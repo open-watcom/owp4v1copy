@@ -72,14 +72,5 @@ diagnosed.
 The following sections contain a complete list of the messages.
 Run-time messages (messages displayed during execution) do not have
 message numbers associated with them.
-.if &version ge 110 .do begin
 :INCLUDE file='CERRS'.
-.do end
-.el .if &version ge 107 .do begin
-:INCLUDE file='CMSGMACS'.
-:INCLUDE file='CERROR7'.
-.do end
-.el .do begin
-:INCLUDE file='CMSGMACS'.
-:INCLUDE file='CERROR'.
-.do end
+

@@ -165,8 +165,8 @@ book_multi_chapter=1
 !else ifeq hbook cguide
 # cguide
 book_title=$(company) C/C++ User's Guide
-book_objs=$(objs_cg) $(objs_lg) $(objs_cmn) $(objs_plusplus)
-book_incs=$(incs_cg);$(incs_lg);$(incs_cmn);$(incs_plusplus)
+book_objs=$(objs_cg) $(objs_lg) $(objs_cmn) $(objs_plusplus) $(objs_cc)
+book_incs=$(incs_cg);$(incs_lg);$(incs_cmn);$(incs_plusplus);$(incs_cc)
 book_bmroot=$(bmroot_cg)
 book_src=cguide
 book_multi_chapter=1
@@ -174,8 +174,8 @@ book_multi_chapter=1
 !else ifeq hbook cguideq
 # cguideq
 book_title=$(company) C/C++ User's Guide for QNX
-book_objs=$(objs_cg) $(objs_lg) $(objs_cmn) $(objs_plusplus)
-book_incs=$(incs_cg);$(incs_lg);$(incs_cmn);$(incs_plusplus)
+book_objs=$(objs_cg) $(objs_lg) $(objs_cmn) $(objs_plusplus) $(objs_cc)
+book_incs=$(incs_cg);$(incs_lg);$(incs_cmn);$(incs_plusplus);$(incs_cc)
 book_bmroot=$(bmroot_cg)
 book_src=cguideq
 book_multi_chapter=1
@@ -210,8 +210,8 @@ book_src=wfcerrs
 !else ifeq hbook wccerrs
 # wccerrs
 book_title=$(company) C Diagnostic Messages
-book_objs=$(objs_cg) $(objs_plusplus)
-book_incs=$(incs_cg);$(incs_plusplus)
+book_objs=$(objs_cg) $(objs_plusplus) $(objs_cc)
+book_incs=$(incs_cg);$(incs_plusplus);$(incs_cc)
 book_bmroot=$(bmroot_cg)
 book_src=wccerrs
 !define book_os2_help

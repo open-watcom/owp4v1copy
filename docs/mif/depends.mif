@@ -4,18 +4,20 @@
 #
 #############################################################
 
+# cc sub-directory
+incs_cc = $(bldsrc_dir)\cc\gml
+objs_cc = &
+$(bldsrc_dir)\cc\gml\cerrs.gml &
+$(bldsrc_dir)\cc\gml\msgmacs.gml &
+
 # cg sub-directory
 bmroot_cg = $(docsrc_dir)\cg
 incs_cg = $(docsrc_dir)\cg
 objs_cg = &
 $(docsrc_dir)\cg\ccall.gml &
-$(docsrc_dir)\cg\cerror.gml &
-$(docsrc_dir)\cg\cerror7.gml &
-$(docsrc_dir)\cg\cerrs.gml &
 $(docsrc_dir)\cg\cguide.bmp &
 $(docsrc_dir)\cg\cguide.gml &
 $(docsrc_dir)\cg\cguideq.gml &
-$(docsrc_dir)\cg\cmsgmacs.gml &
 $(docsrc_dir)\cg\cmsgs.gml &
 $(docsrc_dir)\cg\cpasm.gml &
 $(docsrc_dir)\cg\cpbench.gml &
@@ -2261,11 +2263,11 @@ $(docsrc_dir)\pg\wflw2.gml &
 $(docsrc_dir)\pg\winnt.gml &
 
 # plusplus sub-directory
-incs_plusplus = $(docsrc_dir)\plusplus
+incs_plusplus = $(bldsrc_dir)\plusplus\gml
 objs_plusplus = &
-$(docsrc_dir)\plusplus\messages.gml &
-$(docsrc_dir)\plusplus\msgmacs.gml &
-$(docsrc_dir)\plusplus\options.gml
+$(bldsrc_dir)\plusplus\gml\messages.gml &
+$(bldsrc_dir)\plusplus\gml\msgmacs.gml &
+$(bldsrc_dir)\plusplus\gml\options.gml
 
 # rsi sub-directory
 incs_rsi = $(docsrc_dir)\rsi

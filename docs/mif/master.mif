@@ -6,6 +6,7 @@ proj_name = docs
 
 # location of documentation sources
 docsrc_dir=..\doc
+bldsrc_dir=..\..\bld
 
 !include ../mif/depends.mif
 !include ../mif/books.mif
