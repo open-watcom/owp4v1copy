@@ -62,6 +62,7 @@ mad_trace_how   DIGENTRY MITraceOne( mad_trace_data *td, mad_disasm_data *dd, ma
     td->ra = mr->ppc.iar.u._32[I64LO32] + sizeof( unsigned_32 );
     switch( tk ) {
     case MTRK_OUT:
+        // NYI: this doesn't always work - lr need not contain useful value!
         memset( brk, 0, sizeof( *brk ) );
         brk->mach.offset = ra;
         return( MTRH_BREAK );
@@ -69,6 +70,13 @@ mad_trace_how   DIGENTRY MITraceOne( mad_trace_data *td, mad_disasm_data *dd, ma
         return( MTRH_STEP );
     case MTRK_OVER:
         switch( dc & MDC_TYPE_MASK ) {
+        case MDC_CALL:
+             /* Handle special case of call to the next instruction, which is used
+              * to get the GOT pointer in position independent code.
+              */
+             if( dd->ins.op[0].value == sizeof( unsigned_32 ) )
+                 return( MTRH_STEP );
+             break;
         case MDC_OPER:
         case MDC_RET:
         case MDC_JUMP:
@@ -92,8 +100,8 @@ void            DIGENTRY MITraceFini( mad_trace_data *td )
     /* nothing to do */
 }
 
-#define JMP_SHORT       0x4800000c
-#define BRK_POINT       0x00000000
+#define JMP_SHORT       0x4800000c      // 'b' (to 3rd next instruction)
+#define BRK_POINT       0x7fe00008      // 'trap'
 
 mad_status              DIGENTRY MIUnexpectedBreak( mad_registers *mr, unsigned *maxp, char *buff )
 {
