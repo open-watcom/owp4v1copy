@@ -4,35 +4,35 @@
 [ BLOCK <BUILD_PLATFORM> dos386 ]
 #================================
     echo Building DOS 386 C++ reference compilers
-    cdsay <PROJDIR>\..\dosi86
+    cdsay <PROJDIR>\..\dos386.i86
     wmake -h -k reference
-    cdsay ..\dos386
+    cdsay ..\dos386.386
     wmake -h -k reference
     cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
     echo Building OS/2 386 C++ reference compilers
-    cdsay <PROJDIR>\..\os2i86
+    cdsay <PROJDIR>\..\os2386.i86
     wmake -h -k reference
-    cdsay ..\os2386
+    cdsay ..\os2386.386
     wmake -h -k reference
     cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
     echo Building Win32 386 C++ reference compilers
-    cdsay <PROJDIR>\..\nti86
+    cdsay <PROJDIR>\..\nt386.i86
     wmake -h -k reference
-    cdsay ..\nt386
+    cdsay ..\nt386.386
     wmake -h -k reference
     cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> linux386 ]
 #==================================
     echo Building Linux 386 C++ reference compilers
-    cdsay <PROJDIR>/../linuxi86
+    cdsay <PROJDIR>/../linux386.i86
     wmake -h -k reference
-    cdsay ../linux386
+    cdsay ../linux386.386
     wmake -h -k reference
     cdsay <PROJDIR>
