@@ -45,9 +45,9 @@
 #include <string.h>
 #include <fcntl.h>
 #include <io.h>
-#include <sys\types.h>
-#include <sys\utime.h>
-#include <sys\stat.h>
+#include <sys/types.h>
+#include <sys/utime.h>
+#include <sys/stat.h>
 #include "fcenable.h"
 
 extern void *   MemAlloc( unsigned );

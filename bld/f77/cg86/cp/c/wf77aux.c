@@ -56,8 +56,8 @@
 #include <string.h>
 #include <ctype.h>
 #if _OPT_CG == _ON
-#include <sys\types.h>
-#include <sys\stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #endif
 
 extern  void            *FMemAlloc(int);

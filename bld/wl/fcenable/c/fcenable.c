@@ -38,7 +38,7 @@
 #include <setjmp.h>
 #include <process.h>
 #include <io.h>
-#include <sys\utime.h>
+#include <sys/utime.h>
 #include "fcenable.h"
 #include "banner.h"
 

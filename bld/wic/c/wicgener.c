@@ -37,8 +37,8 @@
 #include <malloc.h>
 #include <conio.h>
 #include <io.h>
-#include <sys\types.h>
-#include <sys\stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <fcntl.h>
 #include "wic.h"
 #include "wressetr.h"

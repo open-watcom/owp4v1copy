@@ -35,7 +35,7 @@
 #include "cioconst.h"
 #include "banner.h"
 
-#include <sys\types.h>
+#include <sys/types.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

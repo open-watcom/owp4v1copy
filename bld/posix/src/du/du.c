@@ -36,7 +36,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <dos.h>
-#include <sys\stat.h>
+#include <sys/stat.h>
 #include "misc.h"
 #include "getopt.h"
 #include "fnutils.h"

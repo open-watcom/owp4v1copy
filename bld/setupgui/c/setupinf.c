@@ -67,8 +67,8 @@
 #include "bdiff.h"
 #endif
 #if defined( WSQL )
-  #include <sys\stat.h>
-  #include <sys\utime.h>
+  #include <sys/stat.h>
+  #include <sys/utime.h>
   #include "wsqldef.h"
   #include "standard.h"
   #include "license.h"

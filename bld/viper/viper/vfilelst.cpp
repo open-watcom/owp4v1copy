@@ -34,7 +34,7 @@
 #include <stdlib.h>
 #define STRICT
 #include <windows.h>
-#include <sys\stat.h>
+#include <sys/stat.h>
 #include <io.h>
 #include <direct.h>
 #ifdef __WINDOWS__

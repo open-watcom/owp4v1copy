@@ -34,8 +34,8 @@
 #include <stdlib.h>
 #include <io.h>
 #include <bios.h>
-#include <sys\types.h>
-#include <sys\stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <dos.h>
 #include <malloc.h>
 #include <string.h>

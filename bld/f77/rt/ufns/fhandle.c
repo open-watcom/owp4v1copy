@@ -41,8 +41,8 @@
 #include "units.h"
 
 #include <stddef.h>
-#include <sys\types.h>
-#include <sys\stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 extern  b_file          *_AllocFile(int,f_attrs,long int);
 extern  void            _AllocBuffer(ftnfile *);

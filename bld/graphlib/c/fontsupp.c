@@ -143,7 +143,7 @@ static short            _YVecDir = 0;
   #include <fcntl.h>
   #include <malloc.h>
   #if !defined( __386__ )
-    #include <sys\slib16.h>
+    #include <sys/slib16.h>
   #endif
   #define tiny_ret_t                    int
   #define tiny_handle_t                 int

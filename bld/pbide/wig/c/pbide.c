@@ -39,8 +39,8 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <direct.h>
-#include <sys\types.h>
-#include <sys\stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <io.h>
 #include "pbide.h"
 #include "global.h"

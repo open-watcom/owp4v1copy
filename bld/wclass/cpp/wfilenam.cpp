@@ -40,7 +40,7 @@ extern "C" {
     #include <dos.h>
     #include <fcntl.h>
     #include <time.h>
-    #include <sys\utime.h>
+    #include <sys/utime.h>
 };
 
 #define MAX_BUFFER 500

@@ -31,8 +31,8 @@
 
 
 #include "as.h"
-#include <sys\types.h>
-#include <sys\stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <fcntl.h>
 
 #ifdef AS_PPC

@@ -38,15 +38,15 @@
 #include <errno.h>
 #include <string.h>
 #include <process.h>
-#include <sys\types.h>
-#include <sys\stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include "banner.h"
 #define FAR _far
 typedef unsigned short WORD;
 typedef unsigned long DWORD;
 typedef WORD HINSTANCE;
 typedef char FAR *LPSTR;
-#include "..\h\winext.h"
+#include "winext.h"
 #include "watcom.h"
 #include "exedos.h"
 #include "exeos2.h"

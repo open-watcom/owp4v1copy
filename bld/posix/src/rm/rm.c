@@ -36,8 +36,8 @@
 #include <ctype.h>
 #include <string.h>
 #include <dos.h>
-#include <sys\types.h>
-#include <sys\stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <direct.h>
 #include <conio.h>
 #include "lineprt.h"
