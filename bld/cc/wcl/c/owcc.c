@@ -147,14 +147,14 @@ void print_banner( void )
 
 void addccopt( int option , char *opt )
 {
-    char op[10];
+    char op[4];
     op[0] = ' ';
     op[1] = '-';
     op[2] = option;
     op[3] = '\0';
-    if (opt)
-        strcpy(op + 3, opt);
     strcat(CC_Opts, op);
+    if ( opt )
+        strcat(CC_Opts, opt);
 }
 
 int   main( int argc, char **argv )
@@ -493,7 +493,7 @@ static  int  Parse( int argc, char **argv )
     }
     for ( i = 1; i < argc ; i++ ) {
         Word = argv[i];
-        if( FileExtension( Word, ".lib" ) ) {
+        if( FileExtension( Word, ".lib" ) || FileExtension( Word, ".a" )) {
             strcat( Libs, Libs[0] != '\0' ? "," : " " );
             strcat( Libs, Word );
         } else {
