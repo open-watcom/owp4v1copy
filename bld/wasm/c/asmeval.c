@@ -255,12 +255,14 @@ static int get_operand( expr_list *new, int *start, int end, bool (*is_expr)(int
                 if( AsmBuffer[i+1]->token != T_COLON ) {
                     if( error_msg )
                         AsmError( ILLEGAL_USE_OF_REGISTER );
+                    new->type = EXPR_UNDEF;
                     return( ERROR );
                 }
                 break;
             default:
                 if( error_msg )
                     AsmError( ILLEGAL_USE_OF_REGISTER );
+                new->type = EXPR_UNDEF;
                 return( ERROR );
             }
         } else if( AsmBuffer[i]->value == T_ST ) {
@@ -276,11 +278,13 @@ static int get_operand( expr_list *new, int *start, int end, bool (*is_expr)(int
                 *start = i;
                 init_expr( &sti );
                 if( evaluate( &sti, start, end, PROC_OPERAND, is_expr ) == ERROR ) {
+                    new->type = EXPR_UNDEF;
                     return( ERROR );
                 }
                 if( sti.type != EXPR_CONST ) {
                     if( error_msg )
                         AsmError( CONSTANT_EXPECTED );
+                    new->type = EXPR_UNDEF;
                     return( ERROR );
                 }
                 new->idx_reg = sti.value;
@@ -292,8 +296,26 @@ static int get_operand( expr_list *new, int *start, int end, bool (*is_expr)(int
         }
         break;
     case T_ID:
-        new->sym = AsmLookup( AsmBuffer[i]->string_ptr );
 #ifdef _WASM_
+        if( Parse_Pass == PASS_1 ) {
+            new->sym = AsmLookup( AsmBuffer[i]->string_ptr );
+            if( new->sym == NULL ) {
+                new->type = EXPR_UNDEF;
+                return( ERROR );
+            }
+        } else {
+            new->sym = AsmGetSymbol( AsmBuffer[i]->string_ptr );
+#if 0
+// FIXME !!!!! 
+// problem with aliases and equ directive
+            if( ( new->sym == NULL ) || ( new->sym->state == SYM_UNDEFINED ) ) {
+                if( error_msg )
+                    AsmErr( SYMBOL_S_NOT_DEFINED, AsmBuffer[i]->string_ptr );
+                new->type = EXPR_UNDEF;
+                return( ERROR );
+            }
+#endif
+        }
         if( new->sym != NULL ) {
             if( new->sym->state == SYM_STRUCT ) {
                 new->empty = FALSE;
@@ -312,6 +334,8 @@ static int get_operand( expr_list *new, int *start, int end, bool (*is_expr)(int
                 break;
             }
         }
+#else
+        new->sym = AsmLookup( AsmBuffer[i]->string_ptr );
 #endif
         new->expr_type = new->sym->mem_type;
         new->empty = FALSE;
@@ -325,6 +349,7 @@ static int get_operand( expr_list *new, int *start, int end, bool (*is_expr)(int
         new->label = i;
         break;
     default:
+        new->type = EXPR_UNDEF;
         return( ERROR );
     }
     (*start)++;
@@ -541,6 +566,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
         if( token_2->type != EXPR_CONST ) {
             if( error_msg )
                 AsmError( POSITIVE_SIGN_CONSTANT_EXPECTED );
+            token_1->type = EXPR_UNDEF;
             return( ERROR );
         }
         token_1->type = EXPR_CONST;
@@ -556,6 +582,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
         if( token_2->type != EXPR_CONST ) {
             if( error_msg )
                 AsmError( NEGATIVE_SIGN_CONSTANT_EXPECTED );
+            token_1->type = EXPR_UNDEF;
             return( ERROR );
         }
         token_1->type = EXPR_CONST;
@@ -575,6 +602,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
         if( check_direct_reg( token_1, token_2 ) == ERROR ) {
             if( error_msg )
                 AsmError( ILLEGAL_USE_OF_REGISTER );
+            token_1->type = EXPR_UNDEF;
             return( ERROR );
         }
         if( check_same( token_1, token_2, EXPR_CONST ) ) {
@@ -591,6 +619,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                 if( token_2->sym != NULL ) {
                     if( error_msg )
                         AsmError( SYNTAX_ERROR );
+                    token_1->type = EXPR_UNDEF;
                     return( ERROR );
                 }
             } else if( token_2->sym != NULL ) {
@@ -620,6 +649,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                 if( token_2->instr != EMPTY ) {
                     if( error_msg )
                         AsmError( LABEL_IS_EXPECTED );
+                    token_1->type = EXPR_UNDEF;
                     return( ERROR );
                 }
                 index_connect( token_2, token_1 );
@@ -652,6 +682,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             /* Error */
             if( error_msg )
                 AsmError( ADDITION_CONSTANT_EXPECTED );
+            token_1->type = EXPR_UNDEF;
             return( ERROR );
         }
         break;
@@ -666,6 +697,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
         if( check_direct_reg( token_1, token_2 ) == ERROR ) {
             if( error_msg )
                 AsmError( ILLEGAL_USE_OF_REGISTER );
+            token_1->type = EXPR_UNDEF;
             return( ERROR );
         }
         if( check_same( token_1, token_2, EXPR_ADDR ) ) {
@@ -676,6 +708,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                 if( token_2->sym != NULL ) {
                     if( error_msg )
                         AsmError( SYNTAX_ERROR );
+                    token_1->type = EXPR_UNDEF;
                     return( ERROR );
                 }
             } else if( token_2->sym != NULL ) {
@@ -706,6 +739,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                 if( token_2->instr != EMPTY ) {
                     if( error_msg )
                         AsmError( LABEL_IS_EXPECTED );
+                    token_1->type = EXPR_UNDEF;
                     return( ERROR );
                 }
                 index_connect( token_2, token_1 );
@@ -731,6 +765,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             /* Error */
             if( error_msg )
                 AsmError( SYNTAX_ERROR );
+            token_1->type = EXPR_UNDEF;
             return( ERROR );
         }
         break;
@@ -747,6 +782,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
         if( check_direct_reg( token_1, token_2 ) == ERROR ) {
             if( error_msg )
                 AsmError( ILLEGAL_USE_OF_REGISTER );
+            token_1->type = EXPR_UNDEF;
             return( ERROR );
         }
         MakeConst( token_2 );
@@ -774,6 +810,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                 if( token_1->label == EMPTY ) {
                     if( error_msg )
                         AsmError( SYNTAX_ERROR );
+                    token_1->type = EXPR_UNDEF;
                     return( ERROR );
                 }
                 sym = token_1->sym;
@@ -783,6 +820,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                 if( Parse_Pass > PASS_1 && sym->state == SYM_UNDEFINED ) {
                     if( error_msg )
                         AsmError( LABEL_NOT_DEFINED );
+                    token_1->type = EXPR_UNDEF;
                     return( ERROR );
                 }
                 token_1->value += sym->offset;
@@ -797,6 +835,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                 if( Parse_Pass > PASS_1 && sym->state == SYM_UNDEFINED ) {
                     if( error_msg )
                         AsmError( LABEL_NOT_DEFINED );
+                    token_1->type = EXPR_UNDEF;
                     return( ERROR );
                 }
                 token_1->value -= sym->offset;
@@ -831,6 +870,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             /* Error */
             if( error_msg )
                 AsmError( SUBTRACTION_CONSTANT_EXPECTED );
+            token_1->type = EXPR_UNDEF;
             return( ERROR );
         }
         break;
@@ -865,6 +905,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
         } else {
             if( error_msg )
                 AsmError( MULTIPLICATION_CONSTANT_EXPECTED );
+            token_1->type = EXPR_UNDEF;
             return( ERROR );
         }
         break;
@@ -880,6 +921,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
         } else {
             if( error_msg )
                 AsmError( DIVISION_CONSTANT_EXPECTED );
+            token_1->type = EXPR_UNDEF;
             return( ERROR );
         }
         break;
@@ -896,6 +938,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             /* Error */
             if( error_msg )
                 AsmError( MORE_THAN_ONE_OVERRIDE );
+            token_1->type = EXPR_UNDEF;
             return( ERROR );
         }
 
@@ -904,6 +947,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             if( token_1->base_reg != EMPTY && token_1->idx_reg != EMPTY ) {
                 if( error_msg )
                     AsmError( ILLEGAL_USE_OF_REGISTER );
+                token_1->type = EXPR_UNDEF;
                 return( ERROR );
             }
             token_2->override = token_1->base_reg;
@@ -943,16 +987,19 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             } else if( Parse_Pass > PASS_1 ) {
                 if( error_msg )
                     AsmError( ONLY_SEG_OR_GROUP_ALLOWED );
+                token_1->type = EXPR_UNDEF;
                 return( ERROR );
             }
 #else
             if( error_msg )
                 AsmError( ONLY_SEG_OR_GROUP_ALLOWED );
+            token_1->type = EXPR_UNDEF;
             return( ERROR );
 #endif
         } else {
             if( error_msg )
                 AsmError( REG_OR_LABEL_EXPECTED_IN_OVERRIDE );
+            token_1->type = EXPR_UNDEF;
             return( ERROR );
         }
         break;
@@ -977,6 +1024,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                 // Missing PTR operator
                 if( error_msg )
                     AsmError( SYNTAX_ERROR );
+                token_1->type = EXPR_UNDEF;
                 return( ERROR );
             }
             TokenAssign( token_1, token_2 );
@@ -1011,6 +1059,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                 // find 'ptr' but no 'byte', 'word' etc in front of it
                 if( error_msg )
                     AsmError( NO_SIZE_GIVEN_BEFORE_PTR_OPERATOR );
+                token_1->type = EXPR_UNDEF;
                 return( ERROR );
             }
             break;
@@ -1028,6 +1077,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             if( token_2->type != EXPR_CONST ) {
                 if( error_msg )
                     AsmError( CONSTANT_EXPECTED );
+                token_1->type = EXPR_UNDEF;
                 return( ERROR );
             }
             token_1->type = EXPR_CONST;
@@ -1035,6 +1085,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             if( !check_same( token_1, token_2, EXPR_CONST ) ) {
                 if( error_msg )
                     AsmError( CONSTANT_EXPECTED );
+                token_1->type = EXPR_UNDEF;
                 return( ERROR );
             }
         }
@@ -1087,10 +1138,12 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
         } else if( token_2->type != EXPR_ADDR ) {
             if( error_msg )
                 AsmError( LABEL_IS_EXPECTED );
+            token_1->type = EXPR_UNDEF;
             return( ERROR );
         } else if( token_2->instr != EMPTY ) {
             if( error_msg )
                 AsmError( LABEL_IS_EXPECTED );
+            token_1->type = EXPR_UNDEF;
             return( ERROR );
         }
         switch( AsmBuffer[index]->value ) {
@@ -1173,6 +1226,7 @@ static int evaluate(
             if( *i > end ) {
                 if( error_msg )
                     AsmError( OPERAND_EXPECTED );
+                operand1->type = EXPR_UNDEF;
                 return( ERROR );
             }
             if( evaluate( operand1, i, end, PROC_BRACKET, is_expr ) == ERROR ) {
@@ -1182,6 +1236,7 @@ static int evaluate(
                 // error open ( close ]
                 if( error_msg )
                     AsmError( BRACKETS_NOT_BALANCED );
+                operand1->type = EXPR_UNDEF;
                 return( ERROR );
             }
             (*i)++;
@@ -1196,6 +1251,7 @@ static int evaluate(
             if( *i > end ) {
                 if( error_msg )
                     AsmError( OPERAND_EXPECTED );
+                operand1->type = EXPR_UNDEF;
                 return( ERROR );
             }
             op_sq_bracket_level++;
@@ -1206,6 +1262,7 @@ static int evaluate(
                 // error open [ close )
                 if( error_msg )
                     AsmError( BRACKETS_NOT_BALANCED );
+                operand1->type = EXPR_UNDEF;
                 return( ERROR );
             }
             if( cmp_token( *i, T_CL_SQ_BRACKET ) ) {
@@ -1230,6 +1287,7 @@ static int evaluate(
                 // error missing ]
                 if( error_msg )
                     AsmError( BRACKETS_NOT_BALANCED );
+                operand1->type = EXPR_UNDEF;
                 return( ERROR );
             } else {
                 return( NOT_ERROR );
@@ -1241,6 +1299,7 @@ static int evaluate(
                 // error close ) but [ is open
                 if( error_msg )
                     AsmError( BRACKETS_NOT_BALANCED );
+                operand1->type = EXPR_UNDEF;
                 return( ERROR );
             } else {
                 return( NOT_ERROR );
@@ -1253,6 +1312,7 @@ static int evaluate(
         } else if( !is_optr(*i) ) {
             if( error_msg )
                 AsmError( OPERATOR_EXPECTED );
+            operand1->type = EXPR_UNDEF;
             return( ERROR );
         }
     }
@@ -1268,6 +1328,7 @@ static int evaluate(
         if( *i > end ) {
             if( error_msg )
                 AsmError( OPERAND_EXPECTED );
+            operand1->type = EXPR_UNDEF;
             return( ERROR );
         }
 
@@ -1293,6 +1354,7 @@ static int evaluate(
         } else if( is_optr( *i ) ) {
             if( error_msg )
                 AsmError( OPERAND_EXPECTED );
+            operand1->type = EXPR_UNDEF;
             return( ERROR );
         } else if( get_operand( &operand2, i, end, is_expr ) == ERROR ) {
             return( ERROR );
@@ -1320,6 +1382,7 @@ static int evaluate(
                 || cmp_token( *i, T_OP_BRACKET ) ) {
                 if( error_msg )
                     AsmError( OPERATOR_EXPECTED );
+                operand1->type = EXPR_UNDEF;
                 return( ERROR );
             } else if( !cmp_token( *i, T_CL_BRACKET ) &&
                        !cmp_token( *i, T_CL_SQ_BRACKET ) ) {
@@ -1370,6 +1433,7 @@ static int evaluate(
     if( op_sq_bracket_level != op_sq_bracket ) {
         if( error_msg )
             AsmError( BRACKETS_NOT_BALANCED );
+        operand1->type = EXPR_UNDEF;
         return( ERROR );
     }
     return( NOT_ERROR );

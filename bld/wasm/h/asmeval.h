@@ -37,6 +37,7 @@ enum exprtype {
     EXPR_ADDR,          // e.g. "foo", "seg foo" and "offset foo"
     EXPR_CONST,         // A constant; note that "label1 - label2" -> constant
     EXPR_REG,           // A register
+    EXPR_UNDEF,         // undefined type when error occures or result is undefined
     EXPR_EMPTY = EMPTY
 };
 
