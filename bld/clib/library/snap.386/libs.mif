@@ -8,7 +8,7 @@ libs = $+ &
     $(pfx__)convert$(__sfx) &
 #    $(pfx__)direct$(__sfx) &
     $(pfx__)environ$(__sfx) &
-#    $(pfx__)file$(__sfx) &
+    $(pfx__)file$(__sfx) &
     $(pfx__)fpu$(__sfx) &
     $(pfx__)handleio$(__sfx) &
     $(pfx__)heap$(__sfx) &
