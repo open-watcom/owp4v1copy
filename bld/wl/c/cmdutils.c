@@ -88,6 +88,9 @@ static  char            *DefExt[] = {           /* see LINK.H */
 
 static bool     CheckFence( void );
 static bool     MakeToken( tokcontrol, sep_type );
+static void     GetNewLine( void );
+static void     BackupParser( void );
+static void     StartNewFile( void );
 
 static bool WildCard( bool (*rtn)( void ), tokcontrol ctrl )
 /**********************************************************/
@@ -952,6 +955,7 @@ static bool MakeToken( tokcontrol ctrl, sep_type separator )
                          && !(ctrl & TOK_IS_FILENAME) ) {
         MapEscapeChar();        /* get escape chars starting in 1st pos. */
     }
+    hmm = *Token.next;
     len += MapDoubleByteChar( hmm );
     hitmatch = FALSE;
     for(;;) {
