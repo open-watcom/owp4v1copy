@@ -30,22 +30,15 @@
 ****************************************************************************/
 
 
-#ifndef COFF_GLOBAL_INCLUDED
-#define COFF_GLOBAL_INCLUDED
+#ifndef COFF_IMPL_INCLUDED
+#define COFF_IMPL_INCLUDED
 
-#include "orlintnl.h"
-#include "cofftype.h"
-#include "coffimpl.h"
+#include	"orlglobl.h"
+#include	"coffglbl.h"
 
-#define _ClientRead( a, b )             (((a)->flags & ORL_FILE_FLAG_SHORT_IMPORT_LIBRARY) ? ImportLibData.read( a, b ) : (a)->coff_hnd->funcs->read( a->file, b ))
-#define _ClientSeek( a, b, c )          (((a)->flags & ORL_FILE_FLAG_SHORT_IMPORT_LIBRARY) ? ImportLibData.seek( a, b, c ) : (a)->coff_hnd->funcs->seek( a->file, b, c ))
-#define _ClientAlloc( a, b )            ((a)->coff_hnd->funcs->alloc( b ))
-#define _ClientFree( a, b )             ((a)->coff_hnd->funcs->free( b ))
-#define _ClientReAlloc( a, b, c )       ((a)->coff_hnd->funcs->realloc( b, c ))
-
-#define _ClientSecRead( a, b )          ((a)->coff_file_hnd->coff_hnd->funcs->read( a->coff_file_hnd->file, b ))
-#define _ClientSecSeek( a, b, c )       ((a)->coff_file_hnd->coff_hnd->funcs->seek( a->coff_file_hnd->file, b, c ))
-#define _ClientSecAlloc( a, b )         ((a)->coff_file_hnd->coff_hnd->funcs->alloc( b ))
-#define _ClientSecFree( a, b )          ((a)->coff_file_hnd->coff_hnd->funcs->free( b ))
+extern orl_funcs ImportLibData;
+extern int convert_import_library(coff_file_handle coff_file_hnd);
 
 #endif
+
+

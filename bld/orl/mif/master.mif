@@ -48,7 +48,8 @@ elf_objs        = elfentr$(obj) &
 coff_objs       = coffentr$(obj) &
                         cofflwlv$(obj) &
                         coffflhn$(obj) &
-                        coffload$(obj)
+                        coffload$(obj) &
+                        coffimpl$(obj)
 
 orl_objs        = orlentry$(obj) &
                         orlflhnd$(obj) &

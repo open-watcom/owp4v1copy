@@ -31,6 +31,7 @@
 
 
 #include "coffload.h"
+#include "coffimpl.h"
 
 static char SectionNames[3][COFF_SEC_NAME_LEN] =
     { ".rel", ".symtab", ".strtab" };
@@ -40,13 +41,20 @@ static void determine_file_specs( coff_file_handle coff_file_hnd,
 /***************************************************************/
 {
     uint_16 cpu_type;
+	uint_16 flags;
     coff_import_object_header *i_hdr;
 
 
     cpu_type = f_hdr->cpu_type;
-    if( coff_file_hnd->type == ORL_FILE_TYPE_IMPORT ) {
+	flags = f_hdr->flags;
+
+	coff_file_hnd->flags = ORL_FILE_FLAG_NONE;
+	if( (f_hdr->cpu_type == IMAGE_FILE_MACHINE_UNKNOWN) &&
+		(f_hdr->num_sections == IMPORT_OBJECT_HDR_SIG2) ) {
+		coff_file_hnd->flags |= ORL_FILE_FLAG_SHORT_IMPORT_LIBRARY;
         i_hdr = (coff_import_object_header *) f_hdr;
         cpu_type = i_hdr->machine;
+		flags = 0;
     }
     switch( cpu_type ) {
         case IMAGE_FILE_MACHINE_I860:
@@ -74,51 +82,48 @@ static void determine_file_specs( coff_file_handle coff_file_hnd,
             coff_file_hnd->machine_type = ORL_MACHINE_TYPE_UNKNOWN;
             break;
     }
-    coff_file_hnd->flags = ORL_FILE_FLAG_NONE;
-    if( coff_file_hnd->type == ORL_FILE_TYPE_IMPORT ) {
-        coff_file_hnd->flags |= ORL_FILE_FLAG_LITTLE_ENDIAN;
-    } else {
-        if( f_hdr->flags & IMAGE_FILE_DLL ) {
-            coff_file_hnd->type = ORL_FILE_TYPE_DLL;
-        } else if( f_hdr->flags & IMAGE_FILE_EXECUTABLE_IMAGE ) {
-            coff_file_hnd->type = ORL_FILE_TYPE_EXECUTABLE;
-        } else {
-            coff_file_hnd->type = ORL_FILE_TYPE_OBJECT;
-        }
 
-        if( f_hdr->flags & IMAGE_FILE_RELOCS_STRIPPED ) {
+	if( flags & IMAGE_FILE_DLL ) {
+		coff_file_hnd->type = ORL_FILE_TYPE_DLL;
+	} else if( flags & IMAGE_FILE_EXECUTABLE_IMAGE ) {
+        coff_file_hnd->type = ORL_FILE_TYPE_EXECUTABLE;
+    } else {
+        coff_file_hnd->type = ORL_FILE_TYPE_OBJECT;
+    }
+
+	if( flags & IMAGE_FILE_RELOCS_STRIPPED ) {
             coff_file_hnd->flags |= ORL_FILE_FLAG_RELOCS_STRIPPED;
         }
-        if( f_hdr->flags & IMAGE_FILE_LINE_NUMS_STRIPPED ) {
+	if( flags & IMAGE_FILE_LINE_NUMS_STRIPPED ) {
             coff_file_hnd->flags |= ORL_FILE_FLAG_LINE_NUMS_STRIPPED;
         }
-        if( f_hdr->flags & IMAGE_FILE_LOCAL_SYMS_STRIPPED ) {
+	if( flags & IMAGE_FILE_LOCAL_SYMS_STRIPPED ) {
             coff_file_hnd->flags |= ORL_FILE_FLAG_LOCAL_SYMS_STRIPPED;
         }
-        if( f_hdr->flags & IMAGE_FILE_DEBUG_STRIPPED ) {
+	if( flags & IMAGE_FILE_DEBUG_STRIPPED ) {
             coff_file_hnd->flags |= ORL_FILE_FLAG_DEBUG_STRIPPED;
         }
-        if( f_hdr->flags & IMAGE_FILE_16BIT_MACHINE ) {
+	if( flags & IMAGE_FILE_16BIT_MACHINE ) {
             coff_file_hnd->flags |= ORL_FILE_FLAG_16BIT_MACHINE;
         }
-        if( f_hdr->flags & IMAGE_FILE_32BIT_MACHINE ) {
+	if( flags & IMAGE_FILE_32BIT_MACHINE ) {
             coff_file_hnd->flags |= ORL_FILE_FLAG_32BIT_MACHINE;
         }
-        if( f_hdr->flags & IMAGE_FILE_SYSTEM ) {
+	if( flags & IMAGE_FILE_SYSTEM ) {
             coff_file_hnd->flags |= ORL_FILE_FLAG_SYSTEM;
         }
         /*
-        if( f_hdr->flags & IMAGE_FILE_BYTES_REVERSED_LO ) {
+	if( flags & IMAGE_FILE_BYTES_REVERSED_LO ) {
             coff_file_hnd->flags |= ORL_FILE_FLAG_LITTLE_ENDIAN;
         }
         */
-        if( f_hdr->flags & IMAGE_FILE_BYTES_REVERSED_HI ) {
+	if( flags & IMAGE_FILE_BYTES_REVERSED_HI ) {
             coff_file_hnd->flags |= ORL_FILE_FLAG_BIG_ENDIAN;
         } else {
             // inserting a default here
             coff_file_hnd->flags |= ORL_FILE_FLAG_LITTLE_ENDIAN;
         }
-    }
+
     /*
         At this point, we have filled in
             coff_file_hnd->type
@@ -400,6 +405,7 @@ orl_return CoffLoadFileStructure( coff_file_handle coff_file_hnd )
     char *              PE;
     orl_file_offset     PEoffset=0;
 
+	coff_file_hnd->flags = 0;
     pe_hdr = _ClientRead( coff_file_hnd, 2 );
     _ClientSeek( coff_file_hnd, -2, SEEK_CUR );
     if( pe_hdr->MZ[0] == 'M' && pe_hdr->MZ[1] == 'Z' ) {
@@ -415,22 +421,20 @@ orl_return CoffLoadFileStructure( coff_file_handle coff_file_hnd )
     coff_file_hnd->f_hdr_buffer = _ClientRead( coff_file_hnd, sizeof( coff_file_header ) );
     if( !(coff_file_hnd->f_hdr_buffer) ) return( ORL_OUT_OF_MEMORY );
     f_hdr = (coff_file_header *) coff_file_hnd->f_hdr_buffer;
-
-/**+ JBS 99/06/22 ***/
-    coff_file_hnd->type = ORL_FILE_TYPE_NONE;
-    if( (f_hdr->cpu_type == IMAGE_FILE_MACHINE_UNKNOWN) &&
-        (f_hdr->num_sections == IMPORT_OBJECT_HDR_SIG2) ) {
+	determine_file_specs( coff_file_hnd, f_hdr );
+	if (coff_file_hnd->flags & ORL_FILE_FLAG_SHORT_IMPORT_LIBRARY) {
         // we have identified an import_object_header
-        coff_file_hnd->type = ORL_FILE_TYPE_IMPORT;
-        coff_file_hnd->initial_size = sizeof( coff_import_object_header ) + PEoffset;
+		// convert short import library structures to long import
+		// library structures, change _ClientRead and _ClientSeek 
+		// macros to read from converted metadata
+		convert_import_library( coff_file_hnd );
+
+		// reread new converted file header
+		coff_file_hnd->f_hdr_buffer = _ClientRead( coff_file_hnd, sizeof( coff_file_header ) );
+		if( !(coff_file_hnd->f_hdr_buffer) ) return( ORL_OUT_OF_MEMORY );
+		f_hdr = (coff_file_header *) coff_file_hnd->f_hdr_buffer;
         determine_file_specs( coff_file_hnd, f_hdr );
-        coff_file_hnd->num_symbols = 0;
-        coff_file_hnd->num_sections = 0;
-        coff_file_hnd->symbol_table = NULL;
-        coff_file_hnd->string_table = NULL;
-        coff_file_hnd->size = 0;
-        coff_file_hnd->rest_of_file_buffer = NULL;
-        return( ORL_OKAY );
+		coff_file_hnd->flags |= ORL_FILE_FLAG_SHORT_IMPORT_LIBRARY;
     }
 /**- JBS ***/
     if( f_hdr->opt_hdr_size > 0 ) {     // skip optional header
@@ -443,7 +447,6 @@ orl_return CoffLoadFileStructure( coff_file_handle coff_file_hnd )
         }
     }
     coff_file_hnd->initial_size = sizeof( coff_file_header ) + f_hdr->opt_hdr_size + PEoffset;
-    determine_file_specs( coff_file_hnd, f_hdr );
     switch( coff_file_hnd->machine_type ) {
     case ORL_MACHINE_TYPE_NONE:
     case ORL_MACHINE_TYPE_UNKNOWN:
