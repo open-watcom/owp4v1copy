@@ -35,7 +35,6 @@
 #ifdef __WIDECHAR__
  #include <wctype.h>
 #endif
-#include "istable.h"
 #undef  isblank
 
 _WCRTLINK int __F_NAME(isblank,iswblank)( INTCHAR_TYPE c )
