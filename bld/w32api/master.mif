@@ -13,17 +13,8 @@ libs =               &
         comdlg32.lib &
         crypt32.lib &
         ctl3d32.lib &
-        d3dim.lib &
-        d3drm.lib &
-        d3dxof.lib &
-        ddraw.lib &
         dhcpcsvc.lib &
-        dinput.lib &
         dlcapi.lib &
-        dplayx.lib &
-        dsetup.lib &
-        dsound.lib &
-        dxguid.lib &
         faultrep.lib &
         gdi32.lib &
         glaux.lib &
