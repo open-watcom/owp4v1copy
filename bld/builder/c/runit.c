@@ -294,12 +294,16 @@ static unsigned ProcOneCopy( char *src, char *dst )
         }
         else if( end1 )
             end = end1;
-        else 
+        else
             end = end2;
         if( end )
         {
             end[0] = 0;
+#ifdef __UNIX__
+            mkdir( buff, S_IRWXU | S_IRWXG | S_IRWXO );
+#else
             mkdir( buff );
+#endif
             dp = fopen( dst, "wb" );
         }
         if( !dp )
