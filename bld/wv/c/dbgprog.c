@@ -563,9 +563,14 @@ static bool CheckLoadDebugInfo( image_entry *image, handle h,
 
 /*
  * ProcSymInfo -- initialize symbolic information
+ *
+ * Note: This function should try to open files locally first, for two
+ * reasons:
+ * 1) If a local file is open as remote, then local caching may interfere with
+ *    file operations (notably seeks with SEEK_CUR)
+ * 2) Remote access goes through extra layer of indirection; this overhead
+ *    is completely unnecessary for local debugging.
  */
-
-
 static bool ProcSymInfo( image_entry *image )
 {
     handle      h;
@@ -590,7 +595,10 @@ static bool ProcSymInfo( image_entry *image )
         }
     } else {
         last = DP_EXPORTS-1;
-        h = FileOpen( image->image_name, OP_READ | OP_REMOTE );
+        h = FileOpen( image->image_name, OP_READ );
+        if( h == NIL_HANDLE ) {
+            h = FileOpen( image->image_name, OP_READ | OP_REMOTE );
+        }
     }
     if( h != NIL_HANDLE ) {
         if( CheckLoadDebugInfo( image, h, DP_MIN, last ) ) {
@@ -606,7 +614,10 @@ static bool ProcSymInfo( image_entry *image )
     _Alloc( image->sym_name, len + 1 );
     if( image->sym_name != NULL ) {
         memcpy( image->sym_name, buff, len + 1 );
-        h = FileOpen( image->sym_name, OP_READ | OP_REMOTE );
+        h = FileOpen( image->sym_name, OP_READ );
+        if( h == NIL_HANDLE ) {
+            h = FileOpen( image->sym_name, OP_READ | OP_REMOTE );
+        }
         if( h == NIL_HANDLE ) {
             h = PathOpen( image->sym_name, strlen( image->sym_name ), "" );
         }
