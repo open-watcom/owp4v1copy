@@ -693,8 +693,3 @@ BOOL WINAPI CryptSetProviderW(LPCWSTR,DWORD);
 }
 #endif
 #endif /* _WINCRYPT_H */
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

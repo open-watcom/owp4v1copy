@@ -86,8 +86,3 @@ typedef struct _IP_UNIDIRECTIONAL_ADAPTER_ADDRESS {
 }
 #endif
 #endif /* _IPEXPORT_H */
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

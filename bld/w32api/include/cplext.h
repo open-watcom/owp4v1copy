@@ -10,8 +10,3 @@
 #define CPLPAGE_KEYBOARD_SPEED 1
 #define CPLPAGE_DISPLAY_BACKGROUND 1
 #endif
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

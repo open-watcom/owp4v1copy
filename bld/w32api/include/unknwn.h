@@ -74,8 +74,3 @@ HRESULT STDMETHODCALLTYPE IClassFactory_LockServer_Stub(IClassFactory*,BOOL);
 }
 #endif
 #endif
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

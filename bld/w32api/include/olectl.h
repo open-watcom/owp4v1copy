@@ -321,8 +321,3 @@ STDAPI OleTranslateColor(OLE_COLOR,HPALETTE,COLORREF*);
 }
 #endif
 #endif 
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

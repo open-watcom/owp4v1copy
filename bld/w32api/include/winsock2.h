@@ -1216,8 +1216,3 @@ typedef DWORD (WINAPI *LPFN_WSAWAITFORMULTIPLEEVENTS)(DWORD, const WSAEVENT *, B
 }
 #endif
 #endif
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

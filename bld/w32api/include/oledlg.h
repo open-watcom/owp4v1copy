@@ -933,8 +933,3 @@ STDAPI_(BOOL) OleUIUpdateLinksA(LPOLEUILINKCONTAINERA,HWND,LPSTR,int);
 }
 #endif
 #endif 
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

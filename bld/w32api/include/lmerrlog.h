@@ -209,8 +209,3 @@ NET_API_STATUS WINAPI NetErrorLogWrite(LPBYTE,DWORD,LPCWSTR,LPBYTE,DWORD,LPBYTE,
 }
 #endif
 #endif 
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

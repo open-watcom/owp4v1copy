@@ -248,8 +248,3 @@ NET_API_STATUS WINAPI NetAuditWrite(DWORD,PBYTE,DWORD,LPTSTR,PBYTE);
 }
 #endif
 #endif
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

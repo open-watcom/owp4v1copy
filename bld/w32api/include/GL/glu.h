@@ -263,8 +263,7 @@ GLAPI void APIENTRY gluTessNormal (GLUtesselator* tess, GLdouble valueX, GLdoubl
 GLAPI void APIENTRY gluTessProperty (GLUtesselator* tess, GLenum which, GLdouble data);
 GLAPI void APIENTRY gluTessVertex (GLUtesselator* tess, GLdouble *location, GLvoid* data);
 GLAPI GLint APIENTRY gluUnProject (GLdouble winX, GLdouble winY, GLdouble winZ, const GLdouble *model, const GLdouble *proj, const GLint *view, GLdouble* objX, GLdouble* objY, GLdouble* objZ);
-GLAPI GLint APIENTRY gluUnProject4 (GLdouble winX, GLdouble winY, GLdouble winZ, GLdouble clipW, const GLdouble *model, const GLdouble *proj, const GLint *view, GLdouble nearVal, GLdouble farVal, GLdouble* objX, GLdouble* objY, GLdouble* objZ, GLdouble* 
-bjW);
+GLAPI GLint APIENTRY gluUnProject4 (GLdouble winX, GLdouble winY, GLdouble winZ, GLdouble clipW, const GLdouble *model, const GLdouble *proj, const GLint *view, GLdouble nearVal, GLdouble farVal, GLdouble* objX, GLdouble* objY, GLdouble* objZ, GLdouble* objW);
 
 #ifdef UNICODE
 #define gluErrorStringWIN gluErrorUnicodeStringEXT
@@ -277,8 +276,3 @@ bjW);
 #endif
 
 #endif /* __glu_h__ */
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

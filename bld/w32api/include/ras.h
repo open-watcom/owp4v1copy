@@ -964,8 +964,3 @@ VOID APIENTRY RasFreeEapUserIdentityA (LPRASEAPUSERIDENTITYA);
 #endif
 #include <poppack.h>
 #endif /* _RAS_H */ 
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

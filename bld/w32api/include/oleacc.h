@@ -215,8 +215,3 @@ STDAPI WindowFromAccessibleObject(IAccessible*,HWND*);
 }
 #endif
 #endif /* _OLEACC_H */
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

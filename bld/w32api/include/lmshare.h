@@ -145,8 +145,3 @@ NET_API_STATUS WINAPI NetFileGetInfo(LPWSTR,DWORD,DWORD,PBYTE*);
 }
 #endif
 #endif 
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

@@ -13,8 +13,3 @@ typedef enum _SHUTDOWN_ACTION {
 DWORD WINAPI NtShutdownSystem (SHUTDOWN_ACTION Action);
 
 #endif /* _NTDLL_H */
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

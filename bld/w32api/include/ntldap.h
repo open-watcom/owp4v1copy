@@ -58,8 +58,3 @@
 #define SERVER_SEARCH_FLAG_PHANTOM_ROOT	2
 
 #endif /*  _NTLDAP_H */
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

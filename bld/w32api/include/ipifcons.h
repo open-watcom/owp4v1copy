@@ -21,8 +21,3 @@
 #define MIB_IF_TYPE_LOOPBACK 24
 #define MIB_IF_TYPE_SLIP 28
 #endif /* _IPIFCONS_H */
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

@@ -390,8 +390,3 @@ RPC_STATUS RPC_ENTRY UuidCreateSequential(UUID*);
 }
 #endif
 #endif
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

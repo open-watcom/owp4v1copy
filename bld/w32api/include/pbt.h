@@ -18,8 +18,3 @@
 #define PBT_APMPOWERSTATUSCHANGE 10
 #define PBT_APMOEMEVENT 11
 #endif
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

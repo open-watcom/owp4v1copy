@@ -406,8 +406,3 @@ SQLRETURN SQL_API SQLSetStmtAttr(SQLHSTMT,SQLINTEGER,SQLPOINTER,SQLINTEGER);
 }
 #endif
 #endif
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

@@ -1705,8 +1705,3 @@ HRESULT STDMETHODCALLTYPE ILockBytes_WriteAt_Stub(ILockBytes*,ULARGE_INTEGER,BYT
 #endif /* COBJMACROS */
 
 #endif
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

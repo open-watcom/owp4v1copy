@@ -257,8 +257,3 @@ VOID WINSNMPAPI SnmpUtilVarBindListFree(SnmpVarBindList*);
 #endif
 #include <poppack.h>
 #endif
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

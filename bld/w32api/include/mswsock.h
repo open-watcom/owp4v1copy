@@ -111,8 +111,3 @@ int PASCAL WSARecvMsg(SOCKET,LPWSAMSG,LPDWORD,LPWSAOVERLAPPED,LPWSAOVERLAPPED_CO
 #endif
 #endif  /*  _MSWSOCK_H */
 
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

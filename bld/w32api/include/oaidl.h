@@ -622,8 +622,3 @@ DECLARE_INTERFACE_(ITypeMarshal, IUnknown)
 }
 #endif
 #endif
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

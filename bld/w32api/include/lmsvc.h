@@ -132,8 +132,3 @@ NET_API_STATUS WINAPI NetServiceInstall(LPCWSTR,LPCWSTR,DWORD,LPCWSTR*,PBYTE*);
 }
 #endif
 #endif 
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

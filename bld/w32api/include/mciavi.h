@@ -23,8 +23,3 @@
 #define MCIERR_AVI_AUDIOERROR	(MCIERR_CUSTOM_DRIVER_BASE+107)
 #define MCIERR_AVI_BADPALETTE	(MCIERR_CUSTOM_DRIVER_BASE+108)
 #endif
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

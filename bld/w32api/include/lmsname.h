@@ -56,8 +56,3 @@
 #define NWSAP_DISPLAY_NAME TEXT("NW Sap Agent")
 #define SERVICE_NWCS TEXT("NWCWorkstation")
 #endif
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

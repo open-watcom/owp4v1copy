@@ -37,8 +37,3 @@ NET_API_STATUS WINAPI NetScheduleJobGetInfo(LPWSTR,DWORD,PBYTE*);
 }
 #endif
 #endif
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

@@ -12,8 +12,3 @@
 #define DISPID_TITLECHANGE 113
 
 #endif
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

@@ -608,8 +608,3 @@ NET_API_STATUS WINAPI I_NetLogonControl2(LPCWSTR,DWORD,DWORD,PBYTE,PBYTE*);
 }
 #endif
 #endif 
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

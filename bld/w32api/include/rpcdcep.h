@@ -126,8 +126,3 @@ long __stdcall I_RpcServerUnregisterEndpointW(unsigned short*,unsigned short*);
 }
 #endif
 #endif
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

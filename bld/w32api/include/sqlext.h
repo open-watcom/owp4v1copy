@@ -1216,8 +1216,3 @@ SQLRETURN SQL_API SQLAllocHandleStd( SQLSMALLINT,SQLHANDLE,SQLHANDLE*);
 }
 #endif
 #endif
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

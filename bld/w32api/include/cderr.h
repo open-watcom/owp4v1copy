@@ -42,8 +42,3 @@
 #define FRERR_BUFFERLENGTHZERO	0x4001
 #define CCERR_CHOOSECOLORCODES	0x5000
 #endif
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

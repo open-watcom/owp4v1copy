@@ -62,8 +62,3 @@ LPARAM WINAPI ReuseDDElParam(LPARAM,UINT,UINT,UINT_PTR,UINT_PTR);
 }
 #endif
 #endif
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

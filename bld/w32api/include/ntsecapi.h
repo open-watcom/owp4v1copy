@@ -609,8 +609,3 @@ typedef BOOLEAN (*PSAM_PASSWORD_FILTER_ROUTINE)(PUNICODE_STRING,PUNICODE_STRING,
 }
 #endif
 #endif /* _NTSECAPI_H */
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

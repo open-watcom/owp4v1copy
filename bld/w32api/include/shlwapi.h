@@ -710,8 +710,3 @@ HRESULT WINAPI DllInstall(BOOL,LPCWSTR);
 }
 #endif
 #endif /* ! defined _SHLWAPI_H */
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

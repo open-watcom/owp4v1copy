@@ -304,8 +304,3 @@
 #define NERR_DfsInternalError (NERR_BASE+590)
 #define MAX_NERR (NERR_BASE+899)
 #endif 
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

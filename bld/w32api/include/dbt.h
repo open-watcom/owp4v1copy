@@ -112,8 +112,3 @@ typedef DEV_BROADCAST_PORT_A DEV_BROADCAST_PORT, *PDEV_BROADCAST_PORT;
 }
 #endif
 #endif
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

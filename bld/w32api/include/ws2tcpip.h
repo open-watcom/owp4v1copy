@@ -356,8 +356,3 @@ typedef struct _OLD_INTERFACE_INFO {
 #endif
 
 #endif	/* _WS2TCPIP_H */
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

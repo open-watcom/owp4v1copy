@@ -55,8 +55,3 @@ typedef LPPROFILEINFOA LPPROFILEINFO;
 }
 #endif
 #endif /* _USERENV_H */
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

@@ -161,8 +161,3 @@ typedef ULONG (PASCAL * LPMAPILOGOFF)(LHANDLE,ULONG,FLAGS,ULONG);
 
 #endif	/* Not _MAPI_H */
 
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-

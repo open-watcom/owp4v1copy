@@ -146,8 +146,3 @@ BOOL INSTAPI SQLWriteFileDSNW(LPCWSTR,LPCWSTR,LPCWSTR,LPCWSTR);
 }
 #endif
 #endif /* _ODBCINST_H */
-
-#if !defined(_ENABLE_AUTODEPEND)
-  #pragma read_only_file;
-#endif
-
