@@ -14,16 +14,16 @@ set PROJDIR=<CWD>
 [ BLOCK <1> rel2 cprel2 ]
 #========================
     [ IFDEF <BUILD_PLATFORM> dos386 ]
-        <CPCMD> <DEVDIR>/wpack/supp/wpack.exe <distroot>/supp/
+        <CPCMD> <DEVDIR>/wpack/supp/wpack.exe <OWROOT>/supp/
 
     [ IFDEF <BUILD_PLATFORM> nt386 ]
-        <CPCMD> <DEVDIR>/wpack/supp/wpack.exe <distroot>/supp/
+        <CPCMD> <DEVDIR>/wpack/supp/wpack.exe <OWROOT>/supp/
 
     [ IFDEF <BUILD_PLATFORM> os2386 ]
-        <CPCMD> <DEVDIR>/wpack/supp/wpack.exe <distroot>/supp/
+        <CPCMD> <DEVDIR>/wpack/supp/wpack.exe <OWROOT>/supp/
 
     [ IFDEF <BUILD_PLATFORM> linux386 ]
-        <CPCMD> <DEVDIR>/wpack/supp/wpack.exe <distroot>/supp/wpack
+        <CPCMD> <DEVDIR>/wpack/supp/wpack.exe <OWROOT>/supp/wpack
 
     [ ENDIF ]
 
