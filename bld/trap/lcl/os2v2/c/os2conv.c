@@ -29,11 +29,6 @@
 ****************************************************************************/
 
 
-#include <stddef.h>
-#include <stdio.h>
-#include <string.h>
-#include <i86.h>
-#include <env.h>
 #define INCL_BASE
 #define INCL_DOSDEVICES
 #define INCL_DOSFILEMGR
@@ -61,11 +56,11 @@ extern ULONG            ExceptNum;
 /*
  * IsFlatSeg - check for flat segment
  */
-int IsFlatSeg(USHORT seg)
+int IsFlatSeg( USHORT seg )
 {
-    if (seg == FlatCS || seg == FlatDS)
-        return TRUE;
-    return FALSE;
+    if( seg == FlatCS || seg == FlatDS )
+        return( TRUE );
+    return( FALSE );
 } /* IsFlatSeg */
 
 
@@ -73,44 +68,44 @@ int IsFlatSeg(USHORT seg)
  * IsUnknownGDTSeg - tell if someone is NOT a flat segment but IS a GDT seg.
  * This is useful for FS segment access.
  */
-int IsUnknownGDTSeg(USHORT seg)
+int IsUnknownGDTSeg( USHORT seg )
 {
-    if (seg == FlatCS || seg == FlatDS) {
-        return FALSE;
+    if( seg == FlatCS || seg == FlatDS ) {
+        return( FALSE );
     }
-    if (seg == TaskFS) {
-        return TRUE;
+    if( seg == TaskFS ) {
+        return( TRUE );
     }
-    return FALSE;
+    return( FALSE );
 } /* IsUnknownGDTSeg */
 
 
 /*
  * MakeItFlatNumberOne - make a (sel,offset) into a flat pointer
  */
-ULONG MakeItFlatNumberOne(USHORT seg, ULONG offset)
+ULONG MakeItFlatNumberOne( USHORT seg, ULONG offset )
 {
     uDB_t       buff;
 
-    if (IsFlatSeg(seg))
-        return offset;
+    if( IsFlatSeg( seg ) )
+        return( offset );
     buff.Pid = Buff.Pid;
     buff.Cmd = DBG_C_SelToLin;
     buff.Value = seg;
     buff.Index = offset;
-    CallDosDebug(&buff);
-    return buff.Addr;
+    CallDosDebug( &buff );
+    return( buff.Addr );
 } /* MakeItFlatNumberOne */
 
 
 /*
  * GetExceptionText - return text for last exception
  */
-char *GetExceptionText(void)
+char *GetExceptionText( void )
 {
     char       *str;
 
-    switch (ExceptNum) {
+    switch( ExceptNum ) {
         case XCPT_DATATYPE_MISALIGNMENT:
             str = TRP_EXC_data_type_misalignment;
             break;
@@ -163,5 +158,5 @@ char *GetExceptionText(void)
             str = TRP_EXC_unknown;
             break;
     }
-    return str;
+    return( str );
 } /* GetExceptionText */
