@@ -34,7 +34,7 @@ CMN_CFLAGS = -ox-s-w4-v -$(%MAKE_DEBUG)
 CFLAGS = $(CMN_CFLAGS) $(PLAT_CFLAGS) $(EXTRA_CFLAGS)
 
 .before
-    @set INCLUDE=../h;$(REG_INCLUDE)
+    @set include=../h;$(REG_INCLUDE)
 
 .error
     @cd $(MAIN_DIR)

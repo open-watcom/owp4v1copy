@@ -15,7 +15,7 @@ extra_c_flags_i86       = -fpc-zm-zc
 inc_dirs = $(gui_dir)\h;$(wclass_dir)\hpp
 
 .before:
-        SET INCLUDE=$(inc_path)
+        set include=$(inc_path)
 
 objects =       contfile.obj &
                 maccel.obj &

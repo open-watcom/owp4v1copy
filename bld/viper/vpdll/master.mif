@@ -3,21 +3,20 @@ name = vpdll
 
 sys_dll = 1
 
-.mif : $(mif_path)
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
 
-.c: ..\c
+.c: ../c
 
-inc_dirs = ..\h;..\..
+inc_dirs = ../h;../..
 
 .before:
-        set INCLUDE=$(inc_path)
+        set include=$(inc_path)
 
-extra_c_flags_386 = /bd
-extra_c_flags_axp = /bd
-extra_c_flags_win = /zc /zw
+extra_c_flags_386 = -bd
+extra_c_flags_axp = -bd
+extra_c_flags_win = -zc -zw
 
 lflags_nt_axp += initinstance terminstance
 lflags_nt_386 += initinstance terminstance
@@ -29,7 +28,7 @@ extra_l_flags_nt = op stack=40k
 
 $(name).dll : $(name).obj
 !ifeq host_OS nt
-        $(linker) $(lflags) name $(name) file $(name) @..\export.mif
+        $(linker) $(lflags) name $(name) file $(name) @../export.mif
 !else
         $(linker) $(lflags) name $(name) file $(name)
 !endif

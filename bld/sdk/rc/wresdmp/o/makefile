@@ -28,7 +28,7 @@ TRMEM = -dTRMEM -of+
 .h : ..\h;$(TRMEM_DIR)
 
 .BEFORE
-        @set INCLUDE=$(TRMEM_DIR);$(wresdir)h;$(watcom_h);$(%include);
+        @set include=$(TRMEM_DIR);$(wresdir)h;$(watcom_h);$(%include);
 
 NAME = wresdmp
 LNK = $(name).lnk

@@ -83,7 +83,7 @@ inc_dirs_NT = $(watcom_dir)/h/nt;
 inc_dirs = ../h;$(inc_dirs_$(NT))
 
 .BEFORE
-        @set INCLUDE=$(inc_path)
+        @set include=$(inc_path)
 
 # explicit rules
 

@@ -11,7 +11,7 @@ msgfiles = drwatcom.msg $(sdk_misc)\savelbox.msg $(sdk_misc)\memwnd.msg &
 
 .before
         @set wcc=-dNOUSE3D
-        @set INCLUDE=$(%include);$(common_dir);$(wdisasmdir)h;$(dig_dir)\h
+        @set include=$(%include);$(common_dir);$(wdisasmdir)h;$(dig_dir)\h
 
 cflags= -ml-zq-2-s-zu-d1-zW-fpc-w4 -i=$(sdk_misc) -fo=obj\.obj
 

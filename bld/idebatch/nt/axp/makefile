@@ -16,7 +16,7 @@ inc_dirs = $(watcom_dir)\h;..\..\h
 extra_l_flags = op stack=32K
 
 .before:
-        set INCLUDE=$(inc_path);
+        set include=$(inc_path);
 
 batserv.exe : $(OBJECTS)
         $(linker) $(lflags) name batserv file {$(OBJECTS)}

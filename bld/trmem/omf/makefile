@@ -13,6 +13,6 @@ default: .symbolic trmemcvr.obj trmem.obj mem.obj
 .c: ..
 .cpp: ..
 .c.obj:
-    wcc386 $[* /i=$(%INCLUDE);.. -d2 -mf -oails -s -w4 -zq /dTRMEM /of+
+    wcc386 $[* -i=$(%include);.. -d2 -mf -oails -s -w4 -zq -dTRMEM -of+
 .cpp.obj:
-    wpp386 $[* /i=$(%INCLUDE);.. -d2 -mf -oails -s -w4 -zq /dTRACKER /of+
+    wpp386 $[* -i=$(%include);.. -d2 -mf -oails -s -w4 -zq -dTRACKER -of+

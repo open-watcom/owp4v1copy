@@ -52,7 +52,7 @@ imports = EE $(ji_dll) &
         ,monitorEnter $(ji_dll) &
         ,monitorExit $(ji_dll) &
 
-extra_c_flags = -dJVM -dJVMXHELP -bd -i"$(javasdk)/include;$(javasdk)/include/win32;$(java_src_dir)/SRC/WIN32/JAVA/INCLUDE" -fh
+extra_c_flags = -dJVM -dJVMXHELP -bd -i"$(javasdk)/include;$(javasdk)/include/win32;$(java_src_dir)/src/win32/java/include" -fh
 extra_linker = op map,verbose import $(imports)
 
 !include $(trap_dir)/lcl/jvm/jvm.mif

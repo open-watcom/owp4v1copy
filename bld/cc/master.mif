@@ -159,7 +159,7 @@ inc_dirs +=$(fe_misc_dir)/h
 !endif
 
 .BEFORE
-        @set INCLUDE=$(inc_path)
+        @set include=$(inc_path)
 
 .c: $(cc_dir)/c;$(inline_asm_dir)/c;$(watcom_dir)/c;$(fe_misc_dir)/c
 .h: $(cc_dir)/h;$(inline_asm_h);$(watcom_dir)/h

@@ -30,7 +30,7 @@ TRMEM = -dTRMEM -of+
 .ERASE
 
 .BEFORE
-        @set INCLUDE=$(watcom_h);$(TRMEM_DIR);$(wresdir)h;$(%include);
+        @set include=$(watcom_h);$(TRMEM_DIR);$(wresdir)h;$(%include);
 
 # explicit rules
 

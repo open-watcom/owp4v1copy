@@ -48,7 +48,7 @@ OBJECTS += mem.$(ext)
 
 inc_dirs = ../h;$(browse_dir)/h;$(browse_dir)/contain/h;$(dwarf_dir)/dr/h;$(posix_dir)/h;
 .before
-	SET INCLUDE=$(inc_path)
+	set include=$(inc_path)
 
 !ifdef DBG
 extra_cpp_flags	= -xs-ew-dSTANDALONE_MERGER -dDEBUG=0 -dINSTRUMENTS=1

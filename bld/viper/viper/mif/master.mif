@@ -43,7 +43,7 @@ extra_cpp_flags_386     = $(extra_cpp_flags_386_$(host_os))
 extra_cpp_flags_i86     = -zm-zc
 
 .before:
-        set INCLUDE=$(inc_path)
+        set include=$(inc_path)
 
 $(name).exe : $(OBJECTS) $(LIBS) viper.res
 !ifneq host_OS os2

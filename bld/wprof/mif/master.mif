@@ -31,7 +31,7 @@ exe = exe
 inc_dirs = ../h;$(wsample_dir)/h;$(aui_dir)/h;$(gui_dir)/h;$(trmem_dir);$(dig_dir)/h
 
 .BEFORE:
-        set INCLUDE=$(inc_path)
+        set include=$(inc_path)
 
 extra_c_flags   = -s
 

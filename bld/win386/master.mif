@@ -6,6 +6,9 @@ win386_autodepends = .AUTODEPEND
 !include deftarg.mif
 !include defrule.mif
 
+wdebug_name =WDEBUG
+wemu387_name =WEMU387
+
 !ifdef __LINUX__
 description = \'Win386 $($^&_name) Device (Version 1.1 Open Watcom)\'
 !else
@@ -13,19 +16,15 @@ description = 'Win386 $($^&_name) Device (Version 1.1 Open Watcom)'
 !endif
 
 .before
-    @set INCLUDE =
-
-wdebug_name =WDEBUG
-wemu387_name =WEMU387
+    @set include =
 
 !ifeq fmt vxd
-all : wdebug.386 wemu387.386 .SYMBOLIC
+all : wdebug.386 wemu387.386
 !else ifeq fmt dll
-all : w386dll.ext .SYMBOLIC
+all : w386dll.ext
 !else ifeq fmt exe
-all : win386.ext .SYMBOLIC
+all : win386.ext
 !endif
-        @%null
 
 OBJS_common = &
         begin.obj  &

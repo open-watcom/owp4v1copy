@@ -33,7 +33,7 @@ OBJS = bincmp.obj cmpcont.obj cmpfiles.obj cmpres.obj global.obj &
        trmem.obj trmemcvr.obj
 
 .BEFORE
-        set INCLUDE=$(TRMEM_DIR);$(wresdir)h;$(watcom_h);$(%include);
+        set include=$(TRMEM_DIR);$(wresdir)h;$(watcom_h);$(%include);
 
 # explicit rules
 

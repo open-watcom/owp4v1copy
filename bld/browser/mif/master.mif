@@ -44,7 +44,7 @@ inc_dirs_os2    = $(wclass_dir)/pm/hpp;$(guitools_dir)/os2;
 inc_dirs    = ../h;../brg/h;../gen;$(wclass_dir)/hpp;$(gui_dir)/h;$(dwarf_dir)/dr/h;$(posix_dir)/h;../contain/h;$(editdll_dir)
 
 .before:
-    SET INCLUDE=$(inc_path)
+    set include=$(inc_path)
 
 cflags_all  = -zq -w4
 !ifdef DBG

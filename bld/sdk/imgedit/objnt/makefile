@@ -10,7 +10,7 @@ wres_dir=$(sdk_dir)/rc/wres
 
 .before
         @set wcc386=-i=$(sdk_dir)/misc;$(watcom_nt_h)
-        @set INCLUDE=./h;../h;$(wres_dir)/h;$(wr_dir)/h;$(wpi_dir)/h;$(lang_root)/h;$(watcom_nt_h);$(watcom_h);
+        @set include=./h;../h;$(wres_dir)/h;$(wr_dir)/h;$(wpi_dir)/h;$(lang_root)/h;$(watcom_nt_h);$(watcom_h);
         @set LIB=$(wr_dir)/nt;$(wpi_dir)/lib;$(sdk_dir)/rc/wres/lib;$(%LIB)
 
 $(name).res : $(rcdeps)

@@ -9,7 +9,7 @@ comp = $(comp386)
 
 .before
         @set wcc=-i=%os2drv%/toolkt21/c/os2h
-        @set INCLUDE=./h;../h;../../misc;$(wpi_dir)/h;$(%toolkit)/c/os2h;$(wat_utils)/h;$(lang_root)/h;$(%include)
+        @set include=./h;../h;../../misc;$(wpi_dir)/h;$(%toolkit)/c/os2h;$(wat_utils)/h;$(lang_root)/h;$(%include)
         @set LIB=$(wpi_dir)/lib;$(%lib)
 
 $(name).res : $(rcdeps)
