@@ -40,6 +40,8 @@ set OWLINUXBUILD=bootstrap
 [ INCLUDE <DEVDIR>/cc/lang.ctl ]
 <CPCMD> <DEVDIR>/cc/linux386.386/wcc386c.elf <DEVDIR>/build/binl/wcc386
 <CPCMD> <DEVDIR>/cc/linux386.i86/wcci86c.elf <DEVDIR>/build/binl/wcc
+<CPCMD> <DEVDIR>/cc/wcl/linux386.386/wcl386.exe <DEVDIR>/build/binl/wcl386
+<CPCMD> <DEVDIR>/cc/wcl/linux386.i86/wcl.exe <DEVDIR>/build/binl/wcl
 [ INCLUDE <DEVDIR>/plusplus/lang.ctl ]
 <CPCMD> <DEVDIR>/plusplus/linux386.386/wcpp386.elf <DEVDIR>/build/binl/wpp386
 <CPCMD> <DEVDIR>/plusplus/linux386.i86/wcppi86.elf <DEVDIR>/build/binl/wpp

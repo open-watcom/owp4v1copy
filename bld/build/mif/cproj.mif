@@ -225,8 +225,13 @@ clflags_osi_386    = -l=osi
 clflags_dos_i86    = -l=dos
 clflags_dos_386    = -l=dos4g
 clflags_nov_386    = -l=netware
+!ifdef __LINUX__
+clflags_linux_386  = -l=bld_linux
+clflags_linux_ppc  = -l=bld_linux
+!else
 clflags_linux_386  = -l=linux
 clflags_linux_ppc  = -l=linux
+!endif
 
 proj_c_flags     = $(extra_c_flags) $(extra_c_flags_$(host_cpu)) $(extra_c_flags_$(host_os))
 cflags           = $(cflags_all) $(fpu_flags) $(cflags_$(host_cpu)) $(cflags_$(host_os)) $(proj_c_flags)
