@@ -1,12 +1,11 @@
 ::
-:: This file generates three different headers: string.h, cstring, and
-:: string. The "default" wsplice operation produces string.h, the header
-:: used in the C library. A CNAME wsplice operation produces cstring, the
-:: C++ partner to C's string.h. A special CPPSTRING wsplice operation
-:: generates C++'s string header. That header is not directly related to
-:: either string.h or cstring; it contains the definition of the character
-:: traits template and std::string.
-:: (Peter Chapin)
+:: This file generates three different headers.
+::
+::   string.h: Default wsplice operation.
+::   cstring : CNAME wsplice operation.
+::   string  : CPPSTRING wsplice operation.
+::
+:: Note that string is not directly related to string.h or cstring.
 ::
 :segment !CPPSTRING
 /***************************************************************************
@@ -15,8 +14,8 @@
 :include crwat.sp
  *
  * Description: This header is part of the C/C++ standard library. It
- *              declares functions of use for manipulating null terminated
- *              arrays of characters. 
+ *              declares functions for manipulating null terminated arrays
+ *              of characters. 
  ***************************************************************************/
 :segment CNAME
 #ifndef _CSTRING_INCLUDED
@@ -402,7 +401,7 @@ extern void __strerror( int __max, int __errnum, char *__buf );
 //
 // Description: This header is part of the C++ standard library. It
 //              defines the character traits template and the std::
-//              string templates.
+//              basic_string template.
 ///////////////////////////////////////////////////////////////////////////
 #ifndef _STRING_INCLUDED
 #define _STRING_INCLUDED
@@ -430,10 +429,10 @@ namespace std {
     size_type  n,
     const Allocator &a ) : mem( a )
   {
-    if( pos > other.size( ) )
+    if( pos > other.filled )
       throw out_of_range( "basic_string::basic_string" );
 
-    size_type tail_length = other.size( ) - pos;
+    size_type tail_length = other.filled - pos;
     size_type result_length = ( tail_length <= n ) ? tail_length : n;
 
     buffer = alloc( result_length + 1, total );
@@ -749,7 +748,7 @@ namespace std {
     basic_string< CharT, Traits, Allocator >::at( size_type pos )
   {
     if( pos >= filled )
-      { throw out_of_range( "basic_string::at" ); }
+      throw out_of_range( "basic_string::at" );
 
     return( buffer[pos] );
   }
@@ -918,10 +917,10 @@ namespace std {
       size_type pos2,
       size_type n )
   {
-    if( pos1 > filled || pos2 > str.size( ) )
+    if( pos1 > filled || pos2 > str.filled )
       throw out_of_range( "basic_string::insert" );
 
-    size_type tail_length = str.size( ) - pos2;
+    size_type tail_length = str.filled - pos2;
     size_type insert_length = ( tail_length <= n ) ? tail_length : n;
 
     if( filled >= npos - insert_length - 1)
@@ -1045,11 +1044,11 @@ namespace std {
       size_type pos,
       size_type n )
   {
-    if( pos > size( ) )
+    if( pos > filled )
       throw out_of_range( "basic_string::erase" );
 
-    size_type tail_length = size( ) - pos;
-    size_type erase_length = ( tail_length <= n ) ? tail_length : n;
+    size_type tail_length = filled - pos;
+    size_type erase_length = ( n < tail_length ) ? n : tail_length;
     Traits::move( buffer + pos, buffer + pos + n, tail_length - erase_length );
     filled -= erase_length;
     return( *this );
@@ -1077,6 +1076,183 @@ namespace std {
   {
     erase( first - begin(), last - first);
     return( first );
+  }
+
+  // replace( size_type, size_type, const basic_string & )
+  // *****************************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  basic_string< CharT, Traits, Allocator > &
+    basic_string< CharT, Traits, Allocator >::replace(
+      size_type pos1,
+      size_type n,
+      const basic_string &str )
+  {
+    return( replace( pos1, n, str, 0, npos ) );
+  }
+
+  // replace( size_type, size_type, const basic_string &, size_type, size_type)
+  // **************************************************************************
+  template< class CharT, class Traits, class Allocator >
+  basic_string< CharT, Traits, Allocator > &
+    basic_string< CharT, Traits, Allocator >::replace(
+      size_type pos1,
+      size_type n1,
+      const basic_string &str,
+      size_type pos2,
+      size_type n2 )
+  {
+    if( pos1 > filled || pos2 > str.filled )
+      throw out_of_range( "basic_string::replace" );
+
+    size_type tail_length1 = filled - pos1;
+    size_type tail_length2 = str.filled - pos2;
+    size_type remove_length = (n1 < tail_length1) ? n1 : tail_length1;
+    size_type insert_length = (n2 < tail_length2) ? n2 : tail_length2;
+
+    if( filled - remove_length > npos - insert_length )
+      throw length_error( "basic_string::replace" );
+
+    size_type result_length = filled - remove_length + insert_length;
+    if( total > result_length ) {
+      Traits::move( buffer + pos1 + insert_length,
+                    buffer + pos1 + remove_length,
+                    filled - pos1 - remove_length );
+      Traits::copy( buffer + pos1, str.buffer + pos2, insert_length );
+      filled = result_length;
+    }
+    else {
+      // Prepare new buffer.
+      size_type new_total;
+      pointer new_buffer = alloc( result_length + 1, new_total );
+      Traits::copy( new_buffer, buffer, pos1 );
+      Traits::copy( new_buffer + pos1, str.buffer + pos2, insert_length );
+      Traits::copy( new_buffer + pos1 + insert_length,
+                    buffer + pos1 + remove_length,
+                    filled - pos1 - remove_length );
+
+      // Commit.
+      mem.deallocate( buffer, total );
+      buffer = new_buffer;
+      total  = new_total;
+      filled = result_length;
+    }
+
+    return( *this );
+  }
+
+  // replace( size_type, size_type, const CharT *, size_type )
+  // *********************************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  basic_string< CharT, Traits, Allocator > &
+    basic_string< CharT, Traits, Allocator >::replace(
+      size_type pos,
+      size_type n1,
+      const CharT *s,
+      size_type n2 )
+  {
+    return( replace( pos, n1, basic_string( s, n2 ) ) );
+  }
+
+  // replace( size_type, size_type, const CharT * )
+  // **********************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  basic_string< CharT, Traits, Allocator > &
+    basic_string< CharT, Traits, Allocator >::replace(
+      size_type pos,
+      size_type n1,
+      const CharT *s )
+  {
+    return( replace( pos, n1, basic_string( s ) ) );
+  }
+
+  // replace( size_type, size_type, size_type, CharT )
+  // *************************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  basic_string< CharT, Traits, Allocator > &
+    basic_string< CharT, Traits, Allocator >::replace(
+      size_type pos,
+      size_type n1,
+      size_type n2,
+      CharT c )
+  {
+    return( replace( pos, n1, basic_string( n2, c ) ) );
+  }
+
+  // replace( iterator, iterator, const basic_string & )
+  // ***************************************************
+  template< class CharT, class Traits, class Allocator >
+  basic_string< CharT, Traits, Allocator > &
+    basic_string< CharT, Traits, Allocator >::replace(
+      iterator i1,
+      iterator i2,
+      const basic_string &str )
+  {
+    // IMPLEMENT ME!
+
+    return( *this );
+  }
+
+  // replace( iterator, iterator, const CharT *s, size_type n )
+  // **********************************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  basic_string< CharT, Traits, Allocator > &
+    basic_string< CharT, Traits, Allocator >::replace(
+      iterator i1,
+      iterator i2,
+      const CharT *s,
+      size_type n )
+  {
+    return( replace( i1, i2, basic_string( s, n ) ) );
+  }
+
+  // replace( iterator i1, iterator i2, const CharT * )
+  // **************************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  basic_string< CharT, Traits, Allocator > &
+    basic_string< CharT, Traits, Allocator >::replace(
+      iterator i1,
+      iterator i2,
+      const CharT *s )
+  {
+    return( replace( i1, i2, basic_string( s ) ) );
+  }
+
+  // replace( iterator i1, iterator i2, size_type n, CharT c )
+  // *********************************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  basic_string< CharT, Traits, Allocator > &
+    basic_string< CharT, Traits, Allocator >::replace(
+      iterator i1,
+      iterator i2,
+      size_type n,
+      CharT c )
+  {
+    return( replace( i1, i2, basic_string( n, c ) ) );
+  }
+
+  // copy( CharT *, size_type, size_type )
+  // *************************************
+  template< class CharT, class Traits, class Allocator >
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::copy(
+      CharT    *s,
+      size_type n,
+      size_type pos ) const
+  {
+    if( pos > filled )
+      throw out_of_range( "basic_string::copy" );
+
+    size_type tail_length = filled - pos;
+    size_type copy_length = (n < tail_length) ? n : tail_length;
+    Traits::copy( s, buffer + pos, copy_length );
+    return( copy_length );
   }
 
   // swap( basic_string & )

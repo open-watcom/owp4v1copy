@@ -1,3 +1,35 @@
+/****************************************************************************
+*
+*                            Open Watcom Project
+*
+*    Portions Copyright (c) 1983-2002 Sybase, Inc. All Rights Reserved.
+*
+*  ========================================================================
+*
+*    This file contains Original Code and/or Modifications of Original
+*    Code as defined in and that are subject to the Sybase Open Watcom
+*    Public License version 1.0 (the 'License'). You may not use this file
+*    except in compliance with the License. BY USING THIS FILE YOU AGREE TO
+*    ALL TERMS AND CONDITIONS OF THE LICENSE. A copy of the License is
+*    provided with the Original Code and Modifications, and is also
+*    available at www.sybase.com/developer/opensource.
+*
+*    The Original Code and all software distributed under the License are
+*    distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+*    EXPRESS OR IMPLIED, AND SYBASE AND ALL CONTRIBUTORS HEREBY DISCLAIM
+*    ALL SUCH WARRANTIES, INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF
+*    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR
+*    NON-INFRINGEMENT. Please see the License for the specific language
+*    governing rights and limitations under the License.
+*
+*  ========================================================================
+*
+* Description:  This file contains functional tests for std::string.
+*               Ideally it should carefully exercise every method.
+*               Although currently most methods are checked for basic
+*               operation, many more tests could (and should) be added.
+*
+****************************************************************************/
 
 #include <iostream>
 #include <string>
@@ -458,6 +490,86 @@ bool erase_test( )
   return( rc );
 }
 
+bool replace_test( )
+{
+  bool rc = true;
+  const std::string s1( "Insert me!" );
+
+  std::string t1( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+  t1.replace( 0, std::string::npos, s1, 0, std::string::npos );
+  if( t1 != "Insert me!" ) {
+    std::cout << "replace FAIL 0001\n"; rc = false;
+  }
+
+  std::string t2( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+  t2.replace( 0, 1, s1, 0, std::string::npos );
+  if( t2 != "Insert me!BCDEFGHIJKLMNOPQRSTUVWXYZ" ) {
+    std::cout << "replace FAIL 0002\n"; rc = false;
+  }
+
+  std::string t3( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+  t3.replace( 1, 0, s1, 0, 1 );
+  if( t3 != "AIBCDEFGHIJKLMNOPQRSTUVWXYZ" ) {
+    std::cout << "replace FAIL 0003\n"; rc = false;
+  }
+
+  std::string t4( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+  t4.replace( 26, 0, s1, 0, std::string::npos );
+  if( t4 != "ABCDEFGHIJKLMNOPQRSTUVWXYZInsert me!" ) {
+    std::cout << "replace FAIL 0004\n"; rc = false;
+  }
+
+  std::string t5( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+  t5.replace( 4, 3, s1, 2, 5 );
+  if (t5 != "ABCDsert HIJKLMNOPQRSTUVWXYZ" ) {
+    std::cout << "replace FAIL 0005\n"; rc = false;
+  }
+
+  return( rc );
+}
+
+bool copy_test( )
+{
+  bool rc = true;
+
+  char buffer[128];
+  std::string s1( "Hello, World!" );
+
+  buffer[ s1.copy( buffer, 2, 0 ) ] = '\0';
+  if( std::strcmp( buffer, "He" ) != 0 ) {
+    std::cout << "copy FAIL 0001\n"; rc = false;
+  }
+
+  buffer[ s1.copy( buffer, s1.size( ), 0 ) ] = '\0';
+  if( std::strcmp( buffer, "Hello, World!" ) != 0 ) {
+    std::cout << "copy FAIL 0002\n"; rc = false;
+  }
+
+  buffer[ s1.copy( buffer, 3, 2 ) ] = '\0';
+  if( std::strcmp( buffer, "llo" ) != 0 ) {
+    std::cout << "copy FAIL 0003\n"; rc = false;
+  }
+
+  buffer[ s1.copy( buffer, 10, 7 ) ] = '\0';
+  if( std::strcmp( buffer, "World!" ) != 0 ) {
+    std::cout << "copy FAIL 0004\n"; rc = false;
+  }
+
+  buffer[ s1.copy( buffer, 0, 13 ) ] = '\0';
+  if( std::strcmp( buffer, "" ) != 0 ) {
+    std::cout << "copy FAIL 0005\n"; rc = false;
+  }
+
+  try {
+    buffer[ s1.copy( buffer, 1, 14 ) ] = '\0';
+    std::cout << "copy FAIL 0006\n"; rc = false;
+  }
+  catch( std::out_of_range ) {
+    // Okay
+  }
+  return( rc );
+}
+
 bool swap_test( )
 {
   bool rc = true;
@@ -719,7 +831,7 @@ bool substr_test()
   }
   try {
     if( s1.substr( 14 ) != "" ) {
-      std::cout << "substr FAIL 0008: Exception expected!\n"; rc = false;
+      std::cout << "substr FAIL 0008\n"; rc = false;
     }
   }
   catch( std::out_of_range ) {
@@ -746,6 +858,8 @@ int main( )
     if( !append_test( )          ) rc = 1;
     if( !insert_test( )          ) rc = 1;
     if( !erase_test( )           ) rc = 1;
+    if( !replace_test( )         ) rc = 1;
+    if( !copy_test( )            ) rc = 1;
     if( !swap_test( )            ) rc = 1;
     if( !cstr_test( )            ) rc = 1;
     if( !find_test( )            ) rc = 1;
