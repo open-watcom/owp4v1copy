@@ -95,7 +95,7 @@ Read387_ proc   near
         fnsave   [bx]
         wait
         db      66H
-        fnrstor  [bx]
+        frstor  [bx]
         wait
         pop     edi
         pop     bx
@@ -113,7 +113,7 @@ Write387_ proc  near
         movzx   edi,bx
         wait
         db      66h
-        fnrstor  [bx]
+        frstor  [bx]
         wait
         pop     edi
         pop     bx
