@@ -29,6 +29,13 @@
 ****************************************************************************/
 
 
+extern "C" {
+    #include <io.h>
+    #include "rcdefs.h"
+    #include "stdlib.h"
+    #include "banner.h"
+};
+
 #include "vpemain.hpp"
 #include "vmsglog.hpp"
 
@@ -65,14 +72,6 @@
 #include "vhelpstk.hpp"
 #include "veditdlg.hpp"
 #include "ide.h"
-
-extern "C" {
-    #include <io.h>
-    #include "rcdefs.h"
-    #include "stdlib.h"
-    #include "banner.h"
-};
-
 
 #define OLDEST_SUPPORTED_VERSION 23
 #define LATEST_SUPPORTED_VERSION 40

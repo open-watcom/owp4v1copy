@@ -30,10 +30,6 @@
 ****************************************************************************/
 
 
-#include "guiwind.h"
-#include "guidlg.h"
-#include "guifdlg.h"
-#include "guixutil.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -61,6 +57,10 @@
         #pragma library( "commdlg" );
     #endif
 #endif
+#include "guiwind.h"
+#include "guidlg.h"
+#include "guifdlg.h"
+#include "guixutil.h"
 #include "guistr.h"
 #include "guixhook.h"
 #include "ctl3d.h"

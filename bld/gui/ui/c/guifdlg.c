@@ -37,9 +37,6 @@
 #define NLM
 #endif
 
-#include "guiwind.h"
-#include "guifdlg.h"
-#include "guidlg.h"
 #if defined(__OS2__) || defined(__OS2_PM__)
     #ifndef OS2_INCLUDED
         #undef NULL
@@ -74,6 +71,9 @@
     #include <direct.h>
     #include <dos.h>
 #endif
+#include "guiwind.h"
+#include "guifdlg.h"
+#include "guidlg.h"
 #include "guistr.h"
 
 #if defined( __QNX__ ) || defined( NLM ) || defined( UNIX )

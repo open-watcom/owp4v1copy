@@ -30,6 +30,13 @@
 ****************************************************************************/
 
 
+extern "C" {
+    #include <io.h>
+    #include "rcdefs.h"
+    #include "stdlib.h"
+    #include "banner.h"
+};
+
 #include "vpemain.hpp"
 #include "vmsglog.hpp"
 
@@ -69,13 +76,6 @@
 #include "mitem.hpp"
 
 #include "inifile.hpp"
-
-extern "C" {
-    #include <io.h>
-    #include "rcdefs.h"
-    #include "stdlib.h"
-    #include "banner.h"
-};
 
 #define IDE_INI_IDENTIFIER      "WATCOM_IDE_0"
 #define IDE_INI_TOOLBAR         "toolbar"

@@ -30,6 +30,20 @@
 ****************************************************************************/
 
 
+extern "C" {
+    #include <stdio.h>
+    #include "rcdefs.h"
+
+#ifdef __WINDOWS__
+    #include "common.h"
+    #include "link.h"
+#endif
+#define CONNECTION_TRIES        10
+#define CONNECTION_INTERVAL     300
+    static int _connectionTries = 0;
+    #include "batcher.h"
+};
+
 #include "vpemain.hpp"
 #include "vmsglog.hpp"
 #include "mproject.hpp"
@@ -51,20 +65,6 @@
 #include "wpshbttn.hpp"
 
 #include "mconfig.hpp"
-
-extern "C" {
-    #include <stdio.h>
-    #include "rcdefs.h"
-
-#ifdef __WINDOWS__
-    #include "common.h"
-    #include "link.h"
-#endif
-#define CONNECTION_TRIES        10
-#define CONNECTION_INTERVAL     300
-    static int _connectionTries = 0;
-    #include "batcher.h"
-};
 
 #define LOG_HELP_KEY    GUI_KEY_F1
 #define LOG_ESCAPE_KEY  GUI_KEY_ESCAPE

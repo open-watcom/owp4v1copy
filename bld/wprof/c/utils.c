@@ -38,14 +38,6 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-#include "common.h"
-#include "aui.h"
-#include "dip.h"
-#include "wpaui.h"
-#include "myassert.h"
-#include "msg.h"
-#include "pathlist.h"
-
 #if _OS == _OS_WIN || _OS == _OS_NT
 #include <windows.h>
 #endif
@@ -59,6 +51,14 @@
 #else
 #   error _OS not supported
 #endif
+
+#include "common.h"
+#include "aui.h"
+#include "dip.h"
+#include "wpaui.h"
+#include "myassert.h"
+#include "msg.h"
+#include "pathlist.h"
 
 #if _OS == _OS_QNX
  #define PATH_SEPARATOR '/'

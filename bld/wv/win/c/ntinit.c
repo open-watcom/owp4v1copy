@@ -30,9 +30,6 @@
 ****************************************************************************/
 
 
-#include "dbgdefn.h"
-#include "dbgwind.h"
-#include "dbgtoggl.h"
 #include <stdio.h>
 #include <string.h>
 #include <process.h>
@@ -43,6 +40,9 @@
 #include <stdarg.h>
 
 #include "windows.h"
+#include "dbgdefn.h"
+#include "dbgwind.h"
+#include "dbgtoggl.h"
 #include "dbgmem.h"
 #include "win1632.h"
 
