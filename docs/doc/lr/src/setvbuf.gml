@@ -25,7 +25,7 @@ causes input/output to be fully buffered.
 .term .mono _IOLBF
 causes output to be line buffered (the buffer will be flushed when a
 new-line character is written, when the buffer is full, or when
-input is requested.
+input is requested on a line buffered or unbuffered stream).
 .term .mono _IONBF
 causes input/output to be completely unbuffered.
 .endterm
