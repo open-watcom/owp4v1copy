@@ -100,10 +100,10 @@ void VComponent::initCtor()
     setIcon( I_Target );
 
     int box_h = getTextExtentY( "X" );
-    int xindent = getTextExtentX( "X" ) / 2;
+    int xindent = getTextExtentX( "X" ); /* / 2; Val became too small with new font RR */
     int yindent = getTextExtentY( "X" ) / 2;
 
-    int off = 5;
+    int off = yindent; /* 5; RR */
     _tBox = new WText( this, WRect( xindent, off, -xindent, box_h ), "" );
     _tBox->show();
     off += box_h + box_h/2;
@@ -114,8 +114,9 @@ void VComponent::initCtor()
     _vTitle->show();
     off += title_h + title_h/2;
 
-    _vItems = new WHotPickBox( _component->items(), (cbs)&MItem::name, (icb)&MItem::type, (bcb)&MItem::included,
-                this, WRect(xindent, off, -xindent, -yindent), &_parent->hotSpotList() );
+    _vItems = new WHotPickBox( _component->items(), (cbs)&MItem::name, (icb)&MItem::type,
+                  (bcb)&MItem::included, this, WRect(xindent, off, -xindent, -yindent),
+                  &_parent->hotSpotList() );
     _vItems->show();
 
     createControls();
@@ -175,9 +176,11 @@ VComponent* WEXPORT VComponent::createSelf( WObjectFile& p )
         component = parent->project()->findComponent( fn );
     }
     if( !component ) {
-        WMessageDialog::messagef( parent, MsgError, MsgOk, _viperError, "Unable to locate target '%s'", (const char*)fn );
+        WMessageDialog::messagef( parent, MsgError, MsgOk, _viperError,
+            "Unable to locate target '%s'", (const char*)fn );
         //this isn't great but it will do (I think!)
-        component = new MComponent( parent->project(), _config->nilRule(), "", fn );
+        component = new MComponent( parent->project(),
+            _config->nilRule(), "", fn );
     }
     return new VComponent( parent, r, component, style );
 }
@@ -255,7 +258,8 @@ void VComponent::createControls()
         if( action->button() ) {
             WString text;
             action->name( text );
-            WPushButton* bAction = new WPushButton( this, WRect(-BW-xindent, off, BW, BH), text );
+            WPushButton* bAction =
+                new WPushButton( this, WRect(-BW-xindent, off, BW, BH), text );
             bAction->setTagPtr( action );
             off += BH+BH/2;
             bAction->onClick( this, (cbw)&VComponent::bActionComponent );
@@ -322,7 +326,8 @@ bool VComponent::newItem( WFileName& fn, bool warn, bool mark, unsigned owner )
             }
         }
     }
-    MRule* rule = _config->findMatchingRule( fn, target()->rule(), _component->mask() );
+    MRule* rule = _config->findMatchingRule( fn, target()->rule(),
+                      _component->mask() );
     if( rule ) {
         MItem* item = new MItem( fn, _component, rule );
         if( okToInclude( item, warn ) ) {
@@ -377,7 +382,9 @@ void VComponent::mAddItem( WMenuItem* )
                 asearch.absoluteTo( _component->filename() );
                 DIR* dir = opendir( asearch );
                 if( !dir ) {
-                    WMessageDialog::messagef( this, MsgError, MsgOk, _viperError, "no files found for '%s'", (const char*)search );
+                    WMessageDialog::messagef( this, MsgError, MsgOk,
+                        _viperError, "no files found for '%s'",
+                        (const char*)search );
                     done = TRUE;
                 } else {
                     for(;;) {
@@ -450,7 +457,8 @@ void VComponent::mRenameItem( WMenuItem* )
             if( !inp.getInput( fn, "Enter new filename" ) ) break;
 //            fn.toLower();
             fn.removeQuotes();
-            MRule* rule = _config->findMatchingRule( fn, target()->rule(), _component->mask() );
+            MRule* rule = _config->findMatchingRule( fn, target()->rule(),
+                              _component->mask() );
             if( rule ) {
                 MItem* item = new MItem( fn, _component, rule );
                 if( okToInclude( item, TRUE, m ) ) {
@@ -484,9 +492,11 @@ void VComponent::actionSetup( MItem* item, MAction* action )
     WString a;
     action->text( a );
     WString text;
-    text.printf( "Switches for '%s' action on '%s'", (const char*)a, (const char*)*item );
+    text.printf( "Switches for '%s' action on '%s'",
+        (const char*)a, (const char*)*item );
     WVList& states = item->getActionStates( action );
-    VSetup setup( this, action->tool(), _component->mask(), &states, text, mode() );
+    VSetup setup( this, action->tool(), _component->mask(),
+        &states, text, mode() );
     if( setup.process() ) {
         _component->setDirty();
     }
@@ -497,8 +507,10 @@ void VComponent::setupItem( MItem* m )
     MRule* r = m->rule();
     if( r != _config->nilRule() ) {
         WString text;
-        text.printf( "Switches for making '%s' in target '%s'", (const char*)*m, (const char*)*target() );
-        VSetup setup( this, r->tool(), _component->mask(), &m->states(), text, mode() );
+        text.printf( "Switches for making '%s' in target '%s'",
+            (const char*)*m, (const char*)*target() );
+        VSetup setup( this, r->tool(), _component->mask(),
+            &m->states(), text, mode() );
         if( setup.process() ) {
             touchItem( m );
             _component->items().updateAllViews();
@@ -513,7 +525,8 @@ void VComponent::showItemCommand()
     if( m ) {
         WString n;
         _component->getItemCommand( m, n );
-        WMessageDialog::messagef( this, MsgInfo, MsgOk, "Source Command", "%s", (const char*)n );
+        WMessageDialog::messagef( this, MsgInfo, MsgOk,
+            "Source Command", "%s", (const char*)n );
     }
 }
 
@@ -521,8 +534,10 @@ void VComponent::touchItem( MItem* m )
 {
     if( m ) {
         if( m->isMask() ) {
-            MsgRetType ret = WMessageDialog::messagef( this, MsgQuestion, MsgYesNo, _viperRequest,
-                    "Mark all %s files in '%s' for remake?", m->ext(), (const char*)*target() );
+            MsgRetType ret = WMessageDialog::messagef(
+                this, MsgQuestion, MsgYesNo, _viperRequest,
+                "Mark all %s files in '%s' for remake?",
+                m->ext(), (const char*)*target() );
             if( ret == MsgRetYes ) {
                 _component->touchItem( m );
             }
@@ -542,7 +557,8 @@ static rtn_status captureName( time_t, char* name, void* data )
     MComponent* comp = ((CapData*)data)->comp;
     WPickList* incList = ((CapData*)data)->incList;
     WFileName fn( name ); //fn.toLower();
-    MRule* rule = _config->findMatchingRule( fn, comp->target()->rule(), comp->mask() );
+    MRule* rule = _config->findMatchingRule(
+        fn, comp->target()->rule(), comp->mask() );
     if( rule ) {
         incList->add( new MItem( fn, comp, rule ) );
     }
@@ -561,10 +577,12 @@ void VComponent::mIncludedItems( WMenuItem* )
         data.comp = _component;
         startWait();
         _parent->setStatus( "Scanning result file..." );
-        walk_status stat = WalkOBJAutoDep( (char*)(const char*)resf, captureName, &data );
+        walk_status stat = WalkOBJAutoDep( (char*)(const char*)resf,
+            captureName, &data );
 #ifndef __OS2__
         if( stat == ADW_NOT_AN_OBJ ) {
-            stat = WalkRESAutoDep( (char*)(const char*)resf, captureName, &data );
+            stat = WalkRESAutoDep( (char*)(const char*)resf,
+                captureName, &data );
         }
 #endif
         _parent->setStatus( NULL );

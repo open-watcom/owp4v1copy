@@ -601,6 +601,26 @@ static HWND CreateControl( gui_control_info *info, gui_window *parent,
     hwnd = CreateWindowEx( xstyle, GUIControls[info->control_class].classname,
         new_text, style, pos.x, pos.y, size.x, size.y, parent->hwnd,
         (HMENU)info->id, GUIMainHInst, pctldata );
+
+    /* From here to #else, new by RR 2003.12.05 */
+
+    if ( hwnd != NULL ) {
+        /* Set the standard font for the new control                */
+        /* Use system supplied font, so we do not need to worry     */
+        /* about cleaning it up later (no DeleteObject() necessary) */
+        HFONT setFont;
+
+        if ( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
+            /* New shell active, Win95 or later */
+            setFont = (HFONT) GetStockObject( DEFAULT_GUI_FONT );
+        } else {
+            /* MSDN on net tells SYSTEM_FONT should be Tahoma on W2K    */
+            /* and later. Does not appear to be correct (tested XP SP1) */
+            setFont = (HFONT) GetStockObject( SYSTEM_FONT );
+        }
+
+        SendMessage( hwnd, WM_SETFONT, (WPARAM)setFont, (LPARAM)0 );
+    }
 #else
     _wpi_createanywindow( GUIControls[info->control_class].classname,
                           new_text, style, pos.x, pos.y, size.x, size.y,

@@ -339,26 +339,44 @@ HWND StatusWndCreate( HWND parent, WPI_RECT *size, WPI_INST hinstance,
     HWND        stat;
 
 #ifndef __OS2_PM__
-        /*
-         ****************
-         * Windows version of create
-         ****************
-         */
+    /*
+     ****************
+     * Windows version of create
+     ****************
+     */
+#if defined (__NT__)
+    if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
+        stat = CreateWindow( className, NULL,
+                             WS_CHILD,
+                             size->left, size->top,
+                             size->right - size->left, size->bottom - size->top,
+                             parent, (HMENU)NULL, hinstance, lpvParam );
+    } else {
+        stat = CreateWindow( className, NULL,
+                             WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
+                             size->left, size->top,
+                             size->right - size->left, size->bottom - size->top,
+                             parent, (HMENU)NULL, hinstance, lpvParam );
+    }
+#else  /* WIN16 */
     stat = CreateWindow( className, NULL,
                          WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
                          size->left, size->top,
                          size->right - size->left, size->bottom - size->top,
                          parent, (HMENU)NULL, hinstance, lpvParam );
+#endif
+
     if( stat != NULL ) {
         ShowWindow( stat, SW_SHOWNORMAL );
         UpdateWindow( stat );
     }
+
 #else
-        /*
-         ****************
-         * PM version of create
-         ****************
-         */
+    /*
+     ****************
+     * PM version of create
+     ****************
+     */
     ULONG       flags;
 
     hinstance = hinstance;
@@ -373,6 +391,7 @@ HWND StatusWndCreate( HWND parent, WPI_RECT *size, WPI_INST hinstance,
                         SWP_SIZE | SWP_MOVE | SWP_SHOW );
     }
 #endif
+
     wndHeight = _wpi_getheightrect( *size );
     return( stat );
 } /* StatusWndCreate */

@@ -25,5 +25,9 @@ I_Viper         ICON    viper.ico
 I_Target        ICON    target.ico
 I_MsgLog        ICON    msglog.ico
 
+#ifdef __NT__
+IDR_MANIFEST RT_MANIFEST MOVEABLE PURE "appmanif.xml"
+#endif
+
 #include "getfile.h"
 #include "getfile.dlg"
