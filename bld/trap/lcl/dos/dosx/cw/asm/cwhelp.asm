@@ -1,4 +1,4 @@
-        include system2.inc
+        include system.inc
         include cw.inc
 
 ; MED 1/21/2003, WASM compatibility change
@@ -41,7 +41,7 @@ pushs   macro r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14,r15,r16
         irp     x,<r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14,r15,r16> ;REPEAT FOR EACH PARM
         ifnb    <x>
         push    x
-        endif    
+        endif
         endm
         endm
 
@@ -53,7 +53,7 @@ pops    macro r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14,r15,r16
         irp     x,<r16,r15,r14,r13,r12,r11,r10,r9,r8,r7,r6,r5,r4,r3,r2,r1> ;REPEAT FOR EACH PARM
         ifnb    <x>
         pop     x
-        endif    
+        endif
         endm
         endm
 
@@ -1052,7 +1052,7 @@ addrsetb:
         sub     ecx,1+1+6
         ret
         endps
-        
+
 
 ;*******************************************************************************
 ;
@@ -3485,7 +3485,7 @@ ReadConfig      proc    near    private
         push    offset ConfigName
         call    cfgGetInts
         add     esp,20
-        
+
 ;       calls cfgGetOnOff,offset ConfigName,offset SetupName, offset ResetTimerVar, offset ResetTimer
         push    offset ResetTimer
         push    offset ResetTimerVar
