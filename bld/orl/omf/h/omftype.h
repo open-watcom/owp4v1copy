@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Structures, defines and enums for OMF files.
 *
 ****************************************************************************/
 
@@ -66,6 +65,13 @@ enum{
     OMF_SEC_DATA_CODE_START
 };
 
+/* Debug info styles we recognize */
+enum {
+    OMF_DBG_STYLE_UNKNOWN = -1,
+    OMF_DBG_STYLE_CODEVIEW,
+    OMF_DBG_STYLE_HLL
+};
+
 // handle definitions
 
 typedef uint_8                          omf_file_flags;
@@ -86,6 +92,7 @@ typedef int_32                          omf_quantity;
 
 typedef uint_8                          *omf_bytes;
 typedef uint_8                          omf_rectyp;
+typedef uint_8                          omf_dbg_style;
 
 typedef struct omf_handle_struct        omf_handle_struct;
 typedef omf_handle_struct               *omf_handle;
@@ -186,6 +193,8 @@ struct omf_file_handle_struct {
     omf_sec_handle      work_sec;
 
     omf_tmp_lidata      lidata;
+
+    omf_dbg_style       debug_style;
 
     omf_sec_handle      symbol_table;
     omf_rectyp          last_rec;

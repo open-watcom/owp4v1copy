@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OMF file parsing routines.
 *
 ****************************************************************************/
 
@@ -401,6 +400,24 @@ static orl_return       doCOMENT( omf_file_handle ofh )
             ofh->status |= OMF_STATUS_ARCH_SET;
         }
         break;
+    case( CMT_MS_OMF ):
+        /* If we see the "New OMF" COMENT record, we need to see if it
+         * contains the debug info style information. If it isn't CodeView,
+         * we don't want to parse LINNUM records as they will be in different
+         * format and could confuse us. This happens with .obj files generated
+         * by IBM's compilers. Note that we default to CodeView (MS) style
+         * but we might encounter a COMENT record setting some unknown style.
+         */
+         if (*buffer)
+             buffer++;
+         if( !strncmp( buffer, "CV", 2 ) ) {
+             ofh->debug_style = OMF_DBG_STYLE_CODEVIEW;
+         } else if( !strncmp( buffer, "HL", 2 ) ) {
+             ofh->debug_style = OMF_DBG_STYLE_HLL;
+         } else {
+             ofh->debug_style = OMF_DBG_STYLE_UNKNOWN;
+         }
+         break;
     }
     return( err );
 }
@@ -572,10 +589,22 @@ static orl_return       doLINNUM( omf_file_handle ofh, omf_rectyp typ )
         break;
     case( CMD_LINNUM ):
     case( CMD_LINNUM32 ):
-        loadIndex( &buffer, &len );
-        seg = loadIndex( &buffer, &len );
-        if( !seg ) return( ORL_OKAY );
-        name = 0;
+        switch( ofh->debug_style ) {
+        case( OMF_DBG_STYLE_CODEVIEW ):
+            // We have MS style line numbers.
+            loadIndex( &buffer, &len );
+            seg = loadIndex( &buffer, &len );
+            if( !seg ) return( ORL_OKAY );
+            name = 0;
+            break;
+        case( OMF_DBG_STYLE_HLL ):
+            // We have IBM HLL style line numbers.
+            // TODO
+            return( ORL_OKAY );
+        case( OMF_DBG_STYLE_UNKNOWN ):
+            // We don't know what this is. Do not attempt to parse.
+            return( ORL_OKAY );
+        }
         break;
     default:
         assert( 0 );
