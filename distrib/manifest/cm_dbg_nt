@@ -10,6 +10,8 @@ binnt\nov.dll
 binnt\novserv.exe
 binnt\par.dll
 binnt\parserv.exe
+binnt\ser.dll
+binnt\serserv.exe
 binnt\std.dll
 binnt\tcp.dll
 binnt\tcpserv.exe
