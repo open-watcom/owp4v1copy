@@ -56,14 +56,14 @@ int FTSStart( char *data )
         templatePtr = MemAlloc( sizeof( template_ll ) +
                                 strlen( template_data ) ); // +1 not needed
         strcpy( templatePtr->data, template_data );
-        AddLLItemAtEnd( &fts->template_head,
-                        &fts->template_tail, templatePtr );
+        AddLLItemAtEnd( (ss**)&fts->template_head,
+                        (ss**)&fts->template_tail, (ss*)templatePtr );
     }
 
     if( ftsOld = FTSMatchTemplate( fts->template_head ) ) {
         FTSKill( ftsOld );
     }
-    AddLLItemAtEnd( &ftsHead, &ftsTail, fts );
+    AddLLItemAtEnd( (ss**)&ftsHead, (ss**)&ftsTail, (ss*)fts );
 
     EditFlags.FileTypeSource = TRUE;
 
@@ -92,7 +92,7 @@ int FTSAddCmd( char *data, int setkilled )
     cmd = MemAlloc( sizeof( cmd_ll ) + strlen( cmd_data ) );
     strcpy( cmd->data, cmd_data );
 
-    AddLLItemAtEnd( &ftsTail->cmd_head, &ftsTail->cmd_tail, cmd );
+    AddLLItemAtEnd( (ss**)&ftsTail->cmd_head, (ss**)&ftsTail->cmd_tail, (ss*)cmd );
 
     return( ERR_NO_ERR );
 }
@@ -335,7 +335,7 @@ ft_src *FTSMatchTemplateData( char *data )
         templatePtr = MemAlloc( sizeof( template_ll ) +
                                 strlen( template_data ) ); // +1 not needed
         strcpy( templatePtr->data, template_data );
-        AddLLItemAtEnd( &template_head, &template_tail, templatePtr );
+        AddLLItemAtEnd( (ss**)&template_head, (ss**)&template_tail, (ss*)templatePtr );
     }
 
     fts = FTSMatchTemplate( template_head );
@@ -350,7 +350,7 @@ void FTSKill( ft_src *fts )
 {
     cmd_ll      *cmd, *cmdnext;
 
-    DeleteLLItem( &ftsHead, &ftsTail, fts );
+    DeleteLLItem( (ss**)&ftsHead, (ss**)&ftsTail, (ss*)fts );
 
     deleteTemplateList( fts->template_head );
 

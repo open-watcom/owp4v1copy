@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Menu processing routines for vi.
 *
 ****************************************************************************/
 
@@ -288,7 +287,7 @@ int StartMenu( char *data )
     }
     if( predef_menu == NULL ) {
         if( new ) {
-            AddLLItemAtEnd( &menuHead, &menuTail, tmp );
+            AddLLItemAtEnd( (ss**)&menuHead, (ss**)&menuTail, (ss*)tmp );
         } else {
             freeMenuData( tmp );
         }
@@ -391,7 +390,7 @@ int MenuItem( char *data )
         currMenu->maxwidth = len;
     }
 
-    AddLLItemAtEnd( &currMenu->itemhead, &currMenu->itemtail, tmp );
+    AddLLItemAtEnd( (ss**)&currMenu->itemhead, (ss**)&currMenu->itemtail, (ss*)tmp );
 
     currMenu->itemcnt++;
     return( ERR_NO_ERR );
@@ -444,7 +443,7 @@ int DoItemDelete( char *data )
 
     cmenu->itemcnt--;
     cmenu->maxwidth = mwid;
-    DeleteLLItem( &cmenu->itemhead, &cmenu->itemtail, dmi );
+    DeleteLLItem( (ss**)&cmenu->itemhead, (ss**)&cmenu->itemtail, (ss*)dmi );
     MemFree( dmi );
     initMenuList( cmenu );
     return( ERR_NO_ERR );
@@ -497,7 +496,7 @@ int DoMenuDelete( char *data )
         *predef_menu = NULL;
         return( ERR_NO_ERR );
     }
-    DeleteLLItem( &menuHead, &menuTail, cmenu );
+    DeleteLLItem( (ss**)&menuHead, (ss**)&menuTail, (ss*)cmenu );
     freeMenu( cmenu );
     menuCnt--;
     InitMenu();
@@ -555,7 +554,7 @@ static void removeFileList( menu *cmenu )
     }
     while( citem != NULL ) {
         nitem = citem->next;
-        DeleteLLItem( &cmenu->itemhead, &cmenu->itemtail, citem );
+        DeleteLLItem( (ss**)&cmenu->itemhead, (ss**)&cmenu->itemtail, (ss*)citem );
         MemFree( citem );
         citem = nitem;
         cmenu->itemcnt--;

@@ -194,7 +194,7 @@ int EditFile( char *name, int dammit )
                 FreeUndoStacks();
                 FreeMarkList();
                 FreeEntireFile( CurrentFile );
-                MemFree( DeleteLLItem( &InfoHead, &InfoTail, CurrentInfo ) );
+                MemFree( DeleteLLItem( (ss**)&InfoHead, (ss**)&InfoTail, (ss*)CurrentInfo ) );
                 CurrentInfo = NULL;
                 CurrentWindow = NO_WINDOW;
             } else {

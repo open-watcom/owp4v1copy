@@ -197,9 +197,9 @@ static int createNewFile( char *name, bool same_file )
     }
 
     if( tmp != NULL ) {
-        InsertLLItemAfter( &InfoTail, tmp, CurrentInfo );
+        InsertLLItemAfter( (ss**)&InfoTail, (ss*)tmp, (ss*)CurrentInfo );
     } else {
-        AddLLItemAtEnd( &InfoHead, &InfoTail, CurrentInfo );
+        AddLLItemAtEnd( (ss**)&InfoHead, (ss**)&InfoTail, (ss*)CurrentInfo );
     }
 
     return( rc );

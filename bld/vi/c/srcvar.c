@@ -137,10 +137,10 @@ void VarAddStr( char *name, char *val, vlist *vl )
     new->len = len;
 
     if( glob ) {
-        AddLLItemAtEnd( &VarHead, &VarTail, new );
+        AddLLItemAtEnd( (ss**)&VarHead, (ss**)&VarTail, (ss*)new );
         EditFlags.CompileAssignments = FALSE;
     } else {
-        AddLLItemAtEnd( &vl->head, &vl->tail, new );
+        AddLLItemAtEnd( (ss**)&vl->head, (ss**)&vl->tail, (ss*)new );
     }
 
 } /* VarAddStr */

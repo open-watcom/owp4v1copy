@@ -247,7 +247,7 @@ int SetFont( char *data )
 /*
  * SetAColor - perform a setcolor command
  */
-int SetAColor( void *data )
+int SetAColor( char *data )
 {
     rgb         c;
     int         clr;

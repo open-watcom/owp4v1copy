@@ -112,7 +112,7 @@ bool CreateStringHandle( char *name, HSZ *hdl )
 
     hlptr->hsz = *hdl;
     memcpy( hlptr->string, name, len+1 );
-    AddLLItemAtEnd( &hszHead, &hszTail, hlptr );
+    AddLLItemAtEnd( (ss**)&hszHead, (ss**)&hszTail, (ss*)hlptr );
     return( TRUE );
 
 } /* CreateStringHandle */
@@ -123,7 +123,7 @@ bool CreateStringHandle( char *name, HSZ *hdl )
 static void deleteStringData( hsz_list *hlptr )
 {
     DdeFreeStringHandle( DDEInstId, hlptr->hsz );
-    DeleteLLItem( &hszHead, &hszTail, hlptr );
+    DeleteLLItem( (ss**)&hszHead, (ss**)&hszTail, (ss*)hlptr );
     MemFree( hlptr );
 
 } /* deleteStringData */

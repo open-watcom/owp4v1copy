@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  BIOS emulation routines for OS/2.
 *
 ****************************************************************************/
 
@@ -91,10 +90,11 @@ void BIOSSetColorRegister( short reg, char r, char g, char b )
     VioSetState( &vcr, 0 );
 }
 
-void BIOSGetColorPalette( char _FAR *palette )
+void BIOSGetColorPalette( void _FAR *palette )
 {
     VIOPALSTATE         *pal_state;
     USHORT              size, i;
+    char far            *pal = palette;
 
     size = sizeof( VIOPALSTATE ) + sizeof( USHORT )*(MAX_COLOR_REGISTERS - 1);
     pal_state = MemAlloc( size );
@@ -103,7 +103,7 @@ void BIOSGetColorPalette( char _FAR *palette )
     pal_state->iFirst = 0;
     VioGetState( pal_state, 0 );
     for( i = 0; i <= MAX_COLOR_REGISTERS; i++ ) {
-        palette[ i ] = pal_state->acolor[ i ];
+        pal[ i ] = pal_state->acolor[ i ];
     }
     MemFree( pal_state );
 }

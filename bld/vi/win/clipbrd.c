@@ -36,7 +36,7 @@
                                 changed GetClipboardSavebuf():
                                   an extra \n\r is added to the buffer read from the clipboard
                                 (this seems to be the easiest fix to a complicated crash bug,
-                                 which happens if you paste a line with exactly one \n\r at the 
+                                 which happens if you paste a line with exactly one \n\r at the
                                  end copied from another application)
 */
 
@@ -254,7 +254,7 @@ static int addAnFcb( fcb **head, fcb **tail, int numbytes )
     int         used;
 
     cfcb = FcbAlloc( NULL );
-    AddLLItemAtEnd( head, tail, cfcb );
+    AddLLItemAtEnd( (ss**)head, (ss**)tail, (ss*)cfcb );
     CreateLinesFromBuffer( numbytes, &(cfcb->line_head),
             &(cfcb->line_tail), &used, &linecnt,
             &(cfcb->byte_cnt) );

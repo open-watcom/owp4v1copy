@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Undo command processing.
 *
 ****************************************************************************/
 
@@ -303,8 +302,8 @@ void PatchDeleteUndo( undo_stack *stack )
             if( i == COULD_NOT_MERGE_FCBS ) {
                 cfcb = nfcb;
             } else {
-                DeleteLLItem( &(topdel->data.fcbs.fcb_head),
-                        &(topdel->data.fcbs.fcb_tail), nfcb );
+                DeleteLLItem( (ss**)&(topdel->data.fcbs.fcb_head),
+                        (ss**)&(topdel->data.fcbs.fcb_tail), (ss*)nfcb );
                 FcbFree( nfcb );
             }
         }

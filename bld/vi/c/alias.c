@@ -60,7 +60,7 @@ static int setGenericAlias( char *what, alias_list **head, alias_list **tail )
             MemFree( curr->expand );
             if( what == NULL ) {
                 MemFree( curr->alias );
-                MemFree( DeleteLLItem( head,tail, curr ) );
+                MemFree( DeleteLLItem( (ss**)head, (ss**)tail, (ss*)curr ) );
             } else {
                 AddString( &(curr->expand), what );
             }
@@ -75,7 +75,7 @@ static int setGenericAlias( char *what, alias_list **head, alias_list **tail )
     AddString( &(curr->alias), str );
     AddString( &(curr->expand), what );
 
-    AddLLItemAtEnd( head, tail, curr );
+    AddLLItemAtEnd( (ss**)head, (ss**)tail, (ss*)curr );
     Message1( "%s set to \"%s\"", str, what );
     return( DO_NOT_CLEAR_MESSAGE_WINDOW );
 
@@ -111,7 +111,7 @@ static int removeGenericAlias( char *which, alias_list **head, alias_list **tail
     if( curr == NULL ) {
         return( ERR_NO_SUCH_ALIAS );
     }
-    DeleteLLItem( head, tail, curr );
+    DeleteLLItem( (ss**)head, (ss**)tail, (ss*)curr );
     Message1( "%s removed", which );
     return( ERR_NO_ERR );
 

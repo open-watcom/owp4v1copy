@@ -84,7 +84,7 @@ int SplitFcbAtLine( linenum lne, file *f, fcb *fb )
      */
     pl = cl->prev;
     cfcb = FcbAlloc( f );
-    InsertLLItemAfter( &(f->fcb_tail), fb, cfcb );
+    InsertLLItemAfter( (ss**)&(f->fcb_tail), (ss*)fb, (ss*)cfcb );
 
     /*
      * reset line data for new fcb

@@ -68,7 +68,7 @@ int NextFileDammit( void )
             cinfo = CurrentInfo->prev;
         }
         lastid = CurrentInfo->DuplicateID;
-        MemFree( DeleteLLItem( &InfoHead, &InfoTail, CurrentInfo ) );
+        MemFree( DeleteLLItem( (ss**)&InfoHead, (ss**)&InfoTail, (ss*)CurrentInfo ) );
         CurrentInfo = NULL;
 
         /*

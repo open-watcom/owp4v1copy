@@ -58,7 +58,7 @@ static void duplicateFcb( fcb *cfcb, fcb **dfcb )
     cline = cfcb->line_head;
     while( cline != NULL ) {
         nline = LineAlloc( cline->data, cline->len );
-        AddLLItemAtEnd( &((*dfcb)->line_head), &((*dfcb)->line_tail),nline );
+        AddLLItemAtEnd( (ss**)&((*dfcb)->line_head), (ss**)&((*dfcb)->line_tail), (ss*)nline );
         cline = cline->next;
     }
 
@@ -77,7 +77,7 @@ void CreateDuplicateFcbList( fcb *sfcb, fcb **head, fcb **tail )
     cfcb = sfcb;
     while( cfcb != NULL ) {
         duplicateFcb( cfcb, &xfcb );
-        AddLLItemAtEnd( head, tail, xfcb );
+        AddLLItemAtEnd( (ss**)head, (ss**)tail, (ss*)xfcb );
         cfcb = cfcb->next;
     }
 

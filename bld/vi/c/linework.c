@@ -67,8 +67,8 @@ int ReplaceCurrentLine( void )
      */
     tmp = LineAlloc( WorkLine->data, WorkLine->len );
     tmp->inf.ld.mark = CurrentLine->inf.ld.mark;
-    ReplaceLLItem( &CurrentFcb->line_head, &CurrentFcb->line_tail,
-            CurrentLine, tmp );
+    ReplaceLLItem( (ss**)&CurrentFcb->line_head, (ss**)&CurrentFcb->line_tail,
+            (ss*)CurrentLine, (ss*)tmp );
     MemFree( CurrentLine );
     CurrentLine = tmp;
 

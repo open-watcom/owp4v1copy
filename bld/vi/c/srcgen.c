@@ -66,7 +66,7 @@ static void genItem( int token, label where )
         AddString( &(tsf->data), where );
     }
 
-    InsertLLItemAfter( &tmpTail, tmpTail, tsf );
+    InsertLLItemAfter( (ss**)&tmpTail, (ss*)tmpTail, (ss*)tsf );
 
 } /* genItem */
 

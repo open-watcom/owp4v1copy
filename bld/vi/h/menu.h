@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Menu processing related prototypes.
 *
 ****************************************************************************/
 
@@ -36,7 +35,7 @@
 #define MAX_FLOAT_MENUS 4
 
 /* menu.c */
-void BarfMenuData( void *f );
+void BarfMenuData( FILE *f );
 int StartMenu( char *data );
 int ViEndMenu( void );
 int MenuItem( char *data );

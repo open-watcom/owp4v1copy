@@ -92,12 +92,12 @@ void InsertNewLine( line *who, line **head, line **tail, char *data, int copylen
     }
     cl = LineAlloc( data, copylen );
     if( *head == NULL ) {
-        AddLLItemAtEnd( head, tail, cl );
+        AddLLItemAtEnd( (ss**)head, (ss**)tail, (ss*)cl );
     } else {
         if( dir == INSERT_AFTER ) {
-            InsertLLItemAfter( tail, who, cl );
+            InsertLLItemAfter( (ss**)tail, (ss*)who, (ss*)cl );
         } else {
-            InsertLLItemBefore( head, who, cl );
+            InsertLLItemBefore( (ss**)head, (ss*)who, (ss*)cl );
         }
     }
 
@@ -130,7 +130,7 @@ void CreateNullLine( fcb *cfcb )
 
     cline = LineAlloc( NULL, 0 );
     FetchFcb( cfcb );
-    AddLLItemAtEnd( &(cfcb->line_head), &(cfcb->line_tail), cline );
+    AddLLItemAtEnd( (ss**)&(cfcb->line_head), (ss**)&(cfcb->line_tail), (ss*)cline );
     cfcb->byte_cnt = 1;
     cfcb->start_line = cfcb->end_line = 1;
     cfcb->nullfcb = TRUE;

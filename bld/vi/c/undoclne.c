@@ -129,13 +129,13 @@ void CurrentLineReplaceUndoEnd( int endgrp )
                             if( (FcbSize( cfcb ) +lineSave->len + 4)
                                     <= MAX_IO_BUFFER ) {
                                 FetchFcb( cfcb );
-                                InsertLLItemAfter( &cfcb->line_tail, cfcb->line_tail, lineSave );
+                                InsertLLItemAfter( (ss**)&cfcb->line_tail, (ss*)cfcb->line_tail, (ss*)lineSave );
                                 cfcb->byte_cnt += lineSave->len + 1;
                                 cfcb->end_line++;
                             } else {
                                 nfcb = singleLineFcb();
                                 nfcb->start_line = nfcb->end_line = cfcb->end_line+1;
-                                InsertLLItemAfter( &(top->data.fcbs.fcb_tail),cfcb, nfcb );
+                                InsertLLItemAfter( (ss**)&(top->data.fcbs.fcb_tail), (ss*)cfcb, (ss*)nfcb );
                                 nfcb->non_swappable = FALSE;
                             }
                             delrec->data.del_range.end++;

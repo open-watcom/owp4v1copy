@@ -45,7 +45,7 @@ int CMergeFcbs( fcb *fcb1, fcb *fcb2 )
     if( i ) {
         return( i );
     }
-    DeleteLLItem( &(CurrentFile->fcb_head),&(CurrentFile->fcb_tail), fcb2 );
+    DeleteLLItem( (ss**)&(CurrentFile->fcb_head), (ss**)&(CurrentFile->fcb_tail), (ss*)fcb2 );
 
     if( fcb2->globalmatch ) {
         fcb1->globalmatch = TRUE;

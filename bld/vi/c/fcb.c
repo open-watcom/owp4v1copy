@@ -56,7 +56,7 @@ int ReadFcbData( file *f )
      */
     f->bytes_pending = FALSE;
     cfcb = FcbAlloc( f );
-    AddLLItemAtEnd( &(f->fcb_head), &(f->fcb_tail), cfcb );
+    AddLLItemAtEnd( (ss**)&(f->fcb_head), (ss**)&(f->fcb_tail), (ss*)cfcb );
 
     /*
      * open file handle if we need to
@@ -242,7 +242,7 @@ void CreateFcbData( file *f, int cnt )
      * get new fcb
      */
     cfcb = FcbAlloc( f );
-    AddLLItemAtEnd( &(f->fcb_head), &(f->fcb_tail), cfcb );
+    AddLLItemAtEnd( (ss**)&(f->fcb_head), (ss**)&(f->fcb_tail), (ss*)cfcb );
 
     /*
      * create lines from buffer info
