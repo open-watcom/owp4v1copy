@@ -12,8 +12,8 @@ The format of the "DEBUG" directive (short form "D") is as follows.
     DEBUG dbtype [dblist] |
     DEBUG [dblist]
 ~b
-    db_type ::= DWARF | WATCOM | CODEVIEW | NOVELL
-    db_list ::= [db_option{,db_option}]
+    dbtype ::= DWARF | WATCOM | CODEVIEW | NOVELL
+    dblist ::= [db_option{,db_option}]
     db_option ::= LINES | TYPES | LOCALS | ALL
 ~b
 DEBUG NOVELL only
@@ -37,7 +37,7 @@ debugging information and that the executable file will contain WATCOM
 debugging information.
 This format permits the selection of specific classes of debugging
 information (
-.ct;.us db_list
+.ct;.us dblist
 .ct )
 which are described below.
 .point CODEVIEW

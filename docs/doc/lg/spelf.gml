@@ -26,7 +26,7 @@ is any of the following:
 .cw `
 .begnote $compact
 .note ALIAS alias_name=symbol_name{,alias_name=symbol_name}
-.note DEBUG dbtype [dblist] |
+.note DEBUG dbtype [dblist] | DEBUG [dblist]
 .note DISABLE msg_num{,msg_num}
 .note ENDLINK
 .note EXPORT entry_name {,entry_name}

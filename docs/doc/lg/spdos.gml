@@ -31,7 +31,7 @@ is any of the following:
 .if '&overlay' eq 'yes' .do begin
 .note BEGIN {section_type [INTO ovl_file] {directive}} END
 .do end
-.note DEBUG dbtype [dblist] |
+.note DEBUG dbtype [dblist] | DEBUG [dblist]
 .note DISABLE msg_num{,msg_num}
 .note ENDLINK
 .note FILE obj_spec{,obj_spec}

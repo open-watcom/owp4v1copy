@@ -25,7 +25,7 @@ where
 is any of the following:
 .begnote $compact
 .note ALIAS alias_name=symbol_name{,alias_name=symbol_name}
-.note DEBUG dbtype [dblist] |
+.note DEBUG dbtype [dblist] | DEBUG [dblist]
 .note DISABLE msg_num{,msg_num}
 .note ENDLINK
 .note FILE obj_spec{,obj_spec}
