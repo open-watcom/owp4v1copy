@@ -55,10 +55,10 @@ if ((u_long)(res) >= (u_long)(-125)) {                  \
 }                                                       \
 return (type)(res);
 
-#define __syscall_return_pointer(type, res)                     \
+#define __syscall_return_pointer(type, res)             \
 if ((u_long)(res) >= (u_long)(-125)) {                  \
     errno = -(res);                                     \
-    res = (u_long)0;                                   \
+    res = (u_long)0;                                    \
 }                                                       \
 return (type)(res);
 
@@ -95,11 +95,14 @@ long __socketcall(int call, u_long *args)
     __syscall_return(long, res);
 }
 
-_WCRTLINK char *getcwd( char *__buf, size_t __size )
-{
-    u_long res = sys_call2(SYS_getcwd, (u_long)__buf, __size);
-    __syscall_return_pointer(char *,res);
-}
+//
+// It was passed into clib\direct\gtcwdlnx.c to implement full features
+//
+//_WCRTLINK char *getcwd( char *__buf, size_t __size )
+//{
+//    u_long res = sys_call2(SYS_getcwd, (u_long)__buf, __size);
+//    __syscall_return_pointer(char *,res);
+//}
 
 _WCRTLINK int fcntl( int __fildes, int __cmd, ... )
 {
