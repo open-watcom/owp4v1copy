@@ -71,7 +71,11 @@ static void writeFileHeader( owl_file_handle file ) {
     header.e_ident[ EI_MAG2 ] = ELFMAG2;
     header.e_ident[ EI_MAG3 ] = ELFMAG3;
     header.e_ident[ EI_CLASS ] = ELFCLASS32;
+#if defined( __BIG_ENDIAN__ )
+    header.e_ident[ EI_DATA ] = ELFDATA2MSB;
+#else
     header.e_ident[ EI_DATA ] = ELFDATA2LSB;
+#endif
     header.e_ident[ EI_VERSION ] = EV_CURRENT;
     header.e_type = ET_REL;
     header.e_machine = machineTypes[ file->info->cpu ];
