@@ -11,8 +11,8 @@ wmake_autodepends = .AUTODEPEND
 !endif
 
 # DOS code will not fit in 64k with /d2
-#!ifeq host_OS dos
-#!ifeq host_CPU i86
+#!ifeq host_os dos
+#!ifeq host_cpu i86
 #release_wmake = 1
 #!endif
 #!endif
@@ -45,7 +45,7 @@ extra_c_flags_i86 = -zt32
 inc_dirs = -I"$(wmake_dir)/h" -I"$(orl_dir)/h" -I$(trmem_dir)
 
 !ifdef cachestat
-extra_c_flags += -dCACHE_STATS
+extra_c_flags += -DCACHE_STATS
 !endif
 
 !include ../mif/wmk.mif                    #   get our objs macro
@@ -54,8 +54,8 @@ extra_c_flags += -dCACHE_STATS
 
 ext_qnx = qnx
 ext_linux = elf
-!ifdef ext_$(host_OS)
-ext = $(ext_$(host_OS))
+!ifdef ext_$(host_os)
+ext = $(ext_$(host_os))
 !else
 ext = exe
 !endif
@@ -86,7 +86,7 @@ $(xname).$(ext) :: usageend.gh wmake.res $(objs) $(libs) $(__MAKEFILES__)
         wstrip -q -a -r $(xname).$(ext) . wmake.res
 
 wmake.res : ../h/wmake.rc mrcmsg.h usage.rc usagej.rc
-        $(rc_aui) -d__$(host_os)__ $[@ -fo=$^@
+        $(rc_aui) -D__$(host_os)__ -I$(watcom_h) $[@ -fo=$^@
 
 usage.rc : ../h/usage.sp
         @%write usage.tmp -kIS_RC -kENGLISH -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" $< -o "%n%n%n%n" $^@
