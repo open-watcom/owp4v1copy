@@ -533,8 +533,8 @@ void ProcSegDefs( void )
             /* FALL THROUGH */
     case ALIGN_ABS:
         abs_frame = GetUInt();
-             /* note MS386 has a 16bit quantity here */
-        abs_offset = ( IsPharLap ) ? GetLInt() : GetUInt();
+        /* note MS386 has a 16bit quantity here */ // !!! offset should be only 8-bit
+        abs_offset = ( IsPharLap ) ? GetLInt() : GetByte();
         break;
     case ALIGN_LTRELOC:
         if( IsIntel ) {
