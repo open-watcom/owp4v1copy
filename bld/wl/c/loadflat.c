@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Utilities for creation of OS/2 flat (LX) executable files.
 *
 ****************************************************************************/
 
-
-/*
-   LOADFLAT : utilities for creation of OS2 FLAT (V2.X) executable files.
-*/
 
 #include <string.h>
 #include "linkstd.h"
@@ -59,8 +54,6 @@ static unsigned NumberBuf( unsigned_32 *start, unsigned_32 limit,
 /**************************************************************/
 /* fill a buffer with consecutive numbers */
 {
-#define BUMP_ENTRY( x, typ )  (x) = (typ *)((char *)(x)+sizeof(typ))
-
     unsigned    size;
     unsigned_32 num;
     unsigned    shift;
@@ -74,7 +67,7 @@ static unsigned NumberBuf( unsigned_32 *start, unsigned_32 limit,
             buf->le.page_num[1] = *start >> 8;
             buf->le.page_num[0] = *start >> 16;
             buf->le.flags = PAGE_VALID; //NYI: have to figure out how to fill in
-            BUMP_ENTRY( buf, le_map_entry );
+            buf = (map_entry *)((char *)buf + sizeof(le_map_entry));
             num--;
         }
     } else {
@@ -91,7 +84,7 @@ static unsigned NumberBuf( unsigned_32 *start, unsigned_32 limit,
             }
             *start += buf->lx.data_size;
             buf->lx.flags = PAGE_VALID; //NYI: have to figure out how to fill in
-            BUMP_ENTRY( buf, lx_map_entry );
+            buf = (map_entry *)((char *)buf + sizeof(lx_map_entry));
         }
     }
     return( size );
@@ -404,7 +397,7 @@ static unsigned WriteDataPages( unsigned long loc )
     return( last_page );
 }
 
-void SetHeaderVxDInfo(os2_flat_header *exe_head) 
+void SetHeaderVxDInfo(os2_flat_header *exe_head)
 /**********************************************/
 /* setup VxD specific info in the header */
 {
@@ -418,7 +411,7 @@ void SetHeaderVxDInfo(os2_flat_header *exe_head)
         exe_head->r.vxd.DDK_version = ddb->SDK_version;
     }
 
-}    
+}
 
 extern void FiniOS2FlatLoadFile( void )
 /*************************************/
