@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  POSIX df utility
+*               Displays disk free space
 *
 ****************************************************************************/
 
@@ -55,7 +55,7 @@ static char     includeNetwork;
 
 char            *OptEnvVar = "df";
 
-static char *usageMsg[] = {
+static const char *usageMsg[] = {
     "Usage: df [-?n] [@env] [drive list]",
     "\tenv            : environment variable to expand",
     "\tdrive list     : specify which drives do show",

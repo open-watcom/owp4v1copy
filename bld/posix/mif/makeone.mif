@@ -43,7 +43,6 @@ $(LNK) : makefile $(objs)
         @%append $(LNK) system dos
 !else ifeq targos os2v2
         @%append $(LNK) system os2v2 pmc
-        @%append $(LNK) lib $(watcomdir)lib\os2386.lib
 !else ifeq targos pharlap
         @%append $(lnk) name $(name).exp
         @%append $(LNK) system pharlap

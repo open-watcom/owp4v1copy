@@ -24,27 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  POSIX cp utility
+*               Copies files and directories
 *
 ****************************************************************************/
 
 
-/*
-   CP.C - perform enhanced unix cp.
-
-   Date         By              Reason
-   ====         ==              ======
-   17-aug-90    Craig Eisler    defined
-   19-oct-91    Craig Eisler    more work
-   02-nov-91    Craig Eisler    cleaned up
-   28-jan-92    Craig Eisler    display time
-   09-mar-92    Craig Eisler    proper error message when > 2 files specified
-   25-mar-92    Craig Eisler    NT port
-   15-jun-92    Craig Eisler    more cleanup
-   19-jun-92    Craig Eisler    use GetOpt
-   20-jan-92    Craig Eisler    use FileMatch (regular expressions)
- */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -61,7 +46,7 @@ char *OptEnvVar="cp";
 static void parseTD( char *, char, unsigned *, unsigned *, unsigned * );
 static void doneCP( void );
 
-static char * usageMsg[] = {
+static const char * usageMsg[] = {
     "Usage: cp [-?srpnifaX] [-t<ti>] [-T<ti>] [-d<da>] [-D<da>] [files] dest",
     "\t[files]        : source files/directories",
     "\tdest           : destination directory/file",

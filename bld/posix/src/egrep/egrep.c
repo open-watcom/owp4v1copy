@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  POSIX egrep utility
+*               Performs grep function
 *
 ****************************************************************************/
 
@@ -74,7 +74,7 @@ typedef enum outmode {                  // Output modes:
 
 char *OptEnvVar = "egrep";
 
-static char *usageMsg[] = {
+static const char *usageMsg[] = {
     "Usage: egrep [-?Xcilnsvx] [-e pattern] [-f patfile] [@env] [pattern]"
     " [files...]",
     "\tenv                 : environment variable to expand",
