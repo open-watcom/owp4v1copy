@@ -174,6 +174,9 @@ force_include = -include
 
 extra_c_flags = -zp4
 
+extra_c_flags_i86 = -fpc
+extra_c_flags_386 = -fpc
+
 extra_c_flags_ntio = -I"$(wres_dir)/h"
 extra_c_flags_posixio = -I"$(wres_dir)/h"
 extra_c_flags_linkio = -I"$(wres_dir)/h"
