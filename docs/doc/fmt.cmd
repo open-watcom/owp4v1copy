@@ -23,10 +23,10 @@ if "[%1]" == "[ftools]" set gmlinc=cmn;lg;fg;gml;whelp
 if "[%1]" == "[FTOOLS]" set gmlinc=cmn;lg;fg;gml;whelp
 if "[%1]" == "[guitool]" set gmlinc=gui;gui\snaps;cg;gml;whelp
 if "[%1]" == "[GUITOOL]" set gmlinc=gui;gui\snaps;cg;gml;whelp
-if "[%1]" == "[pguide]" set gmlinc=pg;cmn;cg;rsi;win386;win386\pics;gml;whelp
-if "[%1]" == "[PGUIDE]" set gmlinc=pg;cmn;cg;rsi;win386;win386\pics;gml;whelp
-if "[%1]" == "[fpguide]" set gmlinc=pg;cmn;fg;rsi;win386;win386\pics;gml;whelp
-if "[%1]" == "[FPGUIDE]" set gmlinc=pg;cmn;fg;rsi;win386;win386\pics;gml;whelp
+if "[%1]" == "[pguide]" set gmlinc=pg;cmn;cg;rsi;win386;gml;lr\src;whelp
+if "[%1]" == "[PGUIDE]" set gmlinc=pg;cmn;cg;rsi;win386;gml;lr\src;whelp
+if "[%1]" == "[fpguide]" set gmlinc=pg;cmn;fg;rsi;win386;gml;lr\src;whelp
+if "[%1]" == "[FPGUIDE]" set gmlinc=pg;cmn;fg;rsi;win386;gml;lr\src;whelp
 if "[%1]" == "[lguide]" set gmlinc=lg;gml;whelp
 if "[%1]" == "[LGUIDE]" set gmlinc=lg;gml;whelp
 if "[%1]" == "[wdbg]" set gmlinc=wd;gml;whelp
