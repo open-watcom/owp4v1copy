@@ -63,16 +63,14 @@ extra_c_flag_cdata = $(opts_cdata_$(host_OS))
 !ifeq target_cpu axp
 inline_asm_dir = $(as_dir)
 inline_asm_h = $(as_dir)/alpha/h;$(as_dir)/h;$(owl_dir)/h
-!else
-!ifeq target_cpu ppc
+!else ifeq target_cpu ppc
 inline_asm_dir = $(as_dir)
 inline_asm_h = $(as_dir)/ppc/h;$(as_dir)/h;$(owl_dir)/h
-!else
+!else # target_cpu x86
 !include $(wasm_dir)/mif/inline.mif
 inline_asm_dir = $(wasm_dir)
 inline_asm_h = $(wasm_dir)/h
 pre_deps_wasm = inlnops.gh
-!endif
 !endif
 
 #dwarf stuff
@@ -312,8 +310,13 @@ code$(target_cpu).gh : xcode$(target_cpu).tmp ./mkcode.exe
         $]@ $[@ $^@
 !endif
 
+target_as_axp=wasmaxp -zq -w4
+target_as_i86=bwasm -zq -w4
+target_as_386=bwasm -zq -3 -w4
+target_as_ppc=wasmppc -zq -w4
+
 xcode$(target_cpu).tmp: ../a/code$(target_cpu).asm
-        $(as) $(aflags) $(extra_a_flags_$[&) $[@
+        $(target_as_$(target_cpu)) $[@
         $(linker) format dos com op nodefault file code$(target_cpu).obj name $^@ disable 1023,1080
 
 ./mkcode.exe: ../a/mkcode.c
