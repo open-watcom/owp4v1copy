@@ -38,12 +38,14 @@
 
 
 /* constants used by the name manglers ( changes ) */
-#define     NORMAL              0
-#define     USCORE_FRONT        1
-#define     USCORE_BACK         2
-#define     REM_USCORE_FRONT    4
-#define     REM_USCORE_BACK     8
-#define     UPPERCASE           16
+enum changes {
+    NORMAL           = 0,
+    USCORE_FRONT     = 1,
+    USCORE_BACK      = 2,
+    REM_USCORE_FRONT = 4,
+    REM_USCORE_BACK  = 8,
+    UPPERCASE        = 16
+};
 
 static char *AsmMangler( struct asm_sym *sym, char *buffer )
 /***************************************************/
@@ -65,7 +67,7 @@ static char *CMangler( struct asm_sym *sym, char *buffer )
 {
     char                *name;
     char                *ptr = sym->name;
-    uint                changes = NORMAL;
+    enum changes        changes = NORMAL;
     uint                additional_size = 1; // for null
 
     if( Options.watcom_c_mangler ) {
