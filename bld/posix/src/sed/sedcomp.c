@@ -280,7 +280,8 @@ static int cmdcomp( register char cchar ) /* character name of command */
         cmpstk[bdepth++] = &( cmdp->u.link );
         if( ++cmdp >= cmds + MAXCMDS )
             ABORT( TMCDS );             /* Not exercised by sedtest.mak */
-        *--cp = ';';                    /* get next cmd w/o lineread */
+        if( *cp != '\0' )
+            *--cp = ';';                /* get next cmd w/o lineread */
         return( 1 );
 
     case '}':                           /* end command group */

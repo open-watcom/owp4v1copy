@@ -136,6 +136,8 @@ brace: .symbolic
     >>afore echo world
     $(sed) -n {p;} afore > after 2>&1
     diff afore after
+    $(sed) -n -e { -e p -e } afore > after 2>&1
+    diff afore after
     > xpect echo hello
     $(sed) -n 1{p;} afore > after 2>&1
     diff after xpect
