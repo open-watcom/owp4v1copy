@@ -62,30 +62,41 @@ typedef enum {
 
 #define __  NO
 
-local  cmp_type const __FAR CompTable[22][22] = {
-/*               CH,UC,SH,US,IN,UI,LO,UL,DL,DU,FL,DB,PO,AR,ST,UN,FU,FI,VO,EN,TY,UF  */
-/* CHAR     */ { OK,OK,OK,OK,OK,OK,AC,AC,AC,AC,AC,AC,PC,__,__,__,__,OK,__,OK,__,OK  },
-/* UCHAR    */ { OK,OK,OK,OK,OK,OK,AC,AC,AC,AC,AC,AC,PC,__,__,__,__,OK,__,OK,__,OK  },
-/* SHORT    */ { OK,OK,OK,OK,OK,OK,AC,AC,AC,AC,AC,AC,PC,__,__,__,__,OK,__,OK,__,OK  },
-/* USHORT   */ { OK,OK,OK,OK,OK,OK,AC,AC,AC,AC,AC,AC,PC,__,__,__,__,OK,__,OK,__,OK  },
-/* INT      */ { OK,OK,OK,OK,OK,OK,AC,AC,AC,AC,AC,AC,PC,__,__,__,__,OK,__,OK,__,OK  },
-/* UINT     */ { OK,OK,OK,OK,OK,OK,AC,AC,AC,AC,AC,AC,PC,__,__,__,__,OK,__,OK,__,OK  },
-/* LONG     */ { AC,AC,AC,AC,AC,AC,OK,OK,OK,OK,AC,AC,PC,__,__,__,__,OK,__,OK,__,OK  },
-/* ULONG    */ { AC,AC,AC,AC,AC,AC,OK,OK,OK,OK,AC,AC,PC,__,__,__,__,OK,__,OK,__,OK  },
-/* LONG64   */ { AC,AC,AC,AC,AC,AC,OK,OK,OK,OK,AC,AC,PC,__,__,__,__,OK,__,OK,__,OK  },
-/* ULONG64  */ { AC,AC,AC,AC,AC,AC,OK,OK,OK,OK,AC,AC,PC,__,__,__,__,OK,__,OK,__,OK  },
-/* FLOAT    */ { AC,AC,AC,AC,AC,AC,AC,AC,AC,AC,OK,AC,__,__,__,__,__,AC,__,AC,__,AC  },
-/* DOUBLE   */ { AC,AC,AC,AC,AC,AC,AC,AC,AC,AC,AC,OK,__,__,__,__,__,AC,__,AC,__,AC  },
-/* POINTER  */ { PC,PC,PC,PC,PC,PC,PC,PC,PC,PC,__,__,OK,__,__,__,__,__,__,__,__,__  },
-/* ARRAY    */ { __,__,__,__,__,__,__,__,__,__,__,__,__,OK,__,__,__,__,__,__,__,__  },
-/* STRUCT   */ { __,__,__,__,__,__,__,__,__,__,__,__,__,__,OK,__,__,__,__,__,__,__  },
-/* UNION    */ { __,__,__,__,__,__,__,__,__,__,__,__,__,__,__,OK,__,__,__,__,__,__  },
-/* FUNCTION */ { __,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,OK,__,__,__,__,__  },
-/* FIELD    */ { OK,OK,OK,OK,OK,OK,OK,OK,OK,OK,AC,AC,__,__,__,__,__,OK,__,__,__,OK  },
-/* VOID     */ { __,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__  },
-/* ENUM     */ { OK,OK,OK,OK,OK,OK,OK,OK,OK,OK,AC,AC,__,__,__,__,__,__,__,OK,__,__  },
-/* TYPEDEF  */ { __,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,OK,__  },
-/* UFIELD   */ { OK,OK,OK,OK,OK,OK,OK,OK,OK,OK,AC,AC,__,__,__,__,__,OK,__,__,__,OK  }
+local  cmp_type const __FAR CompTable[TYPE_LAST_ENTRY][TYPE_LAST_ENTRY] = {
+/*               CH,UC,SH,US,IN,UI,LO,UL,DL,DU,FL,DB,PO,AR,ST,UN,FU,FI,VO,EN,TY,UF,DD,PC,WC,LD,FC,DC,LC,FI,FI,LI,B  */
+/* CHAR     */ { OK,OK,OK,OK,OK,OK,AC,AC,AC,AC,AC,AC,PC,__,__,__,__,OK,__,OK,__,OK,__,__,__,AC,__,__,__,__,__,__,AC },
+/* UCHAR    */ { OK,OK,OK,OK,OK,OK,AC,AC,AC,AC,AC,AC,PC,__,__,__,__,OK,__,OK,__,OK,__,__,__,AC,__,__,__,__,__,__,AC },
+/* SHORT    */ { OK,OK,OK,OK,OK,OK,AC,AC,AC,AC,AC,AC,PC,__,__,__,__,OK,__,OK,__,OK,__,__,__,AC,__,__,__,__,__,__,AC },
+/* USHORT   */ { OK,OK,OK,OK,OK,OK,AC,AC,AC,AC,AC,AC,PC,__,__,__,__,OK,__,OK,__,OK,__,__,__,AC,__,__,__,__,__,__,AC },
+/* INT      */ { OK,OK,OK,OK,OK,OK,AC,AC,AC,AC,AC,AC,PC,__,__,__,__,OK,__,OK,__,OK,__,__,__,AC,__,__,__,__,__,__,AC },
+/* UINT     */ { OK,OK,OK,OK,OK,OK,AC,AC,AC,AC,AC,AC,PC,__,__,__,__,OK,__,OK,__,OK,__,__,__,AC,__,__,__,__,__,__,AC },
+/* LONG     */ { AC,AC,AC,AC,AC,AC,OK,OK,OK,OK,AC,AC,PC,__,__,__,__,OK,__,OK,__,OK,__,__,__,AC,__,__,__,__,__,__,AC },
+/* ULONG    */ { AC,AC,AC,AC,AC,AC,OK,OK,OK,OK,AC,AC,PC,__,__,__,__,OK,__,OK,__,OK,__,__,__,AC,__,__,__,__,__,__,AC },
+/* LONG64   */ { AC,AC,AC,AC,AC,AC,OK,OK,OK,OK,AC,AC,PC,__,__,__,__,OK,__,OK,__,OK,__,__,__,AC,__,__,__,__,__,__,AC },
+/* ULONG64  */ { AC,AC,AC,AC,AC,AC,OK,OK,OK,OK,AC,AC,PC,__,__,__,__,OK,__,OK,__,OK,__,__,__,AC,__,__,__,__,__,__,AC },
+/* FLOAT    */ { AC,AC,AC,AC,AC,AC,AC,AC,AC,AC,OK,AC,__,__,__,__,__,AC,__,AC,__,AC,__,__,__,AC,AC,AC,AC,AC,AC,AC,AC },
+/* DOUBLE   */ { AC,AC,AC,AC,AC,AC,AC,AC,AC,AC,AC,OK,__,__,__,__,__,AC,__,AC,__,AC,__,__,__,AC,AC,AC,AC,AC,AC,AC,AC },
+/* POINTER  */ { PC,PC,PC,PC,PC,PC,PC,PC,PC,PC,__,__,OK,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__ },
+/* ARRAY    */ { __,__,__,__,__,__,__,__,__,__,__,__,__,OK,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__ },
+/* STRUCT   */ { __,__,__,__,__,__,__,__,__,__,__,__,__,__,OK,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__ },
+/* UNION    */ { __,__,__,__,__,__,__,__,__,__,__,__,__,__,__,OK,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__ },
+/* FUNCTION */ { __,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,OK,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__ },
+/* FIELD    */ { OK,OK,OK,OK,OK,OK,OK,OK,OK,OK,AC,AC,__,__,__,__,__,OK,__,__,__,OK,__,__,__,__,__,__,__,__,__,__,__ },
+/* VOID     */ { __,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__ },
+/* ENUM     */ { OK,OK,OK,OK,OK,OK,OK,OK,OK,OK,AC,AC,__,__,__,__,__,__,__,OK,__,__,__,__,__,__,__,__,__,__,__,__,__ },
+/* TYPEDEF  */ { __,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,OK,__,__,__,__,__,__,__,__,__,__,__,__ },
+/* UFIELD   */ { OK,OK,OK,OK,OK,OK,OK,OK,OK,OK,AC,AC,__,__,__,__,__,OK,__,__,__,OK,__,__,__,__,__,__,__,__,__,__,__ },
+/* DOTDOTDOT*/ { __,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__ },
+/* PLAIN CHAR*/{ __,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__ },
+/* WCHAR    */ { __,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__,__ },
+/* LDOUBLE  */ { AC,AC,AC,AC,AC,AC,AC,AC,AC,AC,AC,AC,__,__,__,__,__,__,__,__,__,__,__,__,__,OK,AC,AC,AC,AC,AC,AC,AC },
+/* FCOMPLEX */ { __,__,__,__,__,__,__,__,__,__,AC,AC,__,__,__,__,__,__,__,__,__,__,__,__,__,AC,OK,AC,AC,AC,AC,AC,__ },
+/* DCOMPLEX */ { __,__,__,__,__,__,__,__,__,__,AC,AC,__,__,__,__,__,__,__,__,__,__,__,__,__,AC,AC,OK,AC,AC,AC,AC,__ },
+/* LDCOMPLEX*/ { __,__,__,__,__,__,__,__,__,__,AC,AC,__,__,__,__,__,__,__,__,__,__,__,__,__,AC,AC,AC,OK,AC,AC,AC,__ },
+/* FIMAG    */ { __,__,__,__,__,__,__,__,__,__,AC,AC,__,__,__,__,__,__,__,__,__,__,__,__,__,AC,AC,AC,AC,OK,AC,AC,__ },
+/* DIMAG    */ { __,__,__,__,__,__,__,__,__,__,AC,AC,__,__,__,__,__,__,__,__,__,__,__,__,__,AC,AC,AC,AC,AC,OK,AC,__ },
+/* LDIMAG   */ { __,__,__,__,__,__,__,__,__,__,AC,AC,__,__,__,__,__,__,__,__,__,__,__,__,__,AC,AC,AC,AC,AC,AC,OK,__ },
+/* BOOL     */ { AC,AC,AC,AC,AC,AC,AC,AC,AC,AC,AC,AC,__,__,__,__,__,__,__,__,__,__,__,__,__,AC,__,__,__,__,__,__,OK },
 };
 
 static cmp_type CompatibleType( TYPEPTR typ1, TYPEPTR typ2, int assignment );
@@ -399,8 +410,8 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
         if( !IdenticalType( typ2->object, typ1 ) ){
             ret_val = NO;
         }
-    }else if( typ1->decl_type >= TYPE_DOT_DOT_DOT  ||     /* 15-may-92 */
-            typ2->decl_type >= TYPE_DOT_DOT_DOT ) {
+    }else if( typ1->decl_type > TYPE_LAST_ENTRY  ||
+            typ2->decl_type > TYPE_LAST_ENTRY ) {
             ret_val = NO;
     }else if( top_level == 0 ){
         ret_val = CompTable[ typ1->decl_type ][ typ2->decl_type ];

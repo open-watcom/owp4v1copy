@@ -29,7 +29,6 @@
 ****************************************************************************/
 
 
-#define TYPE_LONG_DOUBLE        TYPE_DOUBLE
 #define ENUM_HANDLE     ENUMPTR
 
 
@@ -64,6 +63,7 @@ typedef enum    type_modifiers {  /* type   leaf   sym */
         FLAG_NONE       = 0x0000,
         FLAG_CONST      = 0x0001, /* Y0001  Y0001      */
         FLAG_VOLATILE   = 0x0002, /* Y0002  Y0002      */
+        FLAG_RESTRICT   = 0x10000,/* see how this flies*/
 
         FLAG_NEAR       = 0x0004, /* Y0004  Y0004  Y0004 */
         FLAG_FAR        = 0x0008, /* Y0008  Y0008  Y0008 */
@@ -164,6 +164,7 @@ typedef enum BASED_KIND{
         BASED_SEGNAME,       //__based( __segname( "name" )   use seg of segname
 }BASED_KIND;
 
+/* matches CTypeSizes[] table in ctype.c */
 typedef enum DATA_TYPE {
         TYPE_CHAR  =    0,      /* signed char */
         TYPE_UCHAR,
@@ -190,9 +191,20 @@ typedef enum DATA_TYPE {
         TYPE_DOT_DOT_DOT,       /* for the ... in prototypes */
         TYPE_PLAIN_CHAR,        /* char */
         TYPE_WCHAR,             /* L'c' - a wide character constant */
+        TYPE_LONG_DOUBLE,
+        TYPE_FCOMPLEX,
+        TYPE_DCOMPLEX,
+        TYPE_LDCOMPLEX,
+        TYPE_FIMAGINARY,
+        TYPE_DIMAGINARY,
+        TYPE_LDIMAGINARY,
+        TYPE_BOOL,
+
         TYPE_UNUSED,            /* an unused type (a unref'd function) */
+        TYPE_LAST_ENTRY=TYPE_UNUSED,
     }DATA_TYPE;
 
+//#define TYPE_LONG_DOUBLE        TYPE_DOUBLE
 
 // values for type->type_flags
 enum type_state {
@@ -694,7 +706,9 @@ struct  comp_flags {
         unsigned unaligned_segs         : 1;    /* don't align segments */
         unsigned trigraph_alert         : 1;    /* trigraph char alert */
 
-        unsigned generate_auto_depend   : 1; /* Generate make auto depend file */
+        unsigned generate_auto_depend   : 1;    /* Generate make auto depend file */
+        unsigned c99_extensions         : 1;    /* C99 extensions enabled */
+        unsigned use_long_double        : 1;    /* Make CC send long double types to code gen */
 };
 
 struct  global_comp_flags {  // things that live across compiles

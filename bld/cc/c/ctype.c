@@ -46,6 +46,7 @@ local void CheckBitfieldType( TYPEPTR typ );
         }
 #endif
 
+/* matches enum DataType in ctypes.h */
 static  char    CTypeSizes[] = {
         TARGET_CHAR,    /* CHAR         */
         TARGET_CHAR,    /* UCHAR        */
@@ -70,7 +71,17 @@ static  char    CTypeSizes[] = {
         0,              /* TYPEDEF      */
         0,              /* UFIELD       */
         0,              /* DOT_DOT_DOT  */
-        TARGET_CHAR     /* PLAIN_CHAR   */
+        TARGET_CHAR,        /* PLAIN_CHAR            */
+        TARGET_WCHAR,       /* WCHAR                 */
+        TARGET_LDOUBLE,     /* LONG DOUBLE           */
+        TARGET_FCOMPLEX,    /* FLOAT COMPLEX         */
+        TARGET_DCOMPLEX,    /* DOUBLE COMPLEX        */
+        TARGET_LDCOMPLEX,   /* LONG DOUBLE COMPLEX   */
+        TARGET_FIMAGINARY,  /* FLOAT IMAGINARY       */
+        TARGET_DIMAGINARY,  /* DOUBLE IMAGINARY      */
+        TARGET_LDIMAGINARY, /* LONG DOUBLE IMAGINARY */
+        TARGET_BOOL,    /* BOOL        */
+        0,              /* UNUSED      */
     };
 
 TYPEPTR CTypeHash[TYPE_PLAIN_CHAR+1];
@@ -89,6 +100,9 @@ enum {
         M_DOUBLE        = 0x0080,
         M_LONG_LONG     = 0x0100,
         M_VOID          = 0x0200,
+        M_COMPLEX       = 0x0400,
+        M_IMAGINARY     = 0x0800,
+        M_BOOL          = 0x1000,
         M___LAST        = 0
  };
 
@@ -188,7 +202,7 @@ void CTypeInit()
     FieldCount = 0;
     EnumCount = 0;
     InitTypeHashTables();
-    for( base_type = TYPE_CHAR; base_type <= TYPE_DOT_DOT_DOT; ++base_type ) {
+    for( base_type = TYPE_CHAR; base_type <= TYPE_LAST_ENTRY; ++base_type ) {
         CTypeCounts[ base_type ] = 0;
         size = CTypeSizes[ base_type ];
         if( size != 0  ||  base_type == TYPE_VOID  ||
@@ -310,6 +324,11 @@ int TypeQualifier()
             NextToken();
             continue;
         }
+        if( CurToken == T_RESTRICT ) {
+            bit = FLAG_RESTRICT;
+            NextToken();
+            continue;
+        }
         if( CurToken == T___UNALIGNED ) {
             bit = FLAG_UNALIGNED;
             NextToken();
@@ -330,7 +349,7 @@ local TYPEPTR GetScalarType( char *plain_int, int bmask )
     if( bmask & M_LONG_LONG ) {
         bmask &= ~M_INT;
     }
-    if( bmask & (M_VOID | M_FLOAT | M_DOUBLE | M_LONG_LONG ) ) {
+    if( bmask & (M_VOID | M_FLOAT | M_DOUBLE | M_LONG_LONG | M_COMPLEX | M_IMAGINARY) ) {
         if( bmask == M_VOID ) {
             data_type = TYPE_VOID;
         } else if( bmask == M_LONG_LONG ) {
@@ -344,10 +363,36 @@ local TYPEPTR GetScalarType( char *plain_int, int bmask )
         } else if( bmask == M_DOUBLE ) {
             data_type = TYPE_DOUBLE;
         } else if( bmask == (M_LONG | M_DOUBLE) ) {
-            data_type = TYPE_LONG_DOUBLE;
+            if( CompFlags.use_long_double )
+                data_type = TYPE_LONG_DOUBLE;
+            else
+                data_type = TYPE_DOUBLE;
+
+        } else if( bmask == (M_COMPLEX | M_FLOAT) ) {
+            data_type = TYPE_FCOMPLEX;
+        } else if( bmask == (M_COMPLEX | M_DOUBLE) ) {
+            data_type = TYPE_DCOMPLEX;
+        } else if( bmask == (M_COMPLEX | M_LONG | M_DOUBLE) ) {
+            if( CompFlags.use_long_double )
+                data_type = TYPE_LDCOMPLEX;
+            else
+                data_type = TYPE_DCOMPLEX;
+
+        } else if( bmask == (M_IMAGINARY | M_FLOAT) ) {
+            data_type = TYPE_FIMAGINARY;
+        } else if( bmask == (M_IMAGINARY | M_DOUBLE) ) {
+            data_type = TYPE_DIMAGINARY;
+        } else if( bmask == (M_IMAGINARY | M_LONG | M_DOUBLE) ) {
+            if( CompFlags.use_long_double )
+                data_type = TYPE_LDIMAGINARY;
+            else
+                data_type = TYPE_DIMAGINARY;
+
         } else {
             data_type = -1;
         }
+    } else if( bmask == M_BOOL ) {
+        data_type = TYPE_BOOL;
     } else if( bmask == 0 ) {
         data_type = TYPE_INT;
         *plain_int = 1;
@@ -415,6 +460,9 @@ static void DeclSpecifiers( char    *plain_int,
         case T_FLOAT:     bit = M_FLOAT;        break;
         case T_DOUBLE:    bit = M_DOUBLE;       break;
         case T_VOID:      bit = M_VOID;         break;
+        case T__COMPLEX:  bit = M_COMPLEX;      break;
+        case T__IMAGINARY:bit = M_IMAGINARY;    break;
+        case T__BOOL:     bit = M_BOOL;         break;
 
         case T_CONST:
             if( flags & FLAG_CONST ) CErr1( ERR_REPEATED_MODIFIER );
@@ -423,6 +471,10 @@ static void DeclSpecifiers( char    *plain_int,
         case T_VOLATILE:
             if( flags & FLAG_VOLATILE ) CErr1( ERR_REPEATED_MODIFIER );
             flags |= FLAG_VOLATILE;
+            break;
+        case T_RESTRICT:
+            if( flags & FLAG_RESTRICT ) CErr1( ERR_REPEATED_MODIFIER );
+            flags |= FLAG_RESTRICT;
             break;
         case T___UNALIGNED:
             if( flags & FLAG_UNALIGNED )CErr1( ERR_REPEATED_MODIFIER );
@@ -1313,6 +1365,14 @@ unsigned long TypeSizeEx( TYPEPTR typ , unsigned long * pFieldWidth)
     case TYPE_FUNCTION:
     case TYPE_DOT_DOT_DOT:
     case TYPE_PLAIN_CHAR:
+    case TYPE_LONG_DOUBLE:
+    case TYPE_FCOMPLEX:
+    case TYPE_DCOMPLEX:
+    case TYPE_LDCOMPLEX:
+    case TYPE_FIMAGINARY:
+    case TYPE_DIMAGINARY:
+    case TYPE_LDIMAGINARY:
+    case TYPE_BOOL:
         size = CTypeSizes[ typ->decl_type ];
         break;
     case TYPE_VOID:

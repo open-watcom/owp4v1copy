@@ -612,6 +612,9 @@ static void MacroDefs()
     if( GenSwitches & FPU_ROUNDING_INLINE ) {
         Define_Macro( "__SW_ZRI" );
     }
+    if( CompFlags.use_long_double ) {
+        Define_Macro( "__SW_FLD" );
+    }
 
     if( CompFlags.signed_char ) {
         Define_Macro( "__SW_J" );
@@ -1023,6 +1026,12 @@ void Set_FI()
 {
     ForceInclude = GetAFileName();
 }
+
+void Set_FLD()
+{
+    CompFlags.use_long_double = 1;
+}
+
 void Set_FO()
 {
     CMemFree( ObjectFileName );
@@ -1140,6 +1149,12 @@ void Set_XBSA()
 #if _MACHINE == _ALPHA
 void Set_XD()           { TargetSwitches |= EXCEPT_FILTER_USED; }
 #endif
+
+void Set_ZA99()
+{
+    PreDefine_Macro( "__STDC_VERSION__=199901L" );
+    CompFlags.c99_extensions = 1;
+}
 
 void Set_ZA()
 {
@@ -1519,6 +1534,7 @@ struct option const CFE_Options[] = {
     { "fhq=@",  0,              Set_FHQ },
     { "fh=@",   0,              Set_FH },
     { "fi=@",   0,              Set_FI },
+    { "fld",    0,              Set_FLD },
     { "fo=@",   0,              Set_FO },
     { "fr=@",   0,              Set_FR },
 #if _CPU == 8086 || _CPU == 386
@@ -1549,6 +1565,7 @@ struct option const CFE_Options[] = {
 #if _MACHINE == _ALPHA
     { "xd",     0,              Set_XD },
 #endif
+    { "za99",   0,              Set_ZA99 },
     { "zA",     0,              SetStrictANSI },
     { "za",     0,              Set_ZA },
 #if _CPU == 8086 || _CPU == 386

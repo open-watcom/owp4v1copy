@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Reserved keywords.  Included in ctokens.h
 *
 ****************************************************************************/
 
@@ -78,3 +77,7 @@ pick( T_EXTERN,        "extern",       TC_STG_CLASS ),
 pick( T_REGISTER,      "register",     TC_STG_CLASS ),
 pick( T_UNION,         "union",        TC_KEYWORD ),
 pick( T_CHAR,          "char",         TC_KEYWORD ),
+pick( T_RESTRICT,      "restrict",     TC_QUALIFIER ),
+pick( T__COMPLEX,      "_Complex",     TC_KEYWORD ),
+pick( T__IMAGINARY,    "_Imaginary",   TC_KEYWORD ),
+pick( T__BOOL,         "_Bool",        TC_KEYWORD ),

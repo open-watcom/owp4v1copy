@@ -225,8 +225,8 @@ global  MEPTR   UndefMacroList;
 global  MEPTR   __FAR *MacHash;     /* [ MACRO_HASH_SIZE ] */
 global  ENUMPTR EnumTable[ ENUM_HASH_SIZE ];
 global  SYM_HASHPTR __FAR *HashTab;
-global  TYPEPTR BaseTypes[TYPE_PLAIN_CHAR+1];
-global  int     CTypeCounts[TYPE_PLAIN_CHAR+1];
+global  TYPEPTR BaseTypes[TYPE_LAST_ENTRY];
+global  int     CTypeCounts[TYPE_LAST_ENTRY];
 
 #define BUF_SIZE 512
 global  char Buffer[BUF_SIZE+16];
