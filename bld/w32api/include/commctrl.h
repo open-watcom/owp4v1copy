@@ -2938,7 +2938,7 @@ int WINAPI LBItemFromPt(HWND,POINT,BOOL);
 #define ListView_GetCallbackMask(w) (BOOL)SNDMSG((w),LVM_GETCALLBACKMASK,0,0)
 #define ListView_SetCallbackMask(w,m) (BOOL)SNDMSG((w),LVM_SETCALLBACKMASK,m,0)
 #define ListView_GetNextItem(w,i,f) (int)SNDMSG((w),LVM_GETNEXTITEM,i,MAKELPARAM((f),0))
-#define ListView_FindItem(w,i,p) (int)SNDMSG((w), LVM_FINDITEM,i,(LPARAM)(const LV_FINDINFO*)(p))
+#define ListView_FindItem(w,i,p) (int)SNDMSG((w), LVM_FINDITEM,(WPARAM)i,(LPARAM)(const LV_FINDINFO*)(p))
 #define ListView_GetItemRect(w,i,p,c) (BOOL)SNDMSG((w),LVM_GETITEMRECT,i,((p)?(((LPRECT)(p))->left=(c),(LPARAM)(LPRECT)(p)):0))
 #define ListView_SetItemPosition(w,i,x,y) (BOOL)SNDMSG((w),LVM_SETITEMPOSITION,i,MAKELPARAM(x,y))
 #define ListView_GetItemPosition(w,i,p) (BOOL)SNDMSG((w),LVM_GETITEMPOSITION,i,(LPARAM)p)
@@ -3044,6 +3044,7 @@ BOOL WINAPI ShowHideMenuCtl(HWND,UINT,PINT);
 #define TabCtrl_SetToolTips(w,t) (void)SNDMSG((w),TCM_SETTOOLTIPS,(WPARAM)t,0)
 #define TabCtrl_GetCurFocus(w) (int)SNDMSG((w),TCM_GETCURFOCUS,0,0)
 #define TabCtrl_SetCurFocus(w,i) (void)SNDMSG((w),TCM_SETCURFOCUS,i,0)
+#define TabCtrl_GetImageList(w) (HIMAGELIST)SNDMSG((w),TCM_GETIMAGELIST,0,0)
 #define TabCtrl_SetImageList(w,h) (HIMAGELIST)SNDMSG((w),TCM_SETIMAGELIST,0,(LPARAM)(UINT)(h))
 #define TabCtrl_GetItemCount(w) (int)SNDMSG((w),TCM_GETITEMCOUNT,0,0)
 BOOL WINAPI _TrackMouseEvent(LPTRACKMOUSEEVENT);
