@@ -46,31 +46,27 @@
 
 :include throws.sp
 
-:: This header is reasonably complete except for the templated members
-:: of the allocator and auto_ptr templates. Allocator's max_size method
-:: also needs to be implemented.
-::
-template<class Iterator, class Type>
+template< class Iterator, class Type >
 inline void _RawConstruct( Iterator ptr, const Type &value )
 {
-    typedef typename iterator_traits<Iterator>::value_type value_type;
-    new ( static_cast<void *>( &*ptr ) ) value_type( value );
+    typedef typename std::iterator_traits< Iterator >::value_type value_type;
+    new ( static_cast< void * >( &*ptr ) ) value_type( value );
 }
 
-template<class Iterator>
+template< class Iterator >
 inline void _RawDestroy( Iterator ptr )
 {
-    typedef typename iterator_traits<Iterator>::value_type value_type;
-    ptr->~value_type();
+    typedef typename std::iterator_traits< Iterator >::value_type value_type;
+    ( *ptr ).~value_type( );
 }
 
 namespace std {
 
-  template<class Type> class allocator;
+  template< class Type > class allocator;
 
   // Allocator specialization for void.
-  // template<>
-  class allocator<void> {
+  template< >
+  class allocator< void > {
   public:
     typedef void       *pointer;
     typedef const void *const_pointer;
@@ -78,7 +74,7 @@ namespace std {
   };
 
   // Default allocator template.
-  template<class Type>
+  template< class Type >
   class allocator {
   public:
     typedef       std::size_t    size_type;
@@ -88,7 +84,7 @@ namespace std {
     typedef       Type          &reference;
     typedef const Type          &const_reference;
     typedef       Type           value_type;
-    // template<class U> struct rebind { typedef allocator<U> other; };
+    // template< class U > struct rebind { typedef allocator< U > other; };
 
     allocator( )
       { }
@@ -96,7 +92,7 @@ namespace std {
     allocator( const allocator & )
       { }
 
-    // template<class U> allocator( const allocator<U> & )
+    // template< class U > allocator( const allocator< U > & )
 
    ~allocator( )
       { }
@@ -107,32 +103,33 @@ namespace std {
     const_pointer address( const_reference r ) const
       { return( &r ); }
 
-    pointer allocate( size_type n, allocator<void>::const_pointer = 0 )
-      { return( reinterpret_cast<Type *>(
-                  new unsigned char[n * sizeof(Type)]) ); }
+    pointer allocate( size_type n, allocator< void >::const_pointer = 0 )
+      { return( reinterpret_cast< Type * >(
+                  new unsigned char[ n * sizeof( Type ) ] ) ); }
 
     void deallocate( pointer p, size_type )
-      { delete [] (unsigned char *)p; }
+      { delete [] reinterpret_cast< unsigned char * >( p ); }
 
-    size_type max_size() const
+    size_type max_size( ) const
       { return 0; }  // FIX ME
 
     void construct( pointer p, const Type &value )
-      { new ((void *)p) Type(value); }
+      { new ( ( void * )p ) Type( value ); }
 
     void destroy( pointer p )
-      { ((Type *)p)->~Type(); }
+      { ( ( Type * )p )->~Type( ); }
   };
 
   // Templates for initializing blocks of uninitialized memory.
 
-  template<class ForwardIterator, class Type>
+  template< class ForwardIterator, class Type >
   void uninitialized_fill(
       ForwardIterator first,
       ForwardIterator last,
       const Type &value )
   {
-      typedef typename iterator_traits<ForwardIterator>::value_type value_type;
+      typedef
+        typename iterator_traits< ForwardIterator >::value_type value_type;
       ForwardIterator bookmark( first );
 
       _WCTRY {
@@ -155,13 +152,14 @@ namespace std {
   }
 
 
-  template<class ForwardIterator, class Size, class Type>
+  template< class ForwardIterator, class Size, class Type >
   void uninitialized_fill_n(
       ForwardIterator first,
       Size n,
       const Type &value )
   {
-      typedef typename iterator_traits<ForwardIterator>::value_type value_type;
+      typedef
+        typename iterator_traits< ForwardIterator >::value_type value_type;
       ForwardIterator bookmark( first );
 
       _WCTRY {
@@ -184,13 +182,14 @@ namespace std {
   }
 
 
-  template<class InputIterator, class ForwardIterator>
+  template< class InputIterator, class ForwardIterator >
   ForwardIterator uninitialized_copy(
       InputIterator first,
       InputIterator last,
       ForwardIterator dest )
   {
-      typedef typename iterator_traits<ForwardIterator>::value_type value_type;
+      typedef
+        typename iterator_traits< ForwardIterator >::value_type value_type;
       ForwardIterator bookmark( dest );
 
       _WCTRY {
@@ -216,9 +215,9 @@ namespace std {
 
 
   // Auto_ptr template.
-  template<class Type>
+  template< class Type >
   class auto_ptr {
-    // template<class U> struct auto_ptr_ref { };
+    // template< class U > struct auto_ptr_ref { };
   public:
     typedef Type element_type;
 
@@ -228,14 +227,14 @@ namespace std {
     auto_ptr( auto_ptr &other ) : ptr( other.release() )
       { }
 
-    // template<class U> auto_ptr( auto_ptr<U> & );
+    // template< class U > auto_ptr( auto_ptr< U > & );
 
     auto_ptr &operator=( auto_ptr &other )
       { reset( other.release() ); return( *this ); }
 
-    // template<class U> auto_ptr &operator=( auto_ptr<U> & );
+    // template< class U > auto_ptr &operator=( auto_ptr< U > & );
 
-   ~auto_ptr( ) _WCTHROWS()
+   ~auto_ptr( ) _WCTHROWS( )
       { delete ptr; }
 
     Type &operator*( ) const
@@ -250,14 +249,14 @@ namespace std {
     Type *release( )
       { Type *tmp = ptr; ptr = 0; return( tmp ); }
 
-    void reset( Type *p = 0 ) _WCTHROWS()
-      { if (ptr != p) delete ptr; ptr = p; }
+    void reset( Type *p = 0 ) _WCTHROWS( )
+      { if ( ptr != p ) delete ptr; ptr = p; }
 
-    // auto_ptr( auto_ptr_ref<Type> ) _WCTHROWS();
+    // auto_ptr( auto_ptr_ref< Type > ) _WCTHROWS( );
 
-    // template<class U> operator auto_ptr_ref<U>( ) _WCTHROWS();
+    // template< class U > operator auto_ptr_ref< U >( ) _WCTHROWS( );
 
-    // template<class U> operator auto_ptr<U>( ) _WCTHROWS();
+    // template< class U > operator auto_ptr< U >( ) _WCTHROWS( );
 
   private:
     Type *ptr;
