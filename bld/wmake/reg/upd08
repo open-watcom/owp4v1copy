@@ -1,9 +1,0 @@
-all :   .symbolic
-    @cmds\envarg no * version just for reference
-    @*cmds\envarg 12345678901
-    @set wmake1=123456789012
-    *@cmds\envarg @WMAKE1
-    @*cmds\envarg 12345678901
-    @set wmake1=123456789012
-    *@cmds\envarg @WMAKE1
-
