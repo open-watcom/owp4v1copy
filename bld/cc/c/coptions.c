@@ -594,6 +594,13 @@ static void MacroDefs()
     if( GenSwitches & FP_UNSTABLE_OPTIMIZATION ) {
         Define_Macro( "__SW_ON" );
     }
+    if( GenSwitches & FPU_ROUNDING_OMIT ) {
+        Define_Macro( "__SW_ZRO" );
+    }
+    if( GenSwitches & FPU_ROUNDING_INLINE ) {
+        Define_Macro( "__SW_ZRI" );
+    }
+
     if( CompFlags.signed_char ) {
         Define_Macro( "__SW_J" );
     }
@@ -1178,6 +1185,19 @@ void Set_ZM()
     CompFlags.zm_switch_used = 1;
 }
 void Set_ZPW()                { CompFlags.slack_byte_warning = 1; }
+
+void Set_ZRO()
+{
+    GenSwitches |= FPU_ROUNDING_OMIT;
+    GenSwitches &= ~FPU_ROUNDING_INLINE;
+}
+
+void Set_ZRI()
+{
+    GenSwitches |= FPU_ROUNDING_INLINE;
+    GenSwitches &= ~FPU_ROUNDING_OMIT;
+}
+
 void Set_ZQ()                 { CompFlags.quiet_mode = 1; }
 void Set_EQ()                 { CompFlags.no_conmsg  = 1; }
 void Set_ZS()                   { CompFlags.check_syntax = 1; }
@@ -1545,6 +1565,12 @@ struct option const CFE_Options[] = {
     { "zp=#",   1,              SetPackAmount },
 #if _MACHINE == _ALPHA
     { "zps",    0,              SetStructPack },
+#endif
+#if _CPU == 8086 || _CPU == 386
+    { "zro",    0,              Set_ZRO },
+#endif
+#if _CPU == 386
+    { "zri",    0,              Set_ZRI },
 #endif
     { "zs",     0,              Set_ZS },
     { "zt=#",   256,            SetDataThreshHold },

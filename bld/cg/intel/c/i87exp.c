@@ -81,9 +81,9 @@ extern  void            InitFPStkReq( void );
 extern  void            ExpCompare ( instruction *ins,
                                      operand_type op1, operand_type op2 );
 static  void            ExpBinary( instruction *ins,
-                                   operand_type op1, operand_type op2 ); 
+                                   operand_type op1, operand_type op2 );
 static  void            ExpBinFunc( instruction *ins,
-                                    operand_type op1, operand_type op2 ); 
+                                    operand_type op1, operand_type op2 );
 extern  int             FPRegNum( name *reg_name );
 static  void            RevOtherCond( block *blk, instruction *ins );
 
@@ -139,6 +139,9 @@ static opcode_entry    MNFBIN[]  = {
 static  opcode_entry    MFLD    = { PRESERVE, 0, G_MFLD, 0, FU_FOP };
 static  opcode_entry    RFLD    = { PRESERVE, 0, G_RFLD, 0, FU_FOP };
 static  opcode_entry    MFST    = { PRESERVE, 0, G_MFST, 0, FU_FOP };
+#if _TARGET & _TARG_80386
+static  opcode_entry    MFSTRND = { PRESERVE, 0, G_MFSTRND, 0, FU_FOP };
+#endif
 static  opcode_entry    MFST2   = { PRESERVE, 0, G_MFST, 0, FU_FOP };
 static  opcode_entry    RFST    = { PRESERVE, 0, G_RFST, 0, FU_FOP };
 static  opcode_entry    FCHS    = { PRESERVE, 0, G_FCHS, 0, FU_FOP };
@@ -359,6 +362,18 @@ static  void    PrefixChop( instruction *ins ) {
     new_ins->stk_exit = ins->stk_entry;
 }
 
+#if _TARGET & _TARG_80386
+static    int     WantsChop( instruction *ins) {
+/***********************************************
+    Check whether instruction "ins" needs an instruction that will truncate
+    ST(0) to the nearest integer.
+*/
+    if( ins->head.opcode == OP_ROUND ) return 0;
+    if( _IsFloating( ins->result->n.name_class ) ) return 0;
+    return 1;
+}
+#endif
+
 static  instruction     *ExpUnary( instruction *ins,
                                     operand_type src, result_type res,
                                     opcode_entry *table ) {
@@ -419,16 +434,76 @@ static  instruction     *ExpMove( instruction *ins,
         break;
     case _Move( OP_MEM , RES_MEM ):
         PrefixFLDOp( ins, src, 0 );
+        /*
         PrefixChop( ins );
         DoNothing( ins );
         ins = SuffixFSTPRes( ins );
+        */
+#if _TARGET & _TARG_80386
+        if (_IsModel(FPU_ROUNDING_INLINE))
+        {
+          DoNothing( ins );
+          ins = SuffixFSTPRes( ins );
+          if (WantsChop(ins))
+              ins->u.gen_table = &MFSTRND;
+        }
+        else if (_IsModel(FPU_ROUNDING_OMIT))
+        {
+            DoNothing( ins );
+            ins = SuffixFSTPRes( ins );
+        }
+        else
+        {
+            PrefixChop( ins );
+            DoNothing( ins );
+            ins = SuffixFSTPRes( ins );
+        }
+#else
+        if (_IsModel(FPU_ROUNDING_OMIT))
+        {
+            DoNothing( ins );
+            ins = SuffixFSTPRes( ins );
+        }
+        else
+        {
+            PrefixChop( ins );
+            DoNothing( ins );
+            ins = SuffixFSTPRes( ins );
+        }
+#endif
         break;
     case _Move( OP_STK0, RES_STK0 ):
         DoNothing( ins );
         break;
     case _Move( OP_STK0, RES_MEM  ):
-        PrefixChop( ins );
-        ins->u.gen_table = &MFST;
+#if _TARGET & _TARG_80386
+        if (_IsModel(FPU_ROUNDING_INLINE))
+        {
+            if (WantsChop(ins))
+                ins->u.gen_table = &MFSTRND;
+            else
+                ins->u.gen_table = &MFST;
+        }
+        else if (_IsModel(FPU_ROUNDING_OMIT))
+        {
+            ins->u.gen_table = &MFST;
+        }
+        else
+        {
+            PrefixChop( ins );
+            ins->u.gen_table = &MFST;
+        }
+#else
+        if (_IsModel(FPU_ROUNDING_OMIT))
+        {
+            ins->u.gen_table = &MFST;
+        }
+        else
+        {
+            PrefixChop( ins );
+            ins->u.gen_table = &MFST;
+        }
+#endif
         break;
     case _Move( OP_MEM , RES_STK0 ):
         ins->u.gen_table = &MFLD;
@@ -506,6 +581,7 @@ static  instruction     *ExpPush( instruction *ins, operand_types op ) {
             new_ins = MakeMove( ins->operands[ 0 ], index,ins->type_class );
             ReplIns( ins, new_ins );
             ins = ExpMove( new_ins, op, RES_MEM );
+
        } else {
             new_ins = MakeUnary( OP_PUSH, index, NULL, WD );
             new_ins->u.gen_table = &WORDR1;

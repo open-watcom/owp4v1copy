@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Command line processing for C++ compiler (x86 targets) 
 *
 ****************************************************************************/
 
@@ -739,6 +738,12 @@ static void macroDefs( void )
     if( GenSwitches & INS_SCHEDULING ) {
         DefSwitchMacro( "OR" );
     }
+    if( GenSwitches & FPU_ROUNDING_INLINE ) {
+        DefSwitchMacro( "ZRI" );
+    }
+    if( GenSwitches & FPU_ROUNDING_OMIT ) {
+        DefSwitchMacro( "ZRO" );
+    }
     if( CompFlags.signed_char ) {
         DefSwitchMacro( "J" );
     }
@@ -998,6 +1003,22 @@ void CmdSysAnalyse( OPT_STORAGE *data )
         mmc |= MMC_DS;
         break;
     }
+
+#if _CPU == 386
+    if (data->zro && data->zri)
+    {
+        DbgDefault( "invalid fp rounding flags - ignored" );
+        data->zro = data->zri = 0;
+    }
+    if (data->zri)
+        GenSwitches |= FPU_ROUNDING_INLINE;
+    else if (data->zro)
+        GenSwitches |= FPU_ROUNDING_OMIT;
+#else
+    if (data->zro)
+        GenSwitches |= FPU_ROUNDING_OMIT;
+#endif
+
 #if _CPU == 386
     if( data->zdl ) {
         TargetSwitches |= LOAD_DS_DIRECTLY;

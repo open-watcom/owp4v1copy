@@ -832,6 +832,11 @@ extern  void        AdjustStackDepth( instruction *ins ) {
     }
 }
 
+extern void     AdjustStackDepthDirect( int adjust ) {
+/************************************************************/
+    StackDepth += adjust;
+}
+
 
 extern  bool    BaseIsSP( name *op ) {
 /************************************/

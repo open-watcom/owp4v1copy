@@ -237,6 +237,12 @@ Options:
 -zps          always align structs on qword boundaries
 :endsegment
 -zq           operate quietly
+:segment T386 | Ti86
+-zro          omit floating point rounding calls (non ANSI)
+:endsegment
+:segment T386
+-zri          inline floating point rounding calls
+:endsegment
 -zs           syntax check only
 -zt[=<num>]   set far data threshold (i.e., larger objects go in far memory)
 :segment T386 | Ti86

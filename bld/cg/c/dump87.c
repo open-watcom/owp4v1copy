@@ -151,6 +151,11 @@ extern  bool    DumpFPUIns( instruction *ins ) {
         DumpFPInfo( ins );
         DumpOperand( ins->result );
         break;
+    case G_MFSTRND:
+        DumpLiteral( "fstrnd" );
+        DumpFPInfo( ins );
+        DumpOperand( ins->result );
+        break;
     case G_FCHS:
         DumpLiteral( "fneg  " );
         DumpFPInfo( ins );
