@@ -11,16 +11,24 @@ extern "C" {
 
 #ifdef INCL_WIN
     #define INCL_WINACCELERATORS
+    #define INCL_WINATOM
     #define INCL_WINBUTTONS
+    #define INCL_WINCATCHTHROW
     #define INCL_WINCLIPBOARD
     #define INCL_WINDIALOGS
-    #define INCL_WINWINDOWMGR
+    #define INCL_WINENTRYFIELDS
     #define INCL_WINERRORS
+    #define INCL_WINFRAMECTLS
     #define INCL_WINFRAMEMGR
+    #define INCL_WINHEAP
+    #define INCL_WINHELP
     #define INCL_WINHOOKS
     #define INCL_WININPUT
+    #define INCL_WINLISTBOXES
+    #define INCL_WINLOAD
     #define INCL_WINMENUS
     #define INCL_WINMESSAGEMGR
+    #define INCL_WINMLE
     #define INCL_WINPOINTERS
     #define INCL_WINPROGRAMLIST
     #define INCL_WINRECTANGLES
@@ -30,6 +38,7 @@ extern "C" {
     #define INCL_WINSWITCHLIST
     #define INCL_WINSYS
     #define INCL_WINTRACKRECT
+    #define INCL_WINWINDOWMGR
 #else
   #ifdef RC_INVOKED
     #define INCL_WINACCELERATORS
@@ -54,6 +63,8 @@ extern "C" {
   #ifndef INCL_WINENTRYFIELDS
     #define INCL_WINENTRYFIELDS
   #endif
+  #define WC_MLE ((PSZ)0xffff000aL)
+  #include <pmmle.h>
 #endif
 
 #ifdef INCL_WINCOMMON
@@ -560,6 +571,16 @@ BOOL   APIENTRY WinWaitMsg(HAB,USHORT,USHORT);
 
 #endif
 
+#ifdef INCL_WINFRAMECTLS
+
+#define WC_TITLEBAR ((PSZ)0xffff0009L)
+
+#define TBM_SETHILITE   0x01e3
+#define TBM_QUERYHILITE 0x01e4
+#define TBM_TRACKMOVE   0x01e5
+
+#endif
+
 #if defined(INCL_WINFRAMEMGR) || !defined(INCL_NOCOMMON)
 
 #define FCF_TITLEBAR          0x00000001L
@@ -1062,6 +1083,64 @@ HWND   APIENTRY WinQueryClipbrdViewer(HAB,BOOL);
 BOOL   APIENTRY WinSetClipbrdData(HAB,ULONG,USHORT,USHORT);
 BOOL   APIENTRY WinSetClipbrdOwner(HAB,HWND);
 BOOL   APIENTRY WinSetClipbrdViewer(HAB,HWND);
+
+#endif
+
+#ifdef INCL_WINLISTBOXES
+
+#define WC_LISTBOX ((PSZ)0xffff0007L)
+
+#define LIT_ERROR    (-3)
+#define LIT_MEMERROR (-2)
+#define LIT_NONE     (-1)
+#define LIT_FIRST    (-1)
+
+#define LIT_END            (-1)
+#define LIT_SORTASCENDING  (-2)
+#define LIT_SORTDESCENDING (-3)
+
+#define LN_SELECT    1
+#define LN_SETFOCUS  2
+#define LN_KILLFOCUS 3
+#define LN_SCROLL    4
+#define LN_ENTER     5
+
+#define LM_QUERYITEMCOUNT      0x0160
+#define LM_INSERTITEM          0x0161
+#define LM_SETTOPINDEX         0x0162
+#define LM_DELETEITEM          0x0163
+#define LM_SELECTITEM          0x0164
+#define LM_QUERYSELECTION      0x0165
+#define LM_SETITEMTEXT         0x0166
+#define LM_QUERYITEMTEXTLENGTH 0x0167
+#define LM_QUERYITEMTEXT       0x0168
+#define LM_SETITEMHANDLE       0x0169
+#define LM_QUERYITEMHANDLE     0x016a
+#define LM_SEARCHSTRING        0x016b
+#define LM_SETITEMHEIGHT       0x016c
+#define LM_QUERYTOPINDEX       0x016d
+#define LM_DELETEALL           0x016e
+
+#define LS_MULTIPLESEL 1
+#define LS_OWNERDRAW   2
+#define LS_NOADJUSTPOS 4
+#define LS_HORZSCROLL  8
+
+#define LSS_SUBSTRING     1
+#define LSS_PREFIX        2
+#define LSS_CASESENSITIVE 4
+
+#endif
+
+#ifdef INCL_WINLOAD
+
+typedef HMODULE HLIB;
+typedef PHMODULE PHLIB;
+
+BOOL  APIENTRY WinDeleteProcedure(HAB,PFNWP);
+BOOL  APIENTRY WinDeleteLibrary(HAB,HLIB);
+PFNWP APIENTRY WinLoadProcedure(HAB,HLIB,PSZ);
+HLIB  APIENTRY WinLoadLibrary(HAB,PSZ);
 
 #endif
 
@@ -1664,6 +1743,57 @@ BOOL     APIENTRY WinShowPointer(HWND,BOOL);
 #endif
 
 #include <pmshl.h>
+
+#ifdef INCL_WINHELP
+  #include <pmhelp.h>
+#endif
+
+#ifdef INCL_WINHEAP
+
+#define HM_MOVEABLE  1
+#define HM_VALIDSIZE 2
+
+typedef LHANDLE HHEAP;
+
+NPBYTE APIENTRY WinAllocMem(HHEAP,USHORT);
+USHORT APIENTRY WinAvailMem(HHEAP,BOOL,USHORT);
+HHEAP  APIENTRY WinCreateHeap(SEL,USHORT,USHORT,USHORT,USHORT,USHORT);
+HHEAP  APIENTRY WinDestroyHeap(HHEAP);
+NPBYTE APIENTRY WinFreeMem(HHEAP,NPBYTE,USHORT);
+PVOID  APIENTRY WinLockHeap(HHEAP);
+NPBYTE APIENTRY WinReallocMem(HHEAP,NPBYTE,USHORT,USHORT);
+
+#endif
+
+#ifdef INCL_WINATOM
+
+#define MAKEINTATOM(a) ((PCH)MAKEULONG(a, 0xffff))
+
+typedef LHANDLE HATOMTBL;
+typedef USHORT  ATOM;
+
+HATOMTBL APIENTRY WinQuerySystemAtomTable(VOID);
+HATOMTBL APIENTRY WinCreateAtomTable(USHORT,USHORT);
+HATOMTBL APIENTRY WinDestroyAtomTable(HATOMTBL);
+ATOM     APIENTRY WinAddAtom(HATOMTBL,PSZ);
+ATOM     APIENTRY WinFindAtom(HATOMTBL,PSZ);
+ATOM     APIENTRY WinDeleteAtom(HATOMTBL,ATOM);
+USHORT   APIENTRY WinQueryAtomUsage(HATOMTBL,ATOM);
+USHORT   APIENTRY WinQueryAtomLength(HATOMTBL,ATOM);
+USHORT   APIENTRY WinQueryAtomName(HATOMTBL,ATOM,PSZ,USHORT);
+
+#endif
+
+#ifdef INCL_WINCATCHTHROW
+
+typedef struct _CATCHBUF {
+    ULONG reserved[ 4 ];
+} CATCHBUF, FAR *PCATCHBUF;
+
+SHORT APIENTRY WinCatch(PCATCHBUF);
+VOID  APIENTRY WinThrow(PCATCHBUF,SHORT);
+
+#endif
 
 #ifdef INCL_WINERRORS
 

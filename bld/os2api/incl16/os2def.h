@@ -79,12 +79,14 @@ typedef SHORT FAR    *PSHORT;
 typedef INT FAR      *PINT;
 typedef LONG FAR     *PLONG;
 typedef UCHAR FAR    *PUCHAR;
-typedef UCHAR FAR    *PBYTE;
 typedef USHORT FAR   *PUSHORT;
 typedef UINT FAR     *PUINT;
 typedef ULONG FAR    *PULONG;
 
 typedef VOID FAR     *PVOID;
+
+typedef UCHAR FAR    *PBYTE;
+typedef BYTE NEAR    *NPBYTE;
 
 typedef int (PASCAL FAR  *PFN)();
 typedef int (PASCAL NEAR *NPFN)();
