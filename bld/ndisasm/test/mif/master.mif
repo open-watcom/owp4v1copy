@@ -1,46 +1,38 @@
 proj_name = wdistest
 name = dis
 
-.mif: $(mif_path)
 !include cproj.mif
 !include defrule.mif
-!include bhost.mif
+!include deftarg.mif
 
-dis_test=1
+.c: $(disasm_dir)/core/c;$(disasm_dir)/test/c
+.h: $(disasm_dir)/core/h
 
-!include $(disasm_dir)/mif/dis.mif
+inc_dirs = $(disasm_dir)/core/h;$(watcom_dir)/h
 
-obj             = .obj
-exe             = .exe
+dis_objs =  &
+        disentry.obj &
+        disaxp.obj &
+        disppc.obj &
+        disx86.obj &
+        disjvm.obj &
+        dissparc.obj
 
-.c: $(dis_srcs);$(disasm_dir)\test\c
-.h: $(dis_includes)
+test_objs = main.obj $(dis_objs)
 
-inc_dirs = $(dis_includes);$(watcom_dir)\h
+$(name).exe : distbls.gh $(test_objs)
+        $(bld_link) debug all name $@ option quiet, map file { $(test_objs) }
 
-.before:
-        set include=$(inc_path)
+.c.obj:
+        @set include=$(inc_path)
+        $(bld_cc) -zq -d2 $[@
 
-test_objs       = main$(obj) $(dis_objs)
+distbls.gh : ./disbuild.exe
+        $[@
 
-$(name)$(exe) : eraseall.obj $(test_objs)
-        *$(bld_link) debug all name $@ option quiet, map file { $(test_objs) }
+disbuild_headers = $(disasm_dir)/core/h/insaxp.h $(disasm_dir)/core/h/refaxp.h $(disasm_dir)/core/h/regaxp.h
+disbuild_headers += $(disasm_dir)/core/h/insppc.h $(disasm_dir)/core/h/refppc.h $(disasm_dir)/core/h/regppc.h
+disbuild_headers += $(disasm_dir)/core/h/insx86.h $(disasm_dir)/core/h/refx86.h $(disasm_dir)/core/h/regx86.h
 
-.c.obj
-        *$(bld_cc) -zq -d2 $[@
-
-eraseall.obj : $(disasm_dir)\core\compile.gbl
-        if exist *.obj erase *.obj
-        wtouch eraseall.obj
-
-clean: .SYMBOLIC .EXPLICIT
-        @if exist *.?bj del *.?bj
-        @if exist *.lnk del *.lnk
-        @if exist *.exe del *.exe
-        @if exist *.lib del *.lib
-        @if exist *.res del *.res
-        @if exist *.lbc del *.lbc
-        @if exist *.err del *.err
-        @if exist *.c del *.c
-        @if exist *.map del *.map
-        @if exist ..\*.exe del ..\*.exe
+./disbuild.exe : $(disasm_dir)/core/c/disbuild.c $(disbuild_headers)
+        $(bld_cl) -zq $[@ $(wcl_util_opts) -i"../h;$(disasm_dir)/core/h"

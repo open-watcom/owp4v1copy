@@ -34,19 +34,13 @@
 #include <ctype.h>
 #include "distypes.h"
 #include "dis.h"
+#include "distbls.gh"
 
 extern const dis_cpu_data       AXPData;
 extern const dis_cpu_data       PPCData;
 extern const dis_cpu_data       X86Data;
 extern const dis_cpu_data       JVMData;
 extern const dis_cpu_data       SPARCData;
-
-extern const char               DisStringTable[];
-extern const dis_selector       DisSelectorTable[];
-extern const dis_ins_descript   DisInstructionTable[];
-extern const unsigned short     DisRegisterTable[];
-extern const unsigned short     DisRefTypeTable[];
-
 
 long SEX( unsigned long v, unsigned bit )
 {

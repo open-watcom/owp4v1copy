@@ -1,14 +1,13 @@
 proj_name = wdis
 
-.extensions: .rc .gh .msg
+.EXTENSIONS: .rc .msg
 
 !include cproj.mif
 !include defrule.mif
+!include deftarg.mif
 
 !include orl.mif
 !include wres.mif
-
-!include $(disasm_dir)/mif/dis.mif
 
 !ifeq release 0
 disasm_trmem=1
@@ -31,41 +30,45 @@ extra_c_flags_memfuncs += -dTRMEM
 extra_c_flags_trmemcvr += -dTRMEM
 !endif
 
-inc_dirs=$(dis_includes);$(disasm_dir)/stand/h;$(disasm_dir)/h;$(orl_dir)/h;$(watcom_dir)/h;$(trmem_dir);$(lib_misc_dir)/h;$(comp_cfg_dir)/h
+inc_dirs=$(disasm_dir)/core/h;$(disasm_dir)/stand/h;$(disasm_dir)/h;$(orl_dir)/h;$(watcom_dir)/h;$(trmem_dir);$(lib_misc_dir)/h;$(comp_cfg_dir)/h
 
 pre_deps_osi = $(tools_root)/os2ldr.exe
 pre_deps_qnx = wdis.u
 
-.c: .;$(trmem_dir);$(disasm_dir)/stand/c;$(dis_srcs);$(lib_misc_dir)/c;$(disasm_dir)/stand
-.h: $(trmem_dir);$(disasm_dir)/stand/h;$(dis_includes);$(lib_misc_dir)/h
+.c: .;$(trmem_dir);$(disasm_dir)/stand/c;$(disasm_dir)/core/c;$(lib_misc_dir)/c;$(disasm_dir)/stand
+.h: $(trmem_dir);$(disasm_dir)/stand/h;$(disasm_dir)/core/h;$(lib_misc_dir)/h
 .rc : $(disasm_dir)/stand/h
-.gh : $(disasm_dir)/stand/h
 .msg : $(disasm_dir)/stand
 
-.before:
-        set include=$(inc_path)
-
 stand_objs      = args.obj &
-                    buffer.obj &
-                    dwarf.obj &
-                    externs.obj &
-                    formasm.obj &
-                    fini.obj &
-                    groups.obj &
-                    identsec.obj &
-                    init.obj &
-                    hashtabl.obj &
-                    labproc.obj &
-                    main.obj &
-                    memfuncs.obj &
-                    msg.obj &
-                    pass1.obj &
-                    pass2.obj &
-                    pdata.obj &
-                    print.obj &
-                    publics.obj &
-                    srcmix.obj &
-                    refproc.obj
+                buffer.obj &
+                dwarf.obj &
+                externs.obj &
+                formasm.obj &
+                fini.obj &
+                groups.obj &
+                identsec.obj &
+                init.obj &
+                hashtabl.obj &
+                labproc.obj &
+                main.obj &
+                memfuncs.obj &
+                msg.obj &
+                pass1.obj &
+                pass2.obj &
+                pdata.obj &
+                print.obj &
+                publics.obj &
+                srcmix.obj &
+                refproc.obj
+
+dis_objs        =  &
+                disentry.obj &
+                disaxp.obj &
+                disppc.obj &
+                disx86.obj &
+                disjvm.obj &
+                dissparc.obj
 
 wdisasm_objs = $(stand_objs) $(dis_objs) demangle.obj trmemcvr.obj
 
@@ -81,25 +84,21 @@ exe_name = $(proj_name).qnx
 exe_name = $(proj_name).exe
 !endif
 
-$(exe_name) : $(wdisasm_objs) $(pre_deps_$(host_os)) $(orl_lib) $(proj_name).res $(wres_lib)
-        *$(linker) $(lflags) name $@ file { $(wdisasm_objs) } lib $(wres_lib)
+$(exe_name) : $(proj_name).res distbls.gh $(wdisasm_objs) $(pre_deps_$(host_os)) $(orl_lib) $(wres_lib)
+        $(linker) $(lflags) name $@ file { $(wdisasm_objs) } lib $(wres_lib)
 !ifeq host_os osi
         w32bind $^&.rex $^@ $(tools_root)/os2ldr.exe
         rm -f $^&.rex
 !endif
         wstrip -q -a -r $^@ . $(proj_name).res
 
-msg.obj :: msg.c
-
-$(stand_objs) :: ../stand/h/msg.gh
-
-$(proj_name).res : wdis.rc ../stand/h/msg.gh
-        $(rc_aui) -i"$(disasm_dir)/stand/h" $[@ -fo=$^@
+$(proj_name).res : wdis.rc msg.gh
+        $(rc_aui) $[@ -fo=$^@
 
 ./mkstr.exe : mkstr.c
         $(bld_cl) $(wcl_util_opts) -i"$(disasm_dir)/stand" $[@
 
-../stand/h/msg.gh : ./mkstr.exe wdis.msg
+msg.gh : ./mkstr.exe wdis.msg
         $[@ $^@
 
 ./mkuse.exe : mkstr.c
@@ -108,7 +107,12 @@ $(proj_name).res : wdis.rc ../stand/h/msg.gh
 wdis.u : ./mkuse.exe wdis.msg
         $[@ $^@
 
-clean: .SYMBOLIC .EXPLICIT
-        @rm -f *.?bj *.lnk *.exe *.lib *.res *.lbc
-        @rm -f *.err *.c *.sym *.map
-        @rm -f ../*.exe ../stand/h/*.gh
+distbls.gh : ./disbuild.exe
+        $[@
+
+disbuild_headers = $(disasm_dir)/core/h/insaxp.h $(disasm_dir)/core/h/refaxp.h $(disasm_dir)/core/h/regaxp.h
+disbuild_headers += $(disasm_dir)/core/h/insppc.h $(disasm_dir)/core/h/refppc.h $(disasm_dir)/core/h/regppc.h
+disbuild_headers += $(disasm_dir)/core/h/insx86.h $(disasm_dir)/core/h/refx86.h $(disasm_dir)/core/h/regx86.h
+
+./disbuild.exe : $(disasm_dir)/core/c/disbuild.c $(disbuild_headers)
+        $(bld_cl) -zq $[@ $(wcl_util_opts) -i"$(disasm_dir)/core/h;$(disasm_dir)/stand/h"

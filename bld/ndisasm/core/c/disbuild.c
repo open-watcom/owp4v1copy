@@ -502,7 +502,7 @@ static void BuildRanges( FILE *fp, ins_decode_data *data, unsigned num,
 string_data InvalidIns = { INVALID_INS, 0 };
 string_data NullString = { "", 0 };
 
-int main()
+int main( void )
 {
     FILE        *fp;
     unsigned    i;
@@ -510,13 +510,12 @@ int main()
     unsigned    max_name;
     unsigned    len;
 
-    fp = fopen( "distbls.c", "w" );
+    fp = fopen( "distbls.gh", "w" );
     if( fp == NULL ) {
         fprintf( stderr, "can't open output file\n" );
         exit( 1 );
     }
     fprintf( fp, "#include <stddef.h>\n" );
-    fprintf( fp, "#include \"distypes.h\"\n\n" );
     fprintf( fp, "/* file created by DISBUILD.C */\n\n" );
     AddString( &InvalidIns );
     AddString( &NullString );
