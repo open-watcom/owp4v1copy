@@ -132,5 +132,11 @@ typedef struct _ICONINFO {
     PVOID   pIconData;
 } ICONINFO, *PICONINFO;
 
+typedef struct _ACCEL {
+    USHORT fs;
+    USHORT key;
+    USHORT cmd;
+} ACCEL, *PACCEL;
+
 #endif
 

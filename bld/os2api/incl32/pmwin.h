@@ -7,6 +7,7 @@
 #define INCL_WININCLUDED
 
 #ifdef INCL_WIN
+    #define INCL_WINACCELERATORS
     #define INCL_WINATOM
     #define INCL_WINBUTTONS
     #define INCL_WINCLIPBOARD
@@ -41,21 +42,21 @@
     #define INCL_WINWINDOWMGR
 #else
   #ifdef RC_INVOKED
-    #define INCL_WININPUT
-    #define INCL_WINDIALOGS
-    #define INCL_WINSTATICS
+    #define INCL_WINACCELERATORS
     #define INCL_WINBUTTONS
+    #define INCL_WINDIALOGS
     #define INCL_WINENTRYFIELDS
+    #define INCL_WINFRAMECTLS
+    #define INCL_WINFRAMEMGR
+    #define INCL_WINHELP
+    #define INCL_WININPUT
     #define INCL_WINLISTBOXES
     #define INCL_WINMENUS
-    #define INCL_WINSCROLLBARS
-    #define INCL_WINFRAMEMGR
-    #define INCL_WINFRAMECTLS
-    #define INCL_WINACCELERATORS
-    #define INCL_WINPOINTERS
     #define INCL_WINMESSAGEMGR
     #define INCL_WINMLE
-    #define INCL_WINHELP
+    #define INCL_WINPOINTERS
+    #define INCL_WINSCROLLBARS
+    #define INCL_WINSTATICS
     #define INCL_WINSTDDLGS
     #define INCL_WINSYS
   #endif
@@ -875,6 +876,34 @@ BOOL    APIENTRY WinPostQueueMsg(HMQ,ULONG,MPARAM,MPARAM);
 BOOL    APIENTRY WinQueryMsgPos(HAB,PPOINTL);
 BOOL    APIENTRY WinQueryMsgTime(HAB);
 ULONG   APIENTRY WinQueryQueueStatus(HWND);
+
+#endif
+
+#if defined(INCL_WINACCELERATORS)
+
+#define AF_CHAR       0x0001
+#define AF_VIRTUALKEY 0x0002
+#define AF_SCANCODE   0x0004
+#define AF_SHIFT      0x0008
+#define AF_CONTROL    0x0010
+#define AF_ALT        0x0020
+#define AF_LONEKEY    0x0040
+#define AF_SYSCOMMAND 0x0100
+#define AF_HELP       0x0200
+
+typedef struct _ACCELTABLE {
+    USHORT cAccel;
+    USHORT codepage;
+    ACCEL  aaccel[1];
+} ACCELTABLE, *PACCELTABLE;
+
+HACCEL APIENTRY WinLoadAccelTable(HAB,HMODULE,ULONG);
+HACCEL APIENTRY WinCreateAccelTable(HAB,PACCELTABLE);
+HACCEL APIENTRY WinQueryAccelTable(HAB,HWND);
+BOOL   APIENTRY WinDestroyAccelTable(HACCEL);
+BOOL   APIENTRY WinTranslateAccel(HAB,HWND,HACCEL,PQMSG);
+BOOL   APIENTRY WinSetAccelTable(HAB,HACCEL,HWND);
+ULONG  APIENTRY WinCopyAccelTable(HACCEL,PACCELTABLE,ULONG);
 
 #endif
 
