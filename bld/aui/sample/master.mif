@@ -1,0 +1,84 @@
+# AUI sample project makefile
+
+!include cproj.mif
+!include defrule.mif
+!include deftarg.mif
+
+!ifdef sys_windowed
+gui_type = win
+!else
+gui_type = ui
+!endif
+
+inc_dirs=$(auidir)/h;$(guidir)/h;$(uidir)/h;../h;
+
+
+auilib = $(auidir)/$(host_os)$(host_cpu)/aui.lib
+guilib = $(guidir)/$(gui_type)/$(host_os)$(host_cpu)/gui.lib
+uilib  = $(uidir)/$(host_os)/$(host_os)$(host_cpu)/ui.lib
+
+rcfiles = &
+    $(guidir)\h\gui.rc &
+    $(auidir)\h\aui.rc &
+    $(auidir)\sample\h\app.rc &
+    $(auidir)\sample\h\appcomm.rc &
+    $(auidir)\sample\h\dlgoptn.h &
+    $(auidir)\sample\h\dlgoptn.dlg &
+    ..\one.bmp &
+    ..\two.bmp &
+    ..\three.bmp &
+    ..\four.bmp &
+    ..\five.bmp
+
+objs = app.obj util.obj window1.obj window2.obj window3.obj &
+       window4.obj window5.obj window6.obj window7.obj window8.obj &
+       menus.obj appcolor.obj dlgcmd.obj dlgoptn.obj password.obj
+
+!ifeq host_cpu 386
+reslib = $(wres_dir)/lib/wresf.lib
+!else
+reslib = $(wres_dir)/lib/wresl.lib
+!endif
+
+resfile = appui.res
+rcinc   = $(inc_dirs_sys_win)$(guidir)/$(gui_type)/$(host_os)$(host_cpu);$(inc_dirs)
+
+app.exe : auistr.gh $(objs) $(auilib) $(guilib) $(uilib) $(reslib) $(resfile)
+        $(linker) $(lflags) name $^@ op map,un file { $(objs) } lib $(auilib),$(guilib),$(uilib),$(reslib)
+        wstrip -q -a -r app.exe . $(resfile)
+# Need to bind PM/Windows resources into executable
+#!ifeq host_os os2
+#        $(lang_root)\binp\rc apppm.res app.exe
+#!endif
+
+app.res appj.res : $(rcfiles)
+        wrc $(rcopt) -r -q ..\h\app.rc /foapp.res
+        wrc $(rcopt) -r -q ..\h\app.rc /foappj.res
+
+appui.res appuij.res : $(rcfiles) ../h/appui.rc
+        wrc -bt=windows -r -q -I$(rcinc) ..\h\appui.rc /foappui.res
+        wrc -dJAPANESE_MESSAGES -bt=windows -r -q -I$(rcinc) ..\h\appui.rc /foappuij.res
+
+apppm.res apppmj.res : $(rcfiles) ../h/apppm.rc
+        @set oinc=$(%include)
+        set include=..;.;$(auidir)\os2$(host_cpu).pm;$(rcinc);$(%include);$(lang_root)\h\os21x
+        wpp -p -fo=apppm.i ..\h\apppm.rc
+        wpp -dJAPANESE_MESSAGES -p -fo=apppmj.i ..\h\apppm.rc
+        set opath=$(%path)
+        set path=$(lang_root)\binp
+        $(lang_root)\binp\rc -r ..\app2.rc
+        rm -f apppm.i
+        cp app.res apppm.res
+#        rename apppmj.i apppm.i
+#        $(lang_root)\binp\rc -r app.rc
+#        cp app.res apppmj.res
+        set path=$(%opath)
+        @set include=$(%oinc)
+
+.c: ../c
+
+./mkstr.exe: $(auidir)/c/mkstr.c
+        $(bld_cl) $]@ -I$(auidir)\h -fe=$^@
+
+auistr.gh : ./mkstr.exe $(auidir)/h/aui.msg
+        $[@ $^@
