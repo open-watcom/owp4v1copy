@@ -199,18 +199,10 @@ nversion_tmp =
 !endif
 
 w : .SYMBOLIC $(trperr_h) #$(jtrperr_h)
-        @set LINK_DEBUG=d a op symfile
         @%make $(target)
 
 d : .SYMBOLIC $(trperr_h) $(jtrperr_h)
-        @set LINK_DEBUG=d a
         @%make $(target)
-
-cv : .SYMBOLIC $(trperr_h) $(jtrperr_h)
-        @set COMP_DEBUG=-d1 -s -hc
-        @set LINK_DEBUG=debug codeview
-        @%make $(target)
-        !cvpack $(target)
 
 ./mkstr.exe: $(mkstr_c) $(trap_msg)
         $(bld_cl) $(wcl_util_opts) -I"$(trap_dir)/h" $[@
@@ -238,7 +230,7 @@ extra_dobjs = $(extra_objs)
 !endif
 
 !ifeq release 1
-objs  = $($(which)_objs) mxutil.obj $(extra_objs)
+objs = $($(which)_objs) mxutil.obj $(extra_objs)
 !else
 objs = $($(which)_objs) mxutil.obj $(extra_dobjs)
 !endif
@@ -246,7 +238,7 @@ objs = $($(which)_objs) mxutil.obj $(extra_dobjs)
 !ifndef substitute_linker
 
 $(target) : $(objs) $(extra_libs) $(resource_file) $(extra_deps) $(__MAKEFILES__) $(nversion_tmp)
-        $(linker) op map $(%LINK_DEBUG) $(sys_$(cpu)_$(os)) name $^@ &
+        $(linker) $(mode_lflags) op map $(sys_$(cpu)_$(os)) name $^@ &
                 file {$(objs)} &
                 library {$(libs_$(cpu)_$(os)) $(extra_libs)} &
                 $(extra_linker)
