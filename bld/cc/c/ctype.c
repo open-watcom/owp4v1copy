@@ -1136,6 +1136,7 @@ struct {
 }
 */
 
+/*
 local void GetComplexFieldTypeSpecifier( decl_info *info, DATA_TYPE data_type )
 {
     info->stg = SC_NULL;      // indicate don't want any storage class specifiers
@@ -1201,10 +1202,11 @@ local unsigned long GetComplexFields( TYPEPTR decl )
     _CHECK_SIZE( struct_size );
     return( struct_size );
 }
-
+*/
 
 local TYPEPTR ComplexDecl( int decl_typ, int packed )
 {
+/*
     TYPEPTR     typ;
     TAGPTR      tag;
     int         saved_packamount;
@@ -1227,6 +1229,8 @@ local TYPEPTR ComplexDecl( int decl_typ, int packed )
     PackAmount = saved_packamount;
 
     return( typ );
+*/
+    return NULL;
 }
 
 
