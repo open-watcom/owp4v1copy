@@ -367,6 +367,8 @@ static void dw_reloc( dw_sectnum section, dw_relocs reloc_type, ... )
         u32_data = dw_tell( sect );
         dw_write( section, &u32_data, sizeof( u32_data ) );
         break;
+    default:
+        break;
     }
     va_end( args );
 }
