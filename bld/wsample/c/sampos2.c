@@ -31,39 +31,22 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <io.h>
 #include <ctype.h>
 #include <string.h>
-#include <process.h>
-#include <dos.h>
-#include <malloc.h>
-#include <conio.h>
+#include <unistd.h>
+#include <i86.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include "sample.h"
-#include "smpstuff.h"
 #include "wmsg.h"
+#include "smpstuff.h"
 #define INCL_BASE
 #define INCL_DOSDEVICES
 #define INCL_DOSMEMMGR
 #define INCL_DOSPROCESS
 #include "os2.h"
 #include "os2dbg.h"
-
-extern void REPORT_TYPE report();
-extern void             StopAndSave();
-extern unsigned         SampWrite( int, void FAR_PTR *, unsigned );
-extern void             WriteCodeLoad( seg_offset, char *, samp_block_kinds );
-extern void             WriteAddrMap( seg, seg, off );
-extern void             WriteMark( char FAR_PTR *str, seg_offset where );
-extern unsigned         GetNumber(unsigned,unsigned,char**,unsigned);
-extern void             Output(char*);
-extern void             AllocSamples( unsigned );
-extern void             SetTimerRate( char ** );
-extern void             fatal( void );
-extern void             RecordCGraph( void );
-extern char  FAR_PTR    *MsgArray[ERR_LAST_MESSAGE-ERR_FIRST_MESSAGE+1];
 
 #define BUFF_SIZE 512
 static char             UtilBuff[BUFF_SIZE];

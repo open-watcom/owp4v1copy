@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Execution sampler data and functions.
 *
 ****************************************************************************/
 
@@ -95,5 +94,48 @@ extern struct {
     unsigned short      push_no;
 } Comm;
 
-extern char                     ExeName[128];
-extern char                     SampName[256];
+extern char             ExeName[128];
+extern char             SampName[256];
+
+extern void REPORT_TYPE report( void );
+extern void             fatal( void );
+
+extern void             Output( char FAR_PTR * );
+extern unsigned         GetNumber( unsigned, unsigned, char **, unsigned );
+extern void             StopAndSave( void );
+extern void             WriteCodeLoad( seg_offset, char *, samp_block_kinds );
+extern void             WriteAddrMap( seg, seg, off );
+extern void             WriteMark( char FAR_PTR *str, seg_offset where );
+extern void             AllocSamples( unsigned );
+extern void             RecordCGraph( void );
+
+extern int              SampCreate( char * );
+extern int              SampWrite( void FAR_PTR *, unsigned );
+extern int              SampSeek( unsigned long );
+extern int              SampClose( void );
+extern void             SaveSamples( void );
+
+extern void             StartProg( char *cmd, char *prog, char *args );
+extern void             StopProg( void );
+extern void             GetProg( char *,char * );
+extern int              VersionCheck( void );
+extern void             Usage( void );
+
+extern void             FAR_PTR *alloc( int size );
+extern void             mfree( void FAR_PTR *chunk );
+
+extern void             InitTimerRate( void );
+extern void             SetTimerRate( char ** );
+extern unsigned long    TimerRate( void );
+extern unsigned         SafeMargin( void );
+extern unsigned         NextThread( unsigned );
+
+extern void             SysInit( void );
+extern void             SysOptions( void );
+extern void             SysExplain( void );
+extern void             SysDefaultOptions( void );
+extern void             SysParseOptions( char, char ** );
+
+extern void             GetCommArea( void );
+extern void             GetNextAddr( void );
+extern void             ResetCommArea( void );

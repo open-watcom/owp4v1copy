@@ -26,6 +26,9 @@ set PROJDIR=<CWD>
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> <PROJDIR>/nt386/wsmpnt.exe        <RELROOT>/rel2/binnt/wsample.exe
 
+  [ IFDEF (os_linux "") <2*> ]
+    <CPCMD> <PROJDIR>/linux386/wsample.exe    <RELROOT>/rel2/binl/wsample
+
   [ IFDEF (cpu_axp) <2*> ]
     <CPCMD> <PROJDIR>/ntaxp/wsmpaxp.exe       <RELROOT>/rel2/axpnt/wsample.exe
 

@@ -34,16 +34,19 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <string.h>
-#include <process.h>
+#ifdef __WATCOMC__
+    #include <process.h>
+#else
+    #include "clibext.h"
+#endif
 #include <malloc.h>
-#include <conio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "banner.h"
 #include "os.h"
 #include "sample.h"
-#include "smpstuff.h"
 #include "wmsg.h"
+#include "smpstuff.h"
 #include "digtypes.h"
 
 #ifdef __WINDOWS__
@@ -74,34 +77,7 @@ samp_block_prefix       Last = {
 
 bool                    FirstSample = TRUE;
 static int              stackSize = 0;
-extern char  FAR_PTR    *MsgArray[ERR_LAST_MESSAGE-ERR_FIRST_MESSAGE+1];
-/*
-    located in SAMPIO.C
-*/
-extern int              SampCreate( char * );
-extern int              SampWrite( void FAR_PTR *, unsigned );
-extern int              SampSeek( unsigned long );
-extern int              SampClose();
-extern void             Output( char FAR_PTR * );
 
-extern void             StartProg( char *cmd, char *prog, char *args );
-extern void             StopProg( void );
-extern int              VersionCheck();
-extern void             FAR_PTR *alloc( int size );
-extern void             InitTimerRate();
-extern unsigned long    TimerRate();
-extern unsigned         SafeMargin();
-extern unsigned         NextThread(unsigned);
-extern void             GetProg(char *,char *);
-extern void             fatal(void);
-extern void             SysOptions( void );
-extern void             SysExplain( void );
-extern void             SysDefaultOptions( void );
-extern void             SysParseOptions( char, char ** );
-extern void             GetCommArea( void );
-extern void             GetNextAddr( void );
-extern void             ResetCommArea( void );
-extern void             SysInit(void);
 
 void WriteMark( char FAR_PTR *str, seg_offset where )
 {
@@ -185,7 +161,7 @@ void WriteAddrMap( seg map_start,  seg load_start, off load_offset )
 }
 
 
-void StopAndSave()
+void StopAndSave( void )
 /* called from int08_handler, int21_handler, and int28_handler */
 {
     /*  We don't want our int08_handler to interfere at this time;
@@ -197,7 +173,7 @@ void StopAndSave()
 }
 
 
-void SaveSamples()
+void SaveSamples( void )
 /* called from StopAndSave, and report */
 {
     unsigned size;
@@ -206,11 +182,11 @@ void SaveSamples()
     cgraph_sample xfer;
 
     tid = 0;
-    while( tid = NextThread( tid ) ) {
-        if( ! CallGraphMode ) {         /* record actual sample only */
+    while( (tid = NextThread( tid )) ) {
+        if( !CallGraphMode ) {         /* record actual sample only */
             if( SampleIndex > 0 ) {
-                size = sizeof(samp_block_prefix) + sizeof(struct samp_samples)
-                            + ( SampleIndex - 1 ) * sizeof( samp_address );
+                size = sizeof( samp_block_prefix ) + sizeof( struct samp_samples )
+                            + (SampleIndex - 1) * sizeof( samp_address );
                 Samples->pref.length = size;
                 if( SampWrite( Samples, size ) == 0 ) {
                     Info.d.count[ SAMP_SAMPLES ].size += size;
@@ -272,7 +248,7 @@ void SaveSamples()
 }
 
 
-void RecordCGraph()
+void RecordCGraph( void )
 /*
  *  Record the callgraph information.  It won't be written in this
  *  form, but it's easiest to store it with the actual samples and
@@ -325,7 +301,7 @@ void RecordCGraph()
 }
 
 
-static void AllFull()
+static void AllFull( void )
 {
     SampClose();
     Output( MsgArray[ERR_DISK_FULL-ERR_FIRST_MESSAGE] );
@@ -334,7 +310,7 @@ static void AllFull()
 }
 
 
-void REPORT_TYPE report()
+void REPORT_TYPE report( void )
 {
     StopProg();
     SaveSamples();
@@ -367,7 +343,7 @@ void REPORT_TYPE report()
 }
 
 
-void Usage()
+void Usage( void )
 {
     Output(
 banner1w( "Execution Sampler", _WSAMP_VERSION_ ) NL
@@ -456,7 +432,11 @@ char *Parse( char *line, char arg[], char **eoc )
     SampName[0] = '\0';
     for( ;; ) {
         cmd = skip( cmd );
-        if( *cmd != '/' && *cmd != '-' ) break;
+#ifdef __UNIX__
+        if( *cmd != '-' ) break;
+#else
+        if( (*cmd != '/') && (*cmd != '-') ) break;
+#endif
         cmd = skip( ++cmd );
         c = *(cmd++);
         c = tolower( c );
@@ -505,7 +485,9 @@ char *Parse( char *line, char arg[], char **eoc )
     ptr = cmd;
     for( ;; ) {
         if( *ptr == ' ' ) break;
+#ifndef __UNIX__
         if( *ptr == '/' ) break;
+#endif
         if( *ptr == '-' ) break;
         if( *ptr == '\t' ) break;
         if( *ptr == '\0' ) break;
@@ -518,8 +500,12 @@ char *Parse( char *line, char arg[], char **eoc )
         arg[0] = 1;
         arg[1] = *ptr++;
     }
-    while( *ptr != '\0' )   arg[ ++arg[0] ] = *ptr++;
-    arg[ arg[0]+1 ] = '\r';
+    while( *ptr != '\0' ) arg[++arg[0]] = *ptr++;
+#ifdef __DOS__
+    arg[arg[0] + 1] = '\r';
+#else
+    arg[++arg[0]] = '\0';
+#endif
     return( cmd );
 }
 
@@ -551,17 +537,26 @@ void AllocSamples( unsigned tid )
 }
 
 #if !defined(__WINDOWS__)
-int main()
+
+#ifndef __WATCOMC__
+char **_argv;
+#endif
+
+int main( int argc, char **argv )
 #else
 int sample_main( char far *win_cmd )
 #endif
 {
-    char    *cmd_line;
-    char    *arg;
-    char    *cmd;
-    char far *tmp;
-    char    *eoc;
-    int     cmdlen;
+    char            *cmd_line;
+    char            *arg;
+    char            *cmd;
+    char FAR_PTR    *tmp;
+    char            *eoc;
+    int             cmdlen;
+
+#ifndef __WATCOMC__
+    _argv = (char **)argv;
+#endif
 
     SysInit();
 #if !defined(__WINDOWS__)

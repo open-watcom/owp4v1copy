@@ -89,6 +89,13 @@ pick( MSG_EXPLAIN_2,        "              指定する数値 (範囲:27 から 1000まで) 
                 "              time interval (in milliseconds) between samples (default: 55)\n" )
 #endif
 
+#ifdef LINUX      /* messages in samplinux */
+pick( MSG_EXPLAIN_1,        "    <rate>    はサンプリング間のおよその時間間隔 (単位:ﾐﾘ秒) を\n",
+                "    <rate>    is a number (range 1 to 1000) specifying the approximate\n" )
+pick( MSG_EXPLAIN_2,        "              指定する数値 (範囲:27 から 1000まで) です (ﾃﾞﾌｫﾙﾄ: 10)\n",
+                "              time interval (in milliseconds) between samples (default: 10)\n" )
+#endif
+
 #if defined(PLS) || defined(NLM)      /* messages in samppls and sampnlm */
 pick( MSG_EXPLAIN_1,        "    <rate>    はサンプリング間のおよその時間間隔 (単位:ﾐﾘ秒) を\n",
                 "    <rate>    is a number (range 1 to 55) specifying the approximate\n" )
@@ -173,6 +180,21 @@ pick( MSG_SAMPLE_9,     "プロセスに接触できませんでした",
                 "Unable to attach to process" )
 pick( MSG_SAMPLE_10,        "CPU 例外が報告されています",
                 "CPU exception reported" )
+#endif
+
+#ifdef LINUX      /* messages in samplnx */
+pick( MSG_SAMPLE_1,     "実行中: ",
+                "Executing: " )
+pick( MSG_SAMPLE_2,     "内部エラー: ",
+                "internal error: " )
+pick( MSG_SAMPLE_3,     "ファイルを実行できません",
+                "Cannot execute file" )
+pick( MSG_SAMPLE_4,     "ptrace() が失敗しました",
+                "ptrace() failed" )
+pick( MSG_SAMPLE_5,     "プロセスに接触できませんでした",
+                "Unable to attach to process" )
+pick( MSG_SAMPLE_6,     "setitimer() が失敗しました",
+                "ptrace() failed" )
 #endif
 
 #ifdef PLS      /* messages in samppls */

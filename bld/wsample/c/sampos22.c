@@ -32,18 +32,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
-#include <io.h>
 #include <ctype.h>
 #include <string.h>
-#include <process.h>
 #include <i86.h>
-#include <malloc.h>
-#include <conio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "sample.h"
-#include "smpstuff.h"
 #include "wmsg.h"
+#include "smpstuff.h"
 
 #define INCL_32
 
@@ -59,21 +55,8 @@
 #define DBG_N_SStep             -101
 #define DBG_N_Signal            -102
 
-extern void REPORT_TYPE report();
-extern void             StopAndSave();
-extern unsigned         SampWrite( int, void FAR_PTR *, unsigned );
-extern void             WriteCodeLoad( seg_offset, char *, samp_block_kinds );
-extern void             WriteAddrMap( seg, seg, off );
-extern void             WriteMark( char FAR_PTR *str, seg_offset where );
-extern unsigned         GetNumber(unsigned,unsigned,char**,unsigned);
-extern void             Output(char*);
-extern void             AllocSamples( unsigned );
-extern void             SetTimerRate( char ** );
-extern void             fatal(void);
-extern void             RecordCGraph( void );
-extern char  FAR_PTR    *MsgArray[ERR_LAST_MESSAGE-ERR_FIRST_MESSAGE+1];
-
 #define BUFF_SIZE 2048
+
 static char             UtilBuff[BUFF_SIZE];
 static uDB_t            Buff;
 static PID              Pid;

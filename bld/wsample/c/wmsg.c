@@ -39,7 +39,11 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <process.h>
+#ifdef __WATCOMC__
+    #include <process.h>
+#else
+    #include "clibext.h"
+#endif
 
 #if defined (__NETWARE__)
 /*

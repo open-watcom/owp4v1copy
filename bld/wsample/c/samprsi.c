@@ -24,19 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  DOS/4G(W) execution sampler support.
+* Description:  DOS/4G(W) performance sampling core.
 *
 ****************************************************************************/
 
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <io.h>
 #include <ctype.h>
 #include <string.h>
-#include <process.h>
-#include <malloc.h>
-#include <conio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "sample.h"
@@ -44,19 +40,6 @@
 #include "wmsg.h"
 #define DEFVARS
 #include "timermod.h"
-
-extern void REPORT_TYPE report();
-extern void             StopAndSave();
-extern void             WriteMark( char FAR_PTR *, seg_offset );
-extern unsigned         SampWrite( int, void FAR_PTR *, unsigned );
-extern void             Output( char FAR_PTR * );
-extern void             WriteCodeLoad( seg_offset, char *, samp_block_kinds );
-extern void             WriteAddrMap( seg, seg, off );
-extern unsigned         GetNumber(unsigned, unsigned, char **, unsigned);
-extern void             fatal( void );
-extern void             SetTimerRate( char ** );
-extern void             RecordCGraph( void );
-extern char  FAR_PTR    *MsgArray[ERR_LAST_MESSAGE-ERR_FIRST_MESSAGE+1];
 
 #include "dos4g.h"
 #include "pmode32.h"

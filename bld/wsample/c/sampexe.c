@@ -30,20 +30,19 @@
 ****************************************************************************/
 
 
-#include <process.h>
-#include <dos.h>
 #include <stdlib.h>
 #include <string.h>
-#include <io.h>
-#include <direct.h>
+#include <unistd.h>
 #include <ctype.h>
 
 #include "sample.h"
-#include "smpstuff.h"
 #include "wmsg.h"
+#include "smpstuff.h"
 
 #ifdef __WINDOWS__
-#include "sampwin.h"
+    #include <dos.h>
+    #include <direct.h>
+    #include "sampwin.h"
 #endif
 
 extern char  FAR_PTR    *MsgArray[ERR_LAST_MESSAGE-ERR_FIRST_MESSAGE+1];
@@ -76,14 +75,14 @@ void GetProg( char *cmd, char *eoc )
     if( ext[0] == '\0' ) ext = ".nlm";
 #elif defined( __DOS__ ) && defined( _PLS )
     if( ext[0] == '\0' ) ext = ".exp";
-#else
+#elif !defined( __UNIX__ )
     if( ext[0] == '\0' ) ext = ".exe";
 #endif
     _makepath( (char *)prog_name, (char *)drive, (char *)dir, (char *)fname, (char *)ext );
 
     if( drive[0] == '\0' && dir[0] == '\0' ) {
         _searchenv( (char *)prog_name, "PATH", ExeName );
-    } else if( access( (char *)prog_name, ACCESS_RD ) == 0 ) {
+    } else if( access( (char *)prog_name, R_OK ) == 0 ) {
         strcpy( ExeName, (char *)prog_name );
     }
 
@@ -131,9 +130,9 @@ void GetProg( char *cmd, char *eoc )
 #endif
 }
 
-void fatal(void)
+void fatal( void )
 {
-#if defined(__WINDOWS__)
+#if defined( __WINDOWS__ )
 extern void CloseShop( void );
     WaitForFirst = FALSE;
     MessageLoop();

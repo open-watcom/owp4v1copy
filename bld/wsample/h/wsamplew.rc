@@ -25,4 +25,4 @@ BEGIN
   "t",  PUSH_OK_ID, ALT
 END
 
-#include "..\h\wsample.rc"
+#include "../h/wsample.rc"

@@ -36,7 +36,6 @@
 #include <ctype.h>
 #include <string.h>
 #include <process.h>
-//#include <malloc.h>
 #include <conio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -47,10 +46,6 @@
 #include "timermod.h"
 #include "wmsg.h"
 
-extern char  FAR_PTR    *MsgArray[ERR_LAST_MESSAGE-ERR_FIRST_MESSAGE+1];
-extern void             Output( char FAR_PTR * );
-extern unsigned         GetNumber( unsigned, unsigned, char **, unsigned );
-extern void             fatal(void);
 
 void InitTimerRate()
 {
