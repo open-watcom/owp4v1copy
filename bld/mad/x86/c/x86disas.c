@@ -885,17 +885,6 @@ unsigned DisCliValueString( void *d, dis_dec_ins *ins, unsigned opnd, char *buff
     p[0] = '\0';
     val = dd->addr;
     switch( op->type & DO_MASK ) {
-    case DO_RELATIVE:
-        val.mach.offset += op->value;
-        MCAddrToString( val, (ins->flags & DIF_X86_OPND_LONG) ? X86T_N32_PTR : X86T_N16_PTR , MLK_CODE, max, p );
-        break;
-    case DO_ABSOLUTE:
-        if( op->type & DO_EXTRA ) {
-            val.mach.offset = op->value;
-            val.mach.segment = op->extra;
-            MCAddrToString( val, (ins->flags & DIF_X86_OPND_LONG) ? X86T_F32_PTR : X86T_F16_PTR , MLK_CODE, max, p );
-            break;
-        }
     case DO_IMMED:
         switch( op->ref_type ) {
         case DRT_X86_BYTE:
@@ -914,6 +903,18 @@ unsigned DisCliValueString( void *d, dis_dec_ins *ins, unsigned opnd, char *buff
         MCTypeInfoForHost( MTK_INTEGER, size , &mti );
         MCTypeToString( dd->radix, &mti, &op->value, &max, p );
         break;
+    case DO_RELATIVE:
+        val.mach.offset += op->value;
+        MCAddrToString( val, (ins->flags & DIF_X86_OPND_LONG) ? X86T_N32_PTR : X86T_N16_PTR , MLK_CODE, max, p );
+        break;
+    case DO_ABSOLUTE:
+        if( op->type & DO_EXTRA ) {
+            val.mach.offset = op->value;
+            val.mach.segment = op->extra;
+            MCAddrToString( val, (ins->flags & DIF_X86_OPND_LONG) ? X86T_F32_PTR : X86T_F16_PTR , MLK_CODE, max, p );
+            break;
+        }
+        /* fall through for LEA instruction */
     case DO_MEMORY_ABS:
     case DO_MEMORY_REL:
         if( op->base == DR_NONE && op->index == DR_NONE ) {
