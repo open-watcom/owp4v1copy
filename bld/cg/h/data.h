@@ -31,8 +31,8 @@
 #include "ptrint.h"
 #include "typedef.h"
 
-extern  pointer                 HeadBlock;
-extern  pointer                 BlockList;
+extern  block *                 HeadBlock;
+extern  block *                 BlockList;
 extern  int                     InsId;
 extern  int                     TempId;
 extern  pointer                 ConfList;
