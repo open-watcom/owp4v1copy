@@ -538,6 +538,7 @@ Bellow is table with address for each DLL.
 0x6ed00000  codeview.dll  (Debugger DIP)
 0x6ee00000  watcom.dll    (Debugger DIP)
 0x6ef00000  dwarf.dll     (Debugger DIP)
+0x6fa00000  wrtxxxx.dll   (run-time DLL combined C, math and C++ library)
 0x6fd00000  plbxxxx.dll   (run-time DLL C++ library)
 0x6fe00000  clbxxxx.dll   (run-time DLL C library)
 0x6ff00000  mtxxxx.dll    (run-time DLL math library)
