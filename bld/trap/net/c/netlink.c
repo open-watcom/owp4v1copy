@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  NetBIOS remote trap file core.
 *
 ****************************************************************************/
 
@@ -36,6 +35,9 @@
 #if defined( __OS2__ )
 #define INCL_DOSMODULEMGR
 #include <os2.h>
+    #if defined( __386__ )
+    #define far
+    #endif
 #else
 #include "tinyio.h"
 #endif
@@ -44,8 +46,11 @@
 #include "packet.h"
 
 #if defined( __OS2__ )
-
-int pascal (far *NetBiosSubmit)( int, int, NCB far * );
+    #if defined( __386__ )
+    unsigned short _System (*NetBiosSubmit)( unsigned short, unsigned short, NCB * );
+    #else
+        int pascal (far *NetBiosSubmit)( int, int, NCB far * );
+    #endif
 #define NetBIOS( x ) (NetBiosSubmit)( 0, 0, (x) )
 
 extern unsigned char pascal far NetBiosOpen( char far *, char far *,
@@ -68,7 +73,7 @@ extern unsigned char NetBIOS( NCB far * );
 NCB         NetCtlBlk;
 
 
-unsigned RemoteGet( void far *rec, unsigned len )
+unsigned RemoteGet( void *rec, unsigned len )
 {
     NetCtlBlk.buff = rec;
     NetCtlBlk.length = len;
@@ -77,7 +82,7 @@ unsigned RemoteGet( void far *rec, unsigned len )
     return( NetCtlBlk.length );
 }
 
-unsigned RemotePut( void far *rec, unsigned len )
+unsigned RemotePut( void *rec, unsigned len )
 {
     NetCtlBlk.buff = rec;
     NetCtlBlk.length = len;
@@ -119,7 +124,7 @@ void RemoteDisco( void )
 char            DefLinkName[] = "NetLink";
 static char     NotThere[] = TRP_ERR_NetBIOS_is_not_running ;
 
-char *RemoteLink( char far *name, char server )
+char *RemoteLink( char *name, char server )
 {
     unsigned    i;
 
@@ -129,22 +134,35 @@ char *RemoteLink( char far *name, char server )
         NetCtlBlk.name[i] = (*name != '\0') ? *name++ : ' ';
     }
     NetCtlBlk.name[0] = server ? 'S' : 'C';
-#ifdef __OS2__
-    {
-        HMODULE hmod;
+#if defined(__OS2__)
+    #if defined(__386__)
+        {
+            HMODULE hmod;
 
-        if( DosLoadModule( NULL, 0, "NETAPI", &hmod ) != 0 ) {
-            return( NotThere );
+            if( DosLoadModule( NULL, 0, "NETAPI32", &hmod ) != 0 ) {
+                return( NotThere );
+            }
+            if( DosQueryProcAddr( hmod, 0, "NetBios32Submit", (PFN*)&NetBiosSubmit ) != 0 ) {
+                return( NotThere );
+            }
         }
-        if( DosGetProcAddr( hmod, "NETBIOSSUBMIT", &NetBiosSubmit ) != 0 ) {
-            return( NotThere );
+    #else
+        {
+            HMODULE hmod;
+
+            if( DosLoadModule( NULL, 0, "NETAPI", &hmod ) != 0 ) {
+                return( NotThere );
+            }
+            if( DosGetProcAddr( hmod, "NETBIOSSUBMIT", &NetBiosSubmit ) != 0 ) {
+                return( NotThere );
+            }
         }
-    }
+    #endif
 #elif !defined( __WINDOWS__ )
     {
-    unsigned    char far *net_bios;
+    unsigned    char *net_bios;
 
-        net_bios = (void far *)TinyGetVect( NET_BIOS_INT );
+        net_bios = (void *)TinyGetVect( NET_BIOS_INT );
         if( net_bios == 0 || *net_bios == 0xcf ) {
             return( NotThere );
         }

@@ -60,7 +60,7 @@ enum commands {
 #define ILLEGAL_LSN         0
 #define MAX_NAME_LEN        16
 
-typedef struct {
+typedef _Packed struct {
     unsigned char           cmd;
     unsigned char           ret_code;
     unsigned char           lsn;
