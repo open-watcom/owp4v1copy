@@ -17,7 +17,7 @@ cdsay .
 #========================
     <CPCMD> ext\win386.ext <relroot>\rel2\binw\win386.ext
     <CPCMD> dll\w386dll.ext <relroot>\rel2\binw\w386dll.ext
-    <CPCMD> conv\win386.lib <relroot>\rel2\lib386\win\win386.lib
+    <CPCMD> conv\obj\win386.lib <relroot>\rel2\lib386\win\win386.lib
     <CPCMD> vxd\wdebug.386 <relroot>\rel2\binw\wdebug.386
     <CPCMD> vxd\wemu387.386 <relroot>\rel2\binw\wemu387.386
     <CPCMD> wbind\dosi86\wbind.exe <relroot>\rel2\binw\wbind.exe
@@ -27,4 +27,4 @@ cdsay .
 [ BLOCK <1> clean ]
 #==================
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
-    @rm -f obj\*.?bj dllthk.asm dllthunk.c winglue.asm h\winglue.inc
+    @rm -f obj\*.?bj asm\dllthk.asm c\dllthunk.c asm\winglue.asm h\winglue.inc

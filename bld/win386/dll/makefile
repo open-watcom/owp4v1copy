@@ -1,3 +1,5 @@
+#pmake: all build os_win cpu_i86
+
 EXTNAME = w386dll
 
 OBJS = begin.obj &
@@ -32,4 +34,4 @@ extralink : .SYMBOLIC
     @%append $(EXTRALNK) option heapsize=8K,stack=8K
     @%append $(EXTRALNK) option align=9
     @%append $(EXTRALNK) segment CLASS 'EMU' PRELOAD MOVEABLE
-    @%append $(EXTRALNK) @exports.lnk
+    @%append $(EXTRALNK) @..\exports.lnk

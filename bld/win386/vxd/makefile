@@ -1,5 +1,7 @@
 #pmake: all build os_win cpu_386
+
 !include deftarg.mif
+
 LNK = wdebug.lnk
 LNKEMU = wemu387.lnk
 

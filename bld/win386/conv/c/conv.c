@@ -78,12 +78,12 @@ struct  subparm {
  * data structure containing all data about a prototype
  */
 typedef struct fcn {
-    struct fcn  far *next;      /* link */
+    struct fcn  *next;      /* link */
     char        *fn;            /* function name */
     char        *plist;         /* parameter list */
     struct subparm *subparms;   /* sub parms that need aliasing */
     int         class;          /* what class it belongs to */
-    struct fcn  far *next_class;/* connects to next function in same class */
+    struct fcn  *next_class;/* connects to next function in same class */
     char        pcnt;           /* number of parms */
     char        returntype;     /* function return type */
     char        aliascnt;       /* number of 16-bit aliases to be created */
@@ -103,15 +103,15 @@ struct parmlist {
     char                parm_types[1];
 };
 
-char    far * far *ThunkStrs;
-char    far * ThunkGenerated;
+char    **ThunkStrs;
+char    * ThunkGenerated;
 int     ThunkIndex;
 int     MaxAliasCount;
 struct parmlist *ParmList;
 
-fcn     far *Class,far *CurrClass;      /* class list */
-fcn     far *Head,far *Curr;            /* list of all prototypes */
-fcn     far *VoidHead,far *VoidCurr;    /* list of all prototypes */
+fcn     *Class, *CurrClass;      /* class list */
+fcn     *Head, *Curr;            /* list of all prototypes */
+fcn     *VoidHead, *VoidCurr;    /* list of all prototypes */
 
 void *myalloc( size_t size )
 {
@@ -126,25 +126,25 @@ void *myalloc( size_t size )
 
 } /* myalloc */
 
-void far *_fmyalloc( size_t size )
+void *_fmyalloc( size_t size )
 {
-    void far    *tmp;
+    void     *tmp;
 
-    tmp = _fmalloc( size );
+    tmp = malloc( size );
     if( tmp == NULL ) {
         printf("Out of Memory!\n");
         exit( 1 );
     }
-    _fmemset( tmp, 0, size );
+    memset( tmp, 0, size );
     return( tmp );
 
 } /* _fmyalloc */
 
-void far *_fmyrealloc( void far *ptr, size_t size )
+void *_fmyrealloc( void *ptr, size_t size )
 {
-    void far    *tmp;
+    void     *tmp;
 
-    tmp = _frealloc( ptr, size );
+    tmp = realloc( ptr, size );
     if( tmp == NULL ) {
         printf("Out of Memory!\n");
         exit( 1 );
@@ -221,7 +221,7 @@ return_types ClassifyReturnType( char *buff )
 
 } /* ClassifyReturnType */
 
-void ClassifyParmList( char *plist, fcn far *tmpf )
+void ClassifyParmList( char *plist, fcn *tmpf )
 {
     int         i;
     int         j;
@@ -381,7 +381,7 @@ void ProcessDefFile( FILE *f )
     char        *fn;            // function name
     char        *type;          // return type
     char        *plist;         // parameter list
-    fcn         far *tmpf;
+    fcn         *tmpf;
 
     while( fgets( buff, MAX_BUFF, f ) != NULL ) {
 
@@ -390,7 +390,7 @@ void ProcessDefFile( FILE *f )
         }
 
         if( buff[0] == '!' ) {
-            ThunkStrs = _fmyrealloc( ThunkStrs, sizeof( char far *) *
+            ThunkStrs = _fmyrealloc( ThunkStrs, sizeof( char *) *
                                     (ThunkIndex + 1) );
             i = strlen( buff );
             ThunkStrs[ThunkIndex] = _fmyalloc( i-2 );
@@ -400,7 +400,7 @@ void ProcessDefFile( FILE *f )
             continue;
         }
         /*
-         * flag a function that returns a far pointer to a function
+         * flag a function that returns a pointer to a function
          */
         if( strncmp( buff, "int (", 5 ) == 0 ) {
             printf( "Oh, oh, something returns a function!!!\n" );
@@ -522,8 +522,8 @@ void BuildClasses()
 {
     int         i,j;
     int         class_count;
-    fcn         far *tmpf;
-    fcn         far *cl;
+    fcn         *tmpf;
+    fcn         *cl;
 
     /*
      * attach void list to end: Having the void list on the end ensures
@@ -585,7 +585,7 @@ void BuildClasses()
  */
 void ClosingComments( void )
 {
-    fcn         far *tmpf;
+    fcn         *tmpf;
 
     tmpf = Head;
     while( tmpf != NULL ) {
@@ -754,7 +754,7 @@ static void emitEXTDEF( char *func )
     emitBYTE( 0 );
 }
 
-static char *getThunkName( fcn far *tmpf )
+static char *getThunkName( fcn *tmpf )
 {
     char        *name;
 
@@ -767,7 +767,7 @@ static char *getThunkName( fcn far *tmpf )
     return( name );
 }
 
-static int sizeofThunkName( fcn far *tmpf )
+static int sizeofThunkName( fcn *tmpf )
 {
     char        *name;
 
@@ -776,7 +776,7 @@ static int sizeofThunkName( fcn far *tmpf )
     return( strlen( name ) + 1 + 1 );
 }
 
-static void emitThunkName( fcn far *tmpf )
+static void emitThunkName( fcn *tmpf )
 {
     char        *name;
 
@@ -789,7 +789,7 @@ static void emitThunkName( fcn far *tmpf )
     }
 }
 
-static void emitSaveFPU( fcn far *tmpf )
+static void emitSaveFPU( fcn *tmpf )
 {
     if( tmpf->need_fpusave ) {
         emitBYTE( 0xFF );       /* call dword ptr [__addr] */
@@ -852,7 +852,7 @@ static void cleanupSubParms( struct subparm *p )
 /***  the function.                                             ****/
 /*******************************************************************/
 
-static void emitnormalThunk( char *proc, fcn far *tmpf, int index )
+static void emitnormalThunk( char *proc, fcn *tmpf, int index )
 {
     int         size;
     int         segsize;
@@ -966,7 +966,7 @@ static void emitnormalThunk( char *proc, fcn far *tmpf, int index )
     emitBYTE( 0 );
 }
 
-static void emitspecialThunk( char *proc, fcn far *tmpf, int index )
+static void emitspecialThunk( char *proc, fcn *tmpf, int index )
 {
     int         size;
     int         segsize;
@@ -1099,7 +1099,7 @@ static void emitMODEND( void )
     emitBYTE( 0 );
 }
 
-static void emitOBJECT( int modindex, char *proc, fcn far *tmpf, int index )
+static void emitOBJECT( int modindex, char *proc, fcn *tmpf, int index )
 {
     emitTHEADR( modindex );
     emitCOMMENT();
@@ -1112,12 +1112,15 @@ static void emitOBJECT( int modindex, char *proc, fcn far *tmpf, int index )
     emitMODEND();
 }
 
-static void startOBJECT( void )
+static void startOBJECT( int modindex )
 {
-    objFile = open( "w386lib.obj", O_WRONLY | O_CREAT | O_TRUNC | O_BINARY,
+    char        fname[20];
+
+    sprintf( fname,"win%d.obj", modindex );
+    objFile = open( fname, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY,
         S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
     if( objFile == - 1 ) {
-        fprintf(stderr,"error opening w386lib.obj\n" );
+        fprintf(stderr,"error opening %s\n", fname );
         exit( 1 );
     }
     objBufIndex = 0;
@@ -1135,14 +1138,13 @@ static void endOBJECT( void )
  */
 void GenerateCStubs( void )
 {
-    fcn         far *tmpf,far *tmpf2;
+    fcn         *tmpf, *tmpf2;
     short       i=0,index,ii=0;
     char        fn2[128];
 
     if( !genstubs ) {
         return;
     }
-    startOBJECT();
     tmpf = Head;
     while( tmpf != NULL ) {
         if( tmpf->__special_func ) {
@@ -1185,12 +1187,13 @@ void GenerateCStubs( void )
             index = i++;
         }
 
+        startOBJECT( ii );
         strupr( fn2 );                                  /* 23-sep-92 AFS */
         emitOBJECT( ii, fn2, tmpf, 4*index );
+        endOBJECT();
         tmpf = tmpf->next;
         ii++;
     }
-    endOBJECT();
 
 } /* GenerateCStubs */
 
@@ -1203,7 +1206,7 @@ FILE *dllthunk;
  */
 void GenerateCode( void )
 {
-    fcn far *tmpf, far *tmpf2;
+    fcn *tmpf, *tmpf2;
 
     /*
      * find out which _16 functions have a regular type
@@ -1266,7 +1269,7 @@ void GenerateCode( void )
 /*
  * GenerateThunkTable - generate table of thunks
  */
-void GenerateThunkTable( fcn far *tmpf )
+void GenerateThunkTable( fcn *tmpf )
 {
     fprintf( stubs, "__ThunkTable LABEL WORD\n" );
     fprintf( stubs, "public __ThunkTable\n" );
@@ -1298,7 +1301,7 @@ void CloseHeader( FILE *f )
 void DLLThunkHeader( void )
 {
     int      i;
-    fcn far *tmpf;
+    fcn *tmpf;
 
     fprintf( dllthunk,line );
     fprintf( dllthunk,blank );
@@ -1401,11 +1404,11 @@ void DLLThunkHeader( void )
     fprintf(dllthunk,"FiniDLLs_ endp\n");
     fprintf(dllthunk,"\n");
     for( i = 0; i < ThunkIndex; i++ ) {
-        fprintf(dllthunk,"public BackPatch_%Fs_\n", ThunkStrs[i] );
-        fprintf(dllthunk,"BackPatch_%Fs_ proc far\n", ThunkStrs[i] );
+        fprintf(dllthunk,"public BackPatch_%s_\n", ThunkStrs[i] );
+        fprintf(dllthunk,"BackPatch_%s_ proc far\n", ThunkStrs[i] );
         fprintf(dllthunk,"\tmov    dl,%d\n", i );
         fprintf(dllthunk,"\tjmp    __BackPatch_xxx\n" );
-        fprintf(dllthunk,"BackPatch_%Fs_ endp\n\n", ThunkStrs[i] );
+        fprintf(dllthunk,"BackPatch_%s_ endp\n\n", ThunkStrs[i] );
     }
 
 } /* DLLThunkHeader */
@@ -1427,7 +1430,7 @@ void DLLThunkTrailer( void )
 void GenerateDLLData( void )
 {
     int         i;
-    char far    *thunkstr;
+    char     *thunkstr;
 
     fprintf( dllthunk, "DGROUP group _DATA\n");
     fprintf( dllthunk, "_DATA segment word public 'DATA'\n");
@@ -1441,19 +1444,19 @@ void GenerateDLLData( void )
     fprintf( dllthunk, "DLLNames LABEL WORD\n");
     for( i = 0; i < ThunkIndex; i++ ) {
         thunkstr = ThunkStrs[ i ];
-        fprintf( dllthunk, "\tdw    DGROUP:%Fs\n", thunkstr );
+        fprintf( dllthunk, "\tdw    DGROUP:%s\n", thunkstr );
     }
     fprintf( dllthunk, "\n" );
     for( i = 0; i < ThunkIndex; i++ ) {
         thunkstr = ThunkStrs[ i ];
-        fprintf( dllthunk, "%Fs\tdb    '%Fs.dll',0\n", thunkstr, thunkstr );
+        fprintf( dllthunk, "%s\tdb    '%s.dll',0\n", thunkstr, thunkstr );
     }
     fprintf( dllthunk, "_DATA ends\n");
     fprintf( dllthunk, "\n");
 
 } /* GenerateDLLData */
 
-int Parm1Offset( fcn far *tmpf )
+int Parm1Offset( fcn *tmpf )
 {
     return( tmpf->pcnt * 4 + 12 );
 }
@@ -1463,7 +1466,7 @@ int Parm1Offset( fcn far *tmpf )
  *                   variables onto the extenders stack, and does
  *                   the call.
  */
-void GenerateAPICall( fcn far *tmpf )
+void GenerateAPICall( fcn *tmpf )
 {
     int         i, j;
     int         offset;
@@ -1560,7 +1563,7 @@ void GenerateAPICall( fcn far *tmpf )
  * Generate16BitAliases - code to generate a 16-bit alias for each
  *                        of the applications 32-bit pointers
  */
-void Generate16BitAliases( fcn far *tmpf )
+void Generate16BitAliases( fcn *tmpf )
 {
     int         i;
     int         offset;
@@ -1585,7 +1588,7 @@ void Generate16BitAliases( fcn far *tmpf )
  * GenerateStackLocals - generate equates to access local variables (where
  *                       we store the 16-bit aliases for 32-bit ptrs)
  */
-int GenerateStackLocals( fcn far *tmpf )
+int GenerateStackLocals( fcn *tmpf )
 {
     int         i;
     int         offset;
@@ -1608,7 +1611,7 @@ int GenerateStackLocals( fcn far *tmpf )
  * GenerateStackAccessEquates - generate equates to access the variables
  *                              passed in by the 32 bit application
  */
-void GenerateStackAccessEquates( fcn far *tmpf )
+void GenerateStackAccessEquates( fcn *tmpf )
 {
     int         i;
     char        tmp[128];
@@ -1631,7 +1634,7 @@ void GenerateStackAccessEquates( fcn far *tmpf )
 /*
  * GenerateStartupCode - init. code for each glue function
  */
-void GenerateStartupCode( fcn far *tmpf )
+void GenerateStartupCode( fcn *tmpf )
 {
     fprintf( stubs,"PUBLIC  __Thunk%d\n",tmpf->class );
     fprintf( stubs,"__Thunk%d proc near\n",tmpf->class );
@@ -1644,8 +1647,8 @@ void GenerateStartupCode( fcn far *tmpf )
  */
 void FunctionHeader( void )
 {
-    fcn far     *tmpf;
-    char        far *thunkstr;
+    fcn      *tmpf;
+    char        *thunkstr;
     char        *th1,*th2;
 
     fprintf( stubs,line );
@@ -1711,15 +1714,15 @@ void FunctionHeader( void )
         if( tmpf->thunk ) {
             thunkstr = ThunkStrs[ tmpf->thunkindex ];
         } else {
-            thunkstr = (char far *) "";
+            thunkstr = (char *) "";
         }
         if( tmpf->is_16 ) {
             if( tmpf->noregfor_16 ) {
                 if( tmpf->thunk ) {
-                    fprintf( stubs,"  dd __DLLPatch ; %Fs%s\n",
+                    fprintf( stubs,"  dd __DLLPatch ; %s%s\n",
                                 thunkstr, &tmpf->fn[3] );
                 } else {
-                    fprintf( stubs,"  dd %Fs%s\n",
+                    fprintf( stubs,"  dd %s%s\n",
                                 thunkstr, &tmpf->fn[3] );
                 }
             }
@@ -1727,7 +1730,7 @@ void FunctionHeader( void )
             if( tmpf->is_tinyio ) {
                 fprintf( stubs,"  dd _%s\n", tmpf->fn );
             } else if( tmpf->thunk ) {
-                fprintf( stubs,"  dd __DLLPatch ; %Fs%s\n",
+                fprintf( stubs,"  dd __DLLPatch ; %s%s\n",
                                 thunkstr, tmpf->fn );
             } else {
                 fprintf( stubs,"  dd %s\n", tmpf->fn );

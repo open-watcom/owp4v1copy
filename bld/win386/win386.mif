@@ -44,9 +44,8 @@ $(LNK) : makefile ..\win386.mif
     @%append $(LNK) @..\imports.lnk
     %make extralink
 
-.c : ..
-.asm : ..
-
+.asm : ..\asm
+.c : ..\c
 .cbj : ..\obj
 .dbj : ..\obj
 .nbj : ..\obj
