@@ -100,43 +100,6 @@ static void InitOS2DialogBoxHeader( DialogHeaderOS2 *header )
     header->OffsetPresParams = 0;
 }
 
-#if 0
-static void AddDiagOption( DialogBoxHeader * head, FullDialogOptions * opt )
-/***************************************************************************/
-{
-    switch (opt->token) {
-    case Y_MENU:
-        if (head->MenuName != NULL) {
-            RcMemFree( head->MenuName );
-        }
-        head->MenuName = opt->Opt.Name;
-        break;
-    case Y_FONT:
-        head->Style |= DS_SETFONT;
-        head->PointSize = opt->Opt.Font.PointSize;
-        if (head->FontName != NULL) {
-            RcMemFree( head->FontName );
-        }
-        head->FontName = opt->Opt.Font.FontName;
-        break;
-    }
-} /* AddDiagOptions */
-#endif
-
-#if 0
-static FullDialogBoxHeader * SemDiagOptions( FullDialogBoxHeader * head,
-                                            FullDialogOptions * opt )
-/**********************************************************************/
-{
-    AddDiagOption( &head->u.Head, opt );
-//    if( opt->token == Y_STYLE ) {
-//        head->StyleGiven = TRUE;
-//    }
-
-    return( head );
-}
-#endif
-
 static FullDiagCtrlListOS2 * SemOS2EmptyDiagCtrlList( void ) {
 /*******************************************************/
     FullDiagCtrlListOS2 *      newlist;
@@ -149,21 +112,23 @@ static FullDiagCtrlListOS2 * SemOS2EmptyDiagCtrlList( void ) {
 }
 
 extern FullDiagCtrlListOS2 * SemOS2NewDiagCtrlList( FullDialogBoxControlOS2 * ctrl,
-                                                    DataElemList * list )
+                               DataElemList * list, PresParamListOS2 * presparams )
 /*********************************************************************************/
 {
     FullDiagCtrlListOS2 *      newlist;
 
     newlist = SemOS2EmptyDiagCtrlList();
-    return( SemOS2AddDiagCtrlList( newlist, ctrl, list ) );
+    return( SemOS2AddDiagCtrlList( newlist, ctrl, list, presparams ) );
 }
 
 extern FullDiagCtrlListOS2 * SemOS2AddDiagCtrlList( FullDiagCtrlListOS2 * list,
-                    FullDialogBoxControlOS2 * ctrl, DataElemList * dataList )
+                    FullDialogBoxControlOS2 * ctrl, DataElemList * dataList,
+                    PresParamListOS2 * presparams )
 /*****************************************************************************/
 {
     if( ctrl != NULL ) {
         ctrl->dataListHead = dataList;
+//        ctrl->presParams   = presparams;
         ResAddLLItemAtEnd( (void **) &(list->head), (void **) &(list->tail), ctrl );
         list->numctrls++;
     }
@@ -209,8 +174,9 @@ extern FullDialogBoxControlOS2 * SemOS2InitDiagCtrl( void )
 #define DEF_VALUESET         (OS2_WS_VISIBLE|OS2_WS_TABSTOP)
 
 extern FullDialogBoxControlOS2 * SemOS2NewDiagCtrl( uint_8 token,
-                                    FullDiagCtrlOptionsOS2 opts )
-/***************************************************************/
+                                    FullDiagCtrlOptionsOS2 opts,
+                                    PresParamListOS2 * presparams )
+/*****************************************************************/
 {
     FullDialogBoxControlOS2 *   newctrl;
     uint_32                     style_mask; /* for the style of the control */
@@ -317,12 +283,34 @@ extern FullDialogBoxControlOS2 * SemOS2NewDiagCtrl( uint_8 token,
     newctrl->ctrl.Style   = style;
     /* ExtraBytes is 0 for all predefined controls */
     newctrl->ctrl.ExtraBytes = 0;
+    newctrl->presParams      = presparams;
 
     return( newctrl );
 } /* SemOS2NewDiagCtrl */
 
+
+static void SemOS2FreePresParamList( PresParamListOS2 *list )
+/***********************************************************/
+{
+    PresParamsOS2       *presparam;
+    PresParamsOS2       *currparam;
+
+    if( list == NULL )
+        return;
+
+    presparam = list->head;
+    while( presparam != NULL ) {
+        RcMemFree( presparam->Name );
+        SemFreeDataElemList( presparam->dataList );
+        currparam = presparam;
+        presparam = presparam->next;
+        RcMemFree( currparam );
+    }
+    RcMemFree( list );
+}
+
 static void SemOS2FreeDiagCtrlList( FullDiagCtrlListOS2 * list )
-/********************************************************/
+/**************************************************************/
 {
     FullDialogBoxControlOS2 * ctrl;
     FullDialogBoxControlOS2 * oldctrl;
@@ -343,6 +331,7 @@ static void SemOS2FreeDiagCtrlList( FullDiagCtrlListOS2 * list )
             SemOS2FreeDiagCtrlList( ctrl->children );
 
         SemFreeDataElemList( ctrl->dataListHead );
+        SemOS2FreePresParamList( ctrl->presParams );
 
         ctrl = ctrl->next;
 
@@ -368,6 +357,113 @@ static uint_16 SemOS2CountBytes( DataElemList *list )
             }
         }
     }
+
+    return( bytes );
+}
+
+static uint_16 SemOS2CountPresParams( PresParamListOS2 *list )
+/************************************************************/
+{
+    PresParamsOS2       *presparam;
+    DataElemList        *travptr;
+    uint_16             bytes = 0;
+    int                 i;
+
+    if( list == NULL )
+        return 0;
+
+    presparam = list->head;
+
+    for( presparam = list->head; presparam != NULL; presparam = presparam->next ) {
+        int     parmsize = 0;
+        bytes += 4; // Presparam ID or name length
+        if( !(presparam->Name->ord.fFlag == 0xFF) )         // Presparam has name
+            bytes += strlen( presparam->Name->name ) + 1 + 8;
+
+        bytes += 4; // Size of presparam data that follow
+        for( travptr = presparam->dataList; travptr != NULL; travptr = travptr->next ) {
+            for( i = 0; i < travptr->count; i++ ) {
+                if( travptr->data[i].IsString ) {
+                    parmsize += travptr->data[i].StrLen + 1;
+                } else {
+                    parmsize += 4;  // Data elements are ULONGs
+                }
+            }
+        }
+        bytes += parmsize;
+        presparam->size = parmsize;
+    }
+    list->size = bytes;
+
+    return( bytes + 4 );    // Add an ULONG for presparams size
+}
+
+static uint_16 SemOS2DumpPresParams( char *ptr, PresParamListOS2 *list )
+/**********************************************************************/
+{
+    PresParamsOS2       *presparam;
+    DataElemList        *travptr;
+    uint_16             bytes = 0;
+    uint_32             *data;
+    int                 i;
+    int                 len;
+
+
+    if( list == NULL )
+        return 0;
+
+    // Total size of presparams
+    data  = (uint_32 *)ptr;
+    *data = list->size;
+    bytes = 4;
+    ptr  += 4;
+
+    presparam = list->head;
+
+    for( presparam = list->head; presparam != NULL; presparam = presparam->next ) {
+        // Presparam ID or name length
+        if( !(presparam->Name->ord.fFlag == 0xFF) ) {       // Presparam has name
+            len     = strlen( presparam->Name->name ) + 1;
+            data    = (uint_32 *)ptr;
+            *data++ = 0;    // First ULONG is 0 to indicate this isn't numeric ID
+            *data   = len;  // Next is string len
+            ptr    += 8;
+            strcpy( ptr, presparam->Name->name );
+            ptr    += len;
+            data    = (uint_32 *)ptr;
+            *data   = -1;   // Not sure what this is
+            ptr    += 4;
+            bytes  += len + 12;
+        } else {
+            data   = (uint_32 *)ptr;
+            *data  = presparam->Name->ord.wOrdinalID;
+            ptr   += 4;
+            bytes += 4;
+        }
+
+        // Following is the size of presparam data
+        data   = (uint_32 *)ptr;
+        *data  = presparam->size;
+        ptr   += 4;
+        bytes += 4;
+
+        for( travptr = presparam->dataList; travptr != NULL; travptr = travptr->next ) {
+            for( i = 0; i < travptr->count; i++ ) {
+                if( travptr->data[i].IsString ) {
+                    len    = travptr->data[i].StrLen + 1;
+                    strncpy( ptr, travptr->data[i].Item.String, len ); // String is next
+                    ptr   += len;
+                    bytes += len;
+                } else {
+                    data   = (uint_32 *)ptr;
+                    *data  = travptr->data[i].Item.Num;
+                    ptr   += 4;
+                    bytes += 4;         // Data elements are ULONGs
+                }
+            }
+        }
+    }
+    list->size = bytes;
 
     return( bytes );
 }
@@ -401,7 +497,7 @@ static uint_16 SemOS2DumpCtlData( char *ptr, DataElemList *list )
 }
 
 static int SemOS2CalcControlSize( FullDiagCtrlListOS2 *ctrls )
-/***************************************************************/
+/************************************************************/
 {
     FullDialogBoxControlOS2 *ctrl;
     DialogBoxControl        *control;
@@ -420,10 +516,9 @@ static int SemOS2CalcControlSize( FullDiagCtrlListOS2 *ctrls )
         else
             size += 1;
 
-        // TODO: PRESPARAMS
-
         size += control->ExtraBytes;
         size += SemOS2CountBytes( ctrl->dataListHead );
+        size += SemOS2CountPresParams( ctrl->presParams );
 
         if( ctrl->children != NULL )        // Add size of all children
             size += SemOS2CalcControlSize( ctrl->children );
@@ -473,8 +568,6 @@ static char *SemOS2BuildTemplateArray( char *ptr, FullDiagCtrlListOS2 *ctrls )
         }
         else
             tmpl->cchText = 0;
-
-        // TODO: PRESPARAMS
 
         ctrl->tmpl = tmpl;  // Save the pointer to DLGTITEM so we can update it later
 
@@ -533,8 +626,6 @@ static char *SemOS2DumpTemplateData( char *base, char *ptr,
             ptr++;
         }
 
-        // TODO: PRESPARAMS
-
         // Write out class data if provided
         if( control->ExtraBytes ) {
             memcpy( ptr, &ctrl->framectl, sizeof( uint_32 ) );
@@ -548,6 +639,11 @@ static char *SemOS2DumpTemplateData( char *base, char *ptr,
                 tmpl->offCtlData = ptr - base;
                 ptr += SemOS2DumpCtlData( ptr, ctrl->dataListHead );
             }
+        }
+
+        if( ctrl->presParams ) {
+            tmpl->offPresParams = ptr - base;
+            ptr += SemOS2DumpPresParams( ptr, ctrl->presParams );
         }
 
         if( ctrl->children != NULL )    // Process all children
@@ -643,8 +739,9 @@ extern FullDialogBoxControlOS2 * SemOS2SetControlData( ResNameOrOrdinal *name,
 }
 
 extern FullDialogBoxControlOS2 * SemOS2SetWindowData( FullDiagCtrlOptionsOS2 opts,
-                    IntMask framectl, FullDiagCtrlListOS2 * childctls )
-/**********************************************************************************/
+                    IntMask framectl, PresParamListOS2 * presparams,
+                    FullDiagCtrlListOS2 * childctls )
+/*********************************************************************************/
 {
     FullDialogBoxControlOS2 *control;
     uint_32                 style;
@@ -667,6 +764,7 @@ extern FullDialogBoxControlOS2 * SemOS2SetWindowData( FullDiagCtrlOptionsOS2 opt
     control->children        = childctls;
     control->ctrl.ExtraBytes = 4;   // Frame control data
     control->framectl        = framectl.Value;
+    control->presParams      = presparams;
 
     return( control );
 }
@@ -697,3 +795,27 @@ OutputWriteError:
     RcMemFree( filename );
     return;
 }
+
+extern PresParamListOS2 * SemOS2NewPresParamList( PresParamsOS2 presparam )
+/*************************************************************************/
+{
+    PresParamListOS2 *  newlist;
+
+    newlist = RcMemMalloc( sizeof( PresParamListOS2 ) );
+    newlist->head = NULL;
+    newlist->tail = NULL;
+    return( SemOS2AppendPresParam( newlist, presparam ) );
+}
+
+extern PresParamListOS2 * SemOS2AppendPresParam( PresParamListOS2 * list,
+                                                 PresParamsOS2 presparams )
+/*************************************************************************/
+{
+    PresParamsOS2 *     params;
+
+    params = RcMemMalloc( sizeof( PresParamsOS2 ) );
+    *params = presparams;
+    ResAddLLItemAtEnd( (void **) &(list->head), (void **) &(list->tail), params );
+    return( list );
+}
+

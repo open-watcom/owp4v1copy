@@ -195,6 +195,8 @@
 %type <diagctrl>        dialog-stmt
 %type <diagctrlopts>    cntl-text-options
 %type <diagctrlopts>    cntl-options
+%type <presparams>      presparam-stmt
+%type <presparamlist>   presparam-list
 %type <diagctrl>        autocheckbox-stmt
 %type <diagctrl>        autoradiobutton-stmt
 %type <diagctrl>        checkbox-stmt
@@ -217,6 +219,7 @@
 %type <diagctrl>        icon-stmt
 %type <diagctrl>        control-stmt
 %type <nameorord>       control-name
+%type <nameorord>       presparam-name
 %type <diagctrlopts>    icon-parms
 %type <integral>        cntl-id
 %type <resid>           cntl-text
@@ -598,10 +601,33 @@ rcdata-resource
         }
     | Y_RCDATA name-id resource-options user-defined-data
         {
-            SemCheckMemFlags( &($3), 0, MEMFLAG_DISCARDABLE|MEMFLAG_MOVEABLE,
+            SemCheckMemFlags( &($3), 0, MEMFLAG_DISCARDABLE | MEMFLAG_MOVEABLE,
                     MEMFLAG_PURE );
             SemAddResourceFree( $2, WResIDFromNum( RT_RCDATA ), $3.flags, $4 );
         }
+    ;
+
+presparam-list
+    : presparam-stmt
+        { $$ = SemOS2NewPresParamList( $1 ); }
+    | presparam-list presparam-stmt
+        { $$ = SemOS2AppendPresParam( $1, $2 ); }
+    | /* nothing */
+        { $$ = NULL; }
+    ;
+
+presparam-stmt
+    : Y_PRESPARAMS presparam-name comma-opt raw-data-items
+        {
+            $$.Name     = $2;
+            $$.dataList = $4;
+            $$.size     = 0;
+        }
+    ;
+
+presparam-name
+    : name-id
+        { $$ = WResIDToNameOrOrd( $1 ); RcMemFree( $1 ); }
     ;
 
 string-table-resource
@@ -1056,6 +1082,10 @@ diag-control-section
         { $$ = $2; }
     | Y_LBRACE diag-control-stmts Y_RBRACE
         { $$ = $2; }
+    | Y_BEGIN Y_END
+        { $$ = NULL; }
+    | Y_LBRACE Y_RBRACE
+        { $$ = NULL; }
     ;
 
 diag-data-elements
@@ -1066,9 +1096,9 @@ diag-data-elements
 
 diag-control-stmts
     : diag-control-stmt diag-data-elements
-        { $$ = SemOS2NewDiagCtrlList( $1, $2 ); }
+        { $$ = SemOS2NewDiagCtrlList( $1, $2, NULL ); }
     | diag-control-stmts diag-control-stmt diag-data-elements
-        { $$ = SemOS2AddDiagCtrlList( $1, $2, $3 ); }
+        { $$ = SemOS2AddDiagCtrlList( $1, $2, $3, NULL ); }
     ;
 
 diag-control-stmt
@@ -1139,105 +1169,105 @@ cntl-id
     ;
 
 autocheckbox-stmt
-    : Y_AUTOCHECKBOX cntl-text-options
-        { $$ = SemOS2NewDiagCtrl( Y_AUTOCHECKBOX, $2 ); }
+    : Y_AUTOCHECKBOX cntl-text-options presparam-list
+        { $$ = SemOS2NewDiagCtrl( Y_AUTOCHECKBOX, $2, $3 ); }
     ;
 
 autoradiobutton-stmt
-    : Y_AUTORADIOBUTTON cntl-text-options
-        { $$ = SemOS2NewDiagCtrl( Y_AUTORADIOBUTTON, $2 ); }
+    : Y_AUTORADIOBUTTON cntl-text-options presparam-list
+        { $$ = SemOS2NewDiagCtrl( Y_AUTORADIOBUTTON, $2, $3 ); }
     ;
 
 checkbox-stmt
-    : Y_CHECKBOX cntl-text-options
-        { $$ = SemOS2NewDiagCtrl( Y_CHECKBOX, $2 ); }
+    : Y_CHECKBOX cntl-text-options presparam-list
+        { $$ = SemOS2NewDiagCtrl( Y_CHECKBOX, $2, $3 ); }
     ;
 
 combobox-stmt
-    : Y_COMBOBOX cntl-text-options
-        { $$ = SemOS2NewDiagCtrl( Y_COMBOBOX, $2 ); }
+    : Y_COMBOBOX cntl-text-options presparam-list
+        { $$ = SemOS2NewDiagCtrl( Y_COMBOBOX, $2, $3 ); }
     ;
 
 container-stmt
-    : Y_CONTAINER cntl-options
-        { $$ = SemOS2NewDiagCtrl( Y_CONTAINER, $2 ); }
+    : Y_CONTAINER cntl-options presparam-list
+        { $$ = SemOS2NewDiagCtrl( Y_CONTAINER, $2, $3 ); }
     ;
 
 ctext-stmt
-    : Y_CTEXT cntl-text-options
-        { $$ = SemOS2NewDiagCtrl( Y_CTEXT, $2 ); }
+    : Y_CTEXT cntl-text-options presparam-list
+        { $$ = SemOS2NewDiagCtrl( Y_CTEXT, $2, $3 ); }
     ;
 
 defpushbutton-stmt
-    : Y_DEFPUSHBUTTON cntl-text-options
-        { $$ = SemOS2NewDiagCtrl( Y_DEFPUSHBUTTON, $2 ); }
+    : Y_DEFPUSHBUTTON cntl-text-options presparam-list
+        { $$ = SemOS2NewDiagCtrl( Y_DEFPUSHBUTTON, $2, $3 ); }
     ;
 
 edittext-stmt
-    : Y_EDITTEXT cntl-text-options
-        { $$ = SemOS2NewDiagCtrl( Y_EDITTEXT, $2 ); }
-    | Y_ENTRYFIELD cntl-text-options
-        { $$ = SemOS2NewDiagCtrl( Y_EDITTEXT, $2 ); }
+    : Y_EDITTEXT cntl-text-options presparam-list
+        { $$ = SemOS2NewDiagCtrl( Y_EDITTEXT, $2, $3 ); }
+    | Y_ENTRYFIELD cntl-text-options presparam-list
+        { $$ = SemOS2NewDiagCtrl( Y_EDITTEXT, $2, $3 ); }
     ;
 
 groupbox-stmt
-    : Y_GROUPBOX cntl-text-options
-        { $$ = SemOS2NewDiagCtrl( Y_GROUPBOX, $2 ); }
+    : Y_GROUPBOX cntl-text-options presparam-list
+        { $$ = SemOS2NewDiagCtrl( Y_GROUPBOX, $2, $3 ); }
     ;
 
 listbox-stmt
-    : Y_LISTBOX cntl-options
-        { $$ = SemOS2NewDiagCtrl( Y_LISTBOX, $2 ); }
+    : Y_LISTBOX cntl-options presparam-list
+        { $$ = SemOS2NewDiagCtrl( Y_LISTBOX, $2, $3 ); }
     ;
 
 ltext-stmt
-    : Y_LTEXT cntl-text-options
-        { $$ = SemOS2NewDiagCtrl( Y_LTEXT, $2 ); }
+    : Y_LTEXT cntl-text-options presparam-list
+        { $$ = SemOS2NewDiagCtrl( Y_LTEXT, $2, $3 ); }
     ;
 
 mle-stmt
-    : Y_MLE cntl-text-options
-        { $$ = SemOS2NewDiagCtrl( Y_MLE, $2 ); }
+    : Y_MLE cntl-text-options presparam-list
+        { $$ = SemOS2NewDiagCtrl( Y_MLE, $2, $3 ); }
     ;
 
 notebook-stmt
-    : Y_NOTEBOOK cntl-options
-        { $$ = SemOS2NewDiagCtrl( Y_NOTEBOOK, $2 ); }
+    : Y_NOTEBOOK cntl-options presparam-list
+        { $$ = SemOS2NewDiagCtrl( Y_NOTEBOOK, $2, $3 ); }
     ;
 
 pushbutton-stmt
-    : Y_PUSHBUTTON cntl-text-options
-        { $$ = SemOS2NewDiagCtrl( Y_PUSHBUTTON, $2 ); }
+    : Y_PUSHBUTTON cntl-text-options presparam-list
+        { $$ = SemOS2NewDiagCtrl( Y_PUSHBUTTON, $2, $3 ); }
     ;
 
 radiobutton-stmt
-    : Y_RADIOBUTTON cntl-text-options
-        { $$ = SemOS2NewDiagCtrl( Y_RADIOBUTTON, $2 ); }
+    : Y_RADIOBUTTON cntl-text-options presparam-list
+        { $$ = SemOS2NewDiagCtrl( Y_RADIOBUTTON, $2, $3 ); }
     ;
 
 rtext-stmt
-    : Y_RTEXT cntl-text-options
-        { $$ = SemOS2NewDiagCtrl( Y_RTEXT, $2 ); }
+    : Y_RTEXT cntl-text-options presparam-list
+        { $$ = SemOS2NewDiagCtrl( Y_RTEXT, $2, $3 ); }
     ;
 
 slider-stmt
-    : Y_SLIDER cntl-options
-        { $$ = SemOS2NewDiagCtrl( Y_SLIDER, $2 ); }
+    : Y_SLIDER cntl-options presparam-list
+        { $$ = SemOS2NewDiagCtrl( Y_SLIDER, $2, $3 ); }
     ;
 
 spinbutton-stmt
-    : Y_SPINBUTTON cntl-options
-        { $$ = SemOS2NewDiagCtrl( Y_SPINBUTTON, $2 ); }
+    : Y_SPINBUTTON cntl-options presparam-list
+        { $$ = SemOS2NewDiagCtrl( Y_SPINBUTTON, $2, $3 ); }
     ;
 
 valueset-stmt
-    : Y_VALUESET cntl-options
-        { $$ = SemOS2NewDiagCtrl( Y_VALUESET, $2 ); }
+    : Y_VALUESET cntl-options presparam-list
+        { $$ = SemOS2NewDiagCtrl( Y_VALUESET, $2, $3 ); }
     ;
 
 icon-stmt
     : Y_ICON control-name comma-opt cntl-id comma-opt icon-parms
-        { $6.Text = $2; $6.ID = $4; $$ = SemOS2NewDiagCtrl( Y_ICON, $6 ); }
+        { $6.Text = $2; $6.ID = $4; $$ = SemOS2NewDiagCtrl( Y_ICON, $6, NULL ); }
     ;
 
 control-name
@@ -1291,23 +1321,23 @@ cntl-text
     ;
 
 dialog-stmt
-    : Y_DIALOG cntl-text-options
+    : Y_DIALOG cntl-text-options presparam-list
         {
             IntMask mask = {0};
-            $$ = SemOS2SetWindowData( $2, mask, NULL );
+            $$ = SemOS2SetWindowData( $2, mask, $3, NULL );
         }
-    | Y_DIALOG cntl-text-options Y_COMMA frame-style
+    | Y_DIALOG cntl-text-options Y_COMMA frame-style presparam-list
         {
-            $$ = SemOS2SetWindowData( $2, $4, NULL );
+            $$ = SemOS2SetWindowData( $2, $4, $5, NULL );
         }
-    | Y_DIALOG cntl-text-options diag-control-section
+    | Y_DIALOG cntl-text-options presparam-list diag-control-section
         {
             IntMask mask = {0};
-            $$ = SemOS2SetWindowData( $2, mask, $3 );
+            $$ = SemOS2SetWindowData( $2, mask, $3, $4 );
         }
-    | Y_DIALOG cntl-text-options Y_COMMA frame-style diag-control-section
+    | Y_DIALOG cntl-text-options Y_COMMA frame-style presparam-list diag-control-section
         {
-            $$ = SemOS2SetWindowData( $2, $4, $5 );
+            $$ = SemOS2SetWindowData( $2, $4, $5, $6 );
         }
     ;
 

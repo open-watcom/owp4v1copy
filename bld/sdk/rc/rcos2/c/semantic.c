@@ -597,6 +597,9 @@ extern char *SemTokenToString( uint_8 token )
     case Y_PRELOAD:
         return( "PRELOAD" );
         break;
+    case Y_PRESPARAMS:
+        return( "PRESPARAMS" );
+        break;
     case Y_PURE:
         return( "PURE" );
         break;

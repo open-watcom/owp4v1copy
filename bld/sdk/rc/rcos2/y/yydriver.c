@@ -78,6 +78,8 @@ typedef union {
     FullDialogBoxControlOS2 *   diagctrl;
     FullDiagCtrlListOS2 *       diagctrllist;
     FullDiagCtrlOptionsOS2      diagctrlopts;
+    PresParamsOS2               presparams;
+    PresParamListOS2 *          presparamlist;
     StringItem                  stritem;
     FullStringTable *           strtable;
     RawDataItem                 rawitem;
@@ -90,7 +92,6 @@ typedef union {
     VerFixedInfo *              verinforoot;
     YYCHKTYPE                   token;
     WResLangType                langinfo;
-    DlgHelpId                   dlghelpid;
     DataElemList *              dataelem;
     ToolBar *                   toolbar;
 } YYSTYPE;

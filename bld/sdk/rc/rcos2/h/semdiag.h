@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Semantic actions for processing menu resources.
+* Description:  Semantic actions for processing dialog resources.
 *
 ****************************************************************************/
 
@@ -120,11 +120,26 @@ typedef struct DlgHelpId {
     char        HelpIdDefined;
 } DlgHelpId;
 
+typedef struct PresParamsOS2 {
+    struct PresParamsOS2 *  next;
+    struct PresParamsOS2 *  prev;
+    ResNameOrOrdinal *      Name;
+    DataElemList *          dataList;
+    uint_32                 size;
+} PresParamsOS2;
+
+typedef struct PresParamListOS2 {
+    PresParamsOS2 *         head;
+    PresParamsOS2 *         tail;
+    uint_32                 size;
+} PresParamListOS2;
+
 typedef struct FullDialogBoxControlOS2 {
     struct FullDialogBoxControlOS2 * next;
     struct FullDialogBoxControlOS2 * prev;
     DialogBoxControl                 ctrl;
     DataElemList *                   dataListHead;
+    PresParamListOS2 *               presParams;
     struct FullDiagCtrlListOS2 *     children;
     DialogTemplateItemOS2 *          tmpl;
     uint_32                          framectl;
@@ -161,16 +176,19 @@ extern FullDialogBoxControl * SemSetControlData( IntMask, unsigned long,
          DialogSizeInfo, WResID *, ResNameOrOrdinal *, uint_32, DlgHelpId * );
 
 extern FullDiagCtrlListOS2 * SemOS2NewDiagCtrlList( FullDialogBoxControlOS2 * ctrl,
-                    DataElemList * );
+                    DataElemList *, PresParamListOS2 * );
 extern FullDiagCtrlListOS2 * SemOS2AddDiagCtrlList( FullDiagCtrlListOS2 * list,
-                    FullDialogBoxControlOS2 * ctrl, DataElemList * );
+                    FullDialogBoxControlOS2 * ctrl, DataElemList *, PresParamListOS2 * );
 extern FullDialogBoxControlOS2 * SemOS2NewDiagCtrl( uint_8 token,
-                    FullDiagCtrlOptionsOS2 opts );
+                    FullDiagCtrlOptionsOS2 opts, PresParamListOS2 * );
 extern FullDialogBoxControlOS2 * SemOS2SetWindowData( FullDiagCtrlOptionsOS2,
-                    IntMask, FullDiagCtrlListOS2 * );
+                    IntMask, PresParamListOS2 *, FullDiagCtrlListOS2 * );
 extern FullDialogBoxControlOS2 * SemOS2SetControlData( ResNameOrOrdinal *name, uint_32 id,
                     DialogSizeInfo size, ResNameOrOrdinal * ctlclass,
                     IntMask style, FullDiagCtrlListOS2 * );
+extern PresParamListOS2 * SemOS2NewPresParamList( PresParamsOS2 presparam );
+extern PresParamListOS2 * SemOS2AppendPresParam( PresParamListOS2 * list,
+                    PresParamsOS2 presparam );
 
 extern void SemOS2WriteDialogTemplate( WResID * name, ResMemFlags,
                     FullDiagCtrlListOS2 * );
