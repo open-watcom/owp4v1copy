@@ -256,9 +256,6 @@ static char *ScanFName( char *end, int len )
         if( !quoted ) {
             if( *end == ' '  ) break;
             if( *end == '\t'  ) break;                  /* 16-mar-91 */
-#ifndef __UNIX__
-            if( *end == Switch_Chars[1] ) break;
-#endif
         } else if( *end == '"'  ) {
             quoted = 0;
         }
@@ -357,12 +354,12 @@ static  int  Parse( void )
                 if( *end == '\0' ) break;
                 if( *end == ' '  ) break;
                 if( *end == '\t'  ) break;              /* 16-mar-91 */
-#ifndef __UNIX__
-                if( *end == Switch_Chars[1] ) break;
-#endif
                 if( opt == '-'  ||  opt == Switch_Chars[1] ) {
                     /* if we are processing a switch, stop at a '-' */
                     if( *end == '-' ) break;
+#ifndef __UNIX__
+                    if( *end == Switch_Chars[1] ) break;
+#endif
                 }
                 ++end;
             }
