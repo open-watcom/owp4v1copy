@@ -83,7 +83,7 @@ extern unsigned short MyCS( void );
 extern unsigned short MyFlags( void );
 
 
-typedef struct pblock {
+typedef _Packed struct pblock {
     addr_seg    envstring;
     addr32_ptr  commandln;
     addr32_ptr  fcb01;

@@ -73,7 +73,7 @@ void NullOvlHdlr()
 
 #define OVL_SIGNATURE 0x2112
 
-struct ovl_header {
+_Packed struct ovl_header {
     unsigned_16 signature;
     void        (far *hook)();
     unsigned_16 handler_offset;

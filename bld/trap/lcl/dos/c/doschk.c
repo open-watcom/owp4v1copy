@@ -34,7 +34,7 @@
 #include "tinyio.h"
 #include "trpimp.h"
 
-typedef struct {
+typedef _Packed struct {
     char        chain;  /* 'M' memory block, 'Z' is last in chain */
     unsigned_16 owner;  /* 0x0000 ==> free, otherwise psp address */
     unsigned_16 size;   /* in paragraphs, not including header  */
