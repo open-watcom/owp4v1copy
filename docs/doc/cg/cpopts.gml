@@ -533,6 +533,11 @@ remove default library information
 remove file dependency information
 :optref refid='SWzld'.
 .do end
+.if &e'&$SWzlf eq 1 .do begin
+.note zlf
+add default library information to object files
+:optref refid='SWzlf'.
+.do end
 .if &e'&$SWzls eq 1 .do begin
 .note zls
 remove automatically generated symbols references
@@ -3058,6 +3063,14 @@ to determine that this file needs to be recompiled if any of the
 referenced files has been modified since the object file was created.
 This option causes the compiler to not emit this information into the
 object file.
+.do end
+.*
+.if &e'&$SWzlf eq 1 .do begin
+:OPT refid='SWzlf' name='zlf'.&optdag.
+.ix 'options' 'zlf'
+The "zlf" option tells the compilers to emit references for all default
+library information into the compiled object file. See also the options 
+"zl", "zld" and "zls".
 .do end
 .*
 .if &e'&$SWzls eq 1 .do begin

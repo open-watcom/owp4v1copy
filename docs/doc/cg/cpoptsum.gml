@@ -899,6 +899,11 @@ file
 suppress generation of file dependency information in object file
 :optref refid='SWzld'.
 .*
+.note zlf&optdag.
+:CMT .ix 'options' 'zlf'
+add default library information to object files
+:optref refid='SWzlf'
+.*
 .note zls&optdag.
 :CMT .ix 'options' 'zls'
 remove automatically inserted symbols (such as runtime library references)

@@ -222,6 +222,7 @@ Options:
 -zku=<num>    load UNICODE translate table for specified code page
 -zl           remove default library information
 -zld          remove file dependency information
+-zlf          add default library information to object files
 -zls          remove automatically inserted symbols
 -zm           place each function in separate segment
 -zp=<num>     pack structure members with alignment {1,2,4,8,16}
