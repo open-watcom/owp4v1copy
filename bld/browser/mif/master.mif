@@ -14,6 +14,7 @@ sys_windowed = 1
 !include deftarg.mif
 
 !include $(dwarf_dir)/dr/client.mif
+!include $(wclass_dir)/mif/client.mif
 
 .c: ../cpp;../merge/c;$(posix_dir)/misc;$(lib_misc_dir)/c
 .cpp: ../cpp;../brg/cpp
@@ -38,21 +39,21 @@ ext = mbr
 mbr_files = $+$(template)$-
 !endif
 
-inc_dirs_nt  = $(wclass_dir)/win/hpp;$(guitools_dir)/win95;
-inc_dirs_win = $(wclass_dir)/win/hpp;$(guitools_dir)/win;
-inc_dirs_dos = $(wclass_dir)/dos/hpp;$(guitools_dir)/os2;
-inc_dirs_os2 = $(wclass_dir)/pm/hpp;$(guitools_dir)/os2;
+inc_dirs_nt  = $(guitools_dir)/win95
+inc_dirs_win = $(guitools_dir)/win
+inc_dirs_dos = $(guitools_dir)/os2
+inc_dirs_os2 = $(guitools_dir)/os2
 
-inc_dirs = ../h;../brg/h;../gen;$(wclass_dir)/hpp;$(gui_dir)/h;$(dwarf_dir)/dr/h;$(posix_dir)/h;$(editdll_dir)
+inc_dirs = ../h;../brg/h;../gen;$(wclass_inc_dirs);$(dwarf_dir)/dr/h;$(posix_dir)/h;$(editdll_dir)
 
 .before:
     @set include=$(inc_path)
 
-extra_c_flags = -w4
+extra_c_flags_i86 = -zc -zm
 !ifdef DBG
-extra_c_flags_i86 = -zc-zm-zw
+extra_c_flags_i86 += -zw
 !else
-extra_c_flags_i86 = -zc-zm-zW
+extra_c_flags_i86 += -zW
 extra_c_flags_386_os2 = -dNDEBUG=1
 !endif
 !ifndef NOASSERT
@@ -64,7 +65,7 @@ extra_c_flags   = -dSTANDALONE_RX=1
 !ifeq release 0
 extra_c_flags   += -dDEBUG=1 -dDEBUG_ASSERT=1 -dDEBUGTREE=1
 !endif
-extra_cpp_flags = -ew-xs-dNOPERSIST=1
+extra_cpp_flags = -ew -xs -dNOPERSIST=1
 !ifdef gen_browse_file
 extra_cpp_flags += -db
 !endif
@@ -90,14 +91,14 @@ rc_file_os2 = ../res/wbrwpm.rc
 rc_file     = $(rc_file_$(host_OS))
 
 #linker
-LIBS_win    = $(gui_dir)/win/wini86/gui.lib $(wclass_dir)/win/obj/wclass.lib
-LIBS_nt_axp = $(gui_dir)/win/ntaxp/gui.lib $(wclass_dir)/win/axp/wclass.lib
-LIBS_nt_386 = $(gui_dir)/win/nt386/gui.lib $(wclass_dir)/win/nt/wclass.lib
+LIBS_win    = $(gui_dir)/win/wini86/gui.lib
+LIBS_nt_axp = $(gui_dir)/win/ntaxp/gui.lib
+LIBS_nt_386 = $(gui_dir)/win/nt386/gui.lib
 LIBS_nt     = $(LIBS_NT_$(HOST_CPU))
-LIBS_os2    = $(gui_dir)/win/os2386/gui.lib $(wclass_dir)/pm/obj32/wclass.lib
+LIBS_os2    = $(gui_dir)/win/os2386/gui.lib
 LIBS_dos    = $(gui_dir)/ui/dos386/gui.lib $(ui_dir)/dos/dos386/ui.lib
 
-LIBS    = $(LIBS_$(host_OS)) $(dwarf_dr_lib)
+LIBS    = $(LIBS_$(host_OS)) $(dwarf_dr_lib) $(wclass_lib)
 
 lflags_win_i86  = sys windows font mem
 lflags_dos_386  = sys pharlap
@@ -107,7 +108,7 @@ extra_l_flags   = op stack=16k,map
 extra_l_flags   += op show,art,static
 !endif
 
-extra_l_flags_dos = op stub=$(pharlap)stub386.exe
+extra_l_flags_dos = op stub=$(pharlap)stub386.exe op eliminate
 extra_l_flags_win = op packdata=48k seg CLASS CODE FIXED, CLASS FAR_DATA FIXED, CLASS DATA FIXED
 extra_l_flags_nt_386 =
 extra_l_flags_nt_axp = op undefsok
