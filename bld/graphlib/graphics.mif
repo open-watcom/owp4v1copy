@@ -155,7 +155,7 @@ text_seg_name = GRAPH_TEXT
 !ifeq _qnx q
 inc_path = ..\h;$(build_root)\hdr\qnx;$(build_root)\watcom\h;$(%watcom)\qh;$(%watcom)\h
 !else
-inc_path = ..\h;$(build_root)\hdr\dos;$(build_root)\watcom\h;$(%watcom)\h
+inc_path = ..\h;..\..\h;$(build_root)\hdr\dos;$(build_root)\watcom\h;$(%watcom)\h
 !endif
 
 !ifdef _WIN
