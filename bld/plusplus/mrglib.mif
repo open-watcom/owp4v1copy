@@ -17,13 +17,18 @@ lib_flags = -b -c -n -t
 lib_flags += -s
 !endif
 !endif
+
 !ifdef on_JWW_machine
-lib_flags += -p=64
+lib_page_size = -p=64
 !else ifndef on_build_machine
-lib_flags += -p=64
+lib_page_size = -p=64
 !else
-lib_flags += -p=16
 !endif
+!ifndef lib_page_size
+lib_page_size = -p=16
+!endif
+lib_flags += $(lib_page_size)
+
 !ifeq linkage dynamic
 export_name=export.def
 exportx_name=exportx.def

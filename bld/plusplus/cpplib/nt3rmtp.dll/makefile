@@ -3,6 +3,7 @@ host_CPU = 386
 fs_prefix = nt
 suffix = mt3r
 subdir = 3rmtp.dll
+lib_page_size = -p=32
 linkage = dynamic
 profile = 1
 target_lib = $(prefix)$(suffix).lib
