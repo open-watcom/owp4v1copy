@@ -193,6 +193,10 @@ static  ULONG   __syscall xcpt_handler( PEXCEPTIONREPORTRECORD pxcpt,
                     pxcpt->ExceptionInfo[0] != XCPT_SIGNAL_BREAK ) {
                     continue;
                 }
+		if( sig == SIGTERM &&
+		    pxcpt->ExceptionInfo[0] != XCPT_SIGNAL_KILLPROC ) {
+		    continue;
+		}
                 if( (_RWD_sigtab[sig].func == SIG_IGN) ) {
                     return( XCPT_CONTINUE_EXECUTION );
                 }
@@ -239,11 +243,6 @@ _WCRTLINK void (*signal( int sig, void (*func)(int) ))( int ) {
                 /* enable all interrupts, except precision exception */
                 /* - precision exceptions are very common */
                 _control87( 0, ( MCW_EM & ~EM_PRECISION ) | 0x80 );
-            }
-            if( sig == SIGBREAK ) {
-                // map SIGBREAK to SIGINT since OS/2 reports XCPT_SIGNAL_INTR
-                // when Ctrl/Break is pressed
-                sig = SIGINT;
             }
             if( __XCPTHANDLER->prev_structure == NULL ) {
                 DosSetExceptionHandler( __XCPTHANDLER );
