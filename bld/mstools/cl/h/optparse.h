@@ -37,11 +37,11 @@
 
 
 #if defined(__TARGET_386__)
-    #include "optdata.386"
+    #include "optp386h.gh"
 #elif defined(__TARGET_AXP__)
-    #include "optdata.axp"
+    #include "optpaxph.gh"
 #elif defined(__TARGET_PPC__)
-    #include "optdata.ppc"
+    #include "optpppch.gh"
 #else
     #error Unrecognized CPU type
 #endif

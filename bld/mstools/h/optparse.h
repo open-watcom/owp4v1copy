@@ -34,7 +34,7 @@
 #define _OPTPARSE_H
 
 
-#include "optdata.h"
+#include "optparsh.gh"
 
 
 #endif

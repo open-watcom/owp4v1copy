@@ -43,7 +43,8 @@
 #include "parse.h"
 #include "pathconv.h"
 #include "rc.h"
-#include "optparse.c"
+
+#include "optparsc.gh"
 
 
 /*
