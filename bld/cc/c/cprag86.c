@@ -1041,7 +1041,9 @@ local void GetSaveInfo( void )
 void GetAsmLine()
 {
     char        buf[256];
+    int         AsmLineNo;
 
+    AsmLineNo = TokenLine;
     CompFlags.pre_processing = 1;       // cause T_NULL token at end of line
     if( strcmp( Buffer, "_emit" ) == 0 ) {
         NextToken();                    // get numeric constant
@@ -1072,6 +1074,7 @@ void GetAsmLine()
                 strncat( buf, " ", 255 );
             NextToken();
         }
+        TokenLine = AsmLineNo;
         AsmLine( buf );
     }
     CompFlags.pre_processing = 0;       // cause T_NULL token at end of line
