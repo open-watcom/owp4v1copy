@@ -496,7 +496,7 @@ static void SkipBreakpoint( DWORD tid )
     Fir = LODWORD( con.Fir );
     newFir.u._32[0] = Fir+4;
     newFir.u._32[1] = 0;
-    con.Fir = *((CDWORDLONG *)&newFir);
+    con.Fir = *((DWORDLONG *)&newFir);
     mySetThreadContext( tid, &con );
 
 } /* SkipBreakpoint */
