@@ -253,6 +253,38 @@ extern bool ProcOne( parse_entry *entry, sep_type req, bool suicide )
     return( ret );
 }
 
+extern bool MatchOne( parse_entry *entry , sep_type req , char * match, int len )
+/*******************************************************************/
+/* recognize token out of parse table */
+{
+    char                *key;
+    char                *ptr;
+    int                 plen;
+    bool                ret = FALSE;
+
+    while( entry->keyword != NULL ) {
+        key = entry->keyword;
+        ptr = match;
+        plen = len;
+        for(;;) {
+            if( plen == 0 && !isupper( *key ) ) {
+                ret = TRUE;
+                return ( ret );
+            }
+            if( *key == '\0' || tolower( *ptr ) != tolower( *key ) ) 
+                break;
+            ptr++;
+            key++;
+            plen--;
+        }
+        /* here if this is no match */
+        entry++;
+    }
+
+    /* here if no match in table */
+    return( ret );
+}
+
 extern ord_state getatoi( unsigned_16 * pnt )
 /*******************************************/
 {

@@ -131,7 +131,7 @@ static bool NetWareSplitSymbol(char * tokenThis, int tokenLen, char ** name, int
 //	this also affects us using
 //		IMPORT x, (PREFIX), y, (PREFIX), x
 */
-static unsigned int DoWeNeedToSkipASeparator(void)
+static unsigned int DoWeNeedToSkipASeparator( bool CheckDirectives )
 {
 	char *parse;
 
@@ -159,8 +159,26 @@ static unsigned int DoWeNeedToSkipASeparator(void)
     //  always skip to the next token if the next available token is not a comma
     //  this will allow individual tokens without commas which isn't a big deal
     */
-	if(('\0' != *parse) && (',' != *parse))
-		return 1;
+	if(('\0' != *parse) && (',' != *parse)){
+        /*
+        //  If the next token is __not__ a comma then we need to check that it is not a directive
+        //  before allowing the skip!
+        */	    
+        if( CheckDirectives){
+            int len = 0;
+            char * t = parse;
+            
+            while( !IS_WHITESPACE(t) ){
+                t++;
+                len++;
+            }
+            
+            if( MatchOne(Directives, SEP_NO, parse, len) ){
+    		    return 0;
+	    	}
+	    }
+	    return 1;
+	}
 
 	return 0;
 }
@@ -205,7 +223,7 @@ static bool GetNovImport( void )
 		if(FALSE == (result = SetCurrentPrefix(Token.this, Token.len)))
 			return FALSE;
 
-		Token.skipToNext = DoWeNeedToSkipASeparator();
+		Token.skipToNext = DoWeNeedToSkipASeparator( FALSE );
 
 #ifndef NDEBUG
 	    printf("Set new prefix. Skip = %d\n", Token.skipToNext);
@@ -232,7 +250,7 @@ static bool GetNovImport( void )
     sym->info |= SYM_DCE_REF;   // make sure we don't try to get rid of these.
     SetNovImportSymbol( sym );
 
-	Token.skipToNext = DoWeNeedToSkipASeparator();
+	Token.skipToNext = DoWeNeedToSkipASeparator( TRUE );
 
     return( TRUE );
 }
@@ -266,7 +284,7 @@ static bool GetNovExport( void )
 		if(FALSE == (result = SetCurrentPrefix(Token.this, Token.len)))
 			return FALSE;
 
-		Token.skipToNext = DoWeNeedToSkipASeparator();
+		Token.skipToNext = DoWeNeedToSkipASeparator( FALSE );
 		return result;
 	}
 
@@ -281,7 +299,7 @@ static bool GetNovExport( void )
 /*    AddNameTable( Token.this, Token.len, TRUE, &FmtData.u.nov.exp.export ); */
     AddNameTable( name, namelen, TRUE, &FmtData.u.nov.exp.export );
 
-	Token.skipToNext = DoWeNeedToSkipASeparator();
+	Token.skipToNext = DoWeNeedToSkipASeparator( TRUE );
 
     return( TRUE );
 }
