@@ -37,6 +37,9 @@
 #include <errno.h>
 #if defined(__NT__)
     #include <windows.h>
+#elif defined(__WINDOWS__)
+    #include <windows.h>
+    #include "tinyio.h"
 #elif defined(__OS2__)
     #include "tinyos2.h"
     #define INCL_DOSMEMMGR

@@ -40,6 +40,9 @@
 #include <string.h>
 #ifdef __NT__
     #include <windows.h>
+#elif defined(__WINDOWS__)
+    #include <windows.h>
+    #include "tinyio.h"
 #elif defined(__OS2__)
     #include "tinyos2.h"
     #include <wos2.h>
