@@ -288,10 +288,12 @@ static void SortSymbols()
     }
 
     if( NumSymbols == 0 ) {
-        FatalError( ERR_NO_SYMBOLS );
+        SortedSymbols = NULL;
+        Warning( ERR_NO_SYMBOLS );
+    } else {
+        SortedSymbols = MemAllocGlobal( NumSymbols * sizeof( SortedSymbols[0] ) );
     }
 
-    SortedSymbols = MemAllocGlobal( NumSymbols * sizeof( SortedSymbols[0] ) );
     sym_curr = SortedSymbols;
     for( file = FileTable.first; file != NULL; file = file->next ) {
         for( sym = file->first; sym != NULL; sym = sym->next ) {

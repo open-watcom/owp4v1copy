@@ -262,7 +262,7 @@ void ProcessCommands()
     DelModules();
     AddModules();
     CleanFileTab();
-    if( Options.modified ) {
+    if( Options.modified || Options.new_library ) {
         WriteNewLib();
     }
     if( Options.list_contents ) {
