@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DWARF reader interface definition.
 *
 ****************************************************************************/
 
@@ -92,6 +91,10 @@ typedef enum {
     DR_VIRTUALITY_NONE = 0,
     DR_VIRTUALITY_VIRTUAL = 1
 } dr_virtuality;
+
+typedef enum {
+    DR_HANDLE_VOID = -1     /* special handle denoting void type */
+} dr_void_handle;
 
 struct WDRRoutines {                                    /* defaults */
     /* I/O routines */

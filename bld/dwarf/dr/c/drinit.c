@@ -277,7 +277,7 @@ static void ReadCompUnits( struct dr_dbg_info *dbg )
         compunit->next = NULL;
         compunit->start = start;
         length = DWRVMReadDWord( start );
-        compunit->end          = start + length;
+        compunit->end          = start + length + sizeof( length );
         version = DWRVMReadWord( start + sizeof(unsigned_32) );
         if( version != DWARF_VERSION ) DWREXCEPT( DREXCEP_BAD_DBG_VERSION );
         abbrev_offset = DWRVMReadDWord( start + sizeof(unsigned_32) + sizeof(unsigned_16) );

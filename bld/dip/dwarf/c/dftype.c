@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Type handle support for DWARF DIP.
 *
 ****************************************************************************/
 
@@ -40,9 +39,6 @@
 #include "dfloc.h"
 #include "dfclean.h"
 
-/*
-    Stuff dealing with type handles.
-*/
 typedef struct {
     dr_handle curr;
     int       skip;
@@ -227,7 +223,7 @@ static void InitTypeHandle( imp_image_handle *ii,
     dr_array_stat   stat;
     uint_32         base_stride;
 
-    if( it->state == DF_NOT ){
+    if( it->state == DF_NOT ) {
         DRSetDebug( ii->dwarf->handle ); /* must do at each call into dwarf */
         DRGetTypeInfo( it->type, &it->typeinfo );
         it->state = DF_SET;
@@ -491,7 +487,6 @@ dip_status      DIPENTRY DIPImpTypeBase( imp_image_handle *ii,
                         imp_type_handle *it, imp_type_handle *base,
                         location_context *lc, location_list *ll )
 {
-    dip_status ret;
     dr_handle  btype;
     /*
         Given an implementation type handle, fill in 'base' with the
@@ -512,14 +507,12 @@ dip_status      DIPENTRY DIPImpTypeBase( imp_image_handle *ii,
         }
     }
     btype =  DRSkipTypeChain( base->type ); /* skip modifiers and typedefs */
-    base->type = DRGetTypeAT( btype );    /* get base type */
-    if( base->type != NULL ){
-        base->state = DF_NOT;
-        ret = DS_OK;
-    }else{
-       ret = DS_FAIL;
+    base->type = DRGetTypeAT( btype );      /* get base type */
+    if( base->type == NULL ) {
+        base->type = DR_HANDLE_VOID;        /* no type means 'void' */
     }
-    return( ret );
+    base->state = DF_NOT;
+    return( DS_OK );
 }
 
 typedef struct {
@@ -1387,4 +1380,3 @@ dip_status DIPENTRY DIPImpTypeFreeAll( imp_image_handle *ii )
     ii=ii;
     return(DS_OK);
 }
-

@@ -169,7 +169,15 @@ extern bool DRGetTypeInfo( dr_handle entry,  dr_typeinfo *info )
 
     info->acc = DR_STORE_NONE;
     info->mclass = DR_MOD_NONE;
+
     for(;;){
+        if( entry == DR_HANDLE_VOID ) {
+            info->kind = DR_TYPEK_VOID;
+            info->mclass = DR_MOD_BASE;
+            info->size = 0;
+            info->modifier.sign = FALSE;
+            return( TRUE );
+        }
         abbrev = DWRVMReadULEB128( &entry );
         abbrev = DWRLookupAbbrev( entry, abbrev );
         tag = DWRVMReadULEB128( &abbrev );
