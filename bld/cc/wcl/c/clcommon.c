@@ -269,3 +269,18 @@ int BuildQuotedFName( char *buffer, const char *path, const char *filename, cons
 
     return has_space;
 }
+
+int UnquoteFName( char *unquoted, const char *p )
+/***********************************************/
+{
+    if ( *p == '\"' ) {
+        strcpy( unquoted, p + 1 );
+        if( *unquoted && unquoted[ strlen( unquoted ) - 1 ] == '\"' ) {
+            unquoted[ strlen(unquoted) - 1 ] = 0;
+        }
+        return 1;
+    } else {
+        strcpy( unquoted, p );
+        return 0;
+    }
+}

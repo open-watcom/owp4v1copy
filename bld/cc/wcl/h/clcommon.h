@@ -97,6 +97,7 @@ void    AddName( char *, FILE * );
 char    *MakePath( char * );
 char    *GetName( char * );
 int     BuildQuotedFName( char *buffer, const char *path, const char *filename, const char *quote_char );
+int     UnquoteFName( char *unquoted, const char *p );
 
 enum {
 #undef E

@@ -270,7 +270,14 @@ static char *ScanFName( char *end, int len )
 
 static int FileExtension( char *p, char *ext )
 {
+    char        unquoted[_MAX_PATH];
     char        *dot;
+
+    /* Remove quoted from filename to make it easier to compare extension.
+     * We are here assuming that filename comes with quotes or doesn't need them.
+     */
+    UnquoteFName( unquoted, p );
+    p = unquoted;
 
     dot = NULL;
     while( *p != '\0' ) {
@@ -311,6 +318,7 @@ static  int  Parse( void )
     char        *end;
     FILE        *atfp;
     char        buffer[_MAX_PATH];
+    char        unquoted[_MAX_PATH];
     int         len;
     char        *p;
     int         wcc_option;
@@ -374,6 +382,11 @@ static  int  Parse( void )
                 end = ScanFName( end, len );
                 if( FileExtension( Word, ".lib" ) ) {
                     strcat( Libs, Libs[0] != '\0' ? "," : " " );
+
+                    /* remove quotes and change them to be compatible with wlink */
+                    UnquoteFName( unquoted, Word );
+                    BuildQuotedFName( Word, "", unquoted, "'" );
+
                     strcat( Libs, Word );
                 } else
                 if( FileExtension( Word, ".res" ) ) {
