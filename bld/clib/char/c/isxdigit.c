@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation if isxdigit().
 *
 ****************************************************************************/
 
@@ -36,13 +35,11 @@
 #include "istable.h"
 #undef  isxdigit
 
-
-_WCRTLINK int __F_NAME(isxdigit,iswxdigit)( c )
-        register INTCHAR_TYPE c;
-    {
-        if( IS_ASCII( c ) ) {
-            return( IsWhat( c ) & _XDIGT );
-        } else {
-            return( 0 );
-        }
+_WCRTLINK int __F_NAME(isxdigit,iswxdigit)( INTCHAR_TYPE c )
+{
+    if( IS_ASCII( c ) ) {
+        return( IsWhat( c ) & _XDIGT );
+    } else {
+        return( 0 );
     }
+}

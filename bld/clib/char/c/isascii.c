@@ -34,8 +34,7 @@
 #include <ctype.h>
 #undef  isascii
 
-_WCRTLINK int __F_NAME(isascii,iswascii)( c )
-    register INTCHAR_TYPE c;
+_WCRTLINK int __F_NAME(isascii,iswascii)( INTCHAR_TYPE c )
 {
     return( (unsigned)(c) <= 0x7f );
 }

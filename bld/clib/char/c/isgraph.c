@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation if isgraph().
 *
 ****************************************************************************/
 
@@ -36,13 +35,11 @@
 #include "istable.h"
 #undef  isgraph
 
-
-_WCRTLINK int __F_NAME(isgraph,iswgraph)( c )
-        register INTCHAR_TYPE c;
-    {
-        if( IS_ASCII(c) ) {
-            return( (IsWhat( c ) & (_PRINT|_SPACE)) == _PRINT );
-        } else {
-            return( 0 );
-        }
+_WCRTLINK int __F_NAME(isgraph,iswgraph)( INTCHAR_TYPE c )
+{
+    if( IS_ASCII(c) ) {
+        return( (IsWhat( c ) & (_PRINT|_SPACE)) == _PRINT );
+    } else {
+        return( 0 );
     }
+}

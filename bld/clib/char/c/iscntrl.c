@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of iscntrl().
 *
 ****************************************************************************/
 
@@ -36,13 +35,11 @@
 #include "istable.h"
 #undef  iscntrl
 
-
-_WCRTLINK int __F_NAME(iscntrl,iswcntrl)( c )
-        register INTCHAR_TYPE c;
-    {
-        if( IS_ASCII( c ) ) {
-            return( IsWhat( c ) & _CNTRL );
-        } else {
-            return( 0 );
-        }
+_WCRTLINK int __F_NAME(iscntrl,iswcntrl)( INTCHAR_TYPE c )
+{
+    if( IS_ASCII( c ) ) {
+        return( IsWhat( c ) & _CNTRL );
+    } else {
+        return( 0 );
     }
+}

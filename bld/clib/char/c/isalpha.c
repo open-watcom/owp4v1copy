@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of isalpha().
 *
 ****************************************************************************/
 
@@ -36,13 +35,11 @@
 #include "istable.h"
 #undef  isalpha
 
-
-_WCRTLINK int __F_NAME(isalpha,iswalpha)( c )
-        register INTCHAR_TYPE c;
-    {
-        if( IS_ASCII( c ) ) {
-            return( IsWhat( c ) & (_LOWER|_UPPER) );
-        } else {
-            return( 0 );
-        }
+_WCRTLINK int __F_NAME(isalpha,iswalpha)( INTCHAR_TYPE c )
+{
+    if( IS_ASCII( c ) ) {
+        return( IsWhat( c ) & (_LOWER|_UPPER) );
+    } else {
+        return( 0 );
     }
+}

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation if isspace().
 *
 ****************************************************************************/
 
@@ -36,13 +35,11 @@
 #include "istable.h"
 #undef  isspace
 
-
-_WCRTLINK int __F_NAME(isspace,iswspace)( c )
-        register INTCHAR_TYPE c;
-    {
-        if( IS_ASCII( c ) ) {
-            return( IsWhat( c ) & _SPACE );
-        } else {
-            return( 0 );
-        }
+_WCRTLINK int __F_NAME(isspace,iswspace)( INTCHAR_TYPE c )
+{
+    if( IS_ASCII( c ) ) {
+        return( IsWhat( c ) & _SPACE );
+    } else {
+        return( 0 );
     }
+}
