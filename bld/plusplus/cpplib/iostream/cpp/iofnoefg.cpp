@@ -66,3 +66,7 @@ _WPRTLINK _type_EFG_LDcvt  __EFG_LDcvt
        = (_type_EFG_LDcvt)_no_support_loaded;
 _WPRTLINK _type_EFG_fcvt   __EFG_fcvt
        = (_type_EFG_fcvt)_no_support_loaded;
+#if defined( _LONG_DOUBLE_ ) && !defined( __FPI__ )
+_WPRTLINK _type_EFG_FDLD  __EFG_FDLD
+       = (_type_EFG_FDLD)_no_support_loaded;
+#endif

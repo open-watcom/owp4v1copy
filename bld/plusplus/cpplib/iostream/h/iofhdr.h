@@ -63,11 +63,17 @@ typedef void  (*_type_EFG_cnvs2d)( char *, double * );
 typedef int   (*_type_EFG_cnvd2f)( double *, float * );
 typedef void  (*_type_EFG_LDcvt)( long_double *, CVT_INFO *, char * );
 typedef char *(*_type_EFG_fcvt)( double, int, int *, int * );
+#if defined( _LONG_DOUBLE_ ) && !defined( __FPI__ )
+typedef void  (*_type_EFG_FDLD)( double _WCNEAR *, long_double _WCNEAR * );
+#endif
 
 _WPRTLINK extern _type_EFG_cnvs2d __EFG_cnvs2d;
 _WPRTLINK extern _type_EFG_cnvd2f __EFG_cnvd2f;
 _WPRTLINK extern _type_EFG_LDcvt  __EFG_LDcvt;
 _WPRTLINK extern _type_EFG_fcvt   __EFG_fcvt;
+#if defined( _LONG_DOUBLE_ ) && !defined( __FPI__ )
+_WPRTLINK extern _type_EFG_FDLD   __EFG_FDLD;
+#endif
 
 // from math library
 extern "C" {

@@ -58,7 +58,6 @@
 #endif
 #include "ioutil.h"
 #include "iofhdr.h"
-#include "xfloat.h"
 
 void __LDFloatToString( char *buf, double const *f, int precision,
 /*********************************************************************/
@@ -73,7 +72,11 @@ void __LDFloatToString( char *buf, double const *f, int precision,
 
     /* convert this double into a long double */
     double_value = *f;
-    __FDLD( (double near *)&double_value, (long_double near *)&ld );
+#ifdef __FPI__
+    __iFDLD( (double _WCNEAR *)&double_value, (long_double _WCNEAR *)&ld );
+#else
+    __EFG_FDLD( (double _WCNEAR *)&double_value, (long_double _WCNEAR *)&ld );
+#endif
 #else
     ld.value = *f;
 #endif
