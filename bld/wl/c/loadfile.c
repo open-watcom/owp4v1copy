@@ -33,7 +33,7 @@
 #include <malloc.h>
 #include <stdlib.h>
 #include "linkstd.h"
-#if _OS != _LINUX
+#if _OS != _LINUX || defined(__WATCOMC__)
 #include <process.h>
 #endif
 #include "ring.h"
@@ -143,9 +143,14 @@ extern void FiniLoadFile( void )
     DoCVPack();
 }
 
-#if _OS == _LINUX
+#if _OS == _LINUX && !defined(__WATCOMC__)
 static void DoCVPack( void ) {}
 #else
+#if _OS == _LINUX
+#define CVPACK_EXE "cvpack"
+#else
+#define CVPACK_EXE "cvpack.exe"
+#endif
 static void DoCVPack( void )
 /**************************/
 {
@@ -158,10 +163,10 @@ static void DoCVPack( void )
         } else {
             name = Root->outfile->fname;
         }
-        retval = spawnlp( P_WAIT, "cvpack.exe", "cvpack.exe", "/nologo",
+        retval = spawnlp( P_WAIT, CVPACK_EXE, CVPACK_EXE, "/nologo",
                           name, NULL );
         if( retval == -1 ) {
-            PrintIOError( ERR+MSG_CANT_EXECUTE, "12", "cvpack.exe" );
+            PrintIOError( ERR+MSG_CANT_EXECUTE, "12", CVPACK_EXE );
         }
     }
 }
