@@ -92,15 +92,41 @@ imp_mod_handle  DIPENTRY DIPImpCueMod( imp_image_handle *ii,
 typedef struct{
     uint_16         index;
     char*           ret;
+    uint_16         num_dirs;
+    dr_line_dir*    dirs;
 }file_walk_name;
 
 static int ACueFile( void *_info, dr_line_file *curr ) {
 /******************************************************/
     file_walk_name  *info = _info;
     int cont;
+    int i;
 
     if( info->index  == curr->index ){
-        info->ret = curr->name;
+        if( curr->name ) {
+            if( curr->dir != 0) {
+                for( i = 0; i < info->num_dirs; i++ ) {
+                    if( info->dirs[i].index == curr->dir )
+                        break; 
+                }
+                if( i < info->num_dirs ) {  
+                    info->ret = DCAlloc( strlen( curr->name ) + strlen( info->dirs[i].name ) + 2);
+                    strcpy( info->ret, info->dirs[i].name );
+                    strcat( info->ret, "/");
+                    strcat( info->ret, curr->name );
+                    DCFree( curr->name );
+                } else {
+                    /* This should be an error, but it isn't fatal as we should
+                     * never get here in practice.
+                     */
+                    info->ret = curr->name;
+                } 
+            } else { 
+                info->ret = curr->name; 
+            }
+        } else {
+            info->ret = NULL;
+        }    
         cont = FALSE;
     }else{
         cont = TRUE;
@@ -109,9 +135,14 @@ static int ACueFile( void *_info, dr_line_file *curr ) {
     return( cont  );
 }
 
-static int ACueDir( void *d, dr_line_dir *curr ){
-    d = d;
-    curr = curr;
+static int ACueDir( void *_info, dr_line_dir *curr ){
+    file_walk_name  *info = _info;
+    
+    info->dirs = DCRealloc(info->dirs, sizeof(dr_line_dir) * (info->num_dirs+1));
+    info->dirs[info->num_dirs].index = curr->index; 
+    info->dirs[info->num_dirs].name = DCAlloc( strlen( curr->name ) + 1 );
+    strcpy( info->dirs[info->num_dirs].name, curr->name );   
+    info->num_dirs++;     
     return( TRUE );
 }
 
@@ -132,6 +163,7 @@ unsigned        DIPENTRY DIPImpCueFile( imp_image_handle *ii,
     im_idx          imx;
     dr_handle       stmts;
     dr_handle       cu_handle;
+    int             i;
 
     imx = ic->imx;
     DRSetDebug( ii->dwarf->handle ); /* must do at each call into dwarf */
@@ -147,8 +179,16 @@ unsigned        DIPENTRY DIPImpCueFile( imp_image_handle *ii,
     }
     wlk.index = ic->fno;
     wlk.ret = NULL;
-    DRWalkLFiles( stmts, ACueFile, &wlk, ACueDir, NULL );
+    wlk.num_dirs = 0;
+    wlk.dirs = NULL;
+    DRWalkLFiles( stmts, ACueFile, &wlk, ACueDir, &wlk );
     name = wlk.ret;
+    
+    // Free directory and file table information
+    for( i = 0; i < wlk.num_dirs; i++)
+        DCFree(wlk.dirs[i].name);
+    DCFree(wlk.dirs);
+    
     if( name == NULL ) {
         DCStatus( DS_FAIL );
         return( 0 );
