@@ -901,7 +901,7 @@ place each function in separate segment (near functions allowed)
 .*
 .note zp[{1,2,4,8,16}]
 :CMT. .ix 'options' 'zp'
-set minimal structure packing (member alignment) (default is zp1)
+set minimal structure packing (member alignment)
 :optref refid='SWzp'.
 .*
 .if '&alpha' eq 'AXP' .do begin

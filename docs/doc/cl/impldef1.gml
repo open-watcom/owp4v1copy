@@ -736,12 +736,12 @@ extracted via another.
 The padding and alignment of members of structures (6.5.2.1).
 .bigdesc
 .pp
-The &wcboth. compilers do not align structure members by default.
+The &wcboth. compilers align structure members by default.
 A command line switch, or the
 .mono pack
 pragma,
-may be used to force the compiler to do alignment.
-See the &userguide. for details.
+may be used to override the default.
+See the &userguide. for default values and other details.
 .bigterm
 Whether a "plain"
 .kw int

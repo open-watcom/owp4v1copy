@@ -1147,8 +1147,6 @@ files and reduce the time required to compile an application.
 .ix 'pack pragma'
 The "pack" pragma can be used to control the way in which structures
 are stored in memory.
-By default, &cmpname aligns all structures and its fields on a byte
-boundary.
 There are 4 forms of the "pack" pragma.
 .np
 The following form of the "pack" pragma can be used to change the
