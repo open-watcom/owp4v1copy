@@ -281,9 +281,33 @@ static unsigned ProcOneCopy( char *src, char *dst )
     }
     dp = fopen( dst, "wb" );
     if( dp == NULL ) {
-        Log( FALSE, "Can not open '%s' for writing: %s\n", dst, strerror( errno ) );
-        fclose( sp );
-        return( 1 );
+        char *end1, *end2, *end;
+        strcpy( buff, dst );
+        end1 = strrchr( buff, '/' );
+        end2 = strrchr( buff, '\\' );
+        if( end1 && end2 )
+        {
+            if( end1 > end2 )
+                end = end1;
+            else
+                end = end2;
+        }
+        else if( end1 )
+            end = end1;
+        else 
+            end = end2;
+        if( end )
+        {
+            end[0] = 0;
+            mkdir( buff );
+            dp = fopen( dst, "wb" );
+        }
+        if( !dp )
+        {
+            Log( FALSE, "Can not open '%s' for writing: %s\n", dst, strerror( errno ) );
+            fclose( sp );
+            return( 1 );
+        }
     }
     Log( FALSE, "Copying '%s' to '%s'...\n", src, dst );
     for( ;; ) {
