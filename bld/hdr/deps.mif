@@ -14,7 +14,7 @@ stddef_deps = ../watcom/stddef.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp .
 stdio_deps = ../watcom/stdio.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../ext.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../valist.sp ../wchar_t.sp ../wctypet.sp
 stdlib_deps = ../watcom/stdlib.mh ../readonly.sp ../alloca.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../errno.sp ../ext.sp ../maxpath.sp ../mbmax.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../wchar_t.sp
 string_deps = ../watcom/string.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp
-time_deps = ../watcom/time.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../timet.sp ../wchar_t.sp
+time_deps = ../watcom/time.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../timet.sp ../wchar_t.sp ../clockt.sp
 wchar_deps = ../watcom/wchar.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../mbmax.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp
 
 # The follow describe the dependences for the various *.h files.
