@@ -61,6 +61,9 @@
 #if defined(__QNX__)
   #include <semaphor.h>
   #include <sys/types.h>
+#elif defined(__LINUX__)
+// TODO: Linux thread stuff goes here!
+  #include <sys/types.h>
 #else
   #include "sigdefn.h"
 #endif
@@ -140,7 +143,7 @@ typedef struct thread_data {
     char                        __asctimeP[26];
     char                        __allocated;    // vs auto
     char                        __resize;       // storage has realloc pending
-    #if !defined(__QNX__)
+    #if !defined(__QNX__) && !defined(__LINUX__)
         __EXCEPTION_RECORD      *xcpt_handler;
         sigtab                  signal_table[__SIGLAST+1];
     #endif

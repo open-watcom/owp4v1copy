@@ -1,4 +1,4 @@
-#pmake:all small register 32bit linux threading merge iX86 static no_build os_linux cpu_386
+#pmake:all small register 32bit linux threading merge iX86 static build os_linux cpu_386
 processor=386
 model=ms
 subdir=ms_r

@@ -24,58 +24,34 @@
 *
 *  ========================================================================
 *
-* Description:  errno related functions.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
 
 #include "variety.h"
-#include "rtdata.h"
+#include <unistd.h>
+#include "exitwmsg.h"
 
-#if defined(__QNX__)
+extern  void    __linux_exit( int );
 
-#include <sys/magic.h>
-#include <errno.h>
-
-_WCRTLINK int *__get_errno_ptr()
+_WCRTLINK void __exit_with_msg( char _WCI86FAR *msg, unsigned retcode )
 {
-#if defined(__386__)
-    void        *err_ptr;
+    char        c;
 
-    __getmagicvar( &err_ptr, _m_errno_ptr );
-    return( err_ptr );
-#else
-    return( (int *)&__MAGIC.Errno );
-#endif
+    for( ;; ) {
+        c = *msg++;
+        if( c == '\0' ) break;
+        write( 2, &c, 1 );
+    }
+    __linux_exit( retcode );
 }
 
-#elif defined(__LINUX__)
 
-// TODO: Need to add this for Linux!
-
-#if 0
-_WCRTLINK int *__get_errno_ptr()
+_WCRTLINK void __fatal_runtime_error( char _WCI86FAR *msg, unsigned retcode )
 {
+    if( !__EnterWVIDEO( msg ) ) {
+        __exit_with_msg( msg, retcode );
+    }
 }
-#endif
-
-#else
-
-#include "errorno.h"
-
-#if !defined( __SW_BM )
-    _WCRTLINK int               errno;
-    _WCRTLINK int               _doserrno;
-#endif
-
-_WCRTLINK int *__get_errno_ptr()
-{
-    return( &_RWD_errno );
-}
-
-_WCRTLINK int *__get_doserrno_ptr()
-{
-    return( &_RWD_doserrno );
-}
-
-#endif

@@ -24,58 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  errno related functions.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
 
-#include "variety.h"
-#include "rtdata.h"
+// TODO: Clone this from the QNX version for Linux!
 
-#if defined(__QNX__)
-
-#include <sys/magic.h>
-#include <errno.h>
-
-_WCRTLINK int *__get_errno_ptr()
-{
-#if defined(__386__)
-    void        *err_ptr;
-
-    __getmagicvar( &err_ptr, _m_errno_ptr );
-    return( err_ptr );
-#else
-    return( (int *)&__MAGIC.Errno );
-#endif
-}
-
-#elif defined(__LINUX__)
-
-// TODO: Need to add this for Linux!
-
-#if 0
-_WCRTLINK int *__get_errno_ptr()
-{
-}
-#endif
-
-#else
-
-#include "errorno.h"
-
-#if !defined( __SW_BM )
-    _WCRTLINK int               errno;
-    _WCRTLINK int               _doserrno;
-#endif
-
-_WCRTLINK int *__get_errno_ptr()
-{
-    return( &_RWD_errno );
-}
-
-_WCRTLINK int *__get_doserrno_ptr()
-{
-    return( &_RWD_doserrno );
-}
-
-#endif
