@@ -148,7 +148,7 @@ $(hbook).htm : $(hbook).whp
 
 $(hbook).whp : $(book_objs) $(proj_objs)
 !ifdef book_bmroot
-    copy $(book_bmroot)\*.bmp $^ > nul
+    @copy $(book_bmroot)\*.bmp $^: > nul
 !endif
     @%make compile_gml_to_whp
 
@@ -171,7 +171,7 @@ all : $(hbook).ps .SYMBOLIC
 !include master.mif
 
 
-$(hbook).ps : $($^&_objs) $(proj_objs)
+$(hbook).ps : $(book_objs) $(proj_objs)
 	@%make compile_gml_to_ps
 
 

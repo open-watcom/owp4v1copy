@@ -113,7 +113,7 @@ wgml_opts+= pass 2
 #
 !ifeq hbook pguide
 wgml_opts+= outp (t:100)$(hbook).ps
-!else ifeq fpguide
+!else ifeq hbook fpguide
 wgml_opts+= outp (t:100)$(hbook).ps
 !else
 wgml_opts+= outp (t:80)$(hbook).ps

@@ -1,6 +1,6 @@
 !ifeq dotarget win
 #### WINDOWS ######
-books=c_readme wlnkerrs ide wbrw wprof editor &
+books=c_readme ide wbrw wprof editor &
  resedt resacc resdlg resimg resmnu resstr &
  zoom heapwalk spy ddespy drwatcom drnt &
  clr cguide pguide lguide wlnkerrs tools wd rescomp &
@@ -10,7 +10,7 @@ books=c_readme wlnkerrs ide wbrw wprof editor &
 
 !else ifeq dotarget nt
 #### WINDOWS 32-bit ######
-books=c_readme wlnkerrs ide wbrw wprof editor &
+books=c_readme ide wbrw wprof editor &
  resedt resacc resdlg resimg resmnu resstr &
  zoom heapwalk spy ddespy drwatcom drnt &
  clr cguide pguide lguide wlnkerrs tools wd rescomp &
@@ -20,7 +20,7 @@ books=c_readme wlnkerrs ide wbrw wprof editor &
 
 !else ifeq dotarget dos
 #### DOS ######
-books=c_readme wlnkerrs wprof &
+books=c_readme wprof &
  cguide pguide lguide &
  tools wd &
  clr rescomp &
@@ -30,7 +30,7 @@ books=c_readme wlnkerrs wprof &
 
 !else ifeq dotarget html
 #### HTML ######
-books= c_readme wlnkerrs &
+books= c_readme &
  cguideq &
  wd &
  clr &
@@ -38,7 +38,7 @@ books= c_readme wlnkerrs &
 
 !else ifeq dotarget os2
 #### OS2 ######
-books=c_readme wlnkerrs ide wbrw wprof &
+books=c_readme ide wbrw wprof &
  cguide pguide lguide &
  tools wd &
  clr rescomp &
@@ -48,10 +48,10 @@ books=c_readme wlnkerrs ide wbrw wprof &
 
 !else ifeq dotarget ps
 #### POST SCRIPT ######
-books=c_readme wlnkerrs clr cguide pguide lguide &
+books=c_readme clr cguide pguide lguide &
  tools guitool wd clib cpplib &
  f_readme fuguide fpguide ftools f77graph f77lr &
- cguideq clib_qnx
+ cguideq clibqnx
 
 !else
 
