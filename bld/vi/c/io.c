@@ -36,6 +36,7 @@
 #include "posix.h"
 #include <fcntl.h>
 #include <errno.h>
+#include <ctype.h>
 #include "vi.h"
 
 static int closeAFile( void );
@@ -323,7 +324,11 @@ bool FileTemplateMatch( char *name, char *template )
             } else {
                 return( TRUE );
             }
+#ifndef __UNIX__
+        } else if( *template != '?' && tolower( *template ) != tolower( *name ) ) {
+#else
         } else if( *template != '?' && *template != *name ) {
+#endif
             return( FALSE );
         }
         name++;
@@ -333,7 +338,11 @@ bool FileTemplateMatch( char *name, char *template )
         }
     }
 
+#ifndef __UNIX__
+    if( tolower( *template ) == tolower( *name ) ) {
+#else
     if( *template == *name ) {
+#endif
         return( TRUE );
     }
     return( FALSE );
