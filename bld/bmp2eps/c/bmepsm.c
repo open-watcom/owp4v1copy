@@ -632,42 +632,20 @@ int main(int argc, char *argv[])
       }
     } else {
       if(dummy_filename) {
-#if HAVE_SETMODE || HAVE__SETMODE
         int m, f, r;
         m = f = 0;
 
 /*
   Get the file descriptor number
 */
-#if HAVE_FILENO
         f = fileno(stdin);
-#else
-#if HAVE__FILENO
-        f = _fileno(stdin);
-#endif
-/* HAVE__FILENO */
-#endif
-/* HAVE_FILENO */
-
 /*
   Set the mode type.
 */
-#ifdef O_BINARY
         m = O_BINARY;
-#else
-#ifdef _O_BINARY
-        m = O_BINARY;
-#else
-#error "Either O_BINARY or _O_BINARY is needed!"
-#endif
-/* _O_BINARY */
-#endif
-/* O_BINARY */
-
 /*
   Change mode type for file descriptor.
 */
-#if HAVE_SETMODE
         r = setmode(f,m);
         if(r == -1) {
           fprintf(stderr, "setmode(): Failed to establish binary mode for stdin!\n");
@@ -677,25 +655,6 @@ int main(int argc, char *argv[])
           fprintf(stderr, "setmode(): Binary mode established.\n");
         }
 #endif
-
-/* DEBUG */
-#else
-        r = _setmode(f,m);
-        if(r == -1) {
-          fprintf(stderr, "_setmode(): Failed to establish binary mode for stdin!\n");
-        }
-#if DEBUG
-        else {
-          fprintf(stderr, "_setmode(): Binary mode established.\n");
-        }
-#endif
-
-#endif
-/* HAVE_SETMODE */
-
-#endif
-/* HAVE_SETMODE || HAVE__SETMODE */
-
 
         /*
           Now the descriptor is set up if necessary.

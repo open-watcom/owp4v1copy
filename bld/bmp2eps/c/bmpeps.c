@@ -1,5 +1,23 @@
 /*
-    Ideas from pngeps, hacked to death. No error checking yet!
+ * bmpeps - BMP to EPS conversion module
+ * Copyright (C) 2003 - Michal Necasek
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ * In this package the copy of the GNU Library General Public License
+ * is placed in file COPYING.
  */
 
 #include "bmepsco.h"
@@ -12,21 +30,22 @@ static char default_name[] = { "noname.bmp" };
 static int
 bmp_run( FILE *out, FILE *in, char *name, unsigned long *w, unsigned long *h, int cmd )
 {
-    int back = 0;
-    unsigned long width;
-    unsigned long height;
-    unsigned long x, y;
-    int           bpp;    /* bits per pixel */
-    int           alpha, trans, altrig;
-    int           rowbytes;
-    int           mix;    /* mix foreground and background */
-    int           specbg; /* specified background from command line */
-    int           bg_red, bg_green, bg_blue;
-    unsigned char *row, **rows, **rowp;
-    bmp_file_header   bmfh;
-    bmp_info_header   bmih;
-    bmp_rgb_quad      *bmpal;
-    size_t            palsize;
+    int             success = 0;
+    unsigned long   width;
+    unsigned long   height;
+    unsigned long   x, y;
+    int             bpp;    /* bits per pixel */
+    int             alpha, trans, altrig;
+    int             rowbytes;
+    int             mix;    /* mix foreground and background */
+    int             specbg; /* specified background from command line */
+    int             bg_red, bg_green, bg_blue;
+    unsigned char   *row, **rows, **rowp;
+    bmp_file_header bmfh;
+    bmp_info_header bmih;
+    bmp_rgb_quad    *bmpal;
+    size_t          palsize = 0;
+    size_t          hdrsize;
 
     if( !in )
         return 0;
@@ -41,8 +60,12 @@ bmp_run( FILE *out, FILE *in, char *name, unsigned long *w, unsigned long *h, in
     bg_blue  = bmeps_get_bg_blue();
     rewind( in );
 
-    fread( &bmfh, sizeof( bmfh ), 1, in );
-    fread( &bmih, sizeof( bmih ), 1, in );
+    // Check for the 'BM' header
+    if( !fread( &bmfh, sizeof( bmfh ), 1, in ) || ( bmfh.type != 0x4d42 ))
+        return 0;
+
+    if( !fread( &bmih, sizeof( bmih ), 1, in ) )
+        return 0;
 
     bpp = bmih.bit_count;
 
@@ -59,25 +82,27 @@ bmp_run( FILE *out, FILE *in, char *name, unsigned long *w, unsigned long *h, in
             }
 
         bmpal = (bmp_rgb_quad *)malloc( palsize );
-        fread( bmpal, palsize, 1, in );
+        if( !fread( bmpal, palsize, 1, in ) )
+            return 0;
     }
 
-    width  = bmih.width;
-    height = bmih.height;
+    hdrsize = sizeof( bmfh ) + sizeof( bmih ) + palsize;
+    width   = bmih.width;
+    height  = bmih.height;
 
     switch(cmd) {
     case 0:
         if(out) {
             bmeps_header( out, (name ? name : default_name), width, height );
             if( bmeps_get_draft() ) {
-                back = 1;
+                success = 1;
                 bmeps_draft( out, width, height );
             } else {
                 rowbytes = width * sizeof( bmp_rgb_triplet );
                 rowbytes = ( rowbytes + 3 ) & ~3;   // Dword aligned
                 rows = (unsigned char **)malloc( height * sizeof( unsigned char * ));
                 if( rows ) {
-                    back = 1;
+                    success = 1;
                     rowp = rows;
                     for( y = 0; y < height; y++ ) {
                         *rowp = NULL;
@@ -85,12 +110,15 @@ bmp_run( FILE *out, FILE *in, char *name, unsigned long *w, unsigned long *h, in
                         if( row )
                             *rowp = row;
                         else
-                            back = 0;
+                            success = 0;
 
                         rowp++;
                     }
 
-                    if( back ) {
+                    if( bmfh.off_bits > hdrsize )
+                        success = 0;
+
+                    if( success ) {
                         // Read bitmap data from file - stored bottom up!
                         rowp--;
                         switch( bpp ) {
@@ -148,11 +176,11 @@ bmp_run( FILE *out, FILE *in, char *name, unsigned long *w, unsigned long *h, in
                             }
                             break;
                         default:
-                            back = 0;
+                            success = 0;
                         }
                     }
 
-                    if( back ) {
+                    if( success ) {
                         bmeps_begin_image( out, width, height );
                         rowp = rows;
                         for( y = 0; y < height; y++ ) {
@@ -179,48 +207,48 @@ bmp_run( FILE *out, FILE *in, char *name, unsigned long *w, unsigned long *h, in
         break;
     case 1:
         if( out ) {
-            back = 1;
+            success = 1;
             bmeps_bb( out, width, height );
         }
         break;
     case 2:
         if( w && h ) {
-            back = 1;
+            success = 1;
             *w = width;
             *h = height;
         }
         break;
     }
     /* done with it */
-    return back;
+    return success;
 }
 
 int bmeps_bmp( FILE *out, FILE *in, char *name )
 {
-    int back = 0;
+    int success = 0;
     if( out && in ) {
         bmeps_configure();
-        back = bmp_run( out, in, name, NULL, NULL, 0 );
+        success = bmp_run( out, in, name, NULL, NULL, 0 );
     }
-    return back;
+    return success;
 }
 
 int bmeps_bmp_bb( FILE *out, FILE *in, char *name )
 {
-    int back = 0;
+    int success = 0;
     if( out && in ) {
         bmeps_configure();
-        back = bmp_run( out, in, name, NULL, NULL, 1 );
+        success = bmp_run( out, in, name, NULL, NULL, 1 );
     }
-    return back;
+    return success;
 }
 
 int bmeps_bmp_wh( FILE *in, unsigned long *w, unsigned long *h )
 {
-    int back = 0;
+    int success = 0;
     if( w && h && in ) {
         bmeps_configure();
-        back = bmp_run( NULL, in, NULL, w, h, 2 );
+        success = bmp_run( NULL, in, NULL, w, h, 2 );
     }
-    return back;
+    return success;
 }

@@ -868,42 +868,18 @@ char *bmeps_tmpname(void)
 {
   char *back = NULL;
   back = bmeps_default_tmpname;
-#if HAVE_GETPID
   if(!configured_tmpname) {
     configured_tmpname = 1;
     sprintf(bmeps_getpid_tmpname, "BMP2EPS.%lu.TMP", ((unsigned long)getpid()));
   }
   back = bmeps_getpid_tmpname;
-#else
-#if HAVE__GETPID
-  if(!configured_tmpname) {
-    configured_tmpname = 1;
-    sprintf(bmeps_getpid_tmpname, "BMP2EPS.%lu.TMP", ((unsigned long)_getpid()));
-  }
-  back = bmeps_getpid_tmpname;
-#endif
-#endif
   return back;
 }
 
 void bmeps_delete(char *filename)
 {
   if(filename) {
-#if HAVE_UNLINK
     unlink(filename);
-#else
-#if HAVE_REMOVE
-    remove(filename);
-#else
-#if HAVE__UNLINK
-    _unlink(filename);
-#else
-#if HAVE__REMOVE
-    _remove(filename);
-#endif
-#endif
-#endif
-#endif
   }
 }
 
