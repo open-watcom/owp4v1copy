@@ -161,13 +161,13 @@ static void checkShiftCount( void )
 static int copyBody( void )
 {
     NEExeInfo *         tmp;
-    uint_16             sect2mask;
-    uint_16             sect2bits;
+    uint_16             sect2mask = 0;
+    uint_16             sect2bits = 0;
     uint_16             shift_count;
     uint_32             gangloadstart;
     uint_32             gangloadlen;
     CpSegRc             copy_segs_ret;
-    bool                use_gangload;
+    bool                use_gangload = FALSE;
     int                 error;
 
     tmp = &Pass2Info.TmpFile.u.NEInfo;
@@ -205,6 +205,8 @@ static int copyBody( void )
         use_gangload = TRUE;
         checkShiftCount();
         break;
+    default:
+        break;
     }
 
     /* third arg to Copy???? is FALSE --> copy section one */
@@ -221,6 +223,7 @@ static int copyBody( void )
     case CPSEG_ERROR:
         return( TRUE );
     case CPSEG_OK:
+    default:
         break;
     }
     if( ! CmdLineParms.NoResFile ) {
