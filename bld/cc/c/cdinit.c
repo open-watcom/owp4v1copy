@@ -1040,7 +1040,7 @@ local void InitCharArray( TYPEPTR typ )
         if( (len - size) > 1 ) {
             CWarn1( WARN_LIT_TOO_LONG, ERR_LIT_TOO_LONG );
         }
-        str_lit->length = size; /* chop the string */
+        str_lit->length = len = size; /* chop the string */
     }
     dq.opr = T_CONST;
     dq.flags = Q_DATA;
