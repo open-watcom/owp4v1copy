@@ -92,7 +92,7 @@ extern  void    __STKOVERFLOW();
 
 typedef union {
     unsigned __int64    _64;
-    LONG        _32[2];
+    long                _32[2];
 } __i64;
 
 static int zero_pad( int handle )           /* 09-jan-95 */
