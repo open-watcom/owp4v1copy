@@ -14,3 +14,5 @@ set PROJDIR=<CWD>
 [ BLOCK <1> clean ]
 #==================
     pmake -d all -h clean
+    wmake -h -f <DEVDIR>/build/mif/cleanp.mif platform=<BUILD_PLATFORM> file=yacc
+    wmake -h -f <DEVDIR>/build/mif/cleanp.mif platform=<BUILD_PLATFORM> file=wyacc

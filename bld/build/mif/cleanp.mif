@@ -10,4 +10,6 @@ clean: .symbolic
     @rm -f $(build_dir)/binnt/$(file).exe
 !else ifeq platform linux386
     @rm -f $(build_dir)/binl/$(file)
+!else ifeq platform linux386boot
+    @rm -f $(build_dir)/binl/$(file)
 !endif

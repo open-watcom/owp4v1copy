@@ -34,7 +34,7 @@ set PROJDIR=<CWD>
     <CPCMD> ntaxp/wasm.sym      <RELROOT>/rel2/axpnt/wasm.sym
 
   [ IFDEF (os_qnx) <2*> ]
-    <CPCMD> qnx386/wasm.qnx     <RELROOT>/rel2/qnx/binq/wasm
+    <CPCMD> qnx386/wasm.exe     <RELROOT>/rel2/qnx/binq/wasm
     <CPCMD> qnx386/wasm.sym     <RELROOT>/rel2/qnx/sym/
 
 [ BLOCK <1> clean ]

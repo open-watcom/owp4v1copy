@@ -7,10 +7,17 @@ set PROJDIR=<CWD>
 [ INCLUDE <LANG_BLD>/wproj.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
+set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
+
+[ BLOCK <OWLINUXBUILD> bootstrap ]
+#==================================
+    set BUILD_PLATFORM=<BUILD_PLATFORM>boot
+
 [ BLOCK <1> clean ]
 #==================
-set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
-set BUILD_PLATFORM=
+    rm -f -r <PROJDIR>/<OBJDIR>
+    wmake -h -f <DEVDIR>/build/mif/cleanp.mif platform=<BUILD_PLATFORM> file=bwlib
+    set BUILD_PLATFORM=
 
 [ BLOCK <BUILD_PLATFORM> dos386 ]
 #================================
@@ -36,27 +43,24 @@ set BUILD_PLATFORM=
     <CPCMD> wlib.exe <DEVDIR>/build/binnt/bwlib.exe
     cdsay <PROJDIR>
 
-[ BLOCK <OWLINUXBUILD> bootstrap ]
-#==================================
+[ BLOCK <BUILD_PLATFORM> linux386boot ]
+#==========================================
     echo Building the wlib bootstrap
     mkdir <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
     wmake -h -f ../linux386/makefile bootstrap=1
-    <CPCMD> wlib <DEVDIR>/build/binl/wlib
+    <CPCMD> wlib <DEVDIR>/build/binl/bwlib
     cdsay <PROJDIR>
 
-[ BLOCK <OWLINUXBUILD> normal ]
-#==================================
-#    mkdir <PROJDIR>/<OBJDIR>
-#    cdsay <PROJDIR>/<OBJDIR>
-#    wmake -h -f ../linux386/makefile prebuild=1
-#    <CPCMD> wlib.elf <DEVDIR>/build/binl/bwlib
-#    cdsay <PROJDIR>
+[ BLOCK <BUILD_PLATFORM> linux386 ]
+#======================================
+    mkdir <PROJDIR>/<OBJDIR>
+    cdsay <PROJDIR>/<OBJDIR>
+    wmake -h -f ../linux386/makefile prebuild=1
+    <CPCMD> wlib.elf <DEVDIR>/build/binl/bwlib
+    cdsay <PROJDIR>
 
-[ BLOCK <1> clean ]
-#==================
+[ BLOCK . . ]
+#============
 set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>
 set TMP_BUILD_PLATFORM=
-
-    rm -f -r <PROJDIR>/<OBJDIR>
-    wmake -h -f <DEVDIR>/build/mif/cleanp.mif platform=<BUILD_PLATFORM> file=bwlib

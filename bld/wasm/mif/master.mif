@@ -17,15 +17,6 @@ wasm_trmem = 1
 
 !include trmem.mif
 
-!ifdef bootstrap
-exc_name = $(name)
-!else ifeq host_OS qnx
-exc_name = $(name).qnx
-!else
-exc_name = $(name).exe
-!endif
-link_name = $(name).lnk
-
 # Note the explicit $(watcom_dir)/h; there appear to be clashing headers
 inc_dirs  = -I. -I"$(proj_path)/h" -I"$(womp_dir)/h" -I"$(watcom_dir)/h" -I"$(wres_dir)/h"
 
@@ -147,7 +138,7 @@ proj_obj += $(trmem_objs)
 #explicit rules
 ######
 
-$(exc_name) : fullops.gh $(link_name) $(name).res $(proj_obj)
+$(name).exe : fullops.gh $(name).res $(proj_obj)
 !ifeq  host_OS qnx
         @%make usage.u
 !endif
@@ -155,23 +146,19 @@ $(exc_name) : fullops.gh $(link_name) $(name).res $(proj_obj)
         @%make usage.u
         $(cc) -o $^@ $(proj_obj) $(libs)
 !else
-        $(linker) @$(link_name)
+        @%write  $(name).lnk $(lflags)
+        @%append $(name).lnk file { $(proj_obj) }
 !ifeq host_OS osi
+        @%append $(name).lnk name $(name).rex
+        $(linker) @$(name).lnk
         $(bld_bin)/w32bind $(name).rex $@ $(tools_root)/os2ldr.exe
         @rm -f $(name).rex
+!else
+        @%append $(name).lnk name $(name).exe
+        $(linker) @$(name).lnk
 !endif
 !endif
         wstrip -a -r -q $^@ . $(name).res
-
-
-$(link_name) : $(__MAKEFILES__)
-        @%write $^@ $(lflags)
-        @%append  $^@ file { $(proj_obj) }
-!ifeq host_OS osi
-        @%append  $^@ name $(name).rex
-!else
-        @%append  $^@ name $(exc_name)
-!endif
 
 ###################################################################
 # resource stuff

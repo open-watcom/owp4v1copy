@@ -38,7 +38,7 @@ LIBS += -lorl -lwres -lwatcom
 
 $(OBJDIR)/wmake: $(OBJDIR)/usageend.gh $(OBJDIR)/isarray.gh $(OBJS) $(OBJDIR)/wmake.res
 	$(CC) -g -o wmake $(OBJS) $(LIBS) -o $@
-	wstrip -r -a $@ . $(OBJDIR)/wmake.res
+	wstrip -q -r -a $@ . $(OBJDIR)/wmake.res
 
 $(OBJDIR):
 	mkdir $(OBJDIR)
