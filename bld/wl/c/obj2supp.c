@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Utilities for wlink specific parts of objpass2.
 *
 ****************************************************************************/
 
-
-/*
- *  OBJ2SUPP : utilities for wlink specific parts of objpass2
- *
- */
 
 #include <string.h>
 #include "linkstd.h"
@@ -1304,9 +1298,9 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
                 break;
             }
         }
-    // ALWAYS set the alias flag for 16:16 pointers!
-    if (fixtype == 3)
-        fixtype |= OSF_FIXUP_TO_ALIAS;
+        // ALWAYS set the alias flag for 16:16 pointers!
+        if (fixtype == 3)
+            fixtype |= OSF_FIXUP_TO_ALIAS;
 
         PUT_U8( fixptr, fixtype );
         flags = 0;
