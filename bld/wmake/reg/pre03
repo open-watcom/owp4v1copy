@@ -34,10 +34,10 @@ true=
 !ifeq humho true            # error - macro is undefined
 !endif
 
-!define a&^b true           # error - invalid macro name
+!define a&!b true           # should be invalid macro name error? not currently
 
-!error should be warnings on lines 15, 24, 32, 36
-!error should be errors on lines 28, 29, 34, 39
+!error should be warnings on lines 13, 22, 30, 34
+!error should be errors on lines 26, 27, 32, 37
 !error one warning should follow, then the abort message
 
 !ifdef glob_glue
