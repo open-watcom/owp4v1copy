@@ -1030,6 +1030,17 @@ member-selection-expression
 function-like-cast-expression
     : simple-type-specifier Y_LEFT_PAREN expression-list-opt Y_RIGHT_PAREN %ambig 0 Y_LEFT_PAREN
     { $$ = setLocation( MakeFunctionLikeCast( $1, $3 ), &yylp[2] ); }
+    | Y_TYPENAME Y_SCOPED_TYPE_NAME Y_LEFT_PAREN expression-list-opt Y_RIGHT_PAREN
+    {
+        $$ = setLocation( MakeFunctionLikeCast( sendType( $2 ), $4 ),
+                          &yylp[2] );
+    }
+    | Y_TYPENAME template-class-id Y_TEMPLATE_SCOPED_TYPE_NAME Y_LEFT_PAREN expression-list-opt Y_RIGHT_PAREN
+    {
+        $$ = setLocation( MakeFunctionLikeCast( sendType( $3 ), $5 ),
+                          &yylp[2] );
+        PTypeRelease( $2 );
+    }
     ;
 
 primary-expression

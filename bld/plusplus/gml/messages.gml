@@ -11872,3 +11872,19 @@ struct A { };
 template<class T>
 struct A<T> { };
 :eerrbad.
+
+:MSGSYM. ERR_TEMPLATE_SPECIALIZATION_AMBIGUOUS
+:MSGTXT. partial template specialization for '%S' ambiguous
+:MSGJTXT.
+:errbad.
+template<class T, class U>
+struct A { };
+
+template<class T, class U>
+struct A<T *, U> { };
+
+template<class T, class U>
+struct A<T, U *> { };
+
+A<int *, int *> a;
+:eerrbad.

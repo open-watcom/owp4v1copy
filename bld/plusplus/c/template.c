@@ -919,7 +919,11 @@ static TEMPLATE_SPECIALIZATION *mergeClassTemplates( TEMPLATE_DATA *data,
                         defarg_list );
         }
     } else {
-        RewriteFree( defn );
+        if( ( tspec->defn == NULL ) ) {
+            tspec->defn = defn;
+        } else {
+            RewriteFree( defn );
+        }
         data->defn = NULL;
     }
 
@@ -1019,7 +1023,7 @@ static void copyWithNewNames( SCOPE old_scope, char **names )
     }
 }
 
-static void defineAllClassDecls( SYMBOL sym )
+static void defineAllClassDecls( TEMPLATE_SPECIALIZATION *tspec )
 {
     /*
         template <class T>
@@ -1034,10 +1038,7 @@ static void defineAllClassDecls( SYMBOL sym )
              ^ we have to visit F<int> and F<double> to define them with
                this definition
     */
-    TEMPLATE_INFO *tinfo;
-    TEMPLATE_SPECIALIZATION *tspec;
     CLASS_INST *curr;
-    SCOPE file_scope;
     SCOPE save_enclosing;
     SCOPE save_scope;
     SCOPE inst_scope;
@@ -1047,30 +1048,29 @@ static void defineAllClassDecls( SYMBOL sym )
 
     SrcFileGetTokenLocn( &location );
     save_scope = GetCurrScope();
-    tinfo = sym->u.tinfo;
-    file_scope = SymScope( tinfo->sym );
-    RingIterBeg( tinfo->specializations, tspec ) {
-        RingIterBeg( tspec->instantiations, curr ) {
-            if( curr->specific ) {
-                /* we shouldn't mess around with specific instantiations */
-                continue;
-            }
-            /* we have to splice in the new parm scope under the old
-             * INST scope because the parm names may have changed but
-             * the class type must be exactly as before (it may have
-             * been used in typedefs) */
-            inst_scope = curr->scope;
-            old_parm_scope = inst_scope->enclosing;
-            SetCurrScope( file_scope );
-            parm_scope = ScopeBegin( ScopeId( old_parm_scope ) );
+    RingIterBeg( tspec->instantiations, curr ) {
+        if( curr->specific ) {
+            /* we shouldn't mess around with specific instantiations */
+            continue;
+        }
+        /* we have to splice in the new parm scope under the old
+         * INST scope because the parm names may have changed but
+         * the class type must be exactly as before (it may have
+         * been used in typedefs) */
+        inst_scope = curr->scope;
+        old_parm_scope = inst_scope->enclosing;
+
+        SetCurrScope( old_parm_scope->enclosing );
+        parm_scope = ScopeBegin( ScopeId( old_parm_scope ) );
+        if( ScopeType( old_parm_scope, SCOPE_TEMPLATE_PARM ) ) {
             ScopeSetParmCopy( parm_scope, old_parm_scope );
-            copyWithNewNames( old_parm_scope, tspec->arg_names );
-            save_enclosing = ScopeEstablishEnclosing( inst_scope, parm_scope );
-            SetCurrScope( inst_scope );
-            doParseClassTemplate( tspec, tspec->defn, &location, TCI_NULL );
-            ScopeSetEnclosing( inst_scope, save_enclosing );
-        } RingIterEnd( curr )
-    } RingIterEnd( tspec )
+        }
+        copyWithNewNames( old_parm_scope, tspec->arg_names );
+        save_enclosing = ScopeEstablishEnclosing( inst_scope, parm_scope );
+        SetCurrScope( inst_scope );
+        doParseClassTemplate( tspec, tspec->defn, &location, TCI_NULL );
+        ScopeSetEnclosing( inst_scope, save_enclosing );
+    } RingIterEnd( curr )
     SetCurrScope( save_scope );
 }
 
@@ -1133,8 +1133,8 @@ void TemplateDeclFini( void )
             tspec->corrupted = TRUE;
         }
     } else {
-        if( data->defn_added ) {
-            defineAllClassDecls( sym );
+        if( data->defn_added && ( tspec != NULL ) ) {
+            defineAllClassDecls( tspec );
         }
     }
 
@@ -2090,14 +2090,15 @@ static TEMPLATE_SPECIALIZATION *findTemplateClassSpecialization( TEMPLATE_INFO *
     } else {
         struct candidate_ring *candidate_iter;
 
+        CErr2p( ERR_TEMPLATE_SPECIALIZATION_AMBIGUOUS, tinfo->sym );
+
         /* free instantiation parameters */
         RingIterBeg( candidate_list, candidate_iter ) {
             PTreeFreeSubtrees( candidate_iter->inst_parms );
         } RingIterEnd( candidate_iter )
 
-        tspec = NULL;
+        tspec = tprimary;
         *inst_parms = NULL;
-        CFatal( "partial template specialization ambiguous" );
     }
 
     return tspec;

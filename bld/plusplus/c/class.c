@@ -867,8 +867,7 @@ CLNAME_STATE ClassName( PTREE id, CLASS_DECL declaration )
         }
     }
 
-    if( sym_name != NULL )
-    {
+    if( sym_name != NULL ) {
         sym = sym_name->name_type;
         type = sym->sym_type;
         class_type = ClassTagDefinition( type, name );
@@ -964,6 +963,17 @@ void ClassSpecificInstantiation( PTREE tree, CLASS_DECL declaration )
         break;
     case CLASS_DECLARATION:
         tci_control |= TCI_NO_CLASS_DEFN;
+        if( ScopeType( GetCurrScope(), SCOPE_TEMPLATE_INST ) ) {
+            PTreeFreeSubtrees( args );
+            ClassName( id, declaration );
+            break;
+        } else if( ScopeType( GetCurrScope(), SCOPE_TEMPLATE_DECL )
+                && ScopeType( GetCurrScope()->enclosing, SCOPE_FILE ) ) {
+            /* new template specialization syntax: declaration */
+            TemplateSpecializationDefn( id, args );
+            ClassName( id, declaration );
+            break;
+        }
         data->nameless_OK = TRUE;
         /* fall through */
     case CLASS_REFERENCE:

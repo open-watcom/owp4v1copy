@@ -228,6 +228,7 @@ positive_tests = &
     cltemp11.$(ext) &
     cltemp12.$(ext) &
     cltemp13.$(ext) &
+    cltemp14.$(ext) &
     cmdln01.$(ext) &
     cmdln02.$(ext) &
     cmdln03.$(ext) &
