@@ -79,6 +79,7 @@ h\nt\odbcinst.h
 h\nt\ole.h
 h\nt\ole2.h
 h\nt\ole2ver.h
+h\nt\oleacc.h
 h\nt\oleauto.h
 h\nt\olectl.h
 h\nt\olectlid.h
@@ -94,6 +95,7 @@ h\nt\pshpack4.h
 h\nt\pshpack8.h
 h\nt\rapi.h
 h\nt\ras.h
+h\nt\rasdlg.h
 h\nt\raserror.h
 h\nt\rassapi.h
 h\nt\regstr.h
@@ -111,6 +113,7 @@ h\nt\rpcproxy.h
 h\nt\schannel.h
 h\nt\schnlsp.h
 h\nt\scrnsave.h
+h\nt\secext.h
 h\nt\security.h
 h\nt\setupapi.h
 h\nt\shellapi.h
@@ -212,6 +215,7 @@ lib386\nt\pkpd32.lib
 lib386\nt\psapi.lib
 lib386\nt\rapi.lib
 lib386\nt\rasapi32.lib
+lib386\nt\rasdlg.lib
 lib386\nt\rpcdce4.lib
 lib386\nt\rpcns4.lib
 lib386\nt\rpcrt4.lib
