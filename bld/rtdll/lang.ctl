@@ -52,18 +52,18 @@ set PROJDIR=<CWD>
     <CPCMD> cpplib/os2.386/mf_s/plbs*.dll      <RELROOT>/rel2/binp/dll/
     <CPCMD> cpplib/os2.386/mf_s/plbs*.sym      <RELROOT>/rel2/binp/dll/
 
-    <CPCMD> wrtlib/os2.386/mf_r/clib3r.lib     <RELROOT>/rel2/lib386/os2/wrtrdll.lib
-    <CPCMD> wrtlib/os2.386/mf_r/wrtr*.dll      <RELROOT>/rel2/binp/dll/
-    <CPCMD> wrtlib/os2.386/mf_r/wrtr*.sym      <RELROOT>/rel2/binp/dll/
-    <CPCMD> wrtlib/os2.387/mf_r/clib3r.lib     <RELROOT>/rel2/lib386/os2/wr7rdll.lib
-    <CPCMD> wrtlib/os2.387/mf_r/wr7r*.dll      <RELROOT>/rel2/binp/dll/
-    <CPCMD> wrtlib/os2.387/mf_r/wr7r*.sym      <RELROOT>/rel2/binp/dll/
-    <CPCMD> wrtlib/os2.386/mf_s/clib3s.lib     <RELROOT>/rel2/lib386/os2/wrtsdll.lib
-    <CPCMD> wrtlib/os2.386/mf_s/wrts*.dll      <RELROOT>/rel2/binp/dll/
-    <CPCMD> wrtlib/os2.386/mf_s/wrts*.sym      <RELROOT>/rel2/binp/dll/
-    <CPCMD> wrtlib/os2.387/mf_s/clib3s.lib     <RELROOT>/rel2/lib386/os2/wr7sdll.lib
-    <CPCMD> wrtlib/os2.387/mf_s/wr7s*.dll      <RELROOT>/rel2/binp/dll/
-    <CPCMD> wrtlib/os2.387/mf_s/wr7s*.sym      <RELROOT>/rel2/binp/dll/
+#    <CPCMD> wrtlib/os2.386/mf_r/clib3r.lib     <RELROOT>/rel2/lib386/os2/wrtrdll.lib
+#    <CPCMD> wrtlib/os2.386/mf_r/wrtr*.dll      <RELROOT>/rel2/binp/dll/
+#    <CPCMD> wrtlib/os2.386/mf_r/wrtr*.sym      <RELROOT>/rel2/binp/dll/
+#    <CPCMD> wrtlib/os2.387/mf_r/clib3r.lib     <RELROOT>/rel2/lib386/os2/wr7rdll.lib
+#    <CPCMD> wrtlib/os2.387/mf_r/wr7r*.dll      <RELROOT>/rel2/binp/dll/
+#    <CPCMD> wrtlib/os2.387/mf_r/wr7r*.sym      <RELROOT>/rel2/binp/dll/
+#    <CPCMD> wrtlib/os2.386/mf_s/clib3s.lib     <RELROOT>/rel2/lib386/os2/wrtsdll.lib
+#    <CPCMD> wrtlib/os2.386/mf_s/wrts*.dll      <RELROOT>/rel2/binp/dll/
+#    <CPCMD> wrtlib/os2.386/mf_s/wrts*.sym      <RELROOT>/rel2/binp/dll/
+#    <CPCMD> wrtlib/os2.387/mf_s/clib3s.lib     <RELROOT>/rel2/lib386/os2/wr7sdll.lib
+#    <CPCMD> wrtlib/os2.387/mf_s/wr7s*.dll      <RELROOT>/rel2/binp/dll/
+#    <CPCMD> wrtlib/os2.387/mf_s/wr7s*.sym      <RELROOT>/rel2/binp/dll/
 
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> clib/winnt.386/mf_r/clib3r.lib     <RELROOT>/rel2/lib386/nt/clbrdll.lib
@@ -110,18 +110,18 @@ set PROJDIR=<CWD>
     <CPCMD> cpplib/winnt.386/mf_s/plbs*.dll    <RELROOT>/rel2/binnt/
     <CPCMD> cpplib/winnt.386/mf_s/plbs*.sym    <RELROOT>/rel2/binnt/
 
-    <CPCMD> wrtlib/winnt.386/mf_r/clib3r.lib   <RELROOT>/rel2/lib386/nt/wrtrdll.lib
-    <CPCMD> wrtlib/winnt.386/mf_r/wrtr*.dll    <RELROOT>/rel2/binnt/
-    <CPCMD> wrtlib/winnt.386/mf_r/wrtr*.sym    <RELROOT>/rel2/binnt/
-    <CPCMD> wrtlib/winnt.387/mf_r/clib3r.lib   <RELROOT>/rel2/lib386/nt/wr7rdll.lib
-    <CPCMD> wrtlib/winnt.387/mf_r/wr7r*.dll    <RELROOT>/rel2/binnt/
-    <CPCMD> wrtlib/winnt.387/mf_r/wr7r*.sym    <RELROOT>/rel2/binnt/
-    <CPCMD> wrtlib/winnt.386/mf_s/clib3s.lib   <RELROOT>/rel2/lib386/nt/wrtsdll.lib
-    <CPCMD> wrtlib/winnt.386/mf_s/wrts*.dll    <RELROOT>/rel2/binnt/
-    <CPCMD> wrtlib/winnt.386/mf_s/wrts*.sym    <RELROOT>/rel2/binnt/
-    <CPCMD> wrtlib/winnt.387/mf_s/clib3s.lib   <RELROOT>/rel2/lib386/nt/wr7sdll.lib
-    <CPCMD> wrtlib/winnt.387/mf_s/wr7s*.dll    <RELROOT>/rel2/binnt/
-    <CPCMD> wrtlib/winnt.387/mf_s/wr7s*.sym    <RELROOT>/rel2/binnt/
+#    <CPCMD> wrtlib/winnt.386/mf_r/clib3r.lib   <RELROOT>/rel2/lib386/nt/wrtrdll.lib
+#    <CPCMD> wrtlib/winnt.386/mf_r/wrtr*.dll    <RELROOT>/rel2/binnt/
+#    <CPCMD> wrtlib/winnt.386/mf_r/wrtr*.sym    <RELROOT>/rel2/binnt/
+#    <CPCMD> wrtlib/winnt.387/mf_r/clib3r.lib   <RELROOT>/rel2/lib386/nt/wr7rdll.lib
+#    <CPCMD> wrtlib/winnt.387/mf_r/wr7r*.dll    <RELROOT>/rel2/binnt/
+#    <CPCMD> wrtlib/winnt.387/mf_r/wr7r*.sym    <RELROOT>/rel2/binnt/
+#    <CPCMD> wrtlib/winnt.386/mf_s/clib3s.lib   <RELROOT>/rel2/lib386/nt/wrtsdll.lib
+#    <CPCMD> wrtlib/winnt.386/mf_s/wrts*.dll    <RELROOT>/rel2/binnt/
+#    <CPCMD> wrtlib/winnt.386/mf_s/wrts*.sym    <RELROOT>/rel2/binnt/
+#    <CPCMD> wrtlib/winnt.387/mf_s/clib3s.lib   <RELROOT>/rel2/lib386/nt/wr7sdll.lib
+#    <CPCMD> wrtlib/winnt.387/mf_s/wr7s*.dll    <RELROOT>/rel2/binnt/
+#    <CPCMD> wrtlib/winnt.387/mf_s/wr7s*.sym    <RELROOT>/rel2/binnt/
 
 [ BLOCK <1> clean ]
 #==================
