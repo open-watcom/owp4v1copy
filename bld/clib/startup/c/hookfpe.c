@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  16-bit OS/2 FPE handler installation
 *
 ****************************************************************************/
 
@@ -39,9 +38,10 @@
 #include <wos2.h>
 #include <stdlib.h>
 
-void __interrupt __far __FPEHandler();
+void __interrupt __FPEHandler();
 #pragma aux __FPEHandler "*";
-static void __interrupt (*old_FPE_handler)();
+
+static void (__interrupt *old_FPE_handler)() = NULL;
 
 void __Init_FPE_handler()
 /***********************/

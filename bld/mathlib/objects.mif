@@ -109,7 +109,7 @@
 !inject sqrt086.obj  d16c                          wnc
 !inject sqrt386.obj            d32c      n32c
 !endif
-!inject sqrt387.obj       d16i      d32i      n32i     wni
+!inject sqrtx87.obj       d16i      d32i      n32i     wni
 !inject sqrt387_.obj           d32c      n32c
 !inject sqrt87_.obj  d16c                          wnc
 !inject strtod.obj   d16c d16i d32c d32i n32c n32i wnc wni axp ntp op

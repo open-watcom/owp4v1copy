@@ -275,15 +275,15 @@ __fpatan endp
             _quif be                    ; - - quit if x <= tan15
             sub   SP,10                 ; - - allocate temporary
             mov   AX,DI                 ; - - x
-            mov   DX,offset _TEXT:sqrt3 ; - - sqrt(3)
+            mov   DX,offset sqrt3 ; - - sqrt(3)
             mov   BX,SP                 ; - - temp
             call  __FLDMC               ; - - calc. temp = x * sqrt(3)
             mov   AX,SP                 ; - - calc. temp = temp - 1.0
-            mov   DX,offset _TEXT:_COne ; - - ...
+            mov   DX,offset _COne ; - - ...
             mov   BX,SP                 ; - - ...
             call  __FLDSC               ; - - ...
             mov   AX,DI                 ; - - calc. x = x + sqrt(3)
-            mov   DX,offset _TEXT:sqrt3 ; - - ...
+            mov   DX,offset sqrt3 ; - - ...
             mov   BX,DI                 ; - - ...
             call  __FLDAC               ; - - ...
             mov   AX,SP                 ; - - calc. x = temp / x
@@ -297,7 +297,7 @@ __fpatan endp
 
 ;;            x = _OddPoly( x, AtanPoly, 8 );
           mov   AX,DI                   ; - x
-          mov   DX,offset _TEXT:AtanPoly ; - polynomial
+          mov   DX,offset AtanPoly ; - polynomial
           mov   BX,8                    ; - degree
           call  __OddPoly               ; - evaluate polynomial
 
@@ -307,7 +307,7 @@ __fpatan endp
           shr   CH,1                    ; - if add_piby6
           _if   c                       ; - then
             mov   AX,DI                 ; - - x
-            mov   DX,offset _TEXT:__PIby6 ; - - pi/6
+            mov   DX,offset __PIby6 ; - - pi/6
             mov   BX,DI                 ; - - result goes into x
             call  __FLDAC               ; - - calc. x = x + pi/6
           _endif                        ; - endif
@@ -319,7 +319,7 @@ __fpatan endp
           _if   c                       ; - then
             xor   byte ptr 9[DI],80h    ; - - negate x
             mov   AX,DI                 ; - - x
-            mov   DX,offset _TEXT:__PIby2 ; - - pi/2
+            mov   DX,offset __PIby2 ; - - pi/2
             mov   BX,DI                 ; - - result goes into x
             call  __FLDAC               ; - - calc. x = (-x) + pi/2
           _endif                        ; - endif

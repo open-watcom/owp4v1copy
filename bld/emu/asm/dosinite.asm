@@ -261,6 +261,7 @@ __sys_fini_387_emulator proc near
       call  __unhook387     ; - unhook from int7
     _admit              ; admit - we're under Phar Lap
       sub   edx,edx         ; - null selector
+      sub   eax,eax         ; - set offset to 0
       call  __unhook387     ; - unhook from windows
       cmp   al,1            ; - did it work?
       _quif e           ; - yes, done

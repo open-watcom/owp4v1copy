@@ -149,7 +149,7 @@ index   equ     iflag-2
         _if     ne                      ; then
           push  AX                      ; - save i
           mov   AX,DI                   ; - y = y + PIby4
-          mov   DX,offset _TEXT:__PIby4 ; - ...
+          mov   DX,offset __PIby4 ; - ...
           mov   BX,DI                   ; - ...
           call  __FLDAC                 ; - ...
           pop   AX                      ; - restore i
@@ -171,7 +171,7 @@ index   equ     iflag-2
         _if     ne                      ; then
           xor   byte ptr 9[DI],80h      ; - negate y
           mov   AX,DI                   ; - y
-          mov   DX,offset _TEXT:__PIby4 ; - pi/4
+          mov   DX,offset __PIby4 ; - pi/4
           mov   BX,DI                   ; - y
           call  __FLDAC                 ; - calc. y = (-y) + pi/4
         _endif                          ; endif
@@ -238,7 +238,7 @@ index   equ     iflag-2
             shl   BX,1                  ; - - ...
             add   BX,index[BP]          ; - - ...
             shl   BX,1                  ; - - ...
-            lea   DX,_TEXT:__CosPoly[BX]; - - point to start of polynomial
+            lea   DX,__CosPoly[BX]; - - point to start of polynomial
             mov   BX,CX                 ; - - get the degree
             lea   AX,cosy[BP]           ; - - point to y*y
             mov   CX,AX                 ; - - point to cosy for result
@@ -263,7 +263,7 @@ index   equ     iflag-2
             shl   BX,1                  ; - - ...
             add   BX,index[BP]          ; - - ...
             shl   BX,1                  ; - - ...
-            lea   DX,_TEXT:__SinPoly[BX]; - - point to start of polynomial
+            lea   DX,__SinPoly[BX]; - - point to start of polynomial
             mov   BX,CX                 ; - - get the degree
             call  __OddPoly             ; - - evaluate polynomial
 ;;            }

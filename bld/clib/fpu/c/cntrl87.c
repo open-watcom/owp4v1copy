@@ -61,28 +61,32 @@ unsigned int __win87em_fstcw(void);
 #elif defined( __DOS__ ) && !defined( __386__ )
 
 void _WCI86NEAR (*__dos_emu_fldcw)( unsigned short * ) = NULL;
+#pragma aux __dos_emu_fldcw "*";
 void _WCI86NEAR (*__dos_emu_fstcw)( unsigned short * ) = NULL;
+#pragma aux __dos_emu_fstcw "*";
 
 #endif
 
 #if defined(__386__)
-#pragma aux     __fstcw = 0x36 0xd9 0x3f 0x9b parm caller [edi];
-                        /* fstcw ss:[edi] */
-                        /* fwait         */
-#pragma aux     __fldcw = 0x36 0xd9 0x2f 0x9b parm caller [edi];
-                        /* fldcw ss:[edi] */
-                        /* fwait         */
+#pragma aux __fstcw = \
+        "fstcw ss:[edi]" \
+        "fwait"          \
+        parm caller [edi];
+#pragma aux __fldcw = \
+        "fldcw ss:[edi]" \
+        parm caller [edi];
 #else
-#pragma aux     __fstcw = 0x95                  /* xchg ax,bp */\
-                          float 0x9b 0xd9 0x7e 0x00  /* fstcw 0[bp]*/\
-                          float 0x9b 0xd9 0xd0  /* fnop       */\
-                          0x95                  /* xchg ax,bp */\
-                          parm caller [ax];
-#pragma aux     __fldcw = 0x95                  /* xchg ax,bp */\
-                          float 0x9b 0xd9 0x6e 0x00  /* fldcw 0[bp]*/\
-                          float 0x9b 0xd9 0xd0  /* fnop       */\
-                          0x95                  /* xchg ax,bp */\
-                          parm caller [ax];
+#pragma aux __fstcw = \
+        "xchg ax,bp"           \
+        "fstcw [bp]" \
+        "fwait"                \
+        "xchg ax,bp"           \
+        parm caller [ax];
+#pragma aux __fldcw = \
+        "xchg ax,bp"           \
+        "fldcw [bp]" \
+        "xchg ax,bp"           \
+        parm caller [ax];
 #endif
 
 _WCRTLINK unsigned _control87( unsigned new, unsigned mask )

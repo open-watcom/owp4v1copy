@@ -24,10 +24,11 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Init 16-bit DOS FPU emulation
 ;*
 ;*****************************************************************************
+
+; !!!!! must be compiled with -fpi87 option !!!!!
 
 include mdef.inc
 include struct.inc
@@ -59,15 +60,11 @@ FIARQQ  equ             0FE32H
 
 DGROUP  group   _DATA
         assume  ds:DGROUP
+
 _DATA   segment word public 'DATA'
         extrn   __8087          : byte
         extrn   __real87        : byte
         extrn   __no87          : word
-        extrn   __8087cw        : word
-        extrn   __init_emu      : word
-        extrn   __old_8087_emu  : word
-        extrn   "C",__dos_emu_fstcw : word
-        extrn   "C",__dos_emu_fldcw : word
 
 i34off  dw      0
 i34seg  dw      0
@@ -91,21 +88,19 @@ i3doff  dw      0
 i3dseg  dw      0
 _DATA   ends
 
+        extrn   __init_8087_emu : near
+
 _TEXT segment word public 'CODE'
 
         extrn   __int34         : near
         extrn   __int3c         : near
-        extrn   __init_8087_emu : near
-        extrn   ___init_old_emu : near
-        extrn   ___init_emu     : near
-        extrn   ___emu_fstcw    : near
-        extrn   ___emu_fldcw    : near
+        extrn   __dos_init_emu  : near
+        extrn   __dos_fini_emu  : near
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;      void _init_87_emulator( void )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-assume   cs:_TEXT,ds:DGROUP
 xchg_vects      proc near
         push    bx                      ; save regs
         push    cx                      ; ...
@@ -145,13 +140,8 @@ xchg_vects      endp
 ;       __no87 is not 0 if NO87 environment variable is present
 
 public  __init_87_emulator
-__init_87_emulator proc near
-        push    ds                      ; save ds
+__init_87_emulator proc
         push    bx                      ; save bx
-if _MODEL and _BIG_DATA                 ; get addressability
-        mov     ax,DGROUP               ; ...
-        mov     ds,ax
-endif                                   ; ...
         fninit                          ; initialize math coprocessor
         push    ax                      ; ...
         mov     bx,sp                   ; ...
@@ -196,17 +186,11 @@ endif                                   ; ...
         test    bx,bx                   ; if no 80x87 or no87 set
         _if     ne                      ; then
           mov   byte ptr __real87,0     ; - say we do not have a real 80x87
-          mov   ax,__8087cw
-          call  ___init_emu             ; initialize the '8087' emulator
-          mov   word ptr __init_emu, ___init_emu
-          mov   word ptr __old_8087_emu, ___init_old_emu
-          mov   word ptr __dos_emu_fstcw, ___emu_fstcw
-          mov   word ptr __dos_emu_fldcw, ___emu_fldcw
+          call  __dos_init_emu          ; initialize the '8087' emulator
         _else                           ; else
           mov   byte ptr __real87,al    ; - we have a real 80x87 of type AL
         _endif                          ; endif
         pop     bx                      ; restore bx
-        pop     ds                      ; restore ds
         ret                             ; return to caller
 __init_87_emulator endp
 
@@ -215,17 +199,9 @@ __init_87_emulator endp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 public __fini_87_emulator
-__fini_87_emulator proc near
-        push    ds
-if _MODEL and _BIG_DATA                 ; get addressability
-        mov     ax,DGROUP               ; ...
-        mov     ds,ax
-endif                                   ; ...
+__fini_87_emulator proc
         call    xchg_vects
-        mov     word ptr __init_emu, 0
-        mov     word ptr __dos_emu_fstcw, 0
-        mov     word ptr __dos_emu_fldcw, 0
-        pop     ds
+        call    __dos_fini_emu
         ret
 __fini_87_emulator endp
 
@@ -326,7 +302,6 @@ __patch3d proc near
         pop     si                      ; ...
         iret                            ; return from interrupt
 __patch3d endp
-
 
 _TEXT   ends
 

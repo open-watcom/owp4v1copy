@@ -31,7 +31,6 @@
 
 
 #include "variety.h"
-#include <dos.h>
 #include <stdlib.h>
 #if 0
 #pragma pack(__push,1);
@@ -40,12 +39,12 @@
 #endif
 
 extern void __interrupt __int7();
-extern int __no87;
-extern unsigned char __8087;
 #pragma aux __int7 "*";
-#pragma aux __hook387 "*" parm caller [EAX EDX];
-#pragma aux __unhook387 "*" parm caller [EAX EDX];
+
+extern int __no87;
 #pragma aux __no87 "*";
+
+extern unsigned char __8087;
 #pragma aux __8087 "*";
 
 extern  int gorealmode();
@@ -82,12 +81,23 @@ extern char IsWindows( void );
         "int 2fh" \
         value [al];
 
+void __set_dos_vector(unsigned, void (__interrupt *)());
+#pragma aux __set_dos_vector = \
+        "push ds" \
+        "mov ds,cx" \
+        "mov ah,25h" \
+        "int 21h" \
+        "pop ds" \
+        parm caller [al] [cx edx];
+
 #define EMULATING_87 4
 
 static char hooked = 0;
 static char has_wgod_emu = 0;
 
 static char FPArea[128];
+
+#pragma aux __hook387 "*" parm caller [EAX DX];
 #if 0 /* the D16INFO typedef is so far, unknown */
 char __hook387( D16INFO __far *_d16infop )
 #else
@@ -111,9 +121,7 @@ char __hook387( void __far *_d16infop )
     }
     if( _d16infop != NULL ) {
         if( int31( "RATIONAL DOS/4G", 0x0A00 ) == 0 ) {
-            _dos_setvect( 7,
-                        (void (__interrupt *)(void))(void (__near *)
-                                (void))&__int7 );
+            __set_dos_vector( 7, &__int7 );
 #if 0
             _d16infop->has_87 = 1;              /* enable emulator */
             _d16infop->MSW_bits |= EMULATING_87;
@@ -126,6 +134,7 @@ char __hook387( void __far *_d16infop )
     return( 0 );
 }
 
+#pragma aux __unhook387 "*" parm caller [EAX DX];
 #if 0 /* the D16INFO typedef is so far, unknown */
 char __unhook387( D16INFO __far *_d16infop )
 #else

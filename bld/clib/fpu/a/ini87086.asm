@@ -33,9 +33,10 @@
 include struct.inc
 include mdef.inc
 
-        xref    __init_8087_            ; in chk8087.c
         xred    __real87, byte
-        xred    __8087cw, word
+
+        xdefp   __init_8087_emu
+        xdefp   __init_80x87
 
 ifdef __DOS__
 
@@ -50,13 +51,13 @@ endif
 
         modstart init8087
 
-        xdefp   __init_8087_emu
-        defn    __init_8087_emu
-        call    __init_8087_
-        ret                             ; return
-        endproc __init_8087_emu
+        xref    __init_8087_            ; in chk8087.c
 
-        xdefp   __init_80x87
+__init_8087_emu proc near
+        call    __init_8087_
+        ret
+__init_8087_emu endp
+
         defpe   __init_80x87            ; called from chk8087.c
         push    BP                      ; save BP
         mov     BP,SP                   ; get access to stack
@@ -70,7 +71,7 @@ if _MODEL and _BIG_DATA
 endif
         cmp     word ptr __init_emu,0
         jz      l1
-        mov     ax,__8087cw
+        mov     ax,word ptr [BP-2]
         call    __init_emu
 l1:     pop     ds
 endif
@@ -82,15 +83,15 @@ endif
         fld     st                      ; form negative infinity
         fchs                            ; ...
         fcompp                          ; compare +/- infinity
-        fstsw   word ptr -4[BP]         ; equal for 87/287
+        fstsw   word ptr [BP-4]         ; equal for 87/287
         fwait                           ; wait fstsw to complete
-        mov     AX,-4[BP]               ; get NDP status word
+        mov     AX,[BP-4]               ; get NDP status word
         mov     AL,2                    ; assume 80287
         sahf                            ; store condition bits in flags
         jz      not387                  ; it's 287 if infinities equal
         mov     AL,3                    ; indicate 80387
 not387: finit                           ; re-initialize the 8087
-        fldcw   word ptr -2[BP]         ; .(affine,round nearest,64-bit prec)
+        fldcw   word ptr [BP-2]         ; .(affine,round nearest,64-bit prec)
         mov     SP,BP                   ; clean up stack
         pop     BP                      ; restore BP
         ret                             ; return

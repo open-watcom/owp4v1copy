@@ -35,7 +35,12 @@ include mdef.inc
         xref    __8087
 ifdef __DOS__
 ifndef __386__
+DGROUP GROUP _DATA
+        assume DS:DGROUP
+
+_DATA segment 'DATA'
         xred    __old_8087_emu, word
+_DATA ends
 endif
 endif
 
@@ -49,16 +54,10 @@ endif
         fldz
 ifdef __DOS__
 ifndef __386__
-assume DS:DGROUP
-        push    ds
-if _MODEL and _BIG_DATA
-        mov     ax,DGROUP
-        mov     ds,ax
-endif
-        cmp     word ptr __old_8087_emu, 0
+        cmp     word ptr __old_8087_emu,0
         jz      l1
         call    __old_8087_emu
-l1:     pop     ds
+l1:
 endif
 endif
         ret

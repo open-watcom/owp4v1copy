@@ -9,16 +9,15 @@ ifdef QNX32
 __QNX__         equ     1
 endif
 
-_TEXT   segment word public 'CODE'
-        assume  cs:_TEXT
+_TEXT    segment word public 'CODE'
 
 modstart        macro   modname
                 endm
 
 xdefp           macro   xsym
-                ifdef _DEBUG
+ifdef _DEBUG
                 public  xsym
-                endif
+endif
                 endm
 
 defp            macro   dsym

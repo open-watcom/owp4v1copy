@@ -18,20 +18,14 @@ public  FIARQQ
 FIARQQ  equ             0000H
 
 
-        name    emustub
-
 _TEXT segment word public 'CODE'
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;      void __init_87_emulator(void)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-assume   cs:_TEXT
-
-;========================================================
-
 public  __init_87_emulator
-__init_87_emulator proc near
+__init_87_emulator proc
 __init_87_emulator endp
 
 _TEXT   ends

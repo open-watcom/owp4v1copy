@@ -95,7 +95,7 @@ void __sigabort()
 #if defined(__WINDOWS__)
 
 // called from emulator callback
-void __based(__segname("_TEXT")) __raise_fpe(void) {
+void _WCI86NEAR __raise_fpe(void) {
     raise(SIGFPE);
 }
 

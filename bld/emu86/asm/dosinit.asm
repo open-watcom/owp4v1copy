@@ -24,18 +24,32 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  routines for 16-bit DOS FPU emulator control
 ;*
 ;*****************************************************************************
 
+; !!!!! must be compiled with -fpi option !!!!!
+
 include mdef.inc
-;include struct.inc
 
-        modstart    initemu
+DGROUP  group   _DATA
+        assume  ds:DGROUP
 
-        xdefp   ___init_emu
-        defn    ___init_emu
+_DATA   segment word public 'DATA'
+        extrn   __8087cw        : word
+        extrn   __init_emu      : word         ; in clib/fpu/a/ini87086.asm
+        extrn   __old_8087_emu  : word         ; in clib/fpu/a/old87.asm
+        extrn   __dos_emu_fstcw : word         ; in clib/fpu/c/cntrl87.asm
+        extrn   __dos_emu_fldcw : word         ; in clib/fpu/c/cntrl87.asm
+_DATA   ends
+
+
+_TEXT segment word public 'CODE'
+
+        xdefp   __dos_init_emu
+        xdefp   __dos_fini_emu
+
+___init_emu proc near
         push    bp
         mov     bp,sp
         push    ax
@@ -45,34 +59,50 @@ include mdef.inc
         mov     ax,3
         pop     bp
         ret
-        endproc ___init_emu
+___init_emu endp
 
-        xdefp   ___init_old_emu
-        defn    ___init_old_emu
+___init_old_emu proc near
         fldz                          ; put 8087 into 4 empty / 4 full state
         fldz                          ; ...
         fldz                          ; ...
         fldz                          ; ...
         ret
-        endproc ___init_old_emu
+___init_old_emu endp
 
-        xdefp   ___emu_fstcw
-        defn    ___emu_fstcw
+___emu_fstcw proc near
         xchg   ax,bp
         fstcw  word ptr [bp]
         fwait
         xchg   ax,bp
         ret
-        endproc ___emu_fstcw
+___emu_fstcw endp
 
-        xdefp   ___emu_fldcw
-        defn    ___emu_fldcw
+___emu_fldcw proc near
         xchg   ax,bp
         fldcw  word ptr [bp]
-        fwait
         xchg   ax,bp
         ret
-        endproc ___emu_fldcw
+___emu_fldcw endp
 
-        endmod
+__dos_init_emu proc near
+        mov   ax,__8087cw
+        call  ___init_emu
+        mov   word ptr __init_emu, ___init_emu
+        mov   word ptr __old_8087_emu, ___init_old_emu
+        mov   word ptr __dos_emu_fstcw, ___emu_fstcw
+        mov   word ptr __dos_emu_fldcw, ___emu_fldcw
+        ret
+__dos_init_emu endp
+
+__dos_fini_emu proc near
+        xor     ax,ax
+        mov     word ptr __init_emu, ax
+        mov     word ptr __old_8087_emu, ax
+        mov     word ptr __dos_emu_fstcw, ax
+        mov     word ptr __dos_emu_fldcw, ax
+        ret
+__dos_fini_emu endp
+
+_TEXT ends
+
         end

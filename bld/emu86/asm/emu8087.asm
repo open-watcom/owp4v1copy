@@ -1,16 +1,14 @@
 .286
-        name    emu8087
 
 _TEXT   segment word public 'CODE'
-        assume  cs:_TEXT
 
 modstart        macro   modname
                 endm
 
 xdefp           macro   xsym
-                ifdef _DEBUG
+ifdef _DEBUG
                 public  xsym
-                endif
+endif
                 endm
 
 defp            macro   dsym

@@ -31,16 +31,16 @@
 
 
 include mdef.inc
-
-        xref    "C",__chk8087
+include xinit.inc
 
         name    _8087
 
-include xinit.inc
+        xref    "C",__chk8087
+
+DGROUP GROUP _DATA
+        assume DS:DGROUP
 
 _DATA   segment word public 'DATA'
-
-        assume DS:DGROUP
 
         public  __8087
         public  __real87

@@ -1,7 +1,39 @@
-include struct.inc
-include mdef.inc
+;*****************************************************************************
+;*
+;*                            Open Watcom Project
+;*
+;*    Portions Copyright (c) 1983-2002 Sybase, Inc. All Rights Reserved.
+;*
+;*  ========================================================================
+;*
+;*    This file contains Original Code and/or Modifications of Original
+;*    Code as defined in and that are subject to the Sybase Open Watcom
+;*    Public License version 1.0 (the 'License'). You may not use this file
+;*    except in compliance with the License. BY USING THIS FILE YOU AGREE TO
+;*    ALL TERMS AND CONDITIONS OF THE LICENSE. A copy of the License is
+;*    provided with the Original Code and Modifications, and is also
+;*    available at www.sybase.com/developer/opensource.
+;*
+;*    The Original Code and all software distributed under the License are
+;*    distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+;*    EXPRESS OR IMPLIED, AND SYBASE AND ALL CONTRIBUTORS HEREBY DISCLAIM
+;*    ALL SUCH WARRANTIES, INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF
+;*    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR
+;*    NON-INFRINGEMENT. Please see the License for the specific language
+;*    governing rights and limitations under the License.
+;*
+;*  ========================================================================
+;*
+;* Description:  Init 16-bit QNX FPU emulation
+;*
+;*****************************************************************************
 
 .8087
+
+include struct.inc
+include mdef.inc
+include xinit.inc
+
 public  FJSRQQ
 FJSRQQ  equ             0000H
 public  FISRQQ
@@ -21,19 +53,17 @@ FICRQQ  equ             0000H
 public  FIARQQ
 FIARQQ  equ             0000H
 
-        extrn   __init_8087_emu : near
-        name    initemuq
-
-;========================================================
-
-include xinit.inc
-
         xinit   __init_87_emulator,1
         xfini   __fini_87_emulator,1
+
+DGROUP GROUP _DATA
+        assume ds:DGROUP
 
 _DATA segment word public 'DATA'
         extrn   __8087 : byte
 _DATA ends
+
+        extrn   __init_8087_emu : near
 
 _TEXT segment word public 'CODE'
 
@@ -41,18 +71,10 @@ _TEXT segment word public 'CODE'
 ;;      void _init_87_emulator( void )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-assume   cs:_TEXT,ds:DGROUP
-
 public  __init_87_emulator
-__init_87_emulator proc near
-        push    ds
-if _MODEL and _BIG_DATA                 ; get addressability
-        mov     ax,DGROUP               ; ...
-        mov     ds,ax
-endif                                   ; ...
+__init_87_emulator proc
         call    __init_8087_emu         ; initialize the 80x87
         mov     byte ptr __8087,al      ; pretend we have a 387 if emulating
-        pop     ds                      ; ...
         ret                             ; return to caller
 __init_87_emulator endp
 
@@ -61,7 +83,7 @@ __init_87_emulator endp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 public __fini_87_emulator
-__fini_87_emulator proc near
+__fini_87_emulator proc
         ret
 __fini_87_emulator endp
 

@@ -1,7 +1,39 @@
-include struct.inc
-include mdef.inc
+;*****************************************************************************
+;*
+;*                            Open Watcom Project
+;*
+;*    Portions Copyright (c) 1983-2002 Sybase, Inc. All Rights Reserved.
+;*
+;*  ========================================================================
+;*
+;*    This file contains Original Code and/or Modifications of Original
+;*    Code as defined in and that are subject to the Sybase Open Watcom
+;*    Public License version 1.0 (the 'License'). You may not use this file
+;*    except in compliance with the License. BY USING THIS FILE YOU AGREE TO
+;*    ALL TERMS AND CONDITIONS OF THE LICENSE. A copy of the License is
+;*    provided with the Original Code and Modifications, and is also
+;*    available at www.sybase.com/developer/opensource.
+;*
+;*    The Original Code and all software distributed under the License are
+;*    distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+;*    EXPRESS OR IMPLIED, AND SYBASE AND ALL CONTRIBUTORS HEREBY DISCLAIM
+;*    ALL SUCH WARRANTIES, INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF
+;*    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR
+;*    NON-INFRINGEMENT. Please see the License for the specific language
+;*    governing rights and limitations under the License.
+;*
+;*  ========================================================================
+;*
+;* Description:  Init 16-bit OS/2 FPU emulation
+;*
+;*****************************************************************************
 
 .8087
+
+include struct.inc
+include mdef.inc
+include xinit.inc
+
 public  FJSRQQ
 FJSRQQ  equ             0000H
 public  FISRQQ
@@ -21,47 +53,36 @@ FICRQQ  equ             0000H
 public  FIARQQ
 FIARQQ  equ             0000H
 
-        extrn   __init_8087_emu : near
-        extrn   __hook8087_     : far
-        extrn   __unhook8087_   : far
-        name    initemu
-
-;========================================================
-
-include xinit.inc
-
         xinit   __init_87_emulator,1
         xfini   __fini_87_emulator,1
 
 DGROUP  group   _DATA
         assume  ds:DGROUP
+
 _DATA segment word public 'DATA'
-        extrn   __8087 : byte
+        extrn   __8087   : byte
         extrn   __real87 : byte
 _DATA ends
 
+        extrn   __init_8087_emu : near
+
 _TEXT segment word public 'CODE'
+
+        extrn   __hook8087   : near
+        extrn   __unhook8087 : near
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;      void _init_87_emulator( void )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-assume   cs:_TEXT,ds:DGROUP
-
 public  __init_87_emulator
-__init_87_emulator proc near
-        push    ds                      ; save DS
-if _MODEL and _BIG_DATA                 ; get addressability
-        mov     ax,DGROUP               ; ...
-        mov     ds,ax
-endif                                   ; ...
-        call    __hook8087_             ; hook into int7 if 80x87 not present
+__init_87_emulator proc
+        call    __hook8087              ; hook into int7 if 80x87 not present
         mov     byte ptr __real87,al    ; set whether real 80x87 present
         call    __init_8087_emu         ; initialize the 80x87
         mov     byte ptr __8087,al      ; at this point we can't tell the real
                                         ; thing from the fake since emulator is
                                         ; hooked in
-        pop     ds                      ; restore DS
         ret                             ; return to caller
 __init_87_emulator endp
 
@@ -70,8 +91,8 @@ __init_87_emulator endp
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 public __fini_87_emulator
-__fini_87_emulator proc near
-        call    __unhook8087_           ; unhook from int7
+__fini_87_emulator proc
+        call    __unhook8087            ; unhook from int7
         ret
 __fini_87_emulator endp
 

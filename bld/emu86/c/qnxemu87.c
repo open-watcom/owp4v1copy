@@ -33,7 +33,7 @@ unsigned _curbrk;
 #include <errno.h>
 #include <i86.h>
 
-extern void __interrupt __far __int7();
+extern void __interrupt __int7();
 #pragma aux __int7 "*";
 
 #if defined(QNX16)

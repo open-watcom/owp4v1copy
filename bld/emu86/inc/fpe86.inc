@@ -1,9 +1,5 @@
 
-        modstart fpe86
-ifndef __PROTMODE__
         extrn   __GETDS : near
-endif
-
 
 _DOS  = 1
 _OS2  = 2
@@ -20,7 +16,7 @@ _OS2  = 2
   NC = '$'
 
 ifdef _DEBUG
-public  badop,prtnyi,my87,modrm,memop,stkop
+public  badop,prtnyi,my87,modrm,memop,stkop,stkop1
 endif
 
 sarea   struc
@@ -56,7 +52,7 @@ _DATA ends
 
 DGROUP  group   _DATA
 
-assume  ds:DGROUP,cs:_TEXT
+assume  ds:DGROUP
 
 include consts.inc
 include tentab.inc
@@ -266,6 +262,79 @@ else
 endif
         endm
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;       exception handling
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;
+        xdefp   F8DivZero
+F8DivZero proc  near
+        mov     AL,SW_ZE                ; indicate zero divide
+        mov     AH,FPE_ZERODIVIDE       ; ...
+        call    __Exception_HNDLR       ; process exception
+        ret                             ; return
+F8DivZero endp
+
+        xdefp   F8InvalidOp
+F8InvalidOp proc near
+        mov     AL,SW_IE                ; indicate invalid operation
+        mov     AH,FPE_INVALID          ; ...
+        call    __Exception_HNDLR       ; process exception
+        ret                             ; return
+F8InvalidOp endp
+
+        xdefp   F8OverFlow
+F8OverFlow proc near
+        mov     AL,SW_OE                ; get OVERFLOW mask
+        mov     AH,FPE_OVERFLOW         ; set OVERFLOW exception code
+        call    __Exception_HNDLR       ; process exception
+        ret                             ; return
+F8OverFlow endp
+
+        xdefp   __Exception_HNDLR
+;
+; input:
+;       AL - exception mask for status and control word
+;       AH - exception code for signal handler
+
+__Exception_HNDLR proc  near
+        or      byte ptr ds:[bp].status,AL   ; indicate exception occurred
+        test    byte ptr ds:[bp].control,AL  ; if exception unmasked
+        _if     e                       ; then
+          push  si                      ; - save registers
+          push  di                      ; - ...
+          push  cx                      ; - ...
+          push  es                      ; - ...
+          push  ds                      ; - ...
+          sub   sp,NDP_SIZE             ; - allocate space for copy of 387
+          mov   cx,ss                   ; - set ES=SS
+          mov   es,cx                   ; - ...
+          mov   si,bp                   ; - point to current copy
+          mov   di,sp                   ; - point to temporary save area
+          mov   cx,NDP_SIZE/2           ; - number of words to copy
+          cld                           ; - make sure forward direction
+          rep   movsw                   ; - copy it
+;          call  __GETDS                 ; - point DS to DGROUP
+          mov   AL,AH                   ; - get exception code
+          mov   AH,0                    ; - ...
+          call  __FPE_handler           ; - jump to SIGFPE handler rtn
+          mov   cx,ds                   ; - set ES=DS
+          mov   es,cx                   ; - ...
+          mov   cx,ss                   ; - set DS=SS
+          mov   ds,cx                   ; - ...
+          mov   di,bp                   ; - point to current copy
+          mov   si,sp                   ; - point to temporary save area
+          mov   cx,NDP_SIZE/2           ; - number of words to copy
+          rep   movsw                   ; - copy it
+          add   sp,NDP_SIZE             ; - deallocate space
+          pop   ds                      ; - restore registers
+          pop   es                      ; - ...
+          pop   cx                      ; - ...
+          pop   di                      ; - ...
+          pop   si                      ; - ...
+        _endif                          ; endif
+        ret                             ; return
+__Exception_HNDLR endp
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;       interrupt int7()     ; protected-mode programs trap to here
@@ -289,7 +358,6 @@ __dmy_int7:
         push    ds                      ; ...
         push    es                      ; ...
         lea     bx,my87                 ; ...
-        mov     bp,sp                   ; get access to registers
         mov     ax,ss                   ; put SS in DS
         mov     ds,ax                   ; ...
         mov     bp,sp                   ; get access to registers
@@ -657,75 +725,6 @@ p_double:                               ; round result to double precision
         and     [bx],dx                 ; mask off bottom bits
         jmp     exit                    ; exit
 
-
-        xdefp   F8DivZero
-F8DivZero proc  near
-        mov     AL,SW_ZE                ; indicate zero divide
-        mov     AH,FPE_ZERODIVIDE       ; ...
-        call    __Exception_HNDLR       ; process exception
-        ret                             ; return
-F8DivZero endp
-
-        xdefp   F8InvalidOp
-F8InvalidOp proc near
-        mov     AL,SW_IE                ; indicate invalid operation
-        mov     AH,FPE_INVALID          ; ...
-        call    __Exception_HNDLR       ; process exception
-        ret                             ; return
-F8InvalidOp endp
-
-        xdefp   F8OverFlow
-F8OverFlow proc near
-        mov     AL,SW_OE                ; get OVERFLOW mask
-        mov     AH,FPE_OVERFLOW         ; set OVERFLOW exception code
-        call    __Exception_HNDLR       ; process exception
-        ret                             ; return
-F8OverFlow endp
-
-        xdefp   __Exception_HNDLR
-;
-; input:
-;       AL - exception mask for status and control word
-;       AH - exception code for signal handler
-
-__Exception_HNDLR proc  near
-        or      byte ptr ds:[bp].status,AL   ; indicate exception occurred
-        test    byte ptr ds:[bp].control,AL  ; if exception unmasked
-        _if     e                       ; then
-          push  si                      ; - save registers
-          push  di                      ; - ...
-          push  cx                      ; - ...
-          push  es                      ; - ...
-          push  ds                      ; - ...
-          sub   sp,NDP_SIZE             ; - allocate space for copy of 387
-          mov   cx,ss                   ; - set ES=SS
-          mov   es,cx                   ; - ...
-          mov   si,bp                   ; - point to current copy
-          mov   di,sp                   ; - point to temporary save area
-          mov   cx,NDP_SIZE/2           ; - number of words to copy
-          cld                           ; - make sure forward direction
-          rep   movsw                   ; - copy it
-;         call  __GETDS                 ; - point DS to DGROUP
-          mov   AL,AH                   ; - get exception code
-          mov   AH,0                    ; - ...
-          call  __FPE_handler           ; - jump to SIGFPE handler rtn
-          mov   cx,ds                   ; - set ES=DS
-          mov   es,cx                   ; - ...
-          mov   cx,ss                   ; - set DS=SS
-          mov   ds,cx                   ; - ...
-          mov   di,bp                   ; - point to current copy
-          mov   si,sp                   ; - point to temporary save area
-          mov   cx,NDP_SIZE/2           ; - number of words to copy
-          rep   movsw                   ; - copy it
-          add   sp,NDP_SIZE             ; - deallocate space
-          pop   ds                      ; - restore registers
-          pop   es                      ; - ...
-          pop   cx                      ; - ...
-          pop   di                      ; - ...
-          pop   si                      ; - ...
-        _endif                          ; endif
-        ret                             ; return
-__Exception_HNDLR endp
 
 ;===========================MOD/RM calculations=================================
 ;       AX contains segment value to be used for [BP] reference
@@ -1316,7 +1315,7 @@ store   macro   what                            ; store st somewhere
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-include memops.new
+include memops.inc
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;; stack instruction emulation ;;;;;;;;;;;;;;;;;;;;;;;;
 ;; AT THIS POINT
@@ -1327,7 +1326,7 @@ include memops.new
 ;; DI           - will have been updated to reflect top of stack pointer
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-include stkops.new
+include stkops.inc
 
 ; here are some specific stack ops
 
