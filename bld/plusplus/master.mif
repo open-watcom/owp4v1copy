@@ -612,8 +612,13 @@ xcode$(target_cpu).tmp: $(cc_dir)/a/code$(target_cpu).asm
 # create reference compiler
 #
 reference : .symbolic $(exe_ref_name).$(exe)
+!ifdef __LINUX__
+    cp $(exe_ref_name).$(exe) ../bin/$(exe_ref_name)
+    rm -f $(exe_ref_name).*
+!else
     copy /b $(exe_ref_name).$(exe)+$(exe_ref_name).sym ..\bin\$(exe_ref_name).$(exe)
     del $(exe_ref_name).*
+!endif
 
 #
 # list of projects required to build the plusplus project

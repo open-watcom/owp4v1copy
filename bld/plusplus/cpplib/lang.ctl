@@ -8,7 +8,7 @@ set PROJDIR=<CWD>
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
 cdsay .
-set destdir=<relroot>\rel2
+set destdir=<relroot>/rel2
 
 #
 # Make sure we have the reference compilers
@@ -19,7 +19,7 @@ set destdir=<relroot>\rel2
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
 
 [ BLOCK <1> rel2 ]
-    set destdir=<relroot>\rel2
+    set destdir=<relroot>/rel2
 
 [ BLOCK <1> nlang ]
     set destdir=<dwatcom>

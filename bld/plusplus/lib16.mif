@@ -1,12 +1,18 @@
 #
 # 16-bit library support
 #
-host_CPU = i86
+host_cpu = i86
+
+!ifdef __LINUX__
+comp_cpp = $(plusplus_dir)/bin/rpp$(host_CPU)12
+!else
 comp_cpp = $(plusplus_dir)\bin\rpp$(host_CPU)12.exe
+!endif
+
 !ifndef on_build_machine
 !ifdef comp_cpp_i86
 comp_cpp = $(comp_cpp_i86)
 !endif
 !endif
-comp_c = $(cc_$(host_CPU))
-asm_a = $(as_$(host_CPU))
+comp_c = $(cc_$(host_cpu))
+asm_a = $(as_$(host_cpu))

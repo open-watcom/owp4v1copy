@@ -4,9 +4,9 @@ proj_name = yacc
 !include deftarg.mif
 !include defrule.mif
 
-inc_dirs = $(yacc_dir)\h
+inc_dirs = $(yacc_dir)/h
 
-.c: ..\c
+.c: ../c
 
 objs =                  &
         bitsets.obj     &

@@ -11,30 +11,30 @@ source_libs = $(libs)
 source_libs_x = $(libx)
 !endif
 
-lib_flags = /b /c /n /t
+lib_flags = -b -c -n -t
 !ifdef on_build_machine
 !ifeq host_CPU axp
 !else
-lib_flags += /s
+lib_flags += -s
 !endif
 !endif
 !ifdef on_JWW_machine
-lib_flags += /p=64
+lib_flags += -p=64
 !else
-lib_flags += /p=16
+lib_flags += -p=16
 !endif
 !ifeq linkage dynamic
 export_name=export.def
 exportx_name=exportx.def
-exp_lib_flags = /z=$(export_name)
-exp_libx_flags = /z=$(exportx_name)
+exp_lib_flags = -z=$(export_name)
+exp_libx_flags = -z=$(exportx_name)
 !else
 !ifeq host_CPU axp
 exp_lib_flags =
 exp_libx_flags =
 !else
-exp_lib_flags = /z
-exp_libx_flags = /z
+exp_lib_flags = -z
+exp_libx_flags = -z
 !endif
 !endif
 
@@ -50,7 +50,7 @@ $(target_lib) : $(source_libs)
 !ifeq linkage dynamic
     vi -q -s $(plusplus_cpplib_dir)\export.vi $(export_name)
 !endif
-    del $(lbcfile)
+    rm -f $(lbcfile)
     wtouch compile.tim
 
 !ifdef target_lib_x
@@ -61,7 +61,7 @@ $(target_lib_x) : $(source_libs_x)
 !ifeq linkage dynamic
     vi -q -s $(plusplus_cpplib_dir)\export.vi $(exportx_name)
 !endif
-    del $(lbcfile)
+    rm -f $(lbcfile)
     wtouch compile.tim
 !endif
 

@@ -27,3 +27,12 @@
     cdsay ..\nt386
     wmake -h -k reference
     cdsay <PROJDIR>
+
+[ BLOCK <BUILD_PLATFORM> linux386 ]
+#==================================
+    echo Building Linux 386 C++ reference compilers
+    cdsay <PROJDIR>/../linuxi86
+    wmake -h -k reference
+    cdsay ../linux386
+    wmake -h -k reference
+    cdsay <PROJDIR>

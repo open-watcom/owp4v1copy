@@ -24,8 +24,8 @@ files = $+ $(static_objs) $-
 target_lib = $(prefix)$(suffix).lib
 target_lib_x = $(prefix_x)$(suffix).lib
 
-cpp_dirs = ..\cpp
-c_dirs = ..\c
-asm_dirs = ..\a
-inc_dirs = ..\h;$(plusplus_dir)\h
-asm_incs = ..\inc
+cpp_dirs = ../cpp
+c_dirs = ../c
+asm_dirs = ../a
+inc_dirs = ../h;$(plusplus_dir)/h
+asm_incs = ../inc
