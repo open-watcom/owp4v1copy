@@ -140,7 +140,7 @@ void Header( void )
 }
 
 
-STATIC void handleMacroDefn( char *buf )
+STATIC void handleMacroDefn( const char *buf )
 /*********************************************
  * Can't use Parse() at this point because we need readonly macros, so we
  * simply use LexToken().
@@ -148,18 +148,18 @@ STATIC void handleMacroDefn( char *buf )
  * macros even the one on the command line can be overwritten
  */
 {
-    char    *p;
-    int     pos;
+    char        *p;
+    char        *q;
 
     assert( buf != NULL );
 
-    buf = StrDupSafe( buf );    /* we need our own copy */
+    q = StrDupSafe( buf );    /* we need our own copy */
 
-    p = strpbrk( buf, "#=" );
+    p = strpbrk( q, "#=" );
     assert( p != NULL );
     *p = '=';                   /* lex doesn't recognize '#' */
 
-    InsString( buf, FALSE );     /* put arg into stream */
+    InsString( q, FALSE );     /* put arg into stream */
     while( LexToken( LEX_PARSER ) != STRM_END ) {
         /* NOP - eat all the characters */
     }
@@ -169,20 +169,17 @@ STATIC void handleMacroDefn( char *buf )
         /* Insert twice because in nmake declaring a macro in the command line */
         /* is equivalent to declaring one as is and one that is all upper case */
         /* Approximately so. we cater for foo meaning FOO but not FoO W.Briscoe 20031114 */
-        pos = 0;
-        while( buf[ pos ] != NULLCHAR &&
-               buf[ pos ] != '=' ) {
-            buf[ pos ] = (char) toupper( buf[ pos ] );
-            ++pos;
+        while( --p >= q ) {
+            *p = (char) toupper( *p );
         }
 
-        InsString( buf, TRUE );     /* put arg into stream */
+        InsString( q, FALSE );     /* put arg into stream */
         while( LexToken( LEX_PARSER ) != STRM_END ) {
-            /* NOP - eat all the characters */
+            /* NOP - eat the characters. Needs own eater. W.Briscoe 20041014 */
         }
         Glob.macreadonly = TRUE;
     }
-    FreeSafe( buf );
+    FreeSafe( q );
 }
 
 
@@ -312,7 +309,7 @@ STATIC char *procFlags( char const * const *argv, const char **log_name )
             }
         }
         if( strpbrk( p, "=#" ) != NULL ) {     /* is macro=defn */
-            handleMacroDefn( (char*) p );
+            handleMacroDefn( p );
         } else {                /* is a target */
             handleTarg( p );
         }
