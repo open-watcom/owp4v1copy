@@ -38,7 +38,7 @@ OBJS = &
 # removed files: wrrtr.obj wrrwridn.obj
 
 # options to use
-extra_c_flags = -dMICROSOFT -we
+extra_c_flags = -dMICROSOFT
 
 #
 # FLAGS FOR THE DATABASE TEAM
