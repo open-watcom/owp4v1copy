@@ -33,12 +33,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <io.h>
-#ifdef UNIX
-#include <sys/stat.h>
 #include <unistd.h>
+#if defined( UNIX )
+#include <sys/stat.h>
 #include <dirent.h>
 #include <clibext.h>
+#elif defined( __UNIX__ )
+#include <sys/stat.h>
+#include <dirent.h>
 #else
 #include <direct.h>
 #endif
@@ -79,7 +81,7 @@ static int _make_argv( char *p, char ***argv )
         char            name[_MAX_FNAME];
         char            extin[_MAX_EXT];
         char            pathin[_MAX_PATH];
-#ifdef UNIX
+#if defined( UNIX ) || defined( __UNIX__ )
         struct stat     file_info;
         char            full_path[ _MAX_PATH ];
 #endif
@@ -131,7 +133,7 @@ static int _make_argv( char *p, char ***argv )
                     for(;;) {
                         dirent = readdir( dir );
                         if( dirent == NULL ) break;
-#ifdef UNIX
+#if defined( UNIX ) || defined( __UNIX__ )
                         strcpy( full_path, start );
                         strcat( full_path, dirent->d_name );
                         stat( full_path, &file_info );

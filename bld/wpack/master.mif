@@ -1,5 +1,7 @@
 proj_name = wpack
 
+wpack_autodepends = .AUTODEPEND
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
@@ -17,8 +19,13 @@ objs =               &
         lookup.obj   &
         message.obj  &
         qsort.obj    &
-        wildargv.obj &
         wpack.obj
+
+!ifneq nowildargv 1
+!ifneq host_os linux
+objs += wildargv.obj
+!endif
+!endif
 
 extra_l_flags = op map
 
