@@ -13,6 +13,7 @@ host_cpu = 386
 sys_x86_os2     = sys os2 op st=4k,modname=$^&, desc $^&
 sys_x86_os2v2   = sys os2v2 op modname=$^&, desc $^&
 sys_x86_qnx     = sys qnx386 flat op st=16k, offset=20k, res=$(srv).use
+sys_x86_linux   = sys linux
 sys_x86_win     = sys windows op st=20k, modname=$^&, desc $^&
 sys_x86_dos     = sys dos op st=4k
 sys_x86_rsi     = stub
@@ -53,6 +54,7 @@ machsuff=$+$(machine)$-
 targ_x86_os2    = binp\$(name)1.exe
 targ_x86_os2v2  = binp\$(name).exe
 targ_x86_qnx    = qnx\$(name).qnx
+targ_x86_linux  = linux\$(name).elf
 targ_x86_win    = bin\$(name).exe
 targ_x86_dos    = bin.$(machsuff)\$(name).exe
 targ_x86_cw     = bin.$(machsuff)\$(name).exe

@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Internal debugger trap file OS specific implementation
+*               header file.
 *
 ****************************************************************************/
 
@@ -139,6 +139,15 @@
     #define     WANT_THREAD
     #undef      WANT_RFX
     #define     TRAPENTRY TRAPFAR __saveregs
+#elif defined(__LINUX__)
+    #undef      WANT_FILE_INFO  // TODO: Want this later for Linux!
+    #undef      WANT_ENV        // TODO: Want this later for Linux!
+    #undef      WANT_ASYNC      // TODO: Want this later for Linux!
+    #define     WANT_FILE
+    #undef      WANT_OVL
+    #undef      WANT_THREAD     // TODO: Want this later for Linux!
+    #undef      WANT_RFX        // TODO: Want this later for Linux!
+    #define     TRAPENTRY TRAPFAR
 #elif defined(__NETWARE__)
     #undef      WANT_FILE_INFO
     #undef      WANT_ENV
