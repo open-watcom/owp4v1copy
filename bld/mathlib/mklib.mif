@@ -40,7 +40,7 @@ $(libname).lib : $(objs) $(libs) .precious
 
 .c   : ..\..\..\c
 .cpp : ..\..\..\cpp
-.asm : ..\..\..\a;$(emu286);$(emu386)
+.asm : ..\..\..\a;$(emu286)\asm;$(emu386)\asm
 
 !include $(mathlib_dir)\clean.mif
 !include $(mathlib_dir)\updlib.mif
