@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Compare two names
+* Description:  Compare two names.
 *
 ****************************************************************************/
 
@@ -36,11 +36,19 @@
 // byte access instructions).
 
 static unsigned DwordMasks[] = {
+#ifdef __BIG_ENDIAN__
+    0x00000000,
+    0xFF000000,
+    0xFFFF0000,
+    0xFFFFFF00,
+    0xFFFFFFFF
+#else
     0x00000000,
     0x000000FF,
     0x0000FFFF,
     0x00FFFFFF,
     0xFFFFFFFF
+#endif
 };
 
 
