@@ -1576,7 +1576,7 @@ static int process_address( expr_list *opndx )
             AsmError( INVALID_MEMORY_POINTER );
             return( ERROR );
         }
-        switch( AsmBuffer[opndx->instr]->value ) {
+        switch( opndx->instr ) {
         case T_SEG:
             if( sym->state == SYM_STACK ) {
                 AsmError( CANNOT_SEG_AUTO );
