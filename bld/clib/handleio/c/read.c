@@ -86,6 +86,7 @@
     #endif
 
     __handle_check( handle, -1 );
+    __ChkTTYIOMode( handle );
     iomode_flags = __GetIOMode( handle );
     if( iomode_flags == 0 ) {
         #if defined( __WINDOWS__ ) || defined( __WINDOWS_386__ )

@@ -106,6 +106,7 @@ extern time_t _d2ttime();
             }
         }
     #endif
+    __ChkTTYIOMode( hid );
     iomode_flags = __GetIOMode( hid );
     if( iomode_flags & _READ ) {
         buf->st_mode |= S_IRUSR | S_IRGRP | S_IROTH;

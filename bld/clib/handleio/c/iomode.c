@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  io_mode handle information array manipulation
 *
 ****************************************************************************/
 
@@ -63,18 +62,10 @@ unsigned _HUGEDATA __init_mode[_NFILES] = { /* file mode information (flags) */
 
 unsigned *__io_mode = __init_mode;      /* initially points to static array */
 
-#define _INITIALIZED    _DYNAMIC
-
 unsigned __GetIOMode( unsigned handle )
 {
     if( handle >= __NFiles ) {
         return( 0 );
-    }
-    if( handle < NUM_STD_STREAMS && !(__io_mode[handle] & _INITIALIZED) ) {
-        __io_mode[handle] |= _INITIALIZED;
-        if( isatty( handle ) ) {
-            __io_mode[handle] |= _ISTTY;
-        }
     }
     return( __io_mode[handle] );
 }
@@ -86,11 +77,5 @@ void __SetIOMode_nogrow( unsigned handle, unsigned value )
     }
 }
 
-// For F77 to call
-
-unsigned __IOMode( unsigned handle )
-{
-    return( __GetIOMode( handle ) );
-}
 #endif
 

@@ -38,6 +38,7 @@
 !inject hdlman.obj   d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
 !inject hdopen.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32     l32
 !inject iomode.obj   d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+!inject iomodtty.obj d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject lock.obj     d16 d32                                o16 o32         w16 w32
 !inject locking.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
 !inject lockqnx.obj                                                 q16 q32

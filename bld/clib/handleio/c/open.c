@@ -260,11 +260,13 @@ static int __F_NAME(_sopen,__wsopen)( const CHAR_TYPE *name, int mode, int shfla
 }
 
 
+#if 0 /* couldn't find any user; please re-enable if it's necessary */
 #ifndef __WIDECHAR__                    /* compile one version only */
 int __set_binary( int handle )
 {
     unsigned        iomode_flags;
 
+    __ChkTTYIOMode( handle );
     iomode_flags = __GetIOMode( handle );
     iomode_flags |= _BINARY;
     __SetIOMode( handle, iomode_flags );
@@ -282,4 +284,5 @@ int __set_binary( int handle )
     }
     return( 0 );
 }
+#endif
 #endif

@@ -24,46 +24,35 @@
 *
 *  ========================================================================
 *
-* Description:  prototypes and definitions for iomode array manipulation
+* Description:  check tty for standard handles in the iomode array
 *
 ****************************************************************************/
 
+#include "variety.h"
+#include <unistd.h>
+#include "rtdata.h"
+#include "liballoc.h"
+#include "fileacc.h"
 
-#ifndef _IOMODE_H_INCLUDED
-#define _IOMODE_H_INCLUDED
+#define _INITIALIZED    _DYNAMIC
 
-#if defined(__NT__)
+extern unsigned __GetIOMode( unsigned handle );
+extern unsigned *__io_mode;
 
-#define NULL_HANDLE  (HANDLE)-1
-// define a temporary dummy handle that isn't 0 or -1
-#define DUMMY_HANDLE (HANDLE)-2
+void __ChkTTYIOMode( unsigned handle )
+{
+    if( handle < NUM_STD_STREAMS && !(__io_mode[handle] & _INITIALIZED) ) {
+        __io_mode[handle] |= _INITIALIZED;
+        if( isatty( handle ) ) {
+            __io_mode[handle] |= _ISTTY;
+        }
+    }
+}
 
-extern  unsigned    __NHandles;
+// For F77 to call
 
-extern  void        __initPOSIXHandles( void );
-extern  unsigned    __growPOSIXHandles( unsigned num );
-extern  int         __allocPOSIXHandle( HANDLE hdl );
-extern  void        __freePOSIXHandle( int hid );
-extern  HANDLE      __getOSHandle( int hid );
-extern  int         __setOSHandle( unsigned hid, HANDLE hdl );
-extern  HANDLE      __NTGetFakeHandle( void );
-
-extern  HANDLE      *__OSHandles;
-
-#define __getOSHandle( hid ) __OSHandles[ hid ]
-#define NT_STDIN_FILENO (__getOSHandle( STDIN_FILENO ))
-#define NT_STDOUT_FILENO (__getOSHandle( STDOUT_FILENO ))
-#define NT_STDERR_FILENO (__getOSHandle( STDERR_FILENO ))
-
-#endif
-
-#if !defined(__NETWARE__)
-
-extern  unsigned    __GetIOMode( int __handle );
-extern  unsigned    __SetIOMode( int __handle, unsigned __value );
-extern  unsigned    __SetIOMode_nogrow( int __handle, unsigned __value );
-extern  void        __ChkTTYIOMode( int __handle );
-
-#endif
-
-#endif
+unsigned __IOMode( unsigned handle )
+{
+    __ChkTTYIOMode( handle );
+    return( __GetIOMode( handle ) );
+}

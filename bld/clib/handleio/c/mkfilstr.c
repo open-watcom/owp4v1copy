@@ -84,6 +84,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(__FormPosixHandleStr,__wFormPosixHandleStr)( void 
 
     /*** Process the open files ***/
     for( posixHandle=0; posixHandle<__NFiles; posixHandle++ ) {
+        __ChkTTYIOMode( posixHandle );
         mode = __GetIOMode( posixHandle );
         if( mode & _INITIALIZED ) {         /* skip it if it's not open */
             osHandle = _os_handle( posixHandle );

@@ -52,6 +52,7 @@
 extern  unsigned _HUGEDATA __init_mode[_NFILES];
 extern  unsigned __NFiles;              /* maximum # of files we can open */
 extern  unsigned *__io_mode;
+extern  void     __ChkTTYIOMode( unsigned handle );
 
 static  unsigned _init_NFiles;          // original __NFiles value;
 
@@ -139,6 +140,7 @@ signed __SetIOMode( unsigned handle, unsigned value )
         return( -1 );
     } else {
         if( value != 0 ) {
+            __ChkTTYIOMode( handle );
             __io_mode[handle] = value | _INITIALIZED;
         } else {
             __io_mode[handle] = value;    /* we're closing it; smite _INITIALIZED */
