@@ -194,7 +194,6 @@ wresdir=$(build_root)sdk\rc\wres
 # define directories (without trailing \)
 #
 
-bin_root_wv=$(build_root)\bin
 win386dir=$(build_root)\win386
 batchdir=$(build_root)\idebatch
 wclassdir=$(build_root)\wclass
