@@ -45,6 +45,11 @@
     #if defined(__386__)
         extern int _brk(void *);
     #endif
+#elif defined(__LINUX__)
+    #include <sys/types.h>
+    #include <unistd.h>
+    extern int _brk(void *);
+// TODO: Linux specific headers!
 #elif defined(__WINDOWS__)
     #include "windows.h"
 #endif
@@ -53,7 +58,7 @@
 
 extern  unsigned                _STACKTOP;
 
-#if !( defined(__OS2__) || defined(__QNX__))
+#if !( defined(__OS2__) || defined(__QNX__) || defined(__LINUX__))
 
 extern  unsigned short SS_Reg( void );
 #pragma aux SS_Reg              = \
@@ -123,6 +128,9 @@ _WCRTLINK void _WCNEAR *__brk( unsigned brk_value )
 #if defined(__OS2__)
         if( DosReallocSeg( seg_size << 4, segment ) != 0 ) {
 #elif defined(__QNX__) && defined(__386__)
+        if( _brk((void *)(seg_size << 4)) == -1 ) {
+#elif defined(__LINUX__)
+// TODO: This is wrong for Linux - I just copied the QNX code to get it compiling...
         if( _brk((void *)(seg_size << 4)) == -1 ) {
 #elif defined(__QNX__)
         if( qnx_segment_realloc( segment,((unsigned long)seg_size) << 4) == -1){
