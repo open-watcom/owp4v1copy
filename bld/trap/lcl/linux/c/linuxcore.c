@@ -36,11 +36,13 @@
 #include <sys/types.h>
 #include "trpimp.h"
 #include "exeelf.h"
-#include "linuxcomm.h"
+//#include "linuxcomm.h"
 #include "squish87.h"
 #include "mad.h"
 #include "madregs.h"
 #include "orl.h"
+
+extern unsigned FindFilePath( int exe, char *name, char *result );
 
 #define NO_FILE         (-1)
 

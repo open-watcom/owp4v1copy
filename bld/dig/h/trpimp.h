@@ -78,20 +78,31 @@
     #undef          WANT_FILE_INFO
     #undef          WANT_ENV
     #undef          WANT_ASYNC
-    #define     WANT_FILE
+    #define         WANT_FILE
     #undef          WANT_OVL
     #define         WANT_THREAD
-    #define     WANT_RFX
-    #define     TRAPENTRY TRAPFAR __saveregs
+    #define         WANT_RFX
+    #define         TRAPENTRY TRAPFAR __saveregs
 #elif defined(__OS2V2__) || defined(__OS2__) && !defined(__I86__)
-    #undef          WANT_FILE_INFO
-    #undef          WANT_ENV
-    #undef          WANT_ASYNC
-    #define     WANT_FILE
-    #undef          WANT_OVL
-    #define         WANT_THREAD
-    #define     WANT_RFX
-    #define     TRAPENTRY TRAPFAR
+    #if defined(LINUXCORE)
+        #undef      WANT_FILE_INFO
+        #undef      WANT_ENV
+        #undef      WANT_ASYNC
+        #define     WANT_FILE
+        #undef      WANT_OVL
+        #undef      WANT_THREAD
+        #undef      WANT_RFX
+        #define     TRAPENTRY TRAPFAR
+    #else
+        #undef      WANT_FILE_INFO
+        #undef      WANT_ENV
+        #undef      WANT_ASYNC
+        #define     WANT_FILE
+        #undef      WANT_OVL
+        #define     WANT_THREAD
+        #define     WANT_RFX
+        #define     TRAPENTRY TRAPFAR
+    #endif
 #elif defined(__NT__)
     #if defined(JVMXHELP) || defined(MSJXHELP)
         #undef  WANT_FILE_INFO
