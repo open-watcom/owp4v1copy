@@ -410,6 +410,7 @@ static int do_default( void )
 {
     unsigned char       code, c, cmap;
     int                 i;
+    char               *s;
 
     for( i = 0; i < sizeof( default_tix ); i += 2 ) {
         code = default_tix[i];
@@ -440,6 +441,18 @@ static int do_default( void )
     TrieAdd( 0xff0, "\6");
     /* sticky ALT ^A */
     TrieAdd( 0xff3, "\1");
+    s = getenv("TERM");
+    if( s != NULL && strncmp( s, "xterm", 5 ) == 0 ) {
+        /* special xterm keys available in recent xterms */
+        TrieAdd( EV_CTRL_CURSOR_UP, "\033[1;5A" );
+        TrieAdd( EV_CTRL_CURSOR_DOWN, "\033[1;5B" );
+        TrieAdd( EV_CTRL_CURSOR_RIGHT, "\033[1;5C" );
+        TrieAdd( EV_CTRL_CURSOR_LEFT, "\033[1;5D" );
+        TrieAdd( EV_CTRL_HOME, "\033[1;5H" );
+        TrieAdd( EV_CTRL_END, "\033[1;5F" );
+        TrieAdd( EV_CTRL_PAGE_UP, "\033[5;5~" );
+        TrieAdd( EV_CTRL_PAGE_DOWN, "\033[6;5~" );
+    }
     return( 1 );
 }
 
