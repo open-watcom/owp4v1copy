@@ -1226,8 +1226,13 @@ extern void XWriteImports( void )
     for( sym = HeadSym; sym != NULL; sym = sym->link ) {
         if( IS_SYM_IMPORTED(sym) && sym->p.import != NULL ) {
             if( !(FmtData.type & MK_NOVELL)
-                   || sym->p.import != DUMMY_IMPORT_PTR  ) {
-                WriteFormat( 0, "%s", sym->name );
+                   || sym->p.import != DUMMY_IMPORT_PTR  ) 
+            {
+                if(sym->prefix && (strlen(sym->prefix) > 0))
+                    WriteFormat( 0, "%s@%s", sym->prefix, sym->name);
+                else
+                    WriteFormat( 0, "%s", sym->name );
+
 #ifdef _OS2
                 if( FmtData.type & (MK_OS2|MK_PE) ) {
                     WriteFormat( 36, "%s", ImpModuleName( sym->p.import ) );
