@@ -10,12 +10,13 @@ regular-expression and text-data pool, plus a command code and g & p flags.
 In the special case that the command is a label the struct  will hold a ptr
 into the labels array labels[] during most of the compile,  until resolve()
 resolves references at the end.
-   The operation of execute() is described in its source module. 
+   The operation of execute() is described in its source module.
 
 ==== Written for the GNU operating system by Eric S. Raymond ==== */
 
 #include <stdio.h>              /* uses getc, fprintf, fopen, fclose */
-/*#include <string.h>*/		/* imported string functions */    /*BGA*/
+#include <stdlib.h>             /* uses exit */
+#include <string.h>             /* imported string functions */
 #include "sed.h"                /* command type struct and name defines */
 
 /* imported functions */
@@ -29,14 +30,14 @@ static void resolve();
 /***** public stuff ******/
 
 #define MAXCMDS         200     /* maximum number of compiled commands */
-#define MAXLINES        256     /* max # numeric addresses to compile */ 
+#define MAXLINES        256     /* max # numeric addresses to compile */
 
 /* main data areas */
 char    linebuf[MAXBUF+1];      /* current-line buffer */
 sedcmd  cmds[MAXCMDS+1];        /* hold compiled commands */
 long    linenum[MAXLINES];      /* numeric-addresses table */
 
-/* miscellaneous shared variables */ 
+/* miscellaneous shared variables */
 int     nflag;                  /* -n option flag */
 int     eargc;                  /* scratch copy of argument count */
 sedcmd  *pending        = NULL; /* next command to be executed */
@@ -63,7 +64,6 @@ static char     AD2NG[] = "sed: only one address allowed for %s\n";
 static char     TMCDS[] = "sed: too many commands, last was %s\n";
 static char     COCFI[] = "sed: cannot open command-file %s\n";
 static char     UFLAG[] = "sed: unknown flag %c\n";
-static char     COOFI[] = "sed: cannot open %s\n";
 static char     CCOFI[] = "sed: cannot create %s\n";
 static char     ULABL[] = "sed: undefined label %s\n";
 static char     TMLBR[] = "sed: too many {'s\n";
@@ -76,11 +76,11 @@ static char     TMWFI[] = "sed: too many w files\n";
 static char     REITL[] = "sed: RE too long: %s\n";
 static char     TMLNR[] = "sed: too many line numbers\n";
 static char     TRAIL[] = "sed: command \"%s\" has trailing garbage\n";
- 
+
 typedef struct                  /* represent a command label */
 {
         char            *name;          /* the label name */
-        sedcmd          *last;          /* it's on the label search list */  
+        sedcmd          *last;          /* it's on the label search list */
         sedcmd          *address;       /* pointer to the cmd it labels */
 }
 label;
@@ -168,7 +168,7 @@ char    *argv[];
 }
 /**/
 #define H       0x80    /* 128 bit, on if there's really code for command */
-#define LOWCMD  56      /* = '8', lowest char indexed in cmdmask */ 
+#define LOWCMD  56      /* = '8', lowest char indexed in cmdmask */
 
 /* indirect through this to get command internal code, if it exists */
 static char     cmdmask[] =
@@ -592,7 +592,7 @@ char    redelim;                        /* RE end-marker to look for */
                         if (negclass)
                                 for(classct = 0; classct < 16; classct++)
                                         ep[classct] ^= 0xFF;
-                        ep[0] &= 0xFE;          /* never match ASCII 0 */ 
+                        ep[0] &= 0xFE;          /* never match ASCII 0 */
                         ep += 16;               /* advance ep past set mask */
                         continue;
 
@@ -635,7 +635,7 @@ register char   *cbuf;
                                                 continue;
                                 }
                                 else if (*cbuf == '\n') /* end of 1 cmd line */
-                                { 
+                                {
                                         *cbuf = '\0';
                                         return(savep = p, 1);
                                         /* we'll be back for the rest... */
@@ -667,7 +667,7 @@ register char   *cbuf;
 
         /* if no -e flag read from command file descriptor */
         while((inc = getc(cmdf)) != EOF)                /* get next char */
-                if ((*++cbuf = inc) == '\\')            /* if it's escape */ 
+                if ((*++cbuf = inc) == '\\')            /* if it's escape */
                         *++cbuf = inc = getc(cmdf);     /* get next char */
                 else if (*cbuf == '\n')                 /* end on newline */
                         return(*cbuf = '\0', 1);        /* cap the string */
@@ -705,7 +705,7 @@ register char   *expbuf;
                 if (numl >= MAXLINES)   /* oh-oh, address table overflow */
                         ABORT(TMLNR);   /*   abort with error message */
                 *expbuf++ = CEOF;       /* write the end-of-address marker */
-                cp = rcp;               /* point compile past the address */ 
+                cp = rcp;               /* point compile past the address */
                 return(expbuf);         /* we're done */
         }
 
@@ -713,7 +713,7 @@ register char   *expbuf;
 }
 
 static char *gettext(txp)               /* uses global cp */
-/* accept multiline input from *cp..., discarding leading whitespace */ 
+/* accept multiline input from *cp..., discarding leading whitespace */
 register char   *txp;                   /* where to put the text */
 {
         register char   *p = cp;        /* this is for speed */
@@ -728,6 +728,7 @@ register char   *txp;                   /* where to put the text */
                         SKIPWS(p);
         } while
                 (txp++);                /* keep going till we find that nul */
+        return(NULL);                   /* shouldn't really get here */
 }
 
 static label *search(ptr)                       /* uses global lablst */

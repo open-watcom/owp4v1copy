@@ -8,17 +8,18 @@ the compiled commands in cmds[] on each line in turn.
    The function command() does most of the work. Match() and advance()
 are used for matching text against precompiled regular expressions and
 dosub() does right-hand-side substitution.  Getline() does text input;
-readout() and memeql() are output and string-comparison utilities.  
+readout() and memeql() are output and string-comparison utilities.
 
 ==== Written for the GNU operating system by Eric S. Raymond ====
 
-18NOV86	Fixed bug in 'selected()' that prevented address ranges from
-	working.				- Billy G. Allie.
-21FEB88 Refixed bug in 'selected()'		- Charles Marslett
+18NOV86 Fixed bug in 'selected()' that prevented address ranges from
+    working.                - Billy G. Allie.
+21FEB88 Refixed bug in 'selected()'     - Charles Marslett
 */
 
 #include <stdio.h>      /* {f}puts, {f}printf, getc/putc, f{re}open, fclose */
 #include <ctype.h>      /* for isprint(), isdigit(), toascii() macros */
+#include <stdlib.h>     /* for exit() */
 #include "sed.h"        /* command type structures & miscellaneous constants */
 
 extern char     *strcpy();      /* used in dosub */
@@ -55,7 +56,6 @@ static sedcmd   **aptr = appends;       /* ptr to current append */
 
 /* genbuf and its pointers */
 static char     genbuf[GENSIZ];
-static char     *lcomend = genbuf + GENSIZ;
 static char     *loc1;
 static char     *loc2;
 static char     *locs;
@@ -75,11 +75,11 @@ void execute(file)
 /* execute the compiled commands in cmds[] on a file */
 char *file;             /* name of text source file to be filtered */
 {
-        register char           *p1, *p2;       /* dummy copy ptrs */
+        register char           *p1;            /* dummy copy ptrs */
         register sedcmd         *ipc;           /* ptr to current command */
         char                    *execp;         /* ptr to source */
 
-        if (file != NULL)       /* filter text from a named file */ 
+        if (file != NULL)       /* filter text from a named file */
                 if (freopen(file, "r", stdin) == NULL)
                         fprintf(stderr, "sed: can't open %s\n", file);
 
@@ -204,11 +204,11 @@ sedcmd  *ipc;
                         return (TRUE);
                 return (FALSE);
         }
-        if (ipc->flags.allbut)		/* If we reach this point, the */
-                return (FALSE);		/* range test is satisfied, so */
-        return (TRUE);			/* return TRUE unless "!"ed    */
-					/* chasm@killer.UUCP           */
-}					/* Partial fix by Billy G Allie */
+        if (ipc->flags.allbut)      /* If we reach this point, the */
+                return (FALSE);     /* range test is satisfied, so */
+        return (TRUE);          /* return TRUE unless "!"ed    */
+                    /* chasm@killer.UUCP           */
+}                   /* Partial fix by Billy G Allie */
 
 static int match(expbuf, gf)    /* uses genbuf */
 /* match RE at expbuf against linebuf; if gf set, copy linebuf from genbuf */
@@ -269,7 +269,7 @@ static int advance(lp, ep)
 register char   *lp;            /* source (linebuf) ptr */
 register char   *ep;            /* regular expression element ptr */
 {
-        register char   *curlp;         /* save ptr for closures */ 
+        register char   *curlp;         /* save ptr for closures */
         char            c;              /* scratch character holder */
         char            *bbeg;
         int             ct;
@@ -314,7 +314,7 @@ register char   *ep;            /* regular expression element ptr */
                         bracend[*ep++] = lp;    /* mark it */
                         continue;               /* and go */
 
-                case CBACK: 
+                case CBACK:
                         bbeg = brastart[*ep];
                         ct = bracend[*ep++] - bbeg;
 
@@ -343,7 +343,7 @@ register char   *ep;            /* regular expression element ptr */
 
                 case CDOT|STAR:         /* match .* */
                         curlp = lp;             /* save closure start loc */
-                        while (*lp++);          /* match anything */ 
+                        while (*lp++);          /* match anything */
                         goto star;              /* now look for followers */
 
                 case CCHR|STAR:         /* match <literal char>* */
@@ -390,7 +390,7 @@ register char   *ep;            /* regular expression element ptr */
                                         (lp-- > curlp);
                                 return (FALSE);
                         }
-        
+
                         do {
                                 if (lp == locs)
                                         break;
@@ -510,8 +510,7 @@ sedcmd  *ipc;
         static int      didsub;                 /* true if last s succeeded */
         static char     holdsp[MAXHOLD];        /* the hold space */
         static char     *hspend = holdsp;       /* hold space end pointer */
-        register char   *p1, *p2, *p3;
-        register int    i;
+        register char   *p1, *p2;
         char            *execp;
 
         switch(ipc->command)
@@ -528,7 +527,7 @@ sedcmd  *ipc;
         case CCMD:              /* change pattern space */
                 delete = TRUE;
                 if (!ipc->flags.inrange || lastline)
-                        printf("%s\n", ipc->u.lhs);             
+                        printf("%s\n", ipc->u.lhs);
                 break;
 
         case DCMD:              /* delete pattern space */
@@ -696,7 +695,7 @@ register char   *buf;           /* where to send the input */
         {
                 lnum++;                 /* note that we got another line */
                 while(*buf++);          /* find the end of the input */
-                return (--buf);          /* return ptr to terminating null */ 
+                return (--buf);          /* return ptr to terminating null */
         }
         else
         {
@@ -719,7 +718,6 @@ register char   *a, *b;
 static void readout()
 /* write file indicated by r command to output */
 {
-        register char   *p1;    /* character-fetching dummy */
         register int    t;      /* hold input char or EOF */
         FILE            *fi;    /* ptr to file to be read */
 
