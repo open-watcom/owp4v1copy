@@ -35,32 +35,29 @@ pre_obj_deps += wpp$(target_cpu)01.int $(pre_obj_deps_wasm)
 
 !include ../ppobjs.mif
 
-inc_dirs =.;
+inc_dirs =-I.
 !ifdef plusplus_include
 inc_dirs += $+$(plusplus_include)$-;
 !endif
 !ifeq plusplus_trmem 1
-inc_dirs += $(trmem_dir);
+inc_dirs += -I$(trmem_dir);
 !endif
-inc_dirs += ../h;
-inc_dirs += $(cg_inc_dirs);
-inc_dirs += $(wasm_dir)/h;
-inc_dirs += $(as_dir)/h;
-inc_dirs += $(dwarf_dir)/dw/h;
-inc_dirs += $(cc_dir)/h;
-inc_dirs += $(watcom_dir)/h;
+inc_dirs += -I"../h"
+inc_dirs += $(cg_inc_dirs)
+inc_dirs += -I"$(wasm_dir)/h"
+inc_dirs += -I"$(as_dir)/h"
+inc_dirs += -I"$(dwarf_dir)/dw/h"
+inc_dirs += -I"$(cc_dir)/h"
+inc_dirs += -I"$(watcom_dir)/h"
 !ifdef comp_cfg_dir
-inc_dirs += $(comp_cfg_dir)/h;
+inc_dirs += -I"$(comp_cfg_dir)/h"
 !endif
-inc_dirs += $(fe_misc_dir)/h;
-inc_dirs += $(brinfo_dir)/h
+inc_dirs += -I"$(fe_misc_dir)/h"
+inc_dirs += -I"$(brinfo_dir)/h"
 
 !ifndef patch_level
 patch_level=0
 !endif
-
-.before
-    @set include=$(inc_path)                    # includes 'inc_dirs'
 
 exe_bld_name = wcpp$(target_cpu)
 exe_ref_name = rpp$(target_cpu)12
@@ -104,21 +101,21 @@ cflags += $(plusplus_cflags)
 !endif
 
 !ifeq host_os osi
-cflags += -d__OS2__
+cflags += -D__OS2__
 !endif
 
 # specify any unique options for modules
 !ifeq host_cpu axp
 # alpha
 !ifeq plusplus_trmem 1
-extra_c_flags_memmgr = -dTRACKER
+extra_c_flags_memmgr = -DTRACKER
 !endif
 !else
 # all intel
 extra_c_flags_cscan = -4r
 extra_c_flags_srcfile = -4r
 !ifeq plusplus_trmem 1
-extra_c_flags_memmgr = -of+ -dTRACKER
+extra_c_flags_memmgr = -of+ -DTRACKER
 !endif
 !ifeq release 1
 extra_c_flags_pcheader = -oi
@@ -134,37 +131,36 @@ fesupp_hdr   = "fesupp.h"
 carvecpp_hdr = "carvecpp.h"
 !endif
 
-extra_c_flags_carve    = -dheader=$(fesupp_hdr) -dheader2=$(carvecpp_hdr)
+extra_c_flags_carve    = -Dheader=$(fesupp_hdr) -Dheader2=$(carvecpp_hdr)
 extra_c_flags_cmdlnany = -os
-extra_c_flags_idedrv   = -dSTATIC_LINKAGE
+extra_c_flags_idedrv   = -DSTATIC_LINKAGE
 extra_c_flags_idedlld  = -bd
-extra_c_flags_initfini = -dheader=$(fesupp_hdr) -dSPLIT_REQD
-extra_c_flags_intlload = -d__header=$(fesupp_hdr)
-extra_c_flags_pstk     = -dheader=$(fesupp_hdr)
-extra_c_flags_pstk     = -dheader=$(fesupp_hdr)
-extra_c_flags_ringfns  = -dheader=$(fesupp_hdr)
-extra_c_flags_vbuf     = -dheader=$(fesupp_hdr)
-extra_c_flags_vstk     = -dheader=$(fesupp_hdr)
+extra_c_flags_initfini = -Dheader=$(fesupp_hdr) -DSPLIT_REQD
+extra_c_flags_intlload = -D__header=$(fesupp_hdr)
+extra_c_flags_pstk     = -Dheader=$(fesupp_hdr)
+extra_c_flags_ringfns  = -Dheader=$(fesupp_hdr)
+extra_c_flags_vbuf     = -Dheader=$(fesupp_hdr)
+extra_c_flags_vstk     = -Dheader=$(fesupp_hdr)
 !ifeq release 1
-extra_c_flags_wppdlldd = -dDLL_NAME=$(dll_bld_name)
+extra_c_flags_wppdlldd = -DDLL_NAME=$(dll_bld_name)
 !else
-extra_c_flags_wppdlldd = -dDLL_NAME=$(dll_dbg_name)
-extra_c_flags_dbgzap   = -dheader=$(fesupp_hdr)
+extra_c_flags_wppdlldd = -DDLL_NAME=$(dll_dbg_name)
+extra_c_flags_dbgzap   = -Dheader=$(fesupp_hdr)
 !endif
 !ifdef plusplus_dll_ptree
-extra_c_flags_dbgptree = -dDLL_PTREE
+extra_c_flags_dbgptree = -DDLL_PTREE
 !endif
 !ifeq host_os dos
-cflags += -dIDE_PGM
+cflags += -DIDE_PGM
 !endif
 !ifeq host_os osi
-cflags += -dIDE_PGM
+cflags += -DIDE_PGM
 !endif
 !ifeq host_os qnx
-cflags += -dIDE_PGM
+cflags += -DIDE_PGM
 !endif
 !ifeq host_os linux
-cflags += -dIDE_PGM
+cflags += -DIDE_PGM
 !endif
 
 # WLINK options for the various hosts
@@ -382,7 +378,7 @@ $(dll_bld_name).lib : $(dll_bld_name).dll
 $(dll_bld_name).dll : $(rc_objs) $(depends_dll) pdllbld.lnk
     $(linker) $(lflags_dll) NAME $^* @pdllbld
 !ifdef build_rc_$(host_os)_$(host_cpu)
-    $(rc) $(rc_flags) plusplus.rc $^@
+    $(rc) $(rc_flags) $(inc_dirs_sys) plusplus.rc $^@
 !endif
 
 $(exe_dbg_name).exe : $(depends_drv) pdrvdbg.lnk $(dll_dbg_name).lib
@@ -498,7 +494,7 @@ pdlldbg.lnk : pdll.lnk
 # miscellaneous build rules
 #
 ./intlbin.exe: $(fe_misc_dir)/c/intlbin.c
-    $(bld_cl) $[@ $(wcl_util_opts)
+    $(bld_cl) $[@ $(wcl_util_opts) -I"$(fe_misc_dir)/h"
 
 wpp$(target_cpu)01.int : ./intlbin.exe errors01.int usage01.int
     $[@ wpp$(target_cpu)
@@ -508,7 +504,7 @@ wpp$(target_cpu)01.int : ./intlbin.exe errors01.int usage01.int
 #!endif
 
 ./msgencod.exe: $(fe_misc_dir)/c/msgencod.c
-    $(bld_cl) $[@ $(wcl_util_opts)
+    $(bld_cl) $[@ $(wcl_util_opts) -I"$(fe_misc_dir)/h"
 
 errmsgs.c errmsgs.gh errlevel.gh errors01.int : ./msgencod.exe ../gml/messages.gml
     $[@ $(msgencod_opts) -i -q ../gml/messages.gml errmsgs.c errmsgs.gh errlevel.gh
@@ -551,7 +547,7 @@ ytab.c ytab.gh : ../y/plusplus.y ../c/yydriver.c
     rm -f ytab.h
 
 ./optencod.exe: $(fe_misc_dir)/c/optencod.c
-    $(bld_cl) $[@ $(wcl_util_opts) -i"$(fe_misc_dir)/h"
+    $(bld_cl) $[@ $(wcl_util_opts) -I"$(fe_misc_dir)/h"
 
 cmdlnprs.c cmdlnprs.gh cmdlnusg.gh usage.u usage01.int : ./optencod.exe ../gml/options.gml
     $[@ -i -q $(optencod_opt_$(host_os)) $]@ cmdlnprs.gh cmdlnprs.c cmdlnusg.gh $(target_cpu) $(optencod_targ_dbg) $(optencod_targ_$(host_os))

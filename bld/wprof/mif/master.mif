@@ -17,11 +17,6 @@ exe = qnx
 exe = exe
 !endif
 
-inc_dirs = ../h;$(wsample_dir)/h;$(aui_dir)/h;$(gui_dir)/h;$(trmem_dir);$(dig_dir)/h
-
-.BEFORE:
-        set include=$(inc_path)
-
 # cflags stuff
 ###############
 extra_c_flags   = -s
@@ -35,16 +30,16 @@ extra_c_flags   += -of+
 !endif
 !endif
 
-extra_c_flags_dos       = -d_OS=_OS_DOS
-extra_c_flags_nt        = -d_OS=_OS_NT
-extra_c_flags_win       = -d_OS=_OS_WIN
-extra_c_flags_qnx       = -d_OS=_OS_QNX
-extra_c_flags_os2       = -d_OS=_OS_OS2
+extra_c_flags_dos       = -D_OS=_OS_DOS
+extra_c_flags_nt        = -D_OS=_OS_NT
+extra_c_flags_win       = -D_OS=_OS_WIN
+extra_c_flags_qnx       = -D_OS=_OS_QNX
+extra_c_flags_os2       = -D_OS=_OS_OS2
 !ifeq host_cpu i86
 extra_c_flags_qnx       += -zt32
 extra_c_flags_win       += -zW
 !else ifeq sys_windowed 1
-extra_c_flags_os2       += -d_OS2_PM=1
+extra_c_flags_os2       += -D_OS2_PM=1
 !endif
 
 extra_c_flags_386       = -fpc
@@ -77,7 +72,9 @@ rcfiles = &
     $(aui_dir)/h/japsrch.dlg &
     $(aui_dir)/h/japsrcha.dlg
 
-rcinclude=.;../h;$(dig_dir)/h;$(aui_dir)/h;$(gui_dir);$(gui_dir)/h;$(brinfo_dir)/merge/res
+rcinclude= -I. -I"../h" -I"$(dig_dir)/h" -I"$(aui_dir)/h" -I"$(gui_dir)" -I"$(gui_dir)/h" -I"$(brinfo_dir)/merge/res"
+
+inc_dirs = -I"../h" -I"$(wsample_dir)/h" -I"$(aui_dir)/h" -I"$(gui_dir)/h" -I"$(trmem_dir)" -I"$(dig_dir)/h"
 
 # exlicit rules
 ################
@@ -97,8 +94,8 @@ $(fname).$(exe) : _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_objs) $(mad_ob
 wprofgui.res : ../h/wprofgui.rc
         @set oinc=$(%include)
         set include=$(lang_root)/h/os2;$(rcinclude);$(%include)
-        $(cc) -bt=os2 -dRC -i"$(aui_dir)/os2386.pm;$(rcinclude)" -p -pw=0 -fo=wprof.i $]@
-#       wcc -dRC -i"$(aui_dir)/os2386.pm;$(rcinclude)" -p -pw=0 -fo=wprofj.i wprof.rc -dJAPANESE_MESSAGES
+        $(cc) -bt=os2 -DRC -I"$(aui_dir)/os2386.pm" $(rcinclude) -p -pw=0 -fo=wprof.i $]@
+#       wcc -DRC -I"$(aui_dir)/os2386.pm" $(rcinclude) -p -pw=0 -fo=wprofj.i wprof.rc -DJAPANESE_MESSAGES
 
 !ifndef %use_os2tk_stuff
 
@@ -118,10 +115,10 @@ wprofgui.res : ../h/wprofgui.rc
         @set include=$(%oinc)
 !else ifeq host_OS nt
 wprofgui.res : ../h/wprofgui.rc .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad -i="$(rcinclude);$(inc_dirs_sys_nt)" $]@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad $(rcinclude) $(inc_dirs_sys_nt) $]@ -fo=$^@
 !else
 wprofgui.res : ../h/wprofgui.rc .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad -i="$(rcinclude);$(inc_dirs_sys_win)" $]@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad $(rcinclude) $(inc_dirs_sys_win) $]@ -fo=$^@
 !endif
 
 msg.obj : msg.c msg.h
@@ -129,16 +126,16 @@ msg.obj : msg.c msg.h
 msgstr.obj : msgstr.c msg.h
 
 wprofui.res : ../h/wprofui.rc .AUTODEPEND
-        $(rc_aui) -ad -i="$(rcinclude);$(inc_dirs_sys_win)" $[@ -fo=$^@
+        $(rc_aui) -ad $(rcinclude) $(inc_dirs_sys_win) $[@ -fo=$^@
 
 ./auimkstr.exe : $(aui_dir)/h/aui.msg $(aui_dir)/c/mkstr.c
-        $(bld_cl) -i"$(aui_dir)/h" $(wcl_util_opts) $]@
+        $(bld_cl) -I"$(aui_dir)/h" $(wcl_util_opts) $]@
 
 auistr.gh : $(aui_dir)/h/aui.msg ./auimkstr.exe
         $]@ $^@
 
 ./guimkstr.exe: $(gui_dir)/c/mkstr.c $(gui_dir)/h/gui.msg
-        $(bld_cl) -i"$(gui_dir)/h" $(wcl_util_opts) $[@
+        $(bld_cl) -I"$(gui_dir)/h" $(wcl_util_opts) $[@
 
 _guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
         $[@ $^@ $(gui_msg_id_modifier)
