@@ -34,7 +34,7 @@
 #include "drgettab.h"
 #include <string.h>
 
-struct dr_dbg_info * DWRCurrNode = NULL;
+struct dr_dbg_info  *DWRCurrNode = NULL;
 
 /* function prototypes */
 
@@ -91,7 +91,7 @@ static void ReadCUAbbrevTable( struct dr_dbg_info *dbg, compunit_info *compunit 
     }
     if( sizealloc > maxnum ) {  // reduce size to actual amount needed
         /* abbrev[0] not used but we want abbrev[code] = start to work */
-        abbrevs = DWRREALLOC( abbrevs, (maxnum+1) * sizeof(dr_handle) );
+        abbrevs = DWRREALLOC( abbrevs, (maxnum + 1) * sizeof(dr_handle) );
     }
     compunit->numabbrevs = maxnum + 1;
     compunit->abbrevs = abbrevs;
@@ -140,7 +140,7 @@ static void ReadAbbrevTable( struct dr_dbg_info *dbg )
     }
     if( sizealloc > maxnum ) {  // reduce size to actual amount needed
         /* abbrev[0] not used but we want abbrev[code] = start to work */
-        abbrevs = DWRREALLOC( abbrevs, (maxnum+1) * sizeof(dr_handle) );
+        abbrevs = DWRREALLOC( abbrevs, (maxnum + 1) * sizeof(dr_handle) );
     }
     dbg->numabbrevs = maxnum + 1;
     dbg->abbrevs = abbrevs;
@@ -154,7 +154,7 @@ static dr_dbg_handle  InitDbgHandle( void *file, unsigned long *sizes )
 
     dbg = DWRALLOC( sizeof(struct dr_dbg_info) );
     DWRCurrNode = dbg;    /* must be set for DWRVMAlloc in virtstub.c */
-    if( dbg == NULL )goto error;
+    if( dbg == NULL ) goto error;
     dbg->file = file;
     dbg->abbrevs = NULL;
     dbg->addr_size = 0;
@@ -164,8 +164,8 @@ static dr_dbg_handle  InitDbgHandle( void *file, unsigned long *sizes )
         dbg->sections[i].size = *sizes;
         if( *sizes != 0 ) {
             dbg->sections[i].base = DWRVMAlloc( *sizes, i );
-            if( dbg->sections[i].base == NULL )goto error;
-        }else{
+            if( dbg->sections[i].base == NULL ) goto error;
+        } else {
             dbg->sections[i].base = NULL;
         }
         sizes++;
@@ -209,8 +209,8 @@ extern void DRDbgOldVersion( dr_dbg_handle dbg, int version )
 static void ReadFileTable( void )
 /*******************************/
 {
-    compunit_info *     compunit;
-    compunit_info *     next;
+    compunit_info       *compunit;
+    compunit_info       *next;
     dr_handle           start;
     dr_handle           finish;
     unsigned_32         length;
@@ -222,7 +222,7 @@ static void ReadFileTable( void )
     start = DWRCurrNode->sections[DR_DEBUG_INFO].base;
     finish = start + DWRCurrNode->sections[DR_DEBUG_INFO].size;
     addr_size = DWRVMReadByte( start + 10 );
-    for(;;) {
+    for( ;; ) {
         compunit->next = NULL;
         compunit->start = start;
         length = DWRVMReadDWord( start );
@@ -236,7 +236,7 @@ static void ReadFileTable( void )
         DWRScanFileTable( start, &FileNameTable, &compunit->filetab );
         start += length + sizeof(unsigned_32);
         if( start >= finish ) break;
-        next = DWRALLOC( sizeof( compunit_info ) );
+        next = DWRALLOC( sizeof(compunit_info) );
         compunit->next = next;
         compunit = next;
     }
@@ -259,8 +259,8 @@ dr_dbg_handle DRDbgInit( void * file, unsigned long * sizes )
 static void ReadCompUnits( struct dr_dbg_info *dbg )
 /**************************************************/
 {
-    compunit_info *     compunit;
-    compunit_info *     next;
+    compunit_info       *compunit;
+    compunit_info       *next;
     dr_handle           start;
     dr_handle           finish;
     unsigned_32         length;
@@ -273,11 +273,11 @@ static void ReadCompUnits( struct dr_dbg_info *dbg )
     start = DWRCurrNode->sections[DR_DEBUG_INFO].base;
     finish = start + DWRCurrNode->sections[DR_DEBUG_INFO].size;
     addr_size = DWRVMReadByte( start + 10 );
-    for(;;) {
+    for( ;; ) {
         compunit->next = NULL;
         compunit->start = start;
         length = DWRVMReadDWord( start );
-        compunit->end          = start + length + sizeof( length );
+        compunit->end          = start + length + sizeof(unsigned_32);
         version = DWRVMReadWord( start + sizeof(unsigned_32) );
         if( version != DWARF_VERSION ) DWREXCEPT( DREXCEP_BAD_DBG_VERSION );
         abbrev_offset = DWRVMReadDWord( start + sizeof(unsigned_32) + sizeof(unsigned_16) );
@@ -292,7 +292,7 @@ static void ReadCompUnits( struct dr_dbg_info *dbg )
 
         start += length + sizeof(unsigned_32);
         if( start >= finish ) break;
-        next = DWRALLOC( sizeof( compunit_info ) );
+        next = DWRALLOC( sizeof(compunit_info) );
         compunit->next = next;
         compunit = next;
     }
@@ -317,8 +317,8 @@ void DRDbgFini( dr_dbg_handle dbg )
  * pages that are allocated to this module will eventually be swapped out
 */
 {
-    compunit_info *     compunit;
-    compunit_info *     next;
+    compunit_info       *compunit;
+    compunit_info       *next;
 
     compunit = dbg->compunit.next;
     while( compunit != NULL ) {
@@ -351,8 +351,8 @@ dr_dbg_handle  DRSetDebug( dr_dbg_handle dbg )
     return( old );
 }
 
-dr_dbg_handle  DRGetDebug()
-/*************************/
+dr_dbg_handle  DRGetDebug( void )
+/*******************************/
 {
     return( DWRCurrNode );
 }

@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Debug ranges processing.
+* Description:  DWARF debug ranges processing (.debug_aranges section).
 *
 ****************************************************************************/
 
@@ -45,12 +45,13 @@ typedef struct arange_header {
 /* function prototypes */
 
 typedef struct sec_file {
-    dr_handle pos;
-    dr_handle finish;
+    dr_handle   pos;
+    dr_handle   finish;
 }sec_file;
 
 
 static uint_32 ReadInt( dr_handle offset, int size )
+/**************************************************/
 {
     uint_32 ret;
 
@@ -67,6 +68,7 @@ static uint_32 ReadInt( dr_handle offset, int size )
 }
 
 static uint_32 SectInt( sec_file *file, int size )
+/************************************************/
 {
     uint_32 ret;
 
@@ -76,29 +78,31 @@ static uint_32 SectInt( sec_file *file, int size )
 }
 
 
-static void SectRead( sec_file *file, void *buff, int size ){
-/************************************************************/
-
+static void SectRead( sec_file *file, void *buff, int size )
+/**********************************************************/
+{
     DWRVMRead( file->pos, buff, size  );
     file->pos += size;
 }
 
 
-extern void DRWalkARange( DRARNGWLK callback, void *data ){
-/*******************************/
+extern void DRWalkARange( DRARNGWLK callback, void *data )
+/********************************************************/
+{
     dr_arange_data      arange;
     sec_file            file[1];
     arange_header       header;
     dr_handle           base;
     uint_32             tuple_size;
     uint_32             aligned_addr;
-    bool                old_ver, zero_padding = TRUE;
+    bool                old_ver;
+    bool                zero_padding = TRUE;
 
     base = DWRCurrNode->sections[DR_DEBUG_INFO].base;
     file->pos = DWRCurrNode->sections[DR_DEBUG_ARANGES].base;
     file->finish = file->pos + DWRCurrNode->sections[DR_DEBUG_ARANGES].size;
-    for(;;) {
-        if( file->pos >= file->finish )break;
+    for( ;; ) {
+        if( file->pos >= file->finish ) break;
         SectRead( file, &header, sizeof( header )  );
         if( header.version != DWARF_VERSION ) DWREXCEPT( DREXCEP_BAD_DBG_VERSION );
         arange.dbg = header.dbg_pos+base;
@@ -121,16 +125,16 @@ extern void DRWalkARange( DRARNGWLK callback, void *data ){
             if( !old_ver && zero_padding )
                 file->pos = aligned_addr;
         }
-        for(;;){
+        for( ;; ) {
             arange.addr = SectInt( file, header.addr_size );
-            if( header.seg_size != 0 ){
+            if( header.seg_size != 0 ) {
                 arange.seg = SectInt( file, header.seg_size );
-            }else{ /* flat */
+            } else { /* flat */
                 arange.seg = 0;
             }
             arange.len = SectInt( file, header.addr_size );
-            if( arange.addr == 0 && arange.len == 0 )break;
-            if( !callback( data, &arange ) )break;
+            if( arange.addr == 0 && arange.len == 0 ) break;
+            if( !callback( data, &arange ) ) break;
             arange.is_start = FALSE;
         }
     }

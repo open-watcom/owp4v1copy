@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Stubbed virtual memory support functions (no VM support).
 *
 ****************************************************************************/
 
@@ -35,8 +34,8 @@
 #include "drpriv.h"
 
 typedef struct alloc_struct {
-    struct alloc_struct * next;
-    char                  data[ 1 ];
+    struct alloc_struct *next;
+    char                data[ 1 ];
 } alloc_struct;
 
 static alloc_struct *AllocHead;       /* head of list of allocated chunks */
@@ -54,13 +53,13 @@ extern dr_handle DWRVMAlloc( unsigned long len, int sect )
     alloc_struct * nChunk;
 
     if( len == 0 ) {
-        return NULL;
+        return( NULL );
     }
 
     nChunk = (alloc_struct *) DWRALLOC( len - 1 + sizeof( alloc_struct ) );
     if( nChunk == NULL ) {
         DWREXCEPT( DREXCEP_OUT_OF_MMEM );
-        return NULL;
+        return( NULL );
     }
 
     nChunk->next = AllocHead;
@@ -69,19 +68,20 @@ extern dr_handle DWRVMAlloc( unsigned long len, int sect )
     DWRSEEK( DWRCurrNode->file, sect, 0 );
     DWRREAD( DWRCurrNode->file, sect, nChunk->data, len );
 
-    return (dr_handle) nChunk->data;
+    return( (dr_handle) nChunk->data );
 }
 
-extern int DWRVMSectDone( dr_handle base, unsigned_32 size ){
-/***********************************************************/
-    alloc_struct *walk;
-    alloc_struct **lnk;
-    int ret;
+extern int DWRVMSectDone( dr_handle base, unsigned_32 size )
+/**********************************************************/
+{
+    alloc_struct    *walk;
+    alloc_struct    **lnk;
+    int             ret;
 
     lnk = &AllocHead;
     ret = FALSE;
-    while( (walk = *lnk ) != NULL ) {
-        if( (dr_handle)walk->data == base ){
+    while( (walk = *lnk) != NULL ) {
+        if( (dr_handle)walk->data == base ) {
             *lnk = walk->next;
             DWRFREE( walk );
             ret = TRUE;
@@ -96,8 +96,8 @@ extern int DWRVMSectDone( dr_handle base, unsigned_32 size ){
 extern void DWRVMDestroy( void )
 /******************************/
 {
-    alloc_struct * walk;
-    alloc_struct * prev;
+    alloc_struct    *walk;
+    alloc_struct    *prev;
 
     for( walk = AllocHead; walk != NULL; ) {
         prev = walk;
@@ -111,7 +111,7 @@ extern int DRSwap( void )
 {
     // swap requests are ignored.
 
-    return FALSE;
+    return( FALSE );
 }
 
 
@@ -119,7 +119,7 @@ extern dr_handle ReadLEB128( dr_handle *vmptr, bool issigned )
 /************************************************************/
 // works for signed or unsigned
 {
-    char *          buf = (char *) *vmptr;
+    char            *buf = (char *) *vmptr;
     long            result = 0;
     unsigned        shift = 0;
     char            b;
@@ -143,7 +143,7 @@ extern dr_handle ReadLEB128( dr_handle *vmptr, bool issigned )
 extern unsigned DWRStrLen( dr_handle hdl )
 /****************************************/
 {
-    return strlen( (const char *) hdl );
+    return( strlen( (const char *) hdl ) );
 }
 
 extern void DWRGetString( char * buf, dr_handle * hdlp )
@@ -160,16 +160,16 @@ extern unsigned DWRGetStrBuff( dr_handle drstr, char *buf, unsigned max )
 /***********************************************************************/
 {
     unsigned    len;
-    char       *curr;
+    char        *curr;
 
     curr = (char *)drstr;
     len = 0;
-    for(;;){
-        if( len < max ){
+    for( ;; ) {
+        if( len < max ) {
            *buf++ = *curr;
         }
         ++len;
-        if( *curr == '\0' )break;
+        if( *curr == '\0' ) break;
         ++curr;
     }
     return( len );

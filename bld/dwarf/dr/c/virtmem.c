@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Virtual memory support implementation.
 *
 ****************************************************************************/
 
@@ -44,7 +43,7 @@
 /* the following structures are for virtual memory allocation */
 
 typedef struct {
-    char *      mem;
+    char        *mem;
     unsigned_8  sect:4;         // the type of section this page is in
     unsigned_8  refd:1;         // true if page not referenced
     unsigned_8  inmem:1;        // true if page in memory
@@ -89,7 +88,7 @@ typedef union {
 #define OFFSET_SHIFT      12
 #define MAX_NODE_SIZE     (1U << OFFSET_SHIFT)
 #define MAX_LEAFS         16            // maximum # of leafs per branch
-#define SEG_LIMIT         16200     // maximum # of 4K pages.
+#define SEG_LIMIT         16200         // maximum # of 4K pages.
 
 /* find the node for MEM_ADDR or FILE_ADDR */
 #define NODE( stg )        (&PageTab[ stg.w.high ][ stg.w.low >> OFFSET_SHIFT ])
@@ -97,7 +96,7 @@ typedef union {
 #define OFFSET_MASK        (MAX_NODE_SIZE - 1)
 #define NODE_OFF( stg )    ( stg.w.low & OFFSET_MASK )
 
-static page_entry **    PageTab   = NULL;
+static page_entry       **PageTab   = NULL;
 static unsigned_16      NumBranches = 15;
 // start with branch # 1 so an address of zero can be illegal.
 static unsigned_16      CurrBranch = 1;
@@ -123,7 +122,7 @@ static void GetMoreBranches( void )
 /*********************************/
 // make a larger array to hold branch pointers in.
 {
-    page_entry **   branches;
+    page_entry      **branches;
     unsigned        alloc_size;
 
     alloc_size = NumBranches * sizeof( page_entry * );
@@ -141,9 +140,9 @@ static void GetMoreBranches( void )
 static virt_struct GetPage( dr_section sect )
 /*******************************************/
 {
-    page_entry * entry;
-    unsigned     alloc_size;
-    virt_struct  vmem;
+    page_entry      *entry;
+    unsigned        alloc_size;
+    virt_struct     vmem;
 
     if( NextLeaf >= MAX_LEAFS ) {
         DontSwap = TRUE;
@@ -197,14 +196,14 @@ extern int DRSwap( void )
 {
     unsigned_16         startbranch;
     unsigned_16         startleaf;
-    page_entry *        entry;
+    page_entry          *entry;
     bool                passtwo;
 
-    if( DontSwap ) return FALSE;
+    if( DontSwap ) return( FALSE );
     passtwo = FALSE;
     startbranch = SwapBranch;
     startleaf = SwapLeaf;
-    for(;;) {
+    for( ;; ) {
         SwapLeaf++;
         if( SwapLeaf >= MAX_LEAFS ) {
             SwapLeaf = 0;
@@ -221,7 +220,7 @@ extern int DRSwap( void )
                 DWRFREE( entry->mem );
                 PageCount--;
                 entry->inmem = 0;
-                return TRUE;
+                return( TRUE );
             }
         }
         if( SwapLeaf == startleaf && SwapBranch == startbranch ) {
@@ -229,7 +228,7 @@ extern int DRSwap( void )
             passtwo = TRUE;
         }
     }
-    return FALSE;
+    return( FALSE );
 }
 
 extern void DWRVMDestroy( void )
@@ -238,7 +237,7 @@ extern void DWRVMDestroy( void )
 {
     unsigned        branch;
     unsigned        leaf;
-    page_entry *    entry;
+    page_entry      *entry;
 
     DontSwap = TRUE;
     if( PageTab == NULL ) return;
@@ -271,7 +270,9 @@ static void ReadPage( page_entry * node, virt_struct vm )
     base = DWRCurrNode->sections[sect].base;
     offset = (vm.l - base) & ~((unsigned long)OFFSET_MASK);
     size -= offset;
-    if( size > MAX_NODE_SIZE ) size = MAX_NODE_SIZE;
+    if( size > MAX_NODE_SIZE ) {
+        size = MAX_NODE_SIZE;
+    }
     node->mem = DWRALLOC( size );
     node->inmem = TRUE;
     ++PageCount;
@@ -279,38 +280,39 @@ static void ReadPage( page_entry * node, virt_struct vm )
     DWRREAD( DWRCurrNode->file, sect, node->mem, size );
 }
 
-extern void DWRVMSwap( dr_handle base, unsigned_32 size, int *ret ){
-/*******************************************************************/
+extern void DWRVMSwap( dr_handle base, unsigned_32 size, int *ret )
+/*****************************************************************/
 // Swap out base for length size
 // If memory was freed set *ret
+{
     volatile virt_struct         vm; // cg bug workaround
-    page_entry *        entry;
+    page_entry          *entry;
     int                 ret_val;
 
     vm.l = base;
     ret_val = FALSE;
-    if( size > 0 ){
-        for(;;){
+    if( size > 0 ) {
+        for( ;; ) {
             entry = NODE( vm );
             entry->refd = 0;
-            if( entry->inmem ){
+            if( entry->inmem ) {
                 --PageCount;
                 DWRFREE( entry->mem );
                 entry->inmem = 0;
                 ret_val = TRUE;
             }
-            if( size <= MAX_NODE_SIZE )break;
+            if( size <= MAX_NODE_SIZE ) break;
             size -= MAX_NODE_SIZE;
             vm.l += MAX_NODE_SIZE;
         }
     }
-    if( ret_val == TRUE ){
+    if( ret_val == TRUE ) {
         *ret = ret_val;
     }
 }
 
 extern int DWRVMSectDone( dr_handle base, unsigned_32 size )
-/***********************************************************/
+/**********************************************************/
 {
     int ret;
 
@@ -332,7 +334,7 @@ extern int DWRVMSectDone( dr_handle base, unsigned_32 size )
 static page_entry * AccessPage( virt_struct vm )
 /**********************************************/
 {
-    page_entry * node;
+    page_entry  *node;
 
     node = NODE( vm );
     node->refd = TRUE;
@@ -350,7 +352,7 @@ extern void DWRVMRead( dr_handle hdl, void * info, unsigned len )
 {
     unsigned    end_off;
     unsigned    off;
-    page_entry *node;
+    page_entry  *node;
     unsigned    amt;
     virt_struct vm;
 
@@ -374,13 +376,13 @@ extern void DWRVMRead( dr_handle hdl, void * info, unsigned len )
 extern unsigned_8 DWRVMReadByte( dr_handle hdl )
 /**********************************************/
 {
-    page_entry *node;
+    page_entry  *node;
     virt_struct vm;
 
     vm.l = hdl;
     //node = AccessPage( vm );
     ACCESSPAGE( node, vm );                         // ITB
-    return *(node->mem + NODE_OFF(vm));
+    return( *(node->mem + NODE_OFF(vm)) );
 }
 
 static unsigned_32 ReadLEB128( dr_handle *vmptr, bool issigned )
@@ -388,7 +390,7 @@ static unsigned_32 ReadLEB128( dr_handle *vmptr, bool issigned )
 /* read and advance the vm pointer */
 {
     virt_struct vm;
-    page_entry *node;
+    page_entry  *node;
     unsigned_16 off;
     unsigned_32 result;
     unsigned_8  inbyte;
@@ -420,19 +422,19 @@ static unsigned_32 ReadLEB128( dr_handle *vmptr, bool issigned )
             result |= - ((signed_32)(1 << (shift + 7)));
         }
     }
-    return result;
+    return( result );
 }
 
 extern signed_32 DWRVMReadSLEB128( dr_handle *vmptr )
 /***************************************************/
 {
-    return (signed_32) ReadLEB128( vmptr, TRUE );
+    return( (signed_32) ReadLEB128( vmptr, TRUE ) );
 }
 
 extern unsigned_32 DWRVMReadULEB128( dr_handle *vmptr )
 /*****************************************************/
 {
-    page_entry *node;
+    page_entry  *node;
     char *      walk;
     unsigned    off;
     virt_struct vm;
@@ -457,18 +459,18 @@ extern unsigned_32 DWRVMReadULEB128( dr_handle *vmptr )
         result = ReadLEB128( vmptr, FALSE );
     }
 
-    return result;
+    return( result );
 }
 
 extern void DWRVMSkipLEB128( dr_handle *hdl )
 /*******************************************/
 // just advance the vm pointer past the leb128 (works on both signed & unsigned)
 {
-    page_entry *node;
+    page_entry  *node;
     unsigned_16 off;
     unsigned_8  inbyte;
     virt_struct vm;
-    char *      walk;
+    char        *walk;
     char        b;
 
     vm.l = *hdl;
@@ -503,8 +505,8 @@ extern void DWRVMSkipLEB128( dr_handle *hdl )
 extern unsigned_16 DWRVMReadWord( dr_handle hdl )
 /***********************************************/
 {
-    page_entry *node;
-    char *      target;
+    page_entry  *node;
+    char        *target;
     unsigned_16 off;
     virt_struct vm;
 
@@ -515,7 +517,7 @@ extern unsigned_16 DWRVMReadWord( dr_handle hdl )
     off = NODE_OFF(vm);
     target = node->mem + off;
     if( off != MAX_NODE_SIZE - 1 ) {  // we can read both bytes now.
-        return *((unsigned_16 *)target);
+        return( *((unsigned_16 *)target) );
     } else {
         off = *target;
         vm.l++;
@@ -523,14 +525,14 @@ extern unsigned_16 DWRVMReadWord( dr_handle hdl )
         ACCESSPAGE( node, vm );                     // ITB
         off |= ((unsigned_16)*node->mem) << 8;
     }
-    return off;
+    return( off );
 }
 
 extern unsigned_32 DWRVMReadDWord( dr_handle hdl )
 /************************************************/
 {
-    page_entry *node;
-    char *      target;
+    page_entry  *node;
+    char        *target;
     unsigned    off;
     unsigned_32 result;
     virt_struct vm;
@@ -541,7 +543,7 @@ extern unsigned_32 DWRVMReadDWord( dr_handle hdl )
     off = NODE_OFF(vm);
     target = node->mem + off;
     if( off <= MAX_NODE_SIZE - 4 ) {  // we can read both bytes now.
-        return *((unsigned_32 *)target);
+        return( *((unsigned_32 *)target) );
     } else {
         off = MAX_NODE_SIZE - off;
         memcpy( &result, target, off );
@@ -550,7 +552,7 @@ extern unsigned_32 DWRVMReadDWord( dr_handle hdl )
         ACCESSPAGE( node, vm );                     // ITB
         memcpy( (char *)&result + off, node->mem, 4 - off );
     }
-    return result;
+    return( result );
 }
 
 extern unsigned DWRStrLen( dr_handle hdl )
@@ -558,7 +560,7 @@ extern unsigned DWRStrLen( dr_handle hdl )
 {
     unsigned    off;
     unsigned    start_off;
-    page_entry *node;
+    page_entry  *node;
     virt_struct vm;
     int         length = 0;
 
@@ -584,16 +586,16 @@ extern unsigned DWRStrLen( dr_handle hdl )
 
     end:
     length += off - start_off;
-    return length - 1;  // remove '\0' terminator's contrib
+    return( length - 1 );   // remove '\0' terminator's contrib
 }
 
 extern void DWRGetString( char * buf, dr_handle * hdlp )
 /******************************************************/
 {
     unsigned    off;
-    page_entry *node;
+    page_entry  *node;
     virt_struct vm;
-    char *      wlkBuf = buf;
+    char        *wlkBuf = buf;
 
     vm.l = *hdlp;
     off = NODE_OFF( vm );
@@ -613,10 +615,11 @@ extern void DWRGetString( char * buf, dr_handle * hdlp )
     *hdlp = vm.l;
 }
 
-extern unsigned DWRGetStrBuff(  dr_handle drstr, char *buf, unsigned max ){
-/******************************************************/
+extern unsigned DWRGetStrBuff( dr_handle drstr, char *buf, unsigned max )
+/***********************************************************************/
+{
     unsigned    off;
-    page_entry *node;
+    page_entry  *node;
     virt_struct vm;
     char        curr;
     unsigned    len;
@@ -629,11 +632,11 @@ extern unsigned DWRGetStrBuff(  dr_handle drstr, char *buf, unsigned max ){
         ACCESSPAGE( node, vm );                     // ITB
         while( off < MAX_NODE_SIZE ) {
             curr = node->mem[ off++ ];
-            if( len < max ){
+            if( len < max ) {
                *buf++ = curr;
             }
             ++len;
-            if( curr == '\0' )goto end;
+            if( curr == '\0' ) goto end;
             vm.l++;
         }
         off = 0;

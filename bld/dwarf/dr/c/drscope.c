@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DWARF debug info object scope management.
 *
 ****************************************************************************/
 
@@ -47,7 +46,7 @@ static void ScopeBlockInit( scope_block *block )
     block->next = NULL;
     last = NULL;
     curr = &block->entries[SCOPE_BLOCK_SIZE-1];
-    for( i = SCOPE_BLOCK_SIZE; i > 0; --i ){
+    for( i = SCOPE_BLOCK_SIZE; i > 0; --i ) {
         curr->next = last;
         last = curr;
         --curr;
@@ -60,7 +59,8 @@ static scope_entry *AllocScopeEntry( scope_ctl *ctl )
 //****************************************************
 {
     scope_entry *new;
-    if( ctl->free == NULL ){
+
+    if( ctl->free == NULL ) {
         scope_block *block;
 
         block = DWRALLOC( sizeof( scope_block ) );
@@ -91,8 +91,9 @@ static void ScopeCtlFini( scope_ctl *ctl )
 //*****************************************
 {
     scope_block *curr;
+
     curr = ctl->next;
-    while( curr != NULL ){
+    while( curr != NULL ) {
         scope_block *next;
         next = curr->next;
         DWRFREE( curr );
@@ -107,41 +108,39 @@ static int AContainer( dr_handle    enclose,
 // Add entry to list stop when found search entry
 //***********************************************
 {
-    scope_entry *new;
-    bool        cont;
-    scope_trail *df = _df;
+    scope_entry     *new;
+    bool            cont;
+    scope_trail     *df = _df;
 
     index = index;
     new = AllocScopeEntry( &df->ctl );
     new->next = df->head;
     df->head = new;
     new->handle = enclose;
-    if( enclose == df->target ){
+    if( enclose == df->target ) {
         cont = FALSE;
-    }else{
+    } else {
         cont = TRUE;
     }
     return( cont );
 }
 
-extern void DRGetScopeList( scope_trail *container, dr_handle  of )
+extern void DRGetScopeList( scope_trail *container, dr_handle of )
 //*********************************************************************
 // Walk in to of starting at ccu
 //*********************************************************************
 {
-    compunit_info*  compunit;
+    compunit_info   *compunit;
 
     compunit = DWRFindCompileInfo( of );
     ScopeCtlInit( &container->ctl );
     container->target = of;
     container->head = NULL;
-    if( compunit != NULL ){
-
+    if( compunit != NULL ) {
         DWRWalkContaining(  compunit->start + COMPILE_UNIT_HDR_SIZE,
                             of,
                             AContainer,
                             container );
-
     }
 }
 
