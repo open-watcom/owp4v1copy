@@ -72,4 +72,6 @@ unsigned        RunIt( char * );
 void            ResetArchives( copy_entry * );
 void            SysInit( int argc, char *argv[] );
 unsigned        SysRunCommand( const char * );
+unsigned        SysRunCommandPipe( const char *, int *readpipe );
 unsigned        SysChdir( char * );
+unsigned        SysDosChdir( char * );

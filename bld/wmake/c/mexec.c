@@ -34,8 +34,11 @@
 #endif
 #include <fcntl.h>
 #include <unistd.h>
-#ifndef __LINUX__
+#if defined(__WATCOMC__) || !defined(__LINUX__)
 #include <process.h>
+#endif
+#ifdef __LINUX__
+#include <sys/wait.h>
 #endif
 #include <stdio.h>
 #include <stdlib.h>
@@ -897,6 +900,31 @@ STATIC RET_T percentCmd( char *cmdname, char *arg )
     return( RET_SUCCESS );
 }
 
+#ifdef __LINUX__
+STATIC RET_T intSystem( char *cmd )
+/* interruptable "system" (so that ctrl-c works) */
+{
+    pid_t pid = fork();
+    int status;
+    
+    if ( pid == -1 )
+        return -1;
+    if ( pid == 0 ) {
+        execl( "/bin/sh", "sh", "-c", cmd, NULL );
+        exit( 127 );
+    }
+    for (;;) {
+        if ( waitpid( pid, &status, 0) == -1 ) {
+            if ( errno == EINTR ) {
+                continue;
+            }
+            status = -1;
+        }
+        CheckForBreak();
+        return status;
+    }
+}
+#endif
 
 STATIC RET_T mySystem( const char *cmdname, char *cmd )
 /******************************************************
@@ -912,7 +940,11 @@ STATIC RET_T mySystem( const char *cmdname, char *cmd )
     }
 
     closeCurrentFile();
+#ifdef __LINUX__
+    retcode = intSystem( cmd );
+#else
     retcode = system( cmd );
+#endif
     lastErrorLevel = retcode;
     if( retcode < 0 ) {
         PrtMsg( ERR| UNABLE_TO_EXEC, cmdname );

@@ -24,63 +24,35 @@
 *
 *  ========================================================================
 *
-* Description:  OS/2 specific functions for builder
+* Description:  chdir with drive letters and remove trailing slash
 *
 ****************************************************************************/
 
-
-#include <sys/types.h>
-#include <direct.h>
-#include <string.h>
-#include <ctype.h>
 #include <dos.h>
-#include <io.h>
-#include <process.h>
-#include <fcntl.h>
-#include "builder.h"
+#include <string.h>
+#include <direct.h>
+#include <ctype.h>
 
-#define INCL_DOSQUEUES
-#define INCL_DOSFILEMGR
-#include <os2.h>
-
-#define BUFSIZE 256
-char    *CmdProc;
-
-void SysInit( int argc, char *argv[] )
+unsigned SysDosChdir( char *dir )
 {
-    argc = argc;
-    argv = argv;
-    CmdProc = getenv( "COMSPEC" );
-    if( CmdProc == NULL ) {
-        Fatal( "Can not find command processor" );
+    char        *end;
+    unsigned    len;
+    unsigned    total;
+
+    if( dir[0] == '\0' ) return( 0 );
+    len = strlen( dir );
+    end = &dir[len-1];
+    switch( *end ) {
+    case '\\':
+    case '/':
+        if( end > dir && end[-1] != ':' ) {
+            *end = '\0';
+            --len;
+        }
+        break;
     }
-}
-
-unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
-{
-    int         rc;
-    HFILE       pipe_input;
-    HFILE       pipe_output;
-    HFILE       std_output;
-    HFILE       std_error;
-
-    std_output = 1;
-    std_error = 2;
-    rc = DosCreatePipe( &pipe_input, &pipe_output, BUFSIZE );
-    if( rc != 0 ) return( rc );
-    rc = DosDupHandle( pipe_output, &std_output );
-    if( rc != 0 ) return( rc );
-    rc = DosDupHandle( pipe_output, &std_error );
-    if( rc != 0 ) return( rc );
-    DosClose( pipe_output );    
-    rc = spawnl( P_NOWAITO, CmdProc, CmdProc, "/c", cmd, NULL );
-    DosClose( std_output );
-    DosClose( std_error );
-    *readpipe = _hdopen( (int) pipe_input, O_RDONLY );
-    return rc;
-}
-
-unsigned SysChdir( char *dir )
-{
-    return SysDosChdir( dir );
+    if( len > 2 && dir[1] == ':' ) {
+        _dos_setdrive( toupper( dir[0] ) - 'A' + 1, &total );
+    }
+    return( chdir( dir ) );
 }

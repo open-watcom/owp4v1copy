@@ -24,63 +24,36 @@
 *
 *  ========================================================================
 *
-* Description:  OS/2 specific functions for builder
+* Description:  DOS specific functions for builder
 *
 ****************************************************************************/
 
-
-#include <sys/types.h>
-#include <direct.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
-#include <ctype.h>
 #include <dos.h>
-#include <io.h>
-#include <process.h>
-#include <fcntl.h>
 #include "builder.h"
-
-#define INCL_DOSQUEUES
-#define INCL_DOSFILEMGR
-#include <os2.h>
-
-#define BUFSIZE 256
-char    *CmdProc;
 
 void SysInit( int argc, char *argv[] )
 {
     argc = argc;
     argv = argv;
-    CmdProc = getenv( "COMSPEC" );
-    if( CmdProc == NULL ) {
-        Fatal( "Can not find command processor" );
-    }
 }
 
 unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
 {
-    int         rc;
-    HFILE       pipe_input;
-    HFILE       pipe_output;
-    HFILE       std_output;
-    HFILE       std_error;
-
-    std_output = 1;
-    std_error = 2;
-    rc = DosCreatePipe( &pipe_input, &pipe_output, BUFSIZE );
-    if( rc != 0 ) return( rc );
-    rc = DosDupHandle( pipe_output, &std_output );
-    if( rc != 0 ) return( rc );
-    rc = DosDupHandle( pipe_output, &std_error );
-    if( rc != 0 ) return( rc );
-    DosClose( pipe_output );    
-    rc = spawnl( P_NOWAITO, CmdProc, CmdProc, "/c", cmd, NULL );
-    DosClose( std_output );
-    DosClose( std_error );
-    *readpipe = _hdopen( (int) pipe_input, O_RDONLY );
+    /* no pipes for DOS so we call "system" and hence cannot log */
+    int rc = system( cmd );
+    *readpipe = -1;
     return rc;
 }
 
 unsigned SysChdir( char *dir )
 {
     return SysDosChdir( dir );
+}
+
+int wait( int *status )
+{
+    return 0;
 }

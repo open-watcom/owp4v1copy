@@ -24,63 +24,53 @@
 *
 *  ========================================================================
 *
-* Description:  OS/2 specific functions for builder
+* Description:  *nix specifix functions for builder
 *
 ****************************************************************************/
 
-
-#include <sys/types.h>
-#include <direct.h>
-#include <string.h>
-#include <ctype.h>
-#include <dos.h>
-#include <io.h>
-#include <process.h>
-#include <fcntl.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include "watcom.h"
 #include "builder.h"
 
-#define INCL_DOSQUEUES
-#define INCL_DOSFILEMGR
-#include <os2.h>
-
 #define BUFSIZE 256
-char    *CmdProc;
 
 void SysInit( int argc, char *argv[] )
 {
     argc = argc;
     argv = argv;
-    CmdProc = getenv( "COMSPEC" );
-    if( CmdProc == NULL ) {
-        Fatal( "Can not find command processor" );
-    }
 }
 
 unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
 {
-    int         rc;
-    HFILE       pipe_input;
-    HFILE       pipe_output;
-    HFILE       std_output;
-    HFILE       std_error;
-
-    std_output = 1;
-    std_error = 2;
-    rc = DosCreatePipe( &pipe_input, &pipe_output, BUFSIZE );
-    if( rc != 0 ) return( rc );
-    rc = DosDupHandle( pipe_output, &std_output );
-    if( rc != 0 ) return( rc );
-    rc = DosDupHandle( pipe_output, &std_error );
-    if( rc != 0 ) return( rc );
-    DosClose( pipe_output );    
-    rc = spawnl( P_NOWAITO, CmdProc, CmdProc, "/c", cmd, NULL );
-    DosClose( std_output );
-    DosClose( std_error );
-    *readpipe = _hdopen( (int) pipe_input, O_RDONLY );
-    return rc;
+    int pipe_fd[2];
+    pid_t pid;
+    
+    if( pipe( pipe_fd ) == -1)
+        return( errno );
+    if ( dup2( pipe_fd[1], STDOUT_FILENO ) == -1 )
+        return( errno );
+    if ( dup2( pipe_fd[1], STDERR_FILENO ) == -1 )
+        return( errno );
+    close( pipe_fd[1] );
+    pid = fork();
+    if ( pid == -1 ) return ( -1 );
+    if ( pid == 0 ) {
+        execl( "/bin/sh", "sh", "-c", cmd, NULL );
+        exit( 127 );
+    }
+    *readpipe = pipe_fd[0];
+    return 0;
 }
 
 unsigned SysChdir( char *dir )
 {
-    return SysDosChdir( dir );
+    char        *end;
+
+    if( dir[0] == '\0' ) return( 0 );
+    end = &dir[strlen( dir )-1];
+    if( *end == '/'  && end > dir ) {
+        *end = '\0';
+    }
+    return( chdir( dir ) );
 }

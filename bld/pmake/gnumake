@@ -2,7 +2,8 @@ vpath %.o: $(OBJDIR)
 
 all: $(OBJDIR) $(OBJDIR)/pmake
 
-CPPFLAGS = -I../watcom/h -D__UNIX__
+CFLAGS = -g
+CPPFLAGS = -I../watcom/h -D__UNIX__ -D__LINUX__
 LDFLAGS = -L../clib/bootstrp
 LDLIBS = -lwatcom
 

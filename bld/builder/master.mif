@@ -7,32 +7,37 @@ name = builder
 
 all: $(name).exe cdsay.exe sweep.exe wsplice.exe diff.exe comstrip.exe
 
-extra_c_flags = -i..\..\pmake
+extra_c_flags = -i"../../pmake"
 
-.c: ..\c;..\..\pmake
+.c: ../c;../../pmake
 
-OBJS   = builder.obj utils.obj runit.obj sys.obj # pmake.obj pmkcmd.obj
+sys_dos = sysdos.obj sysdoscd.obj
+sys_os2 = sysos2.obj sysdoscd.obj
+sys_nt = sysnt.obj sysdoscd.obj
+sys_linux = sysposix.obj
+
+OBJS   = builder.obj utils.obj runit.obj sys.obj $(sys_$(host_os)) # pmake.obj pmkcmd.obj
 
 $(name).exe : $(OBJS)
         $(linker) $(lflags) name $^@ op map,quiet file {$(OBJS)}
-        @copy $^. $(bld_bin)
+        @cp $^. $(bld_bin)
 
 cdsay.exe : cdsay.obj
         $(linker) $(lflags) name $^@ op map,quiet file { $< }
-        @copy $^. $(bld_bin)
+        @cp $^. $(bld_bin)
 
 sweep.exe : sweep.obj
         $(linker) $(lflags) name $^@ op map,quiet file { $< }
-        @copy $^. $(bld_bin)
+        @cp $^. $(bld_bin)
 
 wsplice.exe : wsplice.obj
         $(linker) $(lflags) name $^@ op map,quiet file { $< }
-        @copy $^. $(bld_bin)
+        @cp $^. $(bld_bin)
 
 diff.exe : diff.obj
         $(linker) $(lflags) name $^@ op map,quiet file { $< }
-        @copy $^. $(bld_bin)
+        @cp $^. $(bld_bin)
 
 comstrip.exe : comstrip.obj
         $(linker) $(lflags) name $^@ op map,quiet file { $< }
-        @copy $^. $(bld_bin)
+        @cp $^. $(bld_bin)
