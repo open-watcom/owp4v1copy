@@ -65,7 +65,7 @@ static WORD getItemMsg( statwnd *wnd, WORD menuid ) {
     return( HINT_EMPTY );
 }
 
-static updateHintText( statwnd *wnd, WORD msgid ) {
+static void updateHintText( statwnd *wnd, WORD msgid ) {
     HDC         dc;
     HFONT       font;
     char        *str;

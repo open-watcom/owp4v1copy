@@ -84,7 +84,7 @@ void TellWinHandle()
     }
 }
 
-ToggleHardMode()
+void ToggleHardMode()
 {
 }
 

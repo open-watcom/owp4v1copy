@@ -45,7 +45,7 @@ static  unsigned        dialCount = 0;
 /*
  * fillMemManDialog
  */
-static fillMemManDialog( HWND hwnd ) {
+static void fillMemManDialog( HWND hwnd ) {
 
     MEMMANINFO          info;
     char                buf[15];
@@ -85,7 +85,7 @@ static fillMemManDialog( HWND hwnd ) {
 /*
  * fillGblInfoDialog
  */
-static fillGblInfoDialog( HWND hwnd ) {
+static void fillGblInfoDialog( HWND hwnd ) {
 
     GLOBALINFO  meminfo;
     char        buf[15];
@@ -111,7 +111,7 @@ static fillGblInfoDialog( HWND hwnd ) {
 /*
  * fillLclInfoDialog
  */
-static fillLclInfoDialog( HWND hwnd ) {
+static void fillLclInfoDialog( HWND hwnd ) {
 
     char                buf[15];
     LclInfo             info;

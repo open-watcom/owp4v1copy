@@ -88,7 +88,7 @@ static BOOL ValidateFName( char *path ) {
 /*
  * PutProfileBool - write a boolean value to the configuration file
  */
-static PutProfileBool( char *id, BOOL val ) {
+static void PutProfileBool( char *id, BOOL val ) {
 
     char        buf[15];
 
@@ -103,7 +103,7 @@ static PutProfileBool( char *id, BOOL val ) {
 /*
  * GetDefaults - set 'info' to the default configuration values
  */
-static GetDefaults( HeapConfigInfo *info ) {
+static void GetDefaults( HeapConfigInfo *info ) {
 
     WORD        x;
     WORD        y;
@@ -250,7 +250,7 @@ void SaveConfigFile( BOOL save_all_values ) {
  * SetupConfigDlg - set the fields in the configuration dialog to
  *                  reflect the values in 'heap' and 'mem'
  */
-static SetupConfigDlg( HeapConfigInfo *heap, MemWndConfig *mem, HWND hwnd ) {
+static void SetupConfigDlg( HeapConfigInfo *heap, MemWndConfig *mem, HWND hwnd ) {
 
     SetDlgItemText( hwnd, CONFIG_GNAME, heap->gfname  );
     SetDlgItemText( hwnd, CONFIG_LNAME, heap->lfname  );

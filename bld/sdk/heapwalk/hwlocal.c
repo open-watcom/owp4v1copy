@@ -195,8 +195,8 @@ BOOL FormatLocalHeapListItem( char *line, unsigned index ) {
  * EnableLocalMenu - grey or enable the local menu in the main window
  */
 
-static EnableLocalMenu( BOOL enable ) {
-
+static void EnableLocalMenu( BOOL enable )
+{
     WORD                action;
     HMENU               mh;
 

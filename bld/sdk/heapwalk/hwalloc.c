@@ -41,7 +41,7 @@ static WORD     DialMode;
 
 static char AmtTable[] = { 1, 2, 5, 10, 25, 50, 0 };
 
-static UpdateAllocMenu( void ) {
+static void UpdateAllocMenu( void ) {
 
     HMENU       mh;
     WORD        i;

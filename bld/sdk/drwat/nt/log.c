@@ -135,12 +135,12 @@ static BOOL startLogFile( void )
 /*
  * finishLogFile - close up log file
  */
-static finishLogFile( void )
+static void finishLogFile( void )
 {
     fclose( logFileHdl );
 }
 
-static logPrintf( DWORD id, ... ) {
+static void logPrintf( DWORD id, ... ) {
 
     va_list     al;
 
@@ -149,7 +149,7 @@ static logPrintf( DWORD id, ... ) {
     va_end( al );
 }
 
-static logStrPrintf( char *str, ... ) {
+static void logStrPrintf( char *str, ... ) {
 
     va_list     al;
 
@@ -642,7 +642,7 @@ static void logFaultInfo( ExceptDlgInfo *info ) {
     }
 }
 
-static logModules( DWORD pid, WORD indent ) {
+static void logModules( DWORD pid, WORD indent ) {
 
     char        **modules;
     char        end[10];
