@@ -24,13 +24,20 @@ wCorelDict begin/bd{bind def}bind def/ld{load def}bd
 pageparams end 1 ne{/$Scra -90.0 def}if pop pop pop}if
 /$sv 0 def/@cp/closepath ld/@gs/gsave ld/@gr/grestore ld
 /@np/newpath ld/@sv{/$sv save def}bd/@rs{$sv restore}bd
-/@ss{load setscreen}bd AutoFlatness 1 eq{/$cpx ([Error: PathTooComplex; OffendingCommand: AnyPaintingOperator;\n) def
-/@err1{$cpx print flush newpath}bd/@ifl{currentflat dup 10 gt{pop @err1 exit}if 2 add setflat}bd
-/@fill/fill ld/fill{currentflat{{@fill}stopped{@ifl}{exit}ifelse}bind loop setflat}bd
-/@eofill/eofill ld/eofill{currentflat{{@eofill}stopped{@ifl}{exit}ifelse}bind loop setflat}bd
-/@clip/clip ld/clip{currentflat{{@clip}stopped{initclip @ifl}{exit}ifelse}bind loop setflat}bd
-/@eoclip/eoclip ld/eoclip{currentflat{{@eoclip}stopped{initclip @ifl}{exit}ifelse}bind loop setflat}bd
-/@stroke/stroke ld/stroke{currentflat{{@stroke}stopped{@ifl}{exit}ifelse}bind loop setflat}bd
+/@ss{load setscreen}bd AutoFlatness 1 eq{/$cpx
+([Error: PathTooComplex; OffendingCommand: AnyPaintingOperator;\n) def
+/@err1{$cpx print flush newpath}bd/@ifl{currentflat dup 10 gt{pop @err1 exit}
+if 2 add setflat}bd
+/@fill/fill ld/fill{currentflat{{@fill}stopped{@ifl}{exit}ifelse}bind loop
+setflat}bd
+/@eofill/eofill ld/eofill{currentflat{{@eofill}stopped{@ifl}{exit}ifelse}
+bind loop setflat}bd
+/@clip/clip ld/clip{currentflat{{@clip}stopped{initclip @ifl}{exit}ifelse}
+bind loop setflat}bd
+/@eoclip/eoclip ld/eoclip{currentflat{{@eoclip}stopped{initclip @ifl}{exit}
+ifelse}bind loop setflat}bd
+/@stroke/stroke ld/stroke{currentflat{{@stroke}stopped{@ifl}{exit}ifelse}
+bind loop setflat}bd
 }if/InRange{3 -1 roll 2 copy le{pop}{exch pop}ifelse
 2 copy ge{pop}{exch pop}ifelse}bd/wDstChck{2 1 roll dup 3 -1 roll
 eq{1 add}if}bd/@dot{dup mul exch dup mul add 1 exch sub 2 div}bd
@@ -97,7 +104,8 @@ $wid 0 translate $dk add 4 1 roll $dy add 4 1 roll
 $dm add 4 1 roll $dc add 4 1 roll}repeat $dk sub 4 1 roll
 $dy sub 4 1 roll $dm sub 4 1 roll $dc sub 4 1 roll
 ColorSeparationMode 0 ne{1 exch sub setgray pop pop pop}
-{setcmykcolor}ifelse 0 0 moveto 0 $hei lineto $pdw $hei lineto $pdw 0 lineto 0 0 lineto fill
+{setcmykcolor}ifelse 0 0 moveto 0 $hei lineto $pdw $hei lineto
+$pdw 0 lineto 0 0 lineto fill
 }bd/@ftr{1 index 4 index sub dup $rox mul/$row xd
 2 div 1 index 4 index sub dup $roy mul/$roh xd
 2 div 2 copy dup mul exch dup mul add sqrt
@@ -171,13 +179,16 @@ $ctm setmatrix/$ttm matrix def}bd/u{}bd/U{}bd
 /A{pop}bd/H{/$h true def}bd/h{@cp H}bd/q/@gs ld
 /Q/@gr ld/E{5 array astore exch cvlit exch def}bd
 /`{}bd/~{}bd/@{}bd/&{}bd/CorelDrawRencodeVect [
-16#80/grave/circumflex/tilde/dotlessi/florin/quotedblleft/quotedblright/guilsinglleft
+16#80/grave/circumflex/tilde/dotlessi/florin/quotedblleft/quotedblright
+/guilsinglleft
 16#88/guilsinglright/fi/fl/dagger/daggerdbl/endash/periodcentered/breve
 16#90/quotedblbase/ellipsis/perthousand/trademark/Pt/fractionbar
 16#98/divide 16#a1/exclamdown/cent/sterling/currency/yen/bar/section
-16#a8/dieresis/copyright/ordfeminine/guillemotleft/logicalnot/emdash/registered/overbar
+16#a8/dieresis/copyright/ordfeminine/guillemotleft/logicalnot/emdash
+/registered/overbar
 16#b0/ring/plusminus/twosuperior/threesuperior/acute/mu/paragraph/bullet
-16#b8/cedilla/onesuperior/ordmasculine/guillemotright/onequarter/onehalf/threequarters/questiondown
+16#b8/cedilla/onesuperior/ordmasculine/guillemotright/onequarter/onehalf
+/threequarters/questiondown
 16#c0/Agrave/Aacute/Acircumflex/Atilde/Adieresis/Aring/AE/Ccedilla
 16#c8/Egrave/Eacute/Ecircumflex/Edieresis/Igrave/Iacute/Icircumflex/Idieresis
 16#d0/Eth/Ntilde/Ograve/Oacute/Ocircumflex/Otilde/Odieresis/OE
