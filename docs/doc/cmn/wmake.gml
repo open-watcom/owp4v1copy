@@ -616,6 +616,8 @@ This macro is defined in the MS/DOS environment.
 This macro is defined in the Windows NT environment.
 .point __OS2__
 This macro is defined in the OS/2 environment.
+.point __LINUX__
+This macro is defined in the Linux environment.
 .point __MAKEOPTS__
 contains all of the command line options that &makcmdup was invoked
 with except for any use of the "f" or "n" options.
@@ -624,6 +626,8 @@ contains the names of all of the makefiles processed at the time of
 expansion (includes the file currently being processed)
 .point MAKE
 contains the full name of the file that contains &makcmdup.
+.point __VERSION__
+contains the wmake version.
 .endpoint
 .pc
 The next three tables contain macros that are valid during execution
@@ -1224,7 +1228,7 @@ If absent, this file creates foo; if present, this file does nothing.
 .ix 'EXPLICIT' '&makcmdup directive'
 The
 .id &sysper.EXPLICIT
-directive seems to be largely redundant. The code only that uses it 
+directive seems to be largely redundant. The code only that uses it
 treats the first target of a rule as special. The author can make no sense of that.
 .*
 .section *refid=extensions Defining Recognized File Extensions (.EXTENSIONS)
@@ -1327,7 +1331,7 @@ hello.exe :
 .ix 'FUZZY' '&makcmdup directive'
 The
 .id &sysper.FUZZY
-directive allows 
+directive allows
 .id &sysper.AUTODEPEND
 times to be out by a minute without causing a rebuild.
 It does not work on 2003-12-03. The following example should build
@@ -2166,7 +2170,7 @@ file1.obj file2.obj file3.obj file4.obj
 file1.obj file2.obj file3.obj file4.obj file5.obj
 .exam end
 .pc
-The "!inject" preprocessor directive supported by &maksname 
+The "!inject" preprocessor directive supported by &maksname
 provides a way to append a word to several macros.
 .np
 There are instances when it is useful to have macro identifiers that
