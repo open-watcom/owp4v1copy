@@ -27,7 +27,7 @@ asinline_ppc_dep_axp = $(as_dir)/ppc/inline/osiaxp/compile.tim
 
 #
 !ifeq target_cpu axp
-!idef asinline_axp_lib_$(host_os)_$(host_cpu)
+!ifdef asinline_axp_lib_$(host_os)_$(host_cpu)
 asinline_lib = $(asinline_axp_lib_$(host_os)_$(host_cpu))
 asinline_dep = $(asinline_axp_dep_$(host_os)_$(host_cpu))
 !else
@@ -35,7 +35,7 @@ asinline_lib = $(asinline_axp_lib_$(host_cpu))
 asinline_dep = $(asinline_axp_dep_$(host_cpu))
 !endif
 !else ifeq target_cpu ppc
-!idef asinline_ppc_lib_$(host_os)_$(host_cpu)
+!ifdef asinline_ppc_lib_$(host_os)_$(host_cpu)
 asinline_lib = $(asinline_ppc_lib_$(host_os)_$(host_cpu))
 asinline_dep = $(asinline_ppc_dep_$(host_os)_$(host_cpu))
 !else
