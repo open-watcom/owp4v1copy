@@ -18,7 +18,108 @@ recompile your application.
 Following is a list of changes made in &product 1.2.
 .begbull
 .bull
-Fill in all the changes...
+Better C99 style support for "long long" type is now available in the
+C compiler. LL, ULL and LLU suffixes are recognized for constants.
+The C++ compiler also supports these suffixes.
+.bull
+Added C99 style *LLONG_MIN/MAX defines in limits.h.
+.bull
+The C compiler has been fixed to correctly diagnose illegal union
+assignments.
+.bull
+The C compiler now issues warnings on operations involving pointers
+to different but compatible unions.
+.bull
+The __UNIX__ macro is now supported in C and C++ compilers, wmake and
+wasm. It is currently defined for QNX and Linux targets.
+.bull
+Default windowing support has been re-enabled for Win16 and Win386
+runtime libraries.
+.bull
+Since default windowing is no longer supported on most platforms, the
+Programmer's Guide and IDE tutorial have been updated to reflect that
+fact.
+.bull
+AutoCAD and MFC targets have been removed from the IDE, the -bw switch
+(default windowing) is no longer available in the IDE for OS/2 and Win32
+targets.
+.bull
+Several system definitions have been added to wlink: os2_pm (16-bit OS/2
+Presentation Manager executable), os2_dll (16-bit OS/2 DLL) and os2v2_dll
+(32-bit OS/2 DLL).
+.bull
+Manual for the CauseWay DOS extender has been added.
+.bull
+The dmpobj tool has been added. This utility dumps the contents of OMF
+object files and can be useful to developers.
+.bull
+The linker has been fixed to read "AR" style archives produced by third
+party tools.
+.bull
+The linker has been fixed to prevent crashes when linking with COFF files
+providing uninitialised COMDAT entries
+.bull
+Updated wlink to call wlib with the -c (case sensitive) option when
+creating import libraries. This fixes problems with DLLs that export
+symbols differring only in case.
+.bull
+Disassembly of xchg and bound instructions has been fixed in wdis
+(corrected order of operands).
+.bull
+The printf() function now supports the "ll" format specifier for
+"long long" integers.
+.bull
+The printf() function has been enhanced to support %b format specifier
+for bitfields.
+.bull
+[OS/2 32-bit] To prevent crashes, termination code is not run if second
+instance of a DLL failed to load due to single DGROUP.
+.bull
+[OS/2 32-bit] The __grow_handles() function was incorrectly adding n
+requested handles to existing limit instead of setting the limit to n.
+.bull
+[OS/2 32-bit] Fixed a problem with _STACKLOW in multithreaded programs
+and DLLs. This prevents crashes where Fortran DLLs would run out of stack.
+.bull
+The Win32 Image Editor has been enhanced with drag-and-drop support.
+.bull
+The IDE has been fixed to properly handle mixed case filenames.
+.bull
+The Microsoft compatibility tools (NMAKE, CL) have been fixed to better
+handle command line arguments.
+.bull
+The Dialog Editor (wde) has been fixed to prevent occasional DDE related
+crashes when run from inside the Resource Editor (wre).
+.bull
+The 'Change font' option no longer crashes the GUI debugger (wdw).
+.bull
+The code generator now deletes object files if it was interrupted.
+Previously zero-length invalid object files could be left behind,
+interfering with make operation.
+.bull
+The wasm assembler has been enhanced to generate file dependency information
+usable by wmake.
+.bull
+Numerous minor fixes have been made to wasm.
+.bull
+The w32api project has been updated to the latest version.
+.bull
+The os2api project has been enhanced - added multimedia headers and
+libraries and numerous fixes have been made to the header files.
+.bull
+The debugger now supports the F7 key as a shortcut for "run to cursor".
+This is consistent with CodeView.
+.bull
+New internal variable dbg$ntid (next thread id) has been added to the
+debugger. This permits automated iteration of all threads.
+.bull
+The wsample tool has been updated to dynamically allocate storage for
+command line, where previously the command line length was limited to
+128 characters.
+.bull
+The FORTRAN compiler has been changed to preserve case of symbols with
+linkage other than FORTRAN. This is especially helpful when calling OS
+API functions and using case sensitive link step (now default).
 .endbull
 .*
 .*
