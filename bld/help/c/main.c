@@ -89,7 +89,7 @@ static void showHelp( char *name ) {
     char        fname[_MAX_FNAME];
 
     _splitpath( name, NULL, NULL, fname, NULL );
-    printf( "\nThe WATCOM Help command line:\n" );
+    printf( "\nThe Watcom Help command line:\n" );
     printf( "\n" );
     printf( "               %s help_file [topic_name]\n", fname );
     printf( "\n" );
