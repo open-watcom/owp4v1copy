@@ -251,7 +251,8 @@ unsigned ReqProg_load( void )
     WORD                version;
     DWORD               pid,pid_started;
     DWORD               cr_flags;
-    char                buff[PATH_MAX+128];
+    char                * buff = NULL;
+    size_t              nBuffRequired = 0;
     char                *dll_name, *service_name, *dll_destination, *service_parm;
 
     acc = GetInPtr( 0 );
@@ -276,6 +277,16 @@ unsigned ReqProg_load( void )
     ParseServiceStuff( parm, &dll_name, &service_name, &dll_destination, &service_parm );
     pid = 0;
     src = parm;
+    
+    /*
+    //  Just to be really safe!
+    */
+    nBuffRequired = GetTotalSize() + PATH_MAX + 16;
+    if(NULL == (buff = malloc(nBuffRequired))){
+        ret->err = ERROR_NOT_ENOUGH_MEMORY;
+        return (sizeof(*ret));
+    }
+
     if( *src == '#' ) {
         src++;
         pid = strtoul( src, &endsrc, 16 );
@@ -302,6 +313,10 @@ unsigned ReqProg_load( void )
     if( pid == 0 ) {
         if( FindFilePath( parm, exe_name, ExtensionList ) != 0 ) {
             ret->err = ERROR_FILE_NOT_FOUND;
+            if(buff){
+                free(buff);
+                buff = NULL;
+            }
             return( sizeof( *ret ) );
         }
 
@@ -312,6 +327,10 @@ unsigned ReqProg_load( void )
                             NULL, OPEN_EXISTING, 0, 0 );
         if( handle == (HANDLE)-1 ) {
             ret->err = GetLastError();
+            if(buff){
+                free(buff);
+                buff = NULL;
+            }
             return( sizeof( *ret ) );
         }
         GetFullPathName( exe_name, MAX_PATH, CurrEXEName, NULL );
@@ -349,6 +368,10 @@ unsigned ReqProg_load( void )
 
         if( !GetEXEHeader( handle, &hi, &stack ) ) {
             ret->err = GetLastError();
+            if(buff){
+                free(buff);
+                buff = NULL;
+            }
             return( sizeof( *ret ) );
         }
         if( hi.sig == EXE_PE ) {
@@ -382,6 +405,10 @@ unsigned ReqProg_load( void )
             }
             if( pid != 0 ) {
                 ret->err = GetLastError();
+                if(buff){
+                    free(buff);
+                    buff = NULL;
+                }
                 return( sizeof( *ret ) );
             }
         } else {
@@ -416,6 +443,10 @@ unsigned ReqProg_load( void )
     }
     ret->err = StartControlThread( buff, &pid_started, cr_flags );
     if( ret->err != 0 ) {
+        if(buff){
+            free(buff);
+            buff = NULL;
+        }
         return( sizeof( *ret ) );
     }
     /*
@@ -426,6 +457,10 @@ unsigned ReqProg_load( void )
     if( !rc || (DebugEvent.dwDebugEventCode != CREATE_PROCESS_DEBUG_EVENT) ||
                 (DebugEvent.dwProcessId != pid_started ) ) {
         ret->err = GetLastError();
+        if(buff){
+            free(buff);
+            buff = NULL;
+        }
         return( sizeof( *ret ) );
     }
     ProcessInfo.pid = DebugEvent.dwProcessId;
@@ -452,6 +487,10 @@ unsigned ReqProg_load( void )
         FlatCS = CS();
         if( !executeUntilVDMStart() ) {
             ret->err = GetLastError();
+            if(buff){
+                free(buff);
+                buff = NULL;
+            }
             return( sizeof( *ret ) );
         }
         if( pid != NULL ) {
@@ -514,6 +553,10 @@ unsigned ReqProg_load( void )
     }
     ret->mod_handle = 0;
 
+    if(buff){
+        free(buff);
+        buff = NULL;
+    }
     return( sizeof( *ret ) );
 
 }
