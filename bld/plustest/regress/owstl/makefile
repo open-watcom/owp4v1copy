@@ -43,6 +43,7 @@ tests = &
         lim01.$(exe)    &
         string01.$(exe) &
         util01.$(exe)   &
+        vector01.$(exe) &
 
 .cpp.obj:
     $(wpp_$(arch)) $[@ $(test_cflags_$(arch)) -e1000
@@ -69,6 +70,8 @@ test : .symbolic test.lnk $(tests)
     $(run) string01 >> test.out
     @echo ----------util01---------->> test.out
     $(run) util01 >> test.out
+    @echo ----------vector01---------->> test.out
+    $(run) vector01 >> test.out
     diff test.out test.chk
     %make global
     %append $(log_file) PASS $(%__CWD__)
