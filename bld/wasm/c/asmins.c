@@ -2478,9 +2478,6 @@ void AsmInit( int cpu, int fpu, int use32 )
     int         size = sizeof( AsmOpTable ) / sizeof( AsmOpTable[0] );
     int         count;
 
-#ifndef NDEBUG
-    printf("AsmInit: %X, %X, %X\n", cpu, fpu, use32);
-#endif
     for( count = 0; count < MAX_TOKEN; count ++ ) {
         AsmBuffer[count] = &tokens[count];
     }
