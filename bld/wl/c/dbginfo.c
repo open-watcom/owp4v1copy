@@ -92,8 +92,6 @@ static unsigned_32  DBISize;
 static dbgheader    Master;            // rest depend on .obj files.
 
 static snamelist *  DBISourceLang;     // list of source languages
-static class_entry *LocalClass;
-static class_entry *TypeClass;
 
 static void             ReadSegInfo( section *, void ** );
 static snamelist *      LangAlloc( byte len, void *buff );
@@ -118,8 +116,6 @@ extern void ODBIInit( section *sect )
     Master.exe_minor_ver = EXE_MINOR_VERSION;
     Master.obj_major_ver = 0;
     Master.obj_minor_ver = 0;
-    LocalClass = NULL;
-    TypeClass = NULL;
     DBISourceLang = LangAlloc( 1, "C" );
     DBISourceLang->next = NULL;
     _PermAlloc( sect->dbg_info, sizeof( debug_info ) );
@@ -334,18 +330,19 @@ extern void ODBIDefClass( class_entry *cl, unsigned_32 size )
         return;
     if( cl->flags & CLASS_MS_TYPE ) {
         dinfo->type.curr += size;
-        TypeClass = cl;
+        dinfo->TypeClass = cl;
     } else if( cl->flags & CLASS_MS_LOCAL ) {
         dinfo->local.curr += size;
-        LocalClass = cl;
+        dinfo->LocalClass = cl;
     }
 }
 
 static int ODBISymIsForGlobalDebugging( symbol *sym, mod_entry *currMod )
 /***********************************************************************/
 {
-    return (!(currMod->modinfo & DBI_EXPORTS) || sym->info & SYM_EXPORTED)
-        && (!(sym->info & SYM_STATIC) || currMod->modinfo & DBI_STATICS);
+    return( !( sym->info & SYM_EXPORTED ) && !( sym->info & SYM_STATIC )
+        || ( currMod->modinfo & DBI_EXPORTS ) && ( sym->info & SYM_EXPORTED )
+        || ( currMod->modinfo & DBI_STATICS ) && ( sym->info & SYM_STATIC ) );
 }
 
 extern void ODBIAddGlobal( symbol *sym )
@@ -860,11 +857,11 @@ extern void WriteDBISecs( section *sec )
         DBIWriteInfo( dptr->typelinks.init, dptr->typelinks.size );
         DBIWriteInfo( dptr->linelinks.init, dptr->linelinks.size );
         pos = PosLoad();
-        if( LocalClass != NULL ) {
-            RingWalk( LocalClass->segs, WriteLeaderLoad );
+        if( dptr->LocalClass != NULL ) {
+            RingWalk( dptr->LocalClass->segs, WriteLeaderLoad );
         }
-        if( TypeClass != NULL ) {
-            RingWalk( TypeClass->segs, WriteLeaderLoad );
+        if( dptr->TypeClass != NULL ) {
+            RingWalk( dptr->TypeClass->segs, WriteLeaderLoad );
         }
         DBISize += PosLoad() - pos;
         DBIWriteInfo( dptr->line.init, dptr->line.size );

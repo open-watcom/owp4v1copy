@@ -98,19 +98,22 @@ extern void ProcObjFiles( void )
 extern void SetupFakeModule( void )
 /*********************************/
 {
-    FakeModule = NewModEntry();
-    FakeModule->modinfo = DBI_ALL|MOD_LAST_SEG|MOD_NEED_PASS_2|FMT_PE_XFER;
-    FakeModule->name = StringStringTable( &PermStrings, LinkerModule );
-    DBIInitModule( FakeModule );
-
+    if( FmtData.type & MK_PE ) {
+        FakeModule = NewModEntry();
+        FakeModule->modinfo = DBI_ALL|MOD_LAST_SEG|MOD_NEED_PASS_2|FMT_PE_XFER;
+        FakeModule->name = StringStringTable( &PermStrings, LinkerModule );
+        DBIInitModule( FakeModule );
+    }
 }
 
 extern void LinkFakeModule( void )
 /********************************/
 {
-    // Unlike other modules, fake module goes to the beginning of the list
-    FakeModule->n.next_mod = LibModules;
-    LibModules = FakeModule;
+    if( FmtData.type & MK_PE ) {
+        // Unlike other modules, fake module goes to the beginning of the list
+        FakeModule->n.next_mod = LibModules;
+        LibModules = FakeModule;
+    }
 }
 
 static void CheckNewFile( mod_entry *mod, file_list *list,

@@ -363,6 +363,8 @@ static void WriteVerbSeg( void *_seg )
     if( seg->isdead )
         return;
     leader = seg->u.leader;
+    if( leader->class->flags & CLASS_HANDS_OFF )
+        return;
     WriteFormat( 16, leader->segname );
     WriteFormat( 38, leader->class->name );
     if( leader->info & SEG_ABSOLUTE ) {

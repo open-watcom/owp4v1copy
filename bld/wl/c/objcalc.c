@@ -823,6 +823,7 @@ static void WriteSymArray( symbol ** symarray, unsigned num )
 typedef struct {
     symbol **   symarray;
     unsigned    num;
+    section     *sect;
     unsigned    first : 1;
 } pubdefinfo;
 
@@ -858,7 +859,7 @@ static bool DefPubSym( void *_pub, void *_info )
             frame = leader->group->grp_addr.seg;
             off = temp + leader->group->grp_addr.off;
             XDefSymAddr( pub, off, frame );
-            DBIGenGlobal( pub, leader->class->section );
+            DBIGenGlobal( pub, info->sect );
         }
     }
     if( ( MapFlags & MAP_FLAG ) && !SkipSymbol( pub ) ) {
@@ -900,6 +901,7 @@ extern void DoPubs( section *sect )
     }
     info.num = 0;
     info.first = TRUE;
+    info.sect = sect;
     Ring2Lookup( CurrMod->publist, DefPubSym, &info );
     if( info.num > 0 ) {
         WriteSymArray( info.symarray, info.num );

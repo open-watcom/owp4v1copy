@@ -1,17 +1,18 @@
 OBJS = ovl1.obj ovl2.obj ovl3.obj
 
 .c.obj:
-    wcc $[@ -ml -of -s -w4 -zq -d1 -oax
+    wcc $[@ -ml -of -s -w4 -zq -d2 -hw
 
 main.exe : main.obj $(OBJS) $(__MAKEFILES__)
     %create tmp.lnk
+    %append tmp.lnk debug watcom
     %append tmp.lnk debug all
     %append tmp.lnk name main
     %append tmp.lnk system dos
-    %append tmp.lnk option quiet,dynamic
     %append tmp.lnk option map,verbose
     %append tmp.lnk sort global
     %append tmp.lnk file main
+    %append tmp.lnk option dynamic
     %append tmp.lnk begin autosection
     @for %i in ($(OBJS)) do %append tmp.lnk file %i
     %append tmp.lnk end

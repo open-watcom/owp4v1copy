@@ -570,8 +570,8 @@ extern void WriteDBI( void )
     if( SymFileName != NULL ) {
         InitBuffFile( &symfile, SymFileName );
         OpenBuffFile( &symfile );
-        save = CurrSect->outfile;
-        CurrSect->outfile = &symfile;
+        save = Root->outfile;
+        Root->outfile = &symfile;
     }
     if( LinkFlags & OLD_DBI_FLAG ) {
         OWriteDBI();
@@ -582,6 +582,6 @@ extern void WriteDBI( void )
     }
     if( SymFileName != NULL ) {
         CloseBuffFile( &symfile );
-        CurrSect->outfile = save;
+        Root->outfile = save;
     }
 }

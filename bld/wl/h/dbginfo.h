@@ -64,6 +64,8 @@ typedef struct debug_info {
     dbi_section     addr;
     virt_mem        DBIWrite;
     signed_16       modnum;
+    class_entry     *LocalClass;
+    class_entry     *TypeClass;
 } debug_info;
 
 
