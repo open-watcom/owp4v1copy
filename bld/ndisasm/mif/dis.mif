@@ -33,4 +33,4 @@ distbls.gh : ./disbuild.exe
         $[@
 
 ./disbuild.exe : $(disasm_dir)/core/c/disbuild.c $(disbuild_headers)
-        $(bld_cl) -I"$(disasm_dir)/core/h" -I"$(disasm_dir)/stand/h" $[@ $(wcl_util_opts)
+        $(bld_cl) -I"../h" -I"$(disasm_dir)/core/h" -I"$(disasm_dir)/stand/h" $[@ $(wcl_util_opts)
