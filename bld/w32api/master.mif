@@ -84,7 +84,8 @@ libs =  	     &
 .def: ..\lib
 
 .def.wlc:
-        vi -i -q "-k :source ..\\\\def2wlc.vi $*\n" $<
+        copy $< $@
+        vi -i -q "-k :source ..\\\\def2wlc.vi $*\n" $@
 
 .wlc.lib:
         $(lib) -q -n -io -ii $@ @$<
