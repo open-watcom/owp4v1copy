@@ -230,34 +230,15 @@ L$25:
     pop       bx
     ret       
 L$26:
-    push      ax
-	; The label referred to here is an undefined location
-    jb        238H
-	; The label referred to here is an undefined location
-    jae       248H
-    and       byte ptr 73H[di],al
-    arpl      word ptr [bx+si],sp
-	; The label referred to here is an undefined location
-    je        24bH
-    and       byte ptr 6fH[bp+si],ah
-    outsw     
-	; The label referred to here is an undefined location
-    je        202H
-    popa      
-    insb      
-	; The label referred to here is an undefined location
-    je        24bH
-	; The label referred to here is an undefined location
-    jb        256H
-    popa      
-	; The label referred to here is an undefined location
-    je        250H
-    and       byte ptr 53H[bx],cl
-    add       byte ptr [bx+si],al
+    DB	50H, 72H, 65H, 73H, 73H, 20H, 45H, 73H
+    DB	63H, 20H, 74H, 6fH, 20H, 62H, 6fH, 6fH
+    DB	74H, 20H, 61H, 6cH, 74H, 65H, 72H, 6eH
+    DB	61H, 74H, 65H, 20H, 4fH, 53H, 0
+    DB	0
 L$27:
     add       byte ptr [bx+si],al
 L$28:
-    inc       si
+    DB	46H
 L$29:
     add       byte ptr [bx+si],al
 L$30:

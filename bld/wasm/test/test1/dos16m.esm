@@ -241,7 +241,7 @@ L$28:
     mov       es,dx
     mov       di,word ptr es:__STACKLOW
     mov       word ptr es:__LpCmdLine,di
-    mov       word ptr es:__LpCmdLine,es
+    mov       word ptr es:__LpCmdLine+2,es
     je        L$29
     inc       cx
     repe movsb 
@@ -288,7 +288,7 @@ L$32:
 L$33:
     mov       si,cx
     mov       word ptr es:__LpPgmName,si
-    mov       word ptr es:__LpPgmName,es
+    mov       word ptr es:__LpPgmName+2,es
     mov       dx,DGROUP
     mov       ds,dx
     mov       es,dx
@@ -303,18 +303,18 @@ L$33:
     jne       L$34
     mov       ax,offset L$39
     mov       word ptr DGROUP:__get_ovl_stack,ax
-    mov       word ptr DGROUP:__get_ovl_stack,cs
+    mov       word ptr DGROUP:__get_ovl_stack+2,cs
     mov       word ptr DGROUP:__restore_ovl_stack,ax
-    mov       word ptr DGROUP:__restore_ovl_stack,cs
+    mov       word ptr DGROUP:__restore_ovl_stack+2,cs
     mov       word ptr DGROUP:__close_ovl_file,ax
-    mov       word ptr DGROUP:__close_ovl_file,cs
+    mov       word ptr DGROUP:__close_ovl_file+2,cs
 L$34:
     xor       bp,bp
     push      bp
     mov       bp,sp
     mov       ax,offset L$38
     mov       word ptr DGROUP:___FPE_handler,ax
-    mov       word ptr DGROUP:___FPE_handler,cs
+    mov       word ptr DGROUP:___FPE_handler+2,cs
     call      far ptr __FInitRtns
     call      far ptr __CMain
 __exit_:

@@ -6,7 +6,7 @@ _TEXT		SEGMENT	WORD PUBLIC USE16 'CODE'
     add       ax,word ptr DGROUP:doodle+4
     add       ax,word ptr DGROUP:doodle+0fffffffcH
     add       ax,word ptr DGROUP:doodle+4
-    adc       al,byte ptr [bx+si]
+    DB	12H, 0
     add       byte ptr -6f70H[bx+si],dl
     nop       
     nop       

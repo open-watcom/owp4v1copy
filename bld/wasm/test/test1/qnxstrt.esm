@@ -5,20 +5,20 @@
 		EXTRN	TrapAccess_:BYTE
 		EXTRN	TrapFini_:BYTE
 		EXTRN	_small_code_:BYTE
-DGROUP		GROUP	_DATA
+dgroup		GROUP	_DATA
 _TEXT		SEGMENT	BYTE PUBLIC USE16 'CODE'
 		ASSUME CS:_TEXT, DS:DGROUP, SS:DGROUP
     jmp       L$2
-    scasw     
-    fiadd     word ptr [bx+si]
-    add       byte ptr [bx+si],al
-    add       byte ptr [bx+si],al
-    DB	0
+    DB	0afH, 0deH
+    DW	L$3
+    DW	L$4
+    DW	L$5
 L$1:
-    add       byte ptr DGROUP[bx+si],al
+    DW	dgroup
 L$2:
     mov       ax,0ffffH
-    jmp       near ptr __qnx_exit_
+    jmp       __qnx_exit_
+L$3:
     push      bp
     mov       bp,sp
     push      ds
@@ -44,6 +44,7 @@ L$2:
     mov       sp,bp
     pop       bp
     retf      0aH
+L$4:
     push      bp
     mov       bp,sp
     push      ds
@@ -57,6 +58,7 @@ L$2:
     mov       sp,bp
     pop       bp
     retf      4
+L$5:
     push      ds
     push      es
     mov       ds,word ptr cs:L$1
