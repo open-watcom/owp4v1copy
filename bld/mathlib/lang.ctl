@@ -46,11 +46,7 @@ cdsay .
     <CPCMD> <DEVDIR>/mathlib/library/msdos.387/ms_r/math387r.lib <RELROOT>/rel2/lib386/dos/math387r.lib
     <CPCMD> <DEVDIR>/mathlib/library/msdos.387/ms_rd/math387r.lib <RELROOT>/rel2/lib386/dos/mth387rd.lib
     <CPCMD> <DEVDIR>/mathlib/library/msdos.387/ms_s/math387s.lib <RELROOT>/rel2/lib386/dos/math387s.lib
-    <CPCMD> <DEVDIR>/mathlib/library/msdos.386/ms_r/math3r.lib <RELROOT>/rel2/lib386/netware/math3r.lib
-    <CPCMD> <DEVDIR>/mathlib/library/msdos.386/ms_rd/math3r.lib <RELROOT>/rel2/lib386/netware/math3rd.lib
     <CPCMD> <DEVDIR>/mathlib/library/msdos.386/ms_s/math3s.lib <RELROOT>/rel2/lib386/netware/math3s.lib
-    <CPCMD> <DEVDIR>/mathlib/library/msdos.387/ms_r/math387r.lib <RELROOT>/rel2/lib386/netware/math387r.lib
-    <CPCMD> <DEVDIR>/mathlib/library/msdos.387/ms_rd/math387r.lib <RELROOT>/rel2/lib386/netware/mth387rd.lib
     <CPCMD> <DEVDIR>/mathlib/library/msdos.387/ms_s/math387s.lib <RELROOT>/rel2/lib386/netware/math387s.lib
 #   <CPCMD> <DEVDIR>/mathlib/library/winnt.axp/_s/mathaxp.lib <RELROOT>/rel2/libaxp/math.lib
 
