@@ -1,0 +1,18 @@
+#pmake: build trap remote os2 16 32 par x86
+
+# This is a quick and dirty project because it is OS/2 specific and
+# intended to be temporary; Yes, I know it breaks all known rules. Once
+# WLINK properly supports 16-bit IOPL segments in 32-bit DLLs, the port
+# I/O can be built into the parallel trap file/server modules, which is
+# where it belongs in the first place.
+
+!include cproj.mif
+!include cdirs.mif
+
+target = $(%devdir)\bin\binp\dll
+
+$(target)\wdio.dll: wdio.obj
+    wlink sys os2 dll d all op protmode name $@ f wdio segment 'IO_TEXT' IOPL export INPORT 2, OUTPORT 4
+
+wdio.obj: wdio.c
+    wcc -oxs -ml -bd -d2 wdio.c

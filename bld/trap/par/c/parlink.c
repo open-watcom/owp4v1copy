@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Parallel link remote communications core.
 *
 ****************************************************************************/
 
@@ -208,15 +207,17 @@ typedef enum { FALSE, TRUE } bool;
         extern unsigned outp( unsigned, unsigned );
         extern unsigned inp( unsigned );
 #elif defined(__OS2__)
-    #define inp input_port
-    #define outp output_port
-    extern unsigned far outp( unsigned, unsigned );
-    extern unsigned far inp( unsigned );
-#elif defined(__OS2V2__)
-    #define inp input_port
-    #define outp output_port
-    extern unsigned short __far16 _pascal outp(unsigned short, unsigned short);
-    extern unsigned short __far16 _pascal inp(unsigned short);
+    #if defined(__386__)
+        #define inp input_port
+        #define outp output_port
+        extern unsigned short __far16 _pascal outp(unsigned short, unsigned short);
+        extern unsigned short __far16 _pascal inp(unsigned short);
+    #else
+        #define inp input_port
+        #define outp output_port
+        extern unsigned far outp( unsigned, unsigned );
+        extern unsigned far inp( unsigned );
+    #endif
 #elif defined(__NETWARE__)
     #pragma aux inp =                                   \
     0xec                /* in   al,dx                           */      \

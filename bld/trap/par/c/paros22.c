@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 2.x specific parallel port access routines.
 *
 ****************************************************************************/
 
@@ -37,11 +36,6 @@
 #include <os2.h>
 #include "i86.h"
 
-// Provide a empty DLL startup routine (empty)
-ULONG _System _DLL_InitTerm(ULONG handle, ULONG reason)
-{
-    return 1;
-}
 
 APIRET16 APIENTRY16 DosPortAccess(USHORT,USHORT,USHORT,USHORT);
 
