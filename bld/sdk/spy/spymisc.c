@@ -37,7 +37,10 @@
 #include "spy.h"
 #include <commdlg.h>
 
-/* missing in MS WIN32 header files */
+/*                                                               */
+/* not included in MS WIN32 header files                         */
+/* It looks like as MS remove support for this on WIN32 platform */
+/*                                                               */
 #ifndef CS_KEYCVTWINDOW
 #define CS_KEYCVTWINDOW 0x0004
 #endif
