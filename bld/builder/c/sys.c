@@ -124,7 +124,7 @@ unsigned SysRunCommand( const char *cmd )
     if (rc != 0) return ( rc );
     rc = dup2( pipe_fd[1], STDERR_FILENO );
     if (rc != 0) return ( rc );
-    rc = spawnl( P_NOWAIT, CmdProc, CmdProc, "/c", cmd, NULL );
+    rc = spawnl( P_NOWAITO, CmdProc, CmdProc, "/c", cmd, NULL );
     close( pipe_fd[1] );
     dup2( my_std_output, STDOUT_FILENO );
     dup2( my_std_error, STDERR_FILENO );
