@@ -26,7 +26,7 @@ emu387.qnx: qnxemu87.qbj emu387.qbj fpeqnx.qbj
     wlink system qnx386 name $^@ file qnxemu87.qbj,emu387.qbj,fpeqnx.qbj opt priv=0,map,long,quiet,res=..\emu86\emu87.u
 
 emu387.obj: emu387.asm $(INCS)
-    wasm -3 bt=dos /dOFFSET32 /d_OS=_PLDT /dSEGMENTED /I$(mathlib_dir)\h /I$(emu386) $[@
+    wasm -3 -bt=dos /dOFFSET32 /d_OS=_PLDT /dSEGMENTED /I$(mathlib_dir)\h /I$(emu386) $[@
     wtouch compile.tim
 
 #emu387w.obj: emu387.asm $(INCS)
