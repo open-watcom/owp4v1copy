@@ -36,30 +36,30 @@
       Idx,              Name,           Opcode,         Mask,           Handler
 */
 
-inspick( addss,		"addss",	0x0000580f,	0x0000ffff,	X86XMMRegModRM32 )	// sse	
-inspick( cmpss,		"cmpss",	0x0000c20f,	0x0000ffff,	X86XMMRegModRM32Imm ) 	// sse	
-inspick( cvtdq2pd,	"cvtdq2pd",	0x0000e60f,	0x0000ffff,	X86XMMRegModRM64 )	// sse2	
-inspick( cvtsi2ss,	"cvtsi2ss",	0x00002a0f,	0x0000ffff,	X86XMMRegModRMMixed )	// sse	
-inspick( cvtss2sd,	"cvtss2sd",	0x00005a0f,	0x0000ffff,	X86XMMRegModRM32 )	// sse2	
-inspick( cvtss2si,	"cvtss2si",	0x00002d0f,	0x0000ffff,	X86RegModRMMixed )	// sse	
-inspick( cvttps2dq,	"cvttps2dq",	0x00005b0f,	0x0000ffff,	X86XMMRegModRM )	// sse2	
-inspick( cvttss2si,	"cvttss2si",	0x00002c0f,	0x0000ffff,	X86RegModRMMixed )	// sse	
-inspick( divss,		"divss",	0x00005e0f,	0x0000ffff,	X86XMMRegModRM32 )	// sse	
-inspick( maxss,		"maxss",	0x00005f0f,	0x0000ffff,	X86XMMRegModRM32 )	// sse	
-inspick( minss,		"minss",	0x00005d0f,	0x0000ffff,	X86XMMRegModRM32 )	// sse	
-inspick( movdqu_1,	"movdqu",	0x00006f0f,	0x0000ffff,	X86XMMRegModRM )	// sse2	
-inspick( movdqu_2,	"movdqu",	0x00007f0f,	0x0000ffff,	X86XMMRegModRM_Rev ) 	// sse2	
-inspick( movq_2,	"movq",		0x00007e0f,	0x0000ffff,	X86XMMRegModRM64 )	// sse2	
-inspick( movq2dq,	"movq2dq",	0x00c0d60f,	0x00c0ffff,	X86XMMRegModRMMixed )	// sse2	
-inspick( movshdup,	"movshdup",	0x0000160f,	0x0000ffff,	X86XMMRegModRM )	// sse3	
-inspick( movsldup,	"movsldup",	0x0000120f,	0x0000ffff,	X86XMMRegModRM )	// sse3	
-inspick( movss_1,	"movss",	0x0000100f,	0x0000ffff,	X86XMMRegModRM32 )	// sse	
-inspick( movss_2,	"movss",	0x0000110f,	0x0000ffff,	X86XMMRegModRM32_Rev ) 	// sse	
-inspick( mulss,		"mulss",	0x0000590f,	0x0000ffff,	X86XMMRegModRM32 )	// sse	
+inspick( addss,         "addss",        0x0000580f,     0x0000ffff,     X86XMMRegModRM32 )      // sse  
+inspick( cmpss,         "cmpss",        0x0000c20f,     0x0000ffff,     X86XMMRegModRM32Imm )   // sse  
+inspick( cvtdq2pd,      "cvtdq2pd",     0x0000e60f,     0x0000ffff,     X86XMMRegModRM64 )      // sse2 
+inspick( cvtsi2ss,      "cvtsi2ss",     0x00002a0f,     0x0000ffff,     X86XMMRegModRMMixed )   // sse  
+inspick( cvtss2sd,      "cvtss2sd",     0x00005a0f,     0x0000ffff,     X86XMMRegModRM32 )      // sse2 
+inspick( cvtss2si,      "cvtss2si",     0x00002d0f,     0x0000ffff,     X86RegModRMMixed )      // sse  
+inspick( cvttps2dq,     "cvttps2dq",    0x00005b0f,     0x0000ffff,     X86XMMRegModRM )        // sse2 
+inspick( cvttss2si,     "cvttss2si",    0x00002c0f,     0x0000ffff,     X86RegModRMMixed )      // sse  
+inspick( divss,         "divss",        0x00005e0f,     0x0000ffff,     X86XMMRegModRM32 )      // sse  
+inspick( maxss,         "maxss",        0x00005f0f,     0x0000ffff,     X86XMMRegModRM32 )      // sse  
+inspick( minss,         "minss",        0x00005d0f,     0x0000ffff,     X86XMMRegModRM32 )      // sse  
+inspick( movdqu_1,      "movdqu",       0x00006f0f,     0x0000ffff,     X86XMMRegModRM )        // sse2 
+inspick( movdqu_2,      "movdqu",       0x00007f0f,     0x0000ffff,     X86XMMRegModRM_Rev )    // sse2 
+inspick( movq_2,        "movq",         0x00007e0f,     0x0000ffff,     X86XMMRegModRM64 )      // sse2 
+inspick( movq2dq,       "movq2dq",      0x00c0d60f,     0x00c0ffff,     X86XMMRegModRMMixed )   // sse2 
+inspick( movshdup,      "movshdup",     0x0000160f,     0x0000ffff,     X86XMMRegModRM )        // sse3 
+inspick( movsldup,      "movsldup",     0x0000120f,     0x0000ffff,     X86XMMRegModRM )        // sse3 
+inspick( movss_1,       "movss",        0x0000100f,     0x0000ffff,     X86XMMRegModRM32 )      // sse  
+inspick( movss_2,       "movss",        0x0000110f,     0x0000ffff,     X86XMMRegModRM32_Rev )  // sse  
+inspick( mulss,         "mulss",        0x0000590f,     0x0000ffff,     X86XMMRegModRM32 )      // sse  
 // Part of xchg
-inspick( pause,		"pause",	0x00000090,	0x00000000,	NULL )		// sse2	
-inspick( pshufhw,	"pshufhw",	0x0000700f,	0x0000ffff,	X86XMMRegModRMImm ) 	// sse2	
-inspick( rcpss,		"rcpss",	0x0000530f,	0x0000ffff,	X86XMMRegModRM32 )	// sse	
-inspick( rsqrtss,	"rsqrtss",	0x0000520f,	0x0000ffff,	X86XMMRegModRM32 )	// sse	
-inspick( sqrtss,	"sqrtss",	0x0000510f,	0x0000ffff,	X86XMMRegModRM32 )	// sse	
-inspick( subss,		"subss",	0x00005c0f,	0x0000ffff,	X86XMMRegModRM32 )	// sse	
+inspick( pause,         "pause",        0x00000090,     0x00000000,     NULL )                  // sse2 
+inspick( pshufhw,       "pshufhw",      0x0000700f,     0x0000ffff,     X86XMMRegModRMImm )     // sse2 
+inspick( rcpss,         "rcpss",        0x0000530f,     0x0000ffff,     X86XMMRegModRM32 )      // sse  
+inspick( rsqrtss,       "rsqrtss",      0x0000520f,     0x0000ffff,     X86XMMRegModRM32 )      // sse  
+inspick( sqrtss,        "sqrtss",       0x0000510f,     0x0000ffff,     X86XMMRegModRM32 )      // sse  
+inspick( subss,         "subss",        0x00005c0f,     0x0000ffff,     X86XMMRegModRM32 )      // sse  
