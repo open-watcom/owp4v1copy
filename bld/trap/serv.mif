@@ -90,6 +90,8 @@ targ_axp_nt     = $(name).exe
 
 targ_ppc_nt     = $(name).exe
 
+targ_ppc_linux  = $(name).elf
+
 !ifeq nwlib libc
 objs_nlm        = libcstrt.obj
 !else

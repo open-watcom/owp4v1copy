@@ -33,6 +33,7 @@
 #define _LINUXCOMM_H
 
 #include <stddef.h>
+#include <sys/stat.h>
 #include "machtype.h"
 
 /* Use 4-byte packing for compatibility with the default packing used by GCC */
@@ -142,8 +143,63 @@ typedef struct {
 #define MAX_WP          32
 
 #define TRACE_BIT       0x100
+
+typedef unsigned char bp_t;
+
 #define BRK_POINT       0xCC
 
+#endif
+
+#if defined( MD_ppc )
+
+typedef struct {
+    u_long eax;
+    u_long eip;
+    u_long orig_eax;
+    u_long cs;
+    u_long ss;
+    u_long esp;
+} user_regs_struct;
+
+#ifndef _PPC_PTRACE_H
+struct pt_regs {
+	unsigned long gpr[32];
+	unsigned long nip;
+	unsigned long msr;
+	unsigned long orig_gpr3;	/* Used for restarting system calls */
+	unsigned long ctr;
+	unsigned long link;
+	unsigned long xer;
+	unsigned long ccr;
+	unsigned long mq;		/* 601 only (not used at present) */
+					/* Used on APUS to hold IPL value. */
+	unsigned long trap;		/* Reason for being here */
+	unsigned long dar;		/* Fault registers */
+	unsigned long dsisr;
+	unsigned long result; 		/* Result of a system call */
+};
+#endif
+
+typedef struct user {
+	struct pt_regs	regs;			/* entire machine state */
+	size_t		u_tsize;		/* text size (pages) */
+	size_t		u_dsize;		/* data size (pages) */
+	size_t		u_ssize;		/* stack size (pages) */
+	unsigned long	start_code;		/* text starting address */
+	unsigned long	start_data;		/* data starting address */
+	unsigned long	start_stack;		/* stack starting address */
+	long int	signal;			/* signal causing core dump */
+	struct regs *	u_ar0;			/* help gdb find registers */
+	unsigned long	magic;			/* identifies a core file */
+	char		u_comm[32];		/* user command name */
+} user_struct;
+
+typedef unsigned long bp_t;
+
+#define BRK_POINT       0x12345678
+
+#define PTRACE_GETREGS  12
+#define PTRACE_SETREGS  13
 #endif
 
 /* Rendezvous structure for communication between the dynamic linker and

@@ -369,6 +369,7 @@ unsigned ReqWrite_mem( void )
     return( sizeof( *ret ) );
 }
 
+#if defined( MD_x86 )
 static int GetFlatSegs( u_short *cs, u_short *ds )
 {
     user_regs_struct    regs;
@@ -380,6 +381,7 @@ static int GetFlatSegs( u_short *cs, u_short *ds )
     }
     return( FALSE );
 }
+#endif
 
 static int SplitParms( char *p, char *args[], unsigned len )
 {
@@ -497,7 +499,7 @@ unsigned ReqProg_load( void )
             ++parms;
             --len;
         }
-        args = __alloca( i * sizeof( *args ) );
+        args = alloca( i * sizeof( *args ) );
         parms = parm_start;
         len = GetTotalSize() - sizeof( *acc );
         i = 1;
@@ -518,7 +520,7 @@ unsigned ReqProg_load( void )
         ++parms;
         --len;
         i = SplitParms( parms, NULL, len );
-        args = __alloca( (i + 2)  * sizeof( *args ) );
+        args = alloca( (i + 2)  * sizeof( *args ) );
         args[ SplitParms( parms, &args[1], len ) + 1 ] = NULL;
     }
     args[0] = parm_start;
@@ -567,9 +569,13 @@ unsigned ReqProg_load( void )
             if( WSTOPSIG( status ) != SIGTRAP )
                 goto fail;
         }
+
+#if defined( MD_x86 )
     if( !GetFlatSegs( &flatCS, &flatDS ) )
         goto fail;
-        dbg_dyn = GetDebuggeeDynSection( exe_name );
+#endif
+
+    dbg_dyn = GetDebuggeeDynSection( exe_name );
     AddProcess();
         errno = 0;
     }
@@ -619,7 +625,7 @@ unsigned ReqSet_break( void )
 {
     set_break_req   *acc;
     set_break_ret   *ret;
-    u_char          opcode;
+    bp_t            opcode;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -729,7 +735,7 @@ static unsigned ProgRun( int step )
             if( regs.eip == rdebug.r_brk + sizeof( old_ld_bp ) ) {
                 int         psig = 0;
                 void        (*oldsig)(int);
-                unsigned_8  opcode = BRK_POINT;
+                bp_t        opcode = BRK_POINT;
         
                 /* The dynamic linker breakpoint was hit, meaning that
                  * libraries are being loaded or unloaded. This gets a bit
@@ -790,7 +796,7 @@ static unsigned ProgRun( int step )
      */
     if( !have_rdebug && (dbg_dyn != NULL) ) {
         if( Get_ld_info( &rdebug, &dbg_rdebug ) ) {
-            unsigned_8  opcode;
+            bp_t        opcode;
     
             AddInitialLibs( rdebug.r_map );
             have_rdebug = TRUE;

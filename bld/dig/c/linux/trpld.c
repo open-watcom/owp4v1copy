@@ -38,6 +38,12 @@
 #include "peloader.h"
 #include "trpqimp.h"
 
+#if defined( BUILTIN_TRAP_FILE )
+extern const trap_requests *TrapLoad( trap_callbacks *client );
+#endif
+
+extern char **environ;
+
 static const trap_requests      *TrapFuncs;
 static PE_MODULE *TrapFile;
 static void (TRAPENTRY *FiniFunc)();
@@ -95,12 +101,16 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
     
     parm = (*ptr != '\0') ? ptr + 1 : ptr;
 
+#if !defined( BUILTIN_TRAP_FILE )
     TrapFile = PE_loadLibraryHandle( GetSystemHandle( filehndl ), trap_name );
     if( TrapFile == NULL ) {
         sprintf( buff, TC_ERR_CANT_LOAD_TRAP, trapbuff );
         return( buff );
     }
-    ld_func  = PE_getProcAddress( TrapFile, "TrapLoad_" );
+    ld_func = PE_getProcAddress( TrapFile, "TrapLoad_" );
+#else
+    ld_func = TrapLoad;
+#endif
     strcpy( buff, TC_ERR_WRONG_TRAP_VERSION );
     if( ld_func == NULL ) {
         KillTrap();
