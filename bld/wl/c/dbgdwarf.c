@@ -411,13 +411,32 @@ extern void DwarfAddGlobal( symbol *sym )
     }
 }
 
+static offset GetLinearGroupOffset( group_entry *group )
+/************************************************************/
+{
+    /* gives the absolute offset for ELF, relative for PE and QNX_FLAT;
+       perhaps PE and QNX_FLAT should be absolute as well if the
+       DWARF format is changed */
+
+    offset      off;
+
+    if( group != NULL ) {
+        off = group->linear - group->grp_addr.off;
+        if( FmtData.type & MK_ELF ) {
+            off += FmtData.base;
+        } else {
+            off -= Groups->linear;
+        }
+    }
+    return( off );
+}
+
 extern void DwarfGenGlobal( symbol *sym, section *sect )
 /******************************************************/
 {
     symbol_die  die;
     symbol_seg  symseg;
     virt_mem    vmem_addr;
-    group_entry *group;
     size_t      len;
 
     sect = sect;
@@ -430,10 +449,7 @@ extern void DwarfGenGlobal( symbol *sym, section *sect )
         vmem_addr = CurrMod->d.d->pubsym.addr;
         die.off = sym->addr.off;
         if( FmtData.type & ( MK_PE | MK_QNX_FLAT | MK_ELF ) ) {
-            group = sym->p.seg->u.leader->group;
-            if( group != NULL ) {
-                die.off += group->linear - group->grp_addr.off - Groups->linear;
-            }
+            die.off += GetLinearGroupOffset( sym->p.seg->u.leader->group );
         }
         die.isexternal = !( sym->info & SYM_STATIC );
         PutInfo( vmem_addr, &die, sizeof( symbol_die ) );
@@ -504,7 +520,6 @@ extern void DwarfGenLines( segdata *seg, void *lines, unsigned size,
     dw_addr_delta       addrdelta;
     virt_mem            vmem_addr;
     ln_off_386          prevline;
-    group_entry *       group;
     offset              off;
     char                buff[ 3 + 2 * MAX_LEB128 ];
 
@@ -527,10 +542,7 @@ extern void DwarfGenLines( segdata *seg, void *lines, unsigned size,
     } else {
         off = seg->a.delta + seg->u.leader->seg_addr.off;
         if( FmtData.type & ( MK_PE | MK_QNX_FLAT | MK_ELF ) ) {
-            group = seg->u.leader->group;
-            if( group != NULL ) {
-                off += group->linear - group->grp_addr.off - Groups->linear;
-            }
+            off += GetLinearGroupOffset( seg->u.leader->group );
         }
         *( (unsigned_32 *)&buff[3] ) = off;
     }
@@ -603,14 +615,10 @@ static offset GetNewAddrOffset( segdata *sdata, offset delta )
 /************************************************************/
 {
     offset      off;
-    group_entry *group;
 
     off = sdata->u.leader->seg_addr.off + delta;
     if( FmtData.type & ( MK_PE | MK_QNX_FLAT | MK_ELF ) ) {
-        group = sdata->u.leader->group;
-        if( group != NULL ) {
-            off += group->linear - group->grp_addr.off - Groups->linear;
-        }
+        off += GetLinearGroupOffset( sdata->u.leader->group );
     }
     return( off );
 }

@@ -979,11 +979,13 @@ static offset FindRealAddr( fix_data *fix )
             if( !( fix->type & FIX_NO_BASE ) ) {
                 off += FmtData.base;
             }
-            if( dbiflat ) {     // want dbi addresses relative to 0
+            // want dbi addresses relative to 0, but not for ELF
+            // (perhaps absolute for others too, later)
+            if( dbiflat && !(FmtData.type & MK_ELF) ) {
                 off -= Groups->linear;
             }
         }
-        if( dbiflat ) {
+        if( dbiflat && !(FmtData.type & MK_ELF) ) {
             off -= FmtData.base;
         }
     }

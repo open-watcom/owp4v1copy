@@ -234,7 +234,7 @@ unsigned ReqMap_addr()
     ret->lo_bound = 0;
     ret->hi_bound = ~(addr48_off)0;
     sys_ptrace(PTRACE_PEEKUSER, pid, offsetof(user_struct,start_code), &val);
-    ret->out_addr.offset = acc->in_addr.offset + val + 0x8048100;
+    ret->out_addr.offset = acc->in_addr.offset + val;
     OutNum(acc->in_addr.segment);
     OutNum(acc->handle);
     if ( acc->in_addr.segment == MAP_FLAT_DATA_SELECTOR ||
