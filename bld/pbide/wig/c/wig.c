@@ -42,7 +42,7 @@
 #include "error.h"
 
 extern FILE *yyin;
-extern int yyparse();
+extern int wig_parse();
 #if defined( __DLL__ )
 #elif defined( __WINDOWS__ )
 int PASCAL WinMain( HANDLE currinst, HANDLE previnst, LPSTR cmdline, int cmdshow)
@@ -118,7 +118,7 @@ int Wigmain( int argc, char **argv ) {
             InitSru();
 
             /* parse loop */
-            while( !yyparse() );
+            while( !wig_parse() );
 
             /* do any post processing */
             DoPostProcessing();

@@ -44,7 +44,7 @@
 #include "mem.h"
 #include "error.h"
 #include "options.h"
-#include "ytab.h"
+#include "ytab.gh"
 #include "list.h"
 #include "filelist.h"
 

@@ -36,7 +36,7 @@
 #include "global.h"
 #include "types.h"
 #include "sruinter.h"
-#include "ytab.h"
+#include "ytab.gh"
 #include "keywords.h"
 
 const keyword Statements[] = {

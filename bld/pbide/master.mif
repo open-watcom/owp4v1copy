@@ -10,7 +10,6 @@ dlldbg.exe : dlldbg.obj dlldbg.res
 
 .c: ..
 
-extra_c_flags =-d2
 extra_c_flags_win =-zW
 
 dlldbg.res : ../dlldbg.rc ../debugger.ico

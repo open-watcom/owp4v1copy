@@ -29,6 +29,9 @@
 *
 ****************************************************************************/
 
+#if defined( __WINDOWS__ ) && defined( __DLL__ )
+#pragma library( "ddeml.lib" );
+#endif
 
 #define STRICT
 #include <windows.h>

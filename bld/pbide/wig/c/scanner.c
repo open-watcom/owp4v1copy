@@ -40,16 +40,16 @@
 #include "types.h"
 #include "list.h"
 #include "sruinter.h"
-#include "ytab.h"
+#include "ytab.gh"
 #include "error.h"
 #include "mem.h"
 #include "filelist.h"
 #include "keywords.h"
 
+#include "sruparse.gh"
+
 #define ID_BUFLEN               (8*1024)
 #define BUF_SIZE_INCREMENT      1024
-
-extern YYSTYPE yylval;
 
 static BOOL     atEOF;                  /* have we reached end of file  */
 static BOOL     yyLineFini;             /* have we finished a line      */
@@ -66,6 +66,12 @@ static char     *yyFileName;            /* name of Current File         */
 // be reimplemented
 static char     idBuffer[ID_BUFLEN];    /* delayed token destroy buffer */
 static int      idPtr;                  /* pointer to current token     */
+
+int wig_parse( void )
+/********************************/
+{
+    return yyparse();
+}
 
 static void addToTok( char ch ) {
 /********************************/
