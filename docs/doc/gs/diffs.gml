@@ -19,6 +19,14 @@ Following is a list of changes made in &product 1.2:
 :cmt Reflects main Perforce branch as of 2003/12/1
 .begbull
 .bull
+Handling of default libraries for Win32 targets has been changed. Previously
+default library records were included in the C runtime library, now they are
+specified part of the wlink Win32 target definitions in wlsystem.lnk. The
+list of libraries has changed from previous version as well and now reflects
+the Microsoft compiler defaults; existing IDE projects and makefiles may need
+to have additional libraries specified if those are no longer part of the
+default list.
+.bull
 The C compiler now performs stricter checking on function prototypes
 and pointer operations. This may lead to previously undiagnosed
 warnings/errors appearing when compiling incorrect or ambiguous code.
@@ -67,6 +75,8 @@ runtime libraries.
 Since default windowing is no longer supported on most platforms, the
 Programmer's Guide and IDE tutorial have been updated to reflect that
 fact.
+.bull
+The Win32 GUI tools now support the Windows XP look and feel.
 .bull
 AutoCAD and MFC targets have been removed from the IDE, the -bw switch
 (default windowing) is no longer available in the IDE for OS/2 and Win32
