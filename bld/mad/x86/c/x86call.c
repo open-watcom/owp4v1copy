@@ -346,8 +346,8 @@ static int HeuristicTraceBack(
     int             word_size;
     long            sp_adjust;
     long            bp_adjust;
-    long            saved_bp_loc;
-    long            bp_to_ra_offset;
+    long            saved_bp_loc = 0;
+    long            bp_to_ra_offset = 0;
     int             found_inc_bp;
     int             found_mov_bp_sp;
     int             found_push_bp;

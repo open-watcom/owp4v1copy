@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  MAD imports interface.
 *
 ****************************************************************************/
 
@@ -118,12 +117,15 @@ mad_imp_routines        MadImpInterface = {
 };
 
 
-#if defined(__386__)
+#if defined( __386__ )
+
+#if defined( __WATCOMC__ )
 #pragma aux MADLOAD "*"
 
 /* WD looks for this symbol to determine module bitness */
 int __nullarea;
 #pragma aux __nullarea "*";
+#endif
 
 #elif defined( __WINDOWS__)
 

@@ -98,6 +98,8 @@ static void BreakRet( mad_trace_data *td, mad_disasm_data *dd, const mad_registe
         MCReadMem( sp, sizeof( td->brk.mach.segment ), &td->brk.mach.segment );
         sp.mach.offset += sizeof( td->brk.mach.segment );
         break;
+    default:
+        break;
     }
     MCAddrSection( &td->brk );
 }
@@ -150,6 +152,8 @@ static mad_trace_how DoTraceOne( mad_trace_data *td, mad_disasm_data *dd, mad_tr
                 return( MTRH_BREAK );
             }
             return( MTRH_STEP );
+        default:
+            break;
         }
         return( MTRH_STEP );
     case MTRK_NEXT:
@@ -287,6 +291,8 @@ mad_trace_how   DIGENTRY MITraceOne( mad_trace_data *td, mad_disasm_data *dd, ma
         case DI_X86_into:
             MCNotify( MNT_EXECUTE_LONG, NULL );
             break;
+        default:
+            break;
         }
         /* fall through */
     case MTRH_STEPBREAK:
@@ -326,6 +332,8 @@ mad_status      DIGENTRY MITraceSimulate( mad_trace_data *td, mad_disasm_data *d
         MCWriteMem( sp, sizeof( value ), &value );
         out->x86.cpu.esp = sp.mach.offset;
         return( MS_OK );
+    default:
+        break;
     }
     return( MS_UNSUPPORTED );
 }

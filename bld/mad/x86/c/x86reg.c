@@ -25,7 +25,7 @@
 *  ========================================================================
 *
 * Description:  X86 registers structures and procedures
-*                       for input/output/expression
+*               for input/output/expressions.
 *
 ****************************************************************************/
 
@@ -48,8 +48,8 @@ typedef enum {
 } register_flags;
 
 #define REG( p, name, type, start, size, flags, sublist, cpulevel, fpulevel ) \
-    const x86_reg_info p##_##name = { #name, X86T_##type, start, size,    \
-                                    RF_##flags##REG, sublist, cpulevel, fpulevel };
+    const x86_reg_info p##_##name = { { #name, X86T_##type, start, size,    \
+                                    RF_##flags##REG }, sublist, cpulevel, fpulevel };
 
 #define CPU( name, type, basereg, startbit, size, sublist, cpulevel )   \
     REG( CPU, name, type, offsetof( mad_registers, x86.cpu.basereg )*8+startbit,        \
@@ -1147,10 +1147,10 @@ static mad_status XMMGetPiece(
 
     unsigned            row;
     unsigned            column;
-    unsigned            group;
+    unsigned            group = 0;
     unsigned            list_num;
-    unsigned            type;
-    const x86_reg_info  **list;
+    unsigned            type = 0;
+    const x86_reg_info  **list = NULL;
 
 
     /* in case we haven't got an XMM */
@@ -1205,7 +1205,7 @@ static mad_status XMMGetPiece(
         } else {
             *max_value_p = 0;
             *reg_p = NULL;
-            *disp_type_p = NULL;
+            *disp_type_p = 0;
         }
         return( MS_OK );
     }
@@ -1247,7 +1247,7 @@ static mad_status XMMGetPiece(
     return( MS_OK );
 }
 
-mad_status DIGENTRY MIRegSetDisplayGetPiece( 
+mad_status DIGENTRY MIRegSetDisplayGetPiece(
     const mad_reg_set_data *rsd,
     const mad_registers *mr,
     unsigned piece,
@@ -1338,7 +1338,7 @@ static unsigned FmtPtr( addr_seg seg, addr_off off, unsigned off_digits,
 
 unsigned RegDispType( mad_type_handle th, const void *d, unsigned max, char *buff )
 {
-    const mad_modify_list       *p;
+    const mad_modify_list       *p = NULL;
     const fpu_ptr       *fp;
     char                title[3];
 
@@ -1780,6 +1780,9 @@ unsigned DIGENTRY MIRegSpecialName(
         seg = CPU_ss.info.name;
         offset = BIG_SEG( GetRegIP( mr ) ) ? CPU_ebp.info.name : CPU_bp.info.name;
         break;
+    default:
+        seg = NULL;
+        offset = NULL;
     }
     len = 0;
     left = max;
