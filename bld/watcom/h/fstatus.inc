@@ -43,3 +43,5 @@ FPE_STACKOVERFLOW       equ     8ah
 FPE_STACKUNDERFLOW      equ     8bh
 FPE_EXPLICITGEN         equ     8ch
 FPE_IOVERFLOW           equ     8dh
+FPE_LOGERR              equ     8eh
+FPE_MODERR              equ     8fh
