@@ -24,6 +24,9 @@ set watcom=c:\c\wc11
 REM Change this to point to your OS/2 Toolkit directory
 set os2tkroot=c:\Toolkit
 
+REM Change this to point to your OS/2 DDK directory
+set os2ddkroot=c:\DDK
+
 REM Set this variable if you wish to use the OS/2 Toolkit headers and libs
 REM set use_os2tk_stuff=1
 

@@ -30,6 +30,7 @@ on_build_machine = $(%on_build_machine)
 !endif
 tools_root  = $(%TOOLDR)\tools
 os2_toolkit     = $(%os2tkroot)
+os2_ddk         = $(%os2ddkroot)
 
 # if you wish to use the OS/2 Toolkit headers/libraries, set the environment
 # variable; default is OS/2 headers/libraries in the Watcom tree
