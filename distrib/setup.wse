@@ -1,7 +1,7 @@
 Document Type: WSE
 item: Global
   Version=9.01
-  Title=Watcom C/C++ 11.0c update Installation
+  Title=Open Watcom C/C++ 1.0 Installation
   Flags=00010100
   Languages=65 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
   Copy Default=1
@@ -11,19 +11,19 @@ item: Global
   Start Gradient=0 0 255
   End Gradient=0 0 0
   Windows Flags=00000100000000010010110000000000
-  Log Pathname=%MAINDIR%\INSTALL.LOG
+  Log Pathname=%MAINDIR%\install.log
   Message Font=MS Sans Serif
   Font Size=8
-  Pages Modified=01110110011110101000111000000011
+  Pages Modified=01110110011110101000111100000111
   Extra Pages=00000000000000000000000000110010
   Disk Label=Default
   Disk Filename=SETUP
-  Patch Flags=0000000000000001
+  Patch Flags=0000000000001001
   Patch Threshold=85
   Patch Memory=4000
   MIF PDF Version=1.0
   MIF SMS Version=2.0
-  EXE Filename=d:\wise\watcom-c-11.0c.exe
+  EXE Filename=setup.exe
   FTP Host=www.openwatcom.org
   FTP Pathname=webdeploy/c_11.0c
   FTP Cluster Size=20
@@ -32,8 +32,8 @@ item: Global
   Upload Directory=watcom/wiseupdate/c_11.0c
   Per-User Version ID=1
   Dialogs Version=7
-  Version File=11.0c
-  Version Description=Watcom C/C++ 11.0c patch update
+  Version File=1.0
+  Version Description=Open Watcom C/C++ 1.0
   Version Copyright=Copyright (C) 2001-2003
   Version Company=SciTech Software, Inc.
   Crystal Format=10111100101100000010001001001001
@@ -74,7 +74,7 @@ item: If/While Statement
 end
 item: Get Registry Key Value
   Variable=FIND_DIRECTORY
-  Key=SOFTWARE\Open Watcom\c_11.0c
+  Key=SOFTWARE\Open Watcom\c_1.0
   Value Name=Install Location
   Flags=00000100
 end
@@ -99,12 +99,12 @@ item: Get Temporary Filename
   Variable=LICENSEFILE
 end
 item: Install File
-  Source=D:\docs\creadme_installer.txt
+  Source=d:\openwatcom\docs\creadme_installer.txt
   Destination=%TEMP%\%READMEFILE%
   Flags=0000000000100010
 end
 item: Install File
-  Source=D:\docs\license.nowrap
+  Source=..\license.nowrap
   Destination=%TEMP%\%LICENSEFILE%
   Flags=0000000000100010
   File Size=2011
@@ -140,7 +140,7 @@ item: Remark
 end
 item: Set Variable
   Variable=APPTITLE
-  Value=Watcom C/C++ 11.0c update
+  Value=Open Watcom C/C++ 1.0
   Flags=10000000
 end
 item: Remark
@@ -148,7 +148,7 @@ item: Remark
 end
 item: Set Variable
   Variable=GROUP
-  Value=Watcom C++ 11.0c
+  Value=Open Watcom C and C++ 1.0
   Flags=10000000
 end
 item: Remark
@@ -222,181 +222,6 @@ item: Set Variable
   Variable=MAINDIR
   Value=%FIND_DIRECTORY%
 end
-item: Else Statement
-end
-item: Remark
-  Text=Display a dialog if no prior Watcom installation was found
-end
-item: Wizard Block
-  Direction Variable=DIRECTION
-  Display Variable=DISPLAY
-  Bitmap Pathname=%_WISE_%\DIALOGS\TEMPLATE\WIZARD.BMP
-  X Position=9
-  Y Position=10
-  Filler Color=8421376
-  Dialog=Welcome
-  Dialog=Display ReadMe
-  Dialog=Display License
-  Dialog=Must Agree
-  Variable=
-  Variable=
-  Variable=
-  Variable=AGREE
-  Value=
-  Value=
-  Value=
-  Value=A
-  Compare=0
-  Compare=0
-  Compare=0
-  Compare=2
-  Flags=00000011
-end
-item: Custom Dialog Set
-  Name=Previous version not found!
-  Display Variable=DISPLAY
-  item: Dialog
-    Title=Previous version not found!
-    Title French=Bienvenue
-    Title German=Willkommen
-    Title Portuguese=Bem-vindo
-    Title Spanish=Bienvenido
-    Title Italian=Benvenuto
-    Title Danish=Velkommen
-    Title Dutch=Welkom
-    Title Norwegian=Velkommen
-    Title Swedish=Välkommen
-    Width=280
-    Height=224
-    Font Name=Helv
-    Font Size=8
-    item: Push Button
-      Rectangle=172 185 214 199
-      Variable=DIRECTION
-      Value=N
-      Create Flags=01010000000000010000000000000001
-      Text=&Continue >
-      Text French=&Suivant>
-      Text German=&Weiter>
-      Text Portuguese=&Próximo>
-      Text Spanish=&Siguiente >
-      Text Italian=&Avanti >
-      Text Danish=&Næste>
-      Text Dutch=&Volgende>
-      Text Norwegian=&Neste>
-      Text Swedish=&Nästa >
-    end
-    item: Push Button
-      Rectangle=222 185 264 199
-      Action=3
-      Create Flags=01010000000000010000000000000000
-      Text=Cancel
-      Text French=Annuler
-      Text German=Abbrechen
-      Text Portuguese=Cancelar
-      Text Spanish=Cancelar
-      Text Italian=Annulla
-      Text Danish=Annuller
-      Text Dutch=Annuleren
-      Text Norwegian=Avbryt
-      Text Swedish=Avbryt
-    end
-    item: Static
-      Rectangle=9 177 263 178
-      Action=3
-      Create Flags=01010000000000000000000000000111
-    end
-    item: Static
-      Rectangle=90 10 258 32
-      Enabled Color=00000000000000001111111111111111
-      Create Flags=01010000000000000000000000000001
-      Flags=0000000000000001
-      Name=Arial
-      Font Style=-30 0 0 0 700 255 0 0 0 3 2 1 34
-      Text=Upgrade Release!
-      Text French=Bienvenue sur le programme d'installation %APPTITLE%. Ce programme va installer %APPTITLE% sur votre ordinateur.
-      Text German=Willkommen im Installationsprogramm für %APPTITLE%. Dieses Programm installiert  %APPTITLE% auf Ihrem Computer.
-      Text Portuguese=Bem-vindo ao programa de configuração %APPTITLE%. Este programa instalará %APPTITLE% no seu computador
-      Text Spanish=Bienvenido al programa de Configuración %APPTITLE%. Este programa instalará %APPTITLE en su ordenador
-      Text Italian=Benvenuto nel programma di installazione di %APPTITLE%. Con questo programma puoi installare %APPTITLE% sul tuo computer.
-      Text Danish=Velkommen til %APPTITLE% installationsprogrammet. Dette program installerer %APPTITLE% på computeren.
-      Text Dutch=Welkom bij het %APPTITLE% installatieprogramma. Dit programma installeert %APPTITLE% op uw computer.
-      Text Norwegian=Velkommen til %APPTITLE% Oppsett-program. Dette programmet vil installere %APPTITLE% på datamaskinen din.
-      Text Swedish=Välkommen till installationsprogrammet för %APPTITLE%. Detta program installerar %APPTITLE% på din dator.
-    end
-    item: Static
-      Rectangle=90 45 260 171
-      Enabled Color=00000000000000001111111111111111
-      Create Flags=01010000000000000000000000000000
-      Text=This release of Watcom C/C++ 11.0c is intended to be an upgrade to an existing installation; it does not create any icons or set up the necessary environment variables for you.  Since an existing installation has not been found, you may need to set these things up manually.  Do you still wish to continue with the install?
-      Text French=Il vous est fortement recommandé de fermer tous les programmes Windows avant d'exécuter le Programme d'Installation
-      Text French=
-      Text French=Cliquez sur Annuler pour quitter l'Installation et fermez tous les programmes actuellement utilisés. Cliquez sur Suivant pour continuer l'installation
-      Text French=
-      Text French=ATTENTION : Ce programme est protégé par la loi sur les droits d'exploitation et par les traités internationaux
-      Text French=
-      Text French=Toute reproduction ou distribution, même partielle, de ce programme qui n'aura pas reçu d'autorisation préalable fera l'objet de poursuites et sera sévèrement sanctionnée par le droit civil et pénal
-      Text German=Wir empfehlen nachdrücklich, vor Ausführen dieses Installationsprogramms alle Windows-Programme zu beenden.
-      Text German=
-      Text German=Auf Abbrechen klicken, um die Installation zu beenden und alle laufenden Programme zu schließen. Auf Weiter klicken, um mit dem Installationsprogramm zu beginnen.
-      Text German=
-      Text German=WARNUNG: Dieses Programm ist urheberrechtlich sowie durch internationale Verträge geschützt.
-      Text German=
-      Text German=Die unzulässige Vervielfältigung oder Verbreitung dieses Programms, ob ganz oder auszugsweise, kann schwere zivil- und strafrechtliche Konsequenzen nach sich ziehen und wird unter voller Ausschöpfung der Rechtsmittel geahndet.
-      Text Portuguese=Recomenda-se insistentemente que saia de todos os programas do Windows antes de executar este Programa de Configuração.
-      Text Portuguese=
-      Text Portuguese=Faça um clique sobre Cancelar para sair da Configuração e feche todos os programas que estiver a executar. Faça um clique sobre Próximo para continuar com o programa de configuração
-      Text Portuguese=
-      Text Portuguese=AVISO: Este programa está protegido pela lei de direitos do autor e tratados internacionais
-      Text Portuguese=
-      Text Portuguese=A reprodução e a distribuição sem autorização deste programa, ou qualquer parte dele, pode dar lugar à aplicação de severas sanções civis e criminais, e serão perseguidas à extensão máxima permitida pela lei.
-      Text Spanish=Se recomienda encarecidamente que salga de todos los programas Windows antes de ejecutar este programa de Configuración.
-      Text Spanish=
-      Text Spanish=Haga un clic en Cancelar para abandonar la Configuración y cerrar cualquier programa que haya estado ejecutando. Haga un clic en Siguiente para continuar con el programa de Configuración.
-      Text Spanish=
-      Text Spanish=AVISO: Este programa está protegido por las leyes de derechos de autor y tratados internacionales.
-      Text Spanish=
-      Text Spanish=La reproducción o distribución no autorizadas de este programa, o cualquier parte de él, podría dar como resultado rigurosas multas civiles y penales, y se entablará la máxima acción judicial que permita la ley.
-      Text Italian=Ti consigliamo di uscire da tutti i programmi Windows prima di eseguire questo programma di installazione.
-      Text Italian=
-      Text Italian=Fai clic su Annulla per uscire dal programma di installazione e chiudi tutti i programmi aperti. Fai clic su Avanti per continuare con il programma di Installazione.
-      Text Italian=
-      Text Italian=AVVERTENZA: Questo programma è protetto ai sensi delle norme di legge e delle convenzioni internazionali in materia di diritti di copyright.
-      Text Italian=
-      Text Italian=La riproduzione o la distribuzione totale o parziale non autorizzata di questo programma potrà essere soggetta a penalità civili e penali, e sarà punita con la massima severità possibile a norma di legge.
-      Text Danish=Det anbefales kraftigt at afslutte alle Windows programmer, inden man kører dette installationsprogram.
-      Text Danish=
-      Text Danish=Klik på Annuller for at forlade installationsprogrammet og lukke alle igangværende programmer. Klik på Næste for at fortsætte med installationsprogrammet.
-      Text Danish=
-      Text Danish=ADVARSEL: Dette program er beskyttet af copyright og internationale traktater.
-      Text Danish=
-      Text Danish=Uautoriseret gengivelse eller videresalg af dette program eller dele heraf kan føre til streng civil- og/eller kriminel stra. Retsforfølgning heraf vil finde sted i det videste omfang der hjemles muligt.
-      Text Dutch=Het wordt aangeraden om alle Windows programma's af te sluiten voordat u met de installatie van dit programma begint.
-      Text Dutch=
-      Text Dutch=Klik op Annuleren om de installatie te verlaten en eventueel nog lopende programma's af te sluiten. Klik op Volgende om verder te gaan met het Installatieprogramma.
-      Text Dutch=
-      Text Dutch=WAARSCHUWING: dit computerprogramma is auteursrechtelijk beschermd.
-      Text Dutch=
-      Text Dutch=Onrechtmatige verveelvoudiging of distributie van dit programma of een gedeelte ervan is verboden en strafbaar en zal met alle beschikbare juridische middelen worden bestreden.
-      Text Norwegian=Det anbefales på det sterkeste at du avslutter alle Windows-programmer før du kjører dette Oppsett-programmet.
-      Text Norwegian=
-      Text Norwegian=Velg Avbryt for å avbryte Oppsett og lukk alle programmer som er i bruk. Velg Neste for å fortsette med Oppsett-programmet.
-      Text Norwegian=
-      Text Norwegian=ADVARSEL: Dette programmet er beskyttet i henhold til lover om opphavsrett og internasjonale konvensjoner.
-      Text Norwegian=
-      Text Norwegian=Uautorisert kopiering eller distribuering av dette programmet eller deler av det, vil resultere i alvorlig sivil og kriminell straff og vil føre til saksmål i høyest mulig utstrekning i henhold til loven.
-      Text Swedish=Du tillråds bestämt att gå ur alla Windows-program innan du kör installationsprogrammet.
-      Text Swedish=
-      Text Swedish=Klicka på Avbryt för att gå ur installationsprogrammet och stäng eventuella program som du har laddade. Klicka på Nästa för att fortsätta med installationen.
-      Text Swedish=
-      Text Swedish=VARNING: Detta program är skyddat av upphovsrätten och internationella avtal.
-      Text Swedish=
-      Text Swedish=Om du utan tillstånd kopierar eller distribuerar detta program eller delar av det kan det bli allvarliga civilrättsliga och brottsrättliga straffpåföljder. Vi beivrar sådana överträdelser i den allra högsta utsträckning som lagen tillåter.
-    end
-  end
-end
-item: End Block
-end
 item: End Block
 end
 item: Remark
@@ -442,73 +267,31 @@ item: Remark
 end
 item: Get Registry Key Value
   Variable=COMPONENTS
-  Key=SOFTWARE\Open Watcom\c_11.0c
+  Key=SOFTWARE\Open Watcom\c_1.0
   Default=%COMPONENTS%
   Value Name=Components
   Flags=00000100
 end
 item: Get Registry Key Value
   Variable=HOST_OS
-  Key=SOFTWARE\Open Watcom\c_11.0c
+  Key=SOFTWARE\Open Watcom\c_1.0
   Default=%HOST_OS%
   Value Name=Host OS
   Flags=00000100
 end
 item: Get Registry Key Value
   Variable=TARGET_OS
-  Key=SOFTWARE\Open Watcom\c_11.0c
+  Key=SOFTWARE\Open Watcom\c_1.0
   Default=%TARGET_OS%
   Value Name=Target OS
   Flags=00000100
 end
 item: Get Registry Key Value
   Variable=DOBACKUP
-  Key=SOFTWARE\Open Watcom\c_11.0c
+  Key=SOFTWARE\Open Watcom\c_1.0
   Default=%DOBACKUP%
   Value Name=Do Backup
   Flags=00000100
-end
-item: Remark
-  Text=BRANDING determines if the installation will be branded with a name and company.  By default, this is written to the INST directory (installation media).
-end
-item: Set Variable
-  Variable=BRANDING
-  Value=0
-end
-item: If/While Statement
-  Variable=BRANDING
-  Value=1
-end
-item: Read INI Value
-  Variable=NAME
-  Pathname=%INST%\CUSTDATA.INI
-  Section=Registration
-  Item=Name
-end
-item: Read INI Value
-  Variable=COMPANY
-  Pathname=%INST%\CUSTDATA.INI
-  Section=Registration
-  Item=Company
-end
-item: If/While Statement
-  Variable=NAME
-end
-item: Set Variable
-  Variable=DOBRAND
-  Value=1
-end
-item: Get System Information
-  Variable=NAME
-  Flags=00000110
-end
-item: Get System Information
-  Variable=COMPANY
-  Flags=00000111
-end
-item: End Block
-end
-item: End Block
 end
 item: Remark
   Text=The Wizard Loop contains the dialog screens that the user sees in the installation
@@ -2001,28 +1784,6 @@ end
 item: End Block
 end
 item: Remark
-  Text=The BRANDING information is written to the INI file on the installation media.
-end
-item: If/While Statement
-  Variable=BRANDING
-  Value=1
-end
-item: If/While Statement
-  Variable=DOBRAND
-  Value=1
-end
-item: Edit INI File
-  Pathname=%INST%\CUSTDATA.INI
-  Settings=[Registration]
-  Settings=NAME=%NAME%
-  Settings=COMPANY=%COMPANY%
-  Settings=
-end
-item: End Block
-end
-item: End Block
-end
-item: Remark
   Text=Begin writing to the INSTALL.LOG
 end
 item: Open/Close INSTALL.LOG
@@ -2124,665 +1885,643 @@ item: End Block
 end
 item: Remark
 end
-item: Remark
+remarked item: Remark
   Text=C compiler files (required by C++ compiler)
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=COMPONENTS
   Value=A
   Flags=00001010
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=HOST_OS
   Value=AB
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\c_binw\*.*
   Destination=%MAINDIR%
   Description=Windows 3.1/DOS hosted C compiler
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=HOST_OS
   Value=C
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\c_binnt\*.*
   Destination=%MAINDIR%
   Description=Windows NT hosted C compiler
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=HOST_OS
   Value=D
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\c_binp\*.*
   Destination=%MAINDIR%
   Description=OS/2 hosted C compiler
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: Remark
+remarked item: Remark
   Text=C runtime files
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\clib_hdr\*.*
   Destination=%MAINDIR%
   Description=C runtime library headers
   Flags=0000000100000010
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=TARGET_OS
   Value=ACE
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\clib_a16\*.*
   Destination=%MAINDIR%
   Description=16-bit C runtime library files
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=TARGET_OS
   Value=A
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\clib_d16\*.*
   Destination=%MAINDIR%
   Description=16-bit C runtime library files
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=TARGET_OS
   Value=C
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\clib_w16\*.*
   Destination=%MAINDIR%
   Description=16-bit C runtime library files
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=TARGET_OS
   Value=E
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\clib_o16\*.*
   Destination=%MAINDIR%
   Description=16-bit C runtime library files
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=TARGET_OS
   Value=BDFG
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\clib_a32\*.*
   Destination=%MAINDIR%
   Description=32-bit C runtime library files
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=TARGET_OS
   Value=B
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\clib_d32\*.*
   Destination=%MAINDIR%
   Description=32-bit C runtime library files
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=TARGET_OS
   Value=D
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\clib_w32\*.*
   Destination=%MAINDIR%
   Description=32-bit C runtime library files
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=TARGET_OS
   Value=F
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\clib_o32\*.*
   Destination=%MAINDIR%
   Description=32-bit C runtime library files
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=TARGET_OS
   Value=G
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\clib_nlm\*.*
   Destination=%MAINDIR%
   Description=32-bit C runtime library files
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: End Block
+remarked item: End Block
 end
-item: Remark
+remarked item: Remark
 end
-item: Remark
+remarked item: Remark
   Text=C++ compiler files
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=COMPONENTS
   Value=B
   Flags=00001010
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=HOST_OS
   Value=AB
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\cpp_binw\*.*
   Destination=%MAINDIR%
   Description=Windows 3.1/DOS hosted C++ compiler
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=HOST_OS
   Value=C
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\cpp_binnt\*.*
   Destination=%MAINDIR%
   Description=Windows NT hosted C++ compiler
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=HOST_OS
   Value=D
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\cpp_binp\*.*
   Destination=%MAINDIR%
   Description=OS/2 hosted C++ compiler
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: Remark
+remarked item: Remark
   Text=C++ runtime files
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\cpplib_hdr\*.*
   Destination=%MAINDIR%
   Description=C runtime library headers
   Flags=0000000100000010
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=TARGET_OS
   Value=ACE
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\cpplib_a16\*.*
   Destination=%MAINDIR%
   Description=16-bit C runtime library files
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: Remark
+remarked item: Remark
   Text=No 16-bit DOS specific files...
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=TARGET_OS
   Value=C
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\cpplib_w16\*.*
   Destination=%MAINDIR%
   Description=16-bit C runtime library files
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=TARGET_OS
   Value=E
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\cpplib_o16\*.*
   Destination=%MAINDIR%
   Description=16-bit C runtime library files
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=TARGET_OS
   Value=BDFG
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\cpplib_a32\*.*
   Destination=%MAINDIR%
   Description=32-bit C runtime library files
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: Remark
+remarked item: Remark
   Text=No 32-bit DOS specific files...
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=TARGET_OS
   Value=D
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\cpplib_w32\*.*
   Destination=%MAINDIR%
   Description=32-bit C runtime library files
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=TARGET_OS
   Value=F
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\cpplib_o32\*.*
   Destination=%MAINDIR%
   Description=32-bit C runtime library files
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: Remark
+remarked item: Remark
   Text=No 32-bit Netware specific files...
 end
-item: End Block
+remarked item: End Block
 end
-item: Remark
+remarked item: Remark
 end
-item: Remark
+remarked item: Remark
   Text=Debugger and profiler
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=COMPONENTS
   Value=C
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\dbg_all\*.*
   Destination=%MAINDIR%
   Description=Debugger and profiler core files
   Flags=0000000100000010
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=HOST_OS
   Value=AB
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\dbg_binw\*.*
   Destination=%MAINDIR%
   Description=Windows 3.1/DOS hosted debugger and profiler
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=HOST_OS
   Value=C
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\dbg_binnt\*.*
   Destination=%MAINDIR%
   Description=Windows NT hosted debugger and profiler
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=HOST_OS
   Value=D
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\dbg_binp\*.*
   Destination=%MAINDIR%
   Description=OS/2 hosted debugger and profiler
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=TARGET_OS
   Value=G
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\dbg_nlm\*.*
   Destination=%MAINDIR%
   Description=Novell debugger files
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: End Block
+remarked item: End Block
 end
-item: Remark
+remarked item: Remark
 end
-item: Remark
+remarked item: Remark
   Text=Integrated Development Environment
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=COMPONENTS
   Value=D
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\ide_all\*.*
   Destination=%MAINDIR%
   Description=IDE core files
   Flags=0000000100000010
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=HOST_OS
   Value=AB
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\ide_binw\*.*
   Destination=%MAINDIR%
   Description=Windows 3.1/DOS hosted IDE 
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=HOST_OS
   Value=C
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\ide_binnt\*.*
   Destination=%MAINDIR%
   Description=Windows NT hosted IDE 
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=HOST_OS
   Value=D
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\ide_binp\*.*
   Destination=%MAINDIR%
   Description=OS/2 hosted debugger IDE
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: End Block
+remarked item: End Block
 end
-item: Remark
+remarked item: Remark
 end
-item: Remark
+remarked item: Remark
   Text=Sample source code
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=COMPONENTS
   Value=E
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\samples\*.*
   Destination=%MAINDIR%
   Description=Sample source code
   Flags=0000000100000010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\samples_goodies\*.*
   Destination=%MAINDIR%
   Description=Sample source code
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: Remark
+remarked item: Remark
 end
-item: Remark
+remarked item: Remark
   Text=Online help files
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=COMPONENTS
   Value=F
   Flags=00001010
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=HOST_OS
   Value=A
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\core_hlp_dos\*.*
   Destination=%MAINDIR%
   Description=DOS hosted help files
   Flags=0000000100000010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\c_hlp_dos\*.*
   Destination=%MAINDIR%
   Description=DOS hosted help files
   Flags=0000000100000010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\cpp_hlp_dos\*.*
   Destination=%MAINDIR%
   Description=DOS hosted help files
   Flags=0000000100000010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\dbg_hlp_dos\*.*
   Destination=%MAINDIR%
   Description=DOS hosted help files
   Flags=0000000100000010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\ide_hlp_dos\*.*
   Destination=%MAINDIR%
   Description=DOS hosted help files
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=HOST_OS
   Value=B
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\core_hlp_win\*.*
   Destination=%MAINDIR%
   Description=Windows 3.1 hosted help files
   Flags=0000000100000010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\c_hlp_win\*.*
   Destination=%MAINDIR%
   Description=Windows 3.1 hosted help files
   Flags=0000000100000010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\cpp_hlp_win\*.*
   Destination=%MAINDIR%
   Description=Windows 3.1 hosted help files
   Flags=0000000100000010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\dbg_hlp_win\*.*
   Destination=%MAINDIR%
   Description=Windows 3.1 hosted help files
   Flags=0000000100000010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\ide_hlp_win\*.*
   Destination=%MAINDIR%
   Description=Windows 3.1 hosted help files
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=HOST_OS
   Value=C
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\core_hlp_nt\*.*
   Destination=%MAINDIR%
   Description=Windows NT hosted help files
   Flags=0000000100000010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\c_hlp_nt\*.*
   Destination=%MAINDIR%
   Description=Windows NT hosted help files
   Flags=0000000100000010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\cpp_hlp_nt\*.*
   Destination=%MAINDIR%
   Description=Windows NT hosted help files
   Flags=0000000100000010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\dbg_hlp_nt\*.*
   Destination=%MAINDIR%
   Description=Windows NT hosted help files
   Flags=0000000100000010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\ide_hlp_nt\*.*
   Destination=%MAINDIR%
   Description=Windows NT hosted help files
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: If/While Statement
+remarked item: If/While Statement
   Variable=HOST_OS
   Value=D
   Flags=00001010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\core_hlp_os2\*.*
   Destination=%MAINDIR%
   Description=OS/2 hosted help files
   Flags=0000000100000010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\c_hlp_os2\*.*
   Destination=%MAINDIR%
   Description=OS/2 hosted help files
   Flags=0000000100000010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\cpp_hlp_os2\*.*
   Destination=%MAINDIR%
   Description=OS/2 hosted help files
   Flags=0000000100000010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\dbg_hlp_os2\*.*
   Destination=%MAINDIR%
   Description=OS/2 hosted help files
   Flags=0000000100000010
 end
-item: Install File
+remarked item: Install File
   Source=d:\wise\ide_hlp_os2\*.*
   Destination=%MAINDIR%
   Description=OS/2 hosted help files
   Flags=0000000100000010
 end
-item: End Block
+remarked item: End Block
 end
-item: End Block
+remarked item: End Block
 end
-item: Remark
+remarked item: Remark
 end
 item: Remark
   Text=Install the WiseUpdate installer
-end
-item: Custom Script Item
-  Filename=install wiseupdate client.wse
-  Variable Name1=_WUPG_VER_
-  Variable Value1=11.0c
-  Variable Name2=_WUPG_FILE_
-  Variable Value2=update.ini
-  Variable Name3=_WUPG_USER_
-  Variable Name4=_WUPG_START_
-  Variable Name5=_WUPG_ICON_
-  Variable Value5=Update Watcom C++
-  Variable Name6=_WUPG_DIR_
-  Variable Value6=wiseupdate/c_11.0c
-  Variable Name7=_WUPG_HOST_
-  Variable Value7=www.openwatcom.org
-  Variable Name8=HELPFILE
-  Variable Value8=c:\c\wise\Help\Wise.hlp
-  Variable Name9=_WUPG_PASS_
-  Variable Name10=_WUPG_WEB_
-  Variable Value10=http://www.openwatcom.org/download.html
-  Variable Name11=_WUPG_CHECK_
-  Variable Value11=30
 end
 item: Remark
 end
@@ -2911,6 +2650,9 @@ item: Self-Register OCXs/DLLs
 end
 item: Remark
   Text=This Wizard Loop finalizes the install
+end
+item: Add Text to INSTALL.LOG
+  Text=Delete in-use files: On
 end
 item: Wizard Block
   Direction Variable=DIRECTION
