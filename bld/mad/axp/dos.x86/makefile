@@ -1,4 +1,4 @@
-#pmake: dos host_x86 targ_axp axp
+#pmake: os_dos host_x86 targ_axp axp
 
 os  = dos
 cpu = x86

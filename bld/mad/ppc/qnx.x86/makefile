@@ -1,4 +1,4 @@
-#pmake: sbuild qnx host_x86 targ_ppc
+#pmake: sbuild os_qnx host_x86 targ_ppc
 
 os  = qnx
 cpu = x86

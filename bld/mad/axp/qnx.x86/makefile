@@ -1,4 +1,4 @@
-#pmake: qnx host_x86 targ_axp axp
+#pmake: os_qnx host_x86 targ_axp axp
 
 os  = qnx
 cpu = x86

@@ -1,4 +1,4 @@
-#pmake: os2 host_x86 targ_axp axp
+#pmake: os_os2 host_x86 targ_axp axp
 
 os  = os2
 cpu = x86

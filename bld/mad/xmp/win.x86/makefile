@@ -1,4 +1,4 @@
-#pmake: sbuild win host_x86 targ_xmp
+#pmake: sbuild os_win host_x86 targ_xmp
 
 os  = win
 cpu = x86

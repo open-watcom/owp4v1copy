@@ -1,4 +1,4 @@
-#pmake: win host_x86 targ_axp axp
+#pmake: os_win host_x86 targ_axp axp
 
 os  = win
 cpu = x86

@@ -1,4 +1,4 @@
-#pmake: sbuild os2 host_x86 targ_ppc
+#pmake: sbuild os_os2 host_x86 targ_ppc
 
 os  = os2
 cpu = x86

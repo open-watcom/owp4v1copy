@@ -1,4 +1,4 @@
-#pmake: build nt host_x86 targ_x86
+#pmake: all build os_nt host_x86 targ_x86
 
 os  = nt
 cpu = x86
