@@ -30,6 +30,7 @@ components386 =      &
         nls.lbc      &
         pmctls.lbc   &
         pmgpi.lbc    &
+        pmspl.lbc    &
         pmshapi.lbc  &
         pmwin.lbc    &
         quecalls.lbc &
