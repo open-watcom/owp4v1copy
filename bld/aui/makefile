@@ -36,7 +36,7 @@ librarian = wlib
 !endif
 
 .c.obj:
-        $(compile) $(copts) /fh
+        $(compile) $(copts) # precompiled headers are buggy! /fh
 
 .c.i:
         $(compile) $(copts) /fh /plc /fo

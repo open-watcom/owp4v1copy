@@ -155,7 +155,7 @@
     #define WPI_PRECT                   LPRECT
     #define WPI_RECTDIM                 int
     #define WPI_COLOUR                  COLORREF
-    #define WPI_PROC                    FARPROC
+    #define WPI_PROC                    WNDPROC
     #define WPI_ENUMFONTPROC            int CALLBACK
     #define WPI_LINEDDAPROC             LINEDDAPROC
     #define WPI_CHOOSEFONT              CHOOSEFONT
