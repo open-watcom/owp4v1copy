@@ -413,6 +413,7 @@ inspick( fimul00,       "fimul",        0x000008da,     0x0000f8fb,     X86FType
 inspick( fimul01,       "fimul",        0x000048da,     0x0000f8fb,     X86FType2)
 inspick( fimul10,       "fimul",        0x000088da,     0x0000f8fb,     X86FType2)
 inspick( fmulp,         "fmulp",        0x0000c8de,     0x0000f8ff,     X86FType3)
+inspick( fsetpm,        "fsetpm",       0x0000e4db,     0x0000ffff,     X86FType4)
 inspick( fst00,         "fst",          0x000010d9,     0x0000f8fb,     X86FType2)
 inspick( fst01,         "fst",          0x000050d9,     0x0000f8fb,     X86FType2)
 inspick( fst10,         "fst",          0x000090d9,     0x0000f8fb,     X86FType2)
