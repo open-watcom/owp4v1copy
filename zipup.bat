@@ -1,7 +1,10 @@
 @echo off
+rem Check for command line option
+if x%1 == x goto Usage
+
 pushd
-set LABEL=open_watcom_devel_1.2.1
-set PREFIX=open_watcom_devel_1.2.1
+set LABEL=open_watcom_devel_%1
+set PREFIX=open_watcom_devel_%1
 set P4OPT=-f
 set ARCHIVES=\archives
 cdd %ARCHIVES%
@@ -15,4 +18,11 @@ cd %ARCHIVES%\ow_devel_src
 zip -r ..\%PREFIX%-src.zip *
 
 popd
+goto end
+
+:usage
+echo Usage: zipup [RELEASE]
+echo.
+echo Where 'RELEASE' is the public release number (ie: 1.3.0 etc).
+:end
 
