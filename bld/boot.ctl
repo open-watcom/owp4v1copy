@@ -49,4 +49,5 @@ set OWLINUXBUILD=bootstrap
 [ INCLUDE <DEVDIR>/owl/boot.ctl ]
 [ INCLUDE <DEVDIR>/orl/test/boot.ctl ]
 [ INCLUDE <DEVDIR>/as/ppc/boot.ctl ]
+[ INCLUDE <DEVDIR>/dwarf/dw/boot.ctl ]
 [ INCLUDE <DEVDIR>/wl/boot.ctl ]
