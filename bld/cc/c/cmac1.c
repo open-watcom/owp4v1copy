@@ -443,7 +443,9 @@ static MACRO_ARG *CollectParms(void)
             } else if( tok == T_RIGHT_PAREN ) {
                 if( bracket == 0 ) break;
                 --bracket;
-            } else if( tok == T_COMMA  &&  bracket == 0 ) {
+            } else if( tok == T_COMMA  &&  bracket == 0 &&
+                      ( !( (mentry->macro_flags & MACRO_VAR_ARGS ) &&
+                          parm_cnt == mentry->parm_count - 2 ) ) ) {
                 if( prev_tok == T_WHITE_SPACE ) --MTokenLen;
                 if( macro_parms != NULL ) {     // if expecting parms
                     SaveParm( mentry, MTokenLen, parm_cnt, macro_parms,
@@ -514,9 +516,13 @@ static MACRO_ARG *CollectParms(void)
         } else if( MTokenLen + total != 0 ) {
             ++parm_cnt;                 // will cause "too many parms" error
         }
-        if( parm_cnt < mentry->parm_count - 1 ) {
+        if( ( (mentry->macro_flags & MACRO_VAR_ARGS ) &&
+              ( parm_cnt < mentry->parm_count - 2 ) )
+           || ( !(mentry->macro_flags & MACRO_VAR_ARGS ) &&
+                 ( parm_cnt < mentry->parm_count - 1 ) ) ) {
             CErr( ERR_TOO_FEW_MACRO_PARMS, mentry->macro_name );
-        } else if( parm_cnt > mentry->parm_count - 1 ) {
+        } else if( !(mentry->macro_flags & MACRO_VAR_ARGS ) && 
+                   ( parm_cnt > mentry->parm_count - 1 ) ) {
             if( mentry->parm_count - 1 != 0 ){
                 CWarn( WARN_PARM_COUNT_MISMATCH, ERR_TOO_MANY_MACRO_PARMS, mentry->macro_name  );
             }
@@ -558,7 +564,6 @@ local void SaveParm( MEPTR      mentry,
         }
     }
 }
-
 
 #ifndef NDEBUG
 
@@ -603,6 +608,10 @@ void DumpMDefn( unsigned char *p )
             case T_MACRO_PARM:
                 ++p;
                 printf( "parm#%c", '1' + *p++ );
+                continue;
+            case T_MACRO_VAR_PARM:
+                ++p;
+                printf( "varparm#%c", '1' + *p++ );
                 continue;
             default:
                 printf( "%s", Tokens[ *p ] );
@@ -659,6 +668,7 @@ static MACRO_TOKEN *BuildAToken( char __FAR *p )
     }
     return( mtok );
 }
+
 
 MACRO_TOKEN *AppendToken( MACRO_TOKEN *head, int token, char *data )
 {
@@ -907,9 +917,10 @@ static MACRO_TOKEN *ReTokenBuffer10( void )
 MACRO_TOKEN *GlueTokens( MACRO_TOKEN *head )
 {
     MACRO_TOKEN *mtok;
-    MACRO_TOKEN **lnk;
+    MACRO_TOKEN **lnk,**_lnk;// prior lnk
     MACRO_TOKEN *next;
 
+    _lnk= NULL;
     lnk  = &head;
     mtok = *lnk;
     for(;;) {
@@ -926,29 +937,73 @@ MACRO_TOKEN *GlueTokens( MACRO_TOKEN *head )
                 next = next->next;
                 // glue mtok->token with next->token to make one token
                 // untokenize mtok into Buffer at a funny pos to allow non overlapp expandve
-                pos = GlueTokenToBuffer( mtok, 10 );
-                if( next != NULL ){
-                    pos = GlueTokenToBuffer( next, pos ); //paste in next
-                    rem = next->next;  // save unseen stuff
-                    next->next = NULL; // break link;
-                }else{
-                    rem = NULL;
+                if( ( mtok->token == T_COMMA && next->token == T_MACRO_EMPTY_VAR_PARM ) ||
+                    ( mtok->token == T_MACRO_EMPTY_VAR_PARM && next->token == T_COMMA ) )
+                {
+                    // delete [mtoken(a comma),##,empty __VA_ARGS__]
+                    // delete [empty __VA_ARGS__,##,mtoken(a comma)]
+                    Buffer[10] = '\0';
+                    pos = -1;
                 }
+                else
+                {
+                    if( mtok->token == T_MACRO_EMPTY_VAR_PARM )
+                    {
+                        // well should never be in this state if no next - since ## cannot 
+                        // appear at the end of a macro
+                        pos = GlueTokenToBuffer( next, 10 );
+                    }
+                    else
+                    {
+                        pos = GlueTokenToBuffer( mtok, 10 );
+                        if( next != NULL &&
+                            next->token != T_MACRO_EMPTY_VAR_PARM ){
+                            pos = GlueTokenToBuffer( next, pos ); //paste in next
+                        }
+                    }
+                }
+                rem = next->next;  // save unseen stuff
+                next->next = NULL; // break link;
                 while( mtok != NULL ){ //free old stuff [mtoken,##,{atok,} next]
                     next = mtok->next;
                     CMemFree( mtok );
                     mtok = next;
                 }
-                mtok = ReTokenBuffer10();
-                *lnk = mtok;  // link in new mtok to mtok's link
-                while( mtok->next != NULL ){ //position mtok & lnk to last token
-                    lnk = &mtok->next;
-                    mtok = *lnk;
-                };
-                mtok->next  = rem; //add in remainder of unseen stuff
+                if( pos >= 0 )
+                {
+                    mtok = ReTokenBuffer10();
+                    *lnk = mtok;  // link in new mtok to mtok's link
+                    while( mtok && mtok->next != NULL ){ //position mtok & lnk to last token
+                        _lnk = lnk;
+                        lnk = &mtok->next;
+                        mtok = *lnk;
+                        if( mtok == mtok->next )
+                        {
+                            return head;
+                        }
+                    }
+                    // mtok == last token of retokenizing
+                    // lnk == the pointer which references mtok
+                    mtok->next = rem;
+                }
+                else
+                {
+                    if( _lnk )
+                    {
+                        *lnk = rem;
+                        lnk = _lnk;
+                        mtok = *lnk;
+                    }
+                    else
+                    {
+                        *lnk = rem;
+                        mtok = head;
+                    }
+                }   
                 continue;          //ready to go
             }
         }
+        _lnk = lnk;
         lnk = &mtok->next;
         mtok = *lnk;
     }
@@ -967,6 +1022,8 @@ static MACRO_TOKEN **NextString( MACRO_TOKEN **lnk, unsigned i )
     lnk = &mtok->next;
     return( lnk );
 }
+
+
 
 local MACRO_TOKEN *BuildString(  byte *p )
 {
@@ -1127,6 +1184,44 @@ MACRO_TOKEN *BuildMTokenList( byte __FAR *p, MACRO_ARG *macro_parms )
             nested->substituting_parms = 1;             /* 09-nov-93 */
             if( macro_parms ) {
                 mtok = BuildMTokenList( macro_parms[buf[0]].arg, NULL );
+            } else {
+                mtok = BuildAToken( "" );
+                mtok->token = T_WHITE_SPACE;
+            }
+            if( *p2 != T_MACRO_SHARP_SHARP  &&
+                prev_token != T_MACRO_SHARP_SHARP ) {
+                if( mtok != NULL ) {
+                    mtok = AppendToken( mtok, T_NULL, "P-<end of parm>" );
+                    mtok = ExpandNestedMacros( mtok, 0 );
+                }
+            }
+            nested->substituting_parms = 0;
+            break;
+        case T_MACRO_VAR_PARM:
+            ++p;
+            buf[0] = *p++;
+            p2 = p;
+            while( *p2 == T_WHITE_SPACE ) ++p2;
+            nested->substituting_parms = 1;             /* 09-nov-93 */
+            if( macro_parms ) {
+                if( macro_parms[buf[0]].arg )
+                {
+                    mtok = BuildMTokenList( macro_parms[buf[0]].arg, NULL );
+                }
+                else
+                {
+                    if( prev_token == T_MACRO_SHARP_SHARP ||
+                        *p2 == T_MACRO_SHARP_SHARP )
+                    {
+                        mtok = BuildAToken( "" );
+                        mtok->token = T_MACRO_EMPTY_VAR_PARM;
+                    }
+                    else
+                    {
+                        mtok = BuildAToken( "" );
+                        mtok->token = T_WHITE_SPACE;
+                    }
+                }
             } else {
                 mtok = BuildAToken( "" );
                 mtok->token = T_WHITE_SPACE;

@@ -183,6 +183,8 @@ pick( T_STRING,        "string",    TC_XX ),
 #define LAST_KEYWORD    (T_MACRO_PARM-1)
 
 pick( T_MACRO_PARM,    "macro parm",TC_XX ),
+pick( T_MACRO_VAR_PARM, "macro var parm",TC_XX ),
+pick( T_MACRO_EMPTY_VAR_PARM, "empty macro var parm",TC_XX ),
 pick( T_MACRO,         "macro",     TC_XX ),
 pick( T_FUNC_DEFN,     "function",  TC_XX ),
 pick( T_FUNC_END,      "fnend",     TC_XX ),

@@ -51,6 +51,8 @@ enum macro_flags {
         MACRO_CAN_BE_REDEFINED              =   0x02,
         MACRO_USER_DEFINED                  =   0x04,
         MACRO_REFERENCED                    =   0x08,
+        // macro has varargs.
+        MACRO_VAR_ARGS                      =   0x10,
 };
 
 typedef struct  macro_entry {

@@ -315,7 +315,7 @@ void CInclude()
 local void CDefine()
 {
     struct macro_parm *mp, *prev_mp, *formal_parms;
-    int         parm_cnt;
+    int         parm_cnt, parm_end;
     int         i, j;
     int         ppscan_mode;
 
@@ -337,14 +337,24 @@ local void CDefine()
         PPNextToken();          /* grab the '(' */
         PPNextToken();
         parm_cnt = 0;           /* 0 ==> () following */
+        parm_end = 0;
         prev_mp = NULL;
         for( ;; ) {
             if( CurToken == T_RIGHT_PAREN ) break;
-            if( CurToken != T_ID ) {
+            if( parm_end ) {
+                ExpectingAfter( ")", "..." );
+                return;
+            }
+            if( CurToken != T_ID &&
+                CurToken != T_DOT_DOT_DOT ) {
                 ExpectIdentifier();
                 return;
             }
             ++parm_cnt;
+            if( CurToken == T_DOT_DOT_DOT )
+            {
+                parm_end = 1; /* can have no more parms after this. */
+            }
             mp = (struct macro_parm *)
                             CMemAlloc( sizeof( struct macro_parm ) );
             if( formal_parms == NULL ) {
@@ -355,7 +365,10 @@ local void CDefine()
                 }
                 prev_mp->next_macro_parm = mp;
             }
-            mp->parm = CStrSave( Buffer );
+            if( CurToken == T_DOT_DOT_DOT )
+                mp->parm = CStrSave( "__VA_ARGS__" );
+            else
+                mp->parm = CStrSave( Buffer );
             prev_mp = mp;
             j = 0;
             while( TokenBuf[i++] = Buffer[j++] );
@@ -365,8 +378,13 @@ local void CDefine()
                 CErr1( ERR_INVALID_MACRO_DEFN );
                 break;
             }
+            if( parm_end ) {
+                ExpectingAfter( ")", "..." );
+                return;
+            }              
             MustRecog( T_COMMA );
-            if( CurToken != T_ID ) {            /* 16-nov-94 */
+            if( CurToken != T_ID &&
+                CurToken != T_DOT_DOT_DOT ) {            /* 16-nov-94 */
                 ExpectIdentifier();
                 return;
             }
@@ -374,7 +392,7 @@ local void CDefine()
     }
     /* grab replacement tokens */
     ppscan_mode = InitPPScan();         // enable T_PPNUMBER tokens
-    GrabTokens( parm_cnt + 1, formal_parms, i );
+    GrabTokens( parm_end?-(parm_cnt + 1):(parm_cnt + 1), formal_parms, i );
     FiniPPScan( ppscan_mode );          // disable T_PPNUMBER tokens
     for(; mp = formal_parms; ) {
         formal_parms = mp->next_macro_parm;
@@ -395,10 +413,16 @@ local void GrabTokens( parm_cnt, formal_parms, defn_offset )
         int     prev_token;
         int     prev_non_ws_token;
         unsigned mlen;
+        int     has_var_args = 0;
 
         i = defn_offset;
         j = strlen( TokenBuf );
         mentry = (MEPTR) CMemAlloc( sizeof(MEDEFN) + j );
+        if( parm_cnt < 0 )
+        {
+            has_var_args    = 1;
+            parm_cnt = -parm_cnt;
+        }
         mentry->parm_count = parm_cnt;
         strcpy( mentry->macro_name, TokenBuf );
         mlen = offsetof(MEDEFN,macro_name) + i;
@@ -442,8 +466,11 @@ local void GrabTokens( parm_cnt, formal_parms, defn_offset )
             case T_ID:
                 j = FormalParm( formal_parms );
                 if( j != 0 ) {
-                    CurToken = T_MACRO_PARM;
-                    TokenBuf[i-1] = T_MACRO_PARM;
+                    if( has_var_args && ( j == parm_cnt-1 ) )
+                        CurToken = T_MACRO_VAR_PARM;
+                    else
+                        CurToken = T_MACRO_PARM;
+                    TokenBuf[i-1] = CurToken;
                     TokenBuf[i] = j - 1;
                     ++i;
                 } else {
@@ -466,7 +493,8 @@ local void GrabTokens( parm_cnt, formal_parms, defn_offset )
             }
             if( CurToken != T_WHITE_SPACE ) {
                 if( prev_non_ws_token == T_MACRO_SHARP &&       /* 26-mar-91 */
-                    CurToken != T_MACRO_PARM ) {
+                    CurToken != T_MACRO_PARM &&
+                    CurToken != T_MACRO_VAR_PARM ) {
                     CErr1( ERR_MUST_BE_MACRO_PARM );
                     prev_token = TokenBuf[0];
                     TokenBuf[0] = T_SHARP;              /* 17-jul-92 */
@@ -494,7 +522,7 @@ local void GrabTokens( parm_cnt, formal_parms, defn_offset )
             CErr1( ERR_MISPLACED_SHARP_SHARP );
         }
         mentry->macro_len = mlen;
-        MacLkAdd( mentry, mlen, MACRO_USER_DEFINED );   /* 15-apr-94 */
+        MacLkAdd( mentry, mlen, MACRO_USER_DEFINED|(has_var_args?MACRO_VAR_ARGS:0) );   /* 15-apr-94 */
         CMemFree( mentry );                     /* 22-aug-88, FWC */
         MacroSize += mlen;
     }
