@@ -262,6 +262,18 @@ _WCRTLINK int chdir( const char *__path )
     __syscall_return(int,res);
 }
 
+_WCRTLINK int rmdir( const char *__path )
+{
+    u_long res = sys_call1(SYS_rmdir, (u_long)__path);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int mkdir( const char *__path, mode_t __mode )
+{
+    u_long res = sys_call2(SYS_mkdir, (u_long)__path, (u_long)__mode);
+    __syscall_return(int,res);
+}
+
 _WCRTLINK int utime( const char *__path, const struct utimbuf * __times )
 {
     u_long res = sys_call2(SYS_utime, (u_long)__path, (u_long)__times);

@@ -36,11 +36,19 @@
 extern "C" {
     #include <stdio.h>
     #include <stdlib.h>
+    #include <unistd.h>
+#ifndef __UNIX__
     #include <direct.h>
     #include <dos.h>
+#endif
     #include <fcntl.h>
     #include <time.h>
+#ifdef __UNIX__
+    #include <sys/types.h>
+    #include <utime.h>
+#else
     #include <sys/utime.h>
+#endif
 };
 
 #define MAX_BUFFER 500
@@ -53,6 +61,7 @@ typedef struct fullName {
     char        ext[ _MAX_EXT + 1 ];
 } FullName;
 
+#ifndef __UNIX__
 static bool setdrive( const char* drive, unsigned* olddrive )
 {
     if( strlen( drive ) > 0 ) {
@@ -68,6 +77,7 @@ static bool setdrive( const char* drive, unsigned* olddrive )
     }
     return TRUE;
 }
+#endif
 
 static void makepath( char* path, const char* drive, const char* dir, const char* fname, const char* ext )
 {
@@ -229,6 +239,16 @@ void WEXPORT WFileName::absoluteTo( const char* f )
     *this = _x.path;
 }
 
+#ifdef __UNIX__
+bool WEXPORT WFileName::setCWD() const
+{
+    splitpath( *this, _x.drive, _x.dir, _x.fname, _x.ext );
+    if( strlen( _x.dir ) > 0 ) {
+        return( chdir( _x.dir ) == 0 );
+    }
+    return TRUE;
+}
+#else
 bool WEXPORT WFileName::setCWD() const
 {
     splitpath( *this, _x.drive, _x.dir, _x.fname, _x.ext );
@@ -247,6 +267,7 @@ bool WEXPORT WFileName::setCWD() const
     }
     return FALSE;
 }
+#endif
 
 void WEXPORT WFileName::getCWD( bool slash )
 {
@@ -261,6 +282,16 @@ void WEXPORT WFileName::getCWD( bool slash )
     *this = _x.path;
 }
 
+#ifdef __UNIX__
+bool WEXPORT WFileName::makeDir() const
+{
+    splitpath( *this, _x.drive, _x.dir, _x.fname, _x.ext );
+    if( strlen( _x.dir ) > 0 ) {
+        return mkdir( _x.dir, 0755 ) == 0;
+    }
+    return TRUE;
+}
+#else
 bool WEXPORT WFileName::makeDir() const
 {
     splitpath( *this, _x.drive, _x.dir, _x.fname, _x.ext );
@@ -276,6 +307,7 @@ bool WEXPORT WFileName::makeDir() const
     }
     return TRUE;
 }
+#endif
 
 bool WEXPORT WFileName::dirExists() const
 {
@@ -288,6 +320,17 @@ bool WEXPORT WFileName::dirExists() const
     return FALSE;
 }
 
+#ifdef __UNIX__
+bool WEXPORT WFileName::attribs( char* attribs ) const
+{
+    /* XXX needs to be fixed: just to get it going */
+    struct stat st;
+    if (attribs != NULL ) {
+        *attribs = 0;
+    }
+    return( stat( *this, &st ) == 0 );
+}
+#else
 bool WEXPORT WFileName::attribs( char* attribs ) const
 {
     struct find_t fileinfo;
@@ -304,6 +347,7 @@ bool WEXPORT WFileName::attribs( char* attribs ) const
     #endif
     return rc == 0;
 }
+#endif
 
 void WEXPORT WFileName::touch( time_t tm ) const
 {

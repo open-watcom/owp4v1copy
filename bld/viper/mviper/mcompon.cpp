@@ -38,11 +38,15 @@
 #include "mswitch.hpp"
 #include "wobjfile.hpp"
 #include "mtarget.hpp"
-#include <io.h>
+#include <unistd.h>
 
 extern "C" {
+#ifdef __UNIX__
+    #include <dirent.h>
+#else
     #include <dos.h>
     #include <direct.h>
+#endif
 };
 
 Define( MComponent )

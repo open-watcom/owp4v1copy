@@ -26,5 +26,5 @@
 #===============================
     cdsay <PROJDIR>/linux386
     wmake -h
-    <CPCMD> bviper.exe <OWROOT>/bld/build/binl/bviper.exe
+    <CPCMD> bviper.exe <OWROOT>/bld/build/binl/bviper
     cdsay <PROJDIR>

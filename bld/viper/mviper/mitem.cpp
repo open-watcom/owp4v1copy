@@ -41,7 +41,9 @@
 #include "mactset.hpp"
 
 extern "C" {
+#ifndef __UNIX__
     #include <dos.h>
+#endif
 };
 
 Define( MItem )
@@ -228,9 +230,11 @@ void MItem::addDecorators( WString& n )
     }
     if( !isMask() ) {
         if( _exists ) {
+#ifndef __UNIX__
             if( (_attribs & _A_RDONLY) ) {
                 n.concat( " [r/o]" );
             }
+#endif
         } else {
             n.concat( " [n/a]" );
         }
