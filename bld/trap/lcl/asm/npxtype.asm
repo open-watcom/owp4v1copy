@@ -24,17 +24,12 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Get FPU type
 ;*
 ;*****************************************************************************
 
 
                 NAME    NPXType
-
-;no87    ; to get the floating point emulator bit turned off
-; correct use is /fpi87 switch on  command line, .no87 directive is used for
-; temporary coprocessor instructions switch off
 
 .8087
 
@@ -47,9 +42,8 @@ NPXType_ proc    near
         sub     ax,ax                   ; set initial control word to 0
         push    ax                      ; push it on stack
         mov     bp,sp                   ; point to control word
-;
-        fninit                          ; initialize math coprocessor
-        fnstcw  0[bp]                   ; store control word in memory
+        finit                           ; initialize math coprocessor
+        fstcw   0[bp]                   ; store control word in memory
         mov     al,0                    ; assume no coprocessor present
         mov     ah,1[bp]                ; upper byte is 03h if
         cmp     ah,03h                  ;   coprocessor is present

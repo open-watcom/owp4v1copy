@@ -34,7 +34,11 @@
 #include <dos.h>
 #include "dos16new.h"
 
-#define _DBG( x ) // printf x; fflush( stdout )
+#ifdef DEBUG_TRAP
+#define _DBG( x ) printf x; fflush( stdout )
+#else
+#define _DBG( x )
+#endif
 
 typedef struct {
         short           real;
