@@ -1164,6 +1164,7 @@ extern STRM_T PreGetCH( void )
                     UnGetCH( t );
                     return( LINECONT );
                 } else {
+                    if( skip ) continue;        /* already have next char */
                     UnGetCH( TMP_EOL );
                 }
             }
