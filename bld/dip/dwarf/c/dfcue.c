@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DWARF DIP source line cues.
 *
 ****************************************************************************/
 
@@ -37,10 +36,6 @@
 #include "dfline.h"
 #include "dfmod.h"
 #include "dfmodinf.h"
-
-/*
-        Stuff for source line cues
-*/
 
 /************************/
 /*** cue cache **********/
@@ -122,16 +117,24 @@ static int ACueDir( void *d, dr_line_dir *curr ){
 unsigned        DIPENTRY DIPImpCueFile( imp_image_handle *ii,
                         imp_cue_handle *ic, char *buff, unsigned max )
 {
-    char        *name;
-    file_walk_name wlk;
-    unsigned    len;
-    im_idx      imx;
-    dr_handle   stmts;
+    char            *name;
+    char            *dir_path;
+    file_walk_name  wlk;
+    unsigned        len;
+    unsigned        dir_len;
+    im_idx          imx;
+    dr_handle       stmts;
+    dr_handle       cu_handle;
 
     imx = ic->imx;
     DRSetDebug( ii->dwarf->handle ); /* must do at each call into dwarf */
-    stmts  = ii->mod_map[imx].stmts;
-    if( stmts == NULL ){
+    stmts = ii->mod_map[imx].stmts;
+    if( stmts == NULL ) {
+        DCStatus( DS_FAIL );
+        return( 0 );
+    }
+    cu_handle = ii->mod_map[imx].cu_tag;
+    if( cu_handle == NULL ) {
         DCStatus( DS_FAIL );
         return( 0 );
     }
@@ -139,11 +142,33 @@ unsigned        DIPENTRY DIPImpCueFile( imp_image_handle *ii,
     wlk.ret = NULL;
     DRWalkLFiles( stmts, ACueFile, &wlk, ACueDir, NULL );
     name = wlk.ret;
-    if( name == NULL ){
+    if( name == NULL ) {
         DCStatus( DS_FAIL );
         return( 0 );
     }
-    len = NameCopy( buff, name, max );
+    // If compilation unit has a DW_AT_comp_dir attribute, we need to
+    // stuff that in front of the (presumably relative) file pathname
+    dir_len = DRGetCompDirBuff( cu_handle, NULL, 0 );
+    if( dir_len > 1 ) {     // Ignore empty strings
+        if( max == 0 ) {
+            len = NameCopy( buff, name, max ) + dir_len;
+        } else {
+            dir_path = DCAlloc( dir_len );
+            if( dir_path == NULL ) {
+                DCStatus( DS_FAIL );
+                return( 0 );
+            }
+            DRGetCompDirBuff( cu_handle, dir_path, dir_len );
+            len = NameCopy( buff, dir_path, max );
+            DCFree( dir_path );
+            if( max > len + 1 ) {
+                len += NameCopy( buff + len, "/", 1 );
+                len += NameCopy( buff + len, name, max - len );
+            }
+        }
+    } else {
+        len = NameCopy( buff, name, max );
+    }
     DCFree( name );
     return( len );
 }

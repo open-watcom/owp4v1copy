@@ -136,24 +136,14 @@ extern dr_language DRGetLanguage( void )
     return( result );
 }
 
-
-extern char * DRGetName( dr_handle entry )
-/****************************************/
-{
-    dr_handle   abbrev;
-
-    abbrev = DWRGetAbbrev( &entry );
-    return( DWRGetName( abbrev, entry ) );
-}
-
-extern unsigned DRGetNameBuff( dr_handle entry, char *buff, unsigned length )
-/***************************************************************************/
+static unsigned GetNameBuffAttr( dr_handle entry, char *buff, unsigned length, dw_atnum attrib )
+/**********************************************************************************************/
 {
     dr_handle   abbrev;
     unsigned    form;
 
     abbrev = DWRGetAbbrev( &entry );
-    if( DWRScanForAttrib( &abbrev, &entry, DW_AT_name ) != 0 ) {
+    if( DWRScanForAttrib( &abbrev, &entry, attrib ) != 0 ) {
         form = DWRVMReadULEB128( &abbrev );
         switch( form ) {
         case DW_FORM_string:
@@ -176,6 +166,27 @@ extern unsigned DRGetNameBuff( dr_handle entry, char *buff, unsigned length )
         length = 0;
     }
     return( length );
+}
+
+extern unsigned DRGetCompDirBuff( dr_handle entry, char *buff, unsigned length )
+/******************************************************************************/
+{
+    return( GetNameBuffAttr( entry, buff, length, DW_AT_comp_dir ) );
+}
+
+extern char * DRGetName( dr_handle entry )
+/****************************************/
+{
+    dr_handle   abbrev;
+
+    abbrev = DWRGetAbbrev( &entry );
+    return( DWRGetName( abbrev, entry ) );
+}
+
+extern unsigned DRGetNameBuff( dr_handle entry, char *buff, unsigned length )
+/***************************************************************************/
+{
+    return( GetNameBuffAttr( entry, buff, length, DW_AT_name ) );
 }
 
 extern unsigned DRGetScopedNameBuff( dr_handle entry,
