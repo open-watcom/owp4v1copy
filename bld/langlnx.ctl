@@ -6,6 +6,7 @@ set PROJDIR=<CWD>
 [ INCLUDE <LANG_BLD>/master.ctl ]
 [ INCLUDE <LANG_BLD>/wproj.ctl ]
 
+set OWLINUXBUILD=bootstrap
 # compiled using GNU make + gcc + ar
 [ INCLUDE <devdir>/clib/prereq.ctl ]
 [ INCLUDE <devdir>/builder/lang.ctl ]
@@ -22,9 +23,7 @@ set PROJDIR=<CWD>
 [ INCLUDE <devdir>/owl/prereq.ctl ]
 [ INCLUDE <devdir>/dwarf/prereq.ctl ]
 [ INCLUDE <devdir>/wl/prereq.ctl ]
-set WASMLINUXBUILD=bootstrap
 [ INCLUDE <devdir>/wasm/prereq.ctl ]
-set WASMLINUXBUILD=normal
 [ INCLUDE <devdir>/cg/prereq.ctl ]
 [ INCLUDE <devdir>/cc/prereq.ctl ]
 
@@ -33,8 +32,7 @@ set WASMLINUXBUILD=normal
 [ INCLUDE <devdir>/clib/lang.ctl ]
 [ INCLUDE <devdir>/mathlib/lang.ctl ]
 [ INCLUDE <devdir>/emu/lang.ctl ]
-[ INCLUDE <devdir>/cc/wcl/lang.ctl ]
-<CPCMD> <devdir>/cc/wcl/linux386.386/wcl386.exe <devdir>/build/binl/wcl386
+[ INCLUDE <devdir>/cc/wcl/prereq.ctl ]
 [ INCLUDE <devdir>/cfloat/lang.ctl ]
 [ INCLUDE <devdir>/owl/lang.ctl ]
 [ INCLUDE <devdir>/dwarf/lang.ctl ]
@@ -42,6 +40,7 @@ set WASMLINUXBUILD=normal
 [ INCLUDE <devdir>/cc/lang.ctl ]
 <CPCMD> <devdir>/cc/linux386.386/wcc386c.elf <devdir>/build/binl/wcc386
 <CPCMD> <devdir>/cc/linux386.i86/wcci86c.elf <devdir>/build/binl/wcc
+set OWLINUXBUILD=normal
 
 # all is ready to do everything else now
 

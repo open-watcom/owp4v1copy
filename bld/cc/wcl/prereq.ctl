@@ -1,4 +1,4 @@
-# WASM Builder Control file
+# wcl Builder Control file
 # ==========================
 
 set PROJDIR=<CWD>
@@ -16,42 +16,34 @@ set BUILD_PLATFORM=
 #================================
     if not exist <PROJDIR>\<OBJDIR> mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
-    wmake -h -f ../dos386/makefile
-    <CPCMD> bwasm.exe <DEVDIR>/build/bin/
+    wmake -h -f ../dos386.386/makefile
+    <CPCMD> wcl386.exe <DEVDIR>/build/bin/bwcl386.exe
     cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
     if not exist <PROJDIR>\<OBJDIR> mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
-    wmake -h -f ../os2386/makefile
-    <CPCMD> bwasm.exe <DEVDIR>/build/binp/
+    wmake -h -f ../os2386.386/makefile
+    <CPCMD> wcl386.exe <DEVDIR>/build/binp/bwcl386.exe
     cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
     if not exist <PROJDIR>\<OBJDIR> mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
-    wmake -h -f ../nt386/makefile
-    <CPCMD> bwasm.exe <DEVDIR>/build/binnt/
+    wmake -h -f ../nt386.386/makefile
+    <CPCMD> wcl386.exe <DEVDIR>/build/binnt/bwcl386.exe
     cdsay <PROJDIR>
 
-[ BLOCK <OWLINUXBUILD> bootstrap ]
+[ BLOCK <BUILD_PLATFORM> linux386 ]
 #==================================
     echo Building the wasm bootstrap
     mkdir -p <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
-    wmake -h -f ../linux386/makefile bootstrap=1
-    <CPCMD> bwasm <DEVDIR>/build/binl/bwasm
+    wmake -h -f ../linux386.386/makefile
+    <CPCMD> wcl386 <DEVDIR>/build/binl/bwcl386
     cdsay <PROJDIR>
-
-[ BLOCK <OWLINUXBUILD> normal ]
-#==================================
-#    mkdir -p <PROJDIR>/<OBJDIR>
-#    cdsay <PROJDIR>/<OBJDIR>
-#    wmake -h -f ../linux386/makefile
-#    <CPCMD> bwasm.elf <DEVDIR>/build/binl/bwasm
-#    cdsay <PROJDIR>
 
 [ BLOCK <1> clean ]
 #==================
@@ -59,7 +51,7 @@ set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>
 set TMP_BUILD_PLATFORM=
 
     rm -f -r <PROJDIR>/<OBJDIR>
-    @rm -f <RELROOT>/bld/build/bin/bwasm.*
-    @rm -f <RELROOT>/bld/build/binp/bwasm.*
-    @rm -f <RELROOT>/bld/build/binnt/bwasm.*
-    @rm -f <RELROOT>/bld/build/binl/bwasm.*
+    @rm -f <RELROOT>/bld/build/bin/bwcl386.*
+    @rm -f <RELROOT>/bld/build/binp/bwcl386.*
+    @rm -f <RELROOT>/bld/build/binnt/bwcl386.*
+    @rm -f <RELROOT>/bld/build/binl/bwcl386.*

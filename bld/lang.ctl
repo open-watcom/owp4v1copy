@@ -27,6 +27,7 @@ echo Languages Build <1>
 [ INCLUDE <devdir>/posix/prereq.ctl ]
 [ INCLUDE <devdir>/wstub/lang.ctl ]
 [ INCLUDE <devdir>/vi/prereq.ctl ]
+[ INCLUDE <devdir>/cc/wcl/prereq.ctl ]
 #
 #        Prebuild newest WASM version for building process
 [ INCLUDE <devdir>/wasm/prereq.ctl ]

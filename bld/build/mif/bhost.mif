@@ -57,12 +57,19 @@ nulldevice      = nul
 !endif
 
 !ifdef __NTAXP__
-bld_cl          = wclaxp -l=$(bld_sys) -i"$(bld_incs)"
 bld_cc          = *wccaxp -i"$(bld_incs)"
 !else
-bld_cl          = wcl386 -l=$(bld_sys) -i"$(bld_incs)"
 bld_cc          = *wcc386 -i"$(bld_incs)"
 !endif
+
+!ifdef __NTAXP__
+bld_cl          = wclaxp -l=$(bld_sys) -i"$(bld_incs)"
+!else ifdef __LINUX__
+bld_cl          = $(bld_bin)/bwcl386 -l=$(bld_sys) -i"$(bld_incs)"
+!else
+bld_cl          = $(bld_bin)\bwcl386 -l=$(bld_sys) -i"$(bld_incs)"
+!endif
+
 bld_link        = *wlink sys $(bld_sys)
 
 !ifeq host_cpu axp
