@@ -55,7 +55,7 @@ inline_asm_h = $(as_dir)\alpha\h;$(as_dir)\h;$(owl_dir)\h
 inline_asm_dir = $(as_dir)
 inline_asm_h = $(as_dir)\ppc\h;$(as_dir)\h;$(owl_dir)\h
 !else
-!include $(wasm_dir)\inline.mif
+!include $(wasm_dir)\mif\inline.mif
 inline_asm_dir = $(wasm_dir)
 inline_asm_h = $(wasm_dir)\h
 !endif

@@ -2,7 +2,7 @@
 
 # Assembler files
 
-!include $(wasm_dir)\inline.mif
+!include $(wasm_dir)\mif\inline.mif
 common_objs += $(inline_objs)
 common_objs += asmalloc.obj
 common_objs += asmmsg.obj
