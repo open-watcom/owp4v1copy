@@ -56,7 +56,9 @@ endif
 if _MODEL and _BIG_CODE
 
 modstart        macro   modname,alignment
+ifdef NDEBUG
                 name    modname
+endif
 _TEXT           segment alignment public 'CODE'
                 assume  cs:_TEXT
                 endm
@@ -109,7 +111,9 @@ calli           macro   regname
 else
 
 modstart        macro   modname,alignment
+ifdef NDEBUG
                 name    modname
+endif
 if _MODEL and _USE_32_SEGS
 _TEXT           segment use32 alignment public 'CODE'
 ifdef _MASM
