@@ -444,7 +444,8 @@ Modified        By              Reason
 %type <tree> field-expression
 %type <tree> field-name
 %type <tree> new-placement
-%type <tree> class-name-id  /* experimental */
+%type <tree> class-name-id
+%type <tree> enum-name
 %type <tree> make-id
 %type <tree> literal
 %type <tree> strings pragma-id
@@ -1056,6 +1057,16 @@ class-name-id
     | Y_TEMPLATE_SCOPED_TEMPLATE_NAME
     ;
 
+enum-name
+    : Y_ID
+    | Y_TYPE_NAME
+    | Y_TEMPLATE_NAME
+    | Y_NAMESPACE_NAME
+    | Y_GLOBAL_TYPE_NAME
+    | Y_SCOPED_TYPE_NAME
+    | Y_TEMPLATE_SCOPED_TYPE_NAME
+    ;
+
 destructor-name
     : Y_TILDE make-id
     { $$ = setLocation( MakeDestructorId( $2 ), &yylp[1] ); }
@@ -1611,10 +1622,11 @@ enum-specifier
         $$ = MakeEnumType( &(state->gstack->u.enumdata) );
         GStackPop( &(state->gstack) );
     }
-    | enum-key
+    | Y_ENUM enum-name
     {
-        $$ = EnumReference( &(state->gstack->u.enumdata) );
-        GStackPop( &(state->gstack) );
+        ENUM_DATA edata;
+        InitEnumState( &edata, $2 );
+        $$ = EnumReference( &edata );
     }
     ;
 

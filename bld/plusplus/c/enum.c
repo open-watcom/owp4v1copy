@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include "plusplus.h"
+#include "cgfront.h"
 #include "errdefns.h"
 #include "stringl.h"
 #include "ptree.h"
@@ -192,11 +193,9 @@ void InitEnumState( ENUM_DATA *edata, PTREE id )
     name = NULL;
     SrcFileGetTokenLocn( &(edata->locn) );
     if( id != NULL ) {
-        name = id->u.id.name;
         edata->locn = id->locn;
-        PTreeFree( id );
     }
-    edata->name = name;
+    edata->id = id;
     edata->sym = NULL;
 }
 
@@ -214,7 +213,14 @@ void EnumDefine( ENUM_DATA *edata )
     base_type = GetBasicType( edata->base_id );
     enum_type = MakeType( TYP_ENUM );
     enum_type->of = base_type;
-    enum_typedef_name = edata->name;
+    if( edata->id != NULL ) {
+        DbgAssert( edata->id->op == PT_ID );
+        enum_typedef_name = edata->id->u.id.name;
+        PTreeFreeSubtrees( edata->id );
+        edata->id = NULL;
+    } else {
+        enum_typedef_name = NULL;
+    }
     if( enum_typedef_name != NULL ) {
         /* we have a named enum type */
         sym = AllocSymbol();
@@ -337,27 +343,55 @@ DECL_SPEC *EnumReference( ENUM_DATA *edata )
     SYMBOL_NAME sym_name;
 
     ref_type = TypeError;
-    name = edata->name;
-    if( name != NULL ) {
-        result = ScopeFindLexicalEnumType( GetCurrScope(), name );
-        if( result != NULL ) {
-            sym_name = result->sym_name;
+
+    if( edata->id != NULL ) {
+        if( edata->id->op == PT_ID ) {
+            name = edata->id->u.id.name;
+
+            result = ScopeFindLexicalEnumType( GetCurrScope(), name );
+            if( result != NULL ) {
+                sym_name = result->sym_name;
+                sym = sym_name->name_type;
+                type = sym->sym_type;
+                if( ! enumNameOK( type, name ) ) {
+                    ScopeFreeResult( result );
+                    result = NULL;
+                }
+            }
+            if( result != NULL ) {
+                if( ScopeCheckSymbol( result, sym ) == FALSE ) {
+                    /* no errors */
+                    ref_type = type;
+                }
+                ScopeFreeResult( result );
+            } else {
+                CErr2p( ERR_UNDECLARED_ENUM_SYM, name );
+            }
+        } else {
+            /* we are dealing with a scoped enum name here */
+            PTREE right;
+
+            DbgAssert( NodeIsBinaryOp( edata->id, CO_STORAGE ) );
+
+            right = edata->id->u.subtree[1];
+            DbgAssert( ( right->op == PT_ID ) );
+
+            name = right->u.id.name;
+            sym_name = edata->id->sym_name;
+
+            DbgAssert( sym_name != NULL );
             sym = sym_name->name_type;
             type = sym->sym_type;
+
             if( ! enumNameOK( type, name ) ) {
-                ScopeFreeResult( result );
-                result = NULL;
-            }
-        }
-        if( result != NULL ) {
-            if( ScopeCheckSymbol( result, sym ) == FALSE ) {
-                /* no errors */
+                CErr2p( ERR_UNDECLARED_ENUM_SYM, name );
+            } else {
                 ref_type = type;
             }
-            ScopeFreeResult( result );
-        } else {
-            CErr2p( ERR_UNDECLARED_ENUM_SYM, name );
         }
+
+        PTreeFreeSubtrees( edata->id );
+        edata->id = NULL;
     } else {
         CErr1( ERR_CANNOT_REFERENCE_UNNAMED_ENUM );
     }

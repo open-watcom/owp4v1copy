@@ -302,7 +302,7 @@ Warning! W014: no reference to symbol 'bad1'
   definition: 'int const bad1[3]'
 File: source\diag0025.c
 (1,4): Error! E118: nameless declaration is not allowed
-(3,5): Error! E251: enum references must have an identifier
+(3,5): Error! E121: syntax error
 (5,7): Error! E240: enum 'A' has not been declared
 (18,13): Error! E125: invalid redefinition of the typedef name 'C'
   definition: 'C'
