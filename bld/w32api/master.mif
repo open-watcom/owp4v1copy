@@ -21,6 +21,7 @@ libs =               &
         dplayx.lib &
         dsetup.lib &
         dsound.lib &
+        dxguid.lib &
         gdi32.lib &
         glaux.lib &
         glu32.lib &
@@ -30,6 +31,7 @@ libs =               &
         imm32.lib &
         iphlpapi.lib &
         kernel32.lib &
+        largeint.lib &
         lz32.lib &
         mapi32.lib &
         mfcuia32.lib &
@@ -57,6 +59,7 @@ libs =               &
         rpcdce4.lib &
         rpcns4.lib &
         rpcrt4.lib &
+        scrnsave.lib &
         secur32.lib &
         setupapi.lib &
         shell32.lib &
@@ -65,6 +68,7 @@ libs =               &
         th32.lib &
         thunk32.lib &
         url.lib &
+        uuid.lib &
         user32.lib &
         userenv.lib &
         vdmdbg.lib &
@@ -82,16 +86,34 @@ libs =               &
 
 .def: ..\lib
 
+.c: ..\lib
+
 .def.lbc:
         vi -i -q -k ":set norc\n:r ../lib/$[.\n:source ../def2lbc.vi $*\n"
 
 .lbc.lib:
-        $(lib) -q -n -io -ii $@ @$<
+        $(lib) -b -c -q -n -io -ii $@ @$<
+
+.obj.lib:
+        $(lib) -b -c -q -n $@ $<
 
 $(libs):
+
+kernel32.lib: kernel32.lbc kernel32.obj
+        $(lib) -b -c -q -n -io -ii $@ @$*
+        $(lib) -b -c -q  $@ +$*
+
+dinput.lib: dinput.lbc dinput.obj
+        $(lib) -b -c -q -n -io -ii $@ @$*
+        $(lib) -b -c -q  $@ +$*
+
+shell32.lib: shell32.lbc shell32.obj
+        $(lib) -b -c -q -n -io -ii $@ @$*
+        $(lib) -b -c -q  $@ +$*
 
 clean: .SYMBOLIC .EXPLICIT
         @if exist *.lbc @del *.lbc
         @if exist *.lib @del *.lib
         @if exist *.bak @del *.bak
+        @if exist *.obj @del *.obj
 

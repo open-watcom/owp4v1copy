@@ -25,6 +25,31 @@ void* GetFiberData(void)
     return ret;
 }
 
+#elif defined (__WATCOMC__)
+
+void* __GetCurrentFiber(void);
+#pragma aux __GetCurrentFiber = \
+        "mov    eax, dword ptr fs:0x10" \
+        value [eax] \
+        modify [eax];
+
+void* __GetFiberData(void);
+#pragma aux __GetFiberData = \
+        "mov    eax, dword ptr fs:0x10" \
+        "mov    eax, [eax]" \
+        value [eax] \
+        modify [eax];
+        
+void* GetCurrentFiber(void)
+{
+   return __GetCurrentFiber();
+}
+
+void* GetFiberData(void)
+{
+   return __GetFiberData();
+}
+
 #else
 
 void* GetCurrentFiber(void)
