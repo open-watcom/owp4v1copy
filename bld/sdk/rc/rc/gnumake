@@ -72,7 +72,7 @@ $(OBJDIR)/ytab.c: y/rc.y
 
 $(OBJDIR)/ytab.gh: $(OBJDIR)/ytab.c
 	rm -f $@
-	ln -s ytab.h $@
+	mv $(OBJDIR)/ytab.h $@
 
 $(OBJDIR)/usage.h: usage.sp gnumake
 	sed 's/\(.*\)/"\1",/' <$< | sed 's;/;-;' >$@
