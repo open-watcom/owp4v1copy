@@ -30,7 +30,7 @@ extra_c_flags += -DWCLPPC
 !else
 objs = owcc.obj clcommon.obj getopt.obj quit.obj
 !ifeq host_os linux
-name = owcc
+name = owcc.elf
 !else
 name = owcc.exe
 !endif
