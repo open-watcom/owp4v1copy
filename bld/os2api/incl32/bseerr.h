@@ -2,6 +2,9 @@
     OS/2 Base errors include file for 32-bit development.
 */
 
+#ifdef INCL_ERRORS
+    #define INCL_DOSERRORS
+#endif
 
 #ifdef INCL_DOSERRORS
 
