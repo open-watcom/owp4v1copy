@@ -1,7 +1,7 @@
 Note: This information and much more is now in the Open Watcom Developer's
-Guide. To produce a PostScript version go to docs\doc and run
+Guide. To produce a PostScript version go to docs\ps and run
 
- .\fmt devguide pass 2
+ wmake hbook=devguide
 
 If you have everything set up correctly, you should end up with devguide.ps
 which you can print or view.
@@ -47,6 +47,8 @@ d:\
     nlang - used to hold intermediate version of 11.0 compiler;
             for OpenWatcom these both point to the same place
             where Watcom 11.0c lives
+
+    docs  - here is all for documentation, sources and tools
 
 
 ------------------------------
