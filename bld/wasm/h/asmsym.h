@@ -33,8 +33,35 @@
 #define ASMSYM_H
 
 #include "watcom.h"
-#include "asmops2.h"
 #include "asminlin.h"
+#include "asmops2.h"
+
+typedef enum {
+        MT_BYTE   = T_BYTE,
+        MT_WORD   = T_WORD,
+        MT_DWORD  = T_DWORD,
+        MT_QWORD  = T_QWORD,
+        MT_FWORD  = T_FWORD,
+        MT_TBYTE  = T_TBYTE,
+//        MT_OWORD  = T_OWORD,
+
+        MT_SHORT  = T_SHORT,
+        MT_NEAR   = T_NEAR,
+        MT_FAR    = T_FAR,
+
+        MT_PTR    = T_PTR,
+
+#ifdef _WASM_
+        MT_SBYTE  = T_SBYTE,
+        MT_SWORD  = T_SWORD,
+        MT_SDWORD = T_SDWORD,
+
+        MT_STRUCT = T_STRUCT,
+
+        MT_PROC   = T_PROC,
+        MT_ABS    = T_ABS
+#endif
+} memtype;
 
 typedef struct asm_sym {
         struct asm_sym  *next;
