@@ -18,5 +18,5 @@ app.lnk : makefile
     for %i in ($(objs)) do echo FILE %i >>app.lnk
 
 app.exe : app.lnk $(objs)
-    wlink sys dos4g @app
+    wlink @app
 
