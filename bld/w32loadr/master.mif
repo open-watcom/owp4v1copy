@@ -5,7 +5,7 @@
 .h: ..
 
 .asm.obj:
-  $(as) -i.. $<
+  $(as_i86) -q -i.. $<
 
 cl = wcl$(host_CPU)
 
@@ -42,9 +42,9 @@ dginfo.gh : $(rsi_root)\bin\dos4g.exe
 dpmi.exe : dpmi.obj loader16.obj int21win.obj
         $(linker) system dos file dpmi,loader16,int21win option map,stack=8k,quiet
 dpmi.obj : dpmi.asm
-        $(as) -d2 $<
+        $(as_i86) -q -d2 $<
 dos16m.obj : dos16m.asm
-        $(as) -d2 $<
+        $(as_i86) -q -d2 $<
 
 !else ifeq host_OS nt
 
@@ -103,7 +103,7 @@ int21os2.obj : int21os2.c
 !endif
 
 int21win.obj : int21win.asm
-        $(as) -d2 $<
+        $(as_i86) -q -d2 $<
 
 clean: .SYMBOLIC
         @if exist *.exe @del *.exe
