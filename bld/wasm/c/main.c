@@ -97,7 +97,7 @@ static unsigned OptValue;
 static char *OptScanPtr;
 static char *OptParm;
 
-#if defined(__DOS__)
+#if defined( __DOS__ )
 
 extern  unsigned char    _DOS_Switch_Char();
 #pragma aux     _DOS_Switch_Char = \
@@ -111,16 +111,12 @@ extern  unsigned char    _DOS_Switch_Char();
 
 unsigned char _dos_switch_char()
 {
-#if defined(__UNIX__)
-        return( '-' );
-#elif defined(__NT__)
-        return( '/' );
-#elif defined(__OS2__)
-        return( '/' );
-#elif defined(__WINDOWS_386__)
-        return( '/' );
-#else
+#if defined( __DOS__ )
         return( _DOS_Switch_Char() );
+#elif defined( __UNIX__ )
+        return( '-' );
+#else
+        return( '/' );
 #endif
 }
 
