@@ -142,11 +142,7 @@ static int nmake( const OPT_STORAGE *cmdOpts, CmdLine *cmdLine )
     if( cmdOpts->Y )      strcat(flagstmp, "Y");
 
     /*** pass builtin macros to wmake, so nmake wrapper gets called in recursive actions ***/
-
-    /* For MAKE use full path to make sure proper nmake get's run, MSVC's nmake only uses executable name
-     * without .exe extension. This change shouldn't cause any problems.
-     */
-    AppendFmtCmdLine( cmdLine, NMAKE_OPTS_SECTION, "MAKE=\"%s\"", __argv[0] );
+    AppendFmtCmdLine( cmdLine, NMAKE_OPTS_SECTION, "MAKE=\"%s\"", "nmake" );
     AppendFmtCmdLine( cmdLine, NMAKE_OPTS_SECTION, "MAKEDIR=\"%s\"", cwd );
     AppendFmtCmdLine( cmdLine, NMAKE_OPTS_SECTION, "MAKEFLAGS=\"%s\"", flagstmp );
 
