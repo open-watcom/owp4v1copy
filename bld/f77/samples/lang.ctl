@@ -33,3 +33,7 @@ cdsay .
 <CPCMD> <devdir>\f77\samples\windll\*.* <relroot>\rel2\samples\fortran\win\dll\
 <CPCMD> <devdir>\f77\samples\dll\*.*    <relroot>\rel2\samples\fortran\os2\dll\
 <CPCMD> <devdir>\f77\samples\dll\*.*    <relroot>\rel2\samples\fortran\win32\dll\
+
+[ BLOCK <1> clean ]
+#==================
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean

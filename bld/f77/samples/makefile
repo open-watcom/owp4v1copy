@@ -1,6 +1,6 @@
 #pmake: all build os_win cpu_i86 cpu_386
 
-all:
+all: .SYMBOLIC
         @cd windll
         @wmake -h -i cover16.obj
 
