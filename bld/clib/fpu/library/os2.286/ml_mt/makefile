@@ -4,7 +4,6 @@ model=ml
 system=os2
 linkage=static
 threading16=1
-fpi=1
 !include ../../../objects.mif
 !include $(clib_dir)/master.mif
 !include $(clib_dir)/mklib.mif

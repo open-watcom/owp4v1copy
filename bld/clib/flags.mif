@@ -222,10 +222,6 @@ c_flags += -en
 c_flags += -bm
 a_flags += -d__MT__
 !endif
-!ifdef fpi
-c_flags += -fpi
-a_flags += -fpi
-!endif
 
 !include $(clib_dir)/bt.mif
 !include $(clib_dir)/include.mif

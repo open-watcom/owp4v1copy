@@ -3,7 +3,6 @@ processor=086
 model=ms
 system=msdos
 linkage=static
-fpi=1
 !include ../../../objects.mif
 !include $(clib_dir)/master.mif
 !include $(clib_dir)/mklib.mif

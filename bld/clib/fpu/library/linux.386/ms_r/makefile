@@ -4,7 +4,6 @@ model=ms
 system=linux
 linkage=static
 convention=register
-fpi=1
 !include ../../../objects.mif
 !include $(clib_dir)/master.mif
 !include $(clib_dir)/mklib.mif
