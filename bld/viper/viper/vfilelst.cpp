@@ -430,7 +430,7 @@ int GetNewFiles( WWindow *parent, WString *results, const char *caption,
     // this is a grody kludge to get an HWND from a gui_window
     // it assumes that the HWND is the first field in the gui_window structure
     owner = *( (HWND *)(parent->handle() ) );
-    hinst = GET_HINSTANCE( owner );
+    hinst = (HINSTANCE)GET_HINSTANCE( owner );
     info.result = results;
     info.tgt_file = tgt_file;
     return( fileSelectDlg( hinst, owner, &info, caption, filters ) );
