@@ -32,6 +32,8 @@ echo Languages Build <1>
 #        Same for OS/2 and Win32 headers/import libs
 [ INCLUDE <devdir>\os2api\lang.ctl ]
 [ INCLUDE <devdir>\w32api\lang.ctl ]
+#        Same for Win16 headers/import libs
+[ INCLUDE <devdir>\w16api\lang.ctl ]
 #
 #        Next step, build libraries used by various projects
 #

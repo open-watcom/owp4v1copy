@@ -1,0 +1,24 @@
+lib = wlib
+cc = wcc386
+
+.EXTENSIONS : .lbc .def
+
+libs =               &
+        winsock.lib
+
+.def: ..\lib
+
+.def.lbc:
+        vi -i -q -k ":set norc\n:r ../lib/$[.\n:source ../def16lbc.vi $*\n"
+
+.lbc.lib:
+        $(lib) -b -q -n -p=16 -io -ii $@ @$<
+
+$(libs):
+
+clean: .SYMBOLIC .EXPLICIT
+        @if exist *.lbc @del *.lbc
+        @if exist *.lib @del *.lib
+        @if exist *.bak @del *.bak
+        @if exist *.obj @del *.obj
+
