@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  POSIX conforming versions of the linker i/o functions.
 *
 ****************************************************************************/
 
-
-/*
-  NTIO -- POSIX conforming versions of the linker i/o functions
-
-*/
 
 #include <stdio.h>
 #include <string.h>
@@ -70,9 +64,6 @@ extern void LnkFilesInit( void )
 #if _LINKER != _DLLHOST
     setmode( STDIN_HANDLE, O_BINARY );
     setmode( STDOUT_HANDLE, O_BINARY );
-#endif
-#if _OS == _OS2V2
-    QWrite( STDOUT_HANDLE, " \b",  2, NULL );   // to avoid op quiet problem
 #endif
 }
 
