@@ -1,49 +1,36 @@
-!include deftarg.mif
+proj_name = editdll
 
-lnk = tmp.lnk
+!ifndef editdll_autodepends
+editdll_autodepends = .AUTODEPEND
+!endif
+
+memory_model_i86 = c
+
+sys_dll = 1
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+.c: ..
+
+inc_dirs = ../..
+
+extra_c_flags_win = -zw -zu
+
+extra_l_flags = op description 'Open Watcom Editor DLL for Codewright'
+extra_l_flags += op map, elim, verbose, static
+extra_l_flags_win = library ddeml
+extra_l_flags_win += op stack=8k
+extra_l_flags_win += segment _TEXT PRELOAD FIXED
+extra_l_flags_win += segment CLASS 'CODE' LOADONCALL MOVEABLE DISCARDABLE
+extra_l_flags_win += export WEP RESIDENT
 
 all: weditcw.dll wedit.dll .SYMBOLIC
 
 weditcw.dll : weditcw.obj
-    @%make linkdll
+    $(linker) $(lflags) name $^* file $[@
 
 wedit.dll : weditcw.obj
-    @%make linkdll
-    wlib -q -b -n $^*.lib +$^*.dll
-
-!ifeq host_os win
-
-# windows version
-linkdll: .PROCEDURE
-    @%create $(lnk)
-    @%append $(lnk) system windows dll debug all
-    @%append $(lnk) name $^*
-    @%append $(lnk) option description 'Open Watcom Editor DLL for Codewright'
-    @%append $(lnk) option map, elim, verbose, static, quiet
-    @%append $(lnk) library ddeml
-    @%append $(lnk) option stack=8k, symfile
-    @%append $(lnk) segment  _TEXT PRELOAD FIXED
-    @%append $(lnk) segment  CLASS 'CODE' LOADONCALL MOVEABLE DISCARDABLE
-    @%append $(lnk) export   WEP RESIDENT
-    @%append $(lnk) file %WATCOM%\lib286\win\libentry.obj, weditcw.obj
-    wlink @$(lnk)
-
-weditcw.obj : ../weditcw.c
-    wcc $< -i=..\..;$(%watcom)\h\win -mc -d1 -oaxt -zc -zw -zu -zq -we
-
-!else ifeq host_os nt
-
-# NT version
-linkdll: .PROCEDURE
-    @%create $(lnk)
-    @%append $(lnk) system nt_dll debug all
-    @%append $(lnk) name $^*
-    @%append $(lnk) option description 'Open Watcom Editor DLL for Codewright'
-    @%append $(lnk) option map, elim, verbose, static, quiet
-    @%append $(lnk) file weditcw.obj
-    wlink @$(lnk)
-
-weditcw.obj : ../weditcw.c
-    wcc386 $< -i=..\..;$(%watcom)\h\nt -bt=nt -d1 -oaxt -we -zq
-
-!endif
+    $(linker) $(lflags) name $^* file $[@
+    $(librarian) -b -n $^*.lib +$^*.dll

@@ -1,22 +1,23 @@
 proj_name = editdll
 name = wedit
 
+!ifndef editdll_autodepends
+editdll_autodepends = .AUTODEPEND
+!endif
+
 sys_dll = 1
 
-.mif : $(mif_path)
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
 
 .c: ..
 
-inc_dirs = ..;..\..
+inc_dirs = ..;../..
 
 .before:
         set INCLUDE=$(inc_path)
 
-extra_c_flags_386 = -bd
-extra_c_flags_axp = -bd
 extra_c_flags_win = -zc -zw
 
 lflags_nt_axp += initinstance terminstance
@@ -31,8 +32,8 @@ extra_l_flags_nt = op stack=40k
 all: weditviw.dll wedit.dll .SYMBOLIC
 
 wedit.dll : weditviw.obj
-        $(linker) $(lflags) name $^* file weditviw
-        wlib -q -b -n $^*.lib +$^*.dll
+        $(linker) $(lflags) name $^* file $[@
+        $(librarian) -b -n $^*.lib +$^*.dll
 
 weditviw.dll : weditviw.obj
-        $(linker) $(lflags) name $^* file weditviw
+        $(linker) $(lflags) name $^* file $[@

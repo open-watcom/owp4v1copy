@@ -184,7 +184,7 @@ int extern __export FAR PASCAL EDITLocateError( long lRow, int iCol,
                                     int iLen, int idResource, LPSTR szErrmsg )
 {
     char        szCommand[ 100 ];
-    int         len;
+//    int         len;
     BOOL        rc;
 
     if( !bConnected ) {
@@ -290,7 +290,7 @@ BOOL CALLBACK EnumWnd( HWND hwnd, LPARAM lParam )
 
 int extern __export FAR PASCAL EDITDisconnect( void )
 {
-    DWORD       idTransaction;
+//    DWORD       idTransaction;
     WNDENUMPROC lpEnumWnd;
     HWND        hwndCodewright = NULL;
 
