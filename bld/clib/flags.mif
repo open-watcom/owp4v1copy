@@ -3,7 +3,7 @@ sw_c_common = -w4-zl-zld
 !else
 sw_c_common = -we-w4-zl-zld
 !endif
-sw_a_common = -zq
+sw_a_common = -zq -d6
 !ifdef __LINUX__
 sw_c_common += -fo=.obj
 sw_a_common += -fo=.obj
@@ -14,6 +14,9 @@ sw_l_common += option map,mangle,artificial,verbose
 !endif
 
 !ifdef default_windowing
+def_windowing = -dDEFWIN
+!else ifeq system windows
+default_windowing = 1
 def_windowing = -dDEFWIN
 !else
 def_windowing =
