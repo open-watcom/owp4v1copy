@@ -42,7 +42,7 @@ components386 =      &
         vi -i -q -k ":set norc\n:r ../$(srcdir)/$[.\n:source ../def2lbc.vi $*\n"
 
 .lbc.lib:
-        $(lib) -b -c -q -n -io -ii $@ @$<
+        $(lib) -b -c -q -n -io -ii -p=32 $@ @$<
 
 .obj.lib:
         $(lib) -b -c -q -n $@ $<

@@ -15,6 +15,11 @@ h\os2\pmgpi.h
 h\os2\pmhelp.h
 h\os2\pmstddlg.h
 h\os2\pmwin.h
+h\os2\GL\gl.h
+h\os2\GL\glu.h
+h\os2\GL\glut.h
+h\os2\GL\pgl.h
+h\os2\GL\tk.h
 h\os21x\bse.h
 h\os21x\bsedos.h
 h\os21x\bseerr.h
@@ -26,4 +31,6 @@ h\os21x\pmerr.h
 h\os21x\pmwin.h
 lib286\os2\os2.lib
 lib386\os2\os2386.lib
-
+lib386\os2\opengl.lib
+lib386\os2\glut.lib
+lib386\os2\libtk.lib
