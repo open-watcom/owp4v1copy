@@ -571,7 +571,8 @@ void multiply_aux (const CoolBignum& b, Data d, CoolBignum& prod, Counter i) {
     unsigned long temp;
     Data carry = 0;
 
-    for (Counter j = 0; j < b.count; j++) {     
+    Counter j;
+    for (j = 0; j < b.count; j++) {     
       // for each of b's data elmts, multiply times d and add running product
       temp = (unsigned long)b.data[j] * (unsigned long)d
         + (unsigned long)prod.data[i + j] + carry;
