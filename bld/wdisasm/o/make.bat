@@ -1,1 +1,0 @@
-wmake wdisasm.exe
