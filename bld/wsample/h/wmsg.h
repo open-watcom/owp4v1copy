@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Execution Sampler message ordinals and functions.
 *
 ****************************************************************************/
 
@@ -140,5 +139,5 @@
 #ifndef __WINDOWS__
 int MsgInit();
 #endif
-int MsgFini();
+void MsgFini();
 void MsgPrintfUsage( int first_ln, int last_ln );

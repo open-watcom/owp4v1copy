@@ -24,8 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Graphics library EGA specific code.
 ;*
 ;*****************************************************************************
 
@@ -192,7 +191,7 @@ E_EGARep:
 _EGAGetDotMono_:        ; for mono ega cards with > 64K
         push    ebx
         mov     ebx,0202h       ; bh = first bit plane, bl = increment
-        _jmp    GetDotCommon
+        jmp     GetDotCommon
 
 _EGAGetDotEO_:          ; even/odd modes
         push    ebx
@@ -201,7 +200,7 @@ _EGAGetDotEO_:          ; even/odd modes
         _if     ne              ; then
           inc     bh            ; - use planes 3 & 1 instead of 2 & 0
         _endif                  ; endif
-        _jmp    GetDotCommon
+        jmp     GetDotCommon
 
 _EGAGetDot_:
         push    ebx
@@ -305,7 +304,7 @@ _EGAPixCopyMono_:
         docall  put_bitplane
         mov     al,0001B        ; then do bit plane 0
         docall  put_bitplane
-        _jmp    done_pixcopy
+        jmp     done_pixcopy
 
 _EGAPixCopy_:
         push    ebp             ; save registers
@@ -317,7 +316,7 @@ _EGAPixCopy_:
           docall  put_bitplane
           shr     ah,1          ; next bit plane
         _until  c
-        _jmp    done_pixcopy
+        jmp     done_pixcopy
 
 pcopy_common:
         mov     ds,si           ; get source in ds:si

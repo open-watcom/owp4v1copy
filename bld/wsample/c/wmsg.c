@@ -24,19 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Message/resources support for the Execution Sampler.
 *
 ****************************************************************************/
 
 
-/*
-  Modified:     By:             Reason:
-  ---------     ---             -------
-  01-oct-92     S.B.Feyler      Initial Implementation
-  13-0ct-92     S.B.Feyler      fixes to resource file support
-  16-mar-93     J.B.Schueler    support RUN386 WSAMPPLS (when no explicit path)
-*/
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>

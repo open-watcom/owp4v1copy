@@ -178,9 +178,6 @@ $(libname).lib : $(objs) $(special_objs) graphics.lbc
 
 .asm.obj:
         $(asm_cmd) $[@ $(asm_flags)
-!ifeq _386 386
-        erase $[&.err
-!endif
 
 graphics.lbc : ..\graphics.mif
         %create graphics.lbc

@@ -24,29 +24,10 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Structured macros for MASM/WASM.
 ;*
 ;*****************************************************************************
 
-
-; Structured macros for MASM.
-
-; Changes:
-; --------
-; 86/10/30      Peter Bumbulis  Original implementation.
-; 87/01/06      Peter Bumbulis  Fixed bug in quif.
-; 87/01/28      Peter Bumbulis  Added calls stuff.
-; 87/09/17      Peter Bumbulis  Added guess/admit.
-; 87/09/24      Peter Bumbulis  Fixed guess/admit.
-; 87/09/29      Peter Bumbulis  Fixed more bugs.
-; 87/10/02      Peter Bumbulis  Fixed more bugs in quif, added block labels.
-; 90/03/19      F.W.Crigger     Added _shl and _rcl macros
-; 91/06/19      D.J.Gaudet      Added _loopif
-; 91/07/22      D.J.Gaudet      Made _loopif work on innermost loop
-; 93/06/11      Mark Patchett   adjusted to work with wasm
-; 95/11/29      Greg Bentz      remove short qualifier from jmp because
-;                               wasm minimizes jmp size
 
         __label = 0
         __depth = 0

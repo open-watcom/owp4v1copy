@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Interrupt probing utilities (for DOS).
 *
 ****************************************************************************/
 
@@ -296,7 +295,7 @@ int monint( int print )
 
         techoutput( "Normal system operation:\n" );
         int_summary();
-        memset( int_tick, 0, sizeof( int_tick ) );
+        memset( (void *)int_tick, 0, sizeof( int_tick ) );
 
         techoutput( "Starting exception test...\n" );
     }

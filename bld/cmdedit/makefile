@@ -43,16 +43,16 @@ dopt=d1
         $(comp286) $^& /w3 /oxs /d1 /fo=.cbj /zq /d__CMDSHELL__ #
 
 .asm.obj:
-        $(asm286)/t/s/zd /d_MODEL=_SMALL /d_OS=_DOS $^&; #
+        $(wasm) -d_MODEL=_SMALL -d_OS=_DOS $^&
 
 .asm.2bj:
-        $(asm286)/t/s/zd /d_MODEL=_SMALL /d_OS=_OS2 $^&,$^&.2bj; #
+        $(wasm) -d_MODEL=_SMALL -d_OS=_OS2 -fo=$^&.2bj $^&
 
 .asm.cbj:
-        $(asm286)/t/s/zd /d_MODEL=_SMALL /d_OS=_OS2 $^&,$^&.cbj; #
+        $(wasm) -d_MODEL=_SMALL -d_OS=_OS2 -fo=$^&.cbj $^&
 
 .before:
-        set include=$(lang_root)\h;$(watcom_dir)\h;$(watcom_dir)\os21x_h
+        set include=$(lang_root)\h;$(watcom_dir)\h;$(lang_root)\h\os21x
 
 all: .symbolic  cmdedit.exe os2edit.dll os2edit.exe os22edit.exe
                 @%null
@@ -75,7 +75,7 @@ cmdedit.exe: $(cmdobjs) makefile
 cmd2objs = cmdstart.2bj $(os2zuobjs)
 
 os2edit.dll: $(cmd2objs) makefile
-            @%write $(lnk) option quiet,dosseg name os2edit lib doscalls, clibs
+            @%write $(lnk) option quiet,dosseg name os2edit lib os2, clibs
             @%append $(lnk) system os2 dll initinstance option manyautodata
             @%append $(lnk) option newfiles op map
             @%append $(lnk) export OS2EDIT_
@@ -99,7 +99,7 @@ ts2objs = dcmdedit.2bj ftos.2bj $(os2objs)
 
 dos2edit.exe: $(ts2objs) makefile
             @%write $(lnk) debug all name dos2edit system os2 pmc option quiet,dosseg
-            @%append $(lnk) lib doscalls option newfiles
+            @%append $(lnk) lib os2 option newfiles
             @for %i in ($(ts2objs)) do @%append $(lnk) file %i
             $(dolink) @$(lnk)
 
@@ -110,7 +110,7 @@ cmdshellobjs = cmdshell.cbj ftos.cbj $(os2cmdshellobjs)
 
 cmdshell.exe: $(cmdshellobjs) makefile
             @%write $(lnk) debug all name cmdshell system os2 pmc option quiet,dosseg
-            @%append $(lnk) lib doscalls
+            @%append $(lnk) lib os2
             @for %i in ($(cmdshellobjs)) do @%append $(lnk) file %i
             $(dolink) @$(lnk)
 

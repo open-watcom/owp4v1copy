@@ -1,10 +1,6 @@
 .CONTINUE
 .ERASE
 
-!ifndef asm
-asm=masm
-!endif
-
 .EXTENSIONS
 .EXTENSIONS : .exe .2bj .obj .c .asm
 
@@ -12,10 +8,10 @@ asm=masm
     $(comp286) $[* -bt=dos -os -s -d1 -w3
 
 .c.2bj
-    $(comp286) $[* -bt=os2 -fo=.2bj -os -s -d1 -w3 -d__OS2__ -i$(watcom_dir)\os21x_h
+    $(comp286) $[* -bt=os2 -fo=.2bj -os -s -d1 -w3 -d__OS2__ -i$(lang_root)\h\os21x
 
 .asm.obj:
-    $(asm) /mx /s $[@,$^@;
+    $(wasm) -fo=$^@ $[@
 
 os2objs = techinfo.2bj ptype.obj pbus.obj pprefix.obj ndptype.obj
 dosobjs = techinfo.obj ptype.obj pbus.obj pprefix.obj ndptype.obj monint.obj

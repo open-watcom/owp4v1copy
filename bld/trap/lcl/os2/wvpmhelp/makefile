@@ -36,7 +36,7 @@ $(bdir)\wdpmhelp.exe: pmhelp.lbj pmhelp.res
     @%append $(tmplnk) debug all op symfile
     @%append $(tmplnk) file pmhelp.lbj
     @%append $(tmplnk) library clibl.lib
-    @%append $(tmplnk) library $(watcom_dir)\lib\os2.lib
+    @%append $(tmplnk) library os2.lib
     @%append $(tmplnk) option alignment=16
     @%append $(tmplnk) option nodefaultlibs,quiet
     @%append $(tmplnk) option modname=wdpmhelp
@@ -46,7 +46,7 @@ $(bdir)\wdpmhelp.exe: pmhelp.lbj pmhelp.res
     @%append $(tmplnk) option heapsize=1024
     @%append $(tmplnk) option protmode
     $(linker) @$(tmplnk)
-    $(os2_tools_root)\rc pmhelp.res $(bdir)\wdpmhelp.exe
+    $(lang_root)\binp\rc pmhelp.res $(bdir)\wdpmhelp.exe
 
 .c: ..\c
 
@@ -74,9 +74,9 @@ pmlock.obj : pmlock.c ..\h\wdpmhelp.h
 
 pmhelp.res: pmhelp.rc ..\h\wdpmhelp.h
         @set oinc=$(%include)
-        @set include=$(watcom_dir)\os21x_h;..\h;$(%include)
+        @set include=$(lang_root)\h\os21x;..\h;$(%include)
         @set opath=$(%path)
-        @set path=$(os2_tools_root)
-        $(os2_tools_root)\rc -r pmhelp.rc
+        @set path=$(lang_root)\binp
+        $(lang_root)\binp\rc -r pmhelp.rc
         @set path=$(%opath)
         @set include=$(%oinc)

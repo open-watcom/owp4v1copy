@@ -24,8 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Graphics library CGA specific code.
 ;*
 ;*****************************************************************************
 
@@ -261,8 +260,11 @@ _Pix1Read_:
         pop     ds
         ret
 
-
-func_table      PlotJmp,<BitReplace,BitXor,BitAnd,BitOr>
+ifdef _386
+    PlotJmp dd BitReplace,BitXor,BitAnd,BitOr
+else
+    PlotJmp dw BitReplace,BitXor,BitAnd,BitOr
+endif
 
 SetupAction:
 ifdef _386
@@ -274,7 +276,11 @@ else
         jmp     cs:PlotJmp[bx]
 endif
 
-func_table      FillJmp,<_CoRep_,_CoXor_,_CoAnd_,_CoOr_>
+ifdef _386
+    FillJmp dd _CoRep_,_CoXor_,_CoAnd_,_CoOr_
+else
+    FillJmp dw _CoRep_,_CoXor_,_CoAnd_,_CoOr_
+endif
 
 ;=========================================================================
 ;

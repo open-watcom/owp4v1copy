@@ -24,36 +24,29 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Structured macros for MASM/WASM.
 ;*
 ;*****************************************************************************
 
 
-; Structured macros for MASM.
-
         __label = 0
         __depth = 0
-
-_setname macro  name,value
-        name = value
-        endm
+        __inner_loop = 0
 
 _guess  macro   name
         __depth = __depth + 1
         __label = __label + 1
-        _set    __astk,%__depth,__label,
+        _set    __astk,%__depth,__label,<>
         __label = __label + 1
-        _set    __estk,%__depth,__label,
+        _set    __estk,%__depth,__label,<>
         ifnb    <name>
-;;        name = __label
-          _setname name,__label
+          name = __label
         endif
         endm
 
 _quif   macro   cc,name
         ifnb    <name>
-          _set  __elbl,,name,
+          _set  __elbl,,name,<>
           _j    cc,_l,%__elbl
         else
           _set  __albl,,__astk,%__depth
@@ -68,9 +61,9 @@ _quit   macro   name
 _admit  macro
         _set    __albl,,__astk,%__depth
         __label = __label + 1
-        _set    __astk,%__depth,__label,
+        _set    __astk,%__depth,__label,<>
         _set    __elbl,,__estk,%__depth
-        _jmp    _l,%__elbl
+        _j      ,_l,%__elbl
         _label  _l,%__albl
         endm
 
@@ -86,22 +79,38 @@ _loop   macro   name
         _guess  name
         _set    __albl,,__astk,%__depth
         _label  _m,%__albl
+        _set    __elbl,,__estk,%__depth
+        _label  _m,%__elbl
+        _set    __llbl,%__depth,%__inner_loop,<>
+        _set    __inner_loop,,%__depth,<>
+        endm
+
+_loopif macro   cc,name
+        ifnb    <name>
+          _set  __elbl,,name,<>
+          _j    cc,_m,%__elbl
+        else
+          _set  __albl,,__astk,%__inner_loop
+          _j    cc,_m,%__albl
+        endif
         endm
 
 _until  macro   cc
         _set    __albl,,__astk,%__depth
         _jn     cc,_m,%__albl
+        _set    __inner_loop,,__llbl,%__depth
         _endguess
         endm
 
 _endloop macro
         _set    __albl,,__astk,%__depth
-        _jmp    _m,%__albl
+        _j      ,_m,%__albl
+        _set    __inner_loop,,__llbl,%__depth
         _endguess
         endm
 
 _if     macro   cc
-        _guess  ;;
+        _guess
         _set    __albl,,__astk,%__depth
         _jn     cc,_l,%__albl
         endm
@@ -115,151 +124,107 @@ _endif  macro
         endm
 
 _set    macro   base1,ext1,base2,ext2
-        base1&ext1 = base2&ext2
+        ifdef __WASM__
+            base1&&ext1 = base2&&ext2
+        else
+            base1&ext1 = base2&ext2
+        endif
         endm
 
 _label  macro   base,ext
-base&ext:
-        endm
-
-_jmp    macro   base,ext
-        jmp     short base&ext
+ifdef __WASM__
+    base&&ext:
+else
+    base&ext:
+endif
         endm
 
 _j      macro   cc,base,ext
-        j&cc    short base&ext
+        ifdef __WASM__
+            j&cc        base&&ext
+        else
+            j&cc        base&ext
+        endif
         endm
 
 _jn     macro   cc,base,ext
-        _jn&cc  base&ext
+        ifdef __WASM__
+            jn&cc       base&&ext
+        else
+            jn&cc       base&ext
+        endif
         endm
 
-_jnna   macro   label
-        ja      short label
+jnna    macro   label
+        ja      label
         endm
 
-_jnnae  macro   label
-        jae     short label
+jnnae   macro   label
+        jae     label
         endm
 
-_jnnb   macro   label
-        jb      short label
+jnnb    macro   label
+        jb      label
         endm
 
-_jnnbe  macro   label
-        jbe     short label
+jnnbe   macro   label
+        jbe     label
         endm
 
-_jnnc   macro   label
-        jc      short label
+jnnc    macro   label
+        jc      label
         endm
 
-_jnne   macro   label
-        je      short label
+jnne    macro   label
+        je      label
         endm
 
-_jnng   macro   label
-        jg      short label
+jnng    macro   label
+        jg      label
         endm
 
-_jnnge  macro   label
-        jge     short label
+jnnge   macro   label
+        jge     label
         endm
 
-_jnnl   macro   label
-        jl      short label
+jnnl    macro   label
+        jl      label
         endm
 
-_jnnle  macro   label
-        jle     short label
+jnnle   macro   label
+        jle     label
         endm
 
-_jnno   macro   label
-        jo      short label
+jnno    macro   label
+        jo      label
         endm
 
-_jnnp   macro   label
-        jp      short label
+jnnp    macro   label
+        jp      label
         endm
 
-_jnns   macro   label
-        js      short label
+jnns    macro   label
+        js      label
         endm
 
-_jnnz   macro   label
-        jz      short label
+jnnz    macro   label
+        jz      label
         endm
 
-_jnpe   macro   label
-        jpo     short label
+jnpe    macro   label
+        jpo     label
         endm
 
-_jnpo   macro   label
-        jpe     short label
+jnpo    macro   label
+        jpe     label
         endm
 
-_jna    macro   label
-        jna     short label
+j       macro   label
+        jmp     label
         endm
 
-_jnae   macro   label
-        jnae    short label
-        endm
-
-_jnb    macro   label
-        jnb     short label
-        endm
-
-_jnbe   macro   label
-        jnbe    short label
-        endm
-
-_jnc    macro   label
-        jnc     short label
-        endm
-
-_jne    macro   label
-        jne     short label
-        endm
-
-_jng    macro   label
-        jng     short label
-        endm
-
-_jnge   macro   label
-        jnge    short label
-        endm
-
-_jnl    macro   label
-        jnl     short label
-        endm
-
-_jnle   macro   label
-        jnle    short label
-        endm
-
-_jno    macro   label
-        jno     short label
-        endm
-
-_jnp    macro   label
-        jnp     short label
-        endm
-
-_jns    macro   label
-        jns     short label
-        endm
-
-_jnz    macro   label
-        jnz     short label
-        endm
-
-_jpe    macro   label
-        jpe     short label
-        endm
-
-_jpo    macro   label
-        jpo     short label
+jn      macro   label
+        nop
         endm
 
 _shl    macro   reg,count

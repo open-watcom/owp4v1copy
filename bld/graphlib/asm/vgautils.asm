@@ -24,8 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Graphics library VGA specific code.
 ;*
 ;*****************************************************************************
 
@@ -139,7 +138,11 @@ _GetDot19_:
 ;
 ;=========================================================================
 
-func_table      VGAJmp,<_Rep19_,_CoXor_,_And19_,_CoOr_>
+ifdef _386
+    VGAJmp dd _Rep19_, _CoXor_, _And19_, _CoOr_
+else
+    VGAJmp dw _Rep19_, _CoXor_, _And19_, _CoOr_
+endif
 
 _Zap19_:
 
