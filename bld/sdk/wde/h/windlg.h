@@ -58,7 +58,10 @@ typedef BYTE INFOTYPE;
 //#else
     #pragma pack(2);
 //#endif
+#else
+#pragma pack(1);
 #endif
+
 typedef struct {
 long    dtStyle;
 #ifdef __NT__
@@ -102,6 +105,8 @@ long    dtilStyle;
 } _DLGITEMTEMPLATE;
 #if defined(__NT__)
 #pragma pack(1);
+#else
+#pragma pack();
 #endif
 
 extern GLOBALHANDLE DialogTemplate( LONG dtStyle, int dtx, int dty,
