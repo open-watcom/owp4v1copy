@@ -1,4 +1,4 @@
-#pmake: build lcl os2 16 trap x86
+#pmake: all build lcl os_os2 16 i86 trap x86
 #
 # Create the OS/2 STD16.DLL
 #

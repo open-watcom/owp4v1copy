@@ -19,12 +19,12 @@ w d : $(bdir)\dll\wdpmhook.dll $(bdir)\wdpmhelp.exe .SYMBOLIC
 
 tmplnk = $(%ramdisk)\tmp.lnk
 
-$(bdir)\dll\wdpmhook.dll: pmhook.obj loadstd.obj
+$(bdir)\dll\wdpmhook.dll: pmhook.obj
     @%write  $(tmplnk) name $(bdir)\dll\wdpmhook.dll sys os2 dll initglobal
     @%append $(tmplnk) debug all op symfile
     @%append $(tmplnk) option dosseg,quiet
     @%append $(tmplnk) option map
-    @%append $(tmplnk) file loadstd,pmhook
+    @%append $(tmplnk) file pmhook
     @%append $(tmplnk) library $(watcom_dir)\lib\os2.lib
     @%append $(tmplnk) export SendMsgHookProc.1,SetHmqDebugee.2
     @%append $(tmplnk) segment class 'DATA' shared
@@ -51,10 +51,10 @@ $(bdir)\wdpmhelp.exe: pmhelp.lbj pmhelp.res
 .c: ..\c
 
 .c.obj:
-        $(comp286) $[* -bt=os2 -zq-fpc-d1-oais-s-w3-mc-zu-i$(watcom_dir)\h;$(watcom_dir)\os21x_h;$(watcom_dir)\os220_h;$(trap_dir)\h
+        $(comp286) $[* -bt=os2 -zq-fpc-d1-oais-s-w3-mc-zu-i$(watcom_dir)\h;$(lang_root)\h\os21x;$(watcom_dir)\os220_h;$(trap_dir)\h
 
 .c.lbj
-        $(comp286) $[* -bt=os2 -zq-fpc-d1-ml-zu-w3-s-i$(watcom_dir)\os21x_h;$(trap_dir)\h -fo=.lbj
+        $(comp286) $[* -bt=os2 -zq-fpc-d1-ml-zu-w3-s-i$(lang_root)\h\os21x;$(trap_dir)\h -fo=.lbj
 
 .asm: ..\asm
 
@@ -74,7 +74,7 @@ pmlock.obj : pmlock.c ..\h\wdpmhelp.h
 
 pmhelp.res: pmhelp.rc ..\h\wdpmhelp.h
         @set oinc=$(%include)
-        @set include=$(watcom_dir)\os21x_h;..\h;$(%include)
+        @set include=$(lang_root)\h\os21x;..\h;$(%include)
         @set opath=$(%path)
         @set path=$(os2_tools_root)
         $(os2_tools_root)\rc -r pmhelp.rc

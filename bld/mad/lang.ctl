@@ -18,6 +18,7 @@ cdsay .
     <CPCMD> <devdir>\bin\bin\mad???.mad <relroot>\rel2\binw\
     <CPCMD> <devdir>\bin\bin\mad???.dll <relroot>\rel2\binw\
     <CPCMD> <devdir>\bin\binp\dll\mad???.dll <relroot>\rel2\binp\dll\
+    <CPCMD> <devdir>\bin\binp\dll\mad???.d32 <relroot>\rel2\binp\
     <CPCMD> <devdir>\bin\binnt\mad???.dll <relroot>\rel2\binnt\
 #    <CPCMD> <devdir>\bin\axpnt\mad???.dll <relroot>\rel2\axpnt\
     <CPCMD> <devdir>\bin\qnx\*.mad <relroot>\rel2\qnx\watcom\wd\

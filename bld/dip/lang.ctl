@@ -23,6 +23,10 @@ cdsay .
         <CPCMD> <devdir>\bin\binp\dll\codeview.sym      <relroot>\rel2\binp\dll\
         <CPCMD> <devdir>\bin\binp\dll\export.sym        <relroot>\rel2\binp\dll\
         <CPCMD> <devdir>\bin\binp\dll\watcom.sym        <relroot>\rel2\binp\dll\
+        <CPCMD> <devdir>\bin\binp\dll\dwarf.d32         <relroot>\rel2\binp\
+        <CPCMD> <devdir>\bin\binp\dll\codeview.d32      <relroot>\rel2\binp\
+        <CPCMD> <devdir>\bin\binp\dll\export.d32        <relroot>\rel2\binp\
+        <CPCMD> <devdir>\bin\binp\dll\watcom.d32        <relroot>\rel2\binp\
 #       NT
         <CPCMD> <devdir>\bin\binnt\dwarf.dll    <relroot>\rel2\binnt\
         <CPCMD> <devdir>\bin\binnt\codeview.dll <relroot>\rel2\binnt\

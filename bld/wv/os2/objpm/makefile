@@ -8,7 +8,7 @@ host_OS=os2
 host_CPU=i86
 display=gui
 extra_cflags= /zc /zu
-syshdir = $(mdir)\$(sysdir)\h;$(watcom_dir)\os21x_h
+syshdir = $(mdir)\$(sysdir)\h;$(lang_root)\h\os21x
 
 sysobjs =   &
         os2init.obj &

@@ -2,7 +2,7 @@ os = pm
 build_target = os2_pm
 model=l
 compiler = comp286
-plat_inc=$(watcom_dir)\os21x_h;
+plat_inc=$(lang_root)\h\os21x;
 xflags=-zu-s
 wpi_lib=wpi_pm16
 wlib_opt = /p=32

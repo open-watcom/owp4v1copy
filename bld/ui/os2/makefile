@@ -6,7 +6,7 @@ TARG=os2
 !   define FORM         OS2 pmc
 !endif
 !ifndef INCLUDES
-!   define INCLUDES     /I..\h;$(watcom_h);$(watcom_dir)\os21x_h
+!   define INCLUDES     /I..\h;$(watcom_h);$(lang_root)\h\os21x
 !endif
 
 !include ui.mif

@@ -1,4 +1,4 @@
-#pmake: build os2 lcl 32 support x86
+#pmake: all build os_os2 lcl 386 32 support x86
 #
 # Create OS2V2HLP.EXE
 #

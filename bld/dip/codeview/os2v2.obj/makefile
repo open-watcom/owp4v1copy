@@ -1,4 +1,4 @@
-#pmake: build os2 codeview 386
+#pmake: build all os_os2 codeview 386
 
 host_OS = os2
 host_CPU = 386

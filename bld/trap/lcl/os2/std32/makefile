@@ -1,4 +1,4 @@
-#pmake: build lcl os2 32 trap x86
+#pmake: all build lcl os_os2 386 32 trap x86
 #
 # Create the OS/2 STD32.DLL
 #
@@ -8,7 +8,7 @@ srv     = lcl
 cpu     = x86
 name    = std32
 
-extra_cflags =-i$(watcom_dir)\os220_h
+extra_cflags =-i$(lang_root)\h\os2
 
 extra_objs = &
         accmisc.obj &

@@ -30,19 +30,16 @@ emu387.obj: emu387.asm $(INCS)
     wtouch compile.tim
 
 emu387w.obj: emu387.asm $(INCS)
-    masm5 /Mx /p /s /d_OS=_PLDT /d__WIN387__ /I$(mathlib_dir)\h /I$(emu386) $[@,$^.;
+    masm /Mx /p /s /d_OS=_PLDT /d__WIN387__ /I$(mathlib_dir)\h /I$(emu386) $[@,$^.;
 
 emu387.qbj: emu387.asm $(INCS)
-    masm5 /Mx /p /s /dOFFSET32=OFFSET /dSEGMENTED /d_OS=_QNX /I$(mathlib_dir)\h /I$(emu386) $[@,$^.;
-#    386asm $[@ -obj $^. -nol -twoc -d OFFSET32=OFFSET -d _OS=_QNX -d SEGMENTED -i $(mathlib_dir)\h\ -i $(emu386)\
+    masm /Mx /p /s /dOFFSET32=OFFSET /dSEGMENTED /d_OS=_QNX /I$(mathlib_dir)\h /I$(emu386) $[@,$^.;
 
 .c : ..\emu86
 .c.qbj:
     $(libcomp386) -r-fpr $[* $(cflags) -i$(new_qnx_h) -fo=.qbj -DQNX32 -bt=qnx
 
 .psm.obj:
-    # for some reason we can not execute 386asm if the command line is too long (sigh)
-    #386asm $[@ -nol -twoc -d _OS=_PLDT -d SEGMENTED -i $(mathlib_dir)\h\ -i $(emu386)\ -i $(watcom_dir)\h\
-    386asm $[@ -nol -twoc -d _OS=_PLDT -d SEGMENTED -i $(mathlib_dir)\h\,$(watcom_dir)\h\,$(comp_cfg_dir)\h\
+    wasm -zq -ms -d_OS=_PLDT -dSEGMENTED -i$(mathlib_dir)\h\;$(watcom_dir)\h\;$(comp_cfg_dir)\h\ $[@
 
 386sqrt.obj: 386sqrt.psm 386sqrt.inc 386fdld.inc 386ldfd.inc xception.inc
