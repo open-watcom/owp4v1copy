@@ -10,11 +10,7 @@
 obj             = .obj
 exe             = .exe
 
-!ifdef bootstrap
-inc_dirs = -I$(dwarfdir)/dr/h -I$(dwarfdir)/dw/h -I$(orl_dir)/h -I$(watcom_dir)/h -I$(trmem_dir) -I../h
-!else
-inc_dirs = $(dwarfdir)/dr/h;$(dwarfdir)/dw/h;$(orl_dir)/h;$(watcom_dir)/h;$(trmem_dir)
-!endif
+inc_dirs = -I"$(dwarfdir)/dr/h" -I"$(dwarfdir)/dw/h" -I"$(orl_dir)/h" -I"$(trmem_dir)" -I"../h"
 
 !ifeq release 0
 extra_c_flags_test      = -of+
