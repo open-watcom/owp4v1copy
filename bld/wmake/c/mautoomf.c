@@ -88,20 +88,20 @@ static BOOLEAN verifyObjFile( int fh )
     return( TRUE );
 }
 
-STATIC omf_info *OMFInitFile( const char *name ) {
-/************************************************/
+STATIC handle OMFInitFile( const char *name ) {
+/*********************************************/
 
-    int         handle;
-    omf_info    *ret_val;
+    int         handl;
+    handle      ret_val;
 
     ret_val = NULL;
-    handle = open( name, O_RDONLY|O_BINARY );
-    if( handle != -1 ) {
-        fileHandle.handle = handle;
-        if( verifyObjFile( handle ) ) {
+    handl = open( name, O_RDONLY|O_BINARY );
+    if( handl != -1 ) {
+        fileHandle.handle = handl;
+        if( verifyObjFile( handl ) ) {
             ret_val = &fileHandle;
         } else {
-            close( handle );
+            close( handl );
         }
     }
     return( ret_val );
@@ -142,8 +142,8 @@ static BOOLEAN getCommentRecord( omf_info *info ) {
     return( FALSE );
 }
 
-STATIC omf_info *OMFNextDep( omf_info *info ) {
-/**********************************************/
+STATIC dep_handle OMFNextDep( dep_handle info ) {
+/***********************************************/
 
     if( getCommentRecord( info ) ) {
         return( info );
@@ -151,17 +151,17 @@ STATIC omf_info *OMFNextDep( omf_info *info ) {
     return( NULL );
 }
 
-STATIC void OMFTransDep( omf_info *info, char **name, time_t *stamp ) {
-/*********************************************************************/
+STATIC void OMFTransDep( dep_handle info, char **name, time_t *stamp ) {
+/**********************************************************************/
 
-    *name = info->name;
-    *stamp = info->time_stamp;
+    *name = ((omf_info *)info)->name;
+    *stamp = ((omf_info *)info)->time_stamp;
 }
 
-STATIC void OMFFiniFile( omf_info *info ) {
-/*****************************************/
+STATIC void OMFFiniFile( handle info ) {
+/**************************************/
 
-    close( info->handle );
+    close( ((omf_info *)info)->handle );
 }
 
 const auto_dep_info OMFAutoDepInfo = {

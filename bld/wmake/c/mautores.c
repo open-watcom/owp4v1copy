@@ -46,8 +46,8 @@ typedef struct res_info {
 
 static res_info ResInfo;
 
-STATIC res_info *RESInitFile( const char *name )
-/**********************************************/
+STATIC handle RESInitFile( const char *name )
+/*******************************************/
 {
     DepInfo     *depends;
     res_info    *ret_val;
@@ -67,8 +67,8 @@ STATIC res_info *RESInitFile( const char *name )
     return( ret_val );
 }
 
-STATIC res_info *RESFirstDep( res_info *file )
-/********************************************/
+STATIC dep_handle RESFirstDep( dep_handle file )
+/**********************************************/
 {
 
     return( file );
@@ -82,10 +82,11 @@ STATIC void RESTransDep( res_info *file, char **name, time_t *stamp )
     *stamp = file->curr->time;
 }
 
-STATIC res_info *RESNextDep( res_info *file )
-/*******************************************/
+STATIC handle RESNextDep( dep_handle f )
+/**************************************/
 {
     DepInfo     *p;
+    res_info    *file = f;
 
     p = (DepInfo *)file->curr;
     p = (DepInfo *)( (char *)p + sizeof( DepInfo ) + p->len - 1 );
@@ -97,11 +98,11 @@ STATIC res_info *RESNextDep( res_info *file )
     return( file );
 }
 
-STATIC void RESFiniFile( res_info *file )
+STATIC void RESFiniFile( handle file )
 /***************************************/
 {
 
-    WResFreeAutoDep( file->first );
+    WResFreeAutoDep( ((res_info *)file)->first );
 }
 
 const auto_dep_info ResAutoDepInfo = {

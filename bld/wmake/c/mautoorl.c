@@ -162,8 +162,8 @@ static char *orlGetDependsInfo( orl_file_handle file )
     return( buffer );
 }
 
-orl_info *AutoORLFileInit( char *name )
-/*************************************/
+handle AutoORLFileInit( const char *name )
+/****************************************/
 {
     orl_file_format     type;
     orl_file_handle     file;
@@ -197,27 +197,30 @@ orl_info *AutoORLFileInit( char *name )
     return( NULL );
 }
 
-orl_info *AutoORLFirstDep( orl_info *hdl )
-/****************************************/
+dep_handle AutoORLFirstDep( handle hdl )
+/**************************************/
 {
-    hdl->curr = (DepInfo *)hdl->buffer;
-    if( hdl->curr->len != 0 ) {
+    orl_info *hndl = hdl;
+
+    hndl->curr = (DepInfo *)hndl->buffer;
+    if( hndl->curr->len != 0 ) {
         return( hdl );
     }
     return( NULL );
 }
 
-void AutoORLTransDep( orl_info *hdl, char **name, time_t *stamp )
-/***************************************************************/
+void AutoORLTransDep( dep_handle hdl, char **name, time_t *stamp )
+/****************************************************************/
 {
-    *name = hdl->curr->name;
-    *stamp = hdl->curr->time;
+    *name = ((orl_info *)hdl)->curr->name;
+    *stamp = ((orl_info *)hdl)->curr->time;
 }
 
-orl_info *AutoORLNextDep( orl_info *hdl )
-/***************************************/
+dep_handle AutoORLNextDep( dep_handle hndl )
+/******************************************/
 {
     DepInfo     *p;
+    orl_info    *hdl = hndl;
 
     p = hdl->curr;
     p = (DepInfo *)( (char *)p + sizeof( DepInfo ) + p->len - 1 );
@@ -229,11 +232,11 @@ orl_info *AutoORLNextDep( orl_info *hdl )
     return( hdl );
 }
 
-void AutoORLFileFini( orl_info *hdl )
-/***********************************/
+void AutoORLFileFini( handle hdl )
+/********************************/
 {
-    ORLFileFini( hdl->file );
-    close( hdl->handle );
+    ORLFileFini( ((orl_info*)hdl)->file );
+    close( ((orl_info*)hdl)->handle );
     FreeSafe( orlBuffer );
     orlBuffer = NULL;
 }
@@ -246,7 +249,7 @@ void AutoORLFini()
 
 const auto_dep_info ORLAutoDepInfo = {
     AutoORLInit,
-    (handle (*) (const char*))AutoORLFileInit,
+    AutoORLFileInit,
     AutoORLFirstDep,
     AutoORLTransDep,
     AutoORLNextDep,
