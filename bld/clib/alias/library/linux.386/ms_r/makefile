@@ -1,4 +1,4 @@
-#pmake:all small register 32bit linux threading string iX86 dynamic build os_linux cpu_386
+#pmake:all small register 32bit linux threading alias iX86 dynamic build os_linux cpu_386
 processor=386
 model=ms
 system=linux

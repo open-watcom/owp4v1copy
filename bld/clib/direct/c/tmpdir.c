@@ -41,6 +41,10 @@
 
 static char *try_one( char *p, char *buff )
 {
+#ifdef __LINUX__
+    // TODO: Needs Linux POSIX library!
+    return NULL;
+#else
     int         fd;
     mode_t      omask;
 
@@ -60,6 +64,7 @@ static char *try_one( char *p, char *buff )
     if( fd == -1 ) return( NULL );
     close( fd );
     return( p );
+#endif
 }
 
 char *__tmpdir( char *buff )
