@@ -68,7 +68,7 @@ int main( int argc, char **argv )
         argv[0] = strchr( argv[0], ' ' );
         ret = FrontEnd( &argv[0] );
 #elif _OS == _DOS || _OS == _OS2  || _OS == _NT
-  #if  __OS == OS_DOS
+  #if  _OS == _DOS
         fclose( stdaux );                   /* 15-dec-92 */
         fclose( stdprn );
   #endif
