@@ -600,23 +600,6 @@ void SysFileInit()
     SysHandles[STD_ERR] = LocalHandle( STD_ERR );
 }
 
-void PathInit()
-{
-#if !defined( BUILD_RFX )
-    #define BSIZE 2048
-    char        *buff;
-
-    _Alloc( buff, BSIZE ); /* allocate enough room for a very long PATH */
-    if( buff == NULL ) {
-        StartupErr( LIT( ERR_NO_MEMORY ) );
-    }
-    if( DUIEnvLkup( "PATH", buff, BSIZE ) != 0 ) {
-        EnvParse( &LclPath, buff );
-    }
-    _Free( buff );
-#endif
-}
-
 #if !defined( BUILD_RFX )
 
 void PathFini()
@@ -656,3 +639,20 @@ static void EnvParse( char_ring **owner, char *src )
     }
 }
 #endif
+
+void PathInit()
+{
+#if !defined( BUILD_RFX )
+    #define BSIZE 2048
+    char        *buff;
+
+    _Alloc( buff, BSIZE ); /* allocate enough room for a very long PATH */
+    if( buff == NULL ) {
+        StartupErr( LIT( ERR_NO_MEMORY ) );
+    }
+    if( DUIEnvLkup( "PATH", buff, BSIZE ) != 0 ) {
+        EnvParse( &LclPath, buff );
+    }
+    _Free( buff );
+#endif
+}

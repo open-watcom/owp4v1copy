@@ -69,6 +69,29 @@ bool IsLogging()
 
 
 /*
+ * LogInit -- initialize logging
+ */
+
+void LogInit()
+{
+    LogHndl = NIL_HANDLE;
+}
+
+
+/*
+ * LogFini -- finish logging
+ */
+
+void LogFini()
+{
+    if( LogHndl != NIL_HANDLE ) {
+        FileClose( LogHndl );
+        LogHndl = NIL_HANDLE;
+    }
+}
+
+
+/*
  * LogLine -- put a string followed by a newline in the log file
  */
 
@@ -197,28 +220,5 @@ void ProcLog()
         (*LogJmpTab[ ScanCmd( &LogNameTab ) ])();
     } else {
         LogStart();
-    }
-}
-
-
-/*
- * LogInit -- initialize logging
- */
-
-void LogInit()
-{
-    LogHndl = NIL_HANDLE;
-}
-
-
-/*
- * LogFini -- finish logging
- */
-
-void LogFini()
-{
-    if( LogHndl != NIL_HANDLE ) {
-        FileClose( LogHndl );
-        LogHndl = NIL_HANDLE;
     }
 }

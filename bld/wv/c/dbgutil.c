@@ -464,6 +464,30 @@ input_type SetInpStack( input_type new )
 
 
 /*
+ * PopInpStack -- remove a level from the input stack
+ */
+
+void PopInpStack()
+{
+    input_stack *old;
+    char        buff[ TXT_LEN ];
+
+    old = InpStack;
+    if( old == NULL ) return;
+    if( old->lang != NULL ) {
+        StrCopy( old->lang, buff );
+        _Free( old->lang );
+        old->lang = NULL; /* in case NewLang gets an error */
+        NewLang( buff );
+    }
+    old->rtn( old->handle, INP_RTN_FINI );
+    ReScan( old->scan );
+    InpStack = old->link;
+    _Free( old );
+}
+
+
+/*
  * PushInpStack -- add a new level to the input stack
  */
 
@@ -502,29 +526,6 @@ void CopyInpFlags()
     InpStack->type |= InpStack->link->type & (INP_HOOK+INP_BREAK_POINT);
 }
 
-
-/*
- * PopInpStack -- remove a level from the input stack
- */
-
-void PopInpStack()
-{
-    input_stack *old;
-    char        buff[ TXT_LEN ];
-
-    old = InpStack;
-    if( old == NULL ) return;
-    if( old->lang != NULL ) {
-        StrCopy( old->lang, buff );
-        _Free( old->lang );
-        old->lang = NULL; /* in case NewLang gets an error */
-        NewLang( buff );
-    }
-    old->rtn( old->handle, INP_RTN_FINI );
-    ReScan( old->scan );
-    InpStack = old->link;
-    _Free( old );
-}
 
 OVL_EXTERN bool DoneCmdList( cmd_list *cmds, inp_rtn_action action )
 {

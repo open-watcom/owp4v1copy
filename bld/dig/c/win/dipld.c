@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Windows 3.x DIP loader.
 *
 ****************************************************************************/
 
@@ -51,6 +50,18 @@ void Say( char *buff )
             MB_OK | MB_ICONHAND | MB_SYSTEMMODAL );
 }
 #endif
+
+
+
+void DIPSysUnload( unsigned long sys_hdl )
+{
+    void        (DIPENTRY *fini_func)() = (void *)sys_hdl;
+
+    if( fini_func != NULL ) {
+        fini_func();
+    }
+}
+
 
 dip_status DIPSysLoad( char *path, dip_client_routines *cli,
                                 dip_imp_routines **imp, unsigned long *sys_hdl )
@@ -113,13 +124,4 @@ dip_status DIPSysLoad( char *path, dip_client_routines *cli,
         return( status );
     }
     return( DS_OK );
-}
-
-void DIPSysUnload( unsigned long sys_hdl )
-{
-    void        (DIPENTRY *fini_func)() = (void *)sys_hdl;
-
-    if( fini_func != NULL ) {
-        fini_func();
-    }
 }

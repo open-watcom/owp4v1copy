@@ -74,6 +74,18 @@ static  lookup      *DefLookup;
 
 static char AddTab[] = { "Add\0" };
 
+static void FreeList( lookup *curr )
+{
+    lookup *next;
+
+    while( curr != NULL ) {
+        next = curr->next;
+        _Free( curr );
+        curr = next;
+    }
+}
+
+
 /*
  * LookInit - initialize lookup
  */
@@ -109,18 +121,6 @@ void FiniLook()
 {
     FreeList( DefLookup );
 }
-
-static void FreeList( lookup *curr )
-{
-    lookup *next;
-
-    while( curr != NULL ) {
-        next = curr->next;
-        _Free( curr );
-        curr = next;
-    }
-}
-
 
 /*
  * LookSet - set the default symbol lookup

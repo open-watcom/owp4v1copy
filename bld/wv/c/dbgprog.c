@@ -232,6 +232,16 @@ bool InitCmd()
     return( TRUE );
 }
 
+void FindLocalDebugInfo( char *name )
+{
+    char *buff;
+    int len = strlen( name );
+    _AllocA( buff, len + 1 + 2 );
+    strcpy( buff, "@l" );
+    strcat( buff, name );
+    InsertRing( RingEnd( &LocalDebugInfo ), buff, len + 2 );
+}
+
 static void DoDownLoadCode()
 /**************************/
 {
@@ -268,16 +278,6 @@ void FiniLocalInfo()
 {
     FreeRing( LocalDebugInfo );
     LocalDebugInfo = NULL;
-}
-
-void FindLocalDebugInfo( char *name )
-{
-    char *buff;
-    int len = strlen( name );
-    _AllocA( buff, len + 1 + 2 );
-    strcpy( buff, "@l" );
-    strcat( buff, name );
-    InsertRing( RingEnd( &LocalDebugInfo ), buff, len + 2 );
 }
 
 image_entry *ImagePrimary()
@@ -366,6 +366,59 @@ void MapAddrForImage( image_entry *image, addr_ptr *addr )
         curr->pre_map = FALSE;
     }
 }
+
+
+bool UnMapAddress( mappable_addr *loc, image_entry *image )
+{
+    map_entry           *map;
+    mod_handle          himage;
+
+    if( image == NULL ) {
+        if( DeAliasAddrMod( loc->addr, &himage ) == SR_NONE ) return( FALSE );
+        image = ImageEntry( himage );
+    }
+    if( image == NULL ) return( FALSE );
+    DbgFree( loc->image_name );
+    loc->image_name = DupStr( image->image_name );
+    for( map = image->map_list; map != NULL; map = map->link ) {
+        if( map->real_addr.segment == loc->addr.mach.segment ) {
+            loc->addr.mach.segment = map->map_addr.segment;
+            loc->addr.mach.offset = loc->addr.mach.offset - map->real_addr.offset;
+            return( TRUE );
+        }
+    }
+    return( FALSE );
+}
+
+
+static void UnMapOnePoint( brk *bp, image_entry *image )
+{
+    mod_handle          himage;
+    if( bp->status.b.unmapped ) return;
+    if( image != NULL ) {
+        if( DeAliasAddrMod( bp->loc.addr, &himage ) == SR_NONE ) return;
+        if( image != ImageEntry( himage ) ) return;
+    }
+    if( bp->image_name == NULL || bp->mod_name == NULL ) {
+        bp->status.b.unmapped = UnMapAddress( &bp->loc, image );
+    } else {
+        bp->status.b.unmapped = TRUE;
+    }
+}
+
+
+void UnMapPoints( image_entry *image )
+{
+    brk                 *bp;
+
+    for( bp = BrkList; bp != NULL; bp = bp->next ) {
+        UnMapOnePoint( bp, image );
+    }
+    if( UserTmpBrk.status.b.has_address ) {
+        UnMapOnePoint( &UserTmpBrk, image );
+    }
+}
+
 
 void FreeImage( image_entry *image )
 {
@@ -608,6 +661,127 @@ bool ReLoadSymInfo( image_entry *image )
 }
 
 
+remap_return ReMapImageAddress( mappable_addr *loc, image_entry *image )
+{
+    map_entry           *map;
+
+    if( loc->image_name == NULL ) {
+        return( REMAP_WRONG_IMAGE );
+    }
+    if( strcmp( image->image_name, loc->image_name ) != 0 ) {
+        return( REMAP_WRONG_IMAGE );
+    }
+    for( map = image->map_list; map != NULL; map = map->link ) {
+        if( map->map_addr.segment == loc->addr.mach.segment ) {
+            loc->addr.mach.segment = map->real_addr.segment;
+            loc->addr.mach.offset = loc->addr.mach.offset + map->real_addr.offset;
+            AddrSection( &loc->addr, OVL_MAP_CURR );
+            DbgFree( loc->image_name );
+            loc->image_name = NULL;
+            return( REMAP_REMAPPED );
+        }
+    }
+    return( REMAP_ERROR );
+}
+
+bool ReMapAddress( mappable_addr *loc )
+{
+    image_entry         *image;
+    for( image = DbgImageList; image != NULL; image = image->link ) {
+        if( ReMapImageAddress( loc, image ) == REMAP_REMAPPED ) return( TRUE );
+    }
+    return( FALSE );
+}
+
+static remap_return ReMapOnePoint( brk *bp, image_entry *image )
+{
+    mod_handle  himage,mod;
+    bool        ok;
+    address     addr;
+    DIPHDL( cue, ch );
+    DIPHDL( cue, ch2 );
+    remap_return        rc = REMAP_REMAPPED;
+
+    if( !bp->status.b.unmapped ) return( REMAP_WRONG_IMAGE );
+    if( bp->image_name == NULL || bp->mod_name == NULL ) {
+        if( image == NULL ) {
+            if( ReMapAddress( &bp->loc ) ) {
+                rc = REMAP_REMAPPED;
+            } else {
+                rc = REMAP_ERROR;
+            }
+        } else {
+            rc = ReMapImageAddress( &bp->loc, image );
+        }
+    } else {
+        himage = LookupImageName( bp->image_name, strlen( bp->image_name ) );
+        if( himage == NO_MOD ) return( REMAP_ERROR );
+        mod =  LookupModName( himage, bp->mod_name, strlen( bp->mod_name ) );
+        if( mod == NO_MOD ) return( REMAP_ERROR );
+        ok = GetBPSymAddr( bp, &addr );
+        if( !ok ) return( REMAP_ERROR );
+        if( bp->cue_diff != 0 ) {
+            if( DeAliasAddrCue( mod, addr, ch ) != SR_EXACT ) return( REMAP_ERROR );
+
+            if( LineCue( mod, CueFileId( ch ), CueLine( ch ) + bp->cue_diff,
+                         0, ch2 ) != SR_EXACT ) return( REMAP_ERROR );
+            addr = CueAddr( ch2 );
+        }
+        if( bp->addr_diff != 0 ) {
+            addr.mach.offset += bp->addr_diff;
+        }
+        bp->loc.addr = addr;
+        rc = REMAP_REMAPPED;
+    }
+    if( rc == REMAP_REMAPPED ) {
+        bp->status.b.unmapped = FALSE;
+    }
+    SetPointAddr( bp, bp->loc.addr );
+    if( bp->status.b.activate_on_remap ) {
+        ActPoint( bp, TRUE );
+    }
+    return( rc );
+}
+
+
+void ReMapPoints( image_entry *image )
+{
+    brk         *bp;
+
+    for( bp = BrkList; bp != NULL; bp = bp->next ) {
+        switch( ReMapOnePoint( bp, image ) ) {
+        case REMAP_ERROR:
+            ActPoint( bp, FALSE );
+            bp->status.b.activate_on_remap = TRUE;
+            break;
+        case REMAP_REMAPPED:
+            bp->countdown = bp->initial_countdown;
+            bp->total_hits = 0;
+        }
+    }
+    if( UserTmpBrk.status.b.has_address ) {
+        switch( ReMapOnePoint( &UserTmpBrk, image ) ) {
+        case REMAP_ERROR:
+// nobody cares about this warning!!        Warn( LIT( WARN_Unable_To_Remap_Tmp ) );
+            UserTmpBrk.status.b.active = FALSE;
+            break;
+        }
+    }
+}
+
+
+static void InitImageInfo( image_entry *image )
+{
+    if( !FindNullSym( image->dip_handle, &image->def_addr_space ) ) {
+        image->def_addr_space = GetRegSP();
+        image->def_addr_space.mach.offset = 0;
+    }
+    SetWDPresent( image->dip_handle );
+    VarReMapScopes( image );
+    ReMapPoints( image );
+}
+
+
 bool LoadDeferredSymbols()
 {
     image_entry *image;
@@ -627,17 +801,6 @@ bool LoadDeferredSymbols()
     }
     if( defer ) _SwitchOn( SW_DEFER_SYM_LOAD );
     return( rc );
-}
-
-static void InitImageInfo( image_entry *image )
-{
-    if( !FindNullSym( image->dip_handle, &image->def_addr_space ) ) {
-        image->def_addr_space = GetRegSP();
-        image->def_addr_space.mach.offset = 0;
-    }
-    SetWDPresent( image->dip_handle );
-    VarReMapScopes( image );
-    ReMapPoints( image );
 }
 
 
@@ -835,164 +998,6 @@ void FiniMappableAddr( mappable_addr *loc )
 }
 
 
-bool UnMapAddress( mappable_addr *loc, image_entry *image )
-{
-    map_entry           *map;
-    mod_handle          himage;
-
-    if( image == NULL ) {
-        if( DeAliasAddrMod( loc->addr, &himage ) == SR_NONE ) return( FALSE );
-        image = ImageEntry( himage );
-    }
-    if( image == NULL ) return( FALSE );
-    DbgFree( loc->image_name );
-    loc->image_name = DupStr( image->image_name );
-    for( map = image->map_list; map != NULL; map = map->link ) {
-        if( map->real_addr.segment == loc->addr.mach.segment ) {
-            loc->addr.mach.segment = map->map_addr.segment;
-            loc->addr.mach.offset = loc->addr.mach.offset - map->real_addr.offset;
-            return( TRUE );
-        }
-    }
-    return( FALSE );
-}
-
-static void UnMapOnePoint( brk *bp, image_entry *image )
-{
-    mod_handle          himage;
-    if( bp->status.b.unmapped ) return;
-    if( image != NULL ) {
-        if( DeAliasAddrMod( bp->loc.addr, &himage ) == SR_NONE ) return;
-        if( image != ImageEntry( himage ) ) return;
-    }
-    if( bp->image_name == NULL || bp->mod_name == NULL ) {
-        bp->status.b.unmapped = UnMapAddress( &bp->loc, image );
-    } else {
-        bp->status.b.unmapped = TRUE;
-    }
-}
-
-void UnMapPoints( image_entry *image )
-{
-    brk                 *bp;
-
-    for( bp = BrkList; bp != NULL; bp = bp->next ) {
-        UnMapOnePoint( bp, image );
-    }
-    if( UserTmpBrk.status.b.has_address ) {
-        UnMapOnePoint( &UserTmpBrk, image );
-    }
-}
-
-
-remap_return ReMapImageAddress( mappable_addr *loc, image_entry *image )
-{
-    map_entry           *map;
-
-    if( loc->image_name == NULL ) {
-        return( REMAP_WRONG_IMAGE );
-    }
-    if( strcmp( image->image_name, loc->image_name ) != 0 ) {
-        return( REMAP_WRONG_IMAGE );
-    }
-    for( map = image->map_list; map != NULL; map = map->link ) {
-        if( map->map_addr.segment == loc->addr.mach.segment ) {
-            loc->addr.mach.segment = map->real_addr.segment;
-            loc->addr.mach.offset = loc->addr.mach.offset + map->real_addr.offset;
-            AddrSection( &loc->addr, OVL_MAP_CURR );
-            DbgFree( loc->image_name );
-            loc->image_name = NULL;
-            return( REMAP_REMAPPED );
-        }
-    }
-    return( REMAP_ERROR );
-}
-
-bool ReMapAddress( mappable_addr *loc )
-{
-    image_entry         *image;
-    for( image = DbgImageList; image != NULL; image = image->link ) {
-        if( ReMapImageAddress( loc, image ) == REMAP_REMAPPED ) return( TRUE );
-    }
-    return( FALSE );
-}
-
-static remap_return ReMapOnePoint( brk *bp, image_entry *image )
-{
-    mod_handle  himage,mod;
-    bool        ok;
-    address     addr;
-    DIPHDL( cue, ch );
-    DIPHDL( cue, ch2 );
-    remap_return        rc = REMAP_REMAPPED;
-
-    if( !bp->status.b.unmapped ) return( REMAP_WRONG_IMAGE );
-    if( bp->image_name == NULL || bp->mod_name == NULL ) {
-        if( image == NULL ) {
-            if( ReMapAddress( &bp->loc ) ) {
-                rc = REMAP_REMAPPED;
-            } else {
-                rc = REMAP_ERROR;
-            }
-        } else {
-            rc = ReMapImageAddress( &bp->loc, image );
-        }
-    } else {
-        himage = LookupImageName( bp->image_name, strlen( bp->image_name ) );
-        if( himage == NO_MOD ) return( REMAP_ERROR );
-        mod =  LookupModName( himage, bp->mod_name, strlen( bp->mod_name ) );
-        if( mod == NO_MOD ) return( REMAP_ERROR );
-        ok = GetBPSymAddr( bp, &addr );
-        if( !ok ) return( REMAP_ERROR );
-        if( bp->cue_diff != 0 ) {
-            if( DeAliasAddrCue( mod, addr, ch ) != SR_EXACT ) return( REMAP_ERROR );
-
-            if( LineCue( mod, CueFileId( ch ), CueLine( ch ) + bp->cue_diff,
-                         0, ch2 ) != SR_EXACT ) return( REMAP_ERROR );
-            addr = CueAddr( ch2 );
-        }
-        if( bp->addr_diff != 0 ) {
-            addr.mach.offset += bp->addr_diff;
-        }
-        bp->loc.addr = addr;
-        rc = REMAP_REMAPPED;
-    }
-    if( rc == REMAP_REMAPPED ) {
-        bp->status.b.unmapped = FALSE;
-    }
-    SetPointAddr( bp, bp->loc.addr );
-    if( bp->status.b.activate_on_remap ) {
-        ActPoint( bp, TRUE );
-    }
-    return( rc );
-}
-
-void ReMapPoints( image_entry *image )
-{
-    brk         *bp;
-
-    for( bp = BrkList; bp != NULL; bp = bp->next ) {
-        switch( ReMapOnePoint( bp, image ) ) {
-        case REMAP_ERROR:
-            ActPoint( bp, FALSE );
-            bp->status.b.activate_on_remap = TRUE;
-            break;
-        case REMAP_REMAPPED:
-            bp->countdown = bp->initial_countdown;
-            bp->total_hits = 0;
-        }
-    }
-    if( UserTmpBrk.status.b.has_address ) {
-        switch( ReMapOnePoint( &UserTmpBrk, image ) ) {
-        case REMAP_ERROR:
-// nobody cares about this warning!!        Warn( LIT( WARN_Unable_To_Remap_Tmp ) );
-            UserTmpBrk.status.b.active = FALSE;
-            break;
-        }
-    }
-}
-
-
 unsigned GetProgName( char *where, unsigned len )
 {
     unsigned    l;
@@ -1076,23 +1081,6 @@ void SetSymName( char *file )
     strcpy( SymFileName, file );
 }
 
-extern void LoadNewProg( char *cmd, char *parms )
-{
-    unsigned clen,plen;
-    char        prog[256];
-
-    clen = strlen( cmd );
-    plen = strlen( parms );
-    GetProgName( prog, sizeof( prog ) );
-    if( stricmp( cmd, prog ) == 0 ) {
-        DoResNew( plen != 0, cmd, clen, parms, plen+1 );
-    } else {
-        BPsDeac();
-        DoResNew( plen != 0, cmd, clen, parms, plen+1 );
-        VarFreeScopes();
-    }
-}
-
 
 static void DoResNew( bool have_parms, char *cmd,
                      unsigned clen, char *parms, unsigned plen )
@@ -1112,6 +1100,25 @@ static void DoResNew( bool have_parms, char *cmd,
     if( have_parms ) _SwitchOff( SW_TRUE_ARGV );
     LoadProg();
 }
+
+
+extern void LoadNewProg( char *cmd, char *parms )
+{
+    unsigned clen,plen;
+    char        prog[256];
+
+    clen = strlen( cmd );
+    plen = strlen( parms );
+    GetProgName( prog, sizeof( prog ) );
+    if( stricmp( cmd, prog ) == 0 ) {
+        DoResNew( plen != 0, cmd, clen, parms, plen+1 );
+    } else {
+        BPsDeac();
+        DoResNew( plen != 0, cmd, clen, parms, plen+1 );
+        VarFreeScopes();
+    }
+}
+
 
 static long SizeMinusDebugInfo( handle floc, bool strip )
 /************************************************/

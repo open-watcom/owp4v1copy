@@ -232,6 +232,15 @@ static void SetTempBreak( address addr )
 }
 
 
+void GoToAddr( address addr )
+{
+    if( IS_NIL_ADDR( addr ) ) return;
+    SetTempBreak( addr );
+    Go( TRUE );
+    NullStatus( &UserTmpBrk );
+}
+
+
 void StepIntoFunction( char *func )
 {
     char        *old;
@@ -250,15 +259,6 @@ void SkipToAddr( address addr )
     if( !AdvMachState( ACTION_MODIFY_IP ) ) return;
     RecordSetRegIP( addr );
     DbgUpdate( UP_CSIP_CHANGE | UP_REG_CHANGE );
-}
-
-
-void GoToAddr( address addr )
-{
-    if( IS_NIL_ADDR( addr ) ) return;
-    SetTempBreak( addr );
-    Go( TRUE );
-    NullStatus( &UserTmpBrk );
 }
 
 
@@ -507,6 +507,24 @@ static void FormThdState( thread_state *thd, char *buff )
     StrCopy( thd->name, p );
 }
 
+
+void MakeThdCurr( thread_state *thd )
+{
+    unsigned    err;
+
+    if( !AdvMachState( ACTION_THREAD_CHANGE ) ) return;
+    // NYI - PUI - record the thread change?
+    WriteDbgRegs();
+    if( RemoteSetThreadWithErr( thd->tid, &err ) == 0 ) {
+        Error( ERR_NONE, LIT( ERR_NO_MAKE_CURR_THREAD ), thd->tid, err );
+    }
+    DbgRegs->tid = thd->tid;
+    ReadDbgRegs();
+    SetCodeDot( GetRegIP() );
+    DbgUpdate( UP_REG_CHANGE | UP_CSIP_CHANGE | UP_THREAD_STATE );
+}
+
+
 static void ThdCmd( thread_state *thd, enum thread_cmds cmd )
 {
     unsigned    up;
@@ -531,27 +549,11 @@ static void ThdCmd( thread_state *thd, enum thread_cmds cmd )
     DbgUpdate( up );
 }
 
+
 bool IsThdCurr( thread_state *thd )
 {
     return( DbgRegs->tid == thd->tid );
 }
-
-void MakeThdCurr( thread_state *thd )
-{
-    unsigned    err;
-
-    if( !AdvMachState( ACTION_THREAD_CHANGE ) ) return;
-    // NYI - PUI - record the thread change?
-    WriteDbgRegs();
-    if( RemoteSetThreadWithErr( thd->tid, &err ) == 0 ) {
-        Error( ERR_NONE, LIT( ERR_NO_MAKE_CURR_THREAD ), thd->tid, err );
-    }
-    DbgRegs->tid = thd->tid;
-    ReadDbgRegs();
-    SetCodeDot( GetRegIP() );
-    DbgUpdate( UP_REG_CHANGE | UP_CSIP_CHANGE | UP_THREAD_STATE );
-}
-
 
 
 static thread_state     *AddThread( dtid_t tid, unsigned state )
@@ -595,10 +597,10 @@ dtid_t GetNextTID()
     thread_state    *thd;
 
     for( thd = HeadThd; thd != NULL; thd = thd->link ) {
-	if( IsThdCurr( thd ) ) {
-	    thd = thd -> link;
-	    break;
-	}
+    if( IsThdCurr( thd ) ) {
+        thd = thd -> link;
+        break;
+    }
     }
     if( thd == NULL ) thd = HeadThd;
     if( thd == NULL ) return( 0 );

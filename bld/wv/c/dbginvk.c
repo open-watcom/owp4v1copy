@@ -211,6 +211,17 @@ static bool GetInvkCmd( invokes *inv )
 }
 
 
+static void Conclude( invokes *inv )
+{
+    if( inv->inv_input != NIL_HANDLE ) {
+        FileClose( inv->inv_input );
+    }
+    FreeRing( inv->prmlst );
+    _Free( inv->buff );
+    _Free( inv );
+}
+
+
 OVL_EXTERN bool DoneInvLine( invokes *inv, inp_rtn_action action )
 {
     switch( action ) {
@@ -345,17 +356,6 @@ void ProcInvoke()
         owner = &path->next;
     }
     Invoke( fstart, (int)flen, parmlist );
-}
-
-
-static void Conclude( invokes *inv )
-{
-    if( inv->inv_input != NIL_HANDLE ) {
-        FileClose( inv->inv_input );
-    }
-    FreeRing( inv->prmlst );
-    _Free( inv->buff );
-    _Free( inv );
 }
 
 

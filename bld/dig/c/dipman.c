@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Debug Information Processor (DIP) manager.
 *
 ****************************************************************************/
 
@@ -330,6 +329,30 @@ unsigned FindImageMapSlot( process_info *p )
     return( i );
 }
 
+static void DIPCleanupInfo( process_info *p, image_handle *ih )
+{
+    image_handle        **owner;
+    image_handle        *curr;
+
+    DIPCliImageUnload( MK_MH( ih->index, 0 ) );
+    ih->dip->unload_info( IMP_HDL( ih, image ) );
+    p->ih_map[ih->index] = NULL;
+    owner = &p->ih_list;
+    for( ;; ) {
+        curr = *owner;
+        if( curr == ih ) break;
+        owner = &curr->next;
+    }
+    *owner = ih->next;
+    if( p->ih_add == &ih->next ) {
+        p->ih_add = owner;
+    }
+    if( ih->index == p->last_addr_mod_found ) {
+        p->last_addr_mod_found = NO_IMAGE_IDX;
+    }
+    DIGCliFree( ih );
+}
+
 static void CleanupProcess( process_info *p, int unload )
 {
     image_handle        *ih;
@@ -480,30 +503,6 @@ void DIPMapInfo( mod_handle mh, void *d )
         ih->dip->map_info( IMP_HDL( ih, image ), d );
     }
     LoadingImageIdx = NO_IMAGE_IDX;
-}
-
-static void DIPCleanupInfo( process_info *p, image_handle *ih )
-{
-    image_handle        **owner;
-    image_handle        *curr;
-
-    DIPCliImageUnload( MK_MH( ih->index, 0 ) );
-    ih->dip->unload_info( IMP_HDL( ih, image ) );
-    p->ih_map[ih->index] = NULL;
-    owner = &p->ih_list;
-    for( ;; ) {
-        curr = *owner;
-        if( curr == ih ) break;
-        owner = &curr->next;
-    }
-    *owner = ih->next;
-    if( p->ih_add == &ih->next ) {
-        p->ih_add = owner;
-    }
-    if( ih->index == p->last_addr_mod_found ) {
-        p->last_addr_mod_found = NO_IMAGE_IDX;
-    }
-    DIGCliFree( ih );
 }
 
 void DIPUnloadInfo( mod_handle mh )

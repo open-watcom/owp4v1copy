@@ -126,6 +126,17 @@ extern brk              UserTmpBrk;
 
 static int              InCall = 0;
 
+static void NoCRLF( char *str )
+/*****************************/
+{
+    char *p;
+
+    for( p = str; *p != '\0'; ++p ) {
+        if( *p == '\r' ) *p = ' ';
+        if( *p == '\n' ) *p = ' ';
+    }
+}
+
 void SetProgState( unsigned run_conditions )
 {
     ReadDbgRegs();
@@ -474,17 +485,6 @@ unsigned ExecProg( bool tracing, bool do_flip, bool want_wps )
     return( conditions );
 }
 
-
-static void NoCRLF( char *str )
-/*****************************/
-{
-    char *p;
-
-    for( p = str; *p != '\0'; ++p ) {
-        if( *p == '\r' ) *p = ' ';
-        if( *p == '\n' ) *p = ' ';
-    }
-}
 
 static void DisplayMsgText()
 /**************************/

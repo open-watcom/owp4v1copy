@@ -284,15 +284,6 @@ extern unsigned long MemSize;
 #endif
 
 
-MemInit()
-{
-#ifdef TRMEM
-    MemTrackInit();
-#endif
-    MemExpand();
-}
-
-
 void MemExpand()
 {
     unsigned long   size;
@@ -318,6 +309,14 @@ void MemExpand()
         TRMemFree( link );
         link = p;
     }
+}
+
+MemInit()
+{
+#ifdef TRMEM
+    MemTrackInit();
+#endif
+    MemExpand();
 }
 
 void *ExtraAlloc( unsigned size )

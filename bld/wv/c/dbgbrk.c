@@ -436,6 +436,15 @@ static char     *GetBPAddrText( brk *bp, char *p )
 }
 
 
+static void GetWPVal( brk *wp )
+{
+    wp->status.b.has_value = FALSE;
+    if( ItemGetMAD( &wp->loc.addr, &wp->item, IT_NIL, wp->th ) ) {
+        wp->status.b.has_value = TRUE;
+    }
+}
+
+
 bool DispBPMsg( bool stack_cmds )
 {
     brk     *bp, *next;
@@ -485,96 +494,6 @@ bool DispBPMsg( bool stack_cmds )
         DUIDlgTxt( TxtBuff );
     }
     return( ret );
-}
-
-
-static void DoActPoint( brk *bp, bool act )
-{
-    bp->status.b.active = act;
-    RecordBreakEvent( bp, act ? B_ACTIVATE : B_DEACTIVATE );
-    if( act && bp->th != MAD_NIL_TYPE_HANDLE ) {
-        GetWPVal( bp );
-    }
-}
-
-void ActPoint( brk *bp, bool act )
-{
-    if( act && bp->status.b.unmapped ) return;
-    DoActPoint( bp, act );
-    DbgUpdate( UP_BREAK_CHANGE );
-}
-
-void BrkEnableAll()
-{
-    brk         *bp;
-
-    for( bp = BrkList; bp != NULL; bp = bp->next ) {
-        DoActPoint( bp, TRUE );
-    }
-    DbgUpdate( UP_BREAK_CHANGE );
-}
-
-
-void BrkDisableAll()
-{
-    brk     *bp;
-
-    for( bp = BrkList; bp != NULL; bp = bp->next ) {
-        DoActPoint( bp, FALSE );
-    }
-    DbgUpdate( UP_BREAK_CHANGE );
-}
-
-
-bool RemoveBreak( address addr )
-{
-    brk         *bp;
-
-    bp = FindBreak( addr );
-    if( bp == NULL ) return( FALSE );
-    RemovePoint( bp );
-    return( TRUE );
-}
-
-
-void BrkClearAll()
-{
-    while( BrkList != NULL ) {
-        RemoveBreak( BrkList->loc.addr );
-    }
-}
-
-
-/*
- * BPsDeac -- deactivate all breakpoints
- */
-
-void BPsDeac()
-{
-    brk     *bp;
-
-    for( bp = BrkList; bp != NULL; bp = bp->next ) {
-        DoActPoint( bp, FALSE );
-    }
-    DbgUpdate( UP_BREAK_CHANGE );
-    NullStatus( &UserTmpBrk );
-    NullStatus( &DbgTmpBrk );
-}
-
-
-/*
- * BPsUnHit -- turn off all BP_HIT indicators
- */
-
-void BPsUnHit()
-{
-    brk     *bp;
-
-    for( bp = BrkList; bp != NULL; bp = bp->next ) {
-        bp->status.b.hit = FALSE;
-    }
-    NullStatus( &UserTmpBrk );
-    NullStatus( &DbgTmpBrk );
 }
 
 
@@ -684,6 +603,127 @@ static void RecordBreakEvent( brk *bp, brk_event event )
     }
 }
 
+
+static void DoActPoint( brk *bp, bool act )
+{
+    bp->status.b.active = act;
+    RecordBreakEvent( bp, act ? B_ACTIVATE : B_DEACTIVATE );
+    if( act && bp->th != MAD_NIL_TYPE_HANDLE ) {
+        GetWPVal( bp );
+    }
+}
+
+void ActPoint( brk *bp, bool act )
+{
+    if( act && bp->status.b.unmapped ) return;
+    DoActPoint( bp, act );
+    DbgUpdate( UP_BREAK_CHANGE );
+}
+
+void BrkEnableAll()
+{
+    brk         *bp;
+
+    for( bp = BrkList; bp != NULL; bp = bp->next ) {
+        DoActPoint( bp, TRUE );
+    }
+    DbgUpdate( UP_BREAK_CHANGE );
+}
+
+
+void BrkDisableAll()
+{
+    brk     *bp;
+
+    for( bp = BrkList; bp != NULL; bp = bp->next ) {
+        DoActPoint( bp, FALSE );
+    }
+    DbgUpdate( UP_BREAK_CHANGE );
+}
+
+
+void RemovePoint( brk *bp )
+{
+    brk         **owner;
+
+    for( owner = &BrkList; ; owner = &(*owner)->next ) {
+        if( (*owner) == bp ) {
+            RecordBreakEvent( bp, B_CLEAR );
+            FreeCmdList( bp->cmds );
+            _Free( bp->condition );
+            _Free( bp->source_line );
+            _Free( bp->image_name );
+            _Free( bp->mod_name );
+            _Free( bp->sym_name );
+            *owner = bp->next;
+            DbgUpdate( UP_BREAK_CHANGE );
+            FiniMappableAddr( &bp->loc );
+            _Free( bp );
+            break;
+        }
+    }
+}
+
+
+bool RemoveBreak( address addr )
+{
+    brk         *bp;
+
+    bp = FindBreak( addr );
+    if( bp == NULL ) return( FALSE );
+    RemovePoint( bp );
+    return( TRUE );
+}
+
+
+void BrkClearAll()
+{
+    while( BrkList != NULL ) {
+        RemoveBreak( BrkList->loc.addr );
+    }
+}
+
+
+/*
+ * BPsDeac -- deactivate all breakpoints
+ */
+
+void BPsDeac()
+{
+    brk     *bp;
+
+    for( bp = BrkList; bp != NULL; bp = bp->next ) {
+        DoActPoint( bp, FALSE );
+    }
+    DbgUpdate( UP_BREAK_CHANGE );
+    NullStatus( &UserTmpBrk );
+    NullStatus( &DbgTmpBrk );
+}
+
+
+/*
+ * BPsUnHit -- turn off all BP_HIT indicators
+ */
+
+void BPsUnHit()
+{
+    brk     *bp;
+
+    for( bp = BrkList; bp != NULL; bp = bp->next ) {
+        bp->status.b.hit = FALSE;
+    }
+    NullStatus( &UserTmpBrk );
+    NullStatus( &DbgTmpBrk );
+}
+
+
+void RecordNewPoint( brk *bp )
+{
+    SetRecord( TRUE );
+    RecordBreakEvent( bp, B_SET );
+}
+
+
 void RecordPointStart()
 {
     brk *bp;
@@ -691,12 +731,6 @@ void RecordPointStart()
     for( bp = BrkList; bp != NULL; bp = bp->next ) {
         RecordNewPoint( bp );
     }
-}
-
-void RecordNewPoint( brk *bp )
-{
-    SetRecord( TRUE );
-    RecordBreakEvent( bp, B_SET );
 }
 
 
@@ -941,29 +975,6 @@ OVL_EXTERN brk *UnResumePoint( memory_expr def_seg )
 }
 
 
-void RemovePoint( brk *bp )
-{
-    brk         **owner;
-
-    for( owner = &BrkList; ; owner = &(*owner)->next ) {
-        if( (*owner) == bp ) {
-            RecordBreakEvent( bp, B_CLEAR );
-            FreeCmdList( bp->cmds );
-            _Free( bp->condition );
-            _Free( bp->source_line );
-            _Free( bp->image_name );
-            _Free( bp->mod_name );
-            _Free( bp->sym_name );
-            *owner = bp->next;
-            DbgUpdate( UP_BREAK_CHANGE );
-            FiniMappableAddr( &bp->loc );
-            _Free( bp );
-            break;
-        }
-    }
-}
-
-
 /*
  * ClearPoint -- clear specified break point
  */
@@ -981,26 +992,6 @@ static brk *ClearPoint( memory_expr def_seg )
         RemovePoint( BPNotNull( PointBreak( def_seg, &addr ) ) );
     }
     return( NULL );
-}
-
-
-/*
- * TogglePoint -- toggle specified break point
- */
-
-OVL_EXTERN brk *TogglePoint( memory_expr def_seg )
-{
-    brk         *bp;
-    address     addr;
-
-    bp = PointBreak( def_seg, &addr );
-    if( IS_NIL_ADDR( addr ) ) {
-        Error( ERR_NONE, LIT( ERR_NO_SUCH_POINT ) );
-        return( NULL );
-    } else {
-        ToggleBreak( addr );
-        return( bp );
-    }
 }
 
 
@@ -1034,6 +1025,7 @@ bool GetBPSymAddr( brk *bp, address *addr )
     _SwitchOff( SW_AMBIGUITY_FATAL );
     return( rc );
 }
+
 
 void SetPointAddr( brk *bp, address addr )
 {
@@ -1098,15 +1090,6 @@ void SetPointAddr( brk *bp, address addr )
 }
 
 
-void BrkAddrRefresh()
-{
-    brk         *bp;
-
-    for( bp = BrkList; bp != NULL; bp = bp->next ) {
-        SetPointAddr( bp, bp->loc.addr );
-    }
-}
-
 bool BrkCheckWatchLimit( address loc, mad_type_handle th )
 {
     bool                enough_iron;
@@ -1143,17 +1126,6 @@ bool BrkCheckWatchLimit( address loc, mad_type_handle th )
     return( TRUE );
 }
 
-static int FindNextBPIndex()
-{
-    brk         *bp;
-    int         max;
-
-    max = 0;
-    for( bp = BrkList; bp != NULL; bp = bp->next ) {
-        if( bp->index > max ) max = bp->index;
-    }
-    return( max+1 );
-}
 
 static brk *AddPoint( address loc, mad_type_handle th, bool unmapped )
 {
@@ -1193,6 +1165,83 @@ static brk *AddPoint( address loc, mad_type_handle th, bool unmapped )
     *owner = bp;
     DbgUpdate( UP_BREAK_CHANGE );
     return( bp );
+}
+
+
+extern brk *AddBreak( address addr )
+{
+    brk         *bp;
+
+    for( bp = BrkList; bp != NULL; bp = bp->next ) {
+        if( AddrComp( bp->loc.addr, addr ) == 0 ) {
+            DoActPoint( bp, TRUE );
+            DbgUpdate( UP_BREAK_CHANGE );
+            return( bp );
+        }
+    }
+    bp = AddPoint( addr, MAD_NIL_TYPE_HANDLE, FALSE );
+    if( bp == NULL ) return( NULL );
+    RecordBreakEvent( bp, B_SET );
+    return( bp );
+}
+
+
+extern void ToggleBreak( address addr )
+{
+    brk         *bp;
+
+    if( IS_NIL_ADDR( addr ) ) return;
+    bp = FindBreak( addr );
+    if( bp == NULL ) {
+        AddBreak( addr );
+    } else if( bp->status.b.active ) {
+        ActPoint( bp, FALSE );
+    } else {
+        RemovePoint( bp );
+    }
+}
+
+
+/*
+ * TogglePoint -- toggle specified break point
+ */
+
+OVL_EXTERN brk *TogglePoint( memory_expr def_seg )
+{
+    brk         *bp;
+    address     addr;
+
+    bp = PointBreak( def_seg, &addr );
+    if( IS_NIL_ADDR( addr ) ) {
+        Error( ERR_NONE, LIT( ERR_NO_SUCH_POINT ) );
+        return( NULL );
+    } else {
+        ToggleBreak( addr );
+        return( bp );
+    }
+}
+
+
+void BrkAddrRefresh()
+{
+    brk         *bp;
+
+    for( bp = BrkList; bp != NULL; bp = bp->next ) {
+        SetPointAddr( bp, bp->loc.addr );
+    }
+}
+
+
+static int FindNextBPIndex()
+{
+    brk         *bp;
+    int         max;
+
+    max = 0;
+    for( bp = BrkList; bp != NULL; bp = bp->next ) {
+        if( bp->index > max ) max = bp->index;
+    }
+    return( max+1 );
 }
 
 
@@ -1423,23 +1472,6 @@ done:;
 }
 
 
-extern brk *AddBreak( address addr )
-{
-    brk         *bp;
-
-    for( bp = BrkList; bp != NULL; bp = bp->next ) {
-        if( AddrComp( bp->loc.addr, addr ) == 0 ) {
-            DoActPoint( bp, TRUE );
-            DbgUpdate( UP_BREAK_CHANGE );
-            return( bp );
-        }
-    }
-    bp = AddPoint( addr, MAD_NIL_TYPE_HANDLE, FALSE );
-    if( bp == NULL ) return( NULL );
-    RecordBreakEvent( bp, B_SET );
-    return( bp );
-}
-
 bool BreakWrite( address addr, mad_type_handle th, char *comment )
 {
     brk                 *bp;
@@ -1517,22 +1549,6 @@ extern void BreakOnExprSP( char *comment )
         s.comment = comment;
         BreakOnAddress( &s );
         break;
-    }
-}
-
-
-extern void ToggleBreak( address addr )
-{
-    brk         *bp;
-
-    if( IS_NIL_ADDR( addr ) ) return;
-    bp = FindBreak( addr );
-    if( bp == NULL ) {
-        AddBreak( addr );
-    } else if( bp->status.b.active ) {
-        ActPoint( bp, FALSE );
-    } else {
-        RemovePoint( bp );
     }
 }
 
@@ -1709,13 +1725,6 @@ unsigned CheckBPs( unsigned conditions, unsigned run_conditions )
     return( conditions );
 }
 
-static void GetWPVal( brk *wp )
-{
-    wp->status.b.has_value = FALSE;
-    if( ItemGetMAD( &wp->loc.addr, &wp->item, IT_NIL, wp->th ) ) {
-        wp->status.b.has_value = TRUE;
-    }
-}
 
 bool UpdateWPs()
 {

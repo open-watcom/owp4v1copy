@@ -221,6 +221,11 @@ char *Attributes( type_display *curr, char *p )
     return( p );
 }
 
+static void oops()
+{
+    Error( ERR_LOC, LIT( ERR_BAD_OPTION ), GetCmdName( CMD_SET ) );
+}
+
 static void ScanLeftBrace()
 /*************************/
 {
@@ -248,11 +253,6 @@ static char *ScanName()
     return( TxtBuff );
 }
 
-
-static void oops()
-{
-    Error( ERR_LOC, LIT( ERR_BAD_OPTION ), GetCmdName( CMD_SET ) );
-}
 
 static int ScanAttribute( type_display *type, int token )
 {

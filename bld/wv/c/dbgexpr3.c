@@ -354,45 +354,6 @@ void ToItem( stack_entry *entry, item_mach *tmp )
 }
 
 
-void ToItemMAD( stack_entry *entry, item_mach *tmp, mad_type_info *mti )
-{
-    unsigned            bytes;
-    mad_type_info       src;
-
-    bytes = mti->b.bits / BITS_PER_BYTE;
-    switch( mti->b.kind ) {
-    case MTK_INTEGER:
-        ConvertTo( entry, TK_INTEGER, TM_UNSIGNED, bytes );
-        MADTypeInfoForHost( MTK_INTEGER, sizeof( entry->v.uint ), &src );
-        break;
-    case MTK_ADDRESS:
-        if( mti->a.seg.bits == 0 ) {
-            ConvertTo( entry, TK_ADDRESS, TM_NEAR, bytes );
-            MADTypeInfoForHost( MTK_ADDRESS, sizeof( entry->v.addr.mach.offset ), &src );
-        } else {
-            ConvertTo( entry, TK_ADDRESS, TM_FAR, bytes );
-            MADTypeInfoForHost( MTK_ADDRESS, sizeof( entry->v.addr.mach ), &src );
-        }
-        break;
-    case MTK_FLOAT:
-        ConvertTo( entry, TK_REAL, TM_NONE, bytes );
-        MADTypeInfoForHost( MTK_FLOAT, sizeof( entry->v.real ), &src );
-        break;
-    case MTK_XMM:
-        //MAD: nyi
-        ToItem( entry, tmp );
-        return;
-    case MTK_CUSTOM:
-        //MAD: nyi
-        ToItem( entry, tmp );
-        return;
-    }
-    if( MADTypeConvert( &src, &entry->v, mti, tmp, 0 ) != MS_OK ) {
-        ToItem( entry, tmp );
-    }
-}
-
-
 OVL_EXTERN bool ConvU8( stack_entry *entry, conv_class from )
 {
     unsigned_64  tmp;
@@ -912,5 +873,43 @@ void AddOp( stack_entry *left, stack_entry *right )
         break;
     default:
         DoBinOp( left, right );
+    }
+}
+
+void ToItemMAD( stack_entry *entry, item_mach *tmp, mad_type_info *mti )
+{
+    unsigned            bytes;
+    mad_type_info       src;
+
+    bytes = mti->b.bits / BITS_PER_BYTE;
+    switch( mti->b.kind ) {
+    case MTK_INTEGER:
+        ConvertTo( entry, TK_INTEGER, TM_UNSIGNED, bytes );
+        MADTypeInfoForHost( MTK_INTEGER, sizeof( entry->v.uint ), &src );
+        break;
+    case MTK_ADDRESS:
+        if( mti->a.seg.bits == 0 ) {
+            ConvertTo( entry, TK_ADDRESS, TM_NEAR, bytes );
+            MADTypeInfoForHost( MTK_ADDRESS, sizeof( entry->v.addr.mach.offset ), &src );
+        } else {
+            ConvertTo( entry, TK_ADDRESS, TM_FAR, bytes );
+            MADTypeInfoForHost( MTK_ADDRESS, sizeof( entry->v.addr.mach ), &src );
+        }
+        break;
+    case MTK_FLOAT:
+        ConvertTo( entry, TK_REAL, TM_NONE, bytes );
+        MADTypeInfoForHost( MTK_FLOAT, sizeof( entry->v.real ), &src );
+        break;
+    case MTK_XMM:
+        //MAD: nyi
+        ToItem( entry, tmp );
+        return;
+    case MTK_CUSTOM:
+        //MAD: nyi
+        ToItem( entry, tmp );
+        return;
+    }
+    if( MADTypeConvert( &src, &entry->v, mti, tmp, 0 ) != MS_OK ) {
+        ToItem( entry, tmp );
     }
 }

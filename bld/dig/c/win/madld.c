@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Windows 3.x MAD loader.
 *
 ****************************************************************************/
 
@@ -51,6 +50,17 @@ void Say( char *buff )
             MB_OK | MB_ICONHAND | MB_SYSTEMMODAL );
 }
 #endif
+
+
+void MADSysUnload( unsigned long sys_hdl )
+{
+    void        (DIGENTRY *fini_func)() = (void *)sys_hdl;
+
+    if( fini_func != NULL ) {
+        fini_func();
+    }
+}
+
 
 mad_status MADSysLoad( char *path, mad_client_routines *cli,
                                 mad_imp_routines **imp, unsigned long *sys_hdl )
@@ -113,13 +123,4 @@ mad_status MADSysLoad( char *path, mad_client_routines *cli,
         return( status );
     }
     return( MS_OK );
-}
-
-void MADSysUnload( unsigned long sys_hdl )
-{
-    void        (DIGENTRY *fini_func)() = (void *)sys_hdl;
-
-    if( fini_func != NULL ) {
-        fini_func();
-    }
 }

@@ -134,12 +134,6 @@ enum { OPT_INVOKE=1,
 };
 
 
-void NextChar()
-{
-    ++CurrArgp;
-    SetupChar();
-}
-
 void SetupChar()
 {
    CurrChar = *CurrArgp;
@@ -153,6 +147,13 @@ void SetupChar()
             --CurrArgp; /* so that NextChar increment is negated */
         }
     }
+}
+
+
+void NextChar()
+{
+    ++CurrArgp;
+    SetupChar();
 }
 
 

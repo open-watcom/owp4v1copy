@@ -125,12 +125,6 @@ extern void StartPrintBuff( char *buff, unsigned len )
 }
 
 
-extern void EndPrintBuff()
-{
-    PrtChar( '\0' );
-}
-
-
 static void PrtBuff()
 {
     if( OutPgm ) {
@@ -158,6 +152,13 @@ static void PrtChar( unsigned ch )
         *OutPtr++ = ch;
     }
 }
+
+
+extern void EndPrintBuff()
+{
+    PrtChar( '\0' );
+}
+
 
 static void PrtNeed( unsigned len )
 {
