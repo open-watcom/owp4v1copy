@@ -5,7 +5,7 @@
         left_adjust = '0.5i'
 :eLAYOUT
 
-:set symbol="edname"     value="WATCOM Editor".
+:set symbol="edname"     value="Open Watcom Editor".
 
 :GDOC.
 :FRONTM.

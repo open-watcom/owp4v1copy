@@ -41,9 +41,9 @@ window_id       Root;
 window_id       EditContainer;
 HINSTANCE       InstanceHandle;
 #ifdef __NT__
-char            near EditorName[] = "WATCOM Windows NT Editor";
+char            near EditorName[] = "Open Watcom Windows NT Editor";
 #else
-char            near EditorName[] = "WATCOM Windows Editor";
+char            near EditorName[] = "Open Watcom Windows Editor";
 #endif
 static  int     showHow;
 
