@@ -98,7 +98,7 @@ static const char *usageMsg[] = {
 /*
  * start of mainline
  */
-main( int argc, char *argv[] )
+int main( int argc, char *argv[] )
 {
     int i,ch;
 
@@ -139,8 +139,7 @@ main( int argc, char *argv[] )
             DoLC( argv[i] );
         }
     }
-    exit( 0 );
-
+    return( 0 );
 } /* main */
 
 int Compare( struct dirent **p1, struct dirent **p2 )
@@ -151,7 +150,7 @@ int Compare( struct dirent **p1, struct dirent **p2 )
 /*
  * DoLC - perform LC on a specified directory
  */
-DoLC( char *dir )
+void DoLC( char *dir )
 {
     int                 i;
     DIR                 *d;

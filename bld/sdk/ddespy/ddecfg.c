@@ -78,7 +78,7 @@ static void SetGlobalDefault( void ) {
 /*
  * MakeWndCfgName - create a name for information about a window
  */
-static MakeWndCfgName( char *buf, char *name, char *ext ) {
+static void MakeWndCfgName( char *buf, char *name, char *ext ) {
     sprintf( buf, "%s_%s", name, ext );
 }
 
@@ -141,7 +141,7 @@ static void ReadWindowInfo( WndConfigInfo *info, char *name_ext ) {
 /*
  * PutProfileBool - write a boolean value to the configuration file
  */
-static PutProfileBool( char *id, BOOL val ) {
+static void PutProfileBool( char *id, BOOL val ) {
 
     char        buf[15];
 

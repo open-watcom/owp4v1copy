@@ -38,7 +38,7 @@ struct dr_dbg_info * DWRCurrNode = NULL;
 
 /* function prototypes */
 
-static ReadAbbrevTable( struct dr_dbg_info *dbg )
+static void ReadAbbrevTable( struct dr_dbg_info *dbg )
 /**********************/
 /* this reads in the abbrev. table, and fills in an array of pointers to it */
 {

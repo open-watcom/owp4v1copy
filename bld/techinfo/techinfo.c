@@ -595,7 +595,7 @@ void check_dos_comm()
 }
 #endif
 
-main( int argc, char *argv[] )
+int main( int argc, char *argv[] )
 {
     char    *opt;
     int     print;
@@ -624,4 +624,5 @@ main( int argc, char *argv[] )
     check_dos_comm();
 #endif
     fclose( TechOutFile );
+    return( 0 );
 }

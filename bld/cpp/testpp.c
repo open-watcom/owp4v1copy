@@ -38,7 +38,7 @@
 
 extern char PreProcChar;
 
-main( int argc, char *argv[] )
+int main( int argc, char *argv[] )
 {
     int         c;
 
@@ -63,6 +63,7 @@ main( int argc, char *argv[] )
     dumpheap();
     PP_Fini();
     dumpheap();
+    return( 0 );
 }
 
 void dumpheap()

@@ -269,7 +269,7 @@ void FindExtender( char *extname, char *winext )
     }
 }
 
-main( int argc, char *argv[] )
+int main( int argc, char *argv[] )
 {
     int         in,out,i,rcparm=0,pcnt;
     int         Rflag=FALSE,nflag=FALSE;
@@ -515,6 +515,5 @@ main( int argc, char *argv[] )
                 tsize,totalsize, tsize+totalsize );
     }
 
-    exit( 0 );
-
+    return( 0 );
 } /* main */

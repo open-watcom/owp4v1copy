@@ -311,7 +311,7 @@ void MemExpand()
     }
 }
 
-MemInit()
+void MemInit()
 {
 #ifdef TRMEM
     MemTrackInit();

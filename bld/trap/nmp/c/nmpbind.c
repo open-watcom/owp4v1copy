@@ -347,7 +347,7 @@ static void CheckForTraffic( HPIPE hdl )
 }
 
 
-main( int argc, char *argv[] )
+int main( int argc, char *argv[] )
 {
     APIRET      rc;
     char        req;
@@ -371,6 +371,7 @@ main( int argc, char *argv[] )
     for( ;; ) {
         CheckForTraffic( BindHdl );
     }
+    return( 0 );
 }
 
 void Error( char *msg )

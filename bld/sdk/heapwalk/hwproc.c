@@ -42,7 +42,7 @@ static  BOOL    NoRefresh = FALSE;
 /*
  * HideResources - hide all resource display windows
  */
-static HideResources( BOOL hide ) {
+static void HideResources( BOOL hide ) {
 
     int         cmd;
     WORD        i;
@@ -79,7 +79,7 @@ static HWND *SetUpPushWindows( HWND hwnd, WORD type ) {
  *                  be the first call to SetDisplayType and the heap display
  *                  type is set to 'HeapType'
  */
-static SetDisplayType( HWND hwnd, HWND **title, WORD type ) {
+static void SetDisplayType( HWND hwnd, HWND **title, WORD type ) {
 
     HMENU       mh;
     char        buf[256];

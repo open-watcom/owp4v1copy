@@ -110,7 +110,7 @@ void SysInit()
         EventSignature);
 }
 
-StopProg()
+void StopProg()
 {
 }
 
@@ -183,7 +183,7 @@ void WakeMeUp()
 }
 
 
-StartProg( char *cmd, char *prog, char *args )
+void StartProg( char *cmd, char *prog, char *args )
 {
     LONG        events;
 
@@ -246,7 +246,7 @@ StartProg( char *cmd, char *prog, char *args )
 }
 
 
-SaveOutSamples()
+void SaveOutSamples()
 {
     StopAndSave();
     AES.AProcessToCall = NULL;

@@ -379,7 +379,7 @@ static dir_node *pop_proc( void )
     return( (dir_node *)pop( &ProcStack ) );
 }
 
-static dir_add( dir_node *new, int tab )
+static void dir_add( dir_node *new, int tab )
 {
     /* note: this is only for those above which do NOT return right away */
     /* put the new entry into the queue for its type of symbol */
@@ -2027,7 +2027,7 @@ void ModuleInit( void )
     ModuleInfo.cmdline = FALSE;
 }
 
-void SetModuleDefSegment32( int flag ) 
+void SetModuleDefSegment32( int flag )
 {
     if(( CurrSeg == NULL ) && (( ModuleInfo.init == 0 ) || ( ModuleInfo.cmdline == TRUE ))) {
         ModuleInfo.defseg32 = flag;
@@ -2556,7 +2556,7 @@ enum assume_reg GetAssume( struct asm_sym* sym, enum assume_reg def )
             return( reg );
         }
     }
-    
+
     // second search for group
     if( SegOverride == NULL || SegOverride->sym.state == SYM_GRP ) {
         if( SegOverride == NULL ) {
@@ -2569,7 +2569,7 @@ enum assume_reg GetAssume( struct asm_sym* sym, enum assume_reg def )
             return( reg );
         }
     }
-    
+
     if( def != ASSUME_NOTHING ) {
         if( ( AssumeTable[def].symbol != NULL ) && ( Code->info.token != T_LEA ) ) {
             if( AssumeTable[def].symbol->segidx != 0 ) {
@@ -3081,7 +3081,7 @@ static void ProcFini( void )
     label_list  *curr;
 
     info = CurrProc->e.procinfo;
-    
+
     if( Parse_Pass == PASS_1 ) {
         for( curr = info->paralist; curr; curr = curr->next ) {
             AsmTakeOut( curr->label );
@@ -3368,7 +3368,7 @@ int Ret( int i, int count, int flag_iret )
     proc_info   *info;
 
     info = CurrProc->e.procinfo;
-    
+
     if( flag_iret ) {
         if( AsmBuffer[i]->value == T_IRET ) {
             strcpy( buffer, "iretf" );
@@ -3382,7 +3382,7 @@ int Ret( int i, int count, int flag_iret )
             strcpy( buffer, "retf " );
         }
     }
-    
+
     write_epilogue();
 
     if( !flag_iret ) {
@@ -3402,9 +3402,9 @@ int Ret( int i, int count, int flag_iret )
             sprintf( buffer + strlen(buffer), "%d", AsmBuffer[i+1]->value );
         }
     }
-    
+
     InputQueueLine( buffer );
-    
+
     return( NOT_ERROR );
 }
 

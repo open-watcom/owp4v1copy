@@ -223,20 +223,9 @@ static int SortServerByInst( const void *_str1, const void *_str2 ) {
 }
 
 /*
- * DoServerSort - change the sort type for the server tracking window
- */
-static void DoServerSort( WORD type, DDETrackInfo *info ) {
-
-    if( type == PUSH_SERVER || type == PUSH_INST ) {
-        info->sorttype = type;
-        DisplayServers( info );
-    }
-}
-
-/*
  * DisplayServers - refresh the information in the servers tracking window
  */
-static DisplayServers( DDETrackInfo *info ) {
+static void DisplayServers( DDETrackInfo *info ) {
 
     unsigned    i;
     unsigned    len;
@@ -267,6 +256,17 @@ static DisplayServers( DDETrackInfo *info ) {
         buf[len] = ' ';
         strcpy( buf + 20, cur->instname );
         SendMessage( info->list.box, LB_ADDSTRING, 0, (DWORD)buf );
+    }
+}
+
+/*
+ * DoServerSort - change the sort type for the server tracking window
+ */
+static void DoServerSort( WORD type, DDETrackInfo *info ) {
+
+    if( type == PUSH_SERVER || type == PUSH_INST ) {
+        info->sorttype = type;
+        DisplayServers( info );
     }
 }
 
@@ -457,7 +457,7 @@ static void RedispStrTrk( DDETrackInfo *info ) {
  * FreeStringItem - free memory allocated to a string item
  */
 
-static FreeStringItem( StringInfo *info ) {
+static void FreeStringItem( StringInfo *info ) {
     MemFree( info->str );
     MemFree( info );
 }

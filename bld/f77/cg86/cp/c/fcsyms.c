@@ -1480,8 +1480,8 @@ static  void    DefineCommonEntry() {
 }
 
 
-static  DeclareShadowArgs( entry_pt *ep, aux_info *aux ) {
-//========================================================
+static  void    DeclareShadowArgs( entry_pt *ep, aux_info *aux ) {
+//================================================================
 
     parameter   *arg;
     pass_by     *arg_aux;

@@ -125,7 +125,7 @@ static void DoScroll( HWND bar, WPARAM wparam, MainWndInfo *info ) {
  *                  image should be displayed
  */
 
-static GetDisplaySize( HWND hwnd, MainWndInfo *info ) {
+static void GetDisplaySize( HWND hwnd, MainWndInfo *info ) {
 
     RECT        area;
 
@@ -143,7 +143,7 @@ static GetDisplaySize( HWND hwnd, MainWndInfo *info ) {
  * PositionWidgets - position the scroll bars and zoom buttons in the
  *                      window
  */
-static PositionWidgets( HWND hwnd, MainWndInfo *info ) {
+static void PositionWidgets( HWND hwnd, MainWndInfo *info ) {
     RECT        area;
     WORD        barheight;
     WORD        barwidth;
@@ -411,7 +411,7 @@ static void DoMouseMove( MainWndInfo *info, DWORD lparam ) {
     ReleaseDC( NULL, dc );
 }
 
-static displayAbout( HWND hwnd ) {
+static void displayAbout( HWND hwnd ) {
 
     about_info          ai;
 

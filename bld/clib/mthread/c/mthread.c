@@ -143,13 +143,13 @@ static CRITICAL_SECTION *__NTGetCriticalSection( void )
     InitializeCriticalSection( ptr );
     return( ptr );
 }
-static __NTDeleteCriticalSection( void ) {
+static void __NTDeleteCriticalSection( void ) {
     int i;
     for( i = 0 ; i < critsect_next ; i++ ) {
         DeleteCriticalSection( &(critsect_cache[i]) );
     }
 }
-static __NTFreeCriticalSection( void ) {
+static void __NTFreeCriticalSection( void ) {
     int i;
     for( i = 0 ; i < critsect_vectornext ; i++ ) {
         DeleteCriticalSection( critsect_vector[i] );

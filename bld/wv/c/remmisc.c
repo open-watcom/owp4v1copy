@@ -87,7 +87,7 @@ void FiniSuppServices()
 #endif
 
 static bool InitTrapError;
-InitTrap( char *trap_file )
+void InitTrap( char *trap_file )
 {
     mx_entry            in[1];
     mx_entry            out[2];

@@ -52,7 +52,7 @@ static void initDCLine( dc dc )
     dc->ss = SSNewBlock();
 }
 
-static deinitDCLine( dc dc )
+static void deinitDCLine( dc dc )
 {
     if( dc->text ) {
         MemFree( dc->text );

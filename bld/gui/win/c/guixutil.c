@@ -54,7 +54,7 @@ extern  WPI_TEXTMETRIC  GUItm;
 extern  WPI_INST        GUIMainHInst;
 extern  WPI_INST        GUIResHInst;
 
-static MaxChild( gui_window *wnd, void *param )
+static void MaxChild( gui_window *wnd, void *param )
 {
     param = param;
     if( _wpi_iszoomed( wnd->hwnd_frame ) ) {

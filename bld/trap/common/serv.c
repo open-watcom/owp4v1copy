@@ -100,9 +100,8 @@ void OpeningStatement( void )
     Output( banner3a "\r\n" );
 }
 
-main()
+int main()
 {
-
     char key;
 
     Initialize();
@@ -138,4 +137,5 @@ main()
             SayGNiteGracey( 0 );
         }
     }
+    return( 0 );
 }

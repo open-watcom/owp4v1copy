@@ -111,7 +111,7 @@ void GetCurrentFilePath( char *path )
 /*
  * getTmpName - get tmp name in path
  */
-static getTmpName( char *path, char *tmpname )
+static void getTmpName( char *path, char *tmpname )
 {
     char        tmp[_MAX_PATH];
     int         i;

@@ -90,7 +90,7 @@ static DWORD Disp_Types[] = {
 BOOL __export FAR PASCAL MemDisplayProc( HWND, UINT, WPARAM, DWORD );
 static void CalcTextDimensions( HWND hwnd, HDC dc, MemWndInfo *info );
 static void DisplaySegInfo( HWND parent, HANDLE instance, MemWndInfo *info );
-static PositionSegInfo( HWND hwnd );
+static void PositionSegInfo( HWND hwnd );
 
 typedef enum {
     MT_FREE,
@@ -1029,7 +1029,7 @@ BOOL __export FAR PASCAL MemDisplayProc( HWND hwnd, UINT msg, WPARAM wparam,
     return( TRUE );
 }
 
-static PositionSegInfo( HWND hwnd ) {
+static void PositionSegInfo( HWND hwnd ) {
     HWND        parent;
     RECT        psize;
     RECT        dsize;

@@ -62,7 +62,8 @@ static const char *usageMsg[] = {
 void PrintLine( unsigned long lines,
                 unsigned long words,
                 unsigned long chars,
-                const char *name ) {
+                const char *name )
+{
     if( line_flag ) {
         printf( "%8lu", lines );
     }
@@ -80,8 +81,8 @@ void PrintLine( unsigned long lines,
 }
 
 
-DoWC( FILE *fh, const char *name ) {
-
+void DoWC( FILE *fh, const char *name )
+{
     int                 ch;
     int                 in_word = 0;
     unsigned long       lines = 0;
@@ -112,8 +113,8 @@ DoWC( FILE *fh, const char *name ) {
 }
 
 
-void main( int argc, char **argv ) {
-
+void main( int argc, char **argv )
+{
     int         i,ch;
     FILE        *fh;
     int         more_than_one;

@@ -157,7 +157,7 @@ unsigned RemotePut( char *snd, unsigned len )
 }
 
 #ifndef SERVER
-BackToProtMode()
+void BackToProtMode()
 {
     if( setjmp( RealModeState ) == 0 ) {
         _DBG_Writeln( "ENTERING PROTECTED MODE" );

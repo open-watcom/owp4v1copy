@@ -306,7 +306,7 @@ unsigned ReqRfx_getcwd()
     return sizeof(*ret) + len;
 }
 
-static MoveDirInfo(FILEFINDBUF3 *os2, trap_dta *dos)
+static void MoveDirInfo(FILEFINDBUF3 *os2, trap_dta *dos)
 {
     dos->dos.dir_entry_num = *(USHORT *)&os2->fdateLastWrite;
     dos->dos.cluster = *(USHORT *)&os2->ftimeLastWrite;

@@ -90,8 +90,8 @@ extern  void                    (* const __FAR ProcTable[])();
 extern  const unsigned_16       __FAR CFTable[];
 
 
-static  ChkStatementSequence() {
-//==============================
+static  void    ChkStatementSequence() {
+//======================================
 
     SetCtrlFlgs();
     if( ( StmtSw & SS_HOLLERITH ) && ( StmtProc != PR_FMT ) ) {

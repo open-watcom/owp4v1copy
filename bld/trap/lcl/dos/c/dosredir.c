@@ -100,7 +100,7 @@ unsigned ReqRedirect_stdout()
     return( Redirect( FALSE ) );
 }
 
-InitRedirect()
+void InitRedirect()
 {
     SaveStdIn = NIL_DOS_HANDLE;
     SaveStdOut = NIL_DOS_HANDLE;

@@ -347,9 +347,9 @@ void ParseServiceStuff( char *name,
 {
     char        *p;
 
-    ( *pdll_name ) = ""; 
-    ( *pservice_name ) = ""; 
-    ( *pdll_destination ) = ""; 
+    ( *pdll_name ) = "";
+    ( *pservice_name ) = "";
+    ( *pdll_destination ) = "";
     ( *pservice_parm ) = "";
     while( ( p = strrchr( name, LOAD_PROG_CHR_DELIM ) ) != NULL ) {
         if( strnicmp( p + 1, LOAD_PROG_STR_DLLNAME, strlen( LOAD_PROG_STR_DLLNAME ) ) == 0 ) {
@@ -718,7 +718,7 @@ BOOL DoWaitForDebugEvent( void )
     return( rc );
 }
 
-StopDebuggee()
+static void StopDebuggee()
 {
 
     if( DebugeePid != NULL && ( IsWOW || !DebugeeEnded ) ) {

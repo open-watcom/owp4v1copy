@@ -276,7 +276,7 @@ static void GenBackup( AsmInfo *asm ) {
  *             Is32Bit, Limit and Sel must be set before calling this routine
  */
 
-static GenBigBackup( AsmInfo *asm ) {
+static void GenBigBackup( AsmInfo *asm ) {
 
     DWORD       cnt;
     DWORD       *dwptr;

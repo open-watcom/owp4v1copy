@@ -1009,8 +1009,8 @@ extern void     AbsPatch(void * patch,offset lc) {
     lc = lc;
 }
 
-extern DoEmptyQueue()
-/*******************/
+extern void DoEmptyQueue()
+/************************/
 {
     EmptyQueue();
     TellUnreachLabels();

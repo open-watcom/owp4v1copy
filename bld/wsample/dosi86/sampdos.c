@@ -171,13 +171,13 @@ void WriteOvl( unsigned req_ovl, char is_return, unsigned offset, unsigned seg )
     SamplerOff--;
 }
 
-StopProg()
+void StopProg()
 {
     StopTimer();
     RemoveDOSIntercepts();
 }
 
-StartProg( char *cmd, char *prog, char *args )
+void StartProg( char *cmd, char *prog, char *args )
 {
     struct  SREGS       segs;
     seg_offset          ovl_tbl;

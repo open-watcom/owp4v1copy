@@ -318,7 +318,7 @@ void *MyAlloc( unsigned size )
 } /* MyAlloc */
 
 
-main( int argc, char *argv[] )
+int main( int argc, char *argv[] )
 {
     char                *buff=NULL,*buff2,*buff3;
     char                *buffn,*buffs;
@@ -485,6 +485,5 @@ main( int argc, char *argv[] )
     } else {
         MyPrintf( "\"%s\" has been stripped of configuration information\n", path );
     }
-    exit( 0 );
-
+    return( 0 );
 } /* main */

@@ -136,7 +136,7 @@ static BOOL getLogName( char *buf, HWND hwnd ) {
 /*
  * flushLog - write out everything in the log buffer
  */
-static flushLog( BOOL free ) {
+static void flushLog( BOOL free ) {
 
     WORD        i;
     int         f;
