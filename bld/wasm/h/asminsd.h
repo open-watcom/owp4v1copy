@@ -914,9 +914,8 @@ ins (T_RCR,             OP_M_DW,     0,      OP_I_1,     0,      0xD1,     0x18,
 ins (T_RCR,             OP_M_DW,     0,      OP_I8_U,    0,      0xC1,     0x18,                     P_386, NO_PREFIX)
 ins (T_RCR,             OP_M_DW,     0,      OP_CL,      0,      0xD3,     0x18,                     P_386, NO_PREFIX)
 
-ins (T_RDMPC,           OP_NONE,     F_0F,   OP_NONE,    no_RM,  0x33,     0x00,                     P_686, NO_PREFIX)
-
 ins (T_RDMSR,           OP_NONE,     F_0F,   OP_NONE,    no_RM,  0x32,     0x00,                     P_586, NO_PREFIX)
+ins (T_RDPMC,           OP_NONE,     F_0F,   OP_NONE,    no_RM,  0x33,     0x00,                     P_686, NO_PREFIX)
 ins (T_RDTSC,           OP_NONE,     F_0F,   OP_NONE,    no_RM,  0x31,     0x00,                     P_586, NO_PREFIX)
 insa(T_READONLY,        OP_SPECIAL,  0,      0,          0,      0,        OP_RES_ID,                0,     0)
 insa(T_RECORD,          OP_SPECIAL,  0,      OP_NONE,    0,      0,        OP_DIRECTIVE,             0,     0)
@@ -1103,6 +1102,8 @@ insa(T_SUBTITLE,        OP_SPECIAL,  0,      OP_NONE,    0,      0,        OP_DI
 insa(T_SUBTTL,          OP_SPECIAL,  0,      OP_NONE,    0,      0,        OP_DIRECTIVE,             0,     0)
 insa(T_SWORD,           OP_SPECIAL,  0,      OP_SPECIAL, 0,      0,        OP_RES_ID|OP_PTR_MODIFIER,0,     0)
 insa(T_SYSCALL,         OP_SPECIAL,  0,      0,          0,      0,        OP_RES_ID,                0,     0)
+ins (T_SYSENTER,        OP_NONE,     F_0F,   OP_NONE,    no_RM,  0x34,     0x00,                     P_686p,NO_PREFIX)
+ins (T_SYSEXIT,         OP_NONE,     F_0F,   OP_NONE,    no_RM,  0x35,     0x00,                     P_686p,NO_PREFIX)
 ins (T_TBYTE,           OP_SPECIAL,  0,      OP_SPECIAL, 0,      0,        OP_RES_ID|OP_PTR_MODIFIER,0,     0)
 ins (T_TEST,            OP_A,        0,      OP_I,       no_RM,  0xA8,     0x00,                     P_86,  NO_PREFIX)
 ins (T_TEST,            OP_R,        0,      OP_R,       0,      0x84,     0x00,                     P_86,  NO_PREFIX)

@@ -417,8 +417,8 @@ pxor
 qword
 rcl
 rcr
-rdmpc
 rdmsr
+rdpmc
 rdtsc
 rep
 repe
@@ -494,6 +494,8 @@ stosd
 stosw
 str
 sub
+sysenter
+sysexit
 tbyte
 test
 tr3

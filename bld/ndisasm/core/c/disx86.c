@@ -3025,7 +3025,7 @@ static unsigned UnixMangleName( dis_dec_ins *ins, char *p, unsigned len )
     case DI_X86_pushw:
     case DI_X86_pushd:
     case DI_X86_rdmsr:
-    case DI_X86_rdmpc:
+    case DI_X86_rdpmc:
     case DI_X86_seto:
     case DI_X86_setno:
     case DI_X86_setb:
