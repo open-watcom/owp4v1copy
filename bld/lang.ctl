@@ -13,6 +13,7 @@ echo Languages Build <1>
 #        First of all build prerequisite utilities used in the build
 #
 [ INCLUDE <devdir>\builder\lang.ctl ]
+[ INCLUDE <devdir>\pmake\lang.ctl ]
 [ INCLUDE <devdir>\yacc\lang.ctl ]
 [ INCLUDE <devdir>\whpcvt\lang.ctl ]
 [ INCLUDE <devdir>\helpcomp\lang.ctl ]
@@ -143,7 +144,6 @@ echo Languages Build <1>
 [ INCLUDE <devdir>\wpack\lang.ctl ]
 [ INCLUDE <devdir>\cvpack\lang.ctl ]
 #[ INCLUDE <devdir>\build\lang.ctl ]
-#[ INCLUDE <devdir>\pmake\lang.ctl ]
 #[ INCLUDE <devdir>\wic\lang.ctl ]      SH: Removed as not needed for 11.0c
 
 
