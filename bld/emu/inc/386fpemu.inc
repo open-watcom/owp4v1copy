@@ -699,13 +699,7 @@ ifdef __WIN387__
           push  eax                     ; - - save eax
           movzx ecx,cx                  ; - - selector to map
 
-;          VMMcall _SelectorMapFlat,<WINVMHandle,ecx,0>
-          push  0
-          push  ecx
-          push  WINVMHandle
-          int   20h
-          dd    1006Eh
-          add   esp,0ch
+          VMMcall _SelectorMapFlat,<WINVMHandle,ecx,0>
 
           add   ebx,eax                 ; - - add base of selector to relative
                                         ;     offset from start of selector
