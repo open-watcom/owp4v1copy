@@ -15,40 +15,41 @@ lang_root = $(%open_nlang_root)
 !else
 lang_root = $(%dwatcom)
 !endif
-%WATCOM=$+$(lang_root)$-
-%PATH=$+$(lang_root)\binnt;$(lang_root)\binw;$(%PATH)$-
-%INCLUDE=$+$(lang_root)\h;$(lang_root)\h\nt$-
-librarian       = $(lang_root)\binnt\wlib
-libaxp          = $(lang_root)\binnt\wlib
+# Do not fuck with the env vars, that way it's far too easy to break stuff!
+#%WATCOM=$+$(lang_root)$-
+#%PATH=$+$(lang_root)\binnt;$(lang_root)\binw;$(%PATH)$-
+#%INCLUDE=$+$(lang_root)\h;$(lang_root)\h\nt$-
+librarian       = $(nlang_bin)\wlib
+libaxp          = $(nlang_bin)\wlib
 # this is since the path stuff above doesn't appear to work at the moment
 !ifdef __NTAXP__
-bld_cl          = $(lang_root)\binnt\wclaxp -zq -l=$(bld_sys) -i$(bld_incs)
-bld_cc          = $(lang_root)\binnt\wccaxp -zq -i$(bld_incs)
+bld_cl          = $(nlang_bin)\wclaxp -zq -l=$(bld_sys) -i$(bld_incs)
+bld_cc          = $(nlang_bin)\wccaxp -zq -i$(bld_incs)
 !else
-bld_cl          = $(lang_root)\binnt\wcl386 -zq -l=$(bld_sys) -i$(bld_incs)
-bld_cc          = $(lang_root)\binnt\wcc386 -zq -i$(bld_incs)
+bld_cl          = $(nlang_bin)\wcl386 -zq -l=$(bld_sys) -i$(bld_incs)
+bld_cc          = $(nlang_bin)\wcc386 -zq -i$(bld_incs)
 
 !ifdef clib_rtdll
 # C runtime library must compile against local headers!!!!
-cc_386          = *$(lang_root)\binnt\wcc386 -zq
-cpp_386         = *$(lang_root)\binnt\wpp386 -zq
+cc_386          = *$(nlang_bin)\wcc386 -zq
+cpp_386         = *$(nlagn_bin)\wpp386 -zq
 !else
-cc_386          = *$(lang_root)\binnt\wcc386 -zq -i$(bld_incs)
-cpp_386         = *$(lang_root)\binnt\wpp386 -zq -i$(bld_incs)
+cc_386          = *$(nlang_bin)\wcc386 -zq -i$(bld_incs)
+cpp_386         = *$(nlang_bin)\wpp386 -zq -i$(bld_incs)
 !endif
 
 !endif
 
 !ifdef __LOADDLL__
-!loaddll wccaxp $(lang_root)\binnt\wccdaxp.dll
-!loaddll wppaxp $(lang_root)\binnt\wppdaxp.dll
-!loaddll wlink  $(lang_root)\binnt\wlink.dll
-!loaddll wlib   $(lang_root)\binnt\wlibd.dll
-!loaddll $(lang_root)\binnt\wlib   $(lang_root)\binnt\wlibd.dll
-!loaddll $(lang_root)\binnt\wccaxp $(lang_root)\binnt\wccdaxp.dll
-!loaddll $(lang_root)\binnt\wppaxp $(lang_root)\binnt\wppdaxp.dll
-!loaddll $(lang_root)\binnt\wlink  $(lang_root)\binnt\wlink.dll
-!loaddll $(lang_root)\binnt\wcc386 $(lang_root)\binnt\wccd386.dll
+!loaddll wccaxp $(nlang_dll)\wccdaxp.dll
+!loaddll wppaxp $(nlang_dll)\wppdaxp.dll
+!loaddll wlink  $(nlang_dll)\wlink.dll
+!loaddll wlib   $(nlang_dll)\wlibd.dll
+!loaddll $(nlang_bin)\wlib   $(nlang_dll)\wlibd.dll
+!loaddll $(nlang_bin)\wccaxp $(nlang_dll)\wccdaxp.dll
+!loaddll $(nlang_bin)\wppaxp $(nlang_dll)\wppdaxp.dll
+!loaddll $(nlang_bin)\wlink  $(nlang_dll)\wlink.dll
+!loaddll $(nlang_bin)\wcc386 $(nlang_dll)\wccd386.dll
 !endif
 !endif
 

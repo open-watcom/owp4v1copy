@@ -126,17 +126,17 @@ pch_flags = -fhq
 !ifndef runtime_library_source
 
 !ifeq target_system os2
-comp_flags += -bt=os2 -i$(lib_misc_dir)\h;$(watcom_dir)\os21x_h
+comp_flags += -bt=os2 -i$(lib_misc_dir)\h;$(lang_root)\h\os21x
 asm_flags += -bt=os2
 !endif
 
 !ifeq target_system os2v2
-comp_flags += -bt=os2 -i$(lib_misc_dir)\h;$(watcom_dir)\os220_h
+comp_flags += -bt=os2 -i$(lib_misc_dir)\h;$(lang_root)\h\os2
 asm_flags += -bt=os2
 !endif
 
 !ifeq target_system nt
-comp_flags += -bt=nt -i$(lib_misc_dir)\h;$(watcom_dir)\nt_h
+comp_flags += -bt=nt -i$(lib_misc_dir)\h;$(lang_root)\h\nt
 asm_flags += -bt=nt
 !endif
 
