@@ -148,15 +148,15 @@ in the same column. All source code statements contained within the function
 body should start at the first indentation level (4 spaces in). The name of
 the function and an opening brace should be on the first line, with the return
 type preceding the function name. Between the return type and the function
-name may be a macro definition for the function type modifier. Using a macro
-for this modifier allows it to be changed to suit new operating environments,
-such as __pascal or __stdcall for Windows environments by only changing a
-single macro definition. It is recommended that each argument to the function
-be listed one per line, with a single indentation level (4 spaces) before the
-argument type. There should be only a single space between the argument type
-and the argument name for each line, followed by a comma. The last argument
-should be ended with the ')' character instead of a comma (this must not be
-placed on the following line).
+name may be a macro for the function type modifier. Using a macro for this
+modifier allows it to be changed to suit new operating environments, such as
+__pascal or __stdcall for Windows environments by only changing a single macro
+definition. It is recommended that each argument to the function be listed one
+per line, with a single indentation level (4 spaces) before the argument type.
+There should be only a single space between the argument type and the argument
+name for each line, followed by a comma. The last argument should be ended with
+the ')' character instead of a comma (this must not be placed on the following
+line).
 
 If the function is static or private, it may be left without any preceding
 documenation provided the function is short. However any function that
@@ -299,7 +299,19 @@ the for statement, or multiple operations in the counter section of the for
 statement then use the comma operator. However ensure that a space always
 follows the comma:
 
-for (i = 0, j = 0; i < 10; i++, j += 10) {
+for( i = 0, j = 0; i < 10; i++, j += 10 ) {
+}
+
+In cases where an "endless" loop is needed, the form
+
+for( ;; ) {
+    // do something;
+}
+
+should be used instead of the alternative
+
+while( 1 ) {
+    // do something in a not so nice way;
 }
 
 Switch Statements
@@ -341,6 +353,19 @@ case 1:
 It is advisable to include a default action for a switch statement, but this
 can be left out for efficiency's sake.
 
+If falling through is used in switch statements, it is highly recommended
+that a comment to that effect is added, such as this:
+
+switch( x ) {
+case 1:
+    // code for case 1
+case 2;                 // Note fallthrough!
+    // code for case 2
+    break;
+default:
+    // default case
+}
+
 Goto Statements
 
 Occasionally, it is reasonable to use goto statements.
@@ -372,6 +397,19 @@ rather than
 
     x=(y+10)-240*(20/(t+my_func()));
 
+Return statements
+In functions that return a value, the return expression should be placed
+in parentheses. For example:
+
+return( i + 1 );
+
+or
+
+return( TRUE );
+
+In other words, format return statements as if 'return' was a name of
+a function.
+
 Variable Declarations
 
 Don't declare multiple variables in one declaration that spans lines. Instead
@@ -400,10 +438,25 @@ that the names of the variables align on "tab stop" columns.
 For example:
 
 int             my_var1;
-ulong           my_var2;
+long            my_var2;
 my_structue     my_structure = {
     ...
 };
+
+Local variables
+Declarations of local variables should be formatted similarly to those of
+global variables, as detailed above. For example:
+
+void foo( void )
+{
+    int         my_var1;
+    long        my_var2;
+
+    // code follows here
+}
+
+Note that the declaration block is separated from the first statement
+in the function by a blank line.
 
 Comments and Commenting Style
 Commenting code is extremely important. Comments serve as an aid to the human
