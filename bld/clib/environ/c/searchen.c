@@ -24,8 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  This function searches for the specified file in the
+*               1) current directory or, failing that,
+*               2) the paths listed in the specified environment variable
+*               until it finds the first occurrence of the file,
+*
+* 06-jan-04     J.B.Schueler    copy no more than _MAX_PATH bytes into buffer
 *
 ****************************************************************************/
 
@@ -70,7 +74,8 @@
 _WCRTLINK void __F_NAME(_searchenv,_wsearchenv)( const CHAR_TYPE *name, const CHAR_TYPE *env_var, CHAR_TYPE *buffer )
     {
         CHAR_TYPE *p, *p2;
-        int prev_errno;
+        int     prev_errno;
+        size_t  len;
 
         #ifdef __WIDECHAR__
             if( _RWD_wenviron == NULL )  __create_wide_environment();
@@ -79,6 +84,7 @@ _WCRTLINK void __F_NAME(_searchenv,_wsearchenv)( const CHAR_TYPE *name, const CH
         prev_errno = _RWD_errno;
         if( __F_NAME(access,_waccess)( name, 0 ) == 0 ) {
             p = buffer;                                 /* JBS 90/3/30 */
+            len = 0;                                    /* JBS 04/1/06 */
             for( ;; ) {
                 if( name[0] == PATH_SEPARATOR ) break;
                 if( name[0] == __F_NAME('.',L'.') ) break;
@@ -87,11 +93,18 @@ _WCRTLINK void __F_NAME(_searchenv,_wsearchenv)( const CHAR_TYPE *name, const CH
                 if( name[0] != __F_NAME('\0',L'\0')  &&  name[1] == __F_NAME(':',L':') ) break;
 #endif
                 __F_NAME(getcwd,_wgetcwd)( buffer, _MAX_PATH );
-                p = &buffer[ __F_NAME(strlen,wcslen)( buffer ) ];
-                if( p[-1] != PATH_SEPARATOR ) *p++ = PATH_SEPARATOR;
+                len = __F_NAME(strlen,wcslen)( buffer );
+                p = &buffer[ len ];
+                if( p[-1] != PATH_SEPARATOR ) {
+                    if( len < (_MAX_PATH-1) ) {
+                        *p++ = PATH_SEPARATOR;
+                        len++;
+                    }
+                }
                 break;
             }
-            __F_NAME(strcpy,wcscpy)( p, name );
+            *p = __F_NAME('\0',L'\0');
+            __F_NAME(strncat,wcsncat)( p, name, (_MAX_PATH-1) - len );
             return;
         }
         p = __F_NAME(getenv,_wgetenv)( env_var );
@@ -99,9 +112,15 @@ _WCRTLINK void __F_NAME(_searchenv,_wsearchenv)( const CHAR_TYPE *name, const CH
             for(;;) {
                 if( *p == __F_NAME('\0',L'\0') ) break;
                 p2 = buffer;
+                len = 0;                                /* JBS 04/1/06 */
                 while( *p ) {
                     if( *p == LIST_SEPARATOR ) break;
-                    if( *p != __F_NAME('"',L'"') ) *p2++ = *p; /* JBS 00/9/29 */
+                    if( *p != __F_NAME('"',L'"') ) {
+                        if( len < (_MAX_PATH-1) ) {
+                            *p2++ = *p; /* JBS 00/9/29 */
+                            len++;
+                        }
+                    }
                     p++;
                 }
                 /* check for zero-length prefix which represents CWD */
@@ -112,20 +131,26 @@ _WCRTLINK void __F_NAME(_searchenv,_wsearchenv)( const CHAR_TYPE *name, const CH
                         &&  p2[-1] != __F_NAME(':',':')
 #endif
                         ) {
-                        *p2++ = PATH_SEPARATOR;
+                        if( len < (_MAX_PATH-1) ) {
+                            *p2++ = PATH_SEPARATOR;
+                            len++;
+                        }
                     }
-                    *p2 = '\0';
-                    __F_NAME(strcat,wcscat)( p2, name );
-                    /* check to see if file exists */
-                    if( __F_NAME(access,_waccess)( buffer, 0 ) == 0 ) {
-                        __set_errno( prev_errno );
-                        return;
+                    *p2 = __F_NAME('\0',L'\0');
+                    len = __F_NAME(strlen,wcslen)( buffer )
+                        + __F_NAME(strlen,wcslen)( name );
+                    if( len < (_MAX_PATH-1) ) {
+                        __F_NAME(strncat,wcsncat)( p2, name, (_MAX_PATH-1) - len );
+                        /* check to see if file exists */
+                        if( __F_NAME(access,_waccess)( buffer, 0 ) == 0 ) {
+                            __set_errno( prev_errno );
+                            return;
+                        }
                     }
                 }
                 if( *p == '\0' ) break;
                 ++p;
             }
         }
-        buffer[0] = '\0';
+        buffer[0] = __F_NAME('\0',L'\0');
     }
-
