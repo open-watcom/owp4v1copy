@@ -1,4 +1,4 @@
-@echo off
+@echo on
 pushd
 set LABEL=open_watcom_0.8.1
 set PREFIX=open_watcom_0.8.1
