@@ -58,9 +58,6 @@ extra_defines           = -d$(as_cpu)
 !ifndef inline_as
 extra_defines           += -d_STANDALONE_
 !endif
-!ifeq release 1
-extra_defines           += -dNDEBUG
-!endif
 
 extra_c_flags           = -fhq $(extra_defines)
 
@@ -185,7 +182,7 @@ $(asi_objs) : msg.gh
 !endif
 
 msg.gh : mkstrid.c as.msg
-        $(bld_cl) $[@ $(cflags)
+        $(bld_cl) $[@ -w4-we-zc-oaxt $(extra_defines)
         mkstrid $^@
 
 $(yacc_in) : $(yacc_src) $(as_dir)\y\yydriver.c
