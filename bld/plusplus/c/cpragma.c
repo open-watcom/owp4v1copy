@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Target independent pragma processing.
 *
 ****************************************************************************/
 
@@ -256,13 +255,13 @@ static void pragCodeSeg(        // SET NEW CODE SEGMENT
     if( CurToken == T_LEFT_PAREN ) {
         PPState = PPS_EOL;
         NextToken();
-        if( CurToken == T_STRING ) {
+        if( (CurToken == T_STRING) || (CurToken == T_ID) ) {
             seg_name = strsave( Buffer );
             seg_class = NULL;
             NextToken();
             if( CurToken == T_COMMA ) {
                 NextToken();
-                if( CurToken == T_STRING ) {
+                if( (CurToken == T_STRING) || (CurToken == T_ID) ) {
                     seg_class = strsave( Buffer );
                     NextToken();
                 } else {
@@ -300,13 +299,13 @@ static void pragDataSeg(        // SET NEW DATA SEGMENT
     if( CurToken == T_LEFT_PAREN ) {
         PPState = PPS_EOL;
         NextToken();
-        if( CurToken == T_STRING ) {
+        if( (CurToken == T_STRING) || (CurToken == T_ID) ) {
             seg_name = strsave( Buffer );
             seg_class = NULL;
             NextToken();
             if( CurToken == T_COMMA ) {
                 NextToken();
-                if( CurToken == T_STRING ) {
+                if( (CurToken == T_STRING) || (CurToken == T_ID) ) {
                     seg_class = strsave( Buffer );
                     NextToken();
                 } else {

@@ -525,7 +525,7 @@ The following describes the form of the "code_seg" pragma.
 .mbox end
 .synote
 .note seg_name
-is the name of the text segment enclosed in quotes.
+is the name of the text segment optionally enclosed in quotes.
 Also,
 .mono seg_name
 may be a macro as in:
@@ -534,7 +534,7 @@ may be a macro as in:
 #pragma code_seg ( seg_name );
 .millust end
 .note class_name
-is the optional class name of the text segment enclosed in quotes.
+is the optional class name of the text segment and may be enclosed in quotes.
 Also,
 .mono class_name
 may be a macro as in:
@@ -546,7 +546,7 @@ may be a macro as in:
 .np
 Consider the following example.
 .millust begin
-#pragma code_seg ( "my_text" );
+#pragma code_seg ( my_text );
 
 int incr( int i )
 {
@@ -624,7 +624,7 @@ The following describes the form of the "data_seg" pragma.
 .mbox end
 .synote
 .note seg_name
-is the name of the data segment enclosed in quotes.
+is the name of the data segment and may be enclosed in quotes.
 Also,
 .mono seg_name
 may be a macro as in:
@@ -633,7 +633,7 @@ may be a macro as in:
 #pragma data_seg ( seg_name );
 .millust end
 .note class_name
-is the optional class name of the data segment enclosed in quotes.
+is the optional class name of the data segment and may be enclosed in quotes.
 Also,
 .mono class_name
 may be a macro as in:
@@ -645,7 +645,7 @@ may be a macro as in:
 .np
 Consider the following example.
 .millust begin
-#pragma data_seg ( "my_data" );
+#pragma data_seg ( my_data );
 
 static int i;
 static int j;

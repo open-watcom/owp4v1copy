@@ -832,13 +832,13 @@ static void PragCodeSeg( void )                       /* 22-oct-92 */
         CompFlags.pre_processing = 1;           /* enable macros */
         seg = NULL;
         NextToken();
-        if( CurToken == T_STRING ) {
+        if( (CurToken == T_STRING) || (CurToken == T_ID) ) {
             segname = CStrSave( Buffer );
             classname = CStrSave( "" );
             NextToken();
             if( CurToken == T_COMMA ) {
                 NextToken();
-                if( CurToken == T_STRING ) {
+                if( (CurToken == T_STRING) || (CurToken == T_ID) ) {
                     CMemFree( classname );
                     classname = CStrSave( Buffer );
 //                  CodeClassName = CStrSave( Buffer );  /* 13-apr-93 */
@@ -867,12 +867,12 @@ static void PragDataSeg( void )                       /* 22-oct-92 */
         CompFlags.pre_processing = 1;           /* enable macros */
         segment = 0;
         NextToken();
-        if( CurToken == T_STRING ) {
+        if( (CurToken == T_STRING) || (CurToken == T_ID) ) {
             segname = CStrSave( Buffer );
             NextToken();
             if( CurToken == T_COMMA ) {
                 NextToken();
-                if( CurToken == T_STRING ) {
+                if( (CurToken == T_STRING) || (CurToken == T_ID) ) {
                     segment = AddSegName( segname, Buffer, SEGTYPE_DATA );
                     NextToken();
                 } else {
