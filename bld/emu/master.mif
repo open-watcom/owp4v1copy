@@ -49,7 +49,7 @@ emu387: $(objs)
 
 !else ifeq host_OS win
 
-emu387w.obj: emu387.asm $(INCS)
+emu387w.obj: emu387.asm $(INCS) win30vxd.inc
     $(as) -mf -d_OS=_PLDT -d__WIN387__ -I$(mathlib_dir)\h;$(emu386)\inc -fo=$^@ $[@
 
 !else

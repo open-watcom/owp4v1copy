@@ -338,45 +338,32 @@ Declare_Virtual_Device macro Name, Major_Ver, Minor_Ver, Ctrl_Proc, Device_Num, 
   VxD_LOCKED_DATA_ENDS
 endm
 
-PushCParms macro arglst
-  local count, argx
-
-  argscnt = 0
-  irp x1,<arglst>
-    argscnt = argscnt + 1
-  endm
-  count = argscnt
-  irp x2,<arglst>
-    argx = 0
-    irp x3,<arglst>
-      argx = argx + 1
-      if argx eq count
-        push x3
-      endif
-    endm
-    count = count - 1
-  endm
-endm
-
-PopCParams macro
-  if argscnt ne 0
-    add esp,argscnt * 4
-  endif
-endm
-
-VxDcall macro P, Param
-  PushCParms <Param>
+VxDcall macro P
   int 20h
   dd  P
-  PopCParams
 endm
 
-VMMcall macro P, Param
-  VxDcall <P>, <Param>
+VxDcall3 macro P, Param1, Param2, Param3
+  push Param3
+  push Param2
+  push Param1
+  int 20h
+  dd  P
+  add esp,0ch
 endm
 
-VMMjmp macro P, Param
-  VxDcall <P + 8000h>, <Param>
+VxDcall3a macro P, Param1, Param2, Param3
+  push OFFSET32 Param3
+  push Param2
+  push Param1
+  int 20h
+  dd  P
+  add esp,0ch
+endm
+
+VxDjmp macro P
+  int 20h
+  dd  P + 8000h
 endm
 
 Control_Dispatch macro Service, Procedure
@@ -392,14 +379,14 @@ Push_Client_State macro
   sub  esp, SIZE Client_Reg_Struc
   push edi
   lea  edi, [esp+4]
-  VMMCall Save_Client_State
+  VxDCall Save_Client_State
   pop  edi
 endm
 
 Pop_Client_State macro
   push esi
   lea  esi, [esp+4]
-  VMMCall Restore_Client_State
+  VxDCall Restore_Client_State
   pop  esi
   add  esp, SIZE Client_Reg_Struc
 endm
@@ -413,7 +400,7 @@ Client_Ptr_Flat MACRO Reg_32, Cli_Seg, Cli_Off, Can_Trash_EAX
   ELSE
     mov ax, (Client_&Cli_Seg * 100h) + Client_&Cli_Off
   ENDIF
-    VMMCall Map_Flat
+    VxDCall Map_Flat
 
   IFDIFI <Reg_32>, <EAX>
     xchg Reg_32, eax
