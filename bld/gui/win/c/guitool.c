@@ -42,9 +42,13 @@
 extern  WPI_INST        GUIResHInst;
 extern  gui_menu_struct GUIHint[];
 
-#define OUTLINE_AMOUNT  4 /* total height/width taken up by outline around
-                             bitmap, on button */
-#define BORDER_AMOUNT   1 /* space outside row of bottons */
+/* total height/width taken up by outline around  bitmap, on button */
+#if defined (__NT__)
+#define OUTLINE_AMOUNT  4   // Should be changed later.
+#else
+#define OUTLINE_AMOUNT  4
+#endif
+#define BORDER_AMOUNT   1 /* space outside row of buttons */
 
 /*
  * GUIXCloseToolBar -- close the tool bar and free memory.  Can be called by
@@ -284,7 +288,7 @@ bool GUIXCreateToolBar( gui_window *wnd, bool fixed, gui_ord height,
     } else {
         /* only height of windows given, make bitmaps square */
         size.x = 0;
-        size.y = height;
+        size.y = height - 2;
         GUIScaleToScreenR( &size );
         height = size.y;
         width = size.y;

@@ -117,6 +117,11 @@ static WORD     lastID = -1;
 static BOOL     mouse_captured = FALSE;
 static BOOL     ignore_mousemove = FALSE; // release_capture generates a
                                           // WM_MOUSEMOVE msg
+#ifndef __OS2_PM__
+static BOOL     round_corners = TRUE;     // Platform has rounded buttons?
+#else
+static BOOL     round_corners = FALSE;    // Platform has rounded buttons?
+#endif
 
 #if defined(__NT__)
 void WPTB_TransparentBlt(HDC, UINT, UINT, UINT, UINT, HDC, COLORREF);
@@ -299,6 +304,15 @@ toolbar *ToolBarInit( HWND parent )
     clr_btnface = btnColour;
 #if defined (__NT__)
     clr_black = GetSysColor(COLOR_BTNTEXT);
+    {
+        OSVERSIONINFO os;
+        
+        GetVersionEx(&os);
+        if ( os.dwMajorVersion == 4 || (os.dwMajorVersion == 5 && os.dwMinorVersion == 0)) {
+            // round_corners = FALSE;
+            // Later, when drawing code is adapted
+        }
+    }    
 #else
     clr_black = RGB(0, 0, 0);
 #endif
@@ -533,27 +547,40 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
     bar->is_fixed = disp->is_fixed;
     width = _wpi_getwidthrect( (disp->area) );
     height = _wpi_getheightrect( (disp->area) );
+
 #ifndef __OS2_PM__
-#ifndef __NT__
+#if defined (__NT__)
+    if ( LOBYTE(LOWORD(GetVersion())) >= 4 &&
+         (disp->style & TOOLBAR_FLOAT_STYLE) == TOOLBAR_FLOAT_STYLE ) {
+        CreateWindowEx( WS_EX_TOOLWINDOW, className, NULL, disp->style,
+            disp->area.left, disp->area.top, width, height,
+            bar->owner, (HMENU) HNULL, GET_HINSTANCE( bar->owner ), bar );
+    }
+    else {
+        if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
+            CreateWindow( className, NULL, WS_CHILD | WS_CLIPSIBLINGS,
+                disp->area.left, disp->area.top, width, height,
+                bar->owner, (HMENU) HNULL, GET_HINSTANCE( bar->owner ), bar );
+        } else {
+            CreateWindow( className, NULL, disp->style,
+                disp->area.left, disp->area.top, width, height,
+                bar->owner, (HMENU) HNULL, GET_HINSTANCE( bar->owner ), bar );
+        }
+    }
+#else
     CreateWindow( className, NULL, disp->style,
         disp->area.left, disp->area.top, width, height,
         bar->owner, (HMENU) HNULL, GET_HINSTANCE( bar->owner ), bar );
-#else
-    if((width > height) && (LOBYTE(LOWORD(GetVersion())) >= 4)) {
-        /* Small hack to avoid black border around main toolbar */
-        disp->style = WS_CHILD;
-    }
-    CreateWindowEx( WS_EX_TOOLWINDOW, className, NULL, disp->style,
-        disp->area.left, disp->area.top, width, height,
-        bar->owner, (HMENU) HNULL, GET_HINSTANCE( bar->owner ), bar );
 #endif
+
     /*
      * Windows ignores the GETMINMAXINFO before the WM_CREATE or
      * something so we kluge it.
      */
     MoveWindow( bar->hwnd, disp->area.left, disp->area.top,
-                                                width, height, TRUE );
-#else
+                width, height, TRUE );
+                
+#else  // It is __OS2_PM__
     {
         HWND    frame;
         HWND    parent;
@@ -742,31 +769,31 @@ static void drawBorder( WPI_PRES pres, WPI_POINT size, int border )
     _wpi_setpoint( &pt, 0, _wpi_cvth_y(0, size.y) );
     _wpi_movetoex( pres, &pt, NULL );
     pt.x = border;
-#ifdef __OS2_PM__
-    pt.x -= 1;
-#endif
+    if (!round_corners) {
+        pt.x -= 1;
+    }
     _wpi_lineto( pres, &pt );
     pt.x = x;
     _wpi_movetoex( pres, &pt, NULL );
     pt.y = _wpi_cvth_y( border, size.y );
-#ifdef __OS2_PM__
-    pt.y += 1;
-#endif
+    if (!round_corners) {
+        pt.y += 1;
+    }
     _wpi_lineto( pres, &pt );
 
     pt.y = y;
     _wpi_movetoex( pres, &pt, NULL );
     pt.x = x - border;
-#ifdef __OS2_PM__
-    pt.x += 1;
-#endif
+    if (!round_corners) {
+        pt.x += 1;
+    }
     _wpi_lineto( pres, &pt );
     pt.x = 0;
     _wpi_movetoex( pres, &pt, NULL );
     pt.y = _wpi_cvth_y( _wpi_cvth_y(y, size.y) - border, size.y );
-#ifdef __OS2_PM__
-    pt.y -= 1;
-#endif
+    if (!round_corners) {
+       pt.y -= 1;
+    }
     _wpi_lineto( pres, &pt );
 
     _wpi_selectobject( pres, old_pen );
