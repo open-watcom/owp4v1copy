@@ -254,7 +254,7 @@ static void getText( ss_block *ss_new, char *start )
     keyword[ index ] = '\0';
 
     // test if string is keyword
-    if( IsKeyword( keyword ) ) {
+    if( IsKeyword( keyword, TRUE ) ) {
         char *end = text;
 
         ss_new->type = SE_KEYWORD;

@@ -41,6 +41,7 @@
 #include "lang.h"
 #include "sstyle_c.h"
 #include "sstyle_f.h"
+#include "sstyle_h.h"
 
 
 /*----- EXPORTS -----*/
@@ -93,22 +94,28 @@ static void getNextBlock( ss_block *ss_new, char *text, int text_col,
         case LANG_NONE:
             getText( ss_new, text + text_col );
             break;
+        case LANG_HTML:
+        case LANG_WML:
+            GetHTMLBlock( ss_new, text + text_col, text_col );
+            break;
         case LANG_FORTRAN:
             GetFORTRANBlock( ss_new, text + text_col, text_col );
             break;
-        case LANG_JAVA:
         case LANG_C:
         case LANG_CPP:
+        case LANG_JAVA:
         case LANG_SQL:
         case LANG_BAT:
         case LANG_BASIC:
         case LANG_PERL:
+        case LANG_DBTEST:
+        case LANG_USER:
         default:
             GetCBlock( ss_new, text + text_col, line, line_no );
             break;
     }
 
-    /* GetCBlock, GetFORTRANBlock and getText fill in only ss->len.
+    /* GetCBlock, GetFORTRANBlock, GetHTMLBlock and getText fill in only ss->len.
        use this to get an index into the text, stored in ss->end.
     */
     ss_new->end = ss_new->len;
@@ -308,17 +315,23 @@ void SSDifBlock( ss_block *ss_old, char *text, int start_col,
     index = 0;
     anychange = FALSE;
     switch( CurrentInfo->Language ) {
-        case LANG_JAVA:
         case LANG_C:
         case LANG_CPP:
+        case LANG_JAVA:
         case LANG_SQL:
         case LANG_BAT:
         case LANG_BASIC:
         case LANG_PERL:
+        case LANG_DBTEST:
+        case LANG_USER:
             InitCLine( text );
             break;
         case LANG_FORTRAN:
             InitFORTRANLine( text, line_no );
+            break;
+        case LANG_HTML:
+        case LANG_WML:
+            InitHTMLLine( text );
             break;
     }
     ss_inc = ss_old;
@@ -374,23 +387,28 @@ void SSKillBlock( ss_block *ss )
 bool SSKillsFlags( char ch )
 {
     // Warning!  contains language-specific information
-    int lang;
-    if( CurrentInfo == NULL ) return( FALSE );
 
-    lang = CurrentInfo->Language;
-
-    if( ( lang == LANG_C ||
-          lang == LANG_CPP ||
-          lang == LANG_JAVA ||
-          lang == LANG_SQL ||
-          lang == LANG_BAT ||
-          lang == LANG_BASIC ||
-          lang == LANG_PERL )
-        && ( ch == '#' || ch == '"' || ch == '/' || ch == '*' ) ) {
-        return( TRUE );
-    }
-    if( lang == LANG_FORTRAN && ch == '\'' ) {
-        return( TRUE );
+    if( CurrentInfo != NULL ) {
+        switch( CurrentInfo->Language ) {
+        case LANG_C:
+        case LANG_CPP:
+        case LANG_JAVA:
+        case LANG_SQL:
+        case LANG_BAT:
+        case LANG_BASIC:
+        case LANG_PERL:
+        case LANG_DBTEST:
+        case LANG_USER:
+            if( ch == '#' || ch == '"' || ch == '/' || ch == '*' ) return( TRUE );
+            break;
+        case LANG_FORTRAN:
+            if( ch == '\'' ) return( TRUE );
+            break;
+        case LANG_HTML:
+        case LANG_WML:
+            if( ch == '<' || ch == '>' ) return( TRUE );
+            break;
+        }
     }
     return( FALSE );
 }
@@ -399,17 +417,23 @@ void SSInitLanguageFlags( linenum line_no )
 {
     if( CurrentInfo != NULL ) {
         switch( CurrentInfo->Language ) {
-            case LANG_JAVA:
             case LANG_C:
             case LANG_CPP:
+            case LANG_JAVA:
             case LANG_SQL:
             case LANG_BAT:
             case LANG_BASIC:
             case LANG_PERL:
+            case LANG_DBTEST:
+            case LANG_USER:
                 InitCFlags( line_no );
                 break;
             case LANG_FORTRAN:
                 InitFORTRANFlags( line_no );
+                break;
+            case LANG_HTML:
+            case LANG_WML:
+                InitHTMLFlags( line_no );
                 break;
         }
     }
@@ -419,17 +443,23 @@ void SSInitLanguageFlagsGivenValues( ss_flags *flags )
 {
     if( CurrentInfo != NULL ) {
         switch( CurrentInfo->Language ) {
-            case LANG_JAVA:
             case LANG_C:
             case LANG_CPP:
+            case LANG_JAVA:
             case LANG_SQL:
             case LANG_BAT:
             case LANG_BASIC:
             case LANG_PERL:
+            case LANG_DBTEST:
+            case LANG_USER:
                 InitCFlagsGivenValues( &( flags->c ) );
                 break;
             case LANG_FORTRAN:
                 InitFORTRANFlagsGivenValues( &( flags->f ) );
+                break;
+            case LANG_HTML:
+            case LANG_WML:
+                InitHTMLFlagsGivenValues( &( flags->f ) );
                 break;
         }
     }
@@ -439,17 +469,23 @@ void SSGetLanguageFlags( ss_flags *flags )
 {
     if( CurrentInfo != NULL ) {
         switch( CurrentInfo->Language ) {
-            case LANG_JAVA:
             case LANG_C:
             case LANG_CPP:
+            case LANG_JAVA:
             case LANG_SQL:
             case LANG_BAT:
             case LANG_BASIC:
             case LANG_PERL:
+            case LANG_DBTEST:
+            case LANG_USER:
                 GetCFlags( &( flags->c ) );
                 break;
             case LANG_FORTRAN:
                 GetFORTRANFlags( &( flags->f ) );
+                break;
+            case LANG_HTML:
+            case LANG_WML:
+                GetHTMLFlags( &( flags->f ) );
                 break;
         }
     }

@@ -30,42 +30,8 @@
 ****************************************************************************/
 
 
-#ifndef _LANG_INCLUDED
-#define _LANG_INCLUDED
-
-enum {
-    LANG_NONE,          // LANG_NONE always first
-    LANG_C,
-    LANG_CPP,
-    LANG_FORTRAN,
-    LANG_JAVA,
-    LANG_SQL,
-    LANG_BAT,
-    LANG_BASIC,
-    LANG_PERL,
-    LANG_HTML,
-    LANG_WML,
-    LANG_DBTEST,
-    LANG_USER,
-    LANG_MAX,           // LANG_MAX always last
-};
-
-typedef struct tag_hash_entry {
-    bool                    real;
-    char                    *keyword;
-    struct tag_hash_entry   *next;
-} hash_entry;
-
-typedef struct tag_lang_info {
-    hash_entry          *keyword_table;
-    int                  table_entries;
-    int                  ref_count;
-    char                *read_buf;
-} lang_info;
-
-bool IsKeyword( char *keyword, bool case_ignore );
-void LangInit( int );
-void LangFini( int );
-void LangFiniAll( void );
-
-#endif
+void GetHTMLBlock( ss_block *, char *, int );
+void InitHTMLFlags( linenum );
+void GetHTMLFlags( ss_flags_f * );
+void InitHTMLFlagsGivenValues( ss_flags_f * );
+void InitHTMLLine( char * );

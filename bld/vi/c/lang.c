@@ -30,6 +30,7 @@
 ****************************************************************************/
 
 
+#include <ctype.h>
 #include <string.h>
 #include <assert.h>
 #include <stdio.h>
@@ -40,14 +41,18 @@
 
 static lang_info    langInfo[ LANG_MAX ] = {
     //table,  entries , ref_count ,read_buf
-    { NULL,          0,          0,    NULL },  // C
-    { NULL,          0,          0,    NULL },  // C++
-    { NULL,          0,          0,    NULL },  // Fortran
-    { NULL,          0,          0,    NULL },  // Java
-    { NULL,          0,          0,    NULL },  // SQL
-    { NULL,          0,          0,    NULL },  // BAT
-    { NULL,          0,          0,    NULL },  // Basic
-    { NULL,          0,          0,    NULL }   // Perl
+    { NULL,        0,          0,    NULL },  // C            1
+    { NULL,        0,          0,    NULL },  // C++          2
+    { NULL,        0,          0,    NULL },  // Fortran      3
+    { NULL,        0,          0,    NULL },  // Java         4
+    { NULL,        0,          0,    NULL },  // SQL          5
+    { NULL,        0,          0,    NULL },  // BAT          6
+    { NULL,        0,          0,    NULL },  // Basic        7
+    { NULL,        0,          0,    NULL },  // Perl         8
+    { NULL,        0,          0,    NULL },  // HTML         9
+    { NULL,        0,          0,    NULL },  // WML          10
+    { NULL,        0,          0,    NULL },  // DBTest       11
+    { NULL,        0,          0,    NULL }   // user-defined 12
 };
 
 /*
@@ -57,7 +62,7 @@ int hashpjw( char *s )
 {
     unsigned h = 0, g;
     while( *s != '\0' ) {
-        h = ( h << 4 ) + (*s);
+        h = ( h << 4 ) + (toupper(*s));
         if( g = h & 0xf0000000 ) {
             h = h ^ ( g >> 24 );
             h = h ^ g;
@@ -67,7 +72,7 @@ int hashpjw( char *s )
     return( h % langInfo[ CurrentInfo->Language ].table_entries );
 }
 
-bool IsKeyword( char *keyword )
+bool IsKeyword( char *keyword, bool case_ignore )
 {
     hash_entry  *entry;
 
@@ -78,10 +83,19 @@ bool IsKeyword( char *keyword )
     if( entry->real == FALSE ) {
         return( FALSE );
     }
-    while( entry != NULL && strcmp( entry->keyword, keyword ) != 0 ) {
-        entry = entry->next;
-        if( entry ) {
-            assert( entry->real == FALSE );
+    if( case_ignore ) {
+        while( entry != NULL && stricmp( entry->keyword, keyword ) != 0 ) {
+            entry = entry->next;
+            if( entry ) {
+                assert( entry->real == FALSE );
+            }
+        }
+    } else {
+        while( entry != NULL && strcmp( entry->keyword, keyword ) != 0 ) {
+            entry = entry->next;
+            if( entry ) {
+                assert( entry->real == FALSE );
+            }
         }
     }
     return( entry != NULL );
@@ -160,7 +174,8 @@ void LangInit( int newLanguage )
     int         rc, nkeywords;
     char        *buff;
     char        *fname[] = { NULL, "c.dat", "cpp.dat", "fortran.dat", "java.dat", "sql.dat",
-                                "bat.dat", "basic.dat", "perl.dat" };
+                            "bat.dat", "basic.dat", "perl.dat", "html.dat", "wml.dat",
+                            "dbtest.dat", "user.dat" };
 
     assert( CurrentInfo != NULL );
     CurrentInfo->Language = newLanguage;

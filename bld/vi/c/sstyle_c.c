@@ -244,7 +244,7 @@ static void getText( ss_block *ss_new, char *start )
     }
     save_char = *text;
     *text = '\0';
-    isKeyword = IsKeyword( start );
+    isKeyword = IsKeyword( start, FALSE );
     *text = save_char;
 
     ss_new->type = SE_IDENTIFIER;
