@@ -53,7 +53,7 @@ include adv.inc
 
         dataseg
 
-        extrn   _MsgBuff : word
+        xred    "C",MsgBuff,  word
 
         SSList  DD      7 DUP(0) ; 7 32-bit words to save subscripts
         WarpRet dw      0        ; warp return address
@@ -282,8 +282,8 @@ efcode  RT_ADV_CONST
 defn    TooBig
         xor     ax,ax           ; indicate no field reference
         call    BuildStrErr     ; ...
-        push    ss:_MsgBuff+2   ; push address of array name
-        push    ss:_MsgBuff     ; ...
+        push    ss:MsgBuff+2    ; push address of array name
+        push    ss:MsgBuff      ; ...
         RTErr   DM_RANGE_ERR_ON_DIMN; report arg array is too big
 endproc TooBig
 
@@ -449,8 +449,8 @@ defn    out_of_bounds           ; subscript out of range error
 far_out_of_1_bound:             ; entry point for 1-D subscripting rtns
         mov     AX,SP           ; point at subscript list
         call    MkSubLst        ; build the error message parm
-        push    SS:_MsgBuff+2   ; pass address of name
-        push    SS:_MsgBuff     ; pass address of name
+        push    SS:MsgBuff+2    ; pass address of name
+        push    SS:MsgBuff      ; pass address of name
         mov     AX,SS_SSCR_RANGE; set the error code
         jmp     RTError         ; report the error
 endproc out_of_bounds
@@ -540,8 +540,8 @@ defn    BadParm                 ; report a bad parameter array
         mov     bx,di           ; pass address of item in DS:BX
         xor     ax,ax           ; indicate not a field reference
         call    BuildStrErr     ; get the name
-        push    ss:_MsgBuff+2   ; pass address of name
-        push    ss:_MsgBuff     ; ...
+        push    ss:MsgBuff+2    ; pass address of name
+        push    ss:MsgBuff      ; ...
         mov     ax,SR_ARG_USED_NOT_PASSED
                                 ; report the error
         jmp     RTError         ; ...

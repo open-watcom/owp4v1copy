@@ -38,17 +38,17 @@ include fcdef.inc
 
         fcxref  RT_PROLOGUE
 
-        xref    Spawn_
+        xref    "C",Spawn
 
         fmodstart    fcdrvr
 
         dataseg
 
 if _MATH eq _8087
-        extrn   AuxTop : word
-        extrn   __STACKLOW : word
+        xred    AuxTop,           word
+        xred    "C",_STACKLOW,    word
 endif
-        extrn   _PgmCall : word
+        xred    "C",PgmCall,      word
 
         enddata
 
@@ -67,10 +67,10 @@ defp    CallPgm_                ; start program execution
         mov     ax,ss           ; set to start the program
         mov     ds,ax           ; ...
 if _MATH eq _8087
-        mov     AX,__STACKLOW; get bottom of CPU stack
+        mov     AX,_STACKLOW    ; get bottom of CPU stack
         mov     AuxTop,AX       ;set top of Auxiliary FPU stack
 endif
-        lea     SI,_PgmCall     ; ...
+        lea     SI,PgmCall      ; ...
 ;;;;;;;;hop     RT_RTN_COUNT
 endproc CallPgm_
 
@@ -85,16 +85,16 @@ endif
 efcode  RT_RTN_COUNT
 
 
-        xdefp   Program_
-defp    Program_
+        xdefp   "C",Program
+defp    Program
         push    dx              ; save registers
         mov     ax,offset CallPgm_
         mov     dx,seg CallPgm_
-        call    Spawn_
+        call    Spawn
         exit_fpu                ; in case we Suicide() because of an error
         pop     dx              ; restore registers
         ret
-endproc Program_
+endproc Program
 
 
 fcode   RT_STOPPGM              ; stop the program

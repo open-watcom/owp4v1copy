@@ -49,9 +49,9 @@ include undef.inc
         extrn   ChkChar : near
         extrn   RTError : near
 
-        extrn   _ArgChkFlags : byte
-
         dataseg
+
+        xred    "C",ArgChkFlags,   byte
 
         IsVarArgs db 0          ; == 1 if varargs == 0 otherwise
 
@@ -421,7 +421,7 @@ endif
 ;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 ;
-; ChkRtns are called when _ArgChkFlags set.  They may only modify ax.
+; ChkRtns are called when ArgChkFlags set.  They may only modify ax.
 ;
 ChkRtn label byte
         dd      BadType         ; no type
@@ -521,7 +521,7 @@ P_Variable:                     ; process a variable parameter
         cmp     dh,dl           ; check if it's proper type
         jne     BadType         ; ...
         lea     edi,[eax*4]     ; move parm type into edi and mult by 4
-        test    byte ptr _ArgChkFlags,UNDEF_CHK
+        test    byte ptr ArgChkFlags,UNDEF_CHK
                                 ; see if undef checking is on
         _if     ne
           call  dword ptr ChkRtn[edi]; call routine to check the type

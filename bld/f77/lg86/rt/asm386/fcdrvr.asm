@@ -36,13 +36,14 @@
 
 include fcdef.inc
 
-        extrn   Spawn_          : near
+        xref    "C",Spawn
 
-        extrn   _PgmCall        : dword
+        xred    "C",PgmCall,      dword
+
 if _MATH eq _8087
-        extrn   AuxTop          : dword
-
         dataseg
+
+        xred    AuxTop,           dword
 
 AUX_STACK_SIZE = 4096
 
@@ -63,7 +64,7 @@ if _MATH eq _8087
         mov     AuxTop,eax      ; set top of Auxiliary FPU stack
 endif
         xor     ebp,ebp         ; initial data offset is 0 for PgmCall
-        lea     esi,_PgmCall    ; set to start the program
+        lea     esi,PgmCall     ; set to start the program
 ;;;;;;;;hop     RT_RTN_COUNT
 endproc CallPgm_
 
@@ -78,13 +79,13 @@ endif
 efcode  RT_RTN_COUNT
 
 
-        xdefp   Program_
-defp    Program_
+        xdefp   "C",Program
+defp    Program
         mov     eax,offset CallPgm_
-        call    Spawn_
+        call    Spawn
         exit_fpu                ; in case we Suicide() because of an error
         ret
-endproc Program_
+endproc Program
 
 
 fcode   RT_STOPPGM

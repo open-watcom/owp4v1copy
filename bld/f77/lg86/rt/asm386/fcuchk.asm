@@ -59,8 +59,8 @@ include structio.inc
         extrn   RTError : near
         extrn   UndefArray : near
 
-        extrn   _SizeVars       : byte
-        extrn   _MsgBuff        : dword
+        xred    "C",SizeVars,     byte
+        xred    "C",MsgBuff,      dword
 
         fmodstart       fcuchk
 
@@ -258,7 +258,7 @@ defn    UndChk2
 uv_undefd_err:
         mov     ebx,edx         ; put pointer in proper register
         call    BuildStrErr     ; build the name
-        push    _MsgBuff        ; pass address of name
+        push    MsgBuff         ; pass address of name
         mov     AX,UV_UNDEFD    ; set undefined error message
         jmp     RTError         ; report the error
 endproc UndChk2
@@ -272,7 +272,7 @@ defn    BadParm
         xor     eax,eax         ; indicate it wasn't structure field
         mov     ebx,edx         ; put pointer in proper register
         call    BuildStrErr     ; build the error message
-        push    _MsgBuff        ; pass address of name
+        push    MsgBuff         ; pass address of name
         mov     AX,SR_ARG_USED_NOT_PASSED; report the error
         jmp     RTError         ; report the error
 endproc BadParm
@@ -483,7 +483,7 @@ defn    ChkElt
         pop     ecx             ; clean stack
         add     edi,ebp         ; add data base to ADV address
         call    UndefArray      ; build error parameter
-        push    _MsgBuff        ; pass address of name
+        push    MsgBuff         ; pass address of name
         mov     eax,UV_UNDEFD   ; set undefined error message
         jmp     RTError         ; report the error
 endproc ChkElt
@@ -512,7 +512,7 @@ fcode   CHK_RET_VAL
           mov   edi,[edi]       ; - load pointer to structure storage
           mov   ecx,sd_total_size[eax+ebp]; - get size of structure
         _admit
-          movzx ecx,byte ptr _SizeVars[ebx]; - get size of return value
+          movzx ecx,byte ptr SizeVars[ebx]; - get size of return value
         _endguess
                                 ; check the Function return value
                                 ; edi points to the storage, ecx = length
@@ -571,7 +571,7 @@ endproc ChkChar
         xdefp   BuildStrErr
 defn    BuildStrErr
         push    eax                     ; save field reference information
-        mov     edi,_MsgBuff            ; get pointer to buffer
+        mov     edi,MsgBuff             ; get pointer to buffer
         lea     esi,-1[ebx]             ; get address of variable
         std                             ; set for auto decrement
         _loop                           ; loop

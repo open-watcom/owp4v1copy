@@ -42,16 +42,16 @@ include struct.inc
 include mdef.inc
 include xinit.inc
 
-        xref    "C",__ReleaseIOSys_
+        xref    "C",__ReleaseIOSys
 
         dataseg
 
-        extrn   "C",_IORslt     : word
-        extrn   __ASTACKSIZ     : dword
-        extrn   __ASTACKPTR     : dword
+        xred    "C",IORslt,       word
+        xred    __ASTACKSIZ,      dword
+        xred    __ASTACKPTR,      dword
 
 ifdef _MT_
-        extrn   __SwitchStkLow  : dword
+        xred    __SwitchStkLow,   dword
 endif
 
 ALT_STACK_SIZE = 8*1024
@@ -179,14 +179,14 @@ endif
 ifdef _MT_
         call    dword ptr __SwitchStkLow; switch stack low pointer
 endif
-        call    __ReleaseIOSys_         ; release i/o system
+        call    __ReleaseIOSys          ; release i/o system
         pop     EAX                     ; restore EAX
         ret
         endproc RdWrCommon
 
 
-        xdefp   "C",IOType_
-        defp    IOType_                 ; return to generated code
+        xdefp   "C",IOType
+        defp    IOType                  ; return to generated code
         push    EBP                     ; only save EBP
         mov     EBP,SaveESP             ; switch stacks
         mov     SaveESP,ESP             ; ...
@@ -202,15 +202,15 @@ ifdef _MT_
 endif
         sub     EAX,EAX                 ; indicate i/o operation succeeded
         ret                             ; return
-        endproc IOType_
+        endproc IOType
 
 
         xdefp   IOChar
         defn    IOChar
         push    [EAX]                   ; put SCB in IORslt
-        pop     dword ptr _IORslt       ; ...
+        pop     dword ptr IORslt        ; ...
         push    4[EAX]                  ; ...
-        pop     dword ptr _IORslt+4     ; ...
+        pop     dword ptr IORslt+4      ; ...
         mov     EAX,PT_CHAR             ; return CHARACTER*n type
         jmp     SwitchToRT              ; return to caller of IOType()
         endproc IOChar
@@ -218,8 +218,8 @@ endif
 
         xdefp   IOStr
         defn    IOStr
-        mov     dword ptr _IORslt,EAX   ; put SCB in IORslt
-        mov     dword ptr _IORslt+4,EDX ; ...
+        mov     dword ptr IORslt,EAX    ; put SCB in IORslt
+        mov     dword ptr IORslt+4,EDX  ; ...
         mov     EAX,PT_CHAR             ; return CHARACTER*n type
         jmp     SwitchToRT              ; return to caller of IOType()
         endproc IOStr
@@ -227,9 +227,9 @@ endif
 
         xdefp   IOArr
         defn    IOArr                   ; put array descriptor in IORslt
-        mov     dword ptr _IORslt,EAX   ; ... data pointer
-        mov     dword ptr _IORslt+4,EDX ; ... number of elements
-        mov     byte ptr _IORslt+12,BL  ; ... type of array
+        mov     dword ptr IORslt,EAX    ; ... data pointer
+        mov     dword ptr IORslt+4,EDX  ; ... number of elements
+        mov     byte ptr IORslt+12,BL   ; ... type of array
         mov     EAX,PT_ARRAY            ; return ARRAY type
         jmp     SwitchToRT              ; return to caller of IOType()
         endproc IOArr
@@ -237,11 +237,11 @@ endif
 
         xdefp   IOChArr
         defn    IOChArr                 ; put array descriptor in IORslt
-        mov     dword ptr _IORslt,EAX   ; ... data pointer
-        mov     dword ptr _IORslt+4,EDX ; ... number of elements
-        mov     dword ptr _IORslt+8,EBX ; ... element size
+        mov     dword ptr IORslt,EAX    ; ... data pointer
+        mov     dword ptr IORslt+4,EDX  ; ... number of elements
+        mov     dword ptr IORslt+8,EBX  ; ... element size
         mov     AL,PT_CHAR              ; ... type of array
-        mov     byte ptr _IORslt+12,AL  ; ...
+        mov     byte ptr IORslt+12,AL   ; ...
         mov     EAX,PT_ARRAY            ; return ARRAY type
         jmp     SwitchToRT              ; return to caller of IOType()
         endproc IOChArr

@@ -46,8 +46,8 @@ include prtarr.inc
 include datamap.inc
 include xfflags.inc
 
-        xref    DoRead_
-        xref    DoWrite_
+        xref    "C",DoRead
+        xref    "C",DoWrite
         xref    StructIOItem_
         xref    StructIOInit_
         xref    LimError_
@@ -101,8 +101,8 @@ include xfflags.inc
 
         dataseg
 
-        extrn   _IORslt         : word
-        extrn   _IOTypeRtn      : dword
+        xred    "C",IORslt,       word
+        xred    "C",IOTypeRtn,    dword
 
         SaveSI          dw      0
         EndEq           dw      0
@@ -138,15 +138,15 @@ efcode  RT_EX_CLOSE
 
 
 fcode   RT_EX_READ
-        mov     AX,offset DoRead_
-        mov     DX,seg DoRead_
+        mov     AX,offset DoRead
+        mov     DX,seg DoRead
         hop     IOStmt
 efcode  RT_EX_READ
 
 
 fcode   RT_EX_WRITE
-        mov     AX,offset DoWrite_
-        mov     DX,seg DoWrite_
+        mov     AX,offset DoWrite
+        mov     DX,seg DoWrite
         hop     IOStmt
 efcode  RT_EX_WRITE
 
@@ -219,9 +219,9 @@ defp    ExecData_
         exit_fcode              ; switch to run-time environment
         mov     SS:SaveSI,SI    ; save F-Code program counter
                                 ; indicate fcode iotype rtn
-        mov     AX,offset FC_IOType_            ; To avoid a wasm bug, we
-        mov     word ptr SS:_IOTypeRtn,AX       ; use a register
-        mov     word ptr SS:_IOTypeRtn+2,cs     ; ...
+        mov     AX,offset FC_IOType            ; To avoid a wasm bug, we
+        mov     word ptr SS:IOTypeRtn,AX       ; use a register
+        mov     word ptr SS:IOTypeRtn+2,cs     ; ...
         docall  IOData          ; execute DATA statement
         mov     SI,SS:SaveSI    ; restore F-Code program counter
         enter_fcode             ; switch to F-Code environment
@@ -231,14 +231,14 @@ defp    ExecData_
 endproc ExecData_
 
 
-        xdefp    FC_IOType_
-defp    FC_IOType_
+        xdefp    "C",FC_IOType
+defp    FC_IOType
         push    DS              ; ...
         push    BP              ; ...
         mov     SI,SS:SaveSI    ; restore F-Code program counter
         enter_fcode             ; switch to F-Code environment
         next                    ; execute next F-Code
-endproc FC_IOType_
+endproc FC_IOType
 
 
 ;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
@@ -319,11 +319,11 @@ fcode   RT_INP_CHAR                     ; input character string
         test    SS:__XcptFlags,XF_LIMIT_ERR; check for limit error
         jne     in_lim                  ; report it if there is one
         mov     AX,ES:0[DI]             ; put SCB in IORslt
-        mov     SS:_IORslt,AX           ; ...
+        mov     SS:IORslt,AX            ; ...
         mov     AX,ES:2[DI]             ; ...
-        mov     SS:_IORslt+2,AX         ; ...
+        mov     SS:IORslt+2,AX          ; ...
         mov     AX,ES:4[DI]             ; ...
-        mov     SS:_IORslt+4,AX         ; ...
+        mov     SS:IORslt+4,AX          ; ...
         mov     AX,PT_CHAR              ; indicate character
         hop     IORegs
 efcode  RT_INP_CHAR
@@ -361,8 +361,8 @@ defp    Inp
         exit_fcode                      ; switch to run-time environment
         test    SS:__XcptFlags,XF_LIMIT_ERR; check for limit error
         jne     in_lim                  ; report error if there is one
-OK:     mov     SS:_IORslt,DI           ; put address in IORslt
-        mov     SS:_IORslt+2,ES         ; ...
+OK:     mov     SS:IORslt,DI            ; put address in IORslt
+        mov     SS:IORslt+2,ES          ; ...
 IORegs:
         mov     SS:SaveSI,SI            ; save F-Code program counter
         pop     BP                      ; restore registers
@@ -428,16 +428,16 @@ dfcode  INP_ARRAY
         getword BX                      ; get ADV pointer in BX
         mov     AX,ADV_ARRAY[BX]        ; get array offset in AX
         mov     DX,ADV_ARRAY+2[BX]      ; get array segment in CX
-        mov     SS:_IORslt,AX           ; ... data pointer
-        mov     SS:_IORslt+2,DX         ; ...
+        mov     SS:IORslt,AX            ; ... data pointer
+        mov     SS:IORslt+2,DX          ; ...
         mov     AX,word ptr ADV_ELNUM[BX]; get lo word - num of array elts
         mov     DX,word ptr ADV_ELNUM+2[BX]; get hi word - num of array elts
         mov     CX,word ptr ADV_ELSIZE[BX] ; get array element size in CX
-        mov     SS:_IORslt+4,AX         ; ... number of elements
-        mov     SS:_IORslt+6,DX         ; ...
-        mov     SS:_IORslt+8,CX         ; ... element size
+        mov     SS:IORslt+4,AX          ; ... number of elements
+        mov     SS:IORslt+6,DX          ; ...
+        mov     SS:IORslt+8,CX          ; ... element size
         getword BX                      ; get the type
-        mov     byte ptr SS:_IORslt+10,BL;... type
+        mov     byte ptr SS:IORslt+10,BL;... type
         mov     AX,PT_ARRAY             ; return ARRAY type
         exit_fcode                      ; switch to run-time environment
         test    SS:__XcptFlags,XF_LIMIT_ERR; check for limit error
@@ -581,9 +581,9 @@ fcode   RT_SET_IOCB_CHECK
 do_set_iocb:
         exit_fcode                      ; switch to run-time environment
         docall  SetIOFlags              ; call run-time routine
-        mov     ax,offset FC_IOType_    ; indicate it's fcode iotype rtn
-        mov     word ptr SS:_IOTypeRtn,ax
-        mov     word ptr SS:_IOTypeRtn+2,cs
+        mov     ax,offset FC_IOType     ; indicate it's fcode iotype rtn
+        mov     word ptr SS:IOTypeRtn,ax
+        mov     word ptr SS:IOTypeRtn+2,cs
         enter_fcode                     ; switch to f-code environ
         next
 efcode  RT_SET_IOCB_CHECK

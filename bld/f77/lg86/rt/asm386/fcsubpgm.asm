@@ -68,12 +68,12 @@ endif
         extrn   IFPrologue      : near
         extrn   RTError         : near
         extrn   F77_to_Ext      : near
-        extrn   StructDefnCmp_  : near
-
-        extrn   _ArgChkFlags    : byte
-        extrn   _MsgBuff        : dword
+        xred    "C",StructDefnCmp,near
 
         dataseg
+
+        xred    "C",ArgChkFlags,  byte
+        xred    "C",MsgBuff,      dword
 
 EnName          dd      0       ; pointer to subprogram name
         lgxdefp CallerDataBase
@@ -246,7 +246,7 @@ endif
         add     eax,ebp         ; ...
         mov     cl,[esi]        ; get argument checking flags
         mov     edi,[eax]       ; get the offset of the SubPgm
-        mov     _ArgChkFlags,cl ; set the argument checking flags
+        mov     ArgChkFlags,cl  ; set the argument checking flags
         cmp     word ptr [edi],WF_SEQUENCE; check if it's WATFOR-77 subprogram
         jne     F77_to_Ext      ; call external if not WATFOR-77 s.p.
         mov     edx,darg_list[edi]; get ptr to arg list descriptor
@@ -338,7 +338,7 @@ endif
           mov   ebx,func_val+4[ebx]; - get offset of callee sdefn
           mov   ecx,CalledDataBase
           exit_fcode            ; - switch to run-time environment
-          call  StructDefnCmp_  ; - compare the structures
+          call  StructDefnCmp   ; - compare the structures
           or    al,al           ; - check if they compare
           _if   e               ; - if they don't
             call GetSPName      ; - get subprogram name
@@ -483,7 +483,7 @@ defn    AsVar
           mov   ebx,[edi]       ; - get ptr to 2nd sdefn
           mov   ecx,CalledDataBase
           exit_fcode            ; - switch to run-time environment
-          call  StructDefnCmp_  ; - compare structures
+          call  StructDefnCmp   ; - compare structures
           enter_fcode           ; - switch to f-code environment
           or    al,al           ; - are they the same?
           pop   ecx             ; - restore registers (don't modify flags)
@@ -541,13 +541,13 @@ defn    AsArray
         _guess                  ; guess
           cmp   al,dl           ; - see if types agree
           _quif e               ; - quit if they do
-          test  byte ptr _ArgChkFlags,ARRAY_CHK
+          test  byte ptr ArgChkFlags,ARRAY_CHK
                                 ; - array type checking on?
           jne   BadType         ; - report error if so
         _admit
           cmp   al,PT_STRUCT    ; - check if structure type
           _quif ne              ; - quit if not
-          test  byte ptr _ArgChkFlags,ARRAY_CHK
+          test  byte ptr ArgChkFlags,ARRAY_CHK
           _quif e               ; - don't compare structs if no array chk
           push  eax             ; - save registers
           push  ebx             ; - ...
@@ -565,7 +565,7 @@ defn    AsArray
           mov   16[esp],ecx     ; - save size of struct
           mov   ecx,CalledDataBase
           exit_fcode            ; - switch to run-time environment
-          call  StructDefnCmp_  ; - compare structures
+          call  StructDefnCmp   ; - compare structures
           enter_fcode           ; - switch to f-code environment
           or    al,al           ; - are they the same?
           pop   edx             ; - restore registers (don't modify flags)
@@ -730,7 +730,7 @@ endproc GetArgName
 
 defn    GetSPName
         mov     esi,dword ptr ds:EnName ; get pointer to name
-        mov     edi,_MsgBuff            ; point to buffer
+        mov     edi,MsgBuff             ; point to buffer
         mov     edx,edi                 ; save pointer
         _loop                           ; loop
           lodsb                         ; - get a byte

@@ -109,7 +109,8 @@ dfcode  PUSH_IND_INT4           ; push integer*4 indirect
 dfcode  PUSH_IND_REAL4          ; push real*4 indirect
         getword DI              ; get addr of pointer
         les     DI,0[DI]        ; get addr of value
-        hop     VAL_INT4        ; push value
+;        hop     VAL_INT4        ; push value
+        jmp     VAL_INT4        ; push value
 efcode  PUSH_IND_LOG4
 
 
@@ -117,7 +118,8 @@ fcode   PUSH_IND_REAL8          ; push real*8 indirect
 dfcode  PUSH_IND_CPLX8          ; push complex*8 indirect
         getword DI              ; get addr of pointer
         les     DI,0[DI]        ; get addr of value
-        hop     VAL_REAL8       ; push value
+;        hop     VAL_REAL8       ; push value
+        jmp     VAL_REAL8       ; push value
 efcode  PUSH_IND_REAL8
 
 

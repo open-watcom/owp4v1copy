@@ -73,8 +73,12 @@ dojmp           macro   dest
                 jmp     far ptr dest
                 endm
 
-xdefp           macro   xsym
-                public  xsym
+xdefp           macro   p1,p2
+                ifb <p2>
+                public p1
+                else
+                public "&p1",p2
+                endif
                 endm
 
 defp            macro   dsym
@@ -85,8 +89,12 @@ defn            macro   dsym
          dsym   proc    near
                 endm
 
-xref            macro   dsym
-                extrn   dsym : far
+xref            macro   p1,p2
+                ifb <p2>
+                extrn `p1` : far
+                else
+                extrn "&p1",`p2` : far
+                endif
                 endm
 
 endproc         macro   dsym
@@ -127,8 +135,12 @@ dojmp           macro   dest
                 jmp     dest
                 endm
 
-xdefp           macro   xsym
-                public  xsym
+xdefp           macro   p1,p2
+                ifb <p2>
+                public p1
+                else
+                public "&p1",p2
+                endif
                 endm
 
 defp            macro   dsym
@@ -139,8 +151,12 @@ defn            macro   dsym
          dsym   proc    near
                 endm
 
-xref            macro   dsym
-                extrn   dsym : near
+xref            macro   p1,p2
+                ifb <p2>
+                extrn `p1` : near
+                else
+                extrn "&p1",`p2` : near
+                endif
                 endm
 
 endproc         macro   dsym
@@ -169,4 +185,12 @@ endif
 
 enddata         macro
 _DATA   ends
+                endm
+
+xred            macro   p1,p2,p3
+                ifb <p3>
+                extrn p1 : p2
+                else
+                extrn "&p1",p2 : p3
+                endif
                 endm

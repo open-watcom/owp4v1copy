@@ -53,8 +53,8 @@ include xfflags.inc
 
         dataseg
 
-        extrn   _ExLinePtr : word
-        extrn   _ExCurr : word
+        xred    "C",ExLinePtr,    word
+        xred    "C",ExCurr,       word
 
         enddata
 
@@ -425,15 +425,15 @@ efcode  SELECT_SCB
 fcode   SF_CALL                 ; call a statement function
         getword BX              ; get the address
         mov     SF_RET[BX],SI   ; save current F-Code PC
-        mov     AX,SS:_ExCurr   ; save pointer to previous traceback
+        mov     AX,SS:ExCurr    ; save pointer to previous traceback
         mov     word ptr SF_LINK[BX],AX  ; ...
-        mov     AX,SS:_ExCurr+2 ; ...
+        mov     AX,SS:ExCurr+2  ; ...
         mov     word ptr SF_LINK+2[BX],AX; ...
-        mov     AX,SS:_ExLinePtr; save pointer to prev. line
+        mov     AX,SS:ExLinePtr ; save pointer to prev. line
         mov     SF_LINEPTR[BX],AX  ; ...
         lea     DI,SF_TB[BX]    ; point to current traceback
-        mov     SS:_ExCurr,DI   ; point to current traceback
-        mov     SS:_ExCurr+2,DS ; ...
+        mov     SS:ExCurr,DI    ; point to current traceback
+        mov     SS:ExCurr+2,DS  ; ...
         lea     SI,SF_STRT[BX]  ; point to start of statement function
         next                    ; execute it
 efcode  SF_CALL
@@ -443,11 +443,11 @@ fcode   SF_RETURN               ; return from a statement function
         call  SFLimErr          ; check for limit error
         getword BX              ; get the addr of the start of the SF
         mov     AX,word ptr SF_LINK[BX]  ; get offset to previous traceback
-        mov     SS:_ExCurr,AX   ; . . .
+        mov     SS:ExCurr,AX    ; . . .
         mov     AX,word ptr SF_LINK+2[BX]; get segment of previous traceback
-        mov     SS:_ExCurr+2,AX ; . . .
+        mov     SS:ExCurr+2,AX  ; . . .
         mov     AX,SF_LINEPTR[BX]  ; restore offset of previous line
-        mov     SS:_ExLinePtr,AX; . . .
+        mov     SS:ExLinePtr,AX ; . . .
         mov     SI,SF_RET[BX]   ; set F-Code PC to return address
         next                    ; execute next instruction
 efcode  SF_RETURN

@@ -50,7 +50,7 @@ include xfflags.inc
 
         dataseg
 
-        extrn   _IORslt : near
+        xred    "C",IORslt,  word
 
         enddata
 
@@ -92,8 +92,8 @@ efcode  RT_OUT_INT4
 
 
 defn    OutLog
-        pop     word ptr SS:_IORslt+0   ; get value
-        pop     word ptr SS:_IORslt+2   ; ...
+        pop     word ptr SS:IORslt+0    ; get value
+        pop     word ptr SS:IORslt+2    ; ...
         jmp     Prt                     ; output value
 endproc OutLog
 
@@ -115,7 +115,7 @@ defn    SimpOut
         xchg    AX,SI                   ; ... in SI and save F-Code pointer
         push    SS                      ; point to IORslt_
         pop     ES                      ; ...
-        mov     DI,offset DGROUP:_IORslt; ...
+        mov     DI,offset DGROUP:IORslt ; ...
         movsw                           ; put value in IORslt_
         movsw                           ; ...
         xchg    AX,SI                   ; restore F-Code pointer
@@ -126,21 +126,21 @@ endproc SimpOut
 
 fcode   RT_OUT_REAL                     ; output real*4
         mov     AX,PT_REAL              ; indicate real*4
-        fstp    dword ptr SS:_IORslt    ; get value
+        fstp    dword ptr SS:IORslt     ; get value
         hop     PrtF                    ; output value
 efcode  RT_OUT_REAL
 
 
 fcode   RT_OUT_DBLE                     ; output real*8
         mov     AX,PT_DBLE              ; indicate real*8
-        fstp    qword ptr SS:_IORslt    ; get value
+        fstp    qword ptr SS:IORslt     ; get value
         hop     PrtF                    ; output value
 efcode  RT_OUT_DBLE
 
 
 fcode   RT_OUT_XTND                     ; output real*16
         mov     AX,PT_XTND              ; indicate real*16
-        fstp    _TBYTE ptr SS:_IORslt    ; get value
+        fstp    _TBYTE ptr SS:IORslt    ; get value
         hop     PrtF                    ; output value
 efcode  RT_OUT_XTND
 
@@ -148,10 +148,10 @@ efcode  RT_OUT_XTND
 fcode   SIMPLE_OUT_R8                   ; output real*8 variable
         getword AX                      ; get address of variable
         xchg    AX,SI                   ; ... in SI and save F-Code pointer
-        push    SS                      ; point to _IORslt
+        push    SS                      ; point to IORslt
         pop     ES                      ; ...
-        mov     DI,offset DGROUP:_IORslt; ...
-        movsw                           ; put value in _IORslt
+        mov     DI,offset DGROUP:IORslt ; ...
+        movsw                           ; put value in IORslt
         movsw                           ; ...
         movsw                           ; ...
         movsw                           ; ...
@@ -163,33 +163,33 @@ efcode  SIMPLE_OUT_R8
 
 fcode   RT_OUT_CPLX                     ; output complex*8
         mov     AX,PT_CPLX              ; indicate complex*8
-        fstp    dword ptr SS:_IORslt    ; get value
-        fstp    dword ptr SS:_IORslt+4  ; . . .
+        fstp    dword ptr SS:IORslt     ; get value
+        fstp    dword ptr SS:IORslt+4   ; . . .
         hop     PrtF                    ; output value
 efcode  RT_OUT_CPLX
 
 
 fcode   RT_OUT_DBCX                     ; output complex*16
         mov     AX,PT_DBCX              ; indicate complex*16
-        fstp    qword ptr SS:_IORslt    ; get value
-        fstp    qword ptr SS:_IORslt+8  ; . . .
+        fstp    qword ptr SS:IORslt     ; get value
+        fstp    qword ptr SS:IORslt+8   ; . . .
         hop     PrtF                    ; output value
 efcode  RT_OUT_DBCX
 
 
 fcode   RT_OUT_XTCX                     ; output complex*32
         mov     AX,PT_XTCX              ; indicate complex*32
-        fstp    _TBYTE ptr SS:_IORslt    ; get value
-        fstp    _TBYTE ptr SS:_IORslt+16 ; . . .
+        fstp    _TBYTE ptr SS:IORslt    ; get value
+        fstp    _TBYTE ptr SS:IORslt+16 ; . . .
         hop     PrtF                    ; output value
 efcode  RT_OUT_XTCX
 
 
 fcode   RT_OUT_CHAR                     ; output character string
         mov     AX,PT_CHAR              ; indicate character string
-        pop     word ptr SS:_IORslt+0   ; get SCB
-        pop     word ptr SS:_IORslt+2   ; . . .
-        pop     word ptr SS:_IORslt+4   ; . . .
+        pop     word ptr SS:IORslt+0    ; get SCB
+        pop     word ptr SS:IORslt+2    ; . . .
+        pop     word ptr SS:IORslt+4    ; . . .
         hop     Prt                     ; output a character string
 efcode  RT_OUT_CHAR
 
@@ -202,7 +202,7 @@ efcode  RT_END_DATA_VARS
 
 defn    PrtF
         fwait                           ; check for pending 8087 exceptions
-defn    Prt                             ; put an n-byte item into _IORslt
+defn    Prt                             ; put an n-byte item into IORslt
         exit_fcode                      ; switch to run-time environment
         test    SS:__XcptFlags,XF_LIMIT_ERR; check for limit error
         jne     out_lim                 ; report error if there is one

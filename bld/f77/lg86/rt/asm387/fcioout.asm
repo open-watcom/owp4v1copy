@@ -42,7 +42,8 @@ include parmtype.inc
         xref    ChkLimitErr_
 
         extrn   IORegs : near
-        extrn   _IORslt : near
+
+        xred    "C",IORslt,  dword
 
         fmodstart fcioout
 
@@ -84,7 +85,7 @@ efcode  RT_OUT_INT4
 
 
 defn    OutLog
-        pop     dword ptr _IORslt       ; get value
+        pop     dword ptr IORslt        ; get value
         jmp     Prt                     ; output value
 endproc OutLog
 
@@ -104,7 +105,7 @@ efcode  SIMPLE_OUT_I4
 defn    SimpOut
         getdw   eax                     ; get address of variable
         mov     edx,[eax+ebp]           ; get value
-        mov     dword ptr _IORslt,edx   ; store value
+        mov     dword ptr IORslt,edx    ; store value
         mov     ebx,ecx                 ; get type into ebx
         jmp     Prt                     ; output value
 endproc SimpOut
@@ -112,21 +113,21 @@ endproc SimpOut
 
 fcode   RT_OUT_REAL                     ; output real*4
         mov     ebx,PT_REAL             ; indicate real*4
-        fstp    dword ptr _IORslt       ; get value
+        fstp    dword ptr IORslt        ; get value
         jmp     PrtF                    ; output value
 efcode  RT_OUT_REAL
 
 
 fcode   RT_OUT_DBLE                     ; output real*8
         mov     ebx,PT_DBLE             ; indicate real*8
-        fstp    qword ptr _IORslt       ; get value
+        fstp    qword ptr IORslt        ; get value
         hop     PrtF                    ; output value
 efcode  RT_OUT_DBLE
 
 
 fcode   RT_OUT_XTND                     ; output real*8
         mov     ebx,PT_XTND             ; indicate real*8
-        fstp    _TBYTE ptr _IORslt      ; get value
+        fstp    _TBYTE ptr IORslt       ; get value
         hop     PrtF                    ; output value
 efcode  RT_OUT_XTND
 
@@ -136,40 +137,40 @@ fcode   SIMPLE_OUT_R8                   ; output real*8 variable
         mov     edx,[eax+ebp]           ; get value
         mov     eax,4[eax+ebp]          ; ...
         mov     ebx,PT_DBLE             ; get type
-        mov     dword ptr _IORslt,edx   ; store value
-        mov     dword ptr _IORslt+4,eax ; ...
+        mov     dword ptr IORslt,edx    ; store value
+        mov     dword ptr IORslt+4,eax  ; ...
         hop     Prt                     ; output value
 efcode  SIMPLE_OUT_R8
 
 
 fcode   RT_OUT_CPLX                     ; output complex*8
         mov     ebx,PT_CPLX             ; indicate complex*8
-        fstp    dword ptr _IORslt       ; get value
-        fstp    dword ptr _IORslt+4     ; . . .
+        fstp    dword ptr IORslt        ; get value
+        fstp    dword ptr IORslt+4      ; . . .
         hop     PrtF                    ; output value
 efcode  RT_OUT_CPLX
 
 
 fcode   RT_OUT_DBCX                     ; output complex*16
         mov     ebx,PT_DBCX             ; indicate complex*16
-        fstp    qword ptr _IORslt       ; get value
-        fstp    qword ptr _IORslt+8     ; . . .
+        fstp    qword ptr IORslt        ; get value
+        fstp    qword ptr IORslt+8      ; . . .
         hop     PrtF                    ; output value
 efcode  RT_OUT_DBCX
 
 
 fcode   RT_OUT_XTCX                     ; output complex*16
         mov     ebx,PT_XTCX             ; indicate complex*16
-        fstp    _TBYTE ptr _IORslt      ; get value
-        fstp    _TBYTE ptr _IORslt+16   ; . . .
+        fstp    _TBYTE ptr IORslt       ; get value
+        fstp    _TBYTE ptr IORslt+16    ; . . .
         hop     PrtF                    ; output value
 efcode  RT_OUT_XTCX
 
 
 fcode   RT_OUT_CHAR                     ; output character string
         mov     ebx,PT_CHAR             ; indicate character string
-        pop     dword ptr _IORslt       ; get SCB
-        pop     dword ptr _IORslt+4     ; . . .
+        pop     dword ptr IORslt        ; get SCB
+        pop     dword ptr IORslt+4      ; . . .
         hop     Prt                     ; output a character string
 efcode  RT_OUT_CHAR
 
@@ -182,7 +183,7 @@ efcode  RT_END_DATA_VARS
 
 defn    PrtF
         fwait                           ; check for pending 8087 exceptions
-defn    Prt                             ; put an n-byte item into _IORslt
+defn    Prt                             ; put an n-byte item into IORslt
         exit_fcode                      ; switch to run-time environment
         docall  ChkLimitErr_            ; check for limit error
         mov     eax,ebx                 ; get type in eax

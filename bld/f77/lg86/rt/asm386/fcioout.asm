@@ -40,7 +40,8 @@ include parmtype.inc
         xref    ChkLimitErr_
 
         extrn   IORegs  : near
-        extrn   _IORslt : dword
+
+        xred    "C",IORslt,dword
 
         fmodstart fcioout
 
@@ -160,9 +161,9 @@ defn    Prt                             ; put an n-byte item into IORslt
         exit_fcode                      ; switch to run-time environment
         docall  ChkLimitErr_            ; check for limit error
         movzx   ecx,DataSize[ebx]       ; get size of data
-        mov     edi,offset32 _IORslt    ; get a pointer to IORslt
+        mov     edi,offset32 IORslt     ; get a pointer to IORslt
         jcxz    done                    ; jump around pops if nothing to do
-loop1:                                 ; loop
+loop1:                                  ; loop
         pop     ax                      ; - get value
         stosw                           ; - store in IORslt and inc pointer
         loop    loop1                  ; until done

@@ -47,8 +47,8 @@ include fcodes.inc
 
         dataseg
 
-        extrn   _ExCurr : word
-        extrn   _DbInAddr : word
+        xred    "C",ExCurr,    word
+        xred    "C",DbInAddr,  word
 
         enddata
 
@@ -74,17 +74,17 @@ defp    DbSubScr_
           add   BX,4                    ; - point to next subscript
           dec   AL                      ; - decrement subscript count
         _until  e                       ; until all subscripts pushed
-        lds     SI,dword ptr SS:_ExCurr ; setup F-Code program pointers
+        lds     SI,dword ptr SS:ExCurr  ; setup F-Code program pointers
         add     SI,FC_CALL              ; ...
         mov     word ptr [SI],FCODE_DB_SSCR_FINI*2
-        mov     AX,SS:_DbInAddr         ; get offset of ADV
+        mov     AX,SS:DbInAddr          ; get offset of ADV
         jmp     DbSScr                  ; do subscripting
 endproc DbSubScr_
 
 
 dbfcode DB_SSCR_FINI
-        mov     SS:_DbInAddr,DI         ; set pointer to array element
-        mov     SS:_DbInAddr+2,ES       ; . . .
+        mov     SS:DbInAddr,DI          ; set pointer to array element
+        mov     SS:DbInAddr+2,ES        ; . . .
 r_regs: pop     DS                      ; restore registers
         pop     ES                      ; ...
         pop     DX                      ; ...
@@ -114,7 +114,7 @@ defp    DbSubStr_
         push    DS                      ; ...
         push    CX                      ; save pointer to result SCB
         push    BX                      ; ...
-        les     DI,dword ptr SS:_DbInAddr; point to source SCB
+        les     DI,dword ptr SS:DbInAddr; point to source SCB
         push    ES:4[DI]                ; push it on the stack
         push    ES:2[DI]                ; ...
         push    ES:0[DI]                ; ...
@@ -123,7 +123,7 @@ defp    DbSubStr_
         push    AX                      ; ...
         push    CX                      ; push second subscript
         push    DX                      ; ...
-        lds     SI,dword ptr SS:_ExCurr ; setup F-Code program pointers
+        lds     SI,dword ptr SS:ExCurr  ; setup F-Code program pointers
         add     SI,FC_CALL              ; ...
         mov     word ptr [SI],FCODE_DB_SSTR_FINI*2
         jmp     DbSStr                  ; do substringing

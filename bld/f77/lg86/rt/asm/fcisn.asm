@@ -49,30 +49,30 @@ include xfflags.inc
 
         dataseg
 
-        extrn   _ExLinePtr : word
-        extrn   _StmtRem : word
-        extrn   _StmtLimit : word
+        xred    "C",ExLinePtr,   word
+        xred    "C",StmtRem,     word
+        xred    _StmtLimit,      word
 
         enddata
 
 
 fcode   RT_SET_LINE                     ; start of new statement
-        sub     word ptr ss:_StmtRem+0,1; decrement # of remaining statements
+        sub     word ptr ss:StmtRem+0,1 ; decrement # of remaining statements
         jc      DecHi                   ; decrement hi word (if necessary)
 OK:
         _fwait                          ; wait for last 8087 intruction to
                                         ; complete in case an exception occurred
         test    SS:__XcptFlags,XF_LIMIT_ERR; check for limit error
         jne     LimErrRep               ; process error
-        mov     ss:_ExLinePtr,SI        ; point to ISN number
+        mov     ss:ExLinePtr,SI         ; point to ISN number
         add     SI,2                    ; skip over ISN number
         next                            ; execute next F-Code
-DecHi:  sbb     word ptr ss:_StmtRem+2,0; . . .
+DecHi:  sbb     word ptr ss:StmtRem+2,0 ; . . .
         jnc     OK                      ; if more statements to execute
         mov     AX,SS:_StmtLimit+0      ; check if statement limit is infinity
         or      AX,SS:_StmtLimit+2      ; . . .
         je      OK                      ; inifite statments, return to program
-        mov     ss:_ExLinePtr,SI        ; get pointer to line
+        mov     ss:ExLinePtr,SI         ; get pointer to line
         mov     AX,KO_STMT_CNT          ; get error code
         hop     RTError                 ; flag error
 efcode  RT_SET_LINE

@@ -51,11 +51,12 @@ include structio.inc
         extrn   WF77_To_Ext : near
         extrn   Ext_To_WF77 : near
 
-        extrn   _ExLinePtr : dword
         lgxref  CalledDataBase
         lgxref  CallerDataBase
 
         dataseg
+
+        xred    "C",ExLinePtr,  dword
 
 WF_Addr dd      0
 
@@ -195,7 +196,7 @@ defn    F77_to_Ext              ; interface to non_watfor77 subroutines
         mov     name_tb[ebp],esp; save pointer to special name
         sub     eax,eax         ; set ExLinePtr to NULL
         mov     ebp,ecx         ; put return storage pointer back in ebp
-        mov     _ExLinePtr,eax  ; set ExLinePtr to NULL
+        mov     ExLinePtr,eax   ; set ExLinePtr to NULL
 ;
 ; Call interface code:
 ;     edi contains 32-bit address of external subprogram

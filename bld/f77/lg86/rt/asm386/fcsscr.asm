@@ -44,9 +44,9 @@ include adv.inc
         extrn   UndChk : near
         extrn   BuildStrErr : near
 
-        extrn   _MsgBuff : dword
-
         dataseg
+
+        xred    "C",MsgBuff,  dword
 
         SSList  DD      7 DUP(0) ; 7 32-bit words to save subscripts
         WarpRet dd      0        ; warp return address
@@ -245,7 +245,7 @@ efcode  RT_ADV_CONST
 defn    TooBig
         xor     eax,eax         ; indicate not a field ref
         call    BuildStrErr     ; . . .
-        push    _MsgBuff        ; push address of array name
+        push    MsgBuff         ; push address of array name
         RTErr   DM_RANGE_ERR_ON_DIMN; report arg array is too big
 endproc TooBig
 
@@ -415,7 +415,7 @@ defn    BadParm                 ; report a bad parameter array
         mov     ebx,edi         ; pass address of item in ebx
         xor     eax,eax         ; indicate not a field ref
         call    BuildStrErr     ; get the name
-        push    _MsgBuff        ; pass address of name
+        push    MsgBuff         ; pass address of name
         mov     eax,SR_ARG_USED_NOT_PASSED; report the error
         jmp     RTError         ; ...
 endproc BadParm
@@ -427,7 +427,7 @@ defn    out_of_bounds           ; subscript out of range error
 out_of_1_bound:                 ; entry point for 1-D subscripting rtns
         mov     eax,esp         ; point at subscript list
         call    MkSubLst        ; build the error message parm
-        push    _MsgBuff        ; pass address of name
+        push    MsgBuff         ; pass address of name
         mov     eax,SS_SSCR_RANGE; set the error code
         jmp     RTError         ; report the error
 endproc out_of_bounds

@@ -43,8 +43,8 @@ include errcod.inc
 include prtarr.inc
 include datamap.inc
 
-        xref    DoRead_
-        xref    DoWrite_
+        xref    "C",DoRead
+        xref    "C",DoWrite
         xref    ChkLimitErr_
         xref    StructIOInit_
         xref    StructIOItem_
@@ -94,11 +94,10 @@ include datamap.inc
 
         extrn   StmtLook        : near
 
-        extrn   _IORslt         : dword
-        extrn   _FmtBuff        : dword
-        extrn   _IOTypeRtn      : dword
-
         dataseg
+
+        xred    "C",IORslt,       dword
+        xred    "C",IOTypeRtn,    dword
 
         SaveESI         dd      0
         SaveEBP         dd      0
@@ -134,13 +133,13 @@ efcode  RT_EX_CLOSE
 
 
 fcode   RT_EX_READ
-        mov     eax,offset32 DoRead_
+        mov     eax,offset32 DoRead
         hop     IOStmt
 efcode  RT_EX_READ
 
 
 fcode   RT_EX_WRITE
-        mov     eax,offset32 DoWrite_
+        mov     eax,offset32 DoWrite
         hop     IOStmt
 efcode  RT_EX_WRITE
 
@@ -209,7 +208,7 @@ defp    ExecData_
         exit_fcode              ; switch to run-time environment
         mov     SaveESI,esi     ; save F-Code program counter
         mov     SaveEBP,ebp
-        mov     _IOTypeRtn,offset32 FC_IOType_; indicate f-code iotype rtn
+        mov     IOTypeRtn,offset32 FC_IOType ; indicate f-code iotype rtn
         docall  IOData          ; execute DATA statement
         mov     esi,SaveESI     ; restore F-Code program counter
         mov     ebp,SaveEBP
@@ -220,14 +219,14 @@ defp    ExecData_
 endproc ExecData_
 
 
-        xdefp    FC_IOType_
-defp    FC_IOType_
+        xdefp    "C",FC_IOType
+defp    FC_IOType
         push    ebp             ; ...
         mov     esi,SaveESI     ; restore F-Code program counter
         mov     ebp,SaveEBP     ; restore Data pointer
         enter_fcode             ; switch to F-Code environment
         next                    ; execute next F-Code
-endproc FC_IOType_
+endproc FC_IOType
 
 
 ;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
@@ -308,8 +307,8 @@ fcode   RT_INP_CHAR                     ; input character string
         docall  ChkLimitErr_            ; check for limit error
         mov     eax,[edi]               ; put SCB in IORslt
         mov     ebx,4[edi]              ; ...
-        mov     _IORslt,eax             ; ...
-        mov     _IORslt+4,ebx           ; ...
+        mov     IORslt,eax              ; ...
+        mov     IORslt+4,ebx            ; ...
         mov     eax,PT_CHAR             ; indicate character
         hop     IORegs
 efcode  RT_INP_CHAR
@@ -344,7 +343,7 @@ endproc SimpInp
 defp    Inp
         exit_fcode                      ; switch to run-time environment
         docall  ChkLimitErr_            ; check for limit error
-        mov     _IORslt,edi             ; put address in IORslt
+        mov     IORslt,edi              ; put address in IORslt
         mov     eax,ebx                 ; get type
 IORegs:
         mov     SaveESI,esi             ; save F-Code program counter
@@ -404,10 +403,10 @@ dfcode  INP_ARRAY
         mov     eax,adv_array[edi]      ; get array offset in ecx
         mov     ecx,adv_elsize[edi]     ; get array element size in edx
         mov     edx,adv_elnum[edi]      ; get number of array elts
-        mov     dword ptr _IORslt,EAX   ; ... data pointer
-        mov     dword ptr _IORslt+4,EDX ; ... number of elements
-        mov     dword ptr _IORslt+8,ECX ; ... element size ( for PT_CHAR )
-        mov     byte ptr _IORslt+12,BL  ; ... type of array
+        mov     dword ptr IORslt,EAX    ; ... data pointer
+        mov     dword ptr IORslt+4,EDX  ; ... number of elements
+        mov     dword ptr IORslt+8,ECX  ; ... element size ( for PT_CHAR )
+        mov     byte ptr IORslt+12,BL   ; ... type of array
         exit_fcode                      ; switch to run-time environment
         docall  ChkLimitErr_            ; check for limit error
         mov     EAX,PT_ARRAY            ; return ARRAY type
@@ -529,7 +528,7 @@ fcode   RT_SET_IOCB_CHECK
 do_set_iocb:
         exit_fcode                      ; switch to run-time environment
         call    SetIOFlags              ; ...
-        mov     _IOTypeRtn,offset32 FC_IOType_; indicate f-code iotype rtn
+        mov     IOTypeRtn,offset32 FC_IOType ; indicate f-code iotype rtn
         enter_fcode                     ; switch to f-code environ
         next
 efcode  RT_SET_IOCB_CHECK

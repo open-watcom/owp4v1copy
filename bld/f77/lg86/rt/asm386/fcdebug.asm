@@ -44,15 +44,15 @@ include datamap.inc
         xref    DbLine_
         xref    DbProlog_
         xref    DbEpilog_
-        xref    Spawn_
+        xref    "C",Spawn
         xref    Suicide_
         xref    ChkLimitErr_
         xref    UnLinkSFTrace_
 
         fcxref  RT_SET_LINE
 
-        extrn   _ExLinePtr      : dword
-        extrn   _DbugRet        : word
+        xred    "C",ExLinePtr,    dword
+        xred    "C",DbugRet,      word
 
         dataseg
 
@@ -69,15 +69,15 @@ include datamap.inc
 
 dbfcode RT_ISN_DBUG
         add     esi,4                   ; skip source line number
-        mov     _ExLinePtr,esi          ; save pointer to ISN
+        mov     ExLinePtr,esi           ; save pointer to ISN
 DbErr:
         exit_fcode                      ; switch to run-time environment
         mov     eax,offset32 BegDbug      ; ...
         mov     SaveESI,esi             ; ...
         mov     SaveEBP,ebp             ; ...
-        docall  Spawn_                  ; ...
-        movzx   eax,word ptr _DbugRet   ; get debugger return address
-        mov     esi,_ExLinePtr          ; get pointer to ISN
+        docall  Spawn                   ; ...
+        movzx   eax,word ptr DbugRet    ; get debugger return address
+        mov     esi,ExLinePtr           ; get pointer to ISN
         enter_fcode                     ; switch to F-Code environment
         jmp     LG@FC_TABLE[eax]        ; execute debugger return code
 edbfcode RT_ISN_DBUG
@@ -107,8 +107,8 @@ if _MATH eq _8087
 endif
         getword ax                      ; get next F-Code
         exit_fcode                      ; switch to run-time environment
-        mov     _ExLinePtr,esi          ; save F-Code program counter
-        mov     _DbugRet,ax             ; set to execute next line
+        mov     ExLinePtr,esi           ; save F-Code program counter
+        mov     DbugRet,ax              ; set to execute next line
         dojmp   Suicide_                ; go execute next line
 edbfcode RT_END_DBUG
 
@@ -149,12 +149,12 @@ edbfcode DB_ERR_STUB
 dbfcode RT_DB_PROLOGUE
         exit_fcode                      ; switch to WSL environment
         docall  DbProlog_               ; call debugger prologue routine
-        mov     eax,offset32 DbProl       ; spawn so when first line suicides
+        mov     eax,offset32 DbProl     ; spawn so when first line suicides
         mov     SaveESI,esi             ; save program counter
         mov     SaveEBP,ebp             ; save data ptr
-        docall  Spawn_                  ; ... it comes here
-        movzx   eax,word ptr _DbugRet   ; get address of line to execute
-        mov     esi,_ExLinePtr          ; get F-Code program counter
+        docall  Spawn                   ; ... it comes here
+        movzx   eax,word ptr DbugRet    ; get address of line to execute
+        mov     esi,ExLinePtr           ; get F-Code program counter
         enter_fcode                     ; switch to F-Code environment
         jmp     LG@FC_TABLE[eax]        ; go execute line
 edbfcode RT_DB_PROLOGUE
@@ -193,7 +193,7 @@ dbfcode DB_SFPRO
         mov     SaveEBP,ebp             ; ...
         mov     byte ptr SFFlag,1       ; assume unsuccessful completion
         mov     eax,offset32 SFStrt     ; spawn statement function
-        docall  Spawn_                  ; ...
+        docall  Spawn                   ; ...
         pop     eax                     ; restore address of statement function
         cmp     byte ptr SFFlag,0       ; check for successful completion
         _if     e                       ; if successful completion

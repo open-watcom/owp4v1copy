@@ -55,8 +55,8 @@ include structio.inc
 
         dataseg
 
-        extrn   _ExCurr : word
-        extrn   _ExLinePtr : word
+        xred    "C",ExCurr,       word
+        xred    "C",ExLinePtr,    word
 
         enddata
 
@@ -109,11 +109,11 @@ defn    F77_to_Ext              ; interface to non_watfor77 subroutines
         push  SS                ; set ES to SS
         pop   ES                ; ...
         call  SetTBack          ; set up trace-back structure
-        mov   SS:_ExCurr+2,SS   ; set the proper data segment for the traceback
+        mov   SS:ExCurr+2,SS    ; set the proper data segment for the traceback
         pop   ES                ; restore callee segment
         mov   NAME_TB[BP],SP    ; save pointer to special name
         sub   AX,AX             ; set ExLinePtr to NULL
-        mov   SS:_ExLinePtr,AX  ; ...
+        mov   SS:ExLinePtr,AX   ; ...
         mov   BP,CX             ; put return storage pointer back in BP
 ;
 ; Call interface code:
@@ -128,11 +128,11 @@ defn    F77_to_Ext              ; interface to non_watfor77 subroutines
         add   SP,4              ; remove special name
         mov   BP,SP             ; get the trace back struct addr in BP
         mov   AX,word ptr LINK_TB[BP]   ; un-link the trace back struct
-        mov   SS:_ExCurr,AX     ; ...
+        mov   SS:ExCurr,AX      ; ...
         mov   AX,word ptr LINK_TB+2[BP] ; un-link the trace back struct
-        mov   SS:_ExCurr+2,AX   ; ...
+        mov   SS:ExCurr+2,AX    ; ...
         mov   AX,LINEPTR_TB[BP] ; un-link the trace back struct
-        mov   SS:_ExLinePtr,AX  ; ...
+        mov   SS:ExLinePtr,AX   ; ...
         add   SP,size traceback_s; remove the struct from the stack
 ;
 ; Clean-up and return to WATFOR-77 subprogram.
@@ -349,7 +349,7 @@ defn    Ext_to_F77
         push   DS               ; set ES=DS
         pop    ES               ; ...
         call   SetTBack         ; set up trace-back structure
-        mov    SS:_ExCurr+2,DS  ; set up proper data segment for traceback
+        mov    SS:ExCurr+2,DS   ; set up proper data segment for traceback
         mov    AX,EN_NAME[SI]   ; get the subroutine name
         mov    ES:NAME_TB[BP],AX; save the name
         pop    BP               ; get return type
@@ -811,14 +811,14 @@ endproc IFCall
 
 
 defn    SetTBack
-        mov   AX,SS:_ExCurr     ; save pointer to previous traceback
+        mov   AX,SS:ExCurr      ; save pointer to previous traceback
         mov   word ptr ES:LINE_TB[BP],TB_LG
         mov   word ptr ES:LINK_TB[BP],AX        ; ...
-        mov   AX,SS:_ExCurr+2   ; ...
+        mov   AX,SS:ExCurr+2    ; ...
         mov   word ptr ES:LINK_TB+2[BP],AX
-        mov   AX,SS:_ExLinePtr  ; save current line number
+        mov   AX,SS:ExLinePtr   ; save current line number
         mov   ES:LINEPTR_TB[BP],AX      ; give a 0 line number
-        mov   SS:_ExCurr,BP     ; save pointer to current traceback
+        mov   SS:ExCurr,BP      ; save pointer to current traceback
         ret                     ; return
 endproc SetTBack
 

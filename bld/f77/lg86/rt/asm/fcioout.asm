@@ -48,7 +48,7 @@ include xfflags.inc
 
         dataseg
 
-        extrn   _IORslt : word
+        xred    "C",IORslt,       word
 
         enddata
 
@@ -174,7 +174,7 @@ defn    Prt                             ; put an n-byte item into IORslt
         jne     out_lim                 ; report error if there is one
 OK:     mov     cl,cs:DataSize[bx]      ; get size of data
         sub     ch,ch                   ; clear high byte
-        mov     di,offset SS:_IORslt    ; get a pointer to IORslt
+        mov     di,offset SS:IORslt     ; get a pointer to IORslt
         mov     ax,ss                   ; set extra seg to data seg
         mov     es,ax                   ; . . .
         jcxz    done                    ; jump around pops if nothing to do

@@ -59,14 +59,13 @@ include structio.inc
         extrn   RTError         : near
         extrn   UndefArray      : near
 
-        extrn   _SizeVars       : byte
-
         fmodstart       fcuchk
 
         dataseg
 
-        extrn   _MsgBuff        : word
-        extrn   _ExCurr         : dword
+        xred    "C",SizeVars,     byte
+        xred    "C",MsgBuff,      word
+        xred    "C",ExCurr,       dword
 
         public  __RCBOffset
 __RCBOffset     dw      ?
@@ -268,8 +267,8 @@ defn    UndChk2
         xor     ax,ax                 ; not a field ref
 uv_undefd_err:
         call    BuildStrErr           ; build the name
-        push    SS:_MsgBuff+2         ; pass address of name
-        push    SS:_MsgBuff           ; ...
+        push    SS:MsgBuff+2          ; pass address of name
+        push    SS:MsgBuff            ; ...
         mov     AX,UV_UNDEFD          ; set undefined error message
         jmp     RTError               ; report the error
 endproc UndChk2
@@ -281,8 +280,8 @@ endproc UndChk2
 defn    BadParm
         xor     ax,ax                   ; not a field ref
         call    BuildStrErr             ; build the error message
-        push    SS:_MsgBuff+2           ; pass address of name
-        push    SS:_MsgBuff             ; ...
+        push    SS:MsgBuff+2            ; pass address of name
+        push    SS:MsgBuff              ; ...
         mov     AX,SR_ARG_USED_NOT_PASSED
         jmp     RTError                 ; report the error
 endproc BadParm
@@ -492,8 +491,8 @@ defn    ChkElt
         _endif                  ; endif
         mov     DI,-( FC_LEN + 2 )[SI]; get the ADV address
         call    UndefArray      ; build error parameter
-        push    SS:_MsgBuff+2   ; pass address of name
-        push    SS:_MsgBuff     ; ...
+        push    SS:MsgBuff+2    ; pass address of name
+        push    SS:MsgBuff      ; ...
         mov     AX,UV_UNDEFD    ; set undefined error message
         jmp     RTError         ; report the error
 endproc ChkElt
@@ -524,9 +523,9 @@ fcode   CHK_RET_VAL
           xchg  ax,di           ; - restore pointer to storage
         _admit
           sub   bh,bh           ; - clear high byte of index
-          mov   ax,seg _SizeVars; - get size of return value
+          mov   ax,seg SizeVars ; - get size of return value
           mov   es,ax           ; ...
-          mov   cl,es:_SizeVars[BX]
+          mov   cl,es:SizeVars[BX]
           sub   ch,ch           ; - . . .
           push  ds              ; - set ES=DS
           pop   es              ; - . . .
@@ -539,8 +538,8 @@ fcode   CHK_RET_VAL
           next                  ; - execute next F-Code
         _endif                  ; endif
         call    TBName          ; put function name in FmtBuff
-        push    SS:_MsgBuff+2   ; pass address of name
-        push    SS:_MsgBuff     ; ...
+        push    SS:MsgBuff+2    ; pass address of name
+        push    SS:MsgBuff      ; ...
         mov     AX,UV_UNDEFD    ; set undefined error message
         jmp     RTError         ; report the error
 efcode  CHK_RET_VAL
@@ -590,7 +589,7 @@ endproc ChkChar
         xdefp   BuildStrErr
 defn    BuildStrErr
         push    ax                      ; save field indicator
-        les     di,dword ptr SS:_MsgBuff; get pointer to buffer
+        les     di,dword ptr SS:MsgBuff ; get pointer to buffer
         lea     SI,-1[BX]               ; get address of variable
         std                             ; set for auto decrement
         _loop                           ; loop
@@ -615,8 +614,8 @@ endproc BuildStrErr
 
 
 defn    TBName
-        les      di,dword ptr SS:_MsgBuff; point to buffer
-        lds      SI,SS:_ExCurr          ; point to traceback struct
+        les      di,dword ptr SS:MsgBuff; point to buffer
+        lds      SI,SS:ExCurr           ; point to traceback struct
         mov      SI,NAME_TB[SI]         ; point to the name
         mov      CX,2                   ; move 2 strings
         _loop                           ; loop

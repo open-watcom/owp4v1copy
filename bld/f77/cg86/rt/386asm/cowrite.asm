@@ -41,12 +41,12 @@ include ptypes.inc
 include struct.inc
 include mdef.inc
 
-        xref    "C",DoWrite_
-        xref    "C",__SetIOCB_
+        xref    "C",DoWrite
+        xref    "C",__SetIOCB
 
         dataseg
 
-        extrn   "C",_IORslt     : word
+        xred    "C",IORslt,       word
 
         enddata
 
@@ -62,8 +62,8 @@ include mdef.inc
 
         xdefp   RT@IOWrite
         defp    RT@IOWrite
-        call    __SetIOCB_              ; initialize i/o
-        mov     EAX,offset DoWrite_     ; indicate write
+        call    __SetIOCB               ; initialize i/o
+        mov     EAX,offset DoWrite      ; indicate write
         jmp     RdWrCommon              ; start write operation
         endproc RT@IOWrite
 
@@ -72,7 +72,7 @@ include mdef.inc
         defp    RT@OutLOG1              ; output LOGICAL*1 value
         cbw                             ; make LOGICAL*4
         cwde                            ; ...
-        mov     dword ptr _IORslt,EAX   ; place value in IORslt
+        mov     dword ptr IORslt,EAX    ; place value in IORslt
         mov     EAX,PT_LOG_1            ; return LOGICAL*1 type
         jmp     SwitchToRT              ; return to caller of IOType()
         endproc RT@OutLOG1
@@ -80,7 +80,7 @@ include mdef.inc
 
         xdefp   RT@OutLOG4
         defp    RT@OutLOG4              ; output LOGICAL*4 value
-        mov     dword ptr _IORslt,EAX   ; place value in IORslt
+        mov     dword ptr IORslt,EAX    ; place value in IORslt
         mov     AX,PT_LOG_4             ; return LOGICAL*4 type
         jmp     SwitchToRT              ; return to caller of IOType()
         endproc RT@OutLOG4
@@ -90,7 +90,7 @@ include mdef.inc
         defp    RT@OutINT1              ; output INTEGER*1 value
         cbw                             ; make INTEGER*4
         cwde                            ; ...
-        mov     dword ptr _IORslt,EAX   ; place value in IORslt
+        mov     dword ptr IORslt,EAX    ; place value in IORslt
         mov     EAX,PT_INT_1            ; return INTEGER*1 type
         jmp     SwitchToRT              ; return to caller of IOType()
         endproc  RT@OutINT1
@@ -99,7 +99,7 @@ include mdef.inc
         xdefp   RT@OutINT2
         defp    RT@OutINT2              ; output INTEGER*2 value
         cwde                            ; make INTEGER*4
-        mov     dword ptr _IORslt,EAX   ; place value in IORslt
+        mov     dword ptr IORslt,EAX    ; place value in IORslt
         mov     EAX,PT_INT_2            ; return INTEGER*2 type
         jmp     SwitchToRT              ; return to caller of IOType()
         endproc RT@OutINT2
@@ -107,7 +107,7 @@ include mdef.inc
 
         xdefp   RT@OutINT4
         defp    RT@OutINT4              ; output INTEGER*4 value
-        mov     dword ptr _IORslt,EAX   ; place value in IORslt
+        mov     dword ptr IORslt,EAX    ; place value in IORslt
         mov     EAX,PT_INT_4            ; return INTEGER*4 type
         jmp     SwitchToRT              ; return to caller of IOType()
         endproc RT@OutINT4
@@ -116,9 +116,9 @@ include mdef.inc
         xdefp   RT@OutREAL
         defp    RT@OutREAL              ; output REAL*4 value
 if _MATH eq _8087
-        fstp    dword ptr _IORslt       ; put value in IORslt
+        fstp    dword ptr IORslt        ; put value in IORslt
 else
-        mov     dword ptr _IORslt,EAX   ; place value in IORslt
+        mov     dword ptr IORslt,EAX    ; place value in IORslt
 endif
         mov     EAX,PT_REAL_4           ; return REAL*4 type
         jmp     SwitchToRT              ; return to caller of IOType()
@@ -128,10 +128,10 @@ endif
         xdefp   RT@OutDBLE
         defp    RT@OutDBLE              ; output REAL*8 value
 if _MATH eq _8087
-        fstp    qword ptr _IORslt       ; put value in IORslt
+        fstp    qword ptr IORslt        ; put value in IORslt
 else
-        mov     dword ptr _IORslt,EAX   ; place value in IORslt
-        mov     dword ptr _IORslt+4,EDX ; ...
+        mov     dword ptr IORslt,EAX    ; place value in IORslt
+        mov     dword ptr IORslt+4,EDX  ; ...
 endif
         mov     EAX,PT_REAL_8           ; return REAL*8 type
         jmp     SwitchToRT              ; return to caller of IOType()
@@ -141,13 +141,13 @@ endif
         xdefp   RT@OutXTND
         defp    RT@OutXTND              ; output REAL*16 value
 if _MATH eq _8087
-        fstp    tbyte ptr _IORslt       ; put value in IORslt
+        fstp    tbyte ptr IORslt        ; put value in IORslt
 else
         pop     EAX                     ; save the return address
-        pop     dword ptr _IORslt       ; put value in IORslt
-        pop     dword ptr _IORslt+4     ; ...
-        pop     dword ptr _IORslt+8     ; ...
-        pop     dword ptr _IORslt+12    ; ...
+        pop     dword ptr IORslt        ; put value in IORslt
+        pop     dword ptr IORslt+4      ; ...
+        pop     dword ptr IORslt+8      ; ...
+        pop     dword ptr IORslt+12     ; ...
         push    EAX                     ; restore the return address
 endif
         mov     EAX,PT_REAL_16          ; return REAL*16 type
@@ -158,11 +158,11 @@ endif
         xdefp   RT@OutCPLX
         defp    RT@OutCPLX              ; output COMPLEX*8 value
 if _MATH eq _8087
-        fstp    dword ptr _IORslt       ; put value in IORslt
-        fstp    dword ptr _IORslt+4     ; ...
+        fstp    dword ptr IORslt        ; put value in IORslt
+        fstp    dword ptr IORslt+4      ; ...
 else
-        mov     dword ptr _IORslt,EAX   ; place value in IORslt
-        mov     dword ptr _IORslt+4,EDX ; ...
+        mov     dword ptr IORslt,EAX    ; place value in IORslt
+        mov     dword ptr IORslt+4,EDX  ; ...
 endif
         mov     EAX,PT_CPLX_8           ; return COMPLEX*8 type
         jmp     SwitchToRT              ; return to caller of IOType()
@@ -172,13 +172,13 @@ endif
         xdefp   RT@OutDBCX
         defp    RT@OutDBCX              ; output COMPLEX*16 value
 if _MATH eq _8087
-        fstp    qword ptr _IORslt       ; put value in IORslt
-        fstp    qword ptr _IORslt+8     ; ...
+        fstp    qword ptr IORslt        ; put value in IORslt
+        fstp    qword ptr IORslt+8      ; ...
 else
-        mov     dword ptr _IORslt,EAX   ; put value in IORslt
-        mov     dword ptr _IORslt+4,EDX ; ...
-        mov     dword ptr _IORslt+8,EBX ; ...
-        mov     dword ptr _IORslt+12,ECX; ...
+        mov     dword ptr IORslt,EAX    ; put value in IORslt
+        mov     dword ptr IORslt+4,EDX  ; ...
+        mov     dword ptr IORslt+8,EBX  ; ...
+        mov     dword ptr IORslt+12,ECX ; ...
 endif
         mov     EAX,PT_CPLX_16          ; return COMPLEX*16 type
         jmp     SwitchToRT              ; return to caller of IOType()
@@ -188,18 +188,18 @@ endif
         xdefp   RT@OutXTCX
         defp    RT@OutXTCX              ; output COMPLEX*32 value
 if _MATH eq _8087
-        fstp    tbyte ptr _IORslt       ; put value in IORslt
-        fstp    tbyte ptr _IORslt+16    ; ...
+        fstp    tbyte ptr IORslt        ; put value in IORslt
+        fstp    tbyte ptr IORslt+16     ; ...
 else
         pop     EAX                     ; save return address
-        pop     dword ptr _IORslt       ; put value in IORslt
-        pop     dword ptr _IORslt+4     ; ...
-        pop     dword ptr _IORslt+8     ; ...
-        pop     dword ptr _IORslt+12    ; ...
-        pop     dword ptr _IORslt+16    ; ...
-        pop     dword ptr _IORslt+20    ; ...
-        pop     dword ptr _IORslt+24    ; ...
-        pop     dword ptr _IORslt+28    ; ...
+        pop     dword ptr IORslt        ; put value in IORslt
+        pop     dword ptr IORslt+4      ; ...
+        pop     dword ptr IORslt+8      ; ...
+        pop     dword ptr IORslt+12     ; ...
+        pop     dword ptr IORslt+16     ; ...
+        pop     dword ptr IORslt+20     ; ...
+        pop     dword ptr IORslt+24     ; ...
+        pop     dword ptr IORslt+28     ; ...
         push    EAX                     ; restore return address
 endif
         mov     EAX,PT_CPLX_32          ; return COMPLEX*32 type

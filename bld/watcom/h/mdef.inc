@@ -336,3 +336,11 @@ alias_function  macro   alias, function
          `alias`    endp
                 endm
 
+xred            macro   p1,p2,p3
+                ifb <p3>
+                extrn p1 : p2
+                else
+                extrn "&p1",p2 : p3
+                endif
+                endm
+

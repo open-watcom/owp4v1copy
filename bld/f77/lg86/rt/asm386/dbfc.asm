@@ -44,7 +44,7 @@ include fcodes.inc
         xref    DbSStr
         xref    GetTBFCCall_
 
-        extrn   _DbInAddr : dword
+        xred    "C",DbInAddr,  dword
 
         fmodstart       dbfc
 
@@ -67,13 +67,13 @@ defp    DbSubScr_
         docall  GetTBFCCall_            ; setup F-Code program pointers
         mov     esi,eax                 ; ...
         mov     word ptr [esi],FCODE_DB_SSCR_FINI*4
-        mov     eax,_DbInAddr           ; get offset of ADV
+        mov     eax,DbInAddr            ; get offset of ADV
         jmp     DbSScr                  ; do subscripting
 endproc DbSubScr_
 
 
 dbfcode DB_SSCR_FINI
-        mov     _DbInAddr,edi           ; set pointer to array element
+        mov     DbInAddr,edi            ; set pointer to array element
         pop     ebp                     ; ...
         pop     esi                     ; ...
         pop     edi                     ; ...
@@ -93,7 +93,7 @@ defp    DbSubStr_
         push    esi                     ; ...
         push    ebp                     ; ...
         push    ebx                     ; save pointer to result SCB
-        mov     edi,_DbInAddr           ; point to source SCB
+        mov     edi,DbInAddr            ; point to source SCB
         push    dword ptr 4[edi]        ; push it on the stack
         push    dword ptr [edi]         ; ...
         push    eax                     ; push first subscript

@@ -143,21 +143,21 @@ include xfflags.inc
         fcxref  VAL_CPLX16
         fcxref  VAL_CPLX32
 
-        extrn   IFPrologue : near
-        extrn   RTError : near
-        extrn   F77_to_Ext : near
-        extrn   StructDefnCmp_ : far
+        extrn   IFPrologue        : near
+        extrn   RTError           : near
+        extrn   F77_to_Ext        : near
+        xred    "C",StructDefnCmp,  far
 if _MATH eq _8087
-        extrn   FCLimErr : near
+        extrn   FCLimErr          : near
 endif
 
         fmodstart       fcsubpgm
 
         dataseg
 
-        extrn   _ExCurr : word
-        extrn   _ExLinePtr : word
-        extrn   _ArgChkFlags : byte
+        xred    "C",ExCurr,      word
+        xred    "C",ExLinePtr,   word
+        xred    "C",ArgChkFlags, byte
 
 EnName          dw      0 ; pointer to subprogram name
                 dw      0
@@ -255,7 +255,7 @@ endif
         getword di              ; get the offset of the SP offset/seg
         mov     cl,[si]         ; get argument checking flags
         les     di,[di]         ; get the offset/segment of the SP
-        mov     SS:_ArgChkFlags,cl; set the argument checking flags
+        mov     SS:ArgChkFlags,cl; set the argument checking flags
         cmp     word ptr es:[di],WF_SEQUENCE; check if it's WATFOR-77 subprogram
         jne     xternal         ; call external if not WATFOR-77 s.p.
         mov     bx,es:en_name[di]; save pointer to entry name for error
@@ -356,7 +356,7 @@ endif
           mov   cx,es           ; - turn into PGM ptr
           push  es:sd_total_size[bx]; - save length of structure
           exit_fcode            ; - switch to run-time environment
-          call  StructDefnCmp_  ; - compare the structures
+          call  StructDefnCmp   ; - compare the structures
           or    al,al           ; - check if they compare
           _if   e               ; - if they don't
             call  GetSPName     ; - get subprogram name
@@ -436,15 +436,15 @@ undef1:
         lea     si,sp_start[di] ; point to first F-Code
         mov     ax,en_name[di]  ; point to entry name
         mov     di,tb_struct[di]; point to traceback struct
-        mov     bx,ss:_ExCurr   ; save pointer to prev. trace back struct
-        mov     cx,ss:_ExCurr+2 ; . . .
-        mov     dx,ss:_ExLinePtr; save pointer to prev. line
+        mov     bx,ss:ExCurr    ; save pointer to prev. trace back struct
+        mov     cx,ss:ExCurr+2  ; . . .
+        mov     dx,ss:ExLinePtr ; save pointer to prev. line
         mov     name_tb[di],ax  ; point traceback struct to entry name
         mov     word ptr link_tb[di],bx  ; save pointer to prev. trace back struct
         mov     word ptr link_tb+2[di],cx; . . .
         mov     lineptr_tb[di],dx  ; save pointer to prev. line
-        mov     ss:_ExCurr,di   ; point to current traceback struct
-        mov     ss:_ExCurr+2,ds ; . . .
+        mov     ss:ExCurr,di    ; point to current traceback struct
+        mov     ss:ExCurr+2,ds  ; . . .
         next                    ; get first opcode of SP and execute it
 efcode  RT_PROLOGUE
 
@@ -543,7 +543,7 @@ defn    AsVar
           mov   bx,es:[di]      ; - get ptr to 2nd sdefn
           mov   cx,es           ; - ...
           exit_fcode            ; - switch to run-time environment
-          call  StructDefnCmp_  ; - compare structures
+          call  StructDefnCmp   ; - compare structures
           enter_fcode           ; - switch to f-code environment
           or    al,al           ; - are they the same?
           pop   cx              ; - restore regs (don't modify flags)
@@ -651,13 +651,13 @@ defn    AsArray
         _guess                  ; guess
           cmp   al,dl           ; - see if types agree
           _quif e               ; - quit if they do
-          test  byte ptr SS:_ArgChkFlags,ARRAY_CHK
+          test  byte ptr SS:ArgChkFlags,ARRAY_CHK
                                 ; - array type checking on?
           jne   BadType         ; - report error if so
         _admit
           cmp   al,PT_STRUCT    ; - check if they're structures
           _quif ne
-          test  byte ptr SS:_ArgChkFlags,ARRAY_CHK
+          test  byte ptr SS:ArgChkFlags,ARRAY_CHK
           _quif e
           add   sp,2            ; - get rid of sdefn
           push  ax              ; - save registers
@@ -683,7 +683,7 @@ defn    AsArray
           mov   dx,ds
           push  es:sd_total_size[bx]; - save size of struct
           exit_fcode            ; - switch to run-time environment
-          call  StructDefnCmp_  ; - compare structures
+          call  StructDefnCmp   ; - compare structures
           enter_fcode           ; - switch to f-code environment
           or    al,al           ; - are they the same?
           pop   dx              ; - restore registers (elm size in dx)
@@ -866,14 +866,14 @@ endif
           add   bx,2            ; - point bx at next arg
           dec   cl              ; - one less arg to do
         _endloop                ; endloop
-        mov     di,ss:_ExCurr   ; get offset to current traceback struct
+        mov     di,ss:ExCurr    ; get offset to current traceback struct
         mov     word ptr arg_list-arg_list[si],0; indicate rtn is inactive
         mov     ax,word ptr link_tb[di]; get offset to previous traceback struct
         mov     bx,word ptr link_tb+2[di]; get seg addr of prev traceback
         mov     cx,lineptr_tb[di]  ; restore pointer to previous line
-        mov     ss:_ExCurr,ax   ; restore it
-        mov     ss:_ExCurr+2,bx ; restore it
-        mov     ss:_ExLinePtr,cx; . . .
+        mov     ss:ExCurr,ax    ; restore it
+        mov     ss:ExCurr+2,bx  ; restore it
+        mov     ss:ExLinePtr,cx ; . . .
         mov     di,dx           ; restore DI
         lds     si,dword ptr (ret_addr-arg_list)[si]; load up return address
         jmp     cs:PshRtns[bp]  ; push func ret val and exec next intr

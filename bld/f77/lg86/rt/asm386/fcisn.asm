@@ -42,27 +42,27 @@ include errcod.inc
         xref    RTErr_
         xref    ChkLimitErr_
 
-        extrn   _ExLinePtr      : dword
-        extrn   _StmtRem        : dword
-        extrn   _StmtLimit      : dword
+        xred    "C",ExLinePtr,    dword
+        xred    "C",StmtRem,      dword
+        xred    _StmtLimit,       dword
 
         fmodstart fcisn
 
 
 fcode   RT_SET_LINE                     ; start of new statement
-        sub     dword ptr _StmtRem,1    ; decrement # of remaining statements
+        sub     dword ptr StmtRem,1     ; decrement # of remaining statements
         jc      CheckLim                ; check if limit reached
 OK:
         _fwait                          ; wait for last 8087 intruction to
                                         ; complete in case an exception occurred
         docall  ChkLimitErr_            ; check for limit error
-        mov     _ExLinePtr,esi          ; point to ISN number
+        mov     ExLinePtr,esi           ; point to ISN number
         add     esi,4                   ; skip over ISN number
         next                            ; execute next F-Code
 CheckLim:
         cmp     _StmtLimit,0            ; check if statement limit is infinity
         je      OK                      ; inifite statments, return to program
-        mov     _ExLinePtr,esi          ; get pointer to line
+        mov     ExLinePtr,esi           ; get pointer to line
         mov     eax,KO_STMT_CNT         ; get error code
         hop     RTError                 ; flag error
 efcode  RT_SET_LINE

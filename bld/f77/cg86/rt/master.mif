@@ -38,94 +38,88 @@ extra_c_flags += -d__NEC__
 #------------------------ assembler options
 
 asm_incs  = -i"$(f77_dir)/cg86/inc" -i"$(watcom_dir)/h" -i"$(comp_cfg_dir)/h"
-asm_opts  = -w4 -d1 -fp$(fp_model) $(asm_incs) -fo=.obj
+extra_a_flags = -fp$(fp_model) -m$(model) -zld $(asm_incs) -fo=.obj
 
 !ifeq host_CPU 386
 
-asm_opts += -mf
-
 !ifdef is_stack
-asm_opts += -3s -3_
-!else
-asm_opts += -3
+extra_a_flags += -3s
 !endif
 
 !ifdef is_MT
-asm_opts += -d_MT_
+extra_a_flags += -d_MT_
 !endif
 
 !ifdef is_DLL
-asm_opts += -d_DLL_
+extra_a_flags += -d_DLL_
 !endif
 
 !ifeq host_OS win
-asm_opts += -d_WINDOWS_
+extra_a_flags += -d_WINDOWS_
 !endif
 
 !ifeq host_OS os2
-asm_opts += -d_OS2_
+extra_a_flags += -d_OS2_
 !endif
 
 !ifeq host_OS nt
-asm_opts += -d_NT_
+extra_a_flags += -d_NT_
 !endif
 
 !ifeq host_OS nov
-asm_opts += -d_NETWARE_
+extra_a_flags += -d_NETWARE_
 !endif
 
 !ifeq is_NEC
-asm_opts += -d_NEC_
+extra_a_flags += -d_NEC_
 !endif
 
 .asm: $(f77_dir)/cg86/rt/386asm;$(f77_dir)/cg86/rt/asm;$(f77_dir)/cg86/asm
 
 !else ifeq host_CPU i86
 
-asm_opts += -m$(model)
-
 !ifeq host_OS win
-asm_opts += -d_WINDOWS_
+extra_a_flags += -d_WINDOWS_
 !endif
 
 !ifeq host_OS os2
-asm_opts += -d_OS2_
+extra_a_flags += -d_OS2_
 !endif
 
 .asm: $(f77_dir)/cg86/rt/asm;$(f77_dir)/cg86/asm
 
 !else ifeq host_CPU axp
 
-asm_opts  = -oc -zq -we -i="$(f77_dir)/cg86/inc" -i="$(watcom_dir)/h"
+extra_a_flags  = -oc -zq -we -i="$(f77_dir)/cg86/inc" -i="$(watcom_dir)/h"
 
 !ifdef is_MT
-asm_opts += -d_MT_
+extra_a_flags += -d_MT_
 !endif
 
 !ifdef is_DLL
-asm_opts += -d_DLL_
+extra_a_flags += -d_DLL_
 !endif
 
 !ifeq host_OS nt
-asm_opts += -d_NT_
+extra_a_flags += -d_NT_
 !endif
 
 .asm: $(f77_dir)/cg86/rt/axpasm;$(f77_dir)/cg86/axpasm
 
 !else ifeq host_CPU ppc
 
-asm_opts  = -oe -zq -we -i="$(f77_dir)/cg86/inc" -i="$(watcom_dir)/h"
+extra_a_flags  = -oe -zq -we -i="$(f77_dir)/cg86/inc" -i="$(watcom_dir)/h"
 
 !ifdef is_MT
-asm_opts += -d_MT_
+extra_a_flags += -d_MT_
 !endif
 
 !ifdef is_DLL
-asm_opts += -d_DLL_
+extra_a_flags += -d_DLL_
 !endif
 
 !ifeq host_OS nt
-asm_opts += -d_NT_
+extra_a_flags += -d_NT_
 !endif
 
 .asm: $(f77_dir)/cg86/rt/ppcasm;$(f77_dir)/cg86/ppcasm
@@ -137,15 +131,9 @@ asm_opts += -d_NT_
 # "is_MT" is defined when building DLL and muti-threaded
 # versions of the libraries
 
-.asm.obj:
-    $(as) $[* $(asm_opts)
-
 inc_dirs=$(f77_dir)/cg86/rt/h;$(f77_dir)/cg86/h;$(f77_dir)/h;$(lib_misc_dir)/h;$(clib_dir)/h;$(hdr_dir)/dos;$(comp_cfg_dir)/h
 
 .c: $(f77_dir)/cg86/rt/c;$(f77_dir)/cg86/c;$(f77_dir)/rt;$(f77_dir)/rt/math;$(f77_dir)/rt/ifns;$(f77_dir)/c;$(f77_dir)/rt/ufns
-.c.obj:
-    @set include=$(inc_path)
-    $(cc) $(cflags) $(extra_c_flags_$[&) $[@
 
 #-------------------------------------------------------------------------------
 
@@ -727,15 +715,10 @@ w_lib = $(librarian) -s -t
 !endif
 
 all: $(lib_name).lib .symbolic
-#all: $(lib_name).lib ../errmsg.res .symbolic
     @%null
 
 $(lib_name).lib : $(files)
     @%create $(lbc_file)
-#    @for %%f in (*.?bj) do @%append $(lbc_file) +%%f
     @for %%f in ($(files)) do @%append $(lbc_file) +%%f
     $(w_lib) -n -b $(lib_name) @$(lbc_file)
     @rm -f $(lbc_file)
-
-#../errmsg.res : ../c/errmsg.rc ../h/errcod.h
-#    $(rc_aui) -zk0 -dMSG_LANG_BASE=0 -dMSG_LANG_SPACING=0 $[@ -fo=$^@

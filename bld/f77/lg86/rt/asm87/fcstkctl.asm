@@ -44,9 +44,6 @@ include fcdef.inc
 
         dataseg
 
-        extrn   _IORslt : near
-        extrn   __STACKLOW : word
-
         public  AuxTop
         AuxTop  dw 0            ; Auxil stack grows towards higher addresses
 

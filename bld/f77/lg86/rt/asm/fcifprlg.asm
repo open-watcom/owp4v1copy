@@ -100,7 +100,7 @@ include undef.inc
 
         dataseg
 
-        extrn   _ArgChkFlags : byte
+        xred    "C",ArgChkFlags,   byte
 
         IsVarArgs db 0          ; == 1 if varargs == 0 otherwise
 
@@ -463,7 +463,7 @@ endif
 ;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
 ;
-; ChkRtns are called when _ArgChkFlags set.  They may only modify ax.
+; ChkRtns are called when ArgChkFlags set.  They may only modify ax.
 ;
 ChkRtn label word
         dw      BadType         ; no type
@@ -571,7 +571,7 @@ P_Variable:                     ; process a variable parameter
         jne     BadType         ; ..
         mov     di, ax          ; load di with arg type
         add     di,di           ; mul by two for indexing
-        test    byte ptr ss:_ArgChkFlags,UNDEF_CHK
+        test    byte ptr ss:ArgChkFlags,UNDEF_CHK
                                 ; see if undef checking is on
         _if     ne
           call  CS:ChkRtn[di]   ; call routine to check the type

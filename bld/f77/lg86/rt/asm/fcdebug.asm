@@ -45,7 +45,7 @@ include xfflags.inc
         xref    DbLine_
         xref    DbProlog_
         xref    DbEpilog_
-        xref    Spawn_
+        xref    "C",Spawn
         xref    Suicide_
 
         fcxref  RT_SET_LINE
@@ -57,9 +57,9 @@ include xfflags.inc
 
         dataseg
 
-        extrn   _ExLinePtr : word
-        extrn   _ExCurr : word
-        extrn   _DbugRet : word
+        xred    "C",ExLinePtr,  word
+        xred    "C",ExCurr,     word
+        xred    "C",DbugRet,    word
 
         SFFlag  db      0
         SaveSI  dw      0
@@ -71,16 +71,16 @@ include xfflags.inc
 
 dbfcode RT_ISN_DBUG
         add     SI,2                    ; skip source line number
-        mov     SS:_ExLinePtr,SI        ; save pointer to ISN
+        mov     SS:ExLinePtr,SI         ; save pointer to ISN
 DbErr:
         exit_fcode                      ; switch to run-time environment
         mov     SS:SaveSI,SI            ; save si
         push    CS                      ; spawn debugger
         pop     DX                      ; ...
         mov     AX,offset BegDbug       ; ...
-        docall  Spawn_                  ; ...
-        mov     BX,SS:_DbugRet          ; get debugger return address
-        mov     SI,SS:_ExLinePtr        ; get pointer to ISN
+        docall  Spawn                   ; ...
+        mov     BX,SS:DbugRet           ; get debugger return address
+        mov     SI,SS:ExLinePtr         ; get pointer to ISN
         enter_fcode                     ; switch to F-Code environment
         jmp     CS:LG@FC_TABLE[BX]      ; execute debugger return code
 edbfcode RT_ISN_DBUG
@@ -112,8 +112,8 @@ if _MATH eq _8087
 endif
         getword ax                      ; get address of next F-Code
         exit_fcode                      ; switch to run-time environment
-        mov     SS:_ExLinePtr,SI        ; save F-Code program counter
-        mov     SS:_DbugRet,AX          ; set to execute next line
+        mov     SS:ExLinePtr,SI         ; save F-Code program counter
+        mov     SS:DbugRet,AX           ; set to execute next line
         dojmp   Suicide_                ; go execute next line
 edbfcode RT_END_DBUG
 
@@ -157,9 +157,9 @@ dbfcode RT_DB_PROLOGUE
         push    CS                      ; spawn so when first line suicides
         pop     DX                      ; ... it comes here
         mov     AX,offset DbProl        ; ...
-        docall  Spawn_                  ; ...
-        mov     BX,SS:_DbugRet          ; get address of line to execute
-        mov     SI,SS:_ExLinePtr        ; get F-Code program counter
+        docall  Spawn                   ; ...
+        mov     BX,SS:DbugRet           ; get address of line to execute
+        mov     SI,SS:ExLinePtr         ; get F-Code program counter
         enter_fcode                     ; switch to F-Code environment
         jmp     CS:LG@FC_TABLE[BX]      ; go execute line
 edbfcode RT_DB_PROLOGUE
@@ -198,7 +198,7 @@ dbfcode DB_SFPRO
         push    CS                      ; spawn statement function
         pop     DX                      ; ...
         mov     AX,offset SFStrt        ; ...
-        docall  Spawn_                  ; ...
+        docall  Spawn                   ; ...
         pop     BX                      ; restore address of statement function
         cmp     byte ptr SS:SFFlag,0    ; check for successful completion
         _if     e                       ; if successful completion
@@ -208,13 +208,13 @@ dbfcode DB_SFPRO
           enter_fcode                   ; - switch to F-Code environment
           next                          ; - execute next F-Code (s. f. return)
         _else                           ; else an error has occurred
-          mov   ES,SS:_ExCurr+2         ; - get segment address of s. f.
+          mov   ES,SS:ExCurr+2          ; - get segment address of s. f.
           mov   AX,word ptr ES:SF_LINK[BX]      ; - get offset of previous traceback
-          mov   SS:_ExCurr,AX           ; - restore it
+          mov   SS:ExCurr,AX            ; - restore it
           mov   AX,word ptr ES:SF_LINK+2[BX]    ; - get segment of previous traceback
-          mov   SS:_ExCurr+2,AX         ; - restore it
+          mov   SS:ExCurr+2,AX          ; - restore it
           mov   AX,ES:SF_LINEPTR[BX]    ; - get offset of previous line
-          mov   SS:_ExLinePtr,AX        ; - restore it
+          mov   SS:ExLinePtr,AX         ; - restore it
           dojmp Suicide_                ; - suicide
         _endif                          ; endif
 edbfcode DB_SFPRO
