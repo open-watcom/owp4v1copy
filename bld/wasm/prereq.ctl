@@ -17,7 +17,7 @@ set BUILD_PLATFORM=
     if not exist <PROJDIR>\<OBJDIR> mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
     wmake -h -f ../dos386/makefile
-    <CPCMD> bwasm.exe <DEVDIR>/build/bin/
+    <CPCMD> wasm.exe <DEVDIR>/build/bin/bwasm.exe
     cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
@@ -25,7 +25,7 @@ set BUILD_PLATFORM=
     if not exist <PROJDIR>\<OBJDIR> mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
     wmake -h -f ../os2386/makefile
-    <CPCMD> bwasm.exe <DEVDIR>/build/binp/
+    <CPCMD> wasm.exe <DEVDIR>/build/binp/bwasm.exe
     cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
@@ -33,7 +33,7 @@ set BUILD_PLATFORM=
     if not exist <PROJDIR>\<OBJDIR> mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
     wmake -h -f ../nt386/makefile
-    <CPCMD> bwasm.exe <DEVDIR>/build/binnt/
+    <CPCMD> wasm.exe <DEVDIR>/build/binnt/bwasm.exe
     cdsay <PROJDIR>
 
 [ BLOCK <OWLINUXBUILD> bootstrap ]
@@ -42,7 +42,7 @@ set BUILD_PLATFORM=
     mkdir -p <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
     wmake -h -f ../linux386/makefile bootstrap=1
-    <CPCMD> bwasm <DEVDIR>/build/binl/bwasm
+    <CPCMD> wasm <DEVDIR>/build/binl/bwasm
     cdsay <PROJDIR>
 
 [ BLOCK <OWLINUXBUILD> normal ]
@@ -50,7 +50,7 @@ set BUILD_PLATFORM=
 #    mkdir -p <PROJDIR>/<OBJDIR>
 #    cdsay <PROJDIR>/<OBJDIR>
 #    wmake -h -f ../linux386/makefile
-#    <CPCMD> bwasm.elf <DEVDIR>/build/binl/bwasm
+#    <CPCMD> wasm.elf <DEVDIR>/build/binl/bwasm
 #    cdsay <PROJDIR>
 
 [ BLOCK <1> clean ]
