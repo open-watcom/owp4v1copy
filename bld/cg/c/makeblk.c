@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Block creation and destruction functions.
 *
 ****************************************************************************/
 
@@ -106,6 +105,7 @@ extern  block   *MakeBlock( label_handle label, block_num edges ) {
     blk->loop_head = NULL;
     blk->unroll_count = 0;
     blk->stack_depth = 0;
+    blk->depth = 0;
     _DBitInit( blk->dom.id, 0 );
     for( i = 0; i < edges; i++ ) {
         edge = &blk->edge[ i ];
