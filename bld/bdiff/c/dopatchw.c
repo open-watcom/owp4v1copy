@@ -24,27 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Indirected file.
 *
 ****************************************************************************/
 
 
-#include "bpatch.h"
-
-#define PATCH_FILE_PATCHED      100
-#define PATCH_DIR_DELETED       101
-#define PATCH_FILE_DELETED      102
-#define PATCH_FILE_ADDED        103
-#define PATCH_DIR_ADDED         104
-#define PATCH_EOF               255
-
-#define PATCH_MAX_PATH_SIZE     250
-
-extern void PatchWrite( void *patch, int size );
-
-extern PATCH_RET_CODE DoPatch( char *patchname,
-                   int doprompt,
-                   int dobackup,
-                   int printlevel,
-                   char *outfilename );
+#define BDIFF
+#define _WPATCH
+#include "dopatch.c"

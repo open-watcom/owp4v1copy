@@ -1,15 +1,7 @@
-
-# There are multiple targets in this makefile, and some require their own
-# compiler macro, depending on the target. Like bpatch -> /dBPATCH.
-# bdiff -> /dBDIFF. Because of this, even if some sources are common, the
-# object files cannot have the same extension, and we cannot used default
-# rules. This is most un-elegant. If you find a way to fix it, please do so!
-
 # Known bugs: if you build a dos386 version, it will build fine but complain
 #             about not being able to find the message file.
 
 proj_name = bdiff
-name = bdiff
 
 !include cproj.mif
 !include defrule.mif
@@ -19,7 +11,7 @@ name = bdiff
 
 .c : ../c
 
-inc_dirs = ../h
+inc_dirs = -I"../h"
 
 extra_c_flags_i86 = -fpc
 extra_c_flags_386 = -fpc
@@ -28,13 +20,13 @@ extra_l_flags = name $^@ op map
 
 .ERASE
 
-all : .SYMBOLIC bpatch.exe bdiff.exe bpcmt.exe bplevel.exe bdump.exe
+all : bpatch.exe bdiff.exe bpcmt.exe bplevel.exe bdump.exe .SYMBOLIC
     @%null
 
 # I don't know what WPATCH and WCPATCH are for, they look somewhat like forerunner versions.
 # They are not in the list of targets.
 #
-# WCPATCH. Create patch. Uses .wbj object extension because of /dBDIFF /d_WPATCH requirement
+# WCPATCH. Create patch.
 #
 WBJS = dopatchw.obj msg.obj myio.obj wcptchio.obj wcpatch.obj bdiffmem.obj wbdiff.obj
 
@@ -46,7 +38,7 @@ wcpatch.exe : $(WBJS) $(wres_lib) $(__MAKEFILES__)
         $(linker) @$^&.lnk
 
 #
-# WPATCH. Apply patch. Uses .pbj object extension because of /d_WPATCH requirement
+# WPATCH. Apply patch.
 #
 YBJS = dopatchp.obj msg.obj myio.obj oldfile.obj wpatchio.obj wpatch.obj bdiffmem.obj bpatch.obj
 
@@ -58,7 +50,7 @@ wpatch.exe : $(YBJS) $(wres_lib) $(__MAKEFILES__)
         $(linker) @$^&.lnk
 
 #
-# BPATCH. Uses .pbj object extension because of /d_WPATCH requirement
+# BPATCH.
 #
 OBJ = bpatch.obj dopatchp.obj msg.obj myio.obj oldfile.obj patchio.obj patmain.obj bdiffmem.obj
 
@@ -71,7 +63,7 @@ bpatch.exe : bpatch.res $(OBJ) $(wres_lib) $(__MAKEFILES__)
         wstrip -q -a -r $^@ . bpatch.res
 
 #
-# BDUMP. Uses .xbj object extension because of /dBDUMP requirement
+# BDUMP.
 #
 XBJ = bdump.obj dopatchx.obj msg.obj myio.obj oldfile.obj patchio.obj patmain.obj bdiffmem.obj
 
@@ -84,7 +76,7 @@ bdump.exe : bpatch.res $(XBJ) $(wres_lib) $(__MAKEFILES__)
         wstrip -q -a -r $^@ . bpatch.res
 
 #
-# BDIFF. Uses .dbj object extension because of /dBDIFF requirement
+# BDIFF.
 #
 DBJ = bdiff.obj bdiffmem.obj dopatchd.obj msg.obj myio.obj
 
@@ -112,24 +104,6 @@ bplevel_objs = bplevel.obj
 bplevel.exe : $(bplevel_objs) $(__MAKEFILES__)
         $(linker) $(lflags) file { $(bplevel_objs) }
 
-# explicit rules
-#################
-dopatchd.obj: dopatch.c $($(proj_name)_autodepends)
-        @set include=$(inc_path)
-        $(cc) $(cflags) -dBDIFF $[@ -fo=$^@
-
-dopatchp.obj: dopatch.c $($(proj_name)_autodepends)
-        @set include=$(inc_path)
-        $(cc) $(cflags) -d_WPATCH $[@ -fo=$^@
-
-dopatchw.obj: dopatch.c $($(proj_name)_autodepends)
-        @set include=$(inc_path)
-        $(cc) $(cflags) -dBDIFF -d_WPATCH $[@ -fo=$^@
-
-dopatchx.obj: dopatch.c $($(proj_name)_autodepends)
-        @set include=$(inc_path)
-        $(cc) $(cflags) -dBDUMP $[@ -fo=$^@
-
 # resources
 ############
 pusage.rc : ../usage.sp
@@ -142,7 +116,7 @@ dusage.rc : ../usage.sp
         wsplice -kBDIFF -kENGLISH -k$(_OS) -t8 -f "%+MSG_USAGE_LN_%$#, \"%s\"" $[@ $^@
 
 bpatch.res : ../bpatch.rc ../h/bpatch.h pusage.rc pusagej.rc
-        $(rc_aui) -i.. -dBPATCH $[@ -fo=$^@
+        $(rc_aui) -i.. -DBPATCH $[@ -fo=$^@
 
 bdiff.res : ../bpatch.rc dusage.rc ../h/bpatch.h
-        $(rc_aui) -i.. -dBDIFF $[@ -fo=$^@
+        $(rc_aui) -i.. -DBDIFF $[@ -fo=$^@

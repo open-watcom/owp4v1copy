@@ -129,7 +129,7 @@ void PatchGetFile( char *path ) {
 }
 
 
-PatchWrite( void *patch, int size ) {
+void PatchWrite( void *patch, int size ) {
     fwrite( patch, size, 1, PatchF );
 }
 

@@ -15,4 +15,4 @@ objunixsize = &
 
 extraobjs = $(objunixsize)
 extraobjsroot = $(objunixtimeroot) $(objunixsizeroot)
-inc_path +=;../h;.
+inc_path += -I"../h" -I.
