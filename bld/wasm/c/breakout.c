@@ -44,7 +44,7 @@
 #include "condasm.h"
 #include "myassert.h"
 #include "asmerr.h"
-#include "expand.h"
+#include "asmexpnd.h"
 #include "asmdefs.h"
 
 /* prototypes */

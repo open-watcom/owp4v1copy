@@ -42,7 +42,7 @@
 #include "asmerr.h"
 #include "myassert.h"
 #include "asmalloc.h"
-#include "expand.h"
+#include "asmexpnd.h"
 #include "asmdefs.h"
 
 extern void             AsmError( int );

@@ -65,7 +65,7 @@
 #include "myassert.h"
 #include "fixup.h"
 #include "queue.h"
-#include "expand.h"
+#include "asmexpnd.h"
 
 #endif
 

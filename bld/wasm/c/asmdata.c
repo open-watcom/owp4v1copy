@@ -48,7 +48,7 @@
 #include "asmopnds.h"
 #ifdef _WASM_
     #include "directiv.h"
-    #include "expand.h"
+    #include "asmexpnd.h"
     #include "fixup.h"
 #endif
 #include "tbyte.h"
