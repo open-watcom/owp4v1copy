@@ -107,8 +107,8 @@ struct asmfixup {
         struct asmfixup         *next;
         char                    *name;
         unsigned long           offset;
-        unsigned                fix_loc;
-        enum fixup_types        fix_type;
+        unsigned                fixup_loc;
+        enum fixup_types        fixup_type;
         char                    external;
 
 #ifdef _WASM_

@@ -371,7 +371,7 @@ static int mem( int i )
     char                id_flag = 0;
 #ifdef _WASM_
     char                field_flag = 0;
-    int                 fix_type;
+    int                 fixup_type;
 
     Label_Idx = -1;
     AssumeError = FALSE;
@@ -668,20 +668,20 @@ static int mem( int i )
                 break;
             }
 #ifdef _WASM_
-            fix_type = FIX_OFF16; /* might be changed to OFF32 later */
+            fixup_type = FIX_OFF16; /* might be changed to OFF32 later */
 
             switch( sym->state ) {
             case SYM_GRP:
             case SYM_SEG:
                 ConstantOnly = TRUE;
-                fix_type = FIX_SEG;
+                fixup_type = FIX_SEG;
                 Code->info.opnd_type[Opnd_Count] = OP_I16;
                 Code->info.opcode |= W_BIT;
                 break;
             }
 
             find_frame( sym );
-            fixup = AddFixup( sym, fix_type );
+            fixup = AddFixup( sym, fixup_type );
 #else
             fixup = AddFixup( sym, FIX_OFF16 );
 #endif
@@ -726,8 +726,8 @@ static int mem( int i )
         }
     }
 #endif
-    if( fixup != NULL && fixup->fix_type == FIX_OFF16 && addr_32( Code ) ) {
-        fixup->fix_type = FIX_OFF32;
+    if( fixup != NULL && fixup->fixup_type == FIX_OFF16 && addr_32( Code ) ) {
+        fixup->fixup_type = FIX_OFF32;
     }
     return( i - 1 );
 }

@@ -556,13 +556,13 @@ static int InsertFixups( unsigned char *buff, unsigned i )
     head = FixupHead;
     if( head != NULL ) {
         FixupHead = NULL;
-        /* sort the fixup list in increasing fix_loc's */
+        /* sort the fixup list in increasing fixup_loc's */
         for( fix = head; fix != NULL; fix = next ) {
             owner = &FixupHead;
             for( ;; ) {
                 chk = *owner;
                 if( chk == NULL ) break;
-                if( chk->fix_loc > fix->fix_loc ) break;
+                if( chk->fixup_loc > fix->fixup_loc ) break;
                 owner = &chk->next;
             }
             next = fix->next;
@@ -576,7 +576,7 @@ static int InsertFixups( unsigned char *buff, unsigned i )
         owner = &FixupHead;
         /* insert fixup escape sequences */
         while( src < end ) {
-            if( fix != NULL && fix->fix_loc == (src - buff) ) {
+            if( fix != NULL && fix->fixup_loc == (src - buff) ) {
                 name = fix->name;
                 if( name != NULL ) {
                     sym_handle = SymLook( CalcHash( name, strlen( name ) ),
@@ -604,7 +604,7 @@ static int InsertFixups( unsigned char *buff, unsigned i )
 #if _CPU == 8086
                 fixup_padding = 0;
 #endif
-                switch( fix->fix_type ) {
+                switch( fix->fixup_type ) {
                 case FIX_SEG:
                     if( name == NULL ) {
                         /* special case for floating point fixup */
@@ -673,8 +673,8 @@ static int InsertFixups( unsigned char *buff, unsigned i )
                         mutating the fixup structure to look like a segment
                         fixup one near pointer size later.
                     */
-                    fix->fix_type = FIX_SEG;
-                    fix->fix_loc += skip;
+                    fix->fixup_type = FIX_SEG;
+                    fix->fixup_loc += skip;
                     fix->offset = 0;
                 } else {
                     head = fix;
@@ -718,10 +718,10 @@ local void AddAFix( unsigned i, char *name, unsigned type, unsigned long off )
 
     fix = (struct asmfixup *)CMemAlloc( sizeof( *fix ) );
     fix->external = 1;
-    fix->fix_loc = i;
+    fix->fixup_loc = i;
     fix->name = name;
     fix->offset = off;
-    fix->fix_type = type;
+    fix->fixup_type = type;
     fix->next = FixupHead;
     FixupHead = fix;
 }
