@@ -72,10 +72,10 @@ typedef struct code_lbl {
 #if  OPTIONS & SHORT_JUMPS
         struct code_lbl         *redirect;
 #endif
-#if _TARGET & ( _TARG_AXP | _TARG_PPC )
+//#if _TARGET & ( _TARG_AXP | _TARG_PPC )
         struct code_lbl         *ppc_alt_name;
         void                    *owl_symbol;
-#endif
+//#endif
 } code_lbl;
 
 #define _SetStatus( var, stat ) var->lbl.status |= (stat)

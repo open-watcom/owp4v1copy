@@ -49,7 +49,7 @@ extern  offset          AskAddress(label_handle);
 extern  label_handle    AskForSymLabel(pointer,cg_class);
 extern  sym_handle      AskForLblSym(label_handle);
 extern  void            TellKeepLabel(label_handle);
-extern  void            OutReloc(seg_id,fix_class,bool);
+extern  void            OutReloc(label_handle,seg_id,fix_class,bool);
 extern  void            OutImport(sym_handle,fix_class,bool);
 extern  void            OutBckImport( char *name, bck_info  *bck, fix_class class );
 extern  void            OutLabel(label_handle);
@@ -160,7 +160,7 @@ static  void    DoLblPtr( label_handle lbl, seg_id seg,
 
     SetUpObj( TRUE );
     TellKeepLabel( lbl );
-    OutReloc( seg, class, FALSE );
+    OutReloc( lbl, seg, class, FALSE );
     OutLblPatch( lbl, class, plus );
 }
 

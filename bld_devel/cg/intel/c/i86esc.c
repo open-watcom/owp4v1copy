@@ -29,7 +29,7 @@
 *
 ****************************************************************************/
 
-
+#include <stdio.h>
 #include "standard.h"
 #include "coderep.h"
 #include "ocentry.h"
@@ -41,6 +41,7 @@
 #include "zoiks.h"
 #include "fppatch.h"
 #include "feprotos.h"
+#include "optlbl.h"
 
 extern  void            DbgSetBase( void );
 extern  void            OutAbsPatch(abspatch*,patch_attr);
@@ -66,7 +67,7 @@ extern  void            TellKeepLabel(label_handle);
 extern  void            OutDataInt(int);
 extern  void            OutDataLong(long);
 extern  void            OutPatch(label_handle,patch_attr);
-extern  void            OutReloc(seg_id,fix_class,bool);
+extern  void            OutReloc(label_handle,seg_id,fix_class,bool);
 extern  seg_id          AskOP( void );
 extern  void            OutLabel(label_handle);
 extern  void            OutDataByte(byte);
@@ -88,6 +89,9 @@ extern bool             AskIfUniqueLabel(label_handle);
 extern bool             UseImportForm(fe_attr);
 extern bool             AskIfCommonLabel(label_handle);
 extern void             OutSpecialCommon(int,fix_class,bool);
+extern void             OutFuncStart( code_lbl *, offset, cg_linenum );
+extern void             OutFuncEnd( offset );
+extern pointer          Copy(pointer,pointer,uint);
 
 extern void             DoLblRef( label_handle lbl, seg_id seg,
                                   offset val, byte kind );
@@ -98,6 +102,10 @@ static  void            OutCodeDisp( label_handle lbl, fix_class f,
                                      bool rel, oc_class class );
 
 extern byte             *NopLists[];
+
+static  offset  procStart;
+static  code_lbl *procLabel;
+static  any_oc  debugOC;
 
 /* Grammar of Escapes :*/
 /**/
@@ -283,6 +291,11 @@ static  void    DumpSavedDebug( void )
 /******************************/
 {
     switch( SaveDbgOc ) {
+    case INFO_LINE:
+        if (debugOC.oc_entry.class != OC_DEAD)
+            OutLineNum( debugOC.oc_linenum.line, debugOC.oc_linenum.label_line );
+        debugOC.oc_entry.class = OC_DEAD;
+        break;
     case INFO_DBG_RTN_BEG:
         DbgRtnBeg( SaveDbgPtr, AskLocation() );
         break;
@@ -428,7 +441,7 @@ static  void    OutCodeDisp( label_handle lbl, fix_class f,
                 OutPatch( lbl, _OFFSET_PATCH );
             }
             _OutFarOff( addr );
-            OutReloc( AskSegID( sym, CG_FE ), F_BASE, FALSE );
+            OutReloc( lbl, AskSegID( sym, CG_FE ), F_BASE, FALSE );
             _OutFarSeg( 0 );
         }
     }
@@ -481,12 +494,14 @@ static  label_handle    ExpandObj( byte *cur, int explen ) {
         }
         switch( key & ~MASK ) {
         case REL:
+            printf("rel reloc!\n");
             seg = *(seg_id *)cur;
             cur += sizeof( seg_id );
-            OutReloc( seg, class, rel );
+            OutReloc( NULL, seg, class, rel );
             val = 0;
             break;
         case SYM:          /* never BASE*/
+            printf("symbol!\n");
             sym = *(pointer *)cur;
             cur += sizeof( pointer );
             lbl = AskForSymLabel( sym, CG_FE );
@@ -499,9 +514,10 @@ static  label_handle    ExpandObj( byte *cur, int explen ) {
                 }
                 val = 0;
             }
-            OutReloc( AskSegID( sym, CG_FE ), class, rel );
+            OutReloc( lbl, AskSegID( sym, CG_FE ), class, rel );
             break;
         case LBL:          /* never BASE*/
+            printf("Normal label!\n");
             seg = *(seg_id *)cur;
             cur += sizeof( seg_id );
             lbl = *(pointer *)cur;
@@ -511,9 +527,11 @@ static  label_handle    ExpandObj( byte *cur, int explen ) {
                 val = 0;
             } else {
                 if( AskIfCommonLabel( lbl ) ) {
+                    printf("Common label!\n");
                     OutSpecialCommon( (int)AskForLblSym( lbl ), class, rel );
                 } else {
-                    OutReloc( seg, class, rel );
+                    printf("Other label!\n");
+                    OutReloc( lbl, seg, class, rel );
                 }
                 val = AskAddress( lbl );
                 if( val == ADDR_UNKNOWN ) {
@@ -527,21 +545,25 @@ static  label_handle    ExpandObj( byte *cur, int explen ) {
             }
             break;
         case IMP:
+            printf("Import label!\n");
             OutImport( *(sym_handle *)cur, class, rel );
             cur += sizeof( sym_handle * );
             val = 0;
             break;
         case ABS:
+            printf("ABS patch!\n");
             val = *cur;
             cur++;
             OutAbsPatch( *(pointer *)cur, val );
             cur += sizeof( pointer );
             continue;
         case FUN:
+            printf("FUN patch!\n");
             OutFPPatch( *cur );
             cur++;
             continue;
         default:
+            printf("Zoiks\n");
             _Zoiks( ZOIKS_038 );
             break;
         }
@@ -576,6 +598,7 @@ extern  void    OutputOC( any_oc *oc, any_oc *next_lbl ) {
         DumpSavedDebug();
     }
     SetUpObj( FALSE );
+
     switch( base ) {
     case OC_CODE:
     case OC_DATA:
@@ -608,6 +631,14 @@ extern  void    OutputOC( any_oc *oc, any_oc *next_lbl ) {
         }
         DoAlignment( len );
         OutLabel( oc->oc_handle.handle );           /* do patches*/
+        if( _IsTargetModel( OWL ) && _TstStatus( ((code_lbl *)oc->oc_handle.handle), PROC ) ) {
+            lc = AskLocation();
+            procStart = lc;
+            procLabel = lbl;
+            if( _IsModel( NUMBERS ) ) {
+                OutFuncStart( oc->oc_handle.handle, lc, oc->oc_handle.line );
+            }
+        }
         DbgSetBase();
         DumpSavedDebug();
         break;
@@ -624,7 +655,7 @@ extern  void    OutputOC( any_oc *oc, any_oc *next_lbl ) {
             OutImport( sym, F_OFFSET, FALSE );
             lc = 0;
         } else {
-            OutReloc( AskOP(), F_OFFSET, FALSE );
+            OutReloc( lbl, AskOP(), F_OFFSET, FALSE );
             lc = AskAddress( lbl );
             if( lc == ADDR_UNKNOWN ) {
                 OutPatch( lbl, ADD_PATCH | _OFFSET_PATCH );
@@ -688,6 +719,9 @@ extern  void    OutputOC( any_oc *oc, any_oc *next_lbl ) {
         base = oc->oc_entry.class & INFO_MASK;
         switch( base ) {
         case INFO_LINE:
+            if (_IsTargetModel( OWL ))
+                Copy( oc, &debugOC, oc->oc_entry.reclen);
+            else
             OutLineNum( oc->oc_linenum.line, oc->oc_linenum.label_line );
             break;
         case INFO_LDONE:
@@ -710,7 +744,11 @@ extern  void    OutputOC( any_oc *oc, any_oc *next_lbl ) {
             break;
         case INFO_DBG_RTN_END:
             DbgRtnEnd( oc->oc_debug.ptr, AskLocation() );
+            if( _IsModel( NUMBERS ) && _IsTargetModel( OWL )) {
+                OutFuncEnd( lc );
+            } else {
             OutLineNum( 0, FALSE ); /* Kill pending line number */
+            }
             break;
         case INFO_SELECT:
             OutSelect( oc->oc_select.starts );

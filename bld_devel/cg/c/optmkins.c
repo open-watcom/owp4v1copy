@@ -99,9 +99,9 @@ extern  code_lbl        *AddNewLabel( ins_entry *new, int align ) {
     lbl_oc.oc_entry.reclen = sizeof( oc_handle );
     lbl = AskForNewLabel();
     lbl_oc.oc_handle.handle = lbl;
-#if _TARGET & _TARG_RISC
+//#if _TARGET & _TARG_RISC
     lbl_oc.oc_handle.line = 0;
-#endif
+//#endif
     AddInstr( NewInstr( &lbl_oc ), new );
     _SetStatus( lbl, DYINGLABEL );
     optreturn( lbl );

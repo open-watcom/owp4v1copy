@@ -59,10 +59,10 @@ static  label_handle    DoAskForLabel( sym_handle sym ) {
     #if( OPTIONS & SHORT_JUMPS )
         new->redirect = NULL;
     #endif
-    #if( _TARGET & ( _TARG_AXP | _TARG_PPC ) )
+//    #if( _TARGET & ( _TARG_AXP | _TARG_PPC ) )
         new->ppc_alt_name = NULL;
         new->owl_symbol = NULL;
-    #endif
+//    #endif
 #ifndef NDEBUG
     new->useinfo.hdltype = NO_HANDLE;
     new->useinfo.used = 0;

@@ -67,7 +67,7 @@ static  label_handle    LocateLabel( instruction *ins, int index ) {
     return( _BLOCK( ins )->edge[  index  ].destination );
 }
 
-#if _TARGET & _TARG_RISC
+//#if _TARGET & _TARG_RISC
 extern  void    CodeLabelLinenum( label_handle label, unsigned align, cg_linenum line ) {
 /***************************************************************************************/
 
@@ -82,7 +82,7 @@ extern  void    CodeLabelLinenum( label_handle label, unsigned align, cg_linenum
     InputOC( &temp );
 
 }
-#endif
+//#endif
 
 extern  void    CodeLabel( label_handle label, unsigned align ) {
 /****************************************************************
@@ -122,9 +122,9 @@ extern  void    CodeHandle( oc_class class, int len, label_handle handle ) {
     temp.op.reclen = sizeof( oc_handle );
     temp.op.objlen = len;
     temp.handle = handle;
-#if _TARGET & _TARG_RISC
+//#if _TARGET & _TARG_RISC
     temp.line = 0;
-#endif
+//#endif
     InputOC( &temp );
 }
 

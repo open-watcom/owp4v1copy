@@ -30,40 +30,59 @@
 ****************************************************************************/
 
 
-CLASS_NAME,
-CODE_GROUP,
-FREE_AUX_REQ1,
-DATA_GROUP,
-IMPORT_NAME,
-LIBRARY_NAME,
-NEXT_IMPORT,
-NEXT_LIBRARY,
-STRETURN_REG,
-USED_8087,
-__UNUSED_AUX_CLASS_30,
-STACK_SIZE_8087,
-CODE_LABEL_ALIGNMENT,
-PROEPI_DATA_SIZE,
+#include "standard.h"
+#include <string.h>
+#include "hostsys.h"
+#include "coderep.h"
+#include "pattern.h"
+#include "procdef.h"
+#include "cgdefs.h"
+#include "sysmacro.h"
+#include "offset.h"
+#include "symdbg.h"
+#include "model.h"
+#include "ocentry.h"
+#include "zoiks.h"
+#include "cgaux.h"
+#include "typedef.h"
+#include "dbgstrct.h"
+#include "cvdbg.h"
+#include "dbcue.h"
+#include "owl.h"
+#include "rscobj.h"
 
-IMPORT_TYPE,
-#    define IMPORT_IS_WEAK              0
-#    define IMPORT_IS_LAZY              1
-#    define IMPORT_IS_CONDITIONAL       2
-#    define IMPORT_IS_CONDITIONAL_PURE  3
+extern  seg_id            DbgSegDef( char *name );
+extern owl_section_handle DbgSectDefComdat( char *str );
 
-CONDITIONAL_IMPORT,
-NEXT_CONDITIONAL,
-CONDITIONAL_SYMBOL,
-VIRT_FUNC_REFERENCE,
-VIRT_FUNC_SYM,
-VIRT_FUNC_NEXT_REFERENCE,
-PEGGED_REGISTER,
-CLASS_APPENDED_NAME,
-P5_PROF_DATA,
-P5_PROF_SEG,
-P5_CHIP_BUG_SYM,
-EXCEPTION_HANDLER,
-EXCEPT_FILTER_USED,
-RT_EXCEPT_RTN,
-EXCEPTION_DATA,
+extern seg_id                CVSyms;
+extern seg_id                CVTypes;
 
+static   section_def       *CVSymMain;
+static  owl_section_handle  owlCVSym; //.debug$s for non-comdats .text
+
+extern  void    CVDefSegs( void ){
+/**************************/
+    if( _IsModel( DBG_LOCALS ) ) {
+        CVSyms = DbgSegDef( ".debug$S"  );
+        CVSymMain = FindSection( CVSyms );
+        owlCVSym = CVSymMain->owl_handle;
+    }
+    if( _IsModel( DBG_TYPES ) ) {
+        CVTypes = DbgSegDef( ".debug$T" );
+    }
+}
+
+extern void  CVDefSymNormal( void ){
+/**********************************/
+    if( _IsModel( DBG_LOCALS ) ) {
+        CVSymMain->owl_handle = owlCVSym;
+    }
+}
+
+extern void  CVDefSymComdat( owl_section_handle depof ){
+/**********************************/
+    if( _IsModel( DBG_LOCALS ) ) {
+        CVSymMain->owl_handle = DbgSectDefComdat( ".debug$S" );
+        OWLComdatDep( CVSymMain->owl_handle, depof );
+    }
+}

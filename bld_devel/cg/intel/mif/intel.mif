@@ -17,6 +17,9 @@ intel_objs = &
     i86lesds.obj &
     i86mul.obj &
     i86obj.obj &
+    owlobj.obj &
+    rsccvsup.obj &
+    rscdfsup.obj &
     i86opcod.obj &
     i86proc.obj &
     i86reg.obj &
@@ -39,5 +42,5 @@ intel_objs = &
     wvsyms.obj &
     wvtypes.obj
 
-include_path    = $+$(include_path)$-;$(cg_dir)\intel\h
+include_path    = $+$(include_path)$-;$(cg_dir)\intel\h;$(owl_dir)\h
 src_path        = $+$(src_path)$-;$(cg_dir)\intel\c

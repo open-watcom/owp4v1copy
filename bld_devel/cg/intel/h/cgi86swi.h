@@ -61,6 +61,9 @@
 #define NULL_SELECTOR_BAD       0x04000000L
 #define P5_PROFILING_CTR0       0x08000000L
 #define LAST_TARG_CGSWITCH      0x08000000L
+#define ELF                     0x10000000L
+#define COFF                    0x20000000L
+#define OWL                     COFF|ELF
 
 
 typedef enum {

@@ -864,6 +864,8 @@ void Set_ET()           { TargetSwitches |= P5_PROFILING; }
 void Set_ETP()          { TargetSwitches |= NEW_P5_PROFILING; }
 void Set_ESP()          { TargetSwitches |= STATEMENT_COUNTING; }
 void Set_EZ()           { TargetSwitches |= EZ_OMF; }
+void Set_ELF()          { TargetSwitches |= ELF; }
+void Set_COFF()         { TargetSwitches |= COFF; }
 #endif
 
 void Set_EP()
@@ -1330,6 +1332,8 @@ struct option const CFE_Options[] = {
 #endif
 #if _CPU == 386
     { "ez",     0,              Set_EZ },
+    { "eelf",   0,		Set_ELF },
+    { "ecoff",  0,		Set_COFF },
 #endif
     { "e=#",    0,              SetErrorLimit },
 #if _CPU == 8086 || _CPU == 386

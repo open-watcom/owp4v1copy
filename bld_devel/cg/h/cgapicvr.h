@@ -30,5 +30,5 @@
 ****************************************************************************/
 
 
-#define CGAPIDEF( a, b, c ) #define a (CGFuncTable->##a)
+#define CGAPIDEF( a, b, c ) #define a (CGFuncTable->a)
 #include "cgfuntab.h"

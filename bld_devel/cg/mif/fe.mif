@@ -10,10 +10,10 @@ obj_dir         = $(host_OS)$(host_CPU).rtd
 !endif
 
 o_dir_386       = $(cg_dir)\intel\386\$(obj_dir)
-i_dir_386       = $(cg_dir)\intel\386\h;$(cg_dir)\intel\h
+i_dir_386       = $(cg_dir)\intel\386\h;$(cg_dir)\intel\h;$(owl_dir)\h
 
 o_dir_i86       = $(cg_dir)\intel\i86\$(obj_dir)
-i_dir_i86       = $(cg_dir)\intel\i86\h;$(cg_dir)\intel\h
+i_dir_i86       = $(cg_dir)\intel\i86\h;$(cg_dir)\intel\h;$(owl_dir)\h
 
 o_dir_axp       = $(cg_dir)\risc\axp\$(obj_dir)
 i_dir_axp       = $(cg_dir)\risc\axp\h;$(cg_dir)\risc\h;$(owl_dir)\h
@@ -36,8 +36,8 @@ cf_lib          = $(cfloat_dir)\o.$(host_CPU)\cf.lib
 
 use_owl_lib_axp = 1
 use_owl_lib_ppc = 1
-use_owl_lib_386 = 0
-use_owl_lib_i86 = 0
+use_owl_lib_386 = 1
+use_owl_lib_i86 = 1
 
 !include $(cg_dir)\mif\cg.mif
 

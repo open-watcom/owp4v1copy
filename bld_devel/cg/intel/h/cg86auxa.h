@@ -29,6 +29,8 @@
 *
 ****************************************************************************/
 
+#include "owl.h"
+#include "offset.h"
 
 #define CALLER_POPS                    ( 0x00000001L << _TARG_AUX_SHIFT )
 #define DLL_EXPORT                     ( 0x00000002L << _TARG_AUX_SHIFT )
@@ -68,3 +70,16 @@
 #define FIX_SYM_OFFSET          0x00    /* followed by a long */
 #define FIX_SYM_SEGMENT         0x01    /* .. */
 #define FIX_SYM_RELOFF          0x02    /* .. */
+
+typedef struct byte_seq_reloc {
+    struct byte_seq_reloc *     next;
+    offset                      off;
+    void *                      sym;
+    owl_reloc_type              type;
+} byte_seq_reloc;
+
+typedef struct risc_byte_seq {
+    byte_seq_reloc *    relocs;
+    byte_seq_len        length;
+    char                data[];
+} risc_byte_seq;

@@ -103,9 +103,9 @@ typedef struct oc_handle {
         oc_header               op;
         pointer                 ref;
         label_handle            handle;
-#if _TARGET & _TARG_RISC
+//#if _TARGET & _TARG_RISC
         cg_linenum              line;
-#endif
+//#endif
 } oc_handle;
 
 typedef struct oc_debug {

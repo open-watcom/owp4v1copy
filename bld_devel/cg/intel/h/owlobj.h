@@ -30,40 +30,24 @@
 ****************************************************************************/
 
 
-CLASS_NAME,
-CODE_GROUP,
-FREE_AUX_REQ1,
-DATA_GROUP,
-IMPORT_NAME,
-LIBRARY_NAME,
-NEXT_IMPORT,
-NEXT_LIBRARY,
-STRETURN_REG,
-USED_8087,
-__UNUSED_AUX_CLASS_30,
-STACK_SIZE_8087,
-CODE_LABEL_ALIGNMENT,
-PROEPI_DATA_SIZE,
+// section layout for OWL
+typedef struct section_def section_def;
 
-IMPORT_TYPE,
-#    define IMPORT_IS_WEAK              0
-#    define IMPORT_IS_LAZY              1
-#    define IMPORT_IS_CONDITIONAL       2
-#    define IMPORT_IS_CONDITIONAL_PURE  3
+struct section_def {
+    section_def         *next;
+    seg_id              id;
+    owl_func_handle     func;
+    int                 line;
+    int                 start;
+    owl_section_handle  owl_handle;
+    int                 is_start;
+};
+//Linker comments
+#define  COMMENTV( a )  a,sizeof( a )-1
+#define COFF_DRECTVE_DEFLIB "-defaultlib:"
+#define COFF_DRECTVE_STACK  "-stack"
+#define COFF_DRECTVE_HEAP   "-heap"
+#define COFF_DRECTVE_EXPORT "-export"
 
-CONDITIONAL_IMPORT,
-NEXT_CONDITIONAL,
-CONDITIONAL_SYMBOL,
-VIRT_FUNC_REFERENCE,
-VIRT_FUNC_SYM,
-VIRT_FUNC_NEXT_REFERENCE,
-PEGGED_REGISTER,
-CLASS_APPENDED_NAME,
-P5_PROF_DATA,
-P5_PROF_SEG,
-P5_CHIP_BUG_SYM,
-EXCEPTION_HANDLER,
-EXCEPT_FILTER_USED,
-RT_EXCEPT_RTN,
-EXCEPTION_DATA,
-
+extern section_def *FindSection( seg_id id );
+extern owl_section_handle DbgSectDefComdat( char *str );
