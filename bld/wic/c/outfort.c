@@ -243,7 +243,7 @@ static pOUnit getMemModelOUnit(pDclr dclr) {
     }
 }
 
-static _expandPushPragmaDeclInfo(int fileNum, void *_decl) {
+static void _expandPushPragmaDeclInfo(int fileNum, void *_decl) {
     pDeclInfo decl = _decl;
 
     pTokPos pos = getDeclPos(decl);

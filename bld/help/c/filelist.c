@@ -196,7 +196,7 @@ static void scanDirectory( char *buf, FileList *list ) {
     closedir( dirhdl );
 }
 
-static doFillFileList( char *cur, FileList *list ) {
+static void doFillFileList( char *cur, FileList *list ) {
 
     char                done;
     char                *path;
@@ -235,7 +235,7 @@ static doFillFileList( char *cur, FileList *list ) {
     }
 }
 
-static fillFileList( HelpSrchPathItem *srch, FileList *list ) {
+static void fillFileList( HelpSrchPathItem *srch, FileList *list ) {
 
     unsigned    i;
     char        *cur;

@@ -239,7 +239,7 @@ static void putSrcFile( REWRITE *r, TOKEN_LOCN *locn )
     locn->column = 0;
 }
 
-static putSrcLocn( REWRITE *r, TOKEN_LOCN *locn )
+static void putSrcLocn( REWRITE *r, TOKEN_LOCN *locn )
 {
     SRCFILE currfile;
     uint_32 absolute;

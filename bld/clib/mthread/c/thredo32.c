@@ -68,8 +68,8 @@ typedef struct thread_args {
 } thread_args;
 
 
-static APIENTRY begin_thread_helper( thread_args *td )
-/****************************************************/
+static void APIENTRY begin_thread_helper( thread_args *td )
+/*********************************************************/
 {
     thread_fn                   *rtn;
     void                        *arg;

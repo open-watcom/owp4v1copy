@@ -110,7 +110,7 @@ int __is_nonIBM( void )
 _WCRTLINK int           __NonIBM = -1;  // start at -1 for debugging purposes
                                         // (-1 ==> not yet initialized)
 
-static init_on_startup( void )
+static void init_on_startup( void )
 {
     __NonIBM = __is_nonIBM();
 }

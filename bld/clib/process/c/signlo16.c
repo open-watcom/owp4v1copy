@@ -90,7 +90,7 @@ _WCRTLINK void _WCI86FAR __sigfpe_handler( int fpe_type )
     }
 
 
-static _WCFAR pascal break_handler( USHORT sigarg, USHORT signum )
+static void _WCFAR pascal break_handler( USHORT sigarg, USHORT signum )
     {
         int sig;
 

@@ -133,7 +133,7 @@ static const char * usage_data[] = {
 /* ENC is the basic 1-character encoding function to make a char printing */
 #define ENC(c) ((c) ? ((c) & 077) + ' ': '`')
 
-main(argc, argv)
+int main(argc, argv)
 char **argv;
 {
 #if defined( VMS ) || defined( __WATCOMC__ )
@@ -235,13 +235,13 @@ char **argv;
         encode(in, OUT);
 
         fprintf(OUT, "end\n");
-        exit(0);
+        return( 0 );
 }
 
 /*
  * copy from in to out, encoding as you go along.
  */
-encode(in, out)
+void encode(in, out)
 register FILE *in;
 register FILE *out;
 {
@@ -265,7 +265,7 @@ register FILE *out;
 /*
  * output one group of 3 bytes, pointed at by p, on file f.
  */
-outdec(p, f)
+void outdec(p, f)
 register char *p;
 register FILE *f;
 {

@@ -578,7 +578,7 @@ unsigned CgTypeOffset(          // GET CODEGEN TYPE FOR AN OFFSET
 }
 
 
-static init(                    // MODULE INITIALIZATION
+static void init(               // MODULE INITIALIZATION
     INITFINI* defn )            // - definition
 {
     defn = defn;

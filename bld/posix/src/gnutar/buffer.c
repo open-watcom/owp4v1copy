@@ -335,7 +335,7 @@ void saverec(union record  **pointer)
 /*
  * Perform a write to flush the buffer.
  */
-fl_write()
+void fl_write( void )
 {
         int             err;
         int             nbytes = blocksize;
@@ -412,7 +412,7 @@ readerror()
 /*
  * Perform a read to flush the buffer.
  */
-fl_read()
+void fl_read( void )
 {
         int             err;            /* Result from system call */
         int             left;           /* Bytes left */
@@ -524,7 +524,7 @@ again:
 /*
  * Flush the current buffer to/from the archive.
  */
-flush_archive()
+void flush_archive( void )
 {
         baserec += ar_last - ar_block;          /* Keep track of block #s */
         ar_record = ar_block;           /* Restore pointer to start */

@@ -406,7 +406,7 @@ main( int argc , char *argv[] )
         ReadExtraTags( fileName );
     }
     GenerateTagsFile( fileName );
-    exit( 0 );
+    return( 0 );
 
 } /* main */
 

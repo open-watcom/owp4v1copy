@@ -96,7 +96,7 @@ main()
 #ifdef DEBUG
         if( kbhit() ) {
             if( getch() == 'q' ) {
-                exit( 0 );
+                return( 0 );
             }
         }
 #endif
@@ -184,6 +184,6 @@ main()
     VxDDisconnect();
     VxDUnLink();
 
-    exit( 0 );
+    return( 0 );
 
 }

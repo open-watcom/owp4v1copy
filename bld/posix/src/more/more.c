@@ -332,7 +332,7 @@ static void doMore( char *name, FILE *f )
 
 } /* doMore */
 
-main( int argc, char *argv[] )
+int main( int argc, char *argv[] )
 {
     int         i;
     FILE        *f;
@@ -415,6 +415,5 @@ main( int argc, char *argv[] )
             }
         }
     }
-    exit( 0 );
-
+    return( 0 );
 }

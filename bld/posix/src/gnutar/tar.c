@@ -111,7 +111,7 @@ void            describe();
 /*
  * Main routine for tar.
  */
-main(argc, argv)
+int main(argc, argv)
 int             argc;
 char          **argv;
 {
@@ -189,7 +189,7 @@ dupflags:
 #ifndef MSDOS
         sync(); /* insure all floppy buffers are written out */
 #endif
-        exit(0);
+        return( 0 );
 }
 
 
@@ -382,7 +382,7 @@ describe()
  *
  * They can either come from stdin or from argv.
  */
-name_init(argc, argv)
+void name_init(argc, argv)
 int             argc;
 char          **argv;
 {
@@ -738,7 +738,7 @@ void name_gather()
 /*
  * Add a name to the namelist.
  */
-addname(name)
+void addname(name)
 char           *name;                   /* pointer to name */
 {
         register int    i;                      /* Length of string */

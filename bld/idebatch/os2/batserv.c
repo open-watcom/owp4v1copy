@@ -171,7 +171,7 @@ static void ProcessConnection()
 }
 
 
-main( int argc, char *argv[] )
+void main( int argc, char *argv[] )
 {
     APIRET      rc;
     HFILE       h;

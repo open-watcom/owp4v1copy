@@ -204,7 +204,7 @@ BOOL WINAPI Ignore( DWORD CtrlType )
 }
 
 
-main( int argc, char *argv[] )
+void main( int argc, char *argv[] )
 {
     SECURITY_ATTRIBUTES attr;
 

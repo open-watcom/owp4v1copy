@@ -123,7 +123,7 @@ _WCRTLINK extern char __SLV_pic = 0;    /* Slave PIC port number */
 ***** which will initialize some global variables.
 ****/
 
-static init_on_startup( void )
+static void init_on_startup( void )
 {
     if( !__NonIBM ) {       /* IBM */
         __FPE_int = 0x02;               /* INT 0x02 */

@@ -201,7 +201,7 @@ unsigned LocalGetCwd( int drive, char *where )
     return( StashErrCode( DosQueryCurrentDir( drive, where, &len ), OP_LOCAL ) );
 }
 
-static makeDOSDTA( struct _FILEFINDBUF3 *os2, trap_dta *dos )
+static void makeDOSDTA( struct _FILEFINDBUF3 *os2, trap_dta *dos )
 {
     dos->dos.dir_entry_num = *(USHORT *)&os2->fdateLastWrite;
     dos->dos.cluster = *(USHORT *)&os2->ftimeLastWrite;

@@ -207,7 +207,7 @@ static TYPE makeRefPtrFunc      // MAKE REFERENCE OR PTR TO FUNCTION
 }
 
 
-static setFunType               // SET FUNCTION TYPE
+static void setFunType          // SET FUNCTION TYPE
     ( PTREE node                // - node to be set
     , TYPE ftype )              // - function type
 {

@@ -643,7 +643,7 @@ static AccessInfo accessNames[] = {     ST_PROTECTED,   "protected:\n",
 };
 
 
-static outPutDataMembers( FileInfo *fpo, sru_file *sru ) {
+static void outPutDataMembers( FileInfo *fpo, sru_file *sru ) {
 /******************************************************/
 
     unsigned            i;
@@ -660,7 +660,7 @@ static outPutDataMembers( FileInfo *fpo, sru_file *sru ) {
     }
 }
 
-static dumpNewClassDef( sru_file *sru, FileInfo *fpo ) {
+static void dumpNewClassDef( sru_file *sru, FileInfo *fpo ) {
 /*******************************************************/
 
 /* declares a class */

@@ -75,7 +75,7 @@ static const char *usageMsg[] = {
 /*
  * start of mainline
  */
-main( int argc, char *argv[] )
+int main( int argc, char *argv[] )
 {
     int         i,ch,j;
     unsigned long   csum=0,ssum=0;
@@ -132,7 +132,7 @@ main( int argc, char *argv[] )
         fmtPrint( csum );
         printf( " %s\n", argv[i] );
     }
-
+    return( 0 );
 } /* main */
 
 typedef struct ack {

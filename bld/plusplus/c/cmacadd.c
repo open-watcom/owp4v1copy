@@ -102,7 +102,7 @@ static void macroAllocSegment(   // ALLOCATE MACRO SEGMENT
     ExtraRptIncrementCtr( macro_segments );
 }
 
-static storageInitialize(       // INITIALIZE STORAGE DATA
+static void storageInitialize(       // INITIALIZE STORAGE DATA
     void )
 {
     macroAllocSegment( HASH_TABLE_SIZE );

@@ -708,7 +708,7 @@ register char  *where;
 /*
  * Write the EOT block(s).
  */
-write_eot()
+void write_eot( void )
 {
         union record   *p;
 

@@ -110,7 +110,7 @@
 #define DEC(c)  (((c) - ' ') & 077)
 
 
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
         FILE *in, *out;
         int mode;
@@ -214,14 +214,14 @@ main(int argc, char **argv)
                 fprintf(stderr, "No end line\n");
                 exit(5);
         }
-      }
-        exit(0);
+    }
+    return( 0 );
 }
 
 /*
  * copy from in to out, decoding as you go along.
  */
-decode(in, out)
+void decode(in, out)
 FILE *in;
 FILE *out;
 {
@@ -308,7 +308,7 @@ FILE *out;
  * be output to file f.  n is used to tell us not to
  * output all of them at the end of the file.
  */
-outdec(p, f, n)
+void outdec(p, f, n)
 char *p;
 FILE *f;
 {

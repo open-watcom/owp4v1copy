@@ -1425,7 +1425,7 @@ void ScopeJumpBackward( SCOPE scope )
     SetCurrScope(scope);
 }
 
-static scopeWalkSymbolNameSymbols( SYMBOL_NAME name, void *data )
+static void scopeWalkSymbolNameSymbols( SYMBOL_NAME name, void *data )
 /***************************************************************/
 {
     SYMBOL sym;

@@ -204,7 +204,7 @@ static void OpenFiles( char verbose, char *path, char *out_file )
 }
 
 
-static CloseFiles(void)
+static void CloseFiles(void)
 {
     fclose( PrsFile );
     if( TblFile != NULL ) fclose( TblFile );

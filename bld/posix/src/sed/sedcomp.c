@@ -108,7 +108,7 @@ static char     **eargv;                /* scratch copy of argument list */
 static int      eflag;                  /* -e option flag */
 static int      gflag;                  /* -g option flag */
 /**/
-main(argc, argv)
+int main(argc, argv)
 /* main sequence of the stream editor */
 int     argc;
 char    *argv[];
@@ -117,7 +117,7 @@ char    *argv[];
         eargv   = argv;         /* set local copy of argument list */
         cmdp->addr1 = pool;     /* 1st addr expand will be at pool start */
         if (eargc <= 1)
-                exit(0);        /* exit immediately if no arguments */
+                return( 0 );        /* exit immediately if no arguments */
         /* scan through the arguments, interpreting each one */
         while ((--eargc > 0) && (**++eargv == '-'))
                 switch (eargv[0][1])
@@ -164,7 +164,7 @@ char    *argv[];
                 execute(NULL);  /*   execute commands on stdin only */
         else while(--eargc>=0)  /* else execute commands on each file specified */
                 execute(*eargv++);
-        exit(0);                /* everything was O.K. if we got here */
+        return( 0 );                /* everything was O.K. if we got here */
 }
 /**/
 #define H       0x80    /* 128 bit, on if there's really code for command */
