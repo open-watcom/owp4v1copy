@@ -44,13 +44,6 @@ OBJS = &
 # options to use
 extra_c_flags = -DMICROSOFT -s
 
-#
-# Option to compile with -r (used in QNX build)
-#
-!ifdef MAINTAIN_SR
-extra_c_flags += -r
-!endif
-
 !ifdef CONV
 extra_c_flags += -3$(CONV)
 !endif

@@ -34,6 +34,7 @@ cdsay .
     <CPCMD> <DEVDIR>/mathlib/library/windows.287/mc/math87c.lib <RELROOT>/rel2/lib286/win/math87c.lib
     <CPCMD> <DEVDIR>/mathlib/library/windows.287/ml/math87l.lib <RELROOT>/rel2/lib286/win/math87l.lib
 #   <CPCMD> <DEVDIR>/mathlib/library/winnt.axp/_s/mathaxp.lib <RELROOT>/rel2/libaxp/math.lib
+    <CPCMD> <DEVDIR>/mathlib/library/netware.387/ms_s/math387s.lib <RELROOT>/rel2/lib386/netware/math387s.lib
 
 [ BLOCK <1> clean ]
 #==================

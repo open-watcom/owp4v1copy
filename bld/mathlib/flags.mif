@@ -17,7 +17,7 @@ sw_c_static  =
 sw_c_dynamic = -d__MAKE_DLL_MATHLIB
 sw_c_alias   = -d__MAKE_DLL_MATHLIB
 
-sw_c_intel    =-r-fpr-of
+sw_c_intel    =-of
 sw_c_calls    =-fpc
 sw_c_register =-5r
 sw_c_stack    =-5s
@@ -54,6 +54,13 @@ sw_c_387_mf =-mf$(sw_c_$(convention))
 sw_c_axp_   =
 sw_c_ppc_   =
 
+sw_c_msdos    =
+sw_c_os2      =
+sw_c_windows  =
+sw_c_winnt    =
+sw_c_linux    =
+sw_c_netware  =
+
 sw_a_intel   = -w4 -zld -e -dPDIV
 sw_a_static  =
 sw_a_dynamic = -d__MAKE_DLL_MATHLIB -d_EXPORT
@@ -88,12 +95,6 @@ sw_a_387_mf =-mf$(sw_a_$(convention))
 sw_a_axp_   =
 sw_a_ppc_   =
 
-sw_c_msdos    =
-sw_c_os2      =
-sw_c_windows  =
-sw_c_winnt    =
-sw_c_linux    =
-
 sw_a_msdos_286    =
 sw_a_msdos_287    =
 sw_a_msdos_386    =
@@ -105,6 +106,7 @@ sw_a_windows_286  =
 sw_a_windows_287  =
 sw_a_winnt_axp    =
 sw_a_winnt_ppc    =
+sw_a_netware_387  =
 
 c_flags = $(sw_c_common) $(sw_c_$(linkage)) $(sw_c_$(processor)_$(model))
 c_flags += $(sw_c_$(processor)) $(sw_c_$(system)) $(extra_c_flags)

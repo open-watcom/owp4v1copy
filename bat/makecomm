@@ -70,49 +70,19 @@ compaxp += @BWCCAXP
 !endif
 
 #
-# compilers used for libraries
-#
-libcomp286=$(comp286) -r -fpr
-
-!ifdef msc
-libcomp386=$(comp386)
-!else
-libcomp386=$(comp386) -r -fpr
-!endif
-
-libcompaxp=$(compaxp)
-
-#
-# compilers used for install
-#
-inscomp286=$(%RELROOT)\rel2\binw\wcc -r -fpr
-
-!ifdef msc
-inscomp386=$(comp386)
-!else
-inscomp386=$(%RELROOT)\rel2\binw\wcc386 -r -fpr
-!endif
-
-#
 # C++ stuff
 #
 # do not use '*' prefix because C++ MAKEFILEs already compact the cmdline
 # do not use /r or /r7/fpr because C++ has no existing customer base
 
-newlibcomp286=wcc
 comp286plus=wpp
 
 !ifdef msc
-newlibcomp386=$(msvc_dir)\bin\cl
 comp386plus=$(msvc_dir)\bin\cl
 !else
-newlibcomp386=wcc386
 comp386plus=wpp386
 !endif
 
-libcomp286plus=$(build_root)\plusplus\bin\rppi8612.exe
-libcomp386plus=$(build_root)\plusplus\bin\rpp38612.exe
-libcompaxpplus=$(build_root)\plusplus\bin\rppaxp12.exe
 libaxp=$(nlang_root)\binnt\wlibaxp.exe
 
 
@@ -353,49 +323,19 @@ compaxp += @BWCCAXP
 !endif
 
 #
-# compilers used for libraries
-#
-libcomp286=$(comp286) -r-fpr
-
-!ifdef msc
-libcomp386=$(comp386)
-!else
-libcomp386=$(comp386) -r-fpr
-!endif
-
-libcompaxp=$(compaxp)
-
-#
-# compilers used for install
-#
-inscomp286=$(%RELROOT)/rel2/binw/wcc -r-fpr
-
-!ifdef gcc
-inscomp386=$(comp386)
-!else
-inscomp386=$(%RELROOT)/rel2/binw/wcc386 -r-fpr
-!endif
-
-#
 # C++ stuff
 #
 # do not use '*' prefix because C++ MAKEFILEs already compact the cmdline
 # do not use /r or /r7/fpr because C++ has no existing customer base
 
-newlibcomp286=wcc
 comp286plus=wpp
 
 !ifdef gcc
-newlibcomp386=ld
 comp386plus=ld
 !else
-newlibcomp386=wcc386
 comp386plus=wpp386
 !endif
 
-libcomp286plus=$(build_root)/plusplus/bin/rppi8612.exe
-libcomp386plus=$(build_root)/plusplus/bin/rpp38612.exe
-libcompaxpplus=$(build_root)/plusplus/bin/rppaxp12.exe
 libaxp=$(nlang_root)/binnt/wlibaxp.exe
 
 

@@ -149,6 +149,11 @@ comp_flags += -bt=windows
 asm_flags += -bt=windows
 !endif
 
+!ifeq target_system netware
+comp_flags += -bt=netware
+asm_flags += -bt=netware
+!endif
+
 !ifeq target_system generic
 comp_flags += -bt=generic
 asm_flags += -bt=generic
@@ -184,6 +189,11 @@ asm_flags += -bt=ntaxp
 !ifeq target_system windows
 comp_flags += -bt=windows
 asm_flags += -bt=windows
+!endif
+
+!ifeq target_system netware
+comp_flags += -bt=netware
+asm_flags += -bt=netware
 !endif
 
 !ifeq target_system generic

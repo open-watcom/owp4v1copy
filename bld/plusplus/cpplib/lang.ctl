@@ -74,7 +74,7 @@ set destdir=<RELROOT>/rel2
 
 [ BLOCK <1> rel2 cprel2 acprel2 cpu_386 ]
 #========================================
-  [ IFDEF (os_osi os_dos os_linux "") <2*> ]
+  [ IFDEF (os_osi os_dos os_linux os_nov "") <2*> ]
     <CPCMD> 3r/plib3r.lib               <destdir>/lib386/
     <CPCMD> 3r/plbx3r.lib               <destdir>/lib386/
     <CPCMD> 3s/plib3s.lib               <destdir>/lib386/
@@ -109,6 +109,9 @@ set destdir=<RELROOT>/rel2
     <CPCMD> os23rmt/plibmt3r.lib        <destdir>/lib386/os2/
     <CPCMD> os23smt/plbxmt3s.lib        <destdir>/lib386/os2/
     <CPCMD> os23smt/plibmt3s.lib        <destdir>/lib386/os2/
+
+  [ IFDEF (os_nov "") <2*> ]
+    <CPCMD> complex/nov73s/cplx73s.lib  <destdir>/lib386/netware/
 
   [ IFDEF (os_qnx) <2*> ]
     <CPCMD> q3rmt/plbxmt3r.lib          <destdir>/lib386/qnx/

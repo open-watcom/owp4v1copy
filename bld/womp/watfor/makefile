@@ -4,10 +4,10 @@
 
 !ifdef __386__
 .c.obj
-    $(libcomp386) $[@ -mf-d1-oax-w4-zq-zl-fo=$^@
+    $(comp386) $[@ -mf-d1-oax-w4-zq-zl-fo=$^@
 !else
 .c.obj
-    $(libcomp286) $[@ -ml-d1-oax-w4-zq-zl-fo=$^@
+    $(comp286) $[@ -ml-d1-oax-w4-zq-zl-fo=$^@
 !endif
 
 .before:

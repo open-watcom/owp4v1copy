@@ -18,6 +18,7 @@ fpu_flags_qnx_i86 = -fpc
 fpu_flags_qnx_386 = -fpc
 fpu_flags_os2_i86 = -fpc
 fpu_flags_os2_386 = -fpc
+fpu_flags_win_i86 = -fpc
 
 objs = &
         sqrtf.obj &
@@ -143,13 +144,10 @@ special_objs = &
         fsmath.obj &
         dummy.obj
 
-!ifndef _WIN
-objs += $(eng_nonwin_objs)
-!endif
-
-!ifdef _WIN
+!ifeq host_os win
 objs += $(win_objs)
 !else
+objs += $(eng_nonwin_objs)
 objs += $(english_objs)
 !endif
 
@@ -157,14 +155,13 @@ objs += $(english_objs)
 !include defrule.mif
 !include deftarg.mif
 
+inc_dirs = -I"$(dev_dir)/graphlib/h"
 !ifeq host_os qnx
-inc_dirs = -I"$(dev_dir)/graphlib/h" -I"$(hdr_dir)/qnx"
+inc_dirs += -I"$(hdr_dir)/qnx"
+!else ifeq host_os win
+inc_dirs += -I"$(hdr_dir)/dos" -I"$(clib_dir)/h" -I"$(clib_dir)/defwin/h" -I"$(lib_misc_dir)/h" -I"$(wpi_dir)/h"
 !else
-inc_dirs = -I"$(dev_dir)/graphlib/h" -I"$(hdr_dir)/dos"
-!endif
-
-!ifdef _WIN
-inc_dirs += -I"$(clib_dir)/h" -I"$(clib_dir)/defwin/h" -I"$(lib_misc_dir)/h" -I"$(wpi_dir)/h"
+inc_dirs += -I"$(hdr_dir)/dos"
 !endif
 
 !ifeq host_cpu 386
@@ -175,21 +172,16 @@ inc_dirs += -I"$(clib_dir)/h" -I"$(clib_dir)/defwin/h" -I"$(lib_misc_dir)/h" -I"
 
 .c: ../c
 
-extra_c_flags_ = -D_SUPERVGA
-!ifdef _WIN
-extra_c_flags = -zl -zld -D_FARD= -fo=$@ $(extra_c_flags_$(machine))
-!else
-extra_c_flags = -r -zl -zld -D_FARD= -nm=$[&$(suffix_$(convention)) -fo=$@ $(extra_c_flags_$(machine))
-!endif
+extra_c_flags = -zl -zld -nm=$[&$(suffix_$(convention)) -D_SUPERVGA -D_FARD= $(extra_c_flags_$(machine)) -fo=$@
 
+extra_c_flags_i86 = -nt=GRAPH_TEXT -D_CGRAPH=_loadds
 extra_c_flags_386_register = -3r
 extra_c_flags_386_stack = -3s -d__STACK
 extra_c_flags_386 = $(extra_c_flags_386_$(convention)) -nt=_TEXT -D_CGRAPH=
-extra_c_flags_i86 = -nt=GRAPH_TEXT -D_CGRAPH=_loadds
 
 extra_c_flags_qnx = -bt=dos # ?????
 
-extra_a_flags = -ms -i"../inc" $(extra_a_flags_$(machine)) -zld -fo=$@
+extra_a_flags = -ms -zld -i"../inc" $(extra_a_flags_$(machine)) -fo=$@
 
 extra_a_flags_i86 = -D_TEXT=GRAPH_TEXT
 extra_a_flags_386_register = -3r
