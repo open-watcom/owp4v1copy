@@ -2682,11 +2682,11 @@ DLLImport int  dll_data;
 .np
 Functions, data and objects are exported from a DLL by
 use of
-.kwm __declspec(export),
+.kwm __declspec(dllexport),
 the
 .kwm __export
 keyword (for which
-.kwm __declspec(export)
+.kwm __declspec(dllexport)
 is the replacement), or through linker "EXPORT" directives.
 .*
 .note __declspec( dllexport )

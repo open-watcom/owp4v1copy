@@ -3455,11 +3455,11 @@ so that logical structures like:
 .millust begin
 !ifdef %version
 !  ifeq %version debugging
-!    define option = debug all
+!    define option debug all
 !  else ifeq %version beta
-!    define option = debug line
+!    define option debug line
 !  else ifeq %version production
-!    define option = debug
+!    define option debug
 !  else
 !    error invalid value in VERSION
 !  endif
