@@ -17,35 +17,21 @@ readout() and memeql() are output and string-comparison utilities.
 21FEB88 Refixed bug in 'selected()'     - Charles Marslett
 */
 
+#include <assert.h>
 #include <stdio.h>                      /* {f}puts, {f}printf, etc. */
 #include <ctype.h>                      /* isprint(), isdigit(), toascii() */
 #include <stdlib.h>                     /* for exit() */
 #include "sed.h"                        /* command structures & constants */
 
-extern char     *strcpy();              /* used in dosub */
-
-                                        /*** variables imported from main ****/
-
-                                        /* main data areas */
-extern char     linebuf[];              /* current-line buffer */
-extern sedcmd   cmds[];                 /* hold compiled commands */
-extern long     linenum[];              /* numeric-addresses table */
-
-                                        /* miscellaneous shared variables */
-extern int      nflag;                  /* -n option flag */
-extern int      eargc;                  /* scratch copy of argument count */
-extern sedcmd   *pending;               /* command waiting to be executed */
-extern char     bits[];                 /* the bits table */
-
-                                        /***** end of imported stuff *****/
-
 #define MAXHOLD         MAXBUF          /* size of the hold space */
-#define GENSIZ          71              /* maximum genbuf size */
+#define GENSIZ          MAXBUF          /* maximum genbuf size */
 
 #define TRUE            1
 #define FALSE           0
 
-static char     LTLMSG[] = "sed: line too long\n";
+static char const       LTLMSG[] = "sed: line too long \"%.*s\"\n";
+
+#define ABORTEX(msg) fprintf( stderr, msg, sizeof genbuf, genbuf ), exit( 2 )
 
 static char     *spend;                 /* current end-of-line-buffer pointer */
 static long     lnum = 0L;              /* current source line number */
@@ -69,15 +55,23 @@ static int      delete;                 /* delete command flag */
 static char     *bracend[MAXTAGS];      /* tagged pattern start pointers */
 static char     *brastart[MAXTAGS];     /* tagged pattern end pointers */
 
-static char     *getline();                 /* input-getting functions */
-static void     command();
-static void     readout();
+static int      selected( sedcmd *ipc );
+static int      match( char *expbuf, int gf );
+static int      advance( register char *lp, register char *ep );
+static int      substitute( sedcmd const *ipc );
+static void     dosub( char const *rhsbuf );
+static char     *place( register char *asp, register char const *al1,
+    register char const *al2 );
+static void     listto( register char const *p1, FILE *fp );
+static void     command( sedcmd *ipc );
+static char     *getline( register char *buf );
+static int      memeql( register char const *a, register char const *b, int count );
+static void     readout( void );
 
-void execute( file )
 /* execute the compiled commands in cmds[] on a file */
-char *file;                             /* name of text source file to filter */
+void execute( const char *file )        /* name of text source file to filter */
 {
-    register char       *p1;            /* dummy copy ptrs */
+    register char const *p1;            /* dummy copy ptrs */
     register sedcmd     *ipc;           /* ptr to current command */
     char                *execp;         /* ptr to source */
 
@@ -134,12 +128,11 @@ char *file;                             /* name of text source file to filter */
     }
 }
 
-static int selected( ipc )
 /* is current command selected */
-sedcmd  *ipc;
+static int selected( sedcmd *ipc )
 {
-    register char   *p1 = ipc->addr1;   /* point p1 at first address */
-    register char   *p2 = ipc->addr2;   /*   and p2 at second */
+    register char               *p1 = ipc->addr1;       /* first address */
+    register char * const       p2 = ipc->addr2;        /*   and second */
     char            c;
 
     if( ipc->flags.inrange ) {
@@ -186,20 +179,19 @@ sedcmd  *ipc;
     return( TRUE );                     /* return TRUE unless "!"ed    */
 }
 
-static int match( expbuf, gf )          /* uses genbuf */
 /* match RE at expbuf against linebuf; if gf set, copy linebuf from genbuf */
-char    *expbuf;
+static int match( char *expbuf, int gf )
 {
-    register char   *p1;
-    register char   *p2;
-    register char   c;
+    register char       *p1;
+    register char       *p2;
+    register char       c;
 
     if( gf ) {
         if( *expbuf )
             return( FALSE );
         p1 = linebuf; 
         p2 = genbuf;
-        while( *p1++ = *p2++ );
+        while( ( *p1++ = *p2++ ) != 0 ) ;
         locs = p1 = loc2;
     } else {
         p1 = linebuf;
@@ -217,51 +209,48 @@ char    *expbuf;
     if( *p2 == CCHR ) {
         c = p2[1];                      /* pull out character to search for */
         do {
-            if( *p1 != c )
-                continue;               /* scan the source string */
-            if( advance( p1, p2 ) )     /* found it, match the rest */
-                return( loc1 = p1, 1 );
-        } while
-            ( *p1++ );
+            if( *p1 == c )              /* scan the source string */
+                if( advance( p1, p2 ) ) /* found it, match the rest */
+                    return( loc1 = p1, 1 );
+        } while( *p1++ );
         return( FALSE );                /* didn't find that first char */
     }
                                         /* else try unanchored pattern match */
     do {
         if( advance( p1, p2 ) )
             return( loc1 = p1, 1 );
-    } while
-        ( *p1++ );
+    } while( *p1++ );
                                         /* didn't match either way */
     return( FALSE );
 }
 
-static int advance( lp, ep )
 /* attempt to advance match pointer by one pattern element */
- register char   *lp;                   /* source (linebuf) ptr */
- register char   *ep;                   /* regular expression element ptr */
+static int advance(
+    register char       *lp,            /* source (linebuf) ptr */
+    register char       *ep )           /* regular expression element ptr */
 {
-    register char   *curlp;             /* save ptr for closures */
-    char            c;                  /* scratch character holder */
-    char            *bbeg;
-    int             ct;
+    register char const *curlp;         /* save ptr for closures */
+    char                c;              /* scratch character holder */
+    char const          *bbeg;
+    int                 ct;
 
     for( ;; )
         switch( *ep++ ) {
         case CCHR:                      /* literal character */
-            if( *ep++ == *lp++ )        /* if chars are equal */
-                continue;               /* matched */
-            return( FALSE );            /* else return false */
+            if( *ep++ != *lp++ )        /* if chars unequal */
+                return( FALSE );        /* return false */
+            break;                      /* matched */
 
         case CDOT:                      /* anything but newline */
-            if( *lp++ )                 /* first NUL is at EOL */
-                continue;               /* keep going if didn't find */
-            return( FALSE );            /* else return false */
+            if( !*lp++ )                /* first NUL is at EOL */
+                return( FALSE );        /* return false */
+            break;                      /* matched */
 
         case CNL:                       /* start-of-line */
         case CDOL:                      /* end-of-line */
-            if( *lp == 0 )              /* found that first NUL? */
-                continue;               /* yes, keep going */
-            return( FALSE );            /* else return false */
+            if( *lp != 0 )              /* found that first NUL? */
+                return( FALSE );        /* return false */
+            break;                      /* matched */
 
         case CEOF:                      /* end-of-address mark */
             loc2 = lp;                  /* set second loc */
@@ -269,29 +258,27 @@ static int advance( lp, ep )
 
         case CCL:                       /* a closure */
             c = *lp++ &0177;
-            if( ep[c >> 3] & bits[c & 07] ) { /* is char in set? */
-                ep += 16;               /* then skip rest of bitmask */
-                continue;               /*   and keep going */
-            }
-            return( FALSE );            /* else return false */
+            if( !( ep[c >> 3] & bits[c & 07] ) ) /* is char in set? */
+                return( FALSE );        /* return false */
+            ep += 16;                   /* skip rest of bitmask */
+            break;                      /*   and keep going */
 
         case CBRA:                      /* start of tagged pattern */
             brastart[*ep++] = lp;       /* mark it */
-            continue;                   /* and go */
+            break;                      /* and go */
 
         case CKET:                      /* end of tagged pattern */
             bracend[*ep++] = lp;        /* mark it */
-            continue;                   /* and go */
+            break;                      /* and go */
 
         case CBACK:
             bbeg = brastart[*ep];
             ct = bracend[*ep++] - bbeg;
 
-            if( memeql( bbeg, lp, ct ) ) {
-                lp += ct;
-                continue;
-            }
-            return( FALSE );
+            if( !memeql( bbeg, lp, ct ) )
+                return( FALSE );        /* return false */
+            lp += ct;
+            break;                      /* matched */
 
         case CBACK | STAR:
             bbeg = brastart[*ep];
@@ -309,49 +296,44 @@ static int advance( lp, ep )
 
         case CDOT | STAR:               /* match .* */
             curlp = lp;                 /* save closure start loc */
-            while( *lp++ );             /* match anything */
+            while( ( *lp++ ) != 0 ) ;   /* match anything */
             goto star;                  /* now look for followers */
 
         case CCHR | STAR:               /* match <literal char>* */
             curlp = lp;                 /* save closure start loc */
-            while( *lp++ == *ep );      /* match many of that char */
+            while( (int)( *lp++ == *ep ) != 0 ) ; /* match many of that char */
             ep++;                       /* to start of next element */
             goto star;                  /* match it and followers */
 
         case CCL | STAR:                /* match [...]* */
             curlp = lp;                 /* save closure start loc */
             do {
-                c = *lp++ &0x7F;        /* match any in set */
-            } while
-                ( ep[c >> 3] & bits[c & 07] );
+                c = *lp++ & 0x7F;       /* match any in set */
+            } while( ep[c >> 3] & bits[c & 07] );
             ep += 16;                   /* skip past the set */
             goto star;                  /* match followers */
 
         star:                           /* the repeat part of a * or + match */
             if( --lp == curlp )         /* 0 matches */
-                continue;
+                break;
 
             if( *ep == CCHR ) {
                 c = ep[1];
                 do {
-                    if( *lp != c )
-                        continue;
-                    if( advance( lp, ep ) )
-                        return( TRUE );
-                } while
-                    ( lp-- > curlp );
+                    if( *lp == c )
+                        if( advance( lp, ep ) )
+                            return( TRUE );
+                } while( lp-- > curlp );
                 return( FALSE );
             }
 
             if( *ep == CBACK ) {
                 c = *( brastart[ep[1]] );
                 do {
-                    if( *lp != c )
-                        continue;
-                    if( advance( lp, ep ) )
-                        return( TRUE );
-                } while
-                    ( lp-- > curlp );
+                    if( *lp == c )
+                        if( advance( lp, ep ) )
+                            return( TRUE );
+                } while( lp-- > curlp );
                 return( FALSE );
             }
 
@@ -360,7 +342,7 @@ static int advance( lp, ep )
                     break;
                 if( advance( lp, ep ) )
                     return( TRUE );
-            } while ( lp-- > curlp );
+            } while( lp-- > curlp );
             return( FALSE );
 
         default:
@@ -368,78 +350,77 @@ static int advance( lp, ep )
         }
 }
 
-static        void dosub();             /* for if we find a match */
-static int substitute( ipc )
 /* perform s command */
-sedcmd  *ipc;                           /* ptr to s command struct */
+static int substitute( sedcmd const *ipc ) /* ptr to s command struct */
 {
-    if( match( ipc->u.lhs, 0 ) )        /* if no match */
-        dosub( ipc->rhs );              /* perform it once */
-    else
+    if( !match( ipc->u.lhs, 0 ) )       /* if no match */
         return( FALSE );                /* command fails */
+    dosub( ipc->rhs );                  /* perform it once */
 
     if( ipc->flags.global )             /* if global flag enabled */
-        while( *loc2 )                  /* cycle through possibles */
-            if( match( ipc->u.lhs, 1 ) ) /* found another */
-                dosub( ipc->rhs );      /* so substitute */
-            else                        /* otherwise, */
-                break;                  /* we're done */
+        while( *loc2 && match( ipc->u.lhs, 1 ) ) /* cycle through possibles */
+            dosub( ipc->rhs );          /* so substitute */
     return( TRUE );                     /* we succeeded */
 }
 
-static char            *place();
-static void dosub( rhsbuf )             /* uses linebuf, genbuf, spend */
 /* generate substituted right-hand side (of s command) */
-char    *rhsbuf;                        /* where to put the result */
+static void dosub( char const *rhsbuf ) /* where to put the result */
+                                        /* uses linebuf, genbuf, spend */
 {
-    register char   *lp;
-    register char   *sp;
-    register char   *rp;
-    int             c;
+    register char       *lp;
+    register char       *sp;
+    register char const *rp;
+    int                 c;
                                         /* linebuf upto location 1 -> genbuf */
     lp = linebuf; 
     sp = genbuf;
-    while( lp < loc1 ) *sp++ = *lp++;
+    while( lp < loc1 ) {
+        if( sp >= genbuf + sizeof genbuf )
+            ABORTEX( LTLMSG );
+        *sp++ = *lp++;
+    }
 
-    for( rp = rhsbuf; c = *rp++; ) {
+    for( rp = rhsbuf; ( c = *rp++ ) != 0; ) {
         if( c == '&' ) {
             sp = place( sp, loc1, loc2 );
-            continue;
         } else if( c & 0200 && ( c &= 0177 ) >= '1' && c < MAXTAGS + '1' ) {
             sp = place( sp, brastart[c - '1'], bracend[c - '1'] );
-            continue;
+        } else {
+            if( sp >= genbuf + sizeof genbuf )
+                ABORTEX( LTLMSG );
+            *sp++ = c & 0177;
         }
-        *sp++ = c & 0177;
-        if( sp >= genbuf + MAXBUF )
-            fprintf( stderr, LTLMSG );
     }
     lp = loc2;
     loc2 = sp - ( genbuf - linebuf );
-    while( *sp++ = *lp++ )
-        if( sp >= genbuf + MAXBUF )
-            fprintf( stderr, LTLMSG );
+    do{
+        if( sp >= genbuf + sizeof genbuf )
+            ABORTEX( LTLMSG );
+    } while( ( *sp++ = *lp++ ) != 0 );
     lp = linebuf; 
     sp = genbuf;
-    while( *lp++ = *sp++ );
+    while( ( *lp++ = *sp++ ) != 0 ) ;
     spend = lp - 1;
 }
 
-static char *place( asp, al1, al2 )     /* uses genbuf */
 /* place chars at *al1...*(al1 - 1) at asp... in genbuf[] */
-register char   *asp, *al1, *al2;
+static char *place(
+    register char       *asp,
+    register char const *al1,
+    register char const *al2 )
 {
     while( al1 < al2 ) {
+        if( asp >= genbuf + sizeof genbuf )
+            ABORTEX( LTLMSG );
         *asp++ = *al1++;
-        if( asp >= genbuf + MAXBUF )
-            fprintf( stderr, LTLMSG );
     }
     return( asp );
 }
 
-static void listto( p1, fp )
 /* write a hex dump expansion of *p1... to fp */
-register char   *p1;                    /* the source */
-FILE            *fp;                    /* output stream to write to */
+static void listto(
+    register char const *p1,            /* the source */
+    FILE                *fp )           /* output stream to write to */
 {
     p1--;
     while( *p1++ )
@@ -471,9 +452,8 @@ FILE            *fp;                    /* output stream to write to */
     putc( '\n', fp );
 }
 
-static void command( ipc )
 /* execute compiled command pointed at by ipc */
-sedcmd  *ipc;
+static void command( sedcmd *ipc )
 {
     static int      didsub;             /* true if last s succeeded */
     static char     holdsp[MAXHOLD];    /* the hold space */
@@ -503,11 +483,10 @@ sedcmd  *ipc;
     case CDCMD:                         /* delete a line in hold space */
         p1 = p2 = linebuf;
         while( *p1 != '\n' )
-            if( delete = ( *p1++ == 0 ) )
+            if( ( delete = (int)( *p1++ == 0 ) ) != 0 )
                 return;
         p1++;
-        while( *p2++ = *p1++ )
-            continue;
+        while( ( *p2++ = *p1++ ) != 0 ) ;
         spend = p2 - 1;
         jump++;
         break;
@@ -519,7 +498,7 @@ sedcmd  *ipc;
     case GCMD:                          /* copy hold space to pattern space */
         p1 = linebuf;   
         p2 = holdsp;    
-        while( *p1++ = *p2++ );
+        while( ( *p1++ = *p2++ ) != 0 ) ;
         spend = p1 - 1;
         break;
 
@@ -527,7 +506,7 @@ sedcmd  *ipc;
         *spend++ = '\n';
         p1 = spend;     
         p2 = holdsp;
-        while( *p1++ = *p2++ )
+        while( ( *p1++ = *p2++ ) != 0 )
             if( p1 >= linebuf + MAXBUF )
                 break;
         spend = p1 - 1;
@@ -536,7 +515,7 @@ sedcmd  *ipc;
     case HCMD:                          /* copy pattern space to hold space */
         p1 = holdsp;    
         p2 = linebuf;   
-        while( *p1++ = *p2++ );
+        while( ( *p1++ = *p2++ ) != 0 ) ;
         hspend = p1 - 1;
         break;
 
@@ -544,7 +523,7 @@ sedcmd  *ipc;
         *hspend++ = '\n';
         p1 = hspend;    
         p2 = linebuf;
-        while( *p1++ = *p2++ )
+        while( ( *p1++ = *p2++ ) != 0 )
             if( p1 >= holdsp + MAXBUF )
                 break;
         hspend = p1 - 1;
@@ -594,7 +573,7 @@ sedcmd  *ipc;
     case CPCMD:                         /* print one line from pattern space */
     cpcom:                              /* so s command can jump here */
         for( p1 = linebuf; *p1 != '\n' && *p1 != '\0'; )
-            putc( *p1++, stdout );
+            putc( *p1, stdout ), p1++;
         putc( '\n', stdout );
         break;
 
@@ -625,7 +604,7 @@ sedcmd  *ipc;
 
     case TCMD:                          /* branch on last s successful */
     case CTCMD:                         /* branch on last s failed */
-        if( didsub == ( ipc->command == CTCMD ) )
+        if( didsub == (int)( ipc->command == CTCMD ) )
             break;                      /* no branch if last s failed, else */
         didsub = FALSE;
         jump = TRUE;                    /*  set up to jump to assoc'd label */
@@ -633,7 +612,7 @@ sedcmd  *ipc;
 
     case CWCMD:                         /* write one line from pattern space */
         for( p1 = linebuf; *p1 != '\n' && *p1 != '\0'; )
-            putc( *p1++, ipc->fout );
+            putc( *p1, ipc->fout ), p1++;
         putc( '\n', ipc->fout );
         break;
 
@@ -644,36 +623,37 @@ sedcmd  *ipc;
     case XCMD:                          /* exchange pattern and hold spaces */
         p1 = linebuf;   
         p2 = genbuf;    
-        while( *p2++ = *p1++ )
-            continue;
+        while( ( *p2++ = *p1++ ) != 0 ) ;
         p1 = holdsp;    
         p2 = linebuf;   
-        while( *p2++ = *p1++ )
-            continue;
+        while( ( *p2++ = *p1++ ) != 0 ) ;
         spend = p2 - 1;
         p1 = genbuf;    
         p2 = holdsp;    
-        while( *p2++ = *p1++ )
-            continue;
+        while( ( *p2++ = *p1++ ) != 0 ) ;
         hspend = p2 - 1;
         break;
 
     case YCMD:
         p1 = linebuf;   
         p2 = ipc->u.lhs;
-        while( *p1 = p2[*p1] )
+        while( ( *p1 = p2[*p1] ) != 0 )
             p1++;
         break;
     }
 }
 
-static char *getline( buf )
 /* get next line of text to be filtered */
-register char   *buf;                   /* where to send the input */
+static char *getline( register char *buf )  /* where to send the input */
 {
-    if( gets( buf ) != NULL ) {
+    static char const * const   linebufend = linebuf + MAXBUF + 2;
+    int const                   room = linebufend - buf;
+
+    assert( buf >= linebuf && buf < linebufend );
+
+    if (fgets(buf, room, stdin) != NULL) { /* gets() can smash program - WFB */
         lnum++;                         /* note that we got another line */
-        while( *buf++ );                /* find the end of the input */
+        while( ( *buf++ ) != 0 ) ;      /* find the end of the input */
         return( --buf );                /* return ptr to terminating null */
     } else {
         if( eargc == 0 )                /* if no more args */
@@ -682,9 +662,8 @@ register char   *buf;                   /* where to send the input */
     }
 }
 
-static int memeql( a, b, count )
+static int memeql( register char const *a, register char const *b, int count )
 /* return TRUE if *a... == *b... for count chars, FALSE otherwise */
-register char   *a, *b;
 {
     while( count-- )                    /* look at count characters */
         if( *a++ != *b++ )              /* if any are nonequal   */
@@ -692,23 +671,24 @@ register char   *a, *b;
     return( TRUE );                     /* compare succeeded */
 }
 
-static void readout()
 /* write file indicated by r command to output */
+static void readout( void )
 {
-    register int    t;                  /* hold input char or EOF */
-    FILE            *fi;                /* ptr to file to be read */
+    register int        t;              /* hold input char or EOF */
+    FILE                *fi;            /* ptr to file to be read */
+    sedcmd * const      *ap;            /* Loops through appends */
 
-    aptr = appends - 1;                 /* ensure right pre-increment action */
-    while( *++aptr )
-        if( ( *aptr )->command == ACMD ) /* process "a" cmd */
-            printf( "%s\n", ( *aptr )->u.lhs );
+    for( ap = appends; *ap; ap ++ )
+        if( ( *ap )->command == ACMD ) /* process "a" cmd */
+            printf( "%s\n", ( *ap )->u.lhs );
         else {                          /* process "r" cmd */
-            if( ( fi = fopen( ( *aptr )->u.lhs, "r" ) ) == NULL )
-                continue;
-            while( ( t = getc( fi ) ) != EOF )
-                putc( ( char ) t, stdout );
-            fclose( fi );
+            if( ( fi = fopen( ( *ap )->u.lhs, "r" ) ) != NULL ) {
+                while( ( t = getc( fi ) ) != EOF )
+                    putc( ( char ) t, stdout );
+                fclose( fi );
+            }
         }
+
     aptr = appends;                     /* reset the append ptr */
     *aptr = 0;
 }

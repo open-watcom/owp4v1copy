@@ -19,29 +19,19 @@ resolves references at the end.
 #include <string.h>                     /* imported string functions */
 #include "sed.h"                        /* command type struct & name defines */
 
-                                        /* imported functions */
-extern void execute();                  /* execute compiled command */
-
-                                        /* forward references */
-static char *address();
-static void compile();
-static void resolve();
-
-                                        /***** public stuff ******/
-
 #define MAXCMDS         200             /* max number of compiled commands */
 #define MAXLINES        256             /* max number of numeric addresses */
 
                                         /* main data areas */
-char    linebuf[MAXBUF + 1];            /* current-line buffer */
-sedcmd  cmds[MAXCMDS + 1];              /* hold compiled commands */
-long    linenum[MAXLINES];              /* numeric-addresses table */
+char            linebuf[MAXBUF + 1];    /* current-line buffer */
+sedcmd          cmds[MAXCMDS + 1];      /* hold compiled commands */
+long            linenum[MAXLINES];      /* numeric-addresses table */
 
                                         /* miscellaneous shared variables */
-int     nflag;                          /* -n option flag */
-int     eargc;                          /* scratch copy of argument count */
-sedcmd  *pending        = NULL;         /* next command to be executed */
-char    bits[]          = { 1, 2, 4, 8, 16, 32, 64, 128 };
+int             nflag = 0;              /* -n option flag */
+int             eargc;                  /* scratch copy of argument count */
+sedcmd          *pending = NULL;        /* next command to be executed */
+char const      bits[] = { 1, 2, 4, 8, 16, 32, 64, 128 };
 
                                         /***** module common stuff *****/
 
@@ -52,38 +42,37 @@ char    bits[]          = { 1, 2, 4, 8, 16, 32, 64, 128 };
 #define MAXLABS         50              /* max number of labels */
 
 #define SKIPWS(pc)      while ( ( *pc==' ' ) || ( *pc=='\t' ) ) pc++
-#define ABORT(msg)      ( fprintf( stderr, msg, linebuf ), exit( 2 ) )
+#define ABORT(msg)      fprintf( stderr, msg, linebuf ), exit( 2 )
 #define IFEQ(x, v)      if (*x == v) x++ , /* do expression */
 
                                         /* error messages */
-static char     AGMSG[] = "sed: garbled address %s\n";
-static char     CGMSG[] = "sed: garbled command %s\n";
-static char     TMTXT[] = "sed: too much text: %s\n";
-static char     AD1NG[] = "sed: no addresses allowed for %s\n";
-static char     AD2NG[] = "sed: only one address allowed for %s\n";
-static char     TMCDS[] = "sed: too many commands, last was %s\n";
-static char     COCFI[] = "sed: cannot open command-file %s\n";
-static char     UFLAG[] = "sed: unknown flag %c\n";
-static char     CCOFI[] = "sed: cannot create %s\n";
-static char     ULABL[] = "sed: undefined label %s\n";
-static char     TMLBR[] = "sed: too many {'s\n";
-static char     FRENL[] = "sed: first RE must be non-null\n";
-static char     NSCAX[] = "sed: no such command as %s\n";
-static char     TMRBR[] = "sed: too many }'s\n";
-static char     DLABL[] = "sed: duplicate label %s\n";
-static char     TMLAB[] = "sed: too many labels: %s\n";
-static char     TMWFI[] = "sed: too many w files\n";
-static char     REITL[] = "sed: RE too long: %s\n";
-static char     TMLNR[] = "sed: too many line numbers\n";
-static char     TRAIL[] = "sed: command \"%s\" has trailing garbage\n";
+static char const       AGMSG[] = "sed: garbled address %s\n";
+static char const       CGMSG[] = "sed: garbled command %s\n";
+static char const       TMTXT[] = "sed: too much text: %s\n";
+static char const       AD1NG[] = "sed: no addresses allowed for %s\n";
+static char const       AD2NG[] = "sed: only one address allowed for %s\n";
+static char const       TMCDS[] = "sed: too many commands, last was %s\n";
+static char const       COCFI[] = "sed: cannot open command-file %s\n";
+static char const       UFLAG[] = "sed: unknown flag %c\n";
+static char const       CCOFI[] = "sed: cannot create %s\n";
+static char const       ULABL[] = "sed: undefined label %s\n";
+static char const       TMLBR[] = "sed: too many {'s\n";
+static char const       FRENL[] = "sed: first RE must be non-null\n";
+static char const       NSCAX[] = "sed: no such command as %s\n";
+static char const       TMRBR[] = "sed: too many }'s\n";
+static char const       DLABL[] = "sed: duplicate label %s\n";
+static char const       TMLAB[] = "sed: too many labels: %s\n";
+static char const       TMWFI[] = "sed: too many w files\n";
+static char const       REITL[] = "sed: RE too long: %s\n";
+static char const       TMLNR[] = "sed: too many line numbers\n";
+static char const       TRAIL[] = "sed: command \"%s\" has trailing garbage\n";
 
 typedef struct                          /* represent a command label */
 {
-        char            *name;          /* the label name */
-        sedcmd          *last;          /* it's on the label search list */
-        sedcmd          *address;       /* pointer to the cmd it labels */
-}
-label;
+    char        *name;                  /* the label name */
+    sedcmd      *last;                  /* it's on the label search list */
+    sedcmd      *address;               /* pointer to the cmd it labels */
+}               label;
 
                                         /* label handling */
 static label    labels[MAXLABS];        /* here's the label table */
@@ -105,19 +94,28 @@ static int      bcount  = 0;            /* # tagged patterns in current RE */
 static char     **eargv;                /* scratch copy of argument list */
 
 /* compilation flags */
-static int      eflag;                  /* -e option flag */
-static int      gflag;                  /* -g option flag */
-/**/
-int main( argc, argv )
+static int      eflag = 0;              /* -e option flag */
+static int      gflag = 0;              /* -g option flag */
+
+static void     compile( void );
+static int      cmdcomp( register char cchar );
+static char     *rhscomp( register char *rhsp, register char delim );
+static char     *recomp( char *expbuf, char redelim );
+static int      cmdline( register char *cbuf );
+static char     *address( register char *expbuf );
+static char     *gettext( register char *txp );
+static label    *search( register label const *ptr );
+static void     resolve( void );
+static char     *ycomp( register char *ep, char delim );
+
 /* main sequence of the stream editor */
-int     argc;
-char    *argv[];
+int main( int argc, char *argv[] )
 {
+    if( argc <= 1 )
+        return( 0 );            /* exit immediately if no arguments */
     eargc   = argc;             /* set local copy of argument count */
     eargv   = argv;             /* set local copy of argument list */
     cmdp->addr1 = pool;         /* 1st addr expand will be at pool start */
-    if( eargc <= 1 )
-        return( 0 );            /* exit immediately if no arguments */
     /* scan through the arguments, interpreting each one */
     while( ( --eargc > 0 ) && ( **++eargv == '-' ) )
         switch( eargv[0][1] ) {
@@ -125,7 +123,7 @@ char    *argv[];
             eflag++; 
             compile();          /* compile with e flag on */
             eflag = 0;
-            continue;           /* get another argument */
+            break;              /* get another argument */
         case 'f':
             if( --eargc <= 0 )  /* barf if no -f file */
                 exit( 2 );
@@ -135,16 +133,16 @@ char    *argv[];
             }
             compile();          /* file is O.K., compile it */
             fclose( cmdf );
-            continue;           /* go back for another argument */
+            break;              /* go back for another argument */
         case 'g':
             gflag++;            /* set global flag on all s cmds */
-            continue;
+            break;
         case 'n':
             nflag++;            /* no print except on p flag or w */
-            continue;
+            break;
         default:
             fprintf( stdout, UFLAG, eargv[0][1] );
-            continue;
+            break;
         }
 
     if( cmdp == cmds ) {        /* no commands have been compiled */
@@ -186,8 +184,8 @@ static char     cmdmask[] =
         XCMD,   H+YCMD, 0,      H+BCMD, 0,      H,      0,      0,
 };
 
-static void compile()
 /* precompile sed commands out of a file */
+static void compile( void )
 {
     char        ccode;
 
@@ -238,7 +236,7 @@ static void compile()
 
         SKIPWS( cp );                   /* discard whitespace after address */
         IFEQ( cp, '!' )
-        cmdp->flags.allbut = 1;
+            cmdp->flags.allbut = 1;
 
         SKIPWS( cp );                   /* get cmd char, range-check it */
         if( ( *cp < LOWCMD ) || ( *cp > '~' )
@@ -263,25 +261,18 @@ static void compile()
     }
 }
 
-static char     *gettext();
-static char     *rhscomp();
-static char     *recomp();
-static char     *ycomp();
-static label    *search();
-
-static int cmdcomp( cchar )
 /* compile a single command */
-register char   cchar;                  /* character name of command */
+static int cmdcomp( register char cchar ) /* character name of command */
 {
-    static sedcmd   **cmpstk[MAXDEPTH]; /* current cmd stack for {} */
-    static char     *fname[WFILES];     /* w file name pointers */
-    static FILE     *fout[WFILES] = { stdout}; /* w file file ptrs */
-    static int      nwfiles = 1;        /* count of open w files */
-    int             i;                  /* indexing dummy used in w */
-    sedcmd          *sp1;               /* temps for label searches */
-    sedcmd          *sp2;               /* temps for label searches */
-    label           *lpt;               /* ditto, and the searcher */
-    char            redelim;            /* current RE delimiter */
+    static sedcmd       **cmpstk[MAXDEPTH]; /* current cmd stack for {} */
+    static char const   *fname[WFILES]; /* w file name pointers */
+    static FILE         *fout[WFILES];  /* w file file ptrs */
+    static int          nwfiles = 1;    /* count of open w files */
+    int                 i;              /* indexing dummy used in w */
+    sedcmd              *sp1;           /* temps for label searches */
+    sedcmd              *sp2;           /* temps for label searches */
+    label               *lpt;           /* ditto, and the searcher */
+    char                redelim;        /* current RE delimiter */
 
     switch( cchar ) {
     case '{':                           /* start command group */
@@ -311,7 +302,7 @@ register char   cchar;                  /* character name of command */
         if( cmdp->addr1 )
             ABORT( AD1NG );             /* no addresses allowed */
         fp = gettext( lab->name = fp ); /* get the label name */
-        if( lpt = search( lab ) ) {     /* does it have a double? */
+        if( ( lpt = search( lab ) ) != 0 ) { /* does it have a double? */
             if( lpt->address )
                 ABORT( DLABL );         /* yes, abort */
         } else {                        /* check label table doesn't overflow */
@@ -329,8 +320,8 @@ register char   cchar;                  /* character name of command */
         SKIPWS( cp );
         if( *cp == '\0' ) {             /* if branch is to start of cmds... */
                                         /* append command to label last */
-            if( sp1 = lablst->last ) {
-                while( sp2 = sp1->u.link )
+            if( ( sp1 = lablst->last ) != 0 ) {
+                while( ( sp2 = sp1->u.link ) != 0 )
                     sp1 = sp2;
                 sp1->u.link = cmdp;
             } else                      /* lablst->last == NULL */
@@ -338,12 +329,12 @@ register char   cchar;                  /* character name of command */
             break;
         }
         fp = gettext( lab->name = fp ); /* else get label into pool */
-        if( lpt = search( lab ) ) {     /* enter branch to it */
+        if( ( lpt = search( lab ) ) != 0 ) { /* enter branch to it */
             if( lpt->address )
                 cmdp->u.link = lpt->address;
             else {
                 sp1 = lpt->last;
-                while( sp2 = sp1->u.link )
+                while( ( sp2 = sp1->u.link ) != 0 )
                     sp1 = sp2;
                 sp1->u.link = cmdp;
             }
@@ -361,6 +352,7 @@ register char   cchar;                  /* character name of command */
     case 'r':                           /* read file into stream */
         if( cmdp->addr2 )
             ABORT( AD2NG );
+                                        /* Drop through */
     case 'c':                           /* change text */
         if( *cp == '\\' && *++cp == '\n' )
             cp++;
@@ -387,13 +379,13 @@ register char   cchar;                  /* character name of command */
             cmdp->flags.global++;
         while( *cp == 'g' || *cp == 'p' || *cp == 'P' ) {
             IFEQ( cp, 'g' )
-            cmdp->flags.global++;
+                cmdp->flags.global++;
             IFEQ( cp, 'p' )
-            cmdp->flags.print = 1;
+                cmdp->flags.print = 1;
             IFEQ( cp, 'P' )
-            cmdp->flags.print = 2;
+                cmdp->flags.print = 2;
         }
-
+                                        /* Drop through */
     case 'l':                           /* list pattern space */
         if( *cp == 'w' )
             cp++;                       /* and execute a w command! */
@@ -404,7 +396,10 @@ register char   cchar;                  /* character name of command */
     case 'W':                           /* write-first-line command */
         if( nwfiles >= WFILES )
             ABORT( TMWFI );
-        fp = gettext( fname[nwfiles] = fp );  /* filename will be in pool */
+        fout[0] = stdout;               /* Not initialized to humor lint */
+        fname[0] = "";                  /* Set so strcmp( x, fname[0] ) OK */
+        fname[nwfiles] = (const char*)fp; /* filename is in pool */
+        fp = gettext( fp );
         for( i = nwfiles - 1; i >= 0; i-- ) /* match it in table */
             if( strcmp( fname[nwfiles], fname[i] ) == 0 ) {
                 cmdp->fout = fout[i];
@@ -429,12 +424,13 @@ register char   cchar;                  /* character name of command */
     return( 0 );                        /* interpreted one command */
 }
 
-static char *rhscomp( rhsp, delim )     /* uses bcount */
 /* generate replacement string for substitute command right hand side */
-register char   *rhsp;                  /* place to compile expression to */
-register char   delim;                  /* RE end-mark to find */
+static char *rhscomp(
+    register char       *rhsp,          /* place to compile expression to */
+    register char       delim )         /* RE end-mark to find */
+                                        /* uses bcount */
 {
-    register char   *p = cp;            /* strictly for speed */
+    register char       *p = cp;        /* strictly for speed */
 
     for( ;; )
         if( ( *rhsp = *p++ ) == '\\' ) { /* copy; if it's a \, */
@@ -443,7 +439,6 @@ register char   delim;                  /* RE end-mark to find */
             if( *rhsp > bcount + '0' && *rhsp <= '9' )
                 return( BAD );
             *rhsp++ |= 0x80;            /* mark the good ones */
-            continue;
         } else if( *rhsp == delim ) {   /* found RE end, hooray... */
             *rhsp++ = '\0';             /* cap the expression string */
             cp = p;
@@ -452,21 +447,21 @@ register char   delim;                  /* RE end-mark to find */
             return( BAD );
 }
 
-static char *recomp( expbuf, redelim )  /* uses cp, bcount */
 /* compile a regular expression to internal form */
-char    *expbuf;                        /* place to compile it to */
-char    redelim;                        /* RE end-marker to look for */
+static char *recomp(
+    char            *expbuf,            /* place to compile it to */
+    char            redelim )           /* RE end-marker to look for */
+                                        /* uses cp, bcount */
 {
     register char   *ep = expbuf;       /* current-compiled-char pointer */
     register char   *sp = cp;           /* source-character ptr */
-    register int    c;                  /* current-character pointer */
+    register int    c;                  /* current-character */
     char            negclass;           /* all-but flag */
     char            *lastep;            /* ptr to last expr compiled */
-    char            *svclass;           /* start of current char class */
+    char const      *svclass;           /* start of current char class */
     char            brnest[MAXTAGS];    /* bracket-nesting array */
     char            *brnestp;           /* ptr to current bracket-nest */
-    char            *pp;                /* scratch pointer */
-    int             classct;            /* class element count */
+    char const      *pp;                /* scratch pointer */
     int             tags;               /* # of closed tags */
 
     if( *cp == redelim )                /* if first char is RE endmarker */
@@ -476,7 +471,7 @@ char    redelim;                        /* RE end-marker to look for */
     brnestp = brnest;                   /* initialize ptr to brnest array */
     tags = bcount = 0;                  /* initialize counters */
 
-    if( *ep++ = ( *sp == '^' ) )        /* check for start-of-line syntax */
+    if( ( *ep++ = (int)( *sp == '^' ) ) != 0 ) /* check for start-of-line syntax */
         sp++;
 
     for( ;; ) {
@@ -497,23 +492,23 @@ char    redelim;                        /* RE end-marker to look for */
             if( ( c = *sp++ ) == '(' ) {/* start tagged section */
                 if( bcount >= MAXTAGS )
                     return( cp = sp, BAD );
-                *brnestp++ = bcount;    /* update tag stack */
+                *brnestp++ = (char)bcount; /* update tag stack */
                 *ep++ = CBRA;           /* enter tag-start */
-                *ep++ = bcount++;       /* bump tag count */
-                continue;
+                *ep++ = (char)bcount++; /* bump tag count */
+                break;
             } else if( c == ')' ) {     /* end tagged section */
                 if( brnestp <= brnest ) /* extra \) */
                     return( cp = sp, BAD );
                 *ep++ = CKET;           /* enter end-of-tag */
                 *ep++ = *--brnestp;     /* pop tag stack */
                 tags++;                 /* count closed tags */
-                continue;
+                break;
             } else if( c >= '1' && c <= '9' ) { /* tag use */
                 if( ( c -= '1' ) >= tags ) /* too few */
                     return( BAD );
                 *ep++ = CBACK;          /* enter tag mark */
-                *ep++ = c;              /* and the number */
-                continue;
+                *ep++ = (char)c;        /* and the number */
+                break;
             } else if( c == '\n' )      /* escaped newline no good */
                 return( cp = sp, BAD );
             else if( c == 'n' )         /* match a newline */
@@ -524,14 +519,14 @@ char    redelim;                        /* RE end-marker to look for */
                 goto defchar;           /* else match \c */
 
         case '\0':                      /* ignore nuls */
-            continue;
+            break;
 
         case '\n':                      /* missing trailing pattern delimiter */
             return( cp = sp, BAD );
 
         case '.':                       /* match any char except newline */
             *ep++ = CDOT;
-            continue;
+            break;
 
         case '+':                       /* 1 to n repeats of previous pattern */
             if( lastep == NULL )        /* if + not first on line */
@@ -542,7 +537,7 @@ char    redelim;                        /* RE end-marker to look for */
             while( lastep < pp )        /* so we can blt the pattern */
                 *ep++ = *lastep++;
             *lastep |= STAR;            /* flag the copy */
-            continue;
+            break;
 
         case '*':                       /* 0..n repeats of previous pattern */
             if( lastep == NULL )        /* if * isn't first on line */
@@ -550,61 +545,66 @@ char    redelim;                        /* RE end-marker to look for */
             if( *lastep == CKET )       /* can't iterate a tag */
                 return( cp = sp, BAD );
             *lastep |= STAR;            /* flag previous pattern */
-            continue;
+            break;
 
         case '$':                       /* match only end-of-line */
             if( *sp != redelim )        /* if we're not at end of RE */
                 goto defchar;           /*   match a literal $ */
             *ep++ = CDOL;               /* insert end-symbol mark */
-            continue;
+            break;
 
         case '[':                       /* begin character set pattern */
-            if( ep + 17 >= expbuf + RELIMIT )
-                ABORT( REITL );
-            *ep++ = CCL;                /* insert class mark */
-            if( negclass = ( ( c = *sp++ ) == '^' ) )
-                c = *sp++;
-            svclass = sp;               /* save ptr to class start */
-            do {
-                if( c == '\0' )
-                    ABORT( CGMSG );
+            {
+                int                     classct; /* class element count */
+                register unsigned       uc; /* current-character */
 
+                if( ep + 17 >= expbuf + RELIMIT )
+                    ABORT( REITL );
+                *ep++ = CCL;            /* insert class mark */
+                if( ( negclass = (int)( ( c = *sp++ ) == '^' ) ) != 0 )
+                    c = *sp++;
+                svclass = sp;           /* save ptr to class start */
+                uc = (unsigned)c;
+                do {
+                    if( uc == '\0' )
+                        ABORT( CGMSG );
                                         /* handle character ranges */
-                if( c == '-' && sp > svclass && *sp != ']' )
-                    for( c = sp[ -2]; c < *sp; c++ )
-                        ep[c >> 3] |= bits[c & 7];
-
+                    if( uc == '-' && sp > svclass && *sp != ']' ) {
+                        unsigned const  lo = (unsigned)*( sp - 2 );
+                        unsigned const  hi = (unsigned)*sp;
+                        for( uc = lo; uc <= hi; uc++ )
+                            ep[uc >> 3] |= bits[uc & 7];
+                    }
                                         /* handle escape sequences in sets */
-                if( c == '\\' )
-                    if( ( c = *sp++ ) == 'n' )
-                        c = '\n';
-                    else if( c == 't' )
-                        c = '\t';
+                    if( uc == '\\' )
+                        if( ( uc = *sp++ ) == 'n' )
+                            uc = '\n';
+                        else if( uc == 't' )
+                            uc = '\t';
                                         /* add (maybe translated) char to set */
-                ep[c >> 3] |= bits[c & 7];
-            } while ( ( c = *sp++ ) != ']' );
-
+                    ep[uc >> 3] |= bits[uc & 7];
+                } while ( ( uc = *sp++ ) != ']' );
                                         /* invert bitmask if all-but needed */
-            if( negclass )
-                for( classct = 0; classct < 16; classct++ )
-                    ep[classct] ^= 0xFF;
-            ep[0] &= 0xFE;              /* never match ASCII 0 */
-            ep += 16;                   /* advance ep past set mask */
-            continue;
+                if( negclass )
+                    for( classct = 0; classct < 16; classct++ )
+                        ep[classct] ^= 0xFF;
+                ep[0] &= 0xFE;          /* never match ASCII 0 */
+                ep += 16;               /* advance ep past set mask */
+            }
+            break;
 
         defchar:                        /* match literal character */
         default:                        /* which is what we'd do by default */
             *ep++ = CCHR;               /* insert character mark */
-            *ep++ = c;
-        }
-    }
+            *ep++ = (char)c;
+        } /* switch( c ) */
+    } /* for( ;; ) */
 }
 
-static int cmdline( cbuf )              /* uses eflag, eargc, cmdf */
 /* read next command from -e argument or command file */
-register char   *cbuf;
+static int cmdline( register char *cbuf ) /* uses eflag, eargc, cmdf */
 {
-    register int    inc;                /* not char because must hold EOF */
+    register int        inc;            /* not char because must hold EOF */
 
     cbuf--;                             /* so pre-increment points us at cbuf */
 
@@ -620,12 +620,10 @@ register char   *cbuf;
 
                                         /* else copy next e argument to cbuf */
             p = *++eargv;
-            while( *++cbuf = *p++ )
+            while( ( *++cbuf = *p++ ) != 0 )
                 if( *cbuf == '\\' ) {
                     if( ( *++cbuf = *p++ ) == '\0' )
                         return( savep = NULL, -1 );
-                    else
-                        continue;
                 } else if( *cbuf == '\n' ) { /* end of 1 cmd line */
                     *cbuf = '\0';
                     return( savep = p, 1 );
@@ -639,12 +637,10 @@ register char   *cbuf;
         if( ( p = savep ) == NULL )
             return( -1 );
 
-        while( *++cbuf = *p++ )
+        while( ( *++cbuf = *p++ ) != 0 )
             if( *cbuf == '\\' ) {
                 if( ( *++cbuf = *p++ ) == '0' )
                     return( savep = NULL, -1 );
-                else
-                    continue;
             } else if( *cbuf == '\n' ) {
                 *cbuf = '\0';
                 return( savep = p, 1 );
@@ -656,21 +652,21 @@ register char   *cbuf;
                                         /* if no -e flag
                                          * read from command file descriptor */
     while( ( inc = getc( cmdf ) ) != EOF ) /* get next char */
-        if( ( *++cbuf = inc ) == '\\' ) /* if it's escape */
-            *++cbuf = inc = getc( cmdf );     /* get next char */
+        if( ( *++cbuf = (char)inc ) == '\\' ) /* if it's escape */
+            inc = getc( cmdf ),         /* get next char */
+            *++cbuf = (char)inc;
         else if( *cbuf == '\n' )        /* end on newline */
             return( *cbuf = '\0', 1 );  /* cap the string */
 
     return( *++cbuf = '\0', -1 );       /* end-of-file, no more chars */
 }
 
-static char *address( expbuf )          /* uses cp, linenum */
 /* expand an address at *cp... into expbuf, return ptr at following char */
-register char   *expbuf;
+static char *address( register char *expbuf ) /* uses cp, linenum */
 {
-    static int      numl = 0;           /* current ind in addr-number table */
-    register char   *rcp;               /* temp compile ptr for forwd look */
-    long            lno;                /* computed value of numeric address */
+    static int          numl = 0;       /* current ind in addr-number table */
+    register char       *rcp;           /* temp compile ptr for forwd look */
+    long                lno;            /* computed value of numeric address */
 
     if( *cp == '$' ) {                  /* end-of-source address */
         *expbuf++ = CEND;               /* write symbolic end address */
@@ -688,7 +684,7 @@ register char   *expbuf;
 
     if( rcp > cp ) {                    /* if we caught a number... */
         *expbuf++ = CLNUM;              /* put a numeric-address marker */
-        *expbuf++ = numl;               /* and the address table index */
+        *expbuf++ = (char)numl;         /* and the address table index */
         linenum[numl++] = lno;          /* and set the table entry */
         if( numl >= MAXLINES )          /* oh-oh, address table overflow */
             ABORT( TMLNR );             /*   abort with error message */
@@ -700,11 +696,11 @@ register char   *expbuf;
     return( NULL );                     /* no legal address was found */
 }
 
-static char *gettext( txp )             /* uses global cp */
 /* accept multiline input from *cp..., discarding leading whitespace */
-register char   *txp;                   /* where to put the text */
+static char *gettext( register char *txp ) /* where to put the text */
+                                        /* uses global cp */
 {
-    register char   *p = cp;            /* this is for speed */
+    register char       *p = cp;        /* this is for speed */
 
     SKIPWS( p );                        /* discard whitespace */
     do {
@@ -714,16 +710,14 @@ register char   *txp;                   /* where to put the text */
             return( cp =--p,++txp );
         else if( *txp == '\n' )         /* also SKIPWS after newline */
             SKIPWS( p );
-    } while
-        ( txp++ );                      /* keep going till we find that nul */
+    } while( txp++ );                   /* keep going till we find that nul */
     return( NULL );                     /* shouldn't really get here */
 }
 
-static label *search( ptr )             /* uses global lablst */
 /* find the label matching *ptr, return NULL if none */
-register label  *ptr;
+static label *search( register label const *ptr ) /* uses global lablst */
 {
-    register label  *rp;
+    register label      *rp;
     
     for( rp = lablst; rp < ptr; rp++ )
         if( strcmp( rp->name, ptr->name ) == 0 )
@@ -731,12 +725,12 @@ register label  *ptr;
     return( NULL );
 }
 
-static void resolve()                   /* uses global lablst */
 /* write label links into the compiled-command space */
+static void resolve( void )             /* uses global lablst */
 {
-    register label          *lptr;
-    register sedcmd         *rptr;
-    register sedcmd         *trptr;
+    register label const        *lptr;
+    register sedcmd             *rptr;
+    register sedcmd             *trptr;
 
                                         /* loop through the label table */
     for( lptr = lablst; lptr < lab; lptr++ )
@@ -745,7 +739,7 @@ static void resolve()                   /* uses global lablst */
             exit( 2 );
         } else if( lptr->last ) {       /* if last is non-null */
             rptr = lptr->last;          /* chase it */
-            while( trptr = rptr->u.link ) { /* resolve refs */
+            while( ( trptr = rptr->u.link ) != 0 ) { /* resolve refs */
                 rptr->u.link = lptr->address;
                 rptr = trptr;
             }
@@ -753,14 +747,14 @@ static void resolve()                   /* uses global lablst */
         }
 }
 
-static char *ycomp( ep, delim )
 /* compile a y (transliterate) command */
-register char   *ep;                    /* where to compile to */
-char            delim;                  /* end delimiter to look for */
+static char *ycomp(
+    register char       *ep,            /* where to compile to */
+    char                delim )         /* end delimiter to look for */
 {
-    register char   c;
-    register char   *tp;
-    register char   *sp;
+    register char       c;
+    register char       *tp;
+    register char const *sp;
 
                                         /* scan 'from' for invalid chars */
     for( sp = tp = cp; *tp != delim; tp++ ) {

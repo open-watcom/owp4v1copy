@@ -71,5 +71,19 @@ typedef struct cmd_t    sedcmd;         /* use this name for declarations */
 #define CEND    20      /* symbol for end-of-source */
 #define CEOF    22      /* end-of-field mark */
 
+extern void     execute( const char *file ); /* In sedexec.c */
+
+/* The following are in sedcomp.c */
+                                        /* main data areas */
+extern char             linebuf[];      /* current-line buffer */
+extern sedcmd           cmds[];         /* hold compiled commands */
+extern long             linenum[];      /* numeric-addresses table */
+
+                                        /* miscellaneous shared variables */
+extern int              nflag;          /* -n option flag */
+extern int              eargc;          /* scratch copy of argument count */
+extern sedcmd           *pending;       /* command waiting to be executed */
+extern char const       bits[];         /* the bits table */
+
 /* sed.h ends here */
 
