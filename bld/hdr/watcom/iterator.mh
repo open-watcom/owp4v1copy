@@ -21,7 +21,6 @@
 
 #define typename
 
-:: This header is minimal at the moment.
 namespace std {
 
   struct input_iterator_tag  { };
@@ -38,17 +37,22 @@ namespace std {
     typedef typename Iterator::reference         reference;
     typedef typename Iterator::iterator_catagory iterator_catagory;
   };
-  // Need partial specialization for pointers const pointers, far pointers.
 
-  // Full specialization for the important case of char *. This can be
-  // removed once the compiler can do partial specializations.
-  //
-  template< >
-  struct iterator_traits< char * > {
+  template< class Type >
+  struct iterator_traits< Type * > {
     typedef ptrdiff_t                  difference_type;
-    typedef char                       value_type;
-    typedef char                      *pointer;
-    typedef char                      &reference;
+    typedef Type                       value_type;
+    typedef Type                      *pointer;
+    typedef Type                      &reference;
+    typedef random_access_iterator_tag iterator_catagory;
+  };
+
+  template< class Type >
+  struct iterator_traits< const Type * > {
+    typedef ptrdiff_t                  difference_type;
+    typedef const Type                 value_type;
+    typedef const Type                *pointer;
+    typedef const Type                &reference;
     typedef random_access_iterator_tag iterator_catagory;
   };
 

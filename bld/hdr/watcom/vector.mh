@@ -35,77 +35,8 @@ namespace std {
     typedef typename Allocator::pointer         pointer;
     typedef typename Allocator::const_pointer   const_pointer;
 
-    // typedef pointer iterator;
-    //
-    class iterator : public std::iterator<
-      random_access_iterator_tag, Type, difference_type, pointer, reference > {
-    public:
-
-      iterator( )
-        { }
-
-      iterator( pointer p ) : ptr( p )
-        { }
-
-      reference operator *( ) const
-        { return( *ptr ); }
-
-      // pointer operator->( ) const
-      //   { return( ptr ); }
-
-      reference operator[]( size_type index ) const
-        { return( ptr[index] ); }
-
-      iterator &operator+=( difference_type delta )
-        { ptr += delta; return( *this ); }
-
-      iterator &operator-=( difference_type delta )
-        { ptr -= delta; return( *this ); }
-
-      iterator &operator++( )
-        { ++ptr; return( *this ); }
-
-      iterator &operator--( )
-        { --ptr; return( *this ); }
-
-      iterator  operator++( int )
-        { iterator temp( *this ); ptr++; return( temp ); }
-
-      iterator  operator--( int )
-        { iterator temp( *this ); ptr--; return( temp ); }
-
-      difference_type operator-( const iterator &other ) const
-        { return( ptr - other.ptr ); }
-
-      iterator operator+( difference_type delta )
-        { iterator temp( *this ); temp.ptr += delta; return( temp ); }
-
-      iterator operator-( difference_type delta )
-        { iterator temp( *this ); temp.ptr -= delta; return( temp ); }
-
-      bool operator==( const iterator &other ) const
-        { return( ptr == other.ptr ); }
-
-      bool operator!=( const iterator &other ) const
-        { return( ptr != other.ptr ); }
-
-      bool operator<=( const iterator &other ) const
-        { return( ptr <= other.ptr ); }
-
-      bool operator>=( const iterator &other ) const
-        { return( ptr >= other.ptr ); }
-
-      bool operator< ( const iterator &other ) const
-        { return( ptr <  other.ptr ); }
-
-      bool operator> ( const iterator &other ) const
-        { return( ptr >  other.ptr ); }
-
-    private:
-      pointer ptr;
-    };
-
-    // typedef const_pointer const_iterator;
+    typedef pointer iterator;
+    typedef const_pointer const_iterator;
 
     // typedef reverse_iterator<iterator>        reverse_iterator;
     // typedef reverse_iterator<const_iterator>  const_reverse_iterator;
@@ -119,9 +50,9 @@ namespace std {
     allocator_type get_allocator( ) const;
 
     iterator               begin( );
-    // const_iterator         begin( ) const;
+    const_iterator         begin( ) const;
     iterator               end( );
-    // const_iterator         end( ) const;
+    const_iterator         end( ) const;
     // reverse_iterator       rbegin( );
     // const_reverse_iterator rbegin( ) const;
     // reverse_iterator       rend( );
@@ -315,6 +246,16 @@ namespace std {
     return( iterator( buffer ) );
   }
 
+  // begin( ) const
+  // **************
+  template< class Type, class Allocator >
+  inline
+  typename vector< Type, Allocator >::const_iterator
+    vector<Type, Allocator>::begin( ) const
+  {
+    return( const_iterator( buffer ) );
+  }
+
   // end( )
   // ******
   template< class Type, class Allocator >
@@ -323,6 +264,16 @@ namespace std {
     vector< Type, Allocator >::end( )
   {
     return( iterator( buffer + filled ) );
+  }
+
+  // end( ) const
+  // ************
+  template< class Type, class Allocator >
+  inline
+  typename vector< Type, Allocator >::const_iterator
+    vector< Type, Allocator >::end( ) const
+  {
+    return( const_iterator( buffer + filled ) );
   }
 
   // size( ) const

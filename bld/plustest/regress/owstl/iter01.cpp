@@ -24,18 +24,77 @@
 *
 *  ========================================================================
 *
-* Description:  Use this file as a template for creating new tests.
+* Description:  This file contains the functional tests for the generic
+*               iterator support in the library.
 *
 ****************************************************************************/
 
 #include <iostream>
+#include <iterator>
 
-bool some_test( )
+// Use a namespace to exercise that ability.
+namespace xyz {
+  int X, Y;
+
+  // Simple structured iterator gives random access to X or Y.
+  class RandomToggleIterator :
+    public std::iterator< std::random_access_iterator_tag, int, int > {
+
+  public:
+    RandomToggleIterator( bool first_flag )
+      { if( first_flag ) isX = true; else isX = false; }
+
+    int &operator*( )
+      { if( isX ) return X; else return Y; }
+
+  private:
+    bool isX;
+  };
+}
+
+char raw_array[] = { 'a', 'b', 'c', 'd' };
+const char const_raw_array[] = { 'w', 'x', 'y', 'z' };
+
+template< class Iterator >
+void exchange( Iterator x, Iterator y )
+{
+  // Check operation of iterator_traits.
+  typename std::iterator_traits< Iterator >::value_type temp;
+  temp = *x;
+  *x   = *y;
+  *y   = temp;
+}
+
+template< class Iterator >
+bool read_element( Iterator first )
+{
+  // Used for exercising partial specialization for pointers to const.
+  typename std::iterator_traits< Iterator >::value_type temp( *first );
+  if( temp != 'w' ) {
+    std::cout << "traits FAIL 0003\n"; return false;
+  }
+  return true;
+}
+
+bool traits_test( )
 {
   bool rc = true;
+  xyz::RandomToggleIterator p1( true );
+  xyz::RandomToggleIterator p2( false );
 
-  // Exercise some facility here.
+  xyz::X = 1;
+  xyz::Y = 2;
+  exchange( p1, p2 );
+  if( xyz::X != 2 || xyz::Y != 1 ) {
+    std::cout << "traits FAIL 0001\n"; rc = false;
+  }
 
+  exchange( raw_array, raw_array + 3 );
+  if( raw_array[0] != 'd' || raw_array[3] != 'a' ) {
+    std::cout << "traits FAIL 0002\n"; rc = false;
+  }
+
+  if( !read_element( const_raw_array ) ) rc = false;
   return( rc );
 }
 
@@ -44,7 +103,7 @@ int main( )
 {
   int rc = 0;
   try {
-    if( !some_test( )       ) rc = 1;
+    if( !traits_test( )       ) rc = 1;
   }
   catch( ... ) {
     std::cout << "Unexpected exception of unexpected type.\n";
