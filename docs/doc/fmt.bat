@@ -85,8 +85,6 @@ if ["%1"] == ["wfguide3"] set gmlinc=wfg;fg;wed;lg;gml;rsi
 if ["%1"] == ["WFGUIDE3"] set gmlinc=wfg;fg;wed;lg;gml;rsi
 if ["%1"] == ["f77lr"] set gmlinc=fl;gml;whelp
 if ["%1"] == ["F77LR"] set gmlinc=fl;gml;whelp
-if ["%1"] == ["f77lr"] set gmllib=%doc_root%\gml\syslib
-if ["%1"] == ["F77LR"] set gmllib=%doc_root%\gml\syslib
 if not ["%gmlopt%"] == [""] goto OPT2
 if ["%1"] == ["f77lr"] set gmlopt=nbpsshad
 if ["%1"] == ["F77LR"] set gmlopt=nbpsshad
