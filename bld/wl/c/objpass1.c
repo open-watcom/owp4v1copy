@@ -487,7 +487,7 @@ extern void AddSegment( segdata *sd, class_entry *class )
         MakeNewLeader( sd, class, info );
     } else {
         FindALeader( sd, class, info );
-        if( sd->u.leader->info & USE_32 != info & USE_32 ) {
+        if( (sd->u.leader->info & USE_32) != (info & USE_32) ) {
             LnkMsg( ERR+MSG_CANT_COMBINE_32_AND_16, NULL );
         }
     }
