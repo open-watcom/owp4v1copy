@@ -311,7 +311,9 @@ static unsigned ProcOneCopy( char *src, char *dst )
         /* copy permissions: mostly necessary for the "x" bit */
         struct stat buf;
         stat( src, &buf );
-        chmod( dst, buf.st_mode );
+        // some files is copied from the source tree with the read-only permission
+        // for next run we need the write permission for the current user as minimum
+        chmod( dst, buf.st_mode | S_IWUSR );
     }
 #endif
     return( 0 );
