@@ -269,7 +269,7 @@ void VpeMain::readIdeInit()
                         IDE_INI_EDITOR_PARMS, "%f", buff, _MAX_PATH );
     _editorParms = buff;
 
-    for( int i=0; i<4; i++ ) {
+    for( int i=0; i < MAXOLDPROJECTS; i++ ) {
         itoa( i+1, buff, 10 );
         MyGetProfileString( IDE_INI_DIR, IDE_INI_FILENAME, IDE_INI_IDENTIFIER,
                 buff, "*", buff, _MAX_PATH ); // if we get "*", doesn't exist
