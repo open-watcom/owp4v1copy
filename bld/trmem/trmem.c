@@ -129,8 +129,8 @@ struct _trmem_internal {
     void        (*free)( void * );
     void *      (*realloc)( void *, size_t );
     void *      (*expand)( void *, size_t );
-    void *      prt_parm;
-    void        (*prt_line)( void *, const char *, size_t );
+    int *       prt_parm;
+    void        (*prt_line)( int *, const char *, size_t );
     uint        flags;
     size_t      min_alloc;
 #ifdef __WINDOWS__
@@ -374,8 +374,8 @@ _trmem_hdl _trmem_open(
     void ( *free )( void * ),
     void *( *realloc )( void *, size_t ),
     void *( *expand )( void *, size_t ),
-    void *prt_parm,
-    void ( *prt_line )( void *, const char *, size_t ),
+    int  *prt_parm,
+    void ( *prt_line )( int *, const char *, size_t ),
     unsigned flags )
 /*****************************************************/
 {
