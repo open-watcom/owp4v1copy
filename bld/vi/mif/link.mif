@@ -6,8 +6,8 @@ extra_l_flags_os2_i86 = op newfiles,stack=1k
 extra_l_flags_os2 = $(extra_l_flags_$(host_CPU))
 
 lflags_win_i86 = sys windows font mem
-#extra_l_flags_win_i86 = op nocache,symfile lib windows,commdlg,toolhelp,ddeml,shell,$(sdk_dir)\misc\ctl3d,$(datactl_dir)\ctl op stack=16000,heaps=1k
-extra_l_flags_win_i86 = op nocache,symfile lib windows,commdlg,toolhelp,ddeml,shell,$(datactl_dir)\ctl op stack=16000,heaps=1k
+#extra_l_flags_win_i86 = op nocache,symfile lib windows,commdlg,toolhelp,ddeml,shell,$(sdk_dir)\misc\ctl3d op stack=16000,heaps=1k
+extra_l_flags_win_i86 = op nocache,symfile lib windows,commdlg,toolhelp,ddeml,shell op stack=16000,heaps=1k
 !ifeq release 1
 extra_l_flags_win += op rwr
 !endif
@@ -16,10 +16,10 @@ extra_l_flags_win = $(extra_l_flags_win_$(host_CPU))
 
 !ifdef sys_windowed
 ! ifeq host_CPU 386
-extra_l_flags_nt = op stack=40k,heap=8k commit heap=4k lib $(datactl_dir)\nt\ctl.lib
+extra_l_flags_nt = op stack=40k,heap=8k commit heap=4k
 extra_l_flags_nt += alias _WinMain='_WinMain@16'
 ! else
-extra_l_flags_nt = op stack=40k,heap=8k commit heap=4k lib $(datactl_dir)\axp\ctl.lib lib shell32.lib op caseexact
+extra_l_flags_nt = op stack=40k,heap=8k commit heap=4k lib shell32.lib op caseexact
 ! endif
 !else
 extra_l_flags_nt = runtime console op stack=20k
