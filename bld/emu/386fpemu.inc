@@ -75,7 +75,7 @@ if _OS ne _QNX
 my87            sarea           <>
 endif
 ifdef __WIN387__
-precrtn dd              OFFSET32 p_extended ; address of precision rtn
+precrtn dd              p_extended ; address of precision rtn
 endif
 ifdef _DEBUG
     nyimsg      db ": not yet impemented",0dH,0aH,NC
@@ -100,85 +100,84 @@ else
     TENTBL equ  tentab
     TAGTBL equ  tagtab
 endif
-
 ;
 ; NOTE: to make this damn thing work for windows, you have to use
 ;       MASM5. ANNNNND, masm5 is too stupid to figure out that these
 ;       offsets should be 32-bit offsets, SOOOOOO, you have to use
-;       this stupid OFFSET32 macro to make it work.  The macro
+;       this stupid macro to make it work.  The macro
 ;       should be commented out if using masm, since masm doesn't
 ;       understand.  I hate microsoft.
 
         align   4
-mrm     dd      OFFSET32 m00000                 ; mod r/m byte select table
-        dd      OFFSET32 m00001
-        dd      OFFSET32 m00010
-        dd      OFFSET32 m00011
-        dd      OFFSET32 dosib
-        dd      OFFSET32 m00101
-        dd      OFFSET32 m00110
-        dd      OFFSET32 m00111
-        dd      OFFSET32 m01000
-        dd      OFFSET32 m01001
-        dd      OFFSET32 m01010
-        dd      OFFSET32 m01011
-        dd      OFFSET32 dosib
-        dd      OFFSET32 m01101
-        dd      OFFSET32 m01110
-        dd      OFFSET32 m01111
-        dd      OFFSET32 m10000
-        dd      OFFSET32 m10001
-        dd      OFFSET32 m10010
-        dd      OFFSET32 m10011
-        dd      OFFSET32 dosib
-        dd      OFFSET32 m10101
-        dd      OFFSET32 m10110
-        dd      OFFSET32 m10111
+mrm     dd      m00000                 ; mod r/m byte select table
+        dd      m00001
+        dd      m00010
+        dd      m00011
+        dd      dosib
+        dd      m00101
+        dd      m00110
+        dd      m00111
+        dd      m01000
+        dd      m01001
+        dd      m01010
+        dd      m01011
+        dd      dosib
+        dd      m01101
+        dd      m01110
+        dd      m01111
+        dd      m10000
+        dd      m10001
+        dd      m10010
+        dd      m10011
+        dd      dosib
+        dd      m10101
+        dd      m10110
+        dd      m10111
 
-sib     dd      OFFSET32 m00000                 ; sib base/displacement table
-        dd      OFFSET32 m00001
-        dd      OFFSET32 m00010
-        dd      OFFSET32 m00011
-        dd      OFFSET32 s00100
-        dd      OFFSET32 m00101
-        dd      OFFSET32 m00110
-        dd      OFFSET32 m00111
-        dd      OFFSET32 m01000
-        dd      OFFSET32 m01001
-        dd      OFFSET32 m01010
-        dd      OFFSET32 m01011
-        dd      OFFSET32 s01100
-        dd      OFFSET32 m01101
-        dd      OFFSET32 m01110
-        dd      OFFSET32 m01111
-        dd      OFFSET32 m10000
-        dd      OFFSET32 m10001
-        dd      OFFSET32 m10010
-        dd      OFFSET32 m10011
-        dd      OFFSET32 s10100
-        dd      OFFSET32 m10101
-        dd      OFFSET32 m10110
-        dd      OFFSET32 m10111
+sib     dd      m00000                 ; sib base/displacement table
+        dd      m00001
+        dd      m00010
+        dd      m00011
+        dd      s00100
+        dd      m00101
+        dd      m00110
+        dd      m00111
+        dd      m01000
+        dd      m01001
+        dd      m01010
+        dd      m01011
+        dd      s01100
+        dd      m01101
+        dd      m01110
+        dd      m01111
+        dd      m10000
+        dd      m10001
+        dd      m10010
+        dd      m10011
+        dd      s10100
+        dd      m10101
+        dd      m10110
+        dd      m10111
 
-memop   dd      OFFSET32 m00,OFFSET32 m01,OFFSET32 m02,OFFSET32 m03,OFFSET32 m04,OFFSET32 m05,OFFSET32 m06,OFFSET32 m07         ; memory instr
-        dd      OFFSET32 m10,OFFSET32 m11,OFFSET32 m12,OFFSET32 m13,OFFSET32 m14,OFFSET32 m15,OFFSET32 m16,OFFSET32 m17         ; select table
-        dd      OFFSET32 m20,OFFSET32 m21,OFFSET32 m22,OFFSET32 m23,OFFSET32 m24,OFFSET32 m25,OFFSET32 m26,OFFSET32 m27
-        dd      OFFSET32 m30,OFFSET32 m31,OFFSET32 m32,OFFSET32 m33,OFFSET32 m34,OFFSET32 m35,OFFSET32 m36,OFFSET32 m37
-        dd      OFFSET32 m40,OFFSET32 m41,OFFSET32 m42,OFFSET32 m43,OFFSET32 m44,OFFSET32 m45,OFFSET32 m46,OFFSET32 m47
-        dd      OFFSET32 m50,OFFSET32 m51,OFFSET32 m52,OFFSET32 m53,OFFSET32 m54,OFFSET32 m55,OFFSET32 m56,OFFSET32 m57
-        dd      OFFSET32 m60,OFFSET32 m61,OFFSET32 m62,OFFSET32 m63,OFFSET32 m64,OFFSET32 m65,OFFSET32 m66,OFFSET32 m67
-        dd      OFFSET32 m70,OFFSET32 m71,OFFSET32 m72,OFFSET32 m73,OFFSET32 m74,OFFSET32 m75,OFFSET32 m76,OFFSET32 m77
+memop   dd      m00,m01,m02,m03,m04,m05,m06,m07         ; memory instr
+        dd      m10,m11,m12,m13,m14,m15,m16,m17         ; select table
+        dd      m20,m21,m22,m23,m24,m25,m26,m27
+        dd      m30,m31,m32,m33,m34,m35,m36,m37
+        dd      m40,m41,m42,m43,m44,m45,m46,m47
+        dd      m50,m51,m52,m53,m54,m55,m56,m57
+        dd      m60,m61,m62,m63,m64,m65,m66,m67
+        dd      m70,m71,m72,m73,m74,m75,m76,m77
 
-stkop   dd      OFFSET32 s00,OFFSET32 s01,OFFSET32 s02,OFFSET32 s03,OFFSET32 s04,OFFSET32 s05,OFFSET32 s06,OFFSET32 s07         ; stack operand
-        dd      OFFSET32 s10,OFFSET32 s11,OFFSET32 s12,OFFSET32 s13,OFFSET32 s14,OFFSET32 s15,OFFSET32 s16,OFFSET32 s17         ; select table
-        dd      OFFSET32 s20,OFFSET32 s21,OFFSET32 s22,OFFSET32 s23,OFFSET32 s24,OFFSET32 s25,OFFSET32 s26,OFFSET32 s27
-        dd      OFFSET32 s30,OFFSET32 s31,OFFSET32 s32,OFFSET32 s33,OFFSET32 s34,OFFSET32 s35,OFFSET32 s36,OFFSET32 s37
-        dd      OFFSET32 s40,OFFSET32 s41,OFFSET32 s42,OFFSET32 s43,OFFSET32 s44,OFFSET32 s45,OFFSET32 s46,OFFSET32 s47
-        dd      OFFSET32 s50,OFFSET32 s51,OFFSET32 s52,OFFSET32 s53,OFFSET32 s54,OFFSET32 s55,OFFSET32 s56,OFFSET32 s57
-        dd      OFFSET32 s60,OFFSET32 s61,OFFSET32 s62,OFFSET32 s63,OFFSET32 s64,OFFSET32 s65,OFFSET32 s66,OFFSET32 s67
-        dd      OFFSET32 s70,OFFSET32 s71,OFFSET32 s72,OFFSET32 s73,OFFSET32 s74,OFFSET32 s75,OFFSET32 s76,OFFSET32 s77
-        dd      OFFSET32 calc_st0       ; _0_ entries
-        dd      OFFSET32 calc_sti       ; _i_ entries
+stkop   dd      s00,s01,s02,s03,s04,s05,s06,s07         ; stack operand
+        dd      s10,s11,s12,s13,s14,s15,s16,s17         ; select table
+        dd      s20,s21,s22,s23,s24,s25,s26,s27
+        dd      s30,s31,s32,s33,s34,s35,s36,s37
+        dd      s40,s41,s42,s43,s44,s45,s46,s47
+        dd      s50,s51,s52,s53,s54,s55,s56,s57
+        dd      s60,s61,s62,s63,s64,s65,s66,s67
+        dd      s70,s71,s72,s73,s74,s75,s76,s77
+        dd      calc_st0       ; _0_ entries
+        dd      calc_sti       ; _i_ entries
 ;
 ;       stkop1 table entries contain an index into stkop table
 ;       _0_ indicates that the result will be stored in st(0)
@@ -200,7 +199,7 @@ stkop1  db      _0_,_0_,02o,03o,_i_,_0_,_i_,_0_         ; stack operand
 
 _mova   macro   reg,label
         ifdef   __WIN387__
-          mov   reg,OFFSET32 label
+          mov   reg,label
         else
           lea   reg,label
         endif
@@ -224,14 +223,14 @@ get_st0 macro
 jmptab  macro   a,b,c,d,e,f,g,h
         local   table
         jmp     dword ptr cs:table[ebx*4]
-table   dd      OFFSET32 a
-        dd      OFFSET32 b
-        dd      OFFSET32 c
-        dd      OFFSET32 d
-        dd      OFFSET32 e
-        dd      OFFSET32 f
-        dd      OFFSET32 g
-        dd      OFFSET32 h
+table   dd      a
+        dd      b
+        dd      c
+        dd      d
+        dd      e
+        dd      f
+        dd      g
+        dd      h
         endm
 
 saveflg macro                                   ; MACRO
@@ -1322,7 +1321,7 @@ stcons  macro   w1,w2,w3,w4,w5
 
 setp_extended   macro
 ifdef __WIN387__
-        mov     edx,OFFSET32 p_extended
+        mov     edx,p_extended
         mov     precrtn, edx
 else
         lea     edx,p_extended
@@ -1332,7 +1331,7 @@ endif
 
 setp_double     macro
 ifdef __WIN387__
-        mov     edx,OFFSET32 p_double
+        mov     edx,p_double
         mov     precrtn, edx
 else
         lea     edx,p_double
@@ -1342,7 +1341,7 @@ endif
 
 setp_single     macro
 ifdef __WIN387__
-        mov     edx,OFFSET32 p_single
+        mov     edx,p_single
         mov     precrtn,edx
 else
         lea     edx,p_single
@@ -1431,7 +1430,7 @@ load    macro  where,what                       ; load up hi:lo
         mov     eax,   [esi]                    ; - load up double
         mov     edx,   4[esi]                   ; - ...
       endif
-        _lea    ebx,<where>                     ; - ...
+        _lea    ebx,where                       ; - ...
         call    __EmuFDLD                       ; - convert to tbyte
         ELSE                                    ; else if long
         IFIDN      <what>,<long>                ; - then
@@ -1440,7 +1439,7 @@ load    macro  where,what                       ; load up hi:lo
       else
         mov     eax,   [esi]                    ; - load long integer
       endif
-        _lea    edx,<where>                     ; - ...
+        _lea    edx,where                       ; - ...
         call    __I4LD                          ; - convert to tbyte
         ELSE                                    ; else if int
         IFIDN      <what>,<integer>             ; - then
@@ -1450,7 +1449,7 @@ load    macro  where,what                       ; load up hi:lo
         mov     ax,   [esi]                     ; - load an int
       endif
         cwde                                    ; - convert to long
-        _lea    edx,<where>                     ; - ...
+        _lea    edx,where                       ; - ...
         call    __I4LD                          ; - convert to tbyte
         ELSE                                    ; else if double long (8 bytes)
         IFIDN      <what>,<dlong>               ; - then
@@ -1459,7 +1458,7 @@ load    macro  where,what                       ; load up hi:lo
       else
         mov     eax,   [esi]                    ; - load up unsigned long
       endif
-        _lea    edx,<where>                     ; - ...
+        _lea    edx,where                       ; - ...
         call    __U4LD                          ; - convert to tbyte
         ELSE                                    ; else if float
         IFIDN      <what>,<float>               ; - then
@@ -1468,7 +1467,7 @@ load    macro  where,what                       ; load up hi:lo
       else
         mov     eax,   [esi]                    ; - load a float
       endif
-        _lea    edx,<where>                     ; - ...
+        _lea    edx,where                       ; - ...
         call    __EmuFSLD                       ; - convert to double
         ELSE                                    ; else if st(i)
         IFIDN      <what>,<st(i)>               ; - then
