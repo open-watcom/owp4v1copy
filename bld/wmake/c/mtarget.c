@@ -742,6 +742,7 @@ extern void TargInitAttr( TATTR *attr )
     attr->explicit = FALSE;
     attr->always = FALSE;
     attr->auto_dep = FALSE;
+    attr->existsonly = FALSE;
 }
 
 extern void TargOrAttr( TARGET *targ, TATTR attr )
@@ -753,6 +754,7 @@ extern void TargOrAttr( TARGET *targ, TATTR attr )
     targ->attr.explicit |= attr.explicit;
     targ->attr.always |= attr.always;
     targ->attr.auto_dep |= attr.auto_dep;
+    targ->attr.existsonly |= attr.existsonly;
 }
 
 

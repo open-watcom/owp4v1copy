@@ -1276,6 +1276,14 @@ balance.lst summary.lst : ledger.dat sales.dat purchase.dat
 If the program "DOREPORT" executes and its return code is non-zero
 then &maksname will not delete "BALANCE.LST" or "SUMMARY.LST".
 .*
+.section Ignoring Target Timestamp (.EXISTSONLY)
+.*
+.ix '&makcmdup directives' '.EXISTSONLY'
+.ix 'EXISTSONLY' '&makcmdup directive'
+The
+.id &sysper.EXISTSONLY
+directive indicates to &maksname that the target should not be updated if it already exists, regardless of its timestamp.
+.*
 .section Defining Recognized File Extensions (.EXTENSIONS)
 .*
 .ix '&makcmdup directives' '.EXTENSIONS'

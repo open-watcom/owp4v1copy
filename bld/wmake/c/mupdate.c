@@ -503,7 +503,11 @@ STATIC RET_T IsOutOfDate (TARGET *targ, TARGET *deptarg,
  */
 
     getDate( targ );
+    if ( targ->existing && targ->attr.existsonly )
+        return (RET_SUCCESS);
     getDate( deptarg );
+    if ( deptarg->existing && deptarg->attr.existsonly )
+        return (RET_SUCCESS);
     if( dateCmp( targ->date, deptarg->date ) < 0 ) {
         *outofdate = TRUE;
         if(Glob.show_offenders)

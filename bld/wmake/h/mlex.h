@@ -212,6 +212,7 @@ enum DotNames {                 /* must be in alpha order! */
     DOT_DEFAULT,                    /* ".DEFAULT"       */
     DOT_ERASE,                      /* ".ERASE"         */
     DOT_ERROR,                      /* ".ERROR"         */
+    DOT_EXISTSONLY,                 /* ".EXISTSONLY"    */
     DOT_EXPLICIT,                   /* ".EXPLICIT"      */
     DOT_EXTENSIONS,                 /* ".EXTENSIONS"    */
     DOT_FUZZY,                      /* ".FUZZY"         */

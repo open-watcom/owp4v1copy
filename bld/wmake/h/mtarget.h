@@ -63,6 +63,7 @@ struct TargAttr {
     BIT     explicit    : 1;    /* .explicit flag                       */
     BIT     always      : 1;    /* .always flag                         */
     BIT     auto_dep    : 1;    /* .auto_depend flag                    */
+    BIT     existsonly  : 1;    /* .existsonly flag                     */
 };
 
 
