@@ -38,18 +38,18 @@
 #include "trpimp.h"
 #include "tcerr.h"
 
-static trap_version     TRAPENTRY (TRAPENTRY*InitFunc)();
-static void             TRAPENTRY (TRAPENTRY*FiniFunc)();
-void                    TRAPENTRY (TRAPENTRY*HookFunc)();
-void                    TRAPENTRY (TRAPENTRY*InfoFunction)();
-void                    TRAPENTRY (TRAPENTRY*UnLockInput)();
-void                    TRAPENTRY (TRAPENTRY*SetHardMode)();
-static int              TRAPENTRY (TRAPENTRY*HardModeCheck)();
-static int              TRAPENTRY (TRAPENTRY*GetHwndFunc)();
+static trap_version     (TRAPENTRY*InitFunc)();
+static void             (TRAPENTRY*FiniFunc)();
+void                    (TRAPENTRY*HookFunc)();
+void                    (TRAPENTRY*InfoFunction)();
+void                    (TRAPENTRY*UnLockInput)();
+void                    (TRAPENTRY*SetHardMode)();
+static int              (TRAPENTRY*HardModeCheck)();
+static int              (TRAPENTRY*GetHwndFunc)();
 
 extern trap_version     TrapVer;
-extern unsigned         TRAPENTRY (TRAPENTRY*ReqFunc)( unsigned, mx_entry *,
-                                        unsigned, mx_entry * );
+extern unsigned         (TRAPENTRY*ReqFunc)( unsigned, mx_entry *,
+                                             unsigned, mx_entry * );
 static HANDLE           dll;
 
 int HardModeRequired;
