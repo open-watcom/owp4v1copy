@@ -38,6 +38,11 @@
 
 #define BIT_OFF( who ) (offsetof( mad_registers, ppc.who ) * BITS_PER_BYTE)
 
+/* Macros to get at GP/FP registers based on their number; useful in loops */
+#define TRANS_GPREG_32( mr, idx ) (*((unsigned_32 *)(&(mr.r0.u._32[0])) + (2 * idx)))
+#define TRANS_FPREG_LO( mr, idx ) (*((unsigned_32 *)(&(mr.f0.u64.u._32[0])) + (2 * idx)))
+#define TRANS_FPREG_HI( mr, idx ) (*((unsigned_32 *)(&(mr.f0.u64.u._32[1])) + (2 * idx)))
+
 enum {
     RS_NONE,
     RS_DWORD,
@@ -167,42 +172,24 @@ unsigned        DIGENTRY MIRegistersSize( void )
 
 mad_status      DIGENTRY MIRegistersHost( mad_registers *mr )
 {
+    unsigned_32     temp;
+    int             i;
+
     // Currently harcoded for big endian targets - should be dynamic
     // NYI - properly support 64-bit registers
 
     // Convert GPRs
-    CONV_BE_32( mr->ppc.r0.u._32[0] );
-    CONV_BE_32( mr->ppc.r1.u._32[0] );
-    CONV_BE_32( mr->ppc.r2.u._32[0] );
-    CONV_BE_32( mr->ppc.r3.u._32[0] );
-    CONV_BE_32( mr->ppc.r4.u._32[0] );
-    CONV_BE_32( mr->ppc.r5.u._32[0] );
-    CONV_BE_32( mr->ppc.r6.u._32[0] );
-    CONV_BE_32( mr->ppc.r7.u._32[0] );
-    CONV_BE_32( mr->ppc.r8.u._32[0] );
-    CONV_BE_32( mr->ppc.r9.u._32[0] );
-    CONV_BE_32( mr->ppc.r10.u._32[0] );
-    CONV_BE_32( mr->ppc.r11.u._32[0] );
-    CONV_BE_32( mr->ppc.r12.u._32[0] );
-    CONV_BE_32( mr->ppc.r13.u._32[0] );
-    CONV_BE_32( mr->ppc.r14.u._32[0] );
-    CONV_BE_32( mr->ppc.r15.u._32[0] );
-    CONV_BE_32( mr->ppc.r16.u._32[0] );
-    CONV_BE_32( mr->ppc.r17.u._32[0] );
-    CONV_BE_32( mr->ppc.r18.u._32[0] );
-    CONV_BE_32( mr->ppc.r19.u._32[0] );
-    CONV_BE_32( mr->ppc.r20.u._32[0] );
-    CONV_BE_32( mr->ppc.r21.u._32[0] );
-    CONV_BE_32( mr->ppc.r22.u._32[0] );
-    CONV_BE_32( mr->ppc.r23.u._32[0] );
-    CONV_BE_32( mr->ppc.r24.u._32[0] );
-    CONV_BE_32( mr->ppc.r25.u._32[0] );
-    CONV_BE_32( mr->ppc.r26.u._32[0] );
-    CONV_BE_32( mr->ppc.r27.u._32[0] );
-    CONV_BE_32( mr->ppc.r28.u._32[0] );
-    CONV_BE_32( mr->ppc.r29.u._32[0] );
-    CONV_BE_32( mr->ppc.r30.u._32[0] );
-    CONV_BE_32( mr->ppc.r31.u._32[0] );
+    for( i = 0; i < 32; i++ ) {
+        CONV_BE_32( TRANS_GPREG_32( mr->ppc, i ) );
+    }
+    // Convert FPRs
+    for( i = 0; i < 32; i++ ) {
+        CONV_BE_32( TRANS_FPREG_LO( mr->ppc, i ) );
+        CONV_BE_32( TRANS_FPREG_HI( mr->ppc, i ) );
+        temp = TRANS_FPREG_LO( mr->ppc, i );
+        TRANS_FPREG_LO( mr->ppc, i ) = TRANS_FPREG_HI( mr->ppc, i );
+        TRANS_FPREG_HI( mr->ppc, i ) = temp;
+    }
     // Convert special registers
     CONV_BE_32( mr->ppc.iar.u._32[0] );
     CONV_BE_32( mr->ppc.msr.u._32[0] );
@@ -210,44 +197,27 @@ mad_status      DIGENTRY MIRegistersHost( mad_registers *mr )
     CONV_BE_32( mr->ppc.lr.u._32[0] );
     CONV_BE_32( mr->ppc.xer );
     CONV_BE_32( mr->ppc.cr );
+    CONV_BE_32( mr->ppc.fpscr );
     return( MS_OK );
 }
 
 mad_status      DIGENTRY MIRegistersTarget( mad_registers *mr )
 {
+    unsigned_32     temp;
+    int             i;
+
     // Convert GPRs
-    CONV_BE_32( mr->ppc.r0.u._32[0] );
-    CONV_BE_32( mr->ppc.r1.u._32[0] );
-    CONV_BE_32( mr->ppc.r2.u._32[0] );
-    CONV_BE_32( mr->ppc.r3.u._32[0] );
-    CONV_BE_32( mr->ppc.r4.u._32[0] );
-    CONV_BE_32( mr->ppc.r5.u._32[0] );
-    CONV_BE_32( mr->ppc.r6.u._32[0] );
-    CONV_BE_32( mr->ppc.r7.u._32[0] );
-    CONV_BE_32( mr->ppc.r8.u._32[0] );
-    CONV_BE_32( mr->ppc.r9.u._32[0] );
-    CONV_BE_32( mr->ppc.r10.u._32[0] );
-    CONV_BE_32( mr->ppc.r11.u._32[0] );
-    CONV_BE_32( mr->ppc.r12.u._32[0] );
-    CONV_BE_32( mr->ppc.r13.u._32[0] );
-    CONV_BE_32( mr->ppc.r14.u._32[0] );
-    CONV_BE_32( mr->ppc.r15.u._32[0] );
-    CONV_BE_32( mr->ppc.r16.u._32[0] );
-    CONV_BE_32( mr->ppc.r17.u._32[0] );
-    CONV_BE_32( mr->ppc.r18.u._32[0] );
-    CONV_BE_32( mr->ppc.r19.u._32[0] );
-    CONV_BE_32( mr->ppc.r20.u._32[0] );
-    CONV_BE_32( mr->ppc.r21.u._32[0] );
-    CONV_BE_32( mr->ppc.r22.u._32[0] );
-    CONV_BE_32( mr->ppc.r23.u._32[0] );
-    CONV_BE_32( mr->ppc.r24.u._32[0] );
-    CONV_BE_32( mr->ppc.r25.u._32[0] );
-    CONV_BE_32( mr->ppc.r26.u._32[0] );
-    CONV_BE_32( mr->ppc.r27.u._32[0] );
-    CONV_BE_32( mr->ppc.r28.u._32[0] );
-    CONV_BE_32( mr->ppc.r29.u._32[0] );
-    CONV_BE_32( mr->ppc.r30.u._32[0] );
-    CONV_BE_32( mr->ppc.r31.u._32[0] );
+    for( i = 0; i < 32; i++ ) {
+        CONV_BE_32( TRANS_GPREG_32( mr->ppc, i ) );
+    }
+    // Convert FPRs
+    for( i = 0; i < 32; i++ ) {
+        CONV_BE_32( TRANS_FPREG_LO( mr->ppc, i ) );
+        CONV_BE_32( TRANS_FPREG_HI( mr->ppc, i ) );
+        temp = TRANS_FPREG_LO( mr->ppc, i );
+        TRANS_FPREG_LO( mr->ppc, i ) = TRANS_FPREG_HI( mr->ppc, i );
+        TRANS_FPREG_HI( mr->ppc, i ) = temp;
+    }
     // Convert special registers
     CONV_BE_32( mr->ppc.iar.u._32[0] );
     CONV_BE_32( mr->ppc.msr.u._32[0] );
@@ -255,6 +225,7 @@ mad_status      DIGENTRY MIRegistersTarget( mad_registers *mr )
     CONV_BE_32( mr->ppc.lr.u._32[0] );
     CONV_BE_32( mr->ppc.xer );
     CONV_BE_32( mr->ppc.cr );
+    CONV_BE_32( mr->ppc.fpscr );
     return( MS_OK );
 }
 
