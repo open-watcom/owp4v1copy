@@ -392,7 +392,7 @@ wpp_axp += $(targ_bld_$(targ_env_axp))
 #
 proj_name = ctest
 host_CPU = $(arch)
-!ifdef __DOS__
+!ifdef __MSDOS__
 !  define host_OS dos
 !else ifdef __OS2__
 !  define host_OS os2

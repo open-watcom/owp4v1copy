@@ -175,6 +175,8 @@ positive_tests = &
     opt36.$(ext) &
     opt37.$(ext) &
     opt38.$(ext) &
+    opt39.$(ext) &
+    opt40.$(ext) &
     pack01.$(ext) &
     pack02.$(ext) &
     pack03.$(ext) &

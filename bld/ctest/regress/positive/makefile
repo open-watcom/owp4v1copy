@@ -9,7 +9,9 @@ positive_dir = source
 cflags_386 = -d2-mf
 cflags_i86 = -d2-mc-2
 cflags_axp = -d2-si
+!ifndef __MSDOS__
 add_br_ = -br
+!endif
 alt_error = 01
 !else ifdef test2
 cflags_386 = -d1-mf
@@ -51,22 +53,14 @@ cflags_386 = -d1-oe-mf
 cflags_i86 = -d1-oe-ms
 cflags_axp = -d1-oe
 alt_error = 09
-!else ifdef test10
-cflags_386 = -d2s-mf
-cflags_i86 = -d2s-ms
-cflags_axp = -d2s
-alt_error = 10
-!else ifdef test11
-cflags_386 = -d2s-mf
-cflags_i86 = -d2s-ms
-cflags_axp = -d2s
-alt_error = 11
 !else
 cflags_386 = -ox-d1-ms
 cflags_i86 = -ox-d1-ms
 cflags_axp = -ox-d1
 alt_error = 00
+!ifndef __MSDOS__
 add_br_ = -br
+!endif
 !endif
 
 !ifndef noisy
