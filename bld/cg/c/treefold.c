@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Processor independent constant folding optimizations.
 *
 ****************************************************************************/
 
@@ -41,9 +40,13 @@
 #include "zoiks.h"
 #include "i64.h"
 #include "feprotos.h"
+#include "types.h"
 
-typedef union i32 { signed_32 s; unsigned_32 u;
+typedef union i32 {
+    signed_32   s;
+    unsigned_32 u;
 } i32;
+
 extern  type_def        *TypeInteger;
 extern  type_def        *TypeBoolean;
 
@@ -62,7 +65,8 @@ extern  tn              TGConvert(tn,type_def*);
 extern  uint            Length(char*);
 extern  tn              TGTrash(tn);
 extern  tn              TGNode( tn_class, cg_op, tn, tn, type_def * );
-
+extern  bool            TGCanDuplicate( tn node );
+extern  tn              TGDuplicate( tn node );
 
 #define _HasBigConst( t )       ( ( (t)->attr & TYPE_FLOAT ) || (t)->length == 8 )
 
@@ -780,14 +784,39 @@ extern  tn      FoldMod( tn left, tn rite, type_def *tipe ) {
             fold = CFToType( CFCnvIF( 0 ), tipe );
             fold = TGBinary( O_COMMA, left, fold, tipe );
             BurnTree( rite );
-        } else if( !_HasBigConst( tipe )
-              && ( left->tipe->attr & TYPE_SIGNED ) == 0 ) {
-            if( CFIsU32( rv ) ) {
-                ri = CFConvertByType( rv, tipe );
+        } else if( !_HasBigConst( tipe ) ) {
+            if( ( left->tipe->attr & TYPE_SIGNED ) == 0 ) {
+                if( CFIsU32( rv ) ) {
+                    ri = CFConvertByType( rv, tipe );
+                    log = GetLog2( ri );
+                    if( log != -1 ) {
+                        fold = TGBinary( O_AND, left, IntToType( ri-1, tipe ), tipe );
+                        BurnTree( rite );
+                    }
+                }
+            } else if( TGCanDuplicate( left ) ) {
+                /* signed int a; optimize a % rv like IBM does:
+                   int b = a >> 31;
+                   t1 = (a ^ b) - b;
+                   t2 = t & (rv - 1);
+                   fold = (t2 ^ b) - b;
+                 */
+                signed_32 ri = CFConvertByType( rv, tipe );
+                if( ri < 0 )    /* sign of constant doesn't matter */
+                    ri = -ri;
                 log = GetLog2( ri );
-                if( log != -1 ) {
-                    fold = TGBinary( O_AND, left,
-                                  IntToType( ri-1, tipe ), tipe );
+                if( log != -1 && ri > 1 ) {
+                    tn b1, b2, b3, b4; /* 4 copies of b - will be treated as CSE */
+                    tn left1, t1, t2;
+
+                    left1 = TGDuplicate( left );
+                    b1 = TGBinary( O_RSHIFT, left1, IntToType( 31, tipe ), tipe );
+                    b2 = TGDuplicate( b1 );
+                    b3 = TGDuplicate( b1 );
+                    b4 = TGDuplicate( b1 );
+                    t1 = TGBinary( O_MINUS, TGBinary( O_XOR, left, b1, tipe ), b2, tipe );
+                    t2 = TGBinary( O_AND, t1, IntToType( ri-1, tipe ), tipe );
+                    fold = TGBinary( O_MINUS, TGBinary( O_XOR, t2, b3, tipe ), b4, tipe );
                     BurnTree( rite );
                 }
             }

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Functions to manipulate the expression tree.
 *
 ****************************************************************************/
 
@@ -940,7 +939,7 @@ extern  tn  TGLVAssign( tn dst, tn src, type_def *tipe ) {
 }
 
 
-static  bool    TGCanDuplicate( tn node ) {
+extern  bool    TGCanDuplicate( tn node ) {
 /******************************************
     return TRUE if node safe to duplicate? (Has no side effects)
 */
@@ -1027,7 +1026,7 @@ extern  tn  TName( name *name, type_def *tipe ) {
 }
 
 
-static  tn  TGDuplicate( tn node ) {
+extern  tn  TGDuplicate( tn node ) {
 /***************************************
     Return a duplicate for tree "node"
 */
