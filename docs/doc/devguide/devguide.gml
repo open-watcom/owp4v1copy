@@ -1,4 +1,3 @@
-:set symbol="isbn" value="0-123-45645678-9".
 .*
 :INCLUDE file='LYTCHG'.
 .if &e'&dohelp eq 0 .do begin
@@ -8,7 +7,7 @@
 :INCLUDE file='GMLMACS'.
 .*
 :INCLUDE file='XDEFS'.
-:set symbol="lang"      value="C/C++".
+:set symbol="product"    value="Open Watcom".
 :INCLUDE file='DEFS'.
 .*
 :GDOC.
@@ -21,9 +20,9 @@
 :TITLE.Developer's Guide
 :INCLUDE file='DOCTITLE'.
 :eTITLEP.
-.*:ABSTRACT.
-.*:INCLUDE file='COPYRITE'.
-.*:INCLUDE file='DISCLAIM'.
+:ABSTRACT.
+:INCLUDE file='COPYRITE'.
+:INCLUDE file='DISCLAIM'.
 :INCLUDE file='NEWSLETT'.
 .*.pa odd
 :TOC.
@@ -40,10 +39,10 @@
 :include file='&book..kw'
 .do end
 .*
-.sepsect Documentation System
+.sepsect Documentation
 :INCLUDE file='DOCS'.
 .*
-.sepsect Build Architecture
+.sepsect Building
 :INCLUDE file='ARCH'.
 .*
 .if &e'&dohelp eq 0 .do begin

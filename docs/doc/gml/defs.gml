@@ -10,7 +10,7 @@
 :set symbol="computer"  value="Intel".
 .do end
 .if &e'&company eq 0 .do begin
-:set symbol="company"   value="Watcom".
+:set symbol="company"   value="Open Watcom".
 :set symbol="scompany"  value="Watcom International Corp.".
 :set symbol="pcompany"  value="Sybase".
 :set symbol="spcompany" value="Sybase, Inc.".

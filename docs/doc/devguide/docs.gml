@@ -1,3 +1,5 @@
+.chap Producing Documentation
+
 The purpose of this document is twofold: to provide an overview of the
 Open Watcom documentation system togehter with the steps necessary for
 editing and producing online or printed documents, and at the same time
@@ -6,12 +8,10 @@ serve as an example of the documentation system usage.
 It is useful to note that the online documentation is almost, but not quite,
 independent of the rest of the Open Watcom compilers and tools. The one
 important exception is online help files for Open Watcom GUI tools. Formatting
-online documentation generates include files containing
-.id #defines
-designating
-help entries. These are used during building of the tools binaries. If the
-binaries are not built with the right header files, the online help will
-be out of sync and will not be all that helpful.
+online documentation generates include files containing #defines
+designating help entries. These are used during building of the tools 
+binaries. If the binaries are not built with the right header files, the 
+online help will be out of sync and not all that helpful.
 
 
 .section Setting up
@@ -67,6 +67,7 @@ where
 .id <bn>
 is one of
 .millust begin
+devguide    Developer's Guide (this document)
 c_readme    C/C++ Read Me First
 cguide      C/C++ User's Guide
 cguideq     C/C++ User's Guide for QNX
@@ -322,14 +323,14 @@ suitable for post-processing to turn it into IPF for the OS/2 IPF
 compiler, RTF for the WinHelp tools, special Watcom-defined format
 for use with a DOS-based help tool (WHELP) or the ever-popular HTML.
 .np
-If you are a programmer, you'll be somewhat comfortable with the whole
-process of turning ASCII text into documentation. WGML is a text
-processor (compiler) that reads a source file (GML) which, in turn,
+If you are a programmer, and that is likely, you'll be somewhat comfortable 
+with the whole process of turning ASCII text into documentation. WGML is 
+a text processor (compiler) that reads a source file (GML) which, in turn,
 imbeds other source files, and produces an output file (the object
 file). WGML is very fast. It was very fast in the old 20MHz 386 days
 and is, of course, much faster with today's processors. The C Library
-Reference comprising 1,241 pages takes 2 1/2 minutes to format into
-PostScript on a 400 MHz Pentium-II.
+Reference comprising 1,241 pages takes one minute to format into
+PostScript on a 600 MHz Pentium-III.
 .np
 If you ever used TeX or LaTeX you will be comfortable with the
 concept of nonvisual content-driven formatting. If you only know

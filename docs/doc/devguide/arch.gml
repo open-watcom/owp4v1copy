@@ -1,3 +1,5 @@
+.chap Build Architecture
+
 In an effort to clean up the build process, make it easier for projects to
 compile on various people's machines and allow for easier ports to other
 architectures, every project which is developed under the Open Watcom Project
@@ -475,3 +477,4 @@ host_CPU=Y
 .endnote
 That's it! It should be apparent that sticking to these guidelines will make
 everyone's life easier.
+
