@@ -116,7 +116,7 @@ int __export WINAPI WEP( int res )
 /*
  * CallWndProcFilter - hook for calls to wndprocs
  */
-int CALLBACK CallWndProcFilter( int ncode, UINT wparam, DWORD lparam )
+LRESULT CALLBACK CallWndProcFilter( int ncode, WPARAM wparam, LPARAM lparam )
 {
     MSG         msg;
     LPCALLMSG   pcm;
@@ -136,7 +136,7 @@ int CALLBACK CallWndProcFilter( int ncode, UINT wparam, DWORD lparam )
 /*
  * GetMessageFilter - hook for get message
  */
-int CALLBACK GetMessageFilter( int ncode, UINT wparam, DWORD lparam )
+LRESULT CALLBACK GetMessageFilter( int ncode, WPARAM wparam, LPARAM lparam )
 {
 
     if( ncode >= 0 ) {
@@ -160,11 +160,11 @@ void CALLBACK SetFilter( LPVOID hdlmsg )
 
     if( !isFiltering ) {
         callHookHandle = SetWindowsHookEx( WH_CALLWNDPROC,
-                        (HOOKPROC) CallWndProcFilter,
+                        CallWndProcFilter,
                         dllInstance,
                         /*(HTASK)*/ NULL);
         getHookHandle = SetWindowsHookEx( WH_GETMESSAGE,
-                        (HOOKPROC) GetMessageFilter,
+                        GetMessageFilter,
                         dllInstance,
                         /*(HTASK)*/ NULL);
         isFiltering = TRUE;
