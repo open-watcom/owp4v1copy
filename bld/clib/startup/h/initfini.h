@@ -24,28 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Init/Fini routines delcarations.
 *
 ****************************************************************************/
 
 
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//%     Copyright (C) 1994, by WATCOM International Inc.  All rights    %
-//%     reserved.  No part of this software may be reproduced or        %
-//%     used in any form or by any means - graphic, electronic or       %
-//%     mechanical, including photocopying, recording, taping or        %
-//%     information storage and retrieval systems - except with the     %
-//%     written permission of WATCOM International Inc.                 %
-//%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//
-// Date         By              Reason
-// ----         --              ------
-// 11-nov-93    Greg Bentz      defined to rationalize init and fini routines
-// 21-feb-95    Greg Bentz      alpha support
-// 21-apr-95    Greg Bentz      variety.h for near/far and composite macros
-//
-//
 #ifndef _INITFINI_H_INCLUDED
 #define _INITFINI_H_INCLUDED
 
