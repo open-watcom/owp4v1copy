@@ -367,7 +367,7 @@ EVENT ck_keyboardevent()
             switch( ev ) {
             case '\x08':
                /* ctrl-backspace often does the opposite of backspace */
-                if( strcmp(key_backspace, "\008" ) == 0 )
+                if( strcmp(key_backspace, "\x08" ) == 0 )
                     ev = EV_RUB_OUT;
                 else
                     ev = EV_CTRL_BACKSPACE;
@@ -436,7 +436,7 @@ int init_trie()
     str = getenv( "TERM" );
     /* attempt to adjust backspace with the terminfo definition */
     if( str && strncmp(str, "xterm", 5) == 0 ) {
-        if( strcmp(key_backspace, "\008" ) == 0 )
+        if( strcmp(key_backspace, "\x08" ) == 0 )
             write( UIConHandle, "\x1b[?67h", 6 );
         else if( strcmp(key_backspace, "\x7f" ) == 0 )
             write( UIConHandle, "\x1b[?67l", 6 );

@@ -142,6 +142,7 @@ enum {
         EV_ALT_COMMA,
         EV_ALT_PERIOD,
         EV_ALT_SLASH,
+        EV_ALT_SPACE,
         EV_HOME                         = 0x147,
         EV_CURSOR_UP,
         EV_PAGE_UP,
