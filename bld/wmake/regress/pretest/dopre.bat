@@ -28,8 +28,8 @@ ECHO # -----------------------------
 ECHO #   Test 2
 ECHO # -----------------------------
 rm tmp3.out
-%1 -h -f pre03 pre03 > tmp3.out 2>&1
-diff pre03.out tmp3.out
+%1 -h -f pre03 pre03 > tmp.out 2>&1
+diff pre03.out tmp.out
 if errorlevel 1 goto err2
     echo # Test2 successful
     goto test3
