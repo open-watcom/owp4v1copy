@@ -2613,6 +2613,19 @@ int LocalDef( int i )
     proc_info   *info;
     struct asm_sym      *sym;
 
+/*
+
+    LOCAL symbol[,symbol]...
+
+    symbol:
+          name [[count]] [:[type]]
+    count:
+          number of array elements, default is 1
+    type:
+          one of BYTE,SBYTE,WORD,SWORD,DWORD,SDWORD,PWORD,FWORD,TBYTE, default is WORD
+
+ */
+
     if( DefineProc == FALSE ) {
         AsmError( LOCAL_VAR_MUST_FOLLOW_PROC );
         return( ERROR );
@@ -2638,6 +2651,7 @@ int LocalDef( int i )
             return( ERROR );
         } else {
             sym->state = SYM_INTERNAL;
+            sym->mem_type = MT_WORD;
         }
 
         local = AsmAlloc( sizeof( label_list ) );
@@ -2677,6 +2691,7 @@ int LocalDef( int i )
                 AsmError( INVALID_QUALIFIED_TYPE );
                 return( ERROR );
             }
+            sym->mem_type = TypeInfo[type].value;
             local->size = find_size( type );
         }
 
@@ -2860,6 +2875,7 @@ parms:
             return( MT_ERROR );
         } else {
             sym->state = SYM_INTERNAL;
+            sym->mem_type = TypeInfo[type].value;
         }
 
         paranode = AsmAlloc( sizeof( label_list ) );
