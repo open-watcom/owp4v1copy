@@ -89,6 +89,7 @@ STATIC void doBuiltIns( const char *makeopts )
         list = Parse();
         FreeTList( list );
         if( Glob.microsoft | Glob.unix ) {
+            // suffixes must be parsed before builtins
             const char *suffices = MSSuffixList;
             const char *builtins = MSBuiltIn; 
             FmtStr( cpy, "%%MAKEFLAGS=$(%%MAKEFLAGS) %F", makeopts );
@@ -99,12 +100,11 @@ STATIC void doBuiltIns( const char *makeopts )
                 suffices = UNIXSuffixList;
                 builtins = UNIXBuiltIn;
             }
-            FmtStr( buf, "%F", builtins );
-            FmtStr( cpy, buf, makeopts );
+            FmtStr( cpy, "%F", suffices );
             InsString( cpy, FALSE );
             list = Parse();
             FreeTList( list );
-            FmtStr( buf, "%F", suffices );
+            FmtStr( buf, "%F", builtins );
         } else {
             FmtStr( buf, "%F", SuffixList );
         }
@@ -169,6 +169,7 @@ STATIC void handleMacroDefn( char *buf )
         Glob.macreadonly = FALSE;
         /* Insert twice because in nmake declaring a macro in the command line */
         /* is equivalent to declaring one as is and one that is all upper case */
+        /* Approximately so. we cater for foo meaning FOO but not FoO W.Briscoe 20031114 */
         pos = 0;
         while( buf[ pos ] != NULLCHAR &&
                buf[ pos ] != '=' ) {
@@ -237,45 +238,45 @@ STATIC char *procFlags( char const * const *argv, const char **log_name )
 
     while( *++argv != NULL ) {
         checkCtrl( p = *argv );
-        select = p[0], option = (char) toupper( p[1] );
+        select = p[0], option = (char) tolower( p[1] );
         if( select == '-' || select == Glob.swchar ) {
             if( option != NULLCHAR && p[2] == NULLCHAR ) {
                 switch( option ) {
                 case '?':   Usage();                break;
-                case 'A':   Glob.all       = TRUE;  break;
-                case 'B':   Glob.block     = TRUE;  break;
-                case 'C':   Glob.nocheck   = TRUE;  break;
-                case 'D':   Glob.debug     = TRUE;  break;
-                case 'E':   Glob.erase     = TRUE;  break;
-                case 'H':   Glob.noheader  = TRUE;  break;
-                case 'I':   Glob.ignore    = TRUE;  break;
-                case 'J':   Glob.rcs_make  = TRUE;  break;
-                case 'K':   Glob.cont      = TRUE;  break;
-                case 'M':   Glob.nomakeinit= TRUE;  break;
-                case 'N':   Glob.noexec    = TRUE;  break;
-                case 'O':   Glob.optimize  = TRUE;  break;
-                case 'P':   Glob.print     = TRUE;  break;
-                case 'Q':   Glob.query     = TRUE;  break;
-                case 'R':   Glob.overide   = TRUE;  break;
-                case 'S':   Glob.silent    = TRUE;  break;
-                case 'T':   Glob.touch     = TRUE;  break;
-                case 'U':   Glob.unix      = TRUE;  break;
-                case 'V':   Glob.verbose   = TRUE;  break;
-                case 'W':   Glob.auto_depends = TRUE;break;
+                case 'a':   Glob.all       = TRUE;  break;
+                case 'b':   Glob.block     = TRUE;  break;
+                case 'c':   Glob.nocheck   = TRUE;  break;
+                case 'd':   Glob.debug     = TRUE;  break;
+                case 'e':   Glob.erase     = TRUE;  break;
+                case 'h':   Glob.noheader  = TRUE;  break;
+                case 'i':   Glob.ignore    = TRUE;  break;
+                case 'j':   Glob.rcs_make  = TRUE;  break;
+                case 'k':   Glob.cont      = TRUE;  break;
+                case 'm':   Glob.nomakeinit= TRUE;  break;
+                case 'n':   Glob.noexec    = TRUE;  break;
+                case 'o':   Glob.optimize  = TRUE;  break;
+                case 'p':   Glob.print     = TRUE;  break;
+                case 'q':   Glob.query     = TRUE;  break;
+                case 'r':   Glob.overide   = TRUE;  break;
+                case 's':   Glob.silent    = TRUE;  break;
+                case 't':   Glob.touch     = TRUE;  break;
+                case 'u':   Glob.unix      = TRUE;  break;
+                case 'v':   Glob.verbose   = TRUE;  break;
+                case 'w':   Glob.auto_depends = TRUE;break;
 #ifdef CACHE_STATS
-                case 'X':   Glob.cachestat = TRUE;  break;
+                case 'x':   Glob.cachestat = TRUE;  break;
 #endif
-                case 'Y':   Glob.show_offenders = TRUE; break;
-                case 'Z':   Glob.hold      = TRUE;  break;
+                case 'y':   Glob.show_offenders = TRUE; break;
+                case 'z':   Glob.hold      = TRUE;  break;
                     /* these options require a filename */
-                case 'F':
-                case 'L':
+                case 'f':
+                case 'l':
                     if( ( p = *++argv ) == NULL ) {
                         PrtMsg( ERR| INVALID_FILE_OPTION, select, option );
                         Usage();
                     }
                     checkCtrl( p );
-                    if( option == 'F' ) {
+                    if( option == 'f' ) {
                         if ( ( p[0] == '-' ) && ( p[1] == NULLCHAR ) ) {
                             // stdin
                         } else if ( ( p[0] == '-' ) || ( p[0] == Glob.swchar ) ) {
@@ -297,14 +298,14 @@ STATIC char *procFlags( char const * const *argv, const char **log_name )
                 options[ ( option | 0x20 ) + 1 ] = TRUE;
                 continue;
             }
-            if( toupper( p[3]) == NULLCHAR ) {
-                if( option == 'M'  && toupper( p[2] ) == 'S' ) {
+            if( p[3] == NULLCHAR ) {
+                if( option == 'm'  && tolower( p[2] ) == 's' ) {
                     Glob.microsoft = TRUE;
                     Glob.nocheck   = TRUE;
                     options[ ( option | 0x20 ) + 1 ] = TRUE;
                     continue;
                 }
-                if( option == 'S'  && toupper( p[2] ) == 'N' ) {
+                if( option == 's'  && tolower( p[2] ) == 'n' ) {
                     Glob.silentno  = TRUE;
                     options[ ( option | 0x20 ) + 1 ] = TRUE;
                     continue;
@@ -380,7 +381,7 @@ STATIC const char *procLogName( const char * const *argv )
 
     while( *++argv != NULL ) {
         p = *argv;
-        if( ( ( p[0] == '-' ) || ( p[0] == Glob.swchar ) ) && ( toupper( p[1] ) == 'L' ) && ( p[2] == NULLCHAR ) ) {
+        if( ( ( p[0] == '-' ) || ( p[0] == Glob.swchar ) ) && ( tolower( p[1] ) == 'l' ) && ( p[2] == NULLCHAR ) ) {
             return ( ( p = *++argv ) == NULL || ( p[0] == '-' ) || ( p[0] == Glob.swchar ) ) ? NULL : p;
         }
     }

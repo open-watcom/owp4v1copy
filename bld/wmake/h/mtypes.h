@@ -99,10 +99,11 @@ extern const UINT8 IsArray[258];
 #define isbarf(__c)         (IsArray[(__c)+2] & IS_BARF)
 
 /*
- * Since we have redifined a bunch of things from ctype.h, we can't
+ * Since we have redefined a bunch of things from ctype.h, we can't
  * include ctype.h for toupper() and tolower().  BUT... this is ANSI
  * so we SHOULD be able to do this...
  */
+extern int tolower( int );
 extern int toupper( int );
 
 #endif  /* !_MTYPES_H */
