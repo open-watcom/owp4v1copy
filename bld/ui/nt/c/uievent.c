@@ -130,9 +130,9 @@ static void setshiftstate( BOOL has_shift, BOOL has_ctrl, BOOL has_alt )
     }
 }
 
-int CompareEvents( const map *p1, const map *p2 )
+int CompareEvents( const void *p1, const void *p2 )
 {
-    return( p1->vk - p2->vk );
+    return( ((map*)p1)->vk - ((map*)p2)->vk );
 }
 
 bool intern initkeyboard( void )
