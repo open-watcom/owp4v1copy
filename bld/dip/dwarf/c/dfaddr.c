@@ -81,21 +81,6 @@ static seg_blk_head *GetSegOffBlk( void ){
     return( (seg_blk_head*)new );
 }
 
-extern void AddMapAddr( seg_list *list, void *dcmap, off_info *new ){
-/************************************************************/
-// Add a new address to map
-    static seg_ctl  SegCtl = { GetSegOffBlk, InitSegOff };
-    addr_ptr a;
-    seg_info *seg_map;
-
-    a.segment = new->map_seg;
-    a.offset =  new->map_offset;
-    DCMapAddr( &a, dcmap );
-    new->offset = a.offset;
-    seg_map = (seg_info *)AddMapSeg( list, &SegCtl, a.segment );
-    AddSortOffset( seg_map, new );
-}
-
 typedef struct{
     unsigned_16 hi;
     off_info   *base;
@@ -216,74 +201,6 @@ static long BlkOffSearch( off_cmp *cmp ){
 //     return( diff );
 // }
 
-#ifdef DEBUG
-static bool CheckInfo( seg_info *ctl ){
-/***Internal check to see if sorted*************/
-    unsigned_16 rem;
-    unsigned_16 blk_count;
-    off_info   *info;
-    off_info   *last_info;
-    off_blk    *curr;
-    off_blk    *next;
-
-    rem = ctl->entry.count % OFF_PER_BLK;
-    if( rem == 0 ){
-        blk_count = OFF_PER_BLK;
-    }else{
-        blk_count = rem;
-    }
-    curr = ctl->off.head;
-    while( curr != NULL ){  //shuffle free space down to blk
-        next = curr->next;
-        info = curr->info;
-        if( next != NULL ){
-            if( info->offset < next->info[OFF_PER_BLK-1].offset )goto error;
-        }
-        last_info = info;
-        ++info;
-        --blk_count;
-        while( blk_count > 0 ){
-            if( info->offset < last_info->offset )goto error;
-            last_info = info;
-            ++info;
-            --blk_count;
-        }
-        blk_count = OFF_PER_BLK;
-        curr = curr->next;
-    }
-    return( TRUE );
-error:
-    return( FALSE );
-}
-static int ChkOffsets( void *d, seg_info *ctl ){
-/***************************************************/
-//Sort a seg's offsets
-    d = d;
-    if( !CheckInfo( ctl ) ){
-        EnterDebugger();
-    }
-    return( TRUE );
-}
-
-extern void DmpBlk( off_blk *blk, int count ){
-/***** Print contents of blk ****************/
-    off_info   *info;
-
-    myprintf( "blk %lx, %d \r\n", blk, count );
-    info = blk->info;
-    while( count > 0 ){
-        myprintf( "off %lx(%ld) map %x:%lx imx %d\r\n",
-            info->offset,
-            info->len,
-            info->map_seg,
-            info->map_offset,
-            info->imx );
-        ++info;
-        --count;
-    }
-}
-#endif
-
 static  void AddSortOffset( seg_info *ctl, off_info *new  ){
 /****************************************************/
 // blocks are in decreasing order
@@ -365,6 +282,89 @@ static  void AddSortOffset( seg_info *ctl, off_info *new  ){
 exit:
     return;
 }
+
+extern void AddMapAddr( seg_list *list, void *dcmap, off_info *new ){
+/************************************************************/
+// Add a new address to map
+    static seg_ctl  SegCtl = { GetSegOffBlk, InitSegOff };
+    addr_ptr a;
+    seg_info *seg_map;
+
+    a.segment = new->map_seg;
+    a.offset =  new->map_offset;
+    DCMapAddr( &a, dcmap );
+    new->offset = a.offset;
+    seg_map = (seg_info *)AddMapSeg( list, &SegCtl, a.segment );
+    AddSortOffset( seg_map, new );
+}
+
+#ifdef DEBUG
+static bool CheckInfo( seg_info *ctl ){
+/***Internal check to see if sorted*************/
+    unsigned_16 rem;
+    unsigned_16 blk_count;
+    off_info   *info;
+    off_info   *last_info;
+    off_blk    *curr;
+    off_blk    *next;
+
+    rem = ctl->entry.count % OFF_PER_BLK;
+    if( rem == 0 ){
+        blk_count = OFF_PER_BLK;
+    }else{
+        blk_count = rem;
+    }
+    curr = ctl->off.head;
+    while( curr != NULL ){  //shuffle free space down to blk
+        next = curr->next;
+        info = curr->info;
+        if( next != NULL ){
+            if( info->offset < next->info[OFF_PER_BLK-1].offset )goto error;
+        }
+        last_info = info;
+        ++info;
+        --blk_count;
+        while( blk_count > 0 ){
+            if( info->offset < last_info->offset )goto error;
+            last_info = info;
+            ++info;
+            --blk_count;
+        }
+        blk_count = OFF_PER_BLK;
+        curr = curr->next;
+    }
+    return( TRUE );
+error:
+    return( FALSE );
+}
+static int ChkOffsets( void *d, seg_info *ctl ){
+/***************************************************/
+//Sort a seg's offsets
+    d = d;
+    if( !CheckInfo( ctl ) ){
+        EnterDebugger();
+    }
+    return( TRUE );
+}
+
+extern void DmpBlk( off_blk *blk, int count ){
+/***** Print contents of blk ****************/
+    off_info   *info;
+
+    myprintf( "blk %lx, %d \r\n", blk, count );
+    info = blk->info;
+    while( count > 0 ){
+        myprintf( "off %lx(%ld) map %x:%lx imx %d\r\n",
+            info->offset,
+            info->len,
+            info->map_seg,
+            info->map_offset,
+            info->imx );
+        ++info;
+        --count;
+    }
+}
+#endif
 
 static  off_info *SearchBlkList( seg_info *ctl, addr_off offset ){
 /****************************************************/

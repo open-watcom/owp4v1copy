@@ -92,6 +92,27 @@ void SaveCurrentInfo( void )
 } /* SaveCurrentInfo */
 
 /*
+ * cRestoreFileDisplayBits - do just that
+ */
+static void cRestoreFileDisplayBits( void )
+{
+    fcb *tfcb;
+
+    if( CurrentFile == NULL ) {
+        return;
+    }
+    tfcb = CurrentFile->fcb_head;
+    while( tfcb != NULL ) {
+        tfcb->on_display = tfcb->was_on_display;
+        if( tfcb->on_display && !tfcb->in_memory ) {
+            FetchFcb( tfcb );
+        }
+        tfcb=tfcb->next;
+    }
+
+} /* cRestoreFileDisplayBits */
+
+/*
  * RestoreInfo - restore file info
  */
 bool RestoreInfo( info *ci  )
@@ -332,27 +353,6 @@ void CTurnOffFileDisplayBits( void )
     }
 
 } /* CTurnOffFileDisplayBits */
-
-/*
- * cRestoreFileDisplayBits - do just that
- */
-static void cRestoreFileDisplayBits( void )
-{
-    fcb *tfcb;
-
-    if( CurrentFile == NULL ) {
-        return;
-    }
-    tfcb = CurrentFile->fcb_head;
-    while( tfcb != NULL ) {
-        tfcb->on_display = tfcb->was_on_display;
-        if( tfcb->on_display && !tfcb->in_memory ) {
-            FetchFcb( tfcb );
-        }
-        tfcb=tfcb->next;
-    }
-
-} /* cRestoreFileDisplayBits */
 
 /*
  * CFileReadOnly - test if a file is read only or not

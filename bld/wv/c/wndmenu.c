@@ -417,15 +417,6 @@ void SetLogMenuItems( bool active )
     WndEnableMainMenu( MENU_MAIN_WINDOW_LOG, !active );
 }
 
-void SetTargMenuItems()
-{
-    WndEnableMainMenu( MENU_MAIN_BREAK_ON_DLL, _IsOn( SW_HAVE_RUNTIME_DLLS ) );
-    #if defined(__GUI__) && defined(__OS2__)
-        WndEnableMainMenu( MENU_MAIN_FILE_FONT, FALSE );
-    #endif
-    SetMADMenuItems();
-}
-
 void SetMADMenuItems( void )
 {
     const mad_reg_set_data      *rsd;
@@ -436,6 +427,15 @@ void SetMADMenuItems( void )
     WndEnableMainMenu( MENU_MAIN_OPEN_MMX, rsd != NULL );
     RegFindData( MTK_XMM, &rsd );
     WndEnableMainMenu( MENU_MAIN_OPEN_XMM, rsd != NULL );
+}
+
+void SetTargMenuItems()
+{
+    WndEnableMainMenu( MENU_MAIN_BREAK_ON_DLL, _IsOn( SW_HAVE_RUNTIME_DLLS ) );
+    #if defined(__GUI__) && defined(__OS2__)
+        WndEnableMainMenu( MENU_MAIN_FILE_FONT, FALSE );
+    #endif
+    SetMADMenuItems();
 }
 
 static void ForAllMenus( void (*rtn)( gui_menu_struct *menu, int num_menus ) )

@@ -118,18 +118,6 @@ static unsigned long ddeNums[] = {
 #endif
 
 /*
- * StartExprParse - get read to parse an expression
- */
-void StartExprParse( char *data, jmp_buf abort_addr )
-{
-    exprData = data;
-    memcpy( abortAddr, abort_addr, sizeof( jmp_buf ) );
-    nextChar();
-    nextToken();
-
-} /* StartExprParse */
-
-/*
  * nextChar - fetch next character in buffer
  */
 static void nextChar( void )
@@ -144,6 +132,18 @@ static void nextChar( void )
         }
     }
 }
+
+/*
+ * StartExprParse - get read to parse an expression
+ */
+void StartExprParse( char *data, jmp_buf abort_addr )
+{
+    exprData = data;
+    memcpy( abortAddr, abort_addr, sizeof( jmp_buf ) );
+    nextChar();
+    nextToken();
+
+} /* StartExprParse */
 
 static void Abort( int err )
 {

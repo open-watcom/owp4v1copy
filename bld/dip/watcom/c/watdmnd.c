@@ -116,6 +116,30 @@ walk_result WlkDmnd( imp_image_handle *ii, imp_mod_handle im, void *d )
     return( WR_CONTINUE );
 }
 
+static void Unload( demand_ctrl *section )
+{
+    demand_ctrl **owner;
+
+    if( section->owner == NULL ) return;
+    if( section == LastDemand ) {
+        if( section->clear != NULL ) {
+            section->clear( section->buff, section->buff + section->size );
+        }
+        *section->owner = section->save;
+        section->owner = NULL;
+        section->clear = NULL;
+        return;
+    }
+    for( owner = &DemandList; *owner != section; owner = &(*owner)->link )
+        ;
+    *owner = section->link;
+    if( section->clear != NULL ) {
+        section->clear( section->buff, section->buff + section->size );
+    }
+    *section->owner = section->save;
+    DCFree( section );
+}
+
 dip_status InitDemand( imp_image_handle *ii )
 {
     struct walk_demand  d;
@@ -150,31 +174,6 @@ void FiniDemand()
     LastDemand = NULL;
     LastDmndSize = 0;
     TimeStamp = 0;
-}
-
-
-static void Unload( demand_ctrl *section )
-{
-    demand_ctrl **owner;
-
-    if( section->owner == NULL ) return;
-    if( section == LastDemand ) {
-        if( section->clear != NULL ) {
-            section->clear( section->buff, section->buff + section->size );
-        }
-        *section->owner = section->save;
-        section->owner = NULL;
-        section->clear = NULL;
-        return;
-    }
-    for( owner = &DemandList; *owner != section; owner = &(*owner)->link )
-        ;
-    *owner = section->link;
-    if( section->clear != NULL ) {
-        section->clear( section->buff, section->buff + section->size );
-    }
-    *section->owner = section->save;
-    DCFree( section );
 }
 
 walk_result WlkClear( imp_image_handle *ii, imp_mod_handle im, void *d )

@@ -95,38 +95,6 @@ static brk      *BrkGetBP( int row )
     return( bp );
 }
 
-
-static  WNDMODIFY       BrkModify;
-static void     BrkModify( a_window *wnd, int row, int piece )
-{
-    brk         *bp;
-
-    if( row < 0 ) {
-        BrkMenuItem( wnd, MENU_BREAK_CREATE_NEW, row, piece );
-        return;
-    }
-    bp = BrkGetBP( row );
-    if( bp == NULL ) return;
-    if( piece == PIECE_ACTIVE ) {
-        WndRowDirty( wnd, row );
-        WndBreak( wnd )->toggled_break = TRUE;
-        ActPoint( bp, !bp->status.b.active );
-#ifdef OPENER_GADGET
-    } else if( piece == PIECE_OPENER ) {
-        if( bp->size == 0 ) {
-            if( bp->source_line ) {
-                WndSrcInspect( bp->loc.addr );
-            } else {
-                WndAsmInspect( bp->loc.addr );
-            }
-        }
-#endif
-    } else {
-        WndFirstMenuItem( wnd, row, piece );
-    }
-}
-
-
 static  WNDMENU BrkMenuItem;
 static void     BrkMenuItem( a_window *wnd, unsigned id, int row, int piece )
 {
@@ -173,6 +141,36 @@ static void     BrkMenuItem( a_window *wnd, unsigned id, int row, int piece )
     case MENU_BREAK_ASSEMBLY:
         WndAsmInspect( bp->loc.addr );
         break;
+    }
+}
+
+static  WNDMODIFY       BrkModify;
+static void     BrkModify( a_window *wnd, int row, int piece )
+{
+    brk         *bp;
+
+    if( row < 0 ) {
+        BrkMenuItem( wnd, MENU_BREAK_CREATE_NEW, row, piece );
+        return;
+    }
+    bp = BrkGetBP( row );
+    if( bp == NULL ) return;
+    if( piece == PIECE_ACTIVE ) {
+        WndRowDirty( wnd, row );
+        WndBreak( wnd )->toggled_break = TRUE;
+        ActPoint( bp, !bp->status.b.active );
+#ifdef OPENER_GADGET
+    } else if( piece == PIECE_OPENER ) {
+        if( bp->size == 0 ) {
+            if( bp->source_line ) {
+                WndSrcInspect( bp->loc.addr );
+            } else {
+                WndAsmInspect( bp->loc.addr );
+            }
+        }
+#endif
+    } else {
+        WndFirstMenuItem( wnd, row, piece );
     }
 }
 

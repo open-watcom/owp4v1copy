@@ -49,37 +49,6 @@ extern hash_table               HandleToRefListTable;
 
 extern orl_sec_handle           debugHnd;
 
-extern orl_table_index GetDwarfLines( section_ptr sec )
-{
-    uint                size;
-    uint                limit;
-    char *              contents;
-    char *              relocContents;
-    orl_table_index     numlines;
-
-    if( lines ) {
-        MemFree( lines );
-        lines = NULL;
-    }
-    currlinesize = 0;
-    if( debugHnd ) {
-        ORLSecGetContents( debugHnd, &contents );
-        size = ORLSecGetSize( debugHnd );
-        limit = ORLSecGetSize( sec->shnd );
-        relocContents = MemAlloc( size );
-        memcpy( relocContents, contents, size );
-
-        fixupLines( relocContents, debugHnd );
-
-        numlines = ConvertLines( relocContents, size, limit );
-
-        MemFree( relocContents );
-        return numlines;
-    } else {
-        return 0;
-    }
-}
-
 static void fixupLines( char *relocContents, orl_sec_handle sec )
 {
     hash_data *                 data_ptr;
@@ -111,6 +80,37 @@ static void fixupLines( char *relocContents, orl_sec_handle sec )
                 break;
         }
         r_entry = r_entry->next;
+    }
+}
+
+extern orl_table_index GetDwarfLines( section_ptr sec )
+{
+    uint                size;
+    uint                limit;
+    char *              contents;
+    char *              relocContents;
+    orl_table_index     numlines;
+
+    if( lines ) {
+        MemFree( lines );
+        lines = NULL;
+    }
+    currlinesize = 0;
+    if( debugHnd ) {
+        ORLSecGetContents( debugHnd, &contents );
+        size = ORLSecGetSize( debugHnd );
+        limit = ORLSecGetSize( sec->shnd );
+        relocContents = MemAlloc( size );
+        memcpy( relocContents, contents, size );
+
+        fixupLines( relocContents, debugHnd );
+
+        numlines = ConvertLines( relocContents, size, limit );
+
+        MemFree( relocContents );
+        return numlines;
+    } else {
+        return 0;
     }
 }
 

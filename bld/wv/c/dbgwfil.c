@@ -151,6 +151,11 @@ enum {
     PIECE_SOURCE
 };
 
+extern  void    SrcJoinAsm( a_window *wnd, a_window *asm )
+{
+    WndFile( wnd )->asm = asm;
+}
+
 extern  void    SrcNewAsmNotify( a_window *asm, mod_handle mod, bool track )
 {
     file_window *file;
@@ -166,12 +171,6 @@ extern  void    SrcNewAsmNotify( a_window *asm, mod_handle mod, bool track )
         SrcJoinAsm( wnd, asm );
         break;
     }
-}
-
-
-extern  void    SrcJoinAsm( a_window *wnd, a_window *asm )
-{
-    WndFile( wnd )->asm = asm;
 }
 
 extern  void    SrcFreeAsm( a_window *wnd )
@@ -386,6 +385,18 @@ static  void    FileModify( a_window *wnd, int row, int piece )
     }
 }
 
+static void FileSetDotAddr( a_window *wnd, address addr )
+{
+    file_window *file = WndFile( wnd );
+
+    if( AddrComp( file->dotaddr, addr ) == 0 ) return;
+    file->dotaddr = addr;
+    if( IS_NIL_ADDR( addr ) ) return;
+    if( wnd == WndFindActive() ) {
+        AsmMoveDot( file->asm, addr );
+        SetCodeDot( addr );
+    }
+}
 
 static  WNDNOTIFY       FileNotify;
 static void FileNotify( a_window *wnd, wnd_row row, int piece )
@@ -629,22 +640,6 @@ static void FileTrack( a_window *wnd, cue_handle *ch )
     WndRowDirty( wnd, active );
     file->active = active;
 }
-
-
-
-static void FileSetDotAddr( a_window *wnd, address addr )
-{
-    file_window *file = WndFile( wnd );
-
-    if( AddrComp( file->dotaddr, addr ) == 0 ) return;
-    file->dotaddr = addr;
-    if( IS_NIL_ADDR( addr ) ) return;
-    if( wnd == WndFindActive() ) {
-        AsmMoveDot( file->asm, addr );
-        SetCodeDot( addr );
-    }
-}
-
 
 extern  bool    SrcMoveDot( a_window *wnd, address addr )
 {

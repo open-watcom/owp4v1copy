@@ -192,6 +192,7 @@ static int VarNumRows( a_window *wnd )
     return( VarRowTotal( WndVarInfo( wnd ) ) );
 }
 
+static void     VarMenuItem( a_window *wnd, unsigned id, int row, int piece );
 
 static  WNDMODIFY VarModify;
 static  void    VarModify( a_window *wnd, int row, int piece )

@@ -169,6 +169,8 @@ static void MacChangeMac( a_window *wnd, wnd_macro *mac, unsigned key,
     WndNewCurrent( wnd, i, PIECE_KEY );
 }
 
+static void     MacModify( a_window *wnd, int row, int piece );
+
 static bool MacModWhat( a_window *wnd, wnd_row row )
 {
     int         new;
@@ -544,14 +546,6 @@ static int MacCompare( void **pa, void **pb )
     return( (*(wnd_macro **)pa)->key - (*(wnd_macro **)pb)->key );
 }
 
-static WNDREFRESH MacRefresh;
-static void     MacRefresh( a_window *wnd )
-{
-    MacReSize( wnd );
-    WndNoSelect( wnd );
-    WndRepaint( wnd );
-}
-
 static void MacReSize( a_window *wnd )
 {
     wnd_macro   *mac;
@@ -584,6 +578,14 @@ static void MacReSize( a_window *wnd )
                         max[ PIECE_WHERE ] + 2 * WndAvgCharX( wnd );
     Indents[ PIECE_TEXT ] =  Indents[ PIECE_WHAT ] +
                         max[ PIECE_WHAT ] + 2 * WndAvgCharX( wnd );
+}
+
+static WNDREFRESH MacRefresh;
+static void     MacRefresh( a_window *wnd )
+{
+    MacReSize( wnd );
+    WndNoSelect( wnd );
+    WndRepaint( wnd );
 }
 
 static WNDCALLBACK MacEventProc;

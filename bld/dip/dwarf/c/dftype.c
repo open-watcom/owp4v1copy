@@ -129,6 +129,91 @@ static int  GetStrLen( imp_image_handle *ii,
     return( TRUE );
 }
 
+/***********************/
+/* Walk array dims     */
+/***********************/
+typedef struct{
+    int_32           low;
+    uint_32          count;
+    imp_image_handle *ii;
+    location_context *lc;
+    uint_32          num_elts;
+    int              dim;
+    int              cont;
+}array_wlk_wlk;
+
+static int ArraySubRange( dr_handle tsub, int index, void *df );
+static int ArrayEnumType( dr_handle tenu, int index, void *df );
+static DRWLKBLK ArrayWlk[DR_WLKBLK_ARRSIB] = {
+    ArraySubRange,
+    ArrayEnumType,
+    NULL
+};
+
+static void GetArraySize( imp_image_handle *ii,
+                          imp_type_handle  *it,
+                          location_context *lc ){
+//Calculate size of array starting at it->array.index;
+    dr_handle     dim;
+    array_wlk_wlk df;
+    uint_32       base_stride;
+
+    df.ii = ii;
+    df.lc = lc;
+    df.count = 1;
+    df.dim = 0;
+    df.cont = FALSE;
+    DRWalkArraySibs( it->array.index, ArrayWlk, &df );
+    it->array.num_elts = df.count;
+    it->array.low = df.low;
+    df.cont = TRUE;
+    dim = GetArrayDim( it->array.index, 1 );
+    if( dim != NULL ){
+        DRWalkArraySibs( dim, ArrayWlk, &df );
+    }
+    it->array.dims = df.dim;
+    it->typeinfo.size = df.count * it->array.base_stride;
+    if( !it->array.column_major ){
+        base_stride = it->typeinfo.size;
+        base_stride /= it->array.num_elts;
+        it->array.base_stride = base_stride;
+    }
+    it->array.is_set = TRUE;
+    it->array.is_based = FALSE;
+}
+
+static void GetArraySubSize( imp_image_handle *ii,
+                          imp_type_handle  *it,
+                          location_context *lc ){
+// Calc array size one in from previous dim
+    array_wlk_wlk df;
+    uint_32         new_size;
+    uint_32         base_stride;
+
+    df.ii = ii;
+    df.lc = lc;
+    df.count = 1;
+    df.dim = 0;
+    df.cont = FALSE;
+    DRWalkArraySibs( it->array.index, ArrayWlk, &df );
+    new_size = it->typeinfo.size;
+    new_size /= it->array.num_elts;
+    if( it->array.column_major ){
+        base_stride = it->array.base_stride;
+        base_stride *= it->array.num_elts;
+        it->array.base_stride = base_stride;
+    }else{
+        base_stride = it->typeinfo.size;
+        base_stride /= df.count;
+        it->array.base_stride = base_stride;
+    }
+    it->typeinfo.size = new_size;
+    it->array.num_elts = df.count;
+    it->array.low = df.low;
+    --it->array.dims;
+    it->array.is_set = TRUE;
+    it->array.is_based = FALSE;
+}
 
 static void InitTypeHandle( imp_image_handle *ii,
                             imp_type_handle  *it,
@@ -436,26 +521,6 @@ dip_status      DIPENTRY DIPImpTypeBase( imp_image_handle *ii,
     }
     return( ret );
 }
-/***********************/
-/* Walk array dims     */
-/***********************/
-typedef struct{
-    int_32           low;
-    uint_32          count;
-    imp_image_handle *ii;
-    location_context *lc;
-    uint_32          num_elts;
-    int              dim;
-    int              cont;
-}array_wlk_wlk;
-
-static int ArraySubRange( dr_handle tsub, int index, void *df );
-static int ArrayEnumType( dr_handle tenu, int index, void *df );
-static DRWLKBLK ArrayWlk[DR_WLKBLK_ARRSIB] = {
-    ArraySubRange,
-    ArrayEnumType,
-    NULL
-};
 
 typedef struct {
     int_32 low;
@@ -583,73 +648,6 @@ static int ArraySubRange( dr_handle tsub, int index, void *_df ) {
     df->dim++;
     return( df->cont );
 }
-
-
-static void GetArraySize( imp_image_handle *ii,
-                          imp_type_handle  *it,
-                          location_context *lc ){
-//Calculate size of array starting at it->array.index;
-    dr_handle     dim;
-    array_wlk_wlk df;
-    uint_32       base_stride;
-
-    df.ii = ii;
-    df.lc = lc;
-    df.count = 1;
-    df.dim = 0;
-    df.cont = FALSE;
-    DRWalkArraySibs( it->array.index, ArrayWlk, &df );
-    it->array.num_elts = df.count;
-    it->array.low = df.low;
-    df.cont = TRUE;
-    dim = GetArrayDim( it->array.index, 1 );
-    if( dim != NULL ){
-        DRWalkArraySibs( dim, ArrayWlk, &df );
-    }
-    it->array.dims = df.dim;
-    it->typeinfo.size = df.count * it->array.base_stride;
-    if( !it->array.column_major ){
-        base_stride = it->typeinfo.size;
-        base_stride /= it->array.num_elts;
-        it->array.base_stride = base_stride;
-    }
-    it->array.is_set = TRUE;
-    it->array.is_based = FALSE;
-}
-
-static void GetArraySubSize( imp_image_handle *ii,
-                          imp_type_handle  *it,
-                          location_context *lc ){
-// Calc array size one in from previous dim
-    array_wlk_wlk df;
-    uint_32         new_size;
-    uint_32         base_stride;
-
-    df.ii = ii;
-    df.lc = lc;
-    df.count = 1;
-    df.dim = 0;
-    df.cont = FALSE;
-    DRWalkArraySibs( it->array.index, ArrayWlk, &df );
-    new_size = it->typeinfo.size;
-    new_size /= it->array.num_elts;
-    if( it->array.column_major ){
-        base_stride = it->array.base_stride;
-        base_stride *= it->array.num_elts;
-        it->array.base_stride = base_stride;
-    }else{
-        base_stride = it->typeinfo.size;
-        base_stride /= df.count;
-        it->array.base_stride = base_stride;
-    }
-    it->typeinfo.size = new_size;
-    it->array.num_elts = df.count;
-    it->array.low = df.low;
-    --it->array.dims;
-    it->array.is_set = TRUE;
-    it->array.is_based = FALSE;
-}
-
 
 dip_status      DIPENTRY DIPImpTypeArrayInfo( imp_image_handle *ii,
                         imp_type_handle *array, location_context *lc,

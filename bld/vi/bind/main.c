@@ -215,6 +215,19 @@ void AddDataToEXE( char *exe, char *buffer, unsigned short len,
 } /* AddDataToEXE */
 
 /*
+ * GetFromEnv - get file name from environment
+ */
+static void GetFromEnv( char *what, char *path )
+{
+    _searchenv(what,"EDPATH",path );
+    if( path[0] != 0 ) {
+        return;
+    }
+    _searchenv(what,"PATH",path );
+
+} /* GetFromEnv */
+
+/*
  * GetFromEnvAndOpen - search env and fopen a file
  */
 FILE *GetFromEnvAndOpen( char *inpath )
@@ -230,19 +243,6 @@ char tmppath[256];
     return( NULL );
 
 } /* GetFromEnvAndOpen */
-
-/*
- * GetFromEnv - get file name from environment
- */
-void GetFromEnv( char *what, char *path )
-{
-    _searchenv(what,"EDPATH",path );
-    if( path[0] != 0 ) {
-        return;
-    }
-    _searchenv(what,"PATH",path );
-
-} /* GetFromEnv */
 
 /*
  * Usage - dump the usage message
@@ -268,6 +268,21 @@ void Usage( char *msg )
 } /* Usage */
 
 /*
+ * EliminateFirstN - eliminate first n chars from buff
+ */
+static void EliminateFirstN( char *buff, short n  )
+{
+    char        *buff2;
+
+    buff2 = &buff[n];
+    while( *buff2 != 0 ) {
+        *buff++ = *buff2++;
+    }
+    *buff = 0;
+
+} /* EliminateFirstN */
+
+/*
  * RemoveLeadingSpaces - remove leading spaces from a string
  */
 void RemoveLeadingSpaces( char *buff )
@@ -286,21 +301,6 @@ void RemoveLeadingSpaces( char *buff )
     EliminateFirstN( buff, k );
 
 } /* RemoveLeadingSpaces */
-
-/*
- * EliminateFirstN - eliminate first n chars from buff
- */
-void EliminateFirstN( char *buff, short n  )
-{
-    char        *buff2;
-
-    buff2 = &buff[n];
-    while( *buff2 != 0 ) {
-        *buff++ = *buff2++;
-    }
-    *buff = 0;
-
-} /* EliminateFirstN */
 
 /*
  * MyAlloc - allocate memory, failing if cannot

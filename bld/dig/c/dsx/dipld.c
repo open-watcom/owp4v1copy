@@ -41,6 +41,11 @@ extern  int      PathOpen(char *,unsigned, char *);
 
 #define DIPSIG  0x00504944UL
 
+void DIPSysUnload( unsigned long sys_hdl )
+{
+    DIGCliFree( (void *)sys_hdl );
+}
+
 dip_status DIPSysLoad( char *path, dip_client_routines *cli,
                                 dip_imp_routines **imp, unsigned long *sys_hdl )
 {
@@ -66,9 +71,4 @@ dip_status DIPSysLoad( char *path, dip_client_routines *cli,
     }
     *sys_hdl = (unsigned long)dip;
     return( DS_OK );
-}
-
-void DIPSysUnload( unsigned long sys_hdl )
-{
-    DIGCliFree( (void *)sys_hdl );
 }

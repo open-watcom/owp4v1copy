@@ -37,7 +37,7 @@
 #include "vi.h"
 #include "win.h"
 
-static void ReadErrorMsgData( void );
+static void readErrorMsgData( void );
 
 /*
  * FatalError - process fatal error

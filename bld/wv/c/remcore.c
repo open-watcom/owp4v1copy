@@ -145,6 +145,11 @@ static unsigned MemRead( address addr, void *ptr, unsigned size )
     return( size - left );
 }
 
+void FiniCache()
+{
+    _Free( Cache.data );
+    Cache.data = NULL;
+}
 
 void InitCache( address addr, unsigned size )
 {
@@ -157,12 +162,6 @@ void InitCache( address addr, unsigned size )
     Cache.data = ptr;
     Cache.addr = addr;
     Cache.len = MemRead( addr, ptr, size );
-}
-
-void FiniCache()
-{
-    _Free( Cache.data );
-    Cache.data = NULL;
 }
 
 bool HaveCache()
@@ -335,6 +334,12 @@ unsigned int ArgsLen( char *args )
         args++;
     }
     return( len );
+}
+
+void ClearMachineDataCache()
+{
+    MData->addr = NilAddr;
+    MData->end  = 0;
 }
 
 /*
@@ -679,12 +684,6 @@ void GetSysConfig()
 
     acc.req = REQ_GET_SYS_CONFIG;
     TrapSimpAccess( sizeof( acc ), &acc, sizeof( SysConfig ), &SysConfig );
-}
-
-void ClearMachineDataCache()
-{
-    MData->addr = NilAddr;
-    MData->end  = 0;
 }
 
 bool InitCoreSupp()

@@ -135,6 +135,28 @@ void Quit( const char **usage_msg, const char *str, ... )
 
 } /* Usage */
 
+// free globals allocated directly in InitEditor
+static void miscGlobalsFini( void ){
+    MemFree( WorkLine );
+    MemFree( DotBuffer );
+    MemFree( AltDotBuffer );
+    MemFree( DotCmd );
+    MemFree( ReadBuffer );
+    MemFree( WriteBuffer );
+    MemFree( TileColors );
+    MemFree( GrepDefault );
+    MemFree( FileEndString );
+    MemFree( Majick );
+    MemFree( GadgetString );
+    MemFree( WordDefn );
+    MemFree( WordAltDefn );
+    MemFree( TagFileName );
+    MemFree( StatusString );
+    MemFree( StatusSections );
+    MemFree( TmpDir );
+    MemFree( CurrentRegularExpression );
+}
+
 /*
  * ExitEditor - do just that
  */
@@ -209,26 +231,3 @@ void QuitEditor( int rc )
     ExitEditor( rc );
 
 } /* QuitEditor */
-
-
-// free globals allocated directly in InitEditor
-void miscGlobalsFini( void ){
-    MemFree( WorkLine );
-    MemFree( DotBuffer );
-    MemFree( AltDotBuffer );
-    MemFree( DotCmd );
-    MemFree( ReadBuffer );
-    MemFree( WriteBuffer );
-    MemFree( TileColors );
-    MemFree( GrepDefault );
-    MemFree( FileEndString );
-    MemFree( Majick );
-    MemFree( GadgetString );
-    MemFree( WordDefn );
-    MemFree( WordAltDefn );
-    MemFree( TagFileName );
-    MemFree( StatusString );
-    MemFree( StatusSections );
-    MemFree( TmpDir );
-    MemFree( CurrentRegularExpression );
-}

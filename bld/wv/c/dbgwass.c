@@ -175,6 +175,8 @@ static bool ExactCueAt( asm_window *asm, address addr, cue_handle *ch )
     return( TRUE );
 }
 
+static  void    AsmResize( a_window *wnd );
+
 static void AsmSetFirst( a_window *wnd, address addr, bool use_first_source )
 {
     int                 row,rows;
@@ -219,6 +221,46 @@ static void AsmSetFirst( a_window *wnd, address addr, bool use_first_source )
     }
 }
 
+static  void    CalcAddrLen( a_window *wnd, address addr )
+{
+    asm_window  *asm = WndAsm( wnd );
+    unsigned    old;
+
+    old = NewCurrRadix( asm->hex ? 16 : 10 );
+    AddrToString( &addr, MAF_OFFSET, TxtBuff, TXT_LEN );
+    asm->address_end = MaxGadgetLength;
+    asm->address_end += ( strlen( TxtBuff ) + 1 ) * WndMidCharX( wnd );
+    NewCurrRadix( old );
+}
+
+static  void    AsmResize( a_window *wnd )
+{
+    asm_window          *asm = WndAsm( wnd );
+    asm_addr            *new_ins;
+    address             first;
+    int         size;
+
+    size = WndRows( wnd );
+    if( size <= 0 ) size = 1;
+    first = asm->ins[ 0 ].addr;
+    new_ins = WndAlloc( size*sizeof( *new_ins ) );
+    memset( new_ins, 0, size*sizeof( *new_ins ) );
+    if( new_ins == NULL ) {
+        WndClose( wnd );
+        WndNoMemory();
+    }
+    WndFree( asm->ins );
+    asm->ins = new_ins;
+    asm->ins_size = size;
+    AsmSetFirst( wnd, first, asm->ins[ 0 ].line != 0 );
+    CalcAddrLen( wnd, first );
+    if( asm->last_width != WndWidth( wnd ) ) {
+        WndZapped( wnd );
+    }
+    asm->last_width = WndWidth( wnd );
+    WndFixedThumb( wnd );
+}
+
 static int AsmAddrRow( a_window *wnd, address ip )
 {
     int         row;
@@ -231,6 +273,10 @@ static int AsmAddrRow( a_window *wnd, address ip )
     return( row );
 }
 
+extern  void    AsmJoinSrc( a_window *wnd, a_window *src )
+{
+    WndAsm( wnd )->src = src;
+}
 
 extern  void    AsmNewSrcNotify( a_window *src, mod_handle mod, bool track )
 {
@@ -248,40 +294,6 @@ extern  void    AsmNewSrcNotify( a_window *src, mod_handle mod, bool track )
         break;
     }
 }
-
-
-extern a_window *AsmWndFind( a_window *wnd, address addr, bool track )
-{
-    a_window    *new;
-
-    if( wnd == NULL ) {
-        new = DoWndAsmOpen( addr, track );
-    } else {
-        WndRestoreToFront( wnd );
-        new = wnd;
-    }
-    AsmMoveDot( new, addr );
-    return( new );
-}
-
-
-extern  void    AsmJoinSrc( a_window *wnd, a_window *src )
-{
-    WndAsm( wnd )->src = src;
-}
-
-extern  void    AsmFreeSrc( a_window *wnd )
-{
-    if( wnd == NULL ) return;
-    WndAsm( wnd )->src = NULL;
-}
-
-#ifdef DEADCODE
-extern  bool    AsmIsTracking( a_window *wnd )
-{
-    return( WndAsm( wnd )->track );
-}
-#endif
 
 static void AsmSetTitle( a_window *wnd )
 {
@@ -355,6 +367,33 @@ extern  void    AsmMoveDot( a_window *wnd, address addr )
     AsmSetDotAddr( wnd, addr );
 }
 
+extern a_window *AsmWndFind( a_window *wnd, address addr, bool track )
+{
+    a_window    *new;
+
+    if( wnd == NULL ) {
+        new = DoWndAsmOpen( addr, track );
+    } else {
+        WndRestoreToFront( wnd );
+        new = wnd;
+    }
+    AsmMoveDot( new, addr );
+    return( new );
+}
+
+
+extern  void    AsmFreeSrc( a_window *wnd )
+{
+    if( wnd == NULL ) return;
+    WndAsm( wnd )->src = NULL;
+}
+
+#ifdef DEADCODE
+extern  bool    AsmIsTracking( a_window *wnd )
+{
+    return( WndAsm( wnd )->track );
+}
+#endif
 
 static  WNDMODIFY AsmModify;
 static  void    AsmModify( a_window *wnd, int row, int piece )
@@ -908,20 +947,6 @@ static  void    AsmFini( asm_window *asm )
     WndFree( asm );
 }
 
-
-static  void    CalcAddrLen( a_window *wnd, address addr )
-{
-    asm_window  *asm = WndAsm( wnd );
-    unsigned    old;
-
-    old = NewCurrRadix( asm->hex ? 16 : 10 );
-    AddrToString( &addr, MAF_OFFSET, TxtBuff, TXT_LEN );
-    asm->address_end = MaxGadgetLength;
-    asm->address_end += ( strlen( TxtBuff ) + 1 ) * WndMidCharX( wnd );
-    NewCurrRadix( old );
-}
-
-
 static  void    AsmInit( a_window *wnd )
 {
     asm_window  *asm = WndAsm( wnd );
@@ -953,36 +978,6 @@ static  void    AsmInit( a_window *wnd )
     CalcAddrLen( wnd, Context.execution );
     WndZapped( wnd );
 }
-
-
-static  void    AsmResize( a_window *wnd )
-{
-    asm_window          *asm = WndAsm( wnd );
-    asm_addr            *new_ins;
-    address             first;
-    int         size;
-
-    size = WndRows( wnd );
-    if( size <= 0 ) size = 1;
-    first = asm->ins[ 0 ].addr;
-    new_ins = WndAlloc( size*sizeof( *new_ins ) );
-    memset( new_ins, 0, size*sizeof( *new_ins ) );
-    if( new_ins == NULL ) {
-        WndClose( wnd );
-        WndNoMemory();
-    }
-    WndFree( asm->ins );
-    asm->ins = new_ins;
-    asm->ins_size = size;
-    AsmSetFirst( wnd, first, asm->ins[ 0 ].line != 0 );
-    CalcAddrLen( wnd, first );
-    if( asm->last_width != WndWidth( wnd ) ) {
-        WndZapped( wnd );
-    }
-    asm->last_width = WndWidth( wnd );
-    WndFixedThumb( wnd );
-}
-
 
 static WNDCALLBACK AsmEventProc;
 static bool AsmEventProc( a_window * wnd, gui_event gui_ev, void *parm )

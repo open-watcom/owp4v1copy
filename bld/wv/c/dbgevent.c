@@ -143,6 +143,28 @@ void RestoreReplayFromFile( char *name )
     ReplayTo( NULL );
 }
 
+static void AddEvent( char *start, unsigned len, address ip )
+{
+    event_record        **owner;
+    event_record        *new;
+
+    owner = FindOwner( NULL );
+    _Alloc( new, sizeof( *new ) );
+    new->addr_string = NULL;
+    new->cue = NULL;
+    new->next = NULL;
+    new->cmd = AllocCmdList( start, len );
+    new->ip = ip;
+    new->after_asynch = FALSE;
+    new->rad = CurrRadix;
+    if( _IsOn( SW_HAD_ASYNCH_EVENT ) ) {
+        if( _IsOn( SW_EVENT_RECORDED_SINCE_ASYNCH ) ) {
+            new->after_asynch = TRUE;
+        }
+    }
+    *owner = new;
+}
+
 void ProcRecord()
 {
     char        *start;
@@ -224,28 +246,6 @@ void CheckEventRecorded()
             FreeOneEvent( *LastOwner );
         }
     }
-}
-
-static void AddEvent( char *start, unsigned len, address ip )
-{
-    event_record        **owner;
-    event_record        *new;
-
-    owner = FindOwner( NULL );
-    _Alloc( new, sizeof( *new ) );
-    new->addr_string = NULL;
-    new->cue = NULL;
-    new->next = NULL;
-    new->cmd = AllocCmdList( start, len );
-    new->ip = ip;
-    new->after_asynch = FALSE;
-    new->rad = CurrRadix;
-    if( _IsOn( SW_HAD_ASYNCH_EVENT ) ) {
-        if( _IsOn( SW_EVENT_RECORDED_SINCE_ASYNCH ) ) {
-            new->after_asynch = TRUE;
-        }
-    }
-    *owner = new;
 }
 
 void RecordEvent( char *p )

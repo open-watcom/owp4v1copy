@@ -87,13 +87,6 @@ extern void DoDOption( char * );
 extern void DoTOption( char * );
 extern void WhereAmI( void );
 
-extern void Error( int msgnum, char *p )
-/**************************/
-/* routine called by dtparse.c whenever there is an error */
-{
-    writeMsg( msgnum, p );
-}
-
 static void writeStr( char *p )
 /*****************************/
 {
@@ -101,6 +94,12 @@ static void writeStr( char *p )
 
     len = strlen( p );
     write( STDOUT_FILENO, p, len );
+}
+
+static void newLine( void )
+/*************************/
+{
+    write( STDOUT_FILENO, "\r\n", 2 );
 }
 
 static void writeMsg( int msgnum, char *p )
@@ -113,10 +112,11 @@ static void writeMsg( int msgnum, char *p )
     newLine();
 }
 
-static void newLine( void )
-/*************************/
+extern void Error( int msgnum, char *p )
+/**************************/
+/* routine called by dtparse.c whenever there is an error */
 {
-    write( STDOUT_FILENO, "\r\n", 2 );
+    writeMsg( msgnum, p );
 }
 
 static void showDateTimeFormat( void )

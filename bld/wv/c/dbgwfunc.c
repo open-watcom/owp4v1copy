@@ -101,6 +101,52 @@ static  void    FuncModify( a_window *wnd, int row, int piece )
     }
 }
 
+static void FuncNoMod( a_window *wnd )
+{
+    func_window *func = WndFunc( wnd );
+
+    WndScrollAbs( wnd, 0 );
+    NameListFree( NameList( func ) );
+    WndZapped( wnd );
+}
+
+static void FuncGetSourceName( a_window *wnd, int row )
+{
+    func_window *func = WndFunc( wnd );
+
+    NameListName( NameList( func ), row, TxtBuff, SN_QUALIFIED );
+}
+
+static void CalcIndent( a_window *wnd )
+{
+    gui_ord     len,max;
+    int         row,rows;
+
+    rows = FuncNumRows( wnd );
+    max = 0;
+    for( row = 0; row < rows; ++row ) {
+        FuncGetSourceName( wnd, row );
+        len = WndExtentX( wnd, TxtBuff );
+        if( len > max ) max = len;
+    }
+    WndFunc( wnd )->max_name = max;
+}
+
+static void FuncSetMod( a_window *wnd, mod_handle mod )
+{
+    func_window *func = WndFunc( wnd );
+
+    func->mod = mod;
+    NameListAddModules( NameList( func ), mod, func->d2_only, TRUE );
+    CalcIndent( wnd );
+}
+
+static void FuncNewOptions( a_window *wnd )
+{
+    FuncNoMod( wnd );
+    FuncSetMod( wnd, WndFunc( wnd )->mod );
+    WndZapped( wnd );
+}
 
 static  WNDMENU FuncMenuItem;
 static void     FuncMenuItem( a_window *wnd, unsigned id, int row, int piece )
@@ -144,13 +190,6 @@ static int FuncNumRows( a_window *wnd )
     return( NameListNumRows( NameList( WndFunc( wnd ) ) ) );
 }
 
-static void FuncGetSourceName( a_window *wnd, int row )
-{
-    func_window *func = WndFunc( wnd );
-
-    NameListName( NameList( func ), row, TxtBuff, SN_QUALIFIED );
-}
-
 static WNDGETLINE FuncGetLine;
 static  bool    FuncGetLine( a_window *wnd, int row, int piece,
                              wnd_line_piece *line )
@@ -182,43 +221,6 @@ static  bool    FuncGetLine( a_window *wnd, int row, int piece,
         return( FALSE );
     }
 }
-
-
-static void FuncNoMod( a_window *wnd )
-{
-    func_window *func = WndFunc( wnd );
-
-    WndScrollAbs( wnd, 0 );
-    NameListFree( NameList( func ) );
-    WndZapped( wnd );
-}
-
-
-static void CalcIndent( a_window *wnd )
-{
-    gui_ord     len,max;
-    int         row,rows;
-
-    rows = FuncNumRows( wnd );
-    max = 0;
-    for( row = 0; row < rows; ++row ) {
-        FuncGetSourceName( wnd, row );
-        len = WndExtentX( wnd, TxtBuff );
-        if( len > max ) max = len;
-    }
-    WndFunc( wnd )->max_name = max;
-}
-
-
-static void FuncSetMod( a_window *wnd, mod_handle mod )
-{
-    func_window *func = WndFunc( wnd );
-
-    func->mod = mod;
-    NameListAddModules( NameList( func ), mod, func->d2_only, TRUE );
-    CalcIndent( wnd );
-}
-
 
 extern  void    FuncNewMod( a_window *wnd, mod_handle mod )
 {
@@ -264,13 +266,6 @@ static void FuncSetOptions( a_window *wnd )
 
     func->d2_only = func->global && _IsOn( SW_FUNC_D2_ONLY );
     FuncNewOptions( wnd );
-}
-
-static void FuncNewOptions( a_window *wnd )
-{
-    FuncNoMod( wnd );
-    FuncSetMod( wnd, WndFunc( wnd )->mod );
-    WndZapped( wnd );
 }
 
 static WNDCALLBACK FuncEventProc;
