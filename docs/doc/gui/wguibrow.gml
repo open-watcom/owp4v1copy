@@ -2128,12 +2128,6 @@ Since the database files record explicit paths to source files, it is
 likely that the path will no longer be valid once the software is
 moved to another system.
 .np
-A case in point is the MFC software which is pre-compiled into
-libraries at &company..
-When you elect to install the MFC libraries and source code, the
-source code will be stored in different directories than the ones in
-which it was stored when it was originally compiled.
-.np
 .ix 'path search'
 When the &br cannot locate the specified file using its explicit path,
 it will search the paths listed in the path option.

@@ -70,6 +70,8 @@ If your project relies on case insensitive linking, please add
 to your linker directives.
 .bull
 Default windowing support has been removed from the runtime libraries.
+.bull
+MFC libraries, source code and documentation are no longer supplied.
 .endbull
 .if &version ge 110 .do begin
 .*

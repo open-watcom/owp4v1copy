@@ -559,22 +559,6 @@ used.
 .do end
 The "7" designates a library compiled with the "7" option.
 .*
-.if '&target' ne 'QNX' .do begin
-.*
-.section &product MFC Libraries
-.*
-.np
-.ix 'libraries' 'MFC'
-.ix 'Microsoft Foundation Class'
-.ix 'Foundation Class'
-The Microsoft Foundation Class (MFC) Library routines are described in
-the on-line help.
-.np
-The MFC Libraries are provided in source form under
-.fi &pathnamup&pc.SRC&pc.MFC.
-.*
-.do end
-.*
 .section *refid=libmath &product Math Libraries
 .*
 .np

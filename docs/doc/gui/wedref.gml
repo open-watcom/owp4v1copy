@@ -69,9 +69,6 @@ text.
 .note CLib Help
 Choose CLib Help to find information from the C Library Reference
 manual about the currently selected text.
-.note MFC Help
-Choose MFC Help to find information from the MFC documentation
-about the currently selected text.
 .note Open
 Choose Open to open a new file. The name of the new file is the
 selected text.
