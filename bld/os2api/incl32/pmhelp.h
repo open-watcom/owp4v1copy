@@ -16,29 +16,30 @@
 #define CMIC_SHOW_PANEL_ID   1
 #define CMIC_TOGGLE_PANEL_ID 2
 
-#define HM_MSG_BASE               0x0220
+#define HM_MSG_BASE 0x0220
 
-#define HM_DISMISS_WINDOW             0x0220
-#define HM_DISPLAY_HELP               0x0222
-#define HM_EXT_HELP                   0x0223
+#define HM_DISMISS_WINDOW             HM_MSG_BASE+0x0001
+#define HM_DISPLAY_HELP               HM_MSG_BASE+0x0002
+#define HM_EXT_HELP                   HM_MSG_BASE+0x0003
 #define HM_GENERAL_HELP               HM_EXT_HELP
-#define HM_SET_ACTIVE_WINDOW          0x0224
-#define HM_LOAD_HELP_TABLE            0x0225
-#define HM_CREATE_HELP_TABLE          0x0226
-#define HM_SET_HELP_WINDOW_TITLE      0x0227
-#define HM_SET_SHOW_PANEL_ID          0x0228
-#define HM_REPLACE_HELP_FOR_HELP      0x0229
+#define HM_SET_ACTIVE_WINDOW          HM_MSG_BASE+0x0004
+#define HM_LOAD_HELP_TABLE            HM_MSG_BASE+0x0005
+#define HM_CREATE_HELP_TABLE          HM_MSG_BASE+0x0006
+#define HM_SET_HELP_WINDOW_TITLE      HM_MSG_BASE+0x0007
+#define HM_SET_SHOW_PANEL_ID          HM_MSG_BASE+0x0008
+#define HM_REPLACE_HELP_FOR_HELP      HM_MSG_BASE+0x0009
 #define HM_REPLACE_USING_HELP         HM_REPLACE_HELP_FOR_HELP
-#define HM_HELP_INDEX                 0x022a
-#define HM_HELP_CONTENTS              0x022b
-#define HM_KEYS_HELP                  0x022c
-#define HM_SET_HELP_LIBRARY_NAME      0x022d
-#define HM_SET_OBJCOM_WINDOW          0x0238
-#define HM_UPDATE_OBJCOM_WINDOW_CHAIN 0x0239
-#define HM_QUERY_DDF_DATA             0x023a
-#define HM_INVALIDATE_DDF_DATA        0x023b
-#define HM_QUERY                      0x023c
-#define HM_SET_COVERPAGE_SIZE         0x023d
+#define HM_HELP_INDEX                 HM_MSG_BASE+0x000a
+#define HM_HELP_CONTENTS              HM_MSG_BASE+0x000b
+#define HM_KEYS_HELP                  HM_MSG_BASE+0x000c
+#define HM_SET_HELP_LIBRARY_NAME      HM_MSG_BASE+0x000d
+
+#define HM_SET_OBJCOM_WINDOW          HM_MSG_BASE+0x0018
+#define HM_UPDATE_OBJCOM_WINDOW_CHAIN HM_MSG_BASE+0x0019
+#define HM_QUERY_DDF_DATA             HM_MSG_BASE+0x001a
+#define HM_INVALIDATE_DDF_DATA        HM_MSG_BASE+0x001b
+#define HM_QUERY                      HM_MSG_BASE+0x001c
+#define HM_SET_COVERPAGE_SIZE         HM_MSG_BASE+0x001d
 
 #define OPEN_COVERPAGE       1
 #define OPEN_PAGE            2
