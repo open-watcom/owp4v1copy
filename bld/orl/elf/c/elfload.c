@@ -305,8 +305,10 @@ static orl_return load_elf_sec_handles( elf_file_handle elf_file_hnd, orl_sec_of
     return( ORL_OKAY );
 }
 
-static int sec_compare( const elf_sec_handle *first_sec, const elf_sec_handle *second_sec )
+static int sec_compare( const void *_first_sec, const void *_second_sec )
 {
+    const elf_sec_handle *first_sec = _first_sec;
+    const elf_sec_handle *second_sec = _second_sec;
     if( (*first_sec)->offset > (*second_sec)->offset ) {
         return( 1 );
     } else if( (*first_sec)->offset < (*second_sec)->offset ) {
@@ -367,7 +369,6 @@ orl_return ElfLoadFileStructure( elf_file_handle elf_file_hnd )
     // now sort the section handles by file offset
     qsort( elf_file_hnd->elf_sec_hnd, elf_file_hnd->num_sections,
             sizeof( elf_sec_handle ), sec_compare );
-//          (int(*)(const void*, const void*))sec_compare );
 
     elf_sec_hnd = elf_file_hnd->elf_sec_hnd[elf_file_hnd->num_sections - 1];
     contents_size2 = elf_sec_hnd->offset + elf_sec_hnd->size - e_hdr->e_shoff

@@ -233,14 +233,16 @@ static int AddDataImpLib( coff_file_handle coff_file_hnd, void * buff, int len )
     return ORL_OKAY;
 }
 
-static void * ImportLibRead(coff_file_handle coff_file_hnd, int len)
+static void * ImportLibRead(void * _coff_file_hnd, int len)
 {
+    coff_file_handle coff_file_hnd = _coff_file_hnd;
     IMPLIB_POS += len;
     return IMPLIB_DATA + IMPLIB_POS - len;
 }
 
-static long ImportLibSeek(coff_file_handle coff_file_hnd, long pos, int where)
+static long ImportLibSeek(void * _coff_file_hnd, long pos, int where)
 {
+    coff_file_handle coff_file_hnd = _coff_file_hnd;
     if( where == SEEK_SET ) {
         IMPLIB_POS = pos;
     } else if( where == SEEK_CUR ) {
