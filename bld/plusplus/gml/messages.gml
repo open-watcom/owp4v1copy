@@ -77,7 +77,8 @@
 :MSGSYM. ERR_CALL_WATCOM
 :MSGTXT. internal compiler error
 :MSGJTXT. 内部のコンパイラ・エラー
-If this message appears, please report the problem directly to Watcom.
+If this message appears, please report the problem directly to the
+OpenWatcom development team. See http://www.openwatcom.org/.
 
 :MSGSYM. WARN_ASSIGN_CONST_IN_BOOL_EXPR
 :MSGTXT. assignment of constant found in boolean expression
@@ -101,7 +102,7 @@ int a = 12345678901234567890;
 :MSGSYM. ERR_MISSING_RETURN_VALUE
 :MSGTXT. missing return value
 :MSGJTXT. 戻り値がありません
-A function has been declared with a function return type, but no
+A function has been declared with a non-void return type, but no
 .kw return
 statement was found in the function.  Either add a
 .kw return
@@ -120,10 +121,10 @@ The message will be issued at the end of the function.
 :MSGJTXT. 基底クラス'%T'は仮想デストラクタを持ちません
 :WARNING. 1
 A virtual destructor has been declared in a class with base classes.
-The compiler has detected that a base class does not have a virtual
-destructor, so a
+However, one of those base classes does not have a virtual
+destructor. A
 .kw delete
-of a pointer cast to the base class will not function properly
+of a pointer cast to such a base class will not function properly
 in all circumstances.
 :errbad.
 struct Base {
@@ -133,7 +134,7 @@ struct Derived : Base {
     virtual ~Derived();
 };
 :eerrbad.
-It is usually considered good programming practice to declare virtual
+It is considered good programming practice to declare virtual
 destructors in all classes used as base classes of classes having
 virtual destructors.
 
@@ -177,11 +178,11 @@ class X {
 :eerrbad.
 
 :MSGSYM. WARN_ADDR_OF_ARRAY
-:MSGTXT. "&array" may not produce intended result
-:MSGJTXT. "&array"は意図された結果を生じないかもしれません
+:MSGTXT. '&array' may not produce intended result
+:MSGJTXT. '&array'は意図された結果を生じないかもしれません
 :WARNING. 3
-The type of the expression "&array" is different from the type of the
-expression "array".
+The type of the expression '&array' is different from the type of the
+expression 'array'.
 Suppose we have the declaration
 .id char buffer[80].
 Then the expression
@@ -192,8 +193,8 @@ which is
 .id (buffer + 3 * 80)
 and not
 .id (buffer + 3 * 1)
-which is what most people expect to happen.
-The address of operator "&" is not required for getting the address of an
+which is what one may have expected.
+The address-of operator '&' is not required for getting the address of an
 array.
 
 :MSGSYM. WARN_RET_ADDR_OF_AUTO
@@ -226,7 +227,7 @@ since there was no file name after it (i.e., "-fo=my.obj" ).
 :MSGJTXT. asm擬似命令が無視されました
 :WARNING. 1
 The asm directive (e.g., asm( "mov r0,1" ); ) is a non-portable construct.
-The Watcom C++ compiler treats all asm directives like comments.
+The OpenWatcom C++ compiler treats all asm directives like comments.
 
 :MSGSYM. WARN_ALL_PRIVATE_IN_CLASS
 :MSGTXT. all members are private
@@ -258,8 +259,8 @@ These types are required for expressions that can be checked at compile time.
 :MSGTXT. unreachable code
 :MSGJTXT. コードは実行されません
 :WARNING. 2
-The statement will never be executed, because there is no path through
-the program that causes control to reach this statement.
+The indicated statement will never be executed because there is no path
+through the program that causes control to reach that statement.
 :errbad.
 void foo( int *p )
 {
@@ -563,7 +564,7 @@ int b = a( 12 );
 :eerrbad.
 
 :MSGSYM. ERR_MUST_BE_LVALUE
-:MSGTXT. operand must be an 'lvalue'
+:MSGTXT. operand must be an lvalue
 :MSGJTXT. オペランドは'左辺値'でなければなりません
 The operand on the left side of an "=" sign must be a variable or
 memory location which can have a value assigned to it.
@@ -574,7 +575,7 @@ void foo( int a )
     int b = ++ ( a + 6 );
 }
 :eerrbad.
-Both statements within the function are erroneous, since "lvalues" are
+Both statements within the function are erroneous, since lvalues are
 expected where the additions are shown.
 
 :MSGSYM. ERR_LABEL_ALREADY_DEFINED
@@ -603,6 +604,7 @@ function.
 :errbad.
 void bar( int *p )
 {
+labl:
     *p = 0;
     goto label;
 }
@@ -633,7 +635,7 @@ int array[-1];  // not allowed
 All dimensions of a multiple dimension array must be specified.
 The only exception is the first dimension which can declared as "[]".
 :errbad.
-int array[][];  // not allowed
+int array[][];   // not allowed
 :eerrbad.
 
 :MSGSYM. ERR_INVALID_STG_CLASS_FOR_FUNC
@@ -650,9 +652,9 @@ auto void foo()
 :eerrbad.
 
 :MSGSYM. ERR_EXPR_MUST_BE_POINTER_TO
-:MSGTXT. expression must be 'pointer to ...'
+:MSGTXT. expression must have pointer type
 :MSGJTXT. 式は'...へのポインタ'でなければなりません
-An attempt has been made to de-reference (*) a variable or expression
+An attempt has been made to de-reference a variable or expression
 which is not declared to be a pointer.
 :errbad.
 int a;
@@ -660,7 +662,7 @@ int b = *a;
 :eerrbad.
 
 :MSGSYM. ERR_CANT_TAKE_ADDR_OF_RVALUE
-:MSGTXT. cannot take address of an 'rvalue'
+:MSGTXT. cannot take address of an rvalue
 :MSGJTXT. 右辺値のアドレスをとることができません
 You can only take the address of a variable or memory location.
 :errbad.
@@ -783,8 +785,8 @@ A bit field must be at least one bit in size.
 :errbad.
 struct S {
     int bitfield :10;
-    int :0;   // ok, aligns to int
-    int h :0; // err, field is named
+    int :0;   // okay, aligns to int
+    int h :0; // error, field is named
 };
 :eerrbad.
 
@@ -821,7 +823,7 @@ struct S
 :MSGSYM. ERR_EXPR_MUST_BE_ARRAY
 :MSGTXT. subscript on non-array
 :MSGJTXT. 非配列への添え字です
-One of the operands of "[]" must be an array or a pointer.
+One of the operands of '[]' must be an array or a pointer.
 :errbad.
 int array[10];
 int i1 = array[0];  // ok
@@ -839,7 +841,7 @@ to mark the end of a comment.
 :MSGSYM. ERR_MUST_BE_MACRO_PARM
 :MSGTXT. argument for # must be a macro parm
 :MSGJTXT. #の引数はマクロのパラメータでなければなりません
-The argument for the stringize operator "#" must be a macro parameter.
+The argument for the stringize operator '#' must be a macro parameter.
 
 :MSGSYM. ERR_UNKNOWN_DIRECTIVE
 :MSGTXT. unknown preprocessing directive '#%s'
@@ -879,7 +881,7 @@ The specified function is declared as a
 function.
 Delete the
 .kw return
-statement, or change the type of the function.
+value, or change the type of the function.
 :errbad.
 void fun()
 {
@@ -902,7 +904,7 @@ void* p = &var.bitfield;    // illegal
 :eerrbad.
 
 :MSGSYM. ERR_NOT_A_CONSTANT_EXPR
-:MSGTXT. expression must be constant
+:MSGTXT. expression must be a constant
 :MSGJTXT. 式は定数でなければなりません
 The compiler expects a constant expression.
 This message can occur during static initialization if you are
@@ -1175,7 +1177,7 @@ int a;
 :eerrbad.
 
 :MSGSYM. ERR_INVALID_MACRO_DEFN
-:MSGTXT. invalid macro definition, missing )
+:MSGTXT. invalid macro definition, missing ')'
 :MSGJTXT. 不適切なマクロ定義です； ）がありません
 The right parenthesis ")" is required for a function-like macro definition.
 :errbad.
@@ -1183,7 +1185,7 @@ The right parenthesis ")" is required for a function-like macro definition.
 :eerrbad.
 
 :MSGSYM. ERR_INCOMPLETE_MACRO
-:MSGTXT. missing ) for expansion of '%s' macro
+:MSGTXT. missing ')' for expansion of '%s' macro
 :MSGJTXT. '%s'マクロの展開に対して）がありません
 The compiler encountered end-of-file while collecting up the argument for a
 function-like macro.
@@ -1379,8 +1381,9 @@ The type of error is displayed in the message.
 :MSGJTXT. コンパイラ内部エラー %d
 A bug has been encountered in the compiler.
 Please report the specified internal compiler error number and any other
-helpful details about the program being compiled to Watcom so that we
-can fix the problem.
+helpful details about the program being compiled to the OpenWatcom
+development team so that we
+can fix the problem. See http://www.openwatcom.org/.
 
 :MSGSYM. ERR_BAD_PARM_REGISTER
 :MSGTXT. argument number %d - invalid register in #pragma
@@ -1396,11 +1399,11 @@ returned by the function.
 :MSGSYM. ERR_BAD_SAVE
 :MSGTXT. illegal register modified by '%s' #pragma
 :MSGJTXT. '%s'#pragmaによって違法なレジスタが修正されています
-.us For the 16-bit Watcom C/C++ compiler:
+.us For the 16-bit OpenWatcom C/C++ compiler:
 The BP, CS, DS, and SS registers cannot be modified in small data models.
 The BP, CS, and SS registers cannot be modified in large data models.
 .np
-.us For the 32-bit Watcom C/C++ compiler:
+.us For the 32-bit OpenWatcom C/C++ compiler:
 The EBP, CS, DS, ES, and SS registers cannot be modified in flat
 memory models.
 The EBP, CS, DS, and SS registers cannot be modified in small data
@@ -1423,7 +1426,7 @@ The compiler ran out of memory for storing macro definitions.
 :MSGSYM. ERR_BREAK_KEY_HIT
 :MSGTXT. keyboard interrupt detected
 :MSGJTXT. キーボード割り込みが検出されました
-The compile has been aborted with Ctrl/C or Ctrl/Break.
+The compilation has been aborted with Ctrl/C or Ctrl/Break.
 
 :MSGSYM. ERR_DUPLICATE_MACRO_PARM
 :MSGTXT. duplicate macro parameter '%s'
@@ -1471,7 +1474,7 @@ You can use the &wclname. utility to compile multiple files with a
 single command.
 
 :MSGSYM. ERR_UNION_NO_VIRTUAL_FUNCTIONS
-:MSGTXT. virtual member functions are not allowed in an union
+:MSGTXT. virtual member functions are not allowed in a union
 :MSGJTXT. 仮想メンバ関数はunionの中で許されません
 A union can only be used to overlay the storage of data.
 The storage of virtual function
@@ -1546,9 +1549,9 @@ class C : public Dup, public Dup
 :eerrbad.
 
 :MSGSYM. ERR_ONLY_GLOBAL_TEMPLATES
-:MSGTXT. templates may only be declared in file scope
+:MSGTXT. templates may only be declared in namespace scope
 :MSGJTXT. テンプレートはファイル・スコープの中で宣言されるだけです
-Currently, templates can only be declared at file scope.
+Currently, templates can only be declared in namespace scope.
 This simple restriction was chosen in favour of more freedom with
 possibly subtle restrictions.
 
@@ -1562,7 +1565,7 @@ such errors.
 :MSGSYM. ERR_UNKNOWN_LINKAGE
 :MSGTXT. unknown linkage '%s'
 :MSGJTXT. 未知のリンク'%s'です
-Only the linkages "C" and "C++" are supported by Watcom C++.
+Only the linkages "C" and "C++" are supported by OpenWatcom C++.
 :errbad.
 extern "APL" void AplFunc( int* );
 :eerrbad.
@@ -1624,12 +1627,13 @@ it is difficult for a compiler to correct the error itself.
 :MSGTXT. parser stack corrupted
 :MSGJTXT. 構文解析プログラムのスタックが壊れています
 The C++ parser has detected an internal problem that usually indicates
-a compiler problem.  Please report this directly to Watcom.
+a compiler problem.  Please report this directly to the OpenWatcom
+development team. See http://www.openwatcom.org/.
 
 :MSGSYM. ERR_NO_NESTED_TEMPLATES
 :MSGTXT. template declarations cannot be nested within each other
 :MSGJTXT. テンプレート宣言は，お互いの範囲内でネストすることができません
-Currently, templates can only be declared at file scope.
+Currently, templates can only be declared in namespace scope.
 Furthermore, a template declaration must be finished before another
 template can be declared.
 
@@ -1753,7 +1757,7 @@ correct and execute properly.  This message is purely informational
 :MSGSYM. ERR_EXCEEDED_LIMIT
 :MSGTXT. too many errors: compilation aborted
 :MSGJTXT. エラーが多すぎます：コンパイルは中止しました
-The Watcom C++ compiler sets a limit to the number of error messages
+The OpenWatcom C++ compiler sets a limit to the number of error messages
 it will issue.
 Once the number of messages reaches the limit the above message is issued.
 This limit can be changed via the "/e" command line option.
@@ -1782,7 +1786,7 @@ Combine the pragmas into one pragma and apply it once.
 :MSGSYM. ERR_MUST_BE_ZERO
 :MSGTXT. pure member function constant must be '0'
 :MSGJTXT. 純粋メンバ関数定数は'0'でなければなりません
-The constant must be changed to '0' in order for the Watcom C++ compiler
+The constant must be changed to '0' in order for the OpenWatcom C++ compiler
 to accept the pure virtual member function declaration.
 :errbad.
 struct S {
@@ -1791,8 +1795,8 @@ struct S {
 :eerrbad.
 
 :MSGSYM. ERR_REPEATED_BASED_MODS
-:MSGTXT. 'based' modifier has been repeated
-:MSGJTXT. 'based'修飾子が繰り返されました
+:MSGTXT. based modifier has been repeated
+:MSGJTXT. based修飾子が繰り返されました
 A repeated based modifier has been detected.  There are no semantics for
 combining base modifiers so this is not allowed.
 :errbad.
@@ -1968,7 +1972,7 @@ The compiler also requires that
 members be accessed through a derived class to ensure that
 an unrelated base class cannot be quietly modified.
 This is a fairly recent change to the C++ language that may
-cause Watcom C++ to not accept older C++ code.
+cause OpenWatcom C++ to not accept older C++ code.
 See Section 11.5 in the ARM for a discussion of protected access.
 :errbad.
 struct Top { int t; };
@@ -2114,7 +2118,7 @@ void fn( char *p )
 :eerrbad.
 
 :MSGSYM. ERR_DTOR_OBJ_MEM_MODEL
-:MSGTXT. attempt to destruct a far object when data model is near
+:MSGTXT. attempt to destroy a far object when data model is near
 :MSGJTXT. データモデルがnearであるとき，farオブジェクトにデストラクタを適用しています
 Destructors cannot be applied to objects which are stored in far memory
 when the default memory model for data is near.
@@ -2156,7 +2160,7 @@ to have a default type.  There is neither syntax to express the notion
 nor semantics defined for its meaning.
 
 :MSGSYM. ERR_DLT_OBJ_MEM_MODEL
-:MSGTXT. attempt to 'delete' a far object when the data model is near
+:MSGTXT. attempt to delete a far object when the data model is near
 :MSGJTXT. そのデータモデルがnearであるとき，farオブジェクトを'delete'しています
 .kw delete
 cannot be used to deallocate objects which are stored in
@@ -2192,7 +2196,7 @@ int fn( void )
 :eerrbad.
 
 :MSGSYM. ERR_CLASS_TEMPLATE_REWRITE_ERROR
-:MSGTXT. syntax error; class template cannot be processed
+:MSGTXT. syntax error: class template cannot be processed
 :MSGJTXT. 構文エラー；クラス・テンプレートが処理できません
 The class template contains unbalanced braces.  The class definition
 cannot be processed in this form.
@@ -2213,7 +2217,7 @@ void fun( C1* pc1, C2* pc2 )
 :eerrbad.
 
 :MSGSYM. ERR_LEFT_MUST_BE_LVALUE
-:MSGTXT. left operand must be an 'lvalue'
+:MSGTXT. left operand must be an lvalue
 :MSGJTXT. 左オペランドは'左辺値'でなければなりません
 The left operand must be an expression that is valid
 on the left side of an assignment.
@@ -2285,7 +2289,7 @@ of typedefs ending in a final declaration.
 :MSGSYM. ERR_FLOATING_CONSTANT_OVERFLOW
 :MSGTXT. floating-point constant too large to represent
 :MSGJTXT. 浮動小数点定数が大きすぎます
-The Watcom C++ compiler cannot represent the floating-point
+The OpenWatcom C++ compiler cannot represent the floating-point
 constant because the magnitude of the positive exponent is too large.
 :errbad.
 float f = 1.2e78965;
@@ -2294,7 +2298,7 @@ float f = 1.2e78965;
 :MSGSYM. ERR_FLOATING_CONSTANT_UNDERFLOW
 :MSGTXT. floating-point constant too small to represent
 :MSGJTXT. 浮動小数点定数が小さすぎます
-The Watcom C++ compiler cannot represent the floating-point
+The OpenWatcom C++ compiler cannot represent the floating-point
 constant because the magnitude of the negative exponent is too large.
 :errbad.
 float f = 1.2e-78965;
@@ -2389,7 +2393,8 @@ Allowing union members to have constructors would mean
 that the same piece of memory could be constructed twice.
 :errbad.
 class C
-{ C();
+{
+    C();
 };
 union U
 {
@@ -2563,7 +2568,7 @@ unsigned y = sizeof( FT );
 :eerrbad.
 
 :MSGSYM. ERR_CANT_TAKE_SIZEOF_VOID
-:MSGTXT. 'sizeof' is not allowed for a type 'void'
+:MSGTXT. 'sizeof' is not allowed for type void
 :MSGJTXT. 'sizeof'は'void'型に対して使用できません
 The type
 .kw void
@@ -2831,7 +2836,7 @@ The warning can also occur when the default attribute is changed between
 two pragmas for the same object.
 
 :MSGSYM. ERR_NO_VOID_PARMS
-:MSGTXT. function arguments cannot be of type 'void'
+:MSGTXT. function arguments cannot be of type void
 :MSGJTXT. 関数引数は'void'型であることができません
 Having more than one
 .kw void
@@ -2854,7 +2859,7 @@ The class template instantiation has too few parameters supplied
 so the class cannot be instantiated properly.
 
 :MSGSYM. ERR_TOO_MANY_TEMPLATE_PARAMETERS
-:MSGTXT. class template requires less parameters for instantiation
+:MSGTXT. class template requires fewer parameters for instantiation
 :MSGJTXT. クラス・テンプレートのインスタンス化のためのパラメータが多すぎます
 The class template instantiation has too many parameters supplied
 so the class cannot be instantiated properly.
@@ -2917,7 +2922,7 @@ int size_2 = offsetof( C, memb );   // ok
 :eerrbad.
 
 :MSGSYM. ERR_CANT_HAVE_AN_ARRAY_OF_VOID
-:MSGTXT. cannot define an array of 'void'
+:MSGTXT. cannot define an array of void
 :MSGJTXT. 'void'の配列を定義することはできません
 Since the
 .kw void
@@ -2941,7 +2946,7 @@ int& array[24];
 :eerrbad.
 
 :MSGSYM. ERR_CANT_HAVE_REFERENCE_TO_VOID
-:MSGTXT. cannot define a reference to 'void'
+:MSGTXT. cannot define a reference to void
 :MSGJTXT. 'void'の参照を定義することはできません
 One cannot create a reference to a
 .kw void
@@ -2991,7 +2996,7 @@ S *p = new S[10] ( 12 );
 :eerrbad.
 
 :MSGSYM. ERR_CANT_HAVE_VOID_VARIABLE
-:MSGTXT. '%N' is a variable of type 'void'
+:MSGTXT. '%N' is a variable of type void
 :MSGJTXT. '%N'は'void'型の変数です
 A variable cannot be of type
 .kw void.
@@ -3195,8 +3200,8 @@ struct D B { int i; };
 :eerrbad.
 
 :MSGSYM. ERR_UNDECLARED_NESTED_CLASS_SYM
-:MSGTXT. nested type 'class %s' has not been declared
-:MSGJTXT. ネストにされた'class %s'型は宣言されていません
+:MSGTXT. nested type class '%s' has not been declared
+:MSGJTXT. ネストにされたclass '%s'型は宣言されていません
 A nested class has not been found but is required by the use of
 repeated '::' operators.  The construct "A::B::C" requires that
 'A' be a class type, and 'B' be a nested class within the scope
@@ -3220,8 +3225,8 @@ int A::B::b = 2;    // B nested in A
 :eerrgood.
 
 :MSGSYM. ERR_UNDECLARED_ENUM_SYM
-:MSGTXT. 'enum %s' has not been declared
-:MSGJTXT. 'enum %s'は宣言されていません
+:MSGTXT. enum '%s' has not been declared
+:MSGJTXT. enum '%s'は宣言されていません
 An elaborated reference to an
 .kw enum
 could not be satisfied.  All enclosing scopes have been searched for an
@@ -3236,7 +3241,7 @@ enum E enum_var;    // E not visible
 :eerrbad.
 
 :MSGSYM. ERR_UNDECLARED_CLASSNAMESPACE_SYM
-:MSGTXT. 'class or namespace %s' has not been declared
+:MSGTXT. class or namespace '%s' has not been declared
 :MSGJTXT. 'クラス%s'は宣言されていません
 The construct "A::B::C" requires that
 'A' be a class type or a namespace, and 'B' be a nested class or
@@ -3422,7 +3427,7 @@ void fun( C* p )
 Qualified identifiers in a class context are allowed for declaring
 .kw friend
 member functions.
-The Watcom C++ compiler also allows code that is qualified with its own
+The OpenWatcom C++ compiler also allows code that is qualified with its own
 class so that declarations can be moved in and out of class definitions
 easily.
 :errbad.
@@ -3751,7 +3756,7 @@ void fn()
 :eerrgood.
 
 :MSGSYM. ERR_OPERATOR_DEL_RETURNS_VOID
-:MSGTXT. '%N' must have a return type of 'void'
+:MSGTXT. '%N' must have a return type of void
 :MSGJTXT. '%Nは'void'の戻り型を持たなければなりません
 The C++ language requires that
 .kw operator delete
@@ -3770,7 +3775,7 @@ public:
 :eerrbad.
 
 :MSGSYM. ERR_OPERATOR_NEW_RETURNS_VOID
-:MSGTXT. '%N' must have a return type of 'void *'
+:MSGTXT. '%N' must have a return type of pointer to void
 :MSGJTXT. '%Nは'void *'の戻り型を持たなければなりません
 The C++ language requires that both
 .kw operator new
@@ -3790,7 +3795,7 @@ public:
 :eerrbad.
 
 :MSGSYM. ERR_OPERATOR_NEW_FIRST_ARG
-:MSGTXT. the first argument of '%N' must be of type 'size_t'
+:MSGTXT. the first argument of '%N' must be of type size_t
 :MSGJTXT. '%N'の最初の引数は'size_t'型でなければなりません
 The C++ language requires that the first argument for
 .kw operator new
@@ -3806,7 +3811,7 @@ void *operator new []( double size, char c );
 :eerrbad.
 
 :MSGSYM. ERR_OPERATOR_DEL_FIRST_ARG
-:MSGTXT. the first argument of '%N' must be 'void *'
+:MSGTXT. the first argument of '%N' must be of type pointer to void
 :MSGJTXT. '%N'の最初の引数は'void *'でなければなりません
 The C++ language requires that the first argument for
 .kw operator delete
@@ -3821,7 +3826,7 @@ void operator delete []( C* );
 :eerrbad.
 
 :MSGSYM. ERR_OPERATOR_DEL_SECOND_ARG
-:MSGTXT. the second argument of '%N' must be of type 'size_t'
+:MSGTXT. the second argument of '%N' must be of type size_t
 :MSGJTXT. '%N'の二番目の引数は'size_t'型でなければなりません
 The C++ language requires that the second argument for
 .kw operator delete
@@ -3843,7 +3848,7 @@ struct S {
 :eerrbad.
 
 :MSGSYM. ERR_OPERATOR_INC_DEC_SECOND_ARG
-:MSGTXT. the second argument of 'operator ++' or 'operator --' must be 'int'
+:MSGTXT. the second argument of 'operator ++' or 'operator --' must be int
 :MSGJTXT. 'operator ++'か'operator --'の二番目の引数はintでなければなりません
 The C++ language requires that the second argument for
 .kw operator ++
@@ -4030,7 +4035,7 @@ struct S {
 :eerrgood.
 
 :MSGSYM. ERR_CTOR_CANT_BE_CONST_VOLATILE
-:MSGTXT. constructor cannot be declared 'const' or 'volatile'
+:MSGTXT. constructor cannot be declared const or volatile
 :MSGJTXT. コンストラクタは'const'または'volatile'として宣言できません
 A constructor must be able to operate on all instances of classes
 regardless of whether they are
@@ -4046,7 +4051,7 @@ public:
 :eerrbad.
 
 :MSGSYM. ERR_CTOR_CANT_BE_VIRTUAL
-:MSGTXT. constructor cannot be 'virtual'
+:MSGTXT. constructor cannot be virtual
 :MSGJTXT. コンストラクタは'virtual'にはできません
 Virtual functions cannot be called for an object before it is
 constructed.  For this reason, a virtual constructor is not
@@ -4076,11 +4081,11 @@ void foo( int *p )
 :MSGSYM. ERR_OPERATOR_AMBIGUOUS_OVERLOAD
 :MSGTXT. overloaded operator is ambiguous for operands used
 :MSGJTXT. 使われているオペランドのため，オーバーロード演算子が曖昧です
-The Watcom C++ compiler performs exhaustive analysis using formalized
+The OpenWatcom C++ compiler performs exhaustive analysis using formalized
 techniques in order to decide what implicit conversions should be
-applied for overloading operators.  Because of this, Watcom C++
+applied for overloading operators.  Because of this, OpenWatcom C++
 detects ambiguities that may escape other C++ compilers.
-The most common ambiguity that Watcom C++ detects involves
+The most common ambiguity that OpenWatcom C++ detects involves
 classes having constructors with single arguments and
 a user-defined conversion.
 :errbad.
@@ -4141,7 +4146,7 @@ friend void foo();
 :MSGJTXT. クラス・フレンド宣言は，'class'か'struct'キーワードを必要とします
 :ANSI. 4
 The C++ language has evolved to require that all friend class declarations
-be of the form "class S" or "struct S".  The Watcom C++ compiler accepts
+be of the form "class S" or "struct S".  The OpenWatcom C++ compiler accepts
 the older syntax with a warning but rejects the syntax in pure ISO/ANSI
 C++ mode.
 :errbad.
@@ -4237,8 +4242,8 @@ S x = S(1.0);
 :eerrbad.
 
 :MSGSYM. ERR_CLASS_NOT_DEFINED
-:MSGTXT. 'class %s' has not been defined
-:MSGJTXT. 'class %s'は定義されていません
+:MSGTXT. class '%s' has not been defined
+:MSGJTXT. class '%s'は定義されていません
 The name before a '::' scope resolution operator must be defined
 unless a member pointer is being declared.
 :errbad.
@@ -4307,7 +4312,7 @@ struct {
 :eerrbad.
 
 :MSGSYM. ERR_GLOBAL_ANONYMOUS_UNION_MUST_BE_STATIC
-:MSGTXT. global anonymous union must be declared 'static'
+:MSGTXT. global anonymous union must be declared static
 :MSGJTXT. グローバルな名前なし共用体は，'static'と宣言されなければなりません
 This is a restriction in the C++ language.  Since there is no unique
 name for the anonymous union, it is difficult for C++ translators
@@ -4335,7 +4340,7 @@ struct S {
 :eerrbad.
 
 :MSGSYM. WARN_UNION_PROTECTED_MEMBER
-:MSGTXT. union contains a 'protected' member
+:MSGTXT. union contains a protected member
 :MSGJTXT. 共用体は'protected'メンバを含みます
 :WARNING. 1
 A union cannot have a
@@ -4504,11 +4509,11 @@ void foo()
 :eerrbad.
 
 :MSGSYM. ERR_FUNCTION_ANONYMOUS_UNION
-:MSGTXT. anonymous union in a function may only be 'static' or 'auto'
+:MSGTXT. anonymous union in a function may only be static or auto
 :MSGJTXT. 関数の中の名前なし共用体は'static'または'auto'でなければんりません
 The current C++ language definition only allows
 .kw auto
-anonymous unions.  The Watcom C++ compiler allows
+anonymous unions.  The OpenWatcom C++ compiler allows
 .kw static
 anonymous unions.
 Any other storage class is not allowed.
@@ -4632,7 +4637,8 @@ private:
 :MSGSYM. ERR_FRONT_END
 :MSGTXT. *** FATAL *** internal error in front end
 :MSGJTXT. *** 致命的 *** フロントエンドの中で内部エラー
-If this message appears, please report the problem directly to Watcom.
+If this message appears, please report the problem directly to the
+OpenWatcom development team. See http://www.openwatcom.org/.
 
 :MSGSYM. ERR_PARM_IMPOSSIBLE
 :MSGTXT. cannot convert argument to type specified in function prototype
@@ -5043,8 +5049,8 @@ union S var;
 :eerrbad.
 
 :MSGSYM. ERR_CLASS_REF_CLASS_UNION
-:MSGTXT. 'union %T' referenced as a class
-:MSGJTXT. 'union %T'がクラスとして参照されています
+:MSGTXT. union '%T' referenced as a class
+:MSGJTXT. union '%T'がクラスとして参照されています
 A class type defined as a
 .kw union
 has been referenced as a
@@ -5170,7 +5176,7 @@ void goop( int d )
 :MSGJTXT. switch '%s'のサポートは実装されていません
 :WARNING. 1
 Actions for the indicated switch have not been implemented.
-The switch is supported for compatibility with the Watcom C compiler.
+The switch is supported for compatibility with the OpenWatcom C compiler.
 
 :MSGSYM. WARN_IF_ALWAYS_TRUE
 :MSGTXT. conditional expression in if statement is always true
@@ -5378,8 +5384,8 @@ int i = cfun( 14 );
 The last line is erroneous since the constructor is private.
 
 :MSGSYM. WARN_VIRTUAL_DTOR_DELETE
-:MSGTXT. 'delete' expression will invoke a non-virtual destructor
-:MSGJTXT. 'delete'式は，非仮想デストラクタを起動します
+:MSGTXT. delete expression will invoke a non-virtual destructor
+:MSGJTXT. delete式は，非仮想デストラクタを起動します
 :WARNING. 1
 In C++, it is possible to assign a base class pointer the value
 of a derived class pointer so that code that makes use of
@@ -5652,8 +5658,8 @@ int main( int );
 :eerrbad.
 
 :MSGSYM. ERR_NEW_TYPE_VOID
-:MSGTXT. 'new' expression cannot allocate a 'void'
-:MSGJTXT. 'new'式は'void'型を割り付けられません
+:MSGTXT. 'new' expression cannot allocate a void
+:MSGJTXT. 'new'式はvoid型を割り付けられません
 Since the
 .kw void
 type has no size and there are no values of
@@ -5678,8 +5684,8 @@ tdfun *tdv = new tdfun;
 :eerrbad.
 
 :MSGSYM. WARN_NEW_TYPE_CONST_VOLATILE
-:MSGTXT. 'new' expression allocates a 'const' or 'volatile' object
-:MSGJTXT. 'new'式は，'const'か'volatile'オブジェクトを割り当てます
+:MSGTXT. 'new' expression allocates a const or volatile object
+:MSGJTXT. 'new'式は，constかvolatileオブジェクトを割り当てます
 :WARNING. 3
 The pool of raw memory cannot be guaranteed to support
 .kw const
@@ -5814,8 +5820,8 @@ template <class T>
 :eerrbad.
 
 :MSGSYM. ERR_DTOR_CANT_BE_CONST_VOLATILE
-:MSGTXT. destructor cannot be declared 'const' or 'volatile'
-:MSGJTXT. デストラクタは，'const'または'volatile'と宣言することはできません
+:MSGTXT. destructor cannot be declared const or volatile
+:MSGJTXT. デストラクタは，constまたはvolatileと宣言することはできません
 A destructor must be able to operate on all instances of classes
 regardless of whether they are
 .kw const
@@ -5823,7 +5829,7 @@ or
 .kw volatile.
 
 :MSGSYM. ERR_STATIC_CANT_BE_CONST_VOLATILE
-:MSGTXT. static member function cannot be declared 'const' or 'volatile'
+:MSGTXT. static member function cannot be declared const or volatile
 :MSGJTXT. スタティック・メンバ関数は，'const'または'volatile'と宣言することはできません
 A static member function does not have an implicit
 .kw this
@@ -5834,7 +5840,7 @@ and
 function qualifiers cannot be used.
 
 :MSGSYM. ERR_NON_MEMBER_CANT_BE_CONST_VOLATILE
-:MSGTXT. only member functions can be declared 'const' or 'volatile'
+:MSGTXT. only member functions can be declared const or volatile
 :MSGJTXT. メンバ関数だけは，'const'または'volatile'と宣言することができます
 A non-member function does not have an implicit
 .kw this
@@ -6157,7 +6163,7 @@ struct D : private B {
 :eerrbad.
 
 :MSGSYM. ERR_USER_CONV_VOID
-:MSGTXT. user-defined conversion cannot convert to 'void'
+:MSGTXT. user-defined conversion cannot convert to void
 :MSGJTXT. ユーザ定義変換は'void'型に変換できません
 A user-defined conversion cannot be declared as a conversion to
 .kw void.
@@ -6377,7 +6383,7 @@ void cfn( volatile S *p )
 :eerrbad.
 
 :MSGSYM. ERR_CNV_VOID_STAR
-:MSGTXT. cannot convert pointer to constant or volatile objects to 'void*'
+:MSGTXT. cannot convert pointer to constant or volatile objects to pointer to void
 :MSGJTXT. 定数または揮発性オブジェクトへのポインタを'void *'に変換することができません
 You cannot convert a pointer to constant or volatile objects to 'void*'.
 :errbad.
@@ -6388,7 +6394,7 @@ int k = ( pci == vp );
 :eerrbad.
 
 :MSGSYM. ERR_CNV_VOID_STAR_VOLATILE
-:MSGTXT. cannot convert pointer to constant or non-volatile objects to 'volatile void*'
+:MSGTXT. cannot convert pointer to constant or non-volatile objects to pointer to volatile void
 :MSGJTXT. 定数か不揮発性オブジェクトへのポインタを'volatile void *'に変換することができません
 You cannot convert a pointer to constant or non-volatile objects
 to 'volatile void*'.
@@ -6400,7 +6406,7 @@ int k = ( pci == vp );
 :eerrbad.
 
 :MSGSYM. ERR_FUNC_ADDR_TOO_BIG
-:MSGTXT. address of function is too large to be converted to 'void*'
+:MSGTXT. address of function is too large to be converted to pointer to void
 :MSGJTXT. 関数のアドレスは'void*'に変えるには大きすぎます
 The address of a function can be converted to 'void*' only when the size
 of a 'void*' object is large enough to contain the function pointer.
@@ -6410,7 +6416,7 @@ void __near *v = &foo;
 :eerrbad.
 
 :MSGSYM. ERR_OBJECT_ADDR_TOO_BIG
-:MSGTXT. address of data object is too large to be converted to 'void*'
+:MSGTXT. address of data object is too large to be converted to pointer to void
 :MSGJTXT. データオブジェクトのアドレスは，'void*'に変えるには大きすぎます
 The address of an object can be converted to 'void*' only when the size
 of a 'void*' object is large enough to contain the pointer.
@@ -6420,7 +6426,7 @@ void __near *v = ip;
 :eerrbad.
 
 :MSGSYM. WARN_SIZEOF_SIDE_EFFECT
-:MSGTXT. expression with side effect in 'sizeof' discarded
+:MSGTXT. expression with side effect in sizeof discarded
 :MSGJTXT. 'sizeof'の中の副作用をもつ式は破棄されます
 :WARNING. 1
 The indicated expression will be discarded; consequently, any side effects
@@ -6638,8 +6644,8 @@ The indicated symbol has already been initialized.  It cannot be
 initialized twice even if the initialization value is identical.
 
 :MSGSYM. ERR_DLT_PTR_TO_FUNCTION
-:MSGTXT. 'delete' expression is a pointer to a function
-:MSGJTXT. 'delete'式は関数へのポインタです
+:MSGTXT. delete expression is a pointer to a function
+:MSGJTXT. delete式は関数へのポインタです
 A pointer to a function cannot be allocated so it cannot be
 deleted.
 
@@ -6659,8 +6665,8 @@ void fn( S const *p, S const *q ) {
 :eerrbad.
 
 :MSGSYM. ERR_DLT_NOT_PTR_TO_DATA
-:MSGTXT. 'delete' expression is not a pointer to data
-:MSGJTXT. 'delete'式はデータへのポインタではありません
+:MSGTXT. delete expression is not a pointer to data
+:MSGJTXT. delete式はデータへのポインタではありません
 A
 .kw delete
 expression can only delete pointers.
@@ -6790,7 +6796,7 @@ at this point in the code.  This may be the cause of the syntax error.
 :MSGTXT. implementation restriction: cannot generate thunk from '%S'
 :MSGJTXT. 実装制限: '%S'からサンクを生成できません
 This implementation restriction is due to the use of a shared code generator
-between Watcom compilers.
+between OpenWatcom compilers.
 The virtual
 .kw this
 adjustment thunks are generated as functions linked into the virtual
@@ -7176,7 +7182,7 @@ The left hand operand of a '->*' operator must be a pointer to a class.
 This is a restriction in the C++ language.
 
 :MSGSYM. ERR_NOT_VOID
-:MSGTXT. expression must have 'void' type
+:MSGTXT. expression must have void type
 :MSGJTXT. 式は'void'型を持たなければなりません
 If one operand of the ':' operator has
 .kw void
@@ -7328,7 +7334,7 @@ with the same name will occur.
 :MSGSYM. ERR_MAX_CMD_INDIRECTION
 :MSGTXT. more than 5 indirections during command line processing
 :MSGJTXT. コマンドライン処理中に6個以上のネストされた間接参照があります
-The Watcom C++ compiler only allows a fixed number nested indirections using
+The OpenWatcom C++ compiler only allows a fixed number nested indirections using
 files or environment variables,
 to prevent runaway chains of indirections.
 
@@ -7345,14 +7351,14 @@ An assignment operator cannot be generated because the class contains
 members that cannot be assigned into.
 
 :MSGSYM. ERR_CNV_VOID_STAR_CONST
-:MSGTXT. cannot convert pointer to non-constant or volatile objects to 'const void*'
+:MSGTXT. cannot convert pointer to non-constant or volatile objects to pointer to const void
 :MSGJTXT. 非定数か揮発性オブジェクトへのポインタを'const void*'に変換することができません
 :cmt JWW to look at
 A pointer to non-constant or volatile objects cannot be converted
 to 'const void*'.
 
 :MSGSYM. ERR_CNV_VOID_STAR_CONST_VOLATILE
-:MSGTXT. cannot convert pointer to non-constant or non-volatile objects to 'const volatile void*'
+:MSGTXT. cannot convert pointer to non-constant or non-volatile objects to pointer to const volatile void
 :MSGJTXT. 非定数か不揮発性オブジェクトへのポインタを'const volatile void*'に変換することができません
 :cmt JWW to look at
 A pointer to non-constant or non-volatile objects cannot be converted
@@ -7400,7 +7406,7 @@ An incorrect module initialization priority has been provided.
 Check the User's Guide for the correct format of the priority directive.
 
 :MSGSYM. INF_PREVIOUS_CASE
-:MSGTXT. previous 'case' label defined %L
+:MSGTXT. previous case label defined %L
 :MSGJTXT. 前の'case'ラベルは，次で定義されています：%L
 :INFO.
 This informational message indicates where a preceding
@@ -7408,7 +7414,7 @@ This informational message indicates where a preceding
 label is defined.
 
 :MSGSYM. INF_PREVIOUS_DEFAULT
-:MSGTXT. previous 'default' label defined %L
+:MSGTXT. previous default label defined %L
 :MSGJTXT. 前の'default'ラベルは，次で定義されています：%L
 :INFO.
 This informational message indicates where a preceding
@@ -7565,7 +7571,7 @@ A conversion to a protected base class was detected in the default
 argument expression.
 
 :MSGSYM. ERR_MUST_BE_LVALUE_CAST
-:MSGTXT. operand must be an 'lvalue' (cast produces 'rvalue')
+:MSGTXT. operand must be an lvalue (cast produces rvalue)
 :MSGJTXT. オペランドは，'左辺値'でなければなりません（キャストは'右辺値'を生じます）
 The compiler is expecting a value which can be assigned into.
 The result of a cast cannot be assigned into because a brand new
@@ -7573,7 +7579,7 @@ value is always created.  Assigning a new value to a temporary
 is a meaningless operation.
 
 :MSGSYM. ERR_LEFT_MUST_BE_LVALUE_CAST
-:MSGTXT. left operand must be an 'lvalue' (cast produces 'rvalue')
+:MSGTXT. left operand must be an lvalue (cast produces rvalue)
 :MSGJTXT. 左オペランドは，'左辺値'でなければなりません（キャストは'右辺値'を生じます）
 The compiler is expecting a value which can be assigned into.
 The result of a cast cannot be assigned into because a brand new
@@ -7581,7 +7587,7 @@ value is always created.  Assigning a new value to a temporary
 is a meaningless operation.
 
 :MSGSYM. ERR_RIGHT_MUST_BE_LVALUE_CAST
-:MSGTXT. right operand must be an 'lvalue' (cast produces 'rvalue')
+:MSGTXT. right operand must be an lvalue (cast produces rvalue)
 :MSGJTXT. 右オペランドは，'左辺値'でなければなりません（キャストは'右辺値'を生じます）
 The compiler is expecting a value which can be assigned into.
 The result of a cast cannot be assigned into because a brand new
@@ -7640,7 +7646,8 @@ analysing source code.  See the ARM p.93 for more details.
 
 This warning is intended to inform the programmer that an ambiguous
 construct could not be resolved by the compiler.
-Please report this to Watcom so that the problem can be analysed.
+Please report this to the OpenWatcom developement team so that the
+problem can be analysed. See http://www.openwatcom.org/.
 
 :MSGSYM. WARN_AMBIGUOUS_CONSTRUCT_AGAIN
 :MSGTXT. encountered another ambiguous construct during disambiguation
@@ -7751,7 +7758,7 @@ argument) is evaluated.
 :MSGTXT. #pragma aux must reference a "C" linkage function '%S'
 :MSGJTXT. #pragma auxは，"Ｃ"リンケージ関数'%S'を参照しなければなりません
 The method of assigning pragma information via the #pragma syntax
-is provided for compatibility with Watcom C.  Because C only
+is provided for compatibility with OpenWatcom C.  Because C only
 allows one function per name, this was adequate for the C language.
 Since C++ allows functions to be overloaded, a new method of
 referencing pragmas has been introduced.
@@ -7832,7 +7839,7 @@ void f()
 :eerrgood.
 
 :MSGSYM. ERR_CATCH_FOLLOWS_ELLIPSIS
-:MSGTXT. preceding 'catch' specified '...'
+:MSGTXT. preceding catch specified '...'
 :MSGJTXT. '...'を指定した'catch'が前にあります
 Since an ellipsis "..." catch handler will handle any type
 of exception, no further catch handlers can exist afterwards
@@ -7879,7 +7886,7 @@ This informational message indicates where a preceding
 block is defined.
 
 :MSGSYM. WARN_CATCH_PREVIOUS
-:MSGTXT. 'catch' handler can never be invoked
+:MSGTXT. catch handler can never be invoked
 :MSGJTXT. 'catch'ハンドラは，決して起動されることができません
 :WARNING. 1
 Because the handlers for a
@@ -8116,14 +8123,14 @@ void foo( int i, int j )
 :eerrbad.
 
 :MSGSYM. INF_SRC_CNV_TYPE
-:MSGTXT. source conversion type is "%T"
+:MSGTXT. source conversion type is '%T'
 :MSGJTXT. 変換ソースの型は"%T"です
 :INFO.
 This informational message indicates the type of the source operand, for the
 preceding conversion diagnostic.
 
 :MSGSYM. INF_TGT_CNV_TYPE
-:MSGTXT. target conversion type is "%T"
+:MSGTXT. target conversion type is '%T'
 :MSGJTXT. 変換ターゲットの型は"%T"です
 :INFO.
 This informational message indicates the target type of the conversion,
@@ -8468,7 +8475,7 @@ In the example, the attempt to subscript a function is illegal.
 :MSGTXT. define this function inside its class definition (may improve code quality)
 :MSGJTXT. そのクラス定義の内側でこの関数を定義します（コード品質を改善するかもしれません）
 :WARNING. 5
-The Watcom C++ compiler has found a constructor or destructor with
+The OpenWatcom C++ compiler has found a constructor or destructor with
 an empty function body.  An empty function body can usually provide
 optimization opportunities so the compiler is indicating that by
 defining the function inside its class definition,
@@ -8486,7 +8493,7 @@ S::~S() {
 :MSGTXT. define this function inside its class definition (could have improved code quality)
 :MSGJTXT. そのクラス定義の内側でこの関数を定義します（コード品質を改善できたかもしれません）
 :WARNING. 5
-The Watcom C++ compiler has found a constructor or destructor with
+The OpenWatcom C++ compiler has found a constructor or destructor with
 an empty function body.  An empty function body can usually provide
 optimization opportunities so the compiler is indicating that by
 defining the function inside its class definition,
@@ -8524,7 +8531,7 @@ The first argument for the function
 cannot be converted, resulting in the informational message.
 
 :MSGSYM. ERR_EXPR_IS_VOID
-:MSGTXT. expression cannot have 'void' type
+:MSGTXT. expression cannot have void type
 :MSGJTXT. 式は'void'型を持つことができません
 The indicated expression cannot have a
 .kw void
@@ -8636,7 +8643,7 @@ bound to the non-const reference argument of the copy constructor.
 :MSGJTXT. 一時オブジェクトは，非定数の参照を初期するために使われました
 :ANSI. 1
 Ordinarily, a temporary value cannot be bound to a non-constant
-reference.  There is enough legacy code present that the Watcom C++
+reference.  There is enough legacy code present that the OpenWatcom C++
 compiler issues a warning in cases that should be errors.  This
 may change in the future so it is advisable to correct the code
 as soon as possible.
@@ -8646,7 +8653,7 @@ as soon as possible.
 :MSGJTXT. 暗黙の単項の'operator &'は'%T'型でオーバーロードされません
 :WARNING. 3
 An explicit address operator can be applied to a reference
-to an undefined class.  The Watcom C++ compiler will assume
+to an undefined class.  The OpenWatcom C++ compiler will assume
 that the address is required but it does not know whether
 this was the programmer's intention because the class definition
 has not been seen.
@@ -8660,7 +8667,7 @@ S * fn( S &y ) {
 :eerrbad.
 
 :MSGSYM. WARN_NO_ARG_BEFORE_ELLIPSE
-:MSGTXT. 'va_start' macro will not work without an argument before "..."
+:MSGTXT. 'va_start' macro will not work without an argument before '...'
 :MSGJTXT. 'va_start'マクロは，"..."の前に引数がないと働きません
 :WARNING. 3
 The warning indicates that it is impossible to access the arguments
@@ -8675,7 +8682,7 @@ void fn( ... )
 :eerrbad.
 
 :MSGSYM. WARN_REF_ARG_BEFORE_ELLIPSE
-:MSGTXT. 'va_start' macro will not work with a reference argument before "..."
+:MSGTXT. 'va_start' macro will not work with a reference argument before '...'
 :MSGJTXT. 'va_start'マクロは，"..."の前に参照引数があると働きません
 :WARNING. 1
 The warning indicates that taking the address of the argument before the
@@ -8702,7 +8709,7 @@ void fn( int &r, ... )
 :eerrbad.
 
 :MSGSYM. WARN_CLASS_ARG_BEFORE_ELLIPSE
-:MSGTXT. 'va_start' macro will not work with a class argument before "..."
+:MSGTXT. 'va_start' macro will not work with a class argument before '...'
 :MSGJTXT. 'va_start'マクロは，"..."の前にクラス引数があると働きません
 :WARNING. 1
 This warning is specific to C++ compilers that quietly convert
@@ -8726,7 +8733,7 @@ void fn( S c, ... )
 {
     va_list args;
 
-    // Watcom C++ passes a pointer to
+    // OpenWatcom C++ passes a pointer to
     // the temporary created for passing
     // 'c' rather than pushing 'c' on the
     // stack so 'va_start' will not work
@@ -9351,7 +9358,7 @@ mutable int a;
 :eerrbad.
 
 :MSGSYM. ERR_MUTABLE_CANT_BE_CONST
-:MSGTXT. 'mutable' member cannot also be 'const'
+:MSGTXT. 'mutable' member cannot also be const
 :MSGJTXT. 'mutable'メンバーは'const'にはなり得ません
 A
 .kw mutable
@@ -9373,7 +9380,7 @@ struct S {
 :eerrbad.
 
 :MSGSYM. ERR_BAD_BOOL_ASSIGNMENT
-:MSGTXT. left operand cannot be of type 'bool'
+:MSGTXT. left operand cannot be of type bool
 :MSGJTXT. 左オペランドは'bool'型にはなりません
 The left hand side of an assignment operator cannot be of type
 .kw bool
@@ -9389,7 +9396,7 @@ void fn()
 :eerrbad.
 
 :MSGSYM. ERR_CANT_DEC_BOOL
-:MSGTXT. operand cannot be of type 'bool'
+:MSGTXT. operand cannot be of type bool
 :MSGJTXT. オペランドは'bool'型にはなりません
 The operand of both postfix and prefix "--" operators
 cannot be of type
@@ -9491,7 +9498,7 @@ struct Y : X {
 :MSGJTXT. __declspec('%N'）はサポートされていません
 The identifier used in the
 .kw __declspec
-declaration modifier is not supported by Watcom C++.
+declaration modifier is not supported by OpenWatcom C++.
 
 :MSGSYM. ERR_CTOR_OBJ_MEM_MODEL
 :MSGTXT. attempt to construct a far object when data model is near
@@ -9551,7 +9558,7 @@ int fn2( int a, int /* b */, int c )
 :eerrbad.
 
 :MSGSYM. ERR_VOID_INDIRECTION
-:MSGTXT. cannot dereference a pointer to 'void'
+:MSGTXT. cannot dereference a pointer to void
 :MSGJTXT. 'void'型へのポインタは参照できません
 A pointer to
 .kw void
@@ -9665,7 +9672,7 @@ The compiler has detected a problem while trying to open the
 pre-compiled header file for read/write access.
 
 :MSGSYM. ERR_INVALID_VASTART_SYMBOL
-:MSGTXT. invalid second argument to 'va_start'
+:MSGTXT. invalid second argument to va_start
 :MSGJTXT. 'va_start'への第2引数が不適切です
 The second argument to the va_start macro should be
 the name of the argument just before the "..." in the
@@ -9759,7 +9766,7 @@ The compiler was unable to open the indicated file.  Most likely, the file
 does not exist.  An input/output error is also possible.
 
 :MSGSYM. WARN_OPERATOR_BAD_RETURN
-:MSGTXT. '%N' does not have a return type specified ('int' assumed)
+:MSGTXT. '%N' does not have a return type specified (int assumed)
 :MSGJTXT. '%N'は指定された戻り型を持ちません('int'を仮定します)
 :WARNING. 1
 In C++, operator functions should have an explicit return type
@@ -9795,8 +9802,8 @@ variables, in command files (using the '@' notation), or in the batch command
 file (specified using the -fc option).
 
 :MSGSYM. INF_CLASS_NOT_DEFINED
-:MSGTXT. 'class %T' has not been defined
-:MSGJTXT. 'class %T'は定義されませんでした
+:MSGTXT. class '%T' has not been defined
+:MSGJTXT. class '%T'は定義されませんでした
 :INFO.
 This informational message indicates a class which was not defined.  This is
 noted following an error or warning message because it often helps to a user
@@ -9876,7 +9883,7 @@ C a[10];
 :MSGSYM. ERR_INVALID_NEW_MODIFIER
 :MSGTXT. invalid 'new' modifier
 :MSGJTXT. 'new'に対して不適切な修飾子です
-The Watcom C++ compiler does not support new expression modifiers
+The OpenWatcom C++ compiler does not support new expression modifiers
 but allows them to match the ambient memory model for compatibility.
 Invalid memory model modifiers are also rejected by the compiler.
 :errbad.
@@ -10012,19 +10019,19 @@ The expression contains operand(s) without an operator
 More than one operand found in a row.
 
 :MSGSYM. ERR_UNMATCHED_RIGHT_PAREN
-:MSGTXT. unmatched right parenthesis ")"
+:MSGTXT. unmatched right parenthesis ')'
 :MSGJTXT. 右括弧")"が一致しません
 The expression contains a right parenthesis ")" without a matching left
 parenthesis.
 
 :MSGSYM. ERR_UNMATCHED_LEFT_PAREN
-:MSGTXT. unmatched left parenthesis "("
+:MSGTXT. unmatched left parenthesis '('
 :MSGJTXT. 左括弧"("が一致しません
 The expression contains a left parenthesis "(" without a matching right
 parenthesis.
 
 :MSGSYM. ERR_EMPTY_PAREN
-:MSGTXT. no expression between parentheses "()"
+:MSGTXT. no expression between parentheses '( )'
 :MSGJTXT. 括弧"()"の中に式がありません
 There is a matching set of parenthesis "()" which do not contain an expression.
 
@@ -10084,7 +10091,7 @@ struct S {
 :eerrbad.
 
 :MSGSYM. ERR_EXPLICIT_FNS
-:MSGTXT. only constructors can be declared 'explicit'
+:MSGTXT. only constructors can be declared explicit
 :MSGJTXT. コンストラクタのみ'explicit'と宣言できます
 Currently, only constructors can be declared with the
 .kw explicit
@@ -11400,7 +11407,7 @@ The use of
 for the base type of a bit-field has not been implemented.
 
 :MSGSYM. ERR_CODE_IN_NONCODE_SEG
-:MSGTXT. 'based' function object cannot be placed in non-code segment "%s".
+:MSGTXT. based function object cannot be placed in non-code segment "%s".
 :MSGJTXT. 'based'関数オブジェクトを非コード･セグメント"%s"に置くことはできません
 Use
 .kw __segname
