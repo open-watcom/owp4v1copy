@@ -49,7 +49,7 @@
 #define DBCS_DEFAULT_EDITOR_IS_DLL      FALSE
 #define DBCS_DEFAULT_EDITOR_PARMS       "%f"
 
-#define OS2_DEFAULT_EDITOR_NAME         "epmlink"
+#define OS2_DEFAULT_EDITOR_NAME         "weditepm"
 #define OS2_DEFAULT_EDITOR_IS_DLL       TRUE
 #define OS2_DEFAULT_EDITOR_PARMS        ""
 

@@ -20,7 +20,7 @@ wedit.dll : epmlink.obj
     @%append $(lnk) option manyautodata, quiet, symfile, caseexact
     @%append $(lnk) libpath $(watcom_lib)
     @%append $(lnk) file epmlink.obj
-    $(linker) name wedit @$(lnk)
+    $(linker) name wedit op modname=weditepm @$(lnk)
     wlib /n /q /b /c wedit.lib +wedit.dll
     del $(lnk)
 

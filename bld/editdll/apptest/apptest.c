@@ -33,7 +33,7 @@
 #include <windows.h>
 #include "wedit.h"
 
-int PASCAL WinMain( HANDLE hInstance, HANDLE hPrevInstance,
+int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
                     LPSTR lpszCmdLine, int nCmdShow )
 {
     EDITConnect();
