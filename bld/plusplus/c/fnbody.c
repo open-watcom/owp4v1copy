@@ -2200,8 +2200,11 @@ void FunctionBody( DECL_INFO *dinfo )
     }
     switch( returnIsRequired( fn_type ) ) {
       case RETN_REQUIRED :
-        CErr1( ERR_MISSING_RETURN_VALUE );
-        break;
+        if( ! MainProcedure( func ) ) {
+            CErr1( ERR_MISSING_RETURN_VALUE );
+            break;
+        }
+        // drops thru, see 3.6.1 (5)
       case RETN_DFLT_INT :
         if( MainProcedure( func ) ) {
             PTREE expr;

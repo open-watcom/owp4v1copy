@@ -473,6 +473,7 @@ positive_tests = &
     link13.$(ext) &
     link14.$(ext) &
     link15.$(ext) &
+    main1.$(ext) &
     mp01.$(ext) &
     mp02.$(ext) &
     mp03.$(ext) &

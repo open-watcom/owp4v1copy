@@ -1340,7 +1340,10 @@ File: source\diag0225.c
   right operand type is 'int (lvalue)'
 (307,7): Warning! W628: expression is not meaningful
 (307,15): Error! E167: left operand must be an lvalue
-(308,1): Error! E003: missing return value
+(308,1): Error! E324: conversion of return value is impossible
+  'C5_5' defined at: (49,8)
+  source conversion type is 'int'
+  target conversion type is 'C5_5'
 (308,1): Warning! W014: no reference to symbol 'pc'
   definition: 'complex * pc' in 'C5_5 main( void )'
 (308,1): Warning! W014: no reference to symbol 'C5_4::a'
