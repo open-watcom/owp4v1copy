@@ -53,6 +53,8 @@
 .fnw _wtoi                      atoi.gml        DOS QNX W WIN32
 .fnc atol                       atol.gml        DOS QNX W WIN32
 .fnw _wtol                      atol.gml        DOS QNX W WIN32
+.fnc atoll                      atoll.gml       DOS QNX W WIN32
+.fnw _wtoll                     atoll.gml       DOS QNX W WIN32
 .fnc _atouni                    _atouni.gml     DOS QNX W WIN32
 .fnc basename                   basename.gml        QXO
 .fnc bdos                       bdos.gml        DOS
@@ -675,6 +677,9 @@
 .fnc _lseek                     lseek.gml       DOS       WIN32
 .fn8 _lseeki64                  lseek.gml       DOS       WIN32
 .fnc lstat                      lstat.gml           QXO
+.fnc lltoa                      lltoa.gml       DOS QNX W WIN32
+.fnc _lltoa                     lltoa.gml       DOS QNX W WIN32
+.fnw _lltow                     lltoa.gml       DOS QNX W WIN32
 .fnc ltoa                       ltoa.gml        DOS QNX W WIN32
 .fnc _ltoa                      ltoa.gml        DOS QNX W WIN32
 .fnw _ltow                      ltoa.gml        DOS QNX W WIN32
@@ -1378,9 +1383,15 @@
 .fnc strtol                     strtol.gml      DOS QNX W WIN32
 .fnw wcstol                     strtol.gml      DOS QNX W WIN32
 .fnu _ustrtol                   strtol.gml      DOS       WIN32
+.fnc strtoll                    strtoll.gml     DOS QNX W WIN32
+.fnw wcstoll                    strtoll.gml     DOS QNX W WIN32
+.fnu _ustrtoll                  strtoll.gml     DOS       WIN32
 .fnc strtoul                    strtoul.gml     DOS QNX W WIN32
 .fnw wcstoul                    strtoul.gml     DOS QNX W WIN32
 .fnu _ustrtoul                  strtoul.gml     DOS       WIN32
+.fnc strtoull                   strtoull.gml    DOS QNX W WIN32
+.fnw wcstoull                   strtoull.gml    DOS QNX W WIN32
+.fnu _ustrtoull                 strtoull.gml    DOS       WIN32
 .fnc strupr                     strupr.gml      DOS QNX W WIN32
 .fnc _strupr                    strupr.gml      DOS QNX W WIN32
 .fnf _fstrupr                   strupr.gml      DOS QNX W WIN32
@@ -1493,6 +1504,9 @@
 .fnc Trigger                    trigger.gml         QXO
 .fnc ttyname                    ttyname.gml         QXO
 .fnc tzset                      tzset.gml       DOS QNX W WIN32
+.fnc ulltoa                     ulltoa.gml      DOS QNX W WIN32
+.fnc _ulltoa                    ulltoa.gml      DOS QNX W WIN32
+.fnw _ulltow                    ulltoa.gml      DOS QNX W WIN32
 .fnc ultoa                      ultoa.gml       DOS QNX W WIN32
 .fnc _ultoa                     ultoa.gml       DOS QNX W WIN32
 .fnw _ultow                     ultoa.gml       DOS QNX W WIN32

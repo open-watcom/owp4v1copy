@@ -20,8 +20,8 @@ wchar_t *_ltow( long int value,
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
 wchar_t *_ltou( long int value,
-                  wchar_t *buffer,
-                  int radix );
+                wchar_t *buffer,
+                int radix );
 .ixfunc2 '&Conversion' &ufunc
 .do end
 .funcend
@@ -67,26 +67,26 @@ produces a Unicode character string (which is twice as long).
 The &func function returns a pointer to the result.
 .return end
 .see begin
-.seelist &function. atoi atol itoa ltoa sscanf strtol strtoul ultoa utoa
+.seelist &function. atoi atol atoll itoa ltoa lltoa sscanf strtol strtoll strtoul strtoull ultoa ulltoa utoa
 .see end
 .exmp begin
 #include <stdio.h>
 #include <stdlib.h>
 
 void print_value( long value )
-  {
+{
     int base;
     char buffer[33];
 
     for( base = 2; base <= 16; base = base + 2 )
-      printf( "%2d %s\n", base,
-              ltoa( value, buffer, base ) );
-  }
+        printf( "%2d %s\n", base,
+                ltoa( value, buffer, base ) );
+}
 
 void main()
-  {
+{
     print_value( 12765L );
-  }
+}
 .exmp output
  2 11000111011101
  4 3013131

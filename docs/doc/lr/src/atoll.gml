@@ -1,9 +1,9 @@
-.func atol _wtol
+.func atoll _wtoll
 #include <stdlib.h>
-long int atol( const char *ptr );
+long long int atoll( const char *ptr );
 .ixfunc2 '&Conversion' &func
 .if &'length(&wfunc.) ne 0 .do begin
-long int _wtol( const wchar_t *ptr );
+long long int _wtoll( const wchar_t *ptr );
 .ixfunc2 '&Conversion' &wfunc
 .ixfunc2 '&Wide' &wfunc
 .do end
@@ -12,7 +12,7 @@ long int _wtol( const wchar_t *ptr );
 The &func function converts the string pointed to by
 .arg ptr
 to
-.id long int
+.id long long int
 representation.
 .if &'length(&wfunc.) ne 0 .do begin
 .np
@@ -33,7 +33,7 @@ void main()
 {
     long int x;
 .exmp break
-    x = atol( "-289" );
+    x = atoll( "-289356768201" );
 }
 .exmp end
 .class ANSI

@@ -24,34 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  ASCII to long long conversion routine.
+* Description:  Wide character version of strtoll().
 *
 ****************************************************************************/
 
 
-#include "variety.h"
-#include "widechar.h"
-#include "watcom.h"
-#include <stdio.h>
-#include <ctype.h>
-#include <stdlib.h>
-
-_WCRTLINK long long int __F_NAME(atoll,_wtoll)( const CHAR_TYPE *p )  /* convert ASCII string to long long int */
-{
-    unsigned long long int  value = 0;
-    CHAR_TYPE               sign;
-
-    __ptr_check( p, 0 );
-
-    while( __F_NAME(isspace,iswspace)( *p ) )
-        ++p;
-    sign = *p;
-    if( sign == '+' || sign == '-' ) ++p;
-    while( __F_NAME(isdigit,iswdigit)(*p) ) {
-        value = value * 10 + *p - '0';
-        ++p;
-    }
-    if( sign == '-' )
-        value = -value;
-    return( value );
-}
+// this file should remain an indirected file
+// it is done this way to support the reuse of the source file
+#define __WIDECHAR__
+#undef __INLINE_FUNCTIONS__
+#include "strtoll.c"

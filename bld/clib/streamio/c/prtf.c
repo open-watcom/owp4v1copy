@@ -1033,7 +1033,7 @@ processNumericTypes:
                 *arg = '\0';
                 length = 0;
             } else {
-                __F_NAME(__clib_ulltoa,__clib_wulltoa)( long_long_value, &buffer[specs->_n0], radix );
+                __F_NAME(ulltoa,_ulltow)( long_long_value, &buffer[specs->_n0], radix );
                 if( specs->_o._character == 'X' ) {
                     __F_NAME(strupr,_wcsupr)( buffer );
                 }

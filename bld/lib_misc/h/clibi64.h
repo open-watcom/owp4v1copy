@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Prototypes and pragma's for handling __int64
+* Description:  Prototypes and pragmas for handling __int64 values.
 *
 ****************************************************************************/
 
@@ -56,8 +56,6 @@
     #define _clib_U64Div( a, b, c, d )  (d = a % b, c = a / b)
     #define _clib_U64Add( a, b, c )     c = a + b
 
-// conversion functions
-extern _WCRTLINK CHAR_TYPE *__F_NAME(__clib_ulltoa,__clib_wulltoa)( unsigned __int64, CHAR_TYPE *, unsigned );
-extern _WCRTLINK void __F_NAME(__clib_atoll,__clib_watoll)( const CHAR_TYPE *, unsigned __int64 * );
+// conversion functions - use standard ulltoa()/atoll()
 
 #endif

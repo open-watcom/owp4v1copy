@@ -310,6 +310,7 @@ atanh.exe &
 atof.exe &
 atoi.exe &
 atol.exe &
+atoll.exe &
 cabs.exe &
 bessel.exe &
 ceil.exe &
@@ -330,6 +331,7 @@ itoa.exe &
 labs.exe &
 ldexp.exe &
 ldiv.exe &
+lltoa.exe &
 log.exe &
 log10.exe &
 log2.exe &
@@ -347,6 +349,7 @@ sqrt.exe &
 srand.exe &
 tan.exe &
 tanh.exe &
+ulltoa.exe &
 ultoa.exe
 
 #File functions (all platforms & NetWare)
@@ -450,7 +453,9 @@ strstr.exe &
 strtod.exe &
 strtok.exe &
 strtol.exe &
+strtoll.exe &
 strtoul.exe &
+strtoull.exe &
 strupr.exe &
 strxfrm.exe
 
