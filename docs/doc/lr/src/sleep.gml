@@ -5,7 +5,7 @@ unsigned int sleep( unsigned int seconds );
 .do end
 .el .do begin
 #include <&doshdr>
-void sleep( unsigned seconds );
+unsigned sleep( unsigned seconds );
 .do end
 .ixfunc2 '&DosFunc' &func
 .funcend
@@ -34,7 +34,7 @@ If an error occurs, an (unsigned)(-1) is returned and
 will be set.
 .do end
 .el .do begin
-The &func function has no return value.
+The &func function always returns zero.
 .do end
 .return end
 .if '&machsys' eq 'QNX' .do begin
@@ -64,12 +64,12 @@ No timer resources available to satisfy the request.
 .do end
 
 void main( int argc, char *argv[] )
-  {
+{
     unsigned seconds;
 .exmp break
     seconds = (unsigned) strtol( argv[1], NULL, 0 );
     sleep( seconds );
-  }
+}
 .exmp end
 .if '&machsys' eq 'PP' .do begin
 .class POSIX 1003.1

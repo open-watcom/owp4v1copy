@@ -179,7 +179,7 @@ _WCRTLINK extern void     _hardretn( int __error );
 _WCRTLINK extern int      intdos( union REGS *, union REGS * );
 _WCRTLINK extern int      intdosx( union REGS *, union REGS *, struct SREGS * );
 #endif
-_WCRTLINK extern void     sleep( unsigned __seconds );
+_WCRTLINK extern unsigned sleep( unsigned __seconds );
 
 _WCRTLINK extern unsigned _wdos_findfirst( const wchar_t *__path,
                                            unsigned __attr,

@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  sleep() for Linux
+* Description:  Implementation of sleep() for Linux.
 *
 ****************************************************************************/
 
@@ -35,10 +35,12 @@
 
 
 _WCRTLINK unsigned sleep( unsigned seconds )
-    {
-        struct timespec req, rem;
-        req.tv_sec = seconds;
-        req.tv_nsec = 0;
-        nanosleep( &req, &rem );
-        return rem.tv_sec;
-    }
+{
+    struct timespec     req, rem;
+
+    req.tv_sec = seconds;
+    req.tv_nsec = 0;
+    nanosleep( &req, &rem );
+
+    return( rem.tv_sec );
+}
