@@ -144,7 +144,7 @@ int SelectItem( selectitem *si )
 /*
  * SelectItemAndValue - select item from list and give it a value
  */
-int SelectItemAndValue( window_info *wi, char *title, char *list[],
+int SelectItemAndValue( window_info *wi, char *title, char **list,
                         int maxlist, int (*updatertn)(), int indent,
                         char **vals, int valoff )
 {

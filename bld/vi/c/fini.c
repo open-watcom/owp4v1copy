@@ -86,7 +86,7 @@ char *OptEnvVar = "VI";
 /*
  * Quit - print usage messages
  */
-void Quit( const char *usage_msg[], const char *str, ... )
+void Quit( const char **usage_msg, const char *str, ... )
 {
     va_list     al;
 

@@ -37,7 +37,6 @@
 #include "vi.h"
 #include "sstyle.h"
 #include "lang.h"
-#include "misc.h"
 
 static lang_info    langInfo[ LANG_MAX ] = {
     //table,  entries , ref_count ,read_buf
