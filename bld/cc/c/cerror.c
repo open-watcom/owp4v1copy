@@ -35,6 +35,8 @@
 #include "target.h"
 #include <stdarg.h>
 
+static void PrintPostNotes(void);
+
 #if 0
 static char const WngLvls[] = {
 #define warn(code,level) level,
@@ -173,6 +175,7 @@ void CErr( int msgnum, ... ){
         va_end( args1 );
         OutMsg( &info );
         ++ErrCount;
+        PrintPostNotes();
     } else {
         CMsgInfo( &info, ERR_TOO_MANY_ERRORS, args1 );
         OutMsg( &info );
@@ -208,6 +211,7 @@ void CWarn( int level, int msgnum, ... ){
             va_end( args1 );
             OutMsg( &info );
             ++WngCount;
+            PrintPostNotes();
         }
     }
     SymLoc = NULL;
@@ -267,14 +271,7 @@ void PCHNote( int msgnum, ... ){
 
 void SetSymLoc( SYMPTR sym )
 {
-    FNAMEPTR flist;
-
-    flist = FileIndexToFName( sym->defn_file_index );
-    if( CompFlags.ef_switch_used ){
-        SymLoc = FNameFullPath( flist );
-    }else{
-        SymLoc = flist->name;
-    }
+    SymLoc  = FileIndexToCorrectName( sym->defn_file_index );
     ErrLine = sym->d.defn_line;
 }
 
@@ -369,3 +366,36 @@ void DumpAllMsg( void ){
 #undef MSG_DEF
 }
 #endif
+
+struct ErrPostList
+{
+    char *name;
+    char *file;
+    int  line;
+};
+
+static struct ErrPostList PostList;
+
+void SetDiagSymbol(SYMPTR sym, SYM_HANDLE handle)
+{
+    PostList.name = SymName(sym, handle);
+    PostList.file = FileIndexToCorrectName( sym->defn_file_index );
+    PostList.line = sym->d.defn_line;
+}
+
+void SetDiagPop(void)
+{
+    PostList.file = NULL;
+}
+
+static void PrintPostNotes(void)
+{
+    while (PostList.file)
+    {
+        if (PostList.name == NULL)
+            PostList.name = "???";
+
+        CInfoMsg(INFO_SYMBOL_DECLARED_IN, PostList.name, PostList.file, PostList.line);
+        PostList.file = NULL;
+    }
+}

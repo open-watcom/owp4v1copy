@@ -543,6 +543,7 @@ extern  char    *ObjFileName(char *);
 extern  FNAMEPTR AddFlist(char const *);
 extern  FNAMEPTR FileIndexToFName(unsigned);
 extern  char    *FNameFullPath( FNAMEPTR flist );
+extern  char    *FileIndexToCorrectName( unsigned file_index );
 extern  int     FListSrcQue(void);
 extern  void    SrcFileReadOnlyDir( char const *dir );
 extern  void    SrcFileReadOnlyFile( char const *file );
@@ -602,6 +603,8 @@ extern  void    CInfoMsg(int,...);
 extern  void    CSuicide(void);
 extern  void    OpenErrFile(void);
 extern  void    FmtCMsg( char *buff, cmsg_info *info );
+extern  void    SetDiagSymbol(SYMPTR sym, SYM_HANDLE handle);
+extern  void    SetDiagPop(void);
 
 //  cexpr2.c
 extern  void    ExprInit(void);

@@ -512,7 +512,6 @@ static void CompareParms( TYPEPTR *master,
     TYPEPTR     typ2;
     int         parm_num;
     TREEPTR     parm;
-    FNAMEPTR    flist;
     char        *filename;
 
     cmp_type    cmp;
@@ -524,12 +523,7 @@ static void CompareParms( TYPEPTR *master,
         }
     }
     ErrLine = call_line;
-    flist  = FileIndexToFName( source_fno );
-    if( CompFlags.ef_switch_used ){
-        filename = FNameFullPath( flist );
-    }else{
-        filename = flist->name;
-    }
+    filename = FileIndexToCorrectName( source_fno );
     parm_num = 1;
     while( typ != NULL  &&  *passed != 0 ) {
         SymLoc = filename;

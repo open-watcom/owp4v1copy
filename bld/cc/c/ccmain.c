@@ -942,6 +942,20 @@ char *FNameFullPath( FNAMEPTR flist )
     return( fullpath );
 }
 
+char *FileIndexToCorrectName( unsigned file_index )
+{
+    FNAMEPTR flist;
+    char *name;
+
+    flist = FileIndexToFName( file_index );
+    if( CompFlags.ef_switch_used ){
+        name = FNameFullPath( flist );
+    }else{
+        name = flist->name;
+    }
+    return ( name );
+}
+
 static bool IsFNameOnce( char const *filename )
 {
     bool ret;

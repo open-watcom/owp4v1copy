@@ -174,74 +174,76 @@ local SYM_HANDLE FuncDecl( SYMPTR sym, stg_classes stg_class )
             stg_class = SC_NULL;
     }
     old_sym_handle = SymLook( sym->info.hash_value, sym->name );
-    if( old_sym_handle != 0 ) {
-        SymGet( &old_sym, old_sym_handle );
-    }
     if( old_sym_handle == 0 ) {
         EnumLookup( sym->info.hash_value, sym->name, &ei );/* 22-dec-88 */
         if( ei.level >= 0 ) {       /* if enum was found */
             CErr2p( ERR_SYM_ALREADY_DEFINED, sym->name );
         }
         sym_handle = SymAddL0( sym->info.hash_value, sym );
-    } else if( (old_sym.flags & SYM_FUNCTION) == 0 ) {
-        CErr2p( ERR_SYM_ALREADY_DEFINED_AS_VAR, sym->name );
-//02-jun-89 sym_handle = old_sym_handle;                /* 05-apr-89 */
-        sym_handle = SymAddL0( sym->info.hash_value, sym );/* 02-jun-89 */
     } else {
-        CmpFuncDecls( sym, &old_sym );
-        PrevProtoType = old_sym.sym_type;               /* 12-may-91 */
-        if( (old_sym.flags & SYM_DEFINED) == 0 ) {
-            if( sym->sym_type->u.parms != NULL  ||      /* 11-jul-89 */
-            ( CurToken != T_COMMA &&                    /* 18-jul-89 */
-              CurToken != T_SEMI_COLON ) ) {
-                old_typ = old_sym.sym_type;
-                if( old_typ->decl_type == TYPE_TYPEDEF &&
-                    old_typ->object->decl_type == TYPE_FUNCTION ) {
-                    SymGet( &sym_typedef, old_typ->u.typedefn );
-                    sym_name = SymName( &sym_typedef,
-                                        old_typ->u.typedefn );
-                    sym_len = far_strlen_plus1( sym_name );
-                    name = CMemAlloc( sym_len );
-                    far_memcpy( name, sym_name, sym_len );
-                    XferPragInfo( name, sym->name );
-                    CMemFree( name );
+        SymGet( &old_sym, old_sym_handle );
+        SetDiagSymbol( &old_sym, old_sym_handle );
+        if( (old_sym.flags & SYM_FUNCTION) == 0 ) {
+            CErr2p( ERR_SYM_ALREADY_DEFINED_AS_VAR, sym->name );
+            //02-jun-89 sym_handle = old_sym_handle;                /* 05-apr-89 */
+            sym_handle = SymAddL0( sym->info.hash_value, sym );/* 02-jun-89 */
+        } else {
+            CmpFuncDecls( sym, &old_sym );
+            PrevProtoType = old_sym.sym_type;               /* 12-may-91 */
+            if( (old_sym.flags & SYM_DEFINED) == 0 ) {
+                if( sym->sym_type->u.parms != NULL  ||      /* 11-jul-89 */
+                   ( CurToken != T_COMMA &&                    /* 18-jul-89 */
+                    CurToken != T_SEMI_COLON ) ) {
+                    old_typ = old_sym.sym_type;
+                    if( old_typ->decl_type == TYPE_TYPEDEF &&
+                       old_typ->object->decl_type == TYPE_FUNCTION ) {
+                        SymGet( &sym_typedef, old_typ->u.typedefn );
+                        sym_name = SymName( &sym_typedef,
+                                           old_typ->u.typedefn );
+                        sym_len = far_strlen_plus1( sym_name );
+                        name = CMemAlloc( sym_len );
+                        far_memcpy( name, sym_name, sym_len );
+                        XferPragInfo( name, sym->name );
+                        CMemFree( name );
+                    }
+                    old_sym.sym_type = sym->sym_type;
+                    old_sym.d.defn_line = sym->d.defn_line;
+                    old_sym.defn_file_index = sym->defn_file_index;
                 }
-                old_sym.sym_type = sym->sym_type;
-                old_sym.d.defn_line = sym->d.defn_line;
-                old_sym.defn_file_index = sym->defn_file_index;
             }
-        }
-        if( (sym->attrib & FLAG_LANGUAGES) !=( old_sym.attrib & FLAG_LANGUAGES)){
-            // just inherit old lang flags
-            // if new != 0 then it's possible someone saw a different prototype
-            if( (sym->attrib & FLAG_LANGUAGES) != 0 ){
-                 CErr2p( ERR_MODIFIERS_DISAGREE, sym->name );
-            }
-        }
-        if((sym->attrib & FLAG_INLINE) != (old_sym.attrib & FLAG_INLINE) ){
-            old_sym.attrib |= FLAG_INLINE; //either is inline
-        }
-        if( sym->declspec != old_sym.declspec ){
-            switch( sym->declspec ){
-            case DECLSPEC_DLLIMPORT:
-            case DECLSPEC_THREAD:
-                CErr2p( ERR_MODIFIERS_DISAGREE, sym->name );
-                break;
-            case DECLSPEC_DLLEXPORT:
-                if( old_sym.declspec == DECLSPEC_DLLIMPORT ){
-                    old_sym.declspec = DECLSPEC_DLLEXPORT;
-                }else{
+            if( (sym->attrib & FLAG_LANGUAGES) !=( old_sym.attrib & FLAG_LANGUAGES)){
+                // just inherit old lang flags
+                // if new != 0 then it's possible someone saw a different prototype
+                if( (sym->attrib & FLAG_LANGUAGES) != 0 ){
                     CErr2p( ERR_MODIFIERS_DISAGREE, sym->name );
                 }
-                break;
             }
+            if((sym->attrib & FLAG_INLINE) != (old_sym.attrib & FLAG_INLINE) ){
+                old_sym.attrib |= FLAG_INLINE; //either is inline
+            }
+            if( sym->declspec != old_sym.declspec ){
+                switch( sym->declspec ){
+                case DECLSPEC_DLLIMPORT:
+                case DECLSPEC_THREAD:
+                    CErr2p( ERR_MODIFIERS_DISAGREE, sym->name );
+                    break;
+                case DECLSPEC_DLLEXPORT:
+                    if( old_sym.declspec == DECLSPEC_DLLIMPORT ){
+                        old_sym.declspec = DECLSPEC_DLLEXPORT;
+                    }else{
+                        CErr2p( ERR_MODIFIERS_DISAGREE, sym->name );
+                    }
+                    break;
+                }
+            }
+            CMemFree( sym->name );
+            if( stg_class == SC_NULL && old_sym.stg_class != SC_FORWARD ){   /* 05-jul-89 */
+                stg_class = old_sym.stg_class;
+            }
+            memcpy( sym, &old_sym, sizeof( SYM_ENTRY ) );
+            sym_handle = old_sym_handle;
         }
-        CMemFree( sym->name );
-        if( stg_class == SC_NULL && old_sym.stg_class != SC_FORWARD ){   /* 05-jul-89 */
-            stg_class = old_sym.stg_class;
-        }
-        memcpy( sym, &old_sym, sizeof( SYM_ENTRY ) );
-        sym_handle = old_sym_handle;
+        SetDiagPop();
     }
     sym->flags |= SYM_FUNCTION;
     if( (sym->flags & SYM_DEFINED) == 0 ) {
@@ -285,7 +287,7 @@ local SYM_HANDLE VarDecl( SYMPTR sym, stg_classes stg_class )
         CErr1( ERR_INVALID_DECLSPEC );
     }
 
-    if( SymLevel == 0 ) 
+    if( SymLevel == 0 )
     {
         /*
         //  SymLevel == 0 is global scope (SymLevel is the count of nested {'s)
@@ -303,8 +305,8 @@ local SYM_HANDLE VarDecl( SYMPTR sym, stg_classes stg_class )
             }
             sym->u.var.segment = ThreadSeg;
         }
-    } 
-    else 
+    }
+    else
     {
         /*
         //  SymLevel != 0 is function scoped (SymLevel is the count of nested {'s)

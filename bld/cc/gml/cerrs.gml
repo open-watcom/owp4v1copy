@@ -1868,6 +1868,13 @@ about reproducing the exact same object code when the same source file
 is compiled on a different machine.
 You may not be able to reproduce the exact same object code from one
 compile to the next unless the available memory is exactly the same.
+:MSGSYM. INFO_SYMBOL_DECLARED_IN
+:MSGTXT. '%s' declared in: %s(%u)
+:MSGJTXT.
+:INFO.
+.np
+Gives additional information about inital declaration (source file and line)
+of the symbol, referenced in previous message.
 :eMSGGRP. Info
 :cmt -------------------------------------------------------------------
 :MSGGRP. PCHDR
