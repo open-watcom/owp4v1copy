@@ -118,5 +118,5 @@ extern  void    AddNewJump( ins_entry *new, code_lbl *lbl ) {
     jmp_oc.oc_header.objlen = OptInsSize( OC_JMP, OC_DEST_NEAR );
     jmp_oc.oc_header.reclen = sizeof( oc_handle );
     jmp_oc.oc_handle.handle = lbl;
-    AddInstr( NewInstr( &jmp_oc.oc_entry ), new );
+    AddInstr( NewInstr( &jmp_oc ), new );
   optend

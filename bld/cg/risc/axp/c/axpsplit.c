@@ -620,7 +620,7 @@ static instruction *CheapCall( instruction *ins, int rt_call, name *p1, name *p2
     HW_CTurnOn( reg, HW_R2 );   // and this one two!
     HW_CTurnOn( reg, HW_R3 );   // and this one three!
     reg_name = AllocRegName( reg );
-    call->zap = reg_name;
+    call->zap = &reg_name->r;
     PrefixIns( ins, call );
     return( call );
 }

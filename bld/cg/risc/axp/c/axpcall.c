@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Alpha AXP subroutine call generation.
 *
 ****************************************************************************/
 
@@ -41,10 +40,10 @@
 #include "cgaux.h"
 #include "zoiks.h"
 #include "regset.h"
+#include "bldins.h"
 
 extern  bool            AssgnParms(cn,bool);
 extern  type_class_def  AddCallBlock(sym_handle,type_def*);
-extern  temp_name       *BGNewTemp( type_def * );
 extern  hw_reg_set      StackReg();
 extern  name            *AllocRegName( hw_reg_set );
 extern  name            *SAllocIndex( name *, name *, type_length, type_class_def, type_length );

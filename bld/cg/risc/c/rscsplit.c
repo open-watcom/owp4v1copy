@@ -473,7 +473,7 @@ extern  instruction     *rMOVEXX( instruction *ins ) {
     HW_TurnOff( all_regs, SavedRegs() );
     HW_CTurnOff( all_regs, HW_UNUSED );
     HW_TurnOn( all_regs, ReturnAddrReg() );
-    new_ins->zap = reg_name;            /* all parm regs could be zapped*/
+    new_ins->zap = &reg_name->r;        /* all parm regs could be zapped*/
     ReplIns( ins, new_ins );
     UpdateLive( first_ins, new_ins );
     return( first_ins );

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Alpha AXP instruction encoding.
 *
 ****************************************************************************/
 
@@ -221,7 +220,7 @@ extern  void EmitInsReloc( axp_ins ins, pointer sym, owl_reloc_type type ) {
     oc.opcode = ins;
     oc.sym = sym;
     oc.reloc = type;
-    InputOC( &oc );
+    InputOC( (any_oc *)&oc );
 }
 
 static  void EmitIns( axp_ins ins ) {
@@ -403,7 +402,7 @@ extern  void    GenRET() {
     oc.op.reclen = sizeof( oc_ret );
     oc.op.objlen = 4;
     oc.pops = FALSE;            /* not used */
-    InputOC( &oc );
+    InputOC( (any_oc *)&oc );
 }
 
 static  pointer symLabel( name *mem ) {

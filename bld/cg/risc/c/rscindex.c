@@ -151,7 +151,7 @@ static  name    *MakeIndex( instruction *memory_ins, name *memory, type_class_de
         if( attr & FE_THREAD_DATA ) {
             // this is for the kooky expansion in axpenc.c - we have
             // to call rdteb, which destroys R0
-            ins->zap = AllocRegName( HW_R0 );
+            ins->zap = &AllocRegName( HW_R0 )->r;
         }
     }
     op = ScaleIndex( temp, NULL, 0, class, memory->n.size, 0, flags );

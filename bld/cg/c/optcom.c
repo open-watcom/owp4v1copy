@@ -131,8 +131,8 @@ static  bool    CommonInstr( ins_entry *old, ins_entry *add ) {
 
   optbegin
     if( _IsModel( NO_OPTIMIZATION ) ) optreturn( FALSE );
-    oc_add = &add->oc;
-    oc_old = &old->oc;
+    oc_add = &add->oc.oc_entry;
+    oc_old = &old->oc.oc_entry;
     if( oc_add->class != oc_old->class ) optreturn( FALSE );
     if( oc_add->reclen != oc_old->reclen ) optreturn( FALSE );
     switch( _Class( old ) ) {
