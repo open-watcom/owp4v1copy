@@ -94,6 +94,22 @@ static int get_precedence( int i )
 {
     /* Base on MASM 6.0 pg.18 Table 1.3 */
 
+/*
+    2              LENGTH, SIZE, WIDTH, MASK, (), [], <>
+    3              .
+    4              :
+    5              PTR, OFFSET, SEG, TYPE, THIS
+    6              HIGH, LOW
+    7              + (unary), - (unary)
+    8              *, /, MODE, SHL, SHR
+    9              +, -
+    10             EQ, NE, LT, LE, GT, GE
+    11             NOT
+    12             AND
+    13             OR, XOR
+    14             SHORT, .TYPE
+*/
+
     char        token;
 
     token = AsmBuffer[i]->token;
@@ -143,6 +159,8 @@ static int get_precedence( int i )
         case '+':
         case '-':
             return( 9 );
+        case T_DOT:
+            return( 3 );
         default:
             /**/myassert( 0 );
     }
@@ -1012,6 +1030,8 @@ static int is_expr( int i )
             }
         case T_STRING:
             return( TRUE );
+//        case T_DOT:
+//            return( TRUE );
         default:
             return( FALSE );
     }
@@ -1286,9 +1306,9 @@ extern int EvalExpr( int count, int start_tok, int end_tok )
             }
             // Massive kludge ahead:
             // If the thing looks like "<reg>:", then skip it
-            if( !(num == 1
-             && AsmBuffer[start]->token == T_REG
-             && AsmBuffer[start+1]->token == T_COLON) ) {
+            if( num == 1 && AsmBuffer[start]->token == T_REG && AsmBuffer[start+1]->token == T_COLON ) {
+                // skip
+            } else {
                 i = start;
                 result = evaluate( &i, i + num );
                 if( result == NULL ) {
