@@ -138,5 +138,25 @@ typedef struct _ACCEL {
     USHORT cmd;
 } ACCEL, *PACCEL;
 
+#ifndef LONGLONG_INCLUDED
+#define LONGLONG_INCLUDED 1
+
+#ifndef INCL_LONGLONG
+typedef struct _LONGLONG {
+    ULONG ulLo;
+    LONG  ulHi;
+} LONGLONG, *PLONGLONG;
+
+typedef struct _ULONGLONG {
+    ULONG ulLo;
+    ULONG ulHi;
+} ULONGLONG, *PULONGLONG;
+#else
+typedef long long LONGLONG, *PLONGLONG;
+typedef unsigned long long ULONGLONG, *PULONGLONG;
+#endif
+
+#endif
+
 #endif
 
