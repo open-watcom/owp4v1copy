@@ -125,7 +125,7 @@ short _WCI86FAR _CGRAPH _getkanji( unsigned short code, char _WCI86FAR *image )
 }
 
 
-short _WCI86FAR _CGRAPH _setkanji( short code, char _WCI86FAR *image )
+short _WCI86FAR _CGRAPH _setkanji( unsigned short code, char _WCI86FAR *image )
 //==========================================================
 
 {

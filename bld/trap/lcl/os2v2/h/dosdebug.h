@@ -186,4 +186,4 @@ typedef struct  {
 
 extern ULONG CallDosDebug( dos_debug *buff );
 extern ULONG MakeFlatPointer( PVOID ptr );
-int IsFlatSeg( int seg );
+int IsFlatSeg( USHORT seg );

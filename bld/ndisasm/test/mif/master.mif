@@ -1,9 +1,6 @@
 proj_name = wdistest
 name = dis
 
-.extensions:
-.extensions: .exe .obj .c .h .mif
-
 .mif: $(mif_path)
 !include cproj.mif
 !include defrule.mif
@@ -11,7 +8,7 @@ name = dis
 
 dis_test=1
 
-!include $(disasm_dir)/core/dis.mif
+!include $(disasm_dir)/mif/dis.mif
 
 obj             = .obj
 exe             = .exe
@@ -27,10 +24,10 @@ inc_dirs = $(dis_includes);$(watcom_dir)\h
 test_objs       = main$(obj) $(dis_objs)
 
 $(name)$(exe) : eraseall.obj $(test_objs)
-        *$(bld_link) debug all name $@ option map file { $(test_objs) }
+        *$(bld_link) debug all name $@ option quiet, map file { $(test_objs) }
 
 .c.obj
-        *$(bld_cc) -d2 $[@
+        *$(bld_cc) -zq -d2 $[@
 
 eraseall.obj : $(disasm_dir)\core\compile.gbl
         if exist *.obj erase *.obj

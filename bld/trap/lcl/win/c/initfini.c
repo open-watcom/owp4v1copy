@@ -134,7 +134,7 @@ void FinishDebugging( void )
 /*
  * TrapInit - debugger initialization entry point
  */
-trap_version TRAPENTRY TrapInit( char *parm, char *err, int remote )
+trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
 {
     trap_version        ver;
 

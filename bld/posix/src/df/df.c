@@ -175,7 +175,7 @@ static drive_type doGetDriveType( int drv )
 
 } /* doGetDriveType */
 
-unsigned _dos_getdiskfree( int dnum, struct diskfree_t *df )
+unsigned _dos_getdiskfree( unsigned dnum, struct diskfree_t *df )
 {
     FSALLOCATE  fs;
     unsigned    rc;

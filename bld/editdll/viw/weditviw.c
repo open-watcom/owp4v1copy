@@ -227,7 +227,7 @@ int EDITAPI EDITLocate( long iRow, int iCol, int iLen )
     return( EDITLocateError( iRow, iCol, iLen, 0, NULL ) );
 }
 
-int EDITAPI EDITShowWindow( int iCmdShow )
+int EDITAPI EDITShowWindow( show_method iCmdShow )
 {
     if( !bConnected ) {
         return( FALSE );

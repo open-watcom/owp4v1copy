@@ -349,7 +349,7 @@ void DelLib( void )
     }
 }
 
-void DelProcess( bool closeHandles )
+void DelProcess( BOOL closeHandles )
 {
     unsigned    i;
 
@@ -373,7 +373,7 @@ static void force16SegmentLoad( thread_info *ti, WORD sel )
 {
     static      char    getMemIns[INS_BYTES] = { 0x8e, 0xc0, 0x26,0xa1,0x00,0x00,0xcc };
     static      char    origBytes[INS_BYTES];
-    static      bool    gotOrig;
+    static      BOOL    gotOrig;
     CONTEXT     con,oldcon;
 
     if( !UseVDMStuff ) {

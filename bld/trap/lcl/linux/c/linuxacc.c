@@ -125,7 +125,7 @@ static unsigned WriteMem( void *ptr, addr_off offv, unsigned size )
         u_long  val;
         if (sys_ptrace(PTRACE_PEEKTEXT, pid, offv, &val) != 0)
             return size - count;
-        Out("readmem:"); 
+        Out("readmem:");
         OutNum( val );
         Out(" ");
         switch (count) {
@@ -150,7 +150,7 @@ static unsigned WriteMem( void *ptr, addr_off offv, unsigned size )
         if (sys_ptrace(PTRACE_POKETEXT, pid, offv, (void *)val) != 0)
             return size - count;
         }
-        
+
     return size;
 }
 
@@ -671,7 +671,7 @@ unsigned ReqProg_load()
     ret->flags = 0;
     if( pid != -1 && pid != 0 ) {
         int status;
-        
+
         ret->task_id = pid;
         ret->flags |= LD_FLAG_IS_PROT | LD_FLAG_IS_32;
         /* wait until it hits _start (upon execve) or
@@ -700,8 +700,8 @@ fail:
         if ( attached ) {
             sys_ptrace( PTRACE_DETACH, pid, 0, 0 );
             attached = FALSE;
-        } else {            
-            sys_ptrace( PTRACE_KILL, pid, 0, 0 );    
+        } else {
+            sys_ptrace( PTRACE_KILL, pid, 0, 0 );
             waitpid( pid, &status, 0 );
         }
     }
@@ -717,9 +717,9 @@ unsigned ReqProg_kill()
         if ( attached ) {
             sys_ptrace( PTRACE_DETACH, pid, 0, 0 );
             attached = FALSE;
-        } else {            
+        } else {
             int status;
-            sys_ptrace( PTRACE_KILL, pid, 0, 0 );    
+            sys_ptrace( PTRACE_KILL, pid, 0, 0 );
             waitpid( pid, &status, 0 );
         }
     }
@@ -894,7 +894,7 @@ static unsigned ProgRun( int step )
     int                 status;
     prog_go_ret         *ret;
     void                (*old)(int);
-    
+
     if ( pid == 0 )
         return 0;
     ret = GetOutPtr( 0 );
@@ -942,7 +942,7 @@ static unsigned ProgRun( int step )
         ret->conditions = COND_TERMINATE;
         ptrace_sig = 0;
         goto end;
-    }    
+    }
     if (sys_ptrace(PTRACE_GETREGS, pid, 0, &regs) == 0) {
         Out( " eip " );
         OutNum( regs.eip );
@@ -1121,7 +1121,7 @@ unsigned ReqGet_lib_name( void )
     return( sizeof( *ret ) );
 }
 
-trap_version TRAPENTRY TrapInit( char *parm, char *err, int remote )
+trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
 {
     trap_version ver;
 

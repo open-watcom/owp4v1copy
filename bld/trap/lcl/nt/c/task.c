@@ -36,7 +36,7 @@
 #include "stdnt.h"
 
 
-trap_version TRAPENTRY TrapInit( char *parm, char *err, int remote )
+trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
 {
     trap_version        ver;
     OSVERSIONINFO       osver;

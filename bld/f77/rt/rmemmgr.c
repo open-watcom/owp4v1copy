@@ -34,6 +34,8 @@
 #include "bglobal.h"
 #endif
 
+extern  void            *_SysMemAlloc(size_t);
+extern  void            _SysMemFree(void *);
 
 void            *RMemAlloc( int size ) {
 //======================================
