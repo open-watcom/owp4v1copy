@@ -21,7 +21,7 @@ sys_os2 = sys.obj sysos2.obj sysdoscd.obj
 sys_nt = sys.obj sysnt.obj sysdoscd.obj
 sys_linux = sys.obj sysposix.obj
 
-OBJS   = builder.obj utils.obj runit.obj $(sys_$(host_os)) # pmake.obj pmkcmd.obj
+OBJS   = builder.obj utils.obj runit.obj $(sys_$(host_os)) pmake.obj
 
 $(name).exe : $(OBJS)
         $(linker) $(lflags) name $^@ op map file {$(OBJS)}

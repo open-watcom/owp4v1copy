@@ -46,6 +46,7 @@
 #endif
 #include "watcom.h"
 #include "builder.h"
+#include "pmake.h"
 
 #define BSIZE   256
 #define SCREEN  79
@@ -385,7 +386,6 @@ static unsigned ProcMkdir( char *cmd )
         return( 0 );
 }
 
-#if 0
 void PMakeOutput( char *str )
 {
     Log( FALSE, "%s\n", str );
@@ -428,7 +428,6 @@ static unsigned ProcPMake( char *cmd )
     PMakeCleanup( data );
     return( res );
 }
-#endif
 
 unsigned RunIt( char *cmd )
 {
@@ -458,10 +457,8 @@ unsigned RunIt( char *cmd )
         res = ProcCopy( SkipBlanks( cmd + sizeof( "ACOPY" ) ), TRUE );
     } else if( BUILTIN( "MKDIR" ) ) {
         res = ProcMkdir( SkipBlanks( cmd + sizeof( "MKDIR" ) ) );
-#if 0
     } else if( BUILTIN( "PMAKE" ) ) {
         res = ProcPMake( SkipBlanks( cmd + sizeof( "PMAKE" ) ) );
-#endif
     } else {
         res = SysRunCommand( cmd );
     }
