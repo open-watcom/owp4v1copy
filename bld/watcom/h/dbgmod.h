@@ -48,7 +48,7 @@ void EnterDebuggerWithMessage( const char __far * );
 
 /* Inline assembler to get DS selector */
 
-u_short GetCS(void);
+unsigned short GetCS(void);
 #pragma aux GetCS parm caller [] = \
         "mov ax,cs"
 

@@ -80,7 +80,7 @@ dip_status DIPSysLoad( char *path, dip_client_routines *cli,
 #ifdef WATCOM_DEBUG_SYMBOLS
     /* Look for symbols in separate .sym files, not the .dip itself */
     strcpy( dip_name + strlen( dip_name ) - 4, ".sym" );
-    NotifyWDLoad( dip_name, (u_long)dip );
+    NotifyWDLoad( dip_name, (unsigned long)dip );
 #endif
     init_func = (void *)dip->init_rtn;
     *imp = init_func( &status, cli );
