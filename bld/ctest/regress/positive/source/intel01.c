@@ -1,7 +1,7 @@
 #include "fail.h"
 
 
-#if defined(__386__) || defined(__I86__)
+#if (defined(__386__) || defined(__I86__)) && !defined(__LINUX__)
 
 // verify __interrupt implies default __far
 
@@ -22,7 +22,8 @@ void set_vec( void ( __interrupt *p )( void ) )
 
 #else
 
-void set_vec( int ) {
+void set_vec( int i ) {
+    i = i;
 }
 
 #endif
