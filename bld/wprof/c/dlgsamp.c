@@ -24,15 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Sample file open dialog.
 *
 ****************************************************************************/
 
 
 #include <unistd.h>
 #include <sys/stat.h>
-#include <process.h>
 
 #include "common.h"
 #include "aui.h"

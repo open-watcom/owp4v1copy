@@ -34,7 +34,11 @@
 #include <unistd.h>
 #include <string.h>
 #include <ctype.h>
-#include <process.h>
+#ifdef __WATCOMC__
+    #include <process.h>
+#else
+    #include "clibext.h"
+#endif
 
 #include "common.h"
 #include "msg.h"

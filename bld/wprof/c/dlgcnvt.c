@@ -32,7 +32,6 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
-#include <process.h>
 
 #include "common.h"
 #include "aui.h"

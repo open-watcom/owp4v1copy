@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#ifndef __ALPHA__
+#ifdef __WATCOMC__
 #pragma aux fatal aborts;
 #endif
 

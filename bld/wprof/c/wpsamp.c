@@ -898,7 +898,7 @@ STATIC bint sasmGetLine( a_window * wnd, int row )
         if( dispHighLight ) {
             dispCount = 0;
         } else {
-            dispCount = asm_line->u.asm.tick_count;
+            dispCount = asm_line->u.asm_line.tick_count;
         }
         localTicks = curr_sio->curr_mod->agg_count;
         maxTime = wpasm_file->max_time;

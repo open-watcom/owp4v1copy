@@ -33,7 +33,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <ctype.h>
-#include <process.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include "common.h"
@@ -46,8 +45,11 @@
 #elif defined( __OS2__ )
 #   define INCL_DOS
 #   include "os2.h"
-#elif defined( __QNX__ ) || defined( __LINUX__ )
-#   include "unistd.h"
+#elif defined( __UNIX__ )
+#   include <unistd.h>
+#   if defined( __WATCOMC__ )
+#       include <process.h>
+#   endif
 #else
 #   error OS not supported
 #endif
@@ -70,13 +72,10 @@
 #endif
 #define HELP_NAME  "WWINHELP"
 
-//#include "utils.def"
-//#include "msg.def"
-//#include "memutil.def"
-//#include "dipinter.def"
 extern void *ProfAlloc(size_t size);
 extern void fatal(char *msg,... );
 extern dig_fhandle DIGCliOpen(char *name,dig_open mode);
+extern void AddPath( path_list **path_var, char * path_data );
 
 path_list *     HelpPathList = NULL;
 path_list *     FilePathList = NULL;
@@ -216,8 +215,8 @@ extern void InitPaths()
 
 
 
-extern void AddPath( pointer * path_var, char * path_data )
-/*********************************************************/
+extern void AddPath( path_list **path_var, char *path_data )
+/**********************************************************/
 {
     char            path[_MAX_PATH];
     path_list *     path_tail;

@@ -24,15 +24,16 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Main profiler window procedure.
 *
 ****************************************************************************/
 
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <process.h>
+#ifdef __WATCOMC__
+    #include <process.h>
+#endif
 
 #include "common.h"
 #include "aui.h"
@@ -45,18 +46,6 @@
 #include "trmemcvr.h"
 #endif
 
-//#include "utils.def"
-//#include "aboutmsg.def"
-//#include "getsamps.def"
-//#include "clrsamps.def"
-//#include "wpstart.def"
-//#include "msg.def"
-//#include "wpwind.def"
-//#include "wpsamp.def"
-//#include "dlgsamp.def"
-//#include "dlgoptn.def"
-//#include "wpcnvt.def"
-//#include "wphelp.def"
 extern void WPProcHelp(gui_help_actions action);
 extern void WPFini(void);
 extern void AboutClose(void);
@@ -83,7 +72,7 @@ static gui_menu_struct fileMenu[] = {
                             "Close the current sample information" },
     { "", 0, GUI_SEPARATOR },
     { "Op&tions...", MENU_OPTIONS, GUI_ENABLED, "Set Profiler Options" },
-#if !defined( __WINDOWS__ ) && !defined( __NT__ ) && !defined( __OS2_PM__ )
+#if !defined( __WINDOWS__ ) && !defined( __NT__ ) && !defined( __OS2__ ) && !defined( __UNIX__ )
     { "S&ystem", MENU_SYSTEM, GUI_ENABLED, "Start an operating system shell" },
 #endif
 #ifdef TRMEM
@@ -140,7 +129,7 @@ extern bool WndMainMenuProc( a_window * wnd, unsigned id )
 {
     a_window *      active;
     sio_data *      curr_sio;
-#if !defined( __WINDOWS__ ) && !defined( __NT__ )
+#if !defined( __WINDOWS__ ) && !defined( __NT__ ) && !defined( __OS2__ ) && !defined( __UNIX__ )
     char *          sys_spec;
 #endif
 
@@ -157,7 +146,7 @@ extern bool WndMainMenuProc( a_window * wnd, unsigned id )
             WndClose( active );
         }
         break;
-#if !defined( __WINDOWS__ ) && !defined( __NT__ )
+#if !defined( __WINDOWS__ ) && !defined( __NT__ ) && !defined( __OS2__ ) && !defined( __UNIX__ )
     case MENU_SYSTEM:
         GUISpawnStart();
         sys_spec = getenv( "COMSPEC" );

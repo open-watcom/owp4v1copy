@@ -24,15 +24,18 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Source management routines for debugger, profiler etc.
 *
 ****************************************************************************/
 
 
-#include "srcmgt.h"
 #include <limits.h>
 #include <string.h>
+#include "srcmgt.h"
+
+#ifndef O_BINARY
+    #define O_BINARY    0
+#endif
 
 #define SM_CR                   '\r'
 #define SM_LF                   '\n'

@@ -182,16 +182,16 @@ extern wp_asmfile * WPAsmOpen( sio_data * curr_sio, int src_row, bint quiet )
         }
         asm_line = &wpasm_file->asm_data[asm_group].asm_lines[asm_row];
         asm_line->source_line = B_FALSE;
-        asm_line->u.asm.addr = addr;
-        asm_line->u.asm.tick_count = 0;
+        asm_line->u.asm_line.addr = addr;
+        asm_line->u.asm_line.tick_count = 0;
         for( ;; ) {
             if( samp_data == NULL ) break;
             addr_cmp = AddrCmp( &addr, samp_data->raw );
             if( addr_cmp < 0 ) break;
             if( addr_cmp == 0 ) {
-                asm_line->u.asm.tick_count = samp_data->hits;
-                if( asm_line->u.asm.tick_count > wpasm_file->max_time ) {
-                    wpasm_file->max_time = asm_line->u.asm.tick_count;
+                asm_line->u.asm_line.tick_count = samp_data->hits;
+                if( asm_line->u.asm_line.tick_count > wpasm_file->max_time ) {
+                    wpasm_file->max_time = asm_line->u.asm_line.tick_count;
                 }
             }
             samp_data = WPGetMassgdSampData( curr_sio, addr_tick_index++ );
@@ -288,7 +288,7 @@ extern char * WPAsmGetLine( a_window * wnd, int line )
         SetNumBytes( 0 );
         SetExeFile( wpasm_file->fh, B_FALSE );
         SetExeImage( curr_sio->curr_image );
-        GetFullInstruct( asm_line->u.asm.addr, wpasm_file->asm_buff, wpasm_file->asm_buff_len-1 );
+        GetFullInstruct( asm_line->u.asm_line.addr, wpasm_file->asm_buff, wpasm_file->asm_buff_len-1 );
     }
     return( wpasm_file->asm_buff );
 }
