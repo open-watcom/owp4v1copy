@@ -84,6 +84,7 @@ static int DoOpen( char *name, unsigned mode, bool isexe )
 {
     int     h;
     int     perm;
+    struct stat st;
 
     perm = 0666;
     CheckBreak();
@@ -91,6 +92,8 @@ static int DoOpen( char *name, unsigned mode, bool isexe )
     mode |= O_BINARY;
     for( ;; ) {
         if( OpenFiles >= MAX_OPEN_FILES ) CleanCachedHandles();
+        if ( ( mode & O_CREAT ) && !stat( name, &st) )
+            unlink( name );
         h = open( name, mode, perm );
         if( h != -1 ) {
             OpenFiles++;

@@ -64,7 +64,7 @@ def_targ        = wcc$(target_CPU)c.exe
 !endif
 
 # options for single source utility compilations
-wcl_util_opts = -ox -fe=$^@
+wcl_util_opts = -ox -fo=$^@ -fe=$^@
 
 #common bootstrap definitions for Linux
 !ifdef __LINUX__
