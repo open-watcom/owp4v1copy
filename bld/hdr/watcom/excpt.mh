@@ -43,6 +43,7 @@ EXCEPTION_DISPOSITION __cdecl _except_handler (
 #define exception_code                  _exception_code
 #define GetExceptionInformation         (struct _EXCEPTION_POINTERS *)_exception_info
 #define exception_info                  (struct _EXCEPTION_POINTERS *)_exception_info
+#undef AbnormalTermination
 #define AbnormalTermination             _abnormal_termination
 #define abnormal_termination            _abnormal_termination
 
@@ -56,7 +57,9 @@ int           __cdecl _abnormal_termination(void);
  */
 #define EXCEPTION_EXECUTE_HANDLER        1
 #define EXCEPTION_CONTINUE_SEARCH        0
+#ifndef EXCEPTION_CONTINUE_EXECUTION
 #define EXCEPTION_CONTINUE_EXECUTION    -1
+#endif
 
 :include cplusepi.sp
 #endif
