@@ -1,4 +1,4 @@
-#pmake:all small 32bit stack inline winnt iX86 dynamic os_nt cpu_386 alias
+#pmake: build small 32bit stack inline winnt iX86 dynamic os_nt cpu_386 alias
 processor=387
 model=ms
 system=winnt
