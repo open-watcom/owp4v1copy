@@ -115,4 +115,4 @@ inlnops.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
         $[@ $(wasm_dir)/inlnops.tok $^@
 
 msg.gh : $(wasm_dir)/h/asmshare.msg
-        $(vi) -s $(wasm_dir)/h/makemsg.vi -p "$^@" $[@
+        $(vi) -s $(wasm_dir)/h/makemsg.vi -p "$^@ MSG_RC_BASE" $[@

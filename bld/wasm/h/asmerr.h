@@ -54,7 +54,8 @@ extern void             AsmNote( int msgnum, ... );
 
 #if defined( _WASM_ )
 
-    #define MSG_RC_BASE         1
+    #define MSG_RC_BASE         16
+    #define MSG_SHARE_RC_BASE   200
     #define MSG_WASM_RC_BASE    500
     #define MSG_USE_BASE        900
 
@@ -63,6 +64,7 @@ extern void             AsmNote( int msgnum, ... );
     #define MSG_USE_E_BASE      (MSG_USE_BASE + RLE_ENGLISH*MSG_LANG_SPACING)
     #define MSG_USE_J_BASE      (MSG_USE_BASE + RLE_JAPANESE*MSG_LANG_SPACING)
 
+    #include "wmpmsg.gh"
     #include "msg.gh"
     #include "wasmmsg.gh"
 
