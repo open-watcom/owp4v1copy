@@ -769,7 +769,7 @@ local int CharArray( TYPEPTR typ )
 
 local int WCharArray( TYPEPTR typ )
 {
-    if( CurToken == T_STRING  &&  CompFlags.wide_char_string ) {
+    if( CurToken == T_STRING ) {
         while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
         if( typ->decl_type == TYPE_SHORT || typ->decl_type == TYPE_USHORT ) {
             return( 1 );
@@ -789,6 +789,9 @@ local void InitCharArray( TYPEPTR typ )
 /*              char  name[4] = "abcd";  */
 
     str_lit = GetLiteral();
+    /* this is a poor error message -- can be more specific */
+    if( CompFlags.wide_char_string )
+        CErr1( ERR_NEED_BRACES );
     len = str_lit->length;
     if( typ->u.array->dimension == 0 )  typ->u.array->dimension = len;
     size = typ->u.array->dimension;
@@ -826,6 +829,9 @@ local void InitWCharArray( TYPEPTR typ )
 /*              wchar_t  name[4] = "abcd";  */
 
     str_lit = GetLiteral();
+    /* this is a poor error message -- can be more specific */
+    if( !CompFlags.wide_char_string )
+        CErr1( ERR_NEED_BRACES );
     len = str_lit->length / sizeof(unsigned short);
     if( typ->u.array->dimension == 0 ) {
         typ->u.array->dimension = len;

@@ -791,7 +791,7 @@ extern  int     InitPPScan(void);               /* cscan */
 extern  void    FiniPPScan(int);                /* cscan */
 extern  int     CalcHash(char *,int);           /* cscan */
 extern  unsigned hashpjw(char *);               /* cscan */
-extern  int     ESCChar(int,int,char *);        /* cscan */
+extern  int     ESCChar(int,const char **,char *); /* cscan */
 extern  void    SkipAhead(void);                /* cscan */
 extern  int     ScanSlash(void);                /* cscan */
 extern  int     ScanToken(void);                /* cscan */
@@ -820,7 +820,6 @@ extern  STRING_LITERAL  *GetLiteral(void);      /* cstring */
 extern  void    LoadUnicodeTable(long);         /* cstring */
 extern  void    StringInit(void);               /* cstring */
 extern  TREEPTR StringLeaf(int);                /* cstring */
-extern  int     RemoveEscapes(char *);          /* cstring */
 
 extern  void    SymInit(void);                  /* csym */
 extern  void    SpcSymInit(void);               /* csym */

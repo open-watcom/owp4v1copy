@@ -524,7 +524,7 @@ int ScanPPDot()
     }
 }
 
-int ScanHex( int max, int rtn )
+int ScanHex( int max, const char **pbuf )
 {
     int                 c;
     int                 count;
@@ -536,10 +536,10 @@ int ScanHex( int max, int rtn )
     count = max;
     value = 0;
     for( ;; ) {
-        if( rtn == RTN_SAVE_NEXT_CHAR ) {
+        if( pbuf == NULL ) {
             c = SaveNextChar();
         } else {
-            c = Buffer[ ++CLitLength ];
+            c = *++*pbuf;
         }
         if( max == 0 ) break;
         chrclass = CharSet[ c ];
@@ -1275,7 +1275,7 @@ static int CharConst( int char_type )
                 }
                 c = n;
             } else {
-                c = ESCChar( c, RTN_SAVE_NEXT_CHAR, &error );
+                c = ESCChar( c, NULL, &error );
             }
             if( char_type == TYPE_WCHAR ) {     /* 02-aug-91 */
                 ++i;
@@ -1396,7 +1396,7 @@ static int ScanString( void )
             c = NextChar();
             Buffer[TokenLen++] = c;
             if( (CharSet[c] & C_WS) == 0 ) {    /* 04-nov-88 */
-                ESCChar( c, RTN_SAVE_NEXT_CHAR, &error );
+                ESCChar( c, NULL, &error );
             }
             c = CurrChar;
         } else {
@@ -1440,7 +1440,7 @@ int ScanStringContinue()
     return( token );
 }
 
-int ESCChar( int c, int rtn, char *error )
+int ESCChar( int c, const char **pbuf, char *error )
 {
     int n, i;
 
@@ -1449,16 +1449,16 @@ int ESCChar( int c, int rtn, char *error )
         i = 3;
         while( c >= '0'  &&  c <= '7' ) {
             n = n * 8 + c - '0';
-            if( rtn == RTN_SAVE_NEXT_CHAR ) {
+            if( pbuf == NULL ) {
                 c = SaveNextChar();
             } else {
-                c = Buffer[ ++CLitLength ];
+                c = *++*pbuf;
             }
             --i;
             if( i == 0 ) break;
         }
     } else if( c == 'x' ) {         /* get hex escape sequence */
-        if( ScanHex( 127, rtn ) ) {
+        if( ScanHex( 127, pbuf ) ) {
             n = Constant;
         } else {                        /*  '\xz' where z is not a hex char */
             *error = 1;
@@ -1498,10 +1498,10 @@ int ESCChar( int c, int rtn, char *error )
         }
         _ASCIIOUT( c );
         n = c;
-        if( rtn == RTN_SAVE_NEXT_CHAR ) {
+        if( pbuf == NULL ) {
             SaveNextChar();
         } else {
-            ++CLitLength;
+            ++*pbuf;
         }
     }
     return( n );
