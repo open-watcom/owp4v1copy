@@ -22,7 +22,7 @@ extra_objs = &
         rmhdlr.obj &
         sbrk.obj
 
-extra_c_flags = -dDOS4G -dDOSXHELP -zu
+extra_c_flags = -dDOS4G -dDOSXHELP -zdp -zu
 
 extra_a_flags = -Dcompact
 extra_a_flags_npxtype = -fpi87
