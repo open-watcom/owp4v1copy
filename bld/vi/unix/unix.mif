@@ -1,0 +1,18 @@
+objunixtimeroot = &
+        int.obj
+
+objunixsizeroot = &
+        unixcmds.ybj &
+        biosunix.ybj &
+
+objunixsize = &
+        unixsys.ybj &
+        unixdir.ybj &
+        unixmous.ybj &
+        unixmain.ybj &
+        time.ybj &
+        spawn.ybj
+
+extraobjs = $(objunixsize)
+extraobjsroot = $(objunixtimeroot) $(objunixsizeroot)
+inc_path +=;../h;.
