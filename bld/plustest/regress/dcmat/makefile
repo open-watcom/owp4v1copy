@@ -43,9 +43,9 @@ matrix.lbc : makefile
     
 test.lnk : makefile
     %create $^@
+    @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
     @%append $^@ OPTION quiet, map, stack=16k
-    @%append $^@ DEBUG all
     @%append $^@ LIBRARY matrix.lib
     
 global : .symbolic

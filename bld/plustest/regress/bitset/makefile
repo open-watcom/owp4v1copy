@@ -34,7 +34,7 @@ bitset.$(exe) : $(objs) bitset.lnk
 bitset.lnk : makefile
     %create $^@
     @%append $^@ NAME $^*
-    @%append $^@ DEBUG all
+    @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
     @%append $^@ OPTION map, stack=8k, quiet
     @for %i in ( $(objs) ) do @%append $^@ FILE %i

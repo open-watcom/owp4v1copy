@@ -72,7 +72,7 @@ test.lnk : makefile $(objs)
     @%append $^@ SYSTEM windows
     @%append $^@ OPTION map, quiet, rwreloccheck
     @%append $^@ NAME $^*
-    @%append $^@ DEBUG all
+    @%append $^@ $(ldebug_$(arch))
     @for %i in ( $(objs) ) do @%append $^@ FILE %i
     @%append $^@ LIBRARY $(%watcom)\lib286\win\DDEML.LIB
     @%append $^@ LIBRARY $(%watcom)\lib286\win\COMMDLG.LIB

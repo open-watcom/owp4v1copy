@@ -35,7 +35,7 @@ tomdll.obj : tomdll.c
 tomexe.lnk : $(__MAKEFILES__)
     %create $^@
     @%append $^@ NAME $^*
-    @%append $^@ DEBUG all
+    @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
     @%append $^@ OPTION map, caseexact, stack=128k, quiet
     @%append $^@ FILE tomexe
@@ -43,7 +43,7 @@ tomexe.lnk : $(__MAKEFILES__)
 tomdll.lnk : $(__MAKEFILES__)
     %create $^@
     @%append $^@ NAME $^*
-    @%append $^@ DEBUG all
+    @%append $^@ $(ldebug_$(arch))
     @%append $^@ SYSTEM nt dll initinstance terminstance reference __DLLstart_
     @%append $^@ OPTION map, caseexact, stack=128k, quiet
     @%append $^@ FILE tomdll

@@ -34,7 +34,7 @@ opt.$(exe) : $(objs) opt.lnk
 opt.lnk : makefile
     %create $^@
     @%append $^@ NAME $^*
-    @%append $^@ DEBUG all
+    @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
     @%append $^@ OPTION map, caseexact, stack=8k, quiet
     @for %i in ( $(objs) ) do @%append $^@ FILE %i
