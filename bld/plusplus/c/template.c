@@ -347,15 +347,22 @@ static unsigned getArgList( DECL_INFO *args, TYPE *type_list, char **names, REWR
 }
 
 static TEMPLATE_SPECIALIZATION *newTemplateSpecialization(
-    TEMPLATE_DATA *data )
+    TEMPLATE_DATA *data, TEMPLATE_INFO *tinfo )
 {
     DECL_INFO *args;
     TEMPLATE_SPECIALIZATION *tspec;
+    TEMPLATE_SPECIALIZATION *tprimary;
+    PTREE list;
+    PTREE arg;
+    TYPE arg_type;
     unsigned arg_count;
+    unsigned i;
 
     args = data->args;
     arg_count = getArgList( args, NULL, NULL, NULL );
-    tspec = CarveAlloc( carveTEMPLATE_SPECIALIZATION );
+    tspec = RingCarveAlloc( carveTEMPLATE_SPECIALIZATION,
+                            &tinfo->specializations );
+    tprimary = RingFirst( tinfo->specializations );
 
     tspec->instantiations = NULL;
     tspec->member_defns = NULL;
@@ -372,6 +379,38 @@ static TEMPLATE_SPECIALIZATION *newTemplateSpecialization(
     // partial specializations not allowed yet
     DbgAssert( ( tspec->spec_args == NULL ) || ( arg_count == 0 ) );
 
+    /* process specialization args */
+    for( list = tspec->spec_args, i = 0;
+         list != NULL;
+         list = list->u.subtree[0], i++ ) {
+
+        arg = list->u.subtree[1];
+
+        if( ( arg == NULL )
+         || ( i >= tprimary->num_args ) ) {
+            /* number of parameters don't match */
+            /* error message: wrong number of template arguments */
+            DbgAssert( 0 );
+            break;
+        }
+
+        arg_type = tprimary->type_list[i];
+        if( arg_type->id == TYP_GENERIC || arg_type->id == TYP_CLASS ) {
+            arg_type = NULL;
+        }
+
+        if( arg_type != NULL ) {
+            arg = AnalyseRawExpr( arg );
+            if( arg->op == PT_ERROR ) {
+                DbgAssert( 0 );
+                break;
+            }
+        }
+
+        list->u.subtree[1] = arg;
+    }
+    DumpPTree( tspec->spec_args );
+
     getArgList( args, tspec->type_list, tspec->arg_names, NULL );
     return( tspec );
 }
@@ -387,8 +426,7 @@ static TEMPLATE_INFO *newTemplateInfo( TEMPLATE_DATA *data )
     arg_count = getArgList( args, NULL, NULL, NULL );
     tinfo = RingCarveAlloc( carveTEMPLATE_INFO, &allClassTemplates );
     tinfo->specializations = NULL;
-    tprimary = newTemplateSpecialization( data );
-    RingAppend( &tinfo->specializations, tprimary );
+    tprimary = newTemplateSpecialization( data, tinfo );
     /* RingFirst( tinfo->specializations ) is always the primary template */
 
     tinfo->unbound_type = ClassUnboundTemplate( data->template_name );
@@ -568,12 +606,6 @@ static TEMPLATE_SPECIALIZATION *findMatchingTemplateSpecialization(
                 something_went_wrong = TRUE;
                 break;
             }
-            curr_arg = CastImplicit( curr_arg, arg_type, CNV_FUNC_ARG,
-                                     &diagTempParm );
-            if( curr_arg->op == PT_ERROR ) {
-                something_went_wrong = TRUE;
-                break;
-            }
         }
 
         curr_list->u.subtree[1] = curr_arg;
@@ -637,8 +669,7 @@ static TEMPLATE_SPECIALIZATION *mergeClassTemplates( TEMPLATE_DATA *data,
         primary_specialization = FALSE;
         tspec = findMatchingTemplateSpecialization( tinfo, data->spec_args );
         if( tspec == NULL ) {
-            tspec = newTemplateSpecialization( data );
-            RingAppend( &tinfo->specializations, tspec );
+            tspec = newTemplateSpecialization( data, tinfo );
         }
     } else if( data->unbound_type != NULL ) {
         PTREE parm;
