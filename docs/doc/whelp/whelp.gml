@@ -248,12 +248,14 @@
 
 :cmt. **** :DTHD ****
 .dm zdthd begin
+:ZDT.:SF font=3.&*.:eSF.
 .dm zdthd end
 .gt dthd add zdthd cont
 .gt zdthd add zdthd cont
 
 :cmt. **** :DDHD ****
 .dm zddhd begin
+:ZDD.:SF font=3.&*.:eSF.
 .dm zddhd end
 .gt ddhd add zddhd cont
 .gt zddhd add zddhd cont
