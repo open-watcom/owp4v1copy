@@ -23,13 +23,14 @@ echo Languages Build <1>
 [ INCLUDE <DEVDIR>/re2c/lang.ctl ]
 [ INCLUDE <DEVDIR>/whpcvt/lang.ctl ]
 [ INCLUDE <DEVDIR>/helpcomp/lang.ctl ]
+[ INCLUDE <DEVDIR>/bmp2eps/lang.ctl ]
 [ INCLUDE <DEVDIR>/ssl/lang.ctl ]
 [ INCLUDE <DEVDIR>/posix/prereq.ctl ]
 [ INCLUDE <DEVDIR>/wstub/lang.ctl ]
 [ INCLUDE <DEVDIR>/vi/prereq.ctl ]
 [ INCLUDE <DEVDIR>/cc/wcl/prereq.ctl ]
 #
-#        Prebuild newest WASM version for building process
+#        Prebuild newest WASM version for build process
 [ INCLUDE <DEVDIR>/wasm/prereq.ctl ]
 #
 #        Next build online docs. This will create required header files
