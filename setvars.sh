@@ -10,13 +10,13 @@ export WATCOM=$OWROOT/rel2
 
 export MAKE=make
 
-#subdirectory to be used for bootstrapping
+# Subdirectory to be used for bootstrapping
 export OBJDIR=bootstrp
 
-# set this variable to get debug build
+# Set this variable to 1 to get debug build
 export DEBUG_BUILD=0
 
-# set this variable if you want default windowing support
+# Set this variable to 1 to get default windowing support in clib
 export default_windowing=0
 
 # Stuff for the Open Watcom build environment

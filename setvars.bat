@@ -15,23 +15,23 @@ set P4USER=YourName
 set P4CLIENT=YOURCLIENT
 set P4PASSWD=YourPassword
 
-REM Change this to point to your OpenWatcom tree
+REM Change this to point to your Open Watcom source tree
 REM Must be an 8.3 name!
 set owroot=d:\openwa~1
 
-REM Change this to point to your Watcom 11.0c directory
-set watcom=c:\c\wc11
+REM Change this to point to your existing Open Watcom installation
+set watcom=c:\c\ow10
 
-REM Change this to the install location of GhostScript for PDF creation (only if you want it)
+REM Change this to the install location of GhostScript for PDF creation (optional)
 set GHOSTSCRIPT=C:\gs\gs7.04
 
-REM temporary sub-directory for pre-build OW tools
+REM Subdirectory to be used for bootstrapping
 set OBJDIR=prebuild
 
-REM set this variable to get debug build
+REM Set this variable to 1 to get debug build
 set DEBUG_BUILD=0
 
-REM set this variable if you want default windowing support
+REM Set this variable to 1 to get default windowing support in clib
 set default_windowing=0
 
 REM Change the default command prompt
@@ -42,7 +42,7 @@ set COMSPEC=%SystemRoot%\system32\CMD.EXE
 REM Make the window bigger
 mode 80,50
 cls
-echo OpenWatcom compiler build environment
+echo Open Watcom compiler build environment
 
 REM Stuff for the Open Watcom build environment
 set build_platform=nt386
@@ -59,12 +59,9 @@ set doc_root=%owroot%\docs
 set lang=%watcom%
 set include=%lang%\h;%lang%\h\win;%devdir%\watcom\h
 set lang_bld=%owroot%\bat
-set lc=-r
 set lib=%owroot%\bld\watcom\lib
-set more=-t
 set path=%owroot%\bin;%devdir%\build\binnt;%owroot%\bat;%lang%\binnt;%lang%\binw;%lang%\binp;%doc_root%\cmds;%defpath%
 set rm=-s
-set ver=11
 set watcom=%lang%
 set edpath=%lang%\eddat
 set wwinhelp=%owroot%\bld\online\hlp\ib
