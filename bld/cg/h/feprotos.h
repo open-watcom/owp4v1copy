@@ -34,7 +34,7 @@
 #define _FEPROTOS_H_INCLUDED
 
 // always want the prototypes
-#define CGCALLBACKDEF( a, b, c )        extern b a##c;
+#define CGCALLBACKDEF( a, b, c )        extern b a c;
 #include "cgfertns.h"
 #undef  CGCALLBACKDEF
 
@@ -43,7 +43,7 @@
 #include "cgdll.h"
 
 typedef struct fe_interface {
-    #define CGCALLBACKDEF( a, b, c ) b (*##a)##c;
+    #define CGCALLBACKDEF( a, b, c ) b (*a) c;
     #include "cgfertns.h"
     #undef  CGCALLBACKDEF
 } fe_interface;

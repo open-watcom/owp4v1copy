@@ -45,5 +45,7 @@
 #define _CGAPI
 #endif
 
+#if defined( _CGDLL )
 extern struct cg_interface * _CGDLLEXPORT BEDLLInit( struct fe_interface * );
 extern void                  _CGDLLEXPORT BEDLLFini( struct cg_interface * );
+#endif

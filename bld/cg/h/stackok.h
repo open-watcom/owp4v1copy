@@ -74,4 +74,4 @@ extern char near *__STACKLOW;
 
 #endif
 
-extern pointer          SafeRecurse( pointer (*)(), pointer );
+extern pointer          SafeRecurse( pointer (*)( void * ), pointer );

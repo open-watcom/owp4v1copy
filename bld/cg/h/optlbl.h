@@ -88,4 +88,4 @@ typedef struct code_lbl {
 #define _ValidLbl( lbl )
 #endif
 
-extern bool ValidLbl();
+extern bool ValidLbl( code_lbl *lbl );

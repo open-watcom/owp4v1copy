@@ -120,7 +120,7 @@ typedef enum {
 #define    EMPTY        0
 
 typedef struct name_def {
-        struct name_def         *next_name;
+        union name              *next_name;
         name_class_def          class;
         type_class_def          name_class;
         type_length             size;
@@ -163,7 +163,7 @@ typedef struct memory_name {            /*  global name value or address */
 
 typedef struct temp_name {
         struct var_name         _v;
-        struct temp_name        *alias;
+        union name              *alias;
         type_length             location;
         union {
             int                 id;             /*  temporary identification */
