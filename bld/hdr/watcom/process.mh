@@ -30,8 +30,10 @@ _WCRTLINK extern int execve( const char *__path, const char *const __argv[],
                             const char *const __envp[] );
 _WCRTLINK extern int execvp( const char *__file, const char *const __argv[] );
 
+:segment QNX | LINUX
+:include ext.sp
+:endsegment
 :segment QNX
-#if defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
 
 /*
  *  Spawn flags passed to qnx_spawn()
