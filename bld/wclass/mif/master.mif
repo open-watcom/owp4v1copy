@@ -95,7 +95,7 @@ extra_objlib_nt_386     = $(win_objs) $(ndos_objs) $(gui_dir)\win\guintf.lib
 extra_objlib_nt_axp     = $(win_objs) $(ndos_objs) $(gui_dir)\win\guintaxp.lib
 extra_objlib_win_i86    = $(win_objs) $(ndos_objs) $(gui_dir)\win\guiwinl.lib
 extra_objlib_dos_386    = $(ndos_objs) $(gui_dir)\ui\guidosf.lib
-extra_objlib_os2_386    = $(win_objs) $(ndos_objs) wddeobj.obj $(gui_dir)\win\guipmf.lib
+extra_objlib_os2_386    = $(win_objs) $(ndos_objs) wddeobj.obj $(gui_dir)\win\guios2f.lib
 
 extra_objlib = $(extra_objlib_$(host_OS)_$(host_CPU))
 

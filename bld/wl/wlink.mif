@@ -195,16 +195,7 @@ extend = exe
 
 # and finally, the miscellaneous macro definitions
 
-inc_dirs = ..\h;$(watcom_dir)\h
-!ifeq host_OS win
-inc_dirs += -i$(lang_root)\h\$(host_OS)
-!endif
-!ifeq host_OS nt
-inc_dirs += -i$(lang_root)\h\$(host_OS)
-!endif
-!ifeq host_OS os2
-inc_dirs += -i$(lang_root)\h\$(host_OS)
-!endif
+inc_dirs = ..\h;$(watcom_dir)\h;$(lang_root)\h;$(inc_dirs_sys_$(host_os))
 
 !ifndef execomp
 execomp = $(cc) -i$(inc_dirs)
@@ -214,26 +205,6 @@ compile = $(cc) $(cflags) $[@ -i$(inc_dirs)
 
 !ifeq host_OS qnx
 extra_rc_flags = /d_QNX
-!endif
-
-!ifdef jims_machine
-!   ifeq host_OS dos
-!       define bin_prefix $(dev_dir)\bin\bin\
-!   else ifeq host_OS os2
-!       ifeq sys_dll 1
-!           define bin_prefix $(dev_dir)\bin\binp\dll\
-!       else
-!           define bin_prefix $(dev_dir)\bin\binp\
-!       endif
-!   else ifeq host_OS qnx
-!       define bin_prefix $(dev_dir)\bin\qnx\
-!   else ifeq host_CPU 386
-!       define bin_prefix $(dev_dir)\bin\bin$(host_OS)\
-!   else
-!       define bin_prefix $(dev_dir)\bin\$(host_CPU)$(host_OS)\
-!   endif
-!else
-!   define bin_prefix
 !endif
 
 .extensions:
@@ -383,6 +354,7 @@ killnonobj: .SYMBOLIC .EXPLICIT
         @if exist *.lst del *.lst
         @if exist *.tmp del *.tmp
         @if exist *.ilk del *.ilk
+        @if exist *.sym del *.sym
         @if exist grok*.* del grok*.*
         @if exist ..\h\rcmsg.h del ..\h\rcmsg.h
 

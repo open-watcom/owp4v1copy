@@ -23,7 +23,7 @@ gui_lib         = $(gui_dir)\win\guintaxp.lib
 gui_lib         = $(gui_dir)\win\guintf.lib
 !else
 !ifeq host_OS os2
-gui_lib         = $(gui_dir)\win\guipmf.lib
+gui_lib         = $(gui_dir)\win\guios2f.lib
 !else
 gui_lib         = $(gui_dir)\win\guiwinl.lib
 !endif

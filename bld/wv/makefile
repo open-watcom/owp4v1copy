@@ -325,9 +325,9 @@ libs_win_i86_gui        = $(aui_dir)\win\aui.lib $(gui_dir)\win\guiwinl.lib
 libs_nt_386_char        = $(aui_dir)\nt\aui.lib $(gui_dir)\ui\guintf.lib $(ui_dir)\nt\uilibf.lib $(wres_dir)\lib\wresf.lib
 libs_nt_386_gui         = $(aui_dir)\nt\aui.lib $(gui_dir)\win\guintf.lib
 libs_os2_i86_char       = $(aui_dir)\ol\aui.lib $(gui_dir)\ui\guios2l.lib $(ui_dir)\os2\uilibl.lib $(wres_dir)\lib\wresl.lib
-libs_os2_i86_gui        = $(aui_dir)\pm\aui.lib $(gui_dir)\win\guipml.lib $(lang_root)\lib286\os2\os2.lib
+libs_os2_i86_gui        = $(aui_dir)\pm\aui.lib $(gui_dir)\win\guios2l.lib $(lang_root)\lib286\os2\os2.lib
 libs_os2_386_char       = $(aui_dir)\of\aui.lib $(gui_dir)\ui\guios2f.lib $(ui_dir)\os2\uilibf.lib $(wres_dir)\lib\wresf.lib
-libs_os2_386_gui        = $(aui_dir)\pmf\aui.lib $(gui_dir)\win\guipmf.lib
+libs_os2_386_gui        = $(aui_dir)\pmf\aui.lib $(gui_dir)\win\guios2f.lib
 libs_dos_386_char       = $(aui_dir)\of\aui.lib $(gui_dir)\ui\guidosf.lib $(ui_dir)\$(machine)dos\uilibf.lib $(wres_dir)\lib\wresf.lib
 libs_qnx_i86_char       = $(aui_dir)\ol\aui.lib $(gui_dir)\ui\guiqnxl.lib $(ui_dir)\qnx\uilibl.lib $(wres_dir)\lib\wresl.lib
 libs_qnx_386_char       = $(aui_dir)\o32s\aui.lib $(gui_dir)\ui\guiqnxs.lib $(ui_dir)\qnx\uilibs.lib $(wres_dir)\lib\wressqnx.lib
@@ -631,11 +631,11 @@ wvpm.res wvpmj.res : $(hdir)\wvpm.rc $(bitmaps) $(rcfiles) .autodepend
         wcc -dRC -i$(aui_dir)\pm;$(rcinclude) -p -pw=0 -fo=wvpmj.i $(hdir)\wvpm.rc /dJAPANESE_MESSAGES
         set opath=$(%path)
         set path=$(lang_root)\binp
-        $(lang_root)\binp\rc -i $(lang_root)\h\os2 -r foros2pm.rc
+        $(lang_root)\binp\rc -i $(inc_dirs_sys_os2_386) -r foros2pm.rc
         del wvpm.i
         copy foros2pm.res wvpm.res
         copy wvpmj.i wvpm.i
-        $(lang_root)\binp\rc -i $(lang_root)\h\os2 -r foros2pm.rc
+        $(lang_root)\binp\rc -i $(inc_dirs_sys_os2_386) -r foros2pm.rc
         copy foros2pm.res wvpmj.res
         set path=$(%opath)
         @set include=$(%oinc)

@@ -1,11 +1,16 @@
 #pmake: all build os_os2 cpu_386
+
+host_os  = os2
+host_cpu = 386
+
+!include cproj.mif
 !include deftarg.mif
 
 lnk = tmp.lnk
 
-c_opts = /zq /w4 /bt=OS2 /i$(lang_root)\h\os2
+c_opts = -zq -w4 -bt=OS2 -i$(inc_dirs_sys_os2)
 !ifndef on_build_machine
-c_opts += /d2
+c_opts += -d2
 !endif
 
 epmlink.dll : epmlink.obj

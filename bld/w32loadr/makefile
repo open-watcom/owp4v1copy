@@ -1,8 +1,5 @@
-!ifdef tools_10_5
-ZZ = /zz
-!else
-ZZ =
-!endif
+!include cproj.mif
+
 exes =  w32bind.exe &
         w32bindnt.exe &
         os2ldr.exe &
@@ -37,11 +34,11 @@ loader16.obj : loader16.asm
 os2stub.obj : os2stub.asm
         wasm os2stub
 loader.obj : loader.c loader.h
-        wcc386 loader /ox /d1 /d__OS2 /d__CALL21__ /zq /i$(watcom_os220_h)
+        wcc386 loader /ox /d1 /d__OS2 /d__CALL21__ /zq /i$(inc_dirs_sys_os2_386)
 bexpand.obj : bexpand.asm
         wasm bexpand
 int21os2.obj : int21os2.c
-        wcc386 int21os2 /ox /d1 /zq /i$(watcom_os220_h)
+        wcc386 int21os2 /ox /d1 /zq /i$(inc_dirs_sys_os2_386)
 tnk.obj : tnk.asm
         wasm tnk
 int21.obj : int21.asm
@@ -85,11 +82,11 @@ ntstub.exe : ntstub.obj
 ntstub.obj : ntstub.asm
         wasm ntstub
 int21nt.obj : int21nt.c
-  wcc386 int21nt $(ZZ) /ox /d1 /bt=NT /zq /i$(watcom_nt_h)
+  wcc386 int21nt /ox /d1 /bt=NT /zq /i$(watcom_nt_h)
 ntrun.obj : loader.c loader.h
-  wcc386 loader $(ZZ) /ox /d1 /bt=NT /d__NT /d__CALL21__ /fo=ntrun.obj /zq /i$(watcom_nt_h)
+  wcc386 loader /ox /d1 /bt=NT /d__NT /d__CALL21__ /fo=ntrun.obj /zq /i$(watcom_nt_h)
 ntrunner.obj : loader.c loader.h
-  wcc386 loader $(ZZ) /ox /d1 /bt=NT /d__NT /d__CALL21__ /dW32RUN /fo=ntrunner.obj /zq /i$(watcom_nt_h)
+  wcc386 loader /ox /d1 /bt=NT /d__NT /d__CALL21__ /dW32RUN /fo=ntrunner.obj /zq /i$(watcom_nt_h)
 
 # we don't need to link w386run with wstub.exe
 # this will make it about 14k smaller

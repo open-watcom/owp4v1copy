@@ -34,7 +34,7 @@ inc_dirs_lang   = $(lang_root)\h
 !endif
 
 .before
-    set $(build_target)_include=$(sysinclude);$(sys_dep_dir);$(watcom_dir)\h;$(guidir)\h;$(guidir)\$(type)\h;$(trmem_dir);$(help_dir)\h;$(plat_inc);$(inc_dirs_lang)
+    set $(build_target)_include=$(sysinclude);$(sys_dep_dir);$(watcom_dir)\h;$(guidir)\h;$(guidir)\$(type)\h;$(trmem_dir);$(help_dir)\h;$(inc_dirs_lang);$(plat_inc)
 
 nodebugflags = $(xflags)-zq-w3 -bt=$(build_target)
 !ifndef axp

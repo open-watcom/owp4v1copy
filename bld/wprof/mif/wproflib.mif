@@ -20,7 +20,7 @@ gui_dir_nt_386  = win\guintf
 gui_dir_nt      = $(gui_dir_nt_$(host_CPU))
 gui_dir_dos     = ui\guidosf
 !ifeq PM 1
-gui_dir_os2     = win\guipmf
+gui_dir_os2     = win\guios2f
 !else
 gui_dir_os2     = ui\guios2f
 !endif

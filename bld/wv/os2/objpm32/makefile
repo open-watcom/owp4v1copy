@@ -4,10 +4,10 @@
 #
 
 # trmem = 1
-host_OS=os2
-host_CPU=386
-display=gui
-syshdir = $(mdir)\$(sysdir)\h;$(lang_root)\h\os2
+host_OS  = os2
+host_CPU = 386
+display  = gui
+syshdir  = $(mdir)\$(sysdir)\h;$(inc_dirs_sys_os2)
 
 #trap loader is different for 32-bit OS/2
 dig_os_os2_386=os2v2
