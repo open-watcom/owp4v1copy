@@ -295,20 +295,20 @@ wcc.u: ../usage.sp msgencod.exe intlbin.exe
         wsplice -k T$(target_cpu) -k H$(host_cpu) -k OS_$(host_os) -u -t8 ../usage.sp wcc.u
 
 ./usageenc.exe: $(fe_misc_dir)/c/usageenc.c ../jusage.sp
-        $(bld_cl) $(inc_path) $[@ $(wcl_util_opts)
+        $(bld_cl) -I"$(fe_misc_dir)/h" $[@ $(wcl_util_opts)
 
 usage01.int : ./usageenc.exe ../jusage.sp
         wsplice -k T$(target_cpu) -k H$(host_cpu) -k OS_$(host_os) ../jusage.sp usageenc.int
         $[@ usageenc.int usage01.int
 
 ./msgencod.exe: $(fe_misc_dir)/c/msgencod.c
-        $(bld_cl) $(inc_path) $[@ $(wcl_util_opts)
+        $(bld_cl) -I"$(fe_misc_dir)/h" $[@ $(wcl_util_opts)
 
 msgtxt.gh msgdefs.gh msgattr.gh errors01.int : ./msgencod.exe ../gml/cerrs.gml
         $[@ -i -ip -q -g ../gml/cerrs.gml msgtxt.gh msgdefs.gh msgattr.gh
 
 ./intlbin.exe: $(fe_misc_dir)/c/intlbin.c
-        $(bld_cl) $(inc_path) $[@ $(wcl_util_opts)
+        $(bld_cl) -I"$(fe_misc_dir)/h" $[@ $(wcl_util_opts)
 
 $(intname)01.int : ./intlbin.exe errors01.int usage01.int
         $[@ $(intname)
@@ -320,7 +320,7 @@ cc.rc : ./genverrc.exe ../rc/r_$(host_os)$(host_cpu).rc
         $[@ ../rc/r_$(host_os)$(host_cpu).rc cc.rc $$ $(dllname).dll $(patch_level)
 
 ./mkopcode.exe: $(wasm_dir)/mkopcode.c
-        $(bld_cl) $(inc_path) $[@ $(wcl_util_opts)
+        $(bld_cl) $[@ $(wcl_util_opts)
 
 inlnops.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
         $[@ $(wasm_dir)/inlnops.tok $^@

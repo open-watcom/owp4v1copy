@@ -95,7 +95,7 @@ errmsg.res : ../c/errmsg.rc ../h/errmsgi.rc ../h/errmsg3.rc ../h/errcod.h ../h/e
     $(rc_aui) -I"$(f77_dir)/h" -I"$(f77_dir)/cg86/h" -I"$(wasm_dir)/h" $[@ -fo=$^@
 
 ./mkopcode.exe: $(wasm_dir)/mkopcode.c
-    $(bld_cl) $(wcl_util_opts) $(inc_path) $[@
+    $(bld_cl) $[@ $(wcl_util_opts)
 
 inlnops.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
     $[@ $(wasm_dir)/inlnops.tok $^@

@@ -391,7 +391,7 @@ $(dll_dbg_name).dll : $(depends_dll) pdlldbg.lnk
     $(linker) $(lflags_dll) NAME $^* @pdlldbg
 
 ./genverrc.exe: $(fe_misc_dir)/c/genverrc.c
-        $(bld_cl) $(wcl_util_opts) -D_VERSION=$(bld_ver) $[@
+        $(bld_cl) -D_VERSION=$(bld_ver) $[@ $(wcl_util_opts)
 
 plusplus.rc : ./genverrc.exe ../rc/r_$(host_os)$(host_cpu).rc
         $[@ $]@ $^@ $$ $(dll_bld_name).dll $(patch_level)
@@ -494,7 +494,7 @@ pdlldbg.lnk : pdll.lnk
 # miscellaneous build rules
 #
 ./intlbin.exe: $(fe_misc_dir)/c/intlbin.c
-    $(bld_cl) $[@ $(wcl_util_opts) $(inc_path)
+    $(bld_cl) -I"$(fe_misc_dir)/h" $[@ $(wcl_util_opts)
 
 wpp$(target_cpu)01.int : ./intlbin.exe errors01.int usage01.int
     $[@ wpp$(target_cpu)
@@ -504,7 +504,7 @@ wpp$(target_cpu)01.int : ./intlbin.exe errors01.int usage01.int
 #!endif
 
 ./msgencod.exe: $(fe_misc_dir)/c/msgencod.c
-    $(bld_cl) $[@ $(wcl_util_opts) $(inc_path)
+    $(bld_cl) -I"$(fe_misc_dir)/h" $[@ $(wcl_util_opts)
 
 errmsgs.c errmsgs.gh errlevel.gh errors01.int : ./msgencod.exe ../gml/messages.gml
     $[@ $(msgencod_opts) -i -q ../gml/messages.gml errmsgs.c errmsgs.gh errlevel.gh
@@ -547,19 +547,19 @@ ytab.c ytab.gh : ../y/plusplus.y ../c/yydriver.c
     rm -f ytab.h
 
 ./optencod.exe: $(fe_misc_dir)/c/optencod.c
-    $(bld_cl) $[@ $(wcl_util_opts) $(inc_path) 
+    $(bld_cl) -I"$(fe_misc_dir)/h" $[@ $(wcl_util_opts)
 
 cmdlnprs.c cmdlnprs.gh cmdlnusg.gh usage.u usage01.int : ./optencod.exe ../gml/options.gml
     $[@ -i -q $(optencod_opt_$(host_os)) $]@ cmdlnprs.gh cmdlnprs.c cmdlnusg.gh $(target_cpu) $(optencod_targ_dbg) $(optencod_targ_$(host_os))
 
 ./icmask.exe: ../c/icmask.c
-    $(bld_cl) $< $(wcl_util_opts) $(inc_path)
+    $(bld_cl) $< $(wcl_util_opts)
 
 ic_mask.gh : ./icmask.exe ../h/ic.h ../c/dwarf.c ../c/cgbkcgrf.c ../c/cgio.c ../c/brmwrite.c
     $[@ ../h/ic.h ../c/dwarf.c ../c/cgbkcgrf.c ../c/cgio.c ../c/brmwrite.c
 
 ./mkopcode.exe: $(wasm_dir)/mkopcode.c
-        $(bld_cl) $[@ $(wcl_util_opts) $(inc_path)
+        $(bld_cl) $[@ $(wcl_util_opts)
 
 inlnops.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
         $[@ $(wasm_dir)/inlnops.tok $^@
@@ -584,7 +584,7 @@ xcode$(target_cpu).tmp: $(cc_dir)/a/code$(target_cpu).asm
         $(linker) format dos com op nodefault file code$(target_cpu).obj name $^@ disable 1023,1080
 
 ./mkcode.exe: $(cc_dir)/a/mkcode.c
-        $(bld_cl) $[@ $(wcl_util_opts) $(inc_path)
+        $(bld_cl) $[@ $(wcl_util_opts)
 
 !endif
 
