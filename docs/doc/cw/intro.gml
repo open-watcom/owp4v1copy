@@ -5,14 +5,14 @@
 .*
 .np
 CauseWay is a 386 DOS extender package for use with Watcom C/C++
-programs.  It consists of a DOS extender provided as a stub EXE for
-Watcom C/C++ applications as well as several support utilities.
+programs.  It is provided as a stub executable for which can be easily 
+linked into DOS extended applications.
 .*
 .section Introduction
 .*
 .np
 Within the standard DOS, Windows and OS/2 DOS box environments,
-CauseWay supports very large memory models for applications on PC
+CauseWay supports 32-bit memory models for applications on PC
 compatibles with an 80386SX processor or above without the need to use
 overlays or crude stopgap measures such as EMS/XMS swapping.  To do
 this, the DOS extender runs applications in protected mode, rather than
@@ -41,22 +41,27 @@ schemes.
 .np
 A primary objective of CauseWay development was to ensure minimal effort
 would be needed by programmers to adapt their code to work with the
-CauseWay DOS extender.  As a result, most Watcom C/C++ and many real mode
-assembly language programs need no or minor changes to produce a fully
+CauseWay DOS e
+tender.  As a result, most Watcom C/C++ an.fi  many realmode
+assembl
+.fi  language 
+ograms need no or minor changes to produce a fully
 operational CauseWay protected mode application.
 .*
 .section Minimum System Requirements
 .*
+.fi 
 .np
 CauseWay for Watcom C/C++ requires a 386SX based
 computer or better.  The required operating environment is MS-DOS or
-PC-DOS 3.1 or higher, Windows 3.0 or higher, OS/2 2.0 and above,
+PC-DOS 3.3 or higher, Windows 3.0 or higher, OS/2 2.0 and above,
 Windows 95 and above, Windows NT or higher or a
 compatible operating system that provides a DPMI or VCPI DOS
 environment.
 .np
-DOS 3.3+ and a 386 machine or better are necessary to run CauseWay
-applications.
+CauseWay is to a large extent compatible with Tenberry Software's DOS/4GW.
+Most applications built for DOS/4GW will run with CauseWay without any 
+changes.
 .*
 .section CauseWay Memory Requirements
 .*
@@ -67,10 +72,12 @@ conventional DOS memory, the remainder may be extended memory.  CauseWay
 applications can run in less memory, down to the 300KB range, provided
 sufficient virtual (disk-based) memory is available, but application
 performance will decline significantly.  More physical memory improves a
-program's performance, reducing virtual memory disk access overhead.
+.fi rogram's pr
+formanc, reducin virtual memory disk access overhead.
 .*
 .section Operating CauseWay
 .*
+.np
 When using CauseWay, simply follow the standard
 edit-compile/assemble-link programming cycle familiar to C and assembly
 language programmers.
@@ -102,12 +109,16 @@ passes control to the application to begin operation.  No additional
 files are required to make your application run in 386 protected mode
 using the CauseWay DOS extender.
 .np
-*CWSTUB.EXE* will execute stand-alone LE-format files in the same
-way as *DOS4GW.EXE* does if the full file name, including extension, is
+.fi CWSTUB.EXE
+will execute stand-alone LE-format files in the same
+way as 
+.fi DOS4GW.EXE
+does if the full file name, including extension, is
 listed after CWSTUB, e.g. 
 .mono CWSTUB RUNME.EXE. 
 CWSTUB will override the extender bound to the application EXE, if any, 
-with the CauseWay DOS extender version in CWSTUB.EXE.
+with the CauseWay DOS extender version in 
+.fi CWSTUB.EXE.
 .*
 .section Debugging Using WD
 .*
@@ -129,7 +140,8 @@ command.
 By default, CauseWay uses a Ctrl-Alt keypress to interrupt the WD
 debugger, rather than the Print-Screen key.  This can be changed to any
 two, three, or four keypress value by modifying the ASCII file
-*CWHELP.CFG* at the /BreakKeys/ line.  See comments in this file for
+.fi CWHELP.CFG 
+at the BreakKeys line.  See comments in this file for
 further detail.  Note that a single keypress value will not work properly.
 .*
 .section Operational Considerations When Using CauseWay
@@ -140,7 +152,7 @@ The
 .ev TEMP
 , 
 .ev TMP
-, and 
+and 
 .ev CAUSEWAY=SWAP 
 environment variables are used by
 CauseWay to determine where to build its virtual memory swap file when
@@ -151,10 +163,10 @@ use the
 .ev TEMP
 , 
 .ev TMP
-, or 
+or 
 .ev SWAP 
 environment variable to point to a small RAM
-disk or almost full disk, free memory will be affected accordingly.  If
+sk or almost full disk, free memory will be affected accordingly.  If
 virtual (disk-based) memory is less than physical (installed on machine)
 memory, Cause Way turns off virtual memory. On the other hand, if you
 have a disk 300MB free, CauseWay will have no problem reporting 300MB
@@ -205,7 +217,7 @@ memory and which have not been recently requested. After startup is
 complete, the program will operate normally, paging to and from virtual
 memory as necessary.
 .np
-CauseWay automatically sets aside 32K of low DOS memory for allocation
+CauseWay automatically sets aside 32KB of low DOS memory for allocation
 and use by developer routines via the GetMemDOS API function. The 32K
 memory block is available even if CauseWay needs to use virtual memory
 just to load an application. The set-aside amount can be increased by
@@ -222,7 +234,7 @@ CauseWay can make use of three environment variables at runtime:
 .ev TEMP
 , 
 .ev TMP
-, and 
+and 
 .ev CAUSEWAY
 .*
 .beglevel
@@ -315,7 +327,8 @@ memory manager must support DPMI or else this setting is ignored.
 Force CauseWay to use all extended memory and
 sub-allocate memory from the bottom up instead of the default top-down
 approach.  This setting is most useful for processor intensive
-environments which have a small hardware CPU cache.  Use of this setting
+environments which have a small hardware cache that does not cover the 
+entire physical address range.  Use of this setting
 means that no extended memory will be available for other programs while
 the application is loaded (including shelling to DOS).
 .*

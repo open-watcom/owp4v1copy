@@ -2,7 +2,7 @@
 .np
 .ix 'flat model'
 Flat model is a non-segmented memory model that allows accessing data
-and executing code anywhere within the 4GB physical address region via a
+and executing code anywhere within the 4GB linear address region via a
 32-bit offset without the need to use segment registers to point to the
 memory.  In many respects, the memory model is identical to the tiny
 memory model well-known to DOS C and assembly language programmers, but
@@ -15,7 +15,7 @@ For example, writing to memory location 0B8000h will
 address video memory.  Reading from memory locations in the 0FFF00h
 range will access ROM code. Under DPMI there is usually no direct
 relationship between linear and physical addresses, the DPMI host will
-however emulate access to video memory etc. as appropriate without
+however emulate access to memory below 1MB as appropriate without
 requiring any special considerations on the part of application writer.
 .np
 .ix 'near model'
@@ -58,8 +58,11 @@ display an error message, CauseWay will simply report a load error.  The
 entry address is a FAR call, so the initialization code should use a
 RETF to return control to the calling program.
 .np
-A minimal DLL startup system is provided in the DLLSTRTR.OBJ
-(register-based) and the DLLSTRTS.OBJ (stack-based) files. 
+A minimal DLL startup system is provided in the 
+.fi DLLSTRTR.OBJ
+(register-based) and the 
+.fi DLLSTRTS.OBJ
+(stack-based) files. 
 .np
 CauseWay loads DLLs when the program being loaded has references to
 external modules in the DLL.  CauseWay searches the execution path for
@@ -233,7 +236,7 @@ operation under multitatsking environments.
 If your CauseWay application reads and writes files using large amounts
 of data on one read or write pass, you may wish to consider increasing
 the size of the internal DOS memory transfer buffer used by CauseWay.
-Refer to the SetDOSTrans and GetDOSTrans functions in the /CauseWay API/
+Refer to the SetDOSTrans and GetDOSTrans functions in the CauseWay API
 chapter for more information.
 .np
 Note that the internal 8KB buffer is optimized for file transfers.
@@ -446,15 +449,15 @@ a bad (NULL) memory pointer passed to a routine.
 .np
 Next, the processor control register values are listed.  These registers
 are unlikely to be of much use for debugging and will only be filled in
-when not running under a true DPMI server. For an exception 0Eh (page
+when not running under a true DPMI host. For an exception 0Eh (page
 fault), CR2 is the linear address that was accessed for which no memory
 was mapped in.  This may help track down the problem area.
 .np
-*Info Flags*= comes next. This value is returned by CauseWay's Info API
-function.  Check it against the documentation for Info in the /CauseWay/
-/API/ chapter to determine some aspects of the environment in which the
+Info Flags comes next. This value is returned by CauseWay's Info API
+function.  Check it against the documentation for Info in the CauseWay
+API chapter to determine some aspects of the environment in which the
 program was running when the exception occurred, e.g.  whether a DPMI
-server was being used.
+host was being used.
 .np
 Program Linear Load Address follows Info Flags.  This value is th
 executable's load address in linear memory.  It corresponds to one of

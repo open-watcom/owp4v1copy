@@ -427,13 +427,13 @@ DX= Initial selector for allocated block
 If there are not enough selectors or memory available
 then this function returns carry set.
 .note Notes:
-If the size of the block requested is greater than 64K
+If the size of the block requested is greater than 64KB
 bytes (BX >1000h) then contiguous descriptors are allocated.  If more
 than one descriptor is allowed under 32-bit applications, the limit of
 the first descriptor is set to the size of the entire block.  All
-subsequent descriptors have a limit of 64K except for the final
-descriptor which has a limit of block size modulo 64K. For 16-bit
-applications, always set the limit of the first descriptor to 64K.
+subsequent descriptors have a limit of 64KB except for the final
+descriptor which has a limit of block size modulo 64KB. For 16-bit
+applications, always set the limit of the first descriptor to 64KB.
 .endnote
 .*
 .mbox begin
@@ -592,17 +592,17 @@ None.
 .note Inputs:
 AX= 0ff00h
 .note Outputs:
-AX= Selector for real mode segment address of 00000h, 4G limit.
+AX= Selector for real mode segment address of 00000h, 4GB limit.
 .br
 BX= Selector for current PSP segment. 100h limit.
 .br
-[E]CX= DOS transfer buffer size. Always <64K.
+[E]CX= DOS transfer buffer size. Always <64KB.
 .br
 DX= DOS transfer buffer real mode segment address.
 .br
 ES:[E]SI= DOS transfer buffer address.
 .br
-ESI+ECX always <64K
+ESI+ECX always <64KB
 .br
 EDI= System flags. Bits significant if set.
 .br
@@ -676,9 +676,9 @@ enough physical memory is available to fill the region specified, then
 none of the memory is locked and this function returns carry set.
 .note Notes:
 Memory that is locked cannot be swapped to disk by the
-VMM. Locking applies to memory on 4K boundaries. Therefore, areas of
+VMM. Locking applies to memory on page (4KB) boundaries. Therefore, areas of
 memory below and above the memory being locked are locked if the
-specified region is not aligned to a 4K boundary.
+specified region is not aligned to a page boundary.
 .endnote
 .*
 .mbox begin
@@ -697,9 +697,9 @@ Carry set on error.
 See LockMem.
 .note Notes:
 Memory that is locked cannot be swapped to disk by the
-VMM. Locking applies to memory on 4K boundaries. Therefore, areas of
+VMM. Locking applies to memory on page (4KB) boundaries. Therefore, areas of
 memory below and above the memory being locked are locked if the
-specified region is not aligned to a 4K boundary.
+specified region is not aligned to a page boundary.
 .endnote
 .*
 .mbox begin
@@ -715,7 +715,7 @@ None.
 .note Outputs:
 None.
 .note Notes:
-Use this function to release call-back addresses once
+Uspe this function to release call-back addresses once
 they are no longer needed.
 .endnote
 .*
@@ -909,7 +909,7 @@ returns carry set.
 .note Notes:
 Growing a memory block is often likely to fail since
 other DOS block allocations prevent increasing the size of the block.
-Also, if the size of a block grows past a 64K boundary then the
+Also, if the size of a block grows past a 64KB boundary then the
 allocation fails if the next descriptor in the LDT is not free.
 .endnote
 .*
@@ -971,14 +971,14 @@ BX = Real mode segment of buffer.
 .br
 DX = Protected mode selector for buffer.
 .br
-ECX = Buffer size (should be <=64K)
+ECX = Buffer size (should be <=64KB)
 .note Outputs:
 None
 .note Errors:
 None
 .note Notes:
 The buffer must be in conventional memory and only the
-first 64K will be used even if a bigger buffer is specified. CauseWay
+first 64KB will be used even if a bigger buffer is specified. CauseWay
 will automatically restore the previous buffer setting when the
 application terminates but GetDOSTrans can be used to get the current
 buffer's settings if you only want the change to be temporary.
@@ -1032,7 +1032,7 @@ outside this range returns carry set.
 .note Inputs:
 AX = 0ff28h
 .br
-ECX = New value to set (<=64K)
+ECX = New value to set (<=64KB)
 .note Outputs:
 None
 .note Errors:
@@ -1047,8 +1047,8 @@ allocate memory from two sources.  Allocation requests below the value
 returned by this function are allocated from a memory pool controlled
 via conventional style MCB's. Requests above this value are allocated
 via the normal DPMI functions. Because DPMI memory is always allocated
-in multiples of 4K it can become very inefficient for any program that
-needs to allocate small blocks of memory. The value set by this function
+in multiples of pages (4KB) it can become very inefficient for any program 
+that needs to allocate small blocks of memory. The value set by this function
 controls the size of memory chunks that will be allocated to and managed
 by the MCB system.
 .np
@@ -1056,7 +1056,7 @@ A value of zero can be passed to this function to
 disable the MCB allocation system.
 .np
 The value passed will be rounded up to the
-nearest 4K.
+nearest page (4KB) boundary.
 .endnote
 .*
 .mbox begin
@@ -1147,8 +1147,8 @@ function returns carry set.
 .note Notes:
 This function allows the unlocked memory to be swapped
 to disk by the VMM if necessary.  Areas below and above the specified
-memory to the nearest 4K boundary are unlocked if the specified region
-is not aligned to a 4K boundary.
+memory to the nearest page (4KB) boundary are unlocked if the specified region
+is not aligned to a page boundary.
 .endnote
 .*
 .mbox begin
@@ -1168,8 +1168,8 @@ See UnLockMem
 .note Notes:
 This function allows the memory to be swapped to disk
 by the VMM if necessary.  Areas below and above the specified memory to
-the nearest 4K boundary are unlocked if the specified region is not
-aligned to a 4K boundary.
+the nearest page (4KB) boundary are unlocked if the specified region is not
+aligned to a page boundary.
 .endnote
 .*
 .mbox begin
