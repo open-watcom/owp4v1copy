@@ -92,4 +92,7 @@ cdsay .
 
 [ BLOCK <1> clean ]
 #==================
+    cd alias\library
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
+    cd ..\..
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
