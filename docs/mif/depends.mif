@@ -2234,6 +2234,7 @@ $(docsrc_dir)\pg\pgwin32.gml &
 $(docsrc_dir)\pg\pgwin32q.gml &
 $(docsrc_dir)\pg\pgwin32w.gml &
 $(docsrc_dir)\pg\pgwinnt.gml &
+$(docsrc_dir)\pg\pgwinntc.gml &
 $(docsrc_dir)\pg\pgwinntw.gml &
 $(docsrc_dir)\pg\pgwinpsx.gml &
 $(docsrc_dir)\pg\rational.gml &
