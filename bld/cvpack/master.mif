@@ -1,15 +1,13 @@
 proj_name = cvpack
 
+cvpack_autodepends = .autodepend
+
 inc_dirs = $(watcom_dir)\h;$(dev_dir)\$(proj_name)\hpp
 
-extra_c_flags = -xs
-extra_l_flags = name $(exe_file) op map #option eliminate
+extra_cpp_flags = -xs
+extra_l_flags   = name $(exe_file) op map #option eliminate
 
 !include cproj.mif
-
-.BEFORE
-    set include=$(inc_path)
-
 !include deftarg.mif
 !include defrule.mif
 
@@ -23,15 +21,10 @@ object_files =  cvpack.obj retrieve.obj cverror.obj packtype.obj
 object_files += subsect.obj cssymbol.obj makeexe.obj symdis.obj
 object_files += typemap.obj typearray.obj typerecord.obj common.obj
 
-common_include = $(h_dir)common.hpp $(h_dir)cverror.hpp $(makefile)
-
-.EXTENSIONS:
-.EXTENSIONS: .exe .obj .asm .cpp .hpp
+.cpp : $(cpp_dir)
+.hpp : $(h_dir)
 
 $(exe_file) : $(object_files) $(makefile)
     $(linker) $(lflags) FILE { $(object_files) }
 
-.cpp : $(cpp_dir)
-.hpp : $(h_dir)
-.cpp.obj : .AUTODEPEND
-    $(cpp) $(cflags) $(extra_c_flags_$[&) $[@
+

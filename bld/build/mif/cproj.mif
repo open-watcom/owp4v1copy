@@ -136,6 +136,8 @@ cflags_os2     += -br
 
 proj_c_flags     = $(extra_c_flags) $(extra_c_flags_$(host_cpu)) $(extra_c_flags_$(host_os))
 cflags           = $(cflags_all) $(cflags_$(host_cpu)) $(cflags_$(host_os)) $(mode_cflags) $(proj_c_flags)
+proj_cpp_flags   = $(extra_cpp_flags) $(extra_cpp_flags_$(host_cpu)) $(extra_cpp_flags_$(host_os))
+cppflags         = $(cppflags_all) $(proj_cpp_flags)
 
 lflags_dos_i86   = sys dos
 lflags_nt_axp    = sys ntaxp
