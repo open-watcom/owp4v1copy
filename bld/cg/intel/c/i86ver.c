@@ -49,8 +49,8 @@ extern  byte            OptForSize;
 extern  bool    DoVerify( vertype kind, instruction *ins ) {
 /**********************************************************/
 
-    name        *op1;
-    name        *op2;
+    name        *op1 = NULL;
+    name        *op2 = NULL;
     name        *result;
 
     result = ins->result;
@@ -172,6 +172,8 @@ extern  bool    DoVerify( vertype kind, instruction *ins ) {
         case OP_SUB:
             if( OptForSize < 50 && !_CPULevel( CPU_286 ) ) return( FALSE );
             return( TRUE );
+        default:
+            break;
         }
         break;
     case V_SIZE:
@@ -244,6 +246,8 @@ extern  bool    DoVerify( vertype kind, instruction *ins ) {
                 if( ins->num_operands > NumOperands( ins ) ) return( FALSE );
                 if( op1->i.base == NULL ) return( FALSE );
                 return( TRUE );
+            default:
+                break;
             }
         }
         break;
