@@ -24,19 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Techhelp utility. This program was originally designed to
+*               help the oh so overworked technical support department at
+*               WATCOM. It helps to resolve any ambiguities that always seem
+*               to be present when getting information from an user about
+*               the environment that he/she runs in.
 *
 ****************************************************************************/
 
-
-/****************************************************************************/
-/*  Techhelp Utility -                                                      */
-/*  This program was designed to help the oh so overworked technical        */
-/*  support department at WATCOM.  It helps to resolve any ambiguities      */
-/*  that always seem to be present when getting information from an user    */
-/*  about the environment that he/she runs in.                              */
-/****************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -209,7 +204,7 @@ char *WSQL_Dirs[] = {
     "\\mac",
     NULL };
 
-char *ProcessorType[2][6][2] =
+char *ProcessorType[2][8][2] =
 {
     {
         { "8086",   "8088"  },
@@ -217,7 +212,9 @@ char *ProcessorType[2][6][2] =
         { "80286",  "unknown" },
         { "80386",  "unknown" },
         { "80486",  "unknown" },
-        { "Intel Pentium",  "unknown" }
+        { "Intel Pentium",  "unknown" },
+        { "Intel Pentium Pro/II/III",  "unknown" },
+        { "Intel Pentium 4",  "unknown" }
     },
 
     {
@@ -226,18 +223,22 @@ char *ProcessorType[2][6][2] =
         { "unknown",      "unknown" },
         { "unknown",      "unknown" },
         { "unknown",      "unknown" },
+        { "unknown",      "unknown" },
+        { "unknown",      "unknown" },
         { "unknown",      "unknown" }
     }
 };
 
-char *CoProcessorType[6] =
+char *CoProcessorType[8] =
 {
     "No",
     "8087",
     "80287",
     "80387",
     "80486 DX processor or 80487 SX",
-    "Pentium"
+    "Pentium",
+    "Pentium Pro/II/III",
+    "Pentium 4"
 };
 
 char *IsNotIs[2] =
@@ -295,10 +296,7 @@ void do_company_header()
     time_of_day = time( NULL );
     techoutput( BANNER "\n" );
     techoutput( "Current Time: %s", ctime( &time_of_day) );
-    techoutput( "Watcom\t\t\t\tPhone: (519) 884-0702\n" );
-    techoutput( "415 Phillip St.\t\t\tFax: (519) 747-4971\n" );
-    techoutput( "Waterloo, Ontario\n" );
-    techoutput( "CANADA    N2L 3X2\n" );
+    techoutput( "Visit http://www.openwatcom.org/\n" );
     techoutput( "\n" );
 }
 
@@ -545,6 +543,8 @@ void machine_type( int print )
     ndptype = NDPType();
     if( (plevel ==  4) && (ndptype == 3) ) ndptype = 4;
     if( (plevel ==  5) && (ndptype == 3) ) ndptype = 5;
+    if( (plevel ==  6) && (ndptype == 3) ) ndptype = 6;
+    if( (plevel ==  7) && (ndptype == 3) ) ndptype = 7;
     techoutput( "An %s processor is installed in this system.\n",
                 ProcessorType[manuf][plevel][buswidth] );
 
