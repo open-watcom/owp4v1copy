@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  make C file for errors messages
 *
 ****************************************************************************/
 
-
-//
-// ERRSRC:  make C file for errors messages
-//
 
 #include <stdio.h>
 #include <malloc.h>
@@ -68,7 +63,9 @@ typedef struct group_list {
     int                 end_msg_num;
 } group_list;
 
-#include "errsrc.def"
+static  msg_list        *AddWords( char *msg );
+static  msg_list        *InitMsg( void );
+static  word_list       *ProcessWord( char *word );
 
 static  word_list       *HeadWord;
 static  msg_list        *HeadMsg;
@@ -640,7 +637,7 @@ static  void    DumpMsg() {
 
     msg = HeadMsg;
     if( sw_compiler == 'w' ) {
-        fprintf( ErrGrp, "#if ( _OPT_CG == _OFF ) || !defined( __RT__ )\n\n" );
+        fprintf( ErrGrp, "#if !defined( __RT__ )\n\n" );
     }
     if( (sw_compiler == 'w') ||
         ( (sw_compiler == 'o') && (sw_used_at == 'c') ) ) {

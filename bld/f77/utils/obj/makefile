@@ -40,16 +40,6 @@ __err : errsrc.exe .symbolic
         $(%check_out) $(f77_dir)\cg86\cp\h\jerrmsgi.rc
         $(%check_out) $(f77_dir)\cg86\cp\h\jerrmsg3.rc
         $(%check_out) $(f77_dir)\cg86\cp\h\jerrmsgr.rc
-        $(%check_out) $(f77_dir)\lg86\h\errcod.h
-        $(%check_out) $(f77_dir)\lg86\c\errmsg.c
-        $(%check_out) $(f77_dir)\lg86\h\errmsgw.rc
-        $(%check_out) $(f77_dir)\lg86\c\errgrp.c
-        $(%check_out) $(f77_dir)\lg86\rt\asm\errcod.inc
-        $(%check_out) $(f77_dir)\lg86\rt\h\errcod.h
-        $(%check_out) $(f77_dir)\lg86\rt\c\errmsg.c
-        $(%check_out) $(f77_dir)\lg86\rt\c\errmsg.rc
-        $(%check_out) $(f77_dir)\lg86\rt\c\errgrp.c
-#       $(%check_out) $(f77_dir)\lg86\rt\c\jerrmsg.rc
         $(%check_out) $(f77_dir)\wfl\h\errcodi.h
         $(%check_out) $(f77_dir)\wfl\h\errmsgi.c
         $(%check_out) $(f77_dir)\wfl\h\errmsgi.rc
@@ -65,7 +55,6 @@ __err : errsrc.exe .symbolic
         $(%check_out) $(f77_dir)\wfl\h\errmsgr.rc
         $(%check_out) $(f77_dir)\wfl\h\errgrpr.c
         $(%check_out) $(f77_dir)\wfl\h\jerrmsgr.rc
-        $(%check_out) $(f77_dir)\lg86\nec\errmsgw.rc
 !ifndef checkin
         errsrc eo r
         cp errcod.h $(f77_dir)\cg86\rt\h\errcod.h
@@ -105,27 +94,6 @@ __err : errsrc.exe .symbolic
         cp errmsg.rc $(f77_dir)\cg86\cp\h\errmsgr.rc
         del errmsg.rc
         cp errgrp.c $(f77_dir)\cg86\cp\h\errgrpr.c
-        del errgrp.c
-        del errmsg.msg
-        errsrc ew
-        cp errcod.h $(f77_dir)\lg86\h\errcod.h
-        del errcod.h
-        cp errmsg.c $(f77_dir)\lg86\c\errmsg.c
-        del errmsg.c
-        cp errmsg.rc $(f77_dir)\lg86\h\errmsgw.rc
-        del errmsg.rc
-        cp errgrp.c $(f77_dir)\lg86\c\errgrp.c
-        del errgrp.c
-        sed -e 's/^$#define    //' -e 's/ / EQU /' $(f77_dir)\lg86\h\errcod.h >$(f77_dir)\lg86\rt\asm\errcod.inc
-        del errmsg.msg
-        errsrc ew r
-        cp errcod.h $(f77_dir)\lg86\rt\h\errcod.h
-        del errcod.h
-        cp errmsg.c $(f77_dir)\lg86\rt\c\errmsg.c
-        del errmsg.c
-        cp errmsg.rc $(f77_dir)\lg86\rt\c\errmsg.rc
-        del errmsg.rc
-        cp errgrp.c $(f77_dir)\lg86\rt\c\errgrp.c
         del errgrp.c
         del errmsg.msg
         errsrc elic
@@ -186,20 +154,6 @@ __err : errsrc.exe .symbolic
         del errmsg.c
         del errgrp.c
         del errmsg.msg
-        errsrc jw
-        cp errmsg.rc $(f77_dir)\lg86\nec\errmsgw.rc
-        del errmsg.rc
-        del errcod.h
-        del errmsg.c
-        del errgrp.c
-        del errmsg.msg
-#       errsrc jw r
-#       cp errmsg.rc $(f77_dir)\lg86\rt\c\jerrmsg.rc
-#       del errmsg.rc
-#       del errcod.h
-#       del errmsg.c
-#       del errgrp.c
-#       del errmsg.msg
         errsrc jlic
         cp errmsg.rc $(f77_dir)\wfl\h\jerrmsgi.rc
         del errmsg.rc
@@ -229,9 +183,8 @@ errsrc : errsrc.exe .symbolic
 errsrc.exe : errsrc.obj
         wlink d a f errsrc
 
-errsrc.obj : ..\c\errsrc.c
-        wcc386 $[@ /w3 /d1 /i=$(lang_root)\h;$(c_dir)h /dstatic=extern /zs /v >nul
-        wcc386 $[@ /w3 /d1 /i=$(lang_root)\h;$(c_dir)h
+errsrc.obj : ../c/errsrc.c
+        wcc386 $[@ -w3 -d1 -I"$(lang_root)/h" -I$(c_dir)h
 
 makedoc : errdoc.exe .symbolic
         errdoc
@@ -239,5 +192,8 @@ makedoc : errdoc.exe .symbolic
 errdoc.exe : errdoc.obj
         wlink d a f errdoc
 
-errdoc.obj : ..\c\errdoc.for
-        wfc386 $[@ /d1
+errdoc.obj : ../c/errdoc.for
+        wfc386 $[@ -d1
+
+clean: .symbolic
+        rm errmsg.* errsrc.* errgrp.* errdoc.* errcod.* *.ipf *.gml
