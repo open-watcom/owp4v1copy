@@ -332,7 +332,7 @@ check for recursive include statements.
 A pointer is being compared using == or != to a non-zero constant.
 :MSGSYM. ERR_EXPANDED_TRIGRAPH
 :MSGTXT. trigraph found in string
-:MSGJTXT.
+:MSGJTXT. 問題となる三重文字があります
 :WARNING. 1
 .np
 Trigraph expansion occurs inside a  string literal.
@@ -356,7 +356,7 @@ The compiler has added slack bytes to align a member to
 the correct offset.
 :MSGSYM. ERR_WEIRD_ENDIF_ENCOUNTER
 :MSGTXT. #endif matches #if in different source file '%s'
-:MSGJTXT.
+:MSGJTXT. #endifが他のソースファイル'%s'の#ifと対応しています
 :WARNING. 1
 This warning may indicate a
 .kw #endif
@@ -1881,7 +1881,7 @@ You may not be able to reproduce the exact same object code from one
 compile to the next unless the available memory is exactly the same.
 :MSGSYM. INFO_SYMBOL_DECLARATION
 :MSGTXT. '%s' defined in: %s(%u)
-:MSGJTXT.
+:MSGJTXT. '%s' は%s(%u)で定義されています
 :INFO.
 This informational message indicates where the symbol in question was defined.
 The message is displayed following an error or warning diagnostic for the
