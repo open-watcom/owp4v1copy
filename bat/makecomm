@@ -307,11 +307,9 @@ apilib=$(build_root)\watcom\lib\api.lib
 !ifdef %use_os2tk_stuff
 os2386=$(os2_toolkit)\lib\os2386.lib
 os2286=$(os2_ddk)\base\lib\os2286.lib
-os2rc=$(os2_toolkit)\bin\rc16.exe
 !else
 os2386=$(lang_root)\lib386\os2386.lib
 os2286=$(lang_root)\lib286\os2.lib
-os2rc=$(lang_root)\binp\rc.exe
 !endif
 
 #
