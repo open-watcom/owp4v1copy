@@ -6,12 +6,17 @@ editing and producing online or printed documents, and at the same time
 serve as an example of the documentation system usage.
 .np
 It is useful to note that the online documentation is almost, but not quite,
-independent of the rest of the Open Watcom compilers and tools. The one
+independent of the rest of the Open Watcom compilers and tools. One
 important exception is online help files for Open Watcom GUI tools. Formatting
 online documentation generates include files containing #defines
-designating help entries. These are used during building of the tools 
-binaries. If the binaries are not built with the right header files, the 
+designating help entries. These are used during building of the tools
+binaries. If the binaries are not built with the right header files, the
 online help will be out of sync and not all that helpful.
+.np
+There's one other link going in the other direction: certain documentation
+files live with their respective projects and not in the documents tree.
+This is especially true for error message documentation for the compilers
+and tools.
 
 
 .section Setting up
@@ -323,8 +328,8 @@ suitable for post-processing to turn it into IPF for the OS/2 IPF
 compiler, RTF for the WinHelp tools, special Watcom-defined format
 for use with a DOS-based help tool (WHELP) or the ever-popular HTML.
 .np
-If you are a programmer, and that is likely, you'll be somewhat comfortable 
-with the whole process of turning ASCII text into documentation. WGML is 
+If you are a programmer, and that is likely, you'll be somewhat comfortable
+with the whole process of turning ASCII text into documentation. WGML is
 a text processor (compiler) that reads a source file (GML) which, in turn,
 imbeds other source files, and produces an output file (the object
 file). WGML is very fast. It was very fast in the old 20MHz 386 days

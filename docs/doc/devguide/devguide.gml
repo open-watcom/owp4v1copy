@@ -39,11 +39,14 @@
 :include file='&book..kw'
 .do end
 .*
-.sepsect Documentation
-:INCLUDE file='DOCS'.
+.sepsect Overview
+:INCLUDE file='TOUR'.
 .*
 .sepsect Building
 :INCLUDE file='ARCH'.
+.*
+.sepsect Documentation
+:INCLUDE file='DOCS'.
 .*
 .if &e'&dohelp eq 0 .do begin
 :BACKM.
