@@ -24,11 +24,12 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  32-bit chain interrupt handler function
 ;*
+;* date          by              reason
+;* ====          ==              ======
+;* 14-aug-02     SJHowe          Now passes original flags
 ;*****************************************************************************
-
 
         include mdef.inc
         include struct.inc
@@ -45,14 +46,18 @@ _TEXT   segment
 _chain_intr proc far
         public  "C",_chain_intr
 ifdef __STACK__
-        mov     eax,4[esp]              ; get offset
-        mov     edx,8[esp]              ; get segment
-endif
+        mov     ecx,4[esp]              ; get offset
+        mov     eax,8[esp]              ; get segment
+else
         mov     ecx,eax                 ; get offset
         mov     eax,edx                 ; get segment
+endif
         mov     esp,ebp                 ; reset SP to point to saved registers
         xchg    ecx,40[ebp]             ; restore ecx, & put in offset
         xchg    eax,44[ebp]             ; restore eax, & put in segment
+        mov     ebx,56[ebp]             ; restore flags
+        push    ebx                     ; :
+        popfd                           ; :
         pop     gs                      ; restore segment registers
         pop     fs                      ;
         pop     es                      ;
