@@ -163,6 +163,10 @@ unsigned ReqMap_addr()
     //       convert the address appropriately (using FlatCS/FlatDS as necessary).
     //
     // TODO: See the NT implementation for ideas!
+    //
+    // Note: Info about the process address space is stored in the user register
+    //       for GDB, so we can use that to find out what we need to convert these
+    //       values in here...
     acc = GetInPtr(0);
     ret = GetOutPtr(0);
     ret->lo_bound = 0;
