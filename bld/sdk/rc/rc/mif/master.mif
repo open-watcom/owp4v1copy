@@ -1,6 +1,12 @@
 proj_name = wrc
 name = wrc
 
+!ifdef __LINUX__
+nuldevice = /dev/null
+!else
+nuldevice = nul
+!endif
+
 !include cproj.mif
 !include defrule.mif
 
@@ -92,7 +98,7 @@ $(name).exe : $(name).res $(objs) $(WRES_LIB)
         @%make bindit
 !ifeq sys_dll 1
         wstrip -q -a -r $(name).dll . $(name).res
-        rm -f $(name).lib >nul
+        rm -f $(name).lib > $(nuldevice)
         $(librarian) $(name).lib +$(name).dll
 !else
         wstrip -q -a -r $(name).exe . $(name).res
@@ -119,7 +125,7 @@ ytab.obj : ytab.c param.h ytab.gh
 #!endif
 
 ytab.c ytab.gh : rc.y $(wrc_dir)/y/yydriver.c rcmem.h
-        $(yacc) -d -b $[@ $[:yydriver.c  >nul
+        $(yacc) -d -b $[@ $[:yydriver.c > $(nuldevice)
         @cp ytab.h ytab.gh
         @rm -f ytab.h
 
@@ -127,14 +133,14 @@ ytab.c ytab.gh : rc.y $(wrc_dir)/y/yydriver.c rcmem.h
         $(bld_cl) $< $(wcl_util_opts) -fe=$@
 
 weights1.gh keyword1.gh : rc1.key ./findhash.exe
-        $]@ $[@ >nul
+        $]@ $[@ > $(nuldevice)
         @cp keywords.gh keyword1.gh
         @cp weights.gh weights1.gh
         @rm -f keywords.gh
         @rm -f weights.gh
 
 weights2.gh keyword2.gh : rc2.key ./findhash.exe
-        $]@ $[@ >nul
+        $]@ $[@ > $(nuldevice)
         @cp keywords.gh keyword2.gh
         @cp weights.gh weights2.gh
         @rm -f keywords.gh
