@@ -29,7 +29,7 @@ followed by an optional decimal integer or an asterisk character (*);
 .bull
 an optional
 .us type length
-specification: one of "h", "l", "L", "I64", "w"
+specification: one of "h", "l", "ll", "L", "I64", "w"
 .if &farfnc eq 0 .do begin
 .ct
 ; and
@@ -204,6 +204,14 @@ wprintf( L"%s%d", L"Num=", 12345 );
 be treated as a far pointer.
 .do end
 .if &version ge 110 .do begin
+.bull
+.ix 'long long'
+"ll" causes a "b", "d", "i", "o", "u", "x" or "X" (integer) conversion to
+process a
+.id long long
+or
+.id unsigned long long
+argument (e.g., %lld).
 .bull
 .ix '__int64'
 "L" causes a "b", "d", "i", "o", "u", "x" or "X" (integer) conversion to

@@ -357,6 +357,14 @@ static const CHAR_TYPE * getprintspecs( const CHAR_TYPE *ctl,
     }
     switch( *ctl ) {
     case 'l':
+  #if defined(__LONG_LONG_SUPPORT__)
+        if (ctl[1] == 'l') {
+            specs->_flags |= SPF_LONG_DOUBLE;
+            ctl += 2;
+            break;
+        }
+  #endif
+        /* fall through */
     case 'w':
         specs->_flags |= SPF_LONG;
         ctl++;

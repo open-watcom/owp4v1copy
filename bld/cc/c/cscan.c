@@ -649,7 +649,8 @@ int ScanNum()
     cnv_cc              ov;
     struct {
         enum{ CON_DEC, CON_HEX, CON_OCT, CON_ERR }form;
-        enum { SUFF_NONE,SUFF_U, SUFF_L,SUFF_UL,  SUFF_I, SUFF_UI } suffix;
+        enum { SUFF_NONE,SUFF_U, SUFF_L,SUFF_UL,  SUFF_I, SUFF_UI,
+               SUFF_LL,SUFF_ULL } suffix;
     }con;
 
     Constant = 0;
@@ -728,6 +729,9 @@ int ScanNum()
         if( c == 'u' || c == 'U' ) {
             c = SaveNextChar();
             con.suffix = SUFF_UL;
+        } else if( c == 'l' || c == 'L' ) {
+            c = SaveNextChar();
+            con.suffix = SUFF_LL;
         }else{
             con.suffix = SUFF_L;
         }
@@ -735,6 +739,10 @@ int ScanNum()
         c = SaveNextChar();
         if( c == 'l' || c == 'L' ) {
             c = SaveNextChar();
+            if( c == 'l' || c == 'L' ) {
+                c = SaveNextChar();
+                con.suffix = SUFF_ULL;
+            }
             con.suffix = SUFF_UL;
         } else if( c == 'i' || c == 'I' ) {
             c = SaveNextChar();
@@ -792,7 +800,7 @@ int ScanNum()
             }
             Constant =  Const64.u._32[I64LO32];
         }
-    }else if( ov == CNV_32 ){
+    }else if( ov == CNV_32 && con.suffix != SUFF_LL && con.suffix != SUFF_ULL ) {
         switch( con.suffix ){
         case SUFF_NONE:
             if( Constant <= TARGET_INT_MAX ) {
@@ -841,6 +849,7 @@ int ScanNum()
             }
             break;
         case SUFF_L:
+        case SUFF_LL:
             if( Const64.u._32[I64HI32] & 0x80000000 ){
                 ConstType = TYPE_ULONG64;
             }else{
@@ -849,6 +858,7 @@ int ScanNum()
             break;
         case SUFF_U:
         case SUFF_UL:
+        case SUFF_ULL:
             ConstType = TYPE_ULONG64;
             break;
         }
