@@ -393,6 +393,11 @@ static orl_return sectionInit( orl_sec_handle shnd )
     switch( type ) {
         case SECTION_TYPE_SYM_TABLE:
             symbolTable = shnd;
+            // Might have a label or relocation in symbol section
+            error = registerSec( shnd, type );
+            if( error == OKAY ) {
+                error = createLabelList( shnd );
+            }
             break;
         case SECTION_TYPE_DRECTVE:
             if( GetFormat() == ORL_OMF ) {
