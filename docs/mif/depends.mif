@@ -1212,8 +1212,6 @@ $(docsrc_dir)\lr\src\atexit.gml &
 $(docsrc_dir)\lr\src\atof.gml &
 $(docsrc_dir)\lr\src\atoi.gml &
 $(docsrc_dir)\lr\src\atol.gml &
-$(docsrc_dir)\lr\src\autosave.24 &
-$(docsrc_dir)\lr\src\autosave.25 &
 $(docsrc_dir)\lr\src\b_disk.gml &
 $(docsrc_dir)\lr\src\b_disk98.gml &
 $(docsrc_dir)\lr\src\b_equi98.gml &
@@ -1680,7 +1678,6 @@ $(docsrc_dir)\lr\src\outpd.gml &
 $(docsrc_dir)\lr\src\outpw.gml &
 $(docsrc_dir)\lr\src\perror.gml &
 $(docsrc_dir)\lr\src\portdesc.gml &
-$(docsrc_dir)\lr\src\posix.doc &
 $(docsrc_dir)\lr\src\pow.gml &
 $(docsrc_dir)\lr\src\printf.gml &
 $(docsrc_dir)\lr\src\printfs.gml &
@@ -1785,7 +1782,6 @@ $(docsrc_dir)\lr\src\strdec.gml &
 $(docsrc_dir)\lr\src\strdup.gml &
 $(docsrc_dir)\lr\src\strerror.gml &
 $(docsrc_dir)\lr\src\strerror.msg &
-$(docsrc_dir)\lr\src\strerror.pp &
 $(docsrc_dir)\lr\src\strerror.qnx &
 $(docsrc_dir)\lr\src\strftime.gml &
 $(docsrc_dir)\lr\src\stricmp.gml &
