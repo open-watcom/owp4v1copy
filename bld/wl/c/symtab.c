@@ -1057,8 +1057,12 @@ static symbol * DoSymOp( byte op, char *symname, int length )
 extern symbol * UnaliasSym( sym_flags op, symbol *sym )
 /*****************************************************/
 {
+    symbol *orig_sym = sym;
     while( sym != NULL && IS_SYM_ALIAS(sym) ) {
         sym = DoSymOp( op, sym->p.alias, sym->u.aliaslen );
+        /* circular ref, may be a weak symbol ! */
+        if( sym == orig_sym )
+            break;
     }
     return sym;
 }

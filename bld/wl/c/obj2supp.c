@@ -772,7 +772,7 @@ static bool CheckSpecials( fix_data *fix, frame_spec *targ )
     signed_32   off;
     unsigned_32 uoff;
     signed_32   temp;
-    signed_16   pos;
+    signed_32   pos;
     unsigned    fixsize;
     group_entry *group;
     segdata  *  sdata;
@@ -780,7 +780,10 @@ static bool CheckSpecials( fix_data *fix, frame_spec *targ )
 
     if( FmtData.type & MK_ELF ) {
         if( !(fix->type & FIX_REL) ) return FALSE;
+#if 0
+    XXX: this is not the right thing to do for elf-i386
         if( fix->loc_addr.seg != fix->tgt_addr.seg ) return FALSE;
+#endif
     }
     if( FmtData.type & (MK_QNX|MK_WINDOWS) && fix->ffix != FFIX_NOT_A_FLOAT ) {
         if( fix->ffix != FFIX_IGNORE ) {
@@ -807,7 +810,10 @@ static bool CheckSpecials( fix_data *fix, frame_spec *targ )
             }
         }
         DbgVerify( (pos % 4) == 0, "symbol not in toc" );
-        PUT_U16(fix->data, pos);
+        if (fix->type & FIX_OFFSET_16)
+            PUT_U16(fix->data, (signed_16)pos);
+        else
+            PUT_U32(fix->data, pos);
         return TRUE;
     } else if( special == FIX_IFGLUE ) {
         if( targ->type == FIX_FRAME_EXT && IS_SYM_IMPORTED(targ->u.sym) ) {
@@ -849,7 +855,8 @@ static bool CheckSpecials( fix_data *fix, frame_spec *targ )
         }
         return TRUE;
     }
-    if( FmtData.type & (MK_PROT_MODE & ~(MK_OS2_FLAT|MK_PE)) ) {
+    /* XXX: MK_ELF must not be included for non-i386 */
+    if( FmtData.type & (MK_PROT_MODE & ~(MK_OS2_FLAT|MK_PE|MK_ELF)) ) {
         if( fix->loc_addr.seg != fix->tgt_addr.seg && !(fix->type & FIX_ABS) ) {
             //must have same file segment.
             if( FmtData.type & MK_ID_SPLIT ) {
@@ -1446,8 +1453,10 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
         } else {
             new_reloc.item.elf.info = R_386_32;
         }
-        if( tthread->type & FIX_FRAME_EXT && IsSymElfImpExp(tthread->u.sym) ) {
-            sym = tthread->u.sym;
+        sym = tthread->u.sym;
+        if( IS_SYM_ALIAS( sym ) ) {
+            save = FALSE;
+        } else if( (tthread->type & FIX_FRAME_EXT) && IsSymElfImpExp(sym) ) {
             new_reloc.item.elf.addend = 0;
         } else {
             seg = GetFrameSegData( tthread );

@@ -197,11 +197,13 @@ static orl_reloc_type convert386Reloc( elf_reloc_type elf_type ) {
     case R_386_NONE:
         return( ORL_RELOC_TYPE_ABSOLUTE );
     case R_386_32:
-    case R_386_GOT32:
     case R_386_GOTOFF:
         return( ORL_RELOC_TYPE_WORD_32 );
-    case R_386_PC32:
+    case R_386_GOT32:
+        return( ORL_RELOC_TYPE_GOT_32 );
     case R_386_PLT32:
+        return( ORL_RELOC_TYPE_PLT_32 );
+    case R_386_PC32:
     case R_386_GOTPC:
         return( ORL_RELOC_TYPE_REL_32_NOADJ );
     default:

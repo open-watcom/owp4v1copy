@@ -733,6 +733,9 @@ static orl_return DoReloc( orl_reloc *reloc )
     case ORL_RELOC_TYPE_WORD_32:
         type = FIX_OFFSET_32;
         break;
+    case ORL_RELOC_TYPE_GOT_32:     // relative ref to 32-bit offset from TOC base.
+        type = FIX_OFFSET_32 | FIX_TOC;
+        break;
     case ORL_RELOC_TYPE_HALF_HI:
         SavedReloc = *reloc;
         skip = TRUE;

@@ -241,6 +241,7 @@ typedef enum {
     ORL_RELOC_TYPE_TOCREL_14,   // rel. ref to 14-bit offset from TOC base shifted 2.
     ORL_RELOC_TYPE_TOCVREL_16,  // ditto, data explicitely defined in .tocd
     ORL_RELOC_TYPE_TOCVREL_14,  // ditto
+    ORL_RELOC_TYPE_GOT_32,      // direct ref to 32-bit offset from GOT base.
     ORL_RELOC_TYPE_GOT_16,      // direct ref to 16-bit offset from GOT base.
     ORL_RELOC_TYPE_GOT_16_HI,   // direct ref to hi 16-bits of offset from GOT base.
     ORL_RELOC_TYPE_GOT_16_HA,   // ditto adjusted for signed low 16-bits
