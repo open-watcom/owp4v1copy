@@ -158,7 +158,9 @@
 #endif
 
 #define RCSTR_MAX_LEN   128
+#ifndef FILE_OPEN
 #define FILE_OPEN       1
+#endif
 #define FILE_SAVE       2
 
 #define BITMAP_X                ( 23 + 4 )
