@@ -73,8 +73,8 @@ void main( int argc, char **argv )
     int                 fd;
     unsigned            wanted;
     unsigned            i, j, k, l;
-    int                 length=0;
-    fpos_t              head_off;
+    int                 length = 0;
+    off_t               head_off;
     char *              record_type;
     samp_block *        data;
     auto samp_header    head;
@@ -90,7 +90,7 @@ void main( int argc, char **argv )
     puts( banner3a );
 
     if( argc != 2 && argc != 3 ) {
-        puts( "usage: SMPDUMP <sample_file> [-q]" );
+        puts( "usage: smpdump <sample_file> [-q]" );
         exit( 1 );
     }
     data = malloc( 63L*1024+512 );

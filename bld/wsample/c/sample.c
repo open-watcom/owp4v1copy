@@ -629,6 +629,8 @@ int sample_main( char far *win_cmd )
     Info.d.config.mad           = MAD_X86;
 #elif defined(__ALPHA__)
     Info.d.config.mad           = MAD_AXP;
+#elif defined(__PPC__)
+    Info.d.config.mad           = MAD_PPC;
 #else
     #error Machine type not configured
 #endif

@@ -142,10 +142,10 @@ int MsgInit()
                 MsgArray[i-ERR_FIRST_MESSAGE] = alloc( strlen( buffer ) + 1 );
 
                 if( MsgArray[i-ERR_FIRST_MESSAGE] == NULL ) break;
-#if defined(__386__) || defined(__ALPHA__)
-                strcpy( MsgArray[i-ERR_FIRST_MESSAGE], buffer );
-#else
+#if defined( __I86__ )
                 _fstrcpy( MsgArray[i-ERR_FIRST_MESSAGE], buffer );
+#else
+                strcpy( MsgArray[i-ERR_FIRST_MESSAGE], buffer );
 #endif
             }
             CloseResFile( &hInstance );
