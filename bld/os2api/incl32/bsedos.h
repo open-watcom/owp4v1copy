@@ -151,7 +151,7 @@ APIRET APIENTRY DosDebug(PVOID pdbgbuf);
 APIRET APIENTRY DosEnterCritSec(VOID);
 APIRET APIENTRY DosExecPgm(PCHAR pObjname, LONG cbObjname, ULONG execFlag,
                    PCSZ pArg, PCSZ pEnv, PRESULTCODES pRes, PCSZ pName);
-APIRET APIENTRY DosExit(ULONG action, ULONG result);
+VOID   APIENTRY DosExit(ULONG action, ULONG result);
 APIRET APIENTRY DosExitCritSec(VOID);
 APIRET APIENTRY DosExitList(ULONG ordercode, PFNEXITLIST pfn);
 APIRET APIENTRY DosFreeThreadLocalMemory(ULONG *p);

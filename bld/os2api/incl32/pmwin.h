@@ -194,6 +194,8 @@ typedef LHANDLE HPS, *PHPS;
 typedef LHANDLE HRGN, *PHRGN;
 typedef VOID    *MPARAM, **PMPARAM;
 typedef VOID    *MRESULT, **PMRESULT;
+typedef USHORT  HVPS, *PHVPS;
+
 
 typedef CHAR STR8[8];
 typedef STR8 *PSTR8;
@@ -1427,8 +1429,10 @@ BOOL   APIENTRY WinSetHook(HAB hab, HMQ hmq, LONG lHookType, PFN pHookProc, HMOD
 #define WM_CHAR             0x007A
 #define WM_VIOCHAR          0x007B
 
+BOOL   APIENTRY WinFocusChange(HWND hwndDesktop, HWND hwndSetFocus, ULONG fFocusChange);
 LONG   APIENTRY WinGetKeyState(HWND hwndDeskTop, LONG vkey);
 LONG   APIENTRY WinGetPhysKeyState(HWND hwndDeskTop, LONG sc);
+BOOL   APIENTRY WinLockupSystem(HAB hab);
 HWND   APIENTRY WinQueryCapture(HWND hwndDesktop);
 HWND   APIENTRY WinQueryFocus(HWND hwndDeskTop);
 BOOL   APIENTRY WinSetCapture(HWND hwndDesktop, HWND hwnd);
@@ -2269,6 +2273,11 @@ BOOL   APIENTRY WinSetSysValue(HWND hwndDeskTop, LONG iSysValue, LONG lValue);
 
 #if defined(INCL_WINTIMER)
 
+#define TID_CURSOR      0xffff
+#define TID_SCROLL      0xfffe
+#define TID_FLASHWINDOW 0xfffd
+#define TID_USERMAX     0x7fff
+
 ULONG  APIENTRY WinGetCurrentTime(HAB hab);
 ULONG  APIENTRY WinStartTimer(HAB hab, HWND hwnd, ULONG idTimer, ULONG dtTimeout);
 BOOL   APIENTRY WinStopTimer(HAB hab, HWND hwnd, ULONG ulTimer);
@@ -2276,6 +2285,18 @@ BOOL   APIENTRY WinStopTimer(HAB hab, HWND hwnd, ULONG ulTimer);
 #endif
 
 #if defined(INCL_WINTRACKRECT)
+
+#define TF_LEFT              0x0001
+#define TF_TOP               0x0002
+#define TF_RIGHT             0x0004
+#define TF_BOTTOM            0x0008
+#define TF_MOVE              0x000F
+#define TF_SETPOINTERPOS     0x0010
+#define TF_GRID              0x0020
+#define TF_STANDARD          0x0040
+#define TF_ALLINBOUNDARY     0x0080
+#define TF_VALIDATETRACKRECT 0x0100
+#define TF_PARTINBOUNDARY    0x0200
 
 typedef struct _TRACKINFO {
     LONG   cxBorder;

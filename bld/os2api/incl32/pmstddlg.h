@@ -9,6 +9,55 @@
     #define INCL_WINSTDFILE
     #define INCL_WINSTDFONT
     #define INCL_WINSTDBOOK
+    #define INCL_WINSTDSPIN
+#endif
+
+#if defined(INCL_WINSTDSPIN)
+
+#define SPBS_ALLCHARACTERS 0x00000000
+#define SPBS_NUMERICONLY   0x00000001
+#define SPBS_READONLY      0x00000002
+#define SPBS_MASTER        0x00000010
+#define SPBS_SERVANT       0x00000000
+#define SPBS_JUSTDEFAULT   0x00000000
+#define SPBS_JUSTLEFT      0x00000008
+#define SPBS_JUSTRIGHT     0x00000004
+#define SPBS_JUSTCENTER    0x0000000C
+#define SPBS_NOBORDER      0x00000020
+#define SPBS_FASTSPIN      0x00000100
+#define SPBS_PADWITHZEROS  0x00000080
+
+#define SPBN_UPARROW   0x20A
+#define SPBN_DOWNARROW 0x20B
+#define SPBN_ENDSPIN   0x20C
+#define SPBN_CHANGE    0x20D
+#define SPBN_SETFOCUS  0x20E
+#define SPBN_KILLFOCUS 0x20F
+
+#define SPBM_OVERRIDESETLIMITS 0x200
+#define SPBM_QUERYLIMITS       0x201
+#define SPBM_SETTEXTLIMIT      0x202
+#define SPBM_SPINUP            0x203
+#define SPBM_SPINDOWN          0x204
+#define SPBM_QUERYVALUE        0x205
+#define SPBM_SETARRAY          0x206
+#define SPBM_SETLIMITS         0x207
+#define SPBM_SETCURRENTVALUE   0x208
+#define SPBM_SETMASTER         0x209
+
+#define SPBQ_UPDATEIFVALID 0
+#define SPBQ_ALWAYSUPDATE  1
+#define SPBQ_DONOTUPDATE   3
+
+typedef struct _SPBCDATA {
+    ULONG  cbSize;
+    ULONG  ulTextLimit;
+    LONG   lLowerLimit;
+    LONG   lUpperLimit;
+    ULONG  idMasterSpb;
+    PVOID  pHWXCtlData;
+} SPBCDATA, *PSPBCDATA;
+
 #endif
 
 #if defined(INCL_WINSTDBOOK)

@@ -90,6 +90,42 @@
 #define DEV_ITEM_BUF_TOO_SMALL    5
 #define DEV_INV_INP_JOBPROPERTIES 6
 
+#define DEVESC_QUERYESCSUPPORT          0
+#define DEVESC_GETSCALINGFACTOR         1
+#define DEVESC_QUERYVIOCELLSIZES        2
+#define DEVESC_GETCP                 8000
+#define DEVESC_SETABORTPROC          8001
+#define DEVESC_QUERYPDL              8002
+#define DEVESC_STARTDOC              8150
+#define DEVESC_ENDDOC                8151
+#define DEVESC_NEXTBAND              8152
+#define DEVESC_ABORTDOC              8153
+#define DEVESC_GETJOBID              8160
+#define DEVESC_QUERY_RASTER          8161
+#define DEVESC_QUERYSIZE             8162
+#define DEVESC_QUERYJOBPROPERTIES    8163
+#define DEVESC_SETJOBPROPERTIES      8164
+#define DEVESC_DEFAULTJOBPROPERTIES  8165
+#define DEVESC_CHANGEOUTPUTPORT      8166
+#define DEVESC_NEWFRAME             16300
+#define DEVESC_DRAFTMODE            16301
+#define DEVESC_FLUSHOUTPUT          16302
+#define DEVESC_RAWDATA              16303
+#define DEVESC_SETMODE              16304
+#define DEVESC_SEP                  16305
+#define DEVESC_MACRO                16307
+#define DEVESC_BEGIN_BITBLT         16309
+#define DEVESC_END_BITBLT           16310
+#define DEVESC_SEND_COMPDATA        16311
+#define DEVESC_DBE_FIRST            24450
+#define DEVESC_DBE_LAST             24455
+#define DEVESC_CHAR_EXTRA           16998
+#define DEVESC_BREAK_EXTRA          16999
+#define DEVESC_STD_JOURNAL          32600
+#define DEVESC_SETPS                49149
+#define DEVESC_STARTDOC_WPROP       49150
+#define DEVESC_NEWFRAME_WPROP       49151
+
 #define DRIVER_NAME    1
 #define DRIVER_DATA    2
 #define DATA_TYPE      3
@@ -107,7 +143,46 @@
 #define OD_MEMORY           8
 #define OD_METAFILE_NOQUERY 9
 
+#define DPDM_ERROR      (-1)
+#define DPDM_NONE         0
+
+#define DPDM_POSTJOBPROP  0
+#define DPDM_CHANGEPROP   1
+#define DPDM_QUERYJOBPROP 2
+
+typedef CHAR STR16[16], *PSTR16;
+typedef CHAR STR32[32], *PSTR32;
+typedef CHAR STR64[64], *PSTR64;
+
+#define DQHC_ERROR                    (-1)
+
+#define HCAPS_CURRENT                   1
+#define HCAPS_SELECTABLE                2
+
+
 typedef PSZ *PDEVOPENDATA;
+
+typedef struct _VIOSIZECOUNT {
+    LONG maxcount;
+    LONG count;
+} VIOSIZECOUNT, *PVIOSIZECOUNT;
+
+typedef struct _VIOFONTCELLSIZE {
+    LONG cx;
+    LONG cy;
+} VIOFONTCELLSIZE, *PVIOFONTCELLSIZE;
+
+typedef struct _SFACTORS {
+    LONG x;
+    LONG y;
+} SFACTORS, *PSFACTORS;
+
+typedef struct _BANDRECT {
+    LONG xleft;
+    LONG ybottom;
+    LONG xright;
+    LONG ytop;
+} BANDRECT, *PBANDRECT;
 
 typedef struct _DRIVDATA {
     LONG cb;

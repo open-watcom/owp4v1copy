@@ -184,9 +184,32 @@ BOOL    APIENTRY GpiSetBitmapId(HPS hps, HBITMAP hbm, LONG lLcid);
 
 LONG    APIENTRY GpiSetPel(HPS hps, PPOINTL pptlPoint);
 
+LONG    APIENTRY GpiWCBitBlt(HPS hpsTarget, HBITMAP hbmSource, LONG lCount,
+                   PPOINTL aptlPoints, LONG lRop, ULONG flOptions);
+
 #endif
 
 #if defined(INCL_GPICONTROL)
+
+#define GRES_ATTRS    0x0001
+#define GRES_SEGMENTS 0x0002
+#define GRES_ALL      0x0004
+
+#define PS_UNITS      0x00FC
+#define PS_FORMAT     0x0F00
+#define PS_TYPE       0x1000
+#define PS_MODE       0x2000
+#define PS_ASSOCIATE  0x4000
+#define PS_NORESET    0x8000
+
+#define GPIE_SEGMENT     0
+#define GPIE_ELEMENT     1
+#define GPIE_DATA        2
+
+#define DM_ERROR         0
+#define DM_DRAW          1
+#define DM_RETAIN        2
+#define DM_DRAWANDRETAIN 3
 
 BOOL   APIENTRY GpiAssociate(HPS hps, HDC hdc);
 
@@ -196,6 +219,8 @@ BOOL   APIENTRY GpiDestroyPS(HPS hps);
 BOOL   APIENTRY GpiErase(HPS hps);
 
 HDC    APIENTRY GpiQueryDevice(HPS hps);
+
+ULONG  APIENTRY GpiQueryPS(HPS hps, PSIZEL psizlSize);
 
 BOOL   APIENTRY GpiResetPS(HPS hps, ULONG flOptions);
 BOOL   APIENTRY GpiRestorePS(HPS hps, LONG lPSid);
@@ -432,6 +457,8 @@ LONG   APIENTRY GpiEndArea(HPS hps);
 LONG   APIENTRY GpiFullArc(HPS hps, LONG lControl, FIXED fxMultiplier);
 
 LONG   APIENTRY GpiLine(HPS hps, PPOINTL pptlEndPoint);
+
+BOOL   APIENTRY GpiMove(HPS hps, PPOINTL pptlPoint);
 
 LONG   APIENTRY GpiPartialArc(HPS hps, PPOINTL pptlCenter, FIXED fxMultiplier,
                    FIXED fxStartAngle, FIXED fxSweepAngle);
