@@ -76,11 +76,18 @@ local unsigned long BitMask[] = {
 
 #define MAX_DATA_QUAD_SEGS (LARGEST_DATA_QUAD_INDEX/DATA_QUADS_PER_SEG + 1)
 
-DATA_QUAD       *DataQuadSegs[MAX_DATA_QUAD_SEGS];/* segments for data quads*/
-int             LastDataQuadSegIndex;
-DATA_QUAD       *DataQuadPtr;
-int             DataQuadIndex;
-int             LastDataQuadIndex;
+static DATA_QUAD       *DataQuadSegs[MAX_DATA_QUAD_SEGS];/* segments for data quads*/
+static int             LastDataQuadSegIndex;
+static DATA_QUAD       *DataQuadPtr;
+static int             DataQuadIndex;
+static int             LastDataQuadIndex;
+
+local int CharArray( TYPEPTR typ );
+local int WCharArray( TYPEPTR typ );
+local void InitCharArray( TYPEPTR typ );
+local void InitWCharArray( TYPEPTR typ );
+local void StoreFloat( int float_type );
+local void StoreInt64( TYPEPTR typ );
 
 void InitDataQuads()
 {
@@ -228,12 +235,12 @@ typedef struct {
     bool                      addr_set;
     bool                      is_error;
     enum { IS_VALUE, IS_ADDR } state;
-}addrfold_info;
+} addrfold_info;
 
 local void AddrFold( TREEPTR tree, addrfold_info *info ){
 // Assume tree has been const folded
     SYM_ENTRY           sym;
-    long                offset;
+    long                offset = 0;
 
     switch( tree->op.opr ) {
     case OPR_PUSHINT:
@@ -460,7 +467,7 @@ local void StorePointer( TYPEPTR typ, TOKEN int_type )
     }
 }
 
-local StoreInt64( TYPEPTR typ )
+local void StoreInt64( TYPEPTR typ )
 {
     TREEPTR     tree;
     auto DATA_QUAD dq;
@@ -491,7 +498,7 @@ local FIELDPTR InitBitField( FIELDPTR field )
     unsigned long       bit_value;
     unsigned long       offset;
     int                 token;
-    TOKEN               int_type;
+    TOKEN               int_type = T_NULL;
 
     token = CurToken;
     if( CurToken == T_LEFT_BRACE ) NextToken();
@@ -707,6 +714,8 @@ void InitSymData( TYPEPTR typ, int level )
     case TYPE_POINTER:
         StorePointer( typ, T_ID );
         break;
+    default:
+        break;
     }
     if( token == T_LEFT_BRACE ) {
         if( CurToken == T_COMMA ) {
@@ -749,7 +758,6 @@ local int WCharArray( TYPEPTR typ )
     return( 0 );
 }
 
-
 local void InitCharArray( TYPEPTR typ )
 {
     unsigned            len;
@@ -780,7 +788,7 @@ local void InitCharArray( TYPEPTR typ )
     CompFlags.non_zero_data = 1;
  }
 
-
+//
 local void InitWCharArray( TYPEPTR typ )
 {
     unsigned            len;
@@ -825,7 +833,7 @@ local void InitWCharArray( TYPEPTR typ )
  }
 
 
-local StoreFloat( int float_type )
+local void StoreFloat( int float_type )
 {
     TREEPTR     tree;
     auto DATA_QUAD dq;
@@ -1007,6 +1015,8 @@ static int SimpleUnion( TYPEPTR typ ){
     case TYPE_FIELD:
     case TYPE_UFIELD:
         return( 0 );        // give up on these
+    default:
+        break;
     }
     return( 1 );
 }
@@ -1021,6 +1031,7 @@ static int SimpleStruct( TYPEPTR typ )
     for( field = typ->u.tag->u.field_list; field; ) {
         typ = field->field_type;
         while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+
         switch( typ->decl_type ) {
         case TYPE_UNION:
             if( SimpleUnion( typ ) ){
@@ -1031,6 +1042,8 @@ static int SimpleStruct( TYPEPTR typ )
         case TYPE_FIELD:
         case TYPE_UFIELD:
             return( 0 );        // give up on these
+        default:
+            break;
         }
         field = field->next_field;
     }
