@@ -45,6 +45,8 @@ static const mad_type_info_integer      U4 =
     { MTK_INTEGER, D, 32, 31, MNR_UNSIGNED,  ME_LITTLE };
 static const mad_type_info_integer      U8 =
     { MTK_INTEGER, D, 64, 63, MNR_UNSIGNED,  ME_LITTLE };
+static const mad_type_info_integer      U16 =
+    { MTK_INTEGER, D, 64, 63, MNR_UNSIGNED,  ME_LITTLE }; // FIXME !! missing 128-bit support
 static const mad_type_info_integer      I1 =
     { MTK_INTEGER, D,  8,  7, MNR_TWOS_COMP, ME_LITTLE };
 static const mad_type_info_integer      I2 =

@@ -53,6 +53,7 @@ enum {
     pick( USHORT,       USHORT,         0, L1, L1, U2 )
     pick( ULONG,        ULONG,          0, L3, L1, U4 )
     pick( U64,          UNSIGNED64,     0, LX, L1, U8 )
+    pick( U128,         NIL,            0, LX, LX, U16 )
     pick( BIT,          NIL,            0, LX, LX, BIT )
     /* addresses */
     pick( N16_PTR,      N16_PTR,        1, LX, L1, N16 )
@@ -103,7 +104,6 @@ enum {
     pick( XMM_TITLE13,  NIL,            0, LX, LX, XMM_TITLE )
     pick( XMM_TITLE14,  NIL,            0, LX, LX, XMM_TITLE )
     pick( XMM_TITLE15,  NIL,            0, LX, LX, XMM_TITLE )
-    pick( U128,         NIL,            0, LX, LX, XMM_TITLE )
 
 #if defined(defining_enums)
 X86T_LAST_ONE };
