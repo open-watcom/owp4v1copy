@@ -122,12 +122,7 @@ lib=wlib
 !ifdef msc
 linker=$(msvc_dir)\bin\link /MACHINE:IX86 /NOLOGO
 !else
-#don't just blindly use binnt!
-!ifdef __OS2__
-linker=*$(lang_root)\binp\wlink
-!else
-linker=*$(lang_root)\binnt\wlink
-!endif
+linker=*wlink
 !endif
 
 
