@@ -1476,7 +1476,8 @@ STATIC RET_T getRMArgs( const char *line, rm_flags *flags, const char **pfile )
     }
 
     if( p && *p ) {
-        for( *pfile = (const char *) p; NULLCHAR != *p && !isws( p[0] ); p++ );
+        *pfile = p;
+        p = FindNextWS(p);
         if( *p == NULLCHAR )
             p = NULL;
         else
@@ -1524,12 +1525,17 @@ STATIC RET_T handleRM( const char *cmdname, const char *cmd )
  * -v   Verbose operation.
  */
 {
+    char        buffer[ _MAX_PATH ];
     rm_flags    flags;
     RET_T       rt;
     const char  *pfname;
 
     rt = getRMArgs( cmd, &flags, &pfname );
+
     while( RET_SUCCESS == rt ) {
+        RemoveDoubleQuotes( buffer, sizeof(buffer), pfname );
+        pfname = buffer;
+
         if( strpbrk( pfname, WILD_METAS ) == NULL ) {
             if( !doRM( pfname, &flags ) ) {
                 return( RET_ERROR );
