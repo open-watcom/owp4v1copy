@@ -106,8 +106,8 @@ _WCRTLINK int *__threadid()
 static  void    NullSigInit() {}
 static  void    NullSigFini() {}
 
-void    (*__sig_init_rtn)(void) = { &NullSigInit };
-void    (*__sig_fini_rtn)(void) = { &NullSigFini };
+_WCRTLINK void  (*__sig_init_rtn)(void) = { &NullSigInit };
+_WCRTLINK void  (*__sig_fini_rtn)(void) = { &NullSigFini };
 
 #if defined(_M_IX86)
 #pragma aux _end "*"

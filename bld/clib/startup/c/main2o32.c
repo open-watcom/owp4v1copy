@@ -49,7 +49,8 @@
     _WCRTLINK extern    char        **___Argv;  /* argument vector */
     _WCRTLINK extern    int         ___wArgc;   /* argument count */
     _WCRTLINK extern    wchar_t     **___wArgv; /* argument vector */
-
+    _WCRTLINK extern    void        (*__sig_init_rtn)(void);
+    
     extern      void    __CommonInit( void );
     extern      int     main( int, char ** );
     extern      int     wmain( int, wchar_t ** );
@@ -82,9 +83,13 @@ void __F_NAME(__OS2Main,__wOS2Main)( unsigned hmod, unsigned reserved,
         __hmodule = hmod;
         env = env;
         cmd = cmd;
+	// Even though the exception handler and all that is
+	// in the runtime DLL, it must be registered from here since
+	// the registration record needs to live on stack
         __XCPTHANDLER = &xcpt;
         __process_fini = &__FiniRtns;
         __InitRtns( 255 );
+        __sig_init_rtn();
         __CommonInit();
         #ifdef __WIDECHAR__
             exit( wmain( ___wArgc, ___wArgv ) );

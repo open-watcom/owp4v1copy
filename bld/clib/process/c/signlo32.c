@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  OS/2 2.x signal handling (based on OS provided exception
-*               handling)
+* Description:  OS/2 32-bit signal handling (based on OS provided exception
+*               handling).
 *
 ****************************************************************************/
 
@@ -337,8 +337,8 @@ void    __SigFini() {
 #endif
 }
 
-extern  void    (*__sig_init_rtn)(void);
-extern  void    (*__sig_fini_rtn)(void);
+_WCRTLINK extern  void  (*__sig_init_rtn)(void);
+_WCRTLINK extern  void  (*__sig_fini_rtn)(void);
 
 static void __SetSigInit( void ) {
     __sig_init_rtn = &__SigInit;
