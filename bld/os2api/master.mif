@@ -1,0 +1,45 @@
+lib = wlib
+cc = wcc386
+
+.EXTENSIONS : .lbc .def
+
+lib286 = os2.lib
+
+components286 =      &
+        ansicall.lbc &
+        doscalls.lbc &
+        kbdcalls.lbc &
+        moucalls.lbc &
+        msg.lbc      &
+        nls.lbc      &
+        pmgpi.lbc    &
+        pmwin.lbc    &
+        quecalls.lbc &
+        sesmgr.lbc   &
+        viocalls.lbc
+
+.def: ..\lib286
+
+.def.lbc:
+        vi -i -q -k ":set norc\n:r ../lib286/$[.\n:source ../def2lbc.vi $*\n"
+
+.lbc.lib:
+        $(lib) -b -c -q -n -io -ii $@ @$<
+
+.obj.lib:
+        $(lib) -b -c -q -n $@ $<
+
+.c.obj:
+        $(cc) -i$(inc_dirs) -zq-w4-we-dNDEBUG -zc -bt=nt -oaxt -d1 $<
+
+$(lib286): lib286.lbc
+        $(lib) -b -c -q -n -io -ii -p=32 $@ @$<
+
+lib286.lbc: $(components286)
+        cat $< > $@
+
+clean: .SYMBOLIC .EXPLICIT
+        @if exist *.lbc @del *.lbc
+        @if exist *.lib @del *.lib
+        @if exist *.bak @del *.bak
+        @if exist *.obj @del *.obj

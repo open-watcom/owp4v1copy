@@ -1,0 +1,9 @@
+set nomagic
+%s/^LIBRARY.*$//g
+%s/^EXPORTS.*$//g
+%s/[ \t]//g
+%s/^\([A-Za-z0-9_]*\)\@\([0-9]*\)$/++'\1'.'%1.dll'.'\2'/g
+%s/\(%1\)\.dll/\u\1/g
+%s/;.*$//g
+w! %1.lbc
+q!
