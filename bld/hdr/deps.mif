@@ -45,6 +45,7 @@ generic.h       : ../watcom/generic.mh ../readonly.sp ../crwat.sp
 graph.h         : ../watcom/graph.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../poppack.sp ../pshpackl.sp
 graph98.h       : ../watcom/graph98.mh ../watcom/graph.mh
 i86.h           : ../watcom/i86.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../poppack.sp ../pshpackl.sp
+inttypes.h      : ../watcom/inttypes.mh ../readonly.sp ../crwat.sp
 io.h            : ../watcom/io.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../maxpath.sp ../wchar_t.sp
 iomanip.h       : ../watcom/iomanip.mh ../readonly.sp ../crwat.sp ../poppack.sp ../pshpackl.sp
 iostream.h      : ../watcom/iostream.mh ../readonly.sp ../cpplock.sp ../crwat.sp ../poppack.sp ../pshpackl.sp ../watexc.sp

@@ -29,6 +29,7 @@ common = &
         generic.h &
         graph.h &
         i86.h &
+        inttypes.h &
         iomanip.h &
         iostream.h &
         iso646.h &
