@@ -1,3 +1,14 @@
+2002-09-24  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/ws2tcpip.h: Throw error if winsock.h, not winsock2.h
+	has been included first.
+
+2002-09-24  René Møller Fonseca  <fonseca@users.sourceforge.net>
+
+        * include/winbase.h (FindFirstFileEx): Fixed ANSI mode.
+        * include/wingdi.h (PFD_SWAP_LAYER_BUFFERS):Added define.
+        * include/winuser.h (AppendMenu[AW]): Fixed prototypes.
+
 2002-09-18  Eric R. Krause  <ekrause_98@users.sourceforge.net>
 
 	* include/winuser.h (DS_SHELLFONT): Define.
