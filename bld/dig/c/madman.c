@@ -554,7 +554,7 @@ mad_status      MADAddrInterrupt( const addr_ptr *a, unsigned size, const mad_re
  *      Machine Types
  */
 
-static walk_result DIGREGISTER DummyTypeWalk( mad_type_kind tk, MAD_TYPE_WALKER *wk, void *d )
+static walk_result DIGREGISTER DummyTypeWalk( mad_type_kind tk, MI_TYPE_WALKER *wk, void *d )
 {
     tk = tk;
     wk = wk;
@@ -1333,7 +1333,7 @@ mad_status      MADRegistersTarget( mad_registers *mr )
     return( Active->rtns->MIRegistersTarget( mr ) );
 }
 
-static walk_result DIGREGISTER DummyRegSetWalk( mad_type_kind tk, MAD_REG_SET_WALKER *wk, void *d )
+static walk_result DIGREGISTER DummyRegSetWalk( mad_type_kind tk, MI_REG_SET_WALKER *wk, void *d )
 {
     tk = tk;
     wk = wk;
@@ -1482,7 +1482,7 @@ mad_status      MADRegInspectAddr( const mad_reg_info *ri, const mad_registers *
     return( Active->rtns->MIRegInspectAddr( ri, mr, a ) );
 }
 
-static walk_result DIGREGISTER DummyRegWalk( const mad_reg_set_data *rsd, const mad_reg_info *ri, MAD_REG_WALKER *wk, void *d )
+static walk_result DIGREGISTER DummyRegWalk( const mad_reg_set_data *rsd, const mad_reg_info *ri, MI_REG_WALKER *wk, void *d )
 {
     rsd = rsd;
     ri = ri;
@@ -1931,7 +1931,7 @@ mad_status              MADDisasmInspectAddr( char *start, unsigned len, unsigne
     return( Active->rtns->MIDisasmInspectAddr( start, len, radix, mr, a ) );
 }
 
-static walk_result DIGREGISTER DummyDisasmMemRefWalk( mad_disasm_data *dd, MAD_MEMREF_WALKER *wk, const mad_registers *mr, void *d )
+static walk_result DIGREGISTER DummyDisasmMemRefWalk( mad_disasm_data *dd, MI_MEMREF_WALKER *wk, const mad_registers *mr, void *d )
 {
     dd = dd;
     wk = wk;
