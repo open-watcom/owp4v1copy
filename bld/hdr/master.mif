@@ -235,6 +235,7 @@ LINUX_files = &
         sys/time.h &
         sys/times.h &
         sys/ioctl.h &
+        sys/mount.h &
         sys/ptrace.h &
         sys/wait.h &
         sys/socket.h &
