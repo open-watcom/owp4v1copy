@@ -104,7 +104,7 @@ xx
 
 test : .SYMBOLIC
 !ifndef asm
-asm=wasm -q
+asm=wasm -q -c
 !endif 
 	@%create $(cmd_file)
 	@%write $(cmd_file) @echo off
