@@ -124,6 +124,7 @@ int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
 #define SIGTTIN     21  /* attempted background tty read */
 #define SIGTTOU     22  /* attempted background tty write */
 #define SIGURG      23  /* urgent condition on I/O channel */
+#define SIGVTALRM   26  /* virtual alarm clock */
 #define SIGPROF     27  /* profiler */
 #define SIGWINCH    28  /* window change */
 #define SIGIO       29  /* Asynchronus I/O */

@@ -555,3 +555,15 @@ _WCRTLINK int setsid( void )
     u_long res = sys_call0(SYS_setsid);
     __syscall_return(int,res);
 }
+
+_WCRTLINK int getitimer( int which, struct itimerval *value )
+{
+    u_long res = sys_call2( SYS_getitimer, which, (u_long)value );
+    __syscall_return( int, res );
+}
+
+_WCRTLINK int setitimer( int which, const struct itimerval *value, struct itimerval *ovalue )
+{
+    u_long res = sys_call3( SYS_setitimer, which, (u_long)value, (u_long)ovalue );
+    __syscall_return( int, res );
+}
