@@ -18,8 +18,8 @@ cdsay .
 #    <CPCMD> <devdir>\f77\cg86\cp\osi386\wfc386.exe <relroot>\rel2\binw\wfc386.exe
 
     #intel compilers
-    <CPCMD> <devdir>\f77\cg86\cp\osii86\wfc.exe <relroot>\rel2\binw\wfc.exe
-    <CPCMD> <devdir>\f77\cg86\cp\osi386\wfc386.exe <relroot>\rel2\binw\wfc386.exe
+    <CPCMD> <devdir>\f77\cg86\cp\dosi86\wfc.exe <relroot>\rel2\binw\wfc.exe
+    <CPCMD> <devdir>\f77\cg86\cp\dos386\wfc386.exe <relroot>\rel2\binw\wfc386.exe
     <CPCMD> <devdir>\f77\cg86\cp\os2i86\wfc.exe <relroot>\rel2\binp\wfc.exe
     <CPCMD> <devdir>\f77\cg86\cp\os2386\wfc386.exe <relroot>\rel2\binp\wfc386.exe
     <CPCMD> <devdir>\f77\cg86\cp\nti86\wfc.exe <relroot>\rel2\binnt\wfc.exe
