@@ -52,8 +52,15 @@ extern dis_format_flags DFormat;
 
 static label_entry resolveTwoLabelsAtLocation( label_list sec_label_list, label_entry entry, label_entry previous_entry, label_entry old_entry )
 {
-    if( ( entry->type == LTYP_UNNAMED ) && ( old_entry->type != LTYP_FUNC_INFO )
-        && ( old_entry->type != LTYP_SECTION || !IsMasmOutput() ) ) {
+    if( ( entry->type == LTYP_UNNAMED )
+        && ( old_entry->type != LTYP_ABSOLUTE )
+        && ( old_entry->type != LTYP_FUNC_INFO )
+        && ( ( old_entry->type != LTYP_SECTION ) || !IsMasmOutput() ) ) {
+        // merge entry into old_entry
+        MemFree( entry );
+        entry = old_entry;
+    } else if( ( entry->type == LTYP_ABSOLUTE )
+        && ( old_entry->type == LTYP_ABSOLUTE ) ) {
         // merge entry into old_entry
         MemFree( entry );
         entry = old_entry;
@@ -256,6 +263,34 @@ void CreateUnnamedLabel( orl_sec_handle shnd, orl_sec_offset loc, unnamed_label_
     }
     entry->offset = loc;
     entry->type = LTYP_UNNAMED;
+    entry->label.number = 0;
+    entry->shnd = shnd;
+    data_ptr = HashTableQuery( HandleToLabelListTable, (hash_value) shnd );
+    if( data_ptr ) {
+        sec_label_list = (label_list) *data_ptr;
+        entry = addLabel( sec_label_list, entry, 0 );
+        return_struct->entry = entry;
+        return_struct->error = OKAY;
+    } else {
+        // error!!!! the label list should have been created
+        return_struct->error = ERROR;
+    }
+    return;
+}
+
+void CreateAbsoluteLabel( orl_sec_handle shnd, orl_sec_offset loc, unnamed_label_return return_struct )
+{
+    label_list          sec_label_list;
+    hash_data *         data_ptr;
+    label_entry         entry;
+
+    entry = MemAlloc( sizeof( label_entry_struct ) );
+    if( !entry ) {
+        return_struct->error = OUT_OF_MEMORY;
+        return;
+    }
+    entry->offset = loc;
+    entry->type = LTYP_ABSOLUTE;
     entry->label.number = 0;
     entry->shnd = shnd;
     data_ptr = HashTableQuery( HandleToLabelListTable, (hash_value) shnd );

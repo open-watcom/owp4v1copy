@@ -84,6 +84,7 @@ static label_entry handleLabels( char *sec_name, orl_sec_offset offset, label_en
         case LTYP_NAMED:
             if( strcmp( l_entry->label.name, sec_name ) == 0 ) continue;
             break;
+        case LTYP_ABSOLUTE:
         case LTYP_FUNC_INFO:
             continue;
         }
@@ -130,15 +131,13 @@ static return_val referenceString( ref_entry r_entry, orl_sec_size size,
     l_entry = r_entry->label;
     if( Options & METAWARE_COMPATIBLE || (ext_pref[0]==0 && int_pref[0]==0) ) {
         switch( l_entry->type ) {
+            case LTYP_ABSOLUTE:
+                FmtHexNum( temp, 0, l_entry->offset );
+                if( *frame == 0 && ( ( flags & RFLAG_NO_FRAME ) == 0 ) )
+                    frame = "ds:";
+                sprintf( buff, "%s%s[%s]", frame, sep, temp);
+                break;
             case LTYP_UNNAMED:
-                if( r_entry->type == ORL_RELOC_TYPE_MAX + 1 ) {
-                    FmtHexNum( temp, 0, l_entry->offset );
-                    if( *frame == 0 && ( ( flags & RFLAG_NO_FRAME ) == 0 ) )
-                        frame = "ds:";
-                    sprintf( buff, "%s%s[%s]", frame, sep, temp);
-                    break;
-                }
-                // fall through
                 sprintf( buff, "%s%s%c$%d%s", frame, sep, LabelChar,
                          l_entry->label.number, post );
                 break;
@@ -160,15 +159,13 @@ static return_val referenceString( ref_entry r_entry, orl_sec_size size,
                          l_entry->label.name );
                 break;
 
-            case LTYP_UNNAMED:
-                if( r_entry->type == ORL_RELOC_TYPE_MAX + 1 ) {
-                    FmtHexNum( temp, 0, l_entry->offset );
-                    if( *frame == 0 && ( ( flags & RFLAG_NO_FRAME ) == 0 ) )
-                        frame = "ds:";
-                    sprintf( buff, "%s%s%s[%s]", int_pref, frame, sep, temp);
-                    break;
-                }
-                // fall through
+            case LTYP_ABSOLUTE:
+                FmtHexNum( temp, 0, l_entry->offset );
+                if( *frame == 0 && ( ( flags & RFLAG_NO_FRAME ) == 0 ) )
+                    frame = "ds:";
+                sprintf( buff, "%s%s%s[%s]", int_pref, frame, sep, temp);
+                break;
+                
             default:
                 sprintf( buff, "%s%s%s%c$%d", int_pref, frame, sep,
                          LabelChar, l_entry->label.number );
@@ -566,6 +563,7 @@ num_errors DoPass2( section_ptr sec, char *contents, orl_sec_size size,
         DisDecode( &DHnd, &contents[data.loop], &decoded );
         if( sec_label_list ) {
             if( l_entry != NULL &&
+                l_entry->type != LTYP_ABSOLUTE &&
                 l_entry->binding != ORL_SYM_BINDING_NONE &&
                 l_entry->offset > data.loop &&
                 l_entry->offset < ( data.loop + decoded.size ) ) {

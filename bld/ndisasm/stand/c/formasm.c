@@ -519,6 +519,9 @@ static label_entry dumpAsmLabel( label_entry l_entry, section_ptr sec,
 
     while( l_entry && l_entry->offset == curr_pos ) {
         switch( l_entry->type ) {
+        case( LTYP_ABSOLUTE ):
+            // no print any absolute label here
+            break;
         case( LTYP_SECTION ):
             if( is_masm ) break;
             /* fall through */
