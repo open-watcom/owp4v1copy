@@ -37,6 +37,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <process.h>
+#include "autoenv.h"
 
 #define INCL_DOSMISC
 #define INCL_DOSSIGNALS
@@ -64,10 +65,14 @@ static void pascal far BrkHandler( USHORT sig_arg, USHORT sig_num )
 }
 #endif
 
+#include <stdio.h>
 void GUImain( void )
 {
     char    *buff;
     int     len;
+
+    // fix up env vars if necessary
+    watcom_setup_env();
 
     len = _bgetcmd( NULL, INT_MAX ) + 1;
     buff = malloc( len );
@@ -125,22 +130,14 @@ void RestoreHandlers()
 unsigned EnvLkup( char *name, char *buff, int max_len )
 {
     char        *env;
-    unsigned    len;
 
     max_len = max_len; // nyi obey
-    if( DosScanEnv( name, &env ) == 0 ) {
-        len = 0;
-        for( ;; ) {
-            *buff = *env;
-            if( *buff == NULLCHAR )
-                break;
-            ++len;
-            ++buff;
-            ++env;
-        }
-        return( len );
-    }
-    return( 0 );
+    // use getenv() so that autoenv has an effect (we can't
+    // reliably modify the "master" process environment on OS/2)
+    env = getenv( name );
+    if( env == NULL )
+        return( 0 );
+    return( StrCopy( env, buff ) - buff );
 }
 
 long _fork( char *cmd, unsigned len )

@@ -3,12 +3,13 @@
 # Open Watcom Debugger makefile for OS/2
 #
 
-host_OS  = os2
-host_CPU = 386
+host_os  = os2
+host_cpu = 386
 
 syshdir  =
 
 sysobjs =            &
+        autoenv.obj  &
         os22ini.obj  &
         os2chk.obj   &
         os2cmd.obj   &
