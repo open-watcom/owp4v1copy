@@ -63,12 +63,12 @@ typedef enum {                  // flags to control memory model settings
 #endif
 
 #if _CPU != 386
-    #define DEF_TARGET_SWITCHES CHEAP_POINTER|FLOATING_ES
+    #define DEF_TARGET_SWITCHES CHEAP_POINTER
     #define DEF_SWITCHES 0
     #define DEFAULT_CPU CPU_86
     #define DEFAULT_FPU FPU_87
 #else
-    #define DEF_TARGET_SWITCHES CHEAP_POINTER|USE_32|FLAT_MODEL|FLOATING_GS
+    #define DEF_TARGET_SWITCHES CHEAP_POINTER|USE_32|FLAT_MODEL
     #define DEF_SWITCHES 0
     #define DEFAULT_CPU CPU_586
     #define DEFAULT_FPU FPU_387
@@ -388,16 +388,17 @@ static void setMemoryModel( OPT_STORAGE *data, mem_model_control control )
     default:
         DbgNever();
     }
-    if( GET_CPU( GET_CPU( CpuSwitches ) >= CPU_386 ) ) {
-        // 386 flat model needs at least one floating segment register
-        bit |= FLOATING_GS | FLOATING_FS;
-        if( bit & FLAT_MODEL ) {
-            bit &= ~FLOATING_FS;
-        }
-    }
+// setup default "floating" segment registers
+#if _CPU == 8086
+    bit |= FLOATING_ES;
+#else
+    // 386 float model needs at least one floating segment register
+    bit |= FLOATING_GS;
     if( !( bit & FLAT_MODEL ) ) {
+        bit |= FLOATING_FS;
         bit |= FLOATING_ES;
     }
+#endif
     if( bit & BIG_DATA ) {
         bit |= FLOATING_DS;
     }
@@ -410,6 +411,11 @@ static void setMemoryModel( OPT_STORAGE *data, mem_model_control control )
         bit &= ~FLOATING_FS;
     } else {
         TargetSwitches &= ~ FLOATING_FS;
+    }
+    if( control & MMC_GS ) {
+        bit &= ~FLOATING_GS;
+    } else {
+        TargetSwitches &= ~ FLOATING_GS;
     }
     TargetSwitches &= ~( FLAT_MODEL | BIG_CODE | BIG_DATA | CHEAP_POINTER
                     | FLOATING_ES);
@@ -942,6 +948,10 @@ static void miscAnalysis( OPT_STORAGE *data )
         }
     }
 #endif
+    if( GET_CPU( CpuSwitches ) < CPU_386 ) {
+        /* issue warning message if /zf[f|p] or /zg[f|p] spec'd? */
+        TargetSwitches &= ~( FLOATING_FS | FLOATING_GS );
+    }
     if( ! data->r ) {
         if( TargetSwitches & FLOATING_DS ) {
             HW_CTurnOff( DefaultInfo.save, HW_DS );
