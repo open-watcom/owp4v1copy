@@ -332,7 +332,7 @@ static mad_status       FPUGetPiece( unsigned piece,
 }
 
 mad_status      DIGENTRY MIRegSetDisplayGetPiece( const mad_reg_set_data *rsd,
-                                mad_registers *mr,
+                                mad_registers const *mr,
                                 unsigned piece,
                                 char **descript,
                                 unsigned *max_descript,
@@ -399,7 +399,7 @@ mad_status DIGENTRY MIRegModified( const mad_reg_set_data *rsd, const mad_reg_in
     return( MS_OK );
 }
 
-mad_status      DIGENTRY MIRegInspectAddr( const mad_reg_info *ri, mad_registers *mr, address *a )
+mad_status      DIGENTRY MIRegInspectAddr( const mad_reg_info *ri, mad_registers const *mr, address *a )
 {
     unsigned    bit_start;
     unsigned_32 *p;
@@ -476,7 +476,7 @@ walk_result     DIGENTRY MIRegWalk( const mad_reg_set_data *rsd, const mad_reg_i
     return( WR_CONTINUE );
 }
 
-void            DIGENTRY MIRegSpecialGet( mad_special_reg sr, mad_registers *mr, addr_ptr *ma )
+void            DIGENTRY MIRegSpecialGet( mad_special_reg sr, mad_registers const *mr, addr_ptr *ma )
 {
     ma->segment = 0;
     switch( sr ) {
@@ -493,7 +493,7 @@ void            DIGENTRY MIRegSpecialGet( mad_special_reg sr, mad_registers *mr,
     }
 }
 
-void            DIGENTRY MIRegSpecialSet( mad_special_reg sr, mad_registers *mr, addr_ptr *ma )
+void            DIGENTRY MIRegSpecialSet( mad_special_reg sr, mad_registers *mr, addr_ptr const *ma )
 {
     switch( sr ) {
     case MSR_IP:
@@ -509,11 +509,11 @@ void            DIGENTRY MIRegSpecialSet( mad_special_reg sr, mad_registers *mr,
     }
 }
 
-unsigned        DIGENTRY MIRegSpecialName( mad_special_reg sr, mad_registers *mr, mad_address_format af, unsigned max, char *buff )
+unsigned        DIGENTRY MIRegSpecialName( mad_special_reg sr, mad_registers const *mr, mad_address_format af, unsigned max, char *buff )
 {
     unsigned    idx;
     unsigned    len;
-    char        *p;
+    char const  *p;
 
     switch( sr ) {
     case MSR_IP:

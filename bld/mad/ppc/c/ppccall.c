@@ -47,7 +47,7 @@ const mad_string        *DIGENTRY MICallTypeList( void )
     return( list );
 }
 
-mad_status      DIGENTRY MICallBuildFrame( mad_string call, address ret, address rtn, mad_registers *in, mad_registers *out )
+mad_status      DIGENTRY MICallBuildFrame( mad_string call, address ret, address rtn, mad_registers const *in, mad_registers *out )
 {
     call = call;
     out->ppc = in->ppc;
@@ -156,11 +156,11 @@ mad_status      DIGENTRY MICallUpStackInit( mad_call_up_data *cud, const mad_reg
     return( MS_OK );
 }
 
-mad_status      DIGENTRY MICallUpStackLevel( mad_call_data *cud,
-                                address *start,
+mad_status      DIGENTRY MICallUpStackLevel( mad_call_up_data *cud,
+                                address const *start,
                                 unsigned rtn_characteristics,
                                 long return_disp,
-                                mad_registers *in,
+                                mad_registers const *in,
                                 address *execution,
                                 address *frame,
                                 address *stack,

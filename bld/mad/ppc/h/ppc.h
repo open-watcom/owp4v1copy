@@ -97,7 +97,7 @@ extern const mad_type_data      TypeArray[];
 
 extern mad_status               DisasmInit( void );
 extern void                     DisasmFini( void );
-extern mad_disasm_control       DisasmControl( mad_disasm_data *, mad_registers * );
+extern mad_disasm_control       DisasmControl( mad_disasm_data *, mad_registers const * );
 extern mad_status               DisasmOne( mad_disasm_data *dd, address *a, int adj );
 
 extern mad_status               RegInit( void );

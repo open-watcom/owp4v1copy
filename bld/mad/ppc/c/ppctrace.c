@@ -40,12 +40,12 @@ unsigned        DIGENTRY MITraceSize( void )
     return( sizeof( mad_trace_data ) );
 }
 
-void            DIGENTRY MITraceInit( mad_trace_data *td, mad_registers *mr )
+void            DIGENTRY MITraceInit( mad_trace_data *td, mad_registers const *mr )
 {
     /* nothing to do */
 }
 
-mad_status      DIGENTRY MITraceHaveRecursed( address watch_stack, mad_registers *mr )
+mad_status      DIGENTRY MITraceHaveRecursed( address watch_stack, mad_registers const *mr )
 {
     if( mr->ppc.sp.u._32[0] < watch_stack.mach.offset ) {
         return( MS_OK );
@@ -53,7 +53,7 @@ mad_status      DIGENTRY MITraceHaveRecursed( address watch_stack, mad_registers
     return( MS_FAIL );
 }
 
-mad_trace_how   DIGENTRY MITraceOne( mad_trace_data *td, mad_disasm_data *dd, mad_trace_kind tk, mad_registers *mr, address *brk )
+mad_trace_how   DIGENTRY MITraceOne( mad_trace_data *td, mad_disasm_data *dd, mad_trace_kind tk, mad_registers const *mr, address *brk )
 {
     mad_disasm_control  dc;
     addr_off            ra;
@@ -82,7 +82,7 @@ mad_trace_how   DIGENTRY MITraceOne( mad_trace_data *td, mad_disasm_data *dd, ma
     return( MTH_BREAK );
 }
 
-mad_status      DIGENTRY MITraceSimulate( mad_trace_data *td, mad_disasm_data *dd, mad_registers *in, mad_registers *out )
+mad_status      DIGENTRY MITraceSimulate( mad_trace_data *td, mad_disasm_data *dd, mad_registers const *in, mad_registers *out )
 {
     return( MS_UNSUPPORTED );
 }

@@ -53,7 +53,7 @@ void DisasmFini()
     DisFini( &DH );
 }
 
-dis_return DisCliGetData( void *d, unsigned off, int size, void *data )
+dis_return DisCliGetData( void *d, unsigned off, unsigned size, void *data )
 {
     mad_disasm_data     *dd = d;
     address             addr;
@@ -211,7 +211,7 @@ static const mad_type_handle RefTrans[] = {
 #include "refppc.h"
 };
 
-static int CTRZero( mad_registers *mr )
+static int CTRZero( mad_registers const *mr )
 {
     if( mr->ppc.ctr.u._32[I64LO32] != 1 ) return( 0 );
     if( mr->ppc.msr.u._32[I64HI32] & (1UL << MSR_H_sf) ) {
@@ -220,13 +220,13 @@ static int CTRZero( mad_registers *mr )
     return( 1 );
 }
 
-static int CRTest( mad_registers *mr, mad_disasm_data *dd )
+static int CRTest( mad_registers const *mr, mad_disasm_data *dd )
 {
     if( mr->ppc.cr & (1 << (31 - dd->ins.op[1].value)) ) return( 1 );
     return( 0 );
 }
 
-static mad_disasm_control Cond( mad_disasm_data *dd, mad_registers *mr,
+static mad_disasm_control Cond( mad_disasm_data *dd, mad_registers const *mr,
                         addr_off dest )
 {
     #define NOT_TAKEN   (MDC_CONDITIONAL | MDC_TAKEN_NOT)
@@ -278,7 +278,7 @@ static mad_disasm_control Cond( mad_disasm_data *dd, mad_registers *mr,
 
 #define TRANS_REG( mr, r ) (*(unsigned_64 *)((unsigned_8*)(mr) + RegTrans[r]))
 
-static unsigned TrapTest( mad_disasm_data *dd, mad_registers *mr )
+static unsigned TrapTest( mad_disasm_data *dd, mad_registers const *mr )
 {
     unsigned_64 a;
     unsigned_64 b;
@@ -350,7 +350,7 @@ static unsigned TrapTest( mad_disasm_data *dd, mad_registers *mr )
     return( bits );
 }
 
-mad_disasm_control DisasmControl( mad_disasm_data *dd, mad_registers *mr )
+mad_disasm_control DisasmControl( mad_disasm_data *dd, mad_registers const *mr )
 {
     mad_disasm_control  c;
     addr_off            v;
@@ -413,12 +413,12 @@ mad_disasm_control DisasmControl( mad_disasm_data *dd, mad_registers *mr )
     return( MDC_OPER | MDC_TAKEN );
 }
 
-mad_disasm_control      DIGENTRY MIDisasmControl( mad_disasm_data *dd, mad_registers *mr )
+mad_disasm_control      DIGENTRY MIDisasmControl( mad_disasm_data *dd, mad_registers const *mr )
 {
     return( DisasmControl( dd, mr ) );
 }
 
-mad_status      DIGENTRY MIDisasmInsNext( mad_disasm_data *dd, const mad_registers *mr, address *next )
+mad_status      DIGENTRY MIDisasmInsNext( mad_disasm_data *dd, mad_registers const *mr, address *next )
 {
     mad_disasm_control  dc;
 
@@ -438,7 +438,7 @@ mad_status      DIGENTRY MIDisasmInsNext( mad_disasm_data *dd, const mad_registe
     return( MS_OK );
 }
 
-walk_result             DIGENTRY MIDisasmMemRefWalk( mad_disasm_data *dd, MI_MEMREF_WALKER *wk, mad_registers *mr, void *d )
+walk_result             DIGENTRY MIDisasmMemRefWalk( mad_disasm_data *dd, MI_MEMREF_WALKER *wk, mad_registers const *mr, void *d )
 {
     address             a;
     unsigned            i;
@@ -503,7 +503,7 @@ unsigned                DIGENTRY MIDisasmToggle( unsigned on, unsigned off )
     return( MADState->disasm_state );
 }
 
-mad_status              DIGENTRY MIDisasmInspectAddr( char *from, unsigned len, unsigned radix, mad_registers *mr, address *a )
+mad_status              DIGENTRY MIDisasmInspectAddr( char *from, unsigned len, unsigned radix, mad_registers const *mr, address *a )
 {
     char        *buff = __alloca( len * 2 );
     char        *to;

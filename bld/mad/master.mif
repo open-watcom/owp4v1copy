@@ -50,7 +50,7 @@ lflags_nt_axp   = sys ntaxp_dll op dosseg
 extra_l_flags  = op map
 
 extra_l_flags_os2  = export MADLOAD op modname=$(name)
-extra_l_flags_nt  = export MADLOAD op modname=$(name)
+extra_l_flags_nt   = export MADLOAD op modname=$(name)
 extra_l_flags_win  = op modname=$(name)
 
 libs = clib3r
@@ -78,12 +78,6 @@ objs =  madimp.obj $(imp_objs)
 
 # explicit rules
 ##################
-$(exe_name) : eraseall.obj $(objs)
+$(exe_name) : $(objs)
         $(linker) $(lflags) name $^@ file {$(objs)} library {$(libs)}
-!ifdef lexusbld
-        @newer $^@ $(lexlib_dir)\tools\system\$^. "^copy &f $#f > nul"
-!endif
 
-eraseall.obj : ../compile.gbl ../../compile.gbl $(extra_gbls)
-        rm -f *.obj
-        wtouch eraseall.obj

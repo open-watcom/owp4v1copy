@@ -104,7 +104,7 @@ void            DIGENTRY MITypeInfo( mad_type_handle th, mad_type_info *ti )
     memcpy( ti, TypeArray[th].u.info, sizeof( *ti ) );
 }
 
-mad_type_handle DIGENTRY MITypeDefault( mad_type_kind tk, mad_address_format af, mad_registers *mr, address *ap )
+mad_type_handle DIGENTRY MITypeDefault( mad_type_kind tk, mad_address_format af, mad_registers const *mr, address const *ap )
 {
     if( tk & MAS_IO ) {
         return( MAD_NIL_TYPE_HANDLE );

@@ -53,7 +53,7 @@ void DisasmFini()
     DisFini( &DH );
 }
 
-dis_return DisCliGetData( void *d, unsigned off, int size, void *data )
+dis_return DisCliGetData( void *d, unsigned off, unsigned int size, void *data )
 {
     mad_disasm_data     *dd = d;
     address             addr;
