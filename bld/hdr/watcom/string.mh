@@ -63,94 +63,94 @@ _WCRTLINK extern char *strtok( char *__s1, const char *__s2 );
 
 /* WATCOM's Additional Functions (non-ANSI, non-POSIX) */
 
-#if !defined(_fmemccpy) || !defined(_INC_WINDOWSX)
+#if !(defined(_fmemccpy) && _fmemccpy == _memccpy)
 _WCRTLINK extern void _WCFAR *_fmemccpy( void _WCFAR *__s1, const void _WCFAR *__s2, int __c, size_t __n );
 #endif
-#if !defined(_fmemchr) || !defined(_INC_WINDOWSX)
+#if !(defined(_fmemchr) && _fmemchr == memchr)
 _WCIRTLINK extern void _WCFAR *_fmemchr( const void _WCFAR *__s, int __c, size_t __n );
 #endif
-#if !defined(_fmemcpy) || !defined(_INC_WINDOWSX)
+#if !(defined(_fmemcpy) && _fmemcpy == memcpy)
 _WCIRTLINK extern void _WCFAR *_fmemcpy( void _WCFAR *__s1, const void _WCFAR *__s2, size_t __n );
 #endif
-#if !defined(_fmemmove) || !defined(_INC_WINDOWSX)
+#if !(defined(_fmemmove) && _fmemmove == memmove)
 _WCRTLINK extern void _WCFAR *_fmemmove( void _WCFAR *__s1, const void _WCFAR *__s2, size_t __n );
 #endif
-#if !defined(_fmemset) || !defined(_INC_WINDOWSX)
+#if !(defined(_fmemset) && _fmemset == memset)
 _WCIRTLINK extern void _WCFAR *_fmemset( void _WCFAR *__s, int __c, size_t __n );
 #endif
-#if !defined(_fmemcmp) || !defined(_INC_WINDOWSX)
+#if !(defined(_fmemcmp) && _fmemcmp == memcmp)
 _WCIRTLINK extern int _fmemcmp( const void _WCFAR *__s1, const void _WCFAR *__s2, size_t __n );
 #endif
-#if !defined(_fmemicmp) || !defined(_INC_WINDOWSX)
+#if !(defined(_fmemicmp) && _fmemicmp == _memicmp)
 _WCRTLINK extern int _fmemicmp( const void _WCFAR *__s1, const void _WCFAR *__s2, size_t __n );
 #endif
-#if !defined(_fstrcat) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstrcat) && _fstrcat == strcat)
 _WCIRTLINK extern char _WCFAR *_fstrcat( char _WCFAR *__s1, const char _WCFAR *__s2 );
 #endif
-#if !defined(_fstrchr) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstrchr) && _fstrchr == strchr)
 _WCRTLINK extern char _WCFAR *_fstrchr( const char _WCFAR *__s, int __c );
 #endif
-#if !defined(_fstrcmp) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstrcmp) && _fstrcmp == strcmp)
 _WCIRTLINK extern int _fstrcmp( const char _WCFAR *__s1, const char _WCFAR *__s2 );
 #endif
-#if !defined(_fstrcpy) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstrcpy) && _fstrcpy == strcpy)
 _WCIRTLINK extern char _WCFAR *_fstrcpy( char _WCFAR *__s1, const char _WCFAR *__s2 );
 #endif
-#if !defined(_fstrcspn) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstrcspn) && _fstrcspn == strcspn)
 _WCRTLINK extern size_t _fstrcspn( const char _WCFAR *__s1, const char _WCFAR *__s2 );
 #endif
-#if !defined(_fstrdup) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstrdup) && _fstrdup == strdup)
 _WCRTLINK extern char _WCFAR *_fstrdup( const char _WCFAR *__string );
 #endif
-#if !defined(_fstricmp) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstricmp) && _fstricmp == _stricmp)
 _WCRTLINK extern int _fstricmp( const char _WCFAR *__s1, const char _WCFAR *__s2 );
 #endif
-#if !defined(_fstrncat) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstrncat) && _fstrncat == strncat)
 _WCRTLINK extern char _WCFAR *_fstrncat( char _WCFAR *__s1, const char _WCFAR *__s2, size_t __n );
 #endif
-#if !defined(_fstrlen) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstrlen) && _fstrlen == strlen)
 _WCIRTLINK extern size_t _fstrlen( const char _WCFAR *__s );
 #endif
-#if !defined(_fstrlwr) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstrlwr) && _fstrlwr == _strlwr)
 _WCRTLINK extern char _WCFAR *_fstrlwr( char _WCFAR *__string );
 #endif
-#if !defined(_fstrncmp) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstrncmp) && _fstrncmp == strncmp)
 _WCRTLINK extern int _fstrncmp( const char _WCFAR *__s1, const char _WCFAR *__s2, size_t __n );
 #endif
-#if !defined(_fstrncpy) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstrncpy) && _fstrncpy == strncpy)
 _WCRTLINK extern char _WCFAR *_fstrncpy( char _WCFAR *__s1, const char _WCFAR *__s2, size_t __n );
 #endif
-#if !defined(_fstrnicmp) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstrnicmp) && _fstrnicmp == _strnicmp)
 _WCRTLINK extern int _fstrnicmp( const char _WCFAR *__s1, const char _WCFAR *__s2, size_t __n );
 #endif
-#if !defined(_fstrnset) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstrnset) && _fstrnset == _strnset)
 _WCRTLINK extern char _WCFAR *_fstrnset( char _WCFAR *__string, int __c, size_t __len );
 #endif
-#if !defined(_fstrpbrk) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstrpbrk) && _fstrpbrk == strpbrk)
 _WCRTLINK extern char _WCFAR *_fstrpbrk( const char _WCFAR *__s1, const char _WCFAR *__s2 );
 #endif
-#if !defined(_fstrrchr) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstrrchr) && _fstrrchr == strrchr)
 _WCRTLINK extern char _WCFAR *_fstrrchr( const char _WCFAR *__s, int __c );
 #endif
-#if !defined(_fstrrev) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstrrev) && _fstrrev == _strrev)
 _WCRTLINK extern char _WCFAR *_fstrrev( char _WCFAR *__string );
 #endif
-#if !defined(_fstrset) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstrset) && _fstrset == _strset)
 _WCRTLINK extern char _WCFAR *_fstrset( char _WCFAR *__string, int __c );
 #endif
-#if !defined(_fstrspn) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstrspn) && _fstrspn == strspn)
 _WCRTLINK extern size_t _fstrspn( const char _WCFAR *__s1, const char _WCFAR *__s2 );
 #endif
-#if !defined(_fstrspnp) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstrspnp) && _fstrspnp == _strspnp)
 _WCRTLINK extern char _WCFAR *_fstrspnp( const char _WCFAR *__s1, const char _WCFAR *__s2 );
 #endif
-#if !defined(_fstrstr) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstrstr) && _fstrstr == strstr)
 _WCRTLINK extern char _WCFAR *_fstrstr( const char _WCFAR *__s1, const char _WCFAR *__s2 );
 #endif
-#if !defined(_fstrtok) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstrtok) && _fstrtok == strtok)
 _WCRTLINK extern char _WCFAR *_fstrtok( char _WCFAR *__s1, const char _WCFAR *__s2 );
 #endif
-#if !defined(_fstrupr) || !defined(_INC_WINDOWSX)
+#if !(defined(_fstrupr) && _fstrupr == _strupr)
 _WCRTLINK extern char _WCFAR *_fstrupr( char _WCFAR *__string );
 #endif
 _WCIRTLINK extern void movedata( unsigned __srcseg, unsigned __srcoff, unsigned __tgtseg, unsigned __tgtoff, unsigned __len );
