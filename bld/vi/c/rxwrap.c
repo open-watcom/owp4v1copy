@@ -31,4 +31,4 @@
 
 #define REGEXP 1
 #include "rxsupp.h"
-#include "regexp.c"
+#include "../../posix/misc/regexp.c"

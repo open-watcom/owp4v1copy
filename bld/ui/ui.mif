@@ -84,7 +84,9 @@ objfiles = &
 objfiles += $(trmem_objs) $(extra_files)
 
 !ifeq release 1
+!ifndef bootstrap
 extra_c_flags += -os-s
+!endif
 !endif
 
 !include trmem.mif

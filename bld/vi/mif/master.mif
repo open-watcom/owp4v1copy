@@ -8,7 +8,13 @@ vi_autodepends = .AUTODEPEND
 .EXTENSIONS: .ctl .dyn
 .EXTENSIONS: .vi
 
-!include ../mif/name.mif
+name = $(proj_name).exe
+lname = $(name)
+!ifeq host_os win
+!ifeq host_cpu 386
+lname = $(proj_name).rex
+!endif
+!endif
 
 PROJECT : $(name) .symbolic
 
@@ -46,23 +52,22 @@ videps =
 bindextra = -d$(vi_dir)\dat\winbind.dat
 !endif
 
+!ifdef bootstrap
+$(name) : $(special) $(objs) $(objsroot) $(objinit) $(libs) $(other) $(videps) $(mifdep) version.obj
+        $(cl) $(clflags) $< $(cl_libs)
+!else
 $(name) : $(special) $(objs) $(objsroot) $(objinit) $(libs) $(other) $(videps) $(mifdep) version.obj
         $(linker) $(lflags) name $(lname) file version.obj file {$(objsroot)} $(start_flags) file {$(objinit)} $(more_flags) file {$(objs)} $(final_flags) $(rcsdll)
-!ifeq host_os dos
-!ifeq host_cpu 386
-#        $(tnt_dir)\bin\rebind $(tnt_dir)\bin\rtk\tntb.exe $(ED).exp -exe $(name)
-!endif
-!endif
 !ifdef sys_windowed
 !ifeq host_os win
 !ifeq host_cpu 386
-        wbind $(lname) -s $(lang_root)\binw\win386.ext -R -q $(ED).res
-        @erase $(lname)
+        wbind $(lname) -s $(lang_root)/binw/win386.ext -R -q $(proj_name).res
+        rm $(lname)
 !else
-        $(rc) $(rc_flags) $(inc_path) -k -zk0 $(ED).res $^@
+        $(rc) $(rc_flags) $(inc_path) -k -zk0 $(proj_name).res $^@
 !endif
 !else ifeq host_os nt
-        $(rc) $(rc_flags) $(inc_path) -zk0 $(ED).res $^@
+        $(rc) $(rc_flags) $(inc_path) -zk0 $(proj_name).res $^@
 !endif
         # don't bind - it screws up everything - BBB
 !else
@@ -77,6 +82,7 @@ $(name) : $(special) $(objs) $(objsroot) $(objinit) $(libs) $(other) $(videps) $
         $(vi_dir)/bind/linux386/edbind.exe $(bindextra) -q $(name)
 !else
         $(vi_dir)\bind\nt386\edbind $(bindextra) -q $(name)
+!endif
 !endif
 !endif
 !endif

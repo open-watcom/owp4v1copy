@@ -12,7 +12,9 @@
 #define stricmp strcasecmp
 #define strcmpi strcasecmp
 #define strnicmp strncasecmp
+#ifndef getch
 #define getch getchar
+#endif
 #define _vbprintf vsnprintf
 #define __near
 #define near

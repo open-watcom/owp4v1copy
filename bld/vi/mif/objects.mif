@@ -1,4 +1,4 @@
-objtimeroot = regexp.obj rxsupp.obj tab_hell.obj regsub.obj findrx.obj &
+objtimeroot = rxwrap.obj rxsupp.obj tab_hell.obj regsub.obj findrx.obj &
         mem.obj fcbxmint.obj addstr.obj llrtns.obj &
         parse.obj
 

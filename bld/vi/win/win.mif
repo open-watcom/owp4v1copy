@@ -30,19 +30,10 @@ rc_deps = ../win/viw.ico ../win/filelist.dlg ../win/fgrep.dlg &
           ../ctl/setfs.dlg ../ctl/setscr.dlg ../ctl/setgen.dlg
 
 !ifdef sys_windowed
-! ifeq host_OS nt
-!  ifeq host_CPU 386
-other = vintw.res
-!  else
-other = viaxpw.res
-!  endif
+other = vi.res
+! ifeq host_os nt
 extraobjs += spawn.obj getfpath.obj ntcmds.obj
 ! else
-! ifeq host_CPU 386
-other = viwp.res
-! else
-other = viw.res
-! endif
 extraobjs += exec.obj doscmds.obj
 ! endif
 !endif
