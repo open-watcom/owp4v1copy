@@ -76,12 +76,11 @@ extra_c_flags = $(extra_c_flags_trmem) $(extra_c_flags_debug) -DNOUSE3D=1 -ai
 !endif
 
 
-!ifeq host_CPU 386
-wasm_flags = -3
-!endif
-.asm.obj:
-        wasm $(wasm_flags) $[*
-#       masm $(masm_flags) /Mx /Zd $[*;
+#!ifeq host_CPU 386
+#wasm_flags = -3
+#!endif
+#.asm.obj:
+#        wasm $(wasm_flags) $[*
 
 !ifdef __LINUX__
 .ctl.ch:
