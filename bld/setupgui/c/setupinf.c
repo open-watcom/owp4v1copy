@@ -2421,6 +2421,16 @@ static int PrepareSetupInfo( FILE *io, pass_type pass )
             len = strlen( ReadBuf );
             if( len == 0 )
                 break;
+#ifdef __UNIX__
+            // Manually convert CRLF if needed
+            if( (len > 1) && (ReadBuf[len-1] == '\n') ) {
+                if( ReadBuf[len-2] == '\r' ) {
+                    ReadBuf[len-2] = '\n';
+                    ReadBuf[len-1] = '\0';
+                    --len;
+                }
+            }
+#endif
             if( ReadBuf[len-1] == '\n' ) {
                 if( len == 1 )
                     break;
