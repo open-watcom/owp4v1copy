@@ -152,23 +152,23 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
     long                value;
     char                *char_ptr;
     char                negative = FALSE;
-
-    #ifdef _WASM_
-        asm_sym     *the_struct;
-
-        the_struct = (asm_sym*)Definition.curr_struct;
-    #endif
-
+    
+#ifdef _WASM_
+    asm_sym     *the_struct;
+    
+    the_struct = (asm_sym*)Definition.curr_struct;
+#endif
+    
     while( AsmBuffer[cur_pos]->token != T_FINAL ) {
-        #ifdef _WASM_
-            int                 tmp;
-
-            tmp = cur_pos;
-            if( check_override( &tmp ) == ERROR ) {
-                return( ERROR );
-            }
-            cur_pos = tmp;
-        #endif
+#ifdef _WASM_
+        int                 tmp;
+        
+        tmp = cur_pos;
+        if( check_override( &tmp ) == ERROR ) {
+            return( ERROR );
+        }
+        cur_pos = tmp;
+#endif
         if( cur_pos == Token_Count - 1 &&
             AsmBuffer[cur_pos]->token == T_CL_BRACKET ) break;
         switch( AsmBuffer[cur_pos]->token ) {
@@ -179,30 +179,30 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                     return( ERROR );
                 }
             }
-            #ifdef _WASM_
-                if( !struct_field ) {
-                    ChangeCurrentLocation( TRUE, no_of_bytes );
-                } else {
-                    Definition.curr_struct->e.structinfo->size += no_of_bytes;
-                    the_struct->total_size+=no_of_bytes;
-                    the_struct->total_length++;
-                    if( first ) {
-                        the_struct->first_size+=no_of_bytes;
-                        the_struct->first_length++;
-                    }
+#ifdef _WASM_
+            if( !struct_field ) {
+                ChangeCurrentLocation( TRUE, no_of_bytes );
+            } else {
+                Definition.curr_struct->e.structinfo->size += no_of_bytes;
+                the_struct->total_size+=no_of_bytes;
+                the_struct->total_length++;
+                if( first ) {
+                    the_struct->first_size+=no_of_bytes;
+                    the_struct->first_length++;
                 }
-
-                if( sym && Parse_Pass == PASS_1 ) {
-                    sym->total_size+=no_of_bytes;
-                    if( first ) sym->first_size+=no_of_bytes;
-                }
-            #else
-                count = 0;
-                while( count < no_of_bytes ) {
-                    AsmDataByte( 0 );
-                    count++;
-                }
-            #endif
+            }
+            
+            if( sym && Parse_Pass == PASS_1 ) {
+                sym->total_size+=no_of_bytes;
+                if( first ) sym->first_size+=no_of_bytes;
+            }
+#else
+            count = 0;
+            while( count < no_of_bytes ) {
+                AsmDataByte( 0 );
+                count++;
+            }
+#endif
             break;
         case T_MINUS:
             switch( AsmBuffer[cur_pos+1]->token ) {
@@ -218,322 +218,180 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                 return( ERROR );
             }
             break;
-        case T_PLUS:
-        case T_DOT:
-            break; // go around again
-        case T_NUM:
-        case T_FLOAT:
-            if( AsmBuffer[cur_pos+1]->token == T_RES_ID &&
-                AsmBuffer[cur_pos+1]->value == T_DUP ) {
-                cur_pos = dup_array( sym, cur_pos, no_of_bytes );
-                if( cur_pos == ERROR ) return( ERROR );
-                break;
-            }
-
-            if( cur_pos != start_pos ) {
-                switch( AsmBuffer[cur_pos - 1]->token ) {
-                case T_COMMA:
+            case T_PLUS:
+            case T_DOT:
+                break; // go around again
+            case T_NUM:
+            case T_FLOAT:
+                if( AsmBuffer[cur_pos+1]->token == T_RES_ID &&
+                    AsmBuffer[cur_pos+1]->value == T_DUP ) {
+                    cur_pos = dup_array( sym, cur_pos, no_of_bytes );
+                    if( cur_pos == ERROR ) return( ERROR );
                     break;
-                case T_PLUS:
-                case T_MINUS:
-                    if( AsmBuffer[cur_pos - 2]->token == T_COMMA ) break;
-                    if( cur_pos - 1 == start_pos ) break;
-                default:
-                    AsmError( EXPECTING_COMMA );
-                    return( ERROR );
                 }
-            }
-            if( AsmBuffer[cur_pos]->token == T_FLOAT ) {
-                output_float( cur_pos, no_of_bytes, negative );
-                negative = FALSE;
-                break;
-            }
-            value = AsmBuffer[cur_pos]->value;
-            count = 0;
-            #ifdef _WASM_
-            if( sym && Parse_Pass == PASS_1 ) {
-                sym->total_length++;
-                sym->total_size += no_of_bytes;
-                if( first ) {
-                    sym->first_length++;
-                    sym->first_size += no_of_bytes;
-                }
-            }
-            if( !struct_field ) {
-            #endif
-                while( count < no_of_bytes ) {
-                    AsmDataByte( value );
-                    value >>= 8;
-                    count++;
-                    if( count == sizeof( value ) ) {
-                        value = AsmBuffer[cur_pos]->extra_value;
-                    }
-                }
-            #ifdef _WASM_
-            } else {
-                if( the_struct == NULL ) break;
-                Definition.curr_struct->e.structinfo->size += no_of_bytes;
-                the_struct->total_size+=no_of_bytes;
-                the_struct->total_length++;
-                if( first ) {
-                    the_struct->first_size+=no_of_bytes;
-                    the_struct->first_length++;
-                }
-            }
-            #endif
-            break;
-        case T_COMMA:
-            #ifdef _WASM_
-            first = FALSE;
-            #endif
-            if( cur_pos != start_pos ) {
-                if( AsmBuffer[cur_pos - 1]->token == T_COMMA ) {
-                    AsmError( EXPECTING_NUMBER );
-                    return( ERROR );
-                    /********SHOULD WE DO IT THIS WAY?*********
-                    for( count = 0; count < no_of_bytes; count++ ) {
-                        AsmDataByte( 0x00 );
-                    }
-                    ******************************************/
-                }
-            } else {
-                AsmError( EXPECTING_NUMBER );
-                return( ERROR );
-            }
-            if( cur_pos == ( Token_Count - 1 ) ) {
-                More_Array_Element = TRUE;
-                Last_Element_Size = no_of_bytes;
-            }
-            break;
-        case T_STRING:
-            if( no_of_bytes != 1 ) {
-                if( AsmBuffer[cur_pos]->value > no_of_bytes ) {
-                    AsmError( INITIALIZER_OUT_OF_RANGE );
-                    return( ERROR );
-                }
-            }
-            count = 0;
-            char_ptr = AsmBuffer[cur_pos]->string_ptr;
-
-            /* anything bigger than a byte must be stored in little-endian
-             * format -- LSB first */
-            little_endian( char_ptr, no_of_bytes );
-            #ifdef _WASM_
-            if( no_of_bytes == 1 && struct_field ) {
-                no_of_bytes = AsmBuffer[cur_pos]->value;
-            }
-            if( sym && Parse_Pass == PASS_1 ) {
-                sym->total_length++;
-                sym->total_size += no_of_bytes;
-                if( first ) {
-                    sym->first_length++;
-                    sym->first_size += no_of_bytes;
-                }
-            }
-            if( !struct_field ) {
-            #endif
-                while( count < AsmBuffer[cur_pos]->value ) {
-                    AsmDataByte( *char_ptr );
-                    char_ptr++;
-                    count++;
-                }
-            #ifdef _WASM_
-            } else {
-                if( the_struct == NULL ) break;
-                Definition.curr_struct->e.structinfo->size += no_of_bytes;
-                the_struct->total_size+=no_of_bytes;
-                the_struct->total_length++;
-                if( first ) {
-                    the_struct->first_size+=no_of_bytes;
-                    the_struct->first_length++;
-                }
-            }
-            #endif
-            break;
-        case T_ID:
-        {
-            int i;
-            int temp;
-            asm_sym *init_sym;
-            char *ptr;
-            long data = 0;
-            struct asmfixup     *fixup;
-            /* temporary test .. if this works, combine code for id & resid */
-#ifdef _WASM_
-            i = ++cur_pos;
-            if( check_override( &i ) == ERROR ) {
-                return( ERROR );
-            }
-            i--;
-            cur_pos = i;
-
-            switch( ExpandSymbol( i, FALSE ) ) {
-            case ERROR:
-                return( ERROR );
-            case STRING_EXPANDED:
-                continue;
-            }
-#endif
-
-            init_sym = AsmLookup( AsmBuffer[cur_pos]->string_ptr );
-
-            if( init_sym == NULL ) return( ERROR );
-
-            #ifdef _WASM_
-            switch( init_sym->state ) {
-            case SYM_STRUCT_FIELD:
-                AsmBuffer[cur_pos]->token = T_NUM;
-                AsmBuffer[cur_pos]->value = init_sym->offset;
-                continue;
-            case SYM_GRP:
-            case SYM_SEG:
-                temp = FIX_SEG;
-                break;
-            default:
-            #endif
-
-            switch( no_of_bytes ) {
-            case 1:
-                AsmError( OFFSET_TOO_SMALL ); // fixme
-                return( ERROR );
-            case 2:
-                temp = FIX_OFF16;
-                break;
-            case 4:
-                if( Code->use32 ) {
-                    temp = FIX_OFF32;
-                } else {
-                    temp = FIX_PTR16;
-                }
-                break;
-            case 6:
-                // fixme -- this needs work .... check USE_32, etc
-                temp = FIX_PTR32;
-                Code->info.opnd_type[0] = OP_J48;
-                break;
-            default:
-                AsmError( NOT_IMPLEMENTED );
-                return( ERROR );
-            }
-            #ifdef _WASM_
-                /* switch( init_sym->state ) from above */
-            }
-            #endif
-
-            fixup = AddFixup( init_sym, temp );
-//          if( fixup == NULL ) return( ERROR );
-            // fixme
-            InsFixups[0] = fixup;
-            data += fixup->offset;
-
-            for( cur_pos++;
-                AsmBuffer[cur_pos]->token != T_FINAL && AsmBuffer[cur_pos]->token != T_COMMA;
-                cur_pos++ ) {
-                switch( AsmBuffer[cur_pos]->token ) {
-                case T_PLUS:
-                case T_DOT:
-                case T_OP_SQ_BRACKET:
-                    break;
-                #ifdef _WASM_
-                case T_ID:
-                    init_sym = AsmLookup( AsmBuffer[cur_pos]->string_ptr );
-                    data += init_sym->offset;
-                    break;
-                #endif
-                case T_MINUS:
-                    if( AsmBuffer[cur_pos+1]->token != T_NUM ) {
-                        AsmError( EXPECTING_NUMBER );
+                
+                if( cur_pos != start_pos ) {
+                    switch( AsmBuffer[cur_pos - 1]->token ) {
+                    case T_COMMA:
+                        break;
+                    case T_PLUS:
+                    case T_MINUS:
+                        if( AsmBuffer[cur_pos - 2]->token == T_COMMA ) break;
+                        if( cur_pos - 1 == start_pos ) break;
+                    default:
+                        AsmError( EXPECTING_COMMA );
                         return( ERROR );
                     }
-                    AsmBuffer[cur_pos+1]->value *=-1;
+                }
+                if( AsmBuffer[cur_pos]->token == T_FLOAT ) {
+                    output_float( cur_pos, no_of_bytes, negative );
+                    negative = FALSE;
                     break;
-                case T_NUM:
-                    data += AsmBuffer[cur_pos]->value;
                 }
-            }
-            cur_pos--;
-
-            #ifdef _WASM_
-                if( store_fixup( 0 ) == ERROR ) return( ERROR );
-            #endif
-            /* now actually output the data */
-            ptr = (char *)&data;
-            #ifdef _WASM_
-            if( sym && Parse_Pass == PASS_1 ) {
-                sym->total_length++;
-                sym->total_size += no_of_bytes;
-                if( first ) {
-                    sym->first_length++;
-                    sym->first_size += no_of_bytes;
+                value = AsmBuffer[cur_pos]->value;
+                count = 0;
+#ifdef _WASM_
+                if( sym && Parse_Pass == PASS_1 ) {
+                    sym->total_length++;
+                    sym->total_size += no_of_bytes;
+                    if( first ) {
+                        sym->first_length++;
+                        sym->first_size += no_of_bytes;
+                    }
                 }
-            }
-            if( !struct_field ) {
-            #endif
-                /* only output up to 4 bytes of offset (segment is on fixup) */
-                for( i = 0; i < min( no_of_bytes, 4 ); i++ ) {
-                    AsmDataByte( *ptr );
-                    ptr++;
+                if( !struct_field ) {
+#endif
+                    while( count < no_of_bytes ) {
+                        AsmDataByte( value );
+                        value >>= 8;
+                        count++;
+                        if( count == sizeof( value ) ) {
+                            value = AsmBuffer[cur_pos]->extra_value;
+                        }
+                    }
+#ifdef _WASM_
+                } else {
+                    if( the_struct == NULL ) break;
+                    Definition.curr_struct->e.structinfo->size += no_of_bytes;
+                    the_struct->total_size+=no_of_bytes;
+                    the_struct->total_length++;
+                    if( first ) {
+                        the_struct->first_size+=no_of_bytes;
+                        the_struct->first_length++;
+                    }
                 }
-                /* leave space for segment */
-                for( ; i < no_of_bytes; i++ ) {
-                    AsmDataByte( 0 );
-                }
-            #ifdef _WASM_
-            } else {
-                if( the_struct == NULL ) break;
-                Definition.curr_struct->e.structinfo->size += no_of_bytes;
-                the_struct->total_size+=no_of_bytes;
-                the_struct->total_length++;
-                if( first ) {
-                    the_struct->first_size+=no_of_bytes;
-                    the_struct->first_length++;
-                }
-            }
-            #endif
-            break;
-        }
-        case T_UNARY_OPERATOR:
-        {
-            int i;
-            int temp;
-            int seg_off_operator_loc = 0;
-            asm_sym *init_sym;
-            char *ptr;
-            long data = 0;
-            struct asmfixup     *fixup;
-
-            if( AsmBuffer[cur_pos]->value == T_OFFSET ||
-                AsmBuffer[cur_pos]->value == T_SEG2 ) {
-                // see asmins.h about T_SEG2
-                if( no_of_bytes < 2 ) {
-                    AsmError( OFFSET_TOO_SMALL );
+#endif
+                break;
+            case T_COMMA:
+#ifdef _WASM_
+                first = FALSE;
+#endif
+                if( cur_pos != start_pos ) {
+                    if( AsmBuffer[cur_pos - 1]->token == T_COMMA ) {
+                        AsmError( EXPECTING_NUMBER );
+                        return( ERROR );
+                        /********SHOULD WE DO IT THIS WAY?*********
+                        for( count = 0; count < no_of_bytes; count++ ) {
+                        AsmDataByte( 0x00 );
+                        }
+                        ******************************************/
+                    }
+                } else {
+                    AsmError( EXPECTING_NUMBER );
                     return( ERROR );
                 }
-            }
-            seg_off_operator_loc = cur_pos;
+                if( cur_pos == ( Token_Count - 1 ) ) {
+                    More_Array_Element = TRUE;
+                    Last_Element_Size = no_of_bytes;
+                }
+                break;
+            case T_STRING:
+                if( no_of_bytes != 1 ) {
+                    if( AsmBuffer[cur_pos]->value > no_of_bytes ) {
+                        AsmError( INITIALIZER_OUT_OF_RANGE );
+                        return( ERROR );
+                    }
+                }
+                count = 0;
+                char_ptr = AsmBuffer[cur_pos]->string_ptr;
+                
+                /* anything bigger than a byte must be stored in little-endian
+                * format -- LSB first */
+                little_endian( char_ptr, no_of_bytes );
 #ifdef _WASM_
-            i = ++cur_pos;
-            if( check_override( &i ) == ERROR ) {
-                return( ERROR );
-            }
-            i--;
-            cur_pos = i;
+                if( no_of_bytes == 1 && struct_field ) {
+                    no_of_bytes = AsmBuffer[cur_pos]->value;
+                }
+                if( sym && Parse_Pass == PASS_1 ) {
+                    sym->total_length++;
+                    sym->total_size += no_of_bytes;
+                    if( first ) {
+                        sym->first_length++;
+                        sym->first_size += no_of_bytes;
+                    }
+                }
+                if( !struct_field ) {
 #endif
-            if( cur_pos + 1 < Token_Count ) {
-                if( AsmBuffer[++cur_pos]->token == T_ID ) {
+                    while( count < AsmBuffer[cur_pos]->value ) {
+                        AsmDataByte( *char_ptr );
+                        char_ptr++;
+                        count++;
+                    }
+#ifdef _WASM_
+                } else {
+                    if( the_struct == NULL ) break;
+                    Definition.curr_struct->e.structinfo->size += no_of_bytes;
+                    the_struct->total_size+=no_of_bytes;
+                    the_struct->total_length++;
+                    if( first ) {
+                        the_struct->first_size+=no_of_bytes;
+                        the_struct->first_length++;
+                    }
+                }
+#endif
+                break;
+            case T_ID:
+                {
+                    int i;
+                    int temp;
+                    asm_sym *init_sym;
+                    char *ptr;
+                    long data = 0;
+                    struct asmfixup     *fixup;
+                    /* temporary test .. if this works, combine code for id & resid */
+#ifdef _WASM_
+                    i = ++cur_pos;
+                    if( check_override( &i ) == ERROR ) {
+                        return( ERROR );
+                    }
+                    i--;
+                    cur_pos = i;
+                    
+                    switch( ExpandSymbol( i, FALSE ) ) {
+                    case ERROR:
+                        return( ERROR );
+                    case STRING_EXPANDED:
+                        continue;
+                    }
+#endif
+                    
                     init_sym = AsmLookup( AsmBuffer[cur_pos]->string_ptr );
+                    
                     if( init_sym == NULL ) return( ERROR );
-
-                    if( AsmBuffer[seg_off_operator_loc]->value == T_OFFSET ) {
-                        if( init_sym->state == SYM_STACK ) {
-                            AsmError( CANNOT_OFFSET_AUTO );
-                            return( ERROR );
+                    
 #ifdef _WASM_
-                        } else if( init_sym->state == SYM_GRP ) {
-                            AsmError( CANNOT_OFFSET_GRP );
-                            return( ERROR );
+                    switch( init_sym->state ) {
+                    case SYM_STRUCT_FIELD:
+                        AsmBuffer[cur_pos]->token = T_NUM;
+                        AsmBuffer[cur_pos]->value = init_sym->offset;
+                        continue;
+                    case SYM_GRP:
+                    case SYM_SEG:
+                        temp = FIX_SEG;
+                        break;
+                    default:
 #endif
-                        }
+                        
                         switch( no_of_bytes ) {
                         case 1:
                             AsmError( OFFSET_TOO_SMALL ); // fixme
@@ -542,68 +400,46 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                             temp = FIX_OFF16;
                             break;
                         case 4:
-                            temp = FIX_OFF32;
+                            if( Code->use32 ) {
+                                temp = FIX_OFF32;
+                            } else {
+                                temp = FIX_PTR16;
+                            }
+                            break;
+                        case 6:
+                            // fixme -- this needs work .... check USE_32, etc
+                            temp = FIX_PTR32;
+                            Code->info.opnd_type[0] = OP_J48;
                             break;
                         default:
                             AsmError( NOT_IMPLEMENTED );
                             return( ERROR );
                         }
-                    } else if( AsmBuffer[seg_off_operator_loc]->value == T_SEG2 ) {
-                        if( init_sym->state == SYM_STACK ) {
-                            AsmError( CANNOT_SEG_AUTO );
-                        }
-                        temp = FIX_SEG;
+#ifdef _WASM_
+                        /* switch( init_sym->state ) from above */
                     }
-
-                    switch( AsmBuffer[seg_off_operator_loc]->value ) {
-                    case T_OFFSET:
-                        #ifdef _WASM_
-                            if( init_sym->state == SYM_STRUCT_FIELD ) {
-                                data = init_sym->offset;
-                                break;
-                            }
-                        #endif
-                    case T_SEG2:
-
-                        fixup = AddFixup( init_sym, temp );
-                        InsFixups[0] = fixup;
-                        if( AsmBuffer[seg_off_operator_loc]->value == T_OFFSET ) {
-                            data += fixup->offset;
-                        }
-                        #ifdef _WASM_
-                            if( store_fixup( 0 ) == ERROR ) return( ERROR );
-                        #endif
-                        break;
-                    #ifdef _WASM_
-                    case T_LENGTH:
-                        data = sym->first_length;
-                        break;
-                    case T_LENGTHOF:
-                        data = sym->total_length;
-                        break;
-                    case T_SIZE:
-                        data = sym->first_size;
-                        break;
-                    case T_SIZEOF:
-                        data = sym->total_size;
-                        break;
-                    #endif
-                    default:
-                        AsmError( SYNTAX_ERROR );
-                        return( ERROR );
-                    }
-                    for( cur_pos++; AsmBuffer[cur_pos]->token != T_FINAL; cur_pos++ ) {
+#endif
+                    
+                    fixup = AddFixup( init_sym, temp );
+                    //          if( fixup == NULL ) return( ERROR );
+                    // fixme
+                    InsFixups[0] = fixup;
+                    data += fixup->offset;
+                    
+                    for( cur_pos++;
+                    AsmBuffer[cur_pos]->token != T_FINAL && AsmBuffer[cur_pos]->token != T_COMMA;
+                    cur_pos++ ) {
                         switch( AsmBuffer[cur_pos]->token ) {
                         case T_PLUS:
                         case T_DOT:
                         case T_OP_SQ_BRACKET:
                             break;
-                        #ifdef _WASM_
+#ifdef _WASM_
                         case T_ID:
                             init_sym = AsmLookup( AsmBuffer[cur_pos]->string_ptr );
                             data += init_sym->offset;
                             break;
-                        #endif
+#endif
                         case T_MINUS:
                             if( AsmBuffer[cur_pos+1]->token != T_NUM ) {
                                 AsmError( EXPECTING_NUMBER );
@@ -614,13 +450,15 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                         case T_NUM:
                             data += AsmBuffer[cur_pos]->value;
                         }
-                        if( AsmBuffer[cur_pos]->token == T_COMMA ) break;
                     }
                     cur_pos--;
-
+                    
+#ifdef _WASM_
+                    if( store_fixup( 0 ) == ERROR ) return( ERROR );
+#endif
                     /* now actually output the data */
                     ptr = (char *)&data;
-                    #ifdef _WASM_
+#ifdef _WASM_
                     if( sym && Parse_Pass == PASS_1 ) {
                         sym->total_length++;
                         sym->total_size += no_of_bytes;
@@ -630,12 +468,17 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                         }
                     }
                     if( !struct_field ) {
-                    #endif
-                        for( i = 0; i < no_of_bytes; i++ ) {
+#endif
+                        /* only output up to 4 bytes of offset (segment is on fixup) */
+                        for( i = 0; i < min( no_of_bytes, 4 ); i++ ) {
                             AsmDataByte( *ptr );
                             ptr++;
                         }
-                    #ifdef _WASM_
+                        /* leave space for segment */
+                        for( ; i < no_of_bytes; i++ ) {
+                            AsmDataByte( 0 );
+                        }
+#ifdef _WASM_
                     } else {
                         if( the_struct == NULL ) break;
                         Definition.curr_struct->e.structinfo->size += no_of_bytes;
@@ -646,7 +489,164 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                             the_struct->first_length++;
                         }
                     }
-                    #endif
+#endif
+                    break;
+        }
+        case T_UNARY_OPERATOR:
+            {
+                int i;
+                int temp;
+                int seg_off_operator_loc = 0;
+                asm_sym *init_sym;
+                char *ptr;
+                long data = 0;
+                struct asmfixup     *fixup;
+                
+                if( AsmBuffer[cur_pos]->value == T_OFFSET ||
+                    AsmBuffer[cur_pos]->value == T_SEG2 ) {
+                    // see asmins.h about T_SEG2
+                    if( no_of_bytes < 2 ) {
+                        AsmError( OFFSET_TOO_SMALL );
+                        return( ERROR );
+                    }
+                }
+                seg_off_operator_loc = cur_pos;
+#ifdef _WASM_
+                i = ++cur_pos;
+                if( check_override( &i ) == ERROR ) {
+                    return( ERROR );
+                }
+                i--;
+                cur_pos = i;
+#endif
+                if( cur_pos + 1 < Token_Count ) {
+                    if( AsmBuffer[++cur_pos]->token == T_ID ) {
+                        init_sym = AsmLookup( AsmBuffer[cur_pos]->string_ptr );
+                        if( init_sym == NULL ) return( ERROR );
+                        
+                        if( AsmBuffer[seg_off_operator_loc]->value == T_OFFSET ) {
+                            if( init_sym->state == SYM_STACK ) {
+                                AsmError( CANNOT_OFFSET_AUTO );
+                                return( ERROR );
+#ifdef _WASM_
+                            } else if( init_sym->state == SYM_GRP ) {
+                                AsmError( CANNOT_OFFSET_GRP );
+                                return( ERROR );
+#endif
+                            }
+                            switch( no_of_bytes ) {
+                            case 1:
+                                AsmError( OFFSET_TOO_SMALL ); // fixme
+                                return( ERROR );
+                            case 2:
+                                temp = FIX_OFF16;
+                                break;
+                            case 4:
+                                temp = FIX_OFF32;
+                                break;
+                            default:
+                                AsmError( NOT_IMPLEMENTED );
+                                return( ERROR );
+                            }
+                        } else if( AsmBuffer[seg_off_operator_loc]->value == T_SEG2 ) {
+                            if( init_sym->state == SYM_STACK ) {
+                                AsmError( CANNOT_SEG_AUTO );
+                            }
+                            temp = FIX_SEG;
+                        }
+                        
+                        switch( AsmBuffer[seg_off_operator_loc]->value ) {
+                        case T_OFFSET:
+#ifdef _WASM_
+                            if( init_sym->state == SYM_STRUCT_FIELD ) {
+                                data = init_sym->offset;
+                                break;
+                            }
+#endif
+                        case T_SEG2:
+                            
+                            fixup = AddFixup( init_sym, temp );
+                            InsFixups[0] = fixup;
+                            if( AsmBuffer[seg_off_operator_loc]->value == T_OFFSET ) {
+                                data += fixup->offset;
+                            }
+#ifdef _WASM_
+                            if( store_fixup( 0 ) == ERROR ) return( ERROR );
+#endif
+                            break;
+#ifdef _WASM_
+                        case T_LENGTH:
+                            data = sym->first_length;
+                            break;
+                        case T_LENGTHOF:
+                            data = sym->total_length;
+                            break;
+                        case T_SIZE:
+                            data = sym->first_size;
+                            break;
+                        case T_SIZEOF:
+                            data = sym->total_size;
+                            break;
+#endif
+                        default:
+                            AsmError( SYNTAX_ERROR );
+                            return( ERROR );
+                        }
+                        for( cur_pos++; AsmBuffer[cur_pos]->token != T_FINAL; cur_pos++ ) {
+                            switch( AsmBuffer[cur_pos]->token ) {
+                            case T_PLUS:
+                            case T_DOT:
+                            case T_OP_SQ_BRACKET:
+                                break;
+#ifdef _WASM_
+                            case T_ID:
+                                init_sym = AsmLookup( AsmBuffer[cur_pos]->string_ptr );
+                                data += init_sym->offset;
+                                break;
+#endif
+                            case T_MINUS:
+                                if( AsmBuffer[cur_pos+1]->token != T_NUM ) {
+                                    AsmError( EXPECTING_NUMBER );
+                                    return( ERROR );
+                                }
+                                AsmBuffer[cur_pos+1]->value *=-1;
+                                break;
+                            case T_NUM:
+                                data += AsmBuffer[cur_pos]->value;
+                            }
+                            if( AsmBuffer[cur_pos]->token == T_COMMA ) break;
+                        }
+                        cur_pos--;
+                        
+                        /* now actually output the data */
+                        ptr = (char *)&data;
+#ifdef _WASM_
+                        if( sym && Parse_Pass == PASS_1 ) {
+                            sym->total_length++;
+                            sym->total_size += no_of_bytes;
+                            if( first ) {
+                                sym->first_length++;
+                                sym->first_size += no_of_bytes;
+                            }
+                        }
+                        if( !struct_field ) {
+#endif
+                            for( i = 0; i < no_of_bytes; i++ ) {
+                                AsmDataByte( *ptr );
+                                ptr++;
+                            }
+#ifdef _WASM_
+                        } else {
+                            if( the_struct == NULL ) break;
+                            Definition.curr_struct->e.structinfo->size += no_of_bytes;
+                            the_struct->total_size+=no_of_bytes;
+                            the_struct->total_length++;
+                            if( first ) {
+                                the_struct->first_size+=no_of_bytes;
+                                the_struct->first_length++;
+                            }
+                        }
+#endif
                 } else {
                     AsmError( SYNTAX_ERROR );
                     return( ERROR );
