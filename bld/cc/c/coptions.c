@@ -1142,7 +1142,7 @@ void Set_ZL()                   { CompFlags.emit_library_with_main = 0; }
 void Set_ZLF()                  { CompFlags.emit_library_any  = 1; }
 void Set_ZLD()                  { CompFlags.emit_dependencies = 0; }
 void Set_ZLS()                  { CompFlags.emit_targimp_symbols = 0; }
-void Set_ZV()                   { CompFlags.unix_ext = 1; }
+void Set_ZEV()                  { CompFlags.unix_ext = 1; }
 void Set_ZM()
 {
     CompFlags.multiple_code_segments = 1;
@@ -1482,7 +1482,7 @@ struct option const CFE_Options[] = {
 #if _CPU == 8086 || _CPU == 386
     { "zu",     0,              Set_ZU },
 #endif
-    { "zv",     0,              Set_ZV },
+    { "zev",    0,              Set_ZEV },
 #if _CPU == 8086
     { "zW*",    0,              SetCheapWindows },
     { "zw*",    0,              SetWindows },

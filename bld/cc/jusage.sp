@@ -201,6 +201,7 @@ Options:
 -zdl	      DGROUPから直接DSにロードします
 :endsegment
 -ze	      拡張機能を許可します(つまり, near, far, export, 等)
+-zev      enable arithmetic on void derived types
 :segment T386 | Ti86
 -zff	      FSを浮動にします. 1つのセグメントに固定しません
 -zfp	      FSを1つのセグメントに固定します
