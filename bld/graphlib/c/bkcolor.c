@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Background color get/set routines.
 *
 ****************************************************************************/
 
@@ -63,7 +62,7 @@ long _WCI86FAR _CGRAPH _setbkcolor( long pixval )
     prev = _CurrBkColor;
     _CurrBkColor = pixval;
 
-#if defined( _NEC_PC ) || defined( _DEFAULT_WINDOWS )
+#if defined( _DEFAULT_WINDOWS )
     _remappalette( 0, pixval );
     color = color;
 #else

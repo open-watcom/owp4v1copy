@@ -94,7 +94,7 @@ objs = &
         zputimag.obj &
         zrectang.obj
 
-eng_nec_objs = &
+eng_nonwin_objs = &
         8x8font.obj &
         bit.obj &
         gstklow.obj &
@@ -126,11 +126,6 @@ english_objs = &
         svgainfo.obj &
         sysmtype.obj
 
-nec_objs = &
-        grnec.obj &
-        necutils.obj &
-        kanji.obj
-
 win_objs = &
         gphmain.obj &
         winutil.obj &
@@ -140,17 +135,13 @@ special_objs = &
         dummy.obj
 
 !ifndef _WIN
-objs += $(eng_nec_objs)
+objs += $(eng_nonwin_objs)
 !endif
 
-!ifeq machine NEC
-objs += $(nec_objs)
-!else
 !ifdef _WIN
 objs += $(win_objs)
 !else
 objs += $(english_objs)
-!endif
 !endif
 
 !include cproj.mif
@@ -175,7 +166,6 @@ inc_dirs += ;$(%watcom)/h/win;$(clib_dir)/h;$(clib_dir)/defwin/h;$(wpi_dir)/h;$(
 
 .c: ../c
 
-extra_c_flags_NEC = -d_NEC_PC
 extra_c_flags_ = -d_SUPERVGA
 extra_c_flags = -r -zl -zld -fpc -d_FARD= -nm=$[&$(suffix_$(convention)) -fo=$@ $(extra_c_flags_$(machine))
 
@@ -186,7 +176,6 @@ extra_c_flags_i86 = -nt=GRAPH_TEXT -d_CGRAPH=_loadds
 
 extra_c_flags_qnx = -bt=dos # ?????
 
-extra_a_flags_NEC = -d_NEC_PC
 extra_a_flags = -ms -i"../inc" $(extra_a_flags_$(machine)) -zld -fo=$@
 
 extra_a_flags_i86 = -d_TEXT=GRAPH_TEXT

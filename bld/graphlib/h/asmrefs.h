@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Assembler routines called by C.
 *
 ****************************************************************************/
 
@@ -35,53 +34,6 @@
    placed in the combined library. For this to work properly, all
    references to symbol names must be done the same way. */
 
-/* Assembler routines called by C. */
-
-#if defined( _NEC_PC )
-#pragma aux _NECSet "*_";
-#pragma aux _NECReset "*_";
-#pragma aux _NECByteRep "*_";
-#pragma aux _NECByteXor "*_";
-#pragma aux _NECByteAnd "*_";
-#pragma aux _NECByteOr "*_";
-#pragma aux _NECRep "*_";
-#pragma aux _NECXor "*_";
-#pragma aux _NECAnd "*_";
-#pragma aux _NECOr "*_";
-#pragma aux _NECGetDot "*_";
-#pragma aux _NECPixZap "*_";
-#pragma aux _NECPixFill "*_";
-#pragma aux _NECPixCopy "*_";
-#pragma aux _NECPixRead "*_";
-#pragma aux _NEC16Xor "*_";
-#pragma aux _NEC16And "*_";
-#pragma aux _NEC16Or "*_";
-#pragma aux _NEC16GetDot "*_";
-#pragma aux _NEC16PixZap "*_";
-#pragma aux _NEC16PixFill "*_";
-#pragma aux _NEC16PixCopy "*_";
-#pragma aux _NEC16PixRead "*_";
-#pragma aux _NEC16ScanLeft "*_";
-#pragma aux _NEC16ScanRight "*_";
-#pragma aux _NECMoveUp "*_";
-#pragma aux _NECMoveDown "*_";
-#pragma aux _NECMoveLeft "*_";
-#pragma aux _NECMoveRight "*_";
-#pragma aux _NECScanLeft "*_";
-#pragma aux _NECScanRight "*_";
-#pragma aux _NEC1120MoveUp "*_";
-#pragma aux _NEC1120MoveDown "*_";
-#pragma aux _NEC1120MoveLeft "*_";
-#pragma aux _NEC1120MoveRight "*_";
-#pragma aux _NEC1120Xor "*_";
-#pragma aux _NEC1120Or "*_";
-#pragma aux _NEC1120And "*_";
-#pragma aux _NEC1120Zap "*_";
-#pragma aux _NEC1120Fill "*_";
-#pragma aux _NEC1120GetDot "*_";
-#pragma aux _NEC1120Copy "*_";
-#pragma aux _NEC1120Read "*_";
-#else
 #pragma aux _CoRep "*_";
 #pragma aux _CoXor "*_";
 #pragma aux _CoAnd "*_";
@@ -197,7 +149,6 @@
 #pragma aux _PageS3 "*_";
 #pragma aux _PageCirrus "*_";
 #pragma aux _PageViper "*_";
-#endif
 
 /* Variables */
 
@@ -251,18 +202,6 @@
 #pragma aux _BiosSeg "_*";
 #pragma aux _BiosOff "_*";
 
-#if defined( _NEC_PC )
-#pragma aux _NecSeg "_*";
-#pragma aux _TextSeg "_*";
-#pragma aux _AttrSeg "_*";
-#pragma aux _NecOff "_*";
-#pragma aux _TextOff "_*";
-#pragma aux _AttrOff "_*";
-#pragma aux _KanjiBuf "_*";
-#pragma aux _NECPalette "_*";
-#pragma aux _NECDefPalette "_*";
-#pragma aux _GRCGPort "_*";
-#else
 #pragma aux _MonoSeg "_*";
 #pragma aux _CgaSeg "_*";
 #pragma aux _EgaSeg "_*";
@@ -271,7 +210,6 @@
 #pragma aux _CgaOff "_*";
 #pragma aux _EgaOff "_*";
 #pragma aux _RomOff "_*";
-#endif
 
 #if defined( __QNX__ )
 #pragma aux _CompileSeg "_*";

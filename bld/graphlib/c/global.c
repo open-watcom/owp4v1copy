@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Graph library globals.
 *
 ****************************************************************************/
 
@@ -105,22 +104,7 @@ void                    ( _FARC *_SetVGAPage )( short );  // function to set SVG
 
 // segments of screen memory and BIOS and ROM BIOS data area
 
-#if defined ( _NEC_PC )
-    unsigned short      _BiosSeg = 0x0040;          // seg of BIOS data area
-    unsigned short      _NecSeg  = 0xA800;          // seg of graphic VRAM
-    unsigned short      _TextSeg = 0xA000;          // seg of TEXT VRAM
-    unsigned short      _AttrSeg = 0xA200;          // seg of ATTRIBUTE VRAM
-    unsigned int        _BiosOff = 0;               // off of BIOS data area
-    unsigned int        _NecOff  = 0;               // offset of graphic VRAM
-    unsigned int        _TextOff = 0;               // offset of TEXT VRAM
-    unsigned int        _AttrOff = 0;               // offset of ATTRIBUTE VRAM
-    unsigned short      _StackSeg;                  // seg of stack
-    unsigned short      _GRCGPort = 0x7C;                   // port of graphics charger
-  #if defined( __386__ )
-    struct kanji_buf    _KanjiBuf;
-  #endif
-#else
-  #if defined ( __386__ )
+#if defined ( __386__ )
     unsigned short      _BiosSeg = 0x0034;          // seg of BIOS data area
     unsigned short      _MonoSeg = 0x001C;          // seg of MONO screen
     unsigned short      _CgaSeg  = 0x001C;          // seg of CGA screen
@@ -132,7 +116,7 @@ void                    ( _FARC *_SetVGAPage )( short );  // function to set SVG
     unsigned int        _EgaOff  = 0x00000000;      // off of EGA/VGA screen
     unsigned int        _RomOff  = 0x000C0000;      // off of ROM BIOS area
     unsigned short      _StackSeg;                  // seg of stack
-  #else
+#else
     unsigned short      _BiosSeg = 0x0040;          // seg of BIOS data area
     unsigned short      _MonoSeg = 0xB000;          // seg of MONO screen
     unsigned short      _CgaSeg  = 0xB800;          // seg of CGA screen
@@ -144,7 +128,6 @@ void                    ( _FARC *_SetVGAPage )( short );  // function to set SVG
     unsigned int        _EgaOff  = 0x0000;          // off of EGA/VGA screen
     unsigned int        _RomOff  = 0x0000;          // off of ROM BIOS area
     unsigned short      _StackSeg;                  // seg of stack
-  #endif
 #endif
 
 #if defined( __QNX__ )
@@ -159,11 +142,3 @@ void                    ( _FARC *_SetVGAPage )( short );  // function to set SVG
 struct videoinfo        _ConfigBuffer;              // video state
 struct videoinfo _FARD  *_CurrState = &_ConfigBuffer;
 
-#if defined( _NEC_PC )
-char                    _NECPalette[ 4 ];
-long                    _NECDefPalette[ 16 ] =
-                            { _98BLACK, _98BLUE, _98GREEN, _98CYAN,
-                              _98RED, _98MAGENTA, _98YELLOW, _98WHITE,
-                              _98GRAY, _98DARKBLUE, _98DARKGREEN, _98DARKCYAN,
-                              _98DARKRED, _98DARKMAGENTA, _98DARKYELLOW, _98DARKWHITE };
-#endif
