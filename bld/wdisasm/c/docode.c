@@ -1068,7 +1068,7 @@ void  ModRMOp( int op, char byte_ptr )
             opnd->index = RM32Reg[ _IndexField( rm ) ];
             if( mod == 0 && base == 5 ) {
                 if( opnd->index == ESP_REG ) {
-                    opnd->index = NULL;
+                    opnd->index = 0;
                     opnd->scale = 0;
                     opnd->mode = ADDR_ABS;
                     if( CurrIns.seg_used == NULL_REG ) {
@@ -1083,7 +1083,7 @@ void  ModRMOp( int op, char byte_ptr )
             } else {
                 opnd->base = RM32Reg[ base ];
                 if( opnd->index == ESP_REG ) {
-                    opnd->index = NULL;
+                    opnd->index = 0;
                     opnd->scale = 0;
                     opnd->mode = ADDR_BASE;
                 } else {
@@ -1112,7 +1112,7 @@ void  ModRMOp( int op, char byte_ptr )
             }
         } else {
             opnd->mode = ADDR_BASE;
-            opnd->index = NULL;
+            opnd->index = 0;
             opnd->scale = 1;
             opnd->base = RM32Reg[ rm ];
             if( mod == 1 ) {
