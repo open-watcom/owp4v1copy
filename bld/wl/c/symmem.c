@@ -195,6 +195,7 @@ extern void BasicInitSym( symbol *sym )
     sym->info = SYM_REGULAR | SYM_IN_CURRENT;
     sym->u.altdefs = NULL;      // this sets all union members to zero.
     sym->e.def = NULL;          // ditto
+    sym->prefix = NULL;
 }
 
 extern symbol * AddSym( void )
