@@ -12,10 +12,10 @@ host_cpu = 386
 !ifeq bootstrap 1
 bld_cl=cc
 cc=cc
-cflags=-funsigned-char -c -g -D__386__ -I../h -I$(orl_dir)/h -I$(trmem_dir) -I$(lib_misc_dir)/h -I$(watcom_dir)/h -DIDE_PGM -D__stdcall= -D__UNIX__ -D__LINUX__ -o $@
+cflags=-funsigned-char -c -g -D__386__ -I. -I../h -I$(orl_dir)/h -I$(trmem_dir) -I$(lib_misc_dir)/h -I$(watcom_dir)/h -DIDE_PGM -D__stdcall= -D__UNIX__ -D__LINUX__ -o $@
 wcl_flags = -o $@
 
-nwlib: ../h/msg.gh $(wlib_objs) wlib.res
+nwlib: msg.gh $(wlib_objs) wlib.res
     $(cc) -g -o nwlib -L$(clib_dir)/$(%OBJDIR) -L$(wres_dir)/$(%OBJDIR) -L$(orl_dir)/$(%OBJDIR) $(wlib_objs) -lwatcom -lorl -lwres
     wstrip -q -a -r $^@ . wlib.res
 
