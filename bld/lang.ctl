@@ -18,6 +18,7 @@ echo Languages Build <1>
 [ INCLUDE <devdir>\whpcvt\lang.ctl ]
 [ INCLUDE <devdir>\helpcomp\lang.ctl ]
 [ INCLUDE <devdir>\ssl\lang.ctl ]
+[ INCLUDE <devdir>\posixbld\lang.ctl ]
 #
 #        Next build online docs. This will create required header files
 #        as a by-product.

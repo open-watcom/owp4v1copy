@@ -29,7 +29,7 @@ $(name).exe: $(objs) $(lnk) $(posixlib)
 #       create the lnk file
 #
 $(LNK) : makefile $(objs)
-        %create $(LNK)
+        @%create $(LNK)
         @%append $(lnk) name $(name).exe
         @%append $(LNK) debug all option quiet,caseexact,map
         @%append $(LNK) lib $(posixlib)

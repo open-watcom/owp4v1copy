@@ -24,7 +24,7 @@ posix$(model).lib : $(libobjs) $(lib)
 #       create the lbc file
 #
 $(lib) : makefile $(posix_dir)\mif\lib.mif
-        %create $(LIB)
+        @%create $(LIB)
         @for %i in ($(LIBOBJS)) do @%append $(lib) -+%i
 
 !include $(posix_dir)\mif\clean.mif

@@ -1,3 +1,13 @@
 clean : .symbolic
-        -del rm.ex?             # just in case there's a buggy rm here
-        rm -f *.?bj *.ex? *.map *.lst *.smp *.lnk *.lbc *.lib *.err
+!ifdef clean_dir
+        @cd $(clean_dir)
+!endif
+        @if exist *.ex? @erase *.ex?
+        @if exist *.?bj @erase *.?bj
+        @if exist *.map @erase *.map
+        @if exist *.lst @erase *.lst
+        @if exist *.smp @erase *.smp
+        @if exist *.lnk @erase *.lnk
+        @if exist *.lbc @erase *.lbc
+        @if exist *.lib @erase *.lib
+        @if exist *.err @erase *.err
