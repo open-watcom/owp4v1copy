@@ -52,7 +52,7 @@ extern unsigned         LocalSetCWD( char *);
 extern long             LocalGetFileAttr( char * );
 extern unsigned         LocalSetFileAttr( char * , long );
 extern long             LocalGetFreeSpace( int );
-extern unsigned         LocalDateTime( sys_handle , int *, int *, int);
+extern unsigned         LocalDateTime( sys_handle , void *, void *, int);
 extern unsigned         LocalGetCwd( int , char *);
 extern unsigned         LocalFindFirst( char *, void *, unsigned , int );
 extern unsigned         LocalFindNext( void *, unsigned );
