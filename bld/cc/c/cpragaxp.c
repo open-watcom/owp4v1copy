@@ -39,7 +39,7 @@
 #include "scan.h"
 
 static  hw_reg_set      StackParms[] = { HW_D( HW_EMPTY ) };
-static  hw_reg_set      AsmRegsSaved = { HW_D( HW_FULL ) };
+static  hw_reg_set      AsmRegsSaved[] = { HW_D( HW_FULL ) };
 static  int             AsmFuncNum;
 
 #define MAX_NUM_INS     256
@@ -241,7 +241,7 @@ void AsmStmt()
         CreateAux( name );
         *CurrInfo = DefaultInfo;
         CurrInfo->use = 1;
-        CurrInfo->save = AsmRegsSaved;  // indicate no registers saved
+        CurrInfo->save = AsmRegsSaved[0];  // indicate no registers saved
         if( too_many_bytes ) {
              uses_auto = 0;
         }else{
