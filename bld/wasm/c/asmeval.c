@@ -117,12 +117,12 @@ static int get_precedence( int i )
                 case T_LENGTHOF:
                 case T_SIZEOF:
                     return( 2 );
-                case T_SEG2:
+                case T_SEG:
                 case T_OFFSET:
                     return( 5 );
             }
             break;
-        case T_INS:
+        case T_INSTR:
             switch( AsmBuffer[i]->value ) {
                 case T_MOD:
                 case T_SHL:
@@ -246,7 +246,7 @@ static int_8 is_unary( int i, char sign )
     }
 
     switch( tok ) {
-        case T_INS:
+        case T_INSTR:
             if( AsmBuffer[i]->value == T_NOT ) {
                 return( TRUE );
             }
@@ -276,7 +276,7 @@ static int_8 is_unary( int i, char sign )
 static int_8 cmp_token( int i, long tok )
 /* compare AsmBuffer[i] and tok */
 {
-    if( AsmBuffer[i]->token == T_INS ) {
+    if( AsmBuffer[i]->token == T_INSTR ) {
         if( AsmBuffer[i]->value == tok ) {
             return( TRUE );
         }
@@ -654,7 +654,7 @@ static int_8 calculate( expr_list *token_1,expr_list *token_2, uint_8 index )
                  return( ERROR );
             }
             break;
-        case T_INS:
+        case T_INSTR:
             MakeConst( token_1 );
             MakeConst( token_2 );
             if( AsmBuffer[index]->value == T_NOT ) {
@@ -947,7 +947,7 @@ static int is_expr( int i )
 /* Check if the token is part of an expression */
 {
     switch( AsmBuffer[i]->token ) {
-        case T_INS:
+        case T_INSTR:
         case T_RES_ID:
             switch( AsmBuffer[i]->value ) {
                 case T_FLAT:
@@ -986,7 +986,7 @@ static int is_expr( int i )
                     return( FALSE );
             }
         case T_UNARY_OPERATOR:
-//              case T_SEG2:
+//              case T_SEG:
 //              case T_OFFSET:
             if( i+1 < TokCnt ) {
                 return( TRUE );

@@ -146,12 +146,7 @@ main( int argc, char *argv[] )
             prefix = "T_";
         }
         j = strlen(buf);
-        /*** Some special cases because of same name in pcobj.h ***/
-        if( stricmp( buf, "ABS" ) == 0 ||
-            stricmp( buf, "INS" ) == 0 ||
-            stricmp( buf, "SEG" ) == 0 ) {
-            suffix = "2";
-        } else if( *(buf + j - 1) == '?' ) {
+        if( *(buf + j - 1) == '?' ) {
         // append suffix _UN if ? on end
             suffix = "_UN";
             *(buf + j - 1) = 0;

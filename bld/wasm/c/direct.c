@@ -2208,7 +2208,7 @@ int SetAssume( int i )
         }
         i++;
 
-        if( AsmBuffer[i]->token == T_UNARY_OPERATOR && AsmBuffer[i]->value == T_SEG2 ) {
+        if( AsmBuffer[i]->token == T_UNARY_OPERATOR && AsmBuffer[i]->value == T_SEG ) {
             i++;
         }
 
@@ -2359,7 +2359,7 @@ int FixOverride( int index )
     if( tmp != NULL ) {
         sym2 = AsmLookup( AsmBuffer[index]->string_ptr );
         /**/myassert( sym2 != NULL );
-        Frame = F_SEG;
+        Frame = FRAME_SEG;
         Frame_Datum = sym1->segidx;
         return( NOT_ERROR );
     }
@@ -2368,7 +2368,7 @@ int FixOverride( int index )
     if( tmp != NULL ) {
         sym2 = AsmLookup( AsmBuffer[index]->string_ptr );
         /**/myassert( sym2 != NULL );
-        Frame = F_GRP;
+        Frame = FRAME_GRP;
         Frame_Datum = sym1->grpidx;
         return( NOT_ERROR );
     }
@@ -2418,7 +2418,7 @@ uint GetPrefixAssume( struct asm_sym* sym, uint prefix )
     if( Parse_Pass == PASS_1 ) return( prefix );
 
     if( AssumeTable[prefix].flat ) {
-        Frame = F_GRP;
+        Frame = FRAME_GRP;
         Frame_Datum = MAGIC_FLAT_GROUP;
         return( prefix );
     }
@@ -2428,11 +2428,11 @@ uint GetPrefixAssume( struct asm_sym* sym, uint prefix )
 #if 0 //NYI: Don't know what's going on here
             type = GetCurrGrp();
             if( type != 0 ) {
-                Frame = F_GRP;
+                Frame = FRAME_GRP;
             } else {
                 type = GetCurrSeg();
                 /**/myassert( type != 0 );
-                Frame = F_SEG;
+                Frame = FRAME_SEG;
             }
             Frame_Datum = type;
 #endif
@@ -2454,14 +2454,14 @@ uint GetPrefixAssume( struct asm_sym* sym, uint prefix )
         sym->state == SYM_EXTERNAL ) {
 
         if( type == TAB_GRP ) {
-            Frame = F_GRP;
+            Frame = FRAME_GRP;
             if( sym->state == SYM_EXTERNAL ) {
                 Frame_Datum = dir->e.grpinfo->idx;
             } else {
                 Frame_Datum = sym->grpidx;
             }
         } else {
-            Frame = F_SEG;
+            Frame = FRAME_SEG;
             if( sym->state == SYM_EXTERNAL ) {
                 Frame_Datum = dir->e.seginfo->segrec->d.segdef.idx;
             } else {
@@ -2480,7 +2480,7 @@ uint GetAssume( struct asm_sym* sym, uint def )
     uint        reg;
 
     if( AssumeTable[def].flat ) {
-        Frame = F_GRP;
+        Frame = FRAME_GRP;
         Frame_Datum = MAGIC_FLAT_GROUP;
         return( def );
     }
@@ -2489,7 +2489,7 @@ uint GetAssume( struct asm_sym* sym, uint def )
 
     if( reg != ASSUME_NOTHING ) {
 
-        Frame = F_GRP;
+        Frame = FRAME_GRP;
         Frame_Datum = sym->grpidx;
 
     } else if( reg == ASSUME_NOTHING ) {
@@ -2497,13 +2497,13 @@ uint GetAssume( struct asm_sym* sym, uint def )
         reg = search_assume( GetSeg( sym ), def );
         if( reg != ASSUME_NOTHING ) {
             if( Frame == EMPTY ) {
-                Frame = F_SEG;
+                Frame = FRAME_SEG;
                 Frame_Datum = sym->segidx;
             }
         } else {
             if( sym->state == SYM_EXTERNAL ) {
                 if( Frame == EMPTY ) {
-                    Frame = F_EXT;
+                    Frame = FRAME_EXT;
                     Frame_Datum = GetDirIdx( sym->name, TAB_EXT );
                 }
             }

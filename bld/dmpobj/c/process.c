@@ -848,13 +848,13 @@ void ProcLedata( void )
 static void doFrame( byte frame )
 {
     switch( frame ) {
-    case F_SEG:     Output( "SI(%u)%<", GetIndex(), 8 );     break;
-    case F_GRP:     Output( "GI(%u)%<", GetIndex(), 8 );     break;
-    case F_EXT:     Output( "EI(%u)%<", GetIndex(), 8 );     break;
-    case F_ABS:     Output( "%x%<", GetUInt(), 8 );          break;
-    case F_LOC:     Output( "LOCATION" );                    break;
-    case F_TARG:    Output( "TARGET  " );                    break;
-    case F_NONE:    Output( "NONE    " );                    break;
+    case FRAME_SEG:     Output( "SI(%u)%<", GetIndex(), 8 );     break;
+    case FRAME_GRP:     Output( "GI(%u)%<", GetIndex(), 8 );     break;
+    case FRAME_EXT:     Output( "EI(%u)%<", GetIndex(), 8 );     break;
+    case FRAME_ABS:     Output( "%x%<", GetUInt(), 8 );          break;
+    case FRAME_LOC:     Output( "LOCATION" );                    break;
+    case FRAME_TARG:    Output( "TARGET  " );                    break;
+    case FRAME_NONE:    Output( "NONE    " );                    break;
     default:
         Output( BAILOUT "Unknown frame(%b)" CRLF, frame );
         longjmp( BailOutJmp, 1 );
@@ -864,10 +864,10 @@ static void doFrame( byte frame )
 static void doTarget( byte target )
 {
     switch( target & 0x03 ) {
-    case T_SEGWD:   Output( "SI(%u)", GetIndex() );         break;
-    case T_GRPWD:   Output( "GI(%u)", GetIndex() );         break;
-    case T_EXTWD:   Output( "EI(%u)", GetIndex() );         break;
-    case T_ABSWD:   Output( "%x", GetUInt() );              break;
+    case TARGET_SEGWD:   Output( "SI(%u)", GetIndex() );         break;
+    case TARGET_GRPWD:   Output( "GI(%u)", GetIndex() );         break;
+    case TARGET_EXTWD:   Output( "EI(%u)", GetIndex() );         break;
+    case TARGET_ABSWD:   Output( "%x", GetUInt() );              break;
     }
 }
 

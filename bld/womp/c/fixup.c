@@ -93,21 +93,21 @@ STATIC uint_16 frameDatum( obj_rec *objr, uint_8 method ) {
 
 /**/myassert( objr != NULL );
     switch( method ) {
-    case F_SEG:
-    case F_GRP:
-    case F_EXT:
+    case FRAME_SEG:
+    case FRAME_GRP:
+    case FRAME_EXT:
         return( ObjGetIndex( objr ) );
-    case F_ABS:
+    case FRAME_ABS:
         return( ObjGet16( objr ) );
     }
-    /* for F_LOC, F_TARG, and F_NONE we return 0 */
+    /* for FRAME_LOC, FRAME_TARG, and FRAME_NONE we return 0 */
     return( 0 );
 }
 
 STATIC uint_16 targetDatum( obj_rec *objr, uint_8 method ) {
 
 /**/myassert( objr != NULL );
-    if( ( method & 0x03 ) == T_ABSWD ) {
+    if( ( method & 0x03 ) == TARGET_ABSWD ) {
         return( ObjGet16( objr ) );
     }
     return( ObjGetIndex( objr ) );
@@ -283,21 +283,21 @@ STATIC char *putFrameDatum( char *p, uint_8 method, uint_16 datum ) {
 
 /**/myassert( p != NULL );
     switch( method ) {
-    case F_SEG:
-    case F_GRP:
-    case F_EXT:
+    case FRAME_SEG:
+    case FRAME_GRP:
+    case FRAME_EXT:
         return( putIndex( p, datum ) );
-    case F_ABS:
+    case FRAME_ABS:
         return( put16( p, datum ) );
     }
-    /* for F_LOC, F_TARG, and F_NONE there is nothing to output */
+    /* for FRAME_LOC, FRAME_TARG, and FRAME_NONE there is nothing to output */
     return( p );
 }
 
 STATIC char *putTargetDatum( char *p, uint_8 method, uint_16 datum ) {
 
 /**/myassert( p != NULL );
-    if( ( method & 0x03 ) == T_ABSWD ) {
+    if( ( method & 0x03 ) == TARGET_ABSWD ) {
         return( put16( p, datum ) );
     }
     return( putIndex( p, datum ) );

@@ -76,7 +76,7 @@ enum asm_cpu {
 
 enum state {
         T_FINAL,
-        T_INS,
+        T_INSTR,
         T_RES_ID,
         T_ID,
         T_REG,

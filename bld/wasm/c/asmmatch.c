@@ -255,7 +255,7 @@ static int output_data( unsigned long determinant, int index )
     case T_LODS:
     case T_MOVS:
     case T_OUTS:
-    case T_INS2:
+    case T_INS:
     case T_SCAS:
     case T_STOS:
     case T_XLAT:

@@ -230,15 +230,15 @@ static orl_return       processExplicitFixup( omf_file_handle ofh, int is32,
     } else {
         fmethod = ( datum >> 4 ) & 0x07;
         switch( fmethod ) {
-        case( F_SEG ):                  /* segment index                */
-        case( F_GRP ):                  /* group index                  */
-        case( F_EXT ):                  /* external index               */
+        case( FRAME_SEG ):                  /* segment index                */
+        case( FRAME_GRP ):                  /* group index                  */
+        case( FRAME_EXT ):                  /* external index               */
             fidx = loadIndex( &buf, &len );
             break;
-        case( F_LOC ):                  /* frame containing location    */
-        case( F_ABS ):                  /* absolute frame number        */
-        case( F_TARG ):                 /* frame same as target         */
-        case( F_NONE ):                 /* no frame                     */
+        case( FRAME_LOC ):                  /* frame containing location    */
+        case( FRAME_ABS ):                  /* absolute frame number        */
+        case( FRAME_TARG ):                 /* frame same as target         */
+        case( FRAME_NONE ):                 /* no frame                     */
             fidx = 0;
             break;
         }
@@ -251,7 +251,7 @@ static orl_return       processExplicitFixup( omf_file_handle ofh, int is32,
     } else {
         tmethod = datum & 0x07;
         tidx = loadIndex( &buf, &len );
-        if( fmethod == F_TARG ) {
+        if( fmethod == FRAME_TARG ) {
             /* fmethod becomes the same as tmethod (1 of first 3)
              */
             fmethod = tmethod & 0x03;

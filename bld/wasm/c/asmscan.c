@@ -449,10 +449,10 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
             } else if( AsmOpTable[count].rm_byte & OP_DIRECT_EXPR ) {
                 buf->token = T_DIRECT_EXPR;
             } else {
-                buf->token = T_INS;
+                buf->token = T_INSTR;
             }
         } else {
-            buf->token = T_INS;
+            buf->token = T_INSTR;
         }
     }
     return( NOT_ERROR );

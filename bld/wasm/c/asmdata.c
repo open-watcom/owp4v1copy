@@ -495,8 +495,8 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
             struct asmfixup     *fixup;
                 
             if( AsmBuffer[cur_pos]->value == T_OFFSET ||
-                AsmBuffer[cur_pos]->value == T_SEG2 ) {
-                // see asmins.h about T_SEG2
+                AsmBuffer[cur_pos]->value == T_SEG ) {
+                // see asmins.h about T_SEG
                 if( no_of_bytes < 2 ) {
                     AsmError( OFFSET_TOO_SMALL );
                     return( ERROR );
@@ -540,7 +540,7 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                             AsmError( NOT_IMPLEMENTED );
                             return( ERROR );
                         }
-                    } else if( AsmBuffer[seg_off_operator_loc]->value == T_SEG2 ) {
+                    } else if( AsmBuffer[seg_off_operator_loc]->value == T_SEG ) {
                         if( init_sym->state == SYM_STACK ) {
                             AsmError( CANNOT_SEG_AUTO );
                         }
@@ -555,7 +555,7 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                             break;
                         }
 #endif
-                    case T_SEG2:
+                    case T_SEG:
                             
                         fixup = AddFixup( init_sym, temp );
                         InsFixups[0] = fixup;

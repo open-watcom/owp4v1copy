@@ -244,10 +244,10 @@ STATIC int writeFixup( obj_rec *objr, pobj_state *state ) {
                 || walk->loc_method == FIX_POINTER386 ) ) {
                 /* zap FIXUPs for OS/2 2.0 linker 21-mar-91 AFS */
                 switch( walk->lr.frame ) {
-                case F_SEG:
-                case F_GRP:
-                case F_TARG:
-                    walk->lr.frame = F_GRP;
+                case FRAME_SEG:
+                case FRAME_GRP:
+                case FRAME_TARG:
+                    walk->lr.frame = FRAME_GRP;
                     walk->lr.frame_datum = ObjFLATIndex;
                     break;
                 }
@@ -414,10 +414,10 @@ STATIC int writeModend( obj_rec *objr, pobj_state *state ) {
 #if _WOMP_OPT & _WOMP_WOMP
         if( is_log && Can2MsOS2Flat() ) {
             switch( objr->d.modend.ref.log.frame ) {
-            case F_SEG:
-            case F_GRP:
-            case F_TARG:
-                objr->d.modend.ref.log.frame = F_GRP;
+            case FRAME_SEG:
+            case FRAME_GRP:
+            case FRAME_TARG:
+                objr->d.modend.ref.log.frame = FRAME_GRP;
                 objr->d.modend.ref.log.frame_datum = ObjFLATIndex;
                 break;
             }

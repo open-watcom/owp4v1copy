@@ -116,26 +116,26 @@ enum {
  *  INTEL Frame Specifiers
  */
 
-    F_SEG               = 0,        /* segment index                    */
-    F_GRP               = 1,        /* group index                      */
-    F_EXT               = 2,        /* external index                   */
-    F_ABS               = 3,        /* absolute frame number            */
-    F_LOC               = 4,        /* frame containing location        */
-    F_TARG              = 5,        /* frame same as target             */
-    F_NONE              = 6,        /* no frame                         */
+    FRAME_SEG           = 0,        /* segment index                    */
+    FRAME_GRP           = 1,        /* group index                      */
+    FRAME_EXT           = 2,        /* external index                   */
+    FRAME_ABS           = 3,        /* absolute frame number            */
+    FRAME_LOC           = 4,        /* frame containing location        */
+    FRAME_TARG          = 5,        /* frame same as target             */
+    FRAME_NONE          = 6,        /* no frame                         */
 
 /*
  *  INTEL Target Specifiers
  */
 
-    T_SEGWD             = 0,        /* segment index with displacement  */
-    T_GRPWD             = 1,        /* group index with displacement    */
-    T_EXTWD             = 2,        /* external index with displacement */
-    T_ABSWD             = 3,        /* abs frame num with displacement  */
-    T_SEG               = 4,        /* segment index, no displacement   */
-    T_GRP               = 5,        /* group index, no displacement     */
-    T_EXT               = 6,        /* external index, no displacement  */
-    T_ABS               = 7,        /* abs frame num, no displacement   */
+    TARGET_SEGWD        = 0,        /* segment index with displacement  */
+    TARGET_GRPWD        = 1,        /* group index with displacement    */
+    TARGET_EXTWD        = 2,        /* external index with displacement */
+    TARGET_ABSWD        = 3,        /* abs frame num with displacement  */
+    TARGET_SEG          = 4,        /* segment index, no displacement   */
+    TARGET_GRP          = 5,        /* group index, no displacement     */
+    TARGET_EXT          = 6,        /* external index, no displacement  */
+    TARGET_ABS          = 7,        /* abs frame num, no displacement   */
 
 /*
  *  INTEL Group Specifiers

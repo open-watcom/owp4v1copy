@@ -951,8 +951,8 @@ orl_return              OmfAddFixupp( omf_file_handle ofh, int is32, int mode,
         if( !tfr ) return( ORL_OUT_OF_MEMORY );
         memset( tfr, 0, sizeof( omf_tmp_fixup_struct ) );
 
-        if( fmethod == F_LOC ) {
-            fmethod = F_SEG;
+        if( fmethod == FRAME_LOC ) {
+            fmethod = FRAME_SEG;
             fidx = ofh->work_sec->assoc.seg.seg_id;
         }
 
@@ -1042,59 +1042,59 @@ orl_return              OmfAddFixupp( omf_file_handle ofh, int is32, int mode,
     orel->section = (orl_sec_handle)(ofh->work_sec);
     orel->addend = disp;
 
-    if( fmethod == F_LOC ) {
-        fmethod = F_SEG;
+    if( fmethod == FRAME_LOC ) {
+        fmethod = FRAME_SEG;
         fidx = ofh->work_sec->assoc.seg.seg_id;
     }
 
     switch( tmethod ) {
-    case( T_SEGWD ):            /* segment index with displacement      */
-    case( T_SEG ):              /* segment index, no displacement       */
+    case( TARGET_SEGWD ):            /* segment index with displacement      */
+    case( TARGET_SEG ):              /* segment index, no displacement       */
         sh = findSegment( ofh, tidx );
         if( !sh ) return( ORL_ERROR );
         orel->symbol = (orl_symbol_handle)(sh->assoc.seg.sym);
         break;
-    case( T_GRPWD ):            /* group index with displacement        */
-    case( T_GRP ):              /* group index, no displacement         */
+    case( TARGET_GRPWD ):            /* group index with displacement        */
+    case( TARGET_GRP ):              /* group index, no displacement         */
         gr = findGroup( ofh, tidx );
         if( !gr ) return( ORL_ERROR );
         orel->symbol = (orl_symbol_handle)(gr->sym);
         break;
-    case( T_EXTWD ):            /* external index with displacement     */
-    case( T_EXT ):              /* external index, no displacement      */
+    case( TARGET_EXTWD ):            /* external index with displacement     */
+    case( TARGET_EXT ):              /* external index, no displacement      */
         orel->symbol = (orl_symbol_handle)(findExtDefSym( ofh, tidx ));
         if( !orel->symbol ) return( ORL_ERROR );
         break;
-    case( T_ABSWD ):            /* abs frame num with displacement      */
-    case( T_ABS ):              /* abs frame num, no displacement       */
+    case( TARGET_ABSWD ):            /* abs frame num with displacement      */
+    case( TARGET_ABS ):              /* abs frame num, no displacement       */
         break;
     default:
         return( ORL_ERROR );
     }
 
     switch( fmethod ) {
-    case( F_SEG ):                      /* segment index                */
+    case( FRAME_SEG ):                      /* segment index                */
         sh = findSegment( ofh, fidx );
         if( !sh ) return( ORL_ERROR );
         orel->frame = (orl_symbol_handle)(sh->assoc.seg.sym);
         break;
-    case( F_GRP ):                      /* group index                  */
+    case( FRAME_GRP ):                      /* group index                  */
         gr = findGroup( ofh, fidx );
         if( !gr ) return( ORL_ERROR );
         orel->frame = (orl_symbol_handle)(gr->sym);
         break;
-    case( F_EXT ):                      /* external index               */
+    case( FRAME_EXT ):                      /* external index               */
         orel->frame = (orl_symbol_handle)(findExtDefSym( ofh, fidx ));
         if( !orel->frame ) return( ORL_ERROR );
         break;
-    case( F_ABS ):                      /* absolute frame number        */
+    case( FRAME_ABS ):                      /* absolute frame number        */
         /* fix this up to do somehting later */
         orel->frame = NULL;
         break;
-    case( F_TARG ):                     /* frame same as target         */
+    case( FRAME_TARG ):                     /* frame same as target         */
         orel->frame = orel->symbol;
         break;
-    case( F_LOC ):                      /* frame containing location    */
+    case( FRAME_LOC ):                      /* frame containing location    */
         assert( 0 );
     }
 

@@ -132,19 +132,19 @@ static void find_frame( struct asm_sym *sym )
     case SYM_PROC:
         if( Frame != EMPTY ) break;
         if( sym->grpidx != 0 ) {
-            Frame = F_GRP;
+            Frame = FRAME_GRP;
             Frame_Datum = sym->grpidx;
         } else {
-            Frame = F_SEG;
+            Frame = FRAME_SEG;
             Frame_Datum = sym->segidx;
         }
         break;
     case SYM_GRP:
-        Frame = F_GRP;
+        Frame = FRAME_GRP;
         Frame_Datum = sym->grpidx;
         break;
     case SYM_SEG:
-        Frame = F_SEG;
+        Frame = FRAME_SEG;
         Frame_Datum = sym->segidx;
         break;
     }
@@ -1618,7 +1618,7 @@ int AsmParse( void )
 
     while( i < Token_Count ) {
         switch( AsmBuffer[i]->token ) {
-        case T_INS:
+        case T_INSTR:
             #ifdef _WASM_
                 ExpandTheWorld( i, FALSE, TRUE );
             #endif
@@ -1638,7 +1638,7 @@ int AsmParse( void )
             case T_REPZ:
                 rCode->prefix.ins = AsmBuffer[i]->value;
                 // prefix has to be followed by an instruction
-                if( AsmBuffer[i+1]->token != T_INS ) {
+                if( AsmBuffer[i+1]->token != T_INSTR ) {
                     AsmError( PREFIX_MUST_BE_FOLLOWED_BY_AN_INSTRUCTION );
                     return( ERROR );
                 }
@@ -1691,7 +1691,7 @@ int AsmParse( void )
 #endif
                         }
                         break;
-                    case T_SEG2:
+                    case T_SEG:
                         if( sym->state == SYM_STACK ) {
                             AsmError( CANNOT_SEG_AUTO );
                         }
@@ -1699,7 +1699,7 @@ int AsmParse( void )
 
                     switch( AsmBuffer[operator_loc]->value ) {
                     case T_OFFSET:
-                    case T_SEG2:
+                    case T_SEG:
                         if( AsmBuffer[operator_loc]->value == T_OFFSET ) {
                             int         use32 = rCode->use32;
 #if 0
@@ -1774,7 +1774,7 @@ int AsmParse( void )
                         }
                         break;
                     #endif
-                    case T_SEG2:
+                    case T_SEG:
                         break;
                     #ifdef _WASM_
                     case T_LENGTH:
@@ -2273,7 +2273,7 @@ static int check_size( void )
             }
         }
         break;
-    case T_INS2:
+    case T_INS:
     case T_CMPS:
         op_size = OperandSize( op1 );
         /* fall through */

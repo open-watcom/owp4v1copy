@@ -518,24 +518,24 @@ static void processFixups( obj_rec *ledata ) {
 
 #if _TARGET == _8086
         b = 0xc0 | ( LOC_BASE_OFFSET << 2 );
-        b3 = ( F_TARG << 4 );
+        b3 = ( FRAME_TARG << 4 );
 #else
         b = 0xa4;
-        b3 = ( F_GRP << 4 );
+        b3 = ( FRAME_GRP << 4 );
 #endif
 
         data_offs = cur->value.offset - base;
         if( cur->idx != 0 ) {
             if( cur->idx > 0 ) {
                 b |= 0x40;
-                b3 |= T_SEG;
+                b3 |= TARGET_SEG;
             } else {
                 cur->idx = -cur->idx;
                 // if it's not Ext_to_F77 then the relocation is seg relative
                 if( cur->idx != EXTDEF_EXT_TO_F77 ) {
                     b |= 0x40;
                 }
-                b3 |= T_EXT;
+                b3 |= TARGET_EXT;
             }
             ObjPut8( fixrec, b | ( data_offs >> 8 ) );
             ObjPut8( fixrec, data_offs );

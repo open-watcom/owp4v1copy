@@ -110,7 +110,7 @@ static void jumpExtend( void )
 
     /* there MUST be a conditional jump instruction in asmbuffer */
     for( i=0; ; i++ ) {
-        if( AsmBuffer[i]->token==T_INS && IS_JMP( AsmBuffer[i]->value ) ) break;
+        if( AsmBuffer[i]->token==T_INSTR && IS_JMP( AsmBuffer[i]->value ) ) break;
     }
 
     AsmWarn( 4, EXTENDING_JUMP );

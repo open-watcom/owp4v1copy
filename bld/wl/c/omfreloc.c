@@ -151,7 +151,7 @@ extern void DoRelocs( void )
                 GetTarget( loc, &tthread );
             }
             addend = 0;
-            if( loc <= T_ABSWD ) {  /*  if( (loc & 4) == 0 )then */
+            if( loc <= TARGET_ABSWD ) {  /*  if( (loc & 4) == 0 )then */
                 if( ObjFormat & FMT_32BIT_REC ) {
                     addend = *((signed_32 UNALIGN *)ObjBuff);
                     ObjBuff += sizeof( signed_32 );
@@ -174,16 +174,16 @@ static void GetFrame( unsigned frame, frame_spec *refframe )
     segnode *   seg;
     unsigned    index;
 
-    if( frame < F_LOC ) {
+    if( frame < FRAME_LOC ) {
         index = GetIdx();
     }
     refframe->type = frame;
     switch( frame ) {
-    case F_SEG:
+    case FRAME_SEG:
         seg = (segnode *) FindNode( SegNodes, index );
         refframe->u.sdata = seg->entry;
         break;
-    case F_GRP:
+    case FRAME_GRP:
         group = (grpnode *) FindNode( GrpNodes, index );
         if( group->entry == NULL ) {
             refframe->type = FIX_FRAME_FLAT;
@@ -191,7 +191,7 @@ static void GetFrame( unsigned frame, frame_spec *refframe )
             refframe->u.group = group->entry;
         }
         break;
-    case F_EXT:
+    case FRAME_EXT:
         ext = (extnode *) FindNode( ExtNodes, index );
         if( IS_SYM_IMPORTED( ext->entry ) ) {
             refframe->type = FIX_FRAME_TARG;
@@ -199,8 +199,8 @@ static void GetFrame( unsigned frame, frame_spec *refframe )
             refframe->u.sym = ext->entry;
         }
         break;
-    case F_TARG:
-    case F_LOC:
+    case FRAME_TARG:
+    case FRAME_LOC:
         break;
     default:
         BadObject();
@@ -216,23 +216,23 @@ static void GetTarget( unsigned loc, frame_spec *targ )
 
     targ->type = loc & 3;
     switch( loc ) {
-    case T_SEGWD:
-    case T_SEG:
+    case TARGET_SEGWD:
+    case TARGET_SEG:
         seg = (segnode *) FindNode( SegNodes, GetIdx() );
         targ->u.sdata = seg->entry;
         break;
-    case T_GRPWD:
-    case T_GRP:
+    case TARGET_GRPWD:
+    case TARGET_GRP:
         group = (grpnode *) FindNode( GrpNodes, GetIdx() );
         targ->u.group = group->entry;
         break;
-    case T_EXTWD:
-    case T_EXT:
+    case TARGET_EXTWD:
+    case TARGET_EXT:
         ext = (extnode *) FindNode( ExtNodes, GetIdx() );
         targ->u.sym = ext->entry;
         break;
-    case T_ABSWD:
-    case T_ABS:
+    case TARGET_ABSWD:
+    case TARGET_ABS:
         _TargU16toHost( _GetU16UN( ObjBuff ), targ->u.abs );
         ObjBuff += sizeof( unsigned_16 );
         break;
