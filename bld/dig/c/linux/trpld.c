@@ -93,9 +93,9 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
         strcpy( buff, TC_ERR_CANT_LOAD_TRAP );
         return( buff );
     }
-    InitFunc = PE_getProcAddress( TrapFile, "InitFunc" );
-    FiniFunc = PE_getProcAddress( TrapFile, "FiniFunc" );
-    ReqFunc  = PE_getProcAddress( TrapFile, "ReqFunc" );
+    InitFunc = PE_getProcAddress( TrapFile, "TrapInit_" );
+    FiniFunc = PE_getProcAddress( TrapFile, "TrapFini_" );
+    ReqFunc  = PE_getProcAddress( TrapFile, "TrapRequest_" );
     strcpy( buff, TC_ERR_WRONG_TRAP_VERSION );
     if( InitFunc == NULL || FiniFunc == NULL || ReqFunc == NULL) {
         KillTrap();

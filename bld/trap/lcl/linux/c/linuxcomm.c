@@ -28,11 +28,25 @@
 *
 ****************************************************************************/
 
+#include <stdarg.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <sys/stat.h>
 #include "linuxcomm.h"
 #include "trpimp.h"
+
+void print_msg( const char *format, ... )
+{
+    va_list     args;
+    static char buf[2048];
+
+    va_start(args,format);
+    vsprintf(buf,format,args);
+    write( 1, buf, strlen(buf) );
+    va_end(args);
+}
 
 unsigned TryOnePath( char *path, struct stat *tmp, char *name, char *result )
 {

@@ -547,12 +547,6 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, int remote )
 
     parm = parm;
     remote = remote;
-/*
-    ProcInfo.save_in = -1;
-    ProcInfo.save_out = -1;
-    ProcInfo.thread = NULL;
-    ProcInfo.max_threads = 0;
-*/
     StdPos.in  = lseek( 0, 0, SEEK_CUR );
     StdPos.out = lseek( 1, 0, SEEK_CUR );
     StdPos.err = lseek( 2, 0, SEEK_CUR );

@@ -31,4 +31,5 @@
 
 extern unsigned TryOnePath( char *, struct stat *, char *, char * );
 extern unsigned FindFilePath( int, char *, char * );
+extern void print_msg( const char *format, ... );
 
