@@ -64,7 +64,7 @@ dwabenum.gh dwabinfo.gh : ./dwmakeab.exe
         $[@
 
 dwmakeab.obj : dwmakeab.c dwutils.c
-        $(bld_cc) $(dwtjbflags) $(inc_path) $[@
+        $(bld_cc) $(dwtjbflags) $(inc_dirs) $[@
 
 dwabbrev.obj : dwabbrev.c dwabinfo.gh
 

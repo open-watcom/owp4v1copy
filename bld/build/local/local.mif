@@ -23,9 +23,6 @@ use_bld_incs    = 0
 !ifeq host_cpu axp
 use_bld_incs    = 1
 !endif
-!ifeq proj_name ochook
-use_bld_incs    = 1
-!endif
 !ifeq $(proj_name)_rtdll 1
 use_bld_incs    = 1
 !endif
@@ -35,8 +32,8 @@ use_bld_incs    = 0
 !endif
 
 !ifeq use_bld_incs 1
-cc_386          += -i"$(bld_incs)"
-cpp_386         += -i"$(bld_incs)"
+cc_386          += $(bld_incs)
+cpp_386         += $(bld_incs)
 !endif
 
 !endif
