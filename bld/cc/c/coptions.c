@@ -1096,11 +1096,7 @@ void Set_U(){
     AddUndefName( name );
     CMemFree( name );
 }
-void Set_V()
-{
-    CompFlags.dump_prototypes     = 1;
-    CompFlags.generate_prototypes = 1;
-}
+void Set_V()            { CompFlags.generate_prototypes = 1; }
 
 void Set_WE()           { CompFlags.warnings_cause_bad_exit = 1; }
 void Set_WO()           { CompFlags.using_overlays = 1; }
@@ -1150,7 +1146,11 @@ void Set_ZGF()          { SwData.peg_gs_used = 1; SwData.peg_gs_on = 0; }
 void Set_ZGP()          { SwData.peg_gs_used = 1; SwData.peg_gs_on = 1; }
 #endif
 void Set_ZE()           { CompFlags.extensions_enabled = 1; }
-void Set_ZG()           { CompFlags.generate_prototypes = 1; }
+void Set_ZG()
+{
+    CompFlags.generate_prototypes = 1;
+    CompFlags.dump_prototypes     = 1;
+}
 
 void Set_ZI()           { CompFlags.extra_stats_wanted = 1; }
 
