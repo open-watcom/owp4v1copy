@@ -82,7 +82,9 @@ typedef long    fpos_t;
 #elif defined(__SW_BR) || defined(_RTDLL)
  #define __iob __iob_br
 #endif
+
 #if !defined(__OBSCURE_STREAM_INTERNALS)
+
 _WCRTLINK extern FILE _WCDATA __iob[];
 /*
  *  Define macros to access the three default file pointer (and descriptors)
@@ -99,18 +101,23 @@ _WCRTLINK extern FILE _WCDATA __iob[];
 #define stdprn  ((FILE *)&__iob[4])     /* standard printer file  */
 #endif
 #endif
+:endsegment
+
 #else
+
 #define stdin   (__get_std_file(0))     /* standard input file  */
 #define stdout  (__get_std_file(1))     /* standard output file */
 #define stderr  (__get_std_file(2))     /* standard error file  */
+:segment DOS
 #ifndef NO_EXT_KEYS     /* extensions enabled */
 #if !defined(__NT__)
 #define stdaux  (__get_std_file(3))     /* standard auxiliary file  */
 #define stdprn  (__get_std_file(4))     /* standard printer file  */
 #endif
 #endif
-#endif
 :endsegment
+
+#endif
 
 :segment QNX
 /* values for _flag field in FILE struct */
