@@ -339,6 +339,11 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                     char_ptr++;
                     count++;
                 }
+                while( count < no_of_bytes ) {
+                    AsmDataByte( 0 );
+                    char_ptr++;
+                    count++;
+                }
 #ifdef _WASM_
             } else {
                 if( the_struct == NULL ) break;
