@@ -5,9 +5,9 @@ wstub.exe : wstub.obj
 wstubq.exe : wstubq.obj
         wlink file wstubq option quiet sys dos op map
 wstub.obj : wstub.c
-        $(comp286) wstub /oaxs /zq
+        $(comp286) wstub -oaxs -zq
 wstubq.obj : wstub.c
-        $(comp286) wstub /oaxs /zq /dQUIET=1 /fo=wstubq
+        $(comp286) wstub -oaxs -zq -dQUIET=1 -fo=wstubq
 
 clean : .symbolic
         @if exist *.?bj del *.?bj
