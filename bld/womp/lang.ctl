@@ -22,4 +22,5 @@ cdsay .
 
 [ BLOCK <1> clean ]
 #==================
-    sweep killobjs
+     rm -f h\wmpmsg.h
+#    sweep killobjs
