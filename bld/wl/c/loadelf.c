@@ -231,7 +231,7 @@ static void SetGroupHeaders( group_entry *group, offset off, Elf32_Phdr *ph,
     ph->p_type = PT_LOAD;
     ph->p_filesz = sh->sh_size = group->size;
     ph->p_memsz = group->totalsize;
-    if( group == DataGroup ) {
+    if( group == DataGroup && StackSegPtr != NULL ) {
         ph->p_memsz -= StackSize;
     }
     sh->sh_link = SHN_UNDEF;

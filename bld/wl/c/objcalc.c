@@ -48,6 +48,7 @@
 #include "loadpe.h"
 #include "loadqnx.h"
 #include "loadelf.h"
+#include "loadfile.h"
 #include "wlnkmsg.h"
 #include "overlays.h"
 #include "dbgall.h"
@@ -448,8 +449,8 @@ extern void CalcAddresses( void )
         for( grp = Groups; grp != NULL; grp = grp->next_group ) {
             size = grp->totalsize;
             grp->linear = flat;
-            if( FmtData.type & MK_SPLIT_DATA && grp == DataGroup
-                                        && FmtData.dgroupsplitseg != NULL ) {
+            if( ( FmtData.type & MK_SPLIT_DATA ) && grp == DataGroup
+                && StackSegPtr != NULL && FmtData.dgroupsplitseg != NULL ) {
                 size -= StackSize;
             }
             flat = ROUND_UP( flat + size, FmtData.objalign );
