@@ -36,6 +36,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 #include "watcom.h"
 #include "asmerr.h"
 #include "asmglob.h"
@@ -53,7 +54,8 @@ extern char             *get_curr_filename( void );
 static void AsmSuicide( void );
 void PutMsg( FILE *fp, char *prefix, int msgnum, va_list args );
 void OpenErrFile( void );
-void PrtMsg( prefix, msgnum, args1, args2 );
+void PrtMsg( register char *prefix, register int msgnum, va_list args1,
+             va_list args2 );
 void print_include_file_nesting_structure( void );
 
 #include <stdarg.h>
@@ -157,11 +159,9 @@ void AsmWarn( int level, int msgnum, ... )
     }
 }
 
-void PrtMsg( prefix, msgnum, args1, args2 )
-/*****************************************/
-register char *prefix;
-register int msgnum;
-va_list args1, args2;
+void PrtMsg( register char *prefix, register int msgnum, va_list args1,
+             va_list args2 )
+/**************************/
 {
     if( !Options.banner_printed ) {
         Options.banner_printed = TRUE;
