@@ -77,22 +77,6 @@ void SwitchPurge()
 }
 
 
-void LitsPurge()
-/**************/
-{
-#if 0
-    STRING_LITERAL *lit;
-
-    lit = CStringList;
-    while( lit != NULL ) {
-        CStringList = lit->next_string;
-        CMemFree( lit );
-        lit = CStringList;
-    }
-#endif
-}
-
-
 void SrcPurge()
 /*************/
 {
@@ -116,7 +100,6 @@ void PurgeMemory()
     SymsPurge();        /* calls TypesPurge */
     PragmaFini();
     FreeDataQuads();
-    LitsPurge();
     FreeFNames();
     FreeRDir();
     SrcPurge();

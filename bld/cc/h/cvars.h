@@ -120,8 +120,6 @@ global  DATA_TYPE  ConstType;
 global  unsigned long Constant;
 global  uint64  Const64;
 global  int     CLitLength;     /* length of string literal */
-global  STR_HANDLE CStringList;    /* list of literal strings in pgm */
-global  STR_HANDLE CS_StringList;  /* list of literal strings in CODE segment */
 global  FCB     *MainSrcFile;   /* primary source file being compiled */
 global  FCB     *SrcFile;
 global  char    *SrcFName;      /* source file name without suffix */

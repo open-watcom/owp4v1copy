@@ -1344,7 +1344,6 @@ void DoCompile()
     old_env = Environment;
     if( ! setjmp( env ) ) {
         Environment = &env;
-        CStringList = 0;
         if( BEDLLLoad( NULL ) ) {
 #if _MACHINE == _PC
             BEMemInit(); // cg has a strange static var that doesn't get reset
@@ -1396,7 +1395,6 @@ void DoCompile()
                 #endif
                 GenModuleCode();
                 FreeStrings();
-                FreeCS_Strings();
                 FiniSegLabels();                        /* 15-mar-92 */
                 if( ErrCount != 0 ) {
                     BEAbort();
@@ -1916,16 +1914,19 @@ local void EmitLiteral( STR_HANDLE strlit )
 
 void FreeStrings()
 {
-    STR_HANDLE  strlit;
+    STR_HANDLE  strlit, next;
     int         i;
 
     for( i = 0; i < STRING_HASH_SIZE; ++i ) {
-        for( strlit = StringHash[i]; strlit; strlit = strlit->next_string ) {
+        for( strlit = StringHash[i]; strlit; ) {
             if( strlit->cg_back_handle != 0 ) {
                 BEFiniBack( strlit->cg_back_handle );
                 BEFreeBack( strlit->cg_back_handle );
                 strlit->cg_back_handle = 0;
             }
+            next = strlit->next_string;
+            CMemFree( strlit );
+            strlit = next;
         }
         StringHash[i] = 0;
     }
@@ -1950,24 +1951,8 @@ local void EmitCS_Strings()
     int         i;
 
     if( CompFlags.strings_in_code_segment ) {
-        DumpCS_Strings( CS_StringList );
         for( i = STRING_HASH_SIZE - 1; i >= 0; --i ) {
             DumpCS_Strings( StringHash[i] );
-        }
-    }
-}
-
-local void FreeCS_Strings()
-{
-    STR_HANDLE  strlit;
-
-    if( CompFlags.strings_in_code_segment ) {
-        for( strlit = CS_StringList; strlit; strlit = strlit->next_string ) {
-            if( strlit->cg_back_handle != 0 ) {
-                BEFiniBack( strlit->cg_back_handle );
-                BEFreeBack( strlit->cg_back_handle );
-                strlit->cg_back_handle = 0;
-            }
         }
     }
 }

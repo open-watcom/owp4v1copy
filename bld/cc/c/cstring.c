@@ -105,8 +105,6 @@ void StringInit()
 {
     int i;
 
-    CStringList = 0;
-    CS_StringList = 0;
     for( i = 0; i < STRING_HASH_SIZE; ++i ) {
         StringHash[i] = 0;
     }
@@ -240,11 +238,14 @@ TREEPTR StringLeaf( int flags )
     if( TargetSwitches & BIG_DATA ) {          /* 06-oct-88 */
         if( ! CompFlags.strings_in_code_segment ) {         /* 01-sep-89 */
             if( new_lit->length > DataThreshold ) {
-                flags = FLAG_FAR;
+                flags |= FLAG_FAR;
             }
         }
     }
-    if( flags == FLAG_FAR )  CompFlags.far_strings = 1;
+    if( CompFlags.wide_char_string )
+        flags |= STRLIT_WIDE;
+    if( flags & FLAG_FAR )
+        CompFlags.far_strings = 1;
     hash = CalcStringHash( new_lit );
     if( Toggles & TOGGLE_REUSE_DUPLICATE_STRINGS ) {    /* 24-mar-92 */
         strlit = StringHash[ hash ];
@@ -259,30 +260,21 @@ TREEPTR StringLeaf( int flags )
         }
     }
     if( strlit == 0 ) {
-        if( CompFlags.wide_char_string )
-            flags |= STRLIT_WIDE;
         new_lit->flags = flags;
         ++LitCount;
         LitPoolSize += CLitLength;
-        leaf_index = LeafNode( OPR_PUSHSTRING );
-        leaf_index->op.string_handle = new_lit;
-        // set op.flags field
-        leaf_index->expr_type = StringLeafType();
-        if( CompFlags.strings_in_code_segment ) {       /* 01-sep-89 */
-            new_lit->next_string = CS_StringList;
-            CS_StringList = new_lit;
-        } else {
-            new_lit->next_string = StringHash[ hash ];
-            StringHash[ hash ] = new_lit;
-        }
+        new_lit->next_string = StringHash[ hash ];
+        StringHash[ hash ] = new_lit;
     } else {            // we found a duplicate
         CMemFree( new_lit );
-        leaf_index = LeafNode( OPR_PUSHSTRING );
-        leaf_index->op.string_handle = strlit;
-        // set op.flags field
-        leaf_index->expr_type = StringLeafType();
-
+        new_lit = strlit;
     }
+
+    leaf_index = LeafNode( OPR_PUSHSTRING );
+    leaf_index->op.string_handle = new_lit;
+    // set op.flags field
+    leaf_index->expr_type = StringLeafType();
+
     if( CurFunc != NULL ) {                             /* 22-feb-92 */
         CurFuncNode->op.func.flags &= ~FUNC_OK_TO_INLINE;
     }
