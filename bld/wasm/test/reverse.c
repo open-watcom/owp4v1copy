@@ -15,7 +15,7 @@ main( int argc, char *argv[] )
     len = ftell( fp );
     fseek( fp, 0, SEEK_SET );
 
-    buffer = malloc( len + 1 );
+    buffer = (char*)malloc( len + 1 );
     buffer[len] = '\0';
     loc = buffer+len;
 
