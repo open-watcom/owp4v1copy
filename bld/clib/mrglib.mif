@@ -20,7 +20,7 @@ make_flags += linkage=$(linkage)
 
 !ifeq release 0
 !ifdef profile
-lib_flags    +=-p=64
+lib_flags    +=-p=128
 !else
 lib_flags    +=-p=64
 !endif
