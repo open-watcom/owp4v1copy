@@ -523,7 +523,7 @@ trap_version TRAPENTRY TrapInit( char *parm, char *error,
     ver.remote = FALSE;
     ver.major = TRAP_MAJOR_VERSION;
     ver.minor = TRAP_MINOR_VERSION;
-    if( !remote && DPMIVersion() == 90 ) {
+    if( !remote && DPMIVersion() == 90 && !DOSEMUCheck() ) {
         strcpy( error, TRP_ERR_bad_dpmi );
         return( ver );
     }

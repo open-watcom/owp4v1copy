@@ -1039,6 +1039,9 @@ out( "in TrapInit\r\n" );
     } else if( EnhancedWinCheck() & 0x7f ) {
         /* Enhanced Windows 3.0 VM kernel messes up handling of debug regs */
         Flags.DRsOn = FALSE;
+    } else if( DOSEMUCheck() ) {
+        /* no fiddling with debug regs in Linux DOSEMU either */
+        Flags.DRsOn = FALSE;        
     } else {
         Flags.DRsOn = TRUE;
     }

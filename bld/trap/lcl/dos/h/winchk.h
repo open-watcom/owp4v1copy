@@ -45,3 +45,14 @@ extern unsigned DPMIVersion();
         "       xor     dx,dx" \
         "l1:    " \
         value [dx] modify [ ax bx cx dx si es di ]
+
+extern int DOSEMUCheck(void);
+#pragma aux DOSEMUCheck = \
+        "       xor    ax, ax" \
+        "       int    0e6h" \
+        "       cmp    ax, 0aa55h" \
+        "       mov    ax, 0" \
+        "       jne    l1" \
+        "       inc    ax" \
+        "l1:" \
+        value [ax] modify [ bx cx dx si es di ]

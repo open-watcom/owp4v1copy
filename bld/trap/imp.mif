@@ -241,8 +241,7 @@ whole_inc_path = $(extra_incs);$(dig_dir)\h;$(trap_dir)\common\$(os);$(trap_dir)
 .cpp: ..\c;..\..\c;$(trap_dir)\common\$(os);$(trap_dir)\common;$(trap_dir)\c;$(extra_srcs)
 
 .c.obj: .autodepend
-        @set IPATHS=-i$(whole_inc_path)
-        @echo $(%IPATHS)
+        set IPATHS=-i$(whole_inc_path)
         $(compile)
 
 .cpp.obj: .autodepend
