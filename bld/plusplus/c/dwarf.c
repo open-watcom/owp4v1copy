@@ -64,7 +64,7 @@
 ( CompFlags.pch_debug_info_read && ((type)->dbgflag & TF2_DBG_IN_PCH ) != 0 )
 
 
-extern dw_client DFClient( void );
+extern pointer DFClient( void );
 extern void DFDwarfLocal( dw_client client, dw_loc_id locid, cg_sym_handle sym  );
 
 typedef enum

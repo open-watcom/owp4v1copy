@@ -2058,8 +2058,9 @@ static PTREE extractMemberInit( // EXTRACT INITIALIZATION TREE
 
 static void ctorPrologueMember( // GENERATE PROLOGUE FOR MEMBER
     SYMBOL sym,                 // - member
-    ctor_prologue *data )       // - traversal data
+    void *_data )       // - traversal data
 {
+    ctor_prologue *data = _data;
     if( data->gen_copy && SymIsAnonymousMember( sym ) ) {
         /* anonymous member host will be copied */
         return;
@@ -2352,8 +2353,9 @@ static void testExtraParm(          // EMIT TEST OF EXTRA PARAMETER
 
 static void ctorPrologueBaseGen(    // GENERATE FOR CTOR BASE CLASS
     BASE_CLASS *base,               // - base
-    ctor_prologue *data )           // - traversal data
+    void *_data )           // - traversal data
 {
+    ctor_prologue * data = _data;
     data->comp_type = base->type;
     data->comp_offset = base->delta;
     data->comp_expr = extractBaseInit( data, base->type );

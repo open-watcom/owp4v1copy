@@ -501,9 +501,12 @@ struct seg_look {                           // used to lookup segments
 
 
 static boolean same_segment(    // DETERMINE IF SAME SEGMENT
-    PC_SEGMENT *curr,           // - current segment
-    const struct seg_look*lk )  // - segment lookup structure
+    void * _curr,           // - current segment
+    const void * _lk )  // - segment lookup structure
 {
+    PC_SEGMENT *curr = _curr;
+    const struct seg_look* lk = _lk;
+
     target_offset_t     align_adjust;
     target_size_t       new_offset;
 

@@ -114,7 +114,7 @@ void CgioCloseOutputFile(       // CLOSE VIRTUAL FILE AFTER OUTPUT PHASE
     CGFILE *ctl )               // - control for file
 ;
 CGFILE *CgioCreateFile(         // CREATE A CG VIRTUAL FILE
-    void *symbol )              // - controlling symbol-table entry
+    SYMBOL symbol )             // - controlling symbol-table entry
 ;
 void CgioFreeFile(              // FREE A VIRTUAL FILE
     CGFILE *ctl )               // - control for file

@@ -51,7 +51,7 @@ struct pool_con {               // POOL_CON -- pool entry
 
 // PROTOTYPES
 
-void *ConPoolFloatAdd(          // ADD AN ITEM TO THE CONSTANTS POOL
+POOL_CON *ConPoolFloatAdd(          // ADD AN ITEM TO THE CONSTANTS POOL
     PTREE node )                // - node for floating constant
 ;
 POOL_CON *ConPoolInt64Add       // ADD AN INT-64 CONSTANT

@@ -135,8 +135,9 @@ void *ExtrefImportType(         // GET NEXT IMPORT TYPE FOR A SYMBOL
 static void extrefClassVisit(   // VISIT ANCESTRAL CLASS
     SYMBOL sym,                 // - original symbol
     SYMBOL csym,                // - corresponding class symbol
-    EXTRF *rinfo )              // - resolution information
+    void * _rinfo )              // - resolution information
 {
+    EXTRF *rinfo = _rinfo;
     sym = sym;
     extrefPruneOvfn( &rinfo->syms, csym );
     extrefAddOvfn( &rinfo->syms, csym );
@@ -322,8 +323,9 @@ void *ExtrefResolve(            // DETERMINE RESOLUTION FOR A SYMBOL
 static void extrefVfunRegister( // REGISTER AN ANCESTRAL FUNCTION
     SYMBOL sym,                 // - original symbol
     SYMBOL csym,                // - corresponding class symbol
-    OVFN **orig )               // - ring of functions
+    void * _orig )               // - ring of functions
 {
+    OVFN **orig = _orig;
     sym = sym;
     extrefPruneOvfn( orig, csym );
     extrefAddOvfn( orig, csym );
