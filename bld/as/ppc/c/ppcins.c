@@ -458,7 +458,7 @@ static void addInstructionSymbol( ins_flags flags, ins_table *table_entry ) {
     SymSetLink( sym, (void *)entry );
 }
 
-static void enumBits( uint_32 mask, uint_32 remaining, void (*func)( ins_flags, void * ), void *parm ) {
+static void enumBits( uint_32 mask, uint_32 remaining, void (*func)( ins_flags, ins_table * ), void *parm ) {
 //******************************************************************************************************
 
     uint_32     low_bit;
@@ -473,7 +473,7 @@ static void enumBits( uint_32 mask, uint_32 remaining, void (*func)( ins_flags, 
     enumBits( mask | low_bit,   remaining, func, parm );
 }
 
-static void bitSetCover( uint_32 subset, void (*func)( ins_flags set, void *parm ), void *parm ) {
+static void bitSetCover( uint_32 subset, void (*func)( ins_flags set, ins_table *parm ), void *parm ) {
 //************************************************************************************************
 // This is a little different - when this routine is called with a set of bits, it guarantees
 // that the function passed in will be called exactly once for each subset of those bits,
