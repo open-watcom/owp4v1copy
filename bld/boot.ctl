@@ -18,7 +18,7 @@ set PROJDIR=<CWD>
 set OWLINUXBUILD=bootstrap
 # compiled using GNU make + gcc + ar
 [ INCLUDE <DEVDIR>/clib/boot.ctl ]
-[ INCLUDE <DEVDIR>/builder/lang.ctl ]
+[ INCLUDE <DEVDIR>/builder/boot.ctl ]
 [ INCLUDE <DEVDIR>/pmake/lang.ctl ]
 [ INCLUDE <DEVDIR>/yacc/boot.ctl ]
 [ INCLUDE <DEVDIR>/sdk/rc/boot.ctl ]

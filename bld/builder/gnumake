@@ -2,6 +2,12 @@ include $(DEVDIR)/build/mif/master.mk
 
 vpath %.c c ../pmake
 
+ifdef BOOT
+OUT_DIR = ../build/bin
+else
+OUT_DIR = ../build/binl
+endif
+
 INCDIRS = h $(WATCOMH) ../pmake
 LIBDIRS = $(WCLIB_DIR)/$(OBJDIR)
 LIBS += -lwatcom
@@ -10,8 +16,8 @@ UTILS = cdsay sweep wsplice diff comstrip
 UTILS := $(foreach i,$(UTILS),$(OBJDIR)/$i)
 
 all: $(OBJDIR) $(UTILS) $(OBJDIR)/builder
-	cp $(UTILS) ../build/binl
-	mv -f ../build/binl/diff ../build/binl/wdiff
+	cp $(UTILS) $(OUT_DIR)
+	mv -f $(OUT_DIR)/diff $(OUT_DIR)/wdiff
 
 $(OBJDIR)/builder: $(foreach i,sys.o sysposix.o builder.o utils.o runit.o,$(OBJDIR)/$i) pmake.o
 

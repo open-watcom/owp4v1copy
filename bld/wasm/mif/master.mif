@@ -144,7 +144,7 @@ $(name).exe : fullops.gh $(name).res $(proj_obj)
 !endif
 !ifdef bootstrap
         @%make usage.u
-        $(cc) -o $^@ $(proj_obj) $(libs)
+        $(cl) -o $^@ $(proj_obj) $(libs)
 !else
         @%write  $(name).lnk $(lflags)
         @%append $(name).lnk file { $(proj_obj) }
@@ -216,4 +216,4 @@ fullops.gh: $(proj_path)/fullops.tok $(proj_path)/inlnops.tok ./mkopcode.exe
         $]@ $(proj_path)/fullops.tok $(proj_path)/inlnops.tok $^@
 
 ./mkopcode.exe: $(proj_path)/mkopcode.c
-        $(bld_cl) $(inc_path) $[@ $(wcl_util_opts) # order is important for gcc (linux bootstrap)
+        $(bld_cl) $(inc_path) $[@ $(wcl_util_opts) $(cl_libs) # order is important for gcc (linux bootstrap)
