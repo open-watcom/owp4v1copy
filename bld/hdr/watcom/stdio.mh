@@ -59,12 +59,6 @@ typedef struct  __iobuf
     struct __iobuf       *_unused;      /* spare entry */
 :endsegment
 }
-#else
-{
-   /* need at least one member in a structure (for c)            *
-    * if the internals are obscure, this size should be unknown. */
-   char private[];
-}
 #endif
 FILE;
 
