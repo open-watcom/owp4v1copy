@@ -212,7 +212,7 @@ int directive( int i, long direct )
     case T_TEXTEQU:
         /* expand any constants and simplify any expressions */
         //if( Parse_Pass == PASS_1 ) {
-            ExpandTheWorld( 0, FALSE );
+            ExpandTheWorld( 0, FALSE, TRUE );
         //}
         break;
     default:

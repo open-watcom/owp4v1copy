@@ -677,7 +677,7 @@ int dup_array( asm_sym *sym, char start_pos, char no_of_bytes )
 
     #ifdef _WASM_
         bool            was_first;
-        ExpandTheWorld( start_pos, FALSE );
+        ExpandTheWorld( start_pos, FALSE, TRUE );
     #endif
     while( cur_pos + 2 < Token_Count ) {
         if( AsmBuffer[cur_pos + 1]->token == T_RES_ID  &&

@@ -197,7 +197,7 @@ int conditional_error_directive( int i )
     case T_DOT_ERRDIFI:
     case T_DOT_ERRIDN:
     case T_DOT_ERRIDNI:
-        ExpandTheWorld( i+1, FALSE );
+        ExpandTheWorld( i+1, FALSE, TRUE );
     }
 
     switch( direct ) {
@@ -351,7 +351,7 @@ int conditional_assembly_directive( int i )
     case T_IFDIFI:
     case T_IFIDN:
     case T_IFIDNI:
-        ExpandTheWorld( i+1, FALSE );
+        ExpandTheWorld( i+1, FALSE, TRUE );
     }
 
     switch( direct ) {

@@ -70,7 +70,7 @@ extern struct fixup     *CreateFixupRec( int );
 extern void             InputQueueLine( char * );
 extern void             PushLineQueue(void);
 extern void             AsmTakeOut( char * );
-extern int              EvalExpr( int, int, int );
+extern int              EvalExpr( int, int, int, bool );
 extern dir_node         *dir_insert( char *name, int tab );
 extern void             wipe_space( char *token );
 extern char             *get_curr_filename( void );
@@ -615,7 +615,7 @@ int ExpandMacro( int tok_count)
                             AsmBuffer[count]->string_ptr == NULL ||
                             AsmBuffer[count+1]->token == T_FINAL ) {
                             if( AsmBuffer[count+1]->token == T_FINAL ) count++;
-                            tok_count = EvalExpr( tok_count, exp_start, count-1 );
+                            tok_count = EvalExpr( tok_count, exp_start, count-1, TRUE );
                             expansion_flag = FALSE;
                             Token_Count = tok_count;
                             count = exp_start;

@@ -93,7 +93,7 @@ typedef struct input_queue {
 extern void             heap( char * );
 extern void             FlushCurrSeg( void );
 extern void             AsmError( int );
-extern int              EvalExpr( int, int, int );
+extern int              EvalExpr( int, int, int, bool );
 extern void             OutSelect( bool );
 
 extern char             write_to_file;
@@ -270,7 +270,7 @@ static file_list *push_flist( char *name, bool is_a_file )
         new->name = AsmAlloc( strlen( dir->e.macroinfo->filename ) + 1 );
         strcpy( new->name, dir->e.macroinfo->filename );
     } else {
-		AddFlist( name );
+        AddFlist( name );
         new->name = AsmAlloc( strlen( name ) + 1 );
         strcpy( new->name, name );
         LineNumber = 0;
@@ -650,7 +650,7 @@ void AsmLine( char *string )
 #ifdef _WASM_
     Token_Count = ExpandMacro( Token_Count );
 
-    if( ExpandTheWorld( 1, TRUE ) == ERROR ) {
+    if( ExpandTheWorld( 1, TRUE, TRUE ) == ERROR ) {
         write_to_file = FALSE;
         return;
     }

@@ -66,7 +66,7 @@ extern void             PushLineQueue(void);
 extern void             wipe_space( char *token );
 extern int              AsmScan( char *, char * );
 extern dir_node         *dir_insert( char *name, int tab );
-extern int              EvalExpr( int, int, int );
+extern int              EvalExpr( int, int, int, bool );
 extern void             GetInsString( enum asm_token , char *, int );
 extern int              MakeLabel( char *symbol_name, int mem_type );
 
@@ -358,7 +358,7 @@ static int createconstant( char *name, int value, int start, int_8 redefine, boo
     }
 
     /* expand any constants */
-    if( ExpandTheWorld( start, FALSE ) == ERROR ) return( ERROR );
+    if( ExpandTheWorld( start, FALSE, TRUE ) == ERROR ) return( ERROR );
 
     for( i=start; AsmBuffer[i]->token != T_FINAL; i++ );
     count = i-start;
@@ -411,14 +411,14 @@ static int createconstant( char *name, int value, int start, int_8 redefine, boo
     return( NOT_ERROR );
 }
 
-int ExpandTheWorld( int start_pos, bool early_only )
+int ExpandTheWorld( int start_pos, bool early_only, bool flag_msg )
 /**************************************************/
 {
     int         val;
 
     if( ExpandAllConsts( start_pos, early_only ) == ERROR ) return( ERROR );
     if( !early_only ) {
-        val = EvalExpr( Token_Count, start_pos, Token_Count );
+        val = EvalExpr( Token_Count, start_pos, Token_Count, flag_msg );
         if( val == ERROR ) val = 0;
         Token_Count = val;
     }

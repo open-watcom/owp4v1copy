@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-extern int ExpandTheWorld( int start_pos, bool early_only );
+extern int ExpandTheWorld( int start_pos, bool early_only, bool flag_msg );
 extern int ExpandAllConsts( int start_pos, bool early_only );
 extern int ExpandProcString( int index );
 extern int ExpandSymbol( int i, int early_only );

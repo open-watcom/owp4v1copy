@@ -79,7 +79,7 @@ extern int              AsmScan( char *, char * );
 extern struct fixup     *CreateFixupRec( int );
 extern void             InputQueueLine( char * );
 extern void             AsmTakeOut( char * );
-extern int              EvalExpr( int, int, int );
+extern int              EvalExpr( int, int, int, bool );
 extern void             GetInsString( enum asm_token, char *, int );
 extern void             MakeConstant( long );
 extern void             SetMangler( struct asm_sym *sym, char *mangle_type );
@@ -1194,7 +1194,7 @@ int PubDef( int i )
                 /* check if the symbol expands to another symbol,
                  * and if so, expand it */
                  if( node->e.constinfo->data[0].token == T_ID ) {
-                    ExpandTheWorld( i, FALSE );
+                    ExpandTheWorld( i, FALSE, TRUE );
                     return( PubDef( i ) );
                  }
             }

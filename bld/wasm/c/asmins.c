@@ -1598,7 +1598,7 @@ int AsmParse()
         switch( AsmBuffer[i]->token ) {
         case T_INS:
             #ifdef _WASM_
-                ExpandTheWorld( i, FALSE );
+                ExpandTheWorld( i, FALSE, TRUE );
             #endif
             if( last_opnd != OP_NONE ) {
                 // illegal operand is put before instruction
@@ -2119,7 +2119,7 @@ int AsmParse()
         case T_PERCENT:
             /* expansion operator */
             cur_opnd = OP_NONE;
-            ExpandTheWorld( i, FALSE );
+            ExpandTheWorld( i, FALSE, TRUE );
             break;
         #endif
         case T_NOOP:
