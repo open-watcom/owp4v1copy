@@ -21,7 +21,7 @@ Copyright by WATCOM International Corp. &*, &cpyyear.. All rights reserved.
 WATCOM is a trademark of Sybase, Inc. and its subsidiaries.
 .dm trdmrk end
 :set symbol="ver"       value="1".
-:set symbol="rev"       value="0".
+:set symbol="rev"       value="1".
 :set symbol="pver"      value="10".
 :set symbol="prev"      value="6".
 :set symbol="version"   value="110".
