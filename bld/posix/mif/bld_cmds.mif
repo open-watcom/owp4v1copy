@@ -29,6 +29,7 @@ COMMANDS = &
 #    ps &
 #    pwd &
     rev &
+    sed &
 #    split &
 #    strings &
 #    tail &
