@@ -298,6 +298,7 @@ ins (T_DIV,             OP_M_DW,     0,      OP_NONE,    0,      0xF7,     0x30,
 ins (T_DIV,             OP_M_B,      0,      OP_NONE,    0,      0xF6,     0x30,                     P_86,  NO_PREFIX)
 ins (T_DIV,             OP_M,        0,      OP_NONE,    0,      0xF7,     0x30,                     P_86,  NO_PREFIX)
 ins (T_DL,              OP_SPECIAL,  0,      OP_R8_GEN,  0,      2,        OP_REGISTER,              P_86,  0)
+insa(T_DOSSEG,          OP_SPECIAL,  0,      OP_NONE,    0,      0,        OP_DIRECTIVE,             0,     0)
 ins (T_DP,              OP_SPECIAL,  0,      0,          0,      0,        OP_RES_ID,                0,     0)
 insa(T_DQ,              OP_SPECIAL,  0,      OP_SPECIAL, 0,      0,        OP_RES_ID|OP_PTR_MODIFIER,0,     0)
 ins (T_DR0,             OP_SPECIAL,  0,      OP_DR,      0,      0,        OP_REGISTER,              P_386, 0)

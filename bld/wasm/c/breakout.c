@@ -92,6 +92,7 @@ int directive( int i, long direct )
         if( Parse_Pass != PASS_1 ) ret = NOT_ERROR;
         return( ret );
     case T_DOT_DOSSEG:
+    case T_DOSSEG:
         Globals.dosseg = TRUE;
         return( NOT_ERROR );
     case T_PUBLIC:
