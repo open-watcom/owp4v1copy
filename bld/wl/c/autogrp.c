@@ -97,8 +97,6 @@ static offset SetSegType( seg_leader * seg )
     if( seg == NULL ) return 0xFFFF;
     if( seg->info & SEG_CODE ) {
         if( LinkFlags & PACKCODE_FLAG ) return PackCodeLimit;
-        /* By default, do NOT pack code segments in DOS executables */
-        if( FmtData.type & MK_REAL_MODE ) return 0;
     } else {
         if( LinkFlags & PACKDATA_FLAG ) return PackDataLimit;
     }
