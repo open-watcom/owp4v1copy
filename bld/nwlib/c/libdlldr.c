@@ -57,7 +57,13 @@ int main                        // MAIN-LINE FOR DLL DRIVER
 #endif
 
 #ifdef IDE_PGM
+#ifdef __UNIX__
+    static char buffer[PATH_MAX];
+    _cmdname( buffer );
+    ImageName = buffer;
+#else
     ImageName = args[0];
+#endif
 #endif
 #ifndef __UNIX__
     count = count;
