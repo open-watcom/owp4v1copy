@@ -40,13 +40,12 @@
 #include "linuxcomm.h"
 
 typedef struct lli {
-    addr48_off  offset;
-    addr48_off  dbg_dyn_sect;
-    addr48_off  code_size;
+    addr_off    offset;
+    addr_off    dbg_dyn_sect;
+    addr_off    code_size;
     char        newly_unloaded : 1;
     char        newly_loaded : 1;
     char        filename[257]; // TODO: These should really be dynamic!
-    char        modname[128];
 } lib_load_info;
 
 static lib_load_info    *moduleInfo;
@@ -55,7 +54,7 @@ static int              ModuleTop;
 /*
  * FindLib - find a shared lib entry in the list
  */
-lib_load_info *FindLib( addr48_off dynsection )
+lib_load_info *FindLib( addr_off dynsection )
 {
     unsigned    i;
 
@@ -66,15 +65,15 @@ lib_load_info *FindLib( addr48_off dynsection )
     return( NULL );
 }
 
-struct link_map *FindLibInLinkMap( struct link_map *first_lmap, addr48_off dyn_base )
+struct link_map *FindLibInLinkMap( struct link_map *first_lmap, addr_off dyn_base )
 {
     struct link_map     lmap;
     struct link_map     *dbg_lmap;
 
     dbg_lmap = first_lmap;
     while( dbg_lmap != NULL ) {
-        if( !GetLinkMap( dbg_lmap, &lmap ) ) break;
-        if( (addr48_off)lmap.l_ld == dyn_base )
+        if( !GetLinkMap( pid, dbg_lmap, &lmap ) ) break;
+        if( (addr_off)lmap.l_ld == dyn_base )
             return( dbg_lmap );
         dbg_lmap = lmap.l_next;
     }
@@ -95,7 +94,6 @@ void AddProcess( void )
     lli = &moduleInfo[0];
 
     lli->offset = 0;    /* Assume that main executable was not relocated */
-    lli->modname[0] = '\0';
     lli->filename[0] = '\0';
 }
 
@@ -110,15 +108,14 @@ void AddLib( struct link_map *lmap )
     ModuleTop++;
     lli = malloc( ModuleTop * sizeof( lib_load_info ) );
     memset( lli, 0, ModuleTop * sizeof( lib_load_info ) );
-    memcpy( lli, moduleInfo, ( ModuleTop - 1 ) *sizeof( lib_load_info ) );
+    memcpy( lli, moduleInfo, (ModuleTop - 1) * sizeof( lib_load_info ) );
     free( moduleInfo );
     moduleInfo = lli;
     lli = &moduleInfo[ModuleTop - 1];
 
     lli->offset = lmap->l_addr;
-    lli->dbg_dyn_sect = (addr48_off)lmap->l_ld;
-    lli->modname[0] = 0;
-    dbg_strcpy( lli->filename, lmap->l_name );
+    lli->dbg_dyn_sect = (addr_off)lmap->l_ld;
+    dbg_strcpy( pid, lli->filename, lmap->l_name );
     lli->newly_loaded = TRUE;
     lli->newly_unloaded = FALSE;
     lli->offset = lmap->l_addr;
@@ -126,13 +123,13 @@ void AddLib( struct link_map *lmap )
     Out( "Added library: ofs/dyn = " );
     OutNum( lmap->l_addr );
     Out( "/" );
-    OutNum( (addr48_off)lmap->l_ld );
+    OutNum( (addr_off)lmap->l_ld );
     Out( " " );
     Out( lli->filename );
     Out( "\n" );
 }
 
-void DelLib( addr48_off dynsection )
+void DelLib( addr_off dynsection )
 {
     unsigned    i;
 
@@ -174,7 +171,7 @@ int AddInitialLibs( struct link_map *first_lmap )
 
     dbg_lmap = first_lmap;
     while( dbg_lmap != NULL ) {
-        if( !GetLinkMap( dbg_lmap, &lmap ) ) break;
+        if( !GetLinkMap( pid, dbg_lmap, &lmap ) ) break;
         AddLib( &lmap );
         ++count;
         dbg_lmap = lmap.l_next;
@@ -196,8 +193,8 @@ int AddOneLib( struct link_map *first_lmap )
 
     dbg_lmap = first_lmap;
     while( dbg_lmap != NULL ) {
-        if( !GetLinkMap( dbg_lmap, &lmap ) ) break;
-        lli = FindLib( (addr48_off)lmap.l_ld );
+        if( !GetLinkMap( pid, dbg_lmap, &lmap ) ) break;
+        lli = FindLib( (addr_off)lmap.l_ld );
         if( lli == NULL ) {
             AddLib( &lmap );
             ++count;
@@ -216,7 +213,7 @@ int DelOneLib( struct link_map *first_lmap )
 {
     int                 count = 0;
     int                 i;
-    addr48_off          dyn_base;
+    addr_off            dyn_base;
 
     for( i = 0; i < ModuleTop; ++i ) {
         dyn_base = moduleInfo[i].dbg_dyn_sect;
@@ -252,7 +249,7 @@ unsigned ReqMap_addr( void )
     CONV_LE_32( acc->handle );
     ret = GetOutPtr( 0 );
     ret->lo_bound = 0;
-    ret->hi_bound = ~(addr48_off)0;
+    ret->hi_bound = ~(addr_off)0;
     errno = 0;
     if( (val = ptrace( PTRACE_PEEKUSER, pid, (void *)offsetof( user_struct, start_code ), &val )) == -1 ) {
         if( errno ) {

@@ -165,35 +165,35 @@ typedef struct {
 
 #ifndef _PPC_PTRACE_H
 struct pt_regs {
-	unsigned long gpr[32];
-	unsigned long nip;
-	unsigned long msr;
-	unsigned long orig_gpr3;	/* Used for restarting system calls */
-	unsigned long ctr;
-	unsigned long link;
-	unsigned long xer;
-	unsigned long ccr;
-	unsigned long mq;		/* 601 only (not used at present) */
-					/* Used on APUS to hold IPL value. */
-	unsigned long trap;		/* Reason for being here */
-	unsigned long dar;		/* Fault registers */
-	unsigned long dsisr;
-	unsigned long result; 		/* Result of a system call */
+    unsigned long gpr[32];
+    unsigned long nip;
+    unsigned long msr;
+    unsigned long orig_gpr3;        /* Used for restarting system calls */
+    unsigned long ctr;
+    unsigned long link;
+    unsigned long xer;
+    unsigned long ccr;
+    unsigned long mq;               /* 601 only (not used at present) */
+                                    /* Used on APUS to hold IPL value. */
+    unsigned long trap;             /* Reason for being here */
+    unsigned long dar;              /* Fault registers */
+    unsigned long dsisr;
+    unsigned long result;           /* Result of a system call */
 };
 #endif
 
 typedef struct user {
-	struct pt_regs	regs;			/* entire machine state */
-	size_t		u_tsize;		/* text size (pages) */
-	size_t		u_dsize;		/* data size (pages) */
-	size_t		u_ssize;		/* stack size (pages) */
-	unsigned long	start_code;		/* text starting address */
-	unsigned long	start_data;		/* data starting address */
-	unsigned long	start_stack;		/* stack starting address */
-	long int	signal;			/* signal causing core dump */
-	struct regs *	u_ar0;			/* help gdb find registers */
-	unsigned long	magic;			/* identifies a core file */
-	char		u_comm[32];		/* user command name */
+    struct pt_regs  regs;           /* entire machine state */
+    size_t      u_tsize;            /* text size (pages) */
+    size_t      u_dsize;            /* data size (pages) */
+    size_t      u_ssize;            /* stack size (pages) */
+    unsigned long   start_code;     /* text starting address */
+    unsigned long   start_data;     /* data starting address */
+    unsigned long   start_stack;    /* stack starting address */
+    long int    signal;             /* signal causing core dump */
+    struct regs *   u_ar0;          /* help gdb find registers */
+    unsigned long   magic;          /* identifies a core file */
+    char        u_comm[32];         /* user command name */
 } user_struct;
 
 typedef unsigned long bp_t;
@@ -279,24 +279,27 @@ u_long inpd(u_long port);
 
 /* Internal helper functions */
 
-extern unsigned TryOnePath( char *, struct stat *, char *, char * );
-extern unsigned FindFilePath( int, char *, char * );
-extern u_long   GetDR6( void );
-extern void     ClearDebugRegs( void );
-extern int      SetDebugRegs( void );
-extern int      CheckWatchPoints( void );
-extern int      GetLinkMap( struct link_map *, struct link_map * );
-extern int      AddInitialLibs( struct link_map * );
-extern int      AddOneLib( struct link_map * );
-extern int      DelOneLib( struct link_map * );
-extern void     AddProcess( void );
-extern void     DelProcess( void );
-extern char     *dbg_strcpy( char *, const char * );
-extern unsigned ReadMem( void *ptr, addr_off offv, unsigned size );
-extern unsigned WriteMem( void *ptr, addr_off offv, unsigned size );
+extern unsigned     TryOnePath( char *, struct stat *, char *, char * );
+extern unsigned     FindFilePath( int, char *, char * );
+extern u_long       GetDR6( void );
+extern void         ClearDebugRegs( void );
+extern int          SetDebugRegs( void );
+extern int          CheckWatchPoints( void );
+extern int          GetLinkMap( pid_t pid, struct link_map *, struct link_map * );
+extern int          AddInitialLibs( struct link_map * );
+extern int          AddOneLib( struct link_map * );
+extern int          DelOneLib( struct link_map * );
+extern void         AddProcess( void );
+extern void         DelProcess( void );
+extern void         print_msg( const char *format, ... );
 
-
-extern void print_msg( const char *format, ... );
+/* Utility functions shared with execution sampler */
+extern unsigned     ReadMem( pid_t pid, void *ptr, addr_off offv, unsigned size );
+extern unsigned     WriteMem( pid_t pid, void *ptr, addr_off offv, unsigned size );
+extern Elf32_Dyn    *GetDebuggeeDynSection( const char *exe_name );
+extern int          Get_ld_info( pid_t pid, Elf32_Dyn *dbg_dyn, struct r_debug *debug_ptr, struct r_debug **dbg_rdebug_ptr );
+extern char         *dbg_strcpy( pid_t pid, char *, const char * );
+extern int          SplitParms( char *p, char *args[], unsigned len );
 
 /* Copy of parent's environment */
 extern char     **dbg_environ;

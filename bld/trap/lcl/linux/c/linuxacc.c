@@ -28,11 +28,7 @@
 *
 ****************************************************************************/
 
-/* started by Kendall Bennett
-   continued by Bart Oldeman -- thanks to Andi Kleen's stepper.c example
-   5.5.2004 added XMM registers support JM
-
-   still to do:
+/* TODO:
    * complete watchpoints
    * combine global into a struct (like the QNX trap file) to make it a little
      clearer what is global and what not.
@@ -73,260 +69,6 @@ static int              have_rdebug;    /* Flag indicating valid r_debug */
 static Elf32_Dyn        *dbg_dyn;       /* VA of debuggee's dynamic section (if present) */
 static bp_t             old_ld_bp;
 
-#ifdef DEBUG_OUT
-void Out( const char *str )
-{
-    write( 1, (char *)str, strlen( str ) );
-}
-
-void OutNum( unsigned long i )
-{
-    char numbuff[16];
-    char *ptr;
-
-    ptr = numbuff+10;
-    *--ptr = '\0';
-    do {
-        *--ptr = ( i % 16 ) + '0';
-        if( *ptr > '9' )
-        *ptr += 'A' - '9' - 1;
-        i /= 16;
-    } while( i != 0 );
-    Out( ptr );
-}
-#endif
-
-unsigned WriteMem( void *ptr, addr_off offv, unsigned size )
-{
-    char    *data = ptr;
-    int     count;
-
-    /* Write the process memory 32-bits at a time. Kind of silly that
-     * Linux does not have an extended ptrace call to read and write
-     * blocks of data from the debuggee process, but this is what we
-     * need to do for now.
-     */
-    for( count = size; count >= 4; count -= 4 ) {
-        if( ptrace( PTRACE_POKETEXT, pid, (void *)offv, (void *)(*(unsigned_32*)data) ) != 0 )
-            return( size - count );
-        data += 4;
-        offv += 4;
-    }
-
-    /* Now handle last partial write if neccesary. Note that we first
-     * must read the full 32-bit value, then just change the section
-     * we want to update.
-     */
-    if( count ) {
-        u_long  val;
-
-        errno = 0;
-        if( (val = ptrace( PTRACE_PEEKTEXT, pid, (void *)offv, &val )) == -1 ) {
-            if( errno )
-                return( size - count );
-        }
-#if DEBUG_WRITEMEM
-        Out( "writemem:" );
-        OutNum( val );
-        Out( "\n" );
-#endif
-        switch( count ) {
-        case 1:
-            val &= 0xFFFFFF00;
-            val |= (u_long)(*((unsigned_8*)data));
-            break;
-        case 2:
-            val &= 0xFFFF0000;
-            val |= (u_long)(*((unsigned_16*)data));
-            break;
-        case 3:
-            val &= 0xFF000000;
-            val |= ((u_long)(*((unsigned_8*)(data+0))) << 0) |
-                   ((u_long)(*((unsigned_8*)(data+1))) << 8) |
-                   ((u_long)(*((unsigned_8*)(data+2))) << 16);
-            break;
-        }
-#if DEBUG_WRITEMEM
-        Out( "writemem:" );
-        OutNum( val );
-        Out( "\n" );
-#endif
-        if( ptrace( PTRACE_POKETEXT, pid, (void *)offv, (void *)val ) != 0 )
-            return( size - count );
-    }
-
-    return( size );
-}
-
-unsigned ReadMem( void *ptr, addr_off offv, unsigned size )
-{
-    char    *data = ptr;
-    int     count;
-
-    /* Read the process memory 32-bits at a time */
-    for( count = size; count >= 4; count -= 4 ) {
-        u_long  val;
-	
-	errno = 0;
-        if( (val = ptrace( PTRACE_PEEKTEXT, pid, (void *)offv, &val )) == -1 ) {
-            if( errno ) {
-                return( size - count );
-            }
-        }
-	*(u_long *)data = val;
-        data += 4;
-        offv += 4;
-        }
-
-    /* Now handle last partial read if neccesary */
-    if( count ) {
-        u_long  val;
-
-        errno = 0;
-        if( (val = ptrace( PTRACE_PEEKTEXT, pid, (void *)offv, &val )) == -1 ) {
-            if( errno ) {
-                return( size - count );
-            }
-        }
-        CONV_LE_32( val );
-        switch( count ) {
-        case 1:
-            *((unsigned_8*)data) = (unsigned_8)val;
-            break;
-        case 2:
-            *((unsigned_16*)data) = (unsigned_16)val;
-            break;
-        case 3:
-            *((unsigned_8*)(data+0)) = (unsigned_8)(val >> 0);
-            *((unsigned_8*)(data+1)) = (unsigned_8)(val >> 8);
-            *((unsigned_8*)(data+2)) = (unsigned_8)(val >> 16);
-            break;
-        }
-    count = 0;
-    }
-    return( size - count );
-}
-
-Elf32_Dyn *GetDebuggeeDynSection( const char *exe_name )
-{
-    Elf32_Dyn   *result;
-    Elf32_Ehdr  ehdr;
-    Elf32_Phdr  phdr;
-    int         fd;
-    size_t      i;
-
-    result = NULL;
-    fd = open( exe_name, O_RDONLY );
-    if( fd < 0 )
-        return( result );
-    /* Obtain the address of the dynamic section from the program
-     * header. If anything unexpected happens, give up
-     */
-    if( read( fd, &ehdr, sizeof( ehdr ) ) >= sizeof( ehdr ) &&
-        memcmp( ehdr.e_ident, ELF_SIGNATURE, 4 ) == 0 &&
-        ehdr.e_phoff != 0 &&
-        ehdr.e_phentsize >= sizeof( phdr ) &&
-        lseek( fd, ehdr.e_phoff, SEEK_SET ) == ehdr.e_phoff ) {
-        for( i = 0; i < ehdr.e_phnum; i++ ) {
-            if( read( fd, &phdr, sizeof phdr ) < sizeof( phdr ) )
-                break;
-            if( phdr.p_type == PT_DYNAMIC ) {
-                result = (Elf32_Dyn *)phdr.p_vaddr;
-                break;
-            }
-            if( lseek( fd, ehdr.e_phentsize - sizeof( phdr ), SEEK_CUR ) < 0 )
-                break;
-        }
-    }
-    close( fd );
-    Out( "DynSection at: " );
-    OutNum( (size_t)result );
-    Out( "\n" );
-    return( result );
-}
-
-/* Copy dynamic linker rendezvous structure from debuggee's address space
- * to memory provided by caller. Note that it is perfectly valid for this
- * function to fail - that will happen if the debuggee is statically linked.
- */
-int Get_ld_info( struct r_debug *debug_ptr, struct r_debug **dbg_rdebug_ptr )
-{
-    Elf32_Dyn       loc_dyn;
-    struct r_debug  *rdebug = NULL;
-    unsigned        read_len;
-
-    if( dbg_dyn == NULL ) {
-        Out( "Get_ld_info: dynamic section not available\n" );
-        return( FALSE );
-    }
-    read_len = sizeof( loc_dyn );
-    if( ReadMem( &loc_dyn, (addr_off)dbg_dyn, read_len ) != read_len ) {
-        Out( "Get_ld_info: failed to copy first dynamic entry\n" );
-        return( FALSE );
-    }
-    while( loc_dyn.d_tag != DT_NULL ) {
-        if( loc_dyn.d_tag == DT_DEBUG ) {
-            rdebug = (struct r_debug *)loc_dyn.d_un.d_ptr;
-            break;
-        }
-        dbg_dyn++;
-        if( ReadMem( &loc_dyn, (addr_off)dbg_dyn, read_len ) != read_len ) {
-            Out( "Get_ld_info: failed to copy dynamic entry\n" );
-            return( FALSE );
-        }
-    }
-    if( rdebug == NULL ) {
-        Out( "Get_ld_info: failed to find DT_DEBUG entry\n" );
-        return( FALSE );
-    }
-    read_len = sizeof( *debug_ptr );
-    if( ReadMem( debug_ptr, (addr_off)rdebug, read_len ) != read_len ) {
-        Out( "Get_ld_info: failed to copy r_debug struct\n" );
-        return( FALSE );
-    }
-    *dbg_rdebug_ptr = rdebug;
-    Out( "Get_ld_info: dynamic linker rendezvous structure found\n" );
-    return( TRUE );
-}
-
-/* Like strcpy() but source string is in debuggee's address space. Not
- * very efficient, use sparingly!
- */
-char *dbg_strcpy( char *s1, const char *s2 )
-{
-    char    *dst = s1;
-    char    c;
-
-    do {
-        if( ReadMem( &c, (addr48_off)s2, 1 ) != 1 ) {
-            Out( "dbg_strcpy: failed at " );
-            OutNum( (addr48_off)s2 );
-            Out( "\n" );
-            return( NULL );
-        }
-        *dst++ = c;
-        ++s2;
-    } while( c );
-
-    return( s1 );
-}
-
-/* Copy a link map struct from debuggee address space to memory
- * provided by caller.
- */
-int GetLinkMap( struct link_map *dbg_lmap, struct link_map *local_lmap )
-{
-    unsigned    read_len;
-
-    read_len = sizeof( *local_lmap );
-    if( ReadMem( local_lmap, (addr_off)dbg_lmap, read_len ) != read_len ) {
-        Out( "GetLinkMap: failed to copy link_map struct at " );
-        OutNum( (addr48_off)dbg_lmap );
-        Out( "\n" );
-        return( FALSE );
-    }
-    return( TRUE );
-}
 
 unsigned ReqChecksum_mem( void )
 {
@@ -350,7 +92,7 @@ unsigned ReqChecksum_mem( void )
             if( length == 0 )
                 break;
             size = (length > sizeof( buf )) ? sizeof( buf ) : length;
-            amount = ReadMem( buf, offv, size );
+            amount = ReadMem( pid, buf, offv, size );
             for( i = amount; i != 0; --i )
                 sum += buf[ i - 1 ];
             offv += amount;
@@ -371,7 +113,7 @@ unsigned ReqRead_mem( void )
     CONV_LE_32( acc->mem_addr.offset );
     CONV_LE_16( acc->mem_addr.segment );
     CONV_LE_16( acc->len );
-    len = ReadMem( GetOutPtr( 0 ), acc->mem_addr.offset, acc->len );
+    len = ReadMem( pid, GetOutPtr( 0 ), acc->mem_addr.offset, acc->len );
     return( len );
 }
 
@@ -386,7 +128,7 @@ unsigned ReqWrite_mem( void )
     CONV_LE_16( acc->mem_addr.segment );
     ret = GetOutPtr( 0 );
     len = GetTotalSize() - sizeof( *acc );
-    ret->len = WriteMem( GetInPtr( sizeof( *acc ) ), acc->mem_addr.offset, len );
+    ret->len = WriteMem( pid, GetInPtr( sizeof( *acc ) ), acc->mem_addr.offset, len );
     CONV_LE_16( ret->len );
     return( sizeof( *ret ) );
 }
@@ -405,51 +147,6 @@ static int GetFlatSegs( u_short *cs, u_short *ds )
 }
 #endif
 
-static int SplitParms( char *p, char *args[], unsigned len )
-{
-    int     i;
-    char    endc;
-
-    i = 0;
-    if( len == 1 ) goto done;
-    for( ;; ) {
-        for( ;; ) {
-            if( len == 0 ) goto done;
-            if( *p != ' ' && *p != '\t' ) break;
-            ++p;
-            --len;
-        }
-        if( len == 0 ) goto done;
-        if( *p == '"' ) {
-            --len;
-            ++p;
-            endc = '"';
-        } else {
-            endc = ' ';
-        }
-        if( args != NULL ) args[i] = p;
-        ++i;
-        for( ;; ) {
-            if( len == 0 ) goto done;
-            if( *p == endc
-                || *p == '\0'
-                || (endc == ' ' && *p == '\t' ) ) {
-                if( args != NULL ) {
-                    *p = '\0';  //NYI: not a good idea, should make a copy
-                }
-                ++p;
-                --len;
-                if( len == 0 ) goto done;
-                break;
-            }
-            ++p;
-            --len;
-        }
-    }
-done:
-    return( i );
-}
-
 static pid_t RunningProc( char *name, char **name_ret )
 {
     pid_t       pidd;
@@ -467,7 +164,7 @@ static pid_t RunningProc( char *name, char **name_ret )
     pidd = 0;
     for( ;; ) {
         if( *name < '0' || *name > '9' ) break;
-        pidd = (pidd*10) + (*name - '0');
+        pidd = (pidd * 10) + (*name - '0');
         ++name;
     }
     if( *name != '\0') return( 0 );
@@ -528,12 +225,12 @@ unsigned ReqProg_load( void )
         for( ;; ) {
             if( len == 0 ) break;
             if( *parms == '\0' ) {
-                args[ i++ ] = parms + 1;
+                args[i++] = parms + 1;
             }
             ++parms;
             --len;
         }
-        args[ i-1 ] = NULL;
+        args[i - 1] = NULL;
     } else {
         while( *parms != '\0' ) {
             ++parms;
@@ -543,7 +240,7 @@ unsigned ReqProg_load( void )
         --len;
         i = SplitParms( parms, NULL, len );
         args = alloca( (i + 2)  * sizeof( *args ) );
-        args[ SplitParms( parms, &args[1], len ) + 1 ] = NULL;
+        args[SplitParms( parms, &args[1], len ) + 1] = NULL;
     }
     args[0] = parm_start;
     attached = TRUE;
@@ -560,7 +257,7 @@ unsigned ReqProg_load( void )
         if( pid == -1 )
             return( 0 );
         if( pid == 0 ) {
-            if( (long)ptrace( PTRACE_TRACEME, 0, NULL, NULL ) < 0 ) {
+            if( ptrace( PTRACE_TRACEME, 0, NULL, NULL ) < 0 ) {
                 exit( 1 );
             }
             execve( exe_name, (const char **)args, (const char **)dbg_environ );
@@ -579,7 +276,7 @@ unsigned ReqProg_load( void )
         ret->flags |= LD_FLAG_IS_PROT | LD_FLAG_IS_32;
         /* wait until it hits _start (upon execve) or
            gives us a SIGSTOP (if attached) */
-        if( waitpid ( pid, &status, 0 ) < 0 )
+        if( waitpid( pid, &status, 0 ) < 0 )
             goto fail;
         if( !WIFSTOPPED( status ) )
             goto fail;
@@ -636,7 +333,7 @@ unsigned ReqProg_kill( void )
             attached = FALSE;
         } else {
             int status;
-    
+
             ptrace( PTRACE_KILL, pid, NULL, NULL );
             waitpid( pid, &status, 0 );
         }
@@ -660,10 +357,10 @@ unsigned ReqSet_break( void )
     ret = GetOutPtr( 0 );
     CONV_LE_32( acc->break_addr.offset );
     CONV_LE_16( acc->break_addr.segment );
-    ReadMem( &opcode, acc->break_addr.offset, sizeof( opcode ) );
+    ReadMem( pid, &opcode, acc->break_addr.offset, sizeof( opcode ) );
     ret->old = opcode;
     opcode = BRK_POINT;
-    WriteMem( &opcode, acc->break_addr.offset, sizeof( opcode ) );
+    WriteMem( pid, &opcode, acc->break_addr.offset, sizeof( opcode ) );
     Out( "ReqSet_break at " );
     OutNum( acc->break_addr.offset );
     Out( " (was " );
@@ -681,7 +378,7 @@ unsigned ReqClear_break( void )
     CONV_LE_32( acc->break_addr.offset );
     CONV_LE_16( acc->break_addr.segment );
     opcode = acc->old;
-    WriteMem( &opcode, acc->break_addr.offset, sizeof( opcode ) );
+    WriteMem( pid, &opcode, acc->break_addr.offset, sizeof( opcode ) );
     Out( "ReqClear_break at " );
     OutNum( acc->break_addr.offset );
     Out( " (setting to " );
@@ -710,7 +407,6 @@ static unsigned ProgRun( int step )
     prog_go_ret         *ret;
     void                (*old)(int);
     int                 debug_continue;
-    int                 inside_signal = FALSE;
 
     if( pid == 0 )
         return( 0 );
@@ -725,14 +421,14 @@ static unsigned ProgRun( int step )
     /* we only want child-generated SIGINTs now */
     do {
         old = setsig( SIGINT, SIG_IGN );
-        if( step && !inside_signal ) {
+        if( step ) {
             ptrace( PTRACE_SINGLESTEP, pid, NULL, (void *)ptrace_sig );
         } else {
             ptrace( PTRACE_CONT, pid, NULL, (void *)ptrace_sig );
         }
         waitpid( pid, &status, 0 );
         setsig( SIGINT, old );
-        
+
 #if defined( MD_x86 )
         ptrace( PTRACE_GETREGS, pid, NULL, &regs );
 #elif defined( MD_ppc )
@@ -742,8 +438,7 @@ static unsigned ProgRun( int step )
         Out( " eip " );
         OutNum( regs.eip );
         Out( "\n" );
-        
-        inside_signal = FALSE;                
+
         debug_continue = FALSE;
         if( WIFSTOPPED( status ) ) {
             switch( ( ptrace_sig = WSTOPSIG( status ) ) ) {
@@ -776,9 +471,6 @@ static unsigned ProgRun( int step )
                 OutNum( ptrace_sig );
                 Out( "\n" );
                 debug_continue = TRUE;
-//                inside_signal = TRUE;
-                // continue debugger
-                // if we come back to original EIP, single or continue
                 break;
             }
         } else if( WIFEXITED( status ) ) {
@@ -799,15 +491,15 @@ static unsigned ProgRun( int step )
             int         psig = 0;
             void        (*oldsig)(int);
             bp_t        opcode = BRK_POINT;
-    
+
             /* The dynamic linker breakpoint was hit, meaning that
              * libraries are being loaded or unloaded. This gets a bit
              * tricky because we must restore the original code that was
              * at the breakpoint and execute it, but we still want to
              * keep the breakpoint.
              */
-            WriteMem( &old_ld_bp, rdebug.r_brk, sizeof( old_ld_bp ) );
-            ReadMem( &rdebug, (addr48_off)dbg_rdebug, sizeof( rdebug ) );
+            WriteMem( pid, &old_ld_bp, rdebug.r_brk, sizeof( old_ld_bp ) );
+            ReadMem( pid, &rdebug, (addr48_off)dbg_rdebug, sizeof( rdebug ) );
             Out( "ld breakpoint hit, state is " );
             switch( rdebug.r_state ) {
             case RT_ADD:
@@ -838,7 +530,7 @@ static unsigned ProgRun( int step )
             ptrace( PTRACE_SINGLESTEP, pid, NULL, (void *)psig );
             waitpid( pid, &status, 0 );
             setsig( SIGINT, oldsig );
-            WriteMem( &opcode, rdebug.r_brk, sizeof( old_ld_bp ) );
+            WriteMem( pid, &opcode, rdebug.r_brk, sizeof( old_ld_bp ) );
             ret->conditions = COND_LIBRARIES;
         } else {
 #if defined( MD_x86 )
@@ -862,24 +554,24 @@ static unsigned ProgRun( int step )
      * immediately after the debuggee process loads.
      */
     if( !have_rdebug && (dbg_dyn != NULL) ) {
-        if( Get_ld_info( &rdebug, &dbg_rdebug ) ) {
+        if( Get_ld_info( pid, dbg_dyn, &rdebug, &dbg_rdebug ) ) {
             bp_t        opcode;
-    
+
             AddInitialLibs( rdebug.r_map );
             have_rdebug = TRUE;
             ret->conditions |= COND_LIBRARIES;
-    
+
             /* Set a breakpoint in dynamic linker. That way we can be
              * informed on dynamic library load/unload events.
              */
-            ReadMem( &old_ld_bp, rdebug.r_brk, sizeof( old_ld_bp ) );
+            ReadMem( pid, &old_ld_bp, rdebug.r_brk, sizeof( old_ld_bp ) );
             Out( "Setting ld breakpoint at " );
             OutNum( rdebug.r_brk );
             Out( " old opcode was " );
             OutNum( old_ld_bp );
             Out( "\n" );
             opcode = BRK_POINT;
-            WriteMem( &opcode, rdebug.r_brk, sizeof( opcode ) );
+            WriteMem( pid, &opcode, rdebug.r_brk, sizeof( opcode ) );
         }
     }
  end:

@@ -16,6 +16,7 @@ extra_objs = &
         linuxmap.obj &
         linuxcomm.obj &
         linuxfile.obj &
+	linuxutl.obj &
         squish87.obj &
         supp.obj &
         core.obj &
@@ -23,4 +24,3 @@ extra_objs = &
 
 !include $(trap_dir)/lcl/lcl.mif
 !include $(trap_dir)/master.mif
-

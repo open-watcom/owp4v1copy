@@ -301,7 +301,7 @@ int CheckWatchPoints( void )
     int     i;
 
     for( i = 0; i < wpCount; i++ ) {
-        ReadMem( &value, wpList[i].loc.offset, sizeof( value ) );
+        ReadMem( pid, &value, wpList[i].loc.offset, sizeof( value ) );
         if( value != wpList[i].value ) {
             return( TRUE );
         }
@@ -327,7 +327,7 @@ unsigned ReqSet_watch( void )
         curr = wpList + wpCount;
         curr->loc.segment = acc->watch_addr.segment;
         curr->loc.offset = acc->watch_addr.offset;
-        ReadMem( &value, acc->watch_addr.offset, sizeof( dword ) );
+        ReadMem( pid, &value, acc->watch_addr.offset, sizeof( dword ) );
         curr->value = value;
         curr->len = acc->size;
         wpCount++;
