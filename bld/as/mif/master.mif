@@ -145,9 +145,9 @@ $(asi_lib) :
 all_lib : $(asi_lib) $(asi_lib_j) .symbolic
 
 $(asi_lib) : $(asi_objs)
-        @rm -f $^&.clb
-        @for %i in ($<) do @%append $^&.clb -+%i
-        $(librarian) -b -q $^@ @$^&.clb
+        @rm -f $^&.lbc
+        @for %i in ($<) do @%append $^&.lbc -+%i
+        $(librarian) -b -q $^@ @$^&.lbc
 
 $(asi_lib_j) : $(asi_lib) asmsgj$(obj)
         cp $[@ $^@
@@ -187,8 +187,8 @@ $(yacc_in) : $(yacc_src) $(as_dir)/y/yydriver.c
 
 $(yacc_out_c).c $(yacc_out_h) : $(yacc_in)
         $(yacc) $(yacc_flags) $[@ $(as_dir)\y\yydriver.c
-        vi -d -i -q -s $(as_dir)/mif/asyy.vi -p"$(yacc_out_c).c" ytab.c
-        vi -d -i -q -s $(as_dir)/mif/asyy.vi -p"$(yacc_out_c).h" ytab.h
+        $(vi) -s $(as_dir)/mif/asyy.vi -p"$(yacc_out_c).c" ytab.c
+        $(vi) -s $(as_dir)/mif/asyy.vi -p"$(yacc_out_c).h" ytab.h
         # $(yacc) $(yacc_flags) $[@
 
 $(lex_in) : $(lex_src)
@@ -203,6 +203,6 @@ clean: .symbolic .explicit
 !ifdef test_inline_as
         rm -f $(asi_test_name)$(exe)
 !endif
-        rm -f *.err del *.err *.map *.pch *.lib *.clb ytab.* *.res *.sym *.tmp
+        rm -f *.err del *.err *.map *.pch *.lib *.lbc ytab.* *.res *.sym *.tmp
         rm -f $(lex_in) $(lex_out_c).c $(yacc_in) $(yacc_out_c).c $(yacc_out_h)
         rm -f msg.gh mkstrid$(exe)

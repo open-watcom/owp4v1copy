@@ -29,10 +29,10 @@ winlibs =            &
 .asm: ../asm
 
 .asm.obj:
-    $(as) $[@
+        $(as) $[@
 
 .def.lbc:
-        vi -d -i -q -s ../def16lbc.vi -p"$*" ../lib/$[.
+        $(vi) -s ../def16lbc.vi -p"$*" ../lib/$[.
 
 .lbc.lib:
         $(librarian) -b -n -p=16 -io -ii $@ @$<
@@ -41,7 +41,7 @@ $(libs):
 
 windows.lbc : $(winlibs)
         @%create $^@
-        @for %i in ($(winlibs)) do @type %i >>$^@
+        @for %i in ($(winlibs)) do @%append $^@ @ %i
 
 windows.lib: windows.lbc profc.obj
         $(librarian) -b -n -p=16 -io -ii $@ @$<
@@ -49,5 +49,5 @@ windows.lib: windows.lbc profc.obj
 clean: .SYMBOLIC .EXPLICIT
         @rm -f $(watcom_dir)/lib/winsock.lib
         @rm -f $(misc_dir)/ctl3d.lib
-        @rm -f *.lbc *.lib *.bak *.obj
+        @rm -f *.lbc *.lib *.bak *.obj *.err
 

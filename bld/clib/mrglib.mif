@@ -29,7 +29,7 @@ $(libname).lib : $(libs)
 !endif
     $(librarian) $(lib_flags) $(lib_flags_new) $(lib_flags_linkage) $^@ @tmp.lbc +timstamp.obj
 !ifeq linkage dynamic
-    vi -q -s $(lib_misc_dir)/vi/export.vi export.def
+    $(vi) -s $(lib_misc_dir)/vi/export.vi export.def
 !endif
     @rm -f tmp.lbc
     @rm -f timstamp.obj

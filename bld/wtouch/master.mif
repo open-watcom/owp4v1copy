@@ -34,4 +34,4 @@ usagej.rc : usage.sp
 
 msg.gh : $(proj_name).msg msg.vi
         cp $[@ msg.gh
-        vi -q -d -i -s $]@ msg.gh
+        $(vi) -s $]@ msg.gh

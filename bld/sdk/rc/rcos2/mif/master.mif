@@ -138,7 +138,7 @@ $(NAME).res : $(wrc2_dir)\h\rcmsg.h usage.rc usagej.rc $(wrc2_dir)\rc.rc
 
 $(wrc2_dir)\h\rcmsg.h : $(wrc2_dir)\h\rc.msg
 #        cp $[@ rc.msg
-        vi -q -i -s $(sdk_dir)\misc\msgtoh.vi -p"$^@" $[@
+        $(vi) -s $(sdk_dir)\misc\msgtoh.vi -p"$^@" $[@
 #        del rc.msg
 #        copy tmp.h $(wrc2_dir)\h\rcmsg.h
 #        del tmp.h

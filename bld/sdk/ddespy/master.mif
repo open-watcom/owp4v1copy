@@ -50,7 +50,7 @@ $(name).exe : rcstr.gh $(objs) $(name).res
         $(RC) $(rc_flags) -k $(name).res $^@
 
 rcstr.gh : rcstrmsg.gh
-        vi -d -q -i -s ../../misc/msgtoh.vi -p"$^@" $[@
+        $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@
 
 rcstrmsg.gh : $(wddespy_dir)/ddespy.msg $(msgfiles)
         @set include=$(inc_path)

@@ -17,10 +17,10 @@ $(libname).lib : $(dllname).imp $(static_objs)
 $(dllname).imp : $(dllname).lbc $(rtdll_dir)/trimlbc.vi $(rtdll_dir)/add_br.vi
     cp $(dllname).lbc $(dllname).imp
 !ifeq system os2
-    vi -q -s $(rtdll_dir)/trimlbc.vi $(dllname).imp
+    $(vi) -s $(rtdll_dir)/trimlbc.vi $(dllname).imp
 !endif
 !ifeq component clib
-    vi -q -s $(rtdll_dir)/add_br.vi $(dllname).imp
+    $(vi) -s $(rtdll_dir)/add_br.vi $(dllname).imp
 !endif
 
 !ifeq system winnt

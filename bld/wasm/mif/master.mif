@@ -179,7 +179,7 @@ msg.gh : $(proj_path)/h/asmshare.msg
 !ifdef __LINUX__
         perl $(sdk_dir)/misc/msgtoh.pl < $[@ | sed -e '/0$$/d' > $^@
 !else
-        vi -q -d -i -s $(proj_path)/h/makemsg.vi -p"$^@" $[@
+        $(vi) -s $(proj_path)/h/makemsg.vi -p"$^@" $[@
 !endif
 
 wasmmsg.gh : $(proj_path)/h/$(proj_name).msg
@@ -187,7 +187,7 @@ wasmmsg.gh : $(proj_path)/h/$(proj_name).msg
         perl $(sdk_dir)/misc/msgtoh.pl < $[@ | &
         sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_WASM_RC_BASE/' > $^@
 !else
-        vi -q -d -i -s $(proj_path)/h/makewmsg.vi -p"$^@" $[@
+        $(vi) -s $(proj_path)/h/makewmsg.vi -p"$^@" $[@
 !endif
 
 ###################################################################
@@ -200,9 +200,9 @@ fullops.gh: $(proj_path)/fullops.tok $(proj_path)/inlnops.tok ./mkopcode.exe
 
 wmpmsg.gh : $(womp_dir)/womp.msg
 !ifdef __LINUX__
-    perl $(sdk_dir)/misc/msgtoh.pl < $< | sed '/0$$/d' > $^@
+        perl $(sdk_dir)/misc/msgtoh.pl < $< | sed '/0$$/d' > $^@
 !else
-    vi -q -d -i -s $(womp_dir)\h\makemsg.vi -p"$^@" $[@
+        $(vi) -s $(womp_dir)/h/makemsg.vi -p"$^@" $[@
 !endif
 
 ./mkopcode.exe: $(proj_path)/mkopcode.c

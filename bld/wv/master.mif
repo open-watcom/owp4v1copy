@@ -436,7 +436,7 @@ post_process :.PROCEDURE
 !ifeq host_CPU 386
 !ifdef really_ovl_dos
         cp dv.map $(lnk2)
-        vi -d -q -s ../mapfix.vi $(lnk2)
+        $(vi) -s ../mapfix.vi $(lnk2)
         $(linker) $(symfile) $(%DEBUG) name $(bdir)/$(%NAME).$(EXE) @$(lnk) @$(lnk2) $(endsect)
         @%null
 !endif

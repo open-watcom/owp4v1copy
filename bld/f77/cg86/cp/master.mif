@@ -120,5 +120,5 @@ msg.gh : $(wasm_dir)/h/asmshare.msg
         sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_RC_BASE-1/' t.msg > $^@
         rm -f t.msg
 !else
-        vi -q -d -i -s $(wasm_dir)/h/makemsg.vi -p "$^@" $[@
+        $(vi) -s $(wasm_dir)/h/makemsg.vi -p "$^@" $[@
 !endif

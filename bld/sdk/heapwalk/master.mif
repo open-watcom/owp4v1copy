@@ -54,7 +54,7 @@ $(name).exe : rcstr.gh $(objs) $(disasm) $(name).res
         $(RC) $(rc_flags) -k $(name).res $^@
 
 rcstr.gh : rcstrmsg.gh
-        vi -d -q -i -s ../../misc/msgtoh.vi -p"$^@" $[@
+        $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@
 
 rcstrmsg.gh : ../heapwalk.msg $(msgfiles)
         @set include=$(inc_path)

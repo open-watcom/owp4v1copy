@@ -210,5 +210,5 @@ wmpmsg.gh : $(womp_dir)/womp.msg
 !ifdef __LINUX__
     perl $(sdk_dir)/misc/msgtoh.pl < $< | sed '/0$$/d' > $^@
 !else
-    vi -q -d -i -s $(womp_dir)/h/makemsg.vi -p "$^@" $[@
+    $(vi) -s $(womp_dir)/h/makemsg.vi -p "$^@" $[@
 !endif

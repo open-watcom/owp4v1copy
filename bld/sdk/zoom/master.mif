@@ -38,7 +38,7 @@ $(name)j.exe : $(name).exe $(name)j.res
         $(RC) $(rc_flags) -k $(name)j.res $^@
 
 rcstr.gh : rcstrmsg.gh
-        vi -d -q -i -s ../../misc/msgtoh.vi -p"$^@" $[@
+        $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@
 
 rcstrmsg.gh : ../wzoom.msg $(sdk_dir)/misc/about.msg
         @set include=$(inc_path)

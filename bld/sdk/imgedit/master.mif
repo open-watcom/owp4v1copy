@@ -127,7 +127,7 @@ $(name).exe : rcstr.gh $(objs) $(name).res
 !endif
 
 rcstr.gh : rcstrmsg.gh
-        vi -d -q -i -s ../../misc/msgtoh.vi -p"$^@" $[@
+        $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@
 
 rcstrmsg.gh : $(wimgedit_dir)/h/wimgedit.msg $(msgfiles)
         @set include=$(inc_path)

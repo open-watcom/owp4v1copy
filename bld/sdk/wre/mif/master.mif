@@ -105,7 +105,7 @@ $(name).exe: wremsgs.gh $(OBJS) $(wres_lib) $(resedit_libs) $(wr_lib) $(name).re
 !endif
 
 wremsgs.gh: wretemp.gh
-        vi -q -i -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
+        $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
 
 wretemp.gh: ../h/wre.msg
         @set include=$(inc_path)

@@ -121,7 +121,7 @@ $(name).exe: wdemsgs.gh $(OBJS) $(name).res $(wres_lib) $(fmedit_lib) $(wr_lib)
 # explicit rules
 #################
 wdemsgs.gh: wdetemp.gh
-        vi -q -i -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
+        $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
 
 wdetemp.gh: ../h/wde.msg
         @set include=$(inc_path)

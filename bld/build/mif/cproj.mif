@@ -283,6 +283,7 @@ cpp             = $(cpp_$(host_cpu))
 linker          = $(linker_$(host_cpu))
 librarian       = $(librarian_$(host_cpu))
 as              = $(as_$(host_cpu))
+vi              = vi -q -d -i
 
 !include bhost.mif
 !include local.mif

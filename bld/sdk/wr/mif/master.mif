@@ -140,7 +140,7 @@ test.exe: $(name).lib $(TESTLNK) test.obj
         $(linker) $(test_lflags) library $(name) file test
 
 wrcmsg.gh: wrtemp.gh
-        vi -d -q -i -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
+        $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
 
 wrtemp.gh: ../h/master.msg $(msgfiles)
         $(cc) $(cflags) -p $[@ -fo=$^@

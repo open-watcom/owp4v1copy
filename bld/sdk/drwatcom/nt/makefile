@@ -59,7 +59,7 @@ $(name).exe : $(msgh) $(objs) $(lnk) $(name).res
         $(RC) -k $(name).res
 
 $(msgh) : $(mastermsg)
-        vi -i -q "-k :source ..\\\\..\\\\misc\\\\msgtoh.vi $(msgh)\n" $(mastermsg)
+        $(vi) -s ../../misc/msgtoh.vi -p"$(msgh)" $(mastermsg)
         del obj\*.obj
 
 $(mastermsg) : $(msgfiles)

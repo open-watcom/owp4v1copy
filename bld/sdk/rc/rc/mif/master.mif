@@ -162,7 +162,7 @@ rcmsg.gh : ../h/rc.msg
 !ifdef __LINUX__
         perl $(sdk_dir)/misc/msgtoh.pl < $[@ > $^@
 !else
-        vi -d -q -i -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
+        $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
 !endif
 
 usage.rc : $(wrc_dir)/usage.sp

@@ -7,7 +7,7 @@ $(ED).res : $(vi_dir)/win/viw.rc .AUTODEPEND
 !endif
 
 rcstr.gh : rcstrmsg.gh
-        vi -i -q -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
+        $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
 
 rcstrmsg.gh : $(vi_dir)/vi.msg $(msgfiles)
         $(bld_cc) -p -i="$(sdk_dir)/misc" -zk0 $[@ -fo=$^@

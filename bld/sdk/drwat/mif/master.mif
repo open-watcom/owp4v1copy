@@ -118,7 +118,7 @@ $(proj_name).res : ../drnt.rc .AUTODEPEND
 !endif
 
 rcstr.gh : rcstrmsg.gh $(sdk_misc)/msgtoh.vi
-        vi -i -q -s $]@ -p "$^@" $[@
+        $(vi) -s $]@ -p "$^@" $[@
 
 rcstrmsg.gh : ../drwatcom.msg $(msgfiles)
         @set include=$(inc_path)

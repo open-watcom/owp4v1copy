@@ -119,7 +119,7 @@ $(name).exe : $(objs) $(name).res $(dllname).lib
         $(RC) $(rc_flags) -k $(name).res $^@
 
 rcstr.gh : rcstrmsg.gh
-        vi -d -q -i -s ../../misc/msgtoh.vi -p"$^@" $[@
+        $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@
 
 rcstrmsg.gh : $(wspy_dir)/spy.msg $(msgfiles)
         @set include=$(inc_path)

@@ -95,7 +95,7 @@ wic.res: ..\rc\usage$(lang_prefix).rc ..\rc\messages.rc ..\rc\wic.rc
 
 ..\rc\usage$(lang_prefix).rc:  ..\rc\usage.sp ..\h\msg.h
     wsplice -k $(LANGUAGE)  ..\rc\usage.sp ..\rc\usage$(lang_prefix).rc
-    vi ..\rc\usage$(lang_prefix).rc -q -s ..\rc\usage.vi
+    $(vi) -s ..\rc\usage.vi ..\rc\usage$(lang_prefix).rc
 
 superclean : .symbolic
     rm -f *.obj *.lnk *.exe *.res
