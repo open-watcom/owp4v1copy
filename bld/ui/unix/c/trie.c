@@ -32,7 +32,9 @@
 
 #include <stddef.h>
 #include <stdlib.h>
+#ifndef __WATCOMC__
 #include <alloca.h>
+#endif
 #include <sys/types.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -42,7 +44,9 @@
 #include <fcntl.h>
 #include <assert.h>
 #include <ctype.h>
+#ifndef __WATCOMC__
 #include "clibext.h"
+#endif
 #include "uidef.h"
 #include "uishift.h"
 

@@ -167,7 +167,7 @@ void            intern          openbackground( void );
 int             intern          openwindow( UI_WINDOW * );
 void            intern          movewindow( UI_WINDOW *, ORD, ORD );
 void            intern          physupdate( SAREA * );
-#if defined( __QNX__ ) || defined( UNIX )
+#if defined( __UNIX__ ) || defined( UNIX )
 void            intern          forbid_refresh( void );
 void            intern          permit_refresh( void );
 #else

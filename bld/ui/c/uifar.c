@@ -159,7 +159,7 @@ intern void cdecl farcopy( LPPIXEL src, LPPIXEL dst, int len, int snow )
     memmove( dst, src, len*sizeof(PIXEL) );
 #elif defined( __386__ ) || defined( UNIX )
     _unused( snow );
-    #if defined( __QNX__ )
+    #if defined( __UNIX__ )
         memmove( dst, src, len*sizeof(PIXEL) );
     #elif defined( NLM )
         // Netware compiled with "far" defined, but pointers aren't really

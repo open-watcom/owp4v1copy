@@ -49,14 +49,17 @@
 #include <unistd.h>
 #include <string.h>
 #include <assert.h>
+#ifndef __WATCOMC__
 #include <alloca.h>
+#endif
 #ifdef _AIX
     #define alloca __alloca
     #define _HAS_NO_CHAR_BIT_FIELDS
 #endif
 #include <ctype.h>
 
-#ifndef HP
+#if defined( __WATCOMC__ )
+#elif !defined( HP )
     #include <termio.h>
 #else
     #define TIOCGWINSZ      _IOR('t', 107, struct winsize) /* get window size */
@@ -70,7 +73,9 @@
 
 #include <curses.h>
 #include <term.h>
+#ifdef __WATCOMC__
 #include <process.h>
+#endif
 #include <sys/ioctl.h>
 
 #include "uidef.h"
@@ -81,7 +86,9 @@
 #include "qnxuiext.h"
 
 #include "tixparse.h"
+#ifndef __WATCOMC__
 #include "clibext.h"
+#endif
 
 #ifdef AIX
     struct _bool_struct       _aix_cur_bools;
@@ -219,6 +226,12 @@ static TI_FillColourSet= FALSE;
                                 }
 #define TI_CA_DISABLE()         if( _capable_of( exit_ca_mode ) ) {     \
                                     __putp( exit_ca_mode );             \
+                                }
+#define TI_KP_ENABLE()          if( _capable_of( keypad_xmit ) ) {    \
+                                    __putp( keypad_xmit );            \
+                                }
+#define TI_KP_DISABLE()         if( _capable_of( keypad_local ) ) {     \
+                                    __putp( keypad_local );             \
                                 }
 
 #define TI_RESTORE_ATTR()                               \
@@ -429,7 +442,7 @@ int             OldCol= -1,
             }
 
 // move in the optimal way from (OldCol,OldRow) to (c,r)
-static void TI_CURSOR_MOVE( register int c, register int r )
+void TI_CURSOR_MOVE( register int c, register int r )
 /**********************************************************/
 {
     unsigned            newLen;
@@ -627,6 +640,8 @@ static void TI_SETCOLOUR( register int f, register int b )
 {
     // an array of colour brightnesses
     static      colorpri[]={ 0, 1, 4, 2, 6, 5, 3, 7 };
+    // vga to ansi conversion table
+    static      colorans[]={ 0, 4, 2, 6, 1, 5, 3, 7 };
 
 QNXDebugPrintf2( "TI_SETCOLOUR: %d %d", f, b );
 
@@ -648,14 +663,14 @@ QNXDebugPrintf2( "TI_SETCOLOUR: %d %d", f, b );
         TI_SETATTR();
         TI_FillColourSet= (b==0) || back_color_erase;
         // If we can set a colour pair then do so
-        if( _capable_of( set_foreground ) && _capable_of( set_background ) ){
-            __putp( UNIX_TPARM2( set_foreground, f ) );
-            __putp( UNIX_TPARM2( set_background, b ) );
+        if( _capable_of( set_a_foreground ) && _capable_of( set_a_background ) ){
+            __putp( UNIX_TPARM2( set_a_foreground, colorans[f] ) );
+            __putp( UNIX_TPARM2( set_a_background, colorans[b] ) );
+        } else if( _capable_of( set_foreground ) && _capable_of( set_background ) ){
+            __putp( UNIX_TPARM2( set_foreground, colorans[f] ) );
+            __putp( UNIX_TPARM2( set_background, colorans[b] ) );
         } else if( _capable_of( set_color_pair ) ){
-            __putp( UNIX_TPARM2( set_color_pair, f*10+b ) );
-        } else if( _capable_of( set_a_foreground ) && _capable_of( set_a_background ) ){
-            __putp( UNIX_TPARM2( set_a_foreground, f ) );
-            __putp( UNIX_TPARM2( set_a_background, b ) );
+            __putp( UNIX_TPARM2( set_color_pair, colorans[f]*10+colorans[b] ) );
         }
     }
 }
@@ -703,6 +718,7 @@ static int TI_EXEC_PROG( char *pnam )
         strcat( ppath, pnam );
         ppath[TI_PATH_LEN-3]= pnam[0]; // replace '?' with first char of pnam
 
+#ifdef __WATCOMC__
         // attempt to call pgm in /usr/lib/terminfo/?/
         ret= spawnl( P_WAIT, ppath, NULL );
 
@@ -716,6 +732,9 @@ static int TI_EXEC_PROG( char *pnam )
                 ret= spawnlp( P_WAIT, pnam, NULL );
             }
         }
+#else
+        ret = -1;
+#endif
 
         // if program failed...
         if( ret==-1 ) return( FALSE );
@@ -737,7 +756,7 @@ static MONITOR  ui_data = {
 };
 
 
-static  PIXEL far *shadow;
+static  PIXEL _FAR *shadow;
 static  int   save_cursor_type;
 
 static bool setupscrnbuff( int rows, int cols )
@@ -830,6 +849,7 @@ static bool intern ti_initconsole( void )
 
     // Now we're initialized, so set term to usable mode:
     TI_CA_ENABLE();
+    TI_KP_ENABLE();
     TI_ENABLE_ACS();
 
     // disable auto-right-margin
@@ -987,11 +1007,11 @@ static int ti_fini()
     TI_CLS();
     TI_CURSOR_NORMAL();
     TI_RESTORE_COLOUR();
+    TI_ACS_OFF();
+    TI_CA_DISABLE();
+    TI_KP_DISABLE();
 
-    TI_RESET1_STRING();
-    TI_RESET2_STRING();
     TI_PUT_FILE( reset_file );
-    TI_RESET3_STRING();
     __flush();
 
     finikeyboard();

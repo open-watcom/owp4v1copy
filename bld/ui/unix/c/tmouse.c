@@ -60,8 +60,8 @@ extern          char                    *GetTermType(void);
 
 #define         MOUSE_SCALE             8
 
-extern          ORD                     MouseRow;
-extern          ORD                     MouseCol;
+extern          MOUSEORD                MouseRow;
+extern          MOUSEORD                MouseCol;
 extern          bool                    MouseOn;
 
 extern          unsigned short          MouseStatus;
@@ -110,7 +110,7 @@ static void XT_parse()
 }
 
 static int tm_check( unsigned short *status, unsigned short *row,
-                        unsigned short *col, unsigned long *the_time )
+                     unsigned short *col, unsigned long *the_time )
 /**********************************************/
 {
 

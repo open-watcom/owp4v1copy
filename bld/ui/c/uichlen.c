@@ -37,7 +37,7 @@
     These can be the real versions once we're building with 10.5
     - the C library has built in multibyte support.
 */
-#ifdef UNIX
+#if defined( UNIX ) || defined(__UNIX__)
 int global uicharlen( int ch )
 /****************************/
 {
@@ -73,7 +73,7 @@ int global uiisdbcs()
     {
         return( 1 );
     }
-#elif defined(__AXP__) || defined(__QNX__) || defined( UNIX ) || (defined(__NT__) && (__WATCOMC__ < 1050))
+#elif defined(__AXP__) || defined(__UNIX__) || defined( UNIX ) || (defined(__NT__) && (__WATCOMC__ < 1050))
     int global uionnec()
     {
         return( 0 );

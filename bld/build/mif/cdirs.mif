@@ -140,6 +140,9 @@ rcsdll_dir      = $(dev_dir)/rcsdll
 !ifndef curses_dir
 curses_dir      = $(dev_dir)/curses
 !endif
+!ifndef ncurses_dir
+ncurses_dir     = $(dev_dir)/ncurses
+!endif
 !ifndef viper_dir
 viper_dir       = $(dev_dir)/viper
 !endif
@@ -445,6 +448,9 @@ rcsdll_dir      = $(dev_dir)\rcsdll
 !endif
 !ifndef curses_dir
 curses_dir      = $(dev_dir)\curses
+!endif
+!ifndef ncurses_dir
+ncurses_dir      = $(dev_dir)\ncurses
 !endif
 !ifndef viper_dir
 viper_dir       = $(dev_dir)\viper

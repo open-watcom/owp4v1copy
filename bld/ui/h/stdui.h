@@ -375,7 +375,7 @@ typedef         unsigned char           ATTR;
     typedef PIXEL *LPPIXEL;
     #define __FAR
     #undef HAVE_FAR
-#elif defined(__QNX__) && defined(__386__)
+#elif defined(__UNIX__) && defined(__386__)
     typedef struct pixel {
             char            ch;
             ATTR            attr;
@@ -512,9 +512,9 @@ enum {
         M_NEC_HIRES,
         M_FMR
 
-#if defined(  __QNX__ ) || defined( UNIX )
+#if defined(  __UNIX__ ) || defined( UNIX )
         ,M_TERMINFO_MONO
-#endif /* __QNX */
+#endif /* __UNIX */
 };
 
 #ifdef __cplusplus
