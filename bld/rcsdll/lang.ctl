@@ -19,11 +19,9 @@ cdsay .
     <CPCMD> <devdir>\rcsdll\objwin\rcsdll.dll <relroot>\rel2\binw\rcsdll.dll
     <CPCMD> <devdir>\rcsdll\objnt\rcsdll.dll <relroot>\rel2\binnt\rcsdll.dll
 #    <CPCMD> <devdir>\rcsdll\objaxp\rcsdll.dll <relroot>\rel2\axpnt\rcsdll.dll
-    copy <devdir>\rcsdll\bat\*.bat <relroot>\rel2\binw\
-    copy <devdir>\rcsdll\cmd\*.cmd <relroot>\rel2\binp\
+    <CPCMD> <devdir>\rcsdll\bat\*.bat <relroot>\rel2\binw\
+    <CPCMD> <devdir>\rcsdll\cmd\*.cmd <relroot>\rel2\binp\
 
 [ BLOCK <1> clean ]
 #==================
     sweep killobjs
-
-
