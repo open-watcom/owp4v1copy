@@ -62,13 +62,18 @@ typedef enum outmode {                  // Output modes:
  * Global Data.
  **********************************************************/
 
-static char myname[] = "?grep";
-static char color = 'e';
-char *OptEnvVar = myname;
+#ifdef FGREP
+char *OptEnvVar = "fgrep";
+#else
+char *OptEnvVar = "egrep";
+#endif
 
-static char u0[ ] = "Usage: ?grep [-?Xcilnsvx] [-e pattern] [-f patfile] [@env] [pattern] [files...]";
 static const char *usageMsg[] = {
-    0,
+#ifdef FGREP
+    "Usage: fgrep [-?Xcilnsvx] [-e pattern] [-f patfile] [@env] [pattern] [files...]",
+#else
+    "Usage: egrep [-?Xcilnsvx] [-e pattern] [-f patfile] [@env] [pattern] [files...]",
+#endif
     "\tenv                 : environment variable to expand",
     "\tfiles               : files to search",
     "\tpattern             : pattern to search for",
@@ -183,50 +188,50 @@ static int searchBuffer( char *buf )
 {
     unsigned         ui;
 
-    if( color == 'e' ) {
+#ifdef FGREP
+    if( Flags & M_SEARCH_EXACT ) {
         for( ui = 0; ui < PatCount; ui++ )
-            if( RegExec( ePatterns[ ui ], buf, 1 ) )
+            if( strcmp( fPatterns[ ui ], buf ) == 0 )
                 return( 1 );
     } else {
-        if( Flags & M_SEARCH_EXACT ) {
-            for( ui = 0; ui < PatCount; ui++ )
-                if( strcmp( fPatterns[ ui ], buf ) == 0 )
-                    return( 1 );
-        } else {
-            for( ui = 0; ui < PatCount; ui++ ) {
-                char       *s = buf;
-                char const *p = fPatterns[ ui ];
-                char const  first = *p++;
-
-                for( ;; ) {
-                    if( CharTrans[ *s ] == first ) {
-                        char       * const next = ++s;
-
-                        for( ; ; s++, p++ ) {
-                            if( *p == '\0' )
-                                return( 1 );
-                            if( CharTrans[ *s ] != *p ) {
-                                if( *s == '\0' ) {
-                                    goto outer;
-                                } else if( CharExist[ CharTrans[ *s ] ] == 0 ) {
-                                    s++;
-                                } else {
-                                    s = next;
-                                }
-                                break;
+        for( ui = 0; ui < PatCount; ui++ ) {
+            char       *s = buf;
+            char const *p = fPatterns[ ui ];
+            char const  first = *p++;
+            
+            for( ;; ) {
+                if( CharTrans[ *s ] == first ) {
+                    char       * const next = ++s;
+                    
+                    for( ; ; s++, p++ ) {
+                        if( *p == '\0' )
+                            return( 1 );
+                        if( CharTrans[ *s ] != *p ) {
+                            if( *s == '\0' ) {
+                                goto outer;
+                            } else if( CharExist[ CharTrans[ *s ] ] == 0 ) {
+                                s++;
+                            } else {
+                                s = next;
                             }
+                            break;
                         }
-                        p = fPatterns[ ui ] + 1;
-                    } else if( *s == '\0' ) {
-                        break;
-                    } else {
-                        s++;
                     }
+                    p = fPatterns[ ui ] + 1;
+                } else if( *s == '\0' ) {
+                    break;
+                } else {
+                    s++;
                 }
-                outer: ;
             }
+            outer: ;
         }
     }
+#else
+    for( ui = 0; ui < PatCount; ui++ )
+        if( RegExec( ePatterns[ ui ], buf, 1 ) )
+            return( 1 );
+#endif
     return( 0 );
 }
 
@@ -333,14 +338,14 @@ static void insertPattern( const char *pat )
     if( PatCount >= MAX_SEARCH_STR ) {
         errorExit( "too many search patterns" );
     }
-    if( color == 'e' ) {
-        ePatterns[ PatCount ] = RegComp( (char *) pat );
-        if( ePatterns[ PatCount ] == NULL ) {
-            errorExit( "error forming regular expression" );
-        }
-    } else {
-        fPatterns[ PatCount ] = strdup( pat );
+#ifdef FGREP
+    fPatterns[ PatCount ] = strdup( pat );
+#else
+    ePatterns[ PatCount ] = RegComp( (char *) pat );
+    if( ePatterns[ PatCount ] == NULL ) {
+        errorExit( "error forming regular expression" );
     }
+#endif
     PatCount++;
 }
 
@@ -422,20 +427,8 @@ int main( int argc, char **argv )
     int         rematch = 0;    // regexp file matching is OFF
     unsigned    matches = 0;    // number of matches
 
-    /* Decide to be egrep or fgrep */
-    color = 'e';                // Default behavior is egrep
-    if( argc != 0 ) {
-        const char *cp = argv[ 0 ] + strlen( argv[ 0 ] );
-
-        while( --cp >= argv[ 0 ] && strchr( "/\\", *cp ) == NULL ) ;
-
-        if( ( cp[ 1 ] | 0x20 ) == 'f' )
-            color = 'f';
-    }
     if( ( IObuffer = malloc( IObsize = IOBUF_MIN ) ) == NULL )
         errorExit( "insufficient memory for file buffer" );
-    *OptEnvVar = u0 [ 7 ] = color;
-    usageMsg[ 0 ] = u0;
     CaseIgnore  = FALSE;        // case sensitive match by default
     argv = ExpandEnv( &argc, argv );
     handle_options( &argc, argv, &rematch );
