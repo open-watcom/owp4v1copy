@@ -9,7 +9,7 @@
 
 #ifdef __cplusplus
 extern "C" {
-#endif /* defined(__cplusplus) */
+#endif
 
 #define NSPROTO_IPX	1000
 #define NSPROTO_SPX	1256

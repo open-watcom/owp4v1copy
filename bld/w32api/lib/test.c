@@ -58,8 +58,11 @@
 #ifdef _WINSOCK2_H
 #include <ws2tcpip.h>
 #include <ws2spi.h>
+#include <wsahelp.h>
 #endif
+#include <wsipx.h>
 #include <wsnetbs.h>
+#include <svcguid.h>
 #include <setupapi.h>
 #include <aclapi.h>
 #include <security.h>
