@@ -498,12 +498,13 @@ static TYPEPTR DefArgPromotion( TYPEPTR arg_typ )
     return( arg_typ );
 }
 
-static void DoDumpType( TYPEPTR realtype, TYPEPTR typ, char *symname, STRCHUNK *pch )
+static void DoDumpType( TYPEPTR realtype, char *symname, STRCHUNK *pch )
 {
     type_modifiers     pointer_flags;
+    TYPEPTR typ;
 
     realtype = TrueType( realtype );
-    DumpBaseType( typ, pch );
+    DumpBaseType( realtype, pch );
     DumpDecl( realtype, NULL, pch );
     if( symname )
         ChunkSaveStr( pch, symname );
@@ -533,7 +534,6 @@ static void DoDumpType( TYPEPTR realtype, TYPEPTR typ, char *symname, STRCHUNK *
 static void DumpParmList( TYPEPTR *parm, SYMPTR funcsym, STRCHUNK *pch )
 {
     TYPEPTR            typ;
-    TYPEPTR            realtype;
     int                parm_num;
     SYM_HANDLE         sym_handle;
     SYM_ENTRY          sym;
@@ -550,13 +550,12 @@ static void DumpParmList( TYPEPTR *parm, SYMPTR funcsym, STRCHUNK *pch )
             sym_handle = 0;
         }
         for( ;; ) {
-            realtype = *parm;
-            if( realtype == NULL ) break;
-            realtype = TrueType( realtype );
-            typ = realtype;
+            typ = *parm;
+            if( typ == NULL ) break;
+            typ = TrueType( typ );
             if( funcsym != NULL ) {
                 if( funcsym->flags & SYM_OLD_STYLE_FUNC ) {
-                    typ = DefArgPromotion( realtype );
+                    typ = DefArgPromotion( typ );
                 }
             }
             sym_name = NULL;
@@ -571,7 +570,7 @@ static void DumpParmList( TYPEPTR *parm, SYMPTR funcsym, STRCHUNK *pch )
                         sprintf( temp_name, "__p%d", parm_num );
                 }
             }
-            DoDumpType( realtype, typ, sym_name, pch );
+            DoDumpType( typ, sym_name, pch );
             ++parm;
             if( *parm != NULL )  ChunkSaveChar( pch, ',' );
             ++parm_num;
@@ -584,6 +583,6 @@ char *DiagGetTypeName( TYPEPTR typ )
     STRCHUNK  chunk;
 
     ChunkInit( &chunk );
-    DoDumpType( typ, typ, NULL, &chunk );
+    DoDumpType( typ, NULL, &chunk );
     return ChunkToStr( &chunk );
 }
