@@ -360,7 +360,7 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
     if( typ1->decl_type == TYPE_VOID || typ2->decl_type == TYPE_VOID ){
     // allow  void ** with any **
         if( top_level==1 || !CompFlags.strict_ANSI ){
-            if ( ( !assignment || top_level > 1 ) && !CompFlags.extensions_enabled ) {
+            if ( !assignment || top_level > 1 ) {
                 CWarn1( WARN_PCTYPE_MISMATCH, ERR_PCTYPE_MISMATCH );
             }
             return( ret_val ); // void *  and  anything *
@@ -395,7 +395,7 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
                 ret_val = NO;
             }else if( (typ1!=typ2) && (CompatibleFunction( typ1, typ2 )!=TC_OK)  ){
                 ret_val = NO;
-            /* this test might need to be changed - Bart Oldeman, 19-oct-02 */
+            /* check to see if the two functions have identical return types */
             }else if( !IdenticalType( typ1->object, typ2->object ) ) {
                 CWarn1( WARN_PCTYPE_MISMATCH, ERR_PCTYPE_MISMATCH );
             }
@@ -1026,8 +1026,12 @@ local int TypeCheck( TYPEPTR typ1, TYPEPTR typ2 )
         if( typ1 == typ2 ) return( TC_OK );
         if( typ1->decl_type != typ2->decl_type ) {
             if( pointer_type ) {
-                /* this test might need to be changed
-                   - Bart Oldeman, 2002/10/19 */
+                /* on popular demand, I disabled the questionable feature
+                   to accept
+                   void *foo(void);
+                   int *foo(void) {return NULL};
+                   - Bart Oldeman, 2002/10/24 */
+#if 0                    
                 if( CompFlags.extensions_enabled ) {
                     if( typ2->decl_type == TYPE_VOID ) {
                         CWarn1( WARN_POINTER_TYPE_MISMATCH, ERR_POINTER_TYPE_MISMATCH );
@@ -1038,6 +1042,7 @@ local int TypeCheck( TYPEPTR typ1, TYPEPTR typ2 )
                         return( TC_TYPE2_HAS_MORE_INFO );
                     }
                 }
+#endif                
                 if( typ1->decl_type == TYPE_ARRAY ) {
                     return( TypeCheck( typ1->object, typ2 ) );
                 }
