@@ -816,7 +816,7 @@ ins (T_MM4,             OP_SPECIAL,  0,      OP_MMX,        0,       0,  0,     
 ins (T_MM5,             OP_SPECIAL,  0,      OP_MMX,        0,       0,  0,      5,        OP_REGISTER,              P_586|P_MMX, 0)
 ins (T_MM6,             OP_SPECIAL,  0,      OP_MMX,        0,       0,  0,      6,        OP_REGISTER,              P_586|P_MMX, 0)
 ins (T_MM7,             OP_SPECIAL,  0,      OP_MMX,        0,       0,  0,      7,        OP_REGISTER,              P_586|P_MMX, 0)
-insa(T_MOD,             OP_SPECIAL,  0,      OP_NONE,       0,       0,  0,      0,        OP_ARITHOP,               P_86,        0)
+ins (T_MOD,             OP_SPECIAL,  0,      OP_NONE,       0,       0,  0,      0,        OP_ARITHOP,               P_86,        0)
 ins (T_MONITOR,         OP_NONE,     F_0F,   OP_NONE,       OP3_NONE,0,  0,      0x01,     0xC8,                     P_686|P_SSE3,0)
 ins (T_MOV,             OP_CR,       F_0F,   OP_R32,        OP3_NONE,1,  no_WDS, 0x22,     0xC0,                     P_386,       0)
 ins (T_MOV,             OP_DR,       F_0F,   OP_R32,        OP3_NONE,1,  no_WDS, 0x23,     0xC0,                     P_386,       0)

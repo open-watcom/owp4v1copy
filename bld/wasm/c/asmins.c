@@ -1501,17 +1501,22 @@ static int proc_check( void )
    current line is the first instruction line following the procedure
    declaration */
 {
-    if( CurrProc == NULL || Token_Count == 0 || !DefineProc ) return FALSE;
+    if( CurrProc == NULL || Token_Count == 0 || !DefineProc )
+        return FALSE;
 
-    if( AsmBuffer[0]->token == T_DIRECTIVE ) return FALSE;
+    if( AsmBuffer[0]->token == T_DIRECTIVE )
+        return FALSE;
 
     if( Token_Count > 1 ) {
-        if( AsmBuffer[1]->token == T_DIRECTIVE ||
-            AsmBuffer[1]->token == T_DIRECT_EXPR ) return FALSE;
+        if( AsmBuffer[1]->token == T_DIRECTIVE
+            || AsmBuffer[1]->token == T_DIRECT_EXPR ) {
+            return FALSE;
+        }
     }
 
     /* 1st instruction following a procedure definition */
-    if( WritePrologue() == ERROR ) return( ERROR );
+    if( WritePrologue() == ERROR )
+        return( ERROR );
     InputQueueLine( CurrString );
     DefineProc = FALSE;
     return TRUE;
@@ -1568,8 +1573,7 @@ static int process_address( expr_list *opndx )
 
     if( opndx->instr != EMPTY ) {
         if( ( opndx->base_reg != EMPTY )
-            || ( opndx->idx_reg != EMPTY )
-            || ( sym == NULL ) ) {
+            || ( opndx->idx_reg != EMPTY ) ) {
             AsmError( INVALID_MEMORY_POINTER );
             return( ERROR );
         }
@@ -1608,14 +1612,16 @@ static int process_address( expr_list *opndx )
                 return ERROR;
             }
 #endif
-            if( sym->state == SYM_STACK ) {
-                AsmError( CANNOT_OFFSET_AUTO );
-                return( ERROR );
+            if( sym != NULL ) {
+                if( sym->state == SYM_STACK ) {
+                    AsmError( CANNOT_OFFSET_AUTO );
+                    return( ERROR );
 #ifdef _WASM_
-            } else if( sym->state == SYM_GRP ) {
-                AsmError( CANNOT_OFFSET_GRP );
-                return( ERROR );
+                } else if( sym->state == SYM_GRP ) {
+                    AsmError( CANNOT_OFFSET_GRP );
+                    return( ERROR );
 #endif
+                }
             }
 
             if( MEM_TYPE( Code->mem_type, DWORD ) ) {
@@ -1638,6 +1644,8 @@ static int process_address( expr_list *opndx )
         }
         ConstantOnly = TRUE;
         Code->info.opcode |= W_BIT;
+        if( sym == NULL )
+            return( NOT_ERROR );
 #ifdef _WASM_
         find_frame( sym );
 #endif
@@ -2216,10 +2224,7 @@ int AsmParse( void )
                 break;
             }
 #ifdef _WASM_
-            if( ( AsmBuffer[i+1]->token == T_DIRECTIVE
-                && ( AsmBuffer[i+1]->value == T_EQU
-                || AsmBuffer[i+1]->value == T_EQU2
-                || AsmBuffer[i+1]->value == T_TEXTEQU ) ) ) {
+            if( AsmBuffer[i+1]->token == T_DIRECTIVE ) {
                 AsmBuffer[i]->token = T_ID;
                 i--;
                 continue;

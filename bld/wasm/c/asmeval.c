@@ -125,14 +125,15 @@ static int get_precedence( int i )
 //    14             SHORT, .TYPE
 
     switch( AsmBuffer[i]->token ) {
-#ifdef _WASM_
     case T_UNARY_OPERATOR:
         switch( AsmBuffer[i]->value ) {
+#ifdef _WASM_
         case T_LENGTH:
         case T_SIZE:
         case T_LENGTHOF:
         case T_SIZEOF:
             return( 3 );
+#endif
         case T_SEG:
         case T_OFFSET:
             return( 5 );
@@ -144,6 +145,7 @@ static int get_precedence( int i )
         case T_SHL:
         case T_SHR:
             return( 8 );
+#ifdef _WASM_
         case T_EQ:
         case T_NE:
         case T_LT:
@@ -151,6 +153,7 @@ static int get_precedence( int i )
         case T_GT:
         case T_GE:
             return( 10 );
+#endif
         case T_NOT:
             return( 11 );
         case T_AND:
@@ -160,7 +163,6 @@ static int get_precedence( int i )
             return( 13 );
         }
         break;
-#endif
     case T_RES_ID:
         switch( AsmBuffer[i]->value ) {
         case T_SHORT:
@@ -290,11 +292,16 @@ static int get_operand( expr_list *new, int *start, int end, bool (*is_expr)(int
         new->sym = AsmLookup( AsmBuffer[i]->string_ptr );
 #ifdef _WASM_
         if( new->sym != NULL ) {
-            if( ( new->sym->state == SYM_STRUCT_FIELD )
-                || ( new->sym->state == SYM_STRUCT ) ) {
+            if( new->sym->state == SYM_STRUCT ) {
                 new->empty = FALSE;
-                if( new->sym->state == SYM_STRUCT_FIELD )
-                    new->expr_type = new->sym->mem_type;
+                new->value = new->sym->offset;
+                new->mbr = new->sym;
+                new->sym = NULL;
+                new->type = EXPR_ADDR;
+                break;
+            } else if( new->sym->state == SYM_STRUCT_FIELD ) {
+                new->empty = FALSE;
+                new->expr_type = new->sym->mem_type;
                 new->value = new->sym->offset;
                 new->mbr = new->sym;
                 new->sym = NULL;
@@ -971,7 +978,6 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             break;
         }
         break;
-#ifdef _WASM_
     case T_INSTR:
         MakeConst( token_1 );
         MakeConst( token_2 );
@@ -988,6 +994,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             }
         }
         switch( AsmBuffer[index]->value ) {
+#ifdef _WASM_
         case T_EQ:
             token_1->value = ( token_1->value == token_2->value ? -1:0 );
             break;
@@ -1006,6 +1013,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
         case T_GE:
             token_1->value = ( token_1->value >= token_2->value ? -1:0 );
             break;
+#endif
         case T_MOD:
             token_1->value %= token_2->value;
             break;
@@ -1038,6 +1046,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             return( ERROR );
         }
         switch( AsmBuffer[index]->value ) {
+#ifdef _WASM_
         case T_LENGTH:
         case T_SIZE:
         case T_LENGTHOF:
@@ -1076,13 +1085,13 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
             token_1->explicit = FALSE;
             token_1->expr_type = EMPTY;
             break;
+#endif
         default:
             TokenAssign( token_1, token_2 );
             token_1->instr = index;
             break;
         }
         break;
-#endif
     }
     token_1->empty = FALSE;
     return( NOT_ERROR );
@@ -1322,17 +1331,17 @@ static bool is_expr1( int i )
 /* Check if the token is part of an expression */
 {
     switch( AsmBuffer[i]->token ) {
-#ifdef _WASM_
     case T_INSTR:
         switch( AsmBuffer[i]->value ) {
+#ifdef _WASM_
         case T_EQ:
         case T_NE:
         case T_LT:
         case T_LE:
         case T_GT:
         case T_GE:
+#endif
         case T_MOD:
-        case T_NUM:
             return( TRUE );
         case T_SHL:
         case T_SHR:
@@ -1364,6 +1373,7 @@ static bool is_expr1( int i )
         if( i+1 < TokCnt )
             return( TRUE );
         break;
+#ifdef _WASM_
     case T_RES_ID:
         switch( AsmBuffer[i]->value ) {
         case T_FLAT:
@@ -1420,17 +1430,17 @@ static bool is_expr2( int i )
 /* Check if the token is part of an expression */
 {
     switch( AsmBuffer[i]->token ) {
-#ifdef _WASM_
     case T_INSTR:
         switch( AsmBuffer[i]->value ) {
+#ifdef _WASM_
         case T_EQ:
         case T_NE:
         case T_LT:
         case T_LE:
         case T_GT:
         case T_GE:
+#endif
         case T_MOD:
-        case T_NUM:
             return( TRUE );
         case T_SHL:
         case T_SHR:
@@ -1458,7 +1468,6 @@ static bool is_expr2( int i )
         break;
     case T_UNARY_OPERATOR:
         return( TRUE );
-#endif
     case T_RES_ID:
         switch( AsmBuffer[i]->value ) {
 #ifdef _WASM_
@@ -1882,14 +1891,15 @@ static int is_expr_const( int i )
     switch( AsmBuffer[i]->token ) {
     case T_INS:
         switch( AsmBuffer[i]->value ) {
+#ifdef _WASM_
         case T_EQ:
         case T_NE:
         case T_LT:
         case T_LE:
         case T_GT:
         case T_GE:
+#endif
         case T_MOD:
-        case T_NUM:
             return( TRUE );
         case T_SHL:
         case T_SHR:
