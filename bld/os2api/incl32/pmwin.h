@@ -1330,7 +1330,6 @@ ERRORID  APIENTRY WinGetLastError(HAB);
 #define SC_WINDOW         0x8029
 #define SC_HIDE           0x802a
 
-
 #define WM_FLASHWINDOW        0x0040
 #define WM_FORMATFRAME        0x0041
 #define WM_UPDATEFRAME        0x0042
@@ -1364,17 +1363,24 @@ ERRORID  APIENTRY WinGetLastError(HAB);
 
 #pragma pack(2)
 
+typedef LHANDLE HSAVEWP;
+
 typedef struct _FRAMECDATA {
     USHORT cb;
     ULONG  flCreateFlags;
     USHORT hmodResources;
     USHORT idResources;
-} FRAMECDATA;
+} FRAMECDATA, *PFRAMECDATA;
 
 #pragma pack()
 
 BOOL   APIENTRY WinCalcFrameRect(HWND,PRECTL,BOOL);
+BOOL   APIENTRY WinCreateFrameControls(HWND,PFRAMECDATA,PCSZ);
 HWND   APIENTRY WinCreateStdWindow(HWND,ULONG,PULONG,PCSZ,PCSZ,ULONG,HMODULE,ULONG,PHWND);
+BOOL   APIENTRY WinFlashWindow(HWND,BOOL);
+BOOL   APIENTRY WinGetMaxPosition(HWND,PSWP);
+BOOL   APIENTRY WinGetMinPosition(HWND,PSWP,PPOINTL);
+BOOL   APIENTRY WinSaveWindowPos(HSAVEWP,PSWP,ULONG);
 
 #endif
 
