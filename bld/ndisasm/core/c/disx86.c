@@ -128,6 +128,11 @@ typedef enum {
 } SBIT;
 
 typedef enum {
+    D_RM_REG = 0x0,     // normal operand order r/m is first and reg is second
+    D_REG_RM = 0x1      // reverse operand order reg is first and r/m is second
+} DBIT;
+
+typedef enum {
     MF_0 = 0x0,
     MF_1 = 0x1,
     MF_2 = 0x2,
@@ -1050,8 +1055,10 @@ dis_ref_type  X86GetRefType( WBIT w, dis_dec_ins *ins )
             case DI_X86_call4:
             case DI_X86_jmp4:
                 return( DRT_X86_FARPTR48 );
+#if 0
             case DI_X86_bound:
                 return( DRT_X86_QWORD );
+#endif
             case DI_X86_lgdt:
             case DI_X86_lidt:
             case DI_X86_sgdt:
@@ -1070,8 +1077,10 @@ dis_ref_type  X86GetRefType( WBIT w, dis_dec_ins *ins )
             case DI_X86_call4:
             case DI_X86_jmp4:
                 return( DRT_X86_FARPTR32 );
+#if 0
             case DI_X86_bound:
                 return( DRT_X86_DWORD );
+#endif
             case DI_X86_lgdt:
             case DI_X86_lidt:
             case DI_X86_sgdt:
@@ -1150,8 +1159,8 @@ dis_ref_type X86FGetRefTypeEnv( dis_dec_ins * ins )
 /*=====================================================================*/
 
 
-static void X86GetRegModRM(SBIT dir, WBIT w, MOD mod, RM rm, RM reg,
-                     void * d, dis_dec_ins *ins)
+static void X86GetRegModRM( DBIT dir, WBIT w, MOD mod, RM rm, RM reg,
+                     void * d, dis_dec_ins *ins )
 /**********************************************************************/
 //    dir                   1                 0
 //   Destination           Reg              MODRM
@@ -1166,8 +1175,8 @@ static void X86GetRegModRM(SBIT dir, WBIT w, MOD mod, RM rm, RM reg,
     }
 }
 
-static void X86GetMMRegModRM(SBIT dir, WBIT w, MOD mod, RM rm, RM reg,  dis_ref_type ref_type,
-                     void * d, dis_dec_ins *ins)
+static void X86GetMMRegModRM( DBIT dir, WBIT w, MOD mod, RM rm, RM reg,  dis_ref_type ref_type,
+                     void * d, dis_dec_ins *ins )
 /**********************************************************************/
 //    dir                   1                 0
 //   Destination           Reg              MODRM
@@ -1183,8 +1192,8 @@ static void X86GetMMRegModRM(SBIT dir, WBIT w, MOD mod, RM rm, RM reg,  dis_ref_
     }
 }
 
-static void X86GetMMRegModRMMixed(SBIT dir, WBIT w, MOD mod, RM rm, RM reg,  dis_ref_type ref_type,
-                     void * d, dis_dec_ins *ins)
+static void X86GetMMRegModRMMixed( DBIT dir, WBIT w, MOD mod, RM rm, RM reg,  dis_ref_type ref_type,
+                     void * d, dis_dec_ins *ins )
 /*************************************************************************************************/
 //    dir                   1                 0
 //   Destination           Reg              MODRM
@@ -1201,7 +1210,7 @@ static void X86GetMMRegModRMMixed(SBIT dir, WBIT w, MOD mod, RM rm, RM reg,  dis
     }
 }
 
-static void X86GetMMRegModRM_B(MOD mod, RM rm, RM reg,  dis_ref_type ref_type,
+static void X86GetMMRegModRM_B( MOD mod, RM rm, RM reg,  dis_ref_type ref_type,
                      void * d, dis_dec_ins *ins)
 /**********************************************************************/
 //   Destination           Reg
@@ -1211,13 +1220,19 @@ static void X86GetMMRegModRM_B(MOD mod, RM rm, RM reg,  dis_ref_type ref_type,
     X86GetMMModRM(W_DEFAULT, mod, rm, d, ins, ref_type);
 }
 
-void X86GetRegModRM_B( MOD mod, RM rm, RM reg, void *d, dis_dec_ins *ins )
+void X86GetRegModRM_B( DBIT dir, MOD mod, RM rm, RM reg, void *d, dis_dec_ins *ins )
 /**********************************************************************/
-// Destination:  Register
-// Source     :  MODRM
+//    dir                   1                 0
+//   Destination           Reg              MODRM
+//   Source               MODRM              Reg
 {
-    X86GetReg( W_DEFAULT, reg, ins );
-    X86GetModRM(W_DEFAULT, mod, rm, d, ins, X86GetRefType( W_DEFAULT ,ins ));
+    if( dir ) {
+        X86GetReg( W_DEFAULT, reg, ins );
+        X86GetModRM(W_DEFAULT, mod, rm, d, ins, X86GetRefType( W_DEFAULT ,ins ));
+    } else {
+        X86GetModRM(W_DEFAULT, mod, rm, d, ins, X86GetRefType( W_DEFAULT ,ins ));
+        X86GetReg( W_DEFAULT, reg, ins );
+    }
 }
 
 
@@ -1613,8 +1628,8 @@ dis_handler_return X86Reg_8( dis_handle *h, void *d , dis_dec_ins *ins)
         if( code.type2.reg == REG_AX ) {
             ins->type = DI_X86_nop;
         } else {
-            X86GetReg( W_DEFAULT, code.type2.reg, ins );
             X86GetReg( W_DEFAULT,REG_AX,ins );
+            X86GetReg( W_DEFAULT, code.type2.reg, ins );
         }
         return( DHR_DONE );
     case DI_X86_push2:
@@ -2014,6 +2029,21 @@ dis_handler_return X86RegModRM_test( dis_handle *h, void *d, dis_dec_ins *ins )
     return( DHR_DONE );
 }
 
+dis_handler_return X86RegModRM_bound( dis_handle *h, void *d, dis_dec_ins *ins )
+/**********************************************************************/
+// Format:    OOOO OO  D  O   MM   REG RRR
+//               op1  dir     mod reg1 rm/reg2
+{
+    code_16 code;
+
+    code.full    = ins->opcode;
+    ins->num_ops = 0;
+    ins->size   += 2;
+    X86GetRegModRM( code.type2.dir, W_DEFAULT, code.type2.mod,
+                    code.type2.rm, code.type2.reg, d, ins);
+    return( DHR_DONE );
+}
+
 
 
 dis_handler_return X86RegModRM_16B( dis_handle *h, void *d, dis_dec_ins *ins )
@@ -2037,7 +2067,11 @@ dis_handler_return X86RegModRM_16B( dis_handle *h, void *d, dis_dec_ins *ins )
         }
     }
 
-    X86GetRegModRM_B( code.type1.mod, code.type1.rm, code.type1.reg, d, ins);
+    if( ins->type == DI_X86_arpl ) {
+        X86GetRegModRM_B( D_RM_REG, code.type1.mod, code.type1.rm, code.type1.reg, d, ins);
+    } else {
+        X86GetRegModRM_B( D_REG_RM, code.type1.mod, code.type1.rm, code.type1.reg, d, ins);
+    }
 
     switch( ins->type ) {
     case DI_X86_imul3:
@@ -2361,8 +2395,19 @@ dis_handler_return X86RegModRM_24B( dis_handle *h, void *d, dis_dec_ins *ins )
         ++ins->size;
         ++ins->num_ops;
         break;
+    case DI_X86_bt:
+    case DI_X86_bt2:
+    case DI_X86_btc:
+    case DI_X86_btc2:
+    case DI_X86_btr:
+    case DI_X86_btr2:
+    case DI_X86_bts:
+    case DI_X86_bts2:
+        X86GetRegModRM_B( D_RM_REG, code.type1.mod, code.type1.rm,
+                           code.type1.reg, d, ins);
+        break;
     default:
-        X86GetRegModRM_B( code.type1.mod, code.type1.rm,
+        X86GetRegModRM_B( D_REG_RM, code.type1.mod, code.type1.rm,
                            code.type1.reg, d, ins);
         break;
     }
