@@ -24,7 +24,7 @@ def_windowing =
 
 # sw_c_(linkage)
 sw_c_static  =
-sw_c_dynamic = -d__MAKE_DLL_CLIB -D__MAKE_DLL_WRTLIB
+sw_c_dynamic = -d__MAKE_DLL_CLIB
 
 # sw_c_(processor)_(model)
 sw_c_register = -5r
