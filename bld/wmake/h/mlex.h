@@ -219,7 +219,6 @@ enum DotNames {                 /* must be in alpha order! */
     DOT_HOLD,                       /* ".HOLD"          */
     DOT_IGNORE,                     /* ".IGNORE"        */
     DOT_RCS_MAKE,                   /* ".JUST_ENOUGH"   */
-    DOT_KEEP_SPACES,                /* ".KEEP_SPACES"   */
     DOT_MULTIPLE,                   /* ".MULTIPLE"      */
     DOT_NOCHECK,                    /* ".NOCHECK"       */
     DOT_OPTIMIZE,                   /* ".OPTIMIZE"      */

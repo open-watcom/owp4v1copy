@@ -1093,7 +1093,7 @@ See the section entitled
 :HDREF refid='clo'.
 for a full description of its use.
 .*
-.section Ignoring Irrelevant Errors (.CONTINUE)
+.section Ignoring Errors (.CONTINUE)
 .*
 .ix '&makcmdup directives' '.CONTINUE'
 .ix 'CONTINUE' '&makcmdup directive'
@@ -1130,24 +1130,28 @@ Without the directive, good is not built.
 .ix 'DEFAULT' '&makcmdup directive'
 The
 .id &sysper.DEFAULT
-directive provides a command list for those targets which lack one.
+directive provides a default command list for those targets which lack one.
 See the section entitled
 :HDREF refid='cld'.
 for a full description of its use.
-At 2003-12-03, the directive seems not to work.
 .millust begin
 #
 # .default example
 #
 
-&sysper.default:
-    @echo it is useless if  $@ is unknown
+&sysper.default
+    @echo Using default rule to update target "$@"
+    @echo because of dependent(s) "$<"
+    wtouch $@
 
-all:
+all: foo
+
+foo:
+    wtouch foo
 .millust end
 .pc
 "all" has no command list. The one supplied to the default directive
-is not run
+is executed instead.
 .*
 .section Erasing Targets After Error (.ERASE)
 .*
@@ -1489,29 +1493,6 @@ hello.exe:
 .pc
 hello.exe is given the same time as hello.c.
 .*
-.section Retain Macro Spaces (.KEEP_SPACES)
-.*
-.ix '&makcmdup directives' '.KEEP_SPACES'
-.ix 'KEEP_SPACES' '&makcmdup directive'
-The
-.id &sysper.KEEP_SPACES
-directive is intended to allow leading spaces in macro values.
-It does not work on 2003-12-03. The following example should output a string containing several spaces.
-.millust begin
-#
-# .keep_spaces example
-#
-
-&sysper.keep_spaces
-
-b=    B
-
-all: .symbolic
-    @echo a$(b)c
-.millust end
-
-
-.*
 .section (.MULTIPLE)
 .*
 The
@@ -1599,18 +1580,17 @@ the program "DOREPORT" is executing.
 .ix 'PROCEDURE' '&makcmdup directive'
 The
 .id &sysper.PROCEDURE
-directive is a piece of syntactic sugar. It is often used to
-make "procedures" in a makefile.
+directive may be used to construct "procedures" in a makefile.
 .millust begin
 #
 # .procedure example
 #
 
 all: .symbolic
-    @%make gone
+    @%make proc
 
-gone: .procedure
-    @echo Gone! Gone! Gone! Woe-awo-awo ;-)
+proc: .procedure
+    @echo Executing procedure "proc"
 .millust end
 .*
 .section Suppressing Terminal Output (.SILENT)
