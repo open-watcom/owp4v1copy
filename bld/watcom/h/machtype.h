@@ -31,7 +31,14 @@
 
 
 #ifndef MACH_TYPES_INCLUDED
+#define MACH_TYPES_INCLUDED
 #include <watcom.h>
+
+#if __WATCOMC__ > 1000
+#pragma pack(push,1);
+#endif
+
+#define BITS_PER_BYTE   8U
 
 typedef unsigned_32     dword;
 typedef unsigned_16     word;
@@ -116,10 +123,11 @@ typedef struct {
 } mem_block;
 
 #define SET_NIL_ADDR( addr )    \
-        { addr.indirect = 0; addr.sect_id = 0; addr.mach.segment = 0; }
+        { addr.indirect = 0; addr.sect_id = 0; addr.mach.segment = 0; addr.mach.offset = 0; }
 
-#define IS_NIL_ADDR( addr )     ( (addr.indirect == 0) \
-                                && (addr.mach.segment == 0) )
+#define IS_NIL_ADDR( addr )     ( (addr.indirect == 0)          \
+                                && (addr.mach.segment == 0)     \
+                                && (addr.mach.offset == 0) )
 
 #define ConvAddr32ToAddr48( addr32, addr48 ) \
 \
@@ -131,5 +139,8 @@ typedef struct {
         (addr32).segment = (addr48).segment; \
         (addr32).offset  = (addr48).offset;
 
-#define MACH_TYPES_INCLUDED
+#if __WATCOMC__ > 1000
+#pragma pack(pop);
+#endif
+
 #endif
