@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Instruction scoring related structs, enums and defines.
 *
 ****************************************************************************/
 
@@ -69,6 +68,7 @@ typedef struct score_info {
           void                  *p;
         } symbol;
         int                     index_reg;      /*  indexed names only */
+        int                     scale;          /*  indexed names only */
         name_class_def          class;
 } score_info;
 
