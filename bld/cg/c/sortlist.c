@@ -179,8 +179,10 @@ extern  void            *SortList( void *list, unsigned next_offset,
         ++length;
         list2 = _NEXT( list2, next_offset );
     }
-    old_memout = SetMemOut( MO_OK );
-    list = DoSortList( list, next_offset, before, length );
-    SetMemOut( old_memout );
+    if( length > 1 ) {
+        old_memout = SetMemOut( MO_OK );
+        list = DoSortList( list, next_offset, before, length );
+        SetMemOut( old_memout );
+    }
     return( list );
 }
