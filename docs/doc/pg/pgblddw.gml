@@ -58,7 +58,6 @@ void main()
 The C++ version of this program follows:
 .millust begin
 #include <iostream.h>
-#include <iomanip.h>
 
 void main()
 {

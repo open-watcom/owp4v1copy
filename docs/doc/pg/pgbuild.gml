@@ -75,7 +75,6 @@ void main()
 The C++ version of this program follows:
 .millust begin
 #include <iostream.h>
-#include <iomanip.h>
 
 void main()
 {
@@ -165,90 +164,15 @@ demonstrated in the following example.
 &prompt.&wclcmd &sw.2 &demoname.&demo.&demosuff
 .millust end
 .do end
-:cmt. .if '&bldhost' ne 'OS/2' .do begin
-:cmt. .if '&bldhost' ne 'QNX' .do begin
-:cmt. .np
-:cmt. On 386 or 486 systems, you can invoke the protected-mode compiler by
-:cmt. specifying the "p" option as demonstrated in the following example.
-:cmt. .millust begin
-:cmt. &prompt.&wclcmd &sw.p &sw.l=&bldnam &demoname.&demo.&demosuff
-:cmt. .millust end
-:cmt. .np
-:cmt. This is particularly useful for large modules that require more than
-:cmt. the available amount of conventional memory to perform full
-:cmt. optimizations.
-:cmt. .do end
-:cmt. .do end
 .np
 The typical messages that appear on the screen are shown in the
 following illustration.
 .code begin
 .im &wclcmd.1
 .code end
-.if '&target' ne 'QNX' .do begin
-:CMT. .np
-:CMT. .ix 'compilation speed'
-:CMT. .ix 'dots'
-:CMT. Depending on the size of the file, the complexity of the code
-:CMT. optimizations that have been requested, and the speed of your
-:CMT. processor, you might see some dots appear on the screen.
-:CMT. These dots are displayed by the compiler during the code
-:CMT. optimization/generation phase.
-.do end
-.if '&bldnam' eq 'codebuilder' .do begin
-.np
-If you examine the current directory, you will find that two files
-have been created.
-.ix 'object file'
-.ix 'executable file'
-These are
-.fi &demo.&obj
-(the result of compiling
-.fi &demo..&langsuff
-.ct ) and
-.fi &demo.&bldexe
-(the result of linking
-.fi &demo.&obj
-with the appropriate &product libraries).
-.ix 'Code Builder'
-.ix 'MKEXE'
-The "&bldexe" file must now be combined with the Code Builder DOS
-Extender using Intel's "MKEXE" program.
-You should make sure that the directory of the Intel Code Builder
-binaries are included in the
-.ev PATH
-environment variable.
-It contains the "MKEXE" program and the Intel DOS Extender.
-.exam begin
-&prompt.path c:&pathnam\binw;c:\codebldr\bin
-.exam end
-.np
-To create an executable issue the following command.
-.millust begin
-&prompt.mkexe &demo
-.millust end
-.np
-Provided that no errors were encountered during the compile, link or
-MKEXE phases, the "&demo" program may now be run.
-.do end
-.el .do begin
 .np
 Provided that no errors were encountered during the compile or link
 phases, the "&demo" program may now be run.
-.do end
-.if '&bldnam' eq 'ergo' .do begin
-.np
-.ix 'OS/386 DOS extender'
-The OS/386 DOS extender must be loaded first.
-.millust begin
-&prompt.os386
-.millust end
-.pc
-It need only be loaded once (it is a terminate - and - stay - resident
-program).
-After this has been done, the "UP" command is used to start the
-application.
-.do end
 .if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
 .millust begin
 &prompt.&bldrun.&demo
@@ -261,22 +185,6 @@ Hello world
 The Number of Primes between 1 and 10000 are:  1229
 .millust end
 .do end
-.if '&bldnam' eq 'codebuilder' .do begin
-.np
-If you re-examine the current directory, you will find that another
-file has been created.
-.ix 'executable file'
-.ix 'MKEXE'
-This is
-.fi &demo..exe
-(the result of running MKEXE on the
-.fi &demo.&bldexe
-file).
-It is
-.fi &demo..exe
-that is run when you enter the "&demo" command.
-.do end
-.el .do begin
 .np
 If you examine the current directory, you will find that two files
 have been created.
@@ -294,34 +202,11 @@ with the appropriate &product libraries).
 It is
 .fi &demo.&bldexe
 that is run by &bldhost when you enter the "&bldrun.&demo" command.
-.do end
-.if '&bldnam' eq 'ergo' .do begin
-.np
-To remove the OS/386 DOS extender from memory, enter the following command.
-.millust begin
-&prompt.os386 remove
-.millust end
-.do end
 .*
 .section Debugging the Sample &bldos Application
 .*
 .np
 .ix 'debugging &bldos applications'
-.if '&bldnam' eq 'codebuilder' .do begin
-.ix 'Code Builder'
-.ix 'DB32'
-.ix 'Intel debugger'
-.ix 'debugger' 'Intel'
-If your wish to debug your application, you must use the Intel
-debugger, "DB32".
-.ix 'IL32'
-.ix 'Intel linker'
-.ix 'linker' 'Intel'
-In this case, you must use the Intel linker, "IL32", to create an
-executable with the appropriate debugging information format for
-"DB32".
-.do end
-.el .do begin
 Let us assume that you wish to debug your application in order to
 locate an error in programming.
 In the previous section, the "&demo" program was compiled with default
@@ -410,16 +295,10 @@ following command may be issued.
 .millust begin
 &prompt.&blddbg &demo
 .millust end
-.if '&bldnam' eq 'ergo' .do begin
-.np
-Note that the OS/386 DOS extender should already be installed as
-was described in the first section of this chapter.
-.do end
 .np
 It would be too ambitious to describe the debugger in this
 introductory chapter so we refer you to the book entitled
 .book &dbgname User's Guide.
-.do end
 .*
 .if '&bldhost' eq 'OS/2' .do begin
 :set symbol="prompt"     value=&oprompt.

@@ -357,6 +357,8 @@ The source code for this example can be found in
 .code end
 .do end
 .if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
+The source code for this example can be found in
+.fi &pathnam.\samples\os2.
 .code begin
 #include <process.h>
 #include <stdio.h>
@@ -652,7 +654,7 @@ The system name
 .id &tgtosname
 is defined in the file
 .fi wlsystem.lnk
-which is located in the "BINW" directory of the directory in which you
+which is located in the "BINW" subdirectory of the directory in which you
 installed &product..
 .np
 The multi-threaded application is now ready to be run.

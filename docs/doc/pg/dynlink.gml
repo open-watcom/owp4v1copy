@@ -650,7 +650,8 @@ If the return value is 0 when
 is called because the process uses the
 .kw DosLoadModule
 function,
-.kw DosLoadModule returns an error.
+.kw DosLoadModule
+returns an error.
 .np
 If the return value is 0 when
 .kw LibMain
@@ -1148,7 +1149,6 @@ void __dll_finalize( void )
 
 EXTERNC int __dll_terminate( void )
 {
-    /* no C run-time calls allowed under OS/2 Warp */
     return( 1 );
 }
 

@@ -53,6 +53,7 @@ Win32 API functions; they are strictly &lang applications that do
 not rely on the features of a particular operating system.
 &company gives you two choices when porting these kinds of
 applications to Windows NT.
+.if '&defwin' eq 'Windows NT' .do begin
 You may choose to create a character-mode application that makes no
 use of the windowing capabilities of the system (the remainder of this
 chapter will deal with these kinds of applications).
@@ -62,6 +63,7 @@ The latter can give somewhat of a GUI look-and-feel to an application
 what wasn't designed for the GUI environment.
 A subsequent chapter deals with the creation of applications that make
 use of the default windowing system.
+.do end
 .np
 The second class of &lang applications are those that actually call
 Win32 API functions directly.
@@ -101,6 +103,7 @@ run in a Windows NT character-mode environment, or as a Windows NT GUI
 application.
 A Windows NT GUI application has full access to the complete set of
 user-interface tools such as menus, icons, scroll bars, etc.
+.if '&defwin' eq 'Windows NT' .do begin
 .ix 'NT default windowing system'
 An application that was not designed as a windowed application (such
 as a DOS application) can run as a GUI application.
@@ -108,6 +111,7 @@ This is achieved by a default windowing system that is optionally
 linked with your application.
 The creation of default windowing applications is described in a later
 chapter.
+.do end
 .np
 .ix 'NT character-mode applications'
 Very little effort is required to port an existing &lang application
@@ -136,7 +140,6 @@ int main( void )
 An equivalent C++ program follows:
 .millust begin
 #include <iostream.h>
-#include <iomanip.h>
 
 int main( void )
 {
