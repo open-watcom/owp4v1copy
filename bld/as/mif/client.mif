@@ -1,7 +1,45 @@
-!ifeq target_CPU axp
-as_lib = $(as_dir)/alpha/inline/o.$(host_CPU)/asinline.lib
-!else ifeq target_CPU ppc
-as_lib = $(as_dir)/ppc/inline/o.$(host_CPU)/asinline.lib
+# AS in-line library finder.
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
+#
+# AS in-line library
+#
+asinline_axp_lib_386 = $(as_dir)/alpha/inline/osi386/asinline.lib
+asinline_axp_lib_axp = $(as_dir)/alpha/inline/osiaxp/asinline.lib
+
+asinline_ppc_lib_386 = $(as_dir)/ppc/inline/osi386/asinline.lib
+asinline_ppc_lib_axp = $(as_dir)/ppc/inline/osiaxp/asinline.lib
+
+#
+# AS in-line dependency
+#
+asinline_axp_dep_386 = $(as_dir)/alpha/inline/osi386/compile.tim
+asinline_axp_dep_axp = $(as_dir)/alpha/inline/osiaxp/compile.tim
+
+asinline_ppc_dep_386 = $(as_dir)/ppc/inline/osi386/compile.tim
+asinline_ppc_dep_axp = $(as_dir)/ppc/inline/osiaxp/compile.tim
+
+#
+# AS in-line run-time DLL used
+#
+!ifeq $(proj_name)_rtdll 1
+!endif
+
+#
+!ifeq target_cpu axp
+!idef asinline_axp_lib_$(host_os)_$(host_cpu)
+asinline_lib = $(asinline_axp_lib_$(host_os)_$(host_cpu))
+asinline_dep = $(asinline_axp_dep_$(host_os)_$(host_cpu))
 !else
-!error invalid RISC target CPU
+asinline_lib = $(asinline_axp_lib_$(host_cpu))
+asinline_dep = $(asinline_axp_dep_$(host_cpu))
+!endif
+!else ifeq target_cpu ppc
+!idef asinline_ppc_lib_$(host_os)_$(host_cpu)
+asinline_lib = $(asinline_ppc_lib_$(host_os)_$(host_cpu))
+asinline_dep = $(asinline_ppc_dep_$(host_os)_$(host_cpu))
+!else
+asinline_lib = $(asinline_ppc_lib_$(host_cpu))
+asinline_dep = $(asinline_ppc_dep_$(host_cpu))
+!endif
 !endif

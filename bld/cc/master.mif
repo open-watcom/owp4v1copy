@@ -12,6 +12,7 @@ proj_name = cc
 !include mlibs.mif
 
 # CODEGEN stuff
+!include $(as_dir)/mif/client.mif
 !include $(cg_dir)/mif/fe.mif
 !include $(cg_dir)/mif/hostos.mif
 
@@ -117,8 +118,8 @@ wlink_opt_nt_386_dll    = sys nt_dll
 wlink_opt_nt_axp_dll    = sys ntaxp_dll
 
 # 1 if we use asinline_lib to do inline assembly
-as_lib_ppc      = 1
-as_lib_axp      = 1
+use_asinline_lib_ppc      = 1
+use_asinline_lib_axp      = 1
 
 xname = wcc$(target_cpu)c.$(final_exe_$(host_os))
 dxname = wcc$(target_cpu)d.$(final_exe_$(host_os))
@@ -246,8 +247,8 @@ $(dllname).dll : $(pre_obj_deps) $(rc_objs) $(dll_objs) $(dwarf_deps) $(cg_debug
         @%append $^&.lnk $(wlink_opt_common)
         @for %i in ( $(dll_objs) ) do @%append $^&.lnk file %i
         @%append $^&.lnk lib $(dwarf_lib)
-!ifdef as_lib_$(target_cpu)
-        @%append $^&.lnk lib $(asinline_axp_lib)
+!ifeq use_asinline_lib_$(target_cpu) 1
+        @%append $^&.lnk lib $(asinline_lib)
 !endif
 !ifeq release 1
         @%append $^&.lnk $(cg_libs)
@@ -290,8 +291,8 @@ linkfile: .procedure
 #       @for %i in ( $($(host_os)_objs) ) do @%append $^&.lnk file $(o_dir)/%i
 #       @for %i in ( $(mem_objs) ) do @%append $^&.lnk file $(o_dir)/%i
         @%append $^&.lnk lib $(dwarf_lib)
-!ifdef as_lib_$(target_cpu)
-        @%append $^&.lnk lib $(asinline_axp_lib)
+!ifeq use_asinline_lib_$(target_cpu) 1
+        @%append $^&.lnk lib $(asinline_lib)
 !endif
 
 !ifeq target_cpu axp
@@ -312,7 +313,7 @@ code$(target_cpu).gh : xcode$(target_cpu).tmp ./mkcode.exe
 
 target_as_axp=wasmaxp -zq -w4
 target_as_i86=bwasm -zq -w4
-target_as_386=bwasm -zq -3 -w4
+target_as_386=bwasm -zq -w4 -3
 target_as_ppc=wasmppc -zq -w4
 
 xcode$(target_cpu).tmp: ../a/code$(target_cpu).asm

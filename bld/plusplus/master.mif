@@ -15,6 +15,7 @@ proj_name = plusplus
 
 !include cproj.mif
 
+!include $(as_dir)/mif/client.mif
 !include $(cg_dir)/mif/fe.mif
 !include $(cg_dir)/mif/hostos.mif
 
@@ -453,9 +454,7 @@ pexe.lnk : $(__MAKEFILES__)
     @%append $^@ $(wlink_opt_common_exe)
     @for %i in ($(comp_objs_exe)) do @%append $^@ file %i
     @%append $^@ library $(dwarf_dw_lib)
-!ifdef as_lib
-    @%append $^@ library $(as_lib)
-!endif
+    @for %i in ($(asinline_lib)) do @%append $^@ library %i
 
 #
 # -- production version
@@ -508,9 +507,7 @@ pdll.lnk : $(__MAKEFILES__)
     @%append $^@ $(wlink_opt_common_dll)
     @for %i in ($(comp_objs_dll)) do @%append $^@ file %i
     @%append $^@ library $(dwarf_dw_lib)
-!ifdef as_lib
-    @%append $^@ library $(as_lib)
-!endif
+    @for %i in ($(asinline_lib)) do @%append $^@ library %i
     @%append $^@ reference __DLLstart_
 
 #
