@@ -38,7 +38,7 @@ all : .SYMBOLIC bpatch.exe bdiff.exe bpcmt.exe bplevel.exe bdump.exe
 #
 WBJS = dopatchw.obj msg.obj myio.obj wcptchio.obj wcpatch.obj bdiffmem.obj wbdiff.obj
 
-wcpatch.exe : $(WBJS) $(__MAKEFILES__)
+wcpatch.exe : $(WBJS) $(wres_lib) $(__MAKEFILES__)
         @%create $^&.lnk
         @%append $^&.lnk $(lflags)
         @%append $^&.lnk lib $(wres_lib)
@@ -50,7 +50,7 @@ wcpatch.exe : $(WBJS) $(__MAKEFILES__)
 #
 YBJS = dopatchp.obj msg.obj myio.obj oldfile.obj wpatchio.obj wpatch.obj bdiffmem.obj bpatch.obj
 
-wpatch.exe : $(YBJS) $(__MAKEFILES__)
+wpatch.exe : $(YBJS) $(wres_lib) $(__MAKEFILES__)
         @%create $^&.lnk
         @%append $^&.lnk $(lflags)
         @%append $^&.lnk lib $(wres_lib)
@@ -62,7 +62,7 @@ wpatch.exe : $(YBJS) $(__MAKEFILES__)
 #
 OBJ = bpatch.obj dopatchp.obj msg.obj myio.obj oldfile.obj patchio.obj patmain.obj bdiffmem.obj
 
-bpatch.exe : bpatch.res $(OBJ) $(__MAKEFILES__)
+bpatch.exe : bpatch.res $(OBJ) $(wres_lib) $(__MAKEFILES__)
         @%create $^&.lnk
         @%append $^&.lnk $(lflags)
         @%append $^&.lnk lib $(wres_lib)
@@ -75,7 +75,7 @@ bpatch.exe : bpatch.res $(OBJ) $(__MAKEFILES__)
 #
 XBJ = bdump.obj dopatchx.obj msg.obj myio.obj oldfile.obj patchio.obj patmain.obj bdiffmem.obj
 
-bdump.exe : bpatch.res $(XBJ) $(__MAKEFILES__)
+bdump.exe : bpatch.res $(XBJ) $(wres_lib) $(__MAKEFILES__)
         @%create $^&.lnk
         @%append $^&.lnk $(lflags)
         @%append $^&.lnk lib $(wres_lib)
@@ -88,7 +88,7 @@ bdump.exe : bpatch.res $(XBJ) $(__MAKEFILES__)
 #
 DBJ = bdiff.obj bdiffmem.obj dopatchd.obj msg.obj myio.obj
 
-bdiff.exe : $(DBJ) bdiff.res $(__MAKEFILES__)
+bdiff.exe : $(DBJ) bdiff.res $(wres_lib) $(__MAKEFILES__)
         @%create $^&.lnk
         @%append $^&.lnk $(lflags)
         @%append $^&.lnk lib $(wres_lib)

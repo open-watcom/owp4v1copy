@@ -38,11 +38,11 @@ inc_dirs            += ;$(lib_misc_dir)/h;$(orl_dir)/h
 lib.exe :  $(libstub_objs)
         $(linker) $(lflags) name $^@ file {$(libstub_objs)}
 
-lib386.exe :  $(lib_hdrs) $(lib386_objs)
+lib386.exe :  $(lib_hdrs) $(lib386_objs) $(lib_common_libs)
         $(linker) $(lflags) name $^@ file {$(lib386_objs)} library {$(lib_common_libs)}
 
-libaxp.exe :  $(lib_hdrs) $(libaxp_objs)
+libaxp.exe :  $(lib_hdrs) $(libaxp_objs) $(lib_common_libs)
         $(linker) $(lflags) name $^@ file {$(libaxp_objs)} library {$(lib_common_libs)}
 
-libppc.exe :  $(lib_hdrs) $(libppc_objs)
+libppc.exe :  $(lib_hdrs) $(libppc_objs) $(lib_common_libs)
         $(linker) $(lflags) name $^@ file {$(libppc_objs)} library {$(lib_common_libs)}

@@ -4,20 +4,11 @@
 #
 # AS in-line library
 #
-asinline_axp_lib_386 = $(as_dir)/alpha/inline/osi386/asinline.lib
-asinline_axp_lib_axp = $(as_dir)/alpha/inline/osiaxp/asinline.lib
+asminline_axp_lib_386 = $(as_dir)/alpha/inline/osi386/asinline.lib
+asminline_axp_lib_axp = $(as_dir)/alpha/inline/osiaxp/asinline.lib
 
-asinline_ppc_lib_386 = $(as_dir)/ppc/inline/osi386/asinline.lib
-asinline_ppc_lib_axp = $(as_dir)/ppc/inline/osiaxp/asinline.lib
-
-#
-# AS in-line dependency
-#
-asinline_axp_dep_386 = $(as_dir)/alpha/inline/osi386/compile.tim
-asinline_axp_dep_axp = $(as_dir)/alpha/inline/osiaxp/compile.tim
-
-asinline_ppc_dep_386 = $(as_dir)/ppc/inline/osi386/compile.tim
-asinline_ppc_dep_axp = $(as_dir)/ppc/inline/osiaxp/compile.tim
+asminline_ppc_lib_386 = $(as_dir)/ppc/inline/osi386/asinline.lib
+asminline_ppc_lib_axp = $(as_dir)/ppc/inline/osiaxp/asinline.lib
 
 #
 # AS in-line run-time DLL used
@@ -27,19 +18,15 @@ asinline_ppc_dep_axp = $(as_dir)/ppc/inline/osiaxp/compile.tim
 
 #
 !ifeq target_cpu axp
-!ifdef asinline_axp_lib_$(host_os)_$(host_cpu)
-asinline_lib = $(asinline_axp_lib_$(host_os)_$(host_cpu))
-asinline_dep = $(asinline_axp_dep_$(host_os)_$(host_cpu))
+!ifdef asminline_axp_lib_$(host_os)_$(host_cpu)
+asminline_lib = $(asminline_axp_lib_$(host_os)_$(host_cpu))
 !else
-asinline_lib = $(asinline_axp_lib_$(host_cpu))
-asinline_dep = $(asinline_axp_dep_$(host_cpu))
+asminline_lib = $(asminline_axp_lib_$(host_cpu))
 !endif
 !else ifeq target_cpu ppc
-!ifdef asinline_ppc_lib_$(host_os)_$(host_cpu)
-asinline_lib = $(asinline_ppc_lib_$(host_os)_$(host_cpu))
-asinline_dep = $(asinline_ppc_dep_$(host_os)_$(host_cpu))
+!ifdef asminline_ppc_lib_$(host_os)_$(host_cpu)
+asminline_lib = $(asminline_ppc_lib_$(host_os)_$(host_cpu))
 !else
-asinline_lib = $(asinline_ppc_lib_$(host_cpu))
-asinline_dep = $(asinline_ppc_dep_$(host_cpu))
+asminline_lib = $(asminline_ppc_lib_$(host_cpu))
 !endif
 !endif

@@ -1,3 +1,6 @@
+# DWARF DR library finder.
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
 inline_vmem_nt_386  = vm
 inline_vmem_os2_386 = vm
 inline_vmem_nt_axp  = vm
@@ -15,18 +18,6 @@ dwarf_dr_lib_os2_i86   = $(dwarf_dir)/dr/os2i86/dwarfr.lib
 dwarf_dr_lib_qnx_386   = $(dwarf_dir)/dr/qnx386/dwarfr.lib
 
 #
-# DWARF dependencies
-#
-dwarf_dr_dep_386       = $(dwarf_dir)/dr/osi386/compile.tim
-dwarf_dr_dep_axp       = $(dwarf_dir)/dr/osiaxp/compile.tim
-dwarf_dr_dep_nt_386vm  = $(dwarf_dir)/dr/osi386vm/compile.tim
-dwarf_dr_dep_os2_386vm = $(dwarf_dir)/dr/osi386vm/compile.tim
-dwarf_dr_dep_nt_axpvm  = $(dwarf_dir)/dr/osiaxpvm/compile.tim
-dwarf_dr_dep_win_i86   = $(dwarf_dir)/dr/wini86/compile.tim
-dwarf_dr_dep_os2_i86   = $(dwarf_dir)/dr/os2i86/compile.tim
-dwarf_dr_dep_qnx_386   = $(dwarf_dir)/dr/qnx386/compile.tim
-
-#
 # DWARF run-time DLL used
 #
 !ifeq $(proj_name)_rtdll 1
@@ -35,8 +26,6 @@ dwarf_dr_dep_qnx_386   = $(dwarf_dir)/dr/qnx386/compile.tim
 #
 !ifdef dwarf_dr_lib_$(host_OS)_$(host_CPU)$(inline_vmem_$(host_os)_$(host_cpu))
 dwarf_dr_lib = $(dwarf_dr_lib_$(host_OS)_$(host_CPU)$(inline_vmem_$(host_os)_$(host_cpu)))
-dwarf_dr_dep = $(dwarf_dr_dep_$(host_OS)_$(host_CPU)$(inline_vmem_$(host_os)_$(host_cpu)))
 !else
 dwarf_dr_lib = $(dwarf_dr_lib_$(host_CPU))
-dwarf_dr_dep = $(dwarf_dr_dep_$(host_CPU))
 !endif

@@ -102,8 +102,8 @@ $(proj_name).lib: $(targ_name)
 !ifeq bootstrap 1
 inc_dirs=-I. -I../h -I$(orl_dir)/h -I$(trmem_dir) -I$(lib_misc_dir)/h -I$(watcom_dir)/h
 defines = -DIDE_PGM -D__stdcall=
-wlib_libs = $(clib_dir)/$(%OBJDIR)/libwatcom.a &
-$(wres_dir)/$(%OBJDIR)/libwres.a $(orl_dir)/$(%OBJDIR)/liborl.a
+wlib_libs = $(orl_lib) $(wres_lib) &
+$(clib_dir)/$(%OBJDIR)/libwatcom.a
 targ_name = $(proj_name)
 !endif
 

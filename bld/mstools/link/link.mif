@@ -37,11 +37,11 @@ inc_dirs            += ;$(lib_misc_dir)/h;$(orl_dir)/h
 link.exe :  $(linkstub_objs)
         $(linker) $(lflags) name $^@ file {$(linkstub_objs)}
 
-link386.exe :  $(link_hdrs) $(link386_objs)
+link386.exe :  $(link_hdrs) $(link386_objs) $(lib_common_libs)
         $(linker) $(lflags) name $^@ file {$(link386_objs)} library {$(link_common_libs)}
 
-linkaxp.exe :  $(link_hdrs) $(linkaxp_objs)
+linkaxp.exe :  $(link_hdrs) $(linkaxp_objs) $(lib_common_libs)
         $(linker) $(lflags) name $^@ file {$(linkaxp_objs)} library {$(link_common_libs)}
 
-linkppc.exe :  $(link_hdrs) $(linkppc_objs)
+linkppc.exe :  $(link_hdrs) $(linkppc_objs) $(lib_common_libs)
         $(linker) $(lflags) name $^@ file {$(linkppc_objs)} library {$(link_common_libs)}

@@ -1,14 +1,11 @@
+# DWARF DW library finder.
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#
 #
 # DWARF library
 #
-dwarf_dw_lib_386         = $(dwarf_dir)/dw/osi386/dw.lib
-dwarf_dw_lib_axp         = $(dwarf_dir)/dw/osiaxp/dw.lib
-
-#
-# DWARF dependencies
-#
-dwarf_dw_dep_386         = $(dwarf_dir)/dw/osi386/compile.tim
-dwarf_dw_dep_axp         = $(dwarf_dir)/dw/osiaxp/compile.tim
+dwarf_dw_lib_386 = $(dwarf_dir)/dw/osi386/dw.lib
+dwarf_dw_lib_axp = $(dwarf_dir)/dw/osiaxp/dw.lib
 
 #
 # DWARF run-time DLL used
@@ -17,20 +14,13 @@ dwarf_dw_dep_axp         = $(dwarf_dir)/dw/osiaxp/compile.tim
 dwarf_dw_lib_os2_386 = $(dwarf_dir)/dw/os2386.dll/dw.lib
 dwarf_dw_lib_nt_386  = $(dwarf_dir)/dw/nt386.dll/dw.lib
 dwarf_dw_lib_nt_axp  = $(dwarf_dir)/dw/ntaxp.dll/dw.lib
-
-dwarf_dw_dep_os2_386 = $(dwarf_dir)/dw/os2386.dll/compile.tim
-dwarf_dw_dep_nt_386  = $(dwarf_dir)/dw/nt386.dll/compile.tim
-dwarf_dw_dep_nt_axp  = $(dwarf_dir)/dw/ntaxp.dll/compile.tim
 !endif
 
 #
 !ifdef bootstrap
 dwarf_dw_lib = $(dwarf_dir)/dw/$(%OBJDIR)/dw.lib
-dwarf_dw_dep = $(dwarf_dir)/dw/$(%OBJDIR)/compile.tim
 !else ifdef dwarf_dw_lib_$(host_os)_$(host_cpu)
 dwarf_dw_lib = $(dwarf_dw_lib_$(host_os)_$(host_cpu))
-dwarf_dw_dep = $(dwarf_dw_dep_$(host_os)_$(host_cpu))
 !else
 dwarf_dw_lib = $(dwarf_dw_lib_$(host_cpu))
-dwarf_dw_dep = $(dwarf_dw_dep_$(host_cpu))
 !endif

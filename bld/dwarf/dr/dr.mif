@@ -51,4 +51,3 @@ dwarfr.lib : $(c_objs)
     @%create dr.lbc
     @for %i in ($(c_objs)) do @%append dr.lbc +%i
     $(librarian) -b -n $^@ @dr.lbc
-    wtouch compile.tim

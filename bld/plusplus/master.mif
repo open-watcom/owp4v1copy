@@ -21,6 +21,8 @@ proj_name = plusplus
 
 !include $(dwarf_dir)/dw/client.mif
 
+xlibs = $(dwarf_dw_lib) $(asminline_lib)
+
 !include ../verify.mif
 !include ../ppobjs.mif
 
@@ -227,7 +229,7 @@ pre_obj_deps = global.chk errmsgs.gh ic_mask.gh
 pre_obj_deps += wpp$(target_cpu)01.int
 pre_obj_deps += $(pre_obj_deps_wasm)
 
-external_dependencies = $(cg_deps) $(dwarf_dw_dep)
+external_dependencies = $(cg_deps) $(xlibs)
 
 # objects for dll
 # obj -- normal object
@@ -453,8 +455,7 @@ pexe.lnk : $(__MAKEFILES__)
     @%append $^@ $(wlink_dbgfmt)
     @%append $^@ $(wlink_opt_common_exe)
     @for %i in ($(comp_objs_exe)) do @%append $^@ file %i
-    @%append $^@ library $(dwarf_dw_lib)
-    @for %i in ($(asinline_lib)) do @%append $^@ library %i
+    @%append $^@ library $(xlibs)
 
 #
 # -- production version
@@ -506,8 +507,7 @@ pdll.lnk : $(__MAKEFILES__)
     @%append $^@ $(wlink_dll_$(host_os)_$(host_cpu))
     @%append $^@ $(wlink_opt_common_dll)
     @for %i in ($(comp_objs_dll)) do @%append $^@ file %i
-    @%append $^@ library $(dwarf_dw_lib)
-    @for %i in ($(asinline_lib)) do @%append $^@ library %i
+    @%append $^@ library $(xlibs)
     @%append $^@ reference __DLLstart_
 
 #

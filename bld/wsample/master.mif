@@ -114,7 +114,7 @@ description = \'Open Watcom Sampler V2.2\'
 description = 'Open Watcom Sampler V2.2'
 !endif
 
-extra_l_flags = op symfile,map lib $(wres_lib) name $(xname)
+extra_l_flags = op symfile,map name $(xname)
 extra_l_flags_os2_i86 = lib os2.lib op stack=4k, newfiles
 extra_l_flags_os2 = $(extra_l_flags_os2_$(host_cpu))
 extra_l_flags_win = option heap=10k, stack=10k segment class 'CODE' preload fixed segment class 'DATA' preload fixed lib commdlg,toolhelp
@@ -176,7 +176,10 @@ $(xname).exp : $(objects) $(libs) $(__MAKEFILES__)
 
 !else ifeq target nov
 
-$(xname).nlm : $(xname).res $(objects) $(wres_lib) $(__MAKEFILES__)
+libs = ../../clib/library/nw_clib.386/ms_s/clib3s.lib &
+    $(wres_lib)
+
+$(xname).nlm : $(xname).res $(objects) $(libs) $(__MAKEFILES__)
     @%write $(%debug) tmp.lnk name $^@
     @%append tmp.lnk option osname='Novell NLM'
     @%append tmp.lnk format novell nlm $(description)
@@ -188,8 +191,7 @@ $(xname).nlm : $(xname).res $(objects) $(wres_lib) $(__MAKEFILES__)
     @for %i in ($objects) do @%append tmp.lnk file %i
     @for %i in ($(nlm_imports)) do @%append tmp.lnk import %i
     @%append tmp.lnk import @$(ow_nwoss_root)/common/imp/owclib.imp
-    @%append tmp.lnk lib $(wres_lib)
-    @%append tmp.lnk lib ../../clib/library/nw_clib.386/ms_s/clib3s.lib
+    @for %i in ($(libs)) do @%append tmp.lnk lib %i
     @%append tmp.lnk module clib
     $(linker) @tmp.lnk
     wstrip -q -a -r $^@ . $(xname).res
@@ -202,7 +204,7 @@ libs = $(plsdir)/wdos32.lib &
     $(lang_root)/lib386/dos/clib3r.lib &
     $(lang_root)/lib386/math3r.lib
 
-$(xname).exp : $(objects) $(xname).res $(wres_lib) $(__MAKEFILES__)
+$(xname).exp : $(objects) $(xname).res $(libs) $(__MAKEFILES__)
     @%write tmp.lnk format phar ext
     @%append tmp.lnk name $^@
     @%append tmp.lnk option map,nodefaultlibs
@@ -217,8 +219,12 @@ $(xname).exp : $(objects) $(xname).res $(wres_lib) $(__MAKEFILES__)
     $(linker) @tmp.lnk
     wstrip -q -a -r $^@ . $(xname).res
 !else
+
 $(xname).exe : $(objects) $(xname).res $(wres_lib) $(__MAKEFILES__)
-    $(linker) $(lflags) file {$(objects)}
+    @%write tmp.lnk $(lflags)
+    @for %i in ($(objects)) do @%append tmp.lnk file %i
+    @%append tmp.lnk lib $(wres_lib)
+    $(linker) name $^@ @tmp.lnk
 !ifeq host_os win
     $(rc) $(rc_flags) $(xname).res $^@
 !else

@@ -23,13 +23,15 @@ all: $(exe_name) .SYMBOLIC
 !include $(orl_dir)/client.mif
 !include wres.mif
 
+xlibs = $(orl_lib) $(wres_lib)
+
 !include ../mif/dis.mif
 
 !ifeq release 0
 disasm_trmem=1
 !endif
 
-extra_l_flags = library $(orl_lib) option map
+extra_l_flags = option map
 extra_l_flags_qnx = op res=wdis.u, off=8k
 
 oflags_i86 = -of
@@ -84,8 +86,8 @@ wdisasm_objs = $(stand_objs) $(dis_objs) demangle.obj trmemcvr.obj
 wdisasm_objs += trmem.obj
 !endif
 
-$(exe_name) : $(proj_name).res $(dis_prereq) $(wdisasm_objs) $(pre_deps_$(host_os)) $(orl_lib) $(wres_lib)
-        $(linker) $(lflags) name $@ file { $(wdisasm_objs) } lib $(wres_lib)
+$(exe_name) : $(proj_name).res $(dis_prereq) $(wdisasm_objs) $(pre_deps_$(host_os)) $(xlibs)
+        $(linker) $(lflags) name $@ file {$(wdisasm_objs)} lib {$(xlibs)}
 !ifeq host_os osi
         w32bind $^&.rex $^@ $(tools_root)/os2ldr.exe
         rm -f $^&.rex

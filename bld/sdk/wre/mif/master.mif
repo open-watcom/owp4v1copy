@@ -117,19 +117,24 @@ inc_dirs += $(wr_dir)/h;$(trmem_dir);$(wres_dir)/h;$(cpp_dir);$(misc_dir)
 .BEFORE
         @set include=$(inc_path)
 
-resedit_libs    = $(wacc_dir)/$(host_OS)$(host_CPU)/wacc.lib 
-resedit_libs   += $(wmenu_dir)/$(host_OS)$(host_CPU)/wmenu.lib
-resedit_libs   += $(wstring_dir)/$(host_OS)$(host_CPU)/wstring.lib
-wr_lib          = $(wr_dir)/$(host_OS)$(host_CPU)/wr.lib
+xlibs = $(wacc_dir)/$(host_OS)$(host_CPU)/wacc.lib &
+        $(wmenu_dir)/$(host_OS)$(host_CPU)/wmenu.lib &
+        $(wstring_dir)/$(host_OS)$(host_CPU)/wstring.lib &
+        $(wr_dir)/$(host_OS)$(host_CPU)/wr.lib &
+        $(wres_lib)
 
-extra_l_flags = op map, v library {$(wres_lib) $(resedit_libs) $(wr_lib)}
+extra_l_flags = op map, v
 extra_l_flags_nt = op stack=32k,heap=16k commit heap=8k
 extra_l_flags_win = op stack=32k,rwr library commdlg,ddeml
 
 # explicit rules
 #################
-$(name).exe: wremsgs.gh $(OBJS) $(wres_lib) $(resedit_libs) $(wr_lib) $(name).res
-        $(linker) $(lflags) name $^@ file {$(OBJS)}
+$(name).exe: wremsgs.gh $(OBJS) $(name).res $(xlibs)
+        @%create tmp.lnk
+        @%append tmp.lnk $(lflags)
+        @for %i in ($(OBJS)) do @%append tmp.lnk file %i
+        @for %i in ($(xlibs)) do @%append tmp.lnk lib %i
+        $(linker) name $^@ @tmp.lnk
         $(rc) $(rc_flags) -k $(name).res $^@
 
 wremsgs.gh: wretemp.gh

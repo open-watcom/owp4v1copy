@@ -200,8 +200,7 @@ extra_c_flags_wlink = -bd
 
 ldebug_386 = debug dwarf  # file $(stkdepth_dir)/stkd386.lib
 
-extra_l_flags =  op map=wl,verbose,static,noredefs libpath $(watcom_dir)/lib
-extra_l_flags += l { $(libs) }
+extra_l_flags =  op map=wl,verbose,static,noredefs
 
 !ifdef wlink_extralnk
 extra_l_flags += $(wlink_extralnk)
@@ -224,9 +223,6 @@ lflags_nt_axp = sys ntaxp_dll initinstance terminstance
 exe_lflags_nt_axp       = sys ntaxp
 exe_lflags_nt_386       = sys nt
 exe_lflags_os2_386      = sys os2v2
-extend = dll
-!else
-extend = exe
 !endif
 
 ################
@@ -238,9 +234,11 @@ extra_rc_flags = $(extra_rc_flags_$(host_os))
 
 # and finally, the miscellaneous macro definitions
 
-lnk = tmp.lnk
-
-exe = wl.$(extend)
+!ifeq sys_dll 1
+exe = wl.dll
+!else
+exe = wl.exe
+!endif
 stubexe = wlstub.exe
 
 !ifeq bootstrap 1
@@ -252,6 +250,8 @@ libs = $(wres_lib) $(dwarf_dw_lib) $(orl_lib) &
 $(clib_dir)/$(%OBJDIR)/libwatcom.a
 !endif
 
+lnk = tmp.lnk
+
 $(exe) : wlink.res $(c_objs) $(extra_objs) $(libs) $(rc_objs)
 !ifeq bootstrap 1
     $(cc) -o $^@ $(c_objs) $(extra_objs) $(libs)
@@ -260,6 +260,7 @@ $(exe) : wlink.res $(c_objs) $(extra_objs) $(libs) $(rc_objs)
     @%append $(lnk) $(lflags)
     @%append $(lnk) name $^@
     @%append $(lnk) file { $(c_objs) $(extra_objs) }
+    @%append $(lnk) lib { $(libs) }
     $(linker) @$(lnk)
 !ifeq sys_dll 1
 !ifdef build_rc_$(host_os)_$(host_cpu)
@@ -275,7 +276,7 @@ slnk = stub.lnk
 
 $(stubexe) : $(stub_objs)
     rm -f wlink.lib
-    $(librarian) wlink.lib $(exe)
+    $(librarian) -n wlink.lib $(exe)
     @%create $(slnk)
     @%append $(slnk) $(mode_lflags) $(exe_lflags_$(host_os)_$(host_cpu))
     @%append $(slnk) file { $(stub_objs) }

@@ -86,10 +86,10 @@ extra_l_flags_dos = option stack=4k
 !endif
 extra_l_flags = NAME $(xname).$(ext) OPTION MAP
 
-libs            = $(orl_lib)
+libs = $(wres_lib) $(orl_lib)
 
-$(xname).$(ext) :: usageend.gh wmake.res $(objs) $(__MAKEFILES__)
-        $(linker) $(lflags) FILE {$(objs) } LIBRARY { $(wres_lib) $(libs) }
+$(xname).$(ext) :: usageend.gh wmake.res $(objs) $(libs) $(__MAKEFILES__)
+        $(linker) $(lflags) FILE {$(objs)} LIBRARY {$(libs)}
 #
 # If the linker files were different (i.e. if we needed a QNX version),
 # the copy would be replaced by a separate link. CSK

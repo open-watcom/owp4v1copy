@@ -51,7 +51,6 @@ dw.lib : dwabenum.gh $(objs)
         @%create tmp.lbc
         @for %i in ($(objs)) do @%append tmp.lbc +%i
         $(librarian) -n -b -q $^@ @tmp.lbc
-        wtouch compile.tim
 
 ./dwmakeab.exe : dwmakeab.obj
         $(bld_link) $(dwmakeabflags)

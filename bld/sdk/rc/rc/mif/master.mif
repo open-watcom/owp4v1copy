@@ -1,6 +1,12 @@
 proj_name = wrc
 name = wrc
 
+!ifeq sys_dll 1
+xname = $(name).dll
+!else
+xname = $(name).exe
+!endif
+
 !ifndef wrc_autodepends
 wrc_autodepends = .AUTODEPEND
 !endif
@@ -68,7 +74,7 @@ extra_c_flags_rcmem = $(TRACK_MEM_OPTS)
 
 # lflags stuff
 ###############
-extra_l_flags += lib $(wres_lib) option map
+extra_l_flags = option map
 
 !ifeq sys_dll 1
 !ifeq host_os nt
@@ -91,12 +97,8 @@ inc_dirs = .;$(wrc_dir)/h;$(wres_dir)/h;$(watcom_dir)/h;$(cpp_dir);$(trmem_dir)
 
 # explicit rules
 
-!ifeq sys_dll 1
-$(name).dll : usage.rc usagej.rc rcmsg.gh $(objs) $(name).res $(wres_lib)
-!else
-$(name).exe : usage.rc usagej.rc rcmsg.gh $(objs) $(name).res $(wres_lib)
-!endif
-        $(linker) $(lflags) name $@ file { $(objs) }
+$(xname) : usage.rc usagej.rc rcmsg.gh $(objs) $(name).res $(wres_lib)
+        $(linker) $(lflags) name $@ file { $(objs) } lib {$(wres_lib)}
         @%make bindit
 !ifeq sys_dll 1
         wstrip -q -a -r $(name).dll . $(name).res

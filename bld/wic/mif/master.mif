@@ -28,13 +28,13 @@ lnk = $(name).lnk
 extra_stuff = $(tools_root)\os2ldr.exe
 !endif
 
-$(name).exe : $(objs) $(lnk) $(extra_stuff) wic.res
-    $(linker) $(lflags) @$(lnk)
+$(name).exe : $(objs) $(lnk) $(extra_stuff) wic.res $(wres_lib)
+        $(linker) $(lflags) @$(lnk)
 !ifeq host_os osi
         w32bind $(name).rex $(name).exe $(tools_root)\os2ldr.exe
         erase $(name).rex
 !endif
-    wstrip -a -r -q $(name).exe . wic.res
+        wstrip -a -r -q $(name).exe . wic.res
 
 $(lnk) : $(__MAKEFILES__)
         %create $(lnk)
