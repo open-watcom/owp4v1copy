@@ -9,5 +9,5 @@ set PROJDIR=<CWD>
     echo Building the wstrip bootstrap
     cdsay <PROJDIR>
     <MAKE> -f gnumake
-    <CPCMD> <OBJDIR>/wstrip <devdir>/build/binl/wstrip
+    <CPCMD> <OBJDIR>/wstrip <DEVDIR>/build/binl/wstrip
     cdsay <PROJDIR>

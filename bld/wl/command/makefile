@@ -34,17 +34,17 @@ command.exe : $(objs) wlink.res
 !endif
         wstrip -q -a -r command.exe . wlink.res
 
-trmem.obj : $(%devdir)/trmem/trmem.c
-        $(compile) -i="$(%devdir)/trmem"
+trmem.obj : $(%DEVDIR)/trmem/trmem.c
+        $(compile) -i="$(%DEVDIR)/trmem"
 
 dmem.obj : mem.c
-        $(compile) -dTRACKER -fo=dmem.obj -of+ -i="$(%devdir)/trmem"
+        $(compile) -dTRACKER -fo=dmem.obj -of+ -i="$(%DEVDIR)/trmem"
 
 msg.obj : msg.c ../h/msg.h ../h/wlnkmsg.h
-        $(compile) -i="$(%devdir)/plusplus/supp"
+        $(compile) -i="$(%DEVDIR)/plusplus/supp"
 
-demangle.obj : $(%devdir)/plusplus/supp/demangle.c
-        $(compile) -i="$(%devdir)/plusplus/supp"
+demangle.obj : $(%DEVDIR)/plusplus/supp/demangle.c
+        $(compile) -i="$(%DEVDIR)/plusplus/supp"
 
 wlink.res : ../h/wlink.rc ../h/wlnkmsg.h
 #       wrc -r -fo=$^@ ../h/wlink.rc

@@ -17,7 +17,7 @@ set BUILD_PLATFORM=
     if not exist <PROJDIR>\<OBJDIR> mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
     wmake -h -f ../systems/dos/makefile prebuild=1
-    <CPCMD> *.exe <owroot>\bld\build\bin\
+    <CPCMD> *.exe <OWROOT>\bld\build\bin\
     cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
@@ -25,7 +25,7 @@ set BUILD_PLATFORM=
     if not exist <PROJDIR>\<OBJDIR> mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
     wmake -h -f ../systems/os2386/makefile prebuild=1
-    <CPCMD> *.exe <owroot>\bld\build\binp\
+    <CPCMD> *.exe <OWROOT>\bld\build\binp\
     cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
@@ -33,7 +33,7 @@ set BUILD_PLATFORM=
     if not exist <PROJDIR>\<OBJDIR> mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
     wmake -h -f ../systems/nt386/makefile prebuild=1
-    <CPCMD> *.exe <owroot>\bld\build\binnt\
+    <CPCMD> *.exe <OWROOT>\bld\build\binnt\
     cdsay <PROJDIR>
 
 [ BLOCK <1> clean ]

@@ -5,19 +5,19 @@
 #================================
     cdsay <PROJDIR>\dos386
     wmake -h
-    <CPCMD> whc.exe <owroot>\bld\build\bin\whc.exe
+    <CPCMD> whc.exe <OWROOT>\bld\build\bin\whc.exe
     cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
     cdsay <PROJDIR>\os2386
     wmake -h
-    <CPCMD> whc.exe <owroot>\bld\build\binp\whc.exe
+    <CPCMD> whc.exe <OWROOT>\bld\build\binp\whc.exe
     cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
     cdsay <PROJDIR>\nt386
     wmake -h
-    <CPCMD> whc.exe <owroot>\bld\build\binnt\whc.exe
+    <CPCMD> whc.exe <OWROOT>\bld\build\binnt\whc.exe
     cdsay <PROJDIR>

@@ -12,7 +12,7 @@ cpu = x86
 which = TRAP
 
 extra_objs = $(remote_objs)
-inc_dirs = $(%owroot)/contrib/wattcp/inc
-extra_libs = $(%owroot)/contrib/wattcp/lib/wattcpwl.lib
+inc_dirs = $(%OWROOT)/contrib/wattcp/inc
+extra_libs = $(%OWROOT)/contrib/wattcp/lib/wattcpwl.lib
 
 !include $(trap_dir)/master.mif

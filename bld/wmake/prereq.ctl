@@ -9,5 +9,5 @@ set PROJDIR=<CWD>
     echo Building the wmake bootstrap
     cdsay <PROJDIR>
     <MAKE> -f gnumake
-    <CPCMD> <OBJDIR>/wmake <devdir>/build/binl/wmake
+    <CPCMD> <OBJDIR>/wmake <DEVDIR>/build/binl/wmake
     cdsay <PROJDIR>
