@@ -35,14 +35,14 @@ private:
 
 class _WPRTLINK bad_cast : public exception {
 public:
-    bad_cast( string const& what_arg ) _WCTHROWS(())
+    bad_cast( string const& what_arg ) _WCTHROWS()
         : exception( what_arg ) {
     }
 };
 
 class _WPRTLINK bad_typeid : public exception {
 public:
-    bad_typeid( string const& what_arg ) _WCTHROWS(())
+    bad_typeid( string const& what_arg ) _WCTHROWS()
         : exception( what_arg ) {
     }
 };

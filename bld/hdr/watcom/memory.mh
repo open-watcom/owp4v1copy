@@ -89,15 +89,15 @@ namespace std {
     typedef       T              value_type;
     // template<class U> struct rebind { typedef allocator<U> other; };
 
-    allocator( ) _WCTHROW(())
+    allocator( )
       { }
 
-    allocator( const allocator & ) _WCTHROW(())
+    allocator( const allocator & )
       { }
 
-    // template<class U> allocator( const allocator<U> & ) _WCTHROW(());
+    // template<class U> allocator( const allocator<U> & )
 
-   ~allocator( ) _WCTHROW(())
+   ~allocator( )
       { }
 
     pointer address( reference r ) const
@@ -112,7 +112,7 @@ namespace std {
     void deallocate( pointer p, size_type )
       { delete [] (unsigned char *)p; }
 
-    size_type max_size() const _WCTHROW(())
+    size_type max_size() const
       { return 0; }  // FIX ME
 
     void construct( pointer p, const T &value )
@@ -220,42 +220,42 @@ namespace std {
   public:
     typedef T element_type;
 
-    explicit auto_ptr( T *p = 0 ) _WCTHROW(()) : ptr( p )
+    explicit auto_ptr( T *p = 0 ) : ptr( p )
       { }
 
-    auto_ptr( auto_ptr &other ) _WCTHROW(()) : ptr( other.release() )
+    auto_ptr( auto_ptr &other ) : ptr( other.release() )
       { }
 
-    // template<class U> auto_ptr( auto_ptr<U> & ) _WCTHROW(());
+    // template<class U> auto_ptr( auto_ptr<U> & );
 
-    auto_ptr &operator=( auto_ptr &other ) _WCTHROW(())
+    auto_ptr &operator=( auto_ptr &other )
       { reset( other.release() ); return( *this ); }
 
-    // template<class U> auto_ptr &operator=( auto_ptr<U> & ) _WCTHROW(());
+    // template<class U> auto_ptr &operator=( auto_ptr<U> & );
 
-   ~auto_ptr( ) _WCTHROW(())
+   ~auto_ptr( ) _WCTHROWS()
       { delete ptr; }
 
-    T &operator*( ) const _WCTHROW(())
+    T &operator*( ) const
       { return( *ptr ); }
 
-    T *operator->( ) const _WCTHROW(())
+    T *operator->( ) const
       { return( ptr ); }
 
-    T *get( ) const _WCTHROW(())
+    T *get( ) const
       { return( ptr ); }
 
-    T *release( ) _WCTHROW(())
+    T *release( )
       { T *tmp = ptr; ptr = 0; return( tmp ); }
 
-    void reset( T *p = 0 ) _WCTHROW(())
+    void reset( T *p = 0 ) _WCTHROWS()
       { if (ptr != p) delete ptr; ptr = p; }
 
-    // auto_ptr( auto_ptr_ref<T> ) _WCTHROW(());
+    // auto_ptr( auto_ptr_ref<T> ) _WCTHROWS();
 
-    // template<class U> operator auto_ptr_ref<U>( ) _WCTHROW(());
+    // template<class U> operator auto_ptr_ref<U>( ) _WCTHROWS();
 
-    // template<class U> operator auto_ptr<U>( ) _WCTHROW(());
+    // template<class U> operator auto_ptr<U>( ) _WCTHROWS();
 
   private:
     T *ptr;
