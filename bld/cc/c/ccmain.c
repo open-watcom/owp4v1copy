@@ -432,7 +432,7 @@ void DoCCompile( char **cmdline )
                 FreeMacroSegments();
             }
         }
-        if( ErrCount == 0 ) {
+        if( ErrCount == 0 && DepFile ) {
             DumpDepFile();
             fclose( DepFile );
         }
