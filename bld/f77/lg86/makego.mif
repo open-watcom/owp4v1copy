@@ -159,7 +159,7 @@ res_dependencies += $(wl95_dir)/h/wlink.rc
 !endif
 
 errmsg.res : $(res_dependencies)
-   $(rc_aui) -I"$(f77_dir)/h" -fo=$^@ -dMSG_LANG_BASE=0 -dMSG_LANG_SPACING=0 ../c/errmsg.rc
+   $(rc_aui) $(inc_path) -fo=$^@ -dMSG_LANG_BASE=0 -dMSG_LANG_SPACING=0 ../c/errmsg.rc
 
 !endif
 
