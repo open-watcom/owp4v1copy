@@ -24,16 +24,18 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  tbyte format / long double structure definition
 *
 ****************************************************************************/
 
 #ifndef _TBYTE_H
 #define _TBYTE_H
 
-#include "xfloat.h"
+typedef struct {
+        unsigned __int64 m;
+        unsigned short e;
+} TB_LD;
 
-long_double * strtotb( const char *bufptr, long_double *pld, char **endptr, char negative );
+TB_LD * strtotb( char *bufptr, TB_LD *pld, char negative );
 
 #endif

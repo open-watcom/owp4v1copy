@@ -111,10 +111,10 @@ static void output_float( char index, char no_of_bytes, char negative )
     float               float_value;
     char                *char_ptr;
     uint_8              count;
-    long_double         tbyte;
+    TB_LD               tbyte;
 
     if( no_of_bytes == BYTE_10 ) {
-        char_ptr = (char *)strtotb( AsmBuffer[index]->string_ptr, &tbyte, NULL, negative );
+        char_ptr = (char *)strtotb( AsmBuffer[index]->string_ptr, &tbyte, negative );
     } else {
         double_value = strtod( AsmBuffer[index]->string_ptr, NULL );
         if( negative ) {
