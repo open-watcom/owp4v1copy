@@ -66,24 +66,24 @@ extern  pointer         AskLblPatch(label_handle);
 extern  void            TellAddress(label_handle,offset);
 extern  sym_handle      AskForLblSym(label_handle);
 extern  void            FatalError(char *);
-extern  void            CloseObj();
+extern  void            CloseObj( void );
 extern  void            PatchObj(objhandle,uint,byte*,int);
 extern  void            GetFromObj(objhandle,uint,byte*,int);
-extern  void            ScratchObj();
-extern  objhandle       AskObjHandle();
+extern  void            ScratchObj( void );
+extern  objhandle       AskObjHandle( void );
 extern  void            PutObjRec(byte,byte*,uint);
-extern  void            OpenObj();
+extern  void            OpenObj( void );
 extern  char            *CopyStr(char*,char*);
-extern  void            EmptyQueue();
+extern  void            EmptyQueue( void );
 extern  uint            Length(pointer);
 extern  void            TellCommonLabel(label_handle, int );
 extern  void            TellUnreachLabels(void);
-extern  void            KillLblRedirects();
+extern  void            KillLblRedirects( void );
 /* DF interface */
 extern  void            DFObjInitInfo( void );
 extern  void            DFObjLineInitInfo( void );
 extern  void            DFBegCCU( seg_id code, long dbg_pch );
-extern  void            DFDefSegs();
+extern  void            DFDefSegs( void );
 extern  void            DFObjFiniDbgInfo( offset codesize );
 extern  void            DFObjLineFiniDbgInfo( void );
 extern  void            DFLineNum( cue_state *, offset );
@@ -91,24 +91,68 @@ extern  void            DFSegRange( void );
 extern  void            DFSymRange( sym_handle, offset );
 /* CV interface */
 extern  void            CVObjInitInfo( void );
-extern  void            CVDefSegs();
+extern  void            CVDefSegs( void );
 extern  void            CVLineNum( cue_state *, offset );
-extern  void            CVObjFiniDbgInfo();
+extern  void            CVObjFiniDbgInfo( void );
 /* WV interface */
 extern  void            WVObjInitInfo( void );
 extern  void            WVTypesEof( void );
 extern  void            WVDmpCueInfo( long_offset here );
 
 /* Forward ref's */
-extern  array_control   *InitArray(int ,int ,int );
+static  array_control   *InitArray(int ,int ,int );
 extern  seg_id          SetOP(seg_id );
 extern  offset          AskLocation(void);
-extern  void            OutOffset(offset );
-extern  void            OutInt(int );
+static  void            OutOffset(offset );
+static  void            OutInt(int );
 extern  void            IncLocation(offset );
-extern  void            DecLocation(offset );
+static  void            DecLocation(offset );
 extern  void            OutDataInt(int );
 static  void            ChangeObjSrc( char *fname );
+static  void            OutName( char *name, void *dest );
+static  void            DoSegment( segdef *seg, array_control *dgroup_def,
+                                   array_control *tgroup_def, bool use_16 );
+static  void            NeedMore( array_control *arr, int more );
+static  void            InitFPPatches(void);
+static  void            OutIdx( int value, array_control *dest );
+static  void            KillArray( array_control *arr );
+static  void            DoSegGrpNames( array_control *dgroup_def,
+                                       array_control *tgroup_def );
+static  void            OutModel( array_control *dest );
+static  void            OutString( char *name, array_control *dest );
+static  void            DoASegDef( index_rec *rec, bool use_16 );
+static  void            FillArray( array_control *res, int size,
+                                   int starting, int increment );
+static  void            OutCGroup( int sidx );
+static  void            OutGroup( int sidx, array_control *group_def, int *index_p );
+static  void            FiniTarg( void );
+static  void            NormalData( void );
+static  void            KillStatic( array_control *arr );
+static  void            FlushObject( void );
+static  void            EndModule( void );
+static  void            FiniAbsPatches( void );
+static  void            OutByte( byte value );
+static  void            CheckLEDataSize( int max_size, bool need_init );
+static  void            EjectLEData( void );
+static  import_handle   GenImport( sym_handle sym, import_type kind );
+static  void            FlushSelect( void );
+static  void            FlushLineNum( void );
+static  void            OutObjectName( sym_handle sym, array_control *dest );
+static  void            EjectExports( void );
+extern  void            OutSelect( bool starts );
+extern  void            OutRTImportRel( int rtindex, fix_class class, bool rel );
+extern  void            OutDataByte( byte value );
+extern  void            OutDataLong( long value );
+static  void            DoFix( int idx, bool rel, base_type base,
+                               fix_class class, int sidx ); 
+extern  void            OutDLLExport( uint words, sym_handle sym );
+static  void            CheckImportSwitch( bool next_is_static );
+static  void            InitLineInfo( void );
+static  void            EjectImports( void );
+static  void            OutLEDataStart( bool iterated );
+#ifndef _OMF_32
+static  void            OutLongOffset( long_offset value );
+#endif
 
 extern  seg_id          DbgLocals;
 extern  seg_id          DbgTypes;
@@ -198,9 +242,8 @@ typedef struct virt_func_ref_list {
 #define _ARRAY( what, type )    (*(type *)((char*)(what)->array + (what)->used))
 #define _ARRAYOF( what, type )  ((type *)(what)->array)
 #define _CHGTYPE( what, type )  (*(type *)&(what))
-static  void    OutLongOffset( long_offset value );/*forward ref*/
 
-extern  void    InitSegDefs() {
+extern  void    InitSegDefs( void ) {
 /*****************************/
 
     SegDefs = NULL;
@@ -250,7 +293,7 @@ static unsigned GetNameIdx( char *name, char *suff, bool alloc )
     return( NameIndex );
 }
 
-static void FlushNames()
+static void FlushNames( void )
 {
     /*
         don't want to allocate memory because we might be in a low memory
@@ -277,7 +320,7 @@ static void FlushNames()
     }
 }
 
-bool FreeObjCache()
+bool FreeObjCache( void )
 {
     lname_cache         *tmp;
 
@@ -327,11 +370,11 @@ extern  void    DefSegment( seg_id id, seg_attr attr, char *str, uint align, boo
         SegDefs = NULL;
     }
     if( first_code != BACKSEGS && _IsModel( DBG_DF ) ) {
-        DFBegCCU( first_code, NULL );
+        DFBegCCU( first_code, 0 );
     }
 }
 
-static DoEmptyQueue()
+static void DoEmptyQueue( void )
 /*******************/
 {
     EmptyQueue();
@@ -355,7 +398,7 @@ static  index_rec       *AskSegIndex( seg_id seg ) {
 
 
 
-extern  void    ObjInit() {
+extern  void    ObjInit( void ) {
 /*************************/
 
     array_control       *names; /* for LNAMES*/
@@ -658,7 +701,7 @@ static  void    SegmentClass( index_rec *rec ) {
 
     char        *class_name;
 
-    class_name = FEAuxInfo( (pointer)rec->seg, CLASS_NAME );
+    class_name = FEAuxInfo( (pointer)(size_t)rec->seg, CLASS_NAME );
     if( class_name == NULL ) return;
     rec->cidx = GetNameIdx( class_name, "", TRUE );
 }
@@ -716,7 +759,7 @@ static  void    DoSegment( segdef *seg, array_control *dgroup_def,
 /******************************************************************************************************/
 
     index_rec   *rec;
-    seg_id      old;
+    seg_id      old = 0;
 
     rec = AskSegIndex( seg->id );
     if( rec == NULL ) {
@@ -890,28 +933,28 @@ extern  bool    AskSegROM( segment_id id ) {
 }
 
 
-extern  seg_id  AskBackSeg() {
+extern  seg_id  AskBackSeg( void ) {
 /****************************/
 
     return( BackSeg );
 }
 
 
-extern  seg_id  AskCodeSeg() {
+extern  seg_id  AskCodeSeg( void ) {
 /****************************/
 
     return( CodeSeg );
 }
 
 
-extern  bool    HaveCodeSeg() {
+extern  bool    HaveCodeSeg( void ) {
 /*****************************/
 
     return( CodeSeg != BACKSEGS );
 }
 
 
-extern  seg_id  AskAltCodeSeg() {
+extern  seg_id  AskAltCodeSeg( void ) {
 /****************************/
 
     return( CodeSeg );
@@ -919,7 +962,7 @@ extern  seg_id  AskAltCodeSeg() {
 
 static  seg_id  Code16Seg;
 
-extern  seg_id  AskCode16Seg() {
+extern  seg_id  AskCode16Seg( void ) {
 /******************************/
     if( Code16Seg == 0 ) {
         Code16Seg = --BackSegIdx;
@@ -1082,7 +1125,7 @@ static  index_rec       *AskIndexRec( unsigned_16 sidx ) {
     return( rec );
 }
 
-static FiniWVTypes( void ){
+static void FiniWVTypes( void ){
 /**********************/
     seg_id       old;
     long_offset  curr;
@@ -1100,7 +1143,7 @@ static FiniWVTypes( void ){
     SetOP( old );
 }
 
-extern  void    AbortObj() {
+extern  void    AbortObj( void ) {
 /**************************/
 
     ScratchObj();
@@ -1126,7 +1169,7 @@ static void DoSegARange( offset *codesize, index_rec *rec ){
     }
 }
 
-extern  void    ObjFini() {
+extern  void    ObjFini( void ) {
 /*************************/
 
     index_rec   *rec;
@@ -1212,7 +1255,7 @@ extern  void    ObjFini() {
 }
 
 
-static  void    FiniTarg() {
+static  void    FiniTarg( void ) {
 /**************************/
 
     union{
@@ -1317,7 +1360,7 @@ static  void    FreeAbsPatch( abspatch *patch ) {
 }
 
 
-static  void    FiniAbsPatches() {
+static  void    FiniAbsPatches( void ) {
 /********************************/
 
     abspatch    *patch;
@@ -1421,7 +1464,7 @@ static  void    OutExport( sym_handle sym ) {
 }
 
 
-static  void    GenComdef() {
+static  void    GenComdef( void ) {
 /****************************/
 
     array_control       *comdef;
@@ -1501,9 +1544,9 @@ static  void    GenComdef() {
     }
 }
 
-static void GetSymLName( char *name, unsigned *nidx )
+static void GetSymLName( char *name, void *nidx )
 {
-    *nidx = GetNameIdx( name, "", TRUE );
+    *(unsigned *)nidx = GetNameIdx( name, "", TRUE );
 }
 
 static unsigned NeedComdatNidx( import_type kind ) {
@@ -1518,7 +1561,7 @@ static unsigned NeedComdatNidx( import_type kind ) {
 }
 
 
-static  void    NormalData() {
+static  void    NormalData( void ) {
 /****************************/
 
     GenComdef();
@@ -1711,7 +1754,7 @@ extern  void    AbsPatch( abspatch *patch, offset lc ) {
 }
 
 
-static  void    SetAbsPatches() {
+static  void    SetAbsPatches( void ) {
 /*******************************/
 
     abspatch    *patch;
@@ -1729,7 +1772,7 @@ static  void    SetAbsPatches() {
 }
 
 
-static  void    SetPatches() {
+static  void    SetPatches( void ) {
 /****************************/
 
     temp_patch          *curr_pat;
@@ -1752,7 +1795,7 @@ static  void    SetPatches() {
 }
 
 
-extern  array_control   *InitPatch() {
+extern  array_control   *InitPatch( void ) {
 /************************************/
 
 #define MODEST_PAT 10
@@ -1762,7 +1805,7 @@ extern  array_control   *InitPatch() {
 }
 
 
-static  void    InitFPPatches() {
+static  void    InitFPPatches( void ) {
 /*******************************/
 
     int i;
@@ -1828,7 +1871,7 @@ extern  void    OutPatch( label_handle lbl, patch_attr attr ) {
     obj->patches = pat;
 }
 
-extern  abspatch        *NewAbsPatch() {
+extern  abspatch        *NewAbsPatch( void ) {
 /**************************************/
 
     abspatch    *new;
@@ -2000,6 +2043,8 @@ static  void    DoFix( int idx, bool rel, base_type base,
             case F_PTR:
                 class = F_PHAR_PTR;
                 break;
+            default:
+                break;
             }
         } else {
             switch( class ) {
@@ -2011,6 +2056,8 @@ static  void    DoFix( int idx, bool rel, base_type base,
                 break;
             case F_PTR:
                 class = F_MS_PTR;
+                break;
+            default:
                 break;
             }
         }
@@ -2298,7 +2345,7 @@ static  void    AddLineInfo( cg_linenum line, object *obj, offset lc ) {
     OutBuff = old->array;
 }
 
-static  void    SetPendingLine() {
+static  void    SetPendingLine( void ) {
 /********************************/
 
     line_num_entry      *old_line;
@@ -2345,7 +2392,7 @@ extern  unsigned        SavePendingLine( unsigned new ) {
 #define INCREMENT_LINE  200
 
 
-static  void    InitLineInfo() {
+static  void    InitLineInfo( void ) {
 /******************************/
 
     object      *obj;
@@ -2374,7 +2421,7 @@ static  void    InitLineInfo() {
 
 
 
-static  void    FlushLineNum() {
+static  void    FlushLineNum( void ) {
 /******************************/
 
     object      *obj;
@@ -2396,7 +2443,7 @@ static  void    FlushLineNum() {
 }
 
 
-static  void    EjectImports() {
+static  void    EjectImports( void ) {
 /******************************/
 
     unsigned    rec;
@@ -2413,7 +2460,7 @@ static  void    EjectImports() {
 }
 
 
-static void     EjectLEData() {
+static void     EjectLEData( void ) {
 /*****************************/
 
     object      *obj;
@@ -2462,7 +2509,7 @@ static void     EjectLEData() {
 }
 
 
-static  void    EjectExports() {
+static  void    EjectExports( void ) {
 /******************************/
 
     object      *obj;
@@ -2481,7 +2528,7 @@ static  void    EjectExports() {
 }
 
 
-static  void    FlushObject() {
+static  void    FlushObject( void ) {
 /*****************************/
 
     object      *obj;
@@ -2501,7 +2548,7 @@ static  void    FlushObject() {
 }
 
 
-static  void    EndModule() {
+static  void    EndModule( void ) {
 /***************************/
 
     byte        b;
@@ -2584,10 +2631,11 @@ static  void    OutString( char *name, array_control *dest ) {
     dest->used += len;
 }
 
-static  void    OutName( char *name, array_control *dest ) {
+static  void    OutName( char *name, void *dst ) {
 /**********************************************************/
 
     int len;
+    array_control *dest = dst;
 
     len = Length( name );
     NeedMore( dest, len + 1 );
@@ -2624,7 +2672,7 @@ static  void    OutConcat( char *name1, char *name2, array_control *dest ) {
 #endif
 
 
-static  void    SetMaxWritten() {
+static  void    SetMaxWritten( void ) {
 /*******************************/
 
     if( CurrSeg->location > CurrSeg->max_written ) {
@@ -2749,7 +2797,7 @@ extern  void    OutSelect( bool starts ) {
     CurrSeg->start_data_in_code = FALSE;
 }
 
-static void FlushSelect()
+static void FlushSelect( void )
 {
     if( SelIdx != 0 ) OutSelect( FALSE );
 }
@@ -3014,13 +3062,13 @@ extern  seg_id  SetOP( seg_id seg ) {
     return( old );
 }
 
-extern  seg_id  AskOP() {
+extern  seg_id  AskOP( void ) {
 /************************/
 
     return( CurrSeg->seg );
 }
 
-extern  bool    NeedBaseSet() {
+extern  bool    NeedBaseSet( void ) {
 /****************************/
 
     bool        need;
@@ -3031,13 +3079,13 @@ extern  bool    NeedBaseSet() {
 }
 
 
-extern  offset  AskLocation() {
+extern  offset  AskLocation( void ) {
 /*****************************/
 
     return( CurrSeg->location );
 }
 
-extern  offset  AskMaxSize() {
+extern  offset  AskMaxSize( void ) {
 /*****************************/
 
     return( CurrSeg->max_size );
@@ -3058,13 +3106,13 @@ extern  void    SetBigLocation( long_offset loc ) {
     }
 }
 
-extern  long_offset  AskBigLocation() {
+extern  long_offset  AskBigLocation( void ) {
 /*****************************/
 
     return( CurrSeg->location );
 }
 
-extern  long_offset  AskBigMaxSize() {
+extern  long_offset  AskBigMaxSize( void ) {
 /*****************************/
 
     return( CurrSeg->max_size );
@@ -3252,6 +3300,8 @@ extern  bool            AskNameCode( pointer hdl, cg_class class ) {
     case CG_VTB:
     case CG_CLB:
         return( TRUE );
+    default:
+        break;
     }
     return( FALSE );
 }
