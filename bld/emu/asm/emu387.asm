@@ -38,9 +38,13 @@ _NW   = 2 ;     Netware 386
 _QNX  = 3 ;     QNX/386
 
 ifdef __WIN387__
+WIN31COMPAT equ 1
         include win30VMM.Inc
+;        include VMM.Inc
 
-VxD_LOCKED_CODE_SEG
+;VxD_LOCKED_CODE_SEG
+_LTEXT	SEGMENT
+   ASSUME   cs:FLAT, ds:FLAT, es:FLAT, ss:FLAT
 
 else
 _DATA segment dword public 'DATA'
@@ -65,24 +69,28 @@ defp            macro   dsym
          dsym   proc    near
                 endm
 
+endproc         macro   dsym
+         dsym   endp
+                endm
+
 xref            macro   dsym
                 endm
 
 ifdef __WIN387__
 startdata       macro
-VxD_LOCKED_DATA_SEG
+;VxD_LOCKED_DATA_SEG
+_LDATA	SEGMENT
+  ALIGN 4 
                 endm
 enddata         macro
-VxD_LOCKED_DATA_ENDS
+;VxD_LOCKED_DATA_ENDS
+_LDATA	ENDS
                 endm
 endmod          macro
-VxD_LOCKED_CODE_ENDS
+;VxD_LOCKED_CODE_ENDS
+_LTEXT	ENDS
                 endm
 else
-endproc         macro   dsym
-         dsym   endp
-                endm
-
 endmod          macro
 _TEXT           ends
                 endm

@@ -198,11 +198,11 @@ stkop1  db      _0_,_0_,02o,03o,_i_,_0_,_i_,_0_         ; stack operand
         db      _0_,71o,72o,73o,_i_,75o,_i_,77o
 
 _mova   macro   reg,label
-        ifdef   __WIN387__
-          mov   reg,label
-        else
+;        ifdef   __WIN387__
+;          mov   reg,label
+;        else
           lea   reg,label
-        endif
+;        endif
         endm
 
 get_st0 macro
@@ -698,7 +698,15 @@ ifdef __WIN387__
           _quif e                       ; - - yes, use pre-calculated base
           push  eax                     ; - - save eax
           movzx ecx,cx                  ; - - selector to map
-          VMMcall _SelectorMapFlat,<WINVMHandle,ecx,0>
+
+;          VMMcall _SelectorMapFlat,<WINVMHandle,ecx,0>
+          push  0
+          push  ecx
+          push  WINVMHandle
+          int   20h
+          dd    1006Eh
+          add   esp,0ch
+
           add   ebx,eax                 ; - - add base of selector to relative
                                         ;     offset from start of selector
           pop   eax                     ; - - restore eax
@@ -1216,11 +1224,11 @@ st_top2 macro rtn
         call    __&rtn
         endm
 
-real10  struc
+real10x  struc
         bytes1to4       dd      0
         bytes5to8       dd      0
         bytes9n10       dw      0
-real10  ends
+real10x  ends
 
 ifdef SEGMENTED
 mov10   macro   src_seg,src_off,dst_seg,dst_off
@@ -1698,10 +1706,11 @@ s470:;  fstsw   ax
         getword ax,status       ; get status word
 ifdef __WIN387__
         mov     ebp,[esp]       ; get access to saved registers
+        mov     word ptr S_EAX[ebp],ax   ; update user's AX
 else
         mov     ebp,esp         ; get access to saved registers
-endif
         mov     S_EAX[ebp],ax   ; update user's AX
+endif
         done
 
 ifdef __WIN387__

@@ -50,7 +50,8 @@ emu387: $(objs)
 !else ifeq host_OS win
 
 emu387w.obj: emu387.asm $(INCS)
-    $(as) /d_OS=_PLDT /d__WIN387__ /I$(mathlib_dir)\h /I$(emu386)\inc $[@
+    $(as) /d_OS=_PLDT /d__WIN387__ /I$(mathlib_dir)\h /I$(emu386)\inc /dOFFSET32=OFFSET /fo=$^@ $[@
+#    ml /D_OS=_PLDT /D__WIN387__ /I$(mathlib_dir)\h /I$(emu386)\inc /Fl$[*.lst /Zm /c /Sf $[@
 
 !else
 
