@@ -88,6 +88,7 @@ call zipit plib_samples
 call zipit win_samples
 call zipit ide_samples
 call zipit f_samples
+call zipit f_src
 call zipit misc_src
 call zipit os2api
 call zipit_nolic w16api

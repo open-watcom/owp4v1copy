@@ -1,4 +1,4 @@
-           Overview of all Open Watcom C/C++/FORTRAN ZIP archives                       
+           Overview of all Open Watcom C/C++/FORTRAN ZIP archives
            ======================================================
 
 Files common to both Open Watcom C/C++ and FORTRAN 77
@@ -121,7 +121,7 @@ fc_hlp_os2          - Help files (OS/2 host)
 fc_hlp_nt           - Help files (NT host)
 
 f_samples           - FORTRAN sample programs
-
+f_src               - FORTRAN source code and additional sample programs
 
 Extra stuff
 ===========
