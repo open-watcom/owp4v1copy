@@ -1,0 +1,24 @@
+Key Concepts:	keycon.doc
+
+The WinHelp internal filesystem:	whifs.doc
+
+B-Trees:	b_tree.doc
+
+Compression:	compress.doc
+
+Internal files overview:	files.doc
+
+Internal files:
+	|SYSTEM:	system.doc
+	|FONT:		font.doc
+	|Phrases:	phrases.doc
+	|TOPIC:		topic.doc	(long)
+	|TTLBTREE:	ttlbtree.doc
+	|TOMAP:		tomap.doc
+	|CONTEXT:	context.doc
+	|CTXOMAP:	ctxomap.doc
+	|KWBTREE:	kwbtree.doc
+	|KWMAP:		kwmap.doc
+	|KWDATA:	kwdata.doc
+	Baggage:	baggage.doc
+	Bitmap files:	bmx.doc

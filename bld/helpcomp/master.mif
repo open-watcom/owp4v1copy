@@ -1,0 +1,42 @@
+proj_name = whc
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+inc_dirs = ..\h;$(cpp_dir)
+
+.cpp: ..\cpp
+.c: $(trmem_dir)
+
+objs =                  &
+        whc.obj         &
+        hpjread.obj     &
+        hlpdir.obj      &
+        btrees.obj      &
+        myfile.obj      &
+        baggage.obj     &
+        system.obj      &
+        font.obj        &
+        context.obj     &
+        ctxomap.obj     &
+        ttlbtree.obj    &
+        keywords.obj    &
+        scanning.obj    &
+        hcerrors.obj    &
+        mem.obj         &
+        trmem.obj       &
+        topic.obj       &
+        phrase.obj      &
+        bmx.obj         &
+        compress.obj    &
+        parsing.obj
+
+
+.cpp.obj: $($(proj_name)_autodepends)
+        @set include=$(inc_path)
+        $(comp386plus) -xs $(cflags) $(extra_c_flags_$[&) $[@
+
+$(proj_name).exe : $(objs)
+        $(linker) option quiet $(lflags) name $^. file { $< }
+
