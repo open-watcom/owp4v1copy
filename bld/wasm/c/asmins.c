@@ -1664,15 +1664,6 @@ int AsmParse()
                 in_epilogue = 0;
                 rCode->info.token = AsmBuffer[i]->value;
                 break;
-            case T_IRET:
-            case T_IRETD:
-                if(( CurrProc != NULL ) && ( in_epilogue == 0 )) {
-                    in_epilogue = 1;
-                    return Ret( i, Token_Count, TRUE );
-                }
-                in_epilogue = 0;
-                rCode->info.token = AsmBuffer[i]->value;
-                break;
 #endif
             default:
                 rCode->info.token = AsmBuffer[i]->value;
