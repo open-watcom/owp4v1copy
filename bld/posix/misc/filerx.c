@@ -66,7 +66,7 @@ NULL,
 /*
  * FileMatch - check if a file matches a wild card
  */
-int FileMatch( regexp *crx, char *name )
+int FileMatch( void *crx, char *name )
 {
     int i;
 
@@ -109,7 +109,7 @@ int FileNameWild( char *wild,  int isrx )
 /*
  * FileMatchInit - start file matching
  */
-char *FileMatchInit( regexp **crx, char *wild )
+char *FileMatchInit( void **crx, char *wild )
 {
     char        *tomatch;
     int         i,j,len;
@@ -170,7 +170,7 @@ char *FileMatchInit( regexp **crx, char *wild )
 /*
  * FileMatchFini - done with file matching
  */
-void FileMatchFini( regexp *crx )
+void FileMatchFini( void *crx )
 {
     MemFree( crx );
 

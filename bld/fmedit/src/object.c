@@ -24,13 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Generic routines handling interactions with various objects.
 *
 ****************************************************************************/
 
-
-/* OBJECT.C - generic routines to handle interactions with various objects */
 
 #include <string.h>
 #include <windows.h>

@@ -24,13 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+* Description:  Routines to handle the operations on a CURROBJ.
 *               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
-
-/* CURROBJ.C - routines to handle the operations on a CURROBJ */
 
 #include <windows.h>
 
@@ -43,14 +41,14 @@
 /* forward references */
 
 static BOOL PASCAL CurrObjDispatch( ACTION, CURROBJ *, void *, void * );
-static BOOL CurrObjDestroy( CURROBJ *, void *, void * );
-static BOOL CurrObjValidateAction( CURROBJ *, ACTION *, void * );
-static BOOL CurrObjGetObject( CURROBJ *, OBJPTR *, OBJPTR );
-static BOOL CurrObjAddObject( CURROBJ *, OBJPTR, BOOL * );
-static BOOL CurrObjDeleteObject( CURROBJ * , OBJPTR, BOOL * );
-static BOOL CurrObjGetPrimary( CURROBJ *, OBJPTR *, BOOL * );
-static BOOL CurrObjShowSelBoxes( CURROBJ * obj, BOOL * show, void * p2 );
-static BOOL CurrObjNotify( CURROBJ * c, NOTE_ID * id, void * p2 );
+static BOOL CurrObjDestroy( OBJPTR, void *, void * );
+static BOOL CurrObjValidateAction( OBJPTR, void *, void * );
+static BOOL CurrObjGetObject( OBJPTR, void *, void * );
+static BOOL CurrObjAddObject( OBJPTR, void *, void * );
+static BOOL CurrObjDeleteObject( OBJPTR, void *, void * );
+static BOOL CurrObjGetPrimary( OBJPTR, void *, void * );
+static BOOL CurrObjShowSelBoxes( OBJPTR, void *, void * );
+static BOOL CurrObjNotify( OBJPTR, void *, void * );
 
 static DISPATCH_ITEM CurrObjActions[] = {
     { DESTROY,          CurrObjDestroy          }
@@ -82,14 +80,16 @@ extern BOOL PASCAL CurrObjDispatch( ACTION id, CURROBJ * c,
     return( FALSE );
   }
 
-static BOOL CurrObjValidateAction( CURROBJ * c, ACTION * idptr, void * p2 )
+static BOOL CurrObjValidateAction( OBJPTR _c, void * _idptr, void * p2 )
 /*************************************************************************/
 
 /* check if the desired action is valid for and CURROBJ */
 
   {
+    CURROBJ     *c = _c;
+    ACTION      *idptr = _idptr;
     int         i;
-    NOTE_ID *   note;
+    NOTE_ID     *note;
 
     c = c;            /* ref'd to avoid warning */
 
@@ -107,7 +107,7 @@ static BOOL CurrObjValidateAction( CURROBJ * c, ACTION * idptr, void * p2 )
     return( FALSE );
   }
 
-extern OBJPTR CurrObjCreate( OBJPTR * obj, RECT * loc, OBJPTR handle )
+extern OBJPTR CurrObjCreate( OBJPTR obj, RECT * loc, OBJPTR handle )
 /********************************************************************/
 
 /* create an CURROBJ object */
@@ -127,12 +127,13 @@ extern OBJPTR CurrObjCreate( OBJPTR * obj, RECT * loc, OBJPTR handle )
     return( new );
   }
 
-static BOOL CurrObjDestroy( CURROBJ * c, void * p1, void * p2 )
+static BOOL CurrObjDestroy( OBJPTR _c, void * p1, void * p2 )
 /*************************************************************/
 
 /* destroy the CURROBJ */
 
   {
+    CURROBJ *c = _c;
     p1 = p1;          /* ref'd to avoid warning */
     p2 = p2;          /* ref'd to avoid warning */
 
@@ -158,20 +159,21 @@ static void NotifyCurrObj( CURROBJ * c, OBJPTR obj, BOOL add_obj )
     }
 } /* NotifyCurrObj */
 
-static BOOL CurrObjAddObject( CURROBJ * c, OBJPTR obj, BOOL * reset )
+static BOOL CurrObjAddObject( OBJPTR _c, OBJPTR obj, void * reset )
 /*******************************************************************/
 
   {
-    OBJPTR *  new;
-    RECT      rect;
-    OBJPTR    currobj;
+    CURROBJ *c = _c;
+    OBJPTR  *new;
+    RECT    rect;
+    OBJPTR  currobj;
 
     if( c->primaryobj != NULL ) {
         c->prevprimary = c->primaryobj;
     } else {
         c->prevprimary = NULL;
     }
-    if( *reset ) {
+    if( *(BOOL*)reset ) {
         while( c->currobjlist != NULL ) {
             currobj = ListElement( c->currobjlist );
             DeleteCurrObject( currobj );
@@ -191,14 +193,15 @@ static BOOL CurrObjAddObject( CURROBJ * c, OBJPTR obj, BOOL * reset )
     return( TRUE );
   }
 
-static BOOL CurrObjDeleteObject( CURROBJ * c, OBJPTR obj, BOOL * curritem )
+static BOOL CurrObjDeleteObject( OBJPTR _c, OBJPTR obj, void * curritem )
 /*************************************************************************/
 
   {
-    LIST *     clist;
+    CURROBJ *c = _c;
+    LIST    *clist;
     CURROBJPTR currobj;
 
-    if( *curritem ) {
+    if( *(BOOL *)curritem ) {
         if( ListFindElt( c->currobjlist, obj ) != NULL ) {
             NotifyCurrObj( c, obj, FALSE );
             ListRemoveElt( &c->currobjlist, obj );
@@ -246,11 +249,13 @@ static BOOL CurrObjDeleteObject( CURROBJ * c, OBJPTR obj, BOOL * curritem )
     return( TRUE );
   }
 
-static BOOL CurrObjGetObject( CURROBJ * c, OBJPTR * newobj, OBJPTR prevobj )
+static BOOL CurrObjGetObject( OBJPTR _c, void * _newobj, OBJPTR prevobj )
 /**************************************************************************/
 
   {
-    LIST * newlist;
+    CURROBJ *c = _c;
+    OBJPTR  *newobj = _newobj;
+    LIST    *newlist;
 
     if( c->currobjlist == NULL ) {
         *newobj = NULL;
@@ -272,10 +277,14 @@ static BOOL CurrObjGetObject( CURROBJ * c, OBJPTR * newobj, OBJPTR prevobj )
     return( TRUE );
   }
 
-static BOOL CurrObjGetPrimary( CURROBJ * c, OBJPTR * primary, BOOL * get )
+static BOOL CurrObjGetPrimary( OBJPTR _c, void * _primary, void * _get )
 /***********************************************************************/
 
   {
+    CURROBJ *c = _c;
+    OBJPTR  *primary = _primary;
+    BOOL    *get = _get;
+
     if( ( primary != NULL ) && ( get != NULL ) ) {
         if( *get ) {
             /* check if the primary object is still in the list */
@@ -301,11 +310,13 @@ static BOOL CurrObjGetPrimary( CURROBJ * c, OBJPTR * primary, BOOL * get )
     }
   }
 
-static BOOL CurrObjShowSelBoxes( CURROBJ * obj, BOOL * show, void * p2 )
+static BOOL CurrObjShowSelBoxes( OBJPTR _obj, void * _show, void * p2 )
 /**********************************************************************/
 {
-    LIST *      item;
-    OBJECT *    cobj;
+    CURROBJ *obj = _obj;
+    BOOL    *show = _show;
+    LIST    *item;
+    OBJECT  *cobj;
 
     obj->show_sel_boxes = *show;
     for( item = obj->currobjlist; item != NULL; item = ListNext( item ) ) {
@@ -315,9 +326,11 @@ static BOOL CurrObjShowSelBoxes( CURROBJ * obj, BOOL * show, void * p2 )
     return( TRUE );
 } /* CurrObjShowSelBoxes */
 
-static BOOL CurrObjNotify( CURROBJ * c, NOTE_ID * id, void * p2 )
+static BOOL CurrObjNotify( OBJPTR _c, void * _id, void * p2 )
 /***************************************************************/
 {
+    CURROBJ *c = _c;
+    NOTE_ID *id = _id;
     p2 = p2;        // unused
 
     switch( *id ) {

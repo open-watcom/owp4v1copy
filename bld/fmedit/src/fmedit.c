@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Main Form Editor module.
 *
 ****************************************************************************/
 
@@ -56,7 +55,7 @@
 #include "align.def"
 #include "clip.def"
 
-void WINEXP CloseFormEdit( HANDLE wnd )
+void WINEXP CloseFormEdit( HWND wnd )
 /*************************************/
 
 /* close the editting window */
@@ -80,7 +79,7 @@ void WINEXP CloseFormEditID( STATE_HDL hdl )
     }
   }
 
-void WINEXP ResetFormEdit( HANDLE wnd )
+void WINEXP ResetFormEdit( HWND wnd )
 /*************************************/
 
 /* close the editting window */
@@ -106,7 +105,7 @@ STATE_HDL WINEXP InitFormEdit( CREATE_TABLE objtable )
     return( GetCurrFormID() );
   }
 
-void WINEXP SetFormEditWnd( STATE_HDL st, HANDLE wnd, int bitmap,
+void WINEXP SetFormEditWnd( STATE_HDL st, HWND wnd, int bitmap,
                             SCR_CONFIG scroll  )
 /****************************************************************/
 
@@ -122,7 +121,7 @@ void WINEXP SetFormEditWnd( STATE_HDL st, HANDLE wnd, int bitmap,
   }
 
 
-void WINEXP OpenFormEdit( HANDLE wnd, CREATE_TABLE objtable,
+void WINEXP OpenFormEdit( HWND wnd, CREATE_TABLE objtable,
                           int bitmap, SCR_CONFIG scroll )
 /***********************************************************/
 

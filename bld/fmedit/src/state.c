@@ -24,13 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Module to contain various pieces of state information.
 *
 ****************************************************************************/
 
-
-/*  STATE.C - file to contain various pieces of state information */
 
 #include <string.h>
 #include <dos.h>
@@ -665,12 +662,12 @@ BOOL WINEXP IsEditting( HWND wnd )
     return( State->currstate == EDITING );
   }
 
-void WINEXP SetMouseRtn( HWND wnd, FARPROC rtn )
+void WINEXP SetMouseRtn( HWND wnd, void (FM_EXPORT *rtn)( HWND, RECT *) )
 /**********************************************/
 
   {
     InitState( wnd );
-    State->mouseaction = rtn;
+    State->mouseaction = (FARPROC)rtn;
   }
 
 
