@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Windows NT signal handling (based on OS provided exception
+*               handling).
 *
 ****************************************************************************/
 
@@ -189,7 +189,10 @@ _WCRTLINK int __sigfpe_handler( int fpe )
     sig_func *func;
 
     func = __GetSignalFunc(SIGFPE);
-    if( (func != SIG_IGN) && (func != SIG_DFL) && (func != SIG_ERR) ) {
+    if( func == SIG_IGN ) {
+        return( 0 );
+    }
+    if( (func != SIG_DFL) && (func != SIG_ERR) ) {
         __SetSignalFunc(SIGFPE, SIG_DFL);
         (*func)( SIGFPE, fpe );
         return( 0 );

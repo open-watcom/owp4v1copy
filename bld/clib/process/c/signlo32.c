@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 2.x signal handling (based on OS provided exception
+*               handling)
 *
 ****************************************************************************/
 
@@ -90,7 +90,10 @@ _WCRTLINK int   __sigfpe_handler( int fpe ) {
     sig_func *func;
 
     func = _RWD_sigtab[ SIGFPE ].func;
-    if( (func != SIG_IGN) && (func != SIG_DFL) && (func != SIG_ERR) ) {
+    if( func == SIG_IGN ) {
+        return( 0 );
+    }
+    if( (func != SIG_DFL) && (func != SIG_ERR) ) {
         _RWD_sigtab[ SIGFPE ].func = SIG_DFL;
         (*func)( SIGFPE, fpe );
         return( 0 );
@@ -182,11 +185,13 @@ static  ULONG   __syscall xcpt_handler( PEXCEPTIONREPORTRECORD pxcpt,
         }
         for( sig = 1; sig <= __SIGLAST; sig++ ) {
             if( pxcpt->ExceptionNum == _RWD_sigtab[sig].os_sig_code ) {
-                if( sig == SIGINT || sig == SIGBREAK ) {
-                    if( pxcpt->ExceptionInfo[0] != XCPT_SIGNAL_INTR &&
-                        pxcpt->ExceptionInfo[0] != XCPT_SIGNAL_BREAK ) {
-                        continue;
-                    }
+                if( sig == SIGINT &&
+                    pxcpt->ExceptionInfo[0] != XCPT_SIGNAL_INTR ) {
+                    continue;
+                }
+                if( sig == SIGBREAK &&
+                    pxcpt->ExceptionInfo[0] != XCPT_SIGNAL_BREAK ) {
+                    continue;
                 }
                 if( (_RWD_sigtab[sig].func == SIG_IGN) ) {
                     return( XCPT_CONTINUE_EXECUTION );
