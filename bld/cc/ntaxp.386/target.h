@@ -40,13 +40,8 @@
 
 #define VERSION         PRODUCTION
 
-#define _MACHINE        _PC
 #define _CPU            386
-
-#define _OS             _NT
-#define _EMS            0
 
 #define __TGT_SYS       __TGT_SYS_X86
 
-#define _HOST           0000
 #endif

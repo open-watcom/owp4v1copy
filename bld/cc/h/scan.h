@@ -52,7 +52,7 @@
 
         (( c | HEX_MASK ) - HEX_BASE ) + 10
 */
-#if _HOST == 370
+#if defined( __370__ )
 /* EBCDIC */
 #define HEX_MASK        0x40
 #define HEX_BASE        'A'

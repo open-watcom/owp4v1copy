@@ -41,7 +41,7 @@
 #include <stdarg.h>
 #include <signal.h>
 #include <ctype.h>
-#if _OS == _CMS
+#if defined( __CMS__ )
     #include <file.h>
     #include <errno.h>
     #include <setup.h>
@@ -50,7 +50,7 @@
     /* plist format to be passed to main */
     int const _parms = UNTOKENIZED;
     int const _staksize = (100*1024);/* stack size */
-#elif _OS == _QNX
+#elif defined( __QNX__ )
     #include <stdio.h>
     #ifdef __WATCOMC__
         #include <i86.h>
@@ -58,7 +58,7 @@
     #include <fcntl.h>
     #include <unistd.h>
     #include <sys/stat.h>
-#elif _OS == _LINUX
+#elif defined( __LINUX__ )
     #include <stdio.h>
     #include <fcntl.h>
     #include <unistd.h>
@@ -85,7 +85,7 @@
     #include <conio.h>
 #endif
 
-#if defined(__QNX__) || defined(__LINUX__)
+#if defined(__UNIX__)
     #define IS_PATH_SEP( ch ) ((ch) == '/')
 #else
     #define IS_PATH_SEP( ch ) ((ch) == '/' || (ch) == '\\')
@@ -159,7 +159,7 @@ unsigned char _real87;
 int FrontEnd( char **cmdline )
 {
         _real87 = _8087 = 0;/* set to 0 in case 8087 is present; 27-may-91 */
-#if _HOST == 386 && defined(__WATCOMC__)
+#if defined( __386__ ) && defined( __WATCOMC__ )
         _amblksiz = 16;
 #endif
     InitGlobalVars();
@@ -169,7 +169,7 @@ int FrontEnd( char **cmdline )
 
     SwitchChar = _dos_switch_char();
     ClearGlobals();
-    #if _OS == _CMS
+    #if defined( __CMS__ )
         setxedit( 1 ); /* mjc */
     #endif
     DoCCompile( cmdline );
@@ -451,7 +451,7 @@ static int OpenPgmFile( void )
 
 char *CreateFileName( char *template, char *extension, bool forceext )
 {
-    #if _OS != _CMS
+    #if ! defined( __CMS__ )
         char buff[ _MAX_PATH2 ];
         char *drive;
         char *dir;
@@ -621,7 +621,7 @@ void OpenCppFile()
         MyExit( 1 );
     } else {
         if( CppWidth == 0 ) {
-            #if _OS == _CMS
+            #if defined( __CMS__ )
                 CppWidth = lrecl( fileno( CppFile ) )-1;
             #else
                 CppWidth = ~0;
@@ -634,7 +634,7 @@ void OpenCppFile()
 
 void OpenDefFile()
 {
-#if _OS != _CMS
+#if ! defined( __CMS__ )
     char buff[_MAX_PATH2];
     char name[_MAX_PATH ];
     char *fname;

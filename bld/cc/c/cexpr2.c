@@ -174,7 +174,7 @@ extern op_flags OpFlags( type_modifiers flags )
     if( flags & FLAG_CONST )    ops |= OPFLAG_CONST;
     if( flags & FLAG_VOLATILE ) ops |= OPFLAG_VOLATILE;
     if( flags & FLAG_UNALIGNED )ops |= OPFLAG_UNALIGNED;
-#if _MACHINE == _PC
+#if ( _CPU == 8086 ) || ( _CPU == 386 )
     if( flags & FLAG_NEAR )     ops |= OPFLAG_NEARPTR;
     if( flags & FLAG_FAR )      ops |= OPFLAG_FARPTR;
     if( flags & FLAG_HUGE )     ops |= OPFLAG_HUGEPTR;
@@ -191,7 +191,7 @@ extern type_modifiers FlagOps( op_flags ops )
     if( ops & OPFLAG_CONST )    flags |= FLAG_CONST;
     if( ops & OPFLAG_VOLATILE ) flags |= FLAG_VOLATILE;
     if( ops & OPFLAG_UNALIGNED )    flags|= FLAG_UNALIGNED;
-#if _MACHINE == _PC
+#if ( _CPU == 8086 ) || ( _CPU == 386 )
     if( ops & OPFLAG_NEARPTR )     flags |= FLAG_NEAR;
     if( ops & OPFLAG_FARPTR )      flags |= FLAG_FAR;
     if( ops & OPFLAG_HUGEPTR )     flags |= FLAG_HUGE;
@@ -1961,7 +1961,7 @@ local int IntrinsicMathFunc( SYM_NAMEPTR sym_name, int i, int n, SYMPTR sym )
     return( 0 );        /* indicate not a math intrinsic function */
 }
 
-#if _MACHINE == _ALPHA  || _MACHINE == _PPC
+#if ( _CPU == _AXP ) || ( _CPU == _PPC )
 local TREEPTR GenVaStartNode( TREEPTR last_parm )
 {
     // there should be 3 parms __builtin_va_start( list, parm_name, stdarg )
@@ -2032,7 +2032,7 @@ local TREEPTR GenAllocaNode( TREEPTR size_parm )
 }
 #endif
 
-#if _MACHINE == _PPC
+#if _CPU == _PPC
 local TREEPTR GenVaArgNode( TREEPTR last_parm )
 {
     // there should be 2 parms __builtin_varg( list, type_arg )
@@ -2101,7 +2101,7 @@ local TREEPTR GenFuncCall( TREEPTR last_parm )
             typ->decl_type == TYPE_FLOAT ) {
             CompFlags.float_used = 1;
         }
-        #if _CPU == 386                                 /* 22-aug-94 */
+#if _CPU == 386                                 /* 22-aug-94 */
         {
             struct aux_info     *inf;
            struct aux_entry     *ent;
@@ -2114,7 +2114,7 @@ local TREEPTR GenFuncCall( TREEPTR last_parm )
             sym_name = SymName( &sym, functree->op.sym_handle );
             ent = AuxLookup( sym_name );
         }
-        #endif
+#endif
     } else {
         typ = TypeDefault();
     }
@@ -2179,7 +2179,7 @@ local TREEPTR GenFuncCall( TREEPTR last_parm )
                         }
                     }
                 }
-#if _MACHINE == _ALPHA  || _MACHINE == _PPC
+#if _CPU == _AXP  || _CPU == _PPC
                 if( far_strcmp( sym_name, "__builtin_va_start", n ) == 0 ) {
                     tree = GenVaStartNode( last_parm );
                     goto done_call;
@@ -2189,7 +2189,7 @@ local TREEPTR GenFuncCall( TREEPTR last_parm )
                     goto done_call;
                 }
 #endif
-#if  _MACHINE == _PPC
+#if  _CPU == _PPC
                 if( far_strcmp( sym_name, "__builtin_varg", n ) == 0 ) {
                     tree = GenVaArgNode( last_parm );
                     goto done_call;

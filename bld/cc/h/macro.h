@@ -60,7 +60,7 @@ typedef struct  macro_entry {
             struct  macro_entry __FAR *next_macro;
             int         macro_index;    /* for pre-compiled header */
         };
-#if _HOST == 386
+#if defined(__386__)
         unsigned short macro_defn;/* offset to defn, 0 ==>special macro name*/
         unsigned short macro_len;/* length of macro definition */
         char    parm_count;     /* special macro indicator if defn == 0 */

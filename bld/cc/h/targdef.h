@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  define macros for C compiler build configuration
 *
 ****************************************************************************/
 
@@ -35,31 +34,12 @@
 #define PRODUCTION      0
 #define LOAD_N_GO       1
 
-/*      for MACHINE macro */
+/*      for _CPU macro
 
-#define _PC             0
-#define _VAX            1
-#define _S370           3
-#define _PPC            4
-#define _ALPHA          5
-#define _SPARC          6
-
-/*      for _OS macro */
-
-#define _DOS            0
-#define _OS2            1
-#define _QNX            2
-#define _CMS            3
-#define _MVS            4
-#define _NT             5
-#define _LINUX          6
-
-/*      for _HOST macro
         8086    on an 8086 machine running DOS
         286     on a 286 (or 386) running OS/2 or DOS/16M
         386     on a 386 running Phar Lap DOS Extender
-        370     on a 370
-        601     on a PPC 601
-        000     on an Alpha
-        8       on a  SPARC V8+
-*/
+        370     on a IBM S370 */
+#define _AXP            1
+#define _PPC            2
+#define _SPARC          3

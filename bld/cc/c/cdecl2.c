@@ -914,7 +914,7 @@ local TYPEPTR Pointer( TYPEPTR ptr_typ, struct mod_info *info )
         }
         if( CurToken == T_TIMES ) {
             NextToken();
-#if _MACHINE == _PC
+#if ( _CPU == 8086 ) || ( _CPU == 386 )
             // * seg16 binds with * cause of IBM dorks, and so does far16
             if( CurToken == T__SEG16 || CurToken == T___FAR16 ) {
 #if _CPU == 386                                         /* 15-nov-91 */

@@ -1513,7 +1513,7 @@ int ESCChar( int c, const char **pbuf, char *error )
         case 'v':
             c = ESCAPE_v;
             break;
-#if _OS == _QNX
+#ifdef __QNX__
         case 'l':
             /* for lazy QNX programmers */
             if( CompFlags.extensions_enabled ) {
@@ -1636,7 +1636,7 @@ int ScanCarriageReturn()
 
 #if defined(__DOS__) || defined(__OS2__) || defined(__NT__) || defined(__OSI__)
     #define     SYS_EOF_CHAR 0x1A
-#elif defined(__QNX__) || defined(__LINUX__)
+#elif defined(__UNIX__)
     #undef      SYS_EOF_CHAR
 #else
     #error System end of file character not configured.

@@ -31,7 +31,7 @@
 
 #define ENUM_HANDLE     ENUMPTR
 
-#if defined(__386__)
+#if defined( __386__ )
     typedef char * SYM_NAMEPTR;
 #else
     typedef char __FAR * SYM_NAMEPTR;
@@ -327,7 +327,7 @@ struct sym_hash_entry {   /* SYMBOL TABLE structure */
         TYPEPTR     sym_type;
         int         sym_type_index; /* for pre-compiled header */
     };
-#if _HOST == 386
+#if defined(  __386__ )
     SYM_HANDLE      handle;
     char            level;
 #else
@@ -449,7 +449,7 @@ typedef struct tag_entry {
         int         refno;
         int         tag_index;      /* for pre-compiled header */
     };
-#if _HOST == 386
+#if defined( __386__ )
     unsigned short  hash;           /* hash value for tag */
     char            level;
     unsigned char   alignment;      /* alignment required */
@@ -492,7 +492,7 @@ typedef struct {
             SYM_HANDLE  sym_handle;
         } var;
     } u;
-#if _HOST == 386
+#if defined( __386__ )
     byte    opr;            /* contains T_xxxx token value */
 #else
     int     opr;            /* contains T_xxxx token value */
@@ -702,7 +702,7 @@ struct global_comp_flags {  // things that live across compiles
     unsigned cc_first_use           : 1;    /* first time thru           */
 };
 
-#if (_OS == _QNX) || (_OS == _LINUX)
+#if defined( __UNIX__ )
     #define errout  stderr
 #else
     #define errout  stdout

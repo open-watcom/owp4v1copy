@@ -209,19 +209,19 @@ local void SetTargSystem()                               /* 07-aug-90 */
 {
     char        buff[128];
 
-#if _MACHINE == _ALPHA
+#if _CPU == _AXP
     PreDefine_Macro( "M_ALPHA" );
     PreDefine_Macro( "_M_ALPHA" );
     PreDefine_Macro( "__ALPHA__" );
     PreDefine_Macro( "_ALPHA_" );
     PreDefine_Macro( "__AXP__" );
     PreDefine_Macro( "_STDCALL_SUPPORTED" );
-#elif _MACHINE == _SPARC
+#elif _CPU == _SPARC
     PreDefine_Macro( "M_SPARC" );
     PreDefine_Macro( "_M_SPARC" );
     PreDefine_Macro( "__SPARC__" );
     PreDefine_Macro( "_SPARC_" );
-#elif _MACHINE == _PPC
+#elif _CPU == _PPC
     PreDefine_Macro( "M_PPC" );
     PreDefine_Macro( "_M_PPC" );
     PreDefine_Macro( "__POWERPC__" );
@@ -264,20 +264,20 @@ local void SetTargSystem()                               /* 07-aug-90 */
                 }
             #elif defined( __NOVELL__ )
                 _SetConstTarg( "netware" );
-            #elif _OS == _QNX
+            #elif defined( __QNX__ )
                 _SetConstTarg( "qnx" );
-            #elif _OS == _LINUX
+            #elif defined( __LINUX__ )
                 _SetConstTarg( "linux" );
-            #elif _OS == _OS2
+            #elif defined( __OS2__ )
                 _SetConstTarg( "os2" );
-            #elif _OS == _NT
+            #elif defined( __NT__ )
                 _SetConstTarg( "nt" );
-            #elif _OS == _DOS
+            #elif defined( __DOS__ )
                 _SetConstTarg( "dos" );
             #else
                 #error "Target OS not defined"
             #endif
-        #elif _MACHINE == _ALPHA || _MACHINE == _PPC || _MACHINE == _SPARC
+        #elif _CPU == _AXP || _CPU == _PPC || _CPU == _SPARC
             /* we only have NT libraries for Alpha right now */
             _SetConstTarg( "nt" );
         #else
@@ -859,7 +859,7 @@ static void EnsureEndOfSwitch()
     }
 }
 
-#if _MACHINE == _ALPHA
+#if _CPU == _AXP
 static void SetStructPack()    { CompFlags.align_structs_on_qwords = 1; }
 #endif
 
@@ -903,7 +903,7 @@ static void SetExtendedDefines()
 }
 static void SetBrowserInfo()   { CompFlags.emit_browser_info = 1; }
 
-#if _MACHINE == _ALPHA
+#if _CPU == _AXP
 static void Set_AS()
 {
     TargetSwitches |= ALIGNED_SHORT;
@@ -1121,7 +1121,7 @@ static void Set_R()            { CompFlags.save_restore_segregs = 1; }
 static void Set_SG()           { CompFlags.sg_switch_used = 1; }
 static void Set_ST()           { CompFlags.st_switch_used = 1; }
 #endif
-#if _MACHINE == _ALPHA
+#if _CPU == _AXP
 static void Set_SI()           { TargetSwitches |= STACK_INIT; }
 #endif
 static void Set_S()            { Toggles &= ~TOGGLE_CHECK_STACK; }
@@ -1161,7 +1161,7 @@ static void Set_XBSA()
     CompFlags.unaligned_segs = 1;
 }
 
-#if _MACHINE == _ALPHA
+#if _CPU == _AXP
 static void Set_XD()           { TargetSwitches |= EXCEPT_FILTER_USED; }
 #endif
 
@@ -1482,7 +1482,7 @@ static struct option const CFE_Options[] = {
     { "ad=@",   0,              SetGenerateMakeAutoDepend },
     { "ai",     0,              Set_AI },
     { "aq",     0,              Set_AQ },
-#if _MACHINE == _ALPHA
+#if _CPU == _AXP
     { "as",     0,              Set_AS },
 #endif
     { "d0*",    0,              Set_D0 },
@@ -1556,7 +1556,7 @@ static struct option const CFE_Options[] = {
     { "sg",     0,              Set_SG },
     { "st",     0,              Set_ST },
 #endif
-#if _MACHINE == _ALPHA
+#if _CPU == _AXP
     { "si",     0,              Set_SI },
 #endif
     { "s",      0,              Set_S },
@@ -1600,7 +1600,7 @@ static struct option const CFE_Options[] = {
     { "xgv",    0,              Set_XGV },
 #endif
     { "xbsa",   0,              Set_XBSA },
-#if _MACHINE == _ALPHA
+#if _CPU == _AXP
     { "xd",     0,              Set_XD },
 #endif
     { "za99",   0,              Set_ZA99 },
@@ -1634,7 +1634,7 @@ static struct option const CFE_Options[] = {
     { "zm",     0,              Set_ZM },
     { "zpw",    0,              Set_ZPW },
     { "zp=#",   1,              SetPackAmount },
-#if _MACHINE == _ALPHA
+#if _CPU == _AXP
     { "zps",    0,              SetStructPack },
 #endif
 #if _CPU == 8086 || _CPU == 386
@@ -1728,7 +1728,7 @@ static char *ProcessOption( struct option const *op_table, char *p, char *option
                             if( c == '\0' ) break;
                             if( c == ' ' ) break;
                             if( c == '\t' ) break;
-                            #if (_OS != _QNX) && (_OS != _LINUX)
+                            #if ! defined( __UNIX__ )
                                 if( c == SwitchChar ) break;
                             #endif
                             ++j;
@@ -1792,7 +1792,7 @@ static char *CollectEnvOrFileName( char *str )
         ++str;
         if( ch == ' ' ) break;
         if( ch == '\t' ) break;
-        #if (_OS != _QNX) && (_OS != _LINUX)
+        #if ! defined( __UNIX__ )
             if( ch == '-' ) break;
             if( ch == SwitchChar ) break;
         #endif
@@ -1825,7 +1825,7 @@ static char *ReadIndirectFile()
             if( ch == '\r' || ch == '\n' ) {
                 *str = ' ';
             }
-            #if (_OS != _QNX) && (_OS != _LINUX)
+            #if ! defined( __UNIX__ )
                 if( ch == 0x1A ) {      // if end of file
                     *str = '\0';        // - mark end of str
                     break;
@@ -1895,7 +1895,7 @@ local void ProcOptions( char *str )
                         if( *str == '\0' ) break;
                         if( *str == ' '  ) break;
                         if( *str == '\t'  ) break;              /* 16-mar-91 */
-                        #if (_OS != _QNX) && (_OS != _LINUX)
+                        #if ! defined( __UNIX__ )
                             if( *str == SwitchChar ) break;
                         #endif
                         ++str;
@@ -1924,7 +1924,7 @@ static void InitCPUModInfo()
     PCH_FileName  = NULL;
     TargetSwitches = 0;
     TargSys = TS_OTHER;
-#if _MACHINE == _ALPHA | _MACHINE == _PPC | _MACHINE == _SPARC
+#if _CPU == _AXP | _CPU == _PPC | _CPU == _SPARC
     TextSegName   = ".text";
     DataSegName   = ".data";
     GenCodeGroup  = "";
@@ -2055,7 +2055,7 @@ local void Define_Memory_Model()
             }
             EmuLib_Name = "9noemu387";
         }
-    #elif _MACHINE == _ALPHA || _MACHINE == _PPC || _MACHINE == _SPARC
+    #elif _CPU == _AXP || _CPU == _PPC || _CPU == _SPARC
         if( CompFlags.br_switch_used ) {                /* 15-may-95 */
             strcpy( CLIB_Name, "1clbdll" );
             strcpy( MATHLIB_Name, "8mthdll" );
@@ -2104,11 +2104,11 @@ void GenCOptions( char **cmdline )
     ProcOptions( FEGetEnv( "WCC386" ) );              /* 12-mar-90 */
 #elif _CPU == 8086
     ProcOptions( FEGetEnv( "WCC" ) );                 /* 12-mar-90 */
-#elif _MACHINE == _ALPHA
+#elif _CPU == _AXP
     ProcOptions( FEGetEnv( "WCCAXP" ) );
-#elif _MACHINE == _PPC
+#elif _CPU == _PPC
     ProcOptions( FEGetEnv( "WCCPPC" ) );
-#elif _MACHINE == _SPARC
+#elif _CPU == _SPARC
     ProcOptions( FEGetEnv( "WCCSPC" ) );
 #else
     #error Compiler environment variable not configured

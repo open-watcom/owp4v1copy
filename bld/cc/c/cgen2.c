@@ -329,7 +329,7 @@ static void ReturnExpression( OPNODE *node, cg_name expr )
 
 static cg_type DataPointerType( OPNODE *node )
 {
-#if _MACHINE == _PC
+#if ( _CPU == 8086 ) || ( _CPU == 386 )
     cg_type     dtype;
 
     if( Far16Pointer( node->flags ) ) {
@@ -495,7 +495,7 @@ static void TryUnwind( int scope_index )
 }
 #endif
 
-#if _MACHINE == _ALPHA
+#if _CPU == _AXP
 local void GenVaStart( cg_name op1, cg_name offset )
 {
     cg_name     name;
@@ -508,7 +508,7 @@ local void GenVaStart( cg_name op1, cg_name offset )
     name = CGAssign( name, offset, T_INTEGER );
     CGDone( name );
 }
-#elif _MACHINE == _PPC
+#elif _CPU == _PPC
 local void GenVaStart( cg_name op1, cg_name offset )
 {
     cg_name     name;
@@ -1133,7 +1133,7 @@ local void EmitNodes( TREEPTR tree )
             PushCGName( TryAbnormalTermination() );
             break;
 #endif
-#if _MACHINE == _ALPHA  || _MACHINE == _PPC
+#if _CPU == _AXP  || _CPU == _PPC
         case OPR_VASTART:
             op2 = PopCGName();          // - get offset of parm
             op1 = PopCGName();          // - get address of va_list
@@ -1331,7 +1331,7 @@ void DoCompile()
     if( ! setjmp( env ) ) {
         Environment = &env;
         if( BEDLLLoad( NULL ) ) {
-#if _MACHINE == _PC
+#if ( _CPU == 8086 ) || ( _CPU == 386 )
             BEMemInit(); // cg has a strange static var that doesn't get reset
 #endif
             if( ! CompFlags.zu_switch_used )  TargetSwitches &= ~ FLOATING_SS;
@@ -1353,7 +1353,7 @@ void DoCompile()
                 if( cgi_info.version.target != II_TARG_370 ) WrongCodeGen();
 #elif _CPU == 8086
                 if( cgi_info.version.target != II_TARG_8086 ) WrongCodeGen();
-#elif _CPU == 0000
+#elif _CPU == _AXP
                 if( cgi_info.version.target != II_TARG_AXP ) WrongCodeGen();
 #else
 #error "Undefined _CPU type"
@@ -1486,7 +1486,7 @@ local int DoFuncDefn( SYM_HANDLE funcsym_handle )
     CurFunc = &CurFuncSym;
     SymGet( CurFunc, funcsym_handle );
     CurFuncHandle = funcsym_handle;
-#if _MACHINE == _PC
+#if ( _CPU == 8086 ) || ( _CPU == 386 )
     if( ! CompFlags.zu_switch_used ) {
         if( (CurFunc->attrib & FLAG_INTERRUPT) == FLAG_INTERRUPT ){
             /* interrupt function */
@@ -1813,7 +1813,7 @@ int CGenType( TYPEPTR typ )
 
 local int CodePtrType( int flags )
 {
-#if _MACHINE == _PC
+#if ( _CPU == 8086 ) || ( _CPU == 386 )
     int         dtype;
 
     if( flags & FLAG_FAR ) {
@@ -1838,7 +1838,7 @@ extern int PtrType( TYPEPTR typ, int flags )
     if( typ->decl_type == TYPE_FUNCTION ) {
         dtype = CodePtrType( flags );
     } else {
-#if _MACHINE == _PC
+#if ( _CPU == 8086 ) || ( _CPU == 386 )
         if( flags & FLAG_FAR ) {
             dtype = T_LONG_POINTER;
         } else if( flags & FLAG_HUGE ) {
@@ -1858,7 +1858,7 @@ extern int PtrType( TYPEPTR typ, int flags )
 
 local int StringSegment( STR_HANDLE strlit )
 {
-#if _MACHINE == _PC
+#if ( _CPU == 8086 ) || ( _CPU == 386 )
     if( strlit->flags & FLAG_FAR )
         return( FarStringSegment );
 #endif

@@ -157,7 +157,7 @@ int VarFunc( SYMPTR sym )
     return( 0 );
 }
 
-#if _MACHINE == _PC
+#if ( _CPU == 8086 ) || ( _CPU == 386 )
 
 static struct inline_funcs __FAR *Flat( struct inline_funcs __FAR *ifunc )
 {
@@ -182,7 +182,7 @@ static struct inline_funcs __FAR *Flat( struct inline_funcs __FAR *ifunc )
 #endif
 
 
-#if _MACHINE == _PC
+#if ( _CPU == 8086 ) || ( _CPU == 386 )
 struct inline_funcs __FAR *IF_Lookup( char *name )
 {
     struct inline_funcs __FAR *    ifunc;
@@ -411,7 +411,7 @@ struct aux_info *InfoLookup( SYMPTR sym )
                 return( inf );
             name += 8;
         }
-        #if _MACHINE == _PC
+        #if ( _CPU == 8086 ) || ( _CPU == 386 )
         {
             struct inline_funcs __FAR *ifunc;
 
@@ -616,7 +616,7 @@ void GetCallClass( SYM_HANDLE sym_handle )
             default:
                 CallClass = inf->class;
             }
-        #if _MACHINE == _PC
+        #if ( _CPU == 8086 ) || ( _CPU == 386 )
             if( CompFlags.emit_names )
             {
                 CallClass |= EMIT_FUNCTION_NAME;
@@ -672,7 +672,7 @@ void GetCallClass( SYM_HANDLE sym_handle )
     #ifdef REVERSE
         CallClass &= ~ REVERSE_PARMS;               /* 28-may-89 */
     #endif
-    #if _MACHINE == _PC
+    #if ( _CPU == 8086 ) || ( _CPU == 386 )
         if( sym.flags & SYM_FUNC_NEEDS_THUNK )
         {
             CallClass |= THUNK_PROLOG;
@@ -708,7 +708,7 @@ static time_t *getFileDepTimeStamp( FNAMEPTR flist )
 {
     static time_t            stamp;
 
-#if _MACHINE == _PC && COMP_CFG_COFF == 0
+#if ( ( _CPU == 8086 ) || ( _CPU == 386 ) ) && COMP_CFG_COFF == 0
     stamp = _timet2dos( flist->mtime );
 #else
     stamp = flist->mtime;
@@ -909,7 +909,7 @@ static int GetExtName( SYM_ENTRY sym, char *pattern, char *Buffer )
     return( 0 );
 }
 
-#if _MACHINE == _PC
+#if ( _CPU == 8086 ) || ( _CPU == 386 )
 /*
 //    NextImport
 //        Called (indirectly) from the code generator to inject automagically defined symbols.
@@ -1396,8 +1396,8 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, aux_class request )
 #else
 
 /*
-//    This section is NOT _MACHINE==_PC, i.e.,
-//        _ALPHA
+//    This section is NOT 8086 and 386 , i.e.,
+//        _AXP
 //        _PPC
 //
 //    NextImport

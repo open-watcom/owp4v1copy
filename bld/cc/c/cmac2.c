@@ -30,7 +30,6 @@
 
 
 #include "cvars.h"
-#include "pragmas.h"
 #include "scan.h"
 #include <stddef.h>
 

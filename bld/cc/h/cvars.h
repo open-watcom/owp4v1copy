@@ -48,20 +48,11 @@
 #include <time.h>
 #include "target.h"
 
-#ifndef _HOST
- #error _HOST macro not defined
-#endif
-#ifndef _OS
- #error _OS macro not defined
-#endif
 #ifndef _CPU
  #error _CPU macro not defined
 #endif
 #ifndef VERSION
  #error VERSION macro not defined
-#endif
-#ifndef _MACHINE
- #error _MACHINE macro not defined
 #endif
 
 #if _CPU != 8086
@@ -900,7 +891,7 @@ extern  SYM_HANDLE GetBlockSymList( void );
 extern  void    InitStmt( void );
 extern  void    SwitchPurge( void );
 
-#if _OS == _CMS || ! defined(__WATCOMC__)
+#if defined( __CMS__ ) || ! defined(__WATCOMC__)
     #define  __va_list  va_list
     #define  __puts     puts
     #define  __printf   printf
@@ -913,7 +904,7 @@ extern  void    SwitchPurge( void );
     extern  int     __printf(const char *__format,...);
     extern  int     __vfprintf(FILE *__fp,const char *__format,__va_list __arg);
     extern  int     __fprintf(FILE *__fp,const char *__format,...);
-#if _HOST == 386
+#if defined(__386__)
     #pragma aux myexit aborts;
     #pragma aux my_exit aborts;
 #endif
@@ -921,7 +912,7 @@ extern  void    SwitchPurge( void );
     extern  void    my_exit( int );
 #endif
 
-#if _OS == _DOS || (_OS == _OS2 && !defined(__386__))
+#if defined( __DOS__ ) || ( defined( __OS2__ ) && !defined(__386__))
     #define _syserrno _doserrno
 #else
     #define _syserrno errno

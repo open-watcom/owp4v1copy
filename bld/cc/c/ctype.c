@@ -868,7 +868,7 @@ unsigned GetTypeAlignment( TYPEPTR typ )
     if( typ->decl_type == TYPE_STRUCT  ||       /* 25-jul-91 */
         typ->decl_type == TYPE_UNION ) {
         size = typ->u.tag->alignment;
-    #if _MACHINE == _ALPHA
+    #if _CPU == _AXP
         if( CompFlags.align_structs_on_qwords ) {
             size = 8;
         }

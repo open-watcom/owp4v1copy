@@ -51,7 +51,7 @@ typedef int     aux_flags;
 struct aux_info {
         call_class      class;
         union {
-#if _MACHINE == _ALPHA || _MACHINE == _PPC
+#if _CPU == _AXP || _CPU == _PPC
             risc_byte_seq *code;
 #else
             byte_seq    *code;
@@ -65,7 +65,7 @@ struct aux_info {
 #if _CPU == 370
         linkage_regs    *linkage;
 #endif
-#if _MACHINE == _ALPHA
+#if _CPU == _AXP
 #endif
         hw_reg_set      returns;
         hw_reg_set      streturn;
@@ -77,7 +77,7 @@ struct aux_info {
         int             use;            // use count
         aux_flags       flags;
         int             aux_info_index;
-#if _MACHINE == _ALPHA
+#if _CPU == _AXP
         char           *except_rtn;
 #endif
 };

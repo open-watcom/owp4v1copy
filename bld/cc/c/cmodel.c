@@ -319,7 +319,7 @@ void InitModInfo( void )
     ErrLimit = 20;
     WngLevel = 1;
     PackAmount = 8;
-#if _MACHINE == _ALPHA || _MACHINE == _PPC
+#if _CPU == _AXP || _CPU == _PPC
     CompFlags.make_enums_an_int = 1;     // make enums ints
     CompFlags.original_enum_setting = 1;
     PackAmount = 8;

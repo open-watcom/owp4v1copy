@@ -36,12 +36,12 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #ifdef __WATCOMC__
-#if (_OS != _QNX) && (_OS != _LINUX)
+#if ! defined( __UNIX__ )
     #include <direct.h>
 #endif
     #include <share.h>
 #endif
-#if (_OS == _QNX) || (_OS == _LINUX)
+#if defined( __UNIX__ )
     #define PMODE       S_IRUSR+S_IWUSR+S_IRGRP+S_IWGRP+S_IROTH+S_IWOTH
 #else
     #define PMODE       S_IRWXU
@@ -60,7 +60,20 @@ extern  TAGPTR  TagHash[TAG_HASH_SIZE + 1];
 
 #define PH_BUF_SIZE     32768
 #define PCH_SIGNATURE   (unsigned long) 'WPCH'
-#define PCH_VERSION     ((_HOST << 16) | 0x0196)
+#define PCH_VERSION     0x0196
+#if defined(__I86__)
+#define PCH_VERSION_HOST ( ( 1L << 16 ) | PCH_VERSION )
+#elif defined(__386__)
+#define PCH_VERSION_HOST ( ( 2L << 16 ) | PCH_VERSION )
+#elif defined(__AXP__)
+#define PCH_VERSION_HOST ( ( 3L << 16 ) | PCH_VERSION )
+#elif defined(__PPC__)
+#define PCH_VERSION_HOST ( ( 4L << 16 ) | PCH_VERSION )
+#elif defined(__SPARC__)
+#define PCH_VERSION_HOST ( ( 5L << 16 ) | PCH_VERSION )
+#else
+#define PCH_VERSION_HOST ( ( 6L << 16 ) | PCH_VERSION )
+#endif
 
 static  jmp_buf         PH_jmpbuf;
 static  int             PH_handle;
@@ -120,7 +133,7 @@ struct  pheader {
     unsigned            msgflags_len;   // length of MsgFlags array
 };
 
-#if _MACHINE == _PC
+#if ( _CPU == 8086 ) || ( _CPU == 386 )
 static struct aux_info *BuiltinInfos[] = {
         &DefaultInfo,
         &CdeclInfo,
@@ -233,7 +246,7 @@ static void OutPutHeader()
     struct pheader      pch;
 
     pch.signature       = PCH_SIGNATURE;
-    pch.version         = PCH_VERSION;
+    pch.version         = PCH_VERSION_HOST;
     pch.size_of_header  = sizeof(struct pheader);
     pch.size_of_int     = TARGET_INT;
     pch.pack_amount     = PackAmount;
@@ -621,7 +634,7 @@ static void OutPutTypes()
     OutPutTypeIndexes();
 }
 
-#if _MACHINE == _PC
+#if ( _CPU == 8086 ) || ( _CPU == 386 )
 static void OutPutAuxInfo( struct aux_info *info )
 {
     hw_reg_set          *regs;
@@ -834,7 +847,7 @@ void OutPutEverything()
     OutPutSegInfo();
     OutPutTypes();
     OutPutTags();
-#if _MACHINE == _PC
+#if ( _CPU == 8086 ) || ( _CPU == 386 )
     OutPutPragmaInfo();
 #endif
     OutPutSymHashTable();
@@ -1405,7 +1418,7 @@ static char *FixupTags( char *p, unsigned tag_count )
     return( p );
 }
 
-#if _MACHINE == _PC
+#if ( _CPU == 8086 ) || ( _CPU == 386 )
 static char *FixupAuxInfo( char *p, struct aux_info *info )
 {
     unsigned            len;
@@ -1482,12 +1495,12 @@ void FixupFNames( void ){
 
 int ValidHeader( struct pheader *pch )
 {
-    if( pch->signature      == PCH_SIGNATURE  &&
-        pch->version        == PCH_VERSION    &&
-        pch->size_of_header == sizeof(struct pheader)  &&
-        pch->size_of_int    == TARGET_INT       &&
-        pch->specialsyms_count    == SpecialSyms      &&
-        pch->pack_amount    == PackAmount ) {
+    if( ( pch->signature == PCH_SIGNATURE )
+      && ( pch->version == PCH_VERSION_HOST )
+      && ( pch->size_of_header == sizeof(struct pheader) )
+      && ( pch->size_of_int == TARGET_INT )
+      && ( pch->specialsyms_count == SpecialSyms )
+      && ( pch->pack_amount == PackAmount ) ) {
         return( 1 );
     }
     return( 0 );                // indicate unusable pre-compiled header
@@ -1510,7 +1523,7 @@ static int FixupDataStructures( char *p, struct pheader *pch )
     p = FixupSegInfo( p, pch->seg_count );
     p = FixupTypes( p, pch->type_count );
     p = FixupTags( p, pch->tag_count );
-#if _MACHINE == _PC
+#if ( _CPU == 8086 ) || ( _CPU == 386 )
     p = FixupPragmaInfo( p, pch->pragma_count );
 #endif
     p = FixupSymHashTable( p, pch->symhash_count );

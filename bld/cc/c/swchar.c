@@ -32,7 +32,7 @@
 
 #include "target.h"
 
-#if _OS == _DOS
+#ifdef __DOS__
 extern  unsigned char    _DOS_Switch_Char();
 
 #pragma aux     _DOS_Switch_Char = \
@@ -46,20 +46,22 @@ extern  unsigned char    _DOS_Switch_Char();
 
 unsigned char _dos_switch_char()
     {
-#if _OS == _DOS
+#ifdef __DOS__
 #if !defined(__WINDOWS_386__)
         return( _DOS_Switch_Char() );
 #else
         return( '/' );
 #endif
 
-#elif _OS == _NT
+#elif defined( __NT__ )
         return( '/' );
-#elif _OS == _OS2
+#elif defined( __OS2__ )
         return( '/' );
-#elif _OS == _QNX
+#elif defined( __OSI__ )
+        return( '/' );
+#elif defined( __QNX__ )
         return( '-' );
-#elif _OS == _LINUX
+#elif defined( __LINUX__ )
         return( '-' );
 #endif
     }

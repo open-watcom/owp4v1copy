@@ -31,7 +31,6 @@
 
 #include "cvars.h"
 #include "cgswitch.h"
-#include "pragmas.h"
 
 #pragma intrinsic(memcpy)
 

@@ -39,13 +39,8 @@
 
 #define VERSION         PRODUCTION
 
-#define _MACHINE        _PPC
-#define _CPU            601
-
-#define _OS             _OS2
-#define _EMS            0
+#define _CPU            _PPC
 
 #define __TGT_SYS       __TGT_SYS_PPC_NT
 
-#define _HOST           386
 #endif

@@ -37,7 +37,7 @@
 #include "cerrs.h"
 
 extern void CErr2p(int,char*);
-#if _MACHINE == _PC
+#if ( _CPU == 8086 ) || ( _CPU == 386 )
 #define asmerr(code,msg)   msg
 #include "asmerr.h"
 #include "target.h"
