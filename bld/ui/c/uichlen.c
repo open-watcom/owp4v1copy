@@ -24,20 +24,17 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Multi-byte character support for ui library.
 *
 ****************************************************************************/
 
 
 #include "uidef.h"
-//#if (__WATCOMC__ >= 1050) || defined( CLIB_MB )
-#if !defined(__NETWARE_386__)
-/*
-    These can be the real versions once we're building with 10.5
-    - the C library has built in multibyte support.
-*/
-#if defined( UNIX ) || defined(__UNIX__)
+
+#if !defined( __NETWARE_386__ )
+
+#if defined( __UNIX__ )
+
 int global uicharlen( int ch )
 /****************************/
 {
@@ -68,28 +65,17 @@ int global uiisdbcs()
 
 #endif
 
-#ifdef _NEC_PC
-    int global uionnec()
-    {
-        return( 1 );
-    }
-#elif defined(__AXP__) || defined(__UNIX__) || defined( UNIX ) || (defined(__NT__) && (__WATCOMC__ < 1050))
+#if defined( __AXP__ ) || defined( __UNIX__ )
     int global uionnec()
     {
         return( 0 );
     }
 #else
-    #if (__WATCOMC__ < 1100)
-        #define _nonibmfunc     __nonIBM
-    #else
-        #define _nonibmfunc     __is_nonIBM
-    #endif
-
-    extern int _nonibmfunc();
+    extern int __is_nonIBM();
 
     int global uionnec()
     {
-        return( _nonibmfunc() );
+        return( __is_nonIBM() );
     }
 #endif
 

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Generic ui library macros and prototypes.
 *
 ****************************************************************************/
 
@@ -34,7 +33,7 @@
 #define _UIDEF_H_
 #include <stddef.h>
 
-#if defined( __WATCOMC__ ) 
+#if defined( __WATCOMC__ )
   #define cdecl __cdecl
 #else
   #define cdecl
@@ -68,21 +67,7 @@
 #ifdef _unused
    #undef _unused
 #endif
-#ifdef UNIX
-    #define _unused(var)        var=var
-#endif
-#ifdef __WATCOMC__
-    #define _unused(var)        var=var
-#endif
-#ifdef __TURBOC__
-    #define _unused(var)        var=var
-#endif
-#ifdef MICROSOFT
-    #define _unused(var)        var=var
-#endif
-#ifdef LATTICE
-    #define _unused(var)        var=var
-#endif
+#define _unused(var)        var=var
 
 #if defined( TSR )
 
@@ -173,7 +158,7 @@ void            intern          openbackground( void );
 int             intern          openwindow( UI_WINDOW * );
 void            intern          movewindow( UI_WINDOW *, ORD, ORD );
 void            intern          physupdate( SAREA * );
-#if defined( __UNIX__ ) || defined( UNIX )
+#if defined( __UNIX__ )
 void            intern          forbid_refresh( void );
 void            intern          permit_refresh( void );
 #else
