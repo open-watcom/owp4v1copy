@@ -15,7 +15,7 @@
     #include <io.h>
 #endif
 #ifndef _STAT_H_INCLUDED
-    #include <sys\stat.h>
+    #include <sys/stat.h>
 #endif
 :endsegment
 #ifndef _STDARG_H_INCLUDED
