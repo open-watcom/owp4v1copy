@@ -31,4 +31,5 @@ $(bin_root)\binp\dnmpbind.exe : $(objs)
 
 .c: ..\c
 .c.obj:
-    $(comp286) $[@ /d1 /w3 /oaxs /bm /zu /ml /i$(watcom_dir)\os21x_h;$(trap_dir)\h
+#    $(comp286) $[@ /d1 /w3 /oaxs /bm /zu /ml /i$(watcom_dir)\os21x_h;$(trap_dir)\h
+    $(comp286) $[@ /d1 /w3 /oaxs /bm /zu /ml /i$(lang_root)\h\os21x;$(trap_dir)\h
