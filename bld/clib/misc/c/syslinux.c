@@ -38,6 +38,7 @@
 #include <signal.h>
 #include <errno.h>
 #include <time.h>
+#include <sys/wait.h>
 #include <sys/time.h>
 #include <sys/times.h>
 #include <sys/ioctl.h>
@@ -280,11 +281,16 @@ _WCRTLINK int sigprocmask(int __how, const sigset_t *__set, sigset_t *__oldset)
     __syscall_return(int,res);
 }
 
-_WCRTLINK pid_t waitpid (pid_t __pid, int *__stat_loc, int __options)
+_WCRTLINK pid_t waitpid(pid_t __pid, __WAIT_STATUS __stat_loc, int __options)
 {
     u_long res = sys_call3(SYS_waitpid, __pid, (u_long)__stat_loc,
                            (u_long)__options);
     __syscall_return(pid_t,res);
+}
+
+_WCRTLINK pid_t wait(__WAIT_STATUS __stat_loc)
+{
+    return waitpid( -1, __stat_loc, 0 );
 }
 
 _WCRTLINK int pipe( int __fildes[2] )
