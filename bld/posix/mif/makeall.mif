@@ -9,7 +9,7 @@
 all : lib $(commands) .symbolic
         @%null
 
-lib : .symbolic
+lib : .symbolic $(__MAKEFILES__)
 curr_dir_all=$+ $(%cwd) $-
 !ifdef __UNIX__
         @cd $(posix_dir)/misc/$(targos)
@@ -27,7 +27,7 @@ curr_dir_all=$+ $(%cwd) $-
 !endif
         @cd $(curr_dir_all)
 
-$(commands) : .symbolic
+$(commands) : .symbolic $(__MAKEFILES__)
         !@wmake -h targos=$(targos) make_all=1 -f $(posix_dir)/src/$^@/makefile
 !ifdef install
         @wstrip $^@.exe $(install)/$^@.exe

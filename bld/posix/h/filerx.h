@@ -45,12 +45,12 @@ int     FileNameWild( char *wild, int isrx );
 DIR     *OpenDirAll( char *filename, char *wild );
 int     FileMatchNoRx( char *name, char *wild );
 
-#ifndef __QNX__
-#define FILESEPSTR      "\\"
-#define FILESEP         '\\'
-#else
+#ifdef __UNIX__
 #define FILESEPSTR      "/"
-#define FILESEP         '/'
+#define isFILESEP(c)    ( c == '/' )
+#else
+#define FILESEPSTR      "\\"
+#define isFILESEP(c)    ( c == '\\' )
 #endif
 
 #endif

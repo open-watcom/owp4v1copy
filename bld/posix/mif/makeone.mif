@@ -17,7 +17,7 @@
 #       define the main target
 #
 lnk=$(name).lnk
-$(name).exe: $(objs) $(lnk) $(posixlib)
+$(name).exe: $(objs) $(lnk) $(posixlib) $(__MAKEFILES__)
         $(linker) @$(lnk)
 !ifeq targos dosos2
         $(binder)\bind $(name).exe $(apilib) $(doscalls)
@@ -28,7 +28,7 @@ $(name).exe: $(objs) $(lnk) $(posixlib)
 #
 #       create the lnk file
 #
-$(LNK) : $(objs)
+$(LNK) : $(objs) $(__MAKEFILES__)
         @%create $(LNK)
         @%append $(lnk) name $(name).exe
         @%append $(LNK) debug all option quiet,map

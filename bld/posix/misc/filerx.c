@@ -188,7 +188,7 @@ DIR *OpenDirAll( char *filename, char *wild )
         wild[j - i - 1] = filename[j];
     }
 
-    if( ch != FILESEP && ch != ':' && ch != 0 ) {
+    if( !isFILESEP( ch ) && ch != ':' && ch != 0 ) {
         strcat( npath, FILESEPSTR );
     }
     strcat( npath, "*.*" );
