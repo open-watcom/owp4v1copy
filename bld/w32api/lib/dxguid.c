@@ -26,7 +26,7 @@
 #define INITGUID 1
 #include <windows.h>
 #else
-#include <basetyps.h>
+#include <initguid.h>
 #endif 
 
 /////////////////////////////////////////////////////////////////////
