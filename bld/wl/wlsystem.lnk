@@ -148,12 +148,6 @@ system begin com
     libfile cstart_t
     format dos com
 end
-system begin codebuilder
-    option osname='Codebuilder'
-    libpath %WATCOM%\lib386
-    libpath %WATCOM%\lib386\dos
-    format phar rex
-end
 system begin qnx
     option osname='QNX 16-bit'
     libpath %WATCOM%\lib286
