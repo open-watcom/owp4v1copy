@@ -68,7 +68,7 @@ extra_cflags += -fo=.obj
 
 compiler_i86    =$(comp286) -ml -fpc
 !ifeq host_OS linux
-compiler_386    =$(comp386) -mf -fpi87
+compiler_386    =$(comp386) -mf -fpc
 !else
 compiler_386    =$(comp386) -mf -fpc
 !endif
@@ -172,6 +172,10 @@ dig_os = $(host_OS)
 !include $(dig_dir)/mif/dipcli.mif
 !include $(dig_dir)/mif/madcli.mif
 !include $(dig_dir)/mif/trpcli.mif
+
+!ifeq host_OS linux
+dig_srcs+=;$(dig_dir)/c/dsx
+!endif
 
 engine_objs = &
         $(dip_objs) &
