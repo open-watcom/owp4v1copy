@@ -1,10 +1,8 @@
-# Manifest file for IDE binaries (Watcom C/C++/Fortran, All hosts)
+# Manifest file for IDE/editor config files (Watcom C/C++/Fortran, All hosts)
 
 binw\ide.cfg
 binw\idedos32.cfg
 binw\idedos.cfg
-binw\idemfc16.cfg
-binw\idemfc32.cfg
 binw\idenlm.cfg
 binw\ideos232.cfg
 binw\ideos2.cfg

@@ -23,11 +23,11 @@ cdsay .
     <CPCMD> viper/ideos232.cfg   <relroot>/rel2/binw/ideos232.cfg
     <CPCMD> viper/idew32.cfg     <relroot>/rel2/binw/idew32.cfg
     <CPCMD> viper/idew386.cfg    <relroot>/rel2/binw/idew386.cfg
-    <CPCMD> viper/ideads.cfg     <relroot>/rel2/binw/ideads.cfg
+#    <CPCMD> viper/ideads.cfg     <relroot>/rel2/binw/ideads.cfg
     <CPCMD> viper/idenlm.cfg     <relroot>/rel2/binw/idenlm.cfg
-    <CPCMD> viper/idemfc16.cfg   <relroot>/rel2/binw/idemfc16.cfg
-    <CPCMD> viper/idemfc32.cfg   <relroot>/rel2/binw/idemfc32.cfg
-    <CPCMD> viper/idemfca.cfg    <relroot>/rel2/binw/idemfca.cfg
+#    <CPCMD> viper/idemfc16.cfg   <relroot>/rel2/binw/idemfc16.cfg
+#    <CPCMD> viper/idemfc32.cfg   <relroot>/rel2/binw/idemfc32.cfg
+#    <CPCMD> viper/idemfca.cfg    <relroot>/rel2/binw/idemfca.cfg
 #    <CPCMD> viper/ideaxp.cfg     <relroot>/rel2/binw/ideaxp.cfg
     <CPCMD> viper/wini86/ide.exe <relroot>/rel2/binw/ide.exe
     <CPCMD> viper/win/idex.cfg   <relroot>/rel2/binw/idex.cfg

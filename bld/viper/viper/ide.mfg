@@ -15,7 +15,7 @@ rem     dc DOS .com file
 rem     df Flashtek, register based calling conventions
 rem     ds Flashtek, stack based calling conventions
 rem     dp Pharlap
-rem     dr Rational DOS 4G
+rem     dr Tenberry DOS/4G
 rem     dt Pharlap tnt
 rem     dw CauseWay DOS32
 rem     nc Windows NT character mode executable
@@ -86,9 +86,9 @@ Tool WMAKE "Make Utility"
 Tool RUN "User Application"
   Family Application
 rem make fullscreen an option where both windowed & fullscreen work
-    CSwitch 0, oc?eo, "Fullscreen", "!Fullscreen", ON
+    CSwitch 0, oc?eo, "Fullscreen", "!Fullscreen", OFF
     CSwitch 0, of?eo, "Fullscreen", "!Fullscreen", ON
-    CSwitch 0, ov?eo, "Fullscreen", "!Fullscreen", ON
+    CSwitch 0, ov?eo, "Fullscreen", "!Fullscreen", OFF
     CSwitch 0, d??eo, "Fullscreen", "!Fullscreen", ON
     CSwitch 0, dr2e?, "", $(%watcom)\binw\dos4gw, ON
     CSwitch 0, dw2e?, "", $(%watcom)\binw\cwstub, ON
@@ -366,7 +366,7 @@ Tool WCG "Code Generator"
         RSwitch 0, ?????, "Full info plus unused types", -d3, OFF
     RGroup "Debugging format"
         RSwitch 0, ?????, "Compiler default", , ON
-        RSwitch 0, ?????, "WATCOM debugging format", -hw, OFF
+        RSwitch 0, ?????, "Watcom debugging format", -hw, OFF
 :segment !C_FOR_PB
         RSwitch 0, ?????, "Dwarf debugging format", -hd, OFF
         RSwitch 0, ?????, "CodeView debugging format", -hc, OFF
@@ -387,8 +387,6 @@ Tool WCG "Code Generator"
     CSwitch 0, nu???, "Multithreaded application", -bm, ON
     CSwitch 0, o????, "Multithreaded application", -bm, OFF
     CSwitch 0, n????, "Multithreaded application", -bm, OFF
-    CSwitch 0, o????, "Default-window application", -bw, OFF
-    CSwitch 0, n????, "Default-window application", -bw, OFF
     CSwitch 0, w????, "Default-window application", -bw, OFF
 :endsegment
     RGroup "Floating-point Level"
@@ -696,7 +694,7 @@ Tool WFOR "Fortran Compiler"
         RSwitch 0, ?????, "Full debugging information", -d2, OFF, ON
     RGroup "Debugging Format"
         RSwitch 0, ?????, "Compiler default", , ON
-        RSwitch 0, ?????, "WATCOM debugging format", -hw, OFF
+        RSwitch 0, ?????, "Watcom debugging format", -hw, OFF
         RSwitch 0, ?????, "Codeview debugging format", -hc, OFF
         RSwitch 0, ?????, "DWARF debugging format", -hd, OFF
   Family "Code Generation Strategy"
@@ -761,7 +759,7 @@ Tool WFOR "Fortran Compiler"
       CSwitch 1, ?????, "Instruction scheduling", -or, OFF
       CSwitch 1, ?????, "No loop overflow checking", -odo, OFF
     Family "Application Type"
-      CSwitch 0, ?????, "Default windowed application", -bw, OFF
+      CSwitch 0, w????, "Default windowed application", -bw, OFF
       CSwitch 0, ?????, "Multithreaded application", -bm, OFF
       CSwitch 0, ???d?, "Dynamic link library", -bd, ON
       CSwitch 0, ?????, "Dynamic link library", -bd, OFF
@@ -881,7 +879,7 @@ Tool WLINK "Linker"
         RSwitch  0, ?????, "Debug types", "d types", OFF
         RSwitch  0, ?????, "Debug locals", "d locals", OFF
         RSwitch  0, ?????, "Debug All", "d all", OFF, ON
-        RSwitch  0, ?????, "Debug Codeview", "d codeview op cvp", OFF
+        RSwitch  0, ?????, "Debug CodeView", "d codeview op cvp", OFF
         RSwitch  0, ?????, "Debug Dwarf", "d dwarf", OFF
         RSwitch  0, ?????, "Debug Watcom", "d watcom", OFF
     VSwitch  0, w?6d?, "System:", SYS, " ", ONE, REQ, windows_dll
