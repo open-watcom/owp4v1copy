@@ -70,12 +70,13 @@ static void TrapFailed()
 
 void InitSuppServices()
 {
-    InitCoreSupp();
-    InitFileSupp();
-    InitFileInfoSupp();
-    InitEnvSupp();
-    InitThreadSupp();
-    InitOvlSupp();
+    if( InitCoreSupp() ) {
+        InitFileSupp();
+        InitFileInfoSupp();
+        InitEnvSupp();
+        InitThreadSupp();
+        InitOvlSupp();
+    }
 }
 
 void FiniSuppServices()

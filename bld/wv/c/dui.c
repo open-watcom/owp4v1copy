@@ -91,6 +91,8 @@ extern void             PopErrBox( char *buff );
 extern void             KillDebugger( int ret_code );
 extern char             *Format(char *,char *,... );
 
+extern void             InitSuppServices( void );
+
 void DUIUpdate( update_list flags )
 {
     if( flags & UP_NEW_PROGRAM ) {
@@ -313,6 +315,7 @@ extern void *DUIHourGlass( void *x )
 }
 extern void WndDoInput()
 {
+    InitSuppServices();
     DoInput();
 }
 void DUIEnterCriticalSection()

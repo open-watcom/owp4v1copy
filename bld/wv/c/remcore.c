@@ -96,7 +96,7 @@ typedef struct {
 } machine_data_cache;
 
 static cache_block              Cache;
-static machine_data_cache       *MData;
+static machine_data_cache       *MData = NULL;
 
 static bool IsInterrupt( addr_ptr *addr, unsigned size )
 {
@@ -689,12 +689,16 @@ void ClearMachineDataCache()
 
 bool InitCoreSupp()
 {
-    _Alloc( MData, sizeof( *MData ) );
-    MData->len = sizeof( MData->data );
-    ClearMachineDataCache();
-    GetSysConfig();
-    CheckMADChange();
-    return( TRUE );
+    if( MData == NULL ) {
+        _Alloc( MData, sizeof( *MData ) );
+        MData->len = sizeof( MData->data );
+        ClearMachineDataCache();
+        GetSysConfig();
+        CheckMADChange();
+        return( TRUE );
+    } else {
+        return( FALSE );
+    }
 }
 
 void FiniCoreSupp()
