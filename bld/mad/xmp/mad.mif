@@ -1,4 +1,4 @@
-# !include $(disasm_dir)\core\dis.mif
+# !include $(disasm_dir)\mif\dis.mif
 
 imp_objs = &
         xmpaddr.obj &
