@@ -51,13 +51,16 @@ _WCRTLINK int *__get_errno_ptr()
 
 #elif defined(__LINUX__)
 
-// TODO: Need to add this for Linux!
+#include "errorno.h"
 
-#if 0
+#if !defined( __SW_BM )
+    _WCRTLINK int               errno;
+#endif
+
 _WCRTLINK int *__get_errno_ptr()
 {
+    return( &_RWD_errno );
 }
-#endif
 
 #else
 

@@ -92,6 +92,7 @@
 !inject main4wnt.obj                     nt nta ntp
 !inject maino16.obj                                                 o16
 !inject mainqnx.obj                                                             q32
+!inject mainlnx.obj
 !inject maino32.obj                                                     o32
 !inject mainwnt.obj                      nt nta ntp
 !inject mtype.obj    d16 d32             nt nta ntp                 o16 o32         w16 w32
