@@ -97,7 +97,6 @@ int main( int argc, char **argv )
     list_file = FALSE;
     is_intel = FALSE;
     quiet = FALSE;
-    rec_type = 0;
     for( i = 1; i < argc; ++i ) {
         if( argv[i][0] == '-' ) {
             switch( tolower( argv[i][1] ) ) {
@@ -112,10 +111,15 @@ int main( int argc, char **argv )
                 break;
             case 'r':
                 if( strnicmp( argv[i] + 1, "rec=", 4 ) == 0 ) {
-                    if( isdigit( argv[i][5] ) ) {
-                        rec_type = atoi( argv[i] + 5 );
+                    if( rec_count < 10 ) {
+                        if( isdigit( argv[i][5] ) ) {
+                            rec_type[ rec_count++ ] = atoi( argv[i] + 5 );
+                        } else {
+                            rec_type[ rec_count++ ] = RecNameToNumber( argv[i] + 5 );
+                        }
                     } else {
-                        rec_type = RecNameToNumber( argv[i] + 5 );
+                        Output( "Maximum 10 record type allowed." CRLF );
+                        OutputFini();
                     }
                 } else {
                     DumpRaw = TRUE;

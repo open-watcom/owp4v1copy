@@ -61,6 +61,8 @@ extern  void            OutputSetFH( FILE * );
 extern  void            Output( const char *fmt, ... );
 extern  void            OutputData( unsigned_32 off, unsigned_32 len );
 
+extern  int             no_disp;
+
 /*
     Object reading (objread.c)
 */
@@ -83,7 +85,8 @@ extern  jmp_buf         BailOutJmp;
 extern  char            ProvideRawTypes[];
 extern  char            OmitTypes[];
 extern  bool            IgnoreOutput;
-extern  byte            rec_type;
+extern  byte            rec_type[];
+extern  int             rec_count;
 
 extern  bool            EndRec( void );
 extern  unsigned_16     RecOffset( void );

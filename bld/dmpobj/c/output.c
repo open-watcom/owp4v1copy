@@ -40,6 +40,9 @@
 
 #define OUT_BUFF_SIZE   1024
 #define OUT_BUFF_WRITE  512     /* write outBuff when this full */
+
+int     no_disp = FALSE;
+
 static  char            outBuff[ OUT_BUFF_SIZE ];
 static  char            *outBuffPtr;
 static  FILE            *outputFH;
@@ -188,6 +191,8 @@ void Output( const char *fmt, ... )
     const char  *str;
     size_t      len;
 
+    if( no_disp )
+        return;
     va_start( args, fmt );
     p = outBuffPtr;
     for(;;) {
@@ -309,6 +314,8 @@ void OutputData( unsigned_32 offset, unsigned_32 len )
     char        ch;
     char        ascbuf[80];
 
+    if( no_disp )
+        return;
     if( len == 0 ) {
         len = RecLen - RecOffset();  /* FIXME - kind of a kludge */
     }
