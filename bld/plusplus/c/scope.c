@@ -6955,7 +6955,7 @@ SYMBOL ScopeIntrinsic( boolean turn_on )
     TYPE type;
 
     name = NameCreateLen( Buffer, TokenLen );
-    result = ScopeFindNaked( GetFileScope(), name );
+    result = ScopeFindNaked( ScopeNearestFile( GetCurrScope() ), name );
     if( result == NULL ) {
         return( NULL );
     }
