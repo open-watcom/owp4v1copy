@@ -366,7 +366,7 @@ not64k:                                 ; endif
         mov     ch,0
         cld                             ; set direction forward
         mov     al,' '
-        rep     scasb
+        repe    scasb
         lea     si,-1[di]
 
         mov     dx,DGROUP

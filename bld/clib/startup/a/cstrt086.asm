@@ -318,7 +318,7 @@ mem_setup:
         mov     ch,0
         cld                             ; set direction forward
         mov     al,' '
-        rep     scasb
+        repe    scasb
         lea     si,-1[di]
 
 ifdef __TINY__

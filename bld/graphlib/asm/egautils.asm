@@ -353,7 +353,7 @@ put_bitplane:
           dec     _esi           ; back up 1
           cmp     word ptr ss:__PlotAct,0
           _if     e             ; if plot action is replace
-            repe    movsb
+            rep     movsb
           _else
 transfer_bytes:
             mov     al,[_esi]
@@ -543,7 +543,7 @@ get_bitplane:
           shr     _ecx,1
           shr     _ecx,1
           shr     _ecx,1
-          repe    movsb         ; copy cx bytes from ds:si to es:di
+          rep     movsb         ; copy cx bytes from ds:si to es:di
         _else
           mov     ah,[_esi]       ; get first byte at ds:si into ah
           inc     _esi

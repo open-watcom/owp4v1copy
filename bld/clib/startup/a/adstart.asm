@@ -353,7 +353,7 @@ know_extender:                          ; endif
         mov     cl,es:[edi-1]           ; get length of command
         cld                             ; set direction forward
         mov     al,' '
-        rep     scasb
+        repe    scasb
         lea     esi,-1[edi]
         mov     edi,edx
         mov     bx,es
