@@ -53,7 +53,8 @@ void            DIGENTRY MIStateInit( imp_mad_state_data *new )
 {
     memset( new, 0, sizeof( *new ) );
     new->cpu_toggles = CT_HEX;
-    new->mmx_toggles = MT_HEX | MT_BYTE;
+    new->mmx_toggles = MT_BYTE;
+    new->xmm_toggles = XT_BYTE;
 }
 
 void            DIGENTRY MIStateSet( imp_mad_state_data *new )

@@ -126,12 +126,26 @@ struct x86_mmx {
     mmx_reg             mm[8];
 };
 
+typedef struct {
+    union {
+        unsigned_64             uq[2];
+        unsigned_32             ud[4];
+        unsigned_16             uw[8];
+        unsigned_8              ub[16];
+    };
+} xmm_reg;
+
+struct x86_xmm {
+    xmm_reg             xmm[8];
+};
+
 struct x86_mad_registers {
     struct x86_cpu      cpu;
     union {
         struct x86_fpu  fpu;
         struct x86_mmx  mmx;
     };
+    struct x86_xmm      xmm;
 };
 
 #define BIT( name, shift, len ) SHIFT_##name = shift, LEN_##name = len

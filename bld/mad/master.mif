@@ -2,13 +2,12 @@
 # Master makefile for creating MAD's
 #
 
-project_name = mad
+proj_name = mad
 
-.CONTINUE
-.ERASE
+!ifndef mad_autodepends
+mad_autodepends = .autodepend
+!endif
 
-memory_model_i86 = l
-memory_model_386 = f
 !ifeq host_os qnx
 memory_model_386 = s
 !endif
@@ -76,10 +75,7 @@ libs += $(imp_libs)
 
 ##################
 
-inc_dirs=../h;../../h;$(dig_dir)/h;$(inc_dirs_lang);$(watcom_dir)/h;$(dis_includes)
-!ifdef extra_incs
-inc_dirs+=;$(extra_incs)
-!endif
+inc_dirs=../h;../../h;$(dig_dir)/h;$(dis_includes);$(extra_incs)
 
 .c: ../c;../../c;$(dis_srcs);$(extra_srcs)
 
@@ -87,5 +83,5 @@ objs =  madimp.obj $(dis_objs) $(imp_objs)
 
 # explicit rules
 ##################
-$(exe_name) : $(dis_prereq) $(objs)
+$(exe_name) : $(dis_prereq) $(objs) $(__MAKEFILES__)
         $(linker) $(lflags) name $^@ file {$(objs)} library {$(libs)}

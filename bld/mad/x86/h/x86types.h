@@ -30,6 +30,7 @@
 ****************************************************************************/
 
 
+
 #if !defined(pick)
 #define pick( e, x0, x1, x2, x3, x4 )   X86T_##e,
 #define defining_enums
@@ -43,6 +44,7 @@ enum {
     pick( SBYTE,        NIL,            1, LX, LX, I1 )
     pick( SWORD,        NIL,            1, LX, LX, I2 )
     pick( SDWORD,       NIL,            1, LX, LX, I4 )
+    pick( SQWORD,       NIL,            1, LX, LX, I8 )
     pick( CHAR,         CHAR,           0, L1, L1, I1 )
     pick( SHORT,        SHORT,          0, L1, L1, I2 )
     pick( LONG,         LONG,           0, L3, L1, I4 )
@@ -50,7 +52,7 @@ enum {
     pick( UCHAR,        UCHAR,          0, L1, L1, U1 )
     pick( USHORT,       USHORT,         0, L1, L1, U2 )
     pick( ULONG,        ULONG,          0, L3, L1, U4 )
-    pick( U64,          UNSIGNED64,     1, LX, L1, U8 )
+    pick( U64,          UNSIGNED64,     0, LX, L1, U8 )
     pick( BIT,          NIL,            0, LX, LX, BIT )
     /* addresses */
     pick( N16_PTR,      N16_PTR,        1, LX, L1, N16 )
@@ -85,6 +87,23 @@ enum {
     pick( MMX_TITLE5,   NIL,            0, LX, LX, MMX_TITLE )
     pick( MMX_TITLE6,   NIL,            0, LX, LX, MMX_TITLE )
     pick( MMX_TITLE7,   NIL,            0, LX, LX, MMX_TITLE )
+    pick( XMM_TITLE0,   NIL,            0, LX, LX, XMM_TITLE )
+    pick( XMM_TITLE1,   NIL,            0, LX, LX, XMM_TITLE )
+    pick( XMM_TITLE2,   NIL,            0, LX, LX, XMM_TITLE )
+    pick( XMM_TITLE3,   NIL,            0, LX, LX, XMM_TITLE )
+    pick( XMM_TITLE4,   NIL,            0, LX, LX, XMM_TITLE )
+    pick( XMM_TITLE5,   NIL,            0, LX, LX, XMM_TITLE )
+    pick( XMM_TITLE6,   NIL,            0, LX, LX, XMM_TITLE )
+    pick( XMM_TITLE7,   NIL,            0, LX, LX, XMM_TITLE )
+    pick( XMM_TITLE8,   NIL,            0, LX, LX, XMM_TITLE )
+    pick( XMM_TITLE9,   NIL,            0, LX, LX, XMM_TITLE )
+    pick( XMM_TITLE10,  NIL,            0, LX, LX, XMM_TITLE )
+    pick( XMM_TITLE11,  NIL,            0, LX, LX, XMM_TITLE )
+    pick( XMM_TITLE12,  NIL,            0, LX, LX, XMM_TITLE )
+    pick( XMM_TITLE13,  NIL,            0, LX, LX, XMM_TITLE )
+    pick( XMM_TITLE14,  NIL,            0, LX, LX, XMM_TITLE )
+    pick( XMM_TITLE15,  NIL,            0, LX, LX, XMM_TITLE )
+    pick( U128,         NIL,            0, LX, LX, XMM_TITLE )
 
 #if defined(defining_enums)
 X86T_LAST_ONE };

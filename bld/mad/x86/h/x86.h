@@ -35,7 +35,7 @@
 #include "regdef.h"
 #include "instr.h"
 
-typedef enum { LN, L1, L2, L3, L5, LX } processor_level;
+typedef enum { LN, L1, L2, L3, L5, L6, LX } processor_level;
 
 struct imp_mad_state_data {
     enum {
@@ -53,6 +53,16 @@ struct imp_mad_state_data {
         MT_WORD         = 0x8,
         MT_DWORD        = 0x10
     }           mmx_toggles;
+    enum {
+        XT_HEX          = 0x1,
+        XT_SIGNED       = 0x2,
+        XT_BYTE         = 0x4,
+        XT_WORD         = 0x8,
+        XT_DWORD        = 0x10,
+        XT_QWORD        = 0x20,
+        XT_FLOAT        = 0x40,
+        XT_DOUBLE       = 0x80
+    }           xmm_toggles;
     enum {
         DT_UPPER        = 0x1,
         DT_INSIDE       = 0x2

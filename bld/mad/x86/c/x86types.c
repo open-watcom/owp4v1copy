@@ -96,6 +96,9 @@ static const mad_type_info_basic FPPTR_32 =
 static const mad_type_info_basic MMX_TITLE =
     { MTK_CUSTOM, X86T_MMX_TITLE0, 8 };
 
+static const mad_type_info_basic XMM_TITLE =
+    { MTK_XMM, X86T_XMM_TITLE0, 8 };
+
 #undef D
 
 typedef struct mad_type_data {
@@ -157,7 +160,7 @@ unsigned        DIGENTRY MITypePreferredRadix( mad_type_handle th )
 void            DIGENTRY MITypeInfo( mad_type_handle th, mad_type_info *ti )
 {
     memcpy( ti, TypeArray[th].u.info, sizeof( *ti ) );
-    if( TypeArray[th].u.b == &BIT.b || TypeArray[th].u.b == &MMX_TITLE ) {
+    if( TypeArray[th].u.b == &BIT.b || TypeArray[th].u.b == &MMX_TITLE || TypeArray[th].u.b == &XMM_TITLE ) {
         ti->b.handler_code = th;
     }
 }
@@ -231,6 +234,22 @@ mad_status      DIGENTRY MITypeToString( unsigned radix, const mad_type_info *mt
     case X86T_MMX_TITLE5:
     case X86T_MMX_TITLE6:
     case X86T_MMX_TITLE7:
+    case X86T_XMM_TITLE0:
+    case X86T_XMM_TITLE1:
+    case X86T_XMM_TITLE2:
+    case X86T_XMM_TITLE3:
+    case X86T_XMM_TITLE4:
+    case X86T_XMM_TITLE5:
+    case X86T_XMM_TITLE6:
+    case X86T_XMM_TITLE7:
+    case X86T_XMM_TITLE8:
+    case X86T_XMM_TITLE9:
+    case X86T_XMM_TITLE10:
+    case X86T_XMM_TITLE11:
+    case X86T_XMM_TITLE12:
+    case X86T_XMM_TITLE13:
+    case X86T_XMM_TITLE14:
+    case X86T_XMM_TITLE15:
         *max = RegDispType( mti->b.handler_code, data, *max, buff );
         return( MS_OK );
     }

@@ -683,6 +683,8 @@ mad_status      MADTypeInfoForHost( mad_type_kind tk, int size, mad_type_info *m
     #error Host floating point info not configured
 #endif
         break;
+    case MTK_XMM:
+        break;
     }
     return( MS_UNSUPPORTED );
 }

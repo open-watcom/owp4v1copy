@@ -81,7 +81,8 @@ typedef unsigned_8 mad_type_kind; enum {
     MTK_ADDRESS = 0x02,
     MTK_FLOAT   = 0x04,
     MTK_CUSTOM  = 0x08,
-    MTK_ALL     = MTK_INTEGER|MTK_ADDRESS|MTK_FLOAT|MTK_CUSTOM,
+    MTK_XMM     = 0x10,
+    MTK_ALL     = MTK_INTEGER|MTK_ADDRESS|MTK_FLOAT|MTK_CUSTOM|MTK_XMM,
 
     MAS_MEMORY  = 0x40,
     MAS_IO      = 0x80,

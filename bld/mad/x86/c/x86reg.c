@@ -41,9 +41,10 @@
 
 typedef enum {
     RF_NONE,
-    RF_GPREG = 0x1,
-    RF_FPREG = 0x2,
-    RF_MMREG = 0x4,
+    RF_GPREG  = 0x1,
+    RF_FPREG  = 0x2,
+    RF_MMREG  = 0x4,
+    RF_XMMREG = 0x8,
 } register_flags;
 
 #define REG( p, name, type, start, size, flags, sublist, cpulevel, fpulevel ) \
@@ -73,6 +74,10 @@ typedef enum {
 #define MMX( num )      \
     REG( MMX, mm##num, U64, offsetof( mad_registers, x86.mmx.mm[num] )*8,\
     64, MM, MMXSubList##num, L5, LX )
+
+#define XMM( num )      \
+    REG( XMM, xmm##num, U128, offsetof( mad_registers, x86.xmm.xmm[num] )*8,\
+    128, XMM, XMMSubList##num, L6, LX )
 
 
 /* forward definitions */
@@ -219,14 +224,24 @@ NULL };
 #define X86T_b  X86T_BYTE
 #define X86T_w  X86T_WORD
 #define X86T_d  X86T_DWORD
+#define X86T_q  X86T_QWORD
 #define MMXS_b  8
 #define MMXS_w  16
 #define MMXS_d  32
+#define XMMS_b  8
+#define XMMS_w  16
+#define XMMS_d  32
+#define XMMS_q  64
 
 #define MMX_SUBREG( s, i, reg ) \
     REG( MMX##reg, s##i, s,     \
     offsetof( mad_registers, x86.mmx.mm[reg] )*8 + MMXS_##s * i,\
     MMXS_##s, MM, NULL, L5, LX )
+
+#define XMM_SUBREG( s, i, reg ) \
+    REG( XMM##reg, s##i, s,     \
+    offsetof( mad_registers, x86.xmm.xmm[reg] )*16 + XMMS_##s * i,\
+    XMMS_##s, XMM, NULL, L6, LX )
 
 #define MMX_SUBLIST( n )        \
         MMX_SUBREG( b, 0, n )   \
@@ -274,6 +289,72 @@ static const x86_reg_info * const MMXRegList[] = {
 NULL };
 
 
+#define XMM_SUBLIST( n )        \
+        XMM_SUBREG( b, 0, n )   \
+        XMM_SUBREG( b, 1, n )   \
+        XMM_SUBREG( b, 2, n )   \
+        XMM_SUBREG( b, 3, n )   \
+        XMM_SUBREG( b, 4, n )   \
+        XMM_SUBREG( b, 5, n )   \
+        XMM_SUBREG( b, 6, n )   \
+        XMM_SUBREG( b, 7, n )   \
+        XMM_SUBREG( b, 8, n )   \
+        XMM_SUBREG( b, 9, n )   \
+        XMM_SUBREG( b, 10, n )  \
+        XMM_SUBREG( b, 11, n )  \
+        XMM_SUBREG( b, 12, n )  \
+        XMM_SUBREG( b, 13, n )  \
+        XMM_SUBREG( b, 14, n )  \
+        XMM_SUBREG( b, 15, n )  \
+        XMM_SUBREG( w, 0, n )   \
+        XMM_SUBREG( w, 1, n )   \
+        XMM_SUBREG( w, 2, n )   \
+        XMM_SUBREG( w, 3, n )   \
+        XMM_SUBREG( w, 4, n )   \
+        XMM_SUBREG( w, 5, n )   \
+        XMM_SUBREG( w, 6, n )   \
+        XMM_SUBREG( w, 7, n )   \
+        XMM_SUBREG( d, 0, n )   \
+        XMM_SUBREG( d, 1, n )   \
+        XMM_SUBREG( d, 2, n )   \
+        XMM_SUBREG( d, 3, n )   \
+        XMM_SUBREG( q, 0, n )   \
+        XMM_SUBREG( q, 1, n )   \
+                                \
+        static const x86_reg_info * const XMMSubList##n[] = {           \
+            &XMM##n##_b0, &XMM##n##_b1, &XMM##n##_b2, &XMM##n##_b3,     \
+            &XMM##n##_b4, &XMM##n##_b5, &XMM##n##_b6, &XMM##n##_b7,     \
+            &XMM##n##_b8, &XMM##n##_b9, &XMM##n##_b10,&XMM##n##_b11,    \
+            &XMM##n##_b12,&XMM##n##_b13,&XMM##n##_b14,&XMM##n##_b15,    \
+            &XMM##n##_w0, &XMM##n##_w1, &XMM##n##_w2, &XMM##n##_w3,     \
+            &XMM##n##_w4, &XMM##n##_w5, &XMM##n##_w6, &XMM##n##_w7,     \
+            &XMM##n##_d0, &XMM##n##_d1, &XMM##n##_d2, &XMM##n##_d3,     \
+            &XMM##n##_q0, &XMM##n##_q1, NULL };
+
+XMM_SUBLIST( 0 )
+XMM_SUBLIST( 1 )
+XMM_SUBLIST( 2 )
+XMM_SUBLIST( 3 )
+XMM_SUBLIST( 4 )
+XMM_SUBLIST( 5 )
+XMM_SUBLIST( 6 )
+XMM_SUBLIST( 7 )
+
+XMM( 0 );
+XMM( 1 );
+XMM( 2 );
+XMM( 3 );
+XMM( 4 );
+XMM( 5 );
+XMM( 6 );
+XMM( 7 );
+
+static const x86_reg_info * const XMMRegList[] = {
+    &XMM_xmm0, &XMM_xmm1, &XMM_xmm2, &XMM_xmm3,
+    &XMM_xmm4, &XMM_xmm5, &XMM_xmm6, &XMM_xmm7,
+NULL };
+
+
 struct mad_reg_set_data {
     mad_string          name;
     const x86_reg_info  * const *reglist;
@@ -300,6 +381,19 @@ static const mad_toggle_strings MMXToggleList[] =
     {MSTR_BYTE,MSTR_BYTE,MSTR_NIL},
     {MSTR_WORD,MSTR_WORD,MSTR_NIL},
     {MSTR_DWORD,MSTR_DWORD,MSTR_NIL},
+    {MSTR_FLOAT,MSTR_FLOAT,MSTR_NIL},
+    {MSTR_NIL,MSTR_NIL,MSTR_NIL}
+};
+static const mad_toggle_strings XMMToggleList[] =
+{
+    {MSTR_MHEX,MSTR_HEX,MSTR_DECIMAL},
+    {MSTR_SIGNED,MSTR_SIGNED,MSTR_UNSIGNED},
+    {MSTR_BYTE,MSTR_BYTE,MSTR_NIL},
+    {MSTR_WORD,MSTR_WORD,MSTR_NIL},
+    {MSTR_DWORD,MSTR_DWORD,MSTR_NIL},
+    {MSTR_QWORD,MSTR_QWORD,MSTR_NIL},
+    {MSTR_FLOAT,MSTR_FLOAT,MSTR_NIL},
+    {MSTR_DOUBLE,MSTR_DOUBLE,MSTR_NIL},
     {MSTR_NIL,MSTR_NIL,MSTR_NIL}
 };
 
@@ -311,6 +405,8 @@ static const mad_reg_set_data FPURegSet =
     { MSTR_FPU, FPURegList, FPUToggleList, FPU_GROUPING };
 static const mad_reg_set_data MMXRegSet =
     { MSTR_MMX, MMXRegList, MMXToggleList, 1 };
+static const mad_reg_set_data XMMRegSet =
+    { MSTR_XMM, XMMRegList, XMMToggleList, 1 };
 
 unsigned        DIGENTRY MIRegistersSize( void )
 {
@@ -362,6 +458,10 @@ walk_result     DIGENTRY MIRegSetWalk( mad_type_kind tk, MI_REG_SET_WALKER *wk, 
     }
     if( (tk & MTK_CUSTOM) && (MCSystemConfig()->cpu >= X86_586) ) {
         wr = wk( &MMXRegSet, d );
+        if( wr != WR_CONTINUE ) return( wr );
+    }
+    if( (tk & MTK_XMM) && (MCSystemConfig()->cpu >= X86_686) ) {
+        wr = wk( &XMMRegSet, d );
         if( wr != WR_CONTINUE ) return( wr );
     }
     return( WR_CONTINUE );
@@ -430,14 +530,30 @@ unsigned        DIGENTRY MIRegSetLevel( const mad_reg_set_data *rsd, unsigned ma
 
 unsigned        DIGENTRY MIRegSetDisplayGrouping( const mad_reg_set_data *rsd )
 {
-    if( rsd != &MMXRegSet ) {
-        return( rsd->grouping );
-    } else if( MADState->mmx_toggles & MT_BYTE ) {
-        return( 8 );
-    } else if( MADState->mmx_toggles & MT_WORD ) {
-        return( 4 );
+    if( rsd == &MMXRegSet ) {
+        if( MADState->mmx_toggles & MT_BYTE ) {
+            return( 8 );
+        } else if( MADState->mmx_toggles & MT_WORD ) {
+            return( 4 );
+        } else {
+            return( 2 );
+        }
+    } else if( rsd == &XMMRegSet ) {
+        if( MADState->xmm_toggles & XT_BYTE ) {
+            return( 16 );
+        } else if( MADState->xmm_toggles & XT_WORD ) {
+            return( 8 );
+        } else if( MADState->xmm_toggles & XT_DWORD ) {
+            return( 4 );
+        } else if( MADState->xmm_toggles & XT_QWORD ) {
+            return( 2 );
+        } else if( MADState->xmm_toggles & XT_FLOAT ) {
+            return( 4 );
+        } else {  // double
+            return( 2 );
+        }
     } else {
-        return( 2 );
+        return( rsd->grouping );
     }
 }
 
@@ -793,11 +909,11 @@ static mad_status MMXGetPiece( const mad_registers *mr,
         &MMX7_d1,&MMX7_d0,
     };
     #define T(t)        X86T_##t
-    static const mad_type_handle type_select[2][2][3] = {
-        /* decimal, unsigned */         /* decimal, signed */
-        { {T(UCHAR),T(USHORT),T(ULONG)},{T(CHAR),T(SHORT),T(LONG)} },
-        /* hex, unsigned */             /* hex, signed */
-        { {T(BYTE),T(WORD),T(DWORD)},   {T(SBYTE),T(SWORD),T(SDWORD)} },
+    static const mad_type_handle type_select[2][2][4] = {
+        /* decimal, unsigned */                     /* decimal, signed */
+        { { T(UCHAR),T(USHORT),T(ULONG),T(FLOAT) }, { T(CHAR), T(SHORT),T(LONG),  T(FLOAT) } },
+        /* hex, unsigned */                         /* hex, signed */
+        { { T(BYTE), T(WORD),  T(DWORD),T(DWORD) }, { T(SBYTE),T(SWORD),T(SDWORD),T(SDWORD) } },
     };
     #undef T
 
@@ -827,11 +943,16 @@ static mad_status MMXGetPiece( const mad_registers *mr,
         list_num = NUM_ELTS( list_word );
         group = 4;
         type = 1;
-    } else {
+    } else if( MADState->mmx_toggles & MT_DWORD ) {
         list = list_dword;
         list_num = NUM_ELTS( list_dword );
         group = 2;
         type = 2;
+    } else {
+        list = list_dword;
+        list_num = NUM_ELTS( list_dword );
+        group = 2;
+        type = 3;
     }
     *disp_type_p = type_select[(MADState->mmx_toggles&MT_HEX) ? 1 : 0]
                                 [(MADState->mmx_toggles&MT_SIGNED) ? 1 : 0]
@@ -858,6 +979,148 @@ static mad_status MMXGetPiece( const mad_registers *mr,
     return( MS_OK );
 }
 
+static mad_status XMMGetPiece( const mad_registers *mr,
+                                unsigned piece,
+                                char **descript_p,
+                                unsigned *max_descript_p,
+                                const mad_reg_info **reg_p,
+                                mad_type_handle *disp_type_p,
+                                unsigned *max_value_p )
+{
+    static const x86_reg_info *list_byte[] = {
+        &XMM0_b15,&XMM0_b14,&XMM0_b13,&XMM0_b12,&XMM0_b11,&XMM0_b10,&XMM0_b9,&XMM0_b8,
+        &XMM0_b7,&XMM0_b6,&XMM0_b5,&XMM0_b4,&XMM0_b3,&XMM0_b2,&XMM0_b1,&XMM0_b0,
+        &XMM1_b15,&XMM1_b14,&XMM1_b13,&XMM1_b12,&XMM1_b11,&XMM1_b10,&XMM1_b9,&XMM1_b8,
+        &XMM1_b7,&XMM1_b6,&XMM1_b5,&XMM1_b4,&XMM1_b3,&XMM1_b2,&XMM1_b1,&XMM1_b0,
+        &XMM2_b15,&XMM2_b14,&XMM2_b13,&XMM2_b12,&XMM2_b11,&XMM2_b10,&XMM2_b9,&XMM2_b8,
+        &XMM2_b7,&XMM2_b6,&XMM2_b5,&XMM2_b4,&XMM2_b3,&XMM2_b2,&XMM2_b1,&XMM2_b0,
+        &XMM3_b15,&XMM3_b14,&XMM3_b13,&XMM3_b12,&XMM3_b11,&XMM3_b10,&XMM3_b9,&XMM3_b8,
+        &XMM3_b7,&XMM3_b6,&XMM3_b5,&XMM3_b4,&XMM3_b3,&XMM3_b2,&XMM3_b1,&XMM3_b0,
+        &XMM4_b15,&XMM4_b14,&XMM4_b13,&XMM4_b12,&XMM4_b11,&XMM4_b10,&XMM4_b9,&XMM4_b8,
+        &XMM4_b7,&XMM4_b6,&XMM4_b5,&XMM4_b4,&XMM4_b3,&XMM4_b2,&XMM4_b1,&XMM4_b0,
+        &XMM5_b15,&XMM5_b14,&XMM5_b13,&XMM5_b12,&XMM5_b11,&XMM5_b10,&XMM5_b9,&XMM5_b8,
+        &XMM5_b7,&XMM5_b6,&XMM5_b5,&XMM5_b4,&XMM5_b3,&XMM5_b2,&XMM5_b1,&XMM5_b0,
+        &XMM6_b15,&XMM6_b14,&XMM6_b13,&XMM6_b12,&XMM6_b11,&XMM6_b10,&XMM6_b9,&XMM6_b8,
+        &XMM6_b7,&XMM6_b6,&XMM6_b5,&XMM6_b4,&XMM6_b3,&XMM6_b2,&XMM6_b1,&XMM6_b0,
+        &XMM7_b15,&XMM7_b14,&XMM7_b13,&XMM7_b12,&XMM7_b11,&XMM7_b10,&XMM7_b9,&XMM7_b8,
+        &XMM7_b7,&XMM7_b6,&XMM7_b5,&XMM7_b4,&XMM7_b3,&XMM7_b2,&XMM7_b1,&XMM7_b0,
+    };
+    static const x86_reg_info *list_word[] = {
+        &XMM0_w7,&XMM0_w6,&XMM0_w5,&XMM0_w4,&XMM0_w3,&XMM0_w2,&XMM0_w1,&XMM0_w0,
+        &XMM1_w7,&XMM1_w6,&XMM1_w5,&XMM1_w4,&XMM1_w3,&XMM1_w2,&XMM1_w1,&XMM1_w0,
+        &XMM2_w7,&XMM2_w6,&XMM2_w5,&XMM2_w4,&XMM2_w3,&XMM2_w2,&XMM2_w1,&XMM2_w0,
+        &XMM3_w7,&XMM3_w6,&XMM3_w5,&XMM3_w4,&XMM3_w3,&XMM3_w2,&XMM3_w1,&XMM3_w0,
+        &XMM4_w7,&XMM4_w6,&XMM4_w5,&XMM4_w4,&XMM4_w3,&XMM4_w2,&XMM4_w1,&XMM4_w0,
+        &XMM5_w7,&XMM5_w6,&XMM5_w5,&XMM5_w4,&XMM5_w3,&XMM5_w2,&XMM5_w1,&XMM5_w0,
+        &XMM6_w7,&XMM6_w6,&XMM6_w5,&XMM6_w4,&XMM6_w3,&XMM6_w2,&XMM6_w1,&XMM6_w0,
+        &XMM7_w7,&XMM7_w6,&XMM7_w5,&XMM7_w4,&XMM7_w3,&XMM7_w2,&XMM7_w1,&XMM7_w0,
+    };
+    static const x86_reg_info *list_dword[] = {
+        &XMM0_d3,&XMM0_d2,&XMM0_d1,&XMM0_d0,
+        &XMM1_d3,&XMM1_d2,&XMM1_d1,&XMM1_d0,
+        &XMM2_d3,&XMM2_d2,&XMM2_d1,&XMM2_d0,
+        &XMM3_d3,&XMM3_d2,&XMM3_d1,&XMM3_d0,
+        &XMM4_d3,&XMM4_d2,&XMM4_d1,&XMM4_d0,
+        &XMM5_d3,&XMM5_d2,&XMM5_d1,&XMM5_d0,
+        &XMM6_d3,&XMM6_d2,&XMM6_d1,&XMM6_d0,
+        &XMM7_d3,&XMM7_d2,&XMM7_d1,&XMM7_d0,
+    };
+    static const x86_reg_info *list_qword[] = {
+        &XMM0_q1,&XMM0_q0,
+        &XMM1_q1,&XMM1_q0,
+        &XMM2_q1,&XMM2_q0,
+        &XMM3_q1,&XMM3_q0,
+        &XMM4_q1,&XMM4_q0,
+        &XMM5_q1,&XMM5_q0,
+        &XMM6_q1,&XMM6_q0,
+        &XMM7_q1,&XMM7_q0,
+    };
+    #define T(t)        X86T_##t
+    static const mad_type_handle type_select[2][2][6] = {
+        /* decimal, unsigned */
+        { { T(UCHAR),T(USHORT),T(ULONG), T(U64),   T(FLOAT), T(DOUBLE) },
+        /* decimal, signed */
+          { T(CHAR), T(SHORT), T(LONG),  T(I64),   T(FLOAT), T(DOUBLE) } },
+        /* hex, unsigned */
+        { { T(BYTE), T(WORD),  T(DWORD), T(QWORD), T(DWORD), T(QWORD) },
+        /* hex, signed */
+          { T(SBYTE),T(SWORD), T(SDWORD),T(SQWORD),T(SDWORD),T(SQWORD) } },
+    };
+    #undef T
+
+    unsigned            group;
+    unsigned            list_num;
+    unsigned            type;
+    const x86_reg_info  **list;
+
+
+    /* in case we haven't got an XMM */
+    *reg_p = NULL;
+    *disp_type_p = X86T_UNKNOWN;
+
+    *max_descript_p = 0;
+    DescriptBuff[0] = '\0';
+    *descript_p = DescriptBuff;
+    *max_value_p = 0;
+    if( MCSystemConfig()->cpu < X86_686 ) return( MS_FAIL );
+
+    if( MADState->xmm_toggles & XT_BYTE ) {
+        list = list_byte;
+        list_num = NUM_ELTS( list_byte );
+        group = 16;
+        type = 0;
+    } else if( MADState->xmm_toggles & XT_WORD ) {
+        list = list_word;
+        list_num = NUM_ELTS( list_word );
+        group = 8;
+        type = 1;
+    } else if( MADState->xmm_toggles & XT_DWORD ) {
+        list = list_dword;
+        list_num = NUM_ELTS( list_dword );
+        group = 4;
+        type = 2;
+    } else if( MADState->xmm_toggles & XT_QWORD ) {
+        list = list_qword;
+        list_num = NUM_ELTS( list_qword );
+        group = 2;
+        type = 3;
+    } else if( MADState->xmm_toggles & XT_FLOAT ) {
+        list = list_dword;
+        list_num = NUM_ELTS( list_dword );
+        group = 4;
+        type = 4;
+    } else if( MADState->xmm_toggles & XT_DOUBLE ) {
+        list = list_qword;
+        list_num = NUM_ELTS( list_qword );
+        group = 2;
+        type = 5;
+    }
+    *disp_type_p = type_select[( MADState->xmm_toggles & XT_HEX ) ? 1 : 0]
+                                [( MADState->xmm_toggles & XT_SIGNED ) ? 1 : 0]
+                                [type];
+
+    if( piece < group ) {
+        *max_value_p = 2;
+        *reg_p = &XXX_dummy.info;
+        *disp_type_p = X86T_XMM_TITLE0 - 1 + group - piece;
+        return( MS_OK );
+    }
+    piece -= group;
+
+    if( piece >= list_num ) return( MS_FAIL );
+    if( (piece % group) == 0 ) {
+        /* first column */
+        DescriptBuff[0] = 'X';
+        DescriptBuff[1] = 'M';
+        DescriptBuff[2] = 'M';
+        DescriptBuff[3] = (piece / group) + '0';
+        DescriptBuff[4] = '\0';
+        *max_descript_p = 4;
+    }
+    *reg_p = &list[piece]->info;
+    return( MS_OK );
+}
+
 mad_status      DIGENTRY MIRegSetDisplayGetPiece( const mad_reg_set_data *rsd,
                                 const mad_registers *mr,
                                 unsigned piece,
@@ -871,8 +1134,10 @@ mad_status      DIGENTRY MIRegSetDisplayGetPiece( const mad_reg_set_data *rsd,
         return( CPUGetPiece( mr, piece, descript, max_descript, reg, disp_type, max_value ) );
     } else if( rsd == &FPURegSet ) {
         return( FPUGetPiece( mr, piece, descript, max_descript, reg, disp_type, max_value ) );
-    } else {
+    } else if( rsd == &MMXRegSet ) {
         return( MMXGetPiece( mr, piece, descript, max_descript, reg, disp_type, max_value ) );
+    } else {
+        return( XMMGetPiece( mr, piece, descript, max_descript, reg, disp_type, max_value ) );
     }
 }
 
@@ -942,7 +1207,7 @@ unsigned RegDispType( mad_type_handle th, const void *d, unsigned max, char *buf
 {
     const mad_modify_list       *p;
     const fpu_ptr       *fp;
-    char                title[2];
+    char                title[3];
 
     switch( th ) {
     case X86T_PC:       p = ModFPUPc; break;
@@ -984,6 +1249,7 @@ unsigned RegDispType( mad_type_handle th, const void *d, unsigned max, char *buf
             title[0] = 'd';
         }
         title[1] = th - X86T_MMX_TITLE0 + '0';
+        title[2] = '\0';
         if( max > 0 ) {
             --max;
             if( max > 2 ) max = 2;
@@ -991,6 +1257,48 @@ unsigned RegDispType( mad_type_handle th, const void *d, unsigned max, char *buf
             buff[max] = '\0';
         }
         return( 2 );
+    case X86T_XMM_TITLE0:
+    case X86T_XMM_TITLE1:
+    case X86T_XMM_TITLE2:
+    case X86T_XMM_TITLE3:
+    case X86T_XMM_TITLE4:
+    case X86T_XMM_TITLE5:
+    case X86T_XMM_TITLE6:
+    case X86T_XMM_TITLE7:
+    case X86T_XMM_TITLE8:
+    case X86T_XMM_TITLE9:
+    case X86T_XMM_TITLE10:
+    case X86T_XMM_TITLE11:
+    case X86T_XMM_TITLE12:
+    case X86T_XMM_TITLE13:
+    case X86T_XMM_TITLE14:
+    case X86T_XMM_TITLE15:
+        if( MADState->xmm_toggles & XT_BYTE ) {
+            title[0] = 'b';
+        } else if( MADState->xmm_toggles & XT_WORD ) {
+            title[0] = 'w';
+        } else if( MADState->xmm_toggles & XT_DWORD ) {
+            title[0] = 'd';
+        } else if( MADState->xmm_toggles & XT_QWORD ) {
+            title[0] = 'q';
+        } else if( MADState->xmm_toggles & XT_FLOAT ) {
+            title[0] = 'd';
+        } else if( MADState->xmm_toggles & XT_DOUBLE ) {
+            title[0] = 'q';
+        }
+        if( th - X86T_XMM_TITLE0 > 9 ) {
+            title[1] = ( th - X86T_XMM_TITLE0 ) / 10 + '0';
+            title[2] = ( th - X86T_XMM_TITLE0 ) % 10 + '0';
+        } else {
+            title[1] = th - X86T_XMM_TITLE0 + '0';
+            title[2] = ' ';
+        }
+        if( max > 0 ) {
+            max = 3;
+            memcpy( buff, title, max );
+            buff[max] = '\0';
+        }
+        return( 3 );
     }
     return( MCString( p[*(unsigned_8 *)d].name, max, buff ) );
 }
@@ -1087,7 +1395,7 @@ mad_status DIGENTRY MIRegModified( const mad_reg_set_data *rsd, const mad_reg_in
     }
 }
 
-mad_status      DIGENTRY MIRegInspectAddr( const mad_reg_info *ri, const mad_registers *mr, address *a )
+mad_status DIGENTRY MIRegInspectAddr( const mad_reg_info *ri, const mad_registers *mr, address *a )
 {
     unsigned    bit_start;
     unsigned_32 *p;
@@ -1162,7 +1470,7 @@ unsigned        DIGENTRY MIRegSetDisplayToggle( const mad_reg_set_data *rsd, uns
         MADState->fpu_toggles |= on & ~toggle;
         MADState->fpu_toggles &= ~off | toggle;
         return( MADState->fpu_toggles );
-    } else {
+    } else if( rsd == &MMXRegSet ) {
         #define TBITS   (MT_HEX|MT_SIGNED)
         save_on = on & ~TBITS;
         on &= TBITS;
@@ -1183,6 +1491,27 @@ unsigned        DIGENTRY MIRegSetDisplayToggle( const mad_reg_set_data *rsd, uns
             if( (MADState->mmx_toggles & ~TBITS) == 0 ) MADState->mmx_toggles = save;
         }
         return( MADState->mmx_toggles );
+    } else {
+        #define XTBITS   (XT_HEX|XT_SIGNED)
+        save_on = on & ~XTBITS;
+        on &= XTBITS;
+        off &= XTBITS;
+        toggle &= XTBITS;
+        MADState->xmm_toggles ^= toggle;
+        MADState->xmm_toggles |= on & ~toggle;
+        MADState->xmm_toggles &= ~off | toggle;
+        if( save_on != 0 ) {
+            /* only allow one bit to turn on */
+            save_on &= ~(save_on & (save_on-1));
+            save_off = ~save_on & ~XTBITS;
+            toggle = save_on & save_off;
+            save = MADState->mmx_toggles;
+            MADState->xmm_toggles ^= toggle;
+            MADState->xmm_toggles |= save_on & ~toggle;
+            MADState->xmm_toggles &= ~save_off | toggle;
+            if( (MADState->xmm_toggles & ~XTBITS) == 0 ) MADState->xmm_toggles = save;
+        }
+        return( MADState->xmm_toggles );
     }
 }
 
@@ -1198,7 +1527,9 @@ walk_result     DIGENTRY MIRegWalk( const mad_reg_set_data *rsd, const mad_reg_i
     list = (ri==NULL) ? rsd->reglist : ((const x86_reg_info *)ri)->sublist;
     if( list == NULL ) return( WR_CONTINUE );
     level = MCSystemConfig()->cpu;
-    if( level >= X86_586 ) {
+    if( level >= X86_686 ) {
+        cpulevel = L6;
+    } else if( level >= X86_586 ) {
         cpulevel = L5;
     } else if( level >= X86_386 ) {
         cpulevel = L3;
@@ -1259,7 +1590,7 @@ address GetRegIP( const mad_registers *mr )
     return( a );
 }
 
-void            DIGENTRY MIRegSpecialGet( mad_special_reg sr, const mad_registers *mr, addr_ptr *ma )
+void DIGENTRY MIRegSpecialGet( mad_special_reg sr, const mad_registers *mr, addr_ptr *ma )
 {
     switch( sr ) {
     case MSR_IP:
@@ -1277,7 +1608,7 @@ void            DIGENTRY MIRegSpecialGet( mad_special_reg sr, const mad_register
     }
 }
 
-void            DIGENTRY MIRegSpecialSet( mad_special_reg sr, mad_registers *mr, const addr_ptr *ma )
+void DIGENTRY MIRegSpecialSet( mad_special_reg sr, mad_registers *mr, const addr_ptr *ma )
 {
     switch( sr ) {
     case MSR_IP:
@@ -1295,7 +1626,7 @@ void            DIGENTRY MIRegSpecialSet( mad_special_reg sr, mad_registers *mr,
     }
 }
 
-unsigned        DIGENTRY MIRegSpecialName( mad_special_reg sr, const mad_registers *mr, mad_address_format af, unsigned max, char *buff )
+unsigned DIGENTRY MIRegSpecialName( mad_special_reg sr, const mad_registers *mr, mad_address_format af, unsigned max, char *buff )
 {
     const char  *seg;
     const char  *offset;
@@ -1378,7 +1709,7 @@ const mad_reg_info *DIGENTRY MIRegFromContextItem( context_item ci )
     return( list[ci-CI_EAX] );
 }
 
-void            DIGENTRY MIRegUpdateStart( mad_registers *mr, unsigned flags, unsigned bit_start, unsigned bit_size )
+void DIGENTRY MIRegUpdateStart( mad_registers *mr, unsigned flags, unsigned bit_start, unsigned bit_size )
 {
     mr = mr;
     flags = flags;
@@ -1386,7 +1717,7 @@ void            DIGENTRY MIRegUpdateStart( mad_registers *mr, unsigned flags, un
     bit_size = bit_size;
 }
 
-void            DIGENTRY MIRegUpdateEnd( mad_registers *mr, unsigned flags, unsigned bit_start, unsigned bit_size )
+void DIGENTRY MIRegUpdateEnd( mad_registers *mr, unsigned flags, unsigned bit_start, unsigned bit_size )
 {
     bit_size = bit_size;
     if( flags & RF_GPREG ) MCNotify( MNT_MODIFY_REG, (void *)&CPURegSet );
@@ -1394,6 +1725,7 @@ void            DIGENTRY MIRegUpdateEnd( mad_registers *mr, unsigned flags, unsi
         MCNotify( MNT_MODIFY_REG, (void *)&FPURegSet );
         MCNotify( MNT_MODIFY_REG, (void *)&MMXRegSet );
     }
+    if( flags & RF_XMMREG ) MCNotify( MNT_MODIFY_REG, (void *)&XMMRegSet );
     switch( bit_start ) {
     case offsetof( mad_registers, x86.cpu.eip ) * 8:
     case offsetof( mad_registers, x86.cpu.cs  ) * 8:
