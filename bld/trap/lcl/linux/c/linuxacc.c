@@ -37,18 +37,21 @@
 #include "squish87.h"
 #include "mad.h"
 #include "madregs.h"
+#include "dbg386.h"
 #include "linuxcomm.h"
 
 // TODO: Need signals and execve() in runtime library to make this work!!
 
-//static watch_point  wpList[ MAX_WP ];
+static watch_point  wpList[ MAX_WP ];
+static int          wpCount = 0;
 static pid_t        pid;
 static u_short      flatCS;
 static u_short      flatDS;
 
-static unsigned WriteMem( char *data, addr_off offv, unsigned size )
+static unsigned WriteMem( void *ptr, addr_off offv, unsigned size )
 {
-    int count;
+    char    *data = ptr;
+    int     count;
 
     /* Write the process memory 32-bits at a time. Kind of silly that
      * Linux does not have an extended ptrace call to read and write
@@ -92,9 +95,10 @@ static unsigned WriteMem( char *data, addr_off offv, unsigned size )
     return size;
 }
 
-static unsigned ReadMem( char *data, addr_off offv, unsigned size )
+static unsigned ReadMem( void *ptr, addr_off offv, unsigned size )
 {
-    int count;
+    char    *data = ptr;
+    int     count;
 
     /* Read the process memory 32-bits at a time */
     for (count = size; count >= 4; count -= 4) {
@@ -463,13 +467,134 @@ unsigned ReqClear_break( void )
     return( 0 );
 }
 
-unsigned ReqSet_watch()
+u_long GetDR6( void )
 {
-    return( 0 );
+    u_long  val;
+    sys_ptrace(PTRACE_PEEKUSER, pid, O_DEBUGREG(6), &val);
+    return val;
 }
 
-unsigned ReqClear_watch()
+static void SetDR6( u_long val )
 {
+    sys_ptrace(PTRACE_POKEUSER, pid, O_DEBUGREG(6), &val);
+}
+
+static void SetDR7( u_long val )
+{
+    sys_ptrace(PTRACE_POKEUSER, pid, O_DEBUGREG(7), &val);
+}
+
+static u_long SetDRn( int i, u_long linear, long type )
+{
+    sys_ptrace(PTRACE_POKEUSER, pid, O_DEBUGREG(i), &linear);
+    return( ( type << DR7_RWLSHIFT(i) )
+//        | ( DR7_GEMASK << DR7_GLSHIFT(i) ) | DR7_GE
+          | ( DR7_LEMASK << DR7_GLSHIFT(i) ) | DR7_LE );
+}
+
+void ClearDebugRegs( void )
+{
+    int i;
+
+    for( i = 0; i < 4; i++)
+        SetDRn( i, 0, 0 );
+    SetDR6( 0 );
+    SetDR7( 0 );
+}
+
+int SetDebugRegs( void )
+{
+    int         needed,i,dr;
+    u_long      dr7;
+    watch_point *wp;
+
+    needed = 0;
+    for( i = 0; i < wpCount; i++)
+        needed += wpList[i].dregs;
+    if( needed > 4 )
+        return( FALSE );
+    dr  = 0;
+    dr7 = 0;
+    for( i = 0, wp = wpList; i < wpCount; i++, wp++ ) {
+        dr7 |= SetDRn( dr, wp->linear, DRLen( wp->len ) | DR7_BWR );
+        dr++;
+        if( wp->dregs == 2 ) {
+            dr7 |= SetDRn( dr, wp->linear+wp->len, DRLen( wp->len ) | DR7_BWR );
+            dr++;
+        }
+    }
+    SetDR7( dr7 );
+    return( TRUE );
+}
+
+int CheckWatchPoints( void )
+{
+    u_long  value;
+    int     i;
+
+    for( i = 0; i < wpCount; i++ ) {
+        ReadMem( &value, wpList[i].loc.offset, sizeof( value ) );
+        if( value != wpList[i].value ) {
+            return( TRUE );
+        }
+    }
+    return( FALSE );
+}
+
+unsigned ReqSet_watch( void )
+{
+    set_watch_req   *acc;
+    set_watch_ret   *ret;
+    u_long          value;
+    watch_point     *curr;
+    u_long          linear;
+    unsigned        i,needed;
+
+    acc = GetInPtr( 0 );
+    ret = GetOutPtr( 0 );
+    ret->multiplier = 100000;
+    ret->err = 1;
+    if( wpCount < MAX_WP ) {
+        ret->err = 0;
+        curr = wpList + wpCount;
+        curr->loc.segment = acc->watch_addr.segment;
+        curr->loc.offset = acc->watch_addr.offset;
+        ReadMem( &value, acc->watch_addr.offset, sizeof(dword) );
+        curr->value = value;
+        curr->len = acc->size;
+        wpCount++;
+        curr->linear = linear = acc->watch_addr.offset;
+        curr->linear &= ~(curr->len-1);
+        curr->dregs = (linear & (curr->len-1) ) ? 2 : 1;
+        needed = 0;
+        for( i = 0; i < wpCount; ++i ) {
+            needed += wpList[ i ].dregs;
+        }
+        if( needed <= 4 ) ret->multiplier |= USING_DEBUG_REG;
+    }
+    return( sizeof( *ret ) );
+}
+
+unsigned ReqClear_watch( void )
+{
+    clear_watch_req *acc;
+    watch_point     *dst;
+    watch_point     *src;
+    int             i;
+
+    acc = GetInPtr( 0 );
+    dst = src = wpList;
+    for( i = 0; i < wpCount; i++ ) {
+        if( src->loc.segment != acc->watch_addr.segment
+                || src->loc.offset != acc->watch_addr.offset ) {
+            dst->loc.offset = src->loc.offset;
+            dst->loc.segment = src->loc.segment;
+            dst->value = src->value;
+            dst++;
+        }
+        src++;
+    }
+    wpCount--;
     return( 0 );
 }
 

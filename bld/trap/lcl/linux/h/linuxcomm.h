@@ -32,6 +32,7 @@
 #ifndef _LINUXCOMM_H
 #define _LINUXCOMM_H
 
+#include <stddef.h>
 #include "machtype.h"
 
 /* Use 4-byte packing for compatibility with the default packing used by GCC */
@@ -87,28 +88,6 @@ typedef struct {
     int     ss;
 } user_regs_struct;
 
-/* Offsets to registers in the above structure. Also the same offsets
- * used to read and write individual CPU registers using sys_ptrace().
- */
-
-#define O_EBX               0
-#define O_ECX               1
-#define O_EDX               2
-#define O_ESI               3
-#define O_EDI               4
-#define O_EBP               5
-#define O_EAX               6
-#define O_DS                7
-#define O_ES                8
-#define O_FS                9
-#define O_GS                10
-#define O_ORIG_EAX          11
-#define O_EIP               12
-#define O_CS                13
-#define O_EFL               14
-#define O_UESP              15
-#define O_SS                16
-
 /* This defines the structure used to read and write all the floating
  * point registers using sys_ptrace().
  */
@@ -141,6 +120,34 @@ typedef struct {
     long    xmm_space[32];  /* 8*16 bytes for each XMM-reg = 128 bytes */
     long    padding[56];
 } user_fxsr_struct;
+
+/* This defines the user structure that we can read and write using the
+ * sys_ptrace() system call. This allows us to adjust the CPU registers,
+ * FPU registers, debug registers and find out information about the
+ * running process in memory. This is also the structure that heads up
+ * a core dump when the kernel dumps core for a faulting process.
+ */
+typedef struct {
+  user_regs_struct  regs;           /* Where the registers are actually stored */
+  int               u_fpvalid;      /* True if math co-processor being used. Not yet used. */
+  user_i387_struct  i387;           /* Math Co-processor registers. */
+  u_long            u_tsize;        /* Text segment size (pages). */
+  u_long            u_dsize;        /* Data segment size (pages). */
+  u_long            u_ssize;        /* Stack segment size (pages). */
+  u_long            start_code;     /* Starting virtual address of text. */
+  u_long            start_stack;    /* Starting virtual address of stack area (bottom). */
+  long              signal;         /* Signal that caused the core dump. */
+  int               reserved;       /* No longer used */
+  void              *u_ar0;         /* Used by gdb to help find the values for */
+  user_i387_struct  *u_fpstate;     /* Math Co-processor pointer. */
+  u_long            magic;          /* To uniquely identify a core file */
+  char              u_comm[32];     /* User command that was responsible */
+  int               u_debugreg[8];  /* Hardware debug registers */
+} user_struct;
+
+/* Define macros to get the offset of debug registers in user structure */
+
+#define O_DEBUGREG(r)   offsetof(user_struct,u_debugreg[r])
 
 /* Structure used internally to set hardware watch points */
 
@@ -223,6 +230,11 @@ u_long inpd(u_long port);
 
 extern unsigned TryOnePath( char *, struct stat *, char *, char * );
 extern unsigned FindFilePath( int, char *, char * );
+extern u_long   GetDR6( void );
+extern void     ClearDebugRegs( void );
+extern int      SetDebugRegs( void );
+extern int      CheckWatchPoints( void );
+
 extern void print_msg( const char *format, ... );
 
 #pragma pack(__pop);
