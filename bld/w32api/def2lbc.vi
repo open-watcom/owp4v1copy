@@ -1,3 +1,6 @@
+set norc
+source ../getmodn.vi %1
+r %1
 set nomagic
 %s/^LIBRARY.*$//g
 %s/^EXPORTS.*$//g
@@ -6,5 +9,5 @@ set nomagic
 %s/^\+\+'__imp__'.*$//g
 %s/\(%(ModuleName)\)/\u\1/g
 %s/;.*$//g
-w! %1.lbc
+w! %2.lbc
 q!

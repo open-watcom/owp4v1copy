@@ -91,7 +91,7 @@ libs =               &
 .c: ..\lib
 
 .def.lbc:
-        vi -i -q -k ":set norc\n:source ../getmodn.vi ../lib/$[.\n:r ../lib/$[.\n:source ../def2lbc.vi $*\n"
+        vi -i -q -k ":source ../def2lbc.vi ../lib/$[. $*\n"
 
 .lbc.lib:
         $(lib) -b -c -q -n -io -ii $@ @$<
