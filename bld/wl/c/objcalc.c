@@ -391,6 +391,8 @@ extern void CalcAddresses( void )
             FmtData.base = PE_DEFAULT_BASE;
         } else if( FmtData.type & MK_QNX_FLAT ) {
             FmtData.base = ROUND_UP( StackSize + QNX_DEFAULT_BASE, 4 * 1024 );
+        } else if( FmtData.type & MK_WIN_VXD ) {
+            FmtData.base = 0;
         } else if( FmtData.type & MK_OS2_FLAT ) {
             FmtData.base = FLAT_GRANULARITY;
         } else if( FmtData.type & MK_ELF ) {
@@ -416,6 +418,8 @@ extern void CalcAddresses( void )
                 // Development temporarly on hold:
                 // FmtData.objalign = 1024;
             } else if( FmtData.type & MK_ELF ) {
+                FmtData.objalign = 4*1024;
+            } else if( FmtData.type & MK_WIN_VXD ) {
                 FmtData.objalign = 4*1024;
             } else {
                 FmtData.objalign = FLAT_GRANULARITY;
