@@ -92,31 +92,31 @@ STATICDATA      STRUC
 orig_vects      dw VECT_TABLE_SIZE dup('JJ')    ;original vector values
 vecttable1      dw VECT_TABLE_SIZE dup('HH')    ;area to hold a vector table
 vecttable2      dw VECT_TABLE_SIZE dup('II')    ;area to hold a vector table
-rm_func         dw ?                            ;function in file to call
+rm_func         dw 0                            ;function in file to call
 initfunc        dd 0aaaaaaaah                   ;addr of TrapInit()
 reqfunc         dd 0bbbbbbbbh                   ;addr of TrapAccess()
 finifunc        dd 0cccccccch                   ;addr of TrapFini()
-envseg          dw ?                            ;seg of environment
-envseg_pm       dw ?                            ;pm seg of environment
-switchaddr      dd ?                            ;addr to switch back to pmode
+envseg          dw 0                            ;seg of environment
+envseg_pm       dw 0                            ;pm seg of environment
+switchaddr      dd 0                            ;addr to switch back to pmode
 saveaddr        dd 0                            ;addr of save state procedure
 saveseg         dw 0                            ;segment of save state buffer
 saveseg_pm      dw 0                            ; pm seg of save state buffer
-savesize        dw ?
-pmode_ds        dw ?                            ;value to put in ds on return
-pmode_es        dw ?                            ; ...
-pmode_cs        dw ?                            ; ...
-pmode_eip       dd ?                            ; ...
-pmode_ss        dw ?                            ; ...
-pmode_esp       dd ?                            ; ...
+savesize        dw 0 
+pmode_ds        dw 0                            ;value to put in ds on return
+pmode_es        dw 0                            ; ...
+pmode_cs        dw 0                            ; ...
+pmode_eip       dd 0                            ; ...
+pmode_ss        dw 0                            ; ...
+pmode_esp       dd 0                            ; ...
 save_env        dw 'JJ'
 savess          dw 'BB'                         ;ss provided by DOS4G
 savesp          dw 'CC'                         ;sp corresponding to 'savess'
-OldInt10        DD      ?
-Pending         DB      ?
-Fail            DB      ?
-ActFontTbls     DB      ?
-othersaved      db      ?
+OldInt10        DD      0 
+Pending         DB      0 
+Fail            DB      0
+ActFontTbls     DB      0
+othersaved      db      0
 parmarea        db 40h + MAX_MSG_SIZE dup('M')
 stack           db STKSIZE dup('A')
 STATICDATA      ENDS
