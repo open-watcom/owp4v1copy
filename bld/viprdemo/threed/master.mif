@@ -1,0 +1,16 @@
+$(host_OS)_3d.dll: $(host_OS)_3d.mk1
+        wmake -i -h -f project.mk
+
+$(host_OS)_3d.mk1: $(host_OS)_3d.tgt
+        bviper -r $<
+
+clean: .SYMBOLIC
+        del *.obj
+        del *.mk
+        del *.mk1
+        del *.lk1
+        del *.dll
+        del *.lib
+        del *.map
+
+

@@ -10,19 +10,10 @@ set PROJDIR=<CWD>
 cdsay .
 
 [ BLOCK <1> build rel2 ]
-    cdsay threed\os2
-    bviper -r os2_3d.tgt
-    wmake -i -h -f project.mk
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
+    cd <PROJDIR>
 
-    cdsay ..\win
-    bviper -r win_3d.tgt
-    wmake -i -h -f project.mk
-
-    cdsay ..\nt
-    bviper -r nt_3d.tgt
-    wmake -i -h -f project.mk
-
-    cdsay ..\..\src\os2
+    cdsay src\os2
     bviper -r drawos2.tgt
     rem copy <devdir>\plusplus\bin\rpp38610.exe wpp386.exe
     wmake -i -h -f drawos2.mk1 <devdir>\viprdemo\src\os2\box.obj
@@ -96,4 +87,5 @@ cdsay .
 
 [ BLOCK <1> clean ]
 #==================
+    pmake -d clean <2> <3> <4> <5> <6> <7> <8> <9> -h
     sweep killobjs
