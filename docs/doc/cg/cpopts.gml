@@ -4027,8 +4027,7 @@ char *birds[ 3 ] = { "robin", "finch", "wren" };
 .pc
 In the above example, the constant variable
 .id cvar
-is placed in the "CONST2" segment by the 16-bit C compiler and the
-16-bit and 32-bit C++ compilers.
+is placed in the "CONST2" segment.
 .np
 The "_BSS" segment contains uninitialized data such as scalars,
 structures, or arrays.
