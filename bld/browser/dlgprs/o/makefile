@@ -26,7 +26,8 @@ wppdbgf = -d1-oaxt
 wldbgf = pa .
 
 .BEFORE
-    @set compflags=-zq-mf-xs-w4 -bt=dos $(wppdbgf) -i=$(browse_dir)\contain\h;$(browse_dir)\h;..\h;..\gen;$(lang_root)\h\win
+#   @set compflags=-zq-mf-xs-w4 -bt=dos $(wppdbgf) -i=$(browse_dir)\contain\h;$(browse_dir)\h;..\h;..\gen;$(lang_root)\h\win
+    @set compflags=-zq-mf-xs-w4  $(wppdbgf) -i=$(browse_dir)\contain\h;$(browse_dir)\h;..\h;..\gen;$(lang_root)\h\win
 
 .extensions:
 .extensions: .exe .obj .gh .c .cpp .gpp .y
