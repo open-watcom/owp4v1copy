@@ -263,6 +263,8 @@ static int PreprocessInputFile( void )
     } else if( CmdLineParms.TargetOS == RC_TARGET_OS_WIN32 ) {
         strcpy( rcdefine, "__NT__" );
         PP_Define( rcdefine );
+        strcpy( rcdefine, "_WIN32" );
+        PP_Define( rcdefine );
     }
     cppargs = CmdLineParms.CPPArgs;
     if( cppargs != NULL ) {
