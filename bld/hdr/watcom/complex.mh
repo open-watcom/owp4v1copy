@@ -431,7 +431,9 @@ inline double norm( Complex const &__cv ) {
 :keep CPP_HDR
 :include crwat.sp
 //
-// Description: This header is part of the C++ standard library.
+// Description: This header is part of the C++ standard library. It
+//              provides support for complex numbers with varying levels
+//              of precision.
 ///////////////////////////////////////////////////////////////////////////
 #ifndef _COMPLEX_INCLUDED
 #define _COMPLEX_INCLUDED
@@ -857,13 +859,12 @@ namespace std {
   template< class FloatT >
   complex< FloatT > pow( const complex< FloatT > &x, int y )
   {
-    return( exp( y * log( x ) ) );
+    return( exp( static_cast< FloatT >( y ) * log( x ) ) );
   }
 
   template< class FloatT >
   complex< FloatT > pow(
-    const complex< FloatT > &x,
-    const complex< FloatT > &y )
+    const complex< FloatT > &x, const complex< FloatT > &y )
   {
     return( exp( y * log( x ) ) );
   }
@@ -875,7 +876,7 @@ namespace std {
   }
 
   template< class FloatT >
-  complex< FloatT > pow( const FloatT &y, const complex< FloatT > &x )
+  complex< FloatT > pow( const FloatT &x, const complex< FloatT > &y )
   {
     return( exp( y * log( x ) ) );
   }
