@@ -7,9 +7,9 @@
 # 5. For large memory model windows version, define 'windows'
 #
 !ifdef __UNIX__
-wres_lib_path = $(wres_dir)\lib\
-!else
 wres_lib_path = $(wres_dir)/lib/
+!else
+wres_lib_path = $(wres_dir)\lib\
 !endif
 
 !ifdef pegged
