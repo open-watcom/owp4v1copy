@@ -24,7 +24,7 @@ sys_x86_nt      = sys nt_win op st=20k, modname=$^&, desc $^&
 !endif
 !endif
 !endif
-sys_x86_nlm     = form novell nlm 'WATCOM Debug Server' &
+sys_x86_nlm     = form novell nlm 'Open Watcom Debug Server' &
                         libpath $(lang_root)\lib386 &
                         op st=8k &
                         import @$(trap_dir)\common\nlm\trap.imp op nodef
@@ -41,6 +41,7 @@ machsuff=$+$(machine)$-
 !endif
 
 targ_x86_os2    = binp\$(name).exe
+targ_x86_os2v2  = binp\$(name)2.exe
 targ_x86_qnx    = qnx\$(name).qnx
 targ_x86_win    = bin\$(name).exe
 targ_x86_dos    = bin.$(machsuff)\$(name).exe

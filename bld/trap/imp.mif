@@ -131,6 +131,8 @@ targ = dos
 targ = dos
 !else ifeq os rsi
 targ = dos
+!else ifeq os os2v2
+targ = os2
 !else
 targ = $(os)
 !endif
@@ -212,9 +214,6 @@ $(target) : eraseall.obj $(objs) $(extra_libs) $(resource_file) $(extra_deps) $(
 !ifdef extra_cmds
         $(extra_cmds)
 !endif
-!ifdef lexusbld
-        @newer $^@ $(lexlib_dir)\tools\system\$^. "^copy &f $#f > nul"
-!endif
 
 !ifneq target $(dtarget)
 $(dtarget) : eraseall.obj $(dobjs) $(extra_libs) $(resource_file) $(extra_deps) $(__MAKEFILES__)
@@ -246,7 +245,7 @@ whole_inc_path = $(extra_incs);$(dig_dir)\h;$(trap_dir)\common\$(os);$(trap_dir)
 
 .c.obj: .autodepend
         @set IPATHS=-i$(whole_inc_path)
-        echo $(%IPATHS)
+        @echo $(%IPATHS)
         $(compile)
 
 .cpp.obj: .autodepend

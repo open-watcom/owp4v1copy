@@ -26,10 +26,11 @@ cdsay .
 #os2
     <CPCMD> <devdir>\bin\binp\dll\???.dll <relroot>\rel2\binp\dll\
     <CPCMD> <devdir>\bin\binp\dll\std??.dll <relroot>\rel2\binp\dll\
-    <CPCMD> <devdir>\bin\binp\dll\std.d32 <relroot>\rel2\binp\
+    <CPCMD> <devdir>\bin\binp\dll\*.d32 <relroot>\rel2\binp\
     <CPCMD> <devdir>\bin\binp\dll\*.exe <relroot>\rel2\binp\dll\
     <CPCMD> <devdir>\bin\binp\dll\wdpmhook.dll <relroot>\rel2\binp\dll\
     <CPCMD> <devdir>\bin\binp\???serv.exe <relroot>\rel2\binp\
+    <CPCMD> <devdir>\bin\binp\???serv2.exe <relroot>\rel2\binp\
     <CPCMD> <devdir>\bin\binp\wdpmhelp.exe <relroot>\rel2\binp\
     <CPCMD> <devdir>\bin\binp\nmpbind.exe <relroot>\rel2\binp\
 #windows

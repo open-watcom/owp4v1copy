@@ -30,12 +30,7 @@
 ****************************************************************************/
 
 
-#define LITTLE_ENDIAN   1
-#define BIG_ENDIAN      2
-#define BYTE_ORDER      LITTLE_ENDIAN
-#define DEFAULT_PORT    0xDEB
-
-#if defined(__OS2__)
+#if defined(__OS2__) && !defined(__386__)
 #define OS2
 #define _TCP_ENTRY __cdecl __far
 #define BSD_SELECT
@@ -45,25 +40,25 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
 #include <ctype.h>
+
 #if defined(__NT__) || defined(__WINDOWS__)
     #include <winsock.h>
 #else
     #if defined(__OS2__)
-        #define off_t unused_type;
         #include <types.h>
-        #undef off_t
+        #include <arpa/inet.h>
     #else
         #include <sys/types.h>
     #endif
+    #include <unistd.h>
     #include <sys/socket.h>
     #include <sys/select.h>
     #include <sys/time.h>
     #include <netinet/in.h>
     #include <netinet/tcp.h>
     #include <netdb.h>
-    #if defined(__OS2__)
+    #if defined(__OS2__) && !defined(__386__)
         #include <netlib.h>
     #elif defined(__QNX__)
         #include <arpa/inet.h>
@@ -74,6 +69,8 @@
 #include "trptypes.h"
 #include "trperr.h"
 #include "bool.h"
+
+#define DEFAULT_PORT    0xDEB
 
 int data_socket;
 struct sockaddr_in socket_address;
@@ -224,7 +221,8 @@ char *RemoteLink( char *name, char server )
         return( TRP_ERR_unable_to_open_stream_socket );
     }
     port = 0;
-    if( name == NULL || name[0] == '\0' ) name = "tcplink";
+    if( name == NULL || name[0] == '\0' )
+        name = "tcplink";
     sp = getservbyname( name, "tcp" );
     if( sp != NULL ) {
         port = sp->s_port;
@@ -283,7 +281,10 @@ char *RemoteLink( char *name, char server )
         }
         ++sock;
     }
-    sp = getservbyname( sock, "tcp" );
+    if( sock[0] == '\0' )
+        sp = getservbyname( "tcplink", "tcp" );
+    else
+        sp = getservbyname( sock, "tcp" );
     if( sp != NULL ) {
         port = sp->s_port;
     } else {
