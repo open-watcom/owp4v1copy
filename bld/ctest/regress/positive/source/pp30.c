@@ -18,46 +18,51 @@ char buff[1000];
 
 #define TOSTR2(...) #__VA_ARGS__
 #define TOSTR(s) TOSTR2(s)
+#define sharp(s) # s
 
 int main() {
   int i;
     int x = 2, y = 3;
     debug( "Flag" );
-    if ( strcmp( buff, "Flag" ))
+    if( strcmp( buff, "Flag" ) )
         fail(__LINE__);
     debug("X = %d\n", x);
-    if ( strcmp( buff, "X = 2\n" ))
+    if( strcmp( buff, "X = 2\n" ) )
         fail(__LINE__);
     showlist(The first, second, and third items.);
-    if ( strcmp( buff, "The first, second, and third items." ))
+    if( strcmp( buff, "The first, second, and third items." ) )
         fail(__LINE__);
     report(x>y, "x is %d but y is %d\n", x, y);
     if ( strcmp( buff, "x is 2 but y is 3\n" ))
         fail(__LINE__);
-   if( !(((i=__LINE__),
-            strcmp( TOSTR(test(one,x,y,z))            
+    if( !(((i=__LINE__),
+            strcmp( TOSTR(test(one,x,y,z))
                     , "\"x,y,z\" | onex,y,ztwo | onex,y,z | x,y,zone" ) == 0 )
         && ((i=__LINE__),
-            strcmp( TOSTR(test(one))                  
-                    , "| onetwo | one | one" ) == 0 )
+            strcmp( TOSTR(test(one))
+                    , "\"\" | onetwo | one | one" ) == 0 )
         && ((i=__LINE__),
-            strcmp( TOSTR(test1(one,x,y,z))           
+            strcmp( TOSTR(test1(one,x,y,z))
                     , "\"x,y,z\" | one,x,y,z,two | one,x,y,z,two | one,x,y,z,two | x,y,z,one" ) == 0 )
         && ((i=__LINE__),
-            strcmp( TOSTR(test1(one))                 
-                    , "| one,two | one,two | one,two | one" ) == 0 )
+            strcmp( TOSTR(test1(one))
+                    , "\"\" | one,two | one,two | one,two | one" ) == 0 )
         && ((i=__LINE__),
-            strcmp( TOSTR(test3(red,blue,r,g,b,i,v))  
+            strcmp( TOSTR(test3(red,blue,r,g,b,i,v))
                     , "\"r,g,b,i,v\" | redr,g,b,i,vblue | redr,g,b,i,v | r,g,b,i,vblue" ) == 0 )
         && ((i=__LINE__),
-            strcmp( TOSTR(test3(red,blue))            
-                    , "| redblue | red | blue" ) == 0 )
+            strcmp( TOSTR(test3(red,blue))
+                    , "\"\" | redblue | red | blue" ) == 0 )
         && ((i=__LINE__),
-            strcmp( TOSTR(test4(red,blue,r,g,b,i,v))  
+            strcmp( TOSTR(test4(red,blue,r,g,b,i,v))
                     , "\"r,g,b,i,v\" | red,r,g,b,i,v,blue | red,r,g,b,i,v,blue | red,r,g,b,i,v,blue | r,g,b,i,v,blue" ) == 0 )
         && ((i=__LINE__),
-            strcmp( TOSTR(test4(red,blue))            
-                    , "| red,blue | red,blue | red,blue | blue" ) == 0 )))
+            strcmp( TOSTR(test4(red,blue))
+                    , "\"\" | red,blue | red,blue | red,blue | blue" ) == 0 )))
         fail(i);
+    if( strcmp( sharp(a), "a" ) )
+        fail( __LINE__ );
+    if( strcmp( sharp(), "" ) )
+        fail( __LINE__ );
     _PASS;
 }
