@@ -10,7 +10,11 @@
 obj             = .obj
 exe             = .exe
 
+!ifdef bootstrap
+inc_dirs = -I$(dwarfdir)/dr/h -I$(dwarfdir)/dw/h -I$(orl_dir)/h -I$(watcom_dir)/h -I$(trmem_dir) -I../h
+!else
 inc_dirs = $(dwarfdir)/dr/h;$(dwarfdir)/dw/h;$(orl_dir)/h;$(watcom_dir)/h;$(trmem_dir)
+!endif
 
 !ifeq release 0
 extra_c_flags_test      = -of+
@@ -31,4 +35,8 @@ test_objs       +=  trmem$(obj)
 !endif
 
 dwdump$(exe) : $(test_objs) $(orl_lib)
+!ifdef bootstrap
+        $(cc) -o $^@ $(test_objs) $(orl_lib) $(clib_dir)/$(%OBJDIR)/libwatcom.a
+!else
         $(linker) $(lflags) name $@ file { $(test_objs) }
+!endif

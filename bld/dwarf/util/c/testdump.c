@@ -420,7 +420,7 @@ static void printf_debug_str( unsigned int offset )
     }
 }
 
-static void dumpInfo( const char *input, uint length ) {
+static void dumpInfo( const uint_8 *input, uint length ) {
 
     const uint_8 *p;
     uint_32     abbrev_code;
@@ -647,7 +647,7 @@ static void dumpState( state_info *state ) {
 
 
 static void dumpLines(
-    const char *                input,
+    const uint_8 *              input,
     uint                        length )
 {
     const uint_8 *              p;
@@ -875,7 +875,7 @@ static char *getReferenceOp( uint_8 value ) {
 
 
 static void dumpRef(
-    const char *                input,
+    const uint_8 *              input,
     uint                        length )
 {
     const uint_8 *              p;
