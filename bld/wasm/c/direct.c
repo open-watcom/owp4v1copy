@@ -1349,40 +1349,20 @@ static int token_cmp( char **token, int start, int end )
 {
     int         i;
     char        *str;
+    char        *tkn;
 
     str = *token;
 
-    /* Check to see if it is a class name */
-    if( (*str == '\'') || (*str == '"') ) {
-        // it is the class name
-        (*token)++;
-        for( str = *token; ; str++ ) {
-            if( ( *str == '\'' ) || ( *str == '"' ) ) {
-                if( *(str+1) == '\0' ) {
-                    break;
-                } else {
-                    *str = '\0'; // so that the following 'if' statement
-                                 // will detect an error
-                }
-            }
-            if( *str == '\0' ) {
-                AsmError( SEGMENT_DEF_ERROR );
-                return( ERROR );
-            }
+    for( i = start; i <= end; i++ ) {
+        tkn = TypeInfo[i].string;
+        if( tkn == NULL )
+            continue;
+        if( stricmp( tkn, str ) == 0 ) {
+            // type is found
+            return( i );
         }
-        *str = '\0';    // replace the ' with \0
-        return( TOK_CLASS );
-
-    } else {
-
-        for( i = start; i <= end; i++ ) {
-            if( stricmp( TypeInfo[i].string, str ) == 0 ) {
-                // type is found
-                return( i );
-            }
-        }
-        return( ERROR );        // No type is found
     }
+    return( ERROR );        // No type is found
 }
 
 void find_use32( void )
@@ -2170,9 +2150,9 @@ int Model( int i )
 void AssumeInit( void )
 /*********************/
 {
-    uint reg;
+    int reg;
 
-    for( reg = ASSUME_DS; reg <= ASSUME_CS; reg++ ) {
+    for( reg = ASSUME_DS; reg < ASSUME_LAST; reg++ ) {
         AssumeTable[reg].symbol = NULL;
         AssumeTable[reg].error = FALSE;
         AssumeTable[reg].flat = FALSE;
@@ -2183,16 +2163,15 @@ int SetAssume( int i )
 /********************/
 /* Handles ASSUME statement */
 {
-    char        *token;
-    char        *segloc;
-    uint        reg;
-    assume_info *info;
-    struct asm_sym      *sym;
+    char            *token;
+    char            *segloc;
+    int             reg;
+    assume_info     *info;
+    struct asm_sym  *sym;
 
 
     for( i++; i < Token_Count; i++ ) {
         if( AsmBuffer[i]->token==T_RES_ID && AsmBuffer[i]->value==T_NOTHING ) {
-            reg = TOK_NOTHING;
             AssumeInit();
             continue;
         }
@@ -2226,24 +2205,23 @@ int SetAssume( int i )
             AsmError( INVALID_REGISTER );
             return( ERROR );
         }
+        if(( ( Code->info.cpu & P_CPU_MASK ) < P_386 )
+            && ( ( reg == TOK_FS ) || ( reg == TOK_GS ) )) {
+            AsmError( INVALID_REGISTER );
+            return( ERROR );
+        }
 
         info = &(AssumeTable[TypeInfo[reg].value]);
 
-        if( reg <= TOK_CS ) {
-            if( token_cmp( &segloc, TOK_ERROR, TOK_ERROR ) != ERROR ) {
-                info->error = TRUE;
-            } else if( token_cmp( &segloc, TOK_FLAT, TOK_FLAT ) != ERROR ) {
-                DefFlatGroup();
-                info->flat = TRUE;
-            } else {
-                sym = AsmGetSymbol( segloc );
-                info->symbol = sym;
-                info->error = FALSE;
-            }
-        } else {        // NOTHING
-            info->symbol = NULL;
+        if( token_cmp( &segloc, TOK_ERROR, TOK_ERROR ) != ERROR ) {
+            info->error = TRUE;
+        } else if( token_cmp( &segloc, TOK_FLAT, TOK_FLAT ) != ERROR ) {
+            DefFlatGroup();
+            info->flat = TRUE;
+        } else {
+            sym = AsmGetSymbol( segloc );
+            info->symbol = sym;
             info->error = FALSE;
-            info->flat = FALSE;
         }
 
         /* go past comma */
@@ -2251,7 +2229,6 @@ int SetAssume( int i )
             AsmError( EXPECTING_COMMA );
             return( ERROR );
         }
-
     }
     return( NOT_ERROR );
 }
@@ -2376,10 +2353,10 @@ int FixOverride( int index )
     return( ERROR );
 }
 
-static uint search_assume( dir_node *grp_or_seg, uint def )
+static int search_assume( dir_node *grp_or_seg, int def )
 /*********************************************************/
 {
-    uint        reg;
+    int         reg;
     char        found = FALSE;
 
     if( grp_or_seg == NULL ) {
@@ -2408,7 +2385,7 @@ static uint search_assume( dir_node *grp_or_seg, uint def )
     }
 }
 
-uint GetPrefixAssume( struct asm_sym* sym, uint prefix )
+int GetPrefixAssume( struct asm_sym* sym, int prefix )
 /******************************************************/
 {
     int         type;
@@ -2474,10 +2451,10 @@ uint GetPrefixAssume( struct asm_sym* sym, uint prefix )
     }
 }
 
-uint GetAssume( struct asm_sym* sym, uint def )
+int GetAssume( struct asm_sym* sym, int def )
 /**********************************************/
 {
-    uint        reg;
+    int        reg;
 
     if( AssumeTable[def].flat ) {
         Frame = FRAME_GRP;

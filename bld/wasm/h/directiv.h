@@ -419,11 +419,11 @@ extern dir_node *GetSeg( struct asm_sym *sym );
 extern void             AssumeInit( void );     // init all assumed-register table
 extern int              SetAssume( int );       // Assume a register
 
-extern uint             GetAssume( struct asm_sym*, uint );
+extern int              GetAssume( struct asm_sym*, int );
 /* Return the assumed register of the symbol, and determine the frame and
    frame_datum of its fixup */
 
-extern uint             GetPrefixAssume( struct asm_sym* , uint );
+extern int              GetPrefixAssume( struct asm_sym*, int );
 /* Determine the frame and frame_datum of a symbol with a register prefix */
 
 extern int              FixOverride( int );
