@@ -40,6 +40,7 @@ tests = &
 	alg02.$(exe)    &
 	cmplx01.$(exe)	&
         fun01.$(exe)    &
+        iter01.$(exe)   &
         lim01.$(exe)    &
         string01.$(exe) &
         util01.$(exe)   &
@@ -64,6 +65,8 @@ test : .symbolic test.lnk $(tests)
     $(run) cmplx01 >> test.out
     @echo ----------fun01---------->> test.out
     $(run) fun01 >> test.out
+    @echo ----------iter01---------->> test.out
+    $(run) iter01 >> test.out
     @echo ----------lim01---------->> test.out
     $(run) lim01 >> test.out
     @echo ----------string01---------->> test.out
