@@ -15,12 +15,7 @@ set destdir=<relroot>\rel2
 #
 [ BLOCK <1> build rel2 ]
 #=======================
-    set old1=<1>
-    set 1=<BUILD_PLATFORM>
     [ INCLUDE prereq.ctl ]
-    set 1=<old1>
-
-[ BLOCK <1> build rel2 ]
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
 
 [ BLOCK <1> rel2 ]
@@ -136,4 +131,5 @@ set destdir=<relroot>\rel2
 
 [ BLOCK <1> clean ]
 #==================
+    [ INCLUDE clean.ctl ]
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean

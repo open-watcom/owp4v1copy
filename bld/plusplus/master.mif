@@ -569,16 +569,12 @@ has_prag_386 = yes
 
 !endif
 
-!ifdef plusplus_release
-
 #
 # create reference compiler
 #
 reference : .symbolic $(exe_ref_name).$(exe)
     copy /b $(exe_ref_name).$(exe)+$(exe_ref_name).sym ..\bin\$(exe_ref_name).$(exe)
     del $(exe_ref_name).*
-
-!endif
 
 #
 # list of projects required to build the plusplus project
