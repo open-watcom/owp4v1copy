@@ -1,10 +1,10 @@
 #pmake: build remote support nmp os_os2 cpu_i86 cpu_386
-
 host_os  = os2
 host_cpu = i86
 
 !include cproj.mif
 !include deftarg.mif
+!include defrule.mif
 
 !ifndef bin_root
 !ifdef bin_root_wv
@@ -37,4 +37,5 @@ $(bin_root)\binp\dnmpbind.exe : $(objs)
 
 .c: ..\c
 .c.obj:
-    $(comp286) $[@ /d1 /w3 /oaxs /bm /zu /ml /i$(inc_dirs_sys);$(trap_dir)\h
+#    $(comp286) $[@ /d1 /w3 /oaxs /bm /zu /ml /i$(inc_dirs_sys);$(trap_dir)\h
+    $(cc) $[@ /d1 /w3 /oaxs /bm /zu /ml /i$(inc_dirs_sys);$(trap_dir)\h

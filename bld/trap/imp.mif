@@ -45,8 +45,6 @@ bin_root = $(bin_root_wv)
 !endif
 !endif
 
-asm_x86                 = $(wasm)
-
 comp_x86_os2            = $(comp286) -mc-fpc
 comp_x86_os2v2          = $(comp386) -mf-fpc
 comp_x86_qnx            = $(comp386) -ms-fpc
@@ -69,6 +67,43 @@ comp_axp_nt             = $(compaxp)
 comp_ppc_nt             = $(compppc)
 
 cpp_x86_nt              = wpp386 -mf-fpc
+
+!ifeq host_cpu 386
+comp_opts = -fpc
+!endif
+!ifeq host_cpu i86
+comp_opts = -fpc
+!endif
+
+!ifeq os os2
+comp_opts +=-mc
+!else ifeq os os2v2
+comp_opts +=-mf
+!else ifeq os qnx
+comp_opts +=-ms
+!else ifeq os linux
+comp_opts +=-mf
+!else ifeq os win
+comp_opts +=-mc
+!else ifeq os dos
+!ifdef dos_large_model
+comp_opts +=-ml
+!else
+comp_opts +=-mc
+!endif
+!else ifeq os rsi
+comp_opts +=-mc
+!else ifeq os cw
+comp_opts +=-mc
+!else ifeq os ads
+comp_opts +=-mf-3s
+!else ifeq os pls
+comp_opts +=-mf
+!else ifeq os nt
+comp_opts +=-mf
+!else ifeq os nlm
+comp_opts +=-mf-3s
+!endif
 
 TRAP_opts_x86_os2       = -zu
 TRAP_opts_x86_win       = -zu-bd
@@ -151,6 +186,7 @@ comp_opts += -D$(which) -D_$(machine)_PC -DMD_$(cpu) -zq-w4-bt=$(targ) @IPATHS $
 !ifdef japanese
 comp_opts += -DJAPANESE_MESSAGES
 !endif
+asm_opts = -bt=$(targ)-w4
 
 !ifdef on_build_machine
 default_targ    = w
@@ -214,12 +250,12 @@ dobjs = $($(which)_objs) mxutil.obj $(extra_dobjs)
 
 !ifndef substitute_linker
 $(target) : eraseall.obj $(objs) $(extra_libs) $(resource_file) $(extra_deps) $(__MAKEFILES__)
-        $(linker) op quiet,map,case $(%LINK_DEBUG) $(sys_$(cpu)_$(os)) name $^@ &
+        $(linker) op map $(%LINK_DEBUG) $(sys_$(cpu)_$(os)) name $^@ &
                 file {$(objs)} &
                 library {$(libs_$(cpu)_$(os)) $(extra_libs)} &
                 $(extra_linker)
 !ifdef resource_file
-        wrc -bt=$(targ) $(resource_file) $^@
+        $(rc) -bt=$(targ) $(resource_file) $^@
 !endif
 !ifdef extra_cmds
         $(extra_cmds)
@@ -227,12 +263,12 @@ $(target) : eraseall.obj $(objs) $(extra_libs) $(resource_file) $(extra_deps) $(
 
 !ifneq target $(dtarget)
 $(dtarget) : eraseall.obj $(dobjs) $(extra_libs) $(resource_file) $(extra_deps) $(__MAKEFILES__)
-        $(linker) op quiet,map,case $(%LINK_DEBUG) $(sys_$(cpu)_$(os)) name $^@ &
+        $(linker) op map $(%LINK_DEBUG) $(sys_$(cpu)_$(os)) name $^@ &
                 file {$(dobjs)} &
                 library {$(extra_libs) $(libs_$(cpu)_$(os))} &
                 $(extra_linker)
 !ifdef resource_file
-        wrc -bt=$(targ) $(resource_file) $^@
+        $(rc) -bt=$(targ) $(resource_file) $^@
 !endif
 !ifdef extra_cmds
         $(extra_cmds)
@@ -245,9 +281,12 @@ eraseall.obj : $(trap_dir)\compile.gbl
         if exist *.obj erase *.obj
         wtouch eraseall.obj
 
-allcompopts = $(comp_opts) $($(which)_opts_$(cpu)_$(os)) $(extra_cflags) $(extra_flags_$[&) $[@
-compile = $(comp_$(cpu)_$(os)) $(allcompopts)
-ppcompile = $(cpp_$(cpu)_$(os)) $(allcompopts)
+#allcompopts = $(comp_opts) $($(which)_opts_$(cpu)_$(os)) $(extra_cflags) $(extra_flags_$[&) $[@
+#compile = $(comp_$(cpu)_$(os)) $(allcompopts)
+#ppcompile = $(cpp_$(cpu)_$(os)) $(allcompopts)
+allcompopts = $(comp_opts) $($(which)_opts_$(cpu)_$(os)) $(extra_cflags) $(extra_flags_$[&)
+compile = $(cc) $[@ $(allcompopts)
+ppcompile = $(cpp) $[@ $(allcompopts)
 whole_inc_path = $(extra_incs);$(dig_dir)\h;$(trap_dir)\common\$(os);$(trap_dir)\common;$(trap_dir)\h;$(incs_$(os))
 
 .c: ..\c;..\..\c;$(trap_dir)\common\$(os);$(trap_dir)\common;$(trap_dir)\c;$(extra_srcs)
@@ -269,9 +308,10 @@ whole_inc_path = $(extra_incs);$(dig_dir)\h;$(trap_dir)\common\$(os);$(trap_dir)
 
 .asm.obj:
         @set IPATHS=-i$(whole_inc_path)
-        $(asm_$(cpu)) $(comp_opts) $(extra_aflags) $(extra_aflags_$[&) $[@
+#        $(asm_$(cpu)) $(comp_opts) $(extra_aflags) $(extra_aflags_$[&) $[@
+        $(as) $[@ $(asm_opts) $(extra_aflags) $(extra_aflags_$[&)
 
 .rc: ..\c;$(trap_dir)\common\$(os);$(trap_dir)\common;$(extra_srcs)
 
 .rc.res: .autodepend
-        *wrc -r -i$(whole_inc_path) -bt=$(targ) $[@ /fo=$^&.res
+        $(rc) -r -i$(whole_inc_path) -bt=$(targ) /fo=$^&.res $[@

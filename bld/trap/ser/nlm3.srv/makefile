@@ -1,4 +1,5 @@
 #pmake: all build serv remote os_nov cpu_386 ser x86
+host_cpu = 386
 
 !ifndef nlm_ver
 nlm_ver = 3

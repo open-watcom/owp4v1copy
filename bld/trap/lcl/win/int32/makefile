@@ -1,9 +1,12 @@
 #pmake: all build lcl os_win cpu_i86 cpu_386 support x86
+host_cpu = i86
 
 NAME = wint32
 LNK = $(NAME).lnk
 
+!include cproj.mif
 !include deftarg.mif
+!include defrule.mif
 
 !ifndef bin_root
 !ifdef bin_root_wv
@@ -19,7 +22,7 @@ w : .symbolic $(bin_root)\bin\$(name).dll
         @%null
 
 $(bin_root)\bin\$(name).dll: $(OBJS) $(LNK)
-       wlink name $^@ @$(LNK)
+       $(linker) name $^@ @$(LNK)
 
 $(LNK) : $(__MAKEFILES__)
         %create $(LNK)
@@ -38,8 +41,9 @@ $(LNK) : $(__MAKEFILES__)
 
 .c : ..\c
 .c.obj :
-        $(comp286) $[* $(CFLAGS) -zu -zw
+#        $(comp286) $[* $(CFLAGS) -zu -zw
+        $(cc) $[* $(CFLAGS) -zu -zw
 
 .asm : ..\asm
 .asm.obj :
-        wasm $[* $(CFLAGS)
+        $(as) $[* -fpc -mc -w3 -d1 -i=$(%lang)\h;$(%lang)\h\win;$(watcom_dir)\h

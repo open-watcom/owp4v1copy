@@ -1,4 +1,5 @@
 #pmake: all build serv lcl os_dos dsx cpu_386 x86
+host_cpu = 386
 
 #NOTE: This file is also included from the ..\DOSPED.SRV makefile
 

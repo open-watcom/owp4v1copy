@@ -1,4 +1,5 @@
 #pmake: build trap remote os_os2 cpu_386 par
+host_cpu = i86
 
 # This is a quick and dirty project because it is OS/2 specific and
 # intended to be temporary; Yes, I know it breaks all known rules. Once
@@ -13,7 +14,9 @@
 target = $(%devdir)\bin\binp\dll
 
 $(target)\wdio.dll: wdio.obj
-    wlink sys os2 dll d all op protmode name $@ f wdio segment 'IO_TEXT' IOPL export INPORT 2, OUTPORT 4
+#    wlink sys os2 dll d all op protmode name $@ f wdio segment 'IO_TEXT' IOPL export INPORT 2, OUTPORT 4
+    $(linker) sys os2 dll d all op protmode name $@ f wdio segment 'IO_TEXT' IOPL export INPORT 2, OUTPORT 4
 
 wdio.obj: wdio.c
-    wcc -oxs -ml -bd -d2 wdio.c
+#    wcc -oxs -ml -bd -d2 wdio.c
+    $(cc) -oxs -ml -bd -d2 wdio.c

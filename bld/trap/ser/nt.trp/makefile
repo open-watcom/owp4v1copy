@@ -1,4 +1,5 @@
 #pmake: all build trap remote os_nt cpu_i86 cpu_386 ser x86
+host_cpu = 386
 
 os = nt
 srv = ser

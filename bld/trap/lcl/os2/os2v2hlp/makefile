@@ -5,6 +5,7 @@
 
 !include cproj.mif
 !include deftarg.mif
+!include defrule.mif
 
 !ifndef bin_root
 !ifdef bin_root_wv
@@ -20,4 +21,4 @@ $(bin_root)\binp\dll\os2v2hlp.exe : os2v2hlp.obj
                 imp DOS32WRITE DOSCALLS.282,DOS32DEBUG DOSCALLS.317
 
 os2v2hlp.obj: ..\asm\os2v2hlp.asm
-        $(wasm) -zq -3r ..\asm\os2v2hlp
+        $(as) -3r ..\asm\os2v2hlp

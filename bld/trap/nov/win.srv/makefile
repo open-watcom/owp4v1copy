@@ -1,4 +1,5 @@
 #pmake: all build serv remote os_win cpu_i86 cpu_386 nov x86
+host_cpu = i86
 
 gui = 1
 os = win

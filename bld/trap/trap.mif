@@ -2,13 +2,9 @@
 # Master makefile for creating trap files
 #
 
-# Hack to get the $(linker) macro defined; all trap makefiles need to
-# be redone and define it (and this whole makefile needs to be shredded
-# and redone).
-host_cpu = 386
-
 !include cproj.mif
 !include deftarg.mif
+!include defrule.mif
 
 !ifdef test
 sys_x86_os2   = sys os2

@@ -1,4 +1,5 @@
 #pmake: all build trap remote os_nt cpu_386 nov x86
+host_cpu = 386
 
 os = nt
 srv = nov

@@ -14,4 +14,4 @@ extra_linker = &
 !include ..\dos.srv\makefile
 
 plsord.obj : plsord.asm
-        wasm -zq $[@
+        $(as) $[@

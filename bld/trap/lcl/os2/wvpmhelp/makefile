@@ -65,7 +65,7 @@ $(bdir)\wdpmhelp.exe: pmhelp.lbj pmhelp.res
 .asm: ..\asm
 
 .asm.obj:
-        wasm -zq -2 -bt=os2 $[*
+        $(as) -2 -bt=os2 $[*
 
 pmlock.obj : pmlock.c ..\h\wdpmhelp.h
 
