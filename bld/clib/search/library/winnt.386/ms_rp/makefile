@@ -1,4 +1,4 @@
-#pmake:all small register 32bit winnt threading dll search iX86 dynamic os_nt cpu_386 profile
+#pmake:all build small build register 32bit winnt threading dll search iX86 dynamic os_nt cpu_386 profile
 processor=386
 model=ms
 system=winnt
