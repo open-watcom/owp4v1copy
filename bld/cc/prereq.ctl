@@ -12,4 +12,5 @@ set PROJDIR=<CWD>
     cp -f ../linux386/target.h .
     wmake -h -f ../linux386/makefile bootstrap=1
     <CPCMD> wcc386 <devdir>/build/binl/wcc386
+    <CPCMD> <devdir>/misc/unicode.* <devdir>/build/binl/
     cdsay <PROJDIR>

@@ -847,7 +847,7 @@ extern  void    UpdateSymHeaders(unsigned);     /* cstmt */
 #endif
 
 extern  STRING_LITERAL  *GetLiteral(void);      /* cstring */
-extern  char    *LoadUnicodeTable(char *);      /* cstring */
+extern  void    LoadUnicodeTable(long);         /* cstring */
 extern  void    StringInit(void);               /* cstring */
 extern  TREEPTR StringLeaf(int);                /* cstring */
 extern  int     RemoveEscapes(char *);          /* cstring */
