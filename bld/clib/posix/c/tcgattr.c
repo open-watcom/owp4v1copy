@@ -24,40 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of getch() for Linux
+* Description:  Implementation for tcgetattr() for Linux.
 *
 ****************************************************************************/
 
-
-#include "variety.h"
-#include <conio.h>
-#include <unistd.h>
 #include <termios.h>
+#include <sys/ioctl.h>
 
-
-extern unsigned    _cbyte;
-
-_WCRTLINK int (getch)()
+_WCRTLINK int tcgetattr( int __fd, struct termios *__termios_p )
 {
-    auto char buf[1];
-    register unsigned int c;
-    struct termios  old, new;
-
-    c = _cbyte;
-    _cbyte = 0;
-    if( c == 0 ) {
-        tcgetattr( STDIN_FILENO, &old );
-        new = old;
-        new.c_iflag &= ~(IXOFF | IXON);
-        new.c_lflag &= ~(ECHO | ICANON | NOFLSH);
-        new.c_lflag |= ISIG;
-        new.c_cc[VMIN] = 1;
-        new.c_cc[VTIME] = 0;
-        tcsetattr( STDIN_FILENO, TCSADRAIN, &new );
-        read( STDIN_FILENO, &buf, 1 );  /* must be read with no echo */
-        c = buf[0];
-        tcsetattr( STDIN_FILENO, TCSADRAIN, &old );
-    }
-    return( c );
+    return ioctl( __fd, TCGETS, __termios_p );
 }
 

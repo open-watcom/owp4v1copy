@@ -28,7 +28,19 @@
 *
 ****************************************************************************/
 
+// TODO: I think this should all be split up into separate modules for
+//       each of the functions implemented to ensure the runtime library
+//       will static link as small as possible. KB.
+
+#include <stdarg.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <signal.h>
 #include <errno.h>
+#include <time.h>
+#include <sys/time.h>
+#include <sys/ioctl.h>
+#include <sys/stat.h>
 #include "syslinux.h"
 
 /* user-visible error numbers are in the range -1 - -124 */
@@ -67,15 +79,29 @@ _WCRTLINK char *getcwd( char *__buf, size_t __size )
     __syscall_return(char *,res);
 }
 
-_WCRTLINK int fcntl( int __fildes, int __cmd, int rest )
+_WCRTLINK int fcntl( int __fildes, int __cmd, ... )
 {
-    u_long res = sys_call3(SYS_fcntl, (u_long)__fildes, (u_long)__cmd, rest);
+    u_long      rest;
+    va_list     args;
+    u_long      res;
+
+    va_start( args, __cmd );
+    rest = va_arg( args, u_long );
+    va_end( args );
+    res = sys_call3(SYS_fcntl, (u_long)__fildes, (u_long)__cmd, rest);
     __syscall_return(int,res);
 }
 
-_WCRTLINK int ioctl( int __fildes, int request, char *argp)
+_WCRTLINK int ioctl( int __fd, unsigned long int __request, ... )
 {
-    u_long res = sys_call3(SYS_ioctl, (u_long)__fildes, (u_long)request, (u_long)argp);
+    u_long      argp;
+    va_list     args;
+    u_long      res;
+
+    va_start( args, __request );
+    argp = va_arg( args, u_long );
+    va_end( args );
+    res = sys_call3(SYS_ioctl, (u_long)__fd, (u_long)__request, argp);
     __syscall_return(int,res);
 }
 
@@ -172,6 +198,12 @@ _WCRTLINK int iopl( int __level )
 _WCRTLINK int nice( int __val )
 {
     u_long res = sys_call1(SYS_nice, __val);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int select( int __width, fd_set * __readfds, fd_set * __writefds, fd_set * __exceptfds, struct timeval * __timeout )
+{
+    u_long res = sys_call5(SYS_select, __width, (u_long)__readfds, (u_long)__writefds, (u_long)__exceptfds, (u_long)__timeout);
     __syscall_return(int,res);
 }
 

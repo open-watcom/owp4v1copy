@@ -1,7 +1,6 @@
 assert.h        : ..\watcom\assert.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\ext.sp
 bios.h          : ..\watcom\bios.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\ext.sp ..\poppack.sp ..\pshpackl.sp
 bios98.h        : ..\watcom\bios98.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\poppack.sp ..\pshpackl.sp
-cdrom.h         : ..\quantum\cdrom.mh ..\poppack.sp ..\pshpackl.sp
 common.cnv      : ..\watcom\common.mh ..\crwat.sp
 complex.h       : ..\watcom\complex.mh ..\readonly.sp ..\crwat.sp ..\poppack.sp ..\pshpackl.sp
 conio.h         : ..\watcom\conio.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\valist.sp
@@ -10,11 +9,6 @@ cstdlib.h       : ..\watcom\cstdlib.mh ..\readonly.sp ..\crwat.sp
 cstring.h       : ..\watcom\cstring.mh ..\readonly.sp ..\crwat.sp
 ctype.h         : ..\watcom\ctype.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\ext.sp ..\wchar_t.sp ..\wctypet.sp
 direct.h        : ..\watcom\direct.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\dskfreet.sp ..\poppack.sp ..\pshpackl.sp ..\wchar_t.sp
-!ifeq system QNX
-dirent.h        : ..\quantum\dirent.mh ..\poppack.sp ..\pshpackl.sp
-!else
-dirent.h        : ..\watcom\linux\dirent.mh ..\poppack.sp ..\pshpackl.sp
-!endif
 dos.h           : ..\watcom\dos.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\dskfreet.sp ..\poppack.sp ..\pshpackl.sp ..\wchar_t.sp
 dosfunc.h       : ..\watcom\dosfunc.mh ..\readonly.sp ..\crwat.sp
 eh.h            : ..\watcom\eh.mh ..\readonly.sp ..\crwat.sp
@@ -29,7 +23,6 @@ fstream.h       : ..\watcom\fstream.mh ..\readonly.sp ..\crwat.sp ..\poppack.sp 
 generic.h       : ..\watcom\generic.mh ..\readonly.sp ..\crwat.sp
 graph.h         : ..\watcom\graph.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\poppack.sp ..\pshpackl.sp
 graph98.h       : ..\watcom\graph98.mh ..\watcom\graph.mh
-grp.h           : ..\quantum\grp.mh ..\poppack.sp ..\pshpackl.sp
 i86.h           : ..\watcom\i86.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\poppack.sp ..\pshpackl.sp
 io.h            : ..\watcom\io.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\maxpath.sp ..\wchar_t.sp
 iomanip.h       : ..\watcom\iomanip.mh ..\readonly.sp ..\crwat.sp ..\poppack.sp ..\pshpackl.sp
@@ -50,12 +43,9 @@ mmintrin.h      : ..\watcom\mmintrin.mh ..\readonly.sp ..\crwat.sp ..\cplusepi.s
 new.h           : ..\watcom\new.mh ..\readonly.sp ..\cpppfv.sp ..\crwat.sp
 pgchart.h       : ..\watcom\pgchart.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\poppack.sp ..\pshpackl.sp
 process.h       : ..\watcom\process.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwatqnx.sp ..\wchar_t.sp
-pwd.h           : ..\quantum\pwd.mh ..\poppack.sp ..\pshpackl.sp
-regex.h         : ..\quantum\regex.mh ..\poppack.sp ..\pshpackl.sp
 search.h        : ..\watcom\search.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp
 setjmp.h        : ..\watcom\setjmp.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwatqnx.sp ..\poppack.sp ..\pshpackl.sp
 setjmpex.h      : ..\watcom\setjmpex.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwatqnx.sp
-sgtty.h         : ..\quantum\sgtty.mh ..\poppack.sp ..\pshpackl.sp
 share.h         : ..\watcom\share.mh ..\readonly.sp ..\crwat.sp
 signal.h        : ..\watcom\signal.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwatqnx.sp ..\poppack.sp ..\pshpackl.sp
 stdarg.h        : ..\watcom\stdarg.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\valist.sp
@@ -68,6 +58,14 @@ streambu.h      : ..\watcom\streambu.mh ..\readonly.sp ..\cpplock.sp ..\crwat.sp
 string.h        : ..\watcom\string.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\ext.sp ..\null.sp ..\sizet.sp ..\wchar_t.sp ..\wctypet.sp
 string.hpp      : ..\watcom\string.mhp ..\readonly.sp ..\crwat.sp
 strstrea.h      : ..\watcom\strstrea.mh ..\readonly.sp ..\crwat.sp ..\poppack.sp ..\pshpackl.sp
+sys\locking.h   : ..\watcom\locking.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp
+!ifeq system QNX
+dirent.h        : ..\quantum\dirent.mh ..\poppack.sp ..\pshpackl.sp
+cdrom.h         : ..\quantum\cdrom.mh ..\poppack.sp ..\pshpackl.sp
+grp.h           : ..\quantum\grp.mh ..\poppack.sp ..\pshpackl.sp
+pwd.h           : ..\quantum\pwd.mh ..\poppack.sp ..\pshpackl.sp
+regex.h         : ..\quantum\regex.mh ..\poppack.sp ..\pshpackl.sp
+sgtty.h         : ..\quantum\sgtty.mh ..\poppack.sp ..\pshpackl.sp
 sys\console.h   : ..\quantum\console.mh ..\poppack.sp ..\pshpackl.sp
 sys\con_msg.h   : ..\quantum\con_msg.mh ..\poppack.sp ..\pshpackl.sp
 sys\dev.h       : ..\quantum\dev.mh ..\poppack.sp ..\pshpackl.sp
@@ -83,7 +81,6 @@ sys\ioctl.h     : ..\quantum\ioctl.mh ..\poppack.sp ..\pshpackl.sp
 sys\io_msg.h    : ..\quantum\io_msg.mh ..\poppack.sp ..\pshpackl.sp
 sys\irqinfo.h   : ..\quantum\irqinfo.mh ..\poppack.sp ..\pshpackl.sp
 sys\lmf.h       : ..\quantum\lmf.mh ..\poppack.sp ..\pshpackl.sp
-sys\locking.h   : ..\watcom\locking.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp
 sys\magic.h     : ..\quantum\magic.mh ..\poppack.sp ..\pshpackl.sp
 sys\mman.h      : ..\quantum\mman.mh ..\poppack.sp ..\pshpackl.sp
 sys\mouse.h     : ..\quantum\mouse.mh ..\poppack.sp ..\pshpackl.sp
@@ -101,31 +98,35 @@ sys\seginfo.h   : ..\quantum\seginfo.mh ..\poppack.sp ..\pshpackl.sp
 sys\sendmx.h    : ..\quantum\sendmx.mh ..\poppack.sp ..\pshpackl.sp
 sys\ser_msg.h   : ..\quantum\ser_msg.mh ..\poppack.sp ..\pshpackl.sp
 sys\sidinfo.h   : ..\quantum\sidinfo.mh ..\poppack.sp ..\pshpackl.sp
-!ifeq system QNX
 sys\stat.h      : ..\quantum\stat.mh ..\poppack.sp ..\pshpackl.sp
-!else
-sys\stat.h      : ..\watcom\stat.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\poppack.sp ..\pshpackl.sp
-!endif
 sys\statfs.h    : ..\quantum\statfs.mh ..\poppack.sp ..\pshpackl.sp
 sys\sys_msg.h   : ..\quantum\sys_msg.mh ..\poppack.sp ..\pshpackl.sp
 sys\termio.h    : ..\quantum\termio.mh ..\poppack.sp ..\pshpackl.sp
-sys\timeb.h     : ..\watcom\timeb.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\poppack.sp ..\pshpackl.sp ..\timet.sp
 sys\timers.h    : ..\quantum\timers.mh ..\poppack.sp ..\pshpackl.sp
 sys\times.h     : ..\quantum\times.mh ..\poppack.sp ..\pshpackl.sp
 sys\trace.h     : ..\quantum\trace.mh ..\poppack.sp ..\pshpackl.sp
-sys\types.h     : ..\watcom\types.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crqnx.sp ..\crwat.sp ..\sizet.sp ..\timet.sp
 sys\uio.h       : ..\quantum\uio.mh ..\poppack.sp ..\pshpackl.sp
-sys\utime.h     : ..\watcom\utime.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwatqnx.sp ..\poppack.sp ..\pshpackl.sp ..\timet.sp
 sys\utsname.h   : ..\quantum\utsname.mh ..\poppack.sp ..\pshpackl.sp
 sys\vc.h        : ..\quantum\vc.mh ..\poppack.sp ..\pshpackl.sp
-tchar.h         : ..\watcom\tchar.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\ext.sp ..\null.sp ..\wchar_t.sp ..\wctypet.sp
 term.h          : ..\quantum\term.mh ..\poppack.sp ..\pshpackl.sp
 termios.h       : ..\quantum\termios.mh ..\poppack.sp ..\pshpackl.sp
+unix.h          : ..\quantum\unix.mh ..\poppack.sp ..\pshpackl.sp
+ustat.h         : ..\quantum\ustat.mh ..\poppack.sp ..\pshpackl.sp
+!else
+sys\stat.h      : ..\watcom\stat.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\poppack.sp ..\pshpackl.sp
+!endif
+!ifeq system LINUX
+dirent.h        : ..\watcom\linux\dirent.mh ..\poppack.sp ..\pshpackl.sp
+termios.h       : ..\watcom\linux\termios.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp
+sys\ioctl.h     : ..\watcom\linux\ioctl.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp
+!endif
+sys\timeb.h     : ..\watcom\timeb.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\poppack.sp ..\pshpackl.sp ..\timet.sp
+sys\types.h     : ..\watcom\types.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crqnx.sp ..\crwat.sp ..\sizet.sp ..\timet.sp
+sys\utime.h     : ..\watcom\utime.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwatqnx.sp ..\poppack.sp ..\pshpackl.sp ..\timet.sp
+tchar.h         : ..\watcom\tchar.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\ext.sp ..\null.sp ..\wchar_t.sp ..\wctypet.sp
 time.h          : ..\watcom\time.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\ext.sp ..\null.sp ..\poppack.sp ..\pshpackl.sp ..\sizet.sp ..\timet.sp ..\wchar_t.sp
 typeinfo.h      : ..\watcom\typeinfo.mh ..\readonly.sp ..\crwat.sp
 unistd.h        : ..\watcom\unistd.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwatqnx.sp ..\ext.sp ..\null.sp ..\posix.sp
-unix.h          : ..\quantum\unix.mh ..\poppack.sp ..\pshpackl.sp
-ustat.h         : ..\quantum\ustat.mh ..\poppack.sp ..\pshpackl.sp
 varargs.h       : ..\watcom\varargs.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp
 wcdefs.h        : ..\watcom\wcdefs.mh ..\readonly.sp ..\crwat.sp ..\sizet.sp
 wcexcept.h      : ..\watcom\wcexcept.mh ..\readonly.sp ..\crwat.sp ..\poppack.sp ..\pshpackl.sp

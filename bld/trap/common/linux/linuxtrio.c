@@ -34,7 +34,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-//#include <termios.h>
+#include <termios.h>
 #include "trpimp.h"
 
 extern char RWBuff[];
@@ -58,44 +58,12 @@ void StartupErr( char *err )
 
 int KeyPress()
 {
-// TODO: Need termios.h and support functions!!
-#if 0
-    int             ret;
-    struct termios  old;
-    struct termios  new;
-
-    tcgetattr( 0, &old );
-    new = old;
-    new.c_lflag &= ~(ICANON | ECHO);
-    new.c_cc[VMIN] = 1;
-    new.c_cc[VTIME] = 0;
-    tcsetattr( 0, TCSANOW, &new );
-
-    ret = dev_ischars( 0 );
-    tcsetattr( 0, TCSANOW, &old );
-    return( ret != 0 );
-#endif
-    return 0;
+    return( kbhit() );
 }
 
 int KeyGet()
 {
-#if 0
-    struct termios  old;
-    struct termios  new;
-    char            key;
-
-    tcgetattr( 0, &old );
-    new = old;
-    new.c_lflag &= ~(ICANON | ECHO);
-    new.c_cc[VMIN] = 1;
-    new.c_cc[VTIME] = 0;
-    tcsetattr( 0, TCSANOW, &new );
-    read( 0, &key, 1 );
-    tcsetattr( 0, TCSANOW, &old );
-    return( key );
-#endif
-    return 0;
+    return( getch() );
 }
 
 int WantUsage( char *ptr )

@@ -29,35 +29,21 @@
 ****************************************************************************/
 
 #include <unistd.h>
-
-/* #include <termios.h> defining it here for now -- should go to a better
-   place later */
-typedef unsigned char   cc_t;
-typedef unsigned int    tcflag_t;
-
-#define NCCS 19
-struct termios {
-  tcflag_t c_iflag;               /* input mode flags */
-  tcflag_t c_oflag;               /* output mode flags */
-  tcflag_t c_cflag;               /* control mode flags */
-  tcflag_t c_lflag;               /* local mode flags */
-  cc_t c_line;                    /* line discipline */
-  cc_t c_cc[NCCS];                /* control characters */
-};
-#define TCGETS 0x5401
-
-/* sys/ioctl.h */
-int ioctl(int d, int request, void *arg);
-/* should be "..." but this way we have register calling */
-
-_WCRTLINK int tcgetattr ( int fd, struct termios *termios_p )
-{
-  return ioctl( fd, TCGETS, termios_p );
-}
+#include <termios.h>
+#include <errno.h>
 
 _WCRTLINK int isatty( int __fildes )
 {
-  struct termios  term;
+    struct termios  term;
+    int             status;
+    int             errno_save;
 
-  return( tcgetattr( __fildes, &term ) != -1 );
+    /*
+     * preserve errno across the call
+     */
+    errno_save = errno;
+    status = tcgetattr( __fildes, &term );
+    errno = errno_save;
+    return (status == 0);
 }
+

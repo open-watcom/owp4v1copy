@@ -24,40 +24,26 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of getch() for Linux
+* Description:  Implementation for tcsetattr() for Linux.
 *
 ****************************************************************************/
 
-
-#include "variety.h"
-#include <conio.h>
-#include <unistd.h>
 #include <termios.h>
+#include <errno.h>
+#include <sys/ioctl.h>
 
-
-extern unsigned    _cbyte;
-
-_WCRTLINK int (getch)()
+_WCRTLINK int tcsetattr( int __fd, int __optional_actions, const struct termios *__termios_p )
 {
-    auto char buf[1];
-    register unsigned int c;
-    struct termios  old, new;
-
-    c = _cbyte;
-    _cbyte = 0;
-    if( c == 0 ) {
-        tcgetattr( STDIN_FILENO, &old );
-        new = old;
-        new.c_iflag &= ~(IXOFF | IXON);
-        new.c_lflag &= ~(ECHO | ICANON | NOFLSH);
-        new.c_lflag |= ISIG;
-        new.c_cc[VMIN] = 1;
-        new.c_cc[VTIME] = 0;
-        tcsetattr( STDIN_FILENO, TCSADRAIN, &new );
-        read( STDIN_FILENO, &buf, 1 );  /* must be read with no echo */
-        c = buf[0];
-        tcsetattr( STDIN_FILENO, TCSADRAIN, &old );
+    switch(__optional_actions) {
+        case TCSANOW:
+            return ioctl(__fd, TCSETS, __termios_p);
+        case TCSADRAIN:
+            return ioctl(__fd, TCSETSW, __termios_p);
+        case TCSAFLUSH:
+            return ioctl(__fd, TCSETSF, __termios_p);
+        default:
+        errno = EINVAL;
+            return -1;
     }
-    return( c );
 }
 

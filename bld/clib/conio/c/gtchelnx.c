@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of getche() for Linux.
 *
 ****************************************************************************/
 
@@ -33,9 +32,6 @@
 #include "variety.h"
 #include <conio.h>
 #include <unistd.h>
-
-// TODO: Needs Linux POSIX libary support!
-#if 0
 #include <termios.h>
 
 extern  unsigned    _cbyte;
@@ -63,5 +59,4 @@ _WCRTLINK int (getche)()
     }
     return( c );
 }
-#endif
 
