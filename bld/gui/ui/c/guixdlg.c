@@ -317,9 +317,14 @@ a_list *GUIGetList( VFIELD *field )
     return( list );
 }
 
-static void FreeEdit( an_edit_control *edit_control, bool free_edit )
+static void FreeEdit( an_edit_control *edit_control, bool free_edit, bool is_GUI_data )
 {
-    GUIMemFree( edit_control->buffer );
+    void        uifree( void * );  // Function in ui project
+
+    if( is_GUI_data )
+        GUIMemFree( edit_control->buffer );
+    else
+        uifree( edit_control->buffer );
     if( free_edit ) {
         GUIMemFree( edit_control );
     }
@@ -387,12 +392,14 @@ void GUIDoFreeField( VFIELD *field, a_radio_group **group )
     case FLD_COMBOBOX :
         combo_box = (a_combo_box *)field->ptr;
         GUIFreeList( &combo_box->list, FALSE );
-        FreeEdit( &combo_box->edit, FALSE );
+        FreeEdit( &combo_box->edit, FALSE, TRUE );
         GUIMemFree( combo_box );
         break;
     case FLD_EDIT :
+        FreeEdit( field->ptr, TRUE, FALSE );
+        break;
     case FLD_INVISIBLE_EDIT :
-        FreeEdit( field->ptr, TRUE );
+        FreeEdit( field->ptr, TRUE, TRUE );
         break;
     case FLD_EDIT_MLE:
     case FLD_LISTBOX :
@@ -518,7 +525,7 @@ bool GUIDoAddControl( gui_control_info *info, gui_window *wnd, VFIELD *field )
             return( FALSE );
         }
         if( info->text != NULL ) {
-            if( !GUISetEditText( &combo_box->edit, info->text ) ) {
+            if( !GUISetEditText( &combo_box->edit, info->text, FALSE ) ) {
                 return( FALSE );
             }
         }
@@ -532,7 +539,7 @@ bool GUIDoAddControl( gui_control_info *info, gui_window *wnd, VFIELD *field )
         }
         field->ptr = edit_control;
         edit_control->buffer = NULL;
-        GUISetEditText( edit_control, info->text );
+        GUISetEditText( edit_control, info->text, field->typ != FLD_EDIT );
         break;
     case FLD_PULLDOWN :
     case FLD_LISTBOX :
