@@ -2995,14 +2995,6 @@ typedef union {
         unsigned_32 mm : 3;
         unsigned_32 mod: 2;
     } type1;
-    struct {
-        unsigned_32 op1: 8;
-        unsigned_32 dir: 1;
-        unsigned_32 op2: 7;
-        unsigned_32 rm : 3;
-        unsigned_32 mm : 3;
-        unsigned_32 mod: 2;
-    } type2;
 } mm;
 
 dis_handler_return X86MMRegModRM( dis_handle *h, void *d, dis_dec_ins *ins )
