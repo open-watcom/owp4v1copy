@@ -90,5 +90,10 @@ call zipit ide_samples
 call zipit f_samples
 call zipit misc_src
 call zipit os2api
-call zipitw32
+call zipit_nolic w32api
+call zipit_nolic ext_causeway
+call zipit_nolic ext_dos4gw
+call zipit_nolic ext_dos32a
+call zipit_nolic ext_pmodew
 echo All done!
+
