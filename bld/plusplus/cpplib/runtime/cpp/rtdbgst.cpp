@@ -751,6 +751,13 @@ void __DumpPdata()
 }
 #endif
 
+/* dbgio.c includes stdlib.h. As of OW v1.4, stdlib.h can't be completely
+   enclosed in an extern "C" block. Including stdlib.h here brings its
+   declarations into scope now. Inclusion guards will prevent it from
+   being processed again later. This hack avoids changing dbgio.c and thus
+   won't impact anything else that depends on it. */
+
+#include <stdlib.h>
 extern "C" {
 
     #include "../../../c/dbgio.c"
