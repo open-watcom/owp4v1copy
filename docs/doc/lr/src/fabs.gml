@@ -12,16 +12,16 @@ The &func function returns the absolute value of
 .arg x.
 .return end
 .see begin
-.seelist fabs abs labs
+.seelist fabs abs labs imaxabs
 .see end
 .exmp begin
 #include <stdio.h>
 #include <math.h>
 
 void main()
-  {
+{
     printf( "%f %f\n", fabs(.5), fabs(-.5) );
-  }
+}
 .exmp output
 0.500000 0.500000
 .exmp end

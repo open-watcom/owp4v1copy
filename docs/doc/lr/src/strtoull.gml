@@ -76,7 +76,7 @@ is set to
 .kw EDOM.
 .return end
 .see begin
-.seelist &function. atoi atol atoll itoa ltoa lltoa sscanf strtol strtoll strtoul strtoull ultoa ulltoa utoa
+.im seestoi &function.
 .see end
 .exmp begin
 #include <stdlib.h>

@@ -76,17 +76,17 @@ is set to
 .kw EDOM.
 .return end
 .see begin
-.seelist &function. atoi atol itoa ltoa sscanf strtol strtoul ultoa utoa
+.im seestoi &function.
 .see end
 .exmp begin
 #include <stdlib.h>
 
 void main()
-  {
+{
     unsigned long int v;
 .exmp break
     v = strtoul( "12345678", NULL, 10 );
-  }
+}
 .exmp end
 .class ANSI
 .system

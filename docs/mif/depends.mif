@@ -1389,6 +1389,8 @@ $(docsrc_dir)\lr\src\hcfunmac.gml &
 $(docsrc_dir)\lr\src\header.gml &
 $(docsrc_dir)\lr\src\hfree.gml &
 $(docsrc_dir)\lr\src\hypot.gml &
+$(docsrc_dir)\lr\src\imaxabs.gml &
+$(docsrc_dir)\lr\src\imaxdiv.gml &
 $(docsrc_dir)\lr\src\inp.gml &
 $(docsrc_dir)\lr\src\inpd.gml &
 $(docsrc_dir)\lr\src\inpw.gml &
@@ -1807,9 +1809,11 @@ $(docsrc_dir)\lr\src\strspnp.gml &
 $(docsrc_dir)\lr\src\strstr.gml &
 $(docsrc_dir)\lr\src\strtime.gml &
 $(docsrc_dir)\lr\src\strtod.gml &
+$(docsrc_dir)\lr\src\strtoimx.gml &
 $(docsrc_dir)\lr\src\strtok.gml &
 $(docsrc_dir)\lr\src\strtol.gml &
 $(docsrc_dir)\lr\src\strtoul.gml &
+$(docsrc_dir)\lr\src\strtoumx.gml &
 $(docsrc_dir)\lr\src\structtm.gml &
 $(docsrc_dir)\lr\src\strupr.gml &
 $(docsrc_dir)\lr\src\strxfrm.gml &

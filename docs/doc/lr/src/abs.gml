@@ -10,16 +10,16 @@ The &func function returns the absolute value of its integer argument
 The &func function returns the absolute value of its argument.
 .return end
 .see begin
-.seelist abs fabs labs
+.seelist abs labs imaxabs fabs
 .see end
 .exmp begin
 #include <stdio.h>
 #include <stdlib.h>
 
 void main()
-  {
+{
     printf( "%d %d %d\n", abs( -5 ), abs( 0 ), abs( 5 ) );
-  }
+}
 .exmp output
 5 0 5
 .exmp end

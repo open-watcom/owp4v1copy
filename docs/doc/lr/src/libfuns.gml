@@ -483,6 +483,8 @@
 .fnc _imagesize                 gr_imsiz.gml    DOS QNX W GRAPH
 .fnc _imagesize_w               gr_imsiz.gml    DOS QNX W GRAPH
 .fnc _imagesize_wxy             gr_imsiz.gml    DOS QNX W GRAPH
+.fnc imaxabs                    imaxabs.gml     DOS QNX W WIN32
+.fnc imaxdiv                    imaxdiv.gml     DOS QNX W WIN32
 .fnc inp                        inp.gml         DOS QNX W WIN32
 .fnc inpd                       inpd.gml        DOS QNX W WIN32
 .fnc input_line                 input_ln.gml        QXO
@@ -1389,12 +1391,18 @@
 .fnc strtoll                    strtoll.gml     DOS QNX W WIN32
 .fnw wcstoll                    strtoll.gml     DOS QNX W WIN32
 .fnu _ustrtoll                  strtoll.gml     DOS       WIN32
+.fnc strtoimax                  strtoimx.gml    DOS QNX W WIN32
+.fnc wcstoimax                  strtoimx.gml    DOS QNX W WIN32
+.fnu _ustrtoimax                strtoimx.gml    DOS       WIN32
 .fnc strtoul                    strtoul.gml     DOS QNX W WIN32
 .fnw wcstoul                    strtoul.gml     DOS QNX W WIN32
 .fnu _ustrtoul                  strtoul.gml     DOS       WIN32
 .fnc strtoull                   strtoull.gml    DOS QNX W WIN32
 .fnw wcstoull                   strtoull.gml    DOS QNX W WIN32
 .fnu _ustrtoull                 strtoull.gml    DOS       WIN32
+.fnc strtoumax                  strtoumx.gml    DOS QNX W WIN32
+.fnc wcstoumax                  strtoumx.gml    DOS QNX W WIN32
+.fnu _ustrtoumax                strtoumx.gml    DOS       WIN32
 .fnc strupr                     strupr.gml      DOS QNX W WIN32
 .fnc _strupr                    strupr.gml      DOS QNX W WIN32
 .fnf _fstrupr                   strupr.gml      DOS QNX W WIN32

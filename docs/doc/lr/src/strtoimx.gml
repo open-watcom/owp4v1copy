@@ -1,21 +1,21 @@
-.func strtol wcstol _ustrtol
-#include <stdlib.h>
-long int strtol( const char *ptr,
-                 char **endptr,
-                 int base );
+.func strtoimax wcstoimax _ustrtoimax
+#include <stdint.h>
+intmax_t strtoimax( const char *ptr,
+                    char **endptr,
+                    int base );
 .ixfunc2 '&Conversion' &func
 .if &'length(&wfunc.) ne 0 .do begin
-#include <wchar.h>
-long int wcstol( const wchar_t *ptr,
-                 wchar_t **endptr,
-                 int base );
+#include <stdint.h>
+intmax_t wcstoimax( const wchar_t *ptr,
+                    wchar_t **endptr,
+                    int base );
 .ixfunc2 '&Conversion' &wfunc
 .ixfunc2 '&Wide' &wfunc
 .do end
 .if &'length(&ufunc.) ne 0 .do begin
-long int _ustrtol( const wchar_t *ptr,
-                   wchar_t **endptr,
-                   int base );
+intmax_t _ustrtoimax( const wchar_t *ptr,
+                      wchar_t **endptr,
+                      int base );
 .ixfunc2 '&Conversion' &ufunc
 .do end
 .funcend
@@ -23,7 +23,7 @@ long int _ustrtol( const wchar_t *ptr,
 The &func function converts the string pointed to by
 .arg ptr
 to an object of type
-.id long int.
+.id intmax_t.
 The &func function recognizes a string containing:
 .begbull $compact
 .bull
@@ -68,9 +68,9 @@ of letters and digits.
 .return begin
 The &func function returns the converted value.
 If the correct value would cause overflow,
-.kw LONG_MAX
+.kw INTMAX_MAX
 or
-.kw LONG_MIN
+.kw INTMAX_MIN
 is returned according to the sign, and
 .kw errno
 is set to
@@ -86,13 +86,14 @@ is set to
 .im seestoi &function.
 .see end
 .exmp begin
+#include <stdint.h>
 #include <stdlib.h>
 
 void main()
 {
-    long int v;
+    intmax_t v;
 .exmp break
-    v = strtol( "12345678", NULL, 10 );
+    v = strtoimax( "12345678909876", NULL, 10 );
 }
 .exmp end
 .class ANSI

@@ -64,21 +64,21 @@ produces a Unicode character string (which is twice as long).
 The &func function returns the pointer to the result.
 .return end
 .see begin
-.seelist &function. atoi atol itoa ltoa sscanf strtol strtoul ultoa utoa
+.im seestoi &function.
 .see end
 .exmp begin
 #include <stdio.h>
 #include <stdlib.h>
 
 void main()
-  {
+{
     char buffer[20];
     int base;
 .exmp break
     for( base = 2; base <= 16; base = base + 2 )
-      printf( "%2d %s\n", base,
-              itoa( 12765, buffer, base ) );
-  }
+        printf( "%2d %s\n", base,
+                itoa( 12765, buffer, base ) );
+}
 .exmp output
  2 11000111011101
  4 3013131

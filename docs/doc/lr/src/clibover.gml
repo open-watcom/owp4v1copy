@@ -1164,6 +1164,8 @@ and should be isolated in programs when portability is a consideration.
 .fd *fun="_fpreset" initializes for floating-point operations
 .fd *fun="frexp" fractional exponent
 .fd *fun="hypot" compute hypotenuse
+.fd *fun="imaxabs" get quotient, remainder from division of object of maximum-size integer type
+.fd *fun="imaxdiv" absolute value of an object of maximum-size integer type
 .fd *fun="j0" return Bessel functions of the first kind (described under "bessel Functions")
 .fd *fun="j1" return Bessel functions of the first kind (described under "bessel Functions")
 .fd *fun="jn" return Bessel functions of the first kind (described under "bessel Functions")

@@ -23,25 +23,25 @@ and
 .kw rem.
 .return end
 .see begin
-.seelist div ldiv
+.seelist div ldiv imaxdiv
 .see end
 .exmp begin
 #include <stdio.h>
 #include <stdlib.h>
 
 void print_time( int seconds )
-  {
-     auto div_t min_sec;
+{
+     div_t  min_sec;
 
      min_sec = div( seconds, 60 );
      printf( "It took %d minutes and %d seconds\n",
-              min_sec.quot, min_sec.rem );
-  }
+             min_sec.quot, min_sec.rem );
+}
 .exmp break
 void main()
-  {
+{
     print_time( 130 );
-  }
+}
 .exmp output
 It took 2 minutes and 10 seconds
 .exmp end

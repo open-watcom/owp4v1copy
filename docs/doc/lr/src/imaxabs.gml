@@ -1,0 +1,32 @@
+.func imaxabs
+#include <inttypes.h>
+intmax_t imaxabs( intmax_t j );
+.funcend
+.desc begin
+The &func function returns the absolute value
+of its maximum-size integer argument
+.arg j.
+.desc end
+.return begin
+The &func function returns the absolute value of its argument.
+.return end
+.see begin
+.seelist imaxabs labs abs fabs
+.see end
+.exmp begin
+#include <stdio.h>
+#include <inttypes.h>
+
+void main()
+{
+    intmax_t    x, y;
+.exmp break
+    x = -500000000000;
+    y = imaxabs( x );
+    printf( "imaxabs(%"PRIdMAX") = %"PRIdMAX"\n", x, y );
+}
+.exmp output
+imaxabs(-500000000000) = 500000000000
+.exmp end
+.class ANSI
+.system

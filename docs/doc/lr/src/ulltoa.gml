@@ -62,7 +62,7 @@ produces a Unicode character string (which is twice as long).
 The &func function returns the pointer to the result.
 .return end
 .see begin
-.seelist &function. atoi atol atoll itoa ltoa lltoa sscanf strtol strtoll strtoul strtoull ultoa ulltoa utoa
+.im seestoi &function.
 .see end
 .exmp begin
 #include <stdio.h>
