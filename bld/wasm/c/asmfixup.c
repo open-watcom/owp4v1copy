@@ -46,28 +46,29 @@
 #include "asmalloc.h"
 
 #ifdef _WASM_
-    #include "womp.h"
-    #include "fixup.h"
-    #include "directiv.h"
+#include "womp.h"
+#include "fixup.h"
+#include "directiv.h"
 
-    #include "watcom.h"
-    #include "objrec.h"
-    #include "pcobj.h"
-    #include "myassert.h"
-    #include "fixup.h"
+#include "watcom.h"
+#include "objrec.h"
+#include "pcobj.h"
+#include "myassert.h"
+#include "fixup.h"
 #endif
 
 struct asmfixup         *InsFixups[3];
+
 #ifndef _WASM_
-    struct asmfixup             *FixupHead;
+struct asmfixup         *FixupHead;
 #endif
 
 struct fixup            *FixupListHead; // head of list of fixups
 struct fixup            *FixupListTail;
 
 #ifdef _WASM_
-    extern int_8        PhaseError;
-    extern seg_list     *CurrSeg;       // points to stack of opened segments
+extern int_8            PhaseError;
+extern seg_list         *CurrSeg;       // points to stack of opened segments
 #endif
 
 #ifdef _WASM_
@@ -77,18 +78,18 @@ void add_frame( void )
 /* determine the frame and frame datum for the fixup */
 {
     struct asmfixup     *fixup;
-
+    
     if( Parse_Pass != PASS_1 ) {
         fixup = InsFixups[Opnd_Count];
         if( fixup == NULL ) return;
         fixup->frame = Frame;
-        #if 0 // fixme
+#if 0 // fixme
         // fixme /**/myassert( Frame != EMPTY );
         if( Frame == EMPTY ) {
             AsmError( SYMBOL_NOT_DEFINED );
             return;
         }
-        #endif
+#endif
         fixup->frame_datum = Frame_Datum;
     }
 }
@@ -157,20 +158,20 @@ int BackPatch( struct asm_sym *sym )
     struct asmfixup     *next;
     long                max_disp;
     unsigned            size;
-    #ifdef _WASM_
+#ifdef _WASM_
     dir_node            *seg;
-    #endif
-
-    #ifdef _WASM_
-        patch = sym->fixup;
-        sym->fixup = NULL;
-    #else
-        patch = FixupHead;
-        FixupHead = NULL;
-    #endif
+#endif
+    
+#ifdef _WASM_
+    patch = sym->fixup;
+    sym->fixup = NULL;
+#else
+    patch = FixupHead;
+    FixupHead = NULL;
+#endif
     for( ; patch != NULL; patch = next ) {
         next = patch->next;
-        #ifdef _WASM_
+#ifdef _WASM_
         seg = GetSeg( sym );
         if( seg == NULL || patch->def_seg != seg ) {
             /* can't backpatch if fixup location is in diff seg than symbol */
@@ -178,89 +179,89 @@ int BackPatch( struct asm_sym *sym )
             sym->fixup = patch;
             continue;
         }
-        #else
+#else
         if( patch->name == sym->name ) {
-        #endif
-        size = 0;
-        switch( patch->fix_type ) {
-        case FIX_RELOFF8:
-            size = 1;
-            /* fall through */
-        case FIX_RELOFF16:
-            if( size == 0 ) size = 2;
-            /* fall through */
-        case FIX_RELOFF32:
-            if( size == 0 ) size = 4;
-            patch_addr = patch->fix_loc;
-            // calculate the displacement
-            disp = patch->offset + Address - patch_addr - size;
-            max_disp = (1UL << ((size * 8)-1)) - 1;
-            if( disp > max_disp || disp < (-max_disp-1) ) {
-                #ifdef _WASM_
-                PhaseError = TRUE;
-                switch( size ) {
-                case 1:
-                    if( Code->use32 ) {
-                        sym->offset += 3;
+#endif
+            size = 0;
+            switch( patch->fix_type ) {
+            case FIX_RELOFF8:
+                size = 1;
+                /* fall through */
+            case FIX_RELOFF16:
+                if( size == 0 ) size = 2;
+                /* fall through */
+            case FIX_RELOFF32:
+                if( size == 0 ) size = 4;
+                patch_addr = patch->fix_loc;
+                // calculate the displacement
+                disp = patch->offset + Address - patch_addr - size;
+                max_disp = (1UL << ((size * 8)-1)) - 1;
+                if( disp > max_disp || disp < (-max_disp-1) ) {
+#ifdef _WASM_
+                    PhaseError = TRUE;
+                    switch( size ) {
+                    case 1:
+                        if( Code->use32 ) {
+                            sym->offset += 3;
+                            AsmByte( 0 );
+                            AsmByte( 0 );
+                        } else {
+                            sym->offset += 1;
+                            AsmByte( 0 );
+                        }
+                        break;
+                    case 2:
+                        sym->offset += 2;
                         AsmByte( 0 );
                         AsmByte( 0 );
-                    } else {
-                        sym->offset += 1;
-                        AsmByte( 0 );
+                    case 4:
+#if 0
+                        AsmError( JUMP_OUT_OF_RANGE );
+                        sym->fixup = NULL;
+                        return( ERROR );
+#else
+                        AsmWarn( 4, JUMP_OUT_OF_RANGE );
+                        return( NOT_ERROR );
+#endif
                     }
-                    break;
-                case 2:
-                    sym->offset += 2;
-                    AsmByte( 0 );
-                    AsmByte( 0 );
-                case 4:
-                #if 0
-                    AsmError( JUMP_OUT_OF_RANGE );
-                    sym->fixup = NULL;
-                    return( ERROR );
-                #else
-                    AsmWarn( 4, JUMP_OUT_OF_RANGE );
-                    return( NOT_ERROR );
-                #endif
-                }
-                #else
+#else
                     AsmError( JUMP_OUT_OF_RANGE );
                     FixupHead = NULL;
                     return( ERROR );
-                #endif
-            }
-            // patching
-            // fixme 93/02/15 - this can screw up badly if it is on pass 1
-            #ifdef _WASM_
-            if( Parse_Pass != PASS_1 && !PhaseError ) {
-            #endif
-                while( size > 0 ) {
-                    CodeBuffer[patch_addr] = disp;
-                    disp >>= 8;
-                    patch_addr++;
-                    size--;
+#endif
                 }
-            #ifdef _WASM_
+                // patching
+                // fixme 93/02/15 - this can screw up badly if it is on pass 1
+#ifdef _WASM_
+                if( Parse_Pass != PASS_1 && !PhaseError ) {
+#endif
+                    while( size > 0 ) {
+                        CodeBuffer[patch_addr] = disp;
+                        disp >>= 8;
+                        patch_addr++;
+                        size--;
+                    }
+#ifdef _WASM_
+                }
+#endif
+                AsmFree( patch );
+                break;
+                    default:
+#ifdef _WASM_
+                        patch->next = sym->fixup;
+                        sym->fixup = patch;
+#else
+                        patch->next = FixupHead;
+                        FixupHead = patch;
+#endif
+                        break;
             }
-            #endif
-            AsmFree( patch );
-            break;
-        default:
-            #ifdef _WASM_
-                patch->next = sym->fixup;
-                sym->fixup = patch;
-            #else
-                patch->next = FixupHead;
-                FixupHead = patch;
-            #endif
-            break;
-        }
-        #ifndef _WASM_
+#ifndef _WASM_
         } else {
             patch->next = FixupHead;
             FixupHead = patch;
         }
-        #endif
+#endif
     }
     return( NOT_ERROR );
 }
@@ -273,49 +274,49 @@ void mark_fixupp( unsigned long determinant, int index )
 */
 {
     struct asmfixup     *fixup;
-
+    
     fixup = InsFixups[index];
     if( fixup != NULL ) {
         fixup->fix_loc = Address;
-        #ifdef _WASM_
-            // fixup->offset = Code->data[index];
-            // Code->data[index] = 0; // fixme
-            if( fixup->fix_type != FIX_SEG ) {
-                Code->data[index] += fixup->offset;
-            }
+#ifdef _WASM_
+        // fixup->offset = Code->data[index];
+        // Code->data[index] = 0; // fixme
+        if( fixup->fix_type != FIX_SEG ) {
+            Code->data[index] += fixup->offset;
+        }
         /*
-           20-Aug-92: put the offset in the location instead of attaching it
-                      to the fixup
+        20-Aug-92: put the offset in the location instead of attaching it
+        to the fixup
         */
-        #else
-            fixup->offset = Code->data[index];
-            Code->data[index] = 0;
-        #endif
-
-
+#else
+        fixup->offset = Code->data[index];
+        Code->data[index] = 0;
+#endif
+        
+        
         switch( determinant ) {
         case OP_I16:
         case OP_J32:
             switch( fixup->fix_type ) {
             case FIX_OFF32:
-               fixup->fix_type = FIX_OFF16;
-               break;
+                fixup->fix_type = FIX_OFF16;
+                break;
             case FIX_PTR32:
-               fixup->fix_type = FIX_PTR16;
-               break;
+                fixup->fix_type = FIX_PTR16;
+                break;
             }
             break;
-        case OP_I32:
-        case OP_J48:
-            switch( fixup->fix_type ) {
-            case FIX_OFF16:
-               fixup->fix_type = FIX_OFF32;
-               break;
-            case FIX_PTR16:
-               fixup->fix_type = FIX_PTR32;
-               break;
-            }
-            break;
+            case OP_I32:
+            case OP_J48:
+                switch( fixup->fix_type ) {
+                case FIX_OFF16:
+                    fixup->fix_type = FIX_OFF32;
+                    break;
+                case FIX_PTR16:
+                    fixup->fix_type = FIX_PTR32;
+                    break;
+                }
+                break;
         }
     }
 }
