@@ -119,7 +119,6 @@ typedef enum {
     ORL_FILE_FLAG_LITTLE_ENDIAN         = 0x0100,// LSB precedes MSB in memory
     ORL_FILE_FLAG_BIG_ENDIAN            = 0x0200,// MSB precedes LSB in memory
     ORL_FILE_FLAG_SYSTEM                = 0x1000,// system file
-    ORL_FILE_FLAG_SHORT_IMPORT_LIBRARY  = 0x8000,// import library with short records
 } orl_file_flags;
 
 typedef enum {

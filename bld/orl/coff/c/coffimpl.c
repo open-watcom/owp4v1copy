@@ -216,7 +216,7 @@ static int AddCoffSymSec( coff_lib_file *c_file, unsigned_8 selection, int sec )
 #define IMPLIB_POS      (*((long*)(coff_file_hnd->implib_data + sizeof(int))))
 #define IMPLIB_DATA     (coff_file_hnd->implib_data + sizeof(int) + sizeof(long))
 
-int AddDataImpLib( coff_file_handle coff_file_hnd, void * buff, int len )
+static int AddDataImpLib( coff_file_handle coff_file_hnd, void * buff, int len )
 {
     char * x;
         
@@ -235,13 +235,13 @@ int AddDataImpLib( coff_file_handle coff_file_hnd, void * buff, int len )
     return ORL_OKAY;
 }
 
-void * ImportLibRead(coff_file_handle coff_file_hnd, int len)
+static void * ImportLibRead(coff_file_handle coff_file_hnd, int len)
 {
     IMPLIB_POS += len;
     return IMPLIB_DATA + IMPLIB_POS - len;
 }
 
-long ImportLibSeek(coff_file_handle coff_file_hnd, long pos, int where)
+static long ImportLibSeek(coff_file_handle coff_file_hnd, long pos, int where)
 {
     if( where == SEEK_SET ) {
         IMPLIB_POS = pos;
@@ -322,7 +322,7 @@ char * undecoratedName(char * sym){
     return sym;
 }
 
-void CoffCreateImport( coff_file_handle coff_file_hnd, import_sym * import )
+static int CoffCreateImport( coff_file_handle coff_file_hnd, import_sym * import )
 {
     unsigned_16     type;
     coff_lib_file   c_file;
@@ -505,12 +505,17 @@ void CoffCreateImport( coff_file_handle coff_file_hnd, import_sym * import )
 
     CreateCoffStringTable( coff_file_hnd, &c_file );
     FiniCoffLibFile( &c_file );
+    return ORL_OKAY;
 }
 
-int convert_import_library(coff_file_handle coff_file_hnd)
+static int convert_import_library(coff_file_handle coff_file_hnd)
 {
     coff_import_object_header * i_hdr;
     import_sym      sym;
+
+    // init import library data structure
+    if ( AddDataImpLib( coff_file_hnd, &sym, 0 ) != ORL_OKAY )
+        return ORL_OUT_OF_MEMORY;
 
     i_hdr = (coff_import_object_header*)coff_file_hnd->f_hdr_buffer;
     sym.processor = i_hdr->machine;
@@ -519,8 +524,7 @@ int convert_import_library(coff_file_handle coff_file_hnd)
     sym.DLLName = sym.exportedName + strlen(sym.exportedName) + 1;
     sym.time_date_stamp = i_hdr->time_date_stamp;
     sym.type = i_hdr->name_type;
-    CoffCreateImport( coff_file_hnd, &sym);
-    return ORL_OKAY;
+    return CoffCreateImport( coff_file_hnd, &sym);
 }
 
 orl_funcs ImportLibData = {ImportLibRead, ImportLibSeek, NULL, NULL};
