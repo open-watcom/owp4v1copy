@@ -154,17 +154,17 @@ wgml_opts += verb stat
 #
 ####################################################
 
-whpcvt_opts_ext =
+whpcvt_opts_ext = -hn
 
 !ifeq dotarget os2
-whpcvt_opts =-ipf -i -tl "$(book_title)" -hn
+whpcvt_opts =-ipf -i -tl "$(book_title)"
 !else ifeq dotarget dos
 whpcvt_opts =-dt "Table of Contents" -ds "$(book_title)"
-whpcvt_opts_ext =-ib -i -t -e -lk -kw -ix -tc -br -kb -up -hn
+whpcvt_opts_ext += -ib -i -t -e -lk -kw -ix -tc -br -kb -up
 !else ifeq dotarget html
-whpcvt_opts =-html -i -tl "$(book_title)" -hn
+whpcvt_opts =-html -i -tl "$(book_title)"
 !else
-whpcvt_opts =-rtf -i -t -e -lk -b -hh -k -up -hn
+whpcvt_opts =-rtf -i -t -e -lk -b -hh -k -up
 !endif
 
 
