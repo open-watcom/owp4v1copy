@@ -70,8 +70,11 @@ static  void    AddTempSave( name *op, block *blk ) {
 }
 
 
-static  bool    AllocBefore( name *t1, name *t2 ) {
+static  bool    AllocBefore( void *n1, void *n2 ) {
 /*************************************************/
+
+    name *t1 = n1;
+    name *t2 = n2;
 
     /* const temps after all others */
     if( (t1->t.temp_flags & CONST_TEMP) && !(t2->t.temp_flags & CONST_TEMP) ) {

@@ -156,10 +156,11 @@ static  void    ReturnsToBottom() {
     BlockList = last;
 }
 
-static  void    MarkVisited( block *blk ) {
+static  pointer MarkVisited( pointer bl ) {
 /*****************************************/
 
     int         i;
+    block      *blk = bl;
 
     blk->class |= BLOCK_VISITED;
     for( i = 0; i < blk->targets; ++i ) {
@@ -168,6 +169,7 @@ static  void    MarkVisited( block *blk ) {
     }
     blk->prev_block = BlockList;
     BlockList = blk;
+    return NULL;
 }
 
 static  bool    DepthFirstSearch() {

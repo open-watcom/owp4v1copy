@@ -59,7 +59,7 @@ extern  void            TransferTempFlags(void);
 extern  void            PushLocals(void);
 extern  void            SetTempLocation(name*,type_length);
 extern  type_length     TempLocation( name * );
-extern  bool            TempAllocBefore( name *, name * );
+extern  bool            TempAllocBefore( void *, void * );
 
 extern    name          *Names[];
 extern    proc_def      *CurrProc;

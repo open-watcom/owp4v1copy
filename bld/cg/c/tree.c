@@ -1397,8 +1397,8 @@ static  name    *TNGetLeafName( tn node ) {
 }
 
 
-static  name    *TNFindBase( tn node ) {
-/***************************************
+static  pointer  TNFindBase( pointer nod ) {
+/*******************************************
     Given "node", return the "name" which is the base of the expression.
     For example, the base of x[i+j] is x.  We use this base for aliasing
     information.  In fortran, a variable that has had its address taken
@@ -1411,6 +1411,7 @@ static  name    *TNFindBase( tn node ) {
 */
 
     name    *op;
+    tn      node = nod;
 
     if( node == NULL ) return( NULL );
     if( node->base != NULL ) return( node->base );
@@ -2404,10 +2405,11 @@ extern  void    TFini() {
 }
 
 
-static  an  DoTreeGen( tn node ) {
-/************************************/
+static  pointer  DoTreeGen( pointer nod ) {
+/*****************************************/
 
     an          retv;
+    tn          node = nod;
 
     switch( node->class ) {
     case TN_LEAF:

@@ -457,7 +457,12 @@ typedef enum {
     STOP,               // Stop the entire flood down
 } flood_decision;
 
-typedef flood_decision (*flood_func)( block *, void * );
+typedef struct flood_info {
+    bool        post_dominates;
+    block       *dominator;
+} flood_info;
+
+typedef flood_decision (*flood_func)( block *, flood_info * );
 
 static  void    FloodDown( block *from, flood_func func, void *parm ) {
 /*********************************************************************/
@@ -483,11 +488,6 @@ static  void    FloodDown( block *from, flood_func func, void *parm ) {
     }
     EdgeStackFini( stack );
 }
-
-typedef struct flood_info {
-    bool        post_dominates;
-    block       *dominator;
-} flood_info;
 
 static  flood_decision PDFloodFunc( block *blk, flood_info *info ) {
 /******************************************************************/

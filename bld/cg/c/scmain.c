@@ -116,12 +116,13 @@ static  void    ScoreSeed( block *blk, block *son, unsigned index )
 }
 
 
-static  void    ScoreDescendants( block *blk ) {
-/**********************************************/
+static  pointer    ScoreDescendants( pointer bl ) {
+/**************************************************/
 
     int         i;
     block       *son;
     hw_reg_set  regs;
+    block       *blk = bl;
 
     i = blk->targets;
     while( --i >= 0 ) {
@@ -155,6 +156,7 @@ static  void    ScoreDescendants( block *blk ) {
     }
     HW_TurnOn( blk->ins.hd.live.regs, regs );
     UpdateLive( blk->ins.hd.next, blk->ins.hd.prev );
+    return NULL;
 }
 
 

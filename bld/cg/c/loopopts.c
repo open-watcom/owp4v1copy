@@ -694,12 +694,13 @@ extern  induction       *FindIndVar( name *op ) {
 }
 
 
-static  invariant       *CopyInvariant( invariant *invar ) {
-/***********************************************************
+static  pointer CopyInvariant( pointer invari ) {
+/************************************************
     Return a copy of invariant list "invar"
 */
 
     invariant   *new;
+    invariant   *invar = invari;
 
     if( invar == NULL ) {
         new = NULL;
@@ -1807,18 +1808,20 @@ static  void    IncAndInit( induction *var, name *iv, type_class_def class ) {
 }
 
 
-static  void    MarkDown( block *blk ) {
+static  pointer MarkDown( pointer bl ) {
 /**************************************/
 
     int         i;
+    block      *blk = bl;
 
-    if( !( blk->class & IN_LOOP ) ) return;
-    if( blk == Head ) return;
-    if( !( blk->class & BLOCK_WILL_EXECUTE ) ) return;
+    if( !( blk->class & IN_LOOP ) ) return NULL;
+    if( blk == Head ) return NULL;
+    if( !( blk->class & BLOCK_WILL_EXECUTE ) ) return NULL;
     blk->class &= ~BLOCK_WILL_EXECUTE;
     for( i = blk->targets-1; i >= 0; --i ) {
         SafeRecurse( MarkDown, blk->edge[i].destination );
     }
+    return NULL;
 }
 
 

@@ -143,10 +143,10 @@ extern int SelCompare( signed_32 lo1, signed_32 lo2 ) {
 }
 
 
-static  bool            NodeLess( select_list *s1, select_list *s2 ) {
-/********************************************************************/
+static  bool            NodeLess( void *s1, void *s2 ) {
+/******************************************************/
 
-    return( SelCompare( s1->low, s2->low ) < 0 );
+    return( SelCompare( ((select_list *)s1)->low, ((select_list *)s2)->low ) < 0 );
 }
 
 

@@ -50,7 +50,7 @@ extern  void            SuffixIns(instruction*,instruction*);
 extern  void            PrefixIns(instruction*,instruction*);
 extern  name            *DeAlias(name*);
 extern  void            DoNothing(instruction*);
-extern  conflict_node   *InMemory(conflict_node *);
+extern  pointer         InMemory(pointer);
 extern  bool            IsStackReg(name*);
 extern  instruction     *FoldIns(instruction*);
 

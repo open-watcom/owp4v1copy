@@ -172,9 +172,10 @@ extern  void    UnLinkInstr( ins_entry *old ) {
   optend
 
 
-static  ins_entry       *DelInstr_Helper( ins_entry *old ) {
-/**************************************************/
+static  pointer DelInstr_Helper( pointer olde ) {
+/***********************************************/
 
+    ins_entry   *old = olde;
     ins_entry   *next;
 
     UnLinkInstr( old );

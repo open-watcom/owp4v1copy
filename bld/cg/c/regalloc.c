@@ -1119,12 +1119,12 @@ static  enum allocation_state    AssignConflicts() {
 }
 
 
-static  bool            ConfBefore( conflict_node *c1, conflict_node *c2 ) {
-/***************************************************************************
+static  bool            ConfBefore( void *c1, void *c2 ) {
+/*********************************************************
     used by SortConflicts
 */
 
-    return( c1->savings > c2->savings );
+    return( ((conflict_node *)c1)->savings > ((conflict_node *)c2)->savings );
 }
 
 

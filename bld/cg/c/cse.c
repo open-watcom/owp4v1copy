@@ -93,7 +93,7 @@ extern  bool            Inducable(block*,instruction*);
 extern  void            MoveHead(block*,block*);
 extern  void            MakeFlowGraph(void);
 extern  void            BlockTrim(void);
-extern  bool            PeepOpt(block*,block *(*)(block *,void *),block *,bool);
+extern  bool            PeepOpt(block*,block *(*)(block *,block *),block *,bool);
 extern  instruction     *FoldIns(instruction*);
 extern  bool            ConstFold(block*);
 extern  int             GetLog2(unsigned_32);

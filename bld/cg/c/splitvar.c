@@ -35,6 +35,7 @@
 #include "conflict.h"
 #include "opcodes.h"
 #include "stackok.h"
+#include "stack.h"
 
 extern  block           *HeadBlock;
 extern  conflict_node   *ConfList;
@@ -51,6 +52,7 @@ extern  name            *ScaleIndex(name*,name*,type_length,type_class_def,
 
 static  block_num       Instance;
 static  global_bit_set  Id;
+static  pointer         MarkInstance(pointer);
 
 static  block   *FindUnMarkedInstance() {
 /***************************************/
@@ -127,15 +129,16 @@ static  void    NotVisited() {
 }
 
 
-static  void    MarkInstance( block *blk ) {
-/**********************************/
+static  pointer MarkInstance( pointer bl ) {
+/******************************************/
 
     block_edge          *edge;
     int                 i;
     data_flow_def       *flow;
     global_bit_set      *bitp;
+    block               *blk = bl;
 
-    if( blk->class & BLOCK_VISITED ) return;
+    if( blk->class & BLOCK_VISITED ) return NULL;
     blk->class |= BLOCK_VISITED;
     blk->id = Instance;
     flow = blk->dataflow;
@@ -160,6 +163,7 @@ static  void    MarkInstance( block *blk ) {
             ++edge;
         }
     }
+    return NULL;
 }
 
 
