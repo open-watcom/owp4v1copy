@@ -33,7 +33,7 @@
 #ifndef __CHFILE_H__
 
 #include <string.hpp>
-#include <io.h>
+#include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>

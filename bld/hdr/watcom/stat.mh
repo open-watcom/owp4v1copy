@@ -124,9 +124,6 @@ struct stat {
 /*
  *  POSIX 1003.1 Prototypes.
  */
-#ifdef __cplusplus
-extern "C" {
-#endif
 _WCRTLINK extern int     chmod( const char *__path, mode_t __mode );
 _WCRTLINK extern int     stat( const char * __path, struct stat * __buf );
 _WCRTLINK extern int     lstat( const char * __path, struct stat * __buf );
