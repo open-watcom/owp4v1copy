@@ -6,5 +6,5 @@ set nomagic
 %s/^\+\+'__imp__'.*$//g
 %s/\(%1\.dll\)/\u\1/g
 %s/;.*$//g
-w! %1.wlc
+w! %1.lbc
 q!
