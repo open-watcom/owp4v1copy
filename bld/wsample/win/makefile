@@ -21,33 +21,33 @@ objects = winmain.obj sample.obj sampdata.obj sampwin.obj io.obj &
 LNK = tmp.lnk
 
 .before
-        @set wcc=-i=$(sdkdir)\misc;$(dig_dir)\h -dFAR_PTR=__far -dREPORT_TYPE= /fiwatcom.h
+        @set wcc=-i=$(sdkdir)\misc;$(dig_dir)\h -dFAR_PTR=__far -dREPORT_TYPE= -fi=watcom.h
 
 cflags = -zu-zw-2-zq-mc-d1-orlt-s-w3
 
 xname=wsamplew
 
-..\bin\$(xname).exe : $(objects) $(xname).res makefile
+../bin/$(xname).exe : $(objects) $(xname).res makefile
     @%write $(lnk) option map,quiet
 !ifndef on_build_machine
     @%append $(lnk) debug all op symfile
 !endif
-    @for %i in ($objects) do @%append $(lnk) file obj\%i
+    @for %i in ($objects) do @%append $(lnk) file obj/%i
     @%append $(lnk) sys windows
-    @%append $(lnk) name ..\bin\$(xname)
+    @%append $(lnk) name $^@
     @%append $(lnk) option heap=10k, stack=10k
     @%append $(lnk) option description $(description)
     @%append $(lnk) segment class 'CODE' preload fixed
     @%append $(lnk) segment class 'DATA' preload fixed
     @%append $(lnk) lib commdlg,toolhelp
     wlink @$(lnk)
-    wrc $(xname).res ..\bin\$(xname).exe
+    wrc $(xname).res $^@
 
-$(xname).res : $(xname).ico $(xname).rc wsampres.rc ..\h\wsample.rc ..\h\wmsg.h
+$(xname).res : $(xname).ico $(xname).rc wsampres.rc ../h/wsample.rc ../h/wmsg.h
     wrc -bt=windows -zk0 -r -dWIN -30 -i$(lang_root)\h\win $(xname).rc
 
-.c: ..\c;$(sdkdir)\misc
-.asm: $(sdkdir)\misc
+.c: ../c;$(sdkdir)/misc
+.asm: $(sdkdir)/misc
 
 .obj : obj
 
@@ -58,5 +58,5 @@ $(xname).res : $(xname).ico $(xname).rc wsampres.rc ..\h\wsample.rc ..\h\wmsg.h
         wasm -fo=obj\$[&.obj $[*
 
 clean : .symbolic
-    @rm -f obj\*.obj obj\*.res obj\*.lnk obj\*.map obj\*.err
-    @rm -f ..\bin\$(xname).exe
+    @rm -f obj/*.obj obj/*.res obj/*.lnk obj/*.map obj/*.err
+    @rm -f ../bin/$(xname).exe
