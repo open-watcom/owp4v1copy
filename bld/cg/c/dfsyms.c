@@ -919,11 +919,9 @@ static  void GenParmLoc( dbg_local   *parm,
 }
 
 #if _TARGET & _TARG_IAPX86
-    DW_PTR_TYPE_NEAR = DW_PTR_TYPE_NEAR16;
-    DW_PTR_TYPE_FAR  = DW_PTR_TYPE_FAR16;
+static int  DW_PTR_TYPE_FAR  = DW_PTR_TYPE_FAR16;
 #elif _TARGET & _TARG_80386
-    DW_PTR_TYPE_NEAR = DW_PTR_TYPE_NEAR32;
-    DW_PTR_TYPE_FAR  = DW_PTR_TYPE_FAR32;
+static int  DW_PTR_TYPE_FAR  = DW_PTR_TYPE_FAR32;
 #endif
 
 extern  void    DFProEnd( dbg_rtn *rtn, offset lc ) {
