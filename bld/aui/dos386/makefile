@@ -1,5 +1,4 @@
 #pmake: all build os_dos cpu_386
 host_OS = dos
 host_CPU = 386
-extra_c_flags = -s
 !include ../master.mif

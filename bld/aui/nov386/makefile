@@ -2,5 +2,4 @@
 host_OS = nov
 host_CPU = 386
 memory_model_386 = s
-extra_c_flags = -4s -s -dNLM -ot
 !include ../master.mif
