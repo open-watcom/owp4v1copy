@@ -199,11 +199,12 @@ return_val DoPass1( orl_sec_handle shnd, char * contents, orl_sec_size size,
                          * local label because the offset might change when the
                          * code is re-assembled
                          */
-                        r_entry->no_val = 1;
                         if( r_entry->addend ) {
+                            r_entry->no_val = 0;
                             CreateUnnamedLabel( r_entry->label->shnd,
                                                 HandleAddend( r_entry ), &rs );
                         } else {
+                            r_entry->no_val = 1;
                             if( adjusted && isSelfReloc( r_entry ) &&
                                 ( r_entry->label->type == LTYP_SECTION ) ) {
                                 /* This is a kludgy reloc done under OMF

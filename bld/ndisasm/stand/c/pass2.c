@@ -173,13 +173,13 @@ unsigned HandleAReference( dis_value value, int ins_size, ref_flags flags,
     char                *p;
 
     buff[0] = '\0';
-    while( *r_entry && (*r_entry)->offset == offset ) {
-        if( (*r_entry)->no_val ) {
-            nvalue = 0;
+    for( ; *r_entry && (*r_entry)->offset == offset; *r_entry = (*r_entry)->next ) {
+        if( (*r_entry)->no_val == 0 ) {
+            nvalue = value;
         } else if( (*r_entry)->addend ) {
             nvalue = HandleAddend( *r_entry );
         } else {
-            nvalue = value;
+            nvalue = 0;
         }
         switch( (*r_entry)->type ) {
         case ORL_RELOC_TYPE_JUMP:
@@ -201,7 +201,6 @@ unsigned HandleAReference( dis_value value, int ins_size, ref_flags flags,
                 *r_entry = (*r_entry)->next;
                 return( 0 );
             }
-            *r_entry = (*r_entry)->next;
             continue; // Don't print addend
             break;
         case ORL_RELOC_TYPE_SEC_REL:
@@ -277,10 +276,10 @@ unsigned HandleAReference( dis_value value, int ins_size, ref_flags flags,
             // offset, due to CORE implementation
             //
             // Main reason : 
-            // displacement with added instruction size
-            // is correct for relative addresses without relocate
+            // instruction size with displacement and with addend is correct for
+            // relative addresses without relocate
             //
-            if( !(*r_entry)->no_val ) {
+            if( (*r_entry)->no_val == 0 ) {
                 nvalue -= ins_size;
             }
             if( GetMachineType() == ORL_MACHINE_TYPE_I386 && GetFormat() == ORL_ELF ) {
@@ -329,18 +328,16 @@ unsigned HandleAReference( dis_value value, int ins_size, ref_flags flags,
             referenceString( *r_entry, sec_size, "", "", "@plt@l", buff, flags );
             break;
         default:
-            *r_entry = (*r_entry)->next;
             continue;
         }
         // LTYP_UNNAMED labels are always at the correct location
         // if( nvalue != 0 && (*r_entry)->label->type != LTYP_UNNAMED ) {
         // not so - BBB Oct 28, 1996
-        if( nvalue != 0 ) {
+        if(( (*r_entry)->no_val == 0 ) && ( nvalue != 0 )) {
             p = &buff[strlen(buff)];
             *p++ = '+';
             FmtHexNum( p, 0, nvalue );
         }
-        *r_entry = (*r_entry)->next;
     }
     return( strlen( buff ) );
 }
