@@ -100,8 +100,7 @@ typedef struct cacheEntry FAR *CENTRYPTR;
 struct cacheEntry {
     CENTRYPTR   ce_next;
     char        ce_name[ NAME_MAX + 1 ];
-    DOSDATE_T   ce_date;
-    DOSDATE_T   ce_time;
+    time_t      ce_tt;
 };
 
 
@@ -241,8 +240,7 @@ STATIC enum cacheRet cacheDir( DHEADPTR *pdhead, char *path )
                 ++files;
 #           endif
 
-            cnew->ce_date = entry->d_date;
-            cnew->ce_time = entry->d_time;
+            cnew->ce_tt = _DOSStampToTime( entry->d_date, entry->d_time );
             ConstMemCpy( cnew->ce_name, entry->d_name, NAME_MAX + 1 );
 
             cnew->ce_next = (*pdhead)->dh_table[ h ];
@@ -478,7 +476,7 @@ extern RET_T CacheTime( const char *fullpath, time_t *ptime )
 #endif
         switch( maybeCache( fullpath, &centry ) ) {
         case CACHE_OK:
-            *ptime = _DOSStampToTime( centry->ce_date, centry->ce_time );
+            *ptime = centry->ce_tt;
             return( RET_SUCCESS );
         case CACHE_NOT_ENUF_MEM:
             break;
