@@ -1,4 +1,4 @@
-#pmake: all axp alpha cpu_386 os_os2
+#pmake: axp alpha cpu_386 os_os2 target_axp
 host_CPU = 386
 host_OS = os2
 host_CG = os220

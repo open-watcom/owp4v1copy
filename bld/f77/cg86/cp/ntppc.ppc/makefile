@@ -1,4 +1,4 @@
-#pmake: all os_nt cpu_PPC
+#pmake: os_nt cpu_ppc target_ppc
 
 host_OS         = nt
 host_CPU        = ppc
