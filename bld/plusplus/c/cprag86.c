@@ -724,6 +724,9 @@ static int insertFixups( VBUF *code_buffer, unsigned char *buff, unsigned i )
     unsigned            skip;
     int                 mutate_to_segment;
     boolean             uses_auto;
+#if _CPU == 8086
+    int                 fixup_padding;
+#endif
 
     uses_auto = FALSE;
     perform_fixups = 0;
@@ -764,6 +767,9 @@ static int insertFixups( VBUF *code_buffer, unsigned char *buff, unsigned i )
                 skip = 0;
                 code_buffer->buf[ dst++ ] = FLOATING_FIXUP_BYTE;
                 mutate_to_segment = 0;
+#if _CPU == 8086
+                fixup_padding = 0;
+#endif
                 switch( fix->fix_type ) {
                 case FIX_SEG:
                     if( name == NULL ) {
@@ -786,6 +792,9 @@ static int insertFixups( VBUF *code_buffer, unsigned char *buff, unsigned i )
                 case FIX_RELOFF32:
                     skip = 4;
                     cg_fix = FIX_SYM_RELOFF;
+#if _CPU == 8086
+                    fixup_padding = 1;
+#endif
                     break;
                 case FIX_PTR16:
                     mutate_to_segment = 1;
@@ -800,6 +809,9 @@ static int insertFixups( VBUF *code_buffer, unsigned char *buff, unsigned i )
                 case FIX_OFF32:
                     skip = 4;
                     cg_fix = FIX_SYM_OFFSET;
+#if _CPU == 8086
+                    fixup_padding = 1;
+#endif
                     break;
                 }
                 if( skip != 0 ) {
@@ -810,6 +822,15 @@ static int insertFixups( VBUF *code_buffer, unsigned char *buff, unsigned i )
                     dst += sizeof( long );
                     src += skip;
                 }
+#if _CPU == 8086
+                if( fixup_padding ) {
+                    // add offset fixup padding to 32-bit
+                    // cg create only 16-bit offset fixup
+                    code_buffer->buf[ dst++ ] = 0;
+                    code_buffer->buf[ dst++ ] = 0;
+                    //
+                }
+#endif
                 if( mutate_to_segment ) {
                     /*
                         Since the CG escape sequences don't allow for
