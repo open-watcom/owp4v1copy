@@ -38,7 +38,6 @@ os2_toolkit     = $(%OS2TKROOT)
 tools_root      = $(%TOOLDR)\tools
 nlang_root      = $(%DWATCOM)
 build_root      = $(%DEVDIR)
-online_dir      = $(%DEVDIR)\online
 utils_root      = $(build_root)
 # a good enough location for any OS specific support files that may be needed.
 os_supp_dir     = $(build_root)\os_supp
@@ -315,8 +314,6 @@ obj_drv = $(build_root)
 #
 # for creating on-line help
 #
-whelp=$(online_dir)\whelp
-langbk=$(online_dir)\hlp;$(online_dir)\cg;$(online_dir)\gml
 gml_root=$(doc_root)\gml
 gmllib=$(doc_root)\gml\syslib
 windev_dir=$(tools_root)\windev
@@ -326,7 +323,6 @@ windev_dir=$(tools_root)\windev
 tools_root      = $(%TOOLDR)/tools
 nlang_root      = $(%DWATCOM)
 build_root      = $(%DEVDIR)
-online_dir      = $(%DEVDIR)/online
 utils_root      = $(build_root)
 # a good enough location for any OS specific support files that may be needed.
 os_supp_dir     = $(build_root)/os_supp
@@ -542,8 +538,6 @@ obj_drv = $(build_root)
 #
 # for creating on-line help
 #
-whelp=$(online_dir)/whelp
-langbk=$(online_dir)/hlp;$(online_dir)/cg;$(online_dir)/gml
 gml_root=$(doc_root)/gml
 gmllib=$(doc_root)/gml/syslib
 windev_dir=$(tools_root)/windev

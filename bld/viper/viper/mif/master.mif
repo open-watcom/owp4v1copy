@@ -1,10 +1,10 @@
 proj_name = viper
 name      = ide
+
 viper_autodepends = .autodepend
 
 .SUFFIXES : .rc
 
-.mif : $(mif_path);../mif
 c_path_os2 = $(batch_dir)/os2
 c_path_nt = $(batch_dir)/nt
 c_path_win = $(batch_dir)/dos;$(batch_dir)/os2
@@ -22,9 +22,9 @@ sys_windowed = 1
 !include defrule.mif
 !include deftarg.mif
 
-!include objects.mif
-!include lib.mif
-!include include.mif
+!include ../mif/objects.mif
+!include ../mif/lib.mif
+!include ../mif/include.mif
 
 !ifdef __LINUX__
 description = \'Open Watcom IDE\'
@@ -42,10 +42,14 @@ extra_cpp_flags_386_nt  = -zm-zc
 extra_cpp_flags_386     = $(extra_cpp_flags_386_$(host_os))
 extra_cpp_flags_i86     = -zm-zc
 
+prereq_nt = $(guitools_dir)/win95/ide.h
+prereq_win = $(guitools_dir)/win/ide.h
+prereq_os2 = $(guitools_dir)/os2/ide.h
+
 .before:
         set include=$(inc_path)
 
-$(name).exe : $(OBJECTS) $(LIBS) viper.res
+$(name).exe : $(prereq_$(host_os)) $(OBJECTS) $(LIBS) viper.res
 !ifneq host_OS os2
         $(linker) $(lflags) name $(name) op map, de $(description) f {$(OBJECTS)} lib {$(LIBS)}
         $(rc) $(rc_flags) -k viper.res $^@
@@ -78,3 +82,10 @@ viper.res : _guimsgs.gh $(gui_dir)/h/gui.rc viper.rc
 _guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
         $[@ $^@ $(gui_msg_id_modifier)
 
+!ifdef prereq_$(host_os)
+$(prereq_$(host_os)): .SYMBOLIC
+curr_dir=$+$(%cwd)$-
+        @cd $(%DOC_ROOT)\$(host_os)
+        @wmake hbook=ide
+        @cd $(curr_dir)
+!endif

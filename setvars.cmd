@@ -37,6 +37,9 @@ set DEBUG_BUILD=0
 REM Set this variable to 1 to get default windowing support in clib
 set default_windowing=0
 
+REM Set this variable to 0 to suppress documentation build
+set DOC_BUILD=1
+
 REM Change the default command prompt
 prompt $p$g
 

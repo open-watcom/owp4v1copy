@@ -504,7 +504,7 @@ batch_dir       = $(dev_dir)\idebatch
 editdll_dir     = $(dev_dir)\editdll
 !endif
 !ifndef guitools_dir
-guitools_dir    = $(dev_dir)\cdoc\hlp
+guitools_dir    = $(dev_dir)\online\hlp
 !endif
 !ifndef gui_dir
 gui_dir         = $(dev_dir)\gui

@@ -122,7 +122,12 @@ exe_ext = $(exe_ext_$(host_OS))
 exe_ext = exe
 !endif
 
-$(name).exe : $(OBJECTS) $(LIBS)
+prereq_nt = $(guitools_dir)/win95/wbrw.h
+prereq_win = $(guitools_dir)/win/wbrw.h
+prereq_os2 = $(guitools_dir)/os2/wbrw.h
+prereq_dos = $(guitools_dir)/os2/wbrw.h
+
+$(name).exe : $(prereq_$(host_os)) $(OBJECTS) $(LIBS)
     $(linker) $(lflags) name $(name).$(exe_ext) file {$(OBJECTS)} lib {$(LIBS)}
 !ifeq host_OS os2
     $(rc_os2) $(rc_flags) $(rc_file) $^@
@@ -147,3 +152,11 @@ cppflags    = $(cflags) $(extra_cpp_flags)
     $(cpp) $(cppflags) $(extra_c_flags_$[&) $[@
 
 dmem.obj : mem.cpp
+
+!ifdef prereq_$(host_os)
+$(prereq_$(host_os)): .SYMBOLIC
+curr_dir=$+$(%cwd)$-
+        @cd $(%DOC_ROOT)\$(host_os)
+        @wmake hbook=wbrw
+        @cd $(curr_dir)
+!endif

@@ -79,7 +79,7 @@ proj_objs= &
 
 .EXTENSIONS: .hlp .hpj .cnt .rtf .cn1
 
-all : $(hbook).hlp $(hbook).h $(hbook).cnt .SYMBOLIC
+all : $(guitools_dir)/win95/$(hbook).h $(hbook).hlp $(hbook).h $(hbook).cnt .SYMBOLIC
     @%null
 
 $(hbook).hlp : $(hbook).hpj $(hbook).rtf $(hbook).hh $(hbook).cnt
@@ -105,6 +105,8 @@ $(hbook).cnt : $(hbook).cn1
 
 $(hbook).rtf $(hbook).cn1 $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs)
     @%make compile_gml_to_xxx
+
+$(guitools_dir)/win95/$(hbook).h: $(hbook).h
     @copy $(hbook).h $(guitools_dir)\win95 > $(nulldevice)
 
 
@@ -117,7 +119,7 @@ $(hbook).rtf $(hbook).cn1 $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs)
 
 .EXTENSIONS: .hlp .hpj .rtf
 
-all : $(hbook).hlp $(hbook).h .SYMBOLIC
+all : $(guitools_dir)/win/$(hbook).h $(hbook).hlp $(hbook).h .SYMBOLIC
     @%null
 
 $(hbook).hlp : $(hbook).hpj $(hbook).rtf $(hbook).hh
@@ -134,6 +136,8 @@ $(hbook).hpj : $(proj_objs)
 
 $(hbook).rtf $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs)
     @%make compile_gml_to_xxx
+
+$(guitools_dir)/win/$(hbook).h: $(hbook).h
     @copy $(hbook).h $(guitools_dir)\win > $(nulldevice)
 
 
@@ -146,7 +150,7 @@ $(hbook).rtf $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs)
 
 .EXTENSIONS: .ihp .ib
 
-all : $(hbook).ihp $(hbook).h .SYMBOLIC
+all : $(guitools_dir)/ib/$(hbook).h $(hbook).ihp $(hbook).h .SYMBOLIC
     @%null
 
 $(hbook).ihp : $(hbook).ib $(hbook).h
@@ -154,6 +158,8 @@ $(hbook).ihp : $(hbook).ib $(hbook).h
 
 $(hbook).ib $(hbook).h : $(book_objs) $(proj_objs)
     @%make compile_gml_to_xxx
+
+$(guitools_dir)/ib/$(hbook).h: $(hbook).h
     @copy $(hbook).h $(guitools_dir)\ib > $(nulldevice)
 
 
@@ -231,7 +237,7 @@ $(hbook).pdf : $(hbook).ps
 .EXTENSIONS: .hlp .inf .ipf
 .IGNORE
 
-all : $(hbook).inf $(hbook).hlp $(hbook).h .SYMBOLIC
+all : $(guitools_dir)/os2/$(hbook).h $(hbook).inf $(hbook).hlp $(hbook).h .SYMBOLIC
     @%null
 
 $(hbook).inf : $(hbook).ipf
@@ -248,6 +254,8 @@ $(hbook).hlp : .symbolic
 
 $(hbook).ipf $(hbook).h : $(book_objs) $(proj_objs)
     @%make compile_gml_to_xxx
+
+$(guitools_dir)/os2/$(hbook).h: $(hbook).h
     @copy $(hbook).h $(guitools_dir)\os2 > $(nulldevice)
 
 !endif

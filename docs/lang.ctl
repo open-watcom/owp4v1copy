@@ -7,18 +7,13 @@ set PROJDIR=<CWD>
 [ INCLUDE <LANG_BLD>/wproj.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
-[ BLOCK <1> build rel2 ]
-    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
+set OWDOCUMENTATION=0
 
-[ BLOCK <1> rel2 cprel2 ]
-#========================
-    <CPCMD> <DOC_ROOT>/dos/*.ihp <RELROOT>/rel2/binw/
-    <CPCMD> <DOC_ROOT>/win/*.hlp <RELROOT>/rel2/binw/
-    <CPCMD> <DOC_ROOT>/os2/*.inf <RELROOT>/rel2/binp/help/
-    <CPCMD> <DOC_ROOT>/os2/*.hlp <RELROOT>/rel2/binp/help/
-    <CPCMD> <DOC_ROOT>/nt/*.hlp  <RELROOT>/rel2/binnt/
-    <CPCMD> <DOC_ROOT>/nt/*.cnt  <RELROOT>/rel2/binnt/
+[ BLOCK .<DOC_BUILD> . .1 ]
+    set OWDOCUMENTATION=1
 
-[ BLOCK <1> clean ]
-#==================
-    pmake -d all <2> <3> <4> <5> <6> <7> <8> <9> -h clean
+[ BLOCK .<FULLBUILD> . ]
+    set OWDOCUMENTATION=1
+
+[ BLOCK <OWDOCUMENTATION> 1 ]
+    [ INCLUDE build.ctl ]

@@ -33,11 +33,6 @@ echo Languages Build <1>
 #        Prebuild newest WASM version for build process
 [ INCLUDE <DEVDIR>/wasm/prereq.ctl ]
 #
-#        Next build online docs. This will create required header files
-#        as a by-product.
-#
-[ INCLUDE <DOC_ROOT>/lang.ctl ]
-#
 #        Before building anything for real, create up-to-date header files
 #
 [ INCLUDE <DEVDIR>/hdr/lang.ctl ]
@@ -162,6 +157,7 @@ echo Languages Build <1>
 [ INCLUDE <DEVDIR>/cvpack/lang.ctl ]
 #[ INCLUDE <DEVDIR>/wic/lang.ctl ]      SH: Removed as not needed for 11.0c
 [ INCLUDE <DEVDIR>/redist/lang.ctl ]
+[ INCLUDE <DOC_ROOT>/lang.ctl ]
 
 # deal with the project which contains this file last --- the BAT directory
 # BATDIR Builder Control file

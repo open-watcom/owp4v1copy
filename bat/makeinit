@@ -5,10 +5,8 @@ dev_dir      = $(%DEVDIR)
 mif_path     = $(build_dir)/local;$(build_dir)/mif
 !ifdef __LINUX__
 build_dir    = $(%DEVDIR)/build
-guitools_dir = $(%DEVDIR)/online/hlp
 !else
 build_dir    = $(%DEVDIR)\build
-guitools_dir = $(%DEVDIR)\online\hlp
 !endif
 
 .mif: $(mif_path)
