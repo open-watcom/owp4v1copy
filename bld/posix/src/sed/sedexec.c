@@ -30,6 +30,8 @@ readout() and memeql() are output and string-comparison utilities.
 #define FALSE           0
 
 static char const       LTLMSG[] = "sed: line too long \"%.*s\"\n";
+static char const       NOROOM[] = "sed: can only fit %d bytes at line %ld\n";
+static char const       INTERR[] = "sed: internal error: %s\n";
 
 #define ABORTEX(msg) fprintf( stderr, msg, sizeof genbuf, genbuf ), exit( 2 )
 
@@ -87,13 +89,20 @@ void execute( const char *file )        /* name of text source file to filter */
                                         /* the main command-execution loop */
     for( ;; ) {
                                         /* get next line to filter */
-        if( ( execp = getline( linebuf ) ) == BAD )
+                                        /* jump is set but not cleared by D */
+        if( ( execp = getline( jump ? spend : linebuf ) ) == BAD ) {
+            if( jump ) {
+                for( p1 = linebuf; p1 < spend; p1++ )
+                    putc( *p1, stdout );
+                putc( '\n', stdout );
+            }
             return;
+        }
+        jump = FALSE;
         spend = execp;
                                         /* compiled commands execute loop */
         for( ipc = cmds; ipc->command; ) {
-                                        /* all no-address commands selected */
-            if( ipc->addr1 && !selected( ipc ) ) {
+            if( !selected( ipc ) ) {
                 ipc++;
                 continue;
             }
@@ -133,7 +142,11 @@ static int selected( sedcmd *ipc )
 {
     register char               *p1 = ipc->addr1;       /* first address */
     register char * const       p2 = ipc->addr2;        /*   and second */
-    char            c;
+    char                        c;
+    int const                   allbut = ipc->flags.allbut;
+
+    if( !p1 )
+        return( !allbut );
 
     if( ipc->flags.inrange ) {
         if( *p2 == CEND )
@@ -242,7 +255,8 @@ static int advance(
             break;                      /* matched */
 
         case CDOT:                      /* anything but newline */
-            if( !*lp++ )                /* first NUL is at EOL */
+            if( *lp == 0                /* first NUL is at EOL */
+            ||  *lp++ == '\n' )
                 return( FALSE );        /* return false */
             break;                      /* matched */
 
@@ -376,7 +390,7 @@ static void dosub( char const *rhsbuf ) /* where to put the result */
     sp = genbuf;
     while( lp < loc1 ) {
         if( sp >= genbuf + sizeof genbuf )
-            ABORTEX( LTLMSG );
+            ABORTEX( LTLMSG );         /* Not exercised by sedtest.mak */
         *sp++ = *lp++;
     }
 
@@ -387,7 +401,7 @@ static void dosub( char const *rhsbuf ) /* where to put the result */
             sp = place( sp, brastart[c - '1'], bracend[c - '1'] );
         } else {
             if( sp >= genbuf + sizeof genbuf )
-                ABORTEX( LTLMSG );
+                ABORTEX( LTLMSG );      /* Not exercised by sedtest.mak */
             *sp++ = c & 0177;
         }
     }
@@ -395,7 +409,7 @@ static void dosub( char const *rhsbuf ) /* where to put the result */
     loc2 = sp - ( genbuf - linebuf );
     do{
         if( sp >= genbuf + sizeof genbuf )
-            ABORTEX( LTLMSG );
+            ABORTEX( LTLMSG );          /* Not exercised by sedtest.mak */
     } while( ( *sp++ = *lp++ ) != 0 );
     lp = linebuf; 
     sp = genbuf;
@@ -411,7 +425,7 @@ static char *place(
 {
     while( al1 < al2 ) {
         if( asp >= genbuf + sizeof genbuf )
-            ABORTEX( LTLMSG );
+            ABORTEX( LTLMSG );          /* Not exercised by sedtest.mak */
         *asp++ = *al1++;
     }
     return( asp );
@@ -423,7 +437,7 @@ static void listto(
     FILE                *fp )           /* output stream to write to */
 {
     p1--;
-    while( *p1++ )
+    while( *++p1 )
         if( isprint( *p1 ) )
             putc( *p1, fp );            /* pass it through */
         else {
@@ -465,7 +479,7 @@ static void command( sedcmd *ipc )
     switch( ipc->command ) {
     case ACMD:                          /* append */
         *aptr++ = ipc;
-        if( aptr >= appends + MAXAPPENDS )
+        if( aptr >= appends + MAXAPPENDS ) /* Not exercised by sedtest.mak */
             fprintf( stderr, "sed: too many appends after line %ld\n", lnum );
         *aptr = 0;
         break;
@@ -480,15 +494,14 @@ static void command( sedcmd *ipc )
         delete++;
         break;
 
-    case CDCMD:                         /* delete a line in hold space */
+    case CDCMD:                         /* delete a line in pattern space */
         p1 = p2 = linebuf;
-        while( *p1 != '\n' )
-            if( ( delete = (int)( *p1++ == 0 ) ) != 0 )
-                return;
-        p1++;
+        while( *p1 && *p1 != '\n' ) p1++;
+        if( !*p1++ )
+            return;
         while( ( *p2++ = *p1++ ) != 0 ) ;
         spend = p2 - 1;
-        jump++;
+        delete = jump = TRUE;
         break;
 
     case EQCMD:                         /* show current line number */
@@ -559,6 +572,7 @@ static void command( sedcmd *ipc )
             readout();
         *spend++ = '\n';
         if( ( execp = getline( spend ) ) == BAD ) {
+            *--spend = '\0';            /* Remove '\n' added for new line */
             pending = ipc;
             delete = TRUE;
             break;
@@ -571,9 +585,8 @@ static void command( sedcmd *ipc )
         break;
 
     case CPCMD:                         /* print one line from pattern space */
-    cpcom:                              /* so s command can jump here */
-        for( p1 = linebuf; *p1 != '\n' && *p1 != '\0'; )
-            putc( *p1, stdout ), p1++;
+        for( p1 = linebuf; *p1 != '\n' && *p1 != '\0'; p1++ )
+            putc( *p1, stdout );
         putc( '\n', stdout );
         break;
 
@@ -586,20 +599,26 @@ static void command( sedcmd *ipc )
 
     case RCMD:                          /* read a file into the stream */
         *aptr++ = ipc;
-        if( aptr >= appends + MAXAPPENDS )
+        if( aptr >= appends + MAXAPPENDS ) /* Not exercised by sedtest.mak */
             fprintf( stderr, "sed: too many reads after line %ld\n", lnum );
         *aptr = 0;
         break;
 
     case SCMD:                          /* substitute RE */
-        didsub = substitute( ipc );
-        if( ipc->flags.print && didsub )
-            if( ipc->flags.print == TRUE )
+        if( ( didsub = substitute( ipc ) ) != 0 ) {
+            switch( ipc->flags.print ) {
+            case 1:
                 puts( linebuf );
-            else
-                goto cpcom;
-        if( didsub && ipc->fout )
-            fprintf( ipc->fout, "%s\n", linebuf );
+                break;
+            case 2:
+                for( p1 = linebuf; *p1 != '\n' && *p1 != '\0'; p1++ )
+                    putc( *p1, stdout );
+                putc( '\n', stdout );
+                break;
+            }
+            if( ipc->fout )
+                fprintf( ipc->fout, "%s\n", linebuf );
+        }
         break;
 
     case TCMD:                          /* branch on last s successful */
@@ -640,6 +659,9 @@ static void command( sedcmd *ipc )
         while( ( *p1 = p2[*p1] ) != 0 )
             p1++;
         break;
+
+    default: /* Can never happen */
+        fprintf( stderr, INTERR, "unrecognised command" );
     }
 }
 
@@ -648,13 +670,22 @@ static char *getline( register char *buf )  /* where to send the input */
 {
     static char const * const   linebufend = linebuf + MAXBUF + 2;
     int const                   room = linebufend - buf;
+    int                         temp;
 
     assert( buf >= linebuf && buf < linebufend );
 
     if (fgets(buf, room, stdin) != NULL) { /* gets() can smash program - WFB */
         lnum++;                         /* note that we got another line */
         while( ( *buf++ ) != 0 ) ;      /* find the end of the input */
-        return( --buf );                /* return ptr to terminating null */
+        if( --buf, *--buf != '\n' )
+            fprintf( stderr, NOROOM, room, lnum ), buf++;
+        else
+            *buf = 0;
+        if( eargc == 0 ) {              /* if no more args */
+            lastline = ( ( temp = getc( stdin ) ) == EOF );
+            (void)ungetc( temp, stdin );
+        }
+        return( buf );                  /* return ptr to terminating null */
     } else {
         if( eargc == 0 )                /* if no more args */
             lastline = TRUE;            /*    set a flag */
