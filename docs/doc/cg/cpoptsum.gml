@@ -840,6 +840,11 @@ disable/enable language extensions (default is ze)
 :optref refid='SWza'.
 :optref refid='SWze'.
 .*
+.note zat
+:CMT. .ix 'options' 'zat'
+(C++ only) disable alternative tokens
+:optref refid='SWzat'.
+.*
 .note zc
 :CMT. .ix 'options' 'zc'
 place literal strings in code segment
@@ -859,9 +864,14 @@ load DS register directly from DGROUP
 :optref refid='SWzdl'.
 .*
 .note zev&optdag.
-:CMT .ix 'options' 'zev'
+:CMT. .ix 'options' 'zev'
 (C only, Unix extension) enable arithmetic on void derived types
 :optref refid='SWzev'
+.*
+.note zf&optdag.
+:CMT. .ix 'options' 'zf'
+(C++ only) let scope of for loop initialization extend beyond loop
+:optref refid='SWzf'
 .*
 .note zf{f,p}&optdag.
 :CMT. .ix 'options' 'zfp'

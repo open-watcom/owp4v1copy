@@ -532,6 +532,16 @@ continue processing files (ignore errors)
 output function declarations to .def
 :optref refid='SWv'.
 .do end
+.if &e'&$SWzat eq 1 .do begin
+.note zat
+(C++ only) disable alternative tokens
+:optref refid='SWzat'.
+.do end
+.if &e'&$SWzf eq 1 .do begin
+.note zf
+(C++ only) let scope of for loop initialization extend beyond loop
+:optref refid='SWzf'.
+.do end
 .if &e'&$SWzg eq 1 .do begin
 .note zg
 generate function prototypes using base types
@@ -3026,6 +3036,45 @@ filename as the C source file but with extension "&def".
 The "definitions" file may be used as an "include" file when compiling
 other modules in order to take advantage of the compiler's function
 and argument type checking.
+.do end
+.*
+.if &e'&$SWzat eq 1 .do begin
+:OPT refid='SWzat' name='zat'.
+.ix 'options' 'zat'
+ISO C++ defines a number of alternative tokens that can be used instead
+of certain traditional tokens. For example "and" instead of "&&", "or"
+instead of "||", etc. See section 2.5 of the ISO C++ 98 standard for the
+complete list of such tokens. The "zat" option disables support for
+these tokens so that the names "and", "or", etc are no longer reserved.
+.do end
+.*
+.if &e'&$SWzf eq 1 .do begin
+:OPT refid='SWzf' name='zf'.
+.ix 'options' 'zf'
+Starting with Open Watcom 1.3, the scope of a variable declared in the
+initialization expression of a for loop header is by default limited to
+the body of the loop. This is in accordance with the ISO C++ standard.
+The "zf" option causes the compiler to revert to the behavior it had
+before Open Watcom 1.3. In particular, it causes the scope of variables
+declared in the initialization expression of a for loop header to extend
+beyond the loop.
+.np
+.exam begin 9
+#include <iostream>
+
+void f()
+{
+  for( int i = 0; i < 10; ++i ) {
+    std::cout << i << "\n";
+  }
+  std::cout << "Value of i at loop termination: " << i << "\n";
+}
+.exam end
+.np
+The above code will not compile with Open Watcom 1.3 or later because
+the variable "i" is out of scope in the last output statement. The "zf"
+option will allow such code to compile by extending the scope of "i"
+beyond the loop.
 .do end
 .*
 .if &e'&$SWzg eq 1 .do begin
