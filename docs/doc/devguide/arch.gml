@@ -182,7 +182,9 @@ Note that there are no other requirements here &mdash it is very annoying when
 a project requires you to define handles for tools, create directories in
 which it can deposit stuff, scrounge up obscure tools from who knows where
 or pretend to be Jim Welch
-.fn One of the original Watcom compiler developers
+.* .fn begin
+.* One of the original Watcom compiler developers
+.* .fn end
 in order to get a debuggable version of the executable.
 .np
 Perhaps it should be noted that "releasable" build still contains debugging
@@ -475,6 +477,6 @@ host_CPU=Y
 !include ..\master.mif
 .millust end
 .endnote
-That's it! It should be apparent that sticking to these guidelines will make
-everyone's life easier.
-
+.np
+That's it! The only downside is that sticking to these guidelines will make
+everyone's life less exciting.
