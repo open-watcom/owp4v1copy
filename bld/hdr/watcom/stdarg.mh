@@ -99,9 +99,9 @@ typedef __va_list va_list;
 :: Extensions section (C99 va_copy definition)
 :include ext.sp
 #if defined(__PPC__) || defined(__AXP__)
-  #define va_copy(dest,src) ((dest)=(src))
+  #define va_copy(dest,src) ((dest)=(src),(void)0)
 #else
-  #define va_copy(dest,src) ((dest)[0]=(src)[0])
+  #define va_copy(dest,src) ((dest)[0]=(src)[0],(void)0)
 #endif
 #endif /* End of extensions section. */
 
