@@ -17,14 +17,25 @@ comp_flags = -ox-d1-xs -br
 
 comp_flags += -zq -xr
 
+stack_386=opt stack=64k
+stack_i86=opt stack=16k
+stack_axp=opt stack=64k
+
 .cpp.obj:
     $(wpp_$(arch)) $[@ $(comp_flags)
     
 .obj.exe:
     wlink @ehmix file $[@ 
-    
+
+# not posible to compile it for 16-bit due to 
+# ehmix.c requires more than 64kB memory for code
+#
+!ifeq arch i86
+test : .symbolic
+!else
 test : .symbolic exec.out
     -diff exec.out exec.chk >diff.out
+!endif
     %make global
     %append $(log_file) PASS $(%__CWD__)
     
@@ -36,7 +47,7 @@ ehmix.lnk : $(__MAKEFILES__)
     @%append $^@ NAME $^*
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
-    @%append $^@ OPTION map, caseexact, stack=64k, quiet
+    @%append $^@ $(stack_$(arch))
     
 global : .SYMBOLIC
     %make common_clean

@@ -9,6 +9,10 @@ cflags = -ox-d1
 
 cflags += -zq
 
+stack_386=opt stack=8k
+stack_i86=opt stack=4k
+stack_axp=opt stack=8k
+
 .cc.obj:
     $(wpp_$(arch)) $[@ $(cflags)
 
@@ -36,7 +40,7 @@ opt.lnk : makefile
     @%append $^@ NAME $^*
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
-    @%append $^@ OPTION map, caseexact, stack=8k, quiet
+    @%append $^@ $(stack_$(arch))
     @for %i in ( $(objs) ) do @%append $^@ FILE %i
     
 global : .SYMBOLIC

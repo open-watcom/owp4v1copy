@@ -31,7 +31,9 @@ cflags_386 += -zq-fpi87-fp5-mf
 cflags_i86 += -zq-fpi87-fp5-ml
 cflags_axp += -zq
 
-
+stack_386=opt stack=16k
+stack_i86=opt stack=8k
+stack_axp=opt stack=16k
 
 tests = &
         bench.$(exe)    &
@@ -89,7 +91,7 @@ test.lnk : makefile
     %create $^@
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
-    @%append $^@ OPTION map, caseexact, stack=16k, quiet
+    @%append $^@ $(stack_$(arch))
 
 global : .SYMBOLIC
     @%make common_clean

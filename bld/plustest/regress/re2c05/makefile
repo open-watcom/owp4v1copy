@@ -13,7 +13,9 @@ cflags_386 += $(cflags) -mf-zc
 cflags_i86 += $(cflags) -ml-zc
 cflags_axp += $(cflags)
 
-lnk_i86 += op stack=8K
+stack_386=opt stack=16k
+stack_i86=opt stack=8k
+stack_axp=opt stack=16k
 
 .cpp.obj:
     $(wpp_$(arch)) $[@ $(cflags_$(arch))
@@ -44,7 +46,7 @@ re2c.lnk : makefile
     @%append $^@ NAME $^*
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
-    @%append $^@ OPTION map, caseexact, quiet
+    @%append $^@ $(stack_$(arch))
     @for %i in ( $(objs) ) do @%append $^@ FILE %i
 
 global : .SYMBOLIC

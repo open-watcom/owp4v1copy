@@ -17,11 +17,17 @@ cflags = -d2
 
 cflags += -w0-zq -i.;.. -fi=..\pch.h -fhq
 
+cflags_i86 = -mm -zm
+
 extra_istmit1 = <istmit1.in
+
+stack_386=opt stack=64k
+stack_i86=opt stack=16k
+stack_axp=opt stack=64k
 
 .cpp: .;..
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(cflags)
+    $(wpp_$(arch)) $[@ $(cflags) $(cflags_$(arch))
     
 .obj.$(exe):
     wlink @test FILE $[@, tempbuf.obj, random.obj
@@ -32,7 +38,11 @@ extra_istmit1 = <istmit1.in
 !include stl_test.mif
 
 test : .symbolic test.lnk tempbuf.obj random.obj start_test $(tests)
+!ifeq arch i86
+    diff exec.out execi86.chk
+!else
     diff exec.out exec.chk
+!endif
     %make global
     %append $(log_file) PASS $(%__CWD__)
     
@@ -43,7 +53,7 @@ test.lnk : $(__MAKEFILES__)
     %create $^@
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
-    @%append $^@ OPTION caseexact, stack=64k, quiet
+    @%append $^@ $(stack_$(arch))
     
 save : .symbolic
     if exist exec.out copy exec.out s$(arch)_$(alt_error).sav

@@ -21,6 +21,10 @@ cflags += -zv
 !endif
 cflags += -zq -i..\positive\source
 
+stack_386=opt stack=8k
+stack_i86=opt stack=4k
+stack_axp=opt stack=8k
+
 lib = $(librarian_$(arch)) /n/b/q
 
 #
@@ -63,7 +67,7 @@ er03.lib : er03a.obj er03b.obj
     
 er.lnk : makefile
     %create $^@
-    @%append $^@ OPTION quiet, stack=8k
+    @%append $^@ $(stack_$(arch))
 !ifneq arch axp
 # until we implement it under AXP
     @%append $^@ OPTION eliminate, vfremoval

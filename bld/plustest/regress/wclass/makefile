@@ -17,6 +17,10 @@ comp_flags = -ox-d1-mc
 
 comp_flags += -zq -zw -i$(%watcom)\h\win -bt=windows
 
+stack_386=opt stack=16k
+stack_i86=opt stack=8k
+stack_axp=opt stack=16k
+
 .cpp.obj:
     $(wpp_i86) $[* $(comp_flags) $(extra)
     
@@ -70,7 +74,7 @@ test.exe : $(objs) test.lnk
 test.lnk : makefile $(objs)
     %create $^@
     @%append $^@ SYSTEM windows
-    @%append $^@ OPTION map, quiet, rwreloccheck
+    @%append $^@ OPTION rwreloccheck
     @%append $^@ NAME $^*
     @%append $^@ $(ldebug_$(arch))
     @for %i in ( $(objs) ) do @%append $^@ FILE %i

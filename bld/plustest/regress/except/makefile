@@ -64,6 +64,10 @@ cflags_i86 += $(cflags) -mc
 cflags_axp += $(cflags)
 !endif
 
+stack_386=opt stack=32k
+stack_i86=opt stack=8k
+stack_axp=opt stack=32k
+
 .c.obj:
     $(wpp_$(arch)) $[* $(cflags_$(arch)) -zq
     
@@ -96,9 +100,9 @@ batch_build : .symbolic test.lnk $(batch_lnk) $(batch_cmp)
     
 test.lnk : $(__MAKEFILES__)
     %create $^@
-    @%append $^@ OPTION quiet, map, stack=32k
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
+    @%append $^@ $(stack_$(arch))
     @%append $^@ OPTION undefsok
     
 global : .symbolic

@@ -13,6 +13,10 @@ cflags_386 += $(cflags) -mf
 cflags_i86 += $(cflags) -mm
 cflags_axp += $(cflags)
 
+stack_386=opt stack=8k
+stack_i86=opt stack=4k
+stack_axp=opt stack=8k
+
 .cpp.obj:
     $(wpp_$(arch)) $[@ $(cflags_$(arch))
 
@@ -34,7 +38,7 @@ jam.lnk : makefile
     @%append $^@ NAME $^*
     @%append $^@ DEBUG line
     @%append $^@ $(lnk_$(arch))
-    @%append $^@ OPTION map, caseexact, stack=8k, quiet
+    @%append $^@ $(stack_$(arch))
     @for %i in ( $(objs) ) do @%append $^@ FILE %i
     
 global : .symbolic

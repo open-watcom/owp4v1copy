@@ -24,12 +24,21 @@ alt_error=00
 test_flags = -ox-d1-zq-w0-otexanr
 !endif
 
+test_flags_i86 = -mm
+
+stack_386=opt stack=16k
+stack_i86=opt stack=8k
+stack_axp=opt stack=16k
+
 .c.obj:
-    $(wpp_$(arch)) $[@ $(test_flags) $(opt_$^*)
+    $(wpp_$(arch)) $[@ $(test_flags) $(test_flags_$(arch)) $(opt_$^*)
 
 .obj.$(exe):
     wlink @stepanov FILE $[@
 
+!ifeq arch i86
+test : .symbolic
+!else
 test : .symbolic stepanov.lnk $(exes)
     %create stepanov.out
 # Note: Fast machines may need larger iteration counts, otherwise the code could run
@@ -39,6 +48,7 @@ test : .symbolic stepanov.lnk $(exes)
     $(run) oop_v1p7 Max=5000 14 Matrix=50 14 Complex=4000 83 Iterator=15000 19 >>stepanov.out
     @for %i in ( $(stepanovs) ) do $(run) %i 2500 >>stepanov.out
     diff stepanov.out stepanov.chk
+!endif
     %make global
     %append $(log_file) PASS $(%__CWD__)
 
@@ -46,7 +56,7 @@ stepanov.lnk : $(__MAKEFILES__)
     %create $^@
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
-    @%append $^@ OPTION map, caseexact, stack=16k, quiet
+    @%append $^@ $(stack_$(arch))
 
 save : .symbolic
     if exist s$(arch)_$(alt_error).sav erase s$(arch)_$(alt_error).sav

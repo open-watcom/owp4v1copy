@@ -15,6 +15,10 @@ cflags_386 += -j-zq-mf-4r
 cflags_i86 += -j-zq-ml
 cflags_axp += -j-zq
 
+stack_386=opt stack=8k
+stack_i86=opt stack=4k
+stack_axp=opt stack=8k
+
 .cpp.obj:
     $(wpp_$(arch)) $[@ $(cflags_$(arch))
 
@@ -36,7 +40,7 @@ bitset.lnk : makefile
     @%append $^@ NAME $^*
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
-    @%append $^@ OPTION map, stack=8k, quiet
+    @%append $^@ $(stack_$(arch))
     @for %i in ( $(objs) ) do @%append $^@ FILE %i
     
 global : .SYMBOLIC

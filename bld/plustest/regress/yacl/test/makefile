@@ -1,7 +1,6 @@
 plustest_name = yacl
 !include ..\..\environ.mif
 
-!ifneq arch i86
 exes = &
 bittest.$(exe) &
 btreetst.$(exe) &
@@ -20,32 +19,36 @@ strtest.$(exe) &
 treeprnt.$(exe) &
 treetest.$(exe) &
 wordcnt.$(exe)
-!endif
 
 !ifdef test1
-cflags = -op-d2
+cflags = -ot-op-d1
 !else ifdef test2
 cflags = -ot-op-d1-xds
 !else ifdef test3
 cflags = -op-d2-xds
 !else
-cflags = -ot-op-d1
+cflags = -op-d2
 !endif
 
 cflags += -ei -zq -i.. -w0 -d__OS2__
 
+cflags_i86 = -ml
+
+stack_386=opt stack=32k
+stack_i86=opt stack=24k
+stack_axp=opt stack=32k
+
 .obj.$(exe):
-    $(linker) @ex.lnk FILE $[@
+    $(linker) @ex.lnk FILE $[@ op verbose
     
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(cflags)
+    $(wpp_$(arch)) $[@ $(cflags) $(cflags_$(arch))
     
 test : .symbolic ex.lnk $(exes)
     if exist *.dat del *.dat
     del ..\base.lib
     del ..\io.lib
     %create test.out
-!ifneq arch i86
     %append test.out bittest.$(exe)
     $(run) bittest.$(exe) >>test.out
     %append test.out btreetst.$(exe)
@@ -85,14 +88,13 @@ test : .symbolic ex.lnk $(exes)
     %append test.out wordcnt.$(exe)
     $(run) wordcnt.$(exe) <wordcnt.cpp >>test.out
     diff test.out test.chk
-!endif
     %make global
     %append $(log_file) PASS $(%__CWD__)
     
 ex.lnk : makefile
     %create $^@
     @%append $^@ $(lnk_$(arch))
-    @%append $^@ OPTION quiet, stack=32k
+    @%append $^@ $(stack_$(arch))
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ LIBRARY ..\base.lib, ..\io.lib
     

@@ -22,10 +22,12 @@ cflags = -op-d2
 !endif
 
 cflags += -zq -i..\.. -w0
+
+cflags_i86 = -mm -zm
    
 .c: ..
 .c.obj:
-    $(wpp_$(arch)) $[@ $(cflags)
+    $(wpp_$(arch)) $[@ $(cflags) $(cflags_$(arch))
     
 test : .symbolic ..\cool.lib
     %make global

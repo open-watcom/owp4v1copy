@@ -13,6 +13,10 @@ cflags_axp = $(cflags)
 cflags_386 = $(cflags) -mf
 cflags_i86 = $(cflags) -mc
 
+stack_386=opt stack=16k
+stack_i86=opt stack=8k
+stack_axp=opt stack=16k
+
 .c.obj:
     $(wpp_$(arch)) $[@ $(cflags_$(arch))
 
@@ -38,7 +42,7 @@ testi.lnk : makefile
     @%append $^@ NAME $^*
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
-    @%append $^@ OPTION map, verbose, caseexact, quiet
+    @%append $^@ OPTION verbose
     @for %i in ( $(i_objs) ) do @%append $^@ FILE %i
 
 testf.lnk : makefile
@@ -46,7 +50,6 @@ testf.lnk : makefile
     @%append $^@ NAME $^*
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
-    @%append $^@ OPTION map, caseexact, quiet
     @for %i in ( $(f_objs) ) do @%append $^@ FILE %i
 
 global : .SYMBOLIC

@@ -46,12 +46,18 @@ cflags = -ot-op-d1
 !endif
 
 cflags += -zq -i..\.. -w0
+
+cflags_i86 = -mm -zm
     
+stack_386=opt stack=32k
+stack_i86=opt stack=24k
+stack_axp=opt stack=32k
+
 .obj.$(exe):
     $(linker) @ex.lnk FILE $[@
     
 .c.obj:
-    $(wpp_$(arch)) $[@ $(cflags)
+    $(wpp_$(arch)) $[@ $(cflags) $(cflags_$(arch))
     
 test : .symbolic ex.lnk $(tests)
     %create test.out
@@ -127,7 +133,7 @@ ex.lnk : makefile
     %create $^@
     @%append $^@ $(lnk_$(arch))
     @%append $^@ $(ldebug_$(arch))
-    @%append $^@ OPTION quiet, stack=32k
+    @%append $^@ $(stack_$(arch))
     @%append $^@ LIBRARY ..\cool.lib
     
 global : .symbolic

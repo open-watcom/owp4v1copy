@@ -43,6 +43,10 @@ no_br_switcher = no
 cflags += $(add_br_$(no_br_$^*))
 !endif
 
+stack_386=opt stack=16k
+stack_i86=opt stack=8k
+stack_axp=opt stack=16k
+
 .cpp.obj:
     $(wpp_$(arch)) $[@ $(cflags)
     
@@ -60,7 +64,7 @@ test.lnk : $(__MAKEFILES__)
     %create $^@
     @%append $^@ DEBUG line
     @%append $^@ $(lnk_$(arch))
-    @%append $^@ OPTION map, caseexact, stack=16k, quiet
+    @%append $^@ $(stack_$(arch))
 
 global : .SYMBOLIC
     @%make common_clean

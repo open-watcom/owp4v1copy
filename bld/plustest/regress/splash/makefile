@@ -26,6 +26,10 @@ cflags_386 = $(cflags) -3s
 cflags_i86 = $(cflags) -ml
 cflags_axp = $(cflags)
     
+stack_386=opt stack=64k
+stack_i86=opt stack=8k
+stack_axp=opt stack=64k
+
 .c.obj:
     $(wpp_$(arch)) $[@ $(cflags_$(arch))
 
@@ -60,7 +64,7 @@ test.lnk : makefile
     %create $^@
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
-    @%append $^@ OPTION map, quiet, stack=64k
+    @%append $^@ $(stack_$(arch))
     
 global : .symbolic
     @%make common_clean

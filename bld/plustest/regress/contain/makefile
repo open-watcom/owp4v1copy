@@ -36,6 +36,10 @@ opt_axp += -si
 
 comp_flags += -w4 -we -zq -i=source $(EH_$(EH_$[&)) $(special_$[&) $(opt_$(arch))
 
+stack_386=opt stack=16k
+stack_i86=opt stack=8k
+stack_axp=opt stack=16k
+
 ext = $(exe)
 
 EH_wctest4 = yes
@@ -239,7 +243,7 @@ cont.lnk : $(__MAKEFILES__)
     %create $^@
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
-    @%append $^@ OPTION map, stack=16k, quiet, noredef
+    @%append $^@ $(stack_$(arch)) OPTION noredef
     @%append $^@ FILE memchk
     
 save : .symbolic

@@ -119,6 +119,10 @@ opt_cv08 = -xbov1
 !   define test_flags -ox-d1-zq-w0-otexanr
 !endif
 
+stack_386=opt stack=16k
+stack_i86=opt stack=8k
+stack_axp=opt stack=16k
+
 .cpp.obj:
     $(wpp_$(arch)) $[@ $(test_flags) $(opt_$^*)
     
@@ -136,7 +140,7 @@ overload.lnk : $(__MAKEFILES__)
     %create $^@
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
-    @%append $^@ OPTION map, caseexact, stack=16k, quiet
+    @%append $^@ $(stack_$(arch))
 
 global : .SYMBOLIC
     @%make common_clean

@@ -242,7 +242,7 @@ targ_lnk_wntaxp = system ntaxp
 targ_lnk_dosaxp = system ntaxp
 targ_lnk_os2axp = system ntaxp
 
-lnk_any    = op map # option noundefsok # add once we only use 11.0 linkers
+lnk_any    = op map,quiet
 
 lnk_386 = $(targ_lnk_$(targ_env_386)) $(lnk_any)
 lnk_i86 = $(targ_lnk_$(targ_env_i86)) $(lnk_any)

@@ -44,8 +44,10 @@ cflags = -op-d2
 
 cflags += -ei -w0 -zq -i.. -d__OS2__
 
+cflags_i86 = -ml
+
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(cflags)
+    $(wpp_$(arch)) $[@ $(cflags) $(cflags_$(arch))
     
 test : .symbolic ..\base.lib
     %make global

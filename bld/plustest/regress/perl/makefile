@@ -23,15 +23,19 @@ cflags = -ox-d1
 
 cflags += -zq-w0
 
-cflags_386 += $(cflags)
-cflags_i86 += $(cflags) -mm
-cflags_axp += $(cflags)
+cflags_386 =
+cflags_i86 = -mm
+cflags_axp =
+
+stack_386=opt stack=32k
+stack_i86=opt stack=16k
+stack_axp=opt stack=32k
 
 .cpp.obj:
-    $(wpp_$(arch)) $[* $(cflags_$(arch)) -dTEST
+    $(wpp_$(arch)) $[* $(cflags) $(cflags_$(arch)) -dTEST
     
 .c.obj:
-    $(wcc_$(arch)) $[* $(cflags_$(arch))
+    $(wcc_$(arch)) $[* $(cflags) $(cflags_$(arch))
 
 test : .symbolic $(objs) $(exes)
     $(run) perltest >perltest.out
@@ -57,7 +61,7 @@ test.lnk : makefile
     %create $^@
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
-    @%append $^@ OPTION map, quiet, stack=32k
+    @%append $^@ $(stack_$(arch))
     
 global : .symbolic
     @%make common_clean

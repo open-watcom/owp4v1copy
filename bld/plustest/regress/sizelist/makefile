@@ -13,6 +13,10 @@ cflags_386 += $(cflags) -zp4-ms
 cflags_i86 += $(cflags) -zp2-ml
 cflags_axp += $(cflags) -zp8
 
+stack_386=opt stack=8k
+stack_i86=opt stack=4k
+stack_axp=opt stack=8k
+
 .c.obj:
     $(wpp_$(arch)) $[@ $(cflags_$(arch))
 
@@ -33,7 +37,7 @@ psfistt.lnk : makefile
     @%append $^@ NAME $^*
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
-    @%append $^@ OPTION map, caseexact, stack=8k, quiet
+    @%append $^@ $(stack_$(arch))
     @for %i in ( $(objs) ) do @%append $^@ FILE %i
     
 global : .SYMBOLIC

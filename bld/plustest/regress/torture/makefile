@@ -16,12 +16,16 @@ cflags = -ox-d1-j
 
 cflags += -zq-w0-i.
 
-cflags_386 += $(cflags) -mf
-cflags_i86 += $(cflags) -ml -fi=noinline.h
-cflags_axp += $(cflags)
+cflags_386 = -mf
+cflags_i86 = -ml -fi=noinline.h
+cflags_axp =
+
+stack_386=opt stack=16k
+stack_i86=opt stack=8k
+stack_axp=opt stack=16k
 
 .cpp.obj:
-    $(wpp_$(arch)) $[* $(cflags_$(arch))
+    $(wpp_$(arch)) $[* $(cflags) $(cflags_$(arch))
     
 test : .symbolic mdarr.$(exe) diarr.$(exe)
     $(run) mdarr >exec.out
@@ -49,7 +53,7 @@ tort.lbc : $(__MAKEFILES__)
 tort.lnk : $(__MAKEFILES__)
     %create $^@
     @%append $^@ $(lnk_$(arch))
-    @%append $^@ OPTION stack=16k, quiet, map
+    @%append $^@ $(stack_$(arch))
     @%append $^@ $(ldebug_$(arch))
     
 global : .symbolic

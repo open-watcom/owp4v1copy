@@ -12,10 +12,16 @@ alt_error = 03
 cflags = -d2-xs
 !else ifdef test4
 alt_error = 04
-cflags = -oxa-d1-xs -br
+cflags = -oxa-d1-xs
+cflags_386 = -br
+cflags_i86 =
+cflags_axp = -br
 !else ifdef test5
 alt_error = 05
-cflags = -d2-xs -br
+cflags = -d2-xs
+cflags_386 = -br
+cflags_i86 =
+cflags_axp = -br
 !else
 alt_error = 00
 cflags = -d2
@@ -23,11 +29,17 @@ cflags = -d2
 
 cflags += -w0-zq -i.;.. -fi=..\pch.h -fh
 
+cflags_i86 += -mm -zm
+
 extra_istmit1 = <istmit1.in
+
+stack_386=opt stack=64k
+stack_i86=opt stack=16k
+stack_axp=opt stack=64k
 
 .cpp: ..\..\stl.94\examples;..
 .cpp.obj:
-    $(wpp_$(arch)) $[@ $(cflags)
+    $(wpp_$(arch)) $[@ $(cflags) $(cflags_$(arch))
     
 .obj.$(exe):
     wlink @test FILE $[@, tempbuf.obj, random.obj
@@ -38,7 +50,11 @@ extra_istmit1 = <istmit1.in
 !include ..\..\stl.94\examples\stl_test.mif
 
 test : .symbolic test.lnk tempbuf.obj random.obj start_test $(tests)
+!ifeq arch i86
+    diff exec.out execi86.chk
+!else
     diff exec.out exec.chk
+!endif
     %make global
     %append $(log_file) PASS $(%__CWD__)
     
@@ -49,7 +65,7 @@ test.lnk : $(__MAKEFILES__)
     %create $^@
     @%append $^@ $(ldebug_$(arch))
     @%append $^@ $(lnk_$(arch))
-    @%append $^@ OPTION caseexact, stack=64k, quiet
+    @%append $^@ $(stack_$(arch))
     
 save : .symbolic
     if exist exec.out copy exec.out s$(arch)_$(alt_error).sav
