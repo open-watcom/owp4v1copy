@@ -37,11 +37,10 @@
 #include <stdio.h>
 #include <time.h>
 #include <string.h>
+#include <limits.h>
 #include "rtdata.h"
 
-#ifndef TZNAME_MAX
-#define TZNAME_MAX 128 // not defined for netware
-#endif
+//#define TZNAME_MAX    128     /* defined in <limits.h> */
 
 static const char awday_name[] = { "Sun\0Mon\0Tue\0Wed\0Thu\0Fri\0Sat" };
 
@@ -270,7 +269,7 @@ _WCRTLINK size_t __F_NAME( strftime, wcsftime ) ( CHAR_TYPE *s, size_t maxsize,
 #if defined( __WIDECHAR__ )
         if( p != ( char *) buffer ) {
             /*** Convert the MBCS string to wide chars in buffer ***/
-            if( mbstowcs( buffer, p, _mbslen( p ) + 1 ) == ( size_t ) - 1 ) 
+            if( mbstowcs( buffer, p, _mbslen( p ) + 1 ) == ( size_t ) - 1 )
                 buffer[0] = L'\0';
             p = ( const char*) buffer;
         }
