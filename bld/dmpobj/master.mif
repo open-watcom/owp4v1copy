@@ -15,4 +15,4 @@ objs =                  &
         process.obj
 
 $(proj_name).exe : $(objs)
-        $(cl) $(clflags) $<
+        $(cl) $(clflags) $< $(cl_libs)

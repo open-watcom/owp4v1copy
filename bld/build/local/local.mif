@@ -88,6 +88,7 @@ $(defines) $(libs)
 
 # options for linking via cc
 clflags = -o $@
+cl_libs = $(clib_dir)/$(%OBJDIR)/libwatcom.a
 
 !endif
 !endif

@@ -74,8 +74,8 @@ static void usage( void )
     leave( 1 );
 }
 
-void main( int argc, char **argv )
-/********************************/
+int main( int argc, char **argv )
+/*******************************/
 {
     FILE        *fp;
     char        drive[ _MAX_DRIVE ];
@@ -166,4 +166,5 @@ void main( int argc, char **argv )
         OutputSetFH( stdout );  /* does fclose() if necessary */
     }
     leave( 0 );
+    return( 0 );  // for the less intelligent compilers
 }
