@@ -15,10 +15,10 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 ]
 #========================
 #       OS2
-        <CPCMD> <devdir>\bin\binp\dll\dwarf.dll         <relroot>\rel2\binp\dll\
-        <CPCMD> <devdir>\bin\binp\dll\codeview.dll      <relroot>\rel2\binp\dll\
-        <CPCMD> <devdir>\bin\binp\dll\export.dll        <relroot>\rel2\binp\dll\
-        <CPCMD> <devdir>\bin\binp\dll\watcom.dll        <relroot>\rel2\binp\dll\
+#       <CPCMD> <devdir>\bin\binp\dll\dwarf.dll         <relroot>\rel2\binp\dll\
+#       <CPCMD> <devdir>\bin\binp\dll\codeview.dll      <relroot>\rel2\binp\dll\
+#       <CPCMD> <devdir>\bin\binp\dll\export.dll        <relroot>\rel2\binp\dll\
+#       <CPCMD> <devdir>\bin\binp\dll\watcom.dll        <relroot>\rel2\binp\dll\
         <CPCMD> <devdir>\bin\binp\dll\dwarf.sym         <relroot>\rel2\binp\dll\
         <CPCMD> <devdir>\bin\binp\dll\codeview.sym      <relroot>\rel2\binp\dll\
         <CPCMD> <devdir>\bin\binp\dll\export.sym        <relroot>\rel2\binp\dll\
@@ -76,5 +76,4 @@ cdsay .
 
 [ BLOCK <1> clean ]
 #==================
-    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
-    sweep killobjs
+    pmake -d all <2> <3> <4> <5> <6> <7> <8> <9> -h clean

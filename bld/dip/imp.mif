@@ -10,6 +10,7 @@
 .mif: $(mif_path)
 !include cproj.mif
 !include defrule.mif
+!include deftarg.mif
 
 !ifndef bin_root
 !ifdef bin_root_wv
