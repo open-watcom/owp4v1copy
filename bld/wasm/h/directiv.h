@@ -299,16 +299,17 @@ typedef struct a_definition_struct {
 extern a_definition_struct Definition;
 
 typedef struct {
-    dist_type   distance;       // stack distance;
-    mod_type    model;          // memory model;
-    lang_type   langtype;       // language;
-    os_type     ostype;         // operating system;
-    unsigned    use32:1;        // If 32-bit is used
+    dist_type   distance;        // stack distance;
+    mod_type    model;           // memory model;
+    lang_type   langtype;        // language;
+    os_type     ostype;          // operating system;
+    unsigned    use32:1;         // If 32-bit is used
     unsigned    init:1;
     unsigned    cmdline:1;
+    unsigned    defseg32:1;      // default segment size 32-bit
     unsigned    flat_idx;        // index of FLAT group
     char        name[_MAX_FNAME];// name of module
-} module_info;                  // Information about the module
+} module_info;                   // Information about the module
 
 /*---------------------------------------------------------------------------*/
 

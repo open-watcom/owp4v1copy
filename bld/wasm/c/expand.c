@@ -287,7 +287,7 @@ int StoreConstant( char *name, char *value, int_8 redefine )
 void MakeConstantUnderscored( long token )
 /*****************************/
 {
-    char buffer[20];
+    char buffer[23];
 
     /* define a macro */
     buffer[0]='\0';

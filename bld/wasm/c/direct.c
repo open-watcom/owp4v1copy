@@ -176,7 +176,7 @@ char            *SimCodeBegin[2][ SIM_LAST ] = {
         "_BSS SEGMENT DWORD USE32 PUBLIC 'BSS' IGNORE",
         "FAR_DATA SEGMENT PARA USE32 PRIVATE 'FAR_DATA' IGNORE",
         "FAR_BSS SEGMENT PARA USE32 PRIVATE 'FAR_DATA?' IGNORE",
-        "CONST SEGMENT DWORD PUBLIC 'CONST' IGNORE",            },
+        "CONST SEGMENT DWORD USE32 PUBLIC 'CONST' IGNORE",            },
 };
 
 char    *SimCodeEnd[ SIM_LAST ] = {
@@ -1327,7 +1327,6 @@ int  SetCurrSeg( int i )
     struct asm_sym      *sym;
 
     name = AsmBuffer[i]->string_ptr;
-    Use32 = ModuleInfo.use32;
 
     switch( AsmBuffer[i+1]->value ) {
     case T_SEGMENT:
@@ -1399,7 +1398,7 @@ static int token_cmp( char **token, int start, int end )
 static void find_use32( void )
 {
     if( CurrSeg == NULL ) {
-        Use32 = ModuleInfo.use32;
+        Use32 = ModuleInfo.defseg32;
     } else {
         Use32 = CurrSeg->seg->e.seginfo->segrec->d.segdef.use_32;
     }
@@ -1461,7 +1460,7 @@ int SegDef( int i )
             if( !defined ) {
                 seg->d.segdef.align = ALIGN_PARA;
                 seg->d.segdef.combine = COMB_INVALID;
-                seg->d.segdef.use_32 = ( (Code->info.cpu&P_CPU_MASK) >= P_386 ) ? TRUE : FALSE;
+                seg->d.segdef.use_32 = ModuleInfo.defseg32;
                 seg->d.segdef.class_name_idx = 1;
                 /* null class name, in case none is mentioned */
                 dirnode->e.seginfo->readonly = FALSE;
@@ -1473,7 +1472,7 @@ int SegDef( int i )
                 if( !ignore ) {
                     seg->d.segdef.use_32 = oldobj->d.segdef.use_32;
                 } else {
-                    seg->d.segdef.use_32 = ( (Code->info.cpu&P_CPU_MASK) >= P_386 ) ? TRUE : FALSE;
+                    seg->d.segdef.use_32 = ModuleInfo.defseg32;
                 }
                 seg->d.segdef.class_name_idx = oldobj->d.segdef.class_name_idx;
             }
@@ -1622,6 +1621,10 @@ int SegDef( int i )
                 LnameInsert( name );
 
             }
+            if(( CurrSeg != NULL )
+                && ( CurrSeg->seg->e.seginfo->segrec->d.segdef.use_32 )) {
+                ModuleInfo.use32 = TRUE;
+            }
             break;
         case T_ENDS:
             if( CurrSeg == NULL ) {
@@ -1692,7 +1695,7 @@ int IncludeLib( int i )
 
 static int find_bit( void )
 {
-    if( ModuleInfo.use32 ) {
+    if( ModuleInfo.defseg32 ) {
         return( BIT32 );
     } else {
         return( BIT16 );
@@ -2007,6 +2010,7 @@ void ModuleInit( void )
     ModuleInfo.langtype = LANG_NONE;
     ModuleInfo.ostype = OPSYS_DOS;
     ModuleInfo.use32 = FALSE;
+    ModuleInfo.defseg32 = FALSE;
     ModuleInfo.init = FALSE;
     ModuleInfo.cmdline = FALSE;
 }
@@ -2105,6 +2109,9 @@ int Model( int i )
         switch( type ) {
             case TOK_FLAT:
                 DefFlatGroup();
+                // TODO!! FLAT Model supposed 32-bit segments
+                Use32 = 1;
+                ModuleInfo.defseg32 = 1;
             case TOK_TINY:
             case TOK_SMALL:
             case TOK_COMPACT:

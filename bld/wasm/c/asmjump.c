@@ -64,6 +64,8 @@ extern void             InputQueueLine( char * );
 extern void             GetInsString( enum asm_token, char *, int );
 extern uint_32          GetCurrAddr( void );
 
+int    curr_ptr_type;
+
 static enum asm_token getJumpNegation( enum asm_token instruction )
 /*****************************************************************/
 {
@@ -198,8 +200,12 @@ int jmp( int i )                // Bug: can't handle indirect jump
             sym->mem_type != T_WORD &&
             sym->mem_type != T_DWORD &&
             sym->mem_type != T_FWORD &&
+#if 0
             sym->mem_type != T_PWORD &&
             sym->mem_type != T_FAR ) {
+#else
+            sym->mem_type != T_PWORD ) {
+#endif
             temp = 0;
 
             #ifdef _WASM_
@@ -569,35 +575,34 @@ int ptr_operator( int mem_type, uint_8 fix_mem_type )
      * operator will be called again with PTR, then we set the opsiz, etc.
      */
 
+    if( Code->info.token == T_LEA ) return( NOT_ERROR );
     if( mem_type == T_PTR ) {
         /* finish deciding what type to make the inst NOW
          * ie: decide size overrides etc.
          */
-
         if( Code->use32 && MEM_TYPE( Code->mem_type, WORD ) ) {
             // if we are in use32 mode, we have to add OPSIZ prefix for
             // most of the 386 instructions ( except MOVSX and MOVZX )
             // when we find WORD PTR
-
+            
             if( Code->info.opnd_type[OPND1] == OP_MMX ) {
                 /* JBS 2001/02/19
                    no WORD operands for MMX instructions, only 64-bit or 128-bit
-                        so no WORD override needed
-                */
+                   so no WORD override needed
+                 */
             } else {
                 switch( Code->info.token ) {
                 case T_MOVSX:
                 case T_MOVZX:
-                case T_LEA:
                     break;
                 default:
                     Code->prefix.opsiz = TRUE;
                     break;
                 }
             }
-
+            
         } else if( !Code->use32 && MEM_TYPE( Code->mem_type, DWORD ) ) {
-
+            
             /* if we are not in use32 mode, we have to add OPSIZ
              * when we find DWORD PTR
              * unless we have a LXS ins.
@@ -607,12 +612,12 @@ int ptr_operator( int mem_type, uint_8 fix_mem_type )
              *      opsize bytes when necessary ?
              */
             if( !IS_BRANCH( Code->info.token ) ) {
-
+                
                 if( Code->info.opnd_type[OPND1] == OP_MMX ) {
                     /* JBS 2001/02/19
                        no WORD operands for MMX instructions, only 64-bit or 128-bit
-                        so no DWORD override needed
-                    */
+                       so no DWORD override needed
+                     */
                 } else {
                     switch( Code->info.token ) {
                     case T_LDS:
@@ -634,38 +639,40 @@ int ptr_operator( int mem_type, uint_8 fix_mem_type )
                 }
             }
         } else if( !Code->use32 &&
-                (Code->mem_type == T_FWORD || Code->mem_type == T_PWORD) ) {
+            (( Code->mem_type == T_FWORD ) || ( Code->mem_type == T_PWORD ))) {
             Code->prefix.opsiz = TRUE;
         }
-    } else if( mem_type == T_FAR || mem_type == T_NEAR || mem_type == T_SHORT ){
+    } else if(( mem_type == T_FAR ) || ( mem_type == T_NEAR ) || ( mem_type == T_SHORT )){
         Code->distance = mem_type;
     } else {
-        if( mem_type != 0 && Code->mem_type_fixed == FALSE ) {
-            #ifdef _WASM_
+        if(( mem_type != 0 ) && ( Code->mem_type_fixed == FALSE )) {
+#ifdef _WASM_
             if( mem_type != T_STRUCT ) {
-            #endif
+#endif
                 Code->mem_type = mem_type;
                 if( fix_mem_type ) {
                     Code->mem_type_fixed = TRUE;
                 }
 
-                #if 0
+#if 0
                 /* this was screwing up instructions such as FCOM,
                  * and appears not to be necessary
                  */
                 if( MEM_TYPE( mem_type, DWORD ) || MEM_TYPE( mem_type, WORD ) ) {
                     Code->info.opcode |= W_BIT;
                 }
-                #endif
-            #ifdef _WASM_
+#endif
+#ifdef _WASM_
             }
-            #endif
+#endif
         }
     }
 
     if( mem_type == T_FAR || mem_type == T_FWORD || mem_type == T_PWORD ) {
-        Code->distance = T_FAR;
-        if( Code->info.token == T_CALL  ||  Code->info.token == T_JMP ) {
+        if( Code->info.token == T_CALLF  ||  Code->info.token == T_JMPF ) {
+            Code->distance = T_FAR;
+        } else if( Code->info.token == T_CALL  ||  Code->info.token == T_JMP ) {
+            Code->distance = T_FAR;
             Code->info.token++;
         }
     }

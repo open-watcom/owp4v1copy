@@ -123,6 +123,8 @@ extern uint_32          Address;
 
 #endif
 
+extern int              curr_ptr_type;
+
 void make_inst_hash_table( void );
 
 /* moved here from asmline */
@@ -1545,7 +1547,6 @@ int AsmParse()
     unsigned long       cur_opnd;
     unsigned long       last_opnd = OP_NONE;
     struct asm_code     *rCode = Code;
-    int                 use32;
 
 #ifdef _WASM_
     if( Use32 ) {
@@ -1580,6 +1581,7 @@ int AsmParse()
         InsFixups[i] = NULL;
     }
     Opnd_Count = 0;
+    curr_ptr_type = EMPTY;
 
     // check if continue initializing array
     if( More_Array_Element == TRUE ) {
@@ -1674,8 +1676,8 @@ int AsmParse()
                     switch( AsmBuffer[operator_loc]->value ) {
                     case T_OFFSET:
                     case T_SEG2:
-                        use32 = rCode->use32;
                         if( AsmBuffer[operator_loc]->value == T_OFFSET ) {
+                            int         use32 = rCode->use32;
 #ifdef _WASM_
                             dir_node    *seg;
 
@@ -1962,6 +1964,7 @@ int AsmParse()
             break;
         case T_COMMA:
             cur_opnd = OP_NONE;
+            curr_ptr_type = EMPTY;
             if( Opnd_Count == OPND2 ) {
                 switch( rCode->info.token ) {
                 case T_IMUL:
