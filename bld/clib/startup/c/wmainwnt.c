@@ -60,7 +60,7 @@ _WCRTLINK extern char   *_LpCmdLine;    /* pointer to command line */
 _WCRTLINK extern wchar_t*_LpwCmdLine;   /* pointer to command line */
 
 extern void __CommonInit( void );
-extern int APIENTRY __F_NAME(WinMain,wWinMain)( HANDLE, HANDLE, CHAR_TYPE*, int );
+extern int APIENTRY __F_NAME(WinMain,wWinMain)( HINSTANCE, HINSTANCE, CHAR_TYPE*, int );
 
 void __F_NAME(__WinMain,__wWinMain)( void )
 {
