@@ -8,6 +8,9 @@ cpu = x86
 name = rsihelp
 which = SERVER
 
+masmdir = $(tools_root)
+rsidir = $(tools_root)
+
 extra_objs = &
         $(dosx_serv_objs) &
         dosredir.obj &
@@ -22,10 +25,10 @@ extra_objs = &
         rmhdlr.obj &
         sbrk.obj
 
-extra_c_flags = -dDOS4G -dDOSXHELP -zdp -zu -wcd=1177
+extra_c_flags = -dDOS4G -dDOSXHELP -zdp -zu
 extra_c_flags_rsiacc = -I"$(rsilib)"
 extra_c_flags_realmode = -I"$(rsilib)"
-extra_c_flags_dbglib = -I"$(rsilib)"
+extra_c_flags_dbglib = -I"$(rsilib)" -wcd=1177
 extra_a_flags_rsi87 = -fpi87
 extra_a_flags_segs_16m = -I"$(rsilib)" -Dcompact
 extra_a_flags_dbgliba = -I"$(rsilib)" -Dcompact
@@ -53,11 +56,11 @@ $(target) $(dtarget) : $(objs) $(__MAKEFILES__)
     @%append $(lf) -mpl -nod -DPMI -map -acg -farcall -auto -quiet -rtnerr 2
     @for %i in ($(objs)) do @%append $(lf) %i
     @%append $(lf) $(rsilib)/$(libnam).lib $(lang_root)/lib286/dos/clibc.lib
-    !$(tools_root)\glu @$(lf)
+    !$(rsidir)\glu @$(lf)
 
 #until wasm gets fixed up
 
-assemble = $(tools_root)\masm -mx -s -zd -I$(rsilib) -Dcompact $[@;
+assemble = $(masmdir)\masm -mx -s -zd -I$(rsilib) -Dcompact $[@;
 
 segs_16m.obj: segs_16m.asm
         $(assemble)

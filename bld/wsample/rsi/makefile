@@ -8,9 +8,6 @@ host_CPU = i86
 .EXTENSIONS
 .EXTENSIONS : .exe .obj .nbj .c .asm
 
-.BEFORE
-        set include=$(rsilib);$(%include)
-
 model=l
 
 xname       = wsamprsi
@@ -19,7 +16,7 @@ nxname      = nsamprsi
 
 lf = tmp.lnk
 
-cflags = -zq-m$(model)-zdp-d1-osail-s-w3-dREPORT_TYPE= -dFAR_PTR=__far -fi=watcom.h -i"$(plsdir);$(dig_dir)/h"
+rsidir=$(toolsdir)
 
 first = dos16m
 
@@ -27,10 +24,14 @@ objs  = $(lang_root)/lib286/dos/$(first).obj segs_16m.obj dbglib.obj &
         dbgliba.obj rmhdlr.obj sbrk.obj sample.obj samprsi.obj sampdata.obj &
         io.obj sysio.obj sampexe.obj settime.obj magicstr.obj wmsg.obj sysinit.obj
 
-nbjs  = $(lang_root)/lib286/dos/$(first).nbj segs_16m.nbj intrm.nbj &
+nobjs  = $(lang_root)/lib286/dos/$(first).nbj segs_16m.nbj intrm.nbj &
         dbgliba.nbj rmhdlr.nbj sbrk.nbj sample.nbj samprsi.nbj sampdata.nbj &
         io.nbj sysio.nbj sampexe.nbj settime.nbj magicstr.nbj wmsg.nbj sysinit.nbj
 
+extra_c_flags = -zdp -osail -s -dREPORT_TYPE= -dFAR_PTR=__far -fi=watcom.h -i"$(dig_dir)/h"
+extra_c_flags_dbglib = -wcd=1177
+
+inc_dirs=$(rsilib)
 
 all: at nec .symbolic
     @%null
@@ -72,19 +73,21 @@ nsamprsi.exp : $(nobjs) $(__MAKEFILES__)
 .c: .;../c;$(rsilib)
 
 .c.obj :
-#    $(comp286) $[* $(cflags)
-    $(cc) $[* $(cflags)
+    @set include=$(inc_path)
+    $(cc) $[* $(cflags) $(extra_c_flags_$[&) -fo=.obj
 
 .c.nbj :
-#    $(comp286) $[* $(cflags)-d_NEC_PC-fo=.nbj
-    $(cc) $[* $(cflags) -d_NEC_PC -fo=.nbj
+    @set include=$(inc_path)
+    $(cc) $[* $(cflags) $(extra_c_flags_$[&) -d_NEC_PC -fo=.nbj
 
 .asm: .;../a;$(rsilib)
 
 .asm.obj :
+    @set include=$(rsilib)
     masm -mx -s -Dlarge $[@;
 
 .asm.nbj :
+    @set include=$(rsilib)
     masm -mx -s -Dlarge $[@.nbj;
 
 $(xname).res : ../h/wsample.rc ../h/wmsg.h
