@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  PharLap execution sampler support.
+* Description:  PharLap performance sampling core.
 *
 ****************************************************************************/
 
@@ -65,22 +65,10 @@ char            SavedByte;
 char            XVersion;
 char            RateChanged;
 
-extern void REPORT_TYPE report();
-extern void             StopAndSave();
-extern void             WriteMark( char FAR_PTR *, seg_offset );
-extern unsigned         SampWrite( int, void FAR_PTR *, unsigned );
-extern void             Output( char *);
 extern void             GrabVects();
 extern void             ReleVects();
-extern void             WriteCodeLoad( seg_offset, char *, samp_block_kinds );
-extern void             WriteAddrMap( seg, seg, off );
-extern unsigned         GetNumber(unsigned, unsigned, char **, unsigned);
-extern void             fatal( void );
-extern void             SetTimerRate( char ** );
 extern void             ReadRealClk( int *hour, int *min, int *sec );
 extern void             SetBiosClk( int count );
-extern void             RecordCGraph( void );
-extern char  FAR_PTR    *MsgArray[ERR_LAST_MESSAGE-ERR_FIRST_MESSAGE+1];
 
 
 unsigned NextThread( unsigned tid )
