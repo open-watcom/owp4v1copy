@@ -533,6 +533,7 @@ void PP_Identifier( PPVALUE *val )
     char        c;
 
     val->type = 0;
+    value = 0;
     ptr = PP_ScanName( PPTokenPtr );
     c = *ptr;
     *ptr = '\0';
