@@ -693,7 +693,8 @@ char *GetMangledName( SYM_HANDLE  sym_handle )
                     total_parm_size = -1;
                     break;
                 }
-                if (typ->decl_type == TYPE_VOID) break;
+		while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+                if ( typ->decl_type == TYPE_VOID ) break;
                 parm_size = TypeSize( typ );
                 parm_size = (parm_size + sizeof(target_int) - 1)  &
                                 - sizeof(target_int);

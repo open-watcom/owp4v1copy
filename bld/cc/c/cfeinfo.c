@@ -1171,7 +1171,6 @@ extern char *FEExtName( CGSYM_HANDLE sym_handle, char **pat_ret )
         TYPEPTR     fn_typ;
         TYPEPTR     *parm;
         TYPEPTR     typ;
-        char        suffix[6];
 
         fn_typ = sym.sym_type;
         while( fn_typ->decl_type == TYPE_TYPEDEF )
@@ -1186,6 +1185,10 @@ extern char *FEExtName( CGSYM_HANDLE sym_handle, char **pat_ret )
                     total_parm_size = -1;
                     break;
                 }
+
+                while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+                if ( typ->decl_type == TYPE_VOID ) break;
+                
                 parm_size = TypeSize( typ );
                 parm_size = (parm_size + sizeof(target_int) - 1)  &
                                 - sizeof(target_int);
@@ -1194,10 +1197,7 @@ extern char *FEExtName( CGSYM_HANDLE sym_handle, char **pat_ret )
         }
         if( total_parm_size != -1 )
         {
-            suffix[0] = '@';
-            itoa( total_parm_size, &suffix[1], 10 );
-            strcpy( Buffer, name );
-            strcat( Buffer, suffix );
+            sprintf( Buffer, "%s@%d", name, total_parm_size );
             name = Buffer;
         }
     }
