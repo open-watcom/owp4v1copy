@@ -50,9 +50,7 @@
 #include "asmdefs.h"
 #include "expand.h"
 
-#ifdef TRMEM
 #include "memutil.h"
-#endif
 
 #include "womp.h"
 #include "objprs.h"
@@ -622,9 +620,7 @@ static void main_init( void )
 {
     int         i;
 
-#ifdef TRMEM
     MemInit();
-#endif
     for( i=ASM; i<=OBJ; i++ ) {
         AsmFiles.file[i] = NULL;
         AsmFiles.fname[i] = NULL;
