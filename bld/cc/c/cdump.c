@@ -343,8 +343,12 @@ static void DumpDecl( TYPEPTR typ, SYMPTR funcsym, STRCHUNK *pch )
             DumpDecl( obj, NULL, pch );
             ChunkSaveChar( pch, '(' );
             break;
+        default:
+            break;
         }
         DumpPointer( typ, pch );         /* 26-may-89 */
+        break;
+    default:
         break;
     }
 }
@@ -520,6 +524,8 @@ static TYPEPTR DefArgPromotion( TYPEPTR arg_typ )
         break;
     case TYPE_FLOAT:
         arg_typ = GetType( TYPE_DOUBLE );
+        break;
+    default:
         break;
     }
     return( arg_typ );
