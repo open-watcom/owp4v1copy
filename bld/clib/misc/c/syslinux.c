@@ -251,22 +251,22 @@ _WCRTLINK int select( int __width, fd_set * __readfds, fd_set * __writefds, fd_s
     __syscall_return(int,res);
 }
 
-_WCRTLINK int ptrace(int request, int pid, int addr, int data)
+_WCRTLINK long ptrace( int request, int pid, void *addr, void *data )
 {
-        long    res,ret;
+    long    res,ret;
 
-    if (request > 0 && request < 4)
+    if( request > 0 && request < 4 )
         *((long**)&data) = &ret;
-    res = sys_call4(SYS_ptrace, request, pid, addr, data);
-        if (res >= 0) {
-                if (request > 0 && request < 4) {
-                        errno = 0;
-                        return (ret);
-                }
-                return (int)res;
+    res = sys_call4( SYS_ptrace, request, pid, (u_long)addr, (u_long)data );
+    if( res >= 0 ) {
+        if( request > 0 && request < 4 ) {
+            errno = 0;
+            return( ret );
         }
-        errno = -res;
-        return -1;
+        return( (int)res );
+    }
+    errno = -res;
+    return( -1 );
 }
 
 _WCRTLINK int readlink( const char *__path, char *__buf, size_t __bufsiz )
