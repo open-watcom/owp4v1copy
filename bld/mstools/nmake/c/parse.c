@@ -170,6 +170,14 @@ static int parse_combining( OPT_STORAGE *cmdOpts, int x )
 
     x = x;
 
+    /*
+     * Make sure -L is translated correctly to -NOLOGO if it is
+     * a first (or the only) parameter
+     */
+    if( cmdOpts->L ) {
+        cmdOpts->NOLOGO = 1;
+    }
+
     /* scan for combined options */
     do {
         /* get next character */
