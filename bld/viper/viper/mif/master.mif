@@ -67,7 +67,7 @@ viper.res : _guimsgs.gh $(gui_dir)/h/gui.rc viper.rc
         $(cc) -i=".." -p $]@ -fo=viper.prc
 !endif
         set opath=$(%path)
-        set path=$(lang_root)\binp
+	set path=$(rc_os2_path)
         $(rc_os2) -i ".." -r viper.prc viper.res
         set path=$(%opath)
 !endif
