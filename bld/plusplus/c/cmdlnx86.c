@@ -168,16 +168,16 @@ static void defineM_IX86Macro( void )
 
 static void setWindowsSystem( void )
 {
-    #if _CPU == 386
-        PreDefineStringMacro( "__WINDOWS_386__" );
-        TargetSwitches |= FLOATING_FS;
-        SET_FPU_INLINE( CpuSwitches );
-    #else
-        PreDefineStringMacro( "__WINDOWS__" );
-        PreDefineStringMacro( "_WINDOWS" );
-        TargetSwitches |= WINDOWS | CHEAP_WINDOWS;
-        TargetSwitches &= ~ FLOATING_DS;
-    #endif
+#if _CPU == 386
+    PreDefineStringMacro( "__WINDOWS_386__" );
+    TargetSwitches |= FLOATING_FS;
+    SET_FPU_INLINE( CpuSwitches );
+#else
+    PreDefineStringMacro( "__WINDOWS__" );
+    PreDefineStringMacro( "_WINDOWS" );
+    TargetSwitches |= WINDOWS | CHEAP_WINDOWS;
+    TargetSwitches &= ~ FLOATING_DS;
+#endif
 }
 
 
@@ -186,44 +186,44 @@ static void setFinalTargetSystem( OPT_STORAGE *data, char *target_name )
     char buff[128];
 
     TargetSystem = TS_OTHER;
-    #if _CPU == 386
-        PreDefineStringMacro( "M_I386" );
-        PreDefineStringMacro( "_M_I386" );
-        PreDefineStringMacro( "__386__" );
-    #else
-        PreDefineStringMacro( "M_I86" );
-        PreDefineStringMacro( "_M_I86" );
-        PreDefineStringMacro( "__I86__" );
-    #endif
+#if _CPU == 386
+    PreDefineStringMacro( "M_I386" );
+    PreDefineStringMacro( "_M_I386" );
+    PreDefineStringMacro( "__386__" );
+#else
+    PreDefineStringMacro( "M_I86" );
+    PreDefineStringMacro( "_M_I86" );
+    PreDefineStringMacro( "__I86__" );
+#endif
     PreDefineStringMacro( "__X86__" );
     PreDefineStringMacro( "_X86_" );
     if( target_name == NULL ) {
-        #if defined( __OSI__ )
-            switch( __OS ) {
-            case OS_DOS:
-            case OS_WIN:
-                SetTargetLiteral( &target_name, "DOS" );
-                break;
-            case OS_OS2:
-                SetTargetLiteral( &target_name, "OS2" );
-                break;
-            case OS_NT:
-                SetTargetLiteral( &target_name, "NT" );
-                break;
-            }
-        #elif defined( __QNX__ )
-            SetTargetLiteral( &target_name, "QNX" );
-        #elif defined( __LINUX__ )
-            SetTargetLiteral( &target_name, "LINUX" );
-        #elif defined( __OS2__ )
-            SetTargetLiteral( &target_name, "OS2" );
-        #elif defined( __NT__ )
-            SetTargetLiteral( &target_name, "NT" );
-        #elif defined( __DOS__ )
+#if defined( __OSI__ )
+        switch( __OS ) {
+        case OS_DOS:
+        case OS_WIN:
             SetTargetLiteral( &target_name, "DOS" );
-        #else
-            #error "Target System not defined"
-        #endif
+            break;
+        case OS_OS2:
+            SetTargetLiteral( &target_name, "OS2" );
+            break;
+        case OS_NT:
+            SetTargetLiteral( &target_name, "NT" );
+            break;
+        }
+#elif defined( __QNX__ )
+        SetTargetLiteral( &target_name, "QNX" );
+#elif defined( __LINUX__ )
+        SetTargetLiteral( &target_name, "LINUX" );
+#elif defined( __OS2__ )
+        SetTargetLiteral( &target_name, "OS2" );
+#elif defined( __NT__ )
+        SetTargetLiteral( &target_name, "NT" );
+#elif defined( __DOS__ )
+        SetTargetLiteral( &target_name, "DOS" );
+#else
+        #error "Target System not defined"
+#endif
     }
     if( 0 == strcmp( target_name, "DOS" ) ) {
         TargetSystem = TS_DOS;
@@ -258,11 +258,11 @@ static void setFinalTargetSystem( OPT_STORAGE *data, char *target_name )
         TargetSystem = TS_WINDOWS;
         setWindowsSystem();
     } else if( 0 == strcmp( target_name, "CHEAP_WINDOWS" ) ) {
-        #if _CPU == 8086
-            TargetSystem = TS_CHEAP_WINDOWS;
-        #else
-            TargetSystem = TS_WINDOWS;
-        #endif
+#if _CPU == 8086
+        TargetSystem = TS_CHEAP_WINDOWS;
+#else
+        TargetSystem = TS_WINDOWS;
+#endif
         /* can get away with this because "cheap_windows" is longer */
         strcpy( target_name, "WINDOWS" );
         setWindowsSystem();
@@ -395,7 +395,7 @@ static void setMemoryModel( OPT_STORAGE *data, mem_model_control control )
             bit &= ~FLOATING_FS;
         }
     }
-    if( ! ( bit & FLAT_MODEL ) ) {
+    if( !( bit & FLAT_MODEL ) ) {
         bit |= FLOATING_ES;
     }
     if( bit & BIG_DATA ) {
@@ -414,161 +414,161 @@ static void setMemoryModel( OPT_STORAGE *data, mem_model_control control )
     TargetSwitches &= ~( FLAT_MODEL | BIG_CODE | BIG_DATA | CHEAP_POINTER
                     | FLOATING_ES);
     TargetSwitches |= bit;
-    #if _CPU == 8086
+#if _CPU == 8086
+    if( data->bm ) { // .DLL
+        strcpy( DLL_CLIB_Name, "2clibmt?" );
+    } else {
+        if( control & MMC_WIN ) {
+            strcpy( DLL_CLIB_Name, "2clib?" );
+        } else {
+            strcpy( DLL_CLIB_Name, "2clibdl?" );
+        }
+    }
+    if( data->bm ) {
+        strcpy( CLIB_Name, "2clibmt?" );
+    } else if( data->bd ) {
+        if( control & MMC_WIN ) {
+            strcpy( CLIB_Name, "2clib?" );
+        } else {
+            strcpy( CLIB_Name, "2clibdl?" );
+        }
+    } else {
+        strcpy( CLIB_Name, "2clib?" );
+    }
+    if( CompFlags.excs_enabled ) {
         if( data->bm ) { // .DLL
-            strcpy( DLL_CLIB_Name, "2clibmt?" );
+            strcpy( DLL_WCPPLIB_Name, "4plbxmt?" );
         } else {
             if( control & MMC_WIN ) {
-                strcpy( DLL_CLIB_Name, "2clib?" );
+                strcpy( DLL_WCPPLIB_Name, "4plbx?" );
             } else {
-                strcpy( DLL_CLIB_Name, "2clibdl?" );
+                strcpy( DLL_WCPPLIB_Name, "4plbxmt?" );
             }
         }
         if( data->bm ) {
-            strcpy( CLIB_Name, "2clibmt?" );
+            strcpy( WCPPLIB_Name, "4plbxmt?" );
         } else if( data->bd ) {
             if( control & MMC_WIN ) {
-                strcpy( CLIB_Name, "2clib?" );
-            } else {
-                strcpy( CLIB_Name, "2clibdl?" );
-            }
-        } else {
-            strcpy( CLIB_Name, "2clib?" );
-        }
-        if( CompFlags.excs_enabled ) {
-            if( data->bm ) { // .DLL
-                strcpy( DLL_WCPPLIB_Name, "4plbxmt?" );
-            } else {
-                if( control & MMC_WIN ) {
-                    strcpy( DLL_WCPPLIB_Name, "4plbx?" );
-                } else {
-                    strcpy( DLL_WCPPLIB_Name, "4plbxmt?" );
-                }
-            }
-            if( data->bm ) {
-                strcpy( WCPPLIB_Name, "4plbxmt?" );
-            } else if( data->bd ) {
-                if( control & MMC_WIN ) {
-                    strcpy( WCPPLIB_Name, "4plbx?" );
-                } else {
-                    strcpy( WCPPLIB_Name, "4plbxmt?" );
-                }
-            } else {
                 strcpy( WCPPLIB_Name, "4plbx?" );
+            } else {
+                strcpy( WCPPLIB_Name, "4plbxmt?" );
             }
         } else {
-            if( data->bm ) { // .DLL
+            strcpy( WCPPLIB_Name, "4plbx?" );
+        }
+    } else {
+        if( data->bm ) { // .DLL
+            strcpy( DLL_WCPPLIB_Name, "4plibmt?" );
+        } else {
+            if( control & MMC_WIN ) {
+                strcpy( DLL_WCPPLIB_Name, "4plib?" );
+            } else {
                 strcpy( DLL_WCPPLIB_Name, "4plibmt?" );
-            } else {
-                if( control & MMC_WIN ) {
-                    strcpy( DLL_WCPPLIB_Name, "4plib?" );
-                } else {
-                    strcpy( DLL_WCPPLIB_Name, "4plibmt?" );
-                }
             }
-            if( data->bm ) {
-                strcpy( WCPPLIB_Name, "4plibmt?" );
-            } else if( data->bd ) {
-                if( control & MMC_WIN ) {
-                    strcpy( WCPPLIB_Name, "4plib?" );
-                } else {
-                    strcpy( WCPPLIB_Name, "4plibmt?" );
-                }
-            } else {
+        }
+        if( data->bm ) {
+            strcpy( WCPPLIB_Name, "4plibmt?" );
+        } else if( data->bd ) {
+            if( control & MMC_WIN ) {
                 strcpy( WCPPLIB_Name, "4plib?" );
+            } else {
+                strcpy( WCPPLIB_Name, "4plibmt?" );
             }
-        }
-        if( GET_FPU_EMU( CpuSwitches ) ) {
-            strcpy( MATHLIB_Name, "8math87?" );
-            EmuLib_Name = "9emu87";
-        } else if( GET_FPU_LEVEL( CpuSwitches ) == FPU_NONE ) {
-            strcpy( MATHLIB_Name, "5math?" );
-            EmuLib_Name = NULL;
         } else {
-            strcpy( MATHLIB_Name, "8math87?" );
-            EmuLib_Name = "9noemu87";
+            strcpy( WCPPLIB_Name, "4plib?" );
         }
-    #elif _CPU == 386
-        if( CompFlags.register_conventions ) {
-            model = 'r';
-            PreDefineStringMacro( "__3R__" );
+    }
+    if( GET_FPU_EMU( CpuSwitches ) ) {
+        strcpy( MATHLIB_Name, "8math87?" );
+        EmuLib_Name = "9emu87";
+    } else if( GET_FPU_LEVEL( CpuSwitches ) == FPU_NONE ) {
+        strcpy( MATHLIB_Name, "5math?" );
+        EmuLib_Name = NULL;
+    } else {
+        strcpy( MATHLIB_Name, "8math87?" );
+        EmuLib_Name = "9noemu87";
+    }
+#else
+    if( CompFlags.register_conventions ) {
+        model = 'r';
+        PreDefineStringMacro( "__3R__" );
+    } else {
+        model = 's';
+        PreDefineStringMacro( "__3S__" );
+    }
+    strcpy( CDLL_Name, "1clb?dll" );
+    strcpy( CLIB_Name, "2clib3?" );
+    strcpy( DLL_CLIB_Name, "2clib3?" );
+    if( CompFlags.excs_enabled ) {
+        strcpy( WCPPDLL_Name, "3plb?dllx" );
+        if( data->bm ) { // .DLL
+            strcpy( DLL_WCPPLIB_Name, "4plbxmt3?" );
         } else {
-            model = 's';
-            PreDefineStringMacro( "__3S__" );
-        }
-        strcpy( CDLL_Name, "1clb?dll" );
-        strcpy( CLIB_Name, "2clib3?" );
-        strcpy( DLL_CLIB_Name, "2clib3?" );
-        if( CompFlags.excs_enabled ) {
-            strcpy( WCPPDLL_Name, "3plb?dllx" );
-            if( data->bm ) { // .DLL
+            if( control & MMC_WIN ) {
+                strcpy( DLL_WCPPLIB_Name, "4plbx3?" );
+            } else {
                 strcpy( DLL_WCPPLIB_Name, "4plbxmt3?" );
-            } else {
-                if( control & MMC_WIN ) {
-                    strcpy( DLL_WCPPLIB_Name, "4plbx3?" );
-                } else {
-                    strcpy( DLL_WCPPLIB_Name, "4plbxmt3?" );
-                }
             }
-            if( data->bm ) {
-                strcpy( WCPPLIB_Name, "4plbxmt3?" );
-            } else if( data->bd ) {
-                if( control & MMC_WIN ) {
-                    strcpy( WCPPLIB_Name, "4plbx3?" );
-                } else {
-                    strcpy( WCPPLIB_Name, "4plbxmt3?" );
-                }
-            } else {
+        }
+        if( data->bm ) {
+            strcpy( WCPPLIB_Name, "4plbxmt3?" );
+        } else if( data->bd ) {
+            if( control & MMC_WIN ) {
                 strcpy( WCPPLIB_Name, "4plbx3?" );
+            } else {
+                strcpy( WCPPLIB_Name, "4plbxmt3?" );
             }
         } else {
-            strcpy( WCPPDLL_Name, "3plb?dll" );
-            if( data->bm ) { // .DLL
+            strcpy( WCPPLIB_Name, "4plbx3?" );
+        }
+    } else {
+        strcpy( WCPPDLL_Name, "3plb?dll" );
+        if( data->bm ) { // .DLL
+            strcpy( DLL_WCPPLIB_Name, "4plibmt3?" );
+        } else {
+            if( control & MMC_WIN ) {
+                strcpy( DLL_WCPPLIB_Name, "4plib3?" );
+            } else {
                 strcpy( DLL_WCPPLIB_Name, "4plibmt3?" );
-            } else {
-                if( control & MMC_WIN ) {
-                    strcpy( DLL_WCPPLIB_Name, "4plib3?" );
-                } else {
-                    strcpy( DLL_WCPPLIB_Name, "4plibmt3?" );
-                }
             }
-            if( data->bm ) {
-                strcpy( WCPPLIB_Name, "4plibmt3?" );
-            } else if( data->bd ) {
-                if( control & MMC_WIN ) {
-                    strcpy( WCPPLIB_Name, "4plib3?" );
-                } else {
-                    strcpy( WCPPLIB_Name, "4plibmt3?" );
-                }
-            } else {
+        }
+        if( data->bm ) {
+            strcpy( WCPPLIB_Name, "4plibmt3?" );
+        } else if( data->bd ) {
+            if( control & MMC_WIN ) {
                 strcpy( WCPPLIB_Name, "4plib3?" );
-            }
-        }
-        if( GET_FPU_EMU( CpuSwitches ) ) {
-            if( data->br ) {
-                strcpy( MATHLIB_Name, "8mt7?dll" );
             } else {
-                strcpy( MATHLIB_Name, "8math387?" );
+                strcpy( WCPPLIB_Name, "4plibmt3?" );
             }
-            EmuLib_Name = "9emu387";
-        } else if( GET_FPU_LEVEL( CpuSwitches ) == FPU_NONE ) {
-            if( data->br ) {
-                strcpy( MATHLIB_Name, "5mth?dll" );
-            } else {
-                strcpy( MATHLIB_Name, "5math3?" );
-            }
-            EmuLib_Name = NULL;
         } else {
-            if( data->br ) {
-                strcpy( MATHLIB_Name, "8mt7?dll" );
-            } else {
-                strcpy( MATHLIB_Name, "8math387?" );
-            }
-            EmuLib_Name = "9noemu387";
+            strcpy( WCPPLIB_Name, "4plib3?" );
         }
-        *strchr( CDLL_Name, '?' ) = model;
-        *strchr( WCPPDLL_Name, '?' ) = model;
-    #endif
+    }
+    if( GET_FPU_EMU( CpuSwitches ) ) {
+        if( data->br ) {
+            strcpy( MATHLIB_Name, "8mt7?dll" );
+        } else {
+            strcpy( MATHLIB_Name, "8math387?" );
+        }
+        EmuLib_Name = "9emu387";
+    } else if( GET_FPU_LEVEL( CpuSwitches ) == FPU_NONE ) {
+        if( data->br ) {
+            strcpy( MATHLIB_Name, "5mth?dll" );
+        } else {
+            strcpy( MATHLIB_Name, "5math3?" );
+        }
+        EmuLib_Name = NULL;
+    } else {
+        if( data->br ) {
+            strcpy( MATHLIB_Name, "8mt7?dll" );
+        } else {
+            strcpy( MATHLIB_Name, "8math387?" );
+        }
+        EmuLib_Name = "9noemu387";
+    }
+    *strchr( CDLL_Name, '?' ) = model;
+    *strchr( WCPPDLL_Name, '?' ) = model;
+#endif
     *strchr( CLIB_Name, '?' ) = model;
     *strchr( MATHLIB_Name, '?' ) = model;
     *strchr( WCPPLIB_Name, '?' ) = model;
@@ -765,13 +765,13 @@ static void macroDefs( void )
     if( CompFlags.unique_functions ) {
         DefSwitchMacro( "OU" );
     }
-    #if _CPU == 386
-        if( CompFlags.register_conventions ) {
-            DefSwitchMacro( "3R" );
-        } else {
-            DefSwitchMacro( "3S" );
-        }
-    #endif
+#if _CPU == 386
+    if( CompFlags.register_conventions ) {
+        DefSwitchMacro( "3R" );
+    } else {
+        DefSwitchMacro( "3S" );
+    }
+#endif
     if( CompFlags.emit_names ) {
         DefSwitchMacro( "EN" );
     }
@@ -935,13 +935,13 @@ static void setStackConventions( void )    // SET 386 HARDWARE OPTIONS
 
 static void miscAnalysis( OPT_STORAGE *data )
 {
-    #if _CPU == 8086
-        if( data->bd || data->zu ) {
-            if( TargetSwitches & SMART_WINDOWS ) {
-                CErr1( ERR_ZWS_MUST_HAVE_SS_DS_SAME );
-            }
+#if _CPU == 8086
+    if( data->bd || data->zu ) {
+        if( TargetSwitches & SMART_WINDOWS ) {
+            CErr1( ERR_ZWS_MUST_HAVE_SS_DS_SAME );
         }
-    #endif
+    }
+#endif
     if( ! data->r ) {
         if( TargetSwitches & FLOATING_DS ) {
             HW_CTurnOff( DefaultInfo.save, HW_DS );
@@ -959,11 +959,11 @@ static void miscAnalysis( OPT_STORAGE *data )
     if( GET_FPU( CpuSwitches ) > FPU_NONE ) {
         PreDefineStringMacro( "__FPI__" );
     }
-    #if _CPU == 386
-        if( ! CompFlags.register_conventions ) {
-            setStackConventions();
-        }
-    #endif
+#if _CPU == 386
+    if( ! CompFlags.register_conventions ) {
+        setStackConventions();
+    }
+#endif
     if( data->zx ) {
         HW_CTurnOff( DefaultInfo.save, HW_FLTS );
     }
@@ -1143,10 +1143,9 @@ void CmdSysAnalyse( OPT_STORAGE *data )
     //      If fpr switch is not present but are using NetWare then set Stack87
     //      unless the target is NetWare 5 or above.
     */
-    if( data->fpr) {
-            Stack87 = 4;
-    }
-    else{
+    if( data->fpr ) {
+        Stack87 = 4;
+    } else {
         if( mmc & MMC_NETWARE ) {
             if(TS_NETWARE5 != TargetSystem){
                 Stack87 = 4;    /* no fpr for netware 5 */
@@ -1246,7 +1245,7 @@ void CmdSysAnalyse( OPT_STORAGE *data )
     if( data->zz ) {
         CompFlags.use_stdcall_at_number = 0;
     }
-#elif _CPU == 8086
+#else
     if( data->xgls ) {
         TargetSwitches |= NULL_SELECTOR_BAD;
     }
