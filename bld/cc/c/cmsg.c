@@ -70,14 +70,14 @@ static char const *MsgPrefix[grp_index_max] = {
 #undef GRP_DEF
 };
 
-#ifndef __target_CPU
-#error no target
+#ifndef __msg_file_prefix
+#error no message file prefix
 #endif
 #define _mkstr( a ) #a
 #define _str( a ) _mkstr( a )
 void InitMsg( void )
 {
-    internationalData = LoadInternationalData( _str( __target_CPU ) );
+    internationalData = LoadInternationalData( _str( __msg_file_prefix ) );
 }
 void FiniMsg( void )
 {

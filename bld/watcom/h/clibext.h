@@ -16,7 +16,6 @@
 #define _vbprintf vsnprintf
 #define __near
 #define near
-#define __target_CPU = _CPU
 #define _snprintf snprintf
 #define _vsnprintf vsnprintf
 #define  __va_list  va_list
