@@ -153,5 +153,6 @@ wdefwin.h       : ..\watcom\wdefwin.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro
 win\win386.h    : ..\watcom\win386.mh ..\readonly.sp ..\crwat.sp
 win\windows.h   : ..\watcom\windows.mh ..\readonly.sp ..\crwat.sp
 win\_win386.h   : ..\watcom\_win386.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp
+win\win16.h     : ..\watcom\win16.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp
 wsample.h       : ..\watcom\wsample.mh ..\readonly.sp ..\crwat.sp ..\cpluspro.sp ..\cplusepi.sp
 _comdef.h       : ..\watcom\_comdef.mh ..\readonly.sp ..\crwat.sp

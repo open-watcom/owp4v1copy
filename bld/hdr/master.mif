@@ -100,7 +100,7 @@ DOS_files = &
         setjmpex.h &
         wsample.h &
         win/_win386.h &
-#        win/win16.h & orig does not exist!
+        win/win16.h &
         win/windows.h &
         win/win386.h &
         sys/utime.h &

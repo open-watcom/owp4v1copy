@@ -1,11 +1,18 @@
+/****************************************************************************
+ *
+ *  WIN16.H -
+ *
+ *      Include file for Windows 3.x applications
+ *
+ ****************************************************************************/
+
 #ifndef	__WINDOWS_H
 #define	__WINDOWS_H
 
-#pragma	pack(push,1)
+:include readonly.sp
+:include cpluspro.sp
 
-#ifdef	__cplusplus
-extern	"C" {
-#endif
+#pragma	pack(push,1)
 
 /* Default version is 3.1 */
 #ifndef	WINVER
@@ -2252,10 +2259,8 @@ int	CALLBACK	LibMain(HANDLE,WORD,WORD,LPSTR);
 int	CALLBACK	WEP(int);
 #endif
 
-#ifdef	__cplusplus
-}
-#endif
-
 #pragma	pack(pop)
+
+:include cplusepi.sp
 
 #endif
