@@ -1,0 +1,9 @@
+#
+# create contents file
+#
+# remove first topic link on first level
+#
+/^1\ndd
+w! %1
+q!
+

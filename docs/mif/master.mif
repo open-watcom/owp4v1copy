@@ -2,16 +2,15 @@ proj_name = docs
 
 .OPTIMIZE
 
-.EXTENSIONS:
-.EXTENSIONS: .mif .cop .pcd
+.EXTENSIONS: .cop .pcd
 
-.mif : ..\mif
+!include cproj.mif
 
 # location of documentation sources
 docsrc_dir=..\doc
 
-!include depends.mif
-!include books.mif
+!include ../mif/depends.mif
+!include ../mif/books.mif
 
 #############################################################
 #
@@ -81,7 +80,7 @@ gml_drivers= &
 ####################################################
 !ifeq dotarget nt
 
-.EXTENSIONS: .hlp .hpj .cnt .rtf .hh .h .cn1
+.EXTENSIONS: .hlp .hpj .cnt .rtf .cn1
 
 all : $(hbook).hlp $(hbook).h $(hbook).cnt .SYMBOLIC
     @%null
@@ -94,21 +93,21 @@ $(hbook).hpj : $(proj_objs)
 
 !ifeq hbook cbooks
 $(hbook).cnt : $(docsrc_dir)\gs\$(hbook).cnt
-    @%make compile_cnt_cp
+    !$(vi) -s ../mif/crtcntcp.vi -p"$^@" $[@
 !else ifeq hbook ebooks
 $(hbook).cnt : $(docsrc_dir)\gs\$(hbook).cnt
-    @%make compile_cnt_cp
+    !$(vi) -s ../mif/crtcntcp.vi -p"$^@" $[@
 !else ifeq hbook fbooks
 $(hbook).cnt : $(docsrc_dir)\gs\$(hbook).cnt
-    @%make compile_cnt_cp
+    !$(vi) -s ../mif/crtcntcp.vi -p"$^@" $[@
 !else
 $(hbook).cnt : $(hbook).cn1
-    @%make compile_cnt
+    !$(vi) -s ../mif/crtcnthd.vi -p"\"$(book_title)\" $^&.hlp $^@ $(book_multi_chapter)" $[@
 !endif
 
 $(hbook).rtf $(hbook).cn1 $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs) $(gml_drivers)
     @%make compile_gml_to_xxx
-    @copy $(hbook).h $(guitools_dir)\win95 > nul
+    @copy $(hbook).h $(guitools_dir)\win95 > $(nulldevice)
 
 
 ####################################################
@@ -118,7 +117,7 @@ $(hbook).rtf $(hbook).cn1 $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs) $(g
 ####################################################
 !else ifeq dotarget win
 
-.EXTENSIONS: .hlp .hpj .hh .h .rtf
+.EXTENSIONS: .hlp .hpj .rtf
 
 all : $(hbook).hlp $(hbook).h .SYMBOLIC
     @%null
@@ -137,7 +136,7 @@ $(hbook).hpj : $(proj_objs)
 
 $(hbook).rtf $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs) $(gml_drivers)
     @%make compile_gml_to_xxx
-    @copy $(hbook).h $(guitools_dir)\win > nul
+    @copy $(hbook).h $(guitools_dir)\win > $(nulldevice)
 
 
 ####################################################
@@ -147,7 +146,7 @@ $(hbook).rtf $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs) $(gml_drivers)
 ####################################################
 !else ifeq dotarget dos
 
-.EXTENSIONS: .ihp .ib .h
+.EXTENSIONS: .ihp .ib
 
 all : $(hbook).ihp $(hbook).h .SYMBOLIC
     @%null
@@ -157,7 +156,7 @@ $(hbook).ihp : $(hbook).ib $(hbook).h
 
 $(hbook).ib $(hbook).h : $(book_objs) $(proj_objs) $(gml_drivers)
     @%make compile_gml_to_xxx
-    @copy $(hbook).h $(guitools_dir)\ib > nul
+    @copy $(hbook).h $(guitools_dir)\ib > $(nulldevice)
 
 
 ####################################################
@@ -167,14 +166,14 @@ $(hbook).ib $(hbook).h : $(book_objs) $(proj_objs) $(gml_drivers)
 ####################################################
 !else ifeq dotarget html
 
-.EXTENSIONS: .htm .h
+.EXTENSIONS: .htm
 
 all : $(hbook).htm $(hbook).h .SYMBOLIC
     @%null
 
 $(hbook).htm $(hbook).h : $(book_objs) $(proj_objs) $(gml_drivers)
 !ifdef book_bmroot
-    @copy $(book_bmroot)\*.bmp $^: > nul
+    @copy $(book_bmroot)\*.bmp $^: > $(nulldevice)
 !endif
     @%make compile_gml_to_xxx
 
@@ -219,7 +218,7 @@ $(hbook).pdf : $(hbook).ps
 ####################################################
 !else ifeq dotarget os2
 
-.EXTENSIONS: .hlp .inf .ipf .h
+.EXTENSIONS: .hlp .inf .ipf
 .IGNORE
 
 all : $(hbook).inf $(hbook).hlp $(hbook).h .SYMBOLIC
@@ -239,7 +238,7 @@ $(hbook).hlp : .symbolic
 
 $(hbook).ipf $(hbook).h : $(book_objs) $(proj_objs) $(gml_drivers)
     @%make compile_gml_to_xxx
-    @copy $(hbook).h $(guitools_dir)\os2 > nul
+    @copy $(hbook).h $(guitools_dir)\os2 > $(nulldevice)
 
 !endif
 
@@ -477,27 +476,6 @@ compile_hpj_nt : .PROCEDURE
     @%append $^@ CreateButton( "btn_up", "&Up", "Contents()" )
 
 ####################################################
-compile_cnt : .PROCEDURE
-    @%create $^@
-    @%append $^@ :Base $^&.hlp>main
-    @%append $^@ :Title $(book_title)
-    @%append $^@ :Index $(book_title) Help=$^&.hlp
-    @%append $^@
-    @%append $^@ 1 $(book_title)
-    @copy $^@+$*.cn1 $^@ > nul
-    @!vi -d -q -k ":1,$$s/=$$/=ZZZ/\n:g/=ZZZ/j\n:1,$$s/=ZZZ /=/\n:wq\n" $^@
-!ifndef book_multi_chapter
-    @!vi -d -q -k ":/^1/d\n:1,$$s/^2/1/\n:1,$$s/^3/2/\n:1,$$s/^4/3/\n:1,$$s/^5/4/\n:1,$$s/^6/5/\n:wq\n" $^@
-!endif
-    @echo Done with vi scripts
-
-####################################################
-compile_cnt_cp : .PROCEDURE
-    @copy $(docsrc_dir)\gs\$(hbook).cnt $(hbook).cnt > nul
-    @!vi -d -q -k "/^1\ndd\n:wq\n" $(hbook).cnt
-    @echo Done with vi scripts
-
-####################################################
 
 .pcd : $(gml_whelp)
 .cop : .
@@ -508,4 +486,4 @@ currGMLLIB=$+$(%GMLLIB)$-
     -$(gml_path)\gendev $(gml_whelp)\$^&.pcd
     @set GMLLIB=$(currGMLLIB)
 
-!include clean.mif
+!include ../mif/clean.mif

@@ -125,7 +125,7 @@ book_objs=$(objs_gs) $(objs_cg)
 book_incs=$(incs_gs);$(incs_cg)
 book_bmroot=$(bmroot_gs)
 book_src=c_readme
-!define book_multi_chapter
+book_multi_chapter=1
 
 !else ifeq hbook f_readme
 # f_readme
@@ -134,7 +134,7 @@ book_objs=$(objs_gs)
 book_incs=$(incs_gs)
 book_bmroot=$(bmroot_gs)
 book_src=f_readme
-!define book_multi_chapter
+book_multi_chapter=1
 
 !else ifeq hbook tools
 # tools
@@ -143,7 +143,7 @@ book_objs=$(objs_cmn) $(objs_lg) $(objs_cg)
 book_incs=$(incs_cmn);$(incs_lg);$(incs_cg)
 book_bmroot=$(bmroot_cg)
 book_src=ctools
-!define book_multi_chapter
+book_multi_chapter=1
 
 !else ifeq hbook ftools
 # ftools
@@ -152,7 +152,7 @@ book_objs=$(objs_cmn) $(objs_lg) $(objs_fg)
 book_incs=$(incs_cmn);$(incs_lg);$(incs_fg)
 book_bmroot=$(bmroot_fg)
 book_src=ftools
-!define book_multi_chapter
+book_multi_chapter=1
 
 !else ifeq hbook lguide
 # lguide
@@ -160,7 +160,7 @@ book_title=$(company) Linker Guide
 book_objs=$(objs_lg)
 book_incs=$(incs_lg)
 book_src=lguide
-!define book_multi_chapter
+book_multi_chapter=1
 
 !else ifeq hbook cguide
 # cguide
@@ -169,7 +169,7 @@ book_objs=$(objs_cg) $(objs_lg) $(objs_cmn) $(objs_plusplus)
 book_incs=$(incs_cg);$(incs_lg);$(incs_cmn);$(incs_plusplus)
 book_bmroot=$(bmroot_cg)
 book_src=cguide
-!define book_multi_chapter
+book_multi_chapter=1
 
 !else ifeq hbook cguideq
 # cguideq
@@ -178,7 +178,7 @@ book_objs=$(objs_cg) $(objs_lg) $(objs_cmn) $(objs_plusplus)
 book_incs=$(incs_cg);$(incs_lg);$(incs_cmn);$(incs_plusplus)
 book_bmroot=$(bmroot_cg)
 book_src=cguideq
-!define book_multi_chapter
+book_multi_chapter=1
 
 !else ifeq hbook clr
 # clr
@@ -187,7 +187,7 @@ book_objs=$(objs_cl)
 book_incs=$(incs_cl)
 book_bmroot=$(bmroot_cl)
 book_src=c
-!define book_multi_chapter
+book_multi_chapter=1
 
 !else ifeq hbook fuguide
 # fuguide
@@ -196,7 +196,7 @@ book_objs=$(objs_fg) $(objs_lg) $(objs_cmn)
 book_incs=$(incs_fg);$(incs_lg);$(incs_cmn)
 book_bmroot=$(bmroot_fg)
 book_src=fuguide
-!define book_multi_chapter
+book_multi_chapter=1
 
 !else ifeq hbook wfcerrs
 # wfcerrs
@@ -258,7 +258,7 @@ book_objs=$(objs_pg) $(objs_cmn) $(objs_cg) $(objs_rsi) $(objs_win386) $(objs_lr
 book_incs=$(incs_pg);$(incs_cmn);$(incs_cg);$(incs_rsi);$(incs_win386);$(incs_lr1)
 book_bmroot=$(bmroot_pg)
 book_src=pguide
-!define book_multi_chapter
+book_multi_chapter=1
 
 !else ifeq hbook fpguide
 # fpguide
@@ -267,7 +267,7 @@ book_objs=$(objs_pg) $(objs_cmn) $(objs_fg) $(objs_rsi) $(objs_win386) $(objs_lr
 book_incs=$(incs_pg);$(incs_cmn);$(incs_fg);$(incs_rsi);$(incs_win386);$(incs_lr1)
 book_bmroot=$(bmroot_pg)
 book_src=fpguide
-!define book_multi_chapter
+book_multi_chapter=1
 
 !else ifeq hbook f77lr
 # f77lr
@@ -275,7 +275,7 @@ book_title=$(company) FORTRAN 77 Language Reference
 book_objs=$(objs_fl)
 book_incs=$(incs_fl)
 book_src=f77lr
-!define book_multi_chapter
+book_multi_chapter=1
 
 !else ifeq hbook f77graph
 # f77graph
@@ -284,7 +284,7 @@ book_objs=$(objs_lr2) $(objs_cmn)
 book_incs=$(incs_lr2);$(incs_cmn)
 book_bmroot=$(bmroot_lr2)
 book_src=f77graph
-!define book_multi_chapter
+book_multi_chapter=1
 
 !else ifeq hbook clbtst
 # clbtst
@@ -293,7 +293,7 @@ book_objs=$(objs_lr2) $(objs_cmn)
 book_incs=$(incs_lr2);$(incs_cmn)
 book_bmroot=$(bmroot_lr2)
 book_src=clib_tst
-!define book_multi_chapter
+book_multi_chapter=1
 
 !else ifeq hbook clib
 # clib
@@ -302,7 +302,7 @@ book_objs=$(objs_lr2) $(objs_cmn)
 book_incs=$(incs_lr2);$(incs_cmn)
 book_bmroot=$(bmroot_lr2)
 book_src=clib_dos
-!define book_multi_chapter
+book_multi_chapter=1
 
 !else ifeq hbook clibnt
 # clibnt
@@ -310,7 +310,7 @@ book_title=$(company) C Library Reference for Win32
 book_objs=$(objs_lr3) $(objs_cmn)
 book_incs=$(incs_lr3);$(incs_cmn)
 book_src=clib_nt
-!define book_multi_chapter
+book_multi_chapter=1
 
 !else ifeq hbook clibqnx
 # clibqnx
@@ -319,7 +319,7 @@ book_objs=$(objs_lr2) $(objs_cmn)
 book_incs=$(incs_lr2);$(incs_cmn)
 book_bmroot=$(bmroot_lr2)
 book_src=clib_qnx
-!define book_multi_chapter
+book_multi_chapter=1
 
 !else ifeq hbook cpplib
 # cpplib
@@ -327,7 +327,7 @@ book_title=$(company) C++ Class Library Reference
 book_objs=$(objs_cpplib)
 book_incs=$(incs_cpplib)
 book_src=cpplib
-!define book_multi_chapter
+book_multi_chapter=1
 
 !else ifeq hbook wd
 # wd
@@ -336,7 +336,7 @@ book_objs=$(objs_wd)
 book_incs=$(incs_wd)
 book_bmroot=$(bmroot_wd)
 book_src=wdbg
-!define book_multi_chapter
+book_multi_chapter=1
 !define book_os2_help
 
 !else ifeq hbook ide
@@ -364,7 +364,7 @@ book_objs=$(objs_gui) $(objs_cg)
 book_incs=$(incs_gui);$(incs_cg)
 book_bmroot=$(bmroot_gui)
 book_src=guitool
-!define book_multi_chapter
+book_multi_chapter=1
 !define book_os2_help
 
 !else ifeq hbook editor
@@ -374,7 +374,7 @@ book_objs=$(objs_gui) $(objs_cg)
 book_incs=$(incs_gui);$(incs_cg)
 book_bmroot=$(bmroot_gui)
 book_src=guitool
-!define book_multi_chapter
+book_multi_chapter=1
 
 !else ifeq hbook resedt
 # resedt
