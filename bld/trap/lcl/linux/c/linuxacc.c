@@ -213,7 +213,9 @@ Elf32_Dyn *GetDebuggeeDynSection( const char *exe_name )
      */
     if( read( fd, &ehdr, sizeof( ehdr ) ) >= sizeof( ehdr ) &&
         memcmp( ehdr.e_ident, ELF_SIGNATURE, 4 ) == 0 &&
-        ehdr.e_phentsize >= sizeof( phdr ) ) {
+        ehdr.e_phoff != 0 &&
+        ehdr.e_phentsize >= sizeof( phdr ) &&
+        lseek( fd, ehdr.e_phoff, SEEK_SET ) == ehdr.e_phoff ) {
         for( i = 0; i < ehdr.e_phnum; i++ ) {
             if( read( fd, &phdr, sizeof phdr ) < sizeof( phdr ) )
                 break;
