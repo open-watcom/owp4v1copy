@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  ui library definitions
 *
 ****************************************************************************/
 
@@ -338,6 +337,54 @@ enum    {
         ATTR_OFF_HOTSPOT,
         ATTR_RADIO_HOTSPOT,
         ATTR_LAST
+};
+
+/* line drawing and graphics characters */
+enum {
+        /* single line box drawing */
+        UI_LLCORNER = 1,
+        UI_LRCORNER,
+        UI_ULCORNER,
+        UI_URCORNER,
+        UI_HLINE,
+        UI_VLINE,
+        UI_TTEE,
+        UI_RTEE,
+        UI_LTEE,
+
+        /* double line box drawing */
+        UI_DLLCORNER,
+        UI_DLRCORNER,
+        UI_DULCORNER,
+        UI_DURCORNER,
+        UI_DHLINE,
+        UI_DVLINE,
+
+        /* triangles */
+        UI_DPOINT,
+        UI_LPOINT,
+        UI_RPOINT,
+        UI_UPOINT,
+
+        /* arrows */
+        UI_DARROW,
+        UI_UDARROW,
+
+        /* boxes */
+        UI_DBLOCK,
+        UI_LBLOCK,
+        UI_RBLOCK,
+        UI_UBLOCK,
+        UI_CKBOARD,
+        UI_BOARD,
+        UI_BLOCK,
+
+        /* misc */
+        UI_SQUARE,
+        UI_ROOT,
+        UI_EQUIVALENT = 31
+        /* we use 31 of them: don't add any more!
+           they have to fit in the C0 ASCII range */
 };
 
 #ifdef __GUI__

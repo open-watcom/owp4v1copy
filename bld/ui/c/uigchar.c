@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Graphic character definitions
 *
 ****************************************************************************/
 
@@ -34,6 +33,49 @@
 #include "uibox.h"
 #include "uichars.h"
 #include "uidef.h"
+
+#ifdef __LINUX__
+
+void intern DBCSCharacterMap( void ) {}
+
+unsigned char UiGChar[] = {
+    '(',                /* UI_RADIO_LEFT        */
+    ')',                /* UI_RADIO_RIGHT       */
+    '*',                /* UI_RADIO_FULL        */
+    ' ',                /* UI_RADIO_EMPTY       */
+    '[',                /* UI_CHECKBOX_LEFT     */
+    ']',                /* UI_CHECKBOX_RIGHT    */
+    'X',                /* UI_CHECKBOX_FULL     */
+    ' ',                /* UI_CHECKBOX_EMPTY    */
+    UI_ULCORNER,        /* UI_BOX_TOP_LEFT      */
+    UI_URCORNER,        /* UI_BOX_TOP_RIGHT     */
+    UI_LRCORNER,        /* UI_BOX_BOTTOM_RIGHT  */
+    UI_LLCORNER,        /* UI_BOX_BOTTOM_LEFT   */
+    UI_DHLINE,          /* UI_BOX_TOP_LINE      */
+    UI_DVLINE,          /* UI_BOX_RIGHT_LINE    */
+    UI_DHLINE,          /* UI_BOX_BOTTOM_LINE   */
+    UI_DVLINE,          /* UI_BOX_LEFT_LINE     */
+    UI_UBLOCK,          /* UI_SHADOW_BOTTOM     */
+    ' ',                /* UI_SHADOW_B_LEFT     */
+    UI_DBLOCK,          /* UI_SHADOW_RIGHT      */
+    UI_UBLOCK,          /* UI_SHADOW_B_RIGHT    */
+    UI_ULCORNER,        /* UI_SBOX_TOP_LEFT     */
+    UI_URCORNER,        /* UI_SBOX_TOP_RIGHT    */
+    UI_LRCORNER,        /* UI_SBOX_BOTTOM_RIGHT */
+    UI_LLCORNER,        /* UI_SBOX_BOTTOM_LEFT  */
+    UI_HLINE,           /* UI_SBOX_TOP_LINE     */
+    UI_VLINE,           /* UI_SBOX_RIGHT_LINE   */
+    UI_HLINE,           /* UI_SBOX_BOTTOM_LINE  */
+    UI_VLINE,           /* UI_SBOX_LEFT_LINE    */
+    UI_LTEE,            /* UI_SBOX_LEFT_TACK    */
+    UI_RTEE,            /* UI_SBOX_RIGHT_TACK   */
+    UI_HLINE,           /* UI_SBOX_HORIZ_LINE   */
+    UI_DARROW,          /* UI_ARROW_DOWN        */
+    UI_RPOINT,          /* UI_POPUP_MARK        */
+    UI_ROOT,            /* UI_CHECK_MARK        */
+};
+
+#else
 
 /*
     The order of items in this table is position dependent.
@@ -185,3 +227,5 @@ void intern DBCSCharacterMap()
         }
     }
 }
+
+#endif

@@ -383,34 +383,56 @@ static int do_parse( void )
 }
 
 struct charmap {
-    unsigned char cp437;
     unsigned char vt100;
     unsigned short unicode;
 };
 
 static struct charmap default_tix[] = {
+    /* keep zero to handle strings */
+    0, 0,
+
+    /* single line box drawing */
+    'm', 0x2514, /* UI_LLCORNER  */
+    'j', 0x2518, /* UI_LRCORNER  */
+    'l', 0x250c, /* UI_ULCORNER  */
+    'k', 0x2510, /* UI_URCORNER  */
+    'q', 0x2500, /* UI_HLINE     */
+    'x', 0x2502, /* UI_VLINE     */
+    'w', 0x252c, /* UI_TTEE      */
+    'u', 0x2524, /* UI_RTEE      */
+    't', 0x251c, /* UI_LTEE      */
+
+    /* double line box drawing */
+    'm', 0x255a, /* UI_DLLCORNER */
+    'j', 0x255d, /* UI_DLRCORNER */
+    'l', 0x2554, /* UI_DULCORNER */
+    'k', 0x2557, /* UI_DURCORNER */
+    'q', 0x2550, /* UI_DHLINE    */
+    'x', 0x2551, /* UI_DVLINE    */
+
+    /* triangles */
+    '.', 0x25bc, /* UI_DPOINT    */ // 0x2193
+    ',', 0x25c4, /* UI_LPOINT    */ // 0x2190
+    '+', 0x25ba, /* UI_RPOINT    */ // 0x2192
+    '-', 0x25b2, /* UI_UPOINT    */ // 0x2191
+
     /* arrows */
-    0x10, '+', 0x25ba, 0x11, ',', 0x25c4, 0x1e, '-', 0x25b2, 0x1f, '.', 0x25bc,
-    0x1a, '+', 0x2192, 0x1b, ',', 0x2190, 0x18, '-', 0x2191, 0x19, '.', 0x2193,
-    /* squares */
-    0xb0, 'a', 0x2591, 0xb1, 'a', 0x2592, 0xb2, 'O', 0x2593, 0xdb, 'O', 0x2588,
-    0xdc, ' ' | 0x80, 0x2584, 0xdd, 'O', 0x258c, 0xde, ' ' | 0x80, 0x2590,
-    0xdf, 'O', 0x2580,
-    /* line drawing */
-    0xb3, 'x', 0x2502, 0xb4, 'u', 0x2524, 0xb5, 'u', 0x2561, 0xb6, 'u', 0x2562,
-    0xb7, 'k', 0x2556, 0xb8, 'k', 0x2555, 0xb9, 'u', 0x2563, 0xba, 'x', 0x2551,
-    0xbb, 'k', 0x2557, 0xbc, 'j', 0x255d, 0xbd, 'j', 0x255c, 0xbe, 'j', 0x255b,
-    0xbf, 'k', 0x2510, 0xc0, 'm', 0x2514, 0xc1, 'v', 0x2534, 0xc2, 'w', 0x252c,
-    0xc3, 't', 0x251c, 0xc4, 'q', 0x2500, 0xc5, 'n', 0x253c, 0xc6, 't', 0x255e,
-    0xc7, 't', 0x255f, 0xc8, 'm', 0x255a, 0xc9, 'l', 0x2554, 0xca, 'v', 0x2569,
-    0xcb, 'w', 0x2566, 0xcc, 't', 0x2560, 0xcd, 'q', 0x2550, 0xce, 'n', 0x256c,
-    0xcf, 'v', 0x2567, 0xd0, 'v', 0x2568, 0xd1, 'w', 0x2564, 0xd2, 'w', 0x2565,
-    0xd3, 'j', 0x2559, 0xd4, 'j', 0x2558, 0xd5, 'l', 0x2552, 0xd6, 'l', 0x2553,
-    0xd7, 'n', 0x256b, 0xd8, 'n', 0x256a, 0xd9, 'j', 0x2518, 0xda, 'l', 0x250c,
+    '.', 0x2193, /* UI_DARROW    */
+    '/', 0x2195, /* UI_UDARROW   */
+
+    /* boxes */
+    0xa0,0x2584, /* UI_DBLOCK    */
+    'O', 0x258c, /* UI_LBLOCK    */
+    0xa0,0x2590, /* UI_RBLOCK    */
+    'O', 0x2580, /* UI_UBLOCK    */
+    'a', 0x2591, /* UI_CKBOARD   */
+    'h', 0x2592, /* UI_BOARD     */
+    'O', 0x2588, /* UI_BLOCK     */
+
     /* misc */
-    0xf1, 'g', 0x00b1, 0xf8, 'f', 0x00b0, 0xf9, '~', 0x2219, 0xfa, '~', 0x00b7,
-    0xfe, 'h', 0x25a0, 0xff, ' ' | 0x80, 0xa0,
-    0xf0, '#', 0x2261, 0x12, '/', 0x2195, 0xfb, '*', 0x221a
+    'h', 0x25a0, /* UI_SQUARE    */
+    '*', 0x221a, /* UI_ROOT      */
+    '=', 0x2261, /* UI_EQUIVALENT*/
 };
 
 static char alt_keys[] = "QWERTYUIOP[]\r\0ASDFGHJKL;'`\0\\ZXCVBNM,./";
@@ -421,8 +443,7 @@ static char esc_str[] = "\033A";
 static int do_default( void )
 /***************************/
 {
-    unsigned char       code, c, cmap;
-    unsigned short      unicode;
+    unsigned char       c, cmap;
     int                 i;
     char               *s;
     int                 utf8_mode = 0;
@@ -434,24 +455,29 @@ static int do_default( void )
             utf8_mode = 1;
 
     for( i = 0; i < sizeof( default_tix ) / sizeof( default_tix[0] ) ; i ++ ) {
-        code = default_tix[i].cp437;
-        cmap = c = default_tix[i].vt100;
-        unicode = default_tix[i].unicode;
-        ti_char_map[code][0] = cmap;
         if( utf8_mode ) {
-            wctomb( ti_char_map[code], unicode );
-        } else if( (c & 0x80) == 0 ) {
+            wctomb( ti_char_map[i], default_tix[i].unicode );
+            continue;
+        }
+        cmap = c = default_tix[i].vt100;
+        if( (c & 0x80) == 0 ) {
             cmap = find_acs_map( c, acs_chars );
             if( cmap != '\0' ) {
-                ti_alt_map_set( code );
+                ti_alt_map_set( i );
             } else {
                 cmap = find_acs_map( c, acs_default );
                 if( cmap == '\0' ) {
                     cmap = c;
-                    ti_alt_map_set( code );
+                    ti_alt_map_set( i );
                 }
             }
-            ti_char_map[code][0] = cmap;
+        }
+        ti_char_map[i][0] = cmap;
+    }
+    if( utf8_mode ) {
+        /* handle at least iso-8859-1 for now */
+        for( i = 0xa0; i < 0x100; i++ ) {
+            wctomb( ti_char_map[i], i );
         }
     }
     for( i = 0; i < sizeof( alt_keys ); i++ ) {
@@ -494,10 +520,13 @@ static int do_default( void )
         TrieAdd( EV_CTRL_HOME, "\033[O5H" );
         TrieAdd( EV_CTRL_END, "\033[O5F" );
     }
-    if( utf8_mode && s != NULL && strncmp( s, "linux", 5 ) == 0 ) {
+    if( s != NULL && strncmp( s, "linux", 5 ) == 0 ) {
         /* force UTF-8 mode if the locale is set that way; *
          * we may be on a new VT on the Linux console      */
-        write( UIConHandle, "\033%G", 3 );
+        if ( utf8_mode )
+            write( UIConHandle, "\033%G", 3 );
+        else
+            write( UIConHandle, "\033%@", 3 );
     }
     return( 1 );
 }

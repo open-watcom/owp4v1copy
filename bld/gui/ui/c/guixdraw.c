@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  draw various character graphics
 *
 ****************************************************************************/
 
@@ -144,21 +143,27 @@ extern gui_window *GUICurrWnd;
 
 void GUIInitDrawingChars( bool dbcs )
 {
+#ifdef __LINUX__
+    #define draw_pick( a,b,c,d,e ) DrawingChars[DRAW_##a] = e;
+    #include "guidraw.h"
+    #undef draw_pick
+#else
     if( dbcs ) {
         if( uionnec() ) {
-            #define draw_pick( a,b,c,d ) DrawingChars[DRAW_##a] = d;
+            #define draw_pick( a,b,c,d,e ) DrawingChars[DRAW_##a] = d;
             #include "guidraw.h"
             #undef draw_pick
         } else {
-            #define draw_pick( a,b,c,d ) DrawingChars[DRAW_##a] = c;
+            #define draw_pick( a,b,c,d,e ) DrawingChars[DRAW_##a] = c;
             #include "guidraw.h"
             #undef draw_pick
         }
     } else {
-        #define draw_pick( a,b,c,d ) DrawingChars[DRAW_##a] = b;
+        #define draw_pick( a,b,c,d,e ) DrawingChars[DRAW_##a] = b;
         #include "guidraw.h"
         #undef draw_pick
     }
+#endif
 }
 
 
