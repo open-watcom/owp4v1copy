@@ -18,6 +18,7 @@ cdsay .
     <CPCMD> <PROJDIR>/dos/*.cnv          <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/c*.            <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/algorith       <RELROOT>/rel2/h/
+    <CPCMD> <PROJDIR>/dos/exceptio       <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/fstream        <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/function       <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/iomanip        <RELROOT>/rel2/h/
@@ -29,15 +30,18 @@ cdsay .
     <CPCMD> <PROJDIR>/dos/limits         <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/memory         <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/ostream        <RELROOT>/rel2/h/
+    <CPCMD> <PROJDIR>/dos/stdexcep       <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/streambu       <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/string         <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/strstrea       <RELROOT>/rel2/h/
+    <CPCMD> <PROJDIR>/dos/typeinfo       <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/utility        <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/sys/*.h        <RELROOT>/rel2/h/sys/
     <CPCMD> <PROJDIR>/dos/win/*.h        <RELROOT>/rel2/h/win/
     <CPCMD> <PROJDIR>/linux/*.h*         <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/c*.          <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/algorith     <RELROOT>/rel2/lh/
+    <CPCMD> <PROJDIR>/linux/exceptio     <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/fstream      <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/function     <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/iomanip      <RELROOT>/rel2/lh/
@@ -49,9 +53,11 @@ cdsay .
     <CPCMD> <PROJDIR>/linux/limits       <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/memory       <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/ostream      <RELROOT>/rel2/lh/
+    <CPCMD> <PROJDIR>/linux/stdexcep     <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/streambu     <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/string       <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/strstrea     <RELROOT>/rel2/lh/
+    <CPCMD> <PROJDIR>/linux/typeinfo     <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/utility      <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/arpa/*.h     <RELROOT>/rel2/lh/arpa/
     <CPCMD> <PROJDIR>/linux/sys/*.h      <RELROOT>/rel2/lh/sys/
@@ -59,6 +65,7 @@ cdsay .
 #    <CPCMD> <PROJDIR>/qnx/*.h*           <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/c*             <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/algorith       <RELROOT>/rel2/qh/
+#    <CPCMD> <PROJDIR>/qnx/exceptio       <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/fstream        <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/function       <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/iomanip        <RELROOT>/rel2/qh/
@@ -70,9 +77,11 @@ cdsay .
 #    <CPCMD> <PROJDIR>/qnx/limits         <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/memory         <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/ostream        <RELROOT>/rel2/qh/
+#    <CPCMD> <PROJDIR>/qnx/stdexcep       <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/streambu       <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/string         <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/strstrea       <RELROOT>/rel2/qh/
+#    <CPCMD> <PROJDIR>/qnx/typeinfo       <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/utility        <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/sys/*.h        <RELROOT>/rel2/qh/sys/
 

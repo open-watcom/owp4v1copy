@@ -29,9 +29,12 @@
 *
 ****************************************************************************/
 
-
 #include "cpplib.h"
 #include <typeinfo>
 
-type_info::~type_info() {
+namespace std {
+
+  type_info::~type_info() {
+  }
+
 }

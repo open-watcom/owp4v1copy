@@ -18,6 +18,7 @@ stringsplice = wsplice -i.. -k$(system) -kCPPSTRING $(options) ../common.sp $[@ 
 
 common = &
         _comdef.h &
+        _strdef.h &
         algorith &
         assert.h &
         complex.h &
@@ -27,6 +28,7 @@ common = &
         env.h &
         errno.h &
         except.h &
+        exceptio &
         exceptio.h &
         excpt.h &
         exstring.h &
@@ -77,6 +79,7 @@ common = &
         stdarg.h &
         stdbool.h &
         stddef.h &
+        stdexcep &
         stdexcep.h &
         stdint.h &
         stdio.h &
@@ -91,6 +94,7 @@ common = &
         strstrea.h &
         tchar.h &
         time.h &
+        typeinfo &
         typeinfo.h &
         utility &
         varargs.h &
@@ -452,6 +456,9 @@ strstrea : $(strstrea_deps)
 algorith : $(algorith_deps)
          $(splice)
 
+exceptio : $(exception_deps)
+         $(csplice)
+
 function : $(function_deps)
          $(splice)
 
@@ -464,8 +471,14 @@ limits   : $(limits_deps)
 memory   : $(memory_deps)
          $(csplice)
 
+stdexcep : $(stdexcept_deps)
+         $(csplice)
+
 string   : $(string_deps)
          $(stringsplice)
+
+typeinfo : $(typeinfo_deps)
+         $(csplice)
 
 utility  : $(utility_deps)
          $(splice)
