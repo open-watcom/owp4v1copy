@@ -163,3 +163,7 @@ echo Languages Build <1>
 # BATDIR Builder Control file
 # ===========================
 [ INCLUDE <LANG_BLD>/wproj.ctl ]
+
+# Do CDSAY to see end time
+cdsay .
+
