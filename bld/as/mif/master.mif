@@ -215,10 +215,5 @@ $(lex_out_c).c $(lex_out_h) : $(lex_in)
         $(re2c) $(lex_flags) $[@ > $^.
 
 clean: .symbolic .explicit
-        rm -f *.obj $(name)$(exe)
-!ifdef test_inline_as
-        rm -f $(asi_test_name)$(exe)
-!endif
-        rm -f *.err del *.err *.map *.pch *.lib *.lbc ytab.* *.res *.sym *.tmp
-        rm -f $(lex_in) $(lex_out_c).c $(yacc_in) $(yacc_out_c).c $(yacc_out_h)
-        rm -f msg.gh mkstrid.exe
+        rm -f *.obj *.exe *.c *.h *.y *.re *.gh
+        rm -f *.err del *.err *.map *.pch *.lib *.lbc *.res *.sym *.tmp
