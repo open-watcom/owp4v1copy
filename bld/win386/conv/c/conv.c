@@ -1323,7 +1323,7 @@ void DLLThunkHeader( void )
 //    fprintf(dllthunk,"extrn _FunctionTable : word\n");
     GenerateDLLData();
     fprintf(dllthunk,"\n");
-    fprintf(dllthunk,"_TEXT segment word public 'CODE'\n");
+    fprintf(dllthunk,"_TEXT segment word public 'CODE' use16\n");
     fprintf(dllthunk,"assume cs:_TEXT\n");
     fprintf(dllthunk,"assume ds:DGROUP\n");
 #if 0
@@ -1439,7 +1439,7 @@ void GenerateDLLData( void )
     char     *thunkstr;
 
     fprintf( dllthunk, "DGROUP group _DATA\n");
-    fprintf( dllthunk, "_DATA segment word public 'DATA'\n");
+    fprintf( dllthunk, "_DATA segment word public 'DATA' use16\n");
     fprintf( dllthunk, "\n" );
     fprintf( dllthunk, "public DLLHandles\n");
     fprintf( dllthunk, "DLLHandles LABEL WORD\n");
