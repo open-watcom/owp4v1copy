@@ -1,4 +1,4 @@
-lnk = $(%ramdisk)tmp.lnk
+lnk = tmp.lnk
 
 c_opts = /zq /w4 /bt=OS2 /i$(lang_root)\h\os2
 !ifndef on_build_machine
