@@ -14,17 +14,17 @@ int PASCAL WinMain( HINSTANCE, HINSTANCE, LPSTR, int );
 static BOOL FirstInstance( HINSTANCE );
 static BOOL AnyInstance( HINSTANCE, int );
 
-BOOL _EXPORT FAR PASCAL About( HWND, unsigned, UINT, LONG );
-BOOL _EXPORT FAR PASCAL SpeedDlgProc( HWND, unsigned, UINT, LONG );
-long _EXPORT FAR PASCAL WindowProc( HWND, unsigned, UINT, LONG );
+BOOL _EXPORT FAR PASCAL About( HWND, UINT, WPARAM, LPARAM );
+BOOL _EXPORT FAR PASCAL SpeedDlgProc( HWND, UINT, WPARAM, LPARAM );
+long _EXPORT FAR PASCAL WindowProc( HWND, UINT, WPARAM, LPARAM );
 BOOL TurnMessageWindowOn( HWND );
 BOOL TurnScoreWindowOn( HWND );
-BOOL _EXPORT FAR PASCAL MessageWindowProc( HWND, unsigned, UINT, LONG );
-BOOL _EXPORT FAR PASCAL ScoreProc( HWND, unsigned, UINT, LONG );
+BOOL _EXPORT FAR PASCAL MessageWindowProc( HWND, UINT, WPARAM, LPARAM );
+BOOL _EXPORT FAR PASCAL ScoreProc( HWND, UINT, WPARAM, LPARAM );
 static void CheckHit( HDC, POINT );
-static void DrawBitmap( HDC, HBITMAP, short, short );
+static void DrawBitmap( HDC, HBITMAP, int, int );
 POINT RandPoint( RECT, POINT );
-void _EXPORT FAR PASCAL DrawBolt( short, short, LPSTR );
+void _EXPORT FAR PASCAL DrawBolt( int, int, LPSTR );
 static void ShootBolt( HWND );
 static void BoomSound();
 static void BoltSound();
@@ -181,8 +181,8 @@ static BOOL AnyInstance( HINSTANCE this_inst, int cmdshow )
 /*
  * About -  processes messages for the about dialogue.
  */
-BOOL _EXPORT FAR PASCAL About( HWND window_handle, unsigned msg,
-                                UINT wparam, LONG lparam )
+BOOL _EXPORT FAR PASCAL About( HWND window_handle, UINT msg,
+                                WPARAM wparam, LPARAM lparam )
 /********************************************************/
 {
     lparam = lparam;                    /* turn off warning */
@@ -208,8 +208,8 @@ BOOL _EXPORT FAR PASCAL About( HWND window_handle, unsigned msg,
  * Allows the user to select speeds for the target or lightning bolt,
  * depending on which selection was chosen.
  */
-BOOL _EXPORT FAR PASCAL SpeedDlgProc( HWND dialog_wnd, unsigned msg,
-                                UINT wparam, LONG lparam )
+BOOL _EXPORT FAR PASCAL SpeedDlgProc( HWND dialog_wnd, UINT msg,
+                                WPARAM wparam, LPARAM lparam )
 /********************************************************/
 {
     extra_data              *edata_ptr;
@@ -324,8 +324,8 @@ BOOL _EXPORT FAR PASCAL SpeedDlgProc( HWND dialog_wnd, unsigned msg,
 /*
  * WindowProc - handle messages for the main application window
  */
-LONG _EXPORT FAR PASCAL WindowProc( HWND window_handle, unsigned msg,
-                                     UINT wparam, LONG lparam )
+LONG _EXPORT FAR PASCAL WindowProc( HWND window_handle, UINT msg,
+                                     WPARAM wparam, LPARAM lparam )
 /*************************************************************/
 {
     FARPROC             proc;
@@ -662,8 +662,8 @@ BOOL TurnScoreWindowOn( HWND window_handle )
 /*
  * processes messages for the score dialog box
  */
-BOOL _EXPORT FAR PASCAL ScoreProc( HWND window_handle, unsigned msg,
-                                            UINT wparam, LONG lparam )
+BOOL _EXPORT FAR PASCAL ScoreProc( HWND window_handle, UINT msg,
+                                            WPARAM wparam, LPARAM lparam )
 /********************************************************************/
 {
 
@@ -697,8 +697,8 @@ BOOL _EXPORT FAR PASCAL ScoreProc( HWND window_handle, unsigned msg,
     return( FALSE );
 } /* ScoreProc */
 
-BOOL _EXPORT FAR PASCAL MessageWindowProc( HWND window_handle, unsigned msg,
-                                            UINT wparam, LONG lparam )
+BOOL _EXPORT FAR PASCAL MessageWindowProc( HWND window_handle, UINT msg,
+                                            WPARAM wparam, LPARAM lparam )
 /********************************************************************/
 {
     char textbuffer[48];
@@ -902,7 +902,7 @@ static void CheckHit( HDC hdc, POINT hit_point )
  * display a bitmap on the given DC, at device coordinates x,y
  * make the bitmap the same size as the source bitmap
  */
-static void DrawBitmap( HDC hdc, HBITMAP bitmap, short x, short y )
+static void DrawBitmap( HDC hdc, HBITMAP bitmap, int x, int y )
 /*****************************************************************/
 {
     BITMAP      bitmapbuff;

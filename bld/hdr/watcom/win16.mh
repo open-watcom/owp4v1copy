@@ -1121,7 +1121,7 @@ typedef	DWORD	COLORREF;
 #define	CB_ERR	(-1)
 #define	CB_ERRSPACE	(-2)
 
-#define	CW_USEDEFAULT	((int)0x8000)
+#define	CW_USEDEFAULT	((short)0x8000)
 
 /* Class field offsets for GetClassLong() and GetClassWord() */
 #define	GCL_MENUNAME	(-8)
@@ -2232,7 +2232,6 @@ int	WINAPI	EnumObjects(HDC,int,GOBJENUMPROC,LPARAM);
 HLOCAL	WINAPI	LocalHandle(void NEAR*);
 LRESULT	WINAPI	CallWindowProc(WNDPROC,HWND,UINT,WPARAM,LPARAM);
 int	WINAPI	EnumFontFamilies(HDC,LPCSTR,FONTENUMPROC,LPARAM);
-int	WINAPI	EnumFonts(HDC,LPCSTR,FONTENUMPROC,LPARAM);
 void	NEAR* WINAPI	LocalLock(HLOCAL);
 void	FAR* WINAPI	LockResource(HGLOBAL);
 void	FAR* WINAPI	GlobalLock(HGLOBAL);
@@ -2241,12 +2240,12 @@ HOOKPROC	WINAPI	SetWindowsHook(int,HOOKPROC);
 int	WINAPI	EnumObjects(HDC,int,GOBJENUMPROC,LPSTR);
 HLOCAL	WINAPI	LocalHandle(UINT);
 LRESULT	WINAPI	CallWindowProc(FARPROC,HWND,UINT,WPARAM,LPARAM);
-int	WINAPI	EnumFonts(HDC,LPCSTR,FONTENUMPROC,LPSTR);
 int	WINAPI	EnumFontFamilies(HDC,LPCSTR,FONTENUMPROC,LPSTR);
 char	NEAR* WINAPI	LocalLock(HLOCAL);
 char	FAR* WINAPI	LockResource(HGLOBAL);
 char	FAR* WINAPI	GlobalLock(HGLOBAL);
 #endif
+int	WINAPI	EnumFonts(HDC,LPCSTR,FONTENUMPROC,LPARAM);
 
 #ifndef	__WINDOWS_386__
 #ifdef	STRICT

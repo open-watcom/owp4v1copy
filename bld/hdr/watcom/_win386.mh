@@ -173,13 +173,11 @@ BOOL API _Cover_EnumMetaFile(HDC, LOCALHANDLE, FARPROC, LPSTR );
 #endif
 int API _16Escape(HDC, int, int, LPSTR, LPSTR);
 int API _Cover_Escape(HDC, int, int, LPSTR, LPSTR);
-#ifdef STRICT
 int API _16EnumFonts(HDC, LPSTR, FONTENUMPROC, LPARAM);
 int API _Cover_EnumFonts(HDC, LPSTR, FONTENUMPROC, LPARAM);
+#ifdef STRICT
 int API _Cover_EnumFontFamilies(HDC, LPSTR, FONTENUMPROC, LPARAM);
 #else
-int API _16EnumFonts(HDC, LPSTR, FONTENUMPROC, LPSTR);
-int API _Cover_EnumFonts(HDC, LPSTR, FONTENUMPROC, LPSTR);
 int API _Cover_EnumFontFamilies(HDC, LPSTR, FONTENUMPROC, LPSTR);
 #endif
 int API _16EnumObjects(HDC, int, FARPROC, LPSTR);

@@ -50,7 +50,7 @@ static void FillListBox( HWND dialog, unsigned child_id )
  */
 
 int FAR _EXPORT PASCAL SwitchDialogProc( HWND dialog,
-                    UINT msg, UINT wparam, LONG lparam )
+                    UINT msg, WPARAM wparam, LPARAM lparam )
 {
     int         select;
     WORD        cmd;

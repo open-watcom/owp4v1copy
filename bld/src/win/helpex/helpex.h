@@ -32,5 +32,5 @@ BOOL InitInstance(HINSTANCE, int);
 #else
 #define _EXPORT __export
 #endif
-long _EXPORT FAR PASCAL MainWndProc(HWND, unsigned, WORD, LONG);
-BOOL _EXPORT FAR PASCAL About(HWND, unsigned, WORD, LONG);
+long _EXPORT FAR PASCAL MainWndProc(HWND, UINT, WPARAM, LPARAM);
+BOOL _EXPORT FAR PASCAL About(HWND, UINT, WPARAM, LPARAM);

@@ -11,8 +11,8 @@
 char     FrameClass[32]="FrameClass";
 char     IconClass[32]="IconClass";
 
-LONG _EXPORT FAR PASCAL FrameProc( HWND, unsigned, UINT, LONG );
-LONG _EXPORT FAR PASCAL MdiIconProc( HWND, unsigned, UINT, LONG );
+LONG _EXPORT FAR PASCAL FrameProc( HWND, UINT, WPARAM, LPARAM );
+LONG _EXPORT FAR PASCAL MdiIconProc( HWND, UINT, WPARAM, LPARAM );
 static BOOL InitApplication( HINSTANCE );
 static BOOL InitInstance( int );
 static void DoCmdLine( LPSTR cmdline );
@@ -192,7 +192,7 @@ static BOOL InitInstance( int cmdshow )
  * AboutProc - processes messages for the about dialogue.
  */
 BOOL _EXPORT FAR PASCAL AboutProc( HWND hwnd, UINT msg,
-                                                UINT wparam, LONG lparam )
+                                                WPARAM wparam, LPARAM lparam )
 {
     lparam = lparam;                    /* turn off warning */
 
@@ -218,7 +218,7 @@ BOOL _EXPORT FAR PASCAL AboutProc( HWND hwnd, UINT msg,
  */
 
 LONG _EXPORT FAR PASCAL FrameProc( HWND hwnd, UINT msg,
-                                    UINT wparam, LONG lparam )
+                                    WPARAM wparam, LPARAM lparam )
 {
     CLIENTCREATESTRUCT      ccs;
     FARPROC                 proc;

@@ -170,9 +170,9 @@ int    nCmdShow;
 
 long _EXPORT FAR PASCAL MainWndProc(hWnd, message, wParam, lParam)
 HWND       hWnd;
-unsigned   message;
-UINT       wParam;
-LONG       lParam;
+UINT       message;
+WPARAM     wParam;
+LPARAM     lParam;
 {
    FARPROC      lpProcAbout;
    DWORD        dwHelpContextId;
@@ -380,9 +380,9 @@ LONG       lParam;
 
 BOOL _EXPORT FAR PASCAL About(hDlg, message, wParam, lParam)
 HWND       hDlg;
-unsigned   message;
-UINT       wParam;
-LONG       lParam;
+UINT       message;
+WPARAM     wParam;
+LPARAM     lParam;
 {
    lParam = lParam;
    switch (message) {

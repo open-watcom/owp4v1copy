@@ -99,7 +99,7 @@ int FAR PASCAL Lib3( LPSTR data, WORD a, WORD b,
   return( d1 + d2 );
 }
 
-int FAR PASCAL WEP( short nParameter )
+int FAR PASCAL WEP( int nParameter )
 {
   nParameter = nParameter;
   //BreakPoint();

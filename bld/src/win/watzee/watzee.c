@@ -8,14 +8,14 @@
 static char     *AppName = "Watzee";
 static char     ClassName[32]="Watzee";
 
-static void                 DoScore( HWND, WORD );
-static void                 DoScoreTotals( HWND );
+static void                 DoScore( HDC, WORD );
+static void                 DoScoreTotals( HDC );
 static WORD                 GetDieCheck( HWND, POINT );
 static WORD                 GetScoreCheck( POINT );
 static void                 InitializeGameData( void );
 static void                 NextPlayer( HWND, HDC );
 
-long _EXPORT FAR PASCAL    WndProc( HWND, WORD, UINT, LONG );
+long _EXPORT FAR PASCAL    WndProc( HWND, UINT, WPARAM, LPARAM );
 
 
 /*
@@ -25,7 +25,7 @@ long _EXPORT FAR PASCAL    WndProc( HWND, WORD, UINT, LONG );
  */
 
 int PASCAL WinMain( HINSTANCE instance, HINSTANCE previnstance,
-                    LPSTR cmdline, short cmdshow )
+                    LPSTR cmdline, int cmdshow )
 /*******************************************************/
 {
     HWND        hwnd;
@@ -77,8 +77,8 @@ int PASCAL WinMain( HINSTANCE instance, HINSTANCE previnstance,
  * WndProc -- process messages from Windows
  */
 
-long _EXPORT FAR PASCAL WndProc( HWND hwnd, UINT message, UINT wparam,
-                                  LONG lparam )
+long _EXPORT FAR PASCAL WndProc( HWND hwnd, UINT message, WPARAM wparam,
+                                  LPARAM lparam )
 /*********************************************************************/
 {
     static HANDLE   hdlginstance;

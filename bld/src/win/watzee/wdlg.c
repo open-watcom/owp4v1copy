@@ -8,7 +8,7 @@
  */
 
 extern BOOL _EXPORT FAR PASCAL AboutDialogProc( HWND hdlg, UINT message,
-                                                UINT wparam, LONG lparam )
+                                                WPARAM wparam, LPARAM lparam )
 /************************************************************************/
 {
     lparam = lparam;            /* shut compiler up */
@@ -37,8 +37,8 @@ extern BOOL _EXPORT FAR PASCAL AboutDialogProc( HWND hdlg, UINT message,
 
 extern BOOL _EXPORT FAR PASCAL GetNumPlayersDialogProc( HWND hdlg,
                                                         UINT message,
-                                                        UINT wparam,
-                                                        LONG lparam )
+                                                        WPARAM wparam,
+                                                        LPARAM lparam )
 /********************************************************************/
 {
     WORD                cmd;
@@ -68,8 +68,8 @@ extern BOOL _EXPORT FAR PASCAL GetNumPlayersDialogProc( HWND hdlg,
 
 extern BOOL _EXPORT FAR PASCAL GetInitialsDialogProc( HWND hdlg,
                                                        UINT message,
-                                                       UINT wparam,
-                                                       LONG lparam )
+                                                       WPARAM wparam,
+                                                       LPARAM lparam )
 /******************************************************************/
 {
     static short        player;
@@ -169,7 +169,7 @@ extern BOOL _EXPORT FAR PASCAL GetInitialsDialogProc( HWND hdlg,
  * HelpDialogProc -- dialog to display the scoring rules
  */
 extern BOOL _EXPORT FAR PASCAL HelpDialogProc( HWND hdlg, UINT message,
-                                               UINT wparam, LONG lparam )
+                                               WPARAM wparam, LPARAM lparam )
 /***********************************************************************/
 {
     lparam = lparam;    /* shut compiler up*/
@@ -196,7 +196,7 @@ extern BOOL _EXPORT FAR PASCAL HelpDialogProc( HWND hdlg, UINT message,
  * OptionsDialogProc -- options dialog box
  */
 extern BOOL _EXPORT FAR PASCAL OptionsDialogProc( HWND hdlg, UINT message,
-                                                 UINT wparam, LONG lparam )
+                                                 WPARAM wparam, LPARAM lparam )
 /*************************************************************************/
 {
     static BOOL old_diecheck;
