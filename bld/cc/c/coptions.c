@@ -1324,6 +1324,13 @@ static void SetAutoDependSrcDepend()
     SrcDepName = GetAFileName();
 }
 
+static void SetAutoDependHeaderPath()
+{
+    CompFlags.generate_auto_depend = 1;
+    CMemFree( DependHeaderPath );
+    DependHeaderPath = GetAFileName();
+}
+
 static void SetAutoDependForeSlash()
 {
     DependForceSlash = '/';
@@ -1472,6 +1479,7 @@ static struct option const CFE_Options[] = {
     { "adbs",   0,              SetAutoDependBackSlash },
     { "add=@",  0,              SetAutoDependSrcDepend },
     { "adfs",   0,              SetAutoDependForeSlash },
+    { "adhp=@", 0,              SetAutoDependHeaderPath },
     { "ad=@",   0,              SetGenerateMakeAutoDepend },
     { "ai",     0,              Set_AI },
     { "aq",     0,              Set_AQ },

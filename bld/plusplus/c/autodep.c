@@ -42,6 +42,14 @@
 
 static FILE *AutoDepFile;
 
+// macro copied from bld/cc/c/ccmain.c
+#if defined(__QNX__) || defined(__LINUX__)
+    #define IS_PATH_SEP( ch ) ((ch) == '/')
+#else
+    #define IS_PATH_SEP( ch ) ((ch) == '/' || (ch) == '\\')
+#endif
+
+
 char *DoForceSlash( char *name, char slash )
 {
     char *save = name;
@@ -49,7 +57,7 @@ char *DoForceSlash( char *name, char slash )
         return name;
     while( name[0] )
     {
-        if( name[0] == '\\' || name[0] == '/' )
+        if( IS_PATH_SEP( name[0] ) )
             name[0] = slash;
         name++;
     }
@@ -58,7 +66,6 @@ char *DoForceSlash( char *name, char slash )
 
 void AdDump( void )
 {
-
     if( AutoDepFile )
     {
         SRCFILE retn;
@@ -74,11 +81,28 @@ void AdDump( void )
             ((retn = SrcFileWalkNext( retn )),retn?(hadone=1):(hadone=0) ),
              (retn = SrcFileNotReadOnly( retn ) ) )
         {
+           char *name;
            if( IsSrcFilePrimary( retn ) )
               continue;
-           fprintf( AutoDepFile, " %s"
-                  , DoForceSlash( SrcFileName(retn)
+           name = SrcFileName(retn);
+        if( DependHeaderPath )
+        {
+           char *p = name;
+           while( p && p[0] )
+              if( IS_PATH_SEP( *p ) )
+                 break;
+           else p++;
+           fprintf( AutoDepFile, " %s%s"
+                  , (p && p[0])?"":DependHeaderPath
+                  , DoForceSlash( name
                                 , ForceSlash ) );
+        }
+        else
+        {
+           fprintf( AutoDepFile, " %s"
+                         , DoForceSlash( name
+                                       , ForceSlash ) );
+        }
         }
     }
 }

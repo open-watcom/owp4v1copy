@@ -703,7 +703,7 @@ int OpenSrcFile( char *filename, int delimiter )
     char        *ext;
     int         save;
     FCB         *curr;
-
+    // include path here...
     _splitpath2( filename, buff, &drive, &dir, &name, &ext );
     if( drive[0] != '\0' || IS_PATH_SEP(dir[0]) ) {
         // 14-sep-94 if drive letter given or path from root given
@@ -918,14 +918,28 @@ FNAMEPTR AddFlist( char const *filename )
         index++;
     }
     if( flist == NULL ) {
-        flist = (FNAMEPTR)CMemAlloc( strlen( filename )
-                            + sizeof( struct fname_list ) );
+        char const *p;
+        for( p = filename; p[0]; p++ )
+            if( IS_PATH_SEP( p[0] ) )
+                break;
+        if( !p[0] && DependHeaderPath )
+        {
+            flist = (FNAMEPTR)CMemAlloc( strlen( DependHeaderPath )
+                                       + strlen( filename )
+                                       + sizeof( struct fname_list ) );
+            sprintf( flist->name, "%s%s", DependHeaderPath, filename );
+        }
+        else
+        {
+            flist = (FNAMEPTR)CMemAlloc( strlen( filename )
+                                       + sizeof( struct fname_list ) );
+            strcpy( flist->name, filename );
+        }
         flist->next = NULL;
         flist->index = index;
         flist->rwflag = TRUE;
         flist->once   = FALSE;
         flist->fullpath = NULL;
-        strcpy( flist->name, filename );
         *lnk = flist;
         flist->mtime = _getFilenameTimeStamp( filename );
     }

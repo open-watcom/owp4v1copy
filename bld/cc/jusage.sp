@@ -34,7 +34,9 @@ Options:
 :endsegment
 -aa       ローカルの集合体または共用体に対する非定数の初期化を許します
 -ad[=<file>]  generate make style auto depend file
+-add[=<file>] set souce dependancy name in auto depend file
 -adt[=<file>] set make style auto depend target name
+-adhp[=<file>]set default for no header path
 -adbs         force slashes to backward '\' slashes (auto dep gen)
 -adfs         force slashes to forward '/' slashes (auto dep gen)
 -ai       スタティックの初期化への型チェックを行いません

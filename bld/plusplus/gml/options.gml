@@ -781,7 +781,7 @@
 :usage. NULL points to valid memory in the target environment
 :jusage. NULLは、ターゲット環境内の有効なメモリを指します
 
-:option. ad
+:option. ad
 :target. any
 :file.
 :optional.
@@ -804,6 +804,13 @@
 :optional.
 :usage. specify first dependancy in make-style auto depend file
 :jusage. specify first dependancy in make-style auto depend file
+
+:option. adhp
+:target. any
+:file.
+:optional.
+:usage. specify path for headers with none.
+:jusage. specify path for headers with none.
 
 :option. adt
 :target. any

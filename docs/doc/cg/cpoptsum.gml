@@ -139,6 +139,11 @@ specify source dependancy name generated in make-style autodep file
 :optref refid='SWadd'.
 .do end
 .if &version ge 112 .do begin
+.note adhp[=<file_name>]
+specify path to use for headers which result with no path, and are filename only.
+:optref refid='SWadhp'.
+.do end
+.if &version ge 112 .do begin
 .note adfs
 force slashes generated in makefile style auto depend to forward
 :optref refid='SWadfs'.

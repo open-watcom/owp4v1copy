@@ -97,6 +97,13 @@
 .do end
 .*
 .if &version ge 112 .do begin
+:CMT. .note adhp
+:hotlink refid='SWadhp'.
+~b~b~b~b~b~b
+.br
+.do end
+.*
+.if &version ge 112 .do begin
 :CMT. .note adt
 :hotlink refid='SWadt'.
 ~b~b~b~b~b~b

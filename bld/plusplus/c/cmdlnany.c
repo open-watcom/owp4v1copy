@@ -1130,6 +1130,10 @@ static void analyseAnyTargetOptions( OPT_STORAGE *data )
         SetStringOption( &SrcDepFileName, &(data->add_value) );
         CompFlags.generate_auto_depend = 1;
     }
+    if( data->adhp ) {
+        SetStringOption( &DependHeaderPath, &(data->adhp_value) );
+        CompFlags.generate_auto_depend = 1;
+    }
     if( data->adfs ) {
         ForceSlash = '/';
     }
