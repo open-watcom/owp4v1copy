@@ -133,10 +133,9 @@ _WCRTLINK void __F_NAME(_searchenv,_wsearchenv)( const CHAR_TYPE *name, const CH
                     }
                 }
                 *p2 = __F_NAME('\0',L'\0');
-                len = __F_NAME(strlen,wcslen)( buffer )
-                    + __F_NAME(strlen,wcslen)( name );
-                if( len < (_MAX_PATH - 1) ) {
-                    __F_NAME(strncat,wcsncat)( p2, name, (_MAX_PATH - 1) - len );
+                len += __F_NAME(strlen,wcslen)( name );/* JBS 04/12/23 */
+                if( len < _MAX_PATH ) {
+                    __F_NAME(strcat,wcscat)( p2, name );
                     /* check to see if file exists */
                     if( __F_NAME(access,_waccess)( buffer, 0 ) == 0 ) {
                         __set_errno( prev_errno );
