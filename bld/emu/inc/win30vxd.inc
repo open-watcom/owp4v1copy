@@ -282,8 +282,14 @@ VxD_ICODE_ENDS macro
   _ITEXT ENDS
 endm
 
-VxD_CODE_SEG equ <VxD_LOCKED_CODE_SEG>
-VxD_CODE_ENDS equ <VxD_LOCKED_CODE_ENDS>
+VxD_CODE_SEG macro
+  _LTEXT	SEGMENT
+  ASSUME   cs:FLAT, ds:FLAT, es:FLAT, ss:FLAT
+endm
+
+VxD_CODE_ENDS macro
+  _LTEXT	ENDS
+endm
 
 VxD_LOCKED_DATA_SEG macro
   _LDATA	SEGMENT
@@ -301,8 +307,14 @@ VxD_IDATA_ENDS macro
   _IDATA	ENDS
 endm
 
-VxD_DATA_SEG equ <VxD_LOCKED_DATA_SEG>
-VxD_DATA_ENDS equ <VxD_LOCKED_DATA_ENDS>
+VxD_DATA_SEG macro
+  _LDATA	SEGMENT
+endm
+
+VxD_DATA_ENDS macro
+  _LDATA	ENDS
+endm
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Other macros definition
@@ -324,25 +336,20 @@ Declare_Virtual_Device macro Name, Major_Ver, Minor_Ver, Ctrl_Proc, Device_Num, 
   VxD_LOCKED_DATA_ENDS
 endm
 
-?marg	macro	name, num
-  PPP&num &macro
-    push	name
-  &endm
-endm
-
-?invarg macro	name1, name2
-  name1&name2
-endm
-
 PushCParms macro arglst
   ??_argc = 0
   irp x,<arglst>
     ??_argc = ??_argc + 1
-    ?marg   <x>,%??_argc
   endm
   ?count = ??_argc
-  irp x,<arglst>
-    ?invarg <PPP>,%?count
+  irp xx,<arglst>
+    ?argx = 0
+    irp x,<arglst>
+      ?argx = ?argx + 1
+      if ?argx EQ ?count
+        push x
+      endif
+    endm
     ?count = ?count - 1
   endm
 endm
