@@ -658,7 +658,7 @@ extern int DRStartScopeAT( dr_handle entry, uint_32 *num )
     }else{
         ret = FALSE;
     }
-    return( offset );
+    return( ret );
 }
 
 extern unsigned DRGetAddrSize( dr_handle mod ){
