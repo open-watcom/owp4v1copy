@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Font file support (Windows .fon files, bitmap or vector).
 *
 ****************************************************************************/
 
@@ -48,8 +47,8 @@ typedef struct font_entry {
     char                facename[ 32 ];
     char                filler;
     short               version;
-    char _WCI86FAR           *glyph_table;
-    char _WCI86FAR           *bitmap_table;
+    char _WCI86FAR      *glyph_table;
+    char _WCI86FAR      *bitmap_table;
     long                start_offset;
     long                glyph_offset;
     long                bitmap_offset;
@@ -58,7 +57,7 @@ typedef struct font_entry {
 } FONT_ENTRY;
 
 
-typedef struct windows_font {
+typedef _Packed struct windows_font {
     short               dfVersion;
     long                dfSize;
     char                dfCopyright[ 60 ];
