@@ -3848,8 +3848,13 @@ BOOL WINAPI WinHelpA(HWND,LPCSTR,UINT,DWORD);
 BOOL WINAPI WinHelpW(HWND,LPCWSTR,UINT,DWORD);
 int WINAPIV wsprintfA(LPSTR,LPCSTR,...);
 int WINAPIV wsprintfW(LPWSTR,LPCWSTR,...);
+#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)
 int WINAPI wvsprintfA(LPSTR,LPCSTR,va_list arglist);
 int WINAPI wvsprintfW(LPWSTR,LPCWSTR,va_list arglist);
+#else
+int WINAPI wvsprintfA(LPSTR,LPCSTR,char *);
+int WINAPI wvsprintfW(LPWSTR,LPCWSTR,char *);
+#endif
 #if (_WIN32_WINNT >= 0x0500 || _WIN32_WINDOWS >= 0x0490)
 BOOL WINAPI AllowSetForegroundWindow(DWORD);
 BOOL WINAPI LockSetForegroundWindow(UINT);
@@ -4017,7 +4022,11 @@ typedef MONITORINFOEXW MONITORINFOEX, *LPMONITORINFOEX;
 #define VkKeyScanEx VkKeyScanExW
 #define WinHelp WinHelpW
 #define wsprintf wsprintfW
+#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)
 #define wvsprintf wvsprintfW
+#else
+#define wvsprintf(a,b,c) wvsprintfW(a,b,(*c))
+#endif
 #ifndef NOGDI
 typedef ICONMETRICSW ICONMETRICS,*LPICONMETRICS;
 typedef NONCLIENTMETRICSW NONCLIENTMETRICS,*LPNONCLIENTMETRICS;
@@ -4182,7 +4191,11 @@ typedef MONITORINFOEXA MONITORINFOEX, *LPMONITORINFOEX;
 #define VkKeyScanEx VkKeyScanExA
 #define WinHelp WinHelpA
 #define wsprintf wsprintfA
+#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)
 #define wvsprintf wvsprintfA
+#else
+#define wvsprintf(a,b,c) wvsprintfA(a,b,*(c))
+#endif
 #ifndef NOGDI
 typedef ICONMETRICSA ICONMETRICS,*LPICONMETRICS;
 typedef NONCLIENTMETRICSA NONCLIENTMETRICS,*LPNONCLIENTMETRICS;
