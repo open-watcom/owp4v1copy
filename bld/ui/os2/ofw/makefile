@@ -5,7 +5,7 @@ WCCEXE=$(comp386)
 WCCEXE=wcc386p
 !endif
 WCPPEXE=wcpp386
-INCLUDES=/I$(watcom_dir)\os220_h
+INCLUDES=/I$(lang_root)\h\os2
 FORM=os2v2
 
 !include ..\makefile

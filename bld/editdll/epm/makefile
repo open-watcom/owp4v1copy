@@ -1,6 +1,6 @@
 lnk = $(%ramdisk)tmp.lnk
 
-c_opts = /zq /w4 /bt=OS2 /i$(watcom_dir)\os220_h
+c_opts = /zq /w4 /bt=OS2 /i$(lang_root)\h\os2
 !ifndef on_build_machine
 c_opts += /d2
 !endif
@@ -8,7 +8,7 @@ c_opts += /d2
 epmlink.dll : epmlink.obj
     @%create $(lnk)
     @%append $(lnk) sys os2v2 dll initinstance terminstance pm debug all
-    @%append $(lnk) option description 'WATCOM Editor DLL for EPM'
+    @%append $(lnk) option description 'Open Watcom Editor DLL for EPM'
     @%append $(lnk) option manyautodata, quiet, symfile, caseexact
     @%append $(lnk) libpath $(watcom_lib)
     @%append $(lnk) file epmlink.obj
