@@ -82,7 +82,7 @@ pick(	 MSG_CREATE_TYPE_DLL,	"dynamic link library" ,
 				"ダイナミック・リンク・ライブラリ" )
 pick(	 MSG_CREATE_TYPE_EXE,	"executable" ,
 				"実行可能" )
-pick(	 MSG_IS_A_EXE,		"this is %f" ,
+pick(	 MSG_IS_A_EXE,		"This is %f" ,
 				"これは %f です" )
 
 pick(	 MSG_MAP_BOX_GROUP,	"|   Groups   |" ,
