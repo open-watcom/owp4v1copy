@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Driver for DLLs pluggable into the IDE (and wmake).
 *
 ****************************************************************************/
 
@@ -41,58 +40,57 @@
 
 
 #ifndef USE_RUNYOURSELF_ARGV
-# if defined(__UNIX__)
-#  define USE_RUNYOURSELF_ARGV
-# endif
+    #if defined(__UNIX__)
+        #define USE_RUNYOURSELF_ARGV
+    #endif
 #endif
 
 
-#if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
+#if defined( __OS2__ ) || defined( __NT__ )
     //
-    // DLL's implemented only for:
-    //      Intel 386 (OS/2,NT)
-    //      Digital Alpha (NT)
-    //      IBM PowerPc (OS/2,NT)
+    // DLLs implemented only for:
+    //      OS/2 (386, PowerPC)
+    //      NT (386, Alpha AXP, PowerPC)
 
     // you can use link in the dll objects into the stub in other os's
     //(eg dos--if you consider that an os) by defining STATIC_LINKAGE
     // and IDE_PGM. note that IDE_PGM needs to be defined anywhere that
     // IDEDLL_EXPORT is used and/or idedll.h is included
 
-#   if defined(__OS2__) && !defined(__OSI__)
-#       define DLLS_IMPLEMENTED
+    #if defined( __OS2__ ) && !defined( __OSI__ )
+        #define DLLS_IMPLEMENTED
 
         // The following are defined in os2.h
-#       undef  COMMENT
-#       define ERR         OS2_ERR
+        #undef  COMMENT
+        #define ERR         OS2_ERR
 
-#       define INCL_DOS
-#       include "os2.h"
-#       define IDETOOL_GETVER          "_IDEGetVersion@0"
-#       define IDETOOL_INITDLL         "_IDEInitDLL@12"
-#       define IDETOOL_RUNSELF         "_IDERunYourSelf@12"
-#       define IDETOOL_RUNSELF_ARGV    "_IDERunYourSelf@16"
-#       define IDETOOL_FINIDLL         "_IDEFiniDLL@4"
-#       define IDETOOL_STOPRUN         "_IDEStopRunning@0"
-#       define IDETOOL_INITINFO        "_IDEPassInitInfo@8"
-#       undef  ERR
+        #define INCL_DOS
+        #include "os2.h"
+        #define IDETOOL_GETVER          "_IDEGetVersion@0"
+        #define IDETOOL_INITDLL         "_IDEInitDLL@12"
+        #define IDETOOL_RUNSELF         "_IDERunYourSelf@12"
+        #define IDETOOL_RUNSELF_ARGV    "_IDERunYourSelf@16"
+        #define IDETOOL_FINIDLL         "_IDEFiniDLL@4"
+        #define IDETOOL_STOPRUN         "_IDEStopRunning@0"
+        #define IDETOOL_INITINFO        "_IDEPassInitInfo@8"
+        #undef  ERR
         typedef HMODULE DLL_HANDLE;
-#   elif defined __NT__
-#       define DLLS_IMPLEMENTED
-#       include <windows.h>
-#       define IDETOOL_GETVER          "_IDEGetVersion@0"
-#       define IDETOOL_INITDLL         "_IDEInitDLL@12"
-#       define IDETOOL_RUNSELF         "_IDERunYourSelf@12"
-#       define IDETOOL_RUNSELF_ARGV    "_IDERunYourSelf@16"
-#       define IDETOOL_FINIDLL         "_IDEFiniDLL@4"
-#       define IDETOOL_STOPRUN         "_IDEStopRunning@0"
-#       define IDETOOL_INITINFO        "_IDEPassInitInfo@8"
+    #elif defined( __NT__ )
+        #define DLLS_IMPLEMENTED
+        #include <windows.h>
+        #define IDETOOL_GETVER          "_IDEGetVersion@0"
+        #define IDETOOL_INITDLL         "_IDEInitDLL@12"
+        #define IDETOOL_RUNSELF         "_IDERunYourSelf@12"
+        #define IDETOOL_RUNSELF_ARGV    "_IDERunYourSelf@16"
+        #define IDETOOL_FINIDLL         "_IDEFiniDLL@4"
+        #define IDETOOL_STOPRUN         "_IDEStopRunning@0"
+        #define IDETOOL_INITINFO        "_IDEPassInitInfo@8"
         typedef HINSTANCE DLL_HANDLE;
-#else
-#include "bool.h"
-#endif
+    #else
+        #include "bool.h"
+    #endif
 
-#   ifdef DLLS_IMPLEMENTED
+    #ifdef DLLS_IMPLEMENTED
         typedef unsigned IDEDLL_EXPORT (*GetVerFn)( void );
         typedef IDEBool IDEDLL_EXPORT (*InitDllFn)( IDECBHdl hdl
                                                   , IDECallBacks *cb
@@ -108,11 +106,13 @@
         typedef void IDEDLL_EXPORT (*StopRunFn)( void );
         typedef IDEBool IDEDLL_EXPORT (*PassInitInfo)( IDEDllHdl hdl
                                                      , IDEInitInfo *info );
-#   endif
+    #endif
 
+#else
+    #include "bool.h"
 #endif
 
-#if (defined DLLS_IMPLEMENTED || ( defined STATIC_LINKAGE && defined IDE_PGM ) )
+#if (defined DLLS_IMPLEMENTED || (defined STATIC_LINKAGE && defined IDE_PGM) )
 
 typedef void (*P_FUN)( void );
 
@@ -858,5 +858,5 @@ void IdeDrvInit                 // INITIALIZE IDEDRV INFORMATION
 
 
 #else
-#   error IDE not implemented for target platform
+    #error IDE not implemented for target platform
 #endif // DLLS_IMPLEMENTED
