@@ -154,6 +154,7 @@ typedef struct thread_data {
         pid_t                   thread_id;
     #elif defined(__LINUX__)
         // TODO: Linux thread ID!
+        unsigned long           thread_id;  // silent compiler only
     #endif
     #if defined(__NT__)
         void                    *thread_handle;
