@@ -128,14 +128,16 @@ char *CmdScanString( void )
             if( inQuote ) {
                 if( backslash ) {
                     backslash = 0;      /* handle \" within a string */
-                    buf = got_char( buf, &bufsize, offset, ch );
-                    offset++;
+//                    buf = got_char( buf, &bufsize, offset, ch );
+//                    offset++;
                 } else {
                     inQuote = 0;        /* end of a quoted portion */
                 }
             } else {
                 inQuote = 1;            /* start of a quoted portion */
             }
+            buf = got_char( buf, &bufsize, offset, ch );
+            offset++;
         } else if( ch == '\\' ) {
             if( inQuote ) {
                 if( backslash ) {
