@@ -631,6 +631,7 @@ LONG    APIENTRY WinMultWindowFromIDs(HWND,PHWND,ULONG,ULONG);
 HDC     APIENTRY WinOpenWindowDC(HWND);
 HAB     APIENTRY WinQueryAnchorBlock(HWND);
 HWND    APIENTRY WinQueryDesktopWindow(HAB,HDC);
+HWND    APIENTRY WinQueryObjectWindow(HWND);
 ULONG   APIENTRY WinQueryVersion(HAB);
 HWND    APIENTRY WinQueryWindow(HWND,LONG);
 BOOL    APIENTRY WinQueryWindowPos(HWND,PSWP);
