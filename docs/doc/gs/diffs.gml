@@ -621,7 +621,7 @@ The new C++ casts are:
 We have improved (faster) pre-compiled header support.
 .bull
 .ix '__int64'
-We have added "long long" (64-bit floating-point) support in the form
+We have added "long long" (64-bit integer) support in the form
 of a new
 .us __int64
 type.
@@ -646,7 +646,7 @@ as if they might contain double-byte characters.
 We have improved (faster) pre-compiled header support.
 .bull
 .ix '__int64'
-We have added "long long" (64-bit floating-point) support in the form
+We have added "long long" (64-bit integer) support in the form
 of a new
 .us __int64
 type.
@@ -687,7 +687,7 @@ We have added Multi-media Extensions (MMX) support to the in-line
 assemblers.
 .bull
 .ix '__int64'
-We have added "long long" (64-bit floating-point) support in the form
+We have added "long long" (64-bit integer) support in the form
 of a new
 .us __int64
 type.
