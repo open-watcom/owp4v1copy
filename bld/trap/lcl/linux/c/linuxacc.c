@@ -384,7 +384,7 @@ unsigned ReqRead_mem( void )
 
     acc = GetInPtr( 0 );
     len = ReadMem( GetOutPtr( 0 ), acc->mem_addr.offset, acc->len );
-    return( acc->len );
+    return( len );
 }
 
 unsigned ReqWrite_mem( void )
