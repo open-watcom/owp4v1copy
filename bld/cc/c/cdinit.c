@@ -85,6 +85,7 @@ static DATA_QUAD_LIST  *DataQuadSegs[MAX_DATA_QUAD_SEGS];/* segments for data qu
 static DATA_QUAD_LIST  *CurDataQuad;
 static int             DataQuadIndex;
 
+local DATA_QUAD_LIST *NewDataQuad( void );
 local int CharArray( TYPEPTR typ );
 local int WCharArray( TYPEPTR typ );
 local void InitCharArray( TYPEPTR typ );
@@ -97,6 +98,11 @@ void InitDataQuads()
     DataQuadIndex = DATA_QUADS_PER_SEG;
     DataQuadSegIndex = -1;
     memset( DataQuadSegs, 0, sizeof( DataQuadSegs ) );
+    /* put a guard at the start */
+    CurDataQuad = NewDataQuad();
+    CurDataQuad->prev = NULL;
+    CurDataQuad->next = NULL;
+    CurDataQuad->size = 0;
 }
 
 void FreeDataQuads()
@@ -113,7 +119,7 @@ void FreeDataQuads()
 int StartDataQuadAccess()
 {
     if( DataQuadSegIndex != -1 ) {
-        CurDataQuad = DataQuadSegs[ 0 ];
+        CurDataQuad = DataQuadSegs[ 0 ]->next;
         return( 1 );                    // indicate data quads exist
     }
     return( 0 );                        // indicate no data quads
@@ -151,15 +157,68 @@ local DATA_QUAD_LIST *NewDataQuad( void )
     return dql;
 }
 
+/* splits the dataquad pointed to by dql so that the current one
+   will have size "size" and the new one "oldsize - size" */
+local void SplitDataQuad( DATA_QUAD_LIST *dql, unsigned long size )
+{
+    DATA_QUAD_LIST *ndql;
+    DATA_QUAD      *ndq;
+    DATA_QUAD      *dq;
+    unsigned long  oldsize;
+
+    ndql = NewDataQuad();
+    ndql->next = dql->next;
+    ndql->prev = dql;
+    dql->next = ndql;
+    if( ndql->next != NULL )
+        ndql->next->prev = ndql;
+    oldsize = dql->size;
+    ndql->size = oldsize - size;
+    dql->size = size;
+
+    ndq = &ndql->dq;
+    dq = &dql->dq;
+    memcpy( ndq, dq, sizeof( *dq ) );
+
+    if( dq->flags & Q_DATA ) {
+        if( dq->flags & Q_2_INTS_IN_ONE ) {
+            dq->flags = ndq->flags = Q_DATA;
+            ndq->u.long_values[0] = dq->u.long_values[1];
+            ndq->u.long_values[1] = dq->u.long_values[1] = 0;
+            size = 0;
+        } else if( dq->flags & Q_REPEATED_DATA ) {
+            dq->u.long_values[1] = size / (oldsize / dq->u.long_values[1]);
+            ndq->u.long_values[1] -= dq->u.long_values[1];
+            size = 0;
+        } else if( dq->opr == T_CONSTANT ) {
+            dq->u.long_values[0] = size;
+            ndq->u.long_values[0] -= dq->u.long_values[0];
+            size = 0;
+        }
+    }
+    if( size != 0 ) {
+        /* can't happen ! */
+        CSuicide();
+    }
+}
+
 local void GenDataQuad( DATA_QUAD *dq, unsigned long size )
 {
-    DATA_QUAD_LIST *dql = NewDataQuad();
-    memcpy( &dql->dq, dq, sizeof(DATA_QUAD) );
-    if (CurDataQuad != NULL)
+    DATA_QUAD_LIST *dql;
+
+    dql = CurDataQuad->next;
+    if( dql != NULL ) {
+        /* overwrite the current dataquad */
+        if( size < dql->size )
+            SplitDataQuad( dql, size );
+    } else {
+        dql = NewDataQuad();
         CurDataQuad->next = dql;
-    dql->prev = CurDataQuad;
-    dql->next = NULL;
-    dql->size = size;
+        dql->prev = CurDataQuad;
+        dql->next = NULL;
+        dql->size = size;
+    }
+    memcpy( &dql->dq, dq, sizeof(DATA_QUAD) );
     CurDataQuad = dql;
 }
 
@@ -176,13 +235,26 @@ local void ZeroBytes( long n )
 
 local void RelSeekBytes( long n )
 {
-    auto DATA_QUAD dq;
+    DATA_QUAD_LIST *dql;
 
-    dq.opr = T_GOTO;
-    dq.flags = Q_DATA;
-    dq.u.long_values[0] = n;
-    dq.u.long_values[1] = 0;
-    GenDataQuad( &dq, -n );
+    dql = CurDataQuad;
+    while( n < 0 && n <= -dql->size ) {
+        n += dql->size;
+        dql = dql->prev;
+    }
+    while( n > 0 && dql->next != NULL ) {
+        dql = dql->next;
+        n -= dql->size;
+    }
+    /* now -dql->size < n <= 0 or dql->next == NULL */
+    if( n < 0 ) {
+        SplitDataQuad( dql, dql->size + n );
+    }
+    CurDataQuad = dql;
+    if ( n > 0 ) {
+        /* dql->next == NULL */
+        ZeroBytes( n );
+    }
 }
 
 local void ChkConstant( unsigned long value, unsigned long max_value )
@@ -198,7 +270,7 @@ local void StoreIValue( TOKEN int_type, unsigned long value,
                         unsigned long size )
 {
     static DATA_QUAD_LIST *LastCurDataQuad;
-
+    DATA_QUAD_LIST      *dql;
     DATA_QUAD           *dq_ptr;
     auto DATA_QUAD      dq;
 
@@ -229,6 +301,19 @@ local void StoreIValue( TOKEN int_type, unsigned long value,
         if( value != 0 ) CompFlags.non_zero_data = 1;
         GenDataQuad( &dq, size );
         LastCurDataQuad = CurDataQuad;
+        return;
+    }
+    /* if the next dataquad is non-empty we'll have to delete it */
+    dql = CurDataQuad->next;
+    if( dql != NULL ) {
+        if( dql->size > size ) {
+            SplitDataQuad( dql, size );
+        }
+        /* no need to "free" the next one, just remove it from the list */
+        CurDataQuad->next = dql->next;
+        if( dql->next != NULL ) {
+            dql->next->prev = CurDataQuad;
+        }
     }
 }
 
