@@ -6,7 +6,7 @@ proj_name = dmpobj
 
 inc_dirs = $(dmpobj_dir)\h
 
-.c: ..\c
+.c: ../c
 
 objs =                  &
         dmpobj.obj      &
