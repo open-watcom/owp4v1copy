@@ -47,5 +47,5 @@ $(LNKEMU) : makefile
 .obj : $(OBJ)
 
 .asm.obj :
-        ml $(mlopts) $[@ 
-#	wasm -w2 -i..\..\emu\inc -d6 $[@
+#        ml $(mlopts) $[@ 
+	wasm -w2 -i..\..\emu\inc $[@
