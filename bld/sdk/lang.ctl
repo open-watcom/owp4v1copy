@@ -15,7 +15,7 @@ cdsay .
 [ INCLUDE drwat/lang.ctl ]
 [ INCLUDE zoom/lang.ctl ]
 
-[ INCLUDE <devdir>/fmedit/lang.ctl ]
+[ INCLUDE <DEVDIR>/fmedit/lang.ctl ]
 [ INCLUDE wr/lang.ctl ]
 [ INCLUDE wresedit/lang.ctl ]
 [ INCLUDE wre/lang.ctl ]

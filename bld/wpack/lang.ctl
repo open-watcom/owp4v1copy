@@ -15,7 +15,7 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>/wpack/nt386/wpack.exe <distroot>/supp/
+    <CPCMD> <DEVDIR>/wpack/nt386/wpack.exe <distroot>/supp/
 
 [ BLOCK <1> clean ]
 #==================

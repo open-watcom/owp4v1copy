@@ -15,9 +15,9 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>/sdk/wde/wini86/wde.exe      <relroot>/rel2/binw/wde.exe
-    <CPCMD> <devdir>/sdk/wde/nt386/wde.exe       <relroot>/rel2/binnt/wde.exe
-#    <CPCMD> <devdir>/sdk/wde/ntaxp/wde.exe       <relroot>/rel2/axpnt/wde.exe
+    <CPCMD> <DEVDIR>/sdk/wde/wini86/wde.exe      <relroot>/rel2/binw/wde.exe
+    <CPCMD> <DEVDIR>/sdk/wde/nt386/wde.exe       <relroot>/rel2/binnt/wde.exe
+#    <CPCMD> <DEVDIR>/sdk/wde/ntaxp/wde.exe       <relroot>/rel2/axpnt/wde.exe
 
 [ BLOCK <1> clean ]
 #==================

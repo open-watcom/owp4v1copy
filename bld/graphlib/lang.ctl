@@ -17,14 +17,14 @@ set PROJDIR=<CWD>
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>/graphlib/fix/dosi86/graph.lib    <relroot>/rel2/lib286/dos/graph.lib
-    <CPCMD> <devdir>/graphlib/fix/dos386/graph386.lib <relroot>/rel2/lib386/dos/graph.lib
-    <CPCMD> <devdir>/graphlib/fix/os2i86/graphp.2bj   <relroot>/rel2/lib286/os2/graphp.obj
-    <CPCMD> <devdir>/graphlib/fix/dosi86/graph98.lib  <relroot>/rel2/lib286/dos/graph98.lib
-    <CPCMD> <devdir>/graphlib/fix/dos386/graph983.lib <relroot>/rel2/lib386/dos/graph98.lib
-    <CPCMD> <devdir>/graphlib/fix/qnxi86/graphq.lib   <relroot>/rel2/lib286/qnx/graph.lib
-    <CPCMD> <devdir>/graphlib/fix/qnx386/graphq3r.lib  <relroot>/rel2/lib386/qnx/graph3r.lib
-    <CPCMD> <devdir>/graphlib/fix/qnx386/graphq3s.lib  <relroot>/rel2/lib386/qnx/graph3s.lib
+    <CPCMD> <DEVDIR>/graphlib/fix/dosi86/graph.lib    <relroot>/rel2/lib286/dos/graph.lib
+    <CPCMD> <DEVDIR>/graphlib/fix/dos386/graph386.lib <relroot>/rel2/lib386/dos/graph.lib
+    <CPCMD> <DEVDIR>/graphlib/fix/os2i86/graphp.2bj   <relroot>/rel2/lib286/os2/graphp.obj
+    <CPCMD> <DEVDIR>/graphlib/fix/dosi86/graph98.lib  <relroot>/rel2/lib286/dos/graph98.lib
+    <CPCMD> <DEVDIR>/graphlib/fix/dos386/graph983.lib <relroot>/rel2/lib386/dos/graph98.lib
+    <CPCMD> <DEVDIR>/graphlib/fix/qnxi86/graphq.lib   <relroot>/rel2/lib286/qnx/graph.lib
+    <CPCMD> <DEVDIR>/graphlib/fix/qnx386/graphq3r.lib  <relroot>/rel2/lib386/qnx/graph3r.lib
+    <CPCMD> <DEVDIR>/graphlib/fix/qnx386/graphq3s.lib  <relroot>/rel2/lib386/qnx/graph3s.lib
 
 [ BLOCK <1> clean ]
 #==================

@@ -17,7 +17,7 @@ cdsay .
 #================================
     <CPCMD> wini86/*.lib               <RELROOT>/rel2/lib286/win/
     <CPCMD> include/*.h                <RELROOT>/rel2/h/win/
-    <CPCMD> <devdir>/sdk/misc/ctl3d.h  <RELROOT>/rel2/h/win/
+    <CPCMD> <DEVDIR>/sdk/misc/ctl3d.h  <RELROOT>/rel2/h/win/
 
 [ BLOCK <1> clean ]
 #==================

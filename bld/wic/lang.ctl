@@ -15,9 +15,9 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>/wic/os2386/wic.exe <relroot>/rel2/binp/wic.exe
-    <CPCMD> <devdir>/wic/dos386/wic.exe <relroot>/rel2/binw/wic.exe
-    <CPCMD> <devdir>/wic/nt386/wic.exe <relroot>/rel2/binnt/wic.exe
+    <CPCMD> <DEVDIR>/wic/os2386/wic.exe <relroot>/rel2/binp/wic.exe
+    <CPCMD> <DEVDIR>/wic/dos386/wic.exe <relroot>/rel2/binw/wic.exe
+    <CPCMD> <DEVDIR>/wic/nt386/wic.exe <relroot>/rel2/binnt/wic.exe
 
 [ BLOCK <1> clean ]
 #==================

@@ -20,18 +20,18 @@ cdsay .
 #   <CPCMD> wfcp.exe <relroot>/rel2/binw/wfcp.exe
 #   <CPCMD> wlinkp.exe <relroot>/rel2/binw/wlinkp.exe
 
-#   <CPCMD> <devdir>/misc/dos4gw.doc <relroot>/rel2/
-#   <CPCMD> <devdir>/misc/dos4gwj.doc <relroot>/rel2/
-    <CPCMD> <devdir>/misc/unicode.* <relroot>/rel2/binw/
+#   <CPCMD> <DEVDIR>/misc/dos4gw.doc <relroot>/rel2/
+#   <CPCMD> <DEVDIR>/misc/dos4gwj.doc <relroot>/rel2/
+    <CPCMD> <DEVDIR>/misc/unicode.* <relroot>/rel2/binw/
 
-    <CPCMD> <devdir>/misc/watcom.ico <relroot>/rel2/
+    <CPCMD> <DEVDIR>/misc/watcom.ico <relroot>/rel2/
 
-    <CPCMD> <devdir>/watcom/lib/wresf.lib <relroot>/rel2/lib386/
-    <CPCMD> <devdir>/watcom/lib/wresfs.lib <relroot>/rel2/lib386/
-    <CPCMD> <devdir>/watcom/lib/wresm.lib <relroot>/rel2/lib286/
-    <CPCMD> <devdir>/watcom/lib/wresl.lib <relroot>/rel2/lib286/
+    <CPCMD> <DEVDIR>/watcom/lib/wresf.lib <relroot>/rel2/lib386/
+    <CPCMD> <DEVDIR>/watcom/lib/wresfs.lib <relroot>/rel2/lib386/
+    <CPCMD> <DEVDIR>/watcom/lib/wresm.lib <relroot>/rel2/lib286/
+    <CPCMD> <DEVDIR>/watcom/lib/wresl.lib <relroot>/rel2/lib286/
 
-    <CPCMD> <devdir>/misc/unicode.* <relroot>/rel2/binl/
+    <CPCMD> <DEVDIR>/misc/unicode.* <relroot>/rel2/binl/
 
 [ BLOCK <1> clean ]
 #==================

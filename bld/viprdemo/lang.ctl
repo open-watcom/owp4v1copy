@@ -15,34 +15,34 @@ cdsay .
 
     cdsay src/os2
     bviper -r drawos2.tgt
-    # <CPCMD> <devdir>\plusplus\bin\rpp38610.exe wpp386.exe
-    wmake -i -h -f drawos2.mk1 <devdir>/viprdemo/src/os2/box.obj
-    wmake -i -h -f drawos2.mk1 <devdir>/viprdemo/src/os2/drawroom.obj
-    wmake -i -h -f drawos2.mk1 <devdir>/viprdemo/src/os2/furnitu.obj
+    # <CPCMD> <DEVDIR>\plusplus\bin\rpp38610.exe wpp386.exe
+    wmake -i -h -f drawos2.mk1 <DEVDIR>/viprdemo/src/os2/box.obj
+    wmake -i -h -f drawos2.mk1 <DEVDIR>/viprdemo/src/os2/drawroom.obj
+    wmake -i -h -f drawos2.mk1 <DEVDIR>/viprdemo/src/os2/furnitu.obj
     # rm -f wpp386.exe
 
     cdsay ../win
     bviper -r draw16.tgt
-    # <CPCMD> <devdir>\plusplus\bin\rppi8610.exe wpp.exe
-    wmake -i -h -f draw16.mk1 <devdir>/viprdemo/src/win/box.obj
-    wmake -i -h -f draw16.mk1 <devdir>/viprdemo/src/win/drawroom.obj
-    wmake -i -h -f draw16.mk1 <devdir>/viprdemo/src/win/furnitu.obj
+    # <CPCMD> <DEVDIR>\plusplus\bin\rppi8610.exe wpp.exe
+    wmake -i -h -f draw16.mk1 <DEVDIR>/viprdemo/src/win/box.obj
+    wmake -i -h -f draw16.mk1 <DEVDIR>/viprdemo/src/win/drawroom.obj
+    wmake -i -h -f draw16.mk1 <DEVDIR>/viprdemo/src/win/furnitu.obj
     # rm -f wpp.exe
 
     cdsay ../win386
     bviper -r draw.tgt
-    # <CPCMD> <devdir>\plusplus\bin\rpp38610.exe wpp386.exe
-    wmake -i -h -f draw.mk1 <devdir>/viprdemo/src/win386/box.obj
-    wmake -i -h -f draw.mk1 <devdir>/viprdemo/src/win386/drawroom.obj
-    wmake -i -h -f draw.mk1 <devdir>/viprdemo/src/win386/furnitu.obj
+    # <CPCMD> <DEVDIR>\plusplus\bin\rpp38610.exe wpp386.exe
+    wmake -i -h -f draw.mk1 <DEVDIR>/viprdemo/src/win386/box.obj
+    wmake -i -h -f draw.mk1 <DEVDIR>/viprdemo/src/win386/drawroom.obj
+    wmake -i -h -f draw.mk1 <DEVDIR>/viprdemo/src/win386/furnitu.obj
     # rm -f wpp386.exe
 
     cdsay ../win32
     bviper -r draw32.tgt
-    # <CPCMD> <devdir>\plusplus\bin\rpp38610.exe wpp386.exe
-    wmake -i -h -f draw32.mk1 <devdir>/viprdemo/src/win32/box.obj
-    wmake -i -h -f draw32.mk1 <devdir>/viprdemo/src/win32/drawroom.obj
-    wmake -i -h -f draw32.mk1 <devdir>/viprdemo/src/win32/furnitu.obj
+    # <CPCMD> <DEVDIR>\plusplus\bin\rpp38610.exe wpp386.exe
+    wmake -i -h -f draw32.mk1 <DEVDIR>/viprdemo/src/win32/box.obj
+    wmake -i -h -f draw32.mk1 <DEVDIR>/viprdemo/src/win32/drawroom.obj
+    wmake -i -h -f draw32.mk1 <DEVDIR>/viprdemo/src/win32/furnitu.obj
     # rm -f wpp386.exe
     cd <PROJDIR>
 
