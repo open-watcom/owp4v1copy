@@ -326,7 +326,8 @@ static boolean enumNameOK( TYPE type, char *name )
     TYPE enum_type;
 
     if( type->id == TYP_TYPEDEF ) {
-        if( ScopeId( type->u.t.scope ) == SCOPE_TEMPLATE_PARM ) {
+        if( ScopeType( type->u.t.scope, SCOPE_TEMPLATE_PARM )
+         || ScopeType( type->u.t.scope, SCOPE_TEMPLATE_PARM ) ) {
             if( type->u.t.sym->name->name == name ) {
                 // 14.2.1 para 2
                 // <class T> can be ref'd as enum T if an enum type is used

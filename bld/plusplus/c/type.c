@@ -7376,6 +7376,135 @@ static void pushPrototypeAndArguments( type_bind_info *data, arg_list *p_args,
     }
 }
 
+static void pushPrototypeAndArguments_ptree( type_bind_info *data,
+                                             PTREE p_args, PTREE a_args,
+                                             unsigned control )
+{
+    unsigned i;
+    PTREE p;
+    PTREE a;
+    TYPE p_type;
+    TYPE a_type;
+    TYPE refed_type;
+
+    for( i = 0;
+         ( p_args != NULL ) && ( a_args != NULL );
+         p_args = p_args->u.subtree[0], a_args = a_args->u.subtree[0], i++ ) {
+        p = p_args->u.subtree[1];
+        a = a_args->u.subtree[1];
+
+        if( p->op == PT_TYPE ) {
+            p_type = p->type;
+
+            TypeStripTdMod( p_type );
+            if( p_type->id == TYP_DOT_DOT_DOT ) {
+                /* anything after the ... cannot participate in binding */
+                break;
+            }
+        }
+
+        if( a->op == PT_TYPE ) {
+            a_type = a->type;
+
+            TypeStripTdMod( a_type );
+        }
+
+#ifndef NDEBUG
+        if( PragDbgToggle.dump_types ) {
+            printf( "p_arg #%u\n", i + 1 );
+            if( p->op == PT_TYPE ) {
+                DumpFullType( p_type );
+            }
+            printf( "a_arg #%u\n", i + 1 );
+            if( a->op == PT_TYPE ) {
+                DumpFullType( a_type );
+            }
+        }
+#endif
+        if( ( a->op == PT_TYPE ) && ( p->op == PT_TYPE ) ) {
+            /*
+                has reference &?
+                     \ arg
+                proto \     Y           N
+                ------+------------------------
+                  Y   | strip both  strip proto
+                  N   | strip arg       _
+
+            */
+            refed_type = TypeReference( a_type );
+            if( refed_type != NULL ) {
+                a_type = refed_type;
+                refed_type = TypeReference( p_type );
+                if( refed_type != NULL ) {
+                    p_type = refed_type;
+                } else {
+                    // prototype had no reference so modifiers must be removed
+                    TypeStripTdMod( a_type );
+                    a_type = adjustParmType( a_type );
+                }
+            } else {
+                refed_type = TypeReference( p_type );
+                if( refed_type != NULL ) {
+                    p_type = refed_type;
+                } else {
+                    a_type = adjustParmType( a_type );
+                }
+            }
+        }
+
+        if( a->op == PT_TYPE ) {
+            // if we follow the WP, this should not be here but the WP breaks
+            // working code with string literals; we might want to special case
+            // string literals (decay to char *) and remove this line
+            a_type = adjustParmType( a_type );
+        }
+#ifndef NDEBUG
+        if( PragDbgToggle.dump_types ) {
+            if( p->op == PT_TYPE ) {
+                DumpFullType( p_type );
+            }
+            if( a->op == PT_TYPE ) {
+                DumpFullType( a_type );
+            }
+        }
+#endif
+
+        if( p->op == PT_TYPE ) {
+            PstkPush( &(data->with_generic), PTreeType( p_type ) );
+        } else if( p->op == PT_INT_CONSTANT ) {
+            PstkPush( &(data->with_generic),
+                      PTreeInt64Constant( p->u.int64_constant, p->type->id ) );
+        } else if( p->op == PT_ID ) {
+            PstkPush( &(data->with_generic),
+                      PTreeId( p->u.id.name ) );
+        } else if( p->op == PT_SYMBOL ) {
+            PstkPush( &(data->with_generic),
+                      PTreeIdSym( p->u.symcg.symbol ) );
+        } else {
+#ifndef NDEBUG
+            DumpPTree( p );
+#endif
+            DbgAssert( 0 );
+        }
+
+        if( a->op == PT_TYPE ) {
+            PstkPush( &(data->without_generic), PTreeType( a_type ) );
+        } else if( a->op == PT_INT_CONSTANT ) {
+            PstkPush( &(data->without_generic),
+                      PTreeInt64Constant( a->u.int64_constant, a->type->id ) );
+        } else {
+#ifndef NDEBUG
+            DumpPTree( a );
+#endif
+            DbgAssert( 0 );
+        }
+
+        if( control & PA_MARK_FIRST_LEVEL ) {
+            PstkPush( &(data->with_generic), TypeGetCache( TYPC_FIRST_LEVEL ) );
+        }
+    }
+}
+
 static void checkTemplateClass( PSTK_CTL *stk, TYPE class_type )
 {
     SCOPE parm_scope;
@@ -7479,6 +7608,36 @@ static void clearGenericBindings( PSTK_CTL *stk )
         }
 #endif
         bound_type->of = NULL;
+    }
+}
+
+static void clearGenericBindings_ptree( PSTK_CTL *stk )
+{
+    PTREE *top;
+    TYPE bound_type;
+
+    for(;;) {
+        top = PstkPop( stk );
+        if( top == NULL ) break;
+        if( *top == NULL ) continue;
+
+        if( ( *top )->op == PT_TYPE ) {
+            bound_type = ( *top )->type;
+#ifndef NDEBUG
+            switch( bound_type->id ) {
+            case TYP_GENERIC:
+            case TYP_CLASS:
+                if( bound_type->of != NULL ) {
+                    break;
+                }
+                /* fall through */
+            default:
+                CFatal( "bound generic type corrupted" );
+            }
+#endif
+            bound_type->of = NULL;
+        }
+        PTreeFree( *top );
     }
 }
 
@@ -7926,6 +8085,334 @@ static unsigned typesBind( type_bind_info *data )
     return( status );
 }
 
+static unsigned typesBind_ptree( type_bind_info *data )
+{
+    type_flag t_flags;
+    type_flag b_flags;
+    type_flag u_flags;
+    type_flag g_flags;
+    type_flag d_flags;
+    void *t_base;
+    void *b_base;
+    void *u_base;
+    void *g_base;
+    TYPE b_type;
+    TYPE u_type;
+    TYPE g_type;
+    TYPE t_unmod_type;
+    TYPE b_unmod_type;
+    TYPE u_unmod_type;
+    PTREE *b_top;
+    PTREE *u_top;
+    TYPE *pb;
+    TYPE *pu;
+    arg_list *b_args;
+    arg_list *u_args;
+    TYPE match;
+    unsigned i;
+    unsigned status;
+    struct {
+        unsigned        arg_1st_level : 1;
+    } flags;
+
+    status = TB_BINDS;
+    for(;;) {
+        b_top = PstkPop( &(data->without_generic) );
+        u_top = PstkPop( &(data->with_generic) );
+        if( b_top == NULL || u_top == NULL ) {
+            if( b_top != NULL ) {
+                PTreeFree( *b_top );
+            }
+            if( u_top != NULL ) {
+                PTreeFree( *u_top );
+            }
+            break;
+        }
+
+        if( ( *u_top )->op == PT_INT_CONSTANT ) {
+            if( ( *b_top )->op == PT_INT_CONSTANT ) {
+                if( !I64Cmp( &( *u_top )->u.int64_constant,
+                             &( *b_top )->u.int64_constant ) ) {
+                    PTreeFree( *b_top );
+                    PTreeFree( *u_top );
+                    continue;
+                }
+            }
+            PTreeFree( *b_top );
+            PTreeFree( *u_top );
+            return( TB_NULL );
+        } else if( ( ( *u_top )->op == PT_ID )
+                || ( ( *u_top )->op == PT_SYMBOL ) ) {
+            /* TODO: check type */
+            if( ( *b_top )->op == PT_INT_CONSTANT ) {
+                PstkPush( &(data->bindings),
+                          PTreeInt64Constant( ( *b_top )->u.int64_constant,
+                                              ( *b_top )->type->id ) );
+                PTreeFree( *b_top );
+                PTreeFree( *u_top );
+                continue;
+            }
+            PTreeFree( *b_top );
+            PTreeFree( *u_top );
+            return( TB_NULL );
+        } else if( ( ( *u_top )->op != PT_TYPE )
+                || ( ( *b_top )->op != PT_TYPE ) ) {
+            PTreeFree( *b_top );
+            PTreeFree( *u_top );
+            DbgAssert( 0 );
+        }
+
+        b_type = ( *b_top )->type;
+        if( b_type == NULL ) {
+            return( TB_NULL );
+        }
+        b_unmod_type = TypeModFlagsBaseEC( b_type, &b_flags, &b_base );
+        u_type = ( *u_top )->type;
+
+        PTreeFree( *b_top );
+        PTreeFree( *u_top );
+
+        flags.arg_1st_level = FALSE;
+        if( u_type == TypeGetCache( TYPC_FIRST_LEVEL ) ) {
+            flags.arg_1st_level = TRUE;
+            u_top = PstkPop( &(data->with_generic) );
+            if( u_top == NULL ) {
+                break;
+            }
+            u_type = ( *u_top )->type;
+            PTreeFree( *u_top );
+        }
+        if( u_type == NULL ) {
+            return( TB_NULL );
+        }
+        u_unmod_type = TypeModFlagsBaseEC( u_type, &u_flags, &u_base );
+        if( b_unmod_type == u_unmod_type ) {
+            d_flags = u_flags ^ ( b_flags & u_flags );
+            if( d_flags != TF1_NULL ) {
+                /*
+                    make sure flags in the arg type are in the parm type
+
+                    u b  u not in b | (b&u) u^(b&u)
+                    = =  ========== | ===== =======
+                    0 0       0     |   0      0
+                    0 1       0     |   0      0
+                    1 0       1     |   0      1
+                    1 1       0     |   1      0
+                */
+                if( ! flags.arg_1st_level ) {
+                    return( TB_NULL );
+                }
+                // allow trivial conversion
+                if( d_flags & ~TF1_CV_MASK ) {
+                    return( TB_NULL );
+                }
+                status |= TB_NEEDS_TRIVIAL;
+                u_flags &= ~d_flags;
+            }
+            if( ! modifiersMatch( b_flags, u_flags, b_base, u_base ) ) {
+                return( TB_NULL );
+            }
+            /* types on top of stack match exactly */
+            continue;
+        }
+        if( b_unmod_type->id != u_unmod_type->id ) {
+            if( u_unmod_type->id != TYP_GENERIC ) {
+                return( TB_NULL );
+            }
+#if 0       // screws up STL binding (explicit binding of refs!)
+            if( TypeReference( b_unmod_type ) != NULL ) {
+                /* a reference cannot be bound to a generic type */
+                return( TB_NULL );
+            }
+#endif
+            /* we don't want any extra mem-model flags */
+            b_unmod_type = TypeModExtract( b_type, &b_flags, &b_base,
+                                           TC1_NOT_ENUM_CHAR );
+            /* generics can be anything so default memory models can't be trusted */
+            u_unmod_type = TypeModExtract( u_type, &u_flags, &u_base,
+                                           TC1_NOT_ENUM_CHAR );
+            /*
+                we have to split modifiers so that
+                "<generic> const *" matches "char __based() volatile const *"
+                and binds <generic> to "char based() volatile"
+            */
+            d_flags = u_flags ^ ( b_flags & u_flags );
+            if( d_flags != TF1_NULL ) {
+                /*
+                    make sure flags in the unbound type are in the bound type
+
+                    u b  u not in b | (b&u) u^(b&u)
+                    = =  ========== | ===== =======
+                    0 0       0     |   0      0
+                    0 1       0     |   0      0
+                    1 0       1     |   0      1
+                    1 1       0     |   1      0
+                */
+                /* flags up to the generic don't match */
+                if( ! flags.arg_1st_level ) {
+                    return( TB_NULL );
+                }
+                // allow trivial conversion
+                if( d_flags & ~TF1_CV_MASK ) {
+                    return( TB_NULL );
+                }
+                status |= TB_NEEDS_TRIVIAL;
+                u_flags &= ~d_flags;
+            }
+            /* 'u_flags' is known to be a subset of 'b_flags' now */
+            if( u_flags & TF1_BASED ) {
+                /* subset relation isn't final for based mod; check indices */
+                if(( u_flags & TF1_BASED ) != ( b_flags & TF1_BASED )) {
+                    return( TB_NULL );
+                }
+                /* check that based modifiers match up to the generic */
+                if( ! TypeBasesEqual( u_flags, b_base, u_base ) ) {
+                    return( TB_NULL );
+                }
+            }
+            /* build up the generic binding type */
+            g_flags = b_flags & ~u_flags;
+            g_type = b_unmod_type;
+            if( CompFlags.modifier_bind_compatibility && CompFlags.extensions_enabled ) {
+                if( g_flags & TF1_BASED ) {
+                    g_base = b_base;
+                } else {
+                    g_base = NULL;
+                }
+                if( g_flags != TF1_NULL ) {
+                    g_type = MakeBasedModifierOf( g_type, g_flags, g_base );
+                }
+            } else {
+                g_base = NULL;
+                g_flags &= TF1_CONST | TF1_VOLATILE;
+                if( g_flags != TF1_NULL ) {
+                    g_type = MakeModifiedType( g_type, g_flags );
+                }
+            }
+            match = u_unmod_type->of;
+            if( match != NULL ) {
+                /* generic type was bound; check the bound type */
+                t_unmod_type = TypeModExtract( match, &t_flags, &t_base,
+                                               TC1_NOT_ENUM_CHAR );
+                if( ! TypesIdentical( b_unmod_type, t_unmod_type ) ) {
+                    /* unmodified types are different */
+                    return( TB_NULL );
+                }
+                if(( t_flags & ~TF1_MEM_MODEL ) != ( g_flags & ~TF1_MEM_MODEL )) {
+                    /* the non-memory model flags are different */
+                    return( TB_NULL );
+                }
+                if( t_flags & TF1_MEM_MODEL ) {
+                    if( g_flags & TF1_MEM_MODEL ) {
+                        if( ! modifiersMatch( t_flags, g_flags, t_base, g_base ) ) {
+                            return( TB_NULL );
+                        }
+                    } /* else new generic type has no flags so keep old binding */
+                } else {
+                    if( g_flags & TF1_MEM_MODEL ) {
+                        /* old binding had no modifiers; add them */
+                        u_unmod_type->of = g_type;
+                    } /* else neither type had memory model flags */
+                }
+                continue;
+            }
+            /* bind the generic type */
+            u_unmod_type->of = g_type;
+            PstkPush( &(data->bindings), PTreeType( u_unmod_type ) );
+            continue;
+        }
+        if( flags.arg_1st_level ) {
+            // allow trivial conversion
+            d_flags = u_flags ^ ( b_flags & u_flags );
+            if( d_flags != TF1_NULL ) {
+                /* flags up to the types don't match */
+                if(( d_flags & ~TF1_CV_MASK ) == TF1_NULL ) {
+                    /* only const/volatile don't match */
+                    status |= TB_NEEDS_TRIVIAL;
+                    u_flags &= ~d_flags;
+                }
+            }
+        }
+        if( ! modifiersMatch( b_flags, u_flags, b_base, u_base ) ) {
+            return( TB_NULL );
+        }
+        switch( b_unmod_type->id ) {
+        case TYP_CLASS:
+            if( compareClassTypes( b_unmod_type, u_unmod_type, data ) ) {
+                if( flags.arg_1st_level && u_unmod_type->flag & TF1_UNBOUND ) {
+                    b_unmod_type = ScopeFindBoundBase( b_unmod_type, u_unmod_type );
+                    if( b_unmod_type != NULL ) {
+                        if( compareClassTypes( b_unmod_type, u_unmod_type, data ) ) {
+                            return( TB_NULL );
+                        }
+                        // OK, we bound to a base class of the bound type
+                        status |= TB_NEEDS_DERIVED;
+                    } else {
+                        return( TB_NULL );
+                    }
+                } else {
+                    return( TB_NULL );
+                }
+            }
+            u_unmod_type->of = b_unmod_type;
+            PstkPush( &(data->bindings), PTreeType( u_unmod_type ) );
+            break;
+        case TYP_POINTER:
+            if( flags.arg_1st_level ) {
+                status |= handle1stLevelPtr( data, b_unmod_type, u_unmod_type );
+            } else {
+                PstkPush( &(data->without_generic), PTreeType( b_unmod_type->of ) );
+                PstkPush( &(data->with_generic), PTreeType( u_unmod_type->of ) );
+            }
+            break;
+        case TYP_MEMBER_POINTER:
+            PstkPush( &(data->without_generic), PTreeType( b_unmod_type->u.mp.host ) );
+            PstkPush( &(data->with_generic), PTreeType( u_unmod_type->u.mp.host ) );
+            PstkPush( &(data->without_generic), PTreeType( b_unmod_type->of ) );
+            PstkPush( &(data->with_generic), PTreeType( u_unmod_type->of ) );
+            break;
+        case TYP_ARRAY:
+            if( b_unmod_type->u.a.array_size != u_unmod_type->u.a.array_size ) {
+                return( TB_NULL );
+            }
+            PstkPush( &(data->without_generic), PTreeType( b_unmod_type->of ) );
+            PstkPush( &(data->with_generic), PTreeType( u_unmod_type->of ) );
+            break;
+        case TYP_FUNCTION:
+            if( b_unmod_type->u.f.pragma != u_unmod_type->u.f.pragma ) {
+                return( TB_NULL );
+            }
+            b_args = b_unmod_type->u.f.args;
+            u_args = u_unmod_type->u.f.args;
+            if( b_args != u_args ) {
+                if( b_args->num_args != u_args->num_args ) {
+                    return( TB_NULL );
+                }
+                if( b_args->qualifier != u_args->qualifier ) {
+                    return( TB_NULL );
+                }
+                pb = b_args->type_list;
+                pu = u_args->type_list;
+                for( i = b_args->num_args; i != 0; --i ) {
+                    PstkPush( &(data->without_generic), PTreeType( *pb ) );
+                    PstkPush( &(data->with_generic), PTreeType( *pu ) );
+                    ++pb;
+                    ++pu;
+                }
+            }
+            PstkPush( &(data->without_generic), PTreeType( b_unmod_type->of ) );
+            PstkPush( &(data->with_generic), PTreeType( u_unmod_type->of ) );
+            break;
+        default:
+            if( ! TypesIdentical( b_unmod_type, u_unmod_type ) ) {
+                return( TB_NULL );
+            }
+        }
+    }
+    DbgAssert( b_top == NULL && u_top == NULL );
+    return( status );
+}
+
 typedef enum {
     BIND_BIND_TYPE      = 1,    // dup old_type and bind sub-types
     BIND_DUP_TYPE       = 2,    // CheckDupType on *link_type
@@ -8166,6 +8653,79 @@ static void binderFini( type_bind_info *data )
     PstkClose( &(data->with_generic) );
     PstkClose( &(data->without_generic) );
     PstkClose( &(data->bindings) );
+}
+
+static void binderFini_ptree( type_bind_info *data )
+{
+    PTREE *top;
+
+    for(;;) {
+        top = PstkPop( &(data->with_generic) );
+        if( top == NULL ) break;
+        PTreeFree( *top );
+    }
+
+    for(;;) {
+        top = PstkPop( &(data->without_generic) );
+        if( top == NULL ) break;
+        PTreeFree( *top );
+    }
+
+    PstkClose( &(data->with_generic) );
+    PstkClose( &(data->without_generic) );
+    PstkClose( &(data->bindings) );
+}
+
+PTREE BindClassGenericTypes( PTREE parms, PTREE args )
+/**************************************************************************/
+{
+    PTREE result;
+    PTREE item;
+    unsigned bind_status;
+    unsigned push_control;
+    auto type_bind_info data;
+
+    // DbgAssert( parms->num_args == args->num_args );
+    binderInit( &data );
+    push_control = PA_NULL;
+    pushPrototypeAndArguments_ptree( &data, parms, args, push_control );
+    result = NULL;
+    bind_status = typesBind_ptree( &data );
+    if( bind_status != TB_NULL ) {
+        PSTK_ITER iter;
+        PTREE node;
+
+        node = result = PTreeBinary( CO_LIST, NULL, NULL );
+
+        if( ! PstkIterDnOpen( &iter, &data.bindings ) ) {
+            for( ; ; ) {
+                item = PstkIterDnNext( &iter );
+                if( NULL == item ) break;
+
+                node = node->u.subtree[0] = PTreeBinary( CO_LIST, NULL, NULL );
+                if( item->op == PT_TYPE ) {
+                    node->u.subtree[1] = PTreeType( item->type->of );
+                } else if( item->op == PT_INT_CONSTANT ) {
+                    node->u.subtree[1] =
+                        PTreeInt64Constant( item->u.int64_constant,
+                                            item->type->id );
+                } else {
+                    CFatal( "not yet implemented (argument deduction)" );
+                }
+            }
+        }
+
+        if( result->u.subtree[0] != NULL ) {
+            node = result;
+            result = result->u.subtree[0];
+            node->u.subtree[0] = NULL;
+            PTreeFree( node );
+        }
+    }
+    clearGenericBindings_ptree( &data.bindings );
+
+    binderFini_ptree( &data );
+    return( result );
 }
 
 TYPE BindGenericTypes( arg_list *args, SYMBOL template_fn, TOKEN_LOCN *locn,

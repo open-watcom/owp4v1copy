@@ -776,7 +776,8 @@ dbg_type SymbolicDebugType( TYPE type, SD_CONTROL control )
     // normally we ignore typedefs, but we want the names to come out
     if( type->id == TYP_TYPEDEF ) {
         if( ScopeType( type->u.t.scope, SCOPE_TEMPLATE_DECL ) ) return( dt );
-        if( !ScopeType( type->u.t.scope, SCOPE_TEMPLATE_PARM ) ) {
+        if( !ScopeType( type->u.t.scope, SCOPE_TEMPLATE_PARM )
+         && !ScopeType( type->u.t.scope, SCOPE_TEMPLATE_PARM ) ) {
             if( !CompFlags.no_debug_type_names ) {
                 if( !ScopeType( type->u.t.scope, SCOPE_TEMPLATE_INST ) ) {
                     fwd_info->dn = DBBegName( SimpleTypeName( type ),
@@ -1062,6 +1063,7 @@ static void doSymbolicDebugNamedType( TYPE type, void *data )
 {
     data = data;
     if( !ScopeType( type->u.t.scope, SCOPE_TEMPLATE_PARM ) &&
+        !ScopeType( type->u.t.scope, SCOPE_TEMPLATE_SPEC_PARM ) &&
         !ScopeType( type->u.t.scope, SCOPE_TEMPLATE_DECL ) ) {
         if( CompFlags.all_debug_type_names ||
             typedef_is_of_basic_types( type ) ) {

@@ -393,6 +393,7 @@ static void fmtSymScope( SCOPE scope, VBUF *pvbuf, boolean include_function )
         case SCOPE_TEMPLATE_DECL:
         case SCOPE_TEMPLATE_INST:
         case SCOPE_TEMPLATE_PARM:
+        case SCOPE_TEMPLATE_SPEC_PARM:
             break;
         case SCOPE_MAX:
         default:

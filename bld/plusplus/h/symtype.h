@@ -639,6 +639,7 @@ PCH_struct type {
 ,SCOPE_DEF(SCOPE_TEMPLATE_DECL, MIN_HASHTAB_SIZE )   /* template declaration scope  */\
 ,SCOPE_DEF(SCOPE_TEMPLATE_INST, MIN_HASHTAB_SIZE )   /* template instantiation scope*/\
 ,SCOPE_DEF(SCOPE_TEMPLATE_PARM, MIN_HASHTAB_SIZE )   /* template parameters scope   */\
+,SCOPE_DEF(SCOPE_TEMPLATE_SPEC_PARM, MIN_HASHTAB_SIZE ) /* template parameters (for template specializations) scope   */\
 ,SCOPE_DEF(SCOPE_FREE,          MIN_HASHTAB_SIZE )   /* unused scope (pcheader)     */
 
 typedef enum {

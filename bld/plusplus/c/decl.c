@@ -333,6 +333,7 @@ void DeclDefaultStorageClass( SCOPE scope, SYMBOL sym )
         break;
 #ifndef NDEBUG
     case SCOPE_TEMPLATE_PARM:
+    case SCOPE_TEMPLATE_SPEC_PARM:
     case SCOPE_TEMPLATE_DECL:
     case SCOPE_TEMPLATE_INST:
         break;

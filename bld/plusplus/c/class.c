@@ -737,7 +737,8 @@ TYPE ClassTagDefinition( TYPE type, char *name )
     // class T, struct T        if type is a class
     // union T                  if type is an union
     if( type->id == TYP_TYPEDEF ) {
-        if( ScopeId( type->u.t.scope ) == SCOPE_TEMPLATE_PARM ) {
+        if( ScopeType( type->u.t.scope, SCOPE_TEMPLATE_PARM )
+         || ScopeType( type->u.t.scope, SCOPE_TEMPLATE_SPEC_PARM ) ) {
             if( type->u.t.sym->name->name == name ) {
                 return( class_type );
             }
