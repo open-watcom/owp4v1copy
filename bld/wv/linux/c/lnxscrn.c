@@ -224,7 +224,7 @@ static bool TryVC( void )
     char tty_name[20];
     int len;
 
-    len = readlink( "/proc/self/fd/0", tty_name, sizeof( tty_name ) );
+    len = readlink( "/proc/self/fd/0", tty_name, sizeof( tty_name ) - 1 );
     if ( len < 0 )
         return( FALSE );
     tty_name[ len ] = '\0';
