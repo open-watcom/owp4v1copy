@@ -227,8 +227,8 @@ a_flags += -d__MT__
 
 # debug flags need to be last to override optimization flags
 !ifeq release 0
-c_flags += -d2
-a_flags += -d1
+c_dbg_flags = -d2
+a_dbg_flags = -d1
 !endif
 
 !include $(clib_dir)/bt.mif
