@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 #include <stdio.h>
 #include <io.h>
 #include <stdlib.h>
@@ -49,9 +48,9 @@
 #define TRUE    1
 #define FALSE   0
 
-char *OptEnvVar="rm";
+char                    *OptEnvVar = "rm";
 
-static const char * usageMsg[] = {
+static const char       *usageMsg[] = {
     "Usage: rm [-?firsX] [files]",
     "\tfiles       : files/directories to delete",
     "\tOptions: -? : print this list",
@@ -63,20 +62,20 @@ static const char * usageMsg[] = {
     NULL
 };
 
-int  rflag=FALSE,iflag=FALSE,fflag=FALSE,sflag=FALSE,rxflag=FALSE;
+int                     rflag = FALSE, iflag = FALSE, fflag = FALSE, sflag = FALSE, rxflag = FALSE;
 
 typedef struct dd {
-  struct dd *next;
-  char attr;
-  char name[1];
-} iolist;
+  struct dd     *next;
+  char          attr;
+  char          name[1];
+}                       iolist;
 
 /*
  * start of mainline
  */
 main( int argc, char *argv[] )
 {
-    int i,ch;
+    int i, ch;
     DIR *d;
 
     /*
@@ -88,21 +87,11 @@ main( int argc, char *argv[] )
             break;
         }
         switch( ch ) {
-        case 'X':
-            rxflag=TRUE;
-            break;
-        case 'f':
-            fflag=TRUE;
-            break;
-        case 'r':
-            rflag=TRUE;
-            break;
-        case 'i':
-            iflag=TRUE;
-            break;
-        case 's':
-            sflag=TRUE;
-            break;
+        case 'X': rxflag = TRUE; break;
+        case 'f': fflag = TRUE; break;
+        case 'r': rflag = TRUE; break;
+        case 'i': iflag = TRUE; break;
+        case 's': sflag = TRUE; break;
         }
     }
     if( argc < 2 ) {
@@ -115,9 +104,9 @@ main( int argc, char *argv[] )
      * process -r option
      */
     if( rflag ) {
-        for(i=1;i<argc;i++) {
-            if( (rxflag && !strcmp( argv[i],"*" ) ) ||
-                (!rxflag && !strcmp( argv[i], "*.*" ) ) ) {
+        for( i = 1; i < argc; i++ ) {
+            if( ( rxflag && !strcmp( argv[i], "*" ) ) ||
+                ( !rxflag && !strcmp( argv[i], "*.*" ) ) ) {
                 RecursiveRM( "." );
             } else {
                 if( FileNameWild( argv[i], rxflag ) ) {
@@ -126,7 +115,7 @@ main( int argc, char *argv[] )
                     d = opendir( argv[i] );
                 }
                 if( d != NULL ) {
-                    if( !(d->d_attr & _A_SUBDIR) ) {
+                    if( !( d->d_attr & _A_SUBDIR ) ) {
                         closedir( d );
                         if( fflag ) {
                             DoRM( argv[i] );
@@ -146,24 +135,24 @@ main( int argc, char *argv[] )
         /*
          * run through all specified files
          */
-        for(i=1;i<argc;i++) {
+        for( i = 1; i < argc; i++ ) {
             DoRM( argv[i] );
         }
     }
     DropALine();
     exit( 0 );
 
-} /* main */
+}
 
 /*
  * DoRM - perform RM on a specified file
  */
 void DoRM( char *f )
 {
-    iolist              *fhead=NULL,*ftail,*tmp;
-    iolist              *dhead=NULL,*dtail;
-    char                *bo,fpath[_MAX_PATH],tmppath[_MAX_PATH];
-    int                 i,j,k,l;
+    iolist              *fhead= NULL, *ftail, *tmp;
+    iolist              *dhead= NULL, *dtail;
+    char                *bo, fpath[_MAX_PATH], tmppath[_MAX_PATH];
+    int                 i, j, k, l;
     int                 len;
     DIR                 *d;
     struct dirent       *nd;
@@ -175,10 +164,11 @@ void DoRM( char *f )
      * get file path prefix
      */
     fpath[0] = 0;
-    for( i=strlen(f);i>=0;i--) {
+    for( i = strlen( f ); i >= 0; i-- ) {
         if( f[i] == ':' || f[i] == '\\' || f[i] == '/' ) {
-            fpath[i+1] = 0;
-            for(j=i;j>=0;j--) fpath[j] = f[j];
+            fpath[i + 1] = 0;
+            for( j = i; j >= 0; j-- )
+                fpath[j] = f[j];
             i = -1;
         }
     }
@@ -196,8 +186,7 @@ void DoRM( char *f )
     }
 
     k = strlen( fpath );
-    while( (nd = readdir( d )) != NULL ) {
-
+    while( ( nd = readdir( d ) ) != NULL ) {
         FNameLower( nd->d_name );
         if( rxflag ) {
             if( !FileMatch( crx, nd->d_name ) ) {
@@ -213,15 +202,14 @@ void DoRM( char *f )
          */
         l = strlen( nd->d_name );
         bo = tmppath;
-        for( i=0;i<k;i++ ) {
+        for( i = 0; i < k; i++ ) {
             *bo++ = fpath[i];
         }
-        for( i=0;i<l;i++) {
+        for( i = 0; i < l; i++ ) {
             *bo++ = nd->d_name[i];
         }
         *bo = 0;
         if( nd->d_attr & _A_SUBDIR ) {
-
             /*
              * process a directory
              */
@@ -238,32 +226,28 @@ void DoRM( char *f )
                         dtail->next = tmp;
                         dtail = tmp;
                     }
-                    memcpy( tmp->name, tmppath, len+1 );
+                    memcpy( tmp->name, tmppath, len + 1 );
                 } else {
                     PrintALineThenDrop( "%s is a directory, use -r", tmppath );
                 }
             }
 
         } else if( ( nd->d_attr & _A_RDONLY ) && !fflag ) {
-
             PrintALineThenDrop( "%s is read-only, use -f", tmppath );
-
         } else {
-
             /*
              * build file list
              */
             len = strlen( tmppath );
-            tmp = MemAlloc( sizeof(iolist) + len );
+            tmp = MemAlloc( sizeof( iolist ) + len );
             if( fhead == NULL ) {
                 fhead = ftail = tmp;
             } else {
                 ftail->next = tmp;
                 ftail = tmp;
             }
-            memcpy( tmp->name, tmppath, len+1 );
+            memcpy( tmp->name, tmppath, len + 1 );
             tmp->attr = nd->d_attr;
-
         }
 
     }
@@ -282,30 +266,32 @@ void DoRM( char *f )
         }
     }
     while( tmp != NULL ) {
-
-        if( tmp->attr & _A_RDONLY ) chmod( tmp->name, S_IWRITE | S_IREAD );
+        if( tmp->attr & _A_RDONLY )
+            chmod( tmp->name, S_IWRITE | S_IREAD );
 
         if( iflag ) {
             PrintALine( "Delete %s (y\\n)", tmp->name );
             i = getch();
-            while( i != 'y' && i != 'n' ) i=getch();
+            while( i != 'y' && i != 'n' )
+                i= getch();
             DropALine();
-            if( i=='y' ) remove( tmp->name );
+            if( i == 'y' )
+                remove( tmp->name );
         } else {
-            if( !sflag ) PrintALine( "Deleting file %s", tmp->name );
+            if( !sflag )
+                PrintALine( "Deleting file %s", tmp->name );
             remove( tmp->name );
         }
 
         ftail = tmp;
         tmp = tmp->next;
         MemFree( ftail );
-
     }
 
     /*
      * process any directories found
      */
-    if( rflag && (tmp=dhead) != NULL ) {
+    if( rflag && ( tmp= dhead ) != NULL ) {
         while( tmp != NULL ) {
             RecursiveRM( tmp->name );
             dtail = tmp;
@@ -313,18 +299,17 @@ void DoRM( char *f )
             MemFree( dtail );
         }
     }
-
-} /* DoRM */
+}
 
 /*
  * DoRMdir - perform RM on a specified directory
  */
 void DoRMdir( char *dir )
 {
-    unsigned attribute;
-    int rc;
+    unsigned    attribute;
+    int         rc;
 
-    if( (rc = rmdir( dir )) == -1 ) {
+    if( ( rc = rmdir( dir ) ) == -1 ) {
         _dos_getfileattr( dir, &attribute );
         if( attribute & _A_RDONLY ) {
             if( fflag ) {
@@ -338,9 +323,10 @@ void DoRMdir( char *dir )
     if( rc == -1 ) {
         PrintALineThenDrop( "Unable to delete directory %s", dir );
     } else {
-        if( !sflag ) PrintALine( "Deleting directory %s", dir );
+        if( !sflag )
+            PrintALine( "Deleting directory %s", dir );
     }
-} /* DoRMdir */
+}
 
 /*
  * RecursiveRM - do an RM recursively on all files
@@ -348,16 +334,16 @@ void DoRMdir( char *dir )
 void RecursiveRM( char *dir )
 {
     int         i;
-    char        fname[ _MAX_PATH ];
+    char        fname[_MAX_PATH];
 
     /*
      * purge the files
      */
-    strcpy(fname,dir);
+    strcpy( fname, dir );
     if( rxflag ) {
         strcat( fname, "/*" );
     } else {
-        strcat(fname,"/*.*");
+        strcat( fname, "/*.*" );
     }
     DoRM( fname );
 
@@ -367,11 +353,12 @@ void RecursiveRM( char *dir )
     if( iflag ) {
         PrintALine( "Delete directory %s (y\\n)", dir );
         i = getch();
-        while( i != 'y' && i != 'n' ) i=getch();
+        while( i != 'y' && i != 'n' )
+            i= getch();
         DropALine();
-        if( i=='y' ) DoRMdir( dir );
+        if( i == 'y' )
+            DoRMdir( dir );
     } else {
         DoRMdir( dir );
     }
-
-} /* RecursiveRM */
+}
