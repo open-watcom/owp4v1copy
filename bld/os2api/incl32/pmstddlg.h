@@ -6,6 +6,8 @@
 #define STDDLG_INCLUDED
 
 #ifdef INCL_WINSTDDLGS
+    #define INCL_WINCIRCULARSLIDER
+    #define INCL_WINSTDCNR
     #define INCL_WINSTDDRAG
     #define INCL_WINSTDFILE
     #define INCL_WINSTDFONT
@@ -434,6 +436,10 @@ HWND    APIENTRY WinFontDlg(HWND,HWND,PFONTDLG);
 
 #endif
 
+#if defined(INCL_WINSTDCNR) || defined(INCL_WINSTDVALSET)
+  #define INCL_WINSTDDRAG
+#endif
+
 #if defined(INCL_WINSTDDRAG) && !defined(STDDRAG_INCLUDED)
 #define STDDRAG_INCLUDED
 
@@ -645,4 +651,626 @@ BOOL      APIENTRY DrgVerifyType(PDRAGITEM, PCSZ);
 
 #endif
 
+#if defined (INCL_WINSTDCNR) && !defined (INCL_WINSTDCNR_INCLUDED)
+#define INCL_WINSTDCNR_INCLUDED
+
+#define CFA_IGNORE       0x80000000
+#define CRA_IGNORE       0x00008000
+#define CRA_SOURCE       0x00004000
+#define CRA_DISABLED     0x00001000
+#define CRA_OWNERFREE    0x00010000
+#define CRA_OWNERDRAW    0x00020000
+#define CV_EXACTLENGTH   0x10000000
+#define CCS_MINIICONS    0x00000800
+#define CCS_NOCONTROLPTR 0x00001000
+#define CMA_FILTER       0x1000
+
+#define CCS_EXTENDSEL      0x00000001
+#define CCS_MULTIPLESEL    0x00000002
+#define CCS_SINGLESEL      0x00000004
+#define CCS_AUTOPOSITION   0x00000008
+#define CCS_VERIFYPOINTERS 0x00000010
+#define CCS_READONLY       0x00000020
+#define CCS_MINIRECORDCORE 0x00000040
+#define CCS_MINIICONS      0x00000800
+#define CCS_NOCONTROLPTR   0x00001000
+
+#define CV_TEXT        0x00000001
+#define CV_NAME        0x00000002
+#define CV_ICON        0x00000004
+#define CV_DETAIL      0x00000008
+#define CV_FLOW        0x00000010
+#define CV_MINI        0x00000020
+#define CV_TREE        0x00000040
+#define CV_GRID        0x00000080
+#define CV_EXACTLENGTH 0x10000000
+
+#define CA_CONTAINERTITLE       0x00000200
+#define CA_TITLESEPARATOR       0x00000400
+#define CA_TITLELEFT            0x00000800
+#define CA_TITLERIGHT           0x00001000
+#define CA_TITLECENTER          0x00002000
+#define CA_OWNERDRAW            0x00004000
+#define CA_DETAILSVIEWTITLES    0x00008000
+#define CA_ORDEREDTARGETEMPH    0x00010000
+#define CA_DRAWBITMAP           0x00020000
+#define CA_DRAWICON             0x00040000
+#define CA_TITLEREADONLY        0x00080000
+#define CA_OWNERPAINTBACKGROUND 0x00100000
+#define CA_MIXEDTARGETEMPH      0x00200000
+#define CA_TREELINE             0x00400000
+
+#define CID_LEFTCOLTITLEWND  0x7FF0
+#define CID_RIGHTCOLTITLEWND 0x7FF1
+#define CID_BLANKBOX         0x7FF2
+#define CID_HSCROLL          0x7FF3
+#define CID_RIGHTHSCROLL     0x7FF4
+#define CID_CNRTITLEWND      0x7FF5
+#define CID_LEFTDVWND        0x7FF7
+#define CID_RIGHTDVWND       0x7FF8
+#define CID_VSCROLL          0x7FF9
+#define CID_MLE              0x7FFA
+
+#define CFA_LEFT            0x00000001
+#define CFA_RIGHT           0x00000002
+#define CFA_CENTER          0x00000004
+#define CFA_TOP             0x00000008
+#define CFA_VCENTER         0x00000010
+#define CFA_BOTTOM          0x00000020
+#define CFA_INVISIBLE       0x00000040
+#define CFA_BITMAPORICON    0x00000100
+#define CFA_SEPARATOR       0x00000200
+#define CFA_HORZSEPARATOR   0x00000400
+#define CFA_STRING          0x00000800
+#define CFA_OWNER           0x00001000
+#define CFA_DATE            0x00002000
+#define CFA_TIME            0x00004000
+#define CFA_FIREADONLY      0x00008000
+#define CFA_FITITLEREADONLY 0x00010000
+#define CFA_ULONG           0x00020000
+#define CFA_RANGE           0x00040000
+#define CFA_NEWCOMP         0x00080000
+#define CFA_OBJECT          0x00100000
+#define CFA_LIST            0x00200000
+#define CFA_CLASS           0x00400000
+#define CFA_IGNORE          0x80000000
+
+#define CRA_SELECTED        0x00000001
+#define CRA_TARGET          0x00000002
+#define CRA_CURSORED        0x00000004
+#define CRA_INUSE           0x00000008
+#define CRA_FILTERED        0x00000010
+#define CRA_DROPONABLE      0x00000020
+#define CRA_RECORDREADONLY  0x00000040
+#define CRA_EXPANDED        0x00000080
+#define CRA_COLLAPSED       0x00000100
+#define CRA_PICKED          0x00000200
+#define CRA_LOCKED          0x00000400
+#define CRA_DISABLED        0x00001000
+#define CRA_SOURCE          0x00004000
+#define CRA_IGNORE          0x00008000
+#define CRA_OWNERFREE       0x00010000
+#define CRA_OWNERDRAW       0x00020000
+
+#define CMA_TOP              0x0001
+#define CMA_BOTTOM           0x0002
+#define CMA_LEFT             0x0004
+#define CMA_RIGHT            0x0008
+#define CMA_PERIMETER        0x0010
+#define CMA_USER             0x0020
+#define CMA_FIRST            0x0010
+#define CMA_LAST             0x0020
+#define CMA_END              0x0040
+#define CMA_PREV             0x0080
+#define CMA_NEXT             0x0100
+#define CMA_HORIZONTAL       0x0200
+#define CMA_VERTICAL         0x0400
+#define CMA_ICON             0x0800
+#define CMA_TEXT             0x1000
+#define CMA_PARTIAL          0x2000
+#define CMA_COMPLETE         0x4000
+#define CMA_PARENT           0x0001
+#define CMA_FIRSTCHILD       0x0002
+#define CMA_LASTCHILD        0x0004
+#define CMA_CNRTITLE         0x0001
+#define CMA_DELTA            0x0002
+#define CMA_FLWINDOWATTR     0x0004
+#define CMA_LINESPACING      0x0008
+#define CMA_PFIELDINFOLAST   0x0010
+#define CMA_PSORTRECORD      0x0020
+#define CMA_PTLORIGIN        0x0040
+#define CMA_SLBITMAPORICON   0x0080
+#define CMA_XVERTSPLITBAR    0x0100
+#define CMA_PFIELDINFOOBJECT 0x0200
+#define CMA_ITEMORDER        0x0001
+#define CMA_WINDOW           0x0002
+#define CMA_WORKSPACE        0x0004
+#define CMA_ZORDER           0x0008
+#define CMA_DELTATOP         0x0001
+#define CMA_DELTABOT         0x0002
+#define CMA_DELTAHOME        0x0004
+#define CMA_DELTAEND         0x0008
+#define CMA_NOREPOSITION     0x0001
+#define CMA_REPOSITION       0x0002
+#define CMA_TEXTCHANGED      0x0004
+#define CMA_ERASE            0x0008
+#define CMA_NOTEXTCHANGED    0x0010
+#define CMA_FILTER           0x1000
+#define CMA_FREE             0x0001
+#define CMA_INVALIDATE       0x0002
+#define CMA_ARRANGESTANDARD  0x0000
+#define CMA_ARRANGEGRID      0x0001
+#define CMA_ARRANGESELECTED  0x0002
+#define CMA_AVAIL            0x0001
+#define CMA_UNAVAIL          0x0002
+
+#define CMA_TREEICON           0x0400
+#define CMA_TREEBITMAP         0x0800
+#define CMA_CXTREEINDENT       0x1000
+#define CMA_CXTREELINE         0x2000
+#define CMA_SLTREEBITMAPORICON 0x4000
+
+#define CM_ALLOCDETAILFIELDINFO      0x0330
+#define CM_ALLOCRECORD               0x0331
+#define CM_ARRANGE                   0x0332
+#define CM_ERASERECORD               0x0333
+#define CM_FILTER                    0x0334
+#define CM_FREEDETAILFIELDINFO       0x0335
+#define CM_FREERECORD                0x0336
+#define CM_HORZSCROLLSPLITWINDOW     0x0337
+#define CM_INSERTDETAILFIELDINFO     0x0338
+#define CM_INSERTRECORD              0x0339
+#define CM_INVALIDATEDETAILFIELDINFO 0x033a
+#define CM_INVALIDATERECORD          0x033b
+#define CM_PAINTBACKGROUND           0x033c
+#define CM_QUERYCNRINFO              0x033d
+#define CM_QUERYDETAILFIELDINFO      0x033e
+#define CM_QUERYDRAGIMAGE            0x033f
+#define CM_QUERYRECORD               0x0340
+#define CM_QUERYRECORDEMPHASIS       0x0341
+#define CM_QUERYRECORDFROMRECT       0x0342
+#define CM_QUERYRECORDRECT           0x0343
+#define CM_QUERYVIEWPORTRECT         0x0344
+#define CM_REMOVEDETAILFIELDINFO     0x0345
+#define CM_REMOVERECORD              0x0346
+#define CM_SCROLLWINDOW              0x0347
+#define CM_SEARCHSTRING              0x0348
+#define CM_SETCNRINFO                0x0349
+#define CM_SETRECORDEMPHASIS         0x034a
+#define CM_SORTRECORD                0x034b
+#define CM_OPENEDIT                  0x034c
+#define CM_CLOSEEDIT                 0x034d
+#define CM_COLLAPSETREE              0x034e
+#define CM_EXPANDTREE                0x034f
+#define CM_QUERYRECORDINFO           0x0350
+#define CM_INSERTRECORDARRAY         0x0351
+#define CM_MOVETREE                  0x0352
+#define CM_SETTEXTVISIBILITY         0x0353
+#define CM_SETGRIDINFO               0x0354
+#define CM_QUERYGRIDINFO             0x0355
+#define CM_SNAPTOGRID                0x0356
+
+#define CN_DRAGAFTER    101
+#define CN_DRAGLEAVE    102
+#define CN_DRAGOVER     103
+#define CN_DROP         104
+#define CN_DROPHELP     105
+#define CN_ENTER        106
+#define CN_INITDRAG     107
+#define CN_EMPHASIS     108
+#define CN_KILLFOCUS    109
+#define CN_SCROLL       110
+#define CN_QUERYDELTA   111
+#define CN_SETFOCUS     112
+#define CN_REALLOCPSZ   113
+#define CN_BEGINEDIT    114
+#define CN_ENDEDIT      115
+#define CN_COLLAPSETREE 116
+#define CN_EXPANDTREE   117
+#define CN_HELP         118
+#define CN_CONTEXTMENU  119
+#define CN_VERIFYEDIT   134
+#define CN_PICKUP       135
+#define CN_DROPNOTIFY   136
+#define CN_GRIDRESIZED  137
+
+#define PMERR_NOFILTERED_ITEMS          0x1f02
+#define PMERR_COMPARISON_FAILED         0x1f03
+#define PMERR_RECORD_CURRENTLY_INSERTED 0x1f04
+#define PMERR_FI_CURRENTLY_INSERTED     0x1f05
+
+typedef struct _TREEITEMDESC {
+    HBITMAP  hbmExpanded;
+    HBITMAP  hbmCollapsed;
+    HPOINTER hptrExpanded;
+    HPOINTER hptrCollapsed;
+} TREEITEMDESC, *PTREEITEMDESC;
+
+typedef struct _FIELDINFO {
+    ULONG  cb;
+    ULONG  flData;
+    ULONG  flTitle;
+    PVOID  pTitleData;
+    ULONG  offStruct;
+    PVOID  pUserData;
+    struct _FIELDINFO *pNextFieldInfo;
+    ULONG  cxWidth;
+} FIELDINFO, *PFIELDINFO;
+
+typedef struct _RECORDCORE {
+    ULONG    cb;
+    ULONG    flRecordAttr;
+    POINTL   ptlIcon;
+    struct _RECORDCORE *preccNextRecord;
+    PSZ      pszIcon;
+    HPOINTER hptrIcon;
+    HPOINTER hptrMiniIcon;
+    HBITMAP  hbmBitmap;
+    HBITMAP  hbmMiniBitmap;
+    PTREEITEMDESC pTreeItemDesc;
+    PSZ      pszText;
+    PSZ      pszName;
+    PSZ      pszTree;
+} RECORDCORE,  *PRECORDCORE;
+
+typedef struct _MINIRECORDCORE {
+    ULONG    cb;
+    ULONG    flRecordAttr;
+    POINTL   ptlIcon;
+    struct _MINIRECORDCORE *preccNextRecord;
+    PSZ      pszIcon;
+    HPOINTER hptrIcon;
+} MINIRECORDCORE;
+typedef MINIRECORDCORE *PMINIRECORDCORE;
+
+typedef struct _TREEMOVE {
+    PRECORDCORE preccMove;
+    PRECORDCORE preccNewParent;
+    PRECORDCORE pRecordOrder;
+    BOOL        flMoveSiblings;
+} TREEMOVE, *PTREEMOVE;
+
+typedef struct _CNRINFO {
+    ULONG      cb;
+    PVOID      pSortRecord;
+    PFIELDINFO pFieldInfoLast;
+    PFIELDINFO pFieldInfoObject;
+    PSZ        pszCnrTitle;
+    ULONG      flWindowAttr;
+    POINTL     ptlOrigin;
+    ULONG      cDelta;
+    ULONG      cRecords;
+    SIZEL      slBitmapOrIcon;
+    SIZEL      slTreeBitmapOrIcon;
+    HBITMAP    hbmExpanded;
+    HBITMAP    hbmCollapsed;
+    HPOINTER   hptrExpanded;
+    HPOINTER   hptrCollapsed;
+    LONG       cyLineSpacing;
+    LONG       cxTreeIndent;
+    LONG       cxTreeLine;
+    ULONG      cFields;
+    LONG       xVertSplitbar;
+} CNRINFO, *PCNRINFO;
+
+typedef struct _GRIDSQUARE {
+    ULONG ulNumber;
+    ULONG ulState;
+    RECTL rctlSquare;
+} GRIDSQUARE, *PGRIDSQUARE;
+
+typedef struct _GRIDINFO {
+    ULONG cb;
+    SHORT cxGrid;
+    SHORT cyGrid;
+    SHORT sGridRows;
+    SHORT sGridCols;
+    LONG  cGridSquares;
+    PGRIDSQUARE pGrid;
+} GRIDINFO, *PGRIDINFO;
+
+typedef struct _CDATE {
+    UCHAR  day;
+    UCHAR  month;
+    USHORT year;
+} CDATE, *PCDATE;
+
+typedef struct _CTIME {
+    UCHAR hours;
+    UCHAR minutes;
+    UCHAR seconds;
+    UCHAR ucReserved;
+} CTIME, *PCTIME;
+
+typedef struct _CNRDRAGINIT {
+    HWND        hwndCnr;
+    PRECORDCORE pRecord;
+    LONG        x;
+    LONG        y;
+    LONG        cx;
+    LONG        cy;
+} CNRDRAGINIT, *PCNRDRAGINIT;
+
+typedef struct _FIELDINFOINSERT {
+    ULONG      cb;
+    PFIELDINFO pFieldInfoOrder;
+    ULONG      fInvalidateFieldInfo;
+    ULONG      cFieldInfoInsert;
+} FIELDINFOINSERT, *PFIELDINFOINSERT;
+
+typedef struct _RECORDINSERT {
+    ULONG       cb;
+    PRECORDCORE pRecordOrder;
+    PRECORDCORE pRecordParent;
+    ULONG       fInvalidateRecord;
+    ULONG       zOrder;
+    ULONG       cRecordsInsert;
+} RECORDINSERT, *PRECORDINSERT;
+
+typedef struct _QUERYRECFROMRECT {
+    ULONG cb;
+    RECTL rect;
+    ULONG fsSearch;
+} QUERYRECFROMRECT, *PQUERYRECFROMRECT;
+
+typedef struct _QUERYRECORDRECT {
+    ULONG       cb;
+    PRECORDCORE pRecord;
+    ULONG       fRightSplitWindow;
+    ULONG       fsExtent;
+} QUERYRECORDRECT, *PQUERYRECORDRECT;
+
+typedef struct _SEARCHSTRING {
+    ULONG cb;
+    PSZ   pszSearch;
+    ULONG fsPrefix;
+    ULONG fsCaseSensitive;
+    ULONG usView;
+} SEARCHSTRING, *PSEARCHSTRING;
+
+typedef struct _CNRDRAGINFO {
+    PDRAGINFO   pDragInfo;
+    PRECORDCORE pRecord;
+} CNRDRAGINFO, *PCNRDRAGINFO;
+
+typedef struct _CNRLAZYDRAGINFO {
+    PDRAGINFO   pDragInfo;
+    PRECORDCORE pRecord;
+    HWND        hwndTarget;
+} CNRLAZYDRAGINFO, *PCNRLAZYDRAGINFO;
+
+typedef struct _NOTIFYRECORDEMPHASIS {
+    HWND        hwndCnr;
+    PRECORDCORE pRecord;
+    ULONG       fEmphasisMask;
+} NOTIFYRECORDEMPHASIS, *PNOTIFYRECORDEMPHASIS;
+
+typedef struct _NOTIFYRECORDENTER {
+    HWND        hwndCnr;
+    ULONG       fKey;
+    PRECORDCORE pRecord;
+} NOTIFYRECORDENTER, *PNOTIFYRECORDENTER;
+
+typedef struct _NOTIFYDELTA {
+    HWND  hwndCnr;
+    ULONG fDelta;
+} NOTIFYDELTA, *PNOTIFYDELTA;
+
+typedef struct _NOTIFYSCROLL {
+    HWND  hwndCnr;
+    LONG  lScrollInc;
+    ULONG fScroll;
+} NOTIFYSCROLL, *PNOTIFYSCROLL;
+
+typedef struct _CNREDITDATA {
+    ULONG       cb;
+    HWND        hwndCnr;
+    PRECORDCORE pRecord;
+    PFIELDINFO  pFieldInfo;
+    PSZ         *ppszText;
+    ULONG       cbText;
+    ULONG       id;
+} CNREDITDATA, *PCNREDITDATA;
+
+typedef struct _OWNERBACKGROUND {
+    HWND  hwnd;
+    HPS   hps;
+    RECTL rclBackground;
+    LONG  idWindow;
+} OWNERBACKGROUND, *POWNERBACKGROUND;
+
+typedef struct _CNRDRAWITEMINFO {
+    PRECORDCORE pRecord;
+    PFIELDINFO  pFieldInfo;
+} CNRDRAWITEMINFO, *PCNRDRAWITEMINFO;
+
+#endif
+
+#if defined(INCL_WINSTDVALSET) && !defined(INCL_WINSTDVALSET_INCLUDED)
+#define INCL_WINSTDVALSET_INCLUDED
+
+#define VS_BITMAP       0x0001
+#define VS_ICON         0x0002
+#define VS_TEXT         0x0004
+#define VS_RGB          0x0008
+#define VS_COLORINDEX   0x0010
+#define VS_BORDER       0x0020
+#define VS_ITEMBORDER   0x0040
+#define VS_SCALEBITMAPS 0x0080
+#define VS_RIGHTTOLEFT  0x0100
+#define VS_OWNERDRAW    0x0200
+
+#define VIA_BITMAP     0x0001
+#define VIA_ICON       0x0002
+#define VIA_TEXT       0x0004
+#define VIA_RGB        0x0008
+#define VIA_COLORINDEX 0x0010
+#define VIA_OWNERDRAW  0x0020
+#define VIA_DISABLED   0x0040
+#define VIA_DRAGGABLE  0x0080
+#define VIA_DROPONABLE 0x0100
+
+#define VMA_ITEMSIZE    0x0001
+#define VMA_ITEMSPACING 0x0002
+
+#define VDA_ITEM           0x0001
+#define VDA_ITEMBACKGROUND 0x0002
+#define VDA_SURROUNDING    0x0003
+#define VDA_BACKGROUND     0x0004
+
+#define VSERR_INVALID_PARAMETERS (-1)
+
+#define VM_QUERYITEM         0x0375
+#define VM_QUERYITEMATTR     0x0376
+#define VM_QUERYMETRICS      0x0377
+#define VM_QUERYSELECTEDITEM 0x0378
+#define VM_SELECTITEM        0x0379
+#define VM_SETITEM           0x037a
+#define VM_SETITEMATTR       0x037b
+#define VM_SETMETRICS        0x037c
+
+#define VN_SELECT     120
+#define VN_ENTER      121
+#define VN_DRAGLEAVE  122
+#define VN_DRAGOVER   123
+#define VN_DROP       124
+#define VN_DROPHELP   125
+#define VN_INITDRAG   126
+#define VN_SETFOCUS   127
+#define VN_KILLFOCUS  128
+#define VN_HELP       129
+
+typedef struct _VSCDATA {
+    ULONG  cbSize;
+    USHORT usRowCount;
+    USHORT usColumnCount;
+} VSCDATA, *PVSCDATA;
+
+typedef struct _VSDRAGINIT {
+    HWND   hwnd;
+    LONG   x;
+    LONG   y;
+    LONG   cx;
+    LONG   cy;
+    USHORT usRow;
+    USHORT usColumn;
+} VSDRAGINIT, *PVSDRAGINIT;
+
+typedef struct _VSDRAGINFO {
+    PDRAGINFO pDragInfo;
+    USHORT    usRow;
+    USHORT    usColumn;
+} VSDRAGINFO, *PVSDRAGINFO;
+
+typedef struct _VSTEXT {
+    PSZ   pszItemText;
+    ULONG ulBufLen;
+} VSTEXT, *PVSTEXT;
+
+#endif
+
+#if defined(INCL_WINSTDSLIDER) && !defined(INCL_WINSTDSLIDER_INCLUDED)
+#define INCL_WINSTDSLIDER_INCLUDED
+
+#define SLS_HORIZONTAL      0x00000000
+#define SLS_VERTICAL        0x00000001
+#define SLS_CENTER          0x00000000
+#define SLS_BOTTOM          0x00000002
+#define SLS_TOP             0x00000004
+#define SLS_LEFT            0x00000002
+#define SLS_RIGHT           0x00000004
+#define SLS_SNAPTOINCREMENT 0x00000008
+#define SLS_BUTTONSBOTTOM   0x00000010
+#define SLS_BUTTONSTOP      0x00000020
+#define SLS_BUTTONSLEFT     0x00000010
+#define SLS_BUTTONSRIGHT    0x00000020
+#define SLS_OWNERDRAW       0x00000040
+#define SLS_READONLY        0x00000080
+#define SLS_RIBBONSTRIP     0x00000100
+#define SLS_HOMEBOTTOM      0x00000000
+#define SLS_HOMETOP         0x00000200
+#define SLS_HOMELEFT        0x00000000
+#define SLS_HOMERIGHT       0x00000200
+#define SLS_PRIMARYSCALE1   0x00000000
+#define SLS_PRIMARYSCALE2   0x00000400
+
+#define SMA_SCALE1              0x0001
+#define SMA_SCALE2              0x0002
+#define SMA_SHAFTDIMENSIONS     0x0000
+#define SMA_SHAFTPOSITION       0x0001
+#define SMA_SLIDERARMDIMENSIONS 0x0002
+#define SMA_SLIDERARMPOSITION   0x0003
+#define SMA_RANGEVALUE          0x0000
+#define SMA_INCREMENTVALUE      0x0001
+#define SMA_SETALLTICKS         0xFFFF
+
+#define SDA_RIBBONSTRIP 0x0001
+#define SDA_SLIDERSHAFT 0x0002
+#define SDA_BACKGROUND  0x0003
+#define SDA_SLIDERARM   0x0004
+
+#define PMERR_UPDATE_IN_PROGRESS  0x1f06
+#define SLDERR_INVALID_PARAMETERS (-1)
+
+#define SLM_ADDDETENT       0x0369
+#define SLM_QUERYDETENTPOS  0x036a
+#define SLM_QUERYSCALETEXT  0x036b
+#define SLM_QUERYSLIDERINFO 0x036c
+#define SLM_QUERYTICKPOS    0x036d
+#define SLM_QUERYTICKSIZE   0x036e
+#define SLM_REMOVEDETENT    0x036f
+#define SLM_SETSCALETEXT    0x0370
+#define SLM_SETSLIDERINFO   0x0371
+#define SLM_SETTICKSIZE     0x0372
+
+#define SLN_CHANGE      1
+#define SLN_SLIDERTRACK 2
+#define SLN_SETFOCUS    3
+#define SLN_KILLFOCUS   4
+
+typedef struct _SLDCDATA {
+    ULONG  cbSize;
+    USHORT usScale1Increments;
+    USHORT usScale1Spacing;
+    USHORT usScale2Increments;
+    USHORT usScale2Spacing;
+} SLDCDATA, *PSLDCDATA;
+
+#endif
+
+#if defined (INCL_WINCIRCULARSLIDER) && !defined (INCL_WINCIRCULARSLIDER_INCLUDED)
+#define INCL_WINCIRCULARSLIDER_INCLUDED
+
+#define CSM_QUERYRANGE           0x053D
+#define CSM_SETRANGE             0x053E
+#define CSM_QUERYVALUE           0x053F
+#define CSM_SETVALUE             0x0540
+#define CSM_QUERYRADIUS          0x0541
+#define CSM_SETINCREMENT         0x0542
+#define CSM_QUERYINCREMENT       0x0543
+#define CSM_SETBITMAPDATA        0x0544
+#define CSN_SETFOCUS             0x0548
+#define CSN_CHANGED              0x0549
+#define CSN_TRACKING             0x054A
+#define CSN_QUERYBACKGROUNDCOLOR 0x054B
+
+#define CSS_NOBUTTON          0x0001
+#define CSS_NOTEXT            0x0002
+#define CSS_NONUMBER          0x0004
+#define CSS_POINTSELECT       0x0008
+#define CSS_360               0x0010
+#define CSS_MIDPOINT          0x0020
+#define CSS_PROPORTIONALTICKS 0x0040
+#define CSS_NOTICKS           0x0080
+#define CSS_CIRCULARVALUE     0x0100
+
+typedef struct _CSBITMAPDATA {
+    HBITMAP hbmLeftUp;
+    HBITMAP hbmLeftDown;
+    HBITMAP hbmRightUp;
+    HBITMAP hbmRightDown;
+} CSBITMAPDATA, *PCSBITMAPDATA;
+
+
+#endif
 

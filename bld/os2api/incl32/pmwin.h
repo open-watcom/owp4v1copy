@@ -166,6 +166,47 @@
 #define FM_DEFN_WIN       0x0004
 #define FM_DEFN_GENERIC   0x8000
 
+#define FM_DEFN_LATIN1    0x0010
+#define FM_DEFN_PC        0x0020
+#define FM_DEFN_LATIN2    0x0040
+#define FM_DEFN_CYRILLIC  0x0080
+#define FM_DEFN_HEBREW    0x0100
+#define FM_DEFN_GREEK     0x0200
+#define FM_DEFN_ARABIC    0x0400
+#define FM_DEFN_UGLEXT    0x0800
+#define FM_DEFN_KANA      0x1000
+#define FM_DEFN_THAI      0x2000
+
+#define FM_DEFN_UGL383    0x0070
+#define FM_DEFN_UGL504    0x00F0
+#define FM_DEFN_UGL767    0x0FF0
+#define FM_DEFN_UGL1105   0x3FF0
+
+#define FM_SEL_ITALIC         0x0001
+#define FM_SEL_UNDERSCORE     0x0002
+#define FM_SEL_NEGATIVE       0x0004
+#define FM_SEL_OUTLINE        0x0008
+#define FM_SEL_STRIKEOUT      0x0010
+#define FM_SEL_BOLD           0x0020
+#define FM_SEL_ISO9241_TESTED 0x0040
+
+#define FM_SEL_JAPAN    0x1000
+#define FM_SEL_TAIWAN   0x2000
+#define FM_SEL_CHINA    0x4000
+#define FM_SEL_KOREA    0x8000
+#define FM_SEL_DBCSMASK 0xF000
+
+#define FM_ISO_9518_640  0x01
+#define FM_ISO_9515_640  0x02
+#define FM_ISO_9515_1024 0x04
+#define FM_ISO_9517_640  0x08
+#define FM_ISO_9517_1024 0x10
+
+#define FM_CAP_NOMIX         0x0001
+#define FM_CAP_NO_COLOR      0x0002
+#define FM_CAP_NO_MIXEDMODES 0x0004
+#define FM_CAP_NO_HOLLOW     0x0008
+
 #define FATTR_SEL_ITALIC          0x0001
 #define FATTR_SEL_UNDERSCORE      0x0002
 #define FATTR_SEL_OUTLINE         0x0008
@@ -1316,6 +1357,30 @@ BOOL   APIENTRY WinSetHook(HAB hab, HMQ hmq, LONG lHookType, PFN pHookProc, HMOD
 
 #endif
 
+#if defined(INCL_WININPUT) || !defined(INCL_NOCOMMON)
+
+#define FC_NOSETFOCUS            0x0001
+#define FC_NOBRINGTOTOP          FC_NOSETFOCUS
+#define FC_NOLOSEFOCUS           0x0002
+#define FC_NOBRINGTOPFIRSTWINDOW FC_NOLOSEFOCUS
+#define FC_NOSETACTIVE           0x0004
+#define FC_NOLOSEACTIVE          0x0008
+#define FC_NOSETSELECTION        0x0010
+#define FC_NOLOSESELECTION       0x0020
+
+#define QFC_NEXTINCHAIN  1
+#define QFC_ACTIVE       2
+#define QFC_FRAME        3
+#define QFC_SELECTACTIVE 4
+#define QFC_PARTOFCHAIN  5
+
+BOOL   APIENTRY WinFocusChange(HWND,HWND,ULONG);
+BOOL   APIENTRY WinLockupSystem(HAB);
+BOOL   APIENTRY WinSetFocus(HWND,HWND);
+BOOL   APIENTRY WinUnlockSystem(HAB,PSZ);
+
+#endif
+
 #if defined(INCL_WININPUT)
 
 #define VK_BUTTON1                 0x01
@@ -1403,69 +1468,59 @@ BOOL   APIENTRY WinSetHook(HAB hab, HMQ hmq, LONG lHookType, PFN pHookProc, HMOD
 #define KC_DBCSRSRVD1  0x4000
 #define KC_DBCSRSRVD2  0x8000
 
-#define WM_MOUSEFIRST       0x0070
-#define WM_MOUSELAST        0x0079
-#define WM_BUTTONCLICKFIRST 0x0071
-#define WM_BUTTONCLICKLAST  0x0079
+#define WM_MOUSEFIRST         0x0070
+#define WM_MOUSELAST          0x0079
+#define WM_BUTTONCLICKFIRST   0x0071
+#define WM_BUTTONCLICKLAST    0x0079
+#define WM_MOUSEMOVE          0x0070
+#define WM_BUTTON1DOWN        0x0071
+#define WM_BUTTON1UP          0x0072
+#define WM_BUTTON1DBLCLK      0x0073
+#define WM_BUTTON2DOWN        0x0074
+#define WM_BUTTON2UP          0x0075
+#define WM_BUTTON2DBLCLK      0x0076
+#define WM_BUTTON3DOWN        0x0077
+#define WM_BUTTON3UP          0x0078
+#define WM_BUTTON3DBLCLK      0x0079
+#define WM_MOUSEMAP           0x007D
+#define WM_EXTMOUSEFIRST      0x0410
+#define WM_EXTMOUSELAST       0x0419
+#define WM_CHORD              0x0410
+#define WM_BUTTON1MOTIONSTART 0x0411
+#define WM_BUTTON1MOTIONEND   0x0412
+#define WM_BUTTON1CLICK       0x0413
+#define WM_BUTTON2MOTIONSTART 0x0414
+#define WM_BUTTON2MOTIONEND   0x0415
+#define WM_BUTTON2CLICK       0x0416
+#define WM_BUTTON3MOTIONSTART 0x0417
+#define WM_BUTTON3MOTIONEND   0x0418
+#define WM_BUTTON3CLICK       0x0419
+#define WM_BEGINDRAG          0x0420
+#define WM_ENDDRAG            0x0421
+#define WM_SINGLESELECT       0x0422
+#define WM_OPEN               0x0423
+#define WM_CONTEXTMENU        0x0424
+#define WM_CONTEXTHELP        0x0425
+#define WM_TEXTEDIT           0x0426
+#define WM_BEGINSELECT        0x0427
+#define WM_ENDSELECT          0x0428
+#define WM_PICKUP             0x0429
+#define WM_PENFIRST           0x04C0
+#define WM_PENLAST            0x04FF
+#define WM_MMPMFIRST          0x0500
+#define WM_MMPMLAST           0x05FF
+#define WM_STDDLGFIRST        0x0600
+#define WM_STDDLGLAST         0x065F
+#define WM_BIDI_FIRST         0x0BD0
+#define WM_BIDI_LAST          0x0BFF
+#define WM_CHAR               0x007A
+#define WM_VIOCHAR            0x007B
 
-#define WM_MOUSEMOVE        0x0070
-#define WM_BUTTON1DOWN      0x0071
-#define WM_BUTTON1UP        0x0072
-#define WM_BUTTON1DBLCLK    0x0073
-#define WM_BUTTON2DOWN      0x0074
-#define WM_BUTTON2UP        0x0075
-#define WM_BUTTON2DBLCLK    0x0076
-#define WM_BUTTON3DOWN      0x0077
-#define WM_BUTTON3UP        0x0078
-#define WM_BUTTON3DBLCLK    0x0079
-#define WM_MOUSEMAP         0x007D
-
-#define WM_EXTMOUSEFIRST    0x0410
-#define WM_EXTMOUSELAST     0x0419
-
-#define WM_CHORD                0x0410
-#define WM_BUTTON1MOTIONSTART   0x0411
-#define WM_BUTTON1MOTIONEND     0x0412
-#define WM_BUTTON1CLICK         0x0413
-#define WM_BUTTON2MOTIONSTART   0x0414
-#define WM_BUTTON2MOTIONEND     0x0415
-#define WM_BUTTON2CLICK         0x0416
-#define WM_BUTTON3MOTIONSTART   0x0417
-#define WM_BUTTON3MOTIONEND     0x0418
-#define WM_BUTTON3CLICK         0x0419
-
-#define WM_BEGINDRAG            0x0420
-#define WM_ENDDRAG              0x0421
-#define WM_SINGLESELECT         0x0422
-#define WM_OPEN                 0x0423
-#define WM_CONTEXTMENU          0x0424
-#define WM_CONTEXTHELP          0x0425
-#define WM_TEXTEDIT             0x0426
-#define WM_BEGINSELECT          0x0427
-#define WM_ENDSELECT            0x0428
-#define WM_PICKUP               0x0429
-
-#define WM_PENFIRST             0x04C0
-#define WM_PENLAST              0x04FF
-#define WM_MMPMFIRST            0x0500
-#define WM_MMPMLAST             0x05FF
-#define WM_STDDLGFIRST          0x0600
-#define WM_STDDLGLAST           0x065F
-
-#define WM_BIDI_FIRST           0x0BD0
-#define WM_BIDI_LAST            0x0BFF
-
-#define WM_CHAR             0x007A
-#define WM_VIOCHAR          0x007B
-
-BOOL   APIENTRY WinFocusChange(HWND hwndDesktop, HWND hwndSetFocus, ULONG fFocusChange);
-LONG   APIENTRY WinGetKeyState(HWND hwndDeskTop, LONG vkey);
-LONG   APIENTRY WinGetPhysKeyState(HWND hwndDeskTop, LONG sc);
-BOOL   APIENTRY WinLockupSystem(HAB hab);
-HWND   APIENTRY WinQueryCapture(HWND hwndDesktop);
-HWND   APIENTRY WinQueryFocus(HWND hwndDeskTop);
-BOOL   APIENTRY WinSetCapture(HWND hwndDesktop, HWND hwnd);
-BOOL   APIENTRY WinSetFocus(HWND hwndDeskTop, HWND hwndNewFocus);
+LONG   APIENTRY WinGetKeyState(HWND,LONG);
+LONG   APIENTRY WinGetPhysKeyState(HWND,LONG);
+HWND   APIENTRY WinQueryCapture(HWND);
+HWND   APIENTRY WinQueryFocus(HWND);
+BOOL   APIENTRY WinSetCapture(HWND,HWND);
 
 #endif
 
@@ -1541,6 +1596,15 @@ typedef struct _LBOXINFO {
 
 #if defined(INCL_WINMLE)
 
+#define MLS_WORDWRAP     0x00000001
+#define MLS_BORDER       0x00000002
+#define MLS_VSCROLL      0x00000004
+#define MLS_HSCROLL      0x00000008
+#define MLS_READONLY     0x00000010
+#define MLS_IGNORETAB    0x00000020
+#define MLS_DISABLEUNDO  0x00000040
+#define MLS_LIMITVSCROLL 0x00000080
+
 #define MLM_SETTEXTLIMIT          0x01b0
 #define MLM_QUERYTEXTLIMIT        0x01b1
 #define MLM_SETFORMATRECT         0x01b2
@@ -1602,6 +1666,12 @@ typedef struct _LBOXINFO {
 #define MLN_MEMERROR              0x000c
 #define MLN_UNDOOVERFLOW          0x000d
 #define MLN_CLPBDFAIL             0x000f
+
+#define MLFQS_MINMAXSEL 0
+#define MLFQS_MINSEL    1
+#define MLFQS_MAXSEL    2
+#define MLFQS_ANCHORSEL 3
+#define MLFQS_CURSORSEL 4
 
 typedef LONG  IPT;
 typedef PLONG PIPT;
@@ -2278,6 +2348,12 @@ ULONG   APIENTRY WinSwitchToProgram(HSWITCH hswitchSwHandle);
 #define PP_MAJORTABBACKGROUNDCOLOR              71
 #define PP_MINORTABFOREGROUNDCOLOR              72
 #define PP_MINORTABBACKGROUNDCOLOR              73
+
+#define QPF_NOINHERIT     0x0001
+#define QPF_ID1COLORINDEX 0x0002
+#define QPF_ID2COLORINDEX 0x0004
+#define QPF_PURERGBCOLOR  0x0008
+#define QPF_VALIDFLAGS    0x000F
 
 #define SYSCLR_SHADOWHILITEBGND      (-50)
 #define SYSCLR_SHADOWHILITEFGND      (-49)
