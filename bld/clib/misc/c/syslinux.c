@@ -287,19 +287,25 @@ _WCRTLINK int pipe( int __fildes[2] )
 
 _WCRTLINK int rename( const char *__old, const char *__new )
 {
-    int res = sys_call2(SYS_rename, (u_long)__old, (u_long)__new);
+    u_long res = sys_call2(SYS_rename, (u_long)__old, (u_long)__new);
     __syscall_return(int,res);
 }
     
 _WCRTLINK int truncate( const char *__path, off_t __length )
 {
-    int res = sys_call2(SYS_truncate, (u_long)__path, __length);
+    u_long res = sys_call2(SYS_truncate, (u_long)__path, __length);
     __syscall_return(int,res);
 }
 
 _WCRTLINK int ftruncate( int __fd, off_t __length )
 {
-        int res = sys_call2(SYS_ftruncate, __fd, __length);
+    u_long res = sys_call2(SYS_ftruncate, __fd, __length);
     __syscall_return(int,res);
 }
-        
+
+_WCRTLINK int chmod( const char *__path, mode_t __mode )
+{
+    u_long res = sys_call2(SYS_chmod, (u_long)__path, __mode);
+    __syscall_return(int,res);
+}
+
