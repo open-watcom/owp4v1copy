@@ -1,0 +1,34 @@
+proj_name = wresdmp
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+!include wres.mif
+
+inc_dirs = ../h;$(wres_dir)/h;$(trmem_dir)
+
+.c: ../c;$(trmem_dir)
+
+objs =               &
+         dmpcont.obj &
+         dmpcurgr.obj &
+         dmpdiag.obj &
+         dmpfile.obj &
+         dmpicogr.obj &
+         dmpmenu.obj &
+         dmpstr.obj &
+         fatal.obj &
+         flag.obj &
+         global.obj &
+         layer0.obj &
+         param.obj &
+         swchar.obj &
+         wresdmp.obj
+
+objs += trmemcvr.obj trmem.obj
+
+libs = $(wres_lib)
+
+$(proj_name).exe : $(objs)
+        $(linker) option quiet, map $(lflags) name $^. file { $< } library { $(libs) }

@@ -1,0 +1,28 @@
+proj_name = res2res
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+!include wres.mif
+
+inc_dirs = ../h;$(wres_dir)/h;$(trmem_dir)
+
+.c: ../c;$(trmem_dir)
+
+objs =             &
+        bincpy.obj &
+        convert.obj &
+        layer0.obj &
+        m2wres.obj &
+        param.obj &
+        res2res.obj &
+        swchar.obj &
+        w2mres.obj
+
+objs += trmemcvr.obj trmem.obj
+
+libs = $(wres_lib)
+
+$(proj_name).exe : $(objs)
+        $(linker) option quiet, map $(lflags) name $^. file { $< } library { $(libs) }
