@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Bind utility for OSI executables.
 *
 ****************************************************************************/
 
@@ -68,10 +67,10 @@ char    *CompressedBufPtr;
 unsigned short  *RelocBuffer;
 #define W32Putc(c) *CompressedBufPtr++ = (c)
 
-int CmpReloc( DWORD *p, DWORD *q )
+int CmpReloc( const void *_p, const void *_q )
 {
-    DWORD       reloc1;
-    DWORD       reloc2;
+    DWORD       reloc1, const *p = _p;
+    DWORD       reloc2, const *q = _q;
 
     reloc1 = *p & 0x7FFFFFFF;
     reloc2 = *q & 0x7FFFFFFF;
