@@ -3242,6 +3242,101 @@ dis_handler_return X86XMMRegModRM64_BImm( dis_handle *h, void *d, dis_dec_ins *i
 }
 
 /*=====================================================================*/
+/*           AMD 3DNow! Instructions ( with suffix )                   */
+/*=====================================================================*/
+
+dis_handler_return X86_3DNow( dis_handle *h, void *d, dis_dec_ins *ins )
+/************************************************************************
+ *  decode 3DNow instructions from sufix
+ */
+{
+    dis_handler_return retval;
+
+    retval = X86MMRegModRM64_B( h, d, ins );
+    if( retval != DHR_DONE )
+        return( retval );
+    switch( GetUByte( d, ins->size ) ) {
+    case 0xBF:
+        ins->type = DI_X86_pavgusb;
+        break;
+    case 0x1D:
+        ins->type = DI_X86_pf2id;
+        break;
+    case 0x1C:
+        ins->type = DI_X86_pf2iw;
+        break;
+    case 0xAE:
+        ins->type = DI_X86_pfacc;
+        break;
+    case 0x9E:
+        ins->type = DI_X86_pfadd;
+        break;
+    case 0xB0:
+        ins->type = DI_X86_pfcmpeq;
+        break;
+    case 0x90:
+        ins->type = DI_X86_pfcmpge;
+        break;
+    case 0xA0:
+        ins->type = DI_X86_pfcmpgt;
+        break;
+    case 0xA4:
+        ins->type = DI_X86_pfmax;
+        break;
+    case 0x94:
+        ins->type = DI_X86_pfmin;
+        break;
+    case 0xB4:
+        ins->type = DI_X86_pfmul;
+        break;
+    case 0x8A:
+        ins->type = DI_X86_pfnacc;
+        break;
+    case 0x8E:
+        ins->type = DI_X86_pfpnacc;
+        break;
+    case 0x96:
+        ins->type = DI_X86_pfrcp;
+        break;
+    case 0xA6:
+        ins->type = DI_X86_pfrcpt1;
+        break;
+    case 0xB6:
+        ins->type = DI_X86_pfrcpt2;
+        break;
+    case 0xA7:
+        ins->type = DI_X86_pfrsqit1;
+        break;
+    case 0x97:
+        ins->type = DI_X86_pfrsqrt;
+        break;
+    case 0x9A:
+        ins->type = DI_X86_pfsub;
+        break;
+    case 0xAA:
+        ins->type = DI_X86_pfsubr;
+        break;
+    case 0x0D:
+        ins->type = DI_X86_pi2fd;
+        break;
+    case 0x0C:
+        ins->type = DI_X86_pi2fw;
+        break;
+    case 0xB7:
+        ins->type = DI_X86_pmulhrw;
+        break;
+    case 0xBB:
+        ins->type = DI_X86_pswapd;
+        break;
+    default:
+        ins->size++;
+        return ( DHR_INVALID );
+    }
+    ins->size++;
+    return( DHR_DONE );
+}
+
+/*=====================================================================*/
 /*                HOOK FUNCTIONS                                       */
 /*=====================================================================*/
 
