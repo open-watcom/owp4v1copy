@@ -65,6 +65,8 @@ BOOL APIENTRY WinThreadAssocQueue(HAB habAnchor, HMQ hmqQueue);
 
   This API allows the caller to essentially "hijack" a message queue.
 
+  NB: If the associated queue has a local (non-system) hook installed,
+  a call to WinGetMsg will likely cause a crash!
 
 HMQ APIENTRY WinQueueFromID(HAB habAnchor, USHORT usPid, USHORT usTid);
 
