@@ -15,12 +15,12 @@ set PROJDIR=<CWD>
 [ BLOCK <1> rel2 cprel2 acprel2 ]
 #================================
 #NT stuff
-    <CPCMD> READ*.*         <RELROOT>/rel2/readme.w32
+    <CPCMD> README.w32api                 <RELROOT>/rel2/readme.w32
   [ IFDEF (os_nt "") <2*> ]
-    <CPCMD> nt386/include/*.h     <RELROOT>/rel2/h/nt/
+    <CPCMD> nt386/include/*.h             <RELROOT>/rel2/h/nt/
     <CPCMD> nt386/include/directx/*.h     <RELROOT>/rel2/h/nt/
-    <CPCMD> nt386/include/GL/*.h  <RELROOT>/rel2/h/nt/GL/
-    <CPCMD> nt386/*.lib     <RELROOT>/rel2/lib386/nt/
+    <CPCMD> nt386/include/GL/*.h          <RELROOT>/rel2/h/nt/GL/
+    <CPCMD> nt386/*.lib                   <RELROOT>/rel2/lib386/nt/
 
 [ BLOCK <1> clean ]
 #==================

@@ -11,7 +11,7 @@ suppress_bd = 1
 
 !ifeq sys_dll 1
 targ_name = wlibd.dll
-!else ifdef __LINUX__
+!else ifdef bootstrap
 targ_name = wlib
 !else
 targ_name = wlib.exe
