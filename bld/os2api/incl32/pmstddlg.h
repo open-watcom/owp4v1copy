@@ -12,7 +12,9 @@
     #define INCL_WINSTDFILE
     #define INCL_WINSTDFONT
     #define INCL_WINSTDBOOK
+    #define INCL_WINSTDSLIDER
     #define INCL_WINSTDSPIN
+    #define INCL_WINSTDVALSET
 #endif
 
 #if defined(INCL_WINSTDSPIN) && !defined(WINSTDSPIN_INCLUDED)
