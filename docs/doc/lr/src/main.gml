@@ -1,4 +1,4 @@
-.func main wmain WinMain wWinMain __Get_Argv __wGet_Argv
+.func main wmain WinMain wWinMain _getargv _wgetargv
 .funcw wmain
 int main( void );
 int main( int argc, const char *argv[] );
@@ -19,9 +19,9 @@ int PASCAL wWinMain( HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
                      wcharT *lpszCmdLine,
                      int nCmdShow );
-void *__Get_Argv( int historical, char *exe, char *cmd,
+void *_getargv( int historical, char *exe, char *cmd,
                   int *pargc, char ***pargv );
-void *__wGet_Argv( int historical, wchar_t *exe, wchar_t *cmd,
+void *_wgetargv( int historical, wchar_t *exe, wchar_t *cmd,
                    int *pargc, wchar_t ***pargv );
 .do end
 .funcend
@@ -190,13 +190,13 @@ parameter.
 .********************************
 .np
 The
-.kw __Get_Argv
+.kw _getargv
 function analyses a "command line" into a sequence of tokens
 separated by blanks and passed to the caller as an array of pointers
 to character strings.
-.kw __wGet_Argv
+.kw _wgetargv
 is the wide character version of
-.kw __Get_Argv.
+.kw _getargv.
 Each has the following parameters:
 .arg historical
 selects between historical and modern methods of handling double quote
@@ -235,9 +235,9 @@ parameter.
 .do end
 .np
 The
-.kw __Get_Argv
+.kw _getargv
 and
-.kw __wGet_Argv
+.kw _wgetargv
 functions return a pointer to memory allocated by those functions or
 .kw NULL
 on an allocation failure. That memory may be passed to
@@ -318,14 +318,14 @@ int PASCAL WinMain( HANDLE this_inst, HANDLE prev_inst,
 .blkcode end
 .do end
 .blktext begin
-A sample usage of __Get_Argv follows:
+A sample usage of _getargv follows:
 .blktext end
 .blkcode begin
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-void *__Get_Argv( int historical, char *exe, char *cmd,
+void *_getargv( int historical, char *exe, char *cmd,
                   int *pargc, char ***pargv );
 
 void extraparams( const char *envname )
@@ -336,7 +336,7 @@ void extraparams( const char *envname )
         char exe[] = "dummy";
         int c;
         char **v;
-        void * const opaque = __Get_Argv( 0, exe, cmd,
+        void * const opaque = _getargv( 0, exe, cmd,
                                           &c, &v );
         if( opaque ) {
             int i;
@@ -377,7 +377,7 @@ has the value
 .sr ffunc='x wmain'
 .sr mfunc='x WinMain'
 .sr fmfunc='x wWinMain'
-.sr ffunc='x __Get_Argv'
-.sr ffunc='x __wGet_Argv'
+.sr ffunc='x _getargv'
+.sr ffunc='x _wgetargv'
 .class ANSI
 .system

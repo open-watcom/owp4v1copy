@@ -34,37 +34,62 @@
     void __Fini_Argv( void ) { }
 #else
 #include "dll.h"        // needs to be first
+#include "variety.h"
 #include "widechar.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <io.h>
 #include "liballoc.h"
 
-// Why is _WCRTLINK not used consistently, below? W.Briscoe 2003-12-15
-          extern int                    __historical_splitparms;
-_WCRTLINK extern CHAR_TYPE  *__F_NAME(  _LpPgmName, _LpwPgmName );
-_WCRTLINK extern CHAR_TYPE  *__F_NAME(  _LpCmdLine, _LpwCmdLine );
-          extern int         __F_NAME(  _argc,      _wargc );   /* argument count  */
-_WCRTLINK extern int         __F_NAME(  ___Argc,    ___wArgc ); /* argument count */
-          extern CHAR_TYPE **__F_NAME(  _argv,      _wargv );   /* argument vector */
-_WCRTLINK extern CHAR_TYPE **__F_NAME(  ___Argv,    ___wArgv ); /* argument vector */
+extern  int         __historical_splitparms;
+extern  void        _Not_Enough_Memory( void );             /* 25-jul-89 */
+static  unsigned    _SplitParms(int, CHAR_TYPE *, CHAR_TYPE **, CHAR_TYPE ** );
+_WCRTLINK extern CHAR_TYPE  *__F_NAME(_LpCmdLine,_LpwCmdLine);
+_WCRTLINK extern CHAR_TYPE  *__F_NAME(_LpPgmName,_LpwPgmName);
+extern  int         __F_NAME(_argc,_wargc);             /* argument count  */
+extern  int         __F_NAME(__argc,__wargc);           /* argument count  */
+extern  CHAR_TYPE **__F_NAME(_argv,_wargv);             /* argument vector */
+extern  CHAR_TYPE **__F_NAME(__argv,__wargv);           /* argument vector */
+_WCRTLINK extern int        __F_NAME(___Argc,___wArgc); /* argument count */
+_WCRTLINK extern CHAR_TYPE**__F_NAME(___Argv,___wArgv); /* argument vector */
+static CHAR_TYPE   *__F_NAME(__CmdLine,__wCmdLine);     /* cmdline buffer */
 
-static           CHAR_TYPE  *__F_NAME(  __CmdLine,  __wCmdLine ); /* cmdline buffer */
+_WCRTLINK void *__F_NAME( _getargv, _wgetargv )(
+        int historical, CHAR_TYPE *exe, CHAR_TYPE *cmd,
+        int *pargc, CHAR_TYPE ***pargv );
 
-static unsigned _SplitParms( int historical, CHAR_TYPE *p, CHAR_TYPE **argv, CHAR_TYPE **endptr );
-
-void __F_NAME( __Init_Argv, __wInit_Argv )( void )
+void __F_NAME(__Init_Argv,__wInit_Argv)( void )
 {
-    CHAR_TYPE          *endptr;         // ptr to end of command line
-                                        // argument count
-    unsigned            argc = _SplitParms( __historical_splitparms, __F_NAME(_LpCmdLine,_LpwCmdLine), NULL, &endptr ) + 1;
-                                        // length of command line
-    unsigned const      len = (unsigned) ( endptr - __F_NAME(_LpCmdLine,_LpwCmdLine) ) + 1;
-                                        // offset of argv in storage
-    unsigned const      argv_offset = __ALIGN_SIZE( len * sizeof(CHAR_TYPE));
-                                        // amount to allocate - round up for argv pointer alignment
-    unsigned const      size = __ALIGN_SIZE( argv_offset + ( argc+1 ) * sizeof(CHAR_TYPE *) );
-    CHAR_TYPE          *cmdline;        // copy of command line
-    CHAR_TYPE         **argv;           // argument vector
+    __F_NAME( __CmdLine, __wCmdLine ) = __F_NAME( _getargv, _wgetargv )(
+        __historical_splitparms,
+        __F_NAME( _LpPgmName, _LpwPgmName ), __F_NAME( _LpCmdLine, _LpwCmdLine ),
+        &__F_NAME( _argc, _wargc ), &__F_NAME( _argv, _wargv ) );
+
+    __F_NAME( __argc, __wargc )   = __F_NAME( _argc, _wargc );
+    __F_NAME( ___Argc, ___wArgc ) = __F_NAME( _argc, _wargc );
+    __F_NAME( __argv, __wargv )   = __F_NAME( _argv, _wargv );
+    __F_NAME( ___Argv, ___wArgv ) = __F_NAME( _argv, _wargv );
+}
+
+_WCRTLINK void *__F_NAME( _getargv, _wgetargv )(
+        int historical, CHAR_TYPE *exe, CHAR_TYPE *cmd,
+        int *pargc, CHAR_TYPE ***pargv )
+{
+    unsigned    argc;           /* argument count */
+    CHAR_TYPE   **argv;         /* Actual arguments */
+    CHAR_TYPE   *endptr;        /* ptr to end of command line */
+    unsigned    len;            /* length of command line */
+    CHAR_TYPE   *cmdline;       /* copy of command line */
+    unsigned    size;           /* amount to allocate */
+    unsigned    argv_offset;    /* offset of argv in storage */
+
+    argc = _SplitParms( historical, cmd, NULL, &endptr ) + 1;
+    len = (unsigned) ( endptr - cmd ) + 1;
+    argv_offset = __ALIGN_SIZE(len * sizeof(CHAR_TYPE));
+    size = argv_offset + (argc+1) * sizeof(CHAR_TYPE *);
+    // round up size for alignment of argv pointer
+    size = __ALIGN_SIZE( size );
 
     #if defined(__REAL_MODE__) && defined(__BIG_DATA__)
         #if defined(__OS2_286__)
@@ -85,39 +110,35 @@ void __F_NAME( __Init_Argv, __wInit_Argv )( void )
     #else
         cmdline = lib_malloc( size );
     #endif
-
+    argv = NULL;
+    argc = 0;
     if( cmdline ) {
-        memcpy( cmdline, __F_NAME(_LpCmdLine,_LpwCmdLine), len * sizeof(CHAR_TYPE) );
+        memcpy( cmdline, cmd, len * sizeof(CHAR_TYPE) );
         argv = (void *) ( ( ( char*) cmdline ) + argv_offset );
-        argv[0] = __F_NAME(  _LpPgmName, _LpwPgmName );
-
-        _SplitParms( __historical_splitparms, cmdline, argv + 1, &endptr );
-
+        argv[0] = exe;
+        argc = _SplitParms( historical, cmdline, argv + 1, &endptr ) + 1;
         argv[argc] = NULL;
-    } else {
-        argv = NULL;
-        argc = 0;
     }
-    __F_NAME( ___Argc, ___wArgc ) = __F_NAME( __argc, __wargc ) = __F_NAME( _argc, _wargc ) = argc;
-    __F_NAME( ___Argv, ___wArgv ) = __F_NAME( __argv, __wargv ) = __F_NAME( _argv, _wargv ) = argv;
-    __F_NAME(  __CmdLine,  __wCmdLine ) = cmdline;
+    *pargc = argc;
+    *pargv = argv;
+    return( cmdline );
 }
 
 
 static unsigned _SplitParms( int historical, CHAR_TYPE *p, CHAR_TYPE **argv, CHAR_TYPE **endptr )
 {
-    register unsigned   argc;
+    register unsigned argc;
     register CHAR_TYPE *start;
     register CHAR_TYPE *new;
     enum QUOTE_STATE {
         QUOTE_NONE,             /* no " active in current parm */
         QUOTE_DELIMITER,        /* " was first char and must be last */
-        QUOTE_STARTED           /* " was seen, look for a match */
+        QUOTE_STARTED   /* " was seen, look for a match */
     };
     register enum QUOTE_STATE state;
 
     argc = 0;
-    for( ; ; ) {
+    for(;;) {
         while( *p == ' ' || *p == '\t' ) {
             ++p; /* skip over blanks or tabs */
         }
@@ -129,30 +150,28 @@ static unsigned _SplitParms( int historical, CHAR_TYPE *p, CHAR_TYPE **argv, CHA
             state = QUOTE_DELIMITER;
         }
         new = start = p;
-        // Incrementing p here costs marginal 20 bytes
-        for( ; ; ) {
+        for(;;) {
             if( *p == '\"' ) {
                 if( !historical ) {
                     p++;
-                    // Bizarrely, ternary operator here costs marginal 4 bytes.
-#if 1
                     if( state == QUOTE_NONE ) {
                         state = QUOTE_STARTED;
                     } else {
                         state = QUOTE_NONE;
                     }
-#else
-                    state = ( state == QUOTE_NONE ) ? QUOTE_STARTED : QUOTE_NONE;
-#endif
                     continue;
+                } else {
+                    if( state == QUOTE_DELIMITER ) {
+                        break;
+                    }
                 }
-                if( state == QUOTE_DELIMITER ) {
+            }
+            if( *p == ' ' || *p == '\t' ) {
+                if( state == QUOTE_NONE ) {
                     break;
                 }
             }
-            if( ( ( *p == ' ' || *p == '\t' ) && state == QUOTE_NONE ) || *p == '\0' ) {
-                break;
-            }
+            if( *p == '\0' ) break;
             if( *p == '\\' ) {
                 if( !historical ) {
                     if( p[1] == '\"' ) {
@@ -188,13 +207,14 @@ static unsigned _SplitParms( int historical, CHAR_TYPE *p, CHAR_TYPE **argv, CHA
                 break;
             }
             *new = '\0';
+            ++p;
         } else {
             ++argc;
             if( *p == '\0' ) {
                 break;
             }
+            ++p;
         }
-        ++p;
     }
     *endptr = p;
     return( argc );
