@@ -11,5 +11,5 @@ production_lib = lib286\win
 define_library_include = $(plusplus_complex_dir)/complex.mif
 define_deps_include = $(plusplus_complex_dir)/deps.mif
 define_target_include = $(plusplus_dir)/lib16$(suffix).mif
-text = -fpc-zW
+text = -zW
 !include $(plusplus_dir)/mklib.mif

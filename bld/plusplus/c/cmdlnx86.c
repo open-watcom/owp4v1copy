@@ -1092,7 +1092,7 @@ void CmdSysAnalyse( OPT_STORAGE *data )
 #endif
     // depends on 'mmc' being set fully
     setIntelArchitecture( data, mmc );
-#if 1
+
     switch( data->intel_fpu_model ) {
     case OPT_intel_fpu_model_fpi:
         SET_FPU_EMU( CpuSwitches );
@@ -1113,6 +1113,7 @@ void CmdSysAnalyse( OPT_STORAGE *data )
         }
         break;
     }
+
     switch( data->intel_fpu_level ) {
     case OPT_intel_fpu_level_fp6:
         SET_FPU_LEVEL( CpuSwitches, FPU_686 );
@@ -1127,40 +1128,7 @@ void CmdSysAnalyse( OPT_STORAGE *data )
         SET_FPU_LEVEL( CpuSwitches, FPU_87 );
         break;
     }
-#else
-    switch( data->intel_fpu ) {
-    case OPT_intel_fpu__87d:
-        if( data->_87d_value ) {
-            Stack87 = data->_87d_value;
-        }
-        break;
-    case OPT_intel_fpu_fpc:
-        SET_FPU( CpuSwitches, FPU_NONE );
-        break;
-    case OPT_intel_fpu_fp6:
-        SET_FPU_LEVEL( CpuSwitches, FPU_686 );
-        break;
-    case OPT_intel_fpu_fp5:
-        SET_FPU_LEVEL( CpuSwitches, FPU_586 );
-        break;
-    case OPT_intel_fpu_fp3:
-        SET_FPU_LEVEL( CpuSwitches, FPU_387 );
-        break;
-    case OPT_intel_fpu_fp2:
-        SET_FPU_LEVEL( CpuSwitches, FPU_87 );
-        break;
-    case OPT_intel_fpu_fpi:
-        SET_FPU_EMU( CpuSwitches );
-        break;
-#ifdef OPT_intel_fpu__7
-    case OPT_intel_fpu__7:
-        /* fall through */
-#endif
-    case OPT_intel_fpu_fpi87:
-        SET_FPU_INLINE( CpuSwitches );
-        break;
-    }
-#endif
+
     // depends on architecture and fpu being set
     setMemoryModel( data, mmc );
     if( data->fpd ) {
