@@ -112,14 +112,7 @@ extern unsigned_16 DWRAddFileName( char *name, file_table *tab )
     return index;
 }
 
-extern void DWRAddIndex( unsigned_16 idx, file_table *tab, unsigned where )
-/*************************************************************************/
-{
-    GrowTable( tab );
-    DWRInsertIndex( idx, tab, where );
-}
-
-extern void DWRInsertIndex( unsigned_16 idx, file_table *tab, unsigned where )
+static void DWRInsertIndex( unsigned_16 idx, file_table *tab, unsigned where )
 /*************************************************************************/
 {
     if( where == TAB_IDX_FNAME ) {
@@ -127,6 +120,13 @@ extern void DWRInsertIndex( unsigned_16 idx, file_table *tab, unsigned where )
     } else {
         tab->tab[tab->len - 1].idx.pathidx = idx;
     }
+}
+
+extern void DWRAddIndex( unsigned_16 idx, file_table *tab, unsigned where )
+/*************************************************************************/
+{
+    GrowTable( tab );
+    DWRInsertIndex( idx, tab, where );
 }
 
 extern unsigned_16 DWRIndexPath( unsigned_16 idx, file_table *tab )

@@ -290,6 +290,195 @@ void _LDScale10x( long_double *ld, int scale )
 
 #endif
 
+static void DoFFormat( CVT_INFO *cvt, char *p, int nsig, int xexp, char *buf )
+{
+    int         i;
+    int         ndigits;
+
+    ndigits = cvt->ndigits;
+    ++xexp;
+    i = 0;
+    if( cvt->flags & G_FMT ) {
+        if( nsig < ndigits && !(cvt->flags & F_DOT) ) ndigits = nsig;
+        ndigits -= xexp;
+        if( ndigits < 0 )  ndigits = 0;
+    }
+    if( xexp <= 0 ) {   // digits only to right of '.'
+        if( !(cvt->flags & F_CVT) ) {
+            buf[i++] = '0';
+            if( ndigits > 0 || (cvt->flags & F_DOT) ) {
+                buf[i++] = '.';
+            }
+        }
+        cvt->n1 = i;
+        if( ndigits < -xexp )  xexp = - ndigits;
+        cvt->decimal_place = xexp;
+        cvt->nz1 = -xexp;
+//      for( n = -xexp; n > 0; --n ) buf[i++] = '0';
+        ndigits += xexp;
+        if( ndigits < nsig )  nsig = ndigits;
+        memcpy( &buf[i], p, nsig );
+        i += nsig;
+        cvt->n2 = nsig;
+        cvt->nz2 = ndigits - nsig;
+//      for( n = ndigits - nsig; n > 0; --n ) buf[i++] = '0';
+    } else if( nsig < xexp ) {  // zeros before '.'
+        memcpy( buf, p, nsig );
+        i += nsig;
+        cvt->n1 = nsig;
+        cvt->nz1 = xexp - nsig;
+        cvt->decimal_place = xexp;
+//      for( n = xexp - nsig; n > 0; --n ) buf[i++] = '0';
+        if( !(cvt->flags & F_CVT) ) {
+            if( ndigits > 0 || (cvt->flags & F_DOT) ) {
+                buf[i++] = '.';
+                cvt->n2 = 1;
+            }
+        }
+        cvt->nz2 = ndigits;
+//      for( n = ndigits; n > 0; --n ) buf[i++] = '0';
+    } else {                    // enough digits before '.'
+        memcpy( buf, p, xexp );
+        cvt->decimal_place = xexp;
+        i += xexp;
+        nsig -= xexp;
+        if( !(cvt->flags & F_CVT) ) {
+            if( ndigits > 0 || (cvt->flags & F_DOT) ) {
+                buf[i++] = '.';
+            }
+        } else if( buf[0] == '0' ) {    // ecvt or fcvt with 0.0
+            cvt->decimal_place = 0;
+        }
+        if( ndigits < nsig )  nsig = ndigits;
+        memcpy( &buf[i], p + xexp, nsig );
+        i += nsig;
+        cvt->n1 = i;
+        cvt->nz1 = ndigits - nsig;
+//      for( n = ndigits - nsig; n > 0; --n ) buf[i++] = '0';
+    }
+    buf[i] = '\0';
+}
+
+static void DoEFormat( CVT_INFO *cvt, char *p, int nsig, int xexp, char *buf )
+{
+    int         i;
+    int         n;
+    int         ndigits;        // number of digits after decimal place
+    int         width;
+
+    ndigits = cvt->ndigits;
+    if( cvt->scale <= 0 ) {
+        ndigits += cvt->scale;  // decrease number of digits after decimal
+    } else {
+        ndigits -= cvt->scale;  // adjust number of digits (see fortran spec)
+        ndigits++;
+    }
+    i = 0;
+    if( cvt->flags & G_FMT ) {  // fixup for 'G'
+        // for 'G' format, ndigits is the number of significant digits
+        // cvt->scale should be 1 indicating 1 digit before decimal place
+        // so decrement ndigits to get number of digits after decimal place
+/* JBS 25-may-98  - changed to model what DoFFormat did */
+//      if( nsig < ndigits )  ndigits = nsig;
+        if( nsig < ndigits && !(cvt->flags & F_DOT) ) ndigits = nsig;
+        --ndigits;
+        if( ndigits < 0 ) ndigits = 0;
+    }
+    if( cvt->scale <= 0 ) {
+        buf[i++] = '0';
+    } else {
+        n = cvt->scale;
+        if( n > nsig ) n = nsig;
+        memcpy( &buf[i], p, n );        // put in leading digits
+        i += n;
+        p += n;
+        nsig -= n;
+        if( n < cvt->scale ) {          // put in zeros if required
+            n = cvt->scale - n;
+            memset( &buf[i], '0', n );
+            i += n;
+        }
+    }
+    cvt->decimal_place = i;
+    if( !(cvt->flags & F_CVT) ) {
+        if( ndigits > 0 || (cvt->flags & F_DOT) ) {
+            buf[i++] = '.';
+        }
+    }
+    if( cvt->scale < 0 ) {
+        n = - cvt->scale;
+        memset( &buf[i], '0', n );
+        i += n;
+    }
+    if( ndigits > 0 ) {                 // put in fraction digits
+        if( ndigits < nsig )  nsig = ndigits;
+        if( nsig != 0 ) {
+            memcpy( &buf[i], p, nsig );
+            i += nsig;
+        }
+        cvt->n1 = i;
+        cvt->nz1 = ndigits - nsig;
+//      for( n = cvt->ndigits - nsig; n > 0; --n ) buf[i++] = '0';
+    }
+    if( cvt->expchar != '\0' ) buf[i++] = cvt->expchar;
+    if( xexp >= 0 ) {
+        buf[i++] = '+';
+    } else {
+        buf[i++] = '-';
+        xexp = - xexp;
+    }
+    width = cvt->expwidth;
+    switch( width ) {
+    case 0:                             // width unspecified
+        if( xexp >= 1000 ) {
+            width = 4;
+        } else {
+            width = 3;
+        }
+        break;
+    case 1:
+        if( xexp >= 10 ) {
+            width = 2;
+        }
+    case 2:
+        if( xexp >= 100 ) {
+            width = 3;
+        }
+    case 3:
+        if( xexp >= 1000 ) {
+            width = 4;
+        }
+    }
+    cvt->expwidth = width;              // pass back width actually used
+    if( width >= 4 ) {
+        n = 0;
+        if( xexp >= 1000 ) {
+            n = xexp / 1000;
+            xexp -= n * 1000;
+        }
+        buf[i++] = n + '0';
+    }
+    if( width >= 3 ) {
+        n = 0;
+        if( xexp >= 100 ) {
+            n = xexp / 100;
+            xexp -= n * 100;
+        }
+        buf[i++] = n + '0';
+    }
+    if( width >= 2 ) {
+        n = 0;
+        if( xexp >= 10 ) {
+            n = xexp / 10;
+            xexp -= n * 10;
+        }
+        buf[i++] = n + '0';
+    }
+    buf[i++] = xexp + '0';
+    cvt->n2 = i - cvt->n1;
+    buf[i] = '\0';
+}
+
 #define STK_BUF_SIZE    64              // size of stack buffer required
                                         // if long double and NO_TRUNC is on.
 
@@ -534,193 +723,4 @@ end_cvt:;
 #if defined(_LONG_DOUBLE_) && defined(__FPI__)
     __Set87CW( _8087cw );               // restore old control word
 #endif
-}
-
-static void DoFFormat( CVT_INFO *cvt, char *p, int nsig, int xexp, char *buf )
-{
-    int         i;
-    int         ndigits;
-
-    ndigits = cvt->ndigits;
-    ++xexp;
-    i = 0;
-    if( cvt->flags & G_FMT ) {
-        if( nsig < ndigits && !(cvt->flags & F_DOT) ) ndigits = nsig;
-        ndigits -= xexp;
-        if( ndigits < 0 )  ndigits = 0;
-    }
-    if( xexp <= 0 ) {   // digits only to right of '.'
-        if( !(cvt->flags & F_CVT) ) {
-            buf[i++] = '0';
-            if( ndigits > 0 || (cvt->flags & F_DOT) ) {
-                buf[i++] = '.';
-            }
-        }
-        cvt->n1 = i;
-        if( ndigits < -xexp )  xexp = - ndigits;
-        cvt->decimal_place = xexp;
-        cvt->nz1 = -xexp;
-//      for( n = -xexp; n > 0; --n ) buf[i++] = '0';
-        ndigits += xexp;
-        if( ndigits < nsig )  nsig = ndigits;
-        memcpy( &buf[i], p, nsig );
-        i += nsig;
-        cvt->n2 = nsig;
-        cvt->nz2 = ndigits - nsig;
-//      for( n = ndigits - nsig; n > 0; --n ) buf[i++] = '0';
-    } else if( nsig < xexp ) {  // zeros before '.'
-        memcpy( buf, p, nsig );
-        i += nsig;
-        cvt->n1 = nsig;
-        cvt->nz1 = xexp - nsig;
-        cvt->decimal_place = xexp;
-//      for( n = xexp - nsig; n > 0; --n ) buf[i++] = '0';
-        if( !(cvt->flags & F_CVT) ) {
-            if( ndigits > 0 || (cvt->flags & F_DOT) ) {
-                buf[i++] = '.';
-                cvt->n2 = 1;
-            }
-        }
-        cvt->nz2 = ndigits;
-//      for( n = ndigits; n > 0; --n ) buf[i++] = '0';
-    } else {                    // enough digits before '.'
-        memcpy( buf, p, xexp );
-        cvt->decimal_place = xexp;
-        i += xexp;
-        nsig -= xexp;
-        if( !(cvt->flags & F_CVT) ) {
-            if( ndigits > 0 || (cvt->flags & F_DOT) ) {
-                buf[i++] = '.';
-            }
-        } else if( buf[0] == '0' ) {    // ecvt or fcvt with 0.0
-            cvt->decimal_place = 0;
-        }
-        if( ndigits < nsig )  nsig = ndigits;
-        memcpy( &buf[i], p + xexp, nsig );
-        i += nsig;
-        cvt->n1 = i;
-        cvt->nz1 = ndigits - nsig;
-//      for( n = ndigits - nsig; n > 0; --n ) buf[i++] = '0';
-    }
-    buf[i] = '\0';
-}
-
-static void DoEFormat( CVT_INFO *cvt, char *p, int nsig, int xexp, char *buf )
-{
-    int         i;
-    int         n;
-    int         ndigits;        // number of digits after decimal place
-    int         width;
-
-    ndigits = cvt->ndigits;
-    if( cvt->scale <= 0 ) {
-        ndigits += cvt->scale;  // decrease number of digits after decimal
-    } else {
-        ndigits -= cvt->scale;  // adjust number of digits (see fortran spec)
-        ndigits++;
-    }
-    i = 0;
-    if( cvt->flags & G_FMT ) {  // fixup for 'G'
-        // for 'G' format, ndigits is the number of significant digits
-        // cvt->scale should be 1 indicating 1 digit before decimal place
-        // so decrement ndigits to get number of digits after decimal place
-/* JBS 25-may-98  - changed to model what DoFFormat did */
-//      if( nsig < ndigits )  ndigits = nsig;
-        if( nsig < ndigits && !(cvt->flags & F_DOT) ) ndigits = nsig;
-        --ndigits;
-        if( ndigits < 0 ) ndigits = 0;
-    }
-    if( cvt->scale <= 0 ) {
-        buf[i++] = '0';
-    } else {
-        n = cvt->scale;
-        if( n > nsig ) n = nsig;
-        memcpy( &buf[i], p, n );        // put in leading digits
-        i += n;
-        p += n;
-        nsig -= n;
-        if( n < cvt->scale ) {          // put in zeros if required
-            n = cvt->scale - n;
-            memset( &buf[i], '0', n );
-            i += n;
-        }
-    }
-    cvt->decimal_place = i;
-    if( !(cvt->flags & F_CVT) ) {
-        if( ndigits > 0 || (cvt->flags & F_DOT) ) {
-            buf[i++] = '.';
-        }
-    }
-    if( cvt->scale < 0 ) {
-        n = - cvt->scale;
-        memset( &buf[i], '0', n );
-        i += n;
-    }
-    if( ndigits > 0 ) {                 // put in fraction digits
-        if( ndigits < nsig )  nsig = ndigits;
-        if( nsig != 0 ) {
-            memcpy( &buf[i], p, nsig );
-            i += nsig;
-        }
-        cvt->n1 = i;
-        cvt->nz1 = ndigits - nsig;
-//      for( n = cvt->ndigits - nsig; n > 0; --n ) buf[i++] = '0';
-    }
-    if( cvt->expchar != '\0' ) buf[i++] = cvt->expchar;
-    if( xexp >= 0 ) {
-        buf[i++] = '+';
-    } else {
-        buf[i++] = '-';
-        xexp = - xexp;
-    }
-    width = cvt->expwidth;
-    switch( width ) {
-    case 0:                             // width unspecified
-        if( xexp >= 1000 ) {
-            width = 4;
-        } else {
-            width = 3;
-        }
-        break;
-    case 1:
-        if( xexp >= 10 ) {
-            width = 2;
-        }
-    case 2:
-        if( xexp >= 100 ) {
-            width = 3;
-        }
-    case 3:
-        if( xexp >= 1000 ) {
-            width = 4;
-        }
-    }
-    cvt->expwidth = width;              // pass back width actually used
-    if( width >= 4 ) {
-        n = 0;
-        if( xexp >= 1000 ) {
-            n = xexp / 1000;
-            xexp -= n * 1000;
-        }
-        buf[i++] = n + '0';
-    }
-    if( width >= 3 ) {
-        n = 0;
-        if( xexp >= 100 ) {
-            n = xexp / 100;
-            xexp -= n * 100;
-        }
-        buf[i++] = n + '0';
-    }
-    if( width >= 2 ) {
-        n = 0;
-        if( xexp >= 10 ) {
-            n = xexp / 10;
-            xexp -= n * 10;
-        }
-        buf[i++] = n + '0';
-    }
-    buf[i++] = xexp + '0';
-    cvt->n2 = i - cvt->n1;
-    buf[i] = '\0';
 }

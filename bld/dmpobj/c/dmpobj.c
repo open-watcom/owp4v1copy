@@ -47,6 +47,16 @@ void leave( int rc )
     exit( rc );
 }
 
+static void ShowProductInfo( void )
+{
+    if( quiet == FALSE ) {
+        Output( banner1w( "OMF Dump Utility", BAN_VER_STR ) CRLF );
+        Output( banner2a() CRLF );
+        Output( banner3 CRLF );
+        Output( banner3a CRLF );
+    }
+}
+
 static void usage( void )
 {
     ShowProductInfo();
@@ -62,16 +72,6 @@ static void usage( void )
     Output( "-rec=xxx\tProvide dump of selected record type" CRLF );
     Output( "\t\t  (by number or by symbolic name)" CRLF );
     leave( 1 );
-}
-
-void ShowProductInfo( void )
-{
-    if( quiet == FALSE ) {
-        Output( banner1w( "OMF Dump Utility", BAN_VER_STR ) CRLF );
-        Output( banner2a() CRLF );
-        Output( banner3 CRLF );
-        Output( banner3a CRLF );
-    }
 }
 
 void main( int argc, char **argv )

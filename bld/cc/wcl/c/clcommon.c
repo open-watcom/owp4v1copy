@@ -88,6 +88,13 @@ void PrintMsg( char *fmt, ... )
     }
 }
 
+void  Fputnl( char *text, FILE *fptr )
+/************************************/
+{
+    fputs( text, fptr );
+    fputs( "\n", fptr );
+}
+
 void BuildLinkFile()
 {
     fputs( "name ", Fp );
@@ -106,14 +113,6 @@ void BuildLinkFile()
     }
     if( Flags.two_case )  Fputnl( "option caseexact", Fp );
     fclose( Fp );       /* close Temp_Link */
-}
-
-
-void  Fputnl( char *text, FILE *fptr )
-/************************************/
-{
-    fputs( text, fptr );
-    fputs( "\n", fptr );
 }
 
 

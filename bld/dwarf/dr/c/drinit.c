@@ -141,6 +141,43 @@ extern void DRDbgOldVersion( dr_dbg_handle dbg ){
     dbg->old_version = 1; // remove when pat 10.5
 }
 
+static void ReadFileTable( void )
+/*******************************/
+{
+    compunit_info *     compunit;
+    compunit_info *     next;
+    dr_handle           start;
+    dr_handle           finish;
+    unsigned_32         length;
+    unsigned_16         version;
+    unsigned_8          addr_size;
+    unsigned_8          curr_addr_size;
+
+    compunit = &DWRCurrNode->compunit;
+    start = DWRCurrNode->sections[DR_DEBUG_INFO].base;
+    finish = start + DWRCurrNode->sections[DR_DEBUG_INFO].size;
+    addr_size = DWRVMReadByte( start + 10 );
+    for(;;) {
+        compunit->next = NULL;
+        compunit->start = start;
+        length = DWRVMReadDWord( start );
+        version = DWRVMReadWord( start + sizeof(unsigned_32) );
+        if( version != DWARF_VERSION ) DWREXCEPT( DREXCEP_BAD_DBG_VERSION );
+        curr_addr_size = DWRVMReadByte( start + 10 );
+        if( curr_addr_size != addr_size ){
+            addr_size = 0;
+        }
+        DWRInitFileTable( &compunit->filetab );
+        DWRScanFileTable( start, &FileNameTable, &compunit->filetab );
+        start += length + sizeof(unsigned_32);
+        if( start >= finish ) break;
+        next = DWRALLOC( sizeof( compunit_info ) );
+        compunit->next = next;
+        compunit = next;
+    }
+    DWRCurrNode->addr_size = addr_size;
+}
+
 dr_dbg_handle DRDbgInit( void * file, unsigned long * sizes )
 /***********************************************************/
 {
@@ -152,6 +189,43 @@ dr_dbg_handle DRDbgInit( void * file, unsigned long * sizes )
         ReadFileTable();
     }
     return dbg;
+}
+
+static void ReadCompUnits( void )
+/*******************************/
+{
+    compunit_info *     compunit;
+    compunit_info *     next;
+    dr_handle           start;
+    dr_handle           finish;
+    unsigned_32         length;
+    unsigned_16         version;
+    unsigned_8          addr_size;
+    unsigned_8          curr_addr_size;
+
+    compunit = &DWRCurrNode->compunit;
+    start = DWRCurrNode->sections[DR_DEBUG_INFO].base;
+    finish = start + DWRCurrNode->sections[DR_DEBUG_INFO].size;
+    addr_size = DWRVMReadByte( start + 10 );
+    for(;;) {
+        compunit->next = NULL;
+        compunit->start = start;
+        length = DWRVMReadDWord( start );
+        version = DWRVMReadWord( start + sizeof(unsigned_32) );
+        if( version != DWARF_VERSION ) DWREXCEPT( DREXCEP_BAD_DBG_VERSION );
+        curr_addr_size = DWRVMReadByte( start + 10 );
+        if( curr_addr_size != addr_size ){
+            addr_size = 0;
+        }
+        compunit->filetab.len  = 0;
+        compunit->filetab.tab  = NULL;
+        start += length + sizeof(unsigned_32);
+        if( start >= finish ) break;
+        next = DWRALLOC( sizeof( compunit_info ) );
+        compunit->next = next;
+        compunit = next;
+    }
+    DWRCurrNode->addr_size = addr_size;
 }
 
 dr_dbg_handle DRDbgInitNFT( void * file, unsigned long * sizes )
@@ -219,78 +293,4 @@ void DRFini( void )
     DWRVMDestroy();
     DWRFiniFileTable( &FileNameTable.fnametab, TRUE );
     DWRFiniFileTable( &FileNameTable.pathtab, TRUE );
-}
-
-static void ReadFileTable( void )
-/*******************************/
-{
-    compunit_info *     compunit;
-    compunit_info *     next;
-    dr_handle           start;
-    dr_handle           finish;
-    unsigned_32         length;
-    unsigned_16         version;
-    unsigned_8          addr_size;
-    unsigned_8          curr_addr_size;
-
-    compunit = &DWRCurrNode->compunit;
-    start = DWRCurrNode->sections[DR_DEBUG_INFO].base;
-    finish = start + DWRCurrNode->sections[DR_DEBUG_INFO].size;
-    addr_size = DWRVMReadByte( start + 10 );
-    for(;;) {
-        compunit->next = NULL;
-        compunit->start = start;
-        length = DWRVMReadDWord( start );
-        version = DWRVMReadWord( start + sizeof(unsigned_32) );
-        if( version != DWARF_VERSION ) DWREXCEPT( DREXCEP_BAD_DBG_VERSION );
-        curr_addr_size = DWRVMReadByte( start + 10 );
-        if( curr_addr_size != addr_size ){
-            addr_size = 0;
-        }
-        DWRInitFileTable( &compunit->filetab );
-        DWRScanFileTable( start, &FileNameTable, &compunit->filetab );
-        start += length + sizeof(unsigned_32);
-        if( start >= finish ) break;
-        next = DWRALLOC( sizeof( compunit_info ) );
-        compunit->next = next;
-        compunit = next;
-    }
-    DWRCurrNode->addr_size = addr_size;
-}
-
-static void ReadCompUnits( void )
-/*******************************/
-{
-    compunit_info *     compunit;
-    compunit_info *     next;
-    dr_handle           start;
-    dr_handle           finish;
-    unsigned_32         length;
-    unsigned_16         version;
-    unsigned_8          addr_size;
-    unsigned_8          curr_addr_size;
-
-    compunit = &DWRCurrNode->compunit;
-    start = DWRCurrNode->sections[DR_DEBUG_INFO].base;
-    finish = start + DWRCurrNode->sections[DR_DEBUG_INFO].size;
-    addr_size = DWRVMReadByte( start + 10 );
-    for(;;) {
-        compunit->next = NULL;
-        compunit->start = start;
-        length = DWRVMReadDWord( start );
-        version = DWRVMReadWord( start + sizeof(unsigned_32) );
-        if( version != DWARF_VERSION ) DWREXCEPT( DREXCEP_BAD_DBG_VERSION );
-        curr_addr_size = DWRVMReadByte( start + 10 );
-        if( curr_addr_size != addr_size ){
-            addr_size = 0;
-        }
-        compunit->filetab.len  = 0;
-        compunit->filetab.tab  = NULL;
-        start += length + sizeof(unsigned_32);
-        if( start >= finish ) break;
-        next = DWRALLOC( sizeof( compunit_info ) );
-        compunit->next = next;
-        compunit = next;
-    }
-    DWRCurrNode->addr_size = addr_size;
 }

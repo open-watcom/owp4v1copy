@@ -1412,6 +1412,8 @@ static void emitAcceptCode( CODESEQ *c, unsigned depth, unsigned control )
     }
 }
 
+static void emitCode( CODESEQ *h, unsigned depth, unsigned control );
+
 static void emitIfCode( CODESEQ *c, unsigned depth, unsigned control )
 {
     if( c->sensitive ) {
