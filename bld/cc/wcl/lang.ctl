@@ -33,6 +33,7 @@ set PROJDIR=<CWD>
     <CPCMD> <PROJDIR>/os2386.ppc/wclppc.exe     <RELROOT>/rel2/binp/wclppc.exe
 
   [ IFDEF (os_linux "") <2*> ]
+    <CPCMD> <PROJDIR>/linux386/owcc.elf         <RELROOT>/rel2/binl/owcc
     <CPCMD> <PROJDIR>/linux386.i86/wcl.exe      <RELROOT>/rel2/binl/wcl
     <CPCMD> <PROJDIR>/linux386.i86/wcl.sym      <RELROOT>/rel2/binl/wcl.sym
     <CPCMD> <PROJDIR>/linux386.386/wcl386.exe   <RELROOT>/rel2/binl/wcl386
