@@ -1,2 +1,2 @@
 #include "wresdefn.h"
-#include "wprof.rc"
+#include "../h/wprof.rc"

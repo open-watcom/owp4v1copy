@@ -2,7 +2,7 @@
 #include "windows.h"
 #endif
 
-#include "../mif/rcdef.h"
+#include "../h/rcdef.h"
 #include "../h/wprof.rc"
 
 #ifdef __OS2__
