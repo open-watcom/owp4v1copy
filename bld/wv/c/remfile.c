@@ -201,6 +201,7 @@ unsigned RemoteStringToFullName( bool executable, char *name, char *res,
     out[1].ptr = res;
     out[1].len = res_len;
     TrapAccess( 2, &in, 2, &out );
+    CONV_LE_32( ret.err );
     if( ret.err != 0 ) {
         *res = NULLCHAR;
         return( 0 );
@@ -231,6 +232,8 @@ sys_handle RemoteOpen( char *name, open_access mode )
     out[0].ptr = &ret;
     out[0].len = sizeof( ret );
     TrapAccess( 2, &in, 1, &out );
+    CONV_LE_32( ret.err );
+    CONV_LE_32( ret.handle );
     if( ret.err != 0 ) {
         StashErrCode( ret.err, OP_REMOTE );
             return( NIL_SYS_HANDLE );
@@ -272,6 +275,7 @@ static unsigned DoAWrite( unsigned req, sys_handle hdl, void *ptr, unsigned len 
         in[0].len = sizeof( acc.con );
     } else {
         acc.file.handle = hdl;
+	CONV_LE_32( acc.file.handle );
         in[0].len = sizeof( acc.file );
     }
     in[0].ptr = &acc;
@@ -280,6 +284,8 @@ static unsigned DoAWrite( unsigned req, sys_handle hdl, void *ptr, unsigned len 
     out[0].ptr = &ret;
     out[0].len = sizeof( ret );
     TrapAccess( 2, &in, 1, &out );
+    CONV_LE_32( ret.err );
+    CONV_LE_16( ret.len );
     if( ret.err != 0 ) {
         StashErrCode( ret.err, OP_REMOTE );
         return( ERR_RETURN );
@@ -345,7 +351,10 @@ static unsigned DoRead( sys_handle hdl, void *ptr, unsigned len )
     out[0].len = sizeof( ret );
     out[1].ptr = ptr;
     out[1].len = len;
+    CONV_LE_32( acc.handle );
+    CONV_LE_16( acc.len );
     got = TrapAccess( 1, &in, 2, &out );
+    CONV_LE_32( ret.err );
     if( ret.err != 0 ) {
         StashErrCode( ret.err, OP_REMOTE );
         return( ERR_RETURN );
@@ -409,7 +418,11 @@ unsigned long RemoteSeek( sys_handle hdl, unsigned long pos, unsigned method )
     /* Magic again! The seek mode mapped exactly to our definition! */
     acc.mode = method;
     acc.pos = pos;
+    CONV_LE_32( acc.handle );
+    CONV_LE_32( acc.pos );
     TrapSimpAccess( sizeof( acc ), &acc, sizeof( ret ), &ret );
+    CONV_LE_32( ret.pos );
+    CONV_LE_32( ret.err );
     if( ret.err != 0 ) {
         StashErrCode( ret.err, OP_REMOTE );
         return( -1UL );
@@ -438,7 +451,9 @@ unsigned RemoteClose( sys_handle hdl )
 
     SUPP_FILE_SERVICE( acc, REQ_FILE_CLOSE );
     acc.handle = hdl;
+    CONV_LE_32( acc.handle );
     TrapSimpAccess( sizeof( acc ), &acc, sizeof( ret ), &ret );
+    CONV_LE_32( ret.err );
     return( StashErrCode( ret.err, OP_REMOTE ) );
 }
 
@@ -458,6 +473,7 @@ unsigned RemoteErase( char *name )
     out[0].ptr = &ret;
     out[0].len = sizeof( ret );
     TrapAccess( 2, &in, 1, &out );
+    CONV_LE_32( ret.err );
     return( StashErrCode( ret.err, OP_REMOTE ) );
 }
 
@@ -478,5 +494,6 @@ long RemoteFork( char *cmd, unsigned len )
     out[0].ptr = &ret;
     out[0].len = sizeof( ret );
     TrapAccess( 2, &in, 1, &out );
+    CONV_LE_32( ret.err );
     return( StashErrCode( ret.err, OP_REMOTE ) );
 }

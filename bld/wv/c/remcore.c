@@ -132,13 +132,17 @@ static unsigned MemRead( address addr, void *ptr, unsigned size )
 
         int_tbl = IsInterrupt( &(acc.mem_addr), size );
         if( int_tbl ) RestoreHandlers();
+        CONV_LE_32( acc.mem_addr.offset );
+        CONV_LE_16( acc.mem_addr.segment );
+        CONV_LE_16( acc.len );
         got = TrapAccess( 1, &in, 1, &out );
         if( int_tbl ) GrabHandlers();
 
         left -= got;
         if( left == 0 ) break;
         if( got != piece ) break;
-        acc.mem_addr.offset += piece;
+	addr.mach.offset += piece;
+        acc.mem_addr = addr.mach;
         ptr = (char *)ptr + piece;
     }
     return( size - left );
@@ -219,13 +223,17 @@ unsigned ProgPoke( address addr, void *data, unsigned len )
 
         int_tbl = IsInterrupt( &(acc.mem_addr), len );
         if( int_tbl ) RestoreHandlers();
+        CONV_LE_32( acc.mem_addr.offset );
+        CONV_LE_16( acc.mem_addr.segment );
         TrapAccess( 2, &in, 1, &out );
+        CONV_LE_16( ret.len );
         if( int_tbl ) GrabHandlers();
 
         left -= ret.len;
         if( left == 0 ) break;
         if( ret.len != piece ) break;
-        acc.mem_addr.offset += piece;
+	addr.mach.offset += piece;
+        acc.mem_addr = addr.mach;
         data = (char *)data + piece;
     }
     return( len - left );
@@ -696,7 +704,10 @@ void CheckSegAlias()
     acc.seg = 0;
     for( ;; ) {
         ret.seg = 0;
+        CONV_LE_16( acc.seg );
         TrapSimpAccess( sizeof( acc ), &acc, sizeof( ret ), &ret );
+        CONV_LE_16( ret.seg );
+        CONV_LE_16( ret.alias );
         if( ret.seg == 0 ) break;
         AddAliasInfo( ret.seg, ret.alias );
         acc.seg = ret.seg;

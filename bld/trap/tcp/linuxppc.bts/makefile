@@ -23,6 +23,7 @@ extra_objs = $(remote_objs) &
              linuxcomm.obj &
              linux$(cpu).obj &
              linuxfile.obj &
+             linuxutl.obj &
              supp.obj &
              core.obj
 

@@ -39,9 +39,9 @@
 #define BIT_OFF( who ) (offsetof( mad_registers, ppc.who ) * BITS_PER_BYTE)
 
 /* Macros to get at GP/FP registers based on their number; useful in loops */
-#define TRANS_GPREG_32( mr, idx ) (*((unsigned_32 *)(&(mr.r0.u._32[0])) + (2 * idx)))
-#define TRANS_FPREG_LO( mr, idx ) (*((unsigned_32 *)(&(mr.f0.u64.u._32[0])) + (2 * idx)))
-#define TRANS_FPREG_HI( mr, idx ) (*((unsigned_32 *)(&(mr.f0.u64.u._32[1])) + (2 * idx)))
+#define TRANS_GPREG_32( mr, idx ) (*((unsigned_32 *)(&(mr.r0.u._32[I64LO32])) + (2 * idx)))
+#define TRANS_FPREG_LO( mr, idx ) (*((unsigned_32 *)(&(mr.f0.u64.u._32[I64LO32])) + (2 * idx)))
+#define TRANS_FPREG_HI( mr, idx ) (*((unsigned_32 *)(&(mr.f0.u64.u._32[I64HI32])) + (2 * idx)))
 
 enum {
     RS_NONE,
@@ -191,10 +191,10 @@ mad_status      DIGENTRY MIRegistersHost( mad_registers *mr )
         TRANS_FPREG_HI( mr->ppc, i ) = temp;
     }
     // Convert special registers
-    CONV_BE_32( mr->ppc.iar.u._32[0] );
-    CONV_BE_32( mr->ppc.msr.u._32[0] );
-    CONV_BE_32( mr->ppc.ctr.u._32[0] );
-    CONV_BE_32( mr->ppc.lr.u._32[0] );
+    CONV_BE_32( mr->ppc.iar.u._32[I64LO32] );
+    CONV_BE_32( mr->ppc.msr.u._32[I64LO32] );
+    CONV_BE_32( mr->ppc.ctr.u._32[I64LO32] );
+    CONV_BE_32( mr->ppc.lr.u._32[I64LO32] );
     CONV_BE_32( mr->ppc.xer );
     CONV_BE_32( mr->ppc.cr );
     CONV_BE_32( mr->ppc.fpscr );
@@ -219,10 +219,10 @@ mad_status      DIGENTRY MIRegistersTarget( mad_registers *mr )
         TRANS_FPREG_HI( mr->ppc, i ) = temp;
     }
     // Convert special registers
-    CONV_BE_32( mr->ppc.iar.u._32[0] );
-    CONV_BE_32( mr->ppc.msr.u._32[0] );
-    CONV_BE_32( mr->ppc.ctr.u._32[0] );
-    CONV_BE_32( mr->ppc.lr.u._32[0] );
+    CONV_BE_32( mr->ppc.iar.u._32[I64LO32] );
+    CONV_BE_32( mr->ppc.msr.u._32[I64LO32] );
+    CONV_BE_32( mr->ppc.ctr.u._32[I64LO32] );
+    CONV_BE_32( mr->ppc.lr.u._32[I64LO32] );
     CONV_BE_32( mr->ppc.xer );
     CONV_BE_32( mr->ppc.cr );
     CONV_BE_32( mr->ppc.fpscr );
@@ -430,10 +430,10 @@ mad_status DIGENTRY MIRegModified( const mad_reg_set_data *rsd, const mad_reg_in
     if( ri->bit_start == BIT_OFF( iar ) ) {
         new_ip = old->ppc.iar;
         //NYI: 64 bit
-        new_ip.u._32[0] += sizeof( unsigned_32 );
-        if( new_ip.u._32[0] != cur->ppc.iar.u._32[0] ) {
+        new_ip.u._32[I64LO32] += sizeof( unsigned_32 );
+        if( new_ip.u._32[I64LO32] != cur->ppc.iar.u._32[I64LO32] ) {
             return( MS_MODIFIED_SIGNIFICANTLY );
-        } else if( old->ppc.iar.u._32[0] != cur->ppc.iar.u._32[0] ) {
+        } else if( old->ppc.iar.u._32[I64LO32] != cur->ppc.iar.u._32[I64LO32] ) {
             return( MS_MODIFIED );
         }
     } else {
@@ -455,19 +455,19 @@ mad_status DIGENTRY MIRegModified( const mad_reg_set_data *rsd, const mad_reg_in
 mad_status      DIGENTRY MIRegInspectAddr( const mad_reg_info *ri, mad_registers const *mr, address *a )
 {
     unsigned    bit_start;
-    unsigned_32 *p;
+    unsigned_64 *p;
 
     memset( a, 0, sizeof( *a ) );
     bit_start = ri->bit_start;
     if( bit_start == BIT_OFF( iar ) ) {
-        a->mach.offset = mr->ppc.iar.u._32[0];
+        a->mach.offset = mr->ppc.iar.u._32[I64LO32];
         return( MS_OK );
     }
     if( bit_start >= BIT_OFF( f0 ) && bit_start < (BIT_OFF( f31 ) + 64) ) {
         return( MS_FAIL );
     }
-    p = (unsigned_32 *)((unsigned_8 *)mr + (bit_start / BITS_PER_BYTE));
-    a->mach.offset = *p;
+    p = (unsigned_64 *)((unsigned_8 *)mr + (bit_start / BITS_PER_BYTE));
+    a->mach.offset = p->u._32[I64LO32];
     return( MS_OK );
 }
 
@@ -534,14 +534,14 @@ void            DIGENTRY MIRegSpecialGet( mad_special_reg sr, mad_registers cons
     ma->segment = 0;
     switch( sr ) {
     case MSR_IP:
-        ma->offset = mr->ppc.iar.u._32[0];
+        ma->offset = mr->ppc.iar.u._32[I64LO32];
         break;
     case MSR_SP:
-        ma->offset = mr->ppc.sp.u._32[0];
+        ma->offset = mr->ppc.sp.u._32[I64LO32];
         break;
     case MSR_FP:
         //NYI: can actually float around
-        ma->offset = mr->ppc.r31.u._32[0];
+        ma->offset = mr->ppc.r31.u._32[I64LO32];
         break;
     }
 }
@@ -550,14 +550,14 @@ void            DIGENTRY MIRegSpecialSet( mad_special_reg sr, mad_registers *mr,
 {
     switch( sr ) {
     case MSR_IP:
-        mr->ppc.iar.u._32[0] = ma->offset;
+        mr->ppc.iar.u._32[I64LO32] = ma->offset;
         break;
     case MSR_SP:
-        mr->ppc.sp.u._32[0] = ma->offset;
+        mr->ppc.sp.u._32[I64LO32] = ma->offset;
         break;
     case MSR_FP:
         //NYI: can actually float around
-        mr->ppc.r31.u._32[0] = ma->offset;
+        mr->ppc.r31.u._32[I64LO32] = ma->offset;
         break;
     }
 }
@@ -577,6 +577,9 @@ unsigned        DIGENTRY MIRegSpecialName( mad_special_reg sr, mad_registers con
         break;
     case MSR_FP:
         idx = IDX_r31;
+        break;
+    default:
+        idx = 0;
         break;
     }
     p = RegList[idx].info.name;

@@ -415,6 +415,8 @@ mad_disasm_control DisasmControl( mad_disasm_data *dd, mad_registers const *mr )
             c |= MDC_TAKEN;
         }
         return( c );
+    default:
+        break;
     }
     return( MDC_OPER | MDC_TAKEN );
 }
@@ -429,7 +431,7 @@ mad_status      DIGENTRY MIDisasmInsNext( mad_disasm_data *dd, mad_registers con
     mad_disasm_control  dc;
 
     memset( next, 0, sizeof( *next ) );
-    next->mach.offset = mr->ppc.iar.u._32[0] + sizeof( unsigned_32 );
+    next->mach.offset = mr->ppc.iar.u._32[I64LO32] + sizeof( unsigned_32 );
     dc = DisasmControl( dd, mr );
     if( (dc & MDC_TAKEN_MASK) == MDC_TAKEN_NOT ) {
         return( MS_OK );

@@ -152,7 +152,7 @@ static mad_entry        Dummy =
         { NULL, "", "Unknown Architecture", &DummyRtns, MAD_NIL, 0 };
 
 static const mad_string EmptyStrList[] = { MSTR_NIL };
-static const mad_toggle_strings EmptyToggleList[] = { MSTR_NIL, MSTR_NIL, MSTR_NIL };
+static const mad_toggle_strings EmptyToggleList[] = { { MSTR_NIL }, { MSTR_NIL }, { MSTR_NIL } };
 
 static mad_status MADStatus( mad_status ms )
 {
@@ -184,10 +184,10 @@ mad_status      MADInit( void )
         const char      *file;
         const char      *desc;
     } list[] = {
-        MAD_X86,        "madx86",       "Intel Architecture [80(x)86]",
-        MAD_AXP,        "madaxp",       "Alpha Architecture",
-        MAD_PPC,        "madppc",       "PowerPC Architecture",
-        MAD_MSJ,        "msj",          "Java Virtual Machine (Microsoft)"
+        { MAD_X86,      "madx86",       "Intel Architecture [80(x)86]" },
+        { MAD_AXP,      "madaxp",       "Alpha Architecture" },
+        { MAD_PPC,      "madppc",       "PowerPC Architecture" },
+        { MAD_MSJ,      "msj",          "Java Virtual Machine (Microsoft)" }
     };
 
     mad_status  ms;
@@ -729,30 +729,49 @@ typedef union {
     }                   f;
 } decomposed_item;
 
-//NYI: non-two's complement support
+/* size of decomposed int in bytes - corresponds to 'i' in decomposed_item */
+#define DI_SIZE     sizeof( unsigned_64 )
+
+/* Convert integer of specified type to native representation (64-bit) */
+// NYI: non-two's complement support
 static mad_status DecomposeInt( const mad_type_info *mti, const void *d,
                                 decomposed_item *v )
 {
     unsigned    bytes;
     unsigned    i;
     unsigned    sign_bit;
+    unsigned_8  *dst = &v->i.u._8[0];
 
     bytes = mti->b.bits / BITS_PER_BYTE;
+#if ME_HOST == ME_BIG
+    dst += DI_SIZE - bytes;     /* low bytes are higher in memory */
+#endif
+    /* copy significant (low) bytes */
     if( mti->i.endian == ME_HOST ) {
-        memcpy( v, d, bytes );
+        memcpy( dst, d, bytes );
     } else {
         for( i = 0; i < bytes; i++ ) {
-            v->i.u._8[i] = ((unsigned_8 *)d)[EndMap[ME_BIG][8 - bytes + i]];
+            dst[i] = ((unsigned_8 *)d)[EndMap[ME_BIG][DI_SIZE - bytes + i]];
         }
     }
-    memset( &v->i.u._8[bytes], 0, sizeof( v->i ) - bytes );
+    /* clear high bytes */
+#if ME_HOST == ME_BIG
+    memset( &v->i.u._8[0], 0, DI_SIZE - bytes );
+#else
+    memset( &v->i.u._8[bytes], 0, DI_SIZE - bytes );
+#endif
+    /* sign extend if necessary */
     if( mti->i.nr != MNR_UNSIGNED ) {
         i = mti->i.sign_pos / BITS_PER_BYTE;
         sign_bit = mti->i.sign_pos % BITS_PER_BYTE;
-        if( v->i.u._8[i] & 1 << sign_bit ) {
+        if( v->i.u._8[i] & (1 << sign_bit) ) {
             v->i.u._8[i] |= 0xff << sign_bit;
             ++i;
-            memset( &v->i.u._8[i], 0xff, sizeof( v->i ) - i );
+#if ME_HOST == ME_BIG
+            memset( &v->i.u._8[0], 0xff, DI_SIZE - i );
+#else
+            memset( &v->i.u._8[i], 0xff, DI_SIZE - i );
+#endif
         }
     }
     return( MS_OK );
@@ -797,7 +816,7 @@ static mad_status DecomposeAddr( const mad_type_info *mti, const void *d,
             return( MS_UNSUPPORTED );
         }
         for( i = 0; i < bytes; i++ ) {
-            v->i.u._8[i] = ((unsigned_8 *)d)[EndMap[ME_BIG][8 - bytes + i]];
+            v->i.u._8[i] = ((unsigned_8 *)d)[EndMap[ME_BIG][DI_SIZE - bytes + i]];
         }
     }
 #endif
@@ -845,8 +864,14 @@ static void ShiftBits( unsigned bits, int amount, void *d )
         /* left shift */
         byte_shift = amount / BITS_PER_BYTE;
         if( byte_shift != 0 ) {
+#if ME_HOST == ME_BIG
+            memmove( b, b + byte_shift, bytes - byte_shift );
+            memset( b + byte_shift, 0, byte_shift );
+	    byte_shift = 0;
+#else
             memmove( b + byte_shift, b, bytes - byte_shift );
             memset( b, 0, byte_shift );
+#endif
             amount %= BITS_PER_BYTE;
         }
         if( amount != 0 ) {
@@ -862,8 +887,14 @@ static void ShiftBits( unsigned bits, int amount, void *d )
         amount = -amount;
         byte_shift = amount / BITS_PER_BYTE;
         if( byte_shift != 0 ) {
+#if ME_HOST == ME_BIG
+            memmove( b + byte_shift, b, bytes - byte_shift );
+            memset( b, 0, byte_shift );
+	    byte_shift = 0;
+#else
             memmove( b, b + byte_shift, bytes - byte_shift );
             memset( b + bytes - byte_shift, 0, byte_shift );
+#endif
             amount %= BITS_PER_BYTE;
         }
         if( amount != 0 ) {
@@ -877,10 +908,11 @@ static void ShiftBits( unsigned bits, int amount, void *d )
     }
 }
 
-static void ExtractBits( unsigned pos, unsigned len, const void *src, void *dst )
+static void ExtractBits( unsigned pos, unsigned len, const void *src, void *dst, int dst_size )
 {
     unsigned_64         tmp;
     unsigned            bytes;
+    unsigned_8          *d = dst;
 
     src = (unsigned_8 *)src + (pos / BITS_PER_BYTE);
     pos %= BITS_PER_BYTE;
@@ -890,7 +922,10 @@ static void ExtractBits( unsigned pos, unsigned len, const void *src, void *dst 
     ShiftBits( pos + len, -pos, &tmp );
     bytes = len / BITS_PER_BYTE;
     tmp.u._8[bytes] &= BitMask[ len % BITS_PER_BYTE ];
-    memcpy( dst, &tmp, (len + (BITS_PER_BYTE-1)) / BITS_PER_BYTE );
+#if ME_HOST == ME_BIG
+    d += dst_size - (len + (BITS_PER_BYTE-1)) / BITS_PER_BYTE;
+#endif
+    memcpy( d, &tmp, (len + (BITS_PER_BYTE-1)) / BITS_PER_BYTE );
 }
 
 static void InsertBits( unsigned pos, unsigned len, const void *src, void *dst )
@@ -934,12 +969,12 @@ static mad_status DecomposeFloat( const mad_type_info *mti, const void *d,
         memcpy( &v->f.mantissa, d, bytes );
     } else {
         for( i = 0; i < bytes; i++ ) {
-            v->f.mantissa.u._8[i] = ((unsigned_8 *)d)[EndMap[ME_BIG][8 - bytes + i]];
+            v->f.mantissa.u._8[i] = ((unsigned_8 *)d)[EndMap[ME_BIG][DI_SIZE - bytes + i]];
         }
     }
 
     ExtractBits( mti->f.exp.pos, mti->f.exp.data.b.bits,
-                &v->f.mantissa, &v->f.exp );
+                &v->f.mantissa, &v->f.exp, sizeof( v->f.exp ) );
     /* Assuming IEEE here */
     if( v->f.exp == 0 ) {
         v->f.type = F_DENORMAL;
@@ -947,7 +982,8 @@ static mad_status DecomposeFloat( const mad_type_info *mti, const void *d,
         v->f.type = F_SPECIAL;
     }
     v->f.exp -= mti->f.exp.bias;
-    ExtractBits( mti->f.mantissa.sign_pos, 1, &v->f.mantissa, &v->f.sign );
+    ExtractBits( mti->f.mantissa.sign_pos, 1, &v->f.mantissa,
+                &v->f.sign, sizeof( v->f.sign ) );
     mant_bits = mti->b.bits - mti->f.exp.data.b.bits - 1;
     if( mti->f.exp.hidden && (v->f.type != F_DENORMAL) ) mant_bits += 1;
     ShiftBits( sizeof( v->f.mantissa )*BITS_PER_BYTE,
@@ -973,18 +1009,23 @@ static mad_status DecomposeFloat( const mad_type_info *mti, const void *d,
     return( MS_OK );
 }
 
+/* Convert native integer to specified representation */
 static mad_status ComposeInt( decomposed_item *v,
                                 const mad_type_info *mti, void *d )
 {
     unsigned    bytes;
     unsigned    i;
+    unsigned_8  *src = &v->i.u._8[0];
 
     bytes = mti->b.bits / BITS_PER_BYTE;
+#if ME_HOST == ME_BIG
+    src += DI_SIZE - bytes;     /* low bytes are higher in memory */
+#endif
     if( mti->i.endian == ME_HOST ) {
-        memcpy( d, v, bytes );
+        memcpy( d, src, bytes );
     } else {
         for( i = 0; i < bytes; i++ ) {
-            ((unsigned_8 *)d)[EndMap[ME_BIG][8 - bytes + i]] = v->i.u._8[i];
+            ((unsigned_8 *)d)[EndMap[ME_BIG][DI_SIZE - bytes + i]] = src[i];
         }
     }
     return( MS_OK );
@@ -1140,9 +1181,9 @@ static char *U64CvtNum( unsigned_64 val, unsigned radix, char *p, int bit_length
     U32ToU64( radix, &divisor );
     do {
         U64Div( &val, &divisor, &val, &rem );
-        *--p = DigitTab[ rem.u._32[0] ];
+        *--p = DigitTab[ rem.u._32[I64LO32] ];
         --digits;
-    } while( val.u._32[0] != 0 || val.u._32[1] != 0 || digits > 0 );
+    } while( val.u._32[I64LO32] != 0 || val.u._32[I64HI32] != 0 || digits > 0 );
     len = MADCliRadixPrefix( radix, 0, NULL );
     p -= len;
     save = p[len];

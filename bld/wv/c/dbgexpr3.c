@@ -669,22 +669,22 @@ void ConvertTo( stack_entry *entry, type_kind k, type_modifier m, unsigned s )
     from = ConvIdx( &entry->info );
     switch( from ) {
     case U1:
-        U32ToU64( U8FetchNative( entry->v.uint ), &entry->v.uint );
+        U32ToU64( U8FetchTrunc( entry->v.uint ), &entry->v.uint );
         break;
     case U2:
-        U32ToU64( U16FetchNative( entry->v.uint ), &entry->v.uint );
+        U32ToU64( U16FetchTrunc( entry->v.uint ), &entry->v.uint );
         break;
     case U4:
-        U32ToU64( U32FetchNative( entry->v.uint ), &entry->v.uint );
+        U32ToU64( U32FetchTrunc( entry->v.uint ), &entry->v.uint );
         break;
     case I1:
-        I32ToI64( I8FetchNative( entry->v.uint ), &entry->v.uint );
+        I32ToI64( I8FetchTrunc( entry->v.uint ), &entry->v.uint );
         break;
     case I2:
-        I32ToI64( I16FetchNative( entry->v.uint ), &entry->v.uint );
+        I32ToI64( I16FetchTrunc( entry->v.uint ), &entry->v.uint );
         break;
     case I4:
-        I32ToI64( I32FetchNative( entry->v.uint ), &entry->v.uint );
+        I32ToI64( I32FetchTrunc( entry->v.uint ), &entry->v.uint );
         break;
     case F4:
         DToLD( (float)LDToD( &entry->v.real ), &entry->v.real );
@@ -719,6 +719,8 @@ void ConvertTo( stack_entry *entry, type_kind k, type_modifier m, unsigned s )
             entry->v.string.allocated = dest;
             LocationCreate( &entry->v.string.loc, LT_INTERNAL, dest );
         }
+        break;
+    default:
         break;
     }
     entry->info.kind = k;

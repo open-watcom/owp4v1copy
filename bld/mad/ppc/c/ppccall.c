@@ -67,8 +67,8 @@ mad_status      DIGENTRY MICallBuildFrame( mad_string call, address ret, address
     call = call;
     out->ppc = in->ppc;
     //NYI: 64 bit
-    out->ppc.lr.u._32[0] = ret.mach.offset;
-    out->ppc.iar.u._32[0] = rtn.mach.offset;
+    out->ppc.lr.u._32[I64LO32] = ret.mach.offset;
+    out->ppc.iar.u._32[I64LO32] = rtn.mach.offset;
     return( MS_OK );
 }
 
@@ -97,9 +97,9 @@ unsigned        DIGENTRY MICallUpStackSize( void )
 
 mad_status      DIGENTRY MICallUpStackInit( mad_call_up_data *cud, const mad_registers *mr )
 {
-    cud->lr = mr->ppc.lr.u._32[0];
-    cud->sp = mr->ppc.sp.u._32[0];
-    cud->fp = mr->ppc.r31.u._32[0];    // NYI: can float around
+    cud->lr = mr->ppc.lr.u._32[I64LO32];
+    cud->sp = mr->ppc.sp.u._32[I64LO32];
+    cud->fp = mr->ppc.r31.u._32[I64LO32];    // NYI: can float around
     cud->first_frame = TRUE;
     return( MS_OK );
 }

@@ -54,9 +54,9 @@
  */
 
 /* Macros to get at GP/FP registers based on their number; useful in loops */
-#define TRANS_GPREG_32( mr, idx ) (*((unsigned_32 *)(&(mr->r0.u._32[0])) + (2 * idx)))
-#define TRANS_FPREG_LO( mr, idx ) (*((unsigned_32 *)(&(mr->f0.u64.u._32[1])) + (2 * idx)))
-#define TRANS_FPREG_HI( mr, idx ) (*((unsigned_32 *)(&(mr->f0.u64.u._32[0])) + (2 * idx)))
+#define TRANS_GPREG_32( mr, idx ) (*((unsigned_32 *)(&(mr->r0.u._32[I64LO32])) + (2 * idx)))
+#define TRANS_FPREG_LO( mr, idx ) (*((unsigned_32 *)(&(mr->f0.u64.u._32[I64LO32])) + (2 * idx)))
+#define TRANS_FPREG_HI( mr, idx ) (*((unsigned_32 *)(&(mr->f0.u64.u._32[I64HI32])) + (2 * idx)))
 
 static void ReadCPU( struct ppc_mad_registers *r )
 {
@@ -73,14 +73,14 @@ static void ReadCPU( struct ppc_mad_registers *r )
         TRANS_FPREG_LO( r, i ) = ptrace( PTRACE_PEEKUSER, pid, (PT_FPR0 + i + 1) * REGSIZE, 0 );
     }
     /* Read SPRs */
-    r->iar.u._32[0] = ptrace( PTRACE_PEEKUSER, pid, PT_NIP * REGSIZE, 0 );
-    r->msr.u._32[0] = ptrace( PTRACE_PEEKUSER, pid, PT_MSR * REGSIZE, 0 );
-    r->ctr.u._32[0] = ptrace( PTRACE_PEEKUSER, pid, PT_CTR * REGSIZE, 0 );
-    r->lr.u._32[0]  = ptrace( PTRACE_PEEKUSER, pid, PT_LNK * REGSIZE, 0 );
-    r->xer          = ptrace( PTRACE_PEEKUSER, pid, PT_XER * REGSIZE, 0 );
-    r->cr           = ptrace( PTRACE_PEEKUSER, pid, PT_CCR * REGSIZE, 0 );
-    r->fpscr        = ptrace( PTRACE_PEEKUSER, pid, PT_FPSCR * REGSIZE, 0 );
-    last_eip = r->iar.u._32[0];
+    r->iar.u._32[I64LO32] = ptrace( PTRACE_PEEKUSER, pid, PT_NIP * REGSIZE, 0 );
+    r->msr.u._32[I64LO32] = ptrace( PTRACE_PEEKUSER, pid, PT_MSR * REGSIZE, 0 );
+    r->ctr.u._32[I64LO32] = ptrace( PTRACE_PEEKUSER, pid, PT_CTR * REGSIZE, 0 );
+    r->lr.u._32[I64LO32]  = ptrace( PTRACE_PEEKUSER, pid, PT_LNK * REGSIZE, 0 );
+    r->xer                = ptrace( PTRACE_PEEKUSER, pid, PT_XER * REGSIZE, 0 );
+    r->cr                 = ptrace( PTRACE_PEEKUSER, pid, PT_CCR * REGSIZE, 0 );
+    r->fpscr              = ptrace( PTRACE_PEEKUSER, pid, PT_FPSCR * REGSIZE, 0 );
+    last_eip = r->iar.u._32[I64LO32];
 }
 
 unsigned ReqRead_cpu( void )
@@ -109,10 +109,10 @@ static void WriteCPU( struct ppc_mad_registers *r )
     int         i;
 
     /* Write SPRs */
-    ptrace( PTRACE_POKEUSER, pid, PT_NIP * REGSIZE, (void *)(r->iar.u._32[0]) );
-    ptrace( PTRACE_POKEUSER, pid, PT_MSR * REGSIZE, (void *)(r->msr.u._32[0]) );
-    ptrace( PTRACE_POKEUSER, pid, PT_CTR * REGSIZE, (void *)(r->ctr.u._32[0]) );
-    ptrace( PTRACE_POKEUSER, pid, PT_LNK * REGSIZE, (void *)(r->lr.u._32[0]) );
+    ptrace( PTRACE_POKEUSER, pid, PT_NIP * REGSIZE, (void *)(r->iar.u._32[I64LO32]) );
+    ptrace( PTRACE_POKEUSER, pid, PT_MSR * REGSIZE, (void *)(r->msr.u._32[I64LO32]) );
+    ptrace( PTRACE_POKEUSER, pid, PT_CTR * REGSIZE, (void *)(r->ctr.u._32[I64LO32]) );
+    ptrace( PTRACE_POKEUSER, pid, PT_LNK * REGSIZE, (void *)(r->lr.u._32[I64LO32]) );
     ptrace( PTRACE_POKEUSER, pid, PT_CCR * REGSIZE, (void *)r->cr );
     ptrace( PTRACE_POKEUSER, pid, PT_XER * REGSIZE, (void *)r->xer );
     /* Write GPRs */

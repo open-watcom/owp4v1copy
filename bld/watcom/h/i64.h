@@ -132,9 +132,18 @@ int  U64Cnv16( unsigned_64 *res, char c );
 
 #define U64Clear( x )   ((x).u._32[0]=0,(x).u._32[1]=0)
 
+/* The FetchTrunc macros grab an 8/16/32-bit value from memory assuming
+ * that the value is stored as a 64-bit integer. This is required for
+ * big endian systems where the value is at different memory address
+ * depending on its size.
+ */
 #define U32Fetch( x )           (assert((x).u._32[I64HI32]==0),(x).u._32[I64LO32])
 #define U32FetchTrunc( x )      ((x).u._32[I64LO32])
 #define I32FetchTrunc( x )      ((signed_32)(x).u._32[I64LO32])
+#define U16FetchTrunc( x )      ((x).u._16[I64LO16])
+#define I16FetchTrunc( x )      ((signed_16)(x).u._16[I64LO16])
+#define U8FetchTrunc( x )       ((x).u._8[I64LO8])
+#define I8FetchTrunc( x )       ((signed_8)(x).u._8[I64LO8])
 
 /* Note about the FetchNative macros: These assume that the value is stored
  * in memory as a non-64bit type, starting at the lowest address. That is,
