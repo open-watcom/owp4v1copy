@@ -80,63 +80,63 @@ namespace std {
 
   template< class Type >
   struct equal_to : binary_function< Type, Type, bool > {
-    Type operator( )( const Type &x, const Type &y ) const
+    bool operator( )( const Type &x, const Type &y ) const
       { return( x == y ); }
   };
 
 
   template< class Type >
   struct not_equal_to : binary_function< Type, Type, bool > {
-    Type operator( )( const Type &x, const Type &y ) const
+    bool operator( )( const Type &x, const Type &y ) const
       { return( x != y ); }
   };
 
 
   template< class Type >
   struct greater : binary_function< Type, Type, bool > {
-    Type operator( )( const Type &x, const Type &y ) const
+    bool operator( )( const Type &x, const Type &y ) const
       { return( x > y ); }
   };
 
 
   template< class Type >
   struct less : binary_function< Type, Type, bool > {
-    Type operator( )( const Type &x, const Type &y ) const
+    bool operator( )( const Type &x, const Type &y ) const
       { return( x < y ); }
   };
 
 
   template< class Type >
   struct greater_equal : binary_function< Type, Type, bool > {
-    Type operator( )( const Type &x, const Type &y ) const
+    bool operator( )( const Type &x, const Type &y ) const
       { return( x >= y ); }
   };
 
 
   template< class Type >
   struct less_equal : binary_function< Type, Type, bool > {
-    Type operator( )( const Type &x, const Type &y ) const
+    bool operator( )( const Type &x, const Type &y ) const
       { return( x <= y ); }
   };
 
 
   template< class Type >
   struct logical_and : binary_function< Type, Type, bool > {
-    Type operator( )( const Type &x, const Type &y ) const
+    bool operator( )( const Type &x, const Type &y ) const
       { return( x && y ); }
   };
 
 
   template< class Type >
   struct logical_or : binary_function< Type, Type, bool > {
-    Type operator( )( const Type &x, const Type &y ) const
+    bool operator( )( const Type &x, const Type &y ) const
       { return( x || y ); }
   };
 
 
   template< class Type >
   struct logical_not : unary_function< Type, bool > {
-    Type operator( )( const Type &x ) const
+    bool operator( )( const Type &x ) const
       { return( !x ); }
   };
 

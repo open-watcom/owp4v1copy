@@ -1748,12 +1748,14 @@ static YYACTIONTYPE lookAheadYYAction( YYTOKENTYPE t, PARSE_STACK *state, PARSE_
         what_to_do = response[expr_what][decl_what];
         if( what_to_do > DONE ) {
             if( what_to_do == DECL ) {
-                CErr1( WARN_AMBIGUOUS_CONSTRUCT_DECL );
+                // This warning seems inappropriate. --PeterC
+                // CErr1( WARN_AMBIGUOUS_CONSTRUCT_DECL );
                 yyaction = YYACTION_REDUCE_RULE( YYAMBIGR0 );
                 break;
             }
             if( what_to_do == EXPR ) {
-                CErr1( WARN_AMBIGUOUS_CONSTRUCT_EXPR );
+                // This warning seems inappropriate. --PeterC
+                // CErr1( WARN_AMBIGUOUS_CONSTRUCT_EXPR );
                 yyaction = YYACTION_SHIFT_STATE( YYAMBIGH0 );
                 break;
             }
@@ -1835,7 +1837,8 @@ static p_action doAction( YYTOKENTYPE t, PARSE_STACK *state )
             } else if( state->favour_reduce ) {
                 yyaction = YYACTION_REDUCE_RULE( YYAMBIGR0 );
             } else {
-                CErr1( WARN_AMBIGUOUS_CONSTRUCT );
+                // This warning seems inappropriate. --PeterC
+                // CErr1( WARN_AMBIGUOUS_CONSTRUCT );
                 yyaction = lookAheadYYAction( t, state, state );
             }
         } else {

@@ -152,7 +152,7 @@ namespace std {
     }
 
     static int_type not_eof( const int_type &c )
-      { return( (c != WEOF) ? c : 0 ); }
+      { return( (c != WEOF) ? c : static_cast< int_type >( 0 ) ); }
 
     static char_type to_char_type( const int_type &c )
       { return( static_cast< char_type >(c) ); }

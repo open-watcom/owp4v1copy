@@ -1,3 +1,32 @@
+/****************************************************************************
+*
+*                            Open Watcom Project
+*
+*    Portions Copyright (c) 1983-2002 Sybase, Inc. All Rights Reserved.
+*
+*  ========================================================================
+*
+*    This file contains Original Code and/or Modifications of Original
+*    Code as defined in and that are subject to the Sybase Open Watcom
+*    Public License version 1.0 (the 'License'). You may not use this file
+*    except in compliance with the License. BY USING THIS FILE YOU AGREE TO
+*    ALL TERMS AND CONDITIONS OF THE LICENSE. A copy of the License is
+*    provided with the Original Code and Modifications, and is also
+*    available at www.sybase.com/developer/opensource.
+*
+*    The Original Code and all software distributed under the License are
+*    distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+*    EXPRESS OR IMPLIED, AND SYBASE AND ALL CONTRIBUTORS HEREBY DISCLAIM
+*    ALL SUCH WARRANTIES, INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF
+*    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR
+*    NON-INFRINGEMENT. Please see the License for the specific language
+*    governing rights and limitations under the License.
+*
+*  ========================================================================
+*
+* Description: Functional tests for std::numeric_limits.
+*
+****************************************************************************/
 
 #include <iostream>
 #include <limits>
@@ -21,54 +50,22 @@ int main()
   std::numeric_limits< double >             x15;
   std::numeric_limits< long double >        x16;
 
-  if( x01.is_specialized ) {
-    std::cout << "Specialized for bool\n";
-  }
-  if( x02.is_specialized ) {
-    std::cout << "Specialized for char\n";
-  }
-  if( x03.is_specialized ) {
-    std::cout << "Specialized for signed char\n";
-  }
-  if( x04.is_specialized ) {
-    std::cout << "Specialized for unsigned char\n";
-  }
-  if( x05.is_specialized ) {
-    std::cout << "Specialized for wchar_t\n";
-  }
-  if( x06.is_specialized ) {
-    std::cout << "Specialized for short\n";
-  }
-  if( x07.is_specialized ) {
-    std::cout << "Specialized for int\n";
-  }
-  if( x08.is_specialized ) {
-    std::cout << "Specialized for long\n";
-  }
-  if( x09.is_specialized ) {
-    std::cout << "Specialized for long long\n";
-  }
-  if( x10.is_specialized ) {
-    std::cout << "Specialized for unsigned short\n";
-  }
-  if( x11.is_specialized ) {
-    std::cout << "Specialized for unsigned int\n";
-  }
-  if( x12.is_specialized ) {
-    std::cout << "Specialized for unsigned long\n";
-  }
-  if( x13.is_specialized ) {
-    std::cout << "Specialized for unsigned long long\n";
-  }
-  if( x14.is_specialized ) {
-    std::cout << "Specialized for float\n";
-  }
-  if( x15.is_specialized ) {
-    std::cout << "Specialized for double\n";
-  }
-  if( x16.is_specialized ) {
-    std::cout << "Specialized for long double\n";
-  }
+  std::cout << x01.is_specialized << "\n";
+  std::cout << x02.is_specialized << "\n";
+  std::cout << x03.is_specialized << "\n";
+  std::cout << x04.is_specialized << "\n";
+  std::cout << x05.is_specialized << "\n";
+  std::cout << x06.is_specialized << "\n";
+  std::cout << x07.is_specialized << "\n";
+  std::cout << x08.is_specialized << "\n";
+  std::cout << x09.is_specialized << "\n";
+  std::cout << x10.is_specialized << "\n";
+  std::cout << x11.is_specialized << "\n";
+  std::cout << x12.is_specialized << "\n";
+  std::cout << x13.is_specialized << "\n";
+  std::cout << x14.is_specialized << "\n";
+  std::cout << x15.is_specialized << "\n";
+  std::cout << x16.is_specialized << "\n";
 
   return 0;
 }

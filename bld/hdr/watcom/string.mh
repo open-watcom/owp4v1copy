@@ -1185,15 +1185,17 @@ namespace std {
   // replace( iterator, iterator, const basic_string & )
   // ***************************************************
   template< class CharT, class Traits, class Allocator >
+  inline
   basic_string< CharT, Traits, Allocator > &
     basic_string< CharT, Traits, Allocator >::replace(
       iterator i1,
       iterator i2,
       const basic_string &str )
   {
-    // IMPLEMENT ME!
+    size_type pos           = &*i1 - buffer;
+    size_type remove_length = &*i2 - &*i1;
 
-    return( *this );
+    return( replace( pos, remove_length, str, 0, npos ) );
   }
 
   // replace( iterator, iterator, const CharT *s, size_type n )

@@ -528,6 +528,38 @@ bool replace_test( )
   return( rc );
 }
 
+bool iterator_replace_test( )
+{
+  bool rc = true;
+  const std::string s1( "Insert me!" );
+
+  std::string t1( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+  t1.replace( t1.begin( ), t1.end( ), s1 );
+  if( t1 != "Insert me!" ) {
+    std::cout << t1.c_str( ) << "\n";
+    std::cout << "iterator_replace FAIL 0001\n"; rc = false;
+  }
+
+  std::string t2( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+  t2.replace( t2.begin( ), t2.begin( ) + 1, s1 );
+  if( t2 != "Insert me!BCDEFGHIJKLMNOPQRSTUVWXYZ" ) {
+    std::cout << "iterator_replace FAIL 0002\n"; rc = false;
+  }
+
+  std::string t3( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+  t3.replace( t3.end( ), t3.end( ), s1 );
+  if( t3 != "ABCDEFGHIJKLMNOPQRSTUVWXYZInsert me!" ) {
+    std::cout << "iterator_replace FAIL 0003\n"; rc = false;
+  }
+
+  std::string t4( "ABCDEFGHIJKLMNOPQRSTUVWXYZ" );
+  t4.replace( t4.begin( ) + 4, t4.begin( ) + 7, s1 );
+  if (t4 != "ABCDInsert me!HIJKLMNOPQRSTUVWXYZ" ) {
+    std::cout << "iterator_replace FAIL 0004\n"; rc = false;
+  }
+  return( rc );
+}
+
 bool copy_test( )
 {
   bool rc = true;
@@ -849,26 +881,27 @@ int main( )
   int rc = 0;
 
   try {
-    if( !construct_test( )       ) rc = 1;
-    if( !assign_test( )          ) rc = 1;
-    if( !access_test( )          ) rc = 1;
-    if( !relational_test( )      ) rc = 1;
-    if( !capacity_test( )        ) rc = 1;
-    if( !iterator_test( )        ) rc = 1;
-    if( !append_test( )          ) rc = 1;
-    if( !insert_test( )          ) rc = 1;
-    if( !erase_test( )           ) rc = 1;
-    if( !replace_test( )         ) rc = 1;
-    if( !copy_test( )            ) rc = 1;
-    if( !swap_test( )            ) rc = 1;
-    if( !cstr_test( )            ) rc = 1;
-    if( !find_test( )            ) rc = 1;
-    if( !rfind_test( )           ) rc = 1;
-    if( !find_first_of_test()    ) rc = 1;
-    if( !find_last_of_test()     ) rc = 1;
-    if( !find_first_not_of_test()) rc = 1;
-    if( !find_last_not_of_test() ) rc = 1;
-    if( !substr_test()           ) rc = 1;
+    if( !construct_test( )         ) rc = 1;
+    if( !assign_test( )            ) rc = 1;
+    if( !access_test( )            ) rc = 1;
+    if( !relational_test( )        ) rc = 1;
+    if( !capacity_test( )          ) rc = 1;
+    if( !iterator_test( )          ) rc = 1;
+    if( !append_test( )            ) rc = 1;
+    if( !insert_test( )            ) rc = 1;
+    if( !erase_test( )             ) rc = 1;
+    if( !replace_test( )           ) rc = 1;
+    if( !iterator_replace_test( )  ) rc = 1;
+    if( !copy_test( )              ) rc = 1;
+    if( !swap_test( )              ) rc = 1;
+    if( !cstr_test( )              ) rc = 1;
+    if( !find_test( )              ) rc = 1;
+    if( !rfind_test( )             ) rc = 1;
+    if( !find_first_of_test( )     ) rc = 1;
+    if( !find_last_of_test( )      ) rc = 1;
+    if( !find_first_not_of_test( ) ) rc = 1;
+    if( !find_last_not_of_test( )  ) rc = 1;
+    if( !substr_test( )            ) rc = 1;
   }
   catch( std::out_of_range e ) {
     std::cout << "Unexpected out_of_range exception: " << e.what( ) << "\n";

@@ -3,22 +3,22 @@
 ----------cmplx01----------
 ----------fun01----------
 ----------lim01----------
-Specialized for bool
-Specialized for char
-Specialized for signed char
-Specialized for unsigned char
-Specialized for wchar_t
-Specialized for short
-Specialized for int
-Specialized for long
-Specialized for long long
-Specialized for unsigned short
-Specialized for unsigned int
-Specialized for unsigned long
-Specialized for unsigned long long
-Specialized for float
-Specialized for double
-Specialized for long double
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
+1
 ----------string01----------
 ----------util01----------
 ----------vector01----------
