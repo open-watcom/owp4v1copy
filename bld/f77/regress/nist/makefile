@@ -6,63 +6,55 @@ positive_dir = source
 !include $(positive_dir)/positive.mif
 
 !ifdef test1
-cflags_386 = -d2-mf
-cflags_i86 = -d2-mc-2
-cflags_axp = -d2-si
-!ifndef __MSDOS__
-add_br_ = -br
-!endif
+fflags_386 = -D2 -MF
+fflags_i86 = -D2 -MC -2
+fflags_axp = -d2 -si
 alt_error = 01
 !else ifdef test2
-cflags_386 = -d1-mf
-cflags_i86 = -d1-mm
-cflags_axp = -d1-si
+fflags_386 = -D2 -MF -DEBug
+fflags_i86 = -D2 -MM -DEBug
+fflags_axp = -d2-si
 alt_error = 02
 !else ifdef test3
-cflags_386 = -d2-ms
-cflags_i86 = -d2-ml
-cflags_axp = -d2
+fflags_386 = -D2 -MS -FPC
+fflags_i86 = -D2 -ML -FPC
+fflags_axp = -d2
 alt_error = 03
 !else ifdef test4
-cflags_386 = -d1-mf
-cflags_i86 = -d1-ms
-cflags_axp = -d1-si
+fflags_386 = -D2 -MF -6
+fflags_i86 = -D2 -MS -6
+fflags_axp = -d2-si
 alt_error = 04
 !else ifdef test5
-cflags_386 = -d1-mf
-cflags_i86 = -d1-mc-2
-cflags_axp = -d1
+fflags_386 = -D1 -MF
+fflags_i86 = -D1 -MC -2
+fflags_axp = -d1
 alt_error = 05
 !else ifdef test6
-cflags_386 = -d2-mf
-cflags_i86 = -d2-mm
-cflags_axp = -d2
+fflags_386 = -D1 -MF -FPI87
+fflags_i86 = -D1 -MM -FPI87
+fflags_axp = -d1
 alt_error = 06
 !else ifdef test7
-cflags_386 = -d1-ms
-cflags_i86 = -d1-ml
-cflags_axp = -d1
+fflags_386 = -D1 -MS -DEBug -4
+fflags_i86 = -D1 -ML -DEBug -4
+fflags_axp = -d1
 alt_error = 07
 !else ifdef test8
-cflags_386 = -d2-mf
-cflags_i86 = -d2-ms
-cflags_axp = -d2
+fflags_386 = -D1 -MF -SSfloats
+fflags_i86 = -D1 -MS -SSfloats
+fflags_axp = -d1
 alt_error = 08
 !else ifdef test9
-cflags_386 = -d1-oe-mf
-cflags_i86 = -d1-oe-ms
-cflags_axp = -d1-oe
+fflags_386 = -D1 -OI -MF
+fflags_i86 = -D1 -OI -MS
+fflags_axp = -d1-oe
 alt_error = 09
 !else
-cflags_386 = -ox-d1-ms
-cflags_i86 = -ox-d1-ms
-cflags_axp = -ox-d1
+fflags_386 = -OX -D1 -MS
+fflags_i86 = -OX -D1 -MS
+fflags_axp = -ox-d1
 alt_error = 00
-!ifndef __MSDOS__
-!ifndef __LINUX__
-add_br_ = -br
-!endif
-!endif
 !endif
 
 !ifdef __LINUX__
@@ -78,10 +70,6 @@ run_quietly = -Quiet
 fflags_386 += -INCPath=$(positive_dir) $(run_quietly) #-we-w0
 fflags_i86 += -INCPath=$(positive_dir) $(run_quietly) #-we-w0
 fflags_axp += -INCPath=$(positive_dir) $(run_quietly) #-we-w0
-
-!ifeq arch 386
-cflags_386 += $(add_br_$(no_br_$^*))
-!endif
 
 .error
     @%append $(%error_file) $(%error_msg)
