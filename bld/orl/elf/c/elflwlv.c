@@ -270,6 +270,8 @@ orl_return ElfCreateRelocs( elf_sec_handle orig_sec, elf_sec_handle reloc_sec )
                 o_rel++;
             }
             break;
+        default:
+            break;
     }
     return( ORL_OKAY );
 }

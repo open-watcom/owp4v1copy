@@ -268,6 +268,8 @@ static orl_return load_elf_sec_handles( elf_file_handle elf_file_hnd, orl_sec_of
                 associated_index[loop] = s_hdr->sh_info - 1;
                 associated2_index[loop] = s_hdr->sh_link - 1;
                 break;
+            default:
+                break;
         }
         s_hdr++;
     }
@@ -289,6 +291,8 @@ static orl_return load_elf_sec_handles( elf_file_handle elf_file_hnd, orl_sec_of
                 elf_sec_hnd->assoc.reloc.symbol_table = elf_file_hnd->orig_sec_hnd[associated2_index[loop]];
                 elf_sec_hnd->assoc.reloc.orig_sec = elf_file_hnd->orig_sec_hnd[associated_index[loop]];
                 elf_file_hnd->orig_sec_hnd[associated_index[loop]]->assoc.normal.reloc_sec = elf_sec_hnd;
+                break;
+            default:
                 break;
         }
     }
