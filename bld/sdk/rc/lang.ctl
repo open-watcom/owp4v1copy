@@ -21,7 +21,7 @@ cdsay .
 #========================
     <CPCMD> <devdir>\sdk\rc\rc\o\wrc.exe <relroot>\rel2\binp\wrc.exe
     <CPCMD> <devdir>\sdk\rc\rc\nt\wrc.exe <relroot>\rel2\binnt\wrc.exe
-#   <CPCMD> <devdir>\sdk\rc\rc\386\wrc.exe <relroot>\rel2\bin\wrc.exe
+    <CPCMD> <devdir>\sdk\rc\rc\386\wrc.exe <relroot>\rel2\binw\wrc.exe
 #    <CPCMD> <devdir>\sdk\rc\rc\nt.axp\wrc.exe <relroot>\rel2\axpnt\wrc.exe
 #    <CPCMD> <devdir>\sdk\rc\rc\osi\wrc.exe <relroot>\rel2\binw\wrc.exe
     <CPCMD> <devdir>\sdk\rc\rc\ntdll\wrc.dll <relroot>\rel2\binnt\wrc.dll
