@@ -43,6 +43,12 @@ extra_c_flags_intlload = -D__header="fesupp.h"
 !endif
 extra_c_flags_cmsg = -D__msg_file_prefix=$(intname)
 
+!ifndef bootstrap
+# Watcom specific flags
+
+# The following SUCKS! We should be able to use -fh globally
+# and be done with it. Not doable while PCH support is fucked
+# up (cfeinfo module)
 extra_c_flags_ascii = -fh=pch01.pch
 extra_c_flags_asmalloc = -fh=pch01.pch
 extra_c_flags_browsio = -fh=pch01.pch
@@ -105,6 +111,7 @@ extra_c_flags_asmmatch = -fh=pch02.pch
 extra_c_flags_asmscan = -fh=pch02.pch
 extra_c_flags_asmsym = -fh=pch02.pch
 extra_c_flags_insthash = -fh=pch02.pch
+!endif
 
 # WASM stuff
 !ifeq target_cpu axp
