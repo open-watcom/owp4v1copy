@@ -983,19 +983,23 @@ STATIC bint sampleSetLine( a_window * wnd, int row, int piece,
         line->tabstop = B_FALSE;
         line->master_tabstop = B_TRUE;
     } else if( piece == PIECE_BAR ) {
-        line->draw_bar = B_TRUE;
-        barData.bar_style = GUI_BAR_SHADOW;
-        barData.bar_colour = WPA_REL_BAR;
-        barData.bar_colour2 = WPA_ABS_BAR;
-        barData.bar_size2 = bar2Extent;
-        barData.bar_group = B_TRUE;
-        barData.bar_selected = B_FALSE;
         line->extent = barExtent;
         line->indent = BAR_TAIL_POINT - barExtent;
         if( WPPixelTruncWidth( WndMaxCharX( wnd ) / 2 ) == 0 ) {
             line->indent -= WndMaxCharX( wnd ) / 2;
         }
-        line->text = (char *)&barData;
+        if( barExtent || bar2Extent ) {
+            barData.bar_style = GUI_BAR_SHADOW;
+            barData.bar_colour = WPA_REL_BAR;
+            barData.bar_colour2 = WPA_ABS_BAR;
+            barData.bar_size2 = bar2Extent;
+            barData.bar_group = B_TRUE;
+            barData.bar_selected = B_FALSE;
+            line->draw_bar = B_TRUE;
+            line->text = (char *)&barData;
+        } else {
+            line->text = LIT( Empty_Str );
+        }
         line->tabstop = B_FALSE;
         line->master_tabstop = B_TRUE;
     } else if( piece == PIECE_SEPARATOR ) {
