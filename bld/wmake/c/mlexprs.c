@@ -136,40 +136,64 @@ extern TOKEN_T LexPath( STRM_T t )
     pos = 0;
     for(;;) {
         /*
-         Extract path from stream. If '"' is found, start string mode and
-         ignore all filename character specifiers and just copy all characters.
-         String mode ends with another '"'. If we are not in string mode
-         character validity is checked against isfilec().
+         Extract path from stream. If double quote is found, start string mode
+         and ignore all filename character specifiers and just copy all characters.
+         String mode ends with another double quote. Backslash can be used to
+         escape only double quotes, otherwise they are recognized as path seperators.
+         If we are not in string mode character validity is checked against isfilec().
          */
 
         string_open = 0;
 
         while( pos < _MAX_PATH ) {
-            if (string_open) {
-                if (t == '\"') {
-                    string_open = 0;
-                } else
-                {
-                    path[pos++] = t;
+            if( t == EOL || t == STRM_END ) {
+                break;
+            }
+
+            if ( t == BACKSLASH ) {
+                t = PreGetCH();
+
+                if ( t == DOUBLEQUOTE ) {
+                    path[ pos++ ] = DOUBLEQUOTE;
+                } else {
+                    path[ pos++ ] = BACKSLASH;
+
+                    // make sure we don't cross boundaries
+                    if (pos < _MAX_PATH) {
+                        path[ pos++ ] = t;
+                    }
                 }
             } else
             {
-                if ( t == '\"' ) {
-                    string_open = 1;
+                if ( t == DOUBLEQUOTE ) {
+                    string_open = !string_open;
                 } else
-                if ( !isfilec( t ) ) {
-                    break;
-                } else {
-                    path[pos++] = t;
+                {
+                    if ( string_open ) {
+                        path[ pos++ ] = t;
+                    } else
+                    if ( isfilec( t ) ) {
+                        path[ pos++ ] = t;
+                    } else {
+                        // not valid path character, break out.
+                        break;
+                    }
                 }
             }
+
             t = PreGetCH();
+        }
+
+        if ( string_open ) {
+            FreeSafe( FinishVec( vec ) );
+            PrtMsg( FTL|LOC| ERROR_STRING_OPEN );
         }
 
         if( pos == _MAX_PATH ) {
             FreeSafe( FinishVec( vec ) );
             PrtMsg( FTL|LOC| MAXIMUM_TOKEN_IS, _MAX_PATH - 1 );
         }
+
         path[ pos ] = NULLCHAR;
         WriteVec( vec, path );
 
@@ -218,7 +242,7 @@ STATIC TOKEN_T lexFileName( STRM_T t )
     UnGetCH( t );
 
     /* if it is a file, we have to check last position for a ':', and
-     * trim it off it it's there */
+     * trim it off if it's there */
     if( pos > 1 && file[ pos - 1 ] == COLON ) {
         file[ pos - 1 ] = NULLCHAR; /* trim a trailing colon */
         UnGetCH( COLON );       /* push back the colon */

@@ -134,6 +134,7 @@
 #define USER_BREAK_ENCOUNTERED           77
 #define ERROR_TRMEM                      78
 #define MICROSOFT_MAKEFILE               79
+#define ERROR_STRING_OPEN                80
 
 /*
  * all msgs beyond here should not have a number printed with them

@@ -147,7 +147,9 @@ pick( ERROR_TRMEM,              "Error in Memory Tracking Encountered",
                                 "メモリトラッキング中にエラーになりました")
 pick( MICROSOFT_MAKEFILE,       "Makefile may be Microsoft; try /ms switch",
                                 "Makefile may be Microsoft; try /ms switch")
-                               
+pick( ERROR_STRING_OPEN,	"Expecting double quote character to end open string.",
+				"Expecting double quote character to end open string.")
+
 #if defined( __DOS__ )
 pick( OS_CORRUPTED,                "DOS memory inconsistency detected! System may halt ...",
                                 "DOSﾒﾓﾘ管理に矛盾が見つかりました！ｼｽﾃﾑがﾎｰﾙﾄするかもしれません･･･" )
