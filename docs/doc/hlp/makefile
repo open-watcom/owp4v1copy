@@ -6,6 +6,11 @@ book_name=foo
 book_incs=..\..\cmn;..\..\gml;..\..
 book_winhc=whc
 
+!else ifeq hbook devguide
+book_title=Open Watcom Developer's Guide
+book_name=devguide
+book_incs=..\..\devguide;..\..\cmn;..\..\gml
+
 !else ifeq hbook cbooks
 book_title=Watcom C/C++ On-line Documentation
 book_name=cbooks

@@ -6,9 +6,9 @@ the users (who are also developers) of Open Watcom compilers &mdash
 they are encouraged to read the User's Guide, Programmer's Guide,
 C Language Reference and other user oriented books.
 .np
-It should not be assumed that this book is in anyway final or the
-ultimate reference. Readers are encouraged to add, change and modify it
-to better reflect evolution of the Open Watcom project.
+It should not be assumed that this book is in any way final or the
+ultimate reference. Readers are encouraged to add, change and modify this
+document to better reflect evolution of the Open Watcom project.
 
 .section History
 .*
