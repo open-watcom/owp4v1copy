@@ -53,7 +53,7 @@
  *   be able to manually force the caches to be synced.
  */
 
-/* Macros to get at GP/FP registers based on their number; useful in loops */
+/* Macros to get at GP/FP registers based on their index; useful in loops */
 #define TRANS_GPREG_32( mr, idx ) (*((unsigned_32 *)(&(mr->r0.u._32[I64LO32])) + (2 * idx)))
 #define TRANS_FPREG_LO( mr, idx ) (*((unsigned_32 *)(&(mr->f0.u64.u._32[I64LO32])) + (2 * idx)))
 #define TRANS_FPREG_HI( mr, idx ) (*((unsigned_32 *)(&(mr->f0.u64.u._32[I64HI32])) + (2 * idx)))
@@ -64,13 +64,13 @@ static void ReadCPU( struct ppc_mad_registers *r )
 
     memset( r, 0, sizeof( *r ) );
     /* Read GPRs */
-    for( i = 0; i < 32; i++ ) {
+    for( i = 0; i < 32; ++i ) {
         TRANS_GPREG_32( r, i ) = ptrace( PTRACE_PEEKUSER, pid, i * REGSIZE, 0 );
     }
     /* Read FPRs */
-    for( i = 0; i < 64; i += 2 ) {
-        TRANS_FPREG_HI( r, i ) = ptrace( PTRACE_PEEKUSER, pid, (PT_FPR0 + i) * REGSIZE, 0 );
-        TRANS_FPREG_LO( r, i ) = ptrace( PTRACE_PEEKUSER, pid, (PT_FPR0 + i + 1) * REGSIZE, 0 );
+    for( i = 0; i < 32; ++i ) {
+        TRANS_FPREG_HI( r, i ) = ptrace( PTRACE_PEEKUSER, pid, (PT_FPR0 + i * 2) * REGSIZE, 0 );
+        TRANS_FPREG_LO( r, i ) = ptrace( PTRACE_PEEKUSER, pid, (PT_FPR0 + i * 2 + 1) * REGSIZE, 0 );
     }
     /* Read SPRs */
     r->iar.u._32[I64LO32] = ptrace( PTRACE_PEEKUSER, pid, PT_NIP * REGSIZE, 0 );
@@ -116,13 +116,13 @@ static void WriteCPU( struct ppc_mad_registers *r )
     ptrace( PTRACE_POKEUSER, pid, PT_CCR * REGSIZE, (void *)r->cr );
     ptrace( PTRACE_POKEUSER, pid, PT_XER * REGSIZE, (void *)r->xer );
     /* Write GPRs */
-    for( i = 0; i < 32; i++ ) {
+    for( i = 0; i < 32; ++i ) {
         ptrace( PTRACE_POKEUSER, pid, i * REGSIZE, (void *)TRANS_GPREG_32( r, i ) );
     }
     /* Write FPRs */
-    for( i = 0; i < 64; i += 2 ) {
-        ptrace( PTRACE_POKEUSER, pid, (PT_FPR0 + i) * REGSIZE, TRANS_FPREG_HI( r, i ) );
-        ptrace( PTRACE_POKEUSER, pid, (PT_FPR0 + i + 1) * REGSIZE, TRANS_FPREG_LO( r, i ) );
+    for( i = 0; i < 32; ++i ) {
+        ptrace( PTRACE_POKEUSER, pid, (PT_FPR0 + i * 2) * REGSIZE, TRANS_FPREG_HI( r, i ) );
+        ptrace( PTRACE_POKEUSER, pid, (PT_FPR0 + i * 2 + 1) * REGSIZE, TRANS_FPREG_LO( r, i ) );
     }
     ptrace( PTRACE_POKEUSER, pid, PT_FPSCR * REGSIZE, (void *)(r->fpscr) );
 }
