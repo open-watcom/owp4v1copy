@@ -81,7 +81,6 @@ typedef struct data_quad_list {
 #define MAX_DATA_QUAD_SEGS (LARGEST_DATA_QUAD_INDEX/DATA_QUADS_PER_SEG + 1)
 
 static DATA_QUAD_LIST  *DataQuadSegs[MAX_DATA_QUAD_SEGS];/* segments for data quads*/
-static DATA_QUAD_LIST  *DataQuadPtr;
 static DATA_QUAD_LIST  *LastDataQuad;
 static int             DataQuadIndex;
 
@@ -113,9 +112,7 @@ void FreeDataQuads()
 int StartDataQuadAccess()
 {
     if( DataQuadSegIndex != -1 ) {
-        DataQuadSegIndex = 0;
-        DataQuadIndex = 0;
-        DataQuadPtr = DataQuadSegs[ 0 ];
+        LastDataQuad = DataQuadSegs[ 0 ];
         return( 1 );                    // indicate data quads exist
     }
     return( 0 );                        // indicate no data quads
@@ -125,16 +122,17 @@ DATA_QUAD *NextDataQuad()
 {
     DATA_QUAD   *dq_ptr;
 
-    if( DataQuadPtr == NULL )
+    if( LastDataQuad == NULL )
         return NULL;
-    dq_ptr = &DataQuadPtr->dq;
-    DataQuadPtr = DataQuadPtr->next;
+    dq_ptr = &LastDataQuad->dq;
+    LastDataQuad = LastDataQuad->next;
     return( dq_ptr );
 }
 
 local DATA_QUAD_LIST *NewDataQuad( void )
 {
-    DATA_QUAD_LIST *dql;
+    static DATA_QUAD_LIST  *DataQuadPtr;
+    DATA_QUAD_LIST         *dql;
 
     if( DataQuadIndex >= (DATA_QUADS_PER_SEG-1) ) {
         if( DataQuadSegIndex == MAX_DATA_QUAD_SEGS ) {
