@@ -256,7 +256,7 @@ STATIC char *procFlags( const char **argv, const char **log_name )
             case 'P':   Glob.print     = TRUE;  break;
             case 'Q':   Glob.query     = TRUE;  break;
             case 'R':   Glob.overide   = TRUE;  break;
-            case 'S':   Glob.silent++;          break;
+            case 'S':   Glob.silent    = TRUE;  break;
             case 'T':   Glob.touch     = TRUE;  break;
             case 'U':   Glob.unix      = TRUE;  break;
             case 'V':   Glob.verbose   = TRUE;  break;
@@ -310,6 +310,10 @@ STATIC char *procFlags( const char **argv, const char **log_name )
             toupper(p[3]) == NULLCHAR ) {
             Glob.microsoft = TRUE;
             Glob.nocheck   = TRUE;
+        } else if( ( select == '-' || select == Glob.swchar ) &&
+            toupper(option) == 'S'  && toupper(p[2]) == 'N' &&
+            toupper(p[3]) == NULLCHAR ) {
+            Glob.silentno  = TRUE;
         } else {
             if( strpbrk( p, "=#" ) != NULL ) {     /* is macro=defn */
                 handleMacroDefn( (char*)p );

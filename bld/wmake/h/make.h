@@ -78,10 +78,8 @@ struct Glob {
     BIT print       : 1;/* print the dependency tree                    */
     BIT query       : 1;/* query mode - check if target up to date      */
     BIT overide     : 1;/* do not use any default rules                 */
-    BIT silent      : 2;/* 0: default behavior                          */
-                        /* 1: do not print cmds                         */
-                        /* 2: always print cmds                         */
-                        /* 3: always print cmds                         */
+    BIT silent      : 1;/* do not print cmds                            */
+    BIT silentno    : 1;/* print cmds - overrules silent                */
     BIT touch       : 1;/* just touch the files, don't execute anything */
     BIT hold        : 1;/* on error don't erase (and don't ask)         */
 

@@ -171,6 +171,8 @@ query mode - check targets without updating them
 do not use default definitions
 .note &sw.s
 silent mode - do not print commands before execution
+.note &sw.sn
+noisy mode - always print commands before execution
 .note &sw.t
 touch files instead of executing commands
 .note &sw.u
@@ -478,6 +480,12 @@ silent mode - do not print commands before execution
 The "s" option is equivalent to the
 .id &sysper.SILENT
 directive.
+:OPT name='sn'
+.ix '&makcmdup options' 'sn'
+noisy mode - always print commands before execution
+.np
+The "sn" option overrules all silencing controls.
+It can be used to assist in debugging a makefile.
 :OPT name='t'
 .ix '&makcmdup options' 't'
 touch files instead of executing commands

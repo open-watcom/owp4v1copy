@@ -1683,7 +1683,7 @@ STATIC RET_T execLine( char *line )
 
     CheckForBreak();
     /* make a copy of global flags */
-    flags =     ( ( Glob.silent == 1 ) ? FLAG_SILENT : 0 )
+    flags =     ( ( Glob.silent && !Glob.silentno ) ? FLAG_SILENT : 0 )
                 | ( Glob.ignore ? FLAG_IGNORE : 0 )
                 | ( Glob.shell ? FLAG_SHELL : 0 );
 
@@ -1692,7 +1692,7 @@ STATIC RET_T execLine( char *line )
         p = SkipWS( p );
 
         if( *p == '@' ) {
-            if( Glob.silent <= 1 )
+            if( !Glob.silentno )
                 flags |= FLAG_SILENT;
         } else if( *p == '*' ) {
             flags |= FLAG_ENV_ARGS;
