@@ -9,9 +9,9 @@ trying to run the software.
 .note Symptom:
 The message "Cannot connect to batch spawn server" is displayed.
 .note Resolution:
-This message occurs when the WATCOM IDE is trying to connect to the
+This message occurs when the &company IDE is trying to connect to the
 batch server.
-The batch server is a program that is employed by the WATCOM IDE
+The batch server is a program that is employed by the &company IDE
 to run "makes" in the background.
 There are several reasons why you may receive this message.
 .begbull
@@ -47,16 +47,15 @@ enhanced mode. Windows 3.0 is not supported.
 .us Running Third-Party Shell Programs
 .np
 If you run 4DOS.COM or some other shell besides COMMAND.COM, you must
-change WATCOM's "BATCHBOX.PIF" file accordingly. You can do this using
-the standard Window's PIF editor.
+change the "BATCHBOX.PIF" file accordingly. You can do this using
+the standard Windows PIF editor.
 .np
 .us Running Virus Checkers
 .np
 If you are running Central Point's PCTOOLS, VWATCH, or some other
 virus checker, it may be conflicting with our batch server. To isolate
 the problem, uninstall the virus checker and see if the IDE works
-again. Please report your findings to WATCOM Technical Support for
-their records.
+again.
 .np
 .us 386 Enhanced "Exclusive in Foreground" Option
 .np

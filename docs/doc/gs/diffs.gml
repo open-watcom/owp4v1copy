@@ -39,8 +39,8 @@ function sometimes produced incorrect results on OS/2 if the
 .mono TZ
 environment variable was set.
 .bull
-The vi/viw editor has been changed to store temporary files in directory designated
-by the
+The Open Watcom editor (vi/viw) has been changed to store temporary files in directory
+designated by the
 .mono TMP
 environment variable, instead of using the
 .mono TMPDIR
@@ -70,6 +70,8 @@ If your project relies on case insensitive linking, please add
 to your linker directives.
 .bull
 Default windowing support has been removed from the runtime libraries.
+.bull
+Components of the Win32 SDK and OS/2 Toolkits are no longer supplied.
 .bull
 MFC libraries, source code and documentation are no longer supplied.
 .endbull
@@ -499,21 +501,11 @@ Version 2.52b of the 16-bit MFC is included in the package.
 .section Changes in Microsoft Win32 SDK Support for 11.0
 .*
 .begbull
-:CMT. .bull
-:CMT. We include the full Win32 SDK (including all samples).
 .bull
 The Win32 SDK is supported for Windows 95 and Windows NT
 :cmt. (both Intel and Alpha AXP)
 platforms.
 .endbull
-:CMT. .*
-:CMT. .section Microsoft DirectX SDK Now Included in 11.0
-:CMT. .*
-:CMT. .begbull
-:CMT. .bull
-:CMT. We have licensed the DirectX SDK from Microsoft for those customers
-:CMT. who develop games.
-:CMT. .endbull
 .*
 .section Changes in Blue Sky's Visual Programmer for 11.0
 .*
@@ -521,7 +513,6 @@ platforms.
 .bull
 A new 32-bit version of Visual Programmer is included in the package.
 This version runs on 32-bit Windows 95 and NT.
-:CMT. It also runs on 16-bit Windows when Win32s support is installed.
 The 16-bit version of Visual Programmer is no longer included in the
 package.
 .bull
@@ -564,7 +555,7 @@ with new libraries.
 .*
 .np
 The following sections summarize the major differences from the
-previous release of &product..
+previous release of Watcom &lang..
 .*
 .beglevel
 .*
@@ -798,18 +789,18 @@ This was done for compatibility with Microsoft.
 Use the "zz" option for backwards compatibility.
 .note
 The 32-bit "__cdecl" linkage convention has changed.
-&product 10.0 __cdecl did not match the Microsoft Visual C++ __cdecl
+Watcom &lang 10.0 __cdecl did not match the Microsoft Visual C++ __cdecl
 in terms of the binary calling convention; Visual C++ saves EBX in a
-__cdecl function but &product 10.0 modified EBX.
-&product has been changed to match Visual C/C++.
+__cdecl function but Watcom &lang 10.0 modified EBX.
+Watcom &lang has been changed to match Visual C/C++.
 .np
-If you wrote a "__cdecl" function in an earlier version of &product,
+If you wrote a "__cdecl" function in an earlier version of Watcom &lang,
 the EBX register was not saved/restored.
 Starting with release 10.5, the EBX register will be saved/restored
 in the prologue/epilogue of a "__cdecl" function.
 .np
 Another implication of this change is that "__cdecl" functions
-compiled with an earlier version of &product don't match the calling
+compiled with an earlier version of Watcom &lang don't match the calling
 conventions of the current version.
 The solution is either to recompile the functions or to define a
 "__cdecl_old" pragma that matches the old calling conventions.
@@ -1265,8 +1256,6 @@ it with the new -zo option.
 .note
 .mono __stdcall
 functions now have Microsoft Visual C/C++ compatible name mangling.
-:cmt. The -zz option can be used to get the old 10.0GA naming convention for
-:cmt. __stdcall.
 .note
 We have added a number of new functions to the C Library. These have
 been added to improve Microsoft compatibility.
@@ -1300,22 +1289,6 @@ _strtime
 _strupr
 _tolower
 _toupper
-:CMT. _uatof
-:CMT. _uatoi
-:CMT. _uatol
-:CMT. _uecvt
-:CMT. _ufcvt
-:CMT. _ugcvt
-:CMT. _uitoa
-:CMT. _ultoa
-:CMT. _uremove
-:CMT. _ustrcoll
-:CMT. _ustrerror
-:CMT. _ustrftime
-:CMT. _ustrftime_ms
-:CMT. _ustrtod
-:CMT. _ustrtol
-:CMT. _utmpnm
 __isascii
 __iscsym
 __iscsymf
@@ -1393,11 +1366,11 @@ and
 keyword on class definitions.
 These keywords will affect all members of the defined class.
 .*
-.section Major Differences from WATCOM C9.5 /386
+.section Major Differences from Watcom C9.5 /386
 .*
 .begbull
 .bull
-The functionality of &watc16 and &watc32 is included in a single
+The functionality of Watcom C/C++(16) and Watcom C/C++(32) is included in a single
 package.
 .bull
 An Integrated Development Environment for Windows 3.x,
@@ -1426,7 +1399,7 @@ Windows resource editing tools are included:
 .bull
 Windows development tools are included:
 .begpoint $compact
-.point Dr. WATCOM (a post mortem debug utility)
+.point Dr. Watcom (a post mortem debug utility)
 .point Spy (Windows message spy program)
 .point DDESpy
 .point Heap Walker
@@ -1478,334 +1451,315 @@ name mangling for 'char' reduced from two chars to one char
 .endbull
 .*
 .endlevel
-.* .*
-.* .section Major Differences from WATCOM C9.01 /386
-.* .*
-.* .begbull
+.*
+.section Major Differences from Watcom C9.01 /386
+.*
+.begbull
+.bull
+C++ support added
+.bull
+Pentium optimizations added ("5r", "5s", "fp5" options)
+.bull
+Windows NT support added
+.bull
+Microsoft resource compiler (RC.EXE) replaced with Watcom resource
+compiler (WRC.EXE)
+.bull
+OS/2 libraries modified so that single library supports single and
+multiple threads and DLL's
+.bull
+"fpi287" switch renamed to "fp2"
+.bull
+#pragma intrinsic and #pragma function added
+.bull
+80x87 usage modified so that compiler assumes all eight registers are
+available upon entry to function instead of only four registers.
+"fpr" option added for reverse compatibility with object files compiled
+with previous versions of compiler
+.endbull
+.beglevel
+.*
+.section Changes that may Require Recompilation
+.*
+.np
+The
+.us stat
+structure in "stat.h" changed in version 9.5.
+Any object files compiled with an earlier version of the compiler
+will have to be recompiled if they use the stat structure.
+.np
+A new function
+.us _grow_handles
+was added to version 9.5 for growing the number of available file
+handles.
+Details on how to use this function can be found in the
+.us Watcom C/C++&S'32. Commonly Asked Questions & Answers
+booklet.
+.np
+If you compile with structure packing (/zp2, /zp4, /zp8) or use the
+"pack" pragma to specify a packing value other than 1, and you have
+structures that contain other structures, field offsets and structure
+sizes may be different depending on the contents of the structures.
+.np
+In version 9.01,
+the new Windows Supervisor now has 32 user-defined callbacks.
+If you have any user-defined callbacks in your Windows program, you
+must recompile because the constant definitions have changed.
+.np
+In version 9.0,
+the compiler will not use FS by default to avoid conflicts with new
+operating systems (OS/2 2.0, PenPoint, Windows NT).
+This will cause compile errors if you have defined a pragma that
+uses the FS register.
+.np
+In version 8.5,
+the compiler was changed so that it by default does not save
+and restore segment registers across function calls.
+This is to solve problems that occur where a segment register is
+saved and restored in a function that tries to free the segment.
+When the segment register is popped from the stack in the epilogue,
+a general protection exception occurs because the selector is no
+longer valid.
+In order to provide backward compatibility with existing code, we have
+added a "-r" option that will cause the compiler to save and restore
+segment registers across calls.
+The C run-time library has been compiled with the "-r" option so that it
+will work should you choose to compile your application with the same
+option.
+.np
+The packing algorithm was also changed in version 8.5.
+If you are using one of the "-zp2, -zp4, or -zp8" options to pack
+structures, you must recompile your application.
+The packing algorithm has been changed so that the minimum number of
+slack bytes are inserted into structures to align fields onto their
+required alignment.
+.*
+.endlevel
+.*
+.section Major Differences from Watcom C9.0 /386
+.*
+.begbull
+.bull
+Windows 3.1 SDK components
+.bull
+Support for Windows 3.1 DLLs
+.bull
+On-line Watcom C Library Reference help file for OS/2 2.0.
+Help can be accessed by issuing the command "VIEW WATCOMC".
+The command can be followed by a topic. e.g. VIEW WATCOMC PRINTF.
+.endbull
+.cp 11
+.*
+.beglevel
+.*
+.section Command Line Options added to Watcom C9.0 /386
+.*
+.begnote $break
+.note 4r
+Use register calling conventions and optimize for 486.
+.note 4s
+Use stack calling conventions and optimize for 486.
+.note ee
+Generate a call to __EPI at the end of a function
+.note ep{=number}
+Generate a call to __PRO at the start of a function
+.note oe
+In-line user defined functions.
+.note or
+Reorder instructions to take advantage of 486 pipelining.
+.note zff
+Allows the FS register to be used by the code generator for far pointers.
+.note zfp
+Disallows use of the FS register.
+This is the default in flat memory model,
+because operating systems are now using FS to
+point to important information. (e.g. OS/2 2.0, PenPoint, Windows NT).
+.note zm
+Places each function into a separate segment.
+This will allow for smart linking.
+.endnote
+.*
+.endlevel
+.*
+.section Major Differences from Watcom C8.5 /386
+.*
+.np
+Several major items have been added to Watcom C9.0 /386. They are:
+.begbull $compact
+.bull
+486 instruction selection
+.bull
+486 instruction scheduling
+.bull
+Tail recursion elimination
+.bull
+Function inlining
+.bull
+strcmp function optimized for 486
+.bull
+Support for OS/2 2.0
+.bull
+New keywords added (_far16, _Seg16, _Packed, _Cdecl, _Pascal, _System)
+.bull
+Linkage pragma for compatibility with IBM C Set/2
+.bull
+Based pointers
+.bull
+Machine language code sequences can now be entered into pragmas
+using assembly language instead of numeric codes.
 .* .bull
-.* C++ support added
-.* .bull
-.* Pentium optimizations added ("5r", "5s", "fp5" options)
-.* .bull
-.* Windows NT support added
-.* .bull
-.* Microsoft resource compiler (RC.EXE) replaced with WATCOM resource
-.* compiler (WRC.EXE)
-.* .bull
-.* OS/2 libraries modified so that single library supports single and
-.* multiple threads and DLL's
-.* .bull
-.* "fpi287" switch renamed to "fp2"
-.* .bull
-.* #pragma intrinsic and #pragma function added
-.* .bull
-.* 80x87 usage modified so that compiler assumes all eight registers are
-.* available upon entry to function instead of only four registers.
-.* "fpr" option added for reverse compatibility with object files compiled
-.* with previous versions of compiler
-.* .endbull
-.* .beglevel
-.* .*
-.* .section Changes that may Require Recompilation
-.* .*
-.* .np
-.* The
-.* .us stat
-.* structure in "stat.h" changed in version 9.5.
-.* Any object files compiled with an earlier version of the compiler
-.* will have to be recompiled if they use the stat structure.
-.* .np
-.* A new function
-.* .us _grow_handles
-.* was added to version 9.5 for growing the number of available file
-.* handles.
-.* Details on how to use this function can be found in the
-.* .us WATCOM C/C++&S'32. Commonly Asked Questions & Answers
-.* booklet.
-.* .np
-.* If you compile with structure packing (/zp2, /zp4, /zp8) or use the
-.* "pack" pragma to specify a packing value other than 1, and you have
-.* structures that contain other structures, field offsets and structure
-.* sizes may be different depending on the contents of the structures.
-.* .np
-.* In version 9.01,
-.* the new Windows Supervisor now has 32 user-defined callbacks.
-.* If you have any user-defined callbacks in your Windows program, you
-.* must recompile because the constant definitions have changed.
-.* .np
-.* In version 9.0,
-.* the compiler will not use FS by default to avoid conflicts with new
-.* operating systems (OS/2 2.0, PenPoint, Windows NT).
-.* This will cause compile errors if you have defined a pragma that
-.* uses the FS register.
-.* .np
-.* In version 8.5,
-.* the compiler was changed so that it by default does not save
-.* and restore segment registers across function calls.
-.* This is to solve problems that occur where a segment register is
-.* saved and restored in a function that tries to free the segment.
-.* When the segment register is popped from the stack in the epilogue,
-.* a general protection exception occurs because the selector is no
-.* longer valid.
-.* In order to provide backward compatibility with existing code, we have
-.* added a "-r" option that will cause the compiler to save and restore
-.* segment registers across calls.
-.* The C run-time library has been compiled with the "-r" option so that it
-.* will work should you choose to compile your application with the same
-.* option.
-.* .np
-.* The packing algorithm was also changed in version 8.5.
-.* If you are using one of the "-zp2, -zp4, or -zp8" options to pack
-.* structures, you must recompile your application.
-.* The packing algorithm has been changed so that the minimum number of
-.* slack bytes are inserted into structures to align fields onto their
-.* required alignment.
-.* .*
-.* .endlevel
-.* .*
-.* .section Major Differences from WATCOM C9.0 /386
-.* .*
-.* .begbull
-.* .bull
-.* Windows 3.1 SDK components
-.* .bull
-.* Support for Windows 3.1 DLLs
-.* .bull
-.* On-line WATCOM C Library Reference help file for OS/2 2.0.
-.* Help can be accessed by issuing the command "VIEW WATCOMC".
-.* The command can be followed by a topic. e.g. VIEW WATCOMC PRINTF.
-.* .endbull
-.* .cp 11
-.* .section Command Line Options added to WATCOM C9.0 /386
-.* .*
+.* Post-mortem debugging capability for Windows 3.x.
+.bull
+Remote debugging over the parallel port using either a "LapLink" cable
+or a "Flying Dutchman" cable.
+.bull
+Remote debugging of PenPoint applications
+.endbull
+.cp 10
+.*
+.beglevel
+.*
+.section Command Line Options added to Watcom C8.5 /386
+.*
+.begnote $break $compact
+.note d1+
+to generate line number information plus typing information for global
+symbols and local structs and arrays
+.note ei
+force all enumerated types to be of type 'int'
+.note en
+emit routine name before prologue
+.note ez
+generate PharLap EZ-OMF object file
+.note fpi287
+for programs that run on a system with a 287
+.note of
+to generate traceable stack frames
+.note of+
+to generate traceable stack frames for all functions
+.note om
+to generate in-line math functions
+.note p
+to generate preprocessor output
+.note pl
+to generate preprocessor output with #line directives
+.note pc
+to generate preprocessor output preserving comments
+.note plc
+to generate preprocessor output with #line directives and preserving
+comments
+.note r
+save/restore segment registers across calls
+.note we
+treat warnings as errors
+.endnote
+.*
+.endlevel
+.*
+.section Major Differences from Watcom C8.0 /386
+.*
+.np
+Several major items were added to Watcom C8.5 /386. They are:
+.begbull $compact
+.bull
+Royalty-free 32-bit DOS extender
+.bull
+Windows 3.0 support
+.bull
+Windows SDK components included
+.bull
+Improved optimizations
+.bull
+OS/2 hosted version of the compiler
+.bull
+The compiler now generates Microsoft format object files by default.
+Use the '/ez' option to generate Phar Lap EZ-OMF object files.
+.bull
+More library functions to create higher compatibility with
+Microsoft C 5.1 and Microsoft C 6.0.
+.bull
+Preprocessor output from the compiler
+.bull
+Standalone help utility
+.bull
+Object module convert utility can convert debugging information into
+CodeView format
+.bull
+Protected-mode version of the linker
+.bull
+Debugger support for ADS applications
+.bull
+Support for Pharlap 3.0 and Pharlap 4.0
+.bull
+Support for Tenberry Software DOS/4G
+.bull
+Support for Intel 386/486 Code Builder Kit
+.bull
+Support for UNICODE.
+Literal strings and character constants that are preceded by "L" map
+code page 437 onto UNICODE unless one of the options "-zk0, -zk1, or -zk2"
+is specified.
+.endbull
+.*
+.beglevel
+.*
+.section Command Line Options added to Watcom C8.0 /386
+.*
 .* .begnote $break
-.* .note 4r
-.* Use register calling conventions and optimize for 486.
-.* .note 4s
-.* Use stack calling conventions and optimize for 486.
-.* .note ee
-.* Generate a call to __EPI at the end of a function
-.* .note ep{=number}
-.* Generate a call to __PRO at the start of a function
-.* .note oe
-.* In-line user defined functions.
-.* .note or
-.* Reorder instructions to take advantage of 486 pipelining.
-.* .note zff
-.* Allows the FS register to be used by the code generator for far pointers.
-.* .note zfp
-.* Disallows use of the FS register.
-.* This is the default in flat memory model,
-.* because operating systems are now using FS to
-.* point to important information. (e.g. OS/2 2.0, PenPoint, Windows NT).
-.* .note zm
-.* Places each function into a separate segment.
-.* This will allow for smart linking.
-.* .endnote
-.* .*
-.* .section Major Differences from WATCOM C8.5 /386
-.* .*
-.* .np
-.* Several major items have been added to WATCOM C9.0 /386. They are:
-.* .begbull $compact
-.* .bull
-.* 486 instruction selection
-.* .bull
-.* 486 instruction scheduling
-.* .bull
-.* Tail recursion elimination
-.* .bull
-.* Function inlining
-.* .bull
-.* strcmp function optimized for 486
-.* .bull
-.* Support for OS/2 2.0
-.* .bull
-.* New keywords added (_far16, _Seg16, _Packed, _Cdecl, _Pascal, _System)
-.* .bull
-.* Linkage pragma for compatibility with IBM C Set/2
-.* .bull
-.* Based pointers
-.* .bull
-.* Machine language code sequences can now be entered into pragmas
-.* using assembly language instead of numeric codes.
-.* .* .bull
-.* .* Post-mortem debugging capability for Windows 3.x.
-.* .bull
-.* Remote debugging over the parallel port using either a "LapLink" cable
-.* or a "Flying Dutchman" cable.
-.* .bull
-.* Remote debugging of PenPoint applications
-.* .endbull
+.begnote $compact
+.note d2
+symbolic debugging information
+.note oc
+disable "call" followed by "ret" being changed into a "jmp"
+optimization
+.note u<name>
+undefine a pre-defined name
+.note zc
+places literal strings in the CODE segment
+.note zk{0,1,2}
+double-byte character support
+.endnote
 .*
-.* .cp 10
-.* .section Command Line Options added to WATCOM C8.5 /386
-.* .*
-.* .begnote $break $compact
-.* .note d1+
-.* to generate line number information plus typing information for global
-.* symbols and local structs and arrays
-.* .note ei
-.* force all enumerated types to be of type 'int'
-.* .note en
-.* emit routine name before prologue
-.* .note ez
-.* generate PharLap EZ-OMF object file
-.* .note fpi287
-.* for programs that run on a system with a 287
-.* .note of
-.* to generate traceable stack frames
-.* .note of+
-.* to generate traceable stack frames for all functions
-.* .note om
-.* to generate in-line math functions
-.* .note p
-.* to generate preprocessor output
-.* .note pl
-.* to generate preprocessor output with #line directives
-.* .note pc
-.* to generate preprocessor output preserving comments
-.* .note plc
-.* to generate preprocessor output with #line directives and preserving
-.* comments
-.* .note r
-.* save/restore segment registers across calls
-.* .note we
-.* treat warnings as errors
-.* .endnote
-.* .*
-.* .section Major Differences from WATCOM C8.0 /386
-.* .*
-.* .np
-.* Several major items were added to WATCOM C8.5 /386. They are:
-.* .begbull $compact
-.* .bull
-.* Royalty-free 32-bit DOS extender
-.* .bull
-.* Windows 3.0 support
-.* .bull
-.* Windows SDK components included
-.* .bull
-.* Improved optimizations
-.* .bull
-.* OS/2 hosted version of the compiler
-.* .bull
-.* The compiler now generates Microsoft format object files by default.
-.* Use the '/ez' option to generate Phar Lap EZ-OMF object files.
-.* :cmt. .bull
-.* :cmt. The type of "plain int" bitfields has been changed.
-.* :cmt. The default for "plain int" bitfields is now
-.* :cmt. .bd unsigned
-.* :cmt. instead of
-.* :cmt. .bd signed.
-.* .bull
-.* More library functions to create higher compatibility with
-.* Microsoft C 5.1 and Microsoft C 6.0.
-.* .bull
-.* Preprocessor output from the compiler
-.* .bull
-.* Standalone help utility
-.* .bull
-.* Object module convert utility can convert debugging information into
-.* CodeView format
-.* :cmt. .endbull
-.* :cmt. .np
-.* :cmt. The professional edition also gives you the following most asked for
-.* :cmt. features:
-.* :cmt. .begbull
-.* .bull
-.* Protected-mode version of the linker
-.* .bull
-.* Debugger support for ADS applications
-.* .bull
-.* Support for Pharlap 3.0 and Pharlap 4.0
-.* .bull
-.* Support for Tenberry Software DOS/4G
-.* .bull
-.* Support for Intel 386/486 Code Builder Kit
-.* .bull
-.* Support for UNICODE.
-.* Literal strings and character constants that are preceded by "L" map
-.* code page 437 onto UNICODE unless one of the options "-zk0, -zk1, or -zk2"
-.* is specified.
-.* .endbull
-.* .*
-.* .section Command Line Options added to WATCOM C8.0 /386
-.* .*
-.* .* .begnote $break
-.* .begnote $compact
-.* .note d2
-.* symbolic debugging information
-.* .note oc
-.* disable "call" followed by "ret" being changed into a "jmp"
-.* optimization
-.* .note u<name>
-.* undefine a pre-defined name
-.* .note zc
-.* places literal strings in the CODE segment
-.* .note zk{0,1,2}
-.* double-byte character support
-.* .endnote
+.endlevel
 .*
-.* .section Major Differences from WATCOM C7.0 /386
-.* .*
-.* Several major items have been added to WATCOM C8.0 /386. They are:
-.* .begbull
-.* .bull
-.* Linker
-.* .bull
-.* Librarian
-.* .bull
-.* Graphics library
-.* .bull
-.* More library functions to create higher compatibility with
-.* Microsoft C 5.1 and Microsoft C 6.0.
-:cmt. .endbull
-:cmt. .np
-:cmt. The professional edition also gives you the following most asked for
-:cmt. features:
-:cmt. .begbull
-.* .bull
-.* Protected-mode version of the compiler
-.* .bull
-.* Full-screen source-level debugger
-.* .bull
-.* Execution profiler
-.* .endbull
+.section Major Differences from Watcom C7.0 /386
 .*
-.* .section Protected-mode Compiler and Linker
-.* .*
-.* .np
-.* The protected-mode version of the compiler "WCC386P.EXE" and linker
-.* "WLINKP.EXE" use a DPMI compliant DOS extender.
-.* This allows you to run the compiler and linker on a normal
-.* DOS system or in a Windows 3.x DOS box operating in enhanced mode.
-.* :cmt. .np
-.* :cmt. If you encounter a source file that shows up an internal compiler
-.* :cmt. error in the form of a "Memory Protection Fault" or "Page Fault",
-.* :cmt. please record the CS:EIP that is displayed and pass it along to us to
-.* :cmt. investigate.
-.* .*
-.* .section Keyword Changes
-.* .*
-.* .np
-.* Starting with version 8.0, all of the extended keywords now have two
-.* underscores prepended to them.
-.* Thus "near", "far", "pascal" become "__near", "__far", "__pascal", etc.
-.* The compiler internally defines macros for the old keywords so that you
-.* do not have to change your source. For example:
-.* .millust begin
-.* #define far __far
-.* .millust end
-.* .np
-.* Since Microsoft C 6.0 has prepended a single underscore to their
-.* extended keywords, our compiler also internally defines macros that map
-.* these single underscore keywords onto our double underscore keywords.
-.* For example:
-.* .millust begin
-.* #define _far __far
-.* .millust end
-.* .*
+Several major items have been added to Watcom C8.0 /386. They are:
+.begbull
+.bull
+Linker
+.bull
+Librarian
+.bull
+Graphics library
+.bull
+More library functions to create higher compatibility with
+Microsoft C 5.1 and Microsoft C 6.0.
+.endbull
+.np
+The professional edition also gives you the following most asked for
+features:
+.begbull
+.bull
+Protected-mode version of the compiler
+.bull
+Full-screen source-level debugger
+.bull
+Execution profiler
+.endbull
+.*
+.beglevel
+.*
+.section Protected-mode Compiler and Linker
+.*
+.np
+The protected-mode version of the compiler "WCC386P.EXE" and linker
+"WLINKP.EXE" use a DPMI compliant DOS extender.
+This allows you to run the compiler and linker on a normal
+DOS system or in a Windows 3.x DOS box operating in enhanced mode.
+.*
+.endlevel
+.*
 .do end
 .*
 .if '&lang' eq 'FORTRAN 77' .do begin
@@ -1838,7 +1792,7 @@ with new libraries.
 .*
 .np
 The following sections summarize the major differences from the
-previous release of &product..
+previous release of Watcom &lang..
 .begbull
 .bull
 Some of the Win32 and 32-bit OS/2 versions of our tools are now
@@ -1907,18 +1861,8 @@ the package.
 We have added new tool front-ends that emulate Microsoft tools.
 These are:
 .begbull $compact
-:CMT. .bull
-:CMT. nmake
-:CMT. .bull
-:CMT. cl
-:CMT. .bull
-:CMT. link
-:CMT. .bull
-:CMT. lib
 .bull
 rc
-:CMT. .bull
-:CMT. cvtres
 .endbull
 .np
 These programs take the usual Microsoft arguments and translate them,
@@ -1998,7 +1942,7 @@ with new libraries.
 .*
 .np
 The following sections summarize the major differences from the
-previous release of &product..
+previous release of Watcom &lang..
 .*
 .beglevel
 .*
@@ -2114,7 +2058,7 @@ Windows resource editing tools are included:
 .bull
 Windows development tools are included:
 .begpoint $compact
-.point Dr. WATCOM (a post mortem debug utility)
+.point Dr. Watcom (a post mortem debug utility)
 .point Spy (Windows message spy program)
 .point DDESpy
 .point Heap Walker
