@@ -302,7 +302,7 @@ static unsigned get_tix_code( unsigned char *buff )
 }
 
 static const char acs_default[] =
-        "q-x|l.m`k.j\'n+w-v-t|u|~*+>,<-^.vO#f`g?a#h#";
+        "q-x|l+m+k+j+n+w+v+t+u+~o+>,<-^.v0#f\\g#a:h#";
 
 static char find_acs_map( char c, const char *acs )
 /*************************************************/
@@ -422,12 +422,12 @@ static struct charmap default_tix[] = {
 
     /* boxes */
     0xa0,0x2584, /* UI_DBLOCK    */
-    'O', 0x258c, /* UI_LBLOCK    */
+    '0', 0x258c, /* UI_LBLOCK    */
     0xa0,0x2590, /* UI_RBLOCK    */
-    'O', 0x2580, /* UI_UBLOCK    */
+    '0', 0x2580, /* UI_UBLOCK    */
     'a', 0x2591, /* UI_CKBOARD   */
     'h', 0x2592, /* UI_BOARD     */
-    'O', 0x2588, /* UI_BLOCK     */
+    '0', 0x2588, /* UI_BLOCK     */
 
     /* misc */
     'h', 0x25a0, /* UI_SQUARE    */
@@ -445,20 +445,8 @@ static int do_default( void )
 {
     unsigned char       c, cmap;
     int                 i;
-    char               *s;
-    int                 utf8_mode = 0;
-
-    if ( ( ( s = getenv( "LC_ALL" ) )   && *s ) ||
-         ( ( s = getenv( "LC_CTYPE" ) ) && *s ) ||
-         ( ( s = getenv( "LANG" ) )     && *s ) ) 
-        if ( strstr( s, "UTF" ) || strstr( s, "utf" ) )
-            utf8_mode = 1;
 
     for( i = 0; i < sizeof( default_tix ) / sizeof( default_tix[0] ) ; i ++ ) {
-        if( utf8_mode ) {
-            wctomb( ti_char_map[i], default_tix[i].unicode );
-            continue;
-        }
         cmap = c = default_tix[i].vt100;
         if( (c & 0x80) == 0 ) {
             cmap = find_acs_map( c, acs_chars );
@@ -473,12 +461,6 @@ static int do_default( void )
             }
         }
         ti_char_map[i][0] = cmap;
-    }
-    if( utf8_mode ) {
-        /* handle at least iso-8859-1 for now */
-        for( i = 0xa0; i < 0x100; i++ ) {
-            wctomb( ti_char_map[i], i );
-        }
     }
     for( i = 0; i < sizeof( alt_keys ); i++ ) {
         if ( alt_keys[i] ) {
@@ -500,8 +482,56 @@ static int do_default( void )
     TrieAdd( 0xff0, "\6");
     /* sticky ALT ^A */
     TrieAdd( 0xff3, "\1");
-    s = getenv("TERM");
-    if( s != NULL && strncmp( s, "xterm", 5 ) == 0 ) {
+    return( 1 );
+}
+
+
+int ti_read_tix( char *termname )
+/*******************************/
+{
+    int         i;
+    int         ret;
+    char        *s;
+    int         utf8_mode = 0;
+
+    memset( _ti_alt_map, 0, sizeof( _ti_alt_map ) );
+
+    for( i = 0; i < sizeof( ti_char_map ) / sizeof( ti_char_map[0] ); i++ )
+        ti_char_map[i][0]=i;
+
+    if( !init_tix_scanner( termname ) ) {
+        ret = do_default();
+    } else {
+        ret = do_parse();
+        close_tix_scanner();
+    }
+
+    if ( ( ( s = getenv( "LC_ALL" ) )   && *s ) ||
+         ( ( s = getenv( "LC_CTYPE" ) ) && *s ) ||
+         ( ( s = getenv( "LANG" ) )     && *s ) ) 
+        if ( strstr( s, "UTF" ) || strstr( s, "utf" ) )
+            utf8_mode = 1;
+
+    if( utf8_mode ) {
+        /* handle at least iso-8859-1 for now */
+        for( i = 0xa0; i < 0x100; i++ ) {
+            wctomb( ti_char_map[i], i );
+        }
+    }
+    if( strncmp( termname, "linux", 5 ) == 0 ) {
+        /* force UTF-8 mode if the locale is set that way; *
+         * we may be on a new VT on the Linux console      */
+        if ( utf8_mode ) {
+            write( UIConHandle, "\033%G", 3 );
+            /* use UTF-8 characters instead of ACS */
+            for( i = 0; i < sizeof( default_tix ) / sizeof( default_tix[0] ) ;
+                 i ++ )
+                wctomb( ti_char_map[i], default_tix[i].unicode );
+        }
+        else
+            write( UIConHandle, "\033%@", 3 );
+    }
+    if( strncmp( termname, "xterm", 5 ) == 0 ) {
         /* special xterm keys available in recent xterms */
         TrieAdd( EV_CTRL_CURSOR_UP, "\033[1;5A" );
         TrieAdd( EV_CTRL_CURSOR_DOWN, "\033[1;5B" );
@@ -520,33 +550,5 @@ static int do_default( void )
         TrieAdd( EV_CTRL_HOME, "\033[O5H" );
         TrieAdd( EV_CTRL_END, "\033[O5F" );
     }
-    if( s != NULL && strncmp( s, "linux", 5 ) == 0 ) {
-        /* force UTF-8 mode if the locale is set that way; *
-         * we may be on a new VT on the Linux console      */
-        if ( utf8_mode )
-            write( UIConHandle, "\033%G", 3 );
-        else
-            write( UIConHandle, "\033%@", 3 );
-    }
-    return( 1 );
-}
-
-
-int ti_read_tix( char *termname )
-/*******************************/
-{
-    int         i;
-    int         ret;
-
-    memset( _ti_alt_map, 0, sizeof( _ti_alt_map ) );
-
-    for( i = 0; i < sizeof( ti_char_map ) / sizeof( ti_char_map[0] ); i++ )
-        ti_char_map[i][0]=i;
-
-    if( !init_tix_scanner( termname ) ) {
-        return( do_default() );
-    }
-    ret = do_parse();
-    close_tix_scanner();
     return( ret );
 }

@@ -6,8 +6,8 @@ display  4 alt 'k'	# TopRightCorner
 display  5 alt 'q'	# H_Line
 display  6 alt 'x'	# V_Line
 display  7 alt 'w'	# TopTee
-display  8 alt 't'	# LeftTee
-display  9 alt 'u'	# RightTee
+display  8 alt 'u'	# RightTee
+display  9 alt 't'	# LeftTee
 display 10 alt 'm'	# BottomLeftCorner (double)
 display 11 alt 'j'	# BottomRightCorner (double)
 display 12 alt 'l'	# TopLeftCorner (double)
@@ -25,12 +25,12 @@ display 21 '/'		# UpDownArrow
 
 # Squares
 display 22 ' '		# 0x20
-display 23 alt 'O'	# Square
+display 23 alt '0'	# Square
 display 24 ' ' 		# 0x20
-display 25 alt 'O'	# Square
+display 25 alt '0'	# Square
 display 26 alt 'a'	# Checkers
 display 27 alt 'h'	# Squares
-display 28 alt 'O'	# Square
+display 28 alt '0'	# Square
 
 # Misc.
 display 29 alt 'h'	# Square
