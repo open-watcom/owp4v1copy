@@ -21,11 +21,11 @@ lookup.jbj
 .extensions: .exe .obj .jbj .c
 
 !ifeq targ dos
-copts   = /oaxt /ml /w3 /i$(watcom_dir)\os21x_h /u__OS2__
+copts   = /oaxt /ml /w3 /i$(inc_dirs_sys_os2_i86) /u__OS2__
 CC      = wcc
 sys     = dos
 !else ifeq targ os2
-copts   = /oaxt /w3 /i$(watcom_dir)\os220_h /bt=os2
+copts   = /oaxt /w3 /i$(inc_dirs_sys_os2_386) /bt=os2
 CC      = wcc386
 sys     = os2v2
 !else ifeq targ pls
