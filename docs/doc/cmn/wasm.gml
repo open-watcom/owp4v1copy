@@ -301,6 +301,7 @@ opcodes and register names that are recognized by the assembler.
 :cmt. .ix 'div'
 :cmt. .ix 'dl'
 .ix '.dosseg'
+:cmt. .ix 'dosseg'
 :cmt. .ix 'dp'
 :cmt. .ix 'dq'
 :cmt. .ix 'dr0'
@@ -506,7 +507,10 @@ opcodes and register names that are recognized by the assembler.
 :cmt. .ix 'invoke'
 :cmt. .ix 'iret'
 :cmt. .ix 'iretd'
+:cmt. .ix 'iretdf'
+:cmt. .ix 'iretf'
 :cmt. .ix 'irp'
+:cmt. .ix 'irpc'
 :cmt. .ix 'ja'
 :cmt. .ix 'jae'
 :cmt. .ix 'jb'
@@ -651,8 +655,10 @@ opcodes and register names that are recognized by the assembler.
 :cmt. .ix 'rep'
 :cmt. .ix 'repe'
 .ix '.repeat'
+:cmt. .ix 'repeat'
 :cmt. .ix 'repne'
 :cmt. .ix 'repnz'
+:cmt. .ix 'rept'
 :cmt. .ix 'repz'
 :cmt. .ix 'ret'
 :cmt. .ix 'retf'
@@ -772,150 +778,163 @@ opcodes and register names that are recognized by the assembler.
 .ix '.xlist'
 :cmt. .ix 'xor'
 .millust begin
-~.186           .286           .286c          .286p
-~.287           .386           .386p          .387
-~.486           .486p          .586           .586p
-~.686           .686p          .8086          .8087
-aaa            aad            aam            aas
-abs            adc            add            addr
-ah             al             alias          align
-~.alpha         and            arpl           assume
-at             ax             basic          bh
-bl             bound          bp             .break
-bsf            bsr            bswap          bt
-btc            btr            bts            bx
-byte           c              call           callf
-casemap        catstr         cbw            cdq
-ch             cl             clc            cld
-cli            clts           cmc            cmp
-cmps           cmpsb          cmpsd          cmpsw
-cmpxchg        cmpxchg8b      .code          comm
-comment        common         compact        .const
-~.continue      cpuid          cr0            cr2
-cr3            cr4            .cref          cs
-cwd            cwde           cx             daa
-das            .data          .data?         db
-dd             dec            df             dh
-di             div            dl             .dosseg
-dp             dq             dr0            dr1
-dr2            dr3            dr6            dr7
-ds             dt             dup            dw
-dword          dx             eax            ebp
-ebx            echo           ecx            edi
-edx            .else          else           elseif
-end            .endif         endif          endp
-ends           .endw          enter          eq
-equ            equ2           .err           .errb
-~.errdef        .errdif        .errdifi       .erre
-~.erridn        .erridni       .errnb         .errndef
-~.errnz         error          es             esi
-esp            even           .exit          export
-extern         externdef      extrn          f2xm1
-fabs           fadd           faddp          far
-~.fardata       .fardata?      farstack       fbld
+~.186         .286         .286c         .286p        .287         .386
+~.386p        .387         .486          .486p        .586         .586p
+~.686         .686p        .8086         .8087        aaa          aad
+aam          aas          abs           adc          add          addpd
+addps        addr         addsd         addss        addsubpd     addsubps
+ah           al           alias         align        .alpha       and
+andnpd       andnps       andpd         andps        arpl         assume
+ax           basic        bh            bl           bound        bp
+~.break       bsf          bsr           bswap        bt           btc
+btr          bts          bx            byte         c            call
+callf        casemap      catstr        cbw          cdq          ch
+cl           clc          cld           clflush      cli          clts
+cmc          cmova        cmovae        cmovb        cmovbe       cmovc
+cmove        cmovg        cmovge        cmovl        cmovle       cmovna
+cmovnae      cmovnb       cmovnbe       cmovnc       cmovne       cmovng
+cmovnge      cmovnl       cmovnle       cmovno       cmovnp       cmovns
+cmovnz       cmovo        cmovp         cmovpe       cmovpo       cmovs
+cmovz        cmp          cmpeqpd       cmpeqps      cmpeqsd      cmpeqss
+cmplepd      cmpleps      cmplesd       cmpless      cmpltpd      cmpltps
+cmpltsd      cmpltss      cmpneqpd      cmpneqps     cmpneqsd     cmpneqss
+cmpnlepd     cmpnleps     cmpnlesd      cmpnless     cmpnltpd     cmpnltps
+cmpnltsd     cmpnltss     cmpordpd      cmpordps     cmpordsd     cmpordss
+cmppd        cmpps        cmps          cmpsb        cmpsd        cmpss
+cmpsw        cmpunordpd   cmpunordps    cmpunordsd   cmpunordss   cmpxchg
+cmpxchg8b    .code        comisd        comiss       comm         comment
+common       compact      .const        .continue    cpuid        cr0
+cr2          cr3          cr4           .cref        cs           cvtdq2pd
+cvtdq2ps     cvtpd2dq     cvtpd2pi      cvtpd2ps     cvtpi2pd     cvtpi2ps
+cvtps2dq     cvtps2pd     cvtps2pi      cvtsd2si     cvtsd2ss     cvtsi2sd
+cvtsi2ss     cvtss2sd     cvtss2si      cvttpd2dq    cvttpd2pi    cvttps2dq
+cvttps2pi    cvttsd2si    cvttss2si     cwd          cwde         cx
+daa          das          .data         .data?       db           dd
+dec          df           dh            di           div          divpd
+divps        divsd        divss         dl           .dosseg      dosseg
+dp           dq           dr0           dr1          dr2          dr3
+dr6          dr7          ds            dt           dup          dw
 .millust break
-fbstp          fchs           fclex          fcom
-fcomp          fcompp         fcos           fdecstp
-fdisi          fdiv           fdivp          fdivr
-fdivrp         feni           ffree          fiadd
-ficom          ficomp         fidiv          fidivr
-fild           fimul          fincstp        finit
-fist           fistp          fisub          fisubr
-flat           fld            fld1           fldcw
-fldenv         fldenvd        fldenvw        fldl2e
-fldl2t         fldlg2         fldln2         fldpi
-fldz           fmul           fmulp          fnclex
-fndisi         fneni          fninit         fnop
-fnrstor        fnrstord       fnrstorw       fnsave
-fnsaved        fnsavew        fnstcw         fnstenv
-fnstenvd       fnstenvw       fnstsw         for
-forc           fortran        fpatan         fprem
-fprem1         fptan          frndint        frstor
-frstord        frstorw        fs             fsave
-fsaved         fsavew         fscale         fsetpm
-fsin           fsincos        fsqrt          fst
-fstcw          fstenv         fstenvd        fstenvw
-fstp           fstsw          fsub           fsubp
-fsubr          fsubrp         ftst           fucom
-fucomp         fucompp        fwait          fword
-fxam           fxch           fxtract        fyl2x
-fyl2xp1        ge             global         group
-gs             gt             high           highword
-hlt            huge           idiv           .if
-if             if1            if2            ifb
-ifdef          ifdif          ifdifi         ife
-ifidn          ifidni         ifnb           ifndef
-ignore         imul           in             inc
-include        includelib     ins            insb
-insd           insw           int            into
-invd           invlpg         invoke         iret
-iretd          irp            ja             jae
-jb             jbe            jc             jcxz
-je             jecxz          jg             jge
-jl             jle            jmp            jmpf
-jna            jnae           jnb            jnbe
-jnc            jne            jng            jnge
-jnl            jnle           jno            jnp
-jns            jnz            jo             jp
-jpe            jpo            js             jz
-label          lahf           lar            large
-lds            le             lea            leave
-length         lengthof       les            .lfcond
-lfs            lgdt           lgs            lidt
-~.list          .listall       .listif        .listmacro
-~.listmacroall  lldt           lmsw           local
-lock           lods           lodsb          lodsd
-lodsw          loop           loope          loopne
-loopnz         loopz          low            lowword
-lroffset       lsl            lss            lt
-ltr            macro          mask           medium
-memory         mod            .model         mov
-movs           movsb          movsd          movsw
-movsx          movzx          mul            name
-ne             near           nearstack      neg
-~.no87          .nocref        .nolist        nop
-not            nothing        offset         opattr
-option         or             org            os_dos
-os_os2         out            outs           outsb
-outsd          outsw          para           pascal
-pop            popa           popad          popcontext
-popf           popfd          private        proc
-proto          ptr            public         purge
-push           pusha          pushad         pushcontext
-pushf          pushfd         pword          qword
-~.radix         rcl            rcr            rdmsr
-rdtsc          readonly       record         rep
-repe           .repeat        repne          repnz
-repz           ret            retf           retn
-rol            ror            rsm            sahf
-sal            .sall          sar            sbb
-sbyte          scas           scasb          scasd
-scasw          sdword         seg            segment
-~.seq           seta           setae          setb
-setbe          setc           sete           setg
-setge          setl           setle          setna
-setnae         setnb          setnbe         setnc
-setne          setng          setnge         setnl
-setnle         setno          setnp          setns
-setnz          seto           setp           setpe
-setpo          sets           setz           .sfcond
-sgdt           shl            shld           short
-shr            shrd           si             sidt
-size           sizeof         sldt           small
-smsw           sp             ss             st
-~.stack         .startup       stc            std
-stdcall        sti            stos           stosb
-stosd          stosw          str            struc
-struct         sub            sword          syscall
-tbyte          test           textequ        .tfcond
-this           tiny           tr3            tr4
-tr5            tr6            tr7            typedef
-union          .until         use16          use32
-uses           vararg         verr           verw
-wait           watcom_c       wbinvd         .while
-width          word           wrmsr          xadd
-xchg           .xcref         xlat           xlatb
-~.xlist         xor
+dword        dx           eax           ebp          ebx          echo
+ecx          edi          edx           .else        else         elseif
+emms         end          .endif        endif        endm         endp
+ends         .endw        enter         eq           equ          equ2
+~.err         .errb        .errdef       .errdif      .errdifi     .erre
+~.erridn      .erridni     .errnb        .errndef     .errnz       error
+es           esi          esp           even         .exit        exitm
+export       extern       externdef     extrn        f2xm1        fabs
+fadd         faddp        far           .fardata     .fardata?    farstack
+fbld         fbstp        fchs          fclex        fcmovb       fcmovbe
+fcmove       fcmovnb      fcmovnbe      fcmovne      fcmovnu      fcmovu
+fcom         fcomi        fcomip        fcomp        fcompp       fcos
+fdecstp      fdisi        fdiv          fdivp        fdivr        fdivrp
+femms        feni         ffree         fiadd        ficom        ficomp
+fidiv        fidivr       fild          fimul        fincstp      finit
+fist         fistp        fisttp        fisub        fisubr       flat
+fld          fld1         fldcw         fldenv       fldenvd      fldenvw
+fldl2e       fldl2t       fldlg2        fldln2       fldpi        fldz
+fmul         fmulp        fnclex        fndisi       fneni        fninit
+fnop         fnrstor      fnrstord      fnrstorw     fnsave       fnsaved
+fnsavew      fnstcw       fnstenv       fnstenvd     fnstenvw     fnstsw
+for          forc         fortran       fpatan       fprem        fprem1
+fptan        frndint      frstor        frstord      frstorw      fs
+fsave        fsaved       fsavew        fscale       fsetpm       fsin
+fsincos      fsqrt        fst           fstcw        fstenv       fstenvd
+fstenvw      fstp         fstsw         fsub         fsubp        fsubr
+fsubrp       ftst         fucom         fucomi       fucomip      fucomp
+fucompp      fwait        fword         fxam         fxch         fxrstor
+fxsave       fxtract      fyl2x         fyl2xp1      ge           global
+group        gs           gt            haddpd       haddps       high
+highword     hlt          hsubpd        hsubps       huge         idiv
+~.if          if           if1           if2          ifb          ifdef
+ifdif        ifdifi       ife           ifidn        ifidni       ifnb
+ifndef       ignore       imul          in           inc          include
+includelib   ins          insb          insd         insw         int
+into         invd         invlpg        invoke       iret         iretd
+.millust break
+iretdf       iretf        irp           irpc         ja           jae
+jb           jbe          jc            jcxz         je           jecxz
+jg           jge          jl            jle          jmp          jmpf
+jna          jnae         jnb           jnbe         jnc          jne
+jng          jnge         jnl           jnle         jno          jnp
+jns          jnz          jo            jp           jpe          jpo
+js           jz           .k3d          label        lahf         lar
+large        lddqu        ldmxcsr       lds          le           lea
+leave        length       lengthof      les          .lfcond      lfence
+lfs          lgdt         lgs           lidt         .list        .listall
+~.listif      .listmacro   .listmacroall lldt         lmsw         local
+lock         lods         lodsb         lodsd        lodsw        loop
+loopd        loope        looped        loopew       loopne       loopned
+loopnew      loopnz       loopnzd       loopnzw      loopw        loopz
+loopzd       loopzw       low           lowword      lroffset     lsl
+lss          lt           ltr           macro        mask         maskmovdqu
+maskmovq     maxpd        maxps         maxsd        maxss        medium
+memory       mfence       minpd         minps        minsd        minss
+mm0          mm1          mm2           mm3          mm4          mm5
+mm6          mm7          .mmx          mod          .model       monitor
+mov          movapd       movaps        movd         movddup      movdq2q
+movdqa       movdqu       movhlps       movhpd       movhps       movlhps
+movlpd       movlps       movmskpd      movmskps     movntdq      movnti
+movntpd      movntps      movntq        movq         movq2dq      movs
+movsb        movsd        movshdup      movsldup     movss        movsw
+movsx        movupd       movups        movzx        mul          mulpd
+mulps        mulsd        mulss         mwait        name         ne
+near         nearstack    neg           .no87        .nocref      .nolist
+nop          not          nothing       offset       opattr       option
+or           org          orpd          orps         os_dos       os_os2
+out          outs         outsb         outsd        outsw        oword
+packssdw     packsswb     packuswb      paddb        paddd        paddq
+paddsb       paddsw       paddusb       paddusw      paddw        page
+pand         pandn        para          pascal       pause        pavgb
+pavgusb      pavgw        pcmpeqb       pcmpeqd      pcmpeqw      pcmpgtb
+pcmpgtd      pcmpgtw      pextrw        pf2id        pf2iw        pfacc
+.millust break
+pfadd        pfcmpeq      pfcmpge       pfcmpgt      pfmax        pfmin
+pfmul        pfnacc       pfpnacc       pfrcp        pfrcpit1     pfrcpit2
+pfrsqit1     pfrsqrt      pfsub         pfsubr       pi2fd        pi2fw
+pinsrw       pmaddwd      pmaxsw        pmaxub       pminsw       pminub
+pmovmskb     pmulhrw      pmulhuw       pmulhw       pmullw       pmuludq
+pop          popa         popad         popcontext   popf         popfd
+por          prefetch     prefetchnta   prefetcht0   prefetcht1   prefetcht2
+prefetchw    private      proc          proto        psadbw       pshufd
+pshufhw      pshuflw      pshufw        pslld        pslldq       psllq
+psllw        psrad        psraw         psrld        psrldq       psrlq
+psrlw        psubb        psubd         psubq        psubsb       psubsw
+psubusb      psubusw      psubw         pswapd       ptr          public
+punpckhbw    punpckhdq    punpckhqdq    punpckhwd    punpcklbw    punpckldq
+punpcklqdq   punpcklwd    purge         push         pusha        pushad
+pushcontext  pushd        pushf         pushfd       pushw        pword
+pxor         qword        .radix        rcl          rcpps        rcpss
+rcr          rdmsr        rdpmc         rdtsc        readonly     record
+rep          repe         .repeat       repeat       repne        repnz
+rept         repz         ret           retd         retf         retfd
+retn         rol          ror           rsm          rsqrtps      rsqrtss
+sahf         sal          .sall         sar          sbb          sbyte
+scas         scasb        scasd         scasw        sdword       seg
+segment      .seq         seta          setae        setb         setbe
+setc         sete         setg          setge        setl         setle
+setna        setnae       setnb         setnbe       setnc        setne
+setng        setnge       setnl         setnle       setno        setnp
+setns        setnz        seto          setp         setpe        setpo
+sets         setz         .sfcond       sfence       sgdt         shl
+shld         short        shr           shrd         shufpd       shufps
+si           sidt         size          sizeof       sldt         small
+smsw         sp           sqrtpd        sqrtps       sqrtsd       sqrtss
+ss           st           .stack        .startup     stc          std
+stdcall      sti          stmxcsr       stos         stosb        stosd
+stosw        str          struc         struct       sub          subpd
+subps        subsd        subss         subtitle     subttl       sword
+syscall      sysenter     sysexit       tbyte        test         textequ
+.millust break
+~.tfcond      this         tiny          title        tr3          tr4
+tr5          tr6          tr7           typedef      ucomisd      ucomiss
+union        unpckhpd     unpckhps      unpcklpd     unpcklps     .until
+use16        use32        uses          vararg       verr         verw
+wait         watcom_c     wbinvd        .while       width        word
+wrmsr        xadd         xchg          .xcref       xlat         xlatb
+~.xlist       .xmm         xmm0          xmm1         .xmm2        xmm2
+~.xmm3        xmm3         xmm4          xmm5         xmm6         xmm7
+xor          xorpd        xorps         
 .millust end
 .*
 .section Unsupported Directives
