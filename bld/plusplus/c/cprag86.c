@@ -52,7 +52,6 @@
 
 
 extern  int     GetAliasInfo();
-extern  void    AsmInit(int,int,int);
 
 static  hw_reg_set      asmRegsSaved = { HW_D( HW_FULL ) };
 static  hw_reg_set      stackParms[] = { HW_D( HW_EMPTY ) };
@@ -373,7 +372,7 @@ static void assemblerInit(      // INITIALIZATION OF ASSEMBLER
     case FPU_NONE:      fpu = 0; break;
     default:            fpu = 1; break;
     }
-    AsmInit( cpu, fpu, use32 );
+    AsmInit( cpu, fpu, use32, -1 );
 }
 
 
@@ -1041,12 +1040,6 @@ static void AddAFix(
     fix->next = FixupHead;
     FixupHead = fix;
 }
-
-// WASM entry points
-extern long Address;
-extern char *CodeBuffer;
-extern void AsmLine( char * );
-extern void AsmSymFini( void );
 
 syscode_seq *AuxCodeDup(        // DUPLICATE AUX CODE
     syscode_seq *code )

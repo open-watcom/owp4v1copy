@@ -33,12 +33,7 @@
 #include "cgswitch.h"
 #include "pragdefn.h"
 #include "pdefn2.h"
-//#include "cg86auxa.h"
 #include "asminlin.h"
-
-extern  void    AsmInit(int, int, int);
-extern  void    AsmLine(char *);
-extern  void    AsmSymFini(void);
 
 local   void    GetParmInfo( void );
 local   void    GetRetInfo( void );
@@ -46,8 +41,6 @@ local   void    GetSTRetInfo( void );
 local   void    GetSaveInfo( void );
 local   int     GetByteSeq( void );
 
-extern  long        Address;
-extern  char       *CodeBuffer;
 extern  TREEPTR     CurFuncNode;
 
 static  int             AsmFuncNum;
@@ -86,7 +79,7 @@ void PragmaInit()
     default:    fpu = 1; break;
     }
 
-    AsmInit( cpu, fpu, use32 );
+    AsmInit( cpu, fpu, use32, -1 );
 
     PragInit();
 

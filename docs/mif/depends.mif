@@ -34,6 +34,7 @@ $(docsrc_dir)\cg\cromable.gml &
 $(docsrc_dir)\cg\crtmsgs.gml &
 $(docsrc_dir)\cg\errnodos.gml &
 $(docsrc_dir)\cg\errnoqnx.gml &
+$(docsrc_dir)\cg\inlintab.gml &
 $(docsrc_dir)\cg\seh.gml &
 $(docsrc_dir)\cg\wccerrs.gml &
 $(docsrc_dir)\cg\wpperrs.gml

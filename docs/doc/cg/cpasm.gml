@@ -33,6 +33,18 @@ arranging the instruction stream so that it is optimal for a
 particular processor (such as the 486 or Pentium).
 .endbull
 .*
+.section *refid=inlinenv In-line Assembly Language Default Environment
+.*
+.np
+In next table is description of the default in-line assembler 
+environment in dependency on C/C++ compilers CPU switch for x86 target
+platform.
+..sk 1
+..im inlintab
+.pc
+This environment can be simply changed by appropriate directives and this
+change is valid for all remaining part of the source code.
+.*
 .section In-line Assembly Language Tutorial
 .*
 .np
