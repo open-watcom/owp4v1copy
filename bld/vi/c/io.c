@@ -227,7 +227,7 @@ void VerifyTmpDir( void )
             return;
         }
     }
-    env_tmpdir = getenv( "tmpdir" );
+    env_tmpdir = getenv( "tmp" );
     if( env_tmpdir != NULL ) {
         if( env_tmpdir[strlen(env_tmpdir)-1] == '\\' ) {
             char buf[_MAX_PATH];
@@ -251,7 +251,7 @@ void MakeTmpPath( char *out, char *in )
 {
     out[0] = 0;
     if( TmpDir == NULL ) {
-        char *env_tmpdir = getenv( "tmpdir" );
+        char *env_tmpdir = getenv( "tmp" );
         if( env_tmpdir != NULL ) {
             StrMerge( 3, out, env_tmpdir, FILE_SEP_STR, in );
         } else {
