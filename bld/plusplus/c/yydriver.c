@@ -230,6 +230,52 @@ static void dump_rule( unsigned rule )
     }
     putchar( '\n' );
 }
+
+static void dump_state_stack(const char * label, PARSE_STACK * stack)
+{
+    static PARSE_STACK * last_stack = NULL;
+
+    if(stack != last_stack)
+    {
+        printf("===============================================================================\n");
+        printf("*** PARSE STACK CHANGE *** New: 0x%.08X Old: 0x%.08X\n", stack, last_stack);
+        printf("===============================================================================\n");
+        last_stack = stack;
+    }    
+    
+    if(NULL == stack)
+    {
+        printf("dump_state_stack: NULL stack\n");
+    }
+    else
+    {
+        YYACTIONTYPE *  the_ssp = stack->ssp;
+        YYACTIONTYPE *  the_sstack = stack->sstack;
+        unsigned        index;
+        
+        printf("dump_state_stack \"%s\" (0x%.08X):\n", label, the_sstack);
+        /*
+        //  ensure we dump the top of stack (test &(ssp[1]))
+        */
+#if 0
+        for(index = 0; &(the_sstack[index]) < &(the_ssp[1]); index++)
+        {
+              YYACTIONTYPE x = the_sstack[index];
+              printf("  Index: %03d State: %04u\n", index, x);
+        }
+#else
+        printf(" State(s):");
+        for(index = 0; &(the_sstack[index]) < &(the_ssp[1]); index++)
+        {
+              YYACTIONTYPE x = the_sstack[index];
+              printf(" %03u", x);
+        }
+        printf("\n");
+#endif
+    }
+    fflush(stdout);
+}
+
 #endif
 
 static void deleteStack( PARSE_STACK * );
@@ -1256,6 +1302,12 @@ static void pushRestartDecl( PARSE_STACK *state )
     restart->ssp = state->ssp;
     restart->gstack = state->gstack;
     restart->reset_scope = GetCurrScope();
+
+#ifndef NDEBUG
+    printf("===============================================================================\n");
+    printf("*** pushRestartDecl: 0x%.08X 0x%.08X\n", state, restart);
+    printf("===============================================================================\n");
+#endif
 }
 
 static void doPopRestartDecl( PARSE_STACK *state )
@@ -1276,6 +1328,11 @@ static void popRestartDecl( PARSE_STACK *state )
     DbgStmt( RESTART_PARSE *restart );
 
     DbgStmt( restart = state->restart );
+#ifndef NDEBUG
+    printf("===============================================================================\n");
+    printf("*** popRestartDecl: 0x%.08X 0x%.08X\n", state, restart);
+    printf("===============================================================================\n");
+#endif
     restartDeclOK( restart );
     DbgAssert( restart->gstack == restart->state->gstack );
     DbgAssert( restart->reset_scope == GetCurrScope() );
@@ -1314,6 +1371,12 @@ static void syncToRestart( PARSE_STACK *state )
         DbgAssert( restart->gstack == state->gstack );
         DbgAssert( restart->reset_scope == GetCurrScope() );
         restartInit( state );
+
+#ifndef NDEBUG
+        if( PragDbgToggle.dump_parse ) 
+            dump_state_stack("after syncToRestart", state);
+#endif
+
     } else {
         fatalParserError();
     }
@@ -1434,6 +1497,10 @@ static p_action normalYYAction( YYTOKENTYPE t, PARSE_STACK *state, unsigned *pa 
         /* we have a unit reduction */
         lhs = yyplhstab[ rule ];
         top_state = yyaction[ lhs + yygotobase[ ssp[-1] ] ];
+#ifndef NDEBUG
+        if( PragDbgToggle.dump_parse ) 
+            printf("=== Unit reduction. New top state %03u Old state %03u ===\n", top_state, ssp[0]);
+#endif
         ssp[0] = top_state;
     }
 }
@@ -1733,8 +1800,22 @@ static p_action doAction( YYTOKENTYPE t, PARSE_STACK *state )
         ++curr_##kind; \
         state->kind = curr_##kind;
     for(;;) {
+#ifndef NDEBUG
+        unsigned stackDepth;
+#endif
         yyk = *(state->ssp);
-        DbgStmt( if( PragDbgToggle.parser_states ) printf( "parser state: %u token: 0x%x\n", yyk, t ); );
+        DbgStmt( if( PragDbgToggle.parser_states ) printf( "parser top state: %u token: 0x%x (%s)\n", yyk, t , yytoknames[ t ]); );
+        DbgStmt(stackDepth = (state->ssp - &(state->sstack[0])) + 1; );
+
+        /* 
+        //  DumpStack
+        */
+#ifndef NDEBUG
+        if( PragDbgToggle.dump_parse ) 
+            dump_state_stack("in start of doAction loop", state);
+#endif
+
+
         if( yyk == YYAMBIGS0 && t == YYAMBIGT0 ) {
             if( state->favour_shift ) {
                 yyaction = YYACTION_SHIFT_STATE( YYAMBIGH0 );
@@ -1763,6 +1844,12 @@ static p_action doAction( YYTOKENTYPE t, PARSE_STACK *state )
             INC_STACK( vsp );
             *curr_vsp = yylval;
             INC_STACK( lsp );
+
+#ifndef NDEBUG
+            if( PragDbgToggle.dump_parse ) 
+                dump_state_stack("after yyaction shift", state);
+#endif
+
             TokenLocnAssign( *curr_lsp, yylocation );
             switch( t ) {
             case Y_SCOPED_OPERATOR:
@@ -1794,6 +1881,10 @@ static p_action doAction( YYTOKENTYPE t, PARSE_STACK *state )
             if( state->ssp < state->sstack ) {
                 fatalParserError();
             }
+#ifndef NDEBUG
+            if( PragDbgToggle.dump_parse ) 
+                printf("=== Parser stack reduced by %u levels ===\n", yyl);
+#endif
         } else {
             if( state->ssp == state->exhaust ) {
                 return( P_OVERFLOW );
@@ -1805,6 +1896,10 @@ static p_action doAction( YYTOKENTYPE t, PARSE_STACK *state )
         INC_STACK( vsp );
         yyvp = curr_vsp;
         yylp = state->lsp;
+#ifndef NDEBUG
+        if( PragDbgToggle.dump_parse ) 
+            dump_state_stack("shift / reduce?", state);
+#endif
 #ifndef NDEBUG
         if( PragDbgToggle.dump_parse ) {
             dump_rule( rule );
@@ -2121,6 +2216,11 @@ void ParseDecls( void )
             }
             if( what > P_SPECIAL ) {
                 if( what > P_ERROR ) {
+#ifndef NDEBUG
+                    fflush(stdout);
+                    fflush(stderr);
+#endif
+
                     switch( what ) {
                     case P_SYNTAX:
                         syntaxError();

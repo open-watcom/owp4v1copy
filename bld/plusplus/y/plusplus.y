@@ -1222,7 +1222,9 @@ strings
 
 /*** declaration syntax ***/
 might-restart-declarations
-    : start-restart-declarations declarations
+	: start-restart-declarations
+	{ popRestartDecl( state ); }
+    | start-restart-declarations declarations
     { popRestartDecl( state ); }
     ;
     
