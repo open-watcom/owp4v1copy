@@ -24,16 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DLL entry points for wlink.
 *
 ****************************************************************************/
-
-
-/*
-   DLLENTRY  : dll entry points for wlink
-
-*/
 
 #include "linkstd.h"
 #include "msg.h"
@@ -242,4 +235,10 @@ extern bool ExecWlibDLL( char *cmdline )
     status = IdeDrvExecDLL( &inf, cmdline );
     IdeDrvUnloadDLL( &inf );
     return status != IDEDRV_SUCCESS;
+}
+
+// Temporary? Make sure the DLL gets initialized.
+unsigned LibMain(unsigned handle, unsigned reason)
+{
+    return 1;
 }
