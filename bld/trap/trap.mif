@@ -66,6 +66,8 @@ sys_x86_nt   = sys nt_dll initinstance &
             export InfoFunction_.4 &
             export InterruptProgram_.5 &
             export Terminate_.6 &
+# remove reference to run-time code
+            alias __DLLstart_='_LibMain@12' &
             option description $(description) &
             op offset=0x6e900000, modname=$^&
 sys_x86_dos  = sys dos

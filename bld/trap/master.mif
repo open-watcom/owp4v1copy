@@ -57,6 +57,7 @@ memory_model_386 = s
 
 !include cproj.mif
 !include defrule.mif
+!include deftarg.mif
 
 !ifeq which SERVER
 !include $(trap_dir)/serv.mif
@@ -254,7 +255,3 @@ inc_dirs+=;$(ow_nwoss_root)/nw$(nlm_ver)/h;$(ow_nwoss_root)/nw$(nlm_ver)/src;$(o
 #################
 .rc.res: .AUTODEPEND
         $(rc) -r -i"$(inc_path)" -bt=$(targ) $[@ -fo=$^@
-
-clean: .SYMBOLIC
-        rm -f *.obj *.dll *.d32 *.exe *.exp *.nlm *.trp 
-        rm -f *.err *.map *.sym mem.trk
