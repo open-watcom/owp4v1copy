@@ -1,2 +1,2 @@
-#include "windows.h"
+#include "../../brinfo/merge/res/wresdefn.h"
 #include "wv.rc"
