@@ -103,6 +103,7 @@ STATIC OURPTR freeVec;
  * The strings stored in a vecEntry are not null-terminated.
  */
 
+#ifdef USE_SCARCE
 STATIC RET_T vecScarce( void )
 /****************************/
 {
@@ -119,6 +120,7 @@ STATIC RET_T vecScarce( void )
 
     return( RET_ERROR );
 }
+#endif
 
 
 extern void VecInit( void )
@@ -133,7 +135,9 @@ extern void VecInit( void )
         new->next = freeVec;
         freeVec = new;
     }
+#ifdef USE_SCARCE
     IfMemScarce( vecScarce );
+#endif
 }
 
 
@@ -196,11 +200,6 @@ STATIC char *expandVec( VECSTR vec )
     }
 
     result = MallocSafe( ((OURPTR)vec)->d.totlen + 1 );
-#if 0   /* 24-jan-90 AFS */
-    if( result == NULL ) {
-        PrtMsg( FTL|LOC| MAXIMUM_STRING_LENGTH );
-    }
-#endif
 
     d = result;
     for( ; cur != NULL; cur = cur->next ) {

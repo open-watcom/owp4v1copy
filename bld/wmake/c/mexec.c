@@ -28,26 +28,27 @@
 *
 ****************************************************************************/
 
+
 #include <sys/types.h>
 #if !defined( __UNIX__ )
- #include <direct.h>
- #include <dos.h>
+    #include <direct.h>
+    #include <dos.h>
 #endif
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #if defined( __WATCOMC__ ) || !defined( __LINUX__ )
-#include <process.h>
+    #include <process.h>
 #endif
 #ifdef __LINUX__
-#include <sys/wait.h>
+    #include <sys/wait.h>
 #endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #ifdef DLLS_IMPLEMENTED
-#include <idedrv.h>
+    #include <idedrv.h>
 #endif
 
 #include "massert.h"
@@ -99,6 +100,7 @@ STATIC const char *const dosInternals[] = {   /* COMMAND.COM commands */
     "DEL",
     "DIR",
     "ECHO",
+#define COM_ECHO    11  /* index of the echo keyword */
     "ERASE",
     "FOR",
 #define COM_FOR     13  /* index of the for keyword */
@@ -142,6 +144,7 @@ STATIC const char *const dosInternals[] = {   /* COMMAND.COM commands */
     "DIR",
     "DPATH",
     "ECHO",
+#define COM_ECHO    12  /* index of the echo keyword */
     "ENDLOCAL",
     "ERASE",
     "EXIT",
@@ -192,6 +195,7 @@ STATIC const char *const dosInternals[] = {   /* COMMAND.COM commands */
     "DIR",
     "DPATH",
     "ECHO",
+#define COM_ECHO    12  /* index of the echo keyword */
     "ENDLOCAL",
     "ERASE",
     "EXIT",
@@ -961,7 +965,7 @@ STATIC RET_T handleSet( const char *cmd )
         return( mySystem( cmd, cmd ) );
     }
 
-        /* anything goes in a dos set name... even punctuation! */
+    /* anything goes in a dos set name... even punctuation! */
     name = p;
     while( *p != NULLCHAR && !isws( *p ) && *p != '=' ) {
         ++p;
@@ -985,6 +989,32 @@ STATIC RET_T handleSet( const char *cmd )
     retcode = PutEnvSafe( env );
     if( retcode != 0 ) {
         return( RET_ERROR );
+    }
+    return( RET_SUCCESS );
+}
+
+
+STATIC RET_T handleEcho( const char *cmd )
+/*****************************************
+ * "ECHO" <string>
+ */
+{
+    const char  *p;         /* we walk cmd with this        */
+
+    assert( cmd != NULL );
+
+#ifdef DEVELOPMENT
+    PrtMsg( DBG|INF| INTERPRETING, dosInternals[ COM_ECHO ] );
+#endif
+
+    if( Glob.noexec ) {
+        return( RET_SUCCESS );
+    }
+
+    if( cmd[4] ) {      /* check for echo with no arguments */
+        p = cmd + 5;    /* assume "ECHO "; whitespace gets printed! */
+
+        PrtMsg( INF| PRNTSTR, p );
     }
     return( RET_SUCCESS );
 }
@@ -1380,26 +1410,6 @@ STATIC RET_T handleChangeDrive( const char *cmd )
     }
     return( RET_SUCCESS );
 }
-
-
-#if 0
-STATIC RET_T handleCHDrive( char *cmd )
-/*************************************/
-{
-    unsigned    drive;
-
-    if( !isalpha( *cmd ) ) {
-        PrtMsg( ERR| CHANGING_DRIVE, *cmd );
-        return( RET_ERROR );
-    }
-    drive = toupper( *cmd ) - ( 'A' - 1 );
-    if( DosSelectDisk( drive ) != 0 ) {
-        PrtMsg( ERR| CHANGING_DRIVE, *cmd );
-        return( RET_ERROR );
-    }
-    return( RET_SUCCESS );
-}
-#endif
 #endif
 #endif
 
@@ -1711,6 +1721,7 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
         my_ret = mySystem( cmdname, cmd );
     } else if( comnum >= 0 ) {              /* check if we interpret it */
         switch( comnum ) {
+        case COM_ECHO:  my_ret = handleEcho( cmd );         break;
         case COM_SET:   my_ret = handleSet( cmd );          break;
         case COM_FOR:   my_ret = handleFor( cmd );          break;
         case COM_IF:    my_ret = handleIf( cmd );           break;

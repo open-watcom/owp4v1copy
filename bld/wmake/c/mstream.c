@@ -24,10 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Stream processing for wmake.
 *
 ****************************************************************************/
+
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -36,7 +36,7 @@
 #include <stdlib.h>
 #include <string.h>
 #ifdef __WATCOMC__
-#include <share.h>
+    #include <share.h>
 #endif
 
 #include "macros.h"
@@ -381,7 +381,7 @@ extern STRM_T GetCHR( void )
     }
 }
 
-
+#ifdef USE_SCARCE
 STATIC RET_T streamScarce( void )
 /*******************************/
 {
@@ -399,7 +399,7 @@ STATIC RET_T streamScarce( void )
 
     return( RET_SUCCESS );
 }
-
+#endif
 
 extern void StreamFini( void )
 /****************************/
@@ -425,7 +425,9 @@ extern void StreamInit( void )
         freeSent = sent;
     }
 
+#ifdef USE_SCARCE
     IfMemScarce( streamScarce );
+#endif
 }
 
 

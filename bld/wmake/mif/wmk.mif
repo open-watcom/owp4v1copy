@@ -47,7 +47,6 @@ mvecstr.obj
 !ifdef DLLS_IMPLEMENTED
 objs += idedrv.obj
 objs += idemsgfm.obj
-objs += idemsgpr.obj
 !endif
 
 !ifeq release 0

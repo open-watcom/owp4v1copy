@@ -37,7 +37,7 @@
 #include <unistd.h>
 
 #ifndef __WATCOMC__
-#include "clibext.h"
+    #include "clibext.h"
 #endif
 
 #include "mtypes.h"
@@ -46,14 +46,20 @@
 // DLL's implemented only for:
 //      Intel 386 (OS/2,NT)
 #if defined(__OS2__) && defined(__386__)
-# define DLLS_IMPLEMENTED
+    #define DLLS_IMPLEMENTED
 #elif defined(__NT__) && defined(__386__)
-# define DLLS_IMPLEMENTED
+    #define DLLS_IMPLEMENTED
 #endif
 
 #ifdef DLLS_IMPLEMENTED
-# include "idedrv.h"
-# include <malloc.h>
+    #include "idedrv.h"
+    #include <malloc.h>
+#endif
+
+// For debug versions, always use scarce memory manager - memory
+// leak checking depends on it
+#ifndef NDEBUG
+    #define USE_SCARCE  1
 #endif
 
 #if defined( __DOS__ )
@@ -72,7 +78,8 @@
 # define LINE_BUFF          80      /* length of one-line user input buffer */
 #if !defined( __386__ )
 # define USE_FAR            1       /* use far memory for some things       */
-# define FAR                far
+# define USE_SCARCE         1       /* use scarce memory management         */
+# define FAR                _far
 # define FILE_BUFFER_SIZE   512     /* amount to read() at a time           */
 #else
 # define FAR
