@@ -116,4 +116,20 @@ extra_c_flags_win = -zw-zW
 !endif
 extra_c_flags_i86 = -zu
 
+!ifeq memory_model_i86 m
+wpi_lib_win_i86 = $(wpi_dir)/wini86m/wpi.lib
+!else
+wpi_lib_win_i86 = $(wpi_dir)/wini86/wpi.lib
+!endif
+wpi_lib_win_386 = $(wpi_dir)/win386/wpi.lib
+wpi_lib_os2_i86 = $(wpi_dir)/os2i86/wpi.lib
+wpi_lib_os2_386 = $(wpi_dir)/os2386/wpi.lib
+wpi_lib_nt_386 = $(wpi_dir)/nt386/wpi.lib
+wpi_lib_nt_axp = $(wpi_dir)/ntaxp/wpi.lib
+wpi_lib_qnx_386 = $(wpi_dir)/qnx386/wpi.lib
+
+wpi_lib = $(wpi_lib_$(host_os)_$(host_cpu))
+
+wlib_opt = -p=64
+
 !include ../../master.mif

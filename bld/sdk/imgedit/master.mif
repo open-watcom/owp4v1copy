@@ -132,12 +132,12 @@ extra_c_flags_winutils= -fh
 
 extra_l_flags_win = libpath $(watcom_dir)/lib &
                     lib toolhelp.lib lib commdlg.lib lib ddeml.lib &
-                    lib $(wpi_dir)/lib/wpi_win.lib &
+                    lib $(wpi_dir)/wini86/wpi.lib &
                     lib $(wr_dir)/wini86/wr.lib &
                     option rwr option stack=16k option heapsize=2k
 !ifeq host_CPU 386
 extra_l_flags_nt  = libpath $(watcom_dir)/lib &
-                    lib $(wpi_dir)/lib/wpi_nt.lib &
+                    lib $(wpi_dir)/nt386/wpi.lib &
                     lib $(wr_dir)/nt386/wr.lib &
                     option stack=32k
 !ifdef __LINUX__
@@ -146,12 +146,11 @@ extra_l_flags_nt += alias "'_WinMain'='_WinMain@16'"
 extra_l_flags_nt += alias '_WinMain'='_WinMain@16'
 !endif
 !else ifeq host_CPU axp
-extra_l_flags_nt  = libpath $(wpi_dir)/lib &
-                    lib $(wpi_dir)/lib/wpi_axp.lib &
+extra_l_flags_nt  = lib $(wpi_dir)/ntaxp/wpi.lib &
                     lib $(wr_dir)/ntaxp/wr.lib &
                     option stack=32k
 !endif
-extra_l_flags_os2 = lib wpi_os2.lib option stack=12k option heapsize=2k &
+extra_l_flags_os2 = lib $(wpi_dir)/os2386/wpi.lib option stack=12k option heapsize=2k &
                     option symfile=$(name).sym
 extra_l_flags     = lib $(wres_lib) option map
 

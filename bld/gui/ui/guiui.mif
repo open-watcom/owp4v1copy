@@ -108,4 +108,6 @@ extra_c_flags +=-of
 extra_c_flags +=-of
 !endif
 
+wlib_opt = -p=32
+
 !include ../../master.mif
