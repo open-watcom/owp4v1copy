@@ -67,10 +67,10 @@ int __is_nonIBM( void )
 #if defined(__WARP__) || defined(__NT__)
     return( 0 );
 #elif defined(__WINDOWS_386__)
-    extern      unsigned short  __F000;
+    extern      unsigned short  __F000H;
     char        _WCFAR *p;
 
-    p = MK_FP( __F000, 0xfff5 );
+    p = MK_FP( __F000H, 0xfff5 );
     CHECK_IT
 #elif defined(__WINDOWS__)
     extern char _WCFAR  _F000H[];
