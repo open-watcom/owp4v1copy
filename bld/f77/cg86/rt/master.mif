@@ -38,7 +38,7 @@ extra_c_flags += -d__NEC__
 #------------------------ assembler options
 
 asm_incs  = -i"$(f77_dir)/cg86/inc" -i"$(watcom_dir)/h" -i"$(comp_cfg_dir)/h"
-asm_opts  = -w3 -d1 -zq -fp$(fp_model) $(asm_incs) -fo=.obj
+asm_opts  = -w4 -d1 -fp$(fp_model) $(asm_incs) -fo=.obj
 
 !ifeq host_CPU 386
 
