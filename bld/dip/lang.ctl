@@ -44,25 +44,29 @@ set PROJDIR=<CWD>
 #        <CPCMD> <DEVDIR>/dip/watcom/os2i86/watcom.dll       <RELROOT>/rel2/binp/dll/
 #        <CPCMD> <DEVDIR>/dip/watcom/os2i86/watcom.sym       <RELROOT>/rel2/binp/dll/
         <CPCMD> <DEVDIR>/dip/dwarf/os2386/dwarf.d32         <RELROOT>/rel2/binp/
+        <CPCMD> <DEVDIR>/dip/dwarf/os2386/dwarf.sym         <RELROOT>/rel2/binp/
         <CPCMD> <DEVDIR>/dip/codeview/os2386/codeview.d32   <RELROOT>/rel2/binp/
+        <CPCMD> <DEVDIR>/dip/codeview/os2386/codeview.sym   <RELROOT>/rel2/binp/
         <CPCMD> <DEVDIR>/dip/export/os2386/export.d32       <RELROOT>/rel2/binp/
+        <CPCMD> <DEVDIR>/dip/export/os2386/export.sym       <RELROOT>/rel2/binp/
         <CPCMD> <DEVDIR>/dip/watcom/os2386/watcom.d32       <RELROOT>/rel2/binp/
+        <CPCMD> <DEVDIR>/dip/watcom/os2386/watcom.sym       <RELROOT>/rel2/binp/
 
   [ IFDEF (os_nt "") <2*> ]
         <CPCMD> <DEVDIR>/dip/dwarf/nt386/dwarf.dll          <RELROOT>/rel2/binnt/
-#        <CPCMD> <DEVDIR>/dip/dwarf/nt386/dwarf.sym          <RELROOT>/rel2/binnt/
+        <CPCMD> <DEVDIR>/dip/dwarf/nt386/dwarf.sym          <RELROOT>/rel2/binnt/
         <CPCMD> <DEVDIR>/dip/codeview/nt386/codeview.dll    <RELROOT>/rel2/binnt/
-#        <CPCMD> <DEVDIR>/dip/codeview/nt386/codeview.sym    <RELROOT>/rel2/binnt/
+        <CPCMD> <DEVDIR>/dip/codeview/nt386/codeview.sym    <RELROOT>/rel2/binnt/
         <CPCMD> <DEVDIR>/dip/export/nt386/export.dll        <RELROOT>/rel2/binnt/
-#        <CPCMD> <DEVDIR>/dip/export/nt386/export.sym        <RELROOT>/rel2/binnt/
+        <CPCMD> <DEVDIR>/dip/export/nt386/export.sym        <RELROOT>/rel2/binnt/
         <CPCMD> <DEVDIR>/dip/watcom/nt386/watcom.dll        <RELROOT>/rel2/binnt/
-#        <CPCMD> <DEVDIR>/dip/watcom/nt386/watcom.sym        <RELROOT>/rel2/binnt/
+        <CPCMD> <DEVDIR>/dip/watcom/nt386/watcom.sym        <RELROOT>/rel2/binnt/
 
   [ IFDEF (os_linux "") <2*> ]
         <CPCMD> <DEVDIR>/dip/dwarf/linux386/dwarf.dip       <RELROOT>/rel2/binl/
-#        <CPCMD> <DEVDIR>/dip/dwarf/linux386/dwarf.sym       <RELROOT>/rel2/binl/
+        <CPCMD> <DEVDIR>/dip/dwarf/linux386/dwarf.sym       <RELROOT>/rel2/binl/
         <CPCMD> <DEVDIR>/dip/watcom/linux386/watcom.dip     <RELROOT>/rel2/binl/
-#        <CPCMD> <DEVDIR>/dip/watcom/linux386/watcom.sym     <RELROOT>/rel2/binl/
+        <CPCMD> <DEVDIR>/dip/watcom/linux386/watcom.sym     <RELROOT>/rel2/binl/
 #        <CPCMD> <DEVDIR>/dip/codeview/linux386/codeview.dip <RELROOT>/rel2/binl/
 #        <CPCMD> <DEVDIR>/dip/codeview/linux386/codeview.sym <RELROOT>/rel2/binl/
 #        <CPCMD> <DEVDIR>/dip/export/linux386/export.dip     <RELROOT>/rel2/binl/
