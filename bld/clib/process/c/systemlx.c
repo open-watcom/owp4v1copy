@@ -36,6 +36,5 @@
 
 int system( const char *cmd )
 {
-    int rc = spawnl( 0, "/bin/sh", "sh", "-c", cmd, 0 );
-    return errno ? 127 : rc;
+    return spawnl( 0, "/bin/sh", "sh", "-c", cmd, 0 );
 }
