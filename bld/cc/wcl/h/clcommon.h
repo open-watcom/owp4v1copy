@@ -61,7 +61,7 @@ extern  char    Exe_Name[_MAX_PATH];/* name of executable                 */
 extern  char    *Map_Name;          /* name of map file                   */
 extern  char    *Obj_Name;          /* object file name pattern           */
 extern  char    Libs[MAX_CMD];      /* list of libraires from Cmd         */
-extern  char    **WclMsgs;
+extern  const char    *WclMsgs[];
 extern  struct  list *Obj_List;     /* linked list of object filenames    */
 
 struct  flags {
@@ -88,7 +88,7 @@ extern  struct flags Flags;
 
 extern  char *DebugOptions[];
 
-void    PrintMsg( char *fmt, ... );
+void    PrintMsg( const char *fmt, ... );
 void    FindPath( char *name, char *buf );
 void    BuildLinkFile( void );
 void    AddName( char *, FILE * );
@@ -96,11 +96,8 @@ char    *MakePath( char * );
 char    *GetName( char * );
 
 enum {
-#undef pick
 #undef E
-#undef J
 #define E(msg)  msg
-#define J(msg)
 #define pick(code,msg)  code
 #include "wclmsg.h"
 };

@@ -54,6 +54,7 @@
 #define DIS         "wdis"
 #define CC          "wcc386"          /* Open Watcom C compiler          */
 #define CCXX        "wpp386"          /* Open Watcom C++ compiler        */
+#define WCLENV      "OWCC"
 #define STACKSIZE   "8192"            /* default stack size              */
 #define _NAME_      "C/C++32 "
 
@@ -66,7 +67,7 @@
 #define LINK        "wlink"             /* Open Watcom linker              */
 #define TEMPFILE    "@__WCL__.LNK"      /* temporary linker directive file */
 
-char *OptEnvVar = "OWCC";
+char *OptEnvVar = WCLENV;           /* Data interface for GetOpt()        */
 
 static  char    *Cmd;               /* command line parameters            */
 static  char    *Word;              /* one parameter                      */
@@ -77,17 +78,18 @@ static  char    CC_Opts[MAX_CMD];   /* list of compiler options from Cmd  */
 static  char    CC_Path[_MAX_PATH]; /* path name for wcc.exe              */
 static  char    PathBuffer[_MAX_PATH];/* buffer for path name of tool     */
         FILE    *Fp;                /* file pointer for Temp_Link         */
-static  char    *Link_Name;         /* name for Temp_Link if /fd specified*/
+static  char    *Link_Name;         /* Temp_Link copy if /fd specified    */
 static  char    *Temp_Link;         /* temporary linker directive file    */
+                                    /* Temp_Link concurrent usages clash  */
         struct  list *Obj_List;     /* linked list of object filenames    */
 static  struct directives *Directive_List; /* linked list of directives   */
         char    Exe_Name[_MAX_PATH];/* name of executable                 */
         char    *Map_Name;          /* name of map file                   */
         char    *Obj_Name;          /* object file name pattern           */
-static  char    *O_Name;            /* name of -o option                  */
 static  char    *StackSize;         /* size of stack                      */
 static  char    DebugFlag;          /* debug info wanted                  */
 static  char    Conventions;        /* 'r' for -3r or 's' for -3s         */
+static  char    *O_Name;            /* name of -o option                  */
 
         struct flags Flags;
 
@@ -108,30 +110,17 @@ void    Usage( void );
   #define EXE_EXT ".exe"
 #endif
 
-
-char *EnglishMsgs[] = {
 #undef pick
-#undef E
-#undef J
-#define E(msg)  msg
-#define J(msg)
 #define pick(code,english)      english
+
+extern const char *WclMsgs[] = {
 #include "wclmsg.h"
 };
 
-char *JapaneseMsgs[] = {
-#undef pick
-#undef E
-#undef J
-#define E(msg)
-#define J(msg)  msg
-#define pick(code,japanese)     japanese
-#include "wclmsg.h"
+static const char *EnglishHelp[] = {
+    "",
+    NULL
 };
-
-char    **WclMsgs = EnglishMsgs;
-
-static const char *usage[] = {"",NULL};
 
 void print_banner( void )
 {
@@ -162,8 +151,11 @@ int   main( int argc, char **argv )
     int rc;
 
     Temp_Link = TEMPFILE;
+    errno = 0; /* Standard C does not require fopen failure to set errno */
     if( ( Fp = fopen( &Temp_Link[ 1 ], "w" ) ) == NULL ) {
-        PrintMsg( WclMsgs[ UNABLE_TO_OPEN_TEMPORARY_FILE ] );
+        /* Message before banner decision as '@' option uses Fp in Parse() */
+        PrintMsg( WclMsgs[ UNABLE_TO_OPEN_TEMPORARY_FILE ], Temp_Link+1,
+            strerror( errno ) );
         exit( 1 );
     }
     Map_Name = NULL;
@@ -251,11 +243,11 @@ static  int  Parse( int argc, char **argv )
     StackSize = NULL;
     Conventions = 'r';
 
-    AltOptChar = '-';
+    AltOptChar = '-'; /* Suppress '/' as option herald */
     while ((c = GetOpt( &argc, argv,
                         "0123::456a::b:c::D:d:Ee:f:Gg::h:I:i:jk:L:l:Mm:N:n:"
                         "O::o:P::p::Qr::Sst:U:vW:w:Xx::yz:",
-                        usage)) != -1) {
+                        EnglishHelp)) != -1) {
 
         char *Word = "";
         if (OptArg) {
@@ -751,6 +743,7 @@ static  int  CompLink( void )
 static  void  MakeName( char *name, char *ext )
 /*********************************************/
 {
+    /* If the last '.' is before the last path seperator character */
     if( strrchr( name, '.' ) <= strpbrk( name, PATH_SEP_STR ) ) {
         strcat( name, ext );
     }
