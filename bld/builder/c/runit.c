@@ -60,7 +60,7 @@ int __fnmatch( const char *pattern, const char *string )
 {
     if( *string == 0 ) {
         while( *pattern == '*' )
-	    ++pattern;
+            ++pattern;
         return( ( *pattern == 0 ) ? 1 : 0 );
     }
     switch( *pattern ) {
@@ -196,7 +196,7 @@ static copy_entry *BuildList( char *src, char *dst, bool test_abit )
         if( test_abit ) {
             fp = fopen( head->dst, "rb" );
             if( fp != NULL )
-	        fclose( fp );
+                fclose( fp );
             _dos_getfileattr( head->src, &attr );
             if( !( attr & _A_ARCH ) && fp != NULL ) {
                 /* file hasn't changed */
@@ -222,7 +222,7 @@ static copy_entry *BuildList( char *src, char *dst, bool test_abit )
     for( ;; ) {
         dent = readdir( directory );
         if( dent == NULL )
-	    break;
+            break;
 #ifdef __UNIX__
         {
             struct stat buf;
@@ -258,7 +258,7 @@ static copy_entry *BuildList( char *src, char *dst, bool test_abit )
         if( test_abit ) {
             fp = fopen( curr->dst, "rb" );
             if( fp != NULL )
-	        fclose( fp );
+                fclose( fp );
             if( !( dent->d_attr & _A_ARCH ) && fp != NULL ) {
                 /* file hasn't changed */
                 free( curr );
@@ -296,10 +296,11 @@ static unsigned ProcOneCopy( char *src, char *dst )
                 end = end1;
             else
                 end = end2;
-        } else if( end1 )
+        } else if( end1 ) {
             end = end1;
-        else
+        } else {
             end = end2;
+        }
         if( end ) {
             end[0] = 0;
 #ifdef __UNIX__
@@ -319,7 +320,7 @@ static unsigned ProcOneCopy( char *src, char *dst )
     for( ;; ) {
         len = fread( buff, 1, sizeof( buff ), sp );
         if( len == 0 )
-	    break;
+            break;
         if( ferror( sp ) ) {
             Log( FALSE, "Error reading '%s': %s\n", src, strerror( errno ) );
             fclose( sp );
@@ -382,7 +383,7 @@ static unsigned ProcCopy( char *cmd, bool test_abit )
     list = BuildList( src, dst, test_abit );
     for( ;; ) {
         if( list == NULL )
-	    break;
+            break;
         res = ProcOneCopy( list->src, list->dst );
         if( res != 0 ) {
             while( list != NULL ) {
@@ -432,14 +433,14 @@ static unsigned DoPMake( pmake_data *data )
     for( curr = data->dir_list; curr != NULL; curr = curr->next ) {
         res = SysChdir( curr->dir_name );
         if( res != 0 )
-	    return( res );
+            return( res );
         getcwd( IncludeStk->cwd, sizeof( IncludeStk->cwd ) );
         if( data->display )
-	    LogDir( IncludeStk->cwd );
+            LogDir( IncludeStk->cwd );
         PMakeCommand( data, cmd );
         res = SysRunCommand( cmd );
         if( res != 0 )
-	    return( res );
+            return( res );
     }
     return( 0 );
 }
