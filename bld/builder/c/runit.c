@@ -219,16 +219,21 @@ static copy_entry *BuildList( char *src, char *dst, bool test_abit )
         if( dent == NULL ) break;
 #ifdef __UNIX__
         {
-            if( __fnmatch(pattern, dent->d_name) == 0 ) continue;
             struct stat buf;
             size_t len = strlen( srcdir );
+
+            if( __fnmatch(pattern, dent->d_name) == 0 )
+                continue;
+
             strcat( srcdir, dent->d_name );
             stat( srcdir, &buf );
             srcdir[len] = '\0';
-            if ( S_ISDIR( buf.st_mode ) ) continue;
+            if ( S_ISDIR( buf.st_mode ) )
+                continue;
         }
 #else
-        if( dent->d_attr & (_A_SUBDIR|_A_VOLID) ) continue;
+        if( dent->d_attr & (_A_SUBDIR|_A_VOLID) )
+            continue;
 #endif
         curr = Alloc( sizeof( *curr ) );
         curr->next = NULL;
