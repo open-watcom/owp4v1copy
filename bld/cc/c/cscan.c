@@ -218,8 +218,20 @@ int KwLookup()
     /*  lookup id in keyword table */
 
     hash = KwHashValue + FIRST_KEYWORD;
-    if ( hash == T_INLINE && !CompFlags.extensions_enabled /* && !c99 */ )
-      hash = T_ID;
+
+    if( hash == T_INLINE && !CompFlags.extensions_enabled && !CompFlags.c99_extensions )
+        hash = T_ID;
+
+    if( !CompFlags.c99_extensions ) {
+        switch( hash ) {
+        case T_RESTRICT:
+        case T__COMPLEX:
+        case T__IMAGINARY:
+        case T__BOOL:
+            hash = T_ID;
+        }
+    }
+
     keyword = Tokens[ hash ];
     if( *keyword == Buffer[0] ) {
         if( strcmp( keyword, Buffer ) == 0 )  return( hash );
@@ -418,7 +430,10 @@ int doScanFloat()
         ConstType = TYPE_FLOAT;
     } else if( c == 'l' || c == 'L' ) {
         c = SaveNextChar();
-        ConstType = TYPE_LONG_DOUBLE;
+        if( CompFlags.use_long_double )
+            ConstType = TYPE_LONG_DOUBLE;
+        else
+            ConstType = TYPE_DOUBLE;
     } else {
         ConstType = TYPE_DOUBLE;
     }
