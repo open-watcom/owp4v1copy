@@ -175,7 +175,7 @@ extra_c_flags_cmac2    = -fh=pch01.pch
 extra_c_flags_cmacadd  = -fh=pch01.pch
 extra_c_flags_cmacsupp = -fh=pch01.pch
 extra_c_flags_cmdln    = -fh=pch01.pch
-extra_c_flags_cmdlnany = -os -fh=pch01.pch
+extra_c_flags_cmdlnany = -os
 extra_c_flags_cmdlnbat = -fh=pch01.pch
 extra_c_flags_cmdlnctx = -fh=pch01.pch
 extra_c_flags_cmdlnx86 = -fh=pch01.pch
