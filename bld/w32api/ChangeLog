@@ -1,3 +1,24 @@
+2003-01-11  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winnt.h (IMAGE_FILE_AGGRESIVE_WS_TRIM
+	IMAGE_FILE_LARGE_ADDRESS_AWARE): Add defines.
+
+2003-01-11  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/accctrl.h (enum _SE_OBJECT_TYPE): Add
+	SE_REGISTRY_WOW64_32KEY.
+	Reported by: Dimitri Papadopoulos  <dimitri_at@sourceforge.users.net>
+
+2003-01-11  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/commctrl.h (HDN_GETDISPINFO[AW]: Add defines.
+	(tagNMHDDISPINFO[AW}: Add structures and typedefs.
+	Reported by: Mat Nieuwenhoven  <matnieuw@users.sourceforge.net>
+
+2003-01-10  Christopher Faylor  <cgf@redhat.com>
+
+	* include/winsock2.h: Remove gethostname from INSIDE_CYGWIN protection.
+
 2003-01-08  Danny Smith  <dannysmith@users.sourceforge.net>
 
 	* lib/dxguid.c: Don't #include <objbase.h>.
