@@ -35,7 +35,8 @@
 #include "clibi64.h"
 #include <stdlib.h>
 
-static const char _WCI86FAR Alphabet[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+extern const char _WCI86FAR __Alphabet[];
+
 #if defined(__386__) || defined(M_I86)
 unsigned __int64 __ulldiv( unsigned __int64, unsigned _WCNEAR *);
 #if defined(__386__)
@@ -60,10 +61,10 @@ unsigned __int64 __ulldiv( unsigned __int64, unsigned _WCNEAR *);
         "mov dx,ax"        /* dx:ax = ax:bx */ \
         "mov ax,bx" \
         "xor bx,bx"           /* set word 3 of quotient to 0 */ \
-        "cmp dx,word ptr ss:[si]" /* if quotient will be >= 64K */ \ 
+        "cmp dx,word ptr ss:[si]" /* if quotient will be >= 64K */ \
         "jb div2"             /* then */ \
-        "mov bx,ax"       /* restore word 2 of dividend */ \ 
-        "mov ax,dx"       /* restore word 3 of dividend */ \ 
+        "mov bx,ax"       /* restore word 2 of dividend */ \
+        "mov ax,dx"       /* restore word 3 of dividend */ \
         "xor dx,dx"       /* - zero high part */ \
         "div word ptr ss:[si]"  /* - divide into word 3 of dividend */ \
         "xchg ax,bx"      /* - swap word 3,word 2 of dvdnd */ \
@@ -91,7 +92,7 @@ unsigned __int64 __ulldiv( unsigned __int64, unsigned _WCNEAR *);
         "cmp dx,word ptr ss:[si]" /* if quotient will be < 64K */ \
         "jb div3"             /* then need to do two divisions */ \
         "mov cx,ax"        /* restore word 1 of dividend */ \
-        "mov ax,dx"        /* restore word 2 of dividend */ \          
+        "mov ax,dx"        /* restore word 2 of dividend */ \
         "xor dx,dx"        /* zero high part */ \
         "jmp div2"         /* do three divisions*/ \
       "skip2:"      /* ax==bx==0 */ \
@@ -115,10 +116,10 @@ unsigned __int64 __ulldiv( unsigned __int64, unsigned _WCNEAR *);
         "mov dx,ax"        /* dx:ax = ax:bx */ \
         "mov ax,bx" \
         "xor bx,bx"           /* set word 3 of quotient to 0 */ \
-        "cmp dx,word ptr[si]" /* if quotient will be >= 64K */ \ 
+        "cmp dx,word ptr[si]" /* if quotient will be >= 64K */ \
         "jb div2"             /* then */ \
-        "mov bx,ax"       /* restore word 2 of dividend */ \ 
-        "mov ax,dx"       /* restore word 3 of dividend */ \ 
+        "mov bx,ax"       /* restore word 2 of dividend */ \
+        "mov ax,dx"       /* restore word 3 of dividend */ \
         "xor dx,dx"       /* - zero high part */ \
         "div word ptr[si]"  /* - divide into word 3 of dividend */ \
         "xchg ax,bx"      /* - swap word 3,word 2 of dvdnd */ \
@@ -146,7 +147,7 @@ unsigned __int64 __ulldiv( unsigned __int64, unsigned _WCNEAR *);
         "cmp dx,word ptr[si]" /* if quotient will be < 64K */ \
         "jb div3"             /* then need to do two divisions */ \
         "mov cx,ax"        /* restore word 1 of dividend */ \
-        "mov ax,dx"        /* restore word 2 of dividend */ \          
+        "mov ax,dx"        /* restore word 2 of dividend */ \
         "xor dx,dx"        /* zero high part */ \
         "jmp div2"         /* do three divisions*/ \
       "skip2:"      /* ax==bx==0 */ \
@@ -184,8 +185,8 @@ _WCRTLINK CHAR_TYPE *__F_NAME(__clib_ulltoa,__clib_wulltoa)(
 #else
             rem = value % radix;
             value = value / radix;
-#endif            
-            *q = Alphabet[ rem ];
+#endif
+            *q = __Alphabet[ rem ];
             ++q;
         } while( value );
         while( *p++ = (CHAR_TYPE)*--q );
