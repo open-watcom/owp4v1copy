@@ -10,18 +10,8 @@ set PROJDIR=<CWD>
 cdsay .
 
 [ BLOCK <1> build rel2 ]
-    cdsay OBJ286
-    wmake /h /i
-    cdsay ..\OBJ386
-    wmake /h /i
-    cdsay ..\OBJOS2
-    wmake /h /i
-    cdsay ..\OBJNT
-    wmake /h /i
-    cdsay ..\OBJWIN
-    wmake /h /i
-    cdsay ..\OBJQNX
-    wmake /h /i
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
+    cd <PROJDIR>
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================

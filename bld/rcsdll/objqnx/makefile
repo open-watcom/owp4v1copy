@@ -1,3 +1,4 @@
+#pmake: all cpu_i86 os_qnx
 CC = wpp
 CFLAGS = -d2-w4-zq-ml-bt=QNX
 OBJS = rcsdll.obj inifile.obj

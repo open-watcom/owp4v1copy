@@ -1,3 +1,4 @@
+#pmake: all build cpu_386 os_os2
 CC = wpp386
 !ifeq tools_10_0 1
 CFLAGS = -d2-w4-bd-zq-mf-bt=os2 -i=$(watcom_os220_h)

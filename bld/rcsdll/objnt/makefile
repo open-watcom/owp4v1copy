@@ -1,3 +1,4 @@
+#pmake: all build cpu_386 os_nt
 CC = wpp386
 CFLAGS = -d2-w4-bd-zq-mf-bt=nt-i=$(lang_root)\h\nt;..
 OBJS = rcsdll.obj mkssi.obj objcycle.obj inifile.obj

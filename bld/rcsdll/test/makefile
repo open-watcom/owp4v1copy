@@ -1,3 +1,4 @@
+#pmake: cpu_i86 os_win
 CC = wcc
 CFLAGS = -d2 -w4 -zW -zq -zu -ml -i$(win_h);..\..\h;..
 res1_flags = -bt=windows -i..\..\h;..

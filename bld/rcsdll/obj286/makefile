@@ -1,3 +1,4 @@
+#pmake: all cpu_i86 os_dos
 CC = wpp
 CFLAGS = -d2-w4-zq-ml-bt=DOS
 OBJS = rcsdll.obj inifile.obj

@@ -1,3 +1,4 @@
+#pmake: all build cpu_i86 os_win
 CC = wpp
 CFLAGS = -d1-w4-bd-zw-zq-zu-ml-bt=windows -i=$(lang_root)\h\win;..
 OBJS = rcsdll.obj mkssi.obj inifile.obj
