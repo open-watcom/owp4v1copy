@@ -256,49 +256,44 @@ int doScanName()
     unsigned char uc;
     } u;
     char        *scanptr;
+    char        *p;
 
     u.c = CurrChar;
-    token = TokenLen - 1;
 //      we know that NextChar will be pointing to GetNextChar()
 //      so it is safe to inline the function here.
 //      NextChar could also be pointing to ReScanBuffer().
+    p = &Buffer[TokenLen - 1];
     for(;;) {
         scanptr = ScanCharPtr;
         for(;;) {
             if( (CharSet[u.c] & (C_AL | C_DI)) == 0 ) break;
-            Buffer[token] = u.uc;
-            ++token;
+            *p++ = u.uc;
             u.uc = *scanptr++;
             if( (CharSet[u.c] & (C_AL | C_DI)) == 0 ) break;
-            Buffer[token] = u.uc;
-            ++token;
+            *p++ = u.uc;
             u.uc = *scanptr++;
             if( (CharSet[u.c] & (C_AL | C_DI)) == 0 ) break;
-            Buffer[token] = u.uc;
-            ++token;
+            *p++ = u.uc;
             u.uc = *scanptr++;
             if( (CharSet[u.c] & (C_AL | C_DI)) == 0 ) break;
-            Buffer[token] = u.uc;
-            ++token;
+            *p++ = u.uc;
             u.uc = *scanptr++;
             if( (CharSet[u.c] & (C_AL | C_DI)) == 0 ) break;
-            Buffer[token] = u.uc;
-            ++token;
+            *p++ = u.uc;
             u.uc = *scanptr++;
             if( (CharSet[u.c] & (C_AL | C_DI)) == 0 ) break;
-            Buffer[token] = u.uc;
-            ++token;
+            *p++ = u.uc;
             u.uc = *scanptr++;
             if( (CharSet[u.c] & (C_AL | C_DI)) == 0 ) break;
-            Buffer[token] = u.uc;
-            ++token;
+            *p++ = u.uc;
             u.uc = *scanptr++;
             if( (CharSet[u.c] & (C_AL | C_DI)) == 0 ) break;
-            Buffer[token] = u.uc;
-            ++token;
+            *p++ = u.uc;
             u.uc = *scanptr++;
-            if( token >= BufSize ) {
-                EnlargeBuffer( token * 2 );
+            if( p >= &Buffer[BufSize - 16] ) {
+                char *oldbuf = Buffer;
+                EnlargeBuffer( BufSize * 2 );
+                p += Buffer - oldbuf;
             }
         }
         ScanCharPtr = scanptr;
@@ -307,12 +302,14 @@ int doScanName()
         if( (CharSet[u.c] & (C_AL | C_DI)) == 0 ) break;
     }
     CurrChar = u.c;
-    if( token >= BufSize - 2 ) {
-        EnlargeBuffer( token * 2 );
+    if( p >= &Buffer[BufSize - 18] ) {
+        char *oldbuf = Buffer;
+        EnlargeBuffer( BufSize * 2 );
+        p += Buffer - oldbuf;
     }
-    Buffer[token] = '\0';
-    TokenLen = token;
-    CalcHash( Buffer, token );
+    *p = '\0';
+    TokenLen = p - Buffer;
+    CalcHash( Buffer, TokenLen );
     if( CompFlags.doing_macro_expansion ) return( T_ID );
     if( CompFlags.pre_processing == 2 ) return( T_ID );
     token = IdLookup( Buffer );
