@@ -30,7 +30,10 @@
 
 #include <unistd.h>
 #include <fcntl.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include "trpimp.h"
 
 unsigned ReqFile_get_config()
@@ -212,8 +215,6 @@ unsigned ReqFile_erase()
 
 unsigned ReqFile_run_cmd()
 {
-// TODO: Need to implement this for Linux!
-#if 0
     char         buff[256];
     char         *argv[4];
     char         *shell;
@@ -237,8 +238,17 @@ unsigned ReqFile_run_cmd()
     } else {
         argv[1] = NULL;
     }
-    pid = qnx_spawn( 0, 0, 0, -1, -1, _SPAWN_NEWPGRP | _SPAWN_TCSETPGRP,
-                    shell, argv, environ, NULL, -1 );
+    if ( (pid = fork()) == 0 ) { /* child */
+        pid_t pgrp;
+        setpgid( 0, 0 );
+        pgrp = getpgrp();
+        tcsetpgrp( 0, pgrp );
+        tcsetpgrp( 1, pgrp );
+        tcsetpgrp( 2, pgrp );
+        execv( shell, (const char **)argv );
+        exit( 1 );
+    }
+    /* parent */
     if( pid == -1 ) {
         ret->err = errno;
         return( sizeof( *ret ) );
@@ -246,7 +256,4 @@ unsigned ReqFile_run_cmd()
     waitpid( pid, &status, 0 );
     ret->err = WEXITSTATUS( status );
     return( sizeof( *ret ) );
-#endif
-    return 0;
 }
-

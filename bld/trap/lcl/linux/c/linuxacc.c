@@ -36,9 +36,11 @@
    * combine global into a struct (like the QNX trap file ) to make it a little
      clearer what is global and what not.
    * implement thread support
+   * implement corefile post-mortem support
 */
 
 #include <stddef.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <process.h>
@@ -65,6 +67,7 @@ static watch_point  wpList[ MAX_WP ];
 static int          wpCount = 0;
 static pid_t        pid;
 static int          attached;
+static int          just_attached;
 static u_short      flatCS;
 static u_short      flatDS;
 static int          last_sig;
@@ -557,8 +560,6 @@ static pid_t RunningProc( char *name, char **name_ret )
         ++name;
     }
     if( *name != '\0') return( 0 );
-    if ( pidd == 0 || sys_ptrace( PTRACE_ATTACH, pidd, 0, 0 ) == -1 )
-        return( 0 );
     return( pidd );
 }
 
@@ -625,8 +626,9 @@ unsigned ReqProg_load()
     }
     args[0] = parm_start;
     attached = TRUE;
+    just_attached = TRUE;
     pid = RunningProc( args[0], &name );
-    if( pid == 0 ) {
+    if( pid == 0 || sys_ptrace( PTRACE_ATTACH, pid, 0, 0 ) == -1 ) {
         attached = FALSE;
         args[0] = name;
         if( FindFilePath( TRUE, args[0], exe_name ) == 0 ) {
@@ -653,14 +655,16 @@ unsigned ReqProg_load()
         ret->task_id = pid;
         ret->flags |= LD_FLAG_IS_PROT | LD_FLAG_IS_32;
         /* wait until it hits _start (upon execve) */
-        if ( waitpid ( pid, &status, WUNTRACED ) < 0 )
-            goto fail;
-        if ( !WIFSTOPPED( status ) )
-            goto fail;
-        if ( attached && ( WSTOPSIG( status ) != SIGSTOP ) )
-            goto fail;
-        if ( !attached && ( WSTOPSIG( status ) != SIGTRAP ) )
-            goto fail;
+        if( attached ) {
+            ret->flags |= LD_FLAG_IS_STARTED;
+        } else {
+            if ( waitpid ( pid, &status, WUNTRACED ) < 0 )
+                goto fail;
+            if ( !WIFSTOPPED( status ) )
+                goto fail;
+            if ( WSTOPSIG( status ) != SIGTRAP )
+                goto fail;
+        }
         errno = 0;
     }
     ret->err = errno;
@@ -673,7 +677,7 @@ fail:
         if ( attached ) {
             sys_ptrace( PTRACE_DETACH, pid, 0, 0 );    
         } else {            
-            kill( pid, SIGKILL );
+            sys_ptrace( PTRACE_KILL, pid, 0, 0 );    
             waitpid( pid, &status, 0 );
         }
     }
@@ -689,7 +693,7 @@ unsigned ReqProg_kill()
             sys_ptrace( PTRACE_DETACH, pid, 0, 0 );
         } else {            
             int status;
-            kill( pid, SIGKILL );
+            sys_ptrace( PTRACE_KILL, pid, 0, 0 );    
             waitpid( pid, &status, 0 );
         }
     }
@@ -872,7 +876,14 @@ static unsigned ProgRun( int step )
         ret->conditions = COND_TERMINATE;
         goto end;
     }
-    
+
+    /* if we just attached, then first wait for SIGSTOP
+       doesn't work nicely if the process is stopped whilst
+       in a syscall though ... */
+    if ( attached && just_attached ) {
+        waitpid ( pid, &status, WUNTRACED );
+        just_attached = FALSE;
+    }
     /* we only want child-generated SIGINTs now */
     old = signal( SIGINT, SIG_IGN );
     if ( step ) {
@@ -966,15 +977,27 @@ unsigned ReqFile_string_to_fullpath()
     int                         len;
     char                        *name;
     char                        *fullname;
+    pid_t                       pidd;
+    char                        procfile[20];
 
+    pidd = 0;
     acc = GetInPtr( 0 );
     name = GetInPtr( sizeof( *acc ) );
     ret = GetOutPtr( 0 );
     fullname = GetOutPtr( sizeof( *ret ) );
     exe = ( acc->file_type == TF_TYPE_EXE ) ? TRUE : FALSE;
-    // TODO: Need to find out how to get the name of the
-    //       running process first...
-    len = FindFilePath( exe, name, fullname );
+    if( exe ) {
+        pidd = RunningProc( name, &name );
+    }
+    if( pidd != 0 ) {
+        sprintf( procfile, "/proc/%d/exe", pidd );
+        len = readlink( procfile, fullname, PATH_MAX );
+        if ( len < 0 )
+            len = 0;
+        fullname[len] = '\0';
+    } else {
+        len = FindFilePath( exe, name, fullname );
+    }
     if( len == 0 ) {
         ret->err = ENOENT;      /* File not found */
     } else {

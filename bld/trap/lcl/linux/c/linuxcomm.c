@@ -93,7 +93,7 @@ unsigned TryOnePath( char *path, struct stat *tmp, char *name, char *result )
 unsigned FindFilePath( int exe, char *name, char *result )
 {
     struct stat tmp;
-//    unsigned    len;
+    unsigned    len;
     char        *end;
 
     if( stat( (char *)name, &tmp ) == 0 ) {
@@ -102,7 +102,7 @@ unsigned FindFilePath( int exe, char *name, char *result )
     }
     // TODO: Need to find out how to get at the environment for the
     //       debug server process (I think!).
-/*    if( exe ) {
+    if( exe ) {
         return( TryOnePath( getenv( "PATH" ), &tmp, name, result ) );
     } else {
         len = TryOnePath( getenv( "WD_PATH" ), &tmp, name, result );
@@ -110,7 +110,7 @@ unsigned FindFilePath( int exe, char *name, char *result )
         len = TryOnePath( getenv( "HOME" ), &tmp, name, result );
         if( len != 0 ) return( len );
         return( TryOnePath( "/usr/watcom/wd", &tmp, name, result ) );
-    }*/
+    }
     return 0;
 }
 
