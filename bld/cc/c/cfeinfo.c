@@ -121,7 +121,7 @@ int VarParm( SYMPTR sym )
         parm = fn_typ->u.parms;
         if( parm != NULL )
         {
-            for(; typ = *parm; ++parm )
+            for(; (typ = *parm); ++parm )
             {
                 if( typ->decl_type == TYPE_DOT_DOT_DOT )
                     return( 1 );
@@ -467,7 +467,7 @@ struct aux_info *FindInfo( SYM_ENTRY *sym, SYM_HANDLE sym_handle )
     }
     if( sym_handle == SymFinally )
     {                /* 28-mar-94 */
-        static byte_seq FinallyCode = { 1, 0xc3 };
+        static byte_seq FinallyCode = { 1, {0xc3} };
 
         InlineInfo = DefaultInfo;
         InlineInfo.code = &FinallyCode;
@@ -482,7 +482,7 @@ struct aux_info *FindInfo( SYM_ENTRY *sym, SYM_HANDLE sym_handle )
         };
         static byte_seq TryFiniCode =
         {
-            6, 0x64, 0xA3, 0,0,0,0
+            6, {0x64, 0xA3, 0,0,0,0}
         };  /* mov fs:0,eax */
 
         InlineInfo = DefaultInfo;
@@ -755,7 +755,7 @@ static FNAMEPTR NextDependency( FNAMEPTR curr )
 static VOIDPTR NextLibrary( int index, aux_class request )
 {
     struct library_list *liblist;
-    char                *name;
+    char                *name = NULL;
     int                 i;
 
     i = 0;
@@ -1141,7 +1141,7 @@ extern char *FEExtName( CGSYM_HANDLE sym_handle, char **pat_ret )
         parm = fn_typ->u.parms;
         if( parm != NULL )
         {
-            for(; typ = *parm; ++parm )
+            for(; (typ = *parm); ++parm )
             {
                 if( typ->decl_type == TYPE_DOT_DOT_DOT )
                 {
@@ -1284,6 +1284,9 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, aux_class request )
 
     case PEGGED_REGISTER:
         return( SegPeggedReg( (unsigned)cgsym_handle ) );
+
+    default:
+        break;
     }
 
     inf = FindInfo( &sym, sym_handle );
@@ -1348,6 +1351,9 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, aux_class request )
             inf = LangInfo( sym.attrib, inf );
         }
         return( &inf->streturn );
+
+    default:
+        break;
     }
     return( NULL );
 }
