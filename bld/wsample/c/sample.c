@@ -556,17 +556,36 @@ int main()
 int sample_main( char far *win_cmd )
 #endif
 {
-    char    cmd_line[128];
-    char    arg[128];
+    char    *cmd_line;
+    char    *arg;
     char    *cmd;
     char far *tmp;
     char    *eoc;
+    int     cmdlen;
 
     SysInit();
 #if !defined(__WINDOWS__)
-    if( !MsgInit() ) fatal();
-    getcmd( (char *)cmd_line );
+    if( !MsgInit() )
+        fatal();
+
+    /* Command line may be several KB large on most OSes */
+    cmdlen = _bgetcmd( NULL, 0 );
+    cmd_line = malloc( cmdlen+1 );
+    arg = malloc( cmdlen+1 );
+    if( ( cmd_line == NULL ) || ( arg == NULL ) ) {
+        Output( MsgArray[MSG_SAMPLE_BUFF-ERR_FIRST_MESSAGE] );
+        Output( "\r\n" );
+        fatal();
+    }
+    getcmd( cmd_line );
 #else
+    cmd_line = malloc( 256 ); /* Just hope for the best */
+    arg = malloc( 256 );
+    if( ( cmd_line == NULL ) || ( arg == NULL ) ) {
+        Output( MsgArray[MSG_SAMPLE_BUFF-ERR_FIRST_MESSAGE] );
+        Output( "\r\n" );
+        fatal();
+    }
     _fstrcpy( cmd_line, win_cmd );
 #endif
     tmp = cmd_line;
@@ -574,7 +593,7 @@ int sample_main( char far *win_cmd )
     while( *cmd ) ++cmd;
     while( *--cmd == ' ' || *cmd == '\t' ) ;
     *++cmd = '\0';
-    cmd = Parse( (char *)cmd_line, (char *)arg+1, (char **)&eoc );    /*
+    cmd = Parse( cmd_line, arg+1, (char **)&eoc );    /*
           will set Ceiling, Margin, TimerMult, cmd, and arg
                                  */
     GetProg( cmd, eoc );
@@ -622,5 +641,7 @@ int sample_main( char far *win_cmd )
     CurrTick  = 0L;
     StartProg( cmd, ExeName, (char *)arg+1 );
     MsgFini();
+    free( cmd_line );
+    free( arg );
     return( 0 );
 }
