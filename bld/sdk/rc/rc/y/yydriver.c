@@ -122,7 +122,9 @@ typedef enum {
     P_ERROR
 } p_action;
 
-
+/* definitions and tables here */
+            /*  */
+/* */
 
 #ifdef YYDEBUG
 #include <stdio.h>
@@ -295,7 +297,8 @@ static p_action doAction( YYCHKTYPE t, parse_stack *state )
 #endif
         if (!yysyntaxerror) {
             switch( rule ) {
-            /*  *//* */
+            /*  */
+/* */
             default:
 #if 0                                   /*** change with new yacc */
                 yyval = yyvp[1];
