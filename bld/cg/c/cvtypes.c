@@ -212,7 +212,7 @@ static  long_offset   EndTypeString( cv_out *out ) {
     return( here );
 }
 
-extern   CVEndType( cv_out *out ) {
+extern  void    CVEndType( cv_out *out ) {
 /*********************************************/
     int     len;
 
@@ -221,7 +221,7 @@ extern   CVEndType( cv_out *out ) {
     *((u2 *)&out->buff[0]) = len-sizeof( u2 );  /* set type rec len*/
 }
 
-static  PatchLen( long_offset where, u2 what ){
+static  void    PatchLen( long_offset where, u2 what ){
 /********** back patch field list length **/
     long_offset         here;
     seg_id              old;
