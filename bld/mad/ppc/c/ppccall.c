@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  PowerPC call stack unwinding.
 *
 ****************************************************************************/
 
@@ -67,12 +66,12 @@ const mad_reg_info      **DIGENTRY MICallParmRegList( mad_string call, address r
     static const mad_reg_info *list[] = {
         &RegList[IDX_r3].info, &RegList[IDX_r4].info, &RegList[IDX_r5].info,
         &RegList[IDX_r6].info, &RegList[IDX_r7].info, &RegList[IDX_r8].info,
+        &RegList[IDX_r9].info, &RegList[IDX_r10].info,
         NULL };
 
     return( list );
 }
 
-#if 0 //NYI
 static addr_off GetAnOffset( address *a )
 {
     addr_off    off;
@@ -81,57 +80,63 @@ static addr_off GetAnOffset( address *a )
     return( off );
 }
 
-static mad_status HeuristicTraceBack( address *start,
+static mad_status HeuristicTraceBack( address const *start,
                                 address *execution,
                                 address *frame,
                                 address *stack,
-                                mad_registers *mr )
+                                mad_registers const *mr )
 {
     mad_disasm_data     dd;
     mad_status          ms;
     address             where;
 
     if( execution->mach.offset == start->mach.offset ) {
-        /* return address is in return register */
+        /* return address is in link register */
         if( mr == NULL ) return( MS_FAIL );
-        execution->mach.offset = mr->axp.r[AR_ra].u64.u._32[0];
+        execution->mach.offset = mr->ppc.lr.u._32[0];
         return( MS_OK );
     }
     /* have to parse the prologue */
-    ms = DisasmOne( &dd, start, 0 );
+    ms = DisasmOne( &dd, (address *)start, 0 );
     if( ms != MS_OK ) return( ms );
-    if( dd.ins.type != DI_AXP_LDA ) return( MS_FAIL );
+    if( dd.ins.type != DI_PPC_stwu ) return( MS_FAIL );
     where = *stack;
     stack->mach.offset -= dd.ins.op[1].value;
     for( ;; ) {
         if( execution->mach.offset == start->mach.offset ) break;
-        ms = DisasmOne( &dd, start, 0 );
+        ms = DisasmOne( &dd, (address *)start, 0 );
         if( ms != MS_OK ) return( ms );
-        if( dd.ins.type != DI_AXP_STQ && dd.ins.type != DI_AXP_STT ) break;
+        // TODO: figure out proper instruction types
+        if( dd.ins.type != DI_PPC_stw && dd.ins.type != DI_PPC_stwu ) break;
+        // TODO: redo this code for PowerPC
+#if 0
         if( TRANS_REG( dd.ins.op[0].base ) == AR_ra ) {
             where.mach.offset += dd.ins.op[1].value;
             execution->mach.offset = GetAnOffset( &where );
             return( MS_OK );
         }
+#else
+        return( MS_FAIL );
+#endif
     }
     if( mr == NULL ) return( MS_FAIL );
-    execution->mach.offset = mr->axp.r[AR_ra].u64.u._32[0];
+    execution->mach.offset = mr->ppc.lr.u._32[0];
     return( MS_OK );
 }
 
-static mad_status SymbolicTraceBack( address *start,
+static mad_status SymbolicTraceBack( address const *start,
                         address *execution,
                         address *frame,
                         address *stack,
-                        mad_registers *mr,
+                        mad_registers const *mr,
                         long bp_disp )
 {
     address             where;
 
     if( execution->mach.offset == start->mach.offset ) {
-        /* return address is in return register */
+        /* return address is in link register */
         if( mr == NULL ) return( MS_FAIL );
-        execution->mach.offset = mr->axp.r[AR_ra].u64.u._32[0];
+        execution->mach.offset = mr->ppc.lr.u._32[0];
         return( MS_OK );
     }
     where = *frame;
@@ -142,7 +147,6 @@ static mad_status SymbolicTraceBack( address *start,
     stack->mach.offset += sizeof( unsigned_64 );
     return( MS_OK );
 }
-#endif
 
 unsigned        DIGENTRY MICallUpStackSize( void )
 {
@@ -166,7 +170,6 @@ mad_status      DIGENTRY MICallUpStackLevel( mad_call_up_data *cud,
                                 address *stack,
                                 mad_registers **out )
 {
-#if 0 //NYI:
     address             prev_sp_value;
     mad_status          ms;
 
@@ -186,7 +189,4 @@ mad_status      DIGENTRY MICallUpStackLevel( mad_call_up_data *cud,
     if( ms != MS_OK ) return( ms );
     if( stack->mach.offset < prev_sp_value.mach.offset ) return( MS_FAIL );
     return( MS_OK );
-#else
-    return( MS_FAIL );
-#endif
 }
