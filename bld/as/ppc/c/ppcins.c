@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 #include "as.h"
 
 static bool insErrFlag = FALSE;    // to tell whether we had problems or not
@@ -558,3 +557,106 @@ extern void InsInit() {
 }
 
 extern instruction *InsCreate( sym_handle op_sym ) {
+//**************************************************
+// Allocate an instruction and initialize it.
+
+    instruction *ins;
+
+    ins = MemAlloc( sizeof( instruction ) );
+    ins->opcode_sym = op_sym;
+    ins->format = SymGetLink( op_sym );
+    ins->num_operands = 0;
+    return( ins );
+}
+
+extern void InsAddOperand( instruction *ins, ins_operand *op ) {
+//**********************************************************
+// Add an operand to the given instruction.
+
+    if( ins->num_operands == MAX_OPERANDS ) {
+        if( !insErrFlag ) {
+            Error( MAX_NUMOP_EXCEEDED );
+            insErrFlag = TRUE;
+        }
+        MemFree( op );
+        return;
+    }
+    if( insErrFlag) insErrFlag = FALSE;
+    ins->operands[ ins->num_operands++ ] = op;
+}
+
+extern void InsEmit( instruction *ins ) {
+//***************************************
+// Check an instruction to make sure operands match
+// and encode it. The encoded instruction is emitted
+// to the current OWL section.
+
+#ifndef NDEBUG
+    #ifdef _STANDALONE_
+    if( _IsOption( DUMP_INSTRUCTIONS ) ) {
+        DumpIns( ins );
+    }
+    #endif
+#endif
+    if( insErrFlag == FALSE && PPCValidate( ins ) ) {
+        #ifdef _STANDALONE_
+        PPCEmit( CurrentSection, ins );
+        #else
+        PPCEmit( ins );
+        #endif
+    }
+}
+
+extern void InsDestroy( instruction *ins ) {
+//******************************************
+// Free up an instruction and all operands which
+// are hanging off of it.
+
+    int         i;
+
+    for( i = 0; i < ins->num_operands; i++ ) {
+        MemFree( ins->operands[ i ] );
+    }
+    MemFree( ins );
+}
+
+extern void InsFini() {
+//*********************
+
+    ins_table   *curr;
+    ins_symbol  *next;
+    ins_symbol  *entry;
+    int         i, n;
+    extern instruction *AsCurrIns; // from as.y
+
+    if( AsCurrIns != NULL ) {
+        InsDestroy( AsCurrIns );
+        AsCurrIns = NULL;
+    }
+    n = sizeof( PPCTable ) / sizeof( PPCTable[0] );
+    for( i = 0; i < n; i++ ) {
+        curr = &PPCTable[ i ];
+        for( entry = curr->symbols; entry != NULL; entry = next ) {
+            next = entry->next;
+            MemFree( entry );
+        }
+        curr->symbols = NULL;   // need to reset this pointer
+    }
+}
+
+#ifdef _STANDALONE_
+#ifndef NDEBUG
+extern void DumpIns( instruction *ins ) {
+//***************************************
+
+    int         i;
+
+    printf( "%-11s", SymName( ins->opcode_sym ) );
+    for( i = 0; i < ins->num_operands; i++ ) {
+        if( i != 0 ) printf( ", " );
+        DumpOperand( ins->operands[ i ] );
+    }
+    printf( "\n" );
+}
+#endif
+#endif
