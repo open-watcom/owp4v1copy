@@ -858,6 +858,18 @@ dis_return DisCliGetData( void *d, unsigned off, unsigned int size, void *data )
     return( DR_OK );
 }
 
+static int GetValueByteSize( unsigned long value )
+{
+    int                 size;
+
+    for( size = 4; size > 1; size-- ) {
+        if( value & 0xFF000000 )
+            break;
+        value <<= 8;
+    }
+    return( size );
+}
+
 unsigned DisCliValueString( void *d, dis_dec_ins *ins, unsigned opnd, char *buff )
 {
     mad_disasm_data     *dd = d;
@@ -867,7 +879,6 @@ unsigned DisCliValueString( void *d, dis_dec_ins *ins, unsigned opnd, char *buff
     address             val;
     dis_operand         *op;
     int                 size;
-    unsigned long       disp;
 
     op = &ins->op[opnd];
     p = buff;
@@ -886,7 +897,21 @@ unsigned DisCliValueString( void *d, dis_dec_ins *ins, unsigned opnd, char *buff
             break;
         }
     case DO_IMMED:
-        MCTypeInfoForHost( MTK_INTEGER, (ins->flags & DIF_X86_OPND_LONG) ? 4 : 2 , &mti );
+        switch( op->ref_type ) {
+        case DRT_X86_BYTE:
+            size = 1;
+            break;
+        case DRT_X86_WORD:
+            size = 2;
+            break;
+        case DRT_X86_DWORD:
+        case DRT_X86_DWORDF:
+            size = 4;
+            break;
+        default:
+            size = (ins->flags & DIF_X86_OPND_LONG) ? 4 : 2;
+        }
+        MCTypeInfoForHost( MTK_INTEGER, size , &mti );
         MCTypeToString( dd->radix, &mti, &op->value, &max, p );
         break;
     case DO_MEMORY_ABS:
@@ -903,12 +928,7 @@ unsigned DisCliValueString( void *d, dis_dec_ins *ins, unsigned opnd, char *buff
                 *(p++) = '-';
                 op->value = - op->value;
             }
-            disp = op->value;
-            for( size = 4; size > 1; size-- ) {
-                if( disp & 0xFF000000 )
-                    break;
-                disp <<= 8;
-            }
+            size = GetValueByteSize( op->value );
             MCTypeInfoForHost( MTK_INTEGER, size , &mti );
             MCTypeToString( dd->radix, &mti, &op->value, &max, p );
         }

@@ -1011,44 +1011,25 @@ static void X86GetImmedVal( SBIT s, WBIT w, void *d, dis_dec_ins *ins )
     ins->op[oper].type        = DO_IMMED;
     ++ins->num_ops;
 
-    if( w == W_FULL && !s ) {
+    if( w == W_FULL && s == S_FULL ) {
         if( ins->flags & DIF_X86_OPND_LONG ) {
             ins->op[oper].value = GetULong( d, ins->size );
+            ins->op[oper].ref_type = DRT_X86_DWORD;
             ins->size   += 4;
         } else {
             ins->op[oper].value = GetSShort( d, ins->size );
+            ins->op[oper].ref_type = DRT_X86_WORD;
             ins->size   += 2;
         }
     } else {
         ins->op[oper].value = GetSByte( d, ins->size );
-        ins->size   += 1;
-    }
-}
-
-static void X86GetUImmedVal( SBIT s, WBIT w, void *d, dis_dec_ins *ins )
-/*********************************************************************
- * Get Unsigned Immediate Value
- *                   s = 0  (S_FULL / S_DEFAULT)
- *                   s = 1  (S_BYTE)
- */
-{
-    int oper;
-
-    oper                      = ins->num_ops;
-    ins->op[oper].op_position = ins->size;
-    ins->op[oper].type        = DO_IMMED;
-    ++ins->num_ops;
-
-    if( w == W_FULL && !s ) {
-        if( ins->flags & DIF_X86_OPND_LONG ) {
-            ins->op[oper].value = GetULong( d, ins->size );
-            ins->size   += 4;
+        if( w == W_BYTE ) {
+            ins->op[oper].ref_type = DRT_X86_BYTE;
+        } else if( ins->flags & DIF_X86_OPND_LONG ) {
+            ins->op[oper].ref_type = DRT_X86_DWORD;
         } else {
-            ins->op[oper].value = GetUShort( d, ins->size );
-            ins->size   += 2;
+            ins->op[oper].ref_type = DRT_X86_WORD;
         }
-    } else {
-        ins->op[oper].value = GetUByte( d, ins->size );
         ins->size   += 1;
     }
 }
@@ -1587,12 +1568,10 @@ dis_handler_return X86ImmAcc_8( dis_handle *h, void *d, dis_dec_ins *ins )
     switch( ins->type ) {
     case DI_X86_in:
         X86GetReg( code.type1.w, REG_AX, ins );
-        X86GetUImmedVal( S_BYTE, code.type1.w, d, ins );
-        ins->op[ins->num_ops].ref_type = DRT_X86_BYTE;
+        X86GetImmedVal( S_DEFAULT, W_BYTE, d, ins );
         break;
     case DI_X86_out:
-        X86GetUImmedVal( S_BYTE, code.type1.w, d, ins );
-        ins->op[ins->num_ops].ref_type = DRT_X86_BYTE;
+        X86GetImmedVal( S_DEFAULT, W_BYTE, d, ins );
         X86GetReg(code.type1.w, REG_AX, ins);
         break;
     default:
@@ -1683,22 +1662,22 @@ dis_handler_return X86Imm_8( dis_handle *h, void *d, dis_dec_ins *ins )
         } else {
             ins->op[0].value = 3;
         }
+        ins->op[0].ref_type = DRT_X86_BYTE;
         ++ins->num_ops;
         break;
     case DI_X86_ret2:
     case DI_X86_retf2:
         ins->op[0].value = GetUShort( d, ins->size );
+        ins->op[0].ref_type = DRT_X86_WORD;
         ins->size += 2;
         ++ins->num_ops;
         break;
     case DI_X86_push5:
+        X86GetImmedVal( code.type3.s, W_DEFAULT, d, ins );
         if( code.type3.s ) {
-            X86GetImmedVal( code.type3.s, W_DEFAULT, d, ins );
             if( ( DIF_X86_OPND_LONG & ins->flags ) == 0 ) {
                 ins->op[0].value &= 0xffff;
             }
-        } else {
-            X86GetUImmedVal( code.type3.s, W_DEFAULT, d, ins );
         }
         if( DIF_X86_OPND_SIZE & ins->flags ) {
             if( DIF_X86_OPND_LONG & ins->flags ) {
@@ -1950,6 +1929,7 @@ dis_handler_return X86Shift_16 ( dis_handle *h, void *d, dis_dec_ins *ins )
     } else {
         ins->op[ins->num_ops].value = 1;
         ins->op[ins->num_ops].type = DO_IMMED;
+        ins->op[ins->num_ops].ref_type = DRT_X86_BYTE;
         ++ins->num_ops;
     }
     return( DHR_DONE );
@@ -2109,10 +2089,9 @@ dis_handler_return X86ModRMImm_16( dis_handle *h, void *d, dis_dec_ins *ins )
     case DI_X86_sar2:
     case DI_X86_shr2:
     case DI_X86_shl2:
-        X86GetUImmedVal( S_BYTE, code.type1.w, d, ins );
+        X86GetImmedVal( S_DEFAULT, W_BYTE, d, ins );
         break;
     case DI_X86_mov2:
-    case DI_X86_test2:
     case DI_X86_test3:
         X86GetImmedVal( S_DEFAULT, code.type1.w, d, ins );
         break;
@@ -2548,6 +2527,7 @@ dis_handler_return X86RegModRM_24B( dis_handle *h, void *d, dis_dec_ins *ins )
         X86GetReg( W_DEFAULT, code.type1.reg, ins );
         ins->op[ins->num_ops].value = GetUByte( d, ins->size );
         ins->op[ins->num_ops].type = DO_IMMED;
+        ins->op[ins->num_ops].ref_type = DRT_X86_BYTE;
         ++ins->size;
         ++ins->num_ops;
         break;
@@ -3050,7 +3030,7 @@ dis_handler_return X86MMRegModRMImm( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->num_ops = 0;
     ins->size += 3;
     X86GetMMRegModRM( D_REG_RM, W_DEFAULT, code.type1.mod, code.type1.rm, code.type1.mm, DRT_X86_MM64, d, ins );
-    X86GetUImmedVal( S_BYTE, W_DEFAULT, d, ins );
+    X86GetImmedVal( S_DEFAULT, W_BYTE, d, ins );
     return( DHR_DONE );
 }
 
@@ -3079,7 +3059,7 @@ dis_handler_return X86MMRegImm( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->num_ops = 0;
     ins->size += 3;
     X86GetMM( code.type1.rm, ins );
-    X86GetUImmedVal( S_BYTE, W_DEFAULT, d, ins );
+    X86GetImmedVal( S_DEFAULT, W_BYTE, d, ins );
     return( DHR_DONE );
 }
 
@@ -3114,7 +3094,7 @@ dis_handler_return X86XMMRegModRMImm( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->num_ops = 0;
     ins->size += 3;
     X86GetXMMRegModRM( D_REG_RM, W_DEFAULT, code.type1.mod, code.type1.rm, code.type1.mm, DRT_X86_XMM128, d, ins );
-    X86GetUImmedVal( S_BYTE, W_DEFAULT, d, ins );
+    X86GetImmedVal( S_DEFAULT, W_BYTE, d, ins );
     X86XMMResetPrefixes();
     return( DHR_DONE );
 }
@@ -3145,7 +3125,7 @@ dis_handler_return X86XMMRegImm( dis_handle *h, void *d, dis_dec_ins *ins )
     ins->num_ops = 0;
     ins->size += 3;
     X86GetXMM( code.type1.rm, ins );
-    X86GetUImmedVal( S_BYTE, W_DEFAULT, d, ins );
+    X86GetImmedVal( S_DEFAULT, W_BYTE, d, ins );
     X86XMMResetPrefixes();
     return( DHR_DONE );
 }
@@ -3176,7 +3156,7 @@ dis_handler_return X86XMMRegModRM64Imm( dis_handle *h, void *d, dis_dec_ins *ins
     ins->num_ops = 0;
     ins->size += 3;
     X86GetXMMRegModRM( D_REG_RM, W_DEFAULT, code.type1.mod, code.type1.rm, code.type1.mm, DRT_X86_XMM64, d, ins );
-    X86GetUImmedVal( S_BYTE, W_DEFAULT, d, ins );
+    X86GetImmedVal( S_DEFAULT, W_BYTE, d, ins );
     X86XMMResetPrefixes();
     return( DHR_DONE );
 }
@@ -3222,7 +3202,7 @@ dis_handler_return X86XMMRegModRM32Imm( dis_handle *h, void *d, dis_dec_ins *ins
     ins->num_ops = 0;
     ins->size += 3;
     X86GetXMMRegModRM( D_REG_RM, W_DEFAULT, code.type1.mod, code.type1.rm, code.type1.mm, DRT_X86_XMM32, d, ins );
-    X86GetUImmedVal( S_BYTE, W_DEFAULT, d, ins );
+    X86GetImmedVal( S_DEFAULT, W_BYTE, d, ins );
     X86XMMResetPrefixes();
     return( DHR_DONE );
 }
@@ -3310,7 +3290,7 @@ dis_handler_return X86MMRegModRMMixedImm( dis_handle *h, void *d, dis_dec_ins *i
         X86GetModRM_D( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_XMM32 );
         break;
     }
-    X86GetUImmedVal( S_BYTE, W_DEFAULT, d, ins );
+    X86GetImmedVal( S_DEFAULT, W_BYTE, d, ins );
     X86XMMResetPrefixes();
     return( DHR_DONE );
 }
@@ -3386,7 +3366,7 @@ dis_handler_return X86XMMRegModRMMixedImm( dis_handle *h, void *d, dis_dec_ins *
         X86GetModRM_D( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_XMM32 );
         break;
     }
-    X86GetUImmedVal( S_BYTE, W_DEFAULT, d, ins );
+    X86GetImmedVal( S_DEFAULT, W_BYTE, d, ins );
     X86XMMResetPrefixes();
     return( DHR_DONE );
 }
@@ -3464,7 +3444,7 @@ dis_handler_return X86RegModRMMixedImm( dis_handle *h, void *d, dis_dec_ins *ins
         X86MMGetModRM( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_MM64 );
         break;
     }
-    X86GetUImmedVal( S_BYTE, W_DEFAULT, d, ins );
+    X86GetImmedVal( S_DEFAULT, W_BYTE, d, ins );
     X86XMMResetPrefixes();
     return( DHR_DONE );
 }
