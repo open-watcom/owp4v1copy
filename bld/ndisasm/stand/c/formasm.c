@@ -798,7 +798,15 @@ static return_val bssMasmASMSection( section_ptr sec, orl_sec_size size,
             BufferPrint();
         }
     }
-    if( ( size > 0 ) && ( size > offset ) ) {
+    if( offset == -1 ) {
+        if( size > 0 ) {
+            BufferStore( "    ORG 0" );
+            BufferConcatNL();
+            BufferPrint();
+        }
+        offset = 0;
+    }
+    if( size > offset ) {
         BufferStore( "    ORG " );
         BufferHex( 8, size );
         BufferConcatNL();
