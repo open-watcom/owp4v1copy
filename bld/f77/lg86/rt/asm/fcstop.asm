@@ -54,7 +54,7 @@ efcode  RT_STOP
 fcode   RT_PAUSE
         call    StopPause
         exit_fcode                      ; switch to run-time environment
-        docall  Pause                   ; pause
+        docall  RT@Pause                ; pause
         enter_fcode                     ; switch to F-Code environment
         next                            ; execute next F-Code
 efcode  RT_PAUSE

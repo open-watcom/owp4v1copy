@@ -48,7 +48,7 @@ efcode  RT_STOP
 
 
 fcode   RT_PAUSE
-        mov     ebx,offset32 Pause      ; get address of "pause" processor
+        mov     ebx,offset32 RT@Pause   ; get address of "pause" processor
 ;;;;;;;;hop     StopPause
 efcode  RT_PAUSE
 
