@@ -3,6 +3,7 @@
 README.w32
 h\nt\accctrl.h
 h\nt\aclapi.h
+h\nt\afxres.h
 h\nt\basetsd.h
 h\nt\basetyps.h
 h\nt\cderr.h
@@ -16,8 +17,10 @@ h\nt\custcntl.h
 h\nt\dbt.h
 h\nt\dde.h
 h\nt\ddeml.h
+h\nt\dhcpcsdk.h
 h\nt\dlgs.h
 h\nt\docobj.h
+h\nt\errorrep.h
 h\nt\exdisp.h
 h\nt\exdispid.h
 h\nt\httpext.h
@@ -132,8 +135,10 @@ h\nt\sspi.h
 h\nt\subauth.h
 h\nt\svcguid.h
 h\nt\tlhelp32.h
+h\nt\tmschema.h
 h\nt\unknwn.h
 h\nt\userenv.h
+h\nt\uxtheme.h
 h\nt\vfw.h
 h\nt\w32api.h
 h\nt\winable.h
@@ -182,12 +187,14 @@ lib386\nt\d3dim.lib
 lib386\nt\d3drm.lib
 lib386\nt\d3dxof.lib
 lib386\nt\ddraw.lib
+lib386\nt\dhcpcsvc.lib
 lib386\nt\dinput.lib
 lib386\nt\dlcapi.lib
 lib386\nt\dplayx.lib
 lib386\nt\dsetup.lib
 lib386\nt\dsound.lib
 lib386\nt\dxguid.lib
+lib386\nt\faultrep.lib
 lib386\nt\gdi32.lib
 lib386\nt\glaux.lib
 lib386\nt\glu32.lib
@@ -246,6 +253,7 @@ lib386\nt\url.lib
 lib386\nt\user32.lib
 lib386\nt\userenv.lib
 lib386\nt\uuid.lib
+lib386\nt\uxtheme.lib
 lib386\nt\vdmdbg.lib
 lib386\nt\version.lib
 lib386\nt\vfw32.lib

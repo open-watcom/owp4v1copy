@@ -16,12 +16,14 @@ libs =               &
         d3drm.lib &
         d3dxof.lib &
         ddraw.lib &
+        dhcpcsvc.lib &
         dinput.lib &
         dlcapi.lib &
         dplayx.lib &
         dsetup.lib &
         dsound.lib &
         dxguid.lib &
+        faultrep.lib &
         gdi32.lib &
         glaux.lib &
         glu32.lib &
@@ -80,6 +82,7 @@ libs =               &
         uuid.lib &
         user32.lib &
         userenv.lib &
+        uxtheme.lib &
         vdmdbg.lib &
         version.lib &
         vfw32.lib &
