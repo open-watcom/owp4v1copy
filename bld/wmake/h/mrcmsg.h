@@ -220,7 +220,24 @@
 #define SYS_ERR_14                      209
 #define SYS_ERR_15                      210
 
-#define USAGE_BASE                      220
+#define SIG_ERR_0                       211
+#define SIG_ERR_1                       212
+#define SIG_ERR_2                       213
+#define SIG_ERR_3                       214
+#define SIG_ERR_4                       215
+#define SIG_ERR_5                       216
+#define SIG_ERR_6                       217
+#define SIG_ERR_7                       218
+#define SIG_ERR_8                       219
+#define SIG_ERR_9                       220
+#define SIG_ERR_10                      221
+#define SIG_ERR_11                      222
+#define SIG_ERR_12                      223
+#define SIG_ERR_13                      224
+#define SIG_ERR_14                      225
+#define SIG_ERR_15                      226
+
+#define USAGE_BASE                      230
 
 
 // #define USAGE_LN_0                   160

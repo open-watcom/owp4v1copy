@@ -86,7 +86,7 @@ $(xname).$(ext) :: usageend.gh wmake.res $(objs) $(libs) $(__MAKEFILES__)
         wstrip -q -a -r $(xname).$(ext) . wmake.res
 
 wmake.res : ../h/wmake.rc mrcmsg.h usage.rc usagej.rc
-        $(rc_aui) $[@ -fo=$^@
+        $(rc_aui) -d__$(host_os)__ $[@ -fo=$^@
 
 usage.rc : ../h/usage.sp
         @%write usage.tmp -kIS_RC -kENGLISH -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" $< -o "%n%n%n%n" $^@

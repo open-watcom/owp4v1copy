@@ -150,7 +150,7 @@ pick( MICROSOFT_MAKEFILE,       "Makefile may be Microsoft; try /ms switch",
 pick( ERROR_STRING_OPEN,	"Expecting double quote character to end open string.",
 				"Expecting double quote character to end open string.")
 
-#if defined( __DOS__ )
+#if defined( __dos__ )
 pick( OS_CORRUPTED,                "DOS memory inconsistency detected! System may halt ...",
                                 "DOSﾒﾓﾘ管理に矛盾が見つかりました！ｼｽﾃﾑがﾎｰﾙﾄするかもしれません･･･" )
 #else
@@ -312,3 +312,23 @@ pick( SYS_ERR_14,                "Result too large",
                                 "結果が大きすぎます" )
 pick( SYS_ERR_15,                "Resource deadlock would occur",
                                 "リソース・デッド・ロックが起こります" )
+
+/* common signals that cause abnormal termination (cf. sys_siglist) */
+#if defined( __linux__ )
+pick( SIG_ERR_0,                 "Abnormal termination by signal %d", "" )
+pick( SIG_ERR_1,                 "Hangup detected", "" )
+pick( SIG_ERR_2,                 "Keyboard interrupt", "" )
+pick( SIG_ERR_3,                 "Keyboard quit", "" )
+pick( SIG_ERR_4,                 "Illegal instruction", "" )
+pick( SIG_ERR_5,                 "Trap", "" )
+pick( SIG_ERR_6,                 "Abort", "" )
+pick( SIG_ERR_7,                 "Bus error", "" )
+pick( SIG_ERR_8,                 "Floating point exception", "" )
+pick( SIG_ERR_9,                 "Killed", "" )
+pick( SIG_ERR_10,                "User defined signal 1", "" )
+pick( SIG_ERR_11,                "Segmentation fault", "" )
+pick( SIG_ERR_12,                "User defined signal 2", "" )
+pick( SIG_ERR_13,                "Broken pipe", "" )
+pick( SIG_ERR_14,                "Alarm", "" )
+pick( SIG_ERR_15,                "Abnormal termination", "" )
+#endif
