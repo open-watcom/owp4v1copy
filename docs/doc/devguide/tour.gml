@@ -23,11 +23,16 @@ WATFOR) that ran on the University's IBM 7040 systems. The compiler
 was soon ported to IBM 360 and later to the famous DEC PDP-11.
 .np
 .ix 'WATFOR-77'
-In early 1980's a brand new version of the compiler was created
+In early 1980s a brand new version of the compiler was created
 that supported the FORTRAN 77 language. It ran on two platforms,
 the IBM 370 and the emerging IBM PC. The PC version of WATFOR-77
 was finished in 1985 and in the same year support for Japanese was
 added. In 1986, WATFOR-77 was ported to the QNX operating system.
+.np
+The early compilers were written in a portable language called
+WSL or Watcom Systems Language. In late 1980s the developers
+rewrote the existing code in C and from then on all new developments
+were done on C, later with traces of C++ here and there.
 .np
 In parallel to the FORTRAN compilers Watcom developed optimizing
 C compilers. When the first PC version (Watcom C 6.0) was introduced
@@ -42,33 +47,38 @@ ability to cross-compile made Watcom C and C++ compilers quite popular
 in mid-1990s. Around 1994-1996, nearly all DOS games were developed
 with Watcom C.
 .np
+.ix 'VX-REXX'
 Watcom International, Inc. had other successful products besides its
 highly acclaimed compilers. VX-REXX was a popular GUI RAD tool for
 OS/2 and Watcom SQL was a cross-platform "embeddable" SQL database.
 .np
-In 1996 Watcom International, Inc. was acquired by PowerSoft, the maker
-of Power++, PowerDesigner and other GUI RAD tools for the Windows
+.ix 'PowerSoft'
+In mid-1990s, Watcom International, Inc. was acquired by PowerSoft, the
+maker of Power++, PowerDesigner and other GUI RAD tools for the Windows
 platform. PowerSoft used Watcom compiler technology as a back-end for
-their GUI tools.
+their GUI tools besides continuing to market and develop existing
+Watcom tools.
 .np
-But the Watcom compilers did not spend very long time in the custodianship
-of PowerSoft because in 1997, PowerSoft was acquired by Sybase, Inc.,
-a major database vendor. Sybase was primarily interested in database
-oriented RAD tools and also in Watcom SQL which was enhanced and turned
+.ix 'Sybase'
+PowerSoft itself had merged with Sybase, Inc. in 1994. PowerSoft's
+development tools nicely complemented Sybase's database servers.
+Sybase was also interested in Watcom SQL which was enhanced and turned
 into Sybase SQL Anywhere.
 .np
 Sybase continued to sell Watcom C/C++ and FORTRAN compilers version 11 but
-it was obvious that Sybase couldn't compete with Microsoft. Sybase decided
-to end-of-life the Watcom compilers effective 2000.
+it was obvious that Sybase couldn't compete with Microsoft in the
+languages market. Sybase decided to end-of-life the Watcom compilers
+effective 2000.
 .np
+.ix 'SciTech'
 But that's not the end of the story. Many customers did not want to give
 up the Watcom compilers because there was no suitable replacement in many
 areas. One of these customers was Kendall Bennett of SciTech Software, Inc.
 SciTech entered into negotiations with Sybase and in an unprecedented move,
 Sybase agreed upon open sourcing the Watcom compilers and tools. One of
 the reasons why this was possible at all was the fact that Watcom had very
-little reliance on third-party tools and developed practically everything
-in-house, from YACC to IDE.
+little reliance on third-party tools and source code and had developed
+practically everything in-house, from YACC to IDE.
 .np
 The process of opening the source was longer than originally anticipated
 (all software related projects tend to work out this way for some
@@ -79,9 +89,9 @@ made available under the Sybase Open Watcom Public License version 1.0.
 .section Guided Tour
 .*
 .np
-This section is a guided tour of the Open Watcom source tree, presenting
-an overview of its structure and highlighting some of the more memorable
-sights.
+This section will take you on a guided tour of the Open Watcom source tree,
+presenting an overview of its structure and highlighting some of the more
+memorable sights.
 .np
 The Open Watcom directory structure mostly mirrors the layout used by
 the Watcom/Sybase build server but attempts to clean it up, straighten
@@ -107,7 +117,7 @@ of the build process. Since wmake looks for
 along the
 .id PATH,
 the
-us bat
+.us bat
 directory must be placed at or near the start of your
 .id PATH
 environment variable.
@@ -126,7 +136,7 @@ For more information please refer the the chapter entitled Documentation
 later in this manual.
 .note rel2
 is the "release" directory is where the binaries and other files produced
-as a result of the build process end up. The structure of this directory
+in the course of the build process end up. The structure of this directory
 mirrors the
 .us WATCOM
 directory of a typical Open Watcom installation.
@@ -154,7 +164,7 @@ part of the C++ source browser.
 the GUI C++ source browser.
 .note build
 directory holding build related files such as binaries used internally during
-build process and several master make include files. Important!
+build process and several master make include files. Worth seeing!
 .note builder
 builder tool controlled by those
 .us lang.ctl
@@ -213,7 +223,7 @@ batch processor for the IDE.
 .note lib_misc
 shared library.
 .note mad
-Machine Architecture Definition used by debufgger.
+Machine Architecture Definition used by debugger.
 .note mathlib
 the math library.
 .note misc
@@ -236,16 +246,20 @@ presentation graphics and chart library for DOS.
 another huge directory containing all C++ stuff. Compiler, runtime
 libraries, all that.
 .note plustest
-C++ regression test utilities.
+C++ regression test utilities. Extremely worthy of the attention of
+compiler developers.
 .note pmake
 parallel make, tool used in the build process to roughly control
 what gets built.
 .note posix
-a bunch of POSIX utilites like cp, rm and so on.
+a bunch of POSIX utilites like cp, rm and so on. Not suffering from
+creeping featuritis but do the job and they're portable.
 .note rtdll
 C runtime DLLs.
 .note sdk
 SDK tools like resource editor, resource compiler or dialog editor.
+Also the home of wres library which is used by many other projects.
+Many projects will use it when built in debug mode.
 .note src
 sample source code distributed with the compiler.
 .note sweep
@@ -255,9 +269,9 @@ action in each.
 ancient system information utility.
 .note trap
 trap files (both local and remote), the heart of the debugger containing
-platform specific debugging code.
+platform specific debugging code. Heavy stuff.
 .note trmem
-memory tracker library (good for plugging memory leaks).
+memory tracker library (good for discovering and plugging memory leaks).
 .note ui
 user interface library.
 .note vi
@@ -269,14 +283,15 @@ IDE demo program.
 .note w32loadr
 loaders for OS independent (OSI) binaries.
 .note wasm
-the x86 assembler.
+the x86 assembler. Large parts of the source are shared between standalone
+wasm and inline assembler support for compilers targeting x86 platforms.
 .note watcom
 contains internal headers and libraries shared by many projects.
 .note wclass
 an Open Watcom C++ class library.
 .note wdisasm
 disassembler supporting a variety of object formats and instruction
-sets.
+sets. Very handy.
 .note whpcvt
 Watcom Help Converter used for producing online documentation.
 .note wic
@@ -289,7 +304,7 @@ the Open Watcom linker.
 the make utility.
 .note womp
 Watcom Object Module Processor, primarily for conversion between
-debug info formats.
+debug info formats. Some source files are shared with other projects.
 .note wpack
 simple file compression/decompression utility.
 .note wpi
@@ -315,5 +330,7 @@ Watcom's version of YACC used for building compilers/assemblers.
 .endnote
 .np
 As you can see, there's a lot of stuff! Some of these projects
-contain specific documentation pertaining to them. For the most
-part, the best documentation is the source code.
+contain specific documentation pertaining to them, usually located
+in a directory called 'doc' or somesuch. For the most
+part, the truly uptodate and comprehensive documentation is the
+source code.
