@@ -129,7 +129,7 @@ extern void             CreateFonts( void );
 extern void             DrawScoreCard( HDC );
 extern void             DrawDice( HWND, HDC );
 extern void             GetDiceInfo( void );
-extern void             GetDiceBitmaps( HANDLE );
+extern void             GetDiceBitmaps( HWND );
 extern void             GetFontInfo( void );
 extern BOOL _EXPORT FAR PASCAL AboutDialogProc( HWND, WORD, WORD, LONG );
 extern BOOL _EXPORT FAR PASCAL GetNumPlayersDialogProc(HWND,WORD,WORD,LONG);

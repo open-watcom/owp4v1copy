@@ -106,7 +106,7 @@ int FAR PASCAL WEP( short nParameter )
   return( 1 );
 }
 
-int PASCAL WinMain( HANDLE hInstance, HANDLE x1, LPSTR lpCmdLine, int x2 )
+int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE x1, LPSTR lpCmdLine, int x2 )
 {
   short i;
   char buf[128];

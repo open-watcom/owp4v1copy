@@ -170,7 +170,7 @@ void main (void)
 
             inregs.w.ax = 0xC;
             inregs.w.cx = 0x0002 + 0x0008;
-            function_ptr = ( void(*)(void) ) click_handler;
+            function_ptr = ( void(far*)(void) ) click_handler;
             inregs.x.edx = FP_OFF (function_ptr);
             sregs.es        = FP_SEG (function_ptr);
             int386x (0x33, &inregs, &outregs, &sregs);

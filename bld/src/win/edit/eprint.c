@@ -102,7 +102,7 @@ HDC PrinterDC( void )
 } /* PrinterDC */
 
 #ifndef __WINDOWS_386__
-typedef int (FAR PASCAL *EDMPROC)(HWND,HANDLE,LPDEVMODE,LPSTR, LPSTR,LPDEVMODE,LPSTR,WORD);
+typedef int (CALLBACK* EDMPROC)(HWND, HANDLE, LPDEVMODE, LPSTR, LPSTR, LPDEVMODE, LPSTR, WORD);
 #endif
 /*
  * GetPrinterSetup - get data about this printer
@@ -176,8 +176,8 @@ void GetPrinterSetup( HWND hwnd )
                         edm_flag );
     MemFree( (void *) hindir );
 #else
-    rc =  fp( hwnd, hlib, (LPDEVMODE) newdata, (LPSTR) DeviceName,
-                 (LPSTR) PortName, (LPDEVMODE) olddata,
+    rc = ((EDMPROC)fp)( hwnd, hlib, (LPDEVMODE) newdata, (LPSTR) DeviceName,
+                 (LPSTR) PortName, (LPDEVMODE) olddata, 
                  (LPSTR) NULL, edm_flag );
 #endif
 
@@ -312,7 +312,7 @@ BOOL Print( LPEDATA ed )
     /*
      * Create abort dialog
      */
-    DlgWnd = CreateDialog( ed->inst, "AbortDialog", ed->hwnd, abortdlg );
+    DlgWnd = CreateDialog( ed->inst, "AbortDialog", ed->hwnd, (DLGPROC)abortdlg );
     if( DlgWnd == NULL ) return( CleanUp( hdc, abort, abortdlg, 0 ) );
     ShowWindow( DlgWnd, SW_SHOW );
     UpdateWindow( DlgWnd );

@@ -4,8 +4,8 @@
 #include "edit.h"
 #include "win1632.h"
 
-#define FONT_DATA       1
-#define FONT_SIZES      2
+#define FONT_DATA       1L
+#define FONT_SIZES      2L
 
 static LPFINFO FontHead,FontTail;
 static LPFINFO CurrFont;
@@ -219,7 +219,7 @@ void GetAllFonts( LPEDATA ed )
     fp = MakeProcInstance( (FARPROC)EnumFontsProc, ed->inst );
     hdc = GetDC( ed->hwnd );
     EnumFonts( hdc, (LPSTR) 0, (FONTENUMPROC)fp,
-                (LPARAM) PASS_WORD_AS_POINTER( FONT_DATA ) );
+                (LPARAM) FONT_DATA );
 
     /*
      * get all sizes
@@ -228,7 +228,7 @@ void GetAllFonts( LPEDATA ed )
     while( CurrFont != NULL ) {
         CurrFont->size_count = 0;
         EnumFonts( hdc, CurrFont->name, (FONTENUMPROC)fp,
-                (LPARAM) PASS_WORD_AS_POINTER( FONT_SIZES ) );
+                (LPARAM) FONT_SIZES );
         CurrFont = CurrFont->next;
     }
 

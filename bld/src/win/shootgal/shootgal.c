@@ -130,7 +130,7 @@ static BOOL AnyInstance( HINSTANCE this_inst, int cmdshow )
      * get a timer
      */
     while( !SetTimer( window_handle, TARGET_TIMER, STD_TARGET_SPEED,
-                                                 ( FARPROC ) NULL ) ) {
+                                                 (LPVOID) NULL ) ) {
         if( MessageBox( window_handle, "Too many timers in use!", NULL,
                         MB_ICONEXCLAMATION | MB_RETRYCANCEL ) == IDCANCEL ) {
             return( FALSE );
@@ -294,7 +294,7 @@ BOOL _EXPORT FAR PASCAL SpeedDlgProc( HWND dialog_wnd, unsigned msg,
             /* restart timer at new speed */
             KillTimer( GetWindow( dialog_wnd, GW_OWNER), TARGET_TIMER );
             SetTimer( GetWindow( dialog_wnd, GW_OWNER), TARGET_TIMER,
-                      speed, ( FARPROC ) NULL );
+                      speed, (LPVOID) NULL );
         } else {
             /* change speed back to positive value */
             edata_ptr-> bolt_speed = -speed;
@@ -632,7 +632,7 @@ BOOL TurnMessageWindowOn( HWND window_handle )
     inst_handle = GET_HINST( window_handle );
 
     MessageWnd = CreateDialog( inst_handle,"MessageWindow", window_handle,
-                     edata_ptr->message_window_proc );
+                     (DLGPROC)edata_ptr->message_window_proc );
     return( MessageWnd != NULL );
 
 } /* TurnMessageWindowOn */
@@ -654,7 +654,7 @@ BOOL TurnScoreWindowOn( HWND window_handle )
     inst_handle = GET_HINST( window_handle );
 
     ScoreWnd = CreateDialog( inst_handle,"ScoreWindow", window_handle,
-                     edata_ptr->score_window_proc );
+                     (DLGPROC)edata_ptr->score_window_proc );
     return( ScoreWnd != NULL );
 
 } /* TurnScoreWindowOn */
@@ -1037,7 +1037,7 @@ static void ShootBolt( HWND window_handle )
      */
     proc = MakeProcInstance( (FARPROC)DrawBolt, inst_handle );
     LineDDA( edata_ptr->bolt.x, edata_ptr->bolt.y, edata_ptr->aim.x,
-             edata_ptr->aim.y - BOLTHEIGHT, proc, (LPARAM)(LPVOID)&mover );
+             edata_ptr->aim.y - BOLTHEIGHT, (LINEDDAPROC)proc, (LPARAM)(LPVOID)&mover );
     FreeProcInstance( proc );
 
     /*
