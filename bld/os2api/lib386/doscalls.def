@@ -371,5 +371,6 @@ EXPORTS
     DosQueryExtLIBPATH                          @874
     DosPM16SemRst                               @875
     DosSysCtl                                   @876
+    DosQueryThreadContext                       @877
     DOS16SETEXTLIBPATH                          @998
     DOS16QUERYEXTLIBPATH                        @999
