@@ -41,7 +41,7 @@
 !inject cstrwwna.obj                        nta ntp
 !inject cstrwwnt.obj                     nt
 !inject cstrwaxp.obj                        nta ntp
-!inject cvtbuf.obj   d16 d32 dpm         nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 snp drv
+!inject cvtbuf.obj   d16 d32 dpm         nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi l32 snp drv
 !inject ddgrpo32.obj                                                    o32
 !inject ddgrpwnt.obj                     nt nta ntp
 !inject detosinf.obj                                                        q16 q32

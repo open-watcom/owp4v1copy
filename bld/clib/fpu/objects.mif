@@ -5,10 +5,10 @@
 !inject chipw16.obj  d16                                            o16     q16     w16
 !inject chipt16.obj  d16                                            o16     q16     w16
 !inject chipr16.obj  d16                                            o16     q16     w16
-!inject chipd32.obj      d32             nt         nvc     nvl         o32     q32     w32     l32 snp drv
-!inject chipa32.obj      d32             nt         nvc     nvl         o32     q32     w32     l32 snp drv
-!inject chipw32.obj      d32             nt         nvc     nvl         o32     q32     w32     l32 snp drv
-!inject chipt32.obj      d32             nt         nvc     nvl         o32     q32     w32     l32 snp drv
+!inject chipd32.obj      d32             nt         nvc ncl nvl nll     o32     q32     w32     l32 snp drv
+!inject chipa32.obj      d32             nt         nvc ncl nvl nll     o32     q32     w32     l32 snp drv
+!inject chipw32.obj      d32             nt         nvc ncl nvl nll     o32     q32     w32     l32 snp drv
+!inject chipt32.obj      d32             nt         nvc ncl nvl nll     o32     q32     w32     l32 snp drv
 !inject chipr32.obj      d32             nt         nvc     nvl         o32     q32     w32     l32 snp drv
 !inject cntrl87.obj  d16 d32             nt         nvc     nvl     o16 o32 q16 q32 w16 w32     l32 snp drv
 !inject cntrlfp.obj  d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32     l32 snp drv
