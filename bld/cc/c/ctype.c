@@ -1,4 +1,3 @@
-
 /****************************************************************************
 *
 *                            Open Watcom Project
@@ -92,6 +91,7 @@ TYPEPTR CTypeHash[TYPE_LAST_ENTRY];
 TYPEPTR PtrTypeHash[TYPE_LAST_ENTRY];
 
 TAGPTR  TagHash[TAG_HASH_SIZE + 1];
+FIELDPTR FieldHash[FIELD_HASH_SIZE];
 
 enum {
         M_CHAR          = 0x0001,
@@ -193,6 +193,9 @@ void InitTypeHashTables()
     }
     for( index = 0; index <= TAG_HASH_SIZE; ++index ) {
         TagHash[ index ] = NULL;
+    }
+    for( index = 0; index < FIELD_HASH_SIZE; ++index ) {
+        FieldHash[ index ] = NULL;
     }
 }
 
@@ -787,22 +790,31 @@ local FIELDPTR NewField( FIELDPTR new_field, TYPEPTR decl )
         }
     }
     tag = decl->u.tag;
-    for( field = tag->u.field_list; field; field = field->next_field ) {
-        if( new_field->name[0] != '\0' ) {  /* only check non-empty names */
+    new_field->hash = HashValue;
+    if( new_field->name[0] != '\0' ) {  /* only check non-empty names */
+        for( field = FieldHash[HashValue]; field;
+              field = field->next_field_same_hash ) {
+            /* fields were added at the front of the hash linked list --
+               may as well stop if the level isn't the same anymore */
+            if( field->level != new_field->level )
+                break;
             if( strcmp( field->name, new_field->name ) == 0 ) {
                 CErr2p( ERR_DUPLICATE_FIELD_NAME, field->name );
             }
         }
-        prev_field = field;
+        new_field->next_field_same_hash = FieldHash[HashValue];
+        FieldHash[HashValue] = new_field;
     }
     if( tag->u.field_list == NULL ) {
         tag->u.field_list = new_field;
     } else {
+        prev_field = tag->last_field;
         prev_field->next_field = new_field;
         if( SizeOfArg( prev_field->field_type ) == 0 ) { /* 05-jun-92 */
             CErr( ERR_INCOMPLETE_TYPE, (SYM_NAMEPTR)(prev_field->name) );
         }
     }
+    tag->last_field = new_field;
     return( new_field );
 }
 
@@ -925,6 +937,31 @@ local int UnQualifiedType( TYPEPTR typ )                        /* 21-mar-91 */
     return( 0 );
 }
 
+/* clear the hash table of all fields that were just defined
+   in the struct with tag tag */
+local void ClearFieldHashTable( TAGPTR tag )
+{
+    FIELDPTR field;
+    FIELDPTR hash_field;
+    FIELDPTR prev_field;
+
+    for( field = tag->u.field_list; field; field = field->next_field ) {
+        prev_field = NULL;
+        hash_field = FieldHash[field->hash];
+        if( hash_field == field ) {
+            /* first entry: easy kick out */
+            FieldHash[field->hash] = field->next_field_same_hash;
+        } else while ( hash_field ) {
+            /* search for candidate to kick */
+            prev_field = hash_field;
+            hash_field = hash_field->next_field_same_hash;
+            if( hash_field == field ) {
+                 hash_field = hash_field->next_field_same_hash;
+                 prev_field->next_field_same_hash = hash_field;
+            }
+        }
+    }
+}
 
 local unsigned long GetFields( TYPEPTR decl )
 {
@@ -941,7 +978,9 @@ local unsigned long GetFields( TYPEPTR decl )
     char                unqualified_type, prev_unqualified_type;
     char                plain_int;
     decl_info           info;
+    static int          struct_level = 0;
 
+    struct_level++;
     prev_unqualified_type = TYPE_VOID;   /* so it doesn't match 1st time */
     worst_alignment = 1;                                /* 24-jul-91 */
     bits_available = 1;
@@ -978,7 +1017,9 @@ local unsigned long GetFields( TYPEPTR decl )
         for( ;; ) {
             field = NULL;
             if( CurToken != T_COLON ) {
-                field = NewField( FieldDecl( typ,info.mod, state ), decl );
+                field = FieldDecl( typ,info.mod, state );
+                field->level = struct_level;
+                field = NewField( field, decl );
             }
             if( CurToken == T_COLON ) {
                 if( field != NULL ){
@@ -1061,11 +1102,13 @@ local unsigned long GetFields( TYPEPTR decl )
         next_offset += bits_total >> 3;
         if( next_offset > struct_size )  struct_size = next_offset;
     }
+    ClearFieldHashTable( decl->u.tag );
     decl->u.tag->alignment = worst_alignment;   /* 25-jul-91 */
     struct_size += worst_alignment - 1;         /* 01-may-92 */
     struct_size &= - (long)worst_alignment;
     _CHECK_SIZE( struct_size );
     NextToken();
+    struct_level--;
     return( struct_size );
 }
 

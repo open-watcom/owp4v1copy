@@ -407,8 +407,12 @@ typedef struct  field_entry {
         unsigned offset;
 #endif
         type_modifiers  attrib;         /* LANG_CDECL, _PASCAL, _FORTRAN */
+        int     level;
+        int     hash;
+        struct  field_entry *next_field_same_hash;
         char    name[1];
 } FIELD_ENTRY, *FIELDPTR;
+#define FIELD_HASH_SIZE SYM_HASH_SIZE
 
 
 typedef struct  enum_entry {
@@ -455,6 +459,10 @@ typedef struct  tag_entry {
         unsigned        level;
         unsigned        alignment;
 #endif
+        union   {
+            ENUMPTR  last_enum;         /* for ENUM */
+            FIELDPTR last_field;        /* for STRUCT or UNION */
+        };
         char            name[1];
 } TAGDEFN, *TAGPTR;
 
