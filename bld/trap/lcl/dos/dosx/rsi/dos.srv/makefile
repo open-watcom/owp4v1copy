@@ -44,7 +44,7 @@ objs += $(lang_root)/lib286/dos/dos16m.obj &
 
 lf = tmp.lnk
 
-$(target) $(dtarget) : $(extra_libs) $(objs) $(__MAKEFILES__)
+$(target) : $(extra_libs) $(objs) $(__MAKEFILES__)
     @%create $(lf)
     @%append $(lf) exp($^@) map($^&) log($^&.err)
     @%append $(lf) -mpl -nod -DPMI -map -acg -farcall -auto -quiet -rtnerr 2
