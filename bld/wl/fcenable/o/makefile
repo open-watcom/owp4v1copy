@@ -1,4 +1,3 @@
-//depot/openwatcom/bld/wl/fcenable/o/makefile#2 - edit change 19448 (text)
 #pmake: all os_dos os_os2 cpu_i86 small build
 
 proj_name = wlink
@@ -49,4 +48,4 @@ $(dosproj).exe : $(dos_objs)
         $(linker) system dos n $(dosproj) op map f {$(dos_objs)}
 
 spawn.obj : spawn.c
-        $(compile) /i=$(inc_dirs_sys) /bt=os2
+        $(compile) /i=$(inc_dirs_sys) /i=$(inc_dirs_sys_os2) /bt=os2
