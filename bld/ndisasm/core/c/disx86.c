@@ -1686,24 +1686,26 @@ dis_handler_return X86Imm_8( dis_handle *h, void *d, dis_dec_ins *ins)
         ins->size += 2;
         ++ins->num_ops;
         break;
+    case DI_X86_push5:
+        if( code.type3.s ) {
+            X86GetImmedVal( code.type3.s, W_DEFAULT, d, ins );
+            if( (DIF_X86_OPND_LONG & ins->flags) == 0 ) {
+                ins->op[0].value &= 0xffff;
+            }
+        } else {
+            X86GetUImmedVal( code.type3.s, W_DEFAULT, d, ins );
+        }
+        if( DIF_X86_OPND_SIZE & ins->flags ) {
+            if( DIF_X86_OPND_LONG & ins->flags ) {
+                ins->type = DI_X86_pushd;
+            } else {
+                ins->type = DI_X86_pushw;
+            }
+        }
+        break;
     default:
         X86GetImmedVal( code.type3.s, W_DEFAULT, d, ins );
         break;
-    }
-    if( DIF_X86_OPND_SIZE & ins->flags ) {
-        if( DIF_X86_OPND_LONG & ins->flags ) {
-            switch( ins->type ) {
-            case DI_X86_push5:
-                ins->type = DI_X86_pushd;
-                break;
-            }
-        } else {
-            switch( ins->type ) {
-            case DI_X86_push5:
-                ins->type = DI_X86_pushw;
-                break;
-            }
-        }
     }
     return( DHR_DONE );
 }
