@@ -46,7 +46,7 @@
 #elif _OS == _OS_OS2
 #   define INCL_DOS
 #   include "os2.h"
-#elif _OS == _OS_QNX
+#elif _OS == _OS_QNX || _OS == _OS_LINUX
 #   include "unistd.h"
 #else
 #   error _OS not supported
@@ -59,7 +59,7 @@
 #include "msg.h"
 #include "pathlist.h"
 
-#if _OS == _OS_QNX
+#if defined(__UNIX__)
  #define PATH_SEPARATOR '/'
  #define LIST_SEPARATOR ':'
  #define PATH_NAME  "WD_PATH"
@@ -94,7 +94,7 @@ extern void ReplaceExt( char * path, char * addext )
     char *      ext;
 
     _splitpath2( path, buff, &drive, &dir, &fname, &ext );
-#if _OS == _OS_QNX
+#if defined(__UNIX__)
     if( stricmp( ext, addext ) != 0 ) {
         strcat( path, addext );
     }
@@ -137,7 +137,7 @@ extern char * FindFile( char * path, char * name, path_list * path_tail )
 
 
 
-#if _OS == _OS_QNX || _OS == _OS_DOS
+#if _OS == _OS_QNX || _OS == _LINUX || _OS == _OS_DOS
 extern dig_fhandle FullPathOpen( char const *name, char *ext,
                                  char *result, unsigned max_res )
 /***************************************************************/
@@ -176,7 +176,7 @@ extern void InitPaths()
 /*********************/
 {
     char *      env;
-#if _OS == _OS_QNX
+#if defined(__UNIX__)
     char        buff [ _MAX_PATH ];
     char        *p;
 #endif
@@ -190,7 +190,7 @@ extern void InitPaths()
     if( env != NULL && *env != '\0' ) {
         AddPath( &HelpPathList, env );
     }
-#if _OS == _OS_QNX
+#if defined(__UNIX__)
     if( _cmdname( buff ) != NULL ) {
         p = strrchr( buff, '/' );
         if( p != NULL ) {
@@ -323,7 +323,7 @@ extern void Ring( void )
     DoRingBell();
 #elif _OS == _OS_WIN || _OS == _OS_NT
     MessageBeep( 0 );
-#elif _OS == _OS_QNX
+#elif _OS == _OS_QNX || _OS == _OS_LINUX
     write( STDOUT_FILENO, "\a", 1 );
 #elif _OS == _OS_OS2
     DosBeep( 1000, 250 );

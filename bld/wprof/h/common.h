@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Common includes and definitions for profiler.
 *
 ****************************************************************************/
 
@@ -50,7 +49,7 @@ typedef void *          pointer;
 /* use this for boolean parameters and return values */
 typedef enum { B_FALSE = (0==1), B_TRUE = (0==0) } bint;
 
-#if _OS == _OS_QNX
+#if defined(__UNIX__)
 #define PATH_DELIM      ':'
 #define ALLFILES        "All Files\0*\0"
 #else

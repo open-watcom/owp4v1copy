@@ -34,6 +34,7 @@ extra_c_flags_nt        = -D_OS=_OS_NT
 extra_c_flags_win       = -D_OS=_OS_WIN
 extra_c_flags_qnx       = -D_OS=_OS_QNX
 extra_c_flags_os2       = -D_OS=_OS_OS2
+extra_c_flags_linux     = -D_OS=_OS_LINUX
 !ifeq host_cpu i86
 extra_c_flags_qnx       += -zt32
 extra_c_flags_win       += -zW

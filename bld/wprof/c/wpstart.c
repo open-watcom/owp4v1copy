@@ -124,7 +124,7 @@ STATIC char * cmdUsage[] = {
     LIT( Usage3 ),
     LIT( Usage4 ),
     LIT( Usage5 ),
-#ifndef __QNX__
+#if _OS == _OS_DOS
     LIT( Usage6 ),
     LIT( Usage7 ),
     LIT( Usage8 ),

@@ -11,6 +11,7 @@ aui_dir_os2     = os2386
 !endif
 aui_dir_qnx     = qnx386
 aui_dir_win     = wini86
+aui_dir_linux   = linux386
 
 aui_lib = $(aui_dir)/$(aui_dir_$(host_os))/aui.lib
 
@@ -25,6 +26,7 @@ gui_dir_os2     = $(gui_dir)/ui/os2386/gui.lib
 !endif
 gui_dir_qnx     = $(gui_dir)/ui/qnx386/gui.lib
 gui_dir_win     = $(gui_dir)/win/wini86/gui.lib
+gui_dir_linux   = $(gui_dir)/ui/linux386/gui.lib
 
 gui_lib = $(gui_dir_$(host_os))
 
@@ -35,6 +37,7 @@ extra_lib_os2   = $(os2386)
 extra_lib_os2   = $(ui_dir)/os2/os2386/ui.lib $(os2386)
 !endif
 extra_lib_qnx   = $(ui_dir)/qnx/qnx386/ui.lib
+extra_lib_linux = $(ui_dir)/unix/linux386/ui.lib $(ncurses_dir)/linux386/ncurses.lib
 
 extra_lib       = $(extra_lib_$(host_os)) $(wres_lib)
 

@@ -28,6 +28,10 @@ set PROJDIR=<CWD>
 
   [ IFDEF (cpu_axp) <2*> ]
     <CPCMD> <DEVDIR>/wprof/ntaxp/wprof.exe      <RELROOT>/rel2/axpnt/wprof.exe
+    
+  [ IFDEF (os_linux "") <2*> ]
+    <CPCMD> <DEVDIR>/wprof/linux386/wprof.exe   <RELROOT>/rel2/binl/wprof
+    <CPCMD> <DEVDIR>/wprof/linux386/wprof.sym   <RELROOT>/rel2/binl/wprof.sym
 
   [ IFDEF (os_qnx) <2*> ]
     <CPCMD> <DEVDIR>/wprof/qnx386/wprof.qnx     <RELROOT>/rel2/qnx/binq/wprof.
@@ -37,4 +41,3 @@ set PROJDIR=<CWD>
 #==================
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
     cd <PROJDIR>
-
