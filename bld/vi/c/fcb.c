@@ -142,7 +142,7 @@ int ReadFcbData( file *f )
             eofflag = TRUE;
         }
     } else {
-        if( feof( stdin ) && used == cnt ) {
+        if( feof( stdin ) && used >= cnt ) {
             eofflag = TRUE;
         } else {
             extraDataSize = cnt - used;
