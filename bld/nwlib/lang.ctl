@@ -21,8 +21,8 @@ cdsay .
     <CPCMD> os2.x86\wlibd.dll <relroot>\rel2\binp\dll\wlibd.dll
     <CPCMD> nt.x86\wlib.exe <relroot>\rel2\binnt\wlib.exe
     <CPCMD> nt.x86\wlibd.dll <relroot>\rel2\binnt\wlibd.dll
-    <CPCMD> qnx.x86\wlib.exe <relroot>\rel2\qnx\wlib.
-    <CPCMD> qnx.x86\wlib.sym <relroot>\rel2\qnx\wlib.sym
+#    <CPCMD> qnx.x86\wlib.exe <relroot>\rel2\qnx\wlib.
+#    <CPCMD> qnx.x86\wlib.sym <relroot>\rel2\qnx\wlib.sym
     <CPCMD> dos.x86\wlib.exe <relroot>\rel2\binw\wlib.exe
 
 [ BLOCK <1> clean ]

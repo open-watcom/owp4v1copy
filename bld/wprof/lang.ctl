@@ -21,8 +21,8 @@ cdsay .
     <CPCMD> <devdir>\wprof\nec\wprofnec.exe   <relroot>\rel2\n98bw\wprof.exe
     <CPCMD> <devdir>\wprof\nt\wprof.exe       <relroot>\rel2\binnt\wprof.exe
 #    <CPCMD> <devdir>\wprof\axp\wprof.exe     <relroot>\rel2\axpnt\wprof.exe
-    <CPCMD> <devdir>\wprof\qnx\wprof.qnx      <relroot>\rel2\qnx\binq\wprof.
-    <CPCMD> <devdir>\wprof\qnx\wprof.sym      <relroot>\rel2\qnx\sym\wprof.sym
+#    <CPCMD> <devdir>\wprof\qnx\wprof.qnx      <relroot>\rel2\qnx\binq\wprof.
+#    <CPCMD> <devdir>\wprof\qnx\wprof.sym      <relroot>\rel2\qnx\sym\wprof.sym
 
 [ BLOCK <1> clean ]
 #==================

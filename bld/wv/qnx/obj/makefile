@@ -1,18 +1,19 @@
-#pmake: build os_qnx cpu_386 386 intel
+#pmake: os_qnx cpu_386 386 intel
 #
-# WATCOM Debugger makefile for QNX
+# Open Watcom Debugger makefile for QNX
 #
 
-host_OS=qnx
-host_CPU=386
-display=char
-extra_cflags=-ms
+host_os  = qnx
+host_cpu = 386
 
-sysobjs =   &
-        qnxinit.obj &
-        qnxlkup.obj &
-        qnxchk.obj &
-        qnxcmd.obj &
+display = char
+extra_cflags = -ms
+
+sysobjs = &
+        qnxinit.obj  &
+        qnxlkup.obj  &
+        qnxchk.obj   &
+        qnxcmd.obj   &
         qnxfilio.obj &
         qnxscrn.obj
 

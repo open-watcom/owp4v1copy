@@ -1,4 +1,4 @@
-#pmake: all all build lcl os_os2 cpu_386 cpu_386 trap x86
+#pmake: build lcl os_os2 cpu_386 cpu_386 trap x86
 #
 # Create the 32-bit OS/2 STD.DLL
 #

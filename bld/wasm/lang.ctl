@@ -26,8 +26,8 @@ cdsay .
     <CPCMD> <devdir>\wasm\os2386\wasm.sym <relroot>\rel2\binp\wasm.sym
     <CPCMD> <devdir>\wasm\dos386\wasm.exe <relroot>\rel2\binw\wasm.exe
     <CPCMD> <devdir>\wasm\dos386\wasm.sym <relroot>\rel2\binw\wasm.sym
-    <CPCMD> <devdir>\wasm\qnx386\wasm.qnx <relroot>\rel2\qnx\binq\wasm.
-    <CPCMD> <devdir>\wasm\qnx386\wasm.sym <relroot>\rel2\qnx\sym\
+#    <CPCMD> <devdir>\wasm\qnx386\wasm.qnx <relroot>\rel2\qnx\binq\wasm.
+#    <CPCMD> <devdir>\wasm\qnx386\wasm.sym <relroot>\rel2\qnx\sym\
 
 [ BLOCK <1> clean ]
 #==================

@@ -14,8 +14,8 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>\wl\qnx\wl.exe <relroot>\rel2\qnx\binq\wlink
-    <CPCMD> <devdir>\wl\qnx\wl.sym <relroot>\rel2\qnx\sym\wlink.sym
+#    <CPCMD> <devdir>\wl\qnx\wl.exe <relroot>\rel2\qnx\binq\wlink
+#    <CPCMD> <devdir>\wl\qnx\wl.sym <relroot>\rel2\qnx\sym\wlink.sym
     <CPCMD> <devdir>\wl\ms2wlink\o\ms2wlink.exe <relroot>\rel2\binw\ms2wlink.exe
     <CPCMD> <devdir>\wl\fcenable\o\fcenable.exe <relroot>\rel2\binw\fcenable.exe
 # Removed: KB

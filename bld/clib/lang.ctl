@@ -56,16 +56,16 @@ cdsay .
     <CPCMD> startup\library\os2.386\ms_r\commode.obj <relroot>\rel2\lib386\os2\commode.obj
 #    <CPCMD> library\osi.386\ms_r\clibs.lib <relroot>\rel2\lib386\osi\clib3r.lib
 #    <CPCMD> startup\library\osi.386\ms_r\binmode.obj <relroot>\rel2\lib386\osi\binmode.obj
-    <CPCMD> library\qnx.286\mc\clibc.lib <relroot>\rel2\lib286\qnx\clibc.lib
-    <CPCMD> library\qnx.286\mh\clibh.lib <relroot>\rel2\lib286\qnx\clibh.lib
-    <CPCMD> library\qnx.286\ml\clibl.lib <relroot>\rel2\lib286\qnx\clibl.lib
-    <CPCMD> library\qnx.286\ml_sh\clibl.lib <relroot>\rel2\lib286\qnx\clibshar.lib
-    <CPCMD> library\qnx.286\mm\clibm.lib <relroot>\rel2\lib286\qnx\clibm.lib
-    <CPCMD> library\qnx.286\ms\clibs.lib <relroot>\rel2\lib286\qnx\clibs.lib
-    <CPCMD> startup\library\qnx.286\ms\commode.obj <relroot>\rel2\lib286\qnx\commode.obj
-    <CPCMD> library\qnx.386\ms_r\clibs.lib <relroot>\rel2\lib386\qnx\clib3r.lib
-    <CPCMD> library\qnx.386\ms_s\clibs.lib <relroot>\rel2\lib386\qnx\clib3s.lib
-    <CPCMD> startup\library\qnx.386\ms_r\commode.obj <relroot>\rel2\lib386\qnx\commode.obj
+#    <CPCMD> library\qnx.286\mc\clibc.lib <relroot>\rel2\lib286\qnx\clibc.lib
+#    <CPCMD> library\qnx.286\mh\clibh.lib <relroot>\rel2\lib286\qnx\clibh.lib
+#    <CPCMD> library\qnx.286\ml\clibl.lib <relroot>\rel2\lib286\qnx\clibl.lib
+#    <CPCMD> library\qnx.286\ml_sh\clibl.lib <relroot>\rel2\lib286\qnx\clibshar.lib
+#    <CPCMD> library\qnx.286\mm\clibm.lib <relroot>\rel2\lib286\qnx\clibm.lib
+#    <CPCMD> library\qnx.286\ms\clibs.lib <relroot>\rel2\lib286\qnx\clibs.lib
+#    <CPCMD> startup\library\qnx.286\ms\commode.obj <relroot>\rel2\lib286\qnx\commode.obj
+#    <CPCMD> library\qnx.386\ms_r\clibs.lib <relroot>\rel2\lib386\qnx\clib3r.lib
+#    <CPCMD> library\qnx.386\ms_s\clibs.lib <relroot>\rel2\lib386\qnx\clib3s.lib
+#    <CPCMD> startup\library\qnx.386\ms_r\commode.obj <relroot>\rel2\lib386\qnx\commode.obj
     <CPCMD> library\windows.086\mc\clibc.lib <relroot>\rel2\lib286\win\clibc.lib
     <CPCMD> library\windows.086\ml\clibl.lib <relroot>\rel2\lib286\win\clibl.lib
     <CPCMD> startup\library\windows.086\ml\libentry.obj <relroot>\rel2\lib286\win\libentry.obj

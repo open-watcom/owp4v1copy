@@ -1,8 +1,11 @@
-#pmake: all buildwpp flat cpu_386 target_i86 os_qnx
-host_CPU = 386
-host_OS = qnx
-host_CG = qnx
-target_CPU = i86
-cmdline_cflags=-mf
+#pmake: flat cpu_386 target_i86 os_qnx
+
+host_os    = qnx
+host_cpu   = 386
+host_cg    = qnx
+target_cpu = i86
+
+cmdline_cflags = -mf
 also_include = $(lang_root)\qh
+
 !include ..\master.mif

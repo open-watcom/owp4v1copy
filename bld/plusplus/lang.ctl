@@ -74,13 +74,13 @@ set PROJDIR=<CWD>
 # 386 QNX hosted compilers
 #
 #  i86 target
-    <CPCMD> qnxi86\wcppi86.qnx <relroot>\rel2\qnx\binq\wpp.
-    <CPCMD> qnxi86\wcppi86.sym <relroot>\rel2\qnx\sym\wpp.sym
-    <CPCMD> qnxi86\wppi8601.int <relroot>\rel2\qnx\sym\wppi8601.int
+#    <CPCMD> qnxi86\wcppi86.qnx <relroot>\rel2\qnx\binq\wpp.
+#    <CPCMD> qnxi86\wcppi86.sym <relroot>\rel2\qnx\sym\wpp.sym
+#    <CPCMD> qnxi86\wppi8601.int <relroot>\rel2\qnx\sym\wppi8601.int
 #  386 target
-    <CPCMD> qnx386\wcpp386.qnx <relroot>\rel2\qnx\binq\wpp386.
-    <CPCMD> qnx386\wcpp386.sym <relroot>\rel2\qnx\sym\wpp386.sym
-    <CPCMD> qnx386\wpp38601.int <relroot>\rel2\qnx\sym\wpp38601.int
+#    <CPCMD> qnx386\wcpp386.qnx <relroot>\rel2\qnx\binq\wpp386.
+#    <CPCMD> qnx386\wcpp386.sym <relroot>\rel2\qnx\sym\wpp386.sym
+#    <CPCMD> qnx386\wpp38601.int <relroot>\rel2\qnx\sym\wpp38601.int
 
 [ BLOCK <1> clean ]
 #==================

@@ -22,7 +22,7 @@ cdsay .
     <CPCMD> <devdir>\vi\obj2\vi2.exe <relroot>\rel2\binp\vi.exe
     <CPCMD> <devdir>\vi\obj386\vi386.exe <relroot>\rel2\binw\vi.exe
 #    <CPCMD> <devdir>\vi\obj286v\viv.exe <relroot>\rel2\binw\vir.exe
-    <CPCMD> <devdir>\vi\objqnx\viq.qnx <relroot>\rel2\qnx\binq\vi.
+#    <CPCMD> <devdir>\vi\objqnx\viq.qnx <relroot>\rel2\qnx\binq\vi.
     <CPCMD> <devdir>\vi\objnt\vint.exe <relroot>\rel2\binnt\vi.exe
 #    <CPCMD> <devdir>\vi\objaxp\viaxp.exe <relroot>\rel2\axpnt\vi.exe
 #    <CPCMD> <devdir>\vi\objwinap\viaxpw.exe <relroot>\rel2\axpnt\viw.exe

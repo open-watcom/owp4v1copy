@@ -48,8 +48,8 @@ cdsay .
 #    <CPCMD> <devdir>\bin\axpnt\dv.sym <relroot>\rel2\axpnt\wd.sym
 #    <CPCMD> <devdir>\bin\axpnt\dvw.sym <relroot>\rel2\axpnt\wdw.sym
 
-    <CPCMD> <devdir>\bin\qnx\dv.sym <relroot>\rel2\qnx\sym\wd.sym
-    <CPCMD> <devdir>\bin\qnx\dv.qnx <relroot>\rel2\qnx\binq\wd
+#    <CPCMD> <devdir>\bin\qnx\dv.sym <relroot>\rel2\qnx\sym\wd.sym
+#    <CPCMD> <devdir>\bin\qnx\dv.qnx <relroot>\rel2\qnx\binq\wd
 
     <CPCMD> <devdir>\wv\dbg\*.dbg <relroot>\rel2\binw\
     <CPCMD> <devdir>\wv\ssl\*.prs <relroot>\rel2\binw\

@@ -1,5 +1,6 @@
-#pmake: build cpu_386 os_qnx
-host_CPU = 386
-host_OS = qnx
+#pmake: cpu_386 os_qnx
+
+host_os  = qnx
+host_cpu = 386
 
 !include ..\mif\master.mif

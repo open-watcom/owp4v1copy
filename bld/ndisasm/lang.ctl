@@ -14,18 +14,17 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-<CPCMD> <projdir>\STAND\qnx.x86\wdis.qnx <relroot>\rel2\qnx\binq\wdis
+#<CPCMD> <projdir>\STAND\qnx.x86\wdis.qnx <relroot>\rel2\qnx\binq\wdis
+#<CPCMD> <projdir>\STAND\qnx.x86\wdis.sym <relroot>\rel2\qnx\sym\
 <CPCMD> <projdir>\STAND\NT.X86\wdis.exe <relroot>\rel2\binnt\
-<CPCMD> <projdir>\STAND\OS2.X86\wdis.exe <relroot>\rel2\binp\
-#<CPCMD> <projdir>\STAND\osi.x86\wdis.exe <relroot>\rel2\binw\
-<CPCMD> <projdir>\STAND\dos.x86\wdis.exe <relroot>\rel2\binw\
-#<CPCMD> <projdir>\STAND\NT.axp\wdis.exe <relroot>\rel2\axpnt\
-
-<CPCMD> <projdir>\STAND\qnx.x86\wdis.sym <relroot>\rel2\qnx\sym\
 <CPCMD> <projdir>\STAND\NT.X86\wdis.sym <relroot>\rel2\binnt\
+<CPCMD> <projdir>\STAND\OS2.X86\wdis.exe <relroot>\rel2\binp\
 <CPCMD> <projdir>\STAND\OS2.X86\wdis.sym <relroot>\rel2\binp\
+#<CPCMD> <projdir>\STAND\osi.x86\wdis.exe <relroot>\rel2\binw\
 #<CPCMD> <projdir>\STAND\osi.x86\wdis.sym <relroot>\rel2\binw\
+<CPCMD> <projdir>\STAND\dos.x86\wdis.exe <relroot>\rel2\binw\
 <CPCMD> <projdir>\STAND\dos.x86\wdis.sym <relroot>\rel2\binw\
+#<CPCMD> <projdir>\STAND\NT.axp\wdis.exe <relroot>\rel2\axpnt\
 #<CPCMD> <projdir>\STAND\NT.axp\wdis.sym <relroot>\rel2\axpnt\
 
 [ BLOCK <1> clean ]

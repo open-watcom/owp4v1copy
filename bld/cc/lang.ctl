@@ -71,10 +71,11 @@ cdsay .
     <CPCMD> os2i86\wccdi86e.sym <relroot>\rel2\binp\dll\wccd.sym
     <CPCMD> os2i86\wcci8601.int <relroot>\rel2\binp\dll\wcci8601.int
 
-    <CPCMD> qnxi86\wcci86c.qnx <relroot>\rel2\qnx\binq\wcc.
-    <CPCMD> qnxi86\wcci86c.sym <relroot>\rel2\qnx\sym\wcc.sym
-    <CPCMD> qnx386\wcc386c.qnx <relroot>\rel2\qnx\binq\wcc386.
-    <CPCMD> qnx386\wcc386c.sym <relroot>\rel2\qnx\sym\wcc.sym
+#QNX stuff
+#    <CPCMD> qnxi86\wcci86c.qnx <relroot>\rel2\qnx\binq\wcc.
+#    <CPCMD> qnxi86\wcci86c.sym <relroot>\rel2\qnx\sym\wcc.sym
+#    <CPCMD> qnx386\wcc386c.qnx <relroot>\rel2\qnx\binq\wcc386.
+#    <CPCMD> qnx386\wcc386c.sym <relroot>\rel2\qnx\sym\wcc.sym
 
 #AXP NT host
 #    <CPCMD> ntaxp.axp\wccaxpc.exe <relroot>\rel2\axpnt\wccaxp.exe
