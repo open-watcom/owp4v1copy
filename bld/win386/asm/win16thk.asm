@@ -125,7 +125,7 @@ __Win16Thunk1_ proc far
         mov     si,bx                   ; get thunk index
         shr     ebx,16                  ; get API function index
         add     bx,offset _FunctionTable; ...
-        call    __ThunkTable[si]        ; call appropriate thunk routine
+        call    cs:__ThunkTable[si]        ; call appropriate thunk routine
         pop     ecx                     ; restore 32-bit stack pointer
         mov     word ptr _EntryStackSave,SP     ; save current sp
         mov     bx,_DataSelector        ; load 32-bit data segment
@@ -149,7 +149,7 @@ __Win16Thunk2_ proc far
         mov     bp,bx                   ; get thunk index
         shr     ebx,16                  ; get API function index
         add     bx,offset _FunctionTable; ...
-        call    __ThunkTable[bp]        ; call appropriate thunk routine
+        call    cs:__ThunkTable[bp]        ; call appropriate thunk routine
         push    dx                      ; load eax with return value
         push    ax                      ; ...
         pop     eax                     ; ...
@@ -180,7 +180,7 @@ __Win16Thunk3_ proc far
         mov     si,bx                   ; get thunk index
         shr     ebx,16                  ; get API function index
         add     bx,offset _FunctionTable; ...
-        call    __ThunkTable[si]        ; call appropriate thunk routine
+        call    cs:__ThunkTable[si]        ; call appropriate thunk routine
         push    eax                     ; load 16:16 pointer into dx:ax
         pop     ax                      ; ...
         pop     dx                      ; ...
@@ -221,7 +221,7 @@ __Win16Thunk4_ proc far
         mov     bp,bx                   ; get thunk index
         shr     ebx,16                  ; get API function index
         add     bx,offset _FunctionTable; ...
-        call    __ThunkTable[bp]        ; call appropriate thunk routine
+        call    cs:__ThunkTable[bp]        ; call appropriate thunk routine
         jmp     map2flat                ; map 16:16 pointer to 32-bit flat
 __Win16Thunk4_ endp
 
@@ -300,7 +300,7 @@ __Win16Thunk5_ proc far
         mov     si,bx                   ; get thunk index
         shr     ebx,16                  ; get API function index
         add     bx,offset _FunctionTable; ...
-        call    __ThunkTable[si]        ; call appropriate thunk routine
+        call    cs:__ThunkTable[si]        ; call appropriate thunk routine
         call    FreeNestedAliases       ; free nested aliases
         pop     ecx                     ; restore 32-bit stack pointer
         mov     word ptr _EntryStackSave,SP     ; save current sp
@@ -330,7 +330,7 @@ __Win16Thunk6_ proc far
         mov     si,bx                   ; get thunk index
         shr     ebx,16                  ; get API function index
         add     bx,offset _FunctionTable; ...
-        call    __ThunkTable[si]        ; call appropriate thunk routine
+        call    cs:__ThunkTable[si]        ; call appropriate thunk routine
         push    eax                     ; load 16:16 pointer into dx:ax
         pop     ax                      ; ...
         pop     dx                      ; ...

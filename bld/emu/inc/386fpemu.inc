@@ -1314,31 +1314,28 @@ stcons  macro   w1,w2,w3,w4,w5
         endm
 
 setp_extended   macro
+        lea     edx,p_extended
 ifdef __WIN387__
-        mov     edx,p_extended
         mov     precrtn, edx
 else
-        lea     edx,p_extended
         putword edx,precrtn
 endif
         endm
 
 setp_double     macro
+        lea     edx,p_double
 ifdef __WIN387__
-        mov     edx,p_double
         mov     precrtn, edx
 else
-        lea     edx,p_double
         putword edx,precrtn
 endif
         endm
 
 setp_single     macro
+        lea     edx,p_single
 ifdef __WIN387__
-        mov     edx,p_single
         mov     precrtn,edx
 else
-        lea     edx,p_single
         putword edx,precrtn
 endif
         endm
