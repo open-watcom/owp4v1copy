@@ -34,8 +34,8 @@ cdsay .
     <CPCMD> <devdir>\bin\binp\dvw.exe <relroot>\rel2\binp\wdw.exe
     <CPCMD> <devdir>\bin\binp\dv.sym <relroot>\rel2\binp\wd.sym
     <CPCMD> <devdir>\bin\binp\dvw.sym <relroot>\rel2\binp\wdw.sym
-    <CPCMD> <devdir>\bin\binp\dv32.exe <relroot>\rel2\binp\wd32.exe
-    <CPCMD> <devdir>\bin\binp\dvw32.exe <relroot>\rel2\binp\wdw32.exe
+#   <CPCMD> <devdir>\bin\binp\dv16.exe <relroot>\rel2\binp\wd16.exe
+#   <CPCMD> <devdir>\bin\binp\dvw16.exe <relroot>\rel2\binp\wdw16.exe
 
     <CPCMD> <devdir>\bin\bin.nec\dvc.exe <relroot>\rel2\n98bw\wdc.exe
     <CPCMD> <devdir>\bin\bin.nec\dvc.sym <relroot>\rel2\n98bw\wdc.sym
@@ -67,4 +67,4 @@ cdsay .
 
 [ BLOCK <1> clean ]
 #==================
-    sweep killobjs
+    pmake -d all <2> <3> <4> <5> <6> <7> <8> <9> -h clean

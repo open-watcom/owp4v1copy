@@ -631,11 +631,11 @@ wvpm.res wvpmj.res : $(hdir)\wvpm.rc $(bitmaps) $(rcfiles) .autodepend
         wcc -dRC -i$(aui_dir)\pm;$(rcinclude) -p -pw=0 -fo=wvpmj.i $(hdir)\wvpm.rc /dJAPANESE_MESSAGES
         set opath=$(%path)
         set path=$(lang_root)\binp
-        $(lang_root)\binp\rc -i $(inc_dirs_sys_os2_386) -r foros2pm.rc
+        $(lang_root)\binp\rc -i $(inc_dirs_sys_os2_386) -r $(hdir)\foros2pm.rc .\foros2pm.res
         del wvpm.i
         copy foros2pm.res wvpm.res
         copy wvpmj.i wvpm.i
-        $(lang_root)\binp\rc -i $(inc_dirs_sys_os2_386) -r foros2pm.rc
+        $(lang_root)\binp\rc -i $(inc_dirs_sys_os2_386) -r $(hdir)\foros2pm.rc .\foros2pm.res
         copy foros2pm.res wvpmj.res
         set path=$(%opath)
         @set include=$(%oinc)

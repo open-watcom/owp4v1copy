@@ -1,6 +1,6 @@
 #pmake: build os_os2 cpu_386
 #
-# WATCOM Debugger makefile for OS/2
+# Open Watcom Debugger makefile for OS/2
 #
 
 host_OS  = os2
@@ -10,15 +10,12 @@ display  = char
 syshdir = $(mdir)\$(sysdir)\h;$(inc_dirs_sys_os2)
 
 #trap loader is different for 32-bit OS/2
-dig_os_os2_386=os2v2
+dig_os_os2_386 = os2v2
 
-#add '32' suffix to avoid conflicts
-tail_char_os2=32
-
-sysobjs =   &
-        os22ini.obj &
-        os2chk.obj &
-        os2cmd.obj &
+sysobjs =            &
+        os22ini.obj  &
+        os2chk.obj   &
+        os2cmd.obj   &
         os22flio.obj &
         os2scrn.obj
 

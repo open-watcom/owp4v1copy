@@ -1,19 +1,23 @@
-#pmake: build os_os2 cpu_i86 i86 intel
+#pmake: os_os2 cpu_i86
 #
-# WATCOM Debugger makefile for OS/2
+# Open Watcom Debugger makefile for OS/2
 #
 
-host_OS=os2
-host_CPU=i86
-display=char
-extra_cflags= /zc
-syshdir = $(mdir)\$(sysdir)\h;$(lang_root)\h\os21x
+host_OS  = os2
+host_CPU = i86
+display  = char
 
-sysobjs =   &
-        os2init.obj &
-        os2lkup.obj &
-        os2chk.obj &
-        os2cmd.obj &
+syshdir  = $(mdir)\$(sysdir)\h;$(inc_dirs_sys_os2)
+extra_cflags = /zc
+
+#add '16' suffix to avoid conflicts
+tail_char_os2 = 16
+
+sysobjs =            &
+        os2init.obj  &
+        os2lkup.obj  &
+        os2chk.obj   &
+        os2cmd.obj   &
         os2filio.obj &
         os2scrn.obj
 

@@ -7,7 +7,9 @@ killnonobj: .SYMBOLIC .EXPLICIT
         @if exist *.exe @del *.exe
         @if exist *.dll @del *.dll
         @if exist *.lib @del *.lib
-        @if exist *.rc @del *.rc
+        @if exist *.i   @del *.i
+        @if exist *.rc  @del *.rc
+        @if exist *.dlg @del *.dlg
         @if exist *.res @del *.res
         @if exist *.clb @del *.clb
         @if exist *.lst @del *.lst
