@@ -17,11 +17,14 @@ cdsay .
 #========================
 [ IFEQU os_dos <*>]
     <CPCMD> <PROJDIR>/dos386/dmpobj.exe    <RELROOT>/rel2/binw/dmpobj.exe
-[ ELSEIFEQU os_os2 <*> ]
+[ ENDIF ]
+[ IFEQU os_os2 <*> ]
     <CPCMD> <PROJDIR>/os2386/dmpobj.exe    <RELROOT>/rel2/binp/dmpobj.exe
-[ ELSEIFEQU os_nt <*> ]
+[ ENDIF ]
+[ IFEQU os_nt <*> ]
     <CPCMD> <PROJDIR>/nt386/dmpobj.exe     <RELROOT>/rel2/binnt/dmpobj.exe
-[ ELSEIFEQU os_linux <*> ]
+[ ENDIF ]
+[ IFEQU os_linux <*> ]
     <CPCMD> <PROJDIR>/linux386/dmpobj.exe  <RELROOT>/rel2/binl/dmpobj
 [ ENDIF ]
 
