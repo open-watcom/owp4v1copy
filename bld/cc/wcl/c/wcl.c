@@ -32,7 +32,6 @@
 #include <sys/types.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
 #include <unistd.h>
@@ -45,15 +44,10 @@
 #include <malloc.h>
 #include <conio.h>
 
+#include "clcommon.h"
 #include "banner.h"
 #undef  _BANEXTRA
 #define _BANEXTRA _BANEXSHORT
-
-#if defined(__OS2__) || defined(__NT__) || defined(__LINUX__)
-#define MAX_CMD 10240
-#else
-#define MAX_CMD 130
-#endif
 
 #ifdef WCLAXP
   #define WCLNAME     "wclaxp"          /* Name of Compile and Link Utility*/
@@ -85,72 +79,35 @@
   #define _NAME_      "C/C++16 "
 #endif
 #ifdef __UNIX__
-#define OBJ_EXT     ".o"
-#define PATH_SEP    '/'
 #define PATH_SEP_STR "/"
 #else
-#define OBJ_EXT     ".obj"
-#define PATH_SEP    '\\'
 #define PATH_SEP_STR "\\"
 #endif
 #define LINK        "wlink"             /* Open Watcom linker              */
 #define TEMPFILE    "@__WCL__.LNK"      /* temporary linker directive file */
-#define NULLCHAR    '\0'
-#ifndef __UNIX__
-#define ATTR_MASK   _A_HIDDEN + _A_SYSTEM + _A_VOLID + _A_SUBDIR
-#endif
                                         /* mask for illegal file types     */
-#define TRUE        1
-#define FALSE       0
-
-
-struct  list {
-    char        *filename;
-    struct list *next;
-};
-struct  directives {
-    struct directives   *next;
-    char                *directive;
-};
-
-
 static  char    *Cmd;               /* command line parameters            */
 static  char    *Word;              /* one parameter                      */
 static  char    *SystemName;        /* system to link for                 */
 static  char    Files[MAX_CMD];     /* list of filenames from Cmd         */
-static  char    Libs[MAX_CMD];      /* list of libraires from Cmd         */
+        char    Libs[MAX_CMD];      /* list of libraires from Cmd         */
 static  char    CC_Opts[MAX_CMD];   /* list of compiler options from Cmd  */
 static  char    CC_Path[_MAX_PATH]; /* path name for wcc.exe              */
 static  char    PathBuffer[_MAX_PATH];/* buffer for path name of tool     */
-static  FILE    *Fp;                /* file pointer for Temp_Link         */
+        FILE    *Fp;                /* file pointer for Temp_Link         */
 static  char    *Link_Name;         /* name for Temp_Link if /fd specified*/
 static  char    *Temp_Link;         /* temporary linker directive file    */
-static  struct  list *Obj_List;     /* linked list of object filenames    */
+        struct  list *Obj_List;     /* linked list of object filenames    */
 static  struct directives *Directive_List; /* linked list of directives   */
 static  char    Switch_Chars[4];    /* valid switch characters            */
-static  char    Exe_Name[_MAX_PATH];/* name of executable                 */
-static  char    *Map_Name;          /* name of map file                   */
-static  char    *Obj_Name;          /* object file name pattern           */
+        char    Exe_Name[_MAX_PATH];/* name of executable                 */
+        char    *Map_Name;          /* name of map file                   */
+        char    *Obj_Name;          /* object file name pattern           */
 static  char    *StackSize;         /* size of stack                      */
 static  char    DebugFlag;          /* debug info wanted                  */
 static  char    Conventions;        /* 'r' for -3r or 's' for -3s         */
 
-static  struct flags {
-        unsigned math_8087    : 1;  /* 0 ==> no 8087, otherwise /7 option */
-        unsigned map_wanted   : 1;  /* -fm option specified               */
-        unsigned two_case     : 1;  /* two case option                    */
-        unsigned tiny_model   : 1;  /* tiny memory model                  */
-        unsigned be_quiet     : 1;  /* -zq option to be quiet             */
-        unsigned no_link      : 1;  /* -c compile only, no link step      */
-        unsigned do_link      : 1;  /* flag for link if no .obj in Cmd    */
-        unsigned do_cvpack    : 1;  /* flag for link do codeview cvpack   */
-        unsigned link_for_dos : 1;  /* -lr produce DOS executable         */
-        unsigned link_for_os2 : 1;  /* -lp produce OS/2 executable        */
-        unsigned windows      : 1;  /* -zw specified for Windows          */
-        unsigned link_for_sys : 1;  /* -l<system> option given            */
-        unsigned force_c      : 1;  /* -cc option                         */
-        unsigned force_c_plus : 1;  /* -cc++ option                       */
-} Flags;
+struct  flags   Flags;
 
 static char *DebugOptions[] = {
         "",
@@ -171,9 +128,6 @@ char    *SkipSpaces( char * );
 void    Fputnl( char *, FILE * );
 void    *MemAlloc( int );
 void    MakeName( char *, char * );
-void    AddName( char *, FILE * );
-char    *MakePath( char * );
-char    *GetName( char * );
 void    Usage( void );
 #if defined( __UNIX__ )
   #define _dos_switch_char() '-'
@@ -188,16 +142,6 @@ void    Usage( void );
   #define EXE_EXT ".exe"
 #endif
 
-
-enum {
-#undef pick
-#undef E
-#undef J
-#define E(msg)  msg
-#define J(msg)
-#define pick(code,msg)  code
-#include "wclmsg.h"
-};
 
 char *EnglishMsgs[] = {
 #undef pick
@@ -220,43 +164,6 @@ char *JapaneseMsgs[] = {
 };
 
 char    **WclMsgs = EnglishMsgs;
-
-void PrintMsg( char *fmt, ... )
-{
-    char        c;
-    int         i;
-    char        *p;
-    unsigned    value;
-    va_list     args;
-    int         len;
-    char        buf[128];
-
-    value = value;
-    va_start( args, fmt );
-    len = 0;
-    for(;;) {
-        c = *fmt++;
-        if( c == '\0' ) break;
-        if( c == '%' ) {
-            c = *fmt++;
-            if( c == 's' ) {
-                p = va_arg( args, char * );
-                for(;;) {
-                    c = *p++;
-                    if( c == '\0' ) break;
-                    putchar(c);
-                }
-            } else if( c == 'd' ) {
-                i = va_arg( args, int );
-                itoa( i, buf, 10 );
-                for( len = 0; buf[len] != '\0'; ++len ) putchar(buf[len]);
-            }
-        } else {
-            putchar(c);
-        }
-    }
-}
-
 
 void print_banner( void )
 {
@@ -899,52 +806,10 @@ static  int  CompLink( void )
 }
 
 
-static void BuildLinkFile()
-{
-    fputs( "name ", Fp );
-    Fputnl( Exe_Name, Fp );
-    if( Flags.map_wanted ) {
-        if( Map_Name == NULL ) {
-            Fputnl( "option map", Fp );
-        } else {
-            fputs( "option map=", Fp );
-            Fputnl( Map_Name, Fp );
-        }
-    }
-    if( Libs[0] != '\0' ) {
-        fputs( "library ", Fp );
-        Fputnl( Libs, Fp );
-    }
-    if( Flags.two_case )  Fputnl( "option caseexact", Fp );
-    fclose( Fp );       /* close Temp_Link */
-}
-
-
 static  char  *SkipSpaces( char *ptr )
 /************************************/
 {
     while( *ptr == ' ' || *ptr == '\t' )  ptr++;    /* 16-mar-91 */
-    return( ptr );
-}
-
-
-static  void  Fputnl( char *text, FILE *fptr )
-/********************************************/
-{
-    fputs( text, fptr );
-    fputs( "\n", fptr );
-}
-
-
-static  void  *MemAlloc( int size )
-/*********************************/
-{
-    void        *ptr;
-
-    if( ( ptr = malloc( size ) ) == NULL ) {
-        PrintMsg( WclMsgs[ OUT_OF_MEMORY ] );
-        exit( 1 );
-    }
     return( ptr );
 }
 
@@ -956,124 +821,6 @@ static  void  MakeName( char *name, char *ext )
         strcat( name, ext );
     }
 }
-
-static  void  AddName( char *name, FILE *link_fp )
-/************************************************/
-{
-    struct list *curr_name, *last_name, *new_name;
-    char path  [_MAX_PATH ];
-    char buff1[_MAX_PATH2];
-    char buff2[_MAX_PATH2];
-    char *drive;
-    char *dir;
-    char *fname;
-    char *ext1;
-    char *ext2;
-    char *extension;
-
-    curr_name = Obj_List;
-    while( curr_name != NULL ) {
-        if( strcmp( name, curr_name->filename ) == 0 )  return;
-        last_name = curr_name;
-        curr_name = curr_name->next;
-    }
-    new_name = MemAlloc( sizeof( struct list ) );
-    if( Obj_List == NULL ) {
-        Obj_List = new_name;
-    } else {
-        last_name->next = new_name;
-    }
-    new_name->filename = strdup( name );
-    new_name->next = NULL;
-    fputs( "file ", link_fp );
-    if( Obj_Name != NULL ) {
-        /* construct full name of object file from Obj_Name information */
-        _splitpath2( Obj_Name, buff1, &drive, &dir, &fname, &ext1 );
-        extension = ext1;
-        if( ext1[0] == '\0' )  extension = OBJ_EXT;
-        if( fname[0] == '\0' || fname[0] == '*' ) {
-            _splitpath2( name, buff2, NULL, NULL, &fname, &ext2 );
-            if( ext2[0] != '\0' )  extension = ext2;
-        }
-        _makepath( path, drive, dir, fname, extension );
-        name = path;
-    }
-    Fputnl( name, link_fp );
-}
-
-
-static  char  *MakePath( char *path )
-/***********************************/
-{
-    char        *p;
-
-    p = strrchr( path ,PATH_SEP );
-    if( p != NULL ) {
-        p[ 1 ] = NULLCHAR;
-    } else {
-#ifdef __UNIX__
-        *path = NULLCHAR;
-#else
-        p = strchr( path, ':' );
-        if( p != NULL ) {
-            p[ 1 ] = NULLCHAR;
-        } else {
-            *path = NULLCHAR;
-        }
-#endif
-    }
-    return( strdup( path ) );
-}
-
-static  char  *GetName( char *path )
-/**********************************/
-{
-#ifndef __UNIX__
-    static      DIR     *dirp;
-    struct      dirent  *direntp;
-
-    if( path != NULL ) {                /* if given a filespec to open,  */
-        if( *path == NULLCHAR ) {       /*   but filespec is empty, then */
-            closedir( dirp );           /*   close directory and return  */
-            return( NULL );             /*   (for clean up after error)  */
-        }
-        dirp = opendir( path );         /* try to find matching filenames */
-        if( dirp == NULL ) {
-            PrintMsg( WclMsgs[ UNABLE_TO_OPEN ], path );
-            return( NULL );
-        }
-    }
-
-    while( ( direntp = readdir( dirp ) ) != NULL ) {
-        if( ( direntp->d_attr & ATTR_MASK ) == 0 ) {    /* valid file? */
-            return( direntp->d_name );
-        }
-    }
-    closedir( dirp );
-    return( NULL );
-#else
-    char *name;
-    if ( path == NULL )
-            return NULL;
-    name = strrchr(path, '/');
-    if ( name == NULL )
-        name = path;
-    else
-        name++;
-    return ( strdup(name) );
-#endif
-}
-
-void FindPath( char *name, char *buf )
-/************************************/
-{
-    _searchenv( name, "PATH", buf );
-    if( buf[0] == '\0' ) {
-        PrintMsg( WclMsgs[ UNABLE_TO_FIND ], name );
-        exit( 1 );
-    }
-}
-
 
 
 char *EnglishHelp[] = {
