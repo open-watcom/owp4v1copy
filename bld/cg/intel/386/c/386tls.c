@@ -210,7 +210,7 @@ static  void    ExpandTlsOp( instruction *ins, name **pop ) {
         if( op->m.memory_type == CG_FE ) {
             attr = FEAttr( op->v.symbol );
             if( ( attr & FE_THREAD_DATA ) != 0 ) {
-                *pop = GetTLSDataRef( ins, op, ins->type_class );
+                *pop = GetTLSDataRef( ins, op, _OpClass(ins) );
             }
         }
         break;
@@ -221,7 +221,7 @@ static  void    ExpandTlsOp( instruction *ins, name **pop ) {
             if( base->n.class != N_MEMORY || base->m.memory_type != CG_FE ) break;
             attr = FEAttr( base->v.symbol );
             if( ( attr & FE_THREAD_DATA ) == 0 ) break;
-            tls_data = GetTLSDataRef( ins, base, ins->type_class );
+            tls_data = GetTLSDataRef( ins, base, _OpClass(ins) );
             temp = AllocTemp( WD );
             new_ins = MakeUnary( OP_LA, tls_data, temp, WD );
             PrefixIns( ins, new_ins );
@@ -238,8 +238,8 @@ static  void    ExpandTlsOp( instruction *ins, name **pop ) {
             new_ins = MakeBinary( OP_ADD, temp, index, temp, WD );
             PrefixIns( ins, new_ins );
             *pop = ScaleIndex( temp, NULL, 0,
-                            ins->type_class,
-                            TypeClassSize[ ins->type_class ],
+                            _OpClass(ins),
+                            TypeClassSize[ _OpClass(ins) ],
                             0, 0 );
         }
         break;
