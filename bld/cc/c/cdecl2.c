@@ -39,8 +39,8 @@
 TYPEPTR *MakeParmList( struct parm_list *, int, int );
 struct parm_list *NewParm( TYPEPTR, struct parm_list * );
 void    InvDecl( void );
-TYPEPTR DeclPart2(TYPEPTR);
-TYPEPTR DeclPart3(TYPEPTR);
+TYPEPTR DeclPart2( TYPEPTR typ, type_modifiers mod );
+TYPEPTR DeclPart3( TYPEPTR typ, type_modifiers mod );
 static void AbsDecl( SYMPTR sym, type_modifiers mod, TYPEPTR typ );
 
 static int ThreadSeg;
@@ -901,7 +901,7 @@ local void ParseDeclPart2( TYPEPTR *typep, TYPEPTR typ )
             decl1 = decl1->object;
         }
     }
-    decl2 = DeclPart2( typ );
+    decl2 = DeclPart2( typ, FLAG_NONE );
     if( decl1 == NULL ) {
         *typep = decl2;
     } else {
@@ -925,7 +925,7 @@ static void AbsDecl( SYMPTR sym, type_modifiers mod, TYPEPTR typ )
     if( CurToken == T_LEFT_PAREN ) {
         NextToken();
         if( CurToken == T_RIGHT_PAREN ) {
-            typ = FuncNode( typ, FLAG_NONE, NULL );
+            typ = FuncNode( typ, info.modifier, NULL );
         } else {
             AbsDecl( sym, info.modifier, (TYPEPTR) NULL );
             info.modifier = FLAG_NONE;
@@ -935,7 +935,7 @@ static void AbsDecl( SYMPTR sym, type_modifiers mod, TYPEPTR typ )
     } else {
         sym->attrib = info.modifier;
         sym->u.var.segment = info.segment;              /* 01-dec-91 */
-        typ = DeclPart2( typ );
+        typ = DeclPart2( typ, info.modifier );
         sym->sym_type = typ;
     }
 }
@@ -963,12 +963,12 @@ void Declarator( SYMPTR sym, type_modifiers mod, TYPEPTR typ, decl_state state )
             if( parm_type != NULL ) {
                 type_list = MakeParmList( NewParm(parm_type,NULL), 1, 0 );
             }
-            typ = FuncNode( typ, FLAG_NONE, type_list );
+            typ = FuncNode( typ, info.modifier, type_list );
             typ = PtrNode( typ, 0, SEG_DATA );
             MustRecog( T_RIGHT_PAREN );
         } else {
             if( (state & DECL_STATE_ISPARM) && TokenClass[ CurToken ] == TC_STG_CLASS ) {
-                typ = DeclPart3( typ );
+                typ = DeclPart3( typ, info.modifier );
             } else {
                 Declarator( sym, info.modifier, (TYPEPTR) NULL, state );
                 info.modifier = FLAG_NONE;
@@ -1011,7 +1011,7 @@ void Declarator( SYMPTR sym, type_modifiers mod, TYPEPTR typ, decl_state state )
 #if 0
         if( modifier & FLAG_INTERRUPT )  sym->flags |= SYM_INTERRUPT_FN;
 #endif
-        typ = DeclPart2( typ );
+        typ = DeclPart2( typ, info.modifier );
         sym->sym_type = typ;
     }
     if( typ != NULL ) {
@@ -1019,6 +1019,11 @@ void Declarator( SYMPTR sym, type_modifiers mod, TYPEPTR typ, decl_state state )
             if( info.segment != 0 ) {           // __based( __segname("X"))
                 SetFuncSegment( sym, info.segment );
             }
+        }
+        // Keep track of calling convention
+        if( ( typ->decl_type == TYPE_FUNCTION ) ||
+            ( typ->decl_type == TYPE_POINTER  ) ) {
+            typ->type_flags |= info.modifier;
         }
     }
 }
@@ -1075,7 +1080,7 @@ FIELDPTR FieldDecl( TYPEPTR typ, type_modifiers mod, decl_state state )
             field = FieldCreate( "" );
         }
         field->attrib = info.modifier;
-        typ = DeclPart2( typ );
+        typ = DeclPart2( typ, info.modifier );
         field->field_type = typ;
     }
     return( field );
@@ -1130,7 +1135,7 @@ local TYPEPTR ArrayDecl( TYPEPTR typ )
 }
 
 
-static TYPEPTR DeclPart3( TYPEPTR typ )
+static TYPEPTR DeclPart3( TYPEPTR typ, type_modifiers mod )
 {
     PARMPTR     parm_list;
     TYPEPTR     *parms;
@@ -1165,16 +1170,16 @@ static TYPEPTR DeclPart3( TYPEPTR typ )
             CErr1( ERR_FUNCTION_CANT_RETURN_A_FUNCTION );
         }
     }
-    typ = FuncNode( typ, FLAG_NONE, parms );
+    typ = FuncNode( typ, mod, parms );
     return( typ );
 }
 
 
-static TYPEPTR DeclPart2( TYPEPTR typ )
+static TYPEPTR DeclPart2( TYPEPTR typ, type_modifiers mod )
 {
     if( CurToken == T_LEFT_PAREN ) {
         NextToken();
-        typ = DeclPart3( typ );
+        typ = DeclPart3( typ, mod );
     }
     for(;;) {
         if( CurToken == T_LEFT_BRACKET ) {
@@ -1182,7 +1187,7 @@ static TYPEPTR DeclPart2( TYPEPTR typ )
         }
         if( CurToken != T_LEFT_PAREN ) break;
         NextToken();
-        typ = DeclPart3( typ );
+        typ = DeclPart3( typ, mod );
     }
     return( typ );
 }

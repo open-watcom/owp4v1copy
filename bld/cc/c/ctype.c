@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Type management functions.
 *
 ****************************************************************************/
 
@@ -1256,12 +1255,12 @@ TYPEPTR FuncNode( TYPEPTR return_typ, int flag, TYPEPTR *parm_types )
     TYPEPTR     typ;
     int         index;
 
-    flag = FLAG_NONE;
     index = FuncHeadIndex( parm_types );
     if( return_typ != NULL ){
         for( typ = FuncTypeHead[ index ]; typ; typ = typ->next_type ) {
-            if( typ->object == return_typ &&
-                typ->u.parms        == parm_types ) {
+            if( typ->object     == return_typ &&
+                typ->type_flags == flag &&
+                typ->u.parms    == parm_types ) {
                 return( typ );
             }
         }

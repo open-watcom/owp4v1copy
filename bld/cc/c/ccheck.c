@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Type checking routines.
 *
 ****************************************************************************/
 
@@ -320,92 +319,6 @@ local int CompatibleFunction( TYPEPTR typ1, TYPEPTR typ2 )
 #define PTR_FLAGS (FLAG_MEM_MODEL|QUAL_FLAGS)
 #define QUAL_FLAGS (FLAG_CONST|FLAG_VOLATILE|FLAG_UNALIGNED)
 
-#if 0 // save till i figure out what to do
-static cmp_type DoIndenticalType( TYPEPTR typ1, TYPEPTR typ2 ){
-//  don't let anything screwy like x*[4] int = x*int
-    cmp_type        ret_val;
-    type_modifiers  typ1_flags, typ2_flags;
-    int             size1,size2;
-
-    typ1_flags = FLAG_NONE;
-    typ2_flags = FLAG_NONE;
-    ret_val = OK;
-    for( ;; ) {   // * [] loop
-        if( typ1 == typ2 )break;
-        typ1 = SkipTypeFluff( typ1 ); // let typedefs and enums reduce
-        typ2 = SkipTypeFluff( typ2 );
-        if( typ1->decl_type != typ2->decl_type )break;
-        switch( typ1->decl_type ){
-        case TYPE_CHAR:
-        case TYPE_UCHAR:
-        case TYPE_SHORT:
-        case TYPE_USHORT:
-        case TYPE_INT:
-        case TYPE_UINT:
-        case TYPE_LONG:
-        case TYPE_ULONG:
-        case TYPE_LONG64:
-        case TYPE_ULONG64:
-        case TYPE_FLOAT:
-        case TYPE_DOUBLE:
-        case TYPE_DOT_DOT_DOT:
-        case TYPE_VOID:
-        case TYPE_ENUM:
-        case TYPE_PLAIN_CHAR:
-        case TYPE_WCHAR:
-            goto done_check;
-            break;
-        case TYPE_POINTER:
-            typ1_flags = typ1->u.p.decl_flags;
-            typ2_flags = typ2->u.p.decl_flags;
-            if( (typ1_flags & QUAL_FLAGS)!=(typ2_flags & QUAL_FLAGS) ) {
-                if( ret_val == OK ){ //PT is a worse case
-                    ret_val = PQ;
-                }
-            }
-            if( (typ1_flags & FLAG_MEM_MODEL)!=(typ2_flags & FLAG_MEM_MODEL) ){
-                if( (typ1_flags & FLAG_MEM_MODEL) == FLAG_NONE
-                 || (typ2_flags & FLAG_MEM_MODEL) == FLAG_NONE  ){
-                 // check out ambient model
-                    size1 = TypeSize( typ1 );
-                    size2 = TypeSize( typ2 );
-                    if( size1 != size2 ){
-                        ret_val = PT;
-                    }
-                }else{
-                    ret_val = PT;
-                }
-            }
-            break;
-        case TYPE_ARRAY:
-             size1 = typ1->u.array->dimension;
-             size2 = typ1->u.array->dimension;
-             if( size1 != size2 ){
-                ret_val = NO;
-                goto done_check;
-             }
-             break;
-        case TYPE_STRUCT:
-        case TYPE_UNION:
-            ret_val = NO;
-            goto done_check;
-        case TYPE_FUNCTION:
-            if( (typ1_flags & FLAG_LANGUAGES) != (typ2_flags & FLAG_LANGUAGES) ){
-                ret_val = NO;
-            }else if( CompatibleFunction( typ1, typ2 ) != TC_OK  ){
-                ret_val = NO;
-            }
-            goto done_check;
-        default:
-            ;//assert
-        }
-        typ1 = typ1->object;
-        typ2 = typ2->object;
-    }
-done_check:
-    return( ret_val );
-}
-#endif
 static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level )
 {
     cmp_type         ret_val;
@@ -471,6 +384,8 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level )
     }
     if( typ1->decl_type==typ2->decl_type ) {
         if( typ1->decl_type == TYPE_FUNCTION ) {
+            typ1_flags = typ1->type_flags;
+            typ2_flags = typ2->type_flags;
             if( (typ1_flags & FLAG_LANGUAGES) != (typ2_flags & FLAG_LANGUAGES) ){
                 ret_val = NO;
             }else if( (typ1!=typ2) && (CompatibleFunction( typ1, typ2 )!=TC_OK)  ){
@@ -584,6 +499,9 @@ static cmp_type CompatibleType( TYPEPTR typ1, TYPEPTR typ2, int assignment )
                 }else if( size1 > size2 ){
                     ret_pq = PX;
                 }
+            }
+            if( ( typ1_flags & FLAG_LANGUAGES ) != ( typ2_flags & FLAG_LANGUAGES ) ){
+                ret_pq = PX;
             }
         }
         typ1 = typ1->object;
