@@ -21,26 +21,26 @@ namespace std {
 
   namespace rel_ops {
 
-    template< class T >
-    bool operator!=( const T &x, const T &y )
+    template< class Type >
+    bool operator!=( const Type &x, const Type &y )
     {
       return( !( x == y ) );
     }
 
-    template< class T >
-    bool operator>( const T &x, const T &y )
+    template< class Type >
+    bool operator>( const Type &x, const Type &y )
     {
       return( y < x );
     }
 
-    template< class T >
-    bool operator<=( const T &x, const T &y )
+    template< class Type >
+    bool operator<=( const Type &x, const Type &y )
     {
       return( !( y < x ) );
     }
 
-    template< class T >
-    bool operator>=( const T &x, const T &y )
+    template< class Type >
+    bool operator>=( const Type &x, const Type &y )
     {
       return( !( x < y ) );
     }
@@ -49,38 +49,40 @@ namespace std {
 
   // Pair support
 
-  template< class T, class U >
+  template< class Type1, class Type2 >
   struct pair {
-    typedef T first_type;
-    typedef U second_type;
+    typedef Type1 first_type;
+    typedef Type2 second_type;
 
-    T first;
-    U second;
+    Type1 first;
+    Type2 second;
 
     pair( ) { }
-    pair( const T &x, const U &y ) : first(x), second(y) { }
+    pair( const Type1 &x, const Type2 &y ) : first(x), second(y) { }
   };
 
-  template< class T, class U >
+  template< class Type1, class Type2 >
   inline
-  bool operator==( const pair< T, U > &x, const pair< T, U > &y )
+  bool operator==( const pair< Type1, Type2 > &x,
+                   const pair< Type1, Type2 > &y )
   {
     return( x.first == y.first && x.second == y.second );
   }
 
-  template< class T, class U >
+  template< class Type1, class Type2 >
   inline
-  bool operator<( const pair< T, U > &x, const pair< T, U > &y )
+  bool operator<( const pair< Type1, Type2 > &x,
+                  const pair< Type1, Type2 > &y )
   {
     return( x.first < y.first ||
             ( !( y.first < x.first ) && x.second < y.second ) );
   }
 
-  template< class T, class U >
+  template< class Type1, class Type2 >
   inline
-  pair< T, U > make_pair( const T &x, const U &y )
+  pair< Type1, Type2 > make_pair( const Type1 &x, const Type2 &y )
   {
-    return( pair< T, U >( x, y ) );
+    return( pair< Type1, Type2 >( x, y ) );
   }
 
 }

@@ -236,20 +236,20 @@ namespace std {
   enum float_denorm_style
     { denorm_present, denorm_absent, denorm_indeterminate };
 
-  template< class T >
+  template< class Type >
   class numeric_limits {
   public:
     static const bool is_specialized = false;
-    static T min();
-    static T max();
+    static Type min();
+    static Type max();
     static const int digits = 0;
     static const int digits10 = 0;
     static const bool is_signed = false;
     static const bool is_integer = false;
     static const bool is_exact = false;
     static const int radix = 0;
-    static T epsilon();
-    static T round_error();
+    static Type epsilon();
+    static Type round_error();
     static const int min_exponent = 0;
     static const int min_exponent10 = 0;
     static const int max_exponent = 0;
@@ -259,10 +259,10 @@ namespace std {
     static const bool has_signaling_NaN = false;
     static const float_denorm_style has_denorm = denorm_absent;
     static const bool has_denorm_loss = false;
-    static T infinity();
-    static T quiet_NaN();
-    static T signaling_NaN();
-    static T denorm_min();
+    static Type infinity();
+    static Type quiet_NaN();
+    static Type signaling_NaN();
+    static Type denorm_min();
     static const bool is_iec559 = false;
     static const bool is_bounded = false;
     static const bool is_modulo = false;

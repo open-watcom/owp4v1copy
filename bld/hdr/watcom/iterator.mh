@@ -53,12 +53,12 @@ namespace std {
   };
 
   template<class Catagory,
-           class T,
-           class Distance /* = ptrdiff_t */,
-           class Pointer /* = T* */,
-           class Reference /* = T& */>
+           class Type,
+           class Distance = ptrdiff_t,
+           class Pointer = Type*,
+           class Reference = Type& >
   struct iterator {
-    typedef T         value_type;
+    typedef Type      value_type;
     typedef Distance  difference_type;
     typedef Pointer   pointer;
     typedef Reference reference;

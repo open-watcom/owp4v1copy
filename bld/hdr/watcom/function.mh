@@ -36,107 +36,107 @@ namespace std {
   };
 
 
-  template< class T >
-  struct plus : binary_function< T, T, T > {
-    T operator( )( const T &x, const T &y ) const
+  template< class Type >
+  struct plus : binary_function< Type, Type, Type > {
+    Type operator( )( const Type &x, const Type &y ) const
       { return( x + y ); }
   };
 
 
-  template< class T >
-  struct minus : binary_function< T, T, T > {
-    T operator( )( const T &x, const T &y ) const
+  template< class Type >
+  struct minus : binary_function< Type, Type, Type > {
+    Type operator( )( const Type &x, const Type &y ) const
       { return( x - y ); }
   };
 
 
-  template< class T >
-  struct multiplies : binary_function< T, T, T > {
-    T operator( )( const T &x, const T &y ) const
+  template< class Type >
+  struct multiplies : binary_function< Type, Type, Type > {
+    Type operator( )( const Type &x, const Type &y ) const
       { return( x * y ); }
   };
 
 
-  template< class T >
-  struct divides : binary_function< T, T, T > {
-    T operator( )( const T &x, const T &y ) const
+  template< class Type >
+  struct divides : binary_function< Type, Type, Type > {
+    Type operator( )( const Type &x, const Type &y ) const
       { return( x / y ); }
   };
 
 
-  template< class T >
-  struct modulus : binary_function< T, T, T > {
-    T operator( )( const T &x, const T &y ) const
+  template< class Type >
+  struct modulus : binary_function< Type, Type, Type > {
+    Type operator( )( const Type &x, const Type &y ) const
       { return( x % y ); }
   };
 
 
-  template< class T >
-  struct negate : unary_function< T, T > {
-    T operator( )( const T &x ) const
+  template< class Type >
+  struct negate : unary_function< Type, Type > {
+    Type operator( )( const Type &x ) const
       { return( -x ); }
   };
 
 
-  template< class T >
-  struct equal_to : binary_function< T, T, bool > {
-    T operator( )( const T &x, const T &y ) const
+  template< class Type >
+  struct equal_to : binary_function< Type, Type, bool > {
+    Type operator( )( const Type &x, const Type &y ) const
       { return( x == y ); }
   };
 
 
-  template< class T >
-  struct not_equal_to : binary_function< T, T, bool > {
-    T operator( )( const T &x, const T &y ) const
+  template< class Type >
+  struct not_equal_to : binary_function< Type, Type, bool > {
+    Type operator( )( const Type &x, const Type &y ) const
       { return( x != y ); }
   };
 
 
-  template< class T >
-  struct greater : binary_function< T, T, bool > {
-    T operator( )( const T &x, const T &y ) const
+  template< class Type >
+  struct greater : binary_function< Type, Type, bool > {
+    Type operator( )( const Type &x, const Type &y ) const
       { return( x > y ); }
   };
 
 
-  template< class T >
-  struct less : binary_function< T, T, bool > {
-    T operator( )( const T &x, const T &y ) const
+  template< class Type >
+  struct less : binary_function< Type, Type, bool > {
+    Type operator( )( const Type &x, const Type &y ) const
       { return( x < y ); }
   };
 
 
-  template< class T >
-  struct greater_equal : binary_function< T, T, bool > {
-    T operator( )( const T &x, const T &y ) const
+  template< class Type >
+  struct greater_equal : binary_function< Type, Type, bool > {
+    Type operator( )( const Type &x, const Type &y ) const
       { return( x >= y ); }
   };
 
 
-  template< class T >
-  struct less_equal : binary_function< T, T, bool > {
-    T operator( )( const T &x, const T &y ) const
+  template< class Type >
+  struct less_equal : binary_function< Type, Type, bool > {
+    Type operator( )( const Type &x, const Type &y ) const
       { return( x <= y ); }
   };
 
 
-  template< class T >
-  struct logical_and : binary_function< T, T, bool > {
-    T operator( )( const T &x, const T &y ) const
+  template< class Type >
+  struct logical_and : binary_function< Type, Type, bool > {
+    Type operator( )( const Type &x, const Type &y ) const
       { return( x && y ); }
   };
 
 
-  template< class T >
-  struct logical_or : binary_function< T, T, bool > {
-    T operator( )( const T &x, const T &y ) const
+  template< class Type >
+  struct logical_or : binary_function< Type, Type, bool > {
+    Type operator( )( const Type &x, const Type &y ) const
       { return( x || y ); }
   };
 
 
-  template< class T >
-  struct logical_not : unary_function< T, bool > {
-    T operator( )( const T &x ) const
+  template< class Type >
+  struct logical_not : unary_function< Type, bool > {
+    Type operator( )( const Type &x ) const
       { return( !x ); }
   };
 
@@ -193,8 +193,8 @@ namespace std {
   };
 
 
-  template< class Operation, class T >
-  inline binder1st< Operation > bind1st( const Operation &x, const T &y )
+  template< class Operation, class Type >
+  inline binder1st< Operation > bind1st( const Operation &x, const Type &y )
     { return( binder1st< Operation >(
                 x, typename Operation::first_argument_type( y ) ) ); }
 
@@ -216,8 +216,8 @@ namespace std {
   };
 
 
-  template< class Operation, class T >
-  inline binder2nd< Operation > bind2nd( const Operation &x, const T &y )
+  template< class Operation, class Type >
+  inline binder2nd< Operation > bind2nd( const Operation &x, const Type &y )
     { return( binder2nd< Operation >(
                 x, typename Operation::second_argument_type( y ) ) ); }
 
@@ -261,124 +261,133 @@ namespace std {
     { return( pointer_to_binary_function< Arg1, Arg2, Result >( f ) ); }
 
 
-  template< class S, class T >
-  class mem_fun_t : public unary_function< T*, S > {
-    S ( T::*p )( );
+  template< class Result, class Klass >
+  class mem_fun_t : public unary_function< Klass*, Result > {
+    Result ( Klass::*p )( );
   public:
-    explicit mem_fun_t( S ( T::*f )( ) ) : p( f ) { }
-    S operator( )( T *x ) const
+    explicit mem_fun_t( Result ( Klass::*f )( ) ) : p( f ) { }
+    Result operator( )( Klass *x ) const
       { return( ( x->*p )( ) ); }
   };
 
 
-  template< class S, class T, class A >
-  class mem_fun1_t : public binary_function< T*, A, S > {
-    S ( T::*p )( A );
+  template< class Result, class Klass, class Arg >
+  class mem_fun1_t : public binary_function< Klass*, Arg, Result > {
+    Result ( Klass::*p )( Arg );
   public:
-    explicit mem_fun1_t( S ( T::*f )( A ) ) : p( f ) { }
-    S operator( )( T *x, A y ) const
+    explicit mem_fun1_t( Result ( Klass::*f )( Arg ) ) : p( f ) { }
+    Result operator( )( Klass *x, Arg y ) const
       { return( ( x->*p )( y ) ); }
   };
 
 
-  template< class S, class T >
-  inline mem_fun_t< S, T > mem_fun( S ( T::*f )( ) )
-    { return( mem_fun_t< S, T >( f ) ); }
+  template< class Result, class Klass >
+  inline mem_fun_t< Result, Klass > mem_fun( Result ( Klass::*f )( ) )
+    { return( mem_fun_t< Result, Klass >( f ) ); }
 
 
-  template< class S, class T, class A >
-  inline mem_fun1_t< S, T, A > mem_fun( S ( T::*f )( A ) )
-    { return( mem_fun1_t< S, T, A >( f ) ); }
+  template< class Result, class Klass, class Arg >
+  inline mem_fun1_t< Result, Klass, Arg >
+    mem_fun( Result ( Klass::*f )( Arg ) )
+      { return( mem_fun1_t< Result, Klass, Arg >( f ) ); }
 
 
-  template< class S, class T >
-  class mem_fun_ref_t : public unary_function< T, S > {
-    S ( T::*p )( );
+  template< class Result, class Klass >
+  class mem_fun_ref_t : public unary_function< Klass, Result > {
+    Result ( Klass::*p )( );
   public:
-    explicit mem_fun_ref_t( S ( T::*f )( ) ) : p( f ) { }
-    S operator( )( T &x ) const
+    explicit mem_fun_ref_t( Result ( Klass::*f )( ) ) : p( f ) { }
+    Result operator( )( Klass &x ) const
       { return( ( x.*p )( ) ); }
   };
 
 
-  template< class S, class T, class A >
-  class mem_fun1_ref_t : public binary_function< T, A, S > {
-    S ( T::*p )( A );
+  template< class Result, class Klass, class Arg >
+  class mem_fun1_ref_t : public binary_function< Klass, Arg, Result > {
+    Result ( Klass::*p )( Arg );
   public:
-    explicit mem_fun1_ref_t( S ( T::*f )( A ) ) : p( f ) { }
-    S operator( )( T &x, A y ) const
+    explicit mem_fun1_ref_t( Result ( Klass::*f )( Arg ) ) : p( f ) { }
+    Result operator( )( Klass &x, Arg y ) const
       { return( ( x.*p )( y ) ); }
   };
 
 
-  template< class S, class T >
-  inline mem_fun_ref_t< S, T > mem_fun_ref( S ( T::*f )( ) )
-    { return( mem_fun_ref_t< S, T >( f ) ); }
+  template< class Result, class Klass >
+  inline mem_fun_ref_t< Result, Klass >
+    mem_fun_ref( Result ( Klass::*f )( ) )
+      { return( mem_fun_ref_t< Result, Klass >( f ) ); }
 
 
-  template< class S, class T, class A >
-  inline mem_fun1_ref_t< S, T, A > mem_fun_ref( S ( T::*f )( A ) )
-    { return( mem_fun1_ref_t< S, T, A >( f ) ); }
+  template< class Result, class Klass, class Arg >
+  inline mem_fun1_ref_t< Result, Klass, Arg >
+    mem_fun_ref( Result ( Klass::*f )( Arg ) )
+      { return( mem_fun1_ref_t< Result, Klass, Arg >( f ) ); }
 
 
-  template< class S, class T >
-  class const_mem_fun_t : public unary_function< const T*, S > {
-    S ( T::*p )( ) const;
+  template< class Result, class Klass >
+  class const_mem_fun_t : public unary_function< const Klass*, Result > {
+    Result ( Klass::*p )( ) const;
   public:
-    explicit const_mem_fun_t( S ( T::*f )( ) const ) : p( f ) { }
-    S operator( )( const T *x ) const
+    explicit const_mem_fun_t( Result ( Klass::*f )( ) const ) : p( f ) { }
+    Result operator( )( const Klass *x ) const
       { return( ( x->*p )( ) ); }
   };
 
 
-  template< class S, class T, class A >
-  class const_mem_fun1_t : public binary_function< const T*, A, S > {
-    S ( T::*p )( A ) const;
+  template< class Result, class Klass, class Arg >
+  class const_mem_fun1_t :
+    public binary_function< const Klass*, Arg, Result > {
+    Result ( Klass::*p )( Arg ) const;
   public:
-    explicit const_mem_fun1_t( S ( T::*f )( A ) const ) : p( f ) { }
-    S operator( )( const T *x, A y ) const
+    explicit const_mem_fun1_t( Result ( Klass::*f )( Arg ) const ) : p( f ) { }
+    Result operator( )( const Klass *x, Arg y ) const
       { return( ( x->*p )( y ) ); }
   };
 
 
-  template< class S, class T >
-  inline const_mem_fun_t< S, T > mem_fun( S ( T::*f )( ) const )
-    { return( const_mem_fun_t< S, T >( f ) ); }
+  template< class Result, class Klass >
+  inline const_mem_fun_t< Result, Klass >
+    mem_fun( Result ( Klass::*f )( ) const )
+      { return( const_mem_fun_t< Result, Klass >( f ) ); }
 
 
-  template< class S, class T, class A >
-  inline const_mem_fun1_t< S, T, A > mem_fun( S ( T::*f )( A ) const )
-    { return( const_mem_fun1_t< S, T, A >( f ) ); }
+  template< class Result, class Klass, class Arg >
+  inline const_mem_fun1_t< Result, Klass, Arg >
+    mem_fun( Result ( Klass::*f )( Arg ) const )
+      { return( const_mem_fun1_t< Result, Klass, Arg >( f ) ); }
 
 
-  template< class S, class T >
-  class const_mem_fun_ref_t : public unary_function< T, S > {
-    S ( T::*p )( ) const;
+  template< class Result, class Klass >
+  class const_mem_fun_ref_t : public unary_function< Klass, Result > {
+    Result ( Klass::*p )( ) const;
   public:
-    explicit const_mem_fun_ref_t( S ( T::*f )( ) const ) : p( f ) { }
-    S operator( )( const T &x ) const
+    explicit const_mem_fun_ref_t( Result ( Klass::*f )( ) const ) : p( f ) { }
+    Result operator( )( const Klass &x ) const
       { return( ( x.*p )( ) ); }
   };
 
 
-  template< class S, class T, class A >
-  class const_mem_fun1_ref_t : public binary_function< T, A, S > {
-    S ( T::*p )( A ) const;
+  template< class Result, class Klass, class Arg >
+  class const_mem_fun1_ref_t : public binary_function< Klass, Arg, Result > {
+    Result ( Klass::*p )( Arg ) const;
   public:
-    explicit const_mem_fun1_ref_t( S ( T::*f )( A ) const ) : p( f ) { }
-    S operator( )( const T &x, A y ) const
+    explicit const_mem_fun1_ref_t( Result ( Klass::*f )( Arg ) const )
+      : p( f ) { }
+    Result operator( )( const Klass &x, Arg y ) const
       { return( ( x.*p )( y ) ); }
   };
 
 
-  template< class S, class T >
-  inline const_mem_fun_ref_t< S, T > mem_fun_ref( S ( T::*f )( ) const )
-    { return( const_mem_fun_ref_t< S, T >( f ) ); }
+  template< class Result, class Klass >
+  inline const_mem_fun_ref_t< Result, Klass >
+    mem_fun_ref( Result ( Klass::*f )( ) const )
+      { return( const_mem_fun_ref_t< Result, Klass >( f ) ); }
 
 
-  template< class S, class T, class A >
-  inline const_mem_fun1_ref_t< S, T, A > mem_fun_ref( S ( T::*f )( A ) const )
-    { return( const_mem_fun1_ref_t< S, T, A >( f ) ); }
+  template< class Result, class Klass, class Arg >
+  inline const_mem_fun1_ref_t< Result, Klass, Arg >
+    mem_fun_ref( Result ( Klass::*f )( Arg ) const )
+      { return( const_mem_fun1_ref_t< Result, Klass, Arg >( f ) ); }
 
 
 } // End of namespace std.
