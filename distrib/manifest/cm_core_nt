@@ -5,7 +5,6 @@ binnt\cvpack.exe
 binnt\drwatcom.exe
 binnt\_drwin95.exe
 binnt\mkcdpg.exe
-binnt\ochook.dll
 binnt\w32run.exe
 binnt\wacc.dll
 binnt\wasm.exe
@@ -21,4 +20,3 @@ binnt\wspy.exe
 binnt\wstrip.exe
 binnt\wtouch.exe
 binnt\wzoom.exe
-

@@ -205,7 +205,6 @@ binnt\mthr110.sym                               CORE_BINNT      CORE_NT
 binnt\mths110.dll                               CORE_BINNT      CORE_NT
 binnt\mths110.sym                               CORE_BINNT      CORE_NT
 binnt\nmake.exe                                 CORE_BINNT      CORE_NT
-binnt\ochook.dll                                CORE_BINNT      CM_CORE_NT
 binnt\plbr110.dll                               CORE_BINNT      CORE_NT
 binnt\plbr110.sym                               CORE_BINNT      CORE_NT
 binnt\plbs110.dll                               CORE_BINNT      CORE_NT
