@@ -36,3 +36,118 @@
 #include "drscope.h"
 
 static void ScopeBlockInit( scope_block *block )
+//************************************************************
+// link list of free entries together with entries[0] as first
+//************************************************************
+{
+    int i;
+    scope_entry *curr;
+    scope_entry *last;
+
+    block->next = NULL;
+    last = NULL;
+    curr = &block->entries[SCOPE_BLOCK_SIZE-1];
+    for( i = SCOPE_BLOCK_SIZE; i > 0; --i ){
+        curr->next = last;
+        last = curr;
+        --curr;
+    }
+}
+
+static scope_entry *AllocScopeEntry( scope_ctl *ctl )
+//****************************************************
+// get a free one alloc a new block if needed
+//****************************************************
+{
+    scope_entry *new;
+    if( ctl->free == NULL ){
+        scope_block *block;
+
+        block = DWRALLOC( sizeof( scope_block ) );
+        ScopeBlockInit( block );
+        block->next = ctl->next;
+        ctl->next = block;
+        ctl->free = block->entries;
+    }
+    new = ctl->free;
+    ctl->free = new->next;
+    new->next = NULL;
+    return( new );
+}
+
+static void ScopeCtlInit( scope_ctl *ctl )
+//**************************************************
+// Init local block, set free list, init result
+//**************************************************
+{
+    ScopeBlockInit( ctl->first );
+    ctl->free = ctl->first[0].entries;
+    ctl->next = NULL;
+}
+
+static void ScopeCtlFini( scope_ctl *ctl )
+//*****************************************
+// Free any allocated blocks
+//*****************************************
+{
+    scope_block *curr;
+    curr = ctl->next;
+    while( curr != NULL ){
+        scope_block *next;
+        next = curr->next;
+        DWRFREE( curr );
+        curr = next;
+    }
+}
+
+static int AContainer( dr_handle     enclose,
+                      int            index,
+                      scope_trail *df )
+//***********************************************
+// Add entry to list stop when found search entry
+//***********************************************
+{
+    scope_entry *new;
+    bool        cont;
+
+    index = index;
+    new = AllocScopeEntry( &df->ctl );
+    new->next = df->head;
+    df->head = new;
+    new->handle = enclose;
+    if( enclose == df->target ){
+        cont = FALSE;
+    }else{
+        cont = TRUE;
+    }
+    return( cont );
+}
+
+extern void DRGetScopeList( scope_trail *container, dr_handle  of )
+//*********************************************************************
+// Walk in to of starting at ccu
+//*********************************************************************
+{
+    compunit_info*  compunit;
+
+    compunit = DWRFindCompileInfo( of );
+    ScopeCtlInit( &container->ctl );
+    container->target = of;
+    container->head = NULL;
+    if( compunit != NULL ){
+
+        DWRWalkContaining(  compunit->start + COMPILE_UNIT_HDR_SIZE,
+                            of,
+                            AContainer,
+                            container );
+
+    }
+}
+
+extern void DREndScopeList( scope_trail *container )
+//******************************************************
+// Free list
+//******************************************************
+{
+    ScopeCtlFini( &container->ctl );
+}

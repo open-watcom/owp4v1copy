@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DWARF hash table utility functions.
 *
 ****************************************************************************/
 
@@ -157,3 +156,100 @@ extern name_ctl *InitHashName( void ){
 }
 
 extern void FiniHashName( name_ctl *ctl ){
+//***************************************
+// Kill hash table
+//***************************************
+    int      bnum;
+    int      vacant,max,size;
+
+    vacant= 0;  max = 0;
+    for( bnum = 0; bnum < NAME_BUCKETS; ++bnum ){
+        name_blk   *blk;
+        name_blk   *next;
+
+        blk = ctl->bucket[bnum].head;
+        if( ctl->bucket[bnum].rem == 0 ){
+            ++vacant;
+        }else{
+            size =  NAME_BLKSIZE-ctl->bucket[bnum].rem;
+            if( size > max ){
+                max = size;
+            }
+        }
+        while( blk != NULL ){
+            next = blk->next;
+            DCFree( blk );
+            blk = next;
+        }
+    }
+    StrFini( &ctl->str_pool );
+    DCFree( ctl );
+}
+
+extern void AddHashName( name_ctl *ctl, char *name, dr_handle sym ){
+//*************************************************************************
+// Add name, sym to foray
+//*************************************************************************
+    uint_32     key;
+    int         bnum;
+    uint_16     rem;
+    name_blk   *blk;
+    name_entry *curr;
+    int        len;
+
+    len = strlen( name );
+    key = elf_hash( name );
+    bnum = BNUM( key );
+    rem = ctl->bucket[bnum].rem;
+    if( rem == 0 ){
+        blk = DCAlloc( sizeof( *blk ) );
+        blk->next = ctl->bucket[bnum].head;
+        ctl->bucket[bnum].head = blk;
+        rem = NAME_BLKSIZE;
+    }else{
+        blk = ctl->bucket[bnum].head;
+    }
+    curr = &blk->entry[NAME_BLKSIZE-rem];
+    ctl->bucket[bnum].rem = rem-1;
+    ++ctl->count;
+    curr->sym = sym;
+    curr->key = key;
+    curr->name = StrAlloc( &ctl->str_pool, len+1 );
+    strcpy( curr->name, name );
+}
+
+
+extern int FindHashWalk( name_ctl *ctl, name_wlk *wlk ){
+//*****************************************
+// Walk all entries that hash to same key
+//*****************************************
+    uint_32     key;
+    int         bnum;
+    uint_16     count;
+    name_blk   *blk;
+    int     ret;
+
+
+    key = elf_hash( wlk->name );
+    bnum = BNUM( key );
+    count = NAME_BLKSIZE-ctl->bucket[bnum].rem;
+    blk = ctl->bucket[bnum].head;
+    ret = TRUE;
+    while( blk != NULL ){
+        name_entry *curr;
+
+        curr = &blk->entry[0];
+        while( count > 0 ){
+            if( curr->key == key ){
+                if( !wlk->fn( wlk->d, curr->sym, curr->name ) ){
+                    return( FALSE );
+                }
+            }
+            ++curr;
+            --count;
+        }
+        blk = blk->next;
+        count = NAME_BLKSIZE;
+    }
+    return( TRUE );
+}
