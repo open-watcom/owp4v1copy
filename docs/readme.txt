@@ -1,7 +1,7 @@
-Open Watcom C/C++/FORTRAN Version 1.0 - README
+Open Watcom C/C++/FORTRAN Version 1.1 - README
 ----------------------------------------------
 
-Welcome to the Open Watcom C/C++ and FORTRAN/77 version 1.0 release! This
+Welcome to the Open Watcom C/C++ and FORTRAN/77 version 1.1 release! This
 README provides helpful hints to help you get the software package up and
 running. For more detailed information on installation and setup, please
 refer to online Getting Started Guide (c_readme.hlp/c_readme.inf for

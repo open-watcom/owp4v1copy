@@ -1,7 +1,7 @@
-Open Watcom C/C++/FORTRAN Version 1.0
+Open Watcom C/C++/FORTRAN Version 1.1
 =============================================
 
-Welcome to the Open Watcom C/C++ and FORTRAN/77 version 1.0 release! This file contains information about the software package you are about to install. Please read this readme information throughly before installing this software package.
+Welcome to the Open Watcom C/C++ and FORTRAN/77 version 1.1 release! This file contains information about the software package you are about to install. Please read this readme information throughly before installing this software package.
 
 =============================================
 Limited Distribution of Binary Installers
