@@ -732,9 +732,9 @@ If it is issued, please report this problem.
 A segment relocation in the flat memory model was encountered.
 "%a" defines the location of the fixup.
 .*
-.errnote 2064 cannot combine 32-bit segments with 16-bit segments
+.errnote 2064 cannot combine 32-bit segments (%s1) with 16-bit segments (%s2)
 .np
-A 16-bit segment and a 32-bit segment have been encountered.
+A 32-bit segment "%s1" and a 16-bit segment "%s2" have been encountered.
 Mixing object files created by a 286 compiler and object files created
 by a 386 compiler is the most probable cause of this error.
 .*
@@ -838,7 +838,7 @@ If it is issued, please report this problem.
 .errnote 2073 bad Novell file format specified
 .np
 An invalid NetWare executable file format was specified.
-Valid formats are NLM, DSK, NAM, LAN, MSL, HAM, CDM or a numerical 
+Valid formats are NLM, DSK, NAM, LAN, MSL, HAM, CDM or a numerical
 module type.
 .if &e'&optdoc eq 1 .do begin
 .np
