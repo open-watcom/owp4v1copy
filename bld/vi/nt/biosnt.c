@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  BIOS emulation routines for Win32.
 *
 ****************************************************************************/
 
@@ -114,10 +113,6 @@ extern HANDLE   InputHandle, OutputHandle;
 extern COORD    BSize;
 
 #pragma off (unreferenced);
-char In61( void ) { return( 0 ); }
-void Out61( char a ) {}
-void Out43( char a ) {}
-void Out42( char a ) {}
 void BIOSGetColorPalette( void far *a ) {}
 long BIOSGetColorRegister( short a ) { return( 0 ); }
 void BIOSSetNoBlinkAttr() {}
