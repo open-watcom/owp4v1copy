@@ -209,3 +209,6 @@ pick( PROC_IS_NOT_CLOSED,	"Procedure %s is not closed" ,
 pick( CALL_FAR_TO_NEAR,
                                 "Far call is converted to near call." ,
                                 "Far call is converted to near call." )
+pick( MSG_CPU_OPTION_INVALID,
+                                "CPU option %s is not valid for selected CPU.\n" ,
+                                "CPU option %s is not valid for selected CPU.\n" )

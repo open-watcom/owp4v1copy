@@ -5,7 +5,7 @@ Options:
 :elsesegment
 Options:                    ( /option is also supported )
 :endsegment
--{0,1,2,3,4,5}{p}{r,s}
+-{0,1,2,3,4,5,6}{p}{r,s}
     -0          8086 instructions
     -1          80186 instructions
     -2          80286 instructions

@@ -73,7 +73,7 @@ Options may be specified in any order.
 .np
 The options supported by the &asmname. are:
 .begnote $compact
-.note {0,1,2,3,4,5}{p}{r,s}
+.note {0,1,2,3,4,5,6}{p}{r,s}
 .begnote $compact
 .note 0
 same as ".8086"
@@ -1022,6 +1022,64 @@ pushcontext    .radix         record         .repeat
 ~.until         .while         width
 .millust end
 .*
+.section &asmname Specific
+.*
+.np
+There are a few specific features in &asmname.
+.np
+.begnote
+.mnote Naming convention
+.endnote
+.millust begin
+                 Procedure   Variable
+Convention         Name        Name
+---------------  ----------  ---------
+C                   '*'         '*'
+C (MASM)           '_*'        '_*'    see note 1
+WATCOM_C           '*_'        '_*'
+SYSCALL             '*'         '*'
+STDCALL           '_*@nn'      '_*'    see note 2
+BASIC               '^'         '^'
+FORTRAN             '^'         '^'
+PASCAL              '^'         '^'
+.millust end
+Note: 
+.np
+1. WASM uses MASM compatible names when -zcm command line option is used.
+.np
+2. In STDCALL procedures name 'nn' is overall parametrs size in bytes.
+.begnote
+.mnote &company "C" name mangler
+.endnote
+.millust begin
+Command line     Procedure     Others
+  option           Name        Names
+---------------  ----------  ---------
+0,1,2              '*_'        '_*'
+3,4,5,6 with r     '*_'        '_*'
+3,4,5,6 with s      '*'        '*'
+
+.millust end
+.begnote
+.mnote Calling convention
+.endnote
+.millust begin
+                      Parameters    Parameters   Cleanup caller
+Convention   Vararg    passed by       order         stack
+-----------  ------  ------------  ------------- --------------
+C             yes      stack       right to left    no
+WATCOM_C      yes      registers   right to left    no
+SYSCALL       yes      stack       right to left    no
+STDCALL       yes      stack       right to left    yes see note 1
+BASIC         no       stack       left to right    yes
+FORTRAN       no       stack       left to right    yes
+PASCAL        no       stack       left to right    yes
+.millust end
+Note:
+.np
+1. For STDCALL procedures WASM automaticaly cleanup caller stack,
+except vararg parameter is used.
+.*
 .section &asmname. Diagnostic Messages
 .*
 .dm errnote begin
@@ -1207,7 +1265,7 @@ pushcontext    .radix         record         .repeat
 .errnote 573 Floating point instruction not allowed with /fpc
 .errnote 574 Too many errors
 .errnote 575 Build target not recognised
-.errnote 576 Public constants should be numeric; 0 written
+.errnote 576 Public constants should be numeric
 .errnote 577 Expecting symbol
 .errnote 578 Do not mix simplified and full segment definitions
 .errnote 579 Parms passed in multiple registers must be accessed separately, use %s

@@ -190,15 +190,31 @@ static void SetTargName( char *name, unsigned len )
     *p++ = '\0';
 }
 
-static void SetCPUPM(void)
-/************************/
+static void SetCPUPMC(void)
+/*************************/
 {
     char                *tmp;
 
     for( tmp=OptParm; tmp < OptScanPtr; tmp++ ) {
-        if( ( *tmp == 'p' ) && ( SWData.cpu >= 2 ) ) {  // set protected mode
-            SWData.protect_mode = TRUE;
-        } else if( *tmp == '"' ) {                     // set default mangler
+        if( *tmp == 'p' ) {
+            if( SWData.cpu >= 2 ) {         // set protected mode
+                SWData.protect_mode = TRUE;
+            } else {
+                MsgPrintf1( MSG_CPU_OPTION_INVALID, CopyOfParm() );
+            }
+        } else if( *tmp == 'r' ) {
+            if( SWData.cpu >= 3 ) {  // set register calling convention
+                SWData.register_conventions = TRUE;
+            } else {
+                MsgPrintf1( MSG_CPU_OPTION_INVALID, CopyOfParm() );
+            }
+        } else if( *tmp == 's' ) {
+            if( SWData.cpu >= 3 ) {  // set stack calling convention
+                SWData.register_conventions = FALSE;
+            } else {
+                MsgPrintf1( MSG_CPU_OPTION_INVALID, CopyOfParm() );
+            }
+        } else if( *tmp == '"' ) {                             // set default mangler
             char *dest;
             tmp++;
             dest = strchr(tmp, '"');
@@ -216,35 +232,19 @@ static void SetCPUPM(void)
             exit( 1 );
         }
     }
-}
-
-static void _SetCPU(void)
-/***********************/
-{
-    SWData.cpu = OptValue;
+    if( SWData.cpu < 2 ) {
+        SWData.protect_mode = FALSE;
+        SWData.register_conventions = TRUE;
+    } else if( SWData.cpu < 3 ) {
+        SWData.register_conventions = TRUE;
+    }
 }
 
 static void SetCPU(void)
 /**********************/
 {
-    _SetCPU();
-    SetCPUPM();
-}
-
-static void SetCPUxR(void)
-/************************/
-{
-    SWData.register_conventions = TRUE;
-    _SetCPU();
-    SetCPUPM();
-}
-
-static void SetCPUxS(void)
-/************************/
-{
-    SWData.register_conventions = FALSE;
-    _SetCPU();
-    SetCPUPM();
+    SWData.cpu = OptValue;
+    SetCPUPMC();
 }
 
 static void SetFPU(void)
@@ -364,17 +364,9 @@ static struct option const cmdl_options[] = {
     { "0$",     0,        SetCPU },
     { "1$",     1,        SetCPU },
     { "2$",     2,        SetCPU },
-    { "3r$",    3,        SetCPUxR },
-    { "3s$",    3,        SetCPUxS },
     { "3$",     3,        SetCPU },
-    { "4r$",    4,        SetCPUxR },
-    { "4s$",    4,        SetCPUxS },
     { "4$",     4,        SetCPU },
-    { "5r$",    5,        SetCPUxR },
-    { "5s$",    5,        SetCPUxS },
     { "5$",     5,        SetCPU },
-    { "6r$",    6,        SetCPUxR },
-    { "6s$",    6,        SetCPUxS },
     { "6$",     6,        SetCPU },
     { "7",      7,        SetFPU },
     { "?",      0,        HelpUsage },
