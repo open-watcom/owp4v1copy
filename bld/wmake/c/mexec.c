@@ -473,7 +473,7 @@ STATIC char* RemoveBackSlash ( const char* inString ) {
 STATIC RET_T VerbosePrintTempFile(FLIST *head) {
 
     FLIST* current;
-    RET_T  ret;
+    RET_T  ret = RET_SUCCESS;
 
     current = head;
     while (current != NULL) {
@@ -492,8 +492,8 @@ STATIC RET_T createFile (FLIST *head) {
 
     NKLIST *temp;
     int    handle;
-    char   *fileName;
-    char   *tmpFileName;
+    char   *fileName = NULL;
+    char   *tmpFileName = NULL;
     RET_T  ret;
 
     assert (head != NULL);
@@ -1536,7 +1536,7 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
     char    *arg;
     char const *argv[ 3 ]; /* for spawnvp */
     int     retcode;    /* from spawnvp */
-    UINT16  tmp_env;    /* for * commands */
+    UINT16  tmp_env = 0;    /* for * commands */
     RET_T   my_ret;     /* return code for this function */
 
     assert( cmd != NULL );
@@ -1723,7 +1723,7 @@ extern RET_T ExecCList( CLIST *clist )
 /***********************************/
 {
     char    *line;
-    RET_T   ret;
+    RET_T   ret = RET_SUCCESS;
     FLIST   *currentFlist;
 
     while( clist != NULL ) {
