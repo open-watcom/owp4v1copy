@@ -19,6 +19,8 @@ cdsay .
     <CPCMD> <devdir>\bin\bin\???.trp <relroot>\rel2\binw\
     <CPCMD> <devdir>\bin\bin\???serv.exe <relroot>\rel2\binw\
     <CPCMD> <devdir>\bin\bin\???help.ex? <relroot>\rel2\binw\
+    <CPCMD> <devdir>\bin\bin\cw.trp <relroot>\rel2\binw\
+    <CPCMD> <devdir>\bin\bin\cwhelp.exe <relroot>\rel2\binw\
 #nec98
     <CPCMD> <devdir>\bin\bin.nec\???.trp <relroot>\rel2\n98bw\
     <CPCMD> <devdir>\bin\bin.nec\???serv.exe <relroot>\rel2\n98bw\
@@ -26,8 +28,8 @@ cdsay .
 #os2
     <CPCMD> <devdir>\bin\binp\dll\???.dll <relroot>\rel2\binp\dll\
     <CPCMD> <devdir>\bin\binp\dll\std??.dll <relroot>\rel2\binp\dll\
-    <CPCMD> <devdir>\bin\binp\dll\*.d32 <relroot>\rel2\binp\
-    <CPCMD> <devdir>\bin\binp\dll\*.exe <relroot>\rel2\binp\dll\
+    <CPCMD> <devdir>\bin\binp\dll\???.d32 <relroot>\rel2\binp\
+    <CPCMD> <devdir>\bin\binp\dll\???serv.exe <relroot>\rel2\binp\dll\
     <CPCMD> <devdir>\bin\binp\dll\wdpmhook.dll <relroot>\rel2\binp\dll\
     <CPCMD> <devdir>\bin\binp\dll\wdsplice.dll <relroot>\rel2\binp\dll\
     <CPCMD> <devdir>\bin\binp\dll\wdio.dll <relroot>\rel2\binp\dll\
@@ -46,7 +48,7 @@ cdsay .
 #    <CPCMD> <devdir>\bin\axpnt\???.dll <relroot>\rel2\axpnt\
 #    <CPCMD> <devdir>\bin\axpnt\???serv.exe <relroot>\rel2\axpnt\
 #nlm
-    <CPCMD> <devdir>\bin\nlm\*.nlm <relroot>\rel2\nlm\
+    <CPCMD> <devdir>\bin\nlm\???srv?.nlm <relroot>\rel2\nlm\
 #qnx
 #    <CPCMD> <devdir>\bin\qnx\*.trp <relroot>\rel2\qnx\watcom\wd\
 #    <CPCMD> <devdir>\bin\qnx\parserv.qnx <relroot>\rel2\qnx\binq\parserv
