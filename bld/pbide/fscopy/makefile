@@ -1,9 +1,20 @@
 #pmake: build cpu_i86 os_dos os_nt os_win os_os2
+proj_name = fscopy
 
+host_OS = dos
+host_CPU = i86
+
+memory_model_i86 = s
+
+!ifndef fscopy_autodepends
+fscopy_autodepends = .AUTODEPEND
+!endif
+
+!include cproj.mif
+!include defrule.mif
 !include deftarg.mif
 
-wfscopy.exe : fscopy.obj
-        wlink op quiet,map name wfscopy.exe file fscopy
+extra_l_flags = op map
 
-fscopy.obj : fscopy.c
-        wcc -zq -wx fscopy
+wfscopy.exe : fscopy.obj
+        $(linker) $(lflags) name $^@ file $[@
