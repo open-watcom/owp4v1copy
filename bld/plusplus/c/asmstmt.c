@@ -175,7 +175,7 @@ PTREE AsmStmt( void )
     char *fn_name;
     auto VBUF code_buffer;
 
-    PPState = PPS_EOL;
+    PPState = PPS_EOL | PPS_ASM;
     VbufInit( &code_buffer );
     NextToken();
     while( CurToken == T_NULL ) {
