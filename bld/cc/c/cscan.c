@@ -412,17 +412,27 @@ int doScanFloat()
         }
     }
     if( c == 'f' || c == 'F' ) {
-        NextChar();
+        c = SaveNextChar();
         ConstType = TYPE_FLOAT;
     } else if( c == 'l' || c == 'L' ) {
-        NextChar();
+        c = SaveNextChar();
         ConstType = TYPE_LONG_DOUBLE;
     } else {
-        --TokenLen;
         ConstType = TYPE_DOUBLE;
     }
-    Buffer[TokenLen] = '\0';
-    return( CurToken );
+    if( CompFlags.pre_processing && (CharSet[c] & (C_AL | C_DI)) ) {
+        for(;;) {
+            c = SaveNextChar();
+            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
+        }
+        --TokenLen;
+        Buffer[TokenLen] = '\0';
+        return( T_BAD_TOKEN );
+    } else {
+        --TokenLen;
+        Buffer[TokenLen] = '\0';
+        return( T_CONSTANT );
+    }
 }
 
 int ScanDot()
@@ -696,6 +706,7 @@ static int ScanNum( void )
                 c = SaveNextChar();
             }
             if( c == '.' || c == 'e' || c == 'E' ) {
+                BadTokenInfo = bad_token_type;
                 return( doScanFloat() );
             }
             if( digit_mask & 0x08 ) {   /* if digit 8 or 9 somewhere */
@@ -714,6 +725,7 @@ static int ScanNum( void )
             if( c < '0'  ||  c > '9' ) break;
         }
         if( c == '.' || c == 'e' || c == 'E' ) {
+            BadTokenInfo = bad_token_type;
             return( doScanFloat() );
         }
     }
