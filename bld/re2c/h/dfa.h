@@ -1,10 +1,37 @@
+/****************************************************************************
+*
+*                            Open Watcom Project
+*
+*    Portions Copyright (c) 1983-2002 Sybase, Inc. All Rights Reserved.
+*
+*  ========================================================================
+*
+*    This file contains Original Code and/or Modifications of Original
+*    Code as defined in and that are subject to the Sybase Open Watcom
+*    Public License version 1.0 (the 'License'). You may not use this file
+*    except in compliance with the License. BY USING THIS FILE YOU AGREE TO
+*    ALL TERMS AND CONDITIONS OF THE LICENSE. A copy of the License is
+*    provided with the Original Code and Modifications, and is also
+*    available at www.sybase.com/developer/opensource.
+*
+*    The Original Code and all software distributed under the License are
+*    distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+*    EXPRESS OR IMPLIED, AND SYBASE AND ALL CONTRIBUTORS HEREBY DISCLAIM
+*    ALL SUCH WARRANTIES, INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF
+*    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR
+*    NON-INFRINGEMENT. Please see the License for the specific language
+*    governing rights and limitations under the License.
+*
+*  ========================================================================
+*
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
+*
+****************************************************************************/
+
+
 #ifndef _dfa_h
 #define _dfa_h
-
-
-//Revision 1.1  1994/04/08  15:27:59  peter
-//Initial revision
-//
 
 #include <iostream.h>
 #include "re.h"
@@ -17,7 +44,7 @@ class State;
 
 class Action {
 public:
-    State		*state;
+    State               *state;
 public:
     Action(State*);
     virtual void emit(ostream&) = 0;
@@ -31,7 +58,7 @@ public:
 
 class Enter: public Action {
 public:
-    uint		label;
+    uint                label;
 public:
     Enter(State*, uint);
     void emit(ostream&);
@@ -39,7 +66,7 @@ public:
 
 class Save: public Match {
 public:
-    uint		selector;
+    uint                selector;
 public:
     Save(State*, uint);
     void emit(ostream&);
@@ -53,9 +80,9 @@ public:
 
 class Accept: public Action {
 public:
-    uint		nRules;
-    uint		*saves;
-    State		**rules;
+    uint                nRules;
+    uint                *saves;
+    State               **rules;
 public:
     Accept(State*, uint, uint*, State**);
     void emit(ostream&);
@@ -63,7 +90,7 @@ public:
 
 class Rule: public Action {
 public:
-    RuleOp		*rule;
+    RuleOp              *rule;
 public:
     Rule(State*, RuleOp*);
     void emit(ostream&);
@@ -71,16 +98,16 @@ public:
 
 class Span {
 public:
-    uint		ub;
-    State		*to;
+    uint                ub;
+    State               *to;
 public:
     uint show(ostream&, uint);
 };
 
 class Go {
 public:
-    uint		nSpans;
-    Span		*span;
+    uint                nSpans;
+    Span                *span;
 public:
     void genGoto(ostream&, State*);
     void genBase(ostream&, State*);
@@ -93,16 +120,16 @@ public:
 
 class State {
 public:
-    uint		label;
-    RuleOp		*rule;
-    State		*next;
-    State		*link;
-    uint		depth;		// for finding SCCs
-    uint		kCount;
-    Ins			**kernel;
-    bool		isBase:1;
-    Go			go;
-    Action		*action;
+    uint                label;
+    RuleOp              *rule;
+    State               *next;
+    State               *link;
+    uint                depth;          // for finding SCCs
+    uint                kCount;
+    Ins                 **kernel;
+    bool                isBase:1;
+    Go                  go;
+    Action              *action;
 public:
     State();
     ~State();
@@ -113,11 +140,12 @@ public:
 
 class DFA {
 public:
-    uint		lbChar;
-    uint		ubChar;
-    uint		nStates;
-    State		*head, **tail;
-    State		*toDo;
+    uint                lbChar;
+    uint                ubChar;
+    uint                nStates;
+    State               *head;
+    State               **tail;
+    State               *toDo;
 public:
     DFA(Ins*, uint, uint, uint, Char*);
     ~DFA();
