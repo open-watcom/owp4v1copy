@@ -37,7 +37,7 @@
 #include "rtdata.h"
 
 #if defined(_M_IX86)
- extern int     __matherr( struct exception * );
+ extern int     __matherr( struct _exception * );
  #pragma aux    __matherr "*";
 #endif
 
@@ -51,7 +51,7 @@ static const char * const Msgs[] = {
         "Partial loss of significance"
    };
 
-int   (*_RWD_matherr)( struct exception * ) =
+int   (*_RWD_matherr)( struct _exception * ) =
 #if defined(__AXP__) || defined(__PPC__)
   matherr;
 #elif defined(_M_IX86)
