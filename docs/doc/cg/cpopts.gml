@@ -420,6 +420,26 @@ syntax check only
 .ix 'options' 'source/output control'
 .notehd1 Option:
 .notehd2 Description:
+.if &e'&$SWad eq 1 .do begin
+.note ad[=<file_name>]
+generate makefile style auto depend file
+:optref refid='SWad'.
+.do end
+.if &e'&$SWadbs eq 1 .do begin
+.note adbs
+force slashes generated in makefile style auto depend to backward
+:optref refid='SWadbs'.
+.do end
+.if &e'&$SWadfs eq 1 .do begin
+.note adfs
+force slashes generated in makefile style auto depend to forward
+:optref refid='SWadfs'.
+.do end
+.if &e'&$SWadt eq 1 .do begin
+.note adt[=<target_name>]
+specify target name generated in makefile style auto depend
+:optref refid='SWadt'.
+.do end
 .if &e'&$SWdb eq 1 .do begin
 .note db
 generate browsing information
@@ -1438,6 +1458,8 @@ This option does not apply to QNX.
 .do end
 .do end
 .*
+
+
 .if &e'&$SWof eq 1 .do begin
 :OPT refid='SWof' name='of'.
 .ix 'options' 'of'
@@ -2284,6 +2306,7 @@ A default filename extension must be preceded by a period (".").
 &prompt.:SF font=1.compiler_name:eSF. report &sw.p &sw.fo=&dr4.&pc.proj&pc.prep&pc..cpr
 .exam end
 .do end
+
 .*
 .if &e'&$SWp eq 1 .do begin
 :OPT refid='SWp' name='p'.{e,l,c,w=<num>}
@@ -2741,6 +2764,78 @@ This group of options deals with control over the input files and
 output files that the compiler processes and/or creates.
 .*
 :OPTLIST.
+.*
+.if &e'&$SWad eq 1 .do begin
+:OPT refid='SWad' name='ad[=<file_name>]'.
+.ix 'options' 'ad'
+This option enables generation of auto dependancy infomation in a makefile
+syntax generating a <target>:<depends...> list.  If the auto depend file is 
+not specified, it is constructed from the source file name.  If the depend 
+extension is not specified, it is ".d" by default.
+.exam begin 1
+&prompt.:SF font=1.compiler_name:eSF. report &sw.ad=&dr4.&pc.proj&pc.obj&pc
+.exam end
+A trailing "&pc" must be specified for directory names.
+If, for example, the option was specified as
+.mono fo=&dr4.&pc.proj&pc.obj
+then the dependancy file would be called
+.fi &dr4.&pc.proj&pc.obj.d
+.ct ~.
+.np
+A default filename extension must be preceded by a period (".").
+.exam begin 1
+&prompt.:SF font=1.compiler_name:eSF. report &sw.ad=&dr4.&pc.proj&pc.obj&pc..dep
+.exam end
+The file generated has content
+.exam begin 1
+<targetname>:<input source file> <included header files...> 
+.exam end
+included header files exclude those which come <watcom>/h.
+.do end
+.*
+.if &e'&$SWadbs eq 1 .do begin
+:OPT refid='SWadbs' name='adbs'.
+.ix 'options' 'adbs'
+When generating makefile style auto depend files, this option forces any slashes
+"/" or "\" to be "\".  Certain operations can cause mixed slashes, this forces the
+output to be appropriate for the make used.
+.do end
+.*
+.if &e'&$SWadfs eq 1 .do begin
+:OPT refid='SWadfs' name='adfs'.
+.ix 'options' 'adfs'
+When generating makefile style auto depend files, this option forces any slashes
+"/" or "\" to be "/".  Certain operations can cause mixed slashes, this forces the
+output to be appropriate for the make used.
+.do end
+.*
+.if &e'&$SWadt eq 1 .do begin
+:OPT refid='SWadt' name='adt[=<target_name>]'.
+.ix 'options' 'adt'
+This option enables generation of auto dependancy infomation in a makefile
+syntax.  The target name in the file can be specified.  If the auto depend target is 
+not specified, it is constructed from the source file name.  If the target
+extension is not specified, it is "&obj" by default.
+.exam begin 1
+&prompt.:SF font=1.compiler_name:eSF. report &sw.adt=&dr4.&pc.proj&pc.obj&pc
+.exam end
+A trailing "&pc" must be specified for directory names.
+If, for example, the option was specified as
+.mono fo=&dr4.&pc.proj&pc.obj
+then the dependancy file would be called
+.fi &dr4.&pc.proj&pc.obj&obj.
+.ct ~.
+.np
+A default filename extension must be preceded by a period (".").
+.exam begin 1
+&prompt.:SF font=1.compiler_name:eSF. report &sw.adt=&dr4.&pc.proj&pc.obj&pc..dep
+.exam end
+The file generated has content
+.exam begin 1
+<targetname>:<input source file> <included header files...> 
+.exam end
+included header files exclude those which come <watcom>/h.
+.do end
 .*
 .if &e'&$SWdb eq 1 .do begin
 :OPT refid='SWdb' name='db'.

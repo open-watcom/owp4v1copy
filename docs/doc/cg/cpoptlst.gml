@@ -82,6 +82,34 @@
 .br
 .do end
 .*
+.if &version ge 112 .do begin
+:CMT. .note ad
+:hotlink refid='SWad'.
+~b~b~b~b~b~b
+.br
+.do end
+.*
+.if &version ge 112 .do begin
+:CMT. .note adt
+:hotlink refid='SWadt'.
+~b~b~b~b~b~b
+.br
+.do end
+.*
+.if &version ge 112 .do begin
+:CMT. .note adbs
+:hotlink refid='SWadbs'.
+~b~b~b~b~b~b
+.br
+.do end
+.*
+.if &version ge 112 .do begin
+:CMT. .note adfs
+:hotlink refid='SWadfs'.
+~b~b~b~b~b~b
+.br
+.do end
+.*
 .if '&alpha' eq 'AXP' .do begin
 :CMT. .note as
 :hotlink refid='SWas'.
