@@ -324,6 +324,9 @@ local TYPEPTR GetScalarType( char *plain_int, int bmask )
     TYPEPTR     typ;
 
     data_type = -1;
+    if( bmask & M_LONG_LONG ) {
+        bmask &= ~M_INT;
+    }
     if( bmask & (M_VOID | M_FLOAT | M_DOUBLE | M_LONG_LONG ) ) {
         if( bmask == M_VOID ) {
             data_type = TYPE_VOID;
