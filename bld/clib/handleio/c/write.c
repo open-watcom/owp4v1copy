@@ -229,6 +229,9 @@ static int os_write( int handle, const void *buffer, unsigned len, unsigned *amt
 #else
     rc = TinyWrite( handle, buffer, len );
     *amt = TINY_LINFO(rc);
+    if( !TINY_ERROR(rc) ) {
+        rc = 0;
+    }
 #endif
 #ifdef DEFAULT_WINDOWING
     }
@@ -241,8 +244,6 @@ static int os_write( int handle, const void *buffer, unsigned len, unsigned *amt
     if( *amt != len ) {
         rc = ENOSPC;
         __set_errno( rc );
-    } else {
-        rc = 0;
     }
     return( rc );
 }
