@@ -280,9 +280,9 @@ remote and local file names.
 .ix 'NOFpu option'
 requests that the debugger ignore the presence of a math coprocessor.
 
-.note /NOSymbols
-.ix 'options' 'NOSymbols'
-.ix 'NOSymbols option'
+.note /NOSYmbols
+.ix 'options' 'NOSYmbols'
+.ix 'NOSYmbols option'
 requests that the debugger omit all debugging information when loading
 an executable image.
 .bi This option is useful if the debugger detects and

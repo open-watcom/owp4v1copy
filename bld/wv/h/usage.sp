@@ -31,10 +31,10 @@ Options:            ( /option is also supported )
 -TRap=file[;arg]    use 'file' as the debugger's trap file and pass it 'arg'
 -Invoke=file        invoke 'file' as initial debugger setup file
 -NOInvoke           don't invoke any debugger setup file
--NOSymbols          ignore any symbolic information
+-NOSYmbols          ignore any symbolic information
 -NOMouse            ignore any mouse
 -DIp=file           load specified Debug Information Processor
--INITcmd=cmd        process 'cmd' at startup
+-INItcmd=cmd        process 'cmd' at startup
 -REMotefiles        files are accessed on the remote machine by default
 -DOwnload           download executable to the remote machine
 -LOcalinfo=file     look for symbols in 'file' on local system first
@@ -57,6 +57,7 @@ Options:            ( /option is also supported )
 :endsegment
 :segment HIDDEN
 -CONtinueunexpectedbreak    continue execution after unexpected stops
+-POWerbuilder               run in PowerBuilder mode
 :endsegment
 :elsesegment JAPANESE
 Someone please translate the Japanese usage help
