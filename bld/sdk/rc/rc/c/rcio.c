@@ -661,7 +661,7 @@ extern void RcPass2IoShutdown( int noerror )
 } /* RcPass2IoShutdown */
 
 static const char * BannerText =
-    banner1( "WATCOM Windows Resource Compiler", _WRC_VERSION_ )"\n"
+    banner1w( "Windows Resource Compiler", _WRC_VERSION_ )"\n"
     banner2("1993") "\n"
     banner3         "\n"
     banner3a        "\n"
