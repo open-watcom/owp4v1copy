@@ -24,12 +24,15 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  overlay manager shared data structures definition
+;*               they are used by WLINK and OVLLDR
 ;*
 ;*****************************************************************************
 
+;   !!!!!!!!!   must correspond to declaration in ovltab.h  !!!!!!!!!
 
+OVL_MAJOR_VERSION       equ     3
+OVL_MINOR_VERSION       equ     0
 
 OVLTAB_ENTRY    STRUC
     ove_flags_anc       dw      ?
@@ -48,9 +51,6 @@ OVLTAB_PROLOG   STRUC
     ovp_delta           dw      ?
     ovp_ovl_size        dw      ?
 OVLTAB_PROLOG   ENDS
-
-OVL_MAJOR_VERSION       equ     3
-OVL_MINOR_VERSION       equ     0
 
 OVLTAB          STRUC
     ov_prolog           db  size OVLTAB_PROLOG dup(?)

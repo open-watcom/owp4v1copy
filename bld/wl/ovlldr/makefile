@@ -80,6 +80,7 @@ dovlmt.lib : dmovlldr.obj $(mtobjs) $(commobjs) $(debugobjs)
     @%make makedbglib
 
 .h : $(watcom_h)
+.inc : $(watcom_h)
 
 ovlio.obj : ovlio.c
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
@@ -105,34 +106,34 @@ dlovlldr.obj : ovlldr.c
 lovlldr.obj : ovlldr.c
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-novlldr.obj : novlldr.c novlldr.h ovlstd.h ovltab.h ovlvec.h
+novlldr.obj : novlldr.c novlldr.h ovlstd.h ovltab.h
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-dnovlldr.obj : novlldr.c novlldr.h ovlstd.h ovltab.h ovlvec.h
+dnovlldr.obj : novlldr.c novlldr.h ovlstd.h ovltab.h
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-movlldr.obj : movlldr.c novlldr.h ovlstd.h ovltab.h ovlvec.h
+movlldr.obj : movlldr.c novlldr.h ovlstd.h ovltab.h
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-dmovlldr.obj : movlldr.c novlldr.h ovlstd.h ovltab.h ovlvec.h
+dmovlldr.obj : movlldr.c novlldr.h ovlstd.h ovltab.h
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-ovlboth.obj : ovlboth.c ovlstd.h ovltab.h ovlvec.h
+ovlboth.obj : ovlboth.c ovlstd.h ovltab.h
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-dovlboth.obj : ovlboth.c ovlstd.h ovltab.h ovlvec.h
+dovlboth.obj : ovlboth.c ovlstd.h ovltab.h
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-sovldbg.obj : ovldbg.c ovlstd.h ovltab.h ovlvec.h
+sovldbg.obj : ovldbg.c ovlstd.h ovltab.h
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-lovldbg.obj : ovldbg.c ovlstd.h ovltab.h ovlvec.h
+lovldbg.obj : ovldbg.c ovlstd.h ovltab.h
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-novldbg.obj : ovldbg.c novlldr.h ovlstd.h ovltab.h ovlvec.h
+novldbg.obj : ovldbg.c novlldr.h ovlstd.h ovltab.h
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
-movldbg.obj : ovldbg.c novlldr.h ovlstd.h ovltab.h ovlvec.h
+movldbg.obj : ovldbg.c novlldr.h ovlstd.h ovltab.h
     $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
 ovldata.obj : ovldata.asm

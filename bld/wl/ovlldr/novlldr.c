@@ -214,7 +214,7 @@ static void near DeMungeVectors( unsigned tab_off, unsigned sec_num,
  * NOTE: this assumes that __NOVLLDR__ and the vectors are in the same segment!
  */
 {
-    vector_ptr  vect;
+    lvector_ptr vect;
     unsigned    loader;
 
     vect = &__OVLSTARTVEC__;
@@ -227,7 +227,7 @@ static void near DeMungeVectors( unsigned tab_off, unsigned sec_num,
             vect->target.seg -= seg;
         }
         ++vect;
-        loader -= sizeof( vector );
+        loader -= sizeof( lvector );
     }
 }
 
@@ -386,7 +386,7 @@ static void near MoveSection( unsigned destseg, ovltab_entry_ptr ovl )
 */
 {
     unsigned            startseg;
-    vector_ptr          vect;
+    lvector_ptr         vect;
 
     ovl->flags_anc |= FLAG_CHANGED;
     startseg = ovl->code_handle;
@@ -677,7 +677,7 @@ unsigned near __LoadNewOverlay__( unsigned ovl_num )
 }
 
 
-unsigned near __WOVLLDR__( vector_ptr vect )
+unsigned near __WOVLLDR__( lvector_ptr vect )
 /******************************************/
 // Load overlay.
 {

@@ -39,7 +39,6 @@ typedef struct {
 } dos_addr;
 
 #include "ovltab.h"
-#include "ovlvec.h"
 
 // definitions used in the overlay loader.
 
@@ -90,6 +89,12 @@ enum {
 #define NAME( n )       __S##n##__
 #else
 #define NAME( n )       __L##n##__
+#endif
+
+#ifdef OVL_SMALL
+#define vector          svector
+#else
+#define vector          lvector
 #endif
 
 /*

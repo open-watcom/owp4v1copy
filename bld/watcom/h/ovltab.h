@@ -24,12 +24,20 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  overlay manager shared data structures definition
+*               they are used by WLINK and OVLLDR
 *
 ****************************************************************************/
 
+//   !!!!!!!!!   must correspond to declaration in ovltab.inc  !!!!!!!!!
 
+#ifndef _OVLTAB_H_
+#define _OVLTAB_H_
+
+#define OVL_MAJOR_VERSION 3
+#define OVL_MINOR_VERSION 0
+
+#pragma pack( push, 1 );            /* make sure no structures are padded. */
 
 typedef struct ovltab_entry {
     unsigned_16         flags_anc;  /* flags & number of ancestor */
@@ -41,9 +49,11 @@ typedef struct ovltab_entry {
     unsigned_32         disk_addr;  /* location of overlay in file */
 } ovltab_entry;
 
+// flags_anc
 #define FLAG_PRELOAD    0x8000  /* load overlay at init time */
 #define FLAG_ANC_MASK   0x07ff  /* mask to get ancestor */
-#define EXE_FILENAME    0x8000  // flag indicating the .EXE file.
+// fname
+#define EXE_FILENAME    0x8000  /* flag indicating the .EXE file. */
 
 typedef struct ovltab_prolog {
     unsigned_8      major;      // version numbers
@@ -52,9 +62,6 @@ typedef struct ovltab_prolog {
     unsigned_16     delta;      /* paragraph offset of beginning of module */
     unsigned_16     ovl_size;   /* size of overlay area (used in dynamic only)*/
 } ovltab_prolog;
-
-#define OVL_MAJOR_VERSION 3
-#define OVL_MINOR_VERSION 0
 
 typedef struct ovl_null_table {
     ovltab_prolog       prolog;
@@ -67,3 +74,55 @@ typedef struct ovl_table {
 } ovl_table;
 
 #define OVLTAB_TERMINATOR   0xffff
+
+typedef struct svector {            /* short overlay vector */
+    unsigned_8  call_op;
+    unsigned_16 ldr_addr;
+    unsigned_16 sec_num;
+    unsigned_8  jmp_op;
+    unsigned_16 target;
+} svector;
+typedef svector * svector_ptr;
+
+typedef struct {
+    unsigned_16 big_nop;
+    unsigned_8  test_op;
+    unsigned_16 sec_num;
+} mungedvector;
+
+// big_nop
+#define MOV_AX_AX   0xC089          /* opcode for MOV AX,AX */
+// test_op
+#define TEST_OPCODE 0xA9            /* opcode for TEST AX,word */
+                                    /* used for hiding the section number */
+typedef struct {
+    unsigned_8  call_op;
+    unsigned_16 ldr_addr;
+    unsigned_16 sec_num;
+} plainvector;
+
+typedef struct {
+    unsigned_8  cs_over;
+    unsigned_16 inc_op;
+    unsigned_16 tab_addr;
+} incvector;
+
+// cs_over
+#define CS_OVERRIDE 0x2E
+// inc_op
+#define INC_OPCODE 0x6FE
+
+typedef struct lvector {            /* long overlay vector */
+    union {
+        plainvector     v;
+        mungedvector    m;
+        incvector       i;
+    } u;
+    unsigned_8          jmp_op;
+    dos_addr            target;
+} lvector;
+typedef lvector far * lvector_ptr;
+
+#pragma pack( pop );
+
+#endif

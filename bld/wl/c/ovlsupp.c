@@ -296,9 +296,9 @@ extern void CalcOvl( void )
     OvlvecAddr = CurrLoc;
     /* calculate start of overlay area */
     if( FmtData.u.dos.ovl_short ) {
-        temp = VecNum * sizeof( svec );
+        temp = VecNum * sizeof( svector );
     } else {
-        temp = VecNum * sizeof( lvec );
+        temp = VecNum * sizeof( lvector );
     }
     AddSize( temp );
     OvltabSize += temp;
@@ -489,10 +489,10 @@ static void GetVecAddr( int vecnum, targ_addr *addr )
     *addr = OvlvecAddr;
     if( FmtData.u.dos.ovl_short ) {
         /* short address -- fits into 16 bits */
-        addr->off += (vecnum - 1) * sizeof( svec ) + (addr->seg << 4);
+        addr->off += (vecnum - 1) * sizeof( svector ) + (addr->seg << 4);
         addr->seg = 0;
     } else {
-        addr->off += (vecnum - 1) * sizeof( lvec );
+        addr->off += (vecnum - 1) * sizeof( lvector );
     }
 }
 
@@ -527,10 +527,10 @@ extern void GetVecAddr2( int vecnum, thread *targ )
     targ->addr = OvlvecAddr;
     if( FmtData.u.dos.ovl_short ) {
         /* short address -- fits into 16 bits */
-        temp = (vecnum - 1) * sizeof( svec ) + offsetof( svec, call );
+        temp = (vecnum - 1) * sizeof( svector ) + offsetof( svector, call );
     } else {
         /* long address -- put in canonical form */
-        temp = (vecnum - 1) * sizeof( lvec ) + offsetof( lvec, call );
+        temp = (vecnum - 1) * sizeof( lvector ) + offsetof( lvector, call );
     }
     targ->addr.off += temp;
 }
@@ -621,34 +621,34 @@ static void ShortVectors( symbol *loadsym )
     unsigned_32         temp;
     signed_32           diff;
     int                 vecnum;
-    svec                template;
+    svector             template;
 
     vect_off = OvlvecAddr.off;
     temp = MK_REAL_ADDR( OvlvecAddr.seg, OvlvecAddr.off );
     /* get loader address */
     loadval = MK_REAL_ADDR( loadsym->addr.seg, loadsym->addr.off );
     /* fill in overlay vector template */
-    template.call = 0xe8;
-    template.jmpto = 0xe9;
+    template.call_op = 0xe8;
+    template.jmp_op = 0xe9;
     vecnum = 1;
     for( vec = OvlVectors; vec != NULL; vec = vec->next ) {
-        temp = vect_off + offsetof( svec, loader ) + sizeof( unsigned_16 );
+        temp = vect_off + offsetof( svector, ldr_addr ) + sizeof( unsigned_16 );
         diff = loadval - temp;
         if( diff < -32768 || diff > 32767 ) {
             LnkMsg( ERR+MSG_SHORT_VECT_RANGE, "d", vecnum );
         }
-        _HostU16toTarg( diff, template.loader );
+        _HostU16toTarg( diff, template.ldr_addr );
         loadsym = vec->entry;
         _HostU16toTarg( loadsym->p.seg->u.leader->class->section->ovl_num,
                         template.sec_num );
-        temp = vect_off + offsetof( svec, target ) + sizeof( unsigned_16 );
+        temp = vect_off + offsetof( svector, target ) + sizeof( unsigned_16 );
         diff = MK_REAL_ADDR( loadsym->addr.seg, loadsym->addr.off ) - temp;
         if( diff < -32768 || diff > 32767 ) {
             LnkMsg( ERR+MSG_SHORT_VECT_RANGE, "d", vecnum );
         }
         _HostU16toTarg( diff, template.target );
-        PutOvlInfo( vect_off, &template, sizeof( svec ) );
-        vect_off += sizeof( svec );
+        PutOvlInfo( vect_off, &template, sizeof( svector ) );
+        vect_off += sizeof( svector );
         ++vecnum;
     }
 }
@@ -658,7 +658,7 @@ static void LongVectors( symbol *loadsym )
 {
     vecnode             *vec;
     unsigned            vect_off;
-    lvec                template;
+    lvector             template;
     dos_addr            addr;
     signed_32           diff;
     unsigned_32         loadval;
@@ -667,21 +667,21 @@ static void LongVectors( symbol *loadsym )
 
     vect_off = OvlvecAddr.off;
     /* fill in overlay vector template */
-    template.call = 0xe8;
-    template.jmpto = 0xea;
+    template.u.v.call_op = 0xe8;
+    template.jmp_op = 0xea;
     loadval = loadsym->addr.off;
     addr.seg = OvlGroup->grp_addr.seg;
     vecnum = 1;
     for( vec = OvlVectors; vec != NULL; vec = vec->next ) {
-        temp = vect_off + offsetof( lvec, loader ) + sizeof( unsigned_16 );
+        temp = vect_off + offsetof( lvector, u.v.ldr_addr ) + sizeof( unsigned_16 );
         diff = loadval - temp;
         if( diff < -32768 || diff > 32767 ) {
             LnkMsg( ERR+MSG_SHORT_VECT_RANGE, "d", vecnum );
         }
-        _HostU16toTarg( diff, template.loader );
+        _HostU16toTarg( diff, template.u.v.ldr_addr );
         loadsym = vec->entry;
         _HostU16toTarg( loadsym->p.seg->u.leader->class->section->ovl_num,
-                        template.sec_num );
+                        template.u.v.sec_num );
         _HostU16toTarg( loadsym->addr.off, template.target.off );
         if( FmtData.u.dos.dynamic ) {
             _HostU16toTarg( loadsym->addr.seg
@@ -689,11 +689,11 @@ static void LongVectors( symbol *loadsym )
                                                    template.target.seg );
         } else {
             _HostU16toTarg( loadsym->addr.seg, template.target.seg );
-            addr.off = vect_off + offsetof( lvec, target.seg );
+            addr.off = vect_off + offsetof( lvector, target.seg );
             WriteReloc( OvlGroup, addr.off, &addr, sizeof( dos_addr ) );
         }
-        PutOvlInfo( vect_off, &template, sizeof( lvec ) );
-        vect_off += sizeof( lvec );
+        PutOvlInfo( vect_off, &template, sizeof( lvector ) );
+        vect_off += sizeof( lvector );
         vecnum++;
     }
 }
