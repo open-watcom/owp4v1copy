@@ -477,8 +477,7 @@ extern void     MemFree( char *block )
     int     mem_class;
     tag     length;
 
-    block -= TAG_SIZE;
-    free   = (frl *)block;
+    free   = (frl *)( block - TAG_SIZE );
     assert( free->length & ALLOCATED );
     free->length &= ~ALLOCATED;
     length = free->length;
@@ -486,14 +485,14 @@ extern void     MemFree( char *block )
         blk_hdr     *header;
         mem_blk     *blk;
 
-#ifndef NDEBUG
-        // Must zero the memory for later checks in GetFromBlk
-        memset( block + TAG_SIZE, 0, length );
-#endif
-        header = (blk_hdr*)(block - sizeof( blk_hdr ) + TAG_SIZE);
+        header = (blk_hdr *)( block - sizeof( blk_hdr ) );
         blk    = header->block;
         blk->free += header->size + sizeof( blk_hdr );
         blk->size += header->size + sizeof( blk_hdr );
+#ifndef NDEBUG
+        // Must zero the memory for later checks in GetFromBlk
+        memset( header, 0, length + sizeof( blk_hdr ) );
+#endif
     } else {
         mem_class  = SizeToClass( length );
         free->link = _FreeList[ mem_class ];
