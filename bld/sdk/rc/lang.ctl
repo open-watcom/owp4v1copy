@@ -42,7 +42,7 @@ set PROJDIR=<CWD>
   [ IFDEF (cpu_axp) <2*> ]
     <CPCMD> <PROJDIR>/rc/ntaxp/wrc.exe          <RELROOT>/rel2/axpnt/wrc.exe
     <CPCMD> <PROJDIR>/mkcdpg/ntaxp/mkcdpg.exe   <RELROOT>/rel2/axpnt/mkcdpg.exe
-  [ IFDEF (cpu_linux) <2*> ]
+  [ IFDEF (os_linux) <2*> ]
     <CPCMD> <PROJDIR>/rc/linux386/wrc.exe       <RELROOT>/rel2/binl/wrc
     <CPCMD> <PROJDIR>/rc/linux386/wrc.sym       <RELROOT>/rel2/binl/wrc.sym
 
