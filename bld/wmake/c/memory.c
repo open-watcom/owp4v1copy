@@ -241,7 +241,8 @@ extern void MemInit( void )
                         , printLine
                         , _TRMEM_CLOSE_CHECK_FREE );
     if( Handle == NULL ) PrtMsg( FTL| UNABLE_TO_TRACK );
-    trkfile = open( "mem.trk", O_WRONLY | O_CREAT | O_TRUNC, 0 );
+    trkfile = open( "mem.trk", O_WRONLY | O_CREAT | O_TRUNC,
+                   S_IREAD | S_IWRITE );
 #endif
 }
 
