@@ -222,6 +222,9 @@ unsigned_32 Retriever::SeekRead( void*     buffer,
         }
         throw DebugInfoError();
     }
+    /* reading past EOF also flags ios::fail() so we need to clear 
+       that state */
+    _inputFile.ios::clear();
     return length;
 }
 
