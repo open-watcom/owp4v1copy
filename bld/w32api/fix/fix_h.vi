@@ -3,25 +3,5 @@ set nomagic
 #
 # fix WIN32 header files
 #
-# fix1 - include x86 assembly code only for x86 processors
-#        GetCurrentFiber(), GetFiberData()
-#
-assign %fix1beg = "#if defined( _X86_ ) /* Open Watcom fix */"
-assign %fix1end = "#endif               /* Open Watcom fix */"
-edit include/winnt.h
-/Open Watcom fix
-if lastrc != ERR_NO_ERR
-/GetCurrentFiber
-if lastrc == ERR_NO_ERR
-insert 
-%(fix1beg)
-.
-/endif
-insert 
-%(fix1end)
-.
-endif
-endif
-x
 #
 q
