@@ -30,14 +30,7 @@
 
 
 #include <unistd.h>
-#include <stddef.h>
-#include <stdlib.h>
 #include <string.h>
-#ifdef __WATCOMC__
-#include <process.h>
-#endif
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <fcntl.h>
 #include "watcom.h"
 #include "wstrip.h"
@@ -56,6 +49,10 @@ static  HANDLE_INFO     hInstance = { 0 };
 static  int             Res_Flag;
 static  unsigned        MsgShift;
 extern  long            FileShift;
+
+
+static int Msg_Get( int resourceid, char *buffer );
+int Msg_Fini(void);
 
 static void Outs( int nl, char *s )
 {
@@ -118,7 +115,7 @@ void Fatal( int reason, char *insert )
 }
 
 
-static long res_seek( int handle, long position, int where )
+static long res_seek(WResFileID handle, long position, int where )
 /* fool the resource compiler into thinking that the resource information
  * starts at offset 0 */
 {
@@ -130,8 +127,8 @@ static long res_seek( int handle, long position, int where )
 }
 
 
+/* declare struct WResRoutines WResRtns {...} */
 WResSetRtns( open, close, read, write, res_seek, tell, malloc, free );
-
 
 static int Msg_Get( int resourceid, char *buffer )
 {
@@ -178,7 +175,7 @@ int Msg_Init()
 }
 
 
-int Msg_Fini()
+int Msg_Fini(void)
 {
     int     retcode = EXIT_SUCCESS;
 
