@@ -32,6 +32,8 @@
 #ifndef _LINUXCOMM_H
 #define _LINUXCOMM_H
 
+#include "machtype.h"
+
 /* Use 4-byte packing for compatibility with the default packing used by GCC */
 
 #pragma pack(__push,4);
@@ -62,8 +64,8 @@
 /* Options set using PTRACE_SETOPTIONS */
 #define PTRACE_O_TRACESYSGOOD   0x00000001
 
-/* This struct defines the way the registers are stored on the
- * stack during a system call.
+/* This defines the structure used to read and write the entire
+ * set of general purpose CPU registers using sys_ptrace().
  */
 typedef struct {
     long    ebx;
@@ -75,15 +77,19 @@ typedef struct {
     long    eax;
     int     ds;
     int     es;
+    int     fs;
+    int     gs;
     long    orig_eax;
     long    eip;
     int     cs;
     long    eflags;
     long    esp;
     int     ss;
-} pt_regs;
+} user_regs_struct;
 
-/* Offsets to registers in the above structure */
+/* Offsets to registers in the above structure. Also the same offsets
+ * used to read and write individual CPU registers using sys_ptrace().
+ */
 
 #define O_EBX               0
 #define O_ECX               1
@@ -102,7 +108,66 @@ typedef struct {
 #define O_EFL               14
 #define O_UESP              15
 #define O_SS                16
-#define O_FRAME_SIZE        17
+
+/* This defines the structure used to read and write all the floating
+ * point registers using sys_ptrace().
+ */
+typedef struct {
+    long    cwd;
+    long    swd;
+    long    twd;
+    long    fip;
+    long    fcs;
+    long    foo;
+    long    fos;
+    long    st_space[20];   /* 8*10 bytes for each FP-reg = 80 bytes */
+} user_i387_struct;
+
+/* This defines the structure used to read and write all the extended
+ * floating point registers using sys_ptrace().
+ */
+typedef struct {
+    u_short cwd;
+    u_short swd;
+    u_short twd;
+    u_short fop;
+    long    fip;
+    long    fcs;
+    long    foo;
+    long    fos;
+    long    mxcsr;
+    long    reserved;
+    long    st_space[32];   /* 8*16 bytes for each FP-reg = 128 bytes */
+    long    xmm_space[32];  /* 8*16 bytes for each XMM-reg = 128 bytes */
+    long    padding[56];
+} user_fxsr_struct;
+
+/* Structure used internally to set hardware watch points */
+
+typedef struct {
+    addr48_ptr  loc;
+    u_long      value;
+    u_long      linear;
+    u_short     len;
+    u_short     dregs;
+} watch_point;
+
+#define MAX_WP          32
+
+#define TRACE_BIT       0x100
+#define BRK_POINT       0xCC
+
+/* Inline functions to get the CS and DS register values */
+
+u_short DS( void );
+#pragma aux DS = \
+        "mov        ax,ds" \
+        value[ax];
+
+u_short CS( void );
+#pragma aux CS = \
+        "mov        ax,cs" \
+        value[ax];
 
 /* ptrace system call */
 

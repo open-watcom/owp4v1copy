@@ -32,28 +32,21 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include "linuxcomm.h"
 #include "trpimp.h"
 #include "trperr.h"
 #include "squish87.h"
 #include "mad.h"
 #include "madregs.h"
+#include "linuxcomm.h"
 
 // TODO: Need signals and execve() in runtime library to make this work!!
 
-static struct {
-    unsigned long       in;
-    unsigned long       out;
-    unsigned long       err;
-} StdPos;
+//static watch_point  wpList[ MAX_WP ];
+static pid_t        pid;
+static u_short      flatCS;
+static u_short      flatDS;
 
-#define MAX_WP          32
-
-//struct _watch_struct    WatchPoints[ MAX_WP ];
-static short    watchCount = 0;
-static pid_t    pid;
-
-static unsigned WriteBuffer( char *data, addr_off offv, unsigned size )
+static unsigned WriteMem( char *data, addr_off offv, unsigned size )
 {
     int count;
 
@@ -69,20 +62,28 @@ static unsigned WriteBuffer( char *data, addr_off offv, unsigned size )
         offv += 4;
         }
 
-    /* Now handle last partial write if neccesary */
+    /* Now handle last partial write if neccesary. Note that we first
+     * must read the full 32-bit value, then just change the section
+     * we want to update.
+     */
     if (count) {
         u_long  val;
+        if (sys_ptrace(PTRACE_PEEKTEXT, pid, offv, &val) != 0)
+            return size - count;
         switch (count) {
             case 1:
-                val = (u_long)(*((unsigned_8*)data));
+                val &= 0xFFFFFF00;
+                val |= (u_long)(*((unsigned_8*)data));
                 break;
             case 2:
-                val = (u_long)(*((unsigned_16*)data));
+                val &= 0xFFFF0000;
+                val |= (u_long)(*((unsigned_16*)data));
                 break;
             case 3:
-                val = ((u_long)(*((unsigned_8*)(data+0))) << 0) |
-                      ((u_long)(*((unsigned_8*)(data+1))) << 8) |
-                      ((u_long)(*((unsigned_8*)(data+2))) << 16);
+                val &= 0xFF000000;
+                val |= ((u_long)(*((unsigned_8*)(data+0))) << 0) |
+                       ((u_long)(*((unsigned_8*)(data+1))) << 8) |
+                       ((u_long)(*((unsigned_8*)(data+2))) << 16);
                 break;
             }
         if (sys_ptrace(PTRACE_POKETEXT, pid, offv, &val) != 0)
@@ -91,7 +92,7 @@ static unsigned WriteBuffer( char *data, addr_off offv, unsigned size )
     return size;
 }
 
-static unsigned ReadBuffer( char *data, addr_off offv, unsigned size )
+static unsigned ReadMem( char *data, addr_off offv, unsigned size )
 {
     int count;
 
@@ -163,6 +164,7 @@ unsigned ReqMap_addr()
     ret->lo_bound = 0;
     ret->hi_bound = ~(addr48_off)0;
     ret->out_addr.offset = acc->in_addr.offset;
+    ret->out_addr.segment = flatDS;
     return( sizeof( *ret ) );
 }
 
@@ -188,7 +190,7 @@ unsigned ReqChecksum_mem()
             if( length == 0 )
                 break;
             size = (length > sizeof( buf )) ? sizeof( buf ) : length;
-            amount = ReadBuffer( buf, offv, size );
+            amount = ReadMem( buf, offv, size );
             for( i = amount; i != 0; --i )
                 sum += buf[ i - 1 ];
             offv += amount;
@@ -206,7 +208,7 @@ unsigned ReqRead_mem()
     unsigned        len;
 
     acc = GetInPtr(0);
-    len = ReadBuffer(GetOutPtr(0),acc->mem_addr.offset,acc->len);
+    len = ReadMem(GetOutPtr(0),acc->mem_addr.offset,acc->len);
     return( acc->len );
 }
 
@@ -219,7 +221,7 @@ unsigned ReqWrite_mem()
     acc = GetInPtr(0);
     ret = GetOutPtr(0);
     len = GetTotalSize() - sizeof(*acc);
-    ret->len = WriteBuffer( GetInPtr(sizeof(*acc)), acc->mem_addr.offset, len );
+    ret->len = WriteMem( GetInPtr(sizeof(*acc)), acc->mem_addr.offset, len );
     return( sizeof( *ret ) );
 }
 
@@ -294,12 +296,44 @@ unsigned ReqWrite_io()
 
 static void ReadCPU( struct x86_cpu *r )
 {
-    // TODO: Read the CPU state for debuggee!
+    user_regs_struct    regs;
+
+    memset( r, 0, sizeof( *r ) );
+    if (sys_ptrace(PTRACE_GETREGS, pid, 0, &regs) == 0) {
+        r->eax = regs.eax;
+        r->ebx = regs.ebx;
+        r->ecx = regs.ecx;
+        r->edx = regs.edx;
+        r->esi = regs.esi;
+        r->edi = regs.edi;
+        r->ebp = regs.ebp;
+        r->esp = regs.esp;
+        r->eip = regs.eip;
+        r->efl = regs.eflags;
+        r->cs = regs.cs;
+        r->ds = regs.ds;
+        r->ss = regs.ss;
+        r->es = regs.es;
+        r->fs = regs.fs;
+        r->gs = regs.gs;
+    }
 }
 
 static void ReadFPU( struct x86_fpu *r )
 {
-    // TODO: Read the FPU state for debuggee!
+    user_i387_struct    regs;
+
+    memset( r, 0, sizeof( *r ) );
+    if (sys_ptrace(PTRACE_GETFPREGS, pid, 0, &regs) == 0) {
+        r->cw = regs.cwd;
+        r->sw = regs.swd;
+        r->tag = regs.twd;
+        r->ip_err.p.offset = regs.fip;
+        r->ip_err.p.segment = regs.fcs;
+        r->op_err.p.offset = regs.foo;
+        r->op_err.p.segment = regs.fos;
+        memcpy(r->reg,regs.st_space,sizeof(r->reg));
+    }
 }
 
 unsigned ReqRead_cpu()
@@ -326,12 +360,39 @@ unsigned ReqRead_regs( void )
 
 static void WriteCPU( struct x86_cpu *r )
 {
-    // TODO: Write the CPU state for the debuggee!
+    user_regs_struct    regs;
+
+    regs.eax = r->eax;
+    regs.ebx = r->ebx;
+    regs.ecx = r->ecx;
+    regs.edx = r->edx;
+    regs.esi = r->esi;
+    regs.edi = r->edi;
+    regs.ebp = r->ebp;
+    regs.esp = r->esp;
+    regs.eip = r->eip;
+    regs.eflags = r->efl;
+    regs.cs = r->cs;
+    regs.ds = r->ds;
+    regs.ss = r->ss;
+    regs.es = r->es;
+    regs.fs = r->fs;
+    regs.gs = r->gs;
+    sys_ptrace(PTRACE_SETREGS, pid, 0, &regs);
 }
 
 static void WriteFPU( struct x86_fpu *r )
 {
-    // TODO: Write the FPU state for the debuggee!
+    user_i387_struct    regs;
+
+    regs.cwd = r->cw;
+    regs.swd = r->sw;
+    regs.twd = r->tag;
+    regs.fip = r->ip_err.p.offset;
+    regs.fcs = r->ip_err.p.segment;
+    regs.foo = r->op_err.p.offset;
+    regs.fos = r->op_err.p.segment;
+    sys_ptrace(PTRACE_SETFPREGS, pid, 0, &regs);
 }
 
 unsigned ReqWrite_cpu()
@@ -359,6 +420,10 @@ unsigned ReqWrite_regs( void )
 unsigned ReqProg_load()
 {
     // TODO: Load the debuggee program!
+    // TODO: Get the FlatCS and FlatDS register values from the process context
+    //       of the debuggee!!
+    flatDS = DS();
+    flatCS = CS();
     return( 0 );
 }
 
@@ -372,57 +437,39 @@ unsigned ReqProg_kill()
     return( sizeof( *ret ) );
 }
 
-unsigned ReqSet_break()
+unsigned ReqSet_break( void )
 {
-//    long            opcode;
     set_break_req   *acc;
     set_break_ret   *ret;
+    u_char          opcode;
 
-    // TODO: Set a breakpoint
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
-//    __qnx_debug_brk( ProcInfo.proc, ProcInfo.pid, _DEBUG_BRK_SET, &opcode,
-//                     acc->break_addr.offset, acc->break_addr.segment );
-//    ret->old = opcode;
+    ReadMem( &opcode, acc->break_addr.offset, sizeof(opcode) );
+    ret->old = opcode;
+    opcode = BRK_POINT;
+    WriteMem( &opcode, acc->break_addr.offset, sizeof(opcode) );
     return( sizeof( *ret ) );
 }
 
-unsigned ReqClear_break()
+unsigned ReqClear_break( void )
 {
-    long            opcode;
     clear_break_req *acc;
+    u_char          opcode;
 
-    // TODO: Clear a breakpoint
     acc = GetInPtr( 0 );
     opcode = acc->old;
-//    __qnx_debug_brk( ProcInfo.proc, ProcInfo.pid, _DEBUG_BRK_CLR, &opcode,
-//                acc->break_addr.offset, acc->break_addr.segment );
+    WriteMem( &opcode, acc->break_addr.offset, sizeof(opcode) );
     return( 0 );
 }
 
 unsigned ReqSet_watch()
 {
-    unsigned        size;
-    set_watch_req   *acc;
-    set_watch_ret   *ret;
-
-    // TODO: Figure out how to add a watch point
-    acc = GetInPtr( 0 );
-    ret = GetOutPtr( 0 );
-    for( size = acc->size; size != 0; --size ) {
-//        WatchPoints[ watchCount ].seg = acc->watch_addr.segment;
-//        WatchPoints[ watchCount ].off = acc->watch_addr.offset;
-        ++acc->watch_addr.offset;
-        ++watchCount;
-    }
-    ret->err = 0;
-    ret->multiplier = 1000;
-    return( sizeof( *ret ) );
+    return( 0 );
 }
 
 unsigned ReqClear_watch()
 {
-    watchCount = 0; /* assume all are cleared at the same time */
     return( 0 );
 }
 
@@ -444,9 +491,7 @@ unsigned ReqProg_go()
 
 unsigned ReqRedirect_stdin( void  )
 {
-    redirect_stdin_ret  *ret;
-
-    // TODO: Figure out how to redirect standard input for debuggee!
+    redirect_stdin_ret *ret;
     ret = GetOutPtr( 0 );
     ret->err = 1;
     return( sizeof( *ret ) );
@@ -455,8 +500,6 @@ unsigned ReqRedirect_stdin( void  )
 unsigned ReqRedirect_stdout( void  )
 {
     redirect_stdout_ret *ret;
-
-    // TODO: Figure out how to redirect standard output for debuggee!
     ret = GetOutPtr( 0 );
     ret->err = 1;
     return( sizeof( *ret ) );
@@ -545,9 +588,6 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, int remote )
 
     parm = parm;
     remote = remote;
-    StdPos.in  = lseek( 0, 0, SEEK_CUR );
-    StdPos.out = lseek( 1, 0, SEEK_CUR );
-    StdPos.err = lseek( 2, 0, SEEK_CUR );
     err[0] = '\0'; /* all ok */
     ver.major = TRAP_MAJOR_VERSION;
     ver.minor = TRAP_MINOR_VERSION;
