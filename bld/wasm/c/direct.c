@@ -2741,7 +2741,7 @@ static memtype proc_exam( int i )
     info->parasize = 0;
     info->localsize = 0;
     info->is_vararg = FALSE;
-    info->pe_type = !( ( Code->info.cpu & P_CPU_MASK ) < P_286 );
+    info->pe_type = ( ( Code->info.cpu & P_CPU_MASK ) == P_286 ) || ( ( Code->info.cpu & P_CPU_MASK ) == P_386 );
     SetMangler( &dir->sym, NULL );
 
     /* Parse the definition line, except the parameters */
@@ -3074,6 +3074,24 @@ int WritePrologue( void )
     }
 
     if( info->localsize != 0 || info->parasize != 0 || info->is_vararg ) {
+        // prolog code timmings
+        //
+        //                                                   best result
+        //               size  86  286  386  486  P     86  286  386  486  P
+        // push bp       2     11  3    2    1    1
+        // mov bp,sp     2     2   2    2    1    1
+        // sub sp,immed  4     4   3    2    1    1
+        //              -----------------------------
+        //               8     17  8    6    3    3     x   x    x    x    x
+        //
+        // push ebp      2     -   -    2    1    1
+        // mov ebp,esp   2     -   -    2    1    1
+        // sub esp,immed 6     -   -    2    1    1
+        //              -----------------------------
+        //               10    -   -    6    3    3              x    x    x
+        //
+        // enter imm,0   4     -   11   10   14   11
+        //
         // write prolog code
         if( Use32 ) {
             // write 80386 prolog code
@@ -3139,13 +3157,77 @@ static void write_epilogue( void )
     pop_register( CurrProc->e.procinfo->regslist );
 
     if( info->localsize == 0 && info->parasize == 0 && !(info->is_vararg) ) return;
+    // epilog code timmings
+    //
+    //                                                  best result
+    //              size  86  286  386  486  P      86  286  386  486  P
+    // mov sp,bp    2     2   2    2    1    1
+    // pop bp       2     8   5    4    4    1
+    //             -----------------------------
+    //              4     10  7    6    5    2      x             x    x
+    //
+    // mov esp,ebp  2     -   -    2    1    1
+    // pop ebp      2     -   -    4    4    1
+    //             -----------------------------
+    //              4     -   -    6    5    2                    x    x
+    //
+    // leave        1     -   5    4    5    3          x    x    x
+    //
+    // !!!! DECISION !!!!
+    //
+    // leave will be used for .286 and .386
+    // .286 code will be best working on 286,386 and 486 processors
+    // .386 code will be best working on 386 and 486 processors
+    // .486 code will be best working on 486 and above processors
+    //
+    //   without LEAVE
+    //
+    //         86  286  386  486  P
+    //  .8086  0   -2   -2   0    +1
+    //  .286   -   -2   -2   0    +1
+    //  .386   -   -    -2   0    +1
+    //  .486   -   -    -    0    +1
+    //
+    //   LEAVE 286 only
+    //
+    //         86  286  386  486  P
+    //  .8086  0   -2   -2   0    +1
+    //  .286   -   0    +2   0    -1
+    //  .386   -   -    -2   0    +1
+    //  .486   -   -    -    0    +1
+    //
+    //   LEAVE 286 and 386
+    //
+    //         86  286  386  486  P
+    //  .8086  0   -2   -2   0    +1
+    //  .286   -   0    +2   0    -1
+    //  .386   -   -    0    0    -1
+    //  .486   -   -    -    0    +1
+    //
+    //   LEAVE 286, 386 and 486
+    //
+    //         86  286  386  486  P
+    //  .8086  0   -2   -2   0    +1
+    //  .286   -   0    +2   0    -1
+    //  .386   -   -    0    0    -1
+    //  .486   -   -    -    0    -1
+    //
     // write epilog code
-    if( Use32 || info->pe_type ) {
-        // write 80286 and above epilog code
+    if( info->pe_type ) {
+        // write 80286 and 80386 epilog code
         // LEAVE
         strcpy( buffer, "leave" );
+    } else if( Use32 ) {
+        // write 32-bit 80486 or P epilog code
+        // Mov ESP, EBP
+        // POP EBP
+        if( info->localsize != 0 ) {
+            strcpy( buffer, "mov esp, ebp" );
+            InputQueueLine( buffer );
+        }
+        strcpy( buffer, "pop ebp" );
     } else {
-        // write 8086 epilog code
+        // write 16-bit 8086 or 80486 or P epilog code
         // Mov SP, BP
         // POP BP
         if( info->localsize != 0 ) {
