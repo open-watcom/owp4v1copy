@@ -40,7 +40,7 @@
 #include "seterrno.h"
 #include "qwrite.h"
 
-#if !defined(_NETWARE_LIBC) && !defined (_THIN_LIB)
+#if !defined(__NETWARE__) && !defined (_THIN_LIB)
 
 _WCRTLINK int __flush( FILE *fp )
 {

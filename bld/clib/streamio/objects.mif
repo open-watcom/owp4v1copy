@@ -14,7 +14,7 @@
 !inject fgetpos.obj  d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi
 !inject fgets.obj    d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi
 !inject fileno.obj   d16 d32             nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi
-!inject flush.obj    d16 d32             nt nta ntp nvc     nvl nll o16 o32 q16 q32 w16 w32 osi
+!inject flush.obj    d16 d32             nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi
 !inject flushall.obj d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi
 !inject fopen.obj    d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi
 !inject fprintf.obj  d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi
@@ -35,7 +35,7 @@
 !inject initfile.obj d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi
 !inject ioalloc.obj  d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi
 !inject iob.obj      d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi
-!inject iobaddr.obj  d16 d32             nt nta ntp nvc     nvl nll o16 o32 q16 q32 w16 w32 osi
+!inject iobaddr.obj  d16 d32             nt nta ntp nvc ncl nvl nll o16 o32 q16 q32 w16 w32 osi
 !inject iobptr.obj   d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi
 !inject noefgfmt.obj d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi
 !inject ntfio.obj                        nt nta ntp
