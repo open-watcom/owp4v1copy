@@ -132,6 +132,7 @@ extern void __FLDD(long_double _WCNEAR *,long_double _WCNEAR *,long_double _WCNE
 extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
 #endif
 
+#ifdef __WATCOMC__        
 #if defined(__386__)
  #pragma aux    __ZBuf2LD       "*"  parm caller [eax] [edx];
  #if defined(__FPI__)
@@ -427,6 +428,7 @@ extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
   #pragma aux   __iLDFS "*"  parm caller [ax] [dx];
   #pragma aux   __FLDC  "*"  parm caller [ax] [dx] value [ax];
  #endif
+#endif
 #endif
 
 #ifdef _LONG_DOUBLE_

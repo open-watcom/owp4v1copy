@@ -539,6 +539,7 @@ static char *checkAttrib( char *s, char **ptype, char *buff, int *errs,
         }
         ++s;
     } else {
+        i = n + 1;
         if( *s == '-' || isdigit( *s ) ) {
             i = strtol( s, &s, 10 );
         }

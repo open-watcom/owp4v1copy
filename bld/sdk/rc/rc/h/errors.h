@@ -64,7 +64,7 @@ enum {
 
 extern void RcWarning( unsigned errornum, ... );
 extern void RcError(unsigned int ,... );
-#ifndef __AXP__
+#if !defined(__AXP__) && defined(__WATCOMC__)
 #pragma aux RcFatalError aborts;
 #endif
 extern void RcFatalError( unsigned int, ... );
