@@ -87,7 +87,7 @@ typedef long    fpos_t;
 
 #if !defined(__OBSCURE_STREAM_INTERNALS)
 
-_WCRTLINK extern FILE _WCDATA __iob[];
+_WCRTLINK extern FILE _WCNEAR __iob[];
 /*
  *  Define macros to access the three default file pointer (and descriptors)
  *  provided to each process by default.  They will always occupy the

@@ -292,8 +292,8 @@ _WCRTLINK extern char   *_utoa( unsigned int __value, char *__buf, int __radix )
  #define _fileinfo _fileinfo_br
 #endif
 :endsegment
-_WCRTLINK extern char **_WCDATA environ;        /*  pointer to environment table */
-_WCRTLINK extern wchar_t **_WCDATA _wenviron; /*  pointer to wide environment */
+_WCRTLINK extern char **_WCNEAR environ;        /*  pointer to environment table */
+_WCRTLINK extern wchar_t **_WCNEAR _wenviron; /*  pointer to wide environment */
 :segment !QNX & !LINUX
 #if defined(__NT__)
  _WCRTLINK extern int _fileinfo;        /* for inheriting POSIX handles */
@@ -330,10 +330,10 @@ _WCRTLINK extern int                _doserrno;  /* DOS system error code value *
 _WCRTLINK extern unsigned _WCDATA    _psp;      /* Program Segment Prefix */
 #define DOS_MODE 0                              /* Real Address Mode */
 #define OS2_MODE 1                              /* Protected Address Mode */
-_WCRTLINK extern unsigned char _WCDATA _osmode; /* DOS_MODE or OS2_MODE */
-_WCRTLINK extern int _WCDATA        _fmode;     /* default file translation mode */
+_WCRTLINK extern unsigned char _WCNEAR _osmode; /* DOS_MODE or OS2_MODE */
+_WCRTLINK extern int _WCNEAR        _fmode;     /* default file translation mode */
 _WCRTLINK extern char *             _sys_errlist[];/* strerror error message table */
-_WCRTLINK extern int _WCDATA        _sys_nerr;  /* # of entries in _sys_errlist array */
+_WCRTLINK extern int _WCNEAR        _sys_nerr;  /* # of entries in _sys_errlist array */
 _WCRTLINK extern unsigned _WCDATA   __minreal;  /* DOS4GW var for WLINK MINREAL option*/
 _WCRTLINK extern unsigned long _WCDATA __win_alloc_flags; /* Windows allocation flags */
 _WCRTLINK extern unsigned long _WCDATA __win_realloc_flags;/* Windows reallocation flags */
@@ -347,9 +347,9 @@ _WCRTLINK extern unsigned long _WCDATA __win_realloc_flags;/* Windows reallocati
  #define _osminor _osminor_br
 #endif
 :endsegment
-_WCRTLINK extern unsigned _WCDATA      _amblksiz;   /*  mallocs done in multiples of    */
-_WCRTLINK extern unsigned char _WCDATA _osmajor;    /*  O/S major version # */
-_WCRTLINK extern unsigned char _WCDATA _osminor;    /*  O/S minor version # */
+_WCRTLINK extern unsigned _WCNEAR      _amblksiz;   /*  mallocs done in multiples of    */
+_WCRTLINK extern unsigned char _WCNEAR _osmajor;    /*  O/S major version # */
+_WCRTLINK extern unsigned char _WCNEAR _osminor;    /*  O/S minor version # */
 :segment !QNX & !LINUX
 #if defined(__NT__)
  #if defined(__FUNCTION_DATA_ACCESS)
