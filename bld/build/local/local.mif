@@ -71,8 +71,9 @@ wcl_util_opts = $(def_fpu_flags_$(host_os)_$(host_cpu)) -ox -w4 -fo=.obj -fe=$^@
 
 cc = gcc
 cl = $(cc)
-bld_cl = $(cc)
-bld_cc = $(cc)
+bld_incs = $(bld_extra_incs) -I$(watcom_dir)/h
+bld_cl = $(cc) $(bld_incs)
+bld_cc = $(cc) $(bld_incs)
 bld_link = $(cc)
 librarian += -fa
 
