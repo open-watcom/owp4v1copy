@@ -1,0 +1,3 @@
+g/^Error(E78): Error in Memory Tracking Encountered/d
+w
+q
