@@ -2,26 +2,26 @@
 # ~~~~~~~~~~~~~~~~~~
 #
 !ifdef __UNIX__
-orl_prefix=$(orl_dir)/
-orl_suffix=/orl.lib
+__orl_prefix=$(orl_dir)/
+__orl_suffix=/orl.lib
 !else
-orl_prefix=$(orl_dir)\
-orl_suffix=\orl.lib
+__orl_prefix=$(orl_dir)\
+__orl_suffix=\orl.lib
 !endif
 #
 # ORL library
 #
 
-orl_lib_386 = $(orl_prefix)osi386$(orl_suffix)
-orl_lib_axp = $(orl_prefix)osiaxp$(orl_suffix)
+orl_lib_386 = $(__orl_prefix)osi386$(__orl_suffix)
+orl_lib_axp = $(__orl_prefix)osiaxp$(__orl_suffix)
 
 #
 # ORL run-time DLL used
 #
 !ifeq $(proj_name)_rtdll 1
-orl_lib_nt_386  = $(orl_prefix)nt386.dll$(orl_suffix)
-orl_lib_nt_axp  = $(orl_prefix)ntaxp.dll$(orl_suffix)
-orl_lib_os2_386 = $(orl_prefix)os2386.dll$(orl_suffix)
+orl_lib_nt_386  = $(__orl_prefix)nt386.dll$(__orl_suffix)
+orl_lib_nt_axp  = $(__orl_prefix)ntaxp.dll$(__orl_suffix)
+orl_lib_os2_386 = $(__orl_prefix)os2386.dll$(__orl_suffix)
 !endif
 
 #

@@ -1,18 +1,25 @@
 # OWL library finder.
 # ~~~~~~~~~~~~~~~~~~
 #
+!ifdef __UNIX__
+__owl_prefix=$(owl_dir)/
+__owl_suffix=/owl.lib
+!else
+__owl_prefix=$(owl_dir)\
+__owl_suffix=\owl.lib
+!endif
 #
 # OWL library
 #
-owl_lib_386 = $(owl_dir)/osi386/owl.lib
-owl_lib_axp = $(owl_dir)/osiaxp/owl.lib
+owl_lib_386 = $(__owl_prefix)osi386$(__owl_suffix)
+owl_lib_axp = $(__owl_prefix)osiaxp$(__owl_suffix)
 
 #
 # OWL run-time DLL used
 #
 !ifeq $(proj_name)_rtdll 1
-owl_lib_nt_386 = $(owl_dir)/nt386.dll/owl.lib
-owl_lib_nt_axp = $(owl_dir)/ntaxp.dll/owl.lib
+owl_lib_nt_386 = $(__owl_prefix)nt386.dll$(__owl_suffix)
+owl_lib_nt_axp = $(__owl_prefix)ntaxp.dll$(__owl_suffix)
 !endif
 
 #

@@ -4,8 +4,13 @@
 #
 # CFLOAT library
 #
+!ifdef __UNIX__
 cfloat_lib_386 = $(cfloat_dir)/osi386/cf.lib
 cfloat_lib_axp = $(cfloat_dir)/osiaxp/cf.lib
+!else
+cfloat_lib_386 = $(cfloat_dir)\osi386\cf.lib
+cfloat_lib_axp = $(cfloat_dir)\osiaxp\cf.lib
+!endif
 
 #
 # CFLOAT run-time DLL used
