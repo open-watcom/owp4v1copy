@@ -1,3 +1,184 @@
+2002-07-17  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/commdlg.h: Define CDN_* notification message constants
+	as UINT.
+
+2002-07-17  Mattia Barbon  <mbarbon@users.sourceforge.net>
+
+	* include/commctrl.h: Define notification message constants for
+	NMHDR.code as UINT.
+
+2002-07-17   Bart Oldeman  <bart.oldeman@btinternet.com>
+
+	* include/ddeml.h (MH_*) Add defines.
+	(MONHSZSTRUCT): Add structure and typedefs.
+	(MONLINKSTRUCT): Ditto.
+	(MONCONVSTRUCT): Ditto.
+	(MONCBSTRUCT): Ditto.
+	(MONERRSTRUCT): Ditto.
+	(MONMSGSTRUCT): Ditto.
+	* include/windef.h: Don't define __cdecl or _cdecl for
+	__WATCOM__.
+	Don't define _export or __export for __WATCOM__.
+	* include/windows.h (imm.h): #include.
+	* include/winnt.h (LPEXCEPTION_RECORD): Add typedef.
+
+2002-07-17  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/wtypes.h: Remove duplicate #includes of rhc.h and
+
+2002-07-05  Luke Dunstan  <infidel@users.sourceforge.net>
+
+	* include/winbase.h (OpenThread): Add prototype.
+	* lib/kernel32.def (OpenThread): Add symbol.
+
+2002-07-04  Luke Dunstan  <infidel@users.sourceforge.net>
+
+	* include/wtypes.h (HMETAFILEPICT): Add typedef.
+
+2002-07-04  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/rpc.h: Conditionally include <windows.h> before
+	header guard.
+	* include/wtypes.h: Include <rpc.h> and <rpcndr.h> before
+	header guard.
+
+2002-07-02  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/commctrl.h (WC_*): Remove some duplicate defines.
+
+2002-07-02  Ken Fitlike  <kenfitlike@hotmail.com>
+
+	* include/commctrl.h (WC_IPADDRESS[AW]): Add defines and
+	UNICODE mappings.
+	(IPM*): Add defines.
+	(IPN_*): Add defines.
+	(NMIPADDRESS): Add structure and typedefs.
+	(MAKEIPADDRESS): Add macro.
+	(MAKEIPRANGE): Add macro.
+	(FIRST_IPADDRESS): Add macro.
+	(SECOND_IPADDRESS): Add macro.
+	(THIRD_IPADDRESS): Add macro.
+	(FOURTH_IPADDRESS): Add macro.
+
+2002-06-25  Conrad Scott  <conrad.scott@dsl.pipex.com>
+
+	* include/winbase.h (FILE_FLAG_FIRST_PIPE_INSTANCE): Add constant.
+
+2002-06-26  Casper S. Hornstrup  <chorns@users.sourceforge.net>
+
+	* include/winbase.h (WINBASEAPI): Don't define if prior
+	definition.
+
+	* include/winioctl.h (PARTITION_FAT32, PARTITION_FAT32_XINT13,
+	PARTITION_XINT13, PARTITION_XINT13_EXTENDED, PARTITION_LDM,
+	PARTITION_UNIX): Add defines.
+	(PDRIVE_LAYOUT_INFORMATION): Add typedef.
+	(IsRecognizedPartition): Also check for PARTITION_FAT32,
+	PARTITION_FAT32_XINT13 and PARTITION_XINT13.
+	(IsContainerPartition): Add macro.
+
+2002-06-25  Ken Fitlike  <kenfitlike@hotmail.com>
+
+	* include/commctrl.h: (CBEIF_*): Add defines.
+	(CBEN_*): Add defines and UNICODE mappings
+	(WC_COMBOBOXEX[AW]): Add defines and UNICODE mappings.
+	(CBEMAXSTRLEN): Add define.
+	(COMBOBOXEXITEM[AW]): Add structures and typedefs.
+	(NMCOMBOBOXEX[AW]): Add structures and typedefs.
+	(NMCBEDRAGBEGIN[AW]): Add structure and typedefs.
+	(NMCBEENDEDIT[AW]): Add structure and typedefs.
+
+2002-06-24  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/objidl.h (struct tagPROPVARIANT): Kill obsolete
+	union member _VARIANT_BOOL bool.
+	
+2002-06-24  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winioctl.h (FILE_SPECIAL_ACCESS): Add define.
+
+2002-06-24  Casper S. Hornstrup  <chorns@users.sourceforge.net>
+
+	* include/winnt.h (PCCHAR, FCHAR, FSHORT, FLONG,
+	PLUID_AND_ATTRIBUTES,PSECURITY_IMPERSONATION_LEVEL,
+	PSID_AND_ATTRIBUTES, PTOKEN_TYPE, PTOKEN_STATISTICS):
+	Add typedefs.
+	(CCHAR): Correct typedef.
+	(PROCESS_SET_SESSIONID, SECURITY_*,SECTION_MAP_EXECUTE):
+	Add defines.
+
+2002-06-24  Casper S. Hornstrup  <chorns@users.sourceforge.net>
+
+	* README.w32api: Correct spelling error.
+
+2002-06-19  Casper S. Hornstrup  <chorns@users.sourceforge.net>
+
+	* include/winuser.h (FLASHW_*,INPUT_MOUSE,INPUT_KEYBOARD,
+	INPUT_HARDWARE): Add defines.
+	(HDEVNOTIFY): Add typedef.
+	(FLASHWINFO,tagMOUSEMOVEPOINT,tagMOUSEINPUT,tagKEYBDINPUT,
+	tagHARDWAREINPUT,tagINPUT,tagGUITHREADINFO): Define structs and
+	typedefs.
+	(CreateDesktop[AW],CreateMDIWindow[AW],GetClassInfo[AW],
+	GetClassInfoEx[AW],GetKeyboardLayoutList,
+	MessageBoxIndirect[AW],MsgWaitForMultipleObjects,
+	MsgWaitForMultipleObjectsEx, RegisterClass[AW],
+	RegisterClassEx[AW]): Correct prototypes.
+
+2002-06-19  Casper S. Hornstrup  <chorns@users.sourceforge.net>
+
+	* include/ddeml.h (DdeCreateStringHandle{AW]:Correct
+	prototypes.
+	* include/winsvc.h (StartServiceW): Correct prototype.
+	* include/winbase.h (BackupRead,BackupSeek,BackupWrite,
+	FileTimeToLocalFileTime, GetAce,GetPrivateProfileStruct[AW],
+	GetTickCount,InterlockedExchangeAdd,
+	WritePrivateProfileStruct[AW]: Correct prototypes.
+	(GetEnvironmentStrings): Correct mapping to
+	GetEnvironmentStringsA.
+	* include/winver.h (VerQueryValueA,VerQueryValueW):
+	Correct prototypes.
+	* include/wincon.h (CreateConsoleScreenBuffer): Correct
+	prototype.
+	* include/winreg.h (RegQueryMultipleValues[AW],
+	RegQueryValueEx[AW]):Correct prototypes.
+	* include/wingdi.h (PXFORM, PLOGBRUSH, PLOGPEN, PPOLYTEXTA,
+	PPOLYTEXTW): Add typedefs.
+	(_DESIGNVECTOR,COLOR16, _TRIVERTEX, _DISPLAY_DEVICE): Add
+	structures and typedefs.
+	(MM_MAX_NUMAXES): Add define.
+	(EnumFontsW,GetEnhMetaFilePixelFormat,
+	wglGetLayerPaletteEntries): Correct prototypes.
+	* include/winerror.h (RPC_X_INVALID_PIPE_OBJECT,
+	RPC_X_WRONG_PIPE_ORDER,RPC_X_WRONG_PIPE_VERSION,
+	RPC_S_SEND_INCOMPLETE): Add defines.
+
+2002-06-17  Casper S. Hornstrup  <chorns@users.sourceforge.net>
+
+	* include/windef.h (_fastcall, __fastcall, FASTCALL):
+	Add defines.
+
+2002-06-16  Egor Duda  <deo@logos-m.ru>
+
+	* include/ntdll.h: New file.
+	* lib/ntdll.def: Add NtShutdownSystem.
+
+2002-06-16  Steven Edwards  <Steven_Ed4153@yahoo.com>
+
+	* lib/dinput.def (DirectInputCreateEx): Add stub.
+	* lib/ntdll.def: New file.
+
+2002-06-14  Earnie Boyd  <earnie@users.sf.net>
+
+	* include/w32api.h: Change to version 2.0 to reflect the change
+	in the license.
+	* README: Renamed.
+	* README.w32api: Renamed from README.  Modified license to remove
+	the restriction of notifying the author based on the fact that the
+	author is unreachable at the notified address.
+	* Makefile.in (VERSION): Change to 2.0.
+
 2002-06-14  Earnie Boyd  <earnie@users.sf.net>
 
 	* include/wingdi.h (GetEnhMetaFileBits): Correct typo.
@@ -654,14 +835,6 @@
 
 	* Makefile.in: Increment VERSION.
 	* include/w32api.h: Ditto.
-
-2001-12-07  Danny Smith  <dannysmith@users.sourceforge.net>
-
-	* include/setupi.h (SetupDiCreateDeviceInterfaceRegKey[AW],
-	SetupDiCreateDevRegKey[AW],SetupDiDeleteDeviceInterfaceRegKey,
-	SetupDiDeleteDevRegKey,SetupDiOpenClassRegKey,
-	SetupDiOpenClassRegKeyEx[AW],SetupDiOpenDeviceInterfaceRegKey,
-	SetupDiOpenDevRegKey): Correct function names.
 
 2001-12-07  Earnie Boyd  <earnie@users.sf.net>
 
