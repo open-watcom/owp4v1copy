@@ -2,7 +2,7 @@ c$ifdef __386__
 c$define INCL_SUB
 c$include os2.fap
 c$else
-*$pragma aux os2 "*" parm routine reverse [] \
+*$pragma aux os2 "^" parm routine reverse [] \
 *                    modify [ax bx cx dx es]
 *$pragma aux (os2) VioSetCurPos parm (value)
 c$endif
