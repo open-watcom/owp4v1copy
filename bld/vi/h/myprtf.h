@@ -24,46 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  Extended memory/EMS/XMS startup and shutdown.
+* Description:  Prototypes of internal functions that require stdarg.h.
 *
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include "vi.h"
-#include "fcbmem.h"
-
-/*
- * ExtendedMemoryInit
- */
-void ExtendedMemoryInit( void )
-{
-
-#ifndef NOXTD
-    XMemInit();
-#endif
-#ifndef NOEMS
-    EMSInit();
-#endif
-#ifndef NOXMS
-    XMSInit();
-#endif
-
-} /* ExtendedMemoryInit */
-
-/*
- * ExtendedMemoryFini
- */
-void ExtendedMemoryFini( void )
-{
-#ifndef NOXTD
-    XMemFini();
-#endif
-#ifndef NOXMS
-    XMSFini();
-#endif
-#ifndef NOEMS
-    EMSFini();
-#endif
-
-} /* ExtendedMemoryFini */
+void MyVSprintf( char *, const char *, va_list );
+void MyVPrintf( const char *, va_list );

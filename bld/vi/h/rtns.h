@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Prototypes of internal editor functions.
 *
 ****************************************************************************/
 
@@ -393,7 +392,9 @@ int ToggleFontbar( void );
 int ToggleSSbar( void );
 
 /* fini.c */
+#ifdef __WATCOMC__
 #pragma aux Quit aborts;
+#endif
 void Quit( const char **, const char *, ... );
 void ExitEditor( int );
 void QuitEditor( int );
@@ -668,10 +669,8 @@ int ParseCommandLine( char *, linenum *, int *, linenum *, int *, int *, char *,
 int GetAddress( char *, linenum * );
 
 /* printf.c */
-void MyVSprintf( char *, const char *, __va_list );
 void MySprintf( char *, const char *, ... );
 void MyPrintf( const char *, ... );
-void MyVPrintf( const char *, __va_list );
 void MyFprintf( FILE *,const char *, ... );
 
 /* readstr.c */

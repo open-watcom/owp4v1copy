@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Editor shutdown.
 *
 ****************************************************************************/
 
@@ -34,6 +33,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include "vi.h"
+#include "myprtf.h"
 #ifdef __WIN__
 #include "winrtns.h"
 #include "subclass.h"

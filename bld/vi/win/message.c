@@ -33,6 +33,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include "winvi.h"
+#include "myprtf.h"
 #include "color.h"
 #include "font.h"
 #include "utils.h"

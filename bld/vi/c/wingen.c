@@ -33,6 +33,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include "vi.h"
+#include "myprtf.h"
 #include "keys.h"
 #include "win.h"
 #include "mouse.h"

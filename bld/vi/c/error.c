@@ -35,6 +35,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "vi.h"
+#include "myprtf.h"
 #include "win.h"
 
 static void readErrorMsgData( void );
