@@ -60,13 +60,11 @@ cdsay .
     <CPCMD> win\*.* <relroot>\rel2\samples\ide\win\
     <CPCMD> win386\*.* <relroot>\rel2\samples\ide\win386\
     cd ..
-    <CPCMD> threed\os2\os2_3d.dll <relroot>\rel2\samples\ide\
     <CPCMD> threed\os2\os2_3d.dll <relroot>\rel2\samples\ide\os2\
     <CPCMD> threed\win\win_3d.dll <relroot>\rel2\samples\ide\win\
     <CPCMD> threed\win\win_3d.dll <relroot>\rel2\samples\ide\win386\
     <CPCMD> threed\nt\nt_3d.dll  <relroot>\rel2\samples\ide\win32\
 
-    <CPCMD> threed\os2\os2_3d.dll   <relroot>\rel2\samples\ide\fortran\
     <CPCMD> threed\os2\os2_3d.dll   <relroot>\rel2\samples\ide\fortran\os2\
     <CPCMD> threed\win\win_3d.dll   <relroot>\rel2\samples\ide\fortran\win\
     <CPCMD> threed\win\win_3d.dll   <relroot>\rel2\samples\ide\fortran\win386\

@@ -1,4 +1,4 @@
-39
+40
 targetIdent
 0
 MProject
@@ -354,8 +354,8 @@ WVList
 0
 81
 MItem
-13
-..\os2_3d.dll
+10
+os2_3d.dll
 82
 WString
 3
