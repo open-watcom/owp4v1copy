@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  C runtime shared data.
+* Description:  Internal CLIB structures and variables.
 *
 ****************************************************************************/
 
@@ -90,7 +90,7 @@ extern      void            (*__FPE_handler_exit)();
     extern  int             _commode;
 #endif
 extern      unsigned        _STACKTOP;
-#if defined(__QNX__)
+#if !defined(__QNX__)
     extern void         (*__Save8087)();/* Ptr to FP state save rtn (spawn) */
     extern void         (*__Rest8087)();/* Ptr to FP state restore rtn (spawn) */
 #endif
