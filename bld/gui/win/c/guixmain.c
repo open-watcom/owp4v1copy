@@ -101,7 +101,7 @@ extern int          GUIXMain( int argc, char *argv[],
  * WinMain -- main windows message loop
  */
 
-int APIENTRY WinMain( HINSTANCE inst, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
+int PASCAL WinMain( HINSTANCE inst, HINSTANCE hPrevInstance, LPSTR lpCmdLine,
                     int nShowCmd )
 {
 #if !defined( UNIX )
