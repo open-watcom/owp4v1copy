@@ -31,16 +31,16 @@ extra_c_flags_i86 = -fpc
 extra_c_flags_386 = -fpc
 
 extra_c_flags_trmem = $(trmem_cflags)
-extra_c_flags_wicgener = $(trmem_cflags)
+extra_c_flags_wicgener = $(trmem_cover_cflags)
 
 ##############################################################################
 
 
-.h      : ../h;$(trmem_dir)
+.h      : ../h
 .c      : ../c;$(trmem_dir)
 .rc     : ../rc
 
-inc_dirs = ../h;$(trmem_dir)
+inc_dirs = ../h
 
 ##############################################################################
 

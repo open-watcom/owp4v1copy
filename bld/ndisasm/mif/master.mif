@@ -4,6 +4,8 @@ proj_name = wdis
 wdis_autodepends = .AUTODEPEND
 !endif
 
+wdis_trmem = 1
+
 .EXTENSIONS: .rc .msg
 
 !ifeq host_os linux
@@ -27,34 +29,24 @@ xlibs = $(orl_lib) $(wres_lib)
 
 !include ../mif/dis.mif
 
-!ifeq release 0
-disasm_trmem=1
-!endif
+!include trmem.mif
 
 extra_l_flags = option map
 extra_l_flags_qnx = op res=wdis.u, off=8k
 
-oflags_i86 = -of
-oflags_386 = -of+
-
 extra_c_flags_i86 = -fpc
 extra_c_flags_386 = -fpc
 
-extra_c_flags_memfuncs = $(oflags_$(host_CPU)) #-i"$(trmem_dir)"
-extra_c_flags_trmemcvr = $(oflags_$(host_CPU))
+extra_c_flags_memfuncs = $(trmem_cover_cflags)
+extra_c_flags_trmem    = $(trmem_cflags)
 
-!ifeq disasm_trmem 1
-extra_c_flags_memfuncs += -dTRMEM
-extra_c_flags_trmemcvr += -dTRMEM
-!endif
-
-inc_dirs=$(disasm_dir)/core/h;$(disasm_dir)/stand/h;$(disasm_dir)/h;$(orl_dir)/h;$(watcom_dir)/h;$(trmem_dir);$(lib_misc_dir)/h;$(comp_cfg_dir)/h
+inc_dirs=$(disasm_dir)/core/h;$(disasm_dir)/stand/h;$(disasm_dir)/h;$(orl_dir)/h;$(watcom_dir)/h;$(lib_misc_dir)/h;$(comp_cfg_dir)/h
 
 pre_deps_osi = $(tools_root)/os2ldr.exe
 pre_deps_qnx = wdis.u
 
 .c: .;$(trmem_dir);$(disasm_dir)/stand/c;$(disasm_dir)/core/c;$(lib_misc_dir)/c
-.h: $(trmem_dir);$(disasm_dir)/stand/h;$(disasm_dir)/core/h;$(lib_misc_dir)/h
+.h: $(disasm_dir)/stand/h;$(disasm_dir)/core/h;$(lib_misc_dir)/h
 .rc : $(disasm_dir)/stand/h
 .msg : $(disasm_dir)/stand
 
@@ -80,11 +72,7 @@ stand_objs      = args.obj &
                 srcmix.obj &
                 refproc.obj
 
-wdisasm_objs = $(stand_objs) $(dis_objs) demangle.obj trmemcvr.obj
-
-!ifeq disasm_trmem 1
-wdisasm_objs += trmem.obj
-!endif
+wdisasm_objs = $(stand_objs) $(dis_objs) demangle.obj $(trmem_objs)
 
 $(exe_name) : $(proj_name).res $(dis_prereq) $(wdisasm_objs) $(pre_deps_$(host_os)) $(xlibs)
         $(linker) $(lflags) name $@ file {$(wdisasm_objs)} lib {$(xlibs)}
