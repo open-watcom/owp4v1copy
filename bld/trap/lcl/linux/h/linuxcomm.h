@@ -24,9 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  Linux trap file startup code.
+* Description:  Internal header file for the Linux standard debugger
+*               trap file.
 *
 ****************************************************************************/
 
-// Nothing to do here!
+extern unsigned TryOnePath( char *, struct stat *, char *, char * );
+extern unsigned FindFilePath( int, char *, char * );
 

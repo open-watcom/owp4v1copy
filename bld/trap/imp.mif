@@ -77,7 +77,7 @@ TRAP_opts_x86_dos       = -zu
 libs_x86_os2            = clibc
 libs_x86_os2v2          = clib3r
 libs_x86_qnx            = $(lang_root)\lib386\qnx\clib3r
-libs_x86_linux          = clib3r
+libs_x86_linux          = $(lang_root)\lib386\linux\clib3r
 libs_x86_win            = clibc
 !ifdef dos_large_model
 libs_x86_dos            = clibl

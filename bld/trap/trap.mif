@@ -72,7 +72,15 @@ sys_x86_nt   = sys nt_dll initinstance &
             op offset=0x6e900000, modname=$^&
 sys_x86_dos  = sys dos
 sys_x86_qnx  = sys pharlap rex disable 1014, 1023
-sys_x86_linux = sys linux
+
+# For now Linux is linked as a PE DLL file since we have code to load
+# this under Linux already. Eventually it will be an ELF shared library.
+
+sys_x86_linux = sys nt_dll op nodefaultlibs &
+            export TrapInit_.1 &
+            export TrapFini_.2 &
+            export TrapRequest_.3 &
+            option description 'WATCOM Debugger Trap File'
 
 sys_axp_nt   = sys ntaxp_dll initinstance &
             export TrapInit.1 &
