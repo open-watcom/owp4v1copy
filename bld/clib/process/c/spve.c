@@ -143,12 +143,8 @@ static int x_dospawn( int mode, CHAR_TYPE SPVE_NEAR *pgmname, CHAR_TYPE SPVE_NEA
 
 #pragma on(check_stack);
 
-_WCRTLINK int __F_NAME(spawnve,_wspawnve)( mode, path, argv, in_envp )
-        unsigned                mode;
-        const CHAR_TYPE *       path;
-        const CHAR_TYPE * const argv[];
-        const CHAR_TYPE * const in_envp[];
-
+_WCRTLINK int __F_NAME(spawnve,_wspawnve)( int mode, const CHAR_TYPE * path,
+        const CHAR_TYPE * const argv[], const CHAR_TYPE * const in_envp[] )
     {
         const CHAR_TYPE * const *envp = (const CHAR_TYPE * const *)in_envp;
         CHAR_TYPE                   *envmem;
