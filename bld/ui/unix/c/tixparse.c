@@ -382,6 +382,52 @@ static int do_parse( void )
     return( 1 );
 }
 
+unsigned char default_tix[] = {
+    /* arrows */
+    0x10, '+', 0x11, ',', 0x1e, '-', 0x1f, '.', 0x1a, '+', 0x1b, ',', 0x18, '-',
+    0x19, '.',
+    /* squares */
+    0xb0, 'a', 0xb1, 'a', 0xb2, 'O', 0xdb, 'O', 0xdc, ' ' | 0x80, 0xdd, 'O',
+    0xde, ' ' | 0x80, 0xdf, 'O',
+    /* line drawing */
+    0xb3, 'x', 0xb4, 'u', 0xb5, 'u', 0xb6, 'u', 0xb7, 'k', 0xb8, 'k', 0xb9, 'u',
+    0xba, 'x', 0xbb, 'k', 0xbc, 'j', 0xbd, 'j', 0xbe, 'j', 0xbf, 'k', 0xc0, 'm',
+    0xc1, 'v', 0xc2, 'w', 0xc3, 't', 0xc4, 'q', 0xc5, 'n', 0xc6, 't', 0xc7, 't',
+    0xc8, 'm', 0xc9, 'l', 0xca, 'v', 0xcb, 'w', 0xcc, 't', 0xcd, 'q', 0xce, 'n',
+    0xcf, 'v', 0xd0, 'v', 0xd1, 'w', 0xd2, 'w', 0xd3, 'j', 0xd4, 'j', 0xd5, 'l',
+    0xd6, 'l', 0xd7, 'n', 0xd8, 'n', 0xd9, 'j', 0xda, 'l',
+    /* misc */
+    0xf1, 'g', 0xf8, 'f', 0xf9, '~', 0xfa, '~', 0xfe, 'h'
+};
+
+/* use above table if no .tix file is found */
+static int do_default( void )
+/*************************/
+{
+    unsigned char       code, c, cmap;
+    int                 i;
+
+    for( i = 0; i < sizeof( default_tix ); i += 2 ) {
+        code = default_tix[i];
+        cmap = c = default_tix[i + 1];
+	if( (c & 0x80) == 0 ) {
+	    cmap = find_acs_map( c, acs_chars );
+	    if( cmap != '\0' ) {
+		ti_alt_map_set( code );
+	    } else {
+		cmap = find_acs_map( c, acs_default );
+		if( cmap == '\0' ) {
+		    cmap = c;
+		    ti_alt_map_set( code );
+                }
+            }
+	}
+	ti_char_map[ code ] = cmap & 0x7f;
+    }
+    return( 1 );
+}
+
+
 int ti_read_tix( char *termname )
 /*******************************/
 {
@@ -393,7 +439,7 @@ int ti_read_tix( char *termname )
     for( i = 0; i < sizeof( ti_char_map ); i++ ) ti_char_map[i]=i;
 
     if( !init_tix_scanner( termname ) ) {
-        return( ui_tix_missing( termname ) );
+        return( do_default() );
     }
     ret = do_parse();
     close_tix_scanner();
