@@ -1,3 +1,309 @@
+2004-11-21 Benoit Blanchon  <bblanchon@users.sourceforge.net>
+
+	* include/wingdi.h (AC_SRC_ALPHA, AC_SRC_NO_ALPHA, 
+	AC_DST_NO_ALPHA, ...): Add defines.
+	* include/winuser.h (ULW_COLORKEY,ULW_ALPHA,
+	ULW_OPAQUE): Add defines.	
+
+2004-11-21  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winnt.h (VerSetConditionMask): Correct typo in _WIN32_WINNT
+	guard.
+	* lib/kernel32.def (VerSetConditionMask): Correct stdcall
+	suffix.
+	* lib/ddk/ntoskrnl.def (VerSetConditionMask): Likewise.
+
+2004-11-20  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winbase.h (PPROCESS_INFORMATION): Add typedef.
+	(CreateProcessWithLogonW): Declare.
+	(LOGON_WITH_PROFILE, LOGON_NETCREDENTIALS_ONLY): Add defines.
+	Thanks to: "jkmaki"  <jkmaki@users.sourceforge.net>
+
+2004-11-19  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/sspi.h (SecPkgContext_Sizes): Fix typo.
+	Thanks to: David Leonard  <leonard@users.sourceforge.net>
+
+2004-11-19  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/sspi.h (SecPkgCredentials_Names[AW]): Correct name.
+	Thanks to: David Leonard  <leonard@users.sourceforge.net>
+
+2004-11-19  Magnus Olsen  <greatlord@users.sourceforge.net>
+
+	* include/winuser.h (MSLLHOOKSTRUCT): Add structure.
+
+2004-11-19  Magnus Olsen  <greatlord@users.sourceforge.net>
+
+	* include/winuser.h (LLKHF_EXTENDED, LLKHF_INJECTED, LLKHF_UP):
+	Add defines.
+	(LLKHF_ALTDOWN): Define based on KF_ALTDOWN,
+             
+2004-11-19  Benoit Blanchon  <bblanchon@users.sourceforge.net>
+
+	* include/shellapi.h (NIF_GUID): Add another define.
+
+2004-11-18  Earnie Boyd  <earnie@users.sf.net>
+
+	* include/wincon.h (AttachConsole): Correct the _WIN32_WINNT filter.
+	Changed it twice due to inconsistent MSDN documentation.
+	* include/w32api.h (Windows95, etc. and IE3, etc.): Add definitions.
+
+2004-11-13  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/shlobj.h (SHGFP_TYPE): Add enum.
+
+2004-11-12  Loïc Guilloux (glx@users.sourceforge.net> 
+
+	* include/winuser.h (WM_THEMECHANGED): Add define.
+
+2004-11-11  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/ddk/winddk.h (ExAllocateFromPagedLookasideList,
+	ExFreeToPagedLookasideList): Guard inline versions with
+	(__USE_NTOSKRNL__) && (_WIN32_WINNT >= 0x0501). Declare as
+	external functions for earlier _WIN32_WINNT.
+
+2004-11-11  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/ras.h (RASCONN[AW]): Remove dwSessionId field.
+
+2004-11-09  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winnls.h (WINBASEAPI): Define as DECLSPEC_IMPORT
+	if  undefined and __W32API_USE_DLLIMPORT__.
+	Add WINBASEAPI token to prototypes, throughout.
+
+2004-11-08  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winnt.h (GetCurrentFiber): Support -masm=intel.
+	(GetFiberData): Likewise.
+	(NtCurrentTeb): Likewise.
+
+2004-11-04  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/shellapi.h (NIF_INFO): Add define.
+	(NIIF_*) Add defines..
+	Thanks to: Benoit Blanchon <bblanchon@users.sourceforge.net>
+	(NIF_*): Convert constants to hex.
+
+2004-11-02  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/wingdi.h (GetFontUnicodeRanges,GetGlyphIndicesA,
+	GetGlyphIndicesW): Declare.
+	(GGI_MARK_NONEXISTING_GLYPHS): Define
+	* lib/gdi32.def (GetFontUnicodeRanges,GetGlyphIndicesA,
+	GetGlyphIndicesW): Add stubs.
+
+2004-10-24  Dan Aloni  <da-x@colinux.org>
+
+	* include/ddk/ntapi.h (NtQueryFullAttributesFile,
+	ZwQueryFullAttributesFile): Declare.
+	* include/ddk/ntapi.h (RtlDosPathNameToNtPathName_U):
+	Declare.
+	lib/ntoskrnl.def (ZwQueryDirectoryFile, ZwQueryFullAttributesFile.
+	ZwQueryVolumeInformationFile): Add stubs.
+
+2004-10-18  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/wsahelp.h (WINSOCK_MAPPING, WSHGetWinsockMapping,
+        PWSH_GET_WINSOCK_MAPPING): Don't define if __OBJC__.
+
+2004-10-15  Robert Wruck  <wruck@tweerlei.de>
+            Danny Smith  <dannysmith@users.sourceforge.net>
+
+	= include/winbase.h (InitializeSListHead, Interlocked*):
+	Guard with !__USE_NTOSKRNL__.
+
+	* include/ddk/ntddk.h (__USE_NTOSKRNL__): Define.
+	* include/ddk/winddk.h (InitializeSListHead, Interlocked*):
+	Guard with  __USE_NTOSKRNL__. 
+	(ExInterlockedPopEntrySList, ExInterlockedPushEntrySList):
+	Add prototypes.  Guard macro definition with __USE_NTOSKRNL__ 
+	&& _WIN32_WINNT >= 0x0501
+	(ExAllocateFromNPagedLookasideList, ExAllocateFromPagedLookasideList,
+	ExFreeToNPagedLookasideList, ExFreeToPagedLookasideList):
+	Replace calts to InterlockedPopEntrySList, InterlockedPushEntrySList
+	with ExInterlockedPopEntrySList, ExInterlockedPushEntrySList.
+
+	* lib/ddk/ntosknl.def (ExInterlockedPopEntrySList,
+	ExInterlockedPushEntrySList)  Add stubs with fastcall decoration.
+	(ExDesktopObjectType, ExEventObjectType, ExSemaphoreObjectType,
+	ExWindowStationObjectType, IoAdapterObjectType,
+	IoDeviceHandlerObjectSize, IoDeviceHandlerObjectType,
+	IoDeviceObjectType, IoDriverObjectType, IoFileObjectType,
+	LpcPortObjectType, MmSectionObjectType, SeTokenObjectType):
+	Uncomment stubs.
+
+2004-10-11  Robert Wruck  <wruck@tweerlei.de>
+
+        * include/ddk/winddk.h (IoReleaseRemoveLockAndWait): Fix
+        definition
+        (IoReleaseRemoveLock): Add definition.
+
+2004-10-10  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/ddk/winnt4.h (Exi386InterlockedDecrementLong,
+	Exi386InterlockedExchangeUlong, Exi386InterlockedIncrementLong);
+	Add prototypes.
+	* include/winddk.h (ExInterlockedAddUlong,
+	ExInterlockedInsertHeadList, ExInterlockedInsertTailList,
+	ExInterlockedRemoveHeadList, ExInterlockedPopEntryList,
+	ExInterlockedPushEntryList): Change calling convention to 
+	DDKAPI.
+	(ExfInterlockedAddUlong,ExInterlockedInsertHeadList,
+	ExInterlockedInsertTailList, ExInterlockedRemoveHeadList,
+	ExInterlockedPopEntryList, ExInterlockedPushEntryList): 
+	Add prototypes for DDKFASTAPI versions.
+	Thanks to Vadim Yegor0v <zg at bmg dot lv> for report. 
+	* lib/ntoskrnl.def (ExInterlockedAddUlong,
+	ExInterlockedInsertHeadList, ExInterlockedInsertTailList,
+	ExInterlockedRemoveHeadList, ExInterlockedPopEntryList,
+	ExInterlockedPushEntryList): Remove lead '@' from stubs.
+	(ExfInterlockedAddUlong,ExfInterlockedInsertHeadList,
+	ExfInterlockedInsertTailList, ExfInterlockedRemoveHeadList,
+	ExfInterlockedPopEntryList, ExfInterlockedPushEntryList): 
+	Add fastcall stubs.
+	(Exi386InterlockedDecrementLong, Exi386InterlockedExchangeUlong,
+	Exi386InterlockedIncrementLong); Add stdcall stubs.
+
+2004-09-30  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winbase.h (WINBASEAPI): Define as DECLSPEC_IMPORT only
+	 if __W32API_USE_DLLIMPORT__ is defined.
+	* include/winuser.h (WINUSERAPI): Likewise.
+
+2004-09-29  Filip Navara  <xnavara@volny.cz>
+
+	* include/ddk/(atm.h, batclass.h, cfg.h, cfgmgr32.h, d4drvif.h,
+	d4iface.h, ddkmapi.h, hidclass.h, hidpi.h, mcd.h, miniport.h,
+	mountdev.h, mountmgr.h, ndis.h, ndistapi.h, ndiswan.h, netpnp.h,
+	newdev.h, ntapi.h, ntdd8042.h, ntddbeep.h, ntddcdrm.h, ntddcdvd.h,
+	ntddchgr.h, ntdddisk.h, ntddkbd.h, ntddmou.h, ntddpar.h, ntddpcm.h,
+	ntddscsi.h, ntddser.h, ntddstor.h, ntddtape.h, ntddtdi.h,
+	ntddvdeo.h, ntddvol.h, ntpoapi.h, parallel.h, pfhook.h, poclass.h,
+	scsi.h, scsiscan.h, smbus.h, srb.h, storport.h, tdiinfo.h,
+	tdikrnl.h, tvout.h, upssvc.h, usb.h, usb100.h, usbdi.h, usbioctl.h,
+	usbiodef.h, usbscan.h, usbuser.h, videoagp.h, winddi.h, winddk.h,
+	winnt4.h, ws2san.h): Fixed packing.
+	* include/ddk/atm.h (ATM_TRAFFIC_DESCRIPTOR_IE): Fixed declaration.
+	* include/ddk/hidclass.h (HID_INTERFACE_HIDPARSE,
+	HID_INTERFACE_NOTIFY_PNP): Likewise.
+	* include/ddk/ndis.h (NDIS_DMA_BLOCK, CO_FLOW_PARAMETERS): Likewise.
+	(NdisQueryPacketLength): Added macro. Thanks to Art Yerkes
+	<ayerkes@speakeasy.net>.
+	* include/ddk/usb100.h (USB_CONFIGURATION_DESCRIPTOR): Fixed
+	declaration.
+	* include/ddk/winddi.h (PATHDATA, GLYPHPOS): Likewise.
+	* include/ddk/winddk.h (PDRIVER_CONTROL, PDRIVER_LIST_CONTROL,
+	PDRIVER_ADD_DEVICE, PIO_COMPLETION_ROUTINE, PDRIVER_CANCEL,
+	PKDEFERRED_ROUTINE, PDRIVER_DISPATCH, PIO_DPC_ROUTINE,
+	PMM_DLL_INITIALIZE, PMM_DLL_UNLOAD, PDRIVER_ENTRY,
+	PDRIVER_INITIALIZE, PKSERVICE_ROUTINE, PIO_TIMER_ROUTINE,
+	PDRIVER_REINITIALIZE, PDRIVER_STARTIO, PKSYNCHRONIZE_ROUTINE,
+	PDRIVER_UNLOAD, DRIVER_OBJECT): Fixed callback declarations.
+	(struct FILE_BASIC_INFORMATION): Renamed to _FILE_BASIC_INFORMATION.
+	(SYNCH_LEVEL): Added definition.
+	(KPCR, KPCR_TIB): Fixed declaration.
+	(Interlocked[Push/Pop]EntrySList): Declare only if winbase.h isn't
+	included and _WIN32_WINNT >= 0x0501.
+	(RtlEqualLuid): Fixed macro definition.
+	(KfLowerIrql, KfRaiseIrql): Declare and use instead of KeLowerIrql and
+	KeRaiseIrql on i386 architectures.
+
+2004-09-06  Hosaka Yuji  <hos@tamanegi.org>
+ 
+	* include/mshtml.h (IHTMLDocument2): Correct get_selection
+	declaration.
+	(IHTMLSelectionObject): Correct get_type declaration.
+	(IHTMLFramesCollection2, IHTMLWindow2, IHTMLFrameBase,
+	IHTMLFrameBase2, IHTMLFrameBase3, IHTMLBodyElement,
+	IHTMLBodyElement2): Add interfaces.
+	(LPHTMLIMAGEELEMENTFACTORY, LPHTMLEVENTOBJ, LPHTMLSCREEN,
+	LPHTMLOPTIONELEMENTFACTORY, LPOMHISTORY, LPOMNAVIGATOR): Add
+	typedefs.
+	* lib/mshtml-uuid.c (IID_IHTMLFrameBase2, IID_IHTMLFrameBase3):
+	Add IIDs.
+
+2004-09-05  Earnie Boyd  <earnie@users.sf.net>
+
+	* include/w32api.h: Increment version to 3.1.
+	* Makefile.in: Ditto.
+
+2004-09-05  Hosaka Yuji  <hos@tamanegi.org>
+
+	* include/winuser.h (MonitorFromPoint, MonitorFromRect,
+	MonitorFromWindow): Add prototypes.
+	* lib/user32.def (MonitorFromPoint, MonitorFromRect,
+	MonitorFromWindowMonitorFromWindow): Add stubs.
+	* include/shellapi.h (DuplicateIcon): Add prototype.
+
+2004-09-05   Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winuser.h (WINUSERAPI): New define.
+	Use it to mark user32.dll imports, throughout.
+
+2004-09-05  Hosaka Yuji  <hos@tamanegi.org>
+ 
+	* lib/ddk/hid.def (HidD_FlushQueue, HidD_FreePreparsedData,
+	HidD_GetAttributes, HidD_GetConfiguration, HidD_GetFeature,
+	HidD_GetHidGuid, HidD_GetIndexedString, HidD_GetInputReport,
+	HidD_GetManufacturerString, HidD_GetMsGenreDescriptor,
+	HidD_GetNumInputBuffers, HidD_GetPhysicalDescriptor,
+	HidD_GetPreparsedData, HidD_GetProductString,
+	HidD_GetSerialNumberString, HidD_SetConfiguration,
+	HidD_SetFeature, HidD_SetNumInputBuffers, HidD_SetOutputReport,
+	HidP_GetButtonCaps, HidP_GetValueCaps): Add exports.
+
+2004-08-25  Lars Rune Nøstdal  <daysleper@users.sourceforge.net>
+
+	* include/wincon.h (CONSOLE_FULLSCREEN_MODE, CONSOLE_WINDOWED_MODE):
+	Add XP defines.
+	(PCOORD): Add typedef.
+	(GetConsoleDisplayMode, SetConsoleDisplayMode): Add prototypes.
+
+2004-08-25   Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winldap.h: Don't check value of UNICODE.
+	Thanks to: "Jean-Do"  <spab@users.sourceforge.net>
+
+2004-08-25   Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winbase.h (WINBASEAPI): Guard with __INSIDE_CYGWIN__.
+
+2004-08-24  Sam Robb  <samrobb@users.sourceforge.net>
+
+	* include/winbase.h (GetFileSizeEx): Add _WIN32_WINNT >= 0x0500
+	guard.
+
+2004-08-24   Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winbase.h: Add WINBASEAPI token to prototypes, throughout.
+
+2004-08-15  Ken Fitlike  <kenfitlike@users.sourceforge.net>
+
+	* include/commctrl.h (WC_TREEVIEWA): Remove parenthenses.
+
+2004-08-10  Sebastian Nowak  <snowak1@users.sourceforge.net>
+
+	* include/ws2spi.h (LPWSPSELECT): Correct typedef.
+
+2004-08-10   Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/wincrypt.h: Correct _WIN32_WINNT typo.
+
+2004-08-10  Ed Schaller  <schallee@darkmist.net>
+
+	* include/wincrypt.h (MS_ENH_RSA_AES_PROV_A, MS_ENH_RSA_AES_PROV_W)
+	(ALG_SID_AES_128, ALG_SID_AES_192, ALG_SID_AES_256, ALG_SID_AES 17)
+	(CALG_AES_128, CALG_AES_192, CALG_AES_256, CALG_AES,PROV_RSA_AES):
+	Add defines.
+	(CALG_SHA1): Add define.
+	(HP_HMAC_INFO): Add define.
+	(HMAC_INFO): Add struct.
+	(BLOBHEADER): Add typedef.
+
 2004-07-26  Hartmut Honisch  <hhonisch@users.sourceforge.net>
 
 	* include/commctrl.h (TreeView_SetItemState): Define macro.
@@ -35,7 +341,7 @@
 
 2004-06-16  Bang Jun-Young <junyoung@NetBSD.org>
 
-	* w32api/include/winnt.h (WAITORTIMERCALLBACKFUNC): Protect with 
+	* w32api/include/winnt.h (WAITORTIMERCALLBACKFUNC): Protect with
 	_WIN32_WINNT >= 0x0500.
 
 2004-06-05  Luke Dunstan  <infidel@users.sourceforge.net>
@@ -118,7 +424,7 @@
 	* include/winnt.h (PROCESSOR_ARCHITECTURE_MSIL): Correct define.
 	(PROCESSOR_ARCHITECTURE_AMD64, PROCESSOR_ARCHITECTURE_IA32_ON_WIN64):
 	Add defines.
-	Thanks to Benoit Blanchon <benoit.blanchon@free.fr>
+	Thanks to Benoit Blanchon <bblanchon@users.sourceforge.net>
 
 2004-04-24  Justin Forest  <vhex@users.sourceforge.net>
 
@@ -439,6 +745,13 @@
 
 	* include/GL/glu.h: Include <stddef.h>.
 	Thanks to Greg Couch <gregcouch@users.sourceforge.net>
+
+2004-02-15  Earnie Boyd  <earnie@users.sf.net>
+
+	* include/w32api.h: Increment version to 3.0.
+	* Makefile.in: Ditto.
+	* README.win32api: Modify license to Public Domain per agreement as
+	found in the mingw-dvlpr list archive.
 
 2004-02-13  Earnie Boyd  <earnie@users.sourceforge.net>
 
