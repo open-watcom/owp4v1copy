@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  POSIX uuencode utility
+*               Converts files to 7-bit encoding
 *
 ****************************************************************************/
 
@@ -69,12 +69,9 @@
  * while keeping the redirection and piping capability.
  */
 
-#if !defined( lint ) && !defined( __WATCOMC__ )
-static char sccsid[] = "@(#)uuencode.c  5.6 (Berkeley) 7/6/88";
-#endif /* not lint */
-
 #ifdef __WATCOMC__
 #define __MSDOS__
+#include <string.h>
 #endif
 #ifdef __MSDOS__
 #ifndef MSDOS
@@ -100,7 +97,7 @@ static char sccsid[] = "@(#)uuencode.c  5.6 (Berkeley) 7/6/88";
 #  define NUM_ARGS 2
 #  define USAGE "Usage: uuencode [infile] remotefile\n"
 #ifdef __WATCOMC__
-static char * usage_data[] = {
+static const char * usage_data[] = {
     "Usage: uuencode [-h|?] [infile] remotefile [outfile]\n\n",
     "          remotefile - the name of the file when the\n",
     "                       file is later uudecoded\n",
@@ -152,8 +149,8 @@ char **argv;
 
 #ifdef __WATCOMC__
         argc--;
-        if( argc > 3 || argc == 0 || argv[1] == '?'
-         || argv[1] == '-?' || argv[1] == '-h' ) {
+        if( argc > 3 || argc == 0 || !strcmp(argv[1], "?")
+         || !strcmp(argv[1], "-?") || !strcmp(argv[1], "-h") ) {
             cnt = 0;
             for(;;) {
                 if( usage_data[cnt] == NULL ) break;

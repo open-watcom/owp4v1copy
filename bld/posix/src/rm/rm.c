@@ -24,32 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  POSIX rm utility
+*               Removes files and directories
 *
 ****************************************************************************/
 
 
-/*
-   RM.C - perform unix-like rm function.
-
-   Date         By              Reason
-   ====         ==              ======
-   06-jul-89
-    ...
-   24-aug-91    Craig Eisler    original development
-   28-jan-92    Craig Eisler    cleanup
-   28-jan-92    G.R.Bentz       make -r flag delete files
-                                if -f is also specified
-   25-mar-92    Craig Eisler    NT port
-   19-jun-92    Craig Eisler    use GetOpt
-   20-jun-92    Craig Eisler    use FileMatch (regular expressions)
-   23-jun-92    Craig Eisler    use FileMatchNoRx
-   26-jun-92    D.J.Gaudet      if rxflag use "\*" instead of "\*.*"
-   07-jul-92    D.J.Gaudet      HPFS support
-   16-dec-92    Brad Brisco     print message if no files are found
-   11-jan-95    A.F.Scian       made 16-dec-92 respect silent flag
- */
 #include <stdio.h>
 #include <io.h>
 #include <stdlib.h>
@@ -71,7 +51,7 @@
 
 char *OptEnvVar="rm";
 
-static char * usageMsg[] = {
+static const char * usageMsg[] = {
     "Usage: rm [-?firsX] [files]",
     "\tfiles       : files/directories to delete",
     "\tOptions: -? : print this list",

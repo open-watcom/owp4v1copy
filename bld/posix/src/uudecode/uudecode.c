@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  POSIX uudecode utility
+*               Decodes uuencoded files - converts from 7-bit to 8-bit chars
 *
 ****************************************************************************/
 
@@ -74,10 +74,6 @@
  *         input file.
  */
 
-#if !defined( lint ) && !defined( __WATCOMC__ )
-static char sccsid[] = "@(#)uudecode.c  5.5 (Berkeley) 7/6/88";
-#endif /* not lint */
-
 #ifdef __WATCOMC__
 #define __MSDOS__
 #endif
@@ -114,8 +110,7 @@ static char sccsid[] = "@(#)uudecode.c  5.5 (Berkeley) 7/6/88";
 #define DEC(c)  (((c) - ' ') & 077)
 
 
-main(argc, argv)
-char **argv;
+main(int argc, char **argv)
 {
         FILE *in, *out;
         int mode;
@@ -124,8 +119,8 @@ char **argv;
         char buf[80];
 
 #ifdef __WATCOMC__
-        if( argc == 1 || argv[1] == '?' || argv[1] == '-?'
-         || argv[1] == '-h' ) {
+        if( argc == 1 || !strcmp(argv[1], "?") || !strcmp(argv[1], "-?")
+         || !strcmp(argv[1], "-h") ) {
             printf( "Usage: uudecode [infile]\n" );
             exit(2);
         }

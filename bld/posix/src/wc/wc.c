@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  POSIX wc utility
+*               Counts lines, words, characters on input
 *
 ****************************************************************************/
 
@@ -48,7 +48,7 @@ unsigned long total_lines;
 unsigned long total_words;
 unsigned long total_chars;
 
-static char *usageMsg[] = {
+static const char *usageMsg[] = {
     "Usage: wc [-?Xclw] [files]",
     "\tfiles       : files to count words/lines/characters in",
     "\tOptions: -? : display this message",

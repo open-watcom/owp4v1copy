@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  POSIX trunc utility
+*               Truncates files
 *
 ****************************************************************************/
 
@@ -48,7 +48,7 @@
 
 char *OptEnvVar = "trunc";
 
-static char *usageMsg[] = {
+static const char *usageMsg[] = {
     "Usage: trunc [-?qX] [@env] [files]",
     "\tenv         : environment variable to expand",
     "\tfiles       : files to truncate",

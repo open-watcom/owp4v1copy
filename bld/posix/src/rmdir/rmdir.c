@@ -24,11 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  POSIX rmdir utility
+*               Removes directories
 *
 ****************************************************************************/
-
 
 
 #include <stdlib.h>
@@ -44,7 +43,7 @@
 
 char *OptEnvVar="rmdir";
 
-static char *usageMsg[] = {
+static const char *usageMsg[] = {
     "Usage: rmdir [-?] [@env] directory [directories...]",
     "\tenv                : environment variable to expand",
     "\tdirectory          : name of directory to be removed",

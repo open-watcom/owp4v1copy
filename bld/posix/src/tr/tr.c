@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  POSIX tr utility
+*               Translates input according to specification
 *
 ****************************************************************************/
 
@@ -41,7 +41,7 @@
 
 char *OptEnvVar = "tr";
 
-char *usageTxt[] = {
+static const char *usageTxt[] = {
     "Usage: tr [-?bcds] string1 [string2]",
     "\tstring1     : characters to translate",
     "\tstring2     : chars from string1 are translated into the corresponding"
