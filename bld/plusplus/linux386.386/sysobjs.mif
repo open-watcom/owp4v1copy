@@ -1,5 +1,0 @@
-# system-dependent files (Linux for 386)
-
-!include ../ppobj86.mif
-
-common_objs += prag386.obj

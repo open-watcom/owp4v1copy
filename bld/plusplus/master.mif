@@ -380,7 +380,7 @@ build : .symbolic $(exe_bld_name).elf
     @%null
 
 !else
-!error no rules for host_os setting
+!error no rules for $(host_os) setting
 !endif
 
 
