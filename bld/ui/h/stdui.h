@@ -383,6 +383,14 @@ typedef         unsigned char           ATTR;
     typedef PIXEL *LPPIXEL;
     #define __FAR
     #undef HAVE_FAR
+#elif defined(__UNIX__) && defined(__PPC__)
+    typedef struct pixel {
+            char            ch;
+            ATTR            attr;
+    } PIXEL;
+    typedef PIXEL *LPPIXEL;
+    #define __FAR
+    #undef HAVE_FAR
 #elif defined( UNIX )
     typedef struct pixel {
             unsigned char   ch;
@@ -411,7 +419,7 @@ typedef struct buffer {
 } BUFFER;
 
 typedef struct image_hld {
-    struct image_hld far        *next_hld;
+    struct image_hld __FAR      *next_hld;
     SAREA                       area;
     int                         kill_image;
     void __FAR                  *hld;

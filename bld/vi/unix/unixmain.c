@@ -47,7 +47,7 @@ char **_argv;
 
 int main( int argc, char *argv[] )
 {
-    static char buffer[_MAX_PATH];
+    static char buffer[FILENAME_MAX];
     argc = argc;
 #ifndef __WATCOMC__
     _argc = argc;

@@ -24,55 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  Editor top level include file.
+* Description:  Wrapper for regexp.c module. 
 *
 ****************************************************************************/
 
 
-#ifndef __VI_INCLUDED__
-#define __VI_INCLUDED__
-#include "control.h"
-
-#ifndef _FAR
-  #error _FAR not configured
-#endif
-
-#ifndef __WATCOMC__
-  #include "clibext.h"
-#endif
-
-typedef unsigned int U_INT;
-
-char *_inline_strchr( const char *__s, int __c );
-unsigned int _inline_strlen( const char *__s );
-int _inline_strcmp( const char *__s1, const char *__s2 );
-char *_inline_strcat( char *__s1, const char *__s2 );
-void *_inline_memcpy( void *__s1, const void *__s2, unsigned int __n );
-void *_inline_memset( void *__s, int __c, unsigned int __n );
-
-#ifdef __UNIX__
-  #define FSYS_CASE_SENSITIVE         1
-  #ifdef __QNX__
-    extern FileSysNeedsCR( int handle );
-  #else
-    #define FileSysNeedsCR( x )       0
-  #endif
-#else
-  #define FSYS_CASE_SENSITIVE         0
-  #define FileSysNeedsCR( x )         1
-#endif
-
-#if !defined( __AXP__ ) && !defined( __PPC__ ) && !defined( PREBUILD )
-  #define VI_RCS  1
-#endif
-
-#include "const.h"
-#include "struct.h"
-#include "pragmas.h"
-#include "errs.h"
-#include "globals.h"
-#include "rtns.h"
-#include "rtns2.h"
-#include "mouse.h"
-#include "dc.h"
-#endif
+#define REGEXP 1
+#include "rxsupp.h"
+#include "regexp.c"

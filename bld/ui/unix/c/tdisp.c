@@ -898,7 +898,7 @@ static int new_attr(int nattr, int oattr)
     #define _attr_bold( a )  (((a).blink_back_bold_fore>>3)&1)
     #define _attr_fore( a )  ( (a).blink_back_bold_fore    &7)
 #else
-    #if defined( WATCOM_BIG_ENDIAN )
+    #if defined( __BIG_ENDIAN__ )
                     unsigned char   blink:1;
                     unsigned char   back:3;
                     unsigned char   bold:1;

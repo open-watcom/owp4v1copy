@@ -49,7 +49,7 @@ extern int      CurrentMenuNumber;
  */
 int SelectFileOpen( char *dir, char **result_ptr, char *mask, bool want_all_dirs )
 {
-    char                dd[_MAX_PATH],cdir[_MAX_PATH];
+    char                dd[FILENAME_MAX],cdir[FILENAME_MAX];
     int                 i,j,rc = ERR_NO_ERR;
     file                *cfile;
     fcb                 *cfcb;

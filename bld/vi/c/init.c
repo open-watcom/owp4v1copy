@@ -218,7 +218,7 @@ static void doInitializeEditor( int argc, char *argv[] )
 {
     int         i,rc,arg,cnt,ocnt,ln,startcnt=0;
     int         k,j;
-    char        tmp[_MAX_PATH],c[1];
+    char        tmp[FILENAME_MAX],c[1];
     char        buff[MAX_STR],file[MAX_STR],**list;
     char        cmd[MAX_STR*2];
     char        *parm;

@@ -36,7 +36,7 @@
 #include "win.h"
 #include "stdui.h"
 
-static char oldPath[_MAX_PATH];
+static char oldPath[FILENAME_MAX];
 /*
  * PushDirectory
  */
@@ -44,7 +44,7 @@ void PushDirectory( char *orig )
 {
     orig = orig;
     oldPath[0] = 0;
-    GetCWD2( oldPath, _MAX_PATH );
+    GetCWD2( oldPath, FILENAME_MAX );
 
 } /* PushDirectory */
 
