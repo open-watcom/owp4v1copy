@@ -61,6 +61,8 @@ extern          void                    stopmouse(void);
 extern          int                     nextc(int);
 extern          char                    *GetTermType(void);
 
+static          void                    GPM_parse( void );
+
 #define         MOUSE_SCALE             8
 
 extern          MOUSEORD                MouseRow;

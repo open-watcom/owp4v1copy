@@ -148,7 +148,7 @@ EVENT intern mouseevent()
     auto        unsigned short          status;
     auto        bool                    moved;
     auto        unsigned short          diff;
-    auto        signed short            butt;
+    auto        signed short            butt = 0;
 
     ev = EV_NO_EVENT;
     if( MouseInstalled ) {

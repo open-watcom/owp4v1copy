@@ -1299,9 +1299,9 @@ static int ti_refresh( int must )
         bool            ca_valid;       // is cursor address valid?
 
         int             rcount;         // repeat count
-        char            rchar;          // repeated character
-        int             ralt;           // if repeated character is in acs
-        int             rcol;           // starting column of repeated chars
+        char            rchar = 0;      // repeated character
+        int             ralt = 0;       // if repeated character is in acs
+        int             rcol = 0;       // starting column of repeated chars
 
         bufp+= dirty.row0 * incr;
         sbufp+= dirty.row0 * incr;

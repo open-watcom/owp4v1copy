@@ -54,7 +54,6 @@ static          DESCMENU                Describe[ MAX_MENUS ];
 static          int                     NumMenus        = 0;
 
 static          UI_WINDOW               BarWin;
-//static                int                     NumPopups       = 0;
 
 static          EVENT                   menu_list[]      = {
                 EV_FIRST_EDIT_CHAR, EV_LAST_EDIT_CHAR,
@@ -331,7 +330,6 @@ register        UI_WINDOW*      window;
 {
     closewindow( window );
     window->update = NULL;
-//    NumPopups--;
 }
 
 void global uiopenpopup( desc, window )
@@ -343,7 +341,6 @@ register        UI_WINDOW*      window;
     window->update = NULL;
     window->parm = NULL;
     openwindow( window );
-//    NumPopups++;
 }
 
 static int process_char( ch, desc, menu, select )
@@ -436,7 +433,7 @@ EVENT intern process_menuevent( vptr, ev )
                 EVENT                   ev;
 {
     register    int                     index;
-    register    int                     oldmenu;
+    register    int                     oldmenu = 0;
     register    EVENT                   itemevent;
     auto        EVENT                   newevent;
     auto        DESCMENU*               desc;
@@ -979,9 +976,7 @@ void global uinomenus()
 }
 
 
-#pragma off(unreferenced);
 void global uimenus( menus, items, hot )
-#pragma on(unreferenced);
 /**************************************/
 
 register        MENUITEM                *menus;

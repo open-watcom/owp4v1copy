@@ -185,9 +185,7 @@ register        VEDITLINE*              editline;
     return( ev );
 }
 
-#pragma off(unreferenced);
 bool global uiveditinit( vptr, editline, buffer, bufflen, row, col, len )
-#pragma on (unreferenced);
 /************************************************************************/
 
     register    VSCREEN*                vptr;
@@ -213,9 +211,7 @@ bool global uiveditinit( vptr, editline, buffer, bufflen, row, col, len )
     return( TRUE );
 }
 
-#pragma off(unreferenced);
 bool global uiveditfini( vptr, editline )
-#pragma on (unreferenced);
 /***************************************/
 
     register    VSCREEN*                vptr;

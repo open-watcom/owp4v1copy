@@ -150,9 +150,9 @@ static void print_field( vs, field, current )
     ATTR                attr;
     ATTR                hotattr;
     char                ctrlbuf[CTRL_BUF_LEN+1];
-    unsigned            length;
-    a_check             *check;
-    a_radio             *radio;
+    unsigned            length = 0;
+    a_check             *check = NULL;
+    a_radio             *radio = NULL;
     a_list              *list;
     a_combo_box         *combo;
     a_hot_spot          *hotspot;
@@ -355,8 +355,8 @@ unsigned ui_split_line( char **sptr, char *t, unsigned max )
     unsigned            delim, cr, i;
     char                *str;
     unsigned            len;
-    unsigned            slen;
-    char                ch;
+    unsigned            slen = 0;
+    char                ch = '\0';
 
     str = *sptr;
     len = t - str;
@@ -650,7 +650,7 @@ static  void setcombobuffer( a_dialog *info, VFIELD *fld )
 
 EVENT   pulldownfilter( EVENT ev, a_dialog *info )
 {
-    a_list          *list;
+    a_list          *list = NULL;
     a_combo_box     *combo;
 
     VSCREEN     *vs;

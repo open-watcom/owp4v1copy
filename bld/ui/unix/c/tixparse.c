@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Parse the .tix terminal description file.
 *
 ****************************************************************************/
 
@@ -389,50 +388,50 @@ struct charmap {
 
 static struct charmap default_tix[] = {
     /* keep zero to handle strings */
-    0, 0,
+    {0, 0},
 
     /* single line box drawing */
-    'm', 0x2514, /* UI_LLCORNER  */
-    'j', 0x2518, /* UI_LRCORNER  */
-    'l', 0x250c, /* UI_ULCORNER  */
-    'k', 0x2510, /* UI_URCORNER  */
-    'q', 0x2500, /* UI_HLINE     */
-    'x', 0x2502, /* UI_VLINE     */
-    'w', 0x252c, /* UI_TTEE      */
-    'u', 0x2524, /* UI_RTEE      */
-    't', 0x251c, /* UI_LTEE      */
+    {'m', 0x2514}, /* UI_LLCORNER  */
+    {'j', 0x2518}, /* UI_LRCORNER  */
+    {'l', 0x250c}, /* UI_ULCORNER  */
+    {'k', 0x2510}, /* UI_URCORNER  */
+    {'q', 0x2500}, /* UI_HLINE     */
+    {'x', 0x2502}, /* UI_VLINE     */
+    {'w', 0x252c}, /* UI_TTEE      */
+    {'u', 0x2524}, /* UI_RTEE      */
+    {'t', 0x251c}, /* UI_LTEE      */
 
     /* double line box drawing */
-    'm', 0x255a, /* UI_DLLCORNER */
-    'j', 0x255d, /* UI_DLRCORNER */
-    'l', 0x2554, /* UI_DULCORNER */
-    'k', 0x2557, /* UI_DURCORNER */
-    'q', 0x2550, /* UI_DHLINE    */
-    'x', 0x2551, /* UI_DVLINE    */
+    {'m', 0x255a}, /* UI_DLLCORNER */
+    {'j', 0x255d}, /* UI_DLRCORNER */
+    {'l', 0x2554}, /* UI_DULCORNER */
+    {'k', 0x2557}, /* UI_DURCORNER */
+    {'q', 0x2550}, /* UI_DHLINE    */
+    {'x', 0x2551}, /* UI_DVLINE    */
 
     /* triangles */
-    '.', 0x25bc, /* UI_DPOINT    */ // 0x2193
-    ',', 0x25c4, /* UI_LPOINT    */ // 0x2190
-    '+', 0x25ba, /* UI_RPOINT    */ // 0x2192
-    '-', 0x25b2, /* UI_UPOINT    */ // 0x2191
+    {'.', 0x25bc}, /* UI_DPOINT    */ // 0x2193
+    {',', 0x25c4}, /* UI_LPOINT    */ // 0x2190
+    {'+', 0x25ba}, /* UI_RPOINT    */ // 0x2192
+    {'-', 0x25b2}, /* UI_UPOINT    */ // 0x2191
 
     /* arrows */
-    '.', 0x2193, /* UI_DARROW    */
-    '/', 0x2195, /* UI_UDARROW   */
+    {'.', 0x2193}, /* UI_DARROW    */
+    {'/', 0x2195}, /* UI_UDARROW   */
 
     /* boxes */
-    0xa0,0x2584, /* UI_DBLOCK    */
-    '0', 0x258c, /* UI_LBLOCK    */
-    0xa0,0x2590, /* UI_RBLOCK    */
-    '0', 0x2580, /* UI_UBLOCK    */
-    'a', 0x2591, /* UI_CKBOARD   */
-    'h', 0x2592, /* UI_BOARD     */
-    '0', 0x2588, /* UI_BLOCK     */
+    {0xa0,0x2584}, /* UI_DBLOCK    */
+    {'0', 0x258c}, /* UI_LBLOCK    */
+    {0xa0,0x2590}, /* UI_RBLOCK    */
+    {'0', 0x2580}, /* UI_UBLOCK    */
+    {'a', 0x2591}, /* UI_CKBOARD   */
+    {'h', 0x2592}, /* UI_BOARD     */
+    {'0', 0x2588}, /* UI_BLOCK     */
 
     /* misc */
-    'h', 0x25a0, /* UI_SQUARE    */
-    '*', 0x221a, /* UI_ROOT      */
-    '=', 0x2261, /* UI_EQUIVALENT*/
+    {'h', 0x25a0}, /* UI_SQUARE    */
+    {'*', 0x221a}, /* UI_ROOT      */
+    {'=', 0x2261}, /* UI_EQUIVALENT*/
 };
 
 static char alt_keys[] = "QWERTYUIOP[]\r\0ASDFGHJKL;'`\0\\ZXCVBNM,./";
@@ -508,7 +507,7 @@ int ti_read_tix( char *termname )
 
     if ( ( ( s = getenv( "LC_ALL" ) )   && *s ) ||
          ( ( s = getenv( "LC_CTYPE" ) ) && *s ) ||
-         ( ( s = getenv( "LANG" ) )     && *s ) ) 
+         ( ( s = getenv( "LANG" ) )     && *s ) )
         if ( strstr( s, "UTF" ) || strstr( s, "utf" ) )
             utf8_mode = 1;
 

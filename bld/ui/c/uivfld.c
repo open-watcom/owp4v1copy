@@ -102,7 +102,7 @@ register        VFIELDEDIT*              header;
                 int                      col;
 {
     register    int                      cursor;
-    register    int                      field;
+    register    int                      field = 0; // GCC wrongly thinks this might be uninited
     register    VFIELD*                  cur;
 
     if( col < 0 ) {

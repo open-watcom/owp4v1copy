@@ -33,9 +33,7 @@
 #include "uidef.h"
 
 
-#pragma off( unreferenced );
 static void backblank( area, dummy )
-#pragma on( unreferenced );
 /*********************************/
 
 register        SAREA                   area;
@@ -49,9 +47,7 @@ register        void*                   dummy;
 }
 
 
-#pragma off( unreferenced );
 static void backfill( area, dummy )
-#pragma on( unreferenced );
 /*********************************/
 
 register        SAREA                   area;

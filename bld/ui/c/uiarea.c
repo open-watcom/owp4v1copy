@@ -61,14 +61,14 @@ register        SAREA                   centre;
 register        SAREA                   areas[ 5 ];
 {
     register    char                    i;
-    register    int                     row;
-    register    int                     col;
+    register    int                     row = 0;    // GCC thinks this might be uninited
+    register    int                     col = 0;
     register    int                     arow;
     register    int                     acol;
     register    int                     crow;
     register    int                     ccol;
-    register    int                     maxrow;
-    register    int                     maxcol;
+    register    int                     maxrow = 0;
+    register    int                     maxcol = 0;
     register    int                     cmaxrow;
     register    int                     cmaxcol;
     register    int                     amaxrow;
