@@ -861,10 +861,10 @@ MRESULT APIENTRY WinDdeRespond(HWND hwndClient, HWND hwndServer,
 #define DID_CANCEL 2
 #define DID_ERROR  0xffff
 
-#define WA_WARNING    0
-#define WA_NOTE       1
-#define WA_ERROR      2
-#define WA_CWINALARMS 3
+#define WA_WARNING     0
+#define WA_NOTE        1
+#define WA_ERROR       2
+#define WA_CWINALARMS 13
 
 #define MB_OK               0x0000
 #define MB_OKCANCEL         0x0001
@@ -921,7 +921,6 @@ MRESULT APIENTRY WinDdeRespond(HWND hwndClient, HWND hwndServer,
 #define WinIsControlEnabled(hwndDlg, id) \
     ((BOOL)WinIsWindowEnabled(WinWindowFromID(hwndDlg, id)))
 
-
 #pragma pack(2)
 
 typedef struct _DLGTITEM {
@@ -953,6 +952,8 @@ typedef struct _DLGTEMPLATE {
 } DLGTEMPLATE, *PDLGTEMPLATE;
 
 #pragma pack()
+
+BOOL    APIENTRY WinAlarm(HWND hwndDesktop, ULONG rgfType);
 
 HWND    APIENTRY WinCreateDlg(HWND hwndParent, HWND hwndOwner, PFNWP pfnDlgProc,
                    PDLGTEMPLATE pdlgt, PVOID pCreateParams);

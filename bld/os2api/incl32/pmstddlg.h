@@ -246,6 +246,24 @@ typedef struct _PAGESELECTNOTIFY {
 #define FDS_EFSELECTION 0
 #define FDS_LBSELECTION 1
 
+#define DID_FILE_DIALOG        256
+#define DID_FILENAME_TXT       257
+#define DID_FILENAME_ED        258
+#define DID_DRIVE_TXT          259
+#define DID_DRIVE_CB           260
+#define DID_FILTER_TXT         261
+#define DID_FILTER_CB          262
+#define DID_DIRECTORY_TXT      263
+#define DID_DIRECTORY_LB       264
+#define DID_FILES_TXT          265
+#define DID_FILES_LB           266
+#define DID_HELP_PB            267
+#define DID_APPLY_PB           268
+#define DID_READ_ONLY          269
+#define DID_DIRECTORY_SELECTED 270
+#define DID_OK_PB              DID_OK
+#define DID_CANCEL_PB          DID_CANCEL
+
 typedef PSZ APSZ[1];
 typedef APSZ *PAPSZ;
 
@@ -266,7 +284,7 @@ typedef struct _FILEDLG {
     CHAR    szFullFile[CCHMAXPATH];
     PAPSZ   papszFQFilename;
     ULONG   ulFQFCount;
-    USHORT  usDlgID;
+    USHORT  usDlgId;
     SHORT   x;
     SHORT   y;
     SHORT   sEAType;
