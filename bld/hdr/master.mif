@@ -46,6 +46,7 @@ dos_qnx_common = &
         complex.h &
         except.h &
         exceptio.h &
+        excpt.h &
         exstring.h &
         iomanip.h &
         iostream.h &
