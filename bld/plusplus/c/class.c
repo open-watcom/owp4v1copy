@@ -2883,6 +2883,11 @@ void ClassStoreInlineFunc( DECL_INFO *dinfo )
     if( data == NULL ) {
         CFatal( "inline function is not in a class definition" );
     }
+#else
+    if( data == NULL ){
+        CErr1( ERR_PARSER_DIED );
+        CSuicide();
+    }
 #endif
     data = data->inline_data;
 #ifndef NDEBUG

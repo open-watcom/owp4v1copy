@@ -927,6 +927,8 @@ static MACRO_TOKEN *glueTokens( MACRO_TOKEN *head )
                 // glue mtok->token with next->token to make one token
                 // create new token
 
+                if(next == NULL) break;
+
                 if( ( next->token == T_MACRO_EMPTY_VAR_PARM ) ||
                     ( mtok->token == T_MACRO_EMPTY_VAR_PARM ) )
                 {

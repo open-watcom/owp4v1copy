@@ -245,6 +245,10 @@ void MakeEnumMember( ENUM_DATA *edata, PTREE id, PTREE val )
     sym->sym_type = edata->type;
     SymbolLocnDefine( &(id->locn), sym );
     sym = InsertSymbol( GetCurrScope(), sym, id->u.id.name );
+
+    if(sym == NULL) /* error will have been reported */
+        return;
+
     /* add the value into the symbol */
     if( val != NULL ) {
         /* value was specified */
