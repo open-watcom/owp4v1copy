@@ -79,13 +79,7 @@ objs_reg += pdctxaxp.obj &
 !endif
 
 
-!ifeq host_cpu axp
-objs_cpp = prwsdata.obj
-!else
-objs_cpp =
-!endif
-
-objs_cpp += allocexc.$(obj_ext) &
+objs_cpp =  allocexc.$(obj_ext) &
             arrassgn.obj &
             arrdel.obj   &
             arrnew.obj   &

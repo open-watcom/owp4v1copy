@@ -132,7 +132,7 @@ define_c +=-D__USE_RW
 !endif
 
 # -xr has to be on in case the user uses -xr
-extra_c_flags=-zl-zld-xr
+extra_c_flags=-zl-zld-xr-fhwe
 !ifdef mthreaded
 extra_c_flags +=-bm
 !endif
@@ -226,7 +226,7 @@ comp_cpp = $(comp_cpp_$(host_cpu))
 #    $(comp_c) -zq $(comp_flags) $(inc_dirs) -fo=.xbj $[@
 
 .asm.obj :
-    $(as) $(aflags) $[@ -fo=.obj
+    $(as) $(aflags) $[@
 
 !ifeq release 0
 !ifdef define_deps_include
