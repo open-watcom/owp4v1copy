@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  File access utilities.
 *
 ****************************************************************************/
 
@@ -140,28 +139,35 @@ extern char * FindFile( char * path, char * name, path_list * path_tail )
 
 
 #if _OS == _OS_QNX || _OS == _OS_DOS
-extern dig_fhandle PathOpen( char * name, unsigned len, char * ext )
-/******************************************************************/
+extern dig_fhandle FullPathOpen( char const *name, char *ext,
+                                 char *result, unsigned max_res )
+/***************************************************************/
 {
-    char        path[ _MAX_PATH2 ];
     char        realname[ _MAX_PATH2 ];
     char *      filename;
 
-    len = len;
     if( ext == NULL || *ext == '\0' ) {
         strcpy( realname, name );
     } else {
-        _splitpath2( name, path, NULL, NULL, &filename, NULL );
+        _splitpath2( name, result, NULL, NULL, &filename, NULL );
         _makepath( realname, NULL, NULL, filename, ext );
     }
-    filename = FindFile( path, realname, FilePathList );
+    filename = FindFile( result, realname, FilePathList );
     if( filename == NULL ) {
-        filename = FindFile( path, realname, DipExePathList );
+        filename = FindFile( result, realname, DipExePathList );
     }
     if( filename == NULL ) {
         return( -1 );
     }
     return( DIGCliOpen( filename, DIG_READ ) );
+}
+
+extern dig_fhandle PathOpen( char * name, unsigned len, char * ext )
+/******************************************************************/
+{
+    char        path[ _MAX_PATH2 ];
+
+    return( FullPathOpen( name, ext, path, sizeof( path ) ) );
 }
 #endif
 
