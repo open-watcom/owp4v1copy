@@ -81,7 +81,7 @@ double complex clog(double complex z);
 float complex clogf(float complex z);
 long double complex clogl(long double complex z);
 
-/* Power and Absolute-value Functions
+/* Power and Absolute-value Functions */
 double cabs(double complex z);
 float cabsf(float complex z);
 long double cabsl(long double complex z);
