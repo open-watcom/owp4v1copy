@@ -5,6 +5,10 @@
 #ifndef __REXXSAA_H__
 #define __REXXSAA_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef OS2_INCLUDED
 #include <os2.h>
 #endif
@@ -16,6 +20,20 @@
 #define RXCOMMAND    0
 #define RXSUBROUTINE 1
 #define RXFUNCTION   2
+
+#define RXAUTOBUFLEN 256
+
+#define RXFUNC_DYNALINK  1
+#define RXFUNC_CALLENTRY 2
+
+#define RXFUNC_OK         0
+#define RXFUNC_DEFINED   10
+#define RXFUNC_NOMEM     20
+#define RXFUNC_NOTREG    30
+#define RXFUNC_MODNOTFND 40
+#define RXFUNC_ENTNOTFND 50
+#define RXFUNC_NOTINIT   60
+#define RXFUNC_BADTYPE   70
 
 #define RXSUBCOM_DROPPABLE 0
 #define RXSUBCOM_NONDROP   1
@@ -128,5 +146,9 @@ APIRET APIENTRY RexxSetTrace(PID,TID);
 
 LONG   APIENTRY RexxStart(LONG,PRXSTRING,PCSZ,PRXSTRING,PCSZ,LONG,PRXSYSEXIT,PSHORT,PRXSTRING);
 APIRET APIENTRY RexxVariablePool(PSHVBLOCK);
+
+#ifdef __cplusplus
+};
+#endif
 
 #endif
