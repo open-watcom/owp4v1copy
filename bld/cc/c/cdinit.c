@@ -912,22 +912,31 @@ void StaticInit( SYMPTR sym, SYM_HANDLE sym_handle )
 {
     TYPEPTR             typ;
     TYPEPTR             struct_typ;
+    TYPEPTR             last_array;
     FIELDPTR            field;
 
     GenStaticDataQuad( sym_handle );
     CompFlags.non_zero_data = 0;
     struct_typ = NULL;
     typ = sym->sym_type;
+    last_array = NULL;
     for(;;) {
         while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
-        if( typ->decl_type != TYPE_STRUCT )  break;     /* 17-mar-92 */
-        if( struct_typ == NULL )  struct_typ = typ;
-        field = typ->u.tag->u.field_list;
-        if( field == NULL )  break;                     /* 10-sep-92 */
-        while( field->next_field != NULL ) field = field->next_field;
-        typ = field->field_type;
+        if( typ->decl_type == TYPE_ARRAY ) {
+            last_array = typ;
+            typ = typ->object;
+        } else if( typ->decl_type == TYPE_STRUCT ) {
+            struct_typ = typ;
+            field = typ->u.tag->u.field_list;
+            if( field == NULL )  break;                     /* 10-sep-92 */
+            while( field->next_field != NULL ) field = field->next_field;
+            typ = field->field_type;
+        } else {
+            break;
+        }
     }
-    if( typ->decl_type == TYPE_ARRAY  &&  TypeSize( typ ) == 0 ) {
+    typ = last_array;
+    if( typ != NULL  &&  TypeSize( typ ) == 0 ) {
         if( struct_typ == NULL ) {
             sym->sym_type = ArrayNode( typ->object ); /* 18-oct-88 */
         } else {
