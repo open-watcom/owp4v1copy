@@ -336,6 +336,21 @@ static void fmtTypeArgument( TYPE arg_type, unsigned arg_index, VBUF *pvbuf, FMT
     VbufFree( &arg_suffix );
 }
 
+static void fmtTypeFlag( type_flag flag, VBUF *pvbuf,
+/***************************************************/
+    FMT_FLAG_INFO *flag_info )
+{
+    unsigned    i;
+    type_flag   mask;
+
+    for( i = 0 ; flag_info[i].name != NULL ; i++ ) {
+        mask = flag_info[i].mask;
+        if( (flag & mask) == mask ) {
+            VStrConcStr( pvbuf, flag_info[i].name );
+        }
+    }
+}
+
 static void fmtTypeFunction( arg_list *alist, VBUF *pvbuf, int num_def,
 /*********************************************************************/
     FMT_CONTROL control )
@@ -417,20 +432,6 @@ static boolean willPrintModifier( TYPE type, type_flag flag )
         }
     }
     return FALSE;
-}
-static void fmtTypeFlag( type_flag flag, VBUF *pvbuf,
-/***************************************************/
-    FMT_FLAG_INFO *flag_info )
-{
-    unsigned    i;
-    type_flag   mask;
-
-    for( i = 0 ; flag_info[i].name != NULL ; i++ ) {
-        mask = flag_info[i].mask;
-        if( (flag & mask) == mask ) {
-            VStrConcStr( pvbuf, flag_info[i].name );
-        }
-    }
 }
 
 static void fmtTypeChangeState( FMT_LR *curr, FMT_LR new,

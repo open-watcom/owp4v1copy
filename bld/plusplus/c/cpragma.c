@@ -470,6 +470,17 @@ static void pragInitialize(     // #pragma initialize ...
     CompInfo.init_priority = priority;
 }
 
+static void pushPrag( PRAG_STACK **h, unsigned value )
+{
+    PRAG_STACK *stack_entry;
+
+    stack_entry = StackPop( &FreePrags );
+    if( stack_entry == NULL ) {
+        stack_entry = CPermAlloc( sizeof( *stack_entry ) );
+    }
+    stack_entry->value = value;
+    StackPush( h, stack_entry );
+}
 
 // forms: (1) #pragma enum int
 //        (2) #pragma enum minimum
@@ -862,6 +873,76 @@ static void pragOnce( void )
     SrcFileOnceOnly();
 }
 
+static void pragLibs(           // #PRAGMA library ( lib ... lib )
+    void )
+{
+    if( CurToken == T_LEFT_PAREN ) {
+        NextToken();
+        while( PragIdCurToken() || CurToken == T_STRING ) {
+            CgInfoAddUserLib( Buffer );
+            NextToken();
+        }
+        MustRecog( T_RIGHT_PAREN );
+    } else {
+        CompFlags.pragma_library = 1;
+    }
+}
+
+// #pragma pack()
+// #pragma pack( <number> )
+// #pragma pack( pop )
+// #pragma pack( push )
+// #pragma pack( push, <number> )
+
+static void pragPack(           // #PRAGMA PACK
+    void )
+{
+    if( CurToken == T_LEFT_PAREN ) {
+        PPState = PPS_EOL;
+        NextToken();
+        switch( CurToken ) {
+        case T_ID:
+            if( PragRecog( "pop" ) ) {
+                popPrag( &HeadPacks, &PackAmount );
+                MustRecog( T_RIGHT_PAREN );
+            } else if( PragRecog( "push" ) ) {
+                if( CurToken == T_RIGHT_PAREN ) {
+                    pushPrag( &HeadPacks, PackAmount );
+                    MustRecog( T_RIGHT_PAREN );
+                } else {
+                    MustRecog( T_COMMA );
+                    if( CurToken != T_CONSTANT ) {
+                        MustRecog( T_CONSTANT );
+                    } else {
+                        pushPrag( &HeadPacks, PackAmount );
+                        PackAmount = VerifyPackAmount( U32Fetch( Constant64 ) );
+                        NextToken();
+                        MustRecog( T_RIGHT_PAREN );
+                    }
+                }
+            } else {
+                CErr( ERR_EXPECTING_BUT_FOUND, "pop", Buffer );
+            }
+            PPState = PPS_EOL | PPS_NO_EXPAND;
+            break;
+        case T_CONSTANT:
+            PackAmount = VerifyPackAmount( U32Fetch( Constant64 ) );
+            PPState = PPS_EOL | PPS_NO_EXPAND;
+            NextToken();
+            MustRecog( T_RIGHT_PAREN );
+            break;
+        case T_RIGHT_PAREN:
+            PPState = PPS_EOL | PPS_NO_EXPAND;
+            NextToken();
+            PackAmount = GblPackAmount;
+            break;
+        default:
+            PPState = PPS_EOL | PPS_NO_EXPAND;
+            MustRecog( T_RIGHT_PAREN );
+        }
+    }
+}
+
 void CPragma()                  // PROCESS A PRAGMA
 {
     boolean our_pragma;         // - TRUE ==> one of ours
@@ -985,33 +1066,6 @@ void PragInit(
 }
 
 
-static void pragLibs(           // #PRAGMA library ( lib ... lib )
-    void )
-{
-    if( CurToken == T_LEFT_PAREN ) {
-        NextToken();
-        while( PragIdCurToken() || CurToken == T_STRING ) {
-            CgInfoAddUserLib( Buffer );
-            NextToken();
-        }
-        MustRecog( T_RIGHT_PAREN );
-    } else {
-        CompFlags.pragma_library = 1;
-    }
-}
-
-static void pushPrag( PRAG_STACK **h, unsigned value )
-{
-    PRAG_STACK *stack_entry;
-
-    stack_entry = StackPop( &FreePrags );
-    if( stack_entry == NULL ) {
-        stack_entry = CPermAlloc( sizeof( *stack_entry ) );
-    }
-    stack_entry->value = value;
-    StackPush( h, stack_entry );
-}
-
 static boolean popPrag( PRAG_STACK **h, unsigned *pvalue )
 {
     PRAG_STACK *pack_entry;
@@ -1025,61 +1079,6 @@ static boolean popPrag( PRAG_STACK **h, unsigned *pvalue )
         return( TRUE );
     }
     return( FALSE );
-}
-
-// #pragma pack()
-// #pragma pack( <number> )
-// #pragma pack( pop )
-// #pragma pack( push )
-// #pragma pack( push, <number> )
-
-static void pragPack(           // #PRAGMA PACK
-    void )
-{
-    if( CurToken == T_LEFT_PAREN ) {
-        PPState = PPS_EOL;
-        NextToken();
-        switch( CurToken ) {
-        case T_ID:
-            if( PragRecog( "pop" ) ) {
-                popPrag( &HeadPacks, &PackAmount );
-                MustRecog( T_RIGHT_PAREN );
-            } else if( PragRecog( "push" ) ) {
-                if( CurToken == T_RIGHT_PAREN ) {
-                    pushPrag( &HeadPacks, PackAmount );
-                    MustRecog( T_RIGHT_PAREN );
-                } else {
-                    MustRecog( T_COMMA );
-                    if( CurToken != T_CONSTANT ) {
-                        MustRecog( T_CONSTANT );
-                    } else {
-                        pushPrag( &HeadPacks, PackAmount );
-                        PackAmount = VerifyPackAmount( U32Fetch( Constant64 ) );
-                        NextToken();
-                        MustRecog( T_RIGHT_PAREN );
-                    }
-                }
-            } else {
-                CErr( ERR_EXPECTING_BUT_FOUND, "pop", Buffer );
-            }
-            PPState = PPS_EOL | PPS_NO_EXPAND;
-            break;
-        case T_CONSTANT:
-            PackAmount = VerifyPackAmount( U32Fetch( Constant64 ) );
-            PPState = PPS_EOL | PPS_NO_EXPAND;
-            NextToken();
-            MustRecog( T_RIGHT_PAREN );
-            break;
-        case T_RIGHT_PAREN:
-            PPState = PPS_EOL | PPS_NO_EXPAND;
-            NextToken();
-            PackAmount = GblPackAmount;
-            break;
-        default:
-            PPState = PPS_EOL | PPS_NO_EXPAND;
-            MustRecog( T_RIGHT_PAREN );
-        }
-    }
 }
 
 typedef struct magic_word {

@@ -576,6 +576,16 @@ static int skipWhiteSpace( int c )
     return( c );
 }
 
+static void unGetChar( int c )
+{
+    if( NextChar == rescanBuffer ) {
+        --ReScanPtr;
+        CompFlags.rescan_buffer_done = 0;
+    } else {
+        GetNextCharUndo( c );
+    }
+}
+
 boolean ScanOptionalComment( void )
 /*********************************/
 {
@@ -621,16 +631,6 @@ void SkipAhead( void )
         }
         if( c != '/' ) break;
         if( ! ScanOptionalComment() ) break;
-    }
-}
-
-static void unGetChar( int c )
-{
-    if( NextChar == rescanBuffer ) {
-        --ReScanPtr;
-        CompFlags.rescan_buffer_done = 0;
-    } else {
-        GetNextCharUndo( c );
     }
 }
 

@@ -248,6 +248,8 @@ static boolean fmtSymName( SYMBOL sym, char *name, VBUF *pvprefix,
     return( ctordtor );
 }
 
+static void fmtSymScope( SCOPE scope, VBUF *pvbuf, boolean include_function );
+
 static void formatScopedSym( SYMBOL sym, VBUF *pvbuf, FMT_CONTROL control )
 /*************************************************************************/
 {

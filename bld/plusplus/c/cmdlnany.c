@@ -635,6 +635,10 @@ static void handleOptionEQ( OPT_STORAGE *data, int value )
     CompFlags.eq_switch_used = value;
 }
 
+static void procOptions(        // PROCESS AN OPTIONS LINE
+    OPT_STORAGE *data,          // - options data
+    char *str );                // - scan position in command line
+
 static void handleOptionFC( OPT_STORAGE *data, int value )
 {
     value = value;

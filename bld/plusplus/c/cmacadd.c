@@ -519,6 +519,19 @@ void MacroOverflow(             // OVERFLOW SEGMENT IF REQUIRED
     }
 }
 
+static void unlinkMacroFromTable( MEPTR fmentry, unsigned hash )
+{
+    ++undefCount;
+    RingPrune( &macroHashTable[ hash ], fmentry );
+    if(( InitialMacroFlag & MACRO_DEFINED_BEFORE_FIRST_INCLUDE ) == 0 ) {
+        // make sure we only do this *after* the first include has started
+        // processing otherwise the PCH is created in such a way that
+        // the #undef'd macro must be defined before the #include 98/07/13
+        if( fmentry->macro_flags & MACRO_DEFINED_BEFORE_FIRST_INCLUDE ) {
+            RingAppend( &beforeIncludeChecks, fmentry );
+        }
+    }
+}
 
 MEPTR MacroDefine(              // DEFINE A NEW MACRO
     MEPTR mentry,               // - scanned macro
@@ -638,20 +651,6 @@ boolean MacroDependsDefined // MACRO DEPENDENCY: DEFINED OR NOT
     return retn;
 }
 
-
-static void unlinkMacroFromTable( MEPTR fmentry, unsigned hash )
-{
-    ++undefCount;
-    RingPrune( &macroHashTable[ hash ], fmentry );
-    if(( InitialMacroFlag & MACRO_DEFINED_BEFORE_FIRST_INCLUDE ) == 0 ) {
-        // make sure we only do this *after* the first include has started
-        // processing otherwise the PCH is created in such a way that
-        // the #undef'd macro must be defined before the #include 98/07/13
-        if( fmentry->macro_flags & MACRO_DEFINED_BEFORE_FIRST_INCLUDE ) {
-            RingAppend( &beforeIncludeChecks, fmentry );
-        }
-    }
-}
 
 static void doMacroUndef( char *name, unsigned len, boolean quiet )
 {
