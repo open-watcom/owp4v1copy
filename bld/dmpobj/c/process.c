@@ -325,24 +325,30 @@ static int doEasyOmf( byte c_bits ) {
 
 static int doMSOmf( void ) {
 
-    byte    version;
-
-    version = GetByte();
-    IsIntel = FALSE;
-    NamePtr = RecPtr;
-    NameLen = RecLen - 3;
-    RecPtr += NameLen;
-    Output( INDENT "---- \"New OMF\" extensions present <%N> ----" CRLF );
-    if( strncmp( NamePtr, "CV", 2 ) == 0 ) {
-        Output( INDENT "Microsoft CodeView style debugging information version %b" CRLF, version );
+    if( RecLen < 5 ) {
+        Output( INDENT "Assuming CodeView style debugging information" CRLF );
         DbgStyle = DBG_CODEVIEW;
-    } else if( strncmp( NamePtr, "HL", 2 ) == 0 ) {
-        Output( INDENT "IBM HLL style debugging information version %b" CRLF, version );
-        DbgStyle = DBG_HLL;
     }
     else {
-        Output( INDENT "Unknown debugging information style" CRLF );
-        DbgStyle = DBG_UNKNOWN;
+        byte    version;
+
+        version = GetByte();
+        IsIntel = FALSE;
+        NamePtr = RecPtr;
+        NameLen = RecLen - 3;
+        RecPtr += NameLen;
+        Output( INDENT "---- \"New OMF\" extensions present ----" CRLF );
+        if( strncmp( NamePtr, "CV", 2 ) == 0 ) {
+            Output( INDENT "Microsoft CodeView style debugging information version %b" CRLF, version );
+            DbgStyle = DBG_CODEVIEW;
+        } else if( strncmp( NamePtr, "HL", 2 ) == 0 ) {
+            Output( INDENT "IBM HLL style debugging information version %b" CRLF, version );
+            DbgStyle = DBG_HLL;
+        }
+        else {
+            Output( INDENT "Unknown debugging information style" CRLF );
+            DbgStyle = DBG_UNKNOWN;
+        }
     }
 
     return( 1 );
