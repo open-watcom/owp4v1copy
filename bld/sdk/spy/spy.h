@@ -140,7 +140,7 @@
 #ifdef __NT__
 #include "spymsgnt.h"
 #else
-#include "spymsg.h"
+#include "spymsg.gh"
 #endif
 #include "msgs.h"
 #include "winpick.h"
