@@ -119,7 +119,7 @@ extern OBJPTR CurrObjCreate( OBJPTR obj, RECT * loc, OBJPTR handle )
     obj = obj;           /* ref'd to avoid warning */
     loc = loc;           /* ref'd to avoid warning */
     new = EdAlloc( sizeof( CURROBJ ) );
-    new->invoke = &CurrObjDispatch;
+    new->invoke = (FARPROC)&CurrObjDispatch;
     new->currobjlist = NULL;
     new->primaryobj = NULL;
     new->prevprimary = NULL;

@@ -750,6 +750,15 @@ extern WORD LocalPtr;
 
 #pragma library (WIN386);
 
+#if	defined(STRICT)
+int	PASCAL	WinMain(HINSTANCE,HINSTANCE,LPSTR,int);
+int	CALLBACK	LibMain(HINSTANCE,WORD,WORD,LPSTR);
+#else
+int	PASCAL	WinMain(HANDLE,HANDLE,LPSTR,int);
+int	CALLBACK	LibMain(HANDLE,WORD,WORD,LPSTR);
+#endif
+int	CALLBACK	WEP(int);
+
 #else /* __WINDOWS_386__ */
 
 typedef void __far * PROCPTR;

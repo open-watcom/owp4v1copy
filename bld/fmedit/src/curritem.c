@@ -163,7 +163,7 @@ extern OBJPTR CurrItemCreate( OBJPTR parent, RECT * loc, OBJPTR obj )
 
     parent = parent;         /* ref'd to avoid warning */
     new = EdAlloc( sizeof( CURRITEM ) );
-    new->invoke = &CurrItemDispatch;
+    new->invoke = (FARPROC)&CurrItemDispatch;
     new->obj = obj;
     GetOffset( &new->offset );
     new->rect = *loc;

@@ -62,7 +62,7 @@ void StartIDE( HANDLE instance, BOOL dospawn ) {
 
     found = FALSE;
     instance = instance;
-    fp = MakeProcInstance( FindWatIDEHwnd, instance );
+    fp = MakeProcInstance( (FARPROC)FindWatIDEHwnd, instance );
     EnumWindows( FindWatIDEHwnd, (LPARAM)&found );
     FreeProcInstance( fp );
     if( !found && dospawn ) {

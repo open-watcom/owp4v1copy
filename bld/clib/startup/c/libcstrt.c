@@ -119,7 +119,7 @@ extern "C" {
     //  module level functions
     */
     static void __NullSema4Rtn(
-        void *  p
+        semaphore_object *  p
         );
     #if !defined (_THIN_LIB)
     static void __NullAccessRtn(
@@ -168,7 +168,7 @@ static void *               NLMHandle = NULL;
 //  These are essentially NULL functions setup before initialising 
 //  multithreading support is enabled
 *****************************************************************************/
-static void __NullSema4Rtn(void *p) 
+static void __NullSema4Rtn(semaphore_object *p) 
 { 
     p = p; 
 }

@@ -36,7 +36,7 @@ extern DWORD ReturnCode;
 extern int PASCAL StartDLL32( void );
 
 #pragma off(unreferenced);
-int WINAPI LibMain( HANDLE hmod, WORD dataseg, WORD heap, LPSTR cmdline )
+int WINAPI LibMain( HINSTANCE hmod, WORD dataseg, WORD heap, LPSTR cmdline )
 #pragma on(unreferenced);
 {
 

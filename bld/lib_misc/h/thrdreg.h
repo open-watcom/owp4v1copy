@@ -56,7 +56,7 @@
                                                  initializer **init );
 
     _WCRTLINK extern unsigned __RegisterThreadDataSize( unsigned size );
-    _WCRTLINK extern void *(*__GetThreadPtr)();
+    _WCRTLINK extern thread_data *(*__GetThreadPtr)( void );
     _WCRTLINK extern unsigned   __ThreadDataSize;
 #endif
 

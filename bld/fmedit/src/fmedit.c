@@ -196,7 +196,7 @@ BOOL WINEXP FMEditWndProc( HWND wnd, unsigned message,
             break;
         case IDM_GRID :
             procaddr = MakeProcInstance( (FARPROC)FMGrid, inst );
-            DialogBox( inst, "GridBox", wnd, procaddr );
+            DialogBox( inst, "GridBox", wnd, (DLGPROC)procaddr );
             FreeProcInstance( procaddr );
             InheritState( wnd );
             break;
@@ -303,7 +303,7 @@ int WINAPI LibMain ( HANDLE inst, DWORD dwReason, LPVOID lpReserved )
 
 #else
 
-int WINAPI LibMain( HANDLE inst, WORD dataseg,
+int WINAPI LibMain( HINSTANCE inst, WORD dataseg,
                      WORD heapsize, LPSTR cmdline )
 /*************************************************/
 /* Initializes window data and registers window class */
@@ -323,7 +323,7 @@ int WINAPI LibMain( HANDLE inst, WORD dataseg,
     return( TRUE );
   }
 
-int __export WINAPI WEP( int parm )
+int WINAPI WEP( int parm )
 /************************/
 /* terminate the DLL */
   {

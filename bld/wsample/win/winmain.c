@@ -143,8 +143,8 @@ long __export FAR PASCAL MainDriver( HWND hwnd, unsigned message, WORD wparam,
     case WM_COMMAND:
         switch( wparam ) {
         case MSG_ABOUT:
-            proc = MakeProcInstance( About, InstanceHandle );
-            DialogBox(InstanceHandle, ResName( "AboutBox" ), hwnd, proc);
+            proc = MakeProcInstance( (FARPROC)About, InstanceHandle );
+            DialogBox(InstanceHandle, ResName( "AboutBox" ), hwnd, (DLGPROC)proc);
             FreeProcInstance(proc);
             break;
         case MSG_OPT:
@@ -174,7 +174,7 @@ int WindowsInit( HANDLE inst, int showcmd )
     WNDCLASS    wc;
     BOOL        rc;
     WORD        x,y;
-    WORD        handle;
+    HGLOBAL     handle;
 
     if( !SetTimer( MainWindowHandle, TIMER_ID, 32000, 0L) ) {
         return( FALSE );
@@ -304,7 +304,7 @@ void StartWDebug386( void )
 /*
  * WinMain - main windows entry point
  */
-int PASCAL WinMain( HANDLE inst, HANDLE previnst, LPSTR cmd, int show)
+int PASCAL WinMain( HINSTANCE inst, HINSTANCE previnst, LPSTR cmd, int show)
 {
     HINSTANCE           newinst;
     HANDLE              h;
@@ -353,7 +353,7 @@ int PASCAL WinMain( HANDLE inst, HANDLE previnst, LPSTR cmd, int show)
         parm.lpCmdShow = (void far *) &cmddat;
         parm.dwReserved = NULL;
         newinst = LoadModule( "wsamplew.exe", (LPVOID) &parm );
-        if( newinst < 32 ) {
+        if( (UINT)newinst < 32 ) {
             WinMessage( MsgArray[MSG_SAMPLE_12-ERR_FIRST_MESSAGE] );
             CloseShop();
             return( FALSE );

@@ -141,7 +141,7 @@ mad_imp_routines        MadImpInterface = {
 typedef void (DIGENTRY INTER_FUNC)();
 
 static HANDLE TaskId;
-static HANDLE ThisInst;
+static HINSTANCE ThisInst;
 
 extern mad_imp_routines *MADLOAD( mad_status *, mad_client_routines * );
 
@@ -158,7 +158,7 @@ void DIGENTRY MADUNLOAD()
     PostAppMessage( TaskId, WM_QUIT, 0, 0 );
 }
 
-int PASCAL WinMain( HANDLE this_inst, HANDLE prev_inst,
+int PASCAL WinMain( HINSTANCE this_inst, HINSTANCE prev_inst,
                     LPSTR cmdline, int cmdshow )
 /***********************************************
 

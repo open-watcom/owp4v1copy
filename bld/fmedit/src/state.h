@@ -55,7 +55,7 @@ typedef struct state {
     WORD        keystate;       /* Was shift pressed on mouse down?         */
     BOOL        showerror;      /* Show error message when we get it?       */
     char *      error;          /* Pending error string                     */
-    FARPROC     mouseaction;    /* Rtn to call on significant mouse actions */
+    void (FM_EXPORT *mouseaction)(HWND, RECT *);    /* Rtn to call on significant mouse actions */
     unsigned    vresizegrid;    /* vertical resize grid increment           */
     unsigned    hresizegrid;    /* horizontal resize grid increment         */
     BOOL        show_eatoms;    /* new eatoms will show their movement rect */

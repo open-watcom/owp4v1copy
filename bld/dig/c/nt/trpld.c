@@ -41,13 +41,13 @@
 static HANDLE   TrapFile;
 static trap_version (TRAPENTRY *InitFunc)();
 static void (TRAPENTRY *FiniFunc)();
-static void (TRAPENTRY *InfoFunction)( HWND * );
+static void (TRAPENTRY *InfoFunction)( HWND );
 
 extern trap_version     TrapVer;
 extern unsigned         (TRAPENTRY *ReqFunc)( unsigned, mx_entry *,
                                         unsigned, mx_entry * );
 
-void TellHWND( HWND *hwnd )
+void TellHWND( HWND hwnd )
 {
     if( InfoFunction != NULL ) {
         InfoFunction( hwnd );

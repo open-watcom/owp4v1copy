@@ -39,11 +39,11 @@ extern "C" {
 #if defined( __NT__ )
     typedef const char *rcsstring;
     typedef void *rcsdata;
-    #define RCSAPI      __export __stdcall
+    #define RCSAPI      __export WINAPI
 #elif defined( __WINDOWS__ )
     typedef const char far *rcsstring;
     typedef void far *rcsdata;
-    #define RCSAPI      __export far pascal
+    #define RCSAPI      __export WINAPI
 #elif defined( __OS2__ )
     typedef const char *rcsstring;
     typedef void *rcsdata;

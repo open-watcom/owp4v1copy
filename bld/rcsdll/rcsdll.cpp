@@ -201,31 +201,31 @@ int RCSAPI RCSRegisterMessageBoxCallback( rcsdata data,
 
 #ifdef __NT__
 
-int WINAPI LibMain( HANDLE hDll, DWORD reason, LPVOID res )
+int WINAPI LibMain( HINSTANCE hDll, DWORD reason, LPVOID res )
 {
     res = res;
     reason = reason;
 
-    hInstance = (HINSTANCE) hDll;
+    hInstance = hDll;
     return( 1 );
 }
 
 #else
 #ifdef __WINDOWS__
 
-int WINAPI LibMain( HANDLE hInst, WORD wDataSeg, WORD wHeapSize,
+int WINAPI LibMain( HINSTANCE hInst, WORD wDataSeg, WORD wHeapSize,
                         LPSTR lpszCmdLine )
 {
     wDataSeg = wDataSeg;
     wHeapSize = wHeapSize;
     lpszCmdLine = lpszCmdLine;
 
-    hInstance = (HINSTANCE) hInst;
+    hInstance = hInst;
 
     return( 1 );
 }
 
-int __export WINAPI WEP( int q )
+int CALLBACK WEP( int q )
 {
     q = q;
     return( 1);

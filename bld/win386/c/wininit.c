@@ -162,7 +162,7 @@ static char _FAR *dwordToStr( DWORD value )
 /*
  * Init32BitTask - load and initialize the 32-bit application
  */
-int Init32BitTask( HANDLE thishandle, HANDLE prevhandle, LPSTR cmdline,
+int Init32BitTask( HINSTANCE thishandle, HINSTANCE prevhandle, LPSTR cmdline,
                     int cmdshow )
 {
     WORD                i,amount,bytes_read,j;
@@ -427,8 +427,8 @@ int Init32BitTask( HANDLE thishandle, HANDLE prevhandle, LPSTR cmdline,
     /*
      * insert command line parms
      */
-    dataptr->thishandle = thishandle;
-    dataptr->prevhandle = prevhandle;
+    dataptr->thishandle = (WORD)thishandle;
+    dataptr->prevhandle = (WORD)prevhandle;
     dataptr->cmdline    = (DWORD) cmdline;
     dataptr->cmdshow    = cmdshow;
     dataptr->_no87      = _no87;

@@ -68,7 +68,7 @@ extern int                  _SetupArgv( int (*)( int, char ** ) );
 extern long                 _StartNLM( void *, void *, unsigned char *,
                                        unsigned char *, long, long,
                                        long cdecl (*)(), long, long, void **,
-                                       void (*)() );
+                                       int (*)() );
 static void                 InitStackLow( void );
 
 #if !defined(_THIN_LIB)
@@ -123,7 +123,7 @@ extern unsigned short __DS( void );
     "mov ax, ds"        \
     value [ ax ];
 
-static void __NullSema4Rtn(void *p) { p = p; }
+static void __NullSema4Rtn(semaphore_object *p) { p = p; }
 
 #if !defined (_THIN_LIB)
 static void __NullAccessRtn( int hdl ) { hdl = hdl; }

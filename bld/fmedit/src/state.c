@@ -667,7 +667,7 @@ void WINEXP SetMouseRtn( HWND wnd, void (FM_EXPORT *rtn)( HWND, RECT *) )
 
   {
     InitState( wnd );
-    State->mouseaction = (FARPROC)rtn;
+    State->mouseaction = rtn;
   }
 
 

@@ -57,7 +57,7 @@ thread_data             *(*__GetThreadPtr)( void ) = &__SingleThread;
 thread_data             *__FirstThreadData;
 
 
-static thread_data *__SingleThread()
+static thread_data *__SingleThread( void )
 {
     return( __FirstThreadData );
 }

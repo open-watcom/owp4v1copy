@@ -54,7 +54,7 @@ void Say( char *buff )
 mad_status MADSysLoad( char *path, mad_client_routines *cli,
                                 mad_imp_routines **imp, unsigned long *sys_hdl )
 {
-    HANDLE              dll;
+    HINSTANCE           dll;
     mad_imp_routines    *(DIGENTRY *init_func)( mad_status *, mad_client_routines * );
     char                newpath[256];
     mad_status          status;
@@ -97,7 +97,7 @@ mad_status MADSysLoad( char *path, mad_client_routines *cli,
     dll = LoadModule( newpath, &parm_block );
     MADLastHandle = dll;
     SetErrorMode( prev );
-    if( dll < 32 ) {
+    if( (UINT)dll < 32 ) {
         return( MS_ERR|MS_FOPEN_FAILED );
     }
     *sys_hdl = (unsigned long)transfer_block.unload;

@@ -143,7 +143,7 @@ extern OBJPTR EAtomCreate( OBJPTR parent, RECT * loc, OBJPTR handle )
     STATE_ID st;
 
     new = EdAlloc( sizeof( EATOM ) );
-    new->invoke = &EAtomDispatch;
+    new->invoke = (FARPROC)&EAtomDispatch;
     new->obj = parent;
     new->parent = NULL;
     if( handle == NULL ) {

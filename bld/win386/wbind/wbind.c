@@ -41,12 +41,11 @@
 #include <sys\types.h>
 #include <sys\stat.h>
 #include "banner.h"
-//#include <win16.h>
+#define FAR _far
 typedef unsigned short WORD;
 typedef unsigned long DWORD;
-typedef void *HANDLE;
-typedef char far *LPSTR;
-#define FAR far
+typedef WORD HINSTANCE;
+typedef char FAR *LPSTR;
 #include "..\h\winext.h"
 #include "watcom.h"
 #include "exedos.h"
