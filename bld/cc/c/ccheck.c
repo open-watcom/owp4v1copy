@@ -57,8 +57,7 @@ typedef enum {
 
 typedef enum {
    VC_CONVERT,  /* "promote" void * to the type it is compared with */
-   VC_WARN,     /* warn for mismatching void * in function pointer argument lists */
-   VC_ERR       /* err for mismatching void * in normal prototypes */
+   VC_WARN      /* warn for mismatching void * in function pointer argument lists */
 }voidptr_cmp_type;
 
 #define __  NO
@@ -204,7 +203,7 @@ int ChkCompatibleFunction( TYPEPTR typ1, TYPEPTR typ2, int topLevelCheck )
     TYPEPTR     *plist1;
     TYPEPTR     *plist2;
     int         parm_count;
-    cmp_type    cmp;
+//  cmp_type    cmp;
 
     plist1 = typ1->u.parms;
     plist2 = typ2->u.parms;
@@ -223,13 +222,14 @@ int ChkCompatibleFunction( TYPEPTR typ1, TYPEPTR typ2, int topLevelCheck )
                 }
                 return( TC_PARM_COUNT_MISMATCH );
             }
-            if( topLevelCheck || CompFlags.strict_ANSI ) {               /* 22-nov-94 */
+//            if( topLevelCheck || CompFlags.strict_ANSI ) {               /* 22-nov-94 */
                 if( ! IdenticalType( *plist1, *plist2 ) ) {
                     if ( topLevelCheck ) {
                         CErr2( ERR_PARM_TYPE_MISMATCH, parm_count );
                     }
                     return( TC_PARM_TYPE_MISMATCH + parm_count );
                 }
+#if 0
             } else{
                 cmp = DoCompatibleType( *plist1, *plist2, 0, VC_WARN );
                 switch( cmp ){
@@ -255,6 +255,7 @@ int ChkCompatibleFunction( TYPEPTR typ1, TYPEPTR typ2, int topLevelCheck )
                     break;
                 }
             }
+#endif
             ++plist1;
             ++plist2;
             ++parm_count;
@@ -275,12 +276,10 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
     typ1_flags = FLAG_NONE;
     typ2_flags = FLAG_NONE;
     ret_val = OK;
-    typ1 = SkipTypeFluff( typ1 ); // skip typedefs go into enums base
-    typ2 = SkipTypeFluff( typ2 );
     for( ;; ) {   // * [] loop
-        if( typ1 == typ2 )break;
         typ1 = SkipTypeFluff( typ1 ); // skip typedefs go into enums base
         typ2 = SkipTypeFluff( typ2 );
+        if( typ1 == typ2 )break;
         if( typ1->decl_type != typ2->decl_type )break;
         if( typ1->decl_type != TYPE_ARRAY && typ1->decl_type != TYPE_POINTER )break;
         if( typ1->decl_type==TYPE_POINTER ){
@@ -303,18 +302,17 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
         typ1 = typ1->object;
         typ2 = typ2->object;
     }
-    if( voidptr_cmp != VC_ERR &&
-        ( typ1->decl_type == TYPE_VOID || typ2->decl_type == TYPE_VOID ) ) {
-    // allow  void ** with any **
-        if( top_level==1 || !CompFlags.strict_ANSI ){
-            if ( voidptr_cmp == VC_WARN ||
-                 (top_level > 1 && !CompFlags.extensions_enabled) ) {
-                CWarn1( WARN_PCTYPE_MISMATCH, ERR_PCTYPE_MISMATCH );
-            }
-            return( ret_val ); // void *  and  anything *
-        }
-    }
     if( typ1 != typ2 ){   // if not equal see if diff by pointers
+        if( typ1->decl_type == TYPE_VOID || typ2->decl_type == TYPE_VOID ) {
+        // allow  void ** with any **
+            if( top_level==1 || !CompFlags.strict_ANSI ){
+                if ( voidptr_cmp == VC_WARN ||
+                     (top_level > 1 && !CompFlags.extensions_enabled) ) {
+                    CWarn1( WARN_PCTYPE_MISMATCH, ERR_PCTYPE_MISMATCH );
+                }
+                return( ret_val ); // void *  and  anything *
+            }
+        }
         if( top_level > 0 ){ //for PW both types must start as pointers
             if( typ1->decl_type == TYPE_POINTER
                && typ2->decl_type != TYPE_ARRAY ){
@@ -341,11 +339,13 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
             typ2_flags = typ2->type_flags;
             if( (typ1_flags & FLAG_LANGUAGES) != (typ2_flags & FLAG_LANGUAGES) ){
                 ret_val = NO;
-            }else if( ChkCompatibleFunction( typ1, typ2, 0 ) != TC_OK ){
-                ret_val = NO;
-            /* check to see if the two functions have identical return types */
-            }else if( !IdenticalType( typ1->object, typ2->object ) ) {
-                CWarn1( WARN_PCTYPE_MISMATCH, ERR_PCTYPE_MISMATCH );
+            }else {
+                /* check to see if the two functions have identical parameters
+                   and return types */
+                if( ChkCompatibleFunction( typ1, typ2, 0 ) != TC_OK  ||
+                    !IdenticalType( typ1->object, typ2->object ) ) {
+                        CWarn1( WARN_PCTYPE_MISMATCH, ERR_PCTYPE_MISMATCH );
+                }
             }
         }else if( typ1->decl_type == TYPE_STRUCT  || typ1->decl_type == TYPE_UNION ) {
            /* 11-jul-90: allow pointers to different structs */
