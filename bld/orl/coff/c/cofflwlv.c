@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  COFF symbol table and relocations processing.
 *
 ****************************************************************************/
 
@@ -164,6 +163,11 @@ orl_return CoffCreateSymbolHandles( coff_file_handle file_hnd )
                     current->type &= ~ORL_SYM_CDAT_MASK;
                     current->type |= (aux->selection << ORL_SYM_CDAT_SHIFT)
                                         & ORL_SYM_CDAT_MASK;
+                } else {
+                    type = _CoffComplexType( current->symbol->type );
+                    if( type & IMAGE_SYM_DTYPE_FUNCTION ) {
+                        current->type |= ORL_SYM_TYPE_FUNCTION;
+                    }
                 }
                 break;
             case IMAGE_SYM_CLASS_FUNCTION:
