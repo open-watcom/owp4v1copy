@@ -112,9 +112,11 @@ STATIC const char *const dosInternals[] = {   /* COMMAND.COM commands */
     "REM",
     "REN",
     "RENAME",
+    "RM",
+#define COM_RM      24
     "RMDIR",
     "SET",
-#define COM_SET     25  /* index of the set keyword */
+#define COM_SET     26  /* index of the set keyword */
 #define LEN_SET     3   /* strlen( "SET" ) */
     "TIME",
     "TYPE",
@@ -149,9 +151,11 @@ STATIC const char *const dosInternals[] = {   /* COMMAND.COM commands */
     "REM",
     "REN",
     "RENAME",
+    "RM",
+#define COM_RM      24
     "RMDIR",
     "SET",
-#define COM_SET     25  /* index of the set keyword */
+#define COM_SET     26  /* index of the set keyword */
 #define LEN_SET     3   /* strlen( "SET" ) */
     "TIME",
     "TYPE",
@@ -195,9 +199,11 @@ STATIC const char *const dosInternals[] = {   /* COMMAND.COM commands */
     "REM",
     "REN",
     "RENAME",
+    "RM",
+#define COM_RM      30
     "RMDIR",
     "SET",
-#define COM_SET     31
+#define COM_SET     32
     "SETLOCAL",
     "SHIFT",
     "START",
@@ -242,9 +248,11 @@ STATIC const char *const dosInternals[] = {   /* COMMAND.COM commands */
     "REM",
     "REN",
     "RENAME",
+    "RM",
+#define COM_RM      29
     "RMDIR",
     "SET",
-#define COM_SET     30
+#define COM_SET     31
 #define LEN_SET     3
     "SETLOCAL",
     "SHIFT",
@@ -1437,6 +1445,105 @@ STATIC RET_T handleCHDrive( char *cmd )
 #endif
 
 
+STATIC RET_T handleRMSyntaxError( void )
+/***************************************/
+{
+    PrtMsg( ERR| SYNTAX_ERROR_IN, dosInternals[ COM_RM ] );
+    return( RET_ERROR );
+}
+
+STATIC RET_T getRMArgs( const char *line, BOOLEAN *bForce, const char **pfile )
+/******************************************************************************
+ * returns RET_WARN when there are no more arguments
+ */
+{
+    static char     *p;
+
+                            /* first run? */
+    if( line ) {
+        p = SkipWS( line + 2 ); /* find first non-ws after "RM" */
+
+                                /* is it a switch? */
+        while( p[0] == '-' ) {
+            p++;
+            while( isalpha(p[0]) ) {
+                switch( tolower( p[0] ) ) {
+                    case 'f':
+                        *bForce = TRUE;
+                        break;
+                    default:
+                        return( handleRMSyntaxError() );
+                }
+                p++;
+            }
+            p = SkipWS( p );
+        }
+
+        for( *pfile = (const char *) p; NULLCHAR != *p && !isws( p[0] ); p++ );
+        if( *p == NULLCHAR )
+            p = NULL;
+        else
+            *p++ = NULLCHAR;
+
+    } else if( p ) {
+        for( *pfile = (const char *) p; NULLCHAR != *p && !isws( p[0] ); p++ );
+        if( *p == NULLCHAR )
+            p = NULL;
+        else
+            *p++ = NULLCHAR;
+
+    } else {
+        return( RET_WARN );
+    }
+
+    return( RET_SUCCESS );
+}
+
+STATIC RET_T handleRM( char *cmd )
+/*********************************
+ * RM [-f] <file> ...
+ */
+{
+    BOOLEAN     bForce;
+    RET_T       rt;
+    const char  *pfname;
+
+    rt = getRMArgs( cmd, &bForce, &pfname );
+    while( RET_SUCCESS == rt ) {
+        const char    *dfile;
+
+        dfile = DoWildCard( pfname );
+        while( dfile && strcmp(dfile,pfname) ) {
+            int rv;
+
+            rv = unlink( dfile );
+            if( 0 != rv ) {
+                unsigned attribute;
+
+                _dos_getfileattr( dfile, &attribute );
+                if( attribute & _A_RDONLY ) {
+                    if( bForce ) {
+                        _dos_setfileattr( dfile, _A_NORMAL );
+                        rv = unlink( dfile );
+                    }
+                }
+            }
+            if( 0 != rv ) {
+                PrtMsg( ERR| SYSERR_DELETING_FILE, dfile );
+                return( RET_ERROR );
+            }
+
+            dfile = DoWildCard( NULL );
+        }
+
+        rt = getRMArgs( NULL, NULL, &pfname );
+    }
+    if( RET_WARN == rt )
+        rt = RET_SUCCESS;
+
+    return( rt );
+}
+
 STATIC BOOLEAN hasMetas( const char *cmd )
 /*****************************************
  * determine whether a command line has meta characters in it or not
@@ -1622,6 +1729,7 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
         case COM_SET:   my_ret = handleSet( cmd );          break;
         case COM_FOR:   my_ret = handleFor( cmd );          break;
         case COM_IF:    my_ret = handleIf( cmd );           break;
+        case COM_RM:    my_ret = handleRM( cmd );           break;
 #if defined( __OS2__ ) || defined( __NT__ ) || defined( __UNIX__ )
         case COM_CD:    /* fall through */
         case COM_CHDIR: my_ret = handleCD( cmd );           break;

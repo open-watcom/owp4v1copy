@@ -4305,6 +4305,8 @@ internal shell command from the following list:
 (remove directory)
 .point rd
 (remove directory)
+.point rm
+(erase files, intercepted by &makecmdup)
 .point set
 (set environment variables, intercepted by &makcmdup)
 .point time
