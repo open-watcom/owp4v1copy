@@ -28,10 +28,13 @@
 *
 ****************************************************************************/
 
-#include <algorithm>  // I use std::reverse in pushback_test.
+#include <algorithm>
 #include <iostream>
+#include <stdexcept>
 #include <string>
 #include <vector>
+
+#include "sanity.cpp"
 
 bool construction_test( )
 {
@@ -42,19 +45,19 @@ bool construction_test( )
   std::vector< int > v4(v2);
   std::vector< int > v5(10, 1);
 
-  if( v1.size( ) != 0 || !v1.empty( ) ) {
+  if( v1.size( ) != 0 || !v1.empty( ) || INSANE( v1 ) ) {
     std::cout << "construct FAIL 0001\n"; rc = false;
   }
-  if( v2.size( ) != 10 || v2.empty( ) ) {
+  if( v2.size( ) != 10 || v2.empty( ) || INSANE( v2 ) ) {
     std::cout << "construct FAIL 0002\n"; rc = false;
   }
-  if( v3.size( ) != 0 || !v3.empty( ) ) {
+  if( v3.size( ) != 0 || !v3.empty( ) || INSANE( v3 ) ) {
     std::cout << "construct FAIL 0003\n"; rc = false;
   }
-  if( v4.size( ) != 10 || v4.empty( ) ) {
+  if( v4.size( ) != 10 || v4.empty( ) || INSANE( v4 ) ) {
     std::cout << "construct FAIL 0004\n"; rc = false;
   }
-  if( v5.size( ) != 10 || v5.empty( ) ) {
+  if( v5.size( ) != 10 || v5.empty( ) || INSANE( v5 ) ) {
     std::cout << "construct FAIL 0005\n"; rc = false;
   }
 
@@ -112,7 +115,7 @@ bool assign_test( )
   std::vector< int > v3(15, 3);
 
   v1 = v2;
-  if( v1.size( ) != 5 ) {
+  if( v1.size( ) != 5  || INSANE( v1 ) ) {
     std::cout << "assign FAIL 0001\n"; rc = false;
   }
   for( std::vector< int >::size_type i = 0; i < v1.size( ); ++i ) {
@@ -122,7 +125,7 @@ bool assign_test( )
   }
 
   v1 = v3;
-  if( v1.size( ) != 15 ) {
+  if( v1.size( ) != 15 || INSANE( v1 ) ) {
     std::cout << "assign FAIL 0003\n"; rc = false;
   }
   for( std::vector< int >::size_type i = 0; i < v1.size( ); ++i ) {
@@ -132,7 +135,7 @@ bool assign_test( )
   }
 
   v1.assign( 10, 4 );
-  if( v1.size( ) != 10 ) {
+  if( v1.size( ) != 10 || INSANE( v1 ) ) {
     std::cout << "assign FAIL 0005\n"; rc = false;
   }
   for( std::vector< int >::size_type i = 0; i < v1.size( ); ++i ) {
@@ -142,7 +145,7 @@ bool assign_test( )
   }
 
   v1.assign( 20, 5 );
-  if( v1.size( ) != 20 ) {
+  if( v1.size( ) != 20 || INSANE( v1 ) ) {
     std::cout << "assign FAIL 0007\n"; rc = false;
   }
   for( std::vector< int >::size_type i = 0; i < v1.size( ); ++i ) {
@@ -150,7 +153,6 @@ bool assign_test( )
       std::cout << "assign FAIL 0008\n"; rc = false;
     }
   }
-
 
   return( rc );
 }
@@ -163,7 +165,7 @@ bool pushback_test(Type *check, std::size_t check_size )
   bool rc = true;
   vector< Type > vec;
 
-  for( vector< Type >::size_type i = 0; i < check_size; ++i ) {
+  for( typename vector< Type >::size_type i = 0; i < check_size; ++i ) {
     vec.push_back( check[i] );
     if( vec.back( ) != check[i] ) {
       std::cout << "pushback FAIL 0001\n"; rc = false;
@@ -172,12 +174,12 @@ bool pushback_test(Type *check, std::size_t check_size )
       std::cout << "pushback FAIL 0002\n"; rc = false;
     }
   }
-  if( vec.size( ) != check_size ) {
+  if( vec.size( ) != check_size || INSANE( vec ) ) {
     std::cout << "pushback FAIL 0003\n"; rc = false;
   }
 
   std::reverse( check, check + check_size );
-  for( vector< Type >::size_type i = 0; i < check_size; ++i ) {
+  for( typename vector< Type >::size_type i = 0; i < check_size; ++i ) {
     if( vec.back( ) != check[i] ) {
       std::cout << "pushback FAIL 0004\n"; rc = false;
     }
@@ -186,7 +188,7 @@ bool pushback_test(Type *check, std::size_t check_size )
     }
     vec.pop_back( );
   }
-  if( vec.size( ) != 0 ) {
+  if( vec.size( ) != 0 || INSANE( vec ) ) {
     std::cout << "pushback FAIL 0006\n"; rc = false;
   }
 
@@ -224,6 +226,224 @@ bool iterator_test( )
 
   // Also run iterators backwards, do pointer arithmetic, compare, etc.
 
+  return( rc );
+}
+
+bool insert_single_test( )
+{
+  bool rc = true;
+  typedef std::vector< int >::size_type size_type;
+  typedef std::vector< int >::iterator iterator;
+
+  // Try inserting repeatedly at the beginning.
+  std::vector< int > v1;
+  size_type cap = v1.capacity( );
+  int       lim = 4 * cap;
+  iterator   it = v1.end( );
+
+  for( int i = 0; i < lim; ++i ) {
+    it = v1.insert( it, i );
+    if( INSANE( v1 ) ) {
+      std::cout << "insert_single FAIL 0001\n"; rc = false;
+    }
+  }
+  int expected_value = lim - 1;
+  for( size_type i = 0; i < lim; ++i ) {
+    if( v1[i] != expected_value ) {
+      std::cout << "insert_single FAIL 0002\n"; rc = false;
+    }
+    --expected_value;
+  }
+
+  // Try inserting repeatedly at the end.
+  std::vector< int > v2;
+  cap = v2.capacity( );
+  lim = 4 * cap;
+  it  = v2.end( );
+
+  for( int i = 0; i < lim; ++i ) {
+    it = v2.insert( it, i );
+    ++it;
+    if( INSANE( v2 ) ) {
+      std::cout << "insert_single FAIL 0003\n"; rc = false;
+    }
+  }
+  expected_value = 0;
+  for( size_type i = 0; i < lim; ++i ) {
+    if( v2[i] != expected_value ) {
+      std::cout << "insert_single FAIL 0004\n"; rc = false;
+    }
+    ++expected_value;
+  }
+
+  // Add test case for repeated insertions in the middle.
+
+  return( rc );
+}
+
+bool insert_multiple_test( )
+{
+  // This test considers vector's initial capacity of 16.
+  bool rc = true;
+  typedef std::vector< int >::size_type size_type;
+  typedef std::vector< int >::iterator iterator;
+
+  // Small insertion, no reallocation.
+  std::vector< int > v1;
+  v1.push_back( 1 ); v1.push_back( 2 ); v1.push_back( 3 ); v1.push_back( 4 );
+  v1.insert( v1.begin( ), 1, -1 );
+  if( v1.size( ) != 5 || INSANE( v1 ) ) {
+    std::cout << "insert_multiple FAIL 0001\n"; rc = false;
+  }
+  for( size_type i = 0; i < v1.size( ); ++i ) {
+    if( i == 0 && v1[i] != -1 ) {
+      std::cout << "insert_multiple FAIL 0002\n"; rc = false;
+    }
+    if( i != 0 && v1[i] != i ) {
+      std::cout << "insert_multiple FAIL 0003\n"; rc = false;
+    }
+  }
+
+  // Large insertion, no reallocation.
+  std::vector< int > v2;
+  v2.push_back( 1 ); v2.push_back( 2 ); v2.push_back( 3 ); v2.push_back( 4 );
+  v2.insert( v2.begin( ), 4, -1 );
+  if( v2.size( ) != 8 || INSANE( v2 ) ) {
+    std::cout << "insert_multiple FAIL 0004\n"; rc = false;
+  }
+  for( size_type i = 0; i < v2.size( ); ++i ) {
+    if( i < 4 && v2[i] != -1 ) {
+      std::cout << "insert_multiple FAIL 0005\n"; rc = false;
+    }
+    if( i >= 4 && v2[i] != i - 3 ) {
+      std::cout << "insert_multiple FAIL 0006\n"; rc = false;
+    }
+  }
+
+  // Very large insertion, no reallocation.
+  std::vector< int > v3;
+  v3.push_back( 1 ); v3.push_back( 2 ); v3.push_back( 3 ); v3.push_back( 4 );
+  v3.insert( v3.begin( ), 8, -1 );
+  if( v3.size( ) != 12 || INSANE( v3 ) ) {
+    std::cout << "insert_multiple FAIL 0007\n"; rc = false;
+  }
+  for( size_type i = 0; i < v3.size( ); ++i ) {
+    if( i < 8 && v3[i] != -1 ) {
+      std::cout << "insert_multiple FAIL 0008\n"; rc = false;
+    }
+    if( i >= 8 && v3[i] != i - 7 ) {
+      std::cout << "insert_multiple FAIL 0009\n"; rc = false;
+    }
+  }
+
+  // Insertion at the end, no reallocation.
+  std::vector< int > v4;
+  v4.push_back( 1 ); v4.push_back( 2 ); v4.push_back( 3 ); v4.push_back( 4 );
+  v4.insert( v4.end( ), 8, -1 );
+  if( v4.size( ) != 12 || INSANE( v4 ) ) {
+    std::cout << "insert_multiple FAIL 0010\n"; rc = false;
+  }
+  for( size_type i = 0; i < v4.size( ); ++i ) {
+    if( i < 4 && v4[i] != i + 1 ) {
+      std::cout << "insert_multiple FAIL 0011\n"; rc = false;
+    }
+    if( i >= 4 && v4[i] != -1 ) {
+      std::cout << "insert_multiple FAIL 0012\n"; rc = false;
+    }
+  }
+
+  // Do a no-reallocation insertion in the middle as well?
+
+  // Insertion at beginning, reallocation necessary.
+  std::vector< int > v5;
+  v5.push_back( 1 ); v5.push_back( 2 ); v5.push_back( 3 ); v5.push_back( 4 );
+  v5.insert( v5.begin( ), 32, -1 );
+  if( v5.size( ) != 36 || INSANE( v5 ) ) {
+    std::cout << "insert_multiple FAIL 0013\n"; rc = false;
+  }
+  for( size_type i = 0; i < v5.size( ); ++i ) {
+    if( i < 32 && v5[i] != -1 ) {
+      std::cout << "insert_multiple FAIL 0014\n"; rc = false;
+    }
+    if( i >= 32 && v5[i] != i - 31 ) {
+      std::cout << "insert_multiple FAIL 0015\n"; rc = false;
+    }
+  }
+
+  // Insertion at end, reallocation necessary.
+  std::vector< int > v6;
+  v6.push_back( 1 ); v6.push_back( 2 ); v6.push_back( 3 ); v6.push_back( 4 );
+  v6.insert( v6.end( ), 32, -1 );
+  if( v6.size( ) != 36 || INSANE( v6 ) ) {
+    std::cout << "insert_multiple FAIL 0016\n"; rc = false;
+  }
+  for( size_type i = 0; i < v6.size( ); ++i ) {
+    if( i < 4 && v6[i] != i + 1 ) {
+      std::cout << "insert_multiple FAIL 0017\n"; rc = false;
+    }
+    if( i >= 4 && v6[i] != -1 ) {
+      std::cout << "insert_multiple FAIL 0018\n"; rc = false;
+    }
+  }
+
+  // Insertion in the middle, reallocation necessary.
+  std::vector< int > v7;
+  v7.push_back( 1 ); v7.push_back( 2 ); v7.push_back( 3 ); v7.push_back( 4 );
+  v7.insert( v7.begin( ) + 2, 32, -1 );
+  if( v7.size( ) != 36 || INSANE( v7 ) ) {
+    std::cout << "insert_multiple FAIL 0019\n"; rc = false;
+  }
+  for( size_type i = 0; i < v7.size( ); ++i ) {
+    if( i < 2 && v7[i] != i + 1 ) {
+      std::cout << "insert_multiple FAIL 0020\n"; rc = false;
+    }
+    if( i >= 2 && i < 34 && v7[i] != -1 ) {
+      std::cout << "insert_multiple FAIL 0021\n"; rc = false;
+    }
+    if( i >= 34 && v7[i] != i - 31 ) {
+      std::cout << "insert_multiple FAIL 0022\n"; rc = false;
+    }
+  }
+
+  return( rc );
+}
+
+bool erase_test( )
+{
+  bool rc = true;
+
+  std::vector< int > v1;
+ 
+  v1.push_back( 5 );
+  v1.erase( v1.begin( ) );
+  if( v1.size( ) != 0 || INSANE( v1 ) ) {
+    std::cout << "erase FAIL 0001\n"; rc = false;
+  }
+
+  v1.push_back( 6 ); v1.push_back( 7 );
+  v1.erase( v1.end( ) - 1 );
+  if( v1.size( ) != 1 || v1[0] != 6 || INSANE( v1 ) ) {
+    std::cout << "erase FAIL 0002\n"; rc = false;
+  }
+
+  v1.push_back( 8 );
+  v1.erase( v1.begin( ) );
+  if( v1.size( ) != 1 || v1[0] != 8 || INSANE( v1 ) ) {
+    std::cout << "erase FAIL 0003\n"; rc = false;
+  }
+
+  std::vector< int > v2;
+  v2.push_back( 1 ); v2.push_back( 2 ); v2.push_back( 3 );
+  v2.erase( v2.begin( ), v2.begin( ) + 2 );
+  if( v2.size( ) != 1 || v2[0] != 3 || INSANE( v2 ) ) {
+    std::cout << "erase FAIL 0004\n"; rc = false;
+  }
+
+  v2.push_back( 2 ); v2.push_back( 1 );
+  v2.erase( v2.begin( ) + 1, v2.begin( ) + 3 );
+  if( v2.size( ) != 1 || v2[0] != 3 || INSANE( v2 ) ) {
+    std::cout << "erase FAIL 0005\n"; rc = false;
+  }
   return( rc );
 }
 
@@ -326,14 +546,20 @@ bool swap_test( )
   v2.push_back( 10 ); v2.push_back( 20 );
 
   v1.swap( v2 );
-  if( v1[0] != 10 || v1[1] != 20 ) {
+  if( v1[0] != 10 || v1[1] != 20 || INSANE( v1 ) ) {
     std::cout << "swap FAIL 0001\n"; rc = false;
+  }
+  if( v2[0] !=  1 || v2[1] !=  2 || INSANE( v2 ) ) {
+    std::cout << "swap FAIL 0002\n"; rc = false;
   }
 
   #ifdef __NEVER
   std::swap( v1, v2 );
-  if( v1[0] != 1 || v1[1] != 2 ) {
-    std::cout << "swap FAIL 0002\n"; rc = false;
+  if( v1[0] !=  1 || v1[1] !=  2 || INSANE( v1 ) ) {
+    std::cout << "swap FAIL 0003\n"; rc = false;
+  }
+  if( v2[0] != 10 || v2[1] != 20 || INSANE( v2 ) ) {
+    std::cout << "swap FAIL 0004\n"; rc = false;
   }
   #endif
 
@@ -348,7 +574,7 @@ bool clear_test( )
   vec.push_back( 1 ); vec.push_back( 2 ); vec.push_back( 3 );
 
   vec.clear( );
-  if( vec.size( ) != 0 ) {
+  if( vec.size( ) != 0 || INSANE( vec ) ) {
     std::cout << "clear FAIL 0001\n"; rc = false;
   }
 
@@ -372,15 +598,20 @@ int main( )
 
   int rc = 0;
   try {
-    if( !construction_test( )       ) rc = 1;
-    if( !access_test( )             ) rc = 1;
-    if( !assign_test( )             ) rc = 1;
-    if( !pushback_test( int_check, int_check_size ) ) rc = 1;
-    if( !pushback_test( string_check, string_check_size ) ) rc = 1;
-    if( !iterator_test( )           ) rc = 1;
-    if( !relational_test( )         ) rc = 1;
-    if( !swap_test( )               ) rc = 1;
-    if( !clear_test( )              ) rc = 1;
+    if( !construction_test( )    || !heap_ok( "t01" ) ) rc = 1;
+    if( !access_test( )          || !heap_ok( "t02" ) ) rc = 1;
+    if( !assign_test( )          || !heap_ok( "t03" ) ) rc = 1;
+    if( !pushback_test( int_check, int_check_size ) ||
+          !heap_ok( "t4" ) ) rc = 1;
+    if( !pushback_test( string_check, string_check_size ) ||
+          !heap_ok( "t5" ) ) rc = 1;
+    if( !iterator_test( )        || !heap_ok( "t06" ) ) rc = 1;
+    if( !insert_single_test( )   || !heap_ok( "t07" ) ) rc = 1;
+    if( !insert_multiple_test( ) || !heap_ok( "t08" ) ) rc = 1;
+    if( !erase_test( )           || !heap_ok( "t09" ) ) rc = 1;
+    if( !relational_test( )      || !heap_ok( "t10" ) ) rc = 1;
+    if( !swap_test( )            || !heap_ok( "t11" ) ) rc = 1;
+    if( !clear_test( )           || !heap_ok( "t12" ) ) rc = 1;
   }
   catch( ... ) {
     std::cout << "Unexpected exception of unexpected type.\n";

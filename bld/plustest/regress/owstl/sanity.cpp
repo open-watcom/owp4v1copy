@@ -24,34 +24,38 @@
 *
 *  ========================================================================
 *
-* Description:  Use this file as a template for creating new tests.
+* Description: This file contains helper function/macros to facilitate
+*              sanity checks in the other OWSTL test programs. The
+*              facilities defined here are facilities of interest to
+*              all programs in the test suite.
 *
+*              This file is intended to be #included into the other test
+*              files (it contains macros).
 ****************************************************************************/
 
-#include <iostream>
+#if defined(__WATCOMC__)
 
-#include "sanity.cpp"
+  #include <malloc.h>
 
-bool some_test( )
-{
-  bool rc = true;
+  #define INSANE(x) ( !x._Sane( ) )
 
-  // Exercise some facility here.
-
-  return( rc );
-}
-
-
-int main( )
-{
-  int rc = 0;
-  try {
-    if( !some_test( )    || !heap_ok( "t1" ) ) rc = 1;
-  }
-  catch( ... ) {
-    std::cout << "Unexpected exception of unexpected type.\n";
-    rc = 1;
+  static bool heap_ok( const char *msg )
+  {
+    bool rc = true;
+    if( _heapchk( ) != _HEAPOK ) {
+      std::cout << "!!! HEAP CONSISTENCY FAILURE: " << msg << "\n";
+      rc = false;
+    }
+    return( rc );
   }
 
-  return( rc );
-}
+#else
+
+  #define INSANE(x) false
+
+  static bool heap_ok( const char * )
+  {
+    return( true );
+  }
+
+#endif

@@ -4,7 +4,9 @@
 :keep CPP_HDR
 :include crwat.sp
 //
-// Description: This header is part of the C++ standard library.
+// Description: This header is part of the C++ standard library. It
+//              defines a vector template that in many cases can be
+//              used as a replacement for C-style arrays.
 ///////////////////////////////////////////////////////////////////////////
 #ifndef _VECTOR_INCLUDED
 #define _VECTOR_INCLUDED
@@ -12,13 +14,26 @@
 :include readonly.sp
 
 #ifndef __cplusplus
-#error The header vector requires C++
+  #error The header vector requires C++
 #endif
 
-#include <iterator>
-#include <memory>
-#include <stdexcept>
+#ifndef _ITERATOR_INCLUDED
+  #include <iterator>
+#endif
 
+#ifndef _LIMITS_INCLUDED
+  #include <limits>
+#endif
+
+#ifndef _MEMORY_INCLUDED
+  #include <memory>
+#endif
+
+#ifndef _STDEXCEPT_INCLUDED
+  #include <stdexcept>
+#endif
+
+:: Temporary; until typename support added to compiler.
 #define typename
 
 namespace std {
@@ -34,12 +49,10 @@ namespace std {
     typedef Allocator                           allocator_type;
     typedef typename Allocator::pointer         pointer;
     typedef typename Allocator::const_pointer   const_pointer;
-
-    typedef pointer iterator;
-    typedef const_pointer const_iterator;
-
-    // typedef reverse_iterator<iterator>        reverse_iterator;
-    // typedef reverse_iterator<const_iterator>  const_reverse_iterator;
+    typedef pointer                             iterator;
+    typedef const_pointer                       const_iterator;
+    typedef reverse_iterator< iterator >        reverse_iterator;
+    typedef reverse_iterator< const_iterator >  const_reverse_iterator;
 
     explicit vector( const Allocator & = Allocator( ) );
     explicit vector( size_type n, const Type &value = Type( ), const Allocator & = Allocator( ) );
@@ -53,14 +66,14 @@ namespace std {
     const_iterator         begin( ) const;
     iterator               end( );
     const_iterator         end( ) const;
-    // reverse_iterator       rbegin( );
-    // const_reverse_iterator rbegin( ) const;
-    // reverse_iterator       rend( );
-    // const_reverse_iterator rend( ) const;
+    reverse_iterator       rbegin( );
+    const_reverse_iterator rbegin( ) const;
+    reverse_iterator       rend( );
+    const_reverse_iterator rend( ) const;
 
     size_type size( ) const;
     size_type max_size( ) const;
-    void      resize( size_type sz, Type c = Type( ) );
+    void      resize( size_type n, Type c = Type( ) );
     size_type capacity( ) const;
     bool      empty( ) const;
     void      reserve( size_type n );
@@ -77,29 +90,28 @@ namespace std {
     void     push_back( const Type &x );
     void     pop_back( );
     iterator insert( iterator position, const Type &x );
-    void     insert( iterator position, size_type n, const Type&x );
+    void     insert( iterator position, size_type n, const Type &x );
     iterator erase( iterator position );
     iterator erase( iterator first, iterator last );
     void     swap( vector &x );
     void     clear( );
 
+    bool     _Sane( ) const;  // Check invariants.
+
   private:
-    // 1. buffer has size total.
-    // 2. buffer never shrinks.
-    // 3. total >= filled.
-    // 4. total is a power of two.
+    // 1. buffer has size buf_length.
+    // 2. buffer never shrinks (except in ...).
+    // 3. buf_length >= vec_length.
+    // 4. buf_length is a power of two.
     // 5. buffer allocated with mem or a copy of mem.
     //
-    Allocator mem;      // Object used to get and release memory.
-    pointer   buffer;   // Pointer to start of buffer space.
-    size_type filled;   // Number of buffer slots in use by objects.
-    size_type total;    // Total number of buffer slots.
+    Allocator mem;         // Object used to get and release memory.
+    pointer   buffer;      // Pointer to start of buffer space.
+    size_type buf_length;  // Total number of buffer slots.
+    size_type vec_length;  // Number of buffer slots in use by objects.
 
     // This method encapsulates the memory allocation policy.
     pointer alloc( size_type required, size_type &found );
-
-    // Doubles size of buffer and copies objects from old to new.
-    void realloc( );
   };
 
   // ==========================
@@ -124,38 +136,13 @@ namespace std {
     return( result );
   }
 
-  // realloc( )
-  // **********
-  template< class Type, class Allocator >
-  void vector< Type, Allocator >::realloc( )
-  {
-    size_type temp_total = ( total << 1 );  // Check for overflow?
-    pointer temp = mem.allocate( temp_total );
-    try {
-      uninitialized_copy( buffer, buffer + filled, temp );
-    }
-    catch( ... ) {
-      mem.deallocate( temp, temp_total );
-      throw;
-    }
-
-    // New allocation successful. Remove old vector and commit to new.
-    pointer start = buffer;
-    while( buffer < start + filled ) {
-      buffer->~Type( );
-      ++buffer;
-    }
-    total  = temp_total;
-    buffer = temp;
-  }
-
   // vector( const Allocator & )
   // ***************************
   template< class Type, class Allocator >
   vector< Type, Allocator >::vector( const Allocator &a ) : mem( a )
   {
-    buffer = alloc(1, total );
-    filled = 0;
+    buffer = alloc(1, buf_length );
+    vec_length = 0;
   }
 
   // vector( size_type, const Type &, const Allocator & )
@@ -166,15 +153,15 @@ namespace std {
     const Type &value,
     const Allocator &a ) : mem( a )
   {
-    buffer = alloc( n, total );
+    buffer = alloc( n, buf_length );
     try {
       uninitialized_fill_n( buffer, n, value );
     }
     catch( ... ) {
-      mem.deallocate( buffer, total );
+      mem.deallocate( buffer, buf_length );
       throw;
     }
-    filled = n;
+    vec_length = n;
   }
 
   // vector( const vector & )
@@ -183,17 +170,17 @@ namespace std {
   vector< Type, Allocator >::vector( const vector &other )
     : mem( other.mem )
   {
-    buffer = alloc( other.filled, total );
+    buffer = alloc( other.vec_length, buf_length );
     try {
       uninitialized_copy( other.buffer,
-                          other.buffer + other.filled,
+                          other.buffer + other.vec_length,
                           buffer );
     }
     catch( ... ) {
-      mem.deallocate( buffer, total );
+      mem.deallocate( buffer, buf_length );
       throw;
     }
-    filled = other.filled;
+    vec_length = other.vec_length;
   }
 
   // ~vector( )
@@ -201,11 +188,11 @@ namespace std {
   template< class Type, class Allocator >
   vector< Type, Allocator >::~vector( )
   {
-    // Delete objects actually in use and deallocate the total buffer.
-    for( size_type i = 0; i < filled; ++i ) {
+    // Delete objects actually in use and deallocate the buffer.
+    for( size_type i = 0; i < vec_length; ++i ) {
       mem.destroy( &buffer[i] );
     }
-    mem.deallocate( buffer, total );
+    mem.deallocate( buffer, buf_length );
   }
 
   // operator=( const vector & )
@@ -214,34 +201,33 @@ namespace std {
   vector< Type, Allocator > &vector< Type, Allocator >::operator=(
     const vector &other )
   {
-    if( this == &other ) return *this;
+    if( this == &other ) return( *this );
 
     // Don't overwrite our allocator just yet.
     Allocator temp_allocator( other.mem );
 
     // Allocate buffer space for copy and try to make the copy.
-    pointer temp = temp_allocator.allocate( other.total );
+    pointer temp_buffer = temp_allocator.allocate( other.buf_length );
     try {
       uninitialized_copy( other.buffer,
-                          other.buffer + other.filled,
-                          temp );
+                          other.buffer + other.vec_length,
+                          temp_buffer );
     }
     catch( ... ) {
-      mem.deallocate( temp, other.total );
+      temp_allocator.deallocate( temp_buffer, other.buf_length );
       throw;
     }
 
-    // If we get here with no exception, remove the existing value.
-    for( size_type i = 0; i < filled; ++i ) {
+    // New allocation successful.
+    for( size_type i = 0; i < vec_length; ++i ) {
       mem.destroy( &buffer[i] );
     }
-    mem.deallocate( buffer, total );
+    mem.deallocate( buffer, buf_length );
 
-    // Commit the new value.
-    mem    = temp_allocator;
-    total  = other.total;
-    buffer = temp;
-    filled = other.filled;
+    mem        = temp_allocator;
+    buffer     = temp_buffer;
+    buf_length = other.buf_length;
+    vec_length = other.vec_length;
 
     return( *this );
   }
@@ -252,26 +238,25 @@ namespace std {
   void vector< Type, Allocator >::assign( size_type n, const Type &value )
   {
     // Prepare new buffer space.
-    size_type temp_total;
-    pointer temp = alloc( n, temp_total );
+    size_type temp_length;
+    pointer temp_buffer = alloc( n, temp_length );
     try {
-      uninitialized_fill_n( temp, n, value );
+      uninitialized_fill_n( temp_buffer, n, value );
     }
     catch( ... ) {
-      mem.deallocate( temp, temp_total );
+      mem.deallocate( temp_buffer, temp_length );
       throw;
     }
 
-    // If we get here with no exception, remove the existing value.
-    for( size_type i = 0; i < filled; ++i ) {
+    // New allocation successful.
+    for( size_type i = 0; i < vec_length; ++i ) {
       mem.destroy( &buffer[i] );
     }
-    mem.deallocate( buffer, total );
+    mem.deallocate( buffer, buf_length );
 
-    // Commit the new value.
-    total  = temp_total;
-    buffer = temp;
-    filled = n;
+    buffer     = temp_buffer;
+    buf_length = temp_length;
+    vec_length = n;
   }
 
   // get_allocator( ) const
@@ -311,7 +296,7 @@ namespace std {
   typename vector< Type, Allocator >::iterator
     vector< Type, Allocator >::end( )
   {
-    return( buffer + filled );
+    return( buffer + vec_length );
   }
 
   // end( ) const
@@ -321,7 +306,47 @@ namespace std {
   typename vector< Type, Allocator >::const_iterator
     vector< Type, Allocator >::end( ) const
   {
-    return( buffer + filled );
+    return( buffer + vec_length );
+  }
+
+  // rbegin( )
+  // *********
+  template< class Type, class Allocator >
+  inline
+  typename vector< Type, Allocator >::reverse_iterator
+    vector< Type, Allocator >::rbegin( )
+  {
+    return( reverse_iterator( buffer + vec_length ) );
+  }
+
+  // rbegin( ) const
+  // ***************
+  template< class Type, class Allocator >
+  inline
+  typename vector< Type, Allocator >::const_reverse_iterator
+    vector< Type, Allocator >::rbegin( ) const
+  {
+    return( const_reverse_iterator( buffer + vec_length ) );
+  }
+
+  // rend( )
+  // *******
+  template< class Type, class Allocator >
+  inline
+  typename vector< Type, Allocator >::reverse_iterator
+    vector< Type, Allocator >::rend( )
+  {
+    return( reverse_iterator( buffer ) );
+  }
+
+  // rend( ) const
+  // *************
+  template< class Type, class Allocator >
+  inline
+  typename vector< Type, Allocator >::const_reverse_iterator
+    vector< Type, Allocator >::rend( ) const
+  {
+    return( const_reverse_iterator( buffer ) );
   }
 
   // size( ) const
@@ -331,7 +356,28 @@ namespace std {
   typename vector< Type, Allocator >::size_type
     vector< Type, Allocator >::size( ) const
   {
-    return( filled );
+    return( vec_length );
+  }
+
+  // max_size( ) const
+  // *****************
+  template< class Type, class Allocator >
+  inline
+  typename vector< Type, Allocator>::size_type
+    vector< Type, Allocator >::max_size( ) const
+  {
+    return( std::numeric_limits< size_type >::max( ) / sizeof( Type ) );
+  }
+
+  // resize( size_type, Type )
+  // *************************
+  template< class Type, class Allocator >
+  void vector< Type, Allocator >::resize( size_type n, Type c )
+  {
+    if( n > vec_length )
+      insert( end( ), n - vec_length, c );
+    else if ( n < vec_length )
+      erase( begin( ) + n, end( ) );
   }
 
   // capacity( ) const
@@ -341,7 +387,7 @@ namespace std {
   typename vector< Type, Allocator >::size_type
     vector< Type, Allocator >::capacity( ) const
   {
-    return( total );
+    return( buf_length );
   }
 
   // empty( ) const
@@ -350,7 +396,36 @@ namespace std {
   inline
   bool vector< Type, Allocator >::empty( ) const
   {
-    return( filled == 0 );
+    return( vec_length == 0 );
+  }
+
+  // reserve( size_type )
+  // ********************
+  template< class Type, class Allocator >
+  void vector< Type, Allocator>::reserve( size_type new_capacity )
+  {
+    if( new_capacity <= buf_length ) return;
+    if( new_capacity > max_size( ) )
+      throw length_error( "vector::reserve" );
+
+    size_type temp_length;
+    pointer temp_buffer = alloc( new_capacity, temp_length );
+    try {
+      uninitialized_copy( buffer, buffer + vec_length, temp_buffer );
+    }
+    catch( ... ) {
+      mem.deallocate( temp_buffer, temp_length );
+      throw;
+    }
+
+    // New allocation successful.
+    for( size_type i = 0; i < vec_length; ++i ) {
+      mem.destroy( &buffer[i] );
+    }
+    mem.deallocate( buffer, buf_length );
+
+    buffer     = temp_buffer;
+    buf_length = temp_length;
   }
 
   // operator[]( size_type )
@@ -378,7 +453,7 @@ namespace std {
   typename vector< Type, Allocator >::reference
     vector< Type, Allocator >::at( size_type n )
   {
-    if( n >= filled )
+    if( n >= vec_length )
       throw out_of_range( "vector::at" );
     return( buffer[n] );
   }
@@ -389,7 +464,7 @@ namespace std {
   typename vector< Type, Allocator >::const_reference
     vector< Type, Allocator >::at( size_type n ) const
   {
-    if( n >= filled )
+    if( n >= vec_length )
       throw out_of_range( "vector::at" );
     return( buffer[n] );
   }
@@ -421,7 +496,7 @@ namespace std {
   typename vector< Type, Allocator >::reference
     vector< Type, Allocator >::back( )
   {
-    return( buffer[filled - 1] );
+    return( buffer[vec_length - 1] );
   }
 
   // back( ) const
@@ -431,7 +506,7 @@ namespace std {
   typename vector< Type, Allocator >::const_reference
     vector< Type, Allocator >::back( ) const
   {
-    return( buffer[filled - 1] );
+    return( buffer[vec_length - 1] );
   }
 
   // push_back( const Type & )
@@ -439,20 +514,219 @@ namespace std {
   template< class Type, class Allocator >
   void vector< Type, Allocator >::push_back( const Type &item )
   {
-    if( filled + 1 > total ) {
-      realloc( );
+    if( vec_length + 1 > buf_length ) {
+      reserve( buf_length + 1 );
     }
-    new ( static_cast<void *>( buffer + filled ) ) Type( item );
-    ++filled;
+    new ( static_cast<void *>( buffer + vec_length ) ) Type( item );
+    ++vec_length;
   }
 
   // pop_back( )
   // ***********
   template< class Type, class Allocator >
-  inline void vector< Type, Allocator >::pop_back( )
+  inline
+  void vector< Type, Allocator >::pop_back( )
   {
-    mem.destroy( &buffer[filled - 1] );
-    --filled;
+    mem.destroy( &buffer[vec_length - 1] );
+    --vec_length;
+  }
+
+  // insert( iterator const Type & )
+  // *******************************
+  template< class Type, class Allocator >
+  vector< Type, Allocator >::iterator
+    vector< Type, Allocator >::insert( iterator position, const Type &x )
+  {
+    size_type iposition = static_cast< size_type >( position - buffer );
+    size_type tail_count = vec_length - iposition;
+
+    // Deal with zero length vector as a special case.
+    if( vec_length == 0 ) {
+      mem.construct( &buffer[0], x );
+      vec_length++;
+      return( buffer );
+    }
+
+    // Handle case were reallocation isn't necessary.
+    if( vec_length + 1 <= buf_length ) {
+      mem.construct( &buffer[vec_length], buffer[vec_length - 1] );
+      vec_length++;
+      for( size_type i = 2; i <= tail_count; ++i ) {
+        buffer[vec_length - i] = buffer[vec_length - 1 - i];
+      }
+      *position = x;
+      return( position );
+    }
+
+    // Handle case where reallocation is necessary.
+    size_type temp_length;
+    pointer temp_buffer = alloc( vec_length + 1, temp_length );
+
+    size_type copy_count = 0;
+    pointer   src_iterator = buffer;
+    pointer   dst_iterator = temp_buffer;
+    try {
+      while( src_iterator != position ) {
+        mem.construct( dst_iterator, *src_iterator );
+        ++copy_count; ++src_iterator; ++dst_iterator;
+      }
+      mem.construct( dst_iterator, x );
+      ++copy_count; ++dst_iterator;
+      while( src_iterator != buffer + vec_length ) {
+        mem.construct( dst_iterator, *src_iterator );
+        ++copy_count; ++src_iterator; ++dst_iterator;
+      }
+    }
+    catch( ... ) {
+      for( size_type i = 0; i < copy_count; ++i ) {
+        mem.destroy( &temp_buffer[i] );
+      }
+      mem.deallocate( temp_buffer, temp_length );
+      throw;
+    }
+
+    // It worked. Commit the new value.
+    for( size_type i = 0; i < vec_length; ++i ) {
+      mem.destroy( &buffer[i] );
+    }
+    mem.deallocate( buffer, buf_length );
+    buffer     = temp_buffer;
+    buf_length = temp_length;
+    vec_length++;
+    return( buffer + iposition );
+  }
+
+  // insert( iterator, size_type, const Type & )
+  // *******************************************
+  template< class Type, class Allocator >
+  void vector< Type, Allocator >::insert(
+    iterator position, size_type n, const Type &x
+  )
+  {
+    size_type iposition = static_cast< size_type >( position - buffer );
+    if( n == 0 ) return;
+
+    // Handle the case where reallocation isn't necessary.
+    if( vec_length + n <= buf_length ) {
+
+      // FIX ME: This code isn't exception safe.
+
+      // Open a gap of size n.
+      size_type copya;  // Number of objects needing assignment.
+      size_type copyc;  // Number of objects needing copy construction.
+
+      copya = ( iposition + n < vec_length ) ? vec_length - iposition - n : 0;
+      copyc = vec_length - iposition - copya;
+
+      // Copy construct tail of vector into fresh memory.
+      uninitialized_copy( position + copya,
+                          position + copya + copyc,
+                          position + copya + n );
+
+      // Assign remaining elements in reverse order.
+      iterator src_iterator( position + copya - 1);
+      iterator dst_iterator( buffer + vec_length - 1 );
+      for( size_type i = 0; i < copya; ++i ) {
+        *dst_iterator = *src_iterator;
+        --src_iterator; --dst_iterator;
+      }
+
+      // Fill the gap.
+      size_type filla;  // Number of objects needing assignment.
+      size_type fillc;  // Number of objects needing copy construction.
+
+      filla = ( n >= vec_length - iposition ) ? vec_length - iposition : n;
+      fillc = n - filla;
+
+      // Copy construct new objects (if any).
+      uninitialized_fill_n( buffer + vec_length, fillc, x );
+
+      // Assign remaining elements.
+      dst_iterator = position;
+      for( size_type i = 0; i < filla; ++i ) {
+        *dst_iterator = x;
+        ++dst_iterator;
+      }
+
+      vec_length += copyc + fillc;
+      return;
+    }
+
+    // Handle case where reallocation is necessary.
+    size_type temp_length;
+    pointer temp_buffer = alloc( vec_length + n, temp_length );
+
+    size_type copy_count = 0;
+    pointer   src_iterator = buffer;
+    pointer   dst_iterator = temp_buffer;
+    try {
+      while( src_iterator != position ) {
+        mem.construct( dst_iterator, *src_iterator );
+        ++copy_count; ++src_iterator; ++dst_iterator;
+      }
+      for( size_type i = 0; i < n; ++i ) {
+        mem.construct( dst_iterator, x );
+        ++copy_count; ++dst_iterator;
+      }
+      while( src_iterator != buffer + vec_length ) {
+        mem.construct( dst_iterator, *src_iterator );
+        ++copy_count; ++src_iterator; ++dst_iterator;
+      }
+    }
+    catch( ... ) {
+      for( size_type i = 0; i < copy_count; ++i ) {
+        mem.destroy( &temp_buffer[i] );
+      }
+      mem.deallocate( temp_buffer, temp_length );
+      throw;
+    }
+
+    // It worked. Commit the new value.
+    for( size_type i = 0; i < vec_length; ++i ) {
+      mem.destroy( &buffer[i] );
+    }
+    mem.deallocate( buffer, buf_length );
+    buffer     = temp_buffer;
+    buf_length = temp_length;
+    vec_length = vec_length + n;
+  }
+
+  // erase( iterator )
+  // *****************
+  template< class Type, class Allocator >
+  typename vector< Type, Allocator >::iterator
+    vector< Type, Allocator >::erase( iterator position )
+  {
+    iterator return_value( position );
+
+    while( position != buffer + vec_length - 1 ) {
+      *position = *( position + 1 );
+      ++position;
+    }
+    mem.destroy( position );
+    --vec_length;
+    return( return_value );
+  }
+
+  // erase( iterator, iterator )
+  // ***************************
+  template< class Type, class Allocator >
+  typename vector< Type, Allocator >::iterator
+    vector< Type, Allocator >::erase( iterator first, iterator last )
+  {
+    iterator        return_value( first );
+    difference_type removed( last - first );
+
+    while( last != buffer + vec_length ) {
+      *first = *last;
+      ++first; ++last;
+    }
+    while( first != buffer + vec_length ) {
+      mem.destroy( first );
+      ++first;
+    }
+    vec_length -= removed;
+    return( return_value );
   }
 
   // swap( )
@@ -464,21 +738,21 @@ namespace std {
     typename Allocator::size_type stemp;
     Allocator atemp;
 
-    ptemp      = buffer;
-    buffer     = vec.buffer;
-    vec.buffer = ptemp;
+    ptemp          = buffer;
+    buffer         = vec.buffer;
+    vec.buffer     = ptemp;
 
-    stemp      = total;
-    total      = vec.total;
-    vec.total  = stemp;
+    stemp          = buf_length;
+    buf_length     = vec.buf_length;
+    vec.buf_length = stemp;
 
-    stemp      = filled;
-    filled     = vec.filled;
-    vec.filled = stemp;
+    stemp          = vec_length;
+    vec_length     = vec.vec_length;
+    vec.vec_length = stemp;
 
-    atemp      = mem;
-    mem        = vec.mem;
-    vec.mem    = atemp;
+    atemp          = mem;
+    mem            = vec.mem;
+    vec.mem        = atemp;
   }
 
   // clear( )
@@ -486,15 +760,28 @@ namespace std {
   template< class Type, class Allocator >
   void vector< Type, Allocator >::clear( )
   {
-    // Delete objects actually in use and deallocate the total buffer.
-    for( size_type i = 0; i < filled; ++i ) {
+    // Delete objects actually in use.
+    for( size_type i = 0; i < vec_length; ++i ) {
       mem.destroy( &buffer[i] );
     }
+    vec_length = 0;
+  }
 
-    // Rebuild buffer (this is only place where vector capacity might shrink).
-    mem.deallocate( buffer, total );
-    buffer = alloc(1, total );  // Might throw. Problem?
-    filled = 0;
+  // _Sane( ) const
+  // **************
+  template< class Type, class Allocator >
+  bool vector< Type, Allocator >::_Sane( ) const
+  {
+    if( buf_length == 0 ) return( false );
+    if( buf_length < vec_length ) return( false );
+
+    // Is buf_length a power of 2?
+    size_type temp = buf_length;
+    while( temp != 1 ) {
+      if( temp & 0x1 ) return( false );
+      temp >>= 1; 
+    }
+    return( true );
   }
 
   // ===============================
@@ -502,7 +789,7 @@ namespace std {
   // ===============================
 
   // operator==( const vector &, const vector & )
-  // ++++++++++++++++++++++++++++++++++++++++++++
+  // ********************************************
   template< class Type, class Allocator >
   bool operator==(
     const vector< Type, Allocator > &x,
@@ -519,7 +806,7 @@ namespace std {
   }
 
   // operator!=( const vector &, const vector & )
-  // ++++++++++++++++++++++++++++++++++++++++++++
+  // ********************************************
   template< class Type, class Allocator >
   inline
   bool operator!=(
@@ -530,7 +817,7 @@ namespace std {
   }
 
   // operator<( const vector &, const vector & )
-  // +++++++++++++++++++++++++++++++++++++++++++
+  // *******************************************
   template< class Type, class Allocator >
   bool operator<(
     const vector< Type, Allocator > &x,
@@ -546,7 +833,7 @@ namespace std {
   }
 
   // operator<=( const vector &, const vector & )
-  // ++++++++++++++++++++++++++++++++++++++++++++
+  // ********************************************
   template< class Type, class Allocator >
   inline
   bool operator<=(
@@ -557,7 +844,7 @@ namespace std {
   }
 
   // operator>( const vector &, const vector & )
-  // +++++++++++++++++++++++++++++++++++++++++++
+  // *******************************************
   template< class Type, class Allocator >
   inline
   bool operator>(
@@ -568,7 +855,7 @@ namespace std {
   }
 
   // operator>=( const vector &, const vector & )
-  // ++++++++++++++++++++++++++++++++++++++++++++
+  // ********************************************
   template< class Type, class Allocator >
   inline
   bool operator>=(
@@ -578,12 +865,11 @@ namespace std {
     return( !(x < y) );
   }
 
-  // Vector swap ambiguous if general swap (in algorithm) visible.
-  // Need partial ordering of function templates for this to work.
-  //
+:: Vector swap ambiguous if general swap (in algorithm) visible.
+:: Need partial ordering of function templates for this to work.
   #ifdef __NEVER
   // swap( vector &, vector & )
-  // ++++++++++++++++++++++++++
+  // **************************
   template< class Type, class Allocator >
   inline
   void swap( vector< Type, Allocator > &x, vector< Type, Allocator > &y )
