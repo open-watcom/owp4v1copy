@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 address conversion and other support routines.
 *
 ****************************************************************************/
 
@@ -52,6 +51,8 @@
 extern dos_debug        Buff;
 
 extern USHORT           TaskFS;
+
+/* Hardcoded selector values - extremely unlikely to change. */
 USHORT FlatCS = 0x5b, FlatDS = 0x53;
 
 extern ULONG            ExceptNum;
@@ -87,22 +88,17 @@ int IsFlatSeg(USHORT seg)
 
 
 /*
- * IsUnknownGDTSeg - tell if someone is NOT a flat segment but IS a GDT seg
+ * IsUnknownGDTSeg - tell if someone is NOT a flat segment but IS a GDT seg.
+ * This is useful for FS segment access.
  */
 int IsUnknownGDTSeg(USHORT seg)
 {
     if (seg == FlatCS || seg == FlatDS) {
         return FALSE;
     }
-    #if 0
-        if( !(seg & 0x04) ) {
-            return(TRUE);
-        }
-    #else
-        if (seg == TaskFS) {
-            return FALSE; //TRUE;
-        }
-    #endif
+    if (seg == TaskFS) {
+        return TRUE;
+    }
     return FALSE;
 
 } /* IsUnknownGDTSeg */

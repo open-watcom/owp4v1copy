@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of remote access routines.
 *
 ****************************************************************************/
 
@@ -60,10 +59,7 @@ ULONG           *ModHandles = NULL;
 ULONG           NumModHandles = 0;
 int             CurrModHandle = 0;
 ULONG           ExceptNum;
-HMODULE         ThisDLLModHandle;
 scrtype         Screen;
-
-extern  __GINFOSEG  *GblInfo;
 
 extern  void    DebugSession();
 extern  void    AppSession();

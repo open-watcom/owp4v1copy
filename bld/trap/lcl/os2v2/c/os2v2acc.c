@@ -1013,7 +1013,7 @@ static BOOL ExecuteUntilLinearAddressHit(ULONG lin)
         DebugExecute(&Buff, DBG_C_Go, TRUE);
         if (ExceptNum == 0) {
             rc = TRUE; // dll loaded
-            break;
+            continue;
         }
         if (ExceptNum != XCPT_BREAKPOINT) {
             rc = FALSE;
@@ -1134,20 +1134,18 @@ unsigned ReqProg_load( void )
             ReadRegs(&Buff);
         }
 
-        // Removed - was causing major problems on newer OS/2 versions. MN
-#if 0
+        /* Splice our helper DLL into debuggee's context */
         if (CanExecTask) {
             dos_debug   save;
 
             save.Pid = Pid;
             save.Tid = 1;
             ReadRegs(&save);
-            if (!CausePgmToLoadThisDLL(startLinear)) {
+            if (!CausePgmToLoadHelperDLL(startLinear)) {
                 CanExecTask = FALSE;
             }
             WriteRegs(&save);
         }
-#endif
         Buff.Pid = Pid;
         Buff.Tid = 1;
         ReadRegs(&Buff);

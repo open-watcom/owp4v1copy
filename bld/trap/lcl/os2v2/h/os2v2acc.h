@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 2.x trap file internal declarations.
 *
 ****************************************************************************/
 
@@ -45,8 +44,8 @@ void   SetTaskDirectories(void);
 bool   DebugExecute(dos_debug *buff, ULONG cmd, bool);
 int    IsUnknownGDTSeg(USHORT seg);
 
-extern  void    LoadThisDLL();
-extern  void    EndLoadThisDLL();
+extern  void    LoadHelperDLL();
+extern  void    EndLoadHelperDLL();
 extern  char    NPXType();
 extern  char    CPUType();
 
@@ -54,21 +53,15 @@ extern  void    BreakPoint(ULONG);
 #pragma aux     BreakPoint = 0xCC parm [eax] aborts;
 extern void     bp(void);
 #pragma aux     bp = 0xCC;
-extern  void    *Automagic(unsigned short);
-#pragma aux     Automagic = 0x29 0xc4 /* sub sp,ax */\
-                            0x89 0xe0 /* mov ax,sp */\
-                            0x8c 0xd2 /* mov dx,ss */\
-                            parm caller [ax] \
-                            value [ax dx] \
-                            modify [sp];
 
+/* Stack layout for calling Dos32LoadModule */
 typedef struct {
-        USHORT  phmod[2];               /* offset-segment */
-        USHORT  mod_name[2];            /* offset-segment */
-        USHORT  fail_len;
-        PSZ     fail_name;              /* offset-segment */
-        USHORT  hmod;
-        BYTE    load_name[2];
+        PSZ        fail_name;           /* 32-bit flat address */
+        ULONG      fail_len;
+        PSZ        mod_name;            /* 32-bit flat address */
+        PHMODULE   phmod;               /* 32-bit flat address */
+        HMODULE    hmod;
+        BYTE       load_name[2];
 } loadstack_t;
 
 #pragma aux intrface modify [];
@@ -127,7 +120,7 @@ extern USHORT           FlatCS,FlatDS;
         } \
     }
 
-bool CausePgmToLoadThisDLL(ULONG startLinear);
+bool CausePgmToLoadHelperDLL(ULONG startLinear);
 long TaskExecute(long (*rtn)());
 //#pragma aux DoOpen parm [eax] [ebx] [ecx];
 void DoOpen(char *name, int mode, int flags);
