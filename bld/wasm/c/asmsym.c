@@ -258,20 +258,19 @@ struct asm_sym *AsmAdd( struct asm_sym *sym )
         return( NULL );
     }
 
-    sym->offset = 0;
-    sym->public = FALSE;
-    #ifdef _WASM_
-        sym->fixup = NULL;
-        sym->mangler = NULL;
-    #endif
     sym->next = *location;
     *location = sym;
-
+    sym->fixup = NULL;
+#ifdef _WASM_
+    sym->offset = 0;
+    sym->public = FALSE;
+    sym->mangler = NULL;
+#endif
     sym->state = AsmQueryExternal( sym->name );
-    if( sym->state != SYM_UNDEFINED ) {
-        sym->mem_type = CvtTable[ AsmQueryType( sym->name ) ];
+    if( sym->state == SYM_UNDEFINED ) {
+        sym->mem_type = EMPTY;
     } else {
-        sym->mem_type = 0;
+        sym->mem_type = CvtTable[ AsmQueryType( sym->name ) ];
     }
     return( sym );
 }
