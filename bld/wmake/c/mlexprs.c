@@ -108,6 +108,7 @@ extern TOKEN_T LexPath( STRM_T t )
  */
 {
     char        path[ _MAX_PATH ];
+    char        string_open;
     unsigned    pos;
     VECSTR      vec;                /* we'll store file/path here */
 
@@ -120,7 +121,7 @@ extern TOKEN_T LexPath( STRM_T t )
         if( t == STRM_MAGIC ) {
             InsString( DeMacro( EOL ), TRUE );
 
-        } else if( !isfilec( t ) && t != PATH_SPLIT && t != ';' && !isws( t )) {
+        } else if( !isfilec( t ) && t != PATH_SPLIT && t != ';' && t != '\"' && !isws( t )) {
             PrtMsg( ERR|LOC| EXPECTING_M, M_PATH );
 
         } else if( !isws( t ) ) break;
@@ -128,16 +129,43 @@ extern TOKEN_T LexPath( STRM_T t )
         t = PreGetCH(); /* keep fetching characters */
     }
     /* just so you know what we've got now */
-    assert( isfilec( t ) || t == PATH_SPLIT || t == ';' );
+    assert( isfilec( t ) || t == PATH_SPLIT || t == ';' || t == '\"');
 
     vec = StartVec();
 
     pos = 0;
     for(;;) {
-        while( pos < _MAX_PATH && isfilec( t ) ) {
-            path[ pos++ ] = t;
+        /*
+         Extract path from filename. If '"' is found, start string mode and
+         ignore all file name character specifiers and just copy all characters.
+         String mode ends with another '"'. If we are not in string mode file
+         character validity is checked against isfilec().
+         */
+
+        string_open = 0;
+
+        while( pos < _MAX_PATH ) {
+            if (string_open) {
+                if (t == '\"') {
+                    stringOpen = 0;
+                } else
+                {
+                    path[pos++] = t;
+                }
+            } else
+            {
+                if ( t == '\"' ) {
+                    stringOpen = 1;
+                } else
+                if ( !isfilec( t ) ) {
+                    break;
+                } else {
+                    path[pos++] = t;
+                }
+            }
             t = PreGetCH();
         }
+
         if( pos == _MAX_PATH ) {
             FreeSafe( FinishVec( vec ) );
             PrtMsg( FTL|LOC| MAXIMUM_TOKEN_IS, _MAX_PATH - 1 );
