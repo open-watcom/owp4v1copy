@@ -54,6 +54,8 @@ static HWND     deskTopWindow;
 // the following static variables are use to fix the snap bug
 static HWND     snapWindow;
 
+void AbortSnap( HWND hwnd );
+
 BOOL deskTopWindowHook( HWND hwnd, UINT msg, UINT wparam, LONG lparam )
 {
     hwnd=hwnd;

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Extract files from a tar archive.
 *
 ****************************************************************************/
 
@@ -74,7 +73,7 @@ extern void     print_header();
 extern void     skip_file();
 extern void     pr_mkdir();
 
-int             make_dirs();    /* Makes required directories */
+int             make_dirs(char *, int, int);    /* Makes required directories */
 
 time_t          now = 0;                /* Current time */
 
@@ -91,7 +90,7 @@ char           *xname;
         register char  *data;
         int             fd, check, namelen, written;
         long            size;
-		struct utimbuf	acc_upd_times;
+        struct utimbuf  acc_upd_times;
         int             standard;       /* Is header standard? */
         struct stat     st;
 

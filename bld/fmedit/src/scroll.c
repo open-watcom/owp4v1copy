@@ -24,13 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Routines used for scrolling.
 *
 ****************************************************************************/
 
-
-/* SCROLL.C - routines used for scrolling */
 
 #include <stdlib.h>
 #include <limits.h>
@@ -46,6 +43,8 @@
 #define PG_SC_PERCENT           80
 #define LN_SC_AMOUNT            10
 #define UNLOCK_SCROLL_FUDGE     10
+
+static void DoScroll( HWND wnd, int dx, int dy, BOOL lock );
 
 extern void VerticalScroll( WPARAM wparam, LPARAM lparam, HWND wnd )
 /**************************************************************/

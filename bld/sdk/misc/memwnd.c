@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Memory dump display window.
 *
 ****************************************************************************/
 
@@ -87,8 +86,11 @@ static DWORD Disp_Types[] = {
     MWND_DISP_CODE_32
 };
 
-/* forward declaration */
+/* forward declarations */
 BOOL __export FAR PASCAL MemDisplayProc( HWND, UINT, WPARAM, DWORD );
+static void CalcTextDimensions( HWND hwnd, HDC dc, MemWndInfo *info );
+static void DisplaySegInfo( HWND parent, HANDLE instance, MemWndInfo *info );
+static PositionSegInfo( HWND hwnd );
 
 typedef enum {
     MT_FREE,
@@ -509,7 +511,7 @@ static void RedrawMemWnd( HWND hwnd, HDC dc, MemWndInfo *info ) {
     POINT       txtsize;
     BOOL        rc;
 
-    if( CurFont != GetMonoFont() ) CalcTextDimentions( hwnd, dc, info );
+    if( CurFont != GetMonoFont() ) CalcTextDimensions( hwnd, dc, info );
     old_font = SelectObject( dc, CurFont );
     if(  ISCODE( info ) ) {
         MySetScrollPos( info, ( info->limit - info->base) / 2 );
@@ -575,12 +577,12 @@ static unsigned BytesToDisplay( unsigned width, WORD type ) {
 } /* BytesToDisplay */
 
 /*
- * CalcTextDimentions - find the number of bytes to display on a line,
+ * CalcTextDimensions - find the number of bytes to display on a line,
  *                      the number of lines in the window, whether to
  *                      display scroll bars etc... when the window is
  *                      resized or the font changes
  */
-static void CalcTextDimentions( HWND hwnd, HDC dc, MemWndInfo *info ) {
+static void CalcTextDimensions( HWND hwnd, HDC dc, MemWndInfo *info ) {
 
     BOOL        owndc;
     RECT        rect;
@@ -650,7 +652,7 @@ static void ReSizeMemBox( HWND hwnd, DWORD size, MemWndInfo *info ) {
 
     dc = GetDC( hwnd );
 //    old_font = SelectObject( dc, CurFont );
-    CalcTextDimentions( hwnd, dc, info );
+    CalcTextDimensions( hwnd, dc, info );
 
     /*
      * Clear edge areas that may not get refreshed

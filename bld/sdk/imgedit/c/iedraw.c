@@ -43,6 +43,8 @@ static short            toolType;
 static HWND             hDrawArea = NULL;
 static short            currentMouseButton;
 
+static void showGrid( HWND hwnd, WPI_PRES mempres );
+
 /*
  * GridEnumProc - used to grid all the children
  */

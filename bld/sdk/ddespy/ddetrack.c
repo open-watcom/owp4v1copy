@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DDE Spy window tracking.
 *
 ****************************************************************************/
 
@@ -69,6 +68,8 @@ static TrackHeaderInfo  SrvHdr[] = {
             STR_SERVER_NAME,    PUSH_SERVER,    20,
             STR_INSTANCE,       PUSH_INST,      20
 };
+
+static void MakePushWin( DDETrackInfo *info, HWND hwnd, TrackHeaderInfo *hdrinfo, WORD hdrcnt );
 
 /*
  * SetTrackWndDefault - set the tracking window size, pos etc to the defaults

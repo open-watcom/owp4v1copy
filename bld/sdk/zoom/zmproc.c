@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Watcom ZOOM window procedure.
 *
 ****************************************************************************/
 
@@ -48,6 +47,8 @@
 #define MAX_YSIZE       ( ( 2 * GetSystemMetrics( SM_CYSCREEN ) ) / 3 )
 
 static POINT    Origin = { 0, 0 };
+
+static void DrawMagnifier( HDC dc, MainWndInfo *info );
 
 /*
  * EraseMagnifier - Erase the Magnifier window
