@@ -35,8 +35,8 @@
 
 #if defined( __WATCOMC__ )
 #include <_comdef.h>
-#pragma pack(push,1);
 #endif
+#pragma pack( push, 1 )
 
 enum {
     REQ_CONNECT,                        /* 00 */
@@ -487,9 +487,7 @@ typedef struct {
     /* followed by whatever machine specific data is being returned */
 } machine_data_ret;
 
-#if defined( __WATCOMC__ )
-#pragma pack(pop);
-#endif
+#pragma pack( pop )
 
 #define TRPCORE_H
 

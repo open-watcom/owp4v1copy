@@ -71,7 +71,7 @@ static struct r_debug   rdebug;         /* Copy of debuggee's r_debug (if presen
 static struct r_debug   *dbg_rdebug;    /* Ptr to r_debug in debuggee's space */
 static int              have_rdebug;    /* Flag indicating valid r_debug */
 static Elf32_Dyn        *dbg_dyn;       /* VA of debuggee's dynamic section (if present) */
-static unsigned_8       old_ld_bp;
+static bp_t             old_ld_bp;
 
 #ifdef DEBUG_OUT
 void Out( const char *str )
@@ -169,8 +169,9 @@ unsigned ReadMem( void *ptr, addr_off offv, unsigned size )
 	
 	errno = 0;
         if( (val = ptrace( PTRACE_PEEKTEXT, pid, (void *)offv, &val )) == -1 ) {
-            if( errno )
+            if( errno ) {
                 return( size - count );
+            }
         }
 	*(u_long *)data = val;
         data += 4;
@@ -183,9 +184,11 @@ unsigned ReadMem( void *ptr, addr_off offv, unsigned size )
 
         errno = 0;
         if( (val = ptrace( PTRACE_PEEKTEXT, pid, (void *)offv, &val )) == -1 ) {
-            if( errno )
+            if( errno ) {
                 return( size - count );
+            }
         }
+        CONV_LE_32( val );
         switch( count ) {
         case 1:
             *((unsigned_8*)data) = (unsigned_8)val;
@@ -259,17 +262,17 @@ int Get_ld_info( struct r_debug *debug_ptr, struct r_debug **dbg_rdebug_ptr )
     read_len = sizeof( loc_dyn );
     if( ReadMem( &loc_dyn, (addr_off)dbg_dyn, read_len ) != read_len ) {
         Out( "Get_ld_info: failed to copy first dynamic entry\n" );
-    return( FALSE );
+        return( FALSE );
     }
     while( loc_dyn.d_tag != DT_NULL ) {
         if( loc_dyn.d_tag == DT_DEBUG ) {
             rdebug = (struct r_debug *)loc_dyn.d_un.d_ptr;
-        break;
+            break;
         }
-    dbg_dyn++;
+        dbg_dyn++;
         if( ReadMem( &loc_dyn, (addr_off)dbg_dyn, read_len ) != read_len ) {
             Out( "Get_ld_info: failed to copy dynamic entry\n" );
-        return( FALSE );
+            return( FALSE );
         }
     }
     if( rdebug == NULL ) {
@@ -300,9 +303,9 @@ char *dbg_strcpy( char *s1, const char *s2 )
             OutNum( (addr48_off)s2 );
             Out( "\n" );
             return( NULL );
-    }
+        }
         *dst++ = c;
-    ++s2;
+        ++s2;
     } while( c );
 
     return( s1 );
@@ -365,6 +368,9 @@ unsigned ReqRead_mem( void )
     unsigned        len;
 
     acc = GetInPtr( 0 );
+    CONV_LE_32( acc->mem_addr.offset );
+    CONV_LE_16( acc->mem_addr.segment );
+    CONV_LE_16( acc->len );
     len = ReadMem( GetOutPtr( 0 ), acc->mem_addr.offset, acc->len );
     return( len );
 }
@@ -376,9 +382,12 @@ unsigned ReqWrite_mem( void )
     unsigned        len;
 
     acc = GetInPtr( 0 );
+    CONV_LE_32( acc->mem_addr.offset );
+    CONV_LE_16( acc->mem_addr.segment );
     ret = GetOutPtr( 0 );
     len = GetTotalSize() - sizeof( *acc );
     ret->len = WriteMem( GetInPtr( sizeof( *acc ) ), acc->mem_addr.offset, len );
+    CONV_LE_16( ret->len );
     return( sizeof( *ret ) );
 }
 
@@ -596,6 +605,9 @@ unsigned ReqProg_load( void )
     if( ret->err != 0 ) {
         pid = 0;
     }
+    CONV_LE_32( ret->err );
+    CONV_LE_32( ret->task_id );
+    CONV_LE_32( ret->mod_handle );
     return( sizeof( *ret ) );
 fail:
     if( pid != 0 && pid != -1 ) {
@@ -608,6 +620,9 @@ fail:
         }
     }
     pid = 0;
+    CONV_LE_32( ret->err );
+    CONV_LE_32( ret->task_id );
+    CONV_LE_32( ret->mod_handle );
     return( 0 );
 }
 
@@ -631,6 +646,7 @@ unsigned ReqProg_kill( void )
     pid = 0;
     ret = GetOutPtr( 0 );
     ret->err = 0;
+    CONV_LE_32( ret->err );
     return( sizeof( *ret ) );
 }
 
@@ -642,6 +658,8 @@ unsigned ReqSet_break( void )
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
+    CONV_LE_32( acc->break_addr.offset );
+    CONV_LE_16( acc->break_addr.segment );
     ReadMem( &opcode, acc->break_addr.offset, sizeof( opcode ) );
     ret->old = opcode;
     opcode = BRK_POINT;
@@ -657,9 +675,11 @@ unsigned ReqSet_break( void )
 unsigned ReqClear_break( void )
 {
     clear_break_req *acc;
-    u_char          opcode;
+    bp_t            opcode;
 
     acc = GetInPtr( 0 );
+    CONV_LE_32( acc->break_addr.offset );
+    CONV_LE_16( acc->break_addr.segment );
     opcode = acc->old;
     WriteMem( &opcode, acc->break_addr.offset, sizeof( opcode ) );
     Out( "ReqClear_break at " );
@@ -750,12 +770,22 @@ static unsigned ProgRun( int step )
             goto end;
         }
     } while( debug_continue );
+#if defined( MD_x86 )
     if( ptrace( PTRACE_GETREGS, pid, NULL, &regs ) == 0 ) {
+#elif defined( MD_ppc )
+    errno = 0;
+    if( (regs.eip = ptrace( PTRACE_PEEKUSER, pid, REGSIZE * PT_NIP, NULL )) != -1 || !errno ) {
+        regs.esp = ptrace( PTRACE_PEEKUSER, pid, REGSIZE * PT_R1, NULL );
+#endif
         Out( " eip " );
         OutNum( regs.eip );
         Out( "\n" );
         if( ret->conditions == COND_BREAK ) {
+#if defined( MD_x86 )
             if( regs.eip == rdebug.r_brk + sizeof( old_ld_bp ) ) {
+#elif defined( MD_ppc )
+            if( regs.eip == rdebug.r_brk ) {
+#endif
                 int         psig = 0;
                 void        (*oldsig)(int);
                 bp_t        opcode = BRK_POINT;
@@ -790,8 +820,10 @@ static unsigned ProgRun( int step )
                     break;
                 }
                 regs.orig_eax = -1;
+#if defined( MD_x86 )
                 regs.eip--;
                 ptrace( PTRACE_SETREGS, pid, NULL, &regs );
+#endif
                 oldsig = setsig( SIGINT, SIG_IGN );
                 ptrace( PTRACE_SINGLESTEP, pid, NULL, (void *)psig );
                 waitpid( pid, &status, 0 );
@@ -799,10 +831,12 @@ static unsigned ProgRun( int step )
                 WriteMem( &opcode, rdebug.r_brk, sizeof( old_ld_bp ) );
                 ret->conditions = COND_LIBRARIES;
             } else {
+#if defined( MD_x86 )
                 Out( "decrease eip(sigtrap)\n" );
                 regs.orig_eax = -1;
                 regs.eip--;
                 ptrace( PTRACE_SETREGS, pid, NULL, &regs );
+#endif
             }
         }
         orig_eax = regs.orig_eax;
@@ -839,6 +873,11 @@ static unsigned ProgRun( int step )
         }
     }
  end:
+    CONV_LE_32( ret->stack_pointer.offset );
+    CONV_LE_16( ret->stack_pointer.segment );
+    CONV_LE_32( ret->program_counter.offset );
+    CONV_LE_16( ret->program_counter.segment );
+    CONV_LE_16( ret->conditions );
     return( sizeof( *ret ) );
 }
 
@@ -899,6 +938,7 @@ unsigned ReqFile_string_to_fullpath( void )
     } else {
         ret->err = 0;
     }
+    CONV_LE_32( ret->err );
     return( sizeof( *ret ) + len + 1 );
 }
 

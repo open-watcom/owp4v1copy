@@ -126,7 +126,8 @@ unsigned ReqRead_user_keyboard( void )
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
-
+    CONV_LE_16( acc->wait );
+    
     tcgetattr( STDIN_FILENO, &old );
     new = old;
     new.c_iflag &= ~(IXOFF | IXON);
@@ -157,6 +158,7 @@ unsigned ReqGet_err_text( void )
     char                *err_txt;
 
     acc = GetInPtr( 0 );
+    CONV_LE_32( acc->err );
     err_txt = GetOutPtr( 0 );
     strcpy( err_txt, strerror( acc->err ) );
     return( strlen( err_txt ) + 1 );
@@ -181,6 +183,8 @@ unsigned ReqSplit_cmd( void )
         case '\t':
             ret->parm_start = cmd - start + 1;
             ret->cmd_end = cmd - start;
+            CONV_LE_16( ret->cmd_end );
+            CONV_LE_16( ret->parm_start );
             return( sizeof( *ret ) );
         }
         ++cmd;
@@ -188,6 +192,8 @@ unsigned ReqSplit_cmd( void )
     }
     ret->parm_start = cmd - start;
     ret->cmd_end = cmd - start;
+    CONV_LE_16( ret->cmd_end );
+    CONV_LE_16( ret->parm_start );
     return( sizeof( *ret ) );
 }
 

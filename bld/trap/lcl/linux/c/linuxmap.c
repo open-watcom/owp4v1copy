@@ -142,8 +142,8 @@ void DelLib( addr48_off dynsection )
             Out( moduleInfo[i].filename );
             Out( "\n" );
             moduleInfo[i].newly_unloaded = TRUE;
-            moduleInfo[i].offset = NULL;
-            moduleInfo[i].dbg_dyn_sect = NULL;
+            moduleInfo[i].offset = 0;
+            moduleInfo[i].dbg_dyn_sect = 0;
             moduleInfo[i].code_size = 0;
             break;
         }
@@ -155,8 +155,8 @@ void DelProcess( void )
     unsigned    i;
 
     for( i = 0; i < ModuleTop; ++i ) {
-        moduleInfo[i].offset = NULL;
-        moduleInfo[i].dbg_dyn_sect = NULL;
+        moduleInfo[i].offset = 0;
+        moduleInfo[i].dbg_dyn_sect = 0;
         moduleInfo[i].code_size = 0;
     }
 }
@@ -220,7 +220,7 @@ int DelOneLib( struct link_map *first_lmap )
 
     for( i = 0; i < ModuleTop; ++i ) {
         dyn_base = moduleInfo[i].dbg_dyn_sect;
-        if( dyn_base != NULL ) {
+        if( dyn_base != 0 ) {
             if( FindLibInLinkMap( first_lmap, dyn_base ) == NULL ) {
                 DelLib( dyn_base );
             }
@@ -247,6 +247,9 @@ unsigned ReqMap_addr( void )
     //       for GDB, so we can use that to find out what we need to convert these
     //       values in here...
     acc = GetInPtr( 0 );
+    CONV_LE_32( acc->in_addr.offset );
+    CONV_LE_16( acc->in_addr.segment );
+    CONV_LE_32( acc->handle );
     ret = GetOutPtr( 0 );
     ret->lo_bound = 0;
     ret->hi_bound = ~(addr48_off)0;
@@ -284,6 +287,10 @@ unsigned ReqMap_addr( void )
     Out( " to " );
     OutNum( ret->out_addr.offset );
     Out( "\n" );
+    CONV_LE_32( ret->out_addr.offset );
+    CONV_LE_16( ret->out_addr.segment );
+    CONV_LE_32( ret->lo_bound );
+    CONV_LE_32( ret->hi_bound );
     return( sizeof( *ret ) );
 }
 
@@ -299,6 +306,7 @@ unsigned ReqGet_lib_name( void )
     unsigned            ret_len = sizeof( *ret );
 
     acc = GetInPtr( 0 );
+    CONV_LE_32( acc->handle );
     ret = GetOutPtr( 0 );
     name = GetOutPtr( sizeof( *ret ) );
 
@@ -327,5 +335,6 @@ unsigned ReqGet_lib_name( void )
     Out( " out handle " );
     OutNum( ret->handle );
     Out( "\n" );
+    CONV_LE_32( ret->handle );
     return( ret_len );
 }

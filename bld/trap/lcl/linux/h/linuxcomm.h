@@ -36,6 +36,8 @@
 #include <sys/stat.h>
 #include "machtype.h"
 
+//#define DEBUG_OUT
+
 /* Use 4-byte packing for compatibility with the default packing used by GCC */
 
 #pragma pack( push, 4 )
@@ -196,10 +198,12 @@ typedef struct user {
 
 typedef unsigned long bp_t;
 
-#define BRK_POINT       0x12345678
+/* 'trap' instruction */
+#define BRK_POINT       0x7FE00008
 
-#define PTRACE_GETREGS  12
+#define REGSIZE         sizeof( unsigned long )
 #define PTRACE_SETREGS  13
+
 #endif
 
 /* Rendezvous structure for communication between the dynamic linker and

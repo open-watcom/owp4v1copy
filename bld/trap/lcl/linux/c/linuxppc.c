@@ -34,6 +34,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/ptrace.h>
+#include <asm/ptrace.h>
 #include "trpimp.h"
 #include "trperr.h"
 #include "mad.h"
@@ -41,51 +42,87 @@
 #include "exeelf.h"
 #include "linuxcomm.h"
 
+
+static void ReadCPU( struct ppc_mad_registers *r )
+{
+    struct pt_regs      regs;
+    int                 i;
+
+    memset( r, 0, sizeof( *r ) );
+    memset( &regs, 0, sizeof( regs ) );
+    /* Read GPRs */
+    for( i = 0; i < 32; i++ ) {
+        regs.gpr[i] = ptrace( PTRACE_PEEKUSER, pid, i * REGSIZE, 0 );
+    }
+    /* Read SPRs */
+    regs.nip  = ptrace( PTRACE_PEEKUSER, pid, PT_NIP * REGSIZE, 0 );
+    regs.msr  = ptrace( PTRACE_PEEKUSER, pid, PT_MSR * REGSIZE, 0 );
+    regs.ctr  = ptrace( PTRACE_PEEKUSER, pid, PT_CTR * REGSIZE, 0 );
+    regs.link = ptrace( PTRACE_PEEKUSER, pid, PT_LNK * REGSIZE, 0 );
+    regs.xer  = ptrace( PTRACE_PEEKUSER, pid, PT_XER * REGSIZE, 0 );
+    regs.ccr  = ptrace( PTRACE_PEEKUSER, pid, PT_CCR * REGSIZE, 0 );
+    regs.mq   = ptrace( PTRACE_PEEKUSER, pid, PT_MQ  * REGSIZE, 0 );
+    CONV_LE_32( regs.nip );
+    CONV_LE_32( regs.msr );
+    CONV_LE_32( regs.ctr );
+    CONV_LE_32( regs.link );
+    CONV_LE_32( regs.xer );
+    CONV_LE_32( regs.ccr );
+    CONV_LE_32( regs.mq );
+    CONV_LE_32( regs.gpr[0] );
+    CONV_LE_32( regs.gpr[1] );
+    CONV_LE_32( regs.gpr[2] );
+    CONV_LE_32( regs.gpr[3] );
+    CONV_LE_32( regs.gpr[4] );
+    CONV_LE_32( regs.gpr[5] );
+    CONV_LE_32( regs.gpr[6] );
+    CONV_LE_32( regs.gpr[7] );
+    CONV_LE_32( regs.gpr[8] );
+    CONV_LE_32( regs.gpr[9] );
+    r->r0.u._32[0]  = regs.gpr[0];
+    r->r1.u._32[0]  = regs.gpr[1];
+    r->r2.u._32[0]  = regs.gpr[2];
+    r->r3.u._32[0]  = regs.gpr[3];
+    r->r4.u._32[0]  = regs.gpr[4];
+    r->r5.u._32[0]  = regs.gpr[5];
+    r->r6.u._32[0]  = regs.gpr[6];
+    r->r7.u._32[0]  = regs.gpr[7];
+    r->r8.u._32[0]  = regs.gpr[8];
+    r->r9.u._32[0]  = regs.gpr[9];
+    r->r10.u._32[0] = regs.gpr[10];
+    r->r11.u._32[0] = regs.gpr[11];
+    r->r12.u._32[0] = regs.gpr[12];
+    r->r13.u._32[0] = regs.gpr[13];
+    r->r14.u._32[0] = regs.gpr[14];
+    r->r15.u._32[0] = regs.gpr[15];
+    r->r16.u._32[0] = regs.gpr[16];
+    r->r17.u._32[0] = regs.gpr[17];
+    r->r18.u._32[0] = regs.gpr[18];
+    r->r19.u._32[0] = regs.gpr[19];
+    r->r20.u._32[0] = regs.gpr[20];
+    r->r20.u._32[0] = regs.gpr[21];
+    r->r21.u._32[0] = regs.gpr[22];
+    r->r22.u._32[0] = regs.gpr[23];
+    r->r23.u._32[0] = regs.gpr[24];
+    r->r24.u._32[0] = regs.gpr[25];
+    r->r25.u._32[0] = regs.gpr[26];
+    r->r26.u._32[0] = regs.gpr[26];
+    r->r27.u._32[0] = regs.gpr[27];
+    r->r28.u._32[0] = regs.gpr[28];
+    r->r29.u._32[0] = regs.gpr[29];
+    r->r30.u._32[0] = regs.gpr[30];
+    r->r31.u._32[0] = regs.gpr[31];
+    r->lr.u._32[0]  = regs.link;
+    r->ctr.u._32[0] = regs.ctr;
+    r->iar.u._32[0] = regs.nip;
+    r->msr.u._32[0] = regs.msr;
+    r->cr  = regs.ccr;
+    r->xer = regs.xer;
+    last_eip = regs.nip;
 #if 0
-static void ReadCPU( struct x86_cpu *r )
-{
-    user_regs_struct    regs;
-
-    memset( r, 0, sizeof( *r ) );
-    if( ptrace( PTRACE_GETREGS, pid, NULL, &regs ) == 0 ) {
-        last_eip = regs.eip;
         orig_eax = regs.orig_eax;
-        r->eax = regs.eax;
-        r->ebx = regs.ebx;
-        r->ecx = regs.ecx;
-        r->edx = regs.edx;
-        r->esi = regs.esi;
-        r->edi = regs.edi;
-        r->ebp = regs.ebp;
-        r->esp = regs.esp;
-        r->eip = regs.eip;
-        r->efl = regs.eflags;
-        r->cs = regs.cs;
-        r->ds = regs.ds;
-        r->ss = regs.ss;
-        r->es = regs.es;
-        r->fs = regs.fs;
-        r->gs = regs.gs;
-    }
-}
-
-static void ReadFPU( struct x86_fpu *r )
-{
-    user_i387_struct    regs;
-
-    memset( r, 0, sizeof( *r ) );
-    if( ptrace( PTRACE_GETFPREGS, pid, NULL, &regs ) == 0 ) {
-        r->cw = regs.cwd;
-        r->sw = regs.swd;
-        r->tag = regs.twd;
-        r->ip_err.p.offset = regs.fip;
-        r->ip_err.p.segment = regs.fcs;
-        r->op_err.p.offset = regs.foo;
-        r->op_err.p.segment = regs.fos;
-        memcpy( r->reg, regs.st_space, sizeof( r->reg ) );
-    }
-}
 #endif
+}
 
 unsigned ReqRead_cpu( void )
 {
@@ -96,8 +133,6 @@ unsigned ReqRead_cpu( void )
 
 unsigned ReqRead_fpu( void )
 {
-//    ReadFPU( GetOutPtr( 0 ) );
-//    return( sizeof( struct x86_fpu ) );
     return( 0 );
 }
 
@@ -106,7 +141,7 @@ unsigned ReqRead_regs( void )
     mad_registers   *mr;
 
     mr = GetOutPtr( 0 );
-//    ReadCPU( &mr->x86.cpu );
+    ReadCPU( &mr->ppc );
     return( sizeof( mr->ppc ) );
 }
 
@@ -151,20 +186,6 @@ static void WriteCPU( struct x86_cpu *r )
     ptrace( PTRACE_SETREGS, pid, NULL, &regs );
 }
 
-static void WriteFPU( struct x86_fpu *r )
-{
-    user_i387_struct    regs;
-
-    regs.cwd = r->cw;
-    regs.swd = r->sw;
-    regs.twd = r->tag;
-    regs.fip = r->ip_err.p.offset;
-    regs.fcs = r->ip_err.p.segment;
-    regs.foo = r->op_err.p.offset;
-    regs.fos = r->op_err.p.segment;
-    memcpy( regs.st_space, r->reg, sizeof( r->reg ) );
-    ptrace( PTRACE_SETFPREGS, pid, NULL, &regs );
-}
 #endif
 
 unsigned ReqWrite_cpu( void )
@@ -175,7 +196,6 @@ unsigned ReqWrite_cpu( void )
 
 unsigned ReqWrite_fpu()
 {
-//    WriteFPU( GetInPtr( sizeof( write_fpu_req ) ) );
     return( 0 );
 }
 

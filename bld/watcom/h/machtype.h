@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Definition of widely used fundamental machine types.
 *
 ****************************************************************************/
 
@@ -34,9 +33,7 @@
 #define MACH_TYPES_INCLUDED
 #include <watcom.h>
 
-#if __WATCOMC__ > 1000
-#pragma pack(push,1);
-#endif
+#pragma pack( push, 1 )
 
 #define BITS_PER_BYTE   8U
 
@@ -139,8 +136,6 @@ typedef struct {
         (addr32).segment = (addr48).segment; \
         (addr32).offset  = (addr48).offset;
 
-#if __WATCOMC__ > 1000
-#pragma pack(pop);
-#endif
+#pragma pack( pop )
 
 #endif
