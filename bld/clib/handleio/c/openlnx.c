@@ -51,7 +51,7 @@ _WCRTLINK int __F_NAME(open,_wopen)( const CHAR_TYPE *name, int oflag, ... )
     char        mbName[MB_CUR_MAX*_MAX_PATH];   /* single-byte char */
 #endif
 
-    va_start( args, mode );
+    va_start( args, oflag );
     mode = va_arg( args, int );
     va_end( args );
     #ifdef __WIDECHAR__

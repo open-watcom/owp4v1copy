@@ -215,7 +215,9 @@ Options:
 -zk1          double-byte character support: Traditional Chinese
 -zk2          double-byte character support: Korean
 -zk3          double-byte character support: Simplified Chinese
+:segment !OS_linux
 -zkl          double-byte character support: local installed language
+:endsegment
 -zku=<num>    load UNICODE translate table for specified code page
 -zl           remove default library information
 -zld          remove file dependency information

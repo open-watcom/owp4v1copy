@@ -61,6 +61,54 @@ long sys_open(const char * filename, int flags, int mode)
     __syscall_return(ssize_t,res);
 }
 
+_WCRTLINK char   *getcwd( char *__buf, size_t __size )
+{
+    u_long res = sys_call2(SYS_getcwd, (u_long)__buf, __size);
+    __syscall_return(char *,res);
+}
+
+_WCRTLINK int fcntl( int __fildes, int __cmd, int rest )
+{
+    u_long res = sys_call3(SYS_fcntl, (u_long)__fildes, (u_long)__cmd, rest);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int ioctl( int __fildes, int request, char *argp)
+{
+    u_long res = sys_call3(SYS_ioctl, (u_long)__fildes, (u_long)request, (u_long)argp);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK void (*signal(int signum, void (*sighandler)(int)))(int)
+{
+    u_long res = sys_call2(SYS_signal, (u_long)signum, (u_long)sighandler);
+    __syscall_return(void (*)(int),res);
+}
+
+_WCRTLINK int unlink( const char *filename )
+{
+    u_long res = sys_call1(SYS_unlink, (u_long)filename);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK time_t time( time_t *t )
+{
+    u_long res = sys_call1(SYS_time, (u_long)time);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int access( const char *filename, int mode )
+{
+    u_long res = sys_call2(SYS_access, (u_long)filename, mode);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int stat( const char *filename, struct stat * __buf )
+{
+    u_long res = sys_call2(SYS_stat, (u_long)filename, (u_long)__buf);
+    __syscall_return(int,res);
+}
+
 _WCRTLINK int fstat( int __fildes, struct stat * __buf )
 {
     u_long res = sys_call2(SYS_fstat, __fildes, (u_long)__buf);
