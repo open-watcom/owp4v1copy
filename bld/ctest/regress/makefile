@@ -2,8 +2,8 @@ ctest_name = regress
 !include environ.mif
 
 test : .symbolic
-#    $(bld_cl) $(ctest_dir)\c\chktest.c -ox-d1
-#    chktest $(log_file)
+    $(bld_cl) $(ctest_dir)\c\chktest.c -ox-d1
+    chktest $(log_file)
     %make global
     %append $(log_file) PASS $(%__CWD__)
 
