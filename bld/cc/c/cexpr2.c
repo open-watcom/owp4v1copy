@@ -2412,6 +2412,7 @@ TREEPTR BoolExpr( TREEPTR tree )
         if( tree->op.opr == OPR_EQUALS ) {
             switch( tree->right->op.opr ) {
             case OPR_PUSHINT:
+            case OPR_PUSHFLOAT:
                 CWarn1( WARN_ASSIGNMENT_IN_BOOL_EXPR,
                         ERR_ASSIGNMENT_IN_BOOL_EXPR );
                 break;
