@@ -6,6 +6,9 @@
 namespace std {
 typedef unsigned size_t;
 }
+:: The type __size_t is an alias for std::size_t or size_t as
+:: appropriate. It is intended to simplify the standard headers.
+typedef std::size_t __size_t;
 #endif
 :elsesegment
 #ifdef __cplusplus
@@ -14,17 +17,19 @@ typedef unsigned size_t;
 namespace std {
 typedef unsigned size_t;
 }
+typedef std::size_t __size_t
 #endif
 #ifndef _SIZE_T_DEFINED
 #define _SIZE_T_DEFINED
 #define _SIZE_T_DEFINED_
 using std::size_t;
 #endif
-#else
+#else /* __cplusplus not defined */
 #ifndef _SIZE_T_DEFINED
 #define _SIZE_T_DEFINED
 #define _SIZE_T_DEFINED_
 typedef unsigned size_t;
+typedef size_t   __size_t;
 #endif
-#endif
+#endif /* __cplusplus */
 :endsegment
