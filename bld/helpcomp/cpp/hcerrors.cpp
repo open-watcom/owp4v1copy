@@ -24,18 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Error and informational message functions for whc.
 *
 ****************************************************************************/
 
 
-/*
-HCERRORS:  Error and informational message functions
-*/
-
 #include <stdio.h>
 #include <stdarg.h>
+#include <unistd.h>
 #include "hcerrors.h"
 #include "errstrs.h"
 
@@ -51,28 +47,28 @@ void ErrorPrint( FILE *fp, ErrString format, va_list values )
     int     value;
 
     while( *letter != '\0' ){
-    if( *letter != '%' ){
-        fputc( *letter, fp );
-    } else {
-        // Currently, only %s (strings) and %d (integers) are supported.
-        switch( *++letter ){
-        case 'S':
-        case 's':
-        string = va_arg( values, ErrString );
-        fprintf( fp, string );
-        break;
+        if( *letter != '%' ){
+            fputc( *letter, fp );
+        } else {
+            // Currently, only %s (strings) and %d (integers) are supported.
+            switch( *++letter ){
+                case 'S':
+                case 's':
+                    string = va_arg( values, ErrString );
+                    fprintf( fp, string );
+                    break;
 
-        case 'D':
-        case 'd':
-        value = va_arg( values, int );
-        fprintf( fp, "%d", value );
-        break;
+                case 'D':
+                case 'd':
+                    value = va_arg( values, int );
+                    fprintf( fp, "%d", value );
+                    break;
 
-        case '%':
-        fputc( '%', fp );
+                case '%':
+                    fputc( '%', fp );
+            }
         }
-    }
-    letter++;
+        letter++;
     }
     return;
 }
@@ -118,14 +114,18 @@ static int printOutput = 1;
 
 void SetQuiet( int be_quiet )
 {
-    printOutput = !be_quiet;
+    // Shut up if output is redirected
+    if( isatty( STDERR_FILENO ) )
+        printOutput = !be_quiet;
+    else
+        printOutput = 0;
     return;
 }
 
 void HCStartFile( char const name[] )
 {
     if( printOutput ){
-    fprintf( stderr, "\nReading %s  ", name );
+        fprintf( stderr, "\nReading %s  ", name );
     }
 }
 
@@ -134,36 +134,36 @@ void HCTick()
     static const char wheel[]="\\|/-";
     static unsigned i=0;
     if( printOutput ){
-    fputc( '\b', stderr );
-    fputc( wheel[i++%4], stderr );
+        fputc( '\b', stderr );
+        fputc( wheel[i++%4], stderr );
     }
 }
 
 void HCDoneTick()
 {
     if( printOutput ){
-    fprintf( stderr, "\nFinished.\n" );
+        fprintf( stderr, "\nFinished.\n" );
     }
 }
 
 void HCStartOutput()
 {
     if( printOutput ){
-    fprintf( stderr, "\nWriting .HLP file.  " );
+        fprintf( stderr, "\nWriting .HLP file.  " );
     }
 }
 
 void HCStartPhrase()
 {
     if( printOutput ){
-    fprintf( stderr, "\nConstructing phrase table:         " );
+        fprintf( stderr, "\nConstructing phrase table:         " );
     }
 }
 
 void HCPhraseLoop( int pass )
 {
     if( printOutput ){
-    fprintf( stderr, "\b\b\b\b\b\b\bPass %d.", pass );
+        fprintf( stderr, "\b\b\b\b\b\b\bPass %d.", pass );
     }
 }
 
