@@ -1,3 +1,8 @@
+# MN: Whatever the "compression" was supposed to do, it doesn't work with
+# 11.0c wlib. Disabled until it is better understood, especially since
+# it doesn't seem to provide any clear benefits.
+uncompressed=1
+
 !include $(plusplus_dir)\dirmacs.mif
 
 !include $(plusplus_dir)\tools.mif
