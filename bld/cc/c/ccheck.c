@@ -104,6 +104,7 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
                                   voidptr_cmp_type voidptr_cmp );
 
 local int TypeCheck( TYPEPTR typ1, TYPEPTR typ2 );
+local bool IsPointer( TYPEPTR typ );
 
 
 static cmp_type InUnion( TYPEPTR typ1, TYPEPTR typ2, int reversed )
@@ -574,8 +575,8 @@ static void CompareParms( TYPEPTR *master,
                 CWarn2( WARN_PARM_INCONSISTENT_INDIRECTION_LEVEL,
                         ERR_PARM_INCONSISTENT_INDIRECTION_LEVEL, parm_num );
                 break;
-            case PC:
-                if( parm->right->op.opr == OPR_PUSHINT ) {
+            case PC:  /* Allow only "void *p = int 0";  */
+                if( IsPointer( typ ) && parm->right->op.opr == OPR_PUSHINT ) {
                     if( TypeSize(typ) != TypeSize(typ2) ) {
                         CErr2( ERR_PARM_TYPE_MISMATCH, parm_num );
                     } else if( parm->right->op.ulong_value != 0 ) {
@@ -749,6 +750,12 @@ static bool IsPtrtoFunc( TYPEPTR typ )
     return( ret );
 }
 
+static bool IsPointer( TYPEPTR typ )
+{
+    while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+    return( typ->decl_type == TYPE_POINTER );
+}
+
 void ParmAsgnCheck( TYPEPTR typ1, TREEPTR opnd2, int parm_num )
 {
 //TODO merge up with  ChkCalls
@@ -809,8 +816,8 @@ void ParmAsgnCheck( TYPEPTR typ1, TREEPTR opnd2, int parm_num )
                     ERR_PARM_INCONSISTENT_INDIRECTION_LEVEL, parm_num );
         }
         break;
-    case PC:
-        if( opnd2->op.opr == OPR_PUSHINT ) {
+    case PC:  /* Allow only "void *p = int 0";  */
+        if( IsPointer( typ1 ) && opnd2->op.opr == OPR_PUSHINT ) {
             if( opnd2->op.long_value != 0 ) {
                 CWarn1( WARN_NONPORTABLE_PTR_CONV,
                         ERR_NONPORTABLE_PTR_CONV );
