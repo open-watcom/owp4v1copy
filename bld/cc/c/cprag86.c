@@ -35,7 +35,7 @@
 #include "pragdefn.h"
 #include "pdefn2.h"
 //#include "cg86auxa.h"
-#include "asmsym.h"
+#include "asminlin.h"
 
 extern  void    AsmInit(int, int, int);
 extern  void    AsmLine(char *);

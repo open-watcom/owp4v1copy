@@ -1165,6 +1165,5 @@ ins (T_XOR,             OP_M,        0,      OP_R,       0,      0x30,     0x00,
 ins (T_XOR,             OP_M,        0,      OP_I,       0,      0x80,     0x30,                     P_86,  LOCK)
 };
 
-#undef  asm_op
-#define asm_op
+#define DEFINE_ASMOPS 1
 #include "asmops2.h"

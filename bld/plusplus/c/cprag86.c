@@ -41,7 +41,7 @@
 #include "cgdata.h"
 #include "pragdefn.h"
 #include "pdefn2.h"
-#include "asmsym.h"
+#include "asminlin.h"
 #include "fnovload.h"
 #include "cgswitch.h"
 #include "initdefs.h"

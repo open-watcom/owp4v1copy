@@ -532,22 +532,22 @@ static int opsize( memtype mem_type )
 /************************************/
 {
     switch( mem_type ) {
-    case MT_EMPTY:     return( 0 );
+    case EMPTY:     return( 0 );
 #ifdef _WASM_
-    case MT_SBYTE:
+    case T_SBYTE:
 #endif
-    case MT_BYTE:    return( 1 );
+    case T_BYTE:    return( 1 );
 #ifdef _WASM_
-    case MT_SWORD:
+    case T_SWORD:
 #endif
-    case MT_WORD:    return( 2 );
+    case T_WORD:    return( 2 );
 #ifdef _WASM_
-    case MT_SDWORD:
+    case T_SDWORD:
 #endif
-    case MT_DWORD:   return( 4 );
-    case MT_FWORD:   return( 6 );
-    case MT_QWORD:   return( 8 );
-    case MT_TBYTE:   return( 10 );
+    case T_DWORD:   return( 4 );
+    case T_FWORD:   return( 6 );
+    case T_QWORD:   return( 8 );
+    case T_TBYTE:   return( 10 );
     default:        return( 0 );
     }
 }

@@ -82,9 +82,9 @@ char *CMangler( struct asm_sym *sym, char *buffer )
             changes |= USCORE_BACK;
         } else {
             switch( sym->mem_type ) {
-            case MT_NEAR:
-            case MT_FAR:
-            case MT_EMPTY:
+            case T_NEAR:
+            case T_FAR:
+            case EMPTY:
                 changes |= USCORE_BACK;
                 break;
             default:
@@ -97,9 +97,9 @@ char *CMangler( struct asm_sym *sym, char *buffer )
             changes |= REM_USCORE_BACK;
         } else {
             switch( sym->mem_type ) {
-            case MT_NEAR:
-            case MT_FAR:
-            case MT_EMPTY:
+            case T_NEAR:
+            case T_FAR:
+            case EMPTY:
                 changes |= REM_USCORE_BACK;
                 break;
             default:

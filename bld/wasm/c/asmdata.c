@@ -750,30 +750,30 @@ int data_init( int sym_loc, int initializer_loc )
     switch( AsmBuffer[initializer_loc]->value ) {
 #ifdef _WASM_
     case T_SBYTE:                       // 20-Aug-92
-        mem_type = MT_SBYTE;
+        mem_type = T_SBYTE;
         no_of_bytes = BYTE_1;
         break;
     case T_SWORD:                       // 20-Aug-92
-        mem_type = MT_SWORD;
+        mem_type = T_SWORD;
         no_of_bytes = BYTE_2;
         break;
     case T_SDWORD:                      // 20-Aug-92
-        mem_type = MT_SDWORD;
+        mem_type = T_SDWORD;
         no_of_bytes = BYTE_4;
         break;
     case T_DQ:
     case T_QWORD:
-        mem_type = MT_QWORD;
+        mem_type = T_QWORD;
         no_of_bytes = BYTE_8;
         break;
     case T_DT:
     case T_TBYTE:                       // 20-Aug-92
-        mem_type = MT_TBYTE;
+        mem_type = T_TBYTE;
         no_of_bytes = BYTE_10;
         break;
     case T_STRUC:
     case T_STRUCT:
-        mem_type = MT_STRUCT;
+        mem_type = T_STRUCT;
         no_of_bytes = GetStructSize( initializer_loc );
         if( Definition.struct_depth == 0 ) {
             InitializeStructure( sym, initializer_loc );
@@ -782,24 +782,24 @@ int data_init( int sym_loc, int initializer_loc )
 #endif
     case T_DB:
     case T_BYTE:
-        mem_type = MT_BYTE;
+        mem_type = T_BYTE;
         no_of_bytes = BYTE_1;
         break;
     case T_DW:
     case T_WORD:
-        mem_type = MT_WORD;
+        mem_type = T_WORD;
         no_of_bytes = BYTE_2;
         break;
     case T_DD:
     case T_DWORD:
-        mem_type = MT_DWORD;
+        mem_type = T_DWORD;
         no_of_bytes = BYTE_4;
         break;
     case T_DF:                          // 20-Aug-92
     case T_FWORD:
     case T_DP:
     case T_PWORD:
-        mem_type = MT_FWORD;
+        mem_type = T_FWORD;
         no_of_bytes = BYTE_6;
         break;
     default:
@@ -871,7 +871,7 @@ int data_init( int sym_loc, int initializer_loc )
         BackPatch( sym );
     }
     #ifdef _WASM_
-        if( mem_type == MT_STRUCT ) return( NOT_ERROR );
+        if( mem_type == T_STRUCT ) return( NOT_ERROR );
         if( label_dir ) return( NOT_ERROR );
     #endif
     if( dup_array( sym, initializer_loc + 1, no_of_bytes ) == ERROR ) {

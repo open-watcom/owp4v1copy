@@ -380,7 +380,7 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
                 sprintf( buff, ".$%x/%lx", GetCurrSeg(), (unsigned long)GetCurrAddr() );
                 AsmBuffer[start+i]->string_ptr = buff;
                 sym = AsmGetSymbol( buff );
-                if( sym == NULL ) MakeLabel( buff, MT_NEAR );
+                if( sym == NULL ) MakeLabel( buff, T_NEAR );
             }
             break;
         }

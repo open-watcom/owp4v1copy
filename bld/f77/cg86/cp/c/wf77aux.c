@@ -45,7 +45,7 @@
   #include "fio.h"
   #include "sdfile.h"
   #if ( _TARGET == _8086 || _TARGET == _80386 )
-    #include "asmsym.h"
+    #include "asminlin.h"
   #elif ( _TARGET == _AXP || _TARGET == _PPC )
     #include "asinline.h"
   #else

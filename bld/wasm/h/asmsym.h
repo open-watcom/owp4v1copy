@@ -33,82 +33,8 @@
 #define ASMSYM_H
 
 #include "watcom.h"
-
-enum fixup_types {
-        FIX_SEG,
-        FIX_RELOFF8,
-        FIX_RELOFF16,
-        FIX_RELOFF32,
-        FIX_OFF16,
-        FIX_OFF32,
-        FIX_PTR16,
-        FIX_PTR32
-};
-
-enum sym_state {
-    SYM_UNDEFINED,
-    SYM_INTERNAL,
-    SYM_EXTERNAL,
-    SYM_STACK,
-
-#ifdef _WASM_
-    SYM_SEG,    // segment
-    SYM_GRP,    // group
-    SYM_PROC,   // procedure
-    SYM_MACRO,  // macro
-    SYM_CONST,  // constant - created with EQU, =, or /D on the cmdline
-    SYM_LIB,    // included library
-    SYM_EXT,    // extern def.
-    SYM_LNAME,  // lname entry
-    SYM_CLASS_LNAME,    // lname entry for segment class ... not in symbol table
-    SYM_STRUCT_FIELD,   // field defined in some structure
-    SYM_STRUCT          // structure
-#endif
-
-};
-
-struct asmfixup {
-        struct asmfixup         *next;
-        char                    *name;
-        unsigned long           offset;
-        unsigned                fix_loc;
-        enum fixup_types        fix_type;
-        char                    external;
-
-#ifdef _WASM_
-        int_8                   frame;          // frame of the fixup
-        uint_16                 frame_datum;    // frame_datum of the fixup
-        struct dir_node         *def_seg;       // segment fixup is in
-#endif
-
-};
-
-typedef enum {
-        MT_EMPTY,
-        MT_ERROR,
-
-        MT_BYTE,
-        MT_SBYTE,
-        MT_WORD,
-        MT_SWORD,
-        MT_DWORD,
-        MT_SDWORD,
-        MT_QWORD,
-        MT_FWORD,
-        MT_TBYTE,
-
-        MT_SHORT,
-        MT_NEAR,
-        MT_FAR,
-
-        MT_STRUCT,
-
-        MT_PTR,
-
-        MT_PROC,
-        MT_ABS
-
-} memtype;
+#include "asmops2.h"
+#include "asminlin.h"
 
 typedef struct asm_sym {
         struct asm_sym  *next;
@@ -141,42 +67,6 @@ extern struct asm_sym *AsmGetSymbol( char *name );
 #ifdef _WASM_
     extern void AsmTakeOut( char *name );
     extern int AsmChangeName( char *old, char *new );
-#else
-
-enum sym_type {
-        SYM_INT1,               /* a byte variable */
-        SYM_INT2,               /* a word variable */
-        SYM_INT4,               /* a dword variable */
-        SYM_INT6,               /* a 32-bit far pointer */
-        SYM_FLOAT4,             /* a 4 byte floating point variable */
-        SYM_FLOAT8,             /* an 8 byte floating point variable */
-        SYM_FLOAT10,            /* a 10 byte floating point variable */
-        SYM_NEAR2,              /* a 16-bit near routine */
-        SYM_NEAR4,              /* a 32-bit near routine */
-        SYM_FAR2,               /* a 16-bit far routine */
-        SYM_FAR4                /* a 32-bit far routine */
-};
-
-/*
-   The following function is supplied by the user of the mini-assembler.
-   It returns either:
-        SYM_UNDEFINED   - the name is not in the user's symbol table
-        SYM_EXTERNAL    - the name is a static symbol in the user's
-                                symbol table
-        SYM_STACK       - the symbol is an auto symbol in the user's
-                                symbol table
-*/
-extern enum sym_state   AsmQueryExternal( char *name );
-
-/*
-   The following function is supplied by the user of the mini-assembler.
-   It returns the type of the symbol via one of the 'enum sym_type'
-   constants.
-*/
-extern enum sym_type    AsmQueryType( char *name );
-
 #endif
-
-extern struct asmfixup  *FixupHead;
 
 #endif
