@@ -4,6 +4,7 @@ Options: ('/' may be used instead of '-' to specify options)
          -c         do not create files that do not exist
          -i         increment time stamp before touching <file_names>
          -r         touch file even if it is marked read only
+         -s         recurse through subdirectories
          -d <date>  specify date part of the time-stamp explicitly
          -f <file>  use date-time from <file>
          -t <time>  specify time part of the time-stamp explicitly

@@ -203,6 +203,17 @@ static void addFileSpec( char *new_file )
     fileList = new;
 }
 
+static void insertFileSpec( char *new_file, struct file_list *old )
+/***************************************/
+{
+    struct file_list *new;
+
+    new = malloc( sizeof( struct file_list ) );
+    new->next = old->next;
+    new->file_spec = new_file;
+    old->next = new;
+}
+
 static void syncStamp( struct utimbuf *stamp )
 /********************************************/
 {
@@ -271,6 +282,7 @@ static void processOptions( int argc, char **argv )
     TouchFlags.quiet = 0;
     TouchFlags.usa_date_time = 0;
     TouchFlags.increment_time = 0;
+    TouchFlags.recursive = 0;
     files = 0;
     while( --argc ) {
         p = *++argv;
@@ -299,6 +311,9 @@ static void processOptions( int argc, char **argv )
                     break;
                 case 'i':
                     TouchFlags.increment_time = 1;
+                    break;
+                case 's':
+                    TouchFlags.recursive = 1;
                     break;
                 case 'd':
                     if( ( argc - 1 ) != 0 && argv[1] != NULL ) {
@@ -452,6 +467,21 @@ static void doTouch( void )
             if( closedir( dirpt ) != 0 ) {
                 writeMsg( MSG_ERR_CLOSE, item );
                 continue;
+            }
+            if( TouchFlags.recursive ) {
+                _makepath( full_name, drive, dir, NULL, NULL );
+                dirpt = opendir( full_name );
+                // it would make no sense for this to fail, and I'm not entirely sure
+                // what to do if it does....
+                if( dirpt ) {
+                    while( ndir = readdir( dirpt ) ) {
+                        if( ndir->d_attr & _A_SUBDIR && '.' != *ndir->d_name ) {
+                            _makepath( full_name, drive, dir, ndir->d_name, NULL );
+                            insertFileSpec( strdup(full_name), curr );
+                        }
+                    }
+                    closedir( dirpt );
+                }
             }
         }
         if( number_of_successful_touches == 0 ) {
