@@ -1,5 +1,4 @@
-#pmake: build os_qnx cpu_i86
-# makefile for GRAPHS.LIB
+#pmake: os_qnx cpu_i86
 host_os = qnx
 host_cpu = i86
 

@@ -22,9 +22,9 @@ set PROJDIR=<CWD>
     <CPCMD> <DEVDIR>/graphlib/fix/dosi86.nec/graph.lib  <RELROOT>/rel2/lib286/dos/graph98.lib
     <CPCMD> <DEVDIR>/graphlib/fix/dos386.nec/graph386.lib <RELROOT>/rel2/lib386/dos/graph98.lib
     <CPCMD> <DEVDIR>/graphlib/fix/os2i86/graphp.obj   <RELROOT>/rel2/lib286/os2/graphp.obj
-    <CPCMD> <DEVDIR>/graphlib/fix/qnxi86/graph.lib   <RELROOT>/rel2/lib286/qnx/graph.lib
-    <CPCMD> <DEVDIR>/graphlib/fix/qnx386/graph3r.lib  <RELROOT>/rel2/lib386/qnx/graph3r.lib
-    <CPCMD> <DEVDIR>/graphlib/fix/qnx386/graph3s.lib  <RELROOT>/rel2/lib386/qnx/graph3s.lib
+#    <CPCMD> <DEVDIR>/graphlib/fix/qnxi86/graph.lib   <RELROOT>/rel2/lib286/qnx/graph.lib
+#    <CPCMD> <DEVDIR>/graphlib/fix/qnx386/graph3r.lib  <RELROOT>/rel2/lib386/qnx/graph3r.lib
+#    <CPCMD> <DEVDIR>/graphlib/fix/qnx386/graph3s.lib  <RELROOT>/rel2/lib386/qnx/graph3s.lib
 
 [ BLOCK <1> clean ]
 #==================

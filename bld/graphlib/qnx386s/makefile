@@ -1,5 +1,4 @@
-#pmake: build os_qnx cpu_386
-# makefile for GRAPH3R.LIB
+#pmake: os_qnx cpu_386
 host_os = qnx
 host_cpu = 386
 
