@@ -5598,8 +5598,8 @@ int foo( int a, int b )
 :eerrbad.
 
 :MSGSYM. INF_SYMBOL_DECLARATION
-:MSGTXT. '%F' defined %L
-:MSGJTXT. '%F'は定義されています：%L
+:MSGTXT. definition: '%F'
+:MSGJTXT. '%F'は定義されています：
 :INFO.
 This informational message indicates where the symbol in question was defined.
 The message is displayed following an error or warning diagnostic for the
