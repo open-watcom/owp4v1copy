@@ -296,12 +296,16 @@ static  parse_entry     SegOptions[] = {
 };
 static void NullRoutine( void );
 static void SetWindows( void );
+static void SetWindowsVxD( void );
+static void SetWindowsVxDDyn( void );
 static void SetOS2( void );
 
 static  parse_entry     ExeTypeKeywords[] = {
     "os2",              SetOS2,             3,
     "windows",          SetWindows,         7,
     "dos4",             NullRoutine,        4,
+    "dev386",           SetWindowsVxD,      6,
+    "dynamic",          SetWindowsVxDDyn,   7,
     "unknown",          NullRoutine,        7,
     NULL
 };
@@ -414,6 +418,20 @@ static void SetWindows( void )
     if( !GetNumber( &bogus ) ) {
         CmdFile->current = CmdFile->token;      // reparse the token later
     }
+}
+
+static void SetWindowsVxD( void )
+/****************************/
+{
+    FmtType = FMT_WINVXD;
+    FmtInfo = NO_EXTRA;
+}
+
+static void SetWindowsVxDDyn( void )
+/****************************/
+{
+    FmtType = FMT_WINVXDDYN;
+    FmtInfo = NO_EXTRA;
 }
 
 static void SetOS2( void )
@@ -567,7 +585,9 @@ static void ProcDiscardable( void )
 static void ProcNonDiscardable( void )
 /************************************/
 {
-    NotSupported( "nondiscardable" );
+    AddToBuffer( "nondiscardable", 14 );
+    ImplyFormat( FMT_WINDOWS );
+//    NotNecessary( "nondiscardable" );
 }
 
 static void ProcNone( void )

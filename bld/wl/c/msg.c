@@ -294,7 +294,7 @@ static unsigned MakeExeName( char * buff, unsigned max )
     } else {
         format = FmtData.type;
         for( ;; ) {
-            num = binary_log( format );
+            num = blog_32( format );
             format &= ~(1 << num);
             if( format == 0 ) break;
         }

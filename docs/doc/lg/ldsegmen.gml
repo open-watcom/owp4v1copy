@@ -35,6 +35,15 @@ Win16:
                         | SHARED | NONSHARED
                         | MOVEABLE | FIXED
                         | DISCARDABLE
+
+VxD:
+    seg_attrs ::= PRELOAD | LOADONCALL
+                        | IOPL | NOIOPL
+                        | SHARED | NONSHARED
+                        | DISCARDABLE | NONDISCARDABLE
+                        | CONFORMING | NONCONFORMING
+                        | RESIDENT
+
 QNX:
     seg_attrs ::= EXECUTEONLY | EXECUTEREAD
                         | READONLY | READWRITE
@@ -51,12 +60,12 @@ The attributes will be assigned to all segments belonging to the
 specified class.
 .*
 .mnote PRELOAD
-(short form "PR", OS/2 and Win16 only) specifies that the segment is
+(short form "PR", OS/2, VxD and Win16 only) specifies that the segment is
 loaded as soon as the executable file is loaded.
 This is the default.
 .*
 .mnote LOADONCALL
-(short form "LO", OS/2 and Win16 only) specifies that the segment is
+(short form "LO", OS/2, VxD and Win16 only) specifies that the segment is
 loaded only when accessed.
 .*
 .mnote PAGEABLE
@@ -68,21 +77,21 @@ paged from memory. This is the default.
 loaded into memory, must remain in memory.
 .*
 .mnote CONFORMING
-(short form "CON", OS/2 only) specifies that the segment will assume the I/O
+(short form "CON", OS/2 and VxD only) specifies that the segment will assume the I/O
 privilege of the segment that referenced it.
 By default, the segment is "NONCONFORMING".
 .*
 .mnote NONCONFORMING
-(short form "NONC", OS/2 only) specifies that the segment will not
+(short form "NONC", OS/2 and VxD only) specifies that the segment will not
 assume the I/O privilege of the segment that referenced it.
 This is the default.
 .*
 .mnote IOPL
-(short form "I", OS/2 only) specifies that the segment requires I/O
+(short form "I", OS/2 and VxD only) specifies that the segment requires I/O
 privilege. That is, they can access the hardware directly.
 .*
 .mnote NOIOPL
-(short form "NOI", OS/2 only) specifies that the segment does not
+(short form "NOI", OS/2 and VxD only) specifies that the segment does not
 require I/O privilege.
 This is the default.
 .*
@@ -98,7 +107,7 @@ permanent.
 (short form "INV", OS/2 32-bit only) specifies that the segment is invalid.
 .*
 .mnote RESIDENT
-(short form "RES", OS/2 32-bit only) specifies that the segment is
+(short form "RES", OS/2 32-bit and VxD only) specifies that the segment is
 resident.
 .*
 .mnote CONTIGUOUS
@@ -152,7 +161,11 @@ By default, segments are moveable.
 (short form "FIX", Win16 only) specifies that the segment is fixed.
 .*
 .mnote DISCARDABLE
-(short form "DIS", Win16 only) specifies that the segment is discardable.
+(short form "DIS", Win16 and VxD only) specifies that the segment is discardable.
+By default, segments are not discardable.
+.*
+.mnote NONDISCARDABLE
+(short form "NOND", VxD only) specifies that the segment is not discardable.
 By default, segments are not discardable.
 .*
 .esynote

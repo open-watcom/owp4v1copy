@@ -106,7 +106,7 @@ static void DoSavedExport( symbol *sym )
 {
     entry_export *      exp;
 
-    if( FmtData.type & (MK_OS2 | MK_PE) ) {
+    if( FmtData.type & (MK_OS2 | MK_PE | MK_WIN_VXD) ) {
         exp = sym->e.export;
         exp->sym = sym;
         exp->impname = NULL;
@@ -1161,7 +1161,7 @@ extern void HandleImport( length_name *intname, length_name *modname,
             Ring2Append( &CurrMod->publist, sym );
             sym->mod = CurrMod;
         }
-        if( FmtData.type & (MK_OS2|MK_PE) ) {
+        if( FmtData.type & (MK_OS2|MK_PE|MK_WIN_VXD) ) {
             MSImportKeyword( sym, modname, extname, ordinal );
         } else {
             SET_SYM_TYPE( sym, SYM_IMPORTED );
@@ -1181,7 +1181,7 @@ extern void HandleExport( length_name *expname, length_name *intname,
 {
     symbol *            sym;
 
-    if( FmtData.type & (MK_OS2|MK_PE) ) {
+    if( FmtData.type & (MK_OS2|MK_PE|MK_WIN_VXD) ) {
         MSExportKeyword( expname, intname, flags, ordinal );
         return;
     }

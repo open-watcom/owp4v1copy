@@ -76,6 +76,8 @@ pick(	 MSG_FILE_TYPES_14,	"QNX 386" ,
 				"QNX 386" ) 
 pick(    MSG_FILE_TYPES_15,	"ELF" ,
 				"ELF" )
+pick(	 MSG_FILE_TYPES_16,	"Windows VxD" ,
+				"Windows VxD" )
 pick(	 MSG_CREATE_TYPE_DLL,	"dynamic link library" ,
 				"ダイナミック・リンク・ライブラリ" )
 pick(	 MSG_CREATE_TYPE_EXE,	"executable" ,
@@ -569,3 +571,51 @@ pick(	 MSG_ELF_HELP_10,	"export    ::= entryname" ,
 				"export    ::= エントリ名" ) 
 pick(	 MSG_ELF_HELP_11,	" " ,
 				" " )
+
+
+/*
+ *  Windows help screen: max 32 lines (from 0 to 31).
+ *  To start a new page, leave a line undefined or define an empty line.
+ */
+pick(	 MSG_WIN_VXD_HELP_0,	"\ncommands valid for the Microsoft Windows VxD formats only:\n" ,
+				"\nMicrosoft Windows VxD実行可能形式に対してのみ有効なオプション:\n" )
+pick(	 MSG_WIN_VXD_HELP_1,	"form      ::= \"WIndows VXD\" [\"DYNamic\"]" ,
+				"form      ::= \"WIndows VXD\" [\"DYNamic\"]" )
+/*
+pick(	 MSG_WIN_VXD_HELP_2,	"directive ::= \"NEWsegment\"" ,
+				"directive ::= \"NEWsegment\"" )
+pick(	 MSG_WIN_VXD_HELP_3,	"            | \"SEGment\"     segdesc{\",\"segdesc}" ,
+				"            | \"SEgment\"     segdesc{\",\"segdesc}" )
+pick(	 MSG_WIN_VXD_HELP_4,	"            | \"IMPort\"      import{\",\"import}" ,
+				"            | \"IMPort\"      import{\",\"import}" )
+pick(	 MSG_WIN_VXD_HELP_5,	"            | \"EXPort\"      export{\",\"export}" ,
+				"            | \"EXPort\"      export{\",\"export}" )
+pick(	 MSG_WIN_VXD_HELP_6,	"            | \"EXPort\"      \"=\"wlib_directive_file" ,
+				"            | \"EXPort\"      \"=\"wlib疑似命令ﾌｧｲﾙ" )
+pick(	 MSG_WIN_VXD_HELP_7,	"segdesc   ::= segspec segmodel {segmodel}" ,
+				"segdesc   ::= segspec segmodel {segmodel}" )
+pick(	 MSG_WIN_VXD_HELP_8,	"segspec   ::= seg_name | \"Class\" class_name | \"TYpe\" (\"CODE\" | \"DATA\")" ,
+				"segspec   ::= セグメント名 | \"Class\" クラス名 | \"TYpe\" (\"CODE\" | \"DATA\")" )
+pick(	 MSG_WIN_VXD_HELP_9,	"import    ::= entryname module[\".\"(extname | ordinal)]" ,
+				"import    ::= エントリ名 モジュール[\".\"(外部名 | 序数)]" )
+pick(	 MSG_WIN_VXD_HELP_10,	"option    ::= \"Alignment=\"n | \"DEscription\" description | \"Heapsize=\"n" ,
+				"option    ::= \"Alignment=\"n | \"DEscription\" ﾃﾞｨｽｸﾘﾌﾟｼｮﾝ | \"Heapsize=\"n" )
+pick(	 MSG_WIN_VXD_HELP_11,	"            | \"IMPFile\"[=file_name] | \"IMPLib\"[=file_name]" ,
+		 		"            | \"IMPFile\"[=ファイル名] | \"IMPLib\"[=ファイル名]" )
+pick(	 MSG_WIN_VXD_HELP_12,	"            | (\"MANYautodata\" | \"NOautodata\" | \"ONEAutodata\")" ,
+				"            | (\"MANYautodata\" | \"NOautodata\" | \"ONEAutodata\")" )
+pick(	 MSG_WIN_VXD_HELP_13,	"            | \"MODName=\"module_name | \"OLDlibrary=\"dll_name | \"PACKCode=\"n" ,
+				"            | \"MODName=\"モジュール名 | \"OLDlibrary=\"DLL名 | \"PACKCode=\"n" )
+pick(	 MSG_WIN_VXD_HELP_14,	"            | \"PACKData=\"n | \"RESource=\"res_file_name | \"RWReloccheck\"" ,
+                                "            | \"PACKData=\"n | \"RESource=\"リソースファイル名 | \"RWReloccheck\"")
+pick(	 MSG_WIN_VXD_HELP_15,	"            | \"STUB=\"stub_name | \"VERSion=\"major.[minor]" ,
+                                "            | \"STUB=\"スタブ名 | \"VERSion=\"ﾒｼﾞｬｰﾊﾞｰｼﾞｮﾝ.[ﾏｲﾅｰﾊﾞｰｼﾞｮﾝ]")
+pick(	 MSG_WIN_VXD_HELP_16,	"export    ::= entryname[\".\"ordinal][\"=\"internal][\"RESident\"][\"PRIVATE\"]" ,
+                                "export    ::= エントリ名[\".\"序数][\"=\"内部名][\"RESident\"][\"PRIVATE\"]" )
+pick(	 MSG_WIN_VXD_HELP_17,	"segmodel  ::= (\"PReload\" | \"LOadoncall\") | (\"SHared\" | \"NONShared\")" ,
+                                "segmodel  ::= (\"PReload\" | \"LOadoncall\") | (\"SHared\" | \"NONShared\")" )
+pick(	 MSG_WIN_VXD_HELP_18,	"            | (\"EXECUTEOnly\" | \"EXECUTERead\" | \"READOnly\" | \"READWrite\")" ,
+                                "            | (\"EXECUTEOnly\" | \"EXECUTERead\" | \"READOnly\" | \"READWrite\")" )
+pick(	 MSG_WIN_VXD_HELP_19,	"            | (\"MOVeable\" | \"FIXed\") | \"DIScardable\"\n" ,
+                                "            | (\"MOVeable\" | \"FIXed\") | \"DIScardable\"\n" )
+*/

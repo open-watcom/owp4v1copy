@@ -386,7 +386,7 @@ extern bool DumpRelocList( reloc_info * list )
 extern void SetRelocSize( void )
 /******************************/
 {
-    if( FmtData.type & MK_OS2 ) {
+    if( FmtData.type & (MK_OS2|MK_WIN_VXD) ) {
         FmtRelocSize = sizeof( os2_reloc_item );
     } else if( FmtData.type & MK_PE ) {
         FmtRelocSize = sizeof( pe_reloc_item );

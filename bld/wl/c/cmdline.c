@@ -77,6 +77,7 @@ static bool             ProcNovellHelp( void );
 static bool             ProcQNXHelp( void );
 static bool             ProcELFHelp( void );
 static bool             ProcWindowsHelp( void );
+static bool             ProcWinVxdHelp( void );
 static bool             ProcNTHelp( void );
 
 #ifdef _INT_DEBUG
@@ -90,6 +91,7 @@ static  parse_entry   FormatHelp[] = {
 #ifdef _OS2
     "OS2",          &ProcOS2Help,           MK_ALL,     0,
     "WINdows",      &ProcWindowsHelp,       MK_ALL,     0,
+    "VXD",          &ProcWinVxdHelp,        MK_ALL,     0,
     "NT",           &ProcNTHelp,            MK_ALL,     0,
 #endif
 #ifdef _PHARLAP
@@ -211,7 +213,7 @@ extern void DoCmdFile( char *fname )
 #if _OS == _QNX
 #define LAST_CHANCE MK_QNX|MK_OS2_NE|MK_OS2_LX|MK_OS2_LE
 #elif _OS == _NT
-#define LAST_CHANCE MK_PE|MK_WINDOWS|MK_OS2_LX|MK_OS2_NE
+#define LAST_CHANCE MK_PE|MK_WINDOWS|MK_OS2_LX|MK_OS2_NE|MK_WIN_VXD
 #else
 #define LAST_CHANCE MK_DOS_EXE|MK_PHAR_SIMPLE|MK_OS2_NE|MK_OS2_LX|MK_OS2_LE
 #endif
@@ -410,6 +412,7 @@ static void DisplayOptions( void )
 #ifdef _OS2
     WriteHelp( MSG_OS2_HELP_0, MSG_OS2_HELP_31, isout );
     WriteHelp( MSG_WINDOWS_HELP_0, MSG_WINDOWS_HELP_31, isout );
+    WriteHelp( MSG_WIN_VXD_HELP_0, MSG_WIN_VXD_HELP_31, isout );
     WriteHelp( MSG_NT_HELP_0, MSG_NT_HELP_31, isout );
 #endif
 #ifdef _PHARLAP
@@ -449,6 +452,15 @@ static bool ProcWindowsHelp( void )
 {
     WriteGenHelp();
     WriteHelp( MSG_WINDOWS_HELP_0, MSG_WINDOWS_HELP_31,
+                                                CmdFlags & CF_TO_STDOUT );
+    return( TRUE );
+}
+
+static bool ProcWinVxdHelp( void )
+/*********************************/
+{
+    WriteGenHelp();
+    WriteHelp( MSG_WIN_VXD_HELP_0, MSG_WIN_VXD_HELP_31,
                                                 CmdFlags & CF_TO_STDOUT );
     return( TRUE );
 }
@@ -638,6 +650,7 @@ static struct select_format PossibleFmt[] = {
     MK_OS2_LE,      "LIBOS2FLAT",   &SetOS2Fmt,     &FreeOS2Fmt,
     MK_OS2_LX,      "LIBOS2FLAT",   &SetOS2Fmt,     &FreeOS2Fmt,
     MK_PE,          "LIBPE",        &SetOS2Fmt,     &FreeOS2Fmt,
+    MK_WIN_VXD,     "LIBVXD",       &SetOS2Fmt,     &FreeOS2Fmt,
 #endif
 #ifdef _PHARLAP
     MK_PHAR_LAP,    "LIBPHAR",      &SetPharFmt,    &FreePharFmt,
@@ -687,8 +700,8 @@ extern bool HintFormat( exe_format hint )
         possible = check->bits;
         if( possible == 0 ) {
 #ifdef _OS2
-            if( (~(MK_OS2|MK_PE) & FmtData.type) == 0 ) {
-                /* Windows, OS/2 V1.x, OS/2 V2.x, PE all
+            if( (~(MK_OS2|MK_PE|MK_WIN_VXD) & FmtData.type) == 0 ) {
+                /* Windows, OS/2 V1.x, OS/2 V2.x, PE, VxD all
                    want the same structure */
                 InitFmt( &SetOS2Fmt );
             }
@@ -867,6 +880,8 @@ extern bool ProcImport( void )
 #if defined( _OS2) || defined( _ELF ) || defined( _NOVELL )
     if( HintFormat( MK_OS2 | MK_PE ) ) {
         return ProcOS2Import();
+    } else if( HintFormat( MK_WIN_VXD ) ) {
+        return FALSE;
     } else if( HintFormat( MK_ELF ) ) {
         return ProcELFImport();
     } else {
@@ -882,7 +897,7 @@ extern bool ProcExport( void )
 /****************************/
 {
 #ifdef _OS2
-    if( HintFormat( ( MK_OS2 | MK_PE ) ) ) {
+    if( HintFormat( ( MK_OS2 | MK_PE | MK_WIN_VXD ) ) ) {
         return( ProcOS2Export() );
     } else
 #endif
@@ -917,7 +932,7 @@ extern bool ProcSegment( void )
 /*****************************/
 {
 #ifdef _OS2
-    if( HintFormat( MK_OS2 | MK_PE ) ) {
+    if( HintFormat( MK_OS2 | MK_PE | MK_WIN_VXD ) ) {
         return( ProcOS2Segment() );
     }
 #endif

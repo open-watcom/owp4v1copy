@@ -56,6 +56,8 @@ char *      FormatNames[] = {
     "com",
     "os2 ",
     "windows ",
+    "windows vxd ",
+    "windows vxd dynamic",
     "os2v2 ",
     "nt "
 };

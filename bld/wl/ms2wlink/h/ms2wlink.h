@@ -75,7 +75,9 @@ typedef enum {
     FMT_DOS             = 1,
     FMT_COM             = 2,
     FMT_OS2             = 3,
-    FMT_WINDOWS         = 4
+    FMT_WINDOWS         = 4,
+    FMT_WINVXD          = 5,
+    FMT_WINVXDDYN       = 6
 } format_type;
 
 typedef enum {

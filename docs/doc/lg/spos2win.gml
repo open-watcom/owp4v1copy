@@ -16,7 +16,9 @@ is any of the following:
 .if '&exeformat' eq 'win nt' .do begin
 .note COMMIT mem_type
 .do end
-.note DEBUG dbtype [dblist] |
+.if '&exeformat' ne 'win vxd' .do begin
+.note DEBUG dbtype [dblist] | DEBUG [dblist]
+.do end
 .note DISABLE msg_num{,msg_num}
 .note ENDLINK
 .note EXPORT export{,export}
@@ -28,10 +30,15 @@ is any of the following:
 .if '&exeformat' eq 'win' .do begin
 .note FORMAT WINDOWS [dll_form] [MEMORY] [FONT]
 .do end
+.if '&exeformat' eq 'win vxd' .do begin
+.note FORMAT WINDOWS VXD [DYNAMIC]
+.do end
 .if '&exeformat' eq 'win nt' .do begin
 .note FORMAT WINDOWS NT [TNT] [dll_form]
 .do end
+.if '&exeformat' ne 'win vxd' .do begin
 .note IMPORT import{,import}
+.do end
 .note LANGUAGE lang
 .note LIBFILE obj_file{,obj_file}
 .cw !
@@ -41,7 +48,7 @@ is any of the following:
 .note MODFILE obj_file{,obj_file}
 .note MODTRACE obj_module{,obj_module}
 .note NAME exe_file
-.if '&exeformat' ne 'win nt' .do begin
+.if '&exeformat' ne 'win nt' and '&exeformat' ne 'win vxd' .do begin
 .note NEWSEGMENT
 .do end
 .cw !
@@ -53,9 +60,13 @@ is any of the following:
 .note ARTIFICIAL
 .note [NO]CACHE
 .note [NO]CASEEXACT
+.if '&exeformat' ne 'win vxd' .do begin
 .note CVPACK
+.do end
 .note DESCRIPTION 'string'
+.if '&exeformat' ne 'win vxd' .do begin
 .note DOSSEG
+.do end
 .note ELIMINATE
 .note HEAPSIZE=n
 .note IMPFILE[=imp_file]
@@ -87,12 +98,14 @@ is any of the following:
 .if '&exeformat' eq 'os2' or '&exeformat' eq 'win nt' .do begin
 .note OFFSET
 .do end
+.if '&exeformat' ne 'win vxd' .do begin
 .note OLDLIBRARY=dll_name
+.do end
 .if '&exeformat' eq 'win' or '&exeformat' eq 'os2' .do begin
 .note ONEAUTODATA
 .do end
 .note OSNAME='string'
-.if '&exeformat' ne 'win nt' .do begin
+.if '&exeformat' ne 'win nt' and '&exeformat' ne 'win vxd' .do begin
 .note PACKCODE=n
 .note PACKDATA=n
 .do end
@@ -281,6 +294,7 @@ Obviously, data segments that contain read/write data cannot be
 discarded.
 .*
 .do end
+.if '&exeformat' ne 'win vxd' .do begin
 .*
 .section Dynamic Link Libraries
 .*
@@ -394,10 +408,11 @@ However, if you are using "IMPORT" directives, you may have to modify
 the "IMPORT" directives to reflect the changes in the Dynamic Link
 Library.
 .endlevel
+.do end
 .*
 .im wlmemlay
 .im wlmem
 .*
-.if '&exeformat' ne 'win nt' .do begin
+.if '&exeformat' ne 'win nt' and '&exeformat' ne 'win vxd' .do begin
 .im ms2wlink
 .do end

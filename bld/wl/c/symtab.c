@@ -1234,7 +1234,7 @@ extern void XWriteImports( void )
                     WriteFormat( 0, "%s", sym->name );
 
 #ifdef _OS2
-                if( FmtData.type & (MK_OS2|MK_PE) ) {
+                if( FmtData.type & (MK_OS2|MK_PE|MK_WIN_VXD) ) {
                     WriteFormat( 36, "%s", ImpModuleName( sym->p.import ) );
                 }
 #endif

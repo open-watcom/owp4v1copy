@@ -300,7 +300,7 @@ static void PreAddrCalcFormatSpec( void )
 #ifdef _OS2
     if( FmtData.type & MK_PE ) {
         ChkPEData();
-    } else if( FmtData.type & MK_OS2 ) {
+    } else if( FmtData.type & (MK_OS2|MK_WIN_VXD) ) {
         if( IS_PPC_OS2) {
             // Development temporarly on hold:
             // ChkOS2ElfData();
@@ -331,7 +331,7 @@ static void PostAddrCalcFormatSpec( void )
         AllocPETransferTable();
     } else if( FmtData.type & MK_ELF ) {
         ChkElfData();
-    } else if( FmtData.type & MK_OS2 ) {
+    } else if( FmtData.type & (MK_OS2|MK_WIN_VXD) ) {
         if( IS_PPC_OS2) {
             // Development temporarly on hold:
             //PrepareOS2Elf();

@@ -50,6 +50,7 @@
 :INCLUDE file='SPPHAR'.
 :INCLUDE file='SPQNX'.
 :INCLUDE file='SPWIN16'.
+:INCLUDE file='SPWIVXD'.
 :INCLUDE file='SPWIN32'.
 :INCLUDE file='WLERROR'.
 .*

@@ -88,6 +88,8 @@ conventions
 16-bit x86 Windows 3.x executable
 .note windows_dll
 16-bit x86 Windows 3.x Dynamic Link Library
+.note win_vxd
+32-bit x86 Windows 3.x or 9x Virtual Device Driver
 .note win95
 32-bit x86 Windows 95 executable
 .note win95 dll
@@ -509,6 +511,29 @@ wbind -n -d app_name
 .np
 For more information,
 see the chapter entitled :HDREF refid='winchap'..
+.*
+.section Linking 32-bit x86 Windows 3.x or 9x Virtual Device Driver
+.*
+.np
+.ix '32-bit Windows VxD'
+There are two type of the Virtual Device Driver.
+.np
+Staticaly loaded Virtual Device Driver used by Windows 3.x or 9x.
+To create this type of file, use the following structure.
+.millust begin
+system   win_vxd
+.im tutsteps
+.millust end
+.np
+Dynamicaly loaded Virtual Device Driver used by Windows 3.11 or 9x.
+To create this type of file, use the following structure.
+.millust begin
+system   win_vxd dynamic
+.im tutsteps
+.millust end
+.np
+For more information,
+see the chapter entitled :HDREF refid='vxdchap'..
 .*
 .section Linking 32-bit x86 Windows 95 Executable Files
 .*

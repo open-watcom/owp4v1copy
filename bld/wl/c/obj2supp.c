@@ -913,7 +913,7 @@ static offset FindRealAddr( fix_data *fix )
     }
     if( FmtData.type & (MK_OS2_FLAT|MK_LINEARIZE|MK_QNX_FLAT)
                 && !(fix->type & FIX_SEC_REL) ) {
-        if( FmtData.type & MK_OS2_LE && !dbiflat ) return off;
+        if( FmtData.type & (MK_OS2_LE|MK_WIN_VXD) && !dbiflat ) return off;
        /*
             put the correct value in so that internal fixups
             don't have to be applied if everything loads in the
@@ -986,7 +986,7 @@ static void PatchData( fix_data *fix )
         }
     } else {    // its a seg reloc and maybe an offset as well.
         if( (fix->type & FIX_OFFSET_MASK) != FIX_NO_OFFSET ) {
-            if( !fix->done && (FmtData.type & MK_OS2) ) return;
+            if( !fix->done && (FmtData.type & (MK_OS2|MK_WIN_VXD)) ) return;
             PatchOffset( fix, FindRealAddr( fix ), FALSE );
             data += OffsetSizes[ FIX_GET_OFFSET(fix->type) ];
         }
@@ -1062,7 +1062,7 @@ static bool FarCallOpt( fix_data *fix )
         } else {
             temp16 = GET_U16( code + 1 );
         }
-        if( FmtData.type & MK_OS2 ) {
+        if( FmtData.type & (MK_OS2|MK_WIN_VXD) ) {
             if( is32bit ) {
                 temp32 += fix->tgt_addr.off;     // haven't done this for OS/2
             } else {

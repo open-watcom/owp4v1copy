@@ -443,6 +443,8 @@ extern bool ProcOS2( void )
         if( ProcOne( WindowsFormatKeywords, SEP_NO, FALSE ) ) {
             ProcOne( WindowsFormatKeywords, SEP_NO, FALSE );
         }
+    } else if( FmtData.type & MK_WIN_VXD ) {
+        ProcOne( VXDFormatKeywords, SEP_NO, FALSE );
     } else {
         ProcOne( OS2FormatKeywords, SEP_NO, FALSE );
         if( FmtData.type & MK_OS2_LX ) {
@@ -469,6 +471,19 @@ extern bool ProcPE( void )
     FmtData.u.pe.os2.heapsize = 8*1024; // another arbitrary non-zero default
     FmtData.u.pe.stackcommit = PE_DEF_STACK_COMMIT;
     return( TRUE );
+}
+
+extern bool ProcVXD( void )
+/************************/
+{
+    return( ProcOS2() );
+/*
+    ProcOne( VXDFormatKeywords, SEP_NO, FALSE );
+    FmtData.u.pe.heapcommit = 4*1024;   // arbitrary non-zero default.
+    FmtData.u.pe.os2.heapsize = 8*1024; // another arbitrary non-zero default
+    FmtData.u.pe.stackcommit = PE_DEF_STACK_COMMIT;
+    return( TRUE );
+*/
 }
 
 extern bool ProcWindows( void )
@@ -603,6 +618,20 @@ extern bool ProcFont( void )
 /**************************/
 {
     FmtData.u.os2.flags |= PROPORTIONAL_FONT;
+    return( TRUE );
+}
+
+extern bool ProcDynamicDriver( void )
+/********************************/
+{
+    FmtData.u.os2.flags |= VIRT_DEVICE;
+    return( TRUE );
+}
+
+extern bool ProcStaticDriver( void )
+/********************************/
+{
+    FmtData.u.os2.flags |= PHYS_DEVICE;
     return( TRUE );
 }
 
@@ -885,6 +914,13 @@ extern bool ProcDiscardable( void )
 /*********************************/
 {
     FmtData.u.os2.os2_seg_flags->flags |= SEG_DISCARD;
+    return( TRUE );
+}
+
+extern bool ProcNonDiscardable( void )
+/*********************************/
+{
+    FmtData.u.os2.os2_seg_flags->flags &= ~SEG_DISCARD;
     return( TRUE );
 }
 

@@ -11,6 +11,7 @@ The format of the "FORMAT" directive (short form "FORM") is as follows.
 
     form ::= DOS [COM]
                  | WINDOWS [win_dll] [MEMORY] [FONT]
+                 | WINDOWS VXD [DYNAMIC]
                  | WINDOWS NT [TNT] [dll_attrs]
                  | OS2 [os2_type] [dll_attrs | os2_attrs]
                  | PHARLAP [EXTENDED | REX | SEGMENTED]
@@ -111,6 +112,22 @@ The "FONT" specification is ignored in Windows 3.1 or later.
 .np
 For more information on Windows executable file formats,
 see the chapter entitled :HDREF refid='winchap'..
+.do end
+.mnote WINDOWS VXD
+.ix 'VxD format executable'
+tells the &lnkname to generate a Windows VxD file (Virtual Device Driver).
+.np
+The name of the file will have extension "386". Note that this default 
+extension can be overridden by using the "NAME" directive to name 
+the driver file.
+.np
+Specifying "DYNAMIC" (short form "DYN") , dynamicaly loadable driver will 
+be generated (only for Windows 3.11 or 9x). By default the &lnkname 
+generate staticaly loadable driver (for Windows 3.x or 9x).
+.if '&target' ne 'QNX' .do begin
+.np
+For more information on Windows Virtual Device Driver file format,
+see the chapter entitled :HDREF refid='vxdchap'..
 .do end
 .mnote WINDOWS NT
 .ix 'PE format executable'

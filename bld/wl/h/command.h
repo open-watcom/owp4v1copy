@@ -166,6 +166,7 @@ extern parse_entry SubFormats[];
 extern parse_entry OS2FormatKeywords[];
 extern parse_entry WindowsFormatKeywords[];
 extern parse_entry NTFormatKeywords[];
+extern parse_entry VXDFormatKeywords[];
 extern parse_entry Init_Keywords[];
 extern parse_entry Term_Keywords[];
 extern parse_entry Exp_Keywords[];

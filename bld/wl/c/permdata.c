@@ -307,7 +307,7 @@ static void PrepSymbol( void *_sym, void *info )
         sym->u.altdefs = CarveGetIndex( CarveSymbol, sym->u.altdefs );
     }
     if( sym->info & SYM_EXPORTED ) {
-        if( FmtData.type & (MK_OS2 | MK_PE) ) {
+        if( FmtData.type & (MK_OS2 | MK_PE | MK_WIN_VXD) ) {
             sym->e.export = CarveGetIndex( CarveExportInfo, sym->e.export );
         }
     } else if( sym->e.def != NULL ) {
@@ -566,7 +566,7 @@ extern void WritePermData( void )
     hdr.numgroups = WriteGroups( &info );
     hdr.numuserlibs = WriteLibList( &info, TRUE );
     hdr.numdeflibs = WriteLibList( &info, FALSE );
-    if( FmtData.type & (MK_OS2 | MK_PE) ) {
+    if( FmtData.type & (MK_OS2 | MK_PE | MK_WIN_VXD) ) {
         PrepNameTable( FmtData.u.os2.mod_ref_list, &info );
         PrepNameTable( FmtData.u.os2.imp_tab_list, &info );
         hdr.numdllsyms = WriteSmallCarve( CarveDLLInfo, MarkDLLInfo,
@@ -766,7 +766,7 @@ static void RebuildSymbol( void *_sym, void *info )
         sym->u.altdefs = CarveMapIndex( CarveSymbol, sym->u.altdefs );
     }
     if( sym->info & SYM_EXPORTED ) {
-        if( FmtData.type & (MK_OS2 | MK_PE) ) {
+        if( FmtData.type & (MK_OS2 | MK_PE | MK_WIN_VXD) ) {
             sym->e.export = CarveMapIndex( CarveExportInfo, sym->e.export );
         }
     } else if( sym->e.def != NULL ) {
@@ -818,7 +818,7 @@ static void PurgeRead( perm_read_info *info )
     CarvePurge( CarveModEntry );
     CarvePurge( CarveSegData );
     CarvePurge( CarveSymbol );
-    if( FmtData.type & (MK_OS2 | MK_PE) ) {
+    if( FmtData.type & (MK_OS2 | MK_PE | MK_WIN_VXD) ) {
         CarvePurge( CarveDLLInfo );
         CarvePurge( CarveExportInfo );
     }
@@ -903,7 +903,7 @@ extern void ReadPermData( void )
     CarveRestart( CarveModEntry, hdr->mods.num );
     CarveRestart( CarveSegData, hdr->segdatas.num );
     CarveRestart( CarveSymbol, hdr->symbols.num );
-    if( FmtData.type & (MK_OS2 | MK_PE) ) {
+    if( FmtData.type & (MK_OS2 | MK_PE | MK_WIN_VXD) ) {
         CarveRestart( CarveDLLInfo, hdr->numdllsyms );
         CarveRestart( CarveExportInfo, hdr->numexports );
     }
@@ -935,7 +935,7 @@ extern void ReadPermData( void )
     ReadGroups( hdr->numgroups, &info );
     ReadLibList( hdr->numuserlibs, &SavedUserLibs, &info );
     ReadLibList( hdr->numdeflibs, &SavedDefLibs, &info );
-    if( FmtData.type & (MK_OS2 | MK_PE) ) {
+    if( FmtData.type & (MK_OS2 | MK_PE | MK_WIN_VXD) ) {
         RebuildSmallCarve(CarveDLLInfo, hdr->numdllsyms, RebuildDLLInfo, &info);
         RebuildSmallCarve( CarveExportInfo, hdr->numexports, RebuildExportInfo,
                                 &info );

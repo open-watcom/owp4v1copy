@@ -1108,7 +1108,7 @@ extern bool ProcStub( void )
     char *      name;
     char **     nameptr;
 
-    if( HintFormat( MK_OS2 | MK_PE ) ) {
+    if( HintFormat( MK_OS2 | MK_PE | MK_WIN_VXD ) ) {
         nameptr = &FmtData.u.os2.stub_file_name;
     } else {    /* it must be pharlap */
         nameptr = &FmtData.u.phar.stub;

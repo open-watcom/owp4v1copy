@@ -32,38 +32,40 @@
 
 
 typedef enum exe_format {       // there is a corresp. table in MSG.C
-    MK_OS2_NE           = 0x0001,
-    MK_OS2_LE           = 0x0002,
-    MK_OS2_LX           = 0x0004,
-    MK_WINDOWS          = 0x0008,
-    MK_PE               = 0x0010,
-    MK_DOS_EXE          = 0x0020,
-    MK_COM              = 0x0040,
-    MK_OVERLAYS         = 0x0080,
-    MK_NOVELL           = 0x0100,
-    MK_QNX_16           = 0x0200,     // POSIX QNX, not ICON QNX
-    MK_PHAR_SIMPLE      = 0x0400,
-    MK_PHAR_FLAT        = 0x0800,
-    MK_PHAR_REX         = 0x1000,
-    MK_PHAR_MULTISEG    = 0x2000,
-    MK_QNX_FLAT         = 0x4000,
-    MK_ELF              = 0x8000
+    MK_OS2_NE           = 0x00000001,
+    MK_OS2_LE           = 0x00000002,
+    MK_OS2_LX           = 0x00000004,
+    MK_WINDOWS          = 0x00000008,
+    MK_PE               = 0x00000010,
+    MK_DOS_EXE          = 0x00000020,
+    MK_COM              = 0x00000040,
+    MK_OVERLAYS         = 0x00000080,
+    MK_NOVELL           = 0x00000100,
+    MK_QNX_16           = 0x00000200,     // POSIX QNX, not ICON QNX
+    MK_PHAR_SIMPLE      = 0x00000400,
+    MK_PHAR_FLAT        = 0x00000800,
+    MK_PHAR_REX         = 0x00001000,
+    MK_PHAR_MULTISEG    = 0x00002000,
+    MK_QNX_FLAT         = 0x00004000,
+    MK_ELF              = 0x00008000,
+    MK_WIN_VXD          = 0x00010000
 } exe_format;
 
 #define MK_DOS       (MK_OVERLAYS | MK_DOS_EXE | MK_COM)
 #define MK_ONLY_OS2_16  MK_OS2_NE
-#define MK_OS2_FLAT  (MK_OS2_LE | MK_OS2_LX)
-#define MK_ONLY_OS2  (MK_ONLY_OS2_16 | MK_OS2_FLAT)
+#define MK_OS2_FLAT  (MK_OS2_LE | MK_OS2_LX | MK_WIN_VXD)
+#define MK_ONLY_OS2  (MK_ONLY_OS2_16 | MK_OS2_LE | MK_OS2_LX)
 #define MK_OS2_16BIT (MK_ONLY_OS2_16 | MK_WINDOWS)
-#define MK_OS2       (MK_OS2_16BIT | MK_OS2_FLAT)
+/* MK_WIN_VXD is not included into MK_OS2 */
+#define MK_OS2       (MK_OS2_16BIT | MK_OS2_LE | MK_OS2_LX)
 #define MK_PHAR_LAP  (MK_PHAR_SIMPLE|MK_PHAR_FLAT|MK_PHAR_REX|MK_PHAR_MULTISEG)
 #define MK_QNX       (MK_QNX_16 | MK_QNX_FLAT)
-#define MK_386       (MK_PHAR_LAP | MK_NOVELL | MK_QNX|MK_OS2_FLAT|MK_PE|MK_ELF)
+#define MK_386       (MK_PHAR_LAP | MK_NOVELL | MK_QNX|MK_OS2_LE|MK_OS2_LX|MK_PE|MK_ELF|MK_WIN_VXD)
 #define MK_286       (MK_DOS | MK_OS2_16BIT)
-/* MK_OS2_FLAT and MK_PE are not treated as FLAT internally */
+/* MK_OS2_LE, MK_OS2_LX, MK_WIN_VXD and MK_PE are not treated as FLAT internally */
 #define MK_FLAT      (MK_PHAR_SIMPLE | MK_PHAR_FLAT | MK_PHAR_REX )
-#define MK_ALLOW_32  (MK_PHAR_LAP|MK_OS2_FLAT|MK_NOVELL|MK_QNX|MK_PE|MK_ELF)
-#define MK_ALLOW_16  (MK_286 | MK_PHAR_FLAT | MK_OS2 | MK_QNX | MK_PE)
+#define MK_ALLOW_32  (MK_PHAR_LAP|MK_OS2_LE|MK_OS2_LX|MK_NOVELL|MK_QNX|MK_PE|MK_ELF|MK_WIN_VXD)
+#define MK_ALLOW_16  (MK_286 | MK_PHAR_FLAT | MK_OS2 | MK_QNX | MK_PE | MK_WIN_VXD)
 #define MK_ID_SPLIT  (MK_NOVELL)
 #define MK_REAL_MODE (MK_DOS)
 #define MK_PROT_MODE (~MK_REAL_MODE)
@@ -71,7 +73,7 @@ typedef enum exe_format {       // there is a corresp. table in MSG.C
 #define MK_IMPORTS   (MK_NOVELL | MK_OS2 | MK_PE | MK_ELF)
 #define MK_SPLIT_DATA (MK_ELF | MK_PE)
 #define MK_LINEARIZE (MK_ELF | MK_PE)
-#define MK_ALL       (0xFFFF)
+#define MK_ALL       (0x0001FFFF)
 
 #define IS_PPC_PE   ( LinkState & HAVE_PPC_CODE && FmtData.type & MK_PE )
 #define IS_PPC_OS2   0//( LinkState & HAVE_PPC_CODE && FmtData.type & MK_OS2 )
