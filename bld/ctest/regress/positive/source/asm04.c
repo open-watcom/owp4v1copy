@@ -9,7 +9,7 @@ INLINE int sub( int a, int b ) {
 }
 #pragma aux (__stdcall) sub parm reverse;
 
-int INLINE burst( int i, int j ){return 0;}
+int INLINE burst( int i, int j );
 #ifdef __386__
 #pragma aux burst = \
         "xor eax,edx" \
