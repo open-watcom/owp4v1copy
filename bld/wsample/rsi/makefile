@@ -12,7 +12,7 @@ xname       = wsamprsi
 
 nxname      = nsamprsi
 
-lf = $(%ramdisk)\tmp.lnk
+lf = tmp.lnk
 
 cflags = /zq/m$(model)/zdp/d1/osail/s/w3/dREPORT_TYPE= /dFAR_PTR=__far /fiwatcom.h /i$(plsdir);$(dig_dir)\h
 

@@ -17,7 +17,7 @@ bdir = $(bin_root)\binp
 w d : $(bdir)\dll\wdpmhook.dll $(bdir)\wdpmhelp.exe .SYMBOLIC
         @%null
 
-tmplnk = $(%ramdisk)\tmp.lnk
+tmplnk = tmp.lnk
 
 $(bdir)\dll\wdpmhook.dll: pmhook.obj loadstd.obj
     @%write  $(tmplnk) name $(bdir)\dll\wdpmhook.dll sys os2 dll initglobal

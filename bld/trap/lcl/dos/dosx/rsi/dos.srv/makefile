@@ -34,7 +34,7 @@ objs = &
         magicstr.obj &
         $+$(objs)$-
 
-lf = $(%ramdisk)\tmp.lnk
+lf = tmp.lnk
 libnam  = d16libc
 
 $(target) $(dtarget) : eraseall.obj $(objs) $(__MAKEFILES__)

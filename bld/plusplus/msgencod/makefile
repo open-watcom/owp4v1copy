@@ -8,9 +8,9 @@ host_OS = dos
 objs = wrdencod.obj msgencio.obj
 
 .c.obj:
-    $(ppsp) $[@ $(ramdisk)\$[.
-    $(cc) $(ramdisk)\$[. -oailt -s -d1 -zq -w3 -ml
-    rm -f $(ramdisk)\$[.
+    $(ppsp) $[@ $[.
+    $(cc) $[. -oailt -s -d1 -zq -w3 -ml
+    rm -f $[.
 
 msgencod.exe : $(objs) setbin.obj dosencod.exe msgencod.lnk
     $(linker) @msgencod.lnk

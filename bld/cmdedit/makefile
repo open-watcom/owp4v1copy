@@ -57,7 +57,7 @@ dopt=d1
 all: .symbolic  cmdedit.exe os2edit.dll os2edit.exe os22edit.exe
                 @%null
 
-lnk = $(ramdisk)tmp.lnk
+lnk = tmp.lnk
 dolink = $(linker)
 #
 # CMDEDIT.EXE

@@ -712,7 +712,7 @@ ufns += &
 
 files = $(rt) $(both) $(dep_rt) $(dep_both) $(ifns) $(xfns) $(math) $(ufns)
 
-lbc_file=$(%ramdisk)tmp.lbc
+lbc_file=tmp.lbc
 
 !ifdef on_build_machine
 !ifeq host_CPU axp

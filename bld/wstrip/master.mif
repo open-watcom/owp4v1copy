@@ -15,7 +15,7 @@ MODEL = l
 
 inc_dirs = $(dip_dir)\watcom\h;..;$(watcom_dir)\h
 
-lnk = $(%ramdisk)\tmp.lnk
+lnk = tmp.lnk
 
 OBJS = $(name).obj output.obj
 

@@ -75,7 +75,7 @@ extra_c_flags += -DWIN_GUI
 extra_c_flags += -s
 !endif
 
-lbcfile = $(%ramdisk)\tmp.lbc
+lbcfile = tmp.lbc
 
 inc_dirs_NT = $(watcom_dir)\h\nt
 inc_dirs = $(watcom_dir)\h;$(wres_dir)\h;$(inc_dirs_$(NT))
