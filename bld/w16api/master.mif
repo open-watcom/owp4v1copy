@@ -9,6 +9,7 @@ libs =               &
         $(watcom_dir)/lib/winsock.lib &
         commdlg.lib  &
         ctl3d.lib    &
+        ctl3dv2.lib  &
         ddeml.lib    &
         shell.lib    &
         stress.lib   &
