@@ -1,16 +1,16 @@
 #pmake: all build os_nt cpu_386
 
 
-all: ./mkmh.exe .symbolic
+all: lastbld .symbolic
+
+./mkmh.exe: mkmh.c
+        bwcl386 -wx -we -zq mkmh.c -fe=$@ -fo=.obj
+
+lastbld: ./mkmh.exe
         $<
         cd win
         wmake
         cd ..
-
-./mkmh.exe: lastbld
-        bwcl386 -wx -we -zq mkmh.c -fe=$@ -fo=.obj
-
-lastbld: 
         wtouch $@
         
 clean: .symbolic
