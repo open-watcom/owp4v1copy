@@ -33,6 +33,7 @@
 #include <string.h>
 #include <stddef.h>
 #include <sys/stat.h>
+#include <time.h>
 
 #include "autodep.h"
 #include "asmalloc.h"
@@ -40,6 +41,20 @@
 #include "watcom.h"
 
 FNAMEPTR FNames = NULL;
+
+enum
+{
+    TIME_SEC_B  = 0,
+    TIME_MIN_B  = 5,
+    TIME_HOUR_B = 11,
+};
+
+enum
+{
+    DATE_DAY_B  = 0,
+    DATE_MON_B  = 5,
+    DATE_YEAR_B = 9,
+};
 
 char *FilenameFullPath( char *buff, char const *name, size_t max )
 {
@@ -66,13 +81,29 @@ char *FilenameFullPath( char *buff, char const *name, size_t max )
 int SrcFileTime( char const *filename, time_t *mtime )
 {
     struct stat statbuf;
+#if !defined(__UNIX__)
+    struct tm *    ltime;
+    unsigned short dos_date;
+    unsigned short dos_time;
+#endif
 
-    if( stat( filename, &statbuf ) == 0 ) {
-        *mtime = statbuf.st_mtime;
-        return( 0 );
+    if( stat( filename, &statbuf ) != 0 ) {
+        *mtime = 0;
+        return( -1 );
     }
-    *mtime = 0;
-    return( -1 );
+    *mtime = statbuf.st_mtime;
+#if !defined(__UNIX__)
+    // convert time_t to DOS date/time format and put back into time_t
+    ltime = localtime( mtime);
+    dos_date = (( ltime->tm_year - 80 ) << DATE_YEAR_B )
+             | (( ltime->tm_mon + 1 ) << DATE_MON_B )
+             | (( ltime->tm_mday ) << DATE_DAY_B );
+    dos_time = (( ltime->tm_hour ) << TIME_HOUR_B )
+             | (( ltime->tm_min ) << TIME_MIN_B )
+             | (( ltime->tm_sec / 2 ) << TIME_SEC_B );
+    *mtime = dos_time | ( dos_date << 16 );
+#endif
+    return( 0 );
 }
 
 void AddFlist( char const *filename )
