@@ -30,7 +30,11 @@
 
 /* Basic typedefs and defines */
 
-#define NULL       ((void *)0)
+#if (defined(M_I86SM) || defined(M_I86MM))
+#define NULL   0
+#else
+#define NULL   0L
+#endif
 
 #define FAR     _far
 #define NEAR    _near

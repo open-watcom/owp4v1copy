@@ -29,8 +29,12 @@
 ****************************************************************************/
 
 
-/* Base system */
-#include <bsedos.h>
+#ifdef INCL_BASE
+    #define INCL_DOS
+    #define INCL_SUB
+    #define INCL_DOSERRORS
+#endif
 
-/* Subsystem support */
+#include <bsedos.h>
 #include <bsesub.h>
+#include <bseerr.h>

@@ -36,12 +36,14 @@
     #define INCL_DOSMEMMGR
     #define INCL_DOSMISC
     #define INCL_DOSMODULEMGR
+    #define INCL_DOSMONITORS
     #define INCL_DOSNLS
     #define INCL_DOSNMPIPES
     #define INCL_DOSPROCESS
     #define INCL_DOSQUEUES
     #define INCL_DOSRESOURCES
     #define INCL_DOSSEMAPHORES
+    #define INCL_DOSSESMGR
     #define INCL_DOSSIGNALS
 #endif
 
@@ -78,6 +80,10 @@ USHORT APIENTRY DosGetPID(PPIDINFO ProcessIDsArea);
 USHORT APIENTRY DosGetPPID(USHORT PID, PUSHORT PPID);
 USHORT APIENTRY DosGetPrty(USHORT Scope, PUSHORT Priority, USHORT ID);
 USHORT APIENTRY DosKillProcess(USHORT ActionCode, PID ProcessID);
+USHORT APIENTRY DosResumeThread(TID ThreadID);
+USHORT APIENTRY DosSetPrty(USHORT Scope, USHORT PriorityClass, SHORT PriorityDelta, USHORT ID);
+USHORT APIENTRY DosSleep(ULONG TimeInterval);
+USHORT APIENTRY DosSuspendThread(TID ThreadID);
 
 #endif
 
@@ -186,6 +192,47 @@ USHORT APIENTRY DosFSAttach(PSZ DeviceName, PSZ FSDName, PBYTE DataBuffer,
 USHORT APIENTRY DosFSCtl(PBYTE DataArea, USHORT DataLengthMax, PUSHORT DataLength, PBYTE ParmList,
                         USHORT ParmLengthMax, PUSHORT ParmLength, USHORT FunctionCode, PSZ RouteName,
                         HFILE FileHandle, USHORT RouteMethod, ULONG Reserved);
+USHORT APIENTRY DosMkDir(PSZ DirName, ULONG Reserved);
+USHORT APIENTRY DosMkDir2(PSZ DirName, PEAOP EABuf, ULONG Reserved);
+USHORT APIENTRY DosMove(PSZ OldPathName, PSZ NewPathName, ULONG Reserved);
+USHORT APIENTRY DosNewSize(HFILE FileHandle, ULONG FileSize);
+USHORT APIENTRY DosOpen(PSZ FileName, PHFILE FileHandle, PUSHORT ActionTaken, ULONG FileSize,
+                        USHORT FileAttribute, USHORT OpenFlag, USHORT OpenMode, ULONG Reserved);
+USHORT APIENTRY DosOpen2(PSZ FileName, PHFILE FileHandle, PUSHORT ActionTaken, ULONG FileSize,
+                        USHORT FileAttribute, USHORT OpenFlag, USHORT OpenMode, PEAOP EABuf,
+                        ULONG Reserved);
+USHORT APIENTRY DosQCurDir(USHORT DriveNumber, PBYTE DirPath, PUSHORT DirPathLen);
+USHORT APIENTRY DosQCurDisk(PUSHORT DriveNumber, PULONG LogicalDriveMap);
+USHORT APIENTRY DosQFHandState(HFILE FileHandle, PUSHORT FileHandleState);
+USHORT APIENTRY DosQFileInfo(HFILE FileHandle, USHORT FileInfoLevel, PBYTE FileInfoBuf,
+                        USHORT FileInfoBufSize);
+USHORT APIENTRY DosQFileMode(PSZ FilePathName, PUSHORT CurrentAttribute, ULONG Reserved);
+USHORT APIENTRY DosQFSAttach(PSZ DeviceName, USHORT Ordinal, USHORT FSAInfoLevel, PBYTE DataBuffer,
+                        PUSHORT DataBufferLen, ULONG Reserved);
+USHORT APIENTRY DosQFSInfo(USHORT DriveNumber, USHORT FSInfoLevel, PBYTE FSInfoBuf, USHORT FSInfoBufSize);
+USHORT APIENTRY DosQHandType(HFILE FileHandle, PUSHORT HandType, PUSHORT FlagWord);
+USHORT APIENTRY DosQPathInfo(PSZ PathName, USHORT PathInfoLevel, PBYTE PathInfoBuf,
+                        USHORT PathInfoBufSize, ULONG Reserved);
+USHORT APIENTRY DosQVerify(PUSHORT VerifySetting);
+USHORT APIENTRY DosRead(HFILE FileHandle, PVOID BufferArea, USHORT BufferLength, PUSHORT BytesRead);
+USHORT APIENTRY DosReadAsync(HFILE FileHandle, PULONG RamSemaphore, PUSHORT ReturnCode, PVOID BufferArea,
+                        USHORT BufferLength, PUSHORT BytesRead);
+USHORT APIENTRY DosRmDir(PSZ DirName, ULONG Reserved);
+USHORT APIENTRY DosSelectDisk(USHORT DriveNumber);
+USHORT APIENTRY DosSetFHandState(HFILE FileHandle, USHORT FileHandleState);
+USHORT APIENTRY DosSetFileInfo(HFILE FileHandle, USHORT FileInfoLevel, PBYTE FileInfoBuf,
+                        USHORT FileInfoBufSize);
+USHORT APIENTRY DosSetFileMode(PSZ FileName, USHORT NewAttribute, ULONG Reserved);
+USHORT APIENTRY DosSetFSInfo(USHORT DriveNumber, USHORT FSInfoLevel, PBYTE FSInfoBuf,
+                        USHORT FSInfoBufSize);
+USHORT APIENTRY DosSetMaxFH(USHORT NumberHandles);
+USHORT APIENTRY DosSetPathInfo(PSZ PathName, USHORT PathInfoLevel, PBYTE PathInfoBuf,
+                        USHORT PathInfoBufSize, USHORT PathInfoFlags, ULONG Reserved);
+USHORT APIENTRY DosSetVerify(USHORT VerifySetting);
+USHORT APIENTRY DosShutdown(ULONG Reserved);
+USHORT APIENTRY DosWrite(HFILE FileHandle, PVOID BufferArea, USHORT BufferLength, PUSHORT BytesWritten);
+USHORT APIENTRY DosWriteAsync(HFILE FileHandle, PULONG RamSemaphore, PUSHORT ReturnCode,
+                        PVOID BufferArea, USHORT BufferLength, PUSHORT BytesWritten);
 
 #endif
 
@@ -205,6 +252,14 @@ USHORT APIENTRY DosGetSeg(SEL Selector);
 USHORT APIENTRY DosGetShrSeg(PSZ Name, PSEL Selector);
 USHORT APIENTRY DosGiveSeg(SEL CallerSegSelector, PID ProcessID, PSEL RecipientSegSelector);
 USHORT APIENTRY DosLockSeg(SEL Selector);
+USHORT APIENTRY DosMemAvail(PULONG MemAvailSize);
+USHORT APIENTRY DosReallocHuge(USHORT NumSeg, USHORT Size, SEL Selector);
+USHORT APIENTRY DosReallocSeg(USHORT Size, SEL Selector);
+USHORT APIENTRY DosSizeSeg(SEL Selector, PULONG Size);
+USHORT APIENTRY DosSubAlloc(SEL SegSelector, PUSHORT BlockOffset, USHORT Size);
+USHORT APIENTRY DosSubFree(SEL SegSelector, USHORT BlockOffset, USHORT Size);
+USHORT APIENTRY DosSubSet(SEL SegSelector, USHORT Flags, USHORT Size);
+USHORT APIENTRY DosUnlockSeg(SEL Selector);
 
 #endif
 
@@ -228,23 +283,47 @@ USHORT APIENTRY DosCallNmPipe(PSZ FileName, PBYTE InBuffer, USHORT InBufferLen, 
                         USHORT OutBufferLen, PUSHORT BytesOut, ULONG TimeOut);
 USHORT APIENTRY DosConnectNmPipe(HPIPE Handle);
 USHORT APIENTRY DosDisConnectNmPipe(HPIPE Handle);
+USHORT APIENTRY DosMakeNmPipe(PSZ PipeName, PHPIPE PipeHandle, USHORT OpenMode, USHORT PipeMode,
+                        USHORT OutBufSize, USHORT InBufSize, ULONG TimeOut);
+USHORT APIENTRY DosPeekNmPipe(HPIPE Handle, PBYTE Buffer, USHORT BufferLen, PUSHORT BytesRead,
+                        PUSHORT BytesAvail, PUSHORT PipeState);
+USHORT APIENTRY DosQNmPHandState(HPIPE Handle, PUSHORT PipeHandleState);
+USHORT APIENTRY DosQNmPipeInfo(HPIPE Handle, USHORT InfoLevel, PBYTE InfoBuf, USHORT InfoBufSize);
+USHORT APIENTRY DosQNmPipeSemState(HSEM SemHandle, PBYTE InfoBuf, USHORT InfoBufLen);
+USHORT APIENTRY DosSetNmPHandState(HPIPE Handle, USHORT PipeHandleState);
+USHORT APIENTRY DosSetNmPipeSem(HPIPE Handle, HSEM SemHandle, USHORT KeyHandle);
+USHORT APIENTRY DosTransactNmPipe(HPIPE Handle, PBYTE InBuffer, USHORT InBufferLen, PBYTE OutBuffer,
+                        USHORT OutBufferLen, PUSHORT BytesOut);
+USHORT APIENTRY DosWaitNmPipe(PSZ FileName, ULONG TimeOut);
 
 #endif
 
 #ifdef INCL_DOSQUEUES
 
-typedef SHANDLE         HQUEUE;
-typedef HQUEUE FAR      *PHQUEUE;
+typedef SHANDLE     HQUEUE;
+typedef HQUEUE FAR  *PHQUEUE;
 
 USHORT APIENTRY DosCloseQueue(HQUEUE QueueHandle);
 USHORT APIENTRY DosCreateQueue(PHQUEUE RWHandle, USHORT QueuePrty, PSZ QueueName);
+USHORT APIENTRY DosMakePipe(PHFILE ReadHandle, PHFILE WriteHandle, USHORT PipeSize);
+USHORT APIENTRY DosOpenQueue(PUSHORT OwnerPID, PHQUEUE QueueHandle, PSZ QueueName);
+USHORT APIENTRY DosPeekQueue(HQUEUE QueueHandle, PULONG Request, PUSHORT DataLength,
+                        PULONG DataAddress, PUSHORT ElementCode, UCHAR NoWait,
+                        PBYTE ElemPriority, ULONG SemaphoreHandle);
+USHORT APIENTRY DosPurgeQueue(HQUEUE QueueHandle);
+USHORT APIENTRY DosQueryQueue(HQUEUE QueueHandle, PUSHORT NumberElements);
+USHORT APIENTRY DosReadQueue(HQUEUE QueueHandle, PULONG Request, PUSHORT DataLength,
+                        PULONG DataAddress, USHORT ElementCode, UCHAR NoWait,
+                        PBYTE ElemPriority, HSEM SemaphoreHandle);
+USHORT APIENTRY DosWriteQueue(HQUEUE QueueHandle, USHORT Request, USHORT DataLength,
+                        PBYTE DataBuffer, UCHAR ElemPriority);
 
 #endif
 
 #ifdef INCL_DOSSEMAPHORES
 
-typedef LHANDLE         HSYSSEM;
-typedef HSYSSEM FAR     *PHSYSSEM;
+typedef LHANDLE     HSYSSEM;
+typedef HSYSSEM FAR *PHSYSSEM;
 
 typedef struct _DOSFSRSEM {
     USHORT cb;
@@ -255,10 +334,40 @@ typedef struct _DOSFSRSEM {
     ULONG  sem;
 } DOSFSRSEM, FAR *PDOSFSRSEM;
 
+typedef struct _MUXSEM {
+    USHORT zero;
+    HSEM   hsem;
+} MUXSEM, FAR *PMUXSEM;
+
+typedef struct _MUXSEMLIST {
+    USHORT  cmxs;
+    MUXSEM  amxs[16];
+} MUXSEMLIST, FAR *PMUXSEMLIST;
+
 USHORT APIENTRY DosCloseSem(HSEM SemHandle);
 USHORT APIENTRY DosCreateSem(USHORT NoExclusive, PHSYSSEM SemHandle, PSZ SemName);
 USHORT APIENTRY DosFSRamSemClear(PDOSFSRSEM FSRamSemStructure);
 USHORT APIENTRY DosFSRamSemRequest(PDOSFSRSEM FSRamSemStructure, LONG Timeout);
+USHORT APIENTRY DosMuxSemWait(PUSHORT IndexNbr, PVOID ListAddr, LONG Timeout);
+USHORT APIENTRY DosOpenSem(PHSEM SemHandle, PSZ SemName);
+USHORT APIENTRY DosSemClear(HSEM SemHandle);
+USHORT APIENTRY DosSemRequest(HSEM SemHandle, LONG Timeout);
+USHORT APIENTRY DosSemSet(HSEM SemHandle);
+USHORT APIENTRY DosSemSetWait(HSEM SemHandle, LONG Timeout);
+USHORT APIENTRY DosSemWait(HSEM SemHandle, LONG Timeout);
+
+#endif
+
+#ifdef INCL_DOSMONITORS
+
+typedef SHANDLE       HMONITOR;
+typedef HMONITOR FAR  *PHMONITOR;
+
+USHORT APIENTRY DosMonClose(HMONITOR Handle);
+USHORT APIENTRY DosMonOpen(PSZ Devname, PHMONITOR Handle);
+USHORT APIENTRY DosMonRead(PBYTE BufferI, UCHAR WaitFlag, PBYTE DataBuffer, PUSHORT Bytecnt);
+USHORT APIENTRY DosMonReg(HMONITOR Handle, PBYTE BufferI, PBYTE BufferO, USHORT Posflag, USHORT Index);
+USHORT APIENTRY DosMonWrite(PBYTE BufferO, PBYTE DataBuffer, USHORT Bytecnt);
 
 #endif
 
@@ -348,13 +457,20 @@ USHORT APIENTRY DosGetCollate(USHORT Length, PCOUNTRYCODE Structure, PCHAR Memor
 USHORT APIENTRY DosGetCp(USHORT Length, PUSHORT CodePageList, PUSHORT DataLength);
 USHORT APIENTRY DosGetCtryInfo(USHORT Length, PCOUNTRYCODE Structure, PCOUNTRYINFO MemoryBuffer, PUSHORT DataLength);
 USHORT APIENTRY DosGetDBCSEv(USHORT Length, PCOUNTRYCODE Structure, PCHAR MemoryBuffer);
+USHORT APIENTRY DosSetCp(USHORT CodePage, USHORT Reserved);
+USHORT APIENTRY DosSetProcCp(USHORT CodePage, USHORT Reserved);
 
 #endif
 
 #ifdef INCL_DOSSIGNALS
 
+typedef VOID (PASCAL FAR *PFNSIGHANDLER)(USHORT, USHORT);
+
 USHORT APIENTRY DosFlagProcess(PID ProcessID, USHORT ActionCode, USHORT Flagnum, USHORT Flagarg);
 USHORT APIENTRY DosHoldSignal(USHORT ActionCode);
+USHORT APIENTRY DosSendSignal(USHORT PID, USHORT SigNumber);
+USHORT APIENTRY DosSetSigHandler(PFNSIGHANDLER Routine, PFNSIGHANDLER FAR *PrevAddress,
+                        PUSHORT PrevAction, USHORT Action, USHORT SigNumber);
 
 #endif
 
@@ -367,6 +483,9 @@ USHORT APIENTRY DosGetResource2(HMODULE ModHandle, USHORT TypeID, USHORT NameID,
 #endif
 
 #ifdef INCL_DOSDATETIME
+
+typedef SHANDLE     HTIMER;
+typedef HTIMER FAR  *PHTIMER;
 
 typedef struct _DATETIME {
     UCHAR   hours;
@@ -381,6 +500,10 @@ typedef struct _DATETIME {
 } DATETIME, FAR *PDATETIME;
 
 USHORT APIENTRY DosGetDateTime(PDATETIME DateTime);
+USHORT APIENTRY DosSetDateTime(PDATETIME DateTime);
+USHORT APIENTRY DosTimerAsync(ULONG TimeInterval, HSEM SemHandle, PHTIMER Handle);
+USHORT APIENTRY DosTimerStart(ULONG TimeInterval, HSEM SemHandle, PHTIMER Handle);
+USHORT APIENTRY DosTimerStop(HTIMER Handle);
 
 #endif
 
@@ -395,9 +518,50 @@ USHORT APIENTRY DosGetMessage(PCHAR FAR *IvTable, USHORT IvCount, PCHAR DataArea
 USHORT APIENTRY DosGetVersion(PUSHORT VersionWord);
 USHORT APIENTRY DosInsMessage(PCHAR FAR *IvTable, USHORT IvCount, PSZ MsgInput, USHORT MsgInLength,
                         PCHAR DataArea, USHORT DataLength, PUSHORT MsgLength);
-
-
 USHORT APIENTRY DosPutMessage(USHORT FileHandle, USHORT MessageLength, PCHAR MessageBuffer);
+USHORT APIENTRY DosPtrace(PBYTE PtraceB);
+USHORT APIENTRY DosQSysInfo(USHORT Index, PBYTE DataBuf, USHORT DataBufLen);
+USHORT APIENTRY DosScanEnv(PSZ EnvVarName, PSZ FAR *ResultPointer);
+USHORT APIENTRY DosSearchPath(USHORT Control, PSZ PathRef, PSZ FileName, PBYTE ResultBuffer,
+                        USHORT ResultBufferLen);
+USHORT APIENTRY DosSetVec(USHORT VecNum, PFN Routine, PFN PrevAddress);
+
+#endif
+
+#ifdef INCL_DOSSESMGR
+
+typedef struct _STATUSDATA {
+  USHORT Length;
+  USHORT SelectInd;
+  USHORT BondInd;
+} STATUSDATA, FAR *PSTATUSDATA;
+
+typedef struct _STARTDATA {
+    USHORT cb;
+    USHORT Related;
+    USHORT FgBg;
+    USHORT TraceOpt;
+    PSZ    PgmTitle;
+    PSZ    PgmName;
+    PBYTE  PgmInputs;
+    PBYTE  TermQ;
+    PBYTE  Environment;
+    USHORT InheritOpt;
+    USHORT SessionType;
+    PSZ    IconFile;
+    ULONG  PgmHandle;
+    USHORT PgmControl;
+    USHORT InitXPos;
+    USHORT InitYPos;
+    USHORT InitXSize;
+    USHORT InitYSize;
+} STARTDATA, FAR *PSTARTDATA;
+
+USHORT APIENTRY DosQAppType(PSZ ExecutableFileName, PUSHORT AppType);
+USHORT APIENTRY DosSelectSession(USHORT SessID, ULONG Reserved);
+USHORT APIENTRY DosSetSession(USHORT SessID, PSTATUSDATA StatusData);
+USHORT APIENTRY DosStartSession(PSTARTDATA StartData, PUSHORT SessID, PUSHORT PID);
+USHORT APIENTRY DosStopSession(USHORT TargetOption, USHORT SessID, ULONG Reserved);
 
 #endif
 
@@ -409,6 +573,9 @@ USHORT APIENTRY DosDevConfig(PVOID DeviceInfo, USHORT Item, USHORT Parm);
 USHORT APIENTRY DosDevIOCtl(PVOID Data, PVOID ParmList, USHORT Function, USHORT Category, HFILE DevHandle);
 USHORT APIENTRY DosDevIOCtl2(PVOID Data, USHORT DataLength, PVOID ParmList, USHORT ParmListLength,
                         USHORT Function, USHORT Category, HFILE DevHandle);
+USHORT APIENTRY DosPhysicalDisk(USHORT Function, PBYTE DataPtr, USHORT DataLen, PBYTE ParmPtr, USHORT ParmLen);
+USHORT APIENTRY DosPortAccess(USHORT Reserved, USHORT TypeOfAccess, USHORT FirstPort, USHORT LastPort);
+USHORT APIENTRY DosR2StackRealloc(USHORT NewSize);
 
 #endif
 
