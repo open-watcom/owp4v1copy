@@ -9,6 +9,6 @@ imp_objs = &
         jvmdisas.obj &
         jvmtrace.obj
 
-extra_incs = $(javasdk)/include;$(javasdk)/include/win32;$(java_src_dir)/src/win32/java/include;$(lang_root)/h/nt
+extra_incs = -I"$(javasdk)/include" -I"$(javasdk)/include/win32" -I"$(java_src_dir)/src/win32/java/include"
 
 !include ../../master.mif
