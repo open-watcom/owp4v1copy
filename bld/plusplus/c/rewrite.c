@@ -984,6 +984,9 @@ void RewriteToken( void )
             break;
         default:
             getBinary( r, &rt, &stop, (uint_8*)&Constant64, sizeof( Constant64 ) );
+            if( PPStateAsm ) {
+                ulltoa( Constant64.u._64[0], Buffer, 10 );
+            }
         }
         break;
     }

@@ -122,18 +122,24 @@ static void getAsmLine( VBUF *buff )
     for(;;) {
         if( endOfAsmStmt() ) break;
         strncat( line, Buffer, sizeof(line)-1 );
-        if( CurToken == T_CONSTANT ) {
+        switch( CurToken ) {
+        case T_CONSTANT:
             absorbASMConstant( line, sizeof(line)-1 );
             strncat( line, " ", sizeof(line)-1 );
-        } else {
-            if( isId( CurToken ) ) {
-                NextToken();
-                    strncat( line, " ", sizeof(line)-1 );
-            } else {
-                NextToken();
-            }
-            ensureBufferReflectsCurToken();
+            continue;
+        case T_ALT_XOR:
+        case T_ALT_EXCLAMATION:
+        case T_ALT_AND_AND:
+        case T_ALT_OR_OR:
+            strncat( line, " ", sizeof(line)-1 );
+            break;
+        default:
+            if( isId( CurToken ) )
+                strncat( line, " ", sizeof(line)-1 );
+            break;
         }
+        NextToken();
+        ensureBufferReflectsCurToken();
     }
     if( line[0] != '\0' ) {
         AsmSysParseLine( line );

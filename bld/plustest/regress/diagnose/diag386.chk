@@ -541,13 +541,11 @@ File: source\diag0168.c
 File: source\diag0173.c
 (13,2): Error! E080: no warning anymore
 File: source\diag0261.c
-(12,22): Error! E605: assembler: 'Invalid instruction operands'
 (28,7): Error! E166: cannot convert right pointer to type of left operand
   source conversion type is 'char * *'
   target conversion type is 'char __far * *'
 (32,2): Error! E080: at least one error
 File: source\diag0274.c
-(12,22): Error! E605: assembler: 'Invalid instruction operands'
 (28,7): Error! E166: cannot convert right pointer to type of left operand
   source conversion type is 'char * *'
   target conversion type is 'char __far * *'

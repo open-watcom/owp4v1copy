@@ -791,7 +791,7 @@ static int doScanName( int c, int expanding )
     MEPTR fmentry;
 
     SrcFileScanName( c );
-    if( expanding || ( PPState & PPS_NO_EXPAND ) || PPStateAsm ) {
+    if( expanding || ( PPState & PPS_NO_EXPAND ) ) {
         return( T_ID );
     }
     CurToken = idLookup( TokenLen, &fmentry );
