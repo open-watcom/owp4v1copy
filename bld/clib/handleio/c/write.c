@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  C Runtime write() and _lwrite() implementation.
 *
 ****************************************************************************/
 
@@ -283,6 +282,8 @@ static int os_write( int handle, const void *buffer, unsigned len, unsigned *amt
 #if !defined(__NT__)
     if( TINY_ERROR(rc) ) {
         rc = __set_errno_dos( TINY_INFO(rc) );
+    } else {
+        rc = 0;
     }
 #endif
     if( *amt != len ) {
