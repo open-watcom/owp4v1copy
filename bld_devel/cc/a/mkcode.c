@@ -78,9 +78,10 @@ main()
             ++p;
             if( *p == '\0' ) break;
         }
-        fprintf( fp, "static byte_seq %s = {\n    ", cb->name );
         p = cb->burst;
-        len = (*p) + 1;
+        len = *p;
+        fprintf( fp, "static byte_seq %s = { 0x%2.2X, {\n    ", 
+            cb->name, *p++ );
         i = 0;
         for(;;) {
             fprintf( fp, "0x%2.2X", *p++ );
@@ -93,7 +94,7 @@ main()
                 i = 0;
             }
         }
-        fprintf( fp, "\n};\n\n" );
+        fprintf( fp, "\n} };\n\n" );
         cb++;
     }
     fclose( fp );
