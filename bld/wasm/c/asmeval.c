@@ -734,10 +734,8 @@ static int_8 calculate( expr_list *token_1,expr_list *token_2, uint_8 index )
                     token_1->value = sym->total_length;
                     break;
                 case T_SIZE:
-#if 0 /* this gives a screwy number for structure sizes */
                     token_1->value = sym->first_size;
                     break;
-#endif
                 case T_SIZEOF:
                     token_1->value = sym->total_size;
                     break;
