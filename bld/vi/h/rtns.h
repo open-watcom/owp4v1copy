@@ -392,6 +392,7 @@ int ToggleFontbar( void );
 int ToggleSSbar( void );
 
 /* fini.c */
+#pragma aux Quit aborts;
 void Quit( const char **, const char *, ... );
 void ExitEditor( int );
 void QuitEditor( int );
