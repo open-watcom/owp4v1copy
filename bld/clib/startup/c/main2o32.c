@@ -70,6 +70,7 @@
         #endif
     #endif
     extern      unsigned        __ThreadDataSize;
+    extern      void            __InitThreadData( thread_data *tdata );
 #endif
 
 void __F_NAME(__OS2Main,__wOS2Main)( unsigned hmod, unsigned reserved,
@@ -101,7 +102,7 @@ void __F_NAME(__OS2Main,__wOS2Main)( unsigned hmod, unsigned reserved,
         memset( tdata, 0, __ThreadDataSize );
         // tdata->__allocated = 0;
         tdata->__data_size = __ThreadDataSize;
-
+        __InitThreadData( tdata );
         __OS2MainInit( &xcpt, tdata, hmod, env, cmd );
         __F_NAME(__CMain,__wCMain)();
     }

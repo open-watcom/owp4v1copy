@@ -352,6 +352,29 @@ void    __ReleaseFList()
 #endif
 #endif
 
+thread_data *__AllocInitThreadData( thread_data *tdata )
+/******************************************************/
+{
+    if( tdata == NULL ) {
+        tdata = lib_malloc( __ThreadDataSize );
+        if( tdata != NULL ) {
+            tdata->__allocated = 1;
+            tdata->__data_size = __ThreadDataSize;
+        }
+    }
+    __InitThreadData( tdata );
+    return( tdata );
+}
+
+void __FreeInitThreadData( thread_data *tdata )
+/******************************************************/
+{
+    if( tdata != NULL ) {
+        if( tdata->__allocated == 1 )
+            lib_free( tdata );
+    }
+}
+
 _WCRTLINK void *__MultipleThread()
 {
     #if defined( __NT__ )

@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  OS/2 32-bit main routines for executables.
+* Description:  OS/2 32-bit main routines for executables and DLLs.
 *
 ****************************************************************************/
 
@@ -55,8 +55,6 @@ extern unsigned         __hmodule;
 unsigned short          __saved_CS;
 
 thread_data             *__FirstThreadData = NULL;
-thread_data             *__AllocInitThreadData( thread_data * );
-void                     __FreeInitThreadData( thread_data * );
 
 static void *__SingleThread()
 {
@@ -187,8 +185,6 @@ void __OS2Init( int is_dll, thread_data *tdata )
     sys_info                    _sysinfo;
 
     __Is_DLL = is_dll;
-
-    tdata = __AllocInitThreadData( tdata );
     __FirstThreadData = tdata;
 
     DosQuerySysInfo( QSV_VERSION_MAJOR, QSV_VERSION_MINOR,
@@ -229,8 +225,9 @@ void __OS2Init( int is_dll, thread_data *tdata )
 void __OS2Fini( void )
 /********************/
 {
-    // calls to free memory have to be done before semaphores closed
-    __FreeInitThreadData( __FirstThreadData );
+    // Thread data is either freed by the module that allocated it (for DLLs)
+    // or not at all (for executables - allocated from stack). Here we just
+    // make sure the pointer gets invalidated.
     __FirstThreadData = NULL;
 }
 

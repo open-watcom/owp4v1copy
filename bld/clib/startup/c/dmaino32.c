@@ -44,6 +44,7 @@
 #define INCL_DOSMODULEMGR
 #include <wos2.h>
 #include "initfini.h"
+#include "osthread.h"
 
 extern  unsigned            __hmodule;
 
@@ -74,6 +75,9 @@ extern  int                 __disallow_single_dgroup(unsigned);
     extern      void        __shutdown_stack_checking();
     extern      void        *__InitThreadProcessing(void);
     extern      void        __InitMultipleThread(void);
+    extern      thread_data *__AllocInitThreadData(thread_data *tdata);
+    extern      void        __FreeInitThreadData(thread_data *);
+    extern      thread_data *__FirstThreadData;
 
     #ifdef __386__
         #pragma aux     __ASTACKPTR "*";
@@ -98,6 +102,8 @@ static void APIENTRY LibMainExitList( ULONG reason ) {
         __FiniRtns( 0, 255 );
     #else
         __FiniRtns( FINI_PRIORITY_EXIT, 255 );
+        // calls to free memory have to be done before semaphores closed
+        __FreeInitThreadData( __FirstThreadData );
         __OS2Fini(); // must be done before following finalizers get called
         __FiniRtns( 0, FINI_PRIORITY_EXIT-1 );
     #endif
@@ -165,7 +171,7 @@ unsigned __LibMain( unsigned hmod, unsigned termination )
         }
         __InitRtns( 1 );
         if( __InitThreadProcessing() == NULL ) return( 0 );
-        __OS2Init( TRUE, NULL );
+        __OS2Init( TRUE, __AllocInitThreadData( NULL ) );
         for( i = 2; i <= __MaxThreads; i++ ) {
             if( !__OS2AddThread( i, NULL ) ) return( 0 );
         }
