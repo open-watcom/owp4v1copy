@@ -515,7 +515,8 @@ Boolean CoolBit_Set::remove (int start, int end) {
 
 Boolean CoolBit_Set::search (const CoolBit_Set& b) const {
   int len = min(this->number_elements, b.number_elements);
-  for (int i = 0; i < len; i++)                 // For each byte in set
+  int i;
+  for (i = 0; i < len; i++)                       // For each byte in set
     if ((this->data[i] & b.data[i]) != b.data[i]) // If not as first set
       return FALSE;                               // Then not a subset
   if (i < b.number_elements)                      // If more elements in 2nd

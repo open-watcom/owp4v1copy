@@ -126,7 +126,8 @@ Boolean CoolN_Node<Type,nchild>::insert_before (CoolN_Node<Type,nchild>& n, int 
     return FALSE;                               // Return failure status
   }
 #endif
-  for (int i = nchild-1; i > index; i--)        // For each pointer after index
+  int i;
+  for (i = nchild-1; i > index; i--)            // For each pointer after index
     this->sub_trees[i] = this->sub_trees[i-1];  // Move up one in vector
   this->sub_trees[i] = &n;                      // Pointer to new sub-tree
   return TRUE;                                  // Return success status
@@ -146,7 +147,8 @@ Boolean CoolN_Node<Type,nchild>::insert_after (CoolN_Node<Type,nchild>& n, int i
     return FALSE;                               // Return failure status
   }
 #endif
-  for (int i = nchild-1; i > index+1; i--)      // For each pointer after index
+  int i;
+  for (i = nchild-1; i > index+1; i--)          // For each pointer after index
     this->sub_trees[i] = this->sub_trees[i-1];  // Move up one in vector
   this->sub_trees[i] = &n;                      // Pointer to new sub-tree
   return TRUE;                                  // Return success status
