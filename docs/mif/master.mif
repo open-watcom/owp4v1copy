@@ -64,7 +64,7 @@ proj_objs= &
     ..\lang.ctl &
     ..\mif\depends.mif &
     ..\mif\books.mif &
-    ..\mif\makebook.mif &
+    ..\mif\master.mif &
     makefile
 
 gml_drivers= &
