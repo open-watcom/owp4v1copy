@@ -14,16 +14,16 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 acprel2 ]
 #================================
-    <CPCMD> <devdir>\wasm\nt386\wasm.exe  <relroot>\rel2\binnt\wasm.exe
-    <CPCMD> <devdir>\wasm\nt386\wasm.sym  <relroot>\rel2\binnt\wasm.sym
-#    <CPCMD> <devdir>\wasm\ntaxp\wasm.exe  <relroot>\rel2\axpnt\wasm.exe
-#    <CPCMD> <devdir>\wasm\ntaxp\wasm.sym  <relroot>\rel2\axpnt\wasm.sym
-    <CPCMD> <devdir>\wasm\os2386\wasm.exe <relroot>\rel2\binp\wasm.exe
-    <CPCMD> <devdir>\wasm\os2386\wasm.sym <relroot>\rel2\binp\wasm.sym
-    <CPCMD> <devdir>\wasm\dos386\wasm.exe <relroot>\rel2\binw\wasm.exe
-    <CPCMD> <devdir>\wasm\dos386\wasm.sym <relroot>\rel2\binw\wasm.sym
-#    <CPCMD> <devdir>\wasm\qnx386\wasm.qnx <relroot>\rel2\qnx\binq\wasm.
-#    <CPCMD> <devdir>\wasm\qnx386\wasm.sym <relroot>\rel2\qnx\sym\
+    <CPCMD> nt386\wasm.exe  <relroot>\rel2\binnt\wasm.exe
+    <CPCMD> nt386\wasm.sym  <relroot>\rel2\binnt\wasm.sym
+#    <CPCMD> ntaxp\wasm.exe  <relroot>\rel2\axpnt\wasm.exe
+#    <CPCMD> ntaxp\wasm.sym  <relroot>\rel2\axpnt\wasm.sym
+    <CPCMD> os2386\wasm.exe <relroot>\rel2\binp\wasm.exe
+    <CPCMD> os2386\wasm.sym <relroot>\rel2\binp\wasm.sym
+    <CPCMD> dos386\wasm.exe <relroot>\rel2\binw\wasm.exe
+    <CPCMD> dos386\wasm.sym <relroot>\rel2\binw\wasm.sym
+#    <CPCMD> qnx386\wasm.qnx <relroot>\rel2\qnx\binq\wasm.
+#    <CPCMD> qnx386\wasm.sym <relroot>\rel2\qnx\sym\
 
 [ BLOCK <1> clean ]
 #==================
