@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Path group handling.
 *
 ****************************************************************************/
 
@@ -44,17 +43,6 @@ extern void DropPGroup( PGROUP *pg )
     FreeSafe( pg );
 }
 
-static void truncatePart( char *part, size_t max )
-{
-    size_t len;
-
-    len = strlen( part );
-    if( len > max ) {
-        part[ max ] = '\0';
-    }
-}
-
-
 extern PGROUP *SplitPath( const char *path )
 /******************************************/
 {
@@ -65,10 +53,6 @@ extern PGROUP *SplitPath( const char *path )
 
     pg = MallocSafe( sizeof( PGROUP ) );
     _splitpath2( path, pg->buffer, &pg->drive, &pg->dir, &pg->fname, &pg->ext );
-    truncatePart( pg->drive, _MAX_DRIVE - 1 );
-    truncatePart( pg->dir, _MAX_DIR - 1 );
-    truncatePart( pg->fname, _MAX_FNAME - 1 );
-    truncatePart( pg->ext, _MAX_EXT - 1 );
     /*
         I don't really want to make the assumption that _splitpath2 will
         fill in the buffer like so:
