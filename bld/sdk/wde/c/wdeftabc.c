@@ -98,13 +98,13 @@ static WNDPROC                  WdeOriginalTabCProc;
 #define WWC_TABCONTROL   WC_TABCONTROL
 
 static DISPATCH_ITEM WdeTabCActions[] = {
-    { DESTROY           ,  WdeTabCDestroy               }
-,   { COPY              ,  WdeTabCCopyObject            }
-,   { VALIDATE_ACTION   ,  WdeTabCValidateAction        }
-,   { IDENTIFY          ,  WdeTabCIdentify              }
-,   { GET_WINDOW_CLASS  ,  WdeTabCGetWindowClass        }
-,   { DEFINE            ,  WdeTabCDefine                }
-,   { GET_WND_PROC      ,  WdeTabCGetWndProc            }
+    { DESTROY           ,  (BOOL (*)(OBJPTR, void *, void *))WdeTabCDestroy               }
+,   { COPY              ,  (BOOL (*)(OBJPTR, void *, void *))WdeTabCCopyObject            }
+,   { VALIDATE_ACTION   ,  (BOOL (*)(OBJPTR, void *, void *))WdeTabCValidateAction        }
+,   { IDENTIFY          ,  (BOOL (*)(OBJPTR, void *, void *))WdeTabCIdentify              }
+,   { GET_WINDOW_CLASS  ,  (BOOL (*)(OBJPTR, void *, void *))WdeTabCGetWindowClass        }
+,   { DEFINE            ,  (BOOL (*)(OBJPTR, void *, void *))WdeTabCDefine                }
+,   { GET_WND_PROC      ,  (BOOL (*)(OBJPTR, void *, void *))WdeTabCGetWndProc            }
 };
 
 #define MAX_ACTIONS      (sizeof(WdeTabCActions)/sizeof (DISPATCH_ITEM))
@@ -375,8 +375,8 @@ BOOL WdeTabCDefine ( WdeTabCObject *obj, POINT *pnt, void *p2 )
     o_info.obj_id    = obj->object_id;
     o_info.mask      = WS_VISIBLE | WS_DISABLED |
                         WS_TABSTOP | WS_GROUP | WS_BORDER;
-    o_info.set_func  = WdeTabCSetDefineInfo;
-    o_info.get_func  = WdeTabCGetDefineInfo;
+    o_info.set_func  = (WdeSetProc)WdeTabCSetDefineInfo;
+    o_info.get_func  = (WdeGetProc)WdeTabCGetDefineInfo;
     o_info.hook_func = WdeTabCDefineHook;
     o_info.win       = NULL;
 

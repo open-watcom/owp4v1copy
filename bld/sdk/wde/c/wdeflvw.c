@@ -98,13 +98,13 @@ static WNDPROC                  WdeOriginalLViewProc;
 #define WWC_LISTVIEW     WC_LISTVIEW
 
 static DISPATCH_ITEM WdeLViewActions[] = {
-    { DESTROY           ,  WdeLViewDestroy              }
-,   { COPY              ,  WdeLViewCopyObject           }
-,   { VALIDATE_ACTION   ,  WdeLViewValidateAction       }
-,   { IDENTIFY          ,  WdeLViewIdentify             }
-,   { GET_WINDOW_CLASS  ,  WdeLViewGetWindowClass       }
-,   { DEFINE            ,  WdeLViewDefine               }
-,   { GET_WND_PROC      ,  WdeLViewGetWndProc           }
+    { DESTROY           ,  (BOOL (*)(OBJPTR, void *, void *))WdeLViewDestroy              }
+,   { COPY              ,  (BOOL (*)(OBJPTR, void *, void *))WdeLViewCopyObject           }
+,   { VALIDATE_ACTION   ,  (BOOL (*)(OBJPTR, void *, void *))WdeLViewValidateAction       }
+,   { IDENTIFY          ,  (BOOL (*)(OBJPTR, void *, void *))WdeLViewIdentify             }
+,   { GET_WINDOW_CLASS  ,  (BOOL (*)(OBJPTR, void *, void *))WdeLViewGetWindowClass       }
+,   { DEFINE            ,  (BOOL (*)(OBJPTR, void *, void *))WdeLViewDefine               }
+,   { GET_WND_PROC      ,  (BOOL (*)(OBJPTR, void *, void *))WdeLViewGetWndProc           }
 };
 
 #define MAX_ACTIONS      (sizeof(WdeLViewActions)/sizeof (DISPATCH_ITEM))
@@ -375,8 +375,8 @@ BOOL WdeLViewDefine ( WdeLViewObject *obj, POINT *pnt, void *p2 )
     o_info.obj_id    = obj->object_id;
     o_info.mask      = WS_VISIBLE | WS_DISABLED |
                         WS_TABSTOP | WS_GROUP | WS_BORDER;
-    o_info.set_func  = WdeLViewSetDefineInfo;
-    o_info.get_func  = WdeLViewGetDefineInfo;
+    o_info.set_func  = (WdeSetProc)WdeLViewSetDefineInfo;
+    o_info.get_func  = (WdeGetProc)WdeLViewGetDefineInfo;
     o_info.hook_func = WdeLViewDefineHook;
     o_info.win       = NULL;
 

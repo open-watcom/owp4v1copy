@@ -98,13 +98,13 @@ static WNDPROC                  WdeOriginalTViewProc;
 #define WWC_TREEVIEW     WC_TREEVIEW
 
 static DISPATCH_ITEM WdeTViewActions[] = {
-    { DESTROY           ,  WdeTViewDestroy              }
-,   { COPY              ,  WdeTViewCopyObject           }
-,   { VALIDATE_ACTION   ,  WdeTViewValidateAction       }
-,   { IDENTIFY          ,  WdeTViewIdentify             }
-,   { GET_WINDOW_CLASS  ,  WdeTViewGetWindowClass       }
-,   { DEFINE            ,  WdeTViewDefine               }
-,   { GET_WND_PROC      ,  WdeTViewGetWndProc           }
+    { DESTROY           ,  (BOOL (*)(OBJPTR, void *, void *))WdeTViewDestroy              }
+,   { COPY              ,  (BOOL (*)(OBJPTR, void *, void *))WdeTViewCopyObject           }
+,   { VALIDATE_ACTION   ,  (BOOL (*)(OBJPTR, void *, void *))WdeTViewValidateAction       }
+,   { IDENTIFY          ,  (BOOL (*)(OBJPTR, void *, void *))WdeTViewIdentify             }
+,   { GET_WINDOW_CLASS  ,  (BOOL (*)(OBJPTR, void *, void *))WdeTViewGetWindowClass       }
+,   { DEFINE            ,  (BOOL (*)(OBJPTR, void *, void *))WdeTViewDefine               }
+,   { GET_WND_PROC      ,  (BOOL (*)(OBJPTR, void *, void *))WdeTViewGetWndProc           }
 };
 
 #define MAX_ACTIONS      (sizeof(WdeTViewActions)/sizeof (DISPATCH_ITEM))
@@ -375,8 +375,8 @@ BOOL WdeTViewDefine ( WdeTViewObject *obj, POINT *pnt, void *p2 )
     o_info.obj_id    = obj->object_id;
     o_info.mask      = WS_VISIBLE | WS_DISABLED |
                         WS_TABSTOP | WS_GROUP | WS_BORDER;
-    o_info.set_func  = WdeTViewSetDefineInfo;
-    o_info.get_func  = WdeTViewGetDefineInfo;
+    o_info.set_func  = (WdeSetProc)WdeTViewSetDefineInfo;
+    o_info.get_func  = (WdeGetProc)WdeTViewGetDefineInfo;
     o_info.hook_func = WdeTViewDefineHook;
     o_info.win       = NULL;
 

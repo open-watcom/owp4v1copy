@@ -100,13 +100,13 @@ static WNDPROC                  WdeOriginalSBarProc;
 #define WSTATUSCLASSNAME         STATUSCLASSNAME
 
 static DISPATCH_ITEM WdeSBarActions[] = {
-    { DESTROY           ,  WdeSBarDestroy               }
-,   { COPY              ,  WdeSBarCopyObject            }
-,   { VALIDATE_ACTION   ,  WdeSBarValidateAction        }
-,   { IDENTIFY          ,  WdeSBarIdentify              }
-,   { GET_WINDOW_CLASS  ,  WdeSBarGetWindowClass        }
-,   { DEFINE            ,  WdeSBarDefine                }
-,   { GET_WND_PROC      ,  WdeSBarGetWndProc            }
+    { DESTROY           ,  (BOOL (*)(OBJPTR, void *, void *))WdeSBarDestroy               }
+,   { COPY              ,  (BOOL (*)(OBJPTR, void *, void *))WdeSBarCopyObject            }
+,   { VALIDATE_ACTION   ,  (BOOL (*)(OBJPTR, void *, void *))WdeSBarValidateAction        }
+,   { IDENTIFY          ,  (BOOL (*)(OBJPTR, void *, void *))WdeSBarIdentify              }
+,   { GET_WINDOW_CLASS  ,  (BOOL (*)(OBJPTR, void *, void *))WdeSBarGetWindowClass        }
+,   { DEFINE            ,  (BOOL (*)(OBJPTR, void *, void *))WdeSBarDefine                }
+,   { GET_WND_PROC      ,  (BOOL (*)(OBJPTR, void *, void *))WdeSBarGetWndProc            }
 };
 
 #define MAX_ACTIONS      (sizeof(WdeSBarActions)/sizeof (DISPATCH_ITEM))
@@ -329,8 +329,8 @@ BOOL WdeSBarValidateAction ( WdeSBarObject *obj, ACTION *act, void *p2 )
     if( ( *act == MOVE ) || ( *act == RESIZE ) ) {
         OBJPTR  parent;
         OBJ_ID  id;
-        GetObjectParent( obj, &parent );
-        Forward( obj, IDENTIFY, &id, NULL );
+        GetObjectParent( (OBJPTR)obj, &parent );
+        Forward( (OBJPTR)obj, IDENTIFY, &id, NULL );
         if( id == DIALOG_OBJ ) {
             return( FALSE );
         }
@@ -422,8 +422,8 @@ BOOL WdeSBarDefine ( WdeSBarObject *obj, POINT *pnt, void *p2 )
     o_info.obj_id    = obj->object_id;
     o_info.mask      = WS_VISIBLE | WS_DISABLED |
                         WS_TABSTOP | WS_GROUP | WS_BORDER;
-    o_info.set_func  = WdeSBarSetDefineInfo;
-    o_info.get_func  = WdeSBarGetDefineInfo;
+    o_info.set_func  = (WdeSetProc)WdeSBarSetDefineInfo;
+    o_info.get_func  = (WdeGetProc)WdeSBarGetDefineInfo;
     o_info.hook_func = WdeSBarDefineHook;
     o_info.win       = NULL;
 

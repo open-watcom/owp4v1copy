@@ -119,13 +119,13 @@ static LIST                     *WdeCustClassList = NULL;
 static char                     WdeClassName[MAX_NAME];
 
 static DISPATCH_ITEM WdeCustomActions[] = {
-    { DESTROY           ,  WdeCustomDestroy             }
-,   { COPY              ,  WdeCustomCopyObject          }
-,   { VALIDATE_ACTION   ,  WdeCustomValidateAction      }
-,   { IDENTIFY          ,  WdeCustomIdentify            }
-,   { GET_WINDOW_CLASS  ,  WdeCustomGetWindowClass      }
-,   { DEFINE            ,  WdeCustomDefine              }
-,   { GET_WND_PROC      ,  WdeCustomGetWndProc          }
+    { DESTROY           ,  (BOOL (*)(OBJPTR, void *, void *))WdeCustomDestroy             }
+,   { COPY              ,  (BOOL (*)(OBJPTR, void *, void *))WdeCustomCopyObject          }
+,   { VALIDATE_ACTION   ,  (BOOL (*)(OBJPTR, void *, void *))WdeCustomValidateAction      }
+,   { IDENTIFY          ,  (BOOL (*)(OBJPTR, void *, void *))WdeCustomIdentify            }
+,   { GET_WINDOW_CLASS  ,  (BOOL (*)(OBJPTR, void *, void *))WdeCustomGetWindowClass      }
+,   { DEFINE            ,  (BOOL (*)(OBJPTR, void *, void *))WdeCustomDefine              }
+,   { GET_WND_PROC      ,  (BOOL (*)(OBJPTR, void *, void *))WdeCustomGetWndProc          }
 };
 
 #define MAX_ACTIONS      (sizeof(WdeCustomActions)/sizeof (DISPATCH_ITEM))
@@ -714,7 +714,7 @@ BOOL WdeCustomDefine ( WdeCustomObject *obj, POINT *pnt, void *p2 )
     _wde_touch(pnt);
     _wde_touch(p2);
 
-    if ( !Forward ( obj, GET_WINDOW_HANDLE, &o_info.win, NULL ) ) {
+    if ( !Forward ( (OBJPTR)obj, GET_WINDOW_HANDLE, &o_info.win, NULL ) ) {
         WdeWriteTrail("WdeControlDefine: GET_WINDOW_HANDLE failed!");
         return ( FALSE );
     }

@@ -98,13 +98,13 @@ static WNDPROC                  WdeOriginalHtKyProc;
 #define WHOTKEY_CLASS    HOTKEY_CLASS
 
 static DISPATCH_ITEM WdeHtKyActions[] = {
-    { DESTROY           ,  WdeHtKyDestroy               }
-,   { COPY              ,  WdeHtKyCopyObject            }
-,   { VALIDATE_ACTION   ,  WdeHtKyValidateAction        }
-,   { IDENTIFY          ,  WdeHtKyIdentify              }
-,   { GET_WINDOW_CLASS  ,  WdeHtKyGetWindowClass        }
-,   { DEFINE            ,  WdeHtKyDefine                }
-,   { GET_WND_PROC      ,  WdeHtKyGetWndProc            }
+    { DESTROY           ,  (BOOL (*)(OBJPTR, void *, void *))WdeHtKyDestroy               }
+,   { COPY              ,  (BOOL (*)(OBJPTR, void *, void *))WdeHtKyCopyObject            }
+,   { VALIDATE_ACTION   ,  (BOOL (*)(OBJPTR, void *, void *))WdeHtKyValidateAction        }
+,   { IDENTIFY          ,  (BOOL (*)(OBJPTR, void *, void *))WdeHtKyIdentify              }
+,   { GET_WINDOW_CLASS  ,  (BOOL (*)(OBJPTR, void *, void *))WdeHtKyGetWindowClass        }
+,   { DEFINE            ,  (BOOL (*)(OBJPTR, void *, void *))WdeHtKyDefine                }
+,   { GET_WND_PROC      ,  (BOOL (*)(OBJPTR, void *, void *))WdeHtKyGetWndProc            }
 };
 
 #define MAX_ACTIONS      (sizeof(WdeHtKyActions)/sizeof (DISPATCH_ITEM))
@@ -375,8 +375,8 @@ BOOL WdeHtKyDefine ( WdeHtKyObject *obj, POINT *pnt, void *p2 )
     o_info.obj_id    = obj->object_id;
     o_info.mask      = WS_VISIBLE | WS_DISABLED |
                         WS_TABSTOP | WS_GROUP | WS_BORDER;
-    o_info.set_func  = WdeHtKySetDefineInfo;
-    o_info.get_func  = WdeHtKyGetDefineInfo;
+    o_info.set_func  = (WdeSetProc)WdeHtKySetDefineInfo;
+    o_info.get_func  = (WdeGetProc)WdeHtKyGetDefineInfo;
     o_info.hook_func = WdeHtKyDefineHook;
     o_info.win       = NULL;
 

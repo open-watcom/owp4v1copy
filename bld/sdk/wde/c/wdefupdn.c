@@ -98,13 +98,13 @@ static WNDPROC                  WdeOriginalUpDnProc;
 #define WUPDOWN_CLASS    UPDOWN_CLASS
 
 static DISPATCH_ITEM WdeUpDnActions[] = {
-    { DESTROY           ,  WdeUpDnDestroy               }
-,   { COPY              ,  WdeUpDnCopyObject            }
-,   { VALIDATE_ACTION   ,  WdeUpDnValidateAction        }
-,   { IDENTIFY          ,  WdeUpDnIdentify              }
-,   { GET_WINDOW_CLASS  ,  WdeUpDnGetWindowClass        }
-,   { DEFINE            ,  WdeUpDnDefine                }
-,   { GET_WND_PROC      ,  WdeUpDnGetWndProc            }
+    { DESTROY           ,  (BOOL (*)(OBJPTR, void *, void *))WdeUpDnDestroy               }
+,   { COPY              ,  (BOOL (*)(OBJPTR, void *, void *))WdeUpDnCopyObject            }
+,   { VALIDATE_ACTION   ,  (BOOL (*)(OBJPTR, void *, void *))WdeUpDnValidateAction        }
+,   { IDENTIFY          ,  (BOOL (*)(OBJPTR, void *, void *))WdeUpDnIdentify              }
+,   { GET_WINDOW_CLASS  ,  (BOOL (*)(OBJPTR, void *, void *))WdeUpDnGetWindowClass        }
+,   { DEFINE            ,  (BOOL (*)(OBJPTR, void *, void *))WdeUpDnDefine                }
+,   { GET_WND_PROC      ,  (BOOL (*)(OBJPTR, void *, void *))WdeUpDnGetWndProc            }
 };
 
 #define MAX_ACTIONS      (sizeof(WdeUpDnActions)/sizeof (DISPATCH_ITEM))
@@ -375,8 +375,8 @@ BOOL WdeUpDnDefine ( WdeUpDnObject *obj, POINT *pnt, void *p2 )
     o_info.obj_id    = obj->object_id;
     o_info.mask      = WS_VISIBLE | WS_DISABLED |
                         WS_TABSTOP | WS_GROUP | WS_BORDER;
-    o_info.set_func  = WdeUpDnSetDefineInfo;
-    o_info.get_func  = WdeUpDnGetDefineInfo;
+    o_info.set_func  = (WdeSetProc)WdeUpDnSetDefineInfo;
+    o_info.get_func  = (WdeGetProc)WdeUpDnGetDefineInfo;
     o_info.hook_func = WdeUpDnDefineHook;
     o_info.win       = NULL;
 

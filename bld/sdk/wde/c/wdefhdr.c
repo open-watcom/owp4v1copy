@@ -98,13 +98,13 @@ static WNDPROC                  WdeOriginalHdrProc;
 #define WWC_HEADER       WC_HEADER
 
 static DISPATCH_ITEM WdeHdrActions[] = {
-    { DESTROY           ,  WdeHdrDestroy                }
-,   { COPY              ,  WdeHdrCopyObject             }
-,   { VALIDATE_ACTION   ,  WdeHdrValidateAction }
-,   { IDENTIFY          ,  WdeHdrIdentify               }
-,   { GET_WINDOW_CLASS  ,  WdeHdrGetWindowClass }
-,   { DEFINE            ,  WdeHdrDefine         }
-,   { GET_WND_PROC      ,  WdeHdrGetWndProc             }
+    { DESTROY           ,  (BOOL (*)(OBJPTR, void *, void *))WdeHdrDestroy        }
+,   { COPY              ,  (BOOL (*)(OBJPTR, void *, void *))WdeHdrCopyObject     }
+,   { VALIDATE_ACTION   ,  (BOOL (*)(OBJPTR, void *, void *))WdeHdrValidateAction }
+,   { IDENTIFY          ,  (BOOL (*)(OBJPTR, void *, void *))WdeHdrIdentify       }
+,   { GET_WINDOW_CLASS  ,  (BOOL (*)(OBJPTR, void *, void *))WdeHdrGetWindowClass }
+,   { DEFINE            ,  (BOOL (*)(OBJPTR, void *, void *))WdeHdrDefine         }
+,   { GET_WND_PROC      ,  (BOOL (*)(OBJPTR, void *, void *))WdeHdrGetWndProc     }
 };
 
 #define MAX_ACTIONS      (sizeof(WdeHdrActions)/sizeof (DISPATCH_ITEM))
@@ -375,8 +375,8 @@ BOOL WdeHdrDefine ( WdeHdrObject *obj, POINT *pnt, void *p2 )
     o_info.obj_id    = obj->object_id;
     o_info.mask      = WS_VISIBLE | WS_DISABLED |
                         WS_TABSTOP | WS_GROUP | WS_BORDER;
-    o_info.set_func  = WdeHdrSetDefineInfo;
-    o_info.get_func  = WdeHdrGetDefineInfo;
+    o_info.set_func  = (WdeSetProc)WdeHdrSetDefineInfo;
+    o_info.get_func  = (WdeGetProc)WdeHdrGetDefineInfo;
     o_info.hook_func = WdeHdrDefineHook;
     o_info.win       = NULL;
 

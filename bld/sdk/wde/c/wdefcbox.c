@@ -96,13 +96,13 @@ static WNDPROC                  WdeOriginalCBoxProc;
 //static WNDPROC                        WdeCBoxProc;
 
 static DISPATCH_ITEM WdeCBoxActions[] = {
-    { DESTROY           ,  WdeCBoxDestroy               }
-,   { COPY              ,  WdeCBoxCopyObject            }
-,   { VALIDATE_ACTION   ,  WdeCBoxValidateAction        }
-,   { IDENTIFY          ,  WdeCBoxIdentify              }
-,   { GET_WINDOW_CLASS  ,  WdeCBoxGetWindowClass        }
-,   { DEFINE            ,  WdeCBoxDefine                }
-,   { GET_WND_PROC      ,  WdeCBoxGetWndProc            }
+    { DESTROY           ,  (BOOL (*)(OBJPTR, void *, void *))WdeCBoxDestroy               }
+,   { COPY              ,  (BOOL (*)(OBJPTR, void *, void *))WdeCBoxCopyObject            }
+,   { VALIDATE_ACTION   ,  (BOOL (*)(OBJPTR, void *, void *))WdeCBoxValidateAction        }
+,   { IDENTIFY          ,  (BOOL (*)(OBJPTR, void *, void *))WdeCBoxIdentify              }
+,   { GET_WINDOW_CLASS  ,  (BOOL (*)(OBJPTR, void *, void *))WdeCBoxGetWindowClass        }
+,   { DEFINE            ,  (BOOL (*)(OBJPTR, void *, void *))WdeCBoxDefine                }
+,   { GET_WND_PROC      ,  (BOOL (*)(OBJPTR, void *, void *))WdeCBoxGetWndProc            }
 };
 
 #define MAX_ACTIONS      (sizeof(WdeCBoxActions)/sizeof (DISPATCH_ITEM))
@@ -372,8 +372,8 @@ BOOL WdeCBoxDefine ( WdeCBoxObject *obj, POINT *pnt, void *p2 )
     o_info.obj_id     = obj->object_id;
     o_info.mask       = WS_VISIBLE | WS_DISABLED | WS_TABSTOP | WS_GROUP |
                         WS_VSCROLL | WS_HSCROLL;
-    o_info.set_func   = WdeCBoxSetDefineInfo;
-    o_info.get_func   = WdeCBoxGetDefineInfo;
+    o_info.set_func   = (WdeSetProc)WdeCBoxSetDefineInfo;
+    o_info.get_func   = (WdeGetProc)WdeCBoxGetDefineInfo;
     o_info.hook_func  = WdeCBoxDefineHook;
     o_info.win        = NULL;
 

@@ -97,15 +97,15 @@ static WNDPROC                  WdeOriginalScrollProc;
 //static WNDPROC                        WdeScrollProc;
 
 static DISPATCH_ITEM WdeScrollActions[] = {
-    { DESTROY           ,  WdeScrollDestroy             }
-,   { MOVE              ,  WdeScrollMove                }
-,   { RESIZE            ,  WdeScrollResize              }
-,   { COPY              ,  WdeScrollCopyObject          }
-,   { VALIDATE_ACTION   ,  WdeScrollValidateAction      }
-,   { IDENTIFY          ,  WdeScrollIdentify            }
-,   { GET_WINDOW_CLASS  ,  WdeScrollGetWindowClass      }
-,   { DEFINE            ,  WdeScrollDefine              }
-,   { GET_WND_PROC      ,  WdeScrollGetWndProc          }
+    { DESTROY           ,  (BOOL (*)(OBJPTR, void *, void *))WdeScrollDestroy             }
+,   { MOVE              ,  (BOOL (*)(OBJPTR, void *, void *))WdeScrollMove                }
+,   { RESIZE            ,  (BOOL (*)(OBJPTR, void *, void *))WdeScrollResize              }
+,   { COPY              ,  (BOOL (*)(OBJPTR, void *, void *))WdeScrollCopyObject          }
+,   { VALIDATE_ACTION   ,  (BOOL (*)(OBJPTR, void *, void *))WdeScrollValidateAction      }
+,   { IDENTIFY          ,  (BOOL (*)(OBJPTR, void *, void *))WdeScrollIdentify            }
+,   { GET_WINDOW_CLASS  ,  (BOOL (*)(OBJPTR, void *, void *))WdeScrollGetWindowClass      }
+,   { DEFINE            ,  (BOOL (*)(OBJPTR, void *, void *))WdeScrollDefine              }
+,   { GET_WND_PROC      ,  (BOOL (*)(OBJPTR, void *, void *))WdeScrollGetWndProc          }
 };
 
 #define MAX_ACTIONS      (sizeof(WdeScrollActions)/sizeof (DISPATCH_ITEM))
@@ -317,7 +317,7 @@ BOOL WdeScrollResize ( WdeScrollObject *obj, RECT *new_pos, BOOL *flag )
 {
     WdeOrderMode        mode;
 
-    if( Forward( obj, GET_ORDER_MODE, &mode, NULL ) &&
+    if( Forward( (OBJPTR)obj, GET_ORDER_MODE, &mode, NULL ) &&
         ( mode != WdeSelect ) ) {
         return( FALSE );
     }
@@ -369,7 +369,7 @@ BOOL WdeScrollValidateAction ( WdeScrollObject *obj, ACTION *act, void *p2 )
     _wde_touch(p2);
 
     if( *act == MOVE || *act == RESIZE ) {
-        if( Forward( obj, GET_ORDER_MODE, &mode, NULL ) &&
+        if( Forward( (OBJPTR)obj, GET_ORDER_MODE, &mode, NULL ) &&
             ( mode != WdeSelect ) ) {
             return( FALSE );
         }
@@ -460,8 +460,8 @@ BOOL WdeScrollDefine ( WdeScrollObject *obj, POINT *pnt, void *p2 )
     o_info.obj        = obj->object_handle;
     o_info.obj_id     = obj->object_id;
     o_info.mask       = WS_VISIBLE | WS_DISABLED | WS_TABSTOP | WS_GROUP;
-    o_info.set_func   = WdeScrollSetDefineInfo;
-    o_info.get_func   = WdeScrollGetDefineInfo;
+    o_info.set_func   = (WdeSetProc)WdeScrollSetDefineInfo;
+    o_info.get_func   = (WdeGetProc)WdeScrollGetDefineInfo;
     o_info.hook_func  = WdeScrollDefineHook;
     o_info.win        = NULL;
 

@@ -98,13 +98,13 @@ static WNDPROC                  WdeOriginalAniCProc;
 #define WANIMATE_CLASS   ANIMATE_CLASS
 
 static DISPATCH_ITEM WdeAniCActions[] = {
-    { DESTROY           ,  WdeAniCDestroy               }
-,   { COPY              ,  WdeAniCCopyObject            }
-,   { VALIDATE_ACTION   ,  WdeAniCValidateAction        }
-,   { IDENTIFY          ,  WdeAniCIdentify              }
-,   { GET_WINDOW_CLASS  ,  WdeAniCGetWindowClass        }
-,   { DEFINE            ,  WdeAniCDefine                }
-,   { GET_WND_PROC      ,  WdeAniCGetWndProc            }
+    { DESTROY           ,  (BOOL (*)(OBJPTR, void *, void *))WdeAniCDestroy               }
+,   { COPY              ,  (BOOL (*)(OBJPTR, void *, void *))WdeAniCCopyObject            }
+,   { VALIDATE_ACTION   ,  (BOOL (*)(OBJPTR, void *, void *))WdeAniCValidateAction        }
+,   { IDENTIFY          ,  (BOOL (*)(OBJPTR, void *, void *))WdeAniCIdentify              }
+,   { GET_WINDOW_CLASS  ,  (BOOL (*)(OBJPTR, void *, void *))WdeAniCGetWindowClass        }
+,   { DEFINE            ,  (BOOL (*)(OBJPTR, void *, void *))WdeAniCDefine                }
+,   { GET_WND_PROC      ,  (BOOL (*)(OBJPTR, void *, void *))WdeAniCGetWndProc            }
 };
 
 #define MAX_ACTIONS      (sizeof(WdeAniCActions)/sizeof (DISPATCH_ITEM))
@@ -375,8 +375,8 @@ BOOL WdeAniCDefine ( WdeAniCObject *obj, POINT *pnt, void *p2 )
     o_info.obj_id    = obj->object_id;
     o_info.mask      = WS_VISIBLE | WS_DISABLED |
                         WS_TABSTOP | WS_GROUP | WS_BORDER;
-    o_info.set_func  = WdeAniCSetDefineInfo;
-    o_info.get_func  = WdeAniCGetDefineInfo;
+    o_info.set_func  = (WdeSetProc)WdeAniCSetDefineInfo;
+    o_info.get_func  = (WdeGetProc)WdeAniCGetDefineInfo;
     o_info.hook_func = WdeAniCDefineHook;
     o_info.win       = NULL;
 

@@ -92,13 +92,13 @@ static WNDPROC                  WdeOriginalStaticProc;
 //static WNDPROC                        WdeStaticProc;
 
 static DISPATCH_ITEM WdeStaticActions[] = {
-    { DESTROY           ,  WdeStaticDestroy             }
-,   { COPY              ,  WdeStaticCopyObject          }
-,   { VALIDATE_ACTION   ,  WdeStaticValidateAction      }
-,   { IDENTIFY          ,  WdeStaticIdentify            }
-,   { GET_WINDOW_CLASS  ,  WdeStaticGetWindowClass      }
-,   { DEFINE            ,  WdeStaticDefine              }
-,   { GET_WND_PROC      ,  WdeStaticGetWndProc          }
+    { DESTROY           ,  (BOOL (*)(OBJPTR, void *, void *))WdeStaticDestroy             }
+,   { COPY              ,  (BOOL (*)(OBJPTR, void *, void *))WdeStaticCopyObject          }
+,   { VALIDATE_ACTION   ,  (BOOL (*)(OBJPTR, void *, void *))WdeStaticValidateAction      }
+,   { IDENTIFY          ,  (BOOL (*)(OBJPTR, void *, void *))WdeStaticIdentify            }
+,   { GET_WINDOW_CLASS  ,  (BOOL (*)(OBJPTR, void *, void *))WdeStaticGetWindowClass      }
+,   { DEFINE            ,  (BOOL (*)(OBJPTR, void *, void *))WdeStaticDefine              }
+,   { GET_WND_PROC      ,  (BOOL (*)(OBJPTR, void *, void *))WdeStaticGetWndProc          }
 };
 
 #define MAX_ACTIONS      (sizeof(WdeStaticActions)/sizeof (DISPATCH_ITEM))
@@ -397,8 +397,8 @@ BOOL WdeStaticDefine ( WdeStaticObject *obj, POINT *pnt, void *p2 )
     o_info.obj        = obj->object_handle;
     o_info.obj_id     = obj->object_id;
     o_info.mask       = WS_VISIBLE | WS_DISABLED | WS_TABSTOP | WS_GROUP;
-    o_info.set_func   = WdeStaticSetDefineInfo;
-    o_info.get_func   = WdeStaticGetDefineInfo;
+    o_info.set_func   = (WdeSetProc)WdeStaticSetDefineInfo;
+    o_info.get_func   = (WdeGetProc)WdeStaticGetDefineInfo;
     o_info.hook_func  = NULL;
     o_info.win        = NULL;
 

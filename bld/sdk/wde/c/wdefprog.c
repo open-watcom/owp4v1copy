@@ -98,13 +98,13 @@ static WNDPROC                  WdeOriginalProgProc;
 #define WPROGRESS_CLASS  PROGRESS_CLASS
 
 static DISPATCH_ITEM WdeProgActions[] = {
-    { DESTROY           ,  WdeProgDestroy               }
-,   { COPY              ,  WdeProgCopyObject            }
-,   { VALIDATE_ACTION   ,  WdeProgValidateAction        }
-,   { IDENTIFY          ,  WdeProgIdentify              }
-,   { GET_WINDOW_CLASS  ,  WdeProgGetWindowClass        }
-,   { DEFINE            ,  WdeProgDefine                }
-,   { GET_WND_PROC      ,  WdeProgGetWndProc            }
+    { DESTROY           ,  (BOOL (*)(OBJPTR, void *, void *))WdeProgDestroy               }
+,   { COPY              ,  (BOOL (*)(OBJPTR, void *, void *))WdeProgCopyObject            }
+,   { VALIDATE_ACTION   ,  (BOOL (*)(OBJPTR, void *, void *))WdeProgValidateAction        }
+,   { IDENTIFY          ,  (BOOL (*)(OBJPTR, void *, void *))WdeProgIdentify              }
+,   { GET_WINDOW_CLASS  ,  (BOOL (*)(OBJPTR, void *, void *))WdeProgGetWindowClass        }
+,   { DEFINE            ,  (BOOL (*)(OBJPTR, void *, void *))WdeProgDefine                }
+,   { GET_WND_PROC      ,  (BOOL (*)(OBJPTR, void *, void *))WdeProgGetWndProc            }
 };
 
 #define MAX_ACTIONS      (sizeof(WdeProgActions)/sizeof (DISPATCH_ITEM))
@@ -375,8 +375,8 @@ BOOL WdeProgDefine ( WdeProgObject *obj, POINT *pnt, void *p2 )
     o_info.obj_id    = obj->object_id;
     o_info.mask      = WS_VISIBLE | WS_DISABLED |
                         WS_TABSTOP | WS_GROUP | WS_BORDER;
-    o_info.set_func  = WdeProgSetDefineInfo;
-    o_info.get_func  = WdeProgGetDefineInfo;
+    o_info.set_func  = (WdeSetProc)WdeProgSetDefineInfo;
+    o_info.get_func  = (WdeGetProc)WdeProgGetDefineInfo;
     o_info.hook_func = WdeProgDefineHook;
     o_info.win       = NULL;
 

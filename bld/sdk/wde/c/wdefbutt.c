@@ -101,13 +101,13 @@ static WNDPROC                  WdeOriginalButtonProc;
 //static WNDPROC                        WdeButtonProc;
 
 static DISPATCH_ITEM WdeButtonActions[] = {
-    { DESTROY           ,  WdeButtonDestroy             }
-,   { COPY              ,  WdeButtonCopyObject          }
-,   { VALIDATE_ACTION   ,  WdeButtonValidateAction      }
-,   { IDENTIFY          ,  WdeButtonIdentify            }
-,   { GET_WINDOW_CLASS  ,  WdeButtonGetWindowClass      }
-,   { DEFINE            ,  WdeButtonDefine              }
-,   { GET_WND_PROC      ,  WdeButtonGetWndProc          }
+    { DESTROY           ,  (BOOL (*)(OBJPTR, void *, void *))WdeButtonDestroy             }
+,   { COPY              ,  (BOOL (*)(OBJPTR, void *, void *))WdeButtonCopyObject          }
+,   { VALIDATE_ACTION   ,  (BOOL (*)(OBJPTR, void *, void *))WdeButtonValidateAction      }
+,   { IDENTIFY          ,  (BOOL (*)(OBJPTR, void *, void *))WdeButtonIdentify            }
+,   { GET_WINDOW_CLASS  ,  (BOOL (*)(OBJPTR, void *, void *))WdeButtonGetWindowClass      }
+,   { DEFINE            ,  (BOOL (*)(OBJPTR, void *, void *))WdeButtonDefine              }
+,   { GET_WND_PROC      ,  (BOOL (*)(OBJPTR, void *, void *))WdeButtonGetWndProc          }
 };
 
 #define MAX_ACTIONS      (sizeof(WdeButtonActions)/sizeof (DISPATCH_ITEM))
@@ -352,13 +352,13 @@ static BOOL WdeValidateGroupBoxMove( WdeButtonObject *obj, POINT *pnt)
     WdeDialogBoxControl *info;
     WdeOrderMode        mode;
 
-    if( Forward( obj, GET_ORDER_MODE, &mode, NULL ) &&
+    if( Forward( (OBJPTR)obj, GET_ORDER_MODE, &mode, NULL ) &&
         ( mode != WdeSelect ) ) {
         return( FALSE );
     }
 
-    Location ( obj, &obj_rect );
-    GetObjectParent ( obj, &parent );
+    Location ( (OBJPTR)obj, &obj_rect );
+    GetObjectParent ( (OBJPTR)obj, &parent );
 
     if( Forward( obj->control, GET_OBJECT_INFO, &info, NULL ) &&
         parent && Forward( parent, GET_RESIZER, &resizer, NULL ) ) {
@@ -484,8 +484,8 @@ BOOL WdeButtonDefine ( WdeButtonObject *obj, POINT *pnt, void *p2 )
     o_info.obj       = obj->object_handle;
     o_info.obj_id    = obj->object_id;
     o_info.mask      = WS_VISIBLE | WS_DISABLED | WS_TABSTOP | WS_GROUP;
-    o_info.set_func  = WdeButtonSetDefineInfo;
-    o_info.get_func  = WdeButtonGetDefineInfo;
+    o_info.set_func  = (WdeSetProc)WdeButtonSetDefineInfo;
+    o_info.get_func  = (WdeGetProc)WdeButtonGetDefineInfo;
     o_info.hook_func = NULL;
     o_info.win       = NULL;
 

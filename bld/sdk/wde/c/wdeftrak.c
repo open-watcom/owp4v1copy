@@ -98,13 +98,13 @@ static WNDPROC                  WdeOriginalTrakProc;
 #define WTRACKBAR_CLASS  TRACKBAR_CLASS
 
 static DISPATCH_ITEM WdeTrakActions[] = {
-    { DESTROY           ,  WdeTrakDestroy               }
-,   { COPY              ,  WdeTrakCopyObject            }
-,   { VALIDATE_ACTION   ,  WdeTrakValidateAction        }
-,   { IDENTIFY          ,  WdeTrakIdentify              }
-,   { GET_WINDOW_CLASS  ,  WdeTrakGetWindowClass        }
-,   { DEFINE            ,  WdeTrakDefine                }
-,   { GET_WND_PROC      ,  WdeTrakGetWndProc            }
+    { DESTROY           ,  (BOOL (*)(OBJPTR, void *, void *))WdeTrakDestroy               }
+,   { COPY              ,  (BOOL (*)(OBJPTR, void *, void *))WdeTrakCopyObject            }
+,   { VALIDATE_ACTION   ,  (BOOL (*)(OBJPTR, void *, void *))WdeTrakValidateAction        }
+,   { IDENTIFY          ,  (BOOL (*)(OBJPTR, void *, void *))WdeTrakIdentify              }
+,   { GET_WINDOW_CLASS  ,  (BOOL (*)(OBJPTR, void *, void *))WdeTrakGetWindowClass        }
+,   { DEFINE            ,  (BOOL (*)(OBJPTR, void *, void *))WdeTrakDefine                }
+,   { GET_WND_PROC      ,  (BOOL (*)(OBJPTR, void *, void *))WdeTrakGetWndProc            }
 };
 
 #define MAX_ACTIONS      (sizeof(WdeTrakActions)/sizeof (DISPATCH_ITEM))
@@ -375,8 +375,8 @@ BOOL WdeTrakDefine ( WdeTrakObject *obj, POINT *pnt, void *p2 )
     o_info.obj_id    = obj->object_id;
     o_info.mask      = WS_VISIBLE | WS_DISABLED |
                         WS_TABSTOP | WS_GROUP | WS_BORDER;
-    o_info.set_func  = WdeTrakSetDefineInfo;
-    o_info.get_func  = WdeTrakGetDefineInfo;
+    o_info.set_func  = (WdeSetProc)WdeTrakSetDefineInfo;
+    o_info.get_func  = (WdeGetProc)WdeTrakGetDefineInfo;
     o_info.hook_func = WdeTrakDefineHook;
     o_info.win       = NULL;
 

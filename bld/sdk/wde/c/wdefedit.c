@@ -94,13 +94,13 @@ static WNDPROC                  WdeOriginalEditProc;
 //static WNDPROC                        WdeEditProc;
 
 static DISPATCH_ITEM WdeEditActions[] = {
-    { DESTROY           ,  WdeEditDestroy               }
-,   { COPY              ,  WdeEditCopyObject            }
-,   { VALIDATE_ACTION   ,  WdeEditValidateAction        }
-,   { IDENTIFY          ,  WdeEditIdentify              }
-,   { GET_WINDOW_CLASS  ,  WdeEditGetWindowClass        }
-,   { DEFINE            ,  WdeEditDefine                }
-,   { GET_WND_PROC      ,  WdeEditGetWndProc            }
+    { DESTROY           ,  (BOOL (*)(OBJPTR, void *, void *))WdeEditDestroy               }
+,   { COPY              ,  (BOOL (*)(OBJPTR, void *, void *))WdeEditCopyObject            }
+,   { VALIDATE_ACTION   ,  (BOOL (*)(OBJPTR, void *, void *))WdeEditValidateAction        }
+,   { IDENTIFY          ,  (BOOL (*)(OBJPTR, void *, void *))WdeEditIdentify              }
+,   { GET_WINDOW_CLASS  ,  (BOOL (*)(OBJPTR, void *, void *))WdeEditGetWindowClass        }
+,   { DEFINE            ,  (BOOL (*)(OBJPTR, void *, void *))WdeEditDefine                }
+,   { GET_WND_PROC      ,  (BOOL (*)(OBJPTR, void *, void *))WdeEditGetWndProc            }
 };
 
 #define MAX_ACTIONS      (sizeof(WdeEditActions)/sizeof (DISPATCH_ITEM))
@@ -374,8 +374,8 @@ BOOL WdeEditDefine ( WdeEditObject *obj, POINT *pnt, void *p2 )
     o_info.obj_id     = obj->object_id;
     o_info.mask       = WS_VISIBLE | WS_DISABLED | WS_VSCROLL | WS_HSCROLL |
                         WS_TABSTOP | WS_GROUP | WS_BORDER | WS_THICKFRAME;
-    o_info.set_func   = WdeEditSetDefineInfo;
-    o_info.get_func   = WdeEditGetDefineInfo;
+    o_info.set_func   = (WdeSetProc)WdeEditSetDefineInfo;
+    o_info.get_func   = (WdeGetProc)WdeEditGetDefineInfo;
     o_info.hook_func  = WdeEditDefineHook;
     o_info.win        = NULL;
 
