@@ -6,12 +6,6 @@ cd %devdir%\wmake\regress
 
 if exist ERROR.OUT del ERROR.OUT
 if .%1 == . goto usage
-:: notrack.bvi filters memory tracking diagnostics from wmake outputs
->  notrack.bvi echo g/^^Error(E78): Error in Memory Tracking Encountered/d
-:: >> notrack.bvi echo g/^^0.^*chunks.^*unfreed$/d
-:: >> notrack.bvi echo g/^^$/d
->> notrack.bvi echo w
->> notrack.bvi echo q
 
 REM ===========================
 REM -- test1 - Multiple Dependents Test
