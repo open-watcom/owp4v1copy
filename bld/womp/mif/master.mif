@@ -133,7 +133,7 @@ usagej.rc : ..\usage.sp
 
 ..\h\wmpmsg.h : ../womp.msg
     copy ..\womp.msg ..\h\wmpmsg.h
-    vi -q -d -i -s makemsg.vi ..\h\wmpmsg.h
+    vi -q -d -i -s ..\h\makemsg.vi ..\h\wmpmsg.h
 
 !include $(womp_dir)\mif\depends.mif
 

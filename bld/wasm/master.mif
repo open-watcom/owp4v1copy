@@ -130,10 +130,10 @@ $(proj_name).res : ../h/$(proj_name).rc ../h/asmshare.msg ../h/$(proj_name).msg 
         $(RC) /bt=windows /d_WASM_ /r /zk0 /fo=$^@ ..\h\$(proj_name).rc
 
 usage.rc : ../h/usage.sp
-        $(bld_bin)\wsplice -kIS_RC -kENGLISH -k$(host_OS) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\""../h/usage.sp usage.rc
+        $(bld_bin)\wsplice -kIS_RC -kENGLISH -k$(host_OS) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" ../h/usage.sp usage.rc
 
 usagej.rc : ../h/usage.sp
-        $(bld_bin)\wsplice -kIS_RC -kJAPANESE -k$(host_OS) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\""../h/usage.sp usagej.rc
+        $(bld_bin)\wsplice -kIS_RC -kJAPANESE -k$(host_OS) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" ../h/usage.sp usagej.rc
 
 ../h/msg.gh : ../h/asmshare.msg
         @SET OLD_CWD=$+$(%cwd)$-
