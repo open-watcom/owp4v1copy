@@ -4,5 +4,6 @@ host_os  = os2
 host_cpu = 386
 
 release_cg = 0
+debug = 1
 
 !include ../mif/master.mif

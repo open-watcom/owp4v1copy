@@ -155,13 +155,15 @@ extra_c_flags += $(defines)
 def_targ = wcc$(target_CPU)
 !endif
 !ifndef def_targ
-!ifeq release 1
+!ifdef debug
+def_targ        = $(dxname)
+!else ifeq release 1
 def_targ_os2    = $(dllexe).exe
 def_targ_nt     = $(dllexe).exe
 def_targ        = $(xname)
 !else
-def_targ_os2    = $(dxname)
-def_targ_nt     = $(dxname)
+def_targ_os2    = $(dllexe).exe
+def_targ_nt     = $(dllexe).exe
 def_targ        = $(dxname)
 !endif
 !ifdef def_targ_$(host_os)
