@@ -27,82 +27,76 @@ Contents
 15  Header File Layout
 16  C++ Class Definitions
 18  C++ Inline Member Functions
-19  Naming Conventions
-19  Type Definitions
-19  Enumerations
-19  Structures and Unions
-20  C++ Classes
-20  Global Variables
-20  Functions
 
 
 
 Introduction
 
-Open Watcom products are usually written in C, C++ and Assembler. This
-document describes the style conventions used by Open Watcom for the
-development of all software products, and is intended to be used as a guideline if you
-are going to be modifying the source code in any way. Any contributed code that is to
-be included in a Open Watcom product MUST follows these style guidelines. By
-following these style guidelines, all the source code for Open Watcom products will
-be in a consistent format, which will ease the burden of finding ones way around the
+Open Watcom products are usually written in C, C++ and assembler. This
+document describes the style conventions used by Open Watcom contributors
+for all Open Watcom projects, and is intended to be used as a guideline if
+you are going to be modifying the source code in any way. Any contributed
+code that is to be included in a Open Watcom product must follows these
+style guidelines, and submissions violating these guidelines will be rejected.
+By following these style guidelines, all the source code for Open Watcom
+products will be in a consistent format, which will ease the burden of finding
+one's way around the source code.
+
+It is important to have all source code formatted in a similar manner as this
+helps to give the entire product a cohesive image, and makes finding your way
+around the source code much easier. Because C and C++ are entirely free-form,
+there are many different ways that the source code can be formatted. All
+programmers have their own preferred formatting style, just as all writers
+have their own personal writing style. However just as when multiple authors
+work on a single book, multiple programmers working on a common software
+product should adhere to consistent formatting and style conventions.
+
+This document is intended to serve as a guide to the style guidelines used by
+Open Watcom developers. If however something is not clearly documented here,
+the best reference to the style guidelines is to look at some Open Watcom
 source code.
 
-It is important to have all source code formatted in a similar manner as this helps to
-give the entire product a cohesive image, and makes finding your way around
-the source code much easier. Because C and C++ are entirely free-form, there are
-many different ways that the source code can be formatted. All programmers
-have their own preferred formatting style, just as all writers have their
-own personal writing style. However just as when multiple authors work on a single
-book, multiple programmers working on a common software product should adhere
-to the same formatting and style conventions.
-
-It is also important that any public functions, structures, enumerations and classes
-follow the guidelines for commented documentation.
-
-[ I don't know what to substitute for the next sentence. Walter. ]
-
-Open Watcom uses
-automated tools (DocJet from http://www.talltree.com) to extract printed
-documentation directly from the source code.  Specific formatting styles for
-documentation included in the source code must be followed so that the printed
-documentation is correctly formatted. These specific formatting styles are spelled out
-in detail in this document.
-
-This document is intended to serve as a guide to the style guidelines used by Open
-Watcom. If however something is not clearly documented here, the best reference to
-the style guidelines is to look at some official Open Watcom source code.
+NB: The Open Watcom source code is very large (over two million lines of
+C/C++ source code) and was written by many people over the period of almost
+20 years. As a result, not every source file conforms to these guidelines.
+You may wish to reformat existing non-conforming source files, but if you do
+so, please observe the following. It is highly recommended that you reformat
+an entire project or subproject instead of a single source file, and never
+mix formatting changes with functional changes. Always submit formating
+changes separately, as it makes source code maintenance much easier.
 
 Indentation and Tab Width
-All source code should be formatted to use 4 space tabs, and all indentation should be
-in multiples of 4 spaces (one indentation level). The source code should be formatted
-using only real spaces and never hard tabs, so you will need to configure your editor
-to use 4 space tabs and to insert spaces only into the source code. Do NOT use 8 space
-hard tabs in your source code!
-If you MUST work with 8 space hard tabs, please run the resulting source code
-
-[Better recommendation? Walter.]
-through tab expansion program (like TRANS developed by Scitech Software) to
-convert all the hard tabs to 8 spaces. Note that this also includes ASSEMBLY code!
+All source code should be formatted to use 4 space tabs, and all indentation
+should be in multiples of 4 spaces (one indentation level). The source code
+should be formatted using only real spaces and never hard tabs, so you will
+need to configure your editor to use 4 space tabs and to insert spaces only
+into the source code. Do NOT use 8 space hard tabs in your source code!
+If you absolutely must work with 8 space hard tabs, please run the resulting
+source code through a tab expansion utility. Note that this also includes
+assembly code!
 
 Source Code Width
 All source code should try to use a maximum of 80 characters per line. Some
 editors can only display 80 characters on a line, and using more can cause
-them to exhibit line wrap. This is only a guide, and if more than 80 characters will
-enhance the legibility of the code (such as with Windows based code) then use more
-than 80 characters, but not too many more.
+them to exhibit line wrap. This is only a guideline, and if more than 80
+characters will enhance the legibility of the code than 80 characters, use
+wider source lines, but not too much wider.
 
 C/C++ Source Code Formatting
-This section describes the conventions used for formatting C and C++ source code
-modules, and the conventions that you should follow if you modify or extend any of
-the source code. All C source code should be contained in text files with the .c
-extension, and all C++ source code should be contained in text files with the .cpp
-extension.
+This section describes the conventions used for formatting C and C++ source
+code modules, and the conventions that you should follow if you modify or
+extend any of the source code. All C source code should be contained in text
+files with the .c extension, and all C++ source code should be contained in
+text files with the .cpp extension. It is highly recommended that all source
+file names are lowercase and following the 8.3 convention for maximum
+portability.
 
 Source File Layout
-The overall layout for source code is important to help developers quickly find their
-way around unfamiliar source code for the first time. All C and C++ source code
-modules should be formatted in the following manner:
+The overall layout for source code is important to help developers quickly
+find their way around unfamiliar source code for the first time. All C and
+C++ source code modules should be formatted in the following manner:
+
+------------------------------------------------------------------------------
 /****************************************************************************
 *
 *                            Open Watcom Project
@@ -136,11 +130,7 @@ modules should be formatted in the following manner:
 
 #include "myhdr.h"      /* Include any necessary headers */
 
-/*--------------------------- Global Variables ----------------------------*/
-
 /* Global variable declarations and static globals local to module */
-
-/*------------------------- Implementation --------------------------------*/
 
 /* All functions implemented in this module. Where possible static or
  * private functions should be located before functions that use them to
@@ -148,162 +138,111 @@ modules should be formatted in the following manner:
  * *MUST* have a prototype, so if necessary add local prototypes to the top
  * of the file before the regular functions begin.
  */
-[ "void foo() { }" has no prototype. Does "void foo( void ) { }"? I say yes. Walter ]
- 
 
-[ What number applies to the first column? Walter. ]
+------------------------------------------------------------------------------
 
 Function Body
-The body of a C or C++ function should be written with the open brace that starts the
-body of the function in column zero, and the closing brace also in column zero. All
-source code statements contained within the function body should start at the first
-indentation level (4 spaces in). The name of the function and an opening brace should
-be on the first line, with the return type preceeding the function name. Between the
-return type and the function name should be a macro definition for the function type
-modifier, which should be evaluate to _cdecl for functions implemented in assembler
-and an empty macro for functions implemented in C.  Using a macro for this modifier
-also allows it to be changed to suit new operating environments, such as _pascal and
-_stdcall for Windows environments by only changing a single macro definition.
-Each argument to the function should be listed one per line, with a single indentation
-level (4 spaces) before the argument type. There should be only a single space between
-the argument type and the argument name for each line, followed by a comma. The
-last argument should be ended with the ')' character instead of a comma (this must
-not be placed on the following line!).
+The body of a C or C++ function should be written with the open brace that
+starts the body of the function in the leftmost column, and the closing brace
+in the same column. All source code statements contained within the function
+body should start at the first indentation level (4 spaces in). The name of
+the function and an opening brace should be on the first line, with the return
+type preceding the function name. Between the return type and the function
+name may be a macro definition for the function type modifier. Using a macro
+for this modifier allows it to be changed to suit new operating environments,
+such as __pascal or __stdcall for Windows environments by only changing a
+single macro definition. It is recommended that each argument to the function
+be listed one per line, with a single indentation level (4 spaces) before the
+argument type. There should be only a single space between the argument type
+and the argument name for each line, followed by a comma. The last argument
+should be ended with the ')' character instead of a comma (this must not be
+placed on the following line).
 
-The described layout for the function prototype is very important because Open
-Watcom uses automated tools to extract function reference documentation directly
-from the source code, and the prototype will be included verbatim in the reference
-documentation. This formatting style ensures that the prototype will be formatted
-correctly in the printed documentation and will not wrap at the right edge of the
-page.
-If the function is static or private, it may be left without any preceeding documenation
-provided the function is short. However any function that contains more than about 5
-lines of source code and all public functions should be preceeded with a source code
-comment of the format as defined below. An example of a properly formatted
-function with documentation header is as follows:
+If the function is static or private, it may be left without any preceding
+documenation provided the function is short. However any function that
+contains more than about 5 lines of source code and all public functions
+should be preceded with a source code comment. An example of a properly
+formatted function with documentation header is as follows:
 
-[ This seems excessive! I leave others to trim it. Walter. ]
-
-/****************************************************************************
-DESCRIPTION:
-Short description for the function. Should be no longer than a single line.
-
-HEADER:
-mgraph.h  <- defines the header file that the function prototype is found in
-
-PARAMETERS:
-arg1 - Describes argument 1. May be multiples lines if necessary, and
-       this case the subsequent lines should be indented like so.
-arg2 - Describes argument 2. There should be a line for each argument.
-
-RETURNS:
-Describes the return value from the function. If the function does not return
-a value, this field should be removed completely.
-
-REMARKS:
-Long description of the function. This should describe in detail what the
-function does, especially for public functions. If the function is private
-a simpler description may be used, and the DESCRIPTION field above may be
-removed completely. This remarks section can also contain *bold text* and
-/italic text/ using the asterisk and slash formatting characters (printed
-documentation will be bolded or italicised). This section can also contain
-formatted tables like the following:
-
-Table   - Description (heading for table column two)
-item1   - Description of item 1
-item2   - Description of item 2
-
-The above describes a table of values and will be formatted in the resulting
-printed documentation as a real table of values. The first line becomes the
-header for that table, and subsequent lines contain the body of the table.
-Note that column 1 of the table must always be formatted as a single word
-(multiple words with a space do not get formatted by the documenation
-software correctly). You can also include notes and todo's as follows:
-
-Note:  This is a note to be included in the text. You can make notes span
-       more than a single line like the so. Note text is handled specially
-       by the formatting program and will be formatted with the note in
-       italics for clarity and be indented with a hanging indent similar
-       to the above text.
-
-TODO:  You can also include todo items as well. In the resulting
-       documentation it will come out similar to a note, but the text will
-       be printed in red ink.
-
-SEE ALSO:
-myFunctionExt <- lists all public functions related to this function. If
-                 there are no related functions, this field should be
-                 removed completely.
-****************************************************************************/
-bool MYAPI myFunction(
+// Concise description of the function.
+// May use C or C++ style comments.
+bool MYAPI my_function(
     int arg1,
     int arg2 )
 {
     // function body goes here.
 }
 
-Note also that if a function does not have any arguments, it should be formatted on a
-single line as follows:
+Note also that if a function does not have any arguments, it should be
+formatted on a single line as follows:
 
-void myFunction( void )
+void my_function( void )
 {
     // function body goes here.
 }
 
 instead of:
 
-void myFunction(
+void my_function(
     void )
 {
     // function body goes here.
 }
 
-Note that a C language function which takes no paremeters should be declared as
-type foo( void ) rather than type foo(). The former says foo has no parameters;
-the latter that nothing is known about the parameters.
+Note that a C language function which takes no parameters should be declared
+as type foo( void ) rather than type foo(). The former says foo has no
+parameters; the latter that nothing is known about the parameters.
 
 Flow Control Statements
-All the flow control statements should have the open brace placed on the same line as
-the start of the flow control statements, and all statements that are part of the body of
-the flow control statement should be indented by one level (4 spaces). The closing
-brace should be indented to be at the same indention level as the
-flow control statement keyword. This helps to partition the statement into the declaration section
-and the body section of the statement. Note also that the flow control statements
-should be formatted with a single space after the open parenthesis and before the close
-parenthesis and after the open brace
+All the flow control statements should have the open brace placed on the same
+line as the start of the flow control statements, and all statements that are
+part of the body of the flow control statement should be indented by one level
+(4 spaces). The closing brace should be indented to be at the same level as
+the flow control statement keyword. This helps to partition the statement into
+the declaration section and the body section of the statement. Note also that
+the flow control statements should be formatted with a single space after the
+open parenthesis and before the close parenthesis and after the open brace
 for legibility. For example:
+
 if( condition ) {
 }
 
 rather than the less legible
+
 if(condition){
 }
 
-Where the dependent statement does not require braces, it may either:
-a) be placed on the same line
-if( condition ) consequence;
-b) be indented on the next line
+Where the dependent statement does not require braces, it may,
+in order of preference, either:
+
+a) be indented on the next line
+
 if( condition )
-  consequence;
-c) or given braces it does not need
+    consequence;
+
+b) or given braces it does not need
+
 if( condition ) {
-  consequence;
+    consequence;
 }
 
-[ My preference order is b, c, a. I think all should be allowed and one should
-ne recommended. Walter. ]
+c) or be placed on the same line
 
+if( condition ) consequence;
 
-The following shows the templates to use for formatting each of the flow control
-structures in C and C++.
-If-Else Statements
+The following shows the templates to use for formatting each of the flow
+control structures in C and C++.
+If-else Statements
+
 if( x < foo ) {
     // do something;
 } else {
     // do something else;
 }
 
-If you wish to use multiple If-Else statements strung together, do so like this:
+If you wish to use multiple if-else statements strung together, do so
+like this:
+
 if( x < foo ) {
     // do something;
 } else if( x < blah ) {
@@ -312,8 +251,9 @@ if( x < foo ) {
     // default case;
 }
 
-When you have an If-Else statement nested in another If-Else statement, put braces
-around the nested If-Else. For example:
+When you have an if-else statement nested in another if-else statement,
+put braces around the nested if-else. For example:
+
 if( foo ) {
     if( bar )
         win();
@@ -322,6 +262,7 @@ if( foo ) {
 }
 
 rather than the less legible:
+
 if( foo )
     if( bar )
         win();
@@ -329,36 +270,43 @@ if( foo )
         lose();
 
 While Statements
+
 while( x > 1 ) {
     // do something;
 }
 
-Do While Statements
+Do-while Statements
+
 do {
     // do something;
 } while( x > 1 );
 
 For Statements
+
 for( i = 0; i < 10; i++ ) {
     // do something;
 }
 
-Note that with the For statement, there is no space before the semi-colons, and there is
-always a single space AFTER the semicolon. For example avoid formatting your
-statements like this:
+Note that with the for statement, there is no space before the semi-colons,
+and there is always a single space after the semicolon. For example avoid
+formatting your statements like this:
+
 for(i=0;i<10;i++){
 }
 
-If you wish to include multiple definitions in the initialisation section of the for
-statement, or multiple operations in the counter section of the for statement then use
-the comma operator. However ensure that a space ALWAYS follows the comma:
+If you wish to include multiple definitions in the initialisation section of
+the for statement, or multiple operations in the counter section of the for
+statement then use the comma operator. However ensure that a space always
+follows the comma:
+
 for (i = 0, j = 0; i < 10; i++, j += 10) {
 }
 
 Switch Statements
+
 switch( x ) {
 case 1:
-    // code for case 3
+    // code for case 1
     break;
 case 2:
     // code for case 2
@@ -369,27 +317,29 @@ default:
 
 "case" and "default" are viewed as part of "switch" for indentation purposes.
 
-If the code for the cases in the switch statement is exceptionally short, you can format
-the entire case statement on a single line, such as the following:
+If the code for the cases in the switch statement is exceptionally short, you
+can format the entire case statement on a single line, such as the following:
+
 switch( x ) {
 case 1: // tiny code;   break;
 case 2: // more code;   break;
 }
 
-If you wish to create a nested code block for a case statement (for example to declare
-some local variables in some C code), do so like the following:
+If you wish to create a nested code block for a case statement (for example
+to declare some local variables in C code), do so like the following:
+
 switch (x) {
 case 1:
     {
-        int localVar;
+        int local_var;
         // code for case 1
     }
     break;
     ...
 }
 
-It is advisable to include a default action for a switch statement, but this can be left out
-for efficiency's sake.
+It is advisable to include a default action for a switch statement, but this
+can be left out for efficiency's sake.
 
 Goto Statements
 
@@ -411,61 +361,65 @@ errInvalid:
 
 Expressions
 When formatting expressions, try to use spaces and parentheses to enhance the
-readability of the expression - splitting it over multiple lines if necessary to make it
-more readable. Do not format expressions without any spaces between the operators
-and the operands. Judiciously group together sections of the expression without using
-spaces. For example:
-    x = ( y+10 ) - 240 * ( 20 / ( t + myFunc() ) );
+readability of the expression - splitting it over multiple lines if necessary
+to make it more readable. Do not format expressions without any spaces between
+the operators and the operands. Judiciously group together sections of the
+expression without using spaces. For example:
+
+    x = ( y+10 ) - 240 * ( 20 / ( t + my_func() ) );
 
 rather than
-    x=(y+10)-240*(20/(t+myFunc()));
+
+    x=(y+10)-240*(20/(t+my_func()));
 
 Variable Declarations
 
-[ I would prefer one declaration, one variable and ban int foo, bar; too! Walter. ]
+Don't declare multiple variables in one declaration that spans lines. Instead
+start a new declaration on each line.  For example, instead of this:
 
-
-Don't declare multiple variables in one declaration that spans lines. Instead start a
-new declaration on each line.  For example, instead of this:
     int foo,
         bar;
 
-write either this:
-    int foo, bar;
+write either this (recommended form):
 
-or this:
     int foo;
     int bar;
 
+or this:
+
+    int foo, bar;
+
 Global Variables Within a Module
-Any global variables and external global variables must be declared at the start of the
-source file in the 'global variables' section. Globals variables that are private to the
-source module should be declared with the static type modifier. External global
-variables will always be declared in a separate header file, and the definition of the
-variable will be located in one source module without the static modifier.  When
-formatting global variables, try to format them such that the names of the variables align on
-"tab stop" columns.
+Any global variables and external global variables must be declared at the
+start of the source file. Globals variables that are private to the source
+module should be declared with the static type modifier. External global
+variables will always be declared in a separate header file, and the
+definition of the variable will be located in one source module without the
+static modifier.  When formatting global variables, try to format them such
+that the names of the variables align on "tab stop" columns.
 For example:
-int             myVar1;
-ulong           myVar2;
-myStructue      myStructure = {
+
+int             my_var1;
+ulong           my_var2;
+my_structue     my_structure = {
     ...
 };
 
 Comments and Commenting Style
 Commenting code is extremely important. Comments serve as an aid to the human
-readers of our programs; they are a form of engineering etiquette. Comments should
-always be used to clarify otherwise obscure code, however do not comment too
-liberally. If the code itself describes concisely  what is happening, do NOT provide a
-comment explaining the obvious! Comments should always be neat and readable -
-haphazardly placed comments are almost as bad as haphazardly formatted source
-code.
+readers of source code; they are a form of engineering etiquette. Comments
+should always be used to clarify otherwise obscure code, however do not
+comment too liberally. If the code itself describes concisely  what is
+happening, do NOT provide a comment explaining the obvious! Comments should
+always be neat and readable - haphazardly placed comments are almost as bad
+as haphazardly formatted source code.
 Comments should also be used to document the purpose of obscure or non-trivial
 functions (a non-trivial function is one of more than a few lines) and what
-inputs and outputs the function deals with. Please refer to the section on Function
-Bodies for detailed information on the layout and formatting for function headers.
-The following shows examples for commented source code, and how the comments
-should be laid out:
+inputs and outputs the function deals with. Please refer to the section on
+Function Bodies for detailed information on the layout and formatting for
+function headers. The following shows examples for commented source code, and
+how the comments should be laid out:
+
 void myFunc( void )
 {
     int x1 = 10;    // Comment describing X1's purpose if necessary
@@ -482,26 +436,26 @@ void myFunc( void )
     // One line comments should be like this
     ...
 
-[I think the following hideous and prefer the C style for multi-line comments.
-Walter. ]
-
-    // And multiple line comments like the following. These comment
-    // types are more efficient code wise than C style comments so should
-    // be used in preference for C++ code. However although most C
-    // compilers allow C++ style comments, some C compilers do not so
-    // C++ comments style should not be used in portable C code.
+    // C++ style multi line comments style are also allowed, but be
+    // warned that not all C compilers may accept them; this could be
+    // an issue when porting Open Watcom to new platforms.
     ...
 }
 
 C Header File Formatting
-This section describes the conventions used for formatting C header files, and the
-conventions that you should follow if you modify or extend any of the source code. All
-C header files should be contained in a text file with the .h extension.
+This section describes the conventions used for formatting C header files,
+and the conventions that you should follow if you modify or extend any of the
+source code. All C header files should be contained in a text file with the
+.h extension. Note that automatically generated header files usually use
+a .gh extension, but those files are naturally not intended to be edited
+directly.
+
 Header File Layout
-The overall layout for header files is important to help developers quickly find their
-way around unfamiliar source code for the first time. All C header files should be
-formatted in the following manner (for private header files substitute the appropriate
-internal disclaimer for the public one listed below):
+The overall layout for header files is important to help developers quickly
+find their way around unfamiliar source code for the first time. All C header
+files should be formatted in the following manner:
+
+------------------------------------------------------------------------------
 /****************************************************************************
 *
 *                            Open Watcom Project
@@ -533,15 +487,16 @@ internal disclaimer for the public one listed below):
 *
 ****************************************************************************/
 
-#ifndef __HEADER_H      /* Mandatory include guard. The #define name must */
-#define __HEADER_H      /* be the same as the header (ie: header.h here). */
+#ifndef _HEADER_H_INCLUDED  /* Include guard. The #define name should be   */
+#define _HEADER_H_INCLUDED  /* the same as the header (ie: header.h here). */
 
 #include <stdio.h>      /* Include any dependant include files */
 
-/*---------------------- Macros and type definitions ----------------------*/
-
-/* This should always be included, and set the packing value to the value
- * that should be used by the header file.
+/* If necessary, declare structure packing; it is often preferable to
+ * use the compiler default for performance reasons, and only pack
+ * data structures that need to be exchanged with external code.
+ * The __Packed keyword may be used on individual basis instead of
+ * the #pragma.
  */
 #pragma pack(1)
 
@@ -549,13 +504,12 @@ internal disclaimer for the public one listed below):
  * defined in this section for both C and C++ code.
  */
 
-/* Restore the compile default packing value */
+/* Restore the compile default packing value if it has been changed */
 #pragma pack()
 
-/*------------------------- Function Prototypes ---------------------------*/
-
-[ I like the solidity of this. It may be unnecessary. Walter. ]
-
+/* The following is not stricly required for header files that are not
+ * intended to be included from C++ code.
+ */
 #ifdef  __cplusplus
 extern "C" {            /* Use "C" linkage when in C++ mode */
 #endif
@@ -563,95 +517,104 @@ extern "C" {            /* Use "C" linkage when in C++ mode */
 /* Include C function prototypes in here */
 
 #ifdef  __cplusplus
-}                       /* End of "C" linkage for C++   */
+}                       /* End of "C" linkage for C++ */
 #endif
 
 #endif  /* __HEADER_H */
+------------------------------------------------------------------------------
 
 Enumerations
-Enumerations should be defined for all numerical constants used in header files,
-rather than using a macro #define or a set of constants. The reason for this is that it
-provides a logical grouping for related constants, and allows those constants to be
-documented in printed documentation as a logical grouping. The format for defining
-an enumeration is as follows:
+Enumerations should be defined for all numerical constants used in header
+files, rather than using a macro #define or a set of constants. The reason for
+this is that it provides a logical grouping for related constants, and perhaps
+more importantly, eases debugging (because the debugger knows about enums but
+doesn't know about macros). The format for defining an enumeration is as
+follows:
+
 typedef enum {
-    grDETECT        = -1,
-    grNONE          = 0,
-    grVGA,
-} MGL_driverType;
+    CHANGE_NORMAL   = 0x00,
+    CHANGE_ALL      = 0x01,
+    CHANGE_GEN      = 0x02,
+    CHANGE_CHECK    = 0x04
+} change_type;
 
 Structures and Unions
 Always declare structures and unions using a typedef, so that the structure can be
 used without requiring the 'struct' or 'union' keyword. For example:
+
 typedef struct {
     ...
-} MyStrucure;
+} score_reg;
 
 typedef union {
     ...
-} MyUnion;
+} symbol;
 
 rather than:
-struct MyStructure {
+
+struct score_reg {
 };
 
-union MyUnion {
+union symbol {
 };
 
-For C++ code however, you should declare your structures and unions without using
-the typedef keyword, since the language has been extended in this area. The format
-for defining both structures and unions with documentation is as follows:
-typedef struct {
-    int x;
-    int y;
-} MGL_point;
+For C++ code however, you should declare structures and unions without using
+the typedef keyword, since the language treats these language constructs
+differently.
 
 Function Prototypes
-All public functions must be declared in only one header file, in the 'function
-prototypes' section of the header file. For C callable functions (even if implemented in
-C++) the function prototypes must be bracketed with the extern "C" statement as
-shown in the sample header file above. This is to ensure that all global functions will
-be callable from both C and C++ code. Each public function must be declared on a
-single line. This is different to how the prototypes for the function are declared in the
-source modules, where each argument is defined in a separate line. The function
-prototype must also be indented so that the function modifier value (MYAPI in
-this case) is lined up for all functions, inserting as many necessary spaces to get all
-functions to align.
-Although it may seem strange to format functions prototypes in this manner, the
-C/C++ compiler will do the necessary job of checking that the parameters in the
-prototype are correct with respect to the function body, and having a single function
-per line makes it easy to browse header files to find a specific function prototype. Note
-also that this is one case where you must violate the 80 characters per line guideline
-and never break the function prototype across multiple lines, no matter how many
-parameters it takes. For instance a couple of prototypes might be implemented as
-follows:
-bool         MYAPI myFunction( int arg1, int arg2 );
-myStructure *MYAPI myFunction2( int arg1, int arg2, int arg3 );
+All public functions must be declared in only one header file, in the
+'function prototypes' section of the header file. For C callable functions
+(even if implemented in C++) the function prototypes must be bracketed with
+the extern "C" statement as shown in the sample header file above. This is
+to ensure that all global functions will be callable from both C and C++ code.
+Each public function should be declared on a single line. The function
+prototype should also be indented so that the function modifier value (MYAPI
+in this case) is lined up for all functions, inserting as many necessary
+spaces to get all functions to align.
+Although it may seem strange to format functions prototypes in this manner,
+the C/C++ compiler will do the necessary job of checking that the parameters
+in the prototype are correct with respect to the function body, and having a
+single function per line makes it easy to browse header files to find a
+specific function prototype. Note also that this is one case where you must
+violate the 80 characters per line guideline and not break the function
+prototype across multiple lines, no matter how many parameters it takes.
+For instance a couple of prototypes might be implemented as follows:
+
+bool          MYAPI my_function( int arg1, int arg2 );
+my_structure *MYAPI my_function2( int arg1, int arg2, int arg3 );
 
 Global Variables
-Any public global variables must be declared in the header file in the 'global variables'
-section. When formatting global variables declarations, format them so that
-the names of the variables align on "tab stops". For example:
-extern int              myVar1;
-extern ulong            myVar2;
-extern myStructue       myStructure;
-extern long            *myPointer;
+Any public global variables must be declared in the header file in the
+'global variables' section. When formatting global variables declarations,
+format them so that the names of the variables align on "tab stops". For
+example:
+
+extern int          my_var1;
+extern ulong        my_var2;
+extern score_reg    my_structure;
+extern long         *my_pointer;
 
 [ I have no input to the next section. Walter. ]
+[ Neither do I. Michal. ]
+
 C++ Header File Formatting
-This section describes the conventions used for formatting C++ header files, and the
-conventions that you should follow if you modify or extend any of the source code. All
-C++ header files should be contained in a text file with the .hpp extension. Where a
-header file is designed to be used for both C and C++, it should end in a .h extension
-and include C++ specific definitions with a #ifdef cplusplus conditional compilation
-block.
-For the most part formatting and documentation of enumerations, structures,  unions,
-function prototypes and external variables is identical to C header files, so refer to the
-sections above for information on this.
+This section describes the conventions used for formatting C++ header files,
+and the conventions that you should follow if you modify or extend any of the
+source code. All C++ header files should be contained in a text file with the
+.hpp extension. Where a header file is designed to be used for both C and
+C++, it should end in a .h extension and include C++ specific definitions with
+a #ifdef cplusplus conditional compilation block.
+For the most part formatting and documentation of enumerations, structures,
+unions, function prototypes and external variables is identical to C header
+files, so refer to the sections above for information on this.
+
 Header File Layout
-The overall layout for header files is important to help developers quickly find their
-way around unfamiliar source code for the first time. All C++ header files should be
-formatted in the following manner:
+The overall layout for header files is important to help developers quickly
+find their way around unfamiliar source code for the first time. All C++
+header files should be formatted in the following manner:
+
+------------------------------------------------------------------------------
 /****************************************************************************
 *
 *                            Open Watcom Project
@@ -688,28 +651,23 @@ formatted in the following manner:
 
 #include <iostream.h>     // Include any dependant include files
 
-/*---------------------- Macros and type definitions ----------------------*/
-
-// This should always be included, and set the packing value to the value
-// that should be used by the header file.
+// If necessary, declare structure packing; it is often preferable to
+// use the compiler default for performance reasons, and only pack
+// data structures that need to be exchanged with external code.
+// The __Packed keyword may be used on individual basis instead of
+// the #pragma.
 #pragma pack(1)
 
 // Macros, enumerations, type definitions, structures and unions should be
 // defined in this section for both C and C++ code.
 
-// Restore the compile default packing value
+// Restore the compile default packing value if it has been changed
 #pragma pack()
-
-/*--------------------------- Class Definitions ---------------------------*/
 
 // Any C++ class definitions should be defined in this section.
 
-/*------------------------- Inline member functions -----------------------*/
-
 // Any large C++ inline member functions that are not defined in the
 // class definition itself should be defined in this section.
-
-/*------------------------- Function Prototypes ---------------------------*/
 
 // Include C++ only callable function prototypes in here
 
@@ -726,28 +684,32 @@ extern "C" {            // Use "C" linkage when in C++ mode
 #endif
 
 #endif  // __HEADER_HPP
+------------------------------------------------------------------------------
 
 C++ Class Definitions
 When declaring C++ classes, you should structure them with the private and
-protected variable definitions first, following by protected functions and then public
-functions. By declaring things in this order you can immediately use variables in inline
-functions in the class definition. You should also indent the member function
-declarations by three indentation levels (12 spaces) in order to leave room for the
-'virtual', 'static' and 'friend' modifiers. This way all the function declarations line up
-neatly within the class.
-Please document each member function of the class unless it is entirely obvious what
-the member is intended to do, by placing a C++ style comment (//) on the line before
-the member function declaration, and with an indentation of three levels (to line up
-with the start of the function declaration). Also please provide a small descriptive
-comment for all member variables describing the purpose of the variable. For small
-inline functions, place the function body within the class declaration. For inline
-functions that are more than about 2 lines long, please place the body of the function
+protected variable definitions first, following by protected functions and
+then public functions. By declaring things in this order you can immediately
+use variables in inline functions in the class definition. You should also
+indent the member function declarations by three indentation levels
+(12 spaces) in order to leave room for the 'virtual', 'static' and 'friend'
+modifiers. This way all the function declarations line up neatly within the
+class. Please document each member function of the class unless it is
+entirely obvious what the member is intended to do, by placing a C++ style
+comment (//) on the line before the member function declaration, and with an
+indentation of three levels (to line up with the start of the function
+declaration). Also please provide a small descriptive comment for all member
+variables describing the purpose of the variable. For small inline functions,
+place the function body within the class declaration. For inline functions
+that are more than about 2 lines long, please place the body of the function
 after the class definition in the same header file.
-Generally try to place a single class definition into a single header file, however it may
-be more convenient in some instances to place multiple class definitions into a single
-header file (for small, logically related classes such as a node class and the list class
-that uses the nodes).
-The following is a template for how a C++ class definition should be formatted:
+Generally try to place a single class definition into a single header file,
+however it may be more convenient in some instances to place multiple class
+definitions into a single header file (for small, logically related classes
+such as a node class and the list class that uses the nodes).
+The following is a template for how a C++ class definition should be
+formatted:
+
 class MyClass {
 protected:
     int myVar;              // Describe what this is for
@@ -781,14 +743,12 @@ public:
     inline  void reallLargeInlineFunction();
     };
 
-NOTE: At this stage the format for documenting C++ classes and member functions is
-not completed finished, so the above will likely change when the documentation
-system for C++ classes is finalised.
 C++ Inline Member Functions
-For C++ classes that have inline member functions that are larger than will easily fit
-within the class definition (ie: more than say 2 lines of code), they should be declared
-separately in the 'inline member functions' section of the header file. A typical
-declaration would be as follows:
+For C++ classes that have inline member functions that are larger than will
+easily fit within the class definition (ie: more than say 2 lines of code),
+they should be declared separately in the 'inline member functions' section
+of the header file. A typical declaration would be as follows:
+
 inline void MyClass::reallyLargeInlineFunction()
 {
     // function body
@@ -797,136 +757,3 @@ inline void MyClass::reallyLargeInlineFunction()
 NOTE: At this stage the format for documenting C++ classes and member functions is
 not completed finished, so the above will likely change when the documentation
 system for C++ classes is finalised.
-
-Naming Conventions
-
-[I think this is gibberish.  i = foo( bar ), i = foo.bar; i = foo + bar; Walter.]
-
-This section describes the naming conventions used for both C and C++ code. Naming
-conventions are important so that programmers can tell by looking at a name what
-type of syntactic element that name is referring to (function, structure, variable etc).
-
-Type Definitions
-
-[ %devdir%\builder\h\builder.h follows no such conventions. Walter. ]
-
-All public type definition names should always begin with an uppercase prefix and
-underscore of at least two characters in length. The prefix should be unique to the
-library or product that the function is located in, such as MGL_ for the SciTech MGL
-graphics library and FX_ for the fixed point math library. The first character after the
-underscore should always be lowercase, and the remainder of the name should be a
-combination of uppercase and lowercase to break up the words in the name (do not
-use underscores for this). For instance:
-typedef ulong MGL_color;
-
-The only exception to this rule is global type definitions for common types defined in
-the SCITECH.H header file, such as ulong, ushort and uchar etc.
-
-Enumerations
-
-[ %devdir%\wl\h\formats.h follows no such conventions. Walter. ]
-
-All enumeration names should end with a 'Type' postfix. Public enumerations should
-always begin with an uppercase prefix and underscore of at least two characters in
-length. The prefix should be unique to the library or product that the function is
-located in, such as MGL_ for the SciTech MGL graphics library and FX_ for the fixed
-point math library. The first character after the underscore should always be
-lowercase, and the remainder of the name should be a combination of uppercase and
-lowercase to break up the words in the name (do not use underscores for this). For
-instance:
-typedef enum {
-    MGL_NO_DEACTIVATE   = 0,
-    MGL_SUSPEND_APP     = 1,
-    MGL_NO_SUSPEND_APP  = 2
-} MGL_suspendAppCodesType;
-
-Structures and Unions
-
-[ %devdir%\wl\h\formats.h follows no such conventions. Walter. ]
-
-All public structure and union names should always begin with an uppercase prefix
-and underscore of at least two characters in length. The prefix should be unique to the
-library or product that the function is located in, such as MGL_ for the SciTech MGL
-graphics library and FX_ for the fixed point math library. The first character after the
-underscore should always be lowercase, and the remainder of the name should be a
-combination of uppercase and lowercase to break up the words in the name (do not
-use underscores for this). For instance:
-typedef struct {
-    int x;
-    int y;
-} MGL_point;
-
-C++ Classes
-
-[ %devdir%\cvpack\hpp\myvector.hpp follows no such conventions. Walter. ]
-
-All public C++ class names should always begin with an uppercase prefix without
-any underscore of at least two characters in length. The prefix should be unique to the
-library or product that the function is located in, such as TCL for the Techniques Class
-Library and MGL for the SciTech MGL C++ bindings. The first character after the
-prefix should always be uppercase, and the remainder of the name should be a
-combination of uppercase and lowercase to break up the words in the name (do not
-use underscores for this). For instance:
-class TCLGenList {
-    ...
-};
-
-Global Variables
-
-[ %devdir%\wl\c\linkio.c follows no such conventions. Walter. ]
-
-All static global variable names should begin with a lowercase character first, and use
-a combination of uppercase and lowercase characters to break up the words in the
-name. For instance:
-static int  myStaticGlobal;
-
-All public global variable names should always begin with an uppercase prefix and
-underscore of at least two characters in length. The prefix should be unique to the
-library or product that the function is located in, such as MGL_ for the SciTech MGL
-graphics library and FX_ for the fixed point math library. The first character after the
-underscore should always be lowercase, and the remainder of the name should be a
-combination of uppercase and lowercase to break up the words in the name (do not
-use underscores for this). For instance:
-int MGL_fontTypeGlobal;
-
-Generally public global variables should be avoided if at all possible within a library, to
-allow that library to work well in shared dynamic library environments. If
-however the global variable is required to be global, but is not generally called or
-accessed by user programs (for instance if it is not a public function in a library),
-the public name should be prefixed with an underscore to avoid global namespace
-conflicts, but still include the standard library prefix. For example:
-int _MGL_myInternalGlobal;
-
-Functions
-
-[ %devdir%\wl\c\linkio.c follows no such conventions. Walter. ]
-
-All function names should startewith a lowercase character, and use a
-combination of lower case and upper case in the identifiers to break up individual
-words in the identifier. For example, use names like the following:
-void myLongFunctionName( void );
-
-All public function names should begin with an uppercase prefix and
-underscore of at least two characters in length. The prefix should be unique to the
-library or product that the function is located in, such as MGL_ for the SciTech MGL
-graphics library and FX_ for the fixed point math library. The first character after the
-underscore should always be lowercase, and the remainder of the name should be a
-combination of uppercase and lowercase to break up the words in the name (do not
-use underscores for this). For instance:
-void MGL_fillRect( void );
-
-If the function is required to be global, but is not generally called or accessed by user
-programs (for instance if it is not a public function in a library), the public name
-should be prefixed with an underscore to avoid global namespace conflicts, but still
-include the standard library prefix. For example:
-void _MGL_myInternalFunction( void );
-
-
-
-2
-        Open Watcom Source Code Style Guidelines
-i
-Contents
-
-1
-Introduction
