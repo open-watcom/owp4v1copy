@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Machine Architecture Description manager - generic routines.
 *
 ****************************************************************************/
 
@@ -49,12 +48,10 @@
    #error Host MAD type info not configured
 #endif
 
-#if 0
-const static unsigned EndMap[ME_BIG][8] = {
+const static unsigned EndMap[2][8] = {
         /* ME_LITTLE */ { 0, 1, 2, 3, 4, 5, 6, 7 },
         /* ME_BIG */    { 7, 6, 5, 4, 3, 2, 1, 0 },
 };
-#endif
 
 struct mad_state_data {
     mad_state_data      *next;
@@ -736,7 +733,13 @@ static mad_status DecomposeInt( const mad_type_info *mti, const void *d,
     unsigned    sign_bit;
 
     bytes = mti->b.bits / BITS_PER_BYTE;
-    memcpy( v, d, bytes );
+    if( mti->i.endian == ME_HOST ) {
+        memcpy( v, d, bytes );
+    } else {
+        for( i = 0; i < bytes; i++ ) {
+            v->i.u._8[i] = ((unsigned_8 *)d)[EndMap[ME_BIG][8 - bytes + i]];
+        }
+    }
     memset( &v->i.u._8[bytes], 0, sizeof( v->i ) - bytes );
     if( mti->i.nr != MNR_UNSIGNED ) {
         i = mti->i.sign_pos / BITS_PER_BYTE;
@@ -761,16 +764,38 @@ static mad_status DecomposeAddr( const mad_type_info *mti, const void *d,
         if( (mti->a.seg.bits % BITS_PER_BYTE) != 0 ) return( MS_UNSUPPORTED );
         valp = (const unsigned_8 *)d + mti->a.seg.bits / BITS_PER_BYTE;
     }
-    switch( mti->b.bits - mti->a.seg.bits ) {
-    case 16:
-        v->a.offset = *(unsigned_16 *)valp;
-        break;
-    case 32:
-        v->a.offset = *(unsigned_32 *)valp;
-        break;
-    default:
-        return( MS_UNSUPPORTED );
+// NYI - address endianness translation doesn't work yet
+//    if( mti->i.endian == ME_HOST ) {
+        switch( mti->b.bits - mti->a.seg.bits ) {
+        case 16:
+            v->a.offset = *(unsigned_16 *)valp;
+            break;
+        case 32:
+            v->a.offset = *(unsigned_32 *)valp;
+            break;
+        default:
+            return( MS_UNSUPPORTED );
+        }
+#if 0
+    } else {
+        unsigned        bytes;
+        unsigned        i;
+
+        switch( mti->b.bits - mti->a.seg.bits ) {
+        case 16:
+            bytes = 2;
+            break;
+        case 32:
+            bytes = 4;
+            break;
+        default:
+            return( MS_UNSUPPORTED );
+        }
+        for( i = 0; i < bytes; i++ ) {
+            v->i.u._8[i] = ((unsigned_8 *)d)[EndMap[ME_BIG][8 - bytes + i]];
+        }
     }
+#endif
     if( mti->a.seg.bits == 0 ) {
         v->a.segment = seg;
     } else {
@@ -779,6 +804,7 @@ static mad_status DecomposeAddr( const mad_type_info *mti, const void *d,
             if( (mti->a.seg.pos % BITS_PER_BYTE) != 0 ) return( MS_UNSUPPORTED );
             valp = (const unsigned_8 *)d + mti->a.seg.pos / BITS_PER_BYTE;
         }
+        // TODO: byte swap segment also
         switch( mti->a.seg.bits ) {
         case 16:
             v->a.segment = *(unsigned_16 *)valp;

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  PowerPC machine register description.
 *
 ****************************************************************************/
 
@@ -168,11 +167,94 @@ unsigned        DIGENTRY MIRegistersSize( void )
 
 mad_status      DIGENTRY MIRegistersHost( mad_registers *mr )
 {
+    // Currently harcoded for big endian targets - should be dynamic
+    // NYI - properly support 64-bit registers
+
+    // Convert GPRs
+    CONV_BE_32( mr->ppc.r0.u._32[0] );
+    CONV_BE_32( mr->ppc.r1.u._32[0] );
+    CONV_BE_32( mr->ppc.r2.u._32[0] );
+    CONV_BE_32( mr->ppc.r3.u._32[0] );
+    CONV_BE_32( mr->ppc.r4.u._32[0] );
+    CONV_BE_32( mr->ppc.r5.u._32[0] );
+    CONV_BE_32( mr->ppc.r6.u._32[0] );
+    CONV_BE_32( mr->ppc.r7.u._32[0] );
+    CONV_BE_32( mr->ppc.r8.u._32[0] );
+    CONV_BE_32( mr->ppc.r9.u._32[0] );
+    CONV_BE_32( mr->ppc.r10.u._32[0] );
+    CONV_BE_32( mr->ppc.r11.u._32[0] );
+    CONV_BE_32( mr->ppc.r12.u._32[0] );
+    CONV_BE_32( mr->ppc.r13.u._32[0] );
+    CONV_BE_32( mr->ppc.r14.u._32[0] );
+    CONV_BE_32( mr->ppc.r15.u._32[0] );
+    CONV_BE_32( mr->ppc.r16.u._32[0] );
+    CONV_BE_32( mr->ppc.r17.u._32[0] );
+    CONV_BE_32( mr->ppc.r18.u._32[0] );
+    CONV_BE_32( mr->ppc.r19.u._32[0] );
+    CONV_BE_32( mr->ppc.r20.u._32[0] );
+    CONV_BE_32( mr->ppc.r21.u._32[0] );
+    CONV_BE_32( mr->ppc.r22.u._32[0] );
+    CONV_BE_32( mr->ppc.r23.u._32[0] );
+    CONV_BE_32( mr->ppc.r24.u._32[0] );
+    CONV_BE_32( mr->ppc.r25.u._32[0] );
+    CONV_BE_32( mr->ppc.r26.u._32[0] );
+    CONV_BE_32( mr->ppc.r27.u._32[0] );
+    CONV_BE_32( mr->ppc.r28.u._32[0] );
+    CONV_BE_32( mr->ppc.r29.u._32[0] );
+    CONV_BE_32( mr->ppc.r30.u._32[0] );
+    CONV_BE_32( mr->ppc.r31.u._32[0] );
+    // Convert special registers
+    CONV_BE_32( mr->ppc.iar.u._32[0] );
+    CONV_BE_32( mr->ppc.msr.u._32[0] );
+    CONV_BE_32( mr->ppc.ctr.u._32[0] );
+    CONV_BE_32( mr->ppc.lr.u._32[0] );
+    CONV_BE_32( mr->ppc.xer );
+    CONV_BE_32( mr->ppc.cr );
     return( MS_OK );
 }
 
 mad_status      DIGENTRY MIRegistersTarget( mad_registers *mr )
 {
+    // Convert GPRs
+    CONV_BE_32( mr->ppc.r0.u._32[0] );
+    CONV_BE_32( mr->ppc.r1.u._32[0] );
+    CONV_BE_32( mr->ppc.r2.u._32[0] );
+    CONV_BE_32( mr->ppc.r3.u._32[0] );
+    CONV_BE_32( mr->ppc.r4.u._32[0] );
+    CONV_BE_32( mr->ppc.r5.u._32[0] );
+    CONV_BE_32( mr->ppc.r6.u._32[0] );
+    CONV_BE_32( mr->ppc.r7.u._32[0] );
+    CONV_BE_32( mr->ppc.r8.u._32[0] );
+    CONV_BE_32( mr->ppc.r9.u._32[0] );
+    CONV_BE_32( mr->ppc.r10.u._32[0] );
+    CONV_BE_32( mr->ppc.r11.u._32[0] );
+    CONV_BE_32( mr->ppc.r12.u._32[0] );
+    CONV_BE_32( mr->ppc.r13.u._32[0] );
+    CONV_BE_32( mr->ppc.r14.u._32[0] );
+    CONV_BE_32( mr->ppc.r15.u._32[0] );
+    CONV_BE_32( mr->ppc.r16.u._32[0] );
+    CONV_BE_32( mr->ppc.r17.u._32[0] );
+    CONV_BE_32( mr->ppc.r18.u._32[0] );
+    CONV_BE_32( mr->ppc.r19.u._32[0] );
+    CONV_BE_32( mr->ppc.r20.u._32[0] );
+    CONV_BE_32( mr->ppc.r21.u._32[0] );
+    CONV_BE_32( mr->ppc.r22.u._32[0] );
+    CONV_BE_32( mr->ppc.r23.u._32[0] );
+    CONV_BE_32( mr->ppc.r24.u._32[0] );
+    CONV_BE_32( mr->ppc.r25.u._32[0] );
+    CONV_BE_32( mr->ppc.r26.u._32[0] );
+    CONV_BE_32( mr->ppc.r27.u._32[0] );
+    CONV_BE_32( mr->ppc.r28.u._32[0] );
+    CONV_BE_32( mr->ppc.r29.u._32[0] );
+    CONV_BE_32( mr->ppc.r30.u._32[0] );
+    CONV_BE_32( mr->ppc.r31.u._32[0] );
+    // Convert special registers
+    CONV_BE_32( mr->ppc.iar.u._32[0] );
+    CONV_BE_32( mr->ppc.msr.u._32[0] );
+    CONV_BE_32( mr->ppc.ctr.u._32[0] );
+    CONV_BE_32( mr->ppc.lr.u._32[0] );
+    CONV_BE_32( mr->ppc.xer );
+    CONV_BE_32( mr->ppc.cr );
     return( MS_OK );
 }
 
@@ -246,9 +328,9 @@ typedef struct {
 } reg_display_entry;
 
 static const reg_display_entry CPUNumeric[] = {
-    { IDX_r0,           31, PPCT_DWORD },
-    { IDX_lr,            4, PPCT_DWORD },
-    { IDX_cr,            2, PPCT_WORD },
+    { IDX_r0,           32, PPCT_H_DWORD },
+    { IDX_lr,            4, PPCT_H_DWORD },
+    { IDX_cr,            2, PPCT_H_WORD },
     { 0,                 0, 0 }
 };
 
@@ -278,17 +360,17 @@ static mad_status       CPUGetPiece( unsigned piece,
 
     if( !FindEntry( CPUNumeric, piece, &idx, disp_type ) ) return( MS_FAIL );
     if( !(MADState->reg_state[CPU_REG_SET] & CT_EXTENDED) ) {
-        if( *disp_type == PPCT_DWORD ) *disp_type = PPCT_WORD;
+        if( *disp_type == PPCT_H_DWORD ) *disp_type = PPCT_H_WORD;
     }
     //NYI: if extended & ~ 64 bit mode, downshift to 32-bit display.
     //     Also, if 64 <=> 32 bit switch, tell client to redraw window
     if( !(MADState->reg_state[CPU_REG_SET] & CT_HEX) ) {
         switch( *disp_type ) {
-        case PPCT_DWORD:
-            *disp_type = PPCT_UINT64;
+        case PPCT_H_DWORD:
+            *disp_type = PPCT_H_UINT64;
             break;
-        case PPCT_WORD:
-            *disp_type = PPCT_ULONG;
+        case PPCT_H_WORD:
+            *disp_type = PPCT_H_ULONG;
             break;
         }
     }
@@ -301,8 +383,8 @@ static mad_status       CPUGetPiece( unsigned piece,
 }
 
 static const reg_display_entry FPUList[] = {
-    { IDX_f0,           31, PPCT_DOUBLE },
-    { IDX_fpscr,         1, PPCT_WORD },
+    { IDX_f0,           32, PPCT_H_DOUBLE },
+    { IDX_fpscr,         1, PPCT_H_WORD },
     { 0,                 0, 0 }
 };
 
@@ -318,8 +400,8 @@ static mad_status       FPUGetPiece( unsigned piece,
     if( !FindEntry( FPUList, piece, &idx, disp_type ) ) return( MS_FAIL );
     if( MADState->reg_state[FPU_REG_SET] & FT_HEX ) {
         switch( *disp_type ) {
-        case PPCT_DOUBLE:
-            *disp_type = PPCT_HDOUBLE;
+        case PPCT_H_DOUBLE:
+            *disp_type = PPCT_H_HDOUBLE;
             break;
         }
     }
@@ -344,18 +426,18 @@ mad_status      DIGENTRY MIRegSetDisplayGetPiece( const mad_reg_set_data *rsd,
                         disp_type, max_value ) );
 }
 
-static const mad_modify_list    WordReg = { NULL, PPCT_WORD, MSTR_NIL };
-static const mad_modify_list    DWordReg = { NULL, PPCT_DWORD, MSTR_NIL };
-static const mad_modify_list    FltReg = { NULL, PPCT_DOUBLE, MSTR_NIL };
+static const mad_modify_list    WordReg = { NULL, PPCT_H_WORD, MSTR_NIL };
+static const mad_modify_list    DWordReg = { NULL, PPCT_H_DWORD, MSTR_NIL };
+static const mad_modify_list    FltReg = { NULL, PPCT_H_DOUBLE, MSTR_NIL };
 
 mad_status      DIGENTRY MIRegSetDisplayModify( const mad_reg_set_data *rsd, const mad_reg_info *ri, const mad_modify_list **possible_p, unsigned *num_possible_p )
 {
     *num_possible_p = 1;
     switch( ri->type ) {
-    case PPCT_DOUBLE:
+    case PPCT_H_DOUBLE:
         *possible_p = &FltReg;
         break;
-    case PPCT_DWORD:
+    case PPCT_H_DWORD:
         //NYI: have to check for 64-bit mode
         *possible_p = &DWordReg;
         break;
