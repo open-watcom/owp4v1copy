@@ -1061,6 +1061,8 @@ void GetAsmLine()
             strncat( buf, " ", 255 );
             NextToken();
         }
+        if( CurToken == T_NULL )
+            TokenLine--;
         AsmLine( buf );
     }
     CompFlags.pre_processing = 0;       // cause T_NULL token at end of line
