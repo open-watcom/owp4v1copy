@@ -38,7 +38,9 @@
 #else
   #pragma pack(__push,8);
 #endif
+#if 0
 #include "dos16.h"
+#endif
 #pragma pack(__pop);
 
 #if __WATCOMC__ < 1100
@@ -82,7 +84,7 @@ void __far __unhook8087()
     }
 
 #define EMULATING_87 4
-
+#if 0
 int D16Emulate( int enable_flag )
     {
         if( enable_flag ) {
@@ -95,3 +97,4 @@ int D16Emulate( int enable_flag )
         }
         return(1);
     }
+#endif

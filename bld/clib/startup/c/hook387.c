@@ -38,7 +38,9 @@
 #else
   #pragma pack(__push,8);
 #endif
+#if 0
 #include "dos16.h"
+#endif
 #pragma pack(__pop);
 
 extern void __interrupt __int7();
@@ -83,7 +85,7 @@ static char hooked = 0;
 static char has_wgod_emu = 0;
 
 static char FPArea[128];
-
+#if 0
 char __hook387( D16INFO __far *_d16infop )
 /****************************************/
 {
@@ -131,3 +133,4 @@ char __unhook387( D16INFO __far *_d16infop )
     }
     return( 0 );
 }
+#endif
