@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Determine resource language from system environment.
 *
 ****************************************************************************/
 
@@ -95,6 +94,8 @@ static res_language_enumeration check_code_page( void )
     #elif defined __OS2__
         DosGetCp( 2, &cp, &bytesOutput );
         codepage = cp;
+    #elif defined __OSI__
+        codepage = 437;         // Maybe we could try harder...
     #elif defined __DOS__
         codepage = dos_get_code_page();
     #elif defined __WINDOWS__
@@ -116,7 +117,7 @@ static res_language_enumeration check_code_page( void )
 ***** Query DOS to find the valid lead byte ranges.
 ****/
 
-#ifdef __DOS__
+#if defined(__DOS__) && !defined(__OSI__)
 #ifndef __386__
 
 #pragma aux             dos_get_code_page = \
