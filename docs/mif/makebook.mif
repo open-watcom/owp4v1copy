@@ -158,17 +158,19 @@ wgml_opts += verb stat
 #
 ####################################################
 
+whpcvt_opts_ext =
+
 !ifeq dotarget os2
-whpcvt_opts =-ipf -i -tl "$(book_title)"
+whpcvt_opts =-ipf -i -tl "$(book_title)" -hn
 !else ifeq dotarget dos
-whpcvt_opts =-ib -i -t -e -lk -kw -ix -tc -br -kb -up -dt "Table of Contents" -ds "$(book_title)"
+whpcvt_opts =-dt "Table of Contents" -ds "$(book_title)"
+whpcvt_opts_ext =-ib -i -t -e -lk -kw -ix -tc -br -kb -up -hn
 !else ifeq dotarget html
-whpcvt_opts =-html -i -tl "$(book_title)"
+whpcvt_opts =-html -i -tl "$(book_title)" -hn
 !else
-whpcvt_opts =-rtf -i -t -e -lk -b -hh -k -up
+whpcvt_opts =-rtf -i -t -e -lk -b -hh -k -up -hn
 !endif
 
-whpcvt_opts += -hn
 
 ####################################################
 
@@ -358,7 +360,9 @@ compile_gml_to_xxx : .PROCEDURE
     @set GMLLIB=.\;$(whelp_incs);$(%GMLLIB)
     @set GMLINC=.\;$(hlp_incs);$(whelp_incs);$(book_incs);$(gml_incs)
     -$(%GML_ROOT)\wgml $(book_src) ($(wgml_opts)
-    whpcvt $(whpcvt_opts) $*.ptf
+    @%create whpcvt.dat
+    @for %p in ( $(whpcvt_opts_ext) ) do @echo %p >> whpcvt.dat
+    whpcvt $(whpcvt_opts) -@ whpcvt.dat $*.ptf
     @%create sysusr02.gml
     -$(%GML_ROOT)\wgml $(book_src) ($(wgml_opts)
     @if exist $*.cn1 @erase $*.cn1
@@ -367,7 +371,9 @@ compile_gml_to_xxx : .PROCEDURE
     @ren sysusr02.gml $*.h
     @if exist $*.mix @erase $*.mix
     @ren sysusr01.gml $*.mix
-    whpcvt $(whpcvt_opts) -h $*.ptf
+    @%create whpcvt.dat
+    @for %p in ( $(whpcvt_opts_ext) -h ) do @echo %p >> whpcvt.dat
+    whpcvt $(whpcvt_opts) -@ whpcvt.dat $*.ptf
 
 ####################################################
 compile_hpj_win : .PROCEDURE

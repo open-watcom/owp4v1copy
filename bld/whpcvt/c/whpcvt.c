@@ -470,7 +470,7 @@ static int process_args(
     int                 i;
     int                 start_arg;
 
-    for( start_arg = 1; start_arg < argc; ++start_arg ) {
+    for( start_arg = 0; start_arg < argc; ++start_arg ) {
         if( argv[start_arg][0] == '-' || argv[start_arg][0] == '/' ) {
 
             for( i = 0; Args[i] != NULL; ++i ) {
@@ -729,6 +729,7 @@ static int valid_args(
     char                line[200];
     int                 ret;
     int                 i;
+    char                *x;
 
     Tab_xmp = FALSE;
 
@@ -773,15 +774,15 @@ static int valid_args(
     Title_case = TITLE_CASE_UPPER;
 
     start_arg = process_args( argc, argv );
-    if( argc > start_arg + 2 || start_arg == argc ) {
-        return( 0 );
+    if( start_arg < argc - 2 || start_arg >= argc ) {
+        return( -1 );
     }
 
     for( ;; ) {
         if( Options_file != NULL ) {
             opt_file = fopen( Options_file, "r" );
             if( opt_file == NULL ) {
-                return( 0 );
+                return( -1 );
             }
             for( argc = 0 ;; ++argc ) {
                 if( fgets( line, 200, opt_file ) == NULL ) {
@@ -799,11 +800,19 @@ static int valid_args(
                 if( fgets( line, 200, opt_file ) == NULL ) {
                     break;
                 }
-                line[199] = '\0';
-                i = strlen( line );
-
-                if( line[i-1] == '\n' ) {
-                    line[i-1] = '\0';
+                line[199] = 0;
+                for (x = line, i = 0; i < 200 && *x != 0; i++, x++) {
+                    if ( *x != ' ' && *x != 9 ) {
+                        strcpy (line, x);
+                        break;
+                    }
+                }
+                for (i = strlen( line ), x = line + i - 1; i > 0; i--, x--) {
+                    if (*x == '\n' || *x == ' ' || *x == 9) {
+                        *x = 0;
+                    } else {
+                        break;
+                    }
                 }
 
                 _new( argv[argc], i );
@@ -816,7 +825,7 @@ static int valid_args(
             }
             free( argv );
             if( ret != argc ) {
-                return( 0 );
+                return( -1 );
             }
         } else {
             break;
@@ -2087,6 +2096,11 @@ int main(
     char                *dot;
     char                *slash;
 
+    if( argc < 1 ) {
+        print_help();
+        goto error;
+    }
+
     /* This program can be a memory pig, so, to avoid fragmentation,
        do some big allocs to block out the space */
     for( size = 10; size > 0; --size ) {
@@ -2097,8 +2111,11 @@ int main(
         }
     }
 
+    argc--;
+    argv++;
+    
     start_arg = valid_args( argc, argv );
-    if( start_arg == 0 ) {
+    if( start_arg < 0 ) {
         print_help();
         goto error;
     }
