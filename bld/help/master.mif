@@ -8,17 +8,7 @@ inc_dirs = $(help_dir)\h;$(uidir)\h;$(trmem_dir)
 
 .c: ..\c;$(trmem_dir)
 
-help_objs =       &
-    help.obj      &
-    vvscroll.obj  &
-    helpmem.obj   &
-    helpopen.obj  &
-    helpio.obj    &
-    helpscan.obj  &
-    dlg.obj       &
-    msgbox.obj    &
-    search.obj    &
-    dialcb.obj
+!include ..\help.mif
 
 objs =  main.obj filelist.obj
 objs += $(help_objs)

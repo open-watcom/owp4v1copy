@@ -1,0 +1,12 @@
+help_objs =       &
+    help.obj      &
+    vvscroll.obj  &
+    helpmem.obj   &
+    helpopen.obj  &
+    helpio.obj    &
+    helpscan.obj  &
+    dlg.obj       &
+    msgbox.obj    &
+    search.obj    &
+    dialcb.obj
+
