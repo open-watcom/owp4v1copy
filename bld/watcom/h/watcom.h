@@ -78,7 +78,7 @@ typedef struct {
         unsigned_16     _16[4];
         unsigned_8       _8[8];
         struct {
-#if defined( WATCOM_BIG_ENDIAN )
+#if defined( __BIG_ENDIAN__ )
             unsigned    v       : 1;
             unsigned            : 15;
             unsigned            : 16;
@@ -101,7 +101,7 @@ typedef unsigned_64     signed_64;
 
 /* for little endian machines */
 
-#if defined( WATCOM_BIG_ENDIAN )
+#if defined( __BIG_ENDIAN__ )
     #define I64LO32     1
     #define I64HI32     0
 #else
@@ -120,15 +120,27 @@ typedef unsigned_64     signed_64;
     #endif
 #endif
 
-/* Macros for little/big endian conversion */
+/* Macros for little/big endian conversion; These exist to simplify writing
+ * code that handles both little and big endian data on either little or big
+ * endian host platforms. Some of these macros could be implemented as inline
+ * assembler where instructions to byte swap data in registers or read/write
+ * memory access with byte swapping is available.
+ */
 
-#if defined( WATCOM_BIG_ENDIAN )
+#if defined( __BIG_ENDIAN__ )
     /* Macros to get little endian data */
     #define GET_LE_16(w)    ((((w) & 0xFF) << 8) | (((w) & 0xFF00) >> 8))
     #define GET_LE_32(w)    ((((w) & 0xFF) << 24) | (((w) & 0xFF00) << 8) | (((w) & 0xFF0000) >> 8) | (((w) & 0xFF000000) >> 24))
     /* Macros to get big endian data */
     #define GET_BE_16(w)    (w)
     #define GET_BE_32(w)    (w)
+
+    /* Macros to convert little endian data in place */
+    #define CONV_LE_16(w)   (w) = ((((w) & 0xFF) << 8) | (((w) & 0xFF00) >> 8))
+    #define CONV_LE_32(w)   (w) = ((((w) & 0xFF) << 24) | (((w) & 0xFF00) << 8) | (((w) & 0xFF0000) >> 8) | (((w) & 0xFF000000) >> 24))
+    /* Macros to convert big endian data in place */
+    #define CONV_BE_16(w)
+    #define CONV_BE_32(w)
 #else
     /* Macros to get little endian data */
     #define GET_LE_16(w)    (w)

@@ -137,7 +137,7 @@ int  U64Cnv16( unsigned_64 *res, char c );
 #define U32FetchTrunc( x )      ((x).u._32[I64LO32])
 #define I32FetchTrunc( x )      ((signed_32)(x).u._32[I64LO32])
 
-#if defined( WATCOM_BIG_ENDIAN )
+#if defined( __BIG_ENDIAN__ )
 #   define I64Val(h,l) { h, l }
 #else
 #   define I64Val(h,l) { l, h }
