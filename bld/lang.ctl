@@ -54,10 +54,6 @@ echo Languages Build <1>
 #        BDWARF must be done early so that DWARF library users are up-to-date
 [ INCLUDE <devdir>\dwarf\lang.ctl ]
 #
-#        BWOMP must be done before BWASM
-[ INCLUDE <devdir>\womp\lang.ctl ]
-#        BWASM must be done before BCLIB
-[ INCLUDE <devdir>\wasmbld\lang.ctl ]
 #        Now build Open Watcom libraries
 #
 #        emu libraries must be made before C libraries
