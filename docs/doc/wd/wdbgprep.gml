@@ -8,9 +8,9 @@ Before you can debug a program, you must put
 into the code.
 .np
 There are three different formats of debugging information that can be
-put into the code &mdash. "Watcom", "Dwarf" or "Codeview".
+put into the code &mdash. "Watcom", "DWARF" or "CodeView".
 Starting with version 11.0 (and continuing in the &company 1.0 and later
-compilers), the default format is "Dwarf". In earlier releases, the
+compilers), the default format is "DWARF". In earlier releases, the
 default was "Watcom". Although the debugger supports all three formats,
 it is best if you allow the default format to be generated.
 .np
@@ -111,7 +111,16 @@ up the debugging information for all the modules in the executable
 file. There is a linker directive that tells the linker when it should
 include debugging information from the modules.
 .np
-For "Dwarf" format debugging information, the directive is:
+The directive you should use in the general case is:
+.begnote
+.note DEBUG ALL
+.endnote
+.np
+This directive will include all debugging information in the default
+format. You should always use this directive except in the rare cases
+when you need debugging information in a format other than the default.
+.np
+For "DWARF" format debugging information, the directive is:
 .begnote
 .note DEBUG DWARF
 .endnote

@@ -50,6 +50,6 @@ since this will damage the data structures maintained by the linker.
 Add resources to the executable file using the "RESOURCE" option which
 is described in :HDREF refid='xresour'..
 .remark
-Only Dwarf debugging information is supported with incremental
+Only DWARF debugging information is supported with incremental
 linking.
 .eremark

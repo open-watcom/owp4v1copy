@@ -25,15 +25,15 @@ The &lnkname supports four types of debugging information,
 .begpoint $break
 .point DWARF
 .ix 'DEBUG options' 'DWARF'
-(short form "D") specifies that all object files contain Dwarf format
-debugging information and that the executable file will contain Dwarf
+(short form "D") specifies that all object files contain DWARF format
+debugging information and that the executable file will contain DWARF
 debugging information.
 .np
 This debugging format is assumed by default when none is specified.
 .point WATCOM
-.ix 'DEBUG options' 'WATCOM'
-(short form "W") specifies that all object files contain WATCOM format
-debugging information and that the executable file will contain WATCOM
+.ix 'DEBUG options' 'Watcom'
+(short form "W") specifies that all object files contain Watcom format
+debugging information and that the executable file will contain Watcom
 debugging information.
 This format permits the selection of specific classes of debugging
 information (
@@ -42,9 +42,9 @@ information (
 which are described below.
 .point CODEVIEW
 .ix 'DEBUG options' 'CODEVIEW'
-(short form "C") specifies that all object files contain Codeview (CV4)
+(short form "C") specifies that all object files contain CodeView (CV4)
 format debugging information and that the executable file will contain
-Codeview debugging information.
+CodeView debugging information.
 .np
 .ix 'CVPACK'
 .ix 'Debugging Information Compactor'
@@ -59,7 +59,7 @@ Alternatively, you can run CVPACK from the command line.
 can only be processed by the NetWare debugger.
 .endpoint
 .np
-For the WATCOM debugging information format, we can be selective about
+For the Watcom debugging information format, we can be selective about
 the types of debugging information that we include with the executable
 file.
 We can categorize the types of debugging information as follows:
