@@ -91,7 +91,7 @@ void main( int argc, char *argv[] )
     linkCmdLine = InitCmdLine( CL_L_NUM_SECTIONS );
     SetDefaultFile( TYPE_C_FILE, "source" );
     AllowTypeFile( TYPE_C_FILE, TYPE_CPP_FILE, TYPE_DEF_FILE, TYPE_OBJ_FILE,
-                   TYPE_LIB_FILE, TYPE_INVALID_FILE );
+                   TYPE_LIB_FILE, TYPE_RES_FILE, TYPE_INVALID_FILE );
     InitMacro();
 
     /*** Parse the command line and translate to Watcom options ***/
@@ -265,7 +265,7 @@ static int link( const OPT_STORAGE *cmdOpts, CmdLine *linkCmdLine )
 
     /*** Process all object and library file names ***/
     for( numFiles=0; ; numFiles++ ) {
-        filename = GetNextFile( &fileType, TYPE_OBJ_FILE, TYPE_LIB_FILE, TYPE_INVALID_FILE );
+        filename = GetNextFile( &fileType, TYPE_OBJ_FILE, TYPE_LIB_FILE, TYPE_RES_FILE, TYPE_INVALID_FILE );
         if( filename == NULL )  break;
         AppendCmdLine( linkCmdLine, CL_L_FILENAMES_SECTION, filename );
     }
