@@ -48,8 +48,7 @@
 #elif defined(__LINUX__)
     #include <sys/types.h>
     #include <unistd.h>
-    extern int _brk(void *);
-// TODO: Linux specific headers!
+    #include "syslinux.h"
 #elif defined(__WINDOWS__)
     #include "windows.h"
 #endif
@@ -114,10 +113,12 @@ _WCRTLINK void _WCNEAR *__brk( unsigned brk_value )
         unsigned seg_size;
         unsigned segment;
 
+#ifndef __LINUX__
         if( brk_value < _STACKTOP ) {
             errno = ENOMEM;
             return( (void _WCNEAR *) -1 );
         }
+#endif
         seg_size = ( brk_value + 0x0f ) >> 4;
         if( seg_size == 0 ) {
             seg_size = 0x1000;
@@ -130,8 +131,7 @@ _WCRTLINK void _WCNEAR *__brk( unsigned brk_value )
 #elif defined(__QNX__) && defined(__386__)
         if( _brk((void *)(seg_size << 4)) == -1 ) {
 #elif defined(__LINUX__)
-// TODO: This is wrong for Linux - I just copied the QNX code to get it compiling...
-        if( _brk((void *)(seg_size << 4)) == -1 ) {
+        if( sys_brk((unsigned long)(seg_size << 4)) == -1 ) {
 #elif defined(__QNX__)
         if( qnx_segment_realloc( segment,((unsigned long)seg_size) << 4) == -1){
 #else

@@ -37,9 +37,9 @@
 #include "exitwmsg.h"
 #include "initfini.h"
 #include "thread.h"
+#include "rtdata.h"
+#include "syslinux.h"
 
-//void    __near *_endheap;         /* temporary work-around */
-//char    *__near __env_mask;
 _WCRTLINK char ** _WCNEAR environ;  /* pointer to environment table */
 int     _argc;                      /* argument count  */
 char    **_argv;                    /* argument vector */
@@ -57,6 +57,14 @@ void __cdecl _LinuxMain(int argc, char **argv, char **arge)
 {
 //    thread_data *tdata;
 
+    // Initialise the heap. To do this we call sys_brk() with
+    // a value of 0, which will return the current top of the
+    // process address space which is where we start the heap.
+    //
+    // Note also that _STACKLOW under Linux is actually an alias
+    // to _curbrk, since the stack will grow down automatically
+    // until it hits the top of the heap.
+    _curbrk             = sys_brk(0);
     _argc               = argc;
     _argv               = argv;
     environ             = arge;
@@ -69,12 +77,6 @@ void __cdecl _LinuxMain(int argc, char **argv, char **arge)
     _amblksiz = 8 * 1024;       /* set minimum memory block allocation  */
     exit(main(argc,argv,arge));
 }
-
-void sys_exit(int rc);
-#pragma aux sys_exit =                      \
-    "mov    eax,1"                          \
-    "int    0x80"                           \
-    parm [ebx];
 
 _WCRTLINK void __exit(unsigned ret_code)
 {

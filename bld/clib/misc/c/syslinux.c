@@ -24,28 +24,40 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Module implementing linux system calls interface
 *
 ****************************************************************************/
 
-
-#include "variety.h"
-#include <unistd.h>
-#include <string.h>
-#include "exitwmsg.h"
 #include "syslinux.h"
 
-_WCRTLINK void __exit_with_msg( char _WCI86FAR *msg, unsigned retcode )
+/* user-visible error numbers are in the range -1 - -124 */
+
+#define __syscall_return(type, res)                         \
+do {                                                        \
+    if ((unsigned long)(res) >= (unsigned long)(-125)) {    \
+        errno = -(res);                                     \
+        res = -1;                                           \
+    }                                                       \
+    return (type) (res);                                    \
+} while (0)
+
+u_long sys_brk(u_long brk)
 {
-    sys_write(1,msg,strlen(msg));
-    sys_exit( retcode );
+    u_long newbrk;
+
+    newbrk = sys_call1(SYS_brk,brk);
+    if( newbrk < brk )
+        return (u_long)-1;
+    return newbrk;
 }
 
-_WCRTLINK void __fatal_runtime_error( char _WCI86FAR *msg, unsigned retcode )
+long sys_exit(int error_code)
 {
-    if( !__EnterWVIDEO( msg ) ) {
-        __exit_with_msg( msg, retcode );
-    }
+    return sys_call1(SYS_exit,error_code);
+}
+
+ssize_t sys_write(u_int fd, const char * buf,size_t count)
+{
+    return sys_call3(SYS_write, fd, (u_long)buf, count);
 }
 

@@ -38,6 +38,7 @@
 
         extrn   __LinuxMain     : near
         extrn   ___begtext      : near
+        extrn   "C",_STACKTOP   : dword
 
 _TEXT   segment use32 word public 'CODE'
 
@@ -68,13 +69,14 @@ _TEXT   segment use32 word public 'CODE'
 _cstart_:
 _start proc near
 
-	    xor     ebp,ebp     ; Clear frame pointer
-        pop     ecx         ; Pop the argument count.
-        mov     esi,esp     ; argv starts just at the current stack top
+	    xor     ebp,ebp         ; Clear frame pointer
+        mov     _STACKTOP,esp   ; set stack top
+        pop     ecx             ; Pop the argument count.
+        mov     esi,esp         ; argv starts just at the current stack top
         lea     eax,esi + ecx*4 + 4
-        push    eax         ; Push arge (pointer to environment)
-        push    esi         ; Push argv
-        push    ecx         ; Push argc
+        push    eax             ; Push arge (pointer to environment)
+        push    esi             ; Push argv
+        push    ecx             ; Push argc
         call    __LinuxMain
         dd      ___begtext      ; reference module with segment definitions
 ;
