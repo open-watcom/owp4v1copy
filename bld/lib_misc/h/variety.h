@@ -159,6 +159,13 @@
     #else
         #error unrecognized processor for QNX
     #endif
+#elif defined(__LINUX__)
+    #define __PROTECT_MODE__
+    #if defined(__386__)
+        #define __LINUX_386__
+    #else
+        #error unrecognized processor for Linux
+    #endif
 #elif defined(__NETWARE__)
     #define __PROTECT_MODE__
     #if defined(__386__)
