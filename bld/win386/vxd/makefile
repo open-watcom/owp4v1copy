@@ -51,6 +51,6 @@ $(LNKEMU) : makefile
         @%append $(LNKEMU) segment '_TEXT'   nondiscardable
         @%append $(LNKEMU) segment '_DATA'   nondiscardable
 
-.asm.obj :
+wdebug.obj : wdebug.asm wdebug.inc $(emu386)\inc\win30vxd.inc
         $(as) -mf -i..\..\emu\inc $[@
 
