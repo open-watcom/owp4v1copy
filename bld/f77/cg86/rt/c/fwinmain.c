@@ -85,5 +85,6 @@ int     PASCAL  WinMain( HINSTANCE thishandle, HINSTANCE prevhandle, LPSTR cmdli
     CmdShow = cmdshow;
     RTSysInit();
     Spawn( &CallFWINMAIN );
+
     return( RetCode );
 }
