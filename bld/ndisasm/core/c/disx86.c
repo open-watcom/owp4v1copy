@@ -2063,7 +2063,7 @@ dis_handler_return X86ModRMImm_16( dis_handle *h, void *d, dis_dec_ins *ins )
     case DI_X86_sar2:
     case DI_X86_shr2:
     case DI_X86_shl2:
-        X86GetImmedVal( S_BYTE, code.type1.w, d, ins );
+        X86GetUImmedVal( S_BYTE, code.type1.w, d, ins );
         break;
     case DI_X86_mov2:
     case DI_X86_test2:
