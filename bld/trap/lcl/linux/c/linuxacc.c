@@ -647,7 +647,7 @@ unsigned ReqProg_load()
         /* wait until it hits _start (upon execve) */
         if ( waitpid( pid, &status, WUNTRACED ) < 0 )
             goto fail;
-        if ( sys_ptrace( PTRACE_CONT, pid, 0, 0 ) != -1 )
+        if ( sys_ptrace( PTRACE_CONT, pid, 0, 0 ) == -1 )
             goto fail;
         /* wait until it hits SIGSTOP */
         if ( waitpid ( pid, &status, WUNTRACED ) < 0 )
