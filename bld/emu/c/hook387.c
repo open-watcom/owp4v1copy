@@ -33,15 +33,11 @@
 #include "variety.h"
 #include <dos.h>
 #include <stdlib.h>
-#if defined(_M_IX86)
-  #pragma pack(__push,1);
-#else
-  #pragma pack(__push,8);
-#endif
 #if 0
+#pragma pack(__push,1);
 #include "dos16.h"
-#endif
 #pragma pack(__pop);
+#endif
 
 extern void __interrupt __int7();
 extern int __no87;
@@ -53,30 +49,37 @@ extern unsigned char __8087;
 #pragma aux __8087 "*";
 
 extern  int gorealmode();
-#pragma aux gorealmode = 0xb4 0x30 0xcd 0x21;  /* mov ah,30h; int 21h */
+#pragma aux gorealmode = \
+        "mov ah,30h" \
+        "int 21h";
 
 extern int int31( char *, short );
-#pragma aux int31 = 0x06 0xcd 0x31 0x19 0xc0 0x07 parm [esi] [ax] modify [ edi ];
+#pragma aux int31 = \
+        "push es" \
+        "int 31h" \
+        "sbb eax,eax" \
+        "pop es" \
+        parm [esi] [ax] modify [ edi ];
 
 extern int getcr0();
-#pragma aux getcr0 = 0x0f 0x20 0xc0 value [ eax ]; /* mov     eax,cr0 */
+#pragma aux getcr0 = "mov eax,cr0" value [ eax ];
 
 extern void putcr0(int);
-#pragma aux putcr0 = 0x0f 0x22 0xc0 parm [ eax ];  /* mov     cr0,eax */
+#pragma aux putcr0 = "mov cr0,eax" parm [ eax ];
 
 extern short getcs(void);
-#pragma aux getcs = 0x8c 0xc8 value [ ax ];        /* mov     ax,cs */
+#pragma aux getcs = "mov ax,cs" value [ ax ];
 
 extern short int2f( char, short, short, short );
 #pragma aux int2f = \
-        0xB4 0xfa       /* mov ah,0fa */ \
-        0xcd 0x2f       /* int 2f */ \
+        "mov ah,0fah" \
+        "int 2fh" \
         parm [ al ] [ dx ] [ cx ] [ bx ] value [ ax ];
 
 extern char IsWindows( void );
 #pragma aux IsWindows = \
-        0x66 0xb8 0x00 0x16 /* mov ax,1600h */ \
-        0xcd 0x2f       /* int 2f */ \
+        "mov ax,1600h" \
+        "int 2fh" \
         value [al];
 
 #define EMULATING_87 4
@@ -144,7 +147,3 @@ char __unhook387( void __far *_d16infop )
     }
     return( 0 );
 }
-
-
-
-

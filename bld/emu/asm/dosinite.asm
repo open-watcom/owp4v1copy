@@ -3,7 +3,6 @@ include extender.inc
 
 .386p
 .387
-    name    dosinite
 
 extrn   __int7      : near
 extrn   __int7_pl3  : near
@@ -82,15 +81,15 @@ __sys_init_387_emulator proc near
 __sys_init_387_emulator endp
 
 hook_in_emulator proc near
-    mov byte ptr __8087,3   ; pretend we have a 387
-    mov byte ptr hooked,1   ; indicate we hooked it
+    mov     byte ptr __8087,3   ; pretend we have a 387
+    mov     byte ptr hooked,1   ; indicate we hooked it
     smsw    msw         ; save the EM and MP bits
-    and word ptr msw,EM or MP   ; ...
-    sub esp,8           ; allocate temp
+    and     word ptr msw,EM or MP   ; ...
+    sub     esp,8           ; allocate temp
     sidt    fword ptr [esp]     ; find out where IDT table is
-    mov ebx,2[esp]      ; ...
-    add ebx,7*8         ; point to entry for int 7
-    add esp,8           ; deallocate temp
+    mov     ebx,2[esp]      ; ...
+    add     ebx,7*8         ; point to entry for int 7
+    add     esp,8           ; deallocate temp
     _guess              ; guess: X-32VM
       cmp   byte ptr __X32VM,0  ; - quit if not X-32VM
       _quif e           ; - ...
@@ -140,7 +139,7 @@ hook_in_emulator proc near
       _quif e           ; - yes, done
       call  hook_pharlap        ; - hook int7 under Phar Lap
     _endguess           ; endguess
-    ret             ; return
+    ret                 ; return
 hook_in_emulator endp
 
 create_IDT_entry proc near
@@ -148,16 +147,11 @@ create_IDT_entry proc near
     mov DX,CS           ; get CS as our segment selector
     shl EDX,16          ; shift to top
     mov DX,CX           ; bottom word is low part of addr
-;;
-;;  Assembler bug: forgets operand size prefix, so chip does a
-;;      mov ecx,cs
-;;  mov CX,CS           ; get CS for CPL bits
-    db  066h, 08ch, 0c9h
-    
+    mov CX,CS           ; get CS for CPL bits
     and CL,3            ; isolate CPL bits
     shl CX,13           ; shift into place for DPL
     or  CH,8Eh          ; set P=1, and INTERRUPT gate
-    ret             ; return
+    ret                 ; return
 create_IDT_entry endp
 
 hook_pharlap proc near

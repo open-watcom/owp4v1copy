@@ -24,44 +24,62 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Intel x87 emulator hook for 16-bit OS/2.
 *
 ****************************************************************************/
 
 
-#include "variety.h"
+#include <string.h>
+#include <i86.h>
+
 #define INCL_DOSDEVICES
 #define INCL_SUB
 #define INCL_DOSSEMAPHORES
 #define INCL_DOSINFOSEG
 #define INCL_DOSMISC
 #include <wos2.h>
-#include <stdlib.h>
 
-extern  void    __setenvp();
-void __interrupt __far __int7();
-static void __interrupt (*old_int7)();
+extern void __interrupt __far __int7( void );
 #pragma aux __int7 "*";
 
-int __far __hook8087()
-/********************/
-    {
-        char    devinfo;
+static void __interrupt (*old_int7)( void );
 
-        __setenvp();                    /* make sure environment is setup */
-        DosDevConfig( &devinfo, 3, 0 ); /* returns 1=present 0=notpresent */
-        if( getenv( "NO87" ) != NULL  ||  devinfo == 0 ) {
-            DosSetVec( 7, (PFN)&__int7, (PFN FAR*)&old_int7 );
-            return( 0 );
-        }
-        return( devinfo );
-    }
+static int checkenv_NO87( void )
+{
+    unsigned short  seg;
+    unsigned short  count;
+    char __far      *p;
 
-void __far __unhook8087()
-/***********************/
-    {
-        if( old_int7 != NULL ) {
-            DosSetVec( 7, (PFN)old_int7, (PFN FAR*)&old_int7 );
-        }
+    DosGetEnv( (PUSHORT)&seg, (PUSHORT)&count );
+    p = (char __far *)MK_FP( seg, 0 );
+    while( *p ) {
+        if( _fstrnicmp( p, "NO87=", 5 ) == 0 )
+            return( 1 );
+        while( *p )
+            p++;
+        p++;          // skip 0
     }
+    return( 0 );
+}
+
+
+int __far __hook8087( void )
+/**************************/
+{
+    char    devinfo;
+
+    DosDevConfig( &devinfo, 3, 0 ); /* returns 1=present 0=notpresent */
+    if( checkenv_NO87() || ( devinfo == 0 ) ) {
+        DosSetVec( 7, (PFN)&__int7, (PFN FAR*)&old_int7 );
+        return( 0 );
+    }
+    return( devinfo );
+}
+
+void __far __unhook8087( void )
+/*****************************/
+{
+    if( old_int7 != NULL ) {
+        DosSetVec( 7, (PFN)old_int7, (PFN FAR*)&old_int7 );
+    }
+}

@@ -6,6 +6,15 @@ proj_name = emu86
 
 emu86_autodepends = .AUTODEPEND
 
+memory_model_i86 = s
+memory_model_386 = s
+
+fpu_flags_dos_i86 = -fpc
+fpu_flags_os2_i86 = -fpc
+fpu_flags_win_i86 = -fpc
+fpu_flags_qnx_i86 = -fpc
+fpu_flags_qnx_386 = -fpc
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
@@ -18,37 +27,42 @@ emu86_autodepends = .AUTODEPEND
 .asm : ../asm
 
 aflag_386 =
-!ifeq host_CPU i86
+!ifeq host_cpu i86
 cpu_size =16
 !else
 cpu_size =32
 !endif
 
-extra_a_flags=-fpc
-extra_a_flags_dosinit= -ms -fpi
-extra_a_flags_initemu = -ms -i"$(comp_cfg_dir)/h" -fpi87
-extra_a_flags_initemu2 = -ms -i"$(comp_cfg_dir)/h"
-extra_a_flags_initemuw = -ms -i"$(comp_cfg_dir)/h"
-extra_a_flags_emu8087 = -i"../inc" -i"$(emu386)/inc" -i"$(mathlib_dir)/h"
+extra_a_flags = -ms
+
+extra_a_flags_dos = -zld
+extra_a_flags_os2 = -zld
+extra_a_flags_win = -zld
+extra_a_flags_qnx = -DQNX$(cpu_size)
+
+extra_a_flags_dosinit  = -fpi
+extra_a_flags_initemu  = -fpi87 -i"$(comp_cfg_dir)/h"
+extra_a_flags_initemu2 = -fpc -i"$(comp_cfg_dir)/h"
+extra_a_flags_initemuw = -fpc -i"$(comp_cfg_dir)/h"
+extra_a_flags_emu8087  = -fpc -i"../inc" -i"$(emu386)/inc" -i"$(mathlib_dir)/h"
 !ifeq host_OS os2
 extra_a_flags_emu8087 += -d__PROTMODE__
 !else ifeq host_OS qnx
 extra_a_flags_emu8087 += -d__PROTMODE__
 !endif
 extra_a_flags_emustub =
-extra_a_flags_qnx = -DQNX$(cpu_size)
 
-extra_c_flags_qnx = -oais -s -i"$(new_qnx_h)" -DQNX$(cpu_size) -fpc
+extra_c_flags_dos = -zl -zld -zls
+extra_c_flags_os2 = -zl -zld -zls
+extra_c_flags_win = -zl -zld -zls
+extra_c_flags_qnx = -oais -s -i"$(new_qnx_h)" -DQNX$(cpu_size)
 
-extra_c_flags_hk87 = -I"$(lib_misc_dir)/h"
-extra_c_flags_hk87o16 = -I"$(lib_misc_dir)/h"
-
-objs_dos = initemu.obj emu8087.obj dosinit.obj hk87.obj
-objs_os2 = initemu2.obj emu8087.obj hk87o16.obj
+objs_dos = initemu.obj emu8087.obj dosinit.obj
+objs_os2 = initemu2.obj emu8087.obj hook8087.obj
 objs_win = initemuw.obj
 
-!ifeq host_OS qnx
-!ifeq host_CPU cpu_i86
+!ifeq host_os qnx
+!ifeq host_cpu i86
 
 all: emu86_$(cpu_size) emu86
 
@@ -63,7 +77,10 @@ emu86_$(cpu_size): qnxemu87.obj emu8087.obj fpeqnx.obj
 
 noemu87.lib: emustub.obj
     $(librarian) -n -b $^@ +$[@
-!endif
+
+!else
 
 emu87.lib: $(objs_$(host_OS))
     $(librarian) -n -b $^@ $<
+
+!endif

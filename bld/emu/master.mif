@@ -23,15 +23,17 @@ INCS = &
 .c : ../c;../../emu86/c
 .asm : ../asm
 
-extra_a_flags = -I"$(mathlib_dir)/h" -I"$(emu386)/inc" -fpc
-extra_a_flags_dos = -mf -D_OS=_PLDT -DSEGMENTED
+extra_a_flags = -fpc -I"$(mathlib_dir)/h" -I"$(emu386)/inc"
+extra_a_flags_dos = -mf -zld -D_OS=_PLDT -DSEGMENTED
 extra_a_flags_qnx = -ms -D_OS=_QNX -DSEGMENTED
 extra_a_flags_win = -mf -D_OS=_PLDT -D__WIN387__
 extra_a_flags_386inite = -I"$(comp_cfg_dir)/h"
 extra_a_flags_386stub = -ms -I"$(comp_cfg_dir)/h"
 extra_a_flags_dosinite = -fpi -I"$(lib_misc_dir)/h"
 
-extra_c_flags_qnx = -oais-s-w3 -I"$(new_qnx_h)" -DQNX32 -fpc
+extra_c_flags_dos = -zl -zls -zld -fpc
+extra_c_flags_qnx = -fpc -oais-s-w3 -I"$(new_qnx_h)" -DQNX32
+
 extra_c_flags_hook387 = -I"$(lib_misc_dir)/h"
 
 !ifeq host_OS dos
