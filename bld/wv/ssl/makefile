@@ -6,7 +6,7 @@
 .extensions: .prs .ssl
 
 !ifeq release 0
-verbose = /v
+ssl_verbose = -v
 !endif
 
 all : fortran.prs cpp.prs c.prs java.prs .SYMBOLIC
@@ -22,7 +22,7 @@ c.prs : c.ssl pp_c.ssl $(common)
 java.prs : java.ssl pp_c.ssl $(common)
 
 .ssl.prs
-        ssl $(verbose) $[@ $^@
+        ssl $(ssl_verbose) $[@ $^@
 
 clean: .SYMBOLIC
     rm -f *.prs
