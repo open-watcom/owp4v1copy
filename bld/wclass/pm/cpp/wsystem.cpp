@@ -50,7 +50,9 @@ int WEXPORT WSystemService::sysExec( const char *cmd,
 /******************************************************/
 
     WStringList args;
+    const char  *arg_pgm;
     const char  *pgm;
+    char        pgm_buf[_MAX_PATH];
     char        *cmdline;
     APIRET      rc;
     RESULTCODES returncodes;
@@ -66,11 +68,21 @@ int WEXPORT WSystemService::sysExec( const char *cmd,
     WORD        sess_type;
 
     args.parseIn( cmd );
-    pgm = args.stringAt( 0 );
+    arg_pgm = args.stringAt( 0 );
+    // if the filename was quoted, we need to strip the quotes
+    // or OS/2 won't like us
+    if( arg_pgm[0] == '\"' ) {
+        strncpy( pgm_buf, arg_pgm + 1, _MAX_PATH - 1 );
+        pgm_buf[ strlen( pgm_buf ) - 1 ] = '\0';
+        pgm = pgm_buf;
+    } else {
+        pgm = arg_pgm;
+    }
     pgm_starter = PGM_DOSSTARTSESSION;
     sess_type = SSF_TYPE_DEFAULT;
     rc = DosQueryAppType( (char const *)pgm, &app_type );
-    if( rc != 0 ) return( -1 );
+    if( rc != 0 )
+        return( -1 );
     if( typ == WWinTypeDefault ) {
         if( app_type & FAPPTYP_DOS ) {
             pgm_starter = PGM_DOSSTARTSESSION;
@@ -126,7 +138,7 @@ int WEXPORT WSystemService::sysExec( const char *cmd,
             break;
         }
     }
-    WFileName fn( args.stringAt( 0 ) );
+    WFileName fn( pgm );
     if( *fn.ext() == NULLCHAR ) {
         fn.setExt( "exe" );
     }
