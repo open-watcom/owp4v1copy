@@ -2,6 +2,14 @@
 # Master makefile for creating remote servers
 #
 
+# Hack to get the $(linker) macro defined; all trap makefiles need to
+# be redone and define it (and this whole makefile needs to be shredded
+# and redone).
+host_cpu = 386
+
+!include cproj.mif
+!include deftarg.mif
+
 sys_x86_os2     = sys os2 op st=4k,modname=$^&, desc $^&
 sys_x86_qnx     = sys qnx386 flat op st=16k, offset=20k, res=$(srv).use
 sys_x86_win     = sys windows op st=20k, modname=$^&, desc $^&

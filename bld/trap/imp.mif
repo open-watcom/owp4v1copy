@@ -57,7 +57,6 @@ comp_x86_ads            = $(comp386) -mf-fpc-3s
 comp_x86_pls            = $(comp386) -mf-fpc
 comp_x86_nt             = $(comp386) -mf-fpc
 comp_x86_nlm            = $(comp386) -mf-fpc-3s
-comp_x86_penpoint       = $(comp386) -mf-fpc
 
 comp_axp_nt             = $(compaxp)
 
@@ -79,14 +78,13 @@ libs_x86_ads            = clib3s
 libs_x86_pls            = clib3r
 libs_x86_nt             = clib3r
 libs_x86_nlm            = math3s
-libs_x86_penpoint       = clib3r
 
 libs_axp_nt             = clib
 
 libs_ppc_nt             = clib
 
-incs_os2        = $(lang_root)\h\os21x;$(watcom_dir)\h;$(lang_root)\h
-incs_os2v2      = $(lang_root)\h\os2;$(watcom_dir)\h;$(lang_root)\h
+incs_os2        = $(inc_dirs_sys_os2_386);$(watcom_dir)\h;$(lang_root)\h
+incs_os2v2      = $(inc_dirs_sys_os2_386);$(watcom_dir)\h;$(lang_root)\h
 incs_qnx        = $(watcom_dir)\qh;$(watcom_dir)\h;$(lang_root)\qh
 incs_win        = $(lang_root)\h\win;$(watcom_dir)\h;$(lang_root)\h
 incs_dos        = $(watcom_dir)\h;$(lang_root)\h
@@ -96,7 +94,6 @@ incs_pls        = $(watcom_dir)\h;$(lang_root)\h;$(plsdir)
 incs_nt         = $(lang_root)\h\nt;$(watcom_dir)\h;$(lang_root)\h
 #incs_nlm        = $(watcom_dir)\h;$(nw$(nlm_ver)dir);$(nw$(nlm_ver)0src);$(watcom_dir)\nw40_h
 incs_nlm        = $(watcom_dir)\h;$(ow_nwoss_root)\nw$(nlm_ver)\h;$(ow_nwoss_root)\nw$(nlm_ver)\src;$(ow_nwoss_root)\common\h
-incs_penpoint   = $(watcom_dir)\pen$(ver)_h;$(watcom_dir)\h;$(lang_root)\h
 
 !ifndef machine
 machine = IBM
