@@ -373,10 +373,8 @@ STATIC RET_T processInlineFile( int handle, const char* body, const char* fileNa
                         write( handle, DeMacroBody, strlen( DeMacroBody ) ) ) {
                     ret = RET_ERROR;
                 }
-                if( body[index+1] != NULLCHAR ) {
-                    if( write( handle, "\n", 1 ) != 1 ) {
-                        ret = RET_ERROR;
-                    }
+                if( write( handle, "\n", 1 ) != 1 ) {
+                    ret = RET_ERROR;
                 }
             } else {
                 if( !Glob.noheader ) {
