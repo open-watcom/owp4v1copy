@@ -34,7 +34,7 @@ set WASMLINUXBUILD=normal
 [ INCLUDE <devdir>/mathlib/lang.ctl ]
 [ INCLUDE <devdir>/emu/lang.ctl ]
 [ INCLUDE <devdir>/cc/wcl/lang.ctl ]
-<CPCMD> <devdir>/cc/wcl/linux386/wcl386.exe <devdir>/build/binl/wcl386
+<CPCMD> <devdir>/cc/wcl/linux386.386/wcl386.exe <devdir>/build/binl/wcl386
 [ INCLUDE <devdir>/cfloat/lang.ctl ]
 [ INCLUDE <devdir>/owl/lang.ctl ]
 [ INCLUDE <devdir>/dwarf/lang.ctl ]
