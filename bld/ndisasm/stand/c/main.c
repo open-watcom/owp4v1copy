@@ -510,22 +510,25 @@ static return_val disassembleSection( section_ptr sec, char * contents,
 static label_entry dumpLabel( label_entry l_entry, section_ptr sec,
                               orl_sec_offset loop, orl_sec_offset end )
 {
-    while( l_entry != NULL && l_entry->offset == loop ) {
+    while( l_entry != NULL
+        && ( l_entry->type == LTYP_ABSOLUTE || l_entry->offset <= loop ) ) {
         switch( l_entry->type ){
-            case LTYP_ABSOLUTE:
+        case LTYP_ABSOLUTE:
+            break;
+        case LTYP_UNNAMED:
+            PrintLinePrefix( NULL, loop, end, 1, 0 );
+            BufferStore("%c$%d:", LabelChar, l_entry->label.number );
+            BufferConcatNL();
+            break;
+        case( LTYP_SECTION ):
+        case( LTYP_NAMED ):
+            if( sec && !strncmp( l_entry->label.name, sec->name, 8 ) )
                 break;
-            case LTYP_UNNAMED:
-                PrintLinePrefix( NULL, loop, end, 1, 0 );
-                BufferStore("%c$%d:", LabelChar, l_entry->label.number );
-                BufferConcatNL();
-                break;
-            default:
-                if( sec && strncmp( l_entry->label.name, sec->name, 8 ) ) {
-                    PrintLinePrefix( NULL, loop, end, 1, 0 );
-                    BufferStore("%s:", l_entry->label.name );
-                    BufferConcatNL();
-                }
-                break;
+        default:
+            PrintLinePrefix( NULL, loop, end, 1, 0 );
+            BufferStore("%s:", l_entry->label.name );
+            BufferConcatNL();
+            break;
         }
         l_entry = l_entry->next;
     }

@@ -52,26 +52,49 @@ extern dis_format_flags DFormat;
 
 static label_entry resolveTwoLabelsAtLocation( label_list sec_label_list, label_entry entry, label_entry previous_entry, label_entry old_entry )
 {
-    if( ( entry->type == LTYP_UNNAMED )
-        && ( old_entry->type != LTYP_ABSOLUTE )
-        && ( old_entry->type != LTYP_FUNC_INFO )
-        && ( ( old_entry->type != LTYP_SECTION ) || !IsMasmOutput() ) ) {
-        // merge entry into old_entry
-        MemFree( entry );
-        entry = old_entry;
-    } else if( ( entry->type == LTYP_ABSOLUTE )
-        && ( old_entry->type == LTYP_ABSOLUTE ) ) {
-        // merge entry into old_entry
-        MemFree( entry );
-        entry = old_entry;
-    } else {
-        // two labels for this location!
-        entry->next = old_entry;
-        if( previous_entry ) {
-            previous_entry->next = entry;
+    label_entry first_entry = old_entry;
+
+    for( ; old_entry != NULL && old_entry->offset == entry->offset; old_entry = old_entry->next ) {
+        if( entry->type == LTYP_UNNAMED ) {
+            if( old_entry->type == LTYP_UNNAMED ) {
+                MemFree( entry );
+                entry = old_entry;
+                return( entry );
+            } else if( old_entry->type == LTYP_NAMED ) {
+                MemFree( entry );
+                entry = old_entry;
+                return( entry );
+            } else if( old_entry->type == LTYP_ABSOLUTE ) {
+            } else if( old_entry->type == LTYP_FUNC_INFO ) {
+            } else if( old_entry->type == LTYP_SECTION ) {
+                if( !IsMasmOutput() ) {
+                    MemFree( entry );
+                    entry = old_entry;
+                    return( entry );
+                }
+            } else {
+                MemFree( entry );
+                entry = old_entry;
+                return( entry );
+            }
+        } else if( entry->type == LTYP_ABSOLUTE ) {
+            if( old_entry->type == LTYP_ABSOLUTE ) {
+                // merge entry into old_entry
+                MemFree( entry );
+                entry = old_entry;
+                return( entry );
+            }
+        } else if( entry->type == LTYP_EXTERNAL_NAMED ) {
+            break;
         } else {
-            sec_label_list->first = entry;
         }
+    }
+    // two labels for this location!
+    entry->next = first_entry;
+    if( previous_entry ) {
+        previous_entry->next = entry;
+    } else {
+        sec_label_list->first = entry;
     }
     return( entry );
 }

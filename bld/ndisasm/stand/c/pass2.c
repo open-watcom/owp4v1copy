@@ -78,7 +78,9 @@ static label_entry handleLabels( char *sec_name, orl_sec_offset offset, label_en
                         orl_sec_size size )
 // handle any labels at this offset
 {
-    for( ; l_entry != NULL && l_entry->offset <= offset; l_entry = l_entry->next ) {
+    for( ; l_entry != NULL
+        && ( l_entry->type == LTYP_ABSOLUTE || l_entry->offset <= offset );
+        l_entry = l_entry->next ) {
         switch( l_entry->type ) {
         case LTYP_SECTION:
         case LTYP_NAMED:
