@@ -18,7 +18,7 @@ linkdll: .PROCEDURE
     @%create $(lnk)
     @%append $(lnk) system windows dll debug all
     @%append $(lnk) name $^*
-    @%append $(lnk) option description 'Open Watcom Editor DLL for Codewriter'
+    @%append $(lnk) option description 'Open Watcom Editor DLL for Codewright'
     @%append $(lnk) option map, elim, verbose, static
     @%append $(lnk) library ddeml
     @%append $(lnk) option stack=8k, symfile
@@ -38,7 +38,7 @@ linkdll: .PROCEDURE
     @%create $(lnk)
     @%append $(lnk) system nt_dll debug all
     @%append $(lnk) name $^*
-    @%append $(lnk) option description 'Open Watcom Editor DLL for Codewriter'
+    @%append $(lnk) option description 'Open Watcom Editor DLL for Codewright'
     @%append $(lnk) option map, elim, verbose, static
     @%append $(lnk) file weditcw.obj
     wlink @$(lnk)

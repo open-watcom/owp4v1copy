@@ -32,6 +32,7 @@ all: weditviw.dll wedit.dll .SYMBOLIC
 
 wedit.dll : weditviw.obj
         $(linker) $(lflags) name $^* file weditviw
+        wlib -b -n $^*.lib +$^*.dll
 
 weditviw.dll : weditviw.obj
         $(linker) $(lflags) name $^* file weditviw

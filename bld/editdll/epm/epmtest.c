@@ -51,7 +51,7 @@ static Row[] = { 3, 7, 10 };
 static Col[] = { 12, 3, 7 };
 static Len[] = { 5, 2, 3 };
 static ResourceId[] = { 28728, 26659, 30000 };
-static Errors[] = { &Err1, &Err2, &Err3 };
+static char* Errors[] = { &Err1, &Err2, &Err3 };
 
 
 MRESULT EXPENTRY MainDriver( HWND hwnd, USHORT msg, MPARAM mp1, MPARAM mp2 ) {

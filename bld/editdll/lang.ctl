@@ -26,13 +26,14 @@ cdsay .
     <CPCMD> <devdir>\editdll\wedit.h <relroot>\rel2\src\editdll\wedit.h
     <CPCMD> <devdir>\editdll\wedit.doc <relroot>\rel2\src\editdll\wedit.doc
 
-    <CPCMD> <devdir>\editdll\cw\nt386\wedit.lib <relroot>\rel2\src\editdll\nt\wedit.lib
-    <CPCMD> <devdir>\editdll\cw\wini86\wedit.lib <relroot>\rel2\src\editdll\win\wedit.lib
+    <CPCMD> <devdir>\editdll\viw\nt386\wedit.lib <relroot>\rel2\src\editdll\nt\wedit.lib
+    <CPCMD> <devdir>\editdll\viw\wini86\wedit.lib <relroot>\rel2\src\editdll\win\wedit.lib
+    <CPCMD> <devdir>\editdll\epm\wedit.lib <relroot>\rel2\src\editdll\os2\wedit.lib
+
     <CPCMD> <devdir>\editdll\cw\nt386\wedit.dll <relroot>\rel2\src\editdll\nt\cw\wedit.dll
     <CPCMD> <devdir>\editdll\cw\wini86\wedit.dll <relroot>\rel2\src\editdll\win\cw\wedit.dll
     <CPCMD> <devdir>\editdll\viw\nt386\wedit.dll <relroot>\rel2\src\editdll\nt\viw\wedit.dll
     <CPCMD> <devdir>\editdll\viw\wini86\wedit.dll <relroot>\rel2\src\editdll\win\viw\wedit.dll
-    <CPCMD> <devdir>\editdll\epm\wedit.lib <relroot>\rel2\src\editdll\os2\wedit.lib
     <CPCMD> <devdir>\editdll\epm\wedit.dll <relroot>\rel2\src\editdll\os2\wedit.dll
 
 [ BLOCK <1> clean ]
