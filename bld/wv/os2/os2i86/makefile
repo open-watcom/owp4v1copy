@@ -7,7 +7,7 @@ host_OS  = os2
 host_CPU = i86
 display  = char
 
-syshdir  = $(mdir)/$(sysdir)/h;$(inc_dirs_sys_os2)
+syshdir  =
 extra_cflags = -zc
 
 #add '16' suffix to avoid conflicts

@@ -10,17 +10,17 @@ machine=fmr
 EXTRA_CFLAGS = -wo-of-d_OVERLAYED_
 
 sysobjs =   &
-    $(sysodir)/fork.obj &
-    $(sysodir)/dosstl.obj &
-    $(sysodir)/doschk.obj &
-    $(sysodir)/doscmd.obj &
-    $(sysodir)/dosfilio.obj &
-    $(sysodir)/doslkup.obj &
-    $(sysodir)/dosmem.obj &
-    $(sysodir)/$(arch)scrn.obj &
-    $(sysodir)/dosgrow.obj &
-    $(sysodir)/dosalloc.obj &
-    $(sysodir)/dostrap.obj
+    fork.obj &
+    dosstl.obj &
+    doschk.obj &
+    doscmd.obj &
+    dosfilio.obj &
+    doslkup.obj &
+    dosmem.obj &
+    $(arch)scrn.obj &
+    dosgrow.obj &
+    dosalloc.obj &
+    dostrap.obj
 
 !include ../../master.mif
 

@@ -8,25 +8,23 @@ host_CPU=i86
 machine = nec
 EXTRA_CFLAGS = -wo-of -d_OVERLAYED_
 ui_library = $(uidir)/dos.nec/ui.lib
-sysodir = $(mdir)/dos/necobj
-syshdir = $(mdir)/dos/h
 
 !ifeq d 1
 EXTRA_CFLAGS += -dDEBUG_NEC
 !endif
 
 sysobjs =   &
-    $(sysodir)/fork.obj &
-    $(sysodir)/dosstl.obj &
-    $(sysodir)/doschk.obj &
-    $(sysodir)/doscmd.obj &
-    $(sysodir)/dosfilio.obj &
-    $(sysodir)/doslkup.obj &
-    $(sysodir)/dosmem.obj &
-    $(sysodir)/dosgrow.obj &
-    $(sysodir)/dosalloc.obj &
-    $(sysodir)/dostrap.obj &
-    $(sysodir)/necscrn.obj
+    fork.obj &
+    dosstl.obj &
+    doschk.obj &
+    doscmd.obj &
+    dosfilio.obj &
+    doslkup.obj &
+    dosmem.obj &
+    dosgrow.obj &
+    dosalloc.obj &
+    dostrap.obj &
+    necscrn.obj
 
 !include ../../master.mif
 

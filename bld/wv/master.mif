@@ -15,13 +15,7 @@ bin_root = $(bin_root_wv)
 cdir   = $(wv_dir)/c
 hdir   = $(wv_dir)/h
 
-common_h= $(lang_root)/h;$(watcom_dir)/h
-os2inc  = $(common_h)
-dosinc  = $(common_h)
-ntinc   = $(watcom_nt_h);$(common_h)
-wininc  = $(lang_root)/h/win;$(common_h)
-qnxinc  = $(lang_root)/qh;$(watcom_dir)/h
-linuxinc  = $(lang_root)/lh;$(watcom_dir)/h;$(ncurses_dir)/h
+linuxinc  = $(ncurses_dir)/h
 
 !ifeq host_OS nt
 sysdir = win
