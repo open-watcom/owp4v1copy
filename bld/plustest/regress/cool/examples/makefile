@@ -1,0 +1,61 @@
+plustest_name = cool
+!include ..\..\environ.mif
+
+exps = &
+ex2_4.$(exe) &
+ex2_7.$(exe) &
+ex2_9.$(exe) &
+ex3_4.$(exe) &
+ex3_6.$(exe) &
+ex3_8.$(exe) &
+ex3_10.$(exe) &
+ex4_7.$(exe) &
+ex4_9.$(exe) &
+ex5_8.$(exe) &
+ex6_4.$(exe) &
+ex6_6.$(exe) &
+ex6_8.$(exe) &
+ex6_10.$(exe) &
+ex7_4.$(exe) &
+ex7_7.$(exe) &
+ex7_9.$(exe) &
+ex8_4.$(exe) &
+ex8_6.$(exe) &
+ex9_5.$(exe) &
+ex9_7.$(exe) &
+ex9_11.$(exe)
+
+!ifdef test1
+cflags = -op-d2
+!else ifdef test2
+cflags = -ot-op-d1-xds
+!else ifdef test3
+cflags = -op-d2-xds
+!else
+cflags = -ot-op-d1
+!endif
+
+cflags += -zq -i..\.. -w0
+
+.c.obj:
+    $(wpp_$(arch)) $[@ $(cflags)
+    
+.obj.$(exe):
+    $(linker) @ex.lnk NAME $^* FILE $[@
+    
+test : .symbolic ex.lnk $(exps)
+    %create exec.out
+    @for %i in ( $(exps) ) do $(run) %i >>exec.out
+    diff exec.out exec.chk
+    %make global
+    %append $(log_file) PASS $(%__CWD__)
+    
+ex.lnk : $(__MAKEFILES__)
+    %create $^@
+    @%append $^@ $(lnk_$(arch))
+    @%append $^@ $(ldebug_$(arch))
+    @%append $^@ OPTION stack=64k, quiet, map
+    @%append $^@ LIBRARY ..\cool.lib
+    
+global : .symbolic
+    @%make common_clean

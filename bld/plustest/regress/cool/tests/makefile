@@ -1,0 +1,134 @@
+plustest_name = cool
+!include ..\..\environ.mif
+
+tests = &
+    test_as1.$(exe) &
+    test_ass.$(exe) &
+    test_avl.$(exe) &
+    test_big.$(exe) &
+    test_bit.$(exe) &
+    test_bt.$(exe) &
+    test_cha.$(exe) &
+    test_com.$(exe) &
+    test_dt.$(exe) &
+    test_gs.$(exe) &
+    test_han.$(exe) &
+    test_has.$(exe) &
+    test_ite.$(exe) &
+    test_lis.$(exe) &
+    test_m_v.$(exe) &
+    test_mat.$(exe) &
+    test_nod.$(exe) &
+    test_nt.$(exe) &
+    test_pai.$(exe) &
+    test_pro.$(exe) &
+    test_qua.$(exe) &
+    test_que.$(exe) &
+    test_ran.$(exe) &
+    test_rat.$(exe) &
+    test_reg.$(exe) &
+    test_rng.$(exe) &
+    test_set.$(exe) &
+    test_sta.$(exe) &
+    test_str.$(exe) &
+    test_tim.$(exe) &
+    test_val.$(exe) &
+    test_vec.$(exe)
+
+!ifdef test1
+cflags = -op-d2
+!else ifdef test2
+cflags = -ot-op-d1-xds
+!else ifdef test3
+cflags = -op-d2-xds
+!else
+cflags = -ot-op-d1
+!endif
+
+cflags += -zq -i..\.. -w0
+    
+.obj.$(exe):
+    $(linker) @ex.lnk FILE $[@
+    
+.c.obj:
+    $(wpp_$(arch)) $[@ $(cflags)
+    
+test : .symbolic ex.lnk $(tests)
+    %create test.out
+    %append test.out test_as1.$(exe)
+    $(run) test_as1.$(exe) >>test.out
+    %append test.out test_ass.$(exe)
+    $(run) test_ass.$(exe) >>test.out
+    %append test.out test_avl.$(exe)
+    $(run) test_avl.$(exe) >>test.out
+    %append test.out test_big.$(exe)
+    $(run) test_big.$(exe) >>test.out
+    %append test.out test_bit.$(exe)
+    $(run) test_bit.$(exe) >>test.out
+    %append test.out test_bt.$(exe)
+    $(run) test_bt.$(exe) >>test.out
+    %append test.out test_cha.$(exe)
+    $(run) test_cha.$(exe) >>test.out
+    %append test.out test_com.$(exe)
+    $(run) test_com.$(exe) >>test.out
+    %append test.out test_dt.$(exe)
+    $(run) test_dt.$(exe) >>test.out
+    %append test.out test_gs.$(exe)
+    $(run) test_gs.$(exe) >>test.out
+    %append test.out test_han.$(exe)
+    $(run) test_han.$(exe) >>test.out
+    %append test.out test_has.$(exe)
+    $(run) test_has.$(exe) >>test.out
+    %append test.out test_ite.$(exe)
+    $(run) test_ite.$(exe) >>test.out
+    %append test.out test_lis.$(exe)
+    $(run) test_lis.$(exe) >>test.out
+    %append test.out test_m_v.$(exe)
+    $(run) test_m_v.$(exe) >>test.out
+    %append test.out test_mat.$(exe)
+    $(run) test_mat.$(exe) >>test.out
+    %append test.out test_nod.$(exe)
+    $(run) test_nod.$(exe) >>test.out
+    %append test.out test_nt.$(exe)
+    $(run) test_nt.$(exe) >>test.out
+    %append test.out test_pai.$(exe)
+    $(run) test_pai.$(exe) >>test.out
+    %append test.out test_pro.$(exe)
+    $(run) test_pro.$(exe) >>test.out
+    %append test.out test_qua.$(exe)
+    $(run) test_qua.$(exe) >>test.out
+    %append test.out test_que.$(exe)
+    $(run) test_que.$(exe) >>test.out
+    %append test.out test_ran.$(exe)
+    $(run) test_ran.$(exe) >>test.out
+    %append test.out test_rat.$(exe)
+    $(run) test_rat.$(exe) >>test.out
+    %append test.out test_reg.$(exe)
+    $(run) test_reg.$(exe) >>test.out
+    %append test.out test_rng.$(exe)
+    $(run) test_rng.$(exe) >>test.out
+    %append test.out test_set.$(exe)
+    $(run) test_set.$(exe) >>test.out
+    %append test.out test_sta.$(exe)
+    $(run) test_sta.$(exe) >>test.out
+    %append test.out test_str.$(exe)
+    $(run) test_str.$(exe) >>test.out
+    %append test.out test_tim.$(exe)
+    $(run) test_tim.$(exe) >>test.out
+    %append test.out test_val.$(exe)
+    $(run) test_val.$(exe) >>test.out
+    %append test.out test_vec.$(exe)
+    $(run) test_vec.$(exe) >>test.out
+    diff test.out test.chk
+    %make global
+    %append $(log_file) PASS $(%__CWD__)
+    
+ex.lnk : makefile
+    %create $^@
+    @%append $^@ $(lnk_$(arch))
+    @%append $^@ $(ldebug_$(arch))
+    @%append $^@ OPTION quiet, stack=32k
+    @%append $^@ LIBRARY ..\cool.lib
+    
+global : .symbolic
+    @%make common_clean
