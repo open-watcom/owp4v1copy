@@ -31,8 +31,10 @@
 
 
 #include <stdlib.h>
+#ifdef __UNIX__
 #ifndef UNIX
 #define UNIX __UNIX__
+#endif
 #endif
 
 #ifndef __NT__

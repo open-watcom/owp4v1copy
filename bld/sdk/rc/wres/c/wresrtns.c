@@ -31,11 +31,15 @@
 
 
 #include <unistd.h>
+#ifdef __UNIX__
 #ifndef UNIX
 #define UNIX __UNIX__
 #endif
+#endif
+#ifdef __LINUX__
 #ifndef LINUX
 #define LINUX __LINUX__
+#endif
 #endif
 #if defined( __QNX__ ) || defined( UNIX )
 #include <fcntl.h>

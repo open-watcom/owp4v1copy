@@ -61,8 +61,10 @@
 
 #include <time.h>
 
+#ifdef __UNIX__
 #ifndef UNIX
 #define UNIX __UNIX__
+#endif
 #endif
 
 #ifdef UNIX

@@ -41,8 +41,10 @@
 #include "write.h"
 #include "iortns.h"
 
+#ifdef __UNIX__
 #ifndef UNIX
 #define UNIX __UNIX__
+#endif
 #endif
 
 #if defined(UNIX) && !defined(__WATCOMC__)
