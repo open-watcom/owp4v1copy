@@ -96,7 +96,8 @@ void InitSystemRGB()
        GUIColours[1]  = GetSysColor(COLOR_HIGHLIGHT);      /* GUI_BLUE    / Selected menu/list backgr */
        GUIColours[2]  = GetSysColor(COLOR_WINDOWTEXT);     /* GUI_GREEN   / */
        GUIColours[3]  = GetSysColor(COLOR_APPWORKSPACE);   /* GUI_CYAN    / Main MDI backgr. */
-       GUIColours[4]  = 0x00000080;                        /* GUI_RED (could be GetSysColor(COLOR_HIGHLIGHT)) / TEXT FG HILITE WDW */
+//     Dark blue looks too much like black; dark red is much easier to distinguish
+//     GUIColours[4]  = GetSysColor(COLOR_HIGHLIGHT);      /* GUI_RED     / TEXT FG HILITE WDW */
        GUIColours[5]  = GetSysColor(COLOR_APPWORKSPACE);   /* GUI_MAGENTA / */
        GUIColours[6]  = GetSysColor(COLOR_HIGHLIGHTTEXT);  /* GUI_BROWN   / */
        GUIColours[7]  = GetSysColor(COLOR_BTNFACE);        /* GUI_WHITE   / Dialog items Backgr */
