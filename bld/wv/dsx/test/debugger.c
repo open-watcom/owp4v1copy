@@ -86,7 +86,7 @@ static void             far *PMVTable[ NB_VECTORS ];
 
 extern void             StoreDTs( DTreg *, unsigned *, DTreg * );
 extern int              _fork( char *, unsigned );
-extern far              *GetPModeAddr( unsigned * );
+extern void far         *GetPModeAddr( unsigned * );
 extern int              EnterPMode( void far *, unsigned );
 extern int              GetRawAddrs( void far **, void far ** );
 extern void interrupt   PM66Handler( void );

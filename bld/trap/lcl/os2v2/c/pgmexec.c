@@ -157,7 +157,12 @@ long TaskExecute( void (*rtn)() )
 {
     long        retval;
 
+    /* Note that we need to save and restore the ExceptNum and
+     * ExpectingAFault globals. Yucky globals!
+     */
     if( CanExecTask ) {
+        ULONG   oldExcNum = ExceptNum;
+
         ExpectingAFault = TRUE;
         Buff.CS  = FlatCS;
         Buff.EIP = (ULONG)rtn;
@@ -176,6 +181,7 @@ long TaskExecute( void (*rtn)() )
             retval = Buff.EAX;
         }
         ExpectingAFault = FALSE;
+        ExceptNum = oldExcNum;
         return( retval );
     } else {
         return( -1 );
