@@ -163,8 +163,10 @@ check_arg: .SYMBOLIC
           @echo Usage: 'wmake -ms -f $(__MAKEFILES__)'
 !endif
 
-language.c: language.l
-          flex -8 -o$@ $[@
+# Not needed unless you change the lexical analyser...
+#
+# language.c: language.l
+#          flex -8 -o$@ $[@
 
 clean: .SYMBOLIC
           @del $(OBJDIR)\*.obj
