@@ -42,7 +42,7 @@
 #include "aui.h"
 #include "wpaui.h"
 #if defined(_OS2_PM)
-#include "..\mif\rcdef.h"
+#include "rcdef.h"
 #endif
 
 //#include "wpmain.def"
