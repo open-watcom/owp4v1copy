@@ -191,6 +191,12 @@ extern void *glutBitmapTimesRoman24;
 #define GLUT_NUM_TABLET_BUTTONS      609
 #endif
 
+#if defined(__WATCOMC__)
+    #define APIENTRYP APIENTRY *
+#else
+    #define APIENTRYP * APIENTRY
+#endif
+
 /* GLUT initialization sub-API */
 extern void APIENTRY glutInit (int *, char **);
 extern void APIENTRY glutInitDisplayMode (unsigned long);
@@ -217,7 +223,7 @@ extern void APIENTRY glutShowWindow (void);
 extern void APIENTRY glutHideWindow (void);
 
 /* GLUT menu sub-API */
-extern int APIENTRY glutCreateMenu (void (* APIENTRY)(int));
+extern int APIENTRY glutCreateMenu (void (APIENTRYP)(int));
 extern void APIENTRY glutDestroyMenu (int);
 extern int APIENTRY glutGetMenu (void);
 extern void APIENTRY glutSetMenu (int);
@@ -230,26 +236,26 @@ extern void APIENTRY glutAttachMenu (int);
 extern void APIENTRY glutDetachMenu (int);
 
 /* GLUT callback sub-api */
-extern void APIENTRY glutDisplayFunc (void (* APIENTRY)(void));
-extern void APIENTRY glutReshapeFunc (void (* APIENTRY)(int, int));
-extern void APIENTRY glutKeyboardFunc (void (* APIENTRY)(unsigned char, int, int));
-extern void APIENTRY glutMouseFunc (void (* APIENTRY)(int, int, int, int));
-extern void APIENTRY glutMotionFunc (void (* APIENTRY)(int, int));
-extern void APIENTRY glutPassiveMotionFunc (void (* APIENTRY)(int, int));
-extern void APIENTRY glutEntryFunc (void (* APIENTRY)(int));
-extern void APIENTRY glutVisibilityFunc (void (* APIENTRY)(int));
-extern void APIENTRY glutIdleFunc (void (* APIENTRY)(void));
-extern void APIENTRY glutTimerFunc (unsigned long, void (* APIENTRY)(int), int);
-extern void APIENTRY glutMenuStateFunc (void (* APIENTRY)(int));
+extern void APIENTRY glutDisplayFunc (void (APIENTRYP)(void));
+extern void APIENTRY glutReshapeFunc (void (APIENTRYP)(int, int));
+extern void APIENTRY glutKeyboardFunc (void (APIENTRYP)(unsigned char, int, int));
+extern void APIENTRY glutMouseFunc (void (APIENTRYP)(int, int, int, int));
+extern void APIENTRY glutMotionFunc (void (APIENTRYP)(int, int));
+extern void APIENTRY glutPassiveMotionFunc (void (APIENTRYP)(int, int));
+extern void APIENTRY glutEntryFunc (void (APIENTRYP)(int));
+extern void APIENTRY glutVisibilityFunc (void (APIENTRYP)(int));
+extern void APIENTRY glutIdleFunc (void (APIENTRYP)(void));
+extern void APIENTRY glutTimerFunc (unsigned long, void (APIENTRYP)(int), int);
+extern void APIENTRY glutMenuStateFunc (void (APIENTRYP)(int));
 #if (GLUT_API_VERSION >= 2)
-extern void APIENTRY glutSpecialFunc (void (* APIENTRY)(int, int, int));
-extern void APIENTRY glutSpaceballMotionFunc (void (* APIENTRY)(int, int, int));
-extern void APIENTRY glutSpaceballRotateFunc (void (* APIENTRY)(int, int, int));
-extern void APIENTRY glutSpaceballButtonFunc (void (* APIENTRY)(int, int));
-extern void APIENTRY glutButtonBoxFunc (void (* APIENTRY)(int, int));
-extern void APIENTRY glutDialsFunc (void (* APIENTRY)(int, int));
-extern void APIENTRY glutTabletMotionFunc (void (* APIENTRY)(int, int));
-extern void APIENTRY glutTabletButtonFunc (void (* APIENTRY)(int, int, int, int));
+extern void APIENTRY glutSpecialFunc (void (APIENTRYP)(int, int, int));
+extern void APIENTRY glutSpaceballMotionFunc (void (APIENTRYP)(int, int, int));
+extern void APIENTRY glutSpaceballRotateFunc (void (APIENTRYP)(int, int, int));
+extern void APIENTRY glutSpaceballButtonFunc (void (APIENTRYP)(int, int));
+extern void APIENTRY glutButtonBoxFunc (void (APIENTRYP)(int, int));
+extern void APIENTRY glutDialsFunc (void (APIENTRYP)(int, int));
+extern void APIENTRY glutTabletMotionFunc (void (APIENTRYP)(int, int));
+extern void APIENTRY glutTabletButtonFunc (void (APIENTRYP)(int, int, int, int));
 #endif
 
 /* GLUT color index sub-api */
@@ -290,9 +296,10 @@ extern void APIENTRY glutSolidIcosahedron (void);
 extern int APIENTRY glutExtensionSupported (char *);
 #endif
 
+#undef APIENTRYP
+
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* __glut_h__ */
-
