@@ -19,3 +19,24 @@ File: source\diag0302.c
   definition: 'void ABC::meth2( void )'
 (16,10): Warning! W894: unexpected character (22) in source file
 (16,10): Error! E121: syntax error
+File: source\diag0303.c
+(1,35): Error! E244: missing default arguments
+(5,37): Error! E244: missing default arguments
+(9,40): Error! E029: symbol 'i4' has not been declared
+(13,115): Error! E121: syntax error
+(17,21): Error! E498: syntax error before 'test'; probable cause: incorrectly spelled type name
+(28,1): Warning! W014: no reference to symbol 'c'
+  definition: '<error> c' in 'int main( void )'
+(28,1): Warning! W014: no reference to symbol 'd'
+  definition: '<error> d' in 'int main( void )'
+(28,1): Warning! W014: no reference to symbol 'e'
+  definition: '<error> e' in 'int main( void )'
+File: source\diag0304.c
+(2,18): Error! E898: in-class initialization is only allowed for const static integral members
+(3,19): Error! E898: in-class initialization is only allowed for const static integral members
+(7,25): Error! E498: syntax error before 'i3'; probable cause: incorrectly spelled type name
+(8,23): Error! E357: virtual function may only be declared in a class
+(8,25): Error! E330: function cannot be initialized
+(9,23): Error! E357: virtual function may only be declared in a class
+(9,25): Error! E330: function cannot be initialized
+(10,2): Error! E121: syntax error

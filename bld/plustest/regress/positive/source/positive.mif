@@ -193,6 +193,7 @@ positive_tests = &
     asm05.$(ext) &
     asm06.$(ext) &
     asm07.$(ext) &
+    alttok1.$(ext) &
     based01.$(ext) &
     based02.$(ext) &
     based03.$(ext) &
@@ -202,6 +203,7 @@ positive_tests = &
     bf05.$(ext) &
     bool01.$(ext) &
     bool02.$(ext) &
+    bool03.$(ext) &
     cdisp1.$(ext) &
     cdisp2.$(ext) &
     cdisp3.$(ext) &
@@ -279,6 +281,12 @@ positive_tests = &
     defarg03.$(ext) &
     defarg04.$(ext) &
     defarg05.$(ext) &
+    deftemp01.$(ext) &
+    deftemp02.$(ext) &
+    deftemp03.$(ext) &
+    deftemp04.$(ext) &
+    deftemp05.$(ext) &
+    digraph1.$(ext) &
     dtor01.$(ext) &
     dtor02.$(ext) &
     dtor03.$(ext) &
@@ -531,6 +539,7 @@ positive_tests = &
     ns30.$(ext) &
     ns31.$(ext) &
     ns32.$(ext) &
+    ns33.$(ext) &
     offset01.$(ext) &
     opeq01.$(ext) &
     opeq02.$(ext) &
@@ -727,6 +736,7 @@ positive_tests = &
     sizeof03.$(ext) &
     src01.$(ext) &
     stat01.$(ext) &
+    stat02.$(ext) &
     str01.$(ext) &
     str02.$(ext) &
     str03.$(ext) &
