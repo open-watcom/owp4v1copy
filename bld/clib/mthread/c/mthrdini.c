@@ -44,8 +44,6 @@
 #include "rtinit.h"
 #include "exitwmsg.h"
 
-extern  int     __Is_DLL;
-
 _WCRTLINK unsigned __ThreadDataSize = sizeof( thread_data );
 
 void __InitThreadData( thread_data *tdata )
@@ -54,11 +52,9 @@ void __InitThreadData( thread_data *tdata )
     if( tdata != NULL ) {
     tdata->__randnext = 1;
     #if defined( __OS2__ )
-        if( !__Is_DLL ) {
         // We want to detect stack overflow before it actually
         // happens; let's have 8K in reserve
         tdata->__stklowP = __threadstack() + 2 * 4096;
-        }
     #elif defined( __NT__ )
         __init_stack_limits( &tdata->__stklowP, 0 );
         tdata->thread_id = GetCurrentThreadId();
