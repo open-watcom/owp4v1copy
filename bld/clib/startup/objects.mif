@@ -142,6 +142,7 @@
 !inject stkq32.obj                                                              q32
 !inject stkwnt.obj                       nt
 !inject stkl32.obj                                                                              l32
+!inject stksnp.obj                                                                                  snp drv
 !inject stubwep.obj                                                                 w16
 !inject tnkcdo32.obj                                                    o32
 !inject tnksto32.obj                                                    o32
