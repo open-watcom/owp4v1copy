@@ -48,7 +48,7 @@
 #endif
 
 extern "C" {
-    HINSTANCE        GUIMainHInst;
+    extern HINSTANCE        GUIMainHInst;
 }
 
 #endif
