@@ -53,7 +53,6 @@ echo # ---------------------------
 echo #   Macro Test 3A
 echo # ---------------------------
 :: set TRMEM_CODE=3
-rm tmp.out
 %1 -h -f MACRO03 > tmp.out 2>&1
 diff -b MACRO03A.CMP tmp.out
 if errorlevel 1 goto err3a
@@ -161,8 +160,23 @@ if errorlevel 1 goto err7
     @echo Error: MACRO #7 unsuccessful!!! | tee -a %2
 
 :test8
+echo # ---------------------------
+echo #   Macro Test 8
+echo # ---------------------------
 
-rm hello.obj hello2.obj hello.boo hello.tmp hello.c hello2.c 
+%1 -ms -h -f MACRO08 > tmp.out 2>&1
+diff -b MACRO08.CMP tmp.out
+if errorlevel 1 goto err8
+    @echo # MACRO08 successful
+    goto test9
+:err8
+    @echo ## MACRO ## >> %2
+    @echo Error: MACRO #8 unsuccessful!!! | tee -a %2
+
+
+:test9
+
+rm -f hello.obj hello2.obj hello.boo hello.tmp hello.c hello2.c 
 goto done
 :usage
 echo usage: %0 prgname errorfile

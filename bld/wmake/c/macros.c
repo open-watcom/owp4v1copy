@@ -413,17 +413,14 @@ extern char *GetMacroValue( const char *name )
     const char  *beforeSub;
     char        *afterSub;
     char        *current;
-    char        *newString;
-    char        *oldString;
+    char        *new;
+    char        *old;
+    char        *line;
 
     InName = StrDupSafe( name );
-    current = InName;
-    while( *current != NULLCHAR &&
-           *current != COLON ) {
-        ++current;
-    }
+    current = strchr( InName, COLON );
 
-    if( *current == NULLCHAR ) {
+    if( current == NULL ) {
         beforeSub = GetMacroValueProcess( InName );
         if( beforeSub == NULL ) {
             afterSub = NULL;
@@ -431,18 +428,33 @@ extern char *GetMacroValue( const char *name )
             afterSub  = StrDupSafe( beforeSub );
         }
     } else {
-        *current = NULLCHAR;
+        *current++ = NULLCHAR;
         beforeSub = GetMacroValueProcess( InName );
-        ++current;
-        if( beforeSub != NULL ) {
-            if( getOldNewString( current, &oldString, &newString ) == RET_SUCCESS ) {
-                afterSub = doStringSubstitute( beforeSub, oldString, newString );
-            } else {
-                afterSub = NULL;
-                PrtMsg( ERR | LOC | INVALID_STRING_SUBSTITUTE );
-            }
-        } else {
+
+        if( beforeSub == NULL ) {
             afterSub = NULL;
+        } else {
+            line = NULL;
+            // recursively expand so $(macro:sub) OK if macro contains another
+            if( strchr( beforeSub, DOLLAR ) != NULL ) {
+                UnGetCH( STRM_MAGIC );
+                InsString( beforeSub, FALSE );
+                beforeSub = line = DeMacro( STRM_MAGIC );
+                GetCHR();   // eat STRM_MAGIC
+            }
+            if( beforeSub == NULL ) {
+                afterSub = NULL;
+            } else {
+                if( getOldNewString( current, &old, &new ) == RET_SUCCESS ) {
+                    afterSub = doStringSubstitute( beforeSub, old, new );
+                } else {
+                    afterSub = NULL;
+                    PrtMsg( ERR | LOC | INVALID_STRING_SUBSTITUTE );
+                }
+                if( line ) {
+                    FreeSafe( line );
+                }
+            }
         }
     }
 

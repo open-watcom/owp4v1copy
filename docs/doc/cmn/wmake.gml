@@ -2103,7 +2103,8 @@ There are two other special environment macros that are predefined by
 &maksname..
 .ix '&makcmdup special macros' '$(%cdrive)'
 The macro identifier "%cdrive" will expand into one letter
-representing the current drive.
+representing the current drive. Note that it is operating system
+dependent whether the cd command changes the current drive.
 .ix '&makcmdup special macros' '$(%cwd)'
 The macro identifier "%cwd" will expand into the current working
 directory.
@@ -2486,6 +2487,46 @@ The special macro "$$" will result in a "$" when expanded and "$#"
 will expand into a "#".
 These special macros are provided so that you are not forced to work
 around the special meanings of the "$" and "#" characters.
+.np
+There is also a simple macro text substitution facility.
+We have previously seen that a macro call can be made with $(macroname).
+The construct $(macroname:string1=string2) substitutes macroname with
+each occurrence of string1 replaced by string2. We have already seen that
+it can be useful for a macro to be a set of object file names separated
+by spaces. The file directive in &lnkcmd can accept a set of names separated
+by commas. It is useful not to require a second macro for this purpose.
+.millust begin
+#
+# programming example
+# (macro substitution)
+#
+
+.c.obj:
+        &compcmd -zq $*.c
+
+object_files = main.obj input.obj calc.obj output.obj
+
+plot&exe : $(object_files)
+        &lnkcmd name $@ file $(object_files: =,)
+
+.millust end
+.np
+Macro substitution does not work with special macros because they can not
+(yet) be invoked with parentheses. The following does not work:
+.millust begin
+#
+# programming example - does not work
+# (macro substitution)
+#
+
+.c.obj:
+        wcc386 -zq $*.c
+
+plot.exe : main.obj input.obj calc.obj output.obj
+        @echo linking $(<)
+        &lnkcmd name $@ op q file $(<: =,)
+
+.millust end
 .*
 .section Implicit Rules
 .*

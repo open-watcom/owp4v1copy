@@ -98,6 +98,12 @@ $1 -h -ms -m -f macro07 -a cc=bwcl386 > tmp.out 2>&1
 diff -b macro07.cmp tmp.out
 do_check
 
+TEST=8
+print_header
+$1 -h -ms -f macro08 -a > tmp.out 2>&1
+diff -b macro08.cmp tmp.out
+do_check
+
 rm -f hello.obj hello2.obj hello.boo hello.tmp hello.c hello2.c 
 
 rm tmp.out
