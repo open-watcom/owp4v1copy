@@ -86,7 +86,7 @@ _WCRTLINK extern void __ProfEnable( void );
 _WCRTLINK extern void __ProfDisable( void );
 _WCRTLINK extern __int64 __P5_overhead( void );
 
-extern char *__ProfAlloc( void );
+extern void *__ProfAlloc( unsigned long size );
 
 #ifdef __WATCOMC__
 #pragma aux __ProfProlog "__PON" parm routine [] modify []
