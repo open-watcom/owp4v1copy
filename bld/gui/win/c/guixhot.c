@@ -138,7 +138,7 @@ void GUIDrawBitmap( int hot_spot, WPI_PRES hdc,
         /* IMPORTANT: must set required new background color for dest bmp */
         // SetBkColor( mem2, GetSysColor(COLOR_BTNFACE) );
         SetBkColor( mem2, bkcolour );
-        
+
         WPTB_TransparentBlt( mem2,    src_org.x,  src_org.y,
                                       size.x,     size.y,
                              memDC,   cr);
@@ -148,13 +148,13 @@ void GUIDrawBitmap( int hot_spot, WPI_PRES hdc,
 
         /* Clean up */
         _wpi_selectbitmap( mem2, oldbmp2 );
-        _wpi_deletecompatiblepres( mem2, hdc );          
+        _wpi_deletecompatiblepres( mem2, hdc );
     } else {
         // Normal for large bitmaps...
         _wpi_bitblt( hdc, dst_org.x, dst_org.y, size.x, size.y, memDC,
                      src_org.x, src_org.y, SRCCOPY );
     }
-        
+
 #else
 
     _wpi_bitblt( hdc, dst_org.x, dst_org.y, size.x, size.y, memDC,
@@ -165,5 +165,6 @@ void GUIDrawBitmap( int hot_spot, WPI_PRES hdc,
     if( old_bmp != NULLHANDLE ) {
         _wpi_getoldbitmap( memDC, old_bmp );
     }
+    _wpi_deletecompatiblepres( memDC, new_hdc );
 }
 
