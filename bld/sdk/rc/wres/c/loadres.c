@@ -29,13 +29,12 @@
 *
 ****************************************************************************/
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
 #include <malloc.h>
-#ifdef UNIX
+#ifdef __UNIX__
     #include <alloca.h>
     #ifdef _AIX
         #define alloca __alloca

@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 #define USAGE_MSG_BASE  500
 
 #ifdef WR_COMPILED
@@ -40,7 +39,7 @@
 #define MSG_USE_E_BASE  (USAGE_MSG_BASE + RLE_ENGLISH*MSG_LANG_SPACING)
 #define MSG_USE_J_BASE  (USAGE_MSG_BASE + RLE_JAPANESE*MSG_LANG_SPACING)
 
-    #ifdef UNIX
+    #ifdef __UNIX__
         // JCS - With gcc, angle brackets indicates a system include file so an
         //  rcmsg.h file in this directory will not be found
         #include "rcmsg.gh"

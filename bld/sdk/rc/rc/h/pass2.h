@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 #ifndef EXEFMT_INCLUDED
 #define EXEFMT_INCLUDED
 
@@ -41,7 +40,7 @@
 #include "exerespe.h"
 #include "exeseg.h"
 #include "exeres.h"
-#ifdef UNIX
+#ifdef __UNIX__
     #include "clibext.h"
 #endif
 

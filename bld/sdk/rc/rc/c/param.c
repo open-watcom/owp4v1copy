@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -46,7 +45,7 @@
 #endif
 #include "leadbyte.h"
 
-#if defined(__UNIX__) || defined(UNIX)
+#if defined(__UNIX__)
 # define PATH_SPLIT_S       ":"     /* path seperator in string form        */
 #else
 # define PATH_SPLIT_S       ";"     /* path seperator in string form        */

@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 #ifndef RCIO_INCLUDED
 #define RCIO_INCLUDED
 
@@ -41,7 +40,7 @@
 #include "semstr.h"
 #include "semsingl.h"
 #include "sharedio.h"
-#ifdef UNIX
+#ifdef __UNIX__
     #include "clibext.h"
 #endif
 

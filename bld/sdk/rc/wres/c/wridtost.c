@@ -29,13 +29,12 @@
 *
 ****************************************************************************/
 
-
 #include <stdlib.h>
 #include <string.h>
 #include "wresrtns.h"
 #include "util.h"
 #include "reserr.h"
-#if defined( UNIX )
+#if defined( __UNIX__ )
 #include "clibext.h"
 #endif
 

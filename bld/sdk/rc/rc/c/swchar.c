@@ -29,13 +29,7 @@
 *
 ****************************************************************************/
 
-
 #include <stdlib.h>
-#ifdef __UNIX__
-#ifndef UNIX
-#define UNIX __UNIX__
-#endif
-#endif
 
 #ifndef __NT__
 extern  unsigned char     _DOS_Switch_Char();
@@ -53,7 +47,7 @@ int _dos_switch_char()
 {
 #if defined(__NT__) || defined(__OS2__) || defined(__OSI__)
     return( '/' );
-#elif defined( UNIX )
+#elif defined( __UNIX__ )
     return( '-' );
 #else
     #ifdef __386__

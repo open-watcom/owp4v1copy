@@ -29,24 +29,20 @@
 *
 ****************************************************************************/
 
-
-#include <unistd.h>
-#ifdef __UNIX__
-#ifndef UNIX
-#define UNIX __UNIX__
-#endif
-#endif
 #ifdef __LINUX__
 #ifndef LINUX
 #define LINUX __LINUX__
 #endif
 #endif
-#if defined( __QNX__ ) || defined( UNIX )
+
+#include <unistd.h>
+
+#if defined( __UNIX__ )
 #include <fcntl.h>
 #endif
 #include <malloc.h>
 #include "wressetr.h"
-#if defined( UNIX ) && !defined( __WATCOMC__ )
+#if defined( __UNIX__ ) && !defined( __WATCOMC__ )
     #include "clibext.h"
     #include <stdlib.h>  // malloc for AIX
 #endif

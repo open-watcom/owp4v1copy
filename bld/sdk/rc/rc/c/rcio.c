@@ -28,7 +28,6 @@
 *
 ****************************************************************************/
 
-
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -36,7 +35,7 @@
 #include <string.h>
 #include <errno.h>
 #include <stdarg.h>
-#ifndef UNIX
+#ifndef __UNIX__
 #include <process.h>
 #endif
 #include "watcom.h"
@@ -62,12 +61,6 @@
 #include <time.h>
 
 #ifdef __UNIX__
-#ifndef UNIX
-#define UNIX __UNIX__
-#endif
-#endif
-
-#ifdef UNIX
 #define PATH_SEP '/'
 #define PATH_SPLIT ':'
 #else
@@ -96,14 +89,14 @@ static void MakeTmpInSameDir( const char * dirfile, char * outfile, char * ext )
 {
     char    drive[ _MAX_DRIVE ];
     char    dir[ _MAX_DIR ];
-#ifdef UNIX
+#ifdef __UNIX__
     char    fname[ 32 ];
 #else
     char    *fname = "__TMP__";
 #endif
 
     _splitpath( dirfile, drive, dir, NULL, NULL );
-#ifdef UNIX
+#ifdef __UNIX__
     // Must be able to run several "rc" executables simultaneously
     // in the same directory
     sprintf( fname, "__RCTMP%lu__", (unsigned long)getpid() );

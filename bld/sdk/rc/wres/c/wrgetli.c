@@ -29,10 +29,9 @@
 *
 ****************************************************************************/
 
-
 #include "wres.h"
 
-#if defined( UNIX )
+#if defined( __UNIX__ )
 #include "wreslang.h"
 
 res_language_enumeration _WResLanguage(void)

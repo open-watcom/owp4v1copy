@@ -28,7 +28,6 @@
 *
 ****************************************************************************/
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -37,16 +36,14 @@
 #include <fcntl.h>
 #include <time.h>
 #include "preproc.h"
-#ifndef UNIX
-#define UNIX __UNIX__
-#endif
-#if defined( UNIX ) && !defined( __WATCOMC__ )
+
+#if defined( __UNIX__ ) && !defined( __WATCOMC__ )
     #include "clibext.h"
     #include "rotate.h"
 #endif
 
 #ifndef SLASH_CHAR
-    #ifdef UNIX
+    #ifdef __UNIX__
         #define SLASH_CHAR      '/'
     #else
         #define SLASH_CHAR      '\\'
@@ -146,7 +143,7 @@ char *PP_FindInclude( char *filename, char *path, char *buffer )
             for(;;) {
                 c = *path++;
                 if( c == ';' ) break;
-#ifdef UNIX
+#ifdef __UNIX__
                 if( c == ':' ) break;
 #endif
                 if( c == '\0' ) break;
@@ -215,7 +212,7 @@ static void PP_GenLine()
     fname = PP_File->filename;
     while( *fname != '\0' ) {
 //      24-may-94       if( *fname == '\\' )  *p++ = '\\';
-#ifndef UNIX
+#ifndef __UNIX__
         if( *fname == SLASH_CHAR )  *p++ = SLASH_CHAR;          // 14-sep-94
 #endif
         if( DBChar[(unsigned char)*fname] )  {

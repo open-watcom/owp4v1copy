@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 #include <string.h>
 #include "wresall.h"
 #include "layer0.h"
@@ -37,7 +36,7 @@
 #include "global.h"
 #include "fcntl.h"
 #include "ldstr.h"
-#ifndef UNIX
+#ifndef __UNIX__
 #include "process.h"
 #endif
 #include "wreslang.h"
@@ -45,13 +44,7 @@
 
 static unsigned MsgShift;
 
-#ifdef __UNIX__
-#ifndef UNIX
-#define UNIX __UNIX__
-#endif
-#endif
-
-#if defined( UNIX ) && !defined( __WATCOMC__ )
+#if defined( __UNIX__ ) && !defined( __WATCOMC__ )
     #undef BOOTSTRAP_RC
     #define BOOTSTRAP_RC
 #endif

@@ -29,9 +29,8 @@
 *
 ****************************************************************************/
 
-
 #include <stdio.h>
-#if !defined( UNIX ) && !defined( __UNIX__ )
+#if !defined( __UNIX__ )
     #include <conio.h>
 #endif
 #include <stdlib.h>

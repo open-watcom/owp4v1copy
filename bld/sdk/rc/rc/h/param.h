@@ -29,13 +29,12 @@
 *
 ****************************************************************************/
 
-
 #ifndef PARAM_INCLUDED
 #define PARAM_INCLUDED
 
 #include <stdlib.h>
 #include "types.h"
-#ifdef UNIX
+#ifdef __UNIX__
     #include "clibext.h"
 #endif
 #ifndef _MAX_PATH

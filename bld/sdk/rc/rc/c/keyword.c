@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 #include <string.h>
 #include <ctype.h>
 #include "scan.h"
@@ -37,12 +36,8 @@
 #include "hash1.h"
 #include "hash2.h"
 #include "keyword.h"
-#ifdef __UNIX__
-#ifndef UNIX
-#define UNIX __UNIX__
-#endif
-#endif
-#if defined( UNIX ) && !defined( __WATCOMC__ )
+
+#if defined( __UNIX__ ) && !defined( __WATCOMC__ )
     #include "clibext.h"
 #endif
 
