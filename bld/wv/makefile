@@ -152,7 +152,7 @@ cflags += $(extra_cflags)
 !ifndef dll
     @set ipaths=$(%ipaths);$(posix_dir)\h
     @set ipaths=$(%ipaths);$(gui_dir)\ui\h
-    @set ipaths=$(%ipaths);$(help_dir)
+    @set ipaths=$(%ipaths);$(help_dir)\h
 !endif
 
 compile  = *$(compiler_$(host_CPU)) $[* $(cflags) @ipaths
