@@ -74,6 +74,18 @@ extern  void            BGDone(an);
 extern  cg_type         NamePtrType( name *op );
 extern  name            *AllocRegName( hw_reg_set );
 
+
+static  void    CopyAddr( an src, an dst ) {
+/******************************************/
+
+    an  link;
+
+    link = dst->link;
+    Copy( src, dst, sizeof( address_name ) );
+    dst->link = link;
+}
+
+
 extern  an      NewAddrName() {
 /*****************************/
 
@@ -130,6 +142,45 @@ extern  name    *GenIns( an addr ) {
 }
 
 
+extern  void    AddrFree( an node ) {
+/***********************************/
+
+    an  *owner;
+
+    owner = &AddrList;
+    for(;;) {
+        if( *owner == node ) {
+            *owner = node->link;
+            break;
+        }
+        owner = &(*owner)->link;
+    }
+    if( node->format == NF_INS ) {
+        FreeIns( node->u.ins );
+    }
+    FrlFreeSize( &AddrNameFrl, (pointer *)node, sizeof( address_name ) );
+}
+
+
+extern  void    InsToAddr( an addr ) {
+/************************************/
+
+    an          new;
+    instruction *ins;
+
+    if( addr->format == NF_INS ) {
+        ins = addr->u.ins;
+        ins->result = BGNewTemp( addr->tipe );
+        new = AddrName( ins->result, addr->tipe );
+        new->flags = addr->flags;
+        new->base = addr->base;
+        new->alignment = addr->alignment;
+        CopyAddr( new, addr );
+        AddrFree( new );
+    }
+}
+
+
 extern  void    NamesCrossBlocks() {
 /**********************************/
 
@@ -173,26 +224,6 @@ extern  bool    AddrFrlFree() {
 /*****************************/
 
     return( FrlFreeAll( &AddrNameFrl, sizeof( address_name ) ) );
-}
-
-
-extern  void    AddrFree( an node ) {
-/***********************************/
-
-    an  *owner;
-
-    owner = &AddrList;
-    for(;;) {
-        if( *owner == node ) {
-            *owner = node->link;
-            break;
-        }
-        owner = &(*owner)->link;
-    }
-    if( node->format == NF_INS ) {
-        FreeIns( node->u.ins );
-    }
-    FrlFreeSize( &AddrNameFrl, (pointer *)node, sizeof( address_name ) );
 }
 
 
@@ -395,25 +426,6 @@ extern  an      AddrToIns( an addr ) {
 }
 
 
-extern  void    InsToAddr( an addr ) {
-/************************************/
-
-    an          new;
-    instruction *ins;
-
-    if( addr->format == NF_INS ) {
-        ins = addr->u.ins;
-        ins->result = BGNewTemp( addr->tipe );
-        new = AddrName( ins->result, addr->tipe );
-        new->flags = addr->flags;
-        new->base = addr->base;
-        new->alignment = addr->alignment;
-        CopyAddr( new, addr );
-        AddrFree( new );
-    }
-}
-
-
 extern  an      AddrDuplicate( an node ) {
 /****************************************/
 
@@ -457,15 +469,6 @@ extern  void    AddrDemote( an node ) {
 }
 
 
-static  void    CopyAddr( an src, an dst ) {
-/******************************************/
-
-    an  link;
-
-    link = dst->link;
-    Copy( src, dst, sizeof( address_name ) );
-    dst->link = link;
-}
 extern  name    *MaybeTemp( name *op, type_class_def kind ) {
 /*************************************************************/
 

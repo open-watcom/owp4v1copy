@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Functions to generate live information.
 *
 ****************************************************************************/
 
@@ -84,70 +83,6 @@ static  void            GlobalConflictsFirst()
     if( list_owner != &list ) {
         *list_owner = ConfList;
         ConfList = list;
-    }
-}
-
-
-extern  void    MakeLiveInfo() {
-/******************************/
-
-    block               *blk;
-    conflict_node       *first_global;
-    bool                havelive;
-
-    GlobalConflictsFirst();
-    first_global = ConfList; // assumes conflicts get added at start of list
-    havelive = HaveLiveInfo;
-    HaveLiveInfo = FALSE;
-    for( blk = HeadBlock; blk != NULL; blk = blk->next_block ) {
-        if( blk->ins.hd.prev->head.opcode != OP_NOP ) {
-            PrefixIns( (instruction *)&blk->ins, MakeNop() );
-        }
-    }
-    HaveLiveInfo = havelive;
-    Renumber();
-    for( blk = HeadBlock; blk != NULL; blk = blk->next_block ) {
-        FlowConflicts( (instruction *)&blk->ins,
-                       (instruction *)&blk->ins, blk );
-        ExtendConflicts( blk, first_global );
-    }
-}
-
-
-extern  void    LiveInfoUpdate() {
-/*****************************/
-
-    block       *blk;
-
-    blk = HeadBlock;
-    for(;;) {
-        if( blk->ins.hd.next != (instruction *)&blk->ins ) {
-            FlowConflicts( (instruction *)&blk->ins,
-                           (instruction *)&blk->ins, blk );
-        }
-        blk = blk->next_block;
-        if( blk == NULL ) break;
-    }
-}
-
-
-extern  void    UpdateLive( instruction *first, instruction *last ) {
-/*******************************************************************/
-
-/* update the live information from 'first'.prev to 'last'.next inclusive*/
-
-    instruction *ins;
-
-    last = last->head.next;
-    ins = last;
-    while( ins->head.opcode != OP_BLOCK ) {
-        ins = ins->head.next;
-    }
-    if( ins->head.next == ins->head.prev ) { /* 1 or 2 instructions*/
-        FlowConflicts( ins, ins, _BLOCK( ins ) );
-    } else {
-        if( first->head.opcode != OP_BLOCK ) first = first->head.prev;
-        FlowConflicts( first, last, _BLOCK( ins ) );
     }
 }
 
@@ -220,6 +155,65 @@ static  void    ExtendConflicts( block *blk, conflict_node *first_global ) {
                 if( conf->ins_range.last == NULL ) {
                     conf->ins_range.last = first_ins;
                 }
+            }
+        }
+    }
+}
+
+
+static  void    AssignBit( conflict_node *conf, block *blk ) {
+/************************************************************/
+
+    local_bit_set     bit;
+
+    if( _LBitEmpty( blk->available_bit ) ) {
+        conf->state |= CONFLICT_ON_HOLD;
+    } else if( ( conf->state & CONFLICT_ON_HOLD ) == EMPTY ) {
+        _LBitFirst( bit );
+        for(;;) {
+            if( _LBitOverlap( blk->available_bit, bit ) ) break;
+            _LBitNext( &bit );
+        }
+        _LBitAssign( conf->id.within_block, bit );
+        _LBitTurnOff( blk->available_bit, bit );
+    }
+}
+
+
+extern  void    NowAlive( name *opnd, conflict_node *conf,
+                          name_set *alive, block *blk ) {
+
+    if( opnd->n.class == N_REGISTER ) {
+        HW_TurnOn( alive->regs, opnd->r.reg );
+    } else if( conf != NULL ) {
+        if( opnd->v.usage & USE_IN_ANOTHER_BLOCK ) {
+            _GBitTurnOn( alive->out_of_block, conf->id.out_of_block );
+        } else {
+            if( _LBitEmpty( conf->id.within_block ) ) {
+                AssignBit( conf, blk );
+            }
+            _LBitTurnOn( alive->within_block, conf->id.within_block );
+        }
+    }
+}
+
+
+extern  void    NowDead( name *opnd, conflict_node *conf,
+                         name_set *alive, block *blk ) {
+
+    if( opnd->n.class == N_REGISTER ) {
+        HW_TurnOff( alive->regs, opnd->r.reg );
+    } else if( conf != NULL ) {
+        if( opnd->v.usage & USE_IN_ANOTHER_BLOCK ) {
+            if( opnd->n.class != N_TEMP || opnd->t.alias == opnd ) {
+                _GBitTurnOff( alive->out_of_block, conf->id.out_of_block );
+            }
+        } else {
+            if( _LBitEmpty( conf->id.within_block ) ) {
+                AssignBit( conf, blk );
+            }
+            if( opnd->n.class != N_TEMP || opnd->t.alias == opnd ) {
+                _LBitTurnOff( alive->within_block, conf->id.within_block );
             }
         }
     }
@@ -317,60 +311,65 @@ static  void    FlowConflicts( instruction *first,
 }
 
 
-extern  void    NowAlive( name *opnd, conflict_node *conf,
-                          name_set *alive, block *blk ) {
+extern  void    MakeLiveInfo() {
+/******************************/
 
-    if( opnd->n.class == N_REGISTER ) {
-        HW_TurnOn( alive->regs, opnd->r.reg );
-    } else if( conf != NULL ) {
-        if( opnd->v.usage & USE_IN_ANOTHER_BLOCK ) {
-            _GBitTurnOn( alive->out_of_block, conf->id.out_of_block );
-        } else {
-            if( _LBitEmpty( conf->id.within_block ) ) {
-                AssignBit( conf, blk );
-            }
-            _LBitTurnOn( alive->within_block, conf->id.within_block );
+    block               *blk;
+    conflict_node       *first_global;
+    bool                havelive;
+
+    GlobalConflictsFirst();
+    first_global = ConfList; // assumes conflicts get added at start of list
+    havelive = HaveLiveInfo;
+    HaveLiveInfo = FALSE;
+    for( blk = HeadBlock; blk != NULL; blk = blk->next_block ) {
+        if( blk->ins.hd.prev->head.opcode != OP_NOP ) {
+            PrefixIns( (instruction *)&blk->ins, MakeNop() );
         }
+    }
+    HaveLiveInfo = havelive;
+    Renumber();
+    for( blk = HeadBlock; blk != NULL; blk = blk->next_block ) {
+        FlowConflicts( (instruction *)&blk->ins,
+                       (instruction *)&blk->ins, blk );
+        ExtendConflicts( blk, first_global );
     }
 }
 
 
-extern  void    NowDead( name *opnd, conflict_node *conf,
-                         name_set *alive, block *blk ) {
+extern  void    LiveInfoUpdate() {
+/*****************************/
 
-    if( opnd->n.class == N_REGISTER ) {
-        HW_TurnOff( alive->regs, opnd->r.reg );
-    } else if( conf != NULL ) {
-        if( opnd->v.usage & USE_IN_ANOTHER_BLOCK ) {
-            if( opnd->n.class != N_TEMP || opnd->t.alias == opnd ) {
-                _GBitTurnOff( alive->out_of_block, conf->id.out_of_block );
-            }
-        } else {
-            if( _LBitEmpty( conf->id.within_block ) ) {
-                AssignBit( conf, blk );
-            }
-            if( opnd->n.class != N_TEMP || opnd->t.alias == opnd ) {
-                _LBitTurnOff( alive->within_block, conf->id.within_block );
-            }
+    block       *blk;
+
+    blk = HeadBlock;
+    for(;;) {
+        if( blk->ins.hd.next != (instruction *)&blk->ins ) {
+            FlowConflicts( (instruction *)&blk->ins,
+                           (instruction *)&blk->ins, blk );
         }
+        blk = blk->next_block;
+        if( blk == NULL ) break;
     }
 }
 
 
-static  void    AssignBit( conflict_node *conf, block *blk ) {
-/************************************************************/
+extern  void    UpdateLive( instruction *first, instruction *last ) {
+/*******************************************************************/
 
-    local_bit_set     bit;
+/* update the live information from 'first'.prev to 'last'.next inclusive*/
 
-    if( _LBitEmpty( blk->available_bit ) ) {
-        conf->state |= CONFLICT_ON_HOLD;
-    } else if( ( conf->state & CONFLICT_ON_HOLD ) == EMPTY ) {
-        _LBitFirst( bit );
-        for(;;) {
-            if( _LBitOverlap( blk->available_bit, bit ) ) break;
-            _LBitNext( &bit );
-        }
-        _LBitAssign( conf->id.within_block, bit );
-        _LBitTurnOff( blk->available_bit, bit );
+    instruction *ins;
+
+    last = last->head.next;
+    ins = last;
+    while( ins->head.opcode != OP_BLOCK ) {
+        ins = ins->head.next;
+    }
+    if( ins->head.next == ins->head.prev ) { /* 1 or 2 instructions*/
+        FlowConflicts( ins, ins, _BLOCK( ins ) );
+    } else {
+        if( first->head.opcode != OP_BLOCK ) first = first->head.prev;
+        FlowConflicts( first, last, _BLOCK( ins ) );
     }
 }

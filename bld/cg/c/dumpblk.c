@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Instruction block/range dump.
 *
 ****************************************************************************/
 
@@ -49,31 +48,6 @@ extern  void            Dump8h(unsigned_32);
 
 extern  block   *HeadBlock;
 extern  name    *Names[];
-
-
-extern  void    DumpBlock( block *b ) {
-/*************************************/
-
-    while( b != NULL ) {
-        DumpABlk( b );
-        b = b->next_block;
-    }
-    DumpLiteral( "-------------------------------" );
-    DumpNL();
-}
-
-extern  void    DumpBlk() {
-/*************************/
-
-    DumpBlock( HeadBlock );
-}
-
-extern  void    DumpRange(int first,int last) {
-/**************************************/
-
-    first=first;last=last;
-    DumpBlkI();
-}
 
 
 static void DumpBlkFlags( block *blk ) {
@@ -163,42 +137,6 @@ static void DumpBlkFlags( block *blk ) {
 }
 
 
-static  void    DumpBlkI() {
-/**************************/
-
-    block       *blk;
-
-    blk = HeadBlock;
-    while( blk != NULL ) {
-        DumpBlkFlags( blk );
-        DumpLineNum( (instruction *)&blk->ins );
-        DumpPtr( blk );
-        DumpLiteral( " " );
-        DumpBlkId( blk );
-        if( blk->label != NULL ) {
-            DumpLiteral( " L:" );
-            DumpPtr( blk->label );
-        }
-        DumpNL();
-        if( !_DBitEmpty( blk->dom.id ) ) {
-            DumpLiteral( "DOM: id  = " );
-            _DBitIter( Dump8h, blk->dom.id );
-            DumpNL();
-            DumpLiteral( "DOM: dom = " );
-            _DBitIter( Dump8h, blk->dom.dominator );
-            DumpNL();
-            DumpLiteral( "DOM: post= " );
-            _DBitIter( Dump8h, blk->dom.post_dominator );
-            DumpNL();
-        }
-        DumpInputs( blk );
-        DumpInstrsOnly( blk );
-        DumpGotos( blk, FALSE );
-        blk = blk->next_block;
-    }
-}
-
-
 extern  void    DumpRefs( name *op ) {
 /************************************/
 
@@ -271,26 +209,6 @@ extern  void    DumpRefs( name *op ) {
 }
 
 
-extern  void    DumpABlk( block *b ) {
-/************************************/
-
-
-    DumpPtr( b );
-    DumpLiteral( " " );
-    DumpBlkId( b );
-    DumpBlkLabel( b );
-    DumpLiteral( " Depth " );
-    DumpInt( b->depth );
-    DumpNL();
-    DumpBlkFlags( b );
-    DumpInputs( b );
-    DumpDataFlo( b );
-    DumpInsList( b );
-    DumpGotos( b, TRUE );
-    DumpNL();
-}
-
-
 static  void    DumpBlkLabel( block *b ) {
 /****************************************/
 
@@ -317,6 +235,16 @@ static  bool    FindBlock( block *b ) {
         if( blk == b ) return( TRUE );
         blk = blk->next_block;
     }
+}
+
+extern  void    DumpBlkId( block *b ) {
+/*************************************/
+
+    DumpLiteral( "Block " );
+    DumpInt( b->id );
+    DumpLiteral( "(" );
+    DumpInt( b->gen_id );
+    DumpLiteral( ")" );
 }
 
 static  void    DumpInputs( block *b ) {
@@ -531,16 +459,6 @@ extern  void    DumpSymTab() {
     }
 }
 
-extern  void    DumpBlkId( block *b ) {
-/*************************************/
-
-    DumpLiteral( "Block " );
-    DumpInt( b->id );
-    DumpLiteral( "(" );
-    DumpInt( b->gen_id );
-    DumpLiteral( ")" );
-}
-
 extern  void    DumpEdge( block_num i, block_edge *edge ) {
 /*********************************************************/
 
@@ -582,4 +500,83 @@ extern  void    DumpInputEdges( block *b ) {
     for( edge = b->input_edges; edge != NULL; edge = edge->next_source ) {
         DumpEdge( i++, edge );
     }
+}
+
+static  void    DumpBlkI() {
+/**************************/
+
+    block       *blk;
+
+    blk = HeadBlock;
+    while( blk != NULL ) {
+        DumpBlkFlags( blk );
+        DumpLineNum( (instruction *)&blk->ins );
+        DumpPtr( blk );
+        DumpLiteral( " " );
+        DumpBlkId( blk );
+        if( blk->label != NULL ) {
+            DumpLiteral( " L:" );
+            DumpPtr( blk->label );
+        }
+        DumpNL();
+        if( !_DBitEmpty( blk->dom.id ) ) {
+            DumpLiteral( "DOM: id  = " );
+            _DBitIter( Dump8h, blk->dom.id );
+            DumpNL();
+            DumpLiteral( "DOM: dom = " );
+            _DBitIter( Dump8h, blk->dom.dominator );
+            DumpNL();
+            DumpLiteral( "DOM: post= " );
+            _DBitIter( Dump8h, blk->dom.post_dominator );
+            DumpNL();
+        }
+        DumpInputs( blk );
+        DumpInstrsOnly( blk );
+        DumpGotos( blk, FALSE );
+        blk = blk->next_block;
+    }
+}
+
+
+extern  void    DumpRange(int first,int last) {
+/**************************************/
+
+    first=first;last=last;
+    DumpBlkI();
+}
+
+extern  void    DumpABlk( block *b ) {
+/************************************/
+
+
+    DumpPtr( b );
+    DumpLiteral( " " );
+    DumpBlkId( b );
+    DumpBlkLabel( b );
+    DumpLiteral( " Depth " );
+    DumpInt( b->depth );
+    DumpNL();
+    DumpBlkFlags( b );
+    DumpInputs( b );
+    DumpDataFlo( b );
+    DumpInsList( b );
+    DumpGotos( b, TRUE );
+    DumpNL();
+}
+
+extern  void    DumpBlock( block *b ) {
+/*************************************/
+
+    while( b != NULL ) {
+        DumpABlk( b );
+        b = b->next_block;
+    }
+    DumpLiteral( "-------------------------------" );
+    DumpNL();
+}
+
+extern  void    DumpBlk() {
+/*************************/
+
+    DumpBlock( HeadBlock );
 }

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Instruction reordering and dead code elimination.
 *
 ****************************************************************************/
 
@@ -179,36 +178,6 @@ static  opcode_attr OpAttrs[LAST_OP-FIRST_OP+1] = {
 
 #define _IsIns( ins, attr )        ( OpAttrs[ ins->head.opcode ] & attr )
 #define _IsntIns( ins, attr )      ( _IsIns( ins, attr ) == FALSE )
-
-
-extern  void    PushPostOps() {
-/******************************
-    This routine tries to push add and subtract instructions
-    forward in the basic block. The reason for this is that
-    it untangles post increment code allowing for copy propagation
-    and code elimination. Take *x++ = *y++ for example
-
-    Before:                     After:                  With copy propagation:
-
-    MOV x => t1                 MOV x => t1             MOV x => t1 (useless)
-    MOV y => t2                 MOV y => t2             MOV y => t2 (useless)
-    ADD x, 1 => x               MOV [t2] => [t1]        MOV [y] => [x]
-    ADD y, 1 => y               ADD x,1 => x            ADD x,1 => x
-    MOV [t2] => [t1]            ADD y,1 => y            ADD y,1 => y
-*/
-
-/*    Perform instruction optimizations*/
-
-    block       *blk;
-
-    blk = HeadBlock;
-    while( blk != NULL ) {
-        PushInsForward( blk );
-        blk = blk->next_block;
-    }
-    PropagateMoves();
-    Renumber();
-}
 
 
 static  bool    ReDefinesOps( instruction *of, instruction *ins ) {
@@ -439,6 +408,7 @@ extern  void    AxeDeadCode() {
     }
 }
 
+
 extern  void    DeadInstructions() {
 /***********************************
     This is called after register allocation. It frees up any
@@ -452,4 +422,34 @@ extern  void    DeadInstructions() {
         FreeJunk( blk );
         blk = blk->next_block;
     }
+}
+
+
+extern  void    PushPostOps() {
+/******************************
+    This routine tries to push add and subtract instructions
+    forward in the basic block. The reason for this is that
+    it untangles post increment code allowing for copy propagation
+    and code elimination. Take *x++ = *y++ for example
+
+    Before:                     After:                  With copy propagation:
+
+    MOV x => t1                 MOV x => t1             MOV x => t1 (useless)
+    MOV y => t2                 MOV y => t2             MOV y => t2 (useless)
+    ADD x, 1 => x               MOV [t2] => [t1]        MOV [y] => [x]
+    ADD y, 1 => y               ADD x,1 => x            ADD x,1 => x
+    MOV [t2] => [t1]            ADD y,1 => y            ADD y,1 => y
+*/
+
+/*    Perform instruction optimizations*/
+
+    block       *blk;
+
+    blk = HeadBlock;
+    while( blk != NULL ) {
+        PushInsForward( blk );
+        blk = blk->next_block;
+    }
+    PropagateMoves();
+    Renumber();
 }

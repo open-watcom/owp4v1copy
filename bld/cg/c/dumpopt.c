@@ -108,49 +108,13 @@ static char * Conds[] = {
     "jge  ",
     ""
 };
+
 static  char    *CondName( oc_jcond *oc ) {
 /*****************************************/
 
     return( Conds[ oc->cond - FIRST_CONDITION ] );
 }
 #endif
-
-extern  void    DumpOpt() {
-/*************************/
-
-    DownOpt( FirstIns, -1 );
-}
-
-
-extern  void    UpOpt( ins_entry *ins, uint last ) {
-/**************************************************/
-
-    uint        size;
-
-    size = last;
-    for(;;) {
-        if( size == 0 ) break;
-        ins = ins->ins.prev;
-        if( ins == NULL ) break;
-        --size;
-    }
-    DownOpt( ins, last+1 );
-}
-
-
-extern  void    DownOpt( ins_entry *instr, uint num ) {
-/*****************************************************/
-
-    DumpLiteral( "--------<Queue>-------" );
-    DumpNL();
-    for(;;) {
-        if( instr == NULL ) break;
-        if( num == 0 ) break;
-        DumpOc( instr );
-        --num;
-        instr = instr->ins.next;
-    }
-}
 
 static  bool    LblName( code_lbl *lbl ) {
 /*****************************************/
@@ -174,6 +138,82 @@ static  bool    LblName( code_lbl *lbl ) {
     return( TRUE );
 }
 
+
+static  void    CheckAttr( oc_class cl ) {
+/****************************************/
+
+    if( cl & ATTR_FAR ) {
+        DumpLiteral( "far " );
+    }
+    if( cl & ATTR_SHORT ) {
+        DumpLiteral( "short " );
+    }
+    if( cl & ATTR_POP ) {
+        DumpLiteral( "popping " );
+    }
+    if( cl & ATTR_FLOAT ) {
+        DumpLiteral( "floating " );
+    }
+}
+
+
+static  void    DoInfo( any_oc *oc ) {
+/**************************************/
+
+    switch( oc->oc_entry.class & INFO_MASK ) {
+    case INFO_LINE:
+        DumpLiteral( "LINE " );
+        DumpInt( oc->oc_linenum.line );
+        if( oc->oc_linenum.label_line ) {
+            DumpLiteral( " (Label)" );
+        }
+        break;
+    case INFO_LDONE:
+        DumpLiteral( "LDONE " );
+        LblName( oc->oc_handle.handle );
+        break;
+    case INFO_DEAD_JMP:
+        DumpLiteral( "DEAD  " );
+        DumpLiteral( "jmp  " );
+        DoRef( &(oc->oc_handle) );
+        break;
+    case INFO_DBG_RTN_BEG:
+        DumpLiteral( "RTN BEGIN " );
+        DumpPtr( oc->oc_debug.ptr );
+        break;
+    case INFO_DBG_BLK_BEG:
+        DumpLiteral( "BLOCK BEGIN " );
+        DumpPtr( oc->oc_debug.ptr );
+        break;
+    case INFO_DBG_PRO_END:
+        DumpLiteral( "PROLOG END " );
+        DumpPtr( oc->oc_debug.ptr );
+        break;
+    case INFO_DBG_EPI_BEG:
+        DumpLiteral( "EPILOG BEGIN " );
+        DumpPtr( oc->oc_debug.ptr );
+        break;
+    case INFO_DBG_BLK_END:
+        DumpLiteral( "BLOCK END " );
+        DumpPtr( oc->oc_debug.ptr );
+        break;
+    case INFO_DBG_RTN_END:
+        DumpLiteral( "RTN END " );
+        DumpPtr( oc->oc_debug.ptr );
+        break;
+    case INFO_SELECT:
+        DumpLiteral( "SELECT TABLE " );
+        if( oc->oc_select.starts ) {
+            DumpLiteral( "STARTS" );
+        } else {
+            DumpLiteral( "ENDS" );
+        }
+        break;
+    default:
+        DumpLiteral( "*** unknown info ***" );
+        break;
+    }
+}
 
 
 extern  void    DumpOc( ins_entry *ins ) {
@@ -252,80 +292,6 @@ extern  void    DumpOc( ins_entry *ins ) {
     DumpNL();
 }
 
-static  void    CheckAttr( oc_class cl ) {
-/****************************************/
-
-    if( cl & ATTR_FAR ) {
-        DumpLiteral( "far " );
-    }
-    if( cl & ATTR_SHORT ) {
-        DumpLiteral( "short " );
-    }
-    if( cl & ATTR_POP ) {
-        DumpLiteral( "popping " );
-    }
-    if( cl & ATTR_FLOAT ) {
-        DumpLiteral( "floating " );
-    }
-}
-
-static  void    DoInfo( any_oc *oc ) {
-/**************************************/
-
-    switch( oc->oc_entry.class & INFO_MASK ) {
-    case INFO_LINE:
-        DumpLiteral( "LINE " );
-        DumpInt( oc->oc_linenum.line );
-        if( oc->oc_linenum.label_line ) {
-            DumpLiteral( " (Label)" );
-        }
-        break;
-    case INFO_LDONE:
-        DumpLiteral( "LDONE " );
-        LblName( oc->oc_handle.handle );
-        break;
-    case INFO_DEAD_JMP:
-        DumpLiteral( "DEAD  " );
-        DumpLiteral( "jmp  " );
-        DoRef( &(oc->oc_handle) );
-        break;
-    case INFO_DBG_RTN_BEG:
-        DumpLiteral( "RTN BEGIN " );
-        DumpPtr( oc->oc_debug.ptr );
-        break;
-    case INFO_DBG_BLK_BEG:
-        DumpLiteral( "BLOCK BEGIN " );
-        DumpPtr( oc->oc_debug.ptr );
-        break;
-    case INFO_DBG_PRO_END:
-        DumpLiteral( "PROLOG END " );
-        DumpPtr( oc->oc_debug.ptr );
-        break;
-    case INFO_DBG_EPI_BEG:
-        DumpLiteral( "EPILOG BEGIN " );
-        DumpPtr( oc->oc_debug.ptr );
-        break;
-    case INFO_DBG_BLK_END:
-        DumpLiteral( "BLOCK END " );
-        DumpPtr( oc->oc_debug.ptr );
-        break;
-    case INFO_DBG_RTN_END:
-        DumpLiteral( "RTN END " );
-        DumpPtr( oc->oc_debug.ptr );
-        break;
-    case INFO_SELECT:
-        DumpLiteral( "SELECT TABLE " );
-        if( oc->oc_select.starts ) {
-            DumpLiteral( "STARTS" );
-        } else {
-            DumpLiteral( "ENDS" );
-        }
-        break;
-    default:
-        DumpLiteral( "*** unknown info ***" );
-        break;
-    }
-}
 
 static  void    DoData( oc_entry *instr ) {
 /*****************************************/
@@ -338,6 +304,7 @@ static  void    DoData( oc_entry *instr ) {
         ++len;
     }
 }
+
 
 static  void    DoLabel( oc_handle *instr ) {
 /*******************************************/
@@ -363,11 +330,13 @@ static  void    DoLabel( oc_handle *instr ) {
 #endif
 }
 
+
 static  void    DoRef( oc_handle *instr ) {
 /*****************************************/
 
     LblName( instr->handle );
 }
+
 
 extern  void    DumpLbl( code_lbl *lbl ) {
 /****************************************/
@@ -431,4 +400,42 @@ extern  void    DumpLbl( code_lbl *lbl ) {
         }
     }
     DumpNL();
+}
+
+
+extern  void    DownOpt( ins_entry *instr, uint num ) {
+/*****************************************************/
+
+    DumpLiteral( "--------<Queue>-------" );
+    DumpNL();
+    for(;;) {
+        if( instr == NULL ) break;
+        if( num == 0 ) break;
+        DumpOc( instr );
+        --num;
+        instr = instr->ins.next;
+    }
+}
+
+
+extern  void    UpOpt( ins_entry *ins, uint last ) {
+/**************************************************/
+
+    uint        size;
+
+    size = last;
+    for(;;) {
+        if( size == 0 ) break;
+        ins = ins->ins.prev;
+        if( ins == NULL ) break;
+        --size;
+    }
+    DownOpt( ins, last+1 );
+}
+
+
+extern  void    DumpOpt() {
+/*************************/
+
+    DownOpt( FirstIns, -1 );
 }

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Loop optimizations.
 *
 ****************************************************************************/
 
@@ -183,6 +182,137 @@ static  bool    InLoop( block *blk ) {
 }
 
 
+extern  block   *AddPreBlock( block *postblk ) {
+/***********************************************
+    There is no preheader for this loop (loop has no initialization) so
+    add a block right in front of the loop header and move any branch
+    that goes from outside the loop to the header, go through the
+    preheader first.
+*/
+
+
+    block_edge  *edge;
+    block       *preblk;
+
+    preblk = NewBlock( postblk->label, FALSE );
+    /* set up new block to look like it was generated after postblk*/
+    preblk->class = JUMP;
+    preblk->id = NO_BLOCK_ID;
+    preblk->gen_id = postblk->gen_id;
+    preblk->ins.hd.line_num = postblk->ins.hd.line_num;
+    postblk->ins.hd.line_num = 0;
+    preblk->loop_head = postblk->loop_head; /**/
+    preblk->depth = postblk->depth;
+    if( ( postblk->class & LOOP_HEADER ) != EMPTY ) {
+        // we don't always add this block before a loop header
+        // for instance, in the floating point scheduling stuff
+        // we use this routine to add a safe 'decache' block
+        // after a loop  BBB - Oct 14, 1997
+        preblk->depth -= 1;
+    }
+    preblk->next_block = postblk;
+    preblk->prev_block = postblk->prev_block;
+    postblk->prev_block = preblk;
+    if( preblk->prev_block != NULL ) {
+        preblk->prev_block->next_block = preblk;
+    }
+    preblk->input_edges = NULL;
+    preblk->inputs = 0;
+    /* make preblk go to postblk*/
+    preblk->targets++;
+    edge = &preblk->edge[ 0 ];
+    edge->destination = postblk;
+    edge->source = preblk;
+    edge->flags = SOURCE_IS_PREHEADER | DEST_IS_BLOCK;
+    edge->next_source = postblk->input_edges;
+    postblk->input_edges = edge;
+    postblk->inputs++;
+    postblk->label = AskForNewLabel();
+    FixBlockIds();
+    return( preblk );
+}
+
+
+static  bool    IsPreHeader( block *test ) {
+/*******************************************
+    return TRUE if block "test" will serve as a preheader for "Loop".  A
+    preheader must branch directly to the loop head, and no other block
+    that is not in the loop may branch into the loop.
+*/
+
+    int         i;
+    block       *other;
+
+    /* check that test only goes to the loop head*/
+    if( test->targets != 1 ) return( FALSE );
+    if( test->edge[ 0 ].destination != Head ) return( FALSE );
+    if( ( test->class & IN_LOOP ) != EMPTY ) return( FALSE );
+    /* check that no other block outside the loop branches into the loop*/
+    other = HeadBlock;
+    while( other != NULL ) {
+        if( other != test && ( other->class & IN_LOOP ) == EMPTY ) {
+            i = other->targets;
+            while( --i >= 0 ) {
+                if( other->edge[ i ].destination->class & IN_LOOP )
+                    return( FALSE );
+            }
+        }
+        other = other->next_block;
+    }
+    test->edge[ 0 ].flags |= SOURCE_IS_PREHEADER;
+    return( TRUE );
+}
+
+
+static  block   *FindPreHeader() {
+/*********************************
+    See if there is a basic block that will suffice as a pre-header for
+    "Loop".
+*/
+
+    block       *preheader;
+    block_edge  *edge;
+
+    edge = Head->input_edges;
+    for(;;) {
+        if( edge == NULL ) { /* maybe there is a 'user defined' preheader*/
+            preheader = HeadBlock;
+            while( preheader != NULL ) {
+                if( IsPreHeader( preheader ) ) return( preheader );
+                preheader = preheader->next_block;
+            }
+            return( NULL );
+        }
+        if( edge->flags & SOURCE_IS_PREHEADER ) break;
+        edge = edge->next_source;
+    }
+    return( edge->source );
+}
+
+
+static  void    PreHeader() {
+/****************************
+    Make sure that "Loop" has a preheader "PreHead"
+*/
+    block_edge  *edge;
+    block_edge  *next;
+
+    PreHead = FindPreHeader();
+    if( PreHead == NULL ) {
+        PreHead = AddPreBlock( Head );
+        edge = Head->input_edges;
+        while( edge != NULL ) {
+            next = edge->next_source;
+            if( edge->source != PreHead &&
+                ( edge->source->class & IN_LOOP ) == EMPTY ) {
+                MoveEdge( edge, PreHead );
+            }
+            edge = next;
+        }
+    }
+}
+
+
 extern  void    MarkLoop() {
 /***************************
     Mark the current loop (defined by Head) as IN_LOOP.  Also mark any
@@ -248,6 +378,29 @@ extern  block   *NextInProg( block *blk ) {
 }
 
 
+extern  void            MakeJumpBlock( block *cond_blk, block_edge *exit_edge ) {
+/************************************************************************
+
+    Turn the loop condition exit block into one that just transfers out
+    of the loop.
+*/
+    block_edge  *edge;
+
+    RemoveInputEdge( &cond_blk->edge[ 0 ] );
+    RemoveInputEdge( &cond_blk->edge[ 1 ] );
+    cond_blk->class &= ~CONDITIONAL;
+    cond_blk->class |= JUMP;
+    cond_blk->targets = 1;
+    edge = &cond_blk->edge[0];
+    edge->flags = exit_edge->flags;
+    edge->source = cond_blk;
+    edge->destination = exit_edge->destination;
+    edge->next_source = exit_edge->destination->input_edges;
+    exit_edge->destination->input_edges = edge;
+    exit_edge->destination->inputs++;
+}
+
+
 static  bool    KillOneTrippers() {
 /**********************************
 
@@ -294,6 +447,7 @@ static  bool    KillOneTrippers() {
     }
     return( change );
 }
+
 
 extern  void    UnMarkInvariants() {
 /***********************************
@@ -933,6 +1087,16 @@ static  induction       *FindOrAddIndVar( name *op, type_class_def type_class ){
 }
 
 
+static  void    FreeVar( induction *var ) {
+/******************************************
+    Free one induction variable
+*/
+
+    FreeInvariant( var->invar );
+    _Free( var, sizeof( induction ) );
+}
+
+
 extern  void    FiniIndVars() {
 /******************************
     clean up the induction variable lists.
@@ -983,16 +1147,6 @@ static  void    FreeBadVars() {
             FreeVar( var );
         }
     }
-}
-
-
-static  void    FreeVar( induction *var ) {
-/******************************************
-    Free one induction variable
-*/
-
-    FreeInvariant( var->invar );
-    _Free( var, sizeof( induction ) );
 }
 
 
@@ -1721,6 +1875,22 @@ static  instruction     *MakeMul( instruction *prev,
 }
 
 
+extern  void    SuffixPreHeader( instruction *ins ) {
+/****************************************************
+    Suffix the pre-header of "Loop" with ins.
+*/
+
+    instruction *last;
+
+    last = PreHead->ins.hd.prev;
+    while( last->head.opcode == OP_NOP ) {
+        if( last->flags.nop_flags & NOP_ZAP_INFO ) break;
+        last = last->head.prev;
+    }
+    SuffixIns( last, ins );
+}
+
+
 static  void    IncAndInit( induction *var, name *iv, type_class_def class ) {
 /****************************************************************************
     Generate code in the pre-header to initialize newly created
@@ -2079,6 +2249,7 @@ static  void            AdjustOp( instruction *blk_end, name **pop,
                        op->i.scale, op->i.index_flags );
 }
 
+
 extern  instruction     *DupIns( instruction *blk_end, instruction *ins,
                                  name *var, signed_32 adjust ) {
 /**************************************************************/
@@ -2121,28 +2292,6 @@ extern  instruction     *DupInstrs( instruction *blk_end,
         blk_end = DupIns( blk_end, ins, ind, adjust );
     }
     return( blk_end );
-}
-
-extern  void            MakeJumpBlock( block *cond_blk, block_edge *exit_edge ) {
-/************************************************************************
-
-    Turn the loop condition exit block into one that just transfers out
-    of the loop.
-*/
-    block_edge  *edge;
-
-    RemoveInputEdge( &cond_blk->edge[ 0 ] );
-    RemoveInputEdge( &cond_blk->edge[ 1 ] );
-    cond_blk->class &= ~CONDITIONAL;
-    cond_blk->class |= JUMP;
-    cond_blk->targets = 1;
-    edge = &cond_blk->edge[0];
-    edge->flags = exit_edge->flags;
-    edge->source = cond_blk;
-    edge->destination = exit_edge->destination;
-    edge->next_source = exit_edge->destination->input_edges;
-    exit_edge->destination->input_edges = edge;
-    exit_edge->destination->inputs++;
 }
 
 
@@ -2682,6 +2831,21 @@ static  bool    RepIndVar( instruction *ins, induction *rep,
 }
 
 
+static  void    RepBoth( instruction *ins,
+                         induction *rep, type_class_def class ) {
+/****************************************************************
+    Both operands of "ins" need to be replaced with "rep".
+*/
+
+    ins->operands[ 0 ] = rep->name;
+    ins->operands[ 1 ] = rep->name;
+    if( rep->times < 0 ) {
+        RevCond( ins );
+    }
+    ins->type_class = class;
+}
+
+
 static  bool    ReplUses( induction *var, induction *rep,
                           instruction *ins, type_class_def class ) {
 /*******************************************************************
@@ -2710,21 +2874,6 @@ static  bool    ReplUses( induction *var, induction *rep,
         return( TRUE );
     }
     return( FALSE );
-}
-
-
-static  void    RepBoth( instruction *ins,
-                         induction *rep, type_class_def class ) {
-/****************************************************************
-    Both operands of "ins" need to be replaced with "rep".
-*/
-
-    ins->operands[ 0 ] = rep->name;
-    ins->operands[ 1 ] = rep->name;
-    if( rep->times < 0 ) {
-        RevCond( ins );
-    }
-    ins->type_class = class;
 }
 
 
@@ -2769,153 +2918,6 @@ static  void    Replace( induction *var, induction *replacement ) {
         FreeIns( var->ins );
     }
     _SetV( var, IV_DEAD );
-}
-
-
-extern  void    SuffixPreHeader( instruction *ins ) {
-/****************************************************
-    Suffix the pre-header of "Loop" with ins.
-*/
-
-    instruction *last;
-
-    last = PreHead->ins.hd.prev;
-    while( last->head.opcode == OP_NOP ) {
-        if( last->flags.nop_flags & NOP_ZAP_INFO ) break;
-        last = last->head.prev;
-    }
-    SuffixIns( last, ins );
-}
-
-
-static  bool    IsPreHeader( block *test ) {
-/*******************************************
-    return TRUE if block "test" will serve as a preheader for "Loop".  A
-    preheader must branch directly to the loop head, and no other block
-    that is not in the loop may branch into the loop.
-*/
-
-    int         i;
-    block       *other;
-
-    /* check that test only goes to the loop head*/
-    if( test->targets != 1 ) return( FALSE );
-    if( test->edge[ 0 ].destination != Head ) return( FALSE );
-    if( ( test->class & IN_LOOP ) != EMPTY ) return( FALSE );
-    /* check that no other block outside the loop branches into the loop*/
-    other = HeadBlock;
-    while( other != NULL ) {
-        if( other != test && ( other->class & IN_LOOP ) == EMPTY ) {
-            i = other->targets;
-            while( --i >= 0 ) {
-                if( other->edge[ i ].destination->class & IN_LOOP )
-                    return( FALSE );
-            }
-        }
-        other = other->next_block;
-    }
-    test->edge[ 0 ].flags |= SOURCE_IS_PREHEADER;
-    return( TRUE );
-}
-
-
-static  block   *FindPreHeader() {
-/*********************************
-    See if there is a basic block that will suffice as a pre-header for
-    "Loop".
-*/
-
-    block       *preheader;
-    block_edge  *edge;
-
-    edge = Head->input_edges;
-    for(;;) {
-        if( edge == NULL ) { /* maybe there is a 'user defined' preheader*/
-            preheader = HeadBlock;
-            while( preheader != NULL ) {
-                if( IsPreHeader( preheader ) ) return( preheader );
-                preheader = preheader->next_block;
-            }
-            return( NULL );
-        }
-        if( edge->flags & SOURCE_IS_PREHEADER ) break;
-        edge = edge->next_source;
-    }
-    return( edge->source );
-}
-
-
-extern  block   *AddPreBlock( block *postblk ) {
-/***********************************************
-    There is no preheader for this loop (loop has no initialization) so
-    add a block right in front of the loop header and move any branch
-    that goes from outside the loop to the header, go through the
-    preheader first.
-*/
-
-
-    block_edge  *edge;
-    block       *preblk;
-
-    preblk = NewBlock( postblk->label, FALSE );
-    /* set up new block to look like it was generated after postblk*/
-    preblk->class = JUMP;
-    preblk->id = NO_BLOCK_ID;
-    preblk->gen_id = postblk->gen_id;
-    preblk->ins.hd.line_num = postblk->ins.hd.line_num;
-    postblk->ins.hd.line_num = 0;
-    preblk->loop_head = postblk->loop_head; /**/
-    preblk->depth = postblk->depth;
-    if( ( postblk->class & LOOP_HEADER ) != EMPTY ) {
-        // we don't always add this block before a loop header
-        // for instance, in the floating point scheduling stuff
-        // we use this routine to add a safe 'decache' block
-        // after a loop  BBB - Oct 14, 1997
-        preblk->depth -= 1;
-    }
-    preblk->next_block = postblk;
-    preblk->prev_block = postblk->prev_block;
-    postblk->prev_block = preblk;
-    if( preblk->prev_block != NULL ) {
-        preblk->prev_block->next_block = preblk;
-    }
-    preblk->input_edges = NULL;
-    preblk->inputs = 0;
-    /* make preblk go to postblk*/
-    preblk->targets++;
-    edge = &preblk->edge[ 0 ];
-    edge->destination = postblk;
-    edge->source = preblk;
-    edge->flags = SOURCE_IS_PREHEADER | DEST_IS_BLOCK;
-    edge->next_source = postblk->input_edges;
-    postblk->input_edges = edge;
-    postblk->inputs++;
-    postblk->label = AskForNewLabel();
-    FixBlockIds();
-    return( preblk );
-}
-
-
-static  void    PreHeader() {
-/****************************
-    Make sure that "Loop" has a preheader "PreHead"
-*/
-    block_edge  *edge;
-    block_edge  *next;
-
-    PreHead = FindPreHeader();
-    if( PreHead == NULL ) {
-        PreHead = AddPreBlock( Head );
-        edge = Head->input_edges;
-        while( edge != NULL ) {
-            next = edge->next_source;
-            if( edge->source != PreHead &&
-                ( edge->source->class & IN_LOOP ) == EMPTY ) {
-                MoveEdge( edge, PreHead );
-            }
-            edge = next;
-        }
-    }
 }
 
 

@@ -116,6 +116,69 @@ static  void    ScoreSeed( block *blk, block *son, unsigned index )
 }
 
 
+static  void    CopyList( score *frm, score *to,
+                          list_head **sc_heads, int i ) {
+/*****************************************************************/
+
+
+    score_list  *first;
+    score_list  *new;
+    score       *next;
+
+    if( to[ i ].list == NULL ) {
+        to[ i ].list = *sc_heads;
+        *sc_heads = (list_head *)**sc_heads;
+        *to[i].list = NULL;
+        next = to[ i ].next_reg;
+        while( next->list == NULL ) {
+            next->list = next->prev_reg->list;
+            next = next->next_reg;
+        }
+    }
+    if( *to[i].list == NULL ) {
+        next = to[ i ].next_reg;
+        first = *frm[i].list;
+        while( first != NULL ) {
+            new = NewScListEntry();
+            Copy( &first->info, &new->info, sizeof( score_info ) );
+            new->next = *next->list;
+            *next->list = new;
+            first = first->next;
+        }
+    }
+}
+
+
+static  void    ScoreCopy( score *other_sc, score *sc ) {
+/********************************************************/
+
+    list_head   **sc_heads;
+    int         i;
+
+    FreeScoreBoard( sc );
+    sc_heads = (list_head **)&sc[ ScoreCount ];
+    i = ScoreCount;
+    for(;;) {
+        --i;
+        sc[ i ].next_reg = &sc[ other_sc[ i ].next_reg->index ];
+        sc[ i ].prev_reg = &sc[ other_sc[ i ].prev_reg->index ];
+        sc[ i ].generation = other_sc[ i ].generation;
+        sc[ i ].list = NULL;
+        *sc_heads = (list_head *)sc_heads + 1;
+        ++sc_heads;
+        if( i == 0 ) break;
+    }
+    *sc_heads = NULL;
+    i = ScoreCount;
+    sc_heads = (list_head **)&sc[ ScoreCount ];
+    for(;;) {
+        --i;
+        CopyList( other_sc, sc, sc_heads, i );
+        if( i == 0 ) break;
+    }
+}
+
+
 static  pointer    ScoreDescendants( pointer bl ) {
 /**************************************************/
 
@@ -157,6 +220,22 @@ static  pointer    ScoreDescendants( pointer bl ) {
     HW_TurnOn( blk->ins.hd.live.regs, regs );
     UpdateLive( blk->ins.hd.next, blk->ins.hd.prev );
     return NULL;
+}
+
+
+static  void    InitZero() {
+/**************************/
+
+
+/* Must be allocd. Could be modified by ScoreAssign but that's ok*/
+/* since it will just set offset to 0*/
+
+    ScZero = ScAlloc( sizeof( score_info ) );
+    ScZero->class     = N_CONSTANT;
+    ScZero->offset    = 0;
+    ScZero->symbol.p  = NULL;
+    ScZero->index_reg = NO_INDEX;
+    ScZero->base      = NULL;
 }
 
 
@@ -216,21 +295,6 @@ static  void    CleanUp() {
     }
     ScFree( ScoreList, ScoreCount * ( sizeof( pointer ) + sizeof(score_reg) ) );
     ScFree( ScZero, sizeof( score_info ) );
- }
-
-static  void    InitZero() {
-/**************************/
-
-
-/* Must be allocd. Could be modified by ScoreAssign but that's ok*/
-/* since it will just set offset to 0*/
-
-    ScZero = ScAlloc( sizeof( score_info ) );
-    ScZero->class     = N_CONSTANT;
-    ScZero->offset    = 0;
-    ScZero->symbol.p  = NULL;
-    ScZero->index_reg = NO_INDEX;
-    ScZero->base      = NULL;
 }
 
 
@@ -249,68 +313,6 @@ static  void    ConstSizes() {
             }
         }
         cons = cons->n.next_name;
-    }
-}
-
-static  void    ScoreCopy( score *other_sc, score *sc ) {
-/********************************************************/
-
-    list_head   **sc_heads;
-    int         i;
-
-    FreeScoreBoard( sc );
-    sc_heads = (list_head **)&sc[ ScoreCount ];
-    i = ScoreCount;
-    for(;;) {
-        --i;
-        sc[ i ].next_reg = &sc[ other_sc[ i ].next_reg->index ];
-        sc[ i ].prev_reg = &sc[ other_sc[ i ].prev_reg->index ];
-        sc[ i ].generation = other_sc[ i ].generation;
-        sc[ i ].list = NULL;
-        *sc_heads = (list_head *)sc_heads + 1;
-        ++sc_heads;
-        if( i == 0 ) break;
-    }
-    *sc_heads = NULL;
-    i = ScoreCount;
-    sc_heads = (list_head **)&sc[ ScoreCount ];
-    for(;;) {
-        --i;
-        CopyList( other_sc, sc, sc_heads, i );
-        if( i == 0 ) break;
-    }
-}
-
-
-static  void    CopyList( score *frm, score *to,
-                          list_head **sc_heads, int i ) {
-/*****************************************************************/
-
-
-    score_list  *first;
-    score_list  *new;
-    score       *next;
-
-    if( to[ i ].list == NULL ) {
-        to[ i ].list = *sc_heads;
-        *sc_heads = (list_head *)**sc_heads;
-        *to[i].list = NULL;
-        next = to[ i ].next_reg;
-        while( next->list == NULL ) {
-            next->list = next->prev_reg->list;
-            next = next->next_reg;
-        }
-    }
-    if( *to[i].list == NULL ) {
-        next = to[ i ].next_reg;
-        first = *frm[i].list;
-        while( first != NULL ) {
-            new = NewScListEntry();
-            Copy( &first->info, &new->info, sizeof( score_info ) );
-            new->next = *next->list;
-            *next->list = new;
-            first = first->next;
-        }
     }
 }
 

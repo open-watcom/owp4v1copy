@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Register tree manipulation.
 *
 ****************************************************************************/
 
@@ -164,6 +163,30 @@ static  reg_tree        *NewTree() {
 }
 
 
+static  void    BuildPossible( reg_tree *tree ) {
+/***********************************************/
+
+    hw_reg_set  *src;
+    hw_reg_set  *dst;
+
+    if( tree != NULL ) {
+        BuildPossible( tree->lo );
+        BuildPossible( tree->hi );
+        if( tree->idx != RL_NUMBER_OF_SETS ) {
+            tree->regs = AllocRegSet();
+            src = RegSets[  tree->idx  ];
+            dst = tree->regs;
+            for(;;) {
+                *dst = *src;
+                if( HW_CEqual( *dst, HW_EMPTY ) ) break;
+                ++src;
+                ++dst;
+            }
+        }
+    }
+}
+
+
 static  void    SimpleTree( conflict_node *conf ) {
 /*************************************************/
 
@@ -259,6 +282,20 @@ static  reg_tree        *BuildTree( name *alias, name *master,
 }
 
 
+extern  void    BurnRegTree( reg_tree *tree ) {
+/*********************************************/
+
+    if( tree != NULL ) {
+        BurnRegTree( tree->lo );
+        BurnRegTree( tree->hi );
+        if( tree->regs != NULL ) {
+            FreeRegSet( tree->regs );
+        }
+        FreeRegTree( tree );
+    }
+}
+
+
 static  void    TrimTree( reg_tree *tree ) {
 /******************************************/
 
@@ -325,30 +362,6 @@ static  void    CompressSets( reg_tree *tree ) {
             }
             while( dst != src ) {
                 HW_CAsgn( *dst, HW_EMPTY );
-                ++dst;
-            }
-        }
-    }
-}
-
-
-static  void    BuildPossible( reg_tree *tree ) {
-/***********************************************/
-
-    hw_reg_set  *src;
-    hw_reg_set  *dst;
-
-    if( tree != NULL ) {
-        BuildPossible( tree->lo );
-        BuildPossible( tree->hi );
-        if( tree->idx != RL_NUMBER_OF_SETS ) {
-            tree->regs = AllocRegSet();
-            src = RegSets[  tree->idx  ];
-            dst = tree->regs;
-            for(;;) {
-                *dst = *src;
-                if( HW_CEqual( *dst, HW_EMPTY ) ) break;
-                ++src;
                 ++dst;
             }
         }
@@ -463,20 +476,6 @@ extern  void    BurnNameTree( reg_tree *tree ) {
 /**********************************************/
 
     BurnRegTree( tree );
-}
-
-
-extern  void    BurnRegTree( reg_tree *tree ) {
-/*********************************************/
-
-    if( tree != NULL ) {
-        BurnRegTree( tree->lo );
-        BurnRegTree( tree->hi );
-        if( tree->regs != NULL ) {
-            FreeRegSet( tree->regs );
-        }
-        FreeRegTree( tree );
-    }
 }
 
 

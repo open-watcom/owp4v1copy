@@ -37,6 +37,8 @@ extern  void            DelRef(ins_entry**,ins_entry*);
 
 extern    code_lbl      *Handles;
 
+extern  void    TryScrapLabel( code_lbl *old );
+static  void    ScrapCodeLabel( code_lbl *lbl );
 
 extern  void    AddLblDef( ins_entry *instr ) {
 /*********************************************/
@@ -195,20 +197,6 @@ extern  ins_entry       *AliasLabels( ins_entry *oldlbl, ins_entry *newlbl ) {
 }
 
 
-extern  void    TryScrapLabel( code_lbl *old ) {
-/**********************************************/
-
-  optbegin
-    if( old->refs != NULL ) optreturnvoid;
-    if( old->ins != NULL ) {
-        KillDeadLabels( old->ins );
-    } else if( _TstStatus( old, DYINGLABEL )
-         && _TstStatus( old, REDIRECTION | KEEPLABEL ) == FALSE ) {
-        ScrapCodeLabel( old );
-    }
-  optend
-
-
 static  void    KillDeadLabels( ins_entry *instr ) {
 /**************************************************/
 
@@ -263,4 +251,18 @@ static  void    ScrapCodeLabel( code_lbl *lbl ) {
     if( redir == NULL ) optreturnvoid;
     _ClrStatus( redir, REDIRECTION );
     TryScrapLabel( redir );
+  optend
+
+
+extern  void    TryScrapLabel( code_lbl *old ) {
+/**********************************************/
+
+  optbegin
+    if( old->refs != NULL ) optreturnvoid;
+    if( old->ins != NULL ) {
+        KillDeadLabels( old->ins );
+    } else if( _TstStatus( old, DYINGLABEL )
+         && _TstStatus( old, REDIRECTION | KEEPLABEL ) == FALSE ) {
+        ScrapCodeLabel( old );
+    }
   optend

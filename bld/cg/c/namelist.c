@@ -129,6 +129,19 @@ static  name    *findConst64( unsigned_32 low, unsigned_32 high, pointer cf_valu
     return( new_c );
 }
 
+
+static void ZapXX( name *xx, type_class_def class, type_length size ) {
+/***********************************************************************/
+
+    if( class != XX ) { /* if he's making a type with same size as xx */
+        xx->n.name_class = class; /* zap the XX one to be a real type */
+        xx->n.size = TypeClassSize[  class  ];
+    } else if( size != 0 ) {
+        xx->n.size = size;
+    }
+}
+
+
 extern  name    *AllocConst( pointer value ) {
 /********************************************/
 
@@ -505,18 +518,6 @@ extern  name    *AllocUserTemp( pointer symbol, type_class_def class ) {
 /**********************************************************************/
 
     return( SAllocUserTemp( symbol, class, 0 ) );
-}
-
-
-static void ZapXX( name *xx, type_class_def class, type_length size ) {
-/***********************************************************************/
-
-    if( class != XX ) { /* if he's making a type with same size as xx */
-        xx->n.name_class = class; /* zap the XX one to be a real type */
-        xx->n.size = TypeClassSize[  class  ];
-    } else if( size != 0 ) {
-        xx->n.size = size;
-    }
 }
 
 

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Output "blips".
 *
 ****************************************************************************/
 
@@ -101,6 +100,43 @@ static  void    DoBlip( int *count, uint pos, char ch ) {
     } else {
         Blip( pos    , ' ' );
         Blip( pos + 1, ch );
+    }
+}
+
+
+static  void    SetNextTickCount() {
+/**********************************/
+
+    NextTickCount = NextTickCount + BRK_CHECK_TICKS;
+    if( NextTickCount < BRK_CHECK_TICKS )  NextTickCount = ~0;
+}
+
+
+static  void    SetNextBlipCount() {
+/**********************************/
+
+    NextBlipCount = LastBlipCount + BLIP_TICKS;
+    if( NextBlipCount < BLIP_TICKS )  NextBlipCount = ~0;
+}
+
+
+static  void    CheckEvents() {
+/*****************************/
+
+    uint        ticks;
+
+    ticks = GetTickCount();
+    if( ticks < LastBlipCount || ticks >= NextTickCount ) {
+        OSCall();       /* force a DOS call to get version number */
+        if( ticks < LastBlipCount || ticks >= NextBlipCount ) {
+            FEMessage( MSG_BLIP, NULL );
+            LastBlipCount = ticks;
+            SetNextBlipCount();
+        }
+        SetNextTickCount();
+    }
+    if( TBreak() ) {
+        FatalError( "Program interrupted from keyboard" );
     }
 }
 
@@ -291,38 +327,4 @@ extern  void    DGBlip() {
     if( BlipsOn ) {
         DoBlip( &DGCount, DGPos, 'D' );
     }
-}
-
-static  void    CheckEvents() {
-/*****************************/
-
-    uint        ticks;
-
-    ticks = GetTickCount();
-    if( ticks < LastBlipCount || ticks >= NextTickCount ) {
-        OSCall();       /* force a DOS call to get version number */
-        if( ticks < LastBlipCount || ticks >= NextBlipCount ) {
-            FEMessage( MSG_BLIP, NULL );
-            LastBlipCount = ticks;
-            SetNextBlipCount();
-        }
-        SetNextTickCount();
-    }
-    if( TBreak() ) {
-        FatalError( "Program interrupted from keyboard" );
-    }
-}
-
-static  void    SetNextTickCount() {
-/**********************************/
-
-    NextTickCount = NextTickCount + BRK_CHECK_TICKS;
-    if( NextTickCount < BRK_CHECK_TICKS )  NextTickCount = ~0;
-}
-
-static  void    SetNextBlipCount() {
-/**********************************/
-
-    NextBlipCount = LastBlipCount + BLIP_TICKS;
-    if( NextBlipCount < BLIP_TICKS )  NextBlipCount = ~0;
 }

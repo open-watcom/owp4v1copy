@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  High level code generation routines.
 *
 ****************************************************************************/
 
@@ -225,143 +224,10 @@ extern  void    FiniCG() {
 }
 
 
-extern  void    Generate( bool routine_done ) {
-/*********************************************/
+static  void    AddANop() {
+/*************************/
 
-
-    if( BGInInline() ) return;
-    HaveLiveInfo = FALSE;
-    HaveDominatorInfo = FALSE;
-    #if ( _TARGET & ( _TARG_370 | _TARG_AXP | _TARG_PPC ) ) == 0
-        /* if we want to go fast, generate statement at a time */
-        if( _IsModel( NO_OPTIMIZATION ) ) {
-            if( !BlockByBlock ) {
-                InitStackMap();
-                BlockByBlock = TRUE;
-            }
-            LNBlip( SrcLine );
-            FlushBlocks( FALSE );
-            FreeExtraSyms( LastTemp );
-            if( _MemLow ) {
-                BlowAwayFreeLists();
-            }
-            return;
-        }
-    #endif
-
-    /* if we couldn't get the whole procedure in memory, generate part of it */
-    if( BlockByBlock ) {
-        if( _MemLow || routine_done ) {
-            GenPartialRoutine( routine_done );
-        } else {
-            BlkTooBig();
-        }
-        return;
-    }
-
-    /* if we're low on memory, go into BlockByBlock mode */
-    if( _MemLow ) {
-        InitStackMap();
-        GenPartialRoutine( routine_done );
-        BlowAwayFreeLists();
-        return;
-    }
-
-    /* check to see that no basic block gets too unwieldy */
-    if( routine_done == FALSE ) {
-        BlkTooBig();
-        return;
-    }
-
-    /* The routine is all in memory. Optimize and generate it */
-    FixReturns();
-    FixEdges();
-    Renumber();
-    BlockTrim();
-    FindReferences();
-    TailRecursion();
-    NullConflicts( USE_IN_ANOTHER_BLOCK );
-    InsDead();
-    FixMemRefs();
-    FindReferences();
-    PreOptimize();
-    PropNullInfo();
-    MemtoBaseTemp();
-    if( _MemCritical ) {
-        Panic( FALSE );
-        return;
-    }
-    MakeConflicts();
-    if( _IsModel( LOOP_OPTIMIZATION ) ) {
-        SplitVars();
-    }
-    AddCacheRegs();
-    MakeLiveInfo();
-    HaveLiveInfo = TRUE;
-    AxeDeadCode();
-    FixIndex();
-    FixSegments();
-    FPRegAlloc();
-    if( RegAlloc( FALSE ) == FALSE ) {
-        Panic( TRUE );
-        HaveLiveInfo = FALSE;
-        return;
-    }
-    FPParms();
-    FixMemBases();
-    PostOptimize();
-    InitStackMap();
-    AssignTemps();
-    FiniStackMap();
-    FreeConflicts();
-    SortBlocks();
-    if( CalcDominatorInfo() ) {
-        HaveDominatorInfo = TRUE;
-    }
-    GenProlog();
-    UnFixEdges();
-    OptSegs();
-    GenObject();
-    if( ( CurrProc->prolog_state & GENERATED_EPILOG ) == 0 ) {
-        GenEpilog();
-    }
-    FreeProc();
-    HaveLiveInfo = FALSE;
-#if _TARGET & _TARG_IAPX86
-    if( _IsModel( NEW_P5_PROFILING ) ) {
-        FlushQueue();
-    }
-#else
-    FlushQueue();
-#endif
-
-}
-
-
-static  void            GenPartialRoutine( bool routine_done ) {
-/**************************************************************/
-
-    while( routine_done || _MemLow ) {
-        if( CreateBreak() ) {
-            BlockByBlock = TRUE;
-            BlockTrim();
-            FindReferences();
-            PreOptimize();
-            FixBreak();
-            SortBlocks();
-            /* so the front gets told we're panicking */
-            BlockByBlock = FALSE;
-            FlushBlocks( FALSE );
-            RemoveBreak();
-            if( HeadBlock == NULL ) {
-                FreeExtraSyms( NULL );
-            }
-        } else {
-            FlushBlocks( FALSE );
-            FreeExtraSyms( NULL );
-            break;
-        }
-    }
+    AddAnIns( BlockList, MakeNop() );
 }
 
 
@@ -482,62 +348,58 @@ static  void            PostOptimize() {
 }
 
 
-static  void    Panic( bool partly_done ) {
-/*****************************************/
+static  void    FreeExtraTemps( name *last, block_num id ) {
+/**********************************************************/
 
-    proc_def    *curr_proc;
+    name        **owner;
+    name        *temp;
 
-    if( partly_done ) {
-        FinishIndex();
-    }
-    ForceConflictsMemory();
-    SortBlocks();
-    UnFixEdges();
-    InitStackMap();
-    AssgnMoreTemps( NO_BLOCK_ID );
-    curr_proc = CurrProc;
-    FlushBlocks( partly_done );
-    if( curr_proc == CurrProc /* if not freed (dummy!) */
-     && ( CurrProc->prolog_state & GENERATED_EPILOG ) == 0 ) {
-        GenEpilog();
-        FiniStackMap();
-        FreeProc();
+    owner = &Names[ N_TEMP ];
+    for(;;) {
+        temp = *owner;
+        if( temp == last ) break;
+        if( ( temp->v.usage & USE_IN_ANOTHER_BLOCK ) == 0
+         && !_FrontEndTmp( temp )
+         && temp->t.u.block_id == id ) {
+            *owner = temp->n.next_name;
+            FreeAName( temp );
+        } else {
+            owner = &temp->n.next_name;
+        }
     }
 }
 
 
-static  void    FlushBlocks( bool partly_done ) {
-/***********************************************/
+static  void    ForceTempsMemory() {
+/**********************************/
 
-/* we're in deep trouble. Try to get out of it using as little memory as*/
-/* possible*/
+    name        *op;
+    name        *next;
 
-    block       *blk;
-    block       *next;
-    block       *curr;
-    block_class classes;
-
-    if( BlockByBlock == FALSE && _IsntModel( NO_OPTIMIZATION ) ) {
-        ProcMessage( MSG_REGALLOC_DIED );
+    ParmPropagate();
+    op = Names[  N_TEMP  ];
+    while( op != LastTemp ) {
+        next = op->n.next_name;
+        if( ( op->v.usage & USE_IN_ANOTHER_BLOCK ) || _FrontEndTmp( op ) ) {
+            op = DeAlias( op );
+            op->v.usage |= NEEDS_MEMORY | USE_MEMORY;
+            while( op->v.conflict != NULL ) {
+                FreeAConflict( op->v.conflict );
+            }
+        }
+        op = next;
     }
-    if( partly_done == FALSE ) {
-        Renumber();
+    AssignOtherLocals();
+    op = Names[  N_MEMORY  ];
+    while( op != NULL ) {
+        op->v.usage |= USE_IN_ANOTHER_BLOCK | USE_MEMORY;
+        if( op->v.conflict != NULL ) {
+            FreeAConflict( op->v.conflict );
+            op->v.conflict = NULL;
+        }
+        op = op->n.next_name;
     }
-    curr = CurrBlock;
-    BlockByBlock = TRUE;
-    blk = HeadBlock;
-    classes = EMPTY;
-    while( blk != NULL ) {
-        next = blk->next_block;
-        classes |= blk->class;
-        CurrBlock = blk;
-        BlockToCode( partly_done );
-        FlushOpt();
-        blk = next;
-    }
-    CurrBlock = curr;
-    HeadBlock = NULL;
-    BlockList = NULL;
+    LastTemp = Names[ N_TEMP ];
 }
 
 
@@ -662,25 +524,38 @@ static  void    BlockToCode( bool partly_done ) {
 }
 
 
-static  void    FreeExtraTemps( name *last, block_num id ) {
-/**********************************************************/
+static  void    FlushBlocks( bool partly_done ) {
+/***********************************************/
 
-    name        **owner;
-    name        *temp;
+/* we're in deep trouble. Try to get out of it using as little memory as*/
+/* possible*/
 
-    owner = &Names[ N_TEMP ];
-    for(;;) {
-        temp = *owner;
-        if( temp == last ) break;
-        if( ( temp->v.usage & USE_IN_ANOTHER_BLOCK ) == 0
-         && !_FrontEndTmp( temp )
-         && temp->t.u.block_id == id ) {
-            *owner = temp->n.next_name;
-            FreeAName( temp );
-        } else {
-            owner = &temp->n.next_name;
-        }
+    block       *blk;
+    block       *next;
+    block       *curr;
+    block_class classes;
+
+    if( BlockByBlock == FALSE && _IsntModel( NO_OPTIMIZATION ) ) {
+        ProcMessage( MSG_REGALLOC_DIED );
     }
+    if( partly_done == FALSE ) {
+        Renumber();
+    }
+    curr = CurrBlock;
+    BlockByBlock = TRUE;
+    blk = HeadBlock;
+    classes = EMPTY;
+    while( blk != NULL ) {
+        next = blk->next_block;
+        classes |= blk->class;
+        CurrBlock = blk;
+        BlockToCode( partly_done );
+        FlushOpt();
+        blk = next;
+    }
+    CurrBlock = curr;
+    HeadBlock = NULL;
+    BlockList = NULL;
 }
 
 
@@ -768,44 +643,56 @@ static  void    ForceConflictsMemory() {
 }
 
 
-static  void    ForceTempsMemory() {
-/**********************************/
+static  void    Panic( bool partly_done ) {
+/*****************************************/
 
-    name        *op;
-    name        *next;
+    proc_def    *curr_proc;
 
-    ParmPropagate();
-    op = Names[  N_TEMP  ];
-    while( op != LastTemp ) {
-        next = op->n.next_name;
-        if( ( op->v.usage & USE_IN_ANOTHER_BLOCK ) || _FrontEndTmp( op ) ) {
-            op = DeAlias( op );
-            op->v.usage |= NEEDS_MEMORY | USE_MEMORY;
-            while( op->v.conflict != NULL ) {
-                FreeAConflict( op->v.conflict );
+    if( partly_done ) {
+        FinishIndex();
+    }
+    ForceConflictsMemory();
+    SortBlocks();
+    UnFixEdges();
+    InitStackMap();
+    AssgnMoreTemps( NO_BLOCK_ID );
+    curr_proc = CurrProc;
+    FlushBlocks( partly_done );
+    if( curr_proc == CurrProc /* if not freed (dummy!) */
+     && ( CurrProc->prolog_state & GENERATED_EPILOG ) == 0 ) {
+        GenEpilog();
+        FiniStackMap();
+        FreeProc();
+    }
+}
+
+
+static  void            GenPartialRoutine( bool routine_done ) {
+/**************************************************************/
+
+    while( routine_done || _MemLow ) {
+        if( CreateBreak() ) {
+            BlockByBlock = TRUE;
+            BlockTrim();
+            FindReferences();
+            PreOptimize();
+            FixBreak();
+            SortBlocks();
+            /* so the front gets told we're panicking */
+            BlockByBlock = FALSE;
+            FlushBlocks( FALSE );
+            RemoveBreak();
+            if( HeadBlock == NULL ) {
+                FreeExtraSyms( NULL );
             }
+        } else {
+            FlushBlocks( FALSE );
+            FreeExtraSyms( NULL );
+            break;
         }
-        op = next;
     }
-    AssignOtherLocals();
-    op = Names[  N_MEMORY  ];
-    while( op != NULL ) {
-        op->v.usage |= USE_IN_ANOTHER_BLOCK | USE_MEMORY;
-        if( op->v.conflict != NULL ) {
-            FreeAConflict( op->v.conflict );
-            op->v.conflict = NULL;
-        }
-        op = op->n.next_name;
-    }
-    LastTemp = Names[ N_TEMP ];
 }
 
-
-static  void    AddANop() {
-/*************************/
-
-    AddAnIns( BlockList, MakeNop() );
-}
 
 extern  void    ProcMessage( msg_class msg ) {
 /********************************************/
@@ -816,4 +703,117 @@ extern  void    ProcMessage( msg_class msg ) {
         FEMessage( msg, AskForLblSym( CurrProc->label ) );
         lastproc = CurrProc;
     }
+}
+
+
+extern  void    Generate( bool routine_done ) {
+/*********************************************/
+
+
+    if( BGInInline() ) return;
+    HaveLiveInfo = FALSE;
+    HaveDominatorInfo = FALSE;
+    #if ( _TARGET & ( _TARG_370 | _TARG_AXP | _TARG_PPC ) ) == 0
+        /* if we want to go fast, generate statement at a time */
+        if( _IsModel( NO_OPTIMIZATION ) ) {
+            if( !BlockByBlock ) {
+                InitStackMap();
+                BlockByBlock = TRUE;
+            }
+            LNBlip( SrcLine );
+            FlushBlocks( FALSE );
+            FreeExtraSyms( LastTemp );
+            if( _MemLow ) {
+                BlowAwayFreeLists();
+            }
+            return;
+        }
+    #endif
+
+    /* if we couldn't get the whole procedure in memory, generate part of it */
+    if( BlockByBlock ) {
+        if( _MemLow || routine_done ) {
+            GenPartialRoutine( routine_done );
+        } else {
+            BlkTooBig();
+        }
+        return;
+    }
+
+    /* if we're low on memory, go into BlockByBlock mode */
+    if( _MemLow ) {
+        InitStackMap();
+        GenPartialRoutine( routine_done );
+        BlowAwayFreeLists();
+        return;
+    }
+
+    /* check to see that no basic block gets too unwieldy */
+    if( routine_done == FALSE ) {
+        BlkTooBig();
+        return;
+    }
+
+    /* The routine is all in memory. Optimize and generate it */
+    FixReturns();
+    FixEdges();
+    Renumber();
+    BlockTrim();
+    FindReferences();
+    TailRecursion();
+    NullConflicts( USE_IN_ANOTHER_BLOCK );
+    InsDead();
+    FixMemRefs();
+    FindReferences();
+    PreOptimize();
+    PropNullInfo();
+    MemtoBaseTemp();
+    if( _MemCritical ) {
+        Panic( FALSE );
+        return;
+    }
+    MakeConflicts();
+    if( _IsModel( LOOP_OPTIMIZATION ) ) {
+        SplitVars();
+    }
+    AddCacheRegs();
+    MakeLiveInfo();
+    HaveLiveInfo = TRUE;
+    AxeDeadCode();
+    FixIndex();
+    FixSegments();
+    FPRegAlloc();
+    if( RegAlloc( FALSE ) == FALSE ) {
+        Panic( TRUE );
+        HaveLiveInfo = FALSE;
+        return;
+    }
+    FPParms();
+    FixMemBases();
+    PostOptimize();
+    InitStackMap();
+    AssignTemps();
+    FiniStackMap();
+    FreeConflicts();
+    SortBlocks();
+    if( CalcDominatorInfo() ) {
+        HaveDominatorInfo = TRUE;
+    }
+    GenProlog();
+    UnFixEdges();
+    OptSegs();
+    GenObject();
+    if( ( CurrProc->prolog_state & GENERATED_EPILOG ) == 0 ) {
+        GenEpilog();
+    }
+    FreeProc();
+    HaveLiveInfo = FALSE;
+#if _TARGET & _TARG_IAPX86
+    if( _IsModel( NEW_P5_PROFILING ) ) {
+        FlushQueue();
+    }
+#else
+    FlushQueue();
+#endif
+
 }

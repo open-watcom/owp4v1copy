@@ -44,51 +44,6 @@ extern  type_class_def  TypeClass(type_def*);
 extern  cfloat *        CnvCFToType( cfloat *cf, type_def *tipe );
 
 
-extern  tn      FoldCnvRnd( cg_op op, tn name, type_def *to_tipe ) {
-/***************************************************************/
-
-    tn          new;
-    cfloat      *cf;
-    cfloat      *junk;
-
-    if( name->class == TN_CONS ) {
-        if( name->tipe->refno == T_DEFAULT ) {
-            cf = CFCopy( name->u.name->c.value );
-        } else {
-            cf = CnvCFToType( name->u.name->c.value, name->tipe );
-        }
-        if( to_tipe->attr & TYPE_FLOAT ) {
-            new = TGConst( cf, to_tipe );
-        } else if( op == O_CONVERT ) {
-            junk = cf;
-            cf = CFTrunc( cf );
-            CFFree( junk );
-            if( to_tipe->refno != T_DEFAULT ) {
-                junk = cf;
-                cf = CnvCFToType( cf, to_tipe );
-                CFFree( junk );
-            }
-            new = TGConst( cf, to_tipe );
-        } else if( op == O_ROUND ) {
-            junk = cf;
-            cf = CFRound( cf );
-            CFFree( junk );
-            if( to_tipe->refno != T_DEFAULT ) {
-                junk = cf;
-                cf = CnvCFToType( cf, to_tipe );
-                CFFree( junk );
-            }
-            new = TGConst( cf, to_tipe );
-        }
-        BurnTree( name );
-    } else {
-        TGDemote( name, to_tipe );
-        new = NULL;
-    }
-    return( new );
-}
-
-
 static  bool    DemoteTree( tn name, type_def *tipe, bool just_test ) {
 /*********************************************************************/
 
@@ -167,10 +122,56 @@ static  bool    DemoteTree( tn name, type_def *tipe, bool just_test ) {
     return( can_demote );
 }
 
+
 extern  void    TGDemote( tn name, type_def *tipe ) {
 /***************************************************/
 
     if( DemoteTree( name, tipe, TRUE ) ) {
         DemoteTree( name, tipe, FALSE );
     }
+}
+
+
+extern  tn      FoldCnvRnd( cg_op op, tn name, type_def *to_tipe ) {
+/***************************************************************/
+
+    tn          new;
+    cfloat      *cf;
+    cfloat      *junk;
+
+    if( name->class == TN_CONS ) {
+        if( name->tipe->refno == T_DEFAULT ) {
+            cf = CFCopy( name->u.name->c.value );
+        } else {
+            cf = CnvCFToType( name->u.name->c.value, name->tipe );
+        }
+        if( to_tipe->attr & TYPE_FLOAT ) {
+            new = TGConst( cf, to_tipe );
+        } else if( op == O_CONVERT ) {
+            junk = cf;
+            cf = CFTrunc( cf );
+            CFFree( junk );
+            if( to_tipe->refno != T_DEFAULT ) {
+                junk = cf;
+                cf = CnvCFToType( cf, to_tipe );
+                CFFree( junk );
+            }
+            new = TGConst( cf, to_tipe );
+        } else if( op == O_ROUND ) {
+            junk = cf;
+            cf = CFRound( cf );
+            CFFree( junk );
+            if( to_tipe->refno != T_DEFAULT ) {
+                junk = cf;
+                cf = CnvCFToType( cf, to_tipe );
+                CFFree( junk );
+            }
+            new = TGConst( cf, to_tipe );
+        }
+        BurnTree( name );
+    } else {
+        TGDemote( name, to_tipe );
+        new = NULL;
+    }
+    return( new );
 }

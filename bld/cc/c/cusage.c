@@ -69,6 +69,18 @@ static char const *NextUsage( char const *p ) {
     return( p + 1 );
 }
 
+
+local void Wait_for_return()
+{
+    if( ConTTY() ) {
+        char const *press;
+        press =  CGetMsgStr( PHRASE_PRESS_RETURN );
+        ConsMsg( press );
+        getch();
+    }
+}
+
+
 void CCusage()
 {
     char const  * p;
@@ -89,17 +101,6 @@ void CCusage()
         }
         ConsMsg( p );
         p= NextUsage( p );
-    }
-}
-
-
-local void Wait_for_return()
-{
-    if( ConTTY() ) {
-        char const *press;
-        press =  CGetMsgStr( PHRASE_PRESS_RETURN );
-        ConsMsg( press );
-        getch();
     }
 }
 

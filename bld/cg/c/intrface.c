@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Code generator public interface.
 *
 ****************************************************************************/
 
@@ -300,6 +299,17 @@ extern  void _CGAPI     BEMemFini() {
     CGMemFini();
 }
 
+static void FreeBckInfoCarveBlocks()
+{
+    bck_info_block      *carve_block;
+
+    for( ; carve_block = BckInfoCarveHead; ) {
+        BckInfoCarveHead = carve_block->next;
+        _Free( carve_block, sizeof( bck_info_block ) );
+    }
+    BckInfoHead = NULL;
+}
+
 extern  void _CGAPI     BEFiniCg() {
 /**********************************/
 
@@ -525,17 +535,6 @@ static void AllocMoreBckInfo() {
         }
         p->link = NULL;
     }
-}
-
-void FreeBckInfoCarveBlocks()
-{
-    bck_info_block      *carve_block;
-
-    for( ; carve_block = BckInfoCarveHead; ) {
-        BckInfoCarveHead = carve_block->next;
-        _Free( carve_block, sizeof( bck_info_block ) );
-    }
-    BckInfoHead = NULL;
 }
 
 extern  back_handle _CGAPI      BENewBack( sym_handle sym ) {

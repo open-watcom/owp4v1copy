@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Abnormal termination processing.
 *
 ****************************************************************************/
 
@@ -44,22 +43,6 @@ extern void             ScratchObj(void);
 static  bool volatile   BrkFlag;
 static  bool            OnExitFlag = TRUE;
 
-bool TBreak() {
-/*************/
-
-    int         brk;
-
-    InitOnExit();
-    brk = BrkFlag;
-    BrkFlag = 0;
-    return( brk );
-}
-
-void CauseTBreak() {
-/******************/
-    BrkFlag = TRUE;
-}
-
 void SigIntFunc( int sig_num ) {
 /******************************/
 
@@ -67,15 +50,18 @@ void SigIntFunc( int sig_num ) {
     BrkFlag = TRUE;
 }
 
+
 void BrkInit() {
 /**************/
 
     signal( SIGINT, SigIntFunc );
 }
 
+
 void BrkFini() {
 /**************/
 }
+
 
 void InitOnExit() {
 /*****************/
@@ -88,6 +74,25 @@ void InitOnExit() {
         OnExitFlag = FALSE;
     }
 }
+
+
+bool TBreak() {
+/*************/
+
+    int         brk;
+
+    InitOnExit();
+    brk = BrkFlag;
+    BrkFlag = 0;
+    return( brk );
+}
+
+
+void CauseTBreak() {
+/******************/
+    BrkFlag = TRUE;
+}
+
 
 void FatalError( char * str ) {
 /*****************************/

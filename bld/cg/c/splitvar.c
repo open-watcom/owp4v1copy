@@ -72,6 +72,83 @@ static  block   *FindUnMarkedInstance() {
 }
 
 
+static  void    NotVisited() {
+/****************************/
+
+    block       *blk;
+
+    blk = HeadBlock;
+    while( blk != NULL ) {
+        blk->class &= ~BLOCK_VISITED;
+        blk->id = 0;
+        blk = blk->next_block;
+    }
+}
+
+
+extern  bool    RepOp( name **pop, name *of, name *with ) {
+/*********************************************************/
+
+    name        *op;
+    name        *base;
+    name        *index;
+    bool        change;
+
+    op = *pop;
+    change = FALSE;
+    if( op == of ) {
+        *pop = with;
+        change = TRUE;
+    } else if( op->n.class == N_INDEXED ) {
+        base = op->i.base;
+        if( HasTrueBase( op ) && base == of ) {
+            base = with;
+            change = TRUE;
+        }
+        index = op->i.index;
+        if( index == of ) {
+            index = with;
+            change = TRUE;
+        }
+        if( change ) {
+            *pop = ScaleIndex( index, base, op->i.constant,
+                                op->n.name_class, op->n.size,
+                                op->i.scale, op->i.index_flags );
+        }
+    }
+    return( change );
+}
+
+
+static  void    ReplaceInstances( name *of, name *with ) {
+/*****************************************************************/
+
+    block       *blk;
+    instruction *ins;
+    int         i;
+    block       *replaced;
+
+    blk = HeadBlock;
+    replaced = NULL;
+    while( blk != NULL ) {
+        if( blk->id == Instance ) {
+            ins = blk->ins.hd.next;
+            while( ins->head.opcode != OP_BLOCK ) {
+                i = ins->num_operands;
+                while( --i >= 0 ) {
+                    RepOp( &ins->operands[ i ], of, with );
+                }
+                if( ins->result != NULL ) {
+                    RepOp( &ins->result, of, with );
+                }
+                ins = ins->head.next;
+            }
+        }
+        blk = blk->next_block;
+    }
+}
+
+
 static  bool    Split1Var( conflict_node *conf ) {
 /************************************************/
 
@@ -115,20 +192,6 @@ static  void    CleanUp() {
 }
 
 
-static  void    NotVisited() {
-/****************************/
-
-    block       *blk;
-
-    blk = HeadBlock;
-    while( blk != NULL ) {
-        blk->class &= ~BLOCK_VISITED;
-        blk->id = 0;
-        blk = blk->next_block;
-    }
-}
-
-
 static  pointer MarkInstance( pointer bl ) {
 /******************************************/
 
@@ -166,67 +229,6 @@ static  pointer MarkInstance( pointer bl ) {
     return NULL;
 }
 
-
-extern  bool    RepOp( name **pop, name *of, name *with ) {
-/*********************************************************/
-
-    name        *op;
-    name        *base;
-    name        *index;
-    bool        change;
-
-    op = *pop;
-    change = FALSE;
-    if( op == of ) {
-        *pop = with;
-        change = TRUE;
-    } else if( op->n.class == N_INDEXED ) {
-        base = op->i.base;
-        if( HasTrueBase( op ) && base == of ) {
-            base = with;
-            change = TRUE;
-        }
-        index = op->i.index;
-        if( index == of ) {
-            index = with;
-            change = TRUE;
-        }
-        if( change ) {
-            *pop = ScaleIndex( index, base, op->i.constant,
-                                op->n.name_class, op->n.size,
-                                op->i.scale, op->i.index_flags );
-        }
-    }
-    return( change );
-}
-
-static  void    ReplaceInstances( name *of, name *with ) {
-/*****************************************************************/
-
-    block       *blk;
-    instruction *ins;
-    int         i;
-    block       *replaced;
-
-    blk = HeadBlock;
-    replaced = NULL;
-    while( blk != NULL ) {
-        if( blk->id == Instance ) {
-            ins = blk->ins.hd.next;
-            while( ins->head.opcode != OP_BLOCK ) {
-                i = ins->num_operands;
-                while( --i >= 0 ) {
-                    RepOp( &ins->operands[ i ], of, with );
-                }
-                if( ins->result != NULL ) {
-                    RepOp( &ins->result, of, with );
-                }
-                ins = ins->head.next;
-            }
-        }
-        blk = blk->next_block;
-    }
-}
 
 extern  void    SplitVars() {
 /***************************/

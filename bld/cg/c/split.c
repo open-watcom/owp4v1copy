@@ -224,6 +224,33 @@ extern  instruction     *Reduce( instruction *ins ) {
 }
 
 
+extern  void    HalfType( instruction *ins ) {
+/********************************************/
+
+    ins->type_class = HalfClass[  ins->type_class  ];
+    ins->table = NULL;
+    ins->head.state = INS_NEEDS_WORK;
+}
+
+
+extern  void    ChangeType( instruction *ins, type_class_def class ) {
+/********************************************************************/
+
+    ins->type_class = class;
+    ins->table = NULL;
+    ins->head.state = INS_NEEDS_WORK;
+}
+
+
+static  void    ForceToMemory( name *name ) {
+/*******************************************/
+
+    while( name->v.conflict != NULL ) {
+        InMemory( name->v.conflict );
+    }
+}
+
+
 extern  instruction     *rMOVOP1TEMP( instruction *ins ) {
 /*******************************************************/
 
@@ -836,31 +863,4 @@ extern instruction      *rOP1RESTEMP( instruction *ins ) {
     MoveSegRes( ins, ins2 );
     SuffixIns( ins, ins2 );
     return( new_ins );
-}
-
-
-extern  void    HalfType( instruction *ins ) {
-/********************************************/
-
-    ins->type_class = HalfClass[  ins->type_class  ];
-    ins->table = NULL;
-    ins->head.state = INS_NEEDS_WORK;
-}
-
-
-extern  void    ChangeType( instruction *ins, type_class_def class ) {
-/********************************************************************/
-
-    ins->type_class = class;
-    ins->table = NULL;
-    ins->head.state = INS_NEEDS_WORK;
-}
-
-
-static  void    ForceToMemory( name *name ) {
-/*******************************************/
-
-    while( name->v.conflict != NULL ) {
-        InMemory( name->v.conflict );
-    }
 }

@@ -148,37 +148,6 @@ extern  bool    ScoreLookup( score *p, score_info *info ) {
 }
 
 
-static  void    ScoreAdd( score *p, int i, score_info *info ) {
-/*************************************************************/
-
-    if( _IsModel( SUPER_OPTIMAL ) ) {
-        score       *first;
-        score       *curr;
-
-        if( info->class == N_INDEXED ) {
-            first = &p[ info->index_reg ];
-            curr = first;
-            for(;;) {
-                info->index_reg = ScoreList[ curr->index ]->reg_name->r.reg_index;
-                if( ScoreLookup( &p[ i ], info ) == FALSE ) {
-                    ScoreInsert( p, i, info );
-                }
-                curr = curr->next_reg;
-                if( curr == first ) break;
-            }
-        } else {
-            if( ScoreLookup( &p[ i ], info ) == FALSE ) {
-                ScoreInsert( p, i, info );
-            }
-        }
-    } else {
-        if( ScoreLookup( &p[ i ], info ) == FALSE ) {
-            ScoreInsert( p, i, info );
-        }
-    }
-}
-
-
 extern  bool    ScoreEqual( score *p, int index, score_info *info ) {
 /*******************************************************************/
 
@@ -230,6 +199,37 @@ static  void    ScoreInsert(  score *p,  int i,  score_info  *info ) {
            break;
     }
     RegAdd( p, i, j );
+}
+
+
+static  void    ScoreAdd( score *p, int i, score_info *info ) {
+/*************************************************************/
+
+    if( _IsModel( SUPER_OPTIMAL ) ) {
+        score       *first;
+        score       *curr;
+
+        if( info->class == N_INDEXED ) {
+            first = &p[ info->index_reg ];
+            curr = first;
+            for(;;) {
+                info->index_reg = ScoreList[ curr->index ]->reg_name->r.reg_index;
+                if( ScoreLookup( &p[ i ], info ) == FALSE ) {
+                    ScoreInsert( p, i, info );
+                }
+                curr = curr->next_reg;
+                if( curr == first ) break;
+            }
+        } else {
+            if( ScoreLookup( &p[ i ], info ) == FALSE ) {
+                ScoreInsert( p, i, info );
+            }
+        }
+    } else {
+        if( ScoreLookup( &p[ i ], info ) == FALSE ) {
+            ScoreInsert( p, i, info );
+        }
+    }
 }
 
 

@@ -173,6 +173,32 @@ extern  void    ScoreClear( score *p ) {
     }
 }
 
+
+extern  void    FreeScListEntry( score_list *list ) {
+/***************************************************/
+
+    FrlFreeSize( &ScListFrl, (pointer *)list, sizeof( score_list ) );
+}
+
+
+extern  void    ScoreFreeList( score *p ) {
+/*****************************************/
+
+    score_list  *curr;
+    score_list  *next;
+
+    if( p->list != NULL ) {
+        curr = *p->list;
+        while( curr != NULL ) {
+            next = curr->next;
+            FreeScListEntry( curr );
+            curr = next;
+        }
+        *p->list = NULL;
+    }
+}
+
+
 extern  void    FreeScoreBoard( score *p ) {
 /******************************************/
 
@@ -262,24 +288,6 @@ extern  void    MemChanged( score *p, bool statics_too ) {
 }
 
 
-extern  void    ScoreFreeList( score *p ) {
-/*****************************************/
-
-    score_list  *curr;
-    score_list  *next;
-
-    if( p->list != NULL ) {
-        curr = *p->list;
-        while( curr != NULL ) {
-            next = curr->next;
-            FreeScListEntry( curr );
-            curr = next;
-        }
-        *p->list = NULL;
-    }
-}
-
-
 extern  score_list      *NewScListEntry() {
 /*****************************************/
 
@@ -287,13 +295,6 @@ extern  score_list      *NewScListEntry() {
 
     list = AllocFrl( &ScListFrl, sizeof( score_list ) );
     return( list );
-}
-
-
-extern  void    FreeScListEntry( score_list *list ) {
-/***************************************************/
-
-    FrlFreeSize( &ScListFrl, (pointer *)list, sizeof( score_list ) );
 }
 
 

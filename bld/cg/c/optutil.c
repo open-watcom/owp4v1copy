@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Optimizer utility routines.
 *
 ****************************************************************************/
 
@@ -161,6 +160,21 @@ extern  void    AddInstr( ins_entry *instr, ins_entry *insert ) {
   optend
 
 
+extern  void    DelRef(  ins_entry **owner, ins_entry *instr  ) {
+/***************************************************************/
+
+    ins_entry   *curr;
+
+  optbegin
+    for(;;) {
+        curr = *owner;
+        if( curr == instr ) break;
+        owner = &_LblRef( curr );
+    }
+    *owner = _LblRef( curr );
+  optend
+
+
 extern  void    UnLinkInstr( ins_entry *old ) {
 /********************************************/
 
@@ -228,21 +242,6 @@ extern  ins_entry       *DelInstr( ins_entry *old ) {
     }
     return( ValidIns( old->ins.next ) );
 }
-
-
-extern  void    DelRef(  ins_entry **owner, ins_entry *instr  ) {
-/***************************************************************/
-
-    ins_entry   *curr;
-
-  optbegin
-    for(;;) {
-        curr = *owner;
-        if( curr == instr ) break;
-        owner = &_LblRef( curr );
-    }
-    *owner = _LblRef( curr );
-  optend
 
 
 extern  void    FreePendingDeletes() {

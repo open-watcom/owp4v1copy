@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Dump conflicts.
 *
 ****************************************************************************/
 
@@ -49,132 +48,6 @@ extern  void            DumpLBit(local_bit_set*);
 extern  conflict_node   *ConfList;
 extern  reg_list        *RegSets[];
 
-
-extern  void    DumpConflicts() {
-/*******************************/
-
-    conflict_node       *conf;
-
-    DumpLiteral( "Conflict graph" );
-    DumpNL();
-    conf = ConfList;
-    while( conf != NULL ) {
-        DumpPtr( conf );
-        DumpLiteral( " " );
-        DumpAConf( conf );
-        conf = conf->next_conflict;
-    }
-    DumpNL();
-}
-
-
-extern  void    DumpAConf( conflict_node *conf ) {
-/************************************************/
-
-    DumpOperand( conf->name );
-    DumpLiteral( " id " );
-    DumpGBit( &conf->id.out_of_block );
-    DumpLiteral( " " );
-    DumpLBit( &conf->id.within_block );
-    DumpPossible( conf->possible );
-    DumpNL();
-    DumpLiteral( "    " );
-    DumpInsRange( conf );
-    DumpLiteral( " Start block " );
-    DumpPtr( conf->start_block );
-    DumpNL();
-    DumpLiteral( "    Conflicts with " );
-    DumpGBit( &conf->with.out_of_block );
-    DumpLiteral( " " );
-    DumpLBit( &conf->with.within_block );
-    DumpLiteral( " " );
-    DumpRegName( conf->with.regs );
-    DumpNL();
-    DumpLiteral( "    Constrained " );
-    DumpInt( conf->num_constrained );
-    DumpLiteral( " vs " );
-    DumpInt( conf->available );
-    DumpNL();
-    if( _Is( conf, SAVINGS_CALCULATED ) ) {
-        DumpLiteral( "    Savings " );
-        DumpLong( conf->savings );
-        DumpNL();
-    }
-    if( _Is( conf, CONFLICT_ON_HOLD ) ) {
-        DumpLiteral( "    On hold" );
-        DumpNL();
-    }
-    if( _Is( conf, CHANGES_OTHERS ) ) {
-        DumpLiteral( "    Changes Others" );
-        DumpNL();
-    }
-    if( _Is( conf, NEEDS_SEGMENT ) ) {
-        DumpLiteral( "    Needs segment" );
-        DumpNL();
-    }
-    if( _Is( conf, NEEDS_SEGMENT_SPLIT ) ) {
-        DumpLiteral( "    Needs segment split" );
-        DumpNL();
-    }
-    if( _Is( conf, SEGMENT_SPLIT ) ) {
-        DumpLiteral( "    Is segment split" );
-        DumpNL();
-    }
-    if( _Is( conf, NEEDS_INDEX ) ) {
-        DumpLiteral( "    Needs index" );
-        DumpNL();
-    }
-    if( _Is( conf, NEEDS_INDEX_SPLIT ) ) {
-        DumpLiteral( "    Needs index split" );
-        DumpNL();
-    }
-    if( _Is( conf, INDEX_SPLIT ) ) {
-        DumpLiteral( "    Is index split" );
-        DumpNL();
-    }
-}
-
-extern  void    DumpPossible( byte idx ) {
-/****************************************/
-
-
-    if( idx == RL_NUMBER_OF_SETS ) {
-        DumpLiteral( " Choices ANY" );
-    } else {
-        DumpRgSet( RegSets[  idx  ] );
-    }
-}
-
-static  void    DumpRgSet( hw_reg_set *possible ) {
-/**************************************************/
-
-    int i;
-
-    if( possible != NULL ) {
-        i = 0;
-        DumpLiteral( " Choices " );
-        while( !HW_CEqual( *possible, HW_EMPTY ) ) {
-            DumpRegName( *possible );
-            ++ possible;
-            DumpLiteral( " " );
-        }
-    }
-}
-
-
-static  void    DumpInsRange( conflict_node *conf ) {
-/***************************************************/
-
-    if( conf->ins_range.first != NULL ) {
-        DumpLiteral( " Instruction " );
-        DumpInt( conf->ins_range.first->id );
-        if( conf->ins_range.first != conf->ins_range.last
-         && conf->ins_range.last != NULL ) {
-            DumpLiteral( " to Instruction " );
-            DumpInt( conf->ins_range.last->id );
-        }
-    }
-}
 
 static  bool    Check( hw_reg_set *name, hw_reg_set test ) {
 /*********************************************************************/
@@ -447,9 +320,139 @@ extern  void    DumpRegName( hw_reg_set regname ) {
     }
 }
 
+
+static  void    DumpRgSet( hw_reg_set *possible ) {
+/**************************************************/
+
+    int i;
+
+    if( possible != NULL ) {
+        i = 0;
+        DumpLiteral( " Choices " );
+        while( !HW_CEqual( *possible, HW_EMPTY ) ) {
+            DumpRegName( *possible );
+            ++ possible;
+            DumpLiteral( " " );
+        }
+    }
+}
+
+
+static  void    DumpInsRange( conflict_node *conf ) {
+/***************************************************/
+
+    if( conf->ins_range.first != NULL ) {
+        DumpLiteral( " Instruction " );
+        DumpInt( conf->ins_range.first->id );
+        if( conf->ins_range.first != conf->ins_range.last
+         && conf->ins_range.last != NULL ) {
+            DumpLiteral( " to Instruction " );
+            DumpInt( conf->ins_range.last->id );
+        }
+    }
+}
+
+
+extern  void    DumpPossible( byte idx ) {
+/****************************************/
+
+
+    if( idx == RL_NUMBER_OF_SETS ) {
+        DumpLiteral( " Choices ANY" );
+    } else {
+        DumpRgSet( RegSets[  idx  ] );
+    }
+}
+
+
 extern  void    DumpRegSet( hw_reg_set reg ) {
 /********************************************/
 
     DumpRegName( reg );
+    DumpNL();
+}
+
+
+extern  void    DumpAConf( conflict_node *conf ) {
+/************************************************/
+
+    DumpOperand( conf->name );
+    DumpLiteral( " id " );
+    DumpGBit( &conf->id.out_of_block );
+    DumpLiteral( " " );
+    DumpLBit( &conf->id.within_block );
+    DumpPossible( conf->possible );
+    DumpNL();
+    DumpLiteral( "    " );
+    DumpInsRange( conf );
+    DumpLiteral( " Start block " );
+    DumpPtr( conf->start_block );
+    DumpNL();
+    DumpLiteral( "    Conflicts with " );
+    DumpGBit( &conf->with.out_of_block );
+    DumpLiteral( " " );
+    DumpLBit( &conf->with.within_block );
+    DumpLiteral( " " );
+    DumpRegName( conf->with.regs );
+    DumpNL();
+    DumpLiteral( "    Constrained " );
+    DumpInt( conf->num_constrained );
+    DumpLiteral( " vs " );
+    DumpInt( conf->available );
+    DumpNL();
+    if( _Is( conf, SAVINGS_CALCULATED ) ) {
+        DumpLiteral( "    Savings " );
+        DumpLong( conf->savings );
+        DumpNL();
+    }
+    if( _Is( conf, CONFLICT_ON_HOLD ) ) {
+        DumpLiteral( "    On hold" );
+        DumpNL();
+    }
+    if( _Is( conf, CHANGES_OTHERS ) ) {
+        DumpLiteral( "    Changes Others" );
+        DumpNL();
+    }
+    if( _Is( conf, NEEDS_SEGMENT ) ) {
+        DumpLiteral( "    Needs segment" );
+        DumpNL();
+    }
+    if( _Is( conf, NEEDS_SEGMENT_SPLIT ) ) {
+        DumpLiteral( "    Needs segment split" );
+        DumpNL();
+    }
+    if( _Is( conf, SEGMENT_SPLIT ) ) {
+        DumpLiteral( "    Is segment split" );
+        DumpNL();
+    }
+    if( _Is( conf, NEEDS_INDEX ) ) {
+        DumpLiteral( "    Needs index" );
+        DumpNL();
+    }
+    if( _Is( conf, NEEDS_INDEX_SPLIT ) ) {
+        DumpLiteral( "    Needs index split" );
+        DumpNL();
+    }
+    if( _Is( conf, INDEX_SPLIT ) ) {
+        DumpLiteral( "    Is index split" );
+        DumpNL();
+    }
+}
+
+
+extern  void    DumpConflicts() {
+/*******************************/
+
+    conflict_node       *conf;
+
+    DumpLiteral( "Conflict graph" );
+    DumpNL();
+    conf = ConfList;
+    while( conf != NULL ) {
+        DumpPtr( conf );
+        DumpLiteral( " " );
+        DumpAConf( conf );
+        conf = conf->next_conflict;
+    }
     DumpNL();
 }

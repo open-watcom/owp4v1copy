@@ -55,6 +55,39 @@ static bool     CaughtBreak;    // set to TRUE if break hit.
 
 #define TOOMANY EMFILE
 
+extern void TrapBreak( int sig_num )
+/**********************************/
+{
+    sig_num = sig_num;          // to avoid a warning, will be optimized out.
+    CaughtBreak = TRUE;
+}
+
+extern void CheckBreak( void )
+/****************************/
+{
+#ifdef __OSI__
+    if( *_BreakFlagPtr ) {
+        *_BreakFlagPtr = 0;
+        LnkMsg( FTL+MSG_BREAK_HIT, NULL );    /* suicides */
+    }
+#else
+    if( CaughtBreak ) {
+        CaughtBreak = FALSE;        /* prevent recursion */
+        LnkMsg( FTL+MSG_BREAK_HIT, NULL );    /* suicides */
+    }
+#endif
+}
+
+extern void SetBreak( void )
+/**************************/
+{
+}
+
+extern void RestoreBreak( void )
+/******************************/
+{
+}
+
 extern void LnkFilesInit( void )
 /******************************/
 {
@@ -396,37 +429,4 @@ extern void GetCmdLine( char *buff )
 /**********************************/
 {
     getcmd( buff );
-}
-
-extern void TrapBreak( int sig_num )
-/**********************************/
-{
-    sig_num = sig_num;          // to avoid a warning, will be optimized out.
-    CaughtBreak = TRUE;
-}
-
-extern void CheckBreak( void )
-/****************************/
-{
-#ifdef __OSI__
-    if( *_BreakFlagPtr ) {
-        *_BreakFlagPtr = 0;
-        LnkMsg( FTL+MSG_BREAK_HIT, NULL );    /* suicides */
-    }
-#else
-    if( CaughtBreak ) {
-        CaughtBreak = FALSE;        /* prevent recursion */
-        LnkMsg( FTL+MSG_BREAK_HIT, NULL );    /* suicides */
-    }
-#endif
-}
-
-extern void SetBreak( void )
-/**************************/
-{
-}
-
-extern void RestoreBreak( void )
-/******************************/
-{
 }

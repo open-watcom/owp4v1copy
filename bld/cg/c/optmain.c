@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Instruction queue manipulation.
 *
 ****************************************************************************/
 
@@ -60,73 +59,6 @@ extern  void            FreeInstr(ins_entry*);
 extern  pointer_int     MemInUse();
 extern  ins_entry       *NextIns(ins_entry*);
 extern  bool            UniqueLabel(code_lbl*);
-
-
-static  bool    LDone( any_oc *oc ) {
-/*******************************************/
-
-    code_lbl    *lbl;
-
-  optbegin
-    if( oc->oc_entry.class != OC_LDONE ) optreturn( FALSE );
-    lbl = oc->oc_handle.handle;
-    _ValidLbl( lbl );
-    if( _TstStatus( lbl, CODELABEL ) == FALSE ) optreturn( FALSE );
-    _SetStatus( lbl, DYINGLABEL );
-    TryScrapLabel( lbl );
-    optreturn( TRUE );
-}
-
-extern  void    InputOC( any_oc *oc ) {
-/***************************************/
-
-  optbegin
-    PSBlip();
-    if( LDone( oc ) == FALSE ) {
-        if( (oc->oc_entry.class & GET_BASE) != OC_INFO
-         && (oc->oc_entry.class & GET_BASE) != OC_LABEL
-         && _TransferClass( PrevClass( NULL ) ) ) optreturnvoid; /*dead code*/
-        while( QCount >= Q_MAX ) {
-            PullQueue();
-        }
-        AddInstr( NewInstr( oc ), LastIns );
-        switch( _Class( LastIns ) ) {
-        case OC_LABEL:
-            if( _TstStatus( _Label( LastIns ), UNIQUE ) ) {
-                /* Unique labels might need an addition byte of spacing */
-                LastIns->oc.oc_entry.objlen++;
-            }
-            /* fall through */
-        case OC_LREF:
-        case OC_JCOND:
-        case OC_JMP:
-        case OC_CALL:
-            _ClrStatus( _Label( LastIns ), DYINGLABEL );
-            break;
-        }
-        OptPush();
-    }
-  optend
-
-
-extern  bool    ShrinkQueue( pointer_int size ) {
-/***********************************************/
-
-    signed_32   freed;
-    signed_32   need;
-
-  optbegin
-    need = size;
-    freed = 0;
-    for(;;) {
-        if( freed >= need ) break;
-        if( QCount <= Q_MIN ) break;
-        freed += MemInUse();
-        PullQueue();
-        freed -= MemInUse();
-    }
-    optreturn( freed >= need );
-}
 
 
 static  void    PullQueue() {
@@ -195,6 +127,73 @@ static  void    PullQueue() {
         if( FirstIns == NULL ) break;
     }
   optend
+
+
+static  bool    LDone( any_oc *oc ) {
+/*******************************************/
+
+    code_lbl    *lbl;
+
+  optbegin
+    if( oc->oc_entry.class != OC_LDONE ) optreturn( FALSE );
+    lbl = oc->oc_handle.handle;
+    _ValidLbl( lbl );
+    if( _TstStatus( lbl, CODELABEL ) == FALSE ) optreturn( FALSE );
+    _SetStatus( lbl, DYINGLABEL );
+    TryScrapLabel( lbl );
+    optreturn( TRUE );
+}
+
+extern  void    InputOC( any_oc *oc ) {
+/***************************************/
+
+  optbegin
+    PSBlip();
+    if( LDone( oc ) == FALSE ) {
+        if( (oc->oc_entry.class & GET_BASE) != OC_INFO
+         && (oc->oc_entry.class & GET_BASE) != OC_LABEL
+         && _TransferClass( PrevClass( NULL ) ) ) optreturnvoid; /*dead code*/
+        while( QCount >= Q_MAX ) {
+            PullQueue();
+        }
+        AddInstr( NewInstr( oc ), LastIns );
+        switch( _Class( LastIns ) ) {
+        case OC_LABEL:
+            if( _TstStatus( _Label( LastIns ), UNIQUE ) ) {
+                /* Unique labels might need an addition byte of spacing */
+                LastIns->oc.oc_entry.objlen++;
+            }
+            /* fall through */
+        case OC_LREF:
+        case OC_JCOND:
+        case OC_JMP:
+        case OC_CALL:
+            _ClrStatus( _Label( LastIns ), DYINGLABEL );
+            break;
+        }
+        OptPush();
+    }
+  optend
+
+
+extern  bool    ShrinkQueue( pointer_int size ) {
+/***********************************************/
+
+    signed_32   freed;
+    signed_32   need;
+
+  optbegin
+    need = size;
+    freed = 0;
+    for(;;) {
+        if( freed >= need ) break;
+        if( QCount <= Q_MIN ) break;
+        freed += MemInUse();
+        PullQueue();
+        freed -= MemInUse();
+    }
+    optreturn( freed >= need );
+}
 
 
 extern  void    InitQueue() {

@@ -100,6 +100,25 @@ static  bool    CanReach( code_lbl *lbl, ins_entry **add_ptr,
     return( FALSE );
 }
 
+
+static  void    HndlRedirect( code_lbl *new ) {
+/*********************************************/
+
+    code_lbl    *redir;
+
+  optbegin
+    redir = Handle->redirect;
+    if( redir != NULL && redir != new ) {
+        _ClrStatus( redir, REDIRECTION );
+        TryScrapLabel( redir );
+    }
+    Handle->redirect = new;
+    if( new != NULL ) {
+        _SetStatus( new, REDIRECTION );
+    }
+  optend
+
+
 static  bool    InRange() {
 /*************************/
 
@@ -122,55 +141,6 @@ static  bool    InRange() {
     HndlRedirect( NULL );
     optreturn( FALSE );
 }
-
-
-extern  void    SetBranches() {
-/*****************************/
-
-/* Check whether the actual label itself can be targeted*/
-
-  ins_entry     *add;
-  ins_entry     *jmp;
-  ins_entry     *next;
-  bool          was_keep;
-
-  optbegin
-    Handle = _Label( FirstIns );
-    if( CanReach( Handle, &add, &jmp ) ) {
-        _SetStatus( Handle, SHORTREACH );
-        HndlRedirect( NULL );
-        SetShort();
-    } else {
-        if( _Attr( FirstIns ) & ATTR_SHORT ) {
-            /* HAS to be a short branch */
-            next = NextIns( FirstIns );
-            if( _Class(next) == OC_JMP && CanReach(_Label(next), NULL, NULL) ) {
-                /* we have:
-                        Jcond   L1
-                        JMP     L2
-                   and L2 is reachable, but L1 is not.
-                   Turn it into:
-                        J~cond  L2
-                        JMP     L1
-                */
-                _JmpCond( FirstIns ) =
-                                ReverseCondition( _JmpCond( FirstIns ) );
-                was_keep = ( _TstStatus( Handle, KEEPLABEL ) != 0 );
-                _SetStatus( Handle, KEEPLABEL );
-                ChgLblRef( FirstIns, _Label( next ) );
-                ChgLblRef( next, Handle );
-                if( !was_keep ) _ClrStatus( Handle, KEEPLABEL );
-            } else {
-                BigBranch( add, jmp );
-            }
-            SetShort();
-        } else if( OptForSize > 50 && InRange() ) {
-            /* use an old redirection label*/
-            ChgLblRef( FirstIns, Handle->redirect );
-            SetShort();
-        }
-    }
-  optend
 
 
 static  void    BigBranch( ins_entry *add, ins_entry *jmp ) {
@@ -238,19 +208,50 @@ static  void    SetShort() {
   optend
 
 
-static  void    HndlRedirect( code_lbl *new ) {
-/*********************************************/
+extern  void    SetBranches() {
+/*****************************/
 
-    code_lbl    *redir;
+/* Check whether the actual label itself can be targeted*/
+
+  ins_entry     *add;
+  ins_entry     *jmp;
+  ins_entry     *next;
+  bool          was_keep;
 
   optbegin
-    redir = Handle->redirect;
-    if( redir != NULL && redir != new ) {
-        _ClrStatus( redir, REDIRECTION );
-        TryScrapLabel( redir );
-    }
-    Handle->redirect = new;
-    if( new != NULL ) {
-        _SetStatus( new, REDIRECTION );
+    Handle = _Label( FirstIns );
+    if( CanReach( Handle, &add, &jmp ) ) {
+        _SetStatus( Handle, SHORTREACH );
+        HndlRedirect( NULL );
+        SetShort();
+    } else {
+        if( _Attr( FirstIns ) & ATTR_SHORT ) {
+            /* HAS to be a short branch */
+            next = NextIns( FirstIns );
+            if( _Class(next) == OC_JMP && CanReach(_Label(next), NULL, NULL) ) {
+                /* we have:
+                        Jcond   L1
+                        JMP     L2
+                   and L2 is reachable, but L1 is not.
+                   Turn it into:
+                        J~cond  L2
+                        JMP     L1
+                */
+                _JmpCond( FirstIns ) =
+                                ReverseCondition( _JmpCond( FirstIns ) );
+                was_keep = ( _TstStatus( Handle, KEEPLABEL ) != 0 );
+                _SetStatus( Handle, KEEPLABEL );
+                ChgLblRef( FirstIns, _Label( next ) );
+                ChgLblRef( next, Handle );
+                if( !was_keep ) _ClrStatus( Handle, KEEPLABEL );
+            } else {
+                BigBranch( add, jmp );
+            }
+            SetShort();
+        } else if( OptForSize > 50 && InRange() ) {
+            /* use an old redirection label*/
+            ChgLblRef( FirstIns, Handle->redirect );
+            SetShort();
+        }
     }
   optend

@@ -114,6 +114,7 @@ extern  block   *MakeBlock( label_handle label, block_num edges ) {
     return( blk );
 }
 
+
 extern  block   *NewBlock( label_handle label, bool label_dies ) {
 /****************************************************************/
     block       *blk;
@@ -128,6 +129,30 @@ extern  block   *NewBlock( label_handle label, bool label_dies ) {
 }
 
 
+extern  void    FreeABlock( block * blk ) {
+/*****************************************/
+
+    if( blk->targets <= 1 ) {
+        _Free( blk, sizeof( block ) );
+    } else {
+        _Free( blk, sizeof( block ) + (blk->targets-1) * sizeof( block_edge ) );
+    }
+}
+
+
+extern  void    FreeBlock() {
+/***************************/
+
+    while( CurrBlock->ins.hd.next != (instruction *)&CurrBlock->ins ) {
+        FreeIns( CurrBlock->ins.hd.next );
+    }
+    if( CurrBlock->dataflow != NULL ) {
+        _Free( CurrBlock->dataflow, sizeof( data_flow_def ) );
+    }
+    FreeABlock( CurrBlock );
+}
+
+
 extern  void    EnLink( label_handle label, bool label_dies ) {
 /*************************************************************/
 
@@ -138,6 +163,23 @@ extern  void    EnLink( label_handle label, bool label_dies ) {
     CurrBlock = blk;
     SrcLine = 0;
 }
+
+extern  void    AddIns( instruction *ins ) {
+/******************************************/
+
+    if( HaveCurrBlock == FALSE ) {
+        EnLink( AskForNewLabel(), TRUE );
+        HaveCurrBlock = TRUE;
+    }
+    ins->head.next = (instruction *)&CurrBlock->ins;
+    ins->head.prev = CurrBlock->ins.hd.prev;
+    CurrBlock->ins.hd.prev->head.next = ins;
+    CurrBlock->ins.hd.prev = ins;
+    ins->head.line_num = SrcLine;
+    ins->id = ++ InsId;
+    SrcLine = 0;
+}
+
 
 extern  void    GenBlock( int class, int targets ) {
 /**************************************************/
@@ -452,23 +494,6 @@ extern  void    AddAnIns( block *blk, instruction *ins ) {
 }
 
 
-extern  void    AddIns( instruction *ins ) {
-/******************************************/
-
-    if( HaveCurrBlock == FALSE ) {
-        EnLink( AskForNewLabel(), TRUE );
-        HaveCurrBlock = TRUE;
-    }
-    ins->head.next = (instruction *)&CurrBlock->ins;
-    ins->head.prev = CurrBlock->ins.hd.prev;
-    CurrBlock->ins.hd.prev->head.next = ins;
-    CurrBlock->ins.hd.prev = ins;
-    ins->head.line_num = SrcLine;
-    ins->id = ++ InsId;
-    SrcLine = 0;
-}
-
-
 extern  bool    BlkTooBig() {
 /***************************/
 
@@ -571,28 +596,5 @@ extern  void    FreeProc() {
             InsId = 0;
             BlockByBlock = FALSE;
         }
-    }
-}
-
-
-extern  void    FreeBlock() {
-/***************************/
-
-    while( CurrBlock->ins.hd.next != (instruction *)&CurrBlock->ins ) {
-        FreeIns( CurrBlock->ins.hd.next );
-    }
-    if( CurrBlock->dataflow != NULL ) {
-        _Free( CurrBlock->dataflow, sizeof( data_flow_def ) );
-    }
-    FreeABlock( CurrBlock );
-}
-
-extern  void    FreeABlock( block * blk ) {
-/*****************************************/
-
-    if( blk->targets <= 1 ) {
-        _Free( blk, sizeof( block ) );
-    } else {
-        _Free( blk, sizeof( block ) + (blk->targets-1) * sizeof( block_edge ) );
     }
 }
