@@ -564,6 +564,7 @@ extern  instruction     *rCLRHI_D( instruction *ins ) {
     ins->head.opcode = OP_MOV;
     ins->result = low;
     new_ins = MakeMove( AllocS32Const( 0 ), high, tipe );
+    DupSegRes( ins, new_ins );         /* 2004-11-01  RomanT (same as bug #341) */
     PrefixIns( ins, new_ins );
     return( new_ins );
 }
@@ -712,9 +713,10 @@ extern  instruction     *rCONVERT_UP( instruction *ins ) {
         tipe = Unsigned[ tipe ];
     temp = AllocTemp( tipe );
     ins1 = MakeConvert( ins->operands[ 0 ], temp, tipe, ins->base_type_class );
-    DupSeg(ins, ins1);            // 2004-10-31 RomanT (bug #341)
+    DupSeg( ins, ins1 );         // 2004-10-31 RomanT (bug #341)
     PrefixIns( ins, ins1 );
     ins2 = MakeConvert( temp, ins->result, ins->type_class, tipe );
+    DupSegRes( ins, ins2 );      // 2004-11-01 RomanT (same as bug #341, *pInt64=char)
     ReplIns( ins, ins2 );
     return( ins1 );
 }
