@@ -13,4 +13,7 @@ all : .SYMBOLIC
         @for %b in ($(books)) do @wmake -h -f ..\mif\master.mif hbook=%b dotarget=$(dotarget)
 !endif
 
+devguide : .SYMBOLIC
+        @wmake -h -f ..\mif\master.mif hbook=devguide dotarget=$(dotarget)
+
 !include clean.mif
