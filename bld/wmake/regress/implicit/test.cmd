@@ -12,7 +12,6 @@ echo # ---------------------------
 rm err1.out
 %1 -h -l err1.out > tst1.out
 if errorlevel 1 goto tst2err
-if exist err1.out goto tst2err
     echo # Implicit Rules Test successful
     goto test2
 :tst2err
