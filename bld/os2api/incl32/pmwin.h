@@ -2349,6 +2349,9 @@ ULONG   APIENTRY WinSwitchToProgram(HSWITCH hswitchSwHandle);
 #define PP_MAJORTABBACKGROUNDCOLOR              71
 #define PP_MINORTABFOREGROUNDCOLOR              72
 #define PP_MINORTABBACKGROUNDCOLOR              73
+#define PP_BIDI_FIRST                       0x0100
+#define PP_BIDI_LAST                        0x012F
+#define PP_USER                             0x8000
 
 #define QPF_NOINHERIT     0x0001
 #define QPF_ID1COLORINDEX 0x0002
