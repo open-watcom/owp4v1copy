@@ -794,7 +794,7 @@ extern  tn      FoldMod( tn left, tn rite, type_def *tipe ) {
                         BurnTree( rite );
                     }
                 }
-            } else if( TGCanDuplicate( left ) ) {
+            } else if( _IsntModel( NO_OPTIMIZATION ) && _IsntModel( DBG_LOCALS ) && TGCanDuplicate( left ) ) {
                 /* signed int a; optimize a % rv like IBM does:
                    int b = a >> 31;
                    t1 = (a ^ b) - b;
