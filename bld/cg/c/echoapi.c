@@ -507,7 +507,7 @@ void EchoAPI              // EchoAPI ROUTINE
                     break;
                   }
                   case 't' : {
-                    cg_type type = va_arg( args, cg_type );
+                    cg_type type = (cg_type)va_arg( args, int );
                     switch( type ) {
                       case_str( T_UINT_1 )
                       case_str( T_INT_1 )
