@@ -815,8 +815,14 @@ static  int  CompLink( void )
                     }
                     errors_found = 1;           /* 21-jan-92 */
                 }
+#ifdef __UNIX__
                 p = strrchr( Word, '.' );
                 if( p != NULL )  *p = NULLCHAR;
+#else
+                p = strrchr( file, '.' );
+                if( p != NULL )  *p = NULLCHAR;
+                strcpy( Word, file );
+#endif
             }
             AddName( Word, Fp );
             if( Exe_Name[0] == '\0' ) {
