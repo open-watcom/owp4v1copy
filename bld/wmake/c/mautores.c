@@ -106,7 +106,7 @@ STATIC void RESFiniFile( handle file )
     WResFreeAutoDep( ((res_info *)file)->first );
 }
 
-const auto_dep_info ResAutoDepInfo = {
+const auto_dep_info RESAutoDepInfo = {
     NULL,
     RESInitFile,
     RESFirstDep,
