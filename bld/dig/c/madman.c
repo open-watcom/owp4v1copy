@@ -743,7 +743,7 @@ static mad_status DecomposeInt( const mad_type_info *mti, const void *d,
     unsigned_8  *dst = &v->i.u._8[0];
 
     bytes = mti->b.bits / BITS_PER_BYTE;
-#if ME_HOST == ME_BIG
+#if defined( __BIG_ENDIAN__ )
     dst += DI_SIZE - bytes;     /* low bytes are higher in memory */
 #endif
     /* copy significant (low) bytes */
@@ -755,7 +755,7 @@ static mad_status DecomposeInt( const mad_type_info *mti, const void *d,
         }
     }
     /* clear high bytes */
-#if ME_HOST == ME_BIG
+#if defined( __BIG_ENDIAN__ )
     memset( &v->i.u._8[0], 0, DI_SIZE - bytes );
 #else
     memset( &v->i.u._8[bytes], 0, DI_SIZE - bytes );
@@ -767,7 +767,7 @@ static mad_status DecomposeInt( const mad_type_info *mti, const void *d,
         if( v->i.u._8[i] & (1 << sign_bit) ) {
             v->i.u._8[i] |= 0xff << sign_bit;
             ++i;
-#if ME_HOST == ME_BIG
+#if defined( __BIG_ENDIAN__ )
             memset( &v->i.u._8[0], 0xff, DI_SIZE - i );
 #else
             memset( &v->i.u._8[i], 0xff, DI_SIZE - i );
@@ -864,10 +864,10 @@ static void ShiftBits( unsigned bits, int amount, void *d )
         /* left shift */
         byte_shift = amount / BITS_PER_BYTE;
         if( byte_shift != 0 ) {
-#if ME_HOST == ME_BIG
+#if defined( __BIG_ENDIAN__ )
             memmove( b, b + byte_shift, bytes - byte_shift );
             memset( b + byte_shift, 0, byte_shift );
-	    byte_shift = 0;
+            byte_shift = 0;
 #else
             memmove( b + byte_shift, b, bytes - byte_shift );
             memset( b, 0, byte_shift );
@@ -887,10 +887,10 @@ static void ShiftBits( unsigned bits, int amount, void *d )
         amount = -amount;
         byte_shift = amount / BITS_PER_BYTE;
         if( byte_shift != 0 ) {
-#if ME_HOST == ME_BIG
+#if defined( __BIG_ENDIAN__ )
             memmove( b + byte_shift, b, bytes - byte_shift );
             memset( b, 0, byte_shift );
-	    byte_shift = 0;
+            byte_shift = 0;
 #else
             memmove( b, b + byte_shift, bytes - byte_shift );
             memset( b + bytes - byte_shift, 0, byte_shift );
@@ -922,7 +922,7 @@ static void ExtractBits( unsigned pos, unsigned len, const void *src, void *dst,
     ShiftBits( pos + len, -pos, &tmp );
     bytes = len / BITS_PER_BYTE;
     tmp.u._8[bytes] &= BitMask[ len % BITS_PER_BYTE ];
-#if ME_HOST == ME_BIG
+#if defined( __BIG_ENDIAN__ )
     d += dst_size - (len + (BITS_PER_BYTE-1)) / BITS_PER_BYTE;
 #endif
     memcpy( d, &tmp, (len + (BITS_PER_BYTE-1)) / BITS_PER_BYTE );
@@ -1018,7 +1018,7 @@ static mad_status ComposeInt( decomposed_item *v,
     unsigned_8  *src = &v->i.u._8[0];
 
     bytes = mti->b.bits / BITS_PER_BYTE;
-#if ME_HOST == ME_BIG
+#if defined( __BIG_ENDIAN__ )
     src += DI_SIZE - bytes;     /* low bytes are higher in memory */
 #endif
     if( mti->i.endian == ME_HOST ) {
