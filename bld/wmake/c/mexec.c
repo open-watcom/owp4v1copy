@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Macro execution and inline file handling.
 *
 ****************************************************************************/
 
@@ -509,8 +508,8 @@ STATIC RET_T createFile (FLIST *head) {
 
     if (head != NULL && ret != RET_ERROR) {
         tmpFileName = RemoveBackSlash (fileName);
-        handle = open (tmpFileName,O_TEXT| O_WRONLY|O_CREAT|O_TRUNC|S_IRUSR|
-                       S_IWUSR|S_IRGRP|S_IWGRP);
+        handle = open (tmpFileName, O_TEXT| O_WRONLY | O_CREAT | O_TRUNC,
+                       S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
         if (handle != -1) {
             if (writeLineByLine(handle,head->body) == RET_ERROR) {
                 PrtMsg( ERR| ERROR_WRITING_FILE, tmpFileName );
