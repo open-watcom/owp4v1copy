@@ -1179,7 +1179,7 @@ static void parse_cmdline( char **cmdline )
     char msgbuf[80];
     int  level = 0;
 
-    if( cmdline == NULL || *cmdline == NULL ) {
+    if( cmdline == NULL || *cmdline == NULL || **cmdline == 0 ) {
         usage_msg();
     }
     for( ;*cmdline != NULL; ++cmdline ) {
