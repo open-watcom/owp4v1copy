@@ -56,6 +56,7 @@ echo Languages Build <1>
 #        BWPI must be done before BSDK and hui, dui and lui
 [ INCLUDE <devdir>/gui/lang.ctl ]
 [ INCLUDE <devdir>/wclass/lang.ctl ]
+[ INCLUDE <devdir>/ncurses/lang.ctl ]
 [ INCLUDE <devdir>/ui/lang.ctl ]
 #        OWL/ORL must be done early so that clients are up-to-date
 [ INCLUDE <devdir>/owl/lang.ctl ]
