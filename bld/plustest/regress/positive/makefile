@@ -106,8 +106,7 @@ lnk_i86 += op stack=8k
     @set error_msg=failure to execute $^@
     @%append exec.out PASS executing $^@
     $(run) $^@ >>exec.out
-    del $[@
-    wstrip -q $^@
+    rm $[@
 
 test : .symbolic actual_test
     @set error_file=error.out
@@ -120,8 +119,8 @@ test : .symbolic actual_test
     %append $(log_file) PASS $(%__CWD__)
 
 actual_test : .symbolic start_test $(positive_exes)
-    if exist *.obj del *.obj
-    if exist *.$(exe) del *.$(exe)
+    rm -f *.obj
+    rm -f *.$(exe)
 
 link3.$(exe) : link3a.obj link3b.obj
     @set error_msg=failure to link $^@
@@ -221,5 +220,5 @@ save : .symbolic
     if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
 
 global : .symbolic
-    @if exist failure del failure
+    @if exist failure rm failure
     @%make common_clean
