@@ -391,7 +391,7 @@ static int HeuristicTraceBack(
             case DI_INVALID:
                 return( 0 );
             case DI_X86_call3:
-                jmplabel = ToSegStr( dd.ins.op[ OP_1 ].value, dd.ins.op[ OP_2 ].value, 0 );
+                jmplabel = ToSegStr( dd.ins.op[ OP_1 ].value, dd.ins.op[ OP_1 ].extra, 0 );
                 if( IdentifyFunc( jmplabel, &sp_adjust ) )
                     continue;
                 break;

@@ -196,10 +196,10 @@ mad_status DIGENTRY MIDisasmInsUndoable( mad_disasm_data *dd )
 
 static unsigned Adjustment( mad_disasm_data *dd )
 {
-    switch( dd->ins.op[0].type & DO_MASK ) {
+    switch( dd->ins.op[ OP_1 ].type & DO_MASK ) {
     case DO_IMMED:
     case DO_RELATIVE:
-        if( dd->ins.op[0].value < dd->addr.mach.offset ) return( MDC_TAKEN_BACK );
+        if( dd->ins.op[ OP_1 ].value < dd->addr.mach.offset ) return( MDC_TAKEN_BACK );
         return( MDC_TAKEN_FORWARD );
     }
     return( MDC_TAKEN );
@@ -349,15 +349,15 @@ mad_status DIGENTRY MIDisasmInsNext( mad_disasm_data *dd, const mad_registers *m
         return( MS_FAIL );
     case MDC_JUMP:
     case MDC_CALL:
-        switch( dd->ins.op[0].type & DO_MASK ) {
+        switch( dd->ins.op[ OP_1 ].type & DO_MASK ) {
         case DO_ABSOLUTE:
-            next->mach.segment = dd->ins.op[1].value;
+            next->mach.segment = dd->ins.op[ OP_1 ].extra;
             /* fall through */
         case DO_RELATIVE:
-            next->mach.offset = dd->ins.op[0].value;
+            next->mach.offset = dd->ins.op[ OP_1 ].value;
             break;
         case DO_REG:
-            next->mach.offset = RegValue( mr, dd->ins.op[0].base );
+            next->mach.offset = RegValue( mr, dd->ins.op[ OP_1 ].base );
             break;
         default:
             /* memory indirect jump/call */
@@ -365,12 +365,12 @@ mad_status DIGENTRY MIDisasmInsNext( mad_disasm_data *dd, const mad_registers *m
 
             if( dd->ins.flags & DIF_X86_OPND_LONG ) {
                 next->mach.offset = GetDataLong();
-                if( dd->ins.op[0].ref_type == DRT_X86_FARPTR48 ) {
+                if( dd->ins.op[ OP_1 ].ref_type == DRT_X86_FARPTR48 ) {
                     next->mach.segment = (unsigned_16)GetDataWord();
                 }
             } else {
                 next->mach.offset = (unsigned_16)GetDataWord();
-                if( dd->ins.op[0].ref_type == DRT_X86_FARPTR32 ) {
+                if( dd->ins.op[ OP_1 ].ref_type == DRT_X86_FARPTR32 ) {
                     next->mach.segment = (unsigned_16)GetDataWord();
                 }
             }
@@ -872,13 +872,23 @@ unsigned DisCliValueString( void *d, dis_dec_ins *ins, unsigned op, char *buff )
     switch( ins->op[op].type & DO_MASK ) {
     case DO_RELATIVE:
         val.mach.offset += ins->op[op].value;
-        //NYI: 64 bit
-        MCAddrToString( val, X86T_N32_PTR, MLK_CODE, 40, p );
+        MCAddrToString( val, (ins->flags & DIF_X86_OPND_LONG) ? X86T_N32_PTR : X86T_N16_PTR , MLK_CODE, 40, p );
         break;
-    case DO_IMMED:
     case DO_ABSOLUTE:
+        if( ins->op[op].type & DO_EXTRA ) {
+            val.mach.offset = ins->op[op].value;
+            val.mach.segment = ins->op[op].extra;
+            MCAddrToString( val, (ins->flags & DIF_X86_OPND_LONG) ? X86T_F32_PTR : X86T_F16_PTR , MLK_CODE, 40, p );
+            break;
+        }
+    case DO_IMMED:
+        MCTypeInfoForHost( MTK_INTEGER, (ins->flags & DIF_X86_OPND_LONG) ? 4 : 2 , &mti );
+        max = 40;
+        MCTypeToString( dd->radix, &mti, &ins->op[op].value, &max, p );
+        break;
     case DO_MEMORY_ABS:
-        MCTypeInfoForHost( MTK_INTEGER, -sizeof( ins->op[0].value ), &mti );
+//        MCTypeInfoForHost( MTK_INTEGER, -sizeof( ins->op[op].value ), &mti );
+        MCTypeInfoForHost( MTK_INTEGER, (ins->flags & DIF_X86_ADDR_LONG) ? 4 : 2 , &mti );
         max = 40;
         MCTypeToString( dd->radix, &mti, &ins->op[op].value, &max, p );
         break;
