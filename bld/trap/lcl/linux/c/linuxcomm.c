@@ -192,14 +192,8 @@ unsigned ReqSplit_cmd()
     start = cmd;
     len = GetTotalSize() - sizeof( split_cmd_req );
     for( ;; ) {
-        if( len == 0 ) goto done;
+        if( len == 0 ) break;
         switch( *cmd ) {
-        case '/':
-        case '=':
-        case '(':
-        case ';':
-        case ',':
-            goto done;
         case '\0':
         case ' ':
         case '\t':
@@ -210,7 +204,6 @@ unsigned ReqSplit_cmd()
         ++cmd;
         --len;
     }
-done:
     ret->parm_start = cmd - start;
     ret->cmd_end = cmd - start;
     return( sizeof( *ret ) );

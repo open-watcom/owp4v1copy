@@ -59,7 +59,6 @@ static int          wpCount = 0;
 static pid_t        pid;
 static u_short      flatCS;
 static u_short      flatDS;
-static int          ptrace_sig;
 
 #if 0
 void Out( char *str )
@@ -628,10 +627,6 @@ unsigned ReqProg_load()
             if ((long)sys_ptrace( PTRACE_TRACEME, 0, 0, 0 ) < 0) {
                 exit( 1 );
             }
-            /* stopping before exec appears to be necessary ... */
-            if ( kill( getpid(), SIGSTOP ) < 0 ) {
-                exit( 1 );
-            }
             execve( exe_name, (const char **)args, (const char **)environ );
             exit( 1 ); /* failsafe */
         }
@@ -643,16 +638,11 @@ unsigned ReqProg_load()
         
         ret->task_id = pid;
         ret->flags |= LD_FLAG_IS_PROT | LD_FLAG_IS_32;
-
         /* wait until it hits _start (upon execve) */
-        if ( waitpid( pid, &status, WUNTRACED ) < 0 )
-            goto fail;
-        if ( sys_ptrace( PTRACE_CONT, pid, 0, 0 ) == -1 )
-            goto fail;
-        /* wait until it hits SIGSTOP */
         if ( waitpid ( pid, &status, WUNTRACED ) < 0 )
             goto fail;
-        ptrace_sig = 0;
+        if ( !WIFSTOPPED( status ) || WSTOPSIG( status ) != SIGTRAP )
+            goto fail;
         errno = 0;
     }
     ret->err = errno;
@@ -841,6 +831,7 @@ unsigned ReqClear_watch( void )
 
 static unsigned ProgRun( int step )
 {
+    static int          ptrace_sig = 0;
     user_regs_struct    regs;
     int                 status;
     prog_go_ret         *ret;
@@ -849,9 +840,9 @@ static unsigned ProgRun( int step )
         return 0;
     ret = GetOutPtr( 0 );
     if ( step ) {
-        sys_ptrace( PTRACE_SINGLESTEP, pid, 0, 0 ); //(void *)ptrace_sig );
+        sys_ptrace( PTRACE_SINGLESTEP, pid, 0, (void *)ptrace_sig );
     } else {
-        sys_ptrace( PTRACE_CONT, pid, 0, 0 ); //(void *)ptrace_sig );
+        sys_ptrace( PTRACE_CONT, pid, 0, (void *)ptrace_sig );
     }
     waitpid ( pid, &status, WUNTRACED );
     if ( WIFSTOPPED( status ) ) {
@@ -859,6 +850,9 @@ static unsigned ProgRun( int step )
         case SIGSEGV:
         case SIGILL:
             ret->conditions = COND_EXCEPTION;
+            break;
+        case SIGINT:
+            ret->conditions = COND_USER;
             break;
         case SIGTRAP:
             if ( !step ) {
@@ -871,10 +865,12 @@ static unsigned ProgRun( int step )
                 ret->conditions = COND_TRACE;
             }
             Out("sigtrap");
+            ptrace_sig = 0;
             break;
         }
     } else if ( WIFEXITED( status ) ) {
         ret->conditions = COND_TERMINATE;
+        return( sizeof( *ret ) );
     }
     if (sys_ptrace(PTRACE_GETREGS, pid, 0, &regs) == 0) {
         Out( " eip " );
@@ -1028,6 +1024,7 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, int remote )
     setsignal(SIGCHLD, sighand, 0, NULL); 
     setsignal(SIGSEGV, sighand, 0, NULL); 
     setsignal(SIGILL, sighand, 0, NULL); 
+    setsignal(SIGINT, sighand, 0, NULL); 
     
     return( ver );
 }
