@@ -1,9 +1,17 @@
 #include <stdio.h>
 #include <string.h>
 #include <malloc.h>
-#include <io.h>  // findfirst,findnext, fileinfo
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#ifdef __UNIX__
+#include <dirent.h>
+#else
+#include <direct.h>
+#define mkdir(a,b) mkdir(a)
+#endif
 
-#define BASEPATH "..\\include"
+#define BASEPATH "../include"
 #define BASEPATHLEN ( sizeof( BASEPATH ) )
 
 #define MAX_PATH_NAME 512
@@ -70,10 +78,10 @@ void WriteMHFiles( char *filename, int flags )
     if( flags & SFF_DIRECTORY )
     {
         char outpath[MAX_PATH_NAME];
-        snprintf( outpath, MAX_PATH_NAME, "watcom\\%s", filename );
-        mkdir( outpath );    // make the path...
-        snprintf( outpath, MAX_PATH_NAME, "win\\%s", filename );
-        mkdir( outpath );
+        snprintf( outpath, MAX_PATH_NAME, "watcom/%s", filename );
+        mkdir( outpath, S_IRWXU | S_IRWXG | S_IRWXO );    // make the path...
+        snprintf( outpath, MAX_PATH_NAME, "win/%s", filename );
+        mkdir( outpath, S_IRWXU | S_IRWXG | S_IRWXO );
     }
     else
     {
@@ -82,14 +90,14 @@ void WriteMHFiles( char *filename, int flags )
         {
             FILE *out;
             char outname[MAX_PATH_NAME];
-            snprintf( outname, MAX_PATH_NAME, "watcom\\%*.*s.mh"
+            snprintf( outname, MAX_PATH_NAME, "watcom/%*.*s.mh"
                      , ext-filename
                      , ext-filename
                      , filename );
             out = fopen( outname, "wt" );
             if( out )
             {
-                fprintf( out, ":include ..\\include\\%s\n", filename );
+                fprintf( out, ":include ../include/%s\n", filename );
                 fprintf( out, ":include readonly.sp\n" );
                 fclose( out );
             }
@@ -102,7 +110,7 @@ void WriteMHFiles( char *filename, int flags )
 void ScanHeaders( void (*proc)(char *filename, int flags) )
 {
     void *info = NULL;
-    while( ScanFiles( "..\\include"
+    while( ScanFiles( "../include"
                          , "*.h"
                          , &info
                          , proc
@@ -113,8 +121,8 @@ void ScanHeaders( void (*proc)(char *filename, int flags) )
 
 int main( void )
 {
-    mkdir( "watcom" );  // make the path...
-    mkdir( "win" );
+    mkdir( "watcom", S_IRWXU | S_IRWXG | S_IRWXO );  // make the path...
+    mkdir( "win", S_IRWXU | S_IRWXG | S_IRWXO );
 
     makefile = fopen( "master.mif", "wt" );
     if( makefile )
@@ -123,7 +131,7 @@ int main( void )
         fprintf( makefile, "host_CPU=386\n" );
         fprintf( makefile, "host_OS=nt\n" );
         fprintf( makefile, "!include cproj.mif\n" );
-        fprintf( makefile, "splice = wsplice -i.. -i..\\..\\include -k$(system) $(options) ../common.sp $[@ $^@\n" );
+        fprintf( makefile, "splice = wsplice -i.. -i../../include -k$(system) $(options) ../common.sp $[@ $^@\n" );
         fprintf( makefile, ".EXTENSIONS\n" );
         fprintf( makefile, ".EXTENSIONS : .h .hpp .mh .mhp\n" );
         fprintf( makefile, "common: &\n" );
@@ -152,7 +160,7 @@ int main( void )
         fclose( makefile );
     }
 
-    makefile=fopen( "win\\makefile", "wt" );
+    makefile=fopen( "win/makefile", "wt" );
     if( makefile )
     {
         fprintf( makefile, "#pmake: all build os_win os_nt \n" );
@@ -267,19 +275,14 @@ try_mask:
     return  0;
 }
 
-#define finddata_t _finddata_t
-#define findfirst _findfirst
-#define findnext    _findnext
-#define findclose _findclose
-
 typedef struct myfinddata {
-    int handle;
-    struct finddata_t fd;
+    DIR *handle;
+    struct dirent *fd;
     char buffer[MAX_PATH_NAME];
 } MFD, *PMFD;
 
 #define findhandle(pInfo) ( ((PMFD)(*pInfo))->handle)
-#define finddata(pInfo) ( &((PMFD)(*pInfo))->fd)
+#define finddata(pInfo) ( ((PMFD)(*pInfo))->fd)
 #define findbuffer(pInfo) ( ((PMFD)(*pInfo))->buffer)
 
 int ScanFiles( char *base
@@ -290,16 +293,15 @@ int ScanFiles( char *base
              )
 {
     int sendflags;
-    PMFD *ppMFD = (PMFD*)pInfo;
+    struct stat st;
     if( !*pInfo )
     {
         char findmask[256];
         sprintf( findmask, "%s/*", base );
         *pInfo = malloc( sizeof( MFD ) );
-        findhandle(pInfo) = findfirst( findmask, finddata(pInfo) );
-        if( findhandle(pInfo) == -1 )
+        findhandle(pInfo) = opendir( base );
+        if( findhandle(pInfo) == NULL )
         {
-            findclose( findhandle(pInfo) );
             free( *pInfo );
             *pInfo = NULL;
             return 0;
@@ -308,24 +310,25 @@ int ScanFiles( char *base
     else
     {
     getnext:
-        if( findnext( findhandle(pInfo), finddata( pInfo ) ) )
+        if( ( finddata( pInfo ) = readdir( findhandle(pInfo) ) ) == NULL )
         {
-            findclose( findhandle(pInfo) );
+            closedir( findhandle(pInfo) );
             free( *pInfo );
             *pInfo = NULL;
             return 0;
         }
     }
-    if( !strcmp( ".", finddata(pInfo)->name ) ||
-         !strcmp( "..", finddata(pInfo)->name ) )
+    if( !strcmp( ".", finddata(pInfo)->d_name ) ||
+         !strcmp( "..", finddata(pInfo)->d_name ) )
         goto getnext;
     if( flags & SFF_NAMEONLY )
-        strncpy( findbuffer( pInfo ), finddata(pInfo)->name, MAX_PATH_NAME );
+        strncpy( findbuffer( pInfo ), finddata(pInfo)->d_name, MAX_PATH_NAME );
     else
-        snprintf( findbuffer( pInfo ), MAX_PATH_NAME, "%s/%s", base, finddata(pInfo)->name );
+        snprintf( findbuffer( pInfo ), MAX_PATH_NAME, "%s/%s", base, finddata(pInfo)->d_name );
     findbuffer( pInfo )[MAX_PATH_NAME-1] = 0; // force nul termination...
+    stat( findbuffer( pInfo ), &st );
     if( ( flags & (SFF_DIRECTORIES|SFF_SUBCURSE) )
-         && finddata(pInfo)->attrib & _A_SUBDIR )
+         && S_ISDIR(st.st_mode) )
     {
         if( flags & SFF_SUBCURSE  )
         {
@@ -334,15 +337,15 @@ int ScanFiles( char *base
                 if( Process )
                     Process( findbuffer( pInfo ), SFF_DIRECTORY );
             if( flags & SFF_NAMEONLY ) // if nameonly - have to rebuild the correct name.
-                snprintf( findbuffer( pInfo ), MAX_PATH_NAME, "%s/%s", base, finddata(pInfo)->name );
+                snprintf( findbuffer( pInfo ), MAX_PATH_NAME, "%s/%s", base, finddata(pInfo)->d_name );
             while( ScanFiles( findbuffer(pInfo), mask, &data, Process, flags ) );
         }
         goto getnext;
     }
 
     if( ( sendflags = SFF_DIRECTORY, ( ( flags & SFF_DIRECTORIES )
-            && ( finddata(pInfo)->attrib & _A_SUBDIR ) ) )
-         || ( sendflags = 0, CompareMask( mask, finddata(pInfo)->name, 0 ) ) )
+            && ( S_ISDIR( st.st_mode ) ) ) )
+         || ( sendflags = 0, CompareMask( mask, finddata(pInfo)->d_name, 0 ) ) )
     {
         if( Process )
             Process( findbuffer( pInfo ), sendflags );
