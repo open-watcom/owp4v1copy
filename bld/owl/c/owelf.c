@@ -140,7 +140,6 @@ static void prepareSymbolTable( owl_file_handle file, elf_special_section *sym_s
     unsigned            next_local_index;
     unsigned            next_global_index;
     Elf32_Sym           *elf_syms;
-    unsigned num = 0;
 
     sym_sect->length = ( numSymbols( file ) + 1 ) * sizeof( Elf32_Sym );
     sym_sect->buffer = _ClientAlloc( file, sym_sect->length );
