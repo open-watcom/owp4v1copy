@@ -34,6 +34,9 @@
 #include <math.h>
 #include <errno.h>
 
+#ifndef __WATCOMC__
+#define _exception exception
+#endif
 
 #ifdef __V80_MATH__
 #pragma off(unreferenced);
