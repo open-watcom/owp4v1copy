@@ -217,7 +217,7 @@ typedef struct  string_literal {
         unsigned short  length;         /* length of literal string   */
         unsigned short  ref_count;      /* reference count */
         char            flags;          /* 0 or FLAG_FAR */
-        char            literal[1];     /* actual literal string */
+        char           *literal;        /* actual literal string */
 } STRING_LITERAL;
 
 #include "xfloat.h"

@@ -853,7 +853,7 @@ local void InitWCharArray( TYPEPTR typ )
     if( i < size ) {
         ZeroBytes( (size - i) * sizeof(unsigned short) );
     }
-    CMemFree( str_lit );
+    FreeLiteral( str_lit );
  }
 
 

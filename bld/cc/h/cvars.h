@@ -819,6 +819,7 @@ extern  void    GenFunctionNode(SYM_HANDLE);    /* cstmt */
 extern  int     NextLabel(void);                /* cstmt */
 extern  void    StmtInit( void );               /* cstmt */
 
+extern  void    FreeLiteral(STRING_LITERAL *);  /* cstring */
 extern  STRING_LITERAL  *GetLiteral(void);      /* cstring */
 extern  void    LoadUnicodeTable(long);         /* cstring */
 extern  void    StringInit(void);               /* cstring */

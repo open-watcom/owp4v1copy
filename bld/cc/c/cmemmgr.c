@@ -213,11 +213,20 @@ void *CMemRealloc( void *loc, unsigned size )
 {
     void           *p;
     MCB            *p1;
+    unsigned        len;
 
-    p = CMemAlloc( size );
+    if( loc == NULL )
+        return CMemAlloc( size );
+
+    p = loc;
     p1 = (MCB *) ( (char *)loc - sizeof( int ) );
-    memcpy( p, loc, p1->len & 0xfffe );
-    CMemFree( loc );
+    len = (p1->len & 0xfffe) - sizeof( int );
+    if ( size > len ) {
+        p = CMemAlloc( size );
+        memcpy( p, loc, len );
+        CMemFree( loc );
+    } /* else the current block is big enough -- nothing to do 
+         (very lazy realloc) */
     return( p );
 }
 

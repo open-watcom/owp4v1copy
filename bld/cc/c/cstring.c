@@ -112,10 +112,16 @@ void StringInit()
     }
 }
 
+void FreeLiteral( STRING_LITERAL *str_lit )
+{
+    CMemFree( str_lit->literal );
+    CMemFree( str_lit );
+}
 
-STRING_LITERAL *GetLiteral()
+STRING_LITERAL *GetLiteral( void )
 {
     unsigned            len, len2;
+    char                *s;
     STRING_LITERAL      *str_lit;
     STRING_LITERAL      *p;
     STRING_LITERAL      *q;
@@ -123,48 +129,43 @@ STRING_LITERAL *GetLiteral()
 
     /* first we store the whole string in a linked list to see if
        the end result is wide or not wide */
-    p = str_lit = CMemAlloc( sizeof( STRING_LITERAL ) + CLitLength );
-    p->length = CLitLength;
-    p->next_string = NULL;
-    memcpy( p->literal, Buffer, CLitLength );
-    is_wide = CompFlags.wide_char_string;
-    NextToken();
-    while( CurToken == T_STRING ) {
+    p = str_lit = CMemAlloc( sizeof( STRING_LITERAL ) );
+    q = NULL;
+    is_wide = 0;
+    do {
         /* if one component is wide then the whole string is wide */
         if( CompFlags.wide_char_string )
             is_wide = 1;
-        p->next_string = CMemAlloc( sizeof( STRING_LITERAL ) + CLitLength );
-        p = p->next_string;
-        memcpy( p->literal, Buffer, CLitLength );
+        if( q != NULL ) {
+            p = CMemAlloc( sizeof( STRING_LITERAL ) );
+            q->next_string = p;
+        }
+        q = p;
         p->length = CLitLength;
         p->next_string = NULL;
-        NextToken();
-    }
+        p->literal = Buffer;
+        Buffer = CMemAlloc( BufSize );
+    } while( NextToken() == T_STRING );
     CompFlags.wide_char_string = is_wide;
     /* then remove escapes (C99: translation phase 5), and only then
        concatenate (translation phase 6), not the other way around! */
     len = 1;
+    s = NULL;
     q = str_lit;
-    str_lit = NULL;
-    while( q ) {
+    do {
         len2 = RemoveEscapes( NULL, q->literal, q->length );
         --len;
         if( is_wide && len != 0 ) --len;
-        p = (STRING_LITERAL *)CMemAlloc( sizeof( STRING_LITERAL )
-                                     + len + len2 );
-        RemoveEscapes( &p->literal[len], q->literal, q->length );
-        if( str_lit ) {
-            /* not first time */
-            memcpy( p->literal, str_lit->literal, len );
-            CMemFree( str_lit );
-        }
+        s = CMemRealloc( s, len + len2 + 1 );
+        RemoveEscapes( &s[len], q->literal, q->length );
         len += len2;
-        str_lit = p;
         p = q->next_string;
-        CMemFree( q );
+        if( q != str_lit )  FreeLiteral( q );
         q = p;
-    }
+    } while ( q );
     CLitLength = len;
+    CMemFree( str_lit->literal );
+    str_lit->literal = s;
     str_lit->length = len;
     str_lit->flags = 0;
     str_lit->cg_back_handle = 0;
@@ -295,7 +296,7 @@ TREEPTR StringLeaf( int flags )
         new_lit->next_string = StringHash[ hash ];
         StringHash[ hash ] = new_lit;
     } else {            // we found a duplicate
-        CMemFree( new_lit );
+        FreeLiteral( new_lit );
         new_lit = strlit;
     }
 

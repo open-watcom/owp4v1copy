@@ -1924,7 +1924,7 @@ void Emit1String( STR_HANDLE str_handle )
 
 int EmitBytes( STR_HANDLE strlit )
 {
-    DGBytes( strlit->length, &strlit->literal[0] );
+    DGBytes( strlit->length, strlit->literal );
     return( strlit->length );
 }
 
@@ -1956,7 +1956,7 @@ void FreeStrings()
                 strlit->cg_back_handle = 0;
             }
             next = strlit->next_string;
-            CMemFree( strlit );
+            FreeLiteral( strlit );
             strlit = next;
         }
         StringHash[i] = 0;
