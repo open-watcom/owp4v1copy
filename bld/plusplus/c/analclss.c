@@ -315,7 +315,7 @@ static void initClassFunction(  // START GENERATION OF CLASS FUNCTION
 
     CtxFunction( fun );
     CErrCheckpoint( check );
-    CurrScope = SymScope( fun );
+    SetCurrScope(SymScope( fun ));
     ScopeBeginFunction( fun );
     fn_type = FunctionDeclarationType( fun->sym_type );
     if( fun_is_copy ) {
@@ -329,7 +329,7 @@ static void initClassFunction(  // START GENERATION OF CLASS FUNCTION
             // special case of compiler-generated copy constructors
             // (this is the only case in a constructor where copy ctors are used
             //  for all of the base classes instead of normal constructors)
-            arg = ScopeInsert( CurrScope, arg, CppSpecialName(SPECIAL_COPY_ARG) );
+            arg = ScopeInsert( GetCurrScope(), arg, CppSpecialName(SPECIAL_COPY_ARG) );
         }
     }
     FunctionBodyStartup( fun, fn_data, FUNC_NULL );
@@ -1067,10 +1067,10 @@ static PTREE defaultCopyDiag(   // COPY TO CLASS OBJECT, WITH DIAGNOSIS
             if( PT_ERROR == src->op ) {
                 opt = CALL_OPT_ERR;
             } else {
-                SCOPE curr = CurrScope;
-                CurrScope = type->u.c.scope;
+                SCOPE curr = GetCurrScope();
+                SetCurrScope(type->u.c.scope);
                 accessCopyCtor( type, &ctor_udc );
-                CurrScope = curr;
+                SetCurrScope(curr);
             }
         }
         break;
@@ -2098,7 +2098,7 @@ static void checkForGenCopy( ctor_prologue *data )
 {
     SEARCH_RESULT *result;
 
-    result = ScopeFindNaked( CurrScope, CppSpecialName( SPECIAL_COPY_ARG ) );
+    result = ScopeFindNaked( GetCurrScope(), CppSpecialName( SPECIAL_COPY_ARG ) );
     if( result != NULL ) {
         data->gen_copy = TRUE;
         ScopeFreeResult( result );
@@ -2560,7 +2560,7 @@ void DtorPrologue(              // GENERATE PROLOGUE FOR DTOR
     CDoptIterEnd( iter );
     if( regster ) {
         FunctionHasRegistration();
-        ScopeKeep( CurrScope );
+        ScopeKeep( GetCurrScope() );
     }
     // don't hide this in if( regster ) because there may be other cases
     // where registration is req'd (the IC code handler will deal with this)

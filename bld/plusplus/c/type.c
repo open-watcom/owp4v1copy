@@ -571,7 +571,7 @@ TYPE MakeBasedModifier( type_flag mod, boolean seg_cast, PTREE base )
         mod = TF1_BASED_VOID;
         id = base->u.id.name;
         PTreeFree( base );
-        result = ScopeFindNaked( CurrScope, id );
+        result = ScopeFindNaked( GetCurrScope(), id );
         if( result == NULL ) {
             CErr2p( ERR_UNDECLARED_SYM, id );
         } else {
@@ -606,7 +606,7 @@ TYPE MakeBasedModifier( type_flag mod, boolean seg_cast, PTREE base )
                         }
                     }
                     if( base_expr != NULL ) {
-                        if( result->scope != CurrScope ) {
+                        if( result->scope != GetCurrScope() ) {
                             verifyBasedRef( result, sym );
                         }
                     }
@@ -2288,7 +2288,7 @@ static SYMBOL checkPreviouslyDeclared( SYMBOL sym, char *name )
     SEARCH_RESULT *result;
 
     free_sym = NULL;
-    result = ScopeFindLexicalClassType( CurrScope, name );
+    result = ScopeFindLexicalClassType( GetCurrScope(), name );
     if( result != NULL ) {
         free_sym = sym;
         sym_name = result->sym_name;
@@ -2301,7 +2301,7 @@ static SYMBOL checkPreviouslyDeclared( SYMBOL sym, char *name )
         class_template = ClassTemplateLookup( name );
         if( class_template == NULL ) {
             if( sym != NULL ) {
-                scope = ScopeNearestNonClass( CurrScope );
+                scope = ScopeNearestNonClass( GetCurrScope() );
                 ClassChangingScope( sym, scope );
                 sym = ScopeInsert( scope, sym, name );
             }
@@ -2328,7 +2328,7 @@ static DECL_SPEC *checkForClassFriends( DECL_SPEC *dspec, boolean decl_done )
     sym = dspec->typedef_defined;
     if(( dspec->specifier & STY_FRIEND ) == 0 || ! decl_done ) {
         if( sym != NULL && ! dspec->generic ) {
-            scope = CurrScope;
+            scope = GetCurrScope();
             if( ! dspec->class_idiom ) {
                 scope = ScopeNearestNonClass( scope );
                 ClassChangingScope( sym, scope );
@@ -2374,7 +2374,7 @@ static DECL_SPEC *checkForClassFriends( DECL_SPEC *dspec, boolean decl_done )
             bad_friend = TRUE;
         }
     }
-    if( ! ScopeType( CurrScope, SCOPE_CLASS ) ) {
+    if( ! ScopeType( GetCurrScope(), SCOPE_CLASS ) ) {
         CErr1( ERR_FRIEND_NOT_IN_CLASS );
         bad_friend = TRUE;
     }
@@ -2386,7 +2386,7 @@ static DECL_SPEC *checkForClassFriends( DECL_SPEC *dspec, boolean decl_done )
             sym = checkPreviouslyDeclared( sym, name );
         }
         if( sym != NULL ) {
-            ScopeAddFriend( CurrScope, sym );
+            ScopeAddFriend( GetCurrScope(), sym );
             /* make sure we don't need a declarator for this declaration */
             dspec->nameless_allowed = TRUE;
         }
@@ -3076,7 +3076,7 @@ static void applyFnClassMods( TYPE declarator, DECL_SPEC *dspec )
     TYPE fn_type;
 
     if( ! dspec->arg_declspec ) {
-        if( ScopeType( CurrScope, SCOPE_CLASS ) ) {
+        if( ScopeType( GetCurrScope(), SCOPE_CLASS ) ) {
             /* we are building up a member function declaration */
             for( type = declarator; type != NULL; type = type->of ) {
                 if( type->id == TYP_FUNCTION ) {
@@ -5265,7 +5265,7 @@ static PTREE verifyQualifiedId( DECL_SPEC *dspec, PTREE id, SCOPE *scope,
     if( id->cgop == CO_STORAGE ) {
         /* we have ::<id> */
         if( dspec->specifier & STY_FRIEND ) {
-            if( ScopeType( CurrScope, SCOPE_CLASS ) ) {
+            if( ScopeType( GetCurrScope(), SCOPE_CLASS ) ) {
                 /* friend int ::foo( int ); */
                 return( id );
             }
@@ -5285,9 +5285,9 @@ static PTREE verifyQualifiedId( DECL_SPEC *dspec, PTREE id, SCOPE *scope,
         // namespace qualification
         DbgAssert( scope_tree->op == PT_TYPE );
         qualifying_scope = scope_tree->u.type.scope;
-        if( ScopeId( CurrScope ) != SCOPE_FILE ) {
+        if( ScopeId( GetCurrScope() ) != SCOPE_FILE ) {
             flag.not_OK = TRUE;
-            class_type = ScopeClass( CurrScope );
+            class_type = ScopeClass( GetCurrScope() );
             if( class_type != NULL ) {
                 /* we're in a class scope */
                 if( dspec->specifier & STY_FRIEND ) {
@@ -5307,9 +5307,9 @@ static PTREE verifyQualifiedId( DECL_SPEC *dspec, PTREE id, SCOPE *scope,
             *pinfo |= IDI_CLASS_TEMPLATE_MEMBER;
             return( id );
         }
-        if( ! ScopeEquivalent( CurrScope, SCOPE_FILE ) ) {
+        if( ! ScopeEquivalent( GetCurrScope(), SCOPE_FILE ) ) {
             flag.not_OK = TRUE;
-            class_type = ScopeClass( CurrScope );
+            class_type = ScopeClass( GetCurrScope() );
             if( class_type != NULL ) {
                 /* we're in a class scope */
                 if( dspec->specifier & STY_FRIEND ) {
@@ -5704,7 +5704,7 @@ static void declareDefaultArgs( SCOPE scope, DECL_INFO *dinfo )
 
 static SCOPE undefdFriendScope( void )
 {
-    return( ScopeNearestFile( CurrScope ) );
+    return( ScopeNearestFile( GetCurrScope() ) );
 }
 
 static SCOPE figureOutFriendScope( SCOPE scope, DECL_INFO *dinfo )
@@ -5715,7 +5715,7 @@ static SCOPE figureOutFriendScope( SCOPE scope, DECL_INFO *dinfo )
 
     if( dinfo->scope == NULL && dinfo->id->op != PT_ID ) {
         /* friend int ::foo( int ); */
-        scope = FileScope;
+        scope = GetFileScope();
     }
     result = ScopeFindNakedFriend( scope, dinfo->name );
     if( result == NULL ) {
@@ -6394,7 +6394,7 @@ type_flag ExplicitModifierFlags( TYPE type )
 
 static SCOPE blockScopeExtern( void )
 {
-    return( ScopeNearestFile( CurrScope ) );
+    return( ScopeNearestFile( GetCurrScope() ) );
 }
 
 DECL_INFO *InsertDeclInfo( SCOPE insert_scope, DECL_INFO *dinfo )
@@ -6431,7 +6431,7 @@ DECL_INFO *InsertDeclInfo( SCOPE insert_scope, DECL_INFO *dinfo )
                 if( check_sym != NULL && check_sym->id == SC_DEFAULT ) {
                     CErr2p( ERR_NOT_A_MEMBER, sym );
                 }
-                if( ! ScopeEnclosed( CurrScope, scope ) ) {
+                if( ! ScopeEnclosed( GetCurrScope(), scope ) ) {
                     if( ScopeEnclosingId( scope, SCOPE_TEMPLATE_INST ) == NULL ) {
                         CErr1( ERR_CURRSCOPE_DOESNT_ENCLOSE );
                     }
@@ -6445,7 +6445,7 @@ DECL_INFO *InsertDeclInfo( SCOPE insert_scope, DECL_INFO *dinfo )
             scope = dinfo->friend_scope;
         } else if( ScopeId( scope ) == SCOPE_TEMPLATE_DECL ) {
             TemplateFunctionCheck( sym, dinfo );
-            scope = ScopeNearestFile( CurrScope );
+            scope = ScopeNearestFile( GetCurrScope() );
         } else if( ScopeId( scope ) == SCOPE_BLOCK ||
                    ScopeId( scope ) == SCOPE_FUNCTION ) {
             /* handle promotions from local scope to file scope */
@@ -6524,7 +6524,7 @@ DECL_INFO *InsertDeclInfo( SCOPE insert_scope, DECL_INFO *dinfo )
             }
         }
         if( is_block_sym && check_sym == sym ) {
-            DbgAssert( CurrScope == insert_scope );
+            DbgAssert( GetCurrScope() == insert_scope );
             DbgAssert( scope != insert_scope );
             SymMakeAlias( sym, &(sym->locn->tl) );
         }
@@ -6563,7 +6563,7 @@ void InsertArgs( DECL_INFO **args )
             curr->sym = SymMakeDummy( curr->type, &name );
             curr->name = name;
         }
-        InsertDeclInfo( CurrScope, curr );
+        InsertDeclInfo( GetCurrScope(), curr );
     } RingIterEnd( curr )
     freeDeclList( args );
 }
@@ -6820,7 +6820,7 @@ void VerifyMemberFunction( DECL_SPEC *dspec, DECL_INFO *dinfo )
 
 static SYMBOL alreadyDefined( char *name )
 {
-    return( ScopeAlreadyExists( FileScope, name ) );
+    return( ScopeAlreadyExists( GetFileScope(), name ) );
 }
 
 
@@ -6845,7 +6845,7 @@ SYMBOL MakeTypeidSym( TYPE type )
     sym->id = SC_PUBLIC;
     // we don't want this symbol referenced unless we will generate it
     sym->sym_type = typeid_type;
-    sym = tryInsertion( FileScope, sym, name );
+    sym = tryInsertion( GetFileScope(), sym, name );
     LinkageSet( sym, "C++" );
     return( sym );
 }
@@ -6868,7 +6868,7 @@ SYMBOL MakeVATableSym( SCOPE class_scope )
     sym->id = SC_PUBLIC;
     sym->flag |= SF_REFERENCED;
     sym->sym_type = vatable_type;
-    sym = tryInsertion( FileScope, sym, name );
+    sym = tryInsertion( GetFileScope(), sym, name );
     LinkageSet( sym, "C++" );
     return( sym );
 }
@@ -6892,7 +6892,7 @@ SYMBOL MakeVBTableSym( SCOPE scope, unsigned num_vbases, target_offset_t delta )
     sym->id = SC_PUBLIC;
     sym->flag |= SF_REFERENCED;
     sym->sym_type = vbtable_type;
-    sym = tryInsertion( FileScope, sym, name );
+    sym = tryInsertion( GetFileScope(), sym, name );
     LinkageSet( sym, "C++" );
     return( sym );
 }
@@ -6920,7 +6920,7 @@ SYMBOL MakeVMTableSym( SCOPE from, SCOPE to, boolean *had_to_define )
     sym->id = SC_PUBLIC;
     sym->flag |= SF_REFERENCED;
     sym->sym_type = vmtable_type;
-    sym = tryInsertion( FileScope, sym, name );
+    sym = tryInsertion( GetFileScope(), sym, name );
     LinkageSet( sym, "C++" );
     return( sym );
 }
@@ -6945,7 +6945,7 @@ SYMBOL MakeVFTableSym( SCOPE scope, unsigned num_vfns, target_offset_t delta )
     sym->id = SC_PUBLIC;
     sym->flag |= SF_REFERENCED;
     sym->sym_type = vftable_type;
-    sym = tryInsertion( FileScope, sym, name );
+    sym = tryInsertion( GetFileScope(), sym, name );
     LinkageSet( sym, "C++" );
     return( sym );
 }
@@ -6974,7 +6974,7 @@ void TypedefUsingDecl( DECL_SPEC *dspec, SYMBOL typedef_sym, TOKEN_LOCN *locn )
         type = typedef_sym->sym_type;
         name = typedef_sym->name->name;
     }
-    SymCreateAtLocn( type, SC_TYPEDEF, SF_NULL, name, CurrScope, locn );
+    SymCreateAtLocn( type, SC_TYPEDEF, SF_NULL, name, GetCurrScope(), locn );
 }
 
 boolean TypeHasVirtualBases( TYPE type )

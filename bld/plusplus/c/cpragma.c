@@ -554,7 +554,7 @@ static int parseExtRef(     // PARSE SYMBOL NAME
     if( PragIdCurToken() ) {
         char* name = NameCreateLen( Buffer, TokenLen );
         SEARCH_RESULT* result;
-        result = ScopeFindNaked( CurrScope
+        result = ScopeFindNaked( GetCurrScope()
                                , NameCreateLen( Buffer, TokenLen ) );
         if( result == NULL ) {
             CErr2p( ERR_PRAG_EXTREF_NONE, Buffer );
@@ -666,7 +666,7 @@ static void pragDumpObjectModel( // DUMP OBJECT MODEL
     void )
 {
     if( PragIdCurToken() ) {
-        SEARCH_RESULT* result = ScopeFindNaked( CurrScope
+        SEARCH_RESULT* result = ScopeFindNaked( GetCurrScope()
                                               , NameCreateLen( Buffer, TokenLen ) );
         if( result == NULL ) {
             CErr2p( ERR_DUMP_OBJ_MODEL, Buffer );

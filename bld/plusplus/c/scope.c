@@ -290,14 +290,65 @@ struct qualify_stack {
     SCOPE               access;
 };
 
-SCOPE CurrScope;
-SCOPE FileScope;
-SCOPE InternalScope;
+SCOPE g_CurrScope;
+SCOPE g_FileScope;
+SCOPE g_InternalScope;
 SYMBOL ChipBugSym;
 SYMBOL DFAbbrevSym;
 SYMBOL PCHDebugSym;
 
 static char bool_zapped_char;
+
+extern SCOPE    GetCurrScope(void)
+{
+    return g_CurrScope;
+}
+
+extern SCOPE    SetCurrScope(SCOPE newScope)
+{
+    SCOPE oldScope = g_CurrScope;
+    g_CurrScope = newScope;
+
+#ifndef NDEBUG
+    if( PragDbgToggle.dump_scopes ) 
+    {
+        printf("Set new scope to 0x%.08X\n", newScope);
+        if(newScope)
+        {
+            printf("===============================================================================\n");
+            DumpScope(newScope);
+            printf("===============================================================================\n");
+        }
+    }
+#endif
+
+    return oldScope;
+}
+
+extern SCOPE    GetFileScope(void)
+{
+    return g_FileScope;
+}
+
+extern SCOPE    SetFileScope(SCOPE newScope)
+{
+    SCOPE oldScope = g_FileScope;
+    g_FileScope = newScope;
+    return oldScope;
+}
+
+extern SCOPE    GetInternalScope(void)
+{
+    return g_InternalScope;
+}
+
+extern SCOPE    SetInternalScope(SCOPE newScope)
+{
+    SCOPE oldScope = g_InternalScope;
+    g_InternalScope = newScope;
+    return oldScope;
+}
+
 
 
 #define BLOCK_SYM_REGION        64
@@ -717,21 +768,21 @@ static void scopeInit(          // SCOPES INITIALIZATION
                                       BLOCK_QUALIFICATION );
     carveSYMBOL_EXCLUDE = CarveCreate( sizeof( SYMBOL_EXCLUDE ),
                                        BLOCK_SYMBOL_EXCLUDE );
-    CurrScope = NULL;
+    SetCurrScope(NULL);
     uniqueNameSpaceName = NULL;
     allNameSpaces = NULL;
     PCHDebugSym = NULL;
     mappingList = NULL;
     HashPostInit( NULL );
     scopeBeginFileScope();
-    FileScope = initGlobalNamespaceScope( CurrScope );
+    SetFileScope(initGlobalNamespaceScope( GetCurrScope() ));
     scopeBeginFileScope();
-    InternalScope = CurrScope;
-    ScopeKeep( InternalScope );
-    CurrScope = FileScope;
-    HashPostInit( FileScope );
-    BrinfOpenScope( FileScope );
-    BrinfOpenScope( InternalScope );
+    SetInternalScope(GetCurrScope());
+    ScopeKeep( GetInternalScope());
+    SetCurrScope(GetFileScope());
+    HashPostInit( GetFileScope() );
+    BrinfOpenScope( GetFileScope() );
+    BrinfOpenScope( GetInternalScope() );
     injectGlobalOpNew();
     injectGlobalOpDelete();
     injectChipBug();
@@ -805,7 +856,7 @@ static SCOPE findCommonEnclosing( SCOPE scope1, SCOPE scope2 )
         }
     }
     DbgNever();
-    return( FileScope );
+    return( GetFileScope() );
 }
 
 static void addLexicalTrigger( SCOPE gets_trigger, SCOPE using_scope )
@@ -921,7 +972,7 @@ void ScopeAddUsing( SCOPE using_scope, SCOPE trigger )
 {
     SCOPE gets_using;
 
-    gets_using = CurrScope;
+    gets_using = GetCurrScope();
     DbgAssert( using_scope != NULL );
     // NYI: to emulate MS/MetaWare bug, set trigger to CurrScope
     if( trigger == NULL ) {
@@ -1066,27 +1117,27 @@ SCOPE ScopeEstablishEnclosing( SCOPE scope, SCOPE new_enclosing )
 void ScopeOpen( SCOPE scope )
 /***************************/
 {
-    doScopeEstablish( scope, CurrScope );
-    CurrScope = scope;
-    BrinfOpenScope( CurrScope );
+    doScopeEstablish( scope, GetCurrScope() );
+    SetCurrScope(scope);
+    BrinfOpenScope( GetCurrScope() );
 }
 
 void ScopeEstablish( SCOPE scope )
 /********************************/
 {
-    doScopeEstablish( scope, CurrScope );
+    doScopeEstablish( scope, GetCurrScope() );
 }
 
 static void scopeOpenMaybeNull( SCOPE scope )
 {
     SCOPE enclosing;
 
-    enclosing = CurrScope;
+    enclosing = GetCurrScope();
     scope->enclosing = enclosing;
     if( enclosing != NULL && enclosing->in_unnamed ) {
         scope->in_unnamed = TRUE;
     }
-    CurrScope = scope;
+    SetCurrScope(scope);
 }
 
 static SCOPE findFunctionScope( SCOPE scope )
@@ -1278,8 +1329,8 @@ SCOPE ScopeClose( void )
     SCOPE trigger;
     SCOPE dropping_scope;
 
-    dropping_scope = CurrScope;
-    CurrScope = dropping_scope->enclosing;
+    dropping_scope = GetCurrScope();
+    SetCurrScope(dropping_scope->enclosing);
     ExtraRptIncrementCtr( scopes_closed );
     RingIterBegSafe( dropping_scope->using_list, use ) {
         trigger = use->trigger;
@@ -1308,8 +1359,8 @@ SCOPE ScopeClose( void )
         }
     }
     /* if this scope must be kept then its enclosing scope must be kept */
-    if( CurrScope != NULL ) {
-        CurrScope->keep |= dropping_scope->keep;
+    if( GetCurrScope() != NULL ) {
+        GetCurrScope()->keep |= dropping_scope->keep;
     }
     BrinfCloseScope( dropping_scope );
     if( dropping_scope->keep == FALSE ) {
@@ -1323,22 +1374,22 @@ void ScopeJumpForward( SCOPE scope )
 /**********************************/
 {
 #ifndef NDEBUG
-    if( ! ScopeEnclosed( CurrScope, scope ) ) {
+    if( ! ScopeEnclosed( GetCurrScope(), scope ) ) {
         CFatal( "invalid scope jump forward" );
     }
 #endif
-    CurrScope = scope;
+    SetCurrScope(scope);
 }
 
 void ScopeJumpBackward( SCOPE scope )
 /***********************************/
 {
 #ifndef NDEBUG
-    if( ! ScopeEnclosed( scope, CurrScope ) ) {
+    if( ! ScopeEnclosed( scope, GetCurrScope() ) ) {
         CFatal( "invalid scope jump backward" );
     }
 #endif
-    CurrScope = scope;
+    SetCurrScope(scope);
 }
 
 static scopeWalkSymbolNameSymbols( SYMBOL_NAME name, void *data )
@@ -1482,15 +1533,15 @@ void ScopeBeginFunction( SYMBOL sym )
 /***********************************/
 {
     ScopeBegin( SCOPE_FUNCTION );
-    CurrScope->owner.sym = sym;
-    ScopeKeep( CurrScope );
+    GetCurrScope()->owner.sym = sym;
+    ScopeKeep( GetCurrScope() );
 }
 
 void ScopeBeginBlock( unsigned index )
 /************************************/
 {
     ScopeBegin( SCOPE_BLOCK );
-    CurrScope->owner.index = index;
+    GetCurrScope()->owner.index = index;
 }
 
 SCOPE ScopeBegin( scope_type_t scope_type )
@@ -1555,11 +1606,11 @@ SCOPE ScopeOpenNameSpace( char *name, SYMBOL sym )
 void ScopeEndFileScope( void )
 /****************************/
 {
-    DbgAssert( FileScope == NULL || ! FileScope->in_unnamed );
-    DbgAssert( InternalScope == NULL || ! InternalScope->in_unnamed );
-    CurrScope = InternalScope;
+    DbgAssert( GetFileScope() == NULL || ! GetFileScope()->in_unnamed );
+    DbgAssert( GetInternalScope() == NULL || ! GetInternalScope()->in_unnamed );
+    SetCurrScope(GetInternalScope());
     ScopeEnd( SCOPE_FILE );
-    CurrScope = FileScope;
+    SetCurrScope(GetFileScope());
     ScopeEnd( SCOPE_FILE );
 }
 
@@ -1567,7 +1618,7 @@ SCOPE ScopeEnd( scope_type_t scope_type )
 /***************************************/
 {
 #ifndef NDEBUG
-    if( CurrScope->id != scope_type ) {
+    if( GetCurrScope()->id != scope_type ) {
         CFatal( "scope terminated incorrectly" );
     }
 #else
@@ -1595,7 +1646,7 @@ void ScopeMarkVisibleAutosInMem( void )
 {
     SCOPE scope;
 
-    scope = CurrScope;
+    scope = GetCurrScope();
     if( _IsBlockScope( scope ) ) {
         for(;;) {
             DbgAssert( _IsBlockScope( scope ) );
@@ -1761,7 +1812,7 @@ static SCOPE findAccessScope( void )
     SCOPE scope;
     QUALIFICATION *qual;
 
-    scope = CurrScope;
+    scope = GetCurrScope();
     qual = ParseCurrQualification();
     if( qual != NULL ) {
         scope = qual->access;
@@ -6624,9 +6675,9 @@ void ScopeQualifyPush( SCOPE scope, SCOPE access )
     QUALIFICATION *qual;
 
     qual = CarveAlloc( carveQUALIFICATION );
-    qual->reset = CurrScope;
+    qual->reset = GetCurrScope();
     qual->access = access;
-    CurrScope = scope;
+    SetCurrScope(scope);
     ParsePushQualification( qual );
 }
 
@@ -6636,10 +6687,10 @@ SCOPE ScopeQualifyPop( void )
     QUALIFICATION *qual;
     SCOPE scope_popped;
 
-    scope_popped = CurrScope;
+    scope_popped = GetCurrScope();
     qual = ParsePopQualification();
     if( qual != NULL ) {
-        CurrScope = qual->reset;
+        SetCurrScope(qual->reset);
         CarveFree( carveQUALIFICATION, qual );
     }
     return( scope_popped );
@@ -6683,7 +6734,7 @@ SCOPE ScopeNearestFile( SCOPE scope )
 SCOPE ScopeFunctionScopeInProgress( void )
 /****************************************/
 {
-    return( findFunctionScope( CurrScope ) );
+    return( findFunctionScope( GetCurrScope() ) );
 }
 
 
@@ -6702,7 +6753,7 @@ SYMBOL ScopeFunctionScope( SCOPE scope )
 SYMBOL ScopeFunctionInProgress( void )
 /************************************/
 {
-    return ScopeFunctionScope( CurrScope );
+    return ScopeFunctionScope( GetCurrScope() );
 }
 
 
@@ -6712,7 +6763,7 @@ SYMBOL ScopeFuncParm( unsigned parm_no )
     SYMBOL stopper;
     SYMBOL sym;
 
-    stopper = ScopeOrderedStart( findFunctionScope( CurrScope ) );
+    stopper = ScopeOrderedStart( findFunctionScope( GetCurrScope() ) );
     for( sym = NULL; ; --parm_no ) {
         sym = ScopeOrderedNext( stopper, sym );
         if( parm_no == 0 ) break;
@@ -6764,7 +6815,7 @@ void ScopeRestoreModuleFunction( SCOPE fn_scope )
     fn_scope = findFunctionScope( fn_scope );
     if( fn_scope != NULL ) {
         // don't propagate ->in_unnamed
-        fn_scope->enclosing = FileScope;
+        fn_scope->enclosing = GetFileScope();
     }
 }
 
@@ -6849,7 +6900,7 @@ SYMBOL ScopeASMLookup( char *buff )
     SEARCH_RESULT   *result;
 
     sym = NULL;
-    result = ScopeFindNaked( CurrScope, NameCreateNoLen( buff ) );
+    result = ScopeFindNaked( GetCurrScope(), NameCreateNoLen( buff ) );
     if( result != NULL ) {
         if( result->simple ) {
             sym = result->sym_name->name_syms;
@@ -6877,7 +6928,7 @@ SYMBOL ScopeIntrinsic( boolean turn_on )
     TYPE type;
 
     name = NameCreateLen( Buffer, TokenLen );
-    result = ScopeFindNaked( FileScope, name );
+    result = ScopeFindNaked( GetFileScope(), name );
     if( result == NULL ) {
         return( NULL );
     }
@@ -6956,7 +7007,7 @@ void ScopeAuxName( char *id, void *aux_info )
     unsigned count;
 
     name = NameCreateNoLen( id );
-    result = ScopeFindNaked( FileScope, name );
+    result = ScopeFindNaked( GetFileScope(), name );
     if( result == NULL ) {
         /* name is not defined (in file scope) */
         /* action: create 'extern "C" void name(...);' */
@@ -6965,7 +7016,7 @@ void ScopeAuxName( char *id, void *aux_info )
         fn_type = MakeModifiableFunction( ret_type, arg_type, NULL );
         fn_type->u.f.pragma = aux_info;
         fn_type = CheckDupType( fn_type );
-        sym = SymCreateAtLocn( fn_type, SC_EXTERN, 0, name, FileScope, NULL );
+        sym = SymCreateAtLocn( fn_type, SC_EXTERN, 0, name, GetFileScope(), NULL );
         LinkageSet( sym, "C" );
         return;
     }
@@ -7498,11 +7549,11 @@ pch_status PCHWriteScopes( void )
     PCHWrite( &unique_name, sizeof( unique_name ) );
     all_name_spaces = NameSpaceGetIndex( allNameSpaces );
     PCHWrite( &all_name_spaces, sizeof( all_name_spaces ) );
-    curr_scope = ScopeGetIndex( CurrScope );
+    curr_scope = ScopeGetIndex( GetCurrScope() );
     PCHWrite( &curr_scope, sizeof( curr_scope ) );
-    file_scope = ScopeGetIndex( FileScope );
+    file_scope = ScopeGetIndex( GetFileScope() );
     PCHWrite( &file_scope, sizeof( file_scope ) );
-    internal_scope = ScopeGetIndex( InternalScope );
+    internal_scope = ScopeGetIndex( GetInternalScope() );
     PCHWrite( &internal_scope, sizeof( internal_scope ) );
     chip_bug_sym = SymbolGetIndex( ChipBugSym );
     PCHWrite( &chip_bug_sym, sizeof( chip_bug_sym ) );
@@ -7726,9 +7777,9 @@ pch_status PCHReadScopes( void )
 {
     uniqueNameSpaceName = NameMapIndex( PCHReadPtr() );
     allNameSpaces = NameSpaceMapIndex( PCHReadPtr() );
-    CurrScope = ScopeMapIndex( PCHReadPtr() );
-    FileScope = ScopeMapIndex( PCHReadPtr() );
-    InternalScope = ScopeMapIndex( PCHReadPtr() );
+    SetCurrScope(ScopeMapIndex( PCHReadPtr() ));
+    SetFileScope(ScopeMapIndex( PCHReadPtr() ));
+    SetInternalScope(ScopeMapIndex( PCHReadPtr() ));
     ChipBugSym = SymbolMapIndex( PCHReadPtr() );
     DFAbbrevSym = SymbolMapIndex( PCHReadPtr() );
     PCHDebugSym = SymbolMapIndex( PCHReadPtr() );

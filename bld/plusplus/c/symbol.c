@@ -535,7 +535,7 @@ SYMBOL SymFunctionReturn(       // GET SYMBOL FOR RETURN
     SEARCH_RESULT *result;      // - search result
     SCOPE fun_scope;            // - scope for current function
 
-    result = ScopeFindNaked( CurrScope
+    result = ScopeFindNaked( GetCurrScope()
                            , CppSpecialName( SPECIAL_RETURN_VALUE ) );
     if( result == NULL ) {
         retn = NULL;
@@ -1177,7 +1177,7 @@ SYMBOL SymCreateCurrScope(      // CREATE NEW CURR-SCOPE SYMBOL
     symbol_flag flags,          // - symbol flags
     char* name )                // - symbol name
 {
-    return SymCreate( type, id, flags, name, CurrScope );
+    return SymCreate( type, id, flags, name, GetCurrScope() );
 }
 
 
@@ -1187,7 +1187,7 @@ SYMBOL SymCreateFileScope(      // CREATE NEW FILE-SCOPE SYMBOL
     symbol_flag flags,          // - symbol flags
     char* name )                // - symbol name
 {
-    return SymCreate( type, id, flags, name, FileScope );
+    return SymCreate( type, id, flags, name, GetFileScope() );
 }
 
 
@@ -1317,7 +1317,7 @@ SYMBOL SymMakeAlias(            // DECLARE AN ALIAS IN CURRSCOPE
     sym->flag |= SF_ALIAS;
     sym->u.alias = aliasee;
     SymbolLocnDefine( locn, sym );
-    check = ScopeInsert( CurrScope, sym, aliasee->name->name );
+    check = ScopeInsert( GetCurrScope(), sym, aliasee->name->name );
     if( check != sym ) {
         check = NULL;
     }
@@ -1334,7 +1334,7 @@ boolean SymIsBrowsable          // TEST IF SYMBOL CAN BE BROWSED
     return ! SymIsTemporary( sym )
         && ! SymIsThunk( sym )
         && ! SymIsVft( sym )
-        && InternalScope != scope
+        && GetInternalScope() != scope
         ;
 }
 #endif

@@ -81,7 +81,7 @@ static SYMBOL lookupOptSym(     // LOOK UP OPTIMIZATION SYMBOL
     SEARCH_RESULT* result;      // - lookup result
     SYMBOL var;                 // - name defined in compiled code
 
-    result = ScopeFindNaked( FileScope, optName( odef ) );
+    result = ScopeFindNaked( GetFileScope(), optName( odef ) );
     if( result == NULL ) {
         var = NULL;
     } else {

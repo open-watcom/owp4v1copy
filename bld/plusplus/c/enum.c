@@ -226,8 +226,8 @@ void EnumDefine( ENUM_DATA *edata )
     sym->id = SC_TYPEDEF;
     edata->sym = sym;
     SymbolLocnDefine( &(edata->locn), sym );
-    sym = InsertSymbol( CurrScope, sym, enum_typedef_name );
-    enum_type->u.t.scope = CurrScope;
+    sym = InsertSymbol( GetCurrScope(), sym, enum_typedef_name );
+    enum_type->u.t.scope = GetCurrScope();
     enum_type->u.t.sym = sym;
     edata->type = CheckDupType( enum_type );
 }
@@ -244,7 +244,7 @@ void MakeEnumMember( ENUM_DATA *edata, PTREE id, PTREE val )
     sym->id = SC_ENUM;
     sym->sym_type = edata->type;
     SymbolLocnDefine( &(id->locn), sym );
-    sym = InsertSymbol( CurrScope, sym, id->u.id.name );
+    sym = InsertSymbol( GetCurrScope(), sym, id->u.id.name );
     /* add the value into the symbol */
     if( val != NULL ) {
         /* value was specified */
@@ -335,7 +335,7 @@ DECL_SPEC *EnumReference( ENUM_DATA *edata )
     ref_type = TypeError;
     name = edata->name;
     if( name != NULL ) {
-        result = ScopeFindLexicalEnumType( CurrScope, name );
+        result = ScopeFindLexicalEnumType( GetCurrScope(), name );
         if( result != NULL ) {
             sym_name = result->sym_name;
             sym = sym_name->name_type;

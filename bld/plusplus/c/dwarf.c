@@ -1821,7 +1821,7 @@ extern void DwarfBrowseEmit( void )
     Client = DwarfInit();
     dummyLoc = DWLocFini( Client, DWLocInit( Client ) );
     dwarfEmitFundamentalType();
-    dwarfEmitSymbolScope( FileScope );
+    dwarfEmitSymbolScope( GetFileScope() );
     DWLocTrash( Client, dummyLoc );
     DwarfFini( Client );
 }
@@ -1873,7 +1873,7 @@ extern void DwarfDebugFini( void )
 {
     if( GenSwitches & DBG_TYPES ) {
         if( !CompFlags.all_debug_type_names  ){ // generate what's used
-            dwarfUsedTypeSymbol(FileScope);
+            dwarfUsedTypeSymbol(GetFileScope());
             dwarfForwardFollowup();
         }
         if( CompFlags.pch_debug_info_write ) {
@@ -2159,9 +2159,9 @@ extern void DwarfDebugEmit( void )
     if( GenSwitches & DBG_TYPES ) {
         dwarfEmitFundamentalType();
         if( CompFlags.all_debug_type_names  ){ // generate the works
-            dwarfDebugSymbol( FileScope );
+            dwarfDebugSymbol( GetFileScope() );
          }else{
-            dwarfPreUsedSymbol( FileScope ); // generate whats used
+            dwarfPreUsedSymbol( GetFileScope() ); // generate whats used
          }
     }
 }

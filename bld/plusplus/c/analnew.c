@@ -120,7 +120,7 @@ static SEARCH_RESULT *findNewDelOp( SCOPE search_scope, char *name )
     }
     // if not found in class scope; search file scope
     if( result == NULL ) {
-        result = ScopeFindNaked( FileScope, name );
+        result = ScopeFindNaked( GetFileScope(), name );
     }
     return( result );
 }
@@ -265,7 +265,7 @@ static SCOPE scopeLookup( TYPE type )
 
     type = StructType( type );
     if( type == NULL ) {
-        scope = FileScope;
+        scope = GetFileScope();
     } else {
         scope = type->u.c.scope;
     }
@@ -276,7 +276,7 @@ static SCOPE opNewSearchScope( TYPE new_type, CGOP cgop )
 {
     SCOPE scope;
 
-    scope = FileScope;
+    scope = GetFileScope();
     if( cgop != CO_NEW_G ) {
         scope = scopeLookup( new_type );
     }
@@ -737,7 +737,7 @@ PTREE AnalyseDelete(            // ANALYSE DELETE OPERATOR
             PTreeErrorExpr( data, ERR_DLT_PTR_TO_FUNCTION );
             return( data );
         }
-        opdel_scope = FileScope;
+        opdel_scope = GetFileScope();
     } else {
         if( ! TypeDefined( cltype ) ) {
             // 5.3.5 para 5 can delete undef'd class ptr
@@ -762,7 +762,7 @@ PTREE AnalyseDelete(            // ANALYSE DELETE OPERATOR
             }
             /* fall through */
         case CO_DELETE_G:
-            opdel_scope = FileScope;
+            opdel_scope = GetFileScope();
             break;
         }
     }

@@ -130,7 +130,7 @@ void RtnGenerate( void )
         (*execTYPE[ c->index ])( c->parm );
         CarveFree( carveRTN_GEN, c );
     }
-    CurrScope = FileScope;
+    SetCurrScope(GetFileScope());
 }
 
 

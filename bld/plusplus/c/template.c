@@ -272,7 +272,7 @@ static void injectGenericTypes( DECL_INFO *args )
         if( sym != NULL ) {
             curr->type = setArgIndex( sym, index );
             ++index;
-            sym = ScopeInsert( CurrScope, sym, name );
+            sym = ScopeInsert( GetCurrScope(), sym, name );
             def_arg = curr->defarg_expr;
             if( def_arg != NULL ) {
                 PTreeErrorExpr( def_arg, ERR_NO_TYPE_DEFAULTS );
@@ -366,7 +366,7 @@ static SYMBOL newTemplateSymbol( TEMPLATE_DATA *data )
     SCOPE scope;
     TEMPLATE_INFO *tinfo;
 
-    scope = CurrScope;
+    scope = GetCurrScope();
     tinfo = newTemplateInfo( data );
     sym = AllocSymbol();
     sym->id = SC_CLASS_TEMPLATE;
@@ -390,7 +390,7 @@ void TemplateUsingDecl( SYMBOL sym, TOKEN_LOCN *locn )
                              , SC_CLASS_TEMPLATE
                              , SF_NULL
                              , sym->name->name
-                             , CurrScope
+                             , GetCurrScope()
                              , locn );
     if( new_sym != NULL ) {
         new_sym->u.tinfo = sym->u.tinfo;
@@ -405,7 +405,7 @@ SYMBOL ClassTemplateLookup( char *name )
     SYMBOL_NAME sym_name;
     SYMBOL sym;
 
-    file_scope = ScopeNearestFile( CurrScope );
+    file_scope = ScopeNearestFile( GetCurrScope() );
     result = ScopeFindNaked( file_scope, name );
     if( result != NULL ) {
         sym_name = result->sym_name;
@@ -541,7 +541,7 @@ static TYPE doParseClassTemplate( TEMPLATE_INFO *tinfo, REWRITE *defn,
 
     new_type = TypeError;
     if( ! tinfo->corrupted ) {
-        pushInstContext( &context, TCTX_CLASS_DEFN, locn, CurrScope );
+        pushInstContext( &context, TCTX_CLASS_DEFN, locn, GetCurrScope() );
         dspec = ParseClassInstantiation( defn, ( control & TCI_NO_CLASS_DEFN ) != 0 );
         popInstContext();
         if( dspec != NULL ) {
@@ -580,7 +580,7 @@ static void defineAllClassDecls( SYMBOL sym )
     auto TOKEN_LOCN location;
 
     SrcFileGetTokenLocn( &location );
-    save_scope = CurrScope;
+    save_scope = GetCurrScope();
     tinfo = sym->u.tinfo;
     file_scope = SymScope( tinfo->sym );
     RingIterBeg( tinfo->instantiations, curr ) {
@@ -593,16 +593,16 @@ static void defineAllClassDecls( SYMBOL sym )
         /* exactly as before (it may have been used in typedefs) */
         inst_scope = curr->scope;
         old_parm_scope = inst_scope->enclosing;
-        CurrScope = file_scope;
+        SetCurrScope(file_scope);
         parm_scope = ScopeBegin( SCOPE_TEMPLATE_PARM );
         ScopeSetParmCopy( parm_scope, old_parm_scope );
         copyWithNewNames( old_parm_scope, tinfo->arg_names );
         save_enclosing = ScopeEstablishEnclosing( inst_scope, parm_scope );
-        CurrScope = inst_scope;
+        SetCurrScope(inst_scope);
         doParseClassTemplate( tinfo, tinfo->defn, &location, TCI_NULL );
         ScopeSetEnclosing( inst_scope, save_enclosing );
     } RingIterEnd( curr )
-    CurrScope = save_scope;
+    SetCurrScope(save_scope);
 }
 
 extern int WalkTemplateInst( SYMBOL sym, AInstSCOPE fscope  )
@@ -631,7 +631,7 @@ void TemplateDeclFini( void )
     data = currentTemplate;
     name = data->template_name;
     sym = NULL;
-    if( name != NULL && ScopeId( CurrScope ) == SCOPE_FILE ) {
+    if( name != NULL && ScopeId( GetCurrScope() ) == SCOPE_FILE ) {
         sym = ClassTemplateLookup( name );
         if( sym != NULL ) {
             mergeClassTemplates( data, sym );
@@ -671,7 +671,7 @@ void TemplateFunctionCheck( SYMBOL sym, DECL_INFO *dinfo )
     data = currentTemplate;
     if( ! data->all_generic ) {
         CErr1( ERR_FUNCTION_TEMPLATE_ONLY_GENERICS );
-    } else if( FunctionUsesAllTypes( sym, CurrScope, diagnoseUnusedArg ) ) {
+    } else if( FunctionUsesAllTypes( sym, GetCurrScope(), diagnoseUnusedArg ) ) {
         sym->id = SC_FUNCTION_TEMPLATE;
         sym->u.defn = NULL;
         sym->sym_type = MakePlusPlusFunction( sym->sym_type );
@@ -1352,16 +1352,16 @@ static TYPE instantiateClass( TEMPLATE_INFO *tinfo, REWRITE *defn, PTREE parms,
             return( already_instantiated );
         }
     }
-    save_scope = CurrScope;
+    save_scope = GetCurrScope();
     file_scope = SymScope( tinfo->sym );
     if( already_instantiated != NULL ) {
         inst_scope = curr_instantiation->scope;
         parm_scope = inst_scope->enclosing;
         ScopeClear( parm_scope );
         ScopeSetParmClass( parm_scope, tinfo );
-        CurrScope = inst_scope;
+        SetCurrScope(inst_scope);
     } else {
-        CurrScope = file_scope;
+        SetCurrScope (file_scope);
         parm_scope = ScopeBegin( SCOPE_TEMPLATE_PARM );
         ScopeSetParmClass( parm_scope, tinfo );
         inst_scope = ScopeBegin( SCOPE_TEMPLATE_INST );
@@ -1372,7 +1372,7 @@ static TYPE instantiateClass( TEMPLATE_INFO *tinfo, REWRITE *defn, PTREE parms,
     injectTemplateParms( tinfo, parm_scope, parms );
     NodeFreeDupedExpr( parms );
     new_type = doParseClassTemplate( tinfo, defn, locn, control );
-    CurrScope = save_scope;
+    SetCurrScope(save_scope);
     return( new_type );
 }
 
@@ -1383,15 +1383,15 @@ static TYPE instantiateUnboundClass( TEMPLATE_INFO *tinfo, PTREE parms, char *na
     SCOPE save_scope;
     SCOPE parm_scope;
 
-    save_scope = CurrScope;
+    save_scope = GetCurrScope();
     file_scope = SymScope( tinfo->sym );
-    CurrScope = file_scope;
+    SetCurrScope(file_scope);
     parm_scope = ScopeBegin( SCOPE_TEMPLATE_PARM );
     ScopeSetParmClass( parm_scope, tinfo );
     injectTemplateParms( tinfo, parm_scope, parms );
     new_type = ClassUnboundTemplate( name );
     ScopeOpen( new_type->u.c.scope );
-    CurrScope = save_scope;
+    SetCurrScope(save_scope);
     return( new_type );
 }
 
@@ -1570,7 +1570,7 @@ static void copyWithNewNames( SCOPE old_scope, char **names )
         curr = ScopeOrderedNext( stop, curr );
         if( curr == NULL ) break;
         sym = dupTemplateParm( curr );
-        sym = ScopeInsert( CurrScope, sym, *names );
+        sym = ScopeInsert( GetCurrScope(), sym, *names );
         ++names;
     }
 }
@@ -1610,14 +1610,14 @@ static void instantiateMember( TEMPLATE_INFO *tinfo, CLASS_INST *instance,
     if( instance->must_process ) {
         templateData.fn_control |= TCF_GEN_FUNCTION;
     }
-    save_scope = CurrScope;
+    save_scope = GetCurrScope();
     class_inst_scope = instance->scope;
     class_parm_scope = class_inst_scope->enclosing;
     member_arg_names = member->arg_names;
     if( tinfo->arg_names != member_arg_names ||
         ! sameParmArgNames( class_parm_scope, member_arg_names ) ) {
         file_scope = SymScope( tinfo->sym );
-        CurrScope = file_scope;
+        SetCurrScope (file_scope);
         parm_scope = ScopeBegin( SCOPE_TEMPLATE_PARM );
         ScopeSetParmClass( parm_scope, tinfo );
         ScopeEstablishEnclosing( class_inst_scope, parm_scope );
@@ -1625,7 +1625,7 @@ static void instantiateMember( TEMPLATE_INFO *tinfo, CLASS_INST *instance,
     } else {
         /* template instantiation parms are identical to class instantiation */
         parm_scope = class_parm_scope;
-        CurrScope = parm_scope;
+        SetCurrScope (parm_scope);
     }
     inst_scope = ScopeBegin( SCOPE_TEMPLATE_INST );
     locn = NULL;
@@ -1636,7 +1636,7 @@ static void instantiateMember( TEMPLATE_INFO *tinfo, CLASS_INST *instance,
     ParseClassMemberInstantiation( member->defn );
     popInstContext();
     ScopeSetEnclosing( class_inst_scope, class_parm_scope );
-    CurrScope = save_scope;
+    SetCurrScope (save_scope);
 }
 
 static TYPE classTemplateType( CLASS_INST *instance )
@@ -1707,7 +1707,7 @@ static void injectFunctionTemplateArgs( SYMBOL sym )
         type = TypedefModifierRemove( *types );
         DbgAssert( type->id == TYP_GENERIC && type->of != NULL );
         parm_sym = templateArgTypedef( type->of );
-        ScopeInsert( CurrScope, parm_sym, *names );
+        ScopeInsert( GetCurrScope(), parm_sym, *names );
         ++types;
         ++names;
     }
@@ -1775,8 +1775,8 @@ void TemplateFunctionInstantiate( SYMBOL fn_sym, SYMBOL fn_template, void *hdl )
     auto TEMPLATE_CONTEXT context;
 
     /* all of the TYP_GENERIC types have their '->of' set to the proper type */
-    save_scope = CurrScope;
-    CurrScope = SymScope( fn_template );
+    save_scope = GetCurrScope();
+    SetCurrScope (SymScope( fn_template ));
     parm_scope = ScopeBegin( SCOPE_TEMPLATE_PARM );
     ScopeSetParmFn( parm_scope, fn_template->u.defn );
     injectFunctionTemplateArgs( fn_template );
@@ -1790,7 +1790,7 @@ void TemplateFunctionInstantiate( SYMBOL fn_sym, SYMBOL fn_template, void *hdl )
     ParseFunctionInstantiation( fn_template->u.defn->defn );
     popInstContext();
     templateData.translate_fn = save_fn;
-    CurrScope = save_scope;
+    SetCurrScope (save_scope);
 }
 
 static void processFunctionTemplateDefns( void )
@@ -1955,7 +1955,7 @@ void TemplateSpecificDefnStart( char *name, PTREE parms )
         inst_scope = findInstScope( tinfo, parms, &instance );
         if( inst_scope != NULL ) {
             instance->specific = TRUE;
-            CurrScope = inst_scope;
+            SetCurrScope (inst_scope);
         } else {
             parm_scope = ScopeBegin( SCOPE_TEMPLATE_PARM );
             ScopeSetParmClass( parm_scope, tinfo );
@@ -1973,7 +1973,7 @@ void TemplateSpecificDefnStart( char *name, PTREE parms )
 void TemplateSpecificDefnEnd( void )
 /**********************************/
 {
-    if( ScopeId( CurrScope ) == SCOPE_TEMPLATE_INST ) {
+    if( ScopeId( GetCurrScope() ) == SCOPE_TEMPLATE_INST ) {
         ScopeEnd( SCOPE_TEMPLATE_INST );
         ScopeEnd( SCOPE_TEMPLATE_PARM );
     }

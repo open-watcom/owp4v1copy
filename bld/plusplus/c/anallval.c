@@ -730,10 +730,10 @@ static boolean analyseClQual(   // ANALYSE :: operator
     expr = *a_expr;
     right = expr->u.subtree[1];
     if( expr->u.subtree[0] == NULL ) {
-        start = FileScope;
-        disam = FileScope;
+        start = GetFileScope();
+        disam = GetFileScope();
     } else {
-        start = CurrScope;
+        start = GetCurrScope();
         DbgAssert( NodeIsBinaryOp( expr, CO_COLON_COLON ) );
         DbgAssert( expr->u.subtree[0] != NULL );
         DbgAssert( expr->u.subtree[0]->op == PT_TYPE );
@@ -792,13 +792,13 @@ boolean AnalyseLvalue(          // ANALYSE AN LVALUE
             retn = FALSE;
         } else {
             if( isUDF( expr ) ) {
-                result = ScopeFindNakedConversion( CurrScope
+                result = ScopeFindNakedConversion( GetCurrScope()
                                                  , expr->type
                                                  , TF1_NULL );
                 retn = checkConversionLookup( result, expr, expr );
             } else {
-                result = ScopeFindNaked( CurrScope, expr->u.id.name );
-                retn = checkIdLookup( result, CurrScope, expr, expr );
+                result = ScopeFindNaked( GetCurrScope(), expr->u.id.name );
+                retn = checkIdLookup( result, GetCurrScope(), expr, expr );
             }
             if( ! retn ) break;
             retn = analyseSymbol( a_expr );

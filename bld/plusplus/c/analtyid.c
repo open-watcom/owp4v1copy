@@ -70,7 +70,7 @@ PTREE NodeTypeid( TYPE type )
 
     sym = TypeidICAccess( type );
     lvalue = NodeSymbolNoRef( NULL, sym, NULL );
-    DbgAssert( ! SymIsReferenced( sym ) || CurrScope == ModuleInitScope() );
+    DbgAssert( ! SymIsReferenced( sym ) || GetCurrScope() == ModuleInitScope() );
     return( lvalue );
 }
 

@@ -1110,7 +1110,7 @@ static void symbolicDebugSymbol()
     SYMBOL stop;
     SYMBOL curr;
 
-    stop = ScopeOrderedStart( FileScope );
+    stop = ScopeOrderedStart( GetFileScope() );
     curr = ScopeOrderedNext( stop, NULL );
     while( curr != NULL ) {
         if( ! SymIsFunctionTemplateModel( curr ) &&

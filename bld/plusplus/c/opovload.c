@@ -831,7 +831,7 @@ static SCOPE nsExtract( OLINF *inf )
         scope = user_type->u.t.scope;
     }
     scope = ScopeEnclosingId( scope, SCOPE_FILE );
-    if( scope == FileScope ) {
+    if( scope == GetFileScope() ) {
         scope = NULL;
     }
     return( scope );
@@ -862,7 +862,7 @@ PTREE OverloadOperator(         // HANDLE OPERATOR OVERLOADING, IF REQ'D
                  && cgop != CO_EQUAL ) {
                     SCOPE scope;
                     ov_fun_name = CppOperatorName( cgop );
-                    oli.result_nonmem = ScopeFindNaked( FileScope
+                    oli.result_nonmem = ScopeFindNaked( GetFileScope()
                                                       , ov_fun_name );
                     scope = nsExtract( &oli );
                     if( scope != NULL ) {
@@ -877,7 +877,7 @@ PTREE OverloadOperator(         // HANDLE OPERATOR OVERLOADING, IF REQ'D
                     oli.result_mem = ScopeContainsMember( scope, ov_fun_name );
                 } else {
                     oli.result_mem = ScopeFindMember( scope, ov_fun_name );
-                    oli.result_nonmem = ScopeFindNaked( FileScope, ov_fun_name );
+                    oli.result_nonmem = ScopeFindNaked( GetFileScope(), ov_fun_name );
                     enclosing = nsExtract( &oli );
                     if( enclosing != NULL ) {
                         oli.result_nonmem_namespace = ScopeContainsNaked( enclosing, ov_fun_name );

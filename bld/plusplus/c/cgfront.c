@@ -574,7 +574,7 @@ CGFILE_INS CgFrontFuncOpen(     // OPEN A FUNCTION (AND ITS FILE)
         emitSourcePosn( gen, posn );
     }
     CgFrontCodePtr( IC_FUNCTION_OPEN, func );
-    CgFrontCodePtr( IC_FUNCTION_ARGS, CurrScope );
+    CgFrontCodePtr( IC_FUNCTION_ARGS, GetCurrScope() );
     dtm = CompInfo.dt_method_speced;
     if( ! SymIsDtor( func ) ) {
         switch( dtm ) {
@@ -776,7 +776,7 @@ void CgFrontScopeCall(          // GENERATE IC_SCOPE_CALL, IF REQ'D
         CgFrontCodePtr( IC_SCOPE_CALL_FUN, fun );
     }
     if( keep_scope ) {
-        ScopeKeep( CurrScope );
+        ScopeKeep( GetCurrScope() );
     }
 }
 

@@ -458,15 +458,15 @@ void CDoptChkAccFun(            // CHECK FUNCTIONS ACCESS FOR CLASS
     if( ! descr->chk_acc ) {
         descr->chk_acc = TRUE;
         if( NULL != descr->accessed ) {
-            old = CurrScope;
-            CurrScope = TypeScope( descr->orig_type );
+            old = GetCurrScope();
+            SetCurrScope(TypeScope( descr->orig_type ));
             RingIterBeg( descr->accessed, af ) {
                 name = af->fun->name->name;
                 result = ScopeFindBaseMember( SymScope( af->fun ), name );
                 ScopeCheckSymbol( result, af->fun );
                 ScopeFreeResult( result );
             } RingIterEnd( af )
-            CurrScope = old;
+            SetCurrScope(old);
         }
     }
 }

@@ -323,7 +323,7 @@ void ClassInitState( type_flag class_variant, CLASS_INIT extra, TYPE class_mod_l
     } else {
         data->inline_data = NULL;
     }
-    switch( ScopeId( CurrScope ) ) {
+    switch( ScopeId( GetCurrScope() ) ) {
     case SCOPE_BLOCK:
         data->local_class = TRUE;
         break;
@@ -496,7 +496,7 @@ static boolean handleAccessDeclaration( PTREE id_tree )
     if( verifyNoChangePerm( data, perm, name ) ) {
         return( TRUE );
     }
-    access_sym = SymCreateAtLocn( type, SC_ACCESS, SF_NULL, name, CurrScope, &name_locn );
+    access_sym = SymCreateAtLocn( type, SC_ACCESS, SF_NULL, name, GetCurrScope(), &name_locn );
     if( access_sym != NULL ) {
         access_sym->u.udc_type = udc_return_type;
     }
@@ -583,7 +583,7 @@ static boolean handleAccessTypeDeclaration( DECL_SPEC *dspec, TOKEN_LOCN *locn )
     if( verifyNoChangePerm( data, perm, name ) ) {
         return( TRUE );
     }
-    SymCreateAtLocn( type, SC_TYPEDEF, SF_NULL, name, CurrScope, locn );
+    SymCreateAtLocn( type, SC_TYPEDEF, SF_NULL, name, GetCurrScope(), locn );
     return( FALSE );
 }
 
@@ -718,7 +718,7 @@ static void newClassSym( CLASS_DATA *data, CLASS_DECL declaration, PTREE id )
     sym = getClassSym( data );
     SymbolLocnDefine( &(id->locn), sym );
     if( declaration == CLASS_DEFINITION ) {
-        InsertSymbol( CurrScope, sym, data->name );
+        InsertSymbol( GetCurrScope(), sym, data->name );
     } else {
         data->sym = sym;
     }
@@ -779,8 +779,8 @@ TYPE ClassPreDefined( char *name, TOKEN_LOCN *locn )
     SCOPE save_scope;
     auto CLASS_DATA data;
 
-    save_scope = CurrScope;
-    CurrScope = FileScope;
+    save_scope = GetCurrScope();
+    SetCurrScope(GetFileScope());
     ClassPush( &data );
     ClassInitState( TF1_NULL, CLINIT_NULL, NULL );
     id = PTreeId( name );
@@ -788,7 +788,7 @@ TYPE ClassPreDefined( char *name, TOKEN_LOCN *locn )
     ClassName( id, CLASS_DECLARATION );
     class_type = data.type;
     ClassPop( &data );
-    CurrScope = save_scope;
+    SetCurrScope(save_scope);
     return( class_type );
 }
 
@@ -829,7 +829,7 @@ CLNAME_STATE ClassName( PTREE id, CLASS_DECL declaration )
             return( processClassTemplate( data, declaration, id ) );
         }
     }
-    result = ScopeFindLexicalClassType( CurrScope, name );
+    result = ScopeFindLexicalClassType( GetCurrScope(), name );
     if( result != NULL ) {
         sym_name = result->sym_name;
         sym = sym_name->name_type;
@@ -853,7 +853,7 @@ CLNAME_STATE ClassName( PTREE id, CLASS_DECL declaration )
     }
     if( result != NULL ) {
         if( declaration != CLASS_REFERENCE ) {
-            if( result->scope == CurrScope ) {
+            if( result->scope == GetCurrScope() ) {
                 if( declaration == CLASS_DEFINITION && TypeDefined( type ) ) {
                     typeError( ERR_CLASS_REDEFINED, type );
                     newClassType( data, declaration );
@@ -914,7 +914,7 @@ void ClassSpecificInstantiation( PTREE tree, CLASS_DECL declaration )
     data = classDataStack;
     switch( declaration ) {
     case CLASS_DEFINITION:
-        if( !ScopeType( CurrScope, SCOPE_FILE ) ) {
+        if( !ScopeType( GetCurrScope(), SCOPE_FILE ) ) {
             PTreeFreeSubtrees( args );
             CErr1( ERR_ONLY_GLOBAL_SPECIFICS );
         } else {
@@ -967,7 +967,7 @@ void ClassStart( void )
     info = type->u.c.info;
     info->index = nextClassIndex();
 #ifndef NDEBUG
-    if( data->scope->enclosing != CurrScope ) {
+    if( data->scope->enclosing != GetCurrScope() ) {
         CFatal( "class open is out of synch" );
     }
 #endif
@@ -1033,11 +1033,11 @@ static void defineInlineFuncsAndDefArgExprs( CLASS_DATA *data )
     }
     SrcFileGetTokenLocn( &locn );
     // process default args
-    save_scope = CurrScope;
+    save_scope = GetCurrScope();
     for(;;) {
         curr = RingPop( &(data->defargs) );
         if( curr == NULL ) break;
-        CurrScope = SymScope( curr->sym );
+        SetCurrScope(SymScope( curr->sym ));
         RingIterBeg( curr->parms, parm ) {
             if( parm->has_defarg ) {
                 ParseFlush();
@@ -1058,7 +1058,7 @@ static void defineInlineFuncsAndDefArgExprs( CLASS_DATA *data )
         } RingIterEnd( parm )
         ProcessDefArgs( curr ); // frees 'curr'
     }
-    CurrScope = save_scope;
+    SetCurrScope(save_scope);
     // process inline functions
     for(;;) {
         curr = RingPop( &(data->inlines) );
@@ -2043,7 +2043,7 @@ static void handleFunctionMember( CLASS_DATA *data, SYMBOL sym, char *name )
     fv_status = FVS_NULL;
     if( data->bases != NULL ) {
         search_sym[0] = sym;
-        fv_status = ScopeFindVirtual( CurrScope, search_sym, name );
+        fv_status = ScopeFindVirtual( GetCurrScope(), search_sym, name );
         if( fv_status & FVS_NAME_SAME_TABLE ) {
             addVFHide( data, sym, search_sym[1] );
         }
@@ -2429,7 +2429,7 @@ void ClassBitfield( DECL_SPEC *dspec, PTREE name_tree, PTREE width_tree )
     sym = AllocSymbol();
     sym->sym_type = bitfield_type;
     SymbolLocnDefine( &(name_tree->locn), sym );
-    InsertSymbol( CurrScope, sym, name );        /* calls ClassMember */
+    InsertSymbol( GetCurrScope(), sym, name );        /* calls ClassMember */
     PTreeFree( name_tree );
 }
 
@@ -2853,7 +2853,7 @@ boolean ClassOKToRewrite( void )
     if( data == NULL ) {
         return( FALSE );
     }
-    DbgAssert( ScopeId( CurrScope ) == SCOPE_CLASS );
+    DbgAssert( ScopeId( GetCurrScope() ) == SCOPE_CLASS );
     return( TRUE );
     // to disable: return( FALSE );
 }
@@ -2891,7 +2891,7 @@ void ClassStoreInlineFunc( DECL_INFO *dinfo )
     }
 #endif
     if( dinfo->scope == NULL ) {
-        dinfo->scope = CurrScope;
+        dinfo->scope = GetCurrScope();
     }
     // RingAppend guarantees FIFO processing which is important because we
     // want any error messages to be sequential and all nested class inlines
@@ -2974,7 +2974,7 @@ static void doPromotion( SYMBOL_NAME sym_name )
     }
 #endif
     name = sym_name->name;
-    sym = ScopePromoteSymbol( CurrScope, sym, name );
+    sym = ScopePromoteSymbol( GetCurrScope(), sym, name );
     if( sym == NULL ) {
         CErr2p( ERR_UNION_COLLISION_MEMBER, name );
     } else {
@@ -2999,7 +2999,7 @@ static void promoteMembers( TYPE class_type, SYMBOL owner )
     char *name;
 
     promote_to_class = FALSE;
-    if( ScopeType( CurrScope, SCOPE_CLASS ) ) {
+    if( ScopeType( GetCurrScope(), SCOPE_CLASS ) ) {
         promote_to_class = TRUE;
     }
     scope = class_type->u.c.scope;
@@ -3060,7 +3060,7 @@ static void promoteMembers( TYPE class_type, SYMBOL owner )
     ScopeOpen( scope );
     occupy_space = MakeInternalType( CgMemorySize( class_type ) );
     place_holder = SymMakeDummy( occupy_space, &name );
-    InsertSymbol( CurrScope, place_holder, name );
+    InsertSymbol( GetCurrScope(), place_holder, name );
     ScopeEnd( SCOPE_CLASS );
     setScopeOwner( class_type, scope );
 }
@@ -3085,7 +3085,7 @@ boolean ClassAnonymousUnion( DECL_SPEC *dspec )
     }
     if(( class_type->flag & TF1_UNION ) == 0 ) {
         /* anonymous struct */
-        if( ! ScopeType( CurrScope, SCOPE_CLASS ) ) {
+        if( ! ScopeType( GetCurrScope(), SCOPE_CLASS ) ) {
             CErr1( ERR_UNNAMED_CLASS_USELESS );
             return( FALSE );
         }
@@ -3095,7 +3095,7 @@ boolean ClassAnonymousUnion( DECL_SPEC *dspec )
     stg_class = dspec->stg_class;
     sym = SymMakeDummy( class_type, &name );
     SymbolLocnDefine( NULL, sym );
-    if( ScopeType( CurrScope, SCOPE_FILE ) ) {
+    if( ScopeType( GetCurrScope(), SCOPE_FILE ) ) {
         if( stg_class != STG_STATIC ) {
             CErr1( ERR_GLOBAL_ANONYMOUS_UNION_MUST_BE_STATIC );
         }
@@ -3109,7 +3109,7 @@ boolean ClassAnonymousUnion( DECL_SPEC *dspec )
             (static anonymous unions in classes are not implemented
              since there is no way to define it outside the class)
         */
-        if( ScopeType( CurrScope, SCOPE_BLOCK ) ) {
+        if( ScopeType( GetCurrScope(), SCOPE_BLOCK ) ) {
             if( stg_class & ~ (STG_STATIC|STG_AUTO) ) {
                 CErr1( ERR_FUNCTION_ANONYMOUS_UNION );
             } else if( stg_class & STG_STATIC ) {
@@ -3126,7 +3126,7 @@ boolean ClassAnonymousUnion( DECL_SPEC *dspec )
     // times that an inline alias for the anon-union symbol is not
     // created (it checks to make sure the sym is ref'd or init'd) AFS 97/05/16
     sym->flag |= SF_REFERENCED;
-    sym = InsertSymbol( CurrScope, sym, name );
+    sym = InsertSymbol( GetCurrScope(), sym, name );
     if( emit_init ) {
         DgSymbol( sym );
     }

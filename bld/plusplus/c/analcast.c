@@ -897,7 +897,7 @@ static PTREE castUdcf           // APPLY USER-DEFINED CONVERSION FUNCTION
                 // using ClassDefaultCopy will optimize away the actual
                 //  call to a copy ctor
                 //
-                SCOPE curr = CurrScope;
+                SCOPE curr = GetCurrScope();
                 DbgVerify( ctl->clscls_copy_init || ctl->diag_ext_conv
                          , "not copy init" );
                 ctl->used_destination = TRUE;
@@ -910,7 +910,7 @@ static PTREE castUdcf           // APPLY USER-DEFINED CONVERSION FUNCTION
                     ctl->expr->u.subtree[1] =
                         NodeRvalue( ctl->expr->u.subtree[1] );
                 }
-                CurrScope = curr;
+                SetCurrScope(curr);
 
             }
             if( okSoFar( ctl ) ) {

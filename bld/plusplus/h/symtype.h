@@ -1132,9 +1132,19 @@ extern boolean LinkageSpecified( void );
 
 // defined in SCOPE.C
 
+#if 0   /* hate globals! */
 extern SCOPE CurrScope;
 extern SCOPE FileScope;
 extern SCOPE InternalScope;
+#endif
+
+extern SCOPE    GetCurrScope(void);
+extern SCOPE    SetCurrScope(SCOPE);
+extern SCOPE    GetFileScope(void);
+extern SCOPE    SetFileScope(SCOPE);
+extern SCOPE    GetInternalScope(void);
+extern SCOPE    SetInternalScope(SCOPE);
+
 extern SYMBOL ChipBugSym;
 extern SYMBOL PCHDebugSym;
 extern SYMBOL DFAbbrevSym;

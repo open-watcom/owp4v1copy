@@ -142,7 +142,7 @@ boolean DeclNoInit( DECL_INFO *dinfo )
     }
     type = sym->sym_type;
     if( SymIsStaticMember( sym ) ) {
-        if( ScopeType( CurrScope, SCOPE_CLASS ) ) {
+        if( ScopeType( GetCurrScope(), SCOPE_CLASS ) ) {
             if( TypeAbstract( type ) ) {
                 return( diagnoseAbstractDefn( sym, type ) );
             }
@@ -236,7 +236,7 @@ boolean DeclWithInit( DECL_INFO *dinfo )
     }
     scope = SymScope( sym );
     if( ScopeEquivalent( scope, SCOPE_FILE ) ) {
-        if( ScopeType( CurrScope, SCOPE_TEMPLATE_INST ) ) {
+        if( ScopeType( GetCurrScope(), SCOPE_TEMPLATE_INST ) ) {
             if( TemplateVerifyDecl( sym ) ) {
                 return( FALSE );
             }
@@ -247,10 +247,10 @@ boolean DeclWithInit( DECL_INFO *dinfo )
                 CompFlags.extern_C_defn_found = 1;
             }
         }
-        if( ! ScopeType( CurrScope, SCOPE_FILE ) ) {
+        if( ! ScopeType( GetCurrScope(), SCOPE_FILE ) ) {
             CErr2p( ERR_CANNOT_INIT_IN_NON_FILE_SCOPE, sym );
         }
-    } else if( SymIsStaticMember( sym ) && ! ScopeType( CurrScope, SCOPE_CLASS ) ) {
+    } else if( SymIsStaticMember( sym ) && ! ScopeType( GetCurrScope(), SCOPE_CLASS ) ) {
         /* "int C::a;" instead of "static int a;" in "class C" */
         CompFlags.external_defn_found = TRUE;
     }
@@ -1022,7 +1022,7 @@ DECL_INFO *DeclFunction( DECL_SPEC *dspec, DECL_INFO *dinfo )
         return( dinfo );
     }
     dinfo->fn_defn = TRUE;
-    dinfo = InsertDeclInfo( CurrScope, dinfo );
+    dinfo = InsertDeclInfo( GetCurrScope(), dinfo );
     /* must refetch 'sym' */
     sym = dinfo->sym;
     if( sym != NULL ) {

@@ -866,7 +866,7 @@ static SYMBOL segDefineLabel(   // DEFINE LABEL FOR SEGMENT, IF REQ'D
             label->id = SC_AUTO;
         } else {
             label->id = SC_STATIC;
-            InsertSymbol( FileScope, label, name );
+            InsertSymbol( GetFileScope(), label, name );
         }
         seg->label = label;
         _markUsed( seg, TRUE );

@@ -674,7 +674,7 @@ static void parseSwitchStmt( void )
     switch_block->u.s.cases = NULL;
     switch_block->u.s.imm_block = NULL;
     switch_block->u.s.default_dropped = 0;
-    switch_block->u.s.defn_scope = CurrScope;
+    switch_block->u.s.defn_scope = GetCurrScope();
     switch_block->u.s.is_signed = TRUE;
     switch_block->u.s.default_locn.src_file = NULL;
     SrcFileGetTokenLocn( &switch_block->u.s.switch_locn );
@@ -1065,7 +1065,7 @@ static void parseTryBlock(      // PARSE TRY
     try_block->u.t.catch_err = FALSE;
     try_block->u.t.catches = NULL;
     try_block->u.t.catch_no = 0;
-    try_block->u.t.defn_scope = CurrScope;
+    try_block->u.t.defn_scope = GetCurrScope();
     try_block->u.t.try_locn = SrcPosnEmitCurrent();
     initBlkLabel( &try_block->outside );
     try_block->u.t.try_var = allocTryVar( try_block );
@@ -1383,13 +1383,13 @@ static boolean endOfStmt(       // PROCESS END-OF-STATEMENT
             switch( next->id ) {
             case CS_SWITCH :
                 if( top_block->u.b.block_switch ) {
-                    if( next->u.s.default_dropped || ! CurrScope->dtor_naked ) {
+                    if( next->u.s.default_dropped || ! GetCurrScope()->dtor_naked ) {
                         if( ! next->u.s.default_dropped ) {
                             TOKEN_LOCN locn;
                             locn = SrcPosnEmitCurrent();
                             genDefaultStmt( next, &locn );
                         }
-                        next->u.s.imm_block = CurrScope;
+                        next->u.s.imm_block = GetCurrScope();
                     }
                 }
                 if( ! currFunction->dead_code ) {
@@ -1554,12 +1554,12 @@ static void insertFunctionReturn( SYMBOL func )
         break;
       case OMR_SCALAR :
       case OMR_CLASS_VAL :
-        retn_sym = SymAllocReturn( CurrScope, base );
+        retn_sym = SymAllocReturn( GetCurrScope(), base );
         CgFrontCodePtr( IC_FUNCTION_RETN, retn_sym );
         break;
       case OMR_CLASS_REF :
         if( NULL == SymFunctionReturn() ) {
-            retn_sym = SymAllocReturn( CurrScope->enclosing, base );
+            retn_sym = SymAllocReturn( GetCurrScope()->enclosing, base );
             CgFrontCodePtr( IC_FUNCTION_RETN, retn_sym );
         }
         break;
@@ -1579,7 +1579,7 @@ static void exceptSpec(         // GENERATE AN EXCEPTION SPECIFICATION
     }
 #endif
     CgFrontCodePtr( IC_EXCEPT_SPEC, except );
-    ScopeKeep( CurrScope );
+    ScopeKeep( GetCurrScope() );
 }
 
 
@@ -1661,7 +1661,7 @@ static void doFnStartup( SYMBOL func
 {
     PTREE mem_init;
 
-    fdata->fn_scope = CurrScope;
+    fdata->fn_scope = GetCurrScope();
     func->flag |= SF_INITIALIZED;
     if( flags & FUNC_NO_STACK_CHECK ) {
         /* in case the type was derived from a stack-checked function */
@@ -1824,7 +1824,7 @@ static void initFunctionBody( DECL_INFO *dinfo, FUNCTION_DATA *f, TYPE fn_type )
         }
     }
     doFnStartup( func, f, mem_init, posnForFunction( dinfo ), FUNC_NULL );
-    ScopeArgumentCheck( CurrScope );
+    ScopeArgumentCheck( GetCurrScope() );
 }
 
 static void finiLabel( FNLABEL *lbl )
@@ -2078,8 +2078,8 @@ void FunctionBody( DECL_INFO *dinfo )
     fn_type = handleDefnChecks( func );
     handleDefnChangesToSym( func );
     previous_func = CgFrontCurrentFunction();
-    enclosing_scope = CurrScope;
-    CurrScope = parsing_scope;
+    enclosing_scope = GetCurrScope();
+    SetCurrScope(parsing_scope);
     initFunctionBody( dinfo, &fn_data, fn_type );
     // after initFunctionBody so .DEF files can have names in their prototypes
     MainProcSetup( func );
@@ -2204,7 +2204,7 @@ void FunctionBody( DECL_INFO *dinfo )
         break;
     }
     finiFunctionBody( func );
-    CurrScope = enclosing_scope;
+    SetCurrScope(enclosing_scope);
     CgFrontResumeFunction( previous_func );
 }
 

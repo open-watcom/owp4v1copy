@@ -1033,7 +1033,7 @@ PTO_FLAG PTreeOpFlags(          // GET FLAGS FOR A PTREE NODE
 PTREE PTreeNonZeroConstantExpr( PTREE expr )
 /******************************************/
 {
-    if( ScopeType( CurrScope, SCOPE_TEMPLATE_DECL ) ) {
+    if( ScopeType( GetCurrScope(), SCOPE_TEMPLATE_DECL ) ) {
         PTreeFreeSubtrees( expr );
         expr = PTreeIntConstant( 1, TYP_SINT );
     } else {
@@ -1130,7 +1130,7 @@ static PTREE makeDestructorId( SCOPE scope, PTREE id, TYPE class_type )
 PTREE MakeDestructorId( PTREE id )
 /********************************/
 {
-    return makeDestructorId( CurrScope, id, NULL );
+    return makeDestructorId( GetCurrScope(), id, NULL );
 }
 
 PTREE MakeDestructorIdFromType( DECL_SPEC *dspec )
@@ -1139,7 +1139,7 @@ PTREE MakeDestructorIdFromType( DECL_SPEC *dspec )
     PTREE id;
 
     id = MakeIdFromType( dspec );
-    return makeDestructorId( CurrScope, id, NULL );
+    return makeDestructorId( GetCurrScope(), id, NULL );
 }
 
 PTREE MakeOperatorId( CGOP op )

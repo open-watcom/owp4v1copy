@@ -107,15 +107,15 @@ static void typeSigAccessVar(   // ACCESS A DTOR, DEFAULT-CTOR, COPY-CTOR
     if( acc_var & info->acc ) {
         fill_out = info->acc & TSA_FILL_OUT;
         if( fill_out ) {
-            CurrScope = info->class_scope;
+            SetCurrScope(info->class_scope);
         } else {
-            CurrScope = info->access_scope;
+            SetCurrScope (info->access_scope);
         }
     } else {
         fill_out = TRUE;
-        CurrScope = info->class_scope;
+        SetCurrScope(info->class_scope);
     }
-    if( ( CurrScope != info->class_scope ) || ( sym == NULL ) ) {
+    if( ( GetCurrScope() != info->class_scope ) || ( sym == NULL ) ) {
         type = info->type;
         err_locn = info->err_locn;
         switch( acc_var ) {
@@ -167,12 +167,12 @@ static void typeSigAccess(      // HANDLE ACCESS FOR TYPE-SIGNATURE
         if( info.type != NULL ) {
             info.err_occurred = error_occurred;
             info.err_locn = err_locn;
-            info.access_scope = CurrScope;
+            info.access_scope = GetCurrScope();
             info.class_scope = TypeScope( info.type );
             typeSigAccessVar( TSA_DTOR,         &sig->dtor,         &info );
             typeSigAccessVar( TSA_DEFAULT_CTOR, &sig->default_ctor, &info );
             typeSigAccessVar( TSA_COPY_CTOR,    &sig->copy_ctor,    &info );
-            CurrScope = info.access_scope;
+            SetCurrScope(info.access_scope);
         }
     }
 }
@@ -290,7 +290,7 @@ TYPE_SIG *TypeSigFind(          // FIND TYPE SIGNATURE
             sym = NULL;
         } else {                // - type for TYPE SIGNATURE variable
             typesig_name = CppNameTypeSig( type );
-            sym = ScopeAlreadyExists( FileScope, typesig_name );
+            sym = ScopeAlreadyExists( GetFileScope(), typesig_name );
             if( sym == NULL ) {
                 typesig_type = MakeInternalType( size );
                 typesig_type = MakeCompilerConstCommonData( typesig_type );

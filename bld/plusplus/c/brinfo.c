@@ -575,7 +575,7 @@ static void brinfIcReference    // WRITE OUT A REFERENCE, IF REQ'D
     locn = adjustLocn( locn, &curr_locn );
     if( NULL == locn ) return;
     if( canWriteIc()
-     && activeScopesReset( CurrScope, locn ) ) {
+     && activeScopesReset( GetCurrScope(), locn ) ) {
         BrinfIcReference( opcode, ptr, locn );
     }
 }

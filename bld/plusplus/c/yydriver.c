@@ -298,7 +298,7 @@ static void fatalParserError( void )
 
 static boolean doFnbodyRewrite( void )
 {
-    switch( ScopeId( CurrScope ) ) {
+    switch( ScopeId( GetCurrScope() ) ) {
     case SCOPE_CLASS:
     case SCOPE_TEMPLATE_DECL:
         return( TRUE );
@@ -408,7 +408,7 @@ static int doId( void )
     if( LAToken == T_LT ) {
         control |= LK_LT_AHEAD;
     }
-    id_check = lexCategory( CurrScope, id, control );
+    id_check = lexCategory( GetCurrScope(), id, control );
     return( lookupToken[ id_check ] );
 }
 
@@ -538,9 +538,9 @@ static int scopedChain( PARSE_STACK *state, PTREE start, PTREE id, unsigned ctrl
     PTREE curr;
     TYPE class_type;
 
-    scope = CurrScope;
+    scope = GetCurrScope();
     if( start != NULL ) {
-        scope = FileScope;
+        scope = GetFileScope();
         if( ctrl & CH_ALREADY_STARTED ) {
             class_type = start->u.subtree[1]->type;
             if( class_type != NULL ) {
@@ -577,7 +577,7 @@ static int scopedChain( PARSE_STACK *state, PTREE start, PTREE id, unsigned ctrl
             }
             yylval.tree = makeBinary( CO_STORAGE, curr, id );
             /* kludge for constructor name */
-            if( name == id->u.id.name && ScopeId( CurrScope ) == SCOPE_FILE ) {
+            if( name == id->u.id.name && ScopeId( GetCurrScope() ) == SCOPE_FILE ) {
                 /* so S::S( T x ) {} works if T is a nested type */
                 return( Y_SCOPED_ID );
             }
@@ -652,7 +652,7 @@ static int templateScopedChain( PARSE_STACK *state )
                 }
                 yylval.tree = makeBinary( CO_STORAGE, curr, id );
                 /* kludge for constructor name */
-                if( name == id->u.id.name && ScopeEquivalent( CurrScope, SCOPE_FILE ) ) {
+                if( name == id->u.id.name && ScopeEquivalent( GetCurrScope(), SCOPE_FILE ) ) {
                     /* so S::S( T x ) {} works if T is a nested type */
                     return( Y_TEMPLATE_SCOPED_ID );
                 }
@@ -721,7 +721,7 @@ static int globalChain( PARSE_STACK *state )
             return( scopedChain( state, tree, id, CH_NULL ) );
         }
         yylval.tree = makeBinary( CO_STORAGE, tree, id );
-        id_check = lexCategory( FileScope, id, LK_LEXICAL );
+        id_check = lexCategory( GetFileScope(), id, LK_LEXICAL );
         return( globalLookupToken[ id_check ] );
     case T_OPERATOR:
         yylval.tree = makeUnary( CO_OPERATOR, tree );
@@ -773,7 +773,7 @@ int yylex( PARSE_STACK *state )
             break;
         case Y_TYPE_NAME:
             // this is the only kind of id that can change in an ambiguity zone
-            id_check = lexCategory( CurrScope, yylval.tree, LK_LEXICAL );
+            id_check = lexCategory( GetCurrScope(), yylval.tree, LK_LEXICAL );
             if( id_check != LK_TYPE ) {
                 yylval.tree->type = NULL;
                 token = Y_ID;
@@ -991,7 +991,7 @@ static DECL_SPEC *sendType( PTREE tree )
             DbgAssert( sub_tree->op == PT_ID );
             scope = sub_tree->u.id.scope;
         } else {
-            scope = FileScope;
+            scope = GetFileScope();
         }
     } else {
         type = tree->type;
@@ -1120,7 +1120,7 @@ static void commonInit( PARSE_STACK *stack )
 {
     stack->restart = NULL;
     stack->gstack = NULL;
-    stack->reset_scope = CurrScope;
+    stack->reset_scope = GetCurrScope();
     stack->qualifications = NULL;
     VstkOpen( &(stack->look_ahead_storage), sizeof(look_ahead_storage), 16 );
     stack->look_ahead_count = 0;
@@ -1237,7 +1237,7 @@ static void deleteStack( PARSE_STACK *stack )
     if( stack->template_record_tokens != NULL ) {
         RewriteFree( stack->template_record_tokens );
     }
-    CurrScope = stack->reset_scope;
+    SetCurrScope(stack->reset_scope);
     check_stack = StackPop( &currParseStack );
 #ifndef NDEBUG
     if( check_stack != stack ) {
@@ -1255,7 +1255,7 @@ static void pushRestartDecl( PARSE_STACK *state )
     restart->state = state;
     restart->ssp = state->ssp;
     restart->gstack = state->gstack;
-    restart->reset_scope = CurrScope;
+    restart->reset_scope = GetCurrScope();
 }
 
 static void doPopRestartDecl( PARSE_STACK *state )
@@ -1278,7 +1278,7 @@ static void popRestartDecl( PARSE_STACK *state )
     DbgStmt( restart = state->restart );
     restartDeclOK( restart );
     DbgAssert( restart->gstack == restart->state->gstack );
-    DbgAssert( restart->reset_scope == CurrScope );
+    DbgAssert( restart->reset_scope == GetCurrScope() );
     doPopRestartDecl( state );
 }
 
@@ -1312,7 +1312,7 @@ static void syncToRestart( PARSE_STACK *state )
             state->lsp -= pop_amount;
         }
         DbgAssert( restart->gstack == state->gstack );
-        DbgAssert( restart->reset_scope == CurrScope );
+        DbgAssert( restart->reset_scope == GetCurrScope() );
         restartInit( state );
     } else {
         fatalParserError();
@@ -1446,7 +1446,7 @@ static void pushOperatorQualification( PTREE tree )
     scope_tree = tree->u.subtree[0]->u.subtree[1];
     class_type = StructType( scope_tree->type );
     if( class_type != NULL ) {
-        ScopeQualifyPush( class_type->u.c.scope, CurrScope );
+        ScopeQualifyPush( class_type->u.c.scope, GetCurrScope() );
     }
 }
 
@@ -1859,7 +1859,7 @@ static void makeStable( int end_token )
             case T_CATCH:
             case T_RIGHT_BRACE:
                 if( token_absorbed ) {
-                    if( ScopeId( CurrScope ) == SCOPE_BLOCK ) {
+                    if( ScopeId( GetCurrScope() ) == SCOPE_BLOCK ) {
                         return;
                     }
                 }
@@ -2416,7 +2416,7 @@ pch_status PCHWriteParserData( void )
 pch_status PCHReadParserData( void )
 {
     if( currParseStack != NULL ) {
-        currParseStack->reset_scope = FileScope;
+        currParseStack->reset_scope = GetFileScope();
     }
     return( PCHCB_OK );
 }

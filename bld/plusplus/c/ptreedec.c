@@ -696,7 +696,7 @@ PTREE PtdDltDtorSize            // DECORATE FOR SIZE OF DTORABLE-ELEMENT
 PTREE PtdDltDtorEnd             // DECORATE FOR END OF DTORABLE-ELEMENT ON DEL
     ( PTREE expr )              // - expression
 {
-    ScopeKeep( CurrScope );
+    ScopeKeep( GetCurrScope() );
     FunctionHasRegistration();
     return ptdBase( expr, PTD_DEL_DTORED );
 }

@@ -1328,12 +1328,12 @@ simple-declaration-before-semicolon
 simple-declaration
     : decl-specifiers declarator-list
     {
-        CheckDeclarationDSpec( state->gstack->u.dspec, CurrScope );
+        CheckDeclarationDSpec( state->gstack->u.dspec, GetCurrScope() );
         GStackPop( &(state->gstack) );
     }
     | no-declarator-declaration
     {
-        CheckDeclarationDSpec( state->gstack->u.dspec, CurrScope );
+        CheckDeclarationDSpec( state->gstack->u.dspec, GetCurrScope() );
         GStackPop( &(state->gstack) );
     }
     | asm-declaration
@@ -1641,7 +1641,7 @@ linkage-id
         LinkagePush( $1->u.string->string );
         StringTrash( $1->u.string );
         PTreeFree( $1 );
-        if( ! ScopeType( CurrScope, SCOPE_FILE ) ) {
+        if( ! ScopeType( GetCurrScope(), SCOPE_FILE ) ) {
             CErr1( ERR_ONLY_GLOBAL_LINKAGES );
         }
     }
@@ -1661,7 +1661,7 @@ declarator-list
 init-declarator
     : declarator
     {
-        $$ = InsertDeclInfo( CurrScope, $1 );
+        $$ = InsertDeclInfo( GetCurrScope(), $1 );
         GStackPush( &(state->gstack), GS_INIT_DATA );
         $$ = DataInitNoInit( &(state->gstack->u.initdata), $$ );
         GStackPop( &(state->gstack) );
@@ -1671,12 +1671,12 @@ init-declarator
     | ptr-mod-init-declarator
     {
         $1 = FinishDeclarator( state->gstack->u.dspec, $1 );
-        $$ = InsertDeclInfo( CurrScope, $1 );
+        $$ = InsertDeclInfo( GetCurrScope(), $1 );
     }
     | actual-declarator Y_LEFT_PAREN expression-list Y_RIGHT_PAREN
     {
         $1 = FinishDeclarator( state->gstack->u.dspec, $1 );
-        $$ = InsertDeclInfo( CurrScope, $1 );
+        $$ = InsertDeclInfo( GetCurrScope(), $1 );
 	setInitWithLocn( $$, $3, &yylp[2] );
     }
     ;
@@ -1684,7 +1684,7 @@ init-declarator
 comma-init-declarator
     : comma-declarator
     {
-        $$ = InsertDeclInfo( CurrScope, $1 );
+        $$ = InsertDeclInfo( GetCurrScope(), $1 );
         GStackPush( &(state->gstack), GS_INIT_DATA );
         $$ = DataInitNoInit( &(state->gstack->u.initdata), $$ );
         GStackPop( &(state->gstack) );
@@ -1695,13 +1695,13 @@ comma-init-declarator
     {
 	$2 = AddMSCVQualifierKludge( $1, $2 );
         $2 = FinishDeclarator( state->gstack->u.dspec, $2 );
-        $$ = InsertDeclInfo( CurrScope, $2 );
+        $$ = InsertDeclInfo( GetCurrScope(), $2 );
     }
     | cv-qualifiers-opt actual-declarator Y_LEFT_PAREN expression-list Y_RIGHT_PAREN
     {
 	$2 = AddMSCVQualifierKludge( $1, $2 );
         $2 = FinishDeclarator( state->gstack->u.dspec, $2 );
-        $$ = InsertDeclInfo( CurrScope, $2 );
+        $$ = InsertDeclInfo( GetCurrScope(), $2 );
 	setInitWithLocn( $$, $4, &yylp[3] );
     }
     ;
@@ -1709,7 +1709,7 @@ comma-init-declarator
 declaring-declarator
     : declarator
     {
-        $$ = InsertDeclInfo( CurrScope, $1 );
+        $$ = InsertDeclInfo( GetCurrScope(), $1 );
         GStackPush( &(state->gstack), GS_DECL_INFO );
         state->gstack->u.dinfo = $$;
     }
@@ -1718,7 +1718,7 @@ declaring-declarator
 comma-declaring-declarator
     : comma-declarator
     {
-        $$ = InsertDeclInfo( CurrScope, $1 );
+        $$ = InsertDeclInfo( GetCurrScope(), $1 );
         GStackPush( &(state->gstack), GS_DECL_INFO );
         state->gstack->u.dinfo = $$;
     }
@@ -2254,7 +2254,7 @@ function-definition
 	    GStackPop( &(state->gstack) );	/* decl-spec */
 	}
         if( $1->body != NULL ) {
-            if( ScopeType( CurrScope, SCOPE_TEMPLATE_DECL ) ) {
+            if( ScopeType( GetCurrScope(), SCOPE_TEMPLATE_DECL ) ) {
                 TemplateFunctionAttachDefn( $1 );
             } else {
                 ClassStoreInlineFunc( $1 );
@@ -2546,7 +2546,7 @@ simple-member-declaration
     }
     | decl-specifiers ctor-declarator
     {
-        InsertDeclInfo( CurrScope, $2 );
+        InsertDeclInfo( GetCurrScope(), $2 );
         FreeDeclInfo( $2 );
         GStackPop( &(state->gstack) );
     }
@@ -2568,11 +2568,11 @@ member-declarator
     : declarator Y_EQUAL Y_CONSTANT
     {
         VerifyPureFunction( $1, $3 );
-        $$ = InsertDeclInfo( CurrScope, $1 );
+        $$ = InsertDeclInfo( GetCurrScope(), $1 );
     }
     | declarator
     {
-        $$ = InsertDeclInfo( CurrScope, $1 );
+        $$ = InsertDeclInfo( GetCurrScope(), $1 );
 	DeclNoInit( $$ );
     }
     |         Y_COLON constant-expression
@@ -2653,7 +2653,7 @@ template-key
     {
         if( state->template_decl ) {
             CErr1( ERR_NO_NESTED_TEMPLATES );
-        } else if( ! ScopeType( CurrScope, SCOPE_FILE ) ) {
+        } else if( ! ScopeType( GetCurrScope(), SCOPE_FILE ) ) {
             CErr1( ERR_ONLY_GLOBAL_TEMPLATES );
         }
         state->template_decl = TRUE;
