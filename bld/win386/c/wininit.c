@@ -51,7 +51,6 @@ typedef char __far *va_list[1];
 #include <share.h>
 #include <sys\stat.h>
 #include <windows.h>
-#include <lzexpand.h>
 #include "winext.h"
 #include "watcom.h"
 #include "tinyio.h"
