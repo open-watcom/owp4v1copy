@@ -45,6 +45,7 @@
 #include "procdef.h"
 #include "cgaux.h"
 #include "ppcenc.h"
+#include "ppcgen.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -76,9 +77,6 @@ extern  code_lbl        *GetWeirdPPCDotDotLabel( code_lbl * );
 extern type_class_def   Unsigned[];
 extern type_length      TypeClassSize[];
 extern proc_def         *CurrProc;
-
-typedef uint_32         opcode;
-typedef uint_32         reg_index;
 
 #define _NameReg( op )                  ( (op)->r.arch_index )
 #define _IsSigned( type )               ( Unsigned[ type ] != type )

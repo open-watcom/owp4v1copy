@@ -41,6 +41,7 @@
 #include "model.h"
 #include "ppcenc.h"
 #include "ppcparm.h"
+#include "ppcgen.h"
 
 extern  seg_id          SetOP( seg_id );
 extern  seg_id          AskCodeSeg( void );
@@ -50,10 +51,6 @@ extern  hw_reg_set      *GPRegs();
 extern  hw_reg_set      *FPRegs();
 extern  hw_reg_set      *ParmRegs();
 extern  hw_reg_set      SaveRegs();
-extern  void            GenMEMINS( uint_8, uint_8, uint_8, signed_16 );
-extern  void            GenOPINS( uint_8, uint_8, uint_8, uint_8, uint_8 );
-extern  void            GenOPIMM( uint_8, uint_8, uint_8, signed_16 );
-extern  void            GenMTSPR( uint_8, uint_8, bool );
 extern  pointer         CGAlloc( unsigned );
 extern  void            CGFree( pointer );
 extern  hw_reg_set      StackReg();
@@ -62,7 +59,6 @@ extern  hw_reg_set      FrameReg();
 extern  hw_reg_set      FrameBaseReg();
 extern  hw_reg_set      TocReg();
 extern  hw_reg_set      VarargsHomePtr();
-extern  void            GenRET();
 extern  sym_handle      AskForLblSym( label_handle );
 extern  fe_attr         FEAttr( sym_handle );
 extern  void            DbgRtnBeg( dbg_rtn *rtn,  offset lc );
@@ -250,7 +246,7 @@ static  void    initSavedRegs( stack_record *saved_regs, type_length *offset ) {
 static  void    genMove( uint_32 src, uint_32 dst ) {
 /***************************************************/
 
-    GenOPINS( 31, 144, dst, src, src );
+    GenOPINS( 31, 444, dst, src, src );
 }
 
 static  void    genAdd( uint_32 src, signed_16 disp, uint_32 dst ) {
