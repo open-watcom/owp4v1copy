@@ -1,5 +1,5 @@
 bld_ver      = $(%bld_ver)
-patch_level  =
+patch_level  = 0
 lang_root    = $(%lang)
 build_dir    = $(%devdir)\build
 dev_dir      = $(%devdir)
