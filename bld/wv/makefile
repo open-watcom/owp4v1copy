@@ -2,15 +2,14 @@
 # WATCOM Debugger makefile
 #
 
+!include cproj.mif
+!include defrule.mif
+
 !ifndef bin_root
 !ifdef bin_root_wv
 bin_root = $(bin_root_wv)
 !endif
 !endif
-
-#For the debugger we must use dos4g 1.96 because it does not work with
-#dos4g 1.97, probably due to some optimizations made in 1.97
-dos4g_ver = dos4g196
 
 cdir   = $(wv_dir)\c
 hdir   = $(wv_dir)\h
@@ -429,14 +428,7 @@ post_process :.PROCEDURE
 !endif
 !ifeq host_OS dos
 !ifeq host_CPU 386
-!ifdef on_build_machine
-        @ren $(bdir)\$(%NAME).$(EXE) x.exe
-        @copy $(rsi_root)\bin\$(dos4g_ver).exe d4g.exe
-        @$(rsi_root)\bin\expmod d4g.exe pmem=384 xmax=384
-        $(rsi_root)\bin\4gbind d4g.exe $(bdir)\x.exe $(bdir)\$(%NAME).$(EXE) -V
-        @del d4g.exe
-        @del $(bdir)\x.exe
-!else ifdef really_ovl_dos
+!ifdef really_ovl_dos
         copy dv.map $(lnk2)
         vi -d -q -s ..\mapfix.vi $(lnk2)
         $(linker) $(symfile) $(%DEBUG) name $(bdir)\$(%NAME).$(EXE) @$(lnk) @$(lnk2) $(endsect)
@@ -473,16 +465,6 @@ srcmgt.obj : $(watcom_dir)\c\srcmgt.c $(hdir)\srcmgt.h  .autodepend
 
 finger_msg  :.PROCEDURE
        @set DGINFO=
-!ifdef on_build_machine
-!ifeq host_os dos
-!ifeq host_CPU 386
-        @copy $(rsi_root)\bin\$(dos4g_ver).exe dos4g.exe
-        -@dos4g $(rsi_root)\bin\dginfo >dginfo.gh
-        @set DGINFO=-fidginfo.gh
-        @del dos4g.exe
-!endif
-!endif
-!endif
         @$(compiler_$(host_CPU)) ..\..\c\fingmsg $(cflags) $(%DGINFO) @ipaths
 
 bitmaps = &

@@ -69,14 +69,14 @@ extern unsigned         (TRAPENTRY *ReqFunc)( unsigned, mx_entry *,
 #define PSP_ENVSEG_OFF          0x2c
 
 #define TRAP_SIGNATURE          0xdeaf
-typedef struct {
+typedef _Packed struct {
     unsigned_16         sig;
     addr32_off          init;
     addr32_off          req;
     addr32_off          fini;
 } trap_file_header;
 
-typedef struct {
+typedef _Packed struct {
     memptr      ptr;
     unsigned_16 len;
 } mx_entry16;
@@ -397,7 +397,7 @@ static char *SetTrapHandler()
 
 static bool CallTrapInit( char *parm, char *errmsg, trap_version *trap_ver )
 {
-    struct {
+    _Packed struct {
         unsigned_16     remote;
         unsigned_16     retcode;
         trap_version    version;
