@@ -46,7 +46,7 @@ extern  int     __close( int );
 void    (*__RmTmpFileFn)( FILE *fp );
 #endif
 
-#if defined(__DOS__) || defined(__OS2__) || defined(__NT__)
+#if defined(__DOS__) || defined(__OS2__) || defined(__NT__) || defined(__WINDOWS__)
 extern  long    __lseek( int handle, long offset, int origin );
 #else
 #define __lseek lseek

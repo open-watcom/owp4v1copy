@@ -42,7 +42,7 @@
 
 #if !defined(__NETWARE__) && !defined (_THIN_LIB)
 
-#if defined(__DOS__) || defined(__OS2__) || defined(__NT__)
+#if defined(__DOS__) || defined(__OS2__) || defined(__NT__) || defined(__WINDOWS__)
 extern  long    __lseek( int handle, long offset, int origin );
 #else
 #define __lseek lseek
