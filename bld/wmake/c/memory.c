@@ -211,7 +211,7 @@ extern void MemFini( void )
     MemCheck();
     close( trkfile );
     if( purge_flag ) {
-        remove( "mem.trk" );
+        unlink( "mem.trk" );
     }
 #endif
 #endif
