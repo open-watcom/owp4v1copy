@@ -35,6 +35,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 #include <malloc.h>
 #include <time.h>
 
@@ -79,6 +80,7 @@ void main( int argc, char **argv )
     auto samp_header    head;
     cgraph_sample *     sptr;
     auto struct stat    file_stat;
+    time_t              stamp;
     count_info          *count;
 
 
@@ -190,11 +192,12 @@ void main( int argc, char **argv )
             break;
         case SAMP_CODE_LOAD:
         case SAMP_MAIN_LOAD:
+	    stamp = data->d.code.time_stamp;
             printf( "  name = \"%s\"\n", data->d.code.name );
             printf( "  overlay table = %.4x:%.8lx\n",
                     data->d.code.ovl_tab.segment, data->d.code.ovl_tab.offset );
-            printf( "  time stamp %lx -> %s", data->d.code.time_stamp,
-                    ctime( &(data->d.code.time_stamp) ) );
+            printf( "  time stamp %lx -> %s", stamp,
+                    ctime( &stamp ) );
             if( stat( data->d.code.name, &file_stat ) == 0 ) {
                 printf( "  actual time stamp %lx -> %s", file_stat.st_mtime,
                         ctime( &(file_stat.st_mtime) ) );
