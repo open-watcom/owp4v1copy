@@ -295,7 +295,7 @@ BOOL FormatHeapListItem( char *line, unsigned index )
 
 static BOOL SaveGlobalListState( HWND boxhwnd, GlobStateStruct *state ) {
 
-    int         top, sel;
+    LRESULT     top, sel;
 
     if( HeapList == NULL ) return( FALSE );
     top = SendMessage( boxhwnd, LB_GETTOPINDEX, 0, 0L );

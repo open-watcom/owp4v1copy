@@ -532,7 +532,7 @@ BOOL __export FAR PASCAL ItemDisplayProc( HWND hwnd, WORD msg, WORD wparam,
 void ShowHeapObject( HWND lbhandle )
 {
     heap_list   *hl;
-    int         index;
+    LRESULT     index;
     HWND        dispwnd;
     HWND        memhdl;
     BOOL        is_res;

@@ -63,7 +63,7 @@ static void setCharSize( HWND parent )
  */
 void SpyOut( LPSTR res )
 {
-    static int  i;
+    static LRESULT i;
 
     if( SpyMessagesPaused ) {
         return;

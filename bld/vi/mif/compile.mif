@@ -79,7 +79,14 @@ wasm_flags = -3
         wasm $(wasm_flags) $[*
 #       masm $(masm_flags) /Mx /Zd $[*;
 
+!ifdef __LINUX__
+.ctl.ch:
+        $(bld_bin)/parsectl $[@ $[&.ch Ctl_$^&
+.dyn.dh:
+        $(bld_bin)/parsedyn $[@ $[&.dh Dyn_$^&
+!else
 .ctl.ch:
         $(bld_bin)\parsectl $[@ $[&.ch Ctl_$^&
 .dyn.dh:
         $(bld_bin)\parsedyn $[@ $[&.dh Dyn_$^&
+!endif

@@ -412,7 +412,7 @@ $(dll_bld_name).lib : $(dll_bld_name).dll
 $(dll_bld_name).dll : $(rc_objs) $(depends_dll) pdllbld.lnk
     $(linker) $(lflags_dll) NAME $^* @pdllbld
 !ifdef build_rc_$(host_os)_$(host_cpu)
-    $(rc) -q -bt=$(build_rc_$(host_os)_$(host_cpu)) plusplus.rc $^@
+    $(rc) -bt=$(build_rc_$(host_os)_$(host_cpu)) ./plusplus.rc $^@
 !endif
 
 $(exe_dbg_name).exe : $(depends_drv) pdrvdbg.lnk $(dll_dbg_name).lib

@@ -5,7 +5,7 @@ TARG=windows
 EXE = exe
 FORM = windows
 !endif
-INCLUDES=;$(WATCOM_DIR)/h;$(%WATCOM)/h/win;$(%WATCOM)/h
+INCLUDES=;$(watcom_dir)/h;$(%WATCOM)/h/win;$(%WATCOM)/h
 
 EXTRA = -zu
 

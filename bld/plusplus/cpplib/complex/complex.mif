@@ -1,8 +1,8 @@
 prefix = cplx
 
-cpp_dirs = ..\cpp
-c_dirs = ..\c
-inc_dirs = ..\h
+cpp_dirs = ../cpp
+c_dirs = ../c
+inc_dirs = ../h
 
 objs = &
 abs.obj &

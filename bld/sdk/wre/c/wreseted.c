@@ -119,9 +119,9 @@ Bool WRESetLBoxWithWResID ( HWND lbox, WResID *id, void *data )
 
 char *WREGetStrFromEdit ( HWND edit, Bool *mod )
 {
-    char  *cp;
-    int    text_length;
-    int    text_copied;
+    char    *cp;
+    LRESULT text_length;
+    LRESULT text_copied;
 
     text_copied = 0;
 

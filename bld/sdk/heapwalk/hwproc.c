@@ -216,7 +216,7 @@ static void ResetFont( GblWndInfo *info ) {
  */
 static DWORD CheckForLocalSelect( GblWndInfo *info ) {
 
-    DWORD       index;
+    LRESULT    index;
 
     index = SendMessage( info->list.box, LB_GETCURSEL, 0, 0 );
     if( index == LB_ERR ) {

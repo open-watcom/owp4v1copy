@@ -43,7 +43,7 @@ static DWORD    AddTotal;
 
 void ShowSelector( HWND list ) {
 
-    DWORD       index;
+    LRESULT     index;
     char        buf[100];
     WORD        sel;
     char        *msgtitle;
@@ -71,7 +71,7 @@ void ShowSelector( HWND list ) {
 
 BOOL GlobDiscardObj( HWND list ) {
 
-    DWORD       index;
+    LRESULT     index;
     char        buf[100];
     char        *msgtitle;
 
@@ -101,7 +101,7 @@ BOOL GlobDiscardObj( HWND list ) {
 
 BOOL GlobSetObjPos( HWND list, BOOL oldest ) {
 
-    DWORD               index;
+    LRESULT             index;
     GLOBALENTRY         ge;
     GLOBALENTRY         *item;
     BOOL                is_newest;
@@ -248,7 +248,7 @@ HWND StartAdd( HWND parent, ListBoxInfo *info ) {
 
 void RefreshAdd( HWND dialog, HWND lbhwnd ) {
     int         *items;
-    DWORD       cnt;
+    LRESULT     cnt;
     DWORD       total;
     DWORD       i;
     char        buf[100];

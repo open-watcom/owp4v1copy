@@ -4,5 +4,5 @@ host_OS = os2
 host_CPU = 386
 
 imp_libs = &
-         $(watcom_dir)\lib\dwarfrp.lib
+         $(watcom_dir)/lib/dwarfrp.lib
 !include ../dwarf.mif

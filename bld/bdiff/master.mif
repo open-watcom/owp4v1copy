@@ -69,7 +69,7 @@ wcpatch.exe : $(WBJS) makefile
         @%append tmp.lnk lib $(wreslib)
         @for %i in ($(WBJS)) do @%append tmp.lnk file %i
         wlink @tmp
-        erase tmp.lnk
+        rm -f tmp.lnk
 
 #
 # WPATCH. Apply patch. Uses .ybj object extension because of /d_WPATCH requirement
@@ -79,7 +79,7 @@ wpatch.exe : $(YBJS) makefile
         @%create tmp.lnk
         @for %i in ($(YBJS)) do @%append tmp.lnk file %i
         wlink name wpatch $(%debug) lib $(wreslib) @tmp
-        erase tmp.lnk
+        rm -f tmp.lnk
 
 #
 # BPATCH. Uses .pbj object extension because of /d_WPATCH requirement
@@ -93,7 +93,7 @@ bpatch.exe : bpatch.res $(OBJ) makefile
         @%append tmp.lnk lib $(wreslib)
         @for %i in ($(OBJ)) do @%append tmp.lnk file %i
         wlink @tmp
-        erase tmp.lnk
+        rm -f tmp.lnk
         wstrip -q -a -r bpatch.exe . bpatch.res
 
 #
@@ -107,7 +107,7 @@ bdump.exe : bpatch.res $(XBJ) makefile
         @%append tmp.lnk lib $(wreslib)
         @for %i in ($(XBJ)) do @%append tmp.lnk file %i
         wlink @tmp
-        erase tmp.lnk
+        rm -f tmp.lnk
         wstrip -q -a -r bdump.exe . bpatch.res
 
 #
@@ -121,7 +121,7 @@ bdiff.exe : $(DBJ) makefile bdiff.res
         @%append tmp.lnk lib $(wreslib)
         @for %i in ($(DBJ)) do @%append tmp.lnk file %i
         wlink @tmp
-        erase tmp.lnk
+        rm -f tmp.lnk
         wstrip -q -a -r bdiff.exe . bdiff.res
 
 #

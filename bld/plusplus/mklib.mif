@@ -55,13 +55,13 @@ $(target_lib) : $(target_objs)
 !ifdef uncompressed
     %create $(lbcfile)
     @for %i in ($(target_objs)) do @%append $(lbcfile) +%i
-    $(librarian) -q-n $(lib_flags) $^@ @$(lbcfile)
+    $(librarian) -n $(lib_flags) $^@ @$(lbcfile)
     rm -f $(lbcfile)
 !else
     @set obj_list=$(target_objs)
     $(concatenate) @obj_list >__wrk__.obj
     @set obj_list=
-    $(librarian) -q $(lib_flags) $^@ -+__wrk__.obj
+    $(librarian) $(lib_flags) $^@ -+__wrk__.obj
     @rm -f __wrk__.obj
     @*$(truncate) -q $(target_objs)
 !endif
@@ -72,13 +72,13 @@ $(target_lib_x) : $(target_xbjs)
 !ifdef uncompressed
     %create $(lbcfile)
     @for %i in ($(target_xbjs)) do @%append $(lbcfile) +%i
-    $(librarian) -q-n $(lib_flags) $^@ @$(lbcfile)
+    $(librarian) -n $(lib_flags) $^@ @$(lbcfile)
     rm -f $(lbcfile)
 !else
     @set obj_list=$(target_xbjs)
     $(concatenate) @obj_list >__wrk__.obj
     @set obj_list=
-    $(librarian) -q $(lib_flags) $^@ -+__wrk__.obj
+    $(librarian) $(lib_flags) $^@ -+__wrk__.obj
     @rm -f __wrk__.obj
     @*$(truncate) -q $(target_xbjs)
     wtouch compile.tim
@@ -218,7 +218,7 @@ reference : .symbolic $(target_lib)
     cp $(target_lib) $(plusplus_dir)/bin
 
 update : .symbolic $(target_lib)
-    $(librarian) -b -c -n -q -s -t $(lang_root)/$(production_lib)/$(target_lib) +$(target_lib)
+    $(librarian) -b -c -n -s -t $(lang_root)/$(production_lib)/$(target_lib) +$(target_lib)
 
 .EXTENSIONS:
 .EXTENSIONS: .exe .lnk .obj .xbj .c .cpp .asm

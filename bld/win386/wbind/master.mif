@@ -19,6 +19,8 @@ extra_l_flags_nt = op stack=12k
 extra_l_flags_dos = op stack=8k
 extra_l_flags_os2 = op stack=12k,heap=8k,newfile
 
+inc_dirs = ../../h
+
 wbind.exe: wbind.obj
     $(linker) $(lflags) name $^@ file $[@
 

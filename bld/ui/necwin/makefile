@@ -6,7 +6,7 @@ TARG=windows
 !ifndef FORM
 EXE = exe
 FORM = windows
-INCLUDES =;../../necdos/h;$(WATCOM_DIR)/h;$(%WATCOM)/h/win;$(%WATCOM)/h
+INCLUDES =;../../necdos/h;$(watcom_dir)/h;$(%WATCOM)/h/win;$(%WATCOM)/h
 !endif
 
 extra_cdir = ../../necdos/c

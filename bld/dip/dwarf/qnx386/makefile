@@ -4,6 +4,6 @@ host_OS = qnx
 host_CPU = 386
 
 imp_libs = &
-         $(watcom_dir)\lib\dwarfrps.lib
+         $(watcom_dir)/lib/dwarfrps.lib
 
 !include ../dwarf.mif

@@ -218,7 +218,7 @@ Bool WdeSetSelectInfo ( HWND hDlg, WdeDialogSelectInfo *si )
 
 Bool WdeGetSelectInfo( HWND hDlg, WdeDialogSelectInfo *si )
 {
-    int            count;
+    LRESULT        count;
     int           *sel;
     Bool           ok;
     LRESULT        ret;

@@ -10,10 +10,10 @@ all : wstub.exe wstubq.exe
 !include deftarg.mif
 
 wstub.exe : wstub.obj
-        $(linker) file $[@ name $^@ op quiet, map sys dos
+        $(linker) file $[@ name $^@ op map sys dos
 wstubq.exe : wstubq.obj
-        $(linker) file $[@ name $^@ op quiet, map sys dos
+        $(linker) file $[@ name $^@ op map sys dos
 wstub.obj : wstub.c
-        $(cc) -bt=dos $[@ -oaxs
+        $(cc) -bt=dos $[@ -oaxs -fo=$^@
 wstubq.obj : wstub.c
         $(cc) -bt=dos $[@ -oaxs -dQUIET -fo=$^@

@@ -26,9 +26,9 @@ WINDOWS = 1
 !include wres.mif
 
 # path names used in the script
-wacc_dir        =$(sdk_dir)\wresedit\waccel
-wmenu_dir       =$(sdk_dir)\wresedit\wmenu
-wstring_dir     =$(sdk_dir)\wresedit\wstring
+wacc_dir        =$(sdk_dir)/wresedit/waccel
+wmenu_dir       =$(sdk_dir)/wresedit/wmenu
+wstring_dir     =$(sdk_dir)/wresedit/wstring
 
 !ifdef on_build_machine
 NODEBUG=1
@@ -68,19 +68,19 @@ OBJS += trmem.tbj trmemcvr.tbj
 !endif
 
 # where to look for various files
-.c         : ..\c;$(misc_dir);$(cpp_dir);$(trmem_dir)
-.rc        : ..\h
+.c         : ../c;$(misc_dir);$(cpp_dir);$(trmem_dir)
+.rc        : ../h
 
-inc_dirs = h;..\h;$(watcom_dir)\h;$(wstring_dir)\h;$(wmenu_dir)\h;$(wacc_dir)\h;
-inc_dirs += $(wr_dir)\h;$(trmem_dir);$(wres_dir)\h;$(cpp_dir);$(misc_dir)
+inc_dirs = h;../h;$(watcom_dir)/h;$(wstring_dir)/h;$(wmenu_dir)/h;$(wacc_dir)/h;
+inc_dirs += $(wr_dir)/h;$(trmem_dir);$(wres_dir)/h;$(cpp_dir);$(misc_dir)
 
 .BEFORE
         @set include=$(inc_path)
 
-resedit_libs    = $(wacc_dir)\$(host_OS)$(host_CPU)\wacc.lib 
-resedit_libs   += $(wmenu_dir)\$(host_OS)$(host_CPU)\wmenu.lib
-resedit_libs   += $(wstring_dir)\$(host_OS)$(host_CPU)\wstring.lib
-wr_lib          = $(wr_dir)\$(host_OS)$(host_CPU)\wr.lib
+resedit_libs    = $(wacc_dir)/$(host_OS)$(host_CPU)/wacc.lib 
+resedit_libs   += $(wmenu_dir)/$(host_OS)$(host_CPU)/wmenu.lib
+resedit_libs   += $(wstring_dir)/$(host_OS)$(host_CPU)/wstring.lib
+wr_lib          = $(wr_dir)/$(host_OS)$(host_CPU)/wr.lib
 
 extra_l_flags = op map, v library {$(wres_lib) $(resedit_libs) $(wr_lib)}
 extra_l_flags_nt = op stack=32k,heap=16k commit heap=8k

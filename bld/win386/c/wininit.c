@@ -273,7 +273,7 @@ int Init32BitTask( HINSTANCE thishandle, HINSTANCE prevhandle, LPSTR cmdline,
      */
 //    BreakPoint();
     minmem = (DWORD) exe.min_data *(DWORD) 4096L;
-    if( exe.max_data == -1 ) {
+    if( exe.max_data == (WORD)-1 ) {
         maxmem = 4096L;
     } else {
         maxmem = (DWORD) exe.max_data*4096L;

@@ -1,16 +1,16 @@
 .EXTENSIONS:
 .EXTENSIONS: .qnx .exe .obj .cbj .abj .asm .c .h
 
-.asm: ..\a
+.asm: ../a
 .asm.obj:
-        $(asm286) /s/mx $[*;
+        $(asm286) -s-mx $[*;
 
-.c: ..\c;$(wasm_dir)\c
+.c: ../c;$(wasm_dir)/c
 .c.obj:
-        $(comp286) $[* $(cflags)
+        $(comp286) $[* $(cflags) -fo=.obj
 
 .c.abj:
-        $(comp286) $[* $(cflags) /fo=.abj /nt=PASS1_TEXT
+        $(comp286) $[* $(cflags) -fo=.abj -nt=PASS1_TEXT
 
 .c.cbj:
-        $(comp286) $[* $(cflags) /fo=.cbj /nt=_RNTEXT_TEXT /g=_RNTEXT
+        $(comp286) $[* $(cflags) -fo=.cbj -nt=_RNTEXT_TEXT -g=_RNTEXT

@@ -15,7 +15,7 @@ mem.obj &
 records.obj &
 wildargv.obj
 
-.c: ..\c;$(lang_root)\src\startup
+.c: ../c;$(lang_root)/src/startup
 
 fcenable.exe : $(objs)
         $(linker) $(lflags) name $^@ op map file {$(objs)}

@@ -483,9 +483,9 @@ static void fillTaskListBox( HWND hwnd, char *buf ) {
 
     HWND                lb;
     BOOL                rc;
-    DWORD               curproc;
-    DWORD               topproc;
-    DWORD               tmp;
+    LRESULT             curproc;
+    LRESULT             topproc;
+    LRESULT             tmp;
     LRESULT             topindex;
     LRESULT             index;
     LRESULT             select;

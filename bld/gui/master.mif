@@ -109,7 +109,7 @@ $(name).lib : eraseall.obj _guimsgs.gh $(objs) $(extra_objs) $(sysobjs) $(__make
         @for %i in ($(sysobjs)) do @%append tmp.lbc +%i
 !ifdef wpi_lib
         @%append tmp.lbc +$(wpi_dir)/lib/$(wpi_lib).lib
-        @%append tmp.lbc +wpimem
+        @%append tmp.lbc +wpimem.obj
 !endif
 !ifdef ctl3d_lib
         @%append tmp.lbc +$(ctl3d_lib)

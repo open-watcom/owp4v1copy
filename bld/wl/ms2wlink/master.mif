@@ -14,7 +14,7 @@ ms2wlink.obj &
 parsems.obj &
 utils.obj
 
-.c: ..\c
+.c: ../c
 
 extra_l_flags_os2 = op stack=8k
 

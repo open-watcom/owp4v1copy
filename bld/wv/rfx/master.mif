@@ -8,8 +8,8 @@ proj_name = rfx
 !include deftarg.mif
 !include defrule.mif
 
-inc_dirs = ..\;$(wv_dir)\h;$(dig_dir)\h;
-#       @set include=..\;$(wvdir)\$(os)\h;$(wvdir)\h;
+inc_dirs = ../;$(wv_dir)/h;$(dig_dir)/h;
+#       @set include=../;$(wvdir)/$(os)/h;$(wvdir)/h;
 
 !include $(wvdir)/make.wv
 dig_os = $(os)
@@ -28,7 +28,7 @@ objs += $(extra_objs)
 
 extra_c_flags = -dBUILD_RFX
 
-.c: ..\;$(dig_srcs);$(wv_dir)\c;$(wv_dir)\$(host_os)\c
+.c: ../;$(dig_srcs);$(wv_dir)/c;$(wv_dir)/$(host_os)/c
 
 .asm: $(odir)
 

@@ -178,12 +178,18 @@ $(asi_objs) : msg.gh
 
 !endif
 
-msg.gh : mkstrid.c as.msg
+msg.gh : ./mkstrid.exe
+        $[@ $^@
+
+./mkstrid.exe : mkstrid.c as.msg
         $(bld_cl) $[@ -w4-we-zc-oaxt $(extra_defines)
-        mkstrid $^@
 
 $(yacc_in) : $(yacc_src) $(as_dir)/y/yydriver.c
+!ifdef __LINUX__
+        $(bld_bin)/wsplice $(splice_opts) $[@ $^@
+!else
         $(bld_bin)\wsplice $(splice_opts) $[@ $^@
+!endif
 
 $(yacc_out_c).c $(yacc_out_h) : $(yacc_in)
         $(yacc) $(yacc_flags) $[@ $(as_dir)\y\yydriver.c > $(nulldevice)
@@ -192,7 +198,11 @@ $(yacc_out_c).c $(yacc_out_h) : $(yacc_in)
         # $(yacc) $(yacc_flags) $[@
 
 $(lex_in) : $(lex_src)
+!ifdef __LINUX__
+        $(bld_bin)/wsplice $(splice_opts) $[@ $^.
+!else
         $(bld_bin)\wsplice $(splice_opts) $[@ $^.
+!endif
 
 .ERASE
 $(lex_out_c).c $(lex_out_h) : $(lex_in)
@@ -205,4 +215,4 @@ clean: .symbolic .explicit
 !endif
         rm -f *.err del *.err *.map *.pch *.lib *.lbc ytab.* *.res *.sym *.tmp
         rm -f $(lex_in) $(lex_out_c).c $(yacc_in) $(yacc_out_c).c $(yacc_out_h)
-        rm -f msg.gh mkstrid$(exe)
+        rm -f msg.gh mkstrid.exe

@@ -35,7 +35,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
-#include <io.h>
+//#include <io.h>
+#include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
 

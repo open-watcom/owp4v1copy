@@ -188,9 +188,9 @@ Bool WSetLBoxWithWResID ( HWND lbox, WResID *id, void *data )
 
 char *WGetStrFromEdit ( HWND edit, Bool *mod )
 {
-    char  *cp;
-    int    text_length;
-    int    text_copied;
+    char    *cp;
+    LRESULT text_length;
+    LRESULT text_copied;
 
     text_copied = 0;
 
@@ -287,9 +287,9 @@ int_32 WGetSINT32FromEdit ( HWND edit, Bool *mod )
 char *WGetStrFromComboLBox( HWND combo, int index )
 {
     char        *cp;
-    int         text_length;
-    int         text_copied;
-    int         count;
+    LRESULT     text_length;
+    LRESULT     text_copied;
+    LRESULT     count;
 
     if( index == -1 ) {
         index = (int)SendMessage( combo, CB_GETCURSEL, 0, 0 );

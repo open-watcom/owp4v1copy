@@ -415,10 +415,10 @@ BOOL CALLBACK MemDmpDlgProc( HWND hwnd, UINT msg, UINT wparam, DWORD lparam )
 {
     char                        buf[150];
     SelMemDlgInfo               *info;
-    DWORD                       selcnt;
+    LRESULT                     selcnt;
     int                         *selitems;
     DWORD                       i;
-    DWORD                       index;
+    LRESULT                     index;
     HWND                        lb;
     MEMORY_BASIC_INFORMATION    *mbi;
 

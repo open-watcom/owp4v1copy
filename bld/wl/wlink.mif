@@ -278,7 +278,7 @@ $(exe) : global.chk wlink.res $(c_objs) $(extra_objs) $(libs)
 !ifdef add_version_info
     %make version.rc
     @set include=$(inc_path)
-    $(rc) -q -bt=$(host_OS) version.rc $^@
+    $(rc) -bt=$(host_OS) ./version.rc $^@
 !endif
     %make $(stubexe)
 !endif

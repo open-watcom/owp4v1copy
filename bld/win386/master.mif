@@ -9,12 +9,6 @@ win386_autodepends = .AUTODEPEND
 wdebug_name =WDEBUG
 wemu387_name =WEMU387
 
-!ifdef __LINUX__
-description = \'Win386 $($^&_name) Device (Version 1.1 Open Watcom)\'
-!else
-description = 'Win386 $($^&_name) Device (Version 1.1 Open Watcom)'
-!endif
-
 .before
     @set include =
 
@@ -97,7 +91,11 @@ LNK = $^&.lnk
         %create $(LNK)
         @%append $(LNK) system win_vxd
         @%append $(LNK) name $^&.386
-        @%append $(LNK) option description $(description)
+!ifdef __LINUX__
+        @%append $(LNK) option desc \'Win386 $($^&_name) Device (Version 1.1 Open Watcom)\'
+!else
+        @%append $(LNK) option desc 'Win386 $($^&_name) Device (Version 1.1 Open Watcom)'
+!endif
         @%append $(LNK) option modname=WDEBUG
         @%append $(LNK) option map
         @%append $(LNK) segment '_LTEXT'  preload nondiscardable

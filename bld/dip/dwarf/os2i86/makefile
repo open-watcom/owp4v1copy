@@ -3,6 +3,6 @@
 host_OS  = os2
 host_CPU = i86
 
-imp_libs = $(watcom_dir)\lib\dwarfrlp.lib
+imp_libs = $(watcom_dir)/lib/dwarfrlp.lib
 
 !include ../dwarf.mif

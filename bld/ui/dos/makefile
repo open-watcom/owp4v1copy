@@ -4,7 +4,7 @@ TARG=dos
 !ifndef FORM
 EXE = exe
 FORM = dos
-INCLUDES=;$(WATCOM_DIR)/h;$(WATCOM)/h
+INCLUDES=;$(watcom_dir)/h;$(%WATCOM)/h
 !endif
 EXTRA += -dCHARMAP
 

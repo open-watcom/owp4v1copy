@@ -100,14 +100,14 @@ static int WREFindTypeLBoxIndex( HWND lbox, uint_16 type,
                                  WResTypeNode **typeNode )
 {
     WResTypeNode        *tnode;
-    int                 count;
+    LRESULT             count;
     int                 i;
     Bool                ok;
 
     ok = ( lbox != (HWND)NULL );
 
     if( ok ) {
-        count = (int)SendMessage( lbox, LB_GETCOUNT, 0, 0 );
+        count = SendMessage( lbox, LB_GETCOUNT, 0, 0 );
         ok = ( count != LB_ERR );
     }
 
@@ -232,7 +232,7 @@ Bool WRESetResNamesFromType( WREResInfo *info, uint_16 type, Bool force,
     HWND                typeLbox;
     int                 typeIndex;
     WResTypeNode        *tnode;
-    int                 max_index;
+    LRESULT             max_index;
     char                *str;
     Bool                ok;
 
@@ -256,7 +256,7 @@ Bool WRESetResNamesFromType( WREResInfo *info, uint_16 type, Bool force,
         if( type != 0 ) {
             typeIndex = WREFindTypeLBoxIndex( typeLbox, type, &tnode );
         } else {
-            int count;
+            LRESULT count;
             count = SendMessage( typeLbox, LB_GETCOUNT, 0, 0 );
             if( count != 0 && count != LB_ERR ) {
                 tnode = (WResTypeNode *)
@@ -293,7 +293,7 @@ Bool WRESetResNamesFromType( WREResInfo *info, uint_16 type, Bool force,
                 index = 0;
             }
         }
-        max_index = (int) SendMessage( resLbox, LB_GETCOUNT, 0, 0 );
+        max_index = SendMessage( resLbox, LB_GETCOUNT, 0, 0 );
         if( max_index == LB_ERR ) {
             max_index = 0;
         }
@@ -314,7 +314,7 @@ Bool WREAddResNames( WREResInfo *info )
     HWND                typeLbox;
     WResTypeNode        *tnode;
     Bool                redrawOff;
-    int                 index;
+    LRESULT             index;
     Bool                ok;
 
     redrawOff = FALSE;
@@ -331,7 +331,7 @@ Bool WREAddResNames( WREResInfo *info )
         SendMessage( resLbox, WM_SETREDRAW, FALSE, 0 );
         redrawOff = TRUE;
         WREResetListbox( resLbox );
-        index = (int)SendMessage( typeLbox, LB_GETCURSEL, 0, 0 );
+        index = SendMessage( typeLbox, LB_GETCURSEL, 0, 0 );
         ok = ( index != LB_ERR );
     }
 
@@ -390,7 +390,7 @@ void WRESetTotalText( WREResInfo *info )
 {
     HWND        total;
     HWND        lbox;
-    int         count;
+    LRESULT     count;
     char        *buf;
 
     if( !info || !WRETotalText || !WRETotalTextOne || !WRETotalTextNone ) {
@@ -403,7 +403,7 @@ void WRESetTotalText( WREResInfo *info )
         return;
     }
 
-    count = (int)SendMessage( lbox, LB_GETCOUNT, 0, 0 );
+    count = SendMessage( lbox, LB_GETCOUNT, 0, 0 );
     if( count == LB_ERR ) {
         count = 0;
     }

@@ -97,7 +97,7 @@ $(exe_name): $(stub_objs) $(proj_name).lib
 
 $(proj_name).lib: $(targ_name)
     @if exist $(exe_name) del $(exe_name)
-    $(librarian) -b-n $^@ + $(targ_name)
+    $(librarian) -b-n $^@ +$(targ_name)
 !endif
 
 !ifeq bootstrap 1
@@ -120,7 +120,6 @@ $(targ_name): msg.gh $(wlib_objs) wlib.res $(wlib_libs)
 !endif
     wstrip -q -a -r $^@ . wlib.res
 
-#error.obj : ../h/msg.gh error.c
 error.obj : msg.gh error.c
 
 ./mkstr.exe : ../mkstr.c ../wlib.msg
@@ -138,7 +137,3 @@ msg_rc_flags = -d__UNIX__
 
 wlib.res : ../wlib.rc ../wlib.msg msg.gh
         $(rc) -bt=windows -r -zk0 -fo=$^@ $(msg_rc_flags) $[@ 
-
-#clean: .SYMBOLIC .EXPLICIT
-#        rm -f *.?bj *.lnk *.exe *.lib *.res *.lbc *.dll *.err
-#        rm -f *.sym *.map *.pch *.gh ../h/msg.gh ../mkstr.exe
