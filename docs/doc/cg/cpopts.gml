@@ -430,6 +430,11 @@ generate makefile style auto depend file
 force slashes generated in makefile style auto depend to backward
 :optref refid='SWadbs'.
 .do end
+.if &e'&$SWadd eq 1 .do begin
+.note add[=<file_name>]
+set source depend name for makefile style auto depend file
+:optref refid='SWadd'.
+.do end
 .if &e'&$SWadfs eq 1 .do begin
 .note adfs
 force slashes generated in makefile style auto depend to forward
@@ -2799,6 +2804,15 @@ included header files exclude those which come <watcom>/h.
 When generating makefile style auto depend files, this option forces any slashes
 "/" or "\" to be "\".  Certain operations can cause mixed slashes, this forces the
 output to be appropriate for the make used.
+.do end
+.*
+.if &e'&$SWadd eq 1 .do begin
+:OPT refid='SWadd' name='add[=<file_name>]'.
+.ix 'options' 'add'
+Set the first dependancy name in a makefile style auto depend file.  The
+default for this is the source name specified to compile.  This file spec
+follows the rules specified for other files.  
+:optref refid='SWad'.
 .do end
 .*
 .if &e'&$SWadfs eq 1 .do begin
