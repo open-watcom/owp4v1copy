@@ -80,7 +80,7 @@ xname = wsample
 #
 
 $(xname).res : ../h/wsample.rc ../h/wmsg.h .AUTODEPEND
-    $(rc_aui) -zk0 -dNLM -fo=$^. $[@
+    $(rc_aui) -dNLM -fo=$^. $[@
 
 clean : .symbolic
     @rm -f *.obj *.res *.lnk *.map *.err
