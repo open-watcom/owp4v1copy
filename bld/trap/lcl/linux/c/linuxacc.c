@@ -949,6 +949,7 @@ static unsigned ProgRun( int step )
         Out( " " );
         if ( ret->conditions == COND_BREAK ) {
             Out("decrease eip(sigtrap)" );
+            regs.orig_eax = -1;
             regs.eip--;
             sys_ptrace(PTRACE_SETREGS, pid, 0, &regs);
         }
