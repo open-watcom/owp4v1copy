@@ -50,11 +50,7 @@
 
 extern void _wpi_free( void * ptr );
 extern void * _wpi_malloc( size_t size );
-//extern void * _wpi_realloc( void *ptr, size_t size );
-
-#ifndef _wpi_realloc
-#define _wpi_realloc(ptr,x) realloc(ptr,x)
-#endif
+extern void * _wpi_realloc( void *ptr, size_t size );
 
 #ifndef _wpi_malloc2
 #define _wpi_malloc2(ptr,x) ptr = (void *) _wpi_malloc( sizeof( *ptr ) * x )
