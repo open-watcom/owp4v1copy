@@ -3,14 +3,17 @@ name      = ide
 viper_autodepends = .autodepend
 
 .SUFFIXES : .rc
+
 .mif : $(mif_path);..\mif
 c_path_os2 = $(batch_dir)\os2
 c_path_nt = $(batch_dir)\nt
 c_path_win = $(batch_dir)\dos;$(batch_dir)\os2
 
-.c : $(c_path_$(host_OS));$(watcom_dir)\c
+.c : $(c_path_$(host_os));$(watcom_dir)\c
 .cpp : ..
-!ifeq host_OS nt
+!ifeq host_os os2
+.rc : ..\os2
+!else
 .rc : ..\win
 !endif
 
@@ -27,7 +30,7 @@ extra_c_flags_386       = -fpc
 extra_c_flags_i86       = -fpc
 
 extra_cpp_flags_386_nt  = -zm-zc
-extra_cpp_flags_386     = $(extra_cpp_flags_386_$(host_OS))
+extra_cpp_flags_386     = $(extra_cpp_flags_386_$(host_os))
 extra_cpp_flags_i86     = -zm-zc
 
 .before:
@@ -35,10 +38,10 @@ extra_cpp_flags_i86     = -zm-zc
 
 $(name).exe : $(OBJECTS) $(LIBS) viper.res
 !ifneq host_OS os2
-        $(linker) $(lflags) name $(name) op map op stack=12k, de 'WATCOM IDE' f {$(OBJECTS)} lib {$(LIBS)}
+        $(linker) $(lflags) name $(name) op map, de 'Open Watcom IDE' f {$(OBJECTS)} lib {$(LIBS)}
         $(rc) -q viper.res $(name).exe
 !else
-        $(linker) $(lflags) name $(name) op map, de 'WATCOM IDE' f {$(OBJECTS)} lib {$(LIBS)}
+        $(linker) $(lflags) name $(name) op map, de 'Open Watcom IDE' f {$(OBJECTS)} lib {$(LIBS)}
         $(rc_os2) -p -x viper.res $(name).exe
 !endif
 
@@ -56,8 +59,6 @@ viper.res : viper.rc
 
 !ifeq host_OS win
 link.obj: link.c
-        $(cc) $(cflags) $(extra_c_flags_$(host_CPU)) -dSERVER $[@ -fo=$^@
+        $(cc) $(cflags) $(extra_c_flags_$(host_cpu)) -dSERVER $[@ -fo=$^@
 !endif
 
-.cpp.obj: .autodepend
-        $(cpp) $(cflags) $(extra_cpp_flags_$(host_CPU)) $[@ -fo=$^@
