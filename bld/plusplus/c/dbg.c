@@ -758,7 +758,7 @@ static void dumpClassType(      // DUMP EXTRA INFO FOR CLASS
 
     ci = tp->u.c.info;
     DumpClassInfo( ci );
-    RingWalk( ci->bases, &dumpBaseClass );
+    RingWalk( ci->bases, (void(*)(void*))&dumpBaseClass );
 }
 
 void PrintFullType(             // PRINT FULL TYPE INFORMATION
@@ -866,7 +866,7 @@ static void dumpSymbolNameInfo( // DUMP SYMBOL_NAME ENTRY
 {
     DumpSymbolName( sn );
     DumpSymbol( sn->name_type );
-    RingWalk( sn->name_syms, &DumpSymbol );
+    RingWalk( sn->name_syms, (void(*)(void*))&DumpSymbol );
 }
 
 
@@ -923,8 +923,8 @@ void DumpScope(                 // DUMP SCOPE INFO FOR SYMBOL
         break;
     }
     ScopeWalkNames( scope, &dumpSymbolNameInfo );
-    RingWalk( ScopeFriends( scope ), &dumpFriendRef );
-    RingWalk( ScopeInherits( scope ), &dumpBaseClass );
+    RingWalk( ScopeFriends( scope ), (void(*)(void*))&dumpFriendRef );
+    RingWalk( ScopeInherits( scope ), (void(*)(void*))&dumpBaseClass );
 }
 
 
@@ -955,8 +955,8 @@ void DumpScopeInfo(             // DUMP INFORMATION FOR SCOPE
     SCOPE scope )               // - starting scope
 {
     DumpScope( scope );
-    RingWalk( ScopeFriends( scope ), &dumpFriend );
-    RingWalk( ScopeInherits( scope ), &dumpBaseClass );
+    RingWalk( ScopeFriends( scope ), (void(*)(void*))&dumpFriend );
+    RingWalk( ScopeInherits( scope ), (void(*)(void*))&dumpBaseClass );
 }
 
 
@@ -1008,7 +1008,7 @@ static dump_scope_defn(         // DUMP SCOPE, GIVEN A SCOPE_DEFN
 void DumpScopes(                // DUMP ALL SCOPES
     void )
 {
-    RingWalk( scopes, dump_scope_defn );
+    RingWalk( scopes, (void(*)(void*))dump_scope_defn );
 }
 
 
@@ -1023,7 +1023,7 @@ static dump_hash(               // DUMP HASH STAT FOR SCOPE, GIVEN A SCOPE_DEFN
 void DumpHashStats(             // DUMP ALL SCOPES' HASH TAB STATS
     void )
 {
-    RingWalk( scopes, dump_hash );
+    RingWalk( scopes, (void(*)(void*))dump_hash );
 }
 
 static void dumpNodeType( PTREE node )

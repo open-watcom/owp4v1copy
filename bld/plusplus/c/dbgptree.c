@@ -621,7 +621,7 @@ void DbgPrintPTREE(             // PRINT A PARSE-TREE BEAUTIFULLY
     subtrees = NULL;
     decoration = NULL;
     buildSubtree( root );
-    RingWalk( subtrees, &printSubtree );
+    RingWalk( subtrees, (void(*)(void*))&printSubtree );
     printDecoration();
     CarveDestroy( carveNode );
     CarveDestroy( carveLine );

@@ -1182,9 +1182,9 @@ void BrinfPchRead               // INSERT PCH REFERENCE INTO BROWSING
 {
     BRINF_PCH_CTL       ctl;
     BRI_PCHRtns         pchrtns = {
-        &brinfReadPch1,
-        &brinfReadPch4,
-        &brinfReadPch
+        (uint_8(*)(void*))&brinfReadPch1,
+        (uint_32(*)(void*))&brinfReadPch4,
+        (void*(*)(void*,unsigned))&brinfReadPch
     };
 
     if( BrinfActive() ) {
