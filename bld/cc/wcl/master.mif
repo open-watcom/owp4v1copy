@@ -26,9 +26,6 @@ wcl.exe : wcl.obj $(objs)
 
 wcl386.exe : wcl386.obj $(objs)
         $(linker) $(lflags) name $^@ file {wcl386.obj $(objs)}
-!ifeq host_OS linux
-	cp $^@ ../../../build/binl/wcl386
-!endif
 
 wclaxp.exe : wclaxp.obj $(objs)
         $(linker) $(lflags) name $^@ file {wclaxp.obj $(objs)}

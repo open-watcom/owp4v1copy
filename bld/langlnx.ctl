@@ -32,6 +32,10 @@ set PROJDIR=<CWD>
 [ INCLUDE <devdir>/mathlib/lang.ctl ]
 [ INCLUDE <devdir>/emu/lang.ctl ]
 [ INCLUDE <devdir>/cc/wcl/lang.ctl ]
+<CPCMD> <devdir>/cc/wcl/linux386/wcl386.exe <devdir>/build/binl/wcl386
+[ INCLUDE <devdir>/cc/lang.ctl ]
+<CPCMD> <devdir>/cc/linux386/wcc386c.elf <devdir>/build/binl/wcc386
+<CPCMD> <devdir>/cc/linuxi86/wcci86c.elf <devdir>/build/binl/wcc
 [ INCLUDE <devdir>/viper/bviper/lang.ctl ]
 
 # all is ready to do everything else now
