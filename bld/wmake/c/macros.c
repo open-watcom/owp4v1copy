@@ -409,12 +409,12 @@ extern char *GetMacroValue( const char *name )
  * $(MACRONAME:oldstring=newstring)
  */
 {
-    char       *InName;
-    const char *beforeSub;
-    char       *afterSub;
-    char       *current;
-    char       *newString;
-    char       *oldString;
+    char        *InName;
+    const char  *beforeSub;
+    char        *afterSub;
+    char        *current;
+    char        *newString;
+    char        *oldString;
 
     InName = StrDupSafe( name );
     current = InName;
@@ -444,8 +444,6 @@ extern char *GetMacroValue( const char *name )
         } else {
             afterSub = NULL;
         }
-
-
     }
 
     FreeSafe( InName );
