@@ -159,7 +159,9 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
     the_struct = (asm_sym*)Definition.curr_struct;
 #endif
     
-    while( AsmBuffer[cur_pos]->token != T_FINAL ) {
+    for( cur_pos = start_pos;
+        ( cur_pos < Token_Count ) && ( AsmBuffer[cur_pos]->token != T_FINAL );
+        cur_pos++ ) {
 #ifdef _WASM_
         int                 tmp;
         
@@ -169,8 +171,8 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
         }
         cur_pos = tmp;
 #endif
-        if( cur_pos == Token_Count - 1 &&
-            AsmBuffer[cur_pos]->token == T_CL_BRACKET ) break;
+        if(( cur_pos == Token_Count - 1 )
+            && ( AsmBuffer[cur_pos]->token == T_CL_BRACKET )) break;
         switch( AsmBuffer[cur_pos]->token ) {
         case T_QUESTION_MARK:
             if( cur_pos != start_pos ) {
@@ -424,31 +426,31 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
             InsFixups[0] = fixup;
             data += fixup->offset;
                     
-            if( cur_pos + 1 < Token_Count ) {
-                for( cur_pos++;
-                    AsmBuffer[cur_pos]->token != T_FINAL && AsmBuffer[cur_pos]->token != T_COMMA;
-                    cur_pos++ ) {
-                    switch( AsmBuffer[cur_pos]->token ) {
-                    case T_PLUS:
-                    case T_DOT:
-                    case T_OP_SQ_BRACKET:
-                        break;
+            for( cur_pos++;
+                ( cur_pos < Token_Count ) && ( AsmBuffer[cur_pos]->token != T_FINAL )
+                    && ( AsmBuffer[cur_pos]->token != T_COMMA )
+                    && ( AsmBuffer[cur_pos]->token != T_CL_BRACKET );
+                cur_pos++ ) {
+                switch( AsmBuffer[cur_pos]->token ) {
+                case T_PLUS:
+                case T_DOT:
+                case T_OP_SQ_BRACKET:
+                    break;
 #ifdef _WASM_
-                    case T_ID:
-                        init_sym = AsmLookup( AsmBuffer[cur_pos]->string_ptr );
-                        data += init_sym->offset;
-                        break;
+                case T_ID:
+                    init_sym = AsmLookup( AsmBuffer[cur_pos]->string_ptr );
+                    data += init_sym->offset;
+                    break;
 #endif
-                    case T_MINUS:
-                        if( AsmBuffer[cur_pos+1]->token != T_NUM ) {
-                            AsmError( EXPECTING_NUMBER );
-                            return( ERROR );
-                        }
-                        AsmBuffer[cur_pos+1]->value *=-1;
-                        break;
-                    case T_NUM:
-                        data += AsmBuffer[cur_pos]->value;
+                case T_MINUS:
+                    if( AsmBuffer[cur_pos+1]->token != T_NUM ) {
+                        AsmError( EXPECTING_NUMBER );
+                        return( ERROR );
                     }
+                    AsmBuffer[cur_pos+1]->value *=-1;
+                    break;
+                case T_NUM:
+                    data += AsmBuffer[cur_pos]->value;
                 }
             }
                     
@@ -478,8 +480,7 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                     AsmDataByte( 0 );
                 }
 #ifdef _WASM_
-            } else {
-                if( the_struct == NULL ) break;
+            } else if( the_struct != NULL ) {
                 Definition.curr_struct->e.structinfo->size += no_of_bytes;
                 the_struct->total_size+=no_of_bytes;
                 the_struct->total_length++;
@@ -489,6 +490,8 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                 }
             }
 #endif
+            // set position back to main loop worked correctly
+            cur_pos--;
             break;
             }
         case T_UNARY_OPERATOR: {
@@ -574,46 +577,46 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                         break;
 #ifdef _WASM_
                     case T_LENGTH:
-                        data = sym->first_length;
+                        data = init_sym->first_length;
                         break;
                     case T_LENGTHOF:
-                        data = sym->total_length;
+                        data = init_sym->total_length;
                         break;
                     case T_SIZE:
-                        data = sym->first_size;
+                        data = init_sym->first_size;
                         break;
                     case T_SIZEOF:
-                        data = sym->total_size;
+                        data = init_sym->total_size;
                         break;
 #endif
                     default:
                         AsmError( SYNTAX_ERROR );
                         return( ERROR );
                     }
-                    if( cur_pos + 1 < Token_Count ) {
-                        for( cur_pos++; AsmBuffer[cur_pos]->token != T_FINAL; cur_pos++ ) {
-                            switch( AsmBuffer[cur_pos]->token ) {
-                            case T_PLUS:
-                            case T_DOT:
-                            case T_OP_SQ_BRACKET:
-                                break;
+                    for( cur_pos++; 
+                        ( cur_pos < Token_Count ) && ( AsmBuffer[cur_pos]->token != T_FINAL)
+                        && ( AsmBuffer[cur_pos]->token != T_COMMA );
+                        cur_pos++ ) {
+                        switch( AsmBuffer[cur_pos]->token ) {
+                        case T_PLUS:
+                        case T_DOT:
+                        case T_OP_SQ_BRACKET:
+                            break;
 #ifdef _WASM_
-                            case T_ID:
-                                init_sym = AsmLookup( AsmBuffer[cur_pos]->string_ptr );
-                                data += init_sym->offset;
-                                break;
+                        case T_ID:
+                            init_sym = AsmLookup( AsmBuffer[cur_pos]->string_ptr );
+                            data += init_sym->offset;
+                            break;
 #endif
-                            case T_MINUS:
-                                if( AsmBuffer[cur_pos+1]->token != T_NUM ) {
-                                    AsmError( EXPECTING_NUMBER );
-                                    return( ERROR );
-                                }
-                                AsmBuffer[cur_pos+1]->value *=-1;
-                                break;
-                            case T_NUM:
-                                data += AsmBuffer[cur_pos]->value;
+                        case T_MINUS:
+                            if( AsmBuffer[cur_pos+1]->token != T_NUM ) {
+                                AsmError( EXPECTING_NUMBER );
+                                return( ERROR );
                             }
-                            if( AsmBuffer[cur_pos]->token == T_COMMA ) break;
+                            AsmBuffer[cur_pos+1]->value *=-1;
+                            break;
+                        case T_NUM:
+                            data += AsmBuffer[cur_pos]->value;
                         }
                     }
                     
@@ -651,6 +654,8 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                     return( ERROR );
                 }
             }
+            // set position back to main loop worked correctly
+            cur_pos--;
             // AsmError( NOT_IMPLEMENTED );
             break;
             }
@@ -660,7 +665,6 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
             AsmError( EXPECTING_NUMBER );
             return( ERROR );
         }
-        cur_pos++;
     }
     return( cur_pos );
 }
@@ -680,8 +684,8 @@ int dup_array( asm_sym *sym, char start_pos, char no_of_bytes )
         ExpandTheWorld( start_pos, FALSE, TRUE );
     #endif
     while( cur_pos + 2 < Token_Count ) {
-        if( AsmBuffer[cur_pos + 1]->token == T_RES_ID  &&
-            AsmBuffer[cur_pos + 1]->value == T_DUP ) {
+        if(( AsmBuffer[cur_pos + 1]->token == T_RES_ID )
+            ( AsmBuffer[cur_pos + 1]->value == T_DUP )) {
             if( AsmBuffer[cur_pos]->token != T_NUM ) {
                 AsmError( SYNTAX_ERROR );
                 return( ERROR );
