@@ -27,15 +27,27 @@ sed = $(here)sed
 !endif
 
 # Shorthands for "standard" operations
-axdiff =afore      | diff xpect -
-a2xdiff=afore 2>&1 | diff xpect -
-aadiff =afore      | diff afore -
+axdiff =afore     2>> stray | diff xpect -
+a2xdiff=afore 2>&1 >> stray | diff xpect -
+aadiff =afore     2>> stray | diff afore -
+
+.before
+    @rm -f stray
+    @wtouch stray
+
+.after
+    # stray should be empty
+    @diff stray $(blackhole) > $(blackhole) || echo Some stray output was written
+    @diff stray $(blackhole) | $(sed) $(q)1d;s/..//$q
+    @diff stray $(blackhole) > $(blackhole)
+    @rm -f stray
 
 all: .symbolic sedcomp sedexec susv3 bre dospencer
 
 dospencer: .symbolic spencer.cmd
     $(here)spencer.cmd 2>&1 | tee spencer.log
-    @$(sed) -n "1s/.*/spencer.bat failed!/p" spencer.log
+    # spencer.log should be empty
+    @diff spencer.log $(blackhole) > $(blackhole)
 
 sedcomp: .symbolic main
     @%null
@@ -45,7 +57,7 @@ sedexec: .symbolic execute
 
 clean: .symbolic
     rm -f afore after xpect scrip scr0p scr1p
-    rm -f spencer.cmd spencer.log spen?.??? listto.* a b c d e f g h i written
+    rm -f spencer.cmd spencer.log spen?.??? listto* a b c d e f g h i written
 
 main: .symbolic badarg enarg fgarg noef badsquig labels resolve compile recomp
     @%null
@@ -330,7 +342,7 @@ rhscomp: .symbolic
     > xpect echo sed: garbled command s/l/l
     $(sed) s/l/l               $(a2xdiff)
 
-recomp: .symbolic starplusdol set handle_cket
+recomp: .symbolic starplusdol set handle_cket listto.exe
     > afore echo hello
     > xpect echo heLo
     $(sed) /ll*/s//L/        $(axdiff)
@@ -365,15 +377,12 @@ recomp: .symbolic starplusdol set handle_cket
     $(sed) "/.\{2,1\}/p"     $(a2xdiff)
     > xpect echo $(e)sed: garbled address /.\{2a\}/p$e
     $(sed) "/.\{2a\}/p"      $(a2xdiff)
-    > xpect cat <<
-sed: garbled command s/h\
-ello//
-<<
+    > xpect $(here)listto.exe  $(q)sed: garbled command s/h\\\nello//\n$q
     > scrip echo $(e)s/h\$e
     >>scrip echo ello//
     $(sed) -f scrip               $(a2xdiff)
-    > afore echo hello
-    >>afore echo $(e)wor	ld$e# There is a tab character on this line WFB 20040801
+    # Some editors turn tab into a sequence of spaces
+    > afore $(here)listto.exe $(q)hello\nwor\tld$q
     > xpect echo hello world
     $(sed) "N;s/o\nw/o w/;s/\t//" $(axdiff)
     > xpect echo $(e)sed: garbled address /h$e
@@ -404,7 +413,7 @@ s/++a+/hello world/
     > xpect echo *hello world
     $(sed) "s/*$$/hello world/"       $(axdiff)
 
-set: .symbolic
+set: .symbolic listto.exe
     > afore echo hello
     > xpect echo haaaa
     $(sed) "s/[^h]/a/g"       $(axdiff)
@@ -420,9 +429,9 @@ set: .symbolic
     $(sed) s/[l-e]/a/g        $(a2xdiff)
     > xpect echo sed: garbled command /[e-l-o]/p
     $(sed) -n /[e-l-o]/p      $(a2xdiff)
-    > afore echo hello
-    >>afore echo $(e)w\r	ld$(e)# There is a tab character on this line WFB 20040802
-    > xpect echo halloawarald
+    # fgets() quietly swallows \r on NT.
+    > afore $(here)listto.exe $(q)hello\nwor\tld$q
+    > xpect echo halloaworald
     $(sed) "N;s/[\e\n\t]/a/g" $(axdiff)
     > afore echo h]llo
     > xpect echo a]aaa
@@ -451,10 +460,7 @@ cmdline: .symbolic
     > afore echo hello
     > xpect echo sed: error processing: -e
     $(sed) -e      <    $(a2xdiff)
-    > xpect cat <<
-sed: garbled command s/h/b\
-
-<<
+    > xpect $(here)listto.exe $(q)sed: garbled command s/h/b\\\n\n$q
     # This used to seize. WFB 20040803
     $(sed) -f <<        $(a2xdiff)
 s/h/b\
@@ -472,25 +478,14 @@ address: .symbolic
     $(sed) -n 1p              $(aadiff)
     $(sed) -n p               $(aadiff)
 
-gettext: .symbolic
+gettext: .symbolic listto.exe
     > afore echo hello
-    > scrip cat <<
-a\
-     world
-<<
+    > scrip $(here)listto.exe $(q)a\\\n    world\n$q
     > xpect echo hello
     >>xpect echo world
     $(sed) -f scrip $(axdiff)
-    > scrip cat <<
-a\
-     w\or \\ ld\
-universe
-<<
-    > xpect cat <<
-hello
-wor \ ld
-universe
-<<
+    > scrip $(here)listto.exe $(q)a\\\n     w\\or \\\\ ld\\\nuniverse\n$q
+    > xpect $(here)listto.exe $(q)hello\nwor \\ ld\nuniverse\n$q
     $(sed) -f scrip $(axdiff)
 
 resolve: .symbolic
@@ -530,16 +525,11 @@ ycomp: .symbolic
     # can be used instead of slash to delimit the strings.
     > xpect echo HELLO
     $(sed) yaheloaHELOa             $(axdiff)
-    > xpect cat <<
-sed: garbled command y\helo\HELO\
-
-<<
+    > xpect $(here)listto.exe $(q)sed: garbled command y\\helo\\HELO\\\n\n$q
     $(sed) -f <<                    $(a2xdiff)
 y\helo\HELO\
 <<
-    > xpect cat <<
-sed: garbled command y\\helo\\HELO\\
-<<
+    > xpect $(here)listto.exe $(q)sed: garbled command y\\\\helo\\\\HELO\\\\\n$q
     # >>xpect echo afore
     $(sed) -f <<                    $(a2xdiff)
 y\\helo\\HELO\\
@@ -579,8 +569,8 @@ y\\helo\\HELO\\
 execute: .symbolic selected command match
     > afore echo hello
     %write xpect sed: can't open nosuch
-    >>xpect echo hello
-    $(sed) -n p nosuch                 $(a2xdiff)
+    $(sed) -n p nosuch                 afore 2>&1 > after | diff xpect -
+    diff afore after
     > xpect echo hello hello
     $(sed) -n $(q)N;$$s/\n/ /p$q afore $(axdiff)
     >>afore echo world
@@ -736,8 +726,7 @@ listto: .symbolic listto.exe
     # BS gets "Illegal character value 08H in file" from wmake
     # ESC gets "Illegal character value 1bH in file" from wmake
     # CR completes the command list
-    > afore echo $(e)hello TAB	NL$e# There is a tab character on this line WFB 20040801
-    >>afore echo line end
+    > afore $(here)listto.exe $(q)hello TAB\tNL\nline end$q
     > xpect echo $(e)hello TAB\tNL$e
     >>xpect echo $(e)line end$$$e
     $(sed) -n "N;l" $(axdiff)
@@ -759,8 +748,8 @@ PQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\7f\80\81\82\83\
 !else
     > xpect cat <<
 $$
-This sed does not treat a decimal 26 character as special\1a$$
-\01\02\03\04\05\06\a\b\t$$
+This sed does not treat a decimal 26 character as special\1a\01\
+\02\03\04\05\06\a\b\t$$
 \v\f\r\0e\0f\10\11\12\13\14\15\16\17\18\19\1a\1b\1c\1d\1e\1f !"\
 $#$$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`\
 abcdefghijklmnopqrstuvwxyz{|}~\7f\80\81\82\83\84\85\86\87\88\89\
@@ -772,35 +761,42 @@ abcdefghijklmnopqrstuvwxyz{|}~\7f\80\81\82\83\84\85\86\87\88\89\
 \f3\f4\f5\f6\f7\f8\f9\fa\fb\fc\fd\fe\ff$$
 <<
 !endif
-    listto.exe | $(sed) -n l | diff xpect -
+    $(here)listto.exe | $(sed) -n l 2>> stray | diff xpect -
 
 listto.exe: $(__MAKEFILES__)
-!ifndef __UNIX__
     > listto.c cat <<
 $#include <stdio.h>
-void main( void ) {
+int main( int argc, char *argv[] ) {
     int i = 0;
-    putc( i, stdout );
-    fprintf( stdout, "%c%s\n", 0, "This sed silently ignores data between NUL and NL" );
-    fprintf( stdout, "%s%c", "This sed quietly terminates a line with a decimal 26 character", 26 );
-    while( ++i != 256 ) {
+
+    if( argc <= 1 ) {
         putc( i, stdout );
+        fprintf( stdout, "%c%s\n", 0, "This sed silently ignores data between NUL and NL" );
+        fprintf( stdout, "%s%c", "This sed quietly terminates a line with a decimal 26 character", 26 );
+        while( ++i != 256 ) {
+            putc( i, stdout );
+        }
+    } else {
+        char const *cp = argv[1];
+
+        while( ( i = *cp++ ) != 0 ) {
+            if( i == '\\' ) {
+                i = *cp++;
+                switch( i ) {
+                case 'n': i = '\n'; break;
+                case 'r': i = '\r'; break;
+                case 't': i = '\t'; break;
+                }
+            }
+            fprintf( stdout, "%c", i );
+        }
     }
+    return( 0 );
 }
 <<
-!else
-    > listto.c cat <<
-$#include <stdio.h>
-void main( void ) {
-    int i = 0;
-    putc( i, stdout );
-    fprintf( stdout, "%c%s\n", 0, "This sed silently ignores data between NUL and NL" );
-    fprintf( stdout, "%s%c\n", "This sed does not treat a decimal 26 character as special", 26 );
-    while( ++i != 256 ) {
-        putc( i, stdout );
-    }
-}
-<<
+!ifdef __UNIX__
+    cp listto.c afore
+    sed "s/quietly.*character/does not treat a decimal 26 character as special/" afore > listto.c
 !endif
     $(bld_cl) -zq -fe=listto.exe listto.c $(wcl_util_opts)
 
@@ -1122,13 +1118,13 @@ susv3: .symbolic
     #          128  256  512 1024  2048 4096 8192
     $(sed) -n "h;G; h;G; h;G; h;G; h;G; h;G; h;G; h;P"              $(aadiff)
     > xpect echo sed: can only fit 8192 bytes at line 1
-    >>xpect echo 12345678 1 2345678 2 2345678 3 2345678 4 2345678 5 2345678 6 23
     #          128  256  512 1024  2048 4096 8192 16384
-    $(sed) -n "h;G; h;G; h;G; h;G; h;G; h;G; h;G; h;G;P"            $(a2xdiff)
+    $(sed) -n "h;G; h;G; h;G; h;G; h;G; h;G; h;G; h;G;P"            afore 2>&1 > after | diff xpect -
+    diff afore after
     > xpect echo sed: can only fit 8192 bytes at line 1
-    >>xpect echo ?12345678 1 2345678 2 2345678 3 2345678 4 2345678 5 2345678 6 23
     #          128  256  512 1024  2048 4096 8192 8193
-    $(sed) -n "h;G; h;G; h;G; h;G; h;G; h;G; h;G; s/^/?/P"          $(a2xdiff)
+    $(sed) -n "h;G; h;G; h;G; h;G; h;G; h;G; h;G; s/^/?/P"          afore 2>&1 > after | diff xpect -
+    echo ?12345678 1 2345678 2 2345678 3 2345678 4 2345678 5 2345678 6 23| diff after -
 
     # "In a context address, the construction "\cBREc" ,
     # where c is any character other than backslash or <newline>,
