@@ -297,3 +297,6 @@ pick(   ERR_DUPLICATE_STR_TABLE_FILE,
         "Duplicate string table block containing strings %d to %d found in files '%s' and '%s'.",
         "Duplicate string table block containing strings %d to %d found in files '%s' and '%s'."
 )
+pick(   ERR_RCVARIABLE_RECURSIVE,
+        "Can't expand environment variable '%s' recursively.",
+        "Can't expand environment variable '%s' recursively." )

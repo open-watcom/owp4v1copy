@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  WRC command line parameter parsing.
 *
 ****************************************************************************/
 
@@ -724,7 +723,6 @@ static void defaultParms( void )
     CmdLineParms.NoPreprocess = FALSE;
     CmdLineParms.GenAutoDep = FALSE;
     CmdLineParms.PreprocessOnly = FALSE;
-    CmdLineParms.EnvVariables = NULL;
     CmdLineParms.ExtraResFiles = NULL;
     CmdLineParms.FindReplaceStrings = NULL;
     #ifdef __OSI__
@@ -843,8 +841,16 @@ static bool doScanParams( int argc, char *argv[], int *nofilenames )
     return( contok );
 }
 
-extern unsigned ParseEnvVar( const char *env, char **argv, char *buf ) {
-/***********************************************************************/
+extern unsigned ParseEnvVar( const char *env, char **argv, char *buf )
+/********************************************************************/
+{
+    /*
+     * Returns a count of the "command line" parameters in *env.
+     * Unless argv is NULL, both argv and buf are completed.
+     *
+     * This function ought to be fairly similar to clib(initargv@_SplitParms).
+     * Parameterisation does the same as _SplitParms with historical = 0.
+     */
 
     const char  *start;
     int         switchchar;
@@ -893,30 +899,65 @@ extern unsigned ParseEnvVar( const char *env, char **argv, char *buf ) {
 }
 
 static bool scanEnvVar( const char *varname, int *nofilenames )
-/*******************************************************/
+/*************************************************************/
 {
-    unsigned    argc;
-    EnvVarInfo  *info;
-    unsigned    argvsize;
-    unsigned    argbufsize;
-    char        *env;
+    /*
+     * Pass nofilenames and analysis of getenv(varname) into argc and argv
+     * to doScanParams. Return view on usability of data. (TRUE is usable.)
+     *
+     * Recursion is supported but circularity is rejected.
+     *
+     * The analysis is fairly similar to that done in clib(initargv@_getargv).
+     * It is possible to use that function but it is not generally exported and
+     * ParseEnvVar() above is called from other places.
+     */
+    typedef struct EnvVarInfo {
+        struct EnvVarInfo       *next;
+        char                    *varname;
+        char                    **argv; /* points into buf */
+        char                    buf[1]; /* dynamic array */
+    } EnvVarInfo;
+
+    unsigned            argc;
+    EnvVarInfo          *info;
+    static EnvVarInfo   *stack = 0; // Needed to detect recursion.
+    unsigned            argvsize;
+    unsigned            argbufsize;
+    char                *env;
+    size_t              varlen;     // size to hold varname copy.
+    bool                result;     // doScanParams Result.
 
     env = RcGetEnv( varname );
     if( env == NULL ) {
         RcWarning( ERR_ENV_VAR_NOT_FOUND, varname );
         return( TRUE );
     }
-    argc = ParseEnvVar( env, NULL, NULL );
-    argbufsize = strlen( env ) + 1 + argc;
-    argvsize = ( argc + 1 ) * sizeof( char * );
-    info = RcMemMalloc( sizeof( EnvVarInfo ) + argbufsize + argvsize );
-    info->next = CmdLineParms.EnvVariables;
-    CmdLineParms.EnvVariables = info;
+    // This used to cause stack overflow: set foo=@foo && wrc @foo.
+    for( info = stack; info != NULL; info = info->next ) {
+#if !defined(__UNIX__)
+        if( stricmp( varname, info->varname ) == 0 ) // Case-insensitive
+#else
+        if( strcmp( varname, info->varname ) == 0 )  // Case-sensitive
+#endif
+            RcFatalError( ERR_RCVARIABLE_RECURSIVE, varname );
+    }
+    argc = ParseEnvVar( env, NULL, NULL );  // count parameters.
+    argbufsize = strlen( env ) + 1 + argc;  // inter-parameter spaces map to 0
+    argvsize = ( argc + 1 ) * sizeof( char * ); // sizeof argv[argc+1]
+    varlen = strlen( varname ) + 1;         // Copy taken to detect recursion.
+    info = RcMemMalloc( sizeof *info + argbufsize + argvsize + varlen );
+    info->next = stack;
+    stack = info;                           // push info on stack
     info->argv = (char **)info->buf;
     ParseEnvVar( env, info->argv, info->buf + argvsize );
+    info->varname = info->buf + argvsize + argbufsize;
+    strcpy( info->varname, varname );
     info->argv[argc] = NULL;    //there must be a NULL element on the end
                                 // of the list
-    return( doScanParams( argc, info->argv, nofilenames ) );
+    result = doScanParams( argc, info->argv, nofilenames );
+    stack = info->next;                     // pop stack
+    RcMemFree( info );
+    return( result );
 }
 
 bool ScanParams( int argc, char * argv[] )
@@ -947,7 +988,6 @@ bool ScanParams( int argc, char * argv[] )
 extern void ScanParamShutdown( void )
 /***********************************/
 {
-    EnvVarInfo          *tmp;
     ExtraRes            *tmpres;
     FRStrings           *strings;
 
@@ -959,11 +999,6 @@ extern void ScanParamShutdown( void )
         tmpres = CmdLineParms.ExtraResFiles;
         CmdLineParms.ExtraResFiles = CmdLineParms.ExtraResFiles->next;
         RcMemFree( tmpres );
-    }
-    while( CmdLineParms.EnvVariables != NULL ) {
-        tmp = CmdLineParms.EnvVariables;
-        CmdLineParms.EnvVariables = CmdLineParms.EnvVariables->next;
-        RcMemFree( tmp );
     }
     while( CmdLineParms.FindReplaceStrings != NULL) {
         strings = CmdLineParms.FindReplaceStrings;
