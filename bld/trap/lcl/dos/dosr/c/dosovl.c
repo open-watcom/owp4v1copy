@@ -60,7 +60,7 @@ static unsigned         OvlStateSize;
 static int              (far *OvlRequest)( int, void far * );
 
 #pragma off(unreferenced);
-static int far NoOvlsHdlr( int req, void *data )
+static int far NoOvlsHdlr( int req, void far *data )
 #pragma on(unreferenced);
 {
     return( 0 );
