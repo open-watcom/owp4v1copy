@@ -22,7 +22,7 @@ extra_objs = &
         rmhdlr.obj &
         sbrk.obj
 
-extra_c_flags = -dDOS4G -dDOSXHELP -zdp -zu
+extra_c_flags = -dDOS4G -dDOSXHELP -zdp -zu -wcd=1177
 extra_c_flags_rsiacc = -I"$(rsilib)"
 extra_c_flags_realmode = -I"$(rsilib)"
 extra_c_flags_dbglib = -I"$(rsilib)"
