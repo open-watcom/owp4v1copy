@@ -21,6 +21,25 @@ time_deps = ../watcom/time.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../cr
 wchar_deps = ../watcom/wchar.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../mbmax.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp
 wctype_deps = ../watcom/wctype.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../wchar_t.sp ../wctypet.sp
 
+cassert.gh      : $(assert_deps)
+cctype.gh       : $(ctype_deps)
+cerrno.gh       : $(errno_deps)
+cfloat.gh       : $(float_deps)
+ciso646.gh      : $(iso646_deps)
+climits.gh      : $(limits_deps)
+clocale.gh      : $(locale_deps)
+cmath.gh        : $(math_deps)
+csetjmp.gh      : $(setjmp_deps)
+csignal.gh      : $(signal_deps)
+cstdarg.gh      : $(stdarg_deps)
+cstddef.gh      : $(stddef_deps)
+cstdio.gh       : $(stdio_deps)
+cstdlib.gh      : $(stdlib_deps)
+cstring.gh      : $(string_deps)
+ctime.gh        : $(time_deps)
+cwchar.gh       : $(wchar_deps)
+cwctype.gh      : $(wctype_deps)
+
 # These dependency lists are for the IOStreams headers.
 
 fstream_deps = ../watcom/fstream.mh ../readonly.sp ../crwat.sp ../pshpackl.sp ../poppack.sp
@@ -33,6 +52,17 @@ ostream_deps = ../watcom/ostream.mh ../readonly.sp ../crwat.sp ../pshpackl.sp ..
 sstream_deps = ../watcom/sstream.mh ../readonly.sp ../crwat.sp
 streambu_deps = ../watcom/streambu.mh ../readonly.sp ../crwat.sp ../cpplock.sp ../pshpackl.sp ../poppack.sp
 strstrea_deps = ../watcom/strstrea.mh ../readonly.sp ../crwat.sp ../pshpackl.sp ../poppack.sp
+
+fstream.gh      : $(fstream_deps)
+iomanip.gh      : $(iomanip_deps)
+ios.gh          : $(ios_deps)
+iosfwd.gh       : $(iosfwd_deps)
+iostream.gh     : $(iostream_deps)
+istream.gh      : $(istream_deps)
+ostream.gh      : $(ostream_deps)
+sstream.gh      : $(sstream_deps)
+streambu.gh     : $(streambu_deps)
+strstrea.gh     : $(strstrea_deps)
 
 # These dependency lists are for other C++ library headers.
 
@@ -56,6 +86,27 @@ typeinfo_deps = ../watcom/typeinfo.mh ../readonly.sp ../crwat.sp
 utility_deps = ../watcom/utility.mh ../readonly.sp ../crwat.sp
 valarray_deps = ../watcom/valarray.mh ../readonly.sp ../crwat.sp
 vector_deps = ../watcom/vector.mh ../readonly.sp ../crwat.sp
+
+algorith.gh     : $(algorith_deps)
+bitset.gh       : $(bitset_deps)
+complex.gh      : $(complex_deps)
+deque.gh        : $(deque_deps)
+exception.gh    : $(exception_deps)
+function.gh     : $(function_deps)
+iterator.gh     : $(iterator_deps)
+list.gh         : $(list_deps)
+map.gh          : $(map_deps)
+memory.gh       : $(memory_deps)
+new.gh          : $(new_deps)
+numeric.gh      : $(numeric_deps)
+queue.gh        : $(queue_deps)
+set.gh          : $(set_deps)
+stack.gh        : $(stack_deps)
+stdexcept.gh    : $(stdexcept_deps)
+typeinfo.gh     : $(typeinfo_deps)
+utility.gh      : $(utility_deps)
+valarray.gh     : $(valarray_deps)
+vector.gh       : $(vector_deps)
 
 # The follow describe the dependences for the various *.h files.
 

@@ -3,134 +3,122 @@ proj_name=hdr
 !include cproj.mif
 
 splice = wsplice -i.. -k$(system) $(options) ../common.sp $[@ $^@
-
-# Used to build C++ extensionless headers that have an associated .h header.
-csplice = wsplice -i.. -k$(system) -kCNAME $(options) ../common.sp $[@ $^@
-
-# Used to build C++ <complex> header (special case; see complex.mh)
-complexsplice = wsplice -i.. -k$(system) -kCPPCOMPLEX $(options) ../common.sp $[@ $^@
-
-# Used to build C++ <limits> header (special case; see limits.mh)
-limitssplice = wsplice -i.. -k$(system) -kCPPLIMITS $(options) ../common.sp $[@ $^@
-
-# Used to build C++ <locale> header (special case; see locale.mh)
-localesplice = wsplice -i.. -k$(system) -kCPPLOCALE $(options) ../common.sp $[@ $^@
-
-# Used to build C++ <memory> header (special case; see memory.mh)
-memorysplice = wsplice -i.. -k$(system) -kCPPMEMORY $(options) ../common.sp $[@ $^@
-
-# Used to build C++ <string> header (special case; see string.mh)
-stringsplice = wsplice -i.. -k$(system) -kCPPSTRING $(options) ../common.sp $[@ $^@
+psplice = wsplice -i.. -k$(system) $(options) $(options_$^&) ../common.sp $[@ $^@
 
 .EXTENSIONS
-.EXTENSIONS : .h .hpp .cnv .mh .mhp
+.EXTENSIONS : .h .hpp .gh .cnv .mh .mhp
+
+#
+# Handle cname style headers as files with *.gh extension.
+# Extension is removed when they are copied to the release tree.
+#
 
 common = &
         _comdef.h &
         _strdef.h &
-        algorith &
+        algorith.gh &
         assert.h &
-        bitset &
-        cassert &
-        cctype &
-        cerrno &
-        cfloat &
-        ciso646 &
-        climits &
-        clocale &
-        cmath &
-        complex &
+        bitset.gh &
+        cassert.gh &
+        cctype.gh &
+        cerrno.gh &
+        cfloat.gh &
+        ciso646.gh &
+        climits.gh &
+        clocale.gh &
+        cmath.gh &
+        complex.gh &
         complex.h &
         conio.h &
         crtdbg.h &
-        csetjmp &
-        csignal &
-        cstdarg &
-        cstddef &
-        cstdio &
-        cstdlib &
-        cstring &
-        ctime &
+        csetjmp.gh &
+        csignal.gh &
+        cstdarg.gh &
+        cstddef.gh &
+        cstdio.gh &
+        cstdlib.gh &
+        cstring.gh &
+        ctime.gh &
         ctype.h &
-        cwchar &
-        cwctype &
-        deque &
+        cwchar.gh &
+        cwctype.gh &
+        deque.gh &
         env.h &
         errno.h &
         except.h &
-        exceptio &
+        exceptio.gh &
         exceptio.h &
         excpt.h &
         exstring.h &
         fcntl.h &
         fenv.h &
         float.h &
-        fstream &
+        fstream.gh &
         fstream.h &
-        function &
+        function.gh &
         generic.h &
         graph.h &
         i86.h &
         inttypes.h &
-        iomanip &
+        iomanip.gh &
         iomanip.h &
-        ios &
+        ios.gh &
         ios.h &
-        iosfwd &
+        iosfwd.gh &
         iosfwd.h &
-        iostream &
+        iostream.gh &
         iostream.h &
         iso646.h &
-        istream &
+        istream.gh &
         istream.h &
-        iterator &
+        iterator.gh &
         jctype.h &
         jstring.h &
         jtime.h &
-        limits &
+        limits.gh &
         limits.h &
-        list &
-        locale &
+        list.gh &
+        locale.gh &
         locale.h &
         malloc.h &
-        map &
+        map.gh &
         math.h &
         mbctype.h &
         mbstring.h &
         mem.h &
-        memory &
+        memory.gh &
         mmintrin.h &
-        new &
+        new.gh &
         new.h &
-        numeric &
-        ostream &
+        numeric.gh &
+        ostream.gh &
         ostream.h &
         pgchart.h &
         process.h &
-        queue &
+        queue.gh &
         search.h &
-        set &
+        set.gh &
         setjmp.h &
         share.h &
         signal.h &
-        sstream &
+        sstream.gh &
         sstream.h &
-        stack &
+        stack.gh &
         stdarg.h &
         stdbool.h &
         stddef.h &
-        stdexcep &
+        stdexcep.gh &
         stdexcep.h &
         stdint.h &
         stdio.h &
         stdiobuf.h &
         stdlib.h &
-        streambu &
+        streambu.gh &
         streambu.h &
-        string &
+        string.gh &
         string.h &
         string.hpp &
-        strstrea &
+        strstrea.gh &
         strstrea.h &
         sys/locking.h &
         sys/stat.h &
@@ -138,12 +126,12 @@ common = &
         sys/types.h &
         tchar.h &
         time.h &
-        typeinfo &
+        typeinfo.gh &
         typeinfo.h &
-        utility &
-        valarray &
+        utility.gh &
+        valarray.gh &
         varargs.h &
-        vector &
+        vector.gh &
         wcdefs.h &
         wcexcept.h &
         wchar.h &
@@ -374,6 +362,9 @@ all : $($(system)_files) .symbolic
 .mh.cnv:
         $(splice)
 
+.mh.gh:
+        $(psplice)
+
 #
 # Special case for sys/time.h since there is also a time.h
 #
@@ -388,171 +379,86 @@ sys/time.h : linux/sys_time.mh ../readonly.sp ../cpluspro.sp ../lnxkpack.sp ../p
 
 !include ../deps.mif
 
-# Handle cname style headers as special cases. Implicit rules for
-# extensionless files seem awkward (especially for Linux?). Another
-# approach would be to define a temporary extension for these files and
-# change their names when they are copied to the release tree.
 #
-cassert : $(assert_deps)
-        $(csplice)
+# Special case for cname style headers
+#
+options_cassert  = -kCNAME
+options_cctype   = -kCNAME
+options_cerrno   = -kCNAME
+options_cfloat   = -kCNAME
+options_ciso646  = -kCNAME
+options_climits  = -kCNAME
+options_clocale  = -kCNAME
+options_cmath    = -kCNAME
+options_complex  = -kCPPCOMPLEX
+options_csetjmp  = -kCNAME
+options_csignal  = -kCNAME
+options_cstdarg  = -kCNAME
+options_cstddef  = -kCNAME
+options_cstdio   = -kCNAME
+options_cstdlib  = -kCNAME
+options_cstring  = -kCNAME
+options_ctime    = -kCNAME
+options_cwchar   = -kCNAME
+options_cwctype  = -kCNAME
+options_exceptio = -kCNAME
+options_fstream  = -kCNAME
+options_iomanip  = -kCNAME
+options_ios      = -kCNAME
+options_iosfwd   = -kCNAME
+options_iostream = -kCNAME
+options_istream  = -kCNAME
+options_limits   = -kCPPLIMITS
+options_locale   = -kCPPLOCALE
+options_memory   = -kCPPMEMORY
+options_new      = -kCNAME
+options_ostream  = -kCNAME
+options_sstream  = -kCNAME
+options_stdexcep = -kCNAME
+options_streambu = -kCNAME
+options_string   = -kCPPSTRING
+options_strstrea = -kCNAME
+options_typeinfo = -kCNAME
 
-cctype  : $(ctype_deps)
-        $(csplice)
-
-cerrno  : $(errno_deps)
-        $(csplice)
-
-cfloat  : $(float_deps)
-        $(csplice)
-
-ciso646 : $(iso646_deps)
-        $(csplice)
-
-climits : $(limits_deps)
-        $(csplice)
-
-clocale : $(locale_deps)
-        $(csplice)
-
-cmath   : $(math_deps)
-        $(csplice)
-
-csetjmp : $(setjmp_deps)
-        $(csplice)
-
-csignal : $(signal_deps)
-        $(csplice)
-
-cstdarg : $(stdarg_deps)
-        $(csplice)
-
-cstddef : $(stddef_deps)
-        $(csplice)
-
-cstdio  : $(stdio_deps)
-        $(csplice)
-
-cstdlib : $(stdlib_deps)
-        $(csplice)
-
-cstring : $(string_deps)
-        $(csplice)
-
-ctime   : $(time_deps)
-        $(csplice)
-
-cwchar  : $(wchar_deps)
-        $(csplice)
-
-cwctype : $(wctype_deps)
-        $(csplice)
-
-# Standard IOStream headers.
-
-fstream  : $(fstream_deps)
-         $(csplice)
-
-iomanip  : $(iomanip_deps)
-         $(csplice)
-
-ios      : $(ios_deps)
-         $(csplice)
-
-iosfwd   : $(iosfwd_deps)
-         $(csplice)
-
-iostream : $(iostream_deps)
-         $(csplice)
-
-istream  : $(istream_deps)
-         $(csplice)
-
-ostream  : $(ostream_deps)
-         $(csplice)
-
-sstream  : $(sstream_deps)
-         $(csplice)
-
-streambu : $(streambu_deps)
-         $(csplice)
-
-strstrea : $(strstrea_deps)
-         $(csplice)
-
-# Other headers from the C++ standard library.
-
-algorith : $(algorith_deps)
-         $(splice)
-
-bitset   : $(bitset_deps)
-         $(splice)
-
-complex  : $(complex_deps)
-         $(complexsplice)
-
-deque    : $(deque_deps)
-         $(splice)
-
-exceptio : $(exception_deps)
-         $(csplice)
-
-function : $(function_deps)
-         $(splice)
-
-iterator : $(iterator_deps)
-         $(splice)
-
-limits   : $(limits_deps)
-         $(limitssplice)
-
-list     : $(list_deps)
-         $(splice)
-
-locale   : $(locale_deps)
-         $(localesplice)
-
-map      : $(map_deps)
-         $(splice)
-
-memory   : $(memory_deps)
-         $(memorysplice)
-
-new      : $(new_deps)
-         $(csplice)
-
-numeric  : $(numeric_deps)
-         $(splice)
-
-queue    : $(queue_deps)
-         $(splice)
-
-set      : $(set_deps)
-         $(splice)
-
-stack    : $(stack_deps)
-         $(splice)
-
-stdexcep : $(stdexcept_deps)
-         $(csplice)
-
-string   : $(string_deps)
-         $(stringsplice)
-
-typeinfo : $(typeinfo_deps)
-         $(csplice)
-
-utility  : $(utility_deps)
-         $(splice)
-
-valarray : $(valarray_deps)
-         $(splice)
-
-vector   : $(vector_deps)
-         $(splice)
-
+cassert.gh :
+        $(psplice)
+cctype.gh :
+        $(psplice)
+cerrno.gh :
+        $(psplice)
+cfloat.gh :
+        $(psplice)
+ciso646.gh :
+        $(psplice)
+climits.gh :
+        $(psplice)
+clocale.gh :
+        $(psplice)
+cmath.gh :
+        $(psplice)
+csetjmp.gh :
+        $(psplice)
+csignal.gh :
+        $(psplice)
+cstdarg.gh :
+        $(psplice)
+cstddef.gh :
+        $(psplice)
+cstdio.gh :
+        $(psplice)
+cstdlib.gh :
+        $(psplice)
+cstring.gh :
+        $(psplice)
+ctime.gh :
+        $(psplice)
+cwchar.gh :
+        $(psplice)
+cwctype.gh :
+        $(psplice)
 
 clean: .SYMBOLIC
-      rm -f *.h sys/*.h *.hpp common.cnv
+      rm -f *.h *.gh sys/*.h *.hpp common.cnv
 !ifeq system DOS
       rm -f win/*.h
 !else ifeq system LINUX
