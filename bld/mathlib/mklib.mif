@@ -28,7 +28,7 @@ $(libname).lib : $(objs) $(libs) .precious
     *$(cc) $[@ -i"$(include_c_path)" $(build_target) $($^&_flags) $(c_flags)
 
 .asm.obj :
-    *$(as) $[@ -i"$(include_a_path)" $(build_target) $($^&_flags) $(a_flags)
+    *$(as) $[@ $(include_a_path) $(build_target) $($^&_flags) $(a_flags)
 
 .c   : ../../../c
 .cpp : ../../../cpp

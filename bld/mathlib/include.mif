@@ -41,4 +41,8 @@ include_a_387 =;$(emu386)/inc;$(emu386)/asm
 include_a_axp =
 include_a_ppc =
 
-include_a_path =$(include_default)$(include_watcom)$(include_a_$(processor))
+!ifdef __LINUX__
+include_a_path =-i"$(include_default)$(include_watcom)$(include_a_$(processor))"
+!else
+include_a_path =-i$(include_default)$(include_watcom)$(include_a_$(processor))
+!endif

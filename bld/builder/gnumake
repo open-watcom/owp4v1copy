@@ -14,6 +14,7 @@ UTILS := $(foreach i,$(UTILS),$(OBJDIR)/$i)
 
 all: $(OBJDIR) $(UTILS) $(OBJDIR)/builder
 	cp $(UTILS) ../build/binl
+	mv -f ../build/binl/diff ../build/binl/wdiff
 
 $(OBJDIR)/builder: $(foreach i,sys.o builder.o utils.o runit.o,$(OBJDIR)/$i)
 
