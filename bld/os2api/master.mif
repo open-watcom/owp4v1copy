@@ -46,6 +46,12 @@ componentsrexx =     &
         rexx.lbc     &
         rexxapi.lbc
 
+componentsmmpm2 =    &
+        dive.lbc     &
+        mdm.lbc      &
+        mmio.lbc     &
+        sw.lbc
+
 .def .asm : ..\$(srcdir)
 
 .def.lbc:
@@ -81,6 +87,12 @@ rexx.lib: rexxall.lbc
         $(lib) -b -c -q -n -io -ii -p=32 $@ @$<
 
 rexxall.lbc: $(componentsrexx)
+        cat $< > $@
+
+mmpm2.lib: mmpm2all.lbc
+        $(lib) -b -c -q -n -io -ii -p=32 $@ @$<
+
+mmpm2all.lbc: $(componentsmmpm2)
         cat $< > $@
 
 clean: .SYMBOLIC .EXPLICIT

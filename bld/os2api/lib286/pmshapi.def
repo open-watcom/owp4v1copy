@@ -1,5 +1,5 @@
-EXPORTS
 LIBRARY PMSHAPI
+EXPORTS
     SHEPIINITIALISE                             @1
     WINQUERYPROFILEINT                          @2
     WINQUERYPROFILESTRING                       @3

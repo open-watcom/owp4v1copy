@@ -5,6 +5,7 @@ host_cpu = 386
 
 srcdir = lib386
 
-all: os2386.lib rexx.lib tcpip32.lib ftpapi.lib opengl.lib glut.lib libtk.lib
+all: os2386.lib rexx.lib tcpip32.lib ftpapi.lib opengl.lib glut.lib &
+     libtk.lib mmpm2.lib
 
 !include ..\master.mif

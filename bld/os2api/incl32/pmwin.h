@@ -827,8 +827,57 @@ BOOL    APIENTRY WinPostMsg(HWND,ULONG,MPARAM,MPARAM);
 
 #if defined(INCL_WINMESSAGEMGR)
 
+#define CVR_ALIGNLEFT   0x0001
+#define CVR_ALIGNBOTTOM 0x0002
+#define CVR_ALIGNRIGHT  0x0004
+#define CVR_ALIGNTOP    0x0008
+#define CVR_REDRAW      0x0010
+
+#define HT_NORMAL      0
+#define HT_TRANSPARENT (-1)
+#define HT_DISCARD     (-2)
+#define HT_ERROR       (-3)
+
+#define WPM_TEXT         0x0001
+#define WPM_CTLDATA      0x0002
+#define WPM_PRESPARAMS   0x0004
+#define WPM_CCHTEXT      0x0008
+#define WPM_CBCTLDATA    0x0010
+#define WPM_CBPRESPARAMS 0x0020
+
+#define BMSG_POST        0x0000
+#define BMSG_SEND        0x0001
+#define BMSG_POSTQUEUE   0x0002
+#define BMSG_DESCENDANTS 0x0004
+#define BMSG_FRAMEONLY   0x0008
+
+#define QS_KEY         0x0001
+#define QS_MOUSEBUTTON 0x0002
+#define QS_MOUSEMOVE   0x0004
+#define QS_MOUSE       0x0006
+#define QS_TIMER       0x0008
+#define QS_PAINT       0x0010
+#define QS_POSTMSG     0x0020
+#define QS_SEM1        0x0040
+#define QS_SEM2        0x0080
+#define QS_SEM3        0x0100
+#define QS_SEM4        0x0200
+#define QS_SENDMSG     0x0400
+#define QS_MSGINPUT    0x0800
+
+typedef struct _WNDPARAMS {
+    ULONG fsStatus;
+    ULONG cchText;
+    PSZ   pszText;
+    ULONG cbPresParams;
+    PVOID pPresParams;
+    ULONG cbCtlData;
+    PVOID pCtlData;
+} WNDPARAMS, *PWNDPARAMS;
+
 BOOL    APIENTRY WinBroadcastMsg(HWND,ULONG,MPARAM,MPARAM,ULONG);
 BOOL    APIENTRY WinCancelShutdown(HMQ,BOOL);
+BOOL    APIENTRY WinInSendMsg(HAB);
 APIRET  APIENTRY WinRequestMutexSem(HMTX,ULONG);
 APIRET  APIENTRY WinWaitEventSem(HEV,ULONG);
 BOOL    APIENTRY WinWaitMsg(HAB,ULONG,ULONG);
@@ -836,6 +885,7 @@ APIRET  APIENTRY WinWaitMuxWaitSem(HMUX,ULONG,PULONG);
 BOOL    APIENTRY WinPostQueueMsg(HMQ,ULONG,MPARAM,MPARAM);
 BOOL    APIENTRY WinQueryMsgPos(HAB,PPOINTL);
 BOOL    APIENTRY WinQueryMsgTime(HAB);
+ULONG   APIENTRY WinQueryQueueStatus(HWND);
 
 #endif
 
@@ -1382,6 +1432,12 @@ BOOL   APIENTRY WinSetFocus(HWND,HWND);
 BOOL   APIENTRY WinUnlockSystem(HAB,PSZ);
 
 #endif
+
+#define WM_VRNDISABLED 0x007e
+#define WM_VRNENABLED  0x007f
+
+ULONG APIENTRY WinQueryVisibleRegion(HWND,HRGN);
+BOOL  APIENTRY WinSetVisibleRegionNotify(HWND,BOOL);
 
 #if defined(INCL_WININPUT)
 
