@@ -122,6 +122,7 @@ book_src=ebooks
 # c_readme
 book_title=$(company) C/C++ Getting Started
 book_objs=$(objs_gs) $(objs_cg)
+book_objs_ps=$(objs_gs_ps)
 book_incs=$(incs_gs);$(incs_cg)
 book_bmroot=$(bmroot_gs)
 book_src=c_readme

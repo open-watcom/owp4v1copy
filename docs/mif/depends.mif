@@ -496,47 +496,26 @@ $(docsrc_dir)\gs\fbooks.bmp &
 $(docsrc_dir)\gs\fbooks.cnt &
 $(docsrc_dir)\gs\fbooks.gml &
 $(docsrc_dir)\gs\ide10c.bmp &
-$(docsrc_dir)\gs\ide10c.ps &
 $(docsrc_dir)\gs\ide11c.bmp &
-$(docsrc_dir)\gs\ide11c.ps &
 $(docsrc_dir)\gs\ide12c.bmp &
-$(docsrc_dir)\gs\ide12c.ps &
 $(docsrc_dir)\gs\ide13c.bmp &
-$(docsrc_dir)\gs\ide13c.ps &
 $(docsrc_dir)\gs\ide14c.bmp &
-$(docsrc_dir)\gs\ide14c.ps &
 $(docsrc_dir)\gs\ide14f.bmp &
-$(docsrc_dir)\gs\ide14f.ps &
 $(docsrc_dir)\gs\ide1c.bmp &
-$(docsrc_dir)\gs\ide1c.ps &
 $(docsrc_dir)\gs\ide2c.bmp &
-$(docsrc_dir)\gs\ide2c.ps &
 $(docsrc_dir)\gs\ide2f.bmp &
-$(docsrc_dir)\gs\ide2f.ps &
 $(docsrc_dir)\gs\ide3c.bmp &
-$(docsrc_dir)\gs\ide3c.ps &
 $(docsrc_dir)\gs\ide3f.bmp &
-$(docsrc_dir)\gs\ide3f.ps &
 $(docsrc_dir)\gs\ide4c.bmp &
-$(docsrc_dir)\gs\ide4c.ps &
 $(docsrc_dir)\gs\ide5c.bmp &
-$(docsrc_dir)\gs\ide5c.ps &
 $(docsrc_dir)\gs\ide5f.bmp &
-$(docsrc_dir)\gs\ide5f.ps &
 $(docsrc_dir)\gs\ide6c.bmp &
-$(docsrc_dir)\gs\ide6c.ps &
 $(docsrc_dir)\gs\ide7c.bmp &
-$(docsrc_dir)\gs\ide7c.ps &
 $(docsrc_dir)\gs\ide7f.bmp &
-$(docsrc_dir)\gs\ide7f.ps &
 $(docsrc_dir)\gs\ide8c.bmp &
-$(docsrc_dir)\gs\ide8c.ps &
 $(docsrc_dir)\gs\ide8f.bmp &
-$(docsrc_dir)\gs\ide8f.ps &
 $(docsrc_dir)\gs\ide9c.bmp &
-$(docsrc_dir)\gs\ide9c.ps &
 $(docsrc_dir)\gs\ide9f.bmp &
-$(docsrc_dir)\gs\ide9f.ps &
 $(docsrc_dir)\gs\install.gml &
 $(docsrc_dir)\gs\intro.gml &
 $(docsrc_dir)\gs\lic.gml &
@@ -544,6 +523,28 @@ $(docsrc_dir)\gs\light2.bmp &
 $(docsrc_dir)\gs\redist.gml &
 $(docsrc_dir)\gs\tshoot.gml &
 $(docsrc_dir)\gs\tutorial.gml
+objs_gs_ps = &
+ide10c.ps &
+ide11c.ps &
+ide12c.ps &
+ide13c.ps &
+ide14c.ps &
+ide14f.ps &
+ide1c.ps &
+ide2c.ps &
+ide2f.ps &
+ide3c.ps &
+ide3f.ps &
+ide4c.ps &
+ide5c.ps &
+ide5f.ps &
+ide6c.ps &
+ide7c.ps &
+ide7f.ps &
+ide8c.ps &
+ide8f.ps &
+ide9c.ps &
+ide9f.ps
 
 # gui;gui\snaps sub-directory
 bmroot_gui = $(docsrc_dir)\gui\snaps
