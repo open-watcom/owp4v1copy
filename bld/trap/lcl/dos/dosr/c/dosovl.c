@@ -41,7 +41,7 @@ typedef addr32_ptr      dos_addr;
 extern unsigned_8       RunProg(trap_cpu_regs *, trap_cpu_regs *);
 extern void             SetDbgTask(void);
 extern void             SetUsrTask(void);
-extern void             OvlTrap( int );
+extern void             far OvlTrap( int );
 
 extern trap_cpu_regs    TaskRegs;
 
