@@ -11,13 +11,15 @@ dig_os = os2v2
 !endif
 !endif
 
+.EXTENSIONS : .str
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
 
 !include $(dig_dir)/mif/trpcli.mif
 
-inc_dirs = ..;$(wv_dir)/h;$(dig_dir)/h;$(wv_dir)/$(host_os)/$(host_os)$(host_cpu)
+inc_dirs = ..;$(wv_dir)/h;$(dig_dir)/h;
 
 extra_c_flags = -s -dBUILD_RFX
 !ifeq machine fmr
@@ -49,9 +51,18 @@ objs += $(host_os)filio.obj &
 objs += inthdlrs.obj
 !endif
 
-rfx.exe : $(objs)
-        $(linker) $(lflags) name $^. file { $< }
+rfx.exe : litdef.gh $(objs)
+        $(linker) $(lflags) name $^@ file { $(objs) }
+
+.str: $(wv_dir)/h
 
 .c: ../$(host_os)$(host_cpu);..;$(wv_dir)/$(host_os)/c;$(wv_dir)/c;$(dig_srcs)
 
 .asm: ../$(host_os)i86
+
+./mkstr.exe : mkstr.c wd.str wdengin.str menu.str $(dig_dir)/h/mad.str
+        $(bld_cl) -i"$(wv_dir)/h;$(dig_dir)/h" $(wcl_util_opts) $[@
+
+litdef.gh : ./mkstr.exe
+        $[@ $^@
+
