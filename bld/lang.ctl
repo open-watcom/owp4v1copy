@@ -12,6 +12,8 @@ echo Languages Build <1>
 
 #       H must be done first to create up-to-date header files
 [ INCLUDE <devdir>\hdr\lang.ctl ]
+#       same for Win32 headers
+[ INCLUDE <devdir>\w32api\lang.ctl ]
 #       This used to be part of HDR
 #[ INCLUDE <devdir>\nwsdk\lang.ctl ]
 #       BW32LDR must be done before EXE's that use the loader
