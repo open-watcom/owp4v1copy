@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  mpathgrp.c interfaces
 *
 ****************************************************************************/
 
@@ -36,17 +35,17 @@
 #include <limits.h>
 #include <stdio.h>
 
-typedef struct PathGroup PGROUP;
+typedef struct PathGroup    PGROUP;
 
 struct PathGroup {
-    char *drive;
-    char *dir;
-    char *fname;
-    char *ext;
-    char buffer[ PATH_MAX + 4 ];
+    char    *drive;
+    char    *dir;
+    char    *fname;
+    char    *ext;
+    char    buffer[PATH_MAX + 4];
 };
 
-extern void DropPGroup( PGROUP * );
-extern PGROUP *SplitPath( const char *path );
+extern void     DropPGroup( PGROUP * );
+extern PGROUP   *SplitPath( const char *path );
 
 #endif /* !_MPATHGRP_H */

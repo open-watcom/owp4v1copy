@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  mlex.c interfaces
 *
 ****************************************************************************/
 
@@ -36,30 +35,30 @@
 #include "mtypes.h"
 #include "mstream.h"
 
-extern char* targ_path;   /* Current sufsuf target path    */
-extern char* dep_path;    /* Current sufsuf dependent path */
+extern char *targ_path;   /* Current sufsuf target path    */
+extern char *dep_path;    /* Current sufsuf dependent path */
 
 /*
  *  The masks for MS-macro modifier
  */
 
-#define MOD_D  0x01
-#define MOD_B  0x02
-#define MOD_F  0x04
-#define MOD_R  0x08
+#define MOD_D   0x01
+#define MOD_B   0x02
+#define MOD_F   0x04
+#define MOD_R   0x08
 
 /*
  * These are used as place holders while doing macro expansion, they are
  * assumed to not be in the input stream.
  */
-#define TMP_DOL_C       '\x01'  /* replace $ with this temporarily */
-#define TMP_DOL_S       "\x01"
-#define TMP_COMMENT_C   '\x02'  /* replace $# with this temporarily */
-#define TMP_COMMENT_S   "\x02"
+#define TMP_DOL_C           '\x01'  /* replace $ with this temporarily */
+#define TMP_DOL_S           "\x01"
+#define TMP_COMMENT_C       '\x02'  /* replace $# with this temporarily */
+#define TMP_COMMENT_S       "\x02"
 /* only good for microsoft option when doing partial deMacros     */
 /* for special macros            */
-#define SPECIAL_TMP_DOL_C '\x03' /* replace $ with this temporarily */
-#define SPECIAL_TMP_DOL_S "\x03"
+#define SPECIAL_TMP_DOL_C   '\x03' /* replace $ with this temporarily */
+#define SPECIAL_TMP_DOL_S   "\x03"
 
 /*
  * Is this a special microsoft character in a macro
@@ -169,35 +168,35 @@ enum Tokens {
     TOKENS_MAX
 };
 
-#define COMPLEMENT     '~'
-#define LOG_NEGATION   '!'
-#define ADD            '+'
-#define SUBTRACT       '-'
-#define MULTIPLY       '*'
-#define DIVIDE         '/'
-#define MODULUS        '%'
-#define BIT_AND        '&'
-#define BIT_OR         '|'
-#define BIT_XOR        '^'
-#define EQUAL          '='
-#define LESSTHAN       '<'
-#define GREATERTHAN    '>'
-#define PAREN_LEFT     '('
-#define PAREN_RIGHT    ')'
-#define DOUBLEQUOTE    '\"'
-#define BACKSLASH      '\\'
-#define MAX_STRING     256
-#define EXIST          "EXIST"
-#define DEFINED        "DEFINED"
+#define COMPLEMENT      '~'
+#define LOG_NEGATION    '!'
+#define ADD             '+'
+#define SUBTRACT        '-'
+#define MULTIPLY        '*'
+#define DIVIDE          '/'
+#define MODULUS         '%'
+#define BIT_AND         '&'
+#define BIT_OR          '|'
+#define BIT_XOR         '^'
+#define EQUAL           '='
+#define LESSTHAN        '<'
+#define GREATERTHAN     '>'
+#define PAREN_LEFT      '('
+#define PAREN_RIGHT     ')'
+#define DOUBLEQUOTE     '\"'
+#define BACKSLASH       '\\'
+#define MAX_STRING      256
+#define EXIST           "EXIST"
+#define DEFINED         "DEFINED"
 
 // Node Definition for the tokens
-typedef struct TOKEN_OP {
+typedef struct  TOKEN_OP {
     enum Tokens type;    // Type of Token
     union {
-        int_32 number;        // string value
-        char  string[MAX_STRING];
-    } data;
-}  TOKEN_TYPE;
+        int_32  number;        // string value
+        char    string[MAX_STRING];
+    }   data;
+}   TOKEN_TYPE;
 
 typedef TOKEN_TYPE DATAVALUE;
 
@@ -266,7 +265,7 @@ enum FormQualifiers {
 /*
  * global data
  */
-extern const char * const DotNames[];
+extern const char * const   DotNames[];
 extern union CurAttrUnion {
     char    *ptr;
     INT16   num;
@@ -288,18 +287,18 @@ enum LexMode {
     LEX_MS_MAC      /* sned back tokens for microsoft demacro               */
 };
 
-extern void LexInit( void );
-extern void LexFini( void );
-extern TOKEN_T LexToken( enum LexMode mode );
-extern void LexMaybeFree( TOKEN_T tok );
+extern void     LexInit( void );
+extern void     LexFini( void );
+extern TOKEN_T  LexToken( enum LexMode mode );
+extern void     LexMaybeFree( TOKEN_T tok );
 
 /* never call these directly! only call through LexToken() */
-extern TOKEN_T LexParser( STRM_T );
-extern TOKEN_T LexPath( STRM_T );
-extern TOKEN_T LexMacSubst( STRM_T );
-extern TOKEN_T LexMacDef( STRM_T );
-extern TOKEN_T LexMSDollar ( STRM_T );
+extern TOKEN_T  LexParser( STRM_T );
+extern TOKEN_T  LexPath( STRM_T );
+extern TOKEN_T  LexMacSubst( STRM_T );
+extern TOKEN_T  LexMacDef( STRM_T );
+extern TOKEN_T  LexMSDollar ( STRM_T );
 
-extern void GetModifier ( void );
+extern void     GetModifier ( void );
 
 #endif /* !_MLEX_H */

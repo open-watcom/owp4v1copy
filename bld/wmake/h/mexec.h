@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  mexec.c interfaces
 *
 ****************************************************************************/
 
@@ -37,8 +36,8 @@
 
 #define BACKSLASH_S "\\"
 
-extern RET_T ExecCList( CLIST *clist );
-extern void ExecInit( void );
-extern void ExecFini( void );
+extern RET_T    ExecCList( CLIST *clist );
+extern void     ExecInit( void );
+extern void     ExecFini( void );
 
 #endif

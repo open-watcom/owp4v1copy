@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  misc.c interfaces. - Note it is not mmisc.c
 *
 ****************************************************************************/
 
@@ -37,20 +36,20 @@ typedef struct EnvTracker {
     char                value[1];
 } ENV_TRACKER;
 
-extern char *FixName( char *name );
-extern int FNameCmp( const char *a, const char *b );
+extern char         *FixName( char *name );
+extern int          FNameCmp( const char *a, const char *b );
 #ifdef USE_FAR
-extern int _fFNameCmp( const char FAR *a, const char FAR *b );
+extern int          _fFNameCmp( const char FAR *a, const char FAR *b );
 #endif
-extern const char *DoWildCard( const char *base );
-extern void DoWildCardClose( void );
-extern int KWCompare( const char **p1, const char **p2 );
-extern char *SkipWS( const char *p );
-extern char *FindNextWS( char *str );
-extern char *RemoveDoubleQuotes( char *dst, int maxlen, const char *src );
-extern int PutEnvSafe( ENV_TRACKER *env );
+extern const char   *DoWildCard( const char *base );
+extern void         DoWildCardClose( void );
+extern int          KWCompare( const char **p1, const char **p2 );
+extern char         *SkipWS( const char *p );
+extern char         *FindNextWS( char *str );
+extern char         *RemoveDoubleQuotes( char *dst, int maxlen, const char *src );
+extern int          PutEnvSafe( ENV_TRACKER *env );
 #ifndef NDEBUG
-extern void PutEnvFini( void );
+extern void         PutEnvFini( void );
 #endif
 
 #endif

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  wmake types and its version of <ctypes.h>
 *
 ****************************************************************************/
 
@@ -106,7 +105,7 @@ extern const UINT8 IsArray[258];
  * include ctype.h for toupper() and tolower().  BUT... this is ANSI
  * so we SHOULD be able to do this...
  */
-extern int tolower( int );
-extern int toupper( int );
+extern int  tolower( int );
+extern int  toupper( int );
 
 #endif  /* !_MTYPES_H */

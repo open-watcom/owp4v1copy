@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  mpreproc.c interfaces
 *
 ****************************************************************************/
 
@@ -34,11 +33,11 @@
 #define _MPREPROC_H     1
 #include "mstream.h"
 
-extern void PreProcInit( void );
-extern void PreProcFini( void );
-extern STRM_T PreGetCH( void );
-extern BOOLEAN existFile (char *inPath);
-extern size_t GetNestLevel( void );
+extern void     PreProcInit( void );
+extern void     PreProcFini( void );
+extern STRM_T   PreGetCH( void );
+extern BOOLEAN  existFile (char *inPath);
+extern size_t   GetNestLevel( void );
 
 #endif /* !_MPREPROC_H */
 

@@ -38,7 +38,7 @@
 #include "mtypes.h"
 
 #ifdef TRACK
-#define TRMEM_ENV_VAR "TRMEM_CODE"
+#define TRMEM_ENV_VAR   "TRMEM_CODE"
 enum {
     TRMEM_DO_NOT_PRINT  = 0x0001,
     TRMEM_IGNORE_ERROR  = 0x0002
@@ -60,7 +60,7 @@ extern void MemDecreaseSize( void *ptr, size_t new_size );
 
 extern void FAR *FarMaybeMalloc( size_t size );
 extern void FAR *FarMalloc( size_t size );
-extern void FarFree( void FAR *p );
+extern void     FarFree( void FAR *p );
 
 #endif
 

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  mrcmsg.c interfaces
 *
 ****************************************************************************/
 
@@ -246,27 +245,27 @@
 
 #include "usageend.gh"
 
-#define MSG_LANG_SPACING        1000
+#define MSG_LANG_SPACING                1000
 
 #define MSG_USE_E_BASE  (USAGE_BASE + RLE_ENGLISH*MSG_LANG_SPACING)
 #define MSG_USE_J_BASE  (USAGE_BASE + RLE_JAPANESE*MSG_LANG_SPACING)
 
 #define END_OF_RESOURCE_MSG             USAGE_LAST
 
-#define MAX_RESOURCE_SIZE       128
+#define MAX_RESOURCE_SIZE               128
 
 
 typedef struct table_type {
-    int         msgid;
-    char        *msgtype;
+    int     msgid;
+    char    *msgtype;
 } TABLE_TYPE;
 
-extern int MsgInit( void );
-extern int MsgGet( int resourceid, char *buffer );
-extern void MsgGetTail( int resourceid, char *buffer );
-extern void MsgFini( void );
-extern int MsgReOrder( int resourceid, char *buff, char **paratype );
-extern BOOLEAN ResAutoDep( char *name, time_t stamp, BOOLEAN (*chk)(time_t,time_t), time_t *pmax_time );
+extern int      MsgInit( void );
+extern int      MsgGet( int resourceid, char *buffer );
+extern void     MsgGetTail( int resourceid, char *buffer );
+extern void     MsgFini( void );
+extern int      MsgReOrder( int resourceid, char *buff, char **paratype );
+extern BOOLEAN  ResAutoDep( char *name, time_t stamp, BOOLEAN (*chk)(time_t,time_t), time_t *pmax_time );
 
 // extern long FileShift; /* This is defined in %devdir%\sdk\rc\wres\c\loadstr.c */ incompatible with mautores.c W.Briscoe 20031106
 #else

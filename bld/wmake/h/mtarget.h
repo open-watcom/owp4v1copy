@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  mtarget.c interfaces
 *
 ****************************************************************************/
 
@@ -38,15 +37,15 @@
 #include "mlex.h"
 #include "mtypes.h"
 
-typedef struct TargAttr   TATTR;
-typedef struct Target     TARGET;
-typedef struct Depend     DEPEND;
-typedef struct TargList   TLIST;
-typedef struct CmdList    CLIST;
-typedef struct fileStruct FLIST;
-typedef struct envStruct  ELIST;
-typedef struct fileList   NKLIST;
-typedef struct sufsufList SLIST;
+typedef struct TargAttr     TATTR;
+typedef struct Target       TARGET;
+typedef struct Depend       DEPEND;
+typedef struct TargList     TLIST;
+typedef struct CmdList      CLIST;
+typedef struct fileStruct   FLIST;
+typedef struct envStruct    ELIST;
+typedef struct fileList     NKLIST;
+typedef struct sufsufList   SLIST;
 
 #define BEFORE_S   "BEFORE"
 #define AFTER_S    "AFTER"
@@ -141,30 +140,30 @@ struct Depend {
 };
 
 struct fileStruct {
-    char*       fileName;
-    char*       body;
-    BOOLEAN     keep;
-    FLIST* next;
+    char    *fileName;
+    char    *body;
+    BOOLEAN keep;
+    FLIST   *next;
 };
 
 struct envStruct {
-    char*      envVarName;
-    char*      envOldVal;
-    ELIST* next;
+    char    *envVarName;
+    char    *envOldVal;
+    ELIST   *next;
 };
 
 
 struct fileList {
-    char*     fileName;
-    NKLIST*   next;
+    char    *fileName;
+    NKLIST  *next;
 };
 
 
 struct CmdList {
-    CLIST *next;      /* next command or NULL                      */
-    FLIST *inlineHead;/* contains the information for inline files */
-                      /* associated with the command               */
-    char  *text;      /* Text of command to execute                */
+    CLIST   *next;      /* next command or NULL                      */
+    FLIST   *inlineHead;/* contains the information for inline files */
+                        /* associated with the command               */
+    char    *text;      /* Text of command to execute                */
 };
 
 struct TargList {
@@ -173,17 +172,17 @@ struct TargList {
 };
 
 struct sufsufList {
-    char   *targ_path;
-    char   *dep_path;
-    CLIST  *clist;
-    SLIST  *next;
+    char    *targ_path;
+    char    *dep_path;
+    CLIST   *clist;
+    SLIST   *next;
 };
 
 
-extern const TATTR FalseAttr;
+extern const TATTR  FalseAttr;
 
-extern void TargetInit( void );
-extern void TargetFini( void );
+extern void     TargetInit( void );
+extern void     TargetFini( void );
 
 extern TLIST    *NewTList( void );
 extern TARGET   *NewTarget( const char *name );

@@ -184,18 +184,19 @@ struct dll_cmd {
 #endif
 };
 
-extern int SwitchChar( void );
-extern int OSCorrupted( void );
-extern RET_T TouchFile( const char *name );
-extern autodep_ret_t SysOBJAutoDep( char *, time_t, BOOLEAN (*)(time_t,time_t), time_t*);
-extern BOOLEAN IdenticalAutoDepTimes( time_t, time_t );
-extern void InitHardErr( void );
-extern DLL_CMD* OSFindDLL( char const *cmd_name );
-extern void OSLoadDLL( char *cmd_name, char *dll_name, char *ent_name );
-extern DLL_CMD* OSFindDLL( char const *cmd_name );
-extern int OSExecDLL( DLL_CMD* dll, char const* cmd_args );
-extern void CheckForBreak ( void );
-extern void InitSignals( void );
-extern void DLLFini ( void );
+extern int              SwitchChar( void );
+extern int              OSCorrupted( void );
+extern RET_T            TouchFile( const char *name );
+extern autodep_ret_t    SysOBJAutoDep( char *, time_t,
+    BOOLEAN (*)(time_t,time_t), time_t* );
+extern BOOLEAN          IdenticalAutoDepTimes( time_t, time_t );
+extern void             InitHardErr( void );
+extern DLL_CMD          *OSFindDLL( char const *cmd_name );
+extern void             OSLoadDLL( char *cmd, char *dll_name, char *ent_name );
+extern DLL_CMD          *OSFindDLL( char const *cmd_name );
+extern int              OSExecDLL( DLL_CMD* dll, char const* cmd_args );
+extern void             CheckForBreak ( void );
+extern void             InitSignals( void );
+extern void             DLLFini ( void );
 
 #endif

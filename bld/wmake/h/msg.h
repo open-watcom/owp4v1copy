@@ -65,12 +65,12 @@ enum MsgClass {
 };
 
 
-extern size_t FmtStr( char *buf, const char *fmt, ... );
-extern void PrtMsg( enum MsgClass num, ... );
-extern void Usage( void );
-extern BOOLEAN GetYes( enum MsgClass querymsg );
-extern void LogInit( const char *logname );
-extern void LogFini( void );
+extern size_t   FmtStr( char *buf, const char *fmt, ... );
+extern void     PrtMsg( enum MsgClass num, ... );
+extern void     Usage( void );
+extern BOOLEAN  GetYes( enum MsgClass querymsg );
+extern void     LogInit( const char *logname );
+extern void     LogFini( void );
 
 #define pick( name, string ) name
 
