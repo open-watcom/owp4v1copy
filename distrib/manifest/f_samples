@@ -4,6 +4,7 @@ samples\fortran\os2\calendar.for
 samples\fortran\os2\comm.for
 samples\fortran\os2\fshapes.fi
 samples\fortran\os2\fshapes.for
+samples\fortran\os2\makefile
 samples\fortran\os2\mthread.for
 samples\fortran\os2\dll\dllinit.for
 samples\fortran\os2\dll\dllsamp.for
@@ -32,6 +33,7 @@ samples\fortran\win\dll\vbdll32.for
 samples\fortran\win\dll\windll.for
 samples\fortran\win\dll\windllv.for
 samples\fortran\win32\dll
+samples\fortran\win32\makefile
 samples\fortran\win32\mthread.for
 samples\fortran\win32\dll\dllinit.for
 samples\fortran\win32\dll\dllsamp.for

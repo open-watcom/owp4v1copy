@@ -23,7 +23,9 @@ cdsay .
 <CPCMD> <devdir>\f77\samples\os2\*.*    <relroot>\rel2\samples\fortran\os2\
 <CPCMD> <devdir>\f77\samples\os2\rexx\*.*       <relroot>\rel2\samples\fortran\os2\rexx\
 <CPCMD> <devdir>\f77\samples\mthread\mthrdos2.for       <relroot>\rel2\samples\fortran\os2\mthread.for
+<CPCMD> <devdir>\f77\samples\mthread\makefile.os2       <relroot>\rel2\samples\fortran\os2\makefile
 <CPCMD> <devdir>\f77\samples\mthread\mthrdnt.for        <relroot>\rel2\samples\fortran\win32\mthread.for
+<CPCMD> <devdir>\f77\samples\mthread\makefile.nt        <relroot>\rel2\samples\fortran\win32\makefile
 <CPCMD> <devdir>\f77\samples\win\*.*    <relroot>\rel2\samples\fortran\win\
 # These don't exist?
 #<CPCMD> <devdir>\f77\samples\win32\*.* <relroot>\rel2\samples\fortran\win32\
