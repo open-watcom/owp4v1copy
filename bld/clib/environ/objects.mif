@@ -6,11 +6,11 @@
 !inject envptr.obj   d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32
 !inject getenv.obj   d16 d32             nt nta ntp         o16 o32 q16     w16 w32 osi l32
 !inject gtcmddos.obj d16 d32                                                w16
-!inject gtcmd.obj                        nt nta ntp nvc nvl o16 o32         w32 osi
+!inject gtcmd.obj                        nt nta ntp nvc nvl o16 o32             w32 osi
 !inject gtcmdunx.obj                                                q16 q32             l32
 !inject gtpid.obj    d16 d32                                                w16     osi
 !inject gtpidos2.obj                                        o16 o32
-!inject gtpidw32.obj                                                        w32
+!inject gtpidw32.obj                                                            w32
 !inject gtpidwnt.obj                     nt nta ntp
 !inject isatt.obj    d16 d32                                                w16 w32 osi
 !inject isattos2.obj                                        o16 o32
