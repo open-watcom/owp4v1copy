@@ -1,3 +1,30 @@
+2002-11-16  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* lib/uuid.c (CATID_InternetAware,CLSID_HttpSProtocol,
+	CLSID_PSUrlMonProxy,CLSID_StdURLMoniker,IID_IObjectWithSite,
+	IID_IPersistMoniker,IID_IProgressNotify): Correct off-by-one bug
+	in definitions.
+	(CLSID_CFontPropPage00, GUID_FONTUNDERSCORE11,
+	IID_IOleControlSite89): Remove.
+
+2002-11-15  Christopher Faylor  <cgf@redhat.com>
+
+	* lib/uuid.c (IID_IRunnableObject): Remove duplicate definition.
+	(IID_IStdMarshalInfo): Ditto.
+
+2002-11-15  Christopher Faylor  <cgf@redhat.com>
+
+	* lib/uuid.c (IID_IOleInPlaceSite): Remove duplicate definition.
+	(IID_IPersistStorage): Ditto.
+
+2002-11-15  Weiqi Gao  <weiqigao@users.sourceforge.net>
+
+	* lib/uuid.c (CLSID_PSClassObject, CLSID_PSEnumerators,
+	IID_IClassActivator, IID_IClientSecurity, IID_ICreateTypeInfo,
+	IID_ICreateTypeLib2, IID_IOleInPlaceSite, IID_IPersistStorage,
+	IID_IRunnableObject, IID_IServerSecurity, IID_IStdMarshalInfo):
+	Correct definitions.
+
 2002-11-15  Danny Smith  <dannysmith@users.sourceforge.net>
 
 	* include/ddk/(atm.h, batclass.h, cfg.h, cfgmgr32.h, d4drvif.h,
