@@ -47,7 +47,7 @@
 void GenCOptions(               // PROCESS ALL OPTIONS
     char **argv );              // - command line vector
 
-int _dos_switch_char(           // OBTAIN SWITCH CHARACTER
+unsigned char _dos_switch_char(           // OBTAIN SWITCH CHARACTER
     void );
 
 

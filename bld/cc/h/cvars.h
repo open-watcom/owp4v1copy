@@ -927,7 +927,7 @@ extern  void    BuildPreCompiledHeader(char *);
 extern  void    FreePreCompiledHeader( void );
 
 extern  char    *CStrSave(char *);               /* strsave */
-extern  int     _dos_switch_char(void);         /* swchar */
+extern  unsigned char     _dos_switch_char(void);         /* swchar */
 extern  void    CBanner(void);                  /* watcom */
 extern  void    MyExit( int ret );              /* cintmain */
 

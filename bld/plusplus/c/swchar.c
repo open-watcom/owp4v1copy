@@ -33,7 +33,7 @@
 #include "plusplus.h"
 
 #if defined(__DOS__)
-extern  int     _DOS_Switch_Char();
+extern  unsigned char    _DOS_Switch_Char();
 
 #pragma aux     _DOS_Switch_Char = \
                         0x52            /* push dx */\
@@ -41,11 +41,10 @@ extern  int     _DOS_Switch_Char();
                         0xb0 0x00       /* mov al,00h    */\
                         0xcd 0x21       /* int 21h       */\
                         0x88 0xd0       /* mov al,dl     */\
-                        0xb4 0x00       /* mov ah,0      */\
                         0x5a            /* pop dx        */;
 #endif
 
-int _dos_switch_char()
+unsigned char _dos_switch_char()
     {
 #if defined( __DOS__ )
         return( _DOS_Switch_Char() );
