@@ -117,9 +117,9 @@ extern unsigned short GetMSW(void);
 extern void SetUsrTask() {}
 extern void SetDbgTask() {}
 
-static unsigned ReadWrite( int (*r)(OFFSET32,SELECTOR,int,char far*,unsigned), addr48_ptr *addr, byte far *data, unsigned req ) {
+static unsigned short ReadWrite( int (*r)(OFFSET32,SELECTOR,int,char far*,unsigned short), addr48_ptr *addr, byte far *data, unsigned short req ) {
 
-    unsigned    len;
+    unsigned short    len;
 
     _DBG(("checking %4.4x:%8.8lx for 0x%x bytes -- ",
             addr->segment, addr->offset, req ));
@@ -142,12 +142,12 @@ static unsigned ReadWrite( int (*r)(OFFSET32,SELECTOR,int,char far*,unsigned), a
     return( len );
 }
 
-static unsigned ReadMemory( addr48_ptr *addr, byte far *data, unsigned len )
+static unsigned short ReadMemory( addr48_ptr *addr, byte far *data, unsigned short len )
 {
     return( ReadWrite( D32DebugRead, addr, data, len ) );
 }
 
-static unsigned WriteMemory( addr48_ptr *addr, byte far *data, unsigned len )
+static unsigned short WriteMemory( addr48_ptr *addr, byte far *data, unsigned short len )
 {
     return( ReadWrite( D32DebugWrite, addr, data, len ) );
 }
@@ -262,9 +262,9 @@ unsigned ReqMachine_data()
 
 unsigned ReqChecksum_mem()
 {
-    unsigned            len;
+    unsigned short      len;
     int                 i;
-    unsigned            read;
+    unsigned short      read;
     checksum_mem_req    *acc;
     checksum_mem_ret    *ret;
 
@@ -298,7 +298,7 @@ unsigned ReqRead_mem()
 {
     read_mem_req        *acc;
     void far            *buff;
-    unsigned            len;
+    unsigned short      len;
 
     _DBG1(( "ReadMem\n" ));
     acc = GetInPtr( 0 );
