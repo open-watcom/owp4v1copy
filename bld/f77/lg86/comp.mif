@@ -4,6 +4,8 @@
 
 !include wres.mif
 
+!include $(dwarf_dir)/dw/client.mif
+
 clibldos_dir    = $(%watcom)/lib286/dos
 clibldos_lib    = $(%watcom)/lib286/dos/clibl.lib
 mathl286_lib    = $(%watcom)/lib286/mathl.lib
