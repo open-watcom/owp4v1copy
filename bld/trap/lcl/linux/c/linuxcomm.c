@@ -48,6 +48,15 @@ void print_msg( const char *format, ... )
     va_end(args);
 }
 
+char *StrCopy( char *src, char *dst )
+{
+    while( *dst = *src ) {
+        ++src;
+        ++dst;
+    }
+    return( dst );
+}
+
 unsigned TryOnePath( char *path, struct stat *tmp, char *name, char *result )
 {
     char        *end;
@@ -61,7 +70,7 @@ unsigned TryOnePath( char *path, struct stat *tmp, char *name, char *result )
         case '\0':
             if( ptr != result && ptr[-1] != '/' )
                 *ptr++ = '/';
-            end = strcpy( name, ptr );
+            end = StrCopy( name, ptr );
             if( stat( result, tmp ) == 0 )
                 return( end - result );
             if( *path == '\0' )
@@ -86,7 +95,7 @@ unsigned FindFilePath( int exe, char *name, char *result )
     char        *end;
 
     if( stat( (char *)name, &tmp ) == 0 ) {
-        end = strcpy( name, result );
+        end = StrCopy( name, result );
         return( end - result );
     }
     // TODO: Need to find out how to get at the environment for the

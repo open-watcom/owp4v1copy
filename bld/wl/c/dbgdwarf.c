@@ -431,7 +431,7 @@ extern void DwarfGenGlobal( symbol *sym, section *sect )
         }
         vmem_addr = CurrMod->d.d->pubsym.addr;
         die.off = sym->addr.off;
-        if( FmtData.type & (MK_PE|MK_QNX_FLAT) ) {
+        if( FmtData.type & (MK_PE|MK_QNX_FLAT|MK_ELF) ) {
             group = sym->p.seg->u.leader->group;
             if( group != NULL ) {
                 die.off += group->linear - group->grp_addr.off - Groups->linear;
@@ -527,7 +527,7 @@ extern void DwarfGenLines( segdata *seg, void *lines, unsigned size,
         *((unsigned_16 *)&buff[3]) = seg->a.delta + seg->u.leader->seg_addr.off;
     } else {
         off = seg->a.delta + seg->u.leader->seg_addr.off;
-        if( FmtData.type & (MK_PE|MK_QNX_FLAT) ) {
+        if( FmtData.type & (MK_PE|MK_QNX_FLAT|MK_ELF) ) {
             group = seg->u.leader->group;
             if( group != NULL ) {
                 off += group->linear - group->grp_addr.off - Groups->linear;
@@ -607,7 +607,7 @@ static offset GetNewAddrOffset( segdata *sdata, offset delta )
     group_entry *group;
 
     off = sdata->u.leader->seg_addr.off + delta;
-    if( FmtData.type & (MK_PE|MK_QNX_FLAT) ) {
+    if( FmtData.type & (MK_PE|MK_QNX_FLAT|MK_ELF) ) {
         group = sdata->u.leader->group;
         if( group != NULL ) {
             off += group->linear - group->grp_addr.off - Groups->linear;

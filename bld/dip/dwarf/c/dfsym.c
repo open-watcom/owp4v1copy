@@ -320,7 +320,11 @@ dip_status      DIPENTRY DIPImpSymLocation( imp_image_handle *ii,
     DRSetDebug( ii->dwarf->handle ); /* must do at each call into dwarf */
     if( DRGetLowPc( is->sym, &base.mach.offset) ){
         if( ii->mod_map[is->imx].is_segment == FALSE ){
-            seg = SEG_CODE; // if flat hoke segment
+            if( DRIsFunc( is->sym ) ){
+                seg = SEG_CODE; // if flat hoke segment
+            }else{
+                seg = SEG_DATA; // if flat hoke segment
+            }
         }else{
             EvalSeg( ii, is->sym, &seg );
         }

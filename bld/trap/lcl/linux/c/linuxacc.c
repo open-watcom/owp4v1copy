@@ -28,8 +28,20 @@
 *
 ****************************************************************************/
 
-#include <string.h>
+/* started by Kendall Bennett
+   continued by Bart Oldeman -- thanks to Andi Kleen's stepper.c example */
+
+#include <stddef.h>
+#include <stdlib.h>
 #include <unistd.h>
+#include <process.h>
+#include <signal.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <limits.h>
+#include <string.h>
+#include <sys/wait.h>
+#include <string.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include "trpimp.h"
@@ -40,13 +52,39 @@
 #include "dbg386.h"
 #include "linuxcomm.h"
 
-// TODO: Need signals and execve() in runtime library to make this work!!
+static pid_t            OrigPGrp;
 
 static watch_point  wpList[ MAX_WP ];
 static int          wpCount = 0;
 static pid_t        pid;
 static u_short      flatCS;
 static u_short      flatDS;
+static int          ptrace_sig;
+
+#if 0
+void Out( char *str )
+{
+    write( 1, (char *)str, strlen( str ) );
+}
+
+void OutNum( unsigned long i )
+{
+    char numbuff[16];
+    char *ptr;
+
+    ptr = numbuff+10;
+    *--ptr = '\0';
+    do {
+        *--ptr = ( i % 16 ) + '0';
+        if (*ptr > '9') *ptr += 'A' - '9' - 1;
+        i /= 16;
+    } while( i != 0 );
+    Out( ptr );
+}
+#else
+#define Out(x)
+#define OutNum(x)
+#endif
 
 static unsigned WriteMem( void *ptr, addr_off offv, unsigned size )
 {
@@ -59,7 +97,8 @@ static unsigned WriteMem( void *ptr, addr_off offv, unsigned size )
      * need to do for now.
      */
     for (count = size; count >= 4; count -= 4) {
-        if (sys_ptrace(PTRACE_POKETEXT, pid, offv, data) != 0)
+        if (sys_ptrace(PTRACE_POKETEXT, pid, offv,
+                       (void *)(*(unsigned_32*)data)) != 0)
             return size - count;
         data += 4;
         offv += 4;
@@ -73,6 +112,9 @@ static unsigned WriteMem( void *ptr, addr_off offv, unsigned size )
         u_long  val;
         if (sys_ptrace(PTRACE_PEEKTEXT, pid, offv, &val) != 0)
             return size - count;
+        Out("readmem:"); 
+        OutNum( val );
+        Out(" ");
         switch (count) {
             case 1:
                 val &= 0xFFFFFF00;
@@ -89,9 +131,13 @@ static unsigned WriteMem( void *ptr, addr_off offv, unsigned size )
                        ((u_long)(*((unsigned_8*)(data+2))) << 16);
                 break;
             }
-        if (sys_ptrace(PTRACE_POKETEXT, pid, offv, &val) != 0)
+        Out("writemem:");
+        OutNum( val );
+        Out(" ");
+        if (sys_ptrace(PTRACE_POKETEXT, pid, offv, (void *)val) != 0)
             return size - count;
         }
+        
     return size;
 }
 
@@ -155,6 +201,7 @@ unsigned ReqMap_addr()
 {
     map_addr_req    *acc;
     map_addr_ret    *ret;
+    unsigned long    val;
 
     // TODO: This appears to a segment and offset address in the
     //       process disk image address space to a real segment/offset
@@ -171,8 +218,18 @@ unsigned ReqMap_addr()
     ret = GetOutPtr(0);
     ret->lo_bound = 0;
     ret->hi_bound = ~(addr48_off)0;
-    ret->out_addr.offset = acc->in_addr.offset;
-    ret->out_addr.segment = flatDS;
+    sys_ptrace(PTRACE_PEEKUSER, pid, offsetof(user_struct,start_code), &val);
+    ret->out_addr.offset = acc->in_addr.offset + val + 0x8048100;
+    OutNum(acc->in_addr.segment);
+    OutNum(acc->handle);
+    if ( acc->in_addr.segment == MAP_FLAT_DATA_SELECTOR ||
+         acc->in_addr.segment == flatDS ) {
+        sys_ptrace(PTRACE_PEEKUSER, pid, offsetof(user_struct,u_tsize), &val);
+        ret->out_addr.offset += val;
+        ret->out_addr.segment = flatDS;
+    } else {
+        ret->out_addr.segment = flatCS;
+    }
     return( sizeof( *ret ) );
 }
 
@@ -425,21 +482,200 @@ unsigned ReqWrite_regs( void )
     return( 0 );
 }
 
+static int SplitParms( char *p, char *args[], unsigned len )
+{
+    int     i;
+    char    endc;
+
+    i = 0;
+    if( len == 1 ) goto done;
+    for( ;; ) {
+        for( ;; ) {
+            if( len == 0 ) goto done;
+            if( *p != ' ' && *p != '\t' ) break;
+            ++p;
+            --len;
+        }
+        if( len == 0 ) goto done;
+        if( *p == '"' ) {
+            --len;
+            ++p;
+            endc = '"';
+        } else {
+            endc = ' ';
+        }
+        if( args != NULL ) args[i] = p;
+        ++i;
+        for( ;; ) {
+            if( len == 0 ) goto done;
+            if( *p == endc
+                || *p == '\0'
+                || (endc == ' ' && *p == '\t' ) ) {
+                if( args != NULL ) {
+                    *p = '\0';  //NYI: not a good idea, should make a copy
+                }
+                ++p;
+                --len;
+                if( len == 0 ) goto done;
+                break;
+            }
+            ++p;
+            --len;
+        }
+    }
+done:
+    return( i );
+}
+
+static pid_t RunningProc( char *name, char **name_ret )
+{
+    pid_t       pidd;
+    char        ch;
+    char        *start;
+
+    start = name;
+
+    for( ;; ) {
+        ch = *name;
+        if( ch != ' ' && ch != '\t' ) break;
+        ++name;
+    }
+    if( name_ret != NULL ) *name_ret = name;
+    pidd = 0;
+    for( ;; ) {
+        if( *name < '0' || *name > '9' ) break;
+        pidd = (pidd*10) + (*name - '0');
+        ++name;
+    }
+    if( *name != '\0') return( 0 );
+    if ( pidd == 0 || sys_ptrace( PTRACE_ATTACH, pidd, 0, 0 ) == -1 )
+        return( 0 );
+    return( pidd );
+}
+
 unsigned ReqProg_load()
 {
-    // TODO: Load the debuggee program!
     // TODO: Get the FlatCS and FlatDS register values from the process context
     //       of the debuggee!!
+    char                        **args;
+    char                        *parms;
+    char                        *parm_start;
+    int                         i;
+    char                        exe_name[255];
+    char                        *name;
+    pid_t                       save_pgrp;
+    prog_load_req               *acc;
+    prog_load_ret               *ret;
+    unsigned                    len;
+    int                         status;
+
     flatDS = DS();
     flatCS = CS();
-    return( 0 );
+
+    acc = GetInPtr( 0 );
+    ret = GetOutPtr( 0 );
+
+    parms = (char *)GetInPtr( sizeof( *acc ) );
+    parm_start = parms;
+    len = GetTotalSize() - sizeof( *acc );
+    if( acc->true_argv ) {
+        i = 1;
+        for( ;; ) {
+            if( len == 0 ) break;
+            if( *parms == '\0' ) {
+                i++;
+            }
+            ++parms;
+            --len;
+        }
+        args = __alloca( i * sizeof( *args ) );
+        parms = parm_start;
+        len = GetTotalSize() - sizeof( *acc );
+        i = 1;
+        for( ;; ) {
+            if( len == 0 ) break;
+            if( *parms == '\0' ) {
+                args[ i++ ] = parms + 1;
+            }
+            ++parms;
+            --len;
+        }
+        args[ i-1 ] = NULL;
+    } else {
+        while( *parms != '\0' ) {
+            ++parms;
+            --len;
+        }
+        ++parms;
+        --len;
+        i = SplitParms( parms, NULL, len );
+        args = __alloca( (i+2) * sizeof( *args ) );
+        args[ SplitParms( parms, &args[1], len ) + 1 ] = NULL;
+    }
+    args[0] = parm_start;
+    pid = RunningProc( args[0], &name );
+    if( pid == 0 ) {
+        args[0] = name;
+        if( FindFilePath( TRUE, args[0], exe_name ) == 0 ) {
+            exe_name[0] = '\0';
+        }
+        save_pgrp = getpgrp();
+        setpgid( 0, OrigPGrp );
+        pid = fork();
+        if ( pid == -1 )
+            return( 0 );
+        if ( pid == 0 ) {
+            if ((long)sys_ptrace( PTRACE_TRACEME, 0, 0, 0 ) < 0) {
+                exit( 1 );
+            }
+            /* stopping before exec appears to be necessary ... */
+            if ( kill( getpid(), SIGSTOP ) < 0 ) {
+                exit( 1 );
+            }
+            execve( exe_name, (const char **)args, (const char **)environ );
+        }
+        setpgid( 0, save_pgrp );
+    }
+    ret->flags = 0;
+    if( pid != -1 && pid != 0 ) {
+        int status;
+        
+        ret->task_id = pid;
+        ret->flags |= LD_FLAG_IS_PROT | LD_FLAG_IS_32;
+
+        /* wait until it hits _start (upon execve) */
+        if ( waitpid( pid, &status, WUNTRACED ) < 0 )
+            goto fail;
+        if ( sys_ptrace( PTRACE_CONT, pid, 0, 0 ) )
+            goto fail;
+        /* wait until it hits SIGSTOP */
+        if ( waitpid ( pid, &status, WUNTRACED ) < 0 )
+            goto fail;
+        ptrace_sig = 0;
+        errno = 0;
+    }
+    ret->err = errno;
+    if( ret->err != 0 ) {
+        pid = 0;
+    }
+    return( sizeof( *ret ) );
+fail:
+    if ( pid != 0 && pid != -1 ) {
+        kill( pid, SIGKILL );
+        waitpid( pid, &status, 0 );
+    }
+    
 }
 
 unsigned ReqProg_kill()
 {
     prog_kill_ret   *ret;
 
-    // TODO: Kill the debuggee process!
+    if ( pid != 0 ) {
+        int status;
+        kill( pid, SIGKILL );
+        waitpid( pid, &status, 0 );
+    }
     ret = GetOutPtr( 0 );
     ret->err = 0;
     return( sizeof( *ret ) );
@@ -480,17 +716,17 @@ u_long GetDR6( void )
 
 static void SetDR6( u_long val )
 {
-    sys_ptrace(PTRACE_POKEUSER, pid, O_DEBUGREG(6), &val);
+    sys_ptrace(PTRACE_POKEUSER, pid, O_DEBUGREG(6), (void *)val);
 }
 
 static void SetDR7( u_long val )
 {
-    sys_ptrace(PTRACE_POKEUSER, pid, O_DEBUGREG(7), &val);
+    sys_ptrace(PTRACE_POKEUSER, pid, O_DEBUGREG(7), (void *)val);
 }
 
 static u_long SetDRn( int i, u_long linear, long type )
 {
-    sys_ptrace(PTRACE_POKEUSER, pid, O_DEBUGREG(i), &linear);
+    sys_ptrace(PTRACE_POKEUSER, pid, O_DEBUGREG(i), (void *)linear);
     return( ( type << DR7_RWLSHIFT(i) )
 //        | ( DR7_GEMASK << DR7_GLSHIFT(i) ) | DR7_GE
           | ( DR7_LEMASK << DR7_GLSHIFT(i) ) | DR7_LE );
@@ -604,8 +840,52 @@ unsigned ReqClear_watch( void )
 
 static unsigned ProgRun( int step )
 {
-    // TODO: Figure out how to run and step the debuggee!!
-    return( 0 );
+    user_regs_struct    regs;
+    int                 status;
+    prog_go_ret         *ret;
+    
+    if ( pid == 0 )
+        return 0;
+    ret = GetOutPtr( 0 );
+    if ( step ) {
+        sys_ptrace( PTRACE_SINGLESTEP, pid, 0, 0 ); //(void *)ptrace_sig );
+    } else {
+        sys_ptrace( PTRACE_CONT, pid, 0, 0 ); //(void *)ptrace_sig );
+    }
+    waitpid ( pid, &status, WUNTRACED );
+    if ( WIFSTOPPED( status ) ) {
+        switch( ( ptrace_sig = WSTOPSIG( status ) ) ) {
+        case SIGSEGV:
+        case SIGILL:
+            ret->conditions = COND_EXCEPTION;
+            break;
+        case SIGTRAP:
+            if ( !step ) {
+                sys_ptrace(PTRACE_GETREGS, pid, 0, &regs);
+                Out("decrease eip(sigtrap)" );
+                regs.eip--;
+                sys_ptrace(PTRACE_SETREGS, pid, 0, &regs);
+                ret->conditions = COND_BREAK;
+            } else {
+                ret->conditions = COND_TRACE;
+            }
+            Out("sigtrap");
+            break;
+        }
+    } else if ( WIFEXITED( status ) ) {
+        ret->conditions = COND_TERMINATE;
+    }
+    if (sys_ptrace(PTRACE_GETREGS, pid, 0, &regs) == 0) {
+        Out( " eip " );
+        OutNum( regs.eip );
+        Out( " " );
+        ret->program_counter.offset = regs.eip;
+        ret->program_counter.segment = regs.cs;
+        ret->stack_pointer.offset = regs.esp;
+        ret->stack_pointer.segment = regs.ss;
+        ret->conditions |= COND_CONFIG;
+    }
+    return( sizeof( *ret ) );
 }
 
 unsigned ReqProg_step()
@@ -711,6 +991,25 @@ unsigned ReqGet_lib_name( void )
     return( sizeof( *ret ) );
 }
 
+static int last_sig;
+
+static void sighand(int s)
+{
+    last_sig = s;
+}
+
+/* Usable sigaction wrapper */
+static int setsignal(int sig, void (*hand)(int), int flags, sigset_t *mask)
+{
+    struct sigaction sa = {0};
+
+    sa.sa_handler = hand;
+    if (mask) 
+        sa.sa_mask = *mask;
+    sa.sa_flags = flags;
+    return sigaction(sig, &sa, NULL); 
+}
+
 trap_version TRAPENTRY TrapInit( char *parm, char *err, int remote )
 {
     trap_version ver;
@@ -721,10 +1020,17 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, int remote )
     ver.major = TRAP_MAJOR_VERSION;
     ver.minor = TRAP_MINOR_VERSION;
     ver.remote = FALSE;
+
+    OrigPGrp = getpgrp();
+
+    setsignal(SIGTRAP, sighand, 0, NULL); 
+    setsignal(SIGCHLD, sighand, 0, NULL); 
+    setsignal(SIGSEGV, sighand, 0, NULL); 
+    setsignal(SIGILL, sighand, 0, NULL); 
+    
     return( ver );
 }
 
 void TRAPENTRY TrapFini()
 {
 }
-
