@@ -30,18 +30,18 @@ OBJECTS += mem.obj
 ext = mbr
 mbr_files = $+$(template)$-
 !endif
-	
-inc_dirs_nt	= $(wclass_dir)\win\hpp;$(guitools_dir)\win
-inc_dirs_win	= $(wclass_dir)\win\hpp;$(guitools_dir)\win
-inc_dirs_dos	= $(wclass_dir)\dos\hpp;$(guitools_dir)\os2
-inc_dirs_os2	= $(wclass_dir)\pm\hpp;$(guitools_dir)\os2
+    
+inc_dirs_nt     = $(wclass_dir)\win\hpp;$(guitools_dir)\win;
+inc_dirs_win    = $(wclass_dir)\win\hpp;$(guitools_dir)\win;
+inc_dirs_dos    = $(wclass_dir)\dos\hpp;$(guitools_dir)\os2;
+inc_dirs_os2    = $(wclass_dir)\pm\hpp;$(guitools_dir)\os2;
 
-inc_dirs	= ..\h;..\brg\h;..\gen;$(wclass_dir)\hpp;$(gui_dir)\h;$(dwarf_dir)\dr\h;$(posix_dir)\h;..\contain\h;$(editdll_dir);$(ind_dirs_$(host_OS))
+inc_dirs    = ..\h;..\brg\h;..\gen;$(wclass_dir)\hpp;$(gui_dir)\h;$(dwarf_dir)\dr\h;$(posix_dir)\h;..\contain\h;$(editdll_dir)
 
 .before:
-	SET INCLUDE=$(inc_path)
+    SET INCLUDE=$(inc_path)
 
-cflags_all	= -zq -w4
+cflags_all  = -zq -w4
 !ifdef DBG
 extra_c_flags_i86 = /zc/zm/zw
 !else
@@ -53,13 +53,13 @@ extra_c_flags_386_dos = /dDEBUG=1
 !endif
 extra_c_flags_386 = $(extra_c_flags_386_$(host_OS))
 
-extra_c_flags	= -dSTANDALONE_RX=1
+extra_c_flags   = -dSTANDALONE_RX=1
 !ifndef release
-extra_c_flags	+= -dDEBUG=1 -dDEBUG_ASSERT=1 -dDEBUGTREE=1
+extra_c_flags   += -dDEBUG=1 -dDEBUG_ASSERT=1 -dDEBUGTREE=1
 !endif
-extra_cpp_flags	= -ew-xs-dNOPERSIST=1
+extra_cpp_flags = -ew-xs-dNOPERSIST=1
 !ifdef gen_browse_file
-extra_cpp_flags	+= -db 
+extra_cpp_flags += -db
 !endif
 
 extra_c_flags_trmem = /i=$(trmem_dir)
@@ -72,70 +72,70 @@ mem_flag = -of+
 extra_c_flags_mem = /fo=dmem.obj $(mem_flag) /i=$(trmem_dir) /dTRACKER
 !endif
 
-rc_flags_nt	= -bt=nt -K
-rc_flags_win	= -bt=windows -K
-rc_flags_os2	= -p
-rc_flags	= $(rc_flags_$(host_OS))
+rc_flags_nt = -bt=nt -K
+rc_flags_win    = -bt=windows -K
+rc_flags_os2    = -p
+rc_flags    = $(rc_flags_$(host_OS))
 
-rc_file_nt	= ..\res\wbrw.rc
-rc_file_win	= ..\res\wbrw.rc
-rc_file_os2	= ..\res\wbrwpm.rc
-rc_file		= $(rc_file_$(host_OS))
+rc_file_nt  = ..\res\wbrw.rc
+rc_file_win = ..\res\wbrw.rc
+rc_file_os2 = ..\res\wbrwpm.rc
+rc_file     = $(rc_file_$(host_OS))
 
 #linker
-LIBS_win	= $(watcom_dir)\lib\dwarfrlw.lib $(gui_dir)\win\guiwinl.lib $(wclass_dir)\win\obj\wclass.lib $(misc_dir)\ctl3d.lib
-LIBS_nt_axp	= $(watcom_dir)\lib\draxp.lib $(gui_dir)\win\guintaxp.lib $(wclass_dir)\win\axp\wclass.lib
-LIBS_nt_386	= $(watcom_dir)\lib\dwarfrp.lib $(gui_dir)\win\guintf.lib $(wclass_dir)\win\nt\wclass.lib
-LIBS_nt		= $(LIBS_NT_$(HOST_CPU))
-LIBS_os2	= $(watcom_dir)\lib\dwarfrp.lib $(gui_dir)\win\guios2f.lib $(wclass_dir)\pm\obj32\wclass.lib
-LIBS_dos	= $(watcom_dir)\lib\dwarfrp.lib $(gui_dir)\ui\guidosf.lib $(ui_dir)\dos\uilibf.lib
+LIBS_win    = $(watcom_dir)\lib\dwarfrlw.lib $(gui_dir)\win\guiwinl.lib $(wclass_dir)\win\obj\wclass.lib $(misc_dir)\ctl3d.lib
+LIBS_nt_axp = $(watcom_dir)\lib\draxp.lib $(gui_dir)\win\guintaxp.lib $(wclass_dir)\win\axp\wclass.lib
+LIBS_nt_386 = $(watcom_dir)\lib\dwarfrp.lib $(gui_dir)\win\guintf.lib $(wclass_dir)\win\nt\wclass.lib
+LIBS_nt     = $(LIBS_NT_$(HOST_CPU))
+LIBS_os2    = $(watcom_dir)\lib\dwarfrp.lib $(gui_dir)\win\guios2f.lib $(wclass_dir)\pm\obj32\wclass.lib
+LIBS_dos    = $(watcom_dir)\lib\dwarfrp.lib $(gui_dir)\ui\guidosf.lib $(ui_dir)\dos\uilibf.lib
 
-LIBS	= $(LIBS_$(host_OS))
+LIBS    = $(LIBS_$(host_OS))
 
-lflags_win_i86	= sys windows font mem
+lflags_win_i86  = sys windows font mem
 extra_l_flags_win = op packdata=48k seg CLASS CODE FIXED, CLASS FAR_DATA FIXED, CLASS DATA FIXED
-lflags_dos_386	= sys pharlap
+lflags_dos_386  = sys pharlap
 extra_l_flags_dos = op stub=$(pharlap)stub386.exe
-extra_l_flags_nt_386 = 
+extra_l_flags_nt_386 =
 extra_l_flags_nt_axp = op undefsok
 extra_l_flags_nt = $(extra_l_flags_nt_$(host_CPU))
-extra_l_flags_os2 = 
+extra_l_flags_os2 =
 
-extra_l_flags	= op stack=16k
+extra_l_flags   = op stack=16k
 
 !ifndef quick_link
-extra_l_flags	+= op map=wbr,show,art,static
+extra_l_flags   += op map=wbr,show,art,static
 !endif
 
 exe_ext_osi = .rex
 !ifdef exe_ext_$(host_OS)
-exe_ext	= $(exe_ext_$(host_OS))
+exe_ext = $(exe_ext_$(host_OS))
 !else
 exe_ext = exe
 !endif
 
 $(name).exe : $(OBJECTS) $(LIBS)
-	$(linker) $(lflags) name $(name).$(exe_ext) file {$(OBJECTS)} lib {$(LIBS)}
+    $(linker) $(lflags) name $(name).$(exe_ext) file {$(OBJECTS)} lib {$(LIBS)}
 !ifeq host_OS os2
-	$(rc_os2) $(rc_flags) $(rc_file) $^@
+    $(rc_os2) $(rc_flags) $(rc_file) $^@
 !else
-	$(rc) $(rc_flags) $(rc_file) $^@
+    $(rc) $(rc_flags) $(rc_file) $^@
 !endif
 !ifdef gen_browse_file
-	@%create browser.wbr
-	@for %i in ($(mbr_files)) do @%append browser.wbr file %i
+    @%create browser.wbr
+    @for %i in ($(mbr_files)) do @%append browser.wbr file %i
 !endif
 
 #compiling
 
-cppflags	= $(cflags) $(extra_cpp_flags)
+cppflags    = $(cflags) $(extra_cpp_flags)
 
 .cpp.obj:
-	@set include=$(inc_path)
-	$(cpp) $(cppflags) $(extra_c_flags_$[&) $[@
-	
+    @set include=$(inc_path)
+    $(cpp) $(cppflags) $(extra_c_flags_$[&) $[@
+    
 .gpp.obj:
-	@set include=$(inc_path)
-	$(cpp) $(cppflags) $(extra_c_flags_$[&) $[@
+    @set include=$(inc_path)
+    $(cpp) $(cppflags) $(extra_c_flags_$[&) $[@
 
 dmem.obj : mem.cpp
