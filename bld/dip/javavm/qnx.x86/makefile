@@ -1,4 +1,4 @@
-#pmake: qnx javavm i86
+#pmake: os_qnx javavm cpu_i86
 
 host_OS = qnx
 host_CPU = i86

@@ -1,4 +1,4 @@
-#pmake: nt export axp
+#pmake: os_nt export axp
 
 host_OS = nt
 host_CPU = axp

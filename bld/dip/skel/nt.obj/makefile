@@ -1,4 +1,4 @@
-#pmake: nt skel 386
+#pmake: os_nt skel cpu_386
 
 host_OS = nt
 host_CPU = 386

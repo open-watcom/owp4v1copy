@@ -1,4 +1,4 @@
-#pmake: win skel i86
+#pmake: os_win skel cpu_i86
 
 host_OS = win
 host_CPU = i86

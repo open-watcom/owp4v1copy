@@ -1,4 +1,4 @@
-#pmake: nt codeview axp
+#pmake: os_nt codeview axp
 
 host_OS = nt
 host_CPU = axp

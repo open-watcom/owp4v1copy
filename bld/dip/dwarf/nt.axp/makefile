@@ -1,4 +1,4 @@
-#pmake: nt dwarf axp
+#pmake: os_nt dwarf axp
 
 host_OS = nt
 host_CPU = axp

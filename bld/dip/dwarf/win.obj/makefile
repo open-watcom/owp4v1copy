@@ -1,4 +1,4 @@
-#pmake: build win dwarf i86
+#pmake: all build os_win dwarf cpu_i86
 
 host_OS = win
 host_CPU = i86

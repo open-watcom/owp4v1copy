@@ -1,4 +1,4 @@
-#pmake: dos skel 386
+#pmake: os_dos skel cpu_386
 
 host_OS = dos
 host_CPU = 386

@@ -1,4 +1,4 @@
-#pmake: os2 skell i86
+#pmake: os_os2 skell cpu_i86
 
 host_OS = os2
 host_CPU = i86

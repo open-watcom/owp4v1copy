@@ -1,4 +1,4 @@
-#pmake: build dos dwarf 386
+#pmake: all build os_dos dwarf cpu_386
 
 host_OS = dos
 host_CPU = 386

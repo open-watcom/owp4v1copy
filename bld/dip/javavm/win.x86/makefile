@@ -1,4 +1,4 @@
-#pmake: win javavm i86
+#pmake: os_win javavm cpu_i86
 
 host_OS = win
 host_CPU = i86

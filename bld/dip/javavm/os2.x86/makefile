@@ -1,4 +1,4 @@
-#pmake: os2 javavm i86
+#pmake: os_os2 javavm cpu_i86
 
 host_OS2 = os2
 host_CPU = i86

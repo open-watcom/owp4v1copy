@@ -1,4 +1,4 @@
-#pmake: build dos watcom 386
+#pmake: all build os_dos watcom cpu_386
 
 host_OS = dos
 host_CPU = 386
