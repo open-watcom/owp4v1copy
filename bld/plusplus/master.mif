@@ -90,6 +90,8 @@ extra_c_flags_dos = -DIDE_PGM
 extra_c_flags_qnx = -DIDE_PGM
 extra_c_flags_linux = -DIDE_PGM
 
+# The following is absolutely awful. Why can't we use the default PCH
+# and only override it in a few rare cases?
 extra_c_flags_analcall = -fh=pch01.pch
 extra_c_flags_analcast = -fh=pch01.pch
 extra_c_flags_analclss = -fh=pch01.pch
@@ -175,7 +177,12 @@ extra_c_flags_cmac2    = -fh=pch01.pch
 extra_c_flags_cmacadd  = -fh=pch01.pch
 extra_c_flags_cmacsupp = -fh=pch01.pch
 extra_c_flags_cmdln    = -fh=pch01.pch
+!ifneq host_os linux
+# Using -os generates ENTER/LEAVE and Linux is too brain damaged
+# to handle ENTER instructions properly. Since GCC doesn't generate
+# ENTER, this is supposed to be a "feature".
 extra_c_flags_cmdlnany = -os
+!endif
 extra_c_flags_cmdlnbat = -fh=pch01.pch
 extra_c_flags_cmdlnctx = -fh=pch01.pch
 extra_c_flags_cmdlnx86 = -fh=pch01.pch
