@@ -368,5 +368,16 @@ gui_dir = $(build_root)\gui
 ui_dir = $(build_root)\ui
 wsample_dir = $(build_root)\wsample
 
+#
+#
+# Projects that should use autodepend
+#
+# Check defrule.mif
+#
+# format is projectname_autodepends
+#
 cg_autodepends = .AUTODEPEND
 cc_version = tree
+
+wlink_autodepends = .AUTODEPEND
+
