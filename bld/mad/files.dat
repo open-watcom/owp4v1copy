@@ -1,10 +1,10 @@
 [ DEFAULT ]
-dir="binw"	usr="madaxp.mad" cond="doshost dostarg |" 	where=""
+#dir="binw"	usr="madaxp.mad" cond="doshost dostarg |" 	where=""
 dir="binw"	usr="madx86.mad" cond="doshost dostarg |"  	where="c jc f77 jf77"
 dir="binw"	usr="madaxp.dll" cond="winhost wintarg |"	where="ac"
 dir="binw"	usr="madx86.dll" cond="winhost wintarg |"	where="c jc f77 jf77"
-dir="binp\dll"	usr="madaxp.dll" cond="os2host os2targ |"  	where=""
-dir="binp\dll"	usr="madx86.dll" cond="os2host os2targ |"  	where="c jc f77 jf77"
+dir="binp"	usr="madaxp.d32" cond="os2host os2targ |"  	where=""
+dir="binp"	usr="madx86.d32" cond="os2host os2targ |"  	where="c jc f77 jf77"
 dir="axpnt"	usr="madaxp.dll" cond="alphahost alphatarg |" 	where="ac"
 dir="axpnt"	usr="madx86.dll" cond="alphahost alphatarg |" 	where="ac"
 dir="binnt"	usr="madaxp.dll" cond="wnthost wnttarg |"  	where="ac"

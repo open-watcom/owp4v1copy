@@ -17,18 +17,11 @@ usr="idedos32.cfg"	cond="winhost wnthost os2host alphahost | | | dostarg"		where
 usr="idewin.cfg"	cond="winhost wnthost os2host alphahost | | | wintarg"		where="c f77 jc jf77"
 usr="ideos2.cfg"	cond="winhost wnthost os2host alphahost | | | os2targ"		where="c f77 jc jf77"
 usr="ideos232.cfg"	cond="winhost wnthost os2host alphahost | | | os2targ"		where="c f77 jc jf77"
-usr="ideads.cfg"	cond="winhost wnthost os2host alphahost | | | adstarg"		where="c f77 jc jf77"
 usr="idenlm.cfg"	cond="winhost wnthost os2host alphahost | | | nlmtarg"		where="c f77 jc jf77"
-usr="idemfc16.cfg"	cond="winhost wnthost os2host alphahost | | | wintarg mfc252" 	where="c f77 jc jf77"
 usr="wsrv.pif"		cond="winhost wnthost os2host alphahost | | |"			where="c f77 jc jf77"
 usr="wd.pif"		cond="winhost wnthost os2host alphahost | | |"			where="c f77 jc jf77"
 
 usr="ide.cfg"		cond="winhost wnthost os2host alphahost | | |"			where="c f77 jc jf77 ac"
 usr="idew32.cfg"	cond="winhost wnthost os2host alphahost | | | wnttarg"		where="c f77 jc jf77 ac"
 usr="idew386.cfg"	cond="winhost wnthost os2host alphahost | | | wintarg"		where="c f77 jc jf77 ac"
-usr="idemfc32.cfg"	cond="winhost wnthost os2host alphahost | | | wnttarg mfc41" 	where="c f77 jc jf77 ac"
-usr="idemfca.cfg"	cond="winhost wnthost os2host alphahost | | | alphatarg mfc41" 	where="ac"
 usr="ideaxp.cfg"	cond="winhost wnthost os2host alphahost | | | alphatarg" 	where="ac"
-
-usr="vpdll.dll"		cond="winhost wnthost |"			where="c f77 jc jf77 ac"
-usr="vpdll.dll"		cond="wnthost" 		dir="binnt"		where="c f77 jc jf77 ac"

@@ -25,13 +25,16 @@ host_cpu = 386
 
 extra_l_flags = op map
 
-commands = mkdisk.exe splitfil.exe packsize.exe genmkfil.exe
+commands = mkdisk.exe mksetup.exe splitfil.exe packsize.exe genmkfil.exe
 
 all : $(commands) .SYMBOLIC
 
 mkdisk.exe : mkdisk.obj
     $(linker) $(lflags) name $@ file {$<}
 
+mksetup.exe : mksetup.obj
+    $(linker) $(lflags) name $@ file {$<}
+    
 packsize.exe : packsize.obj
     $(linker) $(lflags) name $@ file {$<}
 

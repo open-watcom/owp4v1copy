@@ -1,14 +1,6 @@
 # Online help section of lang.dat
 
 [ DEFAULT type="s" dir="binw" cond="win16_helpfiles helpfiles" ]
-#-----------------------------------------------------------------------------
-# windows help files - all languages
-#-----------------------------------------------------------------------------
-usr="winhlp16.cfg"	cond="win16_helpfiles"	where="c jc f77 jf77"
-usr="bkwvp.hlp"		cond="winhost wintarg helpfiles"		where="c jc"
-usr="bkmfc.hlp"		cond="winhost wintarg helpfiles"		where="c jc"
-usr="isvcpp.hlp"	where="c jc"			desc="C isv help"
-usr="isvfor.hlp"	where="f77 jf77"		desc="fortran isv help"
 
 #-----------------------------------------------------------------------------
 # windows help files - English, which have japanese translations
@@ -19,17 +11,6 @@ usr="isvfor.hlp"	where="f77 jf77"		desc="fortran isv help"
 # japanese windows help files
 #-----------------------------------------------------------------------------
 #[ INCLUDE win16jap.dat ]
-
-#-----------------------------------------------------------------------------
-# win32 help files - all languages
-#-----------------------------------------------------------------------------
-[ DEFAULT type="s" dir="binnt" cond="win32_helpfiles helpfiles" ]
-usr="winhlp32.cfg"	cond="win32_helpfiles"	where="c jc f77 jf77 ac"
-usr="isvcpp.cnt"	where="c jc ac" 	desc="C isv help"
-usr="isvcpp.hlp"	where="c jc ac" 	desc="C isv help"
-usr="isvfor.cnt"	where="f77 jf77" 	desc="fortran isv help"
-usr="isvfor.hlp"	where="f77 jf77" 	desc="fortran isv help"
-usr="ime32wh.hlp"	where="jc jf77" 	desc="Input Method Editor Help"
 
 #-----------------------------------------------------------------------------
 # win32 help files - English, which have japanese translations
@@ -64,8 +45,6 @@ usr="fpguide.ihp"	where="f77 jf77"
 usr="ftools.ihp"	where="f77 jf77"
 usr="f77lr.ihp"		where="f77 jf77"
 usr="clr.ihp"		where="c jc"		desc="C Language Reference"
-usr="isvcpp.ihp"	where="c jc"		desc="C isv help"
-usr="isvfor.ihp"	where="f77 jf77"	desc="fortran isv help"
 usr="c_readme.ihp"	where="c jc"		desc="Help file for C/C++ Read Me"
 usr="f_readme.ihp"	where="f77 jf77"	desc="Help file for FORTRAN 77 Read Me"
 usr="cmix.ihp"		where="c"
@@ -115,5 +94,3 @@ usr="ftools.inf"	where="f77 jf77"
 usr="f77lr.inf"		where="f77 jf77"
 usr="rescomp.inf"	where="c jc f77 jf77"		desc="Help file for resource compiler"
 usr="clr.inf"		where="c jc"			desc="C language reference"
-usr="isvcpp.inf"	where="c jc"			desc="C isv help"
-usr="isvfor.inf"	where="  f77 jf77"		desc="fortran isv help"
