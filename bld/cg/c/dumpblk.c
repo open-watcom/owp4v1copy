@@ -51,12 +51,9 @@ extern  block   *HeadBlock;
 extern  name    *Names[];
 
 
-extern  void    DumpBlk() {
-/*************************/
+extern  void    DumpBlock( block *b ) {
+/*************************************/
 
-    block       *b;
-
-    b = HeadBlock;
     while( b != NULL ) {
         DumpABlk( b );
         b = b->next_block;
@@ -65,6 +62,11 @@ extern  void    DumpBlk() {
     DumpNL();
 }
 
+extern  void    DumpBlk() {
+/*************************/
+
+    DumpBlock( HeadBlock );
+}
 
 extern  void    DumpRange(int first,int last) {
 /**************************************/
