@@ -337,6 +337,7 @@ static void BuildReloc( save_fixup *save, frame_spec *targ, frame_spec *frame )
     unsigned    datasize;
     /* it is necessary to add two bytes to addbuf for FAR CALL optimization */
     char        addbuf[MAX_ADDEND_SIZE + 2];
+    int         shift;
 
     memset( &fix, 0, sizeof(fix_data) );        // to get all bitfields 0
     GetFrameAddr( targ, &fix.tgt_addr, NULL, save->off );
@@ -405,11 +406,14 @@ static void BuildReloc( save_fixup *save, frame_spec *targ, frame_spec *frame )
      * it is necessary to copy also two bytes before reloc position to addbuf
      * because these two bytes can be changed during FAR CALL optimization
      */
-    datasize = CalcFixupSize( fix.type ) + 2;
-    ReadInfo( CurrRec.seg->data + save->off - 2, addbuf, datasize );
+    addbuf[0] = 0;
+    addbuf[1] = 0;
+    shift = ( save->off < 2 ) ? save->off : 2;
+    datasize = CalcFixupSize( fix.type ) + shift;
     fix.data = addbuf + 2;
+    ReadInfo( CurrRec.seg->data + save->off - shift, fix.data - shift, datasize );
     Relocate( &fix, targ );
-    PutInfo( CurrRec.seg->data + save->off - 2, addbuf, datasize );
+    PutInfo( CurrRec.seg->data + save->off - shift, fix.data - shift, datasize );
 }
 
 extern unsigned IncExecRelocs( void *_save )
