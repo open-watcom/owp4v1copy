@@ -1346,19 +1346,34 @@ local TREEPTR GetExpr()
                 CompFlags.meaningless_stmt = 1;
                 break;
             case TC_PARM_LIST:          /* do func call */
+                {
+                SYM_ENTRY   sym;
+                int         n;
+                TREEPTR     functree;
+
+                // find the corresponding function symbol
+                n = Level;
+                while( Token[ n ] != T_LEFT_PAREN ) {
+                    --n;
+                }
+                functree = ValueStack[ n ];
+                SymGet( &sym, functree->op.sym_handle );
+                SetDiagSymbol( &sym, functree->op.sym_handle );
                 tree = GenNextParm( tree, &plist );
                 tree = GenFuncCall( tree );
                 if( plist != NULL ){  // function has prototype
                     if(  *plist != NULL && (*plist)->decl_type != TYPE_DOT_DOT_DOT ) {
                         CErr1( ERR_PARM_COUNT_MISMATCH );
                     }
-                }else{
+                } else {
                     AddCallNode( tree );
                 }
+                SetDiagPop();
                 PopNestedParms( &plist );
                 curclass = TokenClass[ CurToken ] & 0x7F;
                 CompFlags.meaningless_stmt = 0;
                 CompFlags.useful_side_effect = 1;
+                }
                 break;
             }
             --Level;
