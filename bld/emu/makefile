@@ -13,7 +13,7 @@ INCS = &
  tagtab.inc tentab.inc xception.inc
 
 
-all: emudos.lib emustub.lib emu387.qnx emu387w.obj .SYMBOLIC
+all: emudos.lib emustub.lib emu387.qnx .SYMBOLIC #emu387w.obj .SYMBOLIC
     @%null
 
 emudos.lib: emu387.obj 386inite.obj
@@ -26,14 +26,14 @@ emu387.qnx: qnxemu87.qbj emu387.qbj fpeqnx.qbj
     wlink system qnx386 name $^@ file qnxemu87.qbj,emu387.qbj,fpeqnx.qbj opt priv=0,map,long,quiet,res=..\emu86\emu87.u
 
 emu387.obj: emu387.asm $(INCS)
-    wasm /dOFFSET32 /d_OS=_PLDT /dSEGMENTED /I$(mathlib_dir)\h /I$(emu386) $[@
+    wasm -3 bt=dos /dOFFSET32 /d_OS=_PLDT /dSEGMENTED /I$(mathlib_dir)\h /I$(emu386) $[@
     wtouch compile.tim
 
-emu387w.obj: emu387.asm $(INCS)
-    wasm /d_OS=_PLDT /d__WIN387__ /I$(mathlib_dir)\h /I$(emu386) $[@,$^.
+#emu387w.obj: emu387.asm $(INCS)
+#    wasm /d_OS=_PLDT /d__WIN387__ /I$(mathlib_dir)\h /I$(emu386) $[@
 
 emu387.qbj: emu387.asm $(INCS)
-    wasm /Mx /p /s /dOFFSET32=OFFSET /dSEGMENTED /d_OS=_QNX /I$(mathlib_dir)\h /I$(emu386) $[@,$^.
+    *wasm -3 -bt=qnx /dOFFSET32=OFFSET /dSEGMENTED /d_OS=_QNX /I$(mathlib_dir)\h /I$(emu386) -fo=.qbj $[@
 
 .c : ..\emu86
 .c.qbj:
