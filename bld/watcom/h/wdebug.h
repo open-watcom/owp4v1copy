@@ -96,7 +96,7 @@ extern void GetDescriptor( short, void far * );         /* 02 */
 extern short GetDebugRegister( short, _dword far * );   /* 04 */
 extern short SetDebugRegister( short, _dword far * );   /* 05 */
 extern _word InitSampler( void far *, _word, _word );   /* 06 */
-extern QuitSampler( _dword far * );                     /* 07 */
+extern void QuitSampler( _dword far * );                /* 07 */
 extern _word StartSampler( void );                      /* 08 */
 extern void StopSampler( _dword far * );                /* 09 */
 extern void GetCurrTick( _dword far * );                /* 0a */

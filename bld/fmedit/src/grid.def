@@ -5,4 +5,4 @@
 extern BOOL SnapRectToGrid( RECT * );
 extern void SnapPointToGrid( POINT * );
 extern void SnapPointToResizeGrid( POINT * );
-extern FM_EXPORT FMGrid( HWND, unsigned, WPARAM, LPARAM );
+extern BOOL FM_EXPORT FMGrid( HWND, unsigned, WPARAM, LPARAM );
