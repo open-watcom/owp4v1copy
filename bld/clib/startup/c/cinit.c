@@ -34,7 +34,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <io.h>
-#if defined(__DOS_386__)
+#if defined(__DOS_386__) && !defined(__OSI__)
     #include "extender.h"
     #include "dpmi.h"
 #elif defined(__OS2__)
@@ -73,7 +73,7 @@
     unsigned            __hmodule;
 #endif
 
-#ifdef __DOS_386__
+#if defined(__DOS_386__) && !defined(__OSI__)
     extern     __GETDSStart_;
     extern     __GETDSEnd_;
     extern int __DPMI_hosted(void);
@@ -86,7 +86,7 @@ void    __CommonInit()
     _amblksiz = 32 * 1024;      /* set minimum memory block allocation */
 #endif
 
-#ifdef __DOS_386__
+#if defined(__DOS_386__) && !defined(__OSI__)
     /*
      * If we are running under DOS/4G then we need to page lock interrupt
      * handlers (since we could be running under VMM).
