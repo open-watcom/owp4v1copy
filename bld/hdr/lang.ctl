@@ -23,12 +23,10 @@ cdsay .
     <CPCMD> <devdir>\hdr\dos\*.cnv <reldir>\h\
     <CPCMD> <devdir>\hdr\dos\sys\*.h <reldir>\h\sys\
     <CPCMD> <devdir>\hdr\dos\win\*.h <reldir>\h\win\
-    <CPCMD> <devdir>\hdr\qnx\*.h* <reldir>\qh\
-    <CPCMD> <devdir>\hdr\qnx\sys\*.h <reldir>\qh\sys\
-#rem<CPCMD> <devdir>\hdr\penpoint\*.h* <reldir>\ph\
-#rem<CPCMD> <devdir>\hdr\penpoint\sys\*.h <reldir>\ph\sys\
-#rem<CPCMD> <devdir>\watcom\nt_h\*.h* <reldir>\h\nt\
-#rem<CPCMD> <devdir>\watcom\nt_h\*.dlg <reldir>\h\nt\
+    <CPCMD> <devdir>\hdr\linux\*.h <reldir>\lh\
+    <CPCMD> <devdir>\hdr\linux\sys\*.h <reldir>\lh\sys\
+#    <CPCMD> <devdir>\hdr\qnx\*.h* <reldir>\qh\
+#    <CPCMD> <devdir>\hdr\qnx\sys\*.h <reldir>\qh\sys\
 
 [ BLOCK <1> clean ]
 #==================
