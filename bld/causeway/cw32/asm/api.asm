@@ -9205,7 +9205,7 @@ CriticalKeys    db 'aArRiIfF'
 CriticalCodes   db 2,2,1,1,0,0,3,3
 Int24Handler    endp
 
-        include loadle\loadle.asm
+        include loadle/loadle.asm
         include decode_c.asm
 
 ;
