@@ -32,9 +32,9 @@
 
 #include <windows.h>
 char *ImageName;
-extern char *_LpDllname;
+extern char *_LpDllName;
 BOOL __export __stdcall LibMain( HINSTANCE hinst, DWORD dw, LPVOID *ptr )
 {
-    ImageName = _LpDllname;
+    ImageName = _LpDllName;
     return( TRUE );
 }
