@@ -14,7 +14,7 @@ extra_c_flags = -i..\..\pmake
 
 .c: ..\c;..\..\pmake
 
-OBJS  = builder.obj utils.obj runit.obj sys$(host_OS).obj # pmake.obj pmkcmd.obj
+OBJS  = builder.obj utils.obj runit.obj sys.obj # pmake.obj pmkcmd.obj
 COBJS = cdsay.obj
 SOBJS = sweep.obj
 WOBJS = wsplice.obj
