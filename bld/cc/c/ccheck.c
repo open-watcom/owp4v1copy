@@ -111,7 +111,7 @@ static cmp_type InUnion( TYPEPTR typ1, TYPEPTR typ2, int reversed )
     return( NO );
 }
 
-void ChkParmPromotion( TYPEPTR *plist )    /* 25-nov-94 */
+static int ChkParmPromotion( TYPEPTR *plist, int topLevelCheck )    /* 25-nov-94 */
 {
     TYPEPTR     typ;
     int         parm_count;
@@ -126,22 +126,30 @@ void ChkParmPromotion( TYPEPTR *plist )    /* 25-nov-94 */
         case TYPE_UCHAR:
         case TYPE_SHORT:
             if( CompFlags.strict_ANSI ){
-                CErr2( ERR_PARM_TYPE_MISMATCH, parm_count );
+                if ( topLevelCheck ) {
+                    CErr2( ERR_PARM_TYPE_MISMATCH, parm_count );
+                }
+                return( TC_TYPE_MISMATCH );
             }
             break;
         case TYPE_USHORT:
             #if TARGET_SHORT != TARGET_INT
                 if( CompFlags.strict_ANSI )  {
-                    CErr2( ERR_PARM_TYPE_MISMATCH, parm_count );
+                    if ( topLevelCheck ) {
+                        CErr2( ERR_PARM_TYPE_MISMATCH, parm_count );
+                    }
+                    return( TC_TYPE_MISMATCH );
                 }
             #endif
             break;
         case TYPE_FLOAT:
-            CErr2( ERR_PARM_TYPE_MISMATCH, parm_count );
-            break;
+            if ( topLevelCheck ) {
+                CErr2( ERR_PARM_TYPE_MISMATCH, parm_count );
+            }
+            return( TC_TYPE_MISMATCH );
         }
     }
-    return;
+    return TC_OK;
 }
 
 TYPEPTR  SkipTypeFluff( TYPEPTR typ ){
@@ -150,52 +158,6 @@ TYPEPTR  SkipTypeFluff( TYPEPTR typ ){
     }
     if( typ->decl_type == TYPE_ENUM ) typ = typ->object;
     return( typ );
-}
-
-
-void ChkParmList( TYPEPTR *plist1 ,TYPEPTR *plist2 ){
-/**************************************************/
-    int         parm_count;
-    cmp_type    cmp;
-    TYPEPTR     ptype1;
-    TYPEPTR     ptype2;
-
-    parm_count = 1;
-    for(;;) {
-        ptype1 = *plist1;
-        ptype2 = *plist2;
-        if( ptype1 == NULL  ||  ptype2 == NULL ) break;
-        cmp = DoCompatibleType( ptype1, ptype2, 0, VC_ERR );
-        switch( cmp ){
-        case NO:
-        case PT:
-        case PX:
-        case AC:
-        case PC:
-        case PM:                                    /* 16-may-91 */
-            CErr2( ERR_PARM_TYPE_MISMATCH, parm_count );
-            break;
-        case PQ:
-            if( !CompFlags.no_check_qualifiers ){ // else fuck em
-                CWarn2( WARN_QUALIFIER_MISMATCH,
-                        ERR_PARM_QUALIFIER_MISMATCH, parm_count );
-            }
-            break;
-        case PS:
-            CWarn2( WARN_SIGN_MISMATCH,
-                 ERR_PARM_SIGN_MISMATCH,parm_count );
-            break;
-        case PW:
-            CErr2( ERR_PARM_INCONSISTENT_INDIRECTION_LEVEL, parm_count );
-            break;
-        }
-        ++plist1;
-        ++plist2;
-        ++parm_count;
-    }
-    if( ptype1 != ptype2  ) {
-        CErr1( ERR_PARM_COUNT_MISMATCH );
-    }
 }
 
 static cmp_type CompatibleStructs( TAGPTR tag1, TAGPTR tag2 )
@@ -237,35 +199,7 @@ static cmp_type CompatibleStructs( TAGPTR tag1, TAGPTR tag2 )
     return( OK );
 }
 
-local int CheckDefaultArgPromotion( TYPEPTR *plist )    /* 25-nov-94 */
-{
-    TYPEPTR     typ;
-
-    for(;;) {
-        typ = *plist++;
-        if( typ == NULL ) break;
-        while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
-        switch( typ->decl_type ) {
-        case TYPE_CHAR:
-        case TYPE_UCHAR:
-        case TYPE_SHORT:
-            if( CompFlags.strict_ANSI ) return( TC_TYPE_MISMATCH );
-            break;
-        case TYPE_USHORT:
-            #if TARGET_SHORT != TARGET_INT
-                if( CompFlags.strict_ANSI ) return( TC_TYPE_MISMATCH );
-            #endif
-            break;
-        case TYPE_FLOAT:
-            return( TC_TYPE_MISMATCH );
-            break;
-        }
-    }
-    return( TC_OK );
-}
-
-
-local int CompatibleFunction( TYPEPTR typ1, TYPEPTR typ2 )
+int ChkCompatibleFunction( TYPEPTR typ1, TYPEPTR typ2, int topLevelCheck )
 {
     TYPEPTR     *plist1;
     TYPEPTR     *plist2;
@@ -276,18 +210,24 @@ local int CompatibleFunction( TYPEPTR typ1, TYPEPTR typ2 )
     plist2 = typ2->u.parms;
     if( plist1 != plist2 ) {
         if( plist1 == NULL ) {
-            return CheckDefaultArgPromotion( plist2 );
+            return ChkParmPromotion( plist2, topLevelCheck );
         } else if( plist2 == NULL ) {
-            return CheckDefaultArgPromotion( plist1 );
+            return ChkParmPromotion( plist1, topLevelCheck );
         }
         parm_count = 1;
         for(;;) {
             if( *plist1 == NULL  &&  *plist2 == NULL ) break;
             if( *plist1 == NULL  ||  *plist2 == NULL ) {
+                if ( topLevelCheck ) {
+                    CErr1( ERR_PARM_COUNT_MISMATCH );
+                }
                 return( TC_PARM_COUNT_MISMATCH );
             }
-            if( CompFlags.strict_ANSI ) {               /* 22-nov-94 */
+            if( topLevelCheck || CompFlags.strict_ANSI ) {               /* 22-nov-94 */
                 if( ! IdenticalType( *plist1, *plist2 ) ) {
+                    if ( topLevelCheck ) {
+                        CErr2( ERR_PARM_TYPE_MISMATCH, parm_count );
+                    }
                     return( TC_PARM_TYPE_MISMATCH + parm_count );
                 }
             } else{
@@ -401,7 +341,7 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
             typ2_flags = typ2->type_flags;
             if( (typ1_flags & FLAG_LANGUAGES) != (typ2_flags & FLAG_LANGUAGES) ){
                 ret_val = NO;
-            }else if( (typ1!=typ2) && (CompatibleFunction( typ1, typ2 )!=TC_OK)  ){
+            }else if( ChkCompatibleFunction( typ1, typ2, 0 ) != TC_OK ){
                 ret_val = NO;
             /* check to see if the two functions have identical return types */
             }else if( !IdenticalType( typ1->object, typ2->object ) ) {
@@ -1088,7 +1028,7 @@ local int TypeCheck( TYPEPTR typ1, TYPEPTR typ2 )
             return( TC_TYPE_MISMATCH );
         }
         if( typ1->decl_type == TYPE_FUNCTION ) {
-            retcode = CompatibleFunction( typ1, typ2 );
+            retcode = ChkCompatibleFunction( typ1, typ2, 0 );
             if( retcode != TC_OK ) return( retcode );
             if( typ1->object == NULL  ||  typ2->object == NULL ) {
                 return( TC_OK );

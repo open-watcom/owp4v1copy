@@ -510,8 +510,7 @@ extern  void    SetDBChar(int);                 /* casian */
 extern  struct aux_entry *AuxLookup(char *);    /* caux.c */
 extern  void    PragmaFini(void);               /* caux.c */
 
-extern  void    ChkParmPromotion( TYPEPTR *plist ); /*ccheck*/
-extern  void    ChkParmList( TYPEPTR *plist1 ,TYPEPTR *plist2 ); /*ccheck*/
+extern  int     ChkCompatibleFunction( TYPEPTR typ1, TYPEPTR typ2, int topLevelCheck ); /*ccheck*/
 extern  void    AsgnCheck(TYPEPTR,TREEPTR);     /* ccheck */
 extern  void    TernChk( TYPEPTR typ1, TYPEPTR typ2 ); /*check */
 extern  void    ChkCallParms(void);             /* ccheck */

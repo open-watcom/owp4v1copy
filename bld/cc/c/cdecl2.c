@@ -145,15 +145,9 @@ local void CmpFuncDecls( SYMPTR new_sym, SYMPTR old_sym )
             CErr2p( ERR_INCONSISTENT_TYPE, new_sym->name );
         }
     }
-    if( type_new->u.parms != type_old->u.parms ){
-        if( type_new->u.parms == NULL ){
-            ChkParmPromotion( type_old->u.parms );
-        }else if( type_old->u.parms == NULL ){
-            ChkParmPromotion( type_new->u.parms );
-        }else{
-            ChkParmList( type_new->u.parms, type_old->u.parms );
-        }
-    }
+
+    /* check types of parms, including promotion */
+    ChkCompatibleFunction(type_new, type_old, 1);
 }
 
 local SYM_HANDLE FuncDecl( SYMPTR sym, stg_classes stg_class )
