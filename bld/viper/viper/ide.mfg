@@ -17,6 +17,7 @@ rem     ds Flashtek, stack based calling conventions
 rem     dp Pharlap
 rem     dr Rational DOS 4G
 rem     dt Pharlap tnt
+rem     dw CauseWay DOS32
 rem     nc Windows NT character mode executable
 rem     nw Windows NT windowed executable
 rem     nm 32-bit MFC static linkage
@@ -90,6 +91,7 @@ rem make fullscreen an option where both windowed & fullscreen work
     CSwitch 0, ov?eo, "Fullscreen", "!Fullscreen", ON
     CSwitch 0, d??eo, "Fullscreen", "!Fullscreen", ON
     CSwitch 0, dr2e?, "", $(%watcom)\binw\dos4gw, ON
+    CSwitch 0, dw2e?, "", $(%watcom)\binw\cwstub, ON
 rem Pharlap run386 must be in your path
     CSwitch 0, dp2e?, "", run386, ON
 rem Pharlap TNT run386 must be in your path
@@ -107,13 +109,16 @@ Tool WDEBUG "Debugger"
     CSwitch 0, ds2e?, "", "!Error Cannot debug a FlashTek executable$", ON
     CSwitch 0, w???9, "", $(%watcom)\binw\wdw, ON
     CSwitch 0, dr2en, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
+    CSwitch 0, dw2en, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\cw.trp $&\n", ON
     CSwitch 0, dp2en, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\pls.trp $&\n", ON
     CSwitch 0, dt2en, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\pls.trp $&\n", ON
     CSwitch 0, dr2e9, "", "$(%watcom)\\binw\\winserv /once /tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
+    CSwitch 0, dw2e9, "", "$(%watcom)\\binw\\winserv /once /tr=$(%watcom)\\binw\\cw.trp $&\n", ON
     CSwitch 0, dp2e9, "", "$(%watcom)\\binw\\winserv /once /tr=$(%watcom)\\binw\\pls.trp $&\n", ON
     CSwitch 0, dt2e9, "", "$(%watcom)\\binw\\winserv /once /tr=$(%watcom)\\binw\\pls.trp $&\n", ON
     CSwitch 0, d?6en, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\std.trp $&\n", ON
     CSwitch 0, dr2eo, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\rsi.trp $&\n", ON
+    CSwitch 0, dw2eo, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\cw.trp $&\n", ON
     CSwitch 0, dp2eo, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\pls.trp $&\n", ON
     CSwitch 0, dt2eo, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\pls.trp $&\n", ON
     CSwitch 0, d?6eo, "", "$(%watcom)\\binw\\vdmserv /once /tr=$(%watcom)\\binw\\std.trp $&\n", ON
@@ -141,12 +146,15 @@ Tool WDEBUG "Debugger"
 :endsegment
 
     CSwitch 0, dr2ew, " Run", "$(%watcom)\\binw\\wd.pif", ON
+    CSwitch 0, dw2ew, " Run", "$(%watcom)\\binw\\wd.pif", ON
     CSwitch 0, dp2ew, " Run", "$(%watcom)\\binw\\wd.pif", ON
     CSwitch 0, dt2ew, " Run", "$(%watcom)\\binw\\wd.pif", ON
     CSwitch 0, dr2ej, " Run", "$(%watcom)\\binw\\wdj.pif", ON
+    CSwitch 0, dw2ej, " Run", "$(%watcom)\\binw\\wdj.pif", ON
     CSwitch 0, dp2ej, " Run", "$(%watcom)\\binw\\wdj.pif", ON
     CSwitch 0, dt2ej, " Run", "$(%watcom)\\binw\\wdj.pif", ON
     CSwitch 0, dr2e8, " Run", "$(%watcom)\\n98bw\\wd.pif", ON
+    CSwitch 0, dw2e8, " Run", "$(%watcom)\\n98bw\\wd.pif", ON
     CSwitch 0, dp2e8, " Run", "$(%watcom)\\n98bw\\wd.pif", ON
     CSwitch 0, dt2e8, " Run", "$(%watcom)\\n98bw\\wd.pif", ON
 
@@ -183,20 +191,25 @@ Tool WDEBUG "Debugger"
     VSwitch 1, ?????, "Dip files:", /di, =, MULTI, REQ, ""
     VSwitch 1, ?????, "Dynamic memory:", /dy, =, ONE, REQ, ""
     VSwitch 1, dr2ew, "Trap file:", /tr, =, ONE, REQ, "win"
+    VSwitch 1, dw2ew, "Trap file:", /tr, =, ONE, REQ, "win"
     VSwitch 1, dp2ew, "Trap file:", /tr, =, ONE, REQ, "win"
     VSwitch 1, dt2ew, "Trap file:", /tr, =, ONE, REQ, "win"
     VSwitch 1, dr2ej, "Trap file:", /tr, =, ONE, REQ, "win"
+    VSwitch 1, dw2ej, "Trap file:", /tr, =, ONE, REQ, "win"
     VSwitch 1, dp2ej, "Trap file:", /tr, =, ONE, REQ, "win"
     VSwitch 1, dt2ej, "Trap file:", /tr, =, ONE, REQ, "win"
     VSwitch 1, dr2e8, "Trap file:", /tr, =, ONE, REQ, "win"
+    VSwitch 1, dw2e8, "Trap file:", /tr, =, ONE, REQ, "win"
     VSwitch 1, dp2e8, "Trap file:", /tr, =, ONE, REQ, "win"
     VSwitch 1, dt2e8, "Trap file:", /tr, =, ONE, REQ, "win"
     VSwitch 1, dr2e9, "Trap file:", /tr, =, ONE, REQ, "win;$&"
+    VSwitch 1, dw2e9, "Trap file:", /tr, =, ONE, REQ, "win;$&"
     VSwitch 1, dp2e9, "Trap file:", /tr, =, ONE, REQ, "win;$&"
     VSwitch 1, dt2e9, "Trap file:", /tr, =, ONE, REQ, "win;$&"
     VSwitch 1, d???o, "Trap file:", /tr, =, ONE, REQ, "vdm;$&"
     VSwitch 1, d???n, "Trap file:", /tr, =, ONE, REQ, "vdm;$&"
     VSwitch 1, dr2e?, "Trap file:", /tr, =, ONE, REQ, "rsi"
+    VSwitch 1, dw2e?, "Trap file:", /tr, =, ONE, REQ, "cw"
     VSwitch 1, dp2e?, "Trap file:", /tr, =, ONE, REQ, "pls"
     VSwitch 1, dt2e?, "Trap file:", /tr, =, ONE, REQ, "pls"
     VSwitch 1, l?2e?, "Trap file:", /tr, =, ONE, REQ, "nov;$&"
@@ -251,12 +264,15 @@ rem For remote debugging, don't put a full path name
     VSwitch 0, ?????, "Application parameters:",,, ONE, REQ, ""
 :endsegment
     CSwitch 0, dr2ew, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=rsi /once\n", ON
+    CSwitch 0, dw2ew, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=cw /once\n", ON
     CSwitch 0, dp2ew, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=pls /once\n", ON
     CSwitch 0, dt2ew, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=pls /once\n", ON
     CSwitch 0, dr2ej, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=rsi /once\n", ON
+    CSwitch 0, dw2ej, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=cw /once\n", ON
     CSwitch 0, dp2ej, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=pls /once\n", ON
     CSwitch 0, dt2ej, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=pls /once\n", ON
     CSwitch 0, dr2e8, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=rsi /once\n", ON
+    CSwitch 0, dw2e8, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=cw /once\n", ON
     CSwitch 0, dp2e8, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=pls /once\n", ON
     CSwitch 0, dt2e8, "", "\n$(%watcom)\\binw\\wsrv.pif /tr=pls /once\n", ON
 
@@ -273,6 +289,7 @@ Tool WSAMPLE "Sampler"
     CSwitch 0, w????, " app", "!Fullscreen wsamplew", ON
     CSwitch 0, d?6??, "", $(%watcom)\binw\wsample, ON
     CSwitch 0, dr2e?, "", wsamprsi, ON
+    CSwitch 0, dw2e?, "", wsamprsi, ON
     CSwitch 0, dp2e?, "", run386, ON
     CSwitch 0, dt2e?, "", tnt, ON
     CSwitch 0, dp2e?, "", wsamppls, ON
@@ -873,6 +890,7 @@ Tool WLINK "Linker"
     VSwitch  0, o?6??, "System:", SYS, " ", ONE, REQ, os2
     VSwitch  0, w?2??, "System:", SYS, " ", ONE, REQ, win386
     VSwitch  0, dr2??, "System:", SYS, " ", ONE, REQ, dos4g
+    VSwitch  0, dw2??, "System:", SYS, " ", ONE, REQ, causeway
     VSwitch  0, dp2??, "System:", SYS, " ", ONE, REQ, pharlap
     VSwitch  0, dt2??, "System:", SYS, " ", ONE, REQ, tnt
     VSwitch  0, o?2??, "System:", SYS, " ", ONE, REQ, os2v2
@@ -1003,6 +1021,7 @@ Tool WLINK "Linker"
     VSwitch  1, n????, "Description:", "op de", " '%s'", ONE, REQ, ""
     VSwitch  1, w????, "Description:", "op de", " '%s'", ONE, REQ, ""
     VSwitch  1, dr???, "Description:", "op de", " '%s'", ONE, REQ, ""
+    VSwitch  1, dw???, "Description:", "op de", " '%s'", ONE, REQ, ""
 :segment !C_FOR_PB
   Family Special
     RGroup "DGROUP Sharing"
