@@ -1,16 +1,7 @@
-VERSION = _WINNT
-model =
-host_CPU = axp      # only defined for axp (for now)
-host_OS  = nt
-cpu = alpha
+#pmake: os_nt cpu_axp
 
-!include cproj.mif
-!include defrule.mif
-
-!include wres.mif
-
-guilib  = $(guidir)/win/ntaxp/gui.lib
-guiinc  = $(guidir)/win/ntaxp
-guihdir = $(guidir)/h
+host_os = nt
+host_cpu = axp
+sys_windowed = 1
 
 !include ../setup.mif

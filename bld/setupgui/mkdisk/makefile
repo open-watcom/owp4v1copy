@@ -1,30 +1,45 @@
-!ifdef __NT__
-CFLAGS = /w4 /d2 /zq /k16000
-comp = wcl386
+#pmake: build os_nt os_dos os_os2 cpu_386
+
+proj_name = mkdisk
+
+mkdisk_autodepends = .AUTODEPEND
+
+!ifeq %BUILD_PLATFORM dos386
+host_os = dos
+host_cpu = 386
+!else ifeq %BUILD_PLATFORM nt386
+host_os = nt
+host_cpu = 386
+!else ifeq %BUILD_PLATFORM os2386
+host_os = os2
+host_cpu = 386
+!else ifeq %BUILD_PLATFORM linux386
+host_os = linux
+host_cpu = 386
 !else
-!ifdef __OS2__
-CFLAGS = /w4 /d2 /zq /k16000
-comp = wcl386
-!else
-CFLAGS = /w4 /d2 /lr /zq /mc /k8192
-comp = wcl
-!endif
 !endif
 
-all : .symbolic
-all : mkdisk.exe splitfil.exe packsize.exe
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
 
-mkdisk.exe : mkdisk.c
-    $(COMP) mkdisk $(CFLAGS)
+extra_l_flags = op map
 
-packsize.exe : packsize.c
-    $(COMP) packsize
+commands = mkdisk.exe splitfil.exe packsize.exe # genmkfil.exe
 
-mkdisk.exp : mkdisk.c
-    wcl386 /d2 /l=pharlap mkdisk
+all : $(commands) .SYMBOLIC
 
-splitfil.exe : splitfil.c
-    $(COMP) splitfil $(CFLAGS)
+mkdisk.exe : mkdisk.obj
+    $(linker) $(lflags) name $@ file {$<}
 
-genmkfil.exe : genmkfil.c
-    $(COMP) genmkfil $(CFLAGS)
+packsize.exe : packsize.obj
+    $(linker) $(lflags) name $@ file {$<}
+
+mkdisk.exp : mkdisk.obj
+    $(linker) $(lflags) name $@ file {$<}
+
+splitfil.exe : splitfil.obj
+    $(linker) $(lflags) name $@ file {$<}
+
+genmkfil.exe : genmkfil.obj
+    $(linker) $(lflags) name $@ file {$<}

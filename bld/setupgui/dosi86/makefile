@@ -1,8 +1,6 @@
-VERSION = _UI
-model = l
+#pmake: os_dos cpu_i86
 
-guilib  = $(guidir)/ui/dosi86/gui.lib
-uilib   = $(uidir)/dos/dosi86/ui.lib
-reslib = $(wres_dir)\lib\wresl.lib
+host_os = dos
+host_cpu = i86
 
 !include ../setup.mif
