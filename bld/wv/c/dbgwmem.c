@@ -599,7 +599,7 @@ static bool GetBuff( mem_window *mem,
     if( mem->file ) {
         offset += mem->u.f.offset;
         new = SeekStream( mem->u.f.filehndl,
-                          offset, SEEK_ORG );
+                          offset, DIO_SEEK_ORG );
         if( new != offset ) return( FALSE );
         len = ReadStream( mem->u.f.filehndl, buff, size );
         return( len >= size );
@@ -859,7 +859,7 @@ static  int     MemScroll( a_window *wnd, int lines )
     if( mem->file ) {
         offset = mem->u.f.offset+tomove;
         if( offset < 0 ) offset = 0;
-        new = SeekStream( mem->u.f.filehndl, offset, SEEK_ORG );
+        new = SeekStream( mem->u.f.filehndl, offset, DIO_SEEK_ORG );
         if( new != offset ) return( 0 );
         if( ReadStream( mem->u.f.filehndl, TxtBuff, 1 ) != 1 ) return( 0 );
         mem->u.f.offset = offset;
@@ -934,8 +934,8 @@ static bool MemEventProc( a_window * wnd, gui_event gui_ev, void *parm )
         if( mem->file ) {
             mem->u.f.offset = 0;
             if( mem->u.f.filehndl != NIL_HANDLE ) {
-                old = SeekStream( mem->u.f.filehndl, 0L, SEEK_END );
-                mem->u.f.size = SeekStream( mem->u.f.filehndl, old, SEEK_ORG );
+                old = SeekStream( mem->u.f.filehndl, 0L, DIO_SEEK_END );
+                mem->u.f.size = SeekStream( mem->u.f.filehndl, old, DIO_SEEK_ORG );
             }
         } else {
             mem->u.m.follow = NULL;

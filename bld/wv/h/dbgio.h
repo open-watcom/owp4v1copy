@@ -24,18 +24,18 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Debugger file I/O layer interface.
 *
 ****************************************************************************/
+
 
 #include "sysdef.h"
 
 typedef         unsigned handle;
 typedef unsigned_8 seek_method; enum {
-    SEEK_ORG,
-    SEEK_CUR,
-    SEEK_END
+    DIO_SEEK_ORG,
+    DIO_SEEK_CUR,
+    DIO_SEEK_END
 };
 typedef unsigned_8 open_access; enum {
     OP_READ         = 0x01,

@@ -48,9 +48,9 @@ extern int TabIntervalGet();
 #define SM_NO_MOD               NO_MOD
 #define SM_BUF_SIZE             512
 
-#define SMSeekStart( fp )               SeekStream( fp, 0L, SEEK_CUR )
-#define SMSeekOrg( fp, offset )         SeekStream( fp, offset, SEEK_ORG )
-#define SMSeekEnd( fp )                 SeekStream( fp, 0L, SEEK_END );
+#define SMSeekStart( fp )               SeekStream( fp, 0L, DIO_SEEK_CUR )
+#define SMSeekOrg( fp, offset )         SeekStream( fp, offset, DIO_SEEK_ORG )
+#define SMSeekEnd( fp )                 SeekStream( fp, 0L, DIO_SEEK_END );
 
 #define SMOpenRead( name )              FileOpen( name, OP_READ )
 #define SMNilHandle( fp)                ( fp == NIL_HANDLE )

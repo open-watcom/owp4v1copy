@@ -583,7 +583,7 @@ static bool CheckLoadDebugInfo( image_entry *image, handle h,
  * Note: This function should try to open files locally first, for two
  * reasons:
  * 1) If a local file is open as remote, then local caching may interfere with
- *    file operations (notably seeks with SEEK_CUR)
+ *    file operations (notably seeks with DIO_SEEK_CUR)
  * 2) Remote access goes through extra layer of indirection; this overhead
  *    is completely unnecessary for local debugging.
  */
@@ -1153,9 +1153,9 @@ static long SizeMinusDebugInfo( handle floc, bool strip )
     TISTrailer          trailer;
     long                copylen;
 
-    copylen = SeekStream( floc, 0, SEEK_END );
+    copylen = SeekStream( floc, 0, DIO_SEEK_END );
     if( !strip ) return( copylen );
-    SeekStream( floc, -sizeof( trailer ), SEEK_END );
+    SeekStream( floc, -sizeof( trailer ), DIO_SEEK_END );
     if( ReadStream( floc, &trailer, sizeof(trailer) ) != sizeof(trailer) ) return( copylen );
     if( trailer.signature != TIS_TRAILER_SIGNATURE ) return( copylen );
     return( copylen - trailer.size );
@@ -1202,7 +1202,7 @@ bool CopyToRemote( char *local, char *remote, bool strip, void *cookie )
     }
     copylen = SizeMinusDebugInfo( floc, strip );
     DUICopySize( cookie, copylen );
-    SeekStream( floc, 0, SEEK_ORG );
+    SeekStream( floc, 0, DIO_SEEK_ORG );
     copied = 0;
     while( ( len = ReadStream( floc, buff, bsize ) ) != 0 ) {
         WriteStream( frem, buff, len );

@@ -231,7 +231,7 @@ handle FileOpen( char const *name, open_access o )
     }
     if( sys == NIL_SYS_HANDLE ) return( NIL_HANDLE );
     SysHandles[ h & ~REMOTE_IND ] = sys;
-    if( o & OP_APPEND ) SeekStream( h, 0, SEEK_END );
+    if( o & OP_APPEND ) SeekStream( h, 0, DIO_SEEK_END );
     return( h );
 }
 
