@@ -227,6 +227,134 @@ bool iterator_test( )
   return( rc );
 }
 
+bool relational_test( )
+{
+  bool rc = true;
+
+  // These initializations are crude, but good enough for now.
+  std::vector< char > s1;
+  s1.push_back( 'a' ); s1.push_back( 'b' );
+  s1.push_back( 'c' ); s1.push_back( 'd' );
+
+  std::vector< char > s2;
+  s2.push_back( 'a' ); s2.push_back( 'b' );
+  s2.push_back( 'c' ); s2.push_back( 'd' );
+
+  std::vector< char > s3;
+  s3.push_back( 'a' ); s3.push_back( 'b' );
+  s3.push_back( 'c' ); s3.push_back( 'c' );
+
+  std::vector< char > s4;
+  s4.push_back( 'a' ); s4.push_back( 'b' );
+  s4.push_back( 'c' ); s4.push_back( 'e' );
+
+  std::vector< char > s5;
+  s5.push_back( 'a' ); s5.push_back( 'b' );
+  s5.push_back( 'c' );
+
+  std::vector< char > s6;
+  s6.push_back( 'a' ); s6.push_back( 'b' );
+  s6.push_back( 'c' ); s6.push_back( 'd' );
+  s6.push_back( 'e' );
+
+  // Operator==
+  if( !( s1 == s2 ) ) {
+    std::cout << "relational FAIL 0001\n"; rc = false;
+  }
+  if(  ( s1 == s5 ) ) {
+    std::cout << "relational FAIL 0002\n"; rc = false;
+  }
+
+  // Operator !=
+  if(  ( s1 != s2 ) ) {
+    std::cout << "relational FAIL 0003\n"; rc = false;
+  }
+  if( !( s5 != s1 ) ) {
+    std::cout << "relational FAIL 0004\n"; rc = false;
+  }
+
+  // Operator<
+  if(  ( s1 < s2 ) ) {
+    std::cout << "relational FAIL 0005\n"; rc = false;
+  }
+  if( !( s3 < s1 ) ) {
+    std::cout << "relational FAIL 0006\n"; rc = false;
+  }
+  if(  ( s4 < s1 ) ) {
+    std::cout << "relational FAIL 0007\n"; rc = false;
+  }
+  if( !( s5 < s1 ) ) {
+    std::cout << "relational FAIL 0008\n"; rc = false;
+  }
+  if(  ( s4 < s6 ) ) {
+    std::cout << "relational FAIL 0009\n"; rc = false;
+  }
+
+  // Operator>
+  if( !( s4 > s3 ) ) {
+    std::cout << "relational FAIL 0010\n"; rc = false;
+  }
+  if(  ( s1 > s6 ) ) {
+    std::cout << "relational FAIL 0011\n"; rc = false;
+  }
+  
+  // Operator <=
+  if( !( s1 <= s2 && s3 <= s2 ) ) {
+    std::cout << "relational FAIL 0012\n"; rc = false;
+  }
+  if(  ( s2 <= s3 || s6 <= s5 ) ) {
+    std::cout << "relational FAIL 0013\n"; rc = false;
+  }
+
+  // Operator>=
+  if( !( s2 >= s1 && s6 >= s5 ) ) {
+    std::cout << "relational FAIL 0014\n"; rc = false;
+  }
+  if(  ( s3 >= s4 || s5 >= s4 ) ) {
+    std::cout << "relatioanl FAIL 0015\n"; rc = false;
+  }
+
+  return( rc );
+}
+
+bool swap_test( )
+{
+  bool rc = true;
+
+  std::vector< int > v1, v2;
+  v1.push_back(  1 ); v1.push_back(  2 );
+  v2.push_back( 10 ); v2.push_back( 20 );
+
+  v1.swap( v2 );
+  if( v1[0] != 10 || v1[1] != 20 ) {
+    std::cout << "swap FAIL 0001\n"; rc = false;
+  }
+
+  #ifdef __NEVER
+  std::swap( v1, v2 );
+  if( v1[0] != 1 || v1[1] != 2 ) {
+    std::cout << "swap FAIL 0002\n"; rc = false;
+  }
+  #endif
+
+  return( rc );
+}
+
+bool clear_test( )
+{
+  bool rc = true;
+
+  std::vector< int > vec;
+  vec.push_back( 1 ); vec.push_back( 2 ); vec.push_back( 3 );
+
+  vec.clear( );
+  if( vec.size( ) != 0 ) {
+    std::cout << "clear FAIL 0001\n"; rc = false;
+  }
+
+  return( rc );
+}
+
 int main( )
 {
   // Probably the entire test suite should be a template so that all
@@ -250,6 +378,9 @@ int main( )
     if( !pushback_test( int_check, int_check_size ) ) rc = 1;
     if( !pushback_test( string_check, string_check_size ) ) rc = 1;
     if( !iterator_test( )           ) rc = 1;
+    if( !relational_test( )         ) rc = 1;
+    if( !swap_test( )               ) rc = 1;
+    if( !clear_test( )              ) rc = 1;
   }
   catch( ... ) {
     std::cout << "Unexpected exception of unexpected type.\n";

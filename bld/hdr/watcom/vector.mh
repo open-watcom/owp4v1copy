@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////
-// FILE: vector (...)
+// FILE: vector (Definition of std::vector)
 //
 :keep CPP_HDR
 :include crwat.sp
@@ -80,29 +80,81 @@ namespace std {
     void     insert( iterator position, size_type n, const Type&x );
     iterator erase( iterator position );
     iterator erase( iterator first, iterator last );
-    void     swap( vector & );
+    void     swap( vector &x );
     void     clear( );
 
   private:
+    // 1. buffer has size total.
+    // 2. buffer never shrinks.
+    // 3. total >= filled.
+    // 4. total is a power of two.
+    // 5. buffer allocated with mem or a copy of mem.
+    //
     Allocator mem;      // Object used to get and release memory.
     pointer   buffer;   // Pointer to start of buffer space.
     size_type filled;   // Number of buffer slots in use by objects.
     size_type total;    // Total number of buffer slots.
 
-    void reallocate( ); // Double the vector's capacity.
+    // This method encapsulates the memory allocation policy.
+    pointer alloc( size_type required, size_type &found );
+
+    // Doubles size of buffer and copies objects from old to new.
+    void realloc( );
   };
 
   // ==========================
   // Member functions of vector
   // ==========================
 
+  template< class Type, class Allocator >
+  vector< Type, Allocator >::pointer
+    vector< Type, Allocator >::alloc(
+      size_type required,
+      size_type &found )
+  {
+    pointer   result;
+    size_type length = 16;
+
+    // Find a power of two that produces a sufficient size.
+    while( length < required ) length <<= 1;
+    result = mem.allocate( length );
+
+    // Update outputs only if allocation successful.
+    found = length;
+    return( result );
+  }
+
+  // realloc( )
+  // **********
+  template< class Type, class Allocator >
+  void vector< Type, Allocator >::realloc( )
+  {
+    size_type temp_total = ( total << 1 );  // Check for overflow?
+    pointer temp = mem.allocate( temp_total );
+    try {
+      uninitialized_copy( buffer, buffer + filled, temp );
+    }
+    catch( ... ) {
+      mem.deallocate( temp, temp_total );
+      throw;
+    }
+
+    // New allocation successful. Remove old vector and commit to new.
+    pointer start = buffer;
+    while( buffer < start + filled ) {
+      buffer->~Type( );
+      ++buffer;
+    }
+    total  = temp_total;
+    buffer = temp;
+  }
+
   // vector( const Allocator & )
   // ***************************
   template< class Type, class Allocator >
   vector< Type, Allocator >::vector( const Allocator &a ) : mem( a )
   {
-    total  = 4;
-    buffer = mem.allocate( total );
+    buffer = alloc(1, total );
     filled = 0;
   }
 
@@ -114,11 +166,9 @@ namespace std {
     const Type &value,
     const Allocator &a ) : mem( a )
   {
-    total = 4;
-    while( total <= n ) total <<= 1;
-    buffer = mem.allocate( total );
+    buffer = alloc( n, total );
     try {
-      uninitialized_fill_n( iterator( buffer ), n, value );
+      uninitialized_fill_n( buffer, n, value );
     }
     catch( ... ) {
       mem.deallocate( buffer, total );
@@ -131,14 +181,13 @@ namespace std {
   // ************************
   template< class Type, class Allocator >
   vector< Type, Allocator >::vector( const vector &other )
+    : mem( other.mem )
   {
-    mem    = other.mem;
-    total  = other.total;
-    buffer = mem.allocate( total );
+    buffer = alloc( other.filled, total );
     try {
-      uninitialized_copy( iterator( other.buffer ),
-                          iterator( other.buffer + other.filled ),
-                          iterator( buffer ) );
+      uninitialized_copy( other.buffer,
+                          other.buffer + other.filled,
+                          buffer );
     }
     catch( ... ) {
       mem.deallocate( buffer, total );
@@ -173,9 +222,9 @@ namespace std {
     // Allocate buffer space for copy and try to make the copy.
     pointer temp = temp_allocator.allocate( other.total );
     try {
-      uninitialized_copy( iterator( other.buffer ),
-                          iterator( other.buffer + other.filled ),
-                          iterator( temp ) );
+      uninitialized_copy( other.buffer,
+                          other.buffer + other.filled,
+                          temp );
     }
     catch( ... ) {
       mem.deallocate( temp, other.total );
@@ -203,11 +252,10 @@ namespace std {
   void vector< Type, Allocator >::assign( size_type n, const Type &value )
   {
     // Prepare new buffer space.
-    size_type temp_total = 4;
-    while( temp_total <= n ) temp_total <<= 1;
-    pointer temp = mem.allocate( temp_total );
+    size_type temp_total;
+    pointer temp = alloc( n, temp_total );
     try {
-      uninitialized_fill_n( iterator( temp ), n, value );
+      uninitialized_fill_n( temp, n, value );
     }
     catch( ... ) {
       mem.deallocate( temp, temp_total );
@@ -243,7 +291,7 @@ namespace std {
   typename vector< Type, Allocator >::iterator
     vector<Type, Allocator>::begin( )
   {
-    return( iterator( buffer ) );
+    return( buffer );
   }
 
   // begin( ) const
@@ -253,7 +301,7 @@ namespace std {
   typename vector< Type, Allocator >::const_iterator
     vector<Type, Allocator>::begin( ) const
   {
-    return( const_iterator( buffer ) );
+    return( buffer );
   }
 
   // end( )
@@ -263,7 +311,7 @@ namespace std {
   typename vector< Type, Allocator >::iterator
     vector< Type, Allocator >::end( )
   {
-    return( iterator( buffer + filled ) );
+    return( buffer + filled );
   }
 
   // end( ) const
@@ -273,7 +321,7 @@ namespace std {
   typename vector< Type, Allocator >::const_iterator
     vector< Type, Allocator >::end( ) const
   {
-    return( const_iterator( buffer + filled ) );
+    return( buffer + filled );
   }
 
   // size( ) const
@@ -392,7 +440,7 @@ namespace std {
   void vector< Type, Allocator >::push_back( const Type &item )
   {
     if( filled + 1 > total ) {
-      reallocate( );
+      realloc( );
     }
     new ( static_cast<void *>( buffer + filled ) ) Type( item );
     ++filled;
@@ -407,31 +455,46 @@ namespace std {
     --filled;
   }
 
-  // reallocate( )
-  // *************
+  // swap( )
+  // *******
   template< class Type, class Allocator >
-  void vector< Type, Allocator >::reallocate( )
+  void vector< Type, Allocator >::swap( vector &vec )
   {
-    size_type temp_total = ( total << 1 );  // Check for overflow?
-    pointer temp = mem.allocate( temp_total );
-    try {
-      uninitialized_copy( iterator( buffer ),
-                          iterator( buffer + filled ),
-                          iterator( temp ) );
-    }
-    catch( ... ) {
-      mem.deallocate( temp, temp_total );
-      throw;
+    typename Allocator::pointer ptemp;
+    typename Allocator::size_type stemp;
+    Allocator atemp;
+
+    ptemp      = buffer;
+    buffer     = vec.buffer;
+    vec.buffer = ptemp;
+
+    stemp      = total;
+    total      = vec.total;
+    vec.total  = stemp;
+
+    stemp      = filled;
+    filled     = vec.filled;
+    vec.filled = stemp;
+
+    atemp      = mem;
+    mem        = vec.mem;
+    vec.mem    = atemp;
+  }
+
+  // clear( )
+  // ********
+  template< class Type, class Allocator >
+  void vector< Type, Allocator >::clear( )
+  {
+    // Delete objects actually in use and deallocate the total buffer.
+    for( size_type i = 0; i < filled; ++i ) {
+      mem.destroy( &buffer[i] );
     }
 
-    // New allocation successful. Remove old vector and commit to new.
-    pointer start = buffer;
-    while( buffer < start + filled ) {
-      buffer->~Type( );
-      ++buffer;
-    }
-    total  = temp_total;
-    buffer = temp;
+    // Rebuild buffer (this is only place where vector capacity might shrink).
+    mem.deallocate( buffer, total );
+    buffer = alloc(1, total );  // Might throw. Problem?
+    filled = 0;
   }
 
   // ===============================
@@ -443,7 +506,17 @@ namespace std {
   template< class Type, class Allocator >
   bool operator==(
     const vector< Type, Allocator > &x,
-    const vector< Type, Allocator > &y );
+    const vector< Type, Allocator > &y )
+  {
+    if( x.size( ) != y.size( ) ) return( false );
+
+    vector< Type, Allocator>::size_type index = 0;
+    while( index < x.size( ) ) {
+      if( x[index] != y[index] ) return( false );
+      ++index;
+    }
+    return( true );
+  }
 
   // operator!=( const vector &, const vector & )
   // ++++++++++++++++++++++++++++++++++++++++++++
@@ -461,7 +534,16 @@ namespace std {
   template< class Type, class Allocator >
   bool operator<(
     const vector< Type, Allocator > &x,
-    const vector< Type, Allocator > &y );
+    const vector< Type, Allocator > &y )
+  {
+    vector< Type, Allocator>::size_type index = 0;
+    while( index != x.size( ) && index != y.size( ) ) {
+      if( x[index] < y[index] ) return( true );
+      if( y[index] < x[index] ) return( false );
+      ++index;
+    }
+    return( index == x.size( ) && index != y.size( ) );
+  }
 
   // operator<=( const vector &, const vector & )
   // ++++++++++++++++++++++++++++++++++++++++++++
@@ -496,10 +578,19 @@ namespace std {
     return( !(x < y) );
   }
 
+  // Vector swap ambiguous if general swap (in algorithm) visible.
+  // Need partial ordering of function templates for this to work.
+  //
+  #ifdef __NEVER
   // swap( vector &, vector & )
   // ++++++++++++++++++++++++++
   template< class Type, class Allocator >
-  void swap( vector< Type, Allocator > &x, vector< Type, Allocator > &y );
+  inline
+  void swap( vector< Type, Allocator > &x, vector< Type, Allocator > &y )
+  {
+    x.swap( y );
+  }
+  #endif
 
 } // End of namespace std.
 

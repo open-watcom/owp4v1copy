@@ -1962,6 +1962,10 @@ namespace std {
     return( !( left < right ) );
   }
 
+  // String swap ambiguous if general swap (in algorithm) visible.
+  // Need partial ordering of function templates for this to work.
+  //
+  #ifdef __NEVER
   // swap( basic_string &, basic_string & )
   // ++++++++++++++++++++++++++++++++++++++
   template< class CharT, class Traits, class Allocator >
@@ -1972,6 +1976,7 @@ namespace std {
   {
     left.swap( right );
   }
+  #endif
 
 } // namespace std
 
