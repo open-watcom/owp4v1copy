@@ -870,12 +870,11 @@ extern unsigned ParseEnvVar( const char *env, char **argv, char *buf ) {
             }
             env ++;
         }
-        while( ( got_quote ||
-               ( *env != switchchar && *env != '-' && !isspace( *env ) )
-               && *env != '\0' ) ) {
+        while( ( got_quote || !isspace( *env ) ) && *env != '\0' ) {
             if( *env == '\"' ) {
                 got_quote = !got_quote;
-            } else if( buf != NULL ) {
+            }
+            if( buf != NULL ) {
                 *bufend = *env;
                 bufend++;
             }
