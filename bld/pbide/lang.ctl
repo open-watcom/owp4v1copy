@@ -29,6 +29,7 @@ set PROJDIR=<CWD>
     <CPCMD> <DEVDIR>/pbide/run/nt386/run.exe <RELROOT>/rel2/binnt/watrun.exe
     <CPCMD> <DEVDIR>/pbide/dlldbg/nt386/dlldbg.exe <RELROOT>/rel2/binnt/dlldbg.exe
     <CPCMD> <DEVDIR>/pbide/wig/nt386.dll/pbide.dll <RELROOT>/rel2/binnt/pbide.dll
+    <CPCMD> <DEVDIR>/pbide/dlldbg/pbwdnt.dbg <RELROOT>/rel2/binnt/pbwdnt.dbg
     <CPCMD> <DEVDIR>/viper/viper/nt/pbide.cfg <RELROOT>/rel2/binnt/pbide.cfg
     <CPCMD> <DEVDIR>/viper/viper/idepbnt.cfg <RELROOT>/rel2/binnt/idepbnt.cfg
     <CPCMD> <DEVDIR>/viper/viper/nt/pbidex.cfg <RELROOT>/rel2/binnt/pbidex.cfg
@@ -36,7 +37,6 @@ set PROJDIR=<CWD>
     <CPCMD> <DEVDIR>/pbide/dlldbg/pbend.dbg <RELROOT>/rel2/binw/pbend.dbg
     <CPCMD> <DEVDIR>/pbide/dlldbg/pbstart.dbg <RELROOT>/rel2/binw/pbstart.dbg
     <CPCMD> <DEVDIR>/pbide/dlldbg/pbwd.dbg <RELROOT>/rel2/binw/pbwd.dbg
-    <CPCMD> <DEVDIR>/pbide/dlldbg/pbwdnt.dbg <RELROOT>/rel2/binnt/pbwdnt.dbg
     <CPCMD> <DEVDIR>/pbide/pbdll.h <RELROOT>/rel2/h/pbdll.h
     <CPCMD> <DEVDIR>/viper/viper/win/pbide.cfg <RELROOT>/rel2/binw/pbide.cfg
     <CPCMD> <DEVDIR>/viper/viper/idepb.cfg <RELROOT>/rel2/binw/idepb.cfg
