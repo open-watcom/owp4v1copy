@@ -73,7 +73,7 @@ _cstart_ proc near
         push    eax         ; Push arge (pointer to environment)
         push    esi         ; Push argv
         push    ecx         ; Push argc
-        jmp     __LinuxMain
+        call    __LinuxMain
         dd      ___begtext      ; reference module with segment definitions
 ;
 ; copyright message

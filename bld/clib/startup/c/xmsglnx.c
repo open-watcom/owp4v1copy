@@ -32,20 +32,27 @@
 
 #include "variety.h"
 #include <unistd.h>
+#include <string.h>
 #include "exitwmsg.h"
 
-extern  void    __linux_exit( int );
+void sys_exit(int rc);
+#pragma aux sys_exit =                      \
+    "mov    eax,1"                          \
+    "int    0x80"                           \
+    parm [ebx];
+
+int sys_write(int handle, const char *buf, int len);
+#pragma aux sys_write =                     \
+    "mov    eax,4"                          \
+    "int    0x80"                           \
+    parm [ebx] [ecx] [edx] value [eax];
 
 _WCRTLINK void __exit_with_msg( char _WCI86FAR *msg, unsigned retcode )
 {
     char        c;
 
-    for( ;; ) {
-        c = *msg++;
-        if( c == '\0' ) break;
-        write( 2, &c, 1 );
-    }
-    __linux_exit( retcode );
+    sys_write(1,msg,strlen(msg));
+    sys_exit( retcode );
 }
 
 
@@ -55,3 +62,4 @@ _WCRTLINK void __fatal_runtime_error( char _WCI86FAR *msg, unsigned retcode )
         __exit_with_msg( msg, retcode );
     }
 }
+
