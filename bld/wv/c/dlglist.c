@@ -149,7 +149,7 @@ static bool SourceEvent( gui_window * gui, gui_event gui_ev, void * param )
 }
 
 void DlgList( char *title, void (*clear)(void), void (*add)(char*),
-                           void *(*next)(void*), char *(*name)(void*) )
+                           char_ring *(*next)(char_ring*), char *(*name)(char_ring*) )
 {
     dlg_list dlg;
     dlg.clear = clear;

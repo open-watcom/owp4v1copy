@@ -1766,10 +1766,11 @@ unsigned                MADCallUpStackSize( void )
     return( Active->rtns->MICallUpStackSize() );
 }
 
-static void DIGREGISTER DummyCallUpStackInit( mad_call_up_data *cud, const mad_registers *mr )
+static mad_status DIGREGISTER DummyCallUpStackInit( mad_call_up_data *cud, const mad_registers *mr )
 {
     cud = cud;
     mr = mr;
+    return MS_OK;
 }
 
 mad_status              MADCallUpStackInit( mad_call_up_data *cud, const mad_registers *mr )
