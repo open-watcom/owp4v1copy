@@ -41,7 +41,7 @@
     #include <wos2.h>
 #endif
 
-_WCRTLINK unsigned _dos_getdiskfree( int dnum, struct diskfree_t *df )
+_WCRTLINK unsigned _dos_getdiskfree( unsigned dnum, struct _diskfree_t *df )
 {
     #if defined(__NT__)
         DWORD   spc;

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of isascii().
 *
 ****************************************************************************/
 
@@ -35,6 +34,8 @@
 #include <ctype.h>
 #undef  isascii
 
-_WCRTLINK int __F_NAME(isascii,iswascii)( int c ) {
+_WCRTLINK int __F_NAME(isascii,iswascii)( c )
+    register int c;
+{
     return( (unsigned)(c) <= 0x7f );
 }

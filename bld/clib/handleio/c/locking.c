@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of the locking() function.
 *
 ****************************************************************************/
 
@@ -47,7 +46,7 @@
 #include "seterrno.h"
 
 #ifdef __UNIX__
-_WCRTLINK int (locking)( int handle, int mode, long nbytes )
+_WCRTLINK int (locking)( int handle, int mode, unsigned long nbytes )
 {
     int                 cmd;
     struct flock        flock_buff;
@@ -101,7 +100,7 @@ _WCRTLINK int (locking)( int handle, int mode, long nbytes )
 
 #else
 
-_WCRTLINK int (locking)( int handle, int mode, long nbytes )
+_WCRTLINK int (locking)( int handle, int mode, unsigned long nbytes )
 {
     unsigned long offset;
     int retry_count;

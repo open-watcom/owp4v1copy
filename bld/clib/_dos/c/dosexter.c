@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of dosexterr().
 *
 ****************************************************************************/
 
@@ -36,7 +35,7 @@
 #define DOS_EXT_ERR     0x59
 
 
-_WCRTLINK int dosexterr( struct DOSERROR *doserr )
+_WCRTLINK int dosexterr( struct _DOSERROR *doserr )
     {
         auto union REGS regs;
 
@@ -44,7 +43,7 @@ _WCRTLINK int dosexterr( struct DOSERROR *doserr )
         regs.h.ah = DOS_EXT_ERR;
         regs.x.ebx = 0;                 /* DOS version 3.00 */
         intdos( &regs, &regs );         /* get extended error */
-        doserr->class = regs.h.bh;
+        doserr->errclass = regs.h.bh;
         doserr->action = regs.h.bl;
         doserr->locus = regs.h.ch;
         return( doserr->exterror = regs.x.eax );
@@ -52,7 +51,7 @@ _WCRTLINK int dosexterr( struct DOSERROR *doserr )
         regs.h.ah = DOS_EXT_ERR;
         regs.x.bx = 0;                  /* DOS version 3.00 */
         intdos( &regs, &regs );         /* get extended error */
-        doserr->class = regs.h.bh;
+        doserr->errclass = regs.h.bh;
         doserr->action = regs.h.bl;
         doserr->locus = regs.h.ch;
         return( doserr->exterror = regs.x.ax );

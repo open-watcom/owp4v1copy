@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of __nec98_bios_timeofday().
 *
 ****************************************************************************/
 
@@ -79,7 +78,7 @@ typedef struct
 #pragma pack(__pop);
 #endif
 
-_WCRTLINK unsigned short __nec98_bios_timeofday( int __cmd, char *__timeval )
+_WCRTLINK unsigned short __nec98_bios_timeofday( unsigned __cmd, char *__timeval )
 {
 #ifdef __386__
     union REGS r;
