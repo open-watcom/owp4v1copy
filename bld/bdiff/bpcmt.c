@@ -60,12 +60,10 @@ static char TmpExt[] = "A";
 void main( int argc, char *argv[] )
 {
     size_t size, bufsize;
-    unsigned long total;
     char        outfile[_MAX_PATH], infile[_MAX_PATH];
     char        drive[_MAX_DRIVE], dir[_MAX_DIR];
     char        name[_MAX_FNAME], ext[_MAX_EXT];
     int         fpin, fpout, fpcmt;
-    int         i;
     char        *pos;
 
 

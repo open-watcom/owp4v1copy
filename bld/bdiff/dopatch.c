@@ -340,7 +340,9 @@ PATCH_RET_CODE Execute()
     int     havenew;
     PATCH_RET_CODE  ret;
     PATCH_RET_CODE  ret2;
+#ifdef BDIFF
     char        *dummy = NULL;
+#endif
 
     havenew = 1;
 #ifdef BDIFF
