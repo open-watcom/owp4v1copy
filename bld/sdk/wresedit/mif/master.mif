@@ -79,10 +79,6 @@ extra_c_flags_preproc = -zm
 extra_c_flags_ppexpr = -zm
 extra_c_flags_ppmacro = -zm
 
-!ifeq wresedit_trmem 1
-TRMEM           = -DTRMEM
-!endif
-
 wr_lib = $(wr_dir)/$(host_OS)$(host_CPU)/wr.lib
 
 .c: ../c;../../c;$(misc_dir);$(cpp_dir)
