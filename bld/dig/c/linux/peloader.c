@@ -39,6 +39,7 @@
 #include "pe.h"
 #include <stdlib.h>
 #include <sys/mman.h>
+#include "dbgmod.h"
 
 /*--------------------------- Global variables ----------------------------*/
 
@@ -48,69 +49,6 @@
 static int          result = PE_ok;
 
 /*------------------------- Implementation --------------------------------*/
-
-#if defined(__WATCOMC__) && defined(__386__)
-
-#define WATCOM_DEBUG_SYMBOLS
-
-/* Variable used to determine if the debugger is present */
-
-extern char volatile __WD_Present;
-
-/* Macro to enter the debugger and pass a message */
-
-void EnterDebuggerWithMessage( const char __far * );
-#pragma aux EnterDebuggerWithMessage parm caller [] = \
-        "int 3" \
-        "jmp short L1" \
-        'W' 'V' 'I' 'D' 'E' 'O' \
-        "L1:"
-
-/* Inline assembler to get DS selector */
-
-u_short GetCS(void);
-#pragma aux GetCS parm caller [] = \
-        "mov ax,cs"
-
-/* Messages to load debug symbols */
-
-#define DEBUGGER_LOADMODULE_COMMAND "!LOADMODULE "
-#define DEBUGGER_LOADMODULE_FORMAT DEBUGGER_LOADMODULE_COMMAND "0x%4.4x:0x%8.8x,%s"
-
-/* Messages to unload debug symbols */
-
-#define DEBUGGER_UNLOADMODULE_COMMAND "!UNLOADMODULE "
-#define DEBUGGER_UNLOADMODULE_FORMAT DEBUGGER_UNLOADMODULE_COMMAND "%s"
-
-/****************************************************************************
-DESCRIPTION:
-Notify the Open Watcom debugger of module load events. WD will attempt
-to load symbolic debugging information for the module much like it would for
-OS loaded DLLs.
-****************************************************************************/
-static void NotifyWDLoad(
-    char *modname,
-    unsigned long offset)
-{
-    char buf[_MAX_PATH + sizeof(DEBUGGER_LOADMODULE_COMMAND) + 2+4+1+8+1+1];
-    sprintf(buf, DEBUGGER_LOADMODULE_FORMAT, GetCS(), offset, modname );
-    if (__WD_Present)
-        EnterDebuggerWithMessage(buf);
-}
-
-/****************************************************************************
-DESCRIPTION:
-Notify the Open Watcom debugger of module unload events.
-****************************************************************************/
-static void NotifyWDUnload(
-    char *modname)
-{
-    char buf[_MAX_PATH + sizeof(DEBUGGER_UNLOADMODULE_COMMAND) + 1];
-    sprintf(buf, DEBUGGER_UNLOADMODULE_FORMAT, modname);
-    if (__WD_Present)
-        EnterDebuggerWithMessage(buf);
-}
-#endif
 
 /****************************************************************************
 PARAMETERS:
@@ -432,13 +370,13 @@ PE_MODULE * PE_loadLibraryExt(
         baseReloc = (BASE_RELOCATION*)((u_long)baseReloc + baseReloc->BlockSize);
         }
 
-    /* On some platforms (such as AMD64 or x86 with NX bit), it is required 
+    /* On some platforms (such as AMD64 or x86 with NX bit), it is required
      * to map the code pages loaded from the BPD as executable, otherwise
      * a segfault will occur when attempting to run any BPD code.
      */
     if (mprotect((void*)image_ptr, image_size, PROT_READ | PROT_WRITE | PROT_EXEC) != 0)
         goto Error;
-        
+
     /* Clean up, close the file and return the loaded module handle */
     free(reloc);
     result = PE_ok;
@@ -544,7 +482,7 @@ PE_MODULE * PE_loadLibraryHandle(
         }
     hMod = PE_loadLibraryExt(f,0,&size);
     fclose(f);
-    
+
     /* Notify the Watcom Debugger of module load and let it load symbolic info */
 #ifdef WATCOM_DEBUG_SYMBOLS
     if (hMod) {
