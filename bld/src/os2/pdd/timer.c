@@ -11,6 +11,7 @@
 \================================================================*/
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <process.h>
 #include <os2.h>
 #include "hrtimer.h"
