@@ -461,23 +461,26 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
 static int get_string( struct asm_tok *buf, char **input, char **output )
 /***********************************************************************/
 {
-    char    symbol;
+    char    symbol_o;
+    char    symbol_c;
     int     count;
+    int     level;
 
     buf->string_ptr = *output;
 
-    symbol = **input;
+    symbol_o = **input;
 
     buf->token = T_STRING;
-    switch( symbol ) {
+    switch( symbol_o ) {
     case '"':
     case '\'':
+        symbol_c = 0;
         break;  // end of string marker is the same
     case '<':
-        symbol = '>';
+        symbol_c = '>';
         break;
     case '{':
-        symbol = '}';
+        symbol_c = '}';
         break;
     default:
         /* this is an undelimited string,
@@ -494,13 +497,29 @@ static int get_string( struct asm_tok *buf, char **input, char **output )
     (*input)++;
 
     count = 0;
+    level = 0;
     while( count < MAX_TOK_LEN ) {
-        if( **input == symbol ) {
-            if( *( *input + 1 ) == symbol ) {
+        if( **input == symbol_o ) {
+            if( symbol_c ) {
+                level++;
+                *(*output)++ = *(*input)++;
+                count++;
+            } else if( *( *input + 1 ) == symbol_o ) {
                 /* if we see "" in a " delimited string,
                  * treat it as a literal " */
                 (*input)++; /* skip the 1st one */
                 *(*output)++ = *(*input)++; /* keep the 2nd one */
+                count++;
+            } else {
+                *(*output)++ = '\0';
+                (*input)++; /* skip the closing delimiter */
+                buf->value = count;
+                break;
+            }
+        } else if( symbol_c && **input == symbol_c ) {
+            if( level ) {
+                level--;
+                *(*output)++ = *(*input)++;
                 count++;
             } else {
                 *(*output)++ = '\0';

@@ -105,6 +105,7 @@ int InitializeStructure( asm_sym *sym, int i )
 
     char            buffer[MAX_LINE_LEN];
     char            *ptr;
+    char            *ptr1;
     int             count = 0;
     struct asm_sym  *struct_symbol;
     dir_node        *dir;
@@ -137,7 +138,16 @@ int InitializeStructure( asm_sym *sym, int i )
             strcat( buffer, f->value );
         } else if( strpbrk( ptr, "," ) != NULL ) {
             count = (int)( strpbrk( ptr, "," ) - ptr );
-            strncat( buffer, ptr, count );
+            ptr1 = ptr;
+            while ( ptr1 < ptr + count ) {
+                if ( *ptr1 != ' ' ) break;
+                ptr1++;
+            }
+            if ( ptr1 >= ptr + count ) {
+                strcat( buffer, f->value );
+            } else {
+                strncat( buffer, ptr, count );
+            }
             ptr += min( count + 1, strlen( ptr ) ); // go past the comma
         } else {
             for( ; *ptr != '\0' && isspace(*ptr); ptr++ );

@@ -99,7 +99,7 @@ int ForDirective( int i, bool is_char )
 
     PushLineQueue();
     end_of_parms = parmstring + strlen( parmstring );
-    for( ptr = parmstring; ptr <= end_of_parms; ) {
+    for( ptr = parmstring; ptr < end_of_parms; ) {
         sprintf( buffer, "%s%d", macroname, Globals.for_counter );
         strcat( buffer, " " );
 
