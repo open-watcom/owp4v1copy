@@ -258,8 +258,10 @@ char *RemoteLink( char *name, char server )
 
 #ifdef SERVER
     socklen_t           length;
+#if !defined(__LINUX__)   /* FIXME */
     struct ifi_info     *ifi, *ifihead;
     struct sockaddr     *sa;
+#endif
     char                buff2[128];
 
     _DBG_NET(("SERVER: Calling into RemoteLink\r\n"));
@@ -313,6 +315,7 @@ char *RemoteLink( char *name, char server )
     _DBG_NET((buff2));
     _DBG_NET(("\r\n"));
 
+#if !defined(__LINUX__)   /* FIXME */
     /* Find and print TCP/IP interface addresses, ignore aliases */
     ifihead = get_ifi_info(AF_INET, FALSE);
     for( ifi = ifihead; ifi != NULL; ifi = ifi->ifi_next ) {
@@ -327,6 +330,7 @@ char *RemoteLink( char *name, char server )
         }
     }
     free_ifi_info( ifihead );
+#endif
 
     _DBG_NET(("Start accepting connections\r\n"));
     /* Start accepting connections */

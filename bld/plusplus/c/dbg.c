@@ -1003,7 +1003,7 @@ void DbgForgetScope(            // SCOPE is useless, so don't dump it
 }
 
 
-static dump_scope_defn(         // DUMP SCOPE, GIVEN A SCOPE_DEFN
+static void dump_scope_defn(    // DUMP SCOPE, GIVEN A SCOPE_DEFN
     void *_defn )               // - scope definition
 {
     SCOPE_DEFN *defn = _defn;
@@ -1018,7 +1018,7 @@ void DumpScopes(                // DUMP ALL SCOPES
 }
 
 
-static dump_hash(               // DUMP HASH STAT FOR SCOPE, GIVEN A SCOPE_DEFN
+static void dump_hash(          // DUMP HASH STAT FOR SCOPE, GIVEN A SCOPE_DEFN
     void *_defn )               // - scope definition
 {
     SCOPE_DEFN *defn = _defn;
