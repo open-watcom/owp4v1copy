@@ -2,7 +2,6 @@
  _WCRTLINK extern void  *alloca(size_t __size);
  _WCRTLINK extern void  *_alloca(size_t __size);
  _WCRTLINK extern unsigned stackavail( void );
-:segment !QNX
  #if defined(__AXP__) || defined(__PPC__)
   extern void *__builtin_alloca(size_t __size);
   #pragma intrinsic(__builtin_alloca);
@@ -12,14 +11,13 @@
   #define alloca( s )   ((s<stackavail())?__alloca(s):NULL)
   #define _alloca( s )  ((s<stackavail())?__alloca(s):NULL)
  #else
-:endsegment
   extern void  *__doalloca(size_t __size);
   #pragma aux stackavail __modify __nomemory;
 
   #define __ALLOCA_ALIGN( s )   (((s)+(sizeof(int)-1))&~(sizeof(int)-1))
   #define __alloca( s )         __doalloca(__ALLOCA_ALIGN(s))
 
-:segment !QNX
+:segment !QNX | !LINUX
   #if defined(__386__)
    extern void __GRO(size_t __size);
    #pragma aux __GRO "*" __parm __routine [];
@@ -29,7 +27,7 @@
 :endsegment
    #define alloca( s )  ((__ALLOCA_ALIGN(s)<stackavail())?__alloca(s):NULL)
    #define _alloca( s ) ((__ALLOCA_ALIGN(s)<stackavail())?__alloca(s):NULL)
-:segment !QNX
+:segment !QNX | !LINUX
   #endif
 :endsegment
 
@@ -48,7 +46,5 @@
             "mov dx,ss"     \
             __parm __nomemory [__ax] __value [__dx __ax] __modify __exact __nomemory [__dx __ax __sp];
   #endif
-:segment !QNX
  #endif
-:endsegment
 #endif

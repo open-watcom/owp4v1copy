@@ -16,12 +16,10 @@
 
 :include wchar_t.sp
 
-:segment QNX
+:segment QNX | LINUX
 #ifndef __TYPES_H_INCLUDED
  #include <sys/types.h>
 #endif
-:endsegment
-:segment QNX
 
 /*
  *  Flag values accessible to both open() and fcntl()
@@ -56,18 +54,9 @@
  *  but it does support the status flags for READ and WRITE.
  */
 
-#if defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
-#if 0
-/*
- *  Old definitions based on early POSIX.4 draft.
- */
-#define O_DSYNCH    000020  /*  Data integrity synch    */
-#define O_FSYNCH    000040  /*  File integrity synch    */
-#define O_SYNC      000020
-#else
+:include ext.sp
 #define O_DSYNC     000020  /*  Data integrity synch    */
 #define O_SYNC      000040  /*  File integrity synch    */
-#endif
 #endif
 
 #define O_PRIV      010000
@@ -81,7 +70,7 @@
 #define O_EXCL      002000  /*  Exclusive open          */
 #define O_NOCTTY    004000  /*  Don't assign a controlling terminal */
 
-#if defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
+:include ext.sp
 #define O_TEMP      010000  /*  Temporary file, don't put to disk   */
 #define O_CACHE     020000  /*  Cache sequential files too      */
 #define O_TEXT      000000  /*  Text file   (DOS thing)     */
@@ -97,13 +86,8 @@
 #define F_SETFD     2       /*  Set file descriptor flags   */
 #define F_GETFL     3       /*  Get file status flags   */
 #define F_SETFL     4       /*  Set file status flags   */
-
-/*#define F_GETOWN    35*/  /* get SIGIO/SIGURG proc/pgrp */
-/*#define F_SETOWN    36*/  /* set SIGIO/SIGURG proc/pgrp */
-
 #define F_SETLK     6       /*  Set record locking info */
 #define F_SETLKW    7       /*  Set record locking info;    */
-                /*  wait if blocked     */
 #define F_CHKFL     8       /*              */
 #define F_ALLOCSP   10      /*              */
 #define F_FREESP    11      /*              */
@@ -114,7 +98,6 @@
 #define F_QUOTACTL  17      /*              */
 #define F_BLOCKS    18      /*              */
 #define F_BLKSIZE   19      /*              */
-
 #define F_RSETLK    20      /*              */
 #define F_RGETLK    21      /*              */
 #define F_RSETLKW   22      /*              */
@@ -178,7 +161,7 @@ typedef struct flock {
  */
 _WCRTLINK extern int open( const char *__path, int __oflag, ... );
 _WCRTLINK extern int sopen( const char *__path, int __oflag, int __share, ... );
-:segment QNX
+:segment QNX | LINUX
 _WCRTLINK extern int creat( const char *__path, mode_t __mode );
 :endsegment
 
@@ -186,11 +169,12 @@ _WCRTLINK extern int _wcreat( const wchar_t *, int );
 _WCRTLINK extern int _wopen( const wchar_t *, int, ... );
 _WCRTLINK extern int _wsopen( const wchar_t *, int, int, ... );
 
-:segment QNX
+:segment QNX | LINUX
+_WCRTLINK extern int fcntl( int __fildes, int __cmd, ... );
 
+:segment QNX
 struct _io_open; /* for C++ */
 
-_WCRTLINK extern int fcntl( int __fildes, int __cmd, ... );
 _WCRTLINK extern int __fcntl_slib( int, int, int, struct flock * );
 _WCRTLINK extern int __open_slib( const char *__path, int __oflag,
                                   mode_t __mode );
@@ -198,7 +182,7 @@ _WCRTLINK extern int __sopen_slib( const char *__path, int __oflag, int __share,
                                    mode_t __mode );
 _WCRTLINK extern int __resolve_net( unsigned, int, struct _io_open *,
                                     const char *, unsigned, char * );
-
+:endsegment
 :endsegment
 
 :include poppack.sp

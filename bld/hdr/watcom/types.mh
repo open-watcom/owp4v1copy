@@ -20,13 +20,11 @@
 
 :include sizet.sp
 
-:segment QNX
+:segment QNX | LINUX
 #ifndef _SSIZE_T_DEFINED_
 #define _SSIZE_T_DEFINED_
  typedef signed ssize_t;
 #endif
-:endsegment
-:segment QNX
 
 #ifndef _LIMITS_H_INCLUDED
  #include <limits.h>
@@ -51,7 +49,11 @@ typedef short mpid_t;           /* Used for process & group IDs in messages */
  typedef short muid_t;          /* used in messages */
  #define _UID_T_DEFINED_
 #endif
+:segment LINUX
+#if defined(_LINUX_SOURCE) || !defined(NO_EXT_KEYS)
+:elsesegment QNX
 #if defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
+:endsegment
 typedef short unsigned  msg_t;  /* Used for message passing     */
 typedef long        nid_t;      /* Used for network IDs         */
 #ifndef _TIMER_T_DEFINED_
@@ -89,15 +91,19 @@ typedef unsigned short wchar_t;
 #endif
 
 typedef char _WCI86FAR *caddr_t;
+:segment QNX
 #if defined __386__
+:endsegment
 typedef int             int32_t;
 typedef unsigned int    u_int32_t;
 typedef unsigned int    uint32_t;
+:segment QNX
 #else
 typedef long            int32_t;
 typedef unsigned long   u_int32_t;
 typedef unsigned long   uint32_t;
 #endif
+:endsegment
 typedef char _WCFAR *   faddr_t;
 typedef unsigned long   paddr_t;
 typedef long            daddr_t;

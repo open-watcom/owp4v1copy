@@ -52,7 +52,7 @@
 #define STDOUT_FILENO   1
 #define STDERR_FILENO   2
 
-:segment QNX
+:segment QNX | LINUX
 /* Compile-time Symbolic Constants for Portability Specifications */
 
 #undef  _POSIX_JOB_CONTROL              /* no job control                   */
@@ -111,18 +111,27 @@ extern int   optopt;        /*  offending letter when error detected */
 /*
  *  POSIX 1003.1 Prototypes
  */
+
 :segment QNX
-
 #if defined(_POSIX_SOURCE) || defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
-extern void    _exit( int __status );
+_WCRTLINK extern void    _exit( int __status );
 #endif
-
 :endsegment
+:segment LINUX
+#if defined(_POSIX_SOURCE) || defined(_LINUX_SOURCE) || !defined(NO_EXT_KEYS)
+_WCRTLINK extern void    _exit( int __status );
+#endif
+:endsegment
+
 _WCRTLINK extern int    access( const char *__path, int __mode );
 :segment QNX
 #if defined(__386__)
-extern int      brk(void *endds);
-extern void     *sbrk(int incr);
+:endsegment
+:segment QNX | LINUX
+_WCRTLINK extern int      brk(void *endds);
+_WCRTLINK extern void     *sbrk(int incr);
+:endsegment
+:segment QNX
 #endif
 :endsegment
 _WCRTLINK extern int    chdir( const char *__path );
@@ -135,60 +144,62 @@ _WCRTLINK extern int    isatty( int __fildes );
 _WCRTLINK extern off_t  lseek( int __fildes, off_t __offset, int __whence );
 _WCRTLINK extern ssize_t read( int __fildes, void *__buffer, size_t __len );
 _WCRTLINK extern int    rmdir( const char *__path );
-:segment QNX
+:segment QNX | LINUX
 #if !(defined(SYSV) || defined(BSD) || defined(XENIX) || defined(_UNIX_H_INCLUDED))
 :endsegment
 _WCRTLINK extern int    setmode( int __handle, int __mode );
-:segment QNX
+:segment QNX | LINUX
 #endif
 :endsegment
 _WCRTLINK extern unsigned int sleep( unsigned int __seconds );
 _WCRTLINK extern int    unlink( const char *__path );
 _WCRTLINK extern ssize_t write( int __fildes, const void *__buf, size_t __len );
-:segment QNX
-extern unsigned alarm( unsigned int __seconds );
-extern int      chown( const char *__path, uid_t __owner, gid_t __group );
-extern int      chroot(const char *__path);
-extern int      dup2( int __fildes, int __fildes2 );
-extern int      fchown( int __fildes, uid_t __owner, gid_t __group );
-extern int      fdatasync( int __fildes );
-extern int      fsync( int __fildes );
-extern pid_t    fork( void );
-extern long     fpathconf( int __fildes, int __name );
-extern gid_t    getegid( void );
-extern uid_t    geteuid( void );
-extern gid_t    getgid( void );
-extern int      getgroups( int __gidsetsize, gid_t __grouplist[] );
-extern char     *getlogin( void );
-extern pid_t    getpgrp( void );
-extern pid_t    getppid( void );
-extern pid_t    getsid(pid_t __pid);
-extern uid_t    getuid( void );
-extern int      link( const char *__path1, const char *__path2 );
-extern int      mkdir( const char *__path, mode_t __mode );
-extern int      mknod( const char *__path, mode_t __mode, int __dev );
-extern int      mount( const char *__special, const char * __dir, int __rwflag );
-extern long     pathconf( const char *__path, int __name );
-extern int      pause( void );
-extern int      pipe( int __fildes[2] );
-extern int      readlink( const char *__path, char *__buf, size_t __bufsiz );
-extern int      setegid( gid_t __newegroup );
-extern int      seteuid( uid_t __newuserid );
-extern int      setgid( gid_t __newgroup );
-extern int      setpgid( pid_t __pid, pid_t __pgroupid );
-extern int      setregid(gid_t real, uid_t effective);
-extern int      setreuid(uid_t real, uid_t effective);
-extern pid_t    setsid( void );
-extern int      setuid( uid_t __newuserid );
-extern int      symlink( const char *__pname, const char *__slink );
-extern long     sysconf( int __name );
-extern pid_t    tcgetpgrp( int __fildes );
-extern int      tcsetpgrp( int __fildes, pid_t __pgrp_id );
-extern int      tcsetct( int __fildes, pid_t pid );
-extern char     *ttyname( int __fildes );
-extern int      umount( const char *__special );
-
+:segment QNX | LINUX
+_WCRTLINK extern unsigned alarm( unsigned int __seconds );
+_WCRTLINK extern int    chown( const char *__path, uid_t __owner, gid_t __group );
+_WCRTLINK extern int    chroot(const char *__path);
+_WCRTLINK extern int    dup2( int __fildes, int __fildes2 );
+_WCRTLINK extern int    fchown( int __fildes, uid_t __owner, gid_t __group );
+_WCRTLINK extern int    fdatasync( int __fildes );
+_WCRTLINK extern int    fsync( int __fildes );
+_WCRTLINK extern pid_t  fork( void );
+_WCRTLINK extern long   fpathconf( int __fildes, int __name );
+_WCRTLINK extern gid_t  getegid( void );
+_WCRTLINK extern uid_t  geteuid( void );
+_WCRTLINK extern gid_t  getgid( void );
+_WCRTLINK extern int    getgroups( int __gidsetsize, gid_t __grouplist[] );
+_WCRTLINK extern char   *getlogin( void );
+_WCRTLINK extern pid_t  getpgrp( void );
+_WCRTLINK extern pid_t  getppid( void );
+_WCRTLINK extern pid_t  getsid(pid_t __pid);
+_WCRTLINK extern uid_t  getuid( void );
+_WCRTLINK extern int    link( const char *__path1, const char *__path2 );
+_WCRTLINK extern long   pathconf( const char *__path, int __name );
+_WCRTLINK extern int    pause( void );
+_WCRTLINK extern int    pipe( int __fildes[2] );
+_WCRTLINK extern int    readlink( const char *__path, char *__buf, size_t __bufsiz );
+_WCRTLINK extern int    setegid( gid_t __newegroup );
+_WCRTLINK extern int    seteuid( uid_t __newuserid );
+_WCRTLINK extern int    setgid( gid_t __newgroup );
+_WCRTLINK extern int    setpgid( pid_t __pid, pid_t __pgroupid );
+_WCRTLINK extern int    setregid(gid_t real, uid_t effective);
+_WCRTLINK extern int    setreuid(uid_t real, uid_t effective);
+_WCRTLINK extern pid_t  setsid( void );
+_WCRTLINK extern int    setuid( uid_t __newuserid );
+_WCRTLINK extern int    symlink( const char *__pname, const char *__slink );
+_WCRTLINK extern long   sysconf( int __name );
+_WCRTLINK extern pid_t  tcgetpgrp( int __fildes );
+_WCRTLINK extern int    tcsetpgrp( int __fildes, pid_t __pgrp_id );
+_WCRTLINK extern char   *ttyname( int __fildes );
 :endsegment
+:segment QNX
+_WCRTLINK extern int    mkdir( const char *__path, mode_t __mode );
+_WCRTLINK extern int    mknod( const char *__path, mode_t __mode, int __dev );
+_WCRTLINK extern int    mount( const char *__special, const char * __dir, int __rwflag );
+_WCRTLINK extern int    tcsetct( int __fildes, pid_t pid );
+_WCRTLINK extern int    umount( const char *__special );
+:endsegment
+
 :include ext.sp
 
 _WCRTLINK extern int    chsize( int __fildes, long __size );
@@ -196,33 +207,35 @@ _WCRTLINK extern int    eof( int __fildes );
 _WCRTLINK extern long   filelength( int __fildes );
 _WCRTLINK extern off_t  tell( int __fildes );
 :segment QNX
-extern nid_t    getnid( void );
-extern int      lock( int __fildes, long __offset, long __nbytes );
-extern void     qnx_display_msg( const char *__text );
-extern void     qnx_display_hex( unsigned __value );
-extern char     *qnx_fullpath( char * __fullpath, const char * __path );
+_WCRTLINK extern nid_t  getnid( void );
+_WCRTLINK extern int    lock( int __fildes, long __offset, long __nbytes );
+_WCRTLINK extern void   qnx_display_msg( const char *__text );
+_WCRTLINK extern void   qnx_display_hex( unsigned __value );
+_WCRTLINK extern char   *qnx_fullpath( char * __fullpath, const char * __path );
 
 struct _psinfo2; /* for C++ */
 
-extern int      qnx_getids( pid_t pid, struct _psinfo2 *info);
-extern int      qnx_setids( pid_t pid, int id, unsigned subtype );
-extern int      qnx_sync( nid_t nid );
-extern void     sync( void );
-extern int      unlock( int __fildes, long __offset, long __nbytes );
+_WCRTLINK extern int    qnx_getids( pid_t pid, struct _psinfo2 *info);
+_WCRTLINK extern int    qnx_setids( pid_t pid, int id, unsigned subtype );
+_WCRTLINK extern int    qnx_sync( nid_t nid );
+_WCRTLINK extern void   sync( void );
+_WCRTLINK extern int    unlock( int __fildes, long __offset, long __nbytes );
 :endsegment
 
 #endif
 
-:segment QNX
+:segment QNX | LINUX
 :include posix.sp
-extern int      getopt( int __argc, char * const* __argv, const char * __optstring );
-extern char     *basename( const char * __fname );
-extern size_t   confstr( int, char*, size_t );
-extern int      fnmatch( const char *__pattern, const char *__string, int __flag );
-extern off_t    ltrunc( int __fildes, off_t __offset, int __origin );
-extern int      putenv(const char * estring);
+_WCRTLINK extern int    getopt( int __argc, char * const* __argv, const char * __optstring );
+_WCRTLINK extern char   *basename( const char * __fname );
+_WCRTLINK extern size_t confstr( int, char*, size_t );
+_WCRTLINK extern int    fnmatch( const char *__pattern, const char *__string, int __flag );
+_WCRTLINK extern off_t  ltrunc( int __fildes, off_t __offset, int __origin );
+_WCRTLINK extern int    putenv(const char * estring);
 #endif
 
+:endsegment
+:segment QNX
 #if defined(__386__)
 #define __far_read read
 #define __far_write write
@@ -239,3 +252,4 @@ _WCRTLINK extern int    fsync( int __filedes );
 
 :include cplusepi.sp
 #endif
+

@@ -1,5 +1,7 @@
 :segment QNX
 :include quantum/stat.mh
+:elsesegment LINUX
+:include linux/stat.mh
 :elsesegment
 /*
  *  sys/stat.h  Equates and prototype for fstat, stat functions

@@ -18,7 +18,7 @@
 
 :include sizet.sp
 
-:segment QNX
+:segment QNX | LINUX
 :include wchar_t.sp
 :endsegment
 :include null.sp
@@ -29,7 +29,7 @@
 
 #define RAND_MAX        32767u
 #define EXIT_SUCCESS    0
-:segment QNX
+:segment QNX | LINUX
 #define EXIT_FAILURE    1
 :elsesegment
 #define EXIT_FAILURE    0xff
@@ -65,11 +65,7 @@ _WCRTLINK extern void    exit( int __status );
 _WCRTLINK extern void    free( void *__ptr );
 _WCRTLINK extern char   *getenv( const char *__name );
 _WCIRTLINK extern long int labs( long int __j );
-:segment QNX
-#if defined(__386__)
-:elsesegment
 #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
-:endsegment
 _WCIRTLINK
 #else
 _WCRTLINK
@@ -97,11 +93,7 @@ _WCRTLINK extern int     system( const char *__string );
 
 #if defined(__INLINE_FUNCTIONS__)
  #pragma intrinsic(abs,div,labs)
-:segment QNX
- #if defined(__386__)
-:elsesegment
  #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
-:endsegment
   #pragma intrinsic(ldiv)
  #endif
 #endif
@@ -110,16 +102,16 @@ _WCRTLINK extern int     system( const char *__string );
 #define atof(p)  strtod(p,(char **)NULL)
 #endif
 
-:segment QNX
-#if defined(_POSIX_SOURCE) || defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
-void             _exit( int __status );
+:segment QNX | LINUX
+:include unixext.sp
+_WCRTLINK void           _exit( int __status );
 #endif
 :endsegment
 
 :include ext.sp
 
 :segment QNX
-extern unsigned  atoh( const char *__nptr );
+_WCRTLINK extern unsigned atoh( const char *__nptr );
 :endsegment
 :segment DOS
 _WCRTLINK extern void    _exit( int __status );
@@ -138,21 +130,13 @@ _WMRTLINK extern char   *gcvt( double __val, int __ndig, char *__buf );
 _WMRTLINK extern char   *_gcvt( double __val, int __ndig, char *__buf );
 _WCRTLINK extern char   *itoa( int __value, char *__buf, int __radix );
 _WCRTLINK extern char   *_itoa( int __value, char *__buf, int __radix );
-:segment QNX
-#if defined(__386__)
-:elsesegment
 #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
-:endsegment
 _WCIRTLINK
 #else
 _WCRTLINK
 #endif
 extern unsigned long _lrotl( unsigned long __value, unsigned int __shift );
-:segment QNX
-#if defined(__386__)
-:elsesegment
 #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
-:endsegment
 _WCIRTLINK
 #else
 _WCRTLINK
@@ -206,7 +190,7 @@ _WCRTLINK extern int        _wsetenv( const wchar_t *__name,
                                       const wchar_t *__newvalue,
                                       int __overwrite );
 _WCRTLINK extern int        _wputenv( const wchar_t *__env_string );
-:segment !QNX
+:segment !QNX & !LINUX
 _WCRTLINK extern void       _wsearchenv( const wchar_t *__name,
                                          const wchar_t *__env_var,
                                          wchar_t *__buf );
@@ -227,9 +211,9 @@ _WCRTLINK extern int     putenv( const char *__string );
 _WCRTLINK extern void    _searchenv( const char *__name, const char *__env_var,
                                      char *__buf );
 :segment QNX
-extern int       need_usage( char **argv );
-extern int       print_usage( char **argv );
-extern void      searchenv( const char *__name, const char *__env_var,
+_WCRTLINK extern int     need_usage( char **argv );
+_WCRTLINK extern int     print_usage( char **argv );
+_WCRTLINK extern void    searchenv( const char *__name, const char *__env_var,
                             char *__buf );
 :endsegment
 _WCRTLINK extern void    _splitpath2( const char *__inp, char *__outp,
@@ -247,11 +231,7 @@ _WCRTLINK extern char   *_utoa( unsigned int __value, char *__buf, int __radix )
 
 #if defined(__INLINE_FUNCTIONS__)
  #pragma intrinsic(_rotl,_rotr)
-:segment QNX
- #if defined(__386__)
-:elsesegment
  #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
-:endsegment
   #pragma intrinsic(_lrotl,_lrotr)
  #endif
 #endif
@@ -275,7 +255,7 @@ _WCRTLINK extern char   *_utoa( unsigned int __value, char *__buf, int __radix )
  * _makepath() and _splitpath() functions.  They include space for the '\0'
  * terminator.
  */
-:segment QNX
+:segment QNX | LINUX
 #define _MAX_DRIVE      48      /*  maximum length of node name w/ '\0' */
 #define _MAX_NODE    _MAX_DRIVE /*  maximum length of node name w/ '\0' */
 #define _MAX_DIR        256     /*  maximum length of subdirectory      */
@@ -301,10 +281,7 @@ _WCRTLINK extern char   *_utoa( unsigned int __value, char *__buf, int __radix )
 #define _MAX_PATH2 (_MAX_PATH+3) /* maximum size of output buffer
                                     for _splitpath2() */
 
-:segment QNX
-_WCRTLINK extern char **environ;                /*  pointer to environment table */
-_WCRTLINK extern wchar_t **_wenviron;   /*  pointer to wide environment */
-:elsesegment
+:segment !QNX & !LINUX
 #if defined(__FUNCTION_DATA_ACCESS)
  #define environ (*__get_environ_ptr())
  #define _wenviron (*__get_wenviron_ptr())
@@ -314,15 +291,17 @@ _WCRTLINK extern wchar_t **_wenviron;   /*  pointer to wide environment */
  #define _wenviron _wenviron_br
  #define _fileinfo _fileinfo_br
 #endif
+:endsegment
 _WCRTLINK extern char **_WCDATA environ;        /*  pointer to environment table */
 _WCRTLINK extern wchar_t **_WCDATA _wenviron; /*  pointer to wide environment */
+:segment !QNX & !LINUX
 #if defined(__NT__)
  _WCRTLINK extern int _fileinfo;        /* for inheriting POSIX handles */
 #endif
 :endsegment
 
 :include errno.sp
-:segment !QNX
+:segment !QNX & !LINUX
 #define _doserrno (*__get_doserrno_ptr())
 _WCRTLINK extern int                _doserrno;  /* DOS system error code value */
 #if !defined(__NETWARE__)
@@ -358,8 +337,6 @@ _WCRTLINK extern int _WCDATA        _sys_nerr;  /* # of entries in _sys_errlist 
 _WCRTLINK extern unsigned _WCDATA   __minreal;  /* DOS4GW var for WLINK MINREAL option*/
 _WCRTLINK extern unsigned long _WCDATA __win_alloc_flags; /* Windows allocation flags */
 _WCRTLINK extern unsigned long _WCDATA __win_realloc_flags;/* Windows reallocation flags */
-:endsegment
-:segment !QNX
 #if defined(__FUNCTION_DATA_ACCESS)
  #define _amblksiz (*__get_amblksiz_ptr())
  #define _osmajor (*__get_osmajor_ptr())
@@ -373,7 +350,7 @@ _WCRTLINK extern unsigned long _WCDATA __win_realloc_flags;/* Windows reallocati
 _WCRTLINK extern unsigned _WCDATA      _amblksiz;   /*  mallocs done in multiples of    */
 _WCRTLINK extern unsigned char _WCDATA _osmajor;    /*  O/S major version # */
 _WCRTLINK extern unsigned char _WCDATA _osminor;    /*  O/S minor version # */
-:segment !QNX
+:segment !QNX & !LINUX
 #if defined(__NT__)
  #if defined(__FUNCTION_DATA_ACCESS)
   #define _osbuild  (*__get_osbuild_ptr())
@@ -397,27 +374,35 @@ _WCRTLINK extern unsigned char _WCDATA _osminor;    /*  O/S minor version # */
 :endsegment
 extern  int       __argc;       /* number of cmd line args */
 extern  char    **__argv;       /* vector of cmd line args */
-:segment !QNX
+:segment !QNX & !LINUX
 #if defined(__NT__) || (defined(__OS2__) && (defined(__386__) || defined(__PPC__)))
 extern  int       __wargc;      /* number of wide cmd line args */
 extern  wchar_t **__wargv;      /* vector of wide cmd line args */
 #endif
 :endsegment
 
-:segment QNX
+:segment QNX | LINUX
 :include alloca.sp
+:endsegment
 
+:segment QNX
 #if defined(__386__)
+:endsegment
+:segment QNX | LINUX
 _WCRTLINK extern int brk(void *endds);
 _WCRTLINK extern void *sbrk(int incr);
+:endsegment
+:segment QNX
 #else
 :endsegment
+:segment !LINUX
 _WCRTLINK extern void _WCNEAR *__brk(unsigned __new_brk_value);
 _WCRTLINK extern void _WCNEAR *sbrk(int __increment);
+:endsegment
 :segment QNX
 #endif
-
 :endsegment
+
  typedef void (*onexit_t)();
 _WCRTLINK extern onexit_t onexit(onexit_t __func);
 #endif

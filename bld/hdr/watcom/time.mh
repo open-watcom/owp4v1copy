@@ -32,14 +32,14 @@
  typedef unsigned long  clock_t;
 #endif
 
-:segment QNX
+:segment QNX | LINUX
 #define CLOCKS_PER_SEC  1000
 
 #ifndef __TYPES_H_INCLUDED
  #include <sys/types.h>
 #endif
 
-#if defined(_POSIX_SOURCE) || defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
+:include unixext.sp
 #ifndef _TIMER_T_DEFINED_
  #define _TIMER_T_DEFINED_
  typedef int timer_t;            /* timer type */
@@ -97,30 +97,34 @@ struct itimercb {
 #define _TICKSIZE_CLOSEST   1
 #define _TICKSIZE_EXTERNAL  2
 
-extern int clock_gettime(clockid_t clock_id, struct timespec *tp );
-extern int clock_settime(clockid_t clock_id, struct timespec *tp );
-extern int clock_getres(clockid_t clock_id, struct timespec *res );
-extern int clock_setres(clockid_t clock_id, struct timespec *res );
+_WCRTLINK extern int clock_gettime(clockid_t clock_id, struct timespec *tp );
+_WCRTLINK extern int clock_settime(clockid_t clock_id, struct timespec *tp );
+_WCRTLINK extern int clock_getres(clockid_t clock_id, struct timespec *res );
+:segment QNX
+_WCRTLINK extern int clock_setres(clockid_t clock_id, struct timespec *res );
 :include ext.sp
-extern int qnx_getclock( pid_t pid, clockid_t clock_id, struct timespec *tp );
-extern int qnx_setclock( pid_t pid, clockid_t clock_id, struct timespec *tp );
-extern int qnx_clock( nid_t nid, clockid_t clock_id, struct timespec *tp );
+_WCRTLINK extern int qnx_getclock( pid_t pid, clockid_t clock_id, struct timespec *tp );
+_WCRTLINK extern int qnx_setclock( pid_t pid, clockid_t clock_id, struct timespec *tp );
+_WCRTLINK extern int qnx_clock( nid_t nid, clockid_t clock_id, struct timespec *tp );
 #endif
+:endsegment
 
 struct sigevent; /* for C++ */
 
-extern timer_t timer_create ( clockid_t clock_id, struct sigevent *evp );
-extern int timer_delete ( timer_t timerid );
-extern int timer_gettime ( timer_t timerid, struct itimerspec *value );
-extern int timer_settime ( timer_t timerid, int flags,
+_WCRTLINK extern timer_t timer_create ( clockid_t clock_id, struct sigevent *evp );
+_WCRTLINK extern int timer_delete ( timer_t timerid );
+_WCRTLINK extern int timer_gettime ( timer_t timerid, struct itimerspec *value );
+_WCRTLINK extern int timer_settime ( timer_t timerid, int flags,
                  struct itimerspec *value, struct itimerspec *ovalue );
+:segment QNX
 :include ext.sp
-extern long qnx_timerperiod( long );
-extern long qnx_ticksize( long nsec, int flags );
-extern int qnx_adj_time(long, long, long *, long *);
+_WCRTLINK extern long qnx_timerperiod( long );
+_WCRTLINK extern long qnx_ticksize( long nsec, int flags );
+_WCRTLINK extern int qnx_adj_time(long, long, long *, long *);
 #endif
+:endsegment
 
-extern int nanosleep( const struct timespec *rqtp, struct timespec *rmtp );
+_WCRTLINK extern int nanosleep( const struct timespec *rqtp, struct timespec *rmtp );
 #endif
 
 :endsegment
@@ -172,8 +176,8 @@ _WCRTLINK extern wchar_t *__wctime( const time_t *, wchar_t * );
 _WCRTLINK extern wchar_t *__wasctime( const struct tm *, wchar_t * );
 #endif
 
-:segment QNX
-#if defined(_POSIX_SOURCE) || defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
+:segment QNX | LINUX
+:include unixext.sp
 :endsegment
 _WCRTLINK extern void tzset( void );
 
@@ -183,7 +187,7 @@ _WCRTLINK extern void tzset( void );
  #define tzname tzname_br
 #endif
 _WCRTLINK extern char   *tzname[2]; /*  time zone names */
-:segment QNX
+:segment QNX | LINUX
 :include ext.sp
 :endsegment
 #if defined(__FUNCTION_DATA_ACCESS)
@@ -195,10 +199,10 @@ _WCRTLINK extern char   *tzname[2]; /*  time zone names */
 #endif
 _WCRTLINK extern long   timezone;       /* # of seconds from GMT */
 _WCRTLINK extern int    daylight;       /* d.s.t. indicator */
-:segment QNX
+:segment QNX | LINUX
 #endif
 :endsegment
-:segment QNX
+:segment QNX | LINUX
 #endif
 :endsegment
 

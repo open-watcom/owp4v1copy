@@ -14,7 +14,7 @@
 
 :include pshpackl.sp
 
-:segment QNX
+:segment QNX | LINUX
 #if !defined(__386__)
     #pragma library (graph);
 #elif defined(__SW_3S)
@@ -114,7 +114,7 @@ short _WCI86FAR         _getvisualpage( void );
 #define _MAXRESMODE     (-3)    /* graphics mode with highest res. */
 #define _MAXCOLORMODE   (-2)    /* graphics mode with most colours */
 #define _DEFAULTMODE    (-1)    /* restore screen to original mode */
-:segment DOS | QNX
+:segment DOS | QNX | LINUX
 #define _TEXTBW40       0       /* 40 x 25 text, 16 grey           */
 #define _TEXTC40        1       /* 40 x 25 text, 16/8 color        */
 #define _TEXTBW80       2       /* 80 x 25 text, 16 grey           */
@@ -179,7 +179,7 @@ short _WCI86FAR         _getvisualpage( void );
 #define _NODISPLAY      (-1)    /* no display device            */
 #define _UNKNOWN        0       /* unknown adapter/monitor type */
 
-:segment DOS | QNX
+:segment DOS | QNX | LINUX
 #define _MDPA           1       /* monochrome display/printer adapter */
 #define _CGA            2       /* colour/graphics monitor adapter    */
 #define _HERCULES       3       /* Hercules monochrome adapter card   */
@@ -224,7 +224,7 @@ long _WCI86FAR          _remappalette( short, long );
 short _WCI86FAR         _remapallpalette( long _WCI86FAR * );
 short _WCI86FAR         _selectpalette( short );
 
-:segment DOS | QNX
+:segment DOS | QNX | LINUX
 #define _BLACK          0x000000L
 #define _BLUE           0x2a0000L
 #define _GREEN          0x002a00L

@@ -11,7 +11,7 @@
 #ifndef _COMDEF_H_INCLUDED
  #include <_comdef.h>
 #endif
-:segment QNX
+:segment QNX | LINUX
 #ifndef __TYPES_H_INCLUDED
  #include <sys/types.h>
 #endif
@@ -20,6 +20,8 @@ typedef int     sig_atomic_t;
 
 :segment QNX
 #define __SIG_FAR _WCI86FAR
+
+// TODO: Port signals to Linux!!
 
 #if defined(_POSIX_SOURCE) || defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
 :include pshpackl.sp

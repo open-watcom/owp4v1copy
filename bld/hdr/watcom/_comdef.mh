@@ -48,7 +48,6 @@
       #define _WCI86FAR __far
       #define _WCI86HUGE __huge
     #endif
-:segment !QNX
   #elif defined(__AXP__)
     #define _WCNEAR
     #define _WCFAR
@@ -76,7 +75,6 @@
     #define _WCI86HUGE
     #define _WCINTERRUPT
     #define _WCUNALIGNED
-:endsegment
   #endif
   #if defined(M_I86MH)
     #define _WCDATA _WCFAR
@@ -85,7 +83,7 @@
   #else
     #define _WCDATA _WCNEAR
   #endif
-:segment QNX
+:segment QNX | LINUX
   #define _WCRTLINK
   #define _WCIRTLINK
   #define _WMRTLINK

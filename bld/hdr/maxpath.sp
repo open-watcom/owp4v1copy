@@ -1,5 +1,5 @@
 #ifndef _MAX_PATH
-:segment QNX
+:segment QNX | LINUX
  #define _MAX_PATH      256     /*  maximum length of path name         */
 :elsesegment
  #if defined(__OS2__) || defined(__NT__)

@@ -1,10 +1,9 @@
 #ifndef _TIME_T_DEFINED
 #define _TIME_T_DEFINED
 #define _TIME_T_DEFINED_
-:segment QNX
+:segment QNX | LINUX
 typedef signed long time_t; /* time value */
-:endsegment
-:segment NOT_QNX
+:elsesegment
 typedef unsigned long time_t; /* time value */
 :endsegment
 #endif

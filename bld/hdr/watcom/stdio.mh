@@ -24,12 +24,11 @@
 
 :include valist.sp
 
-:segment QNX
+:segment QNX | LINUX
 #define BUFSIZ          1024        /*  Default buffer size                 */
 #define _NFILES         16          /*  minimum guaranteed open files       */
 #define FILENAME_MAX    255
-:endsegment
-:segment !QNX
+:elsesegment
 ::
 #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
  #define BUFSIZ         4096
@@ -64,7 +63,7 @@ FILE;
 
 typedef long    fpos_t;
 
-:segment QNX
+:segment QNX | LINUX
 #define FOPEN_MAX   _NFILES         /*  same as _NFILES                     */
 :elsesegment
 :include ext.sp
@@ -124,7 +123,7 @@ _WCRTLINK extern FILE *__get_std_file(unsigned handle);
 
 #endif
 
-:segment QNX
+:segment QNX | LINUX
 /* values for _flag field in FILE struct */
 :elsesegment
 /* values for _flag field in FILE struct and _iomode array */
@@ -132,8 +131,8 @@ _WCRTLINK extern FILE *__get_std_file(unsigned handle);
 
 #define _READ   0x0001  /* file opened for reading */
 #define _WRITE  0x0002  /* file opened for writing */
-:segment QNX
-#define _UNGET  0x0100  /*  ungetc has been done            */
+:segment QNX | LINUX
+#define _UNGET  0x0100  /* ungetc has been done */
 :elsesegment
 #define _UNGET  0x0004  /* ungetc has been done */
 :endsegment
@@ -141,16 +140,13 @@ _WCRTLINK extern FILE *__get_std_file(unsigned handle);
 #define _EOF    0x0010  /* EOF has occurred */
 #define _SFERR  0x0020  /* error has occurred on this file */
 #define _APPEND 0x0080  /* file opened for append */
-:segment QNX
+:segment QNX | LINUX
 #define _BINARY 0x0000  /* not required for POSIX QNX       */
 #define _IOFBF  0x0000  /*  full buffering                  */
 #define _IOLBF  0x0040  /*  line buffering                  */
 #define _IONBF  0x0004  /*  no buffering                    */
-:endsegment
-:segment !QNX
+:elsesegment
 #define _BINARY 0x0040  /* file is binary, skip CRLF processing */
-:endsegment
-:segment !QNX
 #define _IOFBF  0x0100  /* full buffering */
 #define _IOLBF  0x0200  /* line buffering */
 #define _IONBF  0x0400  /* no buffering */
@@ -173,8 +169,8 @@ _WCRTLINK extern FILE *__get_std_file(unsigned handle);
 #define _BYTE_ORIENTED  1               /* byte-oriented stream */
 #define _WIDE_ORIENTED  2               /* wide-oriented stream */
 
-:segment QNX
-#if defined(_POSIX_SOURCE) || defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
+:segment QNX | LINUX
+:include unixext.sp
 #define L_cuserid   14                  /*  Max length of login names       */
 #define L_ctermid   16                  /*  Max length of terminal names    */
 #define P_tmpdir    "/usr/tmp"          /*  Temporary file directory        */
@@ -244,7 +240,7 @@ _WCRTLINK extern int    vsprintf( char *__s, const char *__format,
 _WCRTLINK extern int    fileno(FILE *);
 _WCRTLINK extern int    _fileno(FILE *);
 _WCRTLINK extern int    fcloseall( void );
-:segment !QNX
+:segment !QNX & !LINUX
 _WCRTLINK extern FILE   *fdopen( int __handle, const char *__mode );
 _WCRTLINK extern FILE   *_fdopen( int __handle, const char *__mode );
 :endsegment
@@ -333,8 +329,8 @@ _WCRTLINK extern FILE * _wpopen( const wchar_t *__command, const wchar_t *__mode
 :endsegment
 #endif
 
-:segment QNX
-#if defined(_POSIX_SOURCE) || defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
+:segment QNX | LINUX
+:include unixext.sp
 extern char     *ctermid( char * );
 extern char     *cuserid( char * );
 extern FILE     *fdopen( int __handle, const char *__mode );
@@ -358,7 +354,7 @@ extern int      pclose( FILE *stream );
 #if !defined(__OBSCURE_STREAM_INTERNALS)
 #define getc(fp) \
         ((fp)->_cnt<=0 \
-:segment !QNX
+:segment !QNX & !LINUX
         || (unsigned)((*(fp)->_ptr)-'\x0d')<=('\x1a'-'\x0d') \
 :endsegment
         ? fgetc(fp) \

@@ -25,7 +25,7 @@
 #else
 #define offsetof(__typ,__id) ((size_t)&(((__typ*)0)->__id))
 #endif
-:segment QNX
+:segment QNX | LINUX
 #if defined(__386__)
  _WCRTLINK extern int *__threadid(void); /* pointer to thread id */
  #define _threadid (__threadid())

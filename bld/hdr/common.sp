@@ -6,6 +6,10 @@
 :keep NOT_QNX
 :endsegment
 ::
+:segment !LINUX
+:keep NOT_LINUX
+:endsegment
+::
 :segment !NETWARE
 :keep NOT_NETWARE
 :endsegment

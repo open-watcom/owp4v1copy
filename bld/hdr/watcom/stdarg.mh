@@ -16,7 +16,6 @@
 :include valist.sp
 typedef __va_list va_list;
 
-:segment !QNX
 #if defined(__AXP__)
  #define _AXP_WORD_SIZE     8
  #define _AXP_FLOAT_SIZE    8
@@ -47,7 +46,6 @@ typedef __va_list va_list;
   #define va_arg(ap,type) (__builtin_va_arg(&ap,type))
  #endif
 #else
-:endsegment
  #if defined(__HUGE__) || defined(__SW_ZU)
   #define va_start(ap,pn) ((ap)[0]=(char _WCFAR*)&pn+\
       ((sizeof(pn)+sizeof(int)-1)&~(sizeof(int)-1)),(void)0)
@@ -63,9 +61,7 @@ typedef __va_list va_list;
       (*(type *)((ap)[0]-((sizeof(type)+sizeof(int)-1)&~(sizeof(int)-1)))))
   #define va_end(ap)        ((ap)[0]=0,(void)0)
  #endif
-:segment !QNX
 #endif
-:endsegment
 
 :include cplusepi.sp
 #endif

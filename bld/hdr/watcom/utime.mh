@@ -30,7 +30,7 @@ _WCRTLINK extern int utime( const char *__path, const struct utimbuf * __times )
 _WCRTLINK extern int _utime( const char *__path, const struct utimbuf * __times );
 _WCRTLINK extern int _wutime( const wchar_t *__path, const struct utimbuf * __times );
 :segment QNX
-extern int __futime( int __fildes, const struct utimbuf * __times );
+_WCRTLINK extern int __futime( int __fildes, const struct utimbuf * __times );
 :endsegment
 
 :include poppack.sp

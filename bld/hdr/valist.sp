@@ -1,6 +1,5 @@
 #ifndef _VA_LIST_DEFINED
 #define _VA_LIST_DEFINED
-:segment !QNX
 #if defined(__PPC__)
  #if defined(__NT__)
     typedef char * __va_list;
@@ -18,12 +17,7 @@
     char *__base;
     int   __offset;
   } __va_list;
-:endsegment
-:segment QNX
-#if defined(__HUGE__) || defined(__SW_ZU)
-:elsesegment
 #elif defined(__HUGE__) || defined(__SW_ZU)
-:endsegment
   typedef char _WCFAR *__va_list[1];
 #else
   typedef char *__va_list[1];
