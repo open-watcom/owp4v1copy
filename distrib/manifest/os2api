@@ -23,6 +23,7 @@ h\os2\pmhelp.h
 h\os2\pmspl.h
 h\os2\pmstddlg.h
 h\os2\pmwin.h
+h\os2\pmwp.h
 h\os2\rexxsaa.h
 h\os2\tcpustd.h
 h\os2\types.h

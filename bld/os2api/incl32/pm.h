@@ -15,6 +15,7 @@
 #include <pmwin.h>
 #include <pmgpi.h>
 #include <pmdev.h>
+#include <pmwp.h>
 #include <pmstddlg.h>
 
 #ifdef INCL_AVIO

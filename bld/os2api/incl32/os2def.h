@@ -49,6 +49,11 @@
 #define DEVERR_BASE 0x3000
 #define SPLERR_BASE 0x4000
 
+#define ICON_FILE     1
+#define ICON_RESOURCE 2
+#define ICON_DATA     3
+#define ICON_CLEAR    4
+
 #define APIENTRY16 _Far16 _Pascal
 #define PASCAL16   _Far16 _Pascal
 
@@ -110,3 +115,14 @@ typedef struct _QWORD {
     ULONG   ulLo;
     ULONG   ulHi;
 } QWORD, *PQWORD;
+
+typedef struct _ICONINFO {
+    ULONG   cb;
+    ULONG   fFormat;
+    PSZ     pszFileName;
+    HMODULE hmod;
+    ULONG   resid;
+    ULONG   cbIconData;
+    PVOID   pIconData;
+} ICONINFO, *PICONINFO;
+
