@@ -478,21 +478,22 @@ int FindFilePath( char *pgm, char *buffer, char *ext_list )
     return( -1 );
 }
 
-unsigned ReqSplit_cmd()
+unsigned ReqSplit_cmd( void )
 {
     char                *cmd;
     char                *start;
     split_cmd_ret       *ret;
     unsigned            len;
 
-    cmd = GetInPtr(sizeof(split_cmd_req));
-    len = GetTotalSize() - sizeof(split_cmd_req);
+    cmd = GetInPtr( sizeof( split_cmd_req ) );
+    len = GetTotalSize() - sizeof( split_cmd_req );
     start = cmd;
-    ret = GetOutPtr(0);
+    ret = GetOutPtr( 0 );
     ret->parm_start = 0;
-    for ( ; ; ) {
-        if (len == 0) goto done;
-        switch (*cmd) {
+    for( ;; ) {
+        if( len == 0 )
+            goto done;
+        switch( *cmd ) {
         case '/':
         case '=':
         case '(':
@@ -505,7 +506,7 @@ unsigned ReqSplit_cmd()
             ret->parm_start = 1;
             goto done;
         case '\"':
-            while( --len && ( *++cmd != '\"' ) )
+            while( --len && (*++cmd != '\"') )
                 ;
             if( len == 0 ) {
                 ret->parm_start = 1;
@@ -518,7 +519,7 @@ unsigned ReqSplit_cmd()
 done:
     ret->parm_start += cmd - start;
     ret->cmd_end = cmd - start;
-    return sizeof(*ret);
+    return( sizeof( *ret ) );
 }
 
 unsigned ReqRead_io()
