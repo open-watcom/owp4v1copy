@@ -132,6 +132,7 @@ typedef struct{
     int_32           low;
     uint_32          count;
     imp_image_handle *ii;
+    imp_type_handle  *it;
     location_context *lc;
     uint_32          num_elts;
     int              dim;
@@ -155,6 +156,7 @@ static void GetArraySize( imp_image_handle *ii,
     uint_32       base_stride;
 
     df.ii = ii;
+    df.it = it;
     df.lc = lc;
     df.count = 1;
     df.dim = 0;
@@ -187,6 +189,7 @@ static void GetArraySubSize( imp_image_handle *ii,
     uint_32         base_stride;
 
     df.ii = ii;
+    df.it = it;
     df.lc = lc;
     df.count = 1;
     df.dim = 0;
@@ -623,10 +626,15 @@ static int ArraySubRange( dr_handle tsub, int index, void *_df ) {
 
     index = index;
     DRGetSubrangeInfo( tsub, &info );
-    if( info.low.val_class == DR_VAL_NOT ){
-        return( FALSE );
+    /* DWARF 2.0 specifies lower bound defaults for C/C++ (0) and FORTRAN (1) */
+    if( info.low.val_class == DR_VAL_NOT ) {
+        if( df->ii->mod_map[df->it->imx].lang == DR_LANG_FORTRAN )
+            low = 1;
+        else
+            low = 0;
+    } else {
+        GetDrVal( df, &info.low, &low );
     }
-    GetDrVal( df, &info.low, &low );
     if( info.count.val_class == DR_VAL_NOT ){
         if( info.high.val_class == DR_VAL_NOT ){
             return( FALSE );
