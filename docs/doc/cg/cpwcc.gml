@@ -1346,8 +1346,8 @@ __SW_ZGF=1                            Yes             Yes
 __SW_ZGP=1                    Yes             Yes
 _syscall=_Syscall             Yes     Yes     Yes     Yes
 _System=_Syscall              Yes     Yes     Yes     Yes
-__WATCOM_CPLUSPLUS__=1100                     Yes     Yes
-__WATCOMC__=1100              Yes     Yes     Yes     Yes
+__WATCOM_CPLUSPLUS__=&vermacro                     Yes     Yes
+__WATCOMC__=&vermacro              Yes     Yes     Yes     Yes
 __X86__=1                     Yes     Yes     Yes     Yes
 .code end
 .*
