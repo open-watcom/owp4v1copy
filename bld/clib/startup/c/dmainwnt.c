@@ -154,7 +154,8 @@ int APIENTRY _LibMain( HANDLE hdll, DWORD reason, LPVOID reserved )
     case DLL_THREAD_DETACH:
         rc = LibMain( hdll, reason, reserved );
         #ifndef __SW_BR
-            __NTRemoveThread( TRUE );
+            // this may not be a thread created by us so don't close the handle!
+            __NTRemoveThread( FALSE );
         #endif
         break;
     case DLL_PROCESS_DETACH:
