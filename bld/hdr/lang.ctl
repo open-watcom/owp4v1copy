@@ -24,7 +24,9 @@ cdsay .
     <CPCMD> <devdir>/hdr/dos/sys/*.h <reldir>/h/sys/
     <CPCMD> <devdir>/hdr/dos/win/*.h <reldir>/h/win/
     <CPCMD> <devdir>/hdr/linux/*.h <reldir>/lh/
+    <CPCMD> <devdir>/hdr/linux/arpa/*.h <reldir>/lh/arpa/
     <CPCMD> <devdir>/hdr/linux/sys/*.h <reldir>/lh/sys/
+    <CPCMD> <devdir>/hdr/linux/netinet/*.h <reldir>/lh/netinet/
 #    <CPCMD> <devdir>/hdr/qnx/*.h* <reldir>/qh/
 #    <CPCMD> <devdir>/hdr/qnx/sys/*.h <reldir>/qh/sys/
 

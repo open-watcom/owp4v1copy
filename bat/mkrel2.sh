@@ -35,6 +35,8 @@ mkdir -p $RELROOT/$DEFREL/h/os21x
 mkdir -p $RELROOT/$DEFREL/qh
 mkdir -p $RELROOT/$DEFREL/qh/sys
 mkdir -p $RELROOT/$DEFREL/lh
+mkdir -p $RELROOT/$DEFREL/lh/arpa
+mkdir -p $RELROOT/$DEFREL/lh/netinet
 mkdir -p $RELROOT/$DEFREL/lh/sys
 mkdir -p $RELROOT/$DEFREL/lib286
 mkdir -p $RELROOT/$DEFREL/lib386
