@@ -110,10 +110,10 @@ extra_rc_flags_qnx = -D__UNIX__
 extra_rc_flags_linux = -D__UNIX__
 extra_rc_flags = $(extra_rc_flags_$(host_os))
 
-inc_dirs = -I"../h" -I"$(orl_dir)/h" -I"$(lib_misc_dir)/h" -I"$(watcom_dir)/h"
+inc_dirs = -I"../h" -I"$(orl_dir)/h" -I"$(lib_misc_dir)/h"
 
 !ifeq bootstrap 1
-inc_dirs=-I. -I../h -I$(orl_dir)/h -I$(trmem_dir) -I$(lib_misc_dir)/h -I$(watcom_dir)/h
+inc_dirs=-I. -I../h -I$(orl_dir)/h -I$(trmem_dir) -I$(lib_misc_dir)/h
 defines = -DIDE_PGM -D__stdcall=
 !endif
 
@@ -127,7 +127,7 @@ wlib_libs += $(clib_dir)/$(%OBJDIR)/libwatcom.a
 
 !ifeq sys_dll 1
 wlib.exe: $(stub_objs) $(proj_name).lib
-    $(linker) $(mode_lflags) $(exe_lflags_$(host_OS)_$(host_CPU)) $(extra_l_flags) name $^@ file { $(stub_objs) } lib $(proj_name).lib
+    $(linker) $(mode_lflags) $(exe_lflags_$(host_os$(host_cpu))) $(extra_l_flags) name $^@ file { $(stub_objs) } lib $(proj_name).lib
 
 $(proj_name).lib: $(targ_name)
     @rm -f $^@
@@ -137,7 +137,7 @@ $(proj_name).lib: $(targ_name)
 $(targ_name): msg.gh $(wlib_objs) wlib.res $(wlib_libs)
 !ifeq bootstrap 1
     $(cc) -g -o $@ $(wlib_objs) $(wlib_libs)
-!else ifeq host_OS osi
+!else ifeq host_os osi
     $(linker) $(lflags) name wlib.rex file { $(wlib_objs) } lib { $(wlib_libs) }
     $(bld_bin)/w32bind wlib.rex $@ $(tools_root)/os2ldr.exe
     erase wlib.rex
@@ -155,5 +155,4 @@ msg.gh : ./mkstr.exe
     *$< $@
 
 wlib.res : ../wlib.rc ../wlib.msg msg.gh
-    @set include=$(inc_path)
-    $(rc_aui) $(extra_rc_flags) -I"$(watcom_dir)/h" $[@ -fo=$^@
+    $(rc_aui) $(extra_rc_flags) $(inc_path) $[@ -fo=$^@

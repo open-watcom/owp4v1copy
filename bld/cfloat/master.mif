@@ -1,5 +1,5 @@
 proj_name       = cf
-inc_dirs        = -I"$(watcom_dir)/h" -I"../h"
+inc_dirs        = -I"../h"
 
 !include cproj.mif
 !include deftarg.mif

@@ -45,7 +45,6 @@ inc_dirs += -I"$(wasm_dir)/h"
 inc_dirs += -I"$(as_dir)/h"
 inc_dirs += -I"$(dwarf_dir)/dw/h"
 inc_dirs += -I"$(cc_dir)/h"
-inc_dirs += -I"$(watcom_dir)/h"
 !ifdef comp_cfg_dir
 inc_dirs += -I"$(comp_cfg_dir)/h"
 !endif
