@@ -24,6 +24,8 @@ cdsay .
     <CPCMD> dos386\wasm.sym <relroot>\rel2\binw\wasm.sym
 #    <CPCMD> qnx386\wasm.qnx <relroot>\rel2\qnx\binq\wasm.
 #    <CPCMD> qnx386\wasm.sym <relroot>\rel2\qnx\sym\
+#    <CPCMD> linux386\wasm.exe <relroot>\rel2\binl\wasm.exe
+#    <CPCMD> linux386\wasm.sym <relroot>\rel2\binl\wasm.sym
 
 [ BLOCK <1> clean ]
 #==================

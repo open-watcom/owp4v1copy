@@ -12,11 +12,11 @@ exc_name = $(proj_name).exe
 !else ifdef bootstrap
 exc_name = $(proj_name)
 cc = cc
-cflags = -funsigned-char -c -D_WASM_ -D__UNIX__ -D__LINUX__ -D__386__ -D__FLAT__ -D_WCUNALIGNED= -I$(%PWD) -I../h -I$(womp_dir)/h -I$(womp_dir) -I$(trmem_dir)/h -I../../watcom/h -o $@
+cflags = -funsigned-char -c -D_WASM_ -D__UNIX__ -D__LINUX__ -D__386__ -D__FLAT__ -D_WCUNALIGNED= -I$(%PWD) -I$(proj_path)/h -I$(womp_dir)/h -I$(watcom_dir)/h -I$(wres_dir)/h -I$(trmem_dir) -o $@
 force_include = -include
 bld_cl = cc
 mkopcode_opts = -o $^@ -Dstricmp=strcasecmp $(LIBS)
-LIBS = -L../../clib/bootstrp -lwatcom -L../../sdk/rc/wres/bootstrp -lwres 
+LIBS = -L../../clib/bootstrp -lwatcom  # -L../../sdk/rc/wres/bootstrp -lwres 
 !else
 exc_name = $(proj_name).exe
 !endif
@@ -24,7 +24,7 @@ link_name = $(proj_name).lnk
 
 .OPTIMIZE
 
-inc_dirs = $(proj_path)/h;$(womp_dir)/h;$(womp_dir);$(trmem_dir)
+inc_dirs = $(proj_path)/h;$(womp_dir)/h;$(watcom_dir)/h;$(wres_dir)/h;$(trmem_dir)
 
 #cflags stuff
 #########
@@ -40,7 +40,7 @@ extra_c_flags_386 = -fpc
 extra_l_flags = option map,symfile,stack=12k
 extra_l_flags_qnx = option offset=16k, res=usage.u
 
-.c : $(proj_path)/c;$(womp_dir)/c;$(trmem_dir)
+.c : $(proj_path)/c;$(womp_dir)/c;$(wres_dir)/c;$(trmem_dir)
 
 
 proj_obj =   $(extra_proj_obj_$(host_OS)_$(host_CPU)) &
@@ -82,7 +82,8 @@ proj_obj =   $(extra_proj_obj_$(host_OS)_$(host_CPU)) &
     asmdata.obj         &
     insthash.obj        &
     asmjump.obj         &
-    finger.obj
+    finger.obj          &
+    loadstr.obj
 
 !ifeq release 0
 proj_obj += trmem.obj trmemcvr.obj
@@ -111,11 +112,6 @@ $(exc_name) : $(proj_path)/h/fullops.h $(proj_path)/h/inlnops.h $(womp_dir)/h/wm
 $(link_name) : $(__MAKEFILES__)
         @%write $^@ $(lflags)
         @%append  $^@ file { $(proj_obj) }
-!ifeq host_CPU 386
-        @%append $^@  lib $(wres_dir)/lib/wresf.lib
-!else ifeq host_CPU axp
-        @%append $^@  lib $(wres_dir)/lib/wresaxp.lib
-!endif
 !ifeq host_OS osi
         @%append  $^@ name $(proj_name).rex
 !else
