@@ -1,1 +1,15 @@
 Edit this file to force a recompile.
+
+/*
+//  Carl Young
+//  As I am editing this file to force a rebuild, I may as well use it as a
+//  history file also.
+//
+//  2002/08/24  -   Checked in a lot of files in the linker code and
+//  Change 19349    documentation to support extra NetWare NLM types,
+//                  add a new linker option for NetWare, added support
+//                  for NetWare symbol prefixing and fixed an issue
+//                  where the specified output name would overflow
+//                  the internal module name (bugzilla issue 10).
+//
+*/
