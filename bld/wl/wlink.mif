@@ -150,6 +150,10 @@ extra_c_flags_dbgdwarf = /i=$(dwarf_dir)\dw\h
 extra_c_flags_loadpe = /i=..\h;$(wrc_dir)\h;$(wres_dir)\h /dINSIDE_WLINK
 extra_c_flags_loados2 = /i=$(wres_dir)\h
 
+!ifdef use_os2tk_stuff
+extra_c_flags_loados2 += ;$(inc_dirs_sys)
+!endif
+
 exe_cflags = $+$(cflags)$-
 
 !ifeq sys_dll 1
