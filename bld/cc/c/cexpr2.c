@@ -2250,6 +2250,7 @@ local TREEPTR StartFunc( TREEPTR tree, TYPEPTR **plistptr )
 {
     TYPEPTR             typ;
     TYPEPTR             orig_typ;
+    TYPEPTR             *parms;
     type_modifiers      decl_flags;
     char                recursive = 0;
     unsigned char       opr;
@@ -2305,6 +2306,7 @@ local TREEPTR StartFunc( TREEPTR tree, TYPEPTR **plistptr )
             }
         }
     }
+    parms = typ->u.parms;      /* Parameters (prototype), if any */
     NextToken();                                /* skip over '(' */
     if( CurToken != T_RIGHT_PAREN ) {
         // push previous plist for nested calls
@@ -2314,18 +2316,13 @@ local TREEPTR StartFunc( TREEPTR tree, TYPEPTR **plistptr )
         npl->next_parm_type = *plistptr;
         NestedParms = npl;
 
-        *plistptr = typ->u.parms;
+        *plistptr = parms;
         ++Level;
         ValueStack[ Level ] = tree;
         Class[ Level ] = TC_PARM_LIST;
         Token[ Level ] = T_LEFT_PAREN;
         tree = NULL;               /* indicate need operand for parm */
     } else { // foo() build call
-       if(  typ->u.parms != NULL ){
-              if( *typ->u.parms != NULL && (*typ->u.parms)->decl_type != TYPE_VOID ) {
-                  CErr1( ERR_PARM_COUNT_MISMATCH );
-              }
-        }
         opr = OPR_CALL;
 #ifdef __SEH__                                          /* 25-mar-94 */
         if( CompFlags.exception_filter_expr ||
@@ -2364,6 +2361,13 @@ local TREEPTR StartFunc( TREEPTR tree, TYPEPTR **plistptr )
             tree->expr_type = GetType( TYPE_INT );
         } else {
             tree = CallNode( tree, 0, typ );
+            if( parms != NULL ) {        /* function has prototype */
+                if( *parms != NULL && (*parms)->decl_type != TYPE_VOID ) {
+                    CErr1( ERR_PARM_COUNT_MISMATCH );
+                }
+            } else {                                /* check later */
+                AddCallNode(tree);
+            }
         }
         CompFlags.meaningless_stmt = 0;
         CompFlags.useful_side_effect = 1;
