@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/stat.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
@@ -66,10 +67,6 @@
 #else
 #define PATH_SEP '\\'
 #define PATH_SPLIT ';'
-#endif
-
-#ifndef S_IRWXU
-#define S_IRWXU 0
 #endif
 
 #ifdef __OSI__
