@@ -401,7 +401,7 @@ static unsigned char default_tix[] = {
 };
 
 static char alt_keys[] = "QWERTYUIOP\0\0\0\0ASDFGHJKL\0\0\0\0\0ZXCVBNM";
-static char esc_str[] = "\x1bA";
+static char esc_str[] = "\033A";
 
 /* use above table if no .tix file is found */
 static int do_default( void )
@@ -428,10 +428,12 @@ static int do_default( void )
 	ti_char_map[ code ] = cmap & 0x7f;
     }
     for( i = 0; i < sizeof( alt_keys ); i++ ) {
-        esc_str[0] = alt_keys[i];
-        TrieAdd( 0x110 + i, esc_str );
-        esc_str[0] += 0x20;
-        TrieAdd( 0x110 + i, esc_str );
+        if ( alt_keys[i] ) {
+            esc_str[1] = alt_keys[i];
+            TrieAdd( 0x110 + i, esc_str );
+            esc_str[1] += 0x20;
+            TrieAdd( 0x110 + i, esc_str );
+        }
     }
     /* sticky function key ^F */
     TrieAdd( 0xff0, "\6");
