@@ -33,6 +33,9 @@
 #include <signal.h>
 #include <string.h>
 #include <stdlib.h>
+#ifdef __OS2__
+   #include <stdio.h>
+#endif
 #include <process.h>
 
 #include "macros.h"
@@ -451,7 +454,9 @@ STATIC void init( const char **argv )
     _fileinfo = 0;      /* C Library Kludge -------------------------- */
 #endif
 #endif
-
+#ifdef __OS2__
+    _grow_handles(100); /* Some OS/2 versions allow only 20 files open by default */
+#endif
     filesToDo = NULL;
     mustTargs = NULL;
     log_name = NULL;
