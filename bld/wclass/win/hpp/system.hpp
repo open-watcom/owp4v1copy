@@ -47,6 +47,8 @@
     #pragma library (ddeml)
 #endif
 
-extern HINSTANCE        GUIMainHInst;
+extern "C" {
+    HINSTANCE        GUIMainHInst;
+}
 
 #endif

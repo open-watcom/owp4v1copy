@@ -30,10 +30,11 @@
 ****************************************************************************/
 
 
+#include <io.h>
+#include <stdlib.h>
+
 extern "C" {
-    #include <io.h>
     #include "rcdefs.h"
-    #include "stdlib.h"
     #include "banner.h"
 };
 
