@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  produce WVIDEO debugging information in load file
+* Description:  Produce WVIDEO debugging information in load file.
 *
 ****************************************************************************/
 
@@ -519,7 +519,7 @@ static bool CheckFirst( void *_seg, void *_firstseg )
 {
     segdata *seg = _seg;
     segdata **firstseg = _firstseg;
-        
+
     if( seg->a.delta < (*firstseg)->a.delta
             && seg->o.addrinfo == (*firstseg)->o.addrinfo ) {
         *firstseg = seg;
@@ -800,7 +800,7 @@ extern void OWriteDBI( void )
     Master.debug_size = DBISize;
     if( Master.obj_major_ver == 0 ) Master.obj_major_ver = 1;
     WriteLoad( &Master, sizeof(dbgheader) );
-#if _INT_DEBUG
+#ifdef _INT_DEBUG
     if( TraceInfo.sizeadded != TraceInfo.sizegenned ) {
         LnkMsg( WRN+MSG_INTERNAL, "s", "size mismatch in watcom dbi" );
     }
