@@ -1,6 +1,6 @@
 * MTHREAD.FOR
 
-*$pragma aux DosSleep parm( value ) [] caller
+*$pragma aux DosSleep parm( value*4 ) [] caller
 
       integer NumThreads
       logical HoldThreads
