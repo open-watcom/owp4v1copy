@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Fortran interface to symbol table manager.
 *
 ****************************************************************************/
 
-
-//
-// SYMTAB    : Fortran interface to symbol table manager.
-//
 
 #include "ftnstd.h"
 #include "errcod.h"
@@ -205,7 +200,7 @@ sym_id  LkField( sym_id sd ) {
 
     sym_id      sym;
 
-    sym = FieldLookup( sd->sd.fields, CITNode->opnd, CITNode->opnd_size,
+    sym = FieldLookup( sd->sd.fl.sym_fields, CITNode->opnd, CITNode->opnd_size,
                        &CITNode->value.intstar4 );
     if( sym != NULL ) {
         CITNode->typ = sym->fd.typ;

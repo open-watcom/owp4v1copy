@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Upscan phase of expression handling.
 *
 ****************************************************************************/
 
-
-//
-// UPSCAN       : upscan phase of expression handling
-//
 
 #include "ftnstd.h"
 #include "opr.h"
@@ -852,7 +847,7 @@ void    AddConst( itnode *node ) {
 
     cstring     *val_ptr;
 
-    val_ptr = &node->value;
+    val_ptr = &node->value.cstring;
     if( node->typ != TY_CHAR ) {
         node->sym_ptr = STConst( val_ptr, node->typ, node->size );
     } else {

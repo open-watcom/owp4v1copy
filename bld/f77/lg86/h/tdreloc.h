@@ -24,15 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Symbol table relocation.
 *
 ****************************************************************************/
 
 
-//
-// TDRELOC   : symbol table relocation
-//
 extern  unsigned_32     ArrNumElts(lg_adv PGM *);
 extern  void            LitSCBReloc(sym_id);
 extern  void            TmpSCBReloc(sym_id);
@@ -48,7 +44,7 @@ extern  void            MakeGblAddr(sym_id,sym_id);
 extern  void            GblReloc(sym_id);
 extern  void            RelocAddr(targ_addr *,targ_addr *);
 extern  void            ComVarReloc(com_reloc *,obj_addr *);
-extern  void            GblVarReloc(reloc_head *,targ_addr *,signed_32);
+extern  void            GblVarReloc(targ_addr *,targ_addr *,signed_32);
 extern  void            LinkComReloc(sym_id,com_reloc *);
 extern  void            LinkGblSym(sym_id,sym_id);
 extern  void            LinkGblChain(obj_ptr,targ_addr *);

@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Process an input or output list.
 *
 ****************************************************************************/
 
-
-//
-// IOIOLIST  : process an input or output list
-//
 
 #include "ftnstd.h"
 #include "errcod.h"
@@ -102,7 +97,7 @@ static  bool    HasUnion( sym_id fld ) {
     for(;;) {
         if( fld == NULL ) return( FALSE );
         if( fld->fd.typ == TY_STRUCTURE ) {
-            if( HasUnion( fld->fd.xt.record->fields ) ) break;
+            if( HasUnion( fld->fd.xt.record->fl.sym_fields ) ) break;
         }
         if( fld->fd.typ == TY_UNION ) break;
         fld = fld->fd.link;
@@ -114,7 +109,7 @@ static  bool    HasUnion( sym_id fld ) {
 static  void    ChkStructIO( sym_id sym ) {
 //========================================
 
-    if( HasUnion( sym->sd.fields ) ) {
+    if( HasUnion( sym->sd.fl.sym_fields ) ) {
         if( ( StmtSw & SS_DATA_INIT ) || !NotFormatted() ) {
             StructErr( SP_STRUCT_HAS_UNION, sym );
         }
@@ -213,7 +208,7 @@ void    ListItem() {
         CITNode->sym_ptr->ns.xflags |= SY_DEFINED;
         ChkAssumed();
         if( CITNode->typ == TY_STRUCTURE ) {
-            ChkStructIO( CITNode->sym_ptr->ns.xt.record );
+            ChkStructIO( CITNode->sym_ptr->ns.xt.sym_record );
             GIOStructArray();
         } else {
             GIOArray();
@@ -221,9 +216,9 @@ void    ListItem() {
     } else if( CITNode->typ == TY_STRUCTURE ) {
         CITNode->sym_ptr->ns.xflags |= SY_DEFINED;
         if( CITNode->opn & OPN_FLD ) {
-            sd = CITNode->value.st.field_id->fd.xt.record;
+            sd = CITNode->value.st.field_id->fd.xt.sym_record;
         } else {
-            sd = CITNode->sym_ptr->ns.xt.record;
+            sd = CITNode->sym_ptr->ns.xt.sym_record;
         }
         ChkStructIO( sd );
         GIOStruct( sd );

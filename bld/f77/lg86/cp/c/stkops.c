@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implement operand stack.
 *
 ****************************************************************************/
 
-
-//
-// STKOPS       : Implement operand stack
-//
 
 #include "ftnstd.h"
 #include "global.h"
@@ -113,7 +108,7 @@ extern  void    Push32Const( intstar4 value ) {
     IncStkDepth( TY_INTEGER );
     type_size = TypeSize( TY_INTEGER );
     EmitOp( PUSHOPS + ParmType( TY_INTEGER, type_size ) - 1 );
-    SymRef( STConst( &value, TY_INTEGER, type_size ) );
+    SymRef( STConst( (ftn_type *)&value, TY_INTEGER, type_size ) );
 }
 
 
@@ -317,7 +312,7 @@ static  void    PushOp( itnode *itptr, bool want_value, bool want_check ) {
             break;
         case TY_STRUCTURE:
             EmitOp( STRUCT_SUBSCR );
-            SymRef( itptr->sym_ptr->ns.xt.record );
+            SymRef( itptr->sym_ptr->ns.xt.sym_record );
             break;
         default:
             GValue( typ, size );

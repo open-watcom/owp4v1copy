@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Downscan a name.
 *
 ****************************************************************************/
 
-
-//
-// DSNAME   : Downscan a name.
-//
 
 #include "ftnstd.h"
 #include "opr.h"
@@ -117,9 +112,9 @@ void    DSName() {
     if( ( FieldNode != NULL ) &&
         ( ( CITNode->opr == OPR_FLD ) || ( CITNode->opr == OPR_DPT ) ) ) {
         if( FieldNode->opn & OPN_FLD ) {
-            LkField( FieldNode->sym_ptr->fd.xt.record );
+            LkField( FieldNode->sym_ptr->fd.xt.sym_record );
         } else {
-            LkField( FieldNode->sym_ptr->ns.xt.record );
+            LkField( FieldNode->sym_ptr->ns.xt.sym_record );
         }
         CITNode->opn |= OPN_FLD;
         if( CITNode->sym_ptr != NULL ) { // make sure field name exists

@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  STRUCTURE/RECORD statement processor.
 *
 ****************************************************************************/
 
-
-//
-// STRUCT       : STRUCTURE/RECORD statement processor
-//
 
 #include "ftnstd.h"
 #include "global.h"
@@ -100,7 +95,7 @@ void    CpStructure() {
     CSExtn();
     CurrStruct = StructName();
     if( CurrStruct != NULL ) {
-        if( CurrStruct->sd.fields != NULL ) {
+        if( CurrStruct->sd.fl.fields != NULL ) {
             StructErr( SP_STRUCT_DEFINED, CurrStruct );
             // consider:
             //      STRUCTURE /FOO/
@@ -126,7 +121,7 @@ void    CpEndStructure() {
 
     CSExtn();
     if( SgmtSw & SG_DEFINING_STRUCTURE ) {
-        if( CurrStruct->sd.fields == NULL ) {
+        if( CurrStruct->sd.fl.fields == NULL ) {
             StructErr( SP_STRUCT_NEEDS_FIELD, CurrStruct );
             // consider:
             //  STRUCTURE /FOO/
@@ -161,7 +156,7 @@ void    CpRecord() {
     sd = StructName();
     if( IsFunctionDefn() ) {
         Function( TY_STRUCTURE, 0, TRUE );
-        SubProgId->ns.xt.record = sd;
+        SubProgId->ns.xt.sym_record = sd;
     } else {
         MustBeTypeDecl();
         for(;;) {
@@ -170,10 +165,10 @@ void    CpRecord() {
                 if( SgmtSw & SG_DEFINING_STRUCTURE ) {
                     sym = FieldDecl();
                     sym->fd.typ = TY_STRUCTURE;
-                    sym->fd.xt.record = sd;
+                    sym->fd.xt.sym_record = sd;
                 } else {
                     sym = VarDecl( TY_STRUCTURE );
-                    sym->ns.xt.record = sd;
+                    sym->ns.xt.sym_record = sd;
                 }
                 if( RecOpenParen() ) {
                     ArrayDecl( sym );
@@ -203,7 +198,7 @@ void    StructResolve() {
 
     for( sd = RList; sd != NULL; sd = sd->sd.link ) {
         if( sd->sd.name_len == 0 ) continue; // NULL structure
-        if( sd->sd.fields != NULL ) {
+        if( sd->sd.fl.fields != NULL ) {
             if( CalcStructSize( sd ) ) {
                 StructErr( SP_STRUCT_RECURSION, sd );
             }

@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Generate code for subprogram calls.
 *
 ****************************************************************************/
 
-
-//
-// GSUBPROG     : Generate code for subprogram calls
-//
 
 #include "ftnstd.h"
 #include "progsw.h"
@@ -500,7 +495,7 @@ void    GEpilog() {
     if( ( SubProgId->ns.flags & SY_SUBPROG_TYPE ) == SY_FUNCTION ) {
         OutRTPtr();                     // in case its a character function
         if( SubProgId->ns.typ == TY_STRUCTURE ) {
-            SymRef( SubProgId->ns.xt.record );
+            SymRef( SubProgId->ns.xt.sym_record );
         } else {
             OutInt( SubProgId->ns.xt.size );
         }

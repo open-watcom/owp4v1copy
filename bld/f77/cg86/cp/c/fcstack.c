@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Stack F-Code processor.
 *
 ****************************************************************************/
 
-
-//
-// FCSTACK   : stack F-Code processor
-//
 
 #include "ftnstd.h"
 #include "global.h"
@@ -647,11 +642,11 @@ void    FCPushConst() {
         XPush( CGFloat( fmt_buff, T_SINGLE ) );
         break;
     case TY_DOUBLE :
-        CnvD2S( &sym->cn.value, fmt_buff );
+        CnvD2S( &sym->cn.value.dble, fmt_buff );
         XPush( CGFloat( fmt_buff, T_DOUBLE ) );
         break;
     case TY_TRUE_EXTENDED :
-        CnvX2S( &sym->cn.value, fmt_buff );
+        CnvX2S( &sym->cn.value.extended, fmt_buff );
         XPush( CGFloat( fmt_buff, T_LONGDOUBLE ) );
         break;
     case TY_COMPLEX :

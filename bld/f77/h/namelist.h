@@ -24,17 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Define FORTRAN 77 name list.
 *
 ****************************************************************************/
 
 
-// Define FORTRAN 77 name list:
-// ============================
-
 typedef struct name_list {
-    struct name_list    *link;                  // next name list definition
+    sym_id              link;                   // next name list definition
 #if _OPT_CG == _OFF
     obj_ptr             reloc_chain;            // head of relocation chain
     struct grp_entry    *group_list;            // entries in namelist

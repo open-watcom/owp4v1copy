@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Convert WATFOR-77 argument list to WFC argument list.
 *
 ****************************************************************************/
 
-
-//
-// WFCCALL :    convert WATFOR-77 argument list to WFC argument list
-//
 
 #include <dos.h>
 #include <stdarg.h>
@@ -1196,7 +1191,7 @@ int     SYSCALL_to_WF77( unsigned_8 PGM *arg_list, string PGM **ret_scb, ... ) {
     arg_list += sizeof( unsigned_16 );
     ret_type = _ArgType( arg_info );
     if( call_type == CDECL_CALL ) {
-        *ret_scb = &cdeclRetVal;
+        *ret_scb = &cdeclRetVal.string;
     } else if( _RetStruct( ret_type, call_type ) ) {
         *ret_scb = va_arg( args, void PGM * );
         size = sizeof( void PGM * );

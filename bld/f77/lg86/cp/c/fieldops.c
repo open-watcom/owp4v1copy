@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Field selection operator generation routines.
 *
 ****************************************************************************/
 
-
-//
-// FIELDOPS     : field selection operator generation routines
-//
 
 #include "ftnstd.h"
 #include "global.h"
@@ -115,7 +110,7 @@ void    FieldOp( int typ1, int typ2, int op ) {
                 default:
                     // we must create an RCB
                     EmitOp( FIELD_OP_STRUCT );
-                    SymRef( link->sym_ptr->fd.xt.record );
+                    SymRef( link->sym_ptr->fd.xt.sym_record );
                     break;
                 }
                 SymRef( CITNode->value.st.tmp_id );

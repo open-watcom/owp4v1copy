@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Resident symbol table dump module.
 *
 ****************************************************************************/
 
-
-//
-// RSTDUMP    : Resident symbol table dump module.
-//
 
 #include "ftnstd.h"
 #include "ecflags.h"
@@ -199,7 +194,7 @@ static  void    DumpMagSyms() {
                     break;
                 case TY_STRUCTURE:
                     sym->ns.address.la = ObjPtr + offsetof( rcb, origin );
-                    OutRCB( sym->ns.xt.record, 1 );
+                    OutRCB( sym->ns.xt.sym_record, 1 );
                     // see note in dump variable
                     sym->ns.xt.size = sym->ns.xt.record->size;
                     break;
@@ -304,7 +299,7 @@ static  bool    DumpVariable( sym_id sym ) {
                 // this is output after the ADV so that it can be used
                 // by the debugger and by fcsubpgm to compare arrays of
                 // structs passed as args
-                SymRef( sym->ns.xt.record );
+                SymRef( sym->ns.xt.sym_record );
                 // We have to move the size into ns.xt.size so that we know how
                 // much room to allocate for it in the global data area.
                 sym->ns.xt.size = sym->ns.xt.record->size;
@@ -330,7 +325,7 @@ static  bool    DumpVariable( sym_id sym ) {
     } else if( sym->ns.typ == TY_STRUCTURE ) {
 #if _OPT_CG == _OFF
         Local2GblReloc( sym, ObjPtr + offsetof( rcb, origin ) );
-        OutRCB( sym->ns.xt.record, ( flags & SY_SUB_PARM ) == 0 );
+        OutRCB( sym->ns.xt.sym_record, ( flags & SY_SUB_PARM ) == 0 );
         // We have to move the size into ns.xt.size so that we know how
         // much room to allocate for it in the global data area.
         sym->ns.xt.size = sym->ns.xt.record->size;
@@ -926,7 +921,7 @@ static  sym_id  *FindBiggestMap( field *fd ) {
     sym_id      *big_map;
 
     size = 0;
-    map_walk = &fd->xt.record;
+    map_walk = &fd->xt.sym_record;
     while( *map_walk != NULL ) { // find biggest map
         if( (*map_walk)->sd.size > size ) {
             size = (*map_walk)->sd.size;
@@ -966,7 +961,7 @@ static  bool    DumpSDefn( sym_id sd ) {
     EmitNulls( 2 * sizeof( obj_ptr ) );         // for back_lnik, back_offs
     OutU32( 0 );                                // for elts_left
     forward_ref = FALSE;
-    fd = sd->sd.fields;
+    fd = sd->sd.fl.fields;
     while( fd != NULL ) {
         info = 0;
         switch( fd->typ ) {
@@ -1000,7 +995,7 @@ static  bool    DumpSDefn( sym_id sd ) {
             }
             OutByte( info | PT_STRUCT );
             size = fd->xt.record->size;
-            forward_ref |= RefSDefn( fd->xt.record );
+            forward_ref |= RefSDefn( fd->xt.sym_record );
             break;
         case TY_CHAR:
             if( fd->dim_ext != NULL ) {
@@ -1020,7 +1015,7 @@ static  bool    DumpSDefn( sym_id sd ) {
         if( info ) {
             DumpFieldADV( fd, size );
         }
-        fd = fd->link;
+        fd = &fd->link->fd;
     }
     OutByte( PT_NOTYPE );       /* end of list */
     return( forward_ref );

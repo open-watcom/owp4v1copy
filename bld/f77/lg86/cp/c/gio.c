@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Generate code for I/O.
 *
 ****************************************************************************/
 
-
-//
-// GIO          : Generate code for I/O
-//
 
 #include "ftnstd.h"
 #include "fcodes.h"
@@ -175,7 +170,7 @@ void    GIOStructArray() {
     label = NextLabel();
     GLabel( label );
     EmitOp( STRUCT_SUBSCR );    // put RCB onto stack
-    SymRef( CITNode->sym_ptr->ns.xt.record );
+    SymRef( CITNode->sym_ptr->ns.xt.sym_record );
     DoStruct();
     EmitOp( NEXT_ARR_ELT );     // get next array element
     GenTmpRef( cntrl_blk );

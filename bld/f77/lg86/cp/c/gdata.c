@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Generate code for DATA initialization.
 *
 ****************************************************************************/
 
-
-//
-// GDATA     : generate code for DATA initialization
-//
 
 #include "ftnstd.h"
 #include "fcodes.h"
@@ -127,7 +122,7 @@ extern  void    GDataItem( itnode *rpt ) {
 
     if( rpt == NULL ) {
         one = 1;
-        addr = LinkSym( STConst( &one, TY_INTEGER, TypeSize( TY_INTEGER ) ) );
+        addr = LinkSym( STConst( (ftn_type *)&one, TY_INTEGER, TypeSize( TY_INTEGER ) ) );
     } else {
         addr = LinkSym( rpt->sym_ptr );
     }

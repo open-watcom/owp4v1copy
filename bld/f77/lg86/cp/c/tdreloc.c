@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Symbol table relocation.
 *
 ****************************************************************************/
 
-
-//
-// TDRELOC   : symbol table relocation
-//
 
 #include <string.h>
 
@@ -299,11 +294,11 @@ void    GblReloc( sym_id sym_ptr ) {
         GObjRelocExt( sym_ptr );
         return;
     }
-    RelocAddr( &sym_ptr->ns.reloc_chain, &sym_ptr->ns.address );
+    RelocAddr( &sym_ptr->ns.reloc_chain.gr, &sym_ptr->ns.address.ga );
 }
 
 
-void    GblVarReloc( reloc_head *reloc, targ_addr *base, signed_32 adjust ) {
+void    GblVarReloc( targ_addr *reloc, targ_addr *base, signed_32 adjust ) {
 //===========================================================================
 
 // Relocate global variables.
@@ -556,7 +551,7 @@ void    ComVarReloc( com_reloc *reloc, obj_addr *address ) {
 #if _TARGET == _8086
     packCommonData( reloc, address );
 #endif
-    GblVarReloc( &reloc->reloc_chain, address, reloc->offset );
+    GblVarReloc( &reloc->reloc_chain, &address->ga, reloc->offset );
 }
 
 
@@ -598,7 +593,7 @@ void    LinkGblSym( sym_id local, sym_id gbl ) {
 
 // Link global symbols.
 
-    LinkGblChain( local->ns.reloc_chain.lr, &gbl->ns.reloc_chain );
+    LinkGblChain( local->ns.reloc_chain.lr, &gbl->ns.reloc_chain.gr );
 }
 
 

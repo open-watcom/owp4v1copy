@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Resident symbol table manager.
 *
 ****************************************************************************/
 
-
-//
-// RSTSTRUCT    : resident symbol table manager
-//
 
 #include "ftnstd.h"
 #include "global.h"
@@ -118,7 +113,7 @@ sym_id  STStruct( char *name, int length ) {
     if( sym == NULL ) {
         sym = AddStruct( name, length );
         sym->sd.link = RList;
-        sym->sd.fields = NULL;
+        sym->sd.fl.fields = NULL;
         sym->sd.size = 0;
         RList = sym;
     }
@@ -163,10 +158,10 @@ static  sym_id  *Strut( sym_id *p_field, char *name, uint len ) {
         field = *p_field;
         if( field == NULL ) return( p_field );
         if( field->fd.typ == TY_UNION ) {
-            map = field->fd.xt.record;
+            map = field->fd.xt.sym_record;
             for(;;) {
                 if( map == NULL ) break;
-                q_field = Strut( &map->sd.fields, name, len );
+                q_field = Strut( &map->sd.fl.sym_fields, name, len );
                 if( *q_field != NULL ) {
                     FieldErr( SP_DUPLICATE_FIELD, *q_field );
                 }
@@ -212,7 +207,7 @@ sym_id  STField( char *name, uint len ) {
     if( len > MAX_SYMLEN ) {
         len = MAX_SYMLEN;
     }
-    p_field = Strut( &CurrStruct->sd.fields, name, len );
+    p_field = Strut( &CurrStruct->sd.fl.sym_fields, name, len );
     *p_field = AddField( name, len );
     (*p_field)->fd.link = NULL;
     (*p_field)->fd.dim_ext = NULL;
@@ -235,9 +230,9 @@ static  sym_id  LookupField( sym_id field, char *name, uint len,
         if( field == NULL ) return( NULL );
         if( field->fd.typ == TY_UNION ) {
             size = 0;
-            map = field->fd.xt.record;
+            map = field->fd.xt.sym_record;
             while( map != NULL ) {
-                u_field = LookupField( map->sd.fields, name, len, &f_size );
+                u_field = LookupField( map->sd.fl.sym_fields, name, len, &f_size );
                 if( u_field != NULL ) {
                     *offset = f_offset + f_size;
                     return( u_field );
@@ -299,11 +294,11 @@ bool    CalcStructSize( sym_id sd ) {
     }
     sd->sd.link = sd;           // to protect against recursion
     total_size = 0;
-    field = sd->sd.fields;
+    field = sd->sd.fl.sym_fields;
     while( field != NULL ) {
         size = 0;
         if( field->fd.typ == TY_UNION ) {
-            map = field->fd.xt.record;
+            map = field->fd.xt.sym_record;
             while( map != NULL ) {
                 if( CalcStructSize( map ) ) {
                     sd->sd.link = saved_link;
@@ -317,11 +312,11 @@ bool    CalcStructSize( sym_id sd ) {
         } else {
             if( field->fd.typ == TY_STRUCTURE ) {
                 if( StmtSw & SS_DATA_INIT ) {
-                    if( field->fd.xt.record->fields == NULL ) {
-                        StructErr( SP_UNDEF_STRUCT, field->fd.xt.record );
+                    if( field->fd.xt.record->fl.fields == NULL ) {
+                        StructErr( SP_UNDEF_STRUCT, field->fd.xt.sym_record );
                     }
                 }
-                if( CalcStructSize( field->fd.xt.record ) ) {
+                if( CalcStructSize( field->fd.xt.sym_record ) ) {
                     sd->sd.link = saved_link;
                     return( TRUE );             // recursion detected
                 }
@@ -360,9 +355,9 @@ void    STUnion() {
     un->fd.typ = TY_UNION;
     un->fd.link = NULL;
     un->fd.xt.record = NULL;
-    field = CurrStruct->sd.fields;
+    field = CurrStruct->sd.fl.sym_fields;
     if( field == NULL ) {
-        CurrStruct->sd.fields = un;
+        CurrStruct->sd.fl.sym_fields = un;
     } else {
         while( field->fd.link != NULL ) {
             field = field->fd.link;
@@ -385,7 +380,7 @@ void    STMap() {
     // Consider:        MAP
     //                      INTEGER I
     if( CurrStruct == NULL ) return;
-    field = CurrStruct->sd.fields;
+    field = CurrStruct->sd.fl.sym_fields;
     // make sure that a UNION was defined
     // Consider:      STRUCTURE /STRUCT/
     //                    MAP
@@ -396,14 +391,14 @@ void    STMap() {
     md->sd.reloc_chain = NULL;
 #endif
     md->sd.link = NULL;
-    md->sd.fields = NULL;
+    md->sd.fl.fields = NULL;
     md->sd.size = 0;
     while( field->fd.link != NULL ) {
         field = field->fd.link;
     }
-    map = field->fd.xt.record;
+    map = field->fd.xt.sym_record;
     if( map == NULL ) {
-        field->fd.xt.record = md;
+        field->fd.xt.sym_record = md;
     } else {
         while( map->sd.link != NULL ) {
             map = map->sd.link;

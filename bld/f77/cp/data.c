@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Processing for DATA statements.
 *
 ****************************************************************************/
 
-
-//
-// DATA      : processing for DATA statements
-//
 
 #include "ftnstd.h"
 #include "errcod.h"
@@ -246,7 +241,7 @@ static  void    VarList() {
                 // make sure structure size is calculated - normally
                 // structure size is calculated by StructResolve() which
                 // is not called until the first executable statement
-                CalcStructSize( InitVar->ns.xt.record );
+                CalcStructSize( InitVar->ns.xt.sym_record );
             }
             CkFlags();
             opr = CITNode->opr;

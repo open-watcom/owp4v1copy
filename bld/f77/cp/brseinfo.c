@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Generate browsing information.
 *
 ****************************************************************************/
 
-
-//
-// BRSEINFO  : generate browsing information
-//
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -989,7 +984,7 @@ static dw_handle BIGetStructType( sym_id ste_ptr, dw_handle handle ) {
                         strncpy( buffer, ste_ptr->ns.xt.record->name,
                                 ste_ptr->ns.xt.record->name_len ),
                         0, 0 );
-    fields = ste_ptr->ns.xt.record->fields;
+    fields = ste_ptr->ns.xt.record->fl.fields;
     while( fields ) {
         data->ns.typ = fields->typ;
         data->ns.xt.record = fields->xt.record;
@@ -1014,7 +1009,7 @@ static dw_handle BIGetStructType( sym_id ste_ptr, dw_handle handle ) {
         } else {
             DWAddField( cBIId, BIGetType( data ), justJunk, name, 0 );
         }
-        fields = fields->link;
+        fields = &fields->link->fd;
     }
     DWEndStruct( cBIId );
     return( ret );
@@ -1040,7 +1035,7 @@ static dw_handle BIGetUnionType( sym_id ste_ptr ) {
         if ( fs->size > max ) {
             max = fs->size;
         }
-        fs = fs->link;
+        fs = &fs->link->sd;
     }
 
     // Start the union declaration
@@ -1060,7 +1055,7 @@ static dw_handle BIGetUnionType( sym_id ste_ptr ) {
         data.ns.xt.record->name_len = data.ns.name_len;
         map++;
         DWAddField( cBIId, BIGetType( &data ), justJunk, data.ns.name, 0 );
-        fs = fs->link;
+        fs = &fs->link->sd;
     }
     FMemFree( data.ns.xt.record );
     DWEndStruct( cBIId );

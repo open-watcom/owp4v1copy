@@ -24,21 +24,20 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Define FORTRAN 77 structures.
 *
 ****************************************************************************/
 
 
-// Define FORTRAN 77 structures:
-// =============================
-
 typedef struct fstruct {
-    struct fstruct      *link;                  // next structure definition
+    sym_id              link;                   // next structure definition
 #if _OPT_CG == _OFF
     obj_ptr             reloc_chain;            // head of relocation chain
 #endif
-    struct field        *fields;                // fields of structure
+    union {
+        struct field    *fields;                // fields of structure
+        sym_id          sym_fields;             // sym_id type pointer
+    } fl;
     intstar4            size;                   // size of structure
 #if _OPT_CG == _ON
     unsigned short      cg_typ;                 // type for code generator
@@ -52,7 +51,7 @@ typedef struct fstruct {
 // Note: the fields of "fmap" must match the fields in "fstruct".
 
 typedef struct fmap {
-    struct fmap         *link;                  // next map definition
+    sym_id              link;                   // next map definition
 #if _OPT_CG == _OFF
     obj_ptr             reloc_chain;            // head of relocation chain
 #endif
@@ -61,11 +60,12 @@ typedef struct fmap {
 } fmap;
 
 typedef struct field {
-    struct field        *link;                  // next field
+    sym_id              link;                   // next field
     byte                typ;                    // type of field
     union {
         uint            size;                   // size of field
         struct fstruct  *record;                // pointer to structure
+        sym_id          sym_record;             // sym_id type pointer
     } xt;
     struct act_dim_list *dim_ext;               // dimension information
     byte                name_len;               // length of name of field
@@ -75,8 +75,7 @@ typedef struct field {
 // Note: the fields of "funion" must match the fields in "field".
 
 typedef struct funion {
-    struct field        *link;                  // next field
+    sym_id              link;                   // next field
     byte                typ;                    // type of field
     struct fmap         *record;                // pointer to map
-//  struct fmap         *biggest;               // pointer to biggest map
 } funion;

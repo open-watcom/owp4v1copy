@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Define FORTRAN 77 symbol table types.
 *
 ****************************************************************************/
 
@@ -340,6 +339,7 @@ typedef struct named_symbol {
     union {
         uint            size;           // size of data type
         struct fstruct  *record;        // pointer to structure definition
+        sym_id          sym_record;     // sym_id type pointer to definition
     } xt;
     union {
         struct var          va;         // information for variables

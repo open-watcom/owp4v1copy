@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Arithmetic downscan.
 *
 ****************************************************************************/
 
-
-//
-// DOWNSCAN  : arithmetic downscan
-//
 
 #include "ftnstd.h"
 #include "opr.h"
@@ -94,7 +89,7 @@ static  void    LogC() {
 static  void    IntC() {
 //======================
 
-    if( FmtS2I( CITNode->opnd, CITNode->opnd_size, FALSE, &CITNode->value, FALSE, NULL ) != INT_OK ) {
+    if( FmtS2I( CITNode->opnd, CITNode->opnd_size, FALSE, &CITNode->value.intstar4, FALSE, NULL ) != INT_OK ) {
         // don't issue an overflow for -2147483648
         // but we need to be careful since we do want an
         // overflow for I - 2147483648
@@ -117,7 +112,7 @@ static  bool    CnvFloat( itnode *cit, int prec ) {
 
     ext = ( Options & OPT_EXTEND_REAL ) != 0;
     if( FmtS2F( cit->opnd, cit->opnd_size, 0, FALSE, 0, prec,
-                &cit->value, FALSE, NULL, ext ) != FLT_OK ) {
+                &cit->value.dble, FALSE, NULL, ext ) != FLT_OK ) {
         OpndErr( CN_FLOAT );
         return( FALSE );
     }

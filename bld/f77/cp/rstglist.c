@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Global symbol table routines.
 *
 ****************************************************************************/
 
@@ -484,10 +483,10 @@ unsigned_32     RelocVariable( sym_id ste_ptr ) {
 #endif
     }
 #if _TARGET == _370
-    GblVarReloc( &ste_ptr->ns.reloc_chain, &base->ns.address, offset,
+    GblVarReloc( &ste_ptr->ns.reloc_chain.gr, &base->ns.address.ga, offset,
                  ( flags & SY_DATA_INIT ) != 0 );
 #else
-    GblVarReloc( &ste_ptr->ns.reloc_chain, &base->ns.address, offset );
+    GblVarReloc( &ste_ptr->ns.reloc_chain.gr, &base->ns.address.ga, offset );
 #if _TARGET == _8086
     // we only have 64kb segments to work with.
     PackGblData( size_alloc );

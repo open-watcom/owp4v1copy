@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Generate subscript code.
 *
 ****************************************************************************/
 
-
-//
-// GSUBSCR      : Generate subscript code
-//
 
 #include "ftnstd.h"
 #include "global.h"
@@ -142,7 +137,7 @@ extern  void    GEndSubScr( itnode *itptr ) {
     case TY_STRUCTURE:
         if( !is_field ) {
             EmitOp( STRUCT_SUBSCR );
-            SymRef( itptr->sym_ptr->ns.xt.record );
+            SymRef( itptr->sym_ptr->ns.xt.sym_record );
             // indicate that RCB is on the stack
             SetOpn( itptr, OPN_SAFE );
         }
