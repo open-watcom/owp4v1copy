@@ -95,14 +95,11 @@ restricts the number of significant characters in external
 .ix identifier external 'significant characters'
 .ix linker 'external identifer' 'significant characters'
 identifiers to 40 characters, and
-by default, does
-.us not
-distinguish between identifiers
-that differ only in the
+by default, distinguishes between identifiers that differ only in the
 .ix 'case sensitive'
 .ix 'linker' 'case sensitive'
 case of the letters. An option may be used to
-force the linker to respect case differences.
+force the linker to ignore case differences.
 .shade end
 ..do end
 ..if '&target' eq 'PC 370' ..th ..do begin
