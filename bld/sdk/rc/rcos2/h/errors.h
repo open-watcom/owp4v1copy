@@ -42,13 +42,13 @@
 
     #ifdef UNIX
         // JCS - With gcc, angle brackets indicates a system include file so an
-        //  rcmsg.h file in this directory will not be found
-        #include "rcmsg.h"
+        //  rcmsg.gh file in this directory will not be found
+        #include "rcmsg.gh"
     #else
         // DRW - rcmsg is included with angle brackets because when this file is
-        //      included by the linker it want to use the rcmsg.h from the include
+        //      included by the linker it want to use the rcmsg.gh from the include
         //      path not the one in this directory
-        #include <rcmsg.h>
+        #include <rcmsg.gh>
     #endif
 
 #endif

@@ -91,9 +91,9 @@ inc_dirs = .;$(wrc2_dir)\h;$(wres_dir)\h;$(watcom_dir)\h;$(cpp_dir);$(trmem_dir)
 # explicit rules
 
 !ifeq sys_dll 1
-$(NAME).dll : $(NAME).res $(objs) $(WRES_LIB)
+$(NAME).dll : $(NAME).res rcmsg.gh $(objs) $(WRES_LIB)
 !else
-$(NAME).exe : $(NAME).res $(objs) $(WRES_LIB)
+$(NAME).exe : $(NAME).res rcmsg.gh $(objs) $(WRES_LIB)
 !endif
         $(linker) $(lflags) name $(name) file { $(objs) }
         #e:\lang\binnt\wlink $(lflags) name $(name) file { $(objs) }
@@ -115,33 +115,28 @@ ytab.c ytab.gh : rc.y $(wrc2_dir)\y\yydriver.c rcmem.h
         @del ytab.h
         @del ytab.c
 
-weights1.gh keyword1.gh : rc1.key
-        $(bld_cl) $(fe_misc_dir)\c\findhash.c $(wcl_util_opts)
-        findhash $[@ >nul
-        del findhash.*
-        cp keywords.gh $(wrc2_dir)/h/keyword1.gh
-        cp weights.gh $(wrc2_dir)/h/weights1.gh
-        @del keywords.gh
-        @del weights.gh
+./findhash.exe: $(fe_misc_dir)/c/findhash.c
+        $(bld_cl) $(wcl_util_opts) $<
 
-weights2.gh keyword2.gh : rc2.key
-        $(bld_cl) $(fe_misc_dir)\c\findhash.c $(wcl_util_opts)
-        findhash $[@ >nul
-        del findhash.*
-        cp keywords.gh $(wrc2_dir)/h/keyword2.gh
-        cp weights.gh $(wrc2_dir)/h/weights2.gh
-        @del keywords.gh
-        @del weights.gh
+weights1.gh keyword1.gh : rc1.key ./findhash.exe
+        $]@ -q $[@
+        @cp keywords.gh keyword1.gh
+        @cp weights.gh weights1.gh
+        @rm -f keywords.gh
+        @rm -f weights.gh
 
-$(NAME).res : $(wrc2_dir)\h\rcmsg.h usage.rc usagej.rc $(wrc2_dir)\rc.rc
-        $(rc) -bt=windows -r $(wrc2_dir)\rc.rc -fo=$(NAME).res
+weights2.gh keyword2.gh : rc2.key ./findhash.exe
+        $]@ -q $[@
+        @cp keywords.gh keyword2.gh
+        @cp weights.gh weights2.gh
+        @rm -f keywords.gh
+        @rm -f weights.gh
 
-$(wrc2_dir)\h\rcmsg.h : $(wrc2_dir)\h\rc.msg
-#        cp $[@ rc.msg
-        $(vi) -s $(sdk_dir)\misc\msgtoh.vi -p"$^@" $[@
-#        del rc.msg
-#        copy tmp.h $(wrc2_dir)\h\rcmsg.h
-#        del tmp.h
+rcmsg.gh : ../h/rc.msg
+        $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
+
+$(name).res : ../rc.rc .AUTODEPEND
+        $(rc_aui) -ad $[@ -fo=$^@
 
 usage.rc : $(wrc2_dir)/usage.sp
         $(bld_bin)\wsplice -kENGLISH -kIS_RC -k$(host_OS) $(splice_opts) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" ../usage.sp usage.rc
