@@ -295,6 +295,10 @@ void AsmSymFini()
     FreeAliasQueue();
     FreeLnameQueue();
 
+#if defined( _WASM_ ) && defined( DEBUG_OUT )
+    DumpASym();
+#endif
+
     /* now free the symbol table */
     for( i = 0; i < HASH_TABLE_SIZE; i++ ) {
         struct asm_sym  *next;
@@ -326,3 +330,123 @@ void AsmSymFini()
     }
 #endif
 }
+
+#if defined( _WASM_ ) && defined( DEBUG_OUT )
+
+static void DumpSymbol( struct asm_sym *sym )
+{
+    dir_node    *dir;
+    char        *type;
+    char        value[512];
+
+    dir = (dir_node *)sym;
+    *value = 0;
+    switch( sym->state ) {
+    case SYM_SEG:
+        type = "SEGMENT";
+//        dir->e.seginfo->lname_idx = 0;
+//        dir->e.seginfo->grpidx = 0;
+//        dir->e.seginfo->segrec = NULL;
+        break;
+    case SYM_GRP:
+        type = "GROUP";
+//        dir->e.grpinfo = AsmAlloc( sizeof( grp_info ) );
+//        dir->e.grpinfo->idx = grpdefidx;
+//        dir->e.grpinfo->seglist = NULL;
+//        dir->e.grpinfo->numseg = 0;
+//        dir->e.grpinfo->lname_idx = 0;
+        break;
+    case SYM_EXTERNAL:
+        type = "EXTERNAL";
+//        dir->e.extinfo = AsmAlloc( sizeof( ext_info ) );
+//        dir->e.extinfo->idx = ++extdefidx;
+//        dir->e.extinfo->use32 = Use32;
+//        dir->e.extinfo->comm = 0;
+        break;
+//    case TAB_COMM:
+//        sym->state = SYM_EXTERNAL;
+//        dir->e.comminfo = AsmAlloc( sizeof( comm_info ) );
+//        dir->e.comminfo->idx = ++extdefidx;
+//        dir->e.comminfo->use32 = Use32;
+//        dir->e.comminfo->comm = 1;
+//        break;
+    case SYM_CONST:
+        type = "CONSTANT";
+//        dir->e.constinfo = AsmAlloc( sizeof( const_info ) );
+//        dir->e.constinfo->data = NULL;
+//        dir->e.constinfo->count = 0;
+        break;
+    case SYM_PROC:
+        type = "PROCEDURE";
+//        dir->e.procinfo = AsmAlloc( sizeof( proc_info ) );
+//        dir->e.procinfo->regslist = NULL;
+//        dir->e.procinfo->paralist = NULL;
+//        dir->e.procinfo->locallist = NULL;
+        break;
+    case SYM_MACRO:
+        type = "MACRO";
+//        dir->e.macroinfo = AsmAlloc( sizeof( macro_info ) );
+//        dir->e.macroinfo->parmlist = NULL;
+//        dir->e.macroinfo->data = NULL;
+//        dir->e.macroinfo->filename = NULL;
+//        dir->e.macroinfo->start_line = LineNumber;
+        break;
+    case SYM_CLASS_LNAME:
+        type = "CLASS";
+        break;
+    case SYM_LNAME:
+        type = "LNAME";
+//        dir->e.lnameinfo = AsmAlloc( sizeof( lname_info ) );
+//        dir->e.lnameinfo->idx = ++LnamesIdx;
+        break;
+//    case TAB_PUB:
+//        sym->public = TRUE;
+//        return;
+//    case TAB_GLOBAL:
+//        break;
+    case SYM_STRUCT:
+        type = "STRUCTURE";
+//        dir->e.structinfo = AsmAlloc( sizeof( struct_info ) );
+//        dir->e.structinfo->size = 0;
+//        dir->e.structinfo->alignment = 0;
+//        dir->e.structinfo->head = NULL;
+//        dir->e.structinfo->tail = NULL;
+        break;
+    case SYM_STRUCT_FIELD:
+        type = "STRUCTURE FIELD";
+        break;
+    case SYM_LIB:
+        type = "LIBRARY";
+        break;
+    case SYM_UNDEFINED:
+        type = "UNDEFINED";
+        break;
+    case SYM_INTERNAL:
+        type = "INTERNAL";
+        break;
+    default:
+        type = "UNKNOWN";
+        break;
+    }
+    DoDebugMsg( "%-30s\t%s\t%8X\t%s\n", sym->name, type, sym->offset, value );
+}
+
+void DumpASym( void )
+{
+    struct asm_sym      *sym;
+    unsigned            i;
+
+    DoDebugMsg( "\n" );
+    for( i = 0; i < HASH_TABLE_SIZE; i++ ) {
+        struct asm_sym  *next;
+        next = sym_table[i];
+        for( ;; ) {
+            sym = next;
+            if( sym == NULL ) break;
+            next = sym->next;
+            DumpSymbol( sym );
+        }
+    }
+}
+
+#endif

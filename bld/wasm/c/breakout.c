@@ -214,19 +214,19 @@ int directive( int i, long direct )
     case T_EQU2:    // =
         /* expand any constants and simplify any expressions */
 //        if( Parse_Pass == PASS_1 ) {
-            ExpandTheWorld( 0, FALSE, TRUE );
+            ExpandTheConstant( 0, FALSE, TRUE );
 //        }
         break;
     case T_EQU:     // EQU
         /* expand any constants and simplify any expressions */
 //        if( Parse_Pass == PASS_1 ) {
-            ExpandTheWorld( 0, FALSE, TRUE );
+            ExpandTheConstant( 0, FALSE, TRUE );
 //        }
         break;
     case T_TEXTEQU: // TEXTEQU
         /* expand any constants and simplify any expressions */
 //        if( Parse_Pass == PASS_1 ) {
-//            ExpandTheWorld( 0, FALSE, TRUE );
+            ExpandTheConstant( 0, FALSE, TRUE );
 //        }
         break;
     case T_NAME:

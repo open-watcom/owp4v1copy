@@ -8,6 +8,7 @@ datamix1 &
 datamix2 &
 extprocf &
 extprocn &
+indirect &
 jmpimpl &
 jmpshrt &
 lea &
@@ -31,7 +32,6 @@ testequ &
 tst1
 
 dev_objs = &
-indirect &
 irpexitm
 
 !include ../test.mif

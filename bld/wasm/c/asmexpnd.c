@@ -442,6 +442,21 @@ int ExpandTheWorld( int start_pos, bool early_only, bool flag_msg )
     return( NOT_ERROR );
 }
 
+int ExpandTheConstant( int start_pos, bool early_only, bool flag_msg )
+/******************************************************************/
+{
+    if( ExpandAllConsts( start_pos, early_only ) == ERROR ) return( ERROR );
+    if( early_only == FALSE ) {
+        int    val;
+
+        val = EvalConstant( Token_Count, start_pos + 2, Token_Count, flag_msg );
+        if( val == ERROR )
+            return( ERROR );
+        Token_Count = val;
+    }
+    return( NOT_ERROR );
+}
+
 #else
 
 extern int      EvalExpr( int, int, int, bool );

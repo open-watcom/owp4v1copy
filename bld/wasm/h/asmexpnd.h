@@ -33,7 +33,6 @@
 
 #ifdef _WASM_
 
-extern int ExpandTheWorld( int start_pos, bool early_only, bool flag_msg );
 extern int ExpandAllConsts( int start_pos, bool early_only );
 extern int ExpandProcString( int index );
 extern int ExpandSymbol( int i, bool early_only );
@@ -43,8 +42,8 @@ extern int StoreConstant( char *name, char *value, bool redefine );
 extern void MakeConstantUnderscored( int token );
 #define STRING_EXPANDED (NOT_ERROR+1)
 
-#else
-
-extern int ExpandTheWorld( int start_pos, bool early_only, bool flag_msg );
+extern int ExpandTheConstant( int start_pos, bool early_only, bool flag_msg );
 
 #endif
+
+extern int ExpandTheWorld( int start_pos, bool early_only, bool flag_msg );

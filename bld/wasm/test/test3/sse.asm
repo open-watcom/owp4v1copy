@@ -327,7 +327,7 @@
 .data
 
 L$1 label oword
-;dataq dq 0
+    dq 0
 L$2 dd 0
 L$3 dw 0
 
