@@ -49,7 +49,8 @@ OBJTIME = fcbems.o fcbxms.o fcbdisk.o fcbxmem.o \
         match.o cut.o opmove.o \
         srcgen.o fmatch.o \
         status.o expr.o op.o \
-        lang.o sstyle.o sstyle_f.o sstyle_c.o sstyle_h.o rcs.o
+	lang.o sstyle.o sstyle_f.o sstyle_c.o \
+	sstyle_h.o sstyle_g.o sstyle_m.o rcs.o
 
 OBJINIT = 		\
 	init.o		\

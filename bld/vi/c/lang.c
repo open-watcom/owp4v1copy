@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Processing of .dat files used for syntax highlighting.
 *
 ****************************************************************************/
 
@@ -50,8 +49,10 @@ static lang_info    langInfo[ LANG_MAX ] = {
     { NULL,        0,          0,    NULL },  // Perl         8
     { NULL,        0,          0,    NULL },  // HTML         9
     { NULL,        0,          0,    NULL },  // WML          10
-    { NULL,        0,          0,    NULL },  // DBTest       11
-    { NULL,        0,          0,    NULL }   // user-defined 12
+    { NULL,        0,          0,    NULL },  // GML          11
+    { NULL,        0,          0,    NULL },  // DBTest       12
+    { NULL,        0,          0,    NULL },  // Makefile     13
+    { NULL,        0,          0,    NULL }   // user-defined 14
 };
 
 /*
@@ -174,7 +175,7 @@ void LangInit( int newLanguage )
     char        *buff;
     char        *fname[] = { NULL, "c.dat", "cpp.dat", "fortran.dat", "java.dat", "sql.dat",
                             "bat.dat", "basic.dat", "perl.dat", "html.dat", "wml.dat",
-                            "dbtest.dat", "user.dat" };
+                            "gml.dat", "dbtest.dat", "mif.dat", "user.dat" };
 
     assert( CurrentInfo != NULL );
     CurrentInfo->Language = newLanguage;

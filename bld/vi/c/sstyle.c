@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Syntax highlighting control module.
 *
 ****************************************************************************/
 
@@ -42,6 +41,8 @@
 #include "sstyle_c.h"
 #include "sstyle_f.h"
 #include "sstyle_h.h"
+#include "sstyle_g.h"
+#include "sstyle_m.h"
 
 
 /*----- EXPORTS -----*/
@@ -97,6 +98,12 @@ static void getNextBlock( ss_block *ss_new, char *text, int text_col,
         case LANG_HTML:
         case LANG_WML:
             GetHTMLBlock( ss_new, text + text_col, text_col );
+            break;
+        case LANG_GML:
+            GetGMLBlock( ss_new, text + text_col, text_col );
+            break;
+        case LANG_MAKEFILE:
+            GetMkBlock( ss_new, text + text_col, text_col );
             break;
         case LANG_FORTRAN:
             GetFORTRANBlock( ss_new, text + text_col, text_col );
@@ -333,6 +340,12 @@ void SSDifBlock( ss_block *ss_old, char *text, int start_col,
         case LANG_WML:
             InitHTMLLine( text );
             break;
+        case LANG_GML:
+            InitGMLLine( text );
+            break;
+        case LANG_MAKEFILE:
+            InitMkLine( text );
+            break;
     }
     ss_inc = ss_old;
     text_col = 0;
@@ -408,6 +421,12 @@ bool SSKillsFlags( char ch )
         case LANG_WML:
             if( ch == '<' || ch == '>' ) return( TRUE );
             break;
+        case LANG_GML:
+            if( ch == ':' || ch == '.' ) return( TRUE );
+            break;
+        case LANG_MAKEFILE:
+            if( ch == '!' || ch == '$' || ch == '#' ) return( TRUE );
+            break;
         }
     }
     return( FALSE );
@@ -435,6 +454,12 @@ void SSInitLanguageFlags( linenum line_no )
             case LANG_WML:
                 InitHTMLFlags( line_no );
                 break;
+            case LANG_GML:
+                InitGMLFlags( line_no );
+                break;
+            case LANG_MAKEFILE:
+                InitMkFlags( line_no );
+                break;
         }
     }
 }
@@ -459,7 +484,13 @@ void SSInitLanguageFlagsGivenValues( ss_flags *flags )
                 break;
             case LANG_HTML:
             case LANG_WML:
-                InitHTMLFlagsGivenValues( &( flags->f ) );
+                InitHTMLFlagsGivenValues( &( flags->h ) );
+                break;
+            case LANG_GML:
+                InitGMLFlagsGivenValues( &( flags->g ) );
+                break;
+            case LANG_MAKEFILE:
+                InitMkFlagsGivenValues( &( flags->m ) );
                 break;
         }
     }
@@ -485,7 +516,13 @@ void SSGetLanguageFlags( ss_flags *flags )
                 break;
             case LANG_HTML:
             case LANG_WML:
-                GetHTMLFlags( &( flags->f ) );
+                GetHTMLFlags( &( flags->h ) );
+                break;
+            case LANG_GML:
+                GetGMLFlags( &( flags->g ) );
+                break;
+            case LANG_MAKEFILE:
+                GetMkFlags( &( flags->m ) );
                 break;
         }
     }

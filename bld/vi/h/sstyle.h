@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Syntax highlighting interface.
 *
 ****************************************************************************/
 
@@ -99,11 +98,27 @@ typedef struct ss_flags_h {
     char spare:4;
 } ss_flags_h;
 
+typedef struct ss_flags_g {
+    char inGMLComment:1;
+    char inGMLKeyword:1;
+    char inAltGMLKeyword:1;
+    char inString:1;
+    char spare:4;
+} ss_flags_g;
+
+typedef struct ss_flags_m {
+    char inMkComment:1;
+    char inMkKeyword:1;
+    char inMacro:1;
+    char spare:5;
+} ss_flags_m;
 
 typedef union ss_flags {
     ss_flags_c  c;
     ss_flags_f  f;
     ss_flags_h  h;
+    ss_flags_g  g;
+    ss_flags_m  m;
 } ss_flags;
 
 /*----- EXPORTS -----*/
@@ -118,7 +133,7 @@ bool        SSKillsFlags( char );
 void        SSDifBlock( ss_block *, char *, int, line *, linenum, int * );
 ss_block    *SSNewBlock( void );
 void        SSKillBlock( ss_block * );
-int     SSGetStyle( int, int );
+int         SSGetStyle( int, int );
 void        SSInitBeforeConfig( void );
 void        SSInitAfterConfig( void );
 void        SSFini( void );

@@ -24,13 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  HTML syntax highlighting function prototypes.
+* Description:  (W)GML syntax highlighting function prototypes.
 *
 ****************************************************************************/
 
 
-void GetHTMLBlock( ss_block *, char *, int );
-void InitHTMLFlags( linenum );
-void GetHTMLFlags( ss_flags_h * );
-void InitHTMLFlagsGivenValues( ss_flags_h * );
-void InitHTMLLine( char * );
+void GetGMLBlock( ss_block *, char *, int );
+void InitGMLFlags( linenum );
+void GetGMLFlags( ss_flags_g * );
+void InitGMLFlagsGivenValues( ss_flags_g * );
+void InitGMLLine( char * );
