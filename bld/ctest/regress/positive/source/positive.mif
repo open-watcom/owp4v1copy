@@ -78,6 +78,7 @@ positive_tests = &
     asm04.$(ext) &
     asm05.$(ext) &
     asm06.$(ext) &
+    asm07.$(ext) &
     based02.$(ext) &
     bf01.$(ext) &
     bf02.$(ext) &
