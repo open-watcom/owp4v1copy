@@ -84,6 +84,7 @@ static struct dbg_seg_names DwarfSegNames[DW_DEBUG_MAX] = {
     { ".debug_loc",   "DWARF" },
     { ".debug_abbrev",   "DWARF" },
     { ".debug_macinfo",   "DWARF" },
+    { ".debug_str",   "DWARF" },
     { ".WATCOM_references", "DWARF" }
 };
 
