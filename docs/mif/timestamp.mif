@@ -127,7 +127,7 @@ hlpmix_objs =
 !include books.mif
 
 all : .SYMBOLIC
- timestmp $(hbook).tim $(book_incs)
+ @timestmp $(hbook).tim $(book_incs)
 
 clean :
  %null

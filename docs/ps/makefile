@@ -7,7 +7,7 @@ dotarget=ps
 !include books.mif
 
 all : .SYMBOLIC
-#	@for %b in ($(books)) do @wmake -d -f ..\mif\timestamp.mif hbook=%b dotarget=$(dotarget)
+#	@for %b in ($(books)) do @wmake -h -f ..\mif\timestamp.mif hbook=%b dotarget=$(dotarget)
 !ifdef hbook
 	@wmake -h -f ..\mif\makebook.mif hbook=$(hbook) dotarget=$(dotarget)
 !else
