@@ -1,9 +1,9 @@
-#pmake: cpu_axp os_nt
+#pmake: cpu_axp os_nt target_axp
 
 host_os  = nt
 host_cpu = axp
+target_cpu = axp
 
-cpu = alpha
 inline_as = 1
 test_inline_as = 1
 

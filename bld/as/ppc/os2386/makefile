@@ -2,7 +2,6 @@
 
 host_os  = os2
 host_cpu = 386
-
-cpu = ppc
+target_cpu = ppc
 
 !include $(as_dir)/mif/master.mif

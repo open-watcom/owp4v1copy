@@ -1,20 +1,18 @@
-!ifeq cpu ppc
-as_cpu          = AS_PPC
-as_prog_suffix  = ppc
-!else   # alpha
-as_cpu          = AS_ALPHA
-as_prog_suffix  = axp
-!endif
-
-proj_name = was$(as_prog_suffix)
+proj_name = was$(target_cpu)
 name = $(proj_name)
+
+!ifeq target_cpu ppc
+as_cpu = AS_PPC
+!else   # target_cpu axp
+as_cpu = AS_ALPHA
+!endif
 
 .extensions: .rc .y .re .gh .msg
 
-.c: $(as_dir)/$(cpu)/c;$(as_dir)/c;$(trmem_dir);$(cpp_dir)
-.h: $(as_dir)/$(cpu)/h;$(as_dir)/h;$(trmem_dir);$(cpp_dir)
-.y: $(as_dir)/$(cpu)/y;$(as_dir)/y
-.re: $(as_dir)/$(cpu)/y;$(as_dir)/y
+.c: $(as_dir)/$(target_cpu)/c;$(as_dir)/c;$(trmem_dir);$(cpp_dir)
+.h: $(as_dir)/$(target_cpu)/h;$(as_dir)/h;$(trmem_dir);$(cpp_dir)
+.y: $(as_dir)/$(target_cpu)/y;$(as_dir)/y
+.re: $(as_dir)/$(target_cpu)/y;$(as_dir)/y
 .rc: $(as_dir)/h
 .gh: .
 .msg: $(as_dir)/h
@@ -104,7 +102,7 @@ extra_l_flags           = option map
 extra_l_flags           += library { $(libs) }
 !endif
 
-inc_dirs = $(as_dir)/$(cpu)/h;$(as_dir)/h;$(owl_dir)/h;$(cpp_dir);$(watcom_dir)/h;$(trmem_dir)
+inc_dirs = $(as_dir)/$(target_cpu)/h;$(as_dir)/h;$(owl_dir)/h;$(cpp_dir);$(watcom_dir)/h;$(trmem_dir)
 
 .before:
         @set include=$(inc_path)
@@ -115,8 +113,8 @@ as_comm_objs    = $(yacc_out_c)$(obj) &
                   asopernd$(obj) &
                   asmem$(obj) &
                   asutils$(obj) &
-                  $(cpu)fmt$(obj) &
-                  $(cpu)ins$(obj) &
+                  $(target_cpu)fmt$(obj) &
+                  $(target_cpu)ins$(obj) &
                   asregs$(obj) &
                   assymbol$(obj) &
                   asdrectv$(obj) &
@@ -150,8 +148,8 @@ asi_test_objs   = asitest$(obj) trmemcvr$(obj)
 asi_test_objs   += trmem$(obj)
 !endif
 
-asi_lib     = $(as_dir)/$(cpu)/inline/osi$(host_cpu)/asinline.lib
-asi_lib_j   = $(as_dir)/$(cpu)/inline/osi$(host_cpu)/asinlinj.lib
+asi_lib     = $(as_dir)/$(target_cpu)/inline/osi$(host_cpu)/asinline.lib
+asi_lib_j   = $(as_dir)/$(target_cpu)/inline/osi$(host_cpu)/asinlinj.lib
 !ifdef test_inline_as
 asi_test_name = asinline
 
@@ -159,9 +157,9 @@ $(asi_test_name)$(exe) : $(asi_test_objs) $(asi_lib)
         $(linker) $(lflags) name $@ file { $(asi_test_objs) } lib $(asi_lib)
 
 $(asi_lib) :
-        cd $(as_dir)\$(cpu)\inline\osi$(host_cpu)
+        cd $(as_dir)\$(target_cpu)\inline\osi$(host_cpu)
         wmake -h
-        cd $(as_dir)\$(cpu)\inline\osi$(host_cpu)\test
+        cd $(as_dir)\$(target_cpu)\inline\osi$(host_cpu)\test
 !endif
 
 !ifdef asi_build_lib

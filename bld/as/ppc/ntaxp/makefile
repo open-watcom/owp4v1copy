@@ -2,7 +2,6 @@
 
 host_os  = nt
 host_cpu = axp
-
-cpu = ppc
+target_cpu = ppc
 
 !include $(as_dir)/mif/master.mif

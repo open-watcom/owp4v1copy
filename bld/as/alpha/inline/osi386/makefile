@@ -2,8 +2,8 @@
 
 host_os  = osi
 host_cpu = 386
+target_cpu = axp
 
-cpu = alpha
 inline_as = 1
 asi_build_lib = 1
 
