@@ -430,9 +430,13 @@ extern  instruction     *rSPLITCMP( instruction *ins ) {
         break;
     }
     if( high != NULL ) {
-        if( not_equal != NULL ) {
-            DoNothing( not_equal );     /* don't need to redo compare,*/
-        }                               /* just want another conditional jump*/
+/*
+ * 2005-04-06 RomanT (bug #407)
+ * I removed calls do DoNothing(), it seems ok, extra jumps are perfectly
+ * optimized out in other places of compiler. Calling DoNothing() on chain
+ * of conditions to reuse existing CC flags is ugly and causes unpredictable
+ * logical faults in other places.
+ */
         DupSeg( ins, high );
         PrefixIns( ins, high );
     } else {

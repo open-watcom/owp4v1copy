@@ -520,6 +520,14 @@ extern  instruction     *rSPLIT8CMP( instruction *ins ) {
 
 /*   Used to split 8 byte compare */
 
+/*
+ * 2005-04-06 RomanT (bug #407)
+ * I removed calls do DoNothing(), it seems ok, extra jumps are perfectly
+ * optimized out in other places of compiler. Calling DoNothing() on chain
+ * of conditions to reuse existing CC flags is ugly and causes unpredictable
+ * logical faults in other places.
+ */
+
     eight_byte_name     left;
     eight_byte_name     rite;
     byte                true_idx;
@@ -562,17 +570,14 @@ extern  instruction     *rSPLIT8CMP( instruction *ins ) {
                                         true_idx, NO_JUMP, high_class );
         new[++i] = MakeCondition( OP_CMP_NOT_EQUAL, left.high, rite.high,
                                         false_idx, NO_JUMP, U2 );
-        DoNothing( new[i] );
         new[++i] = MakeCondition( OP_CMP_GREATER, left.mid_high, rite.mid_high,
                                         true_idx, NO_JUMP, U2 );
         new[++i] = MakeCondition( OP_CMP_NOT_EQUAL, left.mid_high, rite.mid_high,
                                         false_idx, NO_JUMP, U2 );
-        DoNothing( new[i] );
         new[++i] = MakeCondition( OP_CMP_GREATER, left.mid_low, rite.mid_low,
                                         true_idx, NO_JUMP, U2 );
         new[++i] = MakeCondition( OP_CMP_NOT_EQUAL, left.mid_low, rite.mid_low,
                                         false_idx, NO_JUMP, U2 );
-        DoNothing( new[i] );
         new[++i] = MakeCondition( ins->head.opcode, left.low, rite.low,
                                         true_idx, false_idx, U2 );
         break;
@@ -582,17 +587,14 @@ extern  instruction     *rSPLIT8CMP( instruction *ins ) {
                                         true_idx, NO_JUMP, high_class );
         new[++i] = MakeCondition( OP_CMP_NOT_EQUAL, left.high, rite.high,
                                         false_idx, NO_JUMP, U2 );
-        DoNothing( new[i] );
         new[++i] = MakeCondition( OP_CMP_LESS, left.mid_high, rite.mid_high,
                                         true_idx, NO_JUMP, U2 );
         new[++i] = MakeCondition( OP_CMP_NOT_EQUAL, left.mid_high, rite.mid_high,
                                         false_idx, NO_JUMP, U2 );
-        DoNothing( new[i] );
         new[++i] = MakeCondition( OP_CMP_LESS, left.mid_low, rite.mid_low,
                                         true_idx, NO_JUMP, U2 );
         new[++i] = MakeCondition( OP_CMP_NOT_EQUAL, left.mid_low, rite.mid_low,
                                         false_idx, NO_JUMP, U2 );
-        DoNothing( new[i] );
         new[++i] = MakeCondition( ins->head.opcode, left.low, rite.low,
                                         true_idx, false_idx, U2 );
         break;
