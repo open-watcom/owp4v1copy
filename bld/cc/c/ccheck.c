@@ -968,8 +968,11 @@ local int TypeCheck( TYPEPTR typ1, TYPEPTR typ2 )
     int                 retcode;
 
     pointer_type = 0;
-    mask = ~FLAG_NONE;                      /* 23-jun-89 */
-    if( TargetSwitches & BIG_DATA )  mask = ~FLAG_FAR;
+    /* "char *s" and "char s[]" differs only by FLAG_WAS_ARRAY, ignore it too */
+    if( TargetSwitches & BIG_DATA )
+        mask = ~(FLAG_FAR  | FLAG_WAS_ARRAY);
+    else
+        mask = ~(FLAG_NEAR | FLAG_WAS_ARRAY);
     for( ;; ) {
         typ1 = SkipTypeFluff( typ1 );
         typ2 = SkipTypeFluff( typ2 );
