@@ -29,12 +29,11 @@
 *
 ****************************************************************************/
 
-
 #include <string.h>
 
 #include "make.h"
 #include "massert.h"
-#include "memory.h"
+#include "mmemory.h"
 #include "mhash.h"
 
 

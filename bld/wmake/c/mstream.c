@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -46,7 +45,7 @@
 #include "msg.h"
 #include "mstream.h"
 #include "msuffix.h"
-#include "memory.h"
+#include "mmemory.h"
 
 /*
  * This file implements something I'll call a "stream".  A stream consists

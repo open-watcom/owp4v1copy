@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 #if defined( DEVELOPMENT ) || defined( INTERNAL_VERSION )
     /* just because this is compiled with -d2 - we get all the debugging
      * info we'll ever need this way :)
@@ -38,10 +37,10 @@
 #   include "make.h"
 #   include "massert.h"
 #   include "mcache.h"
-#   include "memory.h"
+#   include "mmemory.h"
 #   include "mexec.h"
 #   include "mhash.h"
-#   include "misc.h"
+#   include "mmisc.h"
 #   include "mrcmsg.h"
 #   include "msg.h"
 #   include "mparse.h"

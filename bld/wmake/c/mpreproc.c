@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 #include <io.h>
 #include <setjmp.h>
 #include <stdlib.h>
@@ -39,8 +38,8 @@
 #include "macros.h"
 #include "massert.h"
 #include "make.h"
-#include "memory.h"
-#include "misc.h"
+#include "mmemory.h"
+#include "mmisc.h"
 #include "mlex.h"
 #include "mparse.h"
 #include "mpreproc.h"

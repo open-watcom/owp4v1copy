@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 #if defined(__QNX__)
  #include <dirent.h>
 #else
@@ -41,8 +40,8 @@
 
 #include "make.h"
 #include "massert.h"
-#include "memory.h"
-#include "misc.h"
+#include "mmemory.h"
+#include "mmisc.h"
 #include "mpathgrp.h"
 #include "mtypes.h"
 

@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 #include <malloc.h>
 #include <stdlib.h>
 #include <string.h>
@@ -37,7 +36,7 @@
 #include "make.h"
 #include "massert.h"
 #include "mtypes.h"
-#include "memory.h"
+#include "mmemory.h"
 #include "mrcmsg.h"
 #include "msg.h"
 

@@ -29,15 +29,14 @@
 *
 ****************************************************************************/
 
-
 #include <stdlib.h>
 #include <string.h>
 
 #include "macros.h"
 #include "make.h"
 #include "massert.h"
-#include "memory.h"
-#include "misc.h"
+#include "mmemory.h"
+#include "mmisc.h"
 #include "mlex.h"
 #include "mpreproc.h"
 #include "mrcmsg.h"

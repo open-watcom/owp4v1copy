@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 /*
  *  This program can be used to rebuild the IsArray table in mglobs.c.
  *

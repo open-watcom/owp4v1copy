@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 #if !defined(__QNX__)
  #include <direct.h>
  #include <dos.h>
@@ -44,8 +43,8 @@
 #include "make.h"
 #include "massert.h"
 #include "mhash.h"
-#include "memory.h"
-#include "misc.h"
+#include "mmemory.h"
+#include "mmisc.h"
 #include "mpathgrp.h"
 #include "mrcmsg.h"
 #include "msg.h"

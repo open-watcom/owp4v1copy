@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 #if !defined(__QNX__)
  #include <direct.h>
 #endif
@@ -41,9 +40,9 @@
 #include "macros.h"
 #include "make.h"
 #include "massert.h"
-#include "memory.h"
+#include "mmemory.h"
 #include "mhash.h"
-#include "misc.h"
+#include "mmisc.h"
 #include "mlex.h"
 #include "mpathgrp.h"
 #include "mpreproc.h"

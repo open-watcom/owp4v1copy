@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -44,9 +43,9 @@
 #include "macros.h"
 #include "massert.h"
 #include "mcache.h"
-#include "memory.h"
+#include "mmemory.h"
 #include "mexec.h"
-#include "misc.h"
+#include "mmisc.h"
 #include "mlex.h"
 #include "mpathgrp.h"
 #include "mpreproc.h"

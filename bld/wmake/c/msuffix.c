@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -37,9 +36,9 @@
 #include "make.h"
 #include "massert.h"
 #include "mcache.h"
-#include "memory.h"
+#include "mmemory.h"
 #include "mhash.h"
-#include "misc.h"
+#include "mmisc.h"
 #include "mpathgrp.h"
 #include "mrcmsg.h"
 #include "msg.h"

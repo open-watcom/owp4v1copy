@@ -29,11 +29,10 @@
 *
 ****************************************************************************/
 
-
 #if !defined( __I86__ )
 #include "make.h"
 #include "mcache.h"
-#include "memory.h"
+#include "mmemory.h"
 #include "mrcmsg.h"
 #include "msg.h"
 #include "mupdate.h"

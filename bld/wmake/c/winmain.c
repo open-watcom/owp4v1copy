@@ -29,11 +29,9 @@
 *
 ****************************************************************************/
 
-
 #include <windows.h>
 #include <malloc.h>
 #include "wmakerc.h"
-
 
 #define TMPSLEN 256
 
@@ -79,7 +77,7 @@ char foo[64];
             WS_CHILD | WS_CAPTION | WS_HSCROLL | WS_VSCROLL | WS_BORDER, /* style */
             15,                     /* init. x pos */
             20,                     /* init. y pos */
-            3*(x/4),                    /* init. x size */
+            3*(x/4),                /* init. x size */
             y/2,                    /* init. y size */
             MainWindowHandle,       /* parent window */
             NULL,                   /* menu handle */
@@ -129,7 +127,7 @@ int WindowsInit( HANDLE inst, HANDLE previnst, int showcmd )
 
         MainWindowHandle = CreateWindow(
             _class,
-            "Watcom Make for Windows",
+            "Open Watcom Make for Windows",
             WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN, /* Window style.                      */
             0,                              /* Default horizontal position.       */
             0,                              /* Default vertical position.         */

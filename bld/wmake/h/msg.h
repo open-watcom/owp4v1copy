@@ -90,7 +90,7 @@ enum {
 /* banner */
 
 pick( BANNER = END_OF_RESOURCE_MSG,
-    banner1("Watcom Make",_WMAKE_VERSION_) "\n" banner2("1988") "\n" banner3 ),
+    banner1("Open Watcom Make",_WMAKE_VERSION_) "\n" banner2("1988") "\n" banner3 ),
 
 /*
  * All messages beyond here appear only under certain conditions in debugging

@@ -29,14 +29,13 @@
 *
 ****************************************************************************/
 
-
 #include <string.h>
 
 #define _IN_MVECSTR
 
 #include "make.h"
 #include "massert.h"
-#include "memory.h"
+#include "mmemory.h"
 #include "mrcmsg.h"
 #include "msg.h"
 #include "mvecstr.h"
