@@ -177,6 +177,13 @@ libs += $(mathr387_lib)
 !    endif
 !  endif
 
+# we use part of WOMP for generating object files
+# and DWARF for generating browsing info
+!ifdef __386__
+libs += $(womp_dir)\watfor\obj386\wompobj.lib
+libs += $(dwarf_dir)\dw\o\dwf.lib
+!endif
+
 
 !ifdef in_sa_library
 rt_h    = $(f77_dir)\lg86\rt\h;

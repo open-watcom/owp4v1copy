@@ -19,13 +19,6 @@
 
 obj_0 =
 
-# we use part of WOMP for generating object files
-# and DWARF for generating browsing info
-!ifdef __386__
-obj_0 += $(womp_dir)\watfor\obj386\wompobj.lib
-obj_0 += $(dwarf_dir)\dw\o\dwf.lib
-!endif
-
 # The following are SYSTEM INDEPENDENT files used BOTH at
 # compile-time and run-time.
 !ifdef __386__
