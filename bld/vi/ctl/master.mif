@@ -27,11 +27,15 @@ dummytarget: .SYMBOLIC
 ! endif
 !endif
 
-all: parsectl.exe
+all: parsectl.exe parsedyn.exe
 
 .c: ..
 
 parsectl.exe : parsectl.obj
+        wlink $(lflags) name $^@ op map,quiet file { $< }
+        @copy $^. $(bld_bin)
+
+parsedyn.exe : parsedyn.obj
         wlink $(lflags) name $^@ op map,quiet file { $< }
         @copy $^. $(bld_bin)
 
