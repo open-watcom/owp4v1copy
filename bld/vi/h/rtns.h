@@ -144,6 +144,8 @@ void PauseFileComplete( void );
 void FinishFileComplete( void );
 
 /* dosdir.c */
+struct dirent;
+
 int MyGetFileSize( char *, long * );
 void FormatFileEntry( direct_ent *file, char *res );
 int IsDirectory( char *name );
