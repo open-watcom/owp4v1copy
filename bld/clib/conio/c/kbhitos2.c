@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 kbhit() implementation.
 *
 ****************************************************************************/
 
@@ -50,11 +49,13 @@ _WCRTLINK int kbhit()
         KBDKEYINFO  info;
 
         if( _RWD_cbyte != 0 ) return( 1 );
+#ifdef DEFAULT_WINDOWING
         if( _WindowsKbhit != 0 ) {      // Default windowing
             LPWDATA     res;
             res = _WindowsIsWindowedHandle( (int) STDIN_FILENO );
             return( _WindowsKbhit( res ) );
         }
+#endif
         #if defined(__OS2_286__)
             if( _RWD_osmode == DOS_MODE ) {
                 return( _kbhit() );

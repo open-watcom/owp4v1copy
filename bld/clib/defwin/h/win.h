@@ -24,11 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Default windowing main include file.
 *
 ****************************************************************************/
 
+#ifndef DEFAULT_WINDOWING
+#define DEFAULT_WINDOWING
+#endif
 
 #include "variety.h"
 #ifdef __OS2__

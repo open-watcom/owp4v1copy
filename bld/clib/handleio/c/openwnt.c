@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Win32 implementation of open() and sopen().
 *
 ****************************************************************************/
 
@@ -100,6 +99,7 @@ static int __F_NAME(_sopen,__wsopen)( const CHAR_TYPE *name, int mode, int share
     security.lpSecurityDescriptor = NULL;
     security.bInheritHandle = mode&O_NOINHERIT ? FALSE : TRUE;
 
+#ifdef DEFAULT_WINDOWING
 #ifdef __WIDECHAR__
     if( _WindowsNewWindow != 0 && !_wcsicmp( name, L"con" ) )
 #else
@@ -114,6 +114,7 @@ static int __F_NAME(_sopen,__wsopen)( const CHAR_TYPE *name, int mode, int share
 
         iomode_flags = _ISTTY;
     } else {
+#endif
         if( mode & O_CREAT ) {
             perm = va_arg( args, int );
                 va_end( args );
@@ -172,7 +173,9 @@ static int __F_NAME(_sopen,__wsopen)( const CHAR_TYPE *name, int mode, int share
         if( isatty(hid) ) {
             iomode_flags = _ISTTY;
         }
+#ifdef DEFAULT_WINDOWING
     }
+#endif
 
     if( rwmode == O_RDWR )       iomode_flags |= _READ | _WRITE;
     else if( rwmode == O_RDONLY) iomode_flags |= _READ;

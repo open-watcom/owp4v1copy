@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Default windowing support related definitions.
+*               Only effective if DEFAULT_WINDOWING is defined.
 *
 ****************************************************************************/
 
@@ -37,9 +37,9 @@
 
 #if defined(__NT__) || defined(__WINDOWS__) || defined(__OS2__)
 
-#include <unistd.h>
+#ifdef DEFAULT_WINDOWING
 
-#define DEFAULT_WINDOWING
+#include <unistd.h>
 
 struct window_data;
 typedef struct window_data _WCI86FAR *LPWDATA;
@@ -62,5 +62,6 @@ extern int      (*_WindowsDestroyOnClose)( LPWDATA );
 extern int      (*_WindowsYieldControl)( void );
 extern int      (*_WindowsShutDown)( void );
 
+#endif
 #endif
 #endif

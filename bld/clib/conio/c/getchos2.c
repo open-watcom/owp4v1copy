@@ -52,11 +52,13 @@ _WCRTLINK int getch()
             _RWD_cbyte = 0;
             return( c );
         }
+#ifdef DEFAULT_WINDOWING
         if( _WindowsGetch != 0 ) {      // Default windowing
             LPWDATA     res;
             res = _WindowsIsWindowedHandle( (int) STDIN_FILENO );
             return( _WindowsGetch( res ) );
         }
+#endif
         #if defined(__OS2_286__)
             if( _RWD_osmode == DOS_MODE ) {
                 return( _dos( 8 ) );

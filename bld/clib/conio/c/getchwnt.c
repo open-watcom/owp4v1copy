@@ -24,14 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Win32 getch() implementation.
 *
 ****************************************************************************/
 
 
 #include "variety.h"
 #include <stdio.h>
+#include <unistd.h>
 #include <windows.h>
 #include "ntex.h"
 #include "rtdata.h"
@@ -102,11 +102,13 @@ _WCRTLINK int getch( void )
         _RWD_cbyte = 0;
         return( c );
     }
+#ifdef DEFAULT_WINDOWING
     if( _WindowsGetch != 0 ) {
         LPWDATA res;
         res = _WindowsIsWindowedHandle( (int) STDIN_FILENO );
         c = _WindowsGetch( res );
     } else {
+#endif
         _AccessFileH( STDIN_FILENO );
         h = __NTConsoleInput();
         GetConsoleMode( h, &mode );
@@ -114,6 +116,8 @@ _WCRTLINK int getch( void )
         c = do_getch( h );
         SetConsoleMode( h, mode );
         _ReleaseFileH( STDIN_FILENO );
+#ifdef DEFAULT_WINDOWING
     }
+#endif
     return( c );
 }

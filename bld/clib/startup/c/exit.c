@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of exit() and associated functions.
 *
 ****************************************************************************/
 
@@ -72,7 +71,6 @@ void    (*__FPE_handler_exit)() = _null_exit_rtn;
 #endif
 
 #if defined( __WINDOWS__ ) || defined( __WINDOWS_386__ ) || defined( __OS2__ ) || defined(__NT__)
-#define DEFAULT_WINDOWING
 extern  void            (*_WindowExitRtn)();
 #endif
 
