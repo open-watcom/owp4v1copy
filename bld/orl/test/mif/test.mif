@@ -31,4 +31,4 @@ test_objs       +=  trmem$(obj)
 !endif
 
 objread$(exe) : $(test_objs) $(orl_lib)
-        $(linker) $(lflags) name $@ file { $(test_objs) }
+        $(cl) $(clflags) $(test_objs) $(orl_lib) $(cl_libs)

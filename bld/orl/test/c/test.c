@@ -41,9 +41,11 @@
 
 #define MAX_SECS    255
 
+#ifdef __WATCOMC__
 extern int      getopt(int, char **, char *);
 extern int      optind;
 extern char     *optarg;
+#endif
 
 typedef struct _dump_options {
     int         header;
@@ -92,16 +94,22 @@ orl_return PrintSymbolInfo( orl_symbol_handle symbol )
     printf(" %4.4x ", ORLSymbolGetValue( symbol ) );
     switch( ORLSymbolGetBinding( symbol ) ) {
         case ORL_SYM_BINDING_NONE:
-            printf("n/a ");
+            printf( "n/a " );
             break;
         case ORL_SYM_BINDING_LOCAL:
-            printf("locl");
+            printf( "locl" );
             break;
         case ORL_SYM_BINDING_WEAK:
-            printf("weak");
+            printf( "weak" );
             break;
         case ORL_SYM_BINDING_GLOBAL:
-            printf("glbl");
+            printf( "glbl" );
+            break;
+        case ORL_SYM_BINDING_LAZY:
+            printf( "lazy" );
+            break;
+        case ORL_SYM_BINDING_ALIAS:
+            printf( "alis" );
             break;
     }
     printf(" ");
@@ -144,6 +152,7 @@ static char *relocTypes[] = {
     "WORD32",           // a direct ref to a 32-bit address
     "WORD32NB",         // a direct ref to a 32-bit address (no base added)
     "HALFHI",           // ref to high half of 32-bit address
+    "HALFHA",           // ref to high half of 32-bit address adjusted for signed low half
     "HALFLO",           // ref to low half of 32-bit address
     "PAIR",             // reloc connecting a HALF_HI and HALF_LO
     "JUMP",             // ref to the part of a 32-bit address valid for jump
@@ -158,6 +167,24 @@ static char *relocTypes[] = {
     "REL14",            // relative ref to a 14-bit address shifted 2
     "REL24",            // relative ref to a 24-bit address shifted 2
     "REL32",            // relative ref to a 32-bit address
+    "REL32NOA",         // relative ref to a 32-bit address without -4 adjustment
+    "TOCREL16",         // relative ref to a 16-bit offset from TOC base
+    "TOCREL14",         // relative ref to a 14-bit offset from TOC base shl 2
+    "TOCVREL16",        // like TOCREL16, data explicitly defined in .tocd
+    "TOCVREL14",        // like TOCREL14, data explicitly defined in .tocd
+    "GOT32",            // direct ref to 32-bit offset from GOT base
+    "GOT16",            // direct ref to 16-bit offset from GOT base
+    "GOT16HI",          // direct ref to hi 16 bits of offset from GOT base
+    "GOT16HA",          // ditto adjusted for signed low 16 bits
+    "GOT16LO",          // direct ref to lo 16 bits of offset from GOT base
+    "PLTREL24",         // relative ref to 24-bit offset from PLT base
+    "PLTREL32",         // relative ref to 32-bit offset from PLT base
+    "PLT32",            // direct ref to 32-bit offset from PLT base
+    "PLT16HI",          // direct ref to hi 16 bits of offset from PLT base
+    "PLT16HA",          // ditto adjusted for signed low 16 bits
+    "PLT16LO",          // direct ref to lo 16 bits of offset from PLT base
+    "IFGLUE",           // substitute TOC restore instruction iff symbol is glue code
+    "IMGLUE",           // symbol is glue code; VA is TOC restore instruction 
 };
 
 orl_return PrintRelocInfo( orl_reloc *reloc )
@@ -193,6 +220,7 @@ orl_return PrintSecInfo( orl_sec_handle o_shnd )
     int                         sep;
     int                         segname_printed = 0;
 
+    size = 0;   // just because gcc is a little retarded
     sectionFound = 1;
     if( dump.sections || dump.sec_contents ) {
         buf = ORLSecGetName( o_shnd );
@@ -413,8 +441,8 @@ void freeBuffList( void )
     }
 }
 
-void main( int argc, char *argv[] )
-/*********************************/
+int main( int argc, char *argv[] )
+/********************************/
 {
     orl_handle                  o_hnd;
     orl_file_handle             o_fhnd;
@@ -431,7 +459,7 @@ void main( int argc, char *argv[] )
 
     if( argc < 2 ) {
         printf("Usage:  objread [-ahrsSx] [-o<section>] <objfile>\n");
-        printf("Where <objfile> is a Coff or Elf object file\n");
+        printf("Where <objfile> is a COFF or ELF object file\n");
         printf("objread reads and dumps an object using ORL\n");
         printf("Options: -a     dumps all information (except hex dump)\n");
         printf("         -h     dumps file header information\n");
@@ -440,7 +468,7 @@ void main( int argc, char *argv[] )
         printf("         -S     dumps section information\n");
         printf("         -x     get hex dump of section content\n");
         printf("         -o     only scan <section> for info\n");
-        return;
+        return( 1 );
     }
     while ((c = getopt(argc, argv, "axhrsSo:")) != EOF) {
         switch (c) {
@@ -481,7 +509,7 @@ void main( int argc, char *argv[] )
     file = open( argv[optind], O_BINARY | O_RDONLY );
     if( file == -1 ) {
         printf("Error opening file.\n");
-        return;
+        return( 2 );
     }
     TRMemOpen();
     funcs.read = &objRead;
@@ -491,12 +519,12 @@ void main( int argc, char *argv[] )
     o_hnd = ORLInit( &funcs );
     if( o_hnd == NULL ) {
         printf("Got NULL orl_handle.\n");
-        return;
+        return( 2 );
     }
     type = ORLFileIdentify( o_hnd, (void *)file );
     if( type == ORL_UNRECOGNIZED_FORMAT ) {
         printf( "The object file is not in either ELF or COFF format." );
-        return;
+        return( 1 );
     }
     switch( type ) {
     case ORL_ELF:
@@ -513,7 +541,7 @@ void main( int argc, char *argv[] )
     o_fhnd = ORLFileInit( o_hnd, (void *)file, type );
     if( o_fhnd == NULL ) {
         printf("Got NULL orl_file_handle.\n");
-        return;
+        return( 2 );
     }
     if( dump.header ) {
         printf("File %s:\n", argv[optind] );
@@ -526,7 +554,7 @@ void main( int argc, char *argv[] )
             printf( "%s", machType[ machine_type ] );
         }
         file_type = ORLFileGetType( o_fhnd );
-        printf(" (", file_type );
+        printf( " (" );
         switch( file_type ) {
             case ORL_FILE_TYPE_NONE:
                 printf("file_type_none");
@@ -602,20 +630,20 @@ void main( int argc, char *argv[] )
     } else {
         if( ORLFileScan( o_fhnd, NULL, &PrintSecInfo ) != ORL_OKAY ) {
             printf("Error occured in scanning file.\n");
-            return;
+            return( 2 );
         }
     }
     if( ORLFileScan( o_fhnd, ".symtab", &PrintSymTable ) != ORL_OKAY ) {
         printf("Error occured in scanning file for symbol table\n");
-        return;
+        return( 2 );
     }
     if( ORLFileFini( o_fhnd ) != ORL_OKAY ) {
         printf("Error calling ORLFileFini.\n");
-        return;
+        return( 2 );
     }
     if( close( file ) == -1 ) {
         printf("Error closing file.\n");
-        return;
+        return( 2 );
     }
     if( ORLFini( o_hnd ) != ORL_OKAY ) {
         printf("Error calling ORLFini.\n");
@@ -625,4 +653,5 @@ void main( int argc, char *argv[] )
     TRMemPrtList();
     #endif
     TRMemClose();
+    return( 0 );
 }
