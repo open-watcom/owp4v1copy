@@ -109,7 +109,7 @@ libs =               &
         $(librarian) -b -c -n $@ $<
 
 .c.obj:
-        $(cc) $(cflags) -fo=.obj -i"$(inc_dirs)" $<
+        $(cc) $(cflags) -fpc -fo=.obj -i"$(inc_dirs)" $<
 
 $(libs):
 
