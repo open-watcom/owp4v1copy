@@ -242,4 +242,7 @@ sys/time.h : linux/sys_time.mh ../readonly.sp ../cpluspro.sp ../lnxkpack.sp ../p
 !include ../deps.mif
 
 clean: .SYMBOLIC
-      rm -f *.h sys/*.h win/*.h *.hpp common.cnv
+      rm -f *.h sys/*.h *.hpp common.cnv
+!ifeq system DOS
+      rm -f win/*.h
+!endif
