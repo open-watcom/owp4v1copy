@@ -30,15 +30,14 @@ VMM performance tuning enhancements.
 If your application has requirements beyond those provided by &dos4g,
 you may wish to acquire &dos4gprd Professional or DOS/4G from:
 .illust begin
-Tenberry Software, Inc.,
-220 No. Main St.,
-Natick, Massachusetts,
-U.S.A. 01760.
+Tenberry Software, Inc.
+PO Box 20050
+Fountain Hills, Arizona
+U.S.A  85269-0050
 
-Telephone:      (508)653-6006
-Facsimile:      (508)655-2753
-Internet:       dos4gw@ratsys.com
-CompuServe:     73667,1753
+Telephone:      1.480.767.8868
+Fax:            1.480.767.8709
+Internet:       info@tenberry.com
 .illust end
 .np
 Programs developed to use the restricted version of &dos4g which is
