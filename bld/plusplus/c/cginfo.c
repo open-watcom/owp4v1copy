@@ -242,17 +242,9 @@ static char *objectName(        // GET TARGET-DEPENDENT OBJECT NAME
     SYMBOL sym )                // - symbol or NULL
 {
     AUX_INFO *inf;              // - auxilary info
-    void *retn;                 // - return value
 
     inf = getLangInfo( sym );
-    if( inf->objname != NULL ) {
-        retn = CppMangleName( inf->objname, sym );
-    } else if( sym == NULL ) {
-        retn = "*_";
-    } else {
-        retn = CppMangleName( NULL, sym );
-    }
-    return retn;
+    return( CppMangleName( inf->objname, sym ) );
 }
 
 fe_attr FEAttr(                 // GET SYMBOL ATTRIBUTES
@@ -633,25 +625,13 @@ static AUX_INFO *getLangInfo(   // GET LANGUAGE INFO. FOR SYMBOL
     return( inf );
 }
 
-char *FEExtName(                   // RETURN THE SYMBOL'S External NAME
-    SYMBOL sym,
-    char  **pat_ret )              // pattern string
+char *FEExtName( SYMBOL sym )      // RETURN THE SYMBOL'S External NAME
 {
-    char *retn;               // - symbol's name
-    AUX_INFO *inf;              // - auxilary info
-
-    *pat_ret = "*";
     if( sym == NULL || sym->name == NULL ) {
-        retn = "!NULL!";
+        return( "!NULL!" );
     } else {
-        inf = getLangInfo( sym );
-        if( inf->objname != NULL ) {
-            retn = CppMangleName( inf->objname, sym );
-        } else {
-            retn = CppMangleName( NULL, sym );
-        }
+        return( objectName( sym ) );
     }
-    return( retn );
 }
 
 #if _INTEL_CPU

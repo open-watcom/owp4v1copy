@@ -142,10 +142,17 @@ static void pragmaInit(         // INITIALIZATION FOR PRAGMAS
                    | SPECIAL_STRUCT_RETURN
                   , "*" );
 
-    pragmaInitInfo( &StdcallInfo
+    if( CompFlags.use_stdcall_at_number ) {
+        pragmaInitInfo( &StdcallInfo
+                  , call_type
+                   | SPECIAL_STRUCT_RETURN
+                  , "_*@#" );
+    } else {
+        pragmaInitInfo( &StdcallInfo
                   , call_type
                    | SPECIAL_STRUCT_RETURN
                   , "_*" );
+    }
 
 #ifdef __OLD_STDCALL
     pragmaInitInfo( &OldStdcallInfo

@@ -832,6 +832,79 @@ static VOIDPTR NextLibrary( int index, aux_class request )
     return( (char *)index );
 }
 
+static int GetParmsSize( SYM_ENTRY sym )
+{
+    int         total_parm_size = 0;
+    int         parm_size;
+    TYPEPTR     fn_typ;
+    TYPEPTR     *parm;
+    TYPEPTR     typ;
+
+    fn_typ = sym.sym_type;
+    while( fn_typ->decl_type == TYPE_TYPEDEF )
+        fn_typ = fn_typ->object;
+    parm = fn_typ->u.parms;
+    if( parm != NULL ) {
+        for(; (typ = *parm); ++parm ) {
+            if( typ->decl_type == TYPE_DOT_DOT_DOT ) {
+                total_parm_size = -1;
+                break;
+            }
+
+            while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+            if( typ->decl_type == TYPE_VOID )
+                break;
+
+            parm_size = TypeSize( typ );
+            parm_size = (parm_size + sizeof(target_int) - 1)  &
+                            - sizeof(target_int);
+            total_parm_size += parm_size;
+        }
+    }
+    return( total_parm_size );
+}
+
+static int GetExtName( SYM_ENTRY sym, char *pattern, char *Buffer )
+{
+    char                 *src;
+    char                 *dst;
+
+    dst = Buffer;
+    for( ; *pattern != '\0'; pattern++ ) {
+        switch( *pattern ) {
+        case '*':
+            for( src = sym.name; *src != '\0'; ++src )
+                *dst++ = *src;
+            break;
+        case '!':
+            for( src = sym.name; *src != '\0'; ++src )
+                *dst++ = tolower( *src );
+            break;
+        case '^':
+            for( src = sym.name; *src != '\0'; ++src )
+                *dst++ = toupper( *src );
+            break;
+        case '#':
+            {
+                int     size;
+
+                size = GetParmsSize( sym );
+                itoa( size, dst, 10 );
+                dst += strlen( dst );
+            }
+            break;
+        case '\\':
+            pattern++;
+            // fall through
+        default:
+            *dst++ = *pattern;
+            break;
+        }
+    }    
+    *dst = '\0';
+    return( 0 );
+}
+
 #if _MACHINE == _PC
 /*
 //    NextImport
@@ -1088,12 +1161,11 @@ static VOIDPTR NextImport( int index, aux_class request )
 /*
 //    Return external name of symbol plus a pattern manipulator string
 */
-extern char *FEExtName( CGSYM_HANDLE sym_handle, char **pat_ret )
+extern char *FEExtName( CGSYM_HANDLE sym_handle )
 {
-    char *                pattern;
+    char                 *pattern;
     SYM_ENTRY            sym;
-    struct aux_info *    inf;
-    char *                name;
+    struct aux_info      *inf;
 
     inf = FindInfo( &sym, sym_handle );
 #ifdef __SEH__
@@ -1123,47 +1195,8 @@ extern char *FEExtName( CGSYM_HANDLE sym_handle, char **pat_ret )
 #ifdef __SEH__
     }       // close that else
 #endif
-    name = sym.name;
-    if( ((sym.flags & SYM_FUNCTION)&&(sym.attrib & FLAG_LANGUAGES) == LANG_STDCALL)
-        && CompFlags.use_stdcall_at_number)
-    {
-        int         total_parm_size = 0;
-        int         parm_size;
-        TYPEPTR     fn_typ;
-        TYPEPTR     *parm;
-        TYPEPTR     typ;
-
-        fn_typ = sym.sym_type;
-        while( fn_typ->decl_type == TYPE_TYPEDEF )
-            fn_typ = fn_typ->object;
-        parm = fn_typ->u.parms;
-        if( parm != NULL )
-        {
-            for(; (typ = *parm); ++parm )
-            {
-                if( typ->decl_type == TYPE_DOT_DOT_DOT )
-                {
-                    total_parm_size = -1;
-                    break;
-                }
-
-                while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
-                if ( typ->decl_type == TYPE_VOID ) break;
-
-                parm_size = TypeSize( typ );
-                parm_size = (parm_size + sizeof(target_int) - 1)  &
-                                - sizeof(target_int);
-                total_parm_size += parm_size;
-            }
-        }
-        if( total_parm_size != -1 )
-        {
-            sprintf( Buffer, "%s@%d", name, total_parm_size );
-            name = Buffer;
-        }
-    }
-    *pat_ret = pattern; // return pattern string
-    return( name );
+    GetExtName( sym, pattern, Buffer );
+    return( Buffer );
 }
 
 /*
@@ -1487,12 +1520,11 @@ static VOIDPTR NextImport( int index, aux_class request )
 /*
 //    Return external name of symbol plus a pattern manipulator string
 */
-extern char *FEExtName( CGSYM_HANDLE sym_handle, char **pat_ret )
+extern char *FEExtName( CGSYM_HANDLE sym_handle )
 {
-    char *                pattern;
+    char                 *pattern;
     SYM_ENTRY            sym;
-    struct aux_info *    inf;
-    char *                name;
+    struct aux_info      *inf;
 
     inf = FindInfo( &sym, sym_handle );
 #ifdef __SEH__
@@ -1518,9 +1550,8 @@ extern char *FEExtName( CGSYM_HANDLE sym_handle, char **pat_ret )
 #ifdef __SEH__
     }       // close that else
 #endif
-    name = sym.name;
-    *pat_ret = pattern; // return pattern string
-    return( name );
+    GetExtName( sym, pattern, Buffer );
+    return( Buffer );
 }
 
 /*

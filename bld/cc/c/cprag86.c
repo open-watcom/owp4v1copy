@@ -120,7 +120,11 @@ void PragmaInit()
                          // NO_STRUCT_REG_RETURNS |
                          // ROUTINE_RETURN;
                          SPECIAL_STRUCT_RETURN;
-    StdcallInfo.objname = CStrSave( "_*" );
+    if( CompFlags.use_stdcall_at_number ) {
+        StdcallInfo.objname = CStrSave( "_*@#" );
+    } else {
+        StdcallInfo.objname = CStrSave( "_*" );
+    }
     StdcallInfo.parms = (hw_reg_set *)CMemAlloc( sizeof( StackParms ) );
     memcpy( StdcallInfo.parms, StackParms, sizeof( StackParms ) );
     HW_CAsgn( StdcallInfo.returns, HW_EMPTY );

@@ -128,6 +128,9 @@ static uint BldObjString( aux_info *aux, char *name, uint len,
             }
             idx += i;
         } else {
+            if( *pattern == '\\' ) {
+                ++pattern;
+            }
             buff[idx] = *pattern;
             ++idx;
         }

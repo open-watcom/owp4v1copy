@@ -64,16 +64,13 @@ extern  void    DoOutObjectName( sym_handle sym,
                                 import_type kind ) {
 /*******************************************************************/
 
-    char        *src;
     char        *dst;
-    char        *end;
-    char        *pattern;
     char        buffer[MAX_OBJNAME_BUFF];
     char        *fe_name;
     unsigned    fe_len;
     unsigned    pref_len;
 
-    fe_name = FEExtName( sym, &pattern );
+    fe_name = FEExtName( sym );
     fe_len = Length( fe_name );;
     assert( fe_len < sizeof( buffer ) );
     dst = buffer;
@@ -93,41 +90,14 @@ extern  void    DoOutObjectName( sym_handle sym,
     default:
         pref_len = 0;
     }
-    if(( pref_len + fe_len ) >= MAX_OBJNAME_LEN ) {
+    assert( pref_len + fe_len < MAX_OBJNAME_LEN );
+    if( ( pref_len + fe_len ) >= MAX_OBJNAME_LEN ) {
         // we need to keep the prefix so truncate the objname down
-        fe_len -= pref_len;
+        fe_len = MAX_OBJNAME_LEN - pref_len - 1;
         fe_name[fe_len] = '\0';
     }
-    // NYI: check length before inserting into buff
-    for( src = pattern; *src != NULLCHAR; ++src ) {
-        switch( *src ) {
-        case '\\':
-            *dst++ = *++src;
-            break;
-        case '*':
-            dst = CopyStr( fe_name, dst );
-            break;
-        case '^':
-            end = CopyStr( fe_name, dst );
-            while( dst != end ) {
-                if( *dst >= 'a' && *dst <= 'z' ) *dst -= 'a' - 'A';
-                ++dst;
-            }
-            break;
-        case '!':
-            end = CopyStr( fe_name, dst );
-            while( dst != end ) {
-                if( *dst >= 'A' && *dst <= 'Z' ) *dst += 'a' - 'A';
-                ++dst;
-            }
-            break;
-        default:
-            *dst++ = *src;
-            break;
-        }
-    }
+    dst = CopyStr( fe_name, dst );
     *dst = NULLCHAR;
-    assert( Length( buffer ) < MAX_OBJNAME_LEN );
     outputter( buffer, data );
 }
 

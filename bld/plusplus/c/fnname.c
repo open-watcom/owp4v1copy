@@ -1029,28 +1029,17 @@ char *CppArrayDtorName(         // CREATE NAME FOR ARRAY DTOR
     return retMangling( save );
 }
 
-
-static char *cppPragmaMangle(   // HANDLE MANGLING REQUIRED FOR SYS-DEP PRAGMAS
-    char *name,                 // - current name
-    SYMBOL sym,                 // - symbol
-    void *pragma )              // - pragma
+static target_size_t GetParmsSize( SYMBOL sym )
 {
     TYPE fn_type;
     target_size_t size;
 
-    if( CompFlags.use_stdcall_at_number && AddParmSize( pragma ) ) {
-        fn_type = FunctionDeclarationType( sym->sym_type );
-        if( TypeParmSize( fn_type, &size ) ) {
-            DbgVerify( name != mangled_name.buf, "passed mangled name to cppPragmaMangle" );
-            VStrNull( &mangled_name );
-            appendStr( name );
-            appendChar( '@' );
-            appendInt( size );
-            name = mangled_name.buf;
-        }
-    }
-    return( name );
+    size = 0;
+    fn_type = FunctionDeclarationType( sym->sym_type );
+    TypeParmSize( fn_type, &size );
+    return( size );
 }
+
 
 char *CppNameTypeSig(           // NAME OF TYPE SIGNATURE
     TYPE type )                 // - the type
@@ -1254,19 +1243,6 @@ char *CppClassPathDebug(  //TRANSLATE INTERNAL NAME TO CLASS PREFIXED DEBUGGER N
     return( mangled_name.buf );
 }
 
-static char *backSlashCopy(     // DO BACKSLASH ESCAPE COPY
-    char *dst,                  // - target
-    char *src )                 // - source
-{
-    while( *src != '\0' ) {
-        if( *src == '*' || *src == '^' || *src == '!' ) {
-            *dst++ = '\\';
-        }
-        *dst++ = *src++;
-    }
-    return( dst );
-}
-
 static char *allowStrictReplacement( char *patbuff )
 {
     char *p;
@@ -1285,6 +1261,7 @@ static char *allowStrictReplacement( char *patbuff )
             case '*':
             case '^':
             case '!':
+            case '#':
                 return( NULL );
             }
         }
@@ -1293,36 +1270,34 @@ static char *allowStrictReplacement( char *patbuff )
     return( patbuff );
 }
 
+
 static char *objectName(        // DO CODEGEN NAME PROCESSING
     char *patbuff,              // - pattern
-    char *sym_name )            // - mangled name
+    char *sym_name,             // - mangled name
+    SYMBOL sym )                // - symbol
 {
     char        *src;
     char        *dst;
-    char        *end;
     unsigned    namelen;
     unsigned    length;
 
-    if( objNameBuff != NULL ) CMemFreePtr( &objNameBuff );
+    if( objNameBuff != NULL )
+        CMemFreePtr( &objNameBuff );
     namelen = strlen( sym_name );
     length = 1;
-    for( src = sym_name; *src != '\0'; ++src ) {
-        if( *src == '*' || *src == '^' || *src == '!' ) {
-            // add one for escape char '\'
-            namelen++;
-        }
-    }
     for( src = patbuff; *src != '\0'; ++src ) {
         switch( *src ) {
-        case '\\':
-            ++src;              // next character is taken literally
-            length += 2;        // keep the backslash (might be special char)
-            break;
         case '*':
         case '^':
         case '!':
             length += namelen;
             break;
+        case '#':
+            length += 20;
+            break;
+        case '\\':
+            ++src;              // next character is taken literally
+            // fall through
         default:
             ++length;
             break;
@@ -1331,31 +1306,34 @@ static char *objectName(        // DO CODEGEN NAME PROCESSING
     objNameBuff = CMemAlloc( length );
 
     dst = objNameBuff;
-    for( src = patbuff; *src != '\0'; ++src ) {
-        switch( *src ) {
-        case '\\':
-            *dst++ = '\\';
-            *dst++ = *++src;
-            break;
+    for( ; *patbuff != '\0'; ++patbuff ) {
+        switch( *patbuff ) {
         case '*':
-            dst = backSlashCopy( dst, sym_name );
+            for( src = sym_name; *src != '\0'; ++src )
+                *dst++ = *src;
             break;
         case '^':
-            end = backSlashCopy( dst, sym_name );
-            while( dst != end ) {
-                *dst = toupper( *dst );
-                ++dst;
-            }
+            for( src = sym_name; *src != '\0'; ++src )
+                *dst++ = toupper( *src );
             break;
         case '!':
-            end = backSlashCopy( dst, sym_name );
-            while( dst != end ) {
-                *dst = tolower( *dst );
-                ++dst;
+            for( src = sym_name; *src != '\0'; ++src )
+                *dst++ = tolower( *src );
+            break;
+        case '#':
+            {
+                target_size_t parms_size;
+
+                parms_size = GetParmsSize( sym );
+                ultoa( parms_size, dst, 10 );
+                dst += strlen( dst );
             }
             break;
+        case '\\':
+            ++patbuff;
+            // fall through
         default:
-            *dst++ = *src;
+            *dst++ = *patbuff;
             break;
         }
     }
@@ -1421,11 +1399,10 @@ char *CppMangleName(            // MANGLE SYMBOL NAME
     char *sym_name;             // - symbol's name
     SCOPE scope;                // - scope for function
     TYPE fn_type;               // - symbol's function type
-    void *pragma;               // - function's pragma modifier
     size_t len;                 // - mangled name length
 
     if( sym == NULL || sym->name == NULL ) {
-        sym_name = "*** NULL ***";
+        return( "*** NULL ***" );
     } else {
         fn_type = FunctionDeclarationType( sym->sym_type );
         if( fn_type != NULL ) {
@@ -1441,11 +1418,6 @@ char *CppMangleName(            // MANGLE SYMBOL NAME
                     sym_name = sym->name->name;
                     if( patbuff == NULL ) {
                         patbuff = CODE_OBJNAME;
-                    }
-                    pragma = fn_type->u.f.pragma;
-                    if( pragma != NULL ) {
-                        /* only done for extern "C" functions */
-                        sym_name = cppPragmaMangle( sym_name, sym, pragma );
                     }
                 }
             }
@@ -1470,7 +1442,7 @@ char *CppMangleName(            // MANGLE SYMBOL NAME
 
     // handle patbuff modifications
     if( patbuff != NULL ) {
-        sym_name = objectName( patbuff, sym_name );
+        sym_name = objectName( patbuff, sym_name, sym );
     }
     len = strlen( sym_name );
     if( len > MANGLED_MAX_LEN ) {
