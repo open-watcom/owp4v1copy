@@ -1,23 +1,28 @@
-#pmake: nomodel cpu_axp os_nt
-host_CPU = axp
-host_OS = nt
+#pmake: os_nt cpu_axp
+
+host_os  = nt
+host_cpu = axp
+
 !include cproj.mif
+!include deftarg.mif
 
 wl_opt = option quiet
 
-all: .SYMBOLIC wcl.exe wcl386.exe wclaxp.exe
-        @%null
+all: wcl.exe wcl386.exe wclaxp.exe
 
-wcl.exe : ..\wcl.c ..\wclhelp.h ..\wclmsg.h
-        $(compaxp) $[@ /dWCLI86 /d__NT /fo=wcl.abj /os /s /zq /d1 /bt=nt /i$(watcom_dir)\h
-        wlink $(wl_opt) system ntaxp op stack=64K name $^@ file wcl.abj
+dependents = ..\wcl.c ..\wclhelp.h ..\wclmsg.h
 
-wcl386.exe : ..\wcl.c ..\wclhelp.h ..\wclmsg.h
-        $(compaxp) $[@ /dWCL386 /d__NT /fo=wcl386.abj /os /s /zq /d1 /bt=nt /i$(watcom_dir)\h
-        wlink $(wl_opt) system ntaxp op stack=64K name $^@ file wcl386.abj
+# We cannot use default rules since we need to build the same file several
+# times with different switches.
 
-wclaxp.exe : ..\wcl.c ..\wclhelp.h ..\wclmsg.h
-        $(compaxp) $[@ /dWCLAXP /d__NT /fo=wclaxp.abj /os /s /zq /d1 /bt=nt /i$(watcom_dir)\h
-        wlink $(wl_opt) system ntaxp op stack=64K name $^@ file wclaxp.abj
+wcl.exe : $(dependents)
+        $(compaxp) $[@ -dWCLI86 -d__NT -fo=wcl -os -s -zq -d1 -bt=nt -i$(watcom_dir)\h
+        wlink $(wl_opt) system ntaxp name $^@ file wcl
 
-!include deftarg.mif
+wcl386.exe : $(dependents)
+        $(compaxp) $[@ -dWCL386 -d__NT -fo=wcl386 -os -s -zq -d1 -bt=nt -i$(watcom_dir)\h
+        wlink $(wl_opt) system ntaxp name $^@ file wcl386
+
+wclaxp.exe : $(dependents)
+        $(compaxp) $[@ -dWCLAXP -d__NT -fo=wclaxp -os -s -zq -d1 -bt=nt -i$(watcom_dir)\h
+        wlink $(wl_opt) system ntaxp name $^@ file wclaxp
