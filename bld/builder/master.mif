@@ -5,12 +5,12 @@ name = builder
 !include defrule.mif
 !include deftarg.mif
 
-cpcmd = copy
-!ifdef __NT__
-cpcmd = copy>nul # command is noisy by default in MS-produced "shells"
-!endif
-!ifdef __LINUX__
-cpcmd = cp
+!ifdef __UNIX__
+cpcmd = cp $^. $(bld_bin)/$^&
+!else ifdef __NT__
+cpcmd = copy $^. $(bld_bin)\$^&.exe > nulldevice # command is noisy by default in MS-produced "shells"
+!else
+cpcmd = copy $^. $(bld_bin)\$^&.exe
 !endif
 
 all: $(name).exe langdat.exe cdsay.exe sweep.exe wsplice.exe diff.exe comstrip.exe
@@ -29,28 +29,28 @@ l_objs   = langdat.obj utils.obj $(sys_$(host_os))
 
 $(name).exe : $(OBJS)
         $(cl) $(clflags) $(objs)
-        $(cpcmd) $^. $(bld_bin)
+        $(cpcmd)
 
 langdat.exe : $(l_objs)
         $(cl) $(clflags) $(l_objs)
-        $(cpcmd) $^. $(bld_bin)
+        $(cpcmd)
 
 cdsay.exe : cdsay.obj
         $(cl) $(clflags) $<
-        $(cpcmd) $^. $(bld_bin)
+        $(cpcmd)
 
 sweep.exe : sweep.obj
         $(cl) $(clflags) $<
-        $(cpcmd) $^. $(bld_bin)
+        $(cpcmd)
 
 wsplice.exe : wsplice.obj
         $(cl) $(clflags) $<
-        $(cpcmd) $^. $(bld_bin)
+        $(cpcmd)
 
 diff.exe : diff.obj
         $(cl) $(clflags) $<
-        $(cpcmd) $^. $(bld_bin)
+        $(cpcmd)
 
 comstrip.exe : comstrip.obj
         $(cl) $(clflags) $<
-        $(cpcmd) $^. $(bld_bin)
+        $(cpcmd)
