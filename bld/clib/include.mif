@@ -21,7 +21,7 @@ include_c_osi      =;$(hdr_dir)\dos
 include_c_osi      =;$(hdr_dir)\dos
 include_c_qnx      =;$(hdr_dir)\qnx
 include_c_linux    =;$(hdr_dir)\linux
-include_c_windows  =;$(inc_dirs_sys_win);$(hdr_dir)\dos
+include_c_windows  =;$(hdr_dir)\dos;$(hdr_dir)\dos\win;$(inc_dirs_sys_win)
 include_c_winnt    =;$(inc_dirs_sys_nt);$(hdr_dir)\dos
 !else
 include_c_generic  =;$(%watcom)\h
