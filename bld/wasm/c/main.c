@@ -271,10 +271,8 @@ static void SetFPU(void)
     case '7':
         if(OptValue == 'i') {
             Options.floating_point = DO_FP_EMULATION;
-            add_constant("__FPI__");
         } else {
             Options.floating_point = NO_FP_EMULATION;
-            add_constant("__FPI87__");
         }
         switch( Code->info.cpu & P_CPU_MASK ) {
         case P_286:
@@ -295,7 +293,6 @@ static void SetFPU(void)
         break;
     case 'c':
         Options.floating_point = NO_FP_ALLOWED;
-        add_constant("__FPC__");
         token = T_DOT_NO87;
         break;
     case 0:
@@ -566,6 +563,7 @@ static void do_init_stuff( char **cmdline )
     do_envvar_cmdline( "WASM", 0 );
     parse_cmdline( cmdline );
     set_build_target();
+    set_fpu_emulation();
     get_os_include();
     env = getenv( "INCLUDE" );
     if( env != NULL ) AddStringToIncludePath( env );
@@ -844,6 +842,41 @@ static void add_constant( char *string )
 
     StoreConstant( string, tmp, FALSE ); // don't allow it to be redef'd
     return;
+}
+
+static void set_fpu_emulation( void )
+/**********************************/
+{
+    switch( Options.floating_point ) {
+    case DO_FP_EMULATION:
+        add_constant("__FPI__");
+        break;
+    case NO_FP_EMULATION:
+        add_constant("__FPI87__");
+        break;
+    case NO_FP_ALLOWED:
+        add_constant("__FPC__");
+        cpu_directive( T_DOT_NO87 );
+        return;
+    }
+    if(( Code->info.cpu & P_FPU_MASK ) == P_NO87 ) {
+        switch( Code->info.cpu & P_CPU_MASK ) {
+        case P_286:
+            cpu_directive( T_DOT_287 );
+            break;
+        case P_386:
+        case P_486:
+        case P_586:
+        case P_686:
+            cpu_directive( T_DOT_387 );
+            break;
+        case P_86:
+        case P_186:
+        default:
+            cpu_directive( T_DOT_8087 );
+            break;
+        }
+    }
 }
 
 static int set_build_target( void )

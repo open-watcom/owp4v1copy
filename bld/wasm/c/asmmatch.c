@@ -83,6 +83,10 @@ static int output( int i )
         AddLinnumData();
     }
 
+    if((( ins->cpu & P_FPU_MASK ) != P_NO87 ) && ( Options.floating_point == NO_FP_ALLOWED )) {
+        AsmError( NO_FP_WITH_FPC_SET );
+        return( ERROR );
+    }
     if(( Options.floating_point == DO_FP_EMULATION )
         && ( !rCode->use32 )
         && ( ins->allowed_prefix != NO_FWAIT )
