@@ -221,6 +221,10 @@ int check_jump( struct asm_sym *sym ) {
             break;
         case T_FAR:
             break;
+#ifdef _WASM_
+        case T_PROC:
+            break;
+#endif
         case T_FWORD:
             SET_OPSIZ_32( Code );
             return( INDIRECT_JUMP );
@@ -243,6 +247,10 @@ int check_jump( struct asm_sym *sym ) {
             }
         case T_SHORT:
             break;
+#ifdef _WASM_
+        case T_PROC:
+            break;
+#endif
         case T_FWORD:
             Code->info.token++;
             SET_OPSIZ_32( Code );
@@ -460,6 +468,18 @@ int jmp( struct asm_sym *sym )                // Bug: can't handle indirect jump
             case T_NEAR:
                 Code->mem_type = sym->mem_type;
                 break;
+#ifdef _WASM_
+            case T_PROC:
+                if( ModuleInfo.model > MOD_FLAT ) {
+                    if( IS_JMPCALLN( Code->info.token ) ) {
+                        Code->info.token++;
+                    }
+                    Code->mem_type = T_FAR;
+                } else {
+                    Code->mem_type = T_NEAR;
+                }
+                break;
+#endif
             case T_FWORD:
                 if( ptr_operator( T_FWORD, TRUE ) == ERROR )
                     return( ERROR );

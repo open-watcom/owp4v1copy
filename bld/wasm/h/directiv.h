@@ -350,7 +350,8 @@ typedef struct {
     unsigned            flat:1;         // the register is assumed to FLAT
 } assume_info;
 
-extern assume_info AssumeTable[ASSUME_LAST];
+extern assume_info      AssumeTable[ASSUME_LAST];
+extern module_info      ModuleInfo;
 
 /*---------------------------------------------------------------------------*/
 

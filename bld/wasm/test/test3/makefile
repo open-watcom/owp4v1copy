@@ -6,6 +6,8 @@ allign &
 callimpl &
 datamix1 &
 datamix2 &
+extprocf &
+extprocn &
 jmpimpl &
 jmpshrt &
 lea &
