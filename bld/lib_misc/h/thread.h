@@ -67,6 +67,11 @@
   #include "sigdefn.h"
 #endif
 
+/* Make sure these are in C linkage */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*
  * Note that this structure must not grow larger than 32bytes without
  * also updating the C++ runtime file prwdata.asm
@@ -168,10 +173,18 @@ typedef struct thread_data {
     unsigned                    __data_size;
 } thread_data;
 
+#ifdef __cplusplus
+}   /* extern "C" */
+#endif
+
 #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
 
     // define thread registration function
     #include "thrdreg.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
     // prototype for thread data init function
     int __initthread( void *p );
@@ -194,11 +207,30 @@ typedef struct thread_data {
         // QNX uses magic memory for thread specific data
         extern struct thread_data *__MultipleThread();
     #endif
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
+
 #else
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
     extern int _WCFAR *_threadid;
     extern thread_data **__ThreadData;
     extern struct thread_data * __MultipleThread();
     #define __THREADDATAPTR     (__MultipleThread())
+
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
+
+#endif
+
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 extern  unsigned        __GetMaxThreads(void);
@@ -206,6 +238,10 @@ extern  unsigned        __GetMaxThreads(void);
     #pragma aux __GetMaxThreads "^"
 #endif
 extern  unsigned        __MaxThreads;
+
+#ifdef __cplusplus
+}   /* extern "C" */
+#endif
 
 #pragma pack(__pop);
 #endif

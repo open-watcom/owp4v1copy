@@ -52,6 +52,10 @@
         typedef void enderex( unsigned retval );
     #endif
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
     _WCRTLINK extern  void    __RegisterThreadData( beginner **begin,
                                                  ender **end,
                                                  initializer **init );
@@ -59,6 +63,11 @@
     _WCRTLINK extern unsigned __RegisterThreadDataSize( unsigned size );
     _WCRTLINK extern struct thread_data *(*__GetThreadPtr)( void );
     _WCRTLINK extern unsigned   __ThreadDataSize;
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif
 
 #endif
