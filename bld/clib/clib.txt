@@ -25,8 +25,8 @@ notes on the estimated effort required to bring them to C99 conformance:
     stdbool.h   - Completely new; requires _Bool type, otherwise trivial
     stddef.h    - Needs review, no changes expected
     stdint.h    - Completely new; defines no functions
-    stdio.h     - Needs thorough review, but significant changes expected
-    stdlib.h    - Most new C99 functions already added, more likely needed
+    stdio.h     - Needs thorough review, but significant changes not expected
+    stdlib.h    - Most new C99 functions already added, more may be needed
     string.h    - Needs review, no significant changes expected
     tgmath.h    - Completely new; defines no functions but needs complex.h
     time.h      - Needs review, no changes expected
