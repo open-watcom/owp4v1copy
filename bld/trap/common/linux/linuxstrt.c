@@ -48,6 +48,8 @@ const trap_requests *TrapLoad( trap_callbacks *client )
 
 const trap_requests ImpInterface = { TrapInit, TrapRequest, TrapFini } ;
 
+#if !defined( BUILTIN_TRAP_FILE )
+
 void __near *_nmalloc( unsigned size )
 {
     return( malloc( size ) );
@@ -82,6 +84,8 @@ char *getenv( const char *name )
 {
     return( Client->getenv( name ) );
 }
+
+#endif
 
 #if 0 /* redefining signal is not yet necessary */
 void    (*signal( int __sig, void (*__func)(int) ))(int)
