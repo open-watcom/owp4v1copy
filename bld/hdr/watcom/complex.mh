@@ -426,7 +426,7 @@ inline double norm( Complex const &__cv ) {
 :: because they represent the same facility.
 ::
 ///////////////////////////////////////////////////////////////////////////
-// FILE: complex (...)
+// FILE: complex (Complex numbers)
 //
 :keep CPP_HDR
 :include crwat.sp
@@ -443,6 +443,242 @@ inline double norm( Complex const &__cv ) {
 #endif
 
 namespace std {
+
+  template< class FloatT >
+  class complex {
+  public:
+    typedef FloatT value_type;
+
+    complex( const FloatT &r = FloatT( ), const FloatT &i = FloatT( ) ) :
+      re( r ), im( i )
+      { }
+
+    FloatT real( ) const { return( re ); }
+    FloatT imag( ) const { return( im ); }
+
+    complex &operator= ( const FloatT & );
+    complex &operator+=( const FloatT & );
+    complex &operator-=( const FloatT & );
+    complex &operator*=( const FloatT & );
+    complex &operator/=( const FloatT & );
+
+    complex &operator= ( const complex & );
+    complex &operator+=( const complex & );
+    complex &operator-=( const complex & );
+    complex &operator*=( const complex & );
+    complex &operator/=( const complex & );
+
+  private:
+    FloatT re;
+    FloatT im;
+  };
+
+  template< class FloatT >
+  inline
+  complex< FloatT > &complex< FloatT >::operator=( const FloatT &num )
+  {
+    re = num;
+    im = FloatT( );
+    return( *this );
+  }
+
+  template< class FloatT >
+  inline
+  complex< FloatT > &complex< FloatT >::operator+=( const FloatT &num )
+  {
+    re += num;
+    return( *this );
+  }
+
+  template< class FloatT >
+  inline
+  complex< FloatT > &complex< FloatT >::operator-=( const FloatT &num )
+  {
+    re -= num;
+    return( *this );
+  }
+
+  template< class FloatT >
+  inline
+  complex< FloatT > &complex< FloatT >::operator*=( const FloatT &num )
+  {
+    re *= num;
+    im *= num;
+    return( *this );
+  }
+
+  template< class FloatT >
+  inline
+  complex< FloatT > &complex< FloatT >::operator/=( const FloatT &num )
+  {
+    re /= num;
+    im /= num;
+    return( *this );
+  }
+
+  template< class FloatT >
+  inline
+  complex< FloatT > &complex< FloatT >::operator=( const complex &num )
+  {
+    re = num.re;
+    im = num.im;
+    return( *this );
+  }
+
+  template< class FloatT >
+  inline
+  complex< FloatT > &complex< FloatT >::operator+=( const complex &num )
+  {
+    re += num.re;
+    im += num.im;
+    return( *this );
+  }
+
+  template< class FloatT >
+  inline
+  complex< FloatT > &complex< FloatT >::operator-=( const complex &num )
+  {
+    re -= num.re;
+    im -= num.im;
+    return( *this );
+  }
+
+  template< class FloatT >
+  inline
+  complex< FloatT > &complex< FloatT >::operator*=( const complex &num )
+  {
+    re = re * num.re - im * num.im;
+    im = re * num.im + im * num.re;
+    return( *this );
+  }
+
+  template< class FloatT >
+  inline
+  complex< FloatT > &complex< FloatT >::operator/=( const complex &num )
+  {
+    FloatT denom( num.re * num.re + num.im * num.im );
+    re = re * num.re + im * num.im;
+    im = im * num.re - re * num.im;
+    re /= denom;
+    im /= denom;
+    return( *this );
+  }
+
+  template< class FloatT >
+  inline
+  complex< FloatT > operator+(
+    const complex< FloatT > &x,
+    const complex< FloatT > &y )
+  {
+    complex< FloatT > temp( x );
+    temp += y;
+    return( temp );
+  }
+
+  template< class FloatT >
+  inline
+  complex< FloatT > operator+( const complex< FloatT > &x, const FloatT &y )
+  {
+    complex< FloatT > temp( x );
+    temp += y;
+    return( temp );
+  }
+
+  template< class FloatT >
+  inline
+  complex< FloatT > operator+( const FloatT &x, const complex< FloatT > &y )
+  {
+    complex< FloatT > temp( x );
+    temp += y;
+    return( temp );
+  }
+
+  template< class FloatT >
+  inline
+  complex< FloatT > operator-(
+    const complex< FloatT > &x,
+    const complex< FloatT > &y )
+  {
+    complex< FloatT > temp( x );
+    temp -= y;
+    return( temp );
+  }
+
+  template< class FloatT >
+  inline
+  complex< FloatT > operator-( const complex< FloatT > &x, const FloatT &y )
+  {
+    complex< FloatT > temp( x );
+    temp -= y;
+    return( temp );
+  }
+
+  template< class FloatT >
+  inline
+  complex< FloatT > operator-( const FloatT &x, const complex< FloatT > &y )
+  {
+    complex< FloatT > temp( x );
+    temp -= y;
+    return( temp );
+  }
+
+  template< class FloatT >
+  inline
+  complex< FloatT > operator*(
+    const complex< FloatT > &x,
+    const complex< FloatT > &y )
+  {
+    complex< FloatT > temp( x );
+    temp *= y;
+    return( temp );
+  }
+
+  template< class FloatT >
+  inline
+  complex< FloatT > operator*( const complex< FloatT > &x, const FloatT &y )
+  {
+    complex< FloatT > temp( x );
+    temp *= y;
+    return( temp );
+  }
+
+  template< class FloatT >
+  inline
+  complex< FloatT > operator*( const FloatT &x, const complex< FloatT > &y )
+  {
+    complex< FloatT > temp( x );
+    temp *= y;
+    return( temp );
+  }
+
+  template< class FloatT >
+  inline
+  complex< FloatT > operator/(
+    const complex< FloatT > &x,
+    const complex< FloatT > &y )
+  {
+    complex< FloatT > temp( x );
+    temp /= y;
+    return( temp );
+  }
+
+  template< class FloatT >
+  inline
+  complex< FloatT > operator/( const complex< FloatT > &x, const FloatT &y )
+  {
+    complex< FloatT > temp( x );
+    temp /= y;
+    return( temp );
+  }
+
+  template< class FloatT >
+  inline
+  complex< FloatT > operator/( const FloatT &x, const complex< FloatT > &y )
+  {
+    complex< FloatT > temp( x );
+    temp /= y;
+    return( temp );
+  }
 
 } // namespace std
 
