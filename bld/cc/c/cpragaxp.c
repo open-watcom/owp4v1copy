@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Alpha AXP target specific pragma processing.
 *
 ****************************************************************************/
 
@@ -116,7 +115,6 @@ static byte_seq_reloc *GetFixups( void ){
     return( head );
 }
 
-#ifdef NEWCFE
 static int EndOfAsmStmt( void )
 {
     if( CurToken == T_EOF ) return( TRUE );
@@ -276,7 +274,6 @@ void AsmStmt()
     }
     AsmFini();
 }
-#endif
 
 local int GetByteSeq()
 {

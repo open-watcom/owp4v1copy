@@ -18,11 +18,6 @@ cg_inc_dirs = -I$(cfloat_dir)/h -I$(watcom_dir)/h -I$(owl_dir)/h &
   -I$(cg_dir)/h -I$(cg_dir)/intel/h -I$(cg_dir)/intel/$(target_CPU)/h
 !endif
 
-
-!ifndef cc_version
-cc_version      = tree
-!endif
-
 !ifndef patch_level
 patch_level=0
 !endif
@@ -33,9 +28,7 @@ extra_c_flags_386= -3r -fpc
 extra_c_flags = -D_CGDLL
 !endif
 
-defines_tree    = -DNEWCFE
-
-defines = $(defines_$(cc_version)) -Dlocal=static
+defines = -Dlocal=static
 # international data files
 intname = wcc$(target_cpu)
 

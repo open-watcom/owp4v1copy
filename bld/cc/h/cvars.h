@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  C compiler global variables.
 *
 ****************************************************************************/
 
@@ -339,18 +338,6 @@ global  struct nested_parm_lists {
 } *NestedParms;
 
 global  unsigned NextFilePage;  /* next page # in page file */
-#ifndef NEWCFE
-global  int     LeafGetCount, LeafRepCount;
-
-/* magic leaf numbers that contain constants */
-
-#define LEAF_0          0xFFFF
-#define LEAF_1          (LEAF_0-1)
-#define LEAF_2          (LEAF_1-1)
-#define LEAF_4          (LEAF_2-1)
-#define LEAF_0L         (LEAF_4-1)
-#define LEAF_MAGIC      LEAF_0L
-#endif
 
 #ifndef LARGEST_QUAD_INDEX
  #define LARGEST_QUAD_INDEX             0xFFFF
@@ -358,18 +345,7 @@ global  int     LeafGetCount, LeafRepCount;
 #else
  #define LARGEST_DATA_QUAD_INDEX        LARGEST_QUAD_INDEX
 #endif
-#define LARGEST_LEAF_INDEX  LEAF_MAGIC
 #define LARGEST_SYM_INDEX   0xFFFF
-
-#define QUAD_BUF_SIZE   512
-#define QUADS_PER_BUF   (QUAD_BUF_SIZE/sizeof(QUAD))
-#define QUADBUFS_PER_SEG 32
-#define QUAD_SEG_SIZE    (QUAD_BUF_SIZE*QUADBUFS_PER_SEG)
-
-#define LEAF_BUF_SIZE   512
-#define LEAFS_PER_BUF   (LEAF_BUF_SIZE/sizeof(LEAF))
-#define LEAFBUFS_PER_SEG 32
-#define LEAF_SEG_SIZE    (LEAF_BUF_SIZE*LEAFBUFS_PER_SEG)
 
 #define SYM_BUF_SIZE    1024
 #define SYMS_PER_BUF    (SYM_BUF_SIZE/sizeof(SYM_ENTRY))
@@ -379,24 +355,6 @@ global  int     LeafGetCount, LeafRepCount;
 #define MAX_SYM_SEGS  (LARGEST_SYM_INDEX/(SYMS_PER_BUF*SYMBUFS_PER_SEG)+1)
 
 global  struct seg_info SymSegs[MAX_SYM_SEGS];  /* segments for symbols */
-#ifndef NEWCFE
-#define MAX_QUAD_SEGS (LARGEST_QUAD_INDEX/(QUADS_PER_BUF*QUADBUFS_PER_SEG)+1)
-#define MAX_LEAF_SEGS (LARGEST_LEAF_INDEX/(LEAFS_PER_BUF*LEAFBUFS_PER_SEG)+1)
-global  struct seg_info QuadSegs[MAX_QUAD_SEGS];/* segments for quads */
-global  struct seg_info LeafSegs[MAX_LEAF_SEGS];/* segments for leafs */
-
-global struct  int_file_info {          /* intermediate file information */
-        unsigned        curr_buf_num;   /* QuadBufNum */
-        unsigned        last_buf_num;   /* LastQuadBuf */
-        unsigned        curr_seg_num;   /* QuadSegNum */
-        unsigned        items_per_buf;  /* QUADS_PER_BUF */
-        unsigned        size_of_item;   /* sizeof(QUAD) */
-        struct seg_info *seg_table;     /* QuadSegs */
-        SEGADDR_T       curr_buf_seg;   /* QuadSegment */
-        char            *buffer;        /* QuadBuffer */
-        char            curr_buf_dirty; /* QuadBufDirty */
-} QuadFileInfo, LeafFileInfo, SymFileInfo;
-#endif
 
 #define STRING_HASH_SIZE        1024
 global  STR_HANDLE StringHash[STRING_HASH_SIZE];    /* string literals */
@@ -780,13 +738,6 @@ char const *CGetMsgPrefix( msg_codes msgcode );
 
 extern  int     NameCmp(void *,void *,int);     /* cname */
 
-#ifndef NEWCFE
-extern  void    QuadInit(void);                         /* cnode */
-extern  TREEPTR GenLeaf(LEAFPTR);                       /* cnode */
-extern  TREEPTR GenQuad(TREEPTR,int,TREEPTR,TREEPTR);   /* cnode */
-extern  TREEPTR NextLabel(void);                        /* cnode */
-#endif
-
 extern  int     EqualChar(int);                 /* coptions */
 extern  void    GenCOptions(char **);           /* coptions */
 extern  void    MergeInclude(void);             /* coptions */
@@ -850,12 +801,8 @@ extern  void    LookAhead(void);                /* cstmt */
 extern  void    Statement(void);                /* cstmt */
 extern  void    AddStmt(TREEPTR);               /* cstmt */
 extern  void    GenFunctionNode(SYM_HANDLE);    /* cstmt */
-#ifdef NEWCFE
 extern  int     NextLabel(void);                /* cstmt */
 extern  void    StmtInit( void );               /* cstmt */
-#else
-extern  void    UpdateSymHeaders(unsigned);     /* cstmt */
-#endif
 
 extern  STRING_LITERAL  *GetLiteral(void);      /* cstring */
 extern  void    LoadUnicodeTable(long);         /* cstring */

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  C compiler symbol table management.
 *
 ****************************************************************************/
 
@@ -37,11 +36,10 @@
 #pragma intrinsic(memcpy)
 
 extern  void    CSegFree( SEGADDR_T );
-extern  void    WriteOutSegment( struct seg_info * );
 extern  TREEPTR CurFuncNode;
 
 static unsigned Cached_sym_num;
-static void    *Cached_sym_addr;
+static void     *Cached_sym_addr;
 struct sym_stats {
     unsigned get, getptr, replace, read, write;
 } SymStats;
@@ -335,29 +333,6 @@ void SymReplace( SYMPTR sym, SYM_HANDLE sym_handle )
         SymBufDirty = 1;
     }
 }
-
-
-#ifndef NEWCFE
-void PageOutSyms()
-{
-    unsigned seg_num;
-    struct seg_info *si;
-
-    Cached_sym_num = ~0u;
-    if( SymBufPtr != SymBuffer ) {
-        memcpy( SymBuffer, SymBufPtr, SYM_BUF_SIZE );
-        SymBufPtr = SymBuffer;
-        SymBufDirty = 0;
-    }
-    for( seg_num = 0; seg_num < MAX_SYM_SEGS; ++seg_num ) {
-        si = &SymSegs[ seg_num ];
-        if( si->in_farmem ) {
-            if( si->index == SymSegment )  SymSegment = 0;
-            WriteOutSegment( si );
-        }
-    }
-}
-#endif
 
 
 SYM_HASHPTR SymHash( SYMPTR sym, SYM_HANDLE sym_handle )

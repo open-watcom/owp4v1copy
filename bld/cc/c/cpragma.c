@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Generic (target independent) pragma processing.
 *
 ****************************************************************************/
 
@@ -859,11 +858,6 @@ static void PragUnroll()
     NextToken();
     if( unroll_count > 255 ) unroll_count = 255;
     UnrollCount = unroll_count;
-#ifndef NEWCFE
-    if( QuadIndex != 0 ) {              // if we have started some quads
-        GenQuad( unroll_count, T_UNROLL, 0, 0 );
-    }
-#endif
 }
 // forms: (1) #pragma read_only_file
 //        (2) #pragma read_only_file "file"*

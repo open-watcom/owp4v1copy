@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Callback functions invoked from cg - communicate
+*               auxiliary information to the backend.
 *
 ****************************************************************************/
 
@@ -41,9 +41,7 @@
 #include <sys/stat.h>
 #include "autodept.h"
 
-#ifdef NEWCFE
 extern  TREEPTR FirstStmt;
-#endif
 
 static unsigned char VarFuncWeights[] = {
 //a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y,z
@@ -959,13 +957,8 @@ static VOIDPTR NextImport( int index, aux_class request )
         if( CompFlags.emit_library_with_main    /* emit default library info? */
          || CompFlags.emit_library_any )        /* -zlf emit all library info? */
         {            /* 12-mar-90 */
-            #ifdef NEWCFE
             if( FirstStmt != 0 )
                 break;
-            #else
-            if( SymHeaders != 0 )
-                break;
-            #endif
         }
         #endif
         ++index;
@@ -1158,7 +1151,7 @@ extern char *FEExtName( CGSYM_HANDLE sym_handle, char **pat_ret )
 
                 while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
                 if ( typ->decl_type == TYPE_VOID ) break;
-                
+
                 parm_size = TypeSize( typ );
                 parm_size = (parm_size + sizeof(target_int) - 1)  &
                                 - sizeof(target_int);
