@@ -49,9 +49,6 @@ _WCRTLINK time_t time( time_t *timer )
 
         milliseconds = __getctime( &t );        /* get raw time and date */
         if( milliseconds >= 500 )  t.tm_sec++;
-#if 0
-        t.tm_isdst = -1;        /* 01-nov-90 getctime sets isdst to -1 */
-#endif
         seconds = mktime( &t );
         if( timer != NULL )  *timer = seconds;
         return( seconds );

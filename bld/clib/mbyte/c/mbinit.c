@@ -66,7 +66,7 @@
 
 #ifdef __NT__
     unsigned int __MBCodePage = CP_OEMCP;       /* default code page */
-#elif !defined(__QNX__)
+#elif !defined(__UNIX__)
     unsigned int __MBCodePage = 0;              /* default code page */
 #endif
 

@@ -77,7 +77,7 @@ _WCRTLINK FILE _WCNEAR __iob[_NFILES] = {
     { NULL, 0, NULL, _READ  ,       0, 0, 0  }  /* stdin */
    ,{ NULL, 0, NULL, _WRITE ,       1, 0, 0  }  /* stdout */
    ,{ NULL, 0, NULL, _WRITE ,       2, 0, 0  }  /* stderr */
-  #if !defined(__QNX__) && !defined(__NETWARE__) && !defined(__NT__)
+  #if !defined(__UNIX__) && !defined(__NETWARE__) && !defined(__NT__)
    ,{ NULL, 0, NULL, _READ|_WRITE , 3, 0, 0  }  /* stdaux */
    ,{ NULL, 0, NULL, _WRITE ,       4, 0, 0  }  /* stdprn */
   #endif
@@ -86,7 +86,7 @@ _WCRTLINK FILE _WCNEAR __iob[_NFILES] = {
 __stream_link *__ClosedStreams;
 __stream_link *__OpenStreams;
 
-#if !defined(__QNX__)
+#if !defined(__UNIX__)
 _WCRTLINK int _WCNEAR _fmode = O_TEXT;  /* default file translation mode */
 #endif
 

@@ -71,7 +71,7 @@ static int is_directory( const CHAR_TYPE *name )
         #ifdef __WIDECHAR__
             curr_ch = *name;
         #else
-            #ifdef __QNX__
+            #ifdef __UNIX__
                 curr_ch = *name;
             #else
                 curr_ch = _mbsnextc( name );
@@ -83,7 +83,7 @@ static int is_directory( const CHAR_TYPE *name )
         #ifdef __WIDECHAR__
             ++name;
         #else
-            #ifdef __QNX__
+            #ifdef __UNIX__
                 name++;
             #else
                 name = _mbsinc( name );
@@ -190,7 +190,7 @@ _WCRTLINK DIR_TYPE *__F_NAME(_opendir,_w_opendir)( const CHAR_TYPE *name, char a
             #ifdef __WIDECHAR__
                 curr_ch = *name;
             #else
-                #ifdef __QNX__
+                #ifdef __UNIX__
                     curr_ch = *name;
                 #else
                     curr_ch = _mbsnextc( name );

@@ -30,28 +30,28 @@
 ****************************************************************************/
 
 
-#if !defined(MBCHARdotH)
-#define MBCHARdotH
+#include "variety.h"
+#include <time.h>
+#include <sys/timers.h>
+#include <sys/timeb.h>
+
+_WCRTLINK int ftime( struct timeb *timeptr )
+{
+    struct timespec ts;
+    time_t          timer;
+    struct tm       *tm_ptr;
 
 
-/* Prototype for initialization function */
-extern int      __mbinit( int codepage );
+    if( getclock( TIMEOFDAY, &ts ) == -1 ) return( -1 );
 
-#define _MBINIT_CP_ANSI         (-1)
-#define _MBINIT_CP_OEM          (-2)
-#define _MBINIT_CP_SBCS         (-3)
-#define _MBINIT_CP_932          (-4)
+    timer = (time_t) ts.tv_sec;
+    if( ts.tv_nsec >=  500000000L ) timer++;
 
+    tm_ptr = localtime( &timer );
 
-/* Current code page */
-#if !defined(__UNIX__)
-    extern unsigned int __MBCodePage;
-    #define _MB_CODE_PAGE_DEFINED
-#endif
-
-
-/* See if a packed DBCS char has no lead byte, i.e. is a skinny char */
-#define SINGLE_BYTE_CHAR(__c)   ( !( (__c)&0xFF00 ) )
-
-
-#endif
+    timeptr->dstflag  = tm_ptr->tm_isdst;
+    timeptr->time     = (time_t) ts.tv_sec;
+    timeptr->millitm  = ts.tv_nsec / 1000000;
+    timeptr->timezone = timezone / 60L;
+    return( 1 );
+}

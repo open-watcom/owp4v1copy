@@ -39,7 +39,7 @@
 
 
 #if ( defined(__NT__) || defined(__RUNTIME_HANDLE_CHECKS__) ) \
-    && ( !defined(__NETWARE__) && !defined(__QNX__) && !defined(__LINUX__) \
+    && ( !defined(__NETWARE__) && !defined(__UNIX__) \
     && !defined(__OSI__) )
 
     extern unsigned __NFiles;

@@ -45,9 +45,7 @@
 extern  void    __ioalloc( FILE * );
 extern  int     __flushall( int );
 
-#if defined(__QNX__)
- extern int  __qread( int handle, char *buffer, unsigned len );
-#elif defined(NETWARE)
+#if defined(NETWARE)
  #define DOS_EOF_CHAR   0x1a
  #define __qread( h, b, l ) read( h, b, l )
 #else
@@ -117,7 +115,7 @@ _WCRTLINK int fgetc( FILE *fp )
             fp->_ptr++;
         }
     }
-    #if !defined(__QNX__)
+    #if !defined(__UNIX__)
         if( ! (fp->_flag & _BINARY) )
         {
             if( c == '\r' )
@@ -260,7 +258,7 @@ int __F_NAME(__fill_buffer,__wfill_buffer)( FILE *fp )
     }
     fp->_flag &= ~_UNGET;                           /* 10-mar-90 */
     fp->_ptr = _FP_BASE(fp);
-#if defined(__QNX__)
+#if defined(__UNIX__)
     fp->_cnt = __qread( fileno( fp ), fp->_ptr,
         (fp->_flag & _IONBF) ? CHARSIZE : fp->_bufsize );
 #else

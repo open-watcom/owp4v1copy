@@ -38,17 +38,14 @@
 #include <limits.h>
 #include <errno.h>
 #include <ctype.h>
+#if defined(__UNIX__)
+    #include <dirent.h>
+    #include <unistd.h>
+    #include <sys/stat.h>
+    #include <fcntl.h>
 #if defined(__QNX__)
-    #include <dirent.h>
-    #include <unistd.h>
-    #include <sys/stat.h>
     #include <sys/io_msg.h>
-    #include <fcntl.h>
-#elif defined(__LINUX__)
-    #include <dirent.h>
-    #include <unistd.h>
-    #include <sys/stat.h>
-    #include <fcntl.h>
+#endif
 #else
     #include <direct.h>
     #if defined(__OS2__)

@@ -34,15 +34,13 @@
 #include "rtdata.h"
 #include "exitwmsg.h"
 #include <signal.h>
-#if defined(__QNX__)
 #include <unistd.h>
-#endif
 
 void __terminate();
 
 void    (*_RWD_abort)() = __terminate;
 
-// TODO: We may need some different abort handling here for Linux?
+// TODO: Use the QNX code once we get signal handling working properly
 
 #if defined(__QNX__)
 /*

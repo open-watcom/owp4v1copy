@@ -72,7 +72,7 @@ extern  char __test8087( void );
     value [al];
 #endif
 
-#if !defined(__QNX__) && !defined(__OS2_386__) && !defined(__LINUX__)
+#if !defined(__UNIX__) && !defined(__OS2_386__)
 
 struct  _87state {              /* 80x87 save area */
 #if defined(__386__)
@@ -152,11 +152,11 @@ static void __rest_8087( struct _87state * __fs )
 {
     __frstor( __fs );
 }
-#endif  /* ! __QNX__ && && !__OS2__ && !__LINUX__ */
+#endif  /* !__UNIX__ && && !__OS2__ */
 
 unsigned char __init_8087()
 {
-#if !defined(__QNX__) && !defined(__LINUX__) && !defined(__OS2_386__)
+#if !defined(__UNIX__) && !defined(__OS2_386__)
     if( _RWD_real87 != 0 ) {            /* if our emulator, don't worry */
         _RWD_Save8087 = __save_8087;    /* point to real save 8087 routine */
         _RWD_Rest8087 = __rest_8087;    /* point to real restore 8087 routine */

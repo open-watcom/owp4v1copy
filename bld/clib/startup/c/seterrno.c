@@ -55,7 +55,7 @@ _WCRTLINK int __set_EINVAL()
         return( -1 );
     }
 
-#if !defined(__QNX__) && !defined(__LINUX__) && !defined(__NETWARE__)
+#if !defined(__UNIX__) && !defined(__NETWARE__)
 _WCRTLINK void __set_doserrno( unsigned int err )
     {
         _RWD_doserrno = err;

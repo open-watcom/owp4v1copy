@@ -56,7 +56,7 @@
 !inject setvbuf.obj  d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32
 !inject tmpfl.obj    d16 d32             nt nta ntp nvc     nvl     o16 o32         w16 w32 osi
 !inject tmputil.obj  d16 d32             nt nta ntp nvc     nvl     o16 o32         w16 w32 osi
-!inject tmpflqnx.obj                                                q16 q32
+!inject tmpflunx.obj                                                q16 q32                     l32
 !inject ufdopen.obj  d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32
 !inject ufgetc.obj   d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32
 !inject ufgetcha.obj d16 d32             nt nta ntp                 o16 o32 q16 q32 w16 w32     l32

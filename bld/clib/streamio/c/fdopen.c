@@ -116,9 +116,7 @@ static int __iomode( int handle, int amode )
     int flags;
     int __errno;
 
-// TODO: We need to implement this for Linux!
-
-#if defined(__QNX__)
+#if defined(__UNIX__)
     if( (flags = fcntl( handle, F_GETFL )) == -1 ) {
         return( -1 );
     }

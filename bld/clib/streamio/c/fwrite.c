@@ -67,7 +67,7 @@ _WCRTLINK size_t fwrite( const void *buf, size_t size, size_t n, FILE *fp )
     oflag = fp->_flag & (_SFERR|_EOF);      /* JBS 27-jan-92 */
     fp->_flag &= ~(_SFERR|_EOF);                    /* JBS 27-jan-92 */
     count = 0;
-#if !defined(__QNX__)
+#if !defined(__UNIX__)
     if( fp->_flag & _BINARY ) {             /* binary I/O */
 #else
     {
@@ -86,7 +86,7 @@ _WCRTLINK size_t fwrite( const void *buf, size_t size, size_t n, FILE *fp )
                 if( n == -1 ) {
                     fp->_flag |= _SFERR;
                 }
-                #if !defined(__QNX__)
+                #if !defined(__UNIX__)
                     else if( n == 0 ) {
                         _RWD_errno = ENOSPC;
                         fp->_flag |= _SFERR;
@@ -108,7 +108,7 @@ _WCRTLINK size_t fwrite( const void *buf, size_t size, size_t n, FILE *fp )
             count += bytes;
             bytes_left -= bytes;
         } while( bytes_left && !ferror( fp ) );
-#if !defined(__QNX__)
+#if !defined(__UNIX__)
     } else {        /* text I/O */
         const char *    bufptr;
         int             not_buffered;

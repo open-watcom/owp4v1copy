@@ -46,9 +46,7 @@
 #include "rtdata.h"
 #include "seterrno.h"
 
-// TODO: Need to port this to Linux
-
-#ifdef __QNX__
+#ifdef __UNIX__
 _WCRTLINK int (locking)( int handle, int mode, long nbytes )
 {
     int                 cmd;
@@ -85,7 +83,7 @@ _WCRTLINK int (locking)( int handle, int mode, long nbytes )
         flock_buff.l_type = F_RDLCK;
         break;
     default:
-        errno = ENOTSUP;
+        errno = ENOSYS;
         return( -1 );
     }
     tries = 10;

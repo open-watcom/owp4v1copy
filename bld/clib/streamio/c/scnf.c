@@ -53,7 +53,7 @@
 #define TRUE    1
 #define FALSE   0
 
-#if !defined(__NETWARE__) && !defined(__QNX__)
+#if !defined(__NETWARE__) && !defined(__UNIX__)
     #define USE_MBCS_TRANSLATION
 #endif
 

@@ -42,7 +42,7 @@
 extern  void    __freefp( FILE *fp );
 extern  int     __flush( FILE *fp );
 extern  int     __close( int );
-#if !defined(__QNX__)
+#if !defined(__UNIX__)
 void    (*__RmTmpFileFn)( FILE *fp );
 #endif
 
@@ -107,8 +107,8 @@ int __doclose( FILE *fp, int close_handle )
         lib_free( _FP_BASE(fp) );
         _FP_BASE(fp) = NULL;
     }
-#ifndef __QNX__
-    /* this never happens under QNX */
+#ifndef __UNIX__
+    /* this never happens under UNIX */
     if( fp->_flag & _TMPFIL ) {     /* if this is a temporary file */
         __RmTmpFileFn( fp );
     }
