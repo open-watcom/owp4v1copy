@@ -822,6 +822,17 @@ will be created.
 .np
 .ix 'dynamic link library access' '&targetos.'
 .ix 'DLL access' '&targetos.'
+.if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
+.if '&targetos' eq 'Windows NT' .do begin
+.np
+It is assumed that all symbols imported by a client application were
+declared with a
+.id __declspec( dllimport )
+modifier when the client application was compiled. At the link stage
+we have to tell the linker which dynamic libraries the client
+application should link to.
+.do end
+.do end
 Once we have created a dynamic link library, we must allow other
 applications to access the functions available in the dynamic link
 library.
@@ -855,17 +866,6 @@ Hence, any directive file that specifies the import library in a
 However, if you are using "IMPORT" directives, you may have to modify
 the "IMPORT" directives to reflect the changes in the dynamic link
 library.
-.if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
-.if '&targetos' eq 'Windows NT' .do begin
-.np
-It is assumed that all symbols imported by a client application were
-declared with a
-.id __declspec( dllimport )
-modifier when the client application was compiled. At the link stage
-we have to tell the linker which dynamic libraries the client
-application should link to.
-.do end
-.do end
 .np
 Let us create an import library for our sample dynamic link library we
 created in the previous section.

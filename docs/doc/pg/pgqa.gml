@@ -1889,8 +1889,7 @@ reusing static arrays whenever possible.
 .do end
 These techniques will reduce the amount of stack space required
 but there still may be times where the default amount of stack space
-(2048 bytes for 16-bit applications and 4096 bytes for 32-bit
-applications) is insufficient.
+is insufficient.
 The &lnkname (&lnkcmdup) allows the user to set the amount of
 stack space at link-time through the directive
 "OPTION STACK=size" where size may be specified in bytes with an optional
