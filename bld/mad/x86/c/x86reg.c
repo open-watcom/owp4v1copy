@@ -79,11 +79,16 @@ typedef enum {
     REG( XMM, xmm##num, U128, offsetof( mad_registers, x86.xmm.xmm[num] )*8,\
     128, XMM, XMMSubList##num, L6, LX )
 
+#define MXCSR( name )        \
+    REG( XMM_mxcsr, name, BYTE, offsetof( mad_registers, x86.xmm.mxcsr )*8 + SHIFT_mxcsr_##name, \
+        LEN_mxcsr_##name, XMM, NULL, L6, LX )
+
 
 /* forward definitions */
 extern const x86_reg_info       * const EFLRegList[];
 extern const x86_reg_info       * const SWRegList[];
 extern const x86_reg_info       * const CWRegList[];
+extern const x86_reg_info       * const MXCSRRegList[];
 
 /* register definitions */
 CPU( eax, DWORD, eax, 0, 32, NULL, L3 );
@@ -351,10 +356,39 @@ XMM( 5 );
 XMM( 6 );
 XMM( 7 );
 
+/* MXCSR register */
+REG( XMM, mxcsr, DWORD, offsetof( mad_registers, x86.xmm.mxcsr )*8, \
+    32, XMM, MXCSRRegList, L6, LX )
+
+MXCSR( ie );
+MXCSR( de );
+MXCSR( ze );
+MXCSR( oe );
+MXCSR( ue );
+MXCSR( pe );
+MXCSR( daz );
+MXCSR( im );
+MXCSR( dm );
+MXCSR( zm );
+MXCSR( om );
+MXCSR( um );
+MXCSR( pm );
+MXCSR( rc );
+MXCSR( fz );
+
 static const x86_reg_info * const XMMRegList[] = {
     &XMM_xmm0, &XMM_xmm1, &XMM_xmm2, &XMM_xmm3,
     &XMM_xmm4, &XMM_xmm5, &XMM_xmm6, &XMM_xmm7,
+    &XMM_mxcsr,
 NULL };
+
+static const x86_reg_info * const MXCSRRegList[] = {
+    &XMM_mxcsr_ie, &XMM_mxcsr_de, &XMM_mxcsr_ze, &XMM_mxcsr_oe, &XMM_mxcsr_ue, &XMM_mxcsr_pe,
+    &XMM_mxcsr_daz,
+    &XMM_mxcsr_im, &XMM_mxcsr_dm, &XMM_mxcsr_zm, &XMM_mxcsr_om, &XMM_mxcsr_um, &XMM_mxcsr_pm,
+    &XMM_mxcsr_rc, &XMM_mxcsr_fz,
+NULL };
+
 
 
 struct mad_reg_set_data {
@@ -558,17 +592,17 @@ unsigned DIGENTRY MIRegSetDisplayGrouping( const mad_reg_set_data *rsd )
         }
     case XMM_REG_SET:
         if( MADState->reg_state[XMM_REG_SET] & XT_BYTE ) {
-            return( 16 );
+            return( 16 + 2 );
         } else if( MADState->reg_state[XMM_REG_SET] & XT_WORD ) {
-            return( 8 );
+            return( 8 + 2 );
         } else if( MADState->reg_state[XMM_REG_SET] & XT_DWORD ) {
-            return( 4 );
+            return( 4 + 2 );
         } else if( MADState->reg_state[XMM_REG_SET] & XT_QWORD ) {
-            return( 2 );
+            return( 2 + 2 );
         } else if( MADState->reg_state[XMM_REG_SET] & XT_FLOAT ) {
-            return( 4 );
+            return( 4 + 2 );
         } else {  // double
-            return( 2 );
+            return( 2 + 2 );
         }
     default:
         return( rsd->grouping );
@@ -1074,6 +1108,26 @@ static mad_status XMMGetPiece(
         &XMM6_q1,&XMM6_q0,
         &XMM7_q1,&XMM7_q0,
     };
+    static const x86_reg_info *list1_mxcsr[] = {
+        &XMM_mxcsr_ie,
+        &XMM_mxcsr_de,
+        &XMM_mxcsr_ze,
+        &XMM_mxcsr_oe,
+        &XMM_mxcsr_ue,
+        &XMM_mxcsr_pe,
+        &XMM_mxcsr_fz,
+        &XMM_mxcsr_daz
+    };
+    static const x86_reg_info *list2_mxcsr[] = {
+        &XMM_mxcsr_im,
+        &XMM_mxcsr_dm,
+        &XMM_mxcsr_zm,
+        &XMM_mxcsr_om,
+        &XMM_mxcsr_um,
+        &XMM_mxcsr_pm,
+        &XMM_mxcsr_rc,
+        &XMM_mxcsr
+    };
     #define T(t)        X86T_##t
     static const mad_type_handle type_select[2][2][6] = {
         { { T(UCHAR),T(USHORT),T(ULONG), T(U64),   T(FLOAT),T(DOUBLE) },   /* decimal, unsigned */
@@ -1083,6 +1137,8 @@ static mad_status XMMGetPiece(
     };
     #undef T
 
+    unsigned            row;
+    unsigned            column;
     unsigned            group;
     unsigned            list_num;
     unsigned            type;
@@ -1131,29 +1187,55 @@ static mad_status XMMGetPiece(
         group = 2;
         type = 5;
     }
-    *disp_type_p = type_select[( MADState->reg_state[XMM_REG_SET] & XT_HEX ) ? 1 : 0]
-                              [( MADState->reg_state[XMM_REG_SET] & XT_SIGNED ) ? 1 : 0]
-                              [type];
-
-    if( piece < group ) {
-        *max_value_p = 2;
-        *reg_p = &XXX_dummy.info;
-        *disp_type_p = X86T_XMM_TITLE0 - 1 + group - piece;
+    row = piece / ( group + 2 );
+    column = piece % ( group + 2 );
+    if( row == 0 ) {
+        if( column < group ) {
+            *max_value_p = 2;
+            *reg_p = &XXX_dummy.info;
+            *disp_type_p = X86T_XMM_TITLE0 - 1 + group - column;
+        } else {
+            *max_value_p = 0;
+            *reg_p = NULL;
+            *disp_type_p = NULL;
+        }
         return( MS_OK );
     }
-    piece -= group;
-
-    if( piece >= list_num ) return( MS_FAIL );
-    if( (piece % group) == 0 ) {
+    row--;
+    if( row > 7 ) return( MS_FAIL );
+    if( column == 0 ) {
         /* first column */
         DescriptBuff[0] = 'X';
         DescriptBuff[1] = 'M';
         DescriptBuff[2] = 'M';
-        DescriptBuff[3] = (piece / group) + '0';
+        DescriptBuff[3] = row + '0';
         DescriptBuff[4] = '\0';
         *max_descript_p = 4;
     }
-    *reg_p = &list[piece]->info;
+    if( ( column - group ) == 0 )  {
+        *reg_p = &list1_mxcsr[ row ]->info;
+        strcpy( DescriptBuff, (*reg_p)->name );
+        *disp_type_p = X86T_BIT;
+        *max_value_p = 1;
+    } else if( (column - group ) == 1 )  {
+        *reg_p = &list2_mxcsr[ row ]->info;
+        strcpy( DescriptBuff, (*reg_p)->name );
+        if( row == 6 ) {
+            *disp_type_p = X86T_RC;
+            *max_value_p = MODLEN( ModFPURc );
+        } else if( row == 7 ) {
+            *disp_type_p = X86T_DWORD;
+        } else {
+            *disp_type_p = X86T_BIT;
+            *max_value_p = 1;
+        }
+    } else {
+        *reg_p = &list[ row * group + column ]->info;
+        *disp_type_p = type_select[( MADState->reg_state[XMM_REG_SET] & XT_HEX ) ? 1 : 0]
+                              [( MADState->reg_state[XMM_REG_SET] & XT_SIGNED ) ? 1 : 0]
+                              [type];
+
+    }
     return( MS_OK );
 }
 
@@ -1186,6 +1268,9 @@ mad_status DIGENTRY MIRegSetDisplayModify(
         *possible_p = ModFPUPc;
         *num_possible_p = NUM_ELTS( ModFPUPc );
     } else if( ri == &FPU_rc.info ) {
+        *possible_p = ModFPURc;
+        *num_possible_p = NUM_ELTS( ModFPURc );
+    } else if( ri == &XMM_mxcsr_rc.info ) {
         *possible_p = ModFPURc;
         *num_possible_p = NUM_ELTS( ModFPURc );
     } else if( ri == &FPU_ic.info ) {
@@ -1743,7 +1828,7 @@ const mad_reg_info *DIGENTRY MIRegFromContextItem( context_item ci )
         &FPU_st6.info,
         &FPU_st7.info,
         &FPU_sw.info,
-        &FPU_cw.info,
+        &FPU_cw.info
     };
 
     return( list[ci-CI_EAX] );

@@ -156,6 +156,7 @@ struct x86_mad_registers {
 };
 
 #define BIT( name, shift, len ) SHIFT_##name = shift, LEN_##name = len
+#define BIT_MXCSR( name, shift, len ) SHIFT_mxcsr_##name = shift, LEN_mxcsr_##name = len
 enum {
     /* [E]FL flag bit definitions */
     BIT( c,     0,  1 ),
@@ -208,7 +209,24 @@ enum {
     BIT( iem,   7,  1 ),
     BIT( pc,    8,  2 ),
     BIT( rc,    10, 2 ),
-    BIT( ic,    12, 1 )
+    BIT( ic,    12, 1 ),
+
+    /* MXCSR flag bit definitions */
+    BIT_MXCSR( ie,    0,  1 ),
+    BIT_MXCSR( de,    1,  1 ),
+    BIT_MXCSR( ze,    2,  1 ),
+    BIT_MXCSR( oe,    3,  1 ),
+    BIT_MXCSR( ue,    4,  1 ),
+    BIT_MXCSR( pe,    5,  1 ),
+    BIT_MXCSR( daz,   6,  1 ),
+    BIT_MXCSR( im,    7,  1 ),
+    BIT_MXCSR( dm,    8,  1 ),
+    BIT_MXCSR( zm,    9,  1 ),
+    BIT_MXCSR( om,    10, 1 ),
+    BIT_MXCSR( um,    11, 1 ),
+    BIT_MXCSR( pm,    12, 1 ),
+    BIT_MXCSR( rc,    13, 2 ),
+    BIT_MXCSR( fz,    15, 1 )
 };
 
 enum {  TAG_VALID       = 0x0,
