@@ -59,6 +59,11 @@
   #endif
 #endif
 
+#ifdef INCL_ERRORS
+  #define INCL_WINERRORS
+#endif
+
+#define MPVOID              ((MPARAM)0)
 #define MPFROMP(p)          ((MPARAM)(VOID *)(p))
 #define MPFROMHWND(hwnd)    ((MPARAM)(HWND)(hwnd))
 #define MPFROMCHAR(ch)      ((MPARAM)(USHORT)(ch))
@@ -181,11 +186,14 @@
 
 #define FACESIZE 32
 
+#define WRECT RECTL
+
 typedef LHANDLE HWND, *PHWND;
 typedef LHANDLE HAB, *PHAB;
 
 typedef LONG    FIXED, *PFIXED;
 typedef LONG    COLOR, *PCOLOR;
+typedef LHANDLE HACCEL;
 typedef LHANDLE HBITMAP, *PHBITMAP;
 typedef LHANDLE HDC, *PHDC;
 typedef LHANDLE HMF, *PHMF;
@@ -196,11 +204,22 @@ typedef VOID    *MPARAM, **PMPARAM;
 typedef VOID    *MRESULT, **PMRESULT;
 typedef USHORT  HVPS, *PHVPS;
 
-
 typedef CHAR STR8[8];
 typedef STR8 *PSTR8;
 
 typedef MRESULT (APIENTRY *PFNWP)(HWND, ULONG, MPARAM, MPARAM);
+
+typedef struct _MATRIXLF {
+    FIXED fxM11;
+    FIXED fxM12;
+    LONG  lM13;
+    FIXED fxM21;
+    FIXED fxM22;
+    LONG  lM23;
+    LONG  lM31;
+    LONG  lM32;
+    LONG  lM33;
+} MATRIXLF, *PMATRIXLF;
 
 typedef struct _POINTL {
     LONG  x;
@@ -308,7 +327,6 @@ typedef ULONG ATOM;
 typedef LHANDLE HATOMTBL;
 
 ATOM   APIENTRY WinAddAtom(HATOMTBL hatomtblAtomTbl, PCSZ AtomName);
-
 ATOM   APIENTRY WinFindAtom(HATOMTBL hatomtblAtomTbl, PCSZ pszAtomName);
 
 #endif
@@ -541,7 +559,6 @@ BOOL    APIENTRY WinDrawBorder(HPS hps, PRECTL prcl, LONG cx, LONG cy, LONG clrF
                    LONG clrBack, ULONG flCmd);
 LONG    APIENTRY WinDrawText(HPS hps, LONG cchText, PCH lpchText,
                    PRECTL prcl, LONG clrFore, LONG clrBack, ULONG flCmd);
-
 BOOL    APIENTRY WinEnableWindow(HWND hwnd, BOOL fNewEnabled);
 BOOL    APIENTRY WinEnableWindowUpdate(HWND hwnd, BOOL fEnable);
 BOOL    APIENTRY WinEndEnumWindows(HENUM henum);
@@ -577,9 +594,7 @@ HDC     APIENTRY WinOpenWindowDC(HWND hwnd);
 BOOL    APIENTRY WinPopupMenu(HWND hwndParent, HWND hwndOwner, HWND hwndMenu,
                    LONG x, LONG y, LONG idItem, ULONG fs);
 HAB     APIENTRY WinQueryAnchorBlock(HWND hwnd);
-
 HWND    APIENTRY WinQueryDesktopWindow(HAB hab, HDC hdc);
-
 BOOL    APIENTRY WinQueryUpdateRect(HWND hwnd, PRECTL prclPrc);
 LONG    APIENTRY WinQueryUpdateRegion(HWND hwnd, HRGN hrgn);
 ULONG   APIENTRY WinQueryVersion(HAB hab);
@@ -593,18 +608,14 @@ LONG    APIENTRY WinQueryWindowText(HWND hwnd, LONG lLength, PCH pun);
 LONG    APIENTRY WinQueryWindowTextLength(HWND hwnd);
 ULONG   APIENTRY WinQueryWindowULong(HWND hwnd, LONG index);
 USHORT  APIENTRY WinQueryWindowUShort(HWND hwnd, LONG index);
-
 BOOL    APIENTRY WinRegisterClass(HAB hab, PCSZ pszClassName, PFNWP pfnWndProc,
                    ULONG flStyle, ULONG cbWindowData);
 BOOL    APIENTRY WinReleasePS(HPS hps);
-
 LONG    APIENTRY WinScrollWindow(HWND hwnd, LONG lDx, LONG lDy, PRECTL prclScroll,
                    PRECTL prclClip, HRGN hrgnUpdateRgn, PRECTL prclUpdate, ULONG flOptions);
-
 MRESULT APIENTRY WinSendMsg(HWND hwnd, ULONG ulMsgid, MPARAM mpParam1, MPARAM mpParam2);
-
 BOOL    APIENTRY WinSetActiveWindow(HWND hwndDeskTop, HWND hwnd);
-
+BOOL    APIENTRY WinSetMultWindowPos(HAB hab, PSWP pswp, ULONG cswp);
 BOOL    APIENTRY WinSetOwner(HWND hwnd, HWND hwndNewOwner);
 BOOL    APIENTRY WinSetParent(HWND hwnd, HWND hwndNewParent, BOOL fRedraw);
 BOOL    APIENTRY WinSetSysModalWindow(HWND hwndDesktop, HWND hwnd);
@@ -616,10 +627,8 @@ BOOL    APIENTRY WinSetWindowText(HWND hwnd, PCSZ pszString);
 BOOL    APIENTRY WinSetWindowULong(HWND hwnd, LONG index, ULONG ul);
 BOOL    APIENTRY WinSetWindowUShort(HWND hwnd, LONG index, USHORT us);
 BOOL    APIENTRY WinShowWindow(HWND hwnd, BOOL fNewVisibility);
-
 PFNWP   APIENTRY WinSubclassWindow(HWND hwnd, PFNWP pNewWindowProc);
 BOOL    APIENTRY WinTerminate(HAB hab);
-
 BOOL    APIENTRY WinUpdateWindow(HWND hwnd);
 BOOL    APIENTRY WinValidateRect(HWND hwnd, PRECTL prclRect, BOOL fIncludeClippedChildren);
 BOOL    APIENTRY WinValidateRegion(HWND hwnd, HRGN hrgn, BOOL fIncludeClippedChildren);
@@ -855,16 +864,7 @@ MRESULT APIENTRY WinDdeRespond(HWND hwndClient, HWND hwndServer,
 
 #endif
 
-#if defined(INCL_WINDIALOGS)
-
-#define DID_OK     1
-#define DID_CANCEL 2
-#define DID_ERROR  0xffff
-
-#define WA_WARNING     0
-#define WA_NOTE        1
-#define WA_ERROR       2
-#define WA_CWINALARMS 13
+#if defined(INCL_WINDIALOGS) || !defined(INCL_NOCOMMON)
 
 #define MB_OK               0x0000
 #define MB_OKCANCEL         0x0001
@@ -910,6 +910,15 @@ MRESULT APIENTRY WinDdeRespond(HWND hwndClient, HWND hwndServer,
 #define MBID_ENTER          9
 #define MBID_ERROR          (-1)
 
+#define DID_OK     1
+#define DID_CANCEL 2
+#define DID_ERROR  0xffff
+
+#define WA_WARNING     0
+#define WA_NOTE        1
+#define WA_ERROR       2
+#define WA_CWINALARMS 13
+
 #define WinCheckButton(hwndDlg, id, usCheckState) \
     ((ULONG)WinSendDlgItemMsg(hwndDlg, id, BM_SETCHECK, MPFROMSHORT(usCheckState), (MPARAM)NULL))
 #define WinQueryButtonCheckstate(hwndDlg, id) \
@@ -920,6 +929,25 @@ MRESULT APIENTRY WinDdeRespond(HWND hwndClient, HWND hwndServer,
     WinShowWindow(WinWindowFromID(hwndDlg, id), fShow)
 #define WinIsControlEnabled(hwndDlg, id) \
     ((BOOL)WinIsWindowEnabled(WinWindowFromID(hwndDlg, id)))
+
+BOOL    APIENTRY WinAlarm(HWND hwndDesktop, ULONG rgfType);
+MRESULT APIENTRY WinDefDlgProc(HWND hwndDlg, ULONG msg, MPARAM mp1, MPARAM mp2);
+USHORT  APIENTRY WinMessageBox(HWND hwndParent, HWND hwndOwner, PSZ pszText, PSZ pszTitle,
+                    USHORT usWindow, USHORT fsStyle);
+BOOL    APIENTRY WinDismissDlg(HWND hwndDlg, ULONG usResult);
+ULONG   APIENTRY WinDlgBox(HWND hwndParent, HWND hwndOwner, PFNWP pfnDlgProc, HMODULE hmod,
+                    ULONG idDlg, PVOID pCreateParams);
+HWND    APIENTRY WinLoadDlg(HWND hwndParent, HWND hwndOwner, PFNWP pfnDlgProc,
+                    HMODULE hmod, ULONG idDlg, PVOID pCreateParams);
+BOOL    APIENTRY WinQueryDlgItemShort(HWND hwndDlg, ULONG idItem, PSHORT psResult, BOOL fSigned);
+ULONG   APIENTRY WinQueryDlgItemText(HWND hwndDlg, ULONG idItem, LONG lMaxText, PSZ pszText);
+LONG    APIENTRY WinQueryDlgItemTextLength(HWND hwndDlg, ULONG idItem);
+BOOL    APIENTRY WinSetDlgItemShort(HWND hwndDlg, ULONG idItem, USHORT usValue, BOOL fSigned);
+BOOL    APIENTRY WinSetDlgItemText(HWND hwndDlg, ULONG idItem, PCSZ pszText);
+
+#endif
+
+#if defined(INCL_WINDIALOGS)
 
 #pragma pack(2)
 
@@ -953,30 +981,14 @@ typedef struct _DLGTEMPLATE {
 
 #pragma pack()
 
-BOOL    APIENTRY WinAlarm(HWND hwndDesktop, ULONG rgfType);
-
 HWND    APIENTRY WinCreateDlg(HWND hwndParent, HWND hwndOwner, PFNWP pfnDlgProc,
                    PDLGTEMPLATE pdlgt, PVOID pCreateParams);
-MRESULT APIENTRY WinDefDlgProc(HWND hwndDlg, ULONG msg, MPARAM mp1, MPARAM mp2);
-USHORT  APIENTRY WinMessageBox(HWND hwndParent, HWND hwndOwner, PSZ pszText, PSZ pszTitle,
-                    USHORT usWindow, USHORT fsStyle);
-BOOL    APIENTRY WinDismissDlg(HWND hwndDlg, ULONG usResult);
-ULONG   APIENTRY WinDlgBox(HWND hwndParent, HWND hwndOwner, PFNWP pfnDlgProc, HMODULE hmod,
-                    ULONG idDlg, PVOID pCreateParams);
-
-HWND    APIENTRY WinLoadDlg(HWND hwndParent, HWND hwndOwner, PFNWP pfnDlgProc,
-                    HMODULE hmod, ULONG idDlg, PVOID pCreateParams);
+HWND    APIENTRY WinEnumDlgItem(HWND hwndDlg, HWND hwnd, ULONG code);
 BOOL    APIENTRY WinMapDlgPoints(HWND hwndDlg, PPOINTL prgwptl, ULONG cwpt, BOOL fCalcWinCoords);
-
 ULONG   APIENTRY WinProcessDlg(HWND hwndDlg);
-
-BOOL    APIENTRY WinQueryDlgItemShort(HWND hwndDlg, ULONG idItem, PSHORT psResult, BOOL fSigned);
-ULONG   APIENTRY WinQueryDlgItemText(HWND hwndDlg, ULONG idItem, LONG lMaxText, PSZ pszText);
-LONG    APIENTRY WinQueryDlgItemTextLength(HWND hwndDlg, ULONG idItem);
-
 MRESULT APIENTRY WinSendDlgItemMsg(HWND hwndDlg, ULONG idItem, ULONG msg, MPARAM mp1, MPARAM mp2);
+LONG    APIENTRY WinSubstituteStrings(HWND hwnd, PCSZ pszSrc, LONG cchDstMax, PCSZ pszDst);
 
-BOOL    APIENTRY WinSetDlgItemText(HWND hwndDlg, ULONG idItem, PCSZ pszText);
 
 #endif
 
@@ -1235,7 +1247,6 @@ typedef struct _FRAMECDATA {
 #pragma pack()
 
 BOOL   APIENTRY WinCalcFrameRect(HWND hwndFrame, PRECTL prcl, BOOL fClient);
-
 HWND   APIENTRY WinCreateStdWindow(HWND hwndParent, ULONG flStyle, PULONG pflCreateFlags,
                    PCSZ pszClassClient, PCSZ pszTitle, ULONG flStyleClient, HMODULE Resource,
                    ULONG ulId, PHWND phwndClient);
@@ -1775,20 +1786,15 @@ typedef struct _POINTERINFO {
 } POINTERINFO, *PPOINTERINFO;
 
 BOOL     APIENTRY WinDestroyPointer(HPOINTER hptrPointer);
-
 HBITMAP  APIENTRY WinGetSysBitmap(HWND hwndDesktop, ULONG ibm);
-
 HPOINTER APIENTRY WinLoadPointer(HWND hwndDeskTop, HMODULE Resource, ULONG idPointer);
-
 HPOINTER APIENTRY WinQueryPointer(HWND hwndDeskTop);
 BOOL     APIENTRY WinQueryPointerInfo(HPOINTER hptr, PPOINTERINFO pptriPointerInfo);
 BOOL     APIENTRY WinQueryPointerPos(HWND hwndDeskTop, PPOINTL pptlPoint);
 HPOINTER APIENTRY WinQuerySysPointer(HWND hwndDeskTop, LONG lIdentifier, BOOL fCopy);
-
 BOOL     APIENTRY WinSetPointer(HWND hwndDeskTop, HPOINTER hptrNewPointer);
 BOOL     APIENTRY WinSetPointerOwner(HPOINTER hptr, PID pid, BOOL fDestroy);
 BOOL     APIENTRY WinSetPointerPos(HWND hwndDeskTop, LONG lx, LONG ly);
-
 BOOL     APIENTRY WinShowPointer(HWND hwndDeskTop, BOOL fShow);
 
 #endif
@@ -1887,6 +1893,8 @@ BOOL APIENTRY WinTerminateApp(HAPP happ);
 
 #if defined(INCL_WINRECTANGLES)
 
+BOOL    APIENTRY WinCopyRect(HAB hab, PRECTL prclDst, PRECTL prclSrc);
+BOOL    APIENTRY WinEqualRect(HAB hab, PRECTL prcl1, PRECTL prcl2);
 BOOL    APIENTRY WinInflateRect(HAB hab, PRECTL prcl, LONG cx, LONG cy);
 BOOL    APIENTRY WinIntersectRect(HAB hab, PRECTL pcrlDst, PRECTL pcrlSrc1, PRECTL pcrlSrc2);
 BOOL    APIENTRY WinIsRectEmpty(HAB hab, PRECTL prclprc);
@@ -1894,6 +1902,10 @@ BOOL    APIENTRY WinMakePoints(HAB hab, PPOINTL pwpt, ULONG cwpt);
 BOOL    APIENTRY WinMakeRect(HAB hab, PRECTL pwrc);
 BOOL    APIENTRY WinOffsetRect(HAB hab, PRECTL prcl, LONG cx, LONG cy);
 BOOL    APIENTRY WinPtInRect(HAB hab, PRECTL prcl, PPOINTL pptl);
+BOOL    APIENTRY WinUnionRect(HAB hab, PRECTL prclDst, PRECTL prclSrc1, PRECTL prclSrc2);
+BOOL    APIENTRY WinSetRect(HAB hab, PRECTL prcl, LONG xLeft, LONG yBottom, LONG xRight, LONG yTop);
+BOOL    APIENTRY WinSetRectEmpty(HAB hab, PRECTL prcl);
+BOOL    APIENTRY WinSubtractRect(HAB hab, PRECTL prclDst, PRECTL prclSrc1, PRECTL prclSrc2);
 
 #endif
 
@@ -2322,12 +2334,9 @@ BOOL   APIENTRY WinTrackRect(HWND hwnd, HPS hps, PTRACKINFO ptiTrackinfo);
 
 PCSZ   APIENTRY WinNextChar(HAB hab, ULONG idcp, ULONG idcc, PCSZ psz);
 PCSZ   APIENTRY WinPrevChar(HAB hab, ULONG idcp, ULONG idcc, PCSZ pszStart, PCSZ psz);
-
 ULONG  APIENTRY WinQueryCp(HMQ hmq);
 ULONG  APIENTRY WinQueryCpList(HAB hab, ULONG ccpMax, PULONG prgcp);
-
 BOOL   APIENTRY WinSetCp(HMQ hmq, ULONG idCodePage);
-
 ULONG  APIENTRY WinUpper(HAB hab, ULONG idcp, ULONG idcc, PCSZ psz);
 ULONG  APIENTRY WinUpperChar(HAB hab, ULONG idcp, ULONG idcc, ULONG c);
 

@@ -792,7 +792,12 @@ USHORT APIENTRY16 DosMonWrite(PBYTE BufferO, PBYTE DataBuffer, USHORT Bytecnt);
 
 #if defined(INCL_DOSNLS)
 
+#define DosCaseMap     DosMapCase
+#define DosGetCollate  DosQueryCollate
 #define DosGetCp       DosQueryCp
+#define DosGetCtryInfo DosQueryCtryInfo
+#define DosGetDBCSEv   DosQueryDBCSEnv
+#define DosSetProcCp   DosSetProcessCp
 
 typedef struct _COUNTRYCODE {
     ULONG  country;
