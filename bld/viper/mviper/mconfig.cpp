@@ -48,7 +48,7 @@ extern "C" {
     #if defined( __WINDOWS__ ) || defined( __NT__ )
         #include <windows.h>    //temporary ?
     #endif
-    int __nonIBM();
+//    int __nonIBM();
 };
 
 #define MALLOC(s) (char*)malloc(s)
@@ -95,13 +95,14 @@ MConfig::MConfig( WFileName& filename, bool debug )
     _configPtr = this;
 #ifdef __WINDOWS__
     if( __IsDBCS ) {
-        if( __nonIBM() ) {
-            /* japanese windows on a nec 98 pc */
-            _hostType = HOST_NEC_WIN;
-        } else {
+// Looks like we lost __nonIBM() somewhere... remove for now. MN
+//        if( __nonIBM() ) {
+//            /* japanese windows on a nec 98 pc */
+//            _hostType = HOST_NEC_WIN;
+//        } else {
             /* japanese windows on an IBM */
             _hostType = HOST_J_WIN;
-        }
+//        }
     } else {
         /* assume no DBCS win-os/2 */
         union {
