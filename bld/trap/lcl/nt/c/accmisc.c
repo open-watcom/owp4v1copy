@@ -502,6 +502,13 @@ unsigned ReqSplit_cmd( void )
             ret->parm_start = cmd - start + 1;
             ret->cmd_end = cmd - start;
             return( sizeof( *ret ) );
+        case '\"':
+            while( --len && ( *++cmd != '\"' ) )
+                ;
+            if( len == 0 ) {
+                ret->parm_start = 1;
+                goto done;
+            }
         }
         ++cmd;
         --len;
