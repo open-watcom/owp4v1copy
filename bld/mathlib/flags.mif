@@ -89,7 +89,6 @@ sw_a_axp_   =
 sw_a_ppc_   =
 
 sw_c_msdos    =
-sw_c_necdos   =
 sw_c_os2      =
 sw_c_windows  =
 sw_c_winnt    =
@@ -104,8 +103,6 @@ sw_a_os2_387      =
 sw_a_os2_ppc      =
 sw_a_windows_286  =
 sw_a_windows_287  =
-sw_a_necdos_386   =
-sw_a_necdos_387   =
 sw_a_winnt_axp    =
 sw_a_winnt_ppc    =
 
