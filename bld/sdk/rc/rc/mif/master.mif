@@ -119,13 +119,6 @@ bindit : .PROCEDURE
         @%null
 !endif
 
-ytab.obj : ytab.c param.h ytab.gh
-#!ifeq release 0
-#       $(CC) -nm=rc.y $(CFLAGS) $[*
-#!else
-        $(CC) $(CFLAGS) $[*
-#!endif
-
 ytab.c ytab.gh : rc.y $(wrc_dir)/y/yydriver.c rcmem.h
         $(yacc) -d -b $[@ $[:yydriver.c >$(nulldevice)
         @cp ytab.h ytab.gh
