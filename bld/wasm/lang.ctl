@@ -24,8 +24,8 @@ cdsay .
 #    <CPCMD> <devdir>\wasm\nt.axp\wasm.sym <relroot>\rel2\axpnt\wasm.sym
     <CPCMD> <devdir>\wasm\os2.x86\wasm.exe <relroot>\rel2\binp\wasm.exe
     <CPCMD> <devdir>\wasm\os2.x86\wasm.sym <relroot>\rel2\binp\wasm.sym
-    <CPCMD> <devdir>\wasm\osi.x86\wasm.exe <relroot>\rel2\binw\wasm.exe
-    <CPCMD> <devdir>\wasm\osi.x86\wasm.sym <relroot>\rel2\binw\wasm.sym
+    <CPCMD> <devdir>\wasm\dos.x86\wasm.exe <relroot>\rel2\binw\wasm.exe
+    <CPCMD> <devdir>\wasm\dos.x86\wasm.sym <relroot>\rel2\binw\wasm.sym
     <CPCMD> <devdir>\wasm\qnx.x86\wasm.qnx <relroot>\rel2\qnx\binq\wasm.
     <CPCMD> <devdir>\wasm\qnx.x86\wasm.sym <relroot>\rel2\qnx\sym\
 
