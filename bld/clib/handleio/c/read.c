@@ -205,7 +205,7 @@
 
 #if defined( __WINDOWS_386__ )
 #define MAXBUFF 0x8000
-_WCRTLINK int read( int handle, char *buffer, unsigned len )
+_WCRTLINK int read( int handle, void *buffer, unsigned len )
 {
     unsigned    total=0,readamt;
     int         rc;
