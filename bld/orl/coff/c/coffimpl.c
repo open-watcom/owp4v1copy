@@ -32,8 +32,6 @@
 ****************************************************************************/
 
 #include <malloc.h>
-//#include <assert.h>
-//#include <error.h>
 #include <stdio.h>
 
 #include "coffimpl.h"
@@ -508,7 +506,7 @@ static int CoffCreateImport( coff_file_handle coff_file_hnd, import_sym * import
     return ORL_OKAY;
 }
 
-static int convert_import_library(coff_file_handle coff_file_hnd)
+int convert_import_library(coff_file_handle coff_file_hnd)
 {
     coff_import_object_header * i_hdr;
     import_sym      sym;

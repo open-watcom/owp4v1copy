@@ -427,8 +427,10 @@ orl_return CoffLoadFileStructure( coff_file_handle coff_file_hnd )
         // convert short import library structures to long import
         // library structures, change _ClientRead and _ClientSeek 
         // macros to read from converted metadata
-        convert_import_library( coff_file_hnd );
-
+        error = convert_import_library( coff_file_hnd );
+        if ( error != ORL_OKAY ) {
+            return( error );
+        }
         // reread new converted file header and next process as normal
         coff_file_hnd->f_hdr_buffer = _ClientRead( coff_file_hnd, sizeof( coff_file_header ) );
         if( !(coff_file_hnd->f_hdr_buffer) ) return( ORL_OUT_OF_MEMORY );
