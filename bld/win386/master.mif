@@ -6,11 +6,8 @@ win386_autodepends = .AUTODEPEND
 !include deftarg.mif
 !include defrule.mif
 
-wdebug_name =WDEBUG
-wemu387_name =WEMU387
-
-.before
-    @set include =
+wdebug_name  = WDEBUG
+wemu387_name = WEMU387
 
 !ifeq fmt vxd
 all : wdebug.386 wemu387.386
@@ -58,30 +55,29 @@ OBJS_vxd = wdebug.obj &
 # cflags stuff
 ###############
 extra_c_flags = -s-2-fpc
-#extra_c_flags_toolhelp = -oas
 !ifeq fmt dll
-extra_c_flags_wininit = -dDLL32 -zu
-extra_c_flags_libmain = -dDLL32 -zu
-extra_c_flags_windpmi = -dDLL32 -zu
-extra_c_flags_clib = -dDLL32 -zu
-extra_c_flags_fints = -dDLL32 -zu
-extra_c_flags_windata = -dDLL32 -zu
-extra_c_flags_winstubs = -dDLL32 -zu
-extra_c_flags_bitmap = -dDLL32 -zu
-extra_c_flags_toolhelp += -dDLL32 -zu
+extra_c_flags_wininit  = -DDLL32 -zu
+extra_c_flags_libmain  = -DDLL32 -zu
+extra_c_flags_windpmi  = -DDLL32 -zu
+extra_c_flags_clib     = -DDLL32 -zu
+extra_c_flags_fints    = -DDLL32 -zu
+extra_c_flags_windata  = -DDLL32 -zu
+extra_c_flags_winstubs = -DDLL32 -zu
+extra_c_flags_bitmap   = -DDLL32 -zu
+extra_c_flags_toolhelp = -DDLL32 -zu
 !endif
 
 # aflags stuff
 ###############
-extra_a_flags_wdebug = -i"$(emu386)/inc" -mf
-extra_a_flags_winglue = -i"../h"
-extra_a_flags_wincb = -i"../h"
-extra_a_flags_call16 = -i"../../watcom/h"
-extra_a_flags_dllpatch = -i"../../watcom/h"
-extra_a_flags_int21win = -i"../../watcom/h"
+extra_a_flags_wdebug   = -I"$(emu386)/inc" -mf
+extra_a_flags_winglue  = -I"../h"
+extra_a_flags_wincb    = -I"../h"
+extra_a_flags_call16   = -I"../../watcom/h"
+extra_a_flags_dllpatch = -I"../../watcom/h"
+extra_a_flags_int21win = -I"../../watcom/h"
 !ifeq fmt dll
-extra_a_flags_wincall = -dDLL32
-extra_a_flags_dllthunk = -dDLL32
+extra_a_flags_wincall  = -DDLL32
+extra_a_flags_dllthunk = -DDLL32
 !endif
 
 # linker flags stuff
