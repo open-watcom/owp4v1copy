@@ -1,7 +1,7 @@
 .ix keyword
 ..tb set ›
 ..sr firsttab=&SYSIN.+3
-..tb &firsttab. +11 +11 +11
+..tb &firsttab. +13 +13 +13
 .kwon
 ›&kwbased. ›&kwfortran.›&kwnear.    ›&kwsegment.
 ›&kwcdecl. ›&kwhuge.   ›&kwpacked.  ›&kwsegname.
