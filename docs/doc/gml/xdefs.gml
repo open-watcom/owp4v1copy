@@ -24,7 +24,7 @@ WATCOM is a trademark of Sybase, Inc. and its subsidiaries.
 :set symbol="rev"       value="0".
 :set symbol="pver"      value="10".
 :set symbol="prev"      value="6".
-:set symbol="version"   value="10".
+:set symbol="version"   value="110".
 :set symbol="minram"    value="8 MB".
 :set symbol="mfc16"     value="MFC 2.52b".
 :set symbol="mfc32"     value="MFC 4.1".
