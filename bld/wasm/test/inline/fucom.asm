@@ -1,5 +1,5 @@
 fucom st(2)
-fucom
+fucom st(1)
 fucomp st(2)
-fucomp
+fucomp st(1)
 fucompp

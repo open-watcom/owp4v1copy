@@ -1,5 +1,5 @@
-lgdt word ptr x
-lidt word ptr x
+lgdt x
+lidt x
 lldt word ptr x
 lldt ax
 lmsw ax
@@ -12,8 +12,8 @@ nop
 ret
 ret 0004H
 sahf
-sgdt word ptr x
-sidt word ptr x
+sgdt x
+sidt x
 sldt word ptr x
 sldt ax
 smsw ax
@@ -30,5 +30,5 @@ verr si
 verw bx
 verr word ptr x
 verw word ptr x
-wait
-xlat
+fwait
+xlatb

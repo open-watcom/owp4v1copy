@@ -1,15 +1,19 @@
 g/^$/d
-g/@EXTRN/d
-g/@SEGMENT/d
-g/@ENDS/d
-g/@DGROUP/d
+g/EXTRN/d
+g/SEGMENT/d
+g/ENDS/d
+g/DGROUP/d
 g/.386/d
-g/@PUBLIC/d
-g/@ORG/d
-g/@LABEL/d
-g/@END/d
-g/@NAME/d
+g/.387/d
+g/PUBLIC/d
+g/ORG/d
+g/LABEL/d
+g/END/d
+g/NAME/d
 g/ ret /d
-%s/^r[0-9]+_: +//
+g/\.model/d
+g/^r[0-9]+_:/d
+%s/^ +//
+%s/FLAT://
 %s/_x/x/
 %s/ +/ /g

@@ -6,7 +6,7 @@ fchs
 fclex
 fcos
 fdecstp
-ffree st(0)
+ffree st
 ffree st(2)
 fincstp
 finit
@@ -18,18 +18,18 @@ fldlg2
 fldln2
 fldz
 fstcw word ptr x
-fstsw word ptr x
-fstsw ax
+fstsw qword ptr x
+fnstsw ax
 fldcw word ptr x
-fstenv dword ptr x
-fldenv dword ptr x
+fstenv x
+flenv x
 fnop
 fpatan
 fprem
 fptan
 frndint
-frstor dword ptr x
-fsave dword ptr x
+frstor x
+fsave x
 fscale
 fsin
 fsincos

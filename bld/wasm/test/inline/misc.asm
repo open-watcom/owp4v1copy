@@ -26,11 +26,11 @@ hlt
 insb
 insw
 insd
-int 3
-int 12H
+int 00000003H
+int 00000012H
 into
 invd
-invlpg x
+invlpg word ptr x
 iret
 iretd
 lahf
