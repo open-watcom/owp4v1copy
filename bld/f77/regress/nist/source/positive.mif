@@ -1,8 +1,7 @@
 #
 # awaiting bug fixes
 #
-# fm257.$(ext) &        # requires operator input
-# fm923.$(ext) &        # input file likely invalid
+# fm257.$(ext) &        # requires operator input - not really a failure
 
 #
 # special options
@@ -221,7 +220,8 @@ positive_tests = &
     fm919.$(ext) &
     fm920.$(ext) &
     fm921.$(ext) &
-    fm922.$(ext)
+    fm922.$(ext) &
+    fm923.$(ext)
 
 ext = $(ext_$(arch))
 !ifeq arch axp
