@@ -1,0 +1,34 @@
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+!include $(orl_dir)/client.mif
+
+.c: ../c;$(trmem_dir)
+.h: ../h;$(trmem_dir)
+
+obj             = .obj
+exe             = .exe
+
+inc_dirs = $(dwarfdir)/dr/h;$(dwarfdir)/dw/h;$(orl_dir)/h;$(watcom_dir)/h;$(trmem_dir)
+
+!ifeq release 0
+extra_c_flags_test      = -of+
+extra_c_flags_trmemcvr  = -dTRMEM -of+
+extra_c_flags_trmem     = -dTRMEM -of+
+!endif
+
+extra_l_flags           = library $(orl_lib)
+
+.before:
+        set include=$(inc_path)
+
+test_objs       =   dwdump$(obj) &
+                    testdump$(obj) &
+                    trmemcvr$(obj)
+!ifeq release 0
+test_objs       +=  trmem$(obj)
+!endif
+
+dwdump$(exe) : $(test_objs) $(orl_lib)
+        $(linker) $(lflags) name $@ file { $(test_objs) }
