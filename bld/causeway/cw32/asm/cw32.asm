@@ -51,7 +51,7 @@ _cwMain segment para public 'Main thread' use16
 Copyright       label byte
         db 'CauseWay DOS Extender v'
 VersionMajor    db '4.'
-VersionMinor    db '01'
+VersionMinor    db '02'
         db " No copyright. Public domain software.",13,10,"No rights retained. ",13,10,0
 
 ;-------------------------------------------------------------------------------
@@ -1876,8 +1876,36 @@ cw5_InProt:
         and     ax,1011111111111111b    ;clear NT.
         push    eax
         popfd
+
+; MED 12/04
+; check if CPUID is available, if so, check if need to enable SSE instructions
+        pushfd
+        pop     eax
+        mov     ecx,eax
+        xor     eax,200000h     ; toggle cpu id bit
+        push    eax
+        popfd
+        pushfd
+        pop     eax
+        xor     eax,ecx         ; see if cpu id bit was changed
+        je      nosse           ; no, cpuid instruction not supported
+
+.586p
+        mov     eax,1
+        cpuid
+        and     edx,3000000h    ; only want SSE and FXSR bit status
+        cmp     edx,3000000h
+        jne     nosse           ; both bits required
+        mov     eax,cr0
+        and     al,NOT 6        ; clear EM and MP bits
+        mov     cr0,eax
+        mov     eax,cr4
+        or      ax,200h         ; set OSFXSR bit to allow SSE instructions
+        mov     cr4,eax
+nosse:
         cld
         clts
+
 ;
 ;Switch to PL3 code seg for the hell of it.
 ;
