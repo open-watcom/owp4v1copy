@@ -703,10 +703,15 @@ extern void far *MK_FP32( void * );
 extern DWORD MK_FP16( void far * );
 
 #pragma aux MK_LOCAL32 "*_" __parm [__eax] __value [__eax __dx];
-#pragma aux MK_FP32 = 0x8B 0xD0 0xC1 0xEA 0x10 0x25 0xFF 0xFF 0x00 0x00 \
-   __parm [__eax] __value [__eax __dx];
-#pragma aux  MK_FP16 = 0xC1 0xE2 0x10 0x66 0x8B 0xD0 \
-   __parm [__eax __dx] __value [__edx];
+#pragma aux MK_FP32 =    \
+        "mov edx,eax"    \
+        "shr edx,16"     \
+        "and eax,0ffffh" \
+        __parm [__eax] __value [__eax __dx];
+#pragma aux  MK_FP16 =   \
+        "shl edx,16"     \
+        "mov dx,ax"      \
+        __parm [__eax __dx] __value [__edx];
 
 extern DWORD _Call16( FARPROC lpFunc, char *fmt, ... );
 /*
