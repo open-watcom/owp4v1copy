@@ -205,6 +205,7 @@ static dbug_type DoBasedPtr( TYPEPTR typ, predefined_cg_types cg_pnt_mod )
     dbg_loc         dl;
     SYM_HANDLE      sym_handle;
     auto SYM_ENTRY  sym;
+    int             have_retval = 0;
 
     dl = DBLocInit();
     sym_handle = typ->u.p.based_sym;
@@ -214,12 +215,15 @@ static dbug_type DoBasedPtr( TYPEPTR typ, predefined_cg_types cg_pnt_mod )
     } else {
         if( sym_handle == Sym_CS ) { /* 23-jan-92 */
             ret_val = DBPtr( cg_pnt_mod, DBType( typ->object ) );
+            have_retval = 1;
         } else if( sym_handle == Sym_SS ) { /* 13-dec-92 */
             ret_val = DBPtr( cg_pnt_mod, DBType( typ->object ) );
+            have_retval = 1;
         } else {
             SymGet( &sym, sym_handle );
             if( sym.name[0] == '.' ) {  /* if segment label 15-mar-92 */
                 ret_val = DBPtr( cg_pnt_mod, DBType( typ->object ) );
+                have_retval = 1;
             } else {
                 dl = DBLocSym( dl, sym_handle );
                 dl = DBLocOp( dl, DB_OP_POINTS, T_UINT_2 );
@@ -228,7 +232,9 @@ static dbug_type DoBasedPtr( TYPEPTR typ, predefined_cg_types cg_pnt_mod )
             }
         }
     }
-    ret_val = DBBasedPtr( cg_pnt_mod, DBType( typ->object ), dl );
+    if (!have_retval) {
+        ret_val = DBBasedPtr( cg_pnt_mod, DBType( typ->object ), dl );
+    }
     DBLocFini( dl );
     return( ret_val );
 }
