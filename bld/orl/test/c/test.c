@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  ORL test program - useful to identify object files.
 *
 ****************************************************************************/
 
@@ -33,8 +32,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <sys\types.h>
-#include <sys\stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
 #include "trmemcvr.h"
@@ -381,8 +380,8 @@ orl_return PrintSymTable( orl_sec_handle orl_sec_hnd )
     return( ORL_OKAY );
 }
 
-static void * objRead( void *hdl, int len )
-/*****************************************/
+static void * objRead( void *hdl, unsigned int len )
+/**************************************************/
 {
     buff_list   ptr;
 
@@ -507,7 +506,7 @@ void main( int argc, char *argv[] )
         printf( "COFF" );
         break;
     default:
-        printf( "?" );
+        printf( "Unknown" );
         break;
     }
     printf( " object file.\n" );
