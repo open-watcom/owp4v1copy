@@ -38,7 +38,7 @@ set BUILD_PLATFORM=
 
 [ BLOCK <BUILD_PLATFORM> linux386 ]
 #==================================
-    echo Building the wasm bootstrap
+    echo Building the wcl bootstrap
     mkdir <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
     wmake -h -f ../linux386.386/makefile
