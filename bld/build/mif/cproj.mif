@@ -1,7 +1,7 @@
 !include preclude.mif
 
 !ifndef lang_root
-lang_root       = $(lang_root_$(host_CPU))
+lang_root       = $(lang_root_$(host_cpu))
 !endif
 
 cc_386          = *wcc386
@@ -30,12 +30,12 @@ as_axp          = *wasaxp
 as_ppc          = *wasppc
 
 !ifdef %use_os2tk_stuff
-rc_os2		= $(os2_toolkit)\bin\rc16.exe
+rc_os2      = $(os2_toolkit)\bin\rc16.exe
 !else
-rc_os2		= $(lang_root)\binp\rc.exe
+rc_os2      = $(lang_root)\binp\rc.exe
 !endif
 
-!ifeq host_OS os2
+!ifeq host_os os2
 %PATH = $+$(%PATH);$(%watcom)\binp$-
 # this extra line appears to be needed
 !endif
@@ -58,9 +58,9 @@ ldebug_axp      = debug dwarf
 ldebug_ppc      = debug dwarf
 
 mode_cflags_r   = -oaxt -d1
-mode_lflags_r   = $(ldebug_$(host_CPU))
+mode_lflags_r   = $(ldebug_$(host_cpu))
 mode_cflags_d   = -od -d2
-mode_lflags_d   = $(ldebug_$(host_CPU))
+mode_lflags_d   = $(ldebug_$(host_cpu))
 !ifeq release 1
 mode_cflags     = $(mode_cflags_r)
 mode_lflags     = $(mode_lflags_r)
@@ -99,8 +99,8 @@ cflags_all      =-zq-w4-we
 cflags_all      +=-dNDEBUG
 !endif
 
-cflags_386      = $(model_switch_$(host_CPU))-zc
-cflags_i86      = $(model_switch_$(host_CPU))
+cflags_386      = $(model_switch_$(host_cpu))-zc
+cflags_i86      = $(model_switch_$(host_cpu))
 cflags_axp      =
 cflags_ppc      =
 
@@ -131,8 +131,8 @@ cflags_win     += -br
 cflags_os2     += -br
 !endif
 
-proj_c_flags     = $(extra_c_flags) $(extra_c_flags_$(host_CPU)) $(extra_c_flags_$(host_OS))
-cflags           = $(cflags_all) $(cflags_$(host_CPU)) $(cflags_$(host_OS)) $(mode_cflags) $(proj_c_flags)
+proj_c_flags     = $(extra_c_flags) $(extra_c_flags_$(host_cpu)) $(extra_c_flags_$(host_os))
+cflags           = $(cflags_all) $(cflags_$(host_cpu)) $(cflags_$(host_os)) $(mode_cflags) $(proj_c_flags)
 
 lflags_dos_i86   = sys dos
 lflags_nt_axp    = sys ntaxp
@@ -166,14 +166,14 @@ cflags_all     += -bd
 !endif
 !endif
 
-lflags          = $(mode_lflags) $(lflags_$(host_OS)_$(host_CPU)) $(extra_l_flags_$(host_OS)) $(extra_l_flags)
+lflags          = $(mode_lflags) $(lflags_$(host_os)_$(host_cpu)) $(extra_l_flags_$(host_os)) $(extra_l_flags)
 
 rc_flags_nt     = -bt=nt
 rc_flags_win    = -bt=windows
 
 rc_flags_axp    = -d__AXP__
 
-rc_flags        = $(rc_flags_$(host_OS)) $(rc_flags_$(host_CPU))
+rc_flags        = $(rc_flags_$(host_os)) $(rc_flags_$(host_cpu))
 
 !ifdef use_os2tk_hdrs
 inc_dirs_sys_os2_386 = $(os2_toolkit)\h
@@ -182,30 +182,32 @@ inc_dirs_sys_os2_i86 = $(os2_ddk)\base\h
 inc_dirs_sys_os2_386 = $(lang_root)\h\os2
 inc_dirs_sys_os2_i86 = $(lang_root)\h\os21x
 !endif
-inc_dirs_sys_nt = $(lang_root)\h\nt
-inc_dirs_sys_win= $(lang_root)\h\win
-inc_dirs_sys_os2= $(inc_dirs_sys_os2_$(host_CPU))
-inc_dirs_sys_dos=
-inc_dirs_sys_nov=
-inc_dirs_sys_qnx=
+inc_dirs_sys_nt    = $(lang_root)\h\nt
+inc_dirs_sys_win   = $(lang_root)\h\win
+inc_dirs_sys_os2   = $(inc_dirs_sys_os2_$(host_cpu))
+inc_dirs_sys_dos   =
+inc_dirs_sys_nov   =
+inc_dirs_sys_qnx   =
+inc_dirs_sys_linux =
 
-inc_dirs_lang_qnx = $(lang_root)\qh
+inc_dirs_lang_qnx     = $(lang_root)\qh
+inc_dirs_lang_linux   = $(lang_root)\lh
 inc_dirs_lang_netware = $(ow_nwoss_root)\common\h
 
-!ifdef inc_dirs_lang_$(host_OS)
-inc_dirs_lang   = $(inc_dirs_lang_$(host_OS))
+!ifdef inc_dirs_lang_$(host_os)
+inc_dirs_lang   = $(inc_dirs_lang_$(host_os))
 !else
 inc_dirs_lang   = $(lang_root)\h
 !endif
 
-inc_dirs_sys    = $(inc_dirs_lang);$(inc_dirs_sys_$(host_OS))
-inc_path        = $(inc_dirs);$(inc_dirs_$(host_OS));$(inc_dirs_sys);$(watcom_dir)\h
+inc_dirs_sys    = $(inc_dirs_lang);$(inc_dirs_sys_$(host_os))
+inc_path        = $(inc_dirs);$(inc_dirs_$(host_os));$(inc_dirs_sys);$(watcom_dir)\h
 
-cc              = $(cc_$(host_CPU))
-cpp             = $(cpp_$(host_CPU))
-linker          = $(linker_$(host_CPU))
-librarian       = $(librarian_$(host_CPU))
-as              = $(as_$(host_CPU))
+cc              = $(cc_$(host_cpu))
+cpp             = $(cpp_$(host_cpu))
+linker          = $(linker_$(host_cpu))
+librarian       = $(librarian_$(host_cpu))
+as              = $(as_$(host_cpu))
 yacc            = $(bld_bin)\yacc
 re2c            = $(bld_bin)\re2c
 

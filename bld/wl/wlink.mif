@@ -199,7 +199,7 @@ extend = exe
 
 # and finally, the miscellaneous macro definitions
 
-inc_dirs = ..\h;$(watcom_dir)\h;$(lang_root)\h;$(inc_dirs_sys_$(host_os))
+inc_dirs = ..\h;$(watcom_dir)\h;$(inc_dirs_sys)
 
 !ifndef execomp
 execomp = $(cc) -i$(inc_dirs)
