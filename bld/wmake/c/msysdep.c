@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Platform dependent internal helper functions for WMAKE.
 *
 ****************************************************************************/
 
@@ -112,7 +111,7 @@ extern void far *       _DOS_list_of_lists( void );
 extern int OSCorrupted( void )
 /****************************/
 {
-    struct mcb {
+    _Packed struct mcb {
         uint_8  id;
         uint_16 owner;
         uint_16 len;
