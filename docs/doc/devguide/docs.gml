@@ -35,7 +35,7 @@ The environment variable
 must point to the root of the doc
 tree (the place where cmds, doc, gml, and Hlp directories are located).
 If you're wondering where the Hlp directory is, run
-.id mkdocs.bat/mkdocs.cmd
+.id mkall.bat/mkall.cmd
 located in the bat directory. But first you'll need to do something like
 .millust begin
  set doc_root=d:\OpenWatcom\docs
@@ -127,11 +127,11 @@ cd %doc_root%\doc\hlp\win
 .millust end
 .bull
 Run
-.id doit.bat
+.id mkall.bat
 to create all online help.
 .np
 Look at
-.id doit.bat
+.id mk.bat
 for a hint on how to do one document at a time. Or read on
 if you're lazy.
 .np
@@ -151,11 +151,11 @@ cd %doc_root%\doc\hlp\ib
 .millust end
 .bull
 Run
-.id doit.bat
+.id mkall.bat
 to create all online help.
 .np
 Look at
-.id doit.bat
+.id mk.bat
 for a hint on how to do one document at a time.
 Or read on if you're lazy.
 .np
@@ -173,11 +173,11 @@ cd %doc_root%\doc\hlp\os2
 .millust end
 .bull
 Run
-.id doit.bat
+.id mkall.bat
 to create all the IPF files for the OS/2 IPF compiler.
 .np
 Look at
-.id doit.bat
+.id mk.bat
 for a hint on how to do one document at a time. Or read on
 if you're lazy.
 .bull
