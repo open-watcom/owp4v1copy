@@ -37,6 +37,7 @@ cdsay .
     <CPCMD> <devdir>/sdk/rc/rc/nt386rt.dll/wrc.dll <relroot>/rel2/binnt/rtdll/wrc.dll
 # linux
     <CPCMD> <devdir>/sdk/rc/rc/linux386/wrc.exe <relroot>/rel2/binl/wrc
+    <CPCMD> <devdir>/sdk/rc/rc/linux386/wrc.sym <relroot>/rel2/binl/wrc.sym
     <CPCMD> <devdir>/sdk/rc/rc/*.uni <relroot>/rel2/binl/
 
 [ BLOCK <1> clean ]

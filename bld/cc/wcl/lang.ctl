@@ -21,7 +21,9 @@ cdsay .
     <CPCMD> <devdir>/cc/wcl/nt386/wcl.exe     <relroot>/rel2/binnt/wcl.exe
     <CPCMD> <devdir>/cc/wcl/nt386/wcl386.exe  <relroot>/rel2/binnt/wcl386.exe
     <CPCMD> <devdir>/cc/wcl/linux386/wcl.exe     <relroot>/rel2/binl/wcl
+    <CPCMD> <devdir>/cc/wcl/linux386/wcl.sym     <relroot>/rel2/binl/wcl.sym
     <CPCMD> <devdir>/cc/wcl/linux386/wcl386.exe  <relroot>/rel2/binl/wcl386
+    <CPCMD> <devdir>/cc/wcl/linux386/wcl386.sym  <relroot>/rel2/binl/wcl386.sym
 #   <CPCMD> <devdir>/cc/wcl/dosi86/wclaxp.exe  <relroot>/rel2/binw/wclaxp.exe
 #   <CPCMD> <devdir>/cc/wcl/os2386/wclaxp.exe  <relroot>/rel2/binp/wclaxp.exe
 #   <CPCMD> <devdir>/cc/wcl/nt386/wclaxp.exe  <relroot>/rel2/binnt/wclaxp.exe

@@ -173,10 +173,10 @@ usagej.rc : $(proj_path)/h/usage.sp
         wsplice -kIS_RC -kJAPANESE -k$(host_OS) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" $< $^@
 
 usage.u : $(proj_path)/h/usage.sp
-        $(bld_bin)/wsplice -kENGLISH -k$(host_OS) -t8 -u $[@ $^@
+        wsplice -kENGLISH -k$(host_OS) -t8 -u $[@ $^@
 
 usagej.u : $(proj_path)/h/usage.sp
-        $(bld_bin)/wsplice -kJAPANESE -k$(host_OS) -t8 -u $[@ $^@
+        wsplice -kJAPANESE -k$(host_OS) -t8 -u $[@ $^@
 
 msg.gh : $(proj_path)/h/asmshare.msg
 !ifdef __LINUX__

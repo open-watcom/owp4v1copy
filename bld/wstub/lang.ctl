@@ -12,11 +12,15 @@ cdsay .
 [ BLOCK <1> build rel2 ]
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
 
+[ BLOCK <BUILD_PLATFORM> linux386 ]
+#===============================
+    <CPCMD> wstub.exe <DEVDIR>/build/binl/wstub.exe
+
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>/wstub/wstub.exe <relroot>/rel2/binw/wstub.exe
-    <CPCMD> <devdir>/wstub/wstubq.exe <relroot>/rel2/binw/wstubq.exe
-    <CPCMD> <devdir>/wstub/wstub.c <relroot>/rel2/src/wstub.c
+    <CPCMD> wstub.exe <relroot>/rel2/binw/wstub.exe
+    <CPCMD> wstubq.exe <relroot>/rel2/binw/wstubq.exe
+    <CPCMD> wstub.c <relroot>/rel2/src/wstub.c
 
 [ BLOCK <1> clean ]
 #==================

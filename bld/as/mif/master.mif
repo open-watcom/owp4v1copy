@@ -207,11 +207,7 @@ msg.gh : ./mkstrid.exe
         $(bld_cl) $(wcl_util_opts) $(extra_defines) $[@
 
 $(yacc_in) : $(yacc_src) $(as_dir)/y/yydriver.c
-!ifdef __LINUX__
-        $(bld_bin)/wsplice $(splice_opts) $[@ $^@
-!else
-        $(bld_bin)\wsplice $(splice_opts) $[@ $^@
-!endif
+        wsplice $(splice_opts) $[@ $^@
 
 $(yacc_out_c).c $(yacc_out_h) : $(yacc_in)
         $(yacc) $(yacc_flags) $[@ $(as_dir)\y\yydriver.c > $(nulldevice)
@@ -220,11 +216,7 @@ $(yacc_out_c).c $(yacc_out_h) : $(yacc_in)
         # $(yacc) $(yacc_flags) $[@
 
 $(lex_in) : $(lex_src)
-!ifdef __LINUX__
-        $(bld_bin)/wsplice $(splice_opts) $[@ $^.
-!else
-        $(bld_bin)\wsplice $(splice_opts) $[@ $^.
-!endif
+        wsplice $(splice_opts) $[@ $^.
 
 .ERASE
 $(lex_out_c).c $(lex_out_h) : $(lex_in)

@@ -29,11 +29,7 @@ $(proj_name).exe : $(dependants)
         wstrip -q -a -r $^@ . $(res_$(host_os))
 
 msg.gh : wstrip.msg
-!ifdef __LINUX__
-        perl $(sdk_dir)/misc/msgtoh.pl < $< | sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_RC_BASE+1/' > $@
-!else
         $(vi) -s ../go.vi
-!endif
 
 owstrip.res : wstrip.rc wstrip.msg msg.gh ousage.rc ousagej.rc
         $(rc_aui) -zk0 -DDOS $[@ -fo=$^@

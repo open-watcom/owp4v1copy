@@ -115,10 +115,4 @@ inlnops.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
         $[@ $(wasm_dir)/inlnops.tok $^@
 
 msg.gh : $(wasm_dir)/h/asmshare.msg
-!ifdef __LINUX__
-        perl $(sdk_dir)/misc/msgtoh.pl < $[@ > t.msg
-        sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_RC_BASE-1/' t.msg > $^@
-        rm -f t.msg
-!else
         $(vi) -s $(wasm_dir)/h/makemsg.vi -p "$^@" $[@
-!endif
