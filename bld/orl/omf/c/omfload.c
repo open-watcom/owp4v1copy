@@ -410,7 +410,7 @@ static orl_return       doCOMENT( omf_file_handle ofh )
          */
          if (*buffer)
              buffer++;
-         if( !strncmp( buffer, "CV", 2 ) ) {
+         if( ( len == 0 ) || !strncmp( buffer, "CV", 2 ) ) {
              ofh->debug_style = OMF_DBG_STYLE_CODEVIEW;
          } else if( !strncmp( buffer, "HL", 2 ) ) {
              ofh->debug_style = OMF_DBG_STYLE_HLL;
