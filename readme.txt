@@ -30,7 +30,8 @@ d:\
 
     rel2    - this is where the software we actually ship gets copied
               after it is built - it matches the directory structure of our
-              shipping Open Watcom C/C++/FORTRAN tools
+              shipping Open Watcom C/C++/FORTRAN tools. Note: the rel2
+              directory structure is created on the fly.
 
     bat     - batch files, many of which aren't used anymore
               of most interest are the .ctl files - scripts for the "builder"
