@@ -4025,7 +4025,7 @@ typedef MONITORINFOEXW MONITORINFOEX, *LPMONITORINFOEX;
 #if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)
 #define wvsprintf wvsprintfW
 #else
-#define wvsprintf(a,b,c) wvsprintfW(a,b,(*c))
+#define wvsprintf(a,b,c) wvsprintfW(a,b,*(c))
 #endif
 #ifndef NOGDI
 typedef ICONMETRICSW ICONMETRICS,*LPICONMETRICS;
