@@ -57,7 +57,7 @@ include bitmac.inc
 ;       Bit Tables                                              =
 ;================================================================
 
-        modstart bit
+        modstart bit,WORD
 
         xdefp   BitReplace
         xdefp   BitAnd
@@ -79,7 +79,7 @@ MaskTable       db 001h,003h,007h,00fh,01fh,03fh,07fh,0ffh
 
 endif
 
-ifdef _386
+ifdef __386__
 
     DGROUP  group _DATA
     assume  ds:DGROUP,ss:DGROUP

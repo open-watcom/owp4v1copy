@@ -187,10 +187,12 @@ extra_c_flags_i86 = -nt=GRAPH_TEXT -d_CGRAPH=_loadds
 extra_c_flags_qnx = -bt=dos # ?????
 
 extra_a_flags_NEC = -d_NEC_PC
-extra_a_flags = -ms -d_MODEL=_SMALL -i"../inc" $(extra_a_flags_$(machine)) -zld -fo=$@
+extra_a_flags = -ms -i"../inc" $(extra_a_flags_$(machine)) -zld -fo=$@
+
+extra_a_flags_i86 = -d_TEXT=GRAPH_TEXT
 extra_a_flags_386_register = -3r
 extra_a_flags_386_stack = -3s
-extra_a_flags_386 = $(extra_a_flags_386_$(convention)) -d_386
+extra_a_flags_386 = $(extra_a_flags_386_$(convention))
 
 extra_a_flags_qnx = -d_QNX
 

@@ -43,7 +43,7 @@ include graph.inc
         extrn   __PlotAct : word
         extrn   __Transparent : word
 
-        modstart necutils
+        modstart necutils,WORD
 
         xdefp   _NECSet_
         xdefp   _NECReset_
@@ -90,14 +90,14 @@ include graph.inc
 
 Planetable db   0Eh, 01Dh, 02Bh, 037h
 
-ifdef _386
+ifdef __386__
 Segtable dd     0, 08000h, 010000h, 038000h
 else
 Segtable dw     0A800h, 0B000h, 0B800h, 0E000h
 endif
 
 StartPlot macro
-ifdef _386
+ifdef __386__
         push    _edi
 else
         push    es
@@ -106,7 +106,7 @@ endif
         endm
 
 EndPlot macro
-ifdef _386
+ifdef __386__
         pop     _edi
 else
         pop     si
@@ -115,7 +115,7 @@ endif
         endm
 
 NextPlane macro p16,p32
-ifdef _386
+ifdef __386__
         add     _edi,p32
 else
         mov     si,p16
@@ -743,7 +743,7 @@ E_NECMoveDown:
         db      E_NEC1120MoveUp-_NEC1120MoveUp_
 _NEC1120MoveUp_:
         sub     _edi,140         ; move up 1 dot
-ifndef _386
+ifndef __386__
         _if     s               ; adjust segment
           push    si
           add     di,8000h
@@ -759,7 +759,7 @@ E_NEC1120MoveUp:
         db      E_NEC1120MoveDown-_NEC1120MoveDown_
 _NEC1120MoveDown_:              ; move down 1 dot
         add     _edi,140         ;
-ifndef _386
+ifndef __386__
         _if     s               ; adjust segment
           push    si
           sub     di,8000h
@@ -777,7 +777,7 @@ _NEC1120MoveRight_:                 ; move right in high-res mode
         ror     cl,1            ; shift ~mask to the right
         ror     ch,1            ; shift mask to the right
         sbb     _edi,-1          ; move to next byte if it is time
-ifndef _386
+ifndef __386__
         _if     s               ; adjust segment
           push    si
           sub     di,8000h
@@ -795,7 +795,7 @@ _NEC1120MoveLeft_:                  ; move left in high-res mode
         rol     cl,1            ; shift ~mask to the left
         rol     ch,1            ; shift mask to the left
         adc     _edi,-1          ; move to next byte if it is time
-ifndef _386
+ifndef __386__
         _if     s               ; adjust segment
           push    si
           add     di,8000h
@@ -943,7 +943,7 @@ _NEC1120GetDot_:
         ret
 
 ;==========================================================================
-        ifdef _386
+        ifdef __386__
 PixJmp dd _NECByteRep_,_NECByteXor_,_NECByteAnd_,_NECByteOr_
         else
 PixJmp dw _NECByteRep_,_NECByteXor_,_NECByteAnd_,_NECByteOr_
@@ -1017,7 +1017,7 @@ pcopy_common:
         xor     _ebx,_ebx         ; clear out register
         _loop                   ; loop through the different planes
           push      _edi         ; - . . .
-ifdef _386
+ifdef __386__
           add       _edi,cs:Segtable[_ebx*2];point to the new plane
 else
           mov       es,cs:Segtable[bx]; point to the new plane to 'read'
@@ -1103,7 +1103,7 @@ get_common:
         xor     _ebx,_ebx         ; clear out register
         _loop                   ; loop through the different planes
           push      _esi         ; - . . .
-ifdef _386
+ifdef __386__
           add       _esi,cs:Segtable[_ebx*2]; point to the new plane
 else
           mov       ds,cs:Segtable[bx]; point to the new plane to 'read'
@@ -1127,14 +1127,14 @@ endif
         ret
 
 ;========================================================================
-        ifdef _386
+        ifdef __386__
 PlotJmp dd BitReplace,BitXor,BitAnd,BitOr
         else
 PlotJmp dw BitReplace,BitXor,BitAnd,BitOr
         endif
 
 SetupAction:
-ifdef _386
+ifdef __386__
         movzx   _ebx,word ptr ss:__PlotAct
         jmp     cs:PlotJmp[_ebx*4]
 else
@@ -1146,7 +1146,7 @@ endif
 
 ;=========================================================================
 
-        ifdef _386
+        ifdef __386__
 FillJmp     dd _NECRep_,_NECXor_,_NECAnd_,_NECOr_
 Fill16Jmp   dd _NECRep_,_NEC16Xor_,_NEC16And_,_NEC16Or_
 Fill1120Jmp dd _NECRep_,_NEC1120Xor_,_NEC1120And_,_NEC1120Or_
@@ -1157,7 +1157,7 @@ Fill1120Jmp dw _NECRep_,_NEC1120Xor_,_NEC1120And_,_NEC1120Or_
         endif
 
 LoadPlt macro   tab
-ifdef _386
+ifdef __386__
         movzx   _esi,word ptr ss:__PlotAct
         mov     _esi,cs:tab[_esi*4]
 else                                ; load address of plot function

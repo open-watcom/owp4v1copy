@@ -40,7 +40,7 @@ include graph.inc
         extrn   __PlotAct : word
         extrn   __Transparent : word
 
-        modstart cgautils
+        modstart cgautils,WORD
 
         xdefp   _CoRep_
         xdefp   _CoXor_
@@ -151,7 +151,7 @@ E_Move1Left:
 
         db      E_MoveUp-_MoveUp_
 _MoveUp_:                       ; move up 1 dot
-ifdef _386                      ; can't use other method since with DOS4GW
+ifdef __386__                      ; can't use other method since with DOS4GW
         push    _ebx             ; ... the segment is part of _EDI
         mov     bx,di
         and     bx,8000h        ; keep high bit
@@ -161,7 +161,7 @@ endif
         _if     b               ; if di < 0
           add     di,2000h+2000h-80 ; add back 2000h + enough for next row
         _endif                  ; endif
-ifdef _386
+ifdef __386__
         or      di,bx
         pop     _ebx
 endif
@@ -170,7 +170,7 @@ E_MoveUp:
 
         db      E_MoveDown-_MoveDown_
 _MoveDown_:                     ; move down 1 dot
-ifdef _386                      ; can't use other method since with DOS4GW
+ifdef __386__                      ; can't use other method since with DOS4GW
         push    _ebx             ; ... the segment is part of _EDI
         mov     bx,di
         and     bx,8000h        ; keep high bit
@@ -180,7 +180,7 @@ endif
         _if     b               ; if not
           add     di,2000h-80+2000h ; compensate for mistake & add $2000
         _endif                  ; endif
-ifdef _386
+ifdef __386__
         or      di,bx
         pop     _ebx
 endif
@@ -260,14 +260,14 @@ _Pix1Read_:
         pop     ds
         ret
 
-ifdef _386
+ifdef __386__
     PlotJmp dd BitReplace,BitXor,BitAnd,BitOr
 else
     PlotJmp dw BitReplace,BitXor,BitAnd,BitOr
 endif
 
 SetupAction:
-ifdef _386
+ifdef __386__
         movzx   _ebx,word ptr ss:__PlotAct
         jmp     cs:PlotJmp[_ebx*4]
 else
@@ -276,7 +276,7 @@ else
         jmp     cs:PlotJmp[bx]
 endif
 
-ifdef _386
+ifdef __386__
     FillJmp dd _CoRep_,_CoXor_,_CoAnd_,_CoOr_
 else
     FillJmp dw _CoRep_,_CoXor_,_CoAnd_,_CoOr_
@@ -330,7 +330,7 @@ _Pix1Fill_:                         ; fill with style ( 1 bit per pixel )
 
 fill_1_common:                      ; at this point bl = colour, bh = mask
 
-ifdef _386
+ifdef __386__
         movzx   _esi,word ptr ss:__PlotAct
         mov     _esi,cs:FillJmp[_esi*4]
 else                                ; load address of plot function
@@ -465,7 +465,7 @@ fill_2_common:
         ;   cx - scratch register
         ;   si - will hold address of plot routine
 
-ifdef _386
+ifdef __386__
         movzx   _esi,word ptr ss:__PlotAct
         mov     _esi,cs:FillJmp[_esi*4]
 else                                ; load address of plot function

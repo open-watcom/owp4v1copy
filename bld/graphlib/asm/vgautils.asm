@@ -37,7 +37,7 @@ include graph.inc
         extrn   __PlotAct : word
         extrn   __Transparent : word
 
-        modstart vgautils
+        modstart vgautils,WORD
 
         xdefp   _MoveUp19_
         xdefp   _MoveDown19_
@@ -138,7 +138,7 @@ _GetDot19_:
 ;
 ;=========================================================================
 
-ifdef _386
+ifdef __386__
     VGAJmp dd _Rep19_, _CoXor_, _And19_, _CoOr_
 else
     VGAJmp dw _Rep19_, _CoXor_, _And19_, _CoOr_
@@ -146,7 +146,7 @@ endif
 
 _Zap19_:
 
-ifdef _386
+ifdef __386__
         movzx   _ebx,word ptr ss:__PlotAct
         or      _ebx,_ebx
         _if     e               ; if replace mode
@@ -186,7 +186,7 @@ _Fill19_:
         rol     bl,cl               ; adjust fill mask
         mov     cl,dl               ; restore the count
         mov     dl,bl               ; get mask in dl
-ifdef _386
+ifdef __386__
         movzx   _ebx,word ptr ss:__PlotAct
         mov     _ebx,cs:VGAJmp[_ebx*4]; load the appropriate plot routine
 else
@@ -237,7 +237,7 @@ _PixCopy19_:
           rep     movsb         ; - do fast copy
         _else
           push    _ebx
-ifdef _386
+ifdef __386__
           movzx   _ebx,word ptr ss:__PlotAct
           mov     _ebx,cs:VGAJmp[_ebx*4]; load the appropriate plot routine
 else

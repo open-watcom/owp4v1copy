@@ -34,7 +34,7 @@ include graph.inc
         extrn   __PlotAct : word
         extrn   __Transparent : word
 
-        modstart egautils
+        modstart egautils,WORD
 
         xdefp   _EGAMoveUpHi_
         xdefp   _EGAMoveUpLo_
