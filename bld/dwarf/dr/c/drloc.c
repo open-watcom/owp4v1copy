@@ -575,9 +575,22 @@ extern int DRLocBasedAT( dr_handle      var,
         return( FALSE );
     }
     if( DWRScanForAttrib( &abbrev, &var, at ) != 0 ) {
-         ret = DWRLocExpr( sym, abbrev, var, callbck, d );
+        ret = DWRLocExpr( sym, abbrev, var, callbck, d );
     } else {
-        ret = FALSE;
+        if( tag == DW_TAG_member ) {
+            // For members of a union, it is valid not to have any
+            // DW_AT_data_member_location attribute (we might want to check
+            // that we are in fact dealing with a union here). Just create
+            // a dummy location "+0".
+            uint_8      dummy_loc[] = { DW_OP_lit0, DW_OP_plus };
+            int         addr_size;
+
+            addr_size = DWRGetAddrSize( DWRFindCompileUnit( var ) );
+            DoLocExpr( dummy_loc, sizeof(dummy_loc), addr_size, callbck, d, var );
+            ret = TRUE;
+        } else {
+            ret = FALSE;
+        }
     }
     return( ret );
 }
