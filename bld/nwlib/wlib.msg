@@ -88,8 +88,8 @@ pick( USAGE_WLIB_13,        "                | -v                       (print h
                 "                | -v                       (print header)" )
 pick( USAGE_WLIB_14,        "                | -x                       (explode all objects in library)" ,
                 "                | -x                       (ライブラリからすべてのオブジェクトを取り出します)" )
-pick( USAGE_WLIB_15,        "                | -z                       (strip file dependency info)" ,
-                "                | -z                       (strip file dependency info)" )
+pick( USAGE_WLIB_15,        "                | -zld                     (strip file dependency info)" ,
+                "                | -zld                     (strip file dependency info)" )
 pick( USAGE_WLIB_16,        "                | -h                       (display this screen)" ,
                 "                | -h                       (この画面を表示します)" )
 pick( USAGE_WLIB_17,        "                | -?                       (display this screen)" ,
