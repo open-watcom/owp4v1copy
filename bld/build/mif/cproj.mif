@@ -87,14 +87,14 @@ model_switch_i86        = $(mem_model_i86)
 model_switch_i86        = -m$(memory_model_i86)
 !endif
 
+!ifndef memory_model_386
+memory_model_386 = f
+!endif
+
 !ifdef mem_model_386
 model_switch_386        = $(mem_model_386)
 !else ifdef memory_model_386
 model_switch_386        = -m$(memory_model_386)
-!endif
-
-!ifndef memory_model_386
-memory_model_386 = f
 !endif
 
 cflags_all      =-w4-we
