@@ -7,8 +7,8 @@
 .*      +---- 2 letter constant meaning PRofiler
 .*
 :set symbol='smpdosup'  value='WSAMPLE.EXE'
-:set symbol='smpos2up'  value='WSAMPOS2.EXE'
-:set symbol='smpos22up' value='WSMPOS22.EXE'
+:set symbol='smpos2up'  value='WSAMPLE.EXE'
+:set symbol='smpos21up' value='WSMPOS2.EXE'
 :set symbol='smpplsup'  value='WSAMPPLS.EXP'
 :set symbol='smprsiup'  value='WSAMPRSI.EXE'
 :set symbol='smpwinup'  value='WSAMPLEW.EXE'
@@ -16,7 +16,7 @@
 :set symbol='smpnovup'  value='WSAMPLE.NLM'
 .*
 :set symbol='smpdos'    value='wsample'
-:set symbol='smpos2'    value='wsampos2'
+:set symbol='smpos2'    value='wsample'
 :set symbol='smppls'    value='wsamppls'
 :set symbol='smprsi'    value='wsamprsi'
 :set symbol='smpwin'    value='wsamplew'
@@ -312,7 +312,7 @@ This option can be used to disable this assignment of samples so that
 the total time spent executing in DOS code may be determined.
 .endnote
 .*
-.section *refid=smpos2 Using the Sampler with OS/2
+.section *refid=smpos2r Using the Sampler with OS/2
 .*
 .np
 .ix 'OS/2' 'sampler'
@@ -321,10 +321,7 @@ The following options are available under OS/2.
 .seesmpopt
 .begnote
 .note Note
-For OS/2 2.x, you must make sure that &smpos22up is
-also included in a directory listed in the
-.ev PATH
-environment variable.
+For OS/2 1.x, use &smpos21up instead of &smpos2up.
 .endnote
 .exam begin
 C>&smpos2 [wsample_options] program [arguments]
@@ -332,7 +329,7 @@ C>&smpos2 [wsample_options] program [arguments]
 .begnote
 .ix 'sampler options' 'i'
 .note /r=<rate>
-Rates from 27ms to 1000ms are allowed.
+Rates from 1ms to 1000ms are allowed.
 .note /b=<size>
 Sizes from 1K to 64K are allowed.
 .note /f=<file>
@@ -344,7 +341,7 @@ session.  Use /s if you application is a PM application,
 or requires its own session to run.
 .endnote
 .*
-.section *refid=smp4g Using the Sampler with DOS/4GW or DOS/4G
+.section *refid=smp4gr Using the Sampler with DOS/4GW or DOS/4G
 .*
 .np
 .ix 'DOS/4GW' 'sampler'
@@ -395,7 +392,7 @@ Sizes from 1K to 64K are allowed.
 Specify the name of the sample file.
 .endnote
 .*
-.section *refid=smpwin Using the Sampler with Windows 3.x
+.section *refid=smpwinr Using the Sampler with Windows 3.x
 .*
 .np
 .ix 'Windows 3.x' 'sampler'
@@ -441,7 +438,7 @@ Sizes from 1K to 64K are allowed.
 Specify the name of the sample file.
 .endnote
 .*
-.section *refid=smpnt Using the Sampler with Win32
+.section *refid=smpntr Using the Sampler with Win32
 .*
 .np
 .ix 'Windows NT' 'sampler'
