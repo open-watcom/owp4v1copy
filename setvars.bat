@@ -33,6 +33,7 @@ cls
 echo OpenWatcom compiler build environment
 
 REM Stuff for the Open Watcom build environment
+set build_platform=nt386
 set rsidir=d:\rsi
 set batdir=%owroot%
 set bld_ver=110
