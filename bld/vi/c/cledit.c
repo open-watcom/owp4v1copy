@@ -41,7 +41,8 @@
 #include "utils.h"
 #endif
 
-#if (defined __WIN__) && (!defined __NT__)
+#ifdef __WIN__
+#ifndef __NT__
 BOOL isMultipleFiles( char *altname )
 {
     while( *altname && *altname != ' ' ) {
@@ -52,9 +53,7 @@ BOOL isMultipleFiles( char *altname )
     }
     return( FALSE );
 }
-#endif
-
-#ifdef __NT__
+#else
 BOOL isMultipleFiles( char *altname )
 {
     while( *altname ) {
@@ -69,7 +68,7 @@ BOOL isMultipleFiles( char *altname )
 /*
  * EliminateFirstNT - eliminate first n chars from buff for \0\0-strings
  */
-void EliminateFirstNT( char *buff, int n  )
+static void EliminateFirstNT( char *buff, int n  )
 {
     char        *buff2;
 
@@ -113,14 +112,15 @@ static int NextWordNT( char *buff, char *res )
     }
 
 } /* NextWordNT */
+
+/* on NT, we have \0 instead of spaces to delimit single file names and \0\0 to end the string */
+#define NextWord1(a,b) NextWordNT(a,b)
+#endif
 #endif
 
 /*
  * EditFile - read a file into text
  */
-#ifdef __NT__   /* on NT, we have \0 instead of spaces to delimit single file names and \0\0 to end the string */
-#define NextWord1(a,b) NextWordNT(a,b)
-#endif
 int EditFile( char *name, int dammit )
 {
     char        *fn,**list,*currfn;
@@ -364,7 +364,9 @@ EVIL_CONTINUE:
     return( rc );
 
 } /* EditFile */
+#if defined( __WIN__ ) && defined( __NT__ )
 #undef NextWord1
+#endif
 
 #ifndef __WIN__
 static char near *near fileOpts[] =  {
