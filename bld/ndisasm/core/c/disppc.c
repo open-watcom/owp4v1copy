@@ -46,90 +46,93 @@ extern const unsigned short     DisRegisterTable[];
 #define MK_SPR(a,b) (((a)<<5)|(b))
 
 typedef union {
+    struct {
+        unsigned_16 Rc          : 1;
+        // reference types - only valid if memory = ?101
+        unsigned_16 type2       : 2;
+        unsigned_16 mem         : 4;
+        unsigned_16 type1       : 3;
+        // ---
+        unsigned_16 OE          : 1;
+        unsigned_16 rB          : 5;
+    } math;
+    struct {
+        unsigned_16 Rc          : 1;
+        unsigned_16 first       : 5;
+        unsigned_16 second      : 5;
+        unsigned_16 third       : 5;
+    } general;
+    unsigned_16 immediate;
+    struct {
+        unsigned_16 LK          : 1;
+        unsigned_16 AA          : 1;
+        unsigned_16 BD          : 14;
+    } branch;
+    struct {
+        unsigned_16 zero        : 1;
+        unsigned_16 subcode     : 10;
+        unsigned_16 morezero    : 1;
+        unsigned_16 IMM         : 4;
+    } condition;
+    struct {
+        unsigned_16 Rc          : 1;
+        unsigned_16 sh_5        : 1;
+        unsigned_16 XO          : 9;
+        unsigned_16 sh          : 5;
+    } xs_form;
+    struct {
+        unsigned_16 Rc          : 1;
+        unsigned_16 sh_5        : 1;
+        unsigned_16 XO          : 3;
+        unsigned_16 mb          : 6;
+        unsigned_16 sh          : 5;
+    } md_form;
+    struct {
+        unsigned_16 Rc          : 1;
+        unsigned_16 XO          : 4;
+        unsigned_16 mb          : 6;
+        unsigned_16 first       : 5;
+    } mds_form;
+} ppc_ins_lo;
+
+typedef union {
+    struct {
+        unsigned_16 first       : 5;
+        unsigned_16 second      : 5;
+        // reference types - only valid if memory=1
+        unsigned_16 update      : 1;
+        unsigned_16 type        : 3;
+        unsigned_16 floating    : 1;
+        unsigned_16 memory      : 1;
+        // ---
+    } general;
+    struct {
+        unsigned_16 zero        : 1;
+        unsigned_16 FM          : 8;
+        unsigned_16 morezero    : 1;
+        unsigned_16 opcode      : 6;
+    } math;
+    struct {
+        unsigned_16 rA          : 5;
+        unsigned_16 L           : 1;
+        unsigned_16 zero        : 1;
+        unsigned_16 crfD        : 3;
+        unsigned_16 opcode      : 6;
+    } compare;
+    struct {
+        unsigned_16 zero        : 2;
+        unsigned_16 crfS        : 3;
+        unsigned_16 morezero    : 2;
+        unsigned_16 crfD        : 3;
+        unsigned_16 opcode      : 6;
+    } condition;
+} ppc_ins_hi;
+
+typedef union {
     unsigned_32 full;
     struct {
-        union {
-            struct {
-                unsigned_16 Rc          : 1;
-                // reference types - only valid if memory = ?101
-                unsigned_16 type2       : 2;
-                unsigned_16 mem         : 4;
-                unsigned_16 type1       : 3;
-                // ---
-                unsigned_16 OE          : 1;
-                unsigned_16 rB          : 5;
-            } math;
-            struct {
-                unsigned_16 Rc          : 1;
-                unsigned_16 first       : 5;
-                unsigned_16 second      : 5;
-                unsigned_16 third       : 5;
-            } general;
-            unsigned_16 immediate;
-            struct {
-                unsigned_16 LK          : 1;
-                unsigned_16 AA          : 1;
-                unsigned_16 BD          : 14;
-            } branch;
-            struct {
-                unsigned_16 zero        : 1;
-                unsigned_16 subcode     : 10;
-                unsigned_16 morezero    : 1;
-                unsigned_16 IMM         : 4;
-            } condition;
-            struct {
-                unsigned_16 Rc          : 1;
-                unsigned_16 sh_5        : 1;
-                unsigned_16 XO          : 9;
-                unsigned_16 sh          : 5;
-            } xs_form;
-            struct {
-                unsigned_16 Rc          : 1;
-                unsigned_16 sh_5        : 1;
-                unsigned_16 XO          : 3;
-                unsigned_16 mb          : 6;
-                unsigned_16 sh          : 5;
-            } md_form;
-            struct {
-                unsigned_16 Rc          : 1;
-                unsigned_16 XO          : 4;
-                unsigned_16 mb          : 6;
-                unsigned_16 first       : 5;
-            } mds_form;
-        } lo;
-
-        union {
-            struct {
-                unsigned_16 first       : 5;
-                unsigned_16 second      : 5;
-                // reference types - only valid if memory=1
-                unsigned_16 update      : 1;
-                unsigned_16 type        : 3;
-                unsigned_16 floating    : 1;
-                unsigned_16 memory      : 1;
-                // ---
-            } general;
-            struct {
-                unsigned_16 zero        : 1;
-                unsigned_16 FM          : 8;
-                unsigned_16 morezero    : 1;
-                unsigned_16 opcode      : 6;
-            } math;
-            struct {
-                unsigned_16 rA          : 5;
-                unsigned_16 L           : 1;
-                unsigned_16 zero        : 1;
-                unsigned_16 crfD        : 3;
-                unsigned_16 opcode      : 6;
-            } compare;
-            struct {
-                unsigned_16 zero        : 2;
-                unsigned_16 crfS        : 3;
-                unsigned_16 morezero    : 2;
-                unsigned_16 crfD        : 3;
-                unsigned_16 opcode      : 6;
-            } condition;
-        } hi;
+        ppc_ins_lo  lo;
+        ppc_ins_hi  hi;
     };
     struct {
         unsigned_32 LK                  : 1;
