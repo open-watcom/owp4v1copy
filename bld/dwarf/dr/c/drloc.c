@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DWARF reader location expression processing.
 *
 ****************************************************************************/
 
@@ -98,11 +97,13 @@ static uint_8 *DecodeLEB128( const uint_8 *input, uint_32 *value )
     return( (uint_8 *)input );
 }
 //TODO: check stack bounds
-static void DoLocExpr( char *p,       int length,
-                      int             addr_size,
-                      dr_loc_callbck *callbck,
-                      void           *d ){
-
+static void DoLocExpr( char             *p,
+                       int              length,
+                       int              addr_size,
+                       dr_loc_callbck   *callbck,
+                       void             *d,
+                       dr_handle        var )
+{
     char        *end;
     dw_op        op;
     dw_locop_op  opr;
@@ -115,6 +116,8 @@ static void DoLocExpr( char *p,       int length,
     uint_32      *top;
     uint_32      *stk_top;
     dr_loc_kind  kind;
+    dr_handle    sym = var;
+
 #define Pop( a )     (++a)
 #define Push( a )    (--a)
 #define IsEmpty( a, b )  ( (a) == (b) )
@@ -253,14 +256,28 @@ static void DoLocExpr( char *p,       int length,
             Push( top );
             top[0] = op1;
             break;
-        case DW_OP_fbreg:
-            /* get frame */
-            Push( top );
-            if(!callbck->frame( d, top ) ){
-                return;
+        case DW_OP_fbreg: {
+            dr_handle   abbrev;
+//            dr_handle   var;
+
+            /* Earlier versions of Watcom did not emit DW_AT_frame_base attribute
+             * and used a complex heuristic instead. This is against the DWARF
+             * spec which clearly states that DW_OP_fbreg refers to DW_AT_frame_base.
+             * We look for DW_AT_frame_base first and only if not present, fall back
+             * to the old mechanism for compatibility with old debug info.
+             */
+            abbrev = DWRGetAbbrev( &var );
+            if( DWRScanForAttrib( &abbrev, &var, DW_AT_frame_base ) != 0 ) {
+                top[0] = DWRLocExpr( sym, abbrev, var, callbck, d );
+            } else {
+                Push( top );
+                if( !callbck->frame( d, top ) ) {
+                    return;
+                }
             }
             top[0] += op1;
             break;
+            }
         case DW_OP_breg0:
         case DW_OP_bregx:
             /* get contents of reg op1 */
@@ -453,10 +470,12 @@ static dr_handle SearchLocList( uint_32 start, uint_32 context,
     return( p );
 }
 
-static int DWRLocExpr( dr_handle      abbrev,
-                      dr_handle       info,
-                      dr_loc_callbck *callbck,
-                      void           *d  ){
+static int DWRLocExpr( dr_handle        var,
+                       dr_handle        abbrev,
+                       dr_handle        info,
+                       dr_loc_callbck   *callbck,
+                       void             *d )
+{
     unsigned    form;
     uint_32     size;
     char        loc_buff[256];
@@ -522,7 +541,7 @@ static int DWRLocExpr( dr_handle      abbrev,
     }
     ret = TRUE;
     DWRVMRead( info, expr, size );
-    DoLocExpr( expr, size, addr_size, callbck, d );
+    DoLocExpr( expr, size, addr_size, callbck, d, var );
     if( size > sizeof( loc_buff ) ){
         DWRFREE( expr );
     }
@@ -536,6 +555,7 @@ extern int DRLocBasedAT( dr_handle       var,
     uint_16     tag;
     uint_16     at;
     dr_handle   abbrev;
+    dr_handle   sym = var;
     int         ret;
 
     abbrev = DWRVMReadULEB128( &var );
@@ -555,7 +575,7 @@ extern int DRLocBasedAT( dr_handle       var,
         return( FALSE );
     }
     if( DWRScanForAttrib( &abbrev, &var, at ) != 0 ) {
-         ret = DWRLocExpr( abbrev, var, callbck, d );
+         ret = DWRLocExpr( sym, abbrev, var, callbck, d );
     }else{
         ret = FALSE;
     }
@@ -568,6 +588,7 @@ extern int DRLocationAT( dr_handle       var,
     uint_16     tag;
     uint_16     at;
     dr_handle   abbrev;
+    dr_handle   sym = var;
     int         ret;
 
     abbrev = DWRVMReadULEB128( &var );
@@ -588,7 +609,7 @@ extern int DRLocationAT( dr_handle       var,
         return( FALSE );
     }
     if( DWRScanForAttrib( &abbrev, &var, at ) != 0 ) {
-         ret = DWRLocExpr( abbrev, var, callbck, d );
+         ret = DWRLocExpr( sym, abbrev, var, callbck, d );
     }else{
         ret = FALSE;
     }
@@ -600,6 +621,7 @@ extern int DRParmEntryAT( dr_handle       var,
                           void           *d  ){
     uint_16     tag;
     dr_handle   abbrev;
+    dr_handle   sym = var;
     int         ret;
 
     abbrev = DWRVMReadULEB128( &var );
@@ -607,7 +629,7 @@ extern int DRParmEntryAT( dr_handle       var,
     tag = DWRVMReadULEB128( &abbrev );
     ++abbrev; /* skip child flag */
     if( DWRScanForAttrib( &abbrev, &var, DW_AT_WATCOM_parm_entry ) != 0 ) {
-         ret = DWRLocExpr( abbrev, var, callbck, d );
+         ret = DWRLocExpr( sym, abbrev, var, callbck, d );
     }else{
         ret = FALSE;
     }
@@ -630,11 +652,12 @@ extern int DRRetAddrLocation( dr_handle       var,
                               void           *d  ){
 /************************************************/
     dr_handle   abbrev;
+    dr_handle   sym = var;
     int         ret;
 
     abbrev = DWRGetAbbrev( &var );
     if( DWRScanForAttrib( &abbrev, &var, DW_AT_return_addr ) != 0 ) {
-         ret = DWRLocExpr( abbrev, var, callbck, d );
+         ret = DWRLocExpr( sym, abbrev, var, callbck, d );
     }else{
         ret = FALSE;
     }
@@ -646,11 +669,12 @@ extern int DRSegLocation( dr_handle       var,
                           void           *d  ){
 /************************************************/
     dr_handle   abbrev;
+    dr_handle   sym = var;
     int         ret;
 
     abbrev = DWRGetAbbrev( &var );
     if( DWRScanForAttrib( &abbrev, &var, DW_AT_segment ) != 0 ) {
-         ret = DWRLocExpr( abbrev, var, callbck, d );
+         ret = DWRLocExpr( sym, abbrev, var, callbck, d );
     }else{
         ret = FALSE;
     }
