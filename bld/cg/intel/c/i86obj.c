@@ -1143,12 +1143,6 @@ static void FiniWVTypes( void ){
     SetOP( old );
 }
 
-extern  void    AbortObj( void ) {
-/**************************/
-
-    ScratchObj();
-}
-
 static void DoSegARange( offset *codesize, index_rec *rec ){
 /*************************************************/
     seg_id  old;
