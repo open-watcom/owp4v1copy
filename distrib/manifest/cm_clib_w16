@@ -1,5 +1,7 @@
 # Manifest file for C runtime libraries (C/C++/Fortran, Windows 16-bit target)
 
+binw\w386dll.ext
+binw\win386.ext
 lib286\win\binmode.obj
 lib286\win\clibl.lib
 lib286\win\clibm.lib
