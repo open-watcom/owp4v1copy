@@ -262,18 +262,17 @@ int GUIGetFileName( gui_window *wnd, open_file_name *ofn )
 
     old_path[0] = '\0';
     fname[0] = '\0';
-    cwd = getcwd( NULL, 0 );
+    cwd = getcwd( initial_path, _MAX_PATH );
     if( cwd ) {
         _splitpath( cwd, NULL, old_path, NULL, NULL );
-        free( cwd );
     }
 
     drive = 0;
+    initial_path[0] = '\0';
     if( ofn->initial_dir != NULL && ofn->initial_dir[0] != '\0' ) {
         if( ofn->initial_dir[1] == ':' ) {
             drive = ofn->initial_dir[0];
         }
-        initial_path[0] = '\0';
         _splitpath( ofn->initial_dir, NULL, initial_path, NULL, NULL );
     }
 
