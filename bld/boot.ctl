@@ -33,3 +33,4 @@ set OWLINUXBUILD=bootstrap
 [ INCLUDE <DEVDIR>/ncurses/boot.ctl ]
 [ INCLUDE <DEVDIR>/ui/boot.ctl ]
 [ INCLUDE <DEVDIR>/vi/boot.ctl ]
+[ INCLUDE <DEVDIR>/help/boot.ctl ]

@@ -18,12 +18,14 @@ extra_c_flags += -DTRMEM
 objs +=  trmemcvr.obj trmem.obj
 !endif
 
+!ifdef bootstrap
+libs = $(ui_dir)/unix/$(%OBJDIR)/ui.lib $(ncurses_dir)/$(%OBJDIR)/ncurses.lib
+!else
 !ifeq host_os linux
 libs = $(ui_dir)/unix/$(host_os)$(host_cpu)/ui.lib $(ncurses_dir)/$(host_os)$(host_cpu)/ncurses.lib
 !else
 libs = $(ui_dir)/$(host_os)/$(host_os)$(host_cpu)/ui.lib
 !endif
-extra_l_flags = op map l { $(libs) }
+!endif
 
-$(proj_name).exe : $(objs) $(libs)
-        $(linker) option quiet $(lflags) name $^. file { $(objs) }
+!include exetarg.mif
