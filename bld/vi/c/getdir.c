@@ -41,9 +41,10 @@
 /*
  * Compare - quicksort comparison
  */
-int Compare( direct_ent * const *p1, direct_ent * const *p2 )
+int Compare( const void *p1, const void *p2 )
 {
-    return( strcmp( (*p1)->name,(*p2)->name ) );
+    return( strcmp( (*(direct_ent * const *)p1)->name,
+                    (*(direct_ent * const *)p2)->name ) );
 
 } /* Compare */
 
