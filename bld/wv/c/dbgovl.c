@@ -43,11 +43,11 @@ typedef struct {
     unsigned_16 spacer;         /* to make a power of two */
 } section_info;
 
-extern void     RemoteSectTblRead(void *);
-extern void     RemoteSectTblWrite(void *);
-extern bool     RemoteOvlRetAddr( address *, unsigned );
-extern bool     RemoteOvlSectPos( unsigned, mem_block * );
-extern unsigned RemoteOvlSectSize();
+extern void             RemoteSectTblRead(void *);
+extern void             RemoteSectTblWrite(void *);
+extern bool             RemoteOvlRetAddr( address *, unsigned );
+extern bool             RemoteOvlSectPos( unsigned, mem_block * );
+extern unsigned         RemoteOvlSectSize();
 
 extern unsigned         OvlSize;
 extern machine_state    *DbgRegs;
@@ -65,7 +65,7 @@ bool InitOvlState()
 
     if( OvlRemap == NULL ) {
         OvlSize = RemoteOvlSectSize();
-        OvlCount = OvlSize * 8;
+        OvlCount = ( OvlSize - 3 ) * 8;
         _Alloc( OvlRemap, OvlCount * sizeof( section_info ) );
         if( OvlRemap == NULL ) return( FALSE );
         _Alloc( TblCache, OvlSize );
