@@ -48,7 +48,7 @@ extern void     DebugMain( void );
 extern void     DebugFini( void );
 extern char     *StrCopy( char *, char * );
 
-char            *CmdStart;
+char            *CmdData;
 
 static volatile bool    BrkPending;
 
@@ -71,8 +71,8 @@ void GUImain( void )
 
     len = _bgetcmd( NULL, INT_MAX ) + 1;
     buff = malloc( len );
-    CmdStart = buff;
-    getcmd( CmdStart );
+    CmdData = buff;
+    getcmd( CmdData );
     //TODO: replace with exception handler
 //    DosSetSigHandler( BrkHandler, &prev_hdl, &prev_act, 2, SIG_CTRLBREAK );
     DebugMain();
@@ -97,16 +97,16 @@ void WndCleanUp()
 
 char *GetCmdArg( int num )
 {
-    if( num != 0 || CmdStart == NULL )
+    if( num != 0 || CmdData == NULL )
         return( NULL );
 
-    return( CmdStart );
+    return( CmdData );
 }
 
 void SetCmdArgStart( int num, char *ptr )
 {
     num = num; /* must be zero */
-    CmdStart = ptr;
+    CmdData = ptr;
 }
 
 void KillDebugger( int ret_code )

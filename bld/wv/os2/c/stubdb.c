@@ -74,7 +74,7 @@ extern char             *TxtBuff;
 extern unsigned char    CurrRadix;
 static bool             Done;
 extern char             *TrpFile;
-extern char             *CmdStart;
+extern char             *CmdData;
 
 unsigned                NumLines;
 unsigned                NumColumns;
@@ -240,7 +240,7 @@ int main( int argc, char **argv )
 
     MemInit();
     getcmd( buff );
-    CmdStart = buff;
+    CmdData = buff;
     DebugMain();
     _SwitchOff( SW_ERROR_STARTUP );
     DoInput();
