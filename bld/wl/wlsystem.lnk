@@ -126,6 +126,58 @@ system begin netware
     module clib
     import @%WATCOM%\novi\clib.imp
 end
+system begin netware_libc
+    option osname='NetWare LibC NLM (Full-RTL)'
+    format novell ^
+    option nodefault
+    option caseexact
+    option start=_LibCPrelude
+    option exit=_LibCPostlude
+    option pseudopreemption
+    import CurrentProcess
+    file %NOVELLNDK%\..\libc\imports\libcpre.obj
+    library %NOVELLNDK%\..\libc\imports\libcaux.wcc
+    library %WATCOM%\lib386\netware\libc3s.lib
+    import @%NOVELLNDK%\..\libc\imports\libc.imp
+    import @%NOVELLNDK%\..\libc\imports\netware.imp
+end
+system begin netware_libc_lite
+    option osname='NetWare LibC NLM (Lite-RTL)'
+    format novell ^
+    option nodefault
+    option caseexact
+    option start=_LibCPrelude
+    option exit=_LibCPostlude
+    option pseudopreemption
+    import CurrentProcess
+    file %NOVELLNDK%\..\libc\imports\libcpre.obj
+    library %NOVELLNDK%\..\libc\imports\libcaux.wcc
+    library %WATCOM%\lib386\netware\libc3sl.lib
+    import @%NOVELLNDK%\..\libc\imports\libc.imp
+    import @%NOVELLNDK%\..\libc\imports\netware.imp
+end
+system begin netware_clib
+    option osname='NetWare CLIB NLM (Full-RTL)'
+    format novell ^
+    option nodefault
+    option caseexact
+    option start=_Prelude
+    option exit=_Stop
+    file %NOVELLNDK%\imports\clibpre.obj
+    library %WATCOM%\lib386\netware\clib3s.lib
+    import @%NOVELLNDK%\imports\clib.imp
+end
+system begin netware_clib_lite
+    option osname='NetWare CLIB NLM (Lite-RTL)'
+    format novell ^
+    option nodefault
+    option caseexact
+    option start=_Prelude
+    option exit=_Stop
+    file %NOVELLNDK%\imports\clibpre.obj
+    library %WATCOM%\lib386\netware\clib3sl.lib
+    import @%NOVELLNDK%\imports\clib.imp
+end
 system begin ads
     option osname='AutoCAD Development System'
     libpath %WATCOM%\lib386
