@@ -71,9 +71,9 @@ void __cdecl _LinuxMain(int argc, char **argv, char **arge)
     _argc               = argc;
     _argv               = argv;
     environ             = arge;
-    while ( *arge != NULL )
-        arge++;
-    __env_mask = *arge;
+    while ( *argep != NULL )
+        argep++;
+    __env_mask = (char *) argep;
     __FPE_handler =     &__null_FPE_rtn;
     __InitRtns( 1 );
 //    tdata = __alloca( __ThreadDataSize );
