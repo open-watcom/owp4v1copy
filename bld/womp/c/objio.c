@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OMF (Object Module Format) I/O.
 *
 ****************************************************************************/
 
@@ -422,7 +421,7 @@ obj_offset ObjWSkip32( OBJ_WFILE *obj ) {
 
 void ObjWRedo32( OBJ_WFILE *obj, obj_offset off, uint_32 dword ) {
 /*************************************************************/
-#if !LITTLE_ENDIAN
+#if defined( __BIG_ENDIAN__ )
     unsigned char    buf[4];
 #endif
     uint_16 rec_length;
@@ -431,21 +430,21 @@ void ObjWRedo32( OBJ_WFILE *obj, obj_offset off, uint_32 dword ) {
 
 /**/myassert( obj != NULL );
     safeSeek( obj->fh, off.rec_begin, SEEK_SET );
-    #if LITTLE_ENDIAN
-        safeRead( obj->fh, (char *)&rec_length, 2 );
-    #else
-        safeRead( obj->fh, buf, 2 );
-        rec_length = ReadU16( buf );
-    #endif
+#if defined( __BIG_ENDIAN__ )
+    safeRead( obj->fh, buf, 2 );
+    rec_length = ReadU16( buf );
+#else
+    safeRead( obj->fh, (char *)&rec_length, 2 );
+#endif
     safeSeek( obj->fh, off.offset, SEEK_CUR );
-    #if LITTLE_ENDIAN
-        safeWrite( obj->fh, (char *)&dword, 4 );
-    #else
-        for (i = 0; i < 4; i++) {
-            buf[ i ] = ((char*)&dword)[3-i];
-        }
-        safeWrite( obj->fh, buf, 4 );
-    #endif
+#if defined( __BIG_ENDIAN__ )
+    for (i = 0; i < 4; i++) {
+        buf[i] = ((char*)&dword)[3-i];
+    }
+    safeWrite( obj->fh, buf, 4 );
+#else
+    safeWrite( obj->fh, (char *)&dword, 4 );
+#endif
     safeSeek( obj->fh, (int_32)rec_length - off.offset - 5, SEEK_CUR );
     safeRead( obj->fh, &checksum, 1 );
     checksum = -checksum;
@@ -478,7 +477,7 @@ STATIC void safeRead( int fh, char *buf, size_t len ) {
 
 void ObjWRedo16( OBJ_WFILE *obj, obj_offset off, uint_16 word ) {
 /*************************************************************/
-#if !LITTLE_ENDIAN
+#if defined( __BIG_ENDIAN__ )
     char    buf[2];
 #endif
     uint_16 rec_length;
@@ -486,20 +485,20 @@ void ObjWRedo16( OBJ_WFILE *obj, obj_offset off, uint_16 word ) {
 
 /**/myassert( obj != NULL );
     safeSeek( obj->fh, off.rec_begin, SEEK_SET );
-    #if LITTLE_ENDIAN
-        safeRead( obj->fh, (char *)&rec_length, 2 );
-    #else
-        safeRead( obj->fh, buf, 2 );
-        rec_length = ReadU16( buf );
-    #endif
+#if defined( __BIG_ENDIAN__ )
+    safeRead( obj->fh, buf, 2 );
+    rec_length = ReadU16( buf );
+#else
+    safeRead( obj->fh, (char *)&rec_length, 2 );
+#endif
     safeSeek( obj->fh, off.offset, SEEK_CUR );
-    #if LITTLE_ENDIAN
-        safeWrite( obj->fh, (char *)&word, 2 );
-    #else
-        buf[ 0 ] = word & 0xff;
-        buf[ 1 ] = word >> 8;
-        safeWrite( obj->fh, buf, 2 );
-    #endif
+#if defined( __BIG_ENDIAN__ )
+    buf[0] = word & 0xff;
+    buf[1] = word >> 8;
+    safeWrite( obj->fh, buf, 2 );
+#else
+    safeWrite( obj->fh, (char *)&word, 2 );
+#endif
     safeSeek( obj->fh, (int_32)rec_length - off.offset - 3, SEEK_CUR );
     safeRead( obj->fh, &checksum, 1 );
     checksum = -checksum;

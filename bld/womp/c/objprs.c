@@ -524,7 +524,13 @@ STATIC int pass1LinnumData( obj_rec *objr ) {
     objr->d.linnum.num_lines = res.quot;
     linedata = objr->d.linnum.lines =
         MemAlloc( res.quot * sizeof( linnum_data ) );
-#if LITTLE_ENDIAN
+#if defined( __BIG_ENDIAN__ )
+    for( line = 0; line < res.quot; ++line ) {
+        linedata[ line ].number = ObjGet16( objr );
+        linedata[ line ].offset = ObjGetEither( objr );
+    }
+    ObjDetachData( objr );
+#else
     if( is32 ) {
         memcpy( linedata, ObjGet( objr, len ), len );
 /**/    myassert( sizeof( linnum_data ) == 6 );
@@ -533,12 +539,6 @@ STATIC int pass1LinnumData( obj_rec *objr ) {
             linedata[ line ].number = ObjGet16( objr );
             linedata[ line ].offset = (uint_32)ObjGet16( objr );
         }
-    }
-    ObjDetachData( objr );
-#else
-    for( line = 0; line < res.quot; ++line ) {
-        linedata[ line ].number = ObjGet16( objr );
-        linedata[ line ].offset = ObjGetEither( objr );
     }
     ObjDetachData( objr );
 #endif

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Top level WOMP include file.
 *
 ****************************************************************************/
 
@@ -59,10 +58,14 @@
 #error This code can only be compiled for a large data model
 #endif
 
-#if defined( M_I86 ) || defined( __386__ ) || defined ( __AXP__ )
-#ifndef LITTLE_ENDIAN
-#define LITTLE_ENDIAN   1
-#endif
+#if defined( __BIG_ENDIAN__ )
+#define ReadU16(p)      ((p)[0] | ((p)[1] << 8))
+#define ReadU32(p)      (ReadU16(p) | (ReadU16(p+2) << 16))
+#error "No support for non-little endian host machines..."
+/*
+    we need some other macros that I don't feel like writing
+*/
+#else
 #define ReadU16(p)      (*(uint_16*)(p))
 #define ReadU32(p)      (*(uint_32*)(p))
 #define ReadS16(p)      (*(int_16*)(p))
@@ -71,14 +74,6 @@
 #define WriteU32(p,n)   (*(uint_32*)(p) = (uint_32)(n))
 #define WriteS16(p,n)   (*(int_16*)(p) = (int_16)(n))
 #define WriteS32(p,n)   (*(int_32*)(p) = (int_32)(n))
-#else
-#define LITTLE_ENDIAN   0
-#define ReadU16(p)      ((p)[0] | ((p)[1] << 8))
-#define ReadU32(p)      (ReadU16(p) | (ReadU16(p+2) << 16))
-#error "No support for non-little endian host machines..."
-/*
-    we need some other macros that I don't feel like writing
-*/
 #endif
 
 #endif

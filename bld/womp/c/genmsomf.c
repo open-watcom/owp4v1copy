@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Microsoft style OMF output routines.
 *
 ****************************************************************************/
 
@@ -554,7 +553,24 @@ STATIC void writeLinnumData( obj_rec *objr, OBJ_WFILE *out ) {
 /**/myassert( objr != NULL );
 /**/myassert( out != NULL );
     is32 = objr->is_32 || objr->is_phar;
-#if LITTLE_ENDIAN
+#if defined( __BIG_ENDIAN__ )
+    {
+        linnum_data *cur;
+        linnum_data *stop;
+
+        cur = objr->d.linnum.lines;
+        stop = cur + objr->d.linnum.num_lines;
+        while( cur < stop ) {
+            ObjWrite16( out, cur->number );
+            if( is32 ) {
+                ObjWrite32( out, cur->offset );
+            } else {
+                ObjWrite16( out, (uint_16)cur->offset );
+            }
+            ++cur;
+        }
+    }
+#else
     if( is32 ) {
         ObjWrite( out, (char *)objr->d.linnum.lines,
             6 * objr->d.linnum.num_lines );
@@ -569,23 +585,6 @@ STATIC void writeLinnumData( obj_rec *objr, OBJ_WFILE *out ) {
             ObjWrite16( out, cur->number );
 /**/        myassert( ( cur->offset & 0xffff0000 ) == 0 );
             ObjWrite16( out, (uint_16)cur->offset );
-            ++cur;
-        }
-    }
-#else
-    {
-        linnum_data *cur;
-        linnum_data *stop;
-
-        cur = objr->d.linnum.lines;
-        stop = cur + objr->d.linnum.num_lines;
-        while( cur < stop ) {
-            ObjWrite16( out, cur->number );
-            if( is32 ) {
-                ObjWrite32( out, cur->offset );
-            } else {
-                ObjWrite16( out, (uint_16)cur->offset );
-            }
             ++cur;
         }
     }
