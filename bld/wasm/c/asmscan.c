@@ -80,8 +80,10 @@ static int get_float( struct asm_tok *buf, char **input, char **output )
     char    *ptr = *input;
 
     for( ; *ptr != '\0'; ptr++ ) {
-        if( isdigit( *ptr ) ) continue;
-        if( isspace( *ptr ) ) break;
+        if( isdigit( *ptr ) )
+            continue;
+        if( isspace( *ptr ) )
+            break;
         switch( tolower( *ptr ) ) {
         case '.':
             got_decimal = TRUE;
@@ -255,13 +257,16 @@ done_scan:
     }
     switch( base ) {
     case 10:
-        if( OK_NUM( DECIMAL ) ) break;
+        if( OK_NUM( DECIMAL ) )
+            break;
         /* fall through */
     case 8:
-        if( OK_NUM( OCTAL ) ) break;
+        if( OK_NUM( OCTAL ) )
+            break;
         /* fall through */
     case 2:
-        if( OK_NUM( BINARY ) ) break;
+        if( OK_NUM( BINARY ) )
+            break;
         /* fall through */
         //AsmError( INVALID_NUMBER_DIGIT );
         /* swallow remainder of token */
@@ -355,7 +360,8 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
 
     /* now decide what to do with it */
 
-    if( buf->token == T_PATH ) return( NOT_ERROR );
+    if( buf->token == T_PATH )
+        return( NOT_ERROR );
     count = get_instruction_position( buf->string_ptr );
     if( count == EMPTY ) {
         buf->token = T_ID;
@@ -369,20 +375,6 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
         if( AsmOpTable[count].opnd_type[OPND1] == OP_SPECIAL ) {
             if( AsmOpTable[count].rm_byte & OP_REGISTER ) {
                 buf->token = T_REG;
-                #if 0
-                // fixme
-                if( buf_index > 0 ) {   // 30-07-92
-                    if( AsmBuffer[buf_index-1]->token == '+' ||
-                        AsmBuffer[buf_index-1]->token == '-' ) {
-                        if( sq_bracket_flag == 0 ) {
-                            /* Disallow addition or subtraction of
-                               registers out of square brackets */
-                            AsmError( ILLEGAL_USE_OF_REGISTER );
-                            return( ERROR );
-                        }
-                    }
-                }
-                #endif
             } else if( AsmOpTable[count].rm_byte & OP_RES_ID ) {
                 if( buf->value == T_PWORD )
                     buf->value = T_FWORD;
@@ -392,16 +384,7 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
             } else if( AsmOpTable[count].rm_byte & OP_UNARY_OPERATOR ) {
                 buf->token = T_UNARY_OPERATOR;
             } else if( AsmOpTable[count].rm_byte & OP_DIRECTIVE ) {
-                #if 0
-                if( buf_index >= 2 ) {
-                    /* it is too late in the line to be a directive,
-                     * so just treat it as a res_id
-                     */
-                    buf->token = T_RES_ID;
-                }
-                #endif
                 buf->token = T_DIRECTIVE;
-
 #ifdef _WASM_
                 switch( AsmOpTable[count].token ) {
                 case T_COMMENT:
@@ -593,7 +576,7 @@ static int get_inc_path( unsigned int *buf_index, char **input, char **output )
     case '<' :
     case '{' :
         /* string delimiters -- just get the path as a string */
-        if( get_special_symbol( AsmBuffer[*buf_index],input,output )==ERROR ) {
+        if( get_special_symbol( AsmBuffer[*buf_index],input,output ) == ERROR ) {
             return( ERROR );
         }
         return( NOT_ERROR );
@@ -629,7 +612,8 @@ int AsmScan( char *string )
         while( isspace( *ptr ) ) {
             ptr++;
         }
-        if( *ptr == NULLC ) break;
+        if( *ptr == NULLC )
+            break;
 
         if( isalpha( *ptr )
             || *ptr == '_'
