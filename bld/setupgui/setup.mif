@@ -54,7 +54,7 @@ COMMON_FLAGS += -fpc
 PROJECT_DEFS += -DPATCH
 !endif
 
-INCPATH=$(sdk_dir)/misc;$(build_root)/wpack/h;$(build_root)/wpack/o;$(uidir)/h;$(wpi_dir)/h;$(aui_dir)/h;$(gui_dir)/h;../h;$(PROJECT_HPATH);$(INCPLAT);$(%include);$(BDIFF_PATH)/h;
+INCPATH=$(sdk_dir)/misc;$(build_root)/wpack/h;$(build_root)/wpack/o;$(uidir)/h;$(wpi_dir)/h;$(aui_dir)/h;$(gui_dir)/h;$(guiinc);../h;$(PROJECT_HPATH);$(INCPLAT);$(%include);$(BDIFF_PATH)/h;
 
 .BEFORE
     set include=$(INCPATH)
@@ -302,7 +302,7 @@ setup.exe: $(GENDEPS)
 !   ifdef rational
 !      ifdef on_build_machine
           @ren setup.exe x.exe
-          @cp $(rsi_root)/bin/dos4g.exe d4g.exe
+          @cp $(rsi_root)\bin\dos4g.exe d4g.exe
           @$(rsi_root)\bin\expmod d4g.exe pmem=384 xmax=384
           $(rsi_root)\bin\4gbind d4g.exe x.exe setup.exe -Q -V
           @del d4g.exe
