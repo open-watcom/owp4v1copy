@@ -33,6 +33,7 @@
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include "drwatcom.h"
 #include "mem.h"
 #include "thrdctl.h"
