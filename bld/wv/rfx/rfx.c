@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Remote Transfer Utility.
+* Description:  Remote File eXchange utility.
 *
 ****************************************************************************/
 
@@ -164,7 +164,9 @@ NL
 "      rd      [/s] dir_spec [/s]            - delete directory" NL
 "      rmdir   [/s] dir_spec [/s]            - delete directory" NL
 "      type    dir_spec                      - type a file" NL
+"      del     [/s] file_spec [/s]           - erase files (/s= recursive)" NL
 "      erase   [/s] file_spec [/s]           - erase files (/s= recursive)" NL
+"      ren     src_spec dst_spec             - rename files" NL
 "      drive:                                - set drive and XXLcle" NL
 "      exit                                  - leave rfx" NL
 NL
@@ -250,7 +252,7 @@ static void WhatDidYouSay()
 
 static void Usage()
 {
-    Error( "Usage: RFX trap_file[;trap_parm] [rfx_command]" );
+    Error( "Usage: rfx trap_file[;trap_parm] [rfx_command]" );
 }
 
 char *StrCopy( char *src, char *dest )
@@ -1935,10 +1937,10 @@ extern  char    *Squish( file_parse *parse, char *into ) {
 char    *TrapClientString( unsigned tc )
 {
     switch( tc ) {
-        case TC_BAD_TRAP_FILE:      return( "BAD_TRAP_FILE" );
-        case TC_CANT_LOAD_TRAP:     return( "CANT_LOAD_TRAP_FILE" );
-        case TC_WRONG_TRAP_VERSION: return( "INCORRECT_TRAP_FILE_VERSION" );
-        case TC_OUT_OF_DOS_MEMORY:  return( "OUT_OF_DOS_MEMORY" );
+        case TC_BAD_TRAP_FILE:      return( "Bad trap file" );
+        case TC_CANT_LOAD_TRAP:     return( "Cannot load trap file %s" );
+        case TC_WRONG_TRAP_VERSION: return( "Incorrect trap file version" );
+        case TC_OUT_OF_DOS_MEMORY:  return( "Out of DOS memory" );
     }
     return( NULL );
 }
