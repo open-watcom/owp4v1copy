@@ -33,6 +33,8 @@
 #define _POSIX_INCLUDED
 
 #include <sys/stat.h>
+#include <fcntl.h>
+#include <stdlib.h>
 #if defined( __UNIX__ )
   #include <unistd.h>
   #include <dirent.h>
@@ -55,7 +57,7 @@
   #define W_OK  2
   #define R_OK  4
 #endif
-  
+
 #ifndef ACCESS_WR
   #define ACCESS_WR W_OK
   #define ACCESS_RD R_OK
