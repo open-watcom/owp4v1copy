@@ -88,7 +88,7 @@ $(exc_name) : ../h/fullops.h ../h/inlnops.h $(link_name) $(proj_name).res $(proj
         $(bld_bin)/w32bind $(proj_name).rex $@ $(tools_root)/os2ldr.exe
         @rm -f $(proj_name).rex
 !endif
-#        wstrip -a -r -q $@ . $(proj_name)
+        wstrip -a -r -q $@ . $(proj_name)
 
 
 $(link_name) : $(__MAKEFILES__)
