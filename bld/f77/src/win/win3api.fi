@@ -1081,27 +1081,23 @@ c                                         value*2 )
 
 !---- Special WIN386 library functions -----------------------------------------
 
-c$pragma aux GetProc16 "*_" parm ( value*4, value*4 )
-c$pragma aux ReleaseProc16 "*_" parm ( value*4 )
-c$pragma aux AllocAlias16 "*_" parm ( value*4 )
-c$pragma aux AllocHugeAlias16 "*_" parm ( value*4, value*4 )
-c$pragma aux FreeAlias16 "*_" parm ( value*4 )
-c$pragma aux FreeHugeAlias16 "*_" parm ( value*4, value*4 )
-c$pragma aux MapAliasToFlat "*_" parm ( value*4 )
-c$pragma aux InvokeIndirectFunction "InvokeIndirectFunction_" \
-c                                   parm( value*4 ) caller []
-c$pragma aux DefineDLLEntry "DefineDLLEntry_" parm( value*4 ) caller []
-c$pragma aux DefineUserProc16 "DefineUserProc16_" \
-c                             parm( value*4, value*4 ) caller []
-c$pragma aux GetIndirectFunctionHandle "GetIndirectFunctionHandle_" \
-c                                      parm( value*4 ) caller []
-c$pragma aux FreeIndirectFunctionHandle "FreeIndirectFunctionHandle_" \
-c                                      parm( value*4 )
-c$pragma aux PASS_WORD_AS_POINTER = z350000ffff \ or eax,0ffff0000h
+c$pragma aux GetProc16 "^_" parm ( value*4, value*4 )
+c$pragma aux ReleaseProc16 "^_" parm ( value*4 )
+c$pragma aux AllocAlias16 "^_" parm ( value*4 )
+c$pragma aux AllocHugeAlias16 "^_" parm ( value*4, value*4 )
+c$pragma aux FreeAlias16 "^_" parm ( value*4 )
+c$pragma aux FreeHugeAlias16 "^_" parm ( value*4, value*4 )
+c$pragma aux MapAliasToFlat "^_" parm ( value*4 )
+c$pragma aux InvokeIndirectFunction "*_" parm( value*4 ) caller []
+c$pragma aux DefineDLLEntry "*_" parm( value*4 ) caller []
+c$pragma aux DefineUserProc16 "*_" parm( value*4, value*4 ) caller []
+c$pragma aux GetIndirectFunctionHandle "*_" parm( value*4 ) caller []
+c$pragma aux FreeIndirectFunctionHandle "*_" parm( value*4 )
+c$pragma aux PASS_WORD_AS_POINTER = z350000ffff \ ! or eax,0ffff0000h
 c                                 parm( value*2 ) [ax] \
 c                                 value [eax] \
 c                                 modify exact [eax]
-c$pragma aux _Call16 "_Call16" parm( value ) caller []
+c$pragma aux _Call16 "*" parm( value ) caller []
 c  _Call16 performs the same function as "GetIndirectFunctionHandle,
 c  InvokeIndirectFunctionHandle, FreeIndirectFunctionHandle" but is
 c  much easier to use.
@@ -1306,50 +1302,50 @@ c$pragma aux (WriteProfileString) _16WriteProfileString
 !-------------------------------------------------------------------------------
 
 c$ifndef NOCOVERSENDS
-c$pragma aux (SendMessage) SendMessage "_COVER_*"
-c$pragma aux (SendDlgItemMessage) SendDlgItemMessage "_COVER_*"
+c$pragma aux (SendMessage) SendMessage "_COVER_^"
+c$pragma aux (SendDlgItemMessage) SendDlgItemMessage "_COVER_^"
 c$endif
 
 c$ifndef NOCOVERRC
-c$pragma aux (RegisterClass) RegisterClass "_COVER_*"
+c$pragma aux (RegisterClass) RegisterClass "_COVER_^"
 c$endif
 
 c$ifndef NOAUTOPROCS
-c$pragma aux (CreateDialog) CreateDialog "_COVER_*"
-c$pragma aux (CreateDialogIndirect) CreateDialogIndirect "_COVER_*"
-c$pragma aux (CreateDialogParam) CreateDialogParam "_COVER_*"
-c$pragma aux (CreateDialogIndirectParam) CreateDialogIndirectParam "_COVER_*"
-c$pragma aux (DialogBox) DialogBox "_COVER_*"
-c$pragma aux (DialogBoxIndirect) DialogBoxIndirect "_COVER_*"
-c$pragma aux (DialogBoxParam) DialogBoxParam "_COVER_*"
-c$pragma aux (DialogBoxIndirectParam) DialogBoxIndirectParam "_COVER_*"
-c$pragma aux (EnumChildWindows) EnumChildWindows "_COVER_*"
-c$pragma aux (EnumFonts) EnumFonts "_COVER_*"
-c$pragma aux (EnumMetaFile) EnumMetaFile "_COVER_*"
-c$pragma aux (EnumObjects) EnumObjects "_COVER_*"
-c$pragma aux (EnumProps) EnumProps "_COVER_*"
-c$pragma aux (EnumTaskWindows) EnumTaskWindows "_COVER_*"
-c$pragma aux (EnumWindows) EnumWindows "_COVER_*"
+c$pragma aux (CreateDialog) CreateDialog "_COVER_^"
+c$pragma aux (CreateDialogIndirect) CreateDialogIndirect "_COVER_^"
+c$pragma aux (CreateDialogParam) CreateDialogParam "_COVER_^"
+c$pragma aux (CreateDialogIndirectParam) CreateDialogIndirectParam "_COVER_^"
+c$pragma aux (DialogBox) DialogBox "_COVER_^"
+c$pragma aux (DialogBoxIndirect) DialogBoxIndirect "_COVER_^"
+c$pragma aux (DialogBoxParam) DialogBoxParam "_COVER_^"
+c$pragma aux (DialogBoxIndirectParam) DialogBoxIndirectParam "_COVER_^"
+c$pragma aux (EnumChildWindows) EnumChildWindows "_COVER_^"
+c$pragma aux (EnumFonts) EnumFonts "_COVER_^"
+c$pragma aux (EnumMetaFile) EnumMetaFile "_COVER_^"
+c$pragma aux (EnumObjects) EnumObjects "_COVER_^"
+c$pragma aux (EnumProps) EnumProps "_COVER_^"
+c$pragma aux (EnumTaskWindows) EnumTaskWindows "_COVER_^"
+c$pragma aux (EnumWindows) EnumWindows "_COVER_^"
 c$pragma aux (Escape) Escape "_COVER_*"
-c$pragma aux (FreeProcInstance) FreeProcInstance "_COVER_*"
-c$pragma aux (GlobalNotify) GlobalNotify "_COVER_*"
-c$pragma aux (GrayString) GrayString "_COVER_*"
-c$pragma aux (LineDDA) LineDDA "_COVER_*"
-c$pragma aux (MakeProcInstance) MakeProcInstance "_COVER_*" \
+c$pragma aux (FreeProcInstance) FreeProcInstance "_COVER_^"
+c$pragma aux (GlobalNotify) GlobalNotify "_COVER_^"
+c$pragma aux (GrayString) GrayString "_COVER_^"
+c$pragma aux (LineDDA) LineDDA "_COVER_^"
+c$pragma aux (MakeProcInstance) MakeProcInstance "_COVER_^" \
 c                               parm( reference far, value*2 )
-c$pragma aux (SetResourceHandler) SetResourceHandler "_COVER_*"
-c$pragma aux (SetTimer) SetTimer "_COVER_*"
-c$pragma aux (SetWindowsHook) SetWindowsHook "_COVER_*"
-c$pragma aux (SetWindowLong) SetWindowLong "_COVER_*"
-c$pragma aux (SetClassLong) SetClassLong "_COVER_*"
-c$pragma aux (UnhookWindowsHook) UnhookWindowsHook "_COVER_*"
+c$pragma aux (SetResourceHandler) SetResourceHandler "_COVER_^"
+c$pragma aux (SetTimer) SetTimer "_COVER_^"
+c$pragma aux (SetWindowsHook) SetWindowsHook "_COVER_^"
+c$pragma aux (SetWindowLong) SetWindowLong "_COVER_^"
+c$pragma aux (SetClassLong) SetClassLong "_COVER_^"
+c$pragma aux (UnhookWindowsHook) UnhookWindowsHook "_COVER_^"
 
-c$pragma aux (GetOpenFileName) GetOpenFileName "_COVER*"
-c$pragma aux (GetSaveFileName) GetSaveFileName "_COVER*"
-c$pragma aux (GetFileTitle) GetFileTitle "_COVER*"
-c$pragma aux (ChooseColor) ChooseColor "_COVER*"
-c$pragma aux (FindText) FindText "_COVER*"
-c$pragma aux (ReplaceText) ReplaceText "_COVER*"
-c$pragma aux (ChooseFont) ChooseFont "_COVER*"
-c$pragma aux (PrintDlg) PrintDlg "_COVER*"
+c$pragma aux (GetOpenFileName) GetOpenFileName "_COVER^"
+c$pragma aux (GetSaveFileName) GetSaveFileName "_COVER^"
+c$pragma aux (GetFileTitle) GetFileTitle "_COVER^"
+c$pragma aux (ChooseColor) ChooseColor "_COVER^"
+c$pragma aux (FindText) FindText "_COVER^"
+c$pragma aux (ReplaceText) ReplaceText "_COVER^"
+c$pragma aux (ChooseFont) ChooseFont "_COVER^"
+c$pragma aux (PrintDlg) PrintDlg "_COVER^"
 c$endif
