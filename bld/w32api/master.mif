@@ -87,9 +87,9 @@ libs =               &
         wsock32.lib &
         wst.lib
 
-.def: ..\lib
+.def: ../lib
 
-.c: ..\lib
+.c: ../lib
 
 .def.lbc:
         vi -i -q -k ":source ../def2lbc.vi ../lib/$[. $*\n"
@@ -101,7 +101,7 @@ libs =               &
         $(lib) -b -c -q -n $@ $<
 
 .c.obj:
-        $(cc) -i$(inc_dirs) -zq-w4-we-dNDEBUG -zc -bt=nt -oaxt -d1 $<
+        $(cc) -fo=.obj -i"$(inc_dirs)" -zq-w4-we-dNDEBUG -zc -bt=nt -oaxt -d1 $<
 
 $(libs):
 
@@ -125,4 +125,3 @@ clean: .SYMBOLIC .EXPLICIT
         @if exist *.bak @del *.bak
         @if exist *.obj @del *.obj
 
-

@@ -1,6 +1,6 @@
 !include ../../../master.mif
 
-inc_dirs            += -i$(lib_misc_dir)\h;$(orl_dir)\h
+inc_dirs            += -i"$(lib_misc_dir)/h;$(orl_dir)/h"
 
 
 libstub_objs        = libstub.obj $(mstools_stub_obj) $(mstools_objs)
@@ -12,9 +12,9 @@ lib_hdrs            = optdata.h
 
 !ifeq host_OS nt
 !   ifeq host_CPU 386
-!       define lib_common_libs $(orl_dir)\o\orl.lib
+!       define lib_common_libs $(orl_dir)/o/orl.lib
 !   else ifeq host_CPU axp
-!       define lib_common_libs $(orl_dir)\axp\orl.lib
+!       define lib_common_libs $(orl_dir)/axp/orl.lib
 !   endif
 !else
 !   error Unknown OS.
@@ -49,9 +49,9 @@ libppc.exe :  $(libppc_objs)
         $(linker) $(lflags) name $^@ file {$(libppc_objs)} library {$(lib_common_libs)}
 
 
-.c :  ..\..\..\c;..\..\c;$(lib_misc_dir)\c
-.h :  ..\..\..\h;..\..\h;$(lib_misc_dir)\h;$(orl_dir)\h
-.gml : ..\..\gml
+.c :  ../../../c;../../c;$(lib_misc_dir)/c
+.h :  ../../../h;../../h;$(lib_misc_dir)/h;$(orl_dir)/h
+.gml : ../../gml
 
 deff386.obj :  deffile.c $(lib_hdrs)
         $(mstools_compile) -d__TARGET_386__ -fo=deff386.obj $[@
@@ -86,7 +86,7 @@ parse.obj :  parse.c optparse.c $(lib_hdrs)
 demangle.obj :  demangle.c demangle.h
 
 optparse.c optdata.h :  optencod.exe ms.gml
-        optencod.exe ..\..\gml\ms.gml ..\..\h\optdata.h ..\..\c\optparse.c ..\..\h\usagemsg.h i86
+        optencod.exe ../../gml/ms.gml ../../h/optdata.h ../../c/optparse.c ../../h/usagemsg.h i86
 
 
 !include ../../../build.mif

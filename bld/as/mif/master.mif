@@ -11,13 +11,13 @@ name = $(proj_name)
 
 .extensions: .rc .y .re .gh .msg
 
-.c: $(as_dir)\$(cpu)\c;$(as_dir)\c;$(trmem_dir);$(cpp_dir)
-.h: $(as_dir)\$(cpu)\h;$(as_dir)\h;$(trmem_dir);$(cpp_dir)
-.y: $(as_dir)\$(cpu)\y;$(as_dir)\y
-.re: $(as_dir)\$(cpu)\y;$(as_dir)\y
-.rc: $(as_dir)\h
+.c: $(as_dir)/$(cpu)/c;$(as_dir)/c;$(trmem_dir);$(cpp_dir)
+.h: $(as_dir)/$(cpu)/h;$(as_dir)/h;$(trmem_dir);$(cpp_dir)
+.y: $(as_dir)/$(cpu)/y;$(as_dir)/y
+.re: $(as_dir)/$(cpu)/y;$(as_dir)/y
+.rc: $(as_dir)/h
 .gh: .
-.msg: $(as_dir)\h
+.msg: $(as_dir)/h
 
 !include cproj.mif
 !include defrule.mif
@@ -49,7 +49,7 @@ splice_opts     += -k_STANDALONE_
 
 exe_deps_osi = $(bld_bin)\os2ldr.exe
 
-libs = $(owl_dir)\o.$(host_CPU)\owl.lib $(wres_lib)
+libs = $(owl_dir)/o.$(host_CPU)/owl.lib $(wres_lib)
 
 extra_defines           = -d$(as_cpu)
 !ifndef inline_as
@@ -81,7 +81,7 @@ extra_l_flags           = option map,quiet
 extra_l_flags           += library { $(libs) }
 !endif
 
-inc_dirs = $(as_dir)\$(cpu)\h;$(as_dir)\h;$(owl_dir)\h;$(cpp_dir);$(watcom_dir)\h;$(trmem_dir)
+inc_dirs = $(as_dir)/$(cpu)/h;$(as_dir)/h;$(owl_dir)/h;$(cpp_dir);$(watcom_dir)/h;$(trmem_dir)
 
 .before:
         @set include=$(inc_path)
@@ -127,8 +127,8 @@ asi_test_objs   = asitest$(obj) trmemcvr$(obj)
 asi_test_objs   += trmem$(obj)
 !endif
 
-asi_lib     = $(as_dir)\$(cpu)\inline\o.$(host_CPU)\asinline.lib
-asi_lib_j   = $(as_dir)\$(cpu)\inline\o.$(host_CPU)\asinlinj.lib
+asi_lib     = $(as_dir)/$(cpu)/inline/o.$(host_CPU)/asinline.lib
+asi_lib_j   = $(as_dir)/$(cpu)/inline/o.$(host_CPU)/asinlinj.lib
 !ifdef test_inline_as
 asi_test_name = asinline
 
@@ -145,18 +145,18 @@ $(asi_lib) :
 all_lib : $(asi_lib) $(asi_lib_j) .symbolic
 
 $(asi_lib) : $(asi_objs)
-        @if exist $^&.clb @erase $^&.clb
+        @rm -f $^&.clb
         @for %i in ($<) do @%append $^&.clb -+%i
-        $(librarian) -b -q $^. @$^&.clb
+        $(librarian) -b -q $^@ @$^&.clb
 
 $(asi_lib_j) : $(asi_lib) asmsgj$(obj)
         cp $[@ $^@
-        $(librarian) -b -q $(asi_lib_j) -asmsg.obj
-        $(librarian) -b -q $(asi_lib_j) +asmsgj.obj
+        $(librarian) -b -q $^@ -asmsg.obj
+        $(librarian) -b -q $^@ +asmsgj.obj
 
 asmsgj$(obj): asmsg.c
         @set include=$(inc_path)
-        $(cc) $(cflags) $(extra_c_flags_$[&) $[@ /fo=$^. /dJAPANESE_MSG
+        $(cc) $(cflags) $(extra_c_flags_$[&) $[@ -fo=$^@ -dJAPANESE_MSG
 !endif
 
 $(name)$(exe) : $(as_objs) $(libs) $(exe_deps_$(host_OS)) $(name).res
@@ -165,13 +165,13 @@ $(name)$(exe) : $(as_objs) $(libs) $(exe_deps_$(host_OS)) $(name).res
         $(bld_bin)\w32bind $(name).rex $(name)$(exe) $(bld_bin)\os2ldr.exe
         erase $(name).rex
 !endif
-        wstrip /q /a /r $^@ . $(name).res
+        wstrip -q -a -r $^@ . $(name).res
 
 !ifndef inline_as
 $(as_objs) : msg.gh
 
 $(name).res : as.rc msg.gh
-        $(rc) /q /bt=windows /r $(extra_defines) $[@ /i$(as_dir)\h /fo=$^@
+        $(rc) -q -bt=windows -r $(extra_defines) $[@ -i"$(as_dir)/h" -fo=$^@
 !else
 
 $(asi_objs) : msg.gh
@@ -182,13 +182,13 @@ msg.gh : mkstrid.c as.msg
         $(bld_cl) $[@ -w4-we-zc-oaxt $(extra_defines)
         mkstrid $^@
 
-$(yacc_in) : $(yacc_src) $(as_dir)\y\yydriver.c
-        $(bld_bin)\wsplice $(splice_opts) $[@ $^.
+$(yacc_in) : $(yacc_src) $(as_dir)/y/yydriver.c
+        $(bld_bin)\wsplice $(splice_opts) $[@ $^@
 
 $(yacc_out_c).c $(yacc_out_h) : $(yacc_in)
         $(yacc) $(yacc_flags) $[@ $(as_dir)\y\yydriver.c
-        vi -d -i -q -s$(as_dir)\mif\asyy.vi -p"$(yacc_out_c).c" ytab.c
-        vi -d -i -q -s$(as_dir)\mif\asyy.vi -p"$(yacc_out_c).h" ytab.h
+        vi -d -i -q -s $(as_dir)/mif/asyy.vi -p"$(yacc_out_c).c" ytab.c
+        vi -d -i -q -s $(as_dir)/mif/asyy.vi -p"$(yacc_out_c).h" ytab.h
         # $(yacc) $(yacc_flags) $[@
 
 $(lex_in) : $(lex_src)

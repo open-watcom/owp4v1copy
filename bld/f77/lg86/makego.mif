@@ -20,8 +20,8 @@ resource_file = errmsg.res
 fcnovect_lnk =
 lnk_files =
 !else
-fcnovect_lnk = $(f77_dir)\lg86\fcnovect.lnk
-lnk_files = $(f77_dir)\lg86\novector.lnk $(fcnovect_lnk) fciftbl.lnk
+fcnovect_lnk = $(f77_dir)/lg86/fcnovect.lnk
+lnk_files = $(f77_dir)/lg86/novector.lnk $(fcnovect_lnk) fciftbl.lnk
 !endif
 
 #
@@ -29,17 +29,17 @@ lnk_files = $(f77_dir)\lg86\novector.lnk $(fcnovect_lnk) fciftbl.lnk
 #
 !ifdef f77_target_dir
 !ifeq form os2v2
-exedir = $(f77_target_dir)\binp
+exedir = $(f77_target_dir)/binp
 !else ifeq form nt
-exedir = $(f77_target_dir)\binnt
+exedir = $(f77_target_dir)/binnt
 !else
 !ifdef japan_objs
-exedir = $(f77_target_dir)\bin.nec
+exedir = $(f77_target_dir)/bin.nec
 !else
-exedir = $(f77_target_dir)\binw
+exedir = $(f77_target_dir)/binw
 !endif
 !endif
-exename = $(exedir)\$(exe).exe
+exename = $(exedir)/$(exe).exe
 !else
 exedir = .
 exename = $(exe).exe
@@ -69,7 +69,7 @@ dep_list = $(fcode_headers) $(root) $(obj_0) $(obj_1) $(obj_2) $(obj_3) &
 dep_list += $(resource_file)
 !endif
 !ifeq form dos
-dep_list += $(watcom_dir)\lib\xmeml.lib $(wl95_dir)\watfor\wlink.lib
+dep_list += $(watcom_dir)/lib/xmeml.lib $(wl95_dir)/watfor/wlink.lib
 !endif
 
 $(exename) : $(dep_list)
@@ -78,11 +78,11 @@ $(exename) : $(dep_list)
     $(%link)
 !else ifeq form pharlap
 $(exename) :
-    @set link=$(linker) name $(exedir)\$(exe) @$(exe).lnk
+    @set link=$(linker) name $(exedir)/$(exe) @$(exe).lnk
     $(%link)
 !else ifeq form dos4g
 $(exename) :
-    @set link=$(linker) name $(exedir)\$(exe) @$(exe).lnk
+    @set link=$(linker) name $(exedir)/$(exe) @$(exe).lnk
     $(%link)
 !else
 $(exename) :
@@ -90,7 +90,7 @@ $(exename) :
     $(%link)
 !endif
 !ifdef resource_file
-    wstrip /q /a /r $(exedir)\$(exe) . $(resource_file)
+    wstrip -q -a -r $(exedir)/$(exe) . $(resource_file)
 !endif
 
 #
@@ -98,7 +98,7 @@ $(exename) :
 #
 fcmds=@%append $^@ file %i
 
-$(exe).lnk : $(f77_dir)\lg86\files.mif $(f77_dir)\lg86\rt\rt.mif $(f77_dir)\lg86\comp.mif
+$(exe).lnk : $(f77_dir)/lg86/files.mif $(f77_dir)/lg86/rt/rt.mif $(f77_dir)/lg86/comp.mif
     @echo Creating $^@
     @%create $^@
 !ifdef share_objs
@@ -137,8 +137,8 @@ $(exe).lnk : $(f77_dir)\lg86\files.mif $(f77_dir)\lg86\rt\rt.mif $(f77_dir)\lg86
             @for %i in ($(obj_5)) do $(fcmds)   # overlay 5
         @%append $^@ end
     @%append $^@ section
-        @%append $^@ fixedlib $(watcom_dir)\lib\xmeml.lib # overlay 6
-        @%append $^@ file $(wl95_dir)\watfor\wlink.lib
+        @%append $^@ fixedlib $(watcom_dir)/lib/xmeml.lib # overlay 6
+        @%append $^@ file $(wl95_dir)/watfor/wlink.lib
     @%append $^@ end
 !else
     @%append $^@ system $(form) option map,stack=16k
@@ -160,20 +160,20 @@ $(exe).lnk : $(f77_dir)\lg86\files.mif $(f77_dir)\lg86\rt\rt.mif $(f77_dir)\lg86
 
 !ifdef resource_file
 
-res_dependencies = ..\c\errmsg.rc ..\h\errcod.h
+res_dependencies = ../c/errmsg.rc ../h/errcod.h
 
 !ifdef japan_objs
-res_dependencies += ..\nec\errmsgw.rc
+res_dependencies += ../nec/errmsgw.rc
 !else
-res_dependencies += ..\h\errmsgw.rc
+res_dependencies += ../h/errmsgw.rc
 !endif
 
 !ifeq form dos
-res_dependencies += $(wl95_dir)\h\wlink.rc
+res_dependencies += $(wl95_dir)/h/wlink.rc
 !endif
 
 errmsg.res : $(res_dependencies)
-   wrc $(wrcopts) /zk0 /bt=windows /r /fo=$^@ /dMSG_LANG_BASE=0 /dMSG_LANG_SPACING=0 ..\c\errmsg.rc
+   wrc $(wrcopts) -zk0 -bt=windows -r -fo=$^@ -dMSG_LANG_BASE=0 -dMSG_LANG_SPACING=0 ../c/errmsg.rc
 
 !endif
 
@@ -190,7 +190,7 @@ fcdisasm.obj : fcdisasm.c $(fcnames_inc)
 # special cases to put into overlay loader segment
 #
 errmsg.obj : errmsg.c
-    $(compile)/nt=_TEXT/nc=_OVLCODE
+    $(compile)-nt=_TEXT-nc=_OVLCODE
 !endif
 
 
@@ -199,16 +199,16 @@ errmsg.obj : errmsg.c
 #
 !include $(womp_dir)/watfor/files.mif
 !ifdef __386__
-$(womp_dir)\watfor\obj386\wompobj.lib : wmpmsg.gh $(womp_srcs)
-    @wmake -h -f $(womp_dir)\watfor\makefile $(__MAKEOPTS__) __386__=
+$(womp_dir)/watfor/obj386/wompobj.lib : wmpmsg.gh $(womp_srcs)
+    @wmake -h -f $(womp_dir)/watfor/makefile $(__MAKEOPTS__) __386__=
 !else
-$(womp_dir)\watfor\obj\wompobj.lib : wmpmsg.gh $(womp_srcs)
-    @wmake -h -f $(womp_dir)\watfor\makefile $(__MAKEOPTS__)
+$(womp_dir)/watfor/obj/wompobj.lib : wmpmsg.gh $(womp_srcs)
+    @wmake -h -f $(womp_dir)/watfor/makefile $(__MAKEOPTS__)
 !endif
 
 wmpmsg.gh : $(womp_dir)/womp.msg
 !ifdef __LINUX__
     perl $(sdk_dir)/misc/msgtoh.pl < $< | sed '/0$$/d' > $^@
 !else
-    vi -q -d -i -s $(womp_dir)\h\makemsg.vi -p "$^@" $[@
+    vi -q -d -i -s $(womp_dir)/h/makemsg.vi -p "$^@" $[@
 !endif

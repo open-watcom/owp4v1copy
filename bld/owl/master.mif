@@ -1,10 +1,10 @@
 proj_name       = owl
+
 inc_dirs        = $(watcom_dir)/h;../h
 
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
-
 
 .c: $(owl_dir)/c
 
@@ -25,7 +25,7 @@ owl_objs = owl.obj &
 owl.lib : $(owl_objs)
         rm -f $^&.clb
         @for %i in ($<) do @%append $^&.clb -+%i
-        $(librarian) -n -q -b $^. @$^&.clb
+        $(librarian) -n -q -b $^@ @$^&.clb
 
 
 bufftest.exe : bufftest.obj $(owl_objs)

@@ -52,7 +52,7 @@ componentsmmpm2 =    &
         mmio.lbc     &
         sw.lbc
 
-.def .asm : ..\$(srcdir)
+.def .asm : ../$(srcdir)
 
 .def.lbc:
         vi -i -q -k ":set norc\n:r ../$(srcdir)/$[.\n:source ../def2lbc.vi $*\n"
@@ -64,10 +64,10 @@ componentsmmpm2 =    &
         $(lib) -b -c -q -n $@ $<
 
 .c.obj:
-        $(cc) -i$(inc_dirs) -zq-w4-we-dNDEBUG -zc -oaxt -d1 $<
+        $(cc) -i$(inc_dirs) -fo=.obj -zq-w4-we-dNDEBUG -zc -oaxt -d1 $<
 
 .asm.obj:
-        $(as) -zq -d1 $<
+        $(as) -fo=.obj -zq -d1 $<
 
 os2.lib: lib286.lbc msgseg.obj
         $(lib) -b -c -q -n -io -ii -p=32 $@ @$<

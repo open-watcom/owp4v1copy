@@ -19,21 +19,4 @@ sys_object =    wmain.obj winfo.obj wstr.obj whndl.obj &
                 wedit.obj wtoolbar.obj wribbon.obj &
                 wdel.obj wnewitem.obj wsvobj.obj wstr2rc.obj
 
-extra_c_flags_wmain = -fhq
-extra_c_flags_winfo = -fhq
-extra_c_flags_wstr = -fhq
-extra_c_flags_whndl = -fhq
-extra_c_flags_whints = -fhq
-extra_c_flags_wstat = -fhq
-extra_c_flags_wedit = -fhq
-extra_c_flags_wtoolbar = -fhq
-extra_c_flags_wribbon = -fhq
-extra_c_flags_wdel = -fhq
-extra_c_flags_wnewitem = -fhq
-extra_c_flags_wsvobj = -fhq
-extra_c_flags_wstr2rc = -fhq
-
 !include ../../mif/master.mif
-
-$(name).res: $(name).rc rename.dlg w_rc.h sys_rc.h wmsgfile.gh &
-             wstring.men strabout.dlg stredit.dlg

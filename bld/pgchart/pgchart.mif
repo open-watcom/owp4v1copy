@@ -27,21 +27,21 @@ objs = &
 !ifeq _386 386
 text_seg_name = _TEXT
 .before
-        @set inc386=..\h;$(build_root)\graphlib\h;$(build_root)\watcom\h;$(build_root)\hdr\dos;$(%include)
-        @set wcc386=/osax /w3 /zq /zl /fpc /d1 $(model)
+        @set inc386=../h;$(build_root)/graphlib/h;$(build_root)/watcom/h;$(build_root)/hdr/dos;$(%include)
+        @set wcc386=-osax -w3 -zq -zl -fpc -d1 $(model)
 !else
 text_seg_name = GRAPH_TEXT
 .before
-        @set include=..\h;$(build_root)\graphlib\h;$(build_root)\watcom\h;$(build_root)\hdr\dos;$(%include)
-        @set wcc=/osax /w3 /zq /zl /fpc /d1 $(model)
+        @set include=../h;$(build_root)/graphlib/h;$(build_root)/watcom/h;$(build_root)/hdr/dos;$(%include)
+        @set wcc=-osax -w3 -zq -zl -fpc -d1 $(model)
 !endif
 
-cflags = /nt=$(text_seg_name) /d_CGRAPH=$(cdecl) /d_FARD=$(fard) /nm=$(module) /fo=$[&.obj
+cflags = -nt=$(text_seg_name) -d_CGRAPH=$(cdecl) -d_FARD=$(fard) -nm=$(module) -fo=$[&.obj
 
-.c: $(build_root)\pgchart\c
+.c: $(build_root)/pgchart/c
 
-$(libname).lib : $(objs) ..\pgchart.lbc
-        wlib /b /n /q $(libname).lib @..\pgchart.lbc
+$(libname).lib : $(objs) ../pgchart.lbc
+        wlib -b -n -q $(libname).lib @../pgchart.lbc
 
 .c.obj:
 !ifeq _386 386
@@ -50,12 +50,9 @@ $(libname).lib : $(objs) ..\pgchart.lbc
         $(libcomp286) $(cflags) $(extra_c_flags) $[*
 !endif
 
-..\pgchart.lbc : ..\pgchart.mif
-        %create ..\pgchart.lbc
-        for %i in ($(objs)) do %append ..\pgchart.lbc -+%i
+../pgchart.lbc : ../pgchart.mif
+        %create $^@
+        for %i in ($(objs)) do %append $^@ -+%i
 
 clean: .symbolic
-        @if exist *.obj @del *.obj
-        @if exist *.lib @del *.lib
-        @if exist ..\*.lbc @del ..\*.lbc
-        @if exist *.tmp @del *.tmp
+        rm -f *.obj *.lib ../*.lbc *.tmp

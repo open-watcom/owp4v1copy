@@ -5,55 +5,55 @@
 !include wres.mif
 !include mlibs.mif
 
-clibldos_dir    = $(%watcom)\lib286\dos
-clibldos_lib    = $(%watcom)\lib286\dos\clibl.lib
-mathl286_lib    = $(%watcom)\lib286\mathl.lib
-mathl287_lib    = $(%watcom)\lib286\math87l.lib
-ovlldr_lib      = $(%watcom)\lib286\dos\wovl.lib
-emu286_lib      = $(%watcom)\lib286\noemu87.lib
-clibros2_lib    = $(%watcom)\lib386\os2\clib3r.lib
-clibrnt_lib     = $(%watcom)\lib386\nt\clib3r.lib
-clibr386_lib    = $(%watcom)\lib386\dos\clib3r.lib
-mathr386_lib    = $(%watcom)\lib386\math3r.lib
-mathr387_dir    = $(%watcom)\lib386
-mathr387_lib    = $(%watcom)\lib386\math387r.lib
+clibldos_dir    = $(%watcom)/lib286/dos
+clibldos_lib    = $(%watcom)/lib286/dos/clibl.lib
+mathl286_lib    = $(%watcom)/lib286/mathl.lib
+mathl287_lib    = $(%watcom)/lib286/math87l.lib
+ovlldr_lib      = $(%watcom)/lib286/dos/wovl.lib
+emu286_lib      = $(%watcom)/lib286/noemu87.lib
+clibros2_lib    = $(%watcom)/lib386/os2/clib3r.lib
+clibrnt_lib     = $(%watcom)/lib386/nt/clib3r.lib
+clibr386_lib    = $(%watcom)/lib386/dos/clib3r.lib
+mathr386_lib    = $(%watcom)/lib386/math3r.lib
+mathr387_dir    = $(%watcom)/lib386
+mathr387_lib    = $(%watcom)/lib386/math387r.lib
 
-c_opts = /w4 /zp1
+c_opts = -w4 -zp1
 !ifdef __386__
 comp = $(comp386)
-c_opts += /mf
+c_opts += -mf
 model = f
-asm_opts = /3/w3/mf/zq/d1/fp$(fp_model) /i=$(f77_dir)\lg86\rt\asm\ /i=$(watcom_h)\
-asm_o_opt =/fo=
+asm_opts = -3-w3-mf-zq-d1-fp$(fp_model) -i="$(f77_dir)/lg86/rt/asm" -i="$(watcom_h)"
+asm_o_opt = -fo=
 !else
 comp = $(comp286)
-asm_opts = /w3/ml/zq/d1/fp$(fp_model) /i=$(f77_dir)\lg86\rt\asm\ /i=$(watcom_h)\
-asm_o_opt =/fo=
-c_opts += /ml/zc
+asm_opts = -w3-ml-zq-d1-fp$(fp_model) -i="$(f77_dir)/lg86/rt/asm" -i="$(watcom_h)"
+asm_o_opt = -fo=
+c_opts += -ml-zc
 model = l
 !endif
 
 !ifeq form os2v2
-c_opts +=/bt=OS2
+c_opts +=-bt=OS2
 !else ifeq form nt
-c_opts +=/bt=NT
+c_opts +=-bt=NT
 !else
-c_opts +=/bt=DOS
+c_opts +=-bt=DOS
 !endif
-c_opts +=/zq/oax/fp$(fp_model)/d__RT__
+c_opts +=-zq-oax-fp$(fp_model)-d__RT__
 !ifdef in_sa_library
-c_opts +=/zl
+c_opts +=-zl
 !ifdef __mt__
-c_opts +=/d__MT__
+c_opts +=-d__MT__
 !endif
 !endif
 !ifdef japan_objs
-c_opts +=/d__NEC__
+c_opts +=-d__NEC__
 !endif
 
-wlib_opts = /b/n/q
+wlib_opts = -b-n-q
 !ifdef on_build_machine
-wlib_opts += /s/t
+wlib_opts += -s-t
 !endif
 
 #
@@ -75,14 +75,14 @@ wlib_opts += /s/t
 
 !ifndef __386__
 !ifeq fp_model i87
-.asm: $(f77_dir)\lg86\rt\asm87
+.asm: $(f77_dir)/lg86/rt/asm87
 !endif
-.asm: $(f77_dir)\lg86\rt\asm;$(f77_dir)\lg86\asm;$(f77_dir)\cg86\asm
+.asm: $(f77_dir)/lg86/rt/asm;$(f77_dir)/lg86/asm;$(f77_dir)/cg86/asm
 !else
 !ifeq fp_model i87
-.asm: $(f77_dir)\lg86\rt\asm387
+.asm: $(f77_dir)/lg86/rt/asm387
 !endif
-.asm: $(f77_dir)\lg86\rt\asm386
+.asm: $(f77_dir)/lg86/rt/asm386
 !endif
 .asm.xbj:
     $(as) $[* $(asm_o_opt)$^. $(asm_opts)
@@ -91,35 +91,35 @@ wlib_opts += /s/t
     $(as) $[* $(asm_o_opt)$(share_objs)$^. $(asm_opts)
 
 !ifdef on_build_machine
-c_opts += /d1
+c_opts += -d1
 !else
-c_opts += /d2
+c_opts += -d2
 !endif
 compile = $(comp) $(c_opts) $[*
 
 !ifdef in_sa_library
-.c: $(f77_dir)\lg86\rt\c;$(f77_dir)\lg86\c;$(f77_dir)\lg86\cp\c;$(f77_dir)\cg86\rt\c;$(f77_dir)\rt
+.c: $(f77_dir)/lg86/rt/c;$(f77_dir)/lg86/c;$(f77_dir)/lg86/cp/c;$(f77_dir)/cg86/rt/c;$(f77_dir)/rt
 !else
-.c: $(f77_dir)\lg86\c;$(f77_dir)\lg86\rt\c;$(f77_dir)\lg86\cp\c;$(f77_dir)\cg86\rt\c;$(f77_dir)\rt
+.c: $(f77_dir)/lg86/c;$(f77_dir)/lg86/rt/c;$(f77_dir)/lg86/cp/c;$(f77_dir)/cg86/rt/c;$(f77_dir)/rt
 !endif
-.c: $(f77_dir)\rt\math;$(f77_dir)\rt\ifns;$(f77_dir)\rt\ufns;$(f77_dir)\rt\iad;$(f77_dir)\cg86\c
-.c: $(f77_dir)\c;$(f77_dir)\cp;$(f77_dir)\cg86\cp\c;$(f77_dir)\lg86\utils\c
+.c: $(f77_dir)/rt/math;$(f77_dir)/rt/ifns;$(f77_dir)/rt/ufns;$(f77_dir)/rt/iad;$(f77_dir)/cg86/c
+.c: $(f77_dir)/c;$(f77_dir)/cp;$(f77_dir)/cg86/cp/c;$(f77_dir)/lg86/utils/c
 .c.obj:
 !ifdef share_objs
-    $(compile)/fo=$(share_objs).obj
+    $(compile) -fo=$(share_objs).obj
 !else
     $(compile)
 !endif
 .c.xbj:
 !ifdef japan_objs
-    $(compile)/fo=$(share_objs).xbj
+    $(compile) -fo=$(share_objs).xbj
 !else
-    $(compile)/fo=.xbj
+    $(compile) -fo=.xbj
 !endif
 .c.jbj:
-    $(compile)/fo=.jbj
+    $(compile) -fo=.jbj
 .c.2bj .c.3bj:
-    $(compile)/fo=$^@
+    $(compile) -fo=$^@
 
 !ifdef share_objs
 .obj: $(share_objs)
@@ -138,7 +138,7 @@ libs = $(cliblnec_lib)
 !    else
 libs = $(clibldos_lib)
 !    endif
-libs += $(ovlldr_lib) $(wres_dir)\lib\wresl.lib
+libs += $(ovlldr_lib) $(wres_dir)/lib/wresl.lib
 !    ifeq fp_model c
 libs += $(mathl286_lib)
 !    else
@@ -146,7 +146,7 @@ libs += $(mathl287_lib) $(emu286_lib)
 !    endif
 
 !  else ifeq form os2v2
-libs = $(clibros2_lib) $(os2386) $(wres_dir)\lib\wresf.lib
+libs = $(clibros2_lib) $(os2386) $(wres_dir)/lib/wresf.lib
 !    ifeq fp_model c
 libs += $(mathr386_lib)
 !    else
@@ -154,7 +154,7 @@ libs += $(mathr387_lib)
 !    endif
 
 !  else ifeq form nt
-libs = $(clibrnt_lib) $(wres_dir)\lib\wresf.lib
+libs = $(clibrnt_lib) $(wres_dir)/lib/wresf.lib
 !    ifeq fp_model c
 libs += $(mathr386_lib)
 !    else
@@ -167,7 +167,7 @@ libs = $(clibrnec_lib)
 !    else
 libs = $(clibr386_lib)
 !    endif
-libs += $(wres_dir)\lib\wresf.lib
+libs += $(wres_dir)/lib/wresf.lib
 !    ifeq fp_model c
 libs += $(mathr386_lib)
 !    else
@@ -178,20 +178,20 @@ libs += $(mathr387_lib)
 # we use part of WOMP for generating object files
 # and DWARF for generating browsing info
 !ifdef __386__
-libs += $(womp_dir)\watfor\obj386\wompobj.lib
-libs += $(dwarf_dir)\dw\o\dwf.lib
+libs += $(womp_dir)/watfor/obj386/wompobj.lib
+libs += $(dwarf_dir)/dw/o/dwf.lib
 !endif
 
 
 !ifdef in_sa_library
-rt_h    = $(f77_dir)\lg86\rt\h;
+rt_h    = $(f77_dir)/lg86/rt/h;
 !else
 rt_h    =
 !endif
 
 !ifeq form dos
-wlink_include_dir = $(wl95_dir)\h
+wlink_include_dir = $(wl95_dir)/h
 !endif
 
 .before
-    set include=$(rt_h)$(f77_dir)\lg86\h;$(f77_dir)\cg86\h;$(f77_dir)\h;$(womp_dir)\h;$(wlink_inlcude_dir);$(lang_root)\h;$(oshdrs)$(watcom_dir)\h;$(dwarf_dir)\dw\h;$(clib_dir)\h;$(lib_misc_dir)\h;$(comp_cfg_dir)\h;$(cg_inc_dirs)
+    set include=$(rt_h)$(f77_dir)/lg86/h;$(f77_dir)/cg86/h;$(f77_dir)/h;$(womp_dir)/h;$(wlink_inlcude_dir);$(lang_root)/h;$(oshdrs)$(watcom_dir)/h;$(dwarf_dir)/dw/h;$(clib_dir)/h;$(lib_misc_dir)/h;$(comp_cfg_dir)/h;$(cg_inc_dirs)

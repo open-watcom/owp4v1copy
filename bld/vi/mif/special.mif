@@ -1,5 +1,5 @@
 !ifdef sys_windowed
-$(ED).res : $(vi_dir)\win\viw.rc .AUTODEPEND
+$(ED).res : $(vi_dir)/win/viw.rc .AUTODEPEND
 !ifeq host_os win
         $(rc) -r -ad -zk0 -bt=windows -i"$(vi_dir)/win;$(vi_dir)/ctl" $[@ -fo=$^@
 !else
@@ -7,10 +7,10 @@ $(ED).res : $(vi_dir)\win\viw.rc .AUTODEPEND
 !endif
 
 rcstr.gh : rcstrmsg.gh
-        vi -i -q -s $(sdk_dir)\misc\msgtoh.vi -p"$^@" $[@
+        vi -i -q -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
 
-rcstrmsg.gh : $(msgfiles)
-        $(bld_cc) -p -i="$(sdk_dir)/misc" -zk0 "$(vi_dir)/vi.msg" -fo=$^@
+rcstrmsg.gh : $(vi_dir)/vi.msg $(msgfiles)
+        $(bld_cc) -p -i="$(sdk_dir)/misc" -zk0 $[@ -fo=$^@
 
 setfs.ybj : setfs.c setfs.ch setfs.dh
 setfs.ch : setfs.ctl

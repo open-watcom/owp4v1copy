@@ -6,42 +6,42 @@ proj_name = f77
 
 #------------------------ compiler options
 
-extra_c_flags = /s /zl /zld /d__RT__
-extra_c_flags_386 = /fp$(fp_model) /m$(model) /zp1
-extra_c_flags_i86 = /fp$(fp_model) /m$(model)
+extra_c_flags = -s -zl -zld -d__RT__
+extra_c_flags_386 = -fp$(fp_model) -m$(model) -zp1
+extra_c_flags_i86 = -fp$(fp_model) -m$(model)
 
 !ifdef on_build_machine
-extra_c_flags_i86 += /fpr
-extra_c_flags_386 += /fpr
+extra_c_flags_i86 += -fpr
+extra_c_flags_386 += -fpr
 !endif
 
 !ifdef is_MT
-extra_c_flags += /d__MT__
+extra_c_flags += -d__MT__
 !endif
 
 !ifdef is_DLL
-extra_c_flags += /d__DLL__
+extra_c_flags += -d__DLL__
 !endif
 
 !ifdef is_stack
-extra_c_flags_386 += /3s /d__3S__
+extra_c_flags_386 += -3s -d__3S__
 !endif
 
 !ifeq model l
-extra_c_flags_i86 += /zu
+extra_c_flags_i86 += -zu
 !endif
 
 !ifdef is_NEC
-extra_c_flags += /d__NEC__
+extra_c_flags += -d__NEC__
 !endif
 
 #------------------------ assembler options
 
-asm_incs  = -i$(f77_dir)\cg86\inc -i$(watcom_dir)\h -i$(comp_cfg_dir)\h
+asm_incs  = -i"$(f77_dir)/cg86/inc" -i"$(watcom_dir)/h" -i"$(comp_cfg_dir)/h"
 asm_opts  = -w3 -d1 -zq -fp$(fp_model) $(asm_incs)
 
 !ifdef is_stack
-asm_opts += -3s /3_
+asm_opts += -3s -3_
 !endif
 
 !ifeq host_CPU 386
@@ -76,11 +76,11 @@ asm_opts += -d_NETWARE_
 asm_opts += -d_NEC_
 !endif
 
-.asm: $(f77_dir)\cg86\rt\386asm;$(f77_dir)\cg86\rt\asm;$(f77_dir)\cg86\asm
+.asm: $(f77_dir)/cg86/rt/386asm;$(f77_dir)/cg86/rt/asm;$(f77_dir)/cg86/asm
 
 !else ifeq host_CPU i86
 
-asm_opts += /m$(model)
+asm_opts += -m$(model)
 
 !ifeq host_OS win
 asm_opts += -d_WINDOWS_
@@ -90,11 +90,11 @@ asm_opts += -d_WINDOWS_
 asm_opts += -d_OS2_
 !endif
 
-.asm: $(f77_dir)\cg86\rt\asm;$(f77_dir)\cg86\asm
+.asm: $(f77_dir)/cg86/rt/asm;$(f77_dir)/cg86/asm
 
 !else ifeq host_CPU axp
 
-asm_opts  = -oc -zq -we -i=$(f77_dir)\cg86\inc -i=$(watcom_dir)\h
+asm_opts  = -oc -zq -we -i="$(f77_dir)/cg86/inc" -i="$(watcom_dir)/h"
 
 !ifdef is_MT
 asm_opts += -d_MT_
@@ -108,11 +108,11 @@ asm_opts += -d_DLL_
 asm_opts += -d_NT_
 !endif
 
-.asm: $(f77_dir)\cg86\rt\axpasm;$(f77_dir)\cg86\axpasm
+.asm: $(f77_dir)/cg86/rt/axpasm;$(f77_dir)/cg86/axpasm
 
 !else ifeq host_CPU ppc
 
-asm_opts  = -oe -zq -we -i=$(f77_dir)\cg86\inc -i=$(watcom_dir)\h
+asm_opts  = -oe -zq -we -i="$(f77_dir)/cg86/inc" -i="$(watcom_dir)/h"
 
 !ifdef is_MT
 asm_opts += -d_MT_
@@ -126,7 +126,7 @@ asm_opts += -d_DLL_
 asm_opts += -d_NT_
 !endif
 
-.asm: $(f77_dir)\cg86\rt\ppcasm;$(f77_dir)\cg86\ppcasm
+.asm: $(f77_dir)/cg86/rt/ppcasm;$(f77_dir)/cg86/ppcasm
 
 !endif
 
@@ -138,9 +138,9 @@ asm_opts += -d_NT_
 .asm.obj:
     $(as) $[* $(asm_opts)
 
-inc_dirs=$(f77_dir)\cg86\rt\h;$(f77_dir)\cg86\h;$(f77_dir)\h;$(lib_misc_dir)\h;$(clib_dir)\h;$(hdr_dir)\dos;$(comp_cfg_dir)\h
+inc_dirs=$(f77_dir)/cg86/rt/h;$(f77_dir)/cg86/h;$(f77_dir)/h;$(lib_misc_dir)/h;$(clib_dir)/h;$(hdr_dir)/dos;$(comp_cfg_dir)/h
 
-.c: $(f77_dir)\cg86\rt\c;$(f77_dir)\cg86\c;$(f77_dir)\rt;$(f77_dir)\rt\math;$(f77_dir)\rt\ifns;$(f77_dir)\c;$(f77_dir)\rt\ufns
+.c: $(f77_dir)/cg86/rt/c;$(f77_dir)/cg86/c;$(f77_dir)/rt;$(f77_dir)/rt/math;$(f77_dir)/rt/ifns;$(f77_dir)/c;$(f77_dir)/rt/ufns
 .c.obj:
     @set include=$(inc_path)
     $(cc) $(cflags) $(extra_c_flags_$[&) $[@
@@ -716,22 +716,22 @@ lbc_file=tmp.lbc
 
 !ifdef on_build_machine
 !ifeq host_CPU axp
-w_lib = $(librarian) /t
+w_lib = $(librarian) -t
 !else
-w_lib = $(librarian) /s /t
+w_lib = $(librarian) -s -t
 !endif
 !else
 w_lib = $(librarian)
 !endif
 
-all: $(lib_name).lib ..\errmsg.res .symbolic
+all: $(lib_name).lib ../errmsg.res .symbolic
     @%null
 
 $(lib_name).lib : $(files)
     @%create $(lbc_file)
     @for %%f in (*.?bj) do @%append $(lbc_file) +%%f
-    $(w_lib) /n /b $(lib_name) @$(lbc_file)
+    $(w_lib) -n -b $(lib_name) @$(lbc_file)
     @del $(lbc_file)
 
-..\errmsg.res : ..\c\errmsg.rc ..\h\errcod.h
-    $(rc) /zk0 /r /fo=$^@ /dMSG_LANG_BASE=0 /dMSG_LANG_SPACING=0 ..\c\errmsg.rc
+../errmsg.res : ../c/errmsg.rc ../h/errcod.h
+    $(rc) -zk0 -r -fo=$^@ -dMSG_LANG_BASE=0 -dMSG_LANG_SPACING=0 $[@

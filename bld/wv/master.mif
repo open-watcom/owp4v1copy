@@ -374,9 +374,9 @@ $(bdir)/dv$(tail_exe).$(EXE) : $(resfile) eraseall.obj $(objs) $(sysobjs) $(libs
         @%make do_link
 
 wd.lib : eraseall.obj $(engine_objs) $(sysobjs)
-        if exist tmp.lbc del tmp.lbc
+        rm -f tmp.lbc
         @for %i in ($(engine_objs) $(sysobjs)) do @%append tmp.lbc +%i
-        wlib -b -n wd.lib @tmp.lbc
+        $(librarian) -b -n wd.lib @tmp.lbc
         del tmp.lbc
 
 $(bdir)/wv$(tail_exe).$(EXE) : $(resfile) eraseall.obj $(objs) $(sysobjs) $(libs) $(lnk)
@@ -436,7 +436,7 @@ post_process :.PROCEDURE
 !ifeq host_CPU 386
 !ifdef really_ovl_dos
         cp dv.map $(lnk2)
-        vi -d -q -s ..\mapfix.vi $(lnk2)
+        vi -d -q -s ../mapfix.vi $(lnk2)
         $(linker) $(symfile) $(%DEBUG) name $(bdir)/$(%NAME).$(EXE) @$(lnk) @$(lnk2) $(endsect)
         @%null
 !endif

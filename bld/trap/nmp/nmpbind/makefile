@@ -3,6 +3,12 @@
 host_OS  = os2
 host_CPU = i86
 
+proj_name = nmpbind
+
+!ifndef nmpbind_autodepends
+nmpbind_autodepends = .AUTODEPEND
+!endif
+
 .ERASE
 .CONTINUE
 

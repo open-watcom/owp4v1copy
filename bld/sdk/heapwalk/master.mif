@@ -1,30 +1,38 @@
 proj_name = wheapwlk
 name = wheapwlk
 
-sys_windowed=1
-
 !ifndef wheapwlk_autodepends
 wheapwlk_autodepends = .AUTODEPEND
 !endif
+
+sys_windowed=1
 
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
 
-.EXTENSIONS: .dlg
+.EXTENSIONS: .res .rc
 
-msgfiles = ../heapwalk.msg $(sdk_dir)/misc/savelbox.msg &
-           $(sdk_dir)/misc/memwnd.msg $(sdk_dir)/misc/about.msg
- 
-lnk = $(name).lnk
 extra_c_flags= -s-zu-zW-fpc
 extra_c_flags_ldstr = -dSPECIAL_STRING_LOADING 
 extra_c_flags_mem = -dNO_WPI
 
+extra_l_flags = op map
+extra_l_flags_win  = lib windows.lib
+extra_l_flags_win += lib toolhelp.lib
+extra_l_flags_win += lib commdlg.lib
+extra_l_flags_win += lib stress.lib
+extra_l_flags_win += lib $(misc_dir)/ctl3d.lib
+extra_l_flags_win += op stack=7k, heapsize=2k
+
 inc_dirs = ..;$(sdk_dir)/misc;$(watcom_dir)/h;$(wdisasm_dir)/h;$(win31_hdrs)
 
+.c : ..;$(sdk_dir)/misc;$(wdisasm_dir)/c
+.asm : ..;$(sdk_dir)/misc
+.rc : ..
+
 .before:
-        @set INCLUDE=$(inc_path)
+        @set include=$(inc_path)
 
 objs_win = heapwalk.obj hwlist.obj hwproc.obj hwglob.obj hwsort.obj &
         hwbox.obj hwdisp.obj hwsave.obj hwobjec.obj hwlocal.obj&
@@ -36,49 +44,21 @@ objs_win = heapwalk.obj hwlist.obj hwproc.obj hwglob.obj hwsort.obj &
  
 objs = $(objs_$(host_OS))
 
+msgfiles = $(sdk_dir)/misc/savelbox.msg &
+           $(sdk_dir)/misc/memwnd.msg $(sdk_dir)/misc/about.msg
+ 
 !include $(wdisasm_dir)/mif/disasm.mif
 
-resources = ../10hw.ico ../heapwlk.dlg $(sdk_dir)/misc/memwnd.rc &
-            ../heapinfo.dlg ../memman.dlg ../lclinfo.dlg &
-            ../add.dlg config.dlg ../freen.dlg ../alloc.dlg &
-            ../code.dlg ../config.dlg $(sdk_dir)/misc/about.dlg
-
-$(name).exe : rcstr.gh $(objs) $(disasm) $(lnk) $(name).res
-	wlink @$(lnk)
-        $(RC) -k $(name).res
-
-$(name).res : ../$(name).rc $(resources) rcstr.gh
-        $(RC) -zk0 -r -bt=windows ../$(name).rc -i=$(sdk_dir)/misc -fo=./$^.
-
-$(lnk) : makefile
-        %create $(lnk)
-!ifndef on_build_machine
-        @%append $(lnk) debug all
-!endif
-        @%append $(lnk) system windows
-        @%append $(lnk) name $(name).exe
-        @%append $(lnk) library windows.lib
-        @%append $(lnk) library toolhelp.lib
-        @%append $(lnk) library commdlg.lib
-        @%append $(lnk) library stress.lib
-        @%append $(lnk) library $(misc_dir)/ctl3d.lib
-        @%append $(lnk) option map
-        @%append $(lnk) option stack=7k
-        @%append $(lnk) option heapsize=2k
-        @for %i in ($(objs)) do @%append $(lnk) file %i
-        @for %i in ($(disasm)) do @%append $(lnk) file %i
+$(name).exe : rcstr.gh $(objs) $(disasm) $(name).res
+	$(linker) $(lflags) name $^@ file {$(objs) $(disasm)}
+        $(RC) $(rc_flags) -k $(name).res $^@
 
 rcstr.gh : rcstrmsg.gh
         vi -d -q -i -s ../../misc/msgtoh.vi -p"$^@" $[@
 
-rcstrmsg.gh : $(msgfiles)
-        $(cc) -zk0 -p -i="$(sdk_dir)/misc" "../heapwalk.msg" -fo=$^@
+rcstrmsg.gh : ../heapwalk.msg $(msgfiles)
+        @set include=$(inc_path)
+        $(cc) -zk0 -p -i="$(sdk_dir)/misc" $[@ -fo=$^@
 
-.obj : obj
-
-.c : ..;$(sdk_dir)/misc;$(wdisasm_dir)/c
-.asm : ..;$(sdk_dir)/misc
-.dlg : ..;$(sdk_dir)/misc
-
-.asm.obj:
-        $(as) $(aflags) $[* /fo=$[&.obj
+.rc.res: .AUTODEPEND
+        $(RC) $(rc_flags) -zk0 -r -ad -i="$(sdk_dir)/misc" $[@ -fo=$^@

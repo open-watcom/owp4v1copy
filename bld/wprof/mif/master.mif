@@ -121,7 +121,7 @@ wprof.res : auistr.gh wprof.rc
 
 !endif
 
-        $(rc) -i $(inc_dirs_sys) -r foros2pm.rc
+        $(rc) -i"$(inc_dirs_sys)" -r foros2pm.rc
         cp foros2pm.res wprof.res
 
 !ifndef %use_os2tk_stuff
@@ -155,8 +155,8 @@ rcfiles = &
 
 rcinclude=.;../h;$(dig_dir)/h;$(aui_dir)/h;$(gui_dir);$(gui_dir)/h;$(brinfo_dir)/merge/res
 
-wprofui.res : auistr.gh ../h/wprofui.rc $(rcfiles)
-    $(rc) -r -q -bt=windows -i=$(rcinclude);$(lang_root)/h/win ../h/wprofui.rc -fo=wprofui.res
+wprofui.res : ../h/wprofui.rc auistr.gh $(rcfiles)
+    $(rc) -r -q -bt=windows -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
 
 auistr.gh : $(aui_dir)/h/aui.msg $(aui_dir)/c/mkstr.c
         $(bld_cl) -i"$(aui_dir)/h" $]@

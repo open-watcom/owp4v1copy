@@ -38,7 +38,6 @@
 #include "wdemsgbx.h"
 #include "wdemsgs.gh"
 #include "ldstr.h"
-#include "wdemsgs.h"
 
 /****************************************************************************/
 /* macro definitions                                                        */

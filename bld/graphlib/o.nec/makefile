@@ -9,7 +9,7 @@ fard =
 _386 =
 _qnx =
 asm_cmd =       wasm
-asm_flags =     -zq -q -ms -i..\inc -d_MODEL=_SMALL -d_NEC_PC
+asm_flags =     -zq -q -ms -i"../inc" -d_MODEL=_SMALL -d_NEC_PC
 _NEC_PC =       1
 
 !include ../graphics.mif

@@ -1,5 +1,10 @@
 proj_name = wddespy
 name = wddespy
+
+!ifndef wddespy_autodepends
+wddespy_autodepends = .AUTODEPEND
+!endif
+
 sys_windowed = 1
 
 !include cproj.mif
@@ -16,48 +21,40 @@ objs =  savelbox.obj mem.obj font.obj fontstr.obj srchmsg.obj log.obj &
 extra_c_flags_mem = -DNO_WPI
 extra_c_flags_nt = -dNOUSE3D
 
+extra_l_flags     = option map
 extra_l_flags_win = option stack=7k option heapsize=2k lib windows.lib &
                     lib toolhelp.lib lib ddeml.lib lib commdlg.lib &
-                    lib $(misc_dir)\ctl3d.lib
+                    lib $(misc_dir)/ctl3d.lib
 
 extra_l_flags_nt_axp  = lib ctl3d32.lib
 
-extra_l_flags     = option map
-
-inc_dirs        = $(wddespy_dir);$(sdk_dir)\misc;$(watcom_dir)\h
-
 .before:
-        @set INCLUDE=$(inc_path)
+        @set include=$(inc_path)
 
-.c: $(wddespy_dir);$(sdk_dir)\misc
-.h: $(wddespy_dir);$(sdk_dir)\misc
+.c: $(wddespy_dir);$(sdk_dir)/misc
+.h: $(wddespy_dir);$(sdk_dir)/misc
 
-msgfiles  = $(wddespy_dir)\ddespy.msg $(sdk_dir)\misc\about.msg $(sdk_dir)\misc\log.msg &
-            $(sdk_dir)\misc\savelbox.msg $(sdk_dir)\misc\alias.msg
+inc_dirs  = $(wddespy_dir);$(sdk_dir)/misc;$(watcom_dir)/h
 
-resinc    = -i$(wddespy_dir)\res
-resources = $(sdk_dir)\misc\log.rc $(sdk_dir)\misc\mark.rc &
-            $(sdk_dir)\misc\alias.rc $(sdk_dir)\misc\about.dlg &
-            $(mastermsg) $(wddespy_dir)\res\cbfilt.dlg &
-            $(wddespy_dir)\res\msgfilt.dlg $(wddespy_dir)\menu.rc
-rcopts1 = -r -zk0
-rcopts2 = -k
+msgfiles  = $(sdk_dir)/misc/about.msg $(sdk_dir)/misc/log.msg &
+            $(sdk_dir)/misc/savelbox.msg $(sdk_dir)/misc/alias.msg
 
 $(name).exe : rcstr.gh $(objs) $(name).res
-        $(LINKER) $(lflags) name $(name).exe file { $(objs) }
+        $(LINKER) $(lflags) name $^@ file { $(objs) }
 !ifeq host_CPU axp
 !ifndef on_build_machine
         cvpack $(name).exe
         wstrip $(name).exe $(name).exe $(name).sym
 !endif
 !endif
-        $(RC) $(rc_flags) $(rcopts2) $(name).res
+        $(RC) $(rc_flags) -k $(name).res $^@
 
 rcstr.gh : rcstrmsg.gh
         vi -d -q -i -s ../../misc/msgtoh.vi -p"$^@" $[@
 
-rcstrmsg.gh : $(msgfiles)
-        $(cc) -zk0 -p -i=$(sdk_dir)\misc $(wddespy_dir)\ddespy.msg -fo=$^@
+rcstrmsg.gh : $(wddespy_dir)/ddespy.msg $(msgfiles)
+        @set include=$(inc_path)
+        $(cc) -zk0 -p -i="$(sdk_dir)/misc" $[@ -fo=$^@
 
-$(name).res : $(wddespy_dir)\$(name).rc $(resources)
-        $(RC) $(rc_flags) $(wddespy_dir)\$(name).rc -fo=$(name).res $(rcopts1) $(resinc)
+$(name).res : $(wddespy_dir)/$(name).rc .AUTODEPEND
+        $(RC) $(rc_flags) -r -zk0 -ad -i"$(wddespy_dir)/res" $[@ -fo=$^@

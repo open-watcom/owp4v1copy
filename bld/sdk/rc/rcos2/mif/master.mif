@@ -74,7 +74,7 @@ extra_l_flags += libpath $(watcom_dir)\lib &
 extra_l_flags_osi += option symfile
 
 # where to look for various files
-.c : $(wrc2_dir)\c;$(cpp_dir);$(trmem_dir);$(watcom_dir)\c
+.c : .;$(wrc2_dir)\c;$(cpp_dir);$(trmem_dir);$(watcom_dir)\c
 .cpp : $(wrc2_dir)\c;$(trmem_dir)
 .y : $(wrc2_dir)\y
 .key : $(wrc2_dir)\hash
@@ -82,7 +82,7 @@ extra_l_flags_osi += option symfile
 .gh : $(wrc2_dir)\h
 .mif : $(wrc2_dir)\mif
 
-inc_dirs = $(wrc2_dir)\h;$(wres_dir)\h;$(watcom_dir)\h;$(cpp_dir);$(trmem_dir)
+inc_dirs = .;$(wrc2_dir)\h;$(wres_dir)\h;$(watcom_dir)\h;$(cpp_dir);$(trmem_dir)
 
 .before:
         @set INCLUDE=$(inc_path)

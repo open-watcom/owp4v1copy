@@ -4,17 +4,17 @@ viper_autodepends = .autodepend
 
 .SUFFIXES : .rc
 
-.mif : $(mif_path);..\mif
-c_path_os2 = $(batch_dir)\os2
-c_path_nt = $(batch_dir)\nt
-c_path_win = $(batch_dir)\dos;$(batch_dir)\os2
+.mif : $(mif_path);../mif
+c_path_os2 = $(batch_dir)/os2
+c_path_nt = $(batch_dir)/nt
+c_path_win = $(batch_dir)/dos;$(batch_dir)/os2
 
-.c : $(c_path_$(host_os));$(watcom_dir)\c
+.c : $(c_path_$(host_os));$(watcom_dir)/c
 .cpp : ..
 !ifeq host_os os2
-.rc : ..\os2
+.rc : ../os2
 !else
-.rc : ..\win
+.rc : ../win
 !endif
 
 sys_windowed = 1
@@ -28,6 +28,9 @@ sys_windowed = 1
 
 extra_c_flags_386       = -fpc
 extra_c_flags_i86       = -fpc
+!ifeq host_os win
+extra_c_flags_link      = -dSERVER
+!endif
 
 extra_cpp_flags_386_nt  = -zm-zc
 extra_cpp_flags_386     = $(extra_cpp_flags_386_$(host_os))
@@ -47,18 +50,12 @@ $(name).exe : $(OBJECTS) $(LIBS) viper.res
 
 viper.res : viper.rc
 !ifneq host_OS os2
-        $(rc) $(rc_flags) -i..\ -q -r $[@ -fo=$^@
+        $(rc) $(rc_flags) -i".." -q -r $[@ -fo=$^@
 !else
 !ifeq host_lang japan
-        $(cc) -zk0 -dJAPANESE_MESSAGES -i=..\ -p $[@ -fo=viper.prc
+        $(cc) -zk0 -dJAPANESE_MESSAGES -i=".." -p $[@ -fo=viper.prc
 !else
-        $(cc) -i=..\ -p $[@ -fo=viper.prc
+        $(cc) -i=".." -p $[@ -fo=viper.prc
 !endif
-        $(rc_os2) -i ..\ -r viper.prc viper.res
+        $(rc_os2) -i".." -r viper.prc viper.res
 !endif
-
-!ifeq host_OS win
-link.obj: link.c
-        $(cc) $(cflags) $(extra_c_flags_$(host_cpu)) -dSERVER $[@ -fo=$^@
-!endif
-

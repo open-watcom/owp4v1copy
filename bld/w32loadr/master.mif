@@ -5,7 +5,7 @@
 .h: ..
 
 .asm.obj:
-  $(as_i86) -q -i.. $<
+  $(as_i86) -q -i".." $<
 
 !ifeq host_OS dos
 
@@ -25,7 +25,7 @@ tntrun.exe : tntrun.obj cmain32.obj int21pl.obj
    $(linker) system pharlap ext name tntrun file tntrun,cmain32,int21pl option stack=32k,map
    $(%tntdir)\bin\rebind $(%tntdir)\bin\rtk\tntb.exe tntrun.exp -exe tntrun.exe
 x32run.exe : x32run.obj cmain32.obj x32start.obj
-   $(linker) format os2 lx name x32run file x32start,x32run,cmain32 lib x32b option map,dosseg,internalrelocs,stack=4k libpath $(lang_root)\lib386\dos;$(lang_root)\lib386
+   $(linker) format os2 lx name x32run file x32start,x32run,cmain32 lib x32b option map,dosseg,internalrelocs,stack=4k libpath $(lang_root)/lib386/dos;$(lang_root)/lib386
    x32fix x32run.exe
 tntrun.obj : loader.c loader.h
         $(cc) $[@ -ox -d1 -d__DOS -d__CALL21__ -d__TNT -fo=$@
@@ -33,7 +33,7 @@ x32run.obj : loader.c loader.h
         $(cc) $[@ -ox -d1 -d__DOS -d__CALL21__ -d__X32 -fo=$@
 d4grun.obj : loader.c loader.h dginfo.gh
         $(cc) $[@ -ox -d1 -d__DOS -d__CALL21__ -d__DOS4G -fo=$@
-dginfo.gh : $(rsi_root)\bin\dos4g.exe
+dginfo.gh : $(rsi_root)/bin/dos4g.exe
         @%write mkdginfo.bat $(rsi_root)\bin\dos4g $(rsi_root)\bin\dginfo >dginfo.gh
         -mkdginfo
 
@@ -62,7 +62,7 @@ ntrun.exe : ntrun.obj cstrtwnt.obj int21.obj int21nt.obj ntstub.exe
   @%append tmp.lnk lib kernel32
   $(linker) @tmp.lnk
   del tmp.lnk
-  for %i in ( $(nt_exes) ) do cp ntrun.exe nt\%i
+  for %i in ( $(nt_exes) ) do cp ntrun.exe nt/%i
 
 ntrunner.exe : ntrunner.obj cstrtwnt.obj int21.obj int21nt.obj ntstub.exe
   @%write tmp.lnk sys nt name ntrunner.exe file cstrtwnt, ntrunner,int21,int21nt opt map,stack=64k,stub=ntstub.exe
@@ -74,11 +74,11 @@ ntstub.exe : ntstub.obj
   $(linker) system dos file ntstub option map
 
 int21nt.obj : int21nt.c
-  $(cc) $[@ -ox -d1 -bt=NT -i$(watcom_nt_h)
+  $(cc) $[@ -ox -d1 -bt=NT -i"$(watcom_nt_h)"
 ntrun.obj : loader.c loader.h
-  $(cc) $[@ -ox -d1 -bt=NT -d__NT -d__CALL21__ -fo=ntrun.obj -i$(watcom_nt_h)
+  $(cc) $[@ -ox -d1 -bt=NT -d__NT -d__CALL21__ -fo=ntrun.obj -i"$(watcom_nt_h)"
 ntrunner.obj : loader.c loader.h
-  $(cc) $[@ -ox -d1 -bt=NT -d__NT -d__CALL21__ -dW32RUN -fo=ntrunner.obj -i$(watcom_nt_h)
+  $(cc) $[@ -ox -d1 -bt=NT -d__NT -d__CALL21__ -dW32RUN -fo=ntrunner.obj -i"$(watcom_nt_h)"
 
 !else ifeq host_OS os2
 
@@ -94,9 +94,9 @@ os2stub.exe : loader16.obj dpmildr.obj int21win.obj
   $(linker) system dos name os2stub file loader16,dpmildr,int21win option map
 
 loader.obj : loader.c loader.h
-        $(cc) $[@ -ox -d1 -d__OS2 -d__CALL21__ -i$(inc_dirs_sys_os2_386)
+        $(cc) $[@ -ox -d1 -d__OS2 -d__CALL21__ -i"$(inc_dirs_sys_os2_386)"
 int21os2.obj : int21os2.c
-        $(cc) $[@ -ox -d1 -i$(inc_dirs_sys_os2_386)
+        $(cc) $[@ -ox -d1 -i"$(inc_dirs_sys_os2_386)"
 
 !endif
 

@@ -6,10 +6,10 @@ proj_name = conv
 
 .EXTENSIONS: .def
 
-.def : ..\def
-.asm : ..\asm
-.c : ..\c
-.h : ..\h
+.def : ../def
+.asm : ../asm
+.c : ../c
+.h : ../h
 
 def_files = &
 clib.def &
@@ -34,10 +34,10 @@ all : conv.exe win386.lib .SYMBOLIC
 conv.exe : conv.c makefile
     $(bld_cl) $[* $(wcl_util_opts)
 
-win386.lib : $(def_files) ..\def\win386 conv.exe fldenv.obj _call16.obj
-    conv ..\def\win386 ..\def -s -q
+win386.lib : $(def_files) ../def/win386 conv.exe fldenv.obj _call16.obj
+    conv ../def/win386 ../def -s -q
     ls -1 win*.obj >tmp.lbc
-    $(librarian) /n /b /p=16 win386.lib +fldenv.obj +_call16.obj @tmp.lbc
+    $(librarian) -n -b -p=16 win386.lib +fldenv.obj +_call16.obj @tmp.lbc
     @erase tmp.lbc
     @cp winglue.asm ../../asm >nul
     @cp dllthunk.c ../../c >nul
@@ -49,7 +49,7 @@ win386.lib : $(def_files) ..\def\win386 conv.exe fldenv.obj _call16.obj
     @erase winglue.inc
 
 fldenv.obj : fldenv.asm
-    $(as) $[* -i$(watcomdir)h
+    $(as) $[* -i"$(watcomdir)h"
 
 _call16.obj : _call16.asm
     $(as) $[*

@@ -269,4 +269,4 @@ inc_dirs+=;$(ow_nwoss_root)/nw$(nlm_ver)/h;$(ow_nwoss_root)/nw$(nlm_ver)/src;$(o
 # implicit rules
 #################
 .rc.res: .AUTODEPEND
-        $(rc) -r -i$(inc_path) -bt=$(targ) -fo=$^&.res $[@
+        $(rc) -r -i"$(inc_path)" -bt=$(targ) -fo=$^&.res $[@

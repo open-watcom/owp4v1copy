@@ -7,7 +7,6 @@ inc_dirs        = $(watcom_dir)/h;../h
 
 extra_c_flags_386 = -fpc
 
-
 .c: $(cfloat_dir)/c
 
 cf_objs = &
@@ -24,4 +23,4 @@ cf_objs = &
 cf.lib : $(cf_objs)
         rm -f $^&.clb
         @for %i in ($<) do @%append $^&.clb -+%i
-        $(librarian) -n -q -b $^. @$^&.clb
+        $(librarian) -n -b $^@ @$^&.clb

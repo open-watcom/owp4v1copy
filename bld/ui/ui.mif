@@ -10,10 +10,6 @@ compiler_i86     = $(comp286)
 compiler_386     = $(comp386)
 compiler_axp     = wccaxp
 
-librarian_i86    = wlib
-librarian_386    = $(librarian_i86)
-librarian_axp    = wlib
-
 includes_nt_386  = $(lang_root)/h/nt;$(lang_root)/h
 includes_nt_axp  = $(lang_root)/h/nt;$(lang_root)/h
 includes_os2_i86 = $(inc_dirs_sys_os2);$(lang_root)/h
@@ -95,7 +91,7 @@ OBJ = obj
 !include objfiles.mif
 
 ../$(LIBNAME).lib: $(objfiles)
-        *$(librarian_$(host_CPU)) -q -b $* $(objfiles)
+        $(librarian) -b $* $<
 
 .$(EXE): ../x
 !ifeq SAMPLE_MODE WIN_C_M_J

@@ -15,9 +15,9 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>/sdk/wr/win16/wr.dll        <relroot>/rel2/binw/wr.dll
-    <CPCMD> <devdir>/sdk/wr/nt/wr.dll           <relroot>/rel2/binnt/wr.dll
-#    <CPCMD> <devdir>/sdk/wr/axp/wr.dll         <relroot>/rel2/axpnt/wr.dll
+    <CPCMD> <devdir>/sdk/wr/wini86/wr.dll        <relroot>/rel2/binw/wr.dll
+    <CPCMD> <devdir>/sdk/wr/nt386/wr.dll         <relroot>/rel2/binnt/wr.dll
+#    <CPCMD> <devdir>/sdk/wr/ntaxp/wr.dll         <relroot>/rel2/axpnt/wr.dll
 
 [ BLOCK <1> clean ]
 #==================

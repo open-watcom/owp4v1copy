@@ -57,8 +57,8 @@ emu86_$(cpu_size): qnxemu87.obj emu8087.obj fpeqnx.obj
 !else ifeq host_OS stub
 
 noemu87.lib: emustub.obj
-    $(librarian) -n -b $^@ +emustub
+    $(librarian) -n -b $^@ +$[@
 !endif
 
 emu87.lib: $(objs_$(host_OS))
-    $(librarian) -n -b $^@ $(objs_$(host_OS))
+    $(librarian) -n -b $^@ $<

@@ -1,18 +1,15 @@
+proj_name = wde
+name = wde
+
 #
 #  Makefile for WDE
 #
 #   Date        Name            Reason
 #   ----        ----            ------
 #   05 May 93   Wesley Nelson   created
-proj_name = wde
-name = wde
 
-#.EXTENSIONS:
-#.EXTENSIONS: .pp .exe .exp .lib .lnk .rex .obj .cbj .mbj .sbj .asm .c &
-#                 .res .rc .dlg .men .h .msg .fi .mif .ico
-.EXTENSIONS: .res .rc
-
-#.mif:$(mif_path)
+.EXTENSIONS: .res
+.EXTENSIONS: .rc
 
 sys_windowed=1
 
@@ -32,8 +29,6 @@ WINDOWS=1
 fmedit_dir      = $(build_root)/fmedit
 !endif
 !endif
-
-wbind           = wbind
 
 extra_c_flags     = -DWIN_GUI -s -fhq
 extra_c_flags_386 = -fpc
@@ -77,21 +72,17 @@ OBJS =  wde_wres.obj wdealign.obj wdecsize.obj wdecust.obj  wdedebug.obj &
         preproc.obj ppexpr.obj ppmacro.obj &
         toolbr.obj statwnd.obj ldstr.obj wwinhelp.obj jdlg.obj
 
-# where to look for various files
-.c              : c;../c;$(misc_dir);$(cpp_dir)
-#.h              : h;../h;$(misc_dir);$(cpp_dir);$(wr_dir)/h
-.rc             : ../h
-#.dlg .men .msg  : ../h
-#.lib            : $(fmedit_dir)/$(host_OS)$(host_CPU);lib;$(watcom_lib)
-
 fmedit_lib = $(fmedit_dir)/$(host_OS)$(host_CPU)/fmedit.lib
-
 wr_lib = $(wr_dir)/$(host_OS)$(host_CPU)/wr.lib
 
-inc_dirs = h;../h;$(watcom_dir)/h;$(wres_dir)/h;$(wr_dir)/h;$(fmedit_dir)/dev;$(cpp_dir);$(misc_dir)
+# where to look for various files
+.c : c;../c;$(misc_dir);$(cpp_dir)
+.rc : ../h
+
+inc_dirs = h;../h;$(fmedit_dir)/dev;$(wres_dir)/h;$(wr_dir)/h;$(misc_dir);$(cpp_dir)
 
 .BEFORE
-        set include=$(inc_path);$(watcom_dir)/nt_h
+        @set include=$(inc_path)
 
 all : $(name).exe .SYMBOLIC
         @%null
@@ -113,7 +104,7 @@ extra_l_flags_win += library commdlg, ddeml
 
 $(name).exe: wdemsgs.gh $(OBJS) $(name).res $(wres_lib) $(fmedit_lib) $(wr_lib)
         $(linker) name $^@ $(lflags) file {$(OBJS)}
-        $(rc) $(rc_flags) -k $(name).res
+        $(rc) $(rc_flags) -k $(name).res $^@
 !ifdef TOOLS_10_0
 !ifeq host_OS nt
 !ifeq host_CPU 386
@@ -125,7 +116,7 @@ $(name).exe: wdemsgs.gh $(OBJS) $(name).res $(wres_lib) $(fmedit_lib) $(wr_lib)
 # implicit rules
 #################
 .rc.res: .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad -i"$(fmedit_dir)/dev" -fo=$^@ $[@
+        $(rc) $(rc_flags) -r -ad -i"$(fmedit_dir)/dev" $[@ -fo=$^@
 
 # explicit rules
 #################
@@ -133,5 +124,5 @@ wdemsgs.gh: wdetemp.gh
         vi -q -i -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
 
 wdetemp.gh: ../h/wde.msg
+        @set include=$(inc_path)
         $(cc) $(cflags) -p $[@ -fo=$^@
-

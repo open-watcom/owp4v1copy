@@ -1,8 +1,8 @@
 proj_name = wpi
 
-.c      : $(wpi_dir)\c
-.h      : $(wpi_dir)\h
-.mif    : $(mif_path)
+.c      : $(wpi_dir)/c
+.h      : $(wpi_dir)/h
+#.mif    : $(mif_path)
 !include cproj.mif
 
 
@@ -42,7 +42,7 @@ mode_cflags = -$(%MAKE_DEBUG)
 #-------- INCLUDES
 inc_dirs_win = $(win31_hdrs)
 
-inc_dirs = $(inc_dirs_$(host_OS));$(watcom_dir)\h
+inc_dirs = $(inc_dirs_$(host_OS));$(watcom_dir)/h
 
 #-------- OBJECTS
 objs_win = wpi_win.obj
@@ -75,41 +75,32 @@ libname_win_386 = wpi_w386
 libname = $(libname_$(host_OS)_$(host_CPU))
 
 .before
-    set INCS=-i$(inc_path)
+    set INCS=-i"$(inc_path)"
 
 .error
     @cd $(MAIN_DIR)
 
-UPD_DIR = $(%LIBROOT)\wpi
+UPD_DIR = $(%LIBROOT)/wpi
 
 .obj: $(OBJ_DIR)
-.c: $(MAIN_DIR)\c
-.h: $(MAIN_DIR)\h
+.c: $(MAIN_DIR)/c
+.h: $(MAIN_DIR)/h
 
-$(wpi_dir)\lib\$(libname).lib: $(objs)
+$(wpi_dir)/lib/$(libname).lib: $(objs)
         ls -1 *.obj > tmp.lbc
-        $(librarian) -n -q $(wpi_dir)\lib\$(libname) @tmp.lbc
+        $(librarian) -n -q $^@ @tmp.lbc
         del tmp.lbc
 
-lib :: $(LIB_DIR)\$(libname).lib .SYMBOLIC
+lib :: $(LIB_DIR)/$(libname).lib .SYMBOLIC
     %null
 
 .c.obj :
     $(cc) @INCS $(cflags) $[*
 
 clean: .SYMBOLIC .EXPLICIT
-        @if exist *.?bj del *.?bj
-        @if exist *.lnk del *.lnk
-        @if exist *.exe del *.exe
-        @if exist *.dll del *.dll
-        @if exist *.lib del *.lib
-        @if exist *.res del *.res
-        @if exist *.clb del *.clb
-        @if exist *.err del *.err
-        @if exist *.map del *.map
-        @if exist *.def del *.def
-        @if exist *.lbc del *.lbc
-        @if exist $(wpi_dir)\lib\$(libname).lib del $(wpi_dir)\lib\$(libname).lib
+        rm -f *.?bj *.lnk *.exe *.dll *.lib *.res
+        rm -f *.clb *.err *.map *.def *.lbc
+        rm -f $(wpi_dir)/lib/$(libname).lib
 
 update : .SYMBOLIC
     #@cp $(wpi_dir)/read.me $(UPD_DIR)

@@ -5,8 +5,8 @@ proj_name = w16api
 .EXTENSIONS : .lbc .def
 
 libs =               &
-        $(misc_dir)\ctl3d.lib &
-        $(watcom_dir)\lib\winsock.lib &
+        $(misc_dir)/ctl3d.lib &
+        $(watcom_dir)/lib/winsock.lib &
         commdlg.lib  &
         ctl3d.lib    &
         ddeml.lib    &
@@ -25,8 +25,8 @@ winlibs =            &
         user.lbc     &
         win87em.lbc
 
-.def: ..\lib
-.asm: ..\asm
+.def: ../lib
+.asm: ../asm
 
 .asm.obj:
     $(as) $[@
@@ -46,12 +46,8 @@ windows.lbc : $(winlibs)
 windows.lib: windows.lbc profc.obj
         $(librarian) -b -n -p=16 -io -ii $@ @$<
 
-
 clean: .SYMBOLIC .EXPLICIT
-        @if exist $(watcom_dir)\lib\winsock.lib @del $(watcom_dir)\lib\winsock.lib
-        @if exist $(misc_dir)\ctl3d.lib @del $(misc_dir)\ctl3d.lib
-        @if exist *.lbc @del *.lbc
-        @if exist *.lib @del *.lib
-        @if exist *.bak @del *.bak
-        @if exist *.obj @del *.obj
+        @rm -f $(watcom_dir)/lib/winsock.lib
+        @rm -f $(misc_dir)/ctl3d.lib
+        @rm -f *.lbc *.lib *.bak *.obj
 

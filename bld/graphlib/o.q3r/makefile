@@ -9,6 +9,6 @@ fard =
 _386 =          386
 _qnx =          q
 asm_cmd =       wasm
-asm_flags =     -zq -3r -ms -i..\inc\ -d_QNX -d_MODEL=_SMALL -d_386
+asm_flags =     -zq -3r -ms -i"../inc" -d_QNX -d_MODEL=_SMALL -d_386
 
 !include ../graphics.mif

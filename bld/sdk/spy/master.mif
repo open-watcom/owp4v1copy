@@ -1,15 +1,17 @@
 proj_name = wspy
 name = wspy
 
-sys_windowed = 1
-
 !ifndef wspy_autodepends
 wspy_autodepends = .AUTODEPEND
 !endif
 
+sys_windowed = 1
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
+
+.EXTENSIONS: .res .rc
 
 !ifeq host_OS nt
 wspy_dll_prefix = nt
@@ -19,11 +21,9 @@ wspy_dll_prefix = w
 
 dllname = $(wspy_dll_prefix)spyhk
 
-wspy_obj_dir            = $+ $(%cdrive):$(%cwd) $-
-
-msgfiles        = $(wspy_dir)\spy.msg $(sdk_dir)\misc\savelbox.msg &
-                  $(sdk_dir)\misc\log.msg $(sdk_dir)\misc\about.msg &
-                  $(sdk_dir)\misc\hint.msg
+msgfiles = $(sdk_dir)/misc/savelbox.msg &
+           $(sdk_dir)/misc/log.msg $(sdk_dir)/misc/about.msg &
+           $(sdk_dir)/misc/hint.msg
 
 objs_win = spy.obj spyglob.obj spybox.obj spyproc.obj spymsgs.obj &
            spyfilt.obj spypick.obj spymdlgs.obj spyarray.obj &
@@ -32,33 +32,16 @@ objs_win = spy.obj spyglob.obj spybox.obj spyproc.obj spymsgs.obj &
            mark.obj about.obj ldstr.obj mstatwnd.obj hint.obj wwinhelp.obj &
            jdlg.obj
 
-objs_nt  =  spy.obj spyglob.obj spybox.obj spyproc.obj spymsgs.obj &
-            spyfilt.obj spypick.obj spymdlgs.obj spyarray.obj spyzord.obj &
-            spymisc.obj spycfg.obj spylog.obj spytool.obj spysel.obj &
-            savelbox.obj toolbr.obj font.obj fontstr.obj mem.obj log.obj &
-            mark.obj about.obj desknt.obj ldstr.obj mstatwnd.obj hint.obj &
-            wwinhelp.obj jdlg.obj
+objs_nt =  spy.obj spyglob.obj spybox.obj spyproc.obj spymsgs.obj &
+           spyfilt.obj spypick.obj spymdlgs.obj spyarray.obj spyzord.obj &
+           spymisc.obj spycfg.obj spylog.obj spytool.obj spysel.obj &
+           savelbox.obj toolbr.obj font.obj fontstr.obj mem.obj log.obj &
+           mark.obj about.obj desknt.obj ldstr.obj mstatwnd.obj hint.obj &
+           wwinhelp.obj jdlg.obj
 
 objs = $(objs_$(host_OS))
 
 dllobjs = spydll.obj
-
-# Overriding the default rc_flags_$(host_OS) here
-rc_flags_nt = -bt=nt -d__NT__
-rc_flags_win = -bt=windows
-
-resinc          = -i=$(sdk_dir)\misc
-resincj         = -i=$(sdk_dir)\misc
-rcopts1         = -r -i=$(sdk_dir)\misc -zk0
-rcopts2         = -k -ad
-
-resources = $(wspy_dir)\$(name).rc $(wspy_dir)\10spy.ico &
-            $(wspy_dir)\msgs.dlg $(wspy_dir)\winpick.dlg &
-            $(wspy_dir)\msgsel.dlg $(sdk_dir)\misc\about.dlg &
-            $(wspy_dir)\peekmsg.dlg $(wspy_dir)\selwin.dlg &
-            $(wspy_dir)\peekwin.dlg $(sdk_dir)\misc\log.rc rcstrmsg.gh
-resources_nt  = spymsgnt.dlg
-resources_win = spymsgs.dlg
 
 extra_c_flags_mem = -dNO_WPI
 
@@ -79,7 +62,7 @@ dll_debug_axp           = debug codeview
 
 extra_l_flags_win = option stack=9k option heapsize=2k &
                     lib windows.lib lib commdlg.lib lib toolhelp.lib &
-                    lib $(dllname).lib lib $(misc_dir)\ctl3d.lib
+                    lib $(dllname).lib lib $(misc_dir)/ctl3d.lib
 extra_l_flags_nt  = option stack=64k option heapsize=2k &
                     lib $(dllname).lib
 extra_l_flags_nt_axp = lib ctl3d32.lib
@@ -109,13 +92,14 @@ wspy_dll_lflags_ntaxp  = $(dll_debug_$(host_CPU)) &
                          option map &
                          file { $(dllobjs) }
 
-inc_dirs = $(wspy_dir);$(sdk_dir)\misc;$(watcom_dir)\h
-
 .BEFORE
-        @set INCLUDE=$(inc_path)
+        @set include=$(inc_path)
 
-.c: $(wspy_dir);$(sdk_dir)\misc
-.h: $(wspy_dir);$(sdk_dir)\misc
+.c: $(wspy_dir);$(sdk_dir)/misc
+.h: $(wspy_dir);$(sdk_dir)/misc
+.rc: ..
+
+inc_dirs = $(wspy_dir);$(sdk_dir)/misc;$(watcom_dir)/h
 
 wspy_to_build_win = rcstr.gh spymsgs.dlg spymsg.gh $(dllname).dll $(name).exe
 
@@ -125,20 +109,21 @@ all : $(wspy_to_build_$(host_OS)) .SYMBOLIC
         @%null
 
 $(name).exe : $(objs) $(name).res $(dllname).lib
-        $(linker) $(lflags) name $(name).exe file { $(objs) }
+        $(linker) $(lflags) name $^@ file { $(objs) }
 !ifeq host_CPU axp
 !ifndef on_build_machine
         cvpack $(name).exe
         wstrip $(name).exe $(name).exe $(name).sym
 !endif
 !endif
-        $(RC) $(rc_flags) $(rcopts2) $(name).res
+        $(RC) $(rc_flags) -k $(name).res $^@
 
 rcstr.gh : rcstrmsg.gh
         vi -d -q -i -s ../../misc/msgtoh.vi -p"$^@" $[@
 
-rcstrmsg.gh : $(msgfiles)
-        $(cc) -zk0 -p -i=$(sdk_dir)\misc $(wspy_dir)\spy.msg -fo=$^@
+rcstrmsg.gh : $(wspy_dir)/spy.msg $(msgfiles)
+        @set include=$(inc_path)
+        $(cc) -zk0 -p -i="$(sdk_dir)/misc" $[@ -fo=$^@
 
 spymsgs.dlg spymsg.gh: spyarray.h ./mkdlg.exe
         $]@ spymsgs.dlg spymsg.gh
@@ -147,19 +132,18 @@ spymsgnt.dlg spymsgnt.gh: spyarray.h ./mkdlgnt.exe
         $]@ spymsgnt.dlg spymsgnt.gh
 
 ./mkdlg.exe : ../utils/mkdlg.c
-        $(bld_cl) $[@ -fe=$@ -I".." -d__NOSPYMSGS__
+        $(bld_cl) -I".." -d__NOSPYMSGS__ $(wcl_util_opts) $[@
 
 ./mkdlgnt.exe : ../utils/mkdlg.c 
-        $(bld_cl) $[@ -fe=$@ -I".." -d__NOSPYMSGS__ -dNT_MSGS
-
-$(name).res : $(resources) $(resources_$(host_OS))
-        $(RC) $(rc_flags) $(rcopts1) $(wspy_dir)\$(name).rc -fo=.\$^.
+        $(bld_cl) -I".." -d__NOSPYMSGS__ -dNT_MSGS $(wcl_util_opts) $[@
 
 $(dllname).lib : $(dllname).dll
-        @rm -f $(dllname).lib #> NUL
+        @rm -f $(dllname).lib
         $(librarian) $(dllname).lib +$(dllname).dll
 
 $(dllname).dll : $(dllobjs)
         $(linker) $(wspy_dll_lflags_$(host_OS)$(host_CPU))
-        #-@erase $(dllname).lib > NUL
-        #$(librarian) $(dllname).lib +$(dllname).dll
+
+.rc.res: .AUTODEPEND
+        $(RC) $(rc_flags) -r -ad -zk0 -i="$(sdk_dir)/misc" $[@ -fo=$^@
+

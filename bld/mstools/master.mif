@@ -7,12 +7,12 @@ proj_name = mstools
 #
 # MSTOOLS macros.
 #
-mstools_c_path      = ..\..\..\c
+mstools_c_path      = ../../../c
 mstools_stub_obj    = stub.obj
 mstools_objs        = cmdline.obj cmdscan.obj context.obj error.obj file.obj memory.obj pathconv.obj
-mstools_compile     = $(cc) $(cflags) -i$(inc_path) $(extra_c_flags)
+mstools_compile     = $(cc) $(cflags) -i"$(inc_path)" $(extra_c_flags)
 
-inc_dirs = ..\..\..\h;..\..\h
+inc_dirs = ../../../h;../../h
 
 !ifndef extra_l_flags
 !   define extra_l_flags

@@ -17,7 +17,7 @@ nuldevice = nul
 #always use the most up to date wres library
 !include wres.mif
 
-.EXTENSIONS : .y .key .gh
+.EXTENSIONS : .y .key .gh .res .rc
 
 !ifndef on_build_machine
 !ifeq host_os nt
@@ -86,7 +86,7 @@ extra_l_flags += option offset=0x69800000
 extra_l_flags_osi += option symfile
 
 # where to look for various files
-.c : $(wrc_dir)/c;$(cpp_dir);$(trmem_dir);$(watcom_dir)/c
+.c : .;$(wrc_dir)/c;$(cpp_dir);$(trmem_dir);$(watcom_dir)/c
 .y : $(wrc_dir)/y
 .key : $(wrc_dir)/hash
 .h : $(wrc_dir)/h;$(trmem_dir)
@@ -94,15 +94,14 @@ extra_l_flags_osi += option symfile
 inc_dirs = .;$(wrc_dir)/h;$(wres_dir)/h;$(watcom_dir)/h;$(cpp_dir);$(trmem_dir)
 
 .before:
-        @set INCLUDE=$(inc_path)
-#       @set OS2_INCLUDE=$(wrc_dir)/h;$(%os2_include)
+        @set include=$(inc_path)
 
 # explicit rules
 
 !ifeq sys_dll 1
-$(name).dll : $(name).res $(objs) $(WRES_LIB)
+$(name).dll : usage.rc usagej.rc rcmsg.gh $(objs) $(name).res $(WRES_LIB)
 !else
-$(name).exe : $(name).res $(objs) $(WRES_LIB)
+$(name).exe : usage.rc usagej.rc rcmsg.gh $(objs) $(name).res $(WRES_LIB)
 !endif
         $(linker) $(lflags) name $@ file { $(objs) }
         @%make bindit
@@ -140,7 +139,7 @@ ytab.c ytab.gh : rc.y $(wrc_dir)/y/yydriver.c rcmem.h
         @rm -f ytab.h
 
 ./findhash.exe: $(fe_misc_dir)/c/findhash.c
-        $(bld_cl) $< $(wcl_util_opts) -fe=$@
+        $(bld_cl) $(wcl_util_opts) $<
 
 weights1.gh keyword1.gh : rc1.key ./findhash.exe
         $]@ -q $[@
@@ -156,8 +155,8 @@ weights2.gh keyword2.gh : rc2.key ./findhash.exe
         @rm -f keywords.gh
         @rm -f weights.gh
 
-$(name).res : rcmsg.gh usage.rc usagej.rc $(wrc_dir)/rc.rc
-        $(rc) -bt=windows -r $]@ -fo=$(name).res
+$(name).res : ../rc.rc .AUTODEPEND
+        $(rc) $(rc_flags) -r -ad $[@ -fo=$^@
 
 rcmsg.gh : ../h/rc.msg
 !ifdef __LINUX__

@@ -1,11 +1,11 @@
 proj_name = wzoom
 name = wzoom
 
-sys_windowed = 1
-
 !ifndef wzoom_autodepends
 wzoom_autodepends = .AUTODEPEND
 !endif
+
+sys_windowed = 1
 
 !include cproj.mif
 !include deftarg.mif
@@ -14,42 +14,38 @@ wzoom_autodepends = .AUTODEPEND
 objs =  zoom.obj zmglob.obj zmproc.obj zmscreen.obj zmconfig.obj &
         mem.obj about.obj ldstr.obj
 
-resinc          = -i=../res
-resincj         = -i=../res/kanji
-resources       = $(sdk_dir)/misc/about.dlg rcstrmsg.gh config.dlg
-rcopts1         = -r -zk0
-rcopts2         = -k -ad
-
-extra_c_flags_nt  = -dNOUSE3D
 extra_c_flags_mem = -DNO_WPI
-extra_l_flags_win = option stack=7k option heapsize=2k lib toolhelp.lib lib $(misc_dir)/ctl3d.lib
-extra_l_flags_nt  = option stack=64k
-extra_l_flags     = option map
 
-inc_dirs        = ..;$(sdk_dir)/misc;$(watcom_dir)/h
+extra_l_flags     = option map
+extra_l_flags_nt  = op stack=64k
+extra_l_flags_win = op stack=7k, heapsize=2k
+extra_l_flags_win += lib toolhelp.lib, $(misc_dir)/ctl3d.lib
+
+inc_dirs = ..;$(sdk_dir)/misc;$(watcom_dir)/h
 
 .BEFORE
-        @set INCLUDE=$(inc_path)
+        @set include=$(inc_path)
 
 .c: ..;$(sdk_dir)/misc
 .h: ..;$(sdk_dir)/misc
 
 $(name).exe : rcstr.gh $(objs) $(name).res
         $(linker) $(lflags) name $(name).exe file { $(objs) }
-        $(RC) $(rc_flags) $(rcopts2) $(name).res
+        $(RC) $(rc_flags) -k $(name).res $^@
 
 $(name)j.exe : $(name).exe $(name)j.res
         cp $(name).exe $(name)j.exe
-        $(RC) $(rc_flags) $(rcopts2) $(name)j.res
+        $(RC) $(rc_flags) -k $(name)j.res $^@
 
 rcstr.gh : rcstrmsg.gh
         vi -d -q -i -s ../../misc/msgtoh.vi -p"$^@" $[@
 
 rcstrmsg.gh : ../wzoom.msg $(sdk_dir)/misc/about.msg
+        @set include=$(inc_path)
         $(cc) -zk0 -p $[@ -fo=$^@
 
-$(name).res : .AUTODEPEND
-        $(rc) $(rc_flags) ../$(name).rc -fo=$(name).res $(rcopts1) $(resinc)
+$(name).res : ../wzoom.rc .AUTODEPEND
+        $(rc) $(rc_flags) -r -ad -zk0 -i="../res" $[@ -fo=$^@
 
-$(name)j.res : .AUTODEPEND
-        $(rc) $(rc_flags) ../$(name).rc -fo=$(name)j.res -d_JAPANESE_ $(resincj) $(rcopts1)
+$(name)j.res : ../wzoom.rc .AUTODEPEND
+        $(rc) $(rc_flags) -r -ad -zk0 -i="../res/kanji" -d_JAPANESE_ $[@ -fo=$^@

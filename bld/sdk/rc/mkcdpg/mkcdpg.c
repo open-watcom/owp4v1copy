@@ -37,7 +37,7 @@
 #include <string.h>
 #include "watcom.h"
 #include "banner.h"
-#include "types.h"
+#include "rctypes.h"
 #include "dbtable.h"
 
 typedef struct {
