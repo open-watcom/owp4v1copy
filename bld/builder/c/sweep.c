@@ -47,7 +47,7 @@
 #endif
 #include "watcom.h"
 
-char    *Help[] = {
+char *Help[] = {
 "Usage: SWEEP [options] cmd",
 "     Execute 'cmd' in the each subdirectory of the current working directory.",
 "",
@@ -78,25 +78,25 @@ char    *Help[] = {
     NULL
 };
 
-char    Buff[1024];
-char    CmdBuff[1024];
-char    *CmdLine;
-char    SaveDir[_MAX_PATH];
+char                    Buff[1024];
+char                    CmdBuff[1024];
+char                    *CmdLine;
+char                    SaveDir[_MAX_PATH];
 
 struct {
-    unsigned    allfiles : 1;
-    unsigned    verbose : 1;
-    unsigned    print : 1;
-    unsigned    noexec : 1;
-    unsigned    depthfirst : 1;
+    unsigned    allfiles        : 1;
+    unsigned    verbose         : 1;
+    unsigned    print           : 1;
+    unsigned    noexec          : 1;
+    unsigned    depthfirst      : 1;
     int         levels;
-}       Options;
+} Options;
 
 typedef struct dirstack {
     struct dirstack     *prev;
     char                name_len;
-    char                name[_MAX_FNAME + _MAX_EXT];
-}       dirstack;
+    char                name[_MAX_FNAME+_MAX_EXT];
+} dirstack;
 
 dirstack        *Stack = NULL;
 int             DoneFlag = 0;
@@ -119,15 +119,14 @@ void *SafeMalloc( size_t n )
 }
 
 
-static char     CurrPathBuff[_MAX_PATH + 2];
+static char CurrPathBuff[ _MAX_PATH+2 ];
 
 char *CurrPath()
 {
     char        *p;
     dirstack    *stack;
 
-    if( Stack->prev == NULL )
-        return( "." );
+    if( Stack->prev == NULL ) return( "." );
     p = CurrPathBuff + _MAX_PATH;
     *--p = '\0';
     stack = Stack;
@@ -135,8 +134,7 @@ char *CurrPath()
         p -= stack->name_len;
         memcpy( p, stack->name, stack->name_len );
         stack = stack->prev;
-        if( stack->prev == NULL )
-	    break;
+        if( stack->prev == NULL ) break;
         *--p = '\\';
     }
     return( p );
@@ -145,7 +143,7 @@ char *CurrPath()
 
 char *StringCopy( char *dst, char *src )
 {
-    while( ( *dst = *src ) ) {
+    while( (*dst = *src) ) {
         ++dst;
         ++src;
     }
@@ -155,13 +153,13 @@ char *StringCopy( char *dst, char *src )
 
 char *strip( char *buff )
 {
-    char        *p;
-    char        *old;
+    char *p;
+    char *old;
 
     old = p = buff;
     while( *p ) {
         if( *p == '"' ) {
-            memmove( p, p + 1, strlen( p ) );
+            memmove( p,p+1, strlen(p) );
         } else {
             ++p;
         }
@@ -178,30 +176,25 @@ void Compare( char *buff )
     FILE        *fp2;
     unsigned    len1;
     unsigned    len2;
-    static char *buff1;
-    static char *buff2;
+    static      char    *buff1;
+    static      char    *buff2;
     int         inQuote;
 
     if( buff1 == NULL ) {
         buff1 = SafeMalloc( 2*BUFF_SIZE );
-        if( buff1 == NULL )
-	    return;
+        if( buff1 == NULL ) return;
         buff2 = &buff1[BUFF_SIZE];
     }
-    while( isspace( *buff ) )
-        ++buff;
+    while( isspace( *buff ) ) ++buff;
     one = buff;
     inQuote = 0;
     for( ;; ) {
-        if( isspace( *buff ) && !inQuote )
-	    break;
-        if( *buff == '"' )
-	    inQuote = !inQuote;
+        if( isspace( *buff ) && !inQuote ) break;
+        if( *buff == '"' ) inQuote = !inQuote;
         ++buff;
     }
     *buff++ = '\0';
-    while( isspace( *buff ) )
-        ++buff;
+    while( isspace( *buff ) ) ++buff;
     two = buff;
     fp1 = fopen( strip( one ), "rb" );
     if( fp1 == NULL ) {
@@ -225,8 +218,7 @@ void Compare( char *buff )
             printf( " '%s' is longer than '%s'\n", one, two );
             break;
         }
-        if( len1 == 0 )
-	    break;
+        if( len1 == 0 ) break;
         if( memcmp( buff1, buff2, len1 ) != 0 ) {
             printf( " '%s' differs from '%s'\n", one, two );
             break;
@@ -239,13 +231,13 @@ void Compare( char *buff )
 
 void SubstituteAndRun( char *fname )
 {
-    char        *src, *dst, *start;
+    char        *src,*dst,*start;
     char        name[_MAX_FNAME];
     char        ext[_MAX_EXT];
 
     _splitpath( fname, NULL, NULL, name, ext );
     dst = Buff;
-    for( src = CmdLine; *src != '\0';++src ) {
+    for( src = CmdLine; *src != '\0'; ++src ) {
         if( *src != '%' ) {
             *dst++ = *src;
             continue;
@@ -289,7 +281,7 @@ void SubstituteAndRun( char *fname )
         }
         *dst = '\0';
         if( strchr( start, ' ' ) != NULL ) {
-            memmove( start + 1, start, dst - start );
+            memmove( start+1,start, dst - start );
             *start = '"';
             ++dst;
             *dst = '"';
@@ -304,7 +296,7 @@ void SubstituteAndRun( char *fname )
         fflush( stdout );
         #define CMP_NAME        "COMPARE"
         if( memcmp( Buff, CMP_NAME, sizeof( CMP_NAME ) - 1 ) == 0 ) {
-            Compare( &Buff[sizeof( CMP_NAME )] );
+            Compare( &Buff[sizeof(CMP_NAME)] );
             fflush( stdout );
         } else {
             system( Buff );
@@ -318,8 +310,7 @@ void ExecuteCommands()
     DIR                 *dirh;
     struct dirent       *dp;
 
-    if( Options.verbose )
-        printf( "\n>>> SWEEP >>> %s\n", CurrPath() );
+    if( Options.verbose ) printf( "\n>>> SWEEP >>> %s\n", CurrPath() );
     if( !Options.allfiles ) {
         SubstituteAndRun( "" );
         return;
@@ -327,21 +318,17 @@ void ExecuteCommands()
     dirh = opendir( "." );
     if( dirh != NULL ) {
         for( ;; ) {
-            if( DoneFlag )
-	        return;
+            if( DoneFlag ) return;
             dp = readdir( dirh );
-            if( dp == NULL )
-	        break;
+            if( dp == NULL ) break;
 #ifdef __UNIX__
             {
                 struct stat buf;
                 stat( dp->d_name, &buf );
-                if( S_ISDIR( buf.st_mode ) )
-		    continue;
+                if ( S_ISDIR( buf.st_mode ) ) continue;
             }
 #else
-            if( dp->d_attr & _A_SUBDIR )
-	        continue;
+            if( dp->d_attr & _A_SUBDIR ) continue;
 #endif
             SubstituteAndRun( dp->d_name );
         }
@@ -364,31 +351,25 @@ void ProcessCurrentDirectory()
         if( dirh != NULL ) {
             --Options.levels;
             for( ;; ) {
-                if( DoneFlag )
-		    return;
+                if( DoneFlag ) return;
                 dp = readdir( dirh );
-                if( dp == NULL )
-		    break;
+                if( dp == NULL ) break;
 #ifdef __UNIX__
                 {
                     struct stat buf;
                     stat( dp->d_name, &buf );
-                    if( !S_ISDIR( buf.st_mode ) )
-		        continue;
+                    if ( !S_ISDIR( buf.st_mode ) ) continue;
                 }
 #else
-                if( !( dp->d_attr & _A_SUBDIR ) )
-		    continue;
+                if( !( dp->d_attr & _A_SUBDIR ) ) continue;
 #endif
                 if( dp->d_name[0] == '.' ) {
-                    if( dp->d_name[1] == '.' || dp->d_name[1] == '\0' )
-		        continue;
+                    if( dp->d_name[1] == '.' || dp->d_name[1] == '\0' ) continue;
                 }
                 stack = SafeMalloc( sizeof( *stack ) );
-                if( DoneFlag )
-		    return;
+                if( DoneFlag ) return;
                 stack->name_len = strlen( dp->d_name );
-                memcpy( stack->name, dp->d_name, stack->name_len + 1 );
+                memcpy( stack->name, dp->d_name, stack->name_len+1 );
                 stack->prev = Stack;
                 Stack = stack;
                 chdir( stack->name );
@@ -409,24 +390,21 @@ void ProcessCurrentDirectory()
 
 void PrintHelp()
 {
-    int i;
+    int         i;
 
-    for( i = 0; Help[i] != NULL; ++i )
-        puts( Help[i] );
+    for( i = 0; Help[i] != NULL; ++i ) puts( Help[i] );
     exit( EXIT_FAILURE );
 }
 
 
 int GetNumber( int default_num )
 {
-    int number;
+    int         number;
 
-    if( !isdigit( CmdLine[1] ) )
-        return( default_num );
+    if( !isdigit( CmdLine[1] ) ) return( default_num );
     number = 0;
     for( ;; ) {
-        if( !isdigit( CmdLine[1] ) )
-	    return( number );
+        if( !isdigit( CmdLine[1] ) ) return( number );
         number *= 10;
         number += CmdLine[1] - '0';
         ++CmdLine;
@@ -447,13 +425,10 @@ int main( void ) {
     getcmd( CmdBuff );
     CmdLine = CmdBuff;
     Options.levels = INT_MAX;
-    while( *CmdLine == ' ' )
-        ++CmdLine;
-    if( *CmdLine == '\0' || *CmdLine == '?' )
-        PrintHelp();
+    while( *CmdLine == ' ' ) ++CmdLine;
+    if( *CmdLine == '\0' || *CmdLine == '?' ) PrintHelp();
     for( ;; ) {
-        if( *CmdLine != '-' && *CmdLine != '/' )
-	    break;
+        if( *CmdLine != '-' && *CmdLine != '/' ) break;
         ++CmdLine;
         switch( *CmdLine ) {
         case 'a':
@@ -479,8 +454,7 @@ int main( void ) {
             PrintHelp();
         }
         ++CmdLine;
-        while( *CmdLine == ' ' )
-	    ++CmdLine;
+        while( *CmdLine == ' ' ) ++CmdLine;
     }
     Stack = SafeMalloc( sizeof( *Stack ) );
     Stack->name_len = 1;

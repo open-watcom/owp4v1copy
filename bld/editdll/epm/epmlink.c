@@ -416,7 +416,12 @@ int __export _System EDITConnect() {
 int __export _System EDITFile( char *fn, char *hlib ) {
 /*********************************************/
 
-    CurrSession = FindSession( fn );
+    char        full_fn[_MAX_PATH];
+
+    if( _fullpath( full_fn, fn, _MAX_PATH ) == NULL ) {
+        return( NULL );
+    }
+    CurrSession = FindSession( full_fn );
     if( CurrSession == NULL ) {
         if( StartingSessionInProgress ) {
             return( FALSE );
@@ -424,12 +429,12 @@ int __export _System EDITFile( char *fn, char *hlib ) {
         StartingSessionInProgress = TRUE;
         // new session must be created before we start the editor so
         // that we can process the WM_DDE_INITIATE message properly
-        CurrSession = NewSession( fn, hlib );
+        CurrSession = NewSession( full_fn, hlib );
         if( CurrSession == NULL ) {
             return( FALSE );
         }
         LinkSession( CurrSession );
-        if( spawnlp( P_NOWAIT, _Editor, _Editor, "/W", fn, NULL ) == -1 ) {
+        if( spawnlp( P_NOWAIT, _Editor, _Editor, "/W", full_fn, NULL ) == -1 ) {
             DeleteSession( NULLHANDLE );
             CurrSession = NULL;
             return( FALSE );

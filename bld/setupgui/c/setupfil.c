@@ -33,15 +33,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <unistd.h>
-#if !defined( UNIX ) && !defined( __UNIX__ )
+#include <io.h>
+#ifndef UNIX
 #include <dos.h>
 #endif
 #include <ctype.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#if defined( UNIX ) || defined( __UNIX__ )
+#ifdef UNIX
 #include <time.h>
 #endif
 #if defined( __WINDOWS__ ) || defined( __NT__ )
@@ -63,7 +63,7 @@
 extern int GetOptionVarValue( vhandle var_handle, bool is_minimal );
 extern bool CheckForceDLLInstall( char *name );
 
-#if !defined( UNIX ) && !defined( __UNIX__ )
+#ifndef UNIX
 static bool             ModEnv( int );
 static bool             ModOS2Config( char *, char * );
 #endif
@@ -175,7 +175,7 @@ extern short GetBootDrive(void)
     drive = *(unsigned long *)DataBuf;
     return( (int)drive );
 }
-#elif defined( UNIX ) || defined( __UNIX__ )
+#elif defined( UNIX )
 extern short GetBootDrive(void)
 {
     return 0;
@@ -396,12 +396,12 @@ static void ReplaceExt( char *filename, char *new_ext )
 }
 
 
-static char *StrNDup( char *str, size_t len )
-/********************************************/
+static char *StrNDup( char *str, int len )
+/****************************************/
 {
     char                *new;
 
-    new = GUIMemAlloc( len + 1 );
+    new = GUIAlloc( len + 1 );
     if( new != NULL ) {
         memcpy( new, str, len );
         new[ len ] = '\0';
@@ -416,7 +416,7 @@ static bool             *Found;
 static bool ModFile( char *orig, char *new,
                      void (*func)( char *, int ),
                      void (*finish)( FILE *, char *, int ),
-                     size_t num )
+                     int num )
 /*****************************************************************/
 {
     FILE                *fp1, *fp2;
@@ -434,7 +434,7 @@ static bool ModFile( char *orig, char *new,
         return( FALSE );
     }
     // allocate array to remember variables
-    Found = GUIMemAlloc( num * sizeof( bool ) );
+    Found = GUIAlloc( num * sizeof( bool ) );
     if( Found == NULL ) {
         return( FALSE );
     }
@@ -455,7 +455,7 @@ static bool ModFile( char *orig, char *new,
     }
     // handle any remaining variables
     finish( fp2, envbuf, num );
-    GUIMemFree( Found );
+    GUIFree( Found );
     fclose( fp1 );
     if( fclose( fp2 ) != 0 ) {
         MsgBox( NULL, "IDS_ERROR_CLOSING", GUI_OK, new );
@@ -544,7 +544,7 @@ static void CheckConfigLine( char *buf, int num )
             found = Found[ i ];
             if( found ) break;
         }
-        GUIMemFree( cfg_var );
+        GUIFree( cfg_var );
     } while( found );
 }
 
@@ -636,7 +636,7 @@ void CheckAutoLine( char *buf, int num )
                 if( found ) break;
             }
         }
-        GUIMemFree( env_var );
+        GUIFree( env_var );
     } while( found );
 }
 
@@ -660,7 +660,7 @@ void FinishAutoLines( FILE *fp, char *buf, int num )
     }
     if( WinDotCom != NULL ) {
         fputs( WinDotCom, fp );
-        GUIMemFree( WinDotCom );
+        GUIFree( WinDotCom );
         WinDotCom = NULL;
     }
 }
@@ -765,10 +765,10 @@ char *ReplaceVarsInplace( char *buff, bool dorealloc )
     char                *e;
     char                varname[128];
     char                *varval;
-    size_t              varlen;
+    int                 varlen;
     char                *colon;
     char                *newbuff;
-    size_t              bufflen;
+    int                 bufflen;
 
     p = buff;
     bufflen = strlen( buff );
@@ -813,7 +813,7 @@ char *ReplaceVarsInplace( char *buff, bool dorealloc )
             varlen = strlen( varval );
             if( dorealloc ) {
                 if( varlen > e-p ) {
-                    newbuff = GUIMemRealloc( buff, bufflen + varlen - (e-p) + 1 );
+                    newbuff = GUIRealloc( buff, bufflen + varlen - (e-p) + 1 );
                     p = newbuff + (p-buff);
                     e = newbuff + (e-buff);
                     buff = newbuff;
@@ -1102,12 +1102,12 @@ static void CheckVersion( char *path, char *drive, char *dir )
 {
     int                 fp, len, hours;
     char                am_pm, buf[ 100 ];
-#if defined( UNIX ) || defined( __UNIX__ )
+#if defined( UNIX )
     int                 check;
     struct stat *       statbuf;
     struct tm   *       timeptr;
 
-    statbuf     =       GUIMemAlloc( sizeof( struct stat ) );
+    statbuf     =       GUIAlloc( sizeof( struct stat ) );
     if( statbuf == NULL ) {
         return;
     }
@@ -1121,7 +1121,7 @@ static void CheckVersion( char *path, char *drive, char *dir )
     }
 
     // concat date and time to end of path
-#if defined( UNIX ) || defined( __UNIX__ )
+#if defined( UNIX )
     check = fstat( fp, statbuf );
     if( check == -1 ) {
         return;         // shouldn't happen
@@ -1144,7 +1144,7 @@ static void CheckVersion( char *path, char *drive, char *dir )
     _splitpath( path, drive, dir, NULL, NULL );
     _makepath( path, drive, dir, NULL, NULL );
     len = strlen( path );
-#if defined( UNIX ) || defined( __UNIX__ )
+#if defined( UNIX )
     sprintf( path + len, "  (%.2d-%.2d-%.2d %.2d:%.2d%cm)  ",
              timeptr->tm_mon + 1, timeptr->tm_mday, timeptr->tm_year, hours, timeptr->tm_min, am_pm );
 #else
@@ -1175,8 +1175,7 @@ static void CheckVersion( char *path, char *drive, char *dir )
 extern bool ModifyConfiguration( void )
 /*************************************/
 {
-    size_t              num_env;
-    int                 mod_type;
+    int                 num_env, mod_type;
     char                changes[ _MAX_PATH ];
     FILE                *fp;
     int                 i, j;
@@ -1241,7 +1240,7 @@ extern bool ModifyConfiguration( void )
     if( mod_type == MOD_IN_PLACE ) {
         bRet = ModEnv( num_env );
     } else {  // handle MOD_LATER case
-        found = GUIMemAlloc( num_env * sizeof( bool ) );
+        found = GUIAlloc( num_env * sizeof( bool ) );
         memset( found, FALSE, num_env * sizeof( bool ) );
         GetOldConfigFileDir( changes, GetVariableStrVal( "DstDir" ) );
         strcat( changes, "\\CHANGES.ENV" );
@@ -1271,7 +1270,7 @@ extern bool ModifyConfiguration( void )
             }
             fclose( fp );
         }
-        GUIMemFree( found );
+        GUIFree( found );
         bRet = TRUE;
     }
 

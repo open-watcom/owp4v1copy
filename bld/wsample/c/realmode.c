@@ -93,28 +93,73 @@ unsigned NextThread( unsigned tid )
     and things start making sense.
 */
 
-void interrupt far timer_handler( union INTPACK r )
+#if defined(_NEC_PC) || defined(_FMR_PC)
+    union REGPACK R;
+#endif
+
+#if defined(_FMR_PC)
+    struct timer_block {
+        unsigned short  timer_mode;
+        void far *      timer_proc;
+        unsigned long   timer_cycle;
+    } TimerParmBlock;
+
+    char                TimerMgmtNum;
+#endif
+
+#if defined(_NEC_PC)
+void interrupt far dummy_rtn()
 {
-    if( --TimerMod == 0 )
+}
+#endif
+
+#if defined(_NEC_PC)
+    #define INTR interrupt
+#elif defined(_FMR_PC)
+    #define INTR
+#else
+    #define INTR interrupt
+#endif
+
+void INTR far timer_handler( union INTPACK r )
+{
+
+#if defined(_FMR_PC)
+    /* nothing special needed */
+#elif defined(_NEC_PC)
+    /* do a non-specific end-of-interrupt */
+    outp( INT_CTRL, EOI );
+    /*
+     * On the NEC PC, this interrupt occurs every 10 msec.
+     * TimerMult > 1 means that samples are taken at some multiple
+     * of 10 msec.
+     */
+    if( --TimerMod == 0 ) 
+    {
+        TimerMod = TimerMult;
+#else
+    
+    if( --TimerMod == 0 ) 
     {
         TimerMod = TimerMult;
         _CHAIN_TO( old_timer_handler );
-    }
-    else
+    } 
+    else 
     {
         /* end of interrupt (expected by 8259 before you do RETI) */
         outp( INT_CTRL, EOI );
     }
+#endif
 
-    if( ! SamplerOff )
+    if( ! SamplerOff ) 
     {
-        if( InsiderTime == 0 )
+        if( InsiderTime == 0 ) 
         {
             ++InsiderTime;
-            if( SampleIndex == 0 )
+            if( SampleIndex == 0 ) 
             {
                 Samples->pref.tick = CurrTick;
-                if( CallGraphMode )
+                if( CallGraphMode ) 
                 {
                     CallGraph->pref.tick = CurrTick;
                 }
@@ -126,32 +171,32 @@ void interrupt far timer_handler( union INTPACK r )
             #else
                 RecordSample( &r );
             #endif
-            if( SampleIndex >= Margin )
+            if( SampleIndex >= Margin ) 
             {
-                if( InDOS() )
+                if( InDOS() ) 
                 {
                     Save_Request = TRUE;
-                }
-                else
+                } 
+                else 
                 {
                     /*
                         We are not in DOS so we can suspend things for a while
                         and save our block of samples
                     */
-                    if( Save_Request )
+                    if( Save_Request ) 
                     {
                         Save_Request = 0;
                     }
                     StopAndSave();
                 }
-                if( SampleIndex >= Ceiling )
+                if( SampleIndex >= Ceiling ) 
                 {
-                    if( CallGraphMode )
+                    if( CallGraphMode ) 
                     {
                         --SampleCount;
                         SampleIndex = LastSampleIndex;
-                    }
-                    else
+                    } 
+                    else 
                     {
                         --SampleIndex;
                     }
@@ -161,6 +206,9 @@ void interrupt far timer_handler( union INTPACK r )
             --InsiderTime;
         }
     }
+#if defined(_NEC_PC)
+    }
+#endif
 }
 
 
@@ -173,8 +221,25 @@ extern short GetCS(void);
 
 void StartTimer()
 {
+#if defined(_FMR_PC)
+    TimerParmBlock.timer_mode = 0x0000; /* INTERVAL MODE, INTERRUPT MODE */
+    TimerParmBlock.timer_proc = &timer_handler;
+    TimerParmBlock.timer_cycle = TimerMult;
+    R.h.ah = 0x00;              /* register interval timer */
+    R.w.bx = FP_OFF( TimerParmBlock );
+    R.w.ds = FP_SEG( TimerParmBlock );
+    intr( 0x97, &R );
+    TimerMgmtNum = R.h.ah;
+#else
     TimerMod = TimerMult;
     old_timer_handler = HookTimer( MK_FP( GetCS(), (int)&timer_handler ) );
+  #if defined(_NEC_PC)
+    R.h.ah = 0x02;              /* set interval timer */
+    R.w.cx = 0;                 /* duration to maximum */
+    R.w.bx = FP_OFF( dummy_rtn );
+    R.w.es = FP_SEG( dummy_rtn );
+    intr( 0x1c, &R );
+  #else
 
     /*
     //  Only access the clock if we have overridden the default
@@ -184,16 +249,39 @@ void StartTimer()
         outp( TIMER0, DIVISOR & 0xff );
         outp( TIMER0, DIVISOR >> 8 );
     }
+  #endif
+#endif
 }
 
 
 void StopTimer()    /* undo */
 {
+#if defined(_FMR_PC)
+    R.h.ah = 0x01;              /* cancel interval timer */
+    R.h.al = TimerMgmtNum;
+    intr( 0x97, &R );
+    TimerMgmtNum = R.h.ah;
+#elif defined(_NEC_PC)
+    unsigned int i;
+
+    _disable();
+    /* disable interrupts from the timer */
+    i = inp( INT_MASK ) | 0x01;
+    outp( INT_MASK, i );
+    _enable();
+    /* cancel the timer */
+    R.h.ah = 0x03;
+    R.w.bx = FP_OFF( dummy_rtn );
+    R.w.es = FP_SEG( dummy_rtn );
+    intr( 0x1c, &R );
+    HookTimer( old_timer_handler );
+#else
     /*
-    //  Bit worried that NetWare 5 or 6 could interrupt here when switching to
+    //  Bit worried that NetWare 5 or 6 could interrupt here when switching to 
     //  real mode and the timer could get screwed. CLI?
     */
     outp( TIMER0, TimerRestoreValue & 0xFF );
     outp( TIMER0, (TimerRestoreValue >> 8) & 0xFF );
     HookTimer( old_timer_handler );
+#endif
 }

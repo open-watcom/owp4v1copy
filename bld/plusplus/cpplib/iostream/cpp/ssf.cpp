@@ -24,10 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  This master file includes the source for all of the
-*               strstreambuf member functions.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
+
 
 #include    "ssfdestr.cpp"
 #include    "ssfdoall.cpp"

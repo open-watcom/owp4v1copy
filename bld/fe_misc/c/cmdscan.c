@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Command line arguments scanning routines.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -295,10 +296,7 @@ size_t CmdScanFilename(         // SCAN A FILE NAME
                 ++p;
                 break;
             }
-            // '"\\"' means '\', not '\"'
-            if( p[0] == '\\' && p[1] == '\\' ) {
-                ++p;
-            } else if( p[0] == '\\' && p[1] == '"' ) {
+            if( p[0] == '\\' && p[1] == '"' ) {
                 ++p;
             }
         }

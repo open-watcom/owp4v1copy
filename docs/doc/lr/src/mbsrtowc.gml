@@ -93,24 +93,25 @@ const char chars[] = {
 };
 .exmp break
 void main()
-{
+  {
     int         i;
     size_t      elements;
-    const char  *src;
+    char        *src;
     wchar_t     wc[50];
     mbstate_t   pstate;
+
 
     _setmbcp( 932 );
     src = chars;
     elements = mbsrtowcs( wc, &src, 50, &pstate );
     if( errno == EILSEQ ) {
-        printf( "Error in multibyte character string\n" );
+      printf( "Error in multibyte character string\n" );
     } else {
-        for( i = 0; i < elements; i++ ) {
-            printf( "%#6.4x\n", wc[i] );
-        }
+      for( i = 0; i < elements; i++ ) {
+        printf( "%#6.4x\n", wc[i] );
+      }
     }
-}
+  }
 .exmp output
 0x0020
 0x002e

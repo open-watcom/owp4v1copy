@@ -24,8 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  Alpha AXP division routines. Alpha has no integer divide
-;*               instruction, oh joy.
+;* Description:  Alpha AXP division routines.
 ;*
 ;*****************************************************************************
 
@@ -609,16 +608,4 @@ X$46:
     clr           $t0
     call_pal      0x000000aa
     ret           $zero,($ra),0x00000001
-    nop
-    nop
-    nop
-
-.new_section .pdata, "dr4"
-
-//  0000                Procedure descriptor for .text
-.long   .text                   //  BeginAddress      : 0
-.long   .text+0x7e4             //  EndAddress        : 2020
-.long   00000000                //  ExceptionHandler  : 0
-.long   00000000                //  HandlerData       : 0
-.long   .text+0x724             //  PrologEnd         : 1828
 

@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Routines to deal with low memory conditions.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -66,6 +67,9 @@ extern  pointer_int     MemInUse();
 extern  pointer_int     MemSize();
 extern  bool            TreeFrlFree();
 extern  bool            FreeObjCache();
+#ifdef __DOS__
+extern  void            MemAddBlock(pointer);
+#endif
 
 
 static  bool    FlushSomeOpt( pointer_int size ) {
@@ -104,6 +108,16 @@ extern  void    CalcMemLimit() {
 /******************************/
 
     pointer_int size;
+#ifdef __DOS__
+    pointer     extra;
+
+    FrlSize = 0;
+    extra = FEAuxInfo( NULL, FREE_SEGMENT );
+    while( extra != NULL ) {
+        MemAddBlock( extra );
+        extra = FEAuxInfo( extra, FREE_SEGMENT );
+    }
+#endif
     size = MemSize();
     MemLimit = size - size / 4;
     IckyWicky = FALSE;

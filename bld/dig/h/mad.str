@@ -214,9 +214,6 @@ wdpick( MSTR_HWORD,
 wdpick( MSTR_MMX,
 	"MMX Registers",
 	"jMMX Registers" )
-wdpick( MSTR_XMM,
-	"XMM Registers",
-	"jXMM Registers" )
 wdpick( MSTR_UNSIGNED,
 	"&Unsigned",
 	"j&Unsigned" )

@@ -1,7 +1,7 @@
-#pmake: ppc os_osi cpu_386 target_ppc
-
-host_os    = osi
-host_cpu   = 386
-target_cpu = ppc
-
+#pmake: ppc osi
+host_CPU = 386
+host_OS = osi
+host_CG = osi
+target_CPU = ppc
+cc_version = tree
 !include ../master.mif

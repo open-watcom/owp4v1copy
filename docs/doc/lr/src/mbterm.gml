@@ -44,15 +44,16 @@ const unsigned char chars[] = {
 #define SIZE sizeof( chars ) / sizeof( unsigned char )
 
 void main()
-{
-    int     i;
+  {
+    int     i, j, k;
 
     _setmbcp( 932 );
+    k = 0;
     for( i = 0; i < SIZE; i++ ) {
-        printf( "0x%2.2x %d\n", chars[i],
-                _mbterm( &chars[i] ) );
+      printf( "0x%2.2x %d\n", chars[i],
+              _mbterm( &chars[i] ) );
     }
-}
+  }
 .exmp output
 0x20 0
 0x2e 0

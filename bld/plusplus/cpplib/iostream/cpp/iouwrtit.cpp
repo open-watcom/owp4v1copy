@@ -29,19 +29,37 @@
 *
 ****************************************************************************/
 
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %     Copyright (C) 1992, by WATCOM International Inc.  All rights    %
+// %     reserved.  No part of this software may be reproduced or        %
+// %     used in any form or by any means - graphic, electronic or       %
+// %     mechanical, including photocopying, recording, taping or        %
+// %     information storage and retrieval systems - except with the     %
+// %     written permission of WATCOM International Inc.                 %
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+//  Modified    By              Reason
+//  ========    ==              ======
+//  92/01/28    Steve McDowell  Initial implementation.
+//  92/09/08    Greg Bentz      Cleanup.
+//  93/03/05    Greg Bentz      added exception handling
+//  93/10/25    Raymond Tang    Split into seperate files.
+//  94/04/06    Greg Bentz      combine header files
+//  94/08/09    A.F.Scian       fixed delete of padding_buffer to be delete []
+
 #ifdef __SW_FH
 #include "iost.h"
 #else
 #include "variety.h"
-#include <iostream>
+#include <iostream.h>
 #endif
 #include "ioutil.h"
 #include "lock.h"
 
-std::ios::iostate __WATCOM_ios::writeitem( std::ostream &ostrm,
-                                           char const *buffer,
-                                           int size,
-                                           int fill_offset ) {
+ios::iostate __WATCOM_ios::writeitem( ostream &ostrm,
+/**********************************************************/
+    char const *buffer, int size, int fill_offset ) {
 
     int           put_size;
     long          format_flags;
@@ -49,9 +67,9 @@ std::ios::iostate __WATCOM_ios::writeitem( std::ostream &ostrm,
     char         *padding_buffer;
     int           ret;
     streambuf    *sb;
-    std::ios::iostate  state;
+    ios::iostate  state;
 
-    state = std::ios::goodbit;
+    state = ios::goodbit;
     __lock_it( ostrm.__i_lock );
     padding_buffer = NULL;
     padding_size   = ostrm.width() - size;
@@ -66,7 +84,7 @@ std::ios::iostate __WATCOM_ios::writeitem( std::ostream &ostrm,
     format_flags = ostrm.flags();
     sb           = ostrm.rdbuf();
     __lock_it( sb->__b_lock );
-    if( format_flags & std::ios::left ) {
+    if( format_flags & ios::left ) {
         put_size = size;
         ret      = sb->sputn( buffer, put_size );
         if( ret == put_size ) {
@@ -75,7 +93,7 @@ std::ios::iostate __WATCOM_ios::writeitem( std::ostream &ostrm,
                 ret      = sb->sputn( padding_buffer, put_size );
             }
         }
-    } else if( format_flags & std::ios::internal ) {
+    } else if( format_flags & ios::internal ) {
         ret = put_size;
         if( fill_offset > 0 ) {
             put_size = fill_offset;
@@ -103,7 +121,7 @@ std::ios::iostate __WATCOM_ios::writeitem( std::ostream &ostrm,
         }
     }
     if( ret != put_size ) {
-        state |= std::ios::failbit;
+        state |= ios::failbit;
     }
     if( padding_buffer != NULL ) {
         delete [] padding_buffer;

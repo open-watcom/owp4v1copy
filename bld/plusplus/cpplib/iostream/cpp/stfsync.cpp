@@ -24,29 +24,44 @@
 *
 *  ========================================================================
 *
-* Description:
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
+
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %     Copyright (C) 1992, by WATCOM International Inc.  All rights    %
+// %     reserved.  No part of this software may be reproduced or        %
+// %     used in any form or by any means - graphic, electronic or       %
+// %     mechanical, including photocopying, recording, taping or        %
+// %     information storage and retrieval systems - except with the     %
+// %     written permission of WATCOM International Inc.                 %
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+//  Modified    By              Reason
+//  ========    ==              ======
+//  92/02/28    Steve McDowell  Initial implementation.
+//  92/09/08    Greg Bentz      Cleanup.
+//  93/10/29    Raymond Tang    Split into separate files.
+//  94/04/06    Greg Bentz      combine header files
 
 #ifdef __SW_FH
 #include "iost.h"
 #else
 #include "variety.h"
-#include <iostream>
-#include <streambu>
+#include <iostream.h>
+#include <streambu.h>
 #endif
 #include "lock.h"
 
-namespace std {
+int streambuf::sync() {
+/*********************/
+// Synchronize stream I/O with standard I/O.
+// Since this is a default virtual function,
+// it returns EOF if either the get or put area is not empty.
+// If both areas are empty, then 0 is returned.
 
-
-  // Synchronize stream I/O with standard I/O. Since this is a default
-  // virtual function, it returns EOF if either the get or put area is
-  // not empty. If both areas are empty, then 0 is returned.
-
-  int streambuf::sync() {
     __lock_it( __b_lock );
     return( (gptr() < egptr()) || (pptr() > pbase()) ? EOF : __NOT_EOF );
-  }
-
 }

@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Stack manipulation for x86 platforms.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -60,6 +61,10 @@ extern void             setsp(char near *);
 
 extern void             setbp(char near *);
 #pragma aux setbp = 0x89 0xc5 parm [ __AX ];
+
+extern char near *__STACKLOW;
+#define stacklow() __STACKLOW
+#pragma aux __STACKLOW "*";
 
 #pragma aux SafeRecurse parm caller [ __AX __BX __CX __DX ]; /* just to be sure! */
 

@@ -656,7 +656,7 @@ double
 .ix 'enumerated types' 'size of'
 The integral type of an enumerated type is determined by the values of the
 enumeration constants.
-In strict ISO/ANSI C mode, all enumerated constants are of type
+In strict ANSI C mode, all enumerated constants are of type
 .id int.
 In the extensions mode, the compiler will use the smallest integral
 type possible (excluding

@@ -24,10 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  Message resources access functions.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
-
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,7 +37,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #ifdef __WATCOMC__
-    #include <process.h>
+#include <process.h>
 #endif
 
 #include "watcom.h"
@@ -180,3 +180,48 @@ extern int MsgReOrder( int resourceid, char *buff, char **paratype )
     }
     return( rvalue );
 }
+
+#if 0
+BOOLEAN ResAutoDep( char *name, time_t stamp, BOOLEAN (*chk)(time_t,time_t), time_t *pmax_time )
+/**********************************************************************************************/
+{
+    time_t max_time;
+    time_t dep_time;
+    BOOLEAN out_of_date;
+    DepInfo *depends;
+    DepInfo *p;
+    fpos_t saveFileShift;
+
+    max_time = *pmax_time;
+    out_of_date = FALSE;
+    // usually resource lib is reading the WMAKE resources
+    // but here we want it to read a stand-alone resource file
+    saveFileShift = FileShift;
+    FileShift = 0;
+    depends = WResGetAutoDep( name );
+    FileShift = saveFileShift;
+    if( depends != NULL ) {
+        for( p = depends; p->len != 0; ) {
+            if( CacheTime( p->name, &dep_time ) != RET_SUCCESS ) {
+                /* doesn't exist anymore so rebuild the file */
+                out_of_date = TRUE;
+            } else {
+                if( ! IdenticalAutoDepTimes( p->time, dep_time ) ) {
+                    /* time-stamp isn't identical so rebuild */
+                    out_of_date = TRUE;
+                } else if( (*chk)( stamp, dep_time ) ) {
+                    out_of_date = TRUE;
+                }
+                /* we don't want Glob.all affecting the comparison */
+                if( dep_time > max_time ) {
+                    max_time = dep_time;
+                }
+            }
+            p = (DepInfo *) ( (char *)p + sizeof( DepInfo ) + p->len - 1 );
+        }
+        free( depends );
+    }
+    *pmax_time = max_time;
+    return( out_of_date );
+}
+#endif

@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Wide character version of toupper().
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 

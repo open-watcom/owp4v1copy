@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  DWARF debug support.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -44,7 +45,7 @@ static dw_handle       *SymDWHandles;
 static int             CurFile;
 static int             CurLine;
 
-extern  void    InitDebugTypes();               /* from pchdr.c */
+extern  void    InitDebugTypes();               /* pchdr */
 
 typedef enum
 {   DC_RETURN           = 0x01,         // this is a return type
@@ -58,7 +59,7 @@ static dw_handle dwarfType( TYPEPTR, DC_CONTROL );
 static dw_handle dwarfStructUnion( TYPEPTR, DC_CONTROL );
 static dw_handle dwarfVariable( SYMPTR );
 
-static void dwarfEmitVariables( SYM_HANDLE sym_handle );
+
 
 static void type_update( TYPEPTR typ, int mask, dw_handle dh )
 /************************************************************/
@@ -131,7 +132,7 @@ static void dwarfStructInfo( TAGPTR tag )
                         DW_FLAG_PUBLIC );
         }
         if( xref != NULL ){
-            for( ; (xref = xref->next_xref); ) {
+            for( ; xref = xref->next_xref; ) {
                 dwarfFile( xref->filenum );
                 DWReference( Client, xref->linenum, 0, dh );
             }
@@ -304,7 +305,7 @@ uint dwarfTypeModifier( type_modifiers decl_flags )
 static dw_handle dwarfType( TYPEPTR typ, DC_CONTROL control )
 /***********************************************************/
 {
-    dw_handle   dh = 0;
+    dw_handle   dh;
     SYMPTR      sym;
 
     if( typ->type_flags & TF2_DWARF ) return( typ->dwarf_type );
@@ -362,10 +363,12 @@ static dw_handle dwarfType( TYPEPTR typ, DC_CONTROL control )
         dh = DWFundamental( Client, "double", DW_FT_FLOAT, TypeSize( typ ) );
         type_update( typ, TF2_DWARF_DEF, dh );
         break;
+#if 0
     case TYPE_LONG_DOUBLE:
         dh = DWFundamental( Client, "long double", DW_FT_FLOAT, TypeSize( typ ) );
         type_update( typ, TF2_DWARF_DEF, dh );
         break;
+#endif
     case TYPE_ENUM:
         dh = dwarfEnum( typ );
         break;
@@ -440,7 +443,7 @@ static void dwarfFunctionDefine(SYM_HANDLE  sym_handle, SYMPTR func_sym )
     }
     return_dh = dwarfType( typ->object, DC_RETURN );
     func_dh = SymDWHandles[ sym_handle ];
-    if( func_dh != 0 ){ //was forward ref'd
+    if( func_dh != NULL ){ //was forward ref'd
         DWHandleSet( Client, func_dh );
     }
     dwarfLocation( func_sym );
@@ -450,7 +453,7 @@ static void dwarfFunctionDefine(SYM_HANDLE  sym_handle, SYMPTR func_sym )
                    dummyLoc,
                    dummyLoc,
                    dummyLoc,
-                   0,
+                   NULL,
                    dummyLoc,
                    func_sym->name,
                    0,
@@ -501,7 +504,7 @@ static dw_handle dwarfFunctionDecl( SYMPTR func_sym )
                    dummyLoc,
                    dummyLoc,
                    dummyLoc,
-                   0,
+                   NULL,
                    dummyLoc,
                    func_sym->name,
                    0,
@@ -525,7 +528,7 @@ static dw_handle dwarfVariable( SYMPTR sym )
     dh = DWVariable( Client,
                 dh,
                 dummyLoc,
-                0,
+                NULL,
                 dummyLoc,
                 sym->name,
                 0,
@@ -591,7 +594,7 @@ void dwarfDumpNode( TREEPTR node )
             dw_handle   dh;
 
             dh = SymDWHandles[ node->op.sym_handle ];
-            if( dh == 0 ){   // forward ref
+            if( dh == NULL ){   // forward ref
                 dh = DWHandle( Client, DW_ST_NONE );
                 SymDWHandles[ node->op.sym_handle ] = dh;
             }
@@ -599,11 +602,11 @@ void dwarfDumpNode( TREEPTR node )
             DWReference( Client, CurLine, 0, dh );
         }
         break;
-    default:
-        break;
     }
 }
 
+
+extern  TREEPTR FirstStmt;
 
 void dwarfEmitFunctions()
 {
@@ -626,7 +629,7 @@ void SetDwarfType( TYPEPTR typ )
 
 void SetFuncDwarfType( TYPEPTR typ, int index )
 {
-    // index;   /* unused */
+    index;
     typ->type_flags &= ~TF2_DWARF;
     typ->dwarf_type = 0;
 }
@@ -663,9 +666,9 @@ static void InitSymDWHandles( void )
     int i , count;
 
     count =  NextSymHandle + 1;
-    SymDWHandles = (dw_handle *) CMemAlloc( count * sizeof(dw_handle) );
+    SymDWHandles = (dw_handle *)CMemAlloc( count * sizeof(dw_handle) );
     for( i = 0; i < count; ++i ){
-        SymDWHandles[i] = 0;
+        SymDWHandles[i] = NULL;
     }
 }
 extern void DwarfBrowseEmit( void )

@@ -39,25 +39,11 @@ extern  unsigned    _cbyte;
 
 _WCRTLINK int (kbhit)()
 {
-    int    rc;
     fd_set s;
     struct timeval tv = { 0, 0 };
-    struct termios      old, new;
-
-    tcgetattr( STDIN_FILENO, &old );
-    new = old;
-    new.c_iflag &= ~(IXOFF | IXON);
-    new.c_lflag &= ~(ECHO | ICANON | NOFLSH);
-    new.c_lflag |= ISIG;
-    new.c_cc[VMIN] = 1;
-    new.c_cc[VTIME] = 0;
-    tcsetattr( STDIN_FILENO, TCSADRAIN, &new );
 
     FD_ZERO(&s);
     FD_SET(STDIN_FILENO, &s);
-    rc = (select(STDIN_FILENO +1, &s, NULL, NULL, &tv) > 0);
-
-    tcsetattr( STDIN_FILENO, TCSADRAIN, &old );
-    return( rc );
+    return select(STDIN_FILENO, &s, NULL, NULL, &tv) > 0;
 }
 

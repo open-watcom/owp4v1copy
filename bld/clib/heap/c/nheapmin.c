@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of near _heapmin() and _nheapmin().
+* Description:  Heap shrinking routines - return near heap memory to OS.
 *
 ****************************************************************************/
 
@@ -59,21 +59,20 @@
 #if defined(__SMALL_DATA__)
 
 _WCRTLINK int _heapshrink( void )
-{
-    return( _nheapshrink() );
-}
-
+    {
+        return( _nheapshrink() );
+    }
 _WCRTLINK int _heapmin( void )
-{
-    return( _nheapshrink() );
-}
+    {
+        return( _nheapshrink() );
+    }
 
 #endif
 
 _WCRTLINK int _nheapmin( void )
-{
-    return( _nheapshrink() );
-}
+    {
+        return( _nheapshrink() );
+    }
 
 #if defined(__WARP__)        || \
     defined(__WINDOWS_286__) || \
@@ -229,6 +228,7 @@ _WCRTLINK int _nheapshrink( void )
                 __LargestSizeB4MiniHeapRover = 0;
             }
         }
+        __nheap_clean = 0;
 
         if( __brk( new_brk ) == (void _WCNEAR *) -1 ) {
             _ReleaseNHeap();

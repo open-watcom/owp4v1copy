@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  This file declares a flag value that dtermines whether the
-*               open POSIX file handles are passed in the spawn call.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -38,5 +38,4 @@
  * The spawn code checks this variable.  If it's non-zero, information
  * regarding open POSIX-level file handles is passed to the child process.
  */
- 
-_WCRTLINK int           _fileinfo = 0;
+_WCRTLINK int           _fileinfo = 1;

@@ -24,26 +24,45 @@
 *
 *  ========================================================================
 *
-* Description:
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
+
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %     Copyright (C) 1992, by WATCOM International Inc.  All rights    %
+// %     reserved.  No part of this software may be reproduced or        %
+// %     used in any form or by any means - graphic, electronic or       %
+// %     mechanical, including photocopying, recording, taping or        %
+// %     information storage and retrieval systems - except with the     %
+// %     written permission of WATCOM International Inc.                 %
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+//  Modified    By              Reason
+//  ========    ==              ======
+//  93/05/26    Greg Bentz      pull floating point out of istream/ostream
+//  93/10/08    Greg Bentz      make LDFloatToString set scale_factor to 1
+//                              for _Ftos when 'G' format
+//  93/10/25    Raymond Tang    Split into separate files.
+//  93/11/12    Greg Bentz      Reset errno before calling __cnvs2d()
+//  94/04/06    Greg Bentz      combine header files
+//  95/06/19    Greg Bentz      indirect call to math library
 
 #ifdef __SW_FH
 #include "iost.h"
 #else
 #include "variety.h"
 #include <errno.h>
-#include <iostream>
+#include <iostream.h>
 #endif
 #include "ioutil.h"
 #include "lock.h"
 #include "iofhdr.h"
 
-namespace std {
-
-  // Extract a "long double" from the stream.
-
-  istream &istream::operator >> ( long double &f ) {
+istream &istream::operator >> ( long double &f ) {
+/************************************************/
+// Extract a "long double" from the stream.
 
     char         buf[DEFAULT_MAINBUF_SIZE];
     ios::iostate state;
@@ -63,6 +82,4 @@ namespace std {
         isfx();
     }
     return( *this );
-  }
-
 }

@@ -1,36 +1,44 @@
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   %     Copyright (C) 1992, by WATCOM International Inc.  All rights    %
+   %     reserved.  No part of this software may be reproduced or        %
+   %     used in any form or by any means - graphic, electronic or       %
+   %     mechanical, including photocopying, recording, taping or        %
+   %     information storage and retrieval systems - except with the     %
+   %     written permission of WATCOM International Inc.                 %
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
 
 ******************************* ISTREAM **************************************
 
 Filename: istconde.cpp
 Declaration: 
-    std::istream::istream()
+    istream::istream()
 Semantics: Protected constructor, making an istream without a streambuf
            attached.
 
 
 Filename: istconsf.cpp
 Declaration: 
-    std::istream::istream( streambuf *sb ) : ios( sb )
+    istream::istream( streambuf *sb ) : ios( sb )
 Semantics: Public constructor, making an istream with a streambuf attached.
 
 
 Filename: istcoist.cpp
 Declaration: 
-    std::istream::istream( istream const &istrm )
+    istream::istream( istream const &istrm )
 Semantics: Public copy constructor, make an istream with the istrm streambuf
            attached.
 
 
 Filename: istdestr.cpp
 Declaration: 
-    std::istream::~istream()
+    istream::~istream()
 Semantics: Destructor.
 
 
 Filename: istcoesf.cpp
 Declaration: 
-    std::istream &std::istream::operator = ( streambuf *sb )
+    istream &istream::operator = ( streambuf *sb )
 Semantics: *this is an istream that has been initialized, and may or may not
            have a streambuf associated with it.
            Associate the streambuf "sb" with the stream.
@@ -38,7 +46,7 @@ Semantics: *this is an istream that has been initialized, and may or may not
 
 Filename: istcoeis.cpp
 Declaration: 
-    std::istream &std::istream::operator = ( istream const &istrm )
+    istream &istream::operator = ( istream const &istrm )
 Semantics: *this is an istream that has been initialized, and may or may not
            have a streambuf associated with it.
            Associate the streambuf found in "istrm" with the stream.
@@ -46,13 +54,13 @@ Semantics: *this is an istream that has been initialized, and may or may not
 
 Filename: istipfx.cpp
 Declaration: 
-    int std::istream::ipfx( int noskipws )
+    int istream::ipfx( int noskipws )
 Semantics: Input prefix.
 
 
 Filename: istexpch.cpp
 Declaration: 
-    std::istream &std::istream::operator >> ( char *buf )
+    istream &istream::operator >> ( char *buf )
 Semantics: Input a string of non-whitespace characters into the buffer.
            If the width is set, read a maximum of that many characters, less one
            for the NULLCHAR on the end.
@@ -61,28 +69,28 @@ Semantics: Input a string of non-whitespace characters into the buffer.
 
 Filename: istexcha.cpp
 Declaration: 
-    std::istream &std::istream::operator >> ( char &c )
+    istream &istream::operator >> ( char &c )
 Semantics: Input a character into "c".
 
 
 Filename: istexssh.cpp
 Declaration: 
-    std::istream &std::istream::operator >> ( signed short &s )
+    istream &istream::operator >> ( signed short &s )
 
 
 Filename: istexush.cpp
 Declaration: 
-    std::istream &std::istream::operator >> ( unsigned short &s )
+    istream &istream::operator >> ( unsigned short &s )
 
 
 Filename: istexsin.cpp
 Declaration: 
-    std::istream &std::istream::operator >> ( signed int &i )
+    istream &istream::operator >> ( signed int &i )
 
 
 Filename: istexuin.cpp
 Declaration: 
-    std::istream &std::istream::operator >> ( unsigned int &i )
+    istream &istream::operator >> ( unsigned int &i )
 
 
 Filename: istgetul.cpp
@@ -113,23 +121,23 @@ Semantics: Extract digits from the stream.
 
 Filename: istexslo.cpp
 Declaration: 
-    std::istream &std::istream::operator >> ( signed long &l )
+    istream &istream::operator >> ( signed long &l )
 
 
 Filename: istexulo.cpp
 Declaration: 
-    std::istream &std::istream::operator >> ( unsigned long &l )
+    istream &istream::operator >> ( unsigned long &l )
 
 
 Filename: istexstf.cpp
 Declaration: 
-    std::istream &std::istream::operator >> ( streambuf *tgt_sb )
+    istream &istream::operator >> ( streambuf *tgt_sb )
 Semantics: Read all characters from the istream and write them to the streambuf.
 
 
 Filename: istexiom.cpp
 Declaration: 
-    std::istream &std::istream::operator >> ( ios &(*f)( ios & ) )
+    istream &istream::operator >> ( ios &(*f)( ios & ) )
 Semantics: Handles things like cin >> ws where "ws" is a function taking
 	   an ios reference and returning the same. Essentially, this just
 	   does an indirect call to the function.
@@ -137,7 +145,7 @@ Semantics: Handles things like cin >> ws where "ws" is a function taking
 
 Filename: isteximn.cpp
 Declaration: 
-    std::istream &std::istream::operator >> ( istream &(*f)( istream & ) )
+    istream &istream::operator >> ( istream &(*f)( istream & ) )
 Semantics: Handles things like cin >> ws where "ws" is a function taking
 	   an ios reference and returning the same. Essentially, this just
 	   does an indirect call to the function.
@@ -145,20 +153,20 @@ Semantics: Handles things like cin >> ws where "ws" is a function taking
 
 Filename: istget.cpp
 Declaration: 
-    int std::istream::get()
+    int istream::get()
 Semantics: Extract a single character from the input stream.
            Don't set ios::failbit.
 
 
 Filename: istgch.cpp
 Declaration: 
-    std::istream &std::istream::get( char &ch )
+    istream &istream::get( char &ch )
 Semantics: Extract a single character and store it in "ch".
 
 
 Filename: istgalin.cpp
 Declaration: 
-    ios::iostate __getaline( std::istream &istrm, char *buf, int len,
+    ios::iostate __getaline( istream &istrm, char *buf, int len,
     char delim, int is_get, int &chars_read ) 
 Semantics: Read characters into buffer "buf".
            At most "len - 1" characters are read, and a 0 is added at the end.
@@ -168,31 +176,31 @@ Semantics: Read characters into buffer "buf".
 
 Filename: istgpch.cpp
 Declaration: 
-    std::istream &std::istream::get( char *buf, int len, char delim )
+    istream &istream::get( char *buf, int len, char delim )
 
 
 Filename: istgline.cpp
 Declaration: 
-    std::istream &std::istream::getline( char *buf, int len, char delim )
+    istream &istream::getline( char *buf, int len, char delim )
 
 
 Filename: istread.cpp
 Declaration: 
-    std::istream &std::istream::read( char *buf, int len )
+    istream &istream::read( char *buf, int len )
 Semantics: Read up to "len" characters from the stream and store them in
 	   buffer "buf".
 
 
 Filename: istgstf.cpp
 Declaration: 
-    std::istream &std::istream::get( streambuf &tgt_sb, char delim )
+    istream &istream::get( streambuf &tgt_sb, char delim )
 Semantics: Extract characters from our streambuf and store them into the
            specified streambuf.
 
 
 Filename: istignor.cpp
 Declaration: 
-    std::istream &std::istream::ignore( int n, int delim )
+    istream &istream::ignore( int n, int delim )
 Semantics: Ignore "n" characters, or until the specified delimiter is found,
            whichever comes first. If "delim" is EOF, don't look for a delimiter.
            As an extension, specifying a negative "n" value will not count
@@ -202,38 +210,38 @@ Semantics: Ignore "n" characters, or until the specified delimiter is found,
 
 Filename: istpeek.cpp
 Declaration: 
-    int std::istream::peek()
+    int istream::peek()
 Semantics: Return the next character without extracting it from the stream.
 
 
 Filename: istpback.cpp
 Declaration: 
-    std::istream &std::istream::putback( char c )
+    istream &istream::putback( char c )
 Semantics: Put character in "c" back into the stream.
 
 
 Filename: istsync.cpp
 Declaration: 
-    int std::istream::sync()
+    int istream::sync()
 Semantics: Not inline because it is virtual
 
 
 Filename: istsgstp.cpp
 Declaration: 
-    std::istream &std::istream::seekg( streampos pos )
+    istream &istream::seekg( streampos pos )
 
 
 Filename: istsgsto.cpp
 Declaration: 
-    std::istream &std::istream::seekg( streamoff offset, ios::seekdir dir )
+    istream &istream::seekg( streamoff offset, ios::seekdir dir )
 
 
 Filename: isttellg.cpp
 Declaration: 
-    streampos std::istream::tellg()
+    streampos istream::tellg()
 
 
 Filename: isteatwh.cpp
 Declaration: 
-    void std::istream::eatwhite()
+    void istream::eatwhite()
 Semantics: Skip any leading whitespace characters.

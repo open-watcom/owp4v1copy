@@ -954,18 +954,15 @@ Use the Print command to prompt for an expression and then print it
 to the log window. Use this command to examine the values of
 variables and expressions. The Print command is:
 .code begin
-Print [/Program] [<printlist>]
-Print /Window [<exprlist>]
+Print [/Window|/Program] [<printlist>]
 .code end
 .begnote
 .note /Window
-opens up a watch window containing the listed expressions.
+open up a watch window containing the listed expressions.
 .note /Program
 print the results to the application's screen.
 .note <printlist>
-is [<format>] [<exprlist>]
-.note <exprlist>
-is [<expr> [,<expr> [...]]]
+is [<format>] [<expr> [,<expr> [...]]]
 .note <format>
 is a printf like format string.  It consists of plain
 text intermixed with control sequences, which will
@@ -1053,10 +1050,6 @@ This command prints the value of "i":
 This command prints "decimal=100 hex=0x64":
 .code begin
 print {decimal=%d hex=%x} 100,100
-.code end
-This command opens a watch window and displays the value of argv[0]:
-.code begin
-print/window argv[0]
 .code end
 
 .cmddef Quit

@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of __iscsym().
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -35,10 +36,10 @@
 #include "istable.h"
 #undef  __iscsym
 
-_WCRTLINK int (__iscsym)( int c )
-{
+_WCRTLINK int (__iscsym)( int c ) {
     if( IS_ASCII( c ) ) {
-        return( (IsWhat( c ) & (_LOWER|_UPPER|_DIGIT)) || (c == '_') );
+        return( (IsWhat( c ) & (_LOWER|_UPPER|_DIGIT))
+                || c == '_' );
     } else {
         return( 0 );
     }

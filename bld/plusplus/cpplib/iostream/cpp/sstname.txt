@@ -1,54 +1,63 @@
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   %     Copyright (C) 1992, by WATCOM International Inc.  All rights    %
+   %     reserved.  No part of this software may be reproduced or        %
+   %     used in any form or by any means - graphic, electronic or       %
+   %     mechanical, including photocopying, recording, taping or        %
+   %     information storage and retrieval systems - except with the     %
+   %     written permission of WATCOM International Inc.                 %
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  
 
 ******************************* STRSTREAMBUF *********************************
 
 Filename: ssfempsz.cpp
 Declaration:
-    std::strstreambuf::strstreambuf( int size )
+    strstreambuf::strstreambuf( int size )
 Semantics: Create an empty strstreambuf that will use dynamic allocation
            of the specified size.
 
 
 Filename: ssfempsf.cpp
 Declaration:
-    std::strstreambuf::strstreambuf( void *(*alloc)( long ), void (*free)( void * ) )
+    strstreambuf::strstreambuf( void *(*alloc)( long ), void (*free)( void * ) )
 Semantics: Create an empty strstreambuf that will use dynamic allocation
            using the specified allocate/free functions.
 
 
 Filename: ssfstbuf.cpp
 Declaration:
-    void std::strstreambuf::__strstreambuf( char *ptr, int size, char *pstart )
+    void strstreambuf::__strstreambuf( char *ptr, int size, char *pstart )
 Semantics: Initialize a streambuf.
 
 
 Filename: ssfdestr.cpp
 Declaration:
-    std::strstreambuf::~strstreambuf()
+    strstreambuf::~strstreambuf()
 Semantics: Destroy a strstreambuf.
 
 
 Filename: ssfstr.cpp
 Declaration:
-    char *std::strstreambuf::str()
+    char *strstreambuf::str()
 Semantics: Freeze the strstreambuf, and return a pointer to the contents.
 
 
 Filename: ssfoverf.cpp
 Declaration:
-    int std::strstreambuf::overflow( int c )
+    int strstreambuf::overflow( int c )
 Semantics: The streambuf level has decided that its buffer is too small for the
            characters that the user is trying to put.
 
 
 Filename: ssfundrf.cpp
 Declaration:
-    int std::strstreambuf::underflow()
+    int strstreambuf::underflow()
 Semantics: The streambuf has decided that it needs more characters for input.
 
 
 Filename: ssfsetbf.cpp
 Declaration:
-    streambuf *std::strstreambuf::setbuf( char *, int size )
+    streambuf *strstreambuf::setbuf( char *, int size )
 Semantics: Just remember the size to allocate next time.
 
 
@@ -65,20 +74,20 @@ Semantics: For "put" buffers, "extended_end" equals "end".
 
 Filename: ssfseeko.cpp
 Declaration:
-    streampos std::strstreambuf::seekoff( streamoff offset, ios::seekdir direction,
+    streampos strstreambuf::seekoff( streamoff offset, ios::seekdir direction,
         int mode )
 Semantics: Position either the get and/or put pointer to the specified position.
 
 
 Filename: ssfdoall.cpp
 Declaration:
-    int std::strstreambuf::doallocate()
+    int strstreambuf::doallocate()
 Semantics: Do the allocation required if allocate() thinks it's needed.
 
 
 Filename: ssfsync.cpp
 Declaration:
-    int std::strstreambuf::sync()
+    int strstreambuf::sync()
 Semantics: A strstreambuf can never be out of sync,
            so return "something other than EOF".
 
@@ -88,19 +97,19 @@ Semantics: A strstreambuf can never be out of sync,
 
 Filename: ssbconde.cpp
 Declaration:
-    std::strstreambase::strstreambase()
+    strstreambase::strstreambase()
 Semantics: Construct a default strstreambase.
 
 
 Filename: ssbconsz.cpp
 Declaration:
-std::strstreambase::strstreambase( char *str, int size, char *pstart )
+strstreambase::strstreambase( char *str, int size, char *pstart )
              : __strstrmbuf( str, size, pstart ) 
 
 
 Filename: ssbdestr.cpp
 Declaration:
-    std::strstreambase::~strstreambase()
+    strstreambase::~strstreambase()
 Semantics: Destroy ststreambase.
 
 
@@ -109,14 +118,14 @@ Semantics: Destroy ststreambase.
 
 Filename: issconch.cpp
 Declaration:
-    std::istrstream::istrstream( char *str ) : strstreambase( str, 0, NULL )
+    istrstream::istrstream( char *str ) : strstreambase( str, 0, NULL )
 Semantics: Construct an istrstream that will read from the NULLCHAR-delimited
            string pointed at by str.
 
 
 Filename: issconsc.cpp
 Declaration:
-    std::istrstream::istrstream( signed char *str )
+    istrstream::istrstream( signed char *str )
               : strstreambase( (char *)str, 0, NULL )
 Semantics: Construct an istrstream that will read from the NULLCHAR-delimited
            string pointed at by str.
@@ -124,7 +133,7 @@ Semantics: Construct an istrstream that will read from the NULLCHAR-delimited
 
 Filename: issconuc.cpp
 Declaration:
-    std::istrstream::istrstream( unsigned char *str )
+    istrstream::istrstream( unsigned char *str )
               : strstreambase( (char *)str, 0, NULL )
 Semantics: Construct an istrstream that will read from the NULLCHAR-delimited
            string pointed at by str.
@@ -132,7 +141,7 @@ Semantics: Construct an istrstream that will read from the NULLCHAR-delimited
 
 Filename: isscochz.cpp
 Declaration:
-    std::istrstream::istrstream( char *str, int size )
+    istrstream::istrstream( char *str, int size )
               : strstreambase( str, size, NULL )
 Semantics: Construct an istrstream that reads from the characters starting at
            str for length size.
@@ -140,7 +149,7 @@ Semantics: Construct an istrstream that reads from the characters starting at
 
 Filename: isscoscz.cpp
 Declaration:
-    std::istrstream::istrstream( signed char *str, int size )
+    istrstream::istrstream( signed char *str, int size )
               : strstreambase( (char *)str, size, NULL )
 Semantics: Construct an istrstream that reads from the characters starting at
            str for length size.
@@ -148,7 +157,7 @@ Semantics: Construct an istrstream that reads from the characters starting at
 
 Filename: isscoucz.cpp
 Declaration:
-    std::istrstream::istrstream( unsigned char *str, int size )
+    istrstream::istrstream( unsigned char *str, int size )
               : strstreambase( (char *)str, size, NULL )
 Semantics: Construct an istrstream that reads from the characters starting at
 	   str for length size.
@@ -156,7 +165,7 @@ Semantics: Construct an istrstream that reads from the characters starting at
 
 Filename: issdestr.cpp
 Declaration:
-    std::istrstream::~istrstream()
+    istrstream::~istrstream()
 Semantics: Destroy istrstream object.
 
 
@@ -165,34 +174,34 @@ Semantics: Destroy istrstream object.
 
 Filename:
 Declaration: ossconde.cpp
-    std::ostrstream::ostrstream()
+    ostrstream::ostrstream()
 Semantics: Construct an empty ostrstream that may have characters placed in it.
 
 
 Filename: ossconch.cpp
 Declaration:
-    std::ostrstream::ostrstream( char *str, int size, ios::openmode mode )
+    ostrstream::ostrstream( char *str, int size, ios::openmode mode )
 Semantics: Construct an ostrstream that will put characters into the buffer
 	   starting at str for length size.
 
 
 Filename: ossconsc.cpp
 Declaration:
-    std::ostrstream::ostrstream( signed char *str, int size, ios::openmode mode )
+    ostrstream::ostrstream( signed char *str, int size, ios::openmode mode )
 Semantics: Construct an ostrstream that will put characters into the buffer
            starting at str for length size.
 
 
 Filename: ossconuc.cpp
 Declaration:
-    std::ostrstream::ostrstream( unsigned char *str, int size, ios::openmode mode )
+    ostrstream::ostrstream( unsigned char *str, int size, ios::openmode mode )
 Semantics: Construct an ostrstream that will put characters into the buffer
            starting at str for length size.
 
 
 Filename: ossdestr.cpp
 Declaration:
-    std::ostrstream::~ostrstream()
+    ostrstream::~ostrstream()
 Semantics: Destroy the ostrstream object, which means destroying the
            strstreambuf buffer.
 
@@ -202,32 +211,32 @@ Semantics: Destroy the ostrstream object, which means destroying the
 
 Filename: sstconde.cpp
 Declaration:
-    std::strstream::strstream()
+    strstream::strstream()
 Semantics: Construct an empty strstream that may have characters placed in it.
 
 
 Filename: sstconch.cpp
 Declaration:
-    std::strstream::strstream( char *str, int size, ios::openmode mode )
+    strstream::strstream( char *str, int size, ios::openmode mode )
 Semantics: Construct a strstream that will put characters into the buffer
            starting at str for length size.
 
 
 Filename: sstconsc.cpp
 Declaration:
-    std::strstream::strstream( signed char *str, int size, ios::openmode mode )
+    strstream::strstream( signed char *str, int size, ios::openmode mode )
 Semantics: Construct a strstream that will put characters into the buffer
            starting at str for length size.
 
 
 Filename: sstconuc.cpp
 Declaration:
-    std::strstream::strstream( unsigned char *str, int size, ios::openmode mode )
+    strstream::strstream( unsigned char *str, int size, ios::openmode mode )
 Semantics: Construct a strstream that will put characters into the buffer
            starting at str for length size.
 
 
 Filename: sstdestr.cpp
 Declaration:
-    std::strstream::~strstream()
+    strstream::~strstream()
 Semantics: Destroy strstream object.

@@ -61,13 +61,7 @@ libfile: .PROCEDURE
 !else
         @for %i in ($<) do @%append $^&.lbc -+%i
 !endif
-!ifdef bootstrap
-# to be fixed: wlib -fa now produces a library that gnu ld can't read
-# can be a bug in wlib or in gnu ld, I don't know right now...
-        ar crs $^. $<
-!else
         $(librarian) $(wlib_parms) $^. @$^&.lbc
-!endif
 
 global.chk : $(cg_dir)/compile.gbl
     # do not renable this (build machine is auto-dep) - BBB

@@ -155,7 +155,7 @@ echo Languages Build <1>
 [ INCLUDE <DEVDIR>/dmpobj/lang.ctl ]
 [ INCLUDE <DEVDIR>/wpack/lang.ctl ]
 [ INCLUDE <DEVDIR>/cvpack/lang.ctl ]
-[ INCLUDE <DEVDIR>/wic/lang.ctl ]
+#[ INCLUDE <DEVDIR>/wic/lang.ctl ]      SH: Removed as not needed for 11.0c
 [ INCLUDE <DEVDIR>/redist/lang.ctl ]
 [ INCLUDE <DOC_ROOT>/lang.ctl ]
 

@@ -13,9 +13,10 @@ memory_model_i86 = l
 !include deftarg.mif
 !include defrule.mif
 
-.EXTENSIONS: .dlg .res .rc
+.EXTENSIONS: .res .rc
 
 WINDOWS=1
+
 !include wres.mif
 
 .JUST_ENOUGH
@@ -74,81 +75,86 @@ extra_c_flags_386 = -fpc
 extra_c_flags_win = -zc
 
 extra_c_flags_about = -DNOUSE3D
+extra_c_flags_imgedit= -fh
+extra_c_flags_ieproc= -fh
+extra_c_flags_ieglob= -fh
+extra_c_flags_ieclrpal= -fh
+extra_c_flags_ienew= -fh
+extra_c_flags_ieopen= -fh=win.pch
+extra_c_flags_iesave= -fh=win.pch
+extra_c_flags_ieviewin= -fh
+extra_c_flags_iedraw= -fh
+extra_c_flags_icon= -fh=win.pch
+extra_c_flags_wstatus= -fh=win.pch
+extra_c_flags_palette= -fh=win.pch
+extra_c_flags_bitmap= -fh=win.pch
+extra_c_flags_ietoolbr= -fh
+extra_c_flags_wptoolbr= -fh=win.pch
+extra_c_flags_wwinhelp= -fh=win.pch
+extra_c_flags_xorand= -fh
+extra_c_flags_freehand= -fh
+extra_c_flags_clip= -fh
+extra_c_flags_drawproc= -fh
+extra_c_flags_iestatus= -fh
+extra_c_flags_undo= -fh
+extra_c_flags_snap= -fh
+extra_c_flags_colours= -fh
+extra_c_flags_iconinfo= -fh
+extra_c_flags_ieutil= -fh
+extra_c_flags_fill= -fh
+extra_c_flags_clrcntls= -fh
+extra_c_flags_curclr= -fh
+extra_c_flags_funcbar= -fh
+extra_c_flags_modclrs= -fh=win.pch
+extra_c_flags_bkcolour= -fh
+extra_c_flags_imgdata= -fh
+extra_c_flags_getdata= -fh=win.pch
+extra_c_flags_pickbmp= -fh
+extra_c_flags_iefonts= -fh
+extra_c_flags_chgsize= -fh
+extra_c_flags_settings= -fh
+extra_c_flags_trnsform= -fh
+extra_c_flags_hinttext= -fh
+extra_c_flags_ieprofil= -fh
+extra_c_flags_ldstr= -fh=win.pch
+extra_c_flags_wpi_mem= -fh
+extra_c_flags_closeall= -fh
+extra_c_flags_bits= -fh
+extra_c_flags_errors= -fh
+extra_c_flags_iebmpdat= -fh=win.pch
+extra_c_flags_iedde= -fh=win.pch
+extra_c_flags_iemem= -fh=win.pch
+extra_c_flags_iectl3d= -fh
+extra_c_flags_jdlg= -fh=win.pch
+extra_c_flags_desknt= -fh=win.pch
+extra_c_flags_wincreat= -fh
+extra_c_flags_title= -fh
+extra_c_flags_winutils= -fh
 
-extra_c_flags_bitmap   = -fh=pch02.pch
-extra_c_flags_bits     = -fh=pch01.pch
-extra_c_flags_bkcolour = -fh=pch01.pch
-extra_c_flags_chgsize  = -fh=pch01.pch
-extra_c_flags_clip     = -fh=pch01.pch
-extra_c_flags_closeall = -fh=pch01.pch
-extra_c_flags_clrcntls = -fh=pch01.pch
-extra_c_flags_colours  = -fh=pch01.pch
-extra_c_flags_curclr   = -fh=pch01.pch
-extra_c_flags_desknt   = -fh=pch02.pch
-extra_c_flags_drawproc = -fh=pch01.pch
-extra_c_flags_errors   = -fh=pch01.pch
-extra_c_flags_fill     = -fh=pch01.pch
-extra_c_flags_freehand = -fh=pch01.pch
-extra_c_flags_funcbar  = -fh=pch01.pch
-extra_c_flags_getdata  = -fh=pch02.pch
-extra_c_flags_hinttext = -fh=pch01.pch
-extra_c_flags_icon     = -fh=pch02.pch
-extra_c_flags_iconinfo = -fh=pch01.pch
-extra_c_flags_iebmpdat = -fh=pch02.pch
-extra_c_flags_ieclrpal = -fh=pch01.pch
-extra_c_flags_iectl3d  = -fh=pch01.pch
-extra_c_flags_iedde    = -fh=pch02.pch
-extra_c_flags_iedraw   = -fh=pch01.pch
-extra_c_flags_iefonts  = -fh=pch01.pch
-extra_c_flags_ieglob   = -fh=pch01.pch
-extra_c_flags_iemem    = -fh=pch02.pch
-extra_c_flags_ienew    = -fh=pch01.pch
-extra_c_flags_ieopen   = -fh=pch02.pch
-extra_c_flags_ieproc   = -fh=pch01.pch
-extra_c_flags_ieprofil = -fh=pch01.pch
-extra_c_flags_iesave   = -fh=pch02.pch
-extra_c_flags_iestatus = -fh=pch01.pch
-extra_c_flags_ietoolbr = -fh=pch01.pch
-extra_c_flags_ieutil   = -fh=pch01.pch
-extra_c_flags_ieviewin = -fh=pch01.pch
-extra_c_flags_imgdata  = -fh=pch01.pch
-extra_c_flags_imgedit  = -fh=pch01.pch
-extra_c_flags_jdlg     = -fh=pch02.pch
-extra_c_flags_ldstr    = -fh=pch02.pch
-extra_c_flags_modclrs  = -fh=pch02.pch
-extra_c_flags_palette  = -fh=pch02.pch
-extra_c_flags_pickbmp  = -fh=pch01.pch
-extra_c_flags_settings = -fh=pch01.pch
-extra_c_flags_snap     = -fh=pch01.pch
-extra_c_flags_title    = -fh=pch01.pch
-extra_c_flags_trnsform = -fh=pch01.pch
-extra_c_flags_undo     = -fh=pch01.pch
-extra_c_flags_wincreat = -fh=pch01.pch
-extra_c_flags_winutils = -fh=pch01.pch
-extra_c_flags_wpi_mem  = -fh=pch01.pch
-extra_c_flags_wptoolbr = -fh=pch02.pch
-extra_c_flags_wstatus  = -fh=pch02.pch
-extra_c_flags_wwinhelp = -fh=pch02.pch
-extra_c_flags_xorand   = -fh=pch01.pch
-
-libs = $(wres_lib) $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib
-!ifneq host_os os2
-libs += $(wr_dir)/$(host_os)$(host_cpu)/wr.lib
-!endif
-
-extra_l_flags     = option map lib { $(libs) }
-
-extra_l_flags_win = option rwr option stack=16k option heapsize=2k lib ddeml.lib
-extra_l_flags_nt  = option stack=32k
+extra_l_flags_win = libpath $(watcom_dir)/lib &
+                    lib toolhelp.lib lib commdlg.lib lib ddeml.lib &
+                    lib $(wpi_dir)/lib/wpi_win.lib &
+                    lib $(wr_dir)/wini86/wr.lib &
+                    option rwr option stack=16k option heapsize=2k
 !ifeq host_CPU 386
+extra_l_flags_nt  = libpath $(watcom_dir)/lib &
+                    lib $(wpi_dir)/lib/wpi_nt.lib &
+                    lib $(wr_dir)/nt386/wr.lib &
+                    option stack=32k
 !ifdef __LINUX__
 extra_l_flags_nt += alias "'_WinMain'='_WinMain@16'"
 !else
 extra_l_flags_nt += alias '_WinMain'='_WinMain@16'
 !endif
+!else ifeq host_CPU axp
+extra_l_flags_nt  = libpath $(wpi_dir)/lib &
+                    lib $(wpi_dir)/lib/wpi_axp.lib &
+                    lib $(wr_dir)/ntaxp/wr.lib &
+                    option stack=32k
 !endif
-extra_l_flags_os2 = option stack=12k option heapsize=2k &
+extra_l_flags_os2 = lib wpi_os2.lib option stack=12k option heapsize=2k &
                     option symfile=$(name).sym
+extra_l_flags     = lib $(wres_lib) option map
 
 inc_dirs        = h;$(wimgedit_dir)/h;$(wres_dir)/h;$(wr_dir)/h;$(wpi_dir)/h;$(sdk_dir)/misc;$(watcom_dir)/h
 inc_dirs_os2    = $(watcom_dir)/os220_h;$(%toolkit)/c/os2h
@@ -157,7 +163,7 @@ inc_dirs_os2    = $(watcom_dir)/os220_h;$(%toolkit)/c/os2h
         @set include=$(inc_path)
 
 !ifeq host_OS os2
-$(name).exe : $(objs) $(name).res $(libs)
+$(name).exe : $(objs) $(name).res
         $(linker) $(lflags) name $(name).exe file { $(objs) }
         $(%toolkit)/os2bin/rc $(name).res $(name).exe
         wstrip -a $(name).exe . $(name).sym
@@ -169,9 +175,16 @@ $(name).res : $(wimgedit_dir)/objos2/res/$(name).rc $(rcdeps)
         $[@ $^@
 !else
 
-$(name).exe : rcstr.gh $(objs) $(name).res $(libs)
+$(name).exe : rcstr.gh $(objs) $(name).res
         $(linker) $(lflags) name $(name).exe file { $(objs) }
         $(RC) $(rc_flags) -k $(name).res $^@
+!ifdef TOOLS_10_0
+!ifeq host_OS nt
+!ifeq host_CPU 386
+        whack $(name).exe
+!endif
+!endif
+!endif
 
 rcstr.gh : rcstrmsg.gh
         $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@

@@ -5,6 +5,10 @@ name = edbind
 !include defrule.mif
 !include deftarg.mif
 
+!ifdef tools_9_0
+linker = wlink9xx
+!endif
+
 .c : ..
 
 extra_c_flags = -s

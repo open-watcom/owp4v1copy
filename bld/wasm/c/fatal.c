@@ -39,7 +39,9 @@
 #include "objprs.h"
 #include "asmalloc.h"
 
+#ifdef TRMEM
 #include "memutil.h"
+#endif
 
 #include "fatal.h"
 #undef FATAL_H
@@ -73,7 +75,9 @@ void AsmShutDown( void )
     AsmFree( AsmFiles.fname[ASM] );
     AsmFree( AsmFiles.fname[ERR] );
     AsmFree( AsmFiles.fname[OBJ] );
+#ifdef TRMEM
     MemFini();
+#endif
 }
 
 void Fatal( unsigned msg, ... )

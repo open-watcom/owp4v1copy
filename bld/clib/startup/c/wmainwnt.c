@@ -42,8 +42,6 @@
 #include "initfini.h"
 #include "thread.h"
 
-extern void __InitThreadData( thread_data * );
-
 #ifdef __SW_BR
     _WCRTLINK extern    void    (*__process_fini)(unsigned,unsigned);
 #else
@@ -84,7 +82,6 @@ void __F_NAME(__WinMain,__wWinMain)( void )
         memset( tdata, 0, __ThreadDataSize );
         // tdata->__allocated = 0;
         tdata->__data_size = __ThreadDataSize;
-        __InitThreadData( tdata );
         __NTMainInit( &rr, tdata );
         /* allocate alternate stack for F77 */
         __ASTACKPTR = (char *)alloca( __ASTACKSIZ ) + __ASTACKSIZ;

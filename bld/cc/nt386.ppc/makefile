@@ -1,7 +1,5 @@
-#pmake: build ppc os_nt cpu_386 target_ppc
-
-host_os    = nt
-host_cpu   = 386
-target_cpu = ppc
-
+#pmake: all ppc os_nt cpu_386
+host_CPU = 386
+host_OS = nt
+target_CPU = ppc
 !include ../master.mif

@@ -37,24 +37,9 @@
 #include "memmgr.h"
 #include "iosupp.h"
 #include "srcfile.h"
-#include "cgdata.h"
 //#include "hfile.h"
 
 static FILE *AutoDepFile;
-
-char *DoForceSlash( char *name, char slash )
-{
-    char *save = name;
-    if( !slash || !save )
-        return name;
-    while( name[0] )
-    {
-        if( name[0] == '\\' || name[0] == '/' )
-            name[0] = slash;
-        name++;
-    }
-    return save;
-}
 
 void AdDump( void )
 {
@@ -63,12 +48,8 @@ void AdDump( void )
     {
         SRCFILE retn;
         int hadone;
-        fprintf( AutoDepFile, "%s : "
-               , DoForceSlash( IoSuppOutFileName( OFT_TRG )
-                             , ForceSlash ) );
-        fprintf( AutoDepFile, "%s"
-               , DoForceSlash( IoSuppOutFileName( OFT_SRCDEP )
-                             , ForceSlash ) );
+        fprintf( AutoDepFile, "%s : ", IoSuppOutFileName( OFT_TRG ) );
+        fprintf( AutoDepFile, "%s", IoSuppOutFileName( OFT_SRCDEP )  );
         for( retn = SrcFileWalkInit(), retn?(hadone=1):(hadone=0);
              hadone;
             ((retn = SrcFileWalkNext( retn )),retn?(hadone=1):(hadone=0) ),
@@ -76,9 +57,7 @@ void AdDump( void )
         {
            if( IsSrcFilePrimary( retn ) )
               continue;
-           fprintf( AutoDepFile, " %s"
-                  , DoForceSlash( SrcFileName(retn)
-                                , ForceSlash ) );
+           fprintf( AutoDepFile, " %s", SrcFileName(retn) );
         }
     }
 }

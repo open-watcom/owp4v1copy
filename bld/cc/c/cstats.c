@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Print module compilation statistics.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -47,6 +48,10 @@ void InitStats()
     EnumCount = 0;
     TagCount = 0;
     FieldCount = 0;
+#ifndef NEWCFE
+    QuadIndex = 0;
+    LeafIndex = 0;
+#endif
     TypeCount = 0;
     TmpSymCount = 0;
     LitPoolSize = 0;

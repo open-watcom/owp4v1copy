@@ -29,6 +29,7 @@
 *
 ****************************************************************************/
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,7 +37,7 @@
 
 char    buf[2048];
 
-char *skipwhite( char *s )
+char *skipwhite(char *s)
 {
     while( *s && isspace( *s ) )
         s++;
@@ -45,14 +46,14 @@ char *skipwhite( char *s )
 
 int main( int argc, char *argv[] )
 {
-    char        *p;
-    FILE        *in;
+    char    *p;
+    FILE    *in;
 
     /* Display usage information */
     if( argc != 2 && argc != 3 ) {
         fprintf( stderr, "Usage: comstrip <file> [path]\n" );
         return -1;
-    }
+        }
 
     /* Read all lines from input file and copy non-comment lines
      * to output file.
@@ -60,7 +61,7 @@ int main( int argc, char *argv[] )
     if( ( in = fopen( argv[1], "r" ) ) == NULL ) {
         printf( "Unable to open input file %s!\n", argv[1] );
         return -1;
-    }
+        }
     while( fgets( buf, sizeof( buf ), in ) ) {
         /* Skip comment and blank lines */
         p = skipwhite( buf );
@@ -69,7 +70,7 @@ int main( int argc, char *argv[] )
         if( argc == 3 )
             fputs( argv[2], stdout );
         fputs( buf, stdout );
-    }
+        }
     fclose( in );
     return 0;
 }

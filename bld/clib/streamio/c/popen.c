@@ -32,11 +32,7 @@
 
 #include "variety.h"
 #include "widechar.h"
-#ifdef __WIDECHAR__
-    #include <wctype.h>
-#else
-    #include <ctype.h>    
-#endif
+#include <ctype.h>
 #include <fcntl.h>
 #include <io.h>
 #include <malloc.h>

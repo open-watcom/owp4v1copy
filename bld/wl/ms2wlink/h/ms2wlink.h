@@ -24,10 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  Definitions used in all ms2wlink files.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
+
+// definitions used in all ms2wlink files.
 
 typedef enum {
     FALSE = 0,
@@ -40,6 +43,8 @@ typedef int         f_handle;
 #define STDIN_HANDLE    ((f_handle)0)
 #define STDOUT_HANDLE   ((f_handle)1)
 #define STDERR_HANDLE   ((f_handle)2)
+#define STDAUX_HANDLE   ((f_handle)3)
+#define STDPRN_HANDLE   ((f_handle)4)
 
 #define MAX_LINE (256)
 #define FNMAX  80             // maximum file name length.

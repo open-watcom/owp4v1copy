@@ -14,7 +14,7 @@ of some of these programs to their system.
 For systems that don't provide a C compiler, independent companies may
 develop a compiler.
 .pp
-With the development of the ISO/ANSI C standard, the trend towards
+With the development of the ANSI C standard, the trend towards
 universal availability of C compilers will probably accelerate.
 .begbull
 .bull

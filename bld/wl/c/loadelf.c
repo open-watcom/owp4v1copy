@@ -24,18 +24,20 @@
 *
 *  ========================================================================
 *
-* Description:  Routines for creating ELF executable images.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
 
 /*
------------
-Historical note - the ELF output support in wlink was initially developed
-for IBM's OS/2 for PowerPC which used ELF, hence references to OS/2.
------------
+    LOADELF : routines for creating ELF load files.
 
-Layout of OS/2 ELF Executable:
+*/
+
+
+
+/* Layout of OS/2 ELF Executable:
 
 ----------------------------------------------------------------------------
 Elf header
@@ -88,8 +90,7 @@ static ElfSymTable *    ElfSymTab;
 static void AddSecIdxName( ElfHdr *hdr, int idx, char *name )
 /***********************************************************/
 {
-    if( idx == 0 )
-        return;
+    if( idx == 0 ) return;
     AddSecName( hdr, hdr->sh+idx, name );
 }
 
@@ -279,7 +280,6 @@ static void WriteELFGroups( ElfHdr *hdr )
     ph = hdr->ph + 1;
     off = hdr->curr_off;
     for( group = Groups; group != NULL; group = group->next_group ) {
-        if( group->totalsize == 0 ) continue;   // DANGER DANGER DANGER <--!!!
         SetGroupHeaders( group, off, ph, sh );
         WriteGroupLoad( group );
         off = OffsetAlign( off + group->size, FmtData.objalign );
@@ -411,9 +411,7 @@ extern void ChkElfData( void )
     ElfSymTab = CreateElfSymTable( NumImports + NumExports + NumGroups,
                                    &SymStrTab);
     for( group = Groups; group != NULL; group = group->next_group ) {
-        if( group->totalsize != 0 ) {
-            AddSymElfSymTable( ElfSymTab, group->sym );
-        }
+        AddSymElfSymTable( ElfSymTab, group->sym );
     }
     for( sym = HeadSym; sym != NULL; sym = sym->link ) {
         if( IsSymElfImpExp(sym) ) {

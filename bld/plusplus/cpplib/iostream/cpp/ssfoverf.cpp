@@ -24,24 +24,43 @@
 *
 *  ========================================================================
 *
-* Description:
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
+
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %     Copyright (C) 1992, by WATCOM International Inc.  All rights    %
+// %     reserved.  No part of this software may be reproduced or        %
+// %     used in any form or by any means - graphic, electronic or       %
+// %     mechanical, including photocopying, recording, taping or        %
+// %     information storage and retrieval systems - except with the     %
+// %     written permission of WATCOM International Inc.                 %
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+//  Modified    By              Reason
+//  ========    ==              ======
+//  92/02/10    Steve McDowell  Initial implementation.
+//  92/02/28    ...             Modified to delay allocation of buffers
+//                              until overflow/underflow called.
+//  92/09/08    Greg Bentz      Cleanup.
+//  93/10/21    Raymond Tang    Split into separate files.
+//  94/04/06    Greg Bentz      combine header files
 
 #ifdef __SW_FH
 #include "iost.h"
 #else
 #include "variety.h"
-#include <strstrea>
+#include <strstrea.h>
 #endif
 
-namespace std {
+int strstreambuf::overflow( int c ) {
+/***********************************/
+// The streambuf level has decided that its buffer is too small for the
+// characters that the user is trying to put.
+// Allocate a new (bigger) buffer, and append 'c' if it's not EOF.
 
-  // The streambuf level has decided that its buffer is too small for
-  // the characters that the user is trying to put. Allocate a new
-  // (bigger) buffer, and append 'c' if it's not EOF.
-
-  int strstreambuf::overflow( int c ) {
     __lock_it( __b_lock );
     if( !__dynamic ) {
         return( EOF );
@@ -54,7 +73,7 @@ namespace std {
         return( __NOT_EOF );
     }
 
-    // Use doallocate() because streambuf::allocate() will not grow an
+    // use doallocate() because streambuf::allocate() will not grow an
     // existing buffer the way strstreambuf needs to
     if( doallocate() == EOF ) {
         return( EOF );
@@ -64,6 +83,4 @@ namespace std {
         pbump( 1 );
     }
     return( __NOT_EOF );
-  }
-
 }

@@ -48,7 +48,7 @@
 #include "os2trap.h"
 #include "bsexcpt.h"
 
-extern uDB_t            Buff;
+extern dos_debug        Buff;
 
 extern USHORT           TaskFS;
 
@@ -90,7 +90,7 @@ int IsUnknownGDTSeg(USHORT seg)
  */
 ULONG MakeItFlatNumberOne(USHORT seg, ULONG offset)
 {
-    uDB_t       buff;
+    dos_debug   buff;
 
     if (IsFlatSeg(seg))
         return offset;

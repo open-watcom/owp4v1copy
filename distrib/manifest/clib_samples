@@ -161,7 +161,6 @@ samples\clibexam\isalnum.c
 samples\clibexam\isalpha.c
 samples\clibexam\isascii.c
 samples\clibexam\isatty.c
-samples\clibexam\isblank.c
 samples\clibexam\iscntrl.c
 samples\clibexam\isdigit.c
 samples\clibexam\isgraph.c

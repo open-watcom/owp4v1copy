@@ -32,12 +32,10 @@
 #include "variety.h"
 #include "widechar.h"
 #include <ctype.h>
-#ifdef __WIDECHAR__
- #include <wctype.h>
-#endif
 #undef  isascii
 
-_WCRTLINK int __F_NAME(isascii,iswascii)( INTCHAR_TYPE c )
+_WCRTLINK int __F_NAME(isascii,iswascii)( c )
+    register INTCHAR_TYPE c;
 {
     return( (unsigned)(c) <= 0x7f );
 }

@@ -4,7 +4,7 @@
 int isalnum( int c );
 .ixfunc2 '&CharTest' &func
 .if &'length(&wfunc.) ne 0 .do begin
-#include <wctype.h>
+#include <wchar.h>
 int iswalnum( wint_t c );
 .ixfunc2 '&CharTest' &wfunc
 .ixfunc2 '&Wide' &wfunc
@@ -55,11 +55,11 @@ is true for
 #include <ctype.h>
 
 void main()
-{
+  {
     if( isalnum( getchar() ) ) {
-        printf( "is alpha-numeric\n" );
+      printf( "is alpha-numeric\n" );
     }
-}
+  }
 .exmp end
 .class ANSI
 .system

@@ -17,7 +17,7 @@ objs =               &
         dtparse.obj  &
         wtmsg.obj
 
-dependants = wtouch.res $(objs) $(wres_lib)
+dependants = wtouch.res $(objs)
 
 $(proj_name).exe : $(dependants)
         $(linker) option quiet $(lflags) name $^@ file { $(objs) } lib $(wres_lib)

@@ -30,6 +30,15 @@
 ****************************************************************************/
 
 
+/*
+Date            By              Reason
+====            ==              ======
+26-apr-91       A.F.Scian       changed MX_CEIL from 1024 to 63 to fix a bug
+                                with corrupted sample files (the maximum size
+                                for a sample record is 64k)
+07-may-91       C.G.Eisler      windows specific stuff
+19-nov-92       S.B.Feyler      added changes for NEC
+*/
 typedef unsigned short seg;
 #include "offset.h"
 
@@ -52,8 +61,13 @@ typedef struct {
 #define MX_CEIL     63          /* in kilobytes (must never exceed 63k) */
 #define DEF_CEIL    MX_CEIL
 
+#if defined(_NEC_PC)
+#define INT_CTRL        0x00    /* interrupt controller port */
+#define INT_MASK        0x02    /* interrupt controller mask register */
+#else
 #define TIMER0          0x40    /* timer port */
 #define INT_CTRL        0x20    /* interrupt controler port */
+#endif
 #define EOI             0x20    /* End-Of-Interrupt */
 
 #undef TRUE

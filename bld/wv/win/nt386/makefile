@@ -5,6 +5,7 @@
 
 host_OS=nt
 host_CPU=386
+display=char
 
 sysobjs =   &
     ntinit.obj &

@@ -36,6 +36,7 @@
 #include "libwin32.h"
 #include "seterrno.h"
 
+
 _WCRTLINK int __F_NAME(mkdir,_wmkdir)( const CHAR_TYPE *path )
 {
     BOOL                rc;

@@ -24,14 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  Determine switch delimiter character.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
 
 extern  unsigned char     _DOS_Switch_Char();
 
-#ifdef __DOS__
 #pragma aux     _DOS_Switch_Char = \
                         0x52            /* push dx */\
                         0xb4 0x37       /* mov ah,37h    */\
@@ -39,15 +39,8 @@ extern  unsigned char     _DOS_Switch_Char();
                         0xcd 0x21       /* int 21h       */\
                         0x88 0xd0       /* mov al,dl     */\
                         0x5a            /* pop dx        */;
-#endif
 
 int _dos_switch_char()
-{
-#if defined(__DOS__)
-    return( _DOS_Switch_Char() );
-#elif defined(__UNIX__)
-    return( '-' );
-#else
-    return( '/' );
-#endif
-}
+    {
+        return( _DOS_Switch_Char() );
+    }

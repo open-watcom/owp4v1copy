@@ -44,7 +44,7 @@
 #define _BETA_                  _BANEXTRA
 #endif
 
-#define CURR_YEAR       "2004"
+#define CURR_YEAR       "2003"
 
 #define banner1p1(p)  p
 #define banner1p2(v)  "Version " v
@@ -71,18 +71,20 @@
 #define _RC_DELIM_LEFT_         [
 #define _RC_DELIM_RIGHT_        ]
 
-#if _BANVER == 1200
+#if _BANVER == 1070
+    #define BAN_VER_STR "10.7" _BETA_
+#elif _BANVER == 1080
+    #define BAN_VER_STR "10.8" _BETA_
+#elif _BANVER == 1090
+    #define BAN_VER_STR "10.9" _BETA_
+#elif _BANVER == 1100
+    #define BAN_VER_STR "1.0" _BETA_
+#elif _BANVER == 1200
     #define BAN_VER_STR "1.0" _BETA_
 #elif _BANVER == 1210
     #define BAN_VER_STR "1.1" _BETA_
 #elif _BANVER == 1220
     #define BAN_VER_STR "1.2" _BETA_
-#elif _BANVER == 1230
-    #define BAN_VER_STR "1.3" _BETA_
-#elif _BANVER == 1240
-    #define BAN_VER_STR "1.4" _BETA_
-#elif _BANVER == 1250
-    #define BAN_VER_STR "1.5" _BETA_
 #else
     #error **** Specified Banner version not supported ****
     #define BAN_VER_STR "12.0" _BETA_
@@ -141,7 +143,6 @@
 #define _LINK_CLONE_VERSION_    BAN_VER_STR
 #define _NMAKE_CLONE_VERSION_   BAN_VER_STR
 #define _RC_CLONE_VERSION_      BAN_VER_STR
-#define _WIC_VERSION_           BAN_VER_STR
 
 /*
  * Java Tools

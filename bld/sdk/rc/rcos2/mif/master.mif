@@ -135,7 +135,7 @@ weights2.gh keyword2.gh : rc2.key ./findhash.exe
 rcmsg.gh : ../h/rc.msg
         $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
 
-$(name).res : ../rc.rc usage.rc usagej.rc .AUTODEPEND
+$(name).res : ../rc.rc .AUTODEPEND
         $(rc_aui) -ad $[@ -fo=$^@
 
 usage.rc : $(wrc2_dir)/usage.sp

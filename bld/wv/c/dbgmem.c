@@ -189,7 +189,6 @@ static item_type ItemTypeFromMADType( mad_type_handle th )
     MADTypeInfo( th, &mti );
     switch( mti.b.kind ) {
     case MTK_INTEGER:
-    case MTK_XMM:
     case MTK_CUSTOM:
         return( ItemType( mti.b.bits / BITS_PER_BYTE ) );
     case MTK_ADDRESS:

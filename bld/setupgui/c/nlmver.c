@@ -34,12 +34,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#if defined( __UNIX__ )
-#include <unistd.h>
-#include <sys/stat.h>
-#else
 #include <io.h>
-#endif
 #include <fcntl.h>
 
 #include "gui.h"

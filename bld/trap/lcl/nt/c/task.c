@@ -29,10 +29,12 @@
 *
 ****************************************************************************/
 
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "stdnt.h"
+
 
 trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
 {
@@ -59,20 +61,20 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
     if( IsWinNT ) {
         dll = LoadLibrary( "VDMDBG.DLL" );
         if( dll != NULL ) {
-            pVDMSetThreadContext = ( LPVOID ) GetProcAddress( dll, "VDMSetThreadContext" );
-            pVDMModuleFirst = ( LPVOID ) GetProcAddress( dll, "VDMModuleFirst" );
-            pVDMModuleNext = ( LPVOID ) GetProcAddress( dll, "VDMModuleNext" );
-            pVDMEnumProcessWOW = ( LPVOID ) GetProcAddress( dll, "VDMEnumProcessWOW" );
-            pVDMProcessException = ( LPVOID ) GetProcAddress( dll, "VDMProcessException" );
-            pVDMGetModuleSelector = ( LPVOID ) GetProcAddress( dll, "VDMGetModuleSelector" );
-            pVDMGetThreadContext = ( LPVOID ) GetProcAddress( dll, "VDMGetThreadContext" );
+            pVDMSetThreadContext = (LPVOID)GetProcAddress( dll, "VDMSetThreadContext" );
+            pVDMModuleFirst = (LPVOID)GetProcAddress( dll, "VDMModuleFirst" );
+            pVDMModuleNext = (LPVOID)GetProcAddress( dll, "VDMModuleNext" );
+            pVDMEnumProcessWOW = (LPVOID)GetProcAddress( dll, "VDMEnumProcessWOW" );
+            pVDMProcessException = (LPVOID)GetProcAddress( dll, "VDMProcessException" );
+            pVDMGetModuleSelector = (LPVOID)GetProcAddress( dll, "VDMGetModuleSelector" );
+            pVDMGetThreadContext = (LPVOID)GetProcAddress( dll, "VDMGetThreadContext" );
         }
     }
     dll = LoadLibrary( "KERNEL32.DLL" );
     if( dll != NULL ) {
-        pOpenThread = ( LPVOID ) GetProcAddress( dll, "OpenThread" );
+        pOpenThread = (LPVOID)GetProcAddress( dll, "OpenThread" );
     }
-    //say( "base address=%8.8x", ((char*)&GetInPtr)-0x2f );
+//say( "base address=%8.8x", ((char*)&GetInPtr)-0x2f );
     DLLPath = LocalAlloc( LMEM_FIXED | LMEM_ZEROINIT, strlen( err ) + 1 );
     strcpy( DLLPath, err );
 
@@ -108,8 +110,8 @@ void TRAPENTRY InfoFunction( HWND hwnd )
  * TrapListLibs - this is called by the debugger to dump out a list
  *                of DLL's and their associated selectors
  */
-int TRAPENTRY TrapListLibs( char *buff, int is_first, int want_16,
-                         int want_32, int verbose, int sel )
+int TRAPENTRY TrapListLibs( char *buff, int is_first , int want_16,
+                        int want_32, int verbose, int sel )
 {
     return( DoListLibs( buff, is_first, want_16, want_32, verbose, sel ) );
 }

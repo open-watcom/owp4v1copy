@@ -24,27 +24,47 @@
 *
 *  ========================================================================
 *
-* Description:
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
+
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %     Copyright (C) 1992, by WATCOM International Inc.  All rights    %
+// %     reserved.  No part of this software may be reproduced or        %
+// %     used in any form or by any means - graphic, electronic or       %
+// %     mechanical, including photocopying, recording, taping or        %
+// %     information storage and retrieval systems - except with the     %
+// %     written permission of WATCOM International Inc.                 %
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+//  Modified    By              Reason
+//  ========    ==              ======
+//  92/02/10    Steve McDowell  Initial implementation.
+//  92/02/28    ...             Modified to delay allocation of buffers
+//                              until overflow/underflow called.
+//  92/09/08    Greg Bentz      Cleanup.
+//  93/10/21    Raymond Tang    Split into separate files.
+//  94/04/06    Greg Bentz      combine header files
+//  94/08/09    A.F.Scian       fixed delete of base() to be delete []
 
 #ifdef __SW_FH
 #include "iost.h"
 #else
 #include "variety.h"
 #include <string.h>
-#include <strstrea>
+#include <strstrea.h>
 #endif
 #include "ioutil.h"
 
-namespace std {
-
-  // Do the allocation required if allocate() thinks it's needed. If the
-  // allocation fails, return EOF. Copy the old buffer into the new
-  // buffer. Free the old buffer. Return __NOT_EOF if everything
-  // succeeds.
-
-  int strstreambuf::doallocate() {
+int strstreambuf::doallocate() {
+/******************************/
+// Do the allocation required if allocate() thinks it's needed.
+// If the allocation fails, return EOF.
+// Copy the old buffer into the new buffer.
+// Free the old buffer.
+// Return __NOT_EOF if everything succeeds.
 
     char   *oldbuf;
     int     oldbufsize;
@@ -73,8 +93,9 @@ namespace std {
     }
     setb( newbuf, newbuf + newbufsize, FALSE );
 
-    // Copy the get area. This can be done directly by copying bytes and
-    // setting new pointers. The size of the get area does not change.
+    // Copy the get area.
+    // This can be done directly by copying bytes and setting new pointers.
+    // The size of the get area does not change.
     if( eback() != NULL ) {
         base_offset = (__huge_ptr_int)(eback() - oldbuf);
         ptr_offset  = (__huge_ptr_int)(gptr()  - oldbuf);
@@ -83,9 +104,9 @@ namespace std {
         setg( newbuf+base_offset, newbuf+ptr_offset, newbuf+end_offset );
     }
 
-    // Copy the put area. This can be done directly by copying bytes and
-    // setting new pointers. Add the extra bytes allocated above to the
-    // end of the put area.
+    // Copy the put area.
+    // This can be done directly by copying bytes and setting new pointers.
+    // Add the extra bytes allocated above to the end of the put area.
     if( pbase() == NULL ) {
         setp( newbuf, newbuf + newbufsize );
     } else {
@@ -107,7 +128,4 @@ namespace std {
         }
     }
     return( __NOT_EOF );
-  }
-
 }
-

@@ -19,6 +19,7 @@ src\fortran\dos\ansi.for
 src\fortran\dos\calendar.for
 src\fortran\dos\dos.fi
 src\fortran\dos\graph.fi
+src\fortran\dos\graph98.fi
 src\fortran\dos\graphapi.fi
 src\fortran\dos\grdemo1.for
 src\fortran\dos\grdemo2.for

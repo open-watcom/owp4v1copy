@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  File open dialog for profiling information conversion.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -134,7 +135,7 @@ STATIC void setDlgDefaults( gui_window * gui )
 STATIC bint dlgOpenFmtFile()
 /**************************/
 {
-    ConvertFile = fopen( convertPath, "w" );
+    ConvertFile = fopen( convertPath, "W" );
     if( ConvertFile == NULL ) {
         ErrorMsg( "Cannot open the convert file %s", convertPath );
         return( B_FALSE );

@@ -1,6 +1,7 @@
 #
 #   The master file for creating wmake.
 #
+
 ##############################################################################
 
 proj_name   = wmake
@@ -33,12 +34,18 @@ wmake_autodepends = .AUTODEPEND
 .inc    : .
 .inc    : ../h
 
-!include $(orl_dir)/client.mif
 !include wres.mif
 
 echo    = echo
 
 # Compiler Flags
+
+extra_c_flags_win = -zW
+!ifeq memory_model_i86 l
+!ifdef NEC_98_BUG
+extra_c_flags_dos += -DNEC_98_BUG
+!endif
+!endif
 
 extra_c_flags_i86 = -zt32
 
@@ -67,6 +74,8 @@ ext = exe
 extra_l_flags_os2 = option stack=96k
 extra_l_flags_nt = option stack=0x10000k commit stack=32k
 extra_l_flags_qnx = option stack=20k
+lflags_win_i86 = system windows mem font
+extra_l_flags_win = library windows,clibc export MAINDRIVER option stack=16k
 !ifdef LARGE
 extra_l_flags_dos = option stack=16k
 !else ifdef COMPACT
@@ -76,13 +85,26 @@ extra_l_flags_dos = option stack=4k
 !endif
 extra_l_flags = NAME $(xname).$(ext) OPTION MAP
 
-libs = $(wres_lib) $(orl_lib)
+libs_nt_386     = $(orl_dir)/o/orl.lib
+libs_nt_axp     = $(orl_dir)/axp/orl.lib
+libs_os2_386    = $(orl_dir)/os2/orl.lib
+libs_qnx_386    = $(orl_dir)/o/orl.lib
+libs_linux_386  = $(orl_dir)/o/orl.lib
+libs_dos_386    = $(orl_dir)/o/orl.lib
+libs            = $(libs_$(host_OS)_$(host_CPU))
 
-$(xname).$(ext) :: usageend.gh wmake.res $(objs) $(libs) $(__MAKEFILES__)
-        $(linker) $(lflags) FILE {$(objs)} LIBRARY {$(libs)}
+$(xname).$(ext) :: usageend.gh wmake.res $(objs) $(__MAKEFILES__)
+        $(linker) $(lflags) FILE {$(objs) } LIBRARY { $(wres_lib) $(libs) }
 #
 # If the linker files were different (i.e. if we needed a QNX version),
 # the copy would be replaced by a separate link. CSK
+!ifeq host_OS win
+#    wstrip  wmk.exe . x.sym
+        rc wmk
+        rc wmkj
+#    copy /b wmk.exe+x.sym
+#    erase x.sym
+!endif
         wstrip -q -a -r $(xname).$(ext) . wmake.res
 
 wmake.res : ../h/wmake.rc mrcmsg.h usage.rc usagej.rc
@@ -144,9 +166,3 @@ deps : .symbolic
 
 do : .symbolic
     wmake -h -n | sed -f ../mif/mkdo.sed >do.bat
-
-# In NT, failure of ..\regress\test does not set a failure return code.
-test : $(xname).$(ext) .always .symbolic
-    ..\regress\test $(%cwd)\$(xname).$(ext) # Works in NT, will fail in Linux
-    # ../regress/test $(%cwd)\$(xname).$(ext) # Fails in NT
-    # No Linux ../regress/test has been ported. W.Briscoe 2004-01-17

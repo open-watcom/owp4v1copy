@@ -1,7 +1,8 @@
-#pmake: build cpu_386 os_dos target_axp
+#pmake: build cpu_386 os_dos
 
 host_os  = dos
 host_cpu = 386
-target_cpu = axp
 
-!include ../alpha.mif
+cpu = alpha
+
+!include $(as_dir)/mif/master.mif

@@ -33,21 +33,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
-#if defined( UNIX )
+#include <io.h>
+#ifdef UNIX
 #include <sys/stat.h>
+#include <unistd.h>
 #include <dirent.h>
 #include <clibext.h>
-#elif defined( __UNIX__ )
-#include <sys/stat.h>
-#include <dirent.h>
 #else
 #include <direct.h>
 #endif
 #include <malloc.h>
 
 extern  void    _Not_Enough_Memory();
-static  void    *_allocate( size_t );
+static  void    *_allocate(unsigned);
 extern  char    *_LpCmdLine;
 extern  char    *_LpPgmName;
 extern  int     _argc;                  /* argument count  */
@@ -81,7 +79,7 @@ static int _make_argv( char *p, char ***argv )
         char            name[_MAX_FNAME];
         char            extin[_MAX_EXT];
         char            pathin[_MAX_PATH];
-#if defined( UNIX ) || defined( __UNIX__ )
+#ifdef UNIX
         struct stat     file_info;
         char            full_path[ _MAX_PATH ];
 #endif
@@ -133,7 +131,7 @@ static int _make_argv( char *p, char ***argv )
                     for(;;) {
                         dirent = readdir( dir );
                         if( dirent == NULL ) break;
-#if defined( UNIX ) || defined( __UNIX__ )
+#ifdef UNIX
                         strcpy( full_path, start );
                         strcat( full_path, dirent->d_name );
                         stat( full_path, &file_info );
@@ -159,7 +157,7 @@ static int _make_argv( char *p, char ***argv )
     }
 
 
-static void *_allocate( size_t amount )
+static void *_allocate( unsigned amount )
     {
         void *p;
 

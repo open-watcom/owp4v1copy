@@ -69,7 +69,7 @@ ostream &ostream::operator << ( unsigned __int64 i ) {
 
     // Digits:
     digit_offset = size;
-    ulltoa( i, buffer + digit_offset, base );
+    __clib_ulltoa( i, buffer + digit_offset, base );
     if( flags() & ios::uppercase ) {
         strupr( buffer );
     }

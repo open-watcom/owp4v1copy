@@ -150,6 +150,7 @@ typedef struct _TIB {
     ULONG tib_ordinal;
 } TIB, *PTIB;
 
+
 #if !defined(DBG_INCL_DOSDEBUG)
 
 #define DBG_INCL_DOSDEBUG
@@ -391,9 +392,6 @@ APIRET APIENTRY DosWaitThread(PTID,ULONG);
 #define OPEN_FLAGS_FAIL_ON_ERROR    0x2000
 #define OPEN_FLAGS_WRITE_THROUGH    0x4000
 #define OPEN_FLAGS_DASD             0x8000
-#define OPEN_FLAGS_NONSPOOLED       0x00040000
-#define OPEN_SHARE_DENYLEGACY       0x10000000
-#define OPEN_FLAGS_PROTECTED_HANDLE 0x40000000
 
 #define SEARCH_PATH          0
 #define SEARCH_CUR_DIRECTORY 1
@@ -471,12 +469,6 @@ APIRET APIENTRY DosWaitThread(PTID,ULONG);
 
 #define DSPI_WRTTHRU 0x10
 
-#define LISTIO_READ  0x0004
-#define LISTIO_WRITE 0x0008
-
-#define LISTIO_ORDERED   1
-#define LISTIO_UNORDERED 2
-
 typedef LHANDLE HDIR, *PHDIR;
 typedef ULONG FHLOCK, *PFHLOCK;
 
@@ -484,11 +476,6 @@ typedef struct _FILELOCK {
     LONG lOffset;
     LONG lRange;
 } FILELOCK, *PFILELOCK;
-
-typedef struct _FILELOCKL {
-    LONGLONG lOffset;
-    LONGLONG lRange;
-} FILELOCKL, *PFILELOCKL;
 
 typedef struct _FDATE {
     USHORT day:5;
@@ -547,37 +534,6 @@ typedef struct _FILEFINDBUF4 {
     CHAR  achName[CCHMAXPATHCOMP];
 } FILEFINDBUF4, *PFILEFINDBUF4;
 
-typedef struct _FILEFINDBUF3L {
-    ULONG    oNextEntryOffset;
-    FDATE    fdateCreation;
-    FTIME    ftimeCreation;
-    FDATE    fdateLastAccess;
-    FTIME    ftimeLastAccess;
-    FDATE    fdateLastWrite;
-    FTIME    ftimeLastWrite;
-    LONGLONG cbFile;
-    LONGLONG cbFileAlloc;
-    ULONG    attrFile;
-    UCHAR    cchName;
-    CHAR     achName[CCHMAXPATHCOMP];
-} FILEFINDBUF3L, *PFILEFINDBUF3L;
-
-typedef struct _FILEFINDBUF4L {
-    ULONG    oNextEntryOffset;
-    FDATE    fdateCreation;
-    FTIME    ftimeCreation;
-    FDATE    fdateLastAccess;
-    FTIME    ftimeLastAccess;
-    FDATE    fdateLastWrite;
-    FTIME    ftimeLastWrite;
-    LONGLONG cbFile;
-    LONGLONG cbFileAlloc;
-    ULONG    attrFile;
-    ULONG    cbList;
-    UCHAR    cchName;
-    CHAR     achName[CCHMAXPATHCOMP];
-} FILEFINDBUF4L, *PFILEFINDBUF4L;
-
 typedef struct _FILESTATUS {
     FDATE  fdateCreation;
     FTIME  ftimeCreation;
@@ -615,36 +571,11 @@ typedef struct _FILESTATUS4 {
     ULONG cbList;
 } FILESTATUS4, *PFILESTATUS4;
 
-typedef struct _FILESTATUS3L {
-    FDATE    fdateCreation;
-    FTIME    ftimeCreation;
-    FDATE    fdateLastAccess;
-    FTIME    ftimeLastAccess;
-    FDATE    fdateLastWrite;
-    FTIME    ftimeLastWrite;
-    LONGLONG cbFile;
-    LONGLONG cbFileAlloc;
-    ULONG    attrFile;
-} FILESTATUS3L, *PFILESTATUS3L;
-
-typedef struct _FILESTATUS4L {
-    FDATE    fdateCreation;
-    FTIME    ftimeCreation;
-    FDATE    fdateLastAccess;
-    FTIME    ftimeLastAccess;
-    FDATE    fdateLastWrite;
-    FTIME    ftimeLastWrite;
-    LONGLONG cbFile;
-    LONGLONG cbFileAlloc;
-    ULONG    attrFile;
-    ULONG    cbList;
-} FILESTATUS4L, *PFILESTATUS4L;
-
 typedef struct _FSALLOCATE {
-    ULONG idFileSystem;
-    ULONG cSectorUnit;
-    ULONG cUnit;
-    ULONG cUnitAvail;
+    ULONG  idFileSystem;
+    ULONG  cSectorUnit;
+    ULONG  cUnit;
+    ULONG  cUnitAvail;
     USHORT cbSector;
 } FSALLOCATE, *PFSALLOCATE;
 
@@ -699,34 +630,8 @@ typedef struct _FSINFO {
     VOLUMELABEL vol;
 } FSINFO, *PFSINFO;
 
-typedef struct _LISTIO_CB {
-    HFILE hFile;
-    ULONG CmdFlag;
-    LONG  Offset;
-    PVOID pBuffer;
-    ULONG NumBytes;
-    ULONG Actual;
-    ULONG RetCode;
-    ULONG Reserved;
-    ULONG Reserved2[3];
-    ULONG Reserved3[2];
-} LISTIO, *PLISTIO;
-
-typedef struct _LISTIO_CBL {
-    HFILE    hFile;
-    ULONG    CmdFlag;
-    LONGLONG Offset;
-    PVOID    pBuffer;
-    ULONG    NumBytes;
-    ULONG    Actual;
-    ULONG    RetCode;
-    ULONG    Reserved;
-    ULONG    Reserved2[3];
-    ULONG    Reserved3[2];
-} LISTIOL, *PLISTIOL;
 
 APIRET APIENTRY DosCancelLockRequest(HFILE,PFILELOCK);
-APIRET APIENTRY DosCancelLockRequestL(HFILE,PFILELOCKL);
 APIRET APIENTRY DosClose(HFILE);
 APIRET APIENTRY DosCopy(PCSZ,PCSZ,ULONG);
 APIRET APIENTRY DosCreateDir(PCSZ,PEAOP2);
@@ -741,26 +646,19 @@ APIRET APIENTRY DosFindNext(HDIR,PVOID,ULONG,PULONG);
 APIRET APIENTRY DosForceDelete(PCSZ);
 APIRET APIENTRY DosFSAttach(PCSZ,PCSZ,PVOID,ULONG,ULONG);
 APIRET APIENTRY DosFSCtl(PVOID,ULONG,PULONG,PVOID,ULONG,PULONG,ULONG,PCSZ,HFILE,ULONG);
-APIRET APIENTRY DosListIO(ULONG,ULONG,PLISTIO);
-APIRET APIENTRY DosListIOL(LONG,LONG,PVOID);
 APIRET APIENTRY DosMove(PCSZ,PCSZ);
 APIRET APIENTRY DosOpen(PCSZ,PHFILE,PULONG,ULONG,ULONG,ULONG,ULONG,PEAOP2);
-APIRET APIENTRY DosOpenL(PCSZ,PHFILE,PULONG,LONGLONG,ULONG,ULONG,ULONG,PEAOP2);
 APIRET APIENTRY DosProtectClose(HFILE,FHLOCK);
 APIRET APIENTRY DosProtectEnumAttribute(ULONG,PVOID,ULONG,PVOID,ULONG,PULONG,ULONG,FHLOCK);
 APIRET APIENTRY DosProtectOpen(PCSZ,PHFILE,PULONG,ULONG,ULONG,ULONG,ULONG,PEAOP2,PFHLOCK);
-APIRET APIENTRY DosProtectOpenL(PCSZ,PHFILE,PULONG,LONGLONG,ULONG,ULONG,ULONG,PEAOP2,PFHLOCK);
 APIRET APIENTRY DosProtectQueryFHState(HFILE,PULONG,FHLOCK);
 APIRET APIENTRY DosProtectQueryFileInfo(HFILE,ULONG,PVOID,ULONG,FHLOCK);
 APIRET APIENTRY DosProtectRead(HFILE,PVOID,ULONG,PULONG,FHLOCK);
 APIRET APIENTRY DosProtectSetFHState(HFILE,ULONG,FHLOCK);
 APIRET APIENTRY DosProtectSetFileInfo(HFILE,ULONG,PVOID,ULONG,FHLOCK);
 APIRET APIENTRY DosProtectSetFileLocks(HFILE,PFILELOCK,PFILELOCK,ULONG,ULONG,FHLOCK);
-APIRET APIENTRY DosProtectSetFileLocksL(HFILE,PFILELOCKL,PFILELOCKL,ULONG,ULONG,FHLOCK);
 APIRET APIENTRY DosProtectSetFilePtr(HFILE,LONG,ULONG,PULONG,FHLOCK);
-APIRET APIENTRY DosProtectSetFilePtrL(HFILE,LONGLONG,ULONG,PLONGLONG,FHLOCK);
 APIRET APIENTRY DosProtectSetFileSize(HFILE,ULONG,FHLOCK);
-APIRET APIENTRY DosProtectSetFileSizeL(HFILE,LONGLONG,FHLOCK);
 APIRET APIENTRY DosProtectWrite(HFILE,ULONG,ULONG,PULONG,FHLOCK);
 APIRET APIENTRY DosQueryCurrentDir(ULONG,PBYTE,PULONG);
 APIRET APIENTRY DosQueryCurrentDisk(PULONG,PULONG);
@@ -778,11 +676,8 @@ APIRET APIENTRY DosSetDefaultDisk(ULONG);
 APIRET APIENTRY DosSetFHState(HFILE,ULONG);
 APIRET APIENTRY DosSetFileInfo(HFILE,ULONG,PVOID,ULONG);
 APIRET APIENTRY DosSetFileLocks(HFILE,PFILELOCK,PFILELOCK,ULONG,ULONG);
-APIRET APIENTRY DosSetFileLocksL(HFILE,PFILELOCKL,PFILELOCKL,ULONG,ULONG);
 APIRET APIENTRY DosSetFilePtr(HFILE,LONG,ULONG,PULONG);
-APIRET APIENTRY DosSetFilePtrL(HFILE,LONGLONG,ULONG,PLONGLONG);
 APIRET APIENTRY DosSetFileSize(HFILE,ULONG);
-APIRET APIENTRY DosSetFileSizeL(HFILE,LONGLONG);
 APIRET APIENTRY DosSetFSInfo(ULONG,ULONG,PVOID,ULONG);
 APIRET APIENTRY DosSetMaxFH(ULONG);
 APIRET APIENTRY DosSetPathInfo(PCSZ,ULONG,PVOID,ULONG,ULONG);
@@ -1006,7 +901,7 @@ APIRET APIENTRY DosWaitMuxWaitSem(HMUX,ULONG,PULONG);
 
 #endif
 
-#ifdef INCL_DOSMONITORS
+#if defined(INCL_DOSMONITORS)
 
 #define DosMonClose DOS16MONCLOSE
 #define DosMonOpen  DOS16MONOPEN
@@ -1065,7 +960,7 @@ APIRET APIENTRY DosSetProcessCp(ULONG);
 
 #endif
 
-#ifdef INCL_DOSEXCEPTIONS
+#if defined(INCL_DOSEXCEPTIONS)
 
 #define SIG_UNSETFOCUS 0
 #define SIG_SETFOCUS   1
@@ -1085,7 +980,7 @@ APIRET APIENTRY DosUnwindException(PEXCEPTIONREGISTRATIONRECORD,PVOID,PEXCEPTION
 
 #endif
 
-#ifdef INCL_DOSRESOURCES
+#if defined(INCL_DOSRESOURCES)
 
 #define RT_POINTER      1
 #define RT_BITMAP       2
@@ -1119,7 +1014,7 @@ APIRET APIENTRY DosQueryResourceSize(HMODULE,ULONG,ULONG,PULONG);
 
 #endif
 
-#ifdef INCL_DOSDATETIME
+#if defined(INCL_DOSDATETIME)
 
 typedef LHANDLE HTIMER;
 typedef HTIMER  *PHTIMER;
@@ -1235,7 +1130,7 @@ APIRET APIENTRY DosSuppressPopUps(ULONG,CHAR);
 
 #endif
 
-#ifdef INCL_DOSSESMGR
+#if defined(INCL_DOSSESMGR)
 
 #define SSF_RELATED_INDEPENDENT 0
 #define SSF_RELATED_CHILD       1
@@ -1315,7 +1210,7 @@ APIRET APIENTRY DosStopSession(ULONG,ULONG);
 
 #endif
 
-#ifdef INCL_DOSDEVICES
+#if defined(INCL_DOSDEVICES)
 
 #define DEVINFO_PRINTER     0
 #define DEVINFO_RS232       1
@@ -1335,251 +1230,19 @@ APIRET APIENTRY DosPhysicalDisk(ULONG,PVOID,ULONG,PVOID,ULONG);
 
 #endif
 
-#ifdef INCL_DOSMVDM
+#if defined(INCL_DOSMVDM)
 
 typedef LHANDLE HVDD, *PHVDD;
 
 APIRET APIENTRY DosCloseVDD(HVDD);
 APIRET APIENTRY DosOpenVDD(PCSZ,PHVDD);
-APIRET APIENTRY DosQueryDOSProperty(SGID,PCSZ,ULONG,PCSZ);
 APIRET APIENTRY DosRequestVDD(HVDD,SGID,ULONG,ULONG,PVOID,ULONG,PVOID);
-APIRET APIENTRY DosSetDOSProperty(SGID,PCSZ,ULONG,PCSZ);
 
 #endif
 
-#ifdef INCL_DOSPROFILE
-
-#define PROF_ORDINAL 133
-
-#define PROF_SYSTEM  0
-#define PROF_USER    1
-#define PROF_USEDD   2
-#define PROF_KERNEL  4
-#define PROF_VERBOSE 8
-#define PROF_ENABLE  16
-
-#define PROF_ALLOC         0
-#define PROF_CLEAR         1
-#define PROF_ON            2
-#define PROF_OFF           3
-#define PROF_DUMP          4
-#define PROF_FREE          5
-#define PROF_SHIFT         2
-#define PROF_MOD_NAME_SIZE 10
-#define PROF_END_OF_DATA   13
-
-#define QS_PROCESS   0x0001
-#define QS_SEMAPHORE 0x0002
-#define QS_MTE       0x0004
-#define QS_FILESYS   0x0008
-#define QS_SHMEMORY  0x0010
-#define QS_DISK      0x0020
-#define QS_HWCONFIG  0x0040
-#define QS_NAMEDPIPE 0x0080
-#define QS_THREAD    0x0100
-#define QS_MODVER    0x0200
-
-#define QS_SUPPORTED (QS_PROCESS|QS_SEMAPHORE|QS_MTE|QS_FILESYS|QS_SHMEMORY|QS_MODVER)
-
-#define QS_SYSSEM_WAITING           0x01
-#define QS_SYSSEM_MUXWAITING        0x02
-#define QS_SYSSEM_OWNER_DIED        0x04
-#define QS_SYSSEM_EXCLUSIVE         0x08
-#define QS_SYSSEM_NAME_CLEANUP      0x10
-#define QS_SYSSEM_THREAD_OWNER_DIED 0x20
-#define QS_SYSSEM_EXITLIST_OWNER    0x40
-
-#define QS_DC_SEM_SHARED 0x0001
-#define QS_DCMW_WAIT_ANY 0x0002
-#define QS_DCMW_WAIT_ALL 0x0004
-#define QS_DCM_MUTEX_SEM 0x0008
-#define QS_DCE_EVENT_SEM 0x0010
-#define QS_DCMW_MUX_SEM  0x0020
-#define QS_DC_SEM_PM     0x0040
-#define QS_DE_POSTED     0x0040
-#define QS_DM_OWNER_DIED 0x0080
-#define QS_DMW_MTX_MUX   0x0100
-#define QS_DHO_SEM_OPEN  0x0200
-#define QS_DE_16BIT_MW   0x0400
-#define QS_DCE_POSTONE   0x0800
-#define QS_DCE_AUTORESET 0x1000
-
-#define QS_END          0
-
-#define PADSHORT USHORT pad_sh
-#define PADCHAR  UCHAR  pad_ch
+#if defined(INCL_DOSPROFILE)
 
 #define CMD_KI_RDCNT 0x63
-
-typedef struct _QSGREC {
-    ULONG cThrds;
-    ULONG c32SSem;
-    ULONG cMFTNodes;
-} QSGREC;
-
-typedef struct _QSTREC {
-    ULONG     RecType;
-    USHORT    tid;
-    USHORT    slot;
-    ULONG     sleepid;
-    ULONG     priority;
-    ULONG     systime;
-    ULONG     usertime;
-    UCHAR     state;
-    PADCHAR;
-    PADSHORT;
-} QSTREC;
-
-typedef struct _QSPREC {
-    ULONG      RecType;
-    QSTREC FAR *pThrdRec;
-    USHORT     pid;
-    USHORT     ppid;
-    ULONG      type;
-    ULONG      stat;
-    ULONG      sgid;
-    USHORT     hMte;
-    USHORT     cTCB;
-    ULONG      c32PSem;
-    VOID   FAR *p32SemRec;
-    USHORT     c16Sem;
-    USHORT     cLib;
-    USHORT     cShrMem;
-    USHORT     cFH;
-    USHORT FAR *p16SemRec;
-    USHORT FAR *pLibRec;
-    USHORT FAR *pShrMemRec;
-    USHORT FAR *pFSRec;
-} QSPREC;
-
-typedef struct _QSS16REC {
-    ULONG  NextRec;
-    USHORT SysSemOwner ;
-    UCHAR  SysSemFlag ;
-    UCHAR  SysSemRefCnt ;
-    UCHAR  SysSemProcCnt ;
-    UCHAR  SysSemPad ;
-    USHORT pad_sh;
-    USHORT SemPtr;
-    CHAR   SemName;
-} QSS16REC;
-
-typedef struct _QSS16HEADREC {
-    ULONG SRecType;
-    ULONG SpNextRec;
-    ULONG S32SemRec;
-    ULONG S16TblOff;
-    ULONG pSem16Rec;
-} QSS16HEADREC;
-
-typedef struct _QSMREC {
-    ULONG  MemNextRec;
-    USHORT hmem;
-    USHORT sel;
-    USHORT refcnt;
-    CHAR   Memname;
-} QSMREC;
-
-typedef struct _QSOPENQ {
-    USHORT pidOpener;
-    USHORT OpenCt;
-} QSOPENQ;
-
-typedef struct _QSEVENT {
-    ULONG  *pMuxQ;
-    USHORT PostCt;
-} QSEVENT;
-
-typedef struct _QSMUTEX {
-    ULONG  *pMuxQ;
-    USHORT ReqCt;
-    USHORT SlotNum;
-} QSMUTEX;
-
-typedef struct _QSMUX {
-    VOID   *pSemRec;
-    USHORT cSemRec;
-    USHORT WaitCt;
-} QSMUX;
-
-typedef union _QSHUN {
-    QSEVENT qsSEvt;
-    QSMUTEX qsSMtx;
-    QSMUX   qsSMux;
-} QSHUN;
-
-typedef struct _QSS32REC {
-    VOID      *pNextRec;
-    USHORT    flags;
-    PADSHORT;
-    UCHAR     *pName;
-    QSHUN     qsh;
-    ULONG     blockid;
-    USHORT    index;
-    USHORT    OpenCt;
-    QSOPENQ   OpenQ[1];
-} QSS32REC;
-
-typedef struct _QSLOBJREC {
-    ULONG oaddr;
-    ULONG osize;
-    ULONG oflags;
-} QSLOBJREC;
-
-typedef struct _QSLREC {
-    VOID      FAR *pNextRec;
-    USHORT        hmte;
-    USHORT        fFlat;
-    ULONG         ctImpMod;
-    ULONG         ctObj;
-    QSLOBJREC FAR *pObjInfo;
-    UCHAR     FAR *pName;
-} QSLREC;
-
-typedef struct _QSEXLREC {
-    struct    _QSEXLREC *next;
-    USHORT    hndmod;
-    USHORT    pid;
-    USHORT    type;
-    ULONG     refcnt;
-    ULONG     segcnt;
-    VOID      *_reserved_;
-    UCHAR FAR *name;
-    ULONG     ModuleVersion;
-    UCHAR FAR *ShortModName;
-    ULONG     modref;
-} QSEXLREC;
-
-typedef struct _QSSFT {
-    USHORT    sfn;
-    USHORT    refcnt;
-    USHORT    flags;
-    USHORT    flags2;
-    USHORT    mode;
-    USHORT    mode2;
-    ULONG     size;
-    USHORT    hVPB;
-    USHORT    attr;
-    PADSHORT;
-} QSSFT;
-
-typedef struct _QSFREC {
-    ULONG RecType;
-    VOID  *pNextRec;
-    ULONG ctSft;
-    QSSFT *pSft;
-} QSFREC;
-
-typedef struct _QSPTRREC {
-    QSGREC       *pGlobalRec;
-    QSPREC       *pProcRec;
-    QSS16HEADREC *p16SemRec;
-    QSS32REC     *p32SemRec;
-    QSMREC       *pMemRec;
-    QSLREC       *pLibRec;
-    QSMREC       *pShrMemRec;
-    QSFREC       *pFSRec;
-} QSPTRREC;
 
 typedef struct _CPUUTIL {
     ULONG ulTimeLow;
@@ -1592,32 +1255,9 @@ typedef struct _CPUUTIL {
     ULONG ulIntrHigh;
 } CPUUTIL, *PCPUUTIL;
 
-APIRET APIENTRY DosAliasPerfCtrs(ULONG,ULONG,PBYTE*,PULONG);
-APIRET APIENTRY DosConfigurePerf(ULONG,ULONG,ULONG,ULONG,PCSZ,BOOL32);
-APIRET APIENTRY DosDeconPerf(VOID);
 APIRET APIENTRY DosPerfSysCall(ULONG,ULONG,ULONG,ULONG);
-APIRET APIENTRY DosQuerySysState(ULONG,ULONG,PID,TID,PVOID,ULONG);
-APIRET APIENTRY DosRegisterPerfCtrs(PBYTE,PBYTE,ULONG);
 APIRET APIENTRY DosTmrQueryFreq(PULONG);
 APIRET APIENTRY DosTmrQueryTime(PQWORD);
-
-#endif
-
-#ifdef INCL_DOSSPINLOCK
-
-#define PROC_OFFLINE 0
-#define PROC_ONLINE  1
-
-typedef ULONG HSPINLOCK, *PHSPINLOCK;
-
-VOID   APIENTRY DosAcquireSpinLock(HSPINLOCK);
-APIRET APIENTRY DosCreateSpinLock(PHSPINLOCK);
-APIRET APIENTRY DosFreeSpinLock(HSPINLOCK);
-APIRET APIENTRY DosGetProcessorStatus(ULONG,PULONG);
-APIRET APIENTRY DosPerfSysCall(ULONG,ULONG,ULONG,ULONG);
-VOID   APIENTRY DosReleaseSpinLock(HSPINLOCK);
-APIRET APIENTRY DosSetProcessorStatus(ULONG,ULONG);
-APIRET APIENTRY DosTestPSD(PCSZ);
 
 #endif
 

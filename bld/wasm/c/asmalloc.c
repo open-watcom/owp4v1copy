@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  memory manipulation routines
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -36,107 +37,59 @@
 
 #include <stdlib.h>
 #include <malloc.h>
-#include <fcntl.h>
-#include <unistd.h>
 
-#include "asmalloc.h"
+#ifdef _WASM_
+
 #include "fatal.h"
+#ifdef TRMEM
 #include "memutil.h"
-
-#ifdef TRMEM
-#include "trmem.h"
-
-static _trmem_hdl   memHandle;
-static int          memFile;     /* file handle we'll write() to */
-
-static void memLine( int *fh, const char *buf, unsigned size ) {
-
-    write( 2, "***", 3 );
-    write( 2, buf, size );
-    if( *fh != -1 ) {
-        write( *fh, buf, size );
-    }
-}
 #endif
 
-void MemInit( void ) {
+extern void     Fatal( unsigned, ... );
 
-#ifdef TRMEM
-    memFile = open( "mem.trk", O_WRONLY | O_CREAT | O_TRUNC, 0 );
-    memHandle = _trmem_open( malloc, free, realloc, _expand, &memFile, memLine,
-        _TRMEM_ALLOC_SIZE_0 |
-        _TRMEM_FREE_NULL |
-        _TRMEM_OUT_OF_MEMORY |
-        _TRMEM_CLOSE_CHECK_FREE
-    );
-    if( memHandle == NULL ) {
-        exit( EXIT_FAILURE );
-    }
-#endif
-}
+extern void     heap( char * );
 
-void MemFini( void ) {
-
-#ifdef TRMEM
-    if( memHandle != NULL ) {
-        _trmem_prt_list( memHandle );
-        _trmem_close( memHandle );
-        if( memFile != -1 ) {
-            close( memFile );
-        }
-        memHandle = NULL;
-    }
-#endif
-}
-
-void *AsmAlloc( size_t size )
+void *AsmRealloc( void *ptr, size_t size )
 {
-    void        *ptr;
+    void        *new;
 
 #ifdef TRMEM
-    ptr = _trmem_alloc( size, _trmem_guess_who(), memHandle );
+    new = MemRealloc( ptr, size );
 #else
-    ptr = malloc( size );
-#endif
+    new = realloc( ptr, size );
     if( ptr == NULL ) {
         Fatal( MSG_OUT_OF_MEMORY );
     }
+#endif
+    return new;
+}
+#endif
+
+void *AsmAlloc( size_t amount )
+{
+#ifdef _WASM_
+    void        *ptr;
+
+#ifdef TRMEM
+    ptr = MemAlloc( amount );
+#else
+    ptr = malloc( amount );
+    if( ptr == NULL ) {
+        Fatal( MSG_OUT_OF_MEMORY );
+    }
+#endif
     return( ptr );
+#else
+    return( malloc( amount ) );
+#endif
 }
 
 void AsmFree( void *ptr )
 {
-    if( ptr != NULL ) {
+    if( ptr == NULL ) return;
 #ifdef TRMEM
-        _trmem_free( ptr, _trmem_guess_who(), memHandle );
+    MemFree( ptr );
 #else
-        free( ptr );
+    free( ptr );
 #endif
-    }
-}
-
-void *MemAlloc( size_t size )
-{
-    void        *ptr;
-
-#ifdef TRMEM
-    ptr = _trmem_alloc( size, _trmem_guess_who(), memHandle );
-#else
-    ptr = malloc( size );
-#endif
-    if( ptr == NULL ) {
-        Fatal( MSG_OUT_OF_MEMORY );
-    }
-    return( ptr );
-}
-
-void MemFree( void *ptr )
-{
-    if( ptr != NULL ) {
-#ifdef TRMEM
-        _trmem_free( ptr, _trmem_guess_who(), memHandle );
-#else
-        free( ptr );
-#endif
-    }
 }

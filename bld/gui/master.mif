@@ -1,8 +1,6 @@
 proj_name = gui
 name = gui
 
-gui_trmem = 1
-
 !ifndef gui_autodepends
 gui_autodepends = .AUTODEPEND
 !endif
@@ -15,8 +13,6 @@ gui_autodepends = .AUTODEPEND
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
-
-!include trmem.mif
 
 wv_objs = &
        guicreat.obj   &
@@ -55,37 +51,55 @@ wv_objs = &
        guiextnm.obj   &
        guifcrck.obj   &
 
+
 mem_objs = &
        guimem.obj     &
-       $(trmem_objs)
 
+!ifeq release 0
+mem_objs += &
+       trmemcvr.obj   &
+       trmem.obj
+!endif
 
 objs = $(wv_objs) $(mem_objs)
 
-!ifeq sys_windowed 1
-wpi_lib = $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib
+!ifdef wpi_lib
+wpi_library=$(wpi_dir)/lib/$(wpi_lib).lib
 !endif
+
+.c:     ../c;../../c;$(trmem_dir);$(help_dir)/c
+.h:     ../h;../../h;$(wpi_dir)/h
+.msg:   ../../h
+
+inc_dirs += ../h;../../h;$(trmem_dir);$(help_dir)/h;
 
 extra_c_flags += -s -fh
 
-extra_c_flags_axp = -ai -aq
-extra_c_flags_i86 = -fpc -zu
-extra_c_flags_386 = -fpc
-
-extra_c_flags_nov = -4s
-extra_c_flags_win = -zw
-!ifeq host_CPU i86
-extra_c_flags_win += -zW
-!endif
-!ifeq sys_windowed 1
-extra_c_flags_os2 = -d__OS2_PM__
+!ifeq release 1
+track =
 !endif
 
-# memory tracker routines
-extra_c_flags_trmem = $(trmem_cflags) -fh=$^&.pch
+!ifndef track
+track=-dTRMEM
+!ifneq host_CPU axp
+!ifneq host_OS win
+track += -of+
+!endif
+!endif
+!endif
 
-# memory tracker cover routines
-extra_c_flags_guimem = $(trmem_cover_cflags) -fh=$^&.pch
+extra_c_flags_axp += -ai -aq
+extra_c_flags_i86 += -fpc
+extra_c_flags_386 += -fpc
+
+extra_c_flags_nov += -4s-dNLM
+
+extra_c_flags_trmem = $(track) -fh=$^&.pch
+extra_c_flags_trmemcvr = $(track) -fh=$^&.pch
+extra_c_flags_guimem = $(track)
+!ifeq release 0
+extra_c_flags_guimem += -fh=$^&.pch
+!endif
 
 extra_c_flags_guisdef += -fh=$^&.pch
 extra_c_flags_guifcrck += -fh=$^&.pch
@@ -102,6 +116,7 @@ extra_c_flags_search += -fh=gui02.pch
 extra_c_flags_guiextnm += -fh=gui03.pch
 extra_c_flags_helpopen += -fh=gui03.pch
 extra_c_flags_helpio += -fh=gui03.pch
+extra_c_flags_mem += -fh=gui03.pch
 extra_c_flags_guirdlg += -fh=gui04.pch
 extra_c_flags_guirmenu += -fh=gui04.pch
 extra_c_flags_wstatus += -fh=gui05.pch
@@ -111,23 +126,20 @@ extra_c_flags_guifdlg += -fh=gui06.pch
 extra_c_flags_guihelp += -fh=gui07.pch
 extra_c_flags_guixmain += -fh=gui07.pch
 
-!ifeq sys_windowed 1
-inc_dirs = ../h;../../h;$(help_dir)/h;$(wpi_dir)/h;$(sdk_dir)/misc
-!else
-inc_dirs = ../h;../../h;$(help_dir)/h;$(ui_dir)/h
-!endif
 
-.c:     ../c;../../c;$(help_dir)/c;$(sdk_dir)/misc;$(trmem_dir)
-.h:     ../h;../../h;$(wpi_dir)/h
-.msg:   ../../h
-
-$(name).lib : eraseall.obj _guimsgs.gh $(objs) $(extra_objs) $(sysobjs) $(__MAKEFILES__) $(wpi_lib)
+$(name).lib : eraseall.obj _guimsgs.gh $(objs) $(extra_objs) $(sysobjs) $(__makefiles__) $(wpi_library) $(ctl3d_lib)
         @%create tmp.lbc
         @for %i in ($(objs)) do @%append tmp.lbc +%i
-        @for %i in ($(extra_objs)) do @%append tmp.lbc +%i
         @for %i in ($(sysobjs)) do @%append tmp.lbc +%i
-        @for %i in ($(wpi_lib)) do @%append tmp.lbc +%i
+!ifdef wpi_lib
+        @%append tmp.lbc +$(wpi_dir)/lib/$(wpi_lib).lib
+        @%append tmp.lbc +wpimem.obj
+!endif
+!ifdef ctl3d_lib
+        @%append tmp.lbc +$(ctl3d_lib)
+!endif
         $(librarian) $(wlib_opt) -n -b $^@ @tmp.lbc
+        @rm -f tmp.lbc
 
 ./mkstr.exe: $(gui_dir)/c/mkstr.c $(gui_dir)/h/gui.msg
         $(bld_cl) -i"$(gui_dir)/h" $(wcl_util_opts) $[@
@@ -135,6 +147,6 @@ $(name).lib : eraseall.obj _guimsgs.gh $(objs) $(extra_objs) $(sysobjs) $(__MAKE
 _guimsgs.gh: ./mkstr.exe $(gui_dir)/h/gui.msg
         $[@ $^@ $(gui_msg_id_modifier)
 
-eraseall.obj : ../compile.gbl
+eraseall.obj : $(gui_dir)/$(type)/compile.gbl
         rm -f *.obj
         wtouch eraseall.obj

@@ -8,7 +8,11 @@ c$noextensions
         ! Initialize graphics library and presentation graphics
         ! system and then display several sample charts.
 
+*$ifdef _NEC_98
+        include 'graph98.fi'
+*$else
         include 'graph.fi'
+*$endif
         include 'pg.fi'
         include 'pgdemo.fi'
 
@@ -66,7 +70,11 @@ c$noextensions
 
         ! Display a message and wait for the user to press a key
 
+*$ifdef _NEC_98
+        include 'graph98.fi'
+*$else
         include 'graph.fi'
+*$endif
         include 'pg.fi'
         include 'pgdemo.fi'
 
@@ -91,7 +99,11 @@ c$noextensions
 
         ! Display a simple column chart
 
+*$ifdef _NEC_98
+        include 'graph98.fi'
+*$else
         include 'graph.fi'
+*$endif
         include 'pg.fi'
         include 'pgdemo.fi'
 
@@ -107,7 +119,11 @@ c$noextensions
 
         ! Display several sample charts on different areas of the screen
 
+*$ifdef _NEC_98
+        include 'graph98.fi'
+*$else
         include 'graph.fi'
+*$endif
         include 'pg.fi'
         include 'pgdemo.fi'
 
@@ -150,7 +166,11 @@ c$noextensions
         ! Display two scatter charts beside each other;
         ! one using default options, the other customized
 
+*$ifdef _NEC_98
+        include 'graph98.fi'
+*$else
         include 'graph.fi'
+*$endif
         include 'pg.fi'
         include 'pgdemo.fi'
 

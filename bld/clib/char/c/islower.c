@@ -24,25 +24,25 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of islower().
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
 
 #include "variety.h"
-#include "widechar.h"
 #include <ctype.h>
-#ifdef __WIDECHAR__
- #include <wctype.h>
-#endif
+#include "widechar.h"
 #include "istable.h"
 #undef  islower
 
-_WCRTLINK int __F_NAME(islower,iswlower)( INTCHAR_TYPE c )
-{
-    if( IS_ASCII( c ) ) {
-        return( IsWhat( c ) & _LOWER );
-    } else {
-        return( 0 );
+
+_WCRTLINK int __F_NAME(islower,iswlower)( c )
+        register INTCHAR_TYPE c;
+    {
+        if( IS_ASCII( c ) ) {
+            return( IsWhat( c ) & _LOWER );
+        } else {
+            return( 0 );
+        }
     }
-}

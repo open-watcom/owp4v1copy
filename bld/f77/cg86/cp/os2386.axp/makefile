@@ -1,4 +1,4 @@
-#pmake: os_os2 cpu_386 target_axp
+#pmake: os_os2 cpu_386
 
 host_OS         = os2
 host_CPU        = 386

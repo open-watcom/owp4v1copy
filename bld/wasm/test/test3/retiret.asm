@@ -28,25 +28,17 @@ label1:	or   ax,ax
 
 label2:	or   ax,ax
 	jnz SHORT label3
-	iretf	; ignore epilog code
+	ret
 
 label3:	or   ax,ax
 	jnz SHORT label4
-	iretdf	; ignore epilog code
+	retn
 
 label4:	or   ax,ax
 	jnz SHORT label5
-	ret
+	retf
 
-label5:	or   ax,ax
-	jnz SHORT label6
-	retn	; ignore epilog code
-
-label6:	or   ax,ax
-	jnz SHORT label7
-	retf	; ignore epilog code
-
-label7:	ret
+label5:	ret
 
 proc1 endp
 

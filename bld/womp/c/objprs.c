@@ -50,7 +50,6 @@ struct jump_list {
     jlist       *next;
     pobj_filter func;
 };
-
 #define JUMP_OFFSET(cmd)    ((cmd)-CMD_POBJ_MIN_CMD)
 
 STATIC jlist    *readJump[ CMD_MAX_CMD - CMD_POBJ_MIN_CMD + 1 ];
@@ -133,6 +132,16 @@ void PObjRegister( uint_8 command, uint_8 pass, pobj_filter func ) {
     }
 }
 
+void PObjRegList( const pobj_list *list, size_t len ) {
+/***************************************************/
+    size_t  i;
+
+/**/myassert( list != NULL );
+    for( i = 0; i < len; ++i ) {
+        PObjRegister( list[i].command, list[i].pass, list[i].func );
+    }
+}
+
 void PObjUnRegister( uint_8 command, uint_8 pass, pobj_filter func ) {
 /******************************************************************/
     jlist   **walk;
@@ -161,6 +170,16 @@ void PObjUnRegister( uint_8 command, uint_8 pass, pobj_filter func ) {
         walk = &(*walk)->next;
     }
 /**/never_reach();
+}
+
+void PObjUnRegList( const pobj_list *list, size_t len ) {
+/*****************************************************/
+    size_t  i;
+
+/**/myassert( list != NULL );
+    for( i = 0; i < len; ++i ) {
+        PObjUnRegister( list[i].command, list[i].pass, list[i].func );
+    }
 }
 
 void PObjEnqueue( obj_rec *objr ) {

@@ -1,5 +1,29 @@
 !ifeq host_OS dos
 
+!ifeq machine NEC
+
+!ifeq host_CPU i86
+
+graph.lib : ../../dosi86.nec/graphs.lib ../../../pgchart/dosi86/charts.lib
+    cp ../../dosi86.nec/graphs.lib graph.lib
+    $(librarian) -b graph.lib +../../dosi86.nec/dummy.obj +../../dosi86.nec/fsmath.obj +../../../pgchart/dosi86/charts.lib
+
+!else
+
+graph386.lib : ../../dos386s.nec/graph3s.lib ../../dos386r.nec/graph3r.lib &
+               ../../../pgchart/dos386r/chart3r.lib ../../../pgchart/dos386s/chart3s.lib
+    cp ../../dos386s.nec/graph3s.lib graph386.lib
+    $(librarian) -b graph386.lib -globals -bit -sqrtf -std -necutils -font8x8
+    $(librarian) -b graph386.lib +../../dos386r.nec/graph3r.lib
+    cp ../../../pgchart/dos386r/chart3r.lib chart.lib
+    $(librarian) -b chart.lib +../../../pgchart/dos386s/chart3s.lib
+    $(librarian) -b graph386.lib +../../dos386r.nec/dummy.obj +../../dos386r.nec/fsmath.obj +chart.lib
+    rm -f chart.lib
+
+!endif
+
+!else # ! machine NEC
+
 !ifeq host_CPU i86
 
 graph.lib : ../../dosi86/graphs.lib ../../../pgchart/dosi86/charts.lib
@@ -19,6 +43,8 @@ graph386.lib : ../../dos386s/graph3s.lib ../../dos386r/graph3r.lib &
     rm -f chart.lib
 
 !endif
+
+!endif # machine NEC
 
 !else ifeq host_OS qnx
 

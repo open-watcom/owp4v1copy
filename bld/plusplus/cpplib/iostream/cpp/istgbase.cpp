@@ -29,18 +29,45 @@
 *
 ****************************************************************************/
 
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %     Copyright (C) 1992, by WATCOM International Inc.  All rights    %
+// %     reserved.  No part of this software may be reproduced or        %
+// %     used in any form or by any means - graphic, electronic or       %
+// %     mechanical, including photocopying, recording, taping or        %
+// %     information storage and retrieval systems - except with the     %
+// %     written permission of WATCOM International Inc.                 %
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+//  Modified    By              Reason
+//  ========    ==              ======
+//  92/02/04    Steve McDowell  Initial implementation.
+//  92/09/08    Greg Bentz      Cleanup.
+//  93/03/15    Greg Bentz      fix uninitialized state variables.
+//  93/07/29    Greg Bentz      - change istream::op>>(streambuf &) to
+//                                istream::op>>( streambuf * )
+//                              - fix istream::getline() to not set failbit
+//                                if no input stored in user buffer
+//  93/09/15    Greg Bentz      change getline() back to set ios::failbit
+//                              if not input stored in user buffer
+//  93/10/21    Greg Bentz      change get() and getline() to not set failbit
+//                              if the delim character has been seen
+//  93/10/28    Raymond Tang    Split into separate files.
+//  94/04/06    Greg Bentz      combine header files
+
 #ifdef __SW_FH
 #include "iost.h"
 #else
 #include "variety.h"
 #include <ctype.h>
-#include <iostream>
-#include <streambu>
+#include <iostream.h>
+#include <streambu.h>
 #endif
 #include "lock.h"
 #include "isthdr.h"
 
-std::ios::iostate __getbase( std::streambuf *sb, int &base, int &offset ) {
+ios::iostate __getbase( streambuf *sb, int &base, int &offset ) {
+/********************************************************************/
 
     int ch;
 
@@ -48,15 +75,15 @@ std::ios::iostate __getbase( std::streambuf *sb, int &base, int &offset ) {
     ch = sb->speekc();
     if( ch == EOF ) {
         if( offset == 0 ) {
-            return( std::ios::eofbit );
+            return( ios::eofbit );
         }
-        return( std::ios::failbit );
+        return( ios::failbit );
     }
     if( ch != '0' ) {
         if( isdigit( ch ) ) {
             base = 10;
         } else {
-            return( std::ios::failbit );
+            return( ios::failbit );
         }
     } else {
         offset++;
@@ -78,5 +105,5 @@ std::ios::iostate __getbase( std::streambuf *sb, int &base, int &offset ) {
             offset--;
         }
     }
-    return( std::ios::goodbit );
+    return( ios::goodbit );
 }

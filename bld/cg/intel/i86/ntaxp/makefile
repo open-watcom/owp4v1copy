@@ -1,6 +1,6 @@
-#pmake: os_nt cpu_axp i86 intel target_i86
+#pmake: brad os_nt cpu_axp i86 intel
 
-host_OS = nt
-host_CPU = axp
+host_OS         = nt
+host_CPU        = axp
 
 !include ../mif/master.mif

@@ -1,4 +1,4 @@
-#pmake: build os_nt cpu_386 target_i86
+#pmake: all build os_nt cpu_386
 
 host_OS         = nt
 host_CPU        = 386

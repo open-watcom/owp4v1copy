@@ -45,7 +45,7 @@
   #include "fio.h"
   #include "sdfile.h"
   #if ( _TARGET == _8086 || _TARGET == _80386 )
-    #include "asminlin.h"
+    #include "asmsym.h"
   #elif ( _TARGET == _AXP || _TARGET == _PPC )
     #include "asinline.h"
   #else
@@ -1301,13 +1301,13 @@ static  void    InsertFixups( unsigned char *buff, unsigned i ) {
     head = FixupHead;
     if( head != NULL ) {
         FixupHead = NULL;
-        // sort the fixup list in increasing fixup_loc's
+        // sort the fixup list in increasing fix_loc's
         for( fix = head; fix != NULL; fix = next ) {
             owner = &FixupHead;
             for( ;; ) {
                 chk = *owner;
                 if( chk == NULL ) break;
-                if( chk->fixup_loc > fix->fixup_loc ) break;
+                if( chk->fix_loc > fix->fix_loc ) break;
                 owner = &chk->next;
             }
             next = fix->next;
@@ -1321,12 +1321,12 @@ static  void    InsertFixups( unsigned char *buff, unsigned i ) {
         owner = &FixupHead;
         // insert fixup escape sequences
         while( src < end ) {
-            if( (fix != NULL) && (fix->fixup_loc == (src - buff)) ) {
+            if( (fix != NULL) && (fix->fix_loc == (src - buff)) ) {
                 name = fix->name;
                 // insert fixup information
                 *dst++ = FLOATING_FIXUP_BYTE;
-                // only expect a 'fixup_type' of FIX_SEG
-                switch( fix->fixup_type ) {
+                // only expect a 'fix_type' of FIX_SEG
+                switch( fix->fix_type ) {
                 case FIX_SEG:
                     if( name == NULL ) {
                         // special case for floating point fixup
@@ -1425,10 +1425,10 @@ static  void    AddAFix( unsigned i, char *name, unsigned type,
 
     fix = FMemAlloc( sizeof( *fix ) );
     fix->external = 1;
-    fix->fixup_loc = i;
+    fix->fix_loc = i;
     fix->name = name;
     fix->offset = off;
-    fix->fixup_type = type;
+    fix->fix_type = type;
     fix->next = FixupHead;
     FixupHead = fix;
 }

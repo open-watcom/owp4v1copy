@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Disassembler pass 2.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -84,7 +85,6 @@ static label_entry handleLabels( char *sec_name, orl_sec_offset offset, label_en
         case LTYP_NAMED:
             if( strcmp( l_entry->label.name, sec_name ) == 0 ) continue;
             break;
-        case LTYP_ABSOLUTE:
         case LTYP_FUNC_INFO:
             continue;
         }
@@ -120,7 +120,6 @@ static return_val referenceString( ref_entry r_entry, orl_sec_size size,
     label_entry         l_entry;
     char                *sep = ":";
     char                *frame;
-    char                temp[15];
 
     frame = r_entry->frame;
     if( !frame || ( flags & RFLAG_NO_FRAME ) ) {
@@ -131,12 +130,6 @@ static return_val referenceString( ref_entry r_entry, orl_sec_size size,
     l_entry = r_entry->label;
     if( Options & METAWARE_COMPATIBLE || (ext_pref[0]==0 && int_pref[0]==0) ) {
         switch( l_entry->type ) {
-            case LTYP_ABSOLUTE:
-                FmtHexNum( temp, 0, l_entry->offset );
-                if( *frame == 0 && ( ( flags & RFLAG_NO_FRAME ) == 0 ) )
-                    frame = "ds:";
-                sprintf( buff, "%s%s[%s]", frame, sep, temp);
-                break;
             case LTYP_UNNAMED:
                 sprintf( buff, "%s%s%c$%d%s", frame, sep, LabelChar,
                          l_entry->label.number, post );
@@ -158,14 +151,6 @@ static return_val referenceString( ref_entry r_entry, orl_sec_size size,
                 sprintf( buff, "%s%s%s%s", int_pref, frame, sep,
                          l_entry->label.name );
                 break;
-
-            case LTYP_ABSOLUTE:
-                FmtHexNum( temp, 0, l_entry->offset );
-                if( *frame == 0 && ( ( flags & RFLAG_NO_FRAME ) == 0 ) )
-                    frame = "ds:";
-                sprintf( buff, "%s%s%s[%s]", int_pref, frame, sep, temp);
-                break;
-                
             default:
                 sprintf( buff, "%s%s%s%c$%d", int_pref, frame, sep,
                          LabelChar, l_entry->label.number );
@@ -197,7 +182,6 @@ unsigned HandleAReference( dis_value value, int ins_size, ref_flags flags,
             nvalue = 0;
         }
         switch( (*r_entry)->type ) {
-        case ORL_RELOC_TYPE_MAX + 1:
         case ORL_RELOC_TYPE_JUMP:
         case ORL_RELOC_TYPE_REL_21_SH:
             error = referenceString( *r_entry, sec_size, "j^", "", "",
@@ -296,7 +280,7 @@ unsigned HandleAReference( dis_value value, int ins_size, ref_flags flags,
             // of the displacement in a relative call and get a bad
             // offset, due to CORE implementation
             //
-            // Main reason :
+            // Main reason : 
             // instruction size with displacement and with addend is correct for
             // relative addresses without relocate
             //
@@ -563,8 +547,6 @@ num_errors DoPass2( section_ptr sec, char *contents, orl_sec_size size,
         DisDecode( &DHnd, &contents[data.loop], &decoded );
         if( sec_label_list ) {
             if( l_entry != NULL &&
-                l_entry->type != LTYP_ABSOLUTE &&
-                l_entry->binding != ORL_SYM_BINDING_NONE &&
                 l_entry->offset > data.loop &&
                 l_entry->offset < ( data.loop + decoded.size ) ) {
                 /*
@@ -573,9 +555,11 @@ num_errors DoPass2( section_ptr sec, char *contents, orl_sec_size size,
                     out a couple of data bytes, and then restart decode
                     and label process from offset of actual label.
                 */
-                decoded.size = 0;
                 processDataInCode( contents, &data, l_entry->offset - data.loop, &l_entry );
-                continue;
+                data.loop = l_entry->offset;
+                DisDecodeInit( &DHnd, &decoded );
+                decoded.flags |= flags;
+                DisDecode( &DHnd, &contents[data.loop], &decoded );
             }
             l_entry = handleLabels( sec->name, data.loop, l_entry, size );
         }

@@ -29,22 +29,24 @@
 *
 ****************************************************************************/
 
+
 #include "stdnt.h"
+
 
 unsigned ReqFileInfo_getdate()
 {
     file_info_get_date_req      *req;
     file_info_get_date_ret      *ret;
     static WIN32_FIND_DATA      ffb;
-    char                        *name;
-    HANDLE                      h;
-    WORD                        md, mt;
+    char                *name;
+    HANDLE              h;
+    WORD                md,mt;
 
     req = GetInPtr( 0 );
     name = GetInPtr( sizeof( *req ) );
     ret = GetOutPtr( 0 );
     h = FindFirstFile( name, &ffb );
-    if( h == ( HANDLE ) - 1 ) {
+    if( h == (HANDLE)-1 ) {
         ret->err = ERROR_FILE_NOT_FOUND;
         return( sizeof( *ret ) );
     }
@@ -55,14 +57,15 @@ unsigned ReqFileInfo_getdate()
     return( sizeof( *ret ) );
 }
 
+
 unsigned ReqFileInfo_setdate()
 {
     file_info_set_date_req      *req;
     file_info_set_date_ret      *ret;
-    char                        *name;
-    HANDLE                      h;
-    WORD                        md, mt;
-    FILETIME                    ft;
+    char                *name;
+    HANDLE              h;
+    WORD                md,mt;
+    FILETIME            ft;
 
     req = GetInPtr( 0 );
     name = GetInPtr( sizeof( *req ) );
@@ -72,7 +75,7 @@ unsigned ReqFileInfo_setdate()
     DosDateTimeToFileTime( md, mt, &ft );
     h = CreateFile( name, GENERIC_READ | GENERIC_WRITE, 0, NULL,
                     OPEN_EXISTING, 0, NULL );
-    if( h == ( HANDLE ) - 1 ) {
+    if( h == (HANDLE)-1 ) {
         ret->err = GetLastError();
         return( sizeof( *ret ) );
     }

@@ -5,6 +5,7 @@
 
 host_CPU=axp
 host_OS=nt
+display=gui
 
 sys_windowed = 1
 

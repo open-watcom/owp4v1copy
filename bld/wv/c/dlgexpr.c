@@ -89,7 +89,7 @@ static bool DoDlgGet( gui_window *gui, unsigned id, void *value, bool (*rtn)(cha
         ok = rtn( LIT( Empty ), value );
     } else {
         ok = rtn( str, value );
-        GUIMemFree( str );
+        WndFree( str );
     }
     return( ok );
 }

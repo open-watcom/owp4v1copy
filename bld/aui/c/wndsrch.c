@@ -38,8 +38,8 @@ bool    WndDoingSearch = FALSE;
 
 void WndSetSrchItem( a_window *wnd, char *expr )
 {
-    GUIMemFree( wnd->searchitem );
-    wnd->searchitem = GUIMemAlloc( strlen( expr ) + 1 );
+    WndFree( wnd->searchitem );
+    wnd->searchitem = WndAlloc( strlen( expr ) + 1 );
     strcpy( wnd->searchitem, expr );
 }
 

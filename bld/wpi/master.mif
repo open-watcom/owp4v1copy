@@ -1,26 +1,25 @@
 proj_name = wpi
 
-!ifndef wpi_autodepends
-wpi_autodepends = .AUTODEPEND
+.c      : $(wpi_dir)/c
+.h      : $(wpi_dir)/h
+
+!ifdef WINM
+mem_model_i86 = -mm
 !endif
 
 !include cproj.mif
-!include deftarg.mif
-!include defrule.mif
 
 #-------- CFLAGS
-extra_c_flags = -s
-
-extra_c_flags_386 = -fpc
-extra_c_flags_i86 = -fpc -zu
+extra_c_flags_386       = -fpc
+extra_c_flags_i86       = -fpc -zu
 
 !ifeq host_cpu 386
-extra_c_flags_os2 = -3r
+extra_c_flags_os2       = -3r
 !endif
 
-extra_c_flags_win = -zw
+extra_c_flags_win       = -zw
 !ifeq host_cpu i86
-extra_c_flags_win += -zc-zW
+extra_c_flags_win       += -zc-zW
 !endif
 
 !ifeq wpitest yes
@@ -28,10 +27,20 @@ extra_c_flags_os2 += -d_WPI_TEST_
 extra_c_flags_win += -d_WPI_TEST_
 !endif
 
-#-------- INCLUDES
+extra_c_flags = -ox -s -v
 
-.c : $(wpi_dir)/c
-.h : $(wpi_dir)/h
+!ifndef %MAKE_DEBUG
+!ifdef codeview
+extra_c_flags += -hc
+!endif
+!else
+mode_cflags = -$(%MAKE_DEBUG)
+!endif
+
+#-------- INCLUDES
+inc_dirs_win = $(win31_hdrs)
+
+inc_dirs = $(inc_dirs_$(host_OS));$(watcom_dir)/h
 
 #-------- OBJECTS
 objs_win = wpi_win.obj
@@ -45,10 +54,59 @@ extra_objs_os2 = new_os2.obj
 
 objs = $(objs_$(host_OS)) $(extra_objs_$(host_OS))
 
-wpi.lib: $(objs)
-        @%create tmp.lbc
-        @for %i in ($(objs)) do @%append tmp.lbc +%i
-        $(librarian) -n -p=16 $^@ @tmp.lbc
+#-------- LIBRARY NAME
+libname_nt_axp = wpi_axp
+libname_nt_386 = wpi_nt
+libname_os2_i86 = wpi_pm16
+!ifdef OS2F
+libname_os2_386 = wpi_os2f
+!else
+libname_os2_386 = wpi_os2
+!endif
+!ifdef WINM
+libname_win_i86 = wpi_winm
+!else
+libname_win_i86 = wpi_win
+!endif
+libname_win_386 = wpi_w386
+
+libname = $(libname_$(host_OS)_$(host_CPU))
+
+.before
+    set INCS=-i"$(inc_path)"
+
+.error
+    @cd $(MAIN_DIR)
+
+UPD_DIR = $(%LIBROOT)/wpi
+
+.obj: $(OBJ_DIR)
+.c: $(MAIN_DIR)/c
+.h: $(MAIN_DIR)/h
+
+$(wpi_dir)/lib/$(libname).lib: $(objs)
+        ls -1 *.obj > tmp.lbc
+        $(librarian) -n -q $^@ @tmp.lbc
+        rm -f tmp.lbc
+
+lib :: $(LIB_DIR)/$(libname).lib .SYMBOLIC
+    %null
+
+.c.obj :
+    $(cc) @INCS $(cflags) $[*
+
+clean: .SYMBOLIC .EXPLICIT
+        rm -f *.?bj *.lnk *.exe *.dll *.lib *.res
+        rm -f *.lbc *.err *.map *.def
+        rm -f $(wpi_dir)/lib/$(libname).lib
+
+update : .SYMBOLIC
+    #@cp $(wpi_dir)/read.me $(UPD_DIR)
+    @cp $(wpi_dir)/h/wpi.h $(UPD_DIR)/h
+    @cp $(wpi_dir)/h/wpi_win.h $(UPD_DIR)/h
+    @cp $(wpi_dir)/h/wpi_os2.h $(UPD_DIR)/h
+    @cp $(wpi_dir)/lib/$(libname).lib $(UPD_DIR)/lib
 
 wpi_win.obj : wpi_win.c wpi_win.h wpitypes.h wpi.h
 wpi_os2.obj : wpi_os2.c wpi_os2.h wpitypes.h wpi.h
+

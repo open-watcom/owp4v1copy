@@ -699,9 +699,7 @@ typedef DWORD FLONG;
 #define PROCESSOR_ARCHITECTURE_ARM 5
 #define PROCESSOR_ARCHITECTURE_IA64 6
 #define PROCESSOR_ARCHITECTURE_ALPHA64 7
-#define PROCESSOR_ARCHITECTURE_MSIL 8
-#define PROCESSOR_ARCHITECTURE_AMD64 9
-#define PROCESSOR_ARCHITECTURE_IA32_ON_WIN64 10
+#define PROCESSOR_ARCHITECTURE_MSIL8
 #define PROCESSOR_ARCHITECTURE_UNKNOWN 0xFFFF
 #define PF_FLOATING_POINT_PRECISION_ERRATA 0
 #define PF_FLOATING_POINT_EMULATED 1
@@ -714,6 +712,9 @@ typedef DWORD FLONG;
 #define PF_RDTSC_INSTRUCTION_AVAILABLE 8
 #define PF_PAE_ENABLED 9
 #define PF_XMMI64_INSTRUCTIONS_AVAILABLE 10
+#define PAGE_READONLY 2
+#define PAGE_READWRITE 4
+#define PAGE_WRITECOPY 8
 /* also in ddk/ntifs.h */
 #define FILE_ACTION_ADDED                   0x00000001
 #define FILE_ACTION_REMOVED                 0x00000002
@@ -766,16 +767,12 @@ typedef DWORD FLONG;
 #define DACL_SECURITY_INFORMATION 4
 #define SACL_SECURITY_INFORMATION 8
 #define MAXIMUM_PROCESSORS 32
-#define PAGE_NOACCESS	0x0001
-#define PAGE_READONLY	0x0002
-#define PAGE_READWRITE	0x0004
-#define PAGE_WRITECOPY	0x0008
-#define PAGE_EXECUTE	0x0010
-#define PAGE_EXECUTE_READ	0x0020
-#define PAGE_EXECUTE_READWRITE	0x0040
-#define PAGE_EXECUTE_WRITECOPY	0x0080
-#define PAGE_GUARD		0x0100
-#define PAGE_NOCACHE		0x0200
+#define PAGE_EXECUTE 16
+#define PAGE_EXECUTE_READ 32
+#define PAGE_EXECUTE_READWRITE 64
+#define PAGE_GUARD 256
+#define PAGE_NOACCESS 1
+#define PAGE_NOCACHE 512
 #define MEM_COMMIT           0x1000
 #define MEM_RESERVE          0x2000
 #define MEM_DECOMMIT         0x4000
@@ -799,6 +796,7 @@ typedef DWORD FLONG;
 #define SEC_COMMIT	0x08000000
 #define SEC_NOCACHE	0x10000000
 /* end ntifs.h */
+#define PAGE_EXECUTE_WRITECOPY 128
 #define SECTION_EXTEND_SIZE 16
 #define SECTION_MAP_READ 4
 #define SECTION_MAP_WRITE 2
@@ -3283,10 +3281,13 @@ ULONGLONG WINAPI VerSetConditionMask(ULONGLONG,DWORD,BYTE);
 #if defined(__GNUC__)
 
 PVOID GetCurrentFiber(void);
+PVOID GetFiberData(void);
+
+PVOID GetCurrentFiber(void);
 extern __inline__ PVOID GetCurrentFiber(void)
 {
     void* ret;
-    __asm__ __volatile__ (
+    __asm__ volatile (
 	"movl	%%fs:0x10,%0"
 	: "=r" (ret) /* allow use of reg eax,ebx,ecx,edx,esi,edi */
 	);
@@ -3297,24 +3298,11 @@ PVOID GetFiberData(void);
 extern __inline__ PVOID GetFiberData(void)
 {
     void* ret;
-    __asm__ __volatile__ (
+    __asm__ volatile (
 	"movl	%%fs:0x10,%0\n"
 	"movl	(%0),%0"
 	: "=r" (ret) /* allow use of reg eax,ebx,ecx,edx,esi,edi */
 	);
-    return ret;
-}
-
-static __inline__ struct _TEB * NtCurrentTeb(void)
-{
-    struct _TEB *ret;
-
-    __asm__ __volatile__ (
-        "movl %%fs:0x18, %0\n"
-        : "=r" (ret)
-        : /* no inputs */
-    );
-
     return ret;
 }
 

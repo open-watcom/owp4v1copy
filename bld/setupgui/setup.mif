@@ -1,21 +1,70 @@
-proj_name = setupgui
-
-setupgui_autodepends = .AUTODEPEND
-
-.EXTENSIONS: .rc .ico
-
 .ERROR:
 
+!include ../project.mif
 !include cproj.mif
-!include defrule.mif
-#!include deftarg.mif
 
-!include wres.mif
+!ifdef debug_version
+!   define wcdeb        -d2
+!else
+!   ifeq release 0
+!      define wcdeb        -d2
+!   else
+!      define wcdeb        -d1
+!   endif
+!endif
 
-# objects
-##########
+COMMON_FLAGS = -ox -w4 -zq $(WCDEB)
+!ifneq host_CPU axp
+COMMON_FLAGS += -fpc
+!endif
+
+!ifeq VERSION _WINNT
+!   define INCPLAT  $(%watcom)/h/nt;$(watcom_dir)/win95_h;$(watcom_dir)/h
+!   ifeq host_CPU axp
+!      define CFLAGS   -bt=nt
+!      define COMP  wccaxp
+!   else
+!      define CFLAGS   -bt=nt -mf
+!      define COMP  wcc386
+!   endif
+!else ifeq VERSION _OS2
+!   define CFLAGS   -bt=os2 -d__OS220__ -Ufar -Dfar=
+!   define INCPLAT  $(%watcom)/h;$(%watcom)/h/os2
+!   define COMP     wcc386
+!else ifeq VERSION _WIN
+!   define CFLAGS   -bt=windows -m$(model) -zt1024 -zc
+!   define INCPLAT  $(%watcom)/h/win
+!   define COMP     wcc
+!else ifeq VERSION _UI
+!   ifeq model f
+!      ifdef ui_os2
+!         define INCPLAT   $(%watcom)/h/os2
+!         define CFLAGS    -mf -bt=os2 -d_UI
+!      else
+!         define CFLAGS    -mf -bt=dos -d_UI
+!      endif
+!      define COMP      wcc386
+!   else
+!      define COMP      wcc
+!      define CFLAGS   -m$(model) -zt1024 -bt=dos -d_UI
+!   endif
+!endif
+
+!ifdef patch
+PROJECT_DEFS += -DPATCH
+!endif
+
+INCPATH=$(sdk_dir)/misc;$(build_root)/wpack/h;$(build_root)/wpack/o;$(uidir)/h;$(wpi_dir)/h;$(aui_dir)/h;$(gui_dir)/h;$(guiinc);../h;$(PROJECT_HPATH);$(INCPLAT);$(%include);$(BDIFF_PATH)/h;
+
+.BEFORE
+    set include=$(INCPATH)
+    set wcc386=$(PROJECT_DEFS) -DINSTALL_PROGRAM
+    set wcc=$(PROJECT_DEFS) -DINSTALL_PROGRAM
+
+
 objs = &
     setup.obj       &
+    utils.obj       &
     decode.obj      &
     qsort.obj       &
     lookup.obj      &
@@ -38,356 +87,320 @@ objs = &
 objs += exetype.obj
 !endif
 
-!ifeq host_os win
+!ifeq VERSION _WIN
 objs += &
-    utils.obj       &
     winutil.obj     &
     winddeml.obj
-!else ifeq host_os nt
+!else ifeq VERSION _WINNT
 objs += &
-    utils.obj       &
     winutil.obj     &
     winddeml.obj    &
     ntservic.obj
-!else ifeq host_os os2
+!else ifeq VERSION _OS2
 objs += &
-    utils.obj       &
     winutil.obj     &
     os2util.obj
-!else ifeq host_os linux
-objs += &
-    unixutil.obj
 !else
-objs += &
-    utils.obj
 !endif
 
-!ifeq sys_windowed 1
+objs += $(PROJECT_OBJS)
 
-libs_nt = $(guidir)/win/nt$(host_cpu)/gui.lib
+GENDEPS = eraseall.obj $(objs) setup.lnk
 
-libs_os2 = $(guidir)/win/os2$(host_cpu)/gui.lib
+.EXTENSIONS:
+.EXTENSIONS: .obj .pp .c .h
 
-libs_win = $(guidir)/win/win$(host_cpu)/gui.lib
+!ifeq VERSION _WIN
+setup.exe: $(GENDEPS) csetup.res f77setup.res dbsetup.res dosstub.exe
+    wlink option quiet,stub=dosstub.exe name $* @setup.lnk
+    cp setup.exe virgin.exe
+    wlink option quiet,stub=../dosi86/virgin.exe name $* @setup.lnk
+    cp setup.exe wdvirgin.exe
+    $(rc) -30 -q -k setup.res setup.exe
 
-!else
+csetup.exe : setup.exe csetup.res
+    cp virgin.exe csetup.exe
+    $(rc) -30 -q -k csetup.res csetup.exe
 
-libs_dos = &
-$(guidir)/ui/dos$(host_cpu)/gui.lib &
-$(uidir)/dos/dos$(host_cpu)/ui.lib &
-$(wres_lib)
+jcsetup.exe : setup.exe jcsetup.res
+    cp virgin.exe jcsetup.exe
+    $(rc) -30 -q -k jcsetup.res jcsetup.exe
 
-libs_linux = &
-$(guidir)/ui/linux$(host_cpu)/gui.lib &
-$(uidir)/unix/linux$(host_cpu)/ui.lib &
-$(ncurses_dir)/linux$(host_cpu)/ncurses.lib &
-$(wres_lib)
+f77setup.exe : setup.exe f77setup.res
+    cp virgin.exe f77setup.exe
+    $(rc) -30 -q -k f77setup.res f77setup.exe
 
-libs_os2 = &
-$(guidir)/ui/os2$(host_cpu)/gui.lib &
-$(uidir)/os2/os2$(host_cpu)/ui.lib &
-$(wres_lib)
+jfsetup.exe : setup.exe jfsetup.res
+    cp virgin.exe jfsetup.exe
+    $(rc) -30 -q -k jfsetup.res jfsetup.exe
 
+dbsetup.exe : setup.exe dbsetup.res
+    cp virgin.exe dbsetup.exe
+    $(rc) -30 -q -k dbsetup.res dbsetup.exe
+    cp wdvirgin.exe wdsetup.exe
+    $(rc) -30 -q -k dbsetup.res wdsetup.exe
+    wstrip -q -a -r wdsetup.exe . ..\dosi86\setupui.res
+
+jdbsetup.exe : setup.exe jdbsetup.res
+    cp virgin.exe jdbsetup.exe
+    $(rc) -30 -q -k jdbsetup.res jdbsetup.exe
+
+jcsetup.res jfsetup.res csetup.res f77setup.res dbsetup.res jdbsetup.res setup.res: setup.rc setup.ico disk.ico ../wcc.bmp ../f77.bmp ../wsql.bmp ../generic.bmp
+   cp ../wcc.bmp ../splash.bmp
+   $(rc) -bt=windows -30 -q -r -d_WIN setup.rc
+   cp setup.res csetup.res
+   $(rc) -bt=windows -dJAPANESE_MESSAGES -zk0 -30 -q -r -d_WIN setup.rc
+   cp setup.res jcsetup.res
+   cp ../f77.bmp ../splash.bmp
+   $(rc) -bt=windows -30 -q -r -d_WIN setup.rc
+   cp setup.res f77setup.res
+   $(rc) -bt=windows -dJAPANESE_MESSAGES -zk0 -30 -q -r -d_WIN setup.rc
+   cp setup.res jfsetup.res
+   cp ../wsql.bmp ../splash.bmp
+   $(rc) -bt=windows -30 -q -r -d_WIN setup.rc
+   cp setup.res dbsetup.res
+   $(rc) -bt=windows -dJAPANESE_MESSAGES -zk0 -30 -q -r -d_WIN setup.rc
+   cp setup.res jdbsetup.res
+   cp ../generic.bmp ../splash.bmp
+   $(rc) -bt=windows -30 -q -r -d_WIN setup.rc
+
+dosstub.exe : ../stub/dosstub.c
+    wcl -zq -l=dos -bt=dos ..\stub\dosstub
+
+!else ifeq VERSION _OS2
+setup.exe: $(gendeps) setup.res
+    wlink name $* @$*.lnk
+    cp setup.exe virgin.exe
+    $(rc_os2) -p -x setup.res setup.exe
+
+csetup.exe: setup.exe csetup.res
+    cp virgin.exe csetup.exe
+    $(rc_os2) -p -x csetup.res csetup.exe
+
+jcsetup.exe: setup.exe jcsetup.res
+    cp virgin.exe jcsetup.exe
+    $(rc_os2) -p -x jcsetup.res jcsetup.exe
+
+f77setup.exe: setup.exe f77setup.res
+    cp virgin.exe f77setup.exe
+    $(rc_os2) -p -x f77setup.res f77setup.exe
+
+jfsetup.exe: setup.exe jfsetup.res
+    cp virgin.exe jfsetup.exe
+    $(rc_os2) -p -x jfsetup.res jfsetup.exe
+
+dbsetup.exe: setup.exe dbsetup.res
+    cp virgin.exe dbsetup.exe
+    $(rc_os2) -p -x dbsetup.res dbsetup.exe
+
+jcsetup.res : setup.rc
+    %write tmp.rc $#include "gui.rc"
+    copy/b tmp.rc+setup.rc
+    wcc -dJAPANESE_MESSAGES -zk0 -p -fo=setup.i -i"$(gui_dir)/h" tmp.rc
+    cp ../wcc.bmp ../splash.bmp
+    $(rc_os2) -r foros2pm.rc
+    cp foros2pm.res jcsetup.res
+
+jfsetup.res : setup.rc
+    %write tmp.rc $#include "gui.rc"
+    copy/b tmp.rc+setup.rc
+    wcc -dJAPANESE_MESSAGES -zk0 -p -fo=setup.i -i"$(gui_dir)/h" tmp.rc
+    cp ../f77.bmp ../splash.bmp
+    $(rc_os2) -r foros2pm.rc
+    cp foros2pm.res jfsetup.res
+
+csetup.res : setup.rc
+    %write tmp.rc $#include "gui.rc"
+    copy/b tmp.rc+setup.rc
+    wcc -p -fo=setup.i -i"$(gui_dir)/h" tmp.rc
+    cp ../wcc.bmp ../splash.bmp
+    $(rc_os2) -r foros2pm.rc
+    cp foros2pm.res csetup.res
+
+#csetup.res f77setup.res dbsetup.res setup.res : setup.rc
+f77setup.res dbsetup.res setup.res : setup.rc
+    %write tmp.rc $#include "gui.rc"
+    copy/b tmp.rc+setup.rc
+    wcc -p -fo=setup.i -i"$(gui_dir)/h" tmp.rc
+    cp ../wcc.bmp ../splash.bmp
+    $(rc_os2) -r foros2pm.rc
+    cp foros2pm.res csetup.res
+    cp ../f77.bmp ../splash.bmp
+    $(rc_os2) -r foros2pm.rc
+    cp foros2pm.res f77setup.res
+    cp ../wsql.bmp ../splash.bmp
+    $(rc_os2) -r foros2pm.rc
+    cp foros2pm.res dbsetup.res
+    cp ../generic.bmp ../splash.bmp
+    $(rc_os2) -r foros2pm.rc
+    cp foros2pm.res setup.res
+
+!else ifeq VERSION _WINNT
+setup.exe: $(GENDEPS) setup.res
+    wlink name $* @setup.lnk
+    cp setup.exe virgin.exe
+    $(rc) -bt=nt -q -k setup.res
+
+csetup.exe: setup.exe csetup.res
+    cp virgin.exe csetup.exe
+    $(rc) -bt=nt -q -k csetup.res csetup.exe
+
+f77setup.exe: setup.exe f77setup.res
+    cp virgin.exe f77setup.exe
+    $(rc) -bt=nt -q -k f77setup.res f77setup.exe
+
+dbsetup.exe: setup.exe dbsetup.res
+    cp virgin.exe dbsetup.exe
+    $(rc) -bt=nt -q -k dbsetup.res dbsetup.exe
+
+# Japanese version
+jdbsetup.exe: setup.exe jdbsetup.res
+    cp virgin.exe jdbsetup.exe
+    $(rc) -bt=nt -q -k jdbsetup.res jdbsetup.exe
+
+jcsetup.exe: setup.exe jcsetup.res
+    cp virgin.exe jcsetup.exe
+    $(rc) -bt=nt -q -k jcsetup.res jcsetup.exe
+
+jfsetup.exe: setup.exe jfsetup.res
+    cp virgin.exe jfsetup.exe
+    $(rc) -bt=nt -q -k jfsetup.res jfsetup.exe
+
+# SQL Server version
+sdbsetup.exe: setup.exe sdbsetup.res
+    cp virgin.exe sdbsetup.exe
+    $(rc) -bt=nt -q -k sdbsetup.res sdbsetup.exe
+
+csetup.res f77setup.res dbsetup.res jdbsetup.res sdbsetup.res setup.res jcsetup.res jfsetup.res: setup.rc ../h/setup.h setup.ico disk.ico
+    cp ../wcc.bmp ../splash.bmp
+    $(rc) -bt=nt -r -i"../h" -d_WINNT setup.rc
+    cp setup.res csetup.res
+    $(rc) -bt=nt -dJAPANESE_MESSAGES -zk0 -r -i"../h" -d_WINNT setup.rc
+    cp setup.res jcsetup.res
+    cp ../f77.bmp ../splash.bmp
+    $(rc) -bt=nt -r -i"../h" -d_WINNT setup.rc
+    cp setup.res f77setup.res
+    $(rc) -bt=nt -dJAPANESE_MESSAGES -zk0 -r -i"../h" -d_WINNT setup.rc
+    cp setup.res jfsetup.res
+    cp ../wsql.bmp ../splash.bmp
+    $(rc) -bt=nt -r -i"../h" -d_WINNT setup.rc
+    cp setup.res dbsetup.res
+    $(rc) -bt=nt -r -i"../h" -d_WINNT setup.rc
+    $(rc) -bt=nt -dJAPANESE_MESSAGES -zk0 -r -i"../h" -d_WINNT setup.rc
+    cp setup.res jdbsetup.res
+    cp ../sqlserv.bmp ../splash.bmp
+    $(rc) -bt=nt -r -i"../h" -d_WINNT setup.rc
+    cp setup.res sdbsetup.res
+    cp ../generic.bmp ../splash.bmp
+    $(rc) -bt=nt -r -i"../h" -d_WINNT setup.rc
+
+!else ifeq model f
+setup.exe: $(GENDEPS)
+    $(rc) -i="$(gui_dir)/h" -bt=windows -r -q ..\setupui.rc -fosetupui.res
+    wlink name $* @setup.lnk
+!ifndef ui_os2
+!   ifdef rational
+!      ifeq release 1
+          @ren setup.exe x.exe
+          @cp $(rsi_root)\bin\dos4g.exe d4g.exe
+          @$(rsi_root)\bin\expmod d4g.exe pmem=384 xmax=384
+          $(rsi_root)\bin\4gbind d4g.exe x.exe setup.exe -Q -V
+          @del d4g.exe
+          @del x.exe
+!      endif
+!   else
+       !$(pharlap)bind386 $(pharlap)run386b.exe setup
+       if exist setup.exp del setup.exp
+!   endif
 !endif
-
-libs = $(libs_$(host_os))
-
-gendeps = _guimsgs.gh $(objs) $(libs) setup.lnk
-
-# cflags
-#########
-extra_c_flags = -DINSTALL_PROGRAM -DGUISETUP -s
-!ifneq sys_windowed 1
-extra_c_flags += -d_UI
-!endif
-!ifdef patch
-extra_c_flags += -DPATCH
-!endif
-
-extra_c_flags_i86 = -fpc -zc
-extra_c_flags_386 = -fpc
-
-#extra_c_flags_common = -fi=setupmem.h
-#extra_c_flags_io = -fi=setupmem.h
-
-# lflags
-#########
-extra_l_flags = op map op symfile
-
-# rc flags
-###########
-extra_rc_flags_win = -30 -d_WIN
-extra_rc_flags_nt = -d_WINNT
-extra_rc_flags = -r $(extra_rc_flags_$(host_os))
-
-rcx_out_os2 = $(rc_os2) -p -x
-rcx_out_win = $(rc) -30 -k
-rcx_out_nt = $(rc) -k
-rc_out = $(rcx_out_$(host_os))
-
-!ifeq host_os os2
-!ifeq sys_windowed 1
-dep_res1 = ../h/setup.h setup.ico gui.rc _guimsgs.gh
-!else
-dep_res1 = ../h/setup.h gui.rc _guimsgs.gh
-!endif
-!else ifeq host_os dos
-dep_res1 = ../h/setup.h gui.rc _guimsgs.gh
-!else ifeq host_os linux
-dep_res1 = ../h/setup.h gui.rc _guimsgs.gh
-!else
-dep_res1 = ../h/setup.h setup.ico disk.ico gui.rc _guimsgs.gh
-!endif
-
-# where to find objects
-########################
-
-.c : ../c;$(build_root)/bdiff;$(build_root)/wpack/c;$(trmem_dir)
-.rc : res;$(gui_dir)/h
-.ico : res
-
-#inc_dirs_dos = $(guidir)/ui/dos$(host_cpu)
-#inc_dirs_linux = $(guidir)/ui/linux$(host_cpu)
-#inc_dirs_nt = $(guidir)/win/nt$(host_cpu)
-#inc_dirs_os2 = $(guidir)/win/os2$(host_cpu)
-#inc_dirs_win = $(guidir)/win/win$(host_cpu)
-
-inc_dirs = ../h;$(sdk_dir)/misc;$(build_root)/wpack/h;$(build_root)/wpack/o;$(uidir)/h;$(wpi_dir)/h;$(aui_dir)/h;$(gui_dir)/h;$(build_root)/bdiff/h;$(trmem_dir)
-
-.BEFORE
-    @set include=$(inc_path)
-
-
-# explicit rules
-##################
-
-
-!ifeq host_os win
-
-all : setup.exe csetup.exe f77setup.exe .SYMBOLIC
-
-#setup.exe: wdvirgin.exe setup.res
-setup.exe: virgin.exe setup.res
-    cp $[@ $^@ > $(nulldevice)
-    $(rc_out) $]@ $^@
-
-#wdvirgin.exe: virgin.exe
-#    $(linker) name $^@ op stub=virgin.exe @setup.lnk
-
-virgin.exe: $(gendeps) dosstub.exe
-    $(linker) name $^@ op stub=dosstub.exe @setup.lnk
-
-!else ifeq host_os os2
-
-!ifeq sys_windowed 1
-
-all : setup.exe csetup.exe f77setup.exe .SYMBOLIC
-
-setup.exe: virgin.exe setup.res
-    cp $[@ $^@ > $(nulldevice)
-    $(rc_out) $]@ $^@
-
-virgin.exe: $(gendeps)
-    $(linker) name $^@ @setup.lnk
-
-!else
-
-setup.exe: $(gendeps) setupui.res
-    $(linker) name $^@ @setup.lnk
     wstrip -q -a -r setup.exe . setupui.res
-
+!else
+setup.exe: $(GENDEPS)
+    $(rc) -i="$(gui_dir)/h" -bt=windows -r -q ..\setupui.rc -fosetupui.res
+    wlink name $* @setup.lnk
+    cp setup.exe virgin.exe
+    wstrip -q -a -r setup.exe . setupui.res
 !endif
 
-!else ifeq host_os nt
+CPATH = ../c;$(BDIFF_PATH);$(build_root)/wpack/c;$(PROJECT_CPATH)
 
-all : setup.exe csetup.exe f77setup.exe .SYMBOLIC
+.c : $(CPATH)
 
-setup.exe: virgin.exe setup.res
-    cp $[@ $^@ > $(nulldevice)
-    cp $[&.sym $^&.sym > $(nulldevice)
-    $(rc_out) $]@ $^@
+compile = $(COMP) $[@ $(COMMON_FLAGS) $(CFLAGS)
 
-virgin.exe: $(gendeps)
-    $(linker) name $^@ @setup.lnk
+.c.obj : # .AUTODEPEND this bugs me (jd)
+    $(compile)
 
-!else ifeq host_os dos
+.c.pp :
+    $(COMP) $[@ $(COMMON_FLAGS) $(CFLAGS) -pl -fo=.pp
 
-all : setup.exe .SYMBOLIC
-
-setup.exe: $(gendeps) setupui.res
-    $(linker) name $^@ @setup.lnk
-    wstrip -q -a -r setup.exe . setupui.res
-
-!else ifeq host_os linux
-
-all : setup.exe .SYMBOLIC
-
-setup.exe: $(gendeps) setupui.res
-    $(linker) name $^@ @setup.lnk
-    wstrip -q -a -r setup.exe . setupui.res
-
+!ifneq host_CPU axp
+lnk_dbg = debug all
 !else
-
-all : .SYMBOLIC
-    %null
-
+lnk_dbg = debug codeview
 !endif
 
 setup.lnk : makefile ../setup.mif
     %create setup.lnk
-    @%append setup.lnk $(lflags)
-    @%append setup.lnk option map, verbose
-!ifeq host_os win
+    @%append setup.lnk $(lnk_dbg) option symfile
+    @%append setup.lnk option quiet, map, verbose
+!ifeq release 0
+    @%append setup.lnk option undefsok
+!endif
+!ifeq VERSION _WIN
+    @%append setup.lnk system windows
     @%append setup.lnk option manyautodata, stack=20K, heap=10K
     # Segments must be NONDISCARDABLE so that Windows will not attempt
     # to load a segment after the user has swapped diskettes.
     @%append setup.lnk SEGMENT CLASS 'CODE' MOVEABLE PRELOAD
     @%append setup.lnk SEGMENT CLASS 'DATA' MOVEABLE PRELOAD
     @%append setup.lnk LIBRARY ddeml
-!else ifeq host_os os2
+    @%append setup.lnk lib $(guilib)
+!else ifeq VERSION _OS2
+    @%append setup.lnk system os2v2_pm
     @%append setup.lnk option stack=30K
-!else ifeq host_os nt
-    @%append setup.lnk option stack=30K, heap=20K
-! ifneq host_CPU axp
+    @%append setup.lnk libpath $(watcom_dir)/lib
+    @%append setup.lnk lib $(guilib)
+!else ifeq VERSION _WINNT
+! ifeq host_CPU axp
+    @%append setup.lnk system ntaxp_win
+! else
+    @%append setup.lnk system nt_win
     @%append setup.lnk lib shell32.lib
     @%append setup.lnk lib uuid.lib
 ! endif
-!else ifeq host_os dos
-    @%append setup.lnk option stack=30K
+    @%append setup.lnk lib $(guilib)
+    @%append setup.lnk option stack=30K, heap=20K
 !else
+!   ifeq model f
+!      ifdef ui_os2
+       @%append setup.lnk system os2v2
+!      else
+!      ifdef rational
+           @%append setup.lnk system dos4g
+!      else
+           @%append setup.lnk system pharlap
+           @%append setup.lnk runtime minreal=300k,maxreal=300k
+!      endif
+!      endif
+!   else
+       @%append setup.lnk system dos
+!   endif
+    @%append setup.lnk option stack=30K
+    @%append setup.lnk lib $(guilib)
+    @%append setup.lnk lib $(uilib)
+    @%append setup.lnk lib $(reslib)
+    echo $(guilib)
 !endif
 !ifdef PROJECT_LIBS
     @%append setup.lnk lib $(PROJECT_LIBS)
 !endif
-    @for %i in ( $(objs) ) do @%append setup.lnk file %i
-    @for %i in ( $(libs) ) do @%append setup.lnk lib %i
+    @for %i in ($(objs)) do @%append setup.lnk file %i
+
+eraseall.obj : ../compile.gbl
+    if exist *.?bj erase *.?bj
+    wtouch eraseall.obj
 
 nonibm.obj : $(new_clib)/startup/c/nonibm.c
+    $(compile)
 
-setupui.res : ../setupui.rc $(dep_res1)
-    $(rc_aui) -i="$(gui_dir)/h;$(inc_dirs_sys_win)" $[@ -fo=setupui.res
-
-csetup.res : setup.rc $(dep_res1) ../wcc.bmp
-    cp ../wcc.bmp ../splash.bmp > $(nulldevice)
-!ifeq host_os os2
-    $(bld_cc) -p -fo=$[&.i -i"$(gui_dir)/h" $[@
-    $(rc_os2) -r foros2pm.rc
-    cp foros2pm.res $^@ > $(nulldevice)
-!else
-    $(rc) $(rc_flags) $(extra_rc_flags) -i"../h" $[@ -fo=$^@
-!endif
-
-jcsetup.res : setup.rc $(dep_res1) ../wcc.bmp
-    cp ../wcc.bmp ../splash.bmp > $(nulldevice)
-!ifeq host_os os2
-    $(bld_cc) -p -dJAPANESE_MESSAGES -zk0 -fo=$[&.i -i"$(gui_dir)/h" $[@
-    $(rc_os2) -r foros2pm.rc
-    cp foros2pm.res $^@ > $(nulldevice)
-!else
-    $(rc) $(rc_flags) $(extra_rc_flags) -dJAPANESE_MESSAGES -zk0 -i"../h" $[@ -fo=$^@
-!endif
-
-f77setup.res : setup.rc $(dep_res1) ../f77.bmp
-    cp ../f77.bmp ../splash.bmp > $(nulldevice)
-!ifeq host_os os2
-    $(bld_cc) -p -fo=$[&.i -i"$(gui_dir)/h" $[@
-    $(rc_os2) -r foros2pm.rc
-    cp foros2pm.res $^@ > $(nulldevice)
-!else
-    $(rc) $(rc_flags) $(extra_rc_flags) -i"../h" $[@ -fo=$^@
-!endif
-
-jfsetup.res : setup.rc $(dep_res1) ../f77.bmp
-    cp ../f77.bmp ../splash.bmp > $(nulldevice)
-!ifeq host_os os2
-    $(bld_cc) -p -dJAPANESE_MESSAGES -zk0 -fo=$[&.i -i"$(gui_dir)/h" $[@
-    $(rc_os2) -r foros2pm.rc
-    cp foros2pm.res $^@ > $(nulldevice)
-!else
-    $(rc) $(rc_flags) $(extra_rc_flags) -dJAPANESE_MESSAGES -zk0 -i"../h" $[@ -fo=$^@
-!endif
-
-dbsetup.res : setup.rc $(dep_res1) ../wsql.bmp
-    cp ../wsql.bmp ../splash.bmp > $(nulldevice)
-!ifeq host_os os2
-    $(bld_cc) -p -fo=$[&.i -i"$(gui_dir)/h" $[@
-    $(rc_os2) -r foros2pm.rc
-    cp foros2pm.res $^@ > $(nulldevice)
-!else
-    $(rc) $(rc_flags) $(extra_rc_flags) -i"../h" $[@ -fo=$^@
-!endif
-
-jdbsetup.res : setup.rc $(dep_res1) ../wsql.bmp
-    cp ../wsql.bmp ../splash.bmp > $(nulldevice)
-!ifeq host_os os2
-    $(bld_cc) -p -dJAPANESE_MESSAGES -zk0 -fo=$[&.i -i"$(gui_dir)/h" $[@
-    $(rc_os2) -r foros2pm.rc
-    cp foros2pm.res $^@ > $(nulldevice)
-!else
-    $(rc) $(rc_flags) $(extra_rc_flags) -dJAPANESE_MESSAGES -zk0 -i"../h" $[@ -fo=$^@
-!endif
-
-sdbsetup.res : setup.rc $(dep_res1) ../sqlserv.bmp
-    cp ../sqlserv.bmp ../splash.bmp > $(nulldevice)
-!ifeq host_os os2
-    $(bld_cc) -p -fo=$[&.i -i"$(gui_dir)/h" $[@
-    $(rc_os2) -r foros2pm.rc
-    cp foros2pm.res $^@ > $(nulldevice)
-!else
-    $(rc) $(rc_flags) $(extra_rc_flags) -i"../h" $[@ -fo=$^@
-!endif
-
-setup.res : setup.rc $(dep_res1) ../generic.bmp
-    cp ../generic.bmp ../splash.bmp > $(nulldevice)
-!ifeq host_os os2
-    $(bld_cc) -p -fo=$[&.i -i"$(gui_dir)/h" $[@
-    $(rc_os2) -r foros2pm.rc
-    cp foros2pm.res $^@ > $(nulldevice)
-!else
-    $(rc) $(rc_flags) $(extra_rc_flags) -i"../h" $[@ -fo=$^@
-!endif
-
-dosstub.exe : ../stub/dosstub.c
-    wcl -zq -l=dos -os -d0 -bt=dos ..\stub\dosstub
-
-csetup.exe: virgin.exe csetup.res
-    cp $[@ $^@ > $(nulldevice)
-    $(rc_out) $]@ $^@
-
-jcsetup.exe: virgin.exe jcsetup.res
-    cp $[@ $^@ > $(nulldevice)
-    $(rc_out) $]@ $^@
-
-f77setup.exe: virgin.exe f77setup.res
-    cp $[@ $^@ > $(nulldevice)
-    $(rc_out) $]@ $^@
-
-jfsetup.exe: virgin.exe jfsetup.res
-    cp $[@ $^@ > $(nulldevice)
-    $(rc_out) $]@ $^@
-
-dbsetup.exe: virgin.exe dbsetup.res
-    cp $[@ $^@ > $(nulldevice)
-    $(rc_out) $]@ $^@
-
-wdbsetup.exe : wdvirgin.exe dbsetup.res
-    cp $[@ $^@ > $(nulldevice)
-    $(rc_out) $]@ $^@
-    wstrip -q -a -r $^@ . setupui.res
-
-jdbsetup.exe : virgin.exe jdbsetup.res
-    cp $[@ $^@ > $(nulldevice)
-    $(rc_out) $]@ $^@
-
-sdbsetup.exe: virgin.exe sdbsetup.res
-    cp $[@ $^@ > $(nulldevice)
-    $(rc_out) $]@ $^@
-
-./guimkstr.exe: $(gui_dir)/c/mkstr.c $(gui_dir)/h/gui.msg
-    $(bld_cl) -i"$(gui_dir)/h" $(wcl_util_opts) $[@
-
-_guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
-    $[@ $^@ $(gui_msg_id_modifier)
-
-clean : .SYMBOLIC
-    rm -f *.obj *.exe *.err *.lnk *.res *.gh *.i *.map *.sym

@@ -53,15 +53,15 @@ char chars[] = {
 #define SIZE sizeof( chars ) / sizeof( char )
 .exmp break
 void main()
-{
+  {
     int   i;
 .exmp break
     for( i = 0; i < SIZE; i++ ) {
-        printf( "Char %c is %sa Control character\n",
-                chars[i],
-                ( iscntrl( chars[i] ) ) ? "" : "not " );
+      printf( "Char %c is %sa Control character\n",
+            chars[i],
+            ( iscntrl( chars[i] ) ) ? "" : "not " );
     }
-}
+  }
 .exmp output
 Char A is not a Control character
 Char     is a Control character

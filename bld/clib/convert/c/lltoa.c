@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Long long integer to ASCII conversion routines.
+* Description:  Long long integer to ascii routines
 *
 ****************************************************************************/
 
@@ -35,10 +35,10 @@
 #include "clibi64.h"
 #include <stdlib.h>
 
-extern const char __based(__segname("_CONST")) __Alphabet[];
+extern const char __based(__segname("_CODE")) __Alphabet[];
 
 #if defined(__386__) || defined(M_I86)
-unsigned long long __ulldiv( unsigned long long, unsigned _WCNEAR *);
+unsigned __int64 __ulldiv( unsigned __int64, unsigned _WCNEAR *);
 #if defined(__386__)
     #pragma aux __ulldiv = \
         "xor ecx,ecx"     /* set high word of quotient to 0 */ \
@@ -166,10 +166,10 @@ unsigned long long __ulldiv( unsigned long long, unsigned _WCNEAR *);
 #endif
 #endif
 
-_WCRTLINK CHAR_TYPE *__F_NAME(ulltoa,_ulltow)(
-        unsigned long long int value,
+_WCRTLINK CHAR_TYPE *__F_NAME(__clib_ulltoa,__clib_wulltoa)(
+        unsigned __int64 value,
         CHAR_TYPE *buffer,
-        int radix )
+        unsigned radix )
     {
         CHAR_TYPE *p = buffer;
         char *q;
@@ -194,8 +194,8 @@ _WCRTLINK CHAR_TYPE *__F_NAME(ulltoa,_ulltow)(
     }
 
 
-_WCRTLINK CHAR_TYPE *__F_NAME(lltoa,_lltow)(
-        long long int value,
+_WCRTLINK CHAR_TYPE *__F_NAME(__clib_lltoa,__clib_wlltoa)(
+        __int64 value,
         CHAR_TYPE *buffer,
         int radix )
     {
@@ -207,6 +207,6 @@ _WCRTLINK CHAR_TYPE *__F_NAME(lltoa,_lltow)(
                 value = -value;
             }
         }
-        __F_NAME(ulltoa,_ulltow)( value, p, radix );
+        __F_NAME(__clib_ulltoa,__clib_wulltoa)( value, p, radix );
         return( buffer );
     }

@@ -31,14 +31,9 @@
 
 #include "cvars.h"
 
+TYPEPTR StructDecl(int,int);
+
 extern  unsigned SymTypedef;
-
-extern FIELDPTR FieldCreate( char *name );
-
-local TYPEPTR StructDecl(int,int);
-//local TYPEPTR ComplexDecl(int,int);
-static void SetPlainCharType( int char_type );
-local void CheckBitfieldType( TYPEPTR typ );
 
 #if _CPU == 386
 #define _CHECK_SIZE( s )
@@ -49,7 +44,6 @@ local void CheckBitfieldType( TYPEPTR typ );
         }
 #endif
 
-/* matches enum DataType in ctypes.h */
 static  char    CTypeSizes[] = {
         TARGET_CHAR,    /* CHAR         */
         TARGET_CHAR,    /* UCHAR        */
@@ -74,24 +68,13 @@ static  char    CTypeSizes[] = {
         0,              /* TYPEDEF      */
         0,              /* UFIELD       */
         0,              /* DOT_DOT_DOT  */
-        TARGET_CHAR,        /* PLAIN_CHAR            */
-        TARGET_WCHAR,       /* WCHAR                 */
-        TARGET_LDOUBLE,     /* LONG DOUBLE           */
-        TARGET_FCOMPLEX,    /* FLOAT COMPLEX         */
-        TARGET_DCOMPLEX,    /* DOUBLE COMPLEX        */
-        TARGET_LDCOMPLEX,   /* LONG DOUBLE COMPLEX   */
-        TARGET_FIMAGINARY,  /* FLOAT IMAGINARY       */
-        TARGET_DIMAGINARY,  /* DOUBLE IMAGINARY      */
-        TARGET_LDIMAGINARY, /* LONG DOUBLE IMAGINARY */
-        TARGET_BOOL,    /* BOOL        */
-        0,              /* UNUSED      */
+        TARGET_CHAR     /* PLAIN_CHAR   */
     };
 
-TYPEPTR CTypeHash[TYPE_LAST_ENTRY];
-TYPEPTR PtrTypeHash[TYPE_LAST_ENTRY];
+TYPEPTR CTypeHash[TYPE_PLAIN_CHAR+1];
+TYPEPTR PtrTypeHash[TYPE_PLAIN_CHAR+1];
 
 TAGPTR  TagHash[TAG_HASH_SIZE + 1];
-FIELDPTR FieldHash[FIELD_HASH_SIZE];
 
 enum {
         M_CHAR          = 0x0001,
@@ -104,9 +87,6 @@ enum {
         M_DOUBLE        = 0x0080,
         M_LONG_LONG     = 0x0100,
         M_VOID          = 0x0200,
-        M_COMPLEX       = 0x0400,
-        M_IMAGINARY     = 0x0800,
-        M_BOOL          = 0x1000,
         M___LAST        = 0
  };
 
@@ -187,15 +167,12 @@ void InitTypeHashTables()
     for( index = 0; index <= MAX_PARM_LIST_HASH_SIZE; ++index ) {
         FuncTypeHead[ index ] = NULL;
     }
-    for( base_type = TYPE_CHAR; base_type < TYPE_LAST_ENTRY; ++base_type ) {
+    for( base_type = TYPE_CHAR; base_type <= TYPE_PLAIN_CHAR; ++base_type ) {
         CTypeHash[ base_type ] = NULL;
         PtrTypeHash[ base_type ] = NULL;
     }
     for( index = 0; index <= TAG_HASH_SIZE; ++index ) {
         TagHash[ index ] = NULL;
-    }
-    for( index = 0; index < FIELD_HASH_SIZE; ++index ) {
-        FieldHash[ index ] = NULL;
     }
 }
 
@@ -209,16 +186,9 @@ void CTypeInit()
     FieldCount = 0;
     EnumCount = 0;
     InitTypeHashTables();
-    for( base_type = TYPE_CHAR; base_type < TYPE_LAST_ENTRY; ++base_type ) {
+    for( base_type = TYPE_CHAR; base_type <= TYPE_DOT_DOT_DOT; ++base_type ) {
         CTypeCounts[ base_type ] = 0;
         size = CTypeSizes[ base_type ];
-        /*
-        if ( base_type == TYPE_FCOMPLEX || base_type == TYPE_DCOMPLEX
-                            || base_type == TYPE_LDCOMPLEX ) {
-            BaseTypes[ base_type ] = ComplexDecl( TYPE_STRUCT, FALSE );
-            BaseTypes[ base_type ]->decl_type = base_type;
-        } else
-        */
         if( size != 0  ||  base_type == TYPE_VOID  ||
                             base_type == TYPE_DOT_DOT_DOT ) {
             BaseTypes[ base_type ] = TypeNode( base_type, NULL );
@@ -261,12 +231,12 @@ void WalkTypeList( void (*func)(TYPEPTR) )
     TYPEPTR     typ;
     int         base_type;
 
-    for( base_type = TYPE_CHAR; base_type < TYPE_LAST_ENTRY; ++base_type ) {
+    for( base_type = TYPE_CHAR; base_type <= TYPE_PLAIN_CHAR; ++base_type ) {
         for( typ = CTypeHash[ base_type ]; typ; typ = typ->next_type ) {
             func( typ );
         }
     }
-    for( base_type = TYPE_CHAR; base_type < TYPE_LAST_ENTRY; ++base_type ) {
+    for( base_type = TYPE_CHAR; base_type <= TYPE_PLAIN_CHAR; ++base_type ) {
         for( typ = PtrTypeHash[ base_type ]; typ; typ = typ->next_type ) {
             func( typ );
         }
@@ -301,7 +271,6 @@ TYPEPTR DupType( TYPEPTR typ, type_modifiers flags, int force_duplicate )
     return( newtype );
 }
 #endif
-
 static void SetPlainCharType( int char_type )
 {
     TYPEPTR     typ;
@@ -338,11 +307,6 @@ int TypeQualifier()
             NextToken();
             continue;
         }
-        if( CurToken == T_RESTRICT ) {
-            bit = FLAG_RESTRICT;
-            NextToken();
-            continue;
-        }
         if( CurToken == T___UNALIGNED ) {
             bit = FLAG_UNALIGNED;
             NextToken();
@@ -363,7 +327,7 @@ local TYPEPTR GetScalarType( char *plain_int, int bmask )
     if( bmask & M_LONG_LONG ) {
         bmask &= ~M_INT;
     }
-    if( bmask & (M_VOID | M_FLOAT | M_DOUBLE | M_LONG_LONG | M_COMPLEX | M_IMAGINARY) ) {
+    if( bmask & (M_VOID | M_FLOAT | M_DOUBLE | M_LONG_LONG ) ) {
         if( bmask == M_VOID ) {
             data_type = TYPE_VOID;
         } else if( bmask == M_LONG_LONG ) {
@@ -377,36 +341,10 @@ local TYPEPTR GetScalarType( char *plain_int, int bmask )
         } else if( bmask == M_DOUBLE ) {
             data_type = TYPE_DOUBLE;
         } else if( bmask == (M_LONG | M_DOUBLE) ) {
-            if( CompFlags.use_long_double )
-                data_type = TYPE_LONG_DOUBLE;
-            else
-                data_type = TYPE_DOUBLE;
-
-        } else if( bmask == (M_COMPLEX | M_FLOAT) ) {
-            data_type = TYPE_FCOMPLEX;
-        } else if( bmask == (M_COMPLEX | M_DOUBLE) ) {
-            data_type = TYPE_DCOMPLEX;
-        } else if( bmask == (M_COMPLEX | M_LONG | M_DOUBLE) ) {
-            if( CompFlags.use_long_double )
-                data_type = TYPE_LDCOMPLEX;
-            else
-                data_type = TYPE_DCOMPLEX;
-
-        } else if( bmask == (M_IMAGINARY | M_FLOAT) ) {
-            data_type = TYPE_FIMAGINARY;
-        } else if( bmask == (M_IMAGINARY | M_DOUBLE) ) {
-            data_type = TYPE_DIMAGINARY;
-        } else if( bmask == (M_IMAGINARY | M_LONG | M_DOUBLE) ) {
-            if( CompFlags.use_long_double )
-                data_type = TYPE_LDIMAGINARY;
-            else
-                data_type = TYPE_DIMAGINARY;
-
+            data_type = TYPE_LONG_DOUBLE;
         } else {
             data_type = -1;
         }
-    } else if( bmask == M_BOOL ) {
-        data_type = TYPE_BOOL;
     } else if( bmask == 0 ) {
         data_type = TYPE_INT;
         *plain_int = 1;
@@ -474,9 +412,6 @@ static void DeclSpecifiers( char    *plain_int,
         case T_FLOAT:     bit = M_FLOAT;        break;
         case T_DOUBLE:    bit = M_DOUBLE;       break;
         case T_VOID:      bit = M_VOID;         break;
-        case T__COMPLEX:  bit = M_COMPLEX;      break;
-        case T__IMAGINARY:bit = M_IMAGINARY;    break;
-        case T__BOOL:     bit = M_BOOL;         break;
 
         case T_CONST:
             if( flags & FLAG_CONST ) CErr1( ERR_REPEATED_MODIFIER );
@@ -486,16 +421,12 @@ static void DeclSpecifiers( char    *plain_int,
             if( flags & FLAG_VOLATILE ) CErr1( ERR_REPEATED_MODIFIER );
             flags |= FLAG_VOLATILE;
             break;
-        case T_RESTRICT:
-            if( flags & FLAG_RESTRICT ) CErr1( ERR_REPEATED_MODIFIER );
-            flags |= FLAG_RESTRICT;
-            break;
         case T___UNALIGNED:
             if( flags & FLAG_UNALIGNED )CErr1( ERR_REPEATED_MODIFIER );
             flags |= FLAG_UNALIGNED;
             break;
-        case T_INLINE:
         case T___INLINE:
+            if( flags & FLAG_INLINE )CErr1( ERR_REPEATED_MODIFIER );
             flags |= FLAG_INLINE;
             break;
         case T__PACKED:
@@ -790,31 +721,22 @@ local FIELDPTR NewField( FIELDPTR new_field, TYPEPTR decl )
         }
     }
     tag = decl->u.tag;
-    new_field->hash = HashValue;
-    if( new_field->name[0] != '\0' ) {  /* only check non-empty names */
-        for( field = FieldHash[HashValue]; field;
-              field = field->next_field_same_hash ) {
-            /* fields were added at the front of the hash linked list --
-               may as well stop if the level isn't the same anymore */
-            if( field->level != new_field->level )
-                break;
+    for( field = tag->u.field_list; field; field = field->next_field ) {
+        if( new_field->name[0] != '\0' ) {  /* only check non-empty names */
             if( strcmp( field->name, new_field->name ) == 0 ) {
                 CErr2p( ERR_DUPLICATE_FIELD_NAME, field->name );
             }
         }
-        new_field->next_field_same_hash = FieldHash[HashValue];
-        FieldHash[HashValue] = new_field;
+        prev_field = field;
     }
     if( tag->u.field_list == NULL ) {
         tag->u.field_list = new_field;
     } else {
-        prev_field = tag->last_field;
         prev_field->next_field = new_field;
         if( SizeOfArg( prev_field->field_type ) == 0 ) { /* 05-jun-92 */
             CErr( ERR_INCOMPLETE_TYPE, (SYM_NAMEPTR)(prev_field->name) );
         }
     }
-    tag->last_field = new_field;
     return( new_field );
 }
 
@@ -931,37 +853,10 @@ local int UnQualifiedType( TYPEPTR typ )                        /* 21-mar-91 */
     case TYPE_LONG64:
     case TYPE_ULONG64:
         return( TYPE_LONG64 );
-    default:
-        break;
     }
     return( 0 );
 }
 
-/* clear the hash table of all fields that were just defined
-   in the struct with tag tag */
-local void ClearFieldHashTable( TAGPTR tag )
-{
-    FIELDPTR field;
-    FIELDPTR hash_field;
-    FIELDPTR prev_field;
-
-    for( field = tag->u.field_list; field; field = field->next_field ) {
-        prev_field = NULL;
-        hash_field = FieldHash[field->hash];
-        if( hash_field == field ) {
-            /* first entry: easy kick out */
-            FieldHash[field->hash] = field->next_field_same_hash;
-        } else while ( hash_field ) {
-            /* search for candidate to kick */
-            prev_field = hash_field;
-            hash_field = hash_field->next_field_same_hash;
-            if( hash_field == field ) {
-                 hash_field = hash_field->next_field_same_hash;
-                 prev_field->next_field_same_hash = hash_field;
-            }
-        }
-    }
-}
 
 local unsigned long GetFields( TYPEPTR decl )
 {
@@ -978,9 +873,7 @@ local unsigned long GetFields( TYPEPTR decl )
     char                unqualified_type, prev_unqualified_type;
     char                plain_int;
     decl_info           info;
-    static int          struct_level = 0;
 
-    struct_level++;
     prev_unqualified_type = TYPE_VOID;   /* so it doesn't match 1st time */
     worst_alignment = 1;                                /* 24-jul-91 */
     bits_available = 1;
@@ -1017,9 +910,7 @@ local unsigned long GetFields( TYPEPTR decl )
         for( ;; ) {
             field = NULL;
             if( CurToken != T_COLON ) {
-                field = FieldDecl( typ,info.mod, state );
-                field->level = struct_level;
-                field = NewField( field, decl );
+                field = NewField( FieldDecl( typ,info.mod, state ), decl );
             }
             if( CurToken == T_COLON ) {
                 if( field != NULL ){
@@ -1102,13 +993,11 @@ local unsigned long GetFields( TYPEPTR decl )
         next_offset += bits_total >> 3;
         if( next_offset > struct_size )  struct_size = next_offset;
     }
-    ClearFieldHashTable( decl->u.tag );
     decl->u.tag->alignment = worst_alignment;   /* 25-jul-91 */
     struct_size += worst_alignment - 1;         /* 01-may-92 */
     struct_size &= - (long)worst_alignment;
     _CHECK_SIZE( struct_size );
     NextToken();
-    struct_level--;
     return( struct_size );
 }
 
@@ -1174,108 +1063,6 @@ local TYPEPTR StructDecl( int decl_typ, int packed )
     return( typ );
 }
 
-/*
-Next three functions descripe a struct that looks like
-struct {
-    double __ow_real;
-    double _Imaginary __ow_imaginary;
-}
-*/
-
-/*
-local void GetComplexFieldTypeSpecifier( decl_info *info, DATA_TYPE data_type )
-{
-    info->stg = SC_NULL;      // indicate don't want any storage class specifiers
-    info->mod = FLAG_NONE;
-    info->decl = DECLSPEC_NONE;
-    info->naked = FALSE;
-    info->seg = 0;
-    info->typ = GetType( data_type );
-}
-
-
-local unsigned long GetComplexFields( TYPEPTR decl )
-{
-    unsigned long       start = 0;
-    TYPEPTR             typ;
-    decl_state          state;
-    FIELDPTR            field;
-    unsigned long       struct_size;
-    unsigned long       next_offset;
-    unsigned int        worst_alignment;
-    decl_info           info;
-
-    worst_alignment = 1;
-
-    struct_size = start;
-    next_offset = start;
-
-
-    GetComplexFieldTypeSpecifier( &info, TYPE_DOUBLE );
-
-    field = FieldCreate( "__ow_real" );
-    field->attrib = 0;
-    field->field_type = info.typ;
-
-    field = NewField( field, decl );
-
-    typ = info.typ;
-    state = DECL_STATE_NONE;
-
-    next_offset = FieldAlign( next_offset, field, &worst_alignment );
-    next_offset += SizeOfArg( field->field_type );
-    if( next_offset > struct_size )  struct_size = next_offset;
-
-
-    GetComplexFieldTypeSpecifier( &info, TYPE_DIMAGINARY );
-
-    field = FieldCreate( "__ow_imaginary" );
-    field->attrib = 0;
-    field->field_type = info.typ;
-    field = NewField( field, decl );
-
-    typ = info.typ;
-    state = DECL_STATE_NONE;
-
-    next_offset = FieldAlign( next_offset, field, &worst_alignment );
-    next_offset += SizeOfArg( field->field_type );
-    if( next_offset > struct_size )  struct_size = next_offset;
-
-
-    decl->u.tag->alignment = worst_alignment;
-    struct_size += worst_alignment - 1;
-    struct_size &= - (long)worst_alignment;
-    _CHECK_SIZE( struct_size );
-    return( struct_size );
-}
-
-
-local TYPEPTR ComplexDecl( int decl_typ, int packed )
-{
-    TYPEPTR     typ;
-    TAGPTR      tag;
-    int         saved_packamount;
-    TAGPTR      TagLookup();
-
-    saved_packamount = PackAmount;
-    if( packed )  PackAmount = 1;
-
-    tag = NullTag();
-
-    typ = tag->sym_type;
-    if( typ == NULL ) {
-        typ = TypeNode( decl_typ, NULL );
-        tag->sym_type = typ;
-    }
-
-    typ->u.tag = tag;
-    tag->u.field_list = NULL;
-    tag->size = GetComplexFields( typ );
-    PackAmount = saved_packamount;
-
-    return( typ );
-}
-*/
 
 local void CheckBitfieldType( TYPEPTR typ )
 {
@@ -1301,9 +1088,6 @@ local void CheckBitfieldType( TYPEPTR typ )
         if( CompFlags.extensions_enabled ) {
             return;
         }
-        break;
-    default:
-        break;
     }
     CErr1( ERR_INVALID_TYPE_FOR_FIELD );
 }
@@ -1351,7 +1135,7 @@ void FreeTags()
     int         hash;
 
     for( hash = 0; hash <= TAG_HASH_SIZE; ++hash ) {
-        for( ; (tag = TagHash[ hash ]); ) {
+        for( ; tag = TagHash[ hash ]; ) {
             if( tag->level < SymLevel ) break;
             TagHash[ hash ] = tag->next_tag;
             tag->next_tag = DeadTags;
@@ -1521,14 +1305,6 @@ unsigned long TypeSizeEx( TYPEPTR typ , unsigned long * pFieldWidth)
     case TYPE_FUNCTION:
     case TYPE_DOT_DOT_DOT:
     case TYPE_PLAIN_CHAR:
-    case TYPE_LONG_DOUBLE:
-    case TYPE_FCOMPLEX:
-    case TYPE_DCOMPLEX:
-    case TYPE_LDCOMPLEX:
-    case TYPE_FIMAGINARY:
-    case TYPE_DIMAGINARY:
-    case TYPE_LDIMAGINARY:
-    case TYPE_BOOL:
         size = CTypeSizes[ typ->decl_type ];
         break;
     case TYPE_VOID:

@@ -24,38 +24,26 @@
 *
 *  ========================================================================
 *
-* Description:  Cover routines to access the trmem memory tracker
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
+
 #include "guiwind.h"
-#include "trmem.h"
 
-extern _trmem_hdl   GUIMemHandle;
-
-void PMfree( void *ptr )
+void PMfree( void * ptr )
 {
-#ifdef TRMEM
-    _trmem_free( ptr, _trmem_guess_who(), GUIMemHandle );
-#else
-    free( ptr );
-#endif
+    GUIFree( ptr );
 }
 
-void *PMmalloc( size_t size )
+void * PMmalloc( size_t size )
 {
-#ifdef TRMEM
-    return( _trmem_alloc( size, _trmem_guess_who(), GUIMemHandle ) );
-#else
-    return( malloc( size ) );
-#endif
+    return( GUIAlloc( size ) );
 }
 
-void *PMrealloc( void *ptr, size_t size )
+void * PMrealloc( void * ptr, size_t size )
 {
-#ifdef TRMEM
-    return( _trmem_realloc( ptr, size, _trmem_guess_who(), GUIMemHandle ) );
-#else
-    return( realloc( ptr, size ) );
-#endif
+    return( GUIRealloc( ptr, size ) );
 }
+

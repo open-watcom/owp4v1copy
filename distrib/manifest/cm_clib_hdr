@@ -1,6 +1,7 @@
 # Manifest file for C runtime library header files (C/C++/Fortran)
 
 h\assert.h
+h\bios98.h
 h\bios.h
 h\_comdef.h
 h\common.cnv
@@ -15,8 +16,8 @@ h\env.h
 h\errno.h
 h\excpt.h
 h\fcntl.h
-h\fenv.h
 h\float.h
+h\graph98.h
 h\graph.h
 h\i86.h
 h\io.h

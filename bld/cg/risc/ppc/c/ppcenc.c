@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  PPC instruction encoding.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -407,7 +408,6 @@ static  void    doLoadStore( instruction *ins, bool load ) {
         mem = ins->result;
         op = storeOpcodes[ ins->type_class ];
     }
-    assert( op != 0 );
     assert( reg->n.class == N_REGISTER );
     getMemEncoding( mem, &index, &offset );
     GenMEMINS( op, RegTrans( reg->r.reg ), index, offset );
@@ -924,24 +924,3 @@ extern  void    GenCondJump( instruction *cond ) {
         GenJumpLabel( dest_false );
     }
 }
-
-extern  void EmitInsReloc( ppc_ins ins, pointer sym, owl_reloc_type type ) {
-/**************************************************************************/
-
-#if 0
-
-    // copy & paste from AXP cg
-    oc_riscins          oc;
-
-    oc.op.objlen = 4;
-    oc.op.class = OC_RCODE;
-    oc.op.reclen = sizeof( oc_riscins );
-    oc.opcode = ins;
-    oc.sym = sym;
-    oc.reloc = type;
-    InputOC( (any_oc *)&oc );
-#else
-    _Zoiks( ZOIKS_091 );
-#endif
-}
-

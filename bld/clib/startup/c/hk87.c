@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Intel x87 emulator hook for DOS.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -37,16 +38,20 @@
 #else
   #pragma pack(__push,8);
 #endif
-
-// We don't have DOS/16M headers
 #if 0
 #include "dos16.h"
 #endif
 #pragma pack(__pop);
 
+#if __WATCOMC__ < 1100
+ #define _FAR_INTERRUPT __far
+#else
+ #define _FAR_INTERRUPT
+#endif
+
 extern void __chk8087();
 extern void __interrupt __far __int7();
-static void __interrupt (*old_int7)();
+static void __interrupt (_FAR_INTERRUPT *old_int7)();
 extern int __no87;
 extern unsigned char __8087;
 #pragma aux __int7 "*";
@@ -91,7 +96,7 @@ int D16Emulate( int enable_flag )
             _d16info.MSW_bits &= ~EMULATING_87;
         }
 #endif
-        return( 1 );
+        return(1);
     }
 
 

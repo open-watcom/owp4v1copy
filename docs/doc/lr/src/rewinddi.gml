@@ -68,7 +68,7 @@ creates a new file, and then relists the directory.
 #include <&dirhdr>
 .exmp break
 void main()
-{
+  {
     DIR *dirp;
     struct dirent *direntp;
     int &fd;
@@ -80,35 +80,33 @@ void main()
     dirp = opendir( "\\watcom\\h\\*.*" );
 .do end
     if( dirp != NULL ) {
-        printf( "Old directory listing\n" );
-        for(;;) {
-            direntp = readdir( dirp );
-            if( direntp == NULL )
-                break;
-            printf( "%s\n", direntp->d_name );
-        }
+      printf( "Old directory listing\n" );
+      for(;;) {
+          direntp = readdir( dirp );
+          if( direntp == NULL ) break;
+          printf( "%s\n", direntp->d_name );
+      }
 .exmp break
 .if '&machsys' eq 'QNX' .do begin
-        &fd = creat( "/home/fred/file.new",
-                     S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
+      &fd = creat( "/home/fred/file.new",
+                  S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
 .do end
 .el .do begin
-        &fd = creat( "\\watcom\\h\\file.new",
-                     S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
+      &fd = creat( "\\watcom\\h\\file.new",
+                  S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
 .do end
-        close( &fd );
+      close( &fd );
 .exmp break
-        rewinddir( dirp );
-        printf( "New directory listing\n" );
-        for(;;) {
-            direntp = readdir( dirp );
-            if( direntp == NULL )
-                break;
-            printf( "%s\n", direntp->d_name );
-        }
-        closedir( dirp );
+      rewinddir( dirp );
+      printf( "New directory listing\n" );
+      for(;;) {
+        direntp = readdir( dirp );
+        if( direntp == NULL ) break;
+        printf( "%s\n", direntp->d_name );
+      }
+      closedir( dirp );
     }
-}
+  }
 .blkcode end
 .im dblslash
 .exmp end

@@ -160,12 +160,24 @@ Many compilers will use
 .shade begin
 From the following table,
 the
-&wc286. and
-&wc386. compilers will choose the smallest
+&wc286. compiler will choose the smallest
 type that has sufficient range to represent all of the
 constants of a particular enumeration:
 ..sk 1
-..im enumtab
+..im enum286
+.pc
+A command-line option may be used to force all enumerations to
+.kw int
+..ct ..li .
+.shade end
+.shade begin
+From the following table,
+the
+&wc386. compiler will choose the smallest
+type that has sufficient range to represent all of the
+constants of a particular enumeration:
+..sk 1
+..im enum386
 .pc
 A command-line option may be used to force all enumerations to
 .kw int

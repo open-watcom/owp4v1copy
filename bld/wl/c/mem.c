@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <malloc.h>
 #include <string.h>
-#ifdef TRMEM
+#ifdef TRACKER
 #include "trmem.h"
 #endif
 #include "linkstd.h"
@@ -54,7 +54,7 @@
     static  int     Chunks;
 #endif
 
-#ifdef TRMEM
+#ifdef TRACKER
 #include "fileio.h"
 
 void    *TrHdl;
@@ -62,7 +62,7 @@ void    *TrHdl;
 
 static bool         CacheRelease( void );
 
-#ifdef TRMEM
+#ifdef TRACKER
 
 void PrintLine( int * bogus, const char *buff, unsigned len )
 {
@@ -87,7 +87,7 @@ extern void LnkMemInit( void )
 #ifdef _INT_DEBUG
     Chunks = 0;
 #endif
-#ifdef TRMEM
+#ifdef TRACKER
     TrHdl = _trmem_open( malloc, free, realloc, _expand,
             NULL, PrintLine,
             _TRMEM_ALLOC_SIZE_0 | _TRMEM_REALLOC_SIZE_0 | _TRMEM_REALLOC_NULL |
@@ -104,13 +104,13 @@ extern void LnkMemFini( void )
         DEBUG( (DBG_ALWAYS, "%d Chunks unfreed", Chunks ) );
     }
 #endif
-#ifdef TRMEM
+#ifdef TRACKER
     PrintAllMem();
     _trmem_close( TrHdl );
 #endif
 }
 
-#ifdef TRMEM
+#ifdef TRACKER
 extern void *LAlloc( unsigned size )
 /**********************************/
 {
@@ -130,7 +130,7 @@ void *LAlloc( unsigned size )
     void    *p;
 
     for( ;; ) {
-#ifdef TRMEM
+#ifdef TRACKER
         p = _trmem_alloc( size, ra, TrHdl );
 #else
         p = malloc( size );
@@ -151,7 +151,7 @@ extern void * ChkLAlloc( unsigned size )
 /**************************************/
 {
     void                *ptr;
-#ifdef TRMEM
+#ifdef TRACKER
     void                (*ra)();
 
     ra = _trmem_guess_who();
@@ -171,7 +171,7 @@ extern void LFree( void *p )
 /**************************/
 {
     if( p == NULL ) return;
-#ifdef TRMEM
+#ifdef TRACKER
     _trmem_free( p, _trmem_guess_who(), TrHdl );
 #else
     free( p );
@@ -185,7 +185,7 @@ extern void * LnkExpand( void *src, unsigned size )
 /*************************************************/
 // try to expand a block of memory
 {
-#ifdef TRMEM
+#ifdef TRACKER
     return( _trmem_expand( src, size, _trmem_guess_who(), TrHdl ) );
 #else
     return( _expand( src, size ) );
@@ -197,13 +197,13 @@ extern void * LnkReAlloc( void *src, unsigned size )
 // reallocate a block of memory.
 {
     void *  dest;
-#ifdef TRMEM
+#ifdef TRACKER
     void        (*ra)();
 
     ra = _trmem_guess_who(); /* must be first thing */
 #endif
     for(;;) {
-#ifdef TRMEM
+#ifdef TRACKER
         dest = _trmem_realloc( src, size, ra, TrHdl );
 #else
         dest = realloc( src, size );
@@ -220,7 +220,7 @@ extern void * LnkReAlloc( void *src, unsigned size )
  * and this function is called from permshrink
 */
 
-#ifdef TRMEM
+#ifdef TRACKER
 extern int ValidateMem( void )
 /*****************************/
 {

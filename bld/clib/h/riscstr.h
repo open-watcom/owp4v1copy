@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  RISC oriented string functions designed to access memory
-*               as aligned 32- or 64-bit words whenever possible.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -45,11 +45,12 @@
 #ifdef __RISCSTR__              /* do nothing if not RISC target */
 
 
+
 #include "variety.h"
 #include "widechar.h"
 #include <string.h>
-#include <wchar.h>
 #include "watcom.h"
+
 
 
 /*

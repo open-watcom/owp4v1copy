@@ -223,7 +223,7 @@ static bool InsertPopup( gui_window *wnd, unsigned id, HMENU popup,
 
     hmenu = GetPopupHMENU( wnd, GUIGetHMENU( wnd ), id, NULL, NULL, type );
     if( hmenu != popup ) {
-        info = (popup_info *)GUIMemAlloc( sizeof( popup_info ) );
+        info = (popup_info *)GUIAlloc( sizeof( popup_info ) );
         if( info != NULL ) {
             info->next = wnd->popup;
             wnd->popup = info;
@@ -253,7 +253,7 @@ static void DeletePopup( gui_window *wnd, unsigned id )
         } else {
             wnd->popup = curr->next;
         }
-        GUIMemFree( curr );
+        GUIFree( curr );
     }
 }
 
@@ -272,7 +272,7 @@ void GUIDeleteFloatingPopups( gui_window *wnd )
                 wnd->popup = curr->next;
             }
             tmp = curr->next;
-            GUIMemFree( curr );
+            GUIFree( curr );
             curr = tmp;
         } else {
             prev = curr;
@@ -288,7 +288,7 @@ void GUIFreePopupList( gui_window *wnd )
 
     for( curr = wnd->popup; curr != NULL; curr = next ) {
         next = curr->next;
-        GUIMemFree( curr );
+        GUIFree( curr );
     }
     wnd->popup = NULLHANDLE;
 }

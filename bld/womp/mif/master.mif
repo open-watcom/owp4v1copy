@@ -102,7 +102,7 @@ usagej.rc : ../usage.sp
 #    wsplice -f "%s%+"$@ -o "$#define MSG_USAGE_LAST (MSG_USE_BASE+%$#+10)" $@
 
 wmpmsg.gh : $(womp_dir)/womp.msg
-    bvi -d -q -i -s ../h/makemsg.vi -p"$^@" $[@
+    $(vi) -s ../h/makemsg.vi -p"$^@" $[@
 
 !include $(womp_dir)/mif/depends.mif
 

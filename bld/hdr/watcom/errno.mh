@@ -338,7 +338,7 @@
 #define ENOLCK  37      /* No locks available in system */
 #define ENOSYS  38      /* Unknown system call */
 #define ENOTEMPTY 39    /* Directory not empty */
-/* additional Standard C error */
+/* Normative Addendum error */
 #define EILSEQ  40      /* Illegal multibyte sequence */
 :elsesegment DOS
 /*
@@ -388,7 +388,7 @@
 #define ENOLCK  37      /* No locks available in system */
 #define ENOSYS  38      /* Unknown system call */
 #define ENOTEMPTY 39    /* Directory not empty */
-/* additional Standard C error */
+/* Normative Addendum error */
 #define EILSEQ  40      /* Illegal multibyte sequence */
 :endsegment
 

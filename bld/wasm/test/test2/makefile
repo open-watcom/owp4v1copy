@@ -25,7 +25,6 @@ jnk &
 label &
 new &
 old1 &
-old2 &
 ptrtest &
 reljmp &
 reljmp16 &
@@ -73,6 +72,7 @@ timer
 
 dev_objs = &
 data &
+old2 &
 set386 &
 setjmp &
 t02 &

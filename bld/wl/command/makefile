@@ -41,12 +41,13 @@ dmem.obj : mem.c
         $(compile) -dTRACKER -fo=dmem.obj -of+ -i="$(%DEVDIR)/trmem"
 
 msg.obj : msg.c ../h/msg.h ../h/wlnkmsg.h
-        $(compile) -i="$(lib_misc_dir)/h"
+        $(compile) -i="$(%DEVDIR)/plusplus/supp"
 
-demangle.obj : $(lib_misc_dir)/c/demangle.c
-        $(compile) -i="$(lib_misc_dir)/h"
+demangle.obj : $(%DEVDIR)/plusplus/supp/demangle.c
+        $(compile) -i="$(%DEVDIR)/plusplus/supp"
 
-host_os  = nt
-host_cpu = 386
-
-!include ../wlink.mif
+wlink.res : ../h/wlink.rc ../h/wlnkmsg.h
+#       wrc -r -fo=$^@ ../h/wlink.rc
+        wccp -pl -zw -dRC_INVOKED -fo ../h/wlink.rc
+        wrc -r -zn -fo=$^@ wlink.i
+        del wlink.i

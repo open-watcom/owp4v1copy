@@ -22,7 +22,7 @@
 #define  __va_list  va_list
 #define __Strtold(s,ld,endptr) ((*(double *)(ld))=strtod(s,endptr))
 #define SOPEN_DEFINED
-#define sopen(x,y,z) open((x),(y))
+#define sopen(x,y,z) open(x,y)
 #define _fsopen(x,y,z) fopen(x,y)
 #define _fmemcpy memcpy
 #ifndef _MAX_PATH

@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of sbrk() for DOS, OS/2 and Windows.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -74,6 +75,7 @@ extern  int                     SegInfo( unsigned short selector );
         modify exact            [eax ecx edx esi ebx edi];
 
 extern  int                     SegmentLimit( void );
+#if __WATCOMC__ > 950
 #pragma aux SegmentLimit        = \
         "xor    eax,eax"        \
         "mov    ax,ds"          \
@@ -81,6 +83,15 @@ extern  int                     SegmentLimit( void );
         "inc    eax"            \
         value                   [eax] \
         modify exact            [eax];
+#else
+#pragma aux SegmentLimit        = \
+        "xor    eax,eax"        \
+        "mov    ax,ds"          \
+        "lsl    eax,eax"        \
+        "inc    eax"            \
+        value                   [eax] \
+        modify exact            [eax];
+#endif
 #endif
 
 extern  unsigned short          GetDS();

@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Text string output.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -41,10 +42,24 @@
 #endif
 
 
+#if defined( _NEC_PC )
+    unsigned short          jis( unsigned short code );
+#else
+    #define jis( code )     code
+#endif
+
+
 short _CharLen( char c )
 //======================
 
 {
+#if defined( _NEC_PC )
+    if( ( c >= 0x81 && c <= 0x9F ) || ( c >= 0xE0 && c <= 0xFC ) ) {
+        return( 2 );
+    } else {
+        return( 1 );
+    }
+#else
     dbcs_pair           *p;
 
     if( _IsDBCS ) {
@@ -55,6 +70,7 @@ short _CharLen( char c )
     } else {
         return( 1 );
     }
+#endif
 }
 
 
@@ -93,8 +109,12 @@ static void OutputString( char _WCI86FAR *text, short length, short newline )
                     _PutChar( _TextPos.row, _TextPos.col, *text );
                     ++_TextPos.col;
                 } else if( _TextPos.col <= _Tx_Col_Max - 1 ) { // room for both halves
-                    _PutChar( _TextPos.row, _TextPos.col, text[ 0 ] );
-                    _PutChar( _TextPos.row, _TextPos.col+1, text[ 1 ] );
+                    #if defined( _NEC_PC )
+                        _PutChar( _TextPos.row, _TextPos.col, jis( ( text[ 0 ] << 8 ) + text[ 1 ] ) );
+                    #else
+                        _PutChar( _TextPos.row, _TextPos.col, text[ 0 ] );
+                        _PutChar( _TextPos.row, _TextPos.col+1, text[ 1 ] );
+                    #endif
                     _TextPos.col += 2;
                 } else {         // these three lines control double byte
                     text -= 2;   // characters at the end of the text window
@@ -121,7 +141,11 @@ static void OutputString( char _WCI86FAR *text, short length, short newline )
     }
     _RefreshWindow();
     // update cursor position
-#if !defined( _DEFAULT_WINDOWS )
+#if defined( _NEC_PC )
+    NECVideoIntDC( 0x0300, 0, 0x0010, ( _TextPos.row << 8 ) + _TextPos.col );
+    NECVideoInt( _BIOS_CURSOR_SET, 0, 0, _CurrActivePage * 4096 + 2 *
+                ( _TextPos.row * _CurrState->vc.numtextcols + _TextPos.col ) );
+#elif !defined( _DEFAULT_WINDOWS )
     VideoInt( _BIOS_CURSOR_POSN, _CurrActivePage << 8, 0,
                             ( _TextPos.row << 8 ) + _TextPos.col );
 #endif
@@ -203,6 +227,52 @@ short _WCI86FAR _CGRAPH _gettextcursor( void )
 Entry( _GETTEXTCURSOR, _gettextcursor ) // alternate entry-point
 
 
+#if defined( _NEC_PC )
+
+short _WCI86FAR _CGRAPH _settextcursor( short shape )
+/*==============================================
+
+   This function sets the shape of the text cursor and returns the shape
+   of the previous text cursor. This function works only in text modes.
+   The new cursor shape is displayed if the cursor was previously visible.
+ */
+
+{
+    char                param_one;
+    char                param_two;
+    char                param_three;
+    short               previous;
+
+    _InitState();
+    if( !IsTextMode ) {
+        _ErrorStatus = _GRNOTINPROPERMODE;
+        return( -1 );
+    }
+    previous = _CursorShape;
+    _CursorShape = shape;
+
+    if( ( shape & 0x2000 ) == 0 ) {
+        if( _CurrState->vc.numtextrows == 20 ) {
+            param_one = 0x13;
+        } else {
+            param_one = 0x0f;
+        }
+        param_one |= 0x80;      // turn cursor on
+        param_two = ( ( shape >> 8 ) & 0x1f );
+        param_three = ( shape << 3 ) + 0x03;
+
+        outp( 0x62, 0x4b );     // this is the command to set the cursor
+        outp( 0x60, param_one );        // following three lines are parameters for
+        outp( 0x60, param_two );        // changing the cursor . . .
+        outp( 0x60, param_three );      // . . .
+    } else {
+        NECVideoInt( _BIOS_CURSOR_STOP, 0, 0, 0 );
+    }
+    return( previous );
+}
+
+#else
+
 short _WCI86FAR _CGRAPH _settextcursor( short shape )
 /*==============================================
 
@@ -236,5 +306,38 @@ short _WCI86FAR _CGRAPH _settextcursor( short shape )
 #endif
 }
 
+#endif
+
 Entry( _SETTEXTCURSOR, _settextcursor ) // alternate entry-point
 
+
+#if defined( _NEC_PC )
+
+unsigned short jis( unsigned short code )
+//=======================================
+
+{
+    unsigned char       h;
+    unsigned char       l;
+    unsigned char       jis_h;
+    unsigned char       jis_l;
+
+    h = code >> 8;
+    l = code & 0x00FF;
+
+    if( h >= 0xE0 ) {
+        h -= ( 0xE0 - 0xa0 );
+    }
+    if( l >= 0x9F ) {
+        jis_h = 2 * ( h - 0x81 ) + 0x22;
+        jis_l = 0x21 + l - 0x9F;
+    } else {
+        jis_h = 2 * ( h - 0x81 ) + 0x21;
+        jis_l = 0x21 + l - 0x40;
+        if( l >= 0x80 ) {
+            --jis_l;
+        }
+   }
+   return( ( jis_h << 8 ) + jis_l );
+}
+#endif

@@ -28,6 +28,7 @@
 *
 ****************************************************************************/
 
+
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
@@ -40,7 +41,7 @@
 #include <direct.h>
 #include <dos.h>
 #endif
-#if defined( __WATCOMC__ ) || !defined( __UNIX__ )
+#if defined(__WATCOMC__) || !defined(__UNIX__)
 #include <env.h>
 #endif
 #include "watcom.h"
@@ -49,34 +50,33 @@
 
 #define BSIZE   256
 #define SCREEN  79
-const char      Equals[] =      "========================================"\
-                                "========================================";
+const char Equals[] =   "========================================"\
+                        "========================================";
 
-extern bool     Quiet;
+extern bool Quiet;
 
 #ifdef __UNIX__
 
-int __fnmatch( const char *pattern, const char *string )
-{
+int __fnmatch(const char *pattern, const char *string) {
+
     if( *string == 0 ) {
-        while( *pattern == '*' )
-            ++pattern;
-        return( ( *pattern == 0 ) ? 1 : 0 );
+        while( *pattern == '*' ) ++pattern;
+        return(( *pattern == 0 ) ? 1 : 0 );
     }
     switch( *pattern ) {
     case '*':
         if( *string == '.' ) {
-            return( __fnmatch( pattern + 1, string ) );
-        } else if( __fnmatch( pattern + 1, string ) ) {
+            return( __fnmatch( pattern + 1, string ));
+        } else if( __fnmatch( pattern + 1, string )) {
             return( 1 );
         } else {
-            return( __fnmatch( pattern, string + 1 ) );
+            return( __fnmatch( pattern, string + 1 ));
         }
     case '?':
-        if( ( *string == 0 ) || ( *string == '.' ) ) {
+        if(( *string == 0 ) || ( *string == '.' )) {
             return( 0 );
         } else {
-            return( __fnmatch( pattern + 1, string + 1 ) );
+            return( __fnmatch( pattern + 1, string + 1 ));
         }
     case 0:
         return( *string == 0 );
@@ -84,7 +84,7 @@ int __fnmatch( const char *pattern, const char *string )
         if( *pattern != *string ) {
             return( 0 );
         } else {
-            return( __fnmatch( pattern + 1, string + 1 ) );
+            return( __fnmatch( pattern + 1, string + 1 ));
         }
     }
 }
@@ -106,9 +106,8 @@ static void LogDir( char *dir )
     strcat( tbuff, " " );
     strcat( tbuff, dir );
     equals = ( SCREEN - ( bufflen = strlen( tbuff ) ) ) / 2 - 2;
-    if( equals < 0 )
-        equals = 0;
-    eq = &Equals[ ( sizeof( Equals ) - 1 ) - equals];
+    if( equals < 0 ) equals = 0;
+    eq = &Equals[ (sizeof( Equals )-1) - equals ];
     Log( FALSE, "%s %s %s%s\n", eq, tbuff, eq, ( bufflen & 1 ) ? "" : "=" );
 }
 
@@ -116,11 +115,9 @@ static unsigned ProcSet( char *cmd )
 {
     char        *var;
     char        *rep;
-
     var = cmd;
     rep = strchr( cmd, '=' );
-    if( rep == NULL )
-        return( 1 );
+    if( rep == NULL ) return( 1 );
     *rep++ = '\0';
     if( *rep == '\0' ) {
         rep = NULL;             // get rid of the variable! Needed by Optima!
@@ -149,28 +146,28 @@ void ResetArchives( copy_entry *list )
 
 static copy_entry *BuildList( char *src, char *dst, bool test_abit )
 {
-    copy_entry          *head;
-    copy_entry          *curr;
-    copy_entry          **owner;
-    char                *end;
-    char                buff[_MAX_PATH2];
-    char                full[_MAX_PATH];
-    char                srcdir[_MAX_PATH];
-    char                *drive;
-    char                *dir;
-    char                *fn;
-    char                *ext;
+    copy_entry  *head;
+    copy_entry  *curr;
+    copy_entry  **owner;
+    char        *end;
+    char        buff[_MAX_PATH2];
+    char        full[_MAX_PATH];
+    char        srcdir[_MAX_PATH];
+    char        *drive;
+    char        *dir;
+    char        *fn;
+    char        *ext;
     DIR                 *directory;
     struct dirent       *dent;
 #ifndef __UNIX__
-    FILE                *fp;
-    unsigned            attr;
+    FILE        *fp;
+    unsigned    attr;
 #else
-    char                pattern[_MAX_PATH];
+    char        pattern[_MAX_PATH];
 #endif
 
     strcpy( srcdir, src );
-    end = &dst[strlen( dst ) - 1];
+    end = &dst[strlen(dst)-1];
     while( end[0] == ' ' || end[0] == '\t' ) {
         --end;
     }
@@ -195,10 +192,9 @@ static copy_entry *BuildList( char *src, char *dst, bool test_abit )
 #ifndef __UNIX__
         if( test_abit ) {
             fp = fopen( head->dst, "rb" );
-            if( fp != NULL )
-                fclose( fp );
+            if( fp != NULL ) fclose( fp );
             _dos_getfileattr( head->src, &attr );
-            if( !( attr & _A_ARCH ) && fp != NULL ) {
+            if( !(attr & _A_ARCH) && fp != NULL ) {
                 /* file hasn't changed */
                 free( head );
                 head = NULL;
@@ -221,24 +217,23 @@ static copy_entry *BuildList( char *src, char *dst, bool test_abit )
     owner = &head;
     for( ;; ) {
         dent = readdir( directory );
-        if( dent == NULL )
-            break;
+        if( dent == NULL ) break;
 #ifdef __UNIX__
         {
             struct stat buf;
             size_t len = strlen( srcdir );
 
-            if( __fnmatch( pattern, dent->d_name ) == 0 )
+            if( __fnmatch(pattern, dent->d_name) == 0 )
                 continue;
 
             strcat( srcdir, dent->d_name );
             stat( srcdir, &buf );
             srcdir[len] = '\0';
-            if( S_ISDIR( buf.st_mode ) )
+            if ( S_ISDIR( buf.st_mode ) )
                 continue;
         }
 #else
-        if( dent->d_attr & ( _A_SUBDIR | _A_VOLID ) )
+        if( dent->d_attr & (_A_SUBDIR|_A_VOLID) )
             continue;
 #endif
         curr = Alloc( sizeof( *curr ) );
@@ -257,9 +252,8 @@ static copy_entry *BuildList( char *src, char *dst, bool test_abit )
 #ifndef __UNIX__
         if( test_abit ) {
             fp = fopen( curr->dst, "rb" );
-            if( fp != NULL )
-                fclose( fp );
-            if( !( dent->d_attr & _A_ARCH ) && fp != NULL ) {
+            if( fp != NULL ) fclose( fp );
+            if( !(dent->d_attr & _A_ARCH) && fp != NULL ) {
                 /* file hasn't changed */
                 free( curr );
                 continue;
@@ -291,17 +285,19 @@ static unsigned ProcOneCopy( char *src, char *dst )
         strcpy( buff, dst );
         end1 = strrchr( buff, '/' );
         end2 = strrchr( buff, '\\' );
-        if( end1 && end2 ) {
+        if( end1 && end2 )
+        {
             if( end1 > end2 )
                 end = end1;
             else
                 end = end2;
-        } else if( end1 ) {
-            end = end1;
-        } else {
-            end = end2;
         }
-        if( end ) {
+        else if( end1 )
+            end = end1;
+        else
+            end = end2;
+        if( end )
+        {
             end[0] = 0;
 #ifdef __UNIX__
             mkdir( buff, S_IRWXU | S_IRWXG | S_IRWXO );
@@ -310,7 +306,8 @@ static unsigned ProcOneCopy( char *src, char *dst )
 #endif
             dp = fopen( dst, "wb" );
         }
-        if( !dp ) {
+        if( !dp )
+        {
             Log( FALSE, "Can not open '%s' for writing: %s\n", dst, strerror( errno ) );
             fclose( sp );
             return( 1 );
@@ -319,8 +316,7 @@ static unsigned ProcOneCopy( char *src, char *dst )
     Log( FALSE, "Copying '%s' to '%s'...\n", src, dst );
     for( ;; ) {
         len = fread( buff, 1, sizeof( buff ), sp );
-        if( len == 0 )
-            break;
+        if( len == 0 ) break;
         if( ferror( sp ) ) {
             Log( FALSE, "Error reading '%s': %s\n", src, strerror( errno ) );
             fclose( sp );
@@ -382,8 +378,7 @@ static unsigned ProcCopy( char *cmd, bool test_abit )
     }
     list = BuildList( src, dst, test_abit );
     for( ;; ) {
-        if( list == NULL )
-            break;
+        if( list == NULL ) break;
         res = ProcOneCopy( list->src, list->dst );
         if( res != 0 ) {
             while( list != NULL ) {
@@ -409,7 +404,7 @@ static unsigned ProcMkdir( char *cmd )
 {
     struct stat sb;
 
-    if( -1 == stat( cmd, &sb ) )
+    if ( -1 == stat( cmd, &sb ) )
 #ifdef __UNIX__
         return( mkdir( cmd, S_IRWXU | S_IRWXG | S_IRWXO ) );
 #else
@@ -432,15 +427,12 @@ static unsigned DoPMake( pmake_data *data )
 
     for( curr = data->dir_list; curr != NULL; curr = curr->next ) {
         res = SysChdir( curr->dir_name );
-        if( res != 0 )
-            return( res );
+        if( res != 0 ) return( res );
         getcwd( IncludeStk->cwd, sizeof( IncludeStk->cwd ) );
-        if( data->display )
-            LogDir( IncludeStk->cwd );
+        if( data->display ) LogDir( IncludeStk->cwd );
         PMakeCommand( data, cmd );
         res = SysRunCommand( cmd );
-        if( res != 0 )
-            return( res );
+        if( res != 0 ) return( res );
     }
     return( 0 );
 }
@@ -452,8 +444,7 @@ static unsigned ProcPMake( char *cmd )
     char        save[_MAX_PATH];
 
     data = PMakeBuild( cmd );
-    if( data == NULL )
-        return( 1 );
+    if( data == NULL ) return( 1 );
     if( data->want_help || data->signaled ) {
         PMakeCleanup( data );
         return( 2 );
@@ -476,7 +467,7 @@ unsigned RunIt( char *cmd )
     if( BUILTIN( "CD" ) ) {
         res = SysChdir( SkipBlanks( cmd + sizeof( "CD" ) ) );
         if( res == 0 ) {
-            getcwd( IncludeStk->cwd, sizeof( IncludeStk->cwd ) );
+            getcwd( IncludeStk->cwd, sizeof( IncludeStk->cwd ) ) ;
         }
     } else if( BUILTIN( "CDSAY" ) ) {
         res = SysChdir( SkipBlanks( cmd + sizeof( "CDSAY" ) ) );

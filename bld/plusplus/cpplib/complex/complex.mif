@@ -1,11 +1,5 @@
 prefix = cplx
 
-!ifdef fp_option
-target_lib = $(prefix)7$(suffix).lib
-!else
-target_lib = $(prefix)$(suffix).lib
-!endif
-
 cpp_dirs = ../cpp
 c_dirs = ../c
 inc_dirs = ../h

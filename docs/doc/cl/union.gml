@@ -37,7 +37,7 @@ References to the members of an unnamed structure or union are made as
 if the members of the inner structure or union were at the outer level.
 .* .pp
 .* Unnamed union members may not be portable to other compilers,
-.* because they are not required by the ISO standard.
+.* because they are not required by the ANSI standard.
 ..do end
 .shade end
 .*

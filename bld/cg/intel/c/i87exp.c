@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Intel 80x87 floating point instruction expansion.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -52,8 +53,6 @@ extern  name            *FPStatWord;
 extern  int             Max87Stk;
 extern  bool            Used87;
 extern  byte            OptForSize;
-extern  opcode_entry    DoNop[];
-extern  type_length     TypeClassSize[];
 
 extern  void            Opt8087( void );
 extern  bool            DoesSomething(instruction*);
@@ -79,15 +78,18 @@ extern  void            FPCalcMax( void );
 extern  void            InitFPStkReq( void );
 
 /* forward declarations */
-static  void            ExpCompare( instruction *ins,
-                                    operand_type op1, operand_type op2 );
+extern  void            ExpCompare ( instruction *ins,
+                                     operand_type op1, operand_type op2 );
 static  void            ExpBinary( instruction *ins,
-                                   operand_type op1, operand_type op2 );
+                                   operand_type op1, operand_type op2 ); 
 static  void            ExpBinFunc( instruction *ins,
-                                    operand_type op1, operand_type op2 );
+                                    operand_type op1, operand_type op2 ); 
 extern  int             FPRegNum( name *reg_name );
 static  void            RevOtherCond( block *blk, instruction *ins );
 
+
+extern  opcode_entry    DoNop[];
+extern  type_length     TypeClassSize[];
 
 //NYI: probably need more opcode entries for more resolution with func. units
 static  opcode_entry    FNOP    = { SETS_CC,  0, G_NO, 0, FU_FOP };
@@ -137,9 +139,6 @@ static opcode_entry    MNFBIN[]  = {
 static  opcode_entry    MFLD    = { PRESERVE, 0, G_MFLD, 0, FU_FOP };
 static  opcode_entry    RFLD    = { PRESERVE, 0, G_RFLD, 0, FU_FOP };
 static  opcode_entry    MFST    = { PRESERVE, 0, G_MFST, 0, FU_FOP };
-#if _TARGET & _TARG_80386
-static  opcode_entry    MFSTRND = { PRESERVE, 0, G_MFSTRND, 0, FU_FOP };
-#endif
 static  opcode_entry    MFST2   = { PRESERVE, 0, G_MFST, 0, FU_FOP };
 static  opcode_entry    RFST    = { PRESERVE, 0, G_RFST, 0, FU_FOP };
 static  opcode_entry    FCHS    = { PRESERVE, 0, G_FCHS, 0, FU_FOP };
@@ -360,20 +359,6 @@ static  void    PrefixChop( instruction *ins ) {
     new_ins->stk_exit = ins->stk_entry;
 }
 
-#if _TARGET & _TARG_80386
-static    int     WantsChop( instruction *ins ) {
-/************************************************
-    Check whether instruction "ins" needs an instruction that will truncate
-    ST(0) to the nearest integer.
-*/
-    if( ins->head.opcode == OP_ROUND )
-        return( FALSE );
-    if( _IsFloating( ins->result->n.name_class ) )
-        return( FALSE );
-    return( TRUE );
-}
-#endif
-
 static  instruction     *ExpUnary( instruction *ins,
                                     operand_type src, result_type res,
                                     opcode_entry *table ) {
@@ -434,62 +419,16 @@ static  instruction     *ExpMove( instruction *ins,
         break;
     case _Move( OP_MEM , RES_MEM ):
         PrefixFLDOp( ins, src, 0 );
-        /*
         PrefixChop( ins );
         DoNothing( ins );
         ins = SuffixFSTPRes( ins );
-        */
-#if _TARGET & _TARG_80386
-        if( _IsModel( FPU_ROUNDING_INLINE ) ) {
-            DoNothing( ins );
-            ins = SuffixFSTPRes( ins );
-            if( WantsChop( ins ) )
-                ins->u.gen_table = &MFSTRND;
-        }
-        else if( _IsModel( FPU_ROUNDING_OMIT ) ) {
-            DoNothing( ins );
-            ins = SuffixFSTPRes( ins );
-        } else {
-            PrefixChop( ins );
-            DoNothing( ins );
-            ins = SuffixFSTPRes( ins );
-        }
-#else
-        if( _IsModel( FPU_ROUNDING_OMIT ) ) {
-            DoNothing( ins );
-            ins = SuffixFSTPRes( ins );
-        } else {
-            PrefixChop( ins );
-            DoNothing( ins );
-            ins = SuffixFSTPRes( ins );
-        }
-#endif
         break;
     case _Move( OP_STK0, RES_STK0 ):
         DoNothing( ins );
         break;
     case _Move( OP_STK0, RES_MEM  ):
-#if _TARGET & _TARG_80386
-        if( _IsModel( FPU_ROUNDING_INLINE ) ) {
-            if( WantsChop( ins ) )
-                ins->u.gen_table = &MFSTRND;
-            else
-                ins->u.gen_table = &MFST;
-        }
-        else if( _IsModel( FPU_ROUNDING_OMIT ) ) {
-            ins->u.gen_table = &MFST;
-        } else {
-            PrefixChop( ins );
-            ins->u.gen_table = &MFST;
-        }
-#else
-        if( _IsModel( FPU_ROUNDING_OMIT ) ) {
-            ins->u.gen_table = &MFST;
-        } else {
-            PrefixChop( ins );
-            ins->u.gen_table = &MFST;
-        }
-#endif
+        PrefixChop( ins );
+        ins->u.gen_table = &MFST;
         break;
     case _Move( OP_MEM , RES_STK0 ):
         ins->u.gen_table = &MFLD;
@@ -497,7 +436,7 @@ static  instruction     *ExpMove( instruction *ins,
     case _Move( OP_CONS, RES_STK0 ):
         if( CFTest( ins->operands[ 0 ]->c.value ) != 0 ) {
             ins->u.gen_table = &FLD1;
-        } else {
+       } else {
             ins->u.gen_table = &FLDZ;
         }
         ins->result = ST0;
@@ -567,7 +506,6 @@ static  instruction     *ExpPush( instruction *ins, operand_types op ) {
             new_ins = MakeMove( ins->operands[ 0 ], index,ins->type_class );
             ReplIns( ins, new_ins );
             ins = ExpMove( new_ins, op, RES_MEM );
-
        } else {
             new_ins = MakeUnary( OP_PUSH, index, NULL, WD );
             new_ins->u.gen_table = &WORDR1;
@@ -601,7 +539,7 @@ static  instruction     *ExpPush( instruction *ins, operand_types op ) {
 
 static  instruction     *ExpandFPIns( instruction *ins, operand_type op1,
                                       operand_type op2, result_type res ) {
-/**************************************************************************
+/********************************************************
     Using the operand/result classifications "op1", "op2", "res", turn
     "ins" into a real live 8087 instruction by deciding what to generate
     for it (setting gen_table).  Note that it may turn into multiple
@@ -697,7 +635,7 @@ static  instruction     *ExpandFPIns( instruction *ins, operand_type op1,
 
 
 static  instruction     *DoExpand( instruction *ins ) {
-/******************************************************
+/*************************************************
     Expand one instruction "ins" The bulk of this routine is
     spent classifying the operands and result of the instruction, and if
     they are an 8087 register, adjusting them to the real register
@@ -745,7 +683,7 @@ static  instruction     *DoExpand( instruction *ins ) {
 }
 
 static  void    Expand( void ) {
-/*******************************
+/************************
     Run through the instruction stream expanding each
     instruction.  All 8087 instructions will have
         gen_table->generate == G_UNKNOWN.
@@ -963,7 +901,7 @@ static  void    RevOtherCond( block *blk, instruction *ins ) {
 }
 
 
-static  void    ExpCompare ( instruction *ins,
+extern  void    ExpCompare ( instruction *ins,
                              operand_type op1, operand_type op2 ) {
 /******************************************************************
     Expand a floating point comparison using classifications "op1" and
@@ -1204,3 +1142,4 @@ extern  void    FPExpand( void ) {
 //      FPCalcMax();
     }
 }
+

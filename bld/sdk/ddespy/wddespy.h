@@ -61,6 +61,12 @@
 #define HELP_HELP_FILE  "winhelp.hlp"
 #define TRACKING_CLASS  "WDDE_TRACKING_CLASS"
 
+/* Following is special defines for including XP XML file in .rc */
+#if defined __NT__
+#define RT_MANIFEST  24
+#define IDR_MANIFEST  1
+#endif
+
 /* filter type constants */
 
 #define FILTER_MESSAGE                  10

@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Command line parsing routines.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -142,10 +143,6 @@ char *CmdScanString( void )
                 if( backslash ) {
                     buf = got_char( buf, &bufsize, offset, ch );
                     offset++;
-                    backslash = 0;      /* second '\\' of a pair */
-                    if( GetCharContext() == quotechar )
-                        buf = got_char( buf, &bufsize, offset++, '\\' );
-                    UngetCharContext();
                 } else {
                     backslash = 1;      /* first '\\' of a pair */
                 }

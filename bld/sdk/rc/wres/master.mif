@@ -14,6 +14,10 @@ wres_autodepends = .AUTODEPEND
 !include defrule.mif
 #!include deftarg.mif
 
+# where to look for various files
+
+.c : ../c
+
 OBJS = &
  loadstr.obj &
  loadres.obj &
@@ -40,7 +44,7 @@ OBJS = &
 # removed files: wrrtr.obj wrrwridn.obj
 
 # options to use
-extra_c_flags = -dMICROSOFT -s
+extra_c_flags = -dMICROSOFT
 
 #
 # Option to compile with -r (used in QNX build)
@@ -61,10 +65,11 @@ extra_c_flags += -zw-zu
 !ifdef IS_GUI
 extra_c_flags += -DWIN_GUI
 !endif
+!ifdef no_stack
+extra_c_flags += -s
+!endif
 
-# where to look for various files
-
-.c : ../c
+lbcfile = tmp.lbc
 
 inc_dirs = ../h;
 
@@ -74,9 +79,9 @@ inc_dirs = ../h;
 # explicit rules
 
 ../lib/$(name).lib : $(OBJS) $(__MAKEFILES__) .PRECIOUS
-        %create $(name).lbc
-        @for %i in ($(OBJS)) do @%append $(name).lbc +%i
-        $(librarian) -n -b $^@ @$(name).lbc
+        %create $(lbcfile)
+        @for %i in ($(OBJS)) do @%append $(lbcfile) +%i
+        $(librarian) -n -b $^@ @$(lbcfile)
 
 clean : .SYMBOLIC .EXPLICIT
         rm -f *.?bj *.err *.trk *.lbc ../lib/$(name).lib

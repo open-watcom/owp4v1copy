@@ -12,23 +12,18 @@ extern "C" {
 #define ABE_TOP	1
 #define ABE_RIGHT	2
 #define ABE_BOTTOM	3
-#define ABS_AUTOHIDE	1
-#define ABS_ALWAYSONTOP	2
 #define SEE_MASK_CLASSNAME	1
 #define SEE_MASK_CLASSKEY	3
 #define SEE_MASK_IDLIST	4
 #define SEE_MASK_INVOKEIDLIST   12
-#define SEE_MASK_ICON	0x10
-#define SEE_MASK_HOTKEY	0x20
-#define SEE_MASK_NOCLOSEPROCESS	0x40
-#define SEE_MASK_CONNECTNETDRV	0x80
-#define SEE_MASK_FLAG_DDEWAIT	0x100
-#define SEE_MASK_DOENVSUBST	0x200
-#define SEE_MASK_FLAG_NO_UI	0x400
-#define SEE_MASK_NO_CONSOLE	0x8000
-#define SEE_MASK_UNICODE	0x10000
-#define SEE_MASK_ASYNCOK	0x100000
-#define SEE_MASK_HMONITOR	0x200000
+#define SEE_MASK_ICON	16
+#define SEE_MASK_HOTKEY	32
+#define SEE_MASK_NOCLOSEPROCESS	64
+#define SEE_MASK_CONNECTNETDRV	128
+#define SEE_MASK_FLAG_DDEWAIT	256
+#define SEE_MASK_DOENVSUBST	512
+#define SEE_MASK_FLAG_NO_UI	1024
+#define SEE_MASK_UNICODE	65536
 #define ABM_NEW	0
 #define ABM_REMOVE	1
 #define ABM_QUERYPOS	2
@@ -46,17 +41,9 @@ extern "C" {
 #define NIM_ADD	0
 #define NIM_MODIFY	1
 #define NIM_DELETE	2
-#if _WIN32_IE >= 0x0500
-#define NOTIFYICON_VERSION 3
-#define NIM_SETFOCUS	3
-#define NIM_SETVERSION	4
-#endif
 #define NIF_MESSAGE	1
 #define NIF_ICON	2
 #define NIF_TIP	4
-#define NIF_STATE	8
-#define NIS_HIDDEN	1
-#define NIS_SHAREDICON	2
 #define SE_ERR_FNF	2
 #define SE_ERR_PNF	3
 #define SE_ERR_ACCESSDENIED	5
@@ -83,7 +70,6 @@ extern "C" {
 #define FOF_SIMPLEPROGRESS	256
 #define FOF_NOCONFIRMMKDIR	512
 #define FOF_NOERRORUI	1024
-#define FOF_NOCOPYSECURITYATTRIBS	2048
 #define PO_DELETE 19
 #define PO_RENAME 20
 #define PO_PORTCHANGE 32
@@ -120,7 +106,6 @@ typedef struct _AppBarData {
 	LPARAM lParam;
 } APPBARDATA,*PAPPBARDATA;
 DECLARE_HANDLE(HDROP);
-
 typedef struct _NOTIFYICONDATAA {
 	DWORD cbSize;
 	HWND hWnd;
@@ -128,25 +113,8 @@ typedef struct _NOTIFYICONDATAA {
 	UINT uFlags;
 	UINT uCallbackMessage;
 	HICON hIcon;
-#if _WIN32_IE >= 0x0500
-	CHAR szTip[128];
-	DWORD dwState;
-	DWORD dwStateMask;
-	CHAR szInfo[256];
-	_ANONYMOUS_UNION union {
-		UINT uTimeout;
-		UINT uVersion;
-	} DUMMYUNIONNAME;
-	CHAR szInfoTitle[64];
-	DWORD dwInfoFlags;
-#else
 	CHAR szTip[64];
-#endif
-#if _WIN32_IE >= 0x600
-	GUID guidItem;
-#endif
 } NOTIFYICONDATAA,*PNOTIFYICONDATAA;
-
 typedef struct _NOTIFYICONDATAW {
 	DWORD cbSize;
 	HWND hWnd;
@@ -154,25 +122,8 @@ typedef struct _NOTIFYICONDATAW {
 	UINT uFlags;
 	UINT uCallbackMessage;
 	HICON hIcon;
-#if _WIN32_IE >= 0x0500
-	WCHAR szTip[128];
-	DWORD dwState;
-	DWORD dwStateMask;
-	WCHAR szInfo[256];
-	_ANONYMOUS_UNION union {
-		UINT uTimeout;
-		UINT uVersion;
-	} DUMMYUNIONNAME;
-	WCHAR szInfoTitle[64];
-	DWORD dwInfoFlags;
-#else
 	WCHAR szTip[64];
-#endif
-#if _WIN32_IE >= 0x600
-	GUID guidItem;
-#endif
 } NOTIFYICONDATAW,*PNOTIFYICONDATAW;
-
 typedef struct _SHELLEXECUTEINFOA {
 	DWORD cbSize;
 	ULONG fMask;

@@ -24,20 +24,18 @@
 *
 *  ========================================================================
 *
-* Description:
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
+
 
 #ifdef __SW_FH
 #include "iost.h"
 #else
 #include "variety.h"
 #include <sys/stat.h>
-#include <fstream>
+#include <fstream.h>
 #endif
 
-namespace std {
-
-  int const filebuf::openprot = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH; // 0644
-
-}
+int const filebuf::openprot = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH; // 0644

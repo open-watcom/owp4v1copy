@@ -58,6 +58,6 @@ following a type
 specifier, this tends to be difficult to read.
 It is recommended that the storage class (if present)
 always be placed first in the declaration.
-The ISO C standard states that the ability to place the
+The ANSI C standard states that the ability to place the
 storage class specifier other than at the beginning of the declaration
 is an obsolescent feature.

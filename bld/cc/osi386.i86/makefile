@@ -1,4 +1,4 @@
-#pmake: i86 cpu_386 os_osi target_i86
+#pmake: i86 cpu_386 os_osi
 host_CPU = 386
 host_OS = osi
 target_CPU = i86

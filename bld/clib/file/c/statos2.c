@@ -40,6 +40,7 @@
 #include <errno.h>
 #include <string.h>
 #include <direct.h>
+#include <ctype.h>
 
 #include <wos2.h>
 #include <dos.h>
@@ -48,10 +49,7 @@
 #include "seterrno.h"
 #ifdef __WIDECHAR__
     #include <stdlib.h>
-    #include <wctype.h>
     #include "mbwcconv.h"
-#else
-    #include <ctype.h>
 #endif
 
 #if defined(__WARP__)

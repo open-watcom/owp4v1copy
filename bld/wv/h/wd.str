@@ -327,10 +327,6 @@ wdpick( WindowMMX,
        "MMX",
        "jMMX" )
 
-wdpick( WindowXMM,
-       "XMM",
-       "jXMM" )
-
 
 // shown in the source or assembly window when the source file cannot be opened
 

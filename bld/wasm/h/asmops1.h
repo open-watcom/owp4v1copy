@@ -115,12 +115,10 @@ enum state {
 };
 
 struct asm_tok {
+        long            value;
         enum state      token;
         char            *string_ptr;
-        union {
-            long          value;
-            unsigned char bytes[10];
-        };
+        unsigned long   extra_value;
 };
 
 #define ASMOPS1_H

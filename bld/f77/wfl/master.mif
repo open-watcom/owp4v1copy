@@ -5,14 +5,20 @@ proj_name = f77
 !include defrule.mif
 
 !include wres.mif
+!include mlibs.mif
 
 inc_dirs=../h;$(f77_dir)/cg86/cp/h;$(f77_dir)/cg86/h;$(f77_dir)/h
 
+!ifeq host_CPU axp
 extra_c_flags = -d__WFL__ -d__RT__
-extra_c_flags_i86 = -fpc
-extra_c_flags_386 = -fpc
+!else
+extra_c_flags = -fpc -d__WFL__ -d__RT__
+!endif
 
 .c: ../c;$(f77_dir)/cg86/cp/c;$(f77_dir)/cp;$(f77_dir)/c
+.c.obj:
+    @set include=$(inc_path)
+    $(cc) $(cflags) $(extra_c_flags_$[&) $[@
 
 files = &
     blderr.obj &
@@ -26,12 +32,20 @@ files = &
 exename_i86 = wfl
 exename_386 = wfl386
 exename_axp = wflaxp
-target_exe  = $(exename_$(target_CPU))
+exe         = $(exename_$(target_CPU))
+
+!ifdef f77_target_dir
+bindir_nt  = binnt
+bindir_dos = bin
+bindir_os2 = binp
+target_exe = $(f77_target_dir)/$(bindir_$(host_OS))/$(exe)
+!else
+target_exe = $(exe)
+!endif
 
 $(target_exe).exe : $(files) $(wres_lib) errmsg.res
-    $(linker) $(lflags) name $^@ file { $(files) } lib $(wres_lib)
+    $(linker) name $^@ $(lflags) file { $(files) } lib $(wres_lib)
     wstrip -q -a -r $^@ . errmsg.res
 
 errmsg.res : ../c/errmsg.rc ../h/errmsgi.rc ../h/errmsg3.rc ../h/errcod.h ../h/errcodi.h ../h/errcod3.h
-    @set include=$(inc_path)
-    $(rc_aui) $[@ -fo=$^@
+    $(rc_aui) -i="$(inc_path)" $[@ -fo=$^@

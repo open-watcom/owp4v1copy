@@ -1,57 +1,20 @@
-/***************************************************************************
- * FILE: ctype.h/cctype (Character Handling)
+/*
+ *  ctype.h     Character Handling
  *
 :include crwat.sp
- *
- * Description: This header is part of the C/C++ standard library. It
- *              declares several character classification functions.
- ***************************************************************************/
-:segment CNAME
-#ifndef _CCTYPE_INCLUDED
-#define _CCTYPE_INCLUDED
-
-#ifndef __cplusplus
-#error the header cctype requires C++
-#endif
-:elsesegment
+ */
 #ifndef _CTYPE_H_INCLUDED
 #define _CTYPE_H_INCLUDED
-:endsegment
-
 :include readonly.sp
-::
-:: The following somewhat long segment only appears in ctype.h.
-:segment !CNAME
-#ifdef __cplusplus
-#include <cctype>
-
-// C99 functions in ctype.h
-using std::isalnum;
-using std::isalpha;
-using std::isblank;
-using std::iscntrl;
-using std::isdigit;
-using std::isgraph;
-using std::islower;
-using std::isprint;
-using std::ispunct;
-using std::isspace;
-using std::isupper;
-using std::isxdigit;
-using std::tolower;
-using std::toupper;
-
-#else /* __cplusplus not defined */
-:: End of segment that is only in ctype.h
-:endsegment
-
-:segment CNAME
 :include cpluspro.sp
-:endsegment
 
 #ifndef _COMDEF_H_INCLUDED
  #include <_comdef.h>
 #endif
+
+:include wchar_t.sp
+
+:include wctypet.sp
 
 #define _LOWER  0x80
 #define _UPPER  0x40
@@ -62,12 +25,8 @@ using std::toupper;
 #define _SPACE  0x02
 #define _CNTRL  0x01
 
-:segment CNAME
-namespace std {
-:endsegment
 _WCRTLINK extern int    isalnum(int);
 _WCRTLINK extern int    isalpha(int);
-_WCRTLINK extern int    isblank(int);
 _WCRTLINK extern int    iscntrl(int);
 _WCRTLINK extern int    isdigit(int);
 _WCRTLINK extern int    isgraph(int);
@@ -77,18 +36,39 @@ _WCRTLINK extern int    ispunct(int);
 _WCRTLINK extern int    isspace(int);
 _WCRTLINK extern int    isupper(int);
 _WCRTLINK extern int    isxdigit(int);
-_WCRTLINK extern int    tolower(int);
-_WCRTLINK extern int    toupper(int);
-:segment CNAME
-}
-:endsegment
-
 :segment !SNAP & !SNAPDRV
 _WCRTLINK extern int    isleadbyte(int);
+:endsegment
+_WCRTLINK extern int    tolower(int);
+:segment !SNAP & !SNAPDRV
 _WCRTLINK extern int    _tolower(int);
+:endsegment
+_WCRTLINK extern int    toupper(int);
+:segment !SNAP & !SNAPDRV
 _WCRTLINK extern int    _toupper(int);
 _WCRTLINK extern int    __iscsymf(int);
 _WCRTLINK extern int    __iscsym(int);
+:endsegment
+:segment !NO_WIDECHAR
+
+_WCRTLINK extern int    iswalpha(wint_t);
+_WCRTLINK extern int    iswalnum(wint_t);
+_WCRTLINK extern int    iswascii(wint_t);
+_WCRTLINK extern int    iswcntrl(wint_t);
+_WCRTLINK extern int    iswprint(wint_t);
+_WCRTLINK extern int    iswgraph(wint_t);
+_WCRTLINK extern int    iswdigit(wint_t);
+_WCRTLINK extern int    iswxdigit(wint_t);
+_WCRTLINK extern int    iswlower(wint_t);
+_WCRTLINK extern int    iswupper(wint_t);
+_WCRTLINK extern int    iswspace(wint_t);
+_WCRTLINK extern int    iswpunct(wint_t);
+
+_WCRTLINK extern wctype_t wctype(const char *);
+_WCRTLINK extern int    iswctype(wint_t,wctype_t);
+
+_WCRTLINK extern wint_t towlower(wint_t);
+_WCRTLINK extern wint_t towupper(wint_t);
 :endsegment
 
 :include ext.sp
@@ -106,11 +86,8 @@ _WCRTLINK extern int    __iscsym(int);
 _WCRTLINK extern const char _WCDATA _IsTable[257];
 
 #if !defined(__FUNCTION_DATA_ACCESS)
-:: Eliminate macros from cctype. These can be put back later as in-lines.
-:segment !CNAME
 #define isalnum(__c)  ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & (_LOWER|_UPPER|_DIGIT))
 #define isalpha(__c)  ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & (_LOWER|_UPPER))
-#define isblank(__c)  (((__c)==' ')||((__c)=='\t'))
 #define iscntrl(__c)  ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & _CNTRL)
 #define isdigit(__c)  ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & _DIGIT)
 #define isgraph(__c) (((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & (_PRINT|_SPACE))==_PRINT)
@@ -120,20 +97,11 @@ _WCRTLINK extern const char _WCDATA _IsTable[257];
 #define isspace(__c)  ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & _SPACE)
 #define isupper(__c)  ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & _UPPER)
 #define isxdigit(__c) ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & _XDIGT)
-:endsegment
 :segment !SNAP & !SNAPDRV
 #define __iscsymf(__c) (isalpha(__c)||((__c)=='_'))
 #define __iscsym(__c)  (isalnum(__c)||((__c)=='_'))
 :endsegment
 #endif
 
-:segment CNAME
 :include cplusepi.sp
-:endsegment
-
-:: This #endif closes the #ifdef __cplusplus in ctype.h
-:segment !CNAME
-#endif
-:endsegment
-
 #endif

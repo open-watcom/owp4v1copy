@@ -110,7 +110,7 @@ extern DWORD                    WindowsFlags;
 extern struct interrupt_struct  IntResult;
 extern struct fp_state          FPResult;
 extern volatile debugger_state  DebuggerState;
-extern const char __based(__segname("_CONST")) ExtensionList[];
+extern char                     ExtensionList[];
 extern break_point              StopNewTask;
 extern DWORD                    SystemDebugState;
 extern volatile restart_opts    AppMessage;

@@ -47,11 +47,7 @@
 #include <errno.h>
 #include <string.h>
 #include <direct.h>
-#ifdef __WIDECHAR__
-    #include <wctype.h>
-#else
-    #include <ctype.h>
-#endif
+#include <ctype.h>
 #include <dos.h>
 #include <mbstring.h>
 #include "libwin32.h"

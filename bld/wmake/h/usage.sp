@@ -1,5 +1,6 @@
 ::
-:: wmake help page
+:: help page
+:: For a page break, leave a line undefined.
 ::
 :segment ENGLISH
 Usage  :  wmake [options]* [macro=text]* [target]*

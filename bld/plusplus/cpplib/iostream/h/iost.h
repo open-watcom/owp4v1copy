@@ -28,19 +28,20 @@
 *
 ****************************************************************************/
 
+
 #include "variety.h"
 #include <ctype.h>
 #include <errno.h>
 #include <float.h>
-#include <fstream>
-#include <iomanip>
-#include <iostream>
+#include <fstream.h>
+#include <iomanip.h>
+#include <iostream.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdiobuf.h>
 #include <stdlib.h>
-#include <streambu>
+#include <streambu.h>
 #include <string.h>
-#include <strstrea>
+#include <strstrea.h>
 #include <sys/stat.h>
 #include <unistd.h>

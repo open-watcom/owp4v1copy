@@ -73,11 +73,11 @@ void AllocMacroSegment( unsigned minimum )
 }
 
 
-void FreeMacroSegments( void )
+void FreeMacroSegments()
 {
     struct macro_seg_list *msl;
 
-    for( ; (msl = MacSegList); ) {
+    for( ; msl = MacSegList; ) {
         FEfree( (void *)(msl->segment) );
         MacSegList = msl->next;
         CMemFree( msl );
@@ -106,7 +106,7 @@ void MacroOverflow( unsigned amount_needed, unsigned amount_used )
 }
 
 
-local MEPTR *MacroLkUp( const char *name, MEPTR *lnk )
+local MEPTR *MacroLkUp( char *name, MEPTR *lnk )
 {
     int         len;
     MEPTR       mentry;
@@ -177,11 +177,11 @@ int MacroCompare( MEPTR m1, MEPTR m2 )
 }
 
 
-MEPTR MacroLookup( const char *buf )
+MEPTR MacroLookup()
 {
     MEPTR       mentry, *lnk;
 
-    lnk = MacroLkUp( buf, &MacHash[ MacHashValue ] );
+    lnk = MacroLkUp( Buffer, &MacHash[ MacHashValue ] );
     mentry = *lnk;
     return( mentry );
 }

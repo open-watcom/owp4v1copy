@@ -24,15 +24,20 @@
 *
 *  ========================================================================
 *
-* Description:  Quit - print usage messages and exit
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
+
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include "misc.h"
 
+/*
+ * Quit - print usage messages and exit
+ */
 void Quit( const char *usage_msg[], const char *str, ... )
 {
     int         i;
@@ -43,6 +48,7 @@ void Quit( const char *usage_msg[], const char *str, ... )
         vfprintf( stderr, str, al );
         va_end( al );
     }
+
     if( usage_msg == NULL ) {
         fprintf( stderr, "The Weenie That Wrote This Didn't Give A Usage String\n" );
         exit( EXIT_FAILURE );
@@ -56,4 +62,5 @@ void Quit( const char *usage_msg[], const char *str, ... )
         fprintf( stderr, "%s\n", usage_msg[i++] );
     }
     exit( EXIT_FAILURE );
-}
+
+} /* Quit */

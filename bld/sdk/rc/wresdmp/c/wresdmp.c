@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Resource dump utility.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -38,14 +39,12 @@
 #include "global.h"
 
 static char * HelpText[] = {
-    "Usage: %s {options} filename",
-#ifndef __UNIX__
-    "Options: (/option is also accepted)",
-#endif
-    "-?         - print this help message",
-    "-c         - dump contents of resources",
-    "-n=name    - print only resources with this name",
-    "-t=type    - print only resources with this type",
+    "Usages: %s {options} filename",
+    "Options: (-option is also accepted)",
+    "/?         - print this help message",
+    "/c         - dump contents of resources",
+    "/n=name    - print only resources with this name",
+    "/t=type    - print only resources with this type",
     NULL
 };
 
@@ -68,7 +67,7 @@ static void PrintUsageMessage( const char * progpath )
 }
 
 
-int main( int argc, const char * argv[] )
+int main( int argc, char * argv[] )
 /*********************************/
 {
     int     contok;

@@ -5,6 +5,7 @@
 
 host_os  = qnx
 host_cpu = 386
+display = char
 
 memory_model_386 = s
 

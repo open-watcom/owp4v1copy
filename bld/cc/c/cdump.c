@@ -34,8 +34,7 @@
 
 extern  char    *Tokens[];
 
-/* matches table of type in ctypes.h */
-static  char    *CTypeNames[] = {
+char    *CTypeNames[] = {
         "signed char",
         "unsigned char",
         "short",
@@ -59,16 +58,8 @@ static  char    *CTypeNames[] = {
         "<typdef>",
         "<ufield>",
         "...",
-        "<char>",
-        "<wide char>",
-        "long double",
-        "float _Complex",
-        "double _Complex",
-        "long double _Complex",
-        "float _Imaginary",
-        "double _Imaginary",
-        "long double _Imaginary",
-        "_Bool",
+        "<char>"
+        "<wide char>"
  };
 
 static  char   do_message_output; /* Optimize output for human */
@@ -141,9 +132,21 @@ static void ChunkSaveStrWord( STRCHUNK *pch, const char *str )
     ChunkSaveChar( pch, ' ' );
 }
 
-#ifdef FDEBUG
+void SymDump()
+{
+#if 0
+    if( DebugFlag >= 2 ) {
+        DumpTags();
+        DumpHashTable();
+        DumpEnumTable();
+    }
+#endif
+}
+
+
 void DumpToken()
 {
+#if 0
     int value;
 
     if( DebugFlag >= 3 ) {
@@ -158,16 +161,18 @@ void DumpToken()
         } else
             printf( "'%s'\n", Tokens[ CurToken ] );
     }
-}
 #endif
+}
 
 #if 0
 void DumpTypeCounts()
 {
+/*
     int i;
     for( i = TYPE_CHAR; i <= TYPE_VOID; ++i ) {
         printf( "%3d %s\n", CTypeCounts[i], CTypeNames[i] );
     }
+*/
     printf( "%d pointer nodes\n", CTypeCounts[TYPE_POINTER] );
 }
 #endif
@@ -338,12 +343,8 @@ static void DumpDecl( TYPEPTR typ, SYMPTR funcsym, STRCHUNK *pch )
             DumpDecl( obj, NULL, pch );
             ChunkSaveChar( pch, '(' );
             break;
-        default:
-            break;
         }
         DumpPointer( typ, pch );         /* 26-may-89 */
-        break;
-    default:
         break;
     }
 }
@@ -362,7 +363,6 @@ static void DumpFlags( int flags, TYPEPTR typ, STRCHUNK *fp )
 
     if( flags & FLAG_VOLATILE ) put_keyword( T_VOLATILE, fp );
     if( flags & FLAG_CONST )    put_keyword( T_CONST, fp );
-    if( flags & FLAG_RESTRICT ) put_keyword( T_RESTRICT, fp );
     if( flags & FLAG_NEAR ) {
         if( flags & FLAG_FAR  ) {
             put_keyword( T___INTERRUPT, fp );
@@ -520,8 +520,6 @@ static TYPEPTR DefArgPromotion( TYPEPTR arg_typ )
         break;
     case TYPE_FLOAT:
         arg_typ = GetType( TYPE_DOUBLE );
-        break;
-    default:
         break;
     }
     return( arg_typ );

@@ -85,7 +85,7 @@ extern bool GUIXCreateFixedToolbar( gui_window *wnd )
     for( i = 0; i < wnd->toolbar->num_items; i++ ) {
         menu.label = wnd->toolbar->info[i].label;
         if( menu.label != NULL ) {
-            with_excl = (char *)GUIMemAlloc( strlen( menu.label ) + 2 );
+            with_excl = (char *)GUIAlloc( strlen( menu.label ) + 2 );
             if( with_excl != NULL ) {
                 strcpy( with_excl, menu.label );
                 strcat( with_excl, LIT( Exclamation ) );
@@ -95,13 +95,13 @@ extern bool GUIXCreateFixedToolbar( gui_window *wnd )
         menu.id = wnd->toolbar->info[i].id;
         menu.hinttext = wnd->toolbar->info[i].hinttext;
         if( !GUIAppendToolbarMenu( wnd, &menu, i==(wnd->toolbar->num_items-1) ) ) {
-            GUIMemFree( with_excl );
+            GUIFree( with_excl );
             for( j = 0; j < i; j++ ) {
                 GUIDeleteToolbarMenuItem( wnd, wnd->toolbar->info[j].id );
             }
             return( FALSE );
         }
-        GUIMemFree( with_excl );
+        GUIFree( with_excl );
     }
     GUIEVENTWND( wnd, GUI_TOOLBAR_FIXED, NULL );
     return( TRUE );
@@ -191,7 +191,7 @@ static bool CreateFloatingToolbar( gui_window *wnd, gui_ord height )
     FloatingToolbar.colours = GUIGetWindowColours( wnd );
     FloatingToolbar.colours[GUI_FRAME_INACTIVE] = FloatingToolbar.colours[GUI_FRAME_ACTIVE];
     toolbar->floattoolbar = GUICreateWindow( &FloatingToolbar );
-    GUIMemFree( FloatingToolbar.colours );
+    GUIFree( FloatingToolbar.colours );
     FloatingToolbar.colours = NULL;
     Button.parent = toolbar->floattoolbar;
     loc = 0;
@@ -236,14 +236,14 @@ bool GUIXCreateToolBar( gui_window *wnd, bool fixed, gui_ord height,
     if( ( wnd->parent != NULL ) || ( plain == NULL ) || ( standout == NULL ) ) {
         return( FALSE );
     }
-    wnd->toolbar = (toolbarinfo *)GUIMemAlloc( sizeof( toolbarinfo ) );
+    wnd->toolbar = (toolbarinfo *)GUIAlloc( sizeof( toolbarinfo ) );
     if( wnd->toolbar == NULL ) {
         return( FALSE );
     }
     size = sizeof( gui_toolbar_struct ) * num_items;
-    wnd->toolbar->info = (gui_toolbar_struct * )GUIMemAlloc( size );
+    wnd->toolbar->info = (gui_toolbar_struct * )GUIAlloc( size );
     if( wnd->toolbar->info == NULL ) {
-        GUIMemFree( wnd->toolbar );
+        GUIFree( wnd->toolbar );
         wnd->toolbar = FALSE;
         return( FALSE );
     }
@@ -259,10 +259,10 @@ bool GUIXCreateToolBar( gui_window *wnd, bool fixed, gui_ord height,
     for( i = 0; i < num_items; i++ ) {
         if( !GUIStrDup( toolbar[i].label, &wnd->toolbar->info[i].label ) ) {
             for( j=0; j < i; j++ ) {
-                GUIMemFree( wnd->toolbar->info[j].label );
+                GUIFree( wnd->toolbar->info[j].label );
             }
-            GUIMemFree( wnd->toolbar->info );
-            GUIMemFree( wnd->toolbar );
+            GUIFree( wnd->toolbar->info );
+            GUIFree( wnd->toolbar );
         }
         wnd->toolbar->info[i].id = toolbar[i].id;
     }
@@ -297,10 +297,10 @@ bool GUIXCloseToolBar( gui_window *wnd )
     if( (wnd->toolbar != NULL ) && ( wnd->toolbar->info != NULL ) &&
         !( wnd->toolbar->switching ) ) {
         for( i = 0; i < wnd->toolbar->num_items; i++ ) {
-            GUIMemFree( wnd->toolbar->info[i].label );
+            GUIFree( wnd->toolbar->info[i].label );
         }
-        GUIMemFree( wnd->toolbar->info );
-        GUIMemFree( wnd->toolbar );
+        GUIFree( wnd->toolbar->info );
+        GUIFree( wnd->toolbar );
         wnd->toolbar = NULL;
     }
     if( !switching ) {

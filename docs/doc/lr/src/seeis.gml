@@ -1,3 +1,3 @@
 .* CHARACTER PROCESSING FAMILY
-.seelist &*1 isalnum isalpha isblank iscntrl isdigit isgraph isleadbyte islower
-.seelist &*1 isprint ispunct isspace isupper iswctype isxdigit tolower toupper
+.seelist &*1 isalnum isalpha iscntrl isdigit isgraph isleadbyte islower isprint
+.seelist &*1 ispunct isspace isupper iswctype isxdigit tolower toupper

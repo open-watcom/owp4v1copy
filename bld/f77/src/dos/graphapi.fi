@@ -1,4 +1,8 @@
+c$ifdef _NEC_98
+c$pragma library graph98
+c$else
 c$pragma library graph
+c$endif
 
 c$ifdef __stack_conventions__
 c$pragma aux wcgraph "!"
@@ -249,6 +253,24 @@ c$ifdef __386__
 c$pragma aux (wcgraph) _imagesize_wxy parm( reference, reference )
 c$else
 c$pragma aux (wcgraph) _imagesize_wxy parm( reference far, reference far )
+c$endif
+
+c$ifdef _NEC_98
+
+! KANJI Font Functions
+
+c$ifdef __386__
+c$pragma aux (wcgraph) _getkanji parm( value *2, value )
+c$else
+c$pragma aux (wcgraph) _getkanji parm( value *2, value far )
+c$endif
+c$ifdef __386__
+c$pragma aux (wcgraph) _setkanji parm( value *2, value )
+c$else
+c$pragma aux (wcgraph) _setkanji parm( value *2, value far )
+c$endif
+c$pragma aux (wcgraph) _kanjisize parm( value*2 )
+
 c$endif
 
 ! Font Manipulation Functions

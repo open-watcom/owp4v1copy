@@ -37,18 +37,11 @@
 #define MX_FSTK         10
 #define default_file    "_CPPDBG_."
 
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// !!!!!!!!  FIXME  !!!!!!!!!!!!!!!!
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// temporarily disabled redirection for stdout, need rework
-
-#if 0
 static FILE* fstk[ MX_FSTK ];   // suspended files
-#endif
 static unsigned index;          // top of files stack
 static int logging;             // true ==> logging at level 0
 
-#if 0
+
 static void reDirSwitch         // SWITCH TWO FILE AREAS
     ( void )
 {
@@ -61,6 +54,7 @@ static void reDirSwitch         // SWITCH TWO FILE AREAS
     *stdout = *fp;
     *fp = temp;
 }
+
 
 static void reDirBeg            // START REDIRECTION FOR A FILE
     ( void )
@@ -86,6 +80,7 @@ static void reDirBeg            // START REDIRECTION FOR A FILE
     ++ index;
 }
 
+
 static void reDirEnd            // COMPLETE REDIRECTION FOR A FILE
     ( void )
 {
@@ -103,29 +98,6 @@ static void reDirEnd            // COMPLETE REDIRECTION FOR A FILE
     }
 }
 
-#else
-
-// !!!!!!!!  FIXME  !!!!!!!!!!!!!!!!
-// temporarily disabled, need rework
-
-static void reDirBeg            // START REDIRECTION FOR A FILE
-    ( void )
-{
-    if( index < MX_FSTK ) {
-        ++ index;
-    }
-}
-
-
-static void reDirEnd            // COMPLETE REDIRECTION FOR A FILE
-    ( void )
-{
-    if( index > 0 ) {
-        -- index;
-    }
-}
-
-#endif
 
 void DbgRedirectBeg             // START REDIRECTION
     ( void )
@@ -135,6 +107,7 @@ void DbgRedirectBeg             // START REDIRECTION
         logging = 0;
     }
 }
+
 
 int DbgRedirectEnd              // COMPLETE REDIRECTION
     ( void )
@@ -150,6 +123,7 @@ int DbgRedirectEnd              // COMPLETE REDIRECTION
     return retn;
 }
 
+
 void DbgLogBeg                  // START LOGGING
     ( void )
 {
@@ -158,6 +132,7 @@ void DbgLogBeg                  // START LOGGING
     }
     reDirBeg();
 }
+
 
 int DbgLogEnd                   // END LOGGING
     ( void )

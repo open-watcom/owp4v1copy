@@ -3,4 +3,6 @@
 host_os  = os2
 host_cpu = 386
 
+imp_libs = $(watcom_dir)/lib/dwarfrp.lib
+
 !include ../dwarf.mif

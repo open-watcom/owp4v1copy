@@ -28,6 +28,7 @@
 *
 ****************************************************************************/
 
+
 #include <sys/types.h>
 #include <direct.h>
 #include <string.h>
@@ -40,23 +41,21 @@
 
 #include <windows.h>
 
-char    *CmdProc;
 #define TITLESIZE 256
-char    Title[TITLESIZE];
+static char    Title[TITLESIZE];
 
 void SysInitTitle( int argc, char *argv[] )
 {
-    int i;
+    int         i;
 
     strcpy( Title, "Builder " );
-    for( i = 1; i < argc; i++ ) {
-        if( strlen( Title ) + strlen( argv[i] ) > TITLESIZE - 3 )
-	    break;
+    for( i=1; i < argc; i++ ) {
+        if( strlen( Title ) + strlen( argv[i] ) > TITLESIZE - 3 ) break;
         strcat( Title, argv[i] );
         strcat( Title, " " );
     }
     strcat( Title, "[" );
-    getcwd( Title + strlen( Title ), TITLESIZE - strlen( Title ) - 2 );
+    getcwd( Title+strlen(Title), TITLESIZE - strlen( Title ) - 2 );
     strcat( Title, "]" );
     SetConsoleTitle( Title );
 }
@@ -64,12 +63,11 @@ void SysInitTitle( int argc, char *argv[] )
 void SysSetTitle( char *title )
 {
     char        *end;
-
     end = strchr( Title, ']' );
-    *( end + 1 ) = '\0';
+    *(end+1) = '\0';
 
     strcat( Title, " (" );
-    getcwd( Title + strlen( Title ), TITLESIZE - strlen( Title ) - 2 );
+    getcwd( Title+strlen(Title), TITLESIZE - strlen( Title ) - 2 );
     strcat( Title, ")" );
     SetConsoleTitle( Title );
 }
@@ -78,33 +76,29 @@ int RunChildProcessCmdl( const char *cmdl )
 {
 
     PROCESS_INFORMATION pinfo;
-    STARTUPINFO         sinfo;
+    STARTUPINFO sinfo;
 
     memset( &sinfo, 0, sizeof( sinfo ) );
     sinfo.cb = sizeof( sinfo );
     memset( &pinfo, 0, sizeof( pinfo ) );
 
-    return CreateProcessA( NULL, ( LPSTR ) cmdl, NULL, NULL, TRUE, 0, NULL, NULL, &sinfo, &pinfo );
+    return CreateProcessA( NULL, (LPSTR)cmdl, NULL, NULL, TRUE, 0, NULL, NULL, &sinfo, &pinfo );
 }
 
 void SysInit( int argc, char *argv[] )
 {
     SysInitTitle( argc, argv );
-    CmdProc = getenv( "ComSpec" );
-    if( CmdProc == NULL ) {
-        Fatal( "Can not find command processor" );
-    }
 }
 
 unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
 {
-    int                 rc;
-    HANDLE              pipe_input;
-    HANDLE              pipe_output;
-    HANDLE              pipe_input_dup;
+    int         rc;
+    HANDLE      pipe_input;
+    HANDLE      pipe_output;
+    HANDLE      pipe_input_dup;
     SECURITY_ATTRIBUTES sa;
 
-    sa.nLength = sizeof( sa );
+    sa.nLength = sizeof(sa);
     sa.lpSecurityDescriptor = NULL;
     sa.bInheritHandle = TRUE;
     if( !CreatePipe( &pipe_input, &pipe_output, &sa, 0 ) ) {
@@ -113,12 +107,12 @@ unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
     SetStdHandle( STD_OUTPUT_HANDLE, pipe_output );
     SetStdHandle( STD_ERROR_HANDLE, pipe_output );
     DuplicateHandle( GetCurrentProcess(), pipe_input,
-                GetCurrentProcess(), &pipe_input_dup, 0, FALSE,
-                DUPLICATE_SAME_ACCESS );
+                GetCurrentProcess(), &pipe_input_dup , 0, FALSE,
+                DUPLICATE_SAME_ACCESS);
     CloseHandle( pipe_input );
     rc = RunChildProcessCmdl( cmd );
     CloseHandle( pipe_output );
-    *readpipe = _hdopen( ( int ) pipe_input_dup, O_RDONLY );
+    *readpipe = _hdopen( (int) pipe_input_dup, O_RDONLY );
     return rc;
 }
 

@@ -1,7 +1,5 @@
-#pmake: os_nt cpu_axp ppc target_ppc
-
-host_os    = nt
-host_cpu   = axp
-target_cpu = ppc
-
+#pmake: all os_nt cpu_axp ppc
+host_CPU = axp
+host_OS = nt
+target_CPU = ppc
 !include ../master.mif

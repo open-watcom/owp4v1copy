@@ -25,7 +25,6 @@ objs = &
     namemgr.obj &
     objio.obj &
     objprs.obj &
-    reglist.obj &
     objrec.obj &
     pubdef.obj &
     queue.obj &

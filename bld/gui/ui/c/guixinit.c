@@ -56,7 +56,6 @@ bool GUIWndInit( unsigned DClickInterval, gui_window_styles style )
 {
     gui_colour_set      background = { GUI_WHITE, GUI_BLUE };
 
-    GUIMemOpen();
     GUIStyle = style;
     GUIInitGraphicsMouse( style );
     if( !GUISysInit( 2 ) ) {

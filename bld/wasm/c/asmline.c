@@ -46,7 +46,7 @@
 #include "asmerr.h"
 #include "asmalloc.h"
 #include "condasm.h"
-#include "asmexpnd.h"
+#include "expand.h"
 #endif
 
 

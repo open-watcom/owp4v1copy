@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#include <unistd.h>
+#include <io.h>
 #include <fcntl.h>
 #include <stdarg.h>
 #include <string.h>
@@ -102,8 +102,6 @@ typedef struct RcFileEntry {
 } RcFileEntry;
 
 static RcFileEntry RcFileList[ RC_MAX_FILES ];
-
-static int RcFindIndex(int fileno );
 
 static RcBuffer * NewRcBuffer( void )
 /***********************************/
@@ -236,7 +234,7 @@ extern int RcClose( int fileno )
     return( close( fileno ) );
 } /* RcClose */
 
-extern int RcWrite( int fileno, const void * out_buff, size_t size )
+extern int RcWrite( int fileno, const void * out_buff, int size )
 /***************************************************************/
 {
     RcBuffer *  buff;
@@ -298,7 +296,7 @@ static int FillRcBuffer( int fileno, RcBuffer * buff )
     return( buff->Count );
 } /* FillRcBuffer */
 
-int RcRead( int fileno, void * in_buff, size_t size )
+int RcRead( int fileno, void * in_buff, int size )
 /*******************************************************/
 {
     RcBuffer *  buff;
@@ -473,7 +471,8 @@ extern void Layer0InitStatics( void )
 /* Find index in RcFileList table of given filehandle.
 *  Return: RC_MAX_FILES if not found, else index
 */
-static int RcFindIndex(int fileno )
+
+int RcFindIndex(int fileno )
 /******************************/
 {
     int         i;

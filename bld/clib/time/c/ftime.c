@@ -24,9 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of ftime()
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
+
 
 #include "variety.h"
 #include <time.h>
@@ -35,12 +37,12 @@
 #include "timedata.h"
 
 _WCRTLINK int ftime( struct timeb *timeptr )
-{
-    struct tm   t;
+    {
+        auto struct tm t;
 
-    timeptr->millitm  = ( unsigned short ) __getctime( &t );
-    timeptr->time     = mktime( &t );
-    timeptr->dstflag  = ( short ) t.tm_isdst;
-    timeptr->timezone = ( short ) ( _RWD_timezone / 60L );
-    return( 1 );
-}
+        timeptr->millitm  = __getctime( &t );
+        timeptr->time     = mktime( &t );
+        timeptr->dstflag  = t.tm_isdst;
+        timeptr->timezone = _RWD_timezone / 60L;
+        return( 1 );
+    }

@@ -33,34 +33,96 @@
 #define ASMSYM_H
 
 #include "watcom.h"
-#include "asminlin.h"
-#include "asmops2.h"
 
-typedef enum {
-        MT_BYTE   = T_BYTE,
-        MT_WORD   = T_WORD,
-        MT_DWORD  = T_DWORD,
-        MT_QWORD  = T_QWORD,
-        MT_FWORD  = T_FWORD,
-        MT_TBYTE  = T_TBYTE,
-//        MT_OWORD  = T_OWORD,
+enum fixup_types {
+        FIX_SEG,
+        FIX_RELOFF8,
+        FIX_RELOFF16,
+        FIX_RELOFF32,
+        FIX_OFF16,
+        FIX_OFF32,
+        FIX_PTR16,
+        FIX_PTR32
+};
 
-        MT_SHORT  = T_SHORT,
-        MT_NEAR   = T_NEAR,
-        MT_FAR    = T_FAR,
-
-        MT_PTR    = T_PTR,
+enum sym_state {
+    SYM_UNDEFINED,
+    SYM_INTERNAL,
+    SYM_EXTERNAL,
+    SYM_STACK,
 
 #ifdef _WASM_
-        MT_SBYTE  = T_SBYTE,
-        MT_SWORD  = T_SWORD,
-        MT_SDWORD = T_SDWORD,
-
-        MT_STRUCT = T_STRUCT,
-
-        MT_PROC   = T_PROC,
-        MT_ABS    = T_ABS
+    SYM_SEG,    // segment
+    SYM_GRP,    // group
+    SYM_PROC,   // procedure
+    SYM_MACRO,  // macro
+    SYM_CONST,  // constant - created with EQU, =, or /D on the cmdline
+    SYM_LIB,    // included library
+    SYM_EXT,    // extern def.
+    SYM_LNAME,  // lname entry
+    SYM_CLASS_LNAME,    // lname entry for segment class ... not in symbol table
+    SYM_STRUCT_FIELD,   // field defined in some structure
+    SYM_STRUCT          // structure
 #endif
+
+};
+
+enum sym_type {
+        SYM_INT1,               /* a byte variable */
+        SYM_INT2,               /* a word variable */
+        SYM_INT4,               /* a dword variable */
+        SYM_INT6,               /* a 32-bit far pointer */
+        SYM_FLOAT4,             /* a 4 byte floating point variable */
+        SYM_FLOAT8,             /* an 8 byte floating point variable */
+        SYM_FLOAT10,            /* a 10 byte floating point variable */
+        SYM_NEAR2,              /* a 16-bit near routine */
+        SYM_NEAR4,              /* a 32-bit near routine */
+        SYM_FAR2,               /* a 16-bit far routine */
+        SYM_FAR4                /* a 32-bit far routine */
+};
+
+struct asmfixup {
+        struct asmfixup         *next;
+        char                    *name;
+        unsigned long           offset;
+        unsigned                fix_loc;
+        enum fixup_types        fix_type;
+        char                    external;
+
+#ifdef _WASM_
+        int_8                   frame;          // frame of the fixup
+        uint_16                 frame_datum;    // frame_datum of the fixup
+        struct dir_node         *def_seg;       // segment fixup is in
+#endif
+
+};
+
+typedef enum {
+        MT_EMPTY,
+        MT_ERROR,
+
+        MT_BYTE,
+        MT_SBYTE,
+        MT_WORD,
+        MT_SWORD,
+        MT_DWORD,
+        MT_SDWORD,
+        MT_QWORD,
+        MT_FWORD,
+        MT_PWORD,
+        MT_TBYTE,
+
+        MT_SHORT,
+        MT_NEAR,
+        MT_FAR,
+
+        MT_STRUCT,
+
+        MT_PTR,
+
+        MT_PROC,
+        MT_ABS
+
 } memtype;
 
 typedef struct asm_sym {
@@ -95,5 +157,25 @@ extern struct asm_sym *AsmGetSymbol( char *name );
     extern void AsmTakeOut( char *name );
     extern int AsmChangeName( char *old, char *new );
 #endif
+
+/*
+   The following function is supplied by the user of the mini-assembler.
+   It returns either:
+        SYM_UNDEFINED   - the name is not in the user's symbol table
+        SYM_EXTERNAL    - the name is a static symbol in the user's
+                                symbol table
+        SYM_STACK       - the symbol is an auto symbol in the user's
+                                symbol table
+*/
+extern enum sym_state   AsmQueryExternal( char *name );
+
+/*
+   The following function is supplied by the user of the mini-assembler.
+   It returns the type of the symbol via one of the 'enum sym_type'
+   constants.
+*/
+extern enum sym_type    AsmQueryType( char *name );
+
+extern struct asmfixup  *FixupHead;
 
 #endif

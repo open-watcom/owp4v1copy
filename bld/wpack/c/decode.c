@@ -32,13 +32,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <malloc.h>
+#ifdef UNIX
 #include <sys/types.h>
 #include <sys/stat.h>
-#if defined( UNIX )
 #include <clibext.h>
-#elif defined( __UNIX__ )
 #else
 #include <dos.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #endif
 #include "wpack.h"
 #include "txttable.h"
@@ -516,14 +517,14 @@ extern bool DecodeFile( file_info *info, arccmd *cmd )
 static int FileExists( char *name, file_info *info )            /* 26-may-90 */
 {
     auto struct stat            statblk;
-#if !defined( UNIX ) && !defined( __UNIX__ )
+#ifndef UNIX
     unsigned                    attribute;
 #endif
     int                         rc;
 
     rc = stat( name, &statblk );
     if( rc == 0 ) {
-#if defined( UNIX ) || defined( __UNIX__ )
+#ifdef UNIX
         if( !( statblk.st_mode & S_IWRITE ) ) {
 #else
         _dos_getfileattr( name, &attribute );
@@ -533,7 +534,7 @@ static int FileExists( char *name, file_info *info )            /* 26-may-90 */
             if( !OK_ReplaceRDOnly( name ) ) {
                 return( 1 );
             }
-#if defined( UNIX ) || defined( __UNIX__ )
+#ifdef UNIX
             chmod( name, 0777 );
 #else
             _dos_setfileattr( name, _A_NORMAL );

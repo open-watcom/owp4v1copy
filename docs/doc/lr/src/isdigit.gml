@@ -4,7 +4,7 @@
 int isdigit( int c );
 .ixfunc2 '&CharTest' &func
 .if &'length(&wfunc.) ne 0 .do begin
-#include <wctype.h>
+#include <wchar.h>
 int iswdigit( wint_t c );
 .ixfunc2 '&CharTest' &wfunc
 .ixfunc2 '&Wide' &wfunc
@@ -53,15 +53,15 @@ char chars[] = {
 #define SIZE sizeof( chars ) / sizeof( char )
 .exmp break
 void main()
-{
+  {
     int   i;
 .exmp break
     for( i = 0; i < SIZE; i++ ) {
-        printf( "Char %c is %sa digit character\n",
-                chars[i],
-                ( isdigit( chars[i] ) ) ? "" : "not " );
+      printf( "Char %c is %sa digit character\n",
+            chars[i],
+            ( isdigit( chars[i] ) ) ? "" : "not " );
     }
-}
+  }
 .exmp output
 Char A is not a digit character
 Char 5 is a digit character

@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  OS/2 1.x performance sampling core.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -82,7 +83,7 @@ static int              NewSession;
 
 static seg_offset       CommonAddr;
 
-#define STACK_SIZE 4096
+#define STACK_SIZE 2048
 static char near        Stack[STACK_SIZE];
 
 unsigned NextThread( unsigned tid )
@@ -104,7 +105,7 @@ void InitTimerRate()
 
 void SetTimerRate( char **cmd )
 {
-    SleepTime = GetNumber( 1, 1000, cmd, 10 );
+    SleepTime = GetNumber( 27, 1000, cmd, 10 );
 }
 
 unsigned long TimerRate()

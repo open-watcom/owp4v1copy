@@ -103,6 +103,7 @@ extern gui_window       *MainWnd;
 #define WIDTH  1000
 #define HEIGHT 1100
 
+
 extern bool             SetupInit( void );
 extern void             SetupFini( void );
 extern void             SetupError( char * );

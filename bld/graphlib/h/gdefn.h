@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Graph library internal structures and function prototypes.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -104,8 +105,22 @@ struct videoinfo {
 #define PLANAR          0x0001      // videoinfo.misc_info bits
 #define NO_BIOS         0x0002
 
-#define               _DEFAULT_ATTR   0x07    // default text attribute
-#define               IsTextMode      ( !_GrMode )
+#if defined( _NEC_PC )
+  #define               SUPERIMPOSED    16      // mode is superimposed text and graphics
+  #define               _DEFAULT_ATTR   0xE1
+  #define               IsTextMode      ( _CurrState->vc.mode == _98TEXT80 || \
+                                          _CurrState->vc.mode & SUPERIMPOSED )
+  #if defined( __386__ )
+    struct kanji_buf {
+        char far        *buf;           // pointer to buffer in real-mode
+        unsigned short  seg;            // real-mode segment
+    };
+  #endif
+
+#else
+  #define               _DEFAULT_ATTR   0x07    // default text attribute
+  #define               IsTextMode      ( !_GrMode )
+#endif
 
 struct window_def {
     short           invert;

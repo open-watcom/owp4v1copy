@@ -3,7 +3,6 @@
 host_os  = qnx
 host_cpu = 386
 
-memory_model_386 = s
-inline_vmem = 1
+inline_vmem = yes
 
 !include ../dr.mif

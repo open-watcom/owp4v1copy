@@ -1,11 +1,8 @@
-/***************************************************************************
- * FILE: limits.h/climits (Machine and OS limits)
+/*
+ *  limits.h    Machine and OS limits
  *
 :include crwatqnx.sp
- *
- * Description: This header is part of the C/C++ standard library. It
- *              describes implementation limits.
- ***************************************************************************/
+ */
 #ifndef _LIMITS_H_INCLUDED
 #define _LIMITS_H_INCLUDED
 :include readonly.sp
@@ -25,15 +22,11 @@
 #endif
 #define SCHAR_MIN   (-128)      /*  minimum value of a signed char      */
 #define SCHAR_MAX   127         /*  maximum value of a signed char      */
-#define UCHAR_MAX   255         /*  maximum value of an unsigned char   */
+#define UCHAR_MAX   255U        /*  maximum value of an unsigned char   */
 
 #define SHRT_MIN    (-32767-1)  /*  minimum value of a short int        */
 #define SHRT_MAX    32767       /*  maximum value of a short int        */
-#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
- #define USHRT_MAX  65535       /*  maximum value of an unsigned short  */
-#else
- #define USHRT_MAX  65535U      /*  maximum value of an unsigned short  */
-#endif
+#define USHRT_MAX   65535U      /*  maximum value of an unsigned short  */
 #define LONG_MAX    2147483647L      /* maximum value of a long int      */
 #define LONG_MIN    (-2147483647L-1) /* minimum value of a long int      */
 #define ULONG_MAX   4294967295UL     /* maximum value of an unsigned long*/
@@ -60,11 +53,11 @@
 
 #define _I8_MIN     SCHAR_MIN   /*  minimum value of a signed 8 bit type   */
 #define _I8_MAX     SCHAR_MAX   /*  maximum value of a signed 8 bit type   */
-#define _UI8_MAX    255U        /*  maximum value of an unsigned 8 bit type*/
+#define _UI8_MAX    UCHAR_MAX   /*  maximum value of an unsigned 8 bit type*/
 
 #define _I16_MIN    SHRT_MIN    /*  minimum value of a signed 16 bit type   */
 #define _I16_MAX    SHRT_MAX    /*  maximum value of a signed 16 bit type   */
-#define _UI16_MAX   65535U      /*  maximum value of an unsigned 16 bit type*/
+#define _UI16_MAX   USHRT_MAX   /*  maximum value of an unsigned 16 bit type*/
 
 #define _I32_MIN    LONG_MIN    /*  minimum value of a signed 32 bit type   */
 #define _I32_MAX    LONG_MAX    /*  maximum value of a signed 32 bit type   */
@@ -154,16 +147,16 @@
 /*
  *  Posix .2/9 limits.
  */
-#define BC_BASE_MAX     99
-#define BC_DIM_MAX      2048
+#define BC_BASE_MAX 99
+#define BC_DIM_MAX  2048
 #define BC_SCALE_MAX    99
 #define COLL_ELEM_MAX   4
 #define EXPR_NEST_MAX   32
-#define LINE_MAX        2048
+#define LINE_MAX    2048
 #define PASTE_FILES_MAX 12
-#define RE_DUP_MAX      255
+#define RE_DUP_MAX  255
 #define SED_PATTERN_MAX 20480
-#define SENDTO_MAX      90000L
+#define SENDTO_MAX  90000L
 #define SORT_LINE_MAX   20480
 #endif  /* _POSIX_SOURCE || !NO_EXT_KEYS */
 

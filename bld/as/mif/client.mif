@@ -1,32 +1,7 @@
-# AS in-line library finder.
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#
-#
-# AS in-line library
-#
-asminline_axp_lib_386 = $(as_dir)/alpha/inline/osi386/asinline.lib
-asminline_axp_lib_axp = $(as_dir)/alpha/inline/osiaxp/asinline.lib
-
-asminline_ppc_lib_386 = $(as_dir)/ppc/inline/osi386/asinline.lib
-asminline_ppc_lib_axp = $(as_dir)/ppc/inline/osiaxp/asinline.lib
-
-#
-# AS in-line run-time DLL used
-#
-!ifeq $(proj_name)_rtdll 1
-!endif
-
-#
-!ifeq target_cpu axp
-!ifdef asminline_axp_lib_$(host_os)_$(host_cpu)
-asminline_lib = $(asminline_axp_lib_$(host_os)_$(host_cpu))
+!ifeq target_CPU axp
+as_lib = $(as_dir)/alpha/inline/o.$(host_CPU)/asinline.lib
+!else ifeq target_CPU ppc
+as_lib = $(as_dir)/ppc/inline/o.$(host_CPU)/asinline.lib
 !else
-asminline_lib = $(asminline_axp_lib_$(host_cpu))
-!endif
-!else ifeq target_cpu ppc
-!ifdef asminline_ppc_lib_$(host_os)_$(host_cpu)
-asminline_lib = $(asminline_ppc_lib_$(host_os)_$(host_cpu))
-!else
-asminline_lib = $(asminline_ppc_lib_$(host_cpu))
-!endif
+!error invalid RISC target CPU
 !endif

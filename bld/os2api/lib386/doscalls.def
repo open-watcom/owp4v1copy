@@ -372,22 +372,5 @@ EXPORTS
     DosPM16SemRst                               @875
     DosSysCtl                                   @876
     DosQueryThreadContext                       @877
-    DosSGQueryTopmost                           @878
-    DosPerfSysCall                              @976
-    DosOpenL                                    @981
-    DosProtectOpenL                             @982
-    DosProtectSetFileLocksL                     @983
-    DosProtectSetFilePtrL                       @984
-    DosProtectSetFileSizeL                      @985
-    DosSetFileLocksL                            @986
-    DosCancelLockRequestL                       @987
-    DosSetFilePtrL                              @988
-    DosSetFileSizeL                             @989
-    DosListIOL                                  @990
-    DOS16FSRAMSEMREQUEST2                       @991
-    DOS16FSRAMSEMCLEAR2                         @992
-    DosSystemService                            @995
-    DosListIO                                   @996
-    DosCreateThread2                            @997
     DOS16SETEXTLIBPATH                          @998
     DOS16QUERYEXTLIBPATH                        @999

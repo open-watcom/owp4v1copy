@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Non-exhaustive test of C library stream I/O functions.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -316,8 +317,8 @@ int Test_vscanf( char *format, ... )
 int Test_File_FWriteRead( TestFile *cur_test, char *cur_mode )
 /************************************************************/
 {
-    char        buf1[30], buf2[20];
-    int         temp_int;
+    char         buf1[30], buf2[20];
+    int            temp_int, ret_value;
 
     /* fread, fwrite, fprintf, fscanf test */
 
@@ -394,6 +395,8 @@ int Test_File_IO_More( char *cur_mode )
 /*************************************/
 {
     TestFile  * cur_test;
+    char        cur_string[MAX_FILE_SIZE + 1];
+    char        test1 = 'a';
 
     /* Create a file (testing some write functinos) */
     if( cur_mode[0] == 'r' ) {

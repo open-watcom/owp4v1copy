@@ -180,6 +180,7 @@ void TestCompareF( void )
 void TestCopy( void )
 {
     char                bufA[80], bufB[80];
+    int                 status;
 
     strcpy( bufB, "Hello, world!" );            /* initialize bufB */
     memccpy( bufA, bufB, 'o', strlen(bufB)+1 ); /* copy "Hello" to bufA */
@@ -195,18 +196,19 @@ void TestCopyF( void )
 {
     char __far          bufA[80], bufB[80];
     char __far          testStr[] = "Foo Bar Goober Blah";
+    int                 status;
 
     strcpy( bufB, "Hello, world!" );            /* initialize bufB */
     _fmemccpy( bufA, bufB, 'o', strlen(bufB)+1 );   /* copy "Hello" to bufA */
     VERIFY( !_fmemcmp(bufA, "Hello", 5) );      /* ensure copied ok */
 
     _fmemcpy( bufA, bufB, strlen(bufB)+1 );     /* copy to bufA */
-    VERIFY( !_fstrcmp(bufA, bufB) );            /* ensure copied ok */
+    VERIFY( !strcmp(bufA, bufB) );              /* ensure copied ok */
 
     movedata( FP_SEG(bufA), FP_OFF(bufA),       /* copy data */
               FP_SEG(testStr), FP_OFF(testStr),
-              _fstrlen(testStr) );
-    VERIFY( !_fmemcmp(bufA, testStr, _fstrlen(testStr)) );
+              strlen(testStr) );
+    VERIFY( !memcmp(bufA, testStr, strlen(testStr)) );
 }
 #endif
 

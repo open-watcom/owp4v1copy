@@ -89,7 +89,7 @@ typedef uint_32 abbrev_code;
 
 
 #ifndef NO_ENUM
-#include "dwabenum.gh"
+#include "dwabenum.i"
 #endif
 
 #define InitDebugAbbrev         DW_InitDebugAbbrev

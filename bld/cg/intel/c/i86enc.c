@@ -24,11 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  Take the instruction stream from the code generator and
-*               writes the instructions into the object file.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
-#include <stdio.h>
+
 
 #include "standard.h"
 #include "coderep.h"
@@ -94,8 +94,6 @@ extern  void            GenUnkLea(pointer);
 extern  name            *IntEquivalent(name*);
 extern  void            LookupRoutine(instruction*);
 extern  void            AdjustStackDepth(instruction*);
-extern  void            AdjustStackDepthDirect(int adjust);
-
 extern  hw_reg_set      FullReg(hw_reg_set);
 extern  bool            BaseIsSP(name*);
 extern  type_length     TmpLoc(name*,name*);
@@ -849,6 +847,7 @@ static  void    DoP5Divide( instruction *ins ) {
 }
 #endif
 
+
 extern  void    GenObjCode( instruction *ins ) {
 /***********************************************
     Generate object code for the instruction "ins" based on gen_table->generate
@@ -879,37 +878,6 @@ extern  void    GenObjCode( instruction *ins ) {
                 right = ins->operands[ 1 ];
             }
         }
-
-        if (gen == G_MFSTRND)
-        {
-            /*
-            68 3F 0C 00 00            push        0x00000c3f
-            D9 7C 24 02               fnstcw      word ptr 0x2[esp]
-            D9 2C 24                  fldcw       word ptr [esp]
-            */
-
-            _Code;
-            AddByte(0x68);
-            AddByte(0x3f);
-            AddByte(0x0c);
-            AddByte(0x00);
-            AddByte(0x00);
-            _Emit;
-
-            _Code;
-            AddByte(0xd9);
-            AddByte(0x7c);
-            AddByte(0x24);
-            AddByte(0x02);
-            _Emit;
-
-            _Code;
-            AddByte(0xd9);
-            AddByte(0x2c);
-            AddByte(0x24);
-            _Emit;
-        }
-
         _Code;
         LayInitial( ins, gen );
         i = ins->num_operands;
@@ -1290,34 +1258,6 @@ extern  void    GenObjCode( instruction *ins ) {
             LayMF( result );
             LayModRM( result );
             break;
-
-        case G_MFSTRND:
-            /* store with rounding */
-
-            AdjustStackDepthDirect(WORD_SIZE);
-            LayMF( result );
-            LayModRM( result );
-            AdjustStackDepthDirect(-WORD_SIZE);
-            _Emit;
-
-            /*
-            D9 6C 24 02               fldcw       word ptr 0x2[esp]
-            8D 64 24 04               lea         esp,0x4[esp]
-            */
-            _Code;
-            AddByte(0xd9);
-            AddByte(0x6c);
-            AddByte(0x24);
-            AddByte(0x02);
-            _Emit;
-
-            _Code;
-            AddByte(0x8d);
-            AddByte(0x64);
-            AddByte(0x24);
-            AddByte(0x04);
-            break;
-
         case G_FCHS:
         case G_FLD1:
         case G_FLDZ:

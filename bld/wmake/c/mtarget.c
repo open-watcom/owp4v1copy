@@ -24,10 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  Target management routines.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
-
 
 #include <string.h>
 
@@ -54,9 +54,29 @@ STATIC DEPEND     *freeDepends;
 STATIC TLIST      *freeTLists;
 STATIC CLIST      *freeCLists;
 STATIC FLIST      *freeFLists;
+#ifdef CLEAN_ENVIRONMENT_VAR
+STATIC ELIST      *freeELists;
+#endif
 STATIC NKLIST     *freeNKLists;
 STATIC SLIST      *freeSLists;
 
+#ifdef CLEAN_ENVIRONMENT_VAR
+ELIST *NewEList( void )
+/**********************
+ * allocate a FLIST, fill in default values
+ */
+{
+    ELIST *e;
+
+    if( freeELists != NULL ) {
+        e = freeELists;
+        freeELists = e->next;
+        memset( e, 0, sizeof( *e ) );
+        return( e );
+    }
+    return( (ELIST *) CallocSafe( sizeof( ELIST ) ) );
+}
+#endif
 
 FLIST *NewFList( void )
 /**********************
@@ -430,6 +450,23 @@ void FreeFList( FLIST *flist )   /* non-recursive */
     }
 }
 
+#ifdef CLEAN_ENVIRONMENT_VAR
+void FreeEList( ELIST *elist )   /* non-recursive */
+/****************************/
+{
+    ELIST   *cur;
+
+    while( elist != NULL ) {
+        cur        = elist;
+        if (elist->envVarName != NULL) {
+            FreeSafe(elist->envVarName);
+        }
+        elist      = elist->next;
+        cur->next  = freeELists;
+        freeELists = cur;
+    }
+}
+#endif
 
 void FreeCList( CLIST *clist )
 /****************************/
@@ -736,7 +773,6 @@ void ResetExecuted( void )
     WalkHashTab( targTab, resetEx, NULL );
 }
 
-#if defined( USE_SCARCE ) || !defined( NDEBUG )
 STATIC RET_T cleanupLeftovers( void )
 /***********************************/
 {
@@ -745,6 +781,9 @@ STATIC RET_T cleanupLeftovers( void )
     SLIST      *s;
     TLIST      *t;
     FLIST      *f;
+#ifdef CLEAN_ENVIRONMENT_VAR
+    ELIST      *e;
+#endif
     NKLIST *nk;
 
     if( freeDepends != NULL ) {
@@ -787,6 +826,16 @@ STATIC RET_T cleanupLeftovers( void )
         } while( freeFLists != NULL );
         return( RET_SUCCESS );
     }
+#ifdef CLEAN_ENVIRONMENT_VAR
+    if( freeELists != NULL ) {
+        do {
+            e = freeELists;
+            freeELists = e->next;
+            FreeSafe( e );
+        } while( freeELists != NULL );
+        return( RET_SUCCESS );
+    }
+#endif
     if( freeCLists != NULL ) {
         do {
             c = freeCLists;
@@ -797,7 +846,6 @@ STATIC RET_T cleanupLeftovers( void )
     }
     return( RET_ERROR );
 }
-#endif
 
 void TargetInit( void )
 /*********************/
@@ -807,12 +855,13 @@ void TargetInit( void )
     freeTLists = NULL;
     freeCLists = NULL;
     freeFLists = NULL;
+#ifdef CLEAN_ENVIRONMENT_VAR
+    freeELists = NULL;
+#endif
     freeNKLists = NULL;
     freeSLists = NULL;
     targTab = NewHashTab( HASH_PRIME );
-#ifdef USE_SCARCE
     IfMemScarce( cleanupLeftovers );
-#endif
 }
 
 #ifndef NDEBUG

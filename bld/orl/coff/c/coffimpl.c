@@ -533,7 +533,6 @@ int convert_import_library(coff_file_handle coff_file_hnd)
     sym.DLLName = sym.exportedName + strlen(sym.exportedName) + 1;
     sym.time_date_stamp = i_hdr->time_date_stamp;
     sym.type = i_hdr->name_type;
-    sym.ordinal = i_hdr->ordinal;
     return CoffCreateImport( coff_file_hnd, &sym);
 }
 

@@ -29,11 +29,30 @@
 *
 ****************************************************************************/
 
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %     Copyright (C) 1992, by WATCOM International Inc.  All rights    %
+// %     reserved.  No part of this software may be reproduced or        %
+// %     used in any form or by any means - graphic, electronic or       %
+// %     mechanical, including photocopying, recording, taping or        %
+// %     information storage and retrieval systems - except with the     %
+// %     written permission of WATCOM International Inc.                 %
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+//  Modified    By              Reason
+//  ========    ==              ======
+//  93/05/26    Greg Bentz      pull floating point out of istream/ostream
+//  93/10/08    Greg Bentz      make LDFloatToString set scale_factor to 1
+//                              for _Ftos when 'G' format
+//  93/10/25    Raymond Tang    Split into separate files.
+//  94/04/06    Greg Bentz      combine header files
+//  99/10/12    J.B.Schueler    ensure that we don't walk over end of buffer
+
 #ifdef __SW_FH
 #include "iost.h"
 #else
 #include "variety.h"
-#include <iostream>
+#include <iostream.h>
 #endif
 #include "ioutil.h"
 #include "lock.h"
@@ -49,11 +68,9 @@ enum {
 
 #define MAX_DIGITS LDBL_DIG+EXTRA_DIG
 
-namespace std {
-
-  // Write a "long double" floating-point value.
-
-  ostream &ostream::__outfloat( long double const &f ) {
+ostream &ostream::__outfloat( long double const &f ) {
+/****************************************************/
+// Write a "long double" floating-point value.
 
     int   digit_offset;
     int   precision;
@@ -74,7 +91,5 @@ namespace std {
         osfx();
     }
     return( *this );
-  }
-
 }
 

@@ -1,35 +1,43 @@
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   %     Copyright (C) 1992, by WATCOM International Inc.  All rights    %
+   %     reserved.  No part of this software may be reproduced or        %
+   %     used in any form or by any means - graphic, electronic or       %
+   %     mechanical, including photocopying, recording, taping or        %
+   %     information storage and retrieval systems - except with the     %
+   %     written permission of WATCOM International Inc.                 %
+   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
 
 ******************************* IOSTREAM *************************************
 
 Filename: iotconde.cpp
 Declaration: 
-    std::iostream::iostream()
+    iostream::iostream()
 Semantics: Protected constructor, making an iostream without a streambuf attached.
 
 
 Filename: iotconbf.cpp
 Declaration: 
-    std::iostream::iostream( streambuf *sb ) 
+    iostream::iostream( streambuf *sb ) 
 Semantics: Public constructor, making an iostream with a streambuf attached.
 
 
 Filename: iotconsm.cpp
 Declaration: 
-    std::iostream::iostream( ios const &strm )
+    iostream::iostream( ios const &strm )
 Semantics: Public constructor, making an iostream with a streambuf attached.
            Associate the streambuf found in "strm" with the ios.
 
 
 Filename: iotdestr.cpp
 Declaration: 
-    std::iostream::~iostream()
+    iostream::~iostream()
 Semantics: Destructor.
 
 
 Filename: iotopbuf.cpp
 Declaration: 
-    std::iostream &iostream::operator = ( streambuf *sb )
+    iostream &iostream::operator = ( streambuf *sb )
 Semantics: *this is an iostream that has been initialized, and may or may not
            have a streambuf associated with it.
            Associate the streambuf "sb" with the stream.
@@ -37,7 +45,7 @@ Semantics: *this is an iostream that has been initialized, and may or may not
 
 Filename: iotopstm.cpp
 Declaration: 
-    std::iostream &iostream::operator = ( ios const &strm )
+    iostream &iostream::operator = ( ios const &strm )
 Semantics: *this is an iostream that has been initialized, and may or may not
            have a streambuf associated with it.
            Associate the streambuf found in "strm" with the ios.

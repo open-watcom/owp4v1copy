@@ -54,26 +54,15 @@ release = 1
 release = $(release_$(proj_name))
 !endif
 
-ldebug_i86 = debug all
-ldebug_386 = debug all
-
-cdebug_i86 =
-cdebug_386 =
-
-!ifeq %CODEVIEW 1
-cdebug_axp = -hc
-cdebug_ppc = -hc
-ldebug_axp = debug codeview
-ldebug_ppc = debug codeview
-!else
-ldebug_axp = debug dwarf
-ldebug_ppc = debug dwarf
-!endif
+ldebug_i86      = debug all
+ldebug_386      = debug all
+ldebug_axp      = debug dwarf
+ldebug_ppc      = debug dwarf
 
 mode_cflags_r   = -oaxt -d1-dNDEBUG
 mode_lflags_r   = $(ldebug_$(host_cpu))
 mode_aflags_r   = -dNDEBUG
-mode_cflags_d   = -od -d2 $(cdebug_$(host_cpu))
+mode_cflags_d   = -od -d2
 mode_lflags_d   = $(ldebug_$(host_cpu))
 mode_aflags_d   = -d1
 !ifeq release 1
@@ -201,7 +190,6 @@ lflags_linux_386 = sys linux
 lflags_nt_386   = sys nt_win
 lflags_nt_axp   = sys ntaxp_win
 lflags_os2_386  = sys os2v2_pm
-lflags_os2_i86  = sys os2_pm
 !endif
 !ifdef sys_dll
 #this is equally bad
@@ -226,56 +214,56 @@ rc_flags        = $(rc_flags_$(host_os)) $(rc_flags_$(host_cpu))
 
 !ifdef __LINUX__
 
-inc_dirs_sys_os2_386 = $(dev_dir)/os2api/incl32
-inc_dirs_sys_os2_i86 = $(dev_dir)/os2api/incl16
-inc_dirs_sys_nt    = $(dev_dir)/w32api/include
-inc_dirs_sys_win   = $(hdr_dir)/dos/win;$(dev_dir)/w16api/include
+inc_dirs_sys_os2_386 = $(dev_dir)/os2api/incl32;
+inc_dirs_sys_os2_i86 = $(dev_dir)/os2api/incl16;
+inc_dirs_sys_nt    = $(dev_dir)/w32api/include;
+inc_dirs_sys_win   = $(hdr_dir)/dos/win;$(dev_dir)/w16api/include;
 inc_dirs_sys_os2   = $(inc_dirs_sys_os2_$(host_cpu))
 inc_dirs_sys_dos   =
 inc_dirs_sys_nov   =
 inc_dirs_sys_qnx   =
 inc_dirs_sys_linux =
 
-inc_dirs_lang_qnx     = $(hdr_dir)/qnx
-inc_dirs_lang_linux   = $(hdr_dir)/linux
-inc_dirs_lang_netware = $(ow_nwoss_root)/common/h
+inc_dirs_lang_qnx     = $(hdr_dir)/qnx;
+inc_dirs_lang_linux   = $(hdr_dir)/linux;
+inc_dirs_lang_netware = $(ow_nwoss_root)/common/h;
 
 !ifdef inc_dirs_lang_$(host_os)
 inc_dirs_lang   = $(inc_dirs_lang_$(host_os))
 !else
-inc_dirs_lang   = $(hdr_dir)/dos
+inc_dirs_lang   = $(hdr_dir)/dos;
 !endif
 
-inc_dirs_sys    = $(inc_dirs_lang);$(inc_dirs_sys_$(host_os))
-inc_path        = $(inc_dirs);$(inc_dirs_$(host_os));$(inc_dirs_sys);$(watcom_dir)/h
+inc_dirs_sys    = $(inc_dirs_lang)$(inc_dirs_sys_$(host_os))
+inc_path        = $(inc_dirs);$(inc_dirs_$(host_os))$(inc_dirs_sys)$(watcom_dir)/h
 
 yacc            = $(bld_bin)/wyacc
 re2c            = $(bld_bin)/re2c
 
 !else
 
-inc_dirs_sys_os2_386 = $(lang_root)\h\os2
-inc_dirs_sys_os2_i86 = $(lang_root)\h\os21x
-inc_dirs_sys_nt    = $(lang_root)\h\nt
-inc_dirs_sys_win   = $(lang_root)\h\win
+inc_dirs_sys_os2_386 = $(lang_root)\h\os2;
+inc_dirs_sys_os2_i86 = $(lang_root)\h\os21x;
+inc_dirs_sys_nt    = $(lang_root)\h\nt;
+inc_dirs_sys_win   = $(lang_root)\h\win;
 inc_dirs_sys_os2   = $(inc_dirs_sys_os2_$(host_cpu))
 inc_dirs_sys_dos   =
 inc_dirs_sys_nov   =
 inc_dirs_sys_qnx   =
 inc_dirs_sys_linux =
 
-inc_dirs_lang_qnx     = $(lang_root)\qh
-inc_dirs_lang_linux   = $(lang_root)\lh
-inc_dirs_lang_netware = $(ow_nwoss_root)\common\h
+inc_dirs_lang_qnx     = $(lang_root)\qh;
+inc_dirs_lang_linux   = $(lang_root)\lh;
+inc_dirs_lang_netware = $(ow_nwoss_root)\common\h;
 
 !ifdef inc_dirs_lang_$(host_os)
 inc_dirs_lang   = $(inc_dirs_lang_$(host_os))
 !else
-inc_dirs_lang   = $(lang_root)\h
+inc_dirs_lang   = $(lang_root)\h;
 !endif
 
-inc_dirs_sys    = $(inc_dirs_lang);$(inc_dirs_sys_$(host_os))
-inc_path        = $(inc_dirs);$(inc_dirs_$(host_os));$(inc_dirs_sys);$(watcom_dir)\h
+inc_dirs_sys    = $(inc_dirs_lang)$(inc_dirs_sys_$(host_os))
+inc_path        = $(inc_dirs);$(inc_dirs_$(host_os))$(inc_dirs_sys)$(watcom_dir)\h
 
 yacc            = $(bld_bin)\yacc
 re2c            = $(bld_bin)\re2c

@@ -41,10 +41,6 @@
 #define BSD_SELECT
 #endif
 
-#if defined ( __NETWARE__ )
-#define __FUNCTION_DATA_ACCESS
-#endif
-
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -64,18 +60,14 @@
         #include <sys/types.h>
     #endif
     #include <unistd.h>
-#if !defined ( __NETWARE__ )
     #include <sys/socket.h>
-#endif
-#if !defined ( __LINUX__ ) && !defined ( __NETWARE__ )
+#ifndef __LINUX__
     #include <sys/select.h>
 #endif
-#if !defined ( __NETWARE__ )
     #include <sys/time.h>
     #include <netinet/in.h>
     #include <netinet/tcp.h>
     #include <netdb.h>
-#endif
     #if defined(__OS2__) && !defined(__386__)
         #include <netlib.h>
     #elif defined(__UNIX__) || defined(__DOS__) || defined(__OS2__)
@@ -87,24 +79,6 @@
 #if defined(__DOS__)
     #include <machtype.h>
     #include <tcp.h>
-#endif
-
-#if defined ( __NETWARE__ )
-    #include "novhax.h"
-#endif
-
-#if !defined (NDEBUG) && defined ( __NETWARE__ )
-    #include "debugme.h"
-#else
-    #define _DBG_THREAD( x )
-    #define _DBG_DR( x )
-    #define _DBG_EVENT( x )
-    #define _DBG_IO( x )
-    #define _DBG_MISC( x )
-    #define _DBG_IPX( x )
-    #define _DBG_NET( x )
-    #define _DBG_REQ( x )
-    #define _DBG_ERROR( x )
 #endif
 
 #include "packet.h"
@@ -131,8 +105,6 @@ extern void     ServMessage( char * );
     #define soclose( s )        close( s )
 #elif defined(__NT__) || defined(__WINDOWS__)
     #define soclose( s )        closesocket( s )
-#elif defined(__NETWARE__)
-    #define soclose( s)         close( s )
 #endif
 
 bool Terminate( void )
@@ -167,8 +139,6 @@ unsigned RemoteGet( char *rec, unsigned len )
 {
     unsigned_16         rec_len;
 
-    _DBG_NET(("RemoteGet\r\n"));
-
     len = len;
     if( FullGet( &rec_len, sizeof( rec_len ) ) != sizeof( rec_len ) ) {
         return( REQUEST_FAILED );
@@ -178,15 +148,12 @@ unsigned RemoteGet( char *rec, unsigned len )
             return( REQUEST_FAILED );
         }
     }
-    _DBG_NET(("Got a packet - size=%d\r\n", rec_len));
     return( rec_len );
 }
 
 unsigned RemotePut( char *rec, unsigned len )
 {
     unsigned_16         send_len;
-
-    _DBG_NET(("RemotePut\r\n"));
 
     send_len = len;
     if( die || send( data_socket, (void *)&send_len, sizeof( send_len ), 0 ) == -1 ) {
@@ -197,7 +164,6 @@ unsigned RemotePut( char *rec, unsigned len )
             return( REQUEST_FAILED );
         }
     }
-    _DBG_NET(("RemotePut...OK\r\n"));
     return( len );
 }
 
@@ -227,7 +193,6 @@ char RemoteConnect( void )
         data_socket = accept( control_socket, &dummy, &dummy_len );
         if( data_socket != -1 ) {
             nodelay();
-            _DBG_NET(("Found a connection\r\n"));
             return( 1 );
         }
     }
@@ -246,7 +211,6 @@ char RemoteConnect( void )
 
 void RemoteDisco( void )
 {
-    _DBG_NET(("RemoteDisco\r\n"));
     if( data_socket != -1 ) soclose( data_socket );
 }
 
@@ -261,8 +225,6 @@ char *RemoteLink( char *name, char server )
     struct ifi_info     *ifi, *ifihead;
     struct sockaddr     *sa;
     char                buff2[128];
-
-    _DBG_NET(("SERVER: Calling into RemoteLink\r\n"));
 
 #if defined(__NT__) || defined(__WINDOWS__)
     {
@@ -309,10 +271,6 @@ char *RemoteLink( char *name, char server )
     sprintf( buff2, "%s%d", TRP_TCP_socket_number, ntohs( socket_address.sin_port ) );
     ServMessage( buff2 );
 
-    _DBG_NET(("TCP: "));
-    _DBG_NET((buff2));
-    _DBG_NET(("\r\n"));
-
     /* Find and print TCP/IP interface addresses, ignore aliases */
     ifihead = get_ifi_info(AF_INET, FALSE);
     for( ifi = ifihead; ifi != NULL; ifi = ifi->ifi_next ) {
@@ -325,10 +283,10 @@ char *RemoteLink( char *name, char server )
                 inet_ntoa( ((struct sockaddr_in*)sa)->sin_addr ) );
             ServMessage( buff2 );
         }
+
     }
     free_ifi_info( ifihead );
 
-    _DBG_NET(("Start accepting connections\r\n"));
     /* Start accepting connections */
     listen( control_socket, 5 );
 #else

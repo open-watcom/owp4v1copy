@@ -274,7 +274,7 @@ The small memory model is being used.
 .mkwix &mkwNKEY_sp.
 .mkwfont &mkwNKEY.
 .discuss begin
-The program is being compiled for ISO/ANSI conformance using the "za"
+The program is being compiled for ANSI/ISO conformance using the "za"
 (no extended keywords) compiler option.
 .discuss end
 .keep end

@@ -242,9 +242,6 @@ static unsigned maxMsgLen;
 static unsigned totalMsgLen;
 static unsigned totalBytes;
 
-// some local functions which need predefining
-static void outputNum (FILE *fp, unsigned n);
-
 // encoding
 #define MAX_WORD_LEN    31
 #define ENC_BIT         0x80
@@ -855,8 +852,6 @@ static void checkMessages( void ) {
             #define def_msg_type( e, p ) case MSG_TYPE_##e: if( strPref( m, p ) ) errorLocn( m->fname, m->line, "MSGSYM %s has incorrect prefix (should be " p ")\n", m->name ); break;
                 ALL_MSG_TYPES
             #undef def_msg_type
-            default:
-                break;
             }
         }
     }

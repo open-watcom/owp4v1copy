@@ -11,9 +11,9 @@ replacing or deleting existing ones.
 The program displays help information whenever an invalid action is
 entered, or when the sole parameter to the program is a question mark.
 .pp
-The program is in complete conformance to the ISO C standard. It should
+The program is in complete conformance to the ANSI C standard. It should
 be able to run, without modification, on any system that provides an
-ISO-conforming C compiler.
+ANSI-conforming C compiler.
 .*
 .section The memos.h File
 .*

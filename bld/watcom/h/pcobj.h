@@ -137,8 +137,6 @@ enum {
     TARGET_EXT          = 6,        /* external index, no displacement  */
     TARGET_ABS          = 7,        /* abs frame num, no displacement   */
 
-    TARGET_WITH_DISPL   = ~4,       /* frame with displacement          */
-
 /*
  *  INTEL Group Specifiers
  */

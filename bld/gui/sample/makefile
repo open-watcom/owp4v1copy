@@ -38,7 +38,7 @@ cflags = $(commonflags) -d2
 !endif
 
 !ifeq sys nlm
-cflags += /4s/zq/s$(deffp)
+cflags += /4s/zq/s$(deffp)/dNLM
 !endif
 
 compile = $($(compiler)) $(cflags) $[*

@@ -45,7 +45,7 @@
     typedef int     initializer( void *p );
 
     #ifdef __NT__
-        typedef unsigned __stdcall thread_fnex( void * );
+        typedef void __stdcall thread_fnex( void * );
         typedef unsigned long beginnerex( void *security,
             unsigned stack_size, thread_fnex start_address, void *arglist,
             unsigned initflag, unsigned *thrdaddr );

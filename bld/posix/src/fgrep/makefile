@@ -1,7 +1,10 @@
-NAME = fgrep
-OBJS =  $(name).obj
+cpcmd = copy>nul
 
-!include $(posix_dir)/mif/makeone.mif
+fgrep.exe: egrep.exe
+        $(cpcmd) $[@ $^.
 
-fgrep.obj: ../egrep/egrep.c $(posix_autodepends)
-        $(cc) $[@ $(cflags) $(extra_cflags) -fo=$@ -DFGREP
+egrep.exe: $(posix_dir)/src/egrep/egrep.c
+        wmake $(__makeopts__) -f $(posix_dir)/src/egrep/makefile
+
+clean: .symbolic
+        wmake $(__makeopts__) -f $(posix_dir)/src/egrep/makefile clean

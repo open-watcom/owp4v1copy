@@ -28,6 +28,7 @@
 *
 ****************************************************************************/
 
+
 #include <sys/types.h>
 #include <direct.h>
 #include <string.h>
@@ -60,7 +61,7 @@ unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
     char        *cmdnam = strdup( cmd );
     char        *sp = strchr( cmdnam, ' ' );
 
-    if( sp != NULL ) {
+    if ( sp != NULL ) {
         *sp = '\0';
         sp++;
     }
@@ -68,19 +69,16 @@ unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
     std_output = 1;
     std_error  = 2;
     rc = DosCreatePipe( &pipe_input, &pipe_output, BUFSIZE );
-    if( rc != 0 )
-        return( rc );
+    if( rc != 0 ) return( rc );
     rc = DosDupHandle( pipe_output, &std_output );
-    if( rc != 0 )
-        return( rc );
+    if( rc != 0 ) return( rc );
     rc = DosDupHandle( pipe_output, &std_error );
-    if( rc != 0 )
-        return( rc );
+    if( rc != 0 ) return( rc );
     DosClose( pipe_output );
     rc = spawnl( P_NOWAITO, cmdnam, cmdnam, sp, NULL );
     DosClose( std_output );
     DosClose( std_error );
-    *readpipe = _hdopen( ( int ) pipe_input, O_RDONLY );
+    *readpipe = _hdopen( (int) pipe_input, O_RDONLY );
     free( cmdnam );
     return rc;
 }

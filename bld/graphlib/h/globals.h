@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Graph library global variables.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -88,6 +89,21 @@ extern char             _VGAGran;                   // SuperVGA page granularity
 extern short            _SVGAType;                  // type of SuperVGA
 extern void             ( _FARC *_SetVGAPage )( short );  // function to set SVGA page
 
+#if defined ( _NEC_PC )
+extern unsigned short   _BiosSeg;                   // seg of BIOS data area
+extern unsigned short   _NecSeg;                    // seg of graphic VRAM
+extern unsigned short   _TextSeg;                   // seg of TEXT VRAM
+extern unsigned short   _AttrSeg;                   // seg of ATTRIBUTE VRAM
+extern unsigned int     _BiosOff;                   // off of BIOS data area
+extern unsigned int     _NecOff;                    // offset of graphic VRAM
+extern unsigned int     _TextOff;                   // offset of TEXT VRAM
+extern unsigned int     _AttrOff;                   // offset of ATTRIBUTE VRAM
+extern unsigned short   _StackSeg;                  // seg of stack
+extern unsigned short   _GRCGPort;                  // port of graphics charger
+  #if defined( __386__ )
+    extern struct kanji_buf     _KanjiBuf;
+  #endif
+#else
 extern unsigned short   _BiosSeg;                   // seg of BIOS data area
 extern unsigned short   _MonoSeg;                   // seg of MONO screen
 extern unsigned short   _CgaSeg;                    // seg of CGA screen
@@ -99,6 +115,7 @@ extern unsigned int     _MonoOff;                   // off of MONO screen
 extern unsigned int     _CgaOff;                    // off of CGA screen
 extern unsigned int     _EgaOff;                    // off of EGA/VGA screen
 extern unsigned int     _RomOff;                    // off of ROM BIOS area
+#endif
 
 #if defined( __QNX__ )
 extern unsigned short   _CompileBuf;                // scratch compile area
@@ -106,5 +123,10 @@ extern unsigned short   _CompileSeg;                // seg of _CompileBuffer wit
 #endif
 
 extern struct videoinfo _ConfigBuffer;              // video state
+
+#if defined( _NEC_PC )
+extern char             _NECPalette[ 4 ];
+extern long             _NECDefPalette[ 16 ];
+#endif
 
 #include "curstate.h"

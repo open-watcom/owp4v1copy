@@ -70,8 +70,7 @@ struct macro_entry {
 #define MACRO_CAN_BE_REDEFINED                  0x02
 #define MACRO_USER_DEFINED                      0x04
 #define MACRO_REFERENCED                        0x08
-// See below                                    0x10
-#define MACRO_HAS_VAR_ARGS                      0x20
+#define MACRO_HAS_VAR_ARGS                      0x10
 #define MACRO_PCH_CHECKED                       0x40
 #define MACRO_PCH_OVERRIDE                      0x80
 
@@ -79,7 +78,7 @@ struct macro_entry {
                                                 | MACRO_PCH_OVERRIDE )
 
 
-// Following are used only in browsing, not in macro definitions
+// following are used only in browinsing, not in macro definitions
 
 #define MACRO_BRINFO_UNDEF                      0x10
 #define MACRO_BRINFO_DEFN                       ( MACRO_USER_DEFINED \

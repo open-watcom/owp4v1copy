@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Low level bitmap ouput routine.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -92,7 +93,9 @@ void _L1PutPic( short px, short py, short line_len,
         bit_offset = 0;                         /* start at byte boundary   */
     }
 
+#if !defined( _NEC_PC ) // We don't want the graphics charger here
     _StartDevice();
+#endif
 
     plane_len = line_len / _CurrState->vc.bitsperpixel; /* width of plane in bytes  */
     dev_ptr = _CurrState->deviceptr;
@@ -131,5 +134,7 @@ void _L1PutPic( short px, short py, short line_len,
 #endif
     }
 
+#if !defined( _NEC_PC )
     _ResetDevice();
+#endif
 }

@@ -592,7 +592,7 @@ static bool IISSetup()
             SetVariableByName( WEB_SERVER_DIR_FOUND, "1" );
             SetVariableByName( WEB_SERVER_DIR, iis_path );
         }
-        GUIMemFree( iis_path );
+        GUIFree( iis_path );
     }
 
     server_name = ReadRegValue( HKEY_LOCAL_MACHINE, W3SVC, ISAPI_SERVERNAME );
@@ -600,7 +600,7 @@ static bool IISSetup()
         return( TRUE ); // server not detected
     } else {
         SetVariableByName( WEB_SERVER_NAME, server_name );
-        GUIMemFree( server_name );
+        GUIFree( server_name );
     }
 
     //============================== BY THIS POINT, THE IIS SERVER IS DETECTED
@@ -631,23 +631,23 @@ static bool IISSetup()
                 *index = '\0';
             }
             if( *default_dir == '\0' ) {
-                GUIMemFree( default_dir );
+                GUIFree( default_dir );
                 default_dir = NULL;
             }
             EndSlash( default_dir );
-            default_dir = GUIMemRealloc( default_dir, strlen( default_dir ) + length( DYNAMO ) + 1 );
+            default_dir = GUIRealloc( default_dir, strlen( default_dir ) + length( DYNAMO ) + 1 );
             if( default_dir != NULL ) {
                 strcat( default_dir, DYNAMO );
             }
         } else {
-            GUIMemFree( default_dir );
+            GUIFree( default_dir );
             default_dir = NULL;
         }
     }
 
     if( GetVariableIntVal( DO_SERVER_SETUP ) == 0 ) {
         if( default_dir ) {
-            GUIMemFree( default_dir );
+            GUIFree( default_dir );
         }
         DeleteList( iis_dlls );
         return( TRUE );
@@ -758,7 +758,7 @@ static bool IISSetup()
                 MsgBox( NULL, "IDS_CANTALLOCATEMEMORY", GUI_OK );
                 return( FALSE );
             }
-            alias_name = GUIMemAlloc( strlen( temp ) + 2 );
+            alias_name = GUIAlloc( strlen( temp ) + 2 );
             if( alias_name == NULL ) {
                 MsgBox( NULL, "IDS_CANTALLOCATEMEMORY", GUI_OK );
                 return( FALSE );
@@ -768,7 +768,7 @@ static bool IISSetup()
             } else {
                 strcpy( alias_name, temp );
             }
-            GUIMemFree( temp );
+            GUIFree( temp );
 
             // Check all the current aliases to see if the user's request exists already
             rc = RegOpenKeyEx( HKEY_LOCAL_MACHINE, W3SVCVIRTROOTS, NULL, KEY_READ, &hkey );
@@ -786,7 +786,7 @@ static bool IISSetup()
                     return( FALSE );
                 }
             } else {
-                alias_name_comma = GUIMemAlloc( strlen( alias_name ) + 2 );
+                alias_name_comma = GUIAlloc( strlen( alias_name ) + 2 );
                 if( alias_name_comma == NULL ) {
                     MsgBox( NULL, "IDS_CANTALLOCATEMEMORY", GUI_OK );
                     return( FALSE );
@@ -851,7 +851,7 @@ static bool IISSetup()
     }
 
     if( alias_has_comma ) {
-        GUIMemFree( alias_name );
+        GUIFree( alias_name );
         alias_name = alias_name_comma;
     }
 
@@ -863,7 +863,7 @@ static bool IISSetup()
         }
     }
 
-    GUIMemFree( alias_name );
+    GUIFree( alias_name );
 
     if( GetVariableIntVal( IIS_SYBTOOLS ) == 0
         && stricmp( syb_path, full_dll_dir ) != 0 ) {
@@ -888,7 +888,7 @@ static bool IISSetup()
 
     DeleteList( iis_dlls );
     if( default_dir ) {
-        GUIMemFree( default_dir );
+        GUIFree( default_dir );
     }
     SetVariableByName( A_SERVER_CONFIGURED, "1" );
     return( TRUE );
@@ -1218,7 +1218,7 @@ static node * FindNetscapeServers( HKEY hkey, node * server_list )
                 parent   = Parent( server_path );
                 root     = Parent( parent );
 
-                GUIMemFree( parent );
+                GUIFree( parent );
 
                 strcpy( dll_path, root );
 
@@ -1292,7 +1292,7 @@ static bool ModifyNetscapeOBJCONF( char const *path, char const *ninspath )
     if( stat( dll_path, &buf ) != 0 ) {
         return( FALSE );
     }
-    text = GUIMemAlloc( buf.st_size + 1 );
+    text = GUIAlloc( buf.st_size + 1 );
     if( text == NULL ) {
         return( FALSE );
     }
@@ -1449,7 +1449,7 @@ static bool ModifyNetscapeOBJCONF( char const *path, char const *ninspath )
 
     fprintf( fp, NIOBJECT );            // write NIOBJECT section at end
     fclose( fp );
-    GUIMemFree( text );
+    GUIFree( text );
     return( TRUE );
 }
 
@@ -1515,7 +1515,7 @@ static bool VerifyOptimaFiles( bool * verified )
     }
     MsgBox( NULL, "IDS_NID_OPTIMAFILESMISSING", GUI_OK, systemdir, files );
     DeleteList( optima_dlls );
-    GUIMemFree( files );
+    GUIFree( files );
 
     return( TRUE );
 }
@@ -1577,7 +1577,7 @@ static bool VerifyDynamoFiles( char const *server_name,
             temp = ReadRegValue( location[i].root, location[i].sub_key, location[i].name );
             if( temp != NULL ) {
                 strcpy( candidate, temp );
-                GUIMemFree( temp );
+                GUIFree( temp );
                 EndSlash( candidate );
                 strcat( candidate, WIN32_DIR );
                 if( VerifyFiles( file_list, candidate ) ) {
@@ -1617,7 +1617,7 @@ static bool VerifyDynamoFiles( char const *server_name,
     } else {
         MsgBox( NULL, "IDS_NID_CANTSETUPSERVERS", GUI_OK, server_name, files );
     }
-    GUIMemFree( files );
+    GUIFree( files );
     return( TRUE );
 
 }
@@ -1650,7 +1650,7 @@ static bool AddStringToSystemEnvironmentVar( char const *var,
     }
 
     NoDupPaths( (char *) string, old_string, TRUE, ';' );
-    new_string = GUIMemAlloc( strlen( old_string ) + strlen( string ) + 1 );
+    new_string = GUIAlloc( strlen( old_string ) + strlen( string ) + 1 );
     if( new_string == NULL ) {
         MsgBox( NULL, "IDS_CANTALLOCATEMEMORY", GUI_OK );
         return( FALSE );
@@ -1666,8 +1666,8 @@ static bool AddStringToSystemEnvironmentVar( char const *var,
         return( FALSE );
     }
 
-    GUIMemFree( old_string );
-    GUIMemFree( new_string );
+    GUIFree( old_string );
+    GUIFree( new_string );
     return( TRUE );
 }
 
@@ -1751,7 +1751,7 @@ static char * RemoveFileFromString( char const *original, char const *path, char
     }
     strcat( origfile, origext );
 
-    new_string = GUIMemAlloc( strlen( original ) + strlen( path ) + 2 );
+    new_string = GUIAlloc( strlen( original ) + strlen( path ) + 2 );
     if( new_string == NULL ) {
         return( NULL );
     }
@@ -1759,7 +1759,7 @@ static char * RemoveFileFromString( char const *original, char const *path, char
 
     GUIStrDup( (char *) original, &orig_copy );
     if( orig_copy == NULL ) {
-        GUIMemFree( new_string );
+        GUIFree( new_string );
         return( NULL );
     }
 
@@ -1778,7 +1778,7 @@ static char * RemoveFileFromString( char const *original, char const *path, char
     }
     lastchar( new_string ) = '\0'; // get rid of extra dlm
 
-    GUIMemFree( orig_copy );
+    GUIFree( orig_copy );
     return( new_string );
 
 }
@@ -1816,7 +1816,7 @@ static bool AddFilterDLLString( char const * fullpath, bool add )
             return( FALSE );
         }
     } else {
-        old_value = GUIMemAlloc( size + 1 );
+        old_value = GUIAlloc( size + 1 );
 
         if( old_value == NULL ) {
             MsgBox( NULL, "IDS_CANTALLOCATEMEMORY", GUI_OK );
@@ -1849,8 +1849,8 @@ static bool AddFilterDLLString( char const * fullpath, bool add )
     }
 
     RegCloseKey( hkey );
-    GUIMemFree( old_value );
-    GUIMemFree( new_value );
+    GUIFree( old_value );
+    GUIFree( new_value );
     return( TRUE );
 
 }
@@ -1881,7 +1881,7 @@ static char * ReadRegValue( HKEY root, char const *key, char const *name )
         return( NULL );
     }
 
-    value = GUIMemAlloc( size );
+    value = GUIAlloc( size );
     if( value == NULL ) {
         MsgBox( NULL, "IDS_CANTALLOCATEMEMORY", GUI_OK );
         RegCloseKey( hkey );
@@ -1894,7 +1894,7 @@ static char * ReadRegValue( HKEY root, char const *key, char const *name )
 
     if( rc != 0 ) {
         MsgBox( NULL, "IDS_REGERROR", GUI_OK );
-        GUIMemFree( value );
+        GUIFree( value );
         return( NULL );
     }
 
@@ -1919,7 +1919,7 @@ static node * ListRegSubkeys( HKEY key )
     }
 
     max_size += 1;
-    string = GUIMemAlloc( max_size );
+    string = GUIAlloc( max_size );
     if( string == NULL ) {
         return( NULL );
     }
@@ -1938,7 +1938,7 @@ static node * ListRegSubkeys( HKEY key )
         }
     }
 
-    GUIMemFree( string );
+    GUIFree( string );
     return( list );
 }
 
@@ -1961,7 +1961,7 @@ static node * ListRegValues( HKEY key )
     }
 
     max_size += 1;
-    string = GUIMemAlloc( max_size );
+    string = GUIAlloc( max_size );
     if( string == NULL ) {
         return( NULL );
     }
@@ -1979,7 +1979,7 @@ static node * ListRegValues( HKEY key )
         }
     }
 
-    GUIMemFree( string );
+    GUIFree( string );
     return( list );
 }
 
@@ -1996,7 +1996,7 @@ static char * StripQuotes( char const *input )
         return( NULL );
     }
 
-    result = GUIMemAlloc( strlen( input ) + 1 );
+    result = GUIAlloc( strlen( input ) + 1 );
     result_index = result;
     index = input;
 
@@ -2315,8 +2315,8 @@ static bool CheckStrings( char const *test_string, char const *reference_string 
         }
     }
 
-    GUIMemFree( test_string_copy );
-    GUIMemFree( reference_string_copy );
+    GUIFree( test_string_copy );
+    GUIFree( reference_string_copy );
     return( ret );
 }
 //GetNextNode
@@ -2360,7 +2360,7 @@ static node * AddString( node *list_node, char const *string )
         return( NULL );
     }
 
-    new_node = GUIMemAlloc( sizeof( node ) );
+    new_node = GUIAlloc( sizeof( node ) );
     if( new_node == NULL ) {
         DeleteList( list_node );
         return( NULL );
@@ -2368,7 +2368,7 @@ static node * AddString( node *list_node, char const *string )
 
     GUIStrDup( (char *) string, &new_node->data );
     if( GetString( new_node ) == NULL ) {
-        GUIMemFree( new_node );
+        GUIFree( new_node );
         DeleteList( list_node );
         return( NULL );
     }
@@ -2427,7 +2427,7 @@ static char *MakeNewlineDelimitedList( node *list )
         if( GetString( curr_node ) == NULL ) {
             continue;
         }
-        string = GUIMemRealloc( string, strlen( string )
+        string = GUIRealloc( string, strlen( string )
                  + strlen( GetString( curr_node ) ) + 2 );
         if( string == NULL ) {
             return( NULL );
@@ -2473,15 +2473,15 @@ static node * AddNSServer( node *list_node,
     node        *new_node = NULL;
     ns_server   *new_server = NULL;
 
-    new_node = GUIMemAlloc( sizeof( node ) );
+    new_node = GUIAlloc( sizeof( node ) );
     if( new_node == NULL ) {
         DeleteList( list_node );
         return( NULL );
     }
 
-    new_server = GUIMemAlloc( sizeof( ns_server ) );
+    new_server = GUIAlloc( sizeof( ns_server ) );
     if( new_server == NULL ) {
-        GUIMemFree( new_node );
+        GUIFree( new_node );
         DeleteList( list_node );
         return( NULL );
     }
@@ -2552,14 +2552,14 @@ static bool DeleteList( node *list_node )
     while( list_node != NULL ) {
         switch( list_node->data_t ) {
         case( STRING_T ):
-            GUIMemFree( list_node->data );
+            GUIFree( list_node->data );
             break;
         case( NS_SERVER_T ):
             DeleteList( GetServer( list_node )->objconfs );
-            GUIMemFree( list_node->data );
+            GUIFree( list_node->data );
         }
         temp = GetNextNode( list_node );
-        GUIMemFree( list_node );
+        GUIFree( list_node );
         list_node = temp;
     }
     return( TRUE );
@@ -2575,7 +2575,7 @@ static bool NewDialog( char const *dialog_name )
     if( dialog_name == NULL ) {
         return( FALSE );
     }
-    line = GUIMemAlloc( length( NAME ) + strlen( dialog_name ) + 1 );
+    line = GUIAlloc( length( NAME ) + strlen( dialog_name ) + 1 );
     if( line == NULL ) {
         return( FALSE );
     }
@@ -2613,7 +2613,7 @@ static bool AddControl( char const *control, ... )
     length += 1;
     va_end( arglist );
 
-    buff = GUIMemAlloc( length );
+    buff = GUIAlloc( length );
     if( buff == NULL ) {
         return( FALSE );
     }
@@ -2635,7 +2635,7 @@ static bool AddButton( dialog_button button )
     char        *text = NULL;
 
     if( button == DIALOG_OK_BUTTON ) {
-        text = GUIMemAlloc( length( PUSHBUTTON ) +
+        text = GUIAlloc( length( PUSHBUTTON ) +
                strlen( GetVariableStrVal( "IDS_OK_BUTTON" ) ) + 1 );
         if( text == NULL ) {
             return( FALSE );
@@ -2643,7 +2643,7 @@ static bool AddButton( dialog_button button )
         sprintf( text, PUSHBUTTON "%s", GetVariableStrVal( "IDS_OK_BUTTON" ) );
 
     } else if( button == DIALOG_CANCEL_BUTTON ) {
-        text = GUIMemAlloc( length( PUSHBUTTON ) +
+        text = GUIAlloc( length( PUSHBUTTON ) +
                strlen( GetVariableStrVal( "IDS_CANCEL_BUTTON" ) ) + 1 );
         if( text == NULL ) {
             return( FALSE );
@@ -2651,7 +2651,7 @@ static bool AddButton( dialog_button button )
         sprintf( text, PUSHBUTTON "%s", GetVariableStrVal( "IDS_CANCEL_BUTTON" ) );
 
     } else if( button == DIALOG_HELP_BUTTON ) {
-        text = GUIMemAlloc( length( PUSHBUTTON ) +
+        text = GUIAlloc( length( PUSHBUTTON ) +
                strlen( GetVariableStrVal( "IDS_HELP_BUTTON" ) ) + 1 );
         if( text == NULL ) {
             return( FALSE );
@@ -2665,7 +2665,7 @@ static bool AddButton( dialog_button button )
     if( !AddControl( text, NULL ) ) {
         return( FALSE );
     }
-    GUIMemFree( text );
+    GUIFree( text );
     return( TRUE );
 }
 
@@ -2860,7 +2860,7 @@ void SelfRegisterDynamo()
         return( FALSE );
     }
 
-    reg_string = GUIMemAlloc( size );
+    reg_string = GUIAlloc( size );
     if( reg_string == NULL ) {
         MsgBox( NULL, "IDS_CANTALLOCATEMEMORY", GUI_OK );
         RegCloseKey( hkey );
@@ -2882,7 +2882,7 @@ void SelfRegisterDynamo()
     }
 
     RegCloseKey( hkey );
-    GUIMemFree( reg_string );
+    GUIFree( reg_string );
 
     rc = RegCreateKeyEx( HKEY_LOCAL_MACHINE, ODBCSOURCES, 0, NULL, REG_OPTION_NON_VOLATILE,
                          KEY_READ, NULL, &hkey, NULL );

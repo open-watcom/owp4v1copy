@@ -45,8 +45,8 @@
 #include "softmode.h"
 #include "trperr.h"
 
-static uDB_t            *DebugReqBuff;
-static uDB_t            StopBuff;
+static dos_debug        *DebugReqBuff;
+static dos_debug        StopBuff;
 static unsigned int     DebugReqResult;
 static HEV              DebugReqSem = NULL;
 static HEV              DebugDoneSem = NULL;
@@ -73,7 +73,7 @@ static void CantDoIt(void)
 }
 
 
-ULONG CallDosDebug(uDB_t *buff)
+ULONG CallDosDebug(dos_debug *buff)
 {
     QMSG        qmsg;
     int         num_paints;

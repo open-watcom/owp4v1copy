@@ -30,7 +30,6 @@
 
 
 #include "wlib.h"
-#include "idedll.h"
 
 static IDECBHdl   ideHdl;
 static IDECallBacks  *ideCb;

@@ -427,5 +427,6 @@ getc       putc
 getchar    putchar
 .millust end
 .pc
-The ISO standard requires that documentation states which
-library functions evaluate their arguments more than once.
+The ANSI standard requires that documentation states which
+library functions
+evaluate their arguments more than once.

@@ -35,7 +35,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <fcntl.h>
-#include <unistd.h>
+#include <io.h>
 #include "txttable.h"
 #include "wpack.h"
 

@@ -24,23 +24,41 @@
 *
 *  ========================================================================
 *
-* Description:
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
+
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %     Copyright (C) 1992, by WATCOM International Inc.  All rights    %
+// %     reserved.  No part of this software may be reproduced or        %
+// %     used in any form or by any means - graphic, electronic or       %
+// %     mechanical, including photocopying, recording, taping or        %
+// %     information storage and retrieval systems - except with the     %
+// %     written permission of WATCOM International Inc.                 %
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+//  Modified    By              Reason
+//  ========    ==              ======
+//  92/02/19    Steve McDowell  Initial implementation.
+//  92/09/08    Greg Bentz      Cleanup.
+//  93/08.03    Greg Bentz      make the attach() and open() member functions
+//                              clear ios::eofbit on success.
+//  93/10/20    Raymond Tang    Split into separate files.
+//  94/04/06    Greg Bentz      combine header files
 
 #ifdef __SW_FH
 #include "iost.h"
 #else
 #include "variety.h"
-#include <fstream>
+#include <fstream.h>
 #endif
 
-namespace std {
-
-  // Attempt filebuf::setbuf() If something goes wrong, then set
-  // "ios::failbit".
-
-  void fstreambase::setbuf( char *buf, int len ) {
+void fstreambase::setbuf( char *buf, int len ) {
+/**********************************************/
+// Attempt filebuf::setbuf()
+// If something goes wrong, then set "ios::failbit".
 
     filebuf *fb;
 
@@ -54,6 +72,4 @@ namespace std {
             setstate( ios::failbit );
         }
     }
-  }
-
 }

@@ -28,7 +28,6 @@
 *
 ****************************************************************************/
 
-
 #if defined( DEVELOPMENT ) || defined( INTERNAL_VERSION )
     /* just because this is compiled with -d2 - we get all the debugging
      * info we'll ever need this way :)
@@ -78,6 +77,9 @@ const char FAR *BuiltIns = {
 
 #if defined( __DOS__ )
     "__MSDOS__=\n"
+
+#elif defined( __WINDOWS__ )
+    "__WINDOWS__=\n"
 
 #elif defined( __NT__ )
     "__NT__=\n"

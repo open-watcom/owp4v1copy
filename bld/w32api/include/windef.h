@@ -161,10 +161,8 @@ extern "C" {
 #endif /* __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 95) */
 #endif /* NONAMELESSUNION */
 #elif defined(__WATCOMC__)
-#ifndef NONAMELESSUNION
 #define _ANONYMOUS_UNION
 #define _ANONYMOUS_STRUCT
-#endif /* NONAMELESSUNION */
 #endif /* __GNUC__/__WATCOMC__ */
 
 #ifndef _ANONYMOUS_UNION

@@ -28,6 +28,7 @@
 *
 ****************************************************************************/
 
+
 #include <string.h>
 #include <ctype.h>
 #include <stdarg.h>
@@ -42,7 +43,7 @@ void Fatal( const char *str, ... )
     va_list     arg;
 
     va_start( arg, str );
-    vfprintf( stderr, str, arg );
+        vfprintf( stderr, str, arg );
     va_end( arg );
     if( LogFile != NULL ) {
         va_start( arg, str );
@@ -59,7 +60,7 @@ void Log( bool quiet, const char *str, ... )
 
     va_start( arg, str );
 
-    if( !quiet )
+    if (!quiet)
         vfprintf( stderr, str, arg );
     va_end( arg );
     if( LogFile != NULL ) {
@@ -71,7 +72,7 @@ void Log( bool quiet, const char *str, ... )
 
 void LogStream( bool quiet, const char *str, size_t len )
 {
-    if( !quiet ) {
+    if (!quiet) {
         fwrite( str, 1, len, stderr );
     }
     if( LogFile != NULL ) {
@@ -82,21 +83,20 @@ void LogStream( bool quiet, const char *str, size_t len )
 void LogFlush()
 {
     fflush( stderr );
-    if( LogFile != NULL )
-        fflush( LogFile );
+    if( LogFile != NULL ) fflush( LogFile );
 }
 
 void OpenLog( const char *name )
 {
 #ifdef __UNIX__
-    LogFile = fopen( name, "w" );
+   LogFile = fopen( name, "w" );
 #else
-    LogFile = _fsopen( name, "w", SH_DENYWR );
+   LogFile = _fsopen( name, "w", SH_DENYWR );
 #endif
-    if( LogFile == NULL ) {
-        Fatal( "Can not open '%s': %s\n", name, strerror( errno ) );
-    }
-    setvbuf( LogFile, NULL, _IOLBF, BUFSIZ );
+   if( LogFile == NULL ) {
+       Fatal( "Can not open '%s': %s\n", name, strerror( errno ) );
+   }
+   setvbuf( LogFile, NULL, _IOLBF, BUFSIZ );
 }
 
 void CloseLog()
@@ -127,7 +127,7 @@ char *SkipBlanks( const char *p )
         case '\t':
             break;
         default:
-            return( ( char* ) p );
+            return( (char*)p );
         }
         ++p;
     }

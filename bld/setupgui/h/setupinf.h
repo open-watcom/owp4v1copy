@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Interface to the setupinf module.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -48,7 +49,7 @@ typedef enum {
 } pass_type;
 
 extern void CheckStateVars();
-extern char *SimGetDriveLetter( int parm );
+extern char * SimGetDriveLetter( int parm );
 extern bool SimFileAdd( int parm );
 extern bool SimFileUpToDate( int parm );
 extern bool SimFileRemove( int parm );

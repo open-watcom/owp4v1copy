@@ -39,7 +39,7 @@
 #include "ytab.gh"
 #include "keywords.h"
 
-const keyword __based(__segname("_CONST")) Statements[] = {
+const keyword Statements[] = {
         NULL, "end",            ST_END,         FALSE,
         NULL, "forward",        ST_FORWARD,     FALSE,
         NULL, "from",           ST_FROM,        FALSE,
@@ -75,7 +75,7 @@ enum {
     TC_DOUBLE
 };
 
-const keyword __based(__segname("_CONST")) DataTypes[] = {
+keyword         DataTypes[] = {
         NULL, "BOOLean",                TY_BOOLEAN,             TC_INT,
         NULL, "char",                   TY_CHAR,                TC_CHAR,
         NULL, "character",              TY_CHAR,                TC_CHAR,

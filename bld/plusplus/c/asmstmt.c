@@ -44,6 +44,10 @@
 #include "scan.h"
 #include "asmstmt.h"
 
+#if _CPU == 8086 || _CPU == 80386
+#include "asmsym.h"
+#endif
+
 #ifdef DISABLE_ASM_STMT
 
 PTREE AsmStmt( void )
@@ -55,7 +59,26 @@ PTREE AsmStmt( void )
 
 static void ensureBufferReflectsCurToken( void )
 {
-    if( !TokenUsesBuffer( CurToken ) ) {
+    if( TokenUsesBuffer( CurToken ) ) {
+        if( CurToken == T_CONSTANT ) {
+            // kludge to handle the fact that rewrites don't store
+            // the text for integral constants
+            switch( ConstType ) {
+            case TYP_FLOAT:
+            case TYP_DOUBLE:
+            case TYP_LONG_DOUBLE:
+                // OK, Buffer is set
+                break;
+            case TYP_UCHAR:
+            case TYP_UINT:
+            case TYP_ULONG:
+                ultoa( U32Fetch( Constant64 ), Buffer, 10 );
+                break;
+            default:
+                ltoa( U32Fetch( Constant64 ), Buffer, 10 );
+            }
+        }
+    } else {
         strcpy( Buffer, Tokens[ CurToken ] );
     }
 }
@@ -171,7 +194,7 @@ PTREE AsmStmt( void )
     char *fn_name;
     auto VBUF code_buffer;
 
-    PPState = PPS_EOL | PPS_ASM;
+    PPState = PPS_EOL;
     VbufInit( &code_buffer );
     NextToken();
     while( CurToken == T_NULL ) {

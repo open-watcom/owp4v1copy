@@ -16,7 +16,7 @@ compilers for the 80x86 family of processors.
 .*
 It is intended to be an easy-to-read description of the
 C language.
-The ISO C standard is the last word on details about the language,
+The ANSI C standard is the last word on details about the language,
 but it describes the language in terms that must be interpreted for
 each implementation of a C compiler.
 .pp

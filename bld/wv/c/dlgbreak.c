@@ -83,7 +83,7 @@ static  bool    GetAddr( dlg_brk *dlg, gui_window *gui )
             ok = TRUE;
             addr = dlg->tmpbp.loc.addr;
         }
-        GUIMemFree( new );
+        WndFree( new );
     } else {
         ok = DlgGetDataAddr( gui, CTL_BRK_ADDRESS, &addr );
     }

@@ -43,8 +43,8 @@
 
 #define SIG_OFF         0
 #define SIG_SIZE        4
-const unsigned short __based(__segname("_CONST")) win386sig[] = { 0xDEAD,0xBEEF };
-const unsigned short __based(__segname("_CONST")) win386sig2[] = { 0xBEEF,0xDEAD };
+unsigned short win386sig[] = { 0xDEAD,0xBEEF };
+unsigned short win386sig2[] = { 0xBEEF,0xDEAD };
 
 BOOL WasStarted;
 

@@ -24,87 +24,43 @@
 *
 *  ========================================================================
 *
-* Description:  memory tracking cover functions
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
-#include <unistd.h>
-#include <malloc.h>
-#include "trmem.h"
+
+#include "trmemcvr.h"
 #include "memfuncs.h"
-
-#ifdef TRMEM
-static _trmem_hdl   TRMemHandle;
-static int          TRFileHandle;   /* stream to put output on */
-static void MemPrintLine( int *, const char * buff, size_t len );
-#endif
-
-#ifdef NLM
-/* There is no equivalent expand function in NetWare. */
-#define _expand NULL
-#endif
 
 void MemOpen( void )
 {
-#ifdef TRMEM
-    #ifdef NLM
-        TRFileHandle = STDERR_HANDLE;
-    #else
-        TRFileHandle = STDERR_FILENO;
-    #endif
-    TRMemHandle = _trmem_open( malloc, free, realloc, _expand,
-            &TRFileHandle, MemPrintLine,
-            _TRMEM_ALLOC_SIZE_0 | _TRMEM_REALLOC_SIZE_0 |
-            _TRMEM_OUT_OF_MEMORY | _TRMEM_CLOSE_CHECK_FREE );
-#endif
+    TRMemOpen();
 }
 
 void *MemAlloc( size_t size )
 {
-#ifdef TRMEM
-    return( _trmem_alloc( size, _trmem_guess_who(), TRMemHandle ) );
-#else
-    return( malloc( size ) );
-#endif
+    return( TRMemAlloc( size ) );
 }
 
 void *MemRealloc( void *ptr, size_t size )
 {
-#ifdef TRMEM
-    return( _trmem_realloc( ptr, size, _trmem_guess_who(), TRMemHandle ) );
-#else
-    return( realloc( ptr, size ) );
-#endif
+    return( TRMemRealloc( ptr, size ) );
 }
 
 void MemFree( void *ptr )
 {
-#ifdef TRMEM
-    _trmem_free( ptr, _trmem_guess_who(), TRMemHandle );
-#else
-    free( ptr );
-#endif
+    TRMemFree( ptr );
 }
 
 void MemPrtList( void )
 {
 #ifdef TRMEM
-    _trmem_prt_list( TRMemHandle );
+    TRMemPrtList();
 #endif
 }
 
 void MemClose( void )
 {
-#ifdef TRMEM
-    _trmem_close( TRMemHandle );
-#endif
+    TRMemClose();
 }
-
-#ifdef TRMEM
-/* extern to avoid problems with taking address and overlays */
-extern void MemPrintLine( int * handle, const char * buff, size_t len )
-/********************************************************************/
-{
-    write( *handle, buff, len );
-}
-#endif

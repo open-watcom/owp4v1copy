@@ -44,7 +44,7 @@ include graph.inc
         extrn   __VGAGran : byte
         extptr  __SetVGAPage
 
-        modstart svgautil,WORD
+        modstart svgautil
 
         xdefp   _MoveUp100_
         xdefp   _MoveDown100_
@@ -653,7 +653,7 @@ E_MoveDown1024:
 ;;        _endguess               ; endguess
 ;;      shr     cx, 1           ; calc # of pix, then fall into zap_word
 ;;zap_word:
-;;ifdef __386__
+;;ifdef _386
 ;;        _movzx   _ebx, word ptr ss:__PlotAct
 ;;        or      _ebx,_ebx
 ;;        _if     e               ; if replace mode
@@ -745,7 +745,7 @@ _Zap256_:
 ;;        rol     bl,cl               ; adjust fill mask
 ;;        mov     cl,dl               ; restore the count
 ;;        mov     dl,bl               ; get mask in dl
-;;ifdef __386__
+;;ifdef _386
 ;;        _movzx   _ebx,word ptr ss:__PlotAct
 ;;        mov     _ebx,cs:VGAJmp[_ebx*4]; load the appropriate plot routine
 ;;else

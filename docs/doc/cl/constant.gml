@@ -625,7 +625,7 @@ are placed in successively higher order (more significant)
 bytes of the result.
 .* .pp
 .* Multiple-character constants may not be portable to other
-.* compilers, because they are not required by the ISO standard.
+.* compilers, because they are not required by the ANSI standard.
 .shade end
 .*
 .************************************************************************

@@ -2,7 +2,11 @@
 
         program grdemo1
 
+*$ifdef _NEC_98
+        include 'graph98.fi'
+*$else
         include 'graph.fi'
+*$endif
 
         integer TextColor, TextColor2, BorderColor
         record /videoconfig/ VC
@@ -40,9 +44,13 @@
         call _setcolor( TextColor2 )
         call drawtext( width - 1, y - 5 )
 
+*$ifdef _NEC_98
+        call fadecolors()
+*$else
         if( VC.adapter .gt. _MCGA )then
             call fadecolors()
         endif
+*$endif
 
         ! wait for keyboard input and then reset the screen
 
@@ -55,7 +63,11 @@
 
         subroutine drawtext( width, y )
 
+*$ifdef _NEC_98
+        include 'graph98.fi'
+*$else
         include 'graph.fi'
+*$endif
 
         ! This routine displays the text strings.
 
@@ -77,7 +89,11 @@
 
         integer function initscreen()
 
+*$ifdef _NEC_98
+        include 'graph98.fi'
+*$else
         include 'graph.fi'
+*$endif
 
         ! This routine selects the best video mode for a given adapter.
 
@@ -85,6 +101,9 @@
         record /videoconfig/ VC
         common TextColor, TextColor2, BorderColor, VC
 
+*$ifdef _NEC_98
+        mode = _MAXCOLORMODE
+*$else
         call _getvideoconfig( VC )
         select( VC.adapter )
         case( _VGA, _SVGA )
@@ -105,6 +124,7 @@
             initscreen = 0        ! report insufficient hardware
             return
         endselect
+*$endif
 
         if( _setvideomode( mode ) .eq. 0 )then
             initscreen = 0
@@ -120,16 +140,24 @@
             TextColor2 = 3
             BorderColor = 2
         endif
+*$ifdef _NEC_98
+        call newcolors()
+*$else
         if( VC.adapter .ge. _MCGA )then
             call newcolors()
         endif
+*$endif
         initscreen = 1
         end
 
 
         subroutine newcolors()
 
+*$ifdef _NEC_98
+        include 'graph98.fi'
+*$else
         include 'graph.fi'
+*$endif
 
         ! This routine sets the default colors for the program.
 
@@ -137,15 +165,30 @@
         record /videoconfig/ VC
         common TextColor, TextColor2, BorderColor, VC
 
+*$ifdef _NEC_98
+        call _remappalette( TextColor, _98BLUE )      ! light blue
+        call _remappalette( TextColor2, _98BLUE )     ! light blue
+        call _remappalette( BorderColor, _98BLACK )   ! black
+*$else
         call _remappalette( TextColor, '003f0000'x )  ! light blue
         call _remappalette( TextColor2, '003f0000'x ) ! light blue
         call _remappalette( BorderColor, _BLACK  )    ! black
+*$endif
         end
 
 
         subroutine fadecolors()
 
+*$ifdef _NEC_98
+c$ifdef __386__
+*$pragma aux delay "*_" parm (value)
+c$else
+*$pragma aux delay "*_" parm (value*2)
+c$endif
+        include 'graph98.fi'
+*$else
         include 'graph.fi'
+*$endif
 
         ! This routine gradually fades the background text, brightening
         ! the foreground text and the border at the same time.
@@ -156,8 +199,15 @@
 
         integer i, red, blue, green, maxc
 
+*$ifdef _NEC_98
+        maxc = 15   ! 4 color bits
+*$else
         maxc = 63   ! 6 color bits
+*$endif
         do i=1, maxc
+*$ifdef _NEC_98
+            call delay( 150 )
+*$endif
             red = i
             green = ishl( i, 8 )
             blue = ishl( maxc - i, 16 )

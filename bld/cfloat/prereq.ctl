@@ -9,5 +9,5 @@ set PROJDIR=<CWD>
     echo Building the cfloat lib
     mkdir <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
-    wmake -h -f ../osi386/makefile bootstrap=1
+    wmake -h -f ../o.386/makefile bootstrap=1
     cdsay <PROJDIR>

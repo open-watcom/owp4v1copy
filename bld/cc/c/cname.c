@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Compare two names
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -46,10 +47,10 @@ static unsigned DwordMasks[] = {
 
 // len includes the trailing nullchar
 
-int NameCmp( const void *p1, const void *p2, int len )
+int NameCmp( void *p1, void *p2, int len )
 {
-    const unsigned *p = p1;
-    const unsigned *q = p2;
+    unsigned *p = p1;
+    unsigned *q = p2;
 
     while( len > sizeof(unsigned) ) {
         if( *p != *q )  return( -1 );   // indicate names not equal

@@ -21,12 +21,14 @@ if .%2 == . goto usage
 echo # -----------------------------
 echo # ERROR 03:  Invalid Option
 echo # -----------------------------
+rm tmp.out
 %1 "-." > tmp.out 2>&1
 egrep Error tmp.out > tmpfile.out
 diff tmpfile.out err03a.cmp
 if errorlevel 1 goto err03
     echo # Test 03a successful
 
+rm tmp.out
 %1 "- " > tmp.out 2>&1
 egrep Error tmp.out > tmpfile.out
 diff -b tmpfile.out err03b.cmp
@@ -42,6 +44,7 @@ if errorlevel 1 goto err03
 echo # -----------------------------------------
 echo # ERROR 04: -f must be followed by a filename
 echo # -----------------------------------------
+rm tmp.out
 %1 -f > tmp.out 2>&1
 egrep Error tmp.out > tmpfile.out
 diff tmpfile.out err04.cmp
@@ -76,6 +79,7 @@ if errorlevel 1 goto err13
 echo # ------------------------------
 echo # ERROR 17: Token Too Long
 echo # ------------------------------
+rm tmp.out
 %1 -h -f ERR17a >  tmp.out 2>&1
 %1 -h -f ERR17b >> tmp.out 2>&1
 %1 -h -f ERR17c >> tmp.out 2>&1
@@ -94,6 +98,7 @@ if errorlevel 1 goto err17
 echo # ------------------------------
 echo # ERROR 36: Illegal attempt to update special target
 echo # ------------------------------
+rm tmp.out
 %1 -h -f ERR36 .c.obj > tmp.out 2>&1
 diff tmp.out err36.cmp
 if errorlevel 1 goto err36
@@ -108,6 +113,7 @@ echo # ------------------------------
 echo # ERROR 39: Target not mentioned in any makefile
 echo # ------------------------------
 wtouch ditty.c
+rm tmp.out
 %1 -h -f ERR39 ditty.obj > tmp.out 2>&1
 diff tmp.out err39.cmp
 if errorlevel 1 goto err39
@@ -122,6 +128,7 @@ rm ditty.*
 echo # ------------------------------
 echo # ERROR 40: Could not touch target
 echo # ------------------------------
+rm tmp.out
 wtouch err40.tst >tmp.out
 chmod +r err40.tst >>tmp.out
 %1 -h -a -t -f ERR40 >> tmp.out 2>&1

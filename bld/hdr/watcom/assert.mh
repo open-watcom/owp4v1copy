@@ -20,43 +20,23 @@
 #undef assert
 
 #ifdef NDEBUG
- #define assert(ignore) ((void)0)
+ #define assert(__ignore) ((void)0)
 #else
  _WCRTLINK extern void _assert( char *, char *, int );
  _WCRTLINK extern void _wassert( char *, char *, int );
  _WCRTLINK extern void __assert( int, char *, char *, int );
  _WCRTLINK extern void __wassert( int, char *, char *, int );
- _WCRTLINK extern void _assert99( char *, char *, char *, int );
- _WCRTLINK extern void _wassert99( char *, char *, char *, int );
- _WCRTLINK extern void __assert99( int, char *, char *, char *, int );
- _WCRTLINK extern void __wassert99( int, char *, char *, char *, int );
 :include ext.sp
- #ifdef __C89
-  #ifdef _UNICODE
-   #define assert(expr)   ((expr)?(void)0:_wassert(#expr,__FILE__,__LINE__))
-  #else
-   #define assert(expr)   ((expr)?(void)0:_assert(#expr,__FILE__,__LINE__))
-  #endif
+ #ifdef _UNICODE
+  #define assert(expr)   ((expr)?(void)0:_wassert(#expr,__FILE__,__LINE__))
  #else
-  #ifdef _UNICODE
-   #define assert(expr)   ((expr)?(void)0:_wassert99(#expr,__func__,__FILE__,__LINE__))
-  #else
-   #define assert(expr)   ((expr)?(void)0:_assert99(#expr,__func__,__FILE__,__LINE__))
-  #endif
+  #define assert(expr)   ((expr)?(void)0:_assert(#expr,__FILE__,__LINE__))
  #endif
 #else
- #ifdef __C89
-  #ifdef _UNICODE
-   #define assert(expr)  __wassert(expr,#expr,__FILE__,__LINE__)
-  #else
-   #define assert(expr)  __assert(expr,#expr,__FILE__,__LINE__)
-  #endif
+ #ifdef _UNICODE
+  #define assert(expr)  __wassert(expr,#expr,__FILE__,__LINE__)
  #else
-  #ifdef _UNICODE
-   #define assert(expr)  __wassert99(expr,#expr,__func__,__FILE__,__LINE__)
-  #else
-   #define assert(expr)  __assert99(expr,#expr,__func__,__FILE__,__LINE__)
-  #endif
+  #define assert(expr)  __assert(expr,#expr,__FILE__,__LINE__)
  #endif
 #endif
 #endif

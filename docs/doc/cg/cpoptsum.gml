@@ -976,16 +976,6 @@ output warning when padding is added in a struct/class
 operate quietly
 :optref refid='SWzq'.
 .*
-.note zri
-:CMT. .ix 'options' 'zri'
-inline floating point rounding code
-:optref refid='SWzri'.
-.*
-.note zro
-:CMT. .ix 'options' 'zro'
-omit floating point rounding code
-:optref refid='SWzro'.
-.*
 .note zs
 :CMT. .ix 'options' 'zs'
 syntax check only

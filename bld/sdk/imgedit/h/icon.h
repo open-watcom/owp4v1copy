@@ -33,15 +33,8 @@
 /* move these here from icon.c */
 #define BITS_INTO_BYTES( x, y )   ( ( ( x ) * ( y ) + 7 ) / 8 )
 
-/* Redefined, see below
 #define BITMAP_SIZE( bm )       ( sizeof(BITMAPINFO) + \
                                     sizeof(RGBQUAD) * ((1<<(bm)->biBitCount)-1))
-*/
-
-#define BITMAP_SIZE( bc )  \
-    ( (bc)->biBitCount < 9 ? \
-    sizeof(BITMAPINFO) + ( sizeof(RGBQUAD) * ((1<<(bc)->biBitCount)-1) ) : \
-    sizeof(BITMAPINFOHEADER) )
 
 #pragma pack (1);
 

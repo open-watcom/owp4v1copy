@@ -8,7 +8,10 @@ dll_libs = $+ &
     $(pfx__)/$(__ifx__)/plbxmt3$(dllname_$(convention)).lib &
     $-
 
+# def_hack.def is necessary to work around a linker bug
+# where exported symbols don't force a hard reference
 dll_def = $+ &
+    ../../def_hack.def &
     $(pfx__)/runtime/os2386.def &
     $(pfx__)/$(__ifx__).dll/exportx.def &
     $-

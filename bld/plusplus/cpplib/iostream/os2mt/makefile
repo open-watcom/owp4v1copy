@@ -5,6 +5,8 @@
 host_cpu = i86
 
 suffix = mtl
+target_lib = $(prefix)$(suffix).lib
+production_lib = lib286\os2
 target_system = os2
 define_library_include = $(plusplus_iostream_dir)/iostream.mif
 define_deps_include = $(plusplus_iostream_dir)/deps.mif

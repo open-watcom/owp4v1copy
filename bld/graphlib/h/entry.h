@@ -24,10 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  Alternate entry points for WATFOR-77
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
+
+// Alternate entry points for WATFOR-77
 
 // Functions are in uppercase, do not have underscores on the end, and
 // perform a jump to the appropriate function.
@@ -171,6 +174,11 @@ void JMP_setwindow();
 void JMP_setwindow_87();
 void JMP_unregisterfonts();
 void JMP_wrapon();
+#if defined( _NEC_PC )
+void JMP_kanjisize();
+void JMP_getkanji();
+void JMP_setkanji();
+#endif
 
 #pragma aux JMP_arc                     = 0xe9 offset _arc;
 #pragma aux JMP_arc_w                   = 0xe9 offset _arc_w;
@@ -293,6 +301,11 @@ void JMP_wrapon();
 #pragma aux JMP_setwindow_87            = 0xe9 offset _setwindow_87;
 #pragma aux JMP_unregisterfonts         = 0xe9 offset _unregisterfonts;
 #pragma aux JMP_wrapon                  = 0xe9 offset _wrapon;
+#if defined( _NEC_PC )
+#pragma aux JMP_kanjisize               = 0xe9 offset _kanjisize;
+#pragma aux JMP_getkanji                = 0xe9 offset _getkanji;
+#pragma aux JMP_setkanji                = 0xe9 offset _setkanji;
+#endif
 
 #pragma aux _ARC "*";
 #pragma aux _ARC_W "*";
@@ -415,5 +428,10 @@ void JMP_wrapon();
 #pragma aux _SETWINDOW_87 "*";
 #pragma aux _UNREGISTERFONTS "*";
 #pragma aux _WRAPON "*";
+#if defined( _NEC_PC )
+#pragma aux _KANJISIZE "*";
+#pragma aux _GETKANJI "*";
+#pragma aux _SETKANJI "*";
+#endif
 
 #endif

@@ -41,6 +41,7 @@
 #include "seterrno.h"
 #include "defwin.h"
 
+
 int __close( int hid )
 {
     int         is_closed;

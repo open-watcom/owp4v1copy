@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Routines to set number of text rows.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -34,7 +35,51 @@
 #include "gbios.h"
 
 
-#if defined( _DEFAULT_WINDOWS )
+#if defined( _NEC_PC )
+
+short _SetRows( short rows )
+/*==========================
+
+   This function sets the number of text rows in the current mode. It only
+   affects the _VGA, _EGA, and _MCGA adapters and the NEC 9800 series.  */
+
+{
+    _ErrorStatus = _GROK;
+    _InitState();           // read the current machine state
+    if( rows == _MAXTEXTROWS ) {
+        rows = 25;
+    }
+    if( rows != 20 && rows != 25 ) {
+        _ErrorStatus = _GRINVALIDPARAMETER;
+        return( 0 );
+    }
+    _clearscreen( _GCLEARSCREEN );
+    if( IsTextMode ) {
+        if( rows == 25 ) {
+            NECVideoInt( _BIOS_SIZE_25, 0, 0, 0 ); // screen has 25 rows
+        } else {
+            NECVideoInt( _BIOS_SIZE_20, 0, 0, 0 ); // screen has 20 rows
+        }
+        // display cursor - turned off by previous call
+        NECVideoInt( _BIOS_CURSOR_START, 0, 0, 0 );
+    }
+    _CurrState->vc.numtextrows = rows;
+    _Tx_Row_Min = 0;                            // text window is now
+    _Tx_Col_Min = 0;                            // the full screen
+    _Tx_Row_Max = _CurrState->vc.numtextrows - 1;
+    _Tx_Col_Max = _CurrState->vc.numtextcols - 1;
+    _TextPos.row = 0;                           // set mode function
+    _TextPos.col = 0;                           // sets position to 0,0
+    _CurrVisualPage = 0;
+    _CurrActivePage = 0;
+    NECVideoInt( _BIOS_PAGE_SET, 0, 0, 0 );     // set to page zero
+    NECVideoIntDC( 0x0300, 0, 0x0010, 0 );      // tell DOS where cursor is
+    NECVideoInt( _BIOS_CURSOR_SET, 0, 0, 0 );   // set cursor position
+    return( _CurrState->vc.numtextrows );
+}
+
+
+#elif defined( _DEFAULT_WINDOWS )
 
 short _SetRows( short rows )
 /*==========================
@@ -112,7 +157,7 @@ short _SetRows( short rows )
 /*==========================
 
    This function sets the number of text rows in the current mode. It only
-   affects the _VGA, _EGA, and _MCGA adapters.  */
+   affects the _VGA, _EGA, and _MCGA adapters and the NEC 9800 series.  */
 
 {
     _ErrorStatus = _GROK;
@@ -358,13 +403,13 @@ short _WCI86FAR _CGRAPH _settextrows( short rows )
 /*===========================================
 
    This function sets the number of text rows in the current mode. It only
-   affects the _VGA, _EGA, and _MCGA adapters.  */
+   affects the _VGA, _EGA, and _MCGA adapters and the NEC 9800 series.  */
 
 {
     short               set_rows;
 
     set_rows = _SetRows( rows );
-    #if !defined( _DEFAULT_WINDOWS )
+    #if !defined( _NEC_PC ) && !defined( _DEFAULT_WINDOWS )
         _PaletteInit();   // need to reset palette after changing mode
     #endif
     return( set_rows );

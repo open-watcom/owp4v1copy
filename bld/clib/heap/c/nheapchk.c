@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of near _heapchk() and _nheapchk().
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -131,6 +132,10 @@ _WCRTLINK int _nheapchk( void )
     size_t free_size;
 
     _AccessNHeap();
+    if( __nheap_clean ) {
+        _ReleaseNHeap();
+        return( _HEAPOK );
+    }
     heap_status = checkFreeList( &free_size );
     if( heap_status != _HEAPOK ) {
         _ReleaseNHeap();
@@ -139,12 +144,10 @@ _WCRTLINK int _nheapchk( void )
     hi._pentry = NULL;
     for(;;) {
         heap_status = __NHeapWalk( &hi, __nheapbeg );
-        if( heap_status != _HEAPOK )
-            break;
+        if( heap_status != _HEAPOK ) break;
         if( hi._useflag == _FREEENTRY ) {
             heap_status = checkFree( (frlptr) hi._pentry );
-            if( heap_status != _HEAPOK )
-                break;
+            if( heap_status != _HEAPOK ) break;
             free_size -= hi._size;
         }
     }
@@ -155,6 +158,9 @@ _WCRTLINK int _nheapchk( void )
     } else {
         if( heap_status == _HEAPEND ) {
             heap_status = _HEAPOK;
+        }
+        if( heap_status == _HEAPOK ) {
+            __nheap_clean = 1;
         }
     }
     _ReleaseNHeap();

@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  C++ compiler top level driver.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -431,10 +432,14 @@ static int front_end(           // FRONT-END PROCESSING
         if( CompFlags.ide_console_output ) {
             IoSuppSetLineBuffering( stdout, 256 );
             IoSuppSetLineBuffering( errout, 256 );
-            #if defined(__DOS__)
+            #if ( defined(stdaux) || defined(stdprn) ) && ! defined(__NT__)
             if( ! CompFlags.dll_subsequent ) {
+            #if defined(stdaux)
                 SrcFileFClose( stdaux );
+            #endif
+            #if defined(stdprn)
                 SrcFileFClose( stdprn );
+            #endif
             }
             #endif
         }

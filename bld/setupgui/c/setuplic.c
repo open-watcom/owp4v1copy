@@ -33,8 +33,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <unistd.h>
-#if !defined( UNIX ) && !defined( __UNIX__ )
+#include <io.h>
+#if !defined( UNIX )
 #include <dos.h>
 #endif
 #include <ctype.h>
@@ -284,10 +284,10 @@ extern bool ApplyLicense(void)
                         break;
                     }
                     if( licname != NULL ) {
-                        GUIMemFree( licname );
+                        GUIFree( licname );
                     }
                     if( liccompname != NULL ) {
-                        GUIMemFree( liccompname );
+                        GUIFree( liccompname );
                     }
                     licname = reg_name;
                     liccompname = reg_company;
@@ -315,10 +315,10 @@ extern bool ApplyLicense(void)
 
                 if( ini_name[ 0 ] != '\0' && ini_company[ 0 ] != '\0' ) {
                     if( licname != NULL ) {
-                        GUIMemFree( licname );
+                        GUIFree( licname );
                     }
                     if( liccompname != NULL ) {
-                        GUIMemFree( liccompname );
+                        GUIFree( liccompname );
                     }
                     licname = ini_name;
                     liccompname = ini_company;

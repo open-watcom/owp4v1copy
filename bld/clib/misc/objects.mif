@@ -1,7 +1,6 @@
 #                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
 #==================================================================================================
 !inject assert.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-!inject assert99.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 !inject dbgbreak.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
 !inject dbgdata.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
 !inject dbgrpt.obj   d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
@@ -25,7 +24,6 @@
 !inject splitpat.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32
 !inject syslinux.obj                                                                    l32
 !inject uassert.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
-!inject uassrt99.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
 !inject udivdi3.obj                                                                     l32
 !inject ufulpath.obj d16 d32             nt nta ntp         o16 o32         w16 w32
 !inject umkpath.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32

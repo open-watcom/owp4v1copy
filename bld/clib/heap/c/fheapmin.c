@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of far _heapmin() and _fheapmin().
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -68,14 +69,13 @@
 #endif
 
 _WCRTLINK int _heapshrink( void )
-{
-    return( _fheapshrink() );
-}
-
+    {
+        return( _fheapshrink() );
+    }
 _WCRTLINK int _heapmin( void )
-{
-    return( _fheapshrink() );
-}
+    {
+        return( _fheapshrink() );
+    }
 
 #endif
 
@@ -85,9 +85,9 @@ _WCRTLINK int _heapmin( void )
 #endif
 
 _WCRTLINK int _fheapmin( void )
-{
-    return( _fheapshrink() );
-}
+    {
+        return( _fheapshrink() );
+    }
 
 _WCRTLINK int _fheapshrink( void )
 {
@@ -120,6 +120,7 @@ _WCRTLINK int _fheapshrink( void )
                 prev_heap->nextseg = seg;
             }
             __fheapRover = __fheap;                     /* 03-dec-92 */
+            __fheap_clean = 0;
             heap_status = __FreeSeg( heap_seg );
         }
     }

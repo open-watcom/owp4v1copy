@@ -3,7 +3,6 @@ objs = &
 allign &
 datamix1 &
 datamix2 &
-jmpshrt &
 mseg &
 opi8u &
 plsintr &
@@ -11,14 +10,13 @@ proccall &
 segatrep &
 shift &
 structdd &
-tbyte &
 testequ
 
 dev_objs = &
 irpexitm &
+jmpshrt &
 lea &
 lsxxx &
-retiret &
-seg16
+retiret
 
 !include ../test.mif

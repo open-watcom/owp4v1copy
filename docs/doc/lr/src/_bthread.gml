@@ -185,7 +185,7 @@ unsigned __MaxThreads = { 48 };
 .desc end
 .return begin
 Under Win32, the &func function returns the thread handle for the new
-thread if successful; otherwise it returns &minus.1 to indicate that the
+thread if successful; otherwise it returns 0 to indicate that the
 thread could not be started.
 .np
 Under all other systems that support the &func function (OS/2, Netware

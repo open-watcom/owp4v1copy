@@ -1,256 +1,231 @@
 File: source\diag0200.c 
 (8,13): Error! E709: cannot initialize array member 'S::arr' 
-  definition: 'int S::arr[3]' 
+  'int S::arr[3]' defined at: (4,9) 
 File: source\diag0201.c 
 (14,16): Error! E125: invalid redefinition of the typedef name 'XX9' 
-  definition: 'XX9' 
+  'XX9' defined at: (11,8) 
 (25,1): Error! E229: function 'X17::foo' has already been defined 
-  definition: 'void X17::foo( void )' 
+  'void X17::foo( void )' defined at: (21,11) 
 (53,12): Error! E324: conversion of return value is impossible 
-  source conversion type is 'x47 (lvalue)' 
-  target conversion type is 'x47 *' 
+  source conversion type is "x47 (lvalue)" 
+  target conversion type is "x47 *" 
 (58,21): Error! E006: syntax error; probable cause: missing ';' 
 (59,12): Error! E006: syntax error; probable cause: missing ';' 
 (61,28): Error! E336: declaration specifiers are required to declare 'UNDECLARED_TYPE2' 
 (61,26): Error! E006: syntax error; probable cause: missing ';' 
 (62,5): Error! E003: missing return value 
 (62,5): Warning! W014: no reference to symbol 'v2' 
-  definition: 'int v2' in 'int x56( void )' 
+  'int v2' in 'int x56( void )' defined at: (59,9) 
 (62,5): Warning! W014: no reference to symbol 'S::UNDECLARED_TYPE2' 
-  definition: 'int S::UNDECLARED_TYPE2' in 'int x56( void )' 
-(64,1): Error! E121: syntax error 
+  'int S::UNDECLARED_TYPE2' in 'int x56( void )' defined at: (61,9) 
+(63,1): Error! E121: syntax error 
 (69,16): Error! E006: syntax error; probable cause: missing ';' 
 (70,5): Error! E003: missing return value 
 (70,5): Warning! W014: no reference to symbol 'S::v3' 
-  definition: 'int S::v3' in 'int x66( void )' 
-(72,1): Error! E121: syntax error 
-(82,0): Error! E079: missing ')' for expansion of 'assert' macro 
+  'int S::v3' in 'int x66( void )' defined at: (69,13) 
+(71,1): Error! E121: syntax error 
+(82,0): Error! E079: missing ) for expansion of 'assert' macro 
   macro 'assert' defined at: (77,9) 
 (82,0): Error! E121: syntax error 
 (82,0): Error! E003: missing return value 
 (82,0): Warning! W726: no reference to formal parameter 'x' 
-  definition: 'int * x' in 'int end_of_the_file( int * )' 
+  'int * x' in 'int end_of_the_file( int * )' defined at: (78,27) 
 (82,0): Error! E121: syntax error 
 File: source\diag0202.c 
 (33,11): Warning! W836: symbol has different type than previous symbol in same declaration 
   companion definition is 'v' 
-  definition: 'S v' in 'void f( void )' 
+  'S v' in 'void f( void )' defined at: (33,7) 
 (54,2): Error! E080: at least one error 
 File: source\diag0203.c 
 (44,22): Error! E400: cannot convert right expression for initialization 
-  'D' defined at: (6,12) 
-  source conversion type is 'Prime_print<2>::<enum>' 
-  target conversion type is 'D<2>' 
+  source conversion type is "Prime_print<2>::<enum>" 
+  target conversion type is "D<2>" 
 (25,26): Error! E400: cannot convert right expression for initialization 
   template class instantiation for 'Prime_print<30>' was at: (50,16) 
-  'D' defined at: (6,12) 
-  source conversion type is 'Prime_print<3>::<enum>' 
-  target conversion type is 'D<3>' 
+  source conversion type is "Prime_print<3>::<enum>" 
+  target conversion type is "D<3>" 
 (25,26): Error! E400: cannot convert right expression for initialization 
   template class instantiation for 'Prime_print<30>' was at: (50,16) 
-  'D' defined at: (6,12) 
-  source conversion type is 'Prime_print<5>::<enum>' 
-  target conversion type is 'D<5>' 
+  source conversion type is "Prime_print<5>::<enum>" 
+  target conversion type is "D<5>" 
 (25,26): Error! E400: cannot convert right expression for initialization 
   template class instantiation for 'Prime_print<30>' was at: (50,16) 
-  'D' defined at: (6,12) 
-  source conversion type is 'Prime_print<7>::<enum>' 
-  target conversion type is 'D<7>' 
+  source conversion type is "Prime_print<7>::<enum>" 
+  target conversion type is "D<7>" 
 (25,26): Error! E400: cannot convert right expression for initialization 
   template class instantiation for 'Prime_print<30>' was at: (50,16) 
-  'D' defined at: (6,12) 
-  source conversion type is 'Prime_print<11>::<enum>' 
-  target conversion type is 'D<11>' 
+  source conversion type is "Prime_print<11>::<enum>" 
+  target conversion type is "D<11>" 
 (25,26): Error! E400: cannot convert right expression for initialization 
   template class instantiation for 'Prime_print<30>' was at: (50,16) 
-  'D' defined at: (6,12) 
-  source conversion type is 'Prime_print<13>::<enum>' 
-  target conversion type is 'D<13>' 
+  source conversion type is "Prime_print<13>::<enum>" 
+  target conversion type is "D<13>" 
 (25,26): Error! E400: cannot convert right expression for initialization 
   template class instantiation for 'Prime_print<30>' was at: (50,16) 
-  'D' defined at: (6,12) 
-  source conversion type is 'Prime_print<17>::<enum>' 
-  target conversion type is 'D<17>' 
+  source conversion type is "Prime_print<17>::<enum>" 
+  target conversion type is "D<17>" 
 (25,26): Error! E400: cannot convert right expression for initialization 
   template class instantiation for 'Prime_print<30>' was at: (50,16) 
-  'D' defined at: (6,12) 
-  source conversion type is 'Prime_print<19>::<enum>' 
-  target conversion type is 'D<19>' 
+  source conversion type is "Prime_print<19>::<enum>" 
+  target conversion type is "D<19>" 
 (25,26): Error! E400: cannot convert right expression for initialization 
   template class instantiation for 'Prime_print<30>' was at: (50,16) 
-  'D' defined at: (6,12) 
-  source conversion type is 'Prime_print<23>::<enum>' 
-  target conversion type is 'D<23>' 
+  source conversion type is "Prime_print<23>::<enum>" 
+  target conversion type is "D<23>" 
 (25,26): Error! E400: cannot convert right expression for initialization 
   template class instantiation for 'Prime_print<30>' was at: (50,16) 
-  'D' defined at: (6,12) 
-  source conversion type is 'Prime_print<29>::<enum>' 
-  target conversion type is 'D<29>' 
+  source conversion type is "Prime_print<29>::<enum>" 
+  target conversion type is "D<29>" 
 File: source\diag0204.c 
 (18,19): Error! E400: cannot convert right expression for initialization 
   template class instantiation for 'Acker<1,2>' was at: (29,10) 
-  source conversion type is 'Acker_is<0,1,2> (lvalue)' 
-  target conversion type is 'int' 
+  source conversion type is "Acker_is<0,1,2> (lvalue)" 
+  target conversion type is "int" 
 (18,19): Error! E400: cannot convert right expression for initialization 
   template class instantiation for 'Acker<1,2>' was at: (29,10) 
-  source conversion type is 'Acker_is<1,0,2> (lvalue)' 
-  target conversion type is 'int' 
+  source conversion type is "Acker_is<1,0,2> (lvalue)" 
+  target conversion type is "int" 
 (18,19): Error! E400: cannot convert right expression for initialization 
   template class instantiation for 'Acker<1,2>' was at: (29,10) 
-  source conversion type is 'Acker_is<0,2,3> (lvalue)' 
-  target conversion type is 'int' 
+  source conversion type is "Acker_is<0,2,3> (lvalue)" 
+  target conversion type is "int" 
 (18,19): Error! E400: cannot convert right expression for initialization 
   template class instantiation for 'Acker<1,2>' was at: (29,10) 
-  source conversion type is 'Acker_is<1,1,3> (lvalue)' 
-  target conversion type is 'int' 
+  source conversion type is "Acker_is<1,1,3> (lvalue)" 
+  target conversion type is "int" 
 (18,19): Error! E400: cannot convert right expression for initialization 
   template class instantiation for 'Acker<1,2>' was at: (29,10) 
-  source conversion type is 'Acker_is<0,3,4> (lvalue)' 
-  target conversion type is 'int' 
+  source conversion type is "Acker_is<0,3,4> (lvalue)" 
+  target conversion type is "int" 
 (18,19): Error! E400: cannot convert right expression for initialization 
   template class instantiation for 'Acker<1,2>' was at: (29,10) 
-  source conversion type is 'Acker_is<1,2,4> (lvalue)' 
-  target conversion type is 'int' 
+  source conversion type is "Acker_is<1,2,4> (lvalue)" 
+  target conversion type is "int" 
 File: source\diag0205.h 
   included from source\diag0205.c(1) 
 (2,10): Error! E710: file 'source\diag0205.c' will #include itself forever 
 (2,10): Error! E059: unable to open 'diag0205.c' 
 File: source\diag0206.c 
 (15,8): Error! E814: user-defined conversion is ambiguous 
-  'A' defined at: (4,7) 
   ambiguous function: B::operator A () defined at: (10,9) 
   ambiguous function: A::A( B ) defined at: (6,9) 
-  source conversion type is 'B (lvalue)' 
-  target conversion type is 'A' 
+  source conversion type is "B (lvalue)" 
+  target conversion type is "A" 
 (20,2): Error! E080: at least one error 
 File: source\diag0207.c 
 (20,5): Error! E419: cannot call non-const function for a constant object 
-  'S' defined at: (3,8) 
-  definition: 'S & S::operator =( S const & )' 
+  'S & S::operator =( S const & )' defined at: (20,11) 
 (21,5): Error! E467: cannot call a non-volatile function for a volatile object 
-  'S' defined at: (3,8) 
-  definition: 'S & S::operator =( S const & )' 
+  'S & S::operator =( S const & )' defined at: (20,11) 
 (22,5): Error! E419: cannot call non-const function for a constant object 
-  'S' defined at: (3,8) 
-  definition: 'S & S::operator =( S const & )' 
+  'S & S::operator =( S const & )' defined at: (20,11) 
 (24,5): Error! E419: cannot call non-const function for a constant object 
-  'S' defined at: (3,8) 
-  definition: 'S & S::operator =( S const & )' 
+  'S & S::operator =( S const & )' defined at: (20,11) 
 (25,5): Error! E467: cannot call a non-volatile function for a volatile object 
-  'S' defined at: (3,8) 
-  definition: 'S & S::operator =( S const & )' 
+  'S & S::operator =( S const & )' defined at: (20,11) 
 (26,5): Error! E419: cannot call non-const function for a constant object 
-  'S' defined at: (3,8) 
-  definition: 'S & S::operator =( S const & )' 
+  'S & S::operator =( S const & )' defined at: (20,11) 
 (27,11): Error! E475: cannot assign right expression to class object 
-  definition: 'S & S::operator =( S const & )' 
+  'S & S::operator =( S const & )' defined at: (20,11) 
   cannot convert argument 1 defined at: (27,13) 
-  source conversion type is 'S volatile (lvalue)' 
-  target conversion type is 'S const (lvalue)' 
+  source conversion type is "S volatile (lvalue)" 
+  target conversion type is "S const (lvalue)" 
 (28,11): Error! E475: cannot assign right expression to class object 
-  definition: 'S & S::operator =( S const & )' 
+  'S & S::operator =( S const & )' defined at: (20,11) 
   cannot convert argument 1 defined at: (28,13) 
-  source conversion type is 'S volatile (lvalue)' 
-  target conversion type is 'S const (lvalue)' 
+  source conversion type is "S volatile (lvalue)" 
+  target conversion type is "S const (lvalue)" 
 (29,11): Error! E475: cannot assign right expression to class object 
-  definition: 'S & S::operator =( S const & )' 
+  'S & S::operator =( S const & )' defined at: (20,11) 
   cannot convert argument 1 defined at: (29,13) 
-  source conversion type is 'S volatile (lvalue)' 
-  target conversion type is 'S const (lvalue)' 
+  source conversion type is "S volatile (lvalue)" 
+  target conversion type is "S const (lvalue)" 
 (30,11): Error! E475: cannot assign right expression to class object 
-  definition: 'S & S::operator =( S const & )' 
+  'S & S::operator =( S const & )' defined at: (20,11) 
   cannot convert argument 1 defined at: (30,13) 
-  source conversion type is 'S volatile (lvalue)' 
-  target conversion type is 'S const (lvalue)' 
+  source conversion type is "S volatile (lvalue)" 
+  target conversion type is "S const (lvalue)" 
 (31,11): Error! E475: cannot assign right expression to class object 
-  definition: 'S & S::operator =( S const & )' 
+  'S & S::operator =( S const & )' defined at: (20,11) 
   cannot convert argument 1 defined at: (31,13) 
-  source conversion type is 'S const volatile (lvalue)' 
-  target conversion type is 'S const (lvalue)' 
+  source conversion type is "S const volatile (lvalue)" 
+  target conversion type is "S const (lvalue)" 
 (32,11): Error! E475: cannot assign right expression to class object 
-  definition: 'S & S::operator =( S const & )' 
+  'S & S::operator =( S const & )' defined at: (20,11) 
   cannot convert argument 1 defined at: (32,13) 
-  source conversion type is 'S const volatile (lvalue)' 
-  target conversion type is 'S const (lvalue)' 
+  source conversion type is "S const volatile (lvalue)" 
+  target conversion type is "S const (lvalue)" 
 (33,11): Error! E475: cannot assign right expression to class object 
-  definition: 'S & S::operator =( S const & )' 
+  'S & S::operator =( S const & )' defined at: (20,11) 
   cannot convert argument 1 defined at: (33,13) 
-  source conversion type is 'S const volatile (lvalue)' 
-  target conversion type is 'S const (lvalue)' 
+  source conversion type is "S const volatile (lvalue)" 
+  target conversion type is "S const (lvalue)" 
 (34,11): Error! E475: cannot assign right expression to class object 
-  definition: 'S & S::operator =( S const & )' 
+  'S & S::operator =( S const & )' defined at: (20,11) 
   cannot convert argument 1 defined at: (34,13) 
-  source conversion type is 'S const volatile (lvalue)' 
-  target conversion type is 'S const (lvalue)' 
+  source conversion type is "S const volatile (lvalue)" 
+  target conversion type is "S const (lvalue)" 
 File: source\diag0208.c 
 (26,30): Error! E400: cannot convert right expression for initialization 
-  'S' defined at: (3,8) 
-  source conversion type is 'S volatile (lvalue)' 
-  target conversion type is 'S' 
+  source conversion type is "S volatile (lvalue)" 
+  target conversion type is "S" 
 (27,30): Error! E400: cannot convert right expression for initialization 
-  'S' defined at: (3,8) 
-  source conversion type is 'S volatile (lvalue)' 
-  target conversion type is 'S volatile' 
+  source conversion type is "S volatile (lvalue)" 
+  target conversion type is "S volatile" 
 (28,30): Error! E400: cannot convert right expression for initialization 
-  'S' defined at: (3,8) 
-  source conversion type is 'S volatile (lvalue)' 
-  target conversion type is 'S const' 
+  source conversion type is "S volatile (lvalue)" 
+  target conversion type is "S const" 
 (29,30): Error! E400: cannot convert right expression for initialization 
-  'S' defined at: (3,8) 
-  source conversion type is 'S volatile (lvalue)' 
-  target conversion type is 'S const volatile' 
+  source conversion type is "S volatile (lvalue)" 
+  target conversion type is "S const volatile" 
 (30,30): Error! E400: cannot convert right expression for initialization 
-  'S' defined at: (3,8) 
-  source conversion type is 'S const volatile (lvalue)' 
-  target conversion type is 'S' 
+  source conversion type is "S const volatile (lvalue)" 
+  target conversion type is "S" 
 (31,30): Error! E400: cannot convert right expression for initialization 
-  'S' defined at: (3,8) 
-  source conversion type is 'S const volatile (lvalue)' 
-  target conversion type is 'S volatile' 
+  source conversion type is "S const volatile (lvalue)" 
+  target conversion type is "S volatile" 
 (32,30): Error! E400: cannot convert right expression for initialization 
-  'S' defined at: (3,8) 
-  source conversion type is 'S const volatile (lvalue)' 
-  target conversion type is 'S const' 
+  source conversion type is "S const volatile (lvalue)" 
+  target conversion type is "S const" 
 (33,30): Error! E400: cannot convert right expression for initialization 
-  'S' defined at: (3,8) 
-  source conversion type is 'S const volatile (lvalue)' 
-  target conversion type is 'S const volatile' 
+  source conversion type is "S const volatile (lvalue)" 
+  target conversion type is "S const volatile" 
 File: source\diag0209.c 
 (1,2): Error! E053: unknown preprocessing directive '#ackbar' 
 (15,23): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression 
 (15,27): Warning! W595: construct resolved as an expression 
 (58,17): Error! E306: cannot convert expression to type of cast 
-  source conversion type is 'void *' 
-  target conversion type is 'double' 
+  source conversion type is "void *" 
+  target conversion type is "double" 
 (59,17): Error! E306: cannot convert expression to type of cast 
-  source conversion type is 'double' 
-  target conversion type is 'void *' 
+  source conversion type is "double" 
+  target conversion type is "void *" 
 File: source\diag0210.c 
 (9,15): Error! E306: cannot convert expression to type of cast 
-  source conversion type is 'void *' 
-  target conversion type is 'float' 
+  source conversion type is "void *" 
+  target conversion type is "float" 
 (10,21): Error! E306: cannot convert expression to type of cast 
-  source conversion type is 'void *' 
-  target conversion type is 'long double' 
+  source conversion type is "void *" 
+  target conversion type is "long double" 
 (11,16): Error! E306: cannot convert expression to type of cast 
-  source conversion type is 'void *' 
-  target conversion type is 'double' 
+  source conversion type is "void *" 
+  target conversion type is "double" 
 (12,16): Error! E306: cannot convert expression to type of cast 
-  source conversion type is 'double' 
-  target conversion type is 'void *' 
+  source conversion type is "double" 
+  target conversion type is "void *" 
 File: source\diag0211.c 
 (56,16): Error! E042: symbol 'x49o4' already defined 
-  definition: 'char x49o4[4]' 
+  'char x49o4[4]' defined at: (49,6) 
 (57,16): Error! E042: symbol 'x50o2' already defined 
-  definition: 'char x50o2[2]' 
+  'char x50o2[2]' defined at: (50,6) 
 (58,16): Error! E042: symbol 'x51o1' already defined 
-  definition: 'char x51o1[1]' 
+  'char x51o1[1]' defined at: (51,6) 
 (59,16): Error! E042: symbol 'x52o4' already defined 
-  definition: 'char x52o4[4]' 
+  'char x52o4[4]' defined at: (52,6) 
 (60,16): Error! E042: symbol 'x53o4' already defined 
-  definition: 'char x53o4[4]' 
+  'char x53o4[4]' defined at: (53,6) 
 (61,16): Error! E042: symbol 'x54o2' already defined 
-  definition: 'char x54o2[2]' 
+  'char x54o2[2]' defined at: (54,6) 
 File: source\diag0212.c 
 (56,10): Error! E186: attempt to modify a constant value 
 (59,10): Error! E186: attempt to modify a constant value 
@@ -261,14 +236,14 @@ File: source\diag0212.c
 (69,18): Error! E373: invalid modifier for auto variable 
 (69,19): Error! E711: 'mutable' may only be used for non-static class members 
 (70,1): Warning! W014: no reference to symbol 'c' 
-  definition: 'char c' in 'void (mutable bar)( int )' 
+  'char c' in 'void (mutable bar)( int )' defined at: (69,18) 
 (70,1): Warning! W726: no reference to formal parameter 'y' 
-  definition: 'int y' in 'void (mutable bar)( int )' 
+  'int y' in 'void (mutable bar)( int )' defined at: (67,31) 
 (73,21): Error! E117: too many storage class specifiers 
-(75,26): Error! E712: 'mutable' member cannot also be const 
-(76,28): Error! E712: 'mutable' member cannot also be const 
-(87,5): Error! E714: operand cannot be of type bool 
-(88,10): Error! E714: operand cannot be of type bool 
+(75,26): Error! E712: 'mutable' member cannot also be 'const' 
+(76,28): Error! E712: 'mutable' member cannot also be 'const' 
+(87,5): Error! E714: operand cannot be of type 'bool' 
+(88,10): Error! E714: operand cannot be of type 'bool' 
 (109,12): Warning! W716: integral value may be truncated 
 (114,13): Warning! W716: integral value may be truncated 
 (115,10): Error! E159: cannot assign a pointer value to an arithmetic item 
@@ -328,7 +303,7 @@ File: source\diag0213.c
   expression type is 'X * (lvalue)' 
 (31,9): Error! E194: expression pointer type cannot be incremented or decremented 
   operand type is 'int (* )[] (lvalue)' 
-(42,12): Warning! W007: '&array' may not produce intended result 
+(42,12): Warning! W007: "&array" may not produce intended result 
 (44,9): Error! E194: expression pointer type cannot be incremented or decremented 
   operand type is 'int (* )[] (lvalue)' 
 (57,9): Warning! W002: constant out of range; truncated 
@@ -376,44 +351,42 @@ File: source\diag0214.c
 (123,19): Warning! W364: adjacent >=, <=, >, < operators 
 (151,1): Warning! W849: base class virtual function has not been overridden 
   virtual function is 'A145::foo' 
-  definition: 'int A145::foo( unsigned, unsigned )' 
+  'int A145::foo( unsigned, unsigned )' defined at: (146,17) 
   cannot be called with a 'DA149 *' 
 (169,34): Error! E721: virtual function 'X::fn' cannot have its return type changed 
-  definition: 'X159::B * X159::X::fn( int, ... )' 
-(224,20): Error! E447: user-defined conversion cannot convert to void 
+  'X159::B * X159::X::fn( int, ... )' defined at: (166,20) 
+(224,20): Error! E447: user-defined conversion cannot convert to 'void' 
 (232,20): Warning! W446: user-defined conversion cannot convert to its own class or base class 
 (233,28): Warning! W446: user-defined conversion cannot convert to its own class or base class 
 (234,31): Warning! W446: user-defined conversion cannot convert to its own class or base class 
 (235,22): Warning! W446: user-defined conversion cannot convert to its own class or base class 
 (235,22): Error! E226: function 'D229::operator D229 ' is not distinct 
-  definition: 'D229::operator D229 ()' 
+  'D229::operator D229 ()' defined at: (232,5) 
 (236,20): Warning! W446: user-defined conversion cannot convert to its own class or base class 
 (237,28): Warning! W446: user-defined conversion cannot convert to its own class or base class 
 (238,31): Warning! W446: user-defined conversion cannot convert to its own class or base class 
 (239,22): Warning! W446: user-defined conversion cannot convert to its own class or base class 
 (239,22): Error! E226: function 'D229::operator B229 ' is not distinct 
-  definition: 'D229::operator B229 ()' 
+  'D229::operator B229 ()' defined at: (236,5) 
 (251,21): Error! E178: const object must be initialized 
 (251,32): Warning! W836: symbol has different type than previous symbol in same declaration 
   companion definition is 'i244' 
-  definition: 'int i244' 
+  'int i244' defined at: (251,5) 
 (256,10): Error! E186: attempt to modify a constant value 
 (257,14): Error! E186: attempt to modify a constant value 
 (258,5): Error! E419: cannot call non-const function for a constant object 
-  'X244' defined at: (244,16) 
-  definition: 'X244 & X244::operator =( X244 const & )' 
+  'X244 & X244::operator =( X244 const & )' defined at: (259,5) 
 (259,5): Error! E419: cannot call non-const function for a constant object 
-  'X244' defined at: (244,16) 
-  definition: 'X244 & X244::operator =( X244 const & )' 
+  'X244 & X244::operator =( X244 const & )' defined at: (259,5) 
 (269,5): Warning! W013: unreachable code 
 (274,1): Warning! W017: label 'here' has not been referenced by a goto 
   label defined at: (266,5) 
 (274,1): Error! E033: label 'anywhere' is not defined in function 
   label referenced at: (268,10) 
 (281,13): Error! E045: duplicate case value '97' found 
-  previous case label defined at: (279,13) 
+  previous 'case' label defined at: (279,13) 
 (284,12): Error! E200: duplicate case value '255' after conversion to type of switch expression 
-  previous case label defined at: (282,16) 
+  previous 'case' label defined at: (282,16) 
 (293,5): Warning! W015: nested comment found in comment started on line 293 
 (294,5): Warning! W015: nested comment found in comment started on line 294 
 (295,5): Warning! W015: nested comment found in comment started on line 295 
@@ -422,99 +395,84 @@ File: source\diag0214.c
 (308,13): Error! E186: attempt to modify a constant value 
 (310,15): Error! E186: attempt to modify a constant value 
 (312,5): Error! E419: cannot call non-const function for a constant object 
-  definition: 'void X298::foo( void )' 
+  'void X298::foo( void )' defined at: (299,10) 
 (314,5): Error! E419: cannot call non-const function for a constant object 
-  definition: 'void X298::foo( void )' 
+  'void X298::foo( void )' defined at: (299,10) 
 (316,6): Error! E419: cannot call non-const function for a constant object 
-  'X298' defined at: (298,8) 
-  definition: 'void X298::foo( void )' 
+  'void X298::foo( void )' defined at: (299,10) 
 (318,5): Error! E419: cannot call non-const function for a constant object 
-  definition: 'void X298::foo( void )' 
+  'void X298::foo( void )' defined at: (299,10) 
 (320,5): Error! E419: cannot call non-const function for a constant object 
-  definition: 'void X298::foo( void )' 
+  'void X298::foo( void )' defined at: (299,10) 
 (322,6): Error! E419: cannot call non-const function for a constant object 
-  'X298' defined at: (298,8) 
-  definition: 'void X298::foo( void )' 
+  'void X298::foo( void )' defined at: (299,10) 
 Compiling generated function: DD::DD 
-  definition: 'X173::DD::DD( void )' 
+  'X173::DD::DD( void )' defined at: (179,5) 
 Error! E505: implementation restriction: cannot generate thunk from 'VV::foo' 
-  definition: 'int X173::VV::foo( int, ... )' 
+  'int X173::VV::foo( int, ... )' defined at: (175,21) 
   function being overridden is 'DD::foo' 
-  definition: 'int X173::DD::foo( int, ... )' 
+  'int X173::DD::foo( int, ... )' defined at: (178,21) 
 Compiling generated function: VV::$Wvt0ufoo:DD$:X173$o8$:0:1foo$n(ie)i 
 Error! E610: 'DD::DD' could not be generated by the compiler 
-  definition: 'X173::DD::DD( void )' 
+  'X173::DD::DD( void )' defined at: (179,5) 
 File: source\diag0215.c 
 (8,6): Error! E419: cannot call non-const function for a constant object 
-  definition: 'void S::foo( void )' 
+  'void S::foo( void )' defined at: (3,10) 
 (9,1): Warning! W726: no reference to formal parameter 'q1' 
-  definition: 'int q1' in 'void foo( S const *, int, int, int, int, int )' 
+  'int q1' in 'void foo( S const *, int, int, int, int, int )' defined at: (6,27) 
 (9,1): Warning! W726: no reference to formal parameter 'q2' 
-  definition: 'int q2' in 'void foo( S const *, int, int, int, int, int )' 
+  'int q2' in 'void foo( S const *, int, int, int, int, int )' defined at: (6,35) 
 (9,1): Warning! W726: no reference to formal parameter 'q3' 
-  definition: 'int q3' in 'void foo( S const *, int, int, int, int, int )' 
+  'int q3' in 'void foo( S const *, int, int, int, int, int )' defined at: (6,43) 
 (9,1): Warning! W726: no reference to formal parameter 'q4' 
-  definition: 'int q4' in 'void foo( S const *, int, int, int, int, int )' 
+  'int q4' in 'void foo( S const *, int, int, int, int, int )' defined at: (6,51) 
 (9,1): Warning! W726: no reference to formal parameter 'q5' 
-  definition: 'int q5' in 'void foo( S const *, int, int, int, int, int )' 
+  'int q5' in 'void foo( S const *, int, int, int, int, int )' defined at: (6,59) 
 (13,6): Error! E419: cannot call non-const function for a constant object 
-  definition: 'void S::foo( void )' 
+  'void S::foo( void )' defined at: (3,10) 
 (14,5): Error! E419: cannot call non-const function for a constant object 
-  definition: 'void S::foo( void )' 
+  'void S::foo( void )' defined at: (3,10) 
 (15,5): Error! E133: too many errors: compilation aborted 
 File: source\diag0216.c 
 (22,18): Warning! W005: pointer or reference truncated 
-  'NONPODS' defined at: (10,8) 
-  source conversion type is 'NONPODS __far (lvalue)' 
-  target conversion type is 'NONPODS (lvalue)' 
+  source conversion type is "NONPODS __far (lvalue)" 
+  target conversion type is "NONPODS (lvalue)" 
 (39,5): Error! E161: attempt to call member function for far object when the data model is near 
 (39,10): Warning! W005: pointer or reference truncated 
 (40,10): Warning! W005: pointer or reference truncated 
 (41,5): Error! E161: attempt to call member function for far object when the data model is near 
 (44,5): Error! E161: attempt to call member function for far object when the data model is near 
-  'NONPODS' defined at: (10,8) 
-  definition: 'NONPODS & NONPODS::operator =( NONPODS const & )' 
+  'NONPODS & NONPODS::operator =( NONPODS const & )' defined at: (14,14) 
 (45,10): Warning! W005: pointer or reference truncated 
-  'NONPODS' defined at: (10,8) 
-  source conversion type is 'NONPODS __far (lvalue)' 
-  target conversion type is 'NONPODS const (lvalue)' 
+  source conversion type is "NONPODS __far (lvalue)" 
+  target conversion type is "NONPODS const (lvalue)" 
 (46,5): Error! E161: attempt to call member function for far object when the data model is near 
-  'NONPODS' defined at: (10,8) 
-  definition: 'NONPODS & NONPODS::operator =( NONPODS const & )' 
-(49,5): Error! E160: attempt to destroy a far object when data model is near 
-  'PODS' defined at: (6,8) 
-  definition: 'PODS::~PODS( void )' 
-(52,5): Error! E160: attempt to destroy a far object when data model is near 
-  'NONPODS' defined at: (10,8) 
-  definition: 'NONPODS::~NONPODS( void )' 
+  'NONPODS & NONPODS::operator =( NONPODS const & )' defined at: (14,14) 
+(49,5): Error! E160: attempt to destruct a far object when data model is near 
+  'PODS::~PODS( void )' defined at: (49,7) 
+(52,5): Error! E160: attempt to destruct a far object when data model is near 
+  'NONPODS::~NONPODS( void )' defined at: (52,7) 
 (55,15): Warning! W005: pointer or reference truncated 
-  'PODS' defined at: (6,8) 
-  source conversion type is 'PODS __far (lvalue)' 
-  target conversion type is 'PODS const (lvalue)' 
+  source conversion type is "PODS __far (lvalue)" 
+  target conversion type is "PODS const (lvalue)" 
 (58,18): Warning! W005: pointer or reference truncated 
-  'NONPODS' defined at: (10,8) 
-  source conversion type is 'NONPODS __far (lvalue)' 
-  target conversion type is 'NONPODS const (lvalue)' 
+  source conversion type is "NONPODS __far (lvalue)" 
+  target conversion type is "NONPODS const (lvalue)" 
 (61,10): Warning! W005: pointer or reference truncated 
-  'NONPODS' defined at: (10,8) 
-  source conversion type is 'NONPODS __far (lvalue)' 
-  target conversion type is 'NONPODS const (lvalue)' 
+  source conversion type is "NONPODS __far (lvalue)" 
+  target conversion type is "NONPODS const (lvalue)" 
 (64,10): Warning! W005: pointer or reference truncated 
-  'PODS' defined at: (6,8) 
-  source conversion type is 'PODS __far (lvalue)' 
-  target conversion type is 'PODS const (lvalue)' 
+  source conversion type is "PODS __far (lvalue)" 
+  target conversion type is "PODS const (lvalue)" 
 (67,10): Warning! W005: pointer or reference truncated 
-  'NONPODS' defined at: (10,8) 
-  source conversion type is 'NONPODS __far (lvalue)' 
-  target conversion type is 'NONPODS (lvalue)' 
+  source conversion type is "NONPODS __far (lvalue)" 
+  target conversion type is "NONPODS (lvalue)" 
 (70,10): Warning! W005: pointer or reference truncated 
-  'PODS' defined at: (6,8) 
-  source conversion type is 'PODS __far (lvalue)' 
-  target conversion type is 'PODS (lvalue)' 
+  source conversion type is "PODS __far (lvalue)" 
+  target conversion type is "PODS (lvalue)" 
 (73,10): Warning! W005: pointer or reference truncated 
-  'NONPODS' defined at: (10,8) 
-  source conversion type is 'NONPODS __far (lvalue)' 
-  target conversion type is 'NONPODS const (lvalue)' 
+  source conversion type is "NONPODS __far (lvalue)" 
+  target conversion type is "NONPODS const (lvalue)" 
 File: source\diag0217.c 
 (11,10): Error! E186: attempt to modify a constant value 
 (12,10): Error! E186: attempt to modify a constant value 
@@ -535,23 +493,23 @@ File: source\diag0218.c
 (77,15): Error! E080: there. 
 (78,15): Error! E028: expecting 'end of line' but found '/' 
 (83,1): Warning! W014: no reference to symbol 'c' 
-  definition: 'int c' in 'int x76( int, int )' 
+  'int c' in 'int x76( int, int )' defined at: (81,9) 
 (83,1): Warning! W014: no reference to symbol 'd' 
-  definition: 'int d' in 'int x76( int, int )' 
+  'int d' in 'int x76( int, int )' defined at: (81,12) 
 (83,1): Warning! W726: no reference to formal parameter 'a' 
-  definition: 'int a' in 'int x76( int, int )' 
+  'int a' in 'int x76( int, int )' defined at: (79,14) 
 (83,1): Warning! W726: no reference to formal parameter 'b' 
-  definition: 'int b' in 'int x76( int, int )' 
+  'int b' in 'int x76( int, int )' defined at: (79,21) 
 (85,37): Error! E329: modifiers of 'x83' conflict with previous declaration 
-  definition: 'int __export x83' 
+  'int __export x83' defined at: (84,34) 
   current declaration has type 'int __declspec(dllimport)' 
 (85,37): Error! E042: symbol 'x83' already defined 
-  definition: 'int __export x83' 
+  'int __export x83' defined at: (84,34) 
 (87,37): Error! E329: modifiers of 'x85' conflict with previous declaration 
-  definition: 'int __export x85' 
+  'int __export x85' defined at: (86,21) 
   current declaration has type 'int __declspec(dllimport)' 
 (87,37): Error! E042: symbol 'x85' already defined 
-  definition: 'int __export x85' 
+  'int __export x85' defined at: (86,21) 
 (89,27): Error! E416: data members cannot be initialized inside a class definition 
 (90,27): Error! E416: data members cannot be initialized inside a class definition 
 (91,19): Error! E417: only virtual functions may be declared pure 
@@ -562,63 +520,60 @@ File: source\diag0218.c
 (104,10): Error! E186: attempt to modify a constant value 
 File: source\diag0219.c 
 (9,18): Error! E328: storage class of 'g' conflicts with previous declaration 
-  definition: 'char * g( void )' 
+  'char * g( void )' defined at: (8,7) 
 (30,6): Error! E042: symbol 'a' already defined 
-  definition: 'int a' 
+  'int a' defined at: (29,12) 
 (34,13): Error! E328: storage class of 'c' conflicts with previous declaration 
-  definition: 'int c' 
+  'int c' defined at: (33,5) 
 (34,13): Error! E042: symbol 'c' already defined 
-  definition: 'int c' 
+  'int c' defined at: (33,5) 
 (36,13): Error! E328: storage class of 'd' conflicts with previous declaration 
-  definition: 'int d' 
+  'int d' defined at: (35,12) 
 (36,13): Error! E042: symbol 'd' already defined 
-  definition: 'int d' 
+  'int d' defined at: (35,12) 
 End of file 
 Warning! W014: no reference to symbol 'f' 
-  definition: 'char * f( void )' 
+  'char * f( void )' defined at: (4,7) 
 Warning! W014: no reference to symbol 'a' 
-  definition: 'int a' 
+  'int a' defined at: (29,12) 
 Warning! W014: no reference to symbol 'b' 
-  definition: 'int b' 
+  'int b' defined at: (31,12) 
 File: source\diag0220.c 
 (85,6): Error! E686: attempt to convert pointer or reference from a base to a derived class 
-  'D72' defined at: (72,8) 
-  source conversion type is 'B69 (lvalue)' 
-  target conversion type is 'D72 (lvalue)' 
+  source conversion type is "B69 (lvalue)" 
+  target conversion type is "D72 (lvalue)" 
 (86,6): Error! E686: attempt to convert pointer or reference from a base to a derived class 
-  source conversion type is 'B69 *' 
-  target conversion type is 'D72 *' 
+  source conversion type is "B69 *" 
+  target conversion type is "D72 *" 
 (106,6): Error! E342: private base class accessed to convert cast expression 
-  'B' defined at: (91,11) 
-  source conversion type is 'D (lvalue)' 
-  target conversion type is 'B (lvalue)' 
+  source conversion type is "D (lvalue)" 
+  target conversion type is "B (lvalue)" 
 (128,6): Error! E801: cannot cast to ambiguous base class 
-  'A' defined at: (111,11) 
-  source conversion type is 'D (lvalue)' 
-  target conversion type is 'A (lvalue)' 
+  source conversion type is "D (lvalue)" 
+  target conversion type is "A (lvalue)" 
 File: source\diag0221.c 
-(2,39): Warning! W399: 'new' expression allocates a const or volatile object 
+(2,39): Warning! W399: 'new' expression allocates a 'const' or 'volatile' object 
 (2,12): Error! E324: conversion of return value is impossible 
-  source conversion type is 'unsigned long const *' 
-  target conversion type is 'unsigned long volatile *' 
+  source conversion type is "unsigned long const *" 
+  target conversion type is "unsigned long volatile *" 
 (20,12): Error! E148: access to private member 'F12::operator int ' is not allowed 
-  definition: 'F12::operator int ()' 
+  'F12::operator int ()' defined at: (15,5) 
 (21,13): Error! E148: access to private member 'F12::operator int ' is not allowed 
-  definition: 'F12::operator int ()' 
+  'F12::operator int ()' defined at: (15,5) 
 (36,21): Error! E316: anonymous struct/union member 'T' is not distinct in enclosing scope 
-(44,5): Error! E727: cannot dereference a pointer to void 
+(44,5): Error! E727: cannot dereference a pointer to 'void' 
   operand type is 'void *' 
-(45,9): Error! E727: cannot dereference a pointer to void 
+(45,9): Error! E727: cannot dereference a pointer to 'void' 
   operand type is 'void *' 
-(46,10): Error! E727: cannot dereference a pointer to void 
+(46,10): Error! E727: cannot dereference a pointer to 'void' 
   operand type is 'void *' 
-(47,5): Error! E196: 'sizeof' is not allowed for type void 
+(47,5): Error! E196: 'sizeof' is not allowed for a type 'void' 
 (98,12): Error! E253: '::' qualifier cannot be used in this context 
 (98,12): Error! E336: declaration specifiers are required to declare 'q' 
-(99,12): Error! E241: class or namespace 'D' has not been declared 
+(99,12): Error! E241: 'class D' has not been declared 
 (111,10): Error! E547: cannot access 'BB::n' through a private base class 
-  definition: 'int X95::BB::n' 
-(116,11): Error! E079: missing ')' for expansion of 'x115' macro 
+  'int X95::BB::n' defined at: (103,13) 
+(116,11): Error! E079: missing ) for expansion of 'x115' macro 
   macro 'x115' defined at: (115,9) 
 (116,11): Error! E762: binary operator '+' missing right operand 
 (137,14): Warning! W086: definition of macro 'X136' not identical to previous definition 
@@ -628,32 +583,30 @@ File: source\diag0222.c
 (36,13): Error! E394: reference object must be initialized 
 (37,16): Error! E394: reference object must be initialized 
 (39,18): Error! E686: attempt to convert pointer or reference from a base to a derived class 
-  'INHERIT' defined at: (11,7) 
-  source conversion type is 'BASE (lvalue)' 
-  target conversion type is 'INHERIT (lvalue)' 
-(40,23): Error! E220: cannot define a reference to void 
+  source conversion type is "BASE (lvalue)" 
+  target conversion type is "INHERIT (lvalue)" 
+(40,23): Error! E220: cannot define a reference to 'void' 
 (40,23): Error! E394: reference object must be initialized 
 (42,10): Error! E342: private base class accessed to convert cast expression 
-  'BASE' defined at: (5,7) 
-  source conversion type is 'INHERIT (lvalue)' 
-  target conversion type is 'BASE const (lvalue)' 
+  source conversion type is "INHERIT (lvalue)" 
+  target conversion type is "BASE const (lvalue)" 
 (45,8): Error! E473: function argument(s) do not match those in prototype 
-  definition: 'void fir( INHERIT & )' 
+  'void fir( INHERIT & )' defined at: (23,6) 
   cannot convert argument 1 defined at: (45,10) 
-  source conversion type is 'BASE (lvalue)' 
-  target conversion type is 'INHERIT (lvalue)' 
+  source conversion type is "BASE (lvalue)" 
+  target conversion type is "INHERIT (lvalue)" 
 (46,8): Error! E473: function argument(s) do not match those in prototype 
-  definition: 'void fir( INHERIT & )' 
+  'void fir( INHERIT & )' defined at: (23,6) 
   cannot convert argument 1 defined at: (46,10) 
-  source conversion type is 'BASE (lvalue)' 
-  target conversion type is 'INHERIT (lvalue)' 
+  source conversion type is "BASE (lvalue)" 
+  target conversion type is "INHERIT (lvalue)" 
 (47,8): Error! E475: cannot assign right expression to class object 
-  definition: 'INHERIT & INHERIT::operator =( INHERIT const & )' 
+  'INHERIT & INHERIT::operator =( INHERIT const & )' defined at: (27,1) 
   cannot convert argument 1 defined at: (47,10) 
-  source conversion type is 'BASE (lvalue)' 
-  target conversion type is 'INHERIT const (lvalue)' 
+  source conversion type is "BASE (lvalue)" 
+  target conversion type is "INHERIT const (lvalue)" 
 (48,1): Warning! W014: no reference to symbol 'bad_ref_void' 
-  definition: 'void & bad_ref_void' in 'void main( void )' 
+  'void & bad_ref_void' in 'void main( void )' defined at: (40,11) 
 File: source\diag0223.c 
 (17,11): Error! E126: class 'S2' has already been defined 
 (18,11): Error! E126: class 'S2' has already been defined 
@@ -663,10 +616,10 @@ File: source\diag0223.c
 (42,15): Error! E336: declaration specifiers are required to declare 'S3_1' 
 (42,6): Error! E498: syntax error before 'gs3_1_new'; probable cause: incorrectly spelled type name 
 (48,12): Error! E042: symbol 'S4::i' already defined 
-  definition: 'int S4::i' 
+  'int S4::i' defined at: (47,9) 
 (50,13): Error! E258: cannot declare both a function and variable of the same name ('a') 
 (54,24): Error! E254: 'S4::new_member' has not been declared as a member 
-  definition: 'int S4::new_member( int )' 
+  'int S4::new_member( int )' defined at: (54,5) 
 (59,17): Error! E416: data members cannot be initialized inside a class definition 
 (60,23): Error! E416: data members cannot be initialized inside a class definition 
 (61,16): Error! E118: nameless declaration is not allowed 
@@ -678,22 +631,22 @@ File: source\diag0223.c
 (66,10): Error! E336: declaration specifiers are required to declare 'wrong' 
 (66,10): Error! E121: syntax error 
 (68,11): Error! E326: defining 'bs5' is not possible because its type has unknown size 
-  definition: 'S5 bs5' 
-(70,2): Error! E121: syntax error 
+  'S5 bs5' defined at: (68,8) 
+(70,1): Error! E121: syntax error 
 (75,15): Error! E127: 'sizeof' is not allowed for an undefined type 
 (77,32): Error! E121: syntax error 
 (78,32): Error! E121: syntax error 
 (78,36): Error! E003: missing return value 
 (78,36): Warning! W726: no reference to formal parameter 'i' 
-  definition: 'int i' in 'int S6::g( int )' 
+  'int i' in 'int S6::g( int )' defined at: (78,16) 
 (84,25): Error! E036: dimensions of multi-dimension array must be specified 
 (84,25): Error! E681: zero size array must be the last data member 
 (84,25): Error! E326: defining 'S7::ia' is not possible because its type has unknown size 
-  definition: 'int S7::ia[4][][16]' 
+  'int S7::ia[4][][16]' defined at: (84,9) 
 (85,32): Error! E036: dimensions of multi-dimension array must be specified 
 (85,32): Error! E681: zero size array must be the last data member 
 (85,32): Error! E326: defining 'S7::ua' is not possible because its type has unknown size 
-  definition: 'unsigned S7::ua[12][256][]' 
+  'unsigned S7::ua[12][256][]' defined at: (85,14) 
 (91,18): Error! E284: nested type 'S8' cannot be declared in this class 
 (92,23): Error! E285: enumerator 'S8' cannot be declared in this class 
 (96,6): Error! E316: anonymous struct/union member 'S8' is not distinct in enclosing scope 
@@ -703,12 +656,12 @@ File: source\diag0223.c
 (108,15): Error! E284: nested type 'S8_3' cannot be declared in this class 
 (119,26): Error! E169: invalid storage class for a member 
 (123,1): Error! E254: 'S9::funct' has not been declared as a member 
-  definition: 'short S9::funct( float )' 
+  'short S9::funct( float )' defined at: (122,11) 
 (128,21): Error! E229: function 'S9::c' has already been defined 
-  definition: 'int S9::c( int )' 
+  'int S9::c( int )' defined at: (127,9) 
 (129,21): Error! E121: syntax error 
 (130,15): Error! E326: defining 's10' is not possible because its type has unknown size 
-  definition: 'S10 s10' 
+  'S10 s10' defined at: (130,12) 
 (141,22): Error! E287: constructor cannot have a return type 
 (142,23): Error! E234: destructor cannot have a return type 
 (146,25): Error! E287: constructor cannot have a return type 
@@ -717,33 +670,33 @@ File: source\diag0223.c
 (152,32): Error! E234: destructor cannot have a return type 
 (170,33): Error! E376: virtual function must be a non-static member function 
 (173,50): Error! E328: storage class of 'S16::func3' conflicts with previous declaration 
-  definition: 'unsigned long volatile S16::func3( int * )' 
+  'unsigned long volatile S16::func3( int * )' defined at: (172,28) 
 (167,36): Error! E204: 'this' pointer is not defined 
 (177,35): Error! E254: 'S16::b' has not been declared as a member 
-  definition: 'float __far * S16::b[17]' 
+  'float __far * S16::b[17]' defined at: (177,28) 
 (183,22): Error! E416: data members cannot be initialized inside a class definition 
 (184,28): Error! E416: data members cannot be initialized inside a class definition 
 (185,21): Error! E498: syntax error before 'sqrt'; probable cause: incorrectly spelled type name 
 (186,27): Error! E029: symbol 'sqrt' has not been declared 
-(187,2): Error! E121: syntax error 
+(187,1): Error! E121: syntax error 
 (197,20): Error! E110: union cannot be used as a base class 
 (199,1): Warning! W011: all members are private 
 (205,20): Error! E111: union cannot have a base class 
-(213,25): Error! E109: virtual member functions are not allowed in a union 
+(213,25): Error! E109: virtual member functions are not allowed in an union 
 (217,17): Error! E168: static data members are not allowed in an union 
 (232,12): Error! E183: unions cannot have members with constructors 
 (244,12): Error! E317: unions cannot have members with destructors 
 (256,2): Error! E316: anonymous struct/union member 'some_var' is not distinct in enclosing scope 
-(260,2): Error! E309: global anonymous union must be declared static 
-(264,2): Error! E309: global anonymous union must be declared static 
-(272,50): Warning! W311: union contains a protected member 
+(260,2): Error! E309: global anonymous union must be declared 'static' 
+(264,2): Error! E309: global anonymous union must be declared 'static' 
+(272,50): Warning! W311: union contains a 'protected' member 
 (277,2): Error! E312: anonymous struct/union contains a private member 'some_var3' 
-  definition: 'int __far * some_var3' 
+  'int __far * some_var3' defined at: (270,18) 
 (277,2): Error! E313: anonymous struct/union contains a function member 'func' 
-  definition: 'int func( int )' 
-(287,13): Warning! W311: union contains a protected member 
-(288,15): Warning! W311: union contains a protected member 
-(290,22): Warning! W311: union contains a protected member 
+  'int func( int )' defined at: (275,9) 
+(287,13): Warning! W311: union contains a 'protected' member 
+(288,15): Warning! W311: union contains a 'protected' member 
+(290,22): Warning! W311: union contains a 'protected' member 
 (298,2): Warning! W146: unexpected storage class specifier found 
 (302,16): Error! E049: bit-field base type must be an integral type 
 (303,17): Error! E049: bit-field base type must be an integral type 
@@ -753,28 +706,28 @@ File: source\diag0223.c
 (309,16): Error! E046: bit-field width is too large 
 (311,14): Error! E046: bit-field width is too large 
 (348,33): Error! E385: attempt to overload function 'inner::f2' with a different return type 
-  definition: 'int enclose::inner::f2( int )' 
+  'int enclose::inner::f2( int )' defined at: (336,13) 
 (348,33): Error! E254: 'inner::f2' has not been declared as a member 
-  definition: 'void enclose::inner::f2( int )' 
+  'void enclose::inner::f2( int )' defined at: (348,22) 
 (349,6): Error! E374: object (or object pointer) required to access non-static data member 
 (350,15): Error! E056: not expecting a return value 
 (351,15): Warning! W013: unreachable code 
 (351,15): Error! E148: access to private member 'enclose::private_si' is not allowed 
-  definition: 'int enclose::private_si' 
+  'int enclose::private_si' defined at: (321,16) 
 (354,28): Error! E148: access to private member 'inner::private_inner_si' is not allowed 
-  definition: 'int enclose::inner::private_inner_si' 
+  'int enclose::inner::private_inner_si' defined at: (331,20) 
 (357,6): Error! E374: object (or object pointer) required to access non-static data member 
 (358,15): Error! E056: not expecting a return value 
 (359,15): Warning! W013: unreachable code 
 (359,15): Error! E148: access to private member 'enclose::private_si' is not allowed 
-  definition: 'int enclose::private_si' 
+  'int enclose::private_si' defined at: (321,16) 
 (366,27): Error! E385: attempt to overload function 'inner_friend' with a different return type 
-  definition: 'int inner_friend( int )' 
+  'int inner_friend( int )' defined at: (329,20) 
 (367,13): Error! E374: object (or object pointer) required to access non-static data member 
 (368,24): Error! E056: not expecting a return value 
 (369,24): Warning! W013: unreachable code 
 (369,13): Error! E148: access to private member 'enclose::private_si' is not allowed 
-  definition: 'int enclose::private_si' 
+  'int enclose::private_si' defined at: (321,16) 
 (386,8): Error! E258: cannot declare both a function and variable of the same name ('f') 
 (399,5): Error! E029: symbol 'a' has not been declared 
 (400,5): Error! E029: symbol 'b' has not been declared 
@@ -793,65 +746,62 @@ File: source\diag0223.c
   operand type is 'int' 
 (469,17): Error! E178: const object must be initialized 
 (472,5): Error! E419: cannot call non-const function for a constant object 
-  'S9' defined at: (115,8) 
-  definition: 'int S9::b( int )' 
+  'int S9::b( int )' defined at: (117,9) 
 (473,5): Error! E467: cannot call a non-volatile function for a volatile object 
-  'S9' defined at: (115,8) 
-  definition: 'int S9::b( int )' 
+  'int S9::b( int )' defined at: (117,9) 
 (474,5): Error! E516: class for object is not defined 
   'S10' defined at: (129,7) 
-  'S10' defined at: (129,7) 
 (482,6): Error! E316: anonymous struct/union member 'name_that_is_duplicated' is not distinct in enclosing scope 
-(489,54): Warning! W311: union contains a protected member 
+(489,54): Warning! W311: union contains a 'protected' member 
 (496,6): Error! E312: anonymous struct/union contains a private member 'some_var3' 
-  definition: 'int __far * some_var3' in 'void main( void )' 
+  'int __far * some_var3' in 'void main( void )' defined at: (487,22) 
 (502,12): Error! E149: access to protected member 'U7::pro1' is not allowed 
-  definition: 'int U7::pro1' 
+  'int U7::pro1' defined at: (287,9) 
 (503,12): Error! E149: access to protected member 'U7::pro2' is not allowed 
-  definition: 'float U7::pro2' 
+  'float U7::pro2' defined at: (288,11) 
 (504,12): Error! E148: access to private member 'U7::pri1' is not allowed 
-  definition: 'long U7::pri1' 
+  'long U7::pri1' defined at: (293,10) 
 (505,12): Error! E148: access to private member 'U7::s' is not allowed 
-  definition: 'SOK U7::s' 
+  'SOK U7::s' defined at: (294,9) 
 (508,17): Error! E149: access to protected member 'U7::prof' is not allowed 
-  definition: 'int U7::prof( int )' 
+  'int U7::prof( int )' defined at: (290,9) 
 (509,17): Error! E148: access to private member 'U7::prif' is not allowed 
-  definition: 'int U7::prif( int )' 
+  'int U7::prif( int )' defined at: (296,9) 
 (513,5): Error! E029: symbol 'aa' has not been declared 
 (516,5): Error! E029: symbol 'aa2' has not been declared 
 (517,9): Error! E166: cannot convert right pointer to type of left operand 
-  source conversion type is 'char *' 
-  target conversion type is '__1nda5aptr *' 
+  source conversion type is "char *" 
+  target conversion type is "__1nda5aptr *" 
 (522,21): Error! E006: syntax error; probable cause: missing ';' 
 (524,11): Error! E057: cannot take address of a bit-field 
 (525,18): Error! E394: reference object must be initialized 
 (540,21): Error! E322: static data members are not allowed in a local class 
 (542,13): Warning! W361: member function was not defined in its class 
 (547,12): Error! E148: access to private member 'LOCAL::local_int' is not allowed 
-  definition: 'int LOCAL::local_int' in 'void main( void )' 
+  'int LOCAL::local_int' in 'void main( void )' defined at: (535,13) 
 (549,22): Error! E148: access to private member 'LOCAL::priv_func' is not allowed 
-  definition: 'int LOCAL::priv_func( int )' in 'void main( void )' 
+  'int LOCAL::priv_func( int )' in 'void main( void )' defined at: (537,13) 
 (551,1): Warning! W014: no reference to symbol 'bs1' 
-  definition: 'S1 bs1' in 'void main( void )' 
+  'S1 bs1' in 'void main( void )' defined at: (449,8) 
 (551,1): Warning! W014: no reference to symbol 'bs2' 
-  definition: 'S2 bs2' in 'void main( void )' 
+  'S2 bs2' in 'void main( void )' defined at: (450,8) 
 (551,1): Warning! W014: no reference to symbol 'bs3' 
-  definition: 'S1 bs3' in 'void main( void )' 
+  'S1 bs3' in 'void main( void )' defined at: (461,9) 
 (551,1): Warning! W014: no reference to symbol 'name_that_is_duplicated' 
-  definition: 'int name_that_is_duplicated' in 'void main( void )' 
+  'int name_that_is_duplicated' in 'void main( void )' defined at: (478,9) 
 (551,1): Warning! W018: no reference to anonymous union member 'some_var' 
-  definition: 'int some_var' 
+  'int some_var' defined at: (480,13) 
 (551,1): Warning! W014: no reference to symbol 'bfp' 
-  definition: 'int * bfp' in 'void main( void )' 
+  'int * bfp' in 'void main( void )' defined at: (523,15) 
 (551,1): Warning! W014: no reference to symbol 'bfr' 
-  definition: 'int & bfr' in 'void main( void )' 
+  'int & bfr' in 'void main( void )' defined at: (525,15) 
 End of file 
 Warning! W018: no reference to anonymous union member 'float_var' 
-  definition: 'float float_var' 
+  'float float_var' defined at: (255,11) 
 Warning! W018: no reference to anonymous union member 'some_float' 
-  definition: 'float some_float' 
+  'float some_float' defined at: (259,11) 
 Warning! W018: no reference to anonymous union member 'some_float2' 
-  definition: 'float some_float2' 
+  'float some_float2' defined at: (263,11) 
 File: source\diag0224.c 
 (6,12): Error! E118: nameless declaration is not allowed 
 (7,11): Error! E118: nameless declaration is not allowed 
@@ -867,23 +817,21 @@ File: source\diag0224.c
 (26,16): Error! E117: too many storage class specifiers 
 (27,16): Error! E117: too many storage class specifiers 
 (33,7): Error! E042: symbol 'i1' already defined 
-  definition: 'int i1' 
+  'int i1' defined at: (32,12) 
 (39,14): Error! E328: storage class of 'i3' conflicts with previous declaration 
-  definition: 'int i3' 
+  'int i3' defined at: (38,5) 
 (39,14): Error! E042: symbol 'i3' already defined 
-  definition: 'int i3' 
+  'int i3' defined at: (38,5) 
 (42,14): Error! E328: storage class of 'i4' conflicts with previous declaration 
-  definition: 'int i4' 
+  'int i4' defined at: (41,8) 
 (42,14): Error! E042: symbol 'i4' already defined 
-  definition: 'int i4' 
+  'int i4' defined at: (41,8) 
 (51,8): Error! E434: cannot convert to a type of unknown size 
-  'S1' defined at: (44,8) 
-  source conversion type is 'S1 (lvalue)' 
-  class 'S1' has not been defined 
-  target conversion type is 'S1' 
-  class 'S1' has not been defined 
+  source conversion type is "S1 (lvalue)" 
+  'class S1' has not been defined 
+  target conversion type is "S1" 
+  'class S1' has not been defined 
 (52,7): Error! E708: cannot return a type of unknown size 
-  'S1' defined at: (44,8) 
 (55,15): Error! E117: too many storage class specifiers 
 (57,15): Error! E117: too many storage class specifiers 
 (57,22): Error! E177: invalid storage class in file scope 
@@ -897,28 +845,28 @@ File: source\diag0224.c
 (74,41): Error! E336: declaration specifiers are required to declare 'a_funtion' 
 (74,41): Error! E121: syntax error 
 (76,9): Error! E457: 'i11' was previously declared as a typedef 
-  definition: 'i11' 
+  'i11' defined at: (75,14) 
 (81,1): Warning! W014: no reference to symbol 'i11' 
-  definition: 'int i11' in 'void f5( void )' 
+  'int i11' in 'void f5( void )' defined at: (80,9) 
 (84,9): Error! E126: class 'S1' has already been defined 
 (84,31): Warning! W011: all members are private 
 (85,15): Error! E125: invalid redefinition of the typedef name 'S1' 
-  definition: 'S1' 
+  'S1' defined at: (83,8) 
 (88,20): Error! E125: invalid redefinition of the typedef name 'complex' 
-  definition: 'complex' 
+  'complex' defined at: (87,7) 
 (91,12): Error! E457: 'I' was previously declared as a typedef 
-  definition: 'I' 
+  'I' defined at: (90,13) 
 (91,9): Error! E006: syntax error; probable cause: missing ';' 
 (92,14): Error! E457: 'I' was previously declared as a typedef 
-  definition: 'I' 
+  'I' defined at: (90,13) 
 (92,12): Error! E006: syntax error; probable cause: missing ';' 
 (100,18): Error! E178: const object must be initialized 
 (102,9): Error! E186: attempt to modify a constant value 
 (103,9): Error! E186: attempt to modify a constant value 
 (108,20): Error! E042: symbol 'orange' already defined 
-  definition: 'colour orange' 
+  'colour orange' defined at: (107,14) 
 (112,8): Error! E042: symbol 'i15' already defined 
-  definition: 'something i15' 
+  'something i15' defined at: (110,17) 
 (118,23): Error! E071: expression must be integral 
 (126,9): Warning! W139: enumeration variable is not assigned a constant from its enumeration 
   left operand type is 'colour (lvalue)' 
@@ -933,11 +881,11 @@ File: source\diag0224.c
   right operand type is 'int' 
 End of file 
 Warning! W014: no reference to symbol 'f1' 
-  definition: 'char * f1( void )' 
+  'char * f1( void )' defined at: (30,14) 
 Warning! W014: no reference to symbol 'i1' 
-  definition: 'int i1' 
+  'int i1' defined at: (32,12) 
 Warning! W014: no reference to symbol 'i2' 
-  definition: 'int i2' 
+  'int i2' defined at: (35,12) 
 File: source\diag0225.c 
 (13,1): Warning! W011: all members are private 
 (30,7): Error! E186: attempt to modify a constant value 
@@ -945,17 +893,17 @@ File: source\diag0225.c
 (65,10): Error! E062: only one type is allowed in declaration specifiers 
 (66,1): Error! E415: type cannot be defined in return type 
   semicolon (';') may be missing after class/enum definition 
-(82,10): Error! E241: class or namespace 'bli' has not been declared 
-(83,9): Error! E241: class or namespace 'pc' has not been declared 
+(82,10): Error! E241: 'class bli' has not been declared 
+(83,9): Error! E241: 'class pc' has not been declared 
 (82,10): Error! E029: symbol 'a' has not been declared 
-(84,15): Error! E241: class or namespace 'int_type' has not been declared 
+(84,15): Error! E241: 'class int_type' has not been declared 
 (83,9): Error! E029: symbol 'b' has not been declared 
 (84,15): Error! E029: symbol 'c' has not been declared 
 (85,12): Error! E253: '::' qualifier cannot be used in this context 
-(86,15): Error! E241: class or namespace 'function' has not been declared 
+(86,15): Error! E241: 'class function' has not been declared 
 (86,15): Error! E029: symbol 'e' has not been declared 
 (87,14): Error! E029: symbol 'f' has not been declared 
-(89,9): Error! E241: class or namespace 'bc' has not been declared 
+(89,9): Error! E241: 'class bc' has not been declared 
 (88,14): Error! E374: object (or object pointer) required to access non-static data member 
 (97,14): Error! E158: right expression must be integral 
   left operand type is 'long * (lvalue)' 
@@ -982,9 +930,9 @@ File: source\diag0225.c
   operand type is 'void ( char * ) (lvalue)' 
 (113,13): Error! E194: expression pointer type cannot be incremented or decremented 
   operand type is 'void ( char * ) (lvalue)' 
-(116,10): Error! E038: expression must have pointer type 
+(116,10): Error! E038: expression must be 'pointer to ...' 
   operand type is 'long (lvalue)' 
-(117,10): Error! E038: expression must have pointer type 
+(117,10): Error! E038: expression must be 'pointer to ...' 
   operand type is 'long (lvalue)' 
 (118,8): Error! E159: cannot assign a pointer value to an arithmetic item 
   left operand type is 'int (lvalue)' 
@@ -992,17 +940,16 @@ File: source\diag0225.c
 (119,10): Error! E072: expression must be arithmetic 
   operand type is 'long * (lvalue)' 
 (120,11): Error! E554: expression must have type arithmetic, pointer, or pointer to class member 
-  'complex' defined at: (10,7) 
   expression type is 'complex (lvalue)' 
 (121,8): Error! E475: cannot assign right expression to class object 
-  definition: 'complex & complex::operator =( complex const & )' 
+  'complex & complex::operator =( complex const & )' defined at: (122,8) 
   cannot convert argument 1 defined at: (121,10) 
-  source conversion type is 'complex *' 
-  target conversion type is 'complex const (lvalue)' 
+  source conversion type is "complex *" 
+  target conversion type is "complex const (lvalue)" 
 (122,8): Error! E159: cannot assign a pointer value to an arithmetic item 
   left operand type is 'int (lvalue)' 
   right operand type is 'void (* )( char * )' 
-(123,10): Error! E038: expression must have pointer type 
+(123,10): Error! E038: expression must be 'pointer to ...' 
   operand type is 'complex (lvalue)' 
 (124,10): Error! E071: expression must be integral 
   operand type is 'complex (lvalue)' 
@@ -1012,7 +959,7 @@ File: source\diag0225.c
   operand type is 'long * (lvalue)' 
 (127,11): Error! E071: expression must be integral 
   operand type is 'void ( char * ) (lvalue)' 
-(128,10): Error! E039: cannot take address of an rvalue 
+(128,10): Error! E039: cannot take address of an 'rvalue' 
 (130,5): Error! E194: expression pointer type cannot be incremented or decremented 
   operand type is 'void * (lvalue)' 
 (131,5): Error! E151: operand is neither a pointer nor an arithmetic type 
@@ -1025,24 +972,24 @@ File: source\diag0225.c
   operand type is 'void ( char * ) (lvalue)' 
 (135,5): Error! E194: expression pointer type cannot be incremented or decremented 
   operand type is 'void ( char * ) (lvalue)' 
-(138,10): Error! E196: 'sizeof' is not allowed for type void 
+(138,10): Error! E196: 'sizeof' is not allowed for a type 'void' 
 (139,11): Error! E195: 'sizeof' is not allowed for a function 
 (142,10): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression 
 (142,22): Warning! W594: construct resolved as a declaration/type 
 (143,10): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression 
 (143,22): Warning! W594: construct resolved as a declaration/type 
 (144,20): Error! E326: defining 'c5_4' is not possible because its type has unknown size 
-  definition: 'C5_4 c5_4' in 'C5_5 main( void )' 
+  'C5_4 c5_4' in 'C5_5 main( void )' defined at: (144,16) 
 (146,9): Error! E166: cannot convert right pointer to type of left operand 
-  source conversion type is 'void *' 
-  target conversion type is 'long *' 
+  source conversion type is "void *" 
+  target conversion type is "long *" 
 (150,39): Warning! W011: all members are private 
 (150,40): Error! E197: type cannot be defined in this context 
 (150,40): Error! E306: cannot convert expression to type of cast 
-  source conversion type is 'C5_4 (lvalue)' 
-  class 'C5_4' has not been defined 
-  target conversion type is 'C5_4' 
-(151,16): Error! E591: operand must be an lvalue (cast produces rvalue) 
+  source conversion type is "C5_4 (lvalue)" 
+  'class C5_4' has not been defined 
+  target conversion type is "C5_4" 
+(151,16): Error! E591: operand must be an 'lvalue' (cast produces 'rvalue') 
 (160,13): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression 
 (160,20): Warning! W594: construct resolved as a declaration/type 
 (160,43): Error! E029: symbol 'f' has not been declared 
@@ -1055,7 +1002,7 @@ File: source\diag0225.c
 (166,20): Error! E006: syntax error; probable cause: missing ';' 
 (168,12): Error! E029: symbol 'pmi' has not been declared 
 (169,5): Warning! W014: no reference to symbol 'pf' 
-  definition: 'int (* pf)( int )' in 'C5_5 main( void )' 
+  'int (* pf)( int )' in 'C5_5 main( void )' defined at: (161,15) 
 (173,15): Error! E155: left expression must be arithmetic 
   left operand type is 'long * (lvalue)' 
   right operand type is 'long (lvalue)' 
@@ -1151,7 +1098,6 @@ File: source\diag0225.c
 (216,27): Error! E191: expression must be a pointer or a zero constant 
   expression type is 'float (lvalue)' 
 (217,10): Error! E554: expression must have type arithmetic, pointer, or pointer to class member 
-  'complex' defined at: (10,7) 
 (224,9): Error! E186: attempt to modify a constant value 
 (225,9): Error! E186: attempt to modify a constant value 
 (226,9): Error! E186: attempt to modify a constant value 
@@ -1342,14 +1288,14 @@ File: source\diag0225.c
   left operand type is 'complex (lvalue)' 
   right operand type is 'int (lvalue)' 
 (307,7): Warning! W628: expression is not meaningful 
-(307,15): Error! E167: left operand must be an lvalue 
+(307,15): Error! E167: left operand must be an 'lvalue' 
 (308,1): Error! E003: missing return value 
 (308,1): Warning! W014: no reference to symbol 'pc' 
-  definition: 'complex * pc' in 'C5_5 main( void )' 
+  'complex * pc' in 'C5_5 main( void )' defined at: (76,20) 
 (308,1): Warning! W014: no reference to symbol 'C5_4::a' 
-  definition: 'int C5_4::a' in 'C5_5 main( void )' 
+  'int C5_4::a' in 'C5_5 main( void )' defined at: (150,29) 
 (308,1): Warning! W014: no reference to symbol 'C5_4::b' 
-  definition: 'int C5_4::b' in 'C5_5 main( void )' 
+  'int C5_4::b' in 'C5_5 main( void )' defined at: (150,36) 
 File: source\diag0226.c 
 (15,20): Error! E462: type of return value is not the enumeration type of function 
 (17,20): Warning! W716: integral value may be truncated 
@@ -1357,18 +1303,18 @@ File: source\diag0226.c
 (34,20): Error! E191: expression must be a pointer or a zero constant 
   expression type is 'int' 
 (38,20): Error! E324: conversion of return value is impossible 
-  source conversion type is 'char const *' 
-  target conversion type is 'char *' 
+  source conversion type is "char const *" 
+  target conversion type is "char *" 
 (40,20): Error! E324: conversion of return value is impossible 
-  source conversion type is 'int *' 
-  target conversion type is 'char *' 
+  source conversion type is "int *" 
+  target conversion type is "char *" 
 (44,22): Error! E191: expression must be a pointer or a zero constant 
   expression type is '<enum>' 
 (56,20): Error! E191: expression must be a pointer or a zero constant 
   expression type is 'int' 
 (62,20): Error! E324: conversion of return value is impossible 
-  source conversion type is 'int *' 
-  target conversion type is 'char const *' 
+  source conversion type is "int *" 
+  target conversion type is "char const *" 
 File: source\diag0227.c 
 (11,1): Warning! W017: label 'label1' has not been referenced by a goto 
   label defined at: (7,7) 
@@ -1382,15 +1328,14 @@ File: source\diag0227.c
   label defined at: (30,7) 
 (40,5): Warning! W201: declaration statement follows an if statement 
 (40,5): Warning! W014: no reference to symbol 'j' 
-  definition: 'int j' in 'void main( void )' 
+  'int j' in 'void main( void )' defined at: (39,17) 
 (44,5): Warning! W202: declaration statement follows an else statement 
 (44,5): Warning! W014: no reference to symbol 'j' 
-  definition: 'int j' in 'void main( void )' 
+  'int j' in 'void main( void )' defined at: (43,13) 
 (47,5): Warning! W203: declaration statement follows a switch statement 
 (47,5): Warning! W014: no reference to symbol 'j' 
-  definition: 'int j' in 'void main( void )' 
+  'int j' in 'void main( void )' defined at: (44,32) 
 (47,9): Error! E554: expression must have type arithmetic, pointer, or pointer to class member 
-  'test_class' defined at: (13,7) 
 (50,13): Error! E071: expression must be integral 
   operand type is 'float (lvalue)' 
 (51,13): Error! E071: expression must be integral 
@@ -1401,32 +1346,29 @@ File: source\diag0227.c
 (54,13): Error! E071: expression must be integral 
   operand type is 'test_class (lvalue)' 
 (60,11): Error! E045: duplicate case value '1' found 
-  previous case label defined at: (56,11) 
+  previous 'case' label defined at: (56,11) 
 (70,5): Error! E027: only one 'default' per switch statement is allowed 
-  previous default label defined at: (66,5) 
+  previous 'default' label defined at: (66,5) 
 (96,5): Warning! W207: declaration statement cannot follow a for statement 
 (96,5): Warning! W014: no reference to symbol 'j' 
-  definition: 'int j' in 'void main( void )' 
+  'int j' in 'void main( void )' defined at: (95,20) 
 (96,15): Warning! W206: declaration statement cannot follow a do statement 
 (100,5): Warning! W205: declaration statement cannot follow a while statement 
 (100,5): Warning! W014: no reference to symbol 'j' 
-  definition: 'int j' in 'void main( void )' 
+  'int j' in 'void main( void )' defined at: (97,20) 
 (100,12): Error! E554: expression must have type arithmetic, pointer, or pointer to class member 
-  'test_class' defined at: (13,7) 
 (101,12): Warning! W687: expression for 'while' is always true 
 (104,16): Warning! W687: expression for 'while' is always true 
 (105,16): Error! E554: expression must have type arithmetic, pointer, or pointer to class member 
-  'test_class' defined at: (13,7) 
 (108,12): Warning! W688: testing expression for 'for' is always true 
 (109,12): Error! E554: expression must have type arithmetic, pointer, or pointer to class member 
-  'test_class' defined at: (13,7) 
 (114,7): Warning! W013: unreachable code 
 (114,9): Error! E029: symbol 'j1' has not been declared 
 (115,17): Error! E042: symbol 'j1' already defined 
-  definition: '<error> j1' in 'void main( void )' 
+  '<error> j1' in 'void main( void )' defined at: (114,9) 
 (118,10): Warning! W013: unreachable code 
 (118,17): Error! E042: symbol 'j1' already defined 
-  definition: '<error> j1' in 'void main( void )' 
+  '<error> j1' in 'void main( void )' defined at: (114,9) 
 (123,5): Warning! W013: unreachable code 
 (123,5): Error! E019: 'break' may only appear in a for, do, while, or switch statement 
 (125,9): Error! E019: 'break' may only appear in a for, do, while, or switch statement 
@@ -1447,15 +1389,15 @@ File: source\diag0227.c
 (159,1): Error! E033: label 'function_label' is not defined in function 
   label referenced at: (139,10) 
 (159,1): Warning! W014: no reference to symbol 'pd' 
-  definition: 'double * pd' in 'void main( void )' 
+  'double * pd' in 'void main( void )' defined at: (24,13) 
 (159,1): Warning! W014: no reference to symbol 'ld' 
-  definition: 'long double ld' in 'void main( void )' 
+  'long double ld' in 'void main( void )' defined at: (25,17) 
 (159,1): Warning! W014: no reference to symbol 'j' 
-  definition: 'int j' in 'void main( void )' 
+  'int j' in 'void main( void )' defined at: (96,12) 
 (159,1): Warning! W014: no reference to symbol 'cvulifpcvf' 
-  definition: 'unsigned long const volatile __far * const volatile cvulifpcvf' in 'void main( void )' 
+  'unsigned long const volatile __far * const volatile cvulifpcvf' in 'void main( void )' defined at: (143,62) 
 (159,1): Warning! W014: no reference to symbol 'k' 
-  definition: 'int k' in 'void main( void )' 
+  'int k' in 'void main( void )' defined at: (145,9) 
 (164,13): Error! E056: not expecting a return value 
 (171,13): Error! E191: expression must be a pointer or a zero constant 
   expression type is 'int (lvalue)' 
@@ -1464,8 +1406,8 @@ File: source\diag0227.c
 (201,5): Warning! W013: unreachable code 
 (202,5): Warning! W013: unreachable code 
 (202,13): Error! E324: conversion of return value is impossible 
-  source conversion type is 'int *' 
-  target conversion type is 'int' 
+  source conversion type is "int *" 
+  target conversion type is "int" 
 File: source\diag0228.c 
 (15,9): Error! E121: syntax error 
 (19,28): Error! E135: 'friend', 'virtual' or 'inline' modifiers may only be used on functions 
@@ -1476,16 +1418,16 @@ File: source\diag0228.c
   function prototype is 'int ( void )' 
 (25,21): Warning! W836: symbol has different type than previous symbol in same declaration 
   companion definition is 'ci' 
-  definition: 'int const ci' in 'void main( void )' 
+  'int const ci' in 'void main( void )' defined at: (25,11) 
 (25,38): Warning! W836: symbol has different type than previous symbol in same declaration 
   companion definition is 'ci' 
-  definition: 'int const ci' in 'void main( void )' 
+  'int const ci' in 'void main( void )' defined at: (25,11) 
 (26,13): Warning! W836: symbol has different type than previous symbol in same declaration 
   companion definition is 'i' 
-  definition: 'int i' in 'void main( void )' 
+  'int i' in 'void main( void )' defined at: (26,9) 
 (26,23): Warning! W836: symbol has different type than previous symbol in same declaration 
   companion definition is 'i' 
-  definition: 'int i' in 'void main( void )' 
+  'int i' in 'void main( void )' defined at: (26,9) 
 (28,8): Error! E186: attempt to modify a constant value 
 (29,7): Error! E186: attempt to modify a constant value 
 (30,9): Error! E186: attempt to modify a constant value 
@@ -1495,34 +1437,34 @@ File: source\diag0228.c
   left operand type is 'int * (lvalue)' 
   right operand type is 'int const *' 
 (41,11): Error! E537: operand is not a valid pointer to class member 
-  source conversion type is 'int *' 
-  target conversion type is 'int with_static_a::*' 
+  source conversion type is "int *" 
+  target conversion type is "int with_static_a::*" 
 (44,5): Error! E029: symbol 'was' has not been declared 
 (49,31): Error! E034: dimension cannot be zero 
 (50,39): Error! E035: dimension cannot be negative 
-(51,29): Error! E218: cannot define an array of void 
+(51,29): Error! E218: cannot define an array of 'void' 
 (55,30): Error! E081: cannot define an array of functions 
 (56,1): Warning! W014: no reference to symbol 'ok_int' 
-  definition: 'int ok_int' in 'void main( void )' 
+  'int ok_int' in 'void main( void )' defined at: (13,9) 
 (56,1): Warning! W014: no reference to symbol 'ok_int2' 
-  definition: 'int ok_int2' in 'void main( void )' 
+  'int ok_int2' in 'void main( void )' defined at: (14,9) 
 (56,1): Warning! W014: no reference to symbol 'bad_static_i' 
-  definition: 'int bad_static_i' in 'void main( void )' 
+  'int bad_static_i' in 'void main( void )' defined at: (16,16) 
 (56,1): Warning! W014: no reference to symbol 'bad_register_i' 
-  definition: 'int bad_register_i' in 'void main( void )' 
+  'int bad_register_i' in 'void main( void )' defined at: (18,18) 
 (56,1): Warning! W014: no reference to symbol 'bad_friend_i' 
-  definition: 'int bad_friend_i' in 'void main( void )' 
+  'int bad_friend_i' in 'void main( void )' defined at: (19,16) 
 (56,1): Warning! W014: no reference to symbol 'bad_doub_array' 
-  definition: 'double bad_doub_array[1]' in 'void main( void )' 
+  'double bad_doub_array[1]' in 'void main( void )' defined at: (49,12) 
 (56,1): Warning! W014: no reference to symbol 'bad_char_ptr_2d' 
-  definition: 'char * bad_char_ptr_2d[12][1][7]' in 'void main( void )' 
+  'char * bad_char_ptr_2d[12][1][7]' in 'void main( void )' defined at: (50,12) 
 (56,1): Warning! W014: no reference to symbol 'bad_void_array' 
-  definition: 'void bad_void_array[3]' in 'void main( void )' 
+  'void bad_void_array[3]' in 'void main( void )' defined at: (51,10) 
 (56,1): Warning! W014: no reference to symbol 'funct_array' 
-  definition: 'int funct_array[5]( int )' in 'void main( void )' 
+  'int funct_array[5]( int )' in 'void main( void )' defined at: (55,14) 
 (61,1): Error! E082: function cannot return an array 
 (64,13): Error! E810: cannot cast to an array type 
-  target conversion type is 'char [5]' 
+  target conversion type is "char [5]" 
 (70,1): Error! E083: function cannot return a function 
 (71,17): Error! E498: syntax error before 'b'; probable cause: incorrectly spelled type name 
 (71,45): Error! E028: expecting ';' but found ')' 
@@ -1553,15 +1495,15 @@ File: source\diag0229.c
 (179,14): Warning! W555: expression for 'while' is always false 
 File: source\diag0230.c 
 (10,5): Error! E226: function 'X1::f' is not distinct 
-  definition: 'int X1::f( int )' 
+  'int X1::f( int )' defined at: (5,9) 
 (15,10): Error! E227: overloaded function is ambiguous for arguments used in call 
   ambiguous function: int X1::f( int ) defined at: (5,9) 
   ambiguous function: int X1::f( int & ) defined at: (9,9) 
 (26,13): Error! E664: attempt to initialize a non-constant reference with a temporary object 
-  source conversion type is 'double' 
-  target conversion type is 'int (lvalue)' 
+  source conversion type is "double" 
+  target conversion type is "int (lvalue)" 
 (39,42): Error! E385: attempt to overload function 'operator +' with a different return type 
-  definition: 'X36 operator +( X36 const &, Y37 const & )' 
+  'X36 operator +( X36 const &, Y37 const & )' defined at: (38,5) 
 (44,16): Error! E293: overloaded operator is ambiguous for operands used 
   ambiguous function: X36 operator +( X36 const &, Y37 const & ) defined at: (38,5) 
   ambiguous function: Y37 operator +( X36 const &, Y37 const & ) defined at: (39,5) 
@@ -1569,35 +1511,34 @@ File: source\diag0230.c
   ambiguous function: X36 operator +( X36 const &, Y37 const & ) defined at: (38,5) 
   ambiguous function: Y37 operator +( X36 const &, Y37 const & ) defined at: (39,5) 
 (51,22): Error! E229: function 'x50' has already been defined 
-  definition: 'void x50( int )' 
+  'void x50( int )' defined at: (50,6) 
 (59,26): Error! E229: function 'x58' has already been defined 
-  definition: 'void x58( char * )' 
+  'void x58( char * )' defined at: (58,6) 
 (60,26): Error! E229: function 'x58' has already been defined 
-  definition: 'void x58( char * )' 
+  'void x58( char * )' defined at: (58,6) 
 (61,26): Error! E229: function 'x58' has already been defined 
-  definition: 'void x58( char * )' 
+  'void x58( char * )' defined at: (58,6) 
 (63,16): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression 
 (63,18): Warning! W594: construct resolved as a declaration/type 
 (64,34): Error! E229: function 'x63' has already been defined 
-  definition: 'void x63( char (* )[10])' 
+  'void x63( char (* )[10])' defined at: (63,6) 
 (65,34): Error! E229: function 'x63' has already been defined 
-  definition: 'void x63( char (* )[10])' 
+  'void x63( char (* )[10])' defined at: (63,6) 
 (66,16): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression 
 (66,18): Warning! W594: construct resolved as a declaration/type 
 (79,14): Error! E473: function argument(s) do not match those in prototype 
-  definition: 'int X67::D::f( char * )' 
+  'int X67::D::f( char * )' defined at: (75,13) 
   cannot convert argument 1 defined at: (79,16) 
-  source conversion type is 'int' 
-  target conversion type is 'char *' 
+  source conversion type is "int" 
+  target conversion type is "char *" 
 (93,15): Error! E400: cannot convert right expression for initialization 
-  'D' defined at: (89,12) 
-  source conversion type is 'int' 
-  target conversion type is 'x86::D' 
+  source conversion type is "int" 
+  target conversion type is "x86::D" 
 (94,11): Error! E475: cannot assign right expression to class object 
-  definition: 'x86::D & x86::D::operator =( x86::D const & )' 
+  'x86::D & x86::D::operator =( x86::D const & )' defined at: (95,5) 
   cannot convert argument 1 defined at: (94,13) 
-  source conversion type is 'int' 
-  target conversion type is 'x86::D const (lvalue)' 
+  source conversion type is "int" 
+  target conversion type is "x86::D const (lvalue)" 
 (100,12): Error! E227: overloaded function is ambiguous for arguments used in call 
   ambiguous function: void x86::x98( float, int ) defined at: (96,10) 
   ambiguous function: void x86::x98( int, float ) defined at: (97,10) 
@@ -1611,21 +1552,21 @@ File: source\diag0230.c
   ambiguous function: void x121::h( int, x121::complex [, x121::complex ]) defined at: (125,35) 
   ambiguous function: void x121::h( double, double [, x121::complex ]) defined at: (126,37) 
 (144,23): Warning! W248: using default arguments would be overload ambiguous with 'x133::f' 
-  definition: 'int x133::f( void )' 
+  'int x133::f( void )' defined at: (143,9) 
 (141,10): Error! E227: overloaded function is ambiguous for arguments used in call 
   ambiguous function: void x133::h( int, x133::complex, x133::complex ) defined at: (137,10) 
   ambiguous function: void x133::h( double, double, x133::complex ) defined at: (138,10) 
 (152,23): Warning! W248: using default arguments would be overload ambiguous with 'x150::f' 
-  definition: 'int x150::f( void )' 
+  'int x150::f( void )' defined at: (151,9) 
 (156,10): Error! E227: overloaded function is ambiguous for arguments used in call 
   ambiguous function: int x150::f( void ) defined at: (151,9) 
   ambiguous function: int x150::f( [int ]) defined at: (152,18) 
 (170,7): Error! E715: member 'f' has not been declared in 'Y163' 
 (182,11): Error! E473: function argument(s) do not match those in prototype 
-  definition: 'void x172::f2( char * )' 
+  'void x172::f2( char * )' defined at: (175,10) 
   cannot convert argument 1 defined at: (182,13) 
-  source conversion type is 'char const * (lvalue)' 
-  target conversion type is 'char *' 
+  source conversion type is "char const * (lvalue)" 
+  target conversion type is "char *" 
 (190,13): Error! E227: overloaded function is ambiguous for arguments used in call 
   ambiguous function: void x172::x191( char ) defined at: (185,10) 
   ambiguous function: void x172::x191( float ) defined at: (186,10) 
@@ -1633,8 +1574,8 @@ File: source\diag0230.c
   ambiguous function: void x172::x191( char ) defined at: (185,10) 
   ambiguous function: void x172::x191( float ) defined at: (186,10) 
 (200,12): Error! E664: attempt to initialize a non-constant reference with a temporary object 
-  source conversion type is 'char' 
-  target conversion type is 'char (lvalue)' 
+  source conversion type is "char" 
+  target conversion type is "char (lvalue)" 
 (211,10): Error! E227: overloaded function is ambiguous for arguments used in call 
   ambiguous function: void x204::f( char ) defined at: (205,10) 
   ambiguous function: void x204::f( double ) defined at: (206,10) 
@@ -1647,8 +1588,8 @@ File: source\diag0230.c
 (263,17): Error! E814: user-defined conversion is ambiguous 
   ambiguous function: x251::Y::operator double () defined at: (256,13) 
   ambiguous function: x251::Y::operator int () defined at: (255,13) 
-  source conversion type is 'x251::Y (lvalue)' 
-  target conversion type is 'float' 
+  source conversion type is "x251::Y (lvalue)" 
+  target conversion type is "float" 
 (279,10): Error! E227: overloaded function is ambiguous for arguments used in call 
   ambiguous function: void x266::f( x266::X ) defined at: (275,10) 
   ambiguous function: void x266::f( x266::Y ) defined at: (276,10) 
@@ -1659,14 +1600,14 @@ File: source\diag0230.c
 (308,24): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression 
 (308,26): Warning! W594: construct resolved as a declaration/type 
 (311,22): Error! E400: cannot convert right expression for initialization 
-  source conversion type is 'int (* )( int, ... )' 
-  target conversion type is 'int (* )( int, int )' 
+  source conversion type is "int (* )( int, ... )" 
+  target conversion type is "int (* )( int, int )" 
 (317,20): Error! E400: cannot convert right expression for initialization 
-  source conversion type is 'x314 * (* )( void )' 
-  target conversion type is 'x313 * (* )( void )' 
+  source conversion type is "x314 * (* )( void )" 
+  target conversion type is "x313 * (* )( void )" 
 (322,21): Error! E400: cannot convert right expression for initialization 
-  source conversion type is 'void (* )( x314 * )' 
-  target conversion type is 'void (* )( x313 * )' 
+  source conversion type is "void (* )( x314 * )" 
+  target conversion type is "void (* )( x313 * )" 
 (342,12): Error! E293: overloaded operator is ambiguous for operands used 
   ambiguous function: int x323::operator !( void ) defined at: (324,9) 
   ambiguous function: int operator !( x323 & ) defined at: (338,5) 
@@ -1681,19 +1622,19 @@ File: source\diag0230.c
   ambiguous function: x375 operator +( x375, double ) defined at: (379,6) 
 (397,38): Error! E266: 'operator =' must be a non-static member function 
 (414,1): Warning! W726: no reference to formal parameter 'arg' 
-  definition: 'char const * arg' in 'x398ptr::x398ptr( char const * )' 
+  'char const * arg' in 'x398ptr::x398ptr( char const * )' defined at: (410,31) 
 (432,13): Error! E715: member 'm' has not been declared in 'x398ptr' 
 File: source\diag0231.c 
 (43,5): Error! E624: catch block does not immediately follow try block 
-(45,7): Warning! W616: catch handler can never be invoked 
+(45,7): Warning! W616: 'catch' handler can never be invoked 
   previous catch block defined at: (44,7) 
-(50,7): Warning! W616: catch handler can never be invoked 
+(50,7): Warning! W616: 'catch' handler can never be invoked 
   previous catch block defined at: (49,7) 
-(55,7): Warning! W616: catch handler can never be invoked 
+(55,7): Warning! W616: 'catch' handler can never be invoked 
   previous catch block defined at: (54,7) 
-(60,7): Warning! W616: catch handler can never be invoked 
+(60,7): Warning! W616: 'catch' handler can never be invoked 
   previous catch block defined at: (59,7) 
-(62,7): Error! E612: preceding catch specified '...' 
+(62,7): Error! E612: preceding 'catch' specified '...' 
   previous catch block defined at: (61,7) 
 (69,10): Error! E622: jump into try block 
   previous try block defined at: (68,5) 
@@ -1707,18 +1648,18 @@ File: source\diag0231.c
   'undefed' defined at: (79,12) 
 (84,5): Warning! W013: unreachable code 
 (84,20): Error! E148: access to private member 'priv_copy::priv_copy' is not allowed 
-  definition: 'priv_copy::priv_copy( priv_copy const & )' 
+  'priv_copy::priv_copy( priv_copy const & )' defined at: (21,5) 
 (85,20): Error! E148: access to private member 'priv_dtor::~priv_dtor' is not allowed 
-  definition: 'priv_dtor::~priv_dtor( void )' 
+  'priv_dtor::~priv_dtor( void )' defined at: (31,5) 
 File: source\diag0232.c 
 (5,25): Error! E226: function 'x1::fi' is not distinct 
-  definition: 'void x1::fi( int )' 
+  'void x1::fi( int )' defined at: (4,10) 
 (6,28): Error! E226: function 'x1::fi' is not distinct 
-  definition: 'void x1::fi( int const )' 
+  'void x1::fi( int const )' defined at: (5,10) 
 (9,22): Error! E226: function 'x1::fri' is not distinct 
-  definition: 'void x1::fri( int )' 
+  'void x1::fri( int )' defined at: (8,10) 
 (18,27): Error! E385: attempt to overload function 'x1::fb' with a different return type 
-  definition: 'float x1::fb( char, int )' 
+  'float x1::fb( char, int )' defined at: (17,11) 
 (37,10): Error! E227: overloaded function is ambiguous for arguments used in call 
   ambiguous function: void x20::f( void (* )( int ), void (* )( int )) defined at: (21,10) 
   ambiguous function: void x20::f( void (* )( int ), void (* )( char )) defined at: (22,10) 
@@ -1751,12 +1692,12 @@ File: source\diag0232.c
   ambiguous function: void x62::f( x62::A * ) defined at: (67,10) 
   ambiguous function: void x62::f( x62::B * ) defined at: (68,10) 
 (92,12): Error! E334: conversion ambiguity: [argument] to [argument type in prototype] 
-  source conversion type is 'x75::D *' 
-  target conversion type is 'x75::A *' 
+  source conversion type is "x75::D *" 
+  target conversion type is "x75::A *" 
 (97,7): Warning! W735: '//' style comment continues on next line 
 (112,12): Error! E334: conversion ambiguity: [argument] to [argument type in prototype] 
-  source conversion type is 'x95::D *' 
-  target conversion type is 'x95::A *' 
+  source conversion type is "x95::D *" 
+  target conversion type is "x95::A *" 
 (128,10): Error! E227: overloaded function is ambiguous for arguments used in call 
   ambiguous function: void x115::f( short ) defined at: (123,10) 
   ambiguous function: void x115::f( char ) defined at: (124,10) 
@@ -1786,34 +1727,31 @@ File: source\diag0232.c
   rejected function template: void x194( ?, ? ) defined at: (194,24) 
   rejected function: void x194( int, int ) defined at: (197,11) 
   rejected function: void x194( char, char ) defined at: (198,11) 
-(204,33): Warning! W744: 'operator =' does not have a return type specified (int assumed) 
+(204,33): Warning! W744: 'operator =' does not have a return type specified ('int' assumed) 
 (209,11): Error! E419: cannot call non-const function for a constant object 
-  'T' defined at: (206,12) 
-  definition: 'X201::T & X201::T::operator =( X201::T const & )' 
+  'X201::T & X201::T::operator =( X201::T const & )' defined at: (207,5) 
 (215,11): Error! E419: cannot call non-const function for a constant object 
-  'Q' defined at: (213,12) 
-  definition: 'X201::Q & X201::Q::operator =( X201::Q const & )' 
+  'X201::Q & X201::Q::operator =( X201::Q const & )' defined at: (217,5) 
 (225,10): Error! E419: cannot call non-const function for a constant object 
-  'A' defined at: (220,12) 
-  definition: 'void x219::A::f( int )' 
+  'void x219::A::f( int )' defined at: (221,14) 
 (245,18): Error! E819: conversion of const reference to non-const reference 
-  source conversion type is 'int const (lvalue)' 
-  target conversion type is 'int (lvalue)' 
+  source conversion type is "int const (lvalue)" 
+  target conversion type is "int (lvalue)" 
 (250,18): Error! E820: conversion of volatile reference to non-volatile reference 
-  source conversion type is 'int volatile (lvalue)' 
-  target conversion type is 'int (lvalue)' 
+  source conversion type is "int volatile (lvalue)" 
+  target conversion type is "int (lvalue)" 
 (255,18): Error! E821: conversion of const volatile reference to plain reference 
-  source conversion type is 'int const volatile (lvalue)' 
-  target conversion type is 'int (lvalue)' 
+  source conversion type is "int const volatile (lvalue)" 
+  target conversion type is "int (lvalue)" 
 (260,18): Error! E819: conversion of const reference to non-const reference 
-  source conversion type is 'int const (lvalue)' 
-  target conversion type is 'int (lvalue)' 
+  source conversion type is "int const (lvalue)" 
+  target conversion type is "int (lvalue)" 
 (265,18): Error! E820: conversion of volatile reference to non-volatile reference 
-  source conversion type is 'int volatile (lvalue)' 
-  target conversion type is 'int (lvalue)' 
+  source conversion type is "int volatile (lvalue)" 
+  target conversion type is "int (lvalue)" 
 (270,18): Error! E821: conversion of const volatile reference to plain reference 
-  source conversion type is 'int const volatile (lvalue)' 
-  target conversion type is 'int (lvalue)' 
+  source conversion type is "int const volatile (lvalue)" 
+  target conversion type is "int (lvalue)" 
 File: source\diag0233.c 
 (3,8): Warning! W627: text following pre-processor directive 
 (18,20): Warning! W005: pointer or reference truncated 
@@ -1828,14 +1766,14 @@ File: source\diag0233.c
 (44,23): Warning! W728: class modifiers for 'X37' conflict with class modifiers for 'X41' 
 (59,24): Warning! W728: class modifiers for 'x49::B1' conflict with class modifiers for 'x49::B2' 
 (60,37): Error! E884: virtual function 'B1::foo' has a different calling convention 
-  definition: 'void cdecl x49::B1::foo( int, int )' 
+  'void cdecl x49::B1::foo( int, int )' defined at: (51,22) 
 (62,24): Warning! W728: class modifiers for 'x49::B3' conflict with class modifiers for 'x49::B1' 
 (63,37): Error! E884: virtual function 'B1::foo' has a different calling convention 
-  definition: 'void cdecl x49::B1::foo( int, int )' 
+  'void cdecl x49::B1::foo( int, int )' defined at: (51,22) 
 (66,37): Error! E884: virtual function 'B3::foo' has a different calling convention 
-  definition: 'void x49::B3::foo( int, int )' 
+  'void x49::B3::foo( int, int )' defined at: (57,22) 
 (69,37): Error! E884: virtual function 'B2::foo' has a different calling convention 
-  definition: 'void pascal x49::B2::foo( int, int )' 
+  'void pascal x49::B2::foo( int, int )' defined at: (54,22) 
 (101,12): Error! E729: invalid hexadecimal constant 
 (107,24): Warning! W130: arithmetic overflow in a constant expression 
 (112,10): Error! E762: binary operator '&&' missing right operand 
@@ -1845,10 +1783,10 @@ File: source\diag0233.c
 (124,36): Error! E245: overloaded operator cannot have default arguments 
 (124,36): Error! E268: 'operator []' must have two arguments 
   argument count is 3 since there is an implicit 'this' argument 
-(135,7): Error! E167: left operand must be an lvalue 
-(136,5): Error! E031: operand must be an lvalue 
-(137,6): Error! E031: operand must be an lvalue 
-(138,7): Error! E167: left operand must be an lvalue 
+(135,7): Error! E167: left operand must be an 'lvalue' 
+(136,5): Error! E031: operand must be an 'lvalue' 
+(137,6): Error! E031: operand must be an 'lvalue' 
+(138,7): Error! E167: left operand must be an 'lvalue' 
 (139,7): Error! E230: expression on left is an array 
   left operand type is 'int [10] (lvalue)' 
   right operand type is 'int' 
@@ -1863,49 +1801,49 @@ File: source\diag0234.c
 (8,25): Warning! W730: return type of 'operator ->' will not allow '->' to be applied 
 (21,21): Warning! W730: return type of 'operator ->' will not allow '->' to be applied 
 (31,6): Error! E277: return type of 'S::operator ->' must allow the '->' operator to be applied 
-  definition: 'void * S::operator ->( void )' 
+  'void * S::operator ->( void )' defined at: (8,12) 
 (32,6): Error! E277: return type of 'S::operator ->' must allow the '->' operator to be applied 
-  definition: 'void * S::operator ->( void )' 
+  'void * S::operator ->( void )' defined at: (8,12) 
 (33,6): Error! E277: return type of 'W::operator ->' must allow the '->' operator to be applied 
-  definition: 'U & W::operator ->( void )' 
+  'U & W::operator ->( void )' defined at: (25,8) 
 (34,6): Error! E277: return type of 'Q::operator ->' must allow the '->' operator to be applied 
-  definition: 'void * Q<void *>::operator ->( void )' 
+  'void * Q<void *>::operator ->( void )' defined at: (3,11) 
 File: source\diag0235.c 
-(56,7): Warning! W616: catch handler can never be invoked 
+(56,7): Warning! W616: 'catch' handler can never be invoked 
   previous catch block defined at: (52,7) 
-(57,9): Warning! W616: catch handler can never be invoked 
+(57,9): Warning! W616: 'catch' handler can never be invoked 
   previous catch block defined at: (54,7) 
-(58,7): Warning! W616: catch handler can never be invoked 
+(58,7): Warning! W616: 'catch' handler can never be invoked 
   previous catch block defined at: (52,7) 
-(59,9): Warning! W616: catch handler can never be invoked 
+(59,9): Warning! W616: 'catch' handler can never be invoked 
   previous catch block defined at: (54,7) 
 (82,7): Error! E684: cannot catch abstract class object 
   'Abstract' defined at: (3,8) 
   'Abstract' contains the following pure virtual functions 
   pure virtual function 'int Abstract::goop( void )' defined at: (6,17) 
 (84,7): Error! E149: access to protected member 'Concrete::~Concrete' is not allowed 
-  definition: 'Concrete::~Concrete( void )' 
+  'Concrete::~Concrete( void )' defined at: (16,5) 
 (85,9): Error! E149: access to protected member 'Concrete::Concrete' is not allowed 
-  definition: 'Concrete::Concrete( Concrete const & )' 
-(86,7): Warning! W616: catch handler can never be invoked 
+  'Concrete::Concrete( Concrete const & )' defined at: (17,5) 
+(86,7): Warning! W616: 'catch' handler can never be invoked 
   previous catch block defined at: (84,7) 
-(88,7): Warning! W616: catch handler can never be invoked 
+(88,7): Warning! W616: 'catch' handler can never be invoked 
   previous catch block defined at: (84,7) 
-(141,7): Warning! W616: catch handler can never be invoked 
+(141,7): Warning! W616: 'catch' handler can never be invoked 
   previous catch block defined at: (139,7) 
-(143,7): Warning! W616: catch handler can never be invoked 
+(143,7): Warning! W616: 'catch' handler can never be invoked 
   previous catch block defined at: (139,7) 
-(144,9): Warning! W616: catch handler can never be invoked 
+(144,9): Warning! W616: 'catch' handler can never be invoked 
   previous catch block defined at: (141,7) 
-(156,7): Warning! W616: catch handler can never be invoked 
+(156,7): Warning! W616: 'catch' handler can never be invoked 
   previous catch block defined at: (154,7) 
-(180,7): Warning! W616: catch handler can never be invoked 
+(180,7): Warning! W616: 'catch' handler can never be invoked 
   previous catch block defined at: (178,7) 
-(182,7): Warning! W616: catch handler can never be invoked 
+(182,7): Warning! W616: 'catch' handler can never be invoked 
   previous catch block defined at: (178,7) 
-(183,9): Warning! W616: catch handler can never be invoked 
+(183,9): Warning! W616: 'catch' handler can never be invoked 
   previous catch block defined at: (180,7) 
-(195,7): Warning! W616: catch handler can never be invoked 
+(195,7): Warning! W616: 'catch' handler can never be invoked 
   previous catch block defined at: (193,7) 
 File: source\diag0236.c 
 (18,11): Warning! W389: integral value may be truncated during assignment or initialization 
@@ -1921,11 +1859,11 @@ File: source\diag0237.c
   ambiguous function: void foo( int (S::* )( int, int )) defined at: (29,6) 
 File: source\diag0238.c 
 (32,7): Error! E148: access to private member 'S::S' is not allowed 
-  definition: 'S::S( S const & )' 
+  'S::S( S const & )' defined at: (7,5) 
 (33,7): Error! E748: cannot catch undefined class object 
   'T' defined at: (13,7) 
 (34,7): Error! E148: access to private member 'U::~U' is not allowed 
-  definition: 'U::~U( void )' 
+  'U::~U( void )' defined at: (16,5) 
 (35,7): Error! E684: cannot catch abstract class object 
   'A' defined at: (1,7) 
   'A' contains the following pure virtual functions 
@@ -2095,29 +2033,26 @@ File: source\diag0239.c
   constant expression in comparison has value 0 
 (110,29): Error! E029: symbol 'year' has not been declared 
 (113,10): Error! E562: cannot take address of non-static member function 
-  definition: 'unsigned x93::year( void )' 
+  'unsigned x93::year( void )' defined at: (106,14) 
 (114,14): Error! E562: cannot take address of non-static member function 
-  definition: 'unsigned x93::year( void )' 
+  'unsigned x93::year( void )' defined at: (106,14) 
 (123,11): Error! E326: defining 'y' is not possible because its type has unknown size 
-  definition: 'x118 y' in 'void t( x118 )' 
+  'x118 y' in 'void t( x118 )' defined at: (123,10) 
 (124,10): Error! E434: cannot convert to a type of unknown size 
-  'x118' defined at: (118,8) 
-  source conversion type is 'x118 (lvalue)' 
-  class 'x118' has not been defined 
-  target conversion type is 'x118' 
-  class 'x118' has not been defined 
+  source conversion type is "x118 (lvalue)" 
+  'class x118' has not been defined 
+  target conversion type is "x118" 
+  'class x118' has not been defined 
 (125,10): Error! E434: cannot convert to a type of unknown size 
-  'x118' defined at: (118,8) 
-  source conversion type is 'x118 (lvalue)' 
-  class 'x118' has not been defined 
-  target conversion type is 'x118' 
-  class 'x118' has not been defined 
+  source conversion type is "x118 (lvalue)" 
+  'class x118' has not been defined 
+  target conversion type is "x118" 
+  'class x118' has not been defined 
 (126,10): Error! E434: cannot convert to a type of unknown size 
-  'x118' defined at: (118,8) 
-  source conversion type is 'x118 (lvalue)' 
-  class 'x118' has not been defined 
-  target conversion type is 'x118' 
-  class 'x118' has not been defined 
+  source conversion type is "x118 (lvalue)" 
+  'class x118' has not been defined 
+  target conversion type is "x118" 
+  'class x118' has not been defined 
 (132,9): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression 
 (132,10): Warning! W595: construct resolved as an expression 
 (133,13): Error! E437: cannot construct an undefined class 
@@ -2135,11 +2070,10 @@ File: source\diag0239.c
 (136,1): Error! E437: cannot construct an undefined class 
   'x118' defined at: (118,8) 
 (143,38): Error! E324: conversion of return value is impossible 
-  'x132' defined at: (138,7) 
-  source conversion type is 'x131 (lvalue)' 
-  class 'x131' has not been defined 
-  target conversion type is 'x132 const (lvalue)' 
-  class 'x132' has not been defined 
+  source conversion type is "x131 (lvalue)" 
+  'class x131' has not been defined 
+  target conversion type is "x132 const (lvalue)" 
+  'class x132' has not been defined 
 (149,9): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression 
 (149,10): Warning! W595: construct resolved as an expression 
 (151,9): Error! E437: cannot construct an undefined class 
@@ -2149,13 +2083,13 @@ File: source\diag0239.c
 (153,10): Error! E437: cannot construct an undefined class 
   'x132' defined at: (138,7) 
 (153,18): Error! E326: defining 'q' is not possible because its type has unknown size 
-  definition: 'x131 q' in 'x131 const & x140( x134 )' 
+  'x131 q' in 'x131 const & x140( x134 )' defined at: (153,10) 
 (155,21): Error! E437: cannot construct an undefined class 
   'x131' defined at: (137,7) 
 (157,21): Error! E437: cannot construct an undefined class 
   'x132' defined at: (138,7) 
 (161,1): Warning! W014: no reference to symbol 'q' 
-  definition: 'x131 q' in 'x131 const & x140( x134 )' 
+  'x131 q' in 'x131 const & x140( x134 )' defined at: (153,10) 
 (204,1): Error! E121: syntax error 
 (204,3): Warning! W894: unexpected character (92) in source file 
 (206,1): Error! E121: syntax error 
@@ -2166,8 +2100,8 @@ File: source\diag0239.c
 (212,1): Error! E121: syntax error 
 (214,3): Warning! W888: trigraph expansion produced '~' 
 (214,3): Error! E121: syntax error 
-(224,32): Warning! W744: 'operator =' does not have a return type specified (int assumed) 
-(225,33): Warning! W744: 'operator +=' does not have a return type specified (int assumed) 
+(224,32): Warning! W744: 'operator =' does not have a return type specified ('int' assumed) 
+(225,33): Warning! W744: 'operator +=' does not have a return type specified ('int' assumed) 
 (261,23): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression 
 (261,25): Warning! W594: construct resolved as a declaration/type 
 (262,23): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression 
@@ -2177,8 +2111,8 @@ File: source\diag0239.c
 (263,23): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression 
 (263,25): Warning! W594: construct resolved as a declaration/type 
 (263,46): Error! E333: cannot convert argument to type specified in function prototype 
-  source conversion type is 'double' 
-  target conversion type is 'char *' 
+  source conversion type is "double" 
+  target conversion type is "char *" 
 (264,23): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression 
 (264,25): Warning! W594: construct resolved as a declaration/type 
 (264,45): Error! E191: expression must be a pointer or a zero constant 
@@ -2230,7 +2164,7 @@ File: source\diag0240.c
 (76,24): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression 
 (76,28): Warning! W594: construct resolved as a declaration/type 
 (77,1): Warning! W726: no reference to formal parameter 'a' 
-  definition: 'double a' in 'void x70( double )' 
+  'double a' in 'void x70( double )' defined at: (68,18) 
 (96,33): Error! E380: 'offsetof' is not allowed for a function 
 (97,33): Error! E380: 'offsetof' is not allowed for a function 
 (98,33): Error! E217: 'offsetof' is not allowed for a static member 
@@ -2257,25 +2191,25 @@ File: source\diag0240.c
 (187,28): Warning! W549: 'sizeof' operand contains compiler generated information 
 (188,28): Warning! W549: 'sizeof' operand contains compiler generated information 
 (200,29): Error! E754: '__declspec(thread)' data 'x202' must be link-time initialized 
-  definition: 'x193 x202' 
+  'x193 x202' defined at: (200,25) 
 (201,29): Error! E754: '__declspec(thread)' data 'x203' must be link-time initialized 
-  definition: 'x197 x203' 
+  'x197 x203' defined at: (201,25) 
 (203,37): Error! E754: '__declspec(thread)' data 'x205' must be link-time initialized 
-  definition: 'int x205' 
+  'int x205' defined at: (203,24) 
 (208,40): Error! E754: '__declspec(thread)' data 'x210' must be link-time initialized 
-  definition: 'x193 x210' in 'void x209( void )' 
+  'x193 x210' in 'void x209( void )' defined at: (208,36) 
 (223,1): Error! E226: function 'x219::x219' is not distinct 
-  definition: 'x219::x219( unsigned const )' 
+  'x219::x219( unsigned const )' defined at: (219,5) 
 (223,1): Error! E254: 'x219::x219' has not been declared as a member 
-  definition: 'x219::x219( unsigned )' 
+  'x219::x219( unsigned )' defined at: (222,7) 
 (224,1): Warning! W726: no reference to formal parameter 'handle' 
-  definition: 'unsigned handle' in 'x219::x219( unsigned )' 
+  'unsigned handle' in 'x219::x219( unsigned )' defined at: (222,18) 
 (227,1): Error! E226: function 'x219::x219' is not distinct 
-  definition: 'x219::x219( x216 const )' 
+  'x219::x219( x216 const )' defined at: (218,5) 
 (227,1): Error! E254: 'x219::x219' has not been declared as a member 
-  definition: 'x219::x219( x216 )' 
+  'x219::x219( x216 )' defined at: (226,7) 
 (228,1): Warning! W726: no reference to formal parameter 'handle' 
-  definition: 'x216 handle' in 'x219::x219( x216 )' 
+  'x216 handle' in 'x219::x219( x216 )' defined at: (226,18) 
 (245,9): Error! E173: floating-point constant too small to represent 
 (246,9): Error! E173: floating-point constant too small to represent 
 (247,9): Error! E173: floating-point constant too small to represent 
@@ -2314,11 +2248,11 @@ File: \406\108\form1.cpp
 File: source\diag0242.c 
 (9,5): Error! E071: expression must be integral 
 (12,5): Error! E775: 'sizeof' unexpected in constant expression 
-(15,13): Error! E767: unmatched left parenthesis '(' 
-(18,11): Error! E766: unmatched right parenthesis ')' 
-(21,5): Error! E768: no expression between parentheses '( )' 
-(24,5): Error! E767: unmatched left parenthesis '(' 
-(27,6): Error! E766: unmatched right parenthesis ')' 
+(15,13): Error! E767: unmatched left parenthesis "(" 
+(18,11): Error! E766: unmatched right parenthesis ")" 
+(21,5): Error! E768: no expression between parentheses "()" 
+(24,5): Error! E767: unmatched left parenthesis "(" 
+(27,6): Error! E766: unmatched right parenthesis ")" 
 (30,5): Error! E764: expression contains extra operand(s) 
 (35,5): Error! E775: '--' unexpected in constant expression 
 (38,6): Error! E774: expecting operand after unary operator '~' 
@@ -2340,54 +2274,54 @@ File: source\diag0242.c
 (92,13): Error! E765: expression contains consecutive operand(s) 
 File: source\diag0243.c 
 (34,20): Error! E541: pointers to class members reference different object types 
-  source conversion type is 'int const S::*' 
-  target conversion type is 'int S::*' 
+  source conversion type is "int const S::*" 
+  target conversion type is "int S::*" 
 (35,20): Error! E541: pointers to class members reference different object types 
-  source conversion type is 'int const S::*' 
-  target conversion type is 'int volatile S::*' 
+  source conversion type is "int const S::*" 
+  target conversion type is "int volatile S::*" 
 (36,20): Error! E541: pointers to class members reference different object types 
-  source conversion type is 'int volatile S::*' 
-  target conversion type is 'int S::*' 
+  source conversion type is "int volatile S::*" 
+  target conversion type is "int S::*" 
 (37,20): Error! E541: pointers to class members reference different object types 
-  source conversion type is 'int volatile S::*' 
-  target conversion type is 'int const S::*' 
+  source conversion type is "int volatile S::*" 
+  target conversion type is "int const S::*" 
 (38,20): Error! E541: pointers to class members reference different object types 
-  source conversion type is 'int const volatile S::*' 
-  target conversion type is 'int S::*' 
+  source conversion type is "int const volatile S::*" 
+  target conversion type is "int S::*" 
 (39,20): Error! E541: pointers to class members reference different object types 
-  source conversion type is 'int const volatile S::*' 
-  target conversion type is 'int const S::*' 
+  source conversion type is "int const volatile S::*" 
+  target conversion type is "int const S::*" 
 (40,20): Error! E541: pointers to class members reference different object types 
-  source conversion type is 'int const volatile S::*' 
-  target conversion type is 'int volatile S::*' 
+  source conversion type is "int const volatile S::*" 
+  target conversion type is "int volatile S::*" 
 (61,17): Error! E541: pointers to class members reference different object types 
-  source conversion type is 'int const S::*' 
-  target conversion type is 'int volatile S::*' 
+  source conversion type is "int const S::*" 
+  target conversion type is "int volatile S::*" 
 (62,17): Error! E541: pointers to class members reference different object types 
-  source conversion type is 'int volatile S::*' 
-  target conversion type is 'int const S::*' 
+  source conversion type is "int volatile S::*" 
+  target conversion type is "int const S::*" 
 File: source\diag0244.c 
 (14,12): Error! E781: const_cast expression must be lvalue of the same kind of object 
-  source conversion type is 'int (lvalue)' 
-  target conversion type is 'long (lvalue)' 
+  source conversion type is "int (lvalue)" 
+  target conversion type is "long (lvalue)" 
 (15,17): Error! E782: expression must be pointer to member from same class in const_cast 
-  source conversion type is 'int B::*' 
-  target conversion type is 'int D::*' 
+  source conversion type is "int B::*" 
+  target conversion type is "int D::*" 
 (16,32): Error! E782: expression must be pointer to member from same class in const_cast 
-  source conversion type is 'int B::*' 
-  target conversion type is 'int const D::*' 
+  source conversion type is "int B::*" 
+  target conversion type is "int const D::*" 
 (17,32): Error! E782: expression must be pointer to member from same class in const_cast 
-  source conversion type is 'int B::*' 
-  target conversion type is 'int volatile D::*' 
+  source conversion type is "int B::*" 
+  target conversion type is "int volatile D::*" 
 (19,32): Error! E783: expression must be member pointer to same type as specified in const_cast 
-  source conversion type is 'long B::*' 
-  target conversion type is 'int B::*' 
+  source conversion type is "long B::*" 
+  target conversion type is "int B::*" 
 File: source\diag0245.c 
 (2,33): Error! E329: modifiers of 'b' conflict with previous declaration 
-  definition: 'void (__based( __segname( "a" )) b)( void )' 
+  'void (__based( __segname( "a" )) b)( void )' defined at: (1,30) 
   current declaration has type 'void (__based( __segname( "b" )) )( void )' 
 (5,42): Error! E329: modifiers of 'a' conflict with previous declaration 
-  definition: 'void (__based( __segname( "a" )) a)( void )' 
+  'void (__based( __segname( "a" )) a)( void )' defined at: (4,30) 
   current declaration has type 'void (__export __based( __segname( "b" )) )( void )' 
 (32,1): Error! E106: token too long; truncated 
   expanding macro 'j' defined at: (11,9) 
@@ -2398,88 +2332,87 @@ File: source\diag0245.c
 (106,13): Error! E062: only one type is allowed in declaration specifiers 
 (106,15): Error! E090: invalid floating-point constant 
 (107,13): Error! E064: invalid character constant 
-(112,31): Error! E778: only constructors can be declared explicit 
-(113,21): Error! E778: only constructors can be declared explicit 
-(114,28): Error! E778: only constructors can be declared explicit 
-(115,24): Error! E778: only constructors can be declared explicit 
+(112,31): Error! E778: only constructors can be declared 'explicit' 
+(113,21): Error! E778: only constructors can be declared 'explicit' 
+(114,28): Error! E778: only constructors can be declared 'explicit' 
+(115,24): Error! E778: only constructors can be declared 'explicit' 
 (129,10): Error! E400: cannot convert right expression for initialization 
-  source conversion type is 'void *' 
-  target conversion type is 'char *' 
+  source conversion type is "void *" 
+  target conversion type is "char *" 
 (131,10): Error! E400: cannot convert right expression for initialization 
-  source conversion type is 'void *' 
-  target conversion type is 'char *' 
+  source conversion type is "void *" 
+  target conversion type is "char *" 
 (138,8): Error! E166: cannot convert right pointer to type of left operand 
-  source conversion type is 'void *' 
-  target conversion type is 'char *' 
+  source conversion type is "void *" 
+  target conversion type is "char *" 
 (140,8): Error! E166: cannot convert right pointer to type of left operand 
-  source conversion type is 'void *' 
-  target conversion type is 'char *' 
+  source conversion type is "void *" 
+  target conversion type is "char *" 
 (142,9): Error! E473: function argument(s) do not match those in prototype 
-  definition: 'void x123( char * )' 
+  'void x123( char * )' defined at: (123,6) 
   cannot convert argument 1 defined at: (142,11) 
-  source conversion type is 'void * (lvalue)' 
-  target conversion type is 'char *' 
+  source conversion type is "void * (lvalue)" 
+  target conversion type is "char *" 
 (144,9): Error! E473: function argument(s) do not match those in prototype 
-  definition: 'void x123( char * )' 
+  'void x123( char * )' defined at: (123,6) 
   cannot convert argument 1 defined at: (144,11) 
-  source conversion type is 'void *' 
-  target conversion type is 'char *' 
+  source conversion type is "void *" 
+  target conversion type is "char *" 
 (145,1): Warning! W014: no reference to symbol 'a3' 
-  definition: 'char * a3' in 'void x133( void )' 
+  'char * a3' in 'void x133( void )' defined at: (136,11) 
 (174,9): Error! E434: cannot convert to a type of unknown size 
-  source conversion type is 'N::D *' 
-  target conversion type is 'U1 *' 
-  class 'U1' has not been defined 
+  source conversion type is "N::D *" 
+  target conversion type is "U1 *" 
+  'class U1' has not been defined 
 (175,9): Error! E434: cannot convert to a type of unknown size 
-  source conversion type is 'P::D *' 
-  target conversion type is 'U1 *' 
-  class 'U1' has not been defined 
+  source conversion type is "P::D *" 
+  target conversion type is "U1 *" 
+  'class U1' has not been defined 
 (176,9): Error! E386: attempt to use pointer to undefined class 
-  source conversion type is 'U2 *' 
-  class 'U2' has not been defined 
-  target conversion type is 'N::A *' 
+  source conversion type is "U2 *" 
+  'class U2' has not been defined 
+  target conversion type is "N::A *" 
 (177,9): Error! E386: attempt to use pointer to undefined class 
-  source conversion type is 'U2 *' 
-  class 'U2' has not been defined 
-  target conversion type is 'P::A *' 
+  source conversion type is "U2 *" 
+  'class U2' has not been defined 
+  target conversion type is "P::A *" 
 (180,9): Warning! W628: expression is not meaningful 
 (181,9): Warning! W628: expression is not meaningful 
 (182,9): Error! E805: dynamic_cast requires class 'N::D' to have virtual functions 
 (186,9): Error! E805: dynamic_cast requires class 'N::D' to have virtual functions 
 (187,9): Warning! W806: base class for type in dynamic_cast is ambiguous (will fail) 
-  source conversion type is 'P::D *' 
-  target conversion type is 'P::A *' 
+  source conversion type is "P::D *" 
+  target conversion type is "P::A *" 
 (188,9): Error! E805: dynamic_cast requires class 'N::D' to have virtual functions 
 (189,9): Warning! W807: base class for type in dynamic_cast is private (may fail) 
-  source conversion type is 'P::D *' 
-  target conversion type is 'P::PRI *' 
+  source conversion type is "P::D *" 
+  target conversion type is "P::PRI *" 
 (190,9): Error! E805: dynamic_cast requires class 'N::D' to have virtual functions 
 (191,9): Warning! W808: base class for type in dynamic_cast is protected (may fail) 
-  source conversion type is 'P::D *' 
-  target conversion type is 'P::PRO *' 
+  source conversion type is "P::D *" 
+  target conversion type is "P::PRO *" 
 (207,16): Warning! W806: base class for type in dynamic_cast is ambiguous (will fail) 
-  source conversion type is 'x194::D *' 
-  target conversion type is 'x194::A *' 
+  source conversion type is "x194::D *" 
+  target conversion type is "x194::A *" 
 (211,16): Warning! W807: base class for type in dynamic_cast is private (may fail) 
-  source conversion type is 'x194::E *' 
-  target conversion type is 'x194::D *' 
+  source conversion type is "x194::E *" 
+  target conversion type is "x194::D *" 
 (215,16): Warning! W808: base class for type in dynamic_cast is protected (may fail) 
-  source conversion type is 'x194::F *' 
-  target conversion type is 'x194::D *' 
+  source conversion type is "x194::F *" 
+  target conversion type is "x194::D *" 
 (235,16): Error! E805: dynamic_cast requires class 'x222::D' to have virtual functions 
 (239,16): Error! E805: dynamic_cast requires class 'x222::E' to have virtual functions 
 (243,16): Error! E805: dynamic_cast requires class 'x222::F' to have virtual functions 
 (256,10): Error! E400: cannot convert right expression for initialization 
-  source conversion type is 'x251 (lvalue)' 
-  target conversion type is 'int' 
+  source conversion type is "x251 (lvalue)" 
+  target conversion type is "int" 
 (259,11): Error! E400: cannot convert right expression for initialization 
-  source conversion type is 'x251 (lvalue)' 
-  target conversion type is 'int' 
+  source conversion type is "x251 (lvalue)" 
+  target conversion type is "int" 
 (260,17): Error! E055: not enough parameters given for macro 'j' 
   macro 'j' defined at: (11,9) 
-(260,17): Error! E006: syntax error; probable cause: missing ';' 
 (261,1): Warning! W014: no reference to symbol 'x255' 
-  definition: 'int x255' in 'int x258( void )' 
+  'int x255' in 'int x258( void )' defined at: (260,17) 
 (263,13): Error! E191: expression must be a pointer or a zero constant 
   expression type is 'int' 
 (264,12): Error! E191: expression must be a pointer or a zero constant 
@@ -2488,163 +2421,157 @@ File: source\diag0245.c
   expression type is 'int' 
 (268,13): Error! E126: class 'x251' has already been defined 
 (274,24): Error! E340: cannot construct object from argument(s) 
-  source conversion type is 'int' 
-  target conversion type is 'int *' 
+  source conversion type is "int" 
+  target conversion type is "int *" 
 (275,5): Warning! W726: no reference to formal parameter 'x' 
-  definition: 'x251 x' in 'x272::x272( x251 )' 
+  'x251 x' in 'x272::x272( x251 )' defined at: (274,16) 
 (279,28): Warning! W249: using default arguments would be overload ambiguous with 'x278' using default arguments 
-  definition: 'int x278( int [, int ])' 
+  'int x278( int [, int ])' defined at: (278,20) 
 (282,16): Error! E227: overloaded function is ambiguous for arguments used in call 
   ambiguous function: int x278( int [, int ]) defined at: (278,20) 
   ambiguous function: int x278( int [, double ]) defined at: (279,23) 
 (286,20): Warning! W248: using default arguments would be overload ambiguous with 'x284::x284' 
-  definition: 'x284::x284( void )' 
+  'x284::x284( void )' defined at: (285,5) 
 (288,10): Error! E390: cannot generate default constructor to initialize 'x284' since constructors were declared 
 (292,31): Error! E247: cannot redefine default argument for 'x289' 
-  definition: 'void x289( int [, int, int ])' 
+  'void x289( int [, int, int ])' defined at: (291,21) 
 (293,35): Error! E247: cannot redefine default argument for 'x289' 
-  definition: 'void x289( int, int [, int ])' 
+  'void x289( int, int [, int ])' defined at: (290,30) 
 (297,14): Warning! W618: function will be overload ambiguous with 'SD1::SD1' using default arguments 
-  definition: 'x294::SD1::SD1( [int ])' 
+  'x294::SD1::SD1( [int ])' defined at: (296,20) 
 (305,27): Warning! W618: function will be overload ambiguous with 'SC1::SC1' using default arguments 
-  definition: 'x294::SC1::SC1( x294::SC1 const & [, int ])' 
+  'x294::SC1::SC1( x294::SC1 const & [, int ])' defined at: (304,33) 
 (327,25): Warning! W248: using default arguments would be overload ambiguous with 'SD2::SD2' 
-  definition: 'x294::SD2::SD2( void )' 
+  'x294::SD2::SD2( void )' defined at: (326,9) 
 (335,38): Warning! W248: using default arguments would be overload ambiguous with 'SC2::SC2' 
-  definition: 'x294::SC2::SC2( x294::SC2 const & )' 
+  'x294::SC2::SC2( x294::SC2 const & )' defined at: (334,9) 
 (309,15): Error! E390: cannot generate default constructor to initialize 'x294::SD1' since constructors were declared 
 (311,5): Warning! W014: no reference to symbol 'a1' 
-  definition: 'x294::SD1 a1' in 'void x294::d1( void )' 
+  'x294::SD1 a1' in 'void x294::d1( void )' defined at: (309,13) 
 (320,15): Error! E303: constructor is ambiguous for operands used 
-  'SC1' defined at: (301,12) 
   ambiguous function: x294::SC1::SC1( x294::SC1 const & [, int ]) defined at: (304,33) 
   ambiguous function: x294::SC1::SC1( x294::SC1 const & ) defined at: (305,9) 
-  source conversion type is 'x294::SC1 (lvalue)' 
-  target conversion type is 'x294::SC1' 
+  source conversion type is "x294::SC1 (lvalue)" 
+  target conversion type is "x294::SC1" 
 (321,15): Error! E303: constructor is ambiguous for operands used 
-  'SC1' defined at: (301,12) 
   ambiguous function: x294::SC1::SC1( x294::SC1 const & [, int ]) defined at: (304,33) 
   ambiguous function: x294::SC1::SC1( x294::SC1 const & ) defined at: (305,9) 
-  source conversion type is 'x294::SC1 (lvalue)' 
-  target conversion type is 'x294::SC1' 
+  source conversion type is "x294::SC1 (lvalue)" 
+  target conversion type is "x294::SC1" 
 (322,16): Error! E814: user-defined conversion is ambiguous 
-  'SC1' defined at: (301,12) 
   ambiguous function: x294::SC1::SC1( x294::SC1 const & ) defined at: (305,9) 
   ambiguous function: x294::SC1::SC1( x294::SC1 const & [, int ]) defined at: (304,33) 
-  source conversion type is 'x294::SC1 (lvalue)' 
-  target conversion type is 'x294::SC1' 
+  source conversion type is "x294::SC1 (lvalue)" 
+  target conversion type is "x294::SC1" 
 (339,15): Error! E390: cannot generate default constructor to initialize 'x294::SD2' since constructors were declared 
 (341,5): Warning! W014: no reference to symbol 'a2' 
-  definition: 'x294::SD2 a2' in 'void x294::d2( void )' 
+  'x294::SD2 a2' in 'void x294::d2( void )' defined at: (339,13) 
 (350,15): Error! E303: constructor is ambiguous for operands used 
-  'SC2' defined at: (331,12) 
   ambiguous function: x294::SC2::SC2( x294::SC2 const & ) defined at: (334,9) 
   ambiguous function: x294::SC2::SC2( x294::SC2 const & [, int ]) defined at: (335,33) 
-  source conversion type is 'x294::SC2 (lvalue)' 
-  target conversion type is 'x294::SC2' 
+  source conversion type is "x294::SC2 (lvalue)" 
+  target conversion type is "x294::SC2" 
 (351,15): Error! E303: constructor is ambiguous for operands used 
-  'SC2' defined at: (331,12) 
   ambiguous function: x294::SC2::SC2( x294::SC2 const & ) defined at: (334,9) 
   ambiguous function: x294::SC2::SC2( x294::SC2 const & [, int ]) defined at: (335,33) 
-  source conversion type is 'x294::SC2 (lvalue)' 
-  target conversion type is 'x294::SC2' 
+  source conversion type is "x294::SC2 (lvalue)" 
+  target conversion type is "x294::SC2" 
 (352,16): Error! E814: user-defined conversion is ambiguous 
-  'SC2' defined at: (331,12) 
   ambiguous function: x294::SC2::SC2( x294::SC2 const & [, int ]) defined at: (335,33) 
   ambiguous function: x294::SC2::SC2( x294::SC2 const & ) defined at: (334,9) 
-  source conversion type is 'x294::SC2 (lvalue)' 
-  target conversion type is 'x294::SC2' 
+  source conversion type is "x294::SC2 (lvalue)" 
+  target conversion type is "x294::SC2" 
 (359,32): Warning! W248: using default arguments would be overload ambiguous with 'x355::x355' 
-  definition: 'x355::x355( void )' 
+  'x355::x355( void )' defined at: (358,17) 
 (365,1): Warning! W656: define this function inside its class definition (may improve code quality) 
 (369,1): Warning! W726: no reference to formal parameter 'a' 
-  definition: 'int a' in 'x355::x355( int )' 
+  'int a' in 'x355::x355( int )' defined at: (367,16) 
 (373,1): Warning! W657: define this function inside its class definition (could have improved code quality) 
 (377,15): Error! E390: cannot generate default constructor to initialize 'x355' since constructors were declared 
 (420,20): Warning! W824: conversion of pointer to member across a virtual base 
-  source conversion type is 'int (x401::D::* )( void )' 
-  target conversion type is 'int (x401::S::* )( void )' 
+  source conversion type is "int (x401::D::* )( void )" 
+  target conversion type is "int (x401::S::* )( void )" 
 (421,18): Warning! W883: cast changes both member pointer object and class type 
-  source conversion type is 'int (x401::D::* )( int )' 
-  target conversion type is 'int (x401::S::* )( void )' 
+  source conversion type is "int (x401::D::* )( int )" 
+  target conversion type is "int (x401::S::* )( void )" 
 (421,20): Warning! W824: conversion of pointer to member across a virtual base 
-  source conversion type is 'int (x401::D::* )( int )' 
-  target conversion type is 'int (x401::S::* )( void )' 
+  source conversion type is "int (x401::D::* )( int )" 
+  target conversion type is "int (x401::S::* )( void )" 
 (422,18): Warning! W883: cast changes both member pointer object and class type 
-  source conversion type is 'int (x401::D::* )( int, int )' 
-  target conversion type is 'int (x401::S::* )( void )' 
+  source conversion type is "int (x401::D::* )( int, int )" 
+  target conversion type is "int (x401::S::* )( void )" 
 (422,20): Warning! W824: conversion of pointer to member across a virtual base 
-  source conversion type is 'int (x401::D::* )( int, int )' 
-  target conversion type is 'int (x401::S::* )( void )' 
+  source conversion type is "int (x401::D::* )( int, int )" 
+  target conversion type is "int (x401::S::* )( void )" 
 (423,18): Warning! W883: cast changes both member pointer object and class type 
-  source conversion type is 'int (x401::D::* )( int, int, ... )' 
-  target conversion type is 'int (x401::S::* )( void )' 
+  source conversion type is "int (x401::D::* )( int, int, ... )" 
+  target conversion type is "int (x401::S::* )( void )" 
 (423,20): Warning! W824: conversion of pointer to member across a virtual base 
-  source conversion type is 'int (x401::D::* )( int, int, ... )' 
-  target conversion type is 'int (x401::S::* )( void )' 
+  source conversion type is "int (x401::D::* )( int, int, ... )" 
+  target conversion type is "int (x401::S::* )( void )" 
 (424,18): Warning! W883: cast changes both member pointer object and class type 
-  source conversion type is 'int (x401::D::* )( void )' 
-  target conversion type is 'int (x401::S::* )( int )' 
+  source conversion type is "int (x401::D::* )( void )" 
+  target conversion type is "int (x401::S::* )( int )" 
 (424,20): Warning! W824: conversion of pointer to member across a virtual base 
-  source conversion type is 'int (x401::D::* )( void )' 
-  target conversion type is 'int (x401::S::* )( int )' 
+  source conversion type is "int (x401::D::* )( void )" 
+  target conversion type is "int (x401::S::* )( int )" 
 (425,20): Warning! W824: conversion of pointer to member across a virtual base 
-  source conversion type is 'int (x401::D::* )( int )' 
-  target conversion type is 'int (x401::S::* )( int )' 
+  source conversion type is "int (x401::D::* )( int )" 
+  target conversion type is "int (x401::S::* )( int )" 
 (426,18): Warning! W883: cast changes both member pointer object and class type 
-  source conversion type is 'int (x401::D::* )( int, int )' 
-  target conversion type is 'int (x401::S::* )( int )' 
+  source conversion type is "int (x401::D::* )( int, int )" 
+  target conversion type is "int (x401::S::* )( int )" 
 (426,20): Warning! W824: conversion of pointer to member across a virtual base 
-  source conversion type is 'int (x401::D::* )( int, int )' 
-  target conversion type is 'int (x401::S::* )( int )' 
+  source conversion type is "int (x401::D::* )( int, int )" 
+  target conversion type is "int (x401::S::* )( int )" 
 (427,18): Warning! W883: cast changes both member pointer object and class type 
-  source conversion type is 'int (x401::D::* )( int, int, ... )' 
-  target conversion type is 'int (x401::S::* )( int )' 
+  source conversion type is "int (x401::D::* )( int, int, ... )" 
+  target conversion type is "int (x401::S::* )( int )" 
 (427,20): Warning! W824: conversion of pointer to member across a virtual base 
-  source conversion type is 'int (x401::D::* )( int, int, ... )' 
-  target conversion type is 'int (x401::S::* )( int )' 
+  source conversion type is "int (x401::D::* )( int, int, ... )" 
+  target conversion type is "int (x401::S::* )( int )" 
 (428,18): Warning! W883: cast changes both member pointer object and class type 
-  source conversion type is 'int (x401::D::* )( void )' 
-  target conversion type is 'int (x401::S::* )( int, int )' 
+  source conversion type is "int (x401::D::* )( void )" 
+  target conversion type is "int (x401::S::* )( int, int )" 
 (428,20): Warning! W824: conversion of pointer to member across a virtual base 
-  source conversion type is 'int (x401::D::* )( void )' 
-  target conversion type is 'int (x401::S::* )( int, int )' 
+  source conversion type is "int (x401::D::* )( void )" 
+  target conversion type is "int (x401::S::* )( int, int )" 
 (429,18): Warning! W883: cast changes both member pointer object and class type 
-  source conversion type is 'int (x401::D::* )( int )' 
-  target conversion type is 'int (x401::S::* )( int, int )' 
+  source conversion type is "int (x401::D::* )( int )" 
+  target conversion type is "int (x401::S::* )( int, int )" 
 (429,20): Warning! W824: conversion of pointer to member across a virtual base 
-  source conversion type is 'int (x401::D::* )( int )' 
-  target conversion type is 'int (x401::S::* )( int, int )' 
+  source conversion type is "int (x401::D::* )( int )" 
+  target conversion type is "int (x401::S::* )( int, int )" 
 (430,20): Warning! W824: conversion of pointer to member across a virtual base 
-  source conversion type is 'int (x401::D::* )( int, int )' 
-  target conversion type is 'int (x401::S::* )( int, int )' 
+  source conversion type is "int (x401::D::* )( int, int )" 
+  target conversion type is "int (x401::S::* )( int, int )" 
 (431,18): Warning! W883: cast changes both member pointer object and class type 
-  source conversion type is 'int (x401::D::* )( int, int, ... )' 
-  target conversion type is 'int (x401::S::* )( int, int )' 
+  source conversion type is "int (x401::D::* )( int, int, ... )" 
+  target conversion type is "int (x401::S::* )( int, int )" 
 (431,20): Warning! W824: conversion of pointer to member across a virtual base 
-  source conversion type is 'int (x401::D::* )( int, int, ... )' 
-  target conversion type is 'int (x401::S::* )( int, int )' 
+  source conversion type is "int (x401::D::* )( int, int, ... )" 
+  target conversion type is "int (x401::S::* )( int, int )" 
 (432,18): Warning! W883: cast changes both member pointer object and class type 
-  source conversion type is 'int (x401::D::* )( void )' 
-  target conversion type is 'int (x401::S::* )( int, int, ... )' 
+  source conversion type is "int (x401::D::* )( void )" 
+  target conversion type is "int (x401::S::* )( int, int, ... )" 
 (432,20): Warning! W824: conversion of pointer to member across a virtual base 
-  source conversion type is 'int (x401::D::* )( void )' 
-  target conversion type is 'int (x401::S::* )( int, int, ... )' 
+  source conversion type is "int (x401::D::* )( void )" 
+  target conversion type is "int (x401::S::* )( int, int, ... )" 
 (433,18): Warning! W883: cast changes both member pointer object and class type 
-  source conversion type is 'int (x401::D::* )( int )' 
-  target conversion type is 'int (x401::S::* )( int, int, ... )' 
+  source conversion type is "int (x401::D::* )( int )" 
+  target conversion type is "int (x401::S::* )( int, int, ... )" 
 (433,20): Warning! W824: conversion of pointer to member across a virtual base 
-  source conversion type is 'int (x401::D::* )( int )' 
-  target conversion type is 'int (x401::S::* )( int, int, ... )' 
+  source conversion type is "int (x401::D::* )( int )" 
+  target conversion type is "int (x401::S::* )( int, int, ... )" 
 (434,18): Warning! W883: cast changes both member pointer object and class type 
-  source conversion type is 'int (x401::D::* )( int, int )' 
-  target conversion type is 'int (x401::S::* )( int, int, ... )' 
+  source conversion type is "int (x401::D::* )( int, int )" 
+  target conversion type is "int (x401::S::* )( int, int, ... )" 
 (434,20): Warning! W824: conversion of pointer to member across a virtual base 
-  source conversion type is 'int (x401::D::* )( int, int )' 
-  target conversion type is 'int (x401::S::* )( int, int, ... )' 
+  source conversion type is "int (x401::D::* )( int, int )" 
+  target conversion type is "int (x401::S::* )( int, int, ... )" 
 (435,20): Warning! W824: conversion of pointer to member across a virtual base 
-  source conversion type is 'int (x401::D::* )( int, int, ... )' 
-  target conversion type is 'int (x401::S::* )( int, int, ... )' 
+  source conversion type is "int (x401::D::* )( int, int, ... )" 
+  target conversion type is "int (x401::S::* )( int, int, ... )" 
 File: source\diag0246.c 
 (32,11): Warning! W355: pointer expression is never < 0 
 (33,19): Warning! W355: pointer expression is never < 0 
@@ -2773,11 +2700,10 @@ File: source\diag0247.c
   ambiguous function: void f4( C4 ) defined at: (99,6) 
   ambiguous function: void f4( A4 ) defined at: (100,6) 
 (120,8): Error! E814: user-defined conversion is ambiguous 
-  'C5' defined at: (112,7) 
   ambiguous function: B5::operator C5 () defined at: (113,21) 
   ambiguous function: C5::C5( B5 & ) defined at: (112,21) 
-  source conversion type is 'B5 (lvalue)' 
-  target conversion type is 'C5' 
+  source conversion type is "B5 (lvalue)" 
+  target conversion type is "C5" 
 (148,7): Error! E227: overloaded function is ambiguous for arguments used in call 
   ambiguous function: void f6( A6 ) defined at: (142,6) 
   ambiguous function: void f6( C6 ) defined at: (143,6) 
@@ -2793,10 +2719,10 @@ File: source\diag0248.c
   ambiguous function: void f3( B * ) defined at: (21,6) 
 File: source\diag0249.c 
 (20,11): Error! E473: function argument(s) do not match those in prototype 
-  definition: 'void A::bar1( void (A::* )( int ) const)' 
+  'void A::bar1( void (A::* )( int ) const)' defined at: (15,9) 
   cannot convert argument 1 defined at: (20,13) 
-  source conversion type is 'void (A::* )( int ) volatile' 
-  target conversion type is 'void (A::* )( int ) const' 
+  source conversion type is "void (A::* )( int ) volatile" 
+  target conversion type is "void (A::* )( int ) const" 
 File: source\diag0250.c 
 (15,22): Error! E029: symbol 'goo' has not been declared 
 (16,2): Error! E080: last line 
@@ -2805,24 +2731,24 @@ File: source\diag0251.c
   ambiguous function: int S::goo( int (S::* )( int )) defined at: (11,9) 
   ambiguous function: int S::goo( int (* )( double )) defined at: (12,9) 
 (26,25): Error! E121: syntax error 
-(28,2): Error! E121: syntax error 
+(28,1): Error! E121: syntax error 
 (30,28): Error! E511: item is neither a non-static member function nor data member 
-  source conversion type is 'int (S::* )( int )' 
-  target conversion type is 'int (S::* )( double )' 
+  source conversion type is "int (S::* )( int )" 
+  target conversion type is "int (S::* )( double )" 
 (34,28): Error! E541: pointers to class members reference different object types 
-  source conversion type is 'int (S::* )( int )' 
-  target conversion type is 'int (S::* )( double )' 
+  source conversion type is "int (S::* )( int )" 
+  target conversion type is "int (S::* )( double )" 
 (38,22): Error! E562: cannot take address of non-static member function 
 (44,13): Error! E191: expression must be a pointer or a zero constant 
   expression type is 'int (lvalue)' 
 (45,21): Error! E191: expression must be a pointer or a zero constant 
   expression type is 'int (lvalue)' 
 (50,24): Error! E537: operand is not a valid pointer to class member 
-  source conversion type is 'int ( int )' 
-  target conversion type is 'int (S::* )( int )' 
+  source conversion type is "int ( int )" 
+  target conversion type is "int (S::* )( int )" 
 (51,24): Error! E537: operand is not a valid pointer to class member 
-  source conversion type is 'int ( int )' 
-  target conversion type is 'int (S::* )( int )' 
+  source conversion type is "int ( int )" 
+  target conversion type is "int (S::* )( int )" 
 (52,20): Error! E374: object (or object pointer) required to access non-static data member 
 (54,21): Error! E029: symbol 'moo' has not been declared 
 (55,21): Error! E029: symbol 'foo' has not been declared 
@@ -2832,8 +2758,8 @@ File: source\diag0251.c
 (67,20): Error! E374: object (or object pointer) required to access non-static data member 
 (74,25): Error! E562: cannot take address of non-static member function 
 (75,26): Error! E511: item is neither a non-static member function nor data member 
-  source conversion type is 'int (* )( long )' 
-  target conversion type is 'int (X::* )( long )' 
+  source conversion type is "int (* )( long )" 
+  target conversion type is "int (X::* )( long )" 
 (81,20): Error! E400: cannot convert right expression for initialization 
 File: source\diag0252.c 
 (15,12): Error! E227: overloaded function is ambiguous for arguments used in call 
@@ -2843,9 +2769,9 @@ File: source\diag0253.c
 (4,22): Warning! W367: conditional expression in if statement is always true 
 (9,14): Warning! W361: member function was not defined in its class 
 (10,21): Warning! W361: member function was not defined in its class 
-(23,18): Error! E359: union 'Union' referenced as a class 
+(23,18): Error! E359: 'union Union' referenced as a class 
   template class instantiation for 'Template<Struct,Class,Union,Enum>' was at: (62,1) 
-(28,17): Error! E359: union 'Union' referenced as a class 
+(28,17): Error! E359: 'union Union' referenced as a class 
   template class instantiation for 'Template<Struct,Class,Union,Enum>' was at: (62,1) 
 (31,17): Error! E358: 'Struct' referenced as a union 
   template class instantiation for 'Template<Struct,Class,Union,Enum>' was at: (62,1) 
@@ -2853,95 +2779,93 @@ File: source\diag0253.c
   template class instantiation for 'Template<Struct,Class,Union,Enum>' was at: (62,1) 
 (34,17): Error! E358: 'E' referenced as a union 
   template class instantiation for 'Template<Struct,Class,Union,Enum>' was at: (62,1) 
-(36,16): Error! E240: enum 'S' has not been declared 
+(36,16): Error! E240: 'enum S' has not been declared 
   template class instantiation for 'Template<Struct,Class,Union,Enum>' was at: (62,1) 
-(37,16): Error! E240: enum 'C' has not been declared 
+(37,16): Error! E240: 'enum C' has not been declared 
   template class instantiation for 'Template<Struct,Class,Union,Enum>' was at: (62,1) 
-(38,16): Error! E240: enum 'U' has not been declared 
+(38,16): Error! E240: 'enum U' has not been declared 
   template class instantiation for 'Template<Struct,Class,Union,Enum>' was at: (62,1) 
 (66,26): Error! E052: argument for # must be a macro parm 
 (66,32): Error! E052: argument for # must be a macro parm 
 (68,15): Error! E121: syntax error 
+(70,2): Error! E080: last line 
 File: source\diag0254.c 
 (9,8): Error! E400: cannot convert right expression for initialization 
-  'Z' defined at: (4,7) 
-  source conversion type is 'int' 
-  target conversion type is 'Z' 
+  source conversion type is "int" 
+  target conversion type is "Z" 
 File: source\diag0255.c 
 (32,13): Error! E400: cannot convert right expression for initialization 
-  'T1' defined at: (8,8) 
-  source conversion type is 'S1 (lvalue)' 
-  target conversion type is 'T1' 
+  source conversion type is "S1 (lvalue)" 
+  target conversion type is "T1" 
 (33,13): Error! E400: cannot convert right expression for initialization 
-  'T2' defined at: (22,8) 
-  source conversion type is 'S2 (lvalue)' 
-  target conversion type is 'T2' 
+  source conversion type is "S2 (lvalue)" 
+  target conversion type is "T2" 
 File: source\diag0256.c 
 (12,58): Error! E400: cannot convert right expression for initialization 
-  source conversion type is 'int * const * volatile * * volatile' 
-  target conversion type is 'int * const * const volatile * * const volatile' 
+  source conversion type is "int * const * volatile * * volatile" 
+  target conversion type is "int * const * const volatile * * const volatile" 
 (15,56): Error! E400: cannot convert right expression for initialization 
-  source conversion type is 'int volatile * const * volatile * volatile * volatile' 
-  target conversion type is 'int volatile * const * const volatile * volatile *' 
+  source conversion type is "int volatile * const * volatile * volatile * volatile" 
+  target conversion type is "int volatile * const * const volatile * volatile *" 
 (18,76): Error! E400: cannot convert right expression for initialization 
-  source conversion type is 'int volatile * const * volatile * * volatile' 
-  target conversion type is 'int volatile * const volatile * volatile * const * const volatile' 
+  source conversion type is "int volatile * const * volatile * * volatile" 
+  target conversion type is "int volatile * const volatile * volatile * const * const volatile" 
 (21,53): Error! E400: cannot convert right expression for initialization 
-  source conversion type is 'int volatile * const * volatile * *' 
-  target conversion type is 'int volatile * const * const volatile * *' 
+  source conversion type is "int volatile * const * volatile * *" 
+  target conversion type is "int volatile * const * const volatile * *" 
 (24,53): Error! E400: cannot convert right expression for initialization 
-  source conversion type is 'int volatile * const * volatile * * volatile' 
-  target conversion type is 'int volatile * const * const volatile * *' 
+  source conversion type is "int volatile * const * volatile * * volatile" 
+  target conversion type is "int volatile * const * const volatile * *" 
 (27,89): Error! E400: cannot convert right expression for initialization 
-  source conversion type is 'int * * * * *' 
-  target conversion type is 'int const volatile * const volatile * volatile * const volatile * const volatile *' 
+  source conversion type is "int * * * * *" 
+  target conversion type is "int const volatile * const volatile * volatile * const volatile * const volatile *" 
 (29,7): Error! E473: function argument(s) do not match those in prototype 
-  definition: 'void f1( int * const * const volatile * * const volatile )' 
+  'void f1( int * const * const volatile * * const volatile )' defined at: (1,6) 
   cannot convert argument 1 defined at: (29,9) 
-  source conversion type is 'int * const * volatile * * volatile (lvalue)' 
-  target conversion type is 'int * const * const volatile * * const volatile' 
+  source conversion type is "int * const * volatile * * volatile (lvalue)" 
+  target conversion type is "int * const * const volatile * * const volatile" 
 (30,7): Error! E473: function argument(s) do not match those in prototype 
-  definition: 'void f2( int volatile * const * const volatile * volatile * )' 
+  'void f2( int volatile * const * const volatile * volatile * )' defined at: (2,6) 
   cannot convert argument 1 defined at: (30,9) 
-  source conversion type is 'int volatile * const * volatile * volatile * volatile (lvalue)' 
-  target conversion type is 'int volatile * const * const volatile * volatile *' 
+  source conversion type is "int volatile * const * volatile * volatile * volatile (lvalue)" 
+  target conversion type is "int volatile * const * const volatile * volatile *" 
 (31,7): Error! E473: function argument(s) do not match those in prototype 
-  definition: 'void f3( int volatile * const volatile * volatile * const * const volatile )' 
+  'void f3( int volatile * const volatile * volatile * const * const volatile )' defined at: (3,6) 
   cannot convert argument 1 defined at: (31,9) 
-  source conversion type is 'int volatile * const * volatile * * volatile (lvalue)' 
-  target conversion type is 'int volatile * const volatile * volatile * const * const volatile' 
+  source conversion type is "int volatile * const * volatile * * volatile (lvalue)" 
+  target conversion type is "int volatile * const volatile * volatile * const * const volatile" 
 (32,7): Error! E473: function argument(s) do not match those in prototype 
-  definition: 'void f4( int volatile * const * const volatile * * )' 
+  'void f4( int volatile * const * const volatile * * )' defined at: (4,6) 
   cannot convert argument 1 defined at: (32,9) 
-  source conversion type is 'int volatile * const * volatile * * (lvalue)' 
-  target conversion type is 'int volatile * const * const volatile * *' 
+  source conversion type is "int volatile * const * volatile * * (lvalue)" 
+  target conversion type is "int volatile * const * const volatile * *" 
 (33,7): Error! E473: function argument(s) do not match those in prototype 
-  definition: 'void f5( int volatile * const * const volatile * * )' 
+  'void f5( int volatile * const * const volatile * * )' defined at: (5,6) 
   cannot convert argument 1 defined at: (33,9) 
-  source conversion type is 'int volatile * const * volatile * * volatile (lvalue)' 
-  target conversion type is 'int volatile * const * const volatile * *' 
+  source conversion type is "int volatile * const * volatile * * volatile (lvalue)" 
+  target conversion type is "int volatile * const * const volatile * *" 
 (34,7): Error! E473: function argument(s) do not match those in prototype 
-  definition: 'void f6( int const volatile * const volatile * volatile * const volatile * const volatile * )' 
+  'void f6( int const volatile * const volatile * volatile * const volatile * const volatile * )' defined at: (6,6) 
   cannot convert argument 1 defined at: (34,9) 
-  source conversion type is 'int * * * * * (lvalue)' 
-  target conversion type is 'int const volatile * const volatile * volatile * const volatile * const volatile *' 
+  source conversion type is "int * * * * * (lvalue)" 
+  target conversion type is "int const volatile * const volatile * volatile * const volatile * const volatile *" 
 File: source\diag0257.c 
 (2,37): Warning! W248: using default arguments would be overload ambiguous with 'foo' 
-  definition: 'void foo( int, int )' 
+  'void foo( int, int )' defined at: (1,6) 
 (7,25): Error! E400: cannot convert right expression for initialization 
 (11,35): Error! E029: symbol 'operator ()' has not been declared 
 (18,49): Warning! W248: using default arguments would be overload ambiguous with 'B::operator ()' 
-  definition: 'void B::operator ()( int, int )' 
+  'void B::operator ()( int, int )' defined at: (16,10) 
 (30,49): Warning! W248: using default arguments would be overload ambiguous with 'C::operator ()' 
-  definition: 'void C::operator ()( int, int )' 
+  'void C::operator ()( int, int )' defined at: (29,10) 
 (37,49): Warning! W248: using default arguments would be overload ambiguous with 'D::operator ()' 
-  definition: 'void D::operator ()( int, int )' 
+  'void D::operator ()( int, int )' defined at: (36,10) 
 (46,49): Warning! W248: using default arguments would be overload ambiguous with 'E::operator ()' 
-  definition: 'void E::operator ()( int, int )' 
+  'void E::operator ()( int, int )' defined at: (45,10) 
 (53,41): Warning! W618: function will be overload ambiguous with 'F::operator ()' using default arguments 
-  definition: 'void F::operator ()( int, int [, int ])' 
+  'void F::operator ()( int, int [, int ])' defined at: (52,45) 
 (61,37): Warning! W618: function will be overload ambiguous with 'G::operator ()' using default arguments 
-  definition: 'void G::operator ()( int, int [, int ])' 
+  'void G::operator ()( int, int [, int ])' defined at: (60,45) 
 (75,8): Error! E227: overloaded function is ambiguous for arguments used in call 
   ambiguous function: void foo( int, int ) defined at: (1,6) 
   ambiguous function: void foo( int, int [, int ]) defined at: (2,33) 
@@ -2968,7 +2892,7 @@ File: source\diag0258.c
   default argument started at: (5,15) 
 (7,2): Error! E121: syntax error 
 (17,1): Error! E254: 'S::f' has not been declared as a member 
-  definition: 'void S::f( int )' 
+  'void S::f( int )' defined at: (15,9) 
 File: source\diag0259.c 
 (15,11): Warning! W604: must look ahead to determine whether construct is a declaration/type or an expression 
 (15,13): Warning! W595: construct resolved as an expression 
@@ -2987,68 +2911,68 @@ File: source\diag0259.c
 (22,21): Error! E676: number of arguments in function call is incorrect 
   function has type 'void ( int )' 
 (26,10): Error! E825: declaration cannot be in the same scope as namespace 'S' 
-  definition: '<namespace> S' 
+  '<namespace> S' defined at: (24,11) 
 (30,6): Error! E825: declaration cannot be in the same scope as namespace 'i' 
-  definition: '<namespace> i' 
+  '<namespace> i' defined at: (28,11) 
 (34,2): Error! E176: 'CT' cannot be in the same scope as a class template 
-  definition: '<namespace> CT' 
+  '<namespace> CT' defined at: (31,11) 
 (36,13): Error! E826: 'a' cannot be in the same scope as a namespace 
-  definition: 'int a' 
+  'int a' defined at: (35,5) 
 (39,13): Error! E826: 'X' cannot be in the same scope as a namespace 
-  definition: 'X' 
+  'X' defined at: (38,13) 
 (42,15): Error! E826: 'CT2' cannot be in the same scope as a namespace 
-  definition: '<class template> CT2' 
+  '<class template> CT2' defined at: (41,27) 
 (62,19): Error! E042: symbol 'qq' already defined 
-  definition: 'int x20::x::<unique>::qq' 
+  'int x20::x::<unique>::qq' defined at: (61,17) 
 (69,39): Error! E042: symbol 'dd' already defined 
-  definition: 'int x20::x::<unique>::ZZ::<unique>::AA::<unique>::XX::dd' 
+  'int x20::x::<unique>::ZZ::<unique>::AA::<unique>::XX::dd' defined at: (68,37) 
 (82,14): Error! E042: symbol 'c' already defined 
-  definition: 'int x20::x::c' 
+  'int x20::x::c' defined at: (81,13) 
 (95,24): Error! E834: namespace alias cannot be changed 
 (103,9): Warning! W014: no reference to symbol 'x' 
-  definition: 'int x' in 'void x20::S::x( void )' 
+  'int x' in 'void x20::S::x( void )' defined at: (98,17) 
 (112,15): Error! E833: name does not reference a namespace 
 (157,18): Error! E279: too many initializers 
 (160,14): Warning! W836: symbol has different type than previous symbol in same declaration 
   companion definition is 'p' 
-  definition: 'char * p' in 'void x136( void )' 
+  'char * p' in 'void x136( void )' defined at: (160,11) 
 (161,1): Warning! W014: no reference to symbol 'p' 
-  definition: 'char * p' in 'void x136( void )' 
+  'char * p' in 'void x136( void )' defined at: (160,11) 
 (161,1): Warning! W014: no reference to symbol 'q' 
-  definition: 'char q' in 'void x136( void )' 
+  'char q' in 'void x136( void )' defined at: (160,14) 
 (163,14): Warning! W836: symbol has different type than previous symbol in same declaration 
   companion definition is 'p' 
-  definition: 'char * p' in 'void x139( void )' 
+  'char * p' in 'void x139( void )' defined at: (163,11) 
 (164,18): Warning! W836: symbol has different type than previous symbol in same declaration 
   companion definition is 'a' 
-  definition: 'char __far * a' in 'void x139( void )' 
+  'char __far * a' in 'void x139( void )' defined at: (164,15) 
 (164,21): Warning! W836: symbol has different type than previous symbol in same declaration 
   companion definition is 'a' 
-  definition: 'char __far * a' in 'void x139( void )' 
+  'char __far * a' in 'void x139( void )' defined at: (164,15) 
 (165,1): Warning! W014: no reference to symbol 'p' 
-  definition: 'char * p' in 'void x139( void )' 
+  'char * p' in 'void x139( void )' defined at: (163,11) 
 (165,1): Warning! W014: no reference to symbol 'q' 
-  definition: 'char q' in 'void x139( void )' 
+  'char q' in 'void x139( void )' defined at: (163,14) 
 (165,1): Warning! W014: no reference to symbol 'a' 
-  definition: 'char __far * a' in 'void x139( void )' 
+  'char __far * a' in 'void x139( void )' defined at: (164,15) 
 (165,1): Warning! W014: no reference to symbol 'b' 
-  definition: 'char * b' in 'void x139( void )' 
+  'char * b' in 'void x139( void )' defined at: (164,18) 
 (165,1): Warning! W014: no reference to symbol 'c' 
-  definition: 'char * c' in 'void x139( void )' 
+  'char * c' in 'void x139( void )' defined at: (164,21) 
 (170,9): Warning! W011: all members are private 
 (171,6): Error! E314: anonymous struct/union contains a typedef member 'C' 
-  definition: 'x143::C' 
+  'x143::C' defined at: (168,15) 
 (176,6): Error! E316: anonymous struct/union member 'S' is not distinct in enclosing scope 
 (181,22): Warning! W145: unexpected type qualifier found 
 (183,21): Error! E046: bit-field width is too large 
 (184,21): Error! E046: bit-field width is too large 
 (185,22): Error! E046: bit-field width is too large 
 (192,5): Error! E617: cannot overload extern "C" functions (the other function is 'WinMain') 
-  definition: 'int WinMain( int )' 
+  'int WinMain( int )' defined at: (189,9) 
 (196,38): Warning! W840: 'operator new' cannot be declared in a namespace 
 (199,36): Warning! W840: 'operator delete' cannot be declared in a namespace 
 (222,5): Error! E121: syntax error 
-(225,2): Error! E121: syntax error 
+(225,1): Error! E121: syntax error 
 (227,17): Error! E121: syntax error 
 (233,20): Error! E121: syntax error 
 (251,18): Error! E055: not enough parameters given for macro 'WASSERTEX' 
@@ -3085,69 +3009,69 @@ File: zip.y
 (128,2): Error! E080: last line 
 End of file 
 Warning! W014: no reference to symbol 'x' 
-  definition: 'int x90::<unique>::x' 
+  'int x90::<unique>::x' defined in: source\diag0259.c(116,13) 
 Warning! W014: no reference to symbol 'y' 
-  definition: 'int x90::<unique>::y' 
+  'int x90::<unique>::y' defined in: source\diag0259.c(117,20) 
 Warning! W014: no reference to symbol 'z' 
-  definition: 'int x90::<unique>::z' 
+  'int x90::<unique>::z' defined in: source\diag0259.c(118,20) 
 Warning! W014: no reference to symbol 'foo' 
-  definition: 'int x90::<unique>::foo( int, int )' 
+  'int x90::<unique>::foo( int, int )' defined in: source\diag0259.c(119,20) 
 Warning! W014: no reference to symbol 'ack' 
-  definition: 'int x90::<unique>::ack( void )' 
+  'int x90::<unique>::ack( void )' defined in: source\diag0259.c(120,13) 
 Warning! W014: no reference to symbol 'qq' 
-  definition: 'int x20::x::<unique>::qq' 
+  'int x20::x::<unique>::qq' defined in: source\diag0259.c(61,17) 
 File: source\diag0260.c 
 (7,1): Warning! W849: base class virtual function has not been overridden 
   virtual function is 'B1::foo' 
-  definition: 'void B1::foo( int, int )' 
+  'void B1::foo( int, int )' defined at: (3,18) 
   cannot be called with a 'D1 *' 
 (15,1): Warning! W849: base class virtual function has not been overridden 
   virtual function is 'B2::foo' 
-  definition: 'void B2::foo( int )' 
+  'void B2::foo( int )' defined at: (10,18) 
   cannot be called with a 'D2 *' 
 (24,1): Warning! W849: base class virtual function has not been overridden 
   virtual function is 'B3::foo' 
-  definition: 'void B3::foo( int )' 
+  'void B3::foo( int )' defined at: (18,18) 
   cannot be called with a 'D3 *' 
 (24,1): Warning! W849: base class virtual function has not been overridden 
   virtual function is 'B3::foo' 
-  definition: 'void B3::foo( int, int )' 
+  'void B3::foo( int, int )' defined at: (19,18) 
   cannot be called with a 'D3 *' 
 (33,1): Warning! W849: base class virtual function has not been overridden 
   virtual function is 'B4::foo' 
-  definition: 'void B4::foo( int )' 
+  'void B4::foo( int )' defined at: (27,18) 
   cannot be called with a 'D4 *' 
 (33,1): Warning! W849: base class virtual function has not been overridden 
   virtual function is 'B4::foo' 
-  definition: 'void B4::foo( int, int )' 
+  'void B4::foo( int, int )' defined at: (28,18) 
   cannot be called with a 'D4 *' 
 (40,1): Warning! W849: base class virtual function has not been overridden 
   virtual function is 'B1::foo' 
-  definition: 'void B1::foo( int, int )' 
+  'void B1::foo( int, int )' defined at: (3,18) 
   cannot be called with a 'D5 *' 
 (47,1): Warning! W849: base class virtual function has not been overridden 
   virtual function is 'B2::foo' 
-  definition: 'void B2::foo( int )' 
+  'void B2::foo( int )' defined at: (10,18) 
   cannot be called with a 'D6 *' 
 (55,1): Warning! W849: base class virtual function has not been overridden 
   virtual function is 'B3::foo' 
-  definition: 'void B3::foo( int )' 
+  'void B3::foo( int )' defined at: (18,18) 
   cannot be called with a 'D7 *' 
 (55,1): Warning! W849: base class virtual function has not been overridden 
   virtual function is 'B3::foo' 
-  definition: 'void B3::foo( int, int )' 
+  'void B3::foo( int, int )' defined at: (19,18) 
   cannot be called with a 'D7 *' 
 (63,1): Warning! W849: base class virtual function has not been overridden 
   virtual function is 'B4::foo' 
-  definition: 'void B4::foo( int )' 
+  'void B4::foo( int )' defined at: (27,18) 
   cannot be called with a 'D8 *' 
 (63,1): Warning! W849: base class virtual function has not been overridden 
   virtual function is 'B4::foo' 
-  definition: 'void B4::foo( int, int )' 
+  'void B4::foo( int, int )' defined at: (28,18) 
   cannot be called with a 'D8 *' 
 (72,1): Warning! W849: base class virtual function has not been overridden 
   virtual function is 'B9::foo' 
-  definition: 'void B9::foo( char * )' 
+  'void B9::foo( char * )' defined at: (66,18) 
   cannot be called with a 'D9 *' 
 (73,2): Error! E080: last line 
 File: source\diag0261.c 
@@ -3165,107 +3089,215 @@ File: source\diag0266.c
 (17,2): Error! E080: This should be the only error 
 File: source\diag0267.c 
 (18,8): Error! E473: function argument(s) do not match those in prototype 
-  definition: 'void goo( T )' 
+  'void goo( T )' defined at: (13,6) 
   cannot convert argument 1 defined at: (18,10) 
-  source conversion type is 'S (lvalue)' 
-  target conversion type is 'T' 
+  source conversion type is "S (lvalue)" 
+  target conversion type is "T" 
 (19,8): Error! E473: function argument(s) do not match those in prototype 
-  definition: 'void goo( T )' 
+  'void goo( T )' defined at: (13,6) 
   cannot convert argument 1 defined at: (19,11) 
-  source conversion type is 'S' 
-  target conversion type is 'T' 
+  source conversion type is "S" 
+  target conversion type is "T" 
 File: source\diag0268.c 
 (19,8): Error! E473: function argument(s) do not match those in prototype 
-  definition: 'void foo( T )' 
+  'void foo( T )' defined at: (14,6) 
   cannot convert argument 1 defined at: (19,9) 
-  source conversion type is 'S (lvalue)' 
-  target conversion type is 'T' 
+  source conversion type is "S (lvalue)" 
+  target conversion type is "T" 
 (21,8): Error! E473: function argument(s) do not match those in prototype 
-  definition: 'void foo( T )' 
+  'void foo( T )' defined at: (14,6) 
   cannot convert argument 1 defined at: (21,11) 
-  source conversion type is 'S' 
-  target conversion type is 'T' 
+  source conversion type is "S" 
+  target conversion type is "T" 
 File: source\diag0269.c 
 (7,15): Error! E853: conversion to common class type is impossible 
   left operand type is 'A1 (lvalue)' 
   right operand type is 'B1 (lvalue)' 
 (8,20): Error! E853: conversion to common class type is impossible 
-  'A1' defined at: (3,7) 
   left operand type is 'A1' 
   right operand type is 'B1' 
 (16,15): Error! E854: conversion to common class type is ambiguous 
   left operand type is 'A2 (lvalue)' 
   right operand type is 'D2 (lvalue)' 
 (17,22): Error! E801: cannot cast to ambiguous base class 
-  'A2' defined at: (10,7) 
-  source conversion type is 'D2 (lvalue)' 
-  target conversion type is 'A2 (lvalue)' 
+  source conversion type is "D2 (lvalue)" 
+  target conversion type is "A2 (lvalue)" 
 (23,15): Error! E855: conversion to common class type requires private access 
   left operand type is 'A3 (lvalue)' 
   right operand type is 'B3 (lvalue)' 
 (24,22): Error! E342: private base class accessed to convert cast expression 
-  'A3' defined at: (19,7) 
-  source conversion type is 'B3 (lvalue)' 
-  target conversion type is 'A3 (lvalue)' 
+  source conversion type is "B3 (lvalue)" 
+  target conversion type is "A3 (lvalue)" 
 (30,15): Error! E856: conversion to common class type requires protected access 
   left operand type is 'A4 (lvalue)' 
   right operand type is 'B4 (lvalue)' 
 (31,22): Error! E346: protected base class accessed to convert cast expression 
-  'A4' defined at: (26,7) 
-  source conversion type is 'B4 (lvalue)' 
-  target conversion type is 'A4 (lvalue)' 
+  source conversion type is "B4 (lvalue)" 
+  target conversion type is "A4 (lvalue)" 
 File: source\diag0270.c 
 (17,2): Error! E080: This should be only message 
 File: source\diag0271.c 
 (7,9): Warning! W128: initializer for variable 'y' cannot be bypassed 
-  definition: 'int y' in 'void foo( int )' 
+  'int y' in 'void foo( int )' defined at: (4,20) 
 (8,5): Warning! W014: no reference to symbol 'y' 
-  definition: 'int y' in 'void foo( int )' 
+  'int y' in 'void foo( int )' defined at: (4,20) 
 File: source\diag0272.c 
 (16,20): Error! E857: namespace lookup is ambiguous 
   ambiguous namespace symbol is 'i' 
-  definition: 'int x::x2::<unique>::i' 
+  'int x::x2::<unique>::i' defined at: (3,27) 
   ambiguous namespace symbol is 'i' 
-  definition: 'int x::x2::A::<unique>::i' 
+  'int x::x2::A::<unique>::i' defined at: (8,31) 
 (34,35): Error! E192: left expression pointer type cannot be incremented or decremented 
   left operand type is 'void ( void ) (lvalue)' 
   right operand type is 'char (lvalue)' 
 (37,24): Error! E042: symbol 'i' already defined 
-  definition: 'int x::x21::N::i' 
+  'int x::x21::N::i' defined at: (23,23) 
 (43,35): Error! E056: not expecting a return value 
 (46,26): Error! E385: attempt to overload function 'q' with a different return type 
-  definition: 'void x::x21::N::q( void )' 
+  'void x::x21::N::q( void )' defined at: (26,24) 
 (55,31): Error! E254: 'g' has not been declared as a member 
-  definition: 'void x::x49::Q::V::g( void )' 
+  'void x::x49::Q::V::g( void )' defined at: (55,27) 
 (65,34): Error! E861: qualified symbol cannot be defined in this scope 
 (65,46): Error! E229: function 'g' has already been defined 
-  definition: 'void x::x49::Q::V::g( void )' 
+  'void x::x49::Q::V::g( void )' defined at: (55,27) 
 (66,34): Error! E861: qualified symbol cannot be defined in this scope 
 (83,17): Error! E857: namespace lookup is ambiguous 
   ambiguous namespace symbol is 'i' 
-  definition: 'int x::x70::N::i' 
+  'int x::x70::N::i' defined at: (76,21) 
   ambiguous namespace symbol is 'i' 
-  definition: 'int x::x70::M::i' 
+  'int x::x70::M::i' defined at: (72,21) 
 (92,18): Error! E857: namespace lookup is ambiguous 
   ambiguous namespace symbol is 'X' 
-  definition: 'void x::x86::B::X( int )' 
+  'void x::x86::B::X( int )' defined at: (88,32) 
   ambiguous namespace symbol is 'X' 
-  definition: 'x::x86::A::X' 
+  'x::x86::A::X' defined at: (87,33) 
 (114,19): Error! E857: namespace lookup is ambiguous 
   ambiguous namespace symbol is 'd1' 
-  definition: 'int x::x86::d1' 
+  'int x::x86::d1' defined at: (100,17) 
   ambiguous namespace symbol is 'd1' 
-  definition: 'int x::x86::D::d1' 
+  'int x::x86::D::d1' defined at: (95,21) 
 (115,19): Error! E029: symbol 'd1' has not been declared 
 (119,18): Error! E227: overloaded function is ambiguous for arguments used in call 
   ambiguous function: void x::x86::E::f( int ) defined at: (104,22) 
   ambiguous function: void x::x86::D::f( int ) defined at: (110,22) 
 End of file 
 Warning! W014: no reference to symbol 'k' 
-  definition: 'int x::x21::<unique>::k' 
+  'int x::x21::<unique>::k' defined at: (29,27) 
 File: source\diag0273.c 
 (4,9): Warning! W894: unexpected character (64) in source file 
 (4,9): Error! E121: syntax error 
+(5,9): Warning! W894: unexpected character (64) in source file 
+(5,9): Error! E121: syntax error 
+(6,9): Warning! W894: unexpected character (64) in source file 
+(6,9): Error! E121: syntax error 
+(7,9): Warning! W894: unexpected character (64) in source file 
+(7,9): Error! E121: syntax error 
+(8,9): Warning! W894: unexpected character (64) in source file 
+(8,9): Error! E121: syntax error 
+(9,9): Warning! W894: unexpected character (64) in source file 
+(9,9): Error! E121: syntax error 
+(10,9): Warning! W894: unexpected character (64) in source file 
+(10,9): Error! E121: syntax error 
+(11,17): Warning! W894: unexpected character (64) in source file 
+(11,17): Error! E121: syntax error 
+(12,17): Warning! W894: unexpected character (64) in source file 
+(12,17): Error! E121: syntax error 
+(13,17): Warning! W894: unexpected character (64) in source file 
+(13,17): Error! E121: syntax error 
+(14,17): Warning! W894: unexpected character (64) in source file 
+(14,17): Error! E121: syntax error 
+(15,17): Warning! W894: unexpected character (64) in source file 
+(15,17): Error! E121: syntax error 
+(16,17): Warning! W894: unexpected character (64) in source file 
+(16,17): Error! E121: syntax error 
+(17,17): Warning! W894: unexpected character (64) in source file 
+(17,17): Error! E121: syntax error 
+(18,17): Warning! W894: unexpected character (64) in source file 
+(18,17): Error! E121: syntax error 
+(19,25): Warning! W894: unexpected character (64) in source file 
+(19,25): Error! E121: syntax error 
+(20,25): Warning! W894: unexpected character (64) in source file 
+(20,25): Error! E121: syntax error 
+(21,25): Warning! W894: unexpected character (64) in source file 
+(21,25): Error! E121: syntax error 
+(22,25): Warning! W894: unexpected character (64) in source file 
+(22,25): Error! E121: syntax error 
+(23,25): Warning! W894: unexpected character (64) in source file 
+(23,25): Error! E121: syntax error 
+(24,25): Warning! W894: unexpected character (64) in source file 
+(24,25): Error! E121: syntax error 
+(25,25): Warning! W894: unexpected character (64) in source file 
+(25,25): Error! E121: syntax error 
+(26,25): Warning! W894: unexpected character (64) in source file 
+(26,25): Error! E121: syntax error 
+(27,33): Warning! W894: unexpected character (64) in source file 
+(27,33): Error! E121: syntax error 
+(28,33): Warning! W894: unexpected character (64) in source file 
+(28,33): Error! E121: syntax error 
+(29,33): Warning! W894: unexpected character (64) in source file 
+(29,33): Error! E121: syntax error 
+(30,33): Warning! W894: unexpected character (64) in source file 
+(30,33): Error! E121: syntax error 
+(31,33): Warning! W894: unexpected character (64) in source file 
+(31,33): Error! E121: syntax error 
+(32,33): Warning! W894: unexpected character (64) in source file 
+(32,33): Error! E121: syntax error 
+(33,33): Warning! W894: unexpected character (64) in source file 
+(33,33): Error! E121: syntax error 
+(34,33): Warning! W894: unexpected character (64) in source file 
+(34,33): Error! E121: syntax error 
+(35,41): Warning! W894: unexpected character (64) in source file 
+(35,41): Error! E121: syntax error 
+(49,5): Warning! W011: all members are private 
+(54,5): Error! E148: access to private member 'Base::_private' is not allowed 
+  'int x46::Base::_private' defined at: (48,17) 
+(65,9): Warning! W128: initializer for variable 'y' cannot be bypassed 
+  'int y' in 'void x59( int )' defined at: (62,20) 
+(66,5): Warning! W014: no reference to symbol 'y' 
+  'int y' in 'void x59( int )' defined at: (62,20) 
+(112,13): Error! E857: namespace lookup is ambiguous 
+  ambiguous namespace symbol is 'x2' 
+  'int x68::n2::x2' defined at: (85,13) 
+  ambiguous namespace symbol is 'x2' 
+  'int x68::n3::x2' defined at: (92,13) 
+(113,13): Error! E857: namespace lookup is ambiguous 
+  ambiguous namespace symbol is 'x3' 
+  'int x68::n4::x3' defined at: (95,13) 
+  ambiguous namespace symbol is 'x3' 
+  'int x68::n5::x3' defined at: (98,13) 
+(135,12): Error! E857: namespace lookup is ambiguous 
+  ambiguous namespace symbol is 'var_var' 
+  'int x116::N::var_var' defined at: (124,13) 
+  ambiguous namespace symbol is 'var_var' 
+  'int x116::M::var_var' defined at: (118,13) 
+(136,14): Error! E356: type cannot be used in this context 
+(137,12): Error! E857: namespace lookup is ambiguous 
+  ambiguous namespace symbol is 'var_fn' 
+  'int x116::M::var_fn( void )' defined at: (120,13) 
+  ambiguous namespace symbol is 'var_fn' 
+  'int x116::N::var_fn' defined at: (126,13) 
+(142,22): Error! E121: syntax error 
+(143,18): Error! E030: left expression must be a function or a function pointer 
+(163,9): Error! E857: namespace lookup is ambiguous 
+  ambiguous namespace symbol is 'var_var' 
+  'int x147::N::var_var' defined at: (155,13) 
+  ambiguous namespace symbol is 'var_var' 
+  'int x147::M::var_var' defined at: (149,13) 
+(164,19): Error! E121: syntax error 
+(165,15): Error! E857: namespace lookup is ambiguous 
+  ambiguous namespace symbol is 'var_fn' 
+  'int x147::M::var_fn( void )' defined at: (151,13) 
+  ambiguous namespace symbol is 'var_fn' 
+  'int x147::N::var_fn' defined at: (157,13) 
+(183,26): Error! E861: qualified symbol cannot be defined in this scope 
+(186,23): Error! E861: qualified symbol cannot be defined in this scope 
+(205,28): Error! E241: 'class n' has not been declared 
+(205,28): Error! E833: name does not reference a namespace 
+(207,12): Error! E341: number of arguments for function 'foo' is incorrect 
+  'void x169::foo( void )' defined at: (204,10) 
+(208,12): Error! E341: number of arguments for function 'foo' is incorrect 
+  'void x169::foo( void )' defined at: (204,10) 
+(212,2): Error! E080: last line 
 File: source\diag0274.c 
 (2,6): Error! E080: system dependent test for 386 
 File: source\diag0275.c 
@@ -3273,8 +3305,8 @@ File: source\diag0275.c
 (6,2): Error! E080: last line 
 File: source\diag0278.c 
 (17,10): Error! E823: only a non-volatile const reference can be bound to temporary 
-  source conversion type is 'int * (lvalue)' 
-  target conversion type is 'int const * (lvalue)' 
+  source conversion type is "int * (lvalue)" 
+  target conversion type is "int const * (lvalue)" 
 File: source\diag0279.c 
 (7,13): Error! E660: cannot reference a bit field 
 File: source\diag0280.c 
@@ -3290,41 +3322,41 @@ File: source\diag0281.c
 (10,20): Warning! W594: construct resolved as a declaration/type 
 File: source\diag0282.c 
 (6,22): Error! E587: conversion of expression for default argument is impossible 
-  source conversion type is 'char' 
-  target conversion type is 'char *' 
+  source conversion type is "char" 
+  target conversion type is "char *" 
 (7,22): Error! E587: conversion of expression for default argument is impossible 
-  source conversion type is 'char' 
-  target conversion type is 'char *' 
+  source conversion type is "char" 
+  target conversion type is "char *" 
 (11,22): Error! E587: conversion of expression for default argument is impossible 
-  source conversion type is 'int' 
-  target conversion type is 'int *' 
+  source conversion type is "int" 
+  target conversion type is "int *" 
 (12,22): Error! E587: conversion of expression for default argument is impossible 
-  source conversion type is 'int' 
-  target conversion type is 'int *' 
+  source conversion type is "int" 
+  target conversion type is "int *" 
 (16,23): Error! E587: conversion of expression for default argument is impossible 
-  source conversion type is 'int' 
-  target conversion type is 'void *' 
+  source conversion type is "int" 
+  target conversion type is "void *" 
 (17,24): Error! E587: conversion of expression for default argument is impossible 
-  source conversion type is 'int' 
-  target conversion type is 'void *' 
+  source conversion type is "int" 
+  target conversion type is "void *" 
 (25,13): Error! E340: cannot construct object from argument(s) 
-  source conversion type is 'int' 
-  target conversion type is 'int *' 
+  source conversion type is "int" 
+  target conversion type is "int *" 
 (25,19): Error! E340: cannot construct object from argument(s) 
-  source conversion type is 'int' 
-  target conversion type is 'void *' 
+  source conversion type is "int" 
+  target conversion type is "void *" 
 (25,25): Error! E340: cannot construct object from argument(s) 
-  source conversion type is 'char' 
-  target conversion type is 'char *' 
+  source conversion type is "char" 
+  target conversion type is "char *" 
 (28,26): Error! E340: cannot construct object from argument(s) 
-  source conversion type is 'int' 
-  target conversion type is 'int *' 
+  source conversion type is "int" 
+  target conversion type is "int *" 
 (28,32): Error! E340: cannot construct object from argument(s) 
-  source conversion type is 'char' 
-  target conversion type is 'char *' 
+  source conversion type is "char" 
+  target conversion type is "char *" 
 File: source\diag0283.c 
 (5,22): Error! E811: cannot cast to a function type 
-  target conversion type is 'void * ( void )' 
+  target conversion type is "void * ( void )" 
 (12,10): Warning! W725: "<typeinfo> not included" 
 (12,9): Warning! W666: assuming unary 'operator &' not overloaded for type 'type_info' 
 (13,9): Warning! W666: assuming unary 'operator &' not overloaded for type 'type_info' 
@@ -3333,17 +3365,17 @@ File: source\diag0283.c
 (19,9): Warning! W666: assuming unary 'operator &' not overloaded for type 'type_info' 
 (20,9): Warning! W666: assuming unary 'operator &' not overloaded for type 'type_info' 
 (43,14): Warning! W807: base class for type in dynamic_cast is private (may fail) 
-  source conversion type is 'x26::D *' 
-  target conversion type is 'x26::B *' 
+  source conversion type is "x26::D *" 
+  target conversion type is "x26::B *" 
 (52,22): Error! E208: pointer to virtual base class converted to pointer to derived class 
-  source conversion type is 'x26::A *' 
-  target conversion type is 'x26::E *' 
+  source conversion type is "x26::A *" 
+  target conversion type is "x26::E *" 
 (60,9): Error! E876: 'typeid' class type must be defined 
-  source conversion type is 'x52::S' 
-  class 'x52::S' has not been defined 
+  source conversion type is "x52::S" 
+  'class x52::S' has not been defined 
 (61,9): Error! E876: 'typeid' class type must be defined 
-  source conversion type is 'x52::S' 
-  class 'x52::S' has not been defined 
+  source conversion type is "x52::S" 
+  'class x52::S' has not been defined 
 (83,6): Warning! W146: unexpected storage class specifier found 
 (86,14): Warning! W388: integral constant will be truncated during assignment or initialization 
 (87,14): Warning! W388: integral constant will be truncated during assignment or initialization 
@@ -3363,25 +3395,25 @@ File: source\diag0283.c
 (128,17): Warning! W388: integral constant will be truncated during assignment or initialization 
 (162,21): Error! E373: invalid modifier for auto variable 
 (163,9): Warning! W014: no reference to symbol 'tls_data' 
-  definition: 'int tls_data' in 'void x63::x156::func1( void )' 
+  'int tls_data' in 'void x63::x156::func1( void )' defined at: (162,21) 
 (165,28): Error! E373: invalid modifier for auto variable 
 (170,25): Warning! W146: unexpected storage class specifier found 
 (179,10): Error! E878: unexpected type modifier found 
 (183,9): Error! E118: nameless declaration is not allowed 
 (183,9): Error! E006: syntax error; probable cause: missing ';' 
-(205,6): Error! E121: syntax error 
-(206,2): Error! E121: syntax error 
+(205,5): Error! E121: syntax error 
+(206,1): Error! E121: syntax error 
 (217,5): Error! E400: cannot convert right expression for initialization 
-  source conversion type is 'void (* )( void )' 
-  target conversion type is 'void (* const * )( void )' 
+  source conversion type is "void (* )( void )" 
+  target conversion type is "void (* const * )( void )" 
 (220,17): Error! E879: invalid bit-field name 'a' 
 (221,17): Error! E879: invalid bit-field name 'a' 
 (221,17): Error! E042: symbol 'S::a' already defined 
-  definition: 'unsigned x207::S::a : 2' 
+  'unsigned x207::S::a : 2' defined at: (220,12) 
 (222,23): Error! E879: invalid bit-field name 'operator +' 
 (223,23): Error! E879: invalid bit-field name 'operator +' 
 (223,23): Error! E042: symbol 'S::operator +' already defined 
-  definition: 'unsigned x207::S::operator + : 1' 
+  'unsigned x207::S::operator + : 1' defined at: (222,9) 
 (232,13): Error! E660: cannot reference a bit field 
 (243,13): Warning! W389: integral value may be truncated during assignment or initialization 
 (245,16): Warning! W716: integral value may be truncated 
@@ -3390,20 +3422,20 @@ File: source\diag0283.c
 (250,17): Warning! W388: integral constant will be truncated during assignment or initialization 
 (254,2): Error! E080: last line 
 Compiling generated function: nfee::operator = 
-  definition: 'x63::x130::nfee & x63::x130::nfee::operator =( x63::x130::nfee const & )' 
+  'x63::x130::nfee & x63::x130::nfee::operator =( x63::x130::nfee const & )' defined at: (155,9) 
 Error! E563: cannot generate default 'nfee::operator =' because class contains either a constant or a reference member 
-  definition: 'x63::x130::nfee & x63::x130::nfee::operator =( x63::x130::nfee const & )' 
+  'x63::x130::nfee & x63::x130::nfee::operator =( x63::x130::nfee const & )' defined at: (155,9) 
 Compiling generated function: fee::operator = 
-  definition: 'x63::x130::fee & x63::x130::fee::operator =( x63::x130::fee const & )' 
+  'x63::x130::fee & x63::x130::fee::operator =( x63::x130::fee const & )' defined at: (144,9) 
 Error! E563: cannot generate default 'fee::operator =' because class contains either a constant or a reference member 
-  definition: 'x63::x130::fee & x63::x130::fee::operator =( x63::x130::fee const & )' 
+  'x63::x130::fee & x63::x130::fee::operator =( x63::x130::fee const & )' defined at: (144,9) 
 End of file 
 Warning! W014: no reference to symbol 'a' 
-  definition: 'void (* const x207::a[1])( void )' 
+  'void (* const x207::a[1])( void )' defined at: (213,10) 
 Warning! W014: no reference to symbol 'foo' 
-  definition: 'short x63::foo( short )' 
+  'short x63::foo( short )' defined at: (66,18) 
 Warning! W014: no reference to symbol 'foo' 
-  definition: 'char x63::foo( char )' 
+  'char x63::foo( char )' defined at: (72,17) 
 File: source\diag0284.c 
 (2,2): Error! E080: aa 
 (3,2): Error! E080: aa 
@@ -3419,11 +3451,11 @@ File: source\diag0285.c
 (5,2): Error! E080: last line 
 File: source\diag0286.c 
 (3,36): Error! E250: missing default argument for 'crap' 
-  definition: 'int crap( int [, int ])' 
+  'int crap( int [, int ])' defined at: (3,36) 
 (3,26): Error! E029: symbol 'i' has not been declared 
 End of file 
 Error! E043: static function 'crap' has not been defined 
-  definition: 'int crap( int, int )' 
+  'int crap( int, int )' defined at: (3,12) 
 File: source\diag0287.c 
 (1,9): Warning! W086: definition of macro 'MACRO_0287' not identical to previous definition 
   macro 'MACRO_0287' defined on the command line 
@@ -3449,30 +3481,30 @@ File: source\diag0292.c
 (52,16): Error! E318: unions cannot have members with user-defined assignment operators 
 (53,16): Error! E318: unions cannot have members with user-defined assignment operators 
 (54,6): Error! E313: anonymous struct/union contains a function member 'operator =' 
-  definition: 'x1::R::<union> & x1::R::operator =( x1::R::<union> & )' 
+  'x1::R::<union> & x1::R::operator =( x1::R::<union> & )' defined at: (54,5) 
 (61,13): Warning! W880: 7 padding byte(s) added 
 (69,14): Error! E415: type cannot be defined in return type 
   semicolon (';') may be missing after class/enum definition 
 (70,1): Error! E003: missing return value 
 (70,1): Warning! W726: no reference to formal parameter 'x' 
-  definition: 'int x' in 'x60::s x60::ack( int )' 
+  'int x' in 'x60::s x60::ack( int )' defined at: (69,10) 
 (94,6): Error! E536: cannot use '.*' nor '->*' with pointer to class member with zero value 
 (114,10): Error! E303: constructor is ambiguous for operands used 
-  source conversion type is 'void (x84::S::* )( void )' 
-  target conversion type is 'void (x84::S::* )( void )' 
+  source conversion type is "void (x84::S::* )( void )" 
+  target conversion type is "void (x84::S::* )( void )" 
 (124,11): Error! E186: attempt to modify a constant value 
 (170,16): Error! E090: invalid floating-point constant 
-(171,2): Error! E121: syntax error 
-(180,14): Error! E659: expression cannot have void type 
+(171,1): Error! E121: syntax error 
+(180,14): Error! E659: expression cannot have 'void' type 
   left operand type is 'int (lvalue)' 
   right operand type is 'void' 
-(180,28): Error! E659: expression cannot have void type 
+(180,28): Error! E659: expression cannot have 'void' type 
   left operand type is 'void' 
   right operand type is 'int (lvalue)' 
-(183,14): Error! E659: expression cannot have void type 
+(183,14): Error! E659: expression cannot have 'void' type 
   left operand type is 'int (lvalue)' 
   right operand type is 'void' 
-(183,28): Error! E659: expression cannot have void type 
+(183,28): Error! E659: expression cannot have 'void' type 
   left operand type is 'void' 
   right operand type is 'int (lvalue)' 
 (186,14): Error! E153: right operand is neither a pointer nor an arithmetic type 
@@ -3496,25 +3528,25 @@ File: source\diag0292.c
 (195,13): Error! E554: expression must have type arithmetic, pointer, or pointer to class member 
   expression type is 'void' 
 (196,1): Warning! W726: no reference to formal parameter 'i' 
-  definition: 'int i' in 'int x172::__u194( int )' 
+  'int i' in 'int x172::__u194( int )' defined at: (194,14) 
 (204,37): Error! E884: virtual function 'B::foo' has a different calling convention 
-  definition: 'void x198::x1::B::foo( int, int )' 
+  'void x198::x1::B::foo( int, int )' defined at: (201,22) 
 (220,29): Error! E884: virtual function 'B::foo' has a different calling convention 
-  definition: 'void cdecl x198::x7::B::foo( int, int )' 
+  'void cdecl x198::x7::B::foo( int, int )' defined at: (217,30) 
 (232,16): Error! E336: declaration specifiers are required to declare 'namesapce' 
 (232,11): Error! E498: syntax error before 'x232'; probable cause: incorrectly spelled type name 
 (248,33): Warning! W248: using default arguments would be overload ambiguous with 'A::f2' 
-  definition: 'void x244::A::f2( int )' 
+  'void x244::A::f2( int )' defined at: (247,10) 
 (256,19): Warning! W618: function will be overload ambiguous with 'A::f1' using default arguments 
-  definition: 'void x244::A::f1( int [, bool ])' 
+  'void x244::A::f1( int [, bool ])' defined at: (246,24) 
 (256,19): Error! E254: 'A::f1' has not been declared as a member 
-  definition: 'void x244::A::f1( int )' 
+  'void x244::A::f1( int )' defined at: (256,9) 
 (262,19): Error! E254: 'A::f0' has not been declared as a member 
-  definition: 'void x244::A::f0( int )' 
+  'void x244::A::f0( int )' defined at: (262,9) 
 (265,33): Warning! W248: using default arguments would be overload ambiguous with 'A::A' 
-  definition: 'x244::A::A( x244::A const & )' 
+  'x244::A::A( x244::A const & )' defined at: (254,1) 
 (268,33): Error! E247: cannot redefine default argument for 'A::f3' 
-  definition: 'void x244::A::f3( int [, bool ])' 
+  'void x244::A::f3( int [, bool ])' defined at: (249,24) 
 (276,10): Error! E400: cannot convert right expression for initialization 
 (283,19): Warning! W887: unary '-' of unsigned operand produces unsigned result 
 (293,14): Warning! W888: trigraph expansion produced ']' 
@@ -3527,16 +3559,16 @@ File: source\diag0292.c
 (322,46): Warning! W840: 'operator delete' cannot be declared in a namespace 
 (323,48): Warning! W840: 'operator new[]' cannot be declared in a namespace 
 (324,48): Warning! W840: 'operator delete[]' cannot be declared in a namespace 
-(333,27): Error! E411: static member function cannot be declared const or volatile 
+(333,27): Error! E411: static member function cannot be declared 'const' or 'volatile' 
 (338,1): Error! E329: modifiers of 'foo::bar' conflict with previous declaration 
-  definition: 'void x330::foo::bar( void )' 
+  'void x330::foo::bar( void )' defined at: (334,17) 
   current declaration has type 'void ( void ) const' 
 (345,18): Error! E121: syntax error 
-(349,2): Error! E121: syntax error 
+(349,1): Error! E121: syntax error 
 (352,2): Error! E080: last line 
 End of file 
 Warning! W014: no reference to symbol 'd' 
-  definition: 'double <unique>::d' 
+  'double <unique>::d' defined at: (170,12) 
 File: source\diag0293.c 
 (16,2): Error! E080: this should be only error 
 File: source\diag0294.c 
@@ -3545,15 +3577,15 @@ File: source\diag0295.c
 (10,51): Error! E232: user-defined conversion must be a function 
 (10,51): Error! E081: cannot define an array of functions 
 (10,51): Error! E683: zero size array 'WRampFile::operator WRampEntry * ' cannot be used in a class with base classes 
-  definition: 'WRampFile::operator []( long )' 
+  'WRampFile::operator []( long )' defined at: (10,9) 
 (10,51): Error! E336: declaration specifiers are required to declare 'conversion operator()' 
 (16,1): Warning! W656: define this function inside its class definition (may improve code quality) 
 (20,1): Warning! W656: define this function inside its class definition (may improve code quality) 
 (22,1): Error! E254: 'WRampFile::operator []' has not been declared as a member 
-  definition: 'WRampEntry * WRampFile::operator []( long )' 
+  'WRampEntry * WRampFile::operator []( long )' defined at: (21,26) 
 (24,1): Error! E003: missing return value 
 (24,1): Warning! W726: no reference to formal parameter 'entry' 
-  definition: 'long entry' in 'WRampEntry * WRampFile::operator []( long )' 
+  'long entry' in 'WRampEntry * WRampFile::operator []( long )' defined at: (21,48) 
 File: source\diag0296.c 
 (8,11): Warning! W892: promotion of unadorned char type to int 
 (8,11): Warning! W892: promotion of unadorned char type to int 
@@ -3579,22 +3611,22 @@ File: source\diag0298.c
 (3,11): Warning! W893: switch statement has no case labels 
 File: source\diag0299.c 
 (16,1): Warning! W726: no reference to formal parameter 'arg' 
-  definition: 'anEnum & arg' in 'void Test::foo( anEnum & )' 
+  'anEnum & arg' in 'void Test::foo( anEnum & )' defined at: (14,25) 
 (19,1): Warning! W726: no reference to formal parameter 'arg' 
-  definition: 'Enum2 & arg' in 'void Test::foo( Enum2 & )' 
+  'Enum2 & arg' in 'void Test::foo( Enum2 & )' defined at: (17,24) 
 (24,1): Error! E226: function 'Test::bar' is not distinct 
-  definition: 'void Test::bar( anEnum & )' 
+  'void Test::bar( anEnum & )' defined at: (9,10) 
 (24,1): Error! E254: 'Test::bar' has not been declared as a member 
-  definition: 'void Test::bar( anEnum )' 
+  'void Test::bar( anEnum )' defined at: (23,12) 
 (25,1): Warning! W726: no reference to formal parameter 'arg' 
-  definition: 'anEnum arg' in 'void Test::bar( anEnum )' 
+  'anEnum arg' in 'void Test::bar( anEnum )' defined at: (23,24) 
 (27,1): Error! E226: function 'Test::bar' is not distinct 
-  definition: 'void Test::bar( Enum2 & )' 
+  'void Test::bar( Enum2 & )' defined at: (10,10) 
 (27,1): Error! E254: 'Test::bar' has not been declared as a member 
-  definition: 'void Test::bar( Enum2 )' 
+  'void Test::bar( Enum2 )' defined at: (26,12) 
 (28,1): Warning! W726: no reference to formal parameter 'arg' 
-  definition: 'Enum2 arg' in 'void Test::bar( Enum2 )' 
+  'Enum2 arg' in 'void Test::bar( Enum2 )' defined at: (26,23) 
 (30,1): Error! E226: function 'Test::bar' is not distinct 
-  definition: 'void Test::bar( Enum2, Enum2 )' 
+  'void Test::bar( Enum2, Enum2 )' defined at: (11,10) 
 (30,1): Error! E254: 'Test::bar' has not been declared as a member 
-  definition: 'void Test::bar( Enum2 &, Enum2 & )' 
+  'void Test::bar( Enum2 &, Enum2 & )' defined at: (29,12) 

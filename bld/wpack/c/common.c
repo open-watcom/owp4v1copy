@@ -41,6 +41,8 @@
 #include "txttable.h"
 
 // external function declarations
+extern void *           MemAlloc( unsigned );
+extern void             MemFree( void * );
 extern void             QSeek( int, signed long, int );
 extern int              QRead( int, void *, int );
 extern int              QClose( int );
@@ -113,12 +115,12 @@ extern file_info ** ReadHeader( arccmd *cmd, arc_header *header )
     }
 
     QSeek( infile, header->info_offset, SEEK_SET );
-    block = WPMemAlloc( header->info_len );
+    block = MemAlloc( header->info_len );
     result = QRead( infile, block, header->info_len );
     if( result == -1 )  {
         PackExit();
     }
-    filedata = WPMemAlloc( sizeof( file_info * ) * (header->num_files + 1) );
+    filedata = MemAlloc( sizeof( file_info * ) * (header->num_files + 1) );
     currfile = filedata;
     numfiles = header->num_files;
     while( numfiles > 0 ) {
@@ -136,8 +138,8 @@ void    FreeHeader( file_info **filedata )
 /****************************************/
 
 {
-    WPMemFree( *filedata );
-    WPMemFree( filedata );
+    MemFree( *filedata );
+    MemFree( filedata );
 }
 
 typedef struct node {

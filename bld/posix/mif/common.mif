@@ -25,8 +25,6 @@
 #       some people don't have the linker variable in their makeinit
 #
 
-posix_autodepends = .AUTODEPEND
-
 !ifeq           targos  dosos2
 modelos=c
 !else ifeq      targos  dos
@@ -86,15 +84,15 @@ extra_c_flags = -fo=.obj -d__OS_$(targos)__ -dSTANDALONE_RX -i"$(posix_dir)/src/
 extra_c_flags = -fo="$(posix_dir)/misc/$(targos)/.$(model)bj" -d__OS_$(targos)__ -dSTANDALONE_RX -i"$(posix_dir)/h;$(inc_path)"
 !endif
 
-.c.obj: $(posix_autodepends)
+.c.obj:
         $(cc) $[@ $(cflags) $(extra_cflags)
-.c.cbj: $(posix_autodepends)
+.c.cbj:
         $(cc) $[@ $(cflags) $(extra_cflags)
-.c.lbj: $(posix_autodepends)
+.c.lbj:
         $(cc) $[@ $(cflags) $(extra_cflags)
-.c.fbj: $(posix_autodepends)
+.c.fbj:
         $(cc) $[@ $(cflags) $(extra_cflags)
-.c.sbj: $(posix_autodepends)
+.c.sbj:
         $(cc) $[@ $(cflags) $(extra_cflags)
-.c.mbj: $(posix_autodepends)
+.c.mbj:
         $(cc) $[@ $(cflags) $(extra_cflags)

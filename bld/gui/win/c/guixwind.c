@@ -398,7 +398,6 @@ void GUIShowWindowNA( gui_window *wnd )
 
 bool GUIWndInit( unsigned DClickInterval, gui_window_styles style )
 {
-    GUIMemOpen();
     Style = style;
     GUISysInit( 0 );
     _wpi_setdoubleclicktime( DClickInterval );

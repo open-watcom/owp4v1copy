@@ -37,11 +37,10 @@
 #include "standard.h"
 #include "cgprotos.h"
 
-
-static dbug_type DBTypeStruct();
-static dbug_type DBTypeEnum();
-static void InitDBType( void );
-
+dbug_type DBTypeStruct();
+dbug_type DBTypeEnum();
+dbug_type DBType();
+void InitDBType();
 //void RevTypeList();
 extern  int     CGenType( TYPEPTR );
 extern  int     PtrType( TYPEPTR typ, int flags );
@@ -49,7 +48,7 @@ extern  void    SymGet(SYMPTR,SYM_HANDLE);
 extern  SYMPTR  SymGetPtr(SYM_HANDLE);
 
 
-static void InitDBType( void )
+static void InitDBType()
 {
     TYPEPTR  typ;
     ScopeStruct = DBScope( "struct" );
@@ -128,7 +127,7 @@ static int SimpleTypedef( TYPEPTR typ )
     return( TRUE );
 }
 
-static void EmitADBType( TYPEPTR typ )
+void EmitADBType( TYPEPTR typ )
 {
     switch( typ->decl_type ) {
     case TYPE_STRUCT:
@@ -149,8 +148,6 @@ static void EmitADBType( TYPEPTR typ )
         }
 #endif
         DBType( typ );
-        break;
-    default:
         break;
     }
 }
@@ -204,7 +201,7 @@ static dbug_type DBIntegralType( int decl_type )
 
 static dbug_type DoBasedPtr( TYPEPTR typ, predefined_cg_types cg_pnt_mod )
 {
-    dbug_type       ret_val = 0;
+    dbug_type       ret_val;
     dbg_loc         dl;
     SYM_HANDLE      sym_handle;
     auto SYM_ENTRY  sym;
@@ -277,9 +274,6 @@ dbug_type DBType( TYPEPTR typ )
         break;
     case TYPE_DOUBLE:
         ret_val = DBScalar( "double", TY_DOUBLE );
-        break;
-    case TYPE_LONG_DOUBLE:
-        ret_val = DBScalar( "long double", TY_DOUBLE );
         break;
     case TYPE_ARRAY:
         size = TypeSize( typ );
@@ -428,6 +422,7 @@ static dbug_type DBTypeEnum( TYPEPTR typ )
     return( ret_val );
 }
 
+
 dbug_type FEDbgType( CGSYM_HANDLE cgsym_handle )
 {
     SYM_HANDLE          sym_handle = cgsym_handle;
@@ -447,4 +442,3 @@ dbug_type FEDbgRetType( CGSYM_HANDLE cgsym_handle )
         return( DBG_NIL_TYPE );
     }
 }
-

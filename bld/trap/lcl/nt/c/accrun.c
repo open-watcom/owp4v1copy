@@ -43,7 +43,7 @@ typedef enum {
     T_OFF,
     T_ON_CURR,
     T_ON_NEXT
-}       set_t;
+} set_t;
 
 /*
  * setATBit - control if we are tracing
@@ -54,7 +54,7 @@ static void setATBit( thread_info *ti, set_t set )
 
     con.ContextFlags = CONTEXT_CONTROL;
     MyGetThreadContext( ti, &con );
-#if defined( MD_x86 )
+#if defined(MD_x86)
     if( set != T_OFF ) {
         con.EFlags |= TRACE_BIT;
     } else {
@@ -62,27 +62,26 @@ static void setATBit( thread_info *ti, set_t set )
     }
     con.ContextFlags = CONTEXT_CONTROL;
     MySetThreadContext( ti, &con );
-#elif defined( MD_axp )
+#elif defined(MD_axp)
     {
         DWORD           bytes;
         brkpnt_type     brk = BRK_POINT;
 
         if( set != T_OFF ) {
             ti->brk_addr = AdjustIP( &con, 0 );
-            if( set == T_ON_NEXT )
-                ti->brk_addr += 4;
-            ReadProcessMemory( ProcessInfo.process_handle, ( LPVOID ) ti->brk_addr, ( LPVOID ) & ti->brk_opcode, sizeof( ti->brk_opcode ), ( LPDWORD ) & bytes );
+            if( set == T_ON_NEXT ) ti->brk_addr += 4;
+            ReadProcessMemory( ProcessInfo.process_handle, (LPVOID) ti->brk_addr, (LPVOID) &ti->brk_opcode, sizeof(ti->brk_opcode), (LPDWORD) &bytes );
             if( ti->brk_opcode != brk ) {
-                WriteProcessMemory( ProcessInfo.process_handle, ( LPVOID ) ti->brk_addr, ( LPVOID ) & brk, sizeof( brk ), ( LPDWORD ) & bytes );
+                WriteProcessMemory( ProcessInfo.process_handle, (LPVOID) ti->brk_addr, (LPVOID) &brk, sizeof(brk), (LPDWORD) &bytes );
             } else {
                 ti->brk_addr = 0;
             }
         } else if( ti->brk_addr != 0 ) {
-            WriteProcessMemory( ProcessInfo.process_handle, ( LPVOID ) ti->brk_addr, ( LPVOID ) & ti->brk_opcode, sizeof( ti->brk_opcode ), ( LPDWORD ) & bytes );
+            WriteProcessMemory( ProcessInfo.process_handle, (LPVOID) ti->brk_addr, (LPVOID) &ti->brk_opcode, sizeof(ti->brk_opcode), (LPDWORD) &bytes );
             ti->brk_addr = 0;
         }
     }
-#elif defined( MD_ppc )
+#elif defined(MD_ppc)
     if( set != T_OFF ) {
         con.Msr |= TRACE_BIT;
     } else {
@@ -93,7 +92,7 @@ static void setATBit( thread_info *ti, set_t set )
 #else
     #error setATBit not configured
 #endif
-}
+} /* setATBit */
 
 /*
  * setTBitsetTBitInAllThreads - turn the t-bit on or off in all threads.
@@ -125,7 +124,7 @@ static void setTBitInAllThreads( set_t set )
         }
         ti = ti->next;
     }
-}
+} /* setTBitInAllThreads */
 
 void InterruptProgram()
 {
@@ -170,7 +169,7 @@ static BOOL WINAPI consoleHandler( DWORD type )
     } else {
         return( FALSE );
     }
-}
+} /* consoleHandler */
 
 
 
@@ -183,18 +182,18 @@ static void setTBit( set_t set )
 
     ti = FindThread( DebugeeTid );
     setATBit( ti, set );
-}
+} /* setTBit */
 
 /*
  * handleInt3 - process an encountered break point
  */
-#if defined( MD_x86 )
+#if defined(MD_x86)
 static DWORD    BreakFixed;
 #endif
 
 static int handleInt3( DWORD state )
 {
-#if defined( MD_x86 )
+#if defined(MD_x86)
     thread_info *ti;
     CONTEXT     con;
 
@@ -202,8 +201,7 @@ static int handleInt3( DWORD state )
     if( ti == NULL ) {
         HANDLE  th;
 
-        if( pOpenThread == NULL )
-            return( 0 );
+        if( pOpenThread == NULL ) return( 0 );
         th = pOpenThread( DebugeeTid );
         AddThread( DebugeeTid, th, NULL );
         ti = FindThread( DebugeeTid );
@@ -216,13 +214,13 @@ static int handleInt3( DWORD state )
 
         MyGetThreadContext( ti, &con );
         con.Eip--;
-        if( !FindBreak( ( WORD ) con.SegCs, ( DWORD ) con.Eip, &ch ) ) {
+        if( !FindBreak( (WORD)con.SegCs, (DWORD)con.Eip, &ch ) ) {
             MySetThreadContext( ti, &con );
             return( COND_BREAK );
         }
         BreakFixed = con.Eip;
         proc = OpenProcess( PROCESS_ALL_ACCESS, FALSE, DebugeePid );
-        WriteProcessMemory( proc, ( LPVOID ) con.Eip, &ch, 1, &written );
+        WriteProcessMemory( proc, (LPVOID)con.Eip, &ch, 1, &written );
         con.EFlags |= TRACE_BIT;
         MySetThreadContext( ti, &con );
         CloseHandle( proc );
@@ -232,7 +230,7 @@ static int handleInt3( DWORD state )
         con.Eip--;
         MySetThreadContext( ti, &con );
     }
-#elif defined( MD_axp )
+#elif defined(MD_axp)
     thread_info *ti;
     CONTEXT     con;
 
@@ -241,13 +239,13 @@ static int handleInt3( DWORD state )
     if( ti->brk_addr != 0 && AdjustIP( &con, 0 ) == ti->brk_addr ) {
         return( handleInt1( state ) );
     }
-#elif defined( MD_ppc )
+#elif defined(MD_ppc)
     /* nothing special to do */
 #else
     #error handleInt3 not configured
 #endif
     return( COND_BREAK );
-}
+} /* handleInt3 */
 
 /*
  * handleInt1 - process a trace or watch point
@@ -264,7 +262,7 @@ static int handleInt1( DWORD state )
         return( COND_USER );
     }
 
-#if defined( MD_x86 )
+#if defined(MD_x86)
     if( state & STATE_WATCH_386 ) {
 
         if( GetDR6() & 0xf ) {
@@ -277,20 +275,18 @@ static int handleInt1( DWORD state )
             return( COND_WATCH );
         }
     } else {
-#if defined( MD_x86 )
+#if defined(MD_x86)
         HANDLE          proc;
         DWORD           written;
         brkpnt_type     ch;
         thread_info *ti;
 
-        if( BreakFixed == 0 )
-            return( COND_TRACE );
+        if( BreakFixed == 0 ) return( COND_TRACE );
         ti = FindThread( DebugeeTid );
-        if( !ti->is_foreign )
-            return( COND_TRACE );
+        if( !ti->is_foreign ) return( COND_TRACE );
         ch = BRK_POINT;
         proc = OpenProcess( PROCESS_ALL_ACCESS, FALSE, DebugeePid );
-        WriteProcessMemory( proc, ( LPVOID ) BreakFixed, &ch, 1, &written );
+        WriteProcessMemory( proc, (LPVOID)BreakFixed, &ch, 1, &written );
         CloseHandle( proc );
         BreakFixed = 0;
         return( 0 );
@@ -299,7 +295,7 @@ static int handleInt1( DWORD state )
 #endif
     }
     return( 0 );
-}
+} /* handleInt1 */
 
 #ifdef WOW
 /*
@@ -307,9 +303,9 @@ static int handleInt1( DWORD state )
  */
 static void getImageNote( IMAGE_NOTE *pin )
 {
-    ReadMem( FlatDS, ( DWORD ) DW3( DebugEvent.u.Exception.ExceptionRecord ),
-                         pin, sizeof( IMAGE_NOTE ) );
-}
+    ReadMem( FlatDS, (DWORD) DW3( DebugEvent.u.Exception.ExceptionRecord ),
+                        pin, sizeof( IMAGE_NOTE ) );
+} /* getImageNote */
 #endif
 
 /*
@@ -323,7 +319,7 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
     msg_list    **owner;
     msg_list    *new;
     int         cond;
-    char        *p, *q;
+    char        *p,*q;
     bool        rc;
 #ifdef WOW
     thread_info *ti;
@@ -351,9 +347,9 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
 
     for( ;; ) {
         PendingProgramInterrupt = FALSE;
-        if( ( state & STATE_WATCH ) && !( state & STATE_WATCH_386 ) ) {
+        if( (state & STATE_WATCH) && !(state & STATE_WATCH_386) ) {
             setTBit( T_OFF ); /* turn off previous T-bit */
-#if defined( MD_axp )
+#if defined(MD_axp)
             /*
                We're doing watch points on an Alpha. If we run into a
                control transfer instruction, return a spurious watchpoint
@@ -370,9 +366,9 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
                 con.ContextFlags = CONTEXT_CONTROL;
                 MyGetThreadContext( FindThread( DebugeeTid ), &con );
                 addr = AdjustIP( &con, 0 );
-                ReadProcessMemory( ProcessInfo.process_handle, ( LPVOID ) addr, ( LPVOID ) & opcode, sizeof( opcode ), ( LPDWORD ) & bytes );
+                ReadProcessMemory( ProcessInfo.process_handle, (LPVOID) addr, (LPVOID) &opcode, sizeof(opcode), (LPDWORD) &bytes );
                 opcode &= 0xfc000000;
-                if( opcode == ( 0x1a << 26 ) || opcode >= ( 0x30 << 26 ) ) {
+                if( opcode == (0x1a<<26) || opcode >= (0x30<<26) ) {
                     returnCode = COND_WATCH;
                     goto done;
                 }
@@ -428,7 +424,7 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
                      * started is the one that has finally started
                      */
                     if( !stricmp( imgnote.FileName, CurrEXEName ) &&
-                        ( state & STATE_WAIT_FOR_VDM_START ) ) {
+                        (state & STATE_WAIT_FOR_VDM_START) ) {
                         WOWAppInfo.tid = DebugeeTid;
                         WOWAppInfo.htask = imgnote.hTask;
                         WOWAppInfo.hmodule = imgnote.hModule;
@@ -493,7 +489,7 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
                  */
                 DebugeeTid = DebugEvent.dwThreadId;
                 if( DebugEvent.u.Exception.dwFirstChance &&
-                  !( state & STATE_EXPECTING_FAULT ) ) {
+                  ! (state & STATE_EXPECTING_FAULT ) ) {
                     char buff[20];
                     new = LocalAlloc( LMEM_FIXED, 80 );
                     new->next = NULL;
@@ -501,13 +497,12 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
                     itoa( code, buff, 16 );
                     strcat( new->msg, buff );
                     strcat( new->msg, " at 0x" );
-                    itoa( ( DWORD ) DebugEvent.u.Exception.ExceptionRecord.ExceptionAddress, buff, 16 );
+                    itoa( (DWORD)DebugEvent.u.Exception.ExceptionRecord.ExceptionAddress , buff, 16 );
                     strcat( new->msg, buff );
                     owner = &DebugString;
                     for( ;; ) {
-                        if( *owner == NULL )
-                            break;
-                        owner = &( *owner )->next;
+                        if( *owner == NULL ) break;
+                        owner = &(*owner)->next;
                     }
                     *owner = new;
                     continue_how = DBG_EXCEPTION_NOT_HANDLED;
@@ -556,21 +551,21 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
         case UNLOAD_DLL_DEBUG_EVENT:
             DelLib();
             if( !IsWOW && stop_on_module_load ) {
-                returnCode = COND_LIBRARIES;
+                returnCode =COND_LIBRARIES;
                 goto done;
             }
             break;
         case OUTPUT_DEBUG_STRING_EVENT:
-            if( state & ( STATE_IGNORE_DEBUG_OUT | STATE_WAIT_FOR_VDM_START ) ) {
+            if( state & (STATE_IGNORE_DEBUG_OUT|STATE_WAIT_FOR_VDM_START) ) {
                 break;
             }
             len = DebugEvent.u.DebugString.nDebugStringLength;
-            p = LocalAlloc( LMEM_FIXED, len + 1 );
-            ReadMem( FlatDS, ( DWORD ) DebugEvent.u.DebugString.lpDebugStringData,
+            p = LocalAlloc( LMEM_FIXED, len+1 );
+            ReadMem( FlatDS, (DWORD) DebugEvent.u.DebugString.lpDebugStringData,
                         p, len );
             p[len] = '\0';
             #define GOOFY_NT_MESSAGE "LDR: LdrpMapDll Relocating:"
-            if( strncmp( p, GOOFY_NT_MESSAGE, sizeof( GOOFY_NT_MESSAGE ) - 1 ) == 0 ) {
+            if( strncmp( p, GOOFY_NT_MESSAGE, sizeof( GOOFY_NT_MESSAGE )-1 ) == 0 ) {
                 LocalFree( p );
                 break;
             }
@@ -580,19 +575,16 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
                     new = LocalAlloc( LMEM_FIXED, sizeof( *new ) + q - p + 1 );
                     new->next = NULL;
                     memcpy( new->msg, p, q - p );
-                    new->msg[q - p] = '\0';
+                    new->msg[ q - p  ] = '\0';
                     owner = &DebugString;
                     for( ;; ) {
-                        if( *owner == NULL )
-                            break;
-                        owner = &( *owner )->next;
+                        if( *owner == NULL ) break;
+                        owner = &(*owner)->next;
                     }
                     *owner = new;
-                    if( q[0] == '\0' )
-                        break;
+                    if( q[0] == '\0' ) break;
                     ++q;
-                    if( q[0] == '\n' )
-                        ++q;
+                    if( q[0] == '\n' ) ++q;
                     p = q;
                 } else {
                     ++q;
@@ -606,13 +598,12 @@ int DebugExecute( DWORD state, int *tsc, bool stop_on_module_load )
             break;
         }
     }
-done:
-    ;
+done:;
     if( DebugString != NULL ) {
-        returnCode += COND_MESSAGE + ( BreakOnKernelMessage ? COND_STOP : 0 );
+        returnCode += COND_MESSAGE+(BreakOnKernelMessage?COND_STOP:0);
     }
     return( returnCode );
-}
+} /* DebugExecute */
 
 /*
  * runProg - run threads
@@ -645,7 +636,7 @@ static unsigned runProg( bool single_step )
         setTBit( T_OFF );
         if( WPCount != 0 ) {
             state |= STATE_WATCH;
-#if defined( MD_x86 )
+#if defined(MD_x86)
             if( SetDebugRegs() ) {
                 state |= STATE_WATCH_386;
             }
@@ -668,17 +659,17 @@ static unsigned runProg( bool single_step )
 
     ti = FindThread( DebugeeTid );
     MyGetThreadContext( ti, &con );
-#if defined( MD_x86 )
+#if defined(MD_x86)
     ret->program_counter.offset = con.Eip;
     ret->stack_pointer.offset = con.Esp;
     ret->program_counter.segment = con.SegCs;
     ret->stack_pointer.segment = con.SegSs;
-#elif defined( MD_axp )
-    ret->program_counter.offset = ( ( unsigned_64 * ) & con.Fir )->u._32[0];
-    ret->stack_pointer.offset = ( ( unsigned_64 * ) & con.IntSp )->u._32[0];
+#elif defined(MD_axp)
+    ret->program_counter.offset = ((unsigned_64 *)&con.Fir)->u._32[0];
+    ret->stack_pointer.offset = ((unsigned_64 *)&con.IntSp)->u._32[0];
     ret->program_counter.segment = 0;
     ret->stack_pointer.segment = 0;
-#elif defined( MD_ppc )
+#elif defined(MD_ppc)
     ret->program_counter.offset = con.Iar;
     ret->stack_pointer.offset = con.Gpr2;
     ret->program_counter.segment = 0;
@@ -691,7 +682,7 @@ static unsigned runProg( bool single_step )
     }
     ret->conditions |= COND_CONFIG | COND_THREAD;
     return( sizeof( *ret ) );
-}
+} /* runProg */
 
 unsigned ReqProg_go( void )
 {

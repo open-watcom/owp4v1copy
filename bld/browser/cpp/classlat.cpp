@@ -37,7 +37,7 @@
 #include "util.h"
 #include "mem.h"
 
-inline int myabs( int a ) { return (a < 0) ? -1 * a : a; }
+inline int abs( int a ) { return (a < 0) ? -1 * a : a; }
 
 DerivationPtr::DerivationPtr( ClassLattice * cls, dr_access acc,
                               dr_virtuality virt )
@@ -295,7 +295,7 @@ ClassLattice * ClassLattice::joinTo( dr_handle hdl, dr_virtuality virt,
     }
 
     if( ret != NULL ) {
-        if( myabs(ret->_level) < myabs(level) ) {
+        if( abs(ret->_level) < abs(level) ) {
             ret->adjustLevelsUp( level - ret->_level );
         }
     }

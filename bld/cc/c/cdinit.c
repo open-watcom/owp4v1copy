@@ -76,18 +76,11 @@ local unsigned long BitMask[] = {
 
 #define MAX_DATA_QUAD_SEGS (LARGEST_DATA_QUAD_INDEX/DATA_QUADS_PER_SEG + 1)
 
-static DATA_QUAD       *DataQuadSegs[MAX_DATA_QUAD_SEGS];/* segments for data quads*/
-static int             LastDataQuadSegIndex;
-static DATA_QUAD       *DataQuadPtr;
-static int             DataQuadIndex;
-static int             LastDataQuadIndex;
-
-local int CharArray( TYPEPTR typ );
-local int WCharArray( TYPEPTR typ );
-local void InitCharArray( TYPEPTR typ );
-local void InitWCharArray( TYPEPTR typ );
-local void StoreFloat( int float_type );
-local void StoreInt64( TYPEPTR typ );
+DATA_QUAD       *DataQuadSegs[MAX_DATA_QUAD_SEGS];/* segments for data quads*/
+int             LastDataQuadSegIndex;
+DATA_QUAD       *DataQuadPtr;
+int             DataQuadIndex;
+int             LastDataQuadIndex;
 
 void InitDataQuads()
 {
@@ -105,6 +98,10 @@ void FreeDataQuads()
         FEfree( DataQuadSegs[i] );
     }
     InitDataQuads();
+}
+
+void PageOutDataQuads()
+{
 }
 
 int StartDataQuadAccess()
@@ -231,12 +228,12 @@ typedef struct {
     bool                      addr_set;
     bool                      is_error;
     enum { IS_VALUE, IS_ADDR } state;
-} addrfold_info;
+}addrfold_info;
 
 local void AddrFold( TREEPTR tree, addrfold_info *info ){
 // Assume tree has been const folded
     SYM_ENTRY           sym;
-    long                offset = 0;
+    long                offset;
 
     switch( tree->op.opr ) {
     case OPR_PUSHINT:
@@ -463,7 +460,7 @@ local void StorePointer( TYPEPTR typ, TOKEN int_type )
     }
 }
 
-local void StoreInt64( TYPEPTR typ )
+local StoreInt64( TYPEPTR typ )
 {
     TREEPTR     tree;
     auto DATA_QUAD dq;
@@ -494,7 +491,7 @@ local FIELDPTR InitBitField( FIELDPTR field )
     unsigned long       bit_value;
     unsigned long       offset;
     int                 token;
-    TOKEN               int_type = T_NULL;
+    TOKEN               int_type;
 
     token = CurToken;
     if( CurToken == T_LEFT_BRACE ) NextToken();
@@ -669,9 +666,6 @@ void InitSymData( TYPEPTR typ, int level )
             InitArray( typ );
         }
         break;
-    case TYPE_FCOMPLEX:
-    case TYPE_DCOMPLEX:
-    case TYPE_LDCOMPLEX:
     case TYPE_STRUCT:
         if( token != T_LEFT_BRACE  &&  level == 0 ) {
             CErr1( ERR_NEED_BRACES );
@@ -710,34 +704,15 @@ void InitSymData( TYPEPTR typ, int level )
     case TYPE_DOUBLE:
         StoreFloat( T_DOUBLE );
         break;
-    case TYPE_LONG_DOUBLE:
-        //StoreFloat( T_LONG_DOUBLE );
-        StoreFloat( T_DOUBLE );
-        break;
     case TYPE_POINTER:
         StorePointer( typ, T_ID );
-        break;
-    case TYPE_BOOL:
-        StorePointer( typ, T_CHAR );
-        break;
-    case TYPE_FIMAGINARY:
-        StoreFloat( T_FLOAT );
-        break;
-    case TYPE_DIMAGINARY:
-        StoreFloat( T_DOUBLE );
-        break;
-    case TYPE_LDIMAGINARY:
-        //StoreFloat( T_LONG_DOUBLE );
-        StoreFloat( T_DOUBLE );
-        break;
-    default:
         break;
     }
     if( token == T_LEFT_BRACE ) {
         if( CurToken == T_COMMA ) {
             NextToken();
         }
-        if( CurToken != T_RIGHT_BRACE ) {
+        if( CurToken != T_RIGHT_BRACE ){
             CErr1( ERR_TOO_MANY_INITS );
         }
         while( CurToken != T_RIGHT_BRACE ){
@@ -765,7 +740,7 @@ local int CharArray( TYPEPTR typ )
 
 local int WCharArray( TYPEPTR typ )
 {
-    if( CurToken == T_STRING ) {
+    if( CurToken == T_STRING  &&  CompFlags.wide_char_string ) {
         while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
         if( typ->decl_type == TYPE_SHORT || typ->decl_type == TYPE_USHORT ) {
             return( 1 );
@@ -773,6 +748,7 @@ local int WCharArray( TYPEPTR typ )
     }
     return( 0 );
 }
+
 
 local void InitCharArray( TYPEPTR typ )
 {
@@ -785,8 +761,6 @@ local void InitCharArray( TYPEPTR typ )
 /*              char  name[4] = "abcd";  */
 
     str_lit = GetLiteral();
-    if( CompFlags.wide_char_string )
-        CErr1( ERR_TYPE_MISMATCH );
     len = str_lit->length;
     if( typ->u.array->dimension == 0 )  typ->u.array->dimension = len;
     size = typ->u.array->dimension;
@@ -806,7 +780,7 @@ local void InitCharArray( TYPEPTR typ )
     CompFlags.non_zero_data = 1;
  }
 
-//
+
 local void InitWCharArray( TYPEPTR typ )
 {
     unsigned            len;
@@ -821,11 +795,9 @@ local void InitWCharArray( TYPEPTR typ )
     dq.flags = Q_DATA;
 
 /*      This function handles the initialization of statements like:  */
-/*              wchar_t  name[5] = L"abcd";  */
+/*              wchar_t  name[4] = "abcd";  */
 
     str_lit = GetLiteral();
-    if( !CompFlags.wide_char_string )
-        CErr1( ERR_TYPE_MISMATCH );
     len = str_lit->length / sizeof(unsigned short);
     if( typ->u.array->dimension == 0 ) {
         typ->u.array->dimension = len;
@@ -849,11 +821,11 @@ local void InitWCharArray( TYPEPTR typ )
     if( i < size ) {
         ZeroBytes( (size - i) * sizeof(unsigned short) );
     }
-    FreeLiteral( str_lit );
+    CMemFree( str_lit );
  }
 
 
-local void StoreFloat( int float_type )
+local StoreFloat( int float_type )
 {
     TREEPTR     tree;
     auto DATA_QUAD dq;
@@ -1035,8 +1007,6 @@ static int SimpleUnion( TYPEPTR typ ){
     case TYPE_FIELD:
     case TYPE_UFIELD:
         return( 0 );        // give up on these
-    default:
-        break;
     }
     return( 1 );
 }
@@ -1051,7 +1021,6 @@ static int SimpleStruct( TYPEPTR typ )
     for( field = typ->u.tag->u.field_list; field; ) {
         typ = field->field_type;
         while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
-
         switch( typ->decl_type ) {
         case TYPE_UNION:
             if( SimpleUnion( typ ) ){
@@ -1062,8 +1031,6 @@ static int SimpleStruct( TYPEPTR typ )
         case TYPE_FIELD:
         case TYPE_UFIELD:
             return( 0 );        // give up on these
-        default:
-            break;
         }
         field = field->next_field;
     }
@@ -1098,11 +1065,6 @@ local void InitArrayVar( SYMPTR sym, SYM_HANDLE sym_handle, TYPEPTR typ)
     case TYPE_FLOAT:
     case TYPE_DOUBLE:
     case TYPE_POINTER:
-    case TYPE_LONG_DOUBLE:
-    case TYPE_FIMAGINARY:
-    case TYPE_DIMAGINARY:
-    case TYPE_LDIMAGINARY:
-    case TYPE_BOOL:
         NextToken();                    // skip over T_LEFT_BRACE
         if( CharArray( typ->object ) ) {
             sym2_handle = MakeNewSym( &sym2, 'X', typ, SC_STATIC );
@@ -1168,9 +1130,6 @@ local void InitArrayVar( SYMPTR sym, SYM_HANDLE sym_handle, TYPEPTR typ)
         }
         MustRecog( T_RIGHT_BRACE );
         break;
-    case TYPE_FCOMPLEX:
-    case TYPE_DCOMPLEX:
-    case TYPE_LDCOMPLEX:
     case TYPE_STRUCT:
     case TYPE_UNION:
         if( SimpleStruct( typ2 ) ) {

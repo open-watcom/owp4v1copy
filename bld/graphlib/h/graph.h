@@ -138,6 +138,18 @@ short _WCI86FAR _CGRAPH      _getvisualpage( void );
 #define _MAXRESMODE     (-3)    /* graphics mode with highest res. */
 #define _MAXCOLORMODE   (-2)    /* graphics mode with most colours */
 #define _DEFAULTMODE    (-1)    /* restore screen to original mode */
+#if defined( _NEC_PC )
+#define _98TEXT80        3       /* 80 column text, 8 color         */
+#define _98RESSCOLOR     81      /* 640 x 400, 8 color (superimpose)*/
+#define _98RESS8COLOR    84      /* 640 x 400, 8 of 4096 (superimpose)*/
+#define _98RESS16COLOR   85      /* 640 x 400, 16 of 4096 (superimpose)*/
+#define _98HIRESS16COLOR 93      /* 1120 x 750, 16 of 4096 color (super) */
+#define _98RESCOLOR      97      /* 640 x 400, 8 color              */
+#define _98RES8COLOR     100     /* 640 x 400, 8 of 4096 color      */
+#define _98RES16COLOR    101     /* 640 x 400, 16 of 4096 color     */
+#define _98HIRES16COLOR  109     /* 1120 x 750, 16 of 4096 color    */
+#endif //defined( _NEC_PC )
+#if !defined( _NEC_PC )
 #define _TEXTBW40       0       /* 40 x 25 text, 16 grey           */
 #define _TEXTC40        1       /* 40 x 25 text, 16/8 color        */
 #define _TEXTBW80       2       /* 80 x 25 text, 16 grey           */
@@ -164,10 +176,19 @@ short _WCI86FAR _CGRAPH      _getvisualpage( void );
 // This mode is untested
 #define _VRES32KCOLOR   0x110   /* 640 x 480, 32768 color          */
 #endif
+#endif //!defined( _NEC_PC )
 
 #define _NODISPLAY      (-1)    /* no display device            */
 #define _UNKNOWN        0       /* unknown adapter/monitor type */
 
+#if defined( _NEC_PC )
+#define _98CGA          0x2000  /* Color Graphics Adapter (digital)   */
+#define _98EGA          0x4000  /* Enhanced Graphics Adapter (analog) */
+
+#define _98ANALOG       0x0100  /* Analog color monitor               */
+#define _98DIGITAL      0x0200  /* Digital color monitor              */
+#endif //defined( _NEC_PC )
+#if !defined( _NEC_PC )
 #define _MDPA           1       /* monochrome display/printer adapter */
 #define _CGA            2       /* colour/graphics monitor adapter    */
 #define _HERCULES       3       /* Hercules monochrome adapter card   */
@@ -182,6 +203,7 @@ short _WCI86FAR _CGRAPH      _getvisualpage( void );
 #define _ENHANCED       3       /* enhanced color     */
 #define _ANALOGMONO     5       /* analog monochrome  */
 #define _ANALOGCOLOR    6       /* analog color       */
+#endif //!defined( _NEC_PC )
 
 #define _GROK                   0      /* no error                     */
 #define _GRERROR                (-1)   /* graphics error               */
@@ -206,6 +228,34 @@ short _WCI86FAR _CGRAPH      _selectpalette( short );
 
 /* Colour Values for _setbkcolor and _remappalette */
 
+#if defined( _NEC_PC )
+#define _98BLACK        0x000000L      /* colour values for analog display */
+#define _98BLUE         0x0F0000L
+#define _98GREEN        0x000F00L
+#define _98CYAN         0x0F0F00L
+#define _98RED          0x00000FL
+#define _98MAGENTA      0x0F000FL
+#define _98YELLOW       0x000F0FL
+#define _98WHITE        0x0F0F0FL
+#define _98GRAY         0x080808L
+#define _98DARKBLUE     0x080000L
+#define _98DARKGREEN    0x000800L
+#define _98DARKCYAN     0x080800L
+#define _98DARKRED      0x000008L
+#define _98DARKMAGENTA  0x080008L
+#define _98DARKYELLOW   0x000808L
+#define _98DARKWHITE    0x0C0C0CL
+
+#define _98BLACK_D      0x000000L      /* colour values for digital display */
+#define _98BLUE_D       0x000001L
+#define _98GREEN_D      0x000002L
+#define _98CYAN_D       0x000003L
+#define _98RED_D        0x000004L
+#define _98MAGENTA_D    0x000005L
+#define _98YELLOW_D     0x000006L
+#define _98WHITE_D      0x000007L
+#endif //defined( _NEC_PC )
+#if !defined( _NEC_PC )
 #define _BLACK          0x000000L
 #define _BLUE           0x2a0000L
 #define _GREEN          0x002a00L
@@ -223,6 +273,7 @@ short _WCI86FAR _CGRAPH      _selectpalette( short );
 #define _YELLOW         0x153f3fL
 #define _BRIGHTWHITE    0x3f3f3fL
 #define _LIGHTYELLOW    _YELLOW
+#endif //!defined( _NEC_PC )
 
 /* Shape and Curve Drawing Functions */
 
@@ -315,6 +366,10 @@ short _WCI86FAR _CGRAPH      _setwindow( short, double, double, double, double )
 #define _GCLEARSCREEN   0
 #define _GVIEWPORT      1
 #define _GWINDOW        2
+#if defined( _NEC_PC )
+#define _GCLEARGRAPH    3
+#define _GCLEARTEXT     4
+#endif //defined( _NEC_PC )
 
 #define _GBORDER        2
 #define _GFILLINTERIOR  3
@@ -387,6 +442,15 @@ long _WCI86FAR _CGRAPH       _imagesize( short, short, short, short );
 long _WCI86FAR _CGRAPH       _imagesize_w( double, double, double, double );
 long _WCI86FAR _CGRAPH       _imagesize_wxy( struct _wxycoord _WCI86FAR *,
                                         struct _wxycoord _WCI86FAR * );
+#if defined( _NEC_PC )
+
+/* KANJI Font Functions */
+
+short _WCI86FAR _CGRAPH      _getkanji( unsigned short, unsigned char _WCI86FAR * );
+short _WCI86FAR _CGRAPH      _setkanji( unsigned short, unsigned char _WCI86FAR * );
+short _WCI86FAR _CGRAPH      _kanjisize( short );
+#endif //defined( _NEC_PC )
+
 /* Font Manipulation Functions */
 
 short _WCI86FAR _CGRAPH      _registerfonts( char _WCI86FAR * );

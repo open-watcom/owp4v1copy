@@ -49,6 +49,7 @@
 #endif
 
 #include "watcom.h"
+#include "trmemcvr.h"
 #include "orl.h"
 #include "ar.h"
 #include "lib.h"
@@ -92,3 +93,4 @@
 #include "exepe.h"
 #include "exenov.h"
 #include "main.h"
+#include "idedll.h"

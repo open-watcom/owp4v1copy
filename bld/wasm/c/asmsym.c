@@ -48,32 +48,37 @@
 #include "myassert.h"
 #include "directiv.h"
 
-#include "hash.h"
-struct asm_sym *sym_table[ HASH_TABLE_SIZE ] = { NULL };
-/* initialize the whole table to null pointers */
-
 #else
 
 struct asm_sym  *AsmSymHead;
 
-static unsigned short CvtTable[] = {
-    T_BYTE,   // INT1
-    T_WORD,   // INT2
-    T_DWORD,  // INT4
-    T_FWORD,  // INT6
-    T_QWORD,  // INT8
-    T_DWORD,  // FLOAT4
-    T_QWORD,  // FLOAT8
-    T_TBYTE,  // FLOAT10
-    T_NEAR,   // NEAR2
-    T_NEAR,   // NEAR4
-    T_FAR,    // FAR2
-    T_FAR,    // FAR4
-};
-
 #endif
 
 extern void     AsmError( int );
+
+
+
+static unsigned short CvtTable[] = {
+    MT_BYTE,
+    MT_WORD,
+    MT_DWORD,
+    MT_DWORD,    /* should be T_PWORD, T_FWORD */
+    MT_DWORD,
+    MT_QWORD,
+    MT_TBYTE,
+    MT_NEAR,
+    MT_NEAR,
+    MT_FAR,
+    MT_FAR,
+};
+
+#ifdef _WASM_
+
+#include "hash.h"
+struct asm_sym *sym_table[ HASH_TABLE_SIZE ] = { NULL };
+/* initialize the whole table to null pointers */
+
+#endif
 
 char *InitAsmSym( struct asm_sym *sym, char *name )
 /************************************************/
@@ -83,7 +88,7 @@ char *InitAsmSym( struct asm_sym *sym, char *name )
         strcpy( sym->name, name );
         sym->next = NULL;
         sym->state = SYM_UNDEFINED;
-        sym->mem_type = EMPTY;
+        sym->mem_type = MT_EMPTY;
         sym->fixup = NULL;
 #ifdef _WASM_
         sym->grpidx = 0;
@@ -132,12 +137,12 @@ struct asm_sym **AsmFind( char *name )
 /* find a symbol in the symbol table, return NULL if not found */
 {
     struct asm_sym      **sym;
+    #ifdef _WASM_
+        sym = &sym_table[ hashpjw( name ) ];
+    #else
+        sym = &AsmSymHead;
+    #endif
 
-#ifdef _WASM_
-    sym = &sym_table[ hashpjw( name ) ];
-#else
-    sym = &AsmSymHead;
-#endif
     for( ; *sym; sym = &((*sym)->next) ) {
         if( stricmp( name, (*sym)->name ) == 0 ) return( sym );
     }
@@ -149,9 +154,7 @@ struct asm_sym *AsmLookup( char *name )
 {
     struct asm_sym      **sym_ptr;
     struct asm_sym      *sym;
-#ifdef _WASM_
     char                is_current_loc = FALSE;
-#endif
 
     if( strlen( name ) > MAX_ID_LEN ) {
         AsmError( LABEL_TOO_LONG );
@@ -168,32 +171,31 @@ struct asm_sym *AsmLookup( char *name )
         }
     }
 #endif
-    if( *sym_ptr != NULL )
-        return( *sym_ptr );
+    if( *sym_ptr != NULL ) return( *sym_ptr );
 
     sym = AllocASym( name );
     if( sym != NULL ) {
         sym->next = *sym_ptr;
         *sym_ptr = sym;
 
-#ifdef _WASM_
+#ifndef _WASM_
+        sym->addr = Address;
+#else
         if( is_current_loc ) {
             GetSymInfo( sym );
             sym->state = SYM_INTERNAL;
-            sym->mem_type = T_NEAR;
+            sym->mem_type = MT_NEAR;
+        }
+#endif
+        if( is_current_loc ) {
             return( sym );
         }
-        sym->state = SYM_UNDEFINED;
-        sym->mem_type = EMPTY;
-#else
-        sym->addr = Address;
         sym->state = AsmQueryExternal( name );
         if( sym->state == SYM_UNDEFINED ) {
-            sym->mem_type = EMPTY;
+            sym->mem_type = MT_EMPTY;
         } else {
             sym->mem_type = CvtTable[ AsmQueryType( name ) ];
         }
-#endif
     } else {
         AsmError( NO_MEMORY );
     }
@@ -261,16 +263,13 @@ struct asm_sym *AsmAdd( struct asm_sym *sym )
     sym->offset = 0;
     sym->public = FALSE;
     sym->mangler = NULL;
-    sym->state = SYM_UNDEFINED;
-    sym->mem_type = EMPTY;
-#else
+#endif
     sym->state = AsmQueryExternal( sym->name );
     if( sym->state == SYM_UNDEFINED ) {
-        sym->mem_type = EMPTY;
+        sym->mem_type = MT_EMPTY;
     } else {
         sym->mem_type = CvtTable[ AsmQueryType( sym->name ) ];
     }
-#endif
     return( sym );
 }
 

@@ -1,12 +1,9 @@
-///////////////////////////////////////////////////////////////////////////
-// FILE: stdiobuf.h (Standard I/O streams)
+//
+//  stdiobuf.h  Standard I/O streams
 //
 :keep CPP_HDR
 :include crwat.sp
 //
-// Description: This header contains a streambuf class that uses the C
-//              standard library as its input/output "device".
-///////////////////////////////////////////////////////////////////////////
 #ifndef _STDIOBUF_H_INCLUDED
 #define _STDIOBUF_H_INCLUDED
 :include readonly.sp

@@ -32,30 +32,25 @@
 #include "variety.h"
 #include "widechar.h"
 #include "watcom.h"
+#include "clibi64.h"
 #include <stdio.h>
-#ifdef __WIDECHAR__
-    #include <wctype.h>
-#else
-    #include <ctype.h>    
-#endif
+#include <ctype.h>
 #include <stdlib.h>
 
-_WCRTLINK long long int __F_NAME(atoll,_wtoll)( const CHAR_TYPE *p )  /* convert ASCII string to long long int */
-{
-    unsigned long long int  value = 0;
-    CHAR_TYPE               sign;
+_WCRTLINK void __F_NAME(__clib_atoll,__clib_watoll)( const CHAR_TYPE *p, unsigned __int64 *pv )  /* convert ASCII string to long integer */
+    {
+        unsigned __int64 value = 0;
+        CHAR_TYPE    sign;
 
-    __ptr_check( p, 0 );
+        __ptr_check( p, 0 );
 
-    while( __F_NAME(isspace,iswspace)( *p ) )
-        ++p;
-    sign = *p;
-    if( sign == '+' || sign == '-' ) ++p;
-    while( __F_NAME(isdigit,iswdigit)(*p) ) {
-        value = value * 10 + *p - '0';
-        ++p;
+        while( __F_NAME(isspace,iswspace)( *p ) ) ++p;
+        sign = *p;
+        if( sign == '+' || sign == '-' ) ++p;
+        while( __F_NAME(isdigit,iswdigit)(*p) ) {
+            value = value * 10 + *p - '0';
+            ++p;
+        }
+        if( sign == '-' ) value = -value;
+        *pv = value;
     }
-    if( sign == '-' )
-        value = -value;
-    return( value );
-}

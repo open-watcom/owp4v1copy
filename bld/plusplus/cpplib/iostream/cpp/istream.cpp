@@ -29,6 +29,36 @@
 *
 ****************************************************************************/
 
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %     Copyright (C) 1992, by WATCOM International Inc.  All rights    %
+// %     reserved.  No part of this software may be reproduced or        %
+// %     used in any form or by any means - graphic, electronic or       %
+// %     mechanical, including photocopying, recording, taping or        %
+// %     information storage and retrieval systems - except with the     %
+// %     written permission of WATCOM International Inc.                 %
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+//  Modified    By              Reason
+//  ========    ==              ======
+//  92/02/04    Steve McDowell  Initial implementation.
+//  92/09/08    Greg Bentz      Cleanup.
+//  93/03/15    Greg Bentz      fix uninitialized state variables.
+//  93/07/29    Greg Bentz      - change istream::op>>(streambuf &) to
+//                                istream::op>>( streambuf * )
+//                              - fix istream::getline() to not set failbit
+//                                if no input stored in user buffer
+//  93/09/15    Greg Bentz      change getline() back to set ios::failbit
+//                              if not input stored in user buffer
+//  93/10/08    Greg Bentz      change getline() to set ios::failbit if
+//                              len-1 chars stored in user buffer (i.e. no
+//                              delim seen)
+//  93/10/21    Greg Bentz      change get() and getline() to not set failbit
+//                              if the delim character has been seen
+//  94/03/22    Greg Bentz      set ios::eofbit if first char read is eof
+//  95/02/06    Greg Bentz      as above for read() function too
+//  95/05/31    A.F.Scian       made sure gcount() returns 0 if fail/eof
+
 #include "variety.h"
 #include <ctype.h>
 #include <limits.h>
@@ -43,14 +73,15 @@
 
 // **************************** ISTREAM **************************************
 
-// Used by getnumber. Multiplication by 8 is done using a left-shift of
-// three bits. Multiplication by 16 is done using a left-shift of four
-// bits. Multiplication by 10 is done using a left-shift of three bits
-// plus a left-shift of one bit. This table is used to determine if a
-// shift will overflow. The number of bits to shift is used to index
-// into the table. The table entry is anded with the unsigned long
-// number and if any bits are on, then the shift will overflow.
-
+// Used by getnumber.
+// Multiplication by  8 is done using a left-shift of three bits.
+// Multiplication by 16 is done using a left-shift of four bits.
+// Multiplication by 10 is done using a left-shift of three bits plus
+// a left-shift of one bit.
+// This table is used to determine if a shift will overflow. The number of
+// bits to shift is used to index into the table. The table entry is anded
+// with the unsigned long number and if any bits are on, then the shift
+// will overflow.
 static unsigned long const overFlowMasks[] = {
     0x00000000,
     0x80000000,
@@ -59,26 +90,24 @@ static unsigned long const overFlowMasks[] = {
     0xF0000000
 };
 
-namespace std {
-
-  istream::istream() {
-    /******************/
-    // Protected constructor, making an istream without a streambuf attached.
+istream::istream() {
+/******************/
+// Protected constructor, making an istream without a streambuf attached.
 
     __last_read_length = 0;
     setf( ios::skipws );
-  }
+}
 
-  istream::istream( streambuf *sb ) : ios( sb ) {
-    /*********************************************/
-    // Public constructor, making an istream with a streambuf attached.
+istream::istream( streambuf *sb ) : ios( sb ) {
+/*********************************************/
+// Public constructor, making an istream with a streambuf attached.
 
     setf( ios::skipws );
-  }
+}
 
-  istream::istream( istream const &istrm ) {
-    /****************************************/
-    // Public copy constructor, make an istream with the istrm streambuf attached.
+istream::istream( istream const &istrm ) {
+/****************************************/
+// Public copy constructor, make an istream with the istrm streambuf attached.
 
     streambuf *sb;
 
@@ -86,30 +115,30 @@ namespace std {
     sb = istrm.rdbuf();
     ios::init( sb );
     setf( ios::skipws );
-  }
+}
 
 
-  istream::~istream() {
-    /*******************/
-    // Destructor.
-  }
+istream::~istream() {
+/*******************/
+// Destructor.
+}
 
-  istream &istream::operator = ( streambuf *sb ) {
-    /**********************************************/
-    // *this is an istream that has been initialized, and may or may not
-    // have a streambuf associated with it. Associate the streambuf "sb"
-    // with the stream.
+istream &istream::operator = ( streambuf *sb ) {
+/**********************************************/
+// *this is an istream that has been initialized, and may or may not
+// have a streambuf associated with it.
+// Associate the streambuf "sb" with the stream.
 
     __lock_it( __i_lock );
     ios::init( sb );
     return( *this );
-  }
+}
 
-  istream &istream::operator = ( istream const &istrm ) {
-    /*****************************************************/
-    // *this is an istream that has been initialized, and may or may not
-    // have a streambuf associated with it. Associate the streambuf
-    // found in "istrm" with the stream.
+istream &istream::operator = ( istream const &istrm ) {
+/*****************************************************/
+// *this is an istream that has been initialized, and may or may not
+// have a streambuf associated with it.
+// Associate the streambuf found in "istrm" with the stream.
 
     streambuf *sb;
 
@@ -118,11 +147,11 @@ namespace std {
     sb = istrm.rdbuf();
     ios::init( sb );
     return( *this );
-  }
+}
 
-  int istream::ipfx( int noskipws ) {
-    /*********************************/
-    // Input prefix.
+int istream::ipfx( int noskipws ) {
+/*********************************/
+// Input prefix.
 
     __lock_it( __i_lock );
     if( !good() ) {
@@ -146,14 +175,14 @@ namespace std {
 
     // Ensure the error state is still 0:
     return( good() );
-  }
+}
 
-  istream &istream::operator >> ( char *buf ) {
-    /*******************************************/
-    // Input a string of non-whitespace characters into the buffer. If
-    // the width is set, read a maximum of that many characters, less
-    // one for the NULLCHAR on the end. Otherwise, keep reading until
-    // EOF or a whitespace character.
+istream &istream::operator >> ( char *buf ) {
+/*******************************************/
+// Input a string of non-whitespace characters into the buffer.
+// If the width is set, read a maximum of that many characters, less one
+// for the NULLCHAR on the end.
+// Otherwise, keep reading until EOF or a whitespace character.
 
     int c;
     int offset;
@@ -193,11 +222,11 @@ namespace std {
     width( 0 );
     buf[offset] = '\0';
     return( *this );
-  }
+}
 
-  istream &istream::operator >> ( char &c ) {
-    /*****************************************/
-    // Input a character into "c".
+istream &istream::operator >> ( char &c ) {
+/*****************************************/
+// Input a character into "c".
 
     int ch;
 
@@ -213,10 +242,10 @@ namespace std {
         isfx();
     }
     return( *this );
-  }
+}
 
-  istream &istream::operator >> ( signed short &s ) {
-    /*************************************************/
+istream &istream::operator >> ( signed short &s ) {
+/*************************************************/
 
     signed long number;
 
@@ -238,10 +267,10 @@ namespace std {
         }
     }
     return( *this );
-  }
+}
 
-  istream &istream::operator >> ( unsigned short &s ) {
-    /***************************************************/
+istream &istream::operator >> ( unsigned short &s ) {
+/***************************************************/
 
     unsigned long number;
 
@@ -255,26 +284,24 @@ namespace std {
         }
     }
     return( *this );
-  }
-  
-  istream &istream::operator >> ( signed int &i ) {
-    /***********************************************/
+}
+
+istream &istream::operator >> ( signed int &i ) {
+/***********************************************/
 #if UINT_MAX == USHRT_MAX
     return( *this >> (signed short &) i );
 #else
     return( *this >> (signed long &) i );
 #endif
-  }
+}
 
-  istream &istream::operator >> ( unsigned int &i ) {
-    /*************************************************/
+istream &istream::operator >> ( unsigned int &i ) {
+/*************************************************/
 #if UINT_MAX == USHRT_MAX
     return( *this >> (unsigned short &) i );
 #else
     return( *this >> (unsigned long &) i );
 #endif
-  }
-
 }
 
 static ios::iostate getsign( streambuf *sb, char &sign, int &base ) {
@@ -408,10 +435,8 @@ static ios::iostate getnumber( streambuf *sb, unsigned long &number,
     return( state );
 }
 
-namespace std {
-
-  istream &istream::operator >> ( signed long &l ) {
-    /************************************************/
+istream &istream::operator >> ( signed long &l ) {
+/************************************************/
 
     char          sign;
     int           base;
@@ -466,10 +491,10 @@ namespace std {
     }
     __WATCOM_ios::setstate( this, state );
     return( *this );
-  }
+}
 
-  istream &istream::operator >> ( unsigned long &l ) {
-    /**************************************************/
+istream &istream::operator >> ( unsigned long &l ) {
+/**************************************************/
 
     unsigned long  number;
     ios::iostate   state;
@@ -515,11 +540,11 @@ namespace std {
     }
     __WATCOM_ios::setstate( this, state );
     return( *this );
-  }
+}
 
-  istream &istream::operator >> ( streambuf *tgt_sb ) {
-    /***************************************************/
-    // Read all characters from the istream and write them to the streambuf.
+istream &istream::operator >> ( streambuf *tgt_sb ) {
+/***************************************************/
+// Read all characters from the istream and write them to the streambuf.
 
     char buf[DEFAULT_MAINBUF_SIZE];
     int  len;
@@ -537,33 +562,33 @@ namespace std {
         isfx();
     }
     return( *this );
-  }
+}
 
-  istream &istream::operator >> ( ios &(*f)( ios & ) ) {
-    /****************************************************/
-    // Handles things like
-    //     cin >> ws
-    // where "ws" is a function taking an ios reference and returning the
-    // same. Essentially, this just does an indirect call to the function.
+istream &istream::operator >> ( ios &(*f)( ios & ) ) {
+/****************************************************/
+// Handles things like
+//     cin >> ws
+// where "ws" is a function taking an ios reference and returning the
+// same. Essentially, this just does an indirect call to the function.
 
     f( *this );
     return( *this );
-  }
+}
 
-  istream &istream::operator >> ( istream &(*f)( istream & ) ) {
-    /************************************************************/
-    // Handles things like
-    //     cin >> ws
-    // where "ws" is a function taking an ios reference and returning the
-    // same. Essentially, this just does an indirect call to the function.
+istream &istream::operator >> ( istream &(*f)( istream & ) ) {
+/************************************************************/
+// Handles things like
+//     cin >> ws
+// where "ws" is a function taking an ios reference and returning the
+// same. Essentially, this just does an indirect call to the function.
 
     return( f( *this ) );
-  }
+}
 
-  int istream::get() {
-    /******************/
-    // Extract a single character from the input stream.
-    // Don't set ios::failbit.
+int istream::get() {
+/******************/
+// Extract a single character from the input stream.
+// Don't set ios::failbit.
 
     int          c = EOF;
 
@@ -581,11 +606,11 @@ namespace std {
         __last_read_length = 0;
     }
     return( c );
-  }
+}
 
-  istream &istream::get( char &ch ) {
-    /*********************************/
-    // Extract a single character and store it in "ch".
+istream &istream::get( char &ch ) {
+/*********************************/
+// Extract a single character and store it in "ch".
 
     int c;
 
@@ -605,8 +630,6 @@ namespace std {
         __last_read_length = 0;
     }
     return( *this );
-  }
-
 }
 
 static ios::iostate getaline( istream &istrm, char *buf, int len,
@@ -678,10 +701,8 @@ static ios::iostate getaline( istream &istrm, char *buf, int len,
     return( state );
 }
 
-namespace std {
-
-  istream &istream::get( char *buf, int len, char delim ) {
-  /*****************************************************/
+istream &istream::get( char *buf, int len, char delim ) {
+/*****************************************************/
 
     ios::iostate state;
 
@@ -689,10 +710,10 @@ namespace std {
     state = getaline( *this, buf, len, delim, TRUE, __last_read_length );
     __WATCOM_ios::setstate( this, state );
     return( *this );
-  }
+}
 
-  istream &istream::getline( char *buf, int len, char delim ) {
-    /*********************************************************/
+istream &istream::getline( char *buf, int len, char delim ) {
+/*********************************************************/
 
     ios::iostate state;
 
@@ -700,11 +721,11 @@ namespace std {
     state = getaline( *this, buf, len, delim, FALSE, __last_read_length );
     __WATCOM_ios::setstate( this, state );
     return( *this );
-  }
+}
 
-  istream &istream::read( char *buf, int len ) {
-    /********************************************/
-    // Read up to "len" characters from the stream and store them in buffer "buf".
+istream &istream::read( char *buf, int len ) {
+/********************************************/
+// Read up to "len" characters from the stream and store them in buffer "buf".
 
     int offset;
 
@@ -724,12 +745,12 @@ namespace std {
     }
     __last_read_length = offset;
     return( *this );
-  }
+}
 
-  istream &istream::get( streambuf &tgt_sb, char delim ) {
-    /******************************************************/
-    // Extract characters from our streambuf and store them into the
-    // specified streambuf.
+istream &istream::get( streambuf &tgt_sb, char delim ) {
+/******************************************************/
+// Extract characters from our streambuf and store them into the
+// specified streambuf.
 
     streambuf *src_sb;
     int        c;
@@ -762,15 +783,15 @@ namespace std {
     }
     isfx();
     return( *this );
-  }
+}
 
-  istream &istream::ignore( int n, int delim ) {
-    /********************************************/
-    // Ignore "n" characters, or until the specified delimiter is found,
-    // whichever comes first. If "delim" is EOF, don't look for a
-    // delimiter. As an extension, specifying a negative "n" value will
-    // not count ignored characters and will continue ignoring until the
-    // delimiter is found.
+istream &istream::ignore( int n, int delim ) {
+/********************************************/
+// Ignore "n" characters, or until the specified delimiter is found,
+// whichever comes first. If "delim" is EOF, don't look for a delimiter.
+// As an extension, specifying a negative "n" value will not count
+// ignored characters and will continue ignoring until the delimiter
+// is found.
 
     int c;
 
@@ -790,11 +811,11 @@ namespace std {
     }
     isfx();
     return( *this );
-  }
+}
 
-  int istream::peek() {
-    /*******************/
-    // Return the next character without extracting it from the stream.
+int istream::peek() {
+/*******************/
+// Return the next character without extracting it from the stream.
 
     int c;
 
@@ -809,11 +830,11 @@ namespace std {
         c = EOF;
     }
     return( c );
-  }
+}
 
-  istream &istream::putback( char c ) {
-    /***********************************/
-    // Put character in "c" back into the stream.
+istream &istream::putback( char c ) {
+/***********************************/
+// Put character in "c" back into the stream.
 
     __lock_it( __i_lock );
     if( fail() ) {
@@ -823,16 +844,16 @@ namespace std {
         setf( ios::failbit );
     }
     return( *this );
-  }
+}
 
-  int istream::sync() {
-    /*******************/
-    // Not inline because it is virtual
+int istream::sync() {
+/*******************/
+// Not inline because it is virtual
     return( rdbuf()->sync() );
-  }
+}
 
-  istream &istream::seekg( streampos pos ) {
-    /****************************************/
+istream &istream::seekg( streampos pos ) {
+/****************************************/
 
     __lock_it( __i_lock );
     if( ipfx( 1 ) ) {
@@ -842,10 +863,10 @@ namespace std {
         isfx();
     }
     return( *this );
-  }
+}
 
-  istream &istream::seekg( streamoff offset, ios::seekdir dir ) {
-    /*************************************************************/
+istream &istream::seekg( streamoff offset, ios::seekdir dir ) {
+/*************************************************************/
 
     __lock_it( __i_lock );
     if( ipfx( 1 ) ) {
@@ -855,27 +876,25 @@ namespace std {
         isfx();
     }
     return( *this );
-  }
+}
 
-  streampos istream::tellg() {
-    /**************************/
+streampos istream::tellg() {
+/**************************/
 
     __lock_it( __i_lock );
     if( fail() ) {
         return( EOF );
     }
     return( rdbuf()->seekoff( 0, ios::cur, ios::in ) );
-  }
+}
 
-  void istream::eatwhite() {
-    /************************/
-    // Skip any leading whitespace characters.
+void istream::eatwhite() {
+/************************/
+// Skip any leading whitespace characters.
 
     __lock_it( __i_lock );
     if( ipfx( 1 ) ) {
         ws( *this );
         isfx();
     }
-  }
-
 }

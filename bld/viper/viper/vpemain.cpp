@@ -524,7 +524,7 @@ WPopupMenu* VpeMain::makeMenu( MenuPop* popup, VToolBar* tools )
     return( pop );
 }
 
-MenuPop VpeMain::popup0a = { "Set Sou&rce Control", (cbp)&VpeMain::onPopup0a, menu0a, 7 };
+MenuPop VpeMain::popup0a = { "Set Sou&rce Control", (cbp)&VpeMain::onPopup0a, menu0a, 6 };
 MenuData VpeMain::menu0a[] = {
     "MKS &SI", (cbm)&VpeMain::setMksSi, "Use MKS Source Integrity revision control", 0, NULL,
     "MKS &RCS", (cbm)&VpeMain::setMksRcs, "Use MKS RCS revision control", 0, NULL,
@@ -532,7 +532,6 @@ MenuData VpeMain::menu0a[] = {
     "&Other", (cbm)&VpeMain::setOtherRcs, "Use another revision control system", 0, NULL,
     "&None", (cbm)&VpeMain::setNoRcs, "Disable revision control functions", 0, NULL,
     "Object &Cycle", (cbm)&VpeMain::setObjectCycle, "Use Object Cycle", 0, NULL,
-    "P&erforce", (cbm)&VpeMain::setPerforce, "Use Perforce", 0, NULL,
 };
 
 MenuPop VpeMain::popup0 = { "&File", (cbp)&VpeMain::onPopup0, menu0, 16 };
@@ -2139,10 +2138,6 @@ void VpeMain::setMksSi( WMenuItem *) {
 
 void VpeMain::setObjectCycle( WMenuItem *) {
     setRcsScheme( O_CYCLE );
-}
-
-void VpeMain::setPerforce( WMenuItem *) {
-    setRcsScheme( PERFORCE );
 }
 
 void VpeMain::setPvcs( WMenuItem *) {

@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  DOS protected mode debugging test app (16-bit executable).
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -39,8 +40,11 @@
 #include <io.h>
 #include "tinyio.h"
 
+#define _PUSH_BP        0x55
+#define _POP_BP         0x5d
 #define RM_STACK_SIZE   ( 8 * 1024 )
 #define MAX_STATE_SIZE  100
+#define BUFF_SIZE       10
 #define NB_VECTORS      256
 #define SAVE_STATE      0
 #define RESTORE_STATE   1
@@ -117,18 +121,18 @@ extern void far *SwitchStacks( void far *, void far ** );
 
 extern void DoInt66( unsigned, unsigned );
 #pragma aux DoInt66 =   \
-    "xor  bx, bx "      \
-    "push bp     "      \
-    "int  0x66   "      \
-    "pop  bp     "      \
+    _XOR_BX_BX          \
+    _PUSH_BP            \
+    _INT 0x66           \
+    _POP_BP             \
     parm [ax] [dx]      \
     modify exact [ax bx cx dx si di];
 
 extern void DPMIFini( void );
 #pragma aux DPMIFini aborts = \
-    "mov  ah, 0x4c"     \
-    "mov  al, 0   "     \
-    "int  0x21    "     \
+    _MOV_AH 0x4c        \
+    _MOV_AL 0x00        \
+    _INT_21             \
     modify exact [ax];
 
 
@@ -141,8 +145,7 @@ static void save_vects( void far **rmvtable, void far **pmvtable )
         rmvtable[ intnb ] = (void far *)TinyDPMIGetRealVect( intnb );
         pmvtable[ intnb ] = TinyDPMIGetProtectVect( intnb );
     }
-    fhandle = open( "vtable", O_BINARY | O_CREAT | O_TRUNC | O_WRONLY,
-                    S_IREAD | S_IWRITE );
+    fhandle = open( "vtable", O_BINARY | O_CREAT | O_TRUNC | O_WRONLY );
     if( fhandle <= 0 ) {
         _debug16( "error: fhandle <= 0, fhandle=", fhandle );
     } else {
@@ -246,7 +249,6 @@ extern void main( void )
         if( !getaddrs() ) {
             _debug( "could not get raw switch and state save addresses" );
         } else {
-
             segread( &PMRegs );
             hook_vects( MK_FP( PMRegs.cs, FP_OFF( &PM66Handler ) ),
                         &rm_66_handler, &OldPMHandler, &OldRMHandler );

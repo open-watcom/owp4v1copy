@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of far free() and _ffree().
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -73,5 +74,6 @@ _WCRTLINK void _ffree( void _WCFAR *stg )
             __LargestSizeB4Rover = p->largest_blk;
         }
     }
+    __fheap_clean = 0;
     _ReleaseFHeap();
 }

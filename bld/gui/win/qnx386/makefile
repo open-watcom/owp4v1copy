@@ -1,9 +1,6 @@
-#pmake: cpu_386 os_qnx
+#pmake: all cpu_386 os_qnx
 host_CPU = 386
 host_OS = qnx
-
-memory_model_386 = s
-model = s
 
 ##########################################################################
 ##########################################################################
@@ -19,13 +16,20 @@ model = s
 
 os = qnx
 build_target = qnx
-
 sysinclude = $(willows_dir)/h;$(watcom_dir)/qnx_h
+compiler = comp386
+model = s
+wlib_opt = -p=256
+wpi_lib=wpi_qnx
 
+proj_name = gui
+.mif: $(mif_path)
+!include cproj.mif
+
+type=win
 sys_dep_dir = $(sdk_dir)/misc;$(wpi_dir)/h
-
 plat_inc +=$(watcom_h)
-
+extra_objs = wpimem.obj
 sysobjs = guixscal.obj &
           guidrect.obj &
           guimvctr.obj &
@@ -112,11 +116,24 @@ sysobjs = guixscal.obj &
           wptoolbr.obj &
           guiclen.obj &
 
-sysobjs += windlg.obj
+
+!ifneq os pm
+sysobjs +=             &
+          windlg.obj
+!else
+sysobjs +=             &
+          os2mem.obj   &
+          os2dlg.obj
+!endif
+
+!ifeq os w386
+sysobjs +=             &
+          ctl3d32.obj
+!endif
 
 !include ../guiwin.mif
 
-extra_c_flags += -DWILLOWS -DTWIN32 -fpi
+cflags += -DWILLOWS -DTWIN32 -fpi
 
 #rm_wpi :  $(wpi_dir)/h/wpicomp.h .SYMBOLIC
 #        @-rm $(sysobjs)

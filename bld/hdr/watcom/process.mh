@@ -80,10 +80,10 @@ _WCRTLINK extern int execlpe( const char *__file, const char *__arg0, ... );
 _WCRTLINK extern int execvpe( const char *__file, const char *const __argv[],
                               const char *const __envp[] );
 
-:segment QNX | LINUX
-#if defined(__386__)
 :: extra 'register' is used to prevent C++ compiler from entering a parser
 :: disambiguation stage (i.e., it has a use, so don't delete it) AFS
+:segment QNX | LINUX
+#if defined(__386__)
 _WCRTLINK extern int  _beginthread( register void (*__start_address)(void *),
    void *__stack_bottom, unsigned __stack_size, void *__arglist );
 #pragma intrinsic(_beginthread);
@@ -132,27 +132,9 @@ _WCRTLINK extern int   cwait( int *__status, int __process_id,
 _WCRTLINK extern int   _cwait( int *__status, int __process_id,
                              int __action_code );
 :endsegment
-
-:: These functions from the standard library need to be in namspace std
-:: in C++ to avoid conflicts on using declarations if standard headers
-:: are also included.
-#ifdef __cplusplus
-namespace std {
-#endif
 _WCRTLINK extern void  abort( void );
 _WCRTLINK extern void  exit( int __status );
-_WCRTLINK extern char *getenv( const char *__name );
-_WCRTLINK extern int   system( const char *__cmd );
-#ifdef __cplusplus
-}
-using std::abort;
-using std::exit;
-using std::getenv;
-using std::system;
-#endif
-
 _WCRTLINK extern void  _exit( int __status );
-
 :segment QNX | LINUX
 #if !(defined(SYSV) || defined(BSD) || defined(XENIX) || defined(_UNIX_H_INCLUDED))
 :endsegment
@@ -162,6 +144,7 @@ _WCRTLINK extern char *_cmdname( char *__name );
 :segment QNX | LINUX
 #endif
 :endsegment
+_WCRTLINK extern char *getenv( const char *__name );
 _WCRTLINK extern int   putenv( const char *__string );
 _WCRTLINK extern int   spawnl( int __mode, const char *__path,
                               const char *__arg0, ... );
@@ -181,6 +164,7 @@ _WCRTLINK extern int   spawnvp( int __mode, const char *__path,
 _WCRTLINK extern int   spawnvpe( int __mode, const char *__path,
                                 const char * const *__argv,
                                 const char * const *__envp );
+_WCRTLINK extern int   system( const char *__cmd );
 
 _WCRTLINK extern wchar_t *  _wgetenv( const wchar_t *__name );
 _WCRTLINK extern int        _wsetenv( const wchar_t *__name,

@@ -71,7 +71,9 @@ int             ScrnLines=25;
 volatile int    BrkPending;
 bool WndUseGMouse = FALSE;
 
+#if !defined(_NEC_PC)
 static display_configuration    HWDisplay;
+#endif
 
 void InitHookFunc()
 {
@@ -102,6 +104,19 @@ int SwapScrnLines()
  */
 unsigned ConfigScreen( void )
 {
+#if defined( _NEC_PC )
+    unsigned char               mode;
+
+    FlipMech = FLIP_SWAP;
+    mode = BIOSGetMode();
+
+    if( mode & NEC_20_LINES ) {
+        ScrnLines = 20;
+    } else if( mode & NEC_31_LINES ) {
+        ScrnLines = 31;
+    }
+    //win_uisetcolor( M_VGA );
+#else
     GetDispConfig();
     if( !(FlipMech == FLIP_TWO && HWDisplay.alt == DISP_MONOCHROME )) {
         FlipMech = FLIP_SWAP;
@@ -122,6 +137,7 @@ unsigned ConfigScreen( void )
     } else {
         win_uisetmono();
     }
+#endif
     return( 0 );
 }
 
@@ -211,6 +227,7 @@ void InitScreen( void )
     if( _IsOn( SW_USE_MOUSE ) ) GUIInitMouse( 1 );
 }
 
+#if !defined(_NEC_PC)
 static bool ChkCntrlr( int port )
 {
     char curr;
@@ -292,6 +309,7 @@ static void GetDispConfig( void )
     /* only thing left is a single CGA display */
     HWDisplay.active = DISP_CGA;
 }
+#endif
 
 /*****************************************************************************\
  *                                                                           *

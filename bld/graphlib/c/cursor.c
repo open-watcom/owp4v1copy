@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Cursor management routines.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -76,11 +77,16 @@ void _CursorOff( void )
         if( IsTextMode ) {
             TextCursor( 0 );
         } else {
+        #if defined( _NEC_PC )
+            GraphCursor();
+            cursor = cursor;
+        #else
             // if cursor is not where we think it is (printf), assume it is off
             cursor = *(short far *)_BIOS_data( CURSOR_POSN + 2 * _CurrActivePage );
             if( cursor == ( ( _TextPos.row << 8 ) + _TextPos.col ) ) {
                 GraphCursor();
             }
+        #endif
         }
 #endif
         _GrCursor = 0;      // cursor is off
@@ -97,10 +103,20 @@ static void TextCursor( short turning_on )
     short               cursor;
 
     cursor = _CursorShape;
+#if defined( _NEC_PC )
+    if( turning_on ) {
+        if( ( _CursorShape & 0x2000 ) == 0 ) {
+            NECVideoInt( _BIOS_CURSOR_START, 0, 0, 0 ); // display cursor
+        }
+    } else {
+        NECVideoInt( _BIOS_CURSOR_STOP, 0, 0, 0 ); // don't display cursor
+    }
+#else
     if( !turning_on ) {
         cursor |= 0x2000;       // set blank cursor bit
     }
     VideoInt( _BIOS_CURSOR_SIZE, 0, cursor, 0 );
+#endif
 }
 
 #endif

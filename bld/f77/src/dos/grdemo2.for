@@ -41,7 +41,11 @@ c$noextensions
         ! This program draws bar and pie graphs for the
         ! data specified above.
 
+*$ifdef _NEC_98
+        include 'graph98.fi'
+*$else
         include 'graph.fi'
+*$endif
 
         record /videoconfig/ VC
         common VC
@@ -68,7 +72,11 @@ c$noextensions
 
         ! Select a new colour set
 
+*$ifdef _NEC_98
+        include 'graph98.fi'
+*$else
         include 'graph.fi'
+*$endif
 
         integer AxisColour, TitleColour, BorderColour
         common /colours/ AxisColour, TitleColour, BorderColour
@@ -78,16 +86,30 @@ c$noextensions
 
         integer i
         integer newcolrs(0:15)
+*$ifdef _NEC_98
+        data newcolrs/_98BLACK, _98CYAN, _98MAGENTA, _98WHITE,
+     +                _98DARKGREEN, _98BLUE, _98GRAY, _98RED,
+     +                _98DARKCYAN, _98YELLOW, _98DARKRED, _98GREEN,
+     +                _98DARKYELLOW, _98DARKMAGENTA, _98DARKBLUE,
+     +                _98DARKWHITE/
+*$else
         data newcolrs/_BLACK, _LIGHTCYAN, _LIGHTMAGENTA, _BRIGHTWHITE,
      +                _GREEN, _LIGHTBLUE, _GRAY, _LIGHTRED,
      +                _CYAN, _YELLOW, _RED, _LIGHTGREEN,
      +                _BROWN, _MAGENTA, _BLUE, _WHITE/
+*$endif
 
+*$ifdef _NEC_98
+        do i = 0, 15
+            call _remappalette( i, newcolrs( i ) )
+        enddo
+*$else
         if( VC.adapter .ge. _MCGA )then
             do i = 0, 15
                 call _remappalette( i, newcolrs( i ) )
             enddo
         endif
+*$endif
         if( VC.numcolors .eq. 2 )then
             AxisColour = 1
             TitleColour = 1
@@ -104,7 +126,11 @@ c$noextensions
 
         ! Draw main title and graph boxes.
 
+*$ifdef _NEC_98
+        include 'graph98.fi'
+*$else
         include 'graph.fi'
+*$endif
 
         integer AxisColour, TitleColour, BorderColour
         common /colours/ AxisColour, TitleColour, BorderColour
@@ -127,7 +153,11 @@ c$noextensions
 
         ! Draw the axes of bar graph
 
+*$ifdef _NEC_98
+        include 'graph98.fi'
+*$else
         include 'graph.fi'
+*$endif
 
         record /videoconfig/ VC
         common VC
@@ -181,7 +211,11 @@ c$noextensions
 
         ! Draw bars of graph.
 
+*$ifdef _NEC_98
+        include 'graph98.fi'
+*$else
         include 'graph.fi'
+*$endif
 
         record /videoconfig/ VC
         common VC
@@ -226,7 +260,11 @@ c$noextensions
 
         ! Draw pie graph.
 
+*$ifdef _NEC_98
+        include 'graph98.fi'
+*$else
         include 'graph.fi'
+*$endif
 
         record /videoconfig/ VC
         common VC

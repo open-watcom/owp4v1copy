@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Get current video mode information.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -34,6 +35,7 @@
 #include "gbios.h"
 
 
+#if !( defined( _NEC_PC ) || defined( _DEFAULT_WINDOWS ) )
 static short            _AdapTab[ 18 ] = {
     _NODISPLAY,     _MDPA,          _CGA,           _EGA,
     _EGA,           _EGA,           _UNKNOWN,       _VGA,
@@ -53,6 +55,7 @@ static short            _MonTab[ 18 ] = {
 static short            _MemoryTab[ 8 ] = {
     0, 16, 16, 64, 256, -1, 256, 256
 };
+#endif
 
 
 struct videoconfig _WCI86FAR * _WCI86FAR _CGRAPH
@@ -69,6 +72,8 @@ struct videoconfig _WCI86FAR * _WCI86FAR _CGRAPH
 
 Entry( _GETVIDEOCONFIG, _getvideoconfig ) // alternate entry-point
 
+
+#if !( defined( _NEC_PC ) || defined( _DEFAULT_WINDOWS ) )
 
 void _CalcNumPages()
 /*==================
@@ -105,6 +110,8 @@ void _CalcNumPages()
     _CurrState->vc.numvideopages = pages;
 }
 
+#endif
+
 
 void _GetState( void )
 /*====================
@@ -137,7 +144,33 @@ void _GetState( void )
 #else
     _CurrState->misc_info = 0;
 #endif
-#if defined( _DEFAULT_WINDOWS )
+#if defined( _NEC_PC )
+    display = NECVideoInt( _BIOS_SENSE_MODE, 0, 0, 0 ); // get equip status
+    if( display & 1 ) {
+        rows = 20;
+        _CursorShape = 0x0013;
+    } else {
+        rows = 25;
+        _CursorShape = 0x000E;
+    }
+    if( display & 0x80 ) {      // dedicated high-resolution display
+        _CurrState->vc.adapter = _98EGA;
+    } else {
+        _CurrState->vc.adapter = _98CGA;
+    }
+    _CurrState->vc.numtextrows = rows;
+    _CurrState->vc.numtextcols = 80;
+    if( ( inp( 0x42 ) & 0x08 ) == 0 ) {     // 16 colour option available
+        _CurrState->vc.monitor = _98ANALOG;
+        _CurrState->vc.memory = 128;
+    } else {
+        _CurrState->vc.monitor = _98DIGITAL;
+        _CurrState->vc.memory = 96;
+    }
+    _CurrState->vc.numcolors = 16;
+    _CurrState->vc.mode = _98TEXT80;
+    _CurrState->vc.numvideopages = 2;
+#elif defined( _DEFAULT_WINDOWS )
     _CurrState->vc.numxpixels = _wpi_getsystemmetrics( SM_CXSCREEN );
     _CurrState->vc.numypixels = _wpi_getsystemmetrics( SM_CYSCREEN );
     _CurrState->vc.adapter = _VGA;  //initialize it so that it works with windows
@@ -218,7 +251,11 @@ void _InitState( void )
 #else
         _DefMode = _CurrState->vc.mode;
         _DefTextRows = _CurrState->vc.numtextrows;
+  #if defined( _NEC_PC )
+        pos = 0; // no way to find present cursor position
+  #else
         pos = *(short far *)_BIOS_data( CURSOR_POSN );
+  #endif
         _TextPos.row = pos >> 8;        /* default cursor position  */
         _TextPos.col = pos & 0xFF;
 #endif

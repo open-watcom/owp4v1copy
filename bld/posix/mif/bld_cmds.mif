@@ -59,6 +59,6 @@ COMMANDS += &
 #    od &
     rm &
 #    rmdir &
-    sleep &
-    which
+    sleep
+#    which
 !endif

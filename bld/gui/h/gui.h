@@ -35,8 +35,6 @@
     #include "clibext.h"
 #endif
 
-#include "guimem.h"
-
 typedef int gui_ord;
 
 #define GUI_LAST_INTERNAL_MSG 255
@@ -586,6 +584,13 @@ typedef struct gui_timer_event {
                                       size.y = (( gui_coord * )param)->y; }
 
 #define GUI_GET_SCROLL( param, scroll ) ( scroll = *( int * )param )
+
+extern void *GUIAlloc( unsigned );
+extern void GUIFree( void * );
+extern void *GUIRealloc( void *ptr, unsigned size );
+extern void GUIMemOpen();
+extern void GUIMemClose( void );
+extern void GUIMemPrtUsage( void );
 
 /* Initialization Functions */
 

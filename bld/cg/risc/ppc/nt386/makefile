@@ -1,6 +1,7 @@
-#pmake: build os_nt cpu_386 ppc powerpc target_ppc
+#pmake: all brad os_nt cpu_386 ppc powerpc
 
-host_os  = nt
-host_cpu = 386
+
+host_OS         = nt
+host_CPU        = 386
 
 !include ../mif/master.mif

@@ -145,17 +145,6 @@ mkdir -p $RELROOT/$DEFREL/samples/win/datactl/win32
 mkdir -p $RELROOT/$DEFREL/samples/win/edit/win16
 mkdir -p $RELROOT/$DEFREL/samples/win/edit/win32
 mkdir -p $RELROOT/$DEFREL/samples/win/edit/win386
-mkdir -p $RELROOT/$DEFREL/samples/directx
-mkdir -p $RELROOT/$DEFREL/samples/directx/c
-mkdir -p $RELROOT/$DEFREL/samples/directx/cpp
-mkdir -p $RELROOT/$DEFREL/samples/directx/c/d3d
-mkdir -p $RELROOT/$DEFREL/samples/directx/c/dshow
-mkdir -p $RELROOT/$DEFREL/samples/directx/c/dsound
-mkdir -p $RELROOT/$DEFREL/samples/directx/c/dinput
-mkdir -p $RELROOT/$DEFREL/samples/directx/cpp/d3d
-mkdir -p $RELROOT/$DEFREL/samples/directx/cpp/dshow
-mkdir -p $RELROOT/$DEFREL/samples/directx/cpp/dsound
-mkdir -p $RELROOT/$DEFREL/samples/directx/cpp/dinput
 mkdir -p $RELROOT/$DEFREL/src/cpplib
 mkdir -p $RELROOT/$DEFREL/src/editdll
 mkdir -p $RELROOT/$DEFREL/src/editdll/nt

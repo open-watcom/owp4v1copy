@@ -56,7 +56,7 @@ bool GUISetEditText( an_edit_control *edit_control, char *text )
             return( FALSE );
         }
     }
-    GUIMemFree( edit_control->buffer );
+    GUIFree( edit_control->buffer );
     edit_control->buffer = new;
     edit_control->length = strlen( new );
     return( TRUE );
@@ -100,7 +100,7 @@ bool GUISetText( gui_window *wnd, unsigned id, char *text )
             if( !GUIStrDup( text, &new ) ) {
                 return( FALSE );
             } else {
-                GUIMemFree( *fldtext );
+                GUIFree( *fldtext );
                 *fldtext = new;
                 ret = TRUE;
             }

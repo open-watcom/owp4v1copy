@@ -57,7 +57,6 @@ pick( "ACcelerator\0",WND_MACRO, WndMacOpen, MacInfo, WndLong, WindowAccelerator
 pick( "TMPFile\0", WND_TMPFILE, WndNoOpen, FileInfo,WndFileMetrics, WindowTmpFile )
 pick( "REPlay\0", WND_REPLAY, WndRepOpen, RepInfo, WndLong, WindowReplay )
 pick( "MMX\0", WND_MMX, WndMMXOpen, MadRegInfo, WndNormal, WindowMMX )
-pick( "XMM\0", WND_XMM, WndXMMOpen, MadRegInfo, WndNormal, WindowXMM )
 // WND_CURRENT must appear at end so we can exclude if from some window lists
 pick( "CUrrent\0", WND_CURRENT, WndNoOpen, NoInfo, WndLong, WindowCurrent )
 pick( "SEarch\0", WND_SEARCH, WndNoOpen, SrchInfo, WndLong, WindowSearch )

@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Near heap realloc routines.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -52,7 +53,12 @@ _WCRTLINK void *realloc( void *stg, size_t amount )
  void *__ReAllocDPMIBlock( frlptr, unsigned );
 #endif
 
-#pragma intrinsic(memcpy)
+#if __WATCOMC__ < 950
+ #define memcpy(p1,p2,n)        _inline_memcpy(p1,p2,n)
+ void *memcpy( void *__s1, const void *__s2, size_t __n );
+#else
+ #pragma intrinsic(memcpy)
+#endif
 
 _WCRTLINK void _WCNEAR *_nrealloc( void _WCI86NEAR *stg, size_t req_size )
     {

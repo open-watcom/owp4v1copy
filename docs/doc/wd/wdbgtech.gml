@@ -3,7 +3,7 @@
 .np
 A common execution error is the "Null Assignment". The C programming
 language makes use of the concept of a NULL pointer. The NULL pointer
-cannot be dereferenced (i.e., used as a pointer) according to the ISO/ANSI
+cannot be dereferenced (i.e., used as a pointer) according to the ANSI
 standard. In "real-mode" 80x86 systems, the compiler's run-time system
 cannot signal the programmer when the NULL address has been written to
 or read from. The best that the run-time system can do is help

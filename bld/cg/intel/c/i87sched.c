@@ -232,7 +232,6 @@ static  fp_attr FPAttr( instruction *ins ) {
     case G_FCOMPP:
         return( NEEDS_ST0_ST1+POPS2 );
     case G_MFST:
-    case G_MFSTRND:
     case G_RFST:
     case G_MCOMP:
     case G_RCOMP:

@@ -118,7 +118,7 @@ static void DoWndDump( a_window *wnd, WRITERTN *rtn, handle file )
     }
     MaxGadgetLength = gadget_len;
     if( font != NULL ) WndSetFontInfo( wnd, font );
-    GUIMemFree( font );
+    WndFree( font );
 }
 
 

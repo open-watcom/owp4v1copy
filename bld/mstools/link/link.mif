@@ -1,6 +1,13 @@
-!ifneq host_OS nt
+!ifeq host_OS nt
+!   ifeq host_CPU 386
+!       define link_common_libs $(orl_dir)/o/orl.lib
+!   else ifeq host_CPU axp
+!       define link_common_libs $(orl_dir)/axp/orl.lib
+!   endif
+!else
 !   error Unknown OS.
 !endif
+
 
 #
 # Define the name(s) of the program(s) to build.
@@ -15,15 +22,12 @@ done: $(link_stub) link386.exe linkaxp.exe linkppc.exe
 
 !include ../../master.mif
 
-!include $(orl_dir)/client.mif
-
 linkstub_objs       = linkstub.obj $(mstools_stub_obj) $(mstools_objs)
 link_common_objs    = demangle.obj dlltool.obj fuzzy.obj hash.obj parse.obj $(mstools_objs)
 link386_objs        = deff386.obj link386.obj mesg386.obj xlate386.obj $(link_common_objs)
 linkaxp_objs        = deffaxp.obj linkaxp.obj mesgaxp.obj xlateaxp.obj $(link_common_objs)
 linkppc_objs        = deffppc.obj linkppc.obj mesgppc.obj xlateppc.obj $(link_common_objs)
 link_hdrs           = optparsh.gh
-link_common_libs    = $(orl_lib)
 
 .c :  ../c;../../c;$(lib_misc_dir)/c
 .h :  ../h;../../h;$(lib_misc_dir)/h;$(orl_dir)/h
@@ -37,11 +41,11 @@ inc_dirs            += ;$(lib_misc_dir)/h;$(orl_dir)/h
 link.exe :  $(linkstub_objs)
         $(linker) $(lflags) name $^@ file {$(linkstub_objs)}
 
-link386.exe :  $(link_hdrs) $(link386_objs) $(lib_common_libs)
+link386.exe :  $(link_hdrs) $(link386_objs)
         $(linker) $(lflags) name $^@ file {$(link386_objs)} library {$(link_common_libs)}
 
-linkaxp.exe :  $(link_hdrs) $(linkaxp_objs) $(lib_common_libs)
+linkaxp.exe :  $(link_hdrs) $(linkaxp_objs)
         $(linker) $(lflags) name $^@ file {$(linkaxp_objs)} library {$(link_common_libs)}
 
-linkppc.exe :  $(link_hdrs) $(linkppc_objs) $(lib_common_libs)
+linkppc.exe :  $(link_hdrs) $(linkppc_objs)
         $(linker) $(lflags) name $^@ file {$(linkppc_objs)} library {$(link_common_libs)}

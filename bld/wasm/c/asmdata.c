@@ -48,7 +48,7 @@
 #include "asmopnds.h"
 #ifdef _WASM_
     #include "directiv.h"
-    #include "asmexpnd.h"
+    #include "expand.h"
     #include "fixup.h"
 #endif
 #include "tbyte.h"
@@ -136,6 +136,7 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
 {
     int                 cur_pos = start_pos;
     char                count;
+    long                value;
     char                *char_ptr;
     char                negative = FALSE;
     
@@ -236,8 +237,8 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                 negative = FALSE;
                 break;
             }
+            value = AsmBuffer[cur_pos]->value;
             count = 0;
-            char_ptr = AsmBuffer[cur_pos]->bytes;
 #ifdef _WASM_
             if( sym && Parse_Pass == PASS_1 ) {
                 sym->total_length++;
@@ -250,8 +251,12 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
             if( !struct_field ) {
 #endif
                 while( count < no_of_bytes ) {
-                    AsmDataByte( *(char_ptr++) );
+                    AsmDataByte( value );
+                    value >>= 8;
                     count++;
+                    if( count == sizeof( value ) ) {
+                        value = AsmBuffer[cur_pos]->extra_value;
+                    }
                 }
 #ifdef _WASM_
             } else {
@@ -750,30 +755,30 @@ int data_init( int sym_loc, int initializer_loc )
     switch( AsmBuffer[initializer_loc]->value ) {
 #ifdef _WASM_
     case T_SBYTE:                       // 20-Aug-92
-        mem_type = T_SBYTE;
+        mem_type = MT_SBYTE;
         no_of_bytes = BYTE_1;
         break;
     case T_SWORD:                       // 20-Aug-92
-        mem_type = T_SWORD;
+        mem_type = MT_SWORD;
         no_of_bytes = BYTE_2;
         break;
     case T_SDWORD:                      // 20-Aug-92
-        mem_type = T_SDWORD;
+        mem_type = MT_SDWORD;
         no_of_bytes = BYTE_4;
         break;
     case T_DQ:
     case T_QWORD:
-        mem_type = T_QWORD;
+        mem_type = MT_QWORD;
         no_of_bytes = BYTE_8;
         break;
     case T_DT:
     case T_TBYTE:                       // 20-Aug-92
-        mem_type = T_TBYTE;
+        mem_type = MT_TBYTE;
         no_of_bytes = BYTE_10;
         break;
     case T_STRUC:
     case T_STRUCT:
-        mem_type = T_STRUCT;
+        mem_type = MT_STRUCT;
         no_of_bytes = GetStructSize( initializer_loc );
         if( Definition.struct_depth == 0 ) {
             InitializeStructure( sym, initializer_loc );
@@ -782,24 +787,24 @@ int data_init( int sym_loc, int initializer_loc )
 #endif
     case T_DB:
     case T_BYTE:
-        mem_type = T_BYTE;
+        mem_type = MT_BYTE;
         no_of_bytes = BYTE_1;
         break;
     case T_DW:
     case T_WORD:
-        mem_type = T_WORD;
+        mem_type = MT_WORD;
         no_of_bytes = BYTE_2;
         break;
     case T_DD:
     case T_DWORD:
-        mem_type = T_DWORD;
+        mem_type = MT_DWORD;
         no_of_bytes = BYTE_4;
         break;
     case T_DF:                          // 20-Aug-92
     case T_FWORD:
     case T_DP:
     case T_PWORD:
-        mem_type = T_FWORD;
+        mem_type = MT_FWORD;
         no_of_bytes = BYTE_6;
         break;
     default:
@@ -871,7 +876,7 @@ int data_init( int sym_loc, int initializer_loc )
         BackPatch( sym );
     }
     #ifdef _WASM_
-        if( mem_type == T_STRUCT ) return( NOT_ERROR );
+        if( mem_type == MT_STRUCT ) return( NOT_ERROR );
         if( label_dir ) return( NOT_ERROR );
     #endif
     if( dup_array( sym, initializer_loc + 1, no_of_bytes ) == ERROR ) {

@@ -47,11 +47,11 @@ void GUIFreeDialogBoxControlPtrs( DialogBoxControl *dbc )
 {
     if( dbc ) {
         if( dbc->ClassID ) {
-            GUIMemFree( dbc->ClassID );
+            GUIFree( dbc->ClassID );
             dbc->ClassID = NULL;
         }
         if( dbc->Text ) {
-            GUIMemFree( dbc->Text );
+            GUIFree( dbc->Text );
             dbc->Text = NULL;
         }
     }
@@ -61,22 +61,22 @@ void GUIFreeDialogBoxHeader( DialogBoxHeader *hdr )
 {
     if( hdr ) {
         if( hdr->MenuName ) {
-            GUIMemFree( hdr->MenuName );
+            GUIFree( hdr->MenuName );
             hdr->MenuName = NULL;
         }
         if( hdr->ClassName ) {
-            GUIMemFree( hdr->ClassName );
+            GUIFree( hdr->ClassName );
             hdr->ClassName = NULL;
         }
         if( hdr->Caption ) {
-            GUIMemFree( hdr->Caption );
+            GUIFree( hdr->Caption );
             hdr->Caption = NULL;
         }
         if( hdr->FontName ) {
-            GUIMemFree( hdr->FontName );
+            GUIFree( hdr->FontName );
             hdr->FontName = NULL;
         }
-        GUIMemFree( hdr );
+        GUIFree( hdr );
     }
 }
 
@@ -122,7 +122,7 @@ static ControlClass *Data2ControlClass( uint_8 **data )
         len = stringlen;
     }
 
-    new = (ControlClass *)GUIMemAlloc( len );
+    new = (ControlClass *)GUIAlloc( len );
     if( new == NULL ) {
         return( NULL );
     }
@@ -158,7 +158,7 @@ static ResNameOrOrdinal *Data2NameOrOrdinal( uint_8 **data )
         len = max( sizeof(ResNameOrOrdinal), stringlen );
     }
 
-    new = (ResNameOrOrdinal *)GUIMemAlloc( len );
+    new = (ResNameOrOrdinal *)GUIAlloc( len );
     if( new == NULL ) {
         return( NULL );
     }
@@ -215,7 +215,7 @@ static DialogBoxHeader *Template2DlgHdr( uint_8 **data )
     ok = ( data && *data );
 
     if( ok ) {
-        hdr = (DialogBoxHeader *) GUIMemAlloc( sizeof(DialogBoxHeader) );
+        hdr = (DialogBoxHeader *) GUIAlloc( sizeof(DialogBoxHeader) );
         ok = ( hdr != NULL );
     }
 
@@ -287,7 +287,7 @@ static bool Template2Dlg( DialogBoxHeader **hdr, DialogBoxControl **cntls,
 
     if( ok ) {
         *cntls = (DialogBoxControl *)
-            GUIMemAlloc( (*hdr)->NumOfItems * sizeof( DialogBoxControl ) );
+            GUIAlloc( (*hdr)->NumOfItems * sizeof( DialogBoxControl ) );
         ok = ( *cntls != NULL );
     }
 
@@ -310,7 +310,7 @@ static bool Template2Dlg( DialogBoxHeader **hdr, DialogBoxControl **cntls,
             for( index = 0; ok && index < (*hdr)->NumOfItems; index++ ) {
                 GUIFreeDialogBoxControlPtrs( cntls[index] );
             }
-            GUIMemFree( *cntls );
+            GUIFree( *cntls );
             *cntls = NULL;
         }
     }
@@ -490,7 +490,7 @@ static bool DialogBoxControl2GUI( DialogBoxControl *ctl,
     if( !ok ) {
         if( gci ) {
             if( gci->text ) {
-                GUIMemFree( gci->text );
+                GUIFree( gci->text );
             }
         }
     }
@@ -508,7 +508,7 @@ static gui_create_info *DialogBoxHeader2GUI( DialogBoxHeader *hdr )
     ok = ( hdr != NULL );
 
     if( ok ) {
-        gci = (gui_create_info *)GUIMemAlloc( sizeof( gui_create_info ) );
+        gci = (gui_create_info *)GUIAlloc( sizeof( gui_create_info ) );
         ok = ( gci != NULL );
     }
 
@@ -562,9 +562,9 @@ static gui_create_info *DialogBoxHeader2GUI( DialogBoxHeader *hdr )
     if( !ok ) {
         if( gci ) {
             if( gci->text ) {
-                GUIMemFree( gci->text );
+                GUIFree( gci->text );
             }
-            GUIMemFree( gci );
+            GUIFree( gci );
             gci = NULL;
         }
     }
@@ -609,7 +609,7 @@ bool GUICreateDialogFromRes( int id, gui_window *parent, GUICALLBACK cb,
 
     if( ok ) {
         gui_cntls = (gui_control_info *)
-            GUIMemAlloc( sizeof( gui_control_info ) * hdr->NumOfItems );
+            GUIAlloc( sizeof( gui_control_info ) * hdr->NumOfItems );
         ok = ( gui_cntls != NULL );
     }
 
@@ -643,23 +643,23 @@ bool GUICreateDialogFromRes( int id, gui_window *parent, GUICALLBACK cb,
 
     if( gui_cntls ) {
         for( index = 0; ok && index < hdr->NumOfItems; index++ ) {
-            GUIMemFree( gui_cntls[index].text );
+            GUIFree( gui_cntls[index].text );
         }
-        GUIMemFree( gui_cntls );
+        GUIFree( gui_cntls );
     }
 
     if( gui_dlg ) {
         if( gui_dlg->text ) {
-            GUIMemFree( gui_dlg->text );
+            GUIFree( gui_dlg->text );
         }
-        GUIMemFree( gui_dlg );
+        GUIFree( gui_dlg );
     }
 
     if( cntls ) {
         for( index = 0; ok && index < hdr->NumOfItems; index++ ) {
             GUIFreeDialogBoxControlPtrs( &cntls[index] );
         }
-        GUIMemFree( cntls );
+        GUIFree( cntls );
     }
 
     if( hdr ) {
@@ -667,7 +667,7 @@ bool GUICreateDialogFromRes( int id, gui_window *parent, GUICALLBACK cb,
     }
 
     if( data ) {
-        GUIMemFree( data );
+        GUIFree( data );
     }
 
     return( ok );

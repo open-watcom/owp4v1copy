@@ -6,6 +6,8 @@ host_cpu = 386
 
 target_system = qnx
 suffix = mt3r
+target_lib = $(prefix)$(suffix).lib
+production_lib = lib386
 define_library_include = $(plusplus_iostream_dir)/iostream.mif
 define_deps_include = $(plusplus_iostream_dir)/deps.mif
 define_target_include = $(plusplus_dir)/lib$(suffix).mif

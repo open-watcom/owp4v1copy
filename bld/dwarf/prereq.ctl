@@ -9,5 +9,5 @@ set PROJDIR=<CWD>
     echo Building the dwarf write library
     mkdir <PROJDIR>/dw/<OBJDIR>
     cdsay <PROJDIR>/dw/<OBJDIR>
-    wmake -h -f ../osi386/makefile bootstrap=1
+    wmake -h -f ../o/makefile bootstrap=1
     cdsay <PROJDIR>

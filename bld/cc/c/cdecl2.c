@@ -38,14 +38,13 @@
 
 TYPEPTR *MakeParmList( struct parm_list *, int, int );
 struct parm_list *NewParm( TYPEPTR, struct parm_list * );
-static TYPEPTR DeclPart2( TYPEPTR typ, type_modifiers mod );
-static TYPEPTR DeclPart3( TYPEPTR typ, type_modifiers mod );
+void    InvDecl( void );
+TYPEPTR DeclPart2( TYPEPTR typ, type_modifiers mod );
+TYPEPTR DeclPart3( TYPEPTR typ, type_modifiers mod );
 static void AbsDecl( SYMPTR sym, type_modifiers mod, TYPEPTR typ );
 
-local void FreeParmList( void );
-local void GetFuncParmList( void );
-
 static int ThreadSeg;
+
 
 
 
@@ -98,11 +97,10 @@ static int SCSpecifier()
         switch( CurToken ) {
         case T_EXTERN:  stg_class = SC_EXTERN;  break;
         case T_STATIC:  stg_class = SC_STATIC;  break;
+        case T___INLINE:stg_class = SC_STATIC;  break;
         case T_TYPEDEF: stg_class = SC_TYPEDEF; break;
         case T_AUTO:    stg_class = SC_AUTO;    break;
         case T_REGISTER:stg_class = SC_REGISTER;break;
-        default:
-            break;
         }
         NextToken();
     }
@@ -110,7 +108,7 @@ static int SCSpecifier()
 }
 
 
-void InvDecl( void )
+void InvDecl()
 {
     CErr1( ERR_INVALID_DECLARATOR );
 }
@@ -958,7 +956,7 @@ static void AbsDecl( SYMPTR sym, type_modifiers mod, TYPEPTR typ )
     info.segment = 0;
     info.modifier = mod;
     info.based_kind = BASED_NONE;
-    info.based_sym = 0;
+    info.based_sym = NULL;
     typ = Pointer( typ, &info );
     if( CurToken == T_LEFT_PAREN ) {
         NextToken();
@@ -987,7 +985,7 @@ void Declarator( SYMPTR sym, type_modifiers mod, TYPEPTR typ, decl_state state )
     info.segment = 0;
     info.modifier = mod;
     info.based_kind = BASED_NONE;
-    info.based_sym = 0;
+    info.based_sym = NULL;
     typ = Pointer( typ, &info );
     if( CurToken == T_LEFT_PAREN ) {
         NextToken();
@@ -1016,7 +1014,7 @@ void Declarator( SYMPTR sym, type_modifiers mod, TYPEPTR typ, decl_state state )
         ParseDeclPart2( &sym->sym_type, typ );
         typ = sym->sym_type;
         // Transfer function attributes to type; TODO: figure out a better way
-        if( typ && typ->decl_type == TYPE_FUNCTION )
+        if( typ->decl_type == TYPE_FUNCTION )
             typ->type_flags = sym->attrib;
     } else {
         if( CurToken == T_ID  ||  CurToken == T_SAVED_ID ) {
@@ -1065,7 +1063,7 @@ void Declarator( SYMPTR sym, type_modifiers mod, TYPEPTR typ, decl_state state )
 }
 
 
-FIELDPTR FieldCreate( char *name )
+local FIELDPTR FieldCreate( char *name )
 {
     FIELDPTR    field;
 
@@ -1086,7 +1084,7 @@ FIELDPTR FieldDecl( TYPEPTR typ, type_modifiers mod, decl_state state )
     info.segment = 0;
     info.modifier = mod;
     info.based_kind = BASED_NONE;
-    info.based_sym = 0;
+    info.based_sym = NULL;
     typ = Pointer( typ, &info );
     if( CurToken == T_LEFT_PAREN ) {
         NextToken();
@@ -1175,7 +1173,7 @@ static TYPEPTR DeclPart3( TYPEPTR typ, type_modifiers mod )
 {
     PARMPTR     parm_list;
     TYPEPTR     *parms;
-    local TYPEPTR  *FuncProtoType();
+    TYPEPTR     *FuncProtoType();
 
     parms = NULL;
     if( CurToken != T_RIGHT_PAREN ) {
@@ -1278,7 +1276,7 @@ void AdjParmType( SYMPTR sym )
 local TYPEPTR *GetProtoType( decl_info *first )
 {
     PARMPTR     parm;
-    PARMPTR     prev_parm = NULL;
+    PARMPTR     prev_parm;
     PARMPTR     parm_namelist;
     int         parm_count;
     struct parm_list *parmlist;
@@ -1485,9 +1483,9 @@ local TYPEPTR *FuncProtoType()
 }
 
 
-local void GetFuncParmList( void )
+local void GetFuncParmList()
 {
-    PARMPTR     parm = NULL;
+    PARMPTR     parm;
     PARMPTR     newparm;
     PARMPTR     parm_namelist;
 
@@ -1535,11 +1533,11 @@ local void GetFuncParmList( void )
 }
 
 
-local void FreeParmList( void )
+local void FreeParmList()
 {
     PARMPTR     parm;
 
-    for( ; (parm = ParmList); ) {
+    for( ; parm = ParmList; ) {
         ParmList = parm->next_parm;
         CMemFree( parm->sym.name );
         CMemFree( parm );

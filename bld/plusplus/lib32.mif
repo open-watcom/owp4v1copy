@@ -15,7 +15,3 @@ comp_cpp = $(comp_cpp_386)
 !endif
 comp_c = $(cc_$(host_cpu))
 asm_a = $(as_$(host_cpu))
-
-!ifndef fp_option
-fp_option = -fpc
-!endif

@@ -37,6 +37,7 @@
 #include "libwin32.h"
 #include "osver.h"
 
+
 DWORD __lib_GetFullPathNameW( LPCWSTR lpFileName, DWORD nBufferLength,
                               LPWSTR lpBuffer, LPWSTR *lpFilePart )
 /********************************************************************/

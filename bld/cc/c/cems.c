@@ -34,6 +34,17 @@
 
 extern  void *FEmalloc();                       /* cmemmgr */
 extern  void FEfree();                          /* cmemmgr */
+extern  void OpenPageFile();
+
+
+void InitEMS()
+{
+}
+
+
+void FiniEMS()
+{
+}
 
 
 void CSegFree( SEGADDR_T segment )
@@ -44,19 +55,35 @@ void CSegFree( SEGADDR_T segment )
 
 SEGADDR_T AllocSegment( struct seg_info *si )
 {
-    /* FEmalloc never returns NULL - it either allocates the memory
-     * or kills the compiler.
-     */
+    si->in_farmem = 0;
+    si->in_page_file = 0;
     si->index = (SEGADDR_T)FEmalloc( 0x04000 );
+    if( si->index != 0 ) {
+        si->in_farmem = 1;
+        si->allocated = 1;
+        return( si->index );
+    }
+    if( PageHandle == -1 ) {
+        OpenPageFile();      /* write out to page file */
+    }
+    si->index = (SEGADDR_T)NextFilePage;
+    si->in_page_file = 1;
     si->allocated = 1;
-    return( si->index );
+    ++NextFilePage;
+    return( 0 );
 }
 
 
 SEGADDR_T AccessSegment( struct seg_info *si )
 {
-    if( !si->allocated ) {
+    SEGADDR_T segment;
+
+    if( ! si->allocated ) {
         AllocSegment( si );
     }
-    return( si->index );
+    segment = 0;
+    if( si->in_farmem ) {
+        segment = si->index;
+    }
+    return( segment );
 }

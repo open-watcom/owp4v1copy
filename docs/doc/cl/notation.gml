@@ -2,7 +2,7 @@
 .pp
 The C programming language contains many useful features, each of which
 has a number of optional parts.
-The ISO C standard describes
+The ANSI C standard describes
 the language in very precise terms, often giving
 syntax diagrams to describe the features.
 .pp

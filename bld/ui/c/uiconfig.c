@@ -65,7 +65,7 @@ bool uiconfig( char *fn, char **envvars )
         colour = "ATTR_COL";
         slen = 8;
     }
-    #if !defined( __NETWARE__ )
+    #if !defined( NLM )
         for( ; envvars != NULL  &&  *envvars != NULL; ++envvars ) {
             _searchenv( fn, *envvars, buffer );
             if( buffer[0] != '\0' ) {

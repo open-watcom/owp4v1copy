@@ -231,13 +231,6 @@ MACRO_ARG *PPCollectParms( MACRO_ENTRY *fmentry )
         if( parm_cnt < fmentry->parmcount - 1 ) {
             macro_parms[ parm_cnt ].arg = PPTrimWhiteSpace( head );
             ++parm_cnt;
-        } else {
-            mtok = head;
-            while( head != NULL ) {
-                mtok = head->next;
-                PP_Free( head );
-                head = mtok;
-            }
         }
 #if 0
         if( parm_cnt < fmentry->parmcount - 1 ) {

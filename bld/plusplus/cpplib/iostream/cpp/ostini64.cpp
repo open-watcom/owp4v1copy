@@ -66,7 +66,7 @@ ostream &ostream::operator << ( signed __int64 i ) {
     }
 
     // Digits:
-    lltoa( i, buffer + digit_offset, base );
+    __clib_lltoa( i, buffer + digit_offset, base );
     if( buffer[0] == '-' ) {
         digit_offset = 1;
     }

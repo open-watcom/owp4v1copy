@@ -5,6 +5,7 @@
 
 host_OS  = os2
 host_CPU = i86
+display  = gui
 
 sys_windowed = 1
 

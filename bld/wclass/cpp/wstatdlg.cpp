@@ -103,7 +103,7 @@ void WEXPORT WStatDialog::getCtrlText( unsigned control_id,
 
     char *text = GUIGetText( handle(), control_id );
     WString t( text );
-    GUIMemFree( text );
+    GUIFree( text );
     str = t;
 }
 
@@ -123,7 +123,7 @@ void WEXPORT WStatDialog::getCtrlText( unsigned control_id,
         if( text_len > len - 1 ) text_len = len - 1;
         memcpy( buff, text, text_len );
         buff[text_len] = NULLCHAR;
-        GUIMemFree( text );
+        GUIFree( text );
     }
 }
 
@@ -133,7 +133,7 @@ int  WEXPORT WStatDialog::getCtrlTextLength( unsigned control_id ) {
     char *text = GUIGetText( handle(), control_id );
     if( text == NULL ) return( 0 );
     int len = strlen( text );
-    GUIMemFree( text );
+    GUIFree( text );
     return( len );
 }
 

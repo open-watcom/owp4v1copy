@@ -22,7 +22,7 @@ objs =               &
         strip.obj    &
         output.obj
 
-dependants = msg.gh $(objs) $(res_$(host_os)) $(wres_lib)
+dependants = msg.gh $(objs) $(res_$(host_os))
 
 $(proj_name).exe : $(dependants)
         $(linker) option quiet $(lflags) name $^. file { $(objs) } lib $(wres_lib)

@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Installer utility functions for Unix.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -32,6 +33,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <io.h>
 #include <dirent.h>
 #include <string.h>
 #include <malloc.h>
@@ -72,11 +74,6 @@ static int      DecodeError;
 bool            ConfigModified = FALSE;
 bool            RemoveODBC;
 static enum { SRC_UNKNOWN, SRC_CD, SRC_DISK } SrcInstState;
-
-int             SkipDialogs;
-char            *VariablesFile;
-//DEF_VAR         *ExtraVariables;
-int             Invisible;
 
 #ifdef PATCH
     extern int  IsPatch;
@@ -433,7 +430,7 @@ extern bool CheckDrive( bool issue_message )
     max_targs = SimNumTargets();
     for( i = 0; i < max_targs; ++i ) {
         // get drive letter for each target
-        disks[ i ] = tolower( *SimGetDriveLetter( i ) );
+        disks[ i ] = tolower( SimGetDriveLetter( i ) );
     }
     // check for enough disk space, combine drives that are the same
     for( i = 0; i < max_targs; ++i ) {
@@ -632,7 +629,7 @@ static char lastchance[1024];
     if( src_files == -1 ) return( CFE_CANTOPENSRC );
 
     for( ;; ) {
-        pbuff = GUIMemAlloc( buffer_size );
+        pbuff = GUIAlloc( buffer_size );
         if( pbuff != NULL ) break;
         buffer_size >>= 1;
         if( buffer_size < sizeof(lastchance) ) {
@@ -650,7 +647,7 @@ static char lastchance[1024];
     dst_files = open( dst_path, style, S_IREAD + S_IWRITE );
     if( dst_files == -1 ) {
         close( src_files );
-        if( pbuff != lastchance ) GUIMemFree( pbuff );
+        if( pbuff != lastchance ) GUIFree( pbuff );
         return( CFE_CANTOPENDST );
     }
     if( append ) {
@@ -679,7 +676,7 @@ static char lastchance[1024];
                 return( CFE_ABORT );
             }
             // error writing file - probably disk full
-            if( pbuff != lastchance ) GUIMemFree( pbuff );
+            if( pbuff != lastchance ) GUIFree( pbuff );
             SetupError( "IDS_WRITEERROR" );
             return( CFE_ERROR );
         }
@@ -721,7 +718,7 @@ static char lastchance[1024];
     close( dst_files );
 
     SameFileDate( src_path, dst_path );
-    if( pbuff != lastchance ) GUIMemFree( pbuff );
+    if( pbuff != lastchance ) GUIFree( pbuff );
     close( src_files );
 #endif
     return( CFE_NOERROR );
@@ -875,7 +872,7 @@ static void NewFileToCheck( char *name, bool is_dll )
 {
     file_check  *new;
 
-    new = GUIMemAlloc( sizeof( *new ) );
+    new = GUIAlloc( sizeof( *new ) );
     new->next = FileCheckThisPack;
     FileCheckThisPack = new;
     GUIStrDup( name, &new->name );
@@ -922,8 +919,8 @@ static bool CheckPendingFiles()
             ret = CheckInstallNLM( curr->name, curr->var_handle );
         }
         if( ret == GUI_RET_CANCEL ) return( FALSE );
-        GUIMemFree( curr->name );
-        GUIMemFree( curr );
+        GUIFree( curr->name );
+        GUIFree( curr );
     }
     return( TRUE );
 }
@@ -1103,8 +1100,8 @@ static bool DoCopyFiles()
             while( split != NULL ) {
                 junk = split;
                 split = split->next;
-                GUIMemFree( junk->src_path );
-                GUIMemFree( junk );
+                GUIFree( junk->src_path );
+                GUIFree( junk );
             }
             owner_split = &split;
             *owner_split = NULL;
@@ -1126,10 +1123,10 @@ static bool DoCopyFiles()
             }
             if( SimFileLastSplit( filenum ) ) {
                 bool append;
-                unsigned drive;
+                char    drive;
 
                 copy_error = CFE_NOERROR;
-                drive = *SimGetTargTempDisk( SimDirTargNum( SimFileDirNum( filenum ) ) );
+                drive = SimGetTargTempDisk( SimDirTargNum( SimFileDirNum( filenum ) ) );
                 if( UseTargetForTmpFile( drive ) ) {
                     GetTmpFileNameInTarget( drive, tmp_path );
                 } else {
@@ -1158,9 +1155,9 @@ static bool DoCopyFiles()
                     if( StatusCancelled() ) return( FALSE );
                     append = TRUE;
                     if( copy_error != CFE_NOERROR ) break;
-                    GUIMemFree( junk->src_path );
-                    GUIMemFree( junk->disk_desc );
-                    GUIMemFree( junk );
+                    GUIFree( junk->src_path );
+                    GUIFree( junk->disk_desc );
+                    GUIFree( junk );
                 }
                 owner_split = &split;
                 *owner_split = NULL;
@@ -1188,7 +1185,7 @@ static bool DoCopyFiles()
                     }
                 }
             } else if( SimFileSplit( filenum ) ) {
-                *owner_split = GUIMemAlloc( sizeof( split_file ) );
+                *owner_split = GUIAlloc( sizeof( split_file ) );
                 ++num_splits;
                 GUIStrDup( src_path, &((*owner_split)->src_path) );
                 GUIStrDup( disk_desc, &((*owner_split)->disk_desc) );
@@ -1569,7 +1566,7 @@ extern bool MakeDisks( void )
     path_end[0] = '\0';
 
     num_disks = SimGetNumDisks() + 1;
-    used = GUIMemAlloc( num_disks * sizeof( bool ) );
+    used = GUIAlloc( num_disks * sizeof( bool ) );
     memset( used, FALSE, num_disks * sizeof( bool ) );
     DisketteSize = strtol( GetVariableStrVal( "DisketteSize" ), NULL, 10 );
     num_total_install = DisketteSize * CountDisks( used );
@@ -1611,6 +1608,23 @@ extern bool MakeDisks( void )
         strcpy( path_end+1, info->d_name );
         strcpy( end_dst_path, info->d_name );
         state = DLG_START;
+        #ifdef NECCHECK
+            /*
+               We don't have enough room on the install diskettes for
+               both DOSSETUP.EXE & 98SETUP.EXE. So, if we're on a NEC-98,
+               don't put DOSSETUP.EXE on the disk and if we're on an AT
+               clone, don't put 98SETUP.EXE on.
+            */
+            if( GetVariableIntVal( "IsNEC" ) ) {
+                if( stricmp( info->d_name, "DOSSETUP.EXE" ) == 0 ) {
+                    state = DLG_SKIP;
+                }
+            } else {
+                if( stricmp( info->d_name, "98SETUP.EXE" ) == 0 ) {
+                    state = DLG_SKIP;
+                }
+            }
+        #endif
         if( state != DLG_SKIP ) {
             state = CopyToDisk( 0, src_path, dst_path );
             if( state == DLG_CAN || state == DLG_DONE ) return( FALSE );
@@ -1644,7 +1658,7 @@ extern bool MakeDisks( void )
         }
     }
     StatusAmount( num_installed, num_total_install );
-    GUIMemFree( used );
+    GUIFree( used );
     return( TRUE );
 }
 
@@ -1666,7 +1680,7 @@ void DeleteObsoleteFiles()
     for( i = 0; i < max_deletes; ++i ) {
         if( SimDeleteIsDialog( i ) ) ++group;
     }
-    found = GUIMemAlloc( sizeof( bool ) * group );
+    found = GUIAlloc( sizeof( bool ) * group );
     memset( found, FALSE, sizeof( bool ) * group );
     found_any = FALSE;
     group = -1;
@@ -1749,7 +1763,7 @@ char *AddInstallName( char *text, bool dorealloc )
         if( p == NULL ) break;
         offset = p - text;
         if( dorealloc ) {
-            text = GUIMemRealloc( text, len + inst_len );
+            text = GUIRealloc( text, len + inst_len );
             p = text + offset;
         }
         memmove( p + inst_len, p+1, len - (p+1 - text) );
@@ -1852,7 +1866,7 @@ extern void *MemAlloc( int size )
 {
     void                *stg;
 
-    stg = GUIMemAlloc( size );
+    stg = GUIAlloc( size );
     if( stg == NULL ) {
         SetupError( "IDS_NOMEMORY" );
     }
@@ -1863,7 +1877,7 @@ extern void *MemAlloc( int size )
 extern void MemFree( void *mem )
 /******************************/
 {
-    GUIMemFree( mem );
+    GUIFree( mem );
 }
 
 
@@ -1973,14 +1987,14 @@ extern bool GetDirParams( int                   argc,
     char                dir[ _MAX_DIR ];
     char                drive[ _MAX_DRIVE ];
 
-    *inf_name = GUIMemAlloc( _MAX_PATH );
+    *inf_name = GUIAlloc( _MAX_PATH );
     if( *inf_name == NULL ) {
         return FALSE;
     }
 
-    *tmp_path = GUIMemAlloc( _MAX_PATH );
+    *tmp_path = GUIAlloc( _MAX_PATH );
     if( *tmp_path == NULL ) {
-        GUIMemFree( *inf_name );
+        GUIFree( *inf_name );
         return FALSE;
     }
 
@@ -2008,8 +2022,8 @@ extern bool FreeDirParams( char **              inf_name,
 {
     if( inf_name == NULL || tmp_path == NULL ) return FALSE;
 
-    GUIMemFree( *inf_name );
-    GUIMemFree( *tmp_path );
+    GUIFree( *inf_name );
+    GUIFree( *tmp_path );
 
     *inf_name = NULL;
     *tmp_path = NULL;
@@ -2017,62 +2031,6 @@ extern bool FreeDirParams( char **              inf_name,
     return TRUE;
 }
 
-
-extern void ReadVariablesFile( char * name )
-/******************************************/
-{
-    FILE   *fp;
-    char   buf[ 256 ];
-    char   *line;
-    char   *variable;
-    char   *value;
-
-    fp = fopen( VariablesFile, "rt" );
-    if( fp == NULL ) {
-    return;
-    }
-
-    while( fgets( buf, sizeof( buf ), fp ) != NULL ) {
-    line = buf;
-    while( isspace( *line ) != 0 ) {
-        line++;
-    }
-    if( *line == '#' ) {
-        continue;
-    }
-    while( strlen( line ) > 0
-    && isspace( line[ strlen( line ) - 1 ] ) != 0 ) {
-        line[ strlen( line ) - 1 ] = '\0';
-    }
-    variable = strtok( line, " =\t" );
-    value = strtok( NULL, "=\t\0" );
-    if( value != NULL ) {
-        while( isspace( *value ) != 0 ) {
-        value++;
-        }
-
-        while( strlen( value ) > 0
-        && isspace( value[ strlen( value ) - 1 ] ) != 0 ) {
-        value[ strlen( value ) - 1 ] = '\0';
-        }
-        if( variable != NULL ) {
-        if( name == NULL
-        || ( name != NULL
-             && stricmp( name, variable ) == 0 ) ) {
-
-            if( stricmp( value, "true" ) == 0 ) {
-            SetVariableByName( variable, "1" );
-            } else if( stricmp( value, "false" ) == 0 ) {
-            SetVariableByName( variable, "0" );
-            } else {
-            SetVariableByName( variable, value );
-            }
-        }
-        }
-    }
-    }
-    fclose( fp );
-}
 
 extern bool InitInfo( char * inf_name, char * tmp_path )
 /******************************************************/

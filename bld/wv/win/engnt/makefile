@@ -5,9 +5,9 @@
 
 host_OS=nt
 host_cpu=386
+display=gui
 
 sys_windowed = 1
-
 dll = 1
 extra_c_flags= -br
 

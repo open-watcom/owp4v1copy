@@ -5,6 +5,7 @@
 
 host_OS  = linux
 host_CPU = 386
+display = char
 
 syshdir =
 

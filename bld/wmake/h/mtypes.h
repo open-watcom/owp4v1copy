@@ -43,16 +43,8 @@
 /*
  * provide machine independant definitions for different quantities
  */
-#ifndef _WINDOWS_H
 typedef   signed long   INT32;
 typedef unsigned long   UINT32;
-
-enum {
-    FALSE = (0==1),
-    TRUE = (0==0)
-};
-#endif
-
 typedef   signed short  INT16;
 typedef unsigned short  UINT16;
 typedef   signed char   INT8;
@@ -61,6 +53,11 @@ typedef unsigned char   UINT8;
 typedef unsigned        BIT;        /* for bit fields in structures */
 
 typedef unsigned char   BOOLEAN;
+enum {
+    FALSE = (0==1),
+    TRUE = (0==0)
+};
+
 
 typedef struct Node NODE;       /* for singly linked lists */
 struct Node {

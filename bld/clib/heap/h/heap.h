@@ -130,7 +130,9 @@ struct dpmi_hdr {
 #endif
 
 extern unsigned                         _curbrk;
+extern unsigned char                    __nheap_clean;
 extern mheapptr _WCNEAR                 __nheapbeg;
+extern unsigned char                    __fheap_clean;
 #if defined(_M_IX86)
 extern __segment                        __fheap;
 extern __segment                        __bheap;
@@ -203,3 +205,4 @@ extern  void     __MemFree( unsigned __ptr, unsigned __seg, unsigned __off );
 #define __HM_SUCCESS    0
 #define __HM_FAIL       1
 #define __HM_TRYGROW    2
+

@@ -13,7 +13,7 @@ sys_windowed = 1
 
 .EXTENSIONS: .res .rc
 
-!ifeq host_os nt
+!ifeq host_OS nt
 wspy_dll_prefix = nt
 !else
 wspy_dll_prefix = w
@@ -39,7 +39,7 @@ objs_nt =  spy.obj spyglob.obj spybox.obj spyproc.obj spymsgs.obj &
            mark.obj about.obj desknt.obj ldstr.obj mstatwnd.obj hint.obj &
            wwinhelp.obj jdlg.obj
 
-objs = $(objs_$(host_os))
+objs = $(objs_$(host_OS))
 
 dllobjs = spydll.obj
 
@@ -48,9 +48,9 @@ extra_c_flags_mem = -dNO_WPI
 extra_c_flags     += -s
 extra_c_flags_i86 += -fpc -zu -2 -zW
 extra_c_flags_386 += -fpc -4
-!ifeq host_os win
+!ifeq host_OS win
 extra_c_flags_spydll = -bd -mc
-!else ifeq host_os nt
+!else ifeq host_OS nt
 extra_c_flags_spydll = -bd
 !endif
 
@@ -60,13 +60,14 @@ dll_debug_all           = debug all
 dll_debug_axp           = debug codeview
 !endif
 
-extra_l_flags_win = option stack=9k, heapsize=2k lib $(dllname).lib
-
+extra_l_flags_win = option stack=9k option heapsize=2k &
+                    lib windows.lib lib commdlg.lib lib toolhelp.lib &
+                    lib $(dllname).lib lib $(misc_dir)/ctl3d.lib
 extra_l_flags_nt  = option stack=64k option heapsize=2k &
-                    lib $(dllname).lib
+                    lib $(dllname).lib lib ctl3d32.lib
 
 extra_l_flags     = option map
-!ifeq host_cpu  386
+!ifeq host_CPU  386
 # To maintain cross-version linkability
 !ifdef __LINUX__
 extra_l_flags    += alias "'_WinMain'='_WinMain@16'"
@@ -75,21 +76,21 @@ extra_l_flags    += alias '_WinMain'='_WinMain@16'
 !endif
 !endif
 
-wspy_dll_lflags_wini86 = $(dll_debug_$(host_cpu)) &
+wspy_dll_lflags_wini86 = $(dll_debug_$(host_CPU)) &
                          system windows_dll font mem name $(dllname).dll &
                          $(wspy_non_release_option) &
                          lib windows.lib &
-                         option map, rwr &
+                         option map &
                          segment CLASS 'CODE' PRELOAD FIXED &
                          export WEP RESIDENT &
                          file { $(dllobjs) }
 
-wspy_dll_lflags_nt386  = $(dll_debug_$(host_cpu)) &
+wspy_dll_lflags_nt386  = $(dll_debug_$(host_CPU)) &
                          system nt_dll initglobal name $(dllname).dll &
                          option map &
                          file { $(dllobjs) }
 
-wspy_dll_lflags_ntaxp  = $(dll_debug_$(host_cpu)) &
+wspy_dll_lflags_ntaxp  = $(dll_debug_$(host_CPU)) &
                          system ntaxp_dll initglobal name $(dllname).dll &
                          option map &
                          file { $(dllobjs) }
@@ -107,23 +108,18 @@ wspy_to_build_win = rcstr.gh spymsgs.dlg spymsg.gh $(dllname).dll $(name).exe
 
 wspy_to_build_nt = rcstr.gh spymsgnt.dlg spymsgnt.gh $(dllname).dll $(name).exe
 
-all : $(wspy_to_build_$(host_os)) .SYMBOLIC
+all : $(wspy_to_build_$(host_OS)) .SYMBOLIC
         @%null
 
 $(name).exe : $(objs) $(name).res $(dllname).lib
         $(linker) $(lflags) name $^@ file { $(objs) }
-!ifeq host_cpu axp
+!ifeq host_CPU axp
 !ifeq release 0
         cvpack $(name).exe
-        wstrip -q $(name).exe $(name).exe $(name).sym
+        wstrip $(name).exe $(name).exe $(name).sym
 !endif
 !endif
         $(RC) $(rc_flags) -k $(name).res $^@
-!ifeq host_cpu axp
-!ifeq release 0
-        wstrip -q -a wspy.exe . wspy.sym
-!endif
-!endif
 
 rcstr.gh : rcstrmsg.gh
         $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@
@@ -149,7 +145,7 @@ $(dllname).lib : $(dllname).dll
         $(librarian) $(dllname).lib +$(dllname).dll
 
 $(dllname).dll : $(dllobjs)
-        $(linker) $(wspy_dll_lflags_$(host_os)$(host_cpu))
+        $(linker) $(wspy_dll_lflags_$(host_OS)$(host_CPU))
 
 .rc.res: .AUTODEPEND
         $(RC) $(rc_flags) -r -ad -zk0 -i="$(sdk_dir)/misc" $[@ -fo=$^@

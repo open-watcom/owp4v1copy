@@ -102,17 +102,17 @@ static int cmp_u96_max( u96 *x )
     overflow after multiply by 10
 */    
 {
-    if( x->m32[2] > 0x19999999UL ) {
+    if( x->m32[2] > 0xffffffffUL / 10UL ) {
         return 1;
-    } else if( x->m32[2] < 0x19999999UL ) {
+    } else if( x->m32[2] < 0xffffffffUL / 10UL ) {
         return -1;
-    } else if( x->m32[1] > 0x99999999UL ) {
+    } else if( x->m32[1] > 0x5ffffffffUL / 10UL ) {
         return 1;
-    } else if( x->m32[1] < 0x99999999UL ) {
+    } else if( x->m32[1] < 0x5ffffffffUL / 10UL ) {
         return -1;
-    } else if( x->m32[0] > 0x99999998UL ) {
+    } else if( x->m32[0] > 0x5ffffffffUL / 10UL ) {
         return 1;
-    } else if( x->m32[0] < 0x99999998UL ) {
+    } else if( x->m32[0] < (0x5ffffffffUL - 9UL) / 10UL ) {
         return -1;
     } else {
         return 0;
@@ -163,7 +163,7 @@ static int bitsize64(u64 x)
     int i;
     
     for( i = 64; i > 0 ; i-- ) {
-        if( x & 0x8000000000000000ULL ) break;
+        if( x & 0x8000000000000000UL ) break;
         x <<= 1;
     }
     return i;
@@ -346,8 +346,8 @@ static int TB_create(u96 *value, long exponent, TB_LD *ld)
     ld->m = res.m32[1] + ((u64)res.m32[2] << 32) ;
     // round result
     if(res.m32[0] & 0x80000000U) {
-        if( ld->m == 0xffffffffffffffffULL ) {
-            ld->m = 0x8000000000000000ULL;
+        if( ld->m == 0xffffffffffffffffUL ) {
+            ld->m = 0x8000000000000000UL;
             ld->e++;
         } else {
             ld->m++;

@@ -45,10 +45,6 @@
 #include "trpimp.h"
 #include "softmode.h"
 
-#ifndef HK_CALLHOOK
-  #define HK_CALLHOOK 13
-#endif
-
 // Undocumented PM APIs, oh joy!
 extern BOOL APIENTRY16 WinLockInput( HWND, USHORT );
 extern BOOL APIENTRY16 WinQuerySendMsg( HAB, HMQ, HMQ, PQMSG );
@@ -84,29 +80,6 @@ static  HEV             BeginThreadSem = NULL;
 
 #define STACK_SIZE 32768
 
-// If we take over the queue of another process, we may have a serious problem:
-// In case the debuggee installed a local queue hook, PM will try to call the
-// hook in the context of the debugger, which will almost certainly be fatal.
-//
-
-// Following is a brief description of the CallHook hook function arguments and
-// return value (taken from OS/2 for PowerPC API Addendum):
-//
-// HMQ      Current;   /*  Message-queue handle associated with the current thread. */
-// HMQ      Created;   /*  Message-queue handle created by the installing thread. */
-// PID      Pid;       /*  Process identity of the installing thread. */
-// TID      Tid;       /*  Thread identity of the installing thread. */
-// SHORT    HookType;  /*  Hook type. */
-// PROC     HookProc;  /*  Address of the hook procedure that is about to be called. */
-// BOOL     f;         /*  Indicates whether or not the hook HookProc should be called: */
-
-BOOL APIENTRY CallHookProc(HMQ hmqCurrent, HMQ hmqCreated, PID pid, TID tid, SHORT hookType, PFN hookProc)
-{
-    // Returning TRUE will stop PM from trying to call hooks. We could try to be clever
-    // and decide which hooks are safe to call and which are not. For now just don't call any.
-    return TRUE;
-}
-
 static void APIENTRY SoftModeThread( thread_data *thread )
 {
     QMSG        qmsg;
@@ -115,7 +88,6 @@ static void APIENTRY SoftModeThread( thread_data *thread )
     HPS         ps;
 
     rc = WinThreadAssocQueue( HabDebugger, thread->hmq );
-    rc = WinSetHook( HabDebugger, thread->hmq, HK_CALLHOOK, (PFN)CallHookProc, NULLHANDLE );
     PSetHmqDebugee( thread->hmq, HwndDummy );
     rc = WinSetHook( HabDebugger, NULL, HK_SENDMSG, (PFN)PSendMsgHookProc, HookDLL );
     while( WinQuerySendMsg( HabDebugger, NULL, thread->hmq, &qmsg ) ) {
@@ -135,7 +107,6 @@ static void APIENTRY SoftModeThread( thread_data *thread )
     }
     WinReleaseHook( HabDebugger, NULL, HK_SENDMSG, (PFN)PSendMsgHookProc, HookDLL );
     PSetHmqDebugee( thread->hmq, NULL );
-    WinReleaseHook( HabDebugger, thread->hmq, HK_CALLHOOK, (PFN)CallHookProc, NULLHANDLE );
     WinThreadAssocQueue( HabDebugger, NULL );
     WinPostMsg( HwndDebugger, WM_QUIT, 0, 0 ); // tell debugger we're done
 }

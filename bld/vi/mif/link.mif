@@ -4,8 +4,11 @@ extra_l_flags_os2_386 = op newfiles,stack=20k
 extra_l_flags_os2_i86 = op newfiles,stack=1k
 extra_l_flags_os2 = $(extra_l_flags_$(host_CPU))
 
-lflags_win_i86 += font mem
-extra_l_flags_win_i86 = op nocache,symfile,rwr lib windows,commdlg,toolhelp,ddeml,shell op stack=16000,heaps=1k
+lflags_win_i86 = sys windows font mem
+extra_l_flags_win_i86 = op nocache,symfile lib windows,commdlg,toolhelp,ddeml,shell op stack=16000,heaps=1k
+!ifeq release 1
+extra_l_flags_win += op rwr
+!endif
 extra_l_flags_win_386 = lib win386$(BETA),clib3r op stack=40k
 extra_l_flags_win = $(extra_l_flags_win_$(host_CPU))
 

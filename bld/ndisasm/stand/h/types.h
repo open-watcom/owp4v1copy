@@ -50,7 +50,6 @@ typedef enum {
     LTYP_UNNAMED,
     LTYP_FUNC_INFO,
     LTYP_GROUP,
-    LTYP_ABSOLUTE
 } label_type;
 
 typedef enum {

@@ -239,7 +239,7 @@ char *GUIGetText( gui_window *wnd, unsigned control )
         }
         length = _wpi_getwindowtextlength( hwnd );
         if( length > 0 ) {
-            text = (char *)GUIMemAlloc( length + 1 );
+            text = (char *)GUIAlloc( length + 1 );
             if( text != NULL ) {
                 _wpi_getwindowtext( hwnd, (LPSTR)text, length + 1 );
                 switch( class ) {
@@ -304,7 +304,7 @@ char *GUIGetListItem( gui_window *wnd, unsigned id, int choice )
                                    (WPI_PARAM1)choice,
                                    (WPI_PARAM2)NULL, (WPI_MRESULT)NULL );
     if( length > 0 ) {
-        text = (char *)GUIMemAlloc( length + 1 );
+        text = (char *)GUIAlloc( length + 1 );
 #ifdef __OS2_PM__
             p1 = MPFROM2SHORT(choice, length+1 );
 #else

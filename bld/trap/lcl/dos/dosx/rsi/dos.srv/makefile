@@ -1,4 +1,4 @@
-#pmake: serv lcl os_dos dsx cpu_386 x86 rsi
+#pmake: all build serv lcl os_dos dsx cpu_386 x86
 host_CPU = i86
 host_OS = dos
 
@@ -22,7 +22,7 @@ extra_objs = &
         rmhdlr.obj &
         sbrk.obj
 
-extra_c_flags = -hc -dDOS4G -dDOSXHELP -zdp -zu
+extra_c_flags = -dDOS4G -dDOSXHELP -zdp -zu
 
 extra_a_flags = -Dcompact
 extra_a_flags_npxtype = -fpi87
@@ -40,15 +40,11 @@ objs += $(lang_root)/lib286/dos/dos16m.obj &
         segs_16m.obj &
         magicstr.obj
 
-libs = $(rsilib)/d16libc.lib $(lang_root)/lib286/dos/clibc.lib $(extra_libs)
-
-$(target) : $(libs) $(objs) $(__MAKEFILES__)
+$(target) : $(extra_libs) $(objs) $(__MAKEFILES__)
     @%create tmp.lnk
     @%append tmp.lnk exp($^@) map($^&) log($^&.err)
-!ifeq release 0
-    @%append tmp.lnk -codeview
-!endif
     @%append tmp.lnk -mpl -nod -DPMI -map -acg -farcall -auto -quiet -rtnerr 2
     @for %i in ($(objs)) do @%append tmp.lnk %i
-    @for %i in ($(libs)) do @%append tmp.lnk %i
-    -!$(tools_root)\glu @tmp.lnk
+    @%append tmp.lnk $(rsilib)/d16libc.lib
+    @%append tmp.lnk $(lang_root)/lib286/dos/clibc.lib $(extra_libs)
+    -$(tools_root)\glu @tmp.lnk

@@ -24,27 +24,26 @@
 *
 *  ========================================================================
 *
-* Description:  IsDotOrDotDot() - check file is "." or ".."
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
+
 /*
- *  Motivation:
- *      Under HPFS it's possible to have directories and filenames that
- *      start with a '.'.
+    Motivation:
+
+        Under HPFS it's possible to have directories and filenames that
+    start with a '.'.
 */
 
-int IsDotOrDotDot( const char *fname )
-{
-    /* return 1 if fname is "." or "..", 0 otherwise */
+int IsDotOrDotDot( const char *fname ) {
 
-    if( fname[0] != '.' )
-        return( 0 );
-    if( fname[1] == 0 )
-        return( 1 );
-    if( fname[1] != '.' )
-        return( 0 );
-    if( fname[2] == 0 )
-        return( 1 );
+/* return 1 if fname is "." or "..", 0 otherwise */
+
+    if( fname[0] != '.' ) return( 0 );
+    if( fname[1] == 0 ) return( 1 );
+    if( fname[1] != '.' ) return( 0 );
+    if( fname[2] == 0 ) return( 1 );
     return( 0 );
 }

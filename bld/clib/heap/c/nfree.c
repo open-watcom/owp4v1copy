@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of near free() and _nfree().
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -39,8 +40,7 @@
 
 #if defined(__SMALL_DATA__)
 
-_WCRTLINK void free( void *stg )
-{
+_WCRTLINK void free( void *stg ) {
     _nfree( stg );
 }
 
@@ -48,12 +48,10 @@ _WCRTLINK void free( void *stg )
 
 struct miniheapblkp _WCNEAR     *__MiniHeapFreeRover;
 
-_WCRTLINK void _nfree( void _WCNEAR *stg )
-{
+_WCRTLINK void _nfree( void _WCNEAR *stg ) {
     mheapptr            p1,p2;
 
-    if( !stg )
-        return;
+    if( !stg ) return;
 
     _AccessNHeap();
     do {
@@ -108,7 +106,7 @@ _WCRTLINK void _nfree( void _WCNEAR *stg )
         // this pointer is not in the heap
         _ReleaseNHeap();
         return;
-    } while( 0 );
+    } while(0);
 
 found_it:
     // we found the miniheap, free the storage
@@ -119,5 +117,6 @@ found_it:
             __LargestSizeB4MiniHeapRover = p1->largest_blk;
         }
     }
+    __nheap_clean = 0;
     _ReleaseNHeap();
 }

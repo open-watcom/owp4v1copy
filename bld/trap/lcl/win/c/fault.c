@@ -103,8 +103,8 @@ typedef struct {
 // nyi - put in header or something!
 #define SIG_OFF         0
 #define SIG_SIZE        4
-extern const unsigned short __based(__segname("_CONST")) win386sig[];
-extern const unsigned short __based(__segname("_CONST")) win386sig2[];
+extern unsigned short win386sig[];
+extern unsigned short win386sig2[];
 
 #define EXCESS_CRAP_ON_STACK    (sizeof( int_frame ) )
 

@@ -257,7 +257,9 @@ static void printMasmHeader( section_ptr sec )
     orl_group_handle    grp;
     char                comname[ MAX_LINE_LEN ];
 
+    // Check if we need to display this segment
     size = ORLSecGetSize( sec->shnd );
+    if( !size && !( DFormat & DFF_ASM ) ) return;
 
     // Load all necessary information
     name = sec->name;
@@ -512,8 +514,6 @@ static label_entry dumpLabel( label_entry l_entry, section_ptr sec,
 {
     while( l_entry != NULL && l_entry->offset == loop ) {
         switch( l_entry->type ){
-            case LTYP_ABSOLUTE:
-                break;
             case LTYP_UNNAMED:
                 PrintLinePrefix( NULL, loop, end, 1, 0 );
                 BufferStore("%c$%d:", LabelChar, l_entry->label.number );

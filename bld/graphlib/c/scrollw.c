@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Scrolling routines.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -211,7 +212,9 @@ static void GrShift( short src_y, short dst_y,
     }
     prev_action = _setplotaction( _GPSET );
 
+#if !defined( _NEC_PC )
     _StartDevice();
+#endif
 
     dev_ptr = _CurrState->deviceptr;
     get = dev_ptr->readrow;
@@ -228,7 +231,9 @@ static void GrShift( short src_y, short dst_y,
         --rows;
     }
 
+#if !defined( _NEC_PC )
     _ResetDevice();
+#endif
     _setplotaction( prev_action );
 }
 
@@ -238,6 +243,39 @@ static void TxtShift( short src_y, short dst_y,
 //===============================================================
 
 {
+#if defined( _NEC_PC )
+    short               width;
+    unsigned short      screen_seg;
+    unsigned short      attrib_seg;
+    unsigned short      screen_offset;
+    unsigned short      src_offset;
+    unsigned short      dst_offset;
+    short far           *src_char;
+    short far           *dst_char;
+    short far           *src_attr;
+    short far           *dst_attr;
+
+    width = xr - xl + 1;
+    screen_seg = _TextSeg;
+    attrib_seg = _AttrSeg;
+    screen_offset = _CurrActivePage * 4096;
+    src_offset = 2 * ( src_y * _CurrState->vc.numtextcols + xl );
+    dst_offset = 2 * ( dst_y * _CurrState->vc.numtextcols + xl );
+    src_char = MK_FP( screen_seg, _TextOff + screen_offset + src_offset );
+    dst_char = MK_FP( screen_seg, _TextOff + screen_offset + dst_offset );
+    src_attr = MK_FP( attrib_seg, _AttrOff + screen_offset + src_offset );
+    dst_attr = MK_FP( attrib_seg, _AttrOff + screen_offset + dst_offset );
+    dir *= 80;  // each row is 80 characters (160 bytes) wide
+    while( rows != 0 ) {
+        _fmemcpy( dst_char, src_char, width * 2 );
+        _fmemcpy( dst_attr, src_attr, width * 2 );
+        src_char += dir;
+        dst_char += dir;
+        src_attr += dir;
+        dst_attr += dir;
+        --rows;
+    }
+#else
     char far            *p;
     short far           *src;
     short far           *dst;
@@ -262,5 +300,6 @@ static void TxtShift( short src_y, short dst_y,
         dst += dir;
         --rows;
     }
+#endif
 }
 #endif

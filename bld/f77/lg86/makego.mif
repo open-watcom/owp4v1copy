@@ -27,8 +27,24 @@ lnk_files = $(f77_dir)/lg86/novector.lnk $(fcnovect_lnk) fciftbl.lnk
 #
 # define the main target now so that we may define some other targets
 #
+!ifdef f77_target_dir
+!ifeq form os2v2
+exedir = $(f77_target_dir)/binp
+!else ifeq form nt
+exedir = $(f77_target_dir)/binnt
+!else
+!ifdef japan_objs
+exedir = $(f77_target_dir)/bin.nec
+!else
+exedir = $(f77_target_dir)/binw
+!endif
+!endif
+exename = $(exedir)/$(exe).exe
+!else
 exedir = .
 exename = $(exe).exe
+!endif
+
 
 $(exename) :
 # note no command list here, it will appear later

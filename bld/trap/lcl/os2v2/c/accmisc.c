@@ -688,13 +688,6 @@ unsigned ReqSplit_cmd()
         case '\t':
             ret->parm_start = 1;
             goto done;
-        case '\"':
-            while( --len && ( *++cmd != '\"' ) )
-                ;
-            if( len == 0 ) {
-                ret->parm_start = 1;
-                goto done;
-            }
         }
         ++cmd;
         --len;

@@ -22,10 +22,11 @@ extra_c_flags_mem = -DNO_WPI
 extra_c_flags_nt = -dNOUSE3D
 
 extra_l_flags     = option map
-extra_l_flags_win = option stack=7k option heapsize=2k lib ddeml.lib
-                    # lib { toolhelp.lib ddeml.lib commdlg.lib } #$(misc_dir)/ctl3d.lib }
+extra_l_flags_win = option stack=7k option heapsize=2k lib windows.lib &
+                    lib toolhelp.lib lib ddeml.lib lib commdlg.lib &
+                    lib $(misc_dir)/ctl3d.lib
 
-#extra_l_flags_nt_axp  = lib ctl3d32.lib
+extra_l_flags_nt_axp  = lib ctl3d32.lib
 
 .before:
         @set include=$(inc_path)

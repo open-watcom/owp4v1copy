@@ -34,7 +34,7 @@
 #include <stdlib.h>
 #include <process.h>
 #include <string.h>
-#include <unistd.h>
+#include <io.h>
 #include "gui.h"
 #include "setup.h"
 #include "setupinf.h"
@@ -43,7 +43,6 @@
 #include "utils.h"
 
 extern void InitIO( void );          /* fns. from wpack */
-extern void FiniIO( void );          /* fns. from wpack */
 extern void EvalRegNumber();
 extern void SetupTextTable( void );
 extern void SaveState(void);
@@ -211,7 +210,7 @@ bool CheckForSetup32( int argc, char **argv )
     DWORD       version = GetVersion();
     int         winver;
     char        *buff;
-    size_t      mem_needed;
+    int         mem_needed;
     int         i;
     char        new_exe[_MAX_PATH];
     char        drive[_MAX_DRIVE];
@@ -289,7 +288,7 @@ static bool CheckWin95Uninstall( int argc, char **argv )
 bool CheckValidDisketteDrive( char *dst_str )
 /***********************************/
 {
-#if defined( UNIX ) || defined( __UNIX__ )
+#if defined( UNIX )
     return( TRUE );
 #else
     if( !IsDiskette( dst_str[0] ) ) return( FALSE );
@@ -317,20 +316,20 @@ bool DirParamStack( char                **inf_name,
         old_inf_name = *inf_name;
         old_tmp_path = *tmp_path;
 
-        *inf_name = GUIMemAlloc( _MAX_PATH );
+        *inf_name = GUIAlloc( _MAX_PATH );
         if( *inf_name == NULL ) {
             return FALSE;
         }
-        *tmp_path = GUIMemAlloc( _MAX_PATH );
+        *tmp_path = GUIAlloc( _MAX_PATH );
         if( *tmp_path == NULL ) {
-            GUIMemFree( *inf_name );
+            GUIFree( *inf_name );
             return FALSE;
         }
         return TRUE;
     } else if( function == Stack_Pop ) {
         // Pop
-        GUIMemFree( *inf_name );
-        GUIMemFree( *tmp_path );
+        GUIFree( *inf_name );
+        GUIFree( *tmp_path );
         *inf_name = old_inf_name;
         *tmp_path = old_tmp_path;
         old_inf_name = NULL;
@@ -533,7 +532,6 @@ extern void GUImain( void )
     bool                ret = FALSE;
     dlg_state           state;
 
-    GUIMemOpen();
     GUIGetArgs( &argv, &argc );
     #if defined( __NT__ )
         if( CheckWin95Uninstall( argc, argv ) ) return;
@@ -574,13 +572,13 @@ extern void GUImain( void )
                 // push current script on stack
                 DirParamStack( &inf_name, &tmp_path, Stack_Push ); // "Push"
             }
-            new_inf = GUIMemAlloc( _MAX_PATH );
-            drive = GUIMemAlloc( _MAX_DRIVE );
-            dir = GUIMemAlloc( _MAX_PATH );
+            new_inf = GUIAlloc( _MAX_PATH );
+            drive = GUIAlloc( _MAX_DRIVE );
+            dir = GUIAlloc( _MAX_PATH );
             if( new_inf == NULL || drive == NULL || dir == NULL ) {
-                GUIMemFree( new_inf );
-                GUIMemFree( drive );
-                GUIMemFree( dir );
+                GUIFree( new_inf );
+                GUIFree( drive );
+                GUIFree( dir );
                 break;
             }
             // construct new path relative to previous
@@ -592,9 +590,9 @@ extern void GUImain( void )
             _makepath( tmp_path, drive, dir, NULL, NULL );
 //          strcpy( current_dir, tmp_path );
 
-            GUIMemFree( new_inf );
-            GUIMemFree( drive );
-            GUIMemFree( dir );
+            GUIFree( new_inf );
+            GUIFree( drive );
+            GUIFree( dir );
         } /* if */
 
         FreeGlobalVarList( FALSE );
@@ -603,7 +601,6 @@ extern void GUImain( void )
         ConfigModified = FALSE;
     } /* while */
 
-    FiniIO();
     FreeGlobalVarList( TRUE );
     FreeDefaultDialogs();
     FreeAllStructs();

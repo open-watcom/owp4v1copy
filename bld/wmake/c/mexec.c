@@ -28,27 +28,26 @@
 *
 ****************************************************************************/
 
-
 #include <sys/types.h>
 #if !defined( __UNIX__ )
-    #include <direct.h>
-    #include <dos.h>
+ #include <direct.h>
+ #include <dos.h>
 #endif
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #if defined( __WATCOMC__ ) || !defined( __LINUX__ )
-    #include <process.h>
+#include <process.h>
 #endif
 #ifdef __LINUX__
-    #include <sys/wait.h>
+#include <sys/wait.h>
 #endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #ifdef DLLS_IMPLEMENTED
-    #include <idedrv.h>
+#include <idedrv.h>
 #endif
 
 #include "massert.h"
@@ -86,7 +85,45 @@ enum {
 
 STATIC const char *const dosInternals[] = {   /* COMMAND.COM commands */
 
-#if     defined( __DOS__ )
+#if defined( __WINDOWS__ )
+    "BREAK",            /* this list must be in alpha order */
+    "CALL",
+    "CD",
+    "CHDIR",
+    "CLS",
+    "COMMAND",
+    "COPY",
+    "CTTY",
+    "DATE",
+    "DEL",
+    "DIR",
+    "ECHO",
+    "ERASE",
+    "FOR",
+#define COM_FOR     13  /* index of the for keyword */
+    "IF",
+#define COM_IF      14  /* index of the if keyword  */
+    "MD",
+    "MKDIR",
+    "PATH",
+    "PAUSE",
+    "PROMPT",
+    "RD",
+    "REM",
+    "REN",
+    "RENAME",
+    "RM",
+#define COM_RM      24
+    "RMDIR",
+    "SET",
+#define COM_SET     26  /* index of the set keyword */
+#define LEN_SET     3   /* strlen( "SET" ) */
+    "TIME",
+    "TYPE",
+    "VER",
+    "VERIFY",
+    "VOL"
+#elif   defined( __DOS__ )
 
     "BREAK",            /* this list must be in alpha order */
     "CALL",
@@ -100,7 +137,6 @@ STATIC const char *const dosInternals[] = {   /* COMMAND.COM commands */
     "DEL",
     "DIR",
     "ECHO",
-#define COM_ECHO    11  /* index of the echo keyword */
     "ERASE",
     "FOR",
 #define COM_FOR     13  /* index of the for keyword */
@@ -144,7 +180,6 @@ STATIC const char *const dosInternals[] = {   /* COMMAND.COM commands */
     "DIR",
     "DPATH",
     "ECHO",
-#define COM_ECHO    12  /* index of the echo keyword */
     "ENDLOCAL",
     "ERASE",
     "EXIT",
@@ -195,7 +230,6 @@ STATIC const char *const dosInternals[] = {   /* COMMAND.COM commands */
     "DIR",
     "DPATH",
     "ECHO",
-#define COM_ECHO    12  /* index of the echo keyword */
     "ENDLOCAL",
     "ERASE",
     "EXIT",
@@ -449,13 +483,14 @@ STATIC RET_T VerbosePrintTempFile( const FLIST *head )
 {
 
     FLIST const        *current;
-    RET_T               ret = RET_SUCCESS; // success if list empty
+    RET_T               ret;
 
     current = head;
     while( current != NULL ) {
         assert( current->fileName != NULL );
         ret = processInlineFile( 0, current->body, current->fileName, FALSE );
         current = current->next;
+
     }
     return( ret );
 }
@@ -467,8 +502,8 @@ STATIC RET_T createFile( const FLIST *head )
 {
     NKLIST *temp;
     int    handle;
-    char   *fileName = NULL;
-    char   *tmpFileName = NULL;
+    char   *fileName;
+    char   *tmpFileName;
     RET_T  ret;
 
     assert( head != NULL );
@@ -965,7 +1000,7 @@ STATIC RET_T handleSet( const char *cmd )
         return( mySystem( cmd, cmd ) );
     }
 
-    /* anything goes in a dos set name... even punctuation! */
+        /* anything goes in a dos set name... even punctuation! */
     name = p;
     while( *p != NULLCHAR && !isws( *p ) && *p != '=' ) {
         ++p;
@@ -989,32 +1024,6 @@ STATIC RET_T handleSet( const char *cmd )
     retcode = PutEnvSafe( env );
     if( retcode != 0 ) {
         return( RET_ERROR );
-    }
-    return( RET_SUCCESS );
-}
-
-
-STATIC RET_T handleEcho( const char *cmd )
-/*****************************************
- * "ECHO" <string>
- */
-{
-    const char  *p;         /* we walk cmd with this        */
-
-    assert( cmd != NULL );
-
-#ifdef DEVELOPMENT
-    PrtMsg( DBG|INF| INTERPRETING, dosInternals[ COM_ECHO ] );
-#endif
-
-    if( Glob.noexec ) {
-        return( RET_SUCCESS );
-    }
-
-    if( cmd[4] ) {      /* check for echo with no arguments */
-        p = cmd + 5;    /* assume "ECHO "; whitespace gets printed! */
-
-        PrtMsg( INF| PRNTSTR, p );
     }
     return( RET_SUCCESS );
 }
@@ -1410,6 +1419,26 @@ STATIC RET_T handleChangeDrive( const char *cmd )
     }
     return( RET_SUCCESS );
 }
+
+
+#if 0
+STATIC RET_T handleCHDrive( char *cmd )
+/*************************************/
+{
+    unsigned    drive;
+
+    if( !isalpha( *cmd ) ) {
+        PrtMsg( ERR| CHANGING_DRIVE, *cmd );
+        return( RET_ERROR );
+    }
+    drive = toupper( *cmd ) - ( 'A' - 1 );
+    if( DosSelectDisk( drive ) != 0 ) {
+        PrtMsg( ERR| CHANGING_DRIVE, *cmd );
+        return( RET_ERROR );
+    }
+    return( RET_SUCCESS );
+}
+#endif
 #endif
 #endif
 
@@ -1649,7 +1678,7 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
     char    *arg;
     char const *argv[ 3 ]; /* for spawnvp */
     int     retcode;    /* from spawnvp */
-    UINT16  tmp_env = 0;    /* for * commands */
+    UINT16  tmp_env;    /* for * commands */
     RET_T   my_ret;     /* return code for this function */
     int     quote;      /* true if inside quotes */
 
@@ -1721,7 +1750,6 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
         my_ret = mySystem( cmdname, cmd );
     } else if( comnum >= 0 ) {              /* check if we interpret it */
         switch( comnum ) {
-        case COM_ECHO:  my_ret = handleEcho( cmd );         break;
         case COM_SET:   my_ret = handleSet( cmd );          break;
         case COM_FOR:   my_ret = handleFor( cmd );          break;
         case COM_IF:    my_ret = handleIf( cmd );           break;
@@ -1856,7 +1884,7 @@ RET_T ExecCList( CLIST *clist )
 /*****************************/
 {
     char               *line;
-    RET_T               ret = RET_SUCCESS;
+    RET_T               ret;
     FLIST const        *currentFlist;
 
     assert( clist != NULL );

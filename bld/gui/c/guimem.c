@@ -24,127 +24,103 @@
 *
 *  ========================================================================
 *
-* Description:  Cover routines to access the trmem memory tracker
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
 
-#include <unistd.h>
+#include "guiwind.h"
 #include <stdlib.h>
-#include <malloc.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include "trmem.h"
-#include "guimem.h"
-
+#include <stdio.h>
 #ifdef TRMEM
-_trmem_hdl  GUIMemHandle;
-static int  GUIMemFileHandle;   /* stream to put output on */
-static void GUIMemPrintLine( int *, const char * buff, size_t len );
-
-static int  GUIMemOpened = 0;
-
+ #include <unistd.h>
+ #include <fcntl.h>
+ #include <sys/stat.h>
+ #include "trmemcvr.h"
 #endif
 
-#ifdef NLM
-/* There is no equivalent expand function in NetWare. */
-#define _expand NULL
-#endif
+/*
+ * GUIAlloc
+ */
 
-extern void GUIMemRedirect( int handle )
-/*************************************/
-{
-    handle=handle;
-#ifdef TRMEM
-    GUIMemFileHandle = handle;
-#endif
-}
-
-extern void GUIMemOpen( void )
-/***************************/
+void * GUIAlloc( unsigned size )
 {
 #ifdef TRMEM
-    char * tmpdir;
-
-    if( !GUIMemOpened ) {
-#ifdef NLM
-        GUIMemFileHandle = STDERR_HANDLE;
-#else
-        GUIMemFileHandle = STDERR_FILENO;
-#endif
-        GUIMemHandle = _trmem_open( malloc, free, realloc, _expand,
-            &GUIMemFileHandle, GUIMemPrintLine,
-            _TRMEM_ALLOC_SIZE_0 | _TRMEM_REALLOC_SIZE_0 |
-            _TRMEM_OUT_OF_MEMORY | _TRMEM_CLOSE_CHECK_FREE );
-
-        tmpdir = getenv( "TRMEMFILE" );
-        if( tmpdir != NULL ) {
-            GUIMemFileHandle = open( tmpdir, O_RDWR+O_CREAT+O_TRUNC+O_BINARY, S_IWUSR+S_IRUSR );
-        }
-        GUIMemOpened = 1;
-    }
-#endif
-}
-
-extern void GUIMemClose( void )
-/****************************/
-{
-#ifdef TRMEM
-    _trmem_prt_list( GUIMemHandle );
-    _trmem_close( GUIMemHandle );
-#ifdef NLM
-    if( GUIMemFileHandle != STDERR_HANDLE ) {
-#else
-    if( GUIMemFileHandle != STDERR_FILENO ) {
-#endif
-        close( GUIMemFileHandle );
-    }
-#endif
-}
-
-extern void GUIMemPrtUsage( void )
-/*******************************/
-{
-#ifdef TRMEM
-    _trmem_prt_usage( GUIMemHandle );
-#endif
-}
-
-extern void * GUIMemAlloc( size_t size )
-/*************************************/
-{
-#ifdef TRMEM
-    return( _trmem_alloc( size, _trmem_guess_who(), GUIMemHandle ) );
+    return( TRMemAlloc( size ) );
 #else
     return( malloc( size ) );
 #endif
 }
 
-extern void GUIMemFree( void * ptr )
-/*********************************/
+/*
+ * GUIFree
+ */
+
+void GUIFree( void * ptr )
 {
 #ifdef TRMEM
-    _trmem_free( ptr, _trmem_guess_who(), GUIMemHandle );
+    TRMemFree( ptr );
 #else
     free( ptr );
 #endif
 }
 
-extern void * GUIMemRealloc( void * ptr, size_t size )
-/***************************************************/
+/*
+ * GUIMemOpen
+ */
+
+void GUIMemOpen()
 {
 #ifdef TRMEM
-    return( _trmem_realloc( ptr, size, _trmem_guess_who(), GUIMemHandle ) );
+    static bool GUIMemOpened = FALSE;
+    char * tmpdir;
+
+    if( !GUIMemOpened ) {
+        TRMemOpen();
+        tmpdir = getenv( "TRMEMFILE" );
+        if( tmpdir != NULL ) {
+            TRMemRedirect( open( tmpdir, O_RDWR+O_CREAT+O_TRUNC+O_BINARY,
+                           S_IWUSR+S_IRUSR ) );
+        }
+        GUIMemOpened = TRUE;
+    }
+#endif
+}
+
+/*
+ * GUIMemClose
+ */
+
+void GUIMemClose( void )
+{
+#ifdef TRMEM
+    TRMemPrtList();
+    TRMemClose();
+#endif
+}
+
+/*
+ * GUIMemRealloc
+ */
+
+void * GUIRealloc( void * ptr, unsigned size )
+{
+#ifdef TRMEM
+    return( TRMemRealloc( ptr, size) );
 #else
     return( realloc( ptr, size ) );
 #endif
 }
 
-/* extern to avoid problems with taking address and overlays */
-extern void GUIMemPrintLine( int * handle, const char * buff, size_t len )
-/********************************************************************/
+
+/*
+ * GUIMemReport
+ */
+
+void GUIMemPrtUsage( void )
 {
 #ifdef TRMEM
-    write( *handle, buff, len );
+    TRMemPrtUsage();
 #endif
 }

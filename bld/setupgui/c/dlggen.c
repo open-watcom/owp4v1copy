@@ -250,7 +250,7 @@ static void GetVariableVals( gui_window *gui,
             text = GUIGetText( gui, VarGetId( var_handle ) );
             if( text != NULL ) {
                 SetVariableByHandle( var_handle, text );
-                GUIMemFree( text );
+                GUIFree( text );
             }
         break;
         default:

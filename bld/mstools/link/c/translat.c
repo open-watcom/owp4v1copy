@@ -548,8 +548,7 @@ static void linker_opts( struct XlatStatus *status,
     /*** Process the LIB environment variable ***/
     envvar = getenv( "LIB" );
     if( envvar != NULL ) {
-        newstr = PathConvert( envvar, '\'' );
-        AppendFmtCmdLine( cmdLine, LINK_OPTS_SECTION, "LIBPATH %s", newstr );
+        AppendFmtCmdLine( cmdLine, LINK_OPTS_SECTION, "LIBPATH %s", envvar );
     }
 
     if( cmdOpts->incremental ) {

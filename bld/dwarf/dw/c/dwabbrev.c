@@ -39,7 +39,7 @@
 #include "dwdecl.h"
 
 
-#include "dwabinfo.gh"
+#include "dwabinfo.i"
 
 
 static const struct {

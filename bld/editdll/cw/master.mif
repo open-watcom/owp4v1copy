@@ -27,7 +27,7 @@ description = 'Open Watcom Editor DLL for Codewright'
 extra_l_flags = op description $(description)
 extra_l_flags += op map, elim, verbose, static
 extra_l_flags_win = library ddeml
-extra_l_flags_win += op stack=8k, rwr
+extra_l_flags_win += op stack=8k
 extra_l_flags_win += segment _TEXT PRELOAD FIXED
 extra_l_flags_win += segment CLASS 'CODE' LOADONCALL MOVEABLE DISCARDABLE
 extra_l_flags_win += export WEP RESIDENT

@@ -1,4 +1,4 @@
-#pmake: buildwcl os_linux cpu_386 target_i86
+#pmake: buildwcl os_linux cpu_386
 
 host_os  = linux
 host_cpu = 386

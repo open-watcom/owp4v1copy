@@ -40,11 +40,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef __WIDECHAR__
-    #include <wctype.h>
-#else
-    #include <ctype.h>    
-#endif
+#include <ctype.h>
 #include <stdarg.h>
 #include "scanf.h"
 #include "fixpoint.h"

@@ -565,7 +565,6 @@ void SetDialogFont()
         strcpy(lf.lfFaceName, "MS Sans Serif");
         GetFontFormatString( &lf, dlgfont );
         GUISetFontInfo( MainWnd, dlgfont );
-        GUIMemFree( fontstr );
     }
 #endif
 }

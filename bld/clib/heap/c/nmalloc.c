@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of near malloc() and _nmalloc().
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -119,6 +120,7 @@ _WCRTLINK void _WCNEAR *_nmalloc( size_t amt )
         }
     }
 lbl_release_heap:
+    __nheap_clean = 0;
     _ReleaseNHeap();
     return( (void _WCNEAR *)ptr );
 }

@@ -24,10 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  This master file includes the source for all the istrstream
-*               member functions.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
+
 
 #include    "isscochz.cpp"
 #include    "issconch.cpp"

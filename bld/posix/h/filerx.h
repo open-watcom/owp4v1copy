@@ -38,19 +38,19 @@
 #define FALSE   0
 #endif
 
-int     FileMatch( void *crx, char *name );
-char    *FileMatchInit( void **crx, char *wild );
-void    FileMatchFini( void *crx );
-int     FileNameWild( char *wild, int isrx );
-DIR     *OpenDirAll( char *filename, char *wild );
-int     FileMatchNoRx( char *name, char *wild );
+int FileMatch( void *crx, const char *name );
+char *FileMatchInit( void **crx, const char *wild );
+void FileMatchFini( void *crx ) ;
+int FileNameWild( const char *wild, int isrx );
+DIR *OpenDirAll( const char *filename,  char *wild );
+int FileMatchNoRx( const char *name, const char *wild );
+int isFILESEP( int c );
 
-#ifdef __UNIX__
-#define FILESEPSTR      "/"
-#define isFILESEP(c)    ( c == '/' )
-#else
+/* Removed FILESEP - \ and / correct except in UNIX.   W.Briscoe 20031112 */
+#ifndef __QNX__
 #define FILESEPSTR      "\\"
-#define isFILESEP(c)    ( c == '\\' )
+#else
+#define FILESEPSTR      "/"
 #endif
 
 #endif

@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Visual page get/set routines.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -63,7 +64,13 @@ short _WCI86FAR _CGRAPH _setvisualpage( short pagenum )
         }
     }
     pagenum %= _CurrState->vc.numvideopages;
+#if defined( _NEC_PC )
+    NECVideoInt( _BIOS_PAGE_SET, 0, 0, pagenum * 4096 );
+    NECVideoIntDC( 0x0300, 0, 0x0010, 0 );      // tell DOS where cursor is
+    NECVideoInt( _BIOS_CURSOR_SET, 0, 0, pagenum * 4096 );
+#else
     VideoInt( _BIOS_VIDEO_PAGE + pagenum, 0, 0, 0 );
+#endif
     prev = _CurrVisualPage;
     _CurrVisualPage = pagenum;
     return( prev );

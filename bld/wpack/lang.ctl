@@ -9,26 +9,13 @@ set PROJDIR=<CWD>
 
 [ BLOCK <1> build rel2 ]
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
-    cdsay <PROJDIR>
+    cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    [ IFDEF <BUILD_PLATFORM> dos386 ]
-        <CPCMD> <DEVDIR>/wpack/supp/wpack.exe <distroot>/supp/
-
-    [ IFDEF <BUILD_PLATFORM> nt386 ]
-        <CPCMD> <DEVDIR>/wpack/supp/wpack.exe <distroot>/supp/
-
-    [ IFDEF <BUILD_PLATFORM> os2386 ]
-        <CPCMD> <DEVDIR>/wpack/supp/wpack.exe <distroot>/supp/
-
-    [ IFDEF <BUILD_PLATFORM> linux386 ]
-        <CPCMD> <DEVDIR>/wpack/supp/wpack.exe <distroot>/supp/wpack
-
-    [ ENDIF ]
+  [ IFDEF (os_nt "") <2*> ]
+    <CPCMD> <DEVDIR>/wpack/nt386/wpack.exe <distroot>/supp/
 
 [ BLOCK <1> clean ]
 #==================
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
-    cdsay <PROJDIR>
-

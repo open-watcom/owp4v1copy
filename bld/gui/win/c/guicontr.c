@@ -83,7 +83,7 @@ bool GUIInsertCtrlWnd( gui_window *wnd )
 {
     dialog_node *node;
 
-    node = (dialog_node *)GUIMemAlloc( sizeof( dialog_node ) );
+    node = (dialog_node *)GUIAlloc( sizeof( dialog_node ) );
     if( node != NULL ) {
         node->wnd = wnd;
         node->next = DialogHead;
@@ -125,7 +125,7 @@ static void GUIDeleteCtrlWnd( gui_window *wnd )
             } else {
                 (*prev_owner)->next = curr->next;
             }
-            GUIMemFree( curr );
+            GUIFree( curr );
             break;
         }
         prev_owner = owner;
@@ -178,7 +178,7 @@ control_item *GUIControlInsert( gui_window *parent, gui_control_class class,
 {
     control_item        *item;
 
-    item = ( control_item * )GUIMemAlloc( sizeof( control_item ) );
+    item = ( control_item * )GUIAlloc( sizeof( control_item ) );
     if( item == NULL ) {
         return( NULL );
     }
@@ -204,14 +204,14 @@ control_item *GUIControlInsertByHWND( HWND hwnd, gui_window *parent )
     if( ( parent == NULL ) || ( phwnd != parent->hwnd ) ) {
         return( NULL );
     }
-    item = ( control_item * )GUIMemAlloc( sizeof( control_item ) );
+    item = ( control_item * )GUIAlloc( sizeof( control_item ) );
     if( item == NULL ) {
         return( NULL );
     }
     memset( item, 0, sizeof( control_item ) );
     item->class = GUIGetControlClassFromHWND( hwnd );
     if( item->class == BAD_CLASS ) {
-        GUIMemFree( item );
+        GUIFree( item );
         return( NULL );
     }
 
@@ -246,7 +246,7 @@ void GUIControlDelete( gui_window *wnd, unsigned id )
             } else {
                 prev->next = next;
             }
-            GUIMemFree( curr );
+            GUIFree( curr );
             break;
         }
         prev = curr;
@@ -268,7 +268,7 @@ void GUIControlDeleteAll( gui_window *wnd )
 
     for( curr = wnd->controls; curr != NULL; curr = next ) {
         next = curr->next;
-        GUIMemFree( curr );
+        GUIFree( curr );
     }
     wnd->controls = NULL;
     GUIDeleteCtrlWnd( wnd );

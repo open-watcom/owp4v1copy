@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Runtime debug support - error reporting.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -59,7 +60,7 @@
 #define TOO_LONG_MSG            "_CrtDbgReport: Message too long"
 #define ASSERT_PREFIX1          "Assertion failed!"
 #define ASSERT_PREFIX2          "Assertion failed: "
-#define WINTITLE                "Open Watcom C/C++ Debug Library"
+#define WINTITLE                "WATCOM C/C++ Debug Library"
 
 
 

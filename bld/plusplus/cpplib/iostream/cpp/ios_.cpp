@@ -24,10 +24,11 @@
 *
 *  ========================================================================
 *
-* Description: This master file includes the source for all the ios
-*              member functions.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
+
 
 #include    "iosbital.cpp"
 #include    "iosclear.cpp"

@@ -89,10 +89,10 @@
 
 #ifdef _WASM_
     #define     Address         ( GetCurrAddr() )
-    #define MEM_TYPE( op, typ ) ( (op) == T_##typ || (op) == T_S##typ )
+    #define MEM_TYPE( op, typ ) ( (op) == MT_##typ || (op) == MT_S##typ )
 #else
     extern uint_32              Address;
-    #define MEM_TYPE( op, typ ) ( (op) == T_##typ )
+    #define MEM_TYPE( op, typ ) ( (op) == MT_##typ )
 #endif
 
 /* global variables */

@@ -1,15 +1,21 @@
 proj_name = mviper
 name      = mviper
 
-!ifndef mviper_autodepends
-mviper_autodepends = .AUTODEPEND
-!endif
+.mif : $(mif_path)
+.cpp : ..
 
 !include cproj.mif
-!include defrule.mif
 !include deftarg.mif
 
-!include $(wclass_dir)/mif/client.mif
+extra_c_flags_386_nt    = -fpc-zm-zc
+extra_c_flags_386_os2   = -fpc
+extra_c_flags_386       = $(extra_c_flags_386_$(host_OS))
+extra_c_flags_i86       = -fpc-zm-zc
+
+inc_dirs = $(gui_dir)/h;$(wclass_dir)/hpp
+
+.before:
+        set include=$(inc_path)
 
 objects =       contfile.obj &
                 maccel.obj &
@@ -38,15 +44,8 @@ objects =       contfile.obj &
                 mvswitch.obj &
                 mworkfil.obj
 
-extra_c_flags_386       = -fpc
-extra_c_flags_i86       = -fpc -zc -zm
-
-inc_dirs = $(wclass_inc_dirs)
-
-.before:
-        @set include=$(inc_path)
-
-.cpp : ..
-
 $(name).lib : $(objects)
         $(librarian) -b -n $^@ $(objects)
+
+.cpp.obj : .autodepend
+        $(cpp) $(cflags) $[@ -fo=$^@

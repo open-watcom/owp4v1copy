@@ -32,7 +32,7 @@
 
     name italic
 
-ifdef __386__
+ifdef _386
     _DATA segment word public 'DATA'
 else
     ItalicFont_DATA segment para 'FONT_DATA'
@@ -438,7 +438,7 @@ db   20,  16,  21,  14,  21,  11,  20,   9,  19,   8,  16,   7,  14,   7
 db   12,   8,  11,   9,  10,  12, -99,  14,  19,  17,  18,  19,  16,  20
 db   14,  20,  11,  19,   9,  18,   8,  16,   7
 
-ifdef __386__
+ifdef _386
     _DATA ends
 else
     ItalicFont_DATA ends

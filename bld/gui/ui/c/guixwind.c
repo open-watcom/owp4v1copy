@@ -102,15 +102,15 @@ void GUIFreeWindowMemory( gui_window *wnd, bool from_parent, bool dialog )
     }
     if( wnd->hgadget != NULL ) {
         uifinigadget( wnd->hgadget );
-        GUIMemFree( wnd->hgadget );
+        GUIFree( wnd->hgadget );
     }
     if( wnd->vgadget != NULL ) {
         uifinigadget( wnd->vgadget );
-        GUIMemFree( wnd->vgadget );
+        GUIFree( wnd->vgadget );
     }
     GUIFreeMenus( wnd );
     GUIFreeHint( wnd );
-    GUIMemFree( wnd->icon_name );
+    GUIFree( wnd->icon_name );
     if( !dialog ) {
         uivshow( &wnd->screen );
         wnd->screen.open = TRUE;
@@ -119,9 +119,9 @@ void GUIFreeWindowMemory( gui_window *wnd, bool from_parent, bool dialog )
     if( GUICurrWnd == wnd ) {
         GUICurrWnd = NULL;
     }
-    GUIMemFree( wnd->screen.name );
+    GUIFree( wnd->screen.name );
     GUIFreeColours( wnd );
-    GUIMemFree( wnd );
+    GUIFree( wnd );
 }
 
 static void DoDestroy( gui_window * wnd, bool dialog )

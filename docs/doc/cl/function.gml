@@ -211,7 +211,7 @@ or
 .kw short int
 without promotion taking place.
 .pp
-According to the ISO standard for the C language,
+According to the ANSI standard for the C language,
 .bd this form of function definition is obsolete
 and should not be used. It is provided for historical reasons,
 in particular, for compatibility with older C compilers.

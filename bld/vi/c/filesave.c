@@ -483,23 +483,3 @@ bool FileExitOptionSaveChanges( file *f )
 
     return aborted;
 }
-
-/*
- * FancyFileSave
- */
-int FancyFileSave( void )
-{
-    int         rc;
-
-    if( CurrentFile == NULL )
-    {
-        return( ERR_NO_FILE );
-    }
-    rc = SaveFile( CurrentFile->name, -1, -1, TRUE );
-    if( rc == ERR_NO_ERR )
-    {
-        CurrentFile->modified = FALSE;
-        UpdateLastFileList( CurrentFile->name );
-    }
-    return( rc );
-}

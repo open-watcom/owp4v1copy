@@ -36,7 +36,6 @@
 #include <stdarg.h>
 
 static void PrintPostNotes(void);
-local int MsgDisabled( int msgnum );
 
 #if 0
 static char const WngLvls[] = {
@@ -86,7 +85,7 @@ static void CMsgInfo( cmsg_info *info, msg_codes msgnum, va_list args ){
 }
 static char const *MsgClassPhrase( cmsg_class class )
 {
-    msg_codes msgcode = PHRASE_ERROR;   // just for init.
+    msg_codes msgcode;
     char const *phrase;
 
     switch( class ){
@@ -239,7 +238,7 @@ void CInfoMsg( int msgnum, ... )
     CMsgInfo( &info, msgnum, args1 );
     va_end( args1 );
     ConsErrMsg( &info );
-    if( ErrFile != NULL ) {
+    if( ErrFile != NULL  &&  WngLevel >= 4 ) {
         FmtCMsg( pre, &info );
         fputs( pre, ErrFile );
         fputs( info.msgtxt, ErrFile );

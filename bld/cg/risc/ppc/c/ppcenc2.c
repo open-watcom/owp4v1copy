@@ -55,19 +55,19 @@ void EncodeRet( oc_ret *oc ) {
 
 static void doBranch( ppc_ins opcode, pointer lbl, uint reg ) {
 
-    opcode = 0; // _Opcode( opcode ) | _A( reg );
+    opcode = _Opcode( opcode ) | _A( reg );
     OutReloc( lbl, OWL_RELOC_BRANCH_REL, 0 );
     ObjBytes( (char *)&opcode, sizeof( opcode ) );
 }
 
 void EncodeJump( oc_handle *oc ) {
 
-    doBranch( 0x30, oc->handle, 0 );
+    doBranch( 0x30, oc->handle, PPC_ZERO_SINK );
 }
 
 void EncodeCall( oc_handle *oc ) {
 
-    doBranch( 0x34, oc->handle, 0 );
+    doBranch( 0x34, oc->handle, PPC_RETURN_ADDR );
 }
 
 static  uint_8  BranchOpcodes[][2] = {

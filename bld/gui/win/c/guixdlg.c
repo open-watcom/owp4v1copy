@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#include "guiwind.h"
+ #include "guiwind.h"
 #include <stdlib.h>
 #include <string.h>
 #include "guiutil.h"
@@ -80,7 +80,7 @@ void GUISetJapanese()
                 PointSize = 10;
             #endif
             if( Font != NULL ) {
-                GUIMemFree( Font );
+                GUIFree( Font );
             }
             GUIStrDup( newfont, &Font );
         }
@@ -776,7 +776,7 @@ WPI_DLGRESULT CALLBACK GUIInitDialogFunc( HWND hwnd, WPI_MSG message, WPI_PARAM1
 void GUIFiniDialog( void )
 {
     if( Font != NULL ) {
-        GUIMemFree( Font );
+        GUIFree( Font );
         Font = NULL;
     }
 }
@@ -806,7 +806,7 @@ void GUIInitDialog( void )
     if( !font_set ) {
         PointSize = 0;
         if( Font != NULL ) {
-            GUIMemFree( Font );
+            GUIFree( Font );
         }
         GUIStrDup( "", &Font );
     }

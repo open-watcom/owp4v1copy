@@ -75,16 +75,11 @@ static BITMAPINFO *readDIBInfo( FILE *fp )
     if( !header ) return( NULL );
     fseek( fp, START_OF_HEADER, SEEK_SET );
     fread( header, sizeof( BITMAPINFOHEADER ), 1, fp );
-    if( header->biBitCount < 9 ) {
-        /* Bitmap has palette, read it */
-        fseek( fp, START_OF_HEADER, SEEK_SET );
-        bitmap_size = DIB_INFO_SIZE( header->biBitCount );
-        bm = MemReAlloc( header, bitmap_size );
-        if( !bm ) return( NULL );
-        fread( bm, bitmap_size, 1, fp );
-    }
-    else return( (BITMAPINFO*) header );
-     
+    fseek( fp, START_OF_HEADER, SEEK_SET );
+    bitmap_size = DIB_INFO_SIZE( header->biBitCount );
+    bm = MemReAlloc( header, bitmap_size );
+    if( !bm ) return( NULL );
+    fread( bm, bitmap_size, 1, fp );
     return( bm );
 }
 
@@ -197,25 +192,15 @@ static HBITMAP readBitmap( HWND hwnd, FILE *fp, long offset, BOOL core,
             bitmap_handle = CreateBitmap( h->bcWidth, h->bcHeight, h->bcPlanes,
                 h->bcBitCount, mask_ptr );
         } else {
-            if( bm_info->bmiHeader.biBitCount < 9 ) {
-                /* Bitmap has palette, create it */
-                new_palette = CreateDIBPalette( bm_info );
-                if( new_palette ) {
-                    hdc = GetDC( hwnd );
-                    old_palette = SelectPalette( hdc, new_palette, FALSE );
-                    RealizePalette( hdc );
-                    bitmap_handle = CreateDIBitmap( hdc, &bm_info->bmiHeader,
-                                    CBM_INIT, mask_ptr, bm_info, DIB_RGB_COLORS );
-                    SelectPalette( hdc, old_palette, FALSE );
-                    DeleteObject( new_palette );
-                    ReleaseDC( hwnd, hdc );
-                }
-            }
-            else {
-                /* Bitmap with no palette*/
+            new_palette = CreateDIBPalette( bm_info );
+            if( new_palette ) {
                 hdc = GetDC( hwnd );
+                old_palette = SelectPalette( hdc, new_palette, FALSE );
+                RealizePalette( hdc );
                 bitmap_handle = CreateDIBitmap( hdc, &bm_info->bmiHeader,
                                 CBM_INIT, mask_ptr, bm_info, DIB_RGB_COLORS );
+                SelectPalette( hdc, old_palette, FALSE );
+                DeleteObject( new_palette );
                 ReleaseDC( hwnd, hdc );
             }
         }

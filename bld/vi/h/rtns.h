@@ -349,7 +349,6 @@ int StartSaveExit( void );
 int SaveAndExit( char *fname );
 bool FileExitOptionSaveChanges( file * );
 bool FilePromptForSaveChanges( file *f );
-int FancyFileSave( void );
 
 /* filesel.c */
 int SelectFileOpen( char *, char **, char *, bool );

@@ -24,9 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  Die - terminate with error message
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
+
 
 #include <unistd.h>
 #include <stdio.h>
@@ -34,10 +36,13 @@
 #include <stdarg.h>
 #include "misc.h"
 
+/*
+ * Die - terminate with error message
+ */
 void Die( const char *str, ... )
 {
     va_list     al;
-    char        buffer[1024]; /* FIXME: a better way to do this?? */
+    char        buffer[ 1024 ]; /* FIXME: a better way to do this?? */
     int         len;
 
     va_start( al, str );
@@ -45,4 +50,5 @@ void Die( const char *str, ... )
     va_end( al );
     write( STDERR_FILENO, buffer, len );
     exit( 1 );
-}
+
+} /* Die */

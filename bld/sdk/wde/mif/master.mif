@@ -20,6 +20,7 @@ memory_model_i86 = l
 !include defrule.mif
 
 WINDOWS=1
+
 !include wres.mif
 
 # path names used in the script
@@ -178,20 +179,22 @@ deps: .SYMBOLIC
         @echo making dependencies...
         @errout ..\bin\mkwdedep > $(nulldevice)
 
-extra_l_flags = op map, v, symfile
+extra_l_flags  = lib $(wres_lib), $(fmedit_lib), $(wr_lib)
+extra_l_flags += op map, v, symfile
 extra_l_flags_nt = op stack=32k, heap=16k commit heap=8k
 extra_l_flags_win  = op stack=32k, rwr
 extra_l_flags_win += library commdlg, ddeml
 
-xlibs = $(wres_lib) $(fmedit_lib) $(wr_lib)
-
-$(name).exe: wdemsgs.gh $(OBJS) $(name).res $(xlibs)
-        @%create tmp.lnk
-        @%append tmp.lnk $(lflags)
-        @for %i in ($(OBJS)) do @%append tmp.lnk file %i
-        @for %i in ($(xlibs)) do @%append tmp.lnk lib %i
-        $(linker) name $^@ @tmp.lnk
+$(name).exe: wdemsgs.gh $(OBJS) $(name).res $(wres_lib) $(fmedit_lib) $(wr_lib)
+        $(linker) name $^@ $(lflags) file {$(OBJS)}
         $(rc) $(rc_flags) -k $(name).res $^@
+!ifdef TOOLS_10_0
+!ifeq host_OS nt
+!ifeq host_CPU 386
+        whack $(name).exe
+!endif
+!endif
+!endif
 
 # implicit rules
 #################

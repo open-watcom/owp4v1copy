@@ -29,14 +29,15 @@
 *
 ****************************************************************************/
 
+
 typedef enum {
-    DIFF_NO_DIFFS = 0,
-    DIFF_HAVE_DIFFS,
-    DIFF_NOT_COMPARED,
-    DIFF_NO_MEMORY,
-    DIFF_RETURN_ADD = 100,
-    DIFFX_NO_DIFFS = DIFF_RETURN_ADD,
-    DIFFX_HAVE_DIFFS,
-    DIFFX_NOT_COMPARED,
-    DIFFX_NO_MEMORY,
-}       diff_returns;
+        DIFF_NO_DIFFS = 0,
+        DIFF_HAVE_DIFFS,
+        DIFF_NOT_COMPARED,
+        DIFF_NO_MEMORY,
+        DIFF_RETURN_ADD = 100,
+        DIFFX_NO_DIFFS = DIFF_RETURN_ADD,
+        DIFFX_HAVE_DIFFS,
+        DIFFX_NOT_COMPARED,
+        DIFFX_NO_MEMORY,
+} diff_returns;

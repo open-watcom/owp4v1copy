@@ -1,11 +1,7 @@
 proj_name = viper
 name      = ide
 
-sys_windowed = 1
-
-!ifndef viper_autodepends
 viper_autodepends = .autodepend
-!endif
 
 .SUFFIXES : .rc
 
@@ -21,16 +17,14 @@ c_path_win = $(batch_dir)/dos;$(batch_dir)/os2
 .rc : ../win
 !endif
 
+sys_windowed = 1
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
 
-!include $(wclass_dir)/mif/client.mif
-
-WINDOWS = 1
-!include wres.mif
-
 !include ../mif/objects.mif
+!include ../mif/lib.mif
+!include ../mif/include.mif
 
 !ifdef __LINUX__
 description = \'Open Watcom IDE\'
@@ -44,33 +38,18 @@ extra_c_flags_i86       = -fpc
 extra_c_flags_link      = -dSERVER
 !endif
 
-extra_cpp_flags_i86     = -zc -zm
+extra_cpp_flags_386_nt  = -zm-zc
+extra_cpp_flags_386     = $(extra_cpp_flags_386_$(host_os))
+extra_cpp_flags_i86     = -zm-zc
 
-extra_l_flags = op eliminate sort global
-
-prereq_inc_os2 = $(guitools_dir)/os2
-prereq_inc_win = $(guitools_dir)/win
-prereq_inc_nt  = $(guitools_dir)/win95
-!ifdef prereq_inc_$(host_os)
-prereq_ide_h = $(prereq_inc_$(host_os))/ide.h
-!endif
-
-inc_dirs_win = $(batch_dir)/dos
-
-inc_dirs = $(wclass_inc_dirs);$(viper_dir)/mviper;$(editdll_dir);$(rcsdll_dir);$(batch_dir)/h;$(gui_dir)/win/h;$(prereq_inc_$(host_os))
-
-LIBS = &
-    $(viper_dir)/mviper/$(host_os)$(host_cpu)/mviper.lib &
-    $(wclass_lib) &
-    $(gui_dir)/win/$(host_os)$(host_cpu)/gui.lib &
-    $(wres_lib)
+prereq_nt = $(guitools_dir)/win95/ide.h
+prereq_win = $(guitools_dir)/win/ide.h
+prereq_os2 = $(guitools_dir)/os2/ide.h
 
 .before:
-        @set include=$(inc_path)
+        set include=$(inc_path)
 
-all: $(prereq_ide_h) $(name).exe .SYMBOLIC
-
-$(name).exe : $(OBJECTS) $(LIBS) viper.res
+$(name).exe : $(prereq_$(host_os)) $(OBJECTS) $(LIBS) viper.res
 !ifneq host_OS os2
         $(linker) $(lflags) name $(name) op map, de $(description) f {$(OBJECTS)} lib {$(LIBS)}
         $(rc) $(rc_flags) -k viper.res $^@
@@ -103,10 +82,10 @@ viper.res : _guimsgs.gh $(gui_dir)/h/gui.rc viper.rc
 _guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
         $[@ $^@ $(gui_msg_id_modifier)
 
-!ifdef prereq_ide_h
-$(prereq_ide_h): .ALWAYS
+!ifdef prereq_$(host_os)
+$(prereq_$(host_os)): .SYMBOLIC
 curr_dir=$+$(%cwd)$-
         @cd $(%DOC_ROOT)\$(host_os)
-        @wmake -h hbook=ide header=1
+        @wmake hbook=ide
         @cd $(curr_dir)
 !endif

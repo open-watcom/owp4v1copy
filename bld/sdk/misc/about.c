@@ -35,23 +35,15 @@
 #include <stdio.h>
 #define STRICT
 #define INCLUDE_TOOLHELP_H
-#define INCLUDE_COMMDLG_H
 #include <windows.h>
 #include "about.h"
 #include "aboutdlg.h"
 #include "win1632.h"
 #ifndef NOUSE3D
 #include "ctl3d.h"
-#if defined( __WINDOWS__ ) && !defined( __WINDOWS_386__ )
-#pragma library("ctl3d.lib")
-#endif
 #endif
 #include "ldstr.h"
 #include "rcstr.gh"
-#if defined( __WINDOWS__ ) && !defined( __WINDOWS_386__ )
-#pragma library("commdlg.lib")
-#pragma library("toolhelp.lib")
-#endif
 
 /*
  * AboutProc - callback routine for settings dialog

@@ -72,7 +72,7 @@ it will run with little or no modification on any system
 with a C compiler.
 In the past, with the proliferation of C compilers
 and no standard to guide their design, it was much more difficult.
-Today, with the appearance of the ISO standard for the C programming
+Today, with the appearance of the ANSI standard for the C programming
 language, a program written entirely in a conforming C implementation
 should be transportable
 to a new compiler with relatively little work.

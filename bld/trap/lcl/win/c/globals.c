@@ -42,7 +42,7 @@ HTASK                   DebugeeTask;
 HINSTANCE               DebugeeInstance;
 struct interrupt_struct IntResult;
 volatile debugger_state DebuggerState=ACTIVE;
-const char __based(__segname("_CONST")) ExtensionList[] = { ".com\0.exe\0" };
+char                    ExtensionList[] = { ".com\0.exe\0" };
 break_point             StopNewTask;
 DWORD                   SystemDebugState;
 WORD                    NPXType;

@@ -1,10 +1,9 @@
 @echo %regress% off
 SET TRMEM_CODE=1
 
-set from=%cd%
-cd %devdir%\wmake\regress
-
-if exist ERROR.OUT del ERROR.OUT
+if not exist ERROR.OUT  goto not_exist 
+    del ERROR.OUT
+:not_exist
 if .%1 == . goto usage
 
 REM ===========================
@@ -15,7 +14,7 @@ cd TEST1
 :: %comspec% /c call  ... rather than call ... to isolate echo off changes
 %comspec% /c call TEST.BAT %1 ..\ERROR.OUT
 cd ..
-
+    
 :tst2
 REM ===========================
 REM -- TEST2 - Implicit Rules Test
@@ -24,7 +23,7 @@ echo *****************************************************************
 cd IMPLICIT
 %comspec% /c call TEST.BAT %1 ..\ERROR.OUT
 cd ..
-
+    
 :tst3
 REM ===========================
 REM -- FORTEST - FOR LOOP TEST
@@ -36,7 +35,7 @@ cd ..
 
 :tst4
 REM ===========================
-REM -- PRETEST - PRE COMPILER TEST
+REM -- PRETEST - PRE COMPILER TEST 
 REM ===========================
 echo *****************************************************************
 cd PRETEST
@@ -45,7 +44,7 @@ cd ..
 
 :tst5
 REM ===========================
-REM -- UPDTEST - UPDATE TEST
+REM -- UPDTEST - UPDATE TEST 
 REM ===========================
 echo *****************************************************************
 cd UPDTEST
@@ -55,7 +54,7 @@ cd ..
 :tst6
 set TRMEM_CODE=3
 REM ===========================
-REM -- ERRTEST - ERROR TEST
+REM -- ERRTEST - ERROR TEST 
 REM ===========================
 echo *****************************************************************
 cd ERRTEST
@@ -65,7 +64,7 @@ cd ..
 :tst7
 set TRMEM_CODE=1
 REM ===========================
-REM -- INLINE TEST -
+REM -- INLINE TEST - 
 REM ===========================
 echo *****************************************************************
 cd INLINE
@@ -74,7 +73,7 @@ cd ..
 
 :tst8
 REM ===========================
-REM -- PREPROCESS TEST -
+REM -- PREPROCESS TEST - 
 REM ===========================
 echo *****************************************************************
 cd PREPROC
@@ -83,7 +82,7 @@ cd ..
 
 :tst9
 REM ===========================
-REM -- MACROS TEST -
+REM -- MACROS TEST - 
 REM ===========================
 echo *****************************************************************
 cd MACROS
@@ -92,7 +91,7 @@ cd ..
 
 :tst10
 REM ===========================
-REM -- MISC TEST -
+REM -- MISC TEST - 
 REM ===========================
 echo *****************************************************************
 cd MISC
@@ -101,7 +100,7 @@ cd ..
 
 :tst11
 REM ===========================
-REM -- LONG FILENAME TEST -
+REM -- LONG FILENAME TEST - 
 REM ===========================
 echo *****************************************************************
 cd LONGFILE
@@ -110,15 +109,14 @@ cd ..
 
 
 REM ===========================
-REM -- End of Test
+REM -- End of Test 
 REM ===========================
 echo ************* DONE DONE DONE ********************
 
 if exist ERROR.OUT echo !!!!!!!! ERRORS FOUND !!!!!!!!!!
-if exist ERROR.OUT echo look at ERROR.OUT for listing
+if exist ERROR.OUT echo look at ERROR.OUT for listing 
 goto done
 :usage
 echo %0 progname (e.g. %0 wmake)
 
 :done
-cd %from%

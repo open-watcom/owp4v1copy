@@ -29,28 +29,50 @@
 *
 ****************************************************************************/
 
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %     Copyright (C) 1992, by WATCOM International Inc.  All rights    %
+// %     reserved.  No part of this software may be reproduced or        %
+// %     used in any form or by any means - graphic, electronic or       %
+// %     mechanical, including photocopying, recording, taping or        %
+// %     information storage and retrieval systems - except with the     %
+// %     written permission of WATCOM International Inc.                 %
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+//  Modified    By              Reason
+//  ========    ==              ======
+//  93/05/26    Greg Bentz      pull floating point out of istream/ostream
+//  93/10/08    Greg Bentz      make LDFloatToString set scale_factor to 1
+//                              for _Ftos when 'G' format
+//  93/10/25    Raymond Tang    Split into separate files.
+//  93/11/11    Raymond Tang    - Putback the sign and the decimal point if
+//                                the float number is invalid.
+//                              - Putback the sign of exponent if the exponent
+//                                number is invalid
+//  94/04/06    Greg Bentz      combine header files
+
 #ifdef __SW_FH
 #include "iost.h"
 #else
 #include "variety.h"
 #include <ctype.h>
 #include <stdlib.h>
-#include <iostream>
-#include <streambu>
+#include <iostream.h>
+#include <streambu.h>
 #endif
 #include "ioutil.h"
 #include "lock.h"
 #include "iofhdr.h"
 
-std::ios::iostate __getLDFsign( std::streambuf *sb, char *&bufptr, int is_exp ) {
+ios::iostate __getLDFsign( streambuf *sb, char *&bufptr, int is_exp ) {
 
-    std::ios::iostate  state;
+    ios::iostate  state;
     int           c, sign;
 
-    state = std::ios::goodbit;
+    state = ios::goodbit;
     c = sb->speekc();
     if( c == EOF ) {
-        state |= std::ios::eofbit;
+        state |= ios::eofbit;
         return( state );
     }
     if( !isdigit(c)  ) {
@@ -59,7 +81,7 @@ std::ios::iostate __getLDFsign( std::streambuf *sb, char *&bufptr, int is_exp ) 
             c = sb->speekc();
             if( !isdigit(c) ) {
                 if( is_exp || c != '.' ) {
-                    state |= std::ios::failbit;
+                    state |= ios::failbit;
                     sb->sputbackc( (char)sign );
                     return( state );
                 }
@@ -71,13 +93,13 @@ std::ios::iostate __getLDFsign( std::streambuf *sb, char *&bufptr, int is_exp ) 
     return( state );
 }
 
-std::ios::iostate __getLDFmantissa( std::streambuf *sb, char *&bufptr ) {
+ios::iostate __getLDFmantissa( streambuf *sb, char *&bufptr ) {
 
-    std::ios::iostate  state;
+    ios::iostate  state;
     int           c, mant_digits;
     char          have_decimal;
 
-    state = std::ios::goodbit;
+    state = ios::goodbit;
     mant_digits  = 0;
     have_decimal = FALSE;
     for( ;; ) {
@@ -93,7 +115,7 @@ std::ios::iostate __getLDFmantissa( std::streambuf *sb, char *&bufptr ) {
                 if ( mant_digits == 0 ) {
                     bufptr--;
                     sb->sputbackc( '.' );
-                    state |= std::ios::failbit;
+                    state |= ios::failbit;
                     return( state );
                 } else {
                     break;
@@ -107,7 +129,7 @@ std::ios::iostate __getLDFmantissa( std::streambuf *sb, char *&bufptr ) {
         *(bufptr++) = (char)c;
     }
     if( mant_digits == 0 ) {
-        state |= std::ios::failbit;
+        state |= ios::failbit;
         if ( have_decimal ) {
             bufptr--;
             sb->sputbackc( '.' );
@@ -116,12 +138,12 @@ std::ios::iostate __getLDFmantissa( std::streambuf *sb, char *&bufptr ) {
     return( state );
 }
 
-std::ios::iostate __getLDFexponent( std::streambuf *sb, char *&bufptr ) {
+ios::iostate __getLDFexponent( streambuf *sb, char *&bufptr ) {
 
-    std::ios::iostate  state;
+    ios::iostate  state;
     int           c, exp, exp_digits;
 
-    state = std::ios::goodbit;
+    state = ios::goodbit;
     exp_digits = 0;
     c = sb->speekc();
     if( tolower(c) != 'e' ) {
@@ -130,10 +152,10 @@ std::ios::iostate __getLDFexponent( std::streambuf *sb, char *&bufptr ) {
     exp = sb->sbumpc();
     *(bufptr++) = (char)exp;  // keep the 'E'
     state |= __getLDFsign( sb, bufptr, TRUE );
-    if ( state & std::ios::eofbit ) {
+    if ( state & ios::eofbit ) {
         bufptr--;             // discard the 'E'
         sb->sputbackc( (char)exp );
-        return( std::ios::goodbit );
+        return( ios::goodbit );
     }
     if ( !state ) {
         for( ;; ) {
@@ -156,21 +178,19 @@ std::ios::iostate __getLDFexponent( std::streambuf *sb, char *&bufptr ) {
     return( state );
 }
 
-
-// Read the input stream into buffer as long as it is a prefix of a
-// floating point number. Return ios::failbit if something goes wrong in
-// the format.
-
-std::ios::iostate __GetLDFloat( std::streambuf *sb, char *buffer ) {
-
+ios::iostate __GetLDFloat( streambuf *sb, char *buffer ) {
+/********************************************************/
+// Read the input stream into buffer as long as it is a prefix of
+// a floating point number.
+// Return ios::failbit if something goes wrong in the format.
     char         *bufptr;
-    std::ios::iostate  state;
+    ios::iostate  state;
 
-    state = std::ios::goodbit;
+    state = ios::goodbit;
     bufptr = buffer;
     state |= __getLDFsign( sb, bufptr, FALSE );
-    if( state & std::ios::eofbit ) {
-        state |= std::ios::failbit;
+    if( state & ios::eofbit ) {
+        state |= ios::failbit;
     }
     if( !state ) {
         state |= __getLDFmantissa( sb, bufptr );

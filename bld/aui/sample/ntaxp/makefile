@@ -1,7 +1,12 @@
-#pmake/150: os_nt cpu_axp aui_sample
+compile = $(compaxp) $[*
+auilib = $(auidir)/ntaxp/aui.lib
+resfile = app.res
+rcopt = -bt=nt -D__AXP__
+addinc = -i"$(lang_root)/h/nt"
+codeview = 1
 
-host_os  = nt
-host_cpu = axp
+app.exe : $(objs) app.lnk $(auilib) $(resfile) $(guidir)/win/ntaxp/gui.lib
+        $(linker) sys ntaxp_win @app lib $(guidir)/win/ntaxp/gui.lib,nt
+        wrc -k $(rcopt) $(resfile) app.exe
 
-!include ../master.mif
-
+!include ../makefile

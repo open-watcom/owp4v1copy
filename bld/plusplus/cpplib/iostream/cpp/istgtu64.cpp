@@ -29,34 +29,62 @@
 *
 ****************************************************************************/
 
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %     Copyright (C) 1992, by WATCOM International Inc.  All rights    %
+// %     reserved.  No part of this software may be reproduced or        %
+// %     used in any form or by any means - graphic, electronic or       %
+// %     mechanical, including photocopying, recording, taping or        %
+// %     information storage and retrieval systems - except with the     %
+// %     written permission of WATCOM International Inc.                 %
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+//  Modified    By              Reason
+//  ========    ==              ======
+//  92/02/04    Steve McDowell  Initial implementation.
+//  92/09/08    Greg Bentz      Cleanup.
+//  93/03/15    Greg Bentz      fix uninitialized state variables.
+//  93/07/29    Greg Bentz      - change istream::op>>(streambuf &) to
+//                                istream::op>>( streambuf * )
+//                              - fix istream::getline() to not set failbit
+//                                if no input stored in user buffer
+//  93/09/15    Greg Bentz      change getline() back to set ios::failbit
+//                              if not input stored in user buffer
+//  93/10/21    Greg Bentz      change get() and getline() to not set failbit
+//                              if the delim character has been seen
+//  93/10/28    Raymond Tang    Split into separate files.
+//  93/11/08    Raymond Tang    Add the conditions to check the validity of
+//                              a number.
+//  93/11/16    Raymond Tang    Check if a hexadecimal is right after a sign.
+//  94/04/06    Greg Bentz      combine header files
+//  96/07/17    Greg Bentz      __int64 support cloned from istgetul.cpp
+
 #ifdef __SW_FH
 #include "iost.h"
 #else
 #include "variety.h"
 #include <ctype.h>
-#include <iostream>
-#include <streambu>
+#include <iostream.h>
+#include <streambu.h>
 #endif
 #include "ioutil.h"
 #include "isthdr.h"
 
-std::ios::iostate __getunsignedint64( std::streambuf *sb,
-                                      unsigned __int64 &value,
-                                      unsigned __int64 maxval,
-                                      signed __int64 minval,
-                                      std::ios::fmtflags format )
+ios::iostate __getunsignedint64( streambuf *sb, unsigned __int64 &value,
+/**********************************************************************/
+    unsigned __int64 maxval, signed __int64 minval, ios::fmtflags format )
 {
 
     unsigned __int64  number;
-    std::ios::iostate state;
+    ios::iostate   state;
     char           sign;
     int            base;
     int            offset;
     int            ch;
 
-    state = std::ios::goodbit;
+    state = ios::goodbit;
     offset = 0;
-    format &= std::ios::basefield;
+    format &= ios::basefield;
     if( format ) {
         base = __FlagsToBase( format );
     } else {
@@ -75,7 +103,7 @@ std::ios::iostate __getunsignedint64( std::streambuf *sb,
         } else {
             // this will catch (low_char == EOF) too
             sb->sputbackc( (char)ch );
-            state |= std::ios::failbit;
+            state |= ios::failbit;
         }
     }
     if( !state && !base ) {
@@ -92,15 +120,15 @@ std::ios::iostate __getunsignedint64( std::streambuf *sb,
                 if( minval == 0 || -number >= minval ) {
                     value = -number;
                 } else {
-                    state |= std::ios::failbit;
+                    state |= ios::failbit;
                 }
             }
         } else {
-            state |= std::ios::failbit;
+            state |= ios::failbit;
         }
     }
     if( offset == 0 ) {
-        state |= std::ios::failbit;
+        state |= ios::failbit;
     }
     return( state );
 }

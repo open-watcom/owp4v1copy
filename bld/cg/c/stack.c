@@ -33,7 +33,7 @@
 #include "standard.h"
 #include "hostsys.h"
 
-#if defined( __AXP__ ) || defined( __NT__ ) || !defined( __WATCOMC__ )
+#if defined( __AXP__ ) || defined( __NT__ ) || !defined( __WATCOMC__ ) 
 
 pointer SafeRecurse( pointer (* rtn)(), pointer arg ) {
 /*****************************************************/
@@ -43,7 +43,6 @@ pointer SafeRecurse( pointer (* rtn)(), pointer arg ) {
 
 #else
 
-#include <malloc.h>
 #include "stackok.h"
 #include "sysmacro.h"
 #include "cypfunc.h"
@@ -62,7 +61,7 @@ pointer SafeRecurse( pointer (* rtn)(), pointer arg ) {
     pointer             retval;
     mem_out_action      old_action;
 
-    if( stackavail() < 0x2000 ) { /* stack getting low! */
+    if( (unsigned)(sp() - stacklow()) < 0x200 ) { /* stack getting low! */
 /*      This code assumes NO parameters on the stack! */
         old_action = SetMemOut( MO_OK );
         _Alloc( savearea, SAVE_SIZE );

@@ -24,9 +24,30 @@
 *
 *  ========================================================================
 *
-* Description:
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
+
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// %     Copyright (C) 1992, by WATCOM International Inc.  All rights    %
+// %     reserved.  No part of this software may be reproduced or        %
+// %     used in any form or by any means - graphic, electronic or       %
+// %     mechanical, including photocopying, recording, taping or        %
+// %     information storage and retrieval systems - except with the     %
+// %     written permission of WATCOM International Inc.                 %
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+//
+//  Modified    By              Reason
+//  ========    ==              ======
+//  92/01/30    Steve McDowell  Initial implementation.
+//  92/09/08    Greg Bentz      Cleanup.
+//  93/07/29    Greg Bentz      Change ostream::op<<(streambuf &) to
+//                              ostream::op<<( streambuf * )
+//  93/10/26    Raymond Tang    Split into separate files.
+//  93/11/16    Raymond Tang    Remove AddPrefix function.
+//  94/04/06    Greg Bentz      combine header files
 
 #ifdef __SW_FH
 #include "iost.h"
@@ -34,17 +55,16 @@
 #include "variety.h"
 #include <stdlib.h>
 #include <string.h>
-#include <iostream>
+#include <iostream.h>
 #endif
 #include "ioutil.h"
 #include "lock.h"
 #include "osthdr.h"
 
-namespace std {
+ostream &ostream::operator << ( signed long i ) {
+/***********************************************/
+// Write a signed long integer to the stream.
 
-  // Write a signed long integer to the stream.
-
-  ostream &ostream::operator << ( signed long i ) {
     int         base;
     char        buffer[LONGEST_INTEGER + 1];
     int         size;
@@ -77,6 +97,4 @@ namespace std {
         osfx();
     }
     return( *this );
-  }
-
 }

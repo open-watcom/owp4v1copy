@@ -98,8 +98,6 @@ void main( int argc, char *argv[] )
     InitParse( &cmdOpts );
     itemsParsed = do_parsing( &cmdOpts );
     if( itemsParsed==0 || cmdOpts.help ) {
-        if( !cmdOpts.nologo )
-            BannerMessage();
         PrintHelpMessage();
         exit( EXIT_SUCCESS );
     }

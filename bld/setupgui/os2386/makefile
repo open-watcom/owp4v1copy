@@ -1,6 +1,7 @@
-#pmake: build os_os2 cpu_386
+VERSION = _OS2
+model = f
 
-host_os  = os2
-host_cpu = 386
+guilib  = $(guidir)/win/os2386/gui.lib
+guiinc  = $(guidir)/win/os2386
 
 !include ../setup.mif

@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Low level bitmap reading routine.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -111,7 +112,9 @@ void _L1GetPic( short x1, short y1, short x2, short y2,
     image->bpp = _CurrState->vc.bitsperpixel;   /* save bpp - never used ?  */
     line_len = _RowLen( dx );                   /* width of row in bytes    */
 
+  #if !defined( _NEC_PC ) // We don't want the graphics charger here
     _StartDevice();
+  #endif
 
     dev_ptr = _CurrState->deviceptr;
     copy = dev_ptr->readrow;
@@ -149,6 +152,8 @@ void _L1GetPic( short x1, short y1, short x2, short y2,
   #endif
     }
 
+  #if !defined( _NEC_PC )
     _ResetDevice();
+  #endif
 #endif
 }

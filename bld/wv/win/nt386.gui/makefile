@@ -5,6 +5,7 @@
 
 host_OS=nt
 host_CPU=386
+display=gui
 
 sys_windowed = 1
 

@@ -17,9 +17,8 @@ proj_name = plusplus
 
 !include $(cg_dir)/mif/fe.mif
 !include $(cg_dir)/mif/hostos.mif
-!include $(dwarf_dir)/dw/client.mif
 
-xlibs = $(dwarf_dw_lib) $(asminline_lib)
+!include $(dwarf_dir)/dw/client.mif
 
 !include ../verify.mif
 !include ../ppobjs.mif
@@ -182,7 +181,7 @@ extra_l_flags_nt  = OPTION dosseg, stack=0x10000k, offset=64k COMMIT stack=32k
 wlink_dll_os2_386 = OPTION manyautodata
 
 #######################################
-# workaround for OW 1.0 WLINK problem
+# workaround for OW 1.0 WLINK problem 
 #######################################
 linker+= op caseex
 #######################################
@@ -227,7 +226,7 @@ pre_obj_deps = global.chk errmsgs.gh ic_mask.gh
 pre_obj_deps += wpp$(target_cpu)01.int
 pre_obj_deps += $(pre_obj_deps_wasm)
 
-external_dependencies = $(cg_deps) $(xlibs)
+external_dependencies = $(cg_deps) $(dwarf_dw_dep)
 
 # objects for dll
 # obj -- normal object
@@ -381,7 +380,7 @@ build : .symbolic $(exe_bld_name).elf
     @%null
 
 !else
-!error no rules for $(host_os) setting
+!error no rules for host_os setting
 !endif
 
 
@@ -453,7 +452,10 @@ pexe.lnk : $(__MAKEFILES__)
     @%append $^@ $(wlink_dbgfmt)
     @%append $^@ $(wlink_opt_common_exe)
     @for %i in ($(comp_objs_exe)) do @%append $^@ file %i
-    @%append $^@ library { $(xlibs) }
+    @%append $^@ library $(dwarf_dw_lib)
+!ifdef as_lib
+    @%append $^@ library $(as_lib)
+!endif
 
 #
 # -- production version
@@ -505,7 +507,10 @@ pdll.lnk : $(__MAKEFILES__)
     @%append $^@ $(wlink_dll_$(host_os)_$(host_cpu))
     @%append $^@ $(wlink_opt_common_dll)
     @for %i in ($(comp_objs_dll)) do @%append $^@ file %i
-    @%append $^@ library { $(xlibs) }
+    @%append $^@ library $(dwarf_dw_lib)
+!ifdef as_lib
+    @%append $^@ library $(as_lib)
+!endif
     @%append $^@ reference __DLLstart_
 
 #
@@ -608,13 +613,8 @@ has_prag_386 = yes
 code$(target_cpu).gh : xcode$(target_cpu).tmp ./mkcode.exe
         $]@ $[@ $^@
 
-target_as_axp=wasmaxp -zq -w4
-target_as_i86=bwasm -zq -w4
-target_as_386=bwasm -zq -3 -w4
-target_as_ppc=wasmppc -zq -w4
-
 xcode$(target_cpu).tmp: $(cc_dir)/a/code$(target_cpu).asm
-        $(target_as_$(target_cpu)) -fo=.obj $[@
+        $(as) $(aflags) $(extra_a_flags_$[&) $[@
         $(linker) format dos com op nodefault file code$(target_cpu).obj name $^@ disable 1023,1080
 
 ./mkcode.exe: $(cc_dir)/a/mkcode.c

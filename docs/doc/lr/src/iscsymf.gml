@@ -29,15 +29,15 @@ char chars[] = {
 #define SIZE sizeof( chars ) / sizeof( char )
 .exmp break
 void main()
-{
+  {
     int   i;
 .exmp break
     for( i = 0; i < SIZE; i++ ) {
-        printf( "Char %c is %sa csymf character\n",
-                chars[i],
-                ( __iscsymf( chars[i] ) ) ? "" : "not " );
+      printf( "Char %c is %sa csymf character\n",
+            chars[i],
+            ( __iscsymf( chars[i] ) ) ? "" : "not " );
     }
-}
+  }
 .exmp output
 Char A is a csymf character
 Char   is not a csymf character

@@ -29,6 +29,14 @@
 *
 ****************************************************************************/
 
+
+#if defined( __NETWARE__ )
+// Some weird makefile stuff means that NLM isn't defined for NetWare builds.
+// Since __NETWARE__ is, we can use that instead.
+// gperrow June 12, 2000
+#define NLM
+#endif
+
 #if defined(__OS2__) || defined(__OS2_PM__)
     #ifndef OS2_INCLUDED
         #undef NULL
@@ -71,7 +79,7 @@
 #include "guidlg.h"
 #include "guistr.h"
 
-#if defined( __UNIX__ ) || defined( __NETWARE__ ) || defined( UNIX )
+#if defined( __UNIX__ ) || defined( NLM ) || defined( UNIX )
     #define FILE_SEP    "/"
     #define FILE_SEP_CHAR       '/'
     #define FILES_ALL   "*"
@@ -140,7 +148,7 @@ static gui_control_info dlgControls[] =
 /*  7 */ DLG_BUTTON(    NULL, CTL_CANCEL,       (DIR_START+BOX_WIDTH2+4), 6, (DIR_START+BOX_WIDTH2+14) ),
 /*  8 */ DLG_STRING(    NULL, 2, 11, 20 ),
 /*  9 */ DLG_COMBO_BOX( NULL, CTL_FILE_TYPES, 2,12,2+BOX_WIDTH+3,15 ),
-#if !defined(__UNIX__) && !defined( __NETWARE__ ) && !defined( UNIX )
+#if !defined(__UNIX__) && !defined( NLM ) && !defined( UNIX )
 /* 10 */ DLG_STRING(    NULL, DIR_START+2, 11, DIR_START+8 ),
 /* 11 */ DLG_COMBO_BOX( NULL, CTL_DRIVES, DIR_START+2,12,DIR_START+BOX_WIDTH,15 )
 #endif
@@ -157,7 +165,7 @@ static bool     ControlsInitialized = FALSE;
 
 #if defined(__PENPOINT__)
   #define PC '\\'
-#elif defined(__UNIX__) || defined( __NETWARE__ ) || defined( UNIX )
+#elif defined(__UNIX__) || defined( NLM ) || defined( UNIX )
   #define PC '/'
 #else   /* DOS, OS/2, Windows */
   #define PC '\\'
@@ -173,7 +181,7 @@ static void InitDlgControls( void )
 /*  6 */ dlgControls[ 6 ].text = LIT( OK );
 /*  7 */ dlgControls[ 7 ].text = LIT( Cancel );
 /*  8 */ dlgControls[ 8 ].text = LIT( List_Files_of_Type_Colon );
-#if !defined(__UNIX__) && !defined( __NETWARE__ ) && !defined( UNIX )
+#if !defined(__UNIX__) && !defined( NLM ) && !defined( UNIX )
 /* 10 */ dlgControls[ 10 ].text = LIT( Drives_Colon );
 #endif
 }
@@ -200,7 +208,7 @@ static void splitPath( char *path, char *drive, char *dir, char *fname,
     char        *startp;
     char        ch;
 
-#if defined(__UNIX__) || defined( __NETWARE__ ) || defined( UNIX )
+#if defined(__UNIX__) || defined( NLM ) || defined( UNIX )
     /* process node/drive specification */
     startp = path;
     if( path[0] == FILE_SEP_CHAR && path[1] == FILE_SEP_CHAR ) {
@@ -243,7 +251,7 @@ static void splitPath( char *path, char *drive, char *dir, char *fname,
             continue;
         }
         path++;
-#if defined(__UNIX__) || defined( __NETWARE__ ) || defined( UNIX )
+#if defined(__UNIX__) || defined( NLM ) || defined( UNIX )
         if( ch == FILE_SEP_CHAR ) {
 #else
         if( ch == FILE_SEP_CHAR  ||  ch == '/' ) {
@@ -256,7 +264,7 @@ static void splitPath( char *path, char *drive, char *dir, char *fname,
     if( dotp == NULL ) {
         dotp = path;
     }
-#if defined(__UNIX__) || defined( __NETWARE__ ) || defined( UNIX )
+#if defined(__UNIX__) || defined( NLM ) || defined( UNIX )
     if( ext == NULL )  {
         dotp = path;
     }
@@ -291,7 +299,7 @@ static drive_type getDriveType( int drv )
     }
     return( DRIVE_NONE );
 }
-#elif defined(__UNIX__) || defined( __NETWARE__ ) || defined( UNIX )
+#elif defined(__UNIX__) || defined( NLM ) || defined( UNIX )
 #elif defined(__NT__)
 static drive_type getDriveType( int drv )
 {
@@ -369,11 +377,11 @@ static bool hasWild( char *txt )
  */
 static bool addToList( char ***list, int num, char *data, int len )
 {
-    *list = GUIMemRealloc( *list, (num+2) * sizeof( char * ) );
+    *list = GUIRealloc( *list, (num+2) * sizeof( char * ) );
     if( *list == NULL ) {
         return( FALSE );
     }
-    (*list)[num] = GUIMemAlloc( len+1 );
+    (*list)[num] = GUIAlloc( len+1 );
     if( (*list)[num] == NULL ) {
         return( FALSE );
     }
@@ -397,15 +405,15 @@ static void freeStringList( void *ptr )
     }
     cnt = 0;
     while( (*list)[cnt] != NULL ) {
-        GUIMemFree( (*list)[cnt] );
+        GUIFree( (*list)[cnt] );
         cnt++;
     }
-    GUIMemFree( *list );
+    GUIFree( *list );
     *list = NULL;
 
 } /* freeStringList */
 
-#if !defined(__UNIX__) && !defined( __NETWARE__ ) && !defined( UNIX )
+#if !defined(__UNIX__) && !defined( NLM ) && !defined( UNIX )
 /*
  * buildDriveList - get a list of all drives
  */
@@ -524,7 +532,7 @@ static bool goToDir( gui_window *gui, char *dir )
 
     splitPath( dir, drive, NULL, NULL, NULL );
     if( drive[0] != 0 ) {
-#if defined( __UNIX__ ) || defined( __NETWARE__ ) || defined( UNIX )
+#if defined( __UNIX__ ) || defined( NLM ) || defined( UNIX )
         total = 1;
 #else
         _dos_setdrive( tolower( drive[0] ) - 'a'+1, &total );
@@ -654,7 +662,7 @@ static bool setFileList( gui_window *gui, char *ext )
             break;
         }
 
-#if !defined(__UNIX__) && !defined( __NETWARE__ ) && !defined( UNIX )
+#if !defined(__UNIX__) && !defined( NLM ) && !defined( UNIX )
         if( path[strlen(path)-1] != FILE_SEP_CHAR ) {
             strcat( path, FILE_SEP );
         }
@@ -727,11 +735,11 @@ static bool setDirList( gui_window *gui )
     }
 
     if( path[strlen(path)-1] == FILE_SEP_CHAR ) {
-#if !defined(__UNIX__) && !defined( __NETWARE__ ) && !defined( UNIX )
+#if !defined(__UNIX__) && !defined( NLM ) && !defined( UNIX )
         strcat( path, FILES_ALL );
 #endif
     } else {
-#if defined (__UNIX__) || defined ( __NETWARE__ ) || defined( UNIX )
+#if defined (__UNIX__) || defined ( NLM ) || defined( UNIX )
         strcat( path, FILE_SEP );
 #else
         strcat( path, FILE_SEP FILES_ALL );
@@ -746,7 +754,7 @@ static bool setDirList( gui_window *gui )
 
     drive[0] = OPENED_DIR_CHAR;
     drvlist = NULL;
-#if !defined(__UNIX__) && !defined( __NETWARE__ ) && !defined( UNIX )
+#if !defined(__UNIX__) && !defined( NLM ) && !defined( UNIX )
     drvlist = (char **) dlgControls[DRIVE_LIST_INDEX].text;
 #endif
     i = 0;
@@ -760,7 +768,7 @@ static bool setDirList( gui_window *gui )
         }
         i++;
     }
-#if !defined(__UNIX__) && !defined( __NETWARE__ ) && !defined( UNIX )
+#if !defined(__UNIX__) && !defined( NLM ) && !defined( UNIX )
         drive[3] = '\\';
         drive[4] = 0;
 #endif
@@ -834,8 +842,8 @@ static bool initDialog( gui_window *gui, char *ext, char *name )
 
     if( ext != NULL ) {
         if( hasWild( ext ) ) {
-            GUIMemFree( dlg->currExt );
-            dlg->currExt = GUIMemAlloc( strlen( ext ) +1 );
+            GUIFree( dlg->currExt );
+            dlg->currExt = GUIAlloc( strlen( ext ) +1 );
             if( dlg->currExt == NULL ) {
                 return( FALSE );
             }
@@ -884,11 +892,10 @@ static process_rc processFileName( gui_window *gui )
     }
     txt = alloca( strlen( tmp ) + 1 );
     if( txt == NULL ) {
-        GUIMemFree( tmp );
         return( PROCESS_FALSE );
     }
     strcpy( txt, tmp );
-    GUIMemFree( tmp );
+    GUIFree( tmp );
     splitPath( txt, drive, dir, fname, ext );
 
     has_wild = hasWild( txt );
@@ -984,7 +991,7 @@ void ProcessOKorDClick( gui_window *gui, unsigned id  )
         case CTL_FILE_LIST :
             ptr = GUIGetText( gui, CTL_FILE_LIST );
             GUISetText( gui, CTL_EDIT, ptr );
-            GUIMemFree( ptr );
+            GUIFree( ptr );
             break;
         }
     }
@@ -1002,7 +1009,7 @@ void ProcessOKorDClick( gui_window *gui, unsigned id  )
         break;
     case CTL_DIR_LIST :
         sel = GUIGetCurrSelect( gui, id );
-#if defined ( __UNIX__ ) || defined( __NETWARE__ ) || defined( UNIX )
+#if defined ( __UNIX__ ) || defined( NLM ) || defined( UNIX )
         path[0] = FILE_SEP_CHAR;
         path[1] = 0;
 #else
@@ -1025,10 +1032,10 @@ void ProcessOKorDClick( gui_window *gui, unsigned id  )
                     strcat( path, FILE_SEP );
                 }
             } else {
-                GUIMemFree( optr );
+                GUIFree( optr );
                 break;
             }
-            GUIMemFree( optr );
+            GUIFree( optr );
         }
         ptr = GUIGetListItem( gui, id, sel );
         if( ptr == NULL ) {
@@ -1039,7 +1046,7 @@ void ProcessOKorDClick( gui_window *gui, unsigned id  )
             ptr++;
         }
         strcat( path, ptr+1 );
-        GUIMemFree( optr );
+        GUIFree( optr );
         goToDir( gui, path );
         if( !initDialog( gui, NULL, NULL ) ) {
             dlg->dialogRC = OFN_RC_RUNTIME_ERROR;
@@ -1079,7 +1086,7 @@ extern bool GetFileNameEvent( gui_window *gui, gui_event gui_ev, void *param )
     case GUI_INIT_DIALOG:
         dlg->initted = FALSE;
         InitList( gui, CTL_FILE_TYPES, FILE_TYPES_INDEX );
-#if !defined(__UNIX__) && !defined( __NETWARE__ ) && !defined( UNIX )
+#if !defined(__UNIX__) && !defined( NLM ) && !defined( UNIX )
         InitList( gui, CTL_DRIVES, DRIVE_LIST_INDEX );
 #endif
         if( !initDialog( gui, dlg->fileExtensions[ dlg->currExtIndex ], dlg->currOFN->file_name ) ) {
@@ -1112,7 +1119,7 @@ extern bool GetFileNameEvent( gui_window *gui, gui_event gui_ev, void *param )
         case CTL_FILE_LIST:
             ptr = GUIGetText( gui, id );
             GUISetText( gui, CTL_EDIT, ptr );
-            GUIMemFree( ptr );
+            GUIFree( ptr );
             break;
         case CTL_DRIVES :
             sel = GUIGetCurrSelect( gui, id );
@@ -1158,7 +1165,7 @@ int GUIGetFileName( gui_window *gui, open_file_name *ofn )
     dlg.currExtIndex = ofn->filter_index;
     dlg.dialogRC = OFN_RC_NO_FILE_SELECTED;
 
-#if !defined(__UNIX__) && !defined( __NETWARE__ ) && !defined( UNIX )
+#if !defined(__UNIX__) && !defined( NLM ) && !defined( UNIX )
     dlgControls[DRIVE_LIST_INDEX].text = buildDriveList();
     if( dlgControls[DRIVE_LIST_INDEX].text == NULL ) {
         return( OFN_RC_FAILED_TO_INITIALIZE );
@@ -1180,12 +1187,12 @@ int GUIGetFileName( gui_window *gui, open_file_name *ofn )
         goToDir( gui, olddir );
     }
 
-#if !defined(__UNIX__) && !defined( __NETWARE__ ) && !defined( UNIX )
+#if !defined(__UNIX__) && !defined( NLM ) && !defined( UNIX )
     freeStringList( &dlgControls[DRIVE_LIST_INDEX].text );
 #endif
     freeStringList( &dlgControls[FILE_TYPES_INDEX].text );
     freeStringList( &dlg.fileExtensions );
-    GUIMemFree( dlg.currExt );
+    GUIFree( dlg.currExt );
     return( dlg.dialogRC );
 
 } /* GUIGetFileName */

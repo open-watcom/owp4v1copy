@@ -29,6 +29,7 @@
 *
 ****************************************************************************/
 
+
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
@@ -62,7 +63,7 @@ unsigned ReqRead_user_keyboard( void )
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
     delay = acc->wait * 1000;
-    //  if( delay == 0 ) delay = 10000;
+//  if( delay == 0 ) delay = 10000;
     Sleep( delay );
 
     //NYI: get user input
@@ -81,7 +82,7 @@ unsigned ReqFile_open( void )
     static int          mapAcc[] = { 0, 1, 2 };
 
     acc = GetInPtr( 0 );
-    buff = GetInPtr( sizeof( *acc ) );
+    buff = GetInPtr( sizeof(*acc) );
 
     ret = GetOutPtr( 0 );
 
@@ -102,10 +103,10 @@ unsigned ReqFile_open( void )
         extern void __GetNTAccessAttr( int rwmode, LPDWORD desired_access,
                                         LPDWORD attr );
         extern void __GetNTShareAttr( int share, LPDWORD share_mode );
-        DWORD   share_mode, desired_access, attr;
+        DWORD   share_mode,desired_access,attr;
         DWORD   create_disp;
 
-        mode = mapAcc[ ( 0x3 & acc->mode ) - 1];
+        mode = mapAcc[ (0x3 & acc->mode) -1 ];
         __GetNTAccessAttr( mode & 0x7, &desired_access, &attr );
         __GetNTShareAttr( mode & 0x70, &share_mode );
         if( acc->mode & TF_CREATE ) {
@@ -113,15 +114,15 @@ unsigned ReqFile_open( void )
         } else {
             create_disp = OPEN_EXISTING;
         }
-        h = CreateFile( ( LPTSTR ) buff, desired_access, share_mode, 0,
+        h = CreateFile( (LPTSTR) buff, desired_access, share_mode, 0,
                     create_disp, FILE_ATTRIBUTE_NORMAL, NULL );
-        if( h == ( HANDLE ) - 1 ) {
+        if( h == (HANDLE)-1 ) {
             ret->err = GetLastError();
             h = 0;
         }
 
     }
-    ret->handle = ( DWORD ) h;
+    ret->handle = (DWORD) h;
     return( sizeof( *ret ) );
 }
 
@@ -133,7 +134,7 @@ unsigned ReqFile_seek( void )
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
-    rc = SetFilePointer( ( HANDLE ) acc->handle, acc->pos, 0,
+    rc = SetFilePointer( (HANDLE) acc->handle, acc->pos, 0,
                         acc->mode );
     if( rc == -1 ) {
         ret->err = GetLastError();
@@ -159,7 +160,7 @@ unsigned ReqFile_write( void )
 
     len = GetTotalSize() - sizeof( *acc );
 
-    rc = WriteFile( ( HANDLE ) acc->handle, buff, len, &bytes, NULL );
+    rc = WriteFile( (HANDLE) acc->handle, buff, len, &bytes, NULL );
     if( !rc ) {
         ret->err = GetLastError();
         bytes = 0;
@@ -172,13 +173,13 @@ unsigned ReqFile_write( void )
 
 unsigned ReqFile_write_console( void )
 {
-    DWORD                       bytes;
-    BOOL                        rc;
+    DWORD               bytes;
+    BOOL                rc;
     file_write_console_req      *acc;
     file_write_console_ret      *ret;
-    int                         len;
-    void                        *buff;
-    HANDLE                      handle;
+    int                 len;
+    void                *buff;
+    HANDLE              handle;
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -212,7 +213,7 @@ unsigned ReqFile_read( void )
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
     buff = GetOutPtr( sizeof( *ret ) );
-    rc = ReadFile( ( HANDLE ) acc->handle, buff, acc->len, &bytes, NULL );
+    rc = ReadFile( (HANDLE) acc->handle, buff, acc->len, &bytes, NULL );
     if( !rc ) {
         ret->err = GetLastError();
         bytes = 0;
@@ -236,8 +237,8 @@ unsigned ReqFile_close( void )
      * we do not close the file handle if it was a magical one that
      * we remembered from a DLL load
      */
-    if( !IsMagicalFileHandle( ( HANDLE ) acc->handle ) ) {
-        rc = CloseHandle( ( HANDLE ) acc->handle );
+    if( !IsMagicalFileHandle( (HANDLE) acc->handle ) ) {
+        rc = CloseHandle( (HANDLE) acc->handle );
         if( !rc ) {
             ret->err = GetLastError();
         }
@@ -276,9 +277,9 @@ unsigned ReqFile_string_to_fullpath( void )
 {
     file_string_to_fullpath_req *acc;
     file_string_to_fullpath_ret *ret;
-    char                        *name;
-    char                        *fullname;
-    char                        *ext_list;
+    char                *name;
+    char                *fullname;
+    char                *ext_list;
 
     acc = GetInPtr( 0 );
     name = GetInPtr( sizeof( *acc ) );
@@ -296,7 +297,6 @@ unsigned ReqFile_string_to_fullpath( void )
         }
         ret->err = FindFilePath( name, fullname, ext_list );
     }
-    if( ret->err != 0 )
-        *fullname = '\0';
+    if( ret->err != 0 ) *fullname = '\0';
     return( sizeof( *ret ) + strlen( fullname ) + 1 );
 }

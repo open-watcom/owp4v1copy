@@ -32,7 +32,7 @@
 
     name hercfont
 
-ifdef __386__
+ifdef _386
     _DATA segment para public 'DATA'
 else
     HercFont_DATA segment para 'FONT_DATA'
@@ -298,7 +298,7 @@ db  000h,070h,0d8h,030h,060h,0c8h,0f8h,000h,000h,000h,000h,000h,000h,000h
 db  000h,000h,000h,000h,07ch,07ch,07ch,07ch,07ch,07ch,000h,000h,000h,000h
 db  000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h,000h
 
-ifdef __386__
+ifdef _386
     _DATA ends
 else
     HercFont_DATA ends

@@ -443,13 +443,13 @@ BOOL GetValuesIntoBuffer( HKEY                  key_handle,
     DWORD                       type;
     LONG                        result;
 
-    value_name = GUIMemAlloc( value_name_max_length + 1 );
+    value_name = GUIAlloc( value_name_max_length + 1 );
     if( value_name == NULL ) {
         return FALSE;
     }
-    value_data = GUIMemAlloc( value_data_max_length + 1 );
+    value_data = GUIAlloc( value_data_max_length + 1 );
     if( value_data == NULL ) {
-        GUIMemFree( value_name );
+        GUIFree( value_name );
         return FALSE;
     }
     pos = 0;
@@ -466,15 +466,15 @@ BOOL GetValuesIntoBuffer( HKEY                  key_handle,
                                &value_data_length );
 
         if( result != ERROR_SUCCESS ) {
-            GUIMemFree( value_name );
-            GUIMemFree( value_data );
+            GUIFree( value_name );
+            GUIFree( value_data );
             return FALSE;
         }
 
         if( strlen( value_name ) + strlen( value_data ) + 2 >
             *nSize - pos ) {
-            GUIMemFree( value_name );
-            GUIMemFree( value_data );
+            GUIFree( value_name );
+            GUIFree( value_data );
             return FALSE;
         }
 
@@ -493,8 +493,8 @@ BOOL GetValuesIntoBuffer( HKEY                  key_handle,
             pos += strlen( &lpReturnedString[ pos ] ) + 1;
         }
     }
-    GUIMemFree( value_name );
-    GUIMemFree( value_data );
+    GUIFree( value_name );
+    GUIFree( value_data );
 
     *nSize = pos - 1;
 
@@ -521,7 +521,7 @@ DWORD GetRegKeyStrings( LPCTSTR                 lpAppName,
 
     strcpy( lpReturnedString, lpDefault );
 
-    reg_path_name = GUIMemAlloc( strlen( lpFileName ) + strlen( lpAppName ) + 2 );
+    reg_path_name = GUIAlloc( strlen( lpFileName ) + strlen( lpAppName ) + 2 );
     if( reg_path_name == NULL ) {
         return 0;
     }
@@ -533,7 +533,7 @@ DWORD GetRegKeyStrings( LPCTSTR                 lpAppName,
                            KEY_READ,
                            &key_handle );
     if( result != ERROR_SUCCESS ) {
-        GUIMemFree( reg_path_name );
+        GUIFree( reg_path_name );
         return 0;
     }
 
@@ -558,7 +558,7 @@ DWORD GetRegKeyStrings( LPCTSTR                 lpAppName,
                                   lpKeyName,
                                   lpReturnedString,
                                   &nSize );
-    GUIMemFree( reg_path_name );
+    GUIFree( reg_path_name );
 
     if( RegFlushKey( key_handle ) != ERROR_SUCCESS ) return 0;
 
@@ -623,7 +623,7 @@ BOOL WriteRegString( LPCTSTR  lpszSection,
     DWORD                       old_type;
     char *                      reg_path_name;
 
-    reg_path_name = GUIMemAlloc( strlen( lpszSection ) + strlen( lpszFile ) + 2 );
+    reg_path_name = GUIAlloc( strlen( lpszSection ) + strlen( lpszFile ) + 2 );
     if( reg_path_name == NULL ) {
         return 0;
     }
@@ -635,7 +635,7 @@ BOOL WriteRegString( LPCTSTR  lpszSection,
                            KEY_WRITE,
                            &key_handle );
     if( result != ERROR_SUCCESS ) {
-        GUIMemFree( reg_path_name );
+        GUIFree( reg_path_name );
         return 0;
     }
     result = RegQueryValueEx( key_handle, lpszKey, NULL, &old_type, NULL, NULL );

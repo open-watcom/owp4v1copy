@@ -35,7 +35,7 @@
 #include <errno.h>
 #include "rtdata.h"
 #if defined(__NT__)
- #include <windows.h>
+#include <windows.h>
 #endif
 
 #define UNKNOWN_ERROR   "unknown error"

@@ -32,7 +32,7 @@
 
 #include "variety.h"
 #include <complex>
-#include <iomanip.h>
+#include <iomanip>
 
 _WPRTLINK ostream &operator << ( ostream &strm, const Complex &z ) {
 /*****************************************************************/

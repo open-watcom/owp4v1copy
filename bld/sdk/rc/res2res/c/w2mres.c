@@ -24,13 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  Convert Watcom resources to Microsoft format.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
 
 #include <string.h>
-#include <unistd.h>
+#include <io.h>
 #include "trmemcvr.h"
 #include "wresall.h"
 #include "types.h"
@@ -79,8 +80,7 @@ static int ConvertOneWResource( WResFileID infile, WResFileID outfile,
     outhead.MemoryFlags = langinfo->MemoryFlags;
     outhead.Size = langinfo->Length;
 
-    //FIXME! The last argument should be TRUE for Win32 resources
-    error = MResWriteResourceHeader( &outhead, outfile, FALSE );
+    error = MResWriteResourceHeader( &outhead, outfile );
     if (!error) {
         lseek( infile, langinfo->Offset, SEEK_SET );
         error = BinaryCopy( infile, outfile, outhead.Size );

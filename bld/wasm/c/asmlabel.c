@@ -82,7 +82,7 @@ int MakeLabel( char *symbol_name, memtype mem_type )
 /**********************************************/
 {
     struct asm_sym      *sym;
-#ifdef _WASM_
+    #ifdef _WASM_
         int                     addr;
         char                    buffer[20];
 
@@ -111,8 +111,8 @@ int MakeLabel( char *symbol_name, memtype mem_type )
         }
         AsmTakeOut( "@F" );
         sym->state = SYM_INTERNAL;
-        sym->mem_type = mem_type;  // fixme ??
-        GetSymInfo( sym );
+            sym->mem_type = mem_type;  // fixme ??
+            GetSymInfo( sym );
         BackPatch( sym );
 
         /* now point the @F marker at the next anon. label if we have one */
@@ -124,12 +124,12 @@ int MakeLabel( char *symbol_name, memtype mem_type )
 
         return( NOT_ERROR );
     }
-#endif
+    #endif
     sym = AsmLookup( symbol_name );
 
     if( sym == NULL ) return( ERROR );
 
-#ifdef _WASM_
+    #ifdef _WASM_
         if( Parse_Pass == PASS_1 ) {
             if( sym->state != SYM_UNDEFINED ) {
                 AsmErr( SYMBOL_PREVIOUSLY_DEFINED, symbol_name );
@@ -152,16 +152,14 @@ int MakeLabel( char *symbol_name, memtype mem_type )
         if( Parse_Pass != PASS_1 && sym->offset != addr ) {
             PhaseError = TRUE;
         }
-#else
+    #else
         if( sym->state != SYM_UNDEFINED ) {
             AsmError( SYMBOL_ALREADY_DEFINED );
             return( ERROR );
         }
         sym->state = SYM_INTERNAL;
         sym->addr = Address;
-//  it should define label type ?????
-        sym->mem_type = mem_type;  // fixme ??
-#endif
+    #endif
     BackPatch( sym );
     return( NOT_ERROR );
 }
@@ -179,7 +177,7 @@ int LabelDirective( int i )
 
         sym = AsmGetSymbol( AsmBuffer[i+1]->string_ptr );
         if( sym != NULL && sym->state == SYM_STRUCT ) {
-            return( MakeLabel( AsmBuffer[i-1]->string_ptr, T_STRUCT ) );
+            return( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_STRUCT ) );
         }
     }
 #endif
@@ -189,23 +187,23 @@ int LabelDirective( int i )
     }
     switch( AsmBuffer[i+1]->value ) {
     case T_NEAR:
-        return( MakeLabel( AsmBuffer[i-1]->string_ptr, T_NEAR ));
+        return( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_NEAR ));
     case T_FAR:
-        return( MakeLabel( AsmBuffer[i-1]->string_ptr, T_FAR ));
+        return( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_FAR ));
     case T_BYTE:
-        return( MakeLabel( AsmBuffer[i-1]->string_ptr, T_BYTE ));
+        return( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_BYTE ));
     case T_WORD:
-        return( MakeLabel( AsmBuffer[i-1]->string_ptr, T_WORD ));
+        return( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_WORD ));
     case T_DWORD:
-        return( MakeLabel( AsmBuffer[i-1]->string_ptr, T_DWORD ));
+        return( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_DWORD ));
     case T_FWORD:
-        return( MakeLabel( AsmBuffer[i-1]->string_ptr, T_FWORD ));
+        return( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_FWORD ));
     case T_PWORD:
-        return( MakeLabel( AsmBuffer[i-1]->string_ptr, T_FWORD ));
+        return( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_FWORD ));
     case T_QWORD:
-        return( MakeLabel( AsmBuffer[i-1]->string_ptr, T_QWORD ));
+        return( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_QWORD ));
     case T_TBYTE:
-        return( MakeLabel( AsmBuffer[i-1]->string_ptr, T_TBYTE ));
+        return( MakeLabel( AsmBuffer[i-1]->string_ptr, MT_TBYTE ));
     default:
         AsmError( INVALID_LABEL_DEFINITION );
         return( ERROR );

@@ -5,4 +5,6 @@
 target_objs     = $(i86_objs) $(intel_objs) $(cg_objs)
 target_name     = i86
 
+.OPTIMIZE
+
 !include $(cg_dir)/mif/target.mif

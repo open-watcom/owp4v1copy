@@ -29,6 +29,7 @@
 *
 ****************************************************************************/
 
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -49,7 +50,7 @@
  */
 static BOOL executeUntilStart( BOOL was_running )
 {
-    HANDLE      ph, th;
+    HANDLE      ph,th;
     brkpnt_type old;
     brkpnt_type brk = BRK_POINT;
     LPVOID      base;
@@ -65,8 +66,8 @@ static BOOL executeUntilStart( BOOL was_running )
          * plant a breakpoint at the first instruction of our new app
          */
         base = DebugEvent.u.CreateProcessInfo.lpStartAddress;
-        ReadProcessMemory( ph, ( LPVOID ) base, ( LPVOID ) & old, sizeof( old ), ( LPDWORD ) & bytes );
-        WriteProcessMemory( ph, ( LPVOID ) base, ( LPVOID ) & brk, sizeof( brk ), ( LPDWORD ) & bytes );
+        ReadProcessMemory( ph, (LPVOID) base, (LPVOID) &old, sizeof(old), (LPDWORD) &bytes );
+        WriteProcessMemory( ph, (LPVOID) base, (LPVOID) &brk, sizeof(brk), (LPDWORD) &bytes );
     } else {
         // a trick to make app execute long enough to hit a breakpoint
         PostMessage( HWND_TOPMOST, WM_TIMECHANGE, 0, 0 );
@@ -91,19 +92,19 @@ static BOOL executeUntilStart( BOOL was_running )
                  * the user has asked us to stop before any DLL's run
                  * their startup code (";dll"), so we do.
                  */
-                WriteProcessMemory( ph, ( LPVOID ) base, ( LPVOID ) & old, sizeof( old ),
-                                        ( LPDWORD ) & bytes );
+                WriteProcessMemory( ph, (LPVOID) base, (LPVOID) &old, sizeof(old),
+                                        (LPDWORD) &bytes );
                 AdjustIP( &con, sizeof( brk ) );
                 MySetThreadContext( ti, &con );
                 return( TRUE );
             }
-            if( ( AdjustIP( &con, 0 ) == ( DWORD ) base ) ) {
+            if( (AdjustIP( &con, 0 ) == (DWORD) base) ) {
                 /*
                  * we stopped at the applications starting address,
                  * so we can offically declare that the app has loaded
                  */
-                WriteProcessMemory( ph, ( LPVOID ) base, ( LPVOID ) & old, sizeof( old ),
-                                        ( LPDWORD ) & bytes );
+                WriteProcessMemory( ph, (LPVOID) base, (LPVOID) &old, sizeof(old),
+                                        (LPDWORD) &bytes );
                 return( TRUE );
             }
             /*
@@ -116,7 +117,7 @@ static BOOL executeUntilStart( BOOL was_running )
         }
     }
 
-}
+} /* executeUntilStart */
 
 #ifdef WOW
 /*
@@ -125,44 +126,44 @@ static BOOL executeUntilStart( BOOL was_running )
 static void addKERNEL( void )
 {
     #if 0
-    /*
-     * there are bugs in the way VDMDBG.DLL implements some of this
-     * stuff, so this is currently disabled
-     */
-    MODULEENTRY                 me;
-    thread_info                 *ti;
-    IMAGE_NOTE                  im;
+        /*
+         * there are bugs in the way VDMDBG.DLL implements some of this
+         * stuff, so this is currently disabled
+         */
+        MODULEENTRY             me;
+        thread_info             *ti;
+        IMAGE_NOTE              im;
 
-    ti = FindThread( DebugeeTid );
-    me.dwSize = sizeof( MODULEENTRY );
-    if( pVDMModuleFirst( ProcessInfo.process_handle, ti->thread_handle,
-                    &me, NULL, 0 ) ) {
-        do {
-            if( !memicmp( me.szModule, "KERNEL", 6 ) ) {
-                memcpy( &im.Module, &me.szModule, sizeof( me.szModule ) );
-                memcpy( &im.FileName, &me.szExePath, sizeof( me.szExePath ) );
-                AddLib( TRUE, &im );
-                break;
-            }
-            me.dwSize = sizeof( MODULEENTRY );
-        } while( pVDMModuleNext( ProcessInfo.process_handle, ti->thread_handle,
-                        &me, NULL, 0 ) );
-    }
+        ti = FindThread( DebugeeTid );
+        me.dwSize = sizeof( MODULEENTRY );
+        if( pVDMModuleFirst( ProcessInfo.process_handle, ti->thread_handle,
+                        &me, NULL, 0 ) ) {
+            do {
+                if( !memicmp( me.szModule, "KERNEL", 6 ) ) {
+                    memcpy( &im.Module, &me.szModule, sizeof( me.szModule ) );
+                    memcpy( &im.FileName, &me.szExePath, sizeof( me.szExePath ) );
+                    AddLib( TRUE, &im );
+                    break;
+                }
+                me.dwSize = sizeof( MODULEENTRY );
+            } while( pVDMModuleNext( ProcessInfo.process_handle, ti->thread_handle,
+                            &me, NULL, 0 ) );
+        }
     #else
-    IMAGE_NOTE                  im;
+        IMAGE_NOTE              im;
 
-    /*
-     * this is a giant kludge, but it works.  Since KERNEL is already
-     * loaded in the WOW , we never get a DLL load notification, so
-     * we can't show any symbols.  This fakes up the necessary information
-     */
-    strcpy( im.Module, "KERNEL" );
-    GetSystemDirectory( im.FileName, sizeof( im.FileName ) );
-    strcat( im.FileName, "\\KRNL386.EXE" );
-    AddLib( TRUE, &im );
+        /*
+         * this is a giant kludge, but it works.  Since KERNEL is already
+         * loaded in the WOW , we never get a DLL load notification, so
+         * we can't show any symbols.  This fakes up the necessary information
+         */
+        strcpy( im.Module, "KERNEL" );
+        GetSystemDirectory( im.FileName, sizeof( im.FileName ) );
+        strcat( im.FileName, "\\KRNL386.EXE" );
+        AddLib( TRUE, &im );
     #endif
 
-}
+} /* addKERNEL */
 
 /*
  * addAllWOWModules - add all modules as libraries.  This is invoked if
@@ -191,14 +192,14 @@ static void addAllWOWModules( void )
                         &me, NULL, 0 ) );
     }
 
-}
+} /* addAllWOWModules */
 
 /*
  * executeUntilVDMStart - go until we hit our first VDM exception
  */
 static BOOL executeUntilVDMStart( void )
 {
-    int rc;
+    int         rc;
 
     for( ;; ) {
         rc = DebugExecute( STATE_WAIT_FOR_VDM_START, NULL, FALSE );
@@ -208,7 +209,7 @@ static BOOL executeUntilVDMStart( void )
         return( FALSE );
     }
 
-}
+} /* executeUntilVDMStart */
 
 /*
  * EnumWOWProcessFunc - callback for each WOW process in the system
@@ -216,16 +217,16 @@ static BOOL executeUntilVDMStart( void )
 BOOL WINAPI EnumWOWProcessFunc( DWORD pid, DWORD attrib, LPARAM lparam )
 {
     if( attrib & WOW_SYSTEM ) {
-        *( DWORD * ) lparam = pid;
+        *(DWORD *) lparam = pid;
         return( FALSE );
     }
     return( TRUE );
 
-}
+} /* EnumWOWProcessFunc */
 #else
 BOOL WINAPI EnumWOWProcessFunc( DWORD pid, DWORD attrib, LPARAM lparam )
 {
-    *( DWORD * ) lparam = 0;
+    *(DWORD *) lparam = 0;
     return( FALSE );
 }
 #endif
@@ -235,7 +236,7 @@ BOOL WINAPI EnumWOWProcessFunc( DWORD pid, DWORD attrib, LPARAM lparam )
  */
 unsigned ReqProg_load( void )
 {
-    char                *parm, *src, *dst, *endsrc;
+    char                *parm,*src,*dst, *endsrc;
     char                exe_name[PATH_MAX];
     char                ch;
     BOOL                rc;
@@ -248,7 +249,7 @@ unsigned ReqProg_load( void )
     header_info         hi;
     WORD                stack;
     WORD                version;
-    DWORD               pid, pid_started;
+    DWORD               pid,pid_started;
     DWORD               cr_flags;
     char                * buff = NULL;
     size_t              nBuffRequired = 0;
@@ -276,21 +277,20 @@ unsigned ReqProg_load( void )
     ParseServiceStuff( parm, &dll_name, &service_name, &dll_destination, &service_parm );
     pid = 0;
     src = parm;
-
+    
     /*
     //  Just to be really safe!
     */
     nBuffRequired = GetTotalSize() + PATH_MAX + 16;
-    if( NULL == ( buff = malloc( nBuffRequired ) ) ) {
+    if(NULL == (buff = malloc(nBuffRequired))){
         ret->err = ERROR_NOT_ENOUGH_MEMORY;
-        return( sizeof( *ret ) );
+        return (sizeof(*ret));
     }
 
     if( *src == '#' ) {
         src++;
         pid = strtoul( src, &endsrc, 16 );
-        if( pid == 0 )
-            pid = -1;
+        if( pid == 0 ) pid = -1;
         strcpy( buff, endsrc );
     } else {
         while( *src ) {
@@ -313,8 +313,8 @@ unsigned ReqProg_load( void )
     if( pid == 0 ) {
         if( FindFilePath( parm, exe_name, ExtensionList ) != 0 ) {
             ret->err = ERROR_FILE_NOT_FOUND;
-            if( buff ) {
-                free( buff );
+            if(buff){
+                free(buff);
                 buff = NULL;
             }
             return( sizeof( *ret ) );
@@ -323,12 +323,12 @@ unsigned ReqProg_load( void )
         /*
          * Get type of application
          */
-        handle = CreateFile( ( LPTSTR ) exe_name, GENERIC_READ, FILE_SHARE_READ,
+        handle = CreateFile( (LPTSTR) exe_name, GENERIC_READ, FILE_SHARE_READ,
                             NULL, OPEN_EXISTING, 0, 0 );
-        if( handle == ( HANDLE ) - 1 ) {
+        if( handle == (HANDLE)-1 ) {
             ret->err = GetLastError();
-            if( buff ) {
-                free( buff );
+            if(buff){
+                free(buff);
                 buff = NULL;
             }
             return( sizeof( *ret ) );
@@ -345,15 +345,14 @@ unsigned ReqProg_load( void )
         } else {
             strcpy( buff, CurrEXEName );
         }
-        dst = &buff[strlen( buff )];
+        dst = &buff[strlen(buff)];
         src = parm;
         while( *src != 0 ) {
             ++src;
         }
-        len = &parm[GetTotalSize() -sizeof( *acc )] - src;
+        len = &parm[ GetTotalSize() - sizeof( *acc ) ] - src;
         for( ;; ) {
-            if( len == 0 )
-                break;
+            if( len == 0 ) break;
             ch = *src;
             if( ch == 0 ) {
                 ch = ' ';
@@ -369,8 +368,8 @@ unsigned ReqProg_load( void )
 
         if( !GetEXEHeader( handle, &hi, &stack ) ) {
             ret->err = GetLastError();
-            if( buff ) {
-                free( buff );
+            if(buff){
+                free(buff);
                 buff = NULL;
             }
             return( sizeof( *ret ) );
@@ -385,15 +384,15 @@ unsigned ReqProg_load( void )
             /*
              * find out the pid of WOW, if it is already running.
              */
-            pVDMEnumProcessWOW( EnumWOWProcessFunc, ( LPARAM ) & pid );
+            pVDMEnumProcessWOW( EnumWOWProcessFunc, (LPARAM) &pid );
             if( pid != 0 ) {
                 version = LOWORD( GetVersion() );
                 if( LOBYTE( version ) == 3 && HIBYTE( version ) < 50 ) {
                     int kill = MessageBox( NULL, TRP_NT_wow_warning,
                             TRP_The_WATCOM_Debugger,
-                        MB_APPLMODAL + MB_YESNO );
+                        MB_APPLMODAL+MB_YESNO );
                     if( kill == IDYES ) {
-                        HANDLE hprocess = OpenProcess( PROCESS_TERMINATE + STANDARD_RIGHTS_REQUIRED, FALSE, pid );
+                        HANDLE hprocess = OpenProcess( PROCESS_TERMINATE+STANDARD_RIGHTS_REQUIRED, FALSE, pid );
                         if( hprocess != 0 && TerminateProcess( hprocess, 0 ) ) {
                             CloseHandle( hprocess );
                             pid = 0;
@@ -406,8 +405,8 @@ unsigned ReqProg_load( void )
             }
             if( pid != 0 ) {
                 ret->err = GetLastError();
-                if( buff ) {
-                    free( buff );
+                if(buff){
+                    free(buff);
                     buff = NULL;
                 }
                 return( sizeof( *ret ) );
@@ -444,8 +443,8 @@ unsigned ReqProg_load( void )
     }
     ret->err = StartControlThread( buff, &pid_started, cr_flags );
     if( ret->err != 0 ) {
-        if( buff ) {
-            free( buff );
+        if(buff){
+            free(buff);
             buff = NULL;
         }
         return( sizeof( *ret ) );
@@ -455,11 +454,11 @@ unsigned ReqProg_load( void )
      * If it is not, then something is horribly wrong.
      */
     rc = MyWaitForDebugEvent();
-    if( !rc || ( DebugEvent.dwDebugEventCode != CREATE_PROCESS_DEBUG_EVENT ) ||
-                 ( DebugEvent.dwProcessId != pid_started ) ) {
+    if( !rc || (DebugEvent.dwDebugEventCode != CREATE_PROCESS_DEBUG_EVENT) ||
+                (DebugEvent.dwProcessId != pid_started ) ) {
         ret->err = GetLastError();
-        if( buff ) {
-            free( buff );
+        if(buff){
+            free(buff);
             buff = NULL;
         }
         return( sizeof( *ret ) );
@@ -488,8 +487,8 @@ unsigned ReqProg_load( void )
         FlatCS = CS();
         if( !executeUntilVDMStart() ) {
             ret->err = GetLastError();
-            if( buff ) {
-                free( buff );
+            if(buff){
+                free(buff);
                 buff = NULL;
             }
             return( sizeof( *ret ) );
@@ -505,18 +504,18 @@ unsigned ReqProg_load( void )
          */
         ti = FindThread( DebugeeTid );
         MyGetThreadContext( ti, &con );
-        WOWAppInfo.segment = ( WORD ) con.SegCs;
-        WOWAppInfo.offset = ( WORD ) con.Eip;
+        WOWAppInfo.segment = (WORD) con.SegCs;
+        WOWAppInfo.offset = (WORD) con.Eip;
         con.SegSs = con.SegDs; // Wow lies to us about the stack segment.  Reset it
         con.Esp = stack;
         MySetThreadContext( ti, &con );
     } else
 #endif
- {
+           {
         DWORD base;
 
         if( pid == 0 ) {
-            base = ( DWORD ) DebugEvent.u.CreateProcessInfo.lpStartAddress;
+            base = (DWORD)DebugEvent.u.CreateProcessInfo.lpStartAddress;
         } else {
             base = 0;
         }
@@ -536,15 +535,14 @@ unsigned ReqProg_load( void )
             ti = FindThread( DebugeeTid );
             MyGetThreadContext( ti, &con );
             old = AdjustIP( &con, 0 );
-            if( base != 0 )
-                SetIP( &con, base );
+            if( base != 0 ) SetIP( &con, base );
             MySetThreadContext( ti, &con );
             SetIP( &con, old );
             MySetThreadContext( ti, &con );
         }
         ti = FindThread( DebugeeTid );
         MyGetThreadContext( ti, &con );
-#if defined( MD_x86 )
+#if defined(MD_x86)
         FlatCS = con.SegCs;
         FlatDS = con.SegDs;
 #endif
@@ -555,8 +553,8 @@ unsigned ReqProg_load( void )
     }
     ret->mod_handle = 0;
 
-    if( buff ) {
-        free( buff );
+    if(buff){
+        free(buff);
         buff = NULL;
     }
     return( sizeof( *ret ) );

@@ -24,11 +24,13 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  Power PC simplified mnemonics test.
+;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+;*               DESCRIBE IT HERE!
 ;*
 ;*****************************************************************************
 
 
+// simplified mnemonics
 start:
         trap
         twllti  r1,0x00002781

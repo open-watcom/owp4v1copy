@@ -463,7 +463,7 @@ obj_4b = &
 browscli.obj &
 writ_elf.obj &
 dwloader.obj &
-$(dwarf_dw_lib)  # DWARF library
+$(dwarf_dir)\dw\ol\dwl.lib
 !endif
 
 obj_4 += &

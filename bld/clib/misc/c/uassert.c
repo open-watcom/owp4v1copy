@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Wide character version of assert helper routines.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 

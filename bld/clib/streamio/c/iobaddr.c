@@ -34,7 +34,7 @@
 #include <stdio.h>
 #include "rtdata.h"
 
-#if !defined(__NETWARE__) && !defined(_THIN_LIB)
+#if !defined(___NETWARE__) && !defined(_THIN_LIB)
     _WCRTLINK FILE *__get_std_stream( unsigned handle ) 
     {
         if( handle > NUM_STD_STREAMS ) 

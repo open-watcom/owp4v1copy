@@ -24,9 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  GetOpt() - function to process traditional command line options
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,15 +39,15 @@
 #include "misc.h"
 
 char            *OptArg;
-int             OptInd = 1;
+int             OptInd=1;
 char            OptChar;
 #ifndef __ISVI__
-char            AltOptChar = '/';
+char            AltOptChar='/';
 #else
-char            AltOptChar = '+';
+char            AltOptChar='+';
 #endif
 
-static int      optOff = 0;
+static int      optOff=0;
 static int      testedOptEnvVar;
 #ifndef __ISVI__
 static int      testedPosixrx;
@@ -62,10 +64,10 @@ static void eatArg( int *argc, char *argv[], int num )
         return;
     }
 
-    for( i= OptInd + num; i <= *argc; i++ ) {
-        argv[i - num] = argv[i];
+    for( i=OptInd+num; i<=*argc; i++ ) {
+        argv[i-num] = argv[i];
     }
-    ( *argc ) -= num;
+    (*argc) -= num;
 
 } /* eatArg */
 
@@ -93,16 +95,17 @@ int GetOpt( int *argc, char *argv[], char *optstr, const char *usage[] )
     }
 
     while( 1 ) {
+
         if( envVar != NULL ) {
             currarg = envVar;
         } else {
-            currarg = argv[OptInd];
+            currarg = argv[ OptInd ];
             if( currarg == NULL ) {
                 return( -1 );
             }
         }
         while( 1 ) {
-            ch = currarg[optOff];
+            ch = currarg[ optOff ];
             if( isspace( ch ) && envVar != NULL ) {
                 optOff++;
                 continue;
@@ -117,13 +120,12 @@ int GetOpt( int *argc, char *argv[], char *optstr, const char *usage[] )
                     optOff++;
                     ch = currarg[optOff];
                 }
-            } 
-            else {
+            } else {
                 OptChar = ch;
                 optOff++;
                 ch = currarg[optOff];
             }
-            if( ch == '\0' ) { // option char by itself should be
+            if( ch == '\0' ) {          // option char by itself should be
                 return( -1 );           // left alone
             }
             if( ch == '?' ) {
@@ -138,30 +140,30 @@ int GetOpt( int *argc, char *argv[], char *optstr, const char *usage[] )
             if( ptr == NULL || *ptr == ':' ) {
                 Quit( usage, "Invalid option '%c'\n", ch );
             }
-            if( *( ptr + 1 ) == ':' ) {
+            if( *(ptr+1) == ':' ) {
 #ifndef __ISVI__
-                if( *( ptr + 2 ) == ':' ) {
-                    if( currarg[optOff + 1] != 0 ) {
-                        OptArg = &currarg[optOff + 1];
+                if( *(ptr+2) == ':' ) {
+                    if( currarg[optOff+1] != 0 ) {
+                        OptArg = &currarg[optOff+1];
                     }
                     eatArg( argc, argv, 1 );
                     return( ch );
                 }
 #endif
-                if( currarg[optOff + 1] == 0 ) {
-                    if( argv[OptInd + 1] == NULL ) {
+                if( currarg[optOff+1] == 0 ) {
+                    if( argv[ OptInd+1 ] == NULL ) {
                         Quit( usage, "Option '%c' requires a parameter\n", ch );
                     }
-                    OptArg = argv[OptInd + 1];
+                    OptArg = argv[ OptInd+1 ];
                     eatArg( argc, argv, 2 );
                     return( ch );
                 }
-                OptArg = &currarg[optOff + 1];
+                OptArg = &currarg[optOff+1];
                 eatArg( argc, argv, 1 );
                 return( ch );
             }
             optOff++;
-            if( currarg[optOff] == 0 ) {
+            if( currarg[ optOff ] == 0 ) {
                 eatArg( argc, argv, 1 );
             }
             return( ch );
@@ -173,4 +175,5 @@ int GetOpt( int *argc, char *argv[], char *optstr, const char *usage[] )
             }
         }
     }
-}
+
+} /* GetOpt */

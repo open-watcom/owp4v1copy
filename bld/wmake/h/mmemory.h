@@ -24,7 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  Memory management prototypes for wmake.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
@@ -46,6 +47,7 @@ enum {
 #endif
 
 
+
 extern void *MallocUnSafe( size_t size );
 extern void *MallocSafe( size_t size );
 extern void *CallocSafe( size_t size ); /* different from stdlib rtn */
@@ -53,6 +55,7 @@ extern void FreeSafe( void *ptr );
 extern char *StrDupSafe( const char *str );
 extern void MemInit( void );
 extern void MemFini( void );
+extern void IfMemScarce( RET_T (*func)( void ) );
 extern void MemShrink( void );
 extern void MemDecreaseSize( void *ptr, size_t new_size );
 
@@ -61,12 +64,6 @@ extern void MemDecreaseSize( void *ptr, size_t new_size );
 extern void FAR *FarMaybeMalloc( size_t size );
 extern void FAR *FarMalloc( size_t size );
 extern void FarFree( void FAR *p );
-
-#endif
-
-#ifdef USE_SCARCE
-
-extern void IfMemScarce( RET_T (*func)( void ) );
 
 #endif
 

@@ -100,11 +100,7 @@ static void freeLabelList( orl_sec_handle shnd )
         while( entry ) {
             temp = entry;
             entry = entry->next;
-            switch( temp->type ) {
-            case LTYP_UNNAMED:
-            case LTYP_ABSOLUTE:
-                break;
-            default:
+            if( temp->type != LTYP_UNNAMED ) {
                 // Step back over backquote (`) or space where it should be.
                 if( temp->label.name[-1]==1 ) {
                     temp->label.name -= 1;
@@ -112,7 +108,6 @@ static void freeLabelList( orl_sec_handle shnd )
                     temp->label.name -= 2;
                 }
                 MemFree( temp->label.name );
-                break;
             }
             MemFree( temp );
         }

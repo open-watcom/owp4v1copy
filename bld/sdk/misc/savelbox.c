@@ -40,16 +40,10 @@
 #define STRICT
 #include <windows.h>
 #include <commdlg.h>
-#if defined( __WINDOWS__ )
-#pragma library("commdlg.lib")
-#endif
 #include "savelbox.h"
 #include "win1632.h"
 #ifndef NOUSE3D
 #include "ctl3d.h"
-#if defined( __WINDOWS__ ) && !defined( __WINDOWS_386__ )
-#pragma library("ctl3d.lib")
-#endif
 #endif
 #include "ldstr.h"
 #include "rcstr.gh"

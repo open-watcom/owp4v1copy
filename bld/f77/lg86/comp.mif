@@ -3,8 +3,7 @@
 !include defrule.mif
 
 !include wres.mif
-
-!include $(dwarf_dir)/dw/client.mif
+!include mlibs.mif
 
 clibldos_dir    = $(%watcom)/lib286/dos
 clibldos_lib    = $(%watcom)/lib286/dos/clibl.lib
@@ -137,7 +136,7 @@ libs = $(cliblnec_lib)
 !    else
 libs = $(clibldos_lib)
 !    endif
-libs += $(ovlldr_lib)
+libs += $(ovlldr_lib) $(wres_dir)/lib/wresl.lib
 !    ifeq fp_model c
 libs += $(mathl286_lib)
 !    else
@@ -145,7 +144,7 @@ libs += $(mathl287_lib) $(emu286_lib)
 !    endif
 
 !  else ifeq form os2v2
-libs = $(clibros2_lib) $(os2386)
+libs = $(clibros2_lib) $(os2386) $(wres_dir)/lib/wresf.lib
 !    ifeq fp_model c
 libs += $(mathr386_lib)
 !    else
@@ -153,7 +152,7 @@ libs += $(mathr387_lib)
 !    endif
 
 !  else ifeq form nt
-libs = $(clibrnt_lib)
+libs = $(clibrnt_lib) $(wres_dir)/lib/wresf.lib
 !    ifeq fp_model c
 libs += $(mathr386_lib)
 !    else
@@ -166,6 +165,7 @@ libs = $(clibrnec_lib)
 !    else
 libs = $(clibr386_lib)
 !    endif
+libs += $(wres_dir)/lib/wresf.lib
 !    ifeq fp_model c
 libs += $(mathr386_lib)
 !    else
@@ -173,14 +173,13 @@ libs += $(mathr387_lib)
 !    endif
 !  endif
 
-libs += $(wres_lib)
-
 # we use part of WOMP for generating object files
 # and DWARF for generating browsing info
 !ifdef __386__
 libs += $(womp_dir)/watfor/obj386/wompobj.lib
-libs += $(dwarf_dw_lib)  # DWARF library
+libs += $(dwarf_dir)/dw/o/dwf.lib
 !endif
+
 
 !ifdef in_sa_library
 rt_h    = $(f77_dir)/lg86/rt/h;

@@ -7,7 +7,8 @@ host_cpu = 386
 fs_registration = yes
 suffix = 3s
 target_system = nt
-text = -D__USE_FS
+production_lib = lib386
 define_library_include = $(plusplus_runtime_dir)/plib.mif
 define_target_include = $(plusplus_dir)/lib32$(suffix).mif
+text = -D__USE_FS
 !include $(plusplus_dir)/mklib.mif

@@ -31,16 +31,27 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 #include <assert.h>
 
 #include "gui.h"
 #include "guiutil.h"
 #include "hash.h"
 
+typedef struct hash_element_struct {
+    struct hash_element_struct  *next;
+    hash_key                    key;
+    hash_data                   data;
+} hash_element;
+
+typedef struct hash_table_struct {
+    unsigned int        size;
+    hash_key_cmp        cmp_func;
+    hash_element        *table[1];
+} hash_table;
+
 static unsigned int     hashKey( unsigned int size, hash_key k );
 
-hash_table     *HashInit( size_t size, hash_key_cmp func ) {
+hash_handle     HashInit( int size, hash_key_cmp func ) {
 /*******************************************************/
 
     hash_table  *ht;
@@ -48,28 +59,27 @@ hash_table     *HashInit( size_t size, hash_key_cmp func ) {
     assert( size > 0 );
     assert( func );
 
-    ht = GUIMemAlloc( sizeof( hash_table ) + ( sizeof( hash_element * ) * size ) );
-    if( !ht )
-        return( NULL );
+    ht = GUIAlloc( sizeof( hash_table ) + ( sizeof( hash_element * ) * size ) );
+    if( !ht ) return( NULL );
     memset( ht, 0, sizeof( hash_table ) + ( sizeof( hash_element * ) * size ) );
     ht->size = size;
     ht->cmp_func = func;
     return( ht );
 }
 
-int HashInsert( hash_table *ht, hash_key k, hash_data d ) {
-/***********************************************************/
+int             HashInsert( hash_handle h, hash_key k, hash_data d ) {
+/********************************************************************/
 
+    hash_table          *ht = (hash_table *)h;
     unsigned int        i;
     hash_element        *he;
 
-    assert( ht );
+    assert( h );
     assert( k );
-    assert( d >= 0 );
+    assert( d );
 
-    he = GUIMemAlloc( sizeof( hash_element ) );
-    if( !he )
-        return( 0 );
+    he = GUIAlloc( sizeof( hash_element ) );
+    if( !he ) return( 0 );
     i = hashKey( ht->size, k );
     he->data = d;
     GUIStrDup( k, &(he->key) );
@@ -79,54 +89,55 @@ int HashInsert( hash_table *ht, hash_key k, hash_data d ) {
 }
 
 
-hash_data HashFind( hash_table *ht, hash_key_const k ) {
-/********************************************************/
+hash_data       HashFind( hash_handle h, hash_key_const k ) {
+/***********************************************************/
 
+    hash_table          *ht = (hash_table *)h;
     unsigned int        i;
     hash_element        *he;
 
-    assert( ht );
+    assert( h );
     assert( k );
 
     i = hashKey( ht->size, (char *)k );
     he = ht->table[i];
 
     while( he ) {
-        if( !ht->cmp_func( k, he->key ) )
-            break;
+        if( !ht->cmp_func( k, he->key ) ) break;
         he = he->next;
     }
 
     if( he ) {
         return( he->data );
     } else {
-        return( NO_VAR );
+        return( NULL );
     }
 }
 
-void HashFini( hash_table *ht ) {
+void            HashFini( hash_handle h ) {
 /*****************************************/
 
+    hash_table          *ht = (hash_table *)h;
     unsigned int        i;
     hash_element        *he;
     hash_element        *tmp;
 
-    assert( ht );
+    assert( h );
 
     for( i = 0; i < ht->size; i++ ) {
         he = ht->table[i];
         while( he ) {
             tmp = he;
             he = he->next;
-            GUIMemFree( tmp->key );
-            GUIMemFree( tmp );
+            GUIFree( tmp->key );
+            GUIFree( tmp );
         }
     }
-    GUIMemFree( ht );
+    GUIFree( ht );
 }
 
 
-static unsigned int hashKey( unsigned int size, hash_key k ) {
+static unsigned int     hashKey( unsigned int size, hash_key k ) {
 /****************************************************************/
 
     unsigned long       hash = 0;
@@ -135,7 +146,7 @@ static unsigned int hashKey( unsigned int size, hash_key k ) {
     assert( size > 0 );
 
     while( *k ) {
-        hash = ( hash << 4 ) + tolower( *k );
+        hash = ( hash << 4 ) + *k;
         if ( hash & 0xffff0000 ) {
             hash += hash >> 24;
         }

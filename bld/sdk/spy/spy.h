@@ -39,6 +39,12 @@
 #include "ldstr.h"
 #include "hint.h"
 
+/* Following is special defines for including XP XML file in .rc */
+#if defined __NT__
+#define RT_MANIFEST  24
+#define IDR_MANIFEST  1
+#endif
+
 #ifdef __NT__
 #define USE_SNAP_WINDOW         1
 #endif

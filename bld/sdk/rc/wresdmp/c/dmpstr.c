@@ -24,14 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  String resource dumping routine.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
 
-#include <unistd.h>
+#include <io.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include "wresall.h"
 #include "types.h"
 #include "dmpstr.h"
