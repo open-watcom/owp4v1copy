@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Terminal mouse handling
 *
 ****************************************************************************/
 
@@ -53,6 +52,10 @@
 #include "uivirt.h"
 #include "qnxuiext.h"
 #include <time.h>
+#ifdef __LINUX__
+#include <sys/socket.h>
+#include <sys/un.h>
+#endif
 
 extern          void                    stopmouse(void);
 extern          int                     nextc(int);
@@ -69,12 +72,16 @@ extern          bool                    MouseInstalled;
 
 static enum {
     M_NONE,
-    M_XT        /* XTerm */
+    M_XT,       /* XTerm */
+#ifdef __LINUX__
+    M_GPM       /* GPM   */
+#endif
 } MouseType;
 
 #define MAXBUF    30
 static char buf[ MAXBUF + 1 ];
 static int new_sample;
+int UIMouseHandle = -1;
 
 #define ANSI_HDR        "\x1b["
 
@@ -124,6 +131,11 @@ static int tm_check( unsigned short *status, unsigned short *row,
         case M_XT:
             XT_parse();
             break;
+#ifdef __LINUX__
+        case M_GPM:
+            GPM_parse();
+            break;
+#endif
         case M_NONE:
             break;
         }
@@ -163,6 +175,92 @@ static void TryOne( int type, char *test, char *init, char *input )
     stopmouse();
 }
 
+#ifdef __LINUX__
+static struct {
+    unsigned char   button;
+    unsigned char   modifiers;
+    unsigned short  vc;
+    short           dx, dy, x, y, wdx, wdy;
+    int             type, clicks, margin;
+} gpm_buf;
+
+/* Parse a GPM mouse event. */
+static void GPM_parse( void )
+/***************************/
+{
+    last_col = gpm_buf.x - 1;
+    last_row = gpm_buf.y - 1;
+    if (gpm_buf.type & 4) { /* down */
+        if( gpm_buf.button & 4 )
+            last_status |= MOUSE_PRESS;
+        if( gpm_buf.button & 2 )
+            last_status |= MOUSE_PRESS_MIDDLE;
+        if( gpm_buf.button & 1 )
+            last_status |= MOUSE_PRESS_RIGHT;
+    } else if (gpm_buf.type & 8) { /* up */
+        if( gpm_buf.button & 4 )
+            last_status &= ~MOUSE_PRESS;
+        if( gpm_buf.button & 2 )
+            last_status &= ~MOUSE_PRESS_MIDDLE;
+        if( gpm_buf.button & 1 )
+            last_status &= ~MOUSE_PRESS_RIGHT;
+    }
+}
+
+static int gpm_tm_init( void )
+/****************************/
+{
+    struct {
+        unsigned short  eventMask;
+        unsigned short  defaultMask;
+        unsigned short  minMod;
+        unsigned short  maxMod;
+        int             pid;
+        int             vc;
+    } gpm_conn;
+    struct sockaddr_un  sau;
+    char                tty_name[20];
+    char                procname[30];
+    int                 len, mult;
+
+    UIMouseHandle = socket( PF_UNIX, SOCK_STREAM, 0 );
+    if( UIMouseHandle < 0 )
+        return( FALSE );
+    sau.sun_family = AF_UNIX;
+    strcpy( sau.sun_path, "/dev/gpmctl" );
+    if( connect( UIMouseHandle, (struct sockaddr *)&sau, sizeof sau ) < 0 )
+        goto out;
+    gpm_conn.eventMask = 2|4|8; /* DRAG, UP, DOWN */
+    gpm_conn.defaultMask = ~gpm_conn.eventMask;
+    gpm_conn.pid = getpid();
+    gpm_conn.vc = gpm_conn.minMod = gpm_conn.maxMod = 0;
+    sprintf( procname, "/proc/self/fd/%d", UIConHandle );
+    len = readlink( procname, tty_name, sizeof( tty_name ) - 1 );
+    if ( len < 0 )
+        goto out;
+    if( memcmp( tty_name, "/dev/tty", len ) == 0 ) {
+        len = readlink( "/proc/self/fd/0", tty_name, sizeof( tty_name ) - 1 );
+        if ( len < 0 )
+            goto out;
+    }
+    len--;
+    mult = 1;
+    while( len && tty_name[len] >= '0' && tty_name[len] <= '9' ) {
+        gpm_conn.vc += ( tty_name[len] - '0' ) * mult;
+        len--;
+        mult *= 10;
+    }
+    write( UIMouseHandle, &gpm_conn, sizeof gpm_conn );
+    TryOne( M_GPM, NULL, "", ANSI_HDR "M" );
+    MouseType = M_GPM;
+    return( TRUE );
+ out:
+    close( UIMouseHandle );
+    UIMouseHandle = -1;
+    return( FALSE );
+}
+#endif
+
 static int tm_init( bool install )
 /******************************/
 {
@@ -185,7 +283,11 @@ static int tm_init( bool install )
         return( TRUE );
     }
 
+#ifdef __LINUX__
+    return( gpm_tm_init() );
+#else
     return( FALSE );
+#endif
 }
 
 static int tm_fini()
@@ -195,6 +297,11 @@ static int tm_fini()
         case M_XT:
             write( UIConHandle, XT_FINI, sizeof( XT_FINI ) - 1 );
             break;
+#ifdef __LINUX__
+        case M_GPM:
+            close( UIMouseHandle );
+            break;
+#endif
         default :
             break;
     }
@@ -235,12 +342,21 @@ void tm_saveevent()
                 }
                 buf[i] = c;
             }
+            if( i == MAXBUF ) tm_error();
+            buf[i+1] = '\0';
             break;
+#ifdef __LINUX__
+        case M_GPM:
+            if( read( UIMouseHandle, &gpm_buf, sizeof( gpm_buf ) ) <
+                sizeof( gpm_buf ) ) {
+                tm_error();
+                return;
+            }
+            break;
+#endif
         default :
             break;
     }
-    if( i == MAXBUF ) tm_error();
-    buf[i+1] = '\0';
     new_sample = 1;
 }
 

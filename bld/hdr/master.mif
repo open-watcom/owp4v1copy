@@ -288,6 +288,7 @@ LINUX_files = &
         sys/utsname.h &
         sys/wait.h &
         sys/socket.h &
+        sys/un.h &
         netinet/in.h &
         netinet/tcp.h &
         arpa/inet.h

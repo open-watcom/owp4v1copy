@@ -247,6 +247,7 @@ EVENT TrieRead()
     for( ;; ) {
         c = nextc(timeout);
         if( c <= 0 ) break;
+        if( c == 256 ) return( EV_MOUSE_PRESS );
         buf[cpos++] = c;
 
         if( trie->num_child == 0 ) break;

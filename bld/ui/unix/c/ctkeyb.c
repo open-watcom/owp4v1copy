@@ -275,6 +275,8 @@ int nextc(int n)        // delay in 0.1 seconds -- not to exceed 9
         if( test == -1 ) {
             return -1;
         }
+    } else if( fds == 2 ) {
+        return 256; /* mouse event */
     } else {
         return -1;
     }
