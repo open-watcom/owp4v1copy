@@ -128,12 +128,12 @@ comp_flags += -i$(lib_misc_dir)\h;$(inc_dirs);$(bld_h);$(watcom_dir)\h;$(comp_cf
 !ifndef runtime_library_source
 
 !ifeq target_system os2
-comp_flags += -bt=os2 -i$(lib_misc_dir)\h;$(inc_dirs_sys_os2)
+comp_flags += -bt=os2 -i$(lib_misc_dir)\h;$(inc_dirs_sys)
 asm_flags += -bt=os2
 !endif
 
 !ifeq target_system os2v2
-comp_flags += -bt=os2 -i$(lib_misc_dir)\h;$(inc_dirs_sys_os2)
+comp_flags += -bt=os2 -i$(lib_misc_dir)\h;$(inc_dirs_sys)
 asm_flags += -bt=os2
 !endif
 
@@ -165,12 +165,12 @@ asm_flags += -bt=qnx
 !else
 
 !ifeq target_system os2
-comp_flags += -bt=os2 -i$(lib_misc_dir)\h;$(%watcom)\h\os21x
+comp_flags += -bt=os2 -i$(lib_misc_dir)\h;$(inc_dirs_sys)
 asm_flags += -bt=os2
 !endif
 
 !ifeq target_system os2v2
-comp_flags += -bt=os2 -i$(lib_misc_dir)\h;$(%watcom)\h\os2
+comp_flags += -bt=os2 -i$(lib_misc_dir)\h;$(inc_dirs_sys)
 asm_flags += -bt=os2
 !endif
 
