@@ -1257,10 +1257,10 @@ for a full description of its use.
 #
 
 &sysper.error:
-    @echo it is good that "$@" is known
+        @echo it is good that "$@" is known
 
-all: .symbolic
-    false
+all : .symbolic
+        false
 .millust end
 .*
 .section Ignoring Target Timestamp (.EXISTSONLY)
@@ -1269,26 +1269,44 @@ all: .symbolic
 .ix 'EXISTSONLY' '&makcmdup directive'
 The
 .id &sysper.EXISTSONLY
-directive indicates to &maksname that the target should not be updated if it already exists, regardless of its timestamp.
+directive indicates to &maksname that the target should not be updated if it
+already exists, regardless of its timestamp.
 .millust begin
 #
 # .existsonly directive
 #
 
 foo: .existsonly
-    wtouch $@
+        wtouch $@
 .millust end
 .pc
 If absent, this file creates foo; if present, this file does nothing.
 .*
-.section (.EXPLICIT)
+.section Specifying Explicitly Updated Targets (.EXPLICIT)
 .*
 .ix '&makcmdup directives' '.EXPLICIT'
 .ix 'EXPLICIT' '&makcmdup directive'
 The
 .id &sysper.EXPLICIT
-directive seems to be largely redundant. The code only that uses it
-treats the first target of a rule as special. The author can make no sense of that.
+directive may me used to specify a target that needs to be explicitly
+updated. Normally, the first target in a makefule will be implicitly updated
+if no target is specified on &maksname command line. The
+.id &sysper.EXPLICIT
+directive prevents this, and is useful for instance when creating files
+designed to be included for other make files.
+.millust begin
+#
+# .EXPLICIT example
+#
+target : .symbolic .explicit
+        @echo updating first target
+	
+next : .symbolic
+        @echo updating next target
+.millust end
+.pc
+In the above example, &maksname will not automatically update "target",
+despite the fact that it is the first one listed.
 .*
 .section *refid=extensions Defining Recognized File Extensions (.EXTENSIONS)
 .*
@@ -1384,32 +1402,22 @@ Note the implicit connection beween the two files. A more realistic example is
 hello.exe :
 .millust end
 .*
-.section Approximate Date Matching (.FUZZY)
+.section Approximate Timestamp Matching (.FUZZY)
 .*
 .ix '&makcmdup directives' '.FUZZY'
 .ix 'FUZZY' '&makcmdup directive'
 The
 .id &sysper.FUZZY
 directive allows
+.ix '&makcmdup directives' '.AUTODEPEND'
+.ix 'AUTODEPEND' '&makcmdup directive'
 .id &sysper.AUTODEPEND
-times to be out by a minute without causing a rebuild.
-It does not work on 2003-12-03. The following example should build
-once and leave hello.c 5 seconds younger than hello.exe but not
-viewed as younger.
-.millust begin
-#
-# .fuzzy example
-#
-
-&sysper.fuzzy
-
-&sysper.c.exe: .autodepend
-    wcl386 -zq $<
-    sleep 5
-    wtouch $<
-
-hello.exe:
-.millust end
+times to be out by a minute without considering a target out of date.
+It is only useful in conjunction with the
+.ix '&makcmdup directives' '.JUST_ENOUGH'
+.ix 'JUST_ENOUGH' '&makcmdup directive'
+.id &sysper.JUST_ENOUGH
+directive when &maksname is calculating the timestamp to set the target to.
 .*
 .section Preserving Targets After Error (.HOLD)
 .*
@@ -1524,36 +1532,87 @@ use the
 directive.
 .endpoint
 .*
-.section Minimise Target Timestamp (.JUST_ENOUGH)
+.section Minimising Target Timestamp (.JUST_ENOUGH)
 .*
 .ix '&makcmdup directives' '.JUST_ENOUGH'
 .ix 'JUST_ENOUGH' '&makcmdup directive'
 The
 .id &sysper.JUST_ENOUGH
-directive is equivalent to the undocumented "j" command line option.
-The times of created targets are set to be the same as their youngest
-dependendents.
+directive is equivalent to the "j" command line option.
+The timestamps of created targets are set to be the same as those of their 
+youngest dependendents.
 .millust begin
 #
-# .just_enough example
+# .JUST_ENOUGH example
 #
 
 &sysper.just_enough
 
 &sysper.c.exe:
-    wcl386 -zq $<
+        wcl386 -zq $<
 
 hello.exe:
 .millust end
 .pc
-hello.exe is given the same time as hello.c.
+hello.exe is given the same timestamp as hello.c, and not the usual timestamp
+corresponding to when hello.exe was built.
 .*
-.section (.MULTIPLE)
+.section Updating Targets Multiple Times (.MULTIPLE)
 .*
+.ix '&makcmdup directives' '.MULTIPLE'
+.ix 'MULTIPLE' '&makcmdup directive'
 The
 .id &sysper.MULTIPLE
-directive exists but no code is provided to implement its unknown
-purpose.
+directive is used to update a target multiple times. Normally, &maksname
+will only update each target once while processing a makefile. The
+.id &sysper.MULTIPLE
+directive is useful if a target needs to be updated more than once, for
+instance in case the target is destroyed during processing of other targets.
+Consider the following example:
+.millust begin
+#
+# example not using .multiple
+#
+
+all: targ1 targ2
+
+target:
+        wtouch target
+
+targ1: target
+        rm target
+        wtouch targ1
+
+targ2: target
+        rm target
+        wtouch targ2
+.millust end
+.pc
+This makefile will fail because "target" is destroyed when updating "targ1",
+and later is implicitly expected to exist when updating "targ2". Using the
+.id &sysper.MULTIPLE
+directive will work around this problem:
+.millust begin
+#
+# .MULTIPLE example
+#
+
+all : targ1 targ2
+
+target : .multiple
+        wtouch target
+
+targ1 : target
+        rm target
+        wtouch targ1
+
+targ2 : target
+        rm target
+        wtouch targ2
+.millust end
+.pc
+Now &maksname will attempt to update "target" again when updating "targ2",
+discover that "target" doesn't exist, and recreate it.
 .*
 .section Ignoring Target Timestamp (.NOCHECK)
 .*
