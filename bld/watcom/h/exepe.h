@@ -24,19 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Portable Executable (PE) format structures and constants.
 *
 ****************************************************************************/
 
 
 #ifndef _EXEPE_H
-
-#if defined( __WATCOMC__ )
-#pragma pack(push,1);
-#endif
-
-/* PE executable format structures */
 
 /* type of a [relative] virtual address */
 typedef unsigned_32     pe_va;
@@ -364,10 +357,6 @@ typedef struct {
     unsigned_32     code_page;
     unsigned_32     rsvd;           /* must be 0 */
 } resource_entry;
-
-#if defined( __WATCOMC__ )
-#pragma pack(pop);
-#endif
 
 #define _EXEPE_H
 #endif
