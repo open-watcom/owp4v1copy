@@ -954,6 +954,7 @@ static int ti_init()
     if( !ti_initconsole() ) return( FALSE );
 
     if( !initmonitor() ) return( FALSE );
+    if( !initkeyboard() ) return( FALSE );
 
     if( TCAP_MONOCHROME ){
         UIData->colour= M_TERMINFO_MONO;
@@ -984,7 +985,6 @@ static int ti_init()
     if( !setupscrnbuff( rows, cols ) ) return( FALSE );
 
     uiinitcursor();
-    if( !initkeyboard() )return(FALSE);
 
     UIData->mouse_acc_delay= 277;
     UIData->mouse_rpt_delay= 55;

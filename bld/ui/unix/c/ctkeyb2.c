@@ -107,7 +107,7 @@ int ck_restore()
     new.c_lflag |= ISIG;
     new.c_cc[VMIN] = 1;
     new.c_cc[VTIME] = 0;
-    tcsetattr( UIConHandle, TCSADRAIN, &new );
+    while( tcsetattr( UIConHandle, TCSADRAIN, &new ) == -1 && errno == EINTR );
     return 0;
 }
 
