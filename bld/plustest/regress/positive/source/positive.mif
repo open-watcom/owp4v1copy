@@ -381,6 +381,7 @@ positive_tests = &
     fntemp13.$(ext) &
     fntemp14.$(ext) &
     fntemp15.$(ext) &
+    fntemp16.$(ext) &
     fold01.$(ext) &
     fold02.$(ext) &
     friend1.$(ext) &
