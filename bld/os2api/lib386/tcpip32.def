@@ -90,7 +90,7 @@ EXPORTS
     rlisten                                     @160
     rgethostbyname                              @161
     os2_ioctl                                   @200
-    __tcpfdisset                                @201
+    __TCPFDIsSet                                @201
     conv_sockaddr_parms                         @202
     htonl                                       @203
     ntohl                                       @204
