@@ -1,7 +1,7 @@
 !ifndef on_build_machine
 sw_c_common = -w4-zl-zld-zq
 !else
-sw_c_common = -we-zl-zld-zq
+sw_c_common = -we-w4-zl-zld-zq
 !endif
 sw_a_common = -zq
 sw_l_common = option quiet,impfile,caseexact reference __DLLstart_ disable 121
