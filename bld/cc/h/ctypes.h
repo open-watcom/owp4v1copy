@@ -711,7 +711,8 @@ enum {
     TS_CHEAP_WINDOWS,
     TS_NETWARE,
     TS_QNX,
-    TS_NETWARE5
+    TS_NETWARE5,
+    TS_LINUX
 };
 
 /*

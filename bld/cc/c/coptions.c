@@ -257,6 +257,14 @@ local void SetTargSystem()                               /* 07-aug-90 */
     {
         TargSys = TS_NT;
     }
+    else if( strcmp( SwData.sys_name, "LINUX" ) == 0 )
+    {
+        TargSys = TS_LINUX;
+    }
+    else if( strcmp( SwData.sys_name, "QNX" ) == 0 )
+    {
+        TargSys = TS_QNX;
+    }
     else
     {
         TargSys = TS_OTHER;
@@ -295,8 +303,13 @@ local void SetTargSystem()                               /* 07-aug-90 */
     case TS_NT:
         PreDefine_Macro( "_WIN32" );
     break;
-
 #endif
+    case TS_QNX:
+        /* fall through */
+    case TS_LINUX:
+        PreDefine_Macro( "__UNIX__" );
+    break;
+
     case TS_CHEAP_WINDOWS:
         #if _CPU == 8086
             PreDefine_Macro( "__WINDOWS__" );
