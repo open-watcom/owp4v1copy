@@ -43,7 +43,7 @@
 #define STUPID_UINT     unsigned long
 #else
 #define SEG16
-#define STUPID_UINT     unsigned int
+#define STUPID_UINT     unsigned short
 #endif
 
 static char     oldPath[_MAX_PATH];

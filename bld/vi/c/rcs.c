@@ -72,7 +72,7 @@ extern RCSFiniFn                RCSFini = NULL;
         FreeLibrary( LibHandle );
         return( TRUE );
     }
-#elif defined( __OS2__ )
+#elif defined( __OS2__ ) && defined( __386__ )
     #include <os2.h>
     static HMODULE LibHandle;
     APIRET APIENTRY  DosLoadModule(PSZ pszName, ULONG cbName, PSZ pszModname, PHMODULE phmod);
@@ -103,7 +103,7 @@ extern RCSFiniFn                RCSFini = NULL;
     int ViRCSFini() { return( TRUE ); }
 #endif
 
-#if defined( __WINDOWS__ ) || defined( __NT__ ) || defined( __OS2__ )
+#if defined( __WINDOWS__ ) || defined( __NT__ ) || (defined( __OS2__ ) && defined( __386__ ))
 static void getFunctionPtrs()
 {
     GET_ADDR( LibHandle, GETVER_FN_NAME,        RCSGetVersion );
