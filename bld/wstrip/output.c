@@ -32,6 +32,8 @@
 #include <unistd.h>
 #include <string.h>
 #include <fcntl.h>
+#include <stdlib.h>
+#include <process.h>
 #include "watcom.h"
 #include "wstrip.h"
 #include "banner.h"
