@@ -35,6 +35,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <time.h>
+#include <io.h>
 #include "preproc.h"
 
 #if defined( __UNIX__ ) && !defined( __WATCOMC__ )
