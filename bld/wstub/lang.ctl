@@ -18,9 +18,9 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> wstub.exe <relroot>/rel2/binw/wstub.exe
-    <CPCMD> wstubq.exe <relroot>/rel2/binw/wstubq.exe
-    <CPCMD> wstub.c <relroot>/rel2/src/wstub.c
+    <CPCMD> wstub.exe <RELROOT>/rel2/binw/wstub.exe
+    <CPCMD> wstubq.exe <RELROOT>/rel2/binw/wstubq.exe
+    <CPCMD> wstub.c <RELROOT>/rel2/src/wstub.c
 
 [ BLOCK <1> clean ]
 #==================

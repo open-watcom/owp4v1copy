@@ -13,25 +13,25 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 acprel2 ]
 #================================
-    <CPCMD> <DEVDIR>/mathlib/library/msdos.286/mc/mathc.lib <relroot>/rel2/lib286/mathc.lib
-    <CPCMD> <DEVDIR>/mathlib/library/msdos.286/mh/mathh.lib <relroot>/rel2/lib286/mathh.lib
-    <CPCMD> <DEVDIR>/mathlib/library/msdos.286/ml/mathl.lib <relroot>/rel2/lib286/mathl.lib
-    <CPCMD> <DEVDIR>/mathlib/library/msdos.286/mm/mathm.lib <relroot>/rel2/lib286/mathm.lib
-    <CPCMD> <DEVDIR>/mathlib/library/msdos.286/ms/maths.lib <relroot>/rel2/lib286/maths.lib
-    <CPCMD> <DEVDIR>/mathlib/library/msdos.287/mc/math87c.lib <relroot>/rel2/lib286/math87c.lib
-    <CPCMD> <DEVDIR>/mathlib/library/msdos.287/mh/math87h.lib <relroot>/rel2/lib286/math87h.lib
-    <CPCMD> <DEVDIR>/mathlib/library/msdos.287/ml/math87l.lib <relroot>/rel2/lib286/math87l.lib
-    <CPCMD> <DEVDIR>/mathlib/library/msdos.287/mm/math87m.lib <relroot>/rel2/lib286/math87m.lib
-    <CPCMD> <DEVDIR>/mathlib/library/msdos.287/ms/math87s.lib <relroot>/rel2/lib286/math87s.lib
-    <CPCMD> <DEVDIR>/mathlib/library/msdos.386/ms_r/math3r.lib <relroot>/rel2/lib386/math3r.lib
-    <CPCMD> <DEVDIR>/mathlib/library/msdos.386/ms_s/math3s.lib <relroot>/rel2/lib386/math3s.lib
-    <CPCMD> <DEVDIR>/mathlib/library/msdos.387/ms_r/math387r.lib <relroot>/rel2/lib386/math387r.lib
-    <CPCMD> <DEVDIR>/mathlib/library/msdos.387/ms_s/math387s.lib <relroot>/rel2/lib386/math387s.lib
-    <CPCMD> <DEVDIR>/mathlib/library/windows.286/mc/mathc.lib <relroot>/rel2/lib286/win/mathc.lib
-    <CPCMD> <DEVDIR>/mathlib/library/windows.286/ml/mathl.lib <relroot>/rel2/lib286/win/mathl.lib
-    <CPCMD> <DEVDIR>/mathlib/library/windows.287/mc/math87c.lib <relroot>/rel2/lib286/win/math87c.lib
-    <CPCMD> <DEVDIR>/mathlib/library/windows.287/ml/math87l.lib <relroot>/rel2/lib286/win/math87l.lib
-#   <CPCMD> <DEVDIR>/mathlib/library/winnt.axp/_s/mathaxp.lib <relroot>/rel2/libaxp/math.lib
+    <CPCMD> <DEVDIR>/mathlib/library/msdos.286/mc/mathc.lib <RELROOT>/rel2/lib286/mathc.lib
+    <CPCMD> <DEVDIR>/mathlib/library/msdos.286/mh/mathh.lib <RELROOT>/rel2/lib286/mathh.lib
+    <CPCMD> <DEVDIR>/mathlib/library/msdos.286/ml/mathl.lib <RELROOT>/rel2/lib286/mathl.lib
+    <CPCMD> <DEVDIR>/mathlib/library/msdos.286/mm/mathm.lib <RELROOT>/rel2/lib286/mathm.lib
+    <CPCMD> <DEVDIR>/mathlib/library/msdos.286/ms/maths.lib <RELROOT>/rel2/lib286/maths.lib
+    <CPCMD> <DEVDIR>/mathlib/library/msdos.287/mc/math87c.lib <RELROOT>/rel2/lib286/math87c.lib
+    <CPCMD> <DEVDIR>/mathlib/library/msdos.287/mh/math87h.lib <RELROOT>/rel2/lib286/math87h.lib
+    <CPCMD> <DEVDIR>/mathlib/library/msdos.287/ml/math87l.lib <RELROOT>/rel2/lib286/math87l.lib
+    <CPCMD> <DEVDIR>/mathlib/library/msdos.287/mm/math87m.lib <RELROOT>/rel2/lib286/math87m.lib
+    <CPCMD> <DEVDIR>/mathlib/library/msdos.287/ms/math87s.lib <RELROOT>/rel2/lib286/math87s.lib
+    <CPCMD> <DEVDIR>/mathlib/library/msdos.386/ms_r/math3r.lib <RELROOT>/rel2/lib386/math3r.lib
+    <CPCMD> <DEVDIR>/mathlib/library/msdos.386/ms_s/math3s.lib <RELROOT>/rel2/lib386/math3s.lib
+    <CPCMD> <DEVDIR>/mathlib/library/msdos.387/ms_r/math387r.lib <RELROOT>/rel2/lib386/math387r.lib
+    <CPCMD> <DEVDIR>/mathlib/library/msdos.387/ms_s/math387s.lib <RELROOT>/rel2/lib386/math387s.lib
+    <CPCMD> <DEVDIR>/mathlib/library/windows.286/mc/mathc.lib <RELROOT>/rel2/lib286/win/mathc.lib
+    <CPCMD> <DEVDIR>/mathlib/library/windows.286/ml/mathl.lib <RELROOT>/rel2/lib286/win/mathl.lib
+    <CPCMD> <DEVDIR>/mathlib/library/windows.287/mc/math87c.lib <RELROOT>/rel2/lib286/win/math87c.lib
+    <CPCMD> <DEVDIR>/mathlib/library/windows.287/ml/math87l.lib <RELROOT>/rel2/lib286/win/math87l.lib
+#   <CPCMD> <DEVDIR>/mathlib/library/winnt.axp/_s/mathaxp.lib <RELROOT>/rel2/libaxp/math.lib
 
 [ BLOCK <1> clean ]
 #==================

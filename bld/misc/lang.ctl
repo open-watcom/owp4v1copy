@@ -14,24 +14,24 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-#   <CPCMD> wcc386p.exe <relroot>/rel2/binw/wcc386p.exe
-#   <CPCMD> wfc386p.exe <relroot>/rel2/binw/wfc386p.exe
-#   <CPCMD> wccx.exe <relroot>/rel2/binw/wccp.exe
-#   <CPCMD> wfcp.exe <relroot>/rel2/binw/wfcp.exe
-#   <CPCMD> wlinkp.exe <relroot>/rel2/binw/wlinkp.exe
+#   <CPCMD> wcc386p.exe <RELROOT>/rel2/binw/wcc386p.exe
+#   <CPCMD> wfc386p.exe <RELROOT>/rel2/binw/wfc386p.exe
+#   <CPCMD> wccx.exe <RELROOT>/rel2/binw/wccp.exe
+#   <CPCMD> wfcp.exe <RELROOT>/rel2/binw/wfcp.exe
+#   <CPCMD> wlinkp.exe <RELROOT>/rel2/binw/wlinkp.exe
 
-#   <CPCMD> <DEVDIR>/misc/dos4gw.doc <relroot>/rel2/
-#   <CPCMD> <DEVDIR>/misc/dos4gwj.doc <relroot>/rel2/
-    <CPCMD> <DEVDIR>/misc/unicode.* <relroot>/rel2/binw/
+#   <CPCMD> <DEVDIR>/misc/dos4gw.doc <RELROOT>/rel2/
+#   <CPCMD> <DEVDIR>/misc/dos4gwj.doc <RELROOT>/rel2/
+    <CPCMD> <DEVDIR>/misc/unicode.* <RELROOT>/rel2/binw/
 
-    <CPCMD> <DEVDIR>/misc/watcom.ico <relroot>/rel2/
+    <CPCMD> <DEVDIR>/misc/watcom.ico <RELROOT>/rel2/
 
-    <CPCMD> <DEVDIR>/watcom/lib/wresf.lib <relroot>/rel2/lib386/
-    <CPCMD> <DEVDIR>/watcom/lib/wresfs.lib <relroot>/rel2/lib386/
-    <CPCMD> <DEVDIR>/watcom/lib/wresm.lib <relroot>/rel2/lib286/
-    <CPCMD> <DEVDIR>/watcom/lib/wresl.lib <relroot>/rel2/lib286/
+    <CPCMD> <DEVDIR>/watcom/lib/wresf.lib <RELROOT>/rel2/lib386/
+    <CPCMD> <DEVDIR>/watcom/lib/wresfs.lib <RELROOT>/rel2/lib386/
+    <CPCMD> <DEVDIR>/watcom/lib/wresm.lib <RELROOT>/rel2/lib286/
+    <CPCMD> <DEVDIR>/watcom/lib/wresl.lib <RELROOT>/rel2/lib286/
 
-    <CPCMD> <DEVDIR>/misc/unicode.* <relroot>/rel2/binl/
+    <CPCMD> <DEVDIR>/misc/unicode.* <RELROOT>/rel2/binl/
 
 [ BLOCK <1> clean ]
 #==================

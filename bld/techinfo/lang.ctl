@@ -13,8 +13,8 @@ set PROJDIR=<CWD>
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <PROJDIR>/dosi86/techinfo.exe <relroot>/rel2/binw/
-    <CPCMD> <PROJDIR>/os2i86/techinfo.exe <relroot>/rel2/binp/
+    <CPCMD> <PROJDIR>/dosi86/techinfo.exe <RELROOT>/rel2/binw/
+    <CPCMD> <PROJDIR>/os2i86/techinfo.exe <RELROOT>/rel2/binp/
 
 [ BLOCK <1> clean ]
 #==================

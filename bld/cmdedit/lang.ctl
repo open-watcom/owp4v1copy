@@ -13,11 +13,11 @@ set PROJDIR=<CWD>
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> dosi86/cmdedit.exe <relroot>/rel2/binw/cmdedit.exe
-    <CPCMD> cmdedit.txt <relroot>/rel2/binw/cmdedit.txt
-    <CPCMD> os2i86/os2edit.exe <relroot>/rel2/binp/os2edit.exe
-    <CPCMD> os2i86/os22edit.exe <relroot>/rel2/binp/os22edit.exe
-    <CPCMD> os2i86/os2edit.dll <relroot>/rel2/binp/dll/os2edit.dll
+    <CPCMD> dosi86/cmdedit.exe <RELROOT>/rel2/binw/cmdedit.exe
+    <CPCMD> cmdedit.txt <RELROOT>/rel2/binw/cmdedit.txt
+    <CPCMD> os2i86/os2edit.exe <RELROOT>/rel2/binp/os2edit.exe
+    <CPCMD> os2i86/os22edit.exe <RELROOT>/rel2/binp/os22edit.exe
+    <CPCMD> os2i86/os2edit.dll <RELROOT>/rel2/binp/dll/os2edit.dll
 
 [ BLOCK <1> clean ]
 #==================

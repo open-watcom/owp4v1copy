@@ -15,7 +15,7 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <PROJDIR>/qnx/tix/*.tix <relroot>/rel2/qnx/tix/
+    <CPCMD> <PROJDIR>/qnx/tix/*.tix <RELROOT>/rel2/qnx/tix/
 
 [ BLOCK <1> clean ]
 #==================

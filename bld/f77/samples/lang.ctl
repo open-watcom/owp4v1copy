@@ -14,20 +14,20 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-<CPCMD> <DEVDIR>/f77/src/*.*    <relroot>/rel2/src/fortran/
-<CPCMD> <DEVDIR>/f77/src/win/*.*        <relroot>/rel2/src/fortran/win/
-<CPCMD> <DEVDIR>/f77/src/dos/*.*        <relroot>/rel2/src/fortran/dos/
-<CPCMD> <DEVDIR>/f77/src/os2/*.*        <relroot>/rel2/src/fortran/os2/
-<CPCMD> <DEVDIR>/f77/samples/os2/*.*    <relroot>/rel2/samples/fortran/os2/
-<CPCMD> <DEVDIR>/f77/samples/os2/rexx/*.*       <relroot>/rel2/samples/fortran/os2/rexx/
-<CPCMD> <DEVDIR>/f77/samples/mthread/mthrdos2.for       <relroot>/rel2/samples/fortran/os2/mthread.for
-<CPCMD> <DEVDIR>/f77/samples/mthread/makefile.os2       <relroot>/rel2/samples/fortran/os2/makefile
-<CPCMD> <DEVDIR>/f77/samples/mthread/mthrdnt.for        <relroot>/rel2/samples/fortran/win32/mthread.for
-<CPCMD> <DEVDIR>/f77/samples/mthread/makefile.nt        <relroot>/rel2/samples/fortran/win32/makefile
-<CPCMD> <DEVDIR>/f77/samples/win/*.*    <relroot>/rel2/samples/fortran/win/
-<CPCMD> <DEVDIR>/f77/samples/windll/*.* <relroot>/rel2/samples/fortran/win/dll/
-<CPCMD> <DEVDIR>/f77/samples/dll/*.*    <relroot>/rel2/samples/fortran/os2/dll/
-<CPCMD> <DEVDIR>/f77/samples/dll/*.*    <relroot>/rel2/samples/fortran/win32/dll/
+<CPCMD> <DEVDIR>/f77/src/*.*    <RELROOT>/rel2/src/fortran/
+<CPCMD> <DEVDIR>/f77/src/win/*.*        <RELROOT>/rel2/src/fortran/win/
+<CPCMD> <DEVDIR>/f77/src/dos/*.*        <RELROOT>/rel2/src/fortran/dos/
+<CPCMD> <DEVDIR>/f77/src/os2/*.*        <RELROOT>/rel2/src/fortran/os2/
+<CPCMD> <DEVDIR>/f77/samples/os2/*.*    <RELROOT>/rel2/samples/fortran/os2/
+<CPCMD> <DEVDIR>/f77/samples/os2/rexx/*.*       <RELROOT>/rel2/samples/fortran/os2/rexx/
+<CPCMD> <DEVDIR>/f77/samples/mthread/mthrdos2.for       <RELROOT>/rel2/samples/fortran/os2/mthread.for
+<CPCMD> <DEVDIR>/f77/samples/mthread/makefile.os2       <RELROOT>/rel2/samples/fortran/os2/makefile
+<CPCMD> <DEVDIR>/f77/samples/mthread/mthrdnt.for        <RELROOT>/rel2/samples/fortran/win32/mthread.for
+<CPCMD> <DEVDIR>/f77/samples/mthread/makefile.nt        <RELROOT>/rel2/samples/fortran/win32/makefile
+<CPCMD> <DEVDIR>/f77/samples/win/*.*    <RELROOT>/rel2/samples/fortran/win/
+<CPCMD> <DEVDIR>/f77/samples/windll/*.* <RELROOT>/rel2/samples/fortran/win/dll/
+<CPCMD> <DEVDIR>/f77/samples/dll/*.*    <RELROOT>/rel2/samples/fortran/os2/dll/
+<CPCMD> <DEVDIR>/f77/samples/dll/*.*    <RELROOT>/rel2/samples/fortran/win32/dll/
 
 [ BLOCK <1> clean ]
 #==================

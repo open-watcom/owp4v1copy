@@ -14,10 +14,10 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <DEVDIR>/idebatch/os2/batserv.exe  <relroot>/rel2/binp/batserv.exe
-    <CPCMD> <DEVDIR>/idebatch/nt/batserv.exe   <relroot>/rel2/binnt/batserv.exe
-    <CPCMD> <DEVDIR>/idebatch/dos/int.exe      <relroot>/rel2/binw/dosserv.exe
-    <CPCMD> <DEVDIR>/idebatch/wini86/batchbox.pif <relroot>/rel2/binw/batchbox.pif
+    <CPCMD> <DEVDIR>/idebatch/os2/batserv.exe  <RELROOT>/rel2/binp/batserv.exe
+    <CPCMD> <DEVDIR>/idebatch/nt/batserv.exe   <RELROOT>/rel2/binnt/batserv.exe
+    <CPCMD> <DEVDIR>/idebatch/dos/int.exe      <RELROOT>/rel2/binw/dosserv.exe
+    <CPCMD> <DEVDIR>/idebatch/wini86/batchbox.pif <RELROOT>/rel2/binw/batchbox.pif
 
 [ BLOCK <1> clean ]
 #==================

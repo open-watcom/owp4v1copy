@@ -17,12 +17,12 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <DEVDIR>/bdiff/os2386/bdiff.exe <relroot>/rel2/binp/bdiff.exe
-    <CPCMD> <DEVDIR>/bdiff/nt386/bdiff.exe <relroot>/rel2/binnt/bdiff.exe
-    <CPCMD> <DEVDIR>/bdiff/dos386/bdiff.exe <relroot>/rel2/binw/bdiff.exe
-    <CPCMD> <DEVDIR>/bdiff/os2386/bpatch.exe <relroot>/rel2/binp/bpatch.exe
-    <CPCMD> <DEVDIR>/bdiff/nt386/bpatch.exe <relroot>/rel2/binnt/bpatch.exe
-    <CPCMD> <DEVDIR>/bdiff/dos386/bpatch.exe <relroot>/rel2/binw/bpatch.exe
+    <CPCMD> <DEVDIR>/bdiff/os2386/bdiff.exe <RELROOT>/rel2/binp/bdiff.exe
+    <CPCMD> <DEVDIR>/bdiff/nt386/bdiff.exe <RELROOT>/rel2/binnt/bdiff.exe
+    <CPCMD> <DEVDIR>/bdiff/dos386/bdiff.exe <RELROOT>/rel2/binw/bdiff.exe
+    <CPCMD> <DEVDIR>/bdiff/os2386/bpatch.exe <RELROOT>/rel2/binp/bpatch.exe
+    <CPCMD> <DEVDIR>/bdiff/nt386/bpatch.exe <RELROOT>/rel2/binnt/bpatch.exe
+    <CPCMD> <DEVDIR>/bdiff/dos386/bpatch.exe <RELROOT>/rel2/binw/bpatch.exe
 
 [ BLOCK <1> clean ]
 #==================

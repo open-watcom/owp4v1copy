@@ -15,8 +15,8 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <DEVDIR>/help/dos386/whelp.exe <relroot>/rel2/binw/whelp.exe
-    <CPCMD> <DEVDIR>/help/os2386/whelp.exe <relroot>/rel2/binp/whelp.exe
+    <CPCMD> <DEVDIR>/help/dos386/whelp.exe <RELROOT>/rel2/binw/whelp.exe
+    <CPCMD> <DEVDIR>/help/os2386/whelp.exe <RELROOT>/rel2/binp/whelp.exe
 
 [ BLOCK <1> clean ]
 #==================
