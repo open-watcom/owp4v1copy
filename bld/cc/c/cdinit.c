@@ -29,9 +29,9 @@
 ****************************************************************************/
 
 
-#include "i64.h"
 #include "cvars.h"
 #include <limits.h>
+#include "i64.h"
 
 
 local unsigned long BitMask[] = {

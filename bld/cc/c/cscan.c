@@ -29,11 +29,11 @@
 ****************************************************************************/
 
 
-#include "i64.h"
 #include "cvars.h"
 #include "scan.h"
 #include "escchars.h"
 #include "asciiout.h"
+#include "i64.h"
 
 enum scan_class {
     SCAN_NAME = 0,      // identifier

@@ -34,6 +34,7 @@
 #include "cgdefs.h"
 #include "cgswitch.h"
 #include "pragdefn.h"
+#include "i64.h"
 
 struct mathfuncs {
         char    *name;

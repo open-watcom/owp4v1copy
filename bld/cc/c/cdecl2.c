@@ -34,7 +34,7 @@
 #include "toggle.h"
 #include "pragdefn.h"
 #include "cgswitch.h"
-
+#include "i64.h"
 
 TYPEPTR *MakeParmList( struct parm_list *, int, int );
 struct parm_list *NewParm( TYPEPTR, struct parm_list * );
@@ -1157,9 +1157,9 @@ local TYPEPTR ArrayDecl( TYPEPTR typ )
         if( CurToken != T_RIGHT_BRACKET ) {
             const_val val;
 
-            if( ConstExprAndType( &val ) ){
+            if( ConstExprAndType( &val ) ) {
                 dimension = val.val32;
-            }else{
+            } else {
                 dimension = 1;
             }
             if( dimension <= 0 ) {

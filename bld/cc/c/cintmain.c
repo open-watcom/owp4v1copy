@@ -29,9 +29,9 @@
 ****************************************************************************/
 
 
+#include "cvars.h"
 #include <unistd.h>
 #include <limits.h>
-#include "cvars.h"
 #if _OS == _DOS || _OS == _OS2 || _OS == _NT
     #include <process.h>
 #endif

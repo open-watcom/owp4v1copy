@@ -30,6 +30,7 @@
 
 
 #include "cvars.h"
+#include "i64.h"
 
 typedef struct block_entry {
     struct block_entry  *prev_block;
@@ -1057,9 +1058,10 @@ static void AddCaseLabel( unsigned long value )
 static void CaseStmt( void )
 {
     const_val val;
+
     NextToken();
     if( SwitchStack ) {
-        if( ConstExprAndType( &val ) ){
+        if( ConstExprAndType( &val ) ) {
             AddCaseLabel( val.val32 );
         }
         MustRecog( T_COLON );

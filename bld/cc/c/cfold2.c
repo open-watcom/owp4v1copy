@@ -29,8 +29,8 @@
 ****************************************************************************/
 
 
-#include "i64.h"
 #include "cvars.h"
+#include "i64.h"
 
 #ifdef __WATCOMC__
 extern  int     __Strtold(char *,long_double *,char **);
@@ -323,11 +323,11 @@ int DoUnSignedOp( TREEPTR op1, TREEPTR tree, TREEPTR op2 )
 static int64  LongValue64( TREEPTR leaf )
 {
     int64        value;
-    int_32         val32;
-    FLOATVAL    *flt;
-    char        *endptr;
-    long_double ld;
-    bool        sign;
+    int_32       val32;
+    FLOATVAL     *flt;
+    char         *endptr;
+    long_double  ld;
+    bool         sign;
 
     switch( leaf->op.const_type ) {
     case TYPE_CHAR:
@@ -1032,19 +1032,19 @@ bool BoolConstExpr( void )
 {
     const_val   val;
     uint64      tmp;
-    bool         ret;
-
+    bool        ret;
+   
     ConstExprAndType( &val );
     //Must be int
     if( val.type == TYPE_LONG64 || val.type == TYPE_ULONG64 ){
         U32ToU64( 0, &tmp );
-        if( U64Cmp( &tmp, &val.val64 ) != 0 ){
+        if( U64Cmp( &tmp, &val.val64 ) != 0 ) {
             ret = TRUE;
-        }else{
+        } else {
             ret = FALSE;
         }
-    }else{
-        if( val.val32 != 0 ){
+    } else {
+        if( val.val32 != 0 ) {
             ret = TRUE;
         }else{
             ret = FALSE;
