@@ -139,7 +139,9 @@ void __export DoWritePgmScrn( char *buff, ULONG len )
 
 void fxsave( unsigned char *addr );
 #pragma aux fxsave parm [eax] =  \
-    0x0F 0xAE 0x00; // "fxsave [eax]"
+    ".686" \
+    ".XMM" \
+    "fxsave [eax]";
 
 void __export DoReadXMMRegs( struct x86_xmm *xmm_regs )
 {
@@ -154,7 +156,21 @@ void __export DoReadXMMRegs( struct x86_xmm *xmm_regs )
     BreakPoint( 0 );
 }
 
+void fxrstor( unsigned char *addr );
+#pragma aux fxrstor parm [eax] =  \
+    ".XMM" \
+    ".686" \
+    "fxrstor [eax]";
+
 void __export DoWriteXMMRegs( struct x86_xmm *xmm_regs )
 {
+    unsigned char   fxrstor_buff[ 512 + 16 ];
+    unsigned char   *aligned_buf;
+
+    /* The FXRSTOR buffer must be 16-byte aligned! */
+    aligned_buf = (unsigned char*)(((unsigned)fxrstor_buff + 15) & ~15);
+    memcpy( aligned_buf + 160, xmm_regs->xmm, 8 * 16 );
+    *(unsigned_32*)(aligned_buf + 20) = xmm_regs->mxcsr;
+    fxrstor( aligned_buf );
     BreakPoint( 0 );
 }
