@@ -126,10 +126,6 @@ STATIC int writeSegdef( obj_rec *objr, pobj_state *state ) {
     int         is32;
     uint_8      acbp;
     uint_8      align;
-#if ( _WOMP_OPT & _WOMP_WATFOR ) == 0
-    char        buf[ FIX_GEN_MAX ];
-    size_t      len;
-#endif
 #if ( _WOMP_OPT & _WOMP_NASM )
     obj_offset  patch;
 #endif
@@ -173,9 +169,11 @@ STATIC int writeSegdef( obj_rec *objr, pobj_state *state ) {
     ObjWrite8( out, acbp );
 #if ( _WOMP_OPT & _WOMP_WATFOR ) == 0
     if( align == SEGDEF_ALIGN_ABS ) {
-        len = FixGenPRef( &objr->d.segdef.abs, buf,
-            is32 ? FIX_GEN_MS386 : FIX_GEN_INTEL );
-        ObjWrite( out, buf, len );
+        // absolut segment has frame=word and offset=byte
+        // it isn't fixupp physical reference
+        // and don't depend on segment size (16/32bit)
+        ObjWrite16( out, objr->d.segdef.abs.frame );
+        ObjWrite8( out, objr->d.segdef.abs.offset );
     }
 #endif
     if( is32 ) {
