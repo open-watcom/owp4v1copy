@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Prototypes and structures for load file routines.
 *
 ****************************************************************************/
 
@@ -76,7 +75,7 @@ extern offset           CalcGroupSize( group_entry * );
 extern offset           CalcSplitSize( void );
 
 extern void             FreeOutFiles( void );
-extern void             InitBuffFile( outfilelist *, char * );
+extern void             InitBuffFile( outfilelist *outfile, char *, bool );
 extern void             OpenBuffFile( outfilelist * );
 extern void             CloseBuffFile( outfilelist * );
 extern void             WriteLoad3( void *, char *, unsigned );

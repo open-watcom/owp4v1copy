@@ -24,10 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  general routines for producing debugging information in
-*               load file
+* Description:  General routines for producing debugging information in
+*               load file.
 *
 ****************************************************************************/
+
 
 #include <string.h>
 #include "linkstd.h"
@@ -373,7 +374,7 @@ extern void DBIModGlobal( void *_sym )
 /************************************/
 {
     symbol *sym = _sym;
-        
+
     if( !IS_SYM_ALIAS( sym ) && !( sym->info & SYM_DEAD ) ) {
         if( IS_SYM_IMPORTED( sym )
             || ( sym->p.seg != NULL )
@@ -568,7 +569,7 @@ extern void WriteDBI( void )
     if( !( LinkFlags & ANY_DBI_FLAG ) )
         return;
     if( SymFileName != NULL ) {
-        InitBuffFile( &symfile, SymFileName );
+        InitBuffFile( &symfile, SymFileName, FALSE );
         OpenBuffFile( &symfile );
         save = Root->outfile;
         Root->outfile = &symfile;

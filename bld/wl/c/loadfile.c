@@ -1037,20 +1037,25 @@ extern unsigned long PosLoad( void )
 
 #define BUFF_BLOCK_SIZE (16*1024)
 
-extern void InitBuffFile( outfilelist *outfile, char *filename )
-/**************************************************************/
+extern void InitBuffFile( outfilelist *outfile, char *filename, bool executable )
+/*******************************************************************************/
 {
-    outfile->fname = filename;
-    outfile->handle = NIL_HANDLE;
+    outfile->fname    = filename;
+    outfile->handle   = NIL_HANDLE;
     outfile->file_loc = 0;
-    outfile->bufpos = 0;
-    outfile->buffer = NULL;
+    outfile->bufpos   = 0;
+    outfile->buffer   = NULL;
+    outfile->ovlfnoff = 0;
+    outfile->is_exe   = executable;
 }
 
 extern void OpenBuffFile( outfilelist *outfile )
 /**********************************************/
 {
-    outfile->handle = ExeCreate( outfile->fname );
+    if( outfile->is_exe )
+        outfile->handle = ExeCreate( outfile->fname );
+    else
+        outfile->handle = QOpenRW( outfile->fname );
     if( outfile->handle == NIL_HANDLE ) {
         PrintIOError( FTL+MSG_CANT_OPEN_NO_REASON, "s", outfile->fname );
     }

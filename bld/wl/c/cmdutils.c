@@ -1176,7 +1176,7 @@ extern outfilelist * NewOutFile( char * filename )
     }
 // file name not already in list, so add a list entry.
     _ChkAlloc( fnode, sizeof( outfilelist ) );
-    InitBuffFile( fnode, filename );
+    InitBuffFile( fnode, filename, TRUE );
     fnode->next = OutFiles;
     OutFiles = fnode;
     return( fnode );
