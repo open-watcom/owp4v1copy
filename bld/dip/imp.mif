@@ -63,7 +63,7 @@ inc_dirs = $(extra_incs);$(dig_dir)/h
 objs = dipimp.obj $(imp_objs)
 
 $(exe_name) : $(objs) $(imp_libs) $(__MAKEFILES__)
-        $(linker) op map $(dbg_opts) &
+        $(linker) op map, symfile debug all &
                 sys $(sys_$(host_os)_$(host_cpu)) &
                 name $^@ &
                 file {$(objs)} &
