@@ -288,7 +288,7 @@ void CloseFiles()
     if( ErrFile != NULL ) {
         fclose( ErrFile );
         ErrFile = NULL;
-    } 
+    }
     if( PageFile != NULL ) {
         fclose( PageFile );
         #if (_OS != _QNX) && (_OS != _LINUX)
@@ -433,17 +433,18 @@ void DoCCompile( char **cmdline )
                 FreeMacroSegments();
             }
         }
-        if( ErrCount == 0 ){
+        if( ErrCount == 0 ) {
             DumpDepFile();
+            fclose( DepFile );
         }
         else {
-            if( DepFile )
-            {
+            if( DepFile ) {
                 fclose( DepFile );
-                DepFile = NULL;
             }
             DelDepFile();
         }
+        DepFile = NULL;
+
         SymFini();
         PragmaFini();
     } else {
