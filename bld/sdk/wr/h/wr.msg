@@ -16,8 +16,8 @@ pick(   WR_ERRMSG,
 
 // rcerrprt.c
 pick(   WR_WRCMSG,
-	"WATCOM Resource Compiler Message",
-	"WATCOM Resource Compiler Message" )
+	"Open Watcom Resource Compiler Message",
+	"Open Watcom Resource Compiler Message" )
     
 // wrdata.c
 pick(   WR_RESTOOLARGE,

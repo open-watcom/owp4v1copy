@@ -213,8 +213,8 @@ pick( STR_UNABLE_2_STARTUP,
 
 // about box information
 pick( STR_ABOUT_NAME,
-	"WATCOM Heapwalker for Windows",
-	"WATCOM Heapwalker for Windows" )
+	"Open Watcom Heapwalker for Windows",
+	"Open Watcom Heapwalker for Windows" )
 pick( STR_ABOUT_VERSION, //NOT USED
 	"",
 	"" )
@@ -222,8 +222,8 @@ pick( STR_ABOUT_COPYRIGHT_YEAR,
 	"1993",
 	"1993" )
 pick( STR_ABOUT_TITLE,
-	"About WATCOM Heapwalker",
-	"About WATCOM Heapwalker" )
+	"About Open Watcom Heapwalker",
+	"About Open Watcom Heapwalker" )
 pick( STR_UNABLE_TO_ADD,
 	"Unable to do add\n(probable cause: lack of memory)",
 	"Unable to do add\n(probable cause: lack of memory)" )
@@ -373,8 +373,8 @@ pick( STR_LCL_MONITOR_TITLE,
 	"%s Local Heap Monitor",
 	"%s Local Heap Monitor" )
 pick( STR_APP_NAME,
-	"WATCOM Heap Walker",
-	"WATCOM Heap Walker" )
+	"Open Watcom Heap Walker",
+	"Open Watcom Heap Walker" )
 
 pick( STR_GBL_HEADINGS,
       "Handle  Address     Size  Owner    Flags Lock  Heap Type ",

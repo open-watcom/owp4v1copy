@@ -185,14 +185,14 @@ pick( STR_REG_SERVERS,
 	"登録サ－バ－" )
 
 pick( STR_LOG_HEADER,
-	"WATCOM DDE SPY LOG started at: %s",
-	"WATCOM DDE SPY LOG ログ開始: %s" )
+	"Open Watcom DDE SPY LOG started at: %s",
+	"Open Watcom DDE SPY LOG ログ開始: %s" )
 pick( STR_EVENT_LIST_LINE,
 	"--------------------------------------------------------------------------------\n\n",
 	"--------------------------------------------------------------------------------\n\n" )
 pick( STR_EVENT_LIST_HEADER,
-	"WATCOM DDE SPY event listing made: %s\n\n",
-	"WATCOM DDE SPY イベントリスト作成: %s\n\n" )
+	"Open Watcom DDE SPY event listing made: %s\n\n",
+	"Open Watcom DDE SPY イベントリスト作成: %s\n\n" )
 
 pick( STR_ABOUT_VERSION,
 	"", //NOT USED
@@ -201,8 +201,8 @@ pick( STR_ABOUT_COPYRIGHT_YEAR,
 	"2002",
 	"2002" )
 pick( STR_ABOUT_TITLE,
-	"About WATCOM DDE Spy",
-	"WATCOM DDE Spyバ－ジョン情報" )
+	"About Open Watcom DDE Spy",
+	"Open Watcom DDE Spyバ－ジョン情報" )
 pick( STR_ADD_HWND_ALIAS,
 	"Add HWND Alias",
 	"HWND別名の追加" )
@@ -213,16 +213,16 @@ pick( STR_ADD_CONV_ALIAS,
 	"Add Conversation Alias",
 	"対話別名の追加" )
 pick( STR_APP_NAME,
-	"WATCOM DDE Spy",
-	"WATCOM DDE Spy" )
+	"Open Watcom DDE Spy",
+	"Open Watcom DDE Spy" )
 #ifdef __NT__
 pick( STR_ABOUT_NAME,
-	"WATCOM DDE Spy for Windows NT",
-	"WATCOM DDE Spy Windows NT版" )
+	"Open Watcom DDE Spy for Windows NT",
+	"Open Watcom DDE Spy Windows NT版" )
 #else
 pick( STR_ABOUT_NAME,
-	"WATCOM DDE Spy for Windows",
-	"WATCOM DDE Spy Windows版" )
+	"Open Watcom DDE Spy for Windows",
+	"Open Watcom DDE Spy Windows版" )
 #endif
 
 #include "savelbox.msg"

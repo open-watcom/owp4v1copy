@@ -41,8 +41,8 @@ pick(	WIE_ICONIMAGETEXT,
 
 // errors.c
 pick(	WIE_ERRORMSGTITLE,
-	"WATCOM Image Editor",
-	"WATCOM Image Editor" )
+	"Open Watcom Image Editor",
+	"Open Watcom Image Editor" )
 pick(	WIE_ERR_BITMAPNOTOPENED,
 	"Bitmap: '%s' not opened.",
 	"Bitmap: '%s' not opened." )
@@ -176,8 +176,8 @@ pick(	WIE_HINT_IMGED_EXIT,
 	"Exits the image editor",
 	"Exits the image editor" )
 pick(	WIE_HINT_IMGED_ABOUT,
-	"Describes the WATCOM Image Editor",
-	"Describes the WATCOM Image Editor" )
+	"Describes the Open Watcom Image Editor",
+	"Describes the Open Watcom Image Editor" )
 pick(	WIE_HINT_IMGED_REST,
 	"Restores image to opened form",
 	"Restores image to opened form" )
@@ -372,8 +372,8 @@ pick(	WIE_HINT_RECTANGLEMENU,
 	"Rectangle drawing tool",
 	"Rectangle drawing tool" )
 pick(	WIE_HINT_HELPMENU,
-	"Provides help for WATCOM image editor",
-	"Provides help for WATCOM image editor" )
+	"Provides help for Open Watcom image editor",
+	"Provides help for Open Watcom image editor" )
 	
 // SNAP.C
 pick(	WIE_BMPSNAPPEDFROMDSKTOP,
@@ -462,8 +462,8 @@ pick(	WIE_PASTECANCELLED,
 
 // IEGLOB.C
 pick(	WIE_APPNAME,
-	"WATCOM Image Editor",
-	"WATCOM Image Editor" )
+	"Open Watcom Image Editor",
+	"Open Watcom Image Editor" )
 pick(	WIE_IMAGEFILTER,
 	"Bitmap (*.bmp)\t*.bmp\tIcon (*.ico)\t*.ico\t"
 	"Cursor (*.cur)\t*.cur\tResource (*.res)\t*.res\t"
@@ -549,19 +549,19 @@ pick(	WIE_NEIMAGENOTCREATED,
 	"New image not created" )
 #ifdef __NT__
 pick(	WIE_ABOUTTEXT,
-	"WATCOM Image Editor for Windows NT",
-	"WATCOM Image Editor for Windows NT" )
+	"Open Watcom Image Editor for Windows NT",
+	"Open Watcom Image Editor for Windows NT" )
 #else
 pick(	WIE_ABOUTTEXT,
-	"WATCOM Image Editor for Windows",
-	"WATCOM Image Editor for Windows" )
+	"Open Watcom Image Editor for Windows",
+	"Open Watcom Image Editor for Windows" )
 #endif
 pick(	WIE_ABOUTFIRSTYEAR,
 	"2002",
 	"2002" )
 pick(	WIE_ABOUTTITLE,
-	"About the WATCOM Image Editor",
-	"About the WATCOM Image Editor" )
+	"About the Open Watcom Image Editor",
+	"About the Open Watcom Image Editor" )
 
 // WINCREAT.C
 pick(	WIE_COLORPALETTETITLE,

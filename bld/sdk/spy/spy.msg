@@ -17,8 +17,8 @@ pick( STR_SPY_OFF,
 	"Stop Spying &Temporarily",
 	"Stop Spying &Temporarily" )
 pick( STR_APP_NAME,
-	"WATCOM Spy",
-	"WATCOM Spy" )
+	"Open Watcom Spy",
+	"Open Watcom Spy" )
 pick( STR_HEADINGS_NT,
 	    "Message Name              hWnd     MsgID    wParam   lParam  ",
 	    "Message Name              hWnd     MsgID    wParam   lParam  " )
@@ -41,11 +41,11 @@ pick( STR_1_NAMED_WIN_TITLE,
 	"%s - hWnd %0*x (%s)",
 	"%s - hWnd %0*x (%s)" )
 pick( STR_ABOUT_NAME_NT,
-	"WATCOM Spy for Windows NT",
-	"WATCOM Spy for Windows NT" )
+	"Open Watcom Spy for Windows NT",
+	"Open Watcom Spy for Windows NT" )
 pick( STR_ABOUT_NAME_WIN,
-	"WATCOM Spy for Windows",
-	"WATCOM Spy for Windows" )
+	"Open Watcom Spy for Windows",
+	"Open Watcom Spy for Windows" )
 pick( STR_ABOUT_VERSION,
 	"NOT USED",
 	"NOT USED" )
@@ -53,8 +53,8 @@ pick( STR_COPYRIGHT_YEAR,
 	"1993",
 	"1993" )
 pick( STR_ABOUT_TITLE,
-	"About WATCOM Spy",
-	"About WATCOM Spy" )
+	"About Open Watcom Spy",
+	"About Open Watcom Spy" )
 pick( STR_ALL_WIN_TITLE,
 	"%s - All Windows",
 	"%s - All Windows" )

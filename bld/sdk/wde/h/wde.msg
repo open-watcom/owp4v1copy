@@ -15,8 +15,8 @@ pick(	WDE_BASEOBJECTFONT,
 
 // WDEMSGBX.C
 pick(   WDE_MSGBOXTITLE,
-	"WATCOM Dialog Editor",
-	"WATCOM Dialog Editor" )
+	"Open Watcom Dialog Editor",
+	"Open Watcom Dialog Editor" )
 
 // WRESTAT.C
 pick(   WDE_NOCREATESTATUS,
@@ -64,8 +64,8 @@ pick(	WDE_HINT_WRITE_SYMBOLS,
 	"Write symbols to a file",
 	"Write symbols to a file" )
 pick(	WDE_HINT_EXIT,
-	"Exit the WATCOM Dialog Editor",
-	"Exit the WATCOM Dialog Editor" )
+	"Exit the Open Watcom Dialog Editor",
+	"Exit the Open Watcom Dialog Editor" )
 pick(	WDE_HINT_SAME_WIDTH,
 	"Change the width of selected objects",
 	"Change the width of selected objects" )
@@ -371,11 +371,11 @@ pick(	WDE_DDEDEATHMSG,
 
 // WDEMAIN.C
 pick(	WDE_APPTITLE,
-	"WATCOM Dialog Editor",
-	"WATCOM Dialog Editor" )
+	"Open Watcom Dialog Editor",
+	"Open Watcom Dialog Editor" )
 pick(	WDE_NOMULTIPLEINSTANCES,
-	"Cannot run multiple instances of the WATCOM Dialog Editor.",
-	"Cannot run multiple instances of the WATCOM Dialog Editor." )
+	"Cannot run multiple instances of the Open Watcom Dialog Editor.",
+	"Cannot run multiple instances of the Open Watcom Dialog Editor." )
 pick(	WDE_INITFAILED,
 	"Initialization Failed!",
 	"Initialization Failed!" )

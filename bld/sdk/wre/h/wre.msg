@@ -5,8 +5,8 @@ pick(   WRE_STATUSFONT,
 
 // WREMSG.C
 pick(   WRE_MSGBOXTITLE,
-	"WATCOM Resource Editor",
-	"WATCOM Resource Editor" )
+	"Open Watcom Resource Editor",
+	"Open Watcom Resource Editor" )
 
 // WRESTAT.C
 pick(   WRE_NOCREATESTATUS,
@@ -30,8 +30,8 @@ pick(	WRE_HINT_SAVEAS,
 	"Save this file as a different file",
 	"Save this file as a different file" )
 pick(	WRE_HINT_EXIT,
-	"Exit the WATCOM Resource Editor",
-	"Exit the WATCOM Resource Editor" )
+	"Exit the Open Watcom Resource Editor",
+	"Exit the Open Watcom Resource Editor" )
 pick(	WRE_HINT_OPTIONS,
 	"Set program options",
 	"Set program options" )
@@ -176,11 +176,11 @@ pick(	WRE_DEFDIALOGNAME,
 	"DIALOG_%d",
 	"DIALOG_%d" )
 pick(	WRE_DLGSESSIONKILLED,
-	"The WATCOM Dialog Editor terminated the edit session.",
-	"The WATCOM Dialog Editor terminated the edit session." )
+	"The Open Watcom Dialog Editor terminated the edit session.",
+	"The Open Watcom Dialog Editor terminated the edit session." )
 pick(	WRE_DLGEDITNOTSPAWNED,
-	"Failed to spawn the WATCOM Dialog Editor.",
-	"Failed to spawn the WATCOM Dialog Editor." )
+	"Failed to spawn the Open Watcom Dialog Editor.",
+	"Failed to spawn the Open Watcom Dialog Editor." )
 
 // WREIMG.C
 pick(	WRE_DEFBITMAPNAME,
@@ -193,11 +193,11 @@ pick(	WRE_DEFICONNAME,
 	"ICON_%d",
 	"ICON_%d" )
 pick(	WRE_IMGSESSIONKILLED,
-	"The WATCOM Image Editor terminated the edit session.",
-	"The WATCOM Image Editor terminated the edit session." )
+	"The Open Watcom Image Editor terminated the edit session.",
+	"The Open Watcom Image Editor terminated the edit session." )
 pick(	WRE_IMGEDITNOTSPAWNED,
-	"Failed to spawn the WATCOM Image Editor.",
-	"Failed to spawn the WATCOM Image Editor." )
+	"Failed to spawn the Open Watcom Image Editor.",
+	"Failed to spawn the Open Watcom Image Editor." )
 
 // WREACCEL.C
 pick(	WRE_DEFACCELNAME,
@@ -301,8 +301,8 @@ pick(	WRE_TOTALTEXT,
 
 // WREMAIN.C
 pick(	WRE_APPNAME,
-	"WATCOM Resource Editor",
-	"WATCOM Resource Editor" )
+	"Open Watcom Resource Editor",
+	"Open Watcom Resource Editor" )
 pick(	WRE_INITFAILED,
 	"Initialization Failed!",
 	"Initialization Failed!" )

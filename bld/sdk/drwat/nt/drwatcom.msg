@@ -1,18 +1,18 @@
 #ifdef CHICAGO
 pick( STR_APP_NAME,
-	"Dr WATCOM for Windows 95",
-	"Dr WATCOM for Windows 95" )
+	"Dr Open Watcom for Windows 95",
+	"Dr Open Watcom for Windows 95" )
 #else
 pick( STR_APP_NAME,
-	"Dr WATCOM NT",
-	"Dr WATCOM NT" )
+	"Dr Open Watcom NT",
+	"Dr Open Watcom NT" )
 #endif
 pick( STR_CANT_LOAD_DIP,
 	"Unable to load debugging interface",
 	"Unable to load debugging interface" )
 pick( STR_CANT_LOAD_WATCOM_DIP,
-	"Unable to load WATCOM DIP",
-	"Unable to load WATCOM DIP" )
+	"Unable to load Open Watcom DIP",
+	"Unable to load Open Watcom DIP" )
 
 // THREAD WAIT REASONS
 pick( STR_WAIT_4_EXECUTIVE,
@@ -383,17 +383,17 @@ pick( STR_DRNT_STARTED,
 	"%s started" )
 #ifdef CHICAGO
 pick( STR_ABOUT_NAME,
-	"Dr. WATCOM for Windows 95",
-	"Dr. WATCOM for Windows 95" )
+	"Dr. Open Watcom for Windows 95",
+	"Dr. Open Watcom for Windows 95" )
 #else
 #ifdef __AXP__
 pick( STR_ABOUT_NAME,
-	"Dr. WATCOM for Windows NT AXP",
-	"Dr. WATCOM for Windows NT AXP" )
+	"Dr. Open Watcom for Windows NT AXP",
+	"Dr. Open Watcom for Windows NT AXP" )
 #else
 pick( STR_ABOUT_NAME,
-	"Dr. WATCOM for Windows NT",
-	"Dr. WATCOM for Windows NT" )
+	"Dr. Open Watcom for Windows NT",
+	"Dr. Open Watcom for Windows NT" )
 #endif
 #endif
 pick( STR_ABOUT_VERSION, // NOT USED
@@ -404,17 +404,17 @@ pick( STR_ABOUT_COPYRIGHT_YEAR,
 	"2002" )
 #ifdef CHICAGO
 pick( STR_ABOUT_TITLE,
-	"About Dr. WATCOM for Windows 95",
-	"About Dr. WATCOM for Windows 95" )
+	"About Dr. Open Watcom for Windows 95",
+	"About Dr. Open Watcom for Windows 95" )
 #else
 #ifdef __AXP__
 pick( STR_ABOUT_TITLE,
-	"About Dr. WATCOM for Windows NT AXP",
-	"About Dr. WATCOM for Windows NT AXP" )
+	"About Dr. Open Watcom for Windows NT AXP",
+	"About Dr. Open Watcom for Windows NT AXP" )
 #else
 pick( STR_ABOUT_TITLE,
-	"About Dr. WATCOM for Windows NT",
-	"About Dr. WATCOM for Windows NT" )
+	"About Dr. Open Watcom for Windows NT",
+	"About Dr. Open Watcom for Windows NT" )
 #endif
 #endif
 pick( STR_FAULT_PASSED_ON,
