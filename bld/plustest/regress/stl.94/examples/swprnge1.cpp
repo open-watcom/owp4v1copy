@@ -11,8 +11,8 @@
 
 int main ()
 {
-  char* word1 = "World";
-  char* word2 = "Hello";
+  char word1[] = "World";
+  char word2[] = "Hello";
   cout << word1 << " " << word2 << endl;
   swap_ranges (word1, word1 + ::strlen (word1), word2);
   cout << word1 << " " << word2 << endl;
