@@ -62,6 +62,26 @@
 #define HM_SET_USERDATA           HM_MSG_BASE+0x0023
 #define HM_CONTROL                HM_MSG_BASE+0x0024
 
+#define HMQW_COVERPAGE      0x0001
+#define HMQW_INDEX          0x0002
+#define HMQW_TOC            0x0003
+#define HMQW_SEARCH         0x0004
+#define HMQW_VIEWPAGES      0x0005
+#define HMQW_LIBRARY        0x0006
+#define HMQW_VIEWPORT       0x0007
+#define HMQW_OBJCOM_WINDOW  0x0008
+#define HMQW_INSTANCE       0x0009
+#define HMQW_ACTIVEVIEWPORT 0x000a
+#define CONTROL_SELECTED    0x000b
+
+#define HMQW_GROUP_VIEWPORT 0x00f1
+#define HMQW_RES_VIEWPORT   0x00f2
+#define USERDATA            0x00f3
+
+#define HMQVP_NUMBER 1
+#define HMQVP_NAME   2
+#define HMQVP_GROUP  3
+
 #define  HMERR_NO_FRAME_WND_IN_CHAIN     0x00001001
 #define  HMERR_INVALID_ASSOC_APP_WND     0x00001002
 #define  HMERR_INVALID_ASSOC_HELP_INST   0x00001003
@@ -113,6 +133,16 @@ typedef struct _HELPINIT {
 } HELPINIT, *PHELPINIT;
 
 #pragma pack()
+
+typedef struct _ACVP {
+    ULONG cb;
+    HAB   hAB;
+    HMQ   hmq;
+    ULONG ObjectID;
+    HWND  hWndParent;
+    HWND  hWndOwner;
+    HWND  hWndACVP;
+} ACVP, *PACVP;
 
 BOOL   APIENTRY WinAssociateHelpInstance(HWND hwndHelpInstance, HWND hwndApp);
 HWND   APIENTRY WinCreateHelpInstance(HAB hab, PHELPINIT phinitHMInitStructure);
