@@ -7,6 +7,7 @@
 
 #ifdef INCL_WINSTDDLGS
     #define INCL_WINSTDFILE
+    #define INCL_WINSTDFONT
     #define INCL_WINSTDBOOK
 #endif
 
@@ -222,8 +223,114 @@ typedef struct _FILEDLG {
     SHORT   sEAType;
 } FILEDLG, *PFILEDLG;
 
-HWND   APIENTRY WinFileDlg(HWND hwndP, HWND hwndO, PFILEDLG pfild);
-BOOL   APIENTRY WinFreeFileDlgList(PAPSZ papszFQFilename);
+MRESULT APIENTRY WinDefFileDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+HWND    APIENTRY WinFileDlg(HWND hwndP, HWND hwndO, PFILEDLG pfild);
+BOOL    APIENTRY WinFreeFileDlgList(PAPSZ papszFQFilename);
+
 #endif
 
-
+#if defined(INCL_WINSTDFONT)
+
+#define CLRC_FOREGROUND 1
+#define CLRC_BACKGROUND 2
+
+#define FNTF_NOVIEWSCREENFONTS   1
+#define FNTF_NOVIEWPRINTERFONTS  2
+#define FNTF_SCREENFONTSELECTED  4
+#define FNTF_PRINTERFONTSELECTED 8
+
+#define FNTS_CENTER             0x00000001
+#define FNTS_CUSTOM             0x00000002
+#define FNTS_OWNERDRAWPREVIEW   0x00000004
+#define FNTS_HELPBUTTON         0x00000008
+#define FNTS_APPLYBUTTON        0x00000010
+#define FNTS_RESETBUTTON        0x00000020
+#define FNTS_MODELESS           0x00000040
+#define FNTS_INITFROMFATTRS     0x00000080
+#define FNTS_BITMAPONLY         0x00000100
+#define FNTS_VECTORONLY         0x00000200
+#define FNTS_FIXEDWIDTHONLY     0x00000400
+#define FNTS_PROPORTIONALONLY   0x00000800
+#define FNTS_NOSYNTHESIZEDFONTS 0x00001000
+#define FNTS_NATIONAL_LANGUAGE  0x80000000
+
+#define FNTS_SUCCESSFUL             0
+#define FNTS_ERR_INVALID_DIALOG     3
+#define FNTS_ERR_ALLOC_SHARED_MEM   4
+#define FNTS_ERR_INVALID_PARM       5
+#define FNTS_ERR_OUT_OF_MEMORY      7
+#define FNTS_ERR_INVALID_VERSION   10
+#define FNTS_ERR_DIALOG_LOAD_ERROR 12
+
+#define FNTI_BITMAPFONT       0x0001
+#define FNTI_VECTORFONT       0x0002
+#define FNTI_FIXEDWIDTHFONT   0x0004
+#define FNTI_PROPORTIONALFONT 0x0008
+#define FNTI_SYNTHESIZED      0x0010
+#define FNTI_DEFAULTLIST      0x0020
+#define FNTI_FAMILYNAME       0x0100
+#define FNTI_STYLENAME        0x0200
+#define FNTI_POINTSIZE        0x0400
+
+#define FNTM_FACENAMECHANGED  (WM_USER+50)
+#define FNTM_POINTSIZECHANGED (WM_USER+51)
+#define FNTM_STYLECHANGED     (WM_USER+52)
+#define FNTM_COLORCHANGED     (WM_USER+53)
+#define FNTM_UPDATEPREVIEW    (WM_USER+54)
+#define FNTM_FILTERLIST       (WM_USER+55)
+
+typedef struct _FONTDLG {
+    ULONG   cbSize;
+    HPS     hpsScreen;
+    HPS     hpsPrinter;
+    PSZ     pszTitle;
+    PSZ     pszPreview;
+    PSZ     pszPtSizeList;
+    PFNWP   pfnDlgProc;
+    PSZ     pszFamilyname;
+    FIXED   fxPointSize;
+    ULONG   fl;
+    ULONG   flFlags;
+    ULONG   flType;
+    ULONG   flTypeMask;
+    ULONG   flStyle;
+    ULONG   flStyleMask;
+    LONG    clrFore;
+    LONG    clrBack;
+    ULONG   ulUser;
+    LONG    lReturn;
+    LONG    lSRC;
+    LONG    lEmHeight;
+    LONG    lXHeight;
+    LONG    lExternalLeading;
+    HMODULE hMod;
+    FATTRS  fAttrs;
+    SHORT   sNominalPointSize;
+    USHORT  usWeight;
+    USHORT  usWidth;
+    SHORT   x;
+    SHORT   y;
+    USHORT  usDlgId;
+    USHORT  usFamilyBufLen;
+    USHORT  usReserved;
+} FONTDLG, *PFONTDLG;
+
+typedef struct _STYLECHANGE {
+    USHORT usWeight;
+    USHORT usWeightOld;
+    USHORT usWidth;
+    USHORT usWidthOld;
+    ULONG  flType;
+    ULONG  flTypeOld;
+    ULONG  flTypeMask;
+    ULONG  flTypeMaskOld;
+    ULONG  flStyle;
+    ULONG  flStyleOld;
+    ULONG  flStyleMask;
+    ULONG  flStyleMaskOld;
+} STYLECHANGE, *PSTYLECHANGE;
+
+MRESULT APIENTRY WinDefFontDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
+HWND    APIENTRY WinFontDlg(HWND hwndP, HWND hwndO, PFONTDLG pfntd);
+
+#endif
