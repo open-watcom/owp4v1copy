@@ -31,15 +31,19 @@ on_build_machine = $(%on_build_machine)
 tools_root  = $(%TOOLDR)\tools
 tnt_dir  = $(tools_root)\tnt6
 os2_tools_root  = $(tools_root)\os2tools
-os2_toolkit = $(%os2tkroot)
-nlang_root  = $(%dwatcom)
-build_root  = $(%devdir)
-rsi_root    = $(%rsidir)
-online_dir  = $(%devdir)\online
-utils_root  = $(build_root)
+os2_toolkit     = $(%os2tkroot)
+nlang_root      = $(%dwatcom)
+build_root      = $(%devdir)
+rsi_root        = $(%rsidir)
+online_dir      = $(%devdir)\online
+utils_root      = $(build_root)
+# a good enough location for any OS specific support files that may be needed.
+os_supp_dir     = $(build_root)\os_supp
+
 # The NOVELLNDK environment variable should be added during install. If not, the default location is
 # C:\NOVELL\NDK\NWSDK.
-nwndk_root  = $(%NOVELLNDK)
+nwndk_root      = $(%NOVELLNDK)
+ow_nwoss_root   = $(os_supp_dir)\novell
 
 # define compilers
 comp286=*wcc
@@ -222,10 +226,10 @@ plsdir=$(tools_root)\dilib
 adsdir=$(tools_root)\adslib
 rsilib=$(tools_root)\rsilib
 nwos2dir=$(tools_root)\nwos2lib
-nwdir=$(tools_root)\nwclib
-nwsrc=$(tools_root)\src
-nw40src=$(tools_root)\nw40src
-nw40dir=$(tools_root)\nw40clib
+#nwdir=$(tools_root)\nwclib
+#nwsrc=$(tools_root)\src
+#nw40src=$(tools_root)\nw40src
+#nw40dir=$(tools_root)\nw40clib
 new_clib=$(build_root)\clib
 clibdir=$(new_clib)
 new_mlib=$(build_root)\mathlib
