@@ -1,5 +1,5 @@
 compile = $(comp286) $[* -d2 -ml -zW
-auilib = $(auidir)/win/aui.lib
+auilib = $(auidir)/wini86/aui.lib
 guilib = $(guidir)/ui/wini86/gui.lib
 uilib = $(uidir)/win/wini86/ui.lib
 reslib = $(watcomdir)lib/wreslw.lib

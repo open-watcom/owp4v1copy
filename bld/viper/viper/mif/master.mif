@@ -56,7 +56,7 @@ $(name).exe : $(OBJECTS) $(LIBS) viper.res
 
 viper.res : _guimsgs.gh $(gui_dir)/h/gui.rc viper.rc
 !ifneq host_OS os2
-        $(rc) $(rc_flags) -i".." -r $[@ -fo=$^@
+        $(rc) $(rc_flags) -i".." -r -k $]@ -fo=$^@
 !else
 !ifeq host_lang japan
         $(cc) -zk0 -dJAPANESE_MESSAGES -i=".." -p $[@ -fo=viper.prc

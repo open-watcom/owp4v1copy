@@ -1,5 +1,5 @@
 compile = $(comp386) $[* -d2 -mf -dDOS -zk0
-auilib = $(auidir)/of/aui.lib
+auilib = $(auidir)/dos386/aui.lib
 reslib = $(wres_dir)/lib/wresf.lib
 guilib = $(guidir)/ui/dos386/gui.lib
 uilib = $(uidir)/dos/dos386/ui.lib

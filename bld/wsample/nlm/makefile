@@ -57,7 +57,7 @@ xname = wsample
     @%append tmp.lnk import @$(ow_nwoss_root)\common\imp\owclib.imp
     @%append tmp.lnk libpath $(wres_dir)\lib
     @%append tmp.lnk lib wresfs
-    @%append tmp.lnk lib $(%devdir)\clib\library\nw_clib.386\ms_s\clibs.lib
+    @%append tmp.lnk lib $(%devdir)\clib\library\nw_clib.386\ms_s\clib3s.lib
     @%append tmp.lnk module clib
     wlink @tmp.lnk
     wstrip /q /a /r ..\bin\$(xname).nlm . $(xname).res

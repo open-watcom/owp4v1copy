@@ -1,9 +1,9 @@
 compile = $(comp386) $[* -d2 -w4 -mf -s -fpc
-auilib = $(auidir)/pmf/aui.lib
-guilib = $(guidir)/win/guipmf.lib
+auilib = $(auidir)/os2386.pm/aui.lib
+guilib = $(guidir)/win/os2386/gui.lib
 
 app.exe : $(objs) app.lnk $(auilib) $(guilib)
-        $(linker) sys os2v2_pm op symfile=app.sym @app lib $(guilib) lib os2386
+        $(linker) sys os2v2_pm op symfile=app.sym @app lib $(guilib),$(auilib) lib os2386
         %make apppm.res
         $(%toolkit)\os2bin\rc -p -x apppm.res app.exe
         copy /b app.exe+app.sym

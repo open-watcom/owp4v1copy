@@ -65,3 +65,9 @@ app.lnk : eraseall.obj $(objs) $(__makefiles__) $(auilib)
         @%append app.lnk op map,un,stack=12k
         @for %i in ($(objs)) do @%append app.lnk file %i
         @%append app.lnk lib $(auilib)
+
+./mkstr.exe: $(auidir)/c/mkstr.c
+        wcl $]@ -fe=$^@
+
+auistr.gh : ./mkstr.exe $(auidir)/h/aui.msg
+        $[@ $^@
