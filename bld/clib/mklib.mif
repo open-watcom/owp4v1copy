@@ -17,9 +17,21 @@ $(libname).lib : $(objs) .precious
 .asm.obj :
     *$(as) $[@ $(include_a_path) $(build_target) $($[&_opts) $(a_flags) $($[&_postopts)
 
+# KB: I changed this below so that if you specify 'source_root' on the wmake command
+# line, it will pull source code from that directory as a complete path rather than
+# a relative path. I use this so that when I build from within SlickEdit, it will
+# properly process errors etc ;-)
+
+!ifndef source_root
 .c   : ..\..\..\c
 .cpp : ..\..\..\cpp
 .asm : ..\..\..\a
+!else
+.c   : $(source_root)\c
+.cpp : $(source_root)\cpp
+.asm : $(source_root)\a
+!endif
 
 !include $(clib_dir)\clean.mif
 !include $(clib_dir)\project.mif
+
