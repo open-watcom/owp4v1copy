@@ -305,8 +305,7 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
         typ2 = typ2->object;
     }
     if( typ1 != typ2 ){   // if not equal see if diff by pointers
-        if( ( typ1->decl_type == TYPE_VOID || typ2->decl_type == TYPE_VOID )
-           && typ1->decl_type != TYPE_POINTER && typ2->decl_type != TYPE_POINTER ) {
+        if( typ1->decl_type == TYPE_VOID || typ2->decl_type == TYPE_VOID ) {
         // allow  void ** with any **
             if( top_level==1 || !CompFlags.strict_ANSI ){
                 if ( voidptr_cmp == VC_WARN ||
