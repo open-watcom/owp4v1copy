@@ -6,7 +6,7 @@ inc_dirs_lang   = $(lang_root)/h
 !endif
 
 .before:
-        @set incpaths=-i"$(auidir)/h;$(guidir)/h;../h;$(posix_dir)/h;$(inc_dirs_lang)"
+        @set INCPATHS=-i"$(auidir)/h;$(guidir)/h;../h;$(posix_dir)/h;$(inc_dirs_lang)"
 
 .extensions:
 .extensions: .exe .lib .obj .i .c .h .res .dlg .rc
@@ -29,7 +29,10 @@ copts = -zq -oxt -d1
 !ifndef axp
 copts += -fpc
 !endif
-copts += @incpaths
+copts += @INCPATHS
+!ifdef __LINUX__
+copts += -fo=.obj
+!endif
 
 !ifndef librarian
 librarian = wlib
@@ -121,7 +124,7 @@ objs =  guimain.obj &
 aui.lib : eraseall.obj $(objs) $(__makefiles__) $(auirc)
         rm -f tmp.lbc
         @for %i in ($(objs)) do @%append tmp.lbc +%i
-        $(librarian) -b -n aui @tmp.lbc
+        $(librarian) -q -b -n aui @tmp.lbc
 
 .rc: ../h
 !ifdef pm
@@ -151,12 +154,13 @@ japsrcha.dlg : ../h/japsrcha.dlg
 
 dlgfiles = dlgrx.h dlgsrch.h dlgrx.dlg dlgsrch.dlg dlgsrcha.dlg $(auidir)/h/auistr.h auistr.rc auigui.rc
 
-$(auidir)/h/auistr.h : $(auidir)/h/aui.msg $(auidir)/c/mkstr.c
-        wcl386 -zq $]@
-        mkstr $^@
-        rm -f mkstr.*
+./mkstr.exe: $(auidir)/c/mkstr.c
+        wcl386 -zq $]@ -fe=$^.
+
+$(auidir)/h/auistr.h : ./mkstr.exe $(auidir)/h/aui.msg
+        $[@ $^@
 
 clean : .SYMBOLIC
-        rm -f *.obj *.pch *.lib *.rc *.lbc *.dlg
+        rm -f *.obj *.pch *.lib *.rc *.lbc *.dlg mkstr.*
         rm -f $(auidir)/h/auistr.h
 
