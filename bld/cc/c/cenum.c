@@ -77,6 +77,7 @@ local ENUM_HANDLE EnumLkAdd( TAGPTR tag )
 #   define i64val(h,l) { l, h }
 #endif
 enum enum_rng {
+    ENUM_NONE = -1,
     ENUM_S8,
     ENUM_U8,
     ENUM_S16,
@@ -136,7 +137,6 @@ TYPEPTR EnumDecl( int flags )
 {
     TYPEPTR     typ;
     TAGPTR      tag;
-
 
     NextToken();
     if( CurToken == T_ID ) {
@@ -222,16 +222,19 @@ TYPEPTR EnumDecl( int flags )
                 n = val.val64;
             }
             if( sign ) {
-                if( index & 1 ) ++index;
-                for( ; index < ENUM_SIZE; index += 2 ) {
-                    if( minus ){
-                        if( I64Cmp( &n, &(RangeTable[ index ][LOW] )) >= 0 ) break;
-                    }else{
-                        if( U64Cmp( &n, &(RangeTable[ index ][HIGH]) ) <= 0 ) break;
+                if( ( ( index & 1 ) == 0 )
+                    || ( I64Cmp( &n, &(RangeTable[ index - 1 ][LOW] )) < 0 ) ) {
+                    index = ( index + 1 ) & ~1;
+                    for( ; index < ENUM_SIZE; index += 2 ) {
+                        if( minus ){
+                            if( I64Cmp( &n, &(RangeTable[ index ][LOW] )) >= 0 ) break;
+                        } else {
+                            if( U64Cmp( &n, &(RangeTable[ index ][HIGH]) ) <= 0 ) break;
+                        }
                     }
-                }
-                if( index == ENUM_SIZE ) {
-                    CErr1( ERR_ENUM_CONSTANT_TOO_LARGE );
+                    if( index == ENUM_SIZE ) {
+                        index = ENUM_U64;
+                    }
                 }
             } else {
                 for( ; index < ENUM_SIZE; index += 1 ) {
@@ -243,7 +246,7 @@ TYPEPTR EnumDecl( int flags )
                 if( CompFlags.extensions_enabled  ) {
                     typ->object = GetType( ItypeTable[index].decl_type );
                     tag->size   = ItypeTable[index].size;
-                }else{
+                } else {
                     CErr1( ERR_ENUM_CONSTANT_TOO_LARGE );
                 }
                 const_index = index;

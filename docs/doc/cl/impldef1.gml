@@ -776,16 +776,11 @@ By default, &wcboth. will use the smallest integer type that
 can accommodate all values in the enumeration.
 .keep begin
 .pp
-&wc286. will choose the first appropriate
+&wc286. and
+&wc386. will choose the first appropriate
 type from the following table:
 ..sk 1 c
-..im enum286
-.keep end
-.keep begin
-.pp
-&wc386. will choose the first appropriate type from the following table:
-..sk 1 c
-..im enum386
+..im enumtab
 .keep end
 .pp
 Both compilers have a command-line switch that force all enumerations

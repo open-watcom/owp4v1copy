@@ -304,17 +304,7 @@ local TREEPTR EnumLeaf( struct enum_info *eip )
     }
 #endif
     decl_type = eip->parent->sym_type->object->decl_type;
-    switch( decl_type ) {
-    case TYPE_ULONG64:
-    case TYPE_LONG64:
-        return( LongLeaf64( eip->value , decl_type ) );
-    case TYPE_USHORT:
-    case TYPE_UINT:
-    case TYPE_ULONG:
-        return( UIntLeaf( eip->value.u._32[L] ) );
-    default:
-        return( IntLeaf( eip->value.u._32[L] ) );
-    }
+    return( LongLeaf64( eip->value , decl_type ) );
 }
 
 TREEPTR VarLeaf( SYMPTR sym, SYM_HANDLE sym_handle )

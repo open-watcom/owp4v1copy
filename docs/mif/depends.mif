@@ -70,8 +70,7 @@ $(docsrc_dir)\cl\csymbol.gml &
 $(docsrc_dir)\cl\declare.gml &
 $(docsrc_dir)\cl\defmacro.gml &
 $(docsrc_dir)\cl\enum.gml &
-$(docsrc_dir)\cl\enum286.gml &
-$(docsrc_dir)\cl\enum386.gml &
+$(docsrc_dir)\cl\enumtab.gml &
 $(docsrc_dir)\cl\escape.gml &
 $(docsrc_dir)\cl\examples.gml &
 $(docsrc_dir)\cl\express.gml &
