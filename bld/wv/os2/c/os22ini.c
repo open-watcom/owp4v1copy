@@ -35,6 +35,7 @@
 #include <string.h>
 #include <stddef.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <process.h>
 
 #define INCL_DOSMISC
