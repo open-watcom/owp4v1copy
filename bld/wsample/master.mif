@@ -80,7 +80,7 @@ extra_rc_flags_dos_rsi_i86 = -DRSI
 extra_rc_flags_dos_pls_386 = -DPLS
 extra_rc_flags_dos         = $(extra_rc_flags_dos_$(target)_$(host_cpu))
 extra_rc_flags_nov         = -DNLM
-extra_rc_flags_win         = -DWIN -30
+extra_rc_flags_win         = -DWIN -30 $(inc_dirs_sys_win) -I"../h"
 extra_rc_flags             = $(extra_rc_flags_$(host_os))
 
 nlm_imports = &
@@ -233,4 +233,4 @@ $(xname).res : ../h/wsamplew.rc ../h/wsampres.rc ../h/wsamplew.ico ../h/wsample.
 !else
 $(xname).res : ../h/wsample.rc ../h/wmsg.h
 !endif
-    $(rc_aui) $(extra_rc_flags) $(inc_path) $[@ -fo=$^@
+    $(rc_aui) $(extra_rc_flags) $[@ -fo=$^@

@@ -74,7 +74,7 @@ $(lnk) : $(__MAKEFILES__)
 ##############################################################################
 
 wic.res: ../rc/wic.rc usagee.rc usagej.rc #../rc/messages.rc
-    $(rc_aui) $(inc_path) $[@ -fo=$^@
+    $(rc_aui) $[@ -fo=$^@
 
 usagee.rc:  ../rc/usage.sp
     @%write usagee.tmp -kENGLISH -t8 -f "%+(USAGEE_MSG_BASE+%$#-1), \"%s\"" $< $^@

@@ -32,10 +32,10 @@ msg.gh : ../wstrip.msg
         $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
 
 owstrip.res : wstrip.rc wstrip.msg msg.gh ousage.rc ousagej.rc
-        $(rc_aui) $(inc_path) -DDOS $[@ -fo=$^@
+        $(rc_aui) -DDOS $[@ -fo=$^@
 
 qwstrip.res : wstrip.rc wstrip.msg msg.gh qusage.rc
-        $(rc_aui) $(inc_path) -DQNX $[@ -fo=$^@
+        $(rc_aui) -DQNX $[@ -fo=$^@
 
 ousage.rc : usage.sp
         wsplice -kIS_RC -kDOS -kENGLISH -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" $[@ $^@

@@ -285,6 +285,8 @@ inc_dirs += -I"$(posix_dir)/h" -I"$(gui_dir)/ui/h" -I"$(help_dir)/h"
 !ifeq host_os linux
 inc_dirs += -I"$(ncurses_dir)/h"
 dig_srcs +=;$(dig_dir)/c/dsx
+!else ifeq host_os dos
+dig_srcs +=;$(dig_dir)/c/dsx
 !endif
 
 # libs
@@ -300,6 +302,7 @@ libs_win_i86        = $(aui_dir)/wini86/aui.lib $(gui_dir)/ui/wini86/gui.lib $(u
 libs_nt_386         = $(aui_dir)/nt386/aui.lib $(gui_dir)/ui/nt386/gui.lib $(ui_dir)/nt/nt386/ui.lib
 libs_os2_i86        = $(aui_dir)/os2i86/aui.lib $(gui_dir)/ui/os2i86/gui.lib $(ui_dir)/os2/os2i86/ui.lib
 libs_os2_386        = $(aui_dir)/os2386/aui.lib $(gui_dir)/ui/os2386/gui.lib $(ui_dir)/os2/os2386/ui.lib
+libs_dos_i86        = $(lang_root)/lib286/dos/clibol.lib $(aui_dir)/dosi86/aui.lib $(gui_dir)/ui/dosi86/gui.lib $(ui_dir)/dos$(dot_machine)/dosi86/ui.lib
 libs_dos_386        = $(aui_dir)/dos386/aui.lib $(gui_dir)/ui/dos386/gui.lib $(ui_dir)/dos$(dot_machine)/dos386/ui.lib
 libs_qnx_i86        = $(aui_dir)/qnxi86/aui.lib $(gui_dir)/ui/qnxi86/gui.lib $(ui_dir)/qnx/qnxi86/ui.lib
 libs_qnx_386        = $(aui_dir)/qnx386/aui.lib $(gui_dir)/ui/qnx386/gui.lib $(ui_dir)/qnx/qnx386/ui.lib
@@ -326,7 +329,7 @@ extra_l_flags_win_i86 = op stack=12K, heap=15K import DEATH GDI.121 import RESUR
 extra_l_flags_win_i86 = op stack=15K, heap=10K, align=512
 !endif
 extra_l_flags_win = $(extra_l_flags_win_$(host_cpu))
-extra_l_flags_dos_i86 = op stack=12k, area=0k
+extra_l_flags_dos_i86 = op stack=12k, area=0
 extra_l_flags_dos_386 = op stack=12k export DOS4GOPTIONS=_DOS4GOPTIONS
 extra_l_flags_dos = $(extra_l_flags_dos_$(host_cpu))
 !ifeq sys_windowed 1
@@ -374,6 +377,13 @@ $(exe_name) : $(resfile) fingmsg.obj $(objs) $(sysobjs) $(libs) $(lnk)
         @set path=$(%opath)
 !endif
 !endif
+!if 0
+!ifdef ovl_dos
+        copy $^&.map $(lnk2)
+        vi -d -q -s ..\mapfix.vi $(lnk2)
+        $(linker) $(lflags) name $^@ @$(lnk) @$(lnk2) $(endsect)
+!endif
+!endif
 
 wd.lib : litdef.gh $(engine_objs) $(sysobjs)
         @%create tmp.lbc
@@ -382,7 +392,7 @@ wd.lib : litdef.gh $(engine_objs) $(sysobjs)
 
 $(lnk) : $(__MAKEFILES__)
     %create $(lnk)
-    @%append $(lnk) option map,nocache
+    @%append $(lnk) option map,verbose,nocache
     @for %i in ($(libs))    do @%append $(lnk) library %i
     @for %i in ($(sysobjs)) do @%append $(lnk) file %i
     @%append $(lnk) file fingmsg.obj
@@ -393,7 +403,8 @@ $(lnk) : $(__MAKEFILES__)
 !endif
     @for %i in ($(objs)) do @%append $(lnk) file %i
 
-rcinclude=.;$(hdir);$(dig_dir)/h;$(aui_dir)/h;$(gui_dir);$(gui_dir)/h;$(lang_root)/h
+os2_rcinclude=.;$(hdir);$(dig_dir)/h;$(aui_dir)/h;$(gui_dir);$(gui_dir)/h;$(lang_root)/h
+rcinclude=-I. -I"$(hdir)" -I"$(dig_dir)/h" -I"$(aui_dir)/h" -I$(gui_dir) -I"$(gui_dir)/h" -I"$(lang_root)/h"
 
 bitmaps = &
         $(wv_dir)/win/zapant.ico &
@@ -531,22 +542,23 @@ rcfiles = &
     japhis.dlg
 
 wvui.res : $(hdir)/wvui.rc auistr.gh _guimsgs.gh $(rcfiles) .autodepend
-        $(rc_aui) -ad -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
+        $(rc_aui) -ad $(rcinclude) $(inc_dirs_sys_win) $[@ -fo=$^@
 
 wvntdll.res : $(hdir)/strings.rc litdef.gh .autodepend
-        $(rc) $(rc_flags) -r -ad -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad $(rcinclude) $(inc_dirs_sys_win) $[@ -fo=$^@
 
 wvwin.res : $(hdir)/wvwin.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
-        $(rc) $(rc_flags) -r -ad -k -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad -k $(rcinclude) $(inc_dirs_sys_win) $[@ -fo=$^@
 
 wvnt.res : $(hdir)/wvwin.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
-        $(rc) $(rc_flags) -r -ad -k -i="$(rcinclude);$(lang_root)/h/nt" $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad -k $(rcinclude) $(inc_dirs_sys_nt) $[@ -fo=$^@
 
 wvpm.res wvpmj.res : $(hdir)/wvpm.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
+        *wcc -dRC -I"$(aui_dir)/os2386.pm" $(rcinclude) -p -pw=0 -fo=wvpm.i $[@
+        *wcc -dRC -i"$(aui_dir)/os2386.pm" $(rcinclude) -p -pw=0 -fo=wvpmj.i $[@ -dJAPANESE_MESSAGES
+
         @set oinc=$(%include)
-        @set include=$(inc_dirs_sys);$(rcinclude);$(%include)
-        *wcc -dRC -i"$(aui_dir)/os2386.pm;$(rcinclude)" -p -pw=0 -fo=wvpm.i $[@
-        *wcc -dRC -i"$(aui_dir)/os2386.pm;$(rcinclude)" -p -pw=0 -fo=wvpmj.i $[@ -dJAPANESE_MESSAGES
+        @set include=$(os2_rcinclude);$(%include)
 
 !ifndef %use_os2tk_stuff
         @set opath=$(%path)

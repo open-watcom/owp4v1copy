@@ -48,6 +48,10 @@ inc_dirs = -I"$(wmake_dir)/h" -I"$(orl_dir)/h" -I$(trmem_dir)
 extra_c_flags += -DCACHE_STATS
 !endif
 
+extra_rc_flags_dos   = -D__DOS__
+extra_rc_flags_linux = -D__LINUX__
+extra_rc_flags = $(extra_rc_flags_$(host_os))
+
 !include ../mif/wmk.mif                    #   get our objs macro
 
 ##############################################################################
@@ -86,7 +90,7 @@ $(xname).$(ext) :: usageend.gh wmake.res $(objs) $(libs) $(__MAKEFILES__)
         wstrip -q -a -r $(xname).$(ext) . wmake.res
 
 wmake.res : ../h/wmake.rc mrcmsg.h usage.rc usagej.rc
-        $(rc_aui) -D__$(host_os)__ -I$(watcom_h) $[@ -fo=$^@
+        $(rc_aui) $(extra_rc_flags) $[@ -fo=$^@
 
 usage.rc : ../h/usage.sp
         @%write usage.tmp -kIS_RC -kENGLISH -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" $< -o "%n%n%n%n" $^@

@@ -311,7 +311,11 @@ linker          = $(linker_$(host_cpu))
 librarian       = $(librarian_$(host_cpu))
 as              = $(as_$(host_cpu))
 vi              = vi -q -d -i
-rc_aui          = $(rc) -bt=windows -zk0 -r
+!ifdef __UNIX__
+rc_aui          = $(rc) -bt=windows -I$(watcom_dir)/h -zk0 -r
+!else
+rc_aui          = $(rc) -bt=windows -I$(watcom_dir)\h -zk0 -r
+!endif
 
 !include bhost.mif
 !include local.mif

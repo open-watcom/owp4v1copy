@@ -155,4 +155,4 @@ msg.gh : ./mkstr.exe
     *$< $@
 
 wlib.res : ../wlib.rc ../wlib.msg msg.gh
-    $(rc_aui) $(extra_rc_flags) $(inc_path) $[@ -fo=$^@
+    $(rc_aui) $(extra_rc_flags) $[@ -fo=$^@

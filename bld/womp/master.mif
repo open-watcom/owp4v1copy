@@ -69,7 +69,7 @@ wmpmsg.gh : $(womp_dir)/womp.msg
     bvi -d -q -i -s ../h/makemsg.vi -p"$^@" $[@
 
 $(proj_name).res :  usage.rc ../h/$(proj_name).rc
-        $(rc_aui) $(extra_rc_flags) -I"$(wrc_dir)/h" -I"$(watcom_dir)/h" $]@ -fo=$^@
+        $(rc_aui) $(extra_rc_flags) -I"$(wrc_dir)/h" $]@ -fo=$^@
 
 usage.rc : ../usage.sp
     @%write usage.tmp -kIS_RC -kENGLISH -t8 -f "%+(MSG_USE_BASE+%$#-1), \"%s\""$[@ $@
