@@ -1,8 +1,8 @@
-#pmake: debug 386 os2 os_os2 cpu_386 target_386
+#pmake: debug i86 cpu_386 os_os2 target_i86
 
 host_os    = os2
 host_cpu   = 386
-target_cpu = 386
+target_cpu = i86
 release_cc = 0
 debug_cg   = 1
 debug      = 1
