@@ -71,11 +71,11 @@ void main()
     new_year.tm_sec   = 0;
     new_year.tm_isdst = 0;
     mktime( &new_year );
-    printf( "The next century begins on a %s\n",
+    printf( "The 21st century began on a %s\n",
              week_day[ new_year.tm_wday ] );
   }
 .exmp output
-The next century begins on a Monday
+The 21st century began on a Monday
 .exmp end
 .class ANSI
 .system
