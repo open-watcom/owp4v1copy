@@ -151,7 +151,6 @@ echo Languages Build <1>
 [ INCLUDE <devdir>/posix/lang.ctl ]
 [ INCLUDE <devdir>/cpp/lang.ctl ]
 [ INCLUDE <devdir>/pgchart/lang.ctl ]
-[ INCLUDE <devdir>/hlp/lang.ctl ]
 [ INCLUDE <devdir>/dig/lang.ctl ]
 [ INCLUDE <devdir>/uiforms/lang.ctl ]
 [ INCLUDE <devdir>/watcom/lang.ctl ]
