@@ -1,6 +1,7 @@
-#pmake: all flat cpu_386 target_axp os_os2
-host_CPU = 386
-host_OS = os2
-host_CG = os220
-target_CPU = axp
+#pmake: flat cpu_386 target_axp os_os2
+
+host_os    = os2
+host_cpu   = 386
+target_cpu = axp
+
 !include ../master.mif

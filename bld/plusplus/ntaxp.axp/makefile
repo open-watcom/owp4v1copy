@@ -1,6 +1,7 @@
 #pmake: nomodel cpu_axp target_axp os_nt
-host_CPU = axp
-host_OS = nt
-host_CG = axp
-target_CPU = axp
+
+host_os    = nt
+host_cpu   = axp
+target_cpu = axp
+
 !include ../master.mif
