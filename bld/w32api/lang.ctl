@@ -10,16 +10,17 @@ set PROJDIR=<CWD>
 cdsay .
 
 [ BLOCK <1> build rel2 ]
+#=======================
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
     cd <PROJDIR>
 
 [ BLOCK <1> rel2 cprel2 acprel2 ]
-
+#================================
 #NT stuff
-    <CPCMD> READ*.* <relroot>/rel2/readme.w32
-    <CPCMD> include/*.h <relroot>/rel2/h/nt/
-    <CPCMD> include/GL/*.h <relroot>/rel2/h/nt/GL/
-    <CPCMD> nt386/*.lib <relroot>/rel2/lib386/nt/
+    <CPCMD> READ*.*         <RELROOT>/rel2/readme.w32
+    <CPCMD> include/*.h     <RELROOT>/rel2/h/nt/
+    <CPCMD> include/GL/*.h  <RELROOT>/rel2/h/nt/GL/
+    <CPCMD> nt386/*.lib     <RELROOT>/rel2/lib386/nt/
 
 [ BLOCK <1> clean ]
 #==================

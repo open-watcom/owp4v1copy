@@ -10,13 +10,14 @@ set PROJDIR=<CWD>
 cdsay .
 
 [ BLOCK <1> build rel2 ]
+#=======================
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
 
 [ BLOCK <1> rel2 cprel2 acprel2 ]
-
-    <CPCMD> wini86/*.lib <relroot>/rel2/lib286/win/
-    <CPCMD> include/*.h <relroot>/rel2/h/win/
-    <CPCMD> <devdir>/sdk/misc/ctl3d.h <relroot>/rel2/h/win/
+#================================
+    <CPCMD> wini86/*.lib               <RELROOT>/rel2/lib286/win/
+    <CPCMD> include/*.h                <RELROOT>/rel2/h/win/
+    <CPCMD> <devdir>/sdk/misc/ctl3d.h  <RELROOT>/rel2/h/win/
 
 [ BLOCK <1> clean ]
 #==================

@@ -15,18 +15,18 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 acprel2 ]
 #16-bit stuff
-    <CPCMD> incl16/*.h   <relroot>/rel2/h/os21x/
-    <CPCMD> os2286/*.lib <relroot>/rel2/lib286/os2/
+    <CPCMD> incl16/*.h          <RELROOT>/rel2/h/os21x/
+    <CPCMD> os2286/*.lib        <RELROOT>/rel2/lib286/os2/
 #32-bit stuff
-    <CPCMD> incl32/*.h          <relroot>/rel2/h/os2/
-    <CPCMD> incl32/arpa/*.h     <relroot>/rel2/h/os2/arpa/
-    <CPCMD> incl32/machine/*.h  <relroot>/rel2/h/os2/machine/
-    <CPCMD> incl32/net/*.h      <relroot>/rel2/h/os2/net/
-    <CPCMD> incl32/netinet/*.h  <relroot>/rel2/h/os2/netinet/
-    <CPCMD> incl32/protocol/*.h <relroot>/rel2/h/os2/protocol/
-    <CPCMD> incl32/sys/*.h      <relroot>/rel2/h/os2/sys/
-    <CPCMD> incl32/GL/*.h       <relroot>/rel2/h/os2/GL/
-    <CPCMD> os2386/*.lib        <relroot>/rel2/lib386/os2/
+    <CPCMD> incl32/*.h          <RELROOT>/rel2/h/os2/
+    <CPCMD> incl32/arpa/*.h     <RELROOT>/rel2/h/os2/arpa/
+    <CPCMD> incl32/machine/*.h  <RELROOT>/rel2/h/os2/machine/
+    <CPCMD> incl32/net/*.h      <RELROOT>/rel2/h/os2/net/
+    <CPCMD> incl32/netinet/*.h  <RELROOT>/rel2/h/os2/netinet/
+    <CPCMD> incl32/protocol/*.h <RELROOT>/rel2/h/os2/protocol/
+    <CPCMD> incl32/sys/*.h      <RELROOT>/rel2/h/os2/sys/
+    <CPCMD> incl32/GL/*.h       <RELROOT>/rel2/h/os2/GL/
+    <CPCMD> os2386/*.lib        <RELROOT>/rel2/lib386/os2/
 
 [ BLOCK <1> clean ]
 #==================

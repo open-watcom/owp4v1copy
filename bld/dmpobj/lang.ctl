@@ -15,9 +15,10 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>/dmpobj/dos386/dmpobj.exe <relroot>/rel2/binw/dmpobj.exe
-    <CPCMD> <devdir>/dmpobj/os2386/dmpobj.exe <relroot>/rel2/binp/dmpobj.exe
-    <CPCMD> <devdir>/dmpobj/nt386/dmpobj.exe  <relroot>/rel2/binnt/dmpobj.exe
+    <CPCMD> <PROJDIR>/dos386/dmpobj.exe    <RELROOT>/rel2/binw/dmpobj.exe
+    <CPCMD> <PROJDIR>/os2386/dmpobj.exe    <RELROOT>/rel2/binp/dmpobj.exe
+    <CPCMD> <PROJDIR>/nt386/dmpobj.exe     <RELROOT>/rel2/binnt/dmpobj.exe
+    <CPCMD> <PROJDIR>/linux386/dmpobj.exe  <RELROOT>/rel2/binl/dmpobj
 
 [ BLOCK <1> clean ]
 #==================
