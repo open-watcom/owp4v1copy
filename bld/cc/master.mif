@@ -14,7 +14,6 @@ proj_name = cc
 !include defrule.mif
 
 !include mlibs.mif
-!include binname.mif
 
 # CODEGEN stuff
 !include $(cg_dir)/mif/fe.mif
@@ -127,12 +126,12 @@ wlink_opt_nt_axp_dll    = sys ntaxp_dll
 as_lib_ppc      = 1
 as_lib_axp      = 1
 
-xname = $(bin_dir)/wcc$(target_cpu)c.$(final_exe_$(host_os))
-dxname = $(bin_dir)/wcc$(target_cpu)d.$(final_exe_$(host_os))
-dllexet = $(bin_dir)/wcc$(target_cpu)t
-dllexe = $(bin_dir)/wcc$(target_cpu)e
-dllname = $(bin_dir)/wccd$(target_cpu)e
-cxname = $(bin_dir)/wcc$(target_cpu)s.$(final_exe_$(host_os))
+xname = wcc$(target_cpu)c.$(final_exe_$(host_os))
+dxname = wcc$(target_cpu)d.$(final_exe_$(host_os))
+dllexet = wcc$(target_cpu)t
+dllexe = wcc$(target_cpu)e
+dllname = wccd$(target_cpu)e
+cxname = wcc$(target_cpu)s.$(final_exe_$(host_os))
 
 # systems where version resources must be added to .DLL
 build_rc_nt_386 = nt
@@ -373,10 +372,3 @@ eraseall.obj : ../compile.gbl
         rm -f *.?bj
         wtouch eraseall.obj
 
-bin_dir_nt      = binnt
-bin_dir_os2     = binp
-bin_dir_dos     = binw
-
-install: $(dxname) .SYMBOLIC .EXPLICIT
-        cp $(dxname) $(%watcom)/$(bin_dir_$(host_os))/wcc$(target_cpu).exe
-wccexed: $(dxname) .SYMBOLIC .EXPLICIT

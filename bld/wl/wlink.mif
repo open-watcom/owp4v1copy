@@ -253,8 +253,8 @@ extra_rc_flags = $(extra_rc_flags_$(host_OS))
 
 lnk = tmp.lnk
 
-exe = $(bin_prefix)wl.$(extend)
-stubexe = $(bin_prefix)wlstub.exe
+exe = wl.$(extend)
+stubexe = wlstub.exe
 
 !ifeq bootstrap 1
 exe = $(proj_name)

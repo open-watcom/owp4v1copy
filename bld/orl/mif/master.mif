@@ -4,21 +4,7 @@ proj_name = orl
 !include defrule.mif
 !include deftarg.mif
 
-obj             = .obj
-exe             = .exe
-
 extra_c_flags_axp =
-
-bin_nt_386 = o
-bin_nt_axp = axp
-bin_os2_386 = os2
-!ifdef orl_rtdll
-!ifeq orl_rtdll 1
-bin_nt_386 = o.dll
-bin_nt_axp = axp.dll
-bin_os2_386 = os2.dll
-!endif
-!endif
 
 .c: $(orl_dir)/c;$(orl_dir)/elf/c;$(orl_dir)/coff/c;$(orl_dir)/omf/c
 .h: $(orl_dir)/h;$(orl_dir)/elf/h;$(orl_dir)/coff/h;$(orl_dir)/omf/h
@@ -28,35 +14,31 @@ inc_dirs = $(orl_dir)/h;$(orl_dir)/elf/h;$(orl_dir)/coff/h;$(orl_dir)/omf/h;$(wa
 .before:
         set include=$(inc_path)
 
-omf_objs        = &
-                omfload$(obj) &
-                omfmunge$(obj) &
-                omfentr$(obj) &
-                omfflhn$(obj) &
-                omfdrctv$(obj) &
+omf_objs =  omfload.obj &
+            omfmunge.obj &
+            omfentr.obj &
+            omfflhn.obj &
+            omfdrctv.obj
 
-elf_objs        = elfentr$(obj) &
-                        elflwlv$(obj) &
-                        elfflhn$(obj) &
-                        elfload$(obj) &
+elf_objs  = elfentr.obj &
+            elflwlv.obj &
+            elfflhn.obj &
+            elfload.obj
 
-coff_objs       = coffentr$(obj) &
-                        cofflwlv$(obj) &
-                        coffflhn$(obj) &
-                        coffload$(obj) &
-                        coffimpl$(obj)
+coff_objs = coffentr.obj &
+            cofflwlv.obj &
+            coffflhn.obj &
+            coffload.obj &
+            coffimpl.obj
 
-orl_objs        = orlentry$(obj) &
-                        orlflhnd$(obj) &
-                        orlhash$(obj) &
-                        $(omf_objs) &
-                        $(elf_objs) &
-                        $(coff_objs)
+orl_objs  = orlentry.obj &
+            orlflhnd.obj &
+            orlhash.obj &
+            $(omf_objs) &
+            $(elf_objs) &
+            $(coff_objs)
 
-../$(bin_$(host_OS)_$(host_CPU))/orl.lib : $(orl_objs)
+orl.lib : $(orl_objs)
         @%create $^&.lbc
         @for %i in ($(orl_objs)) do @%append $^&.lbc -+%i
         $(librarian) -b $^@ @$^&.lbc
-
-#clean: .SYMBOLIC .EXPLICIT
-#        rm -f *.?bj *.lnk *.exe *.lib *.res *.lbc *.err $(lbc)

@@ -4,7 +4,6 @@ proj_name = wdis
 
 !include cproj.mif
 !include defrule.mif
-!include binname.mif
 
 !include orl.mif
 !include wres.mif
@@ -74,13 +73,19 @@ wdisasm_objs = $(stand_objs) $(dis_objs) demangle.obj trmemcvr.obj
 wdisasm_objs += trmem.obj
 !endif
 
-linker_name = $(bin_dir)/$(bin_name)$(bin_suffix)
+!ifeq host_os linux
+exe_name = $(proj_name).elf
+!else ifeq host_os qnx
+exe_name = $(proj_name).qnx
+!else
+exe_name = $(proj_name).exe
+!endif
 
-$(bin_path) : $(wdisasm_objs) $(pre_deps_$(host_os)) $(orl_lib) $(proj_name).res $(wres_lib)
+$(exe_name) : $(wdisasm_objs) $(pre_deps_$(host_os)) $(orl_lib) $(proj_name).res $(wres_lib)
         *$(linker) $(lflags) name $@ file { $(wdisasm_objs) } lib $(wres_lib)
 !ifeq host_os osi
-        w32bind $(linker_name).rex $(bin_path) $(tools_root)/os2ldr.exe
-        rm -f $(linker_name).rex
+        w32bind $^&.rex $^@ $(tools_root)/os2ldr.exe
+        rm -f $^&.rex
 !endif
         wstrip -q -a -r $^@ . $(proj_name).res
 
