@@ -295,6 +295,7 @@ void DRDbgFini( dr_dbg_handle dbg )
     }
     DWRFiniFileTable( &dbg->compunit.filetab, FALSE );
     DWRFREE( dbg );
+    DWRVMReset();
 }
 
 dr_dbg_handle  DRSetDebug( dr_dbg_handle dbg )

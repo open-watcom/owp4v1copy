@@ -47,6 +47,12 @@ extern void DWRVMInit( void )
     AllocHead = NULL;
 }
 
+extern void DWRVMReset( void )
+/***************************/
+{
+    /* nothing to do here */
+}
+
 extern dr_handle DWRVMAlloc( unsigned long len, int sect )
 /********************************************************/
 {
@@ -104,6 +110,7 @@ extern void DWRVMDestroy( void )
         walk = walk->next;
         DWRFREE( prev );
     }
+    AllocHead = NULL;
 }
 
 extern int DRSwap( void )

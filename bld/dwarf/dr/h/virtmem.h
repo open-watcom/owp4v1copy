@@ -24,14 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DWARF reader library virtual memory interface.
 *
 ****************************************************************************/
 
 
 extern void      DWRVMInit( void );
 extern void      DWRVMDestroy( void );
+extern void      DWRVMReset( void );
 extern int       DWRVMSectDone( dr_handle base, unsigned_32 size );
 
 // DWRCurrNode must be set for alloc, free

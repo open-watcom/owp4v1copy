@@ -117,6 +117,17 @@ extern void DWRVMInit( void )
     PageCount = 0;
 }
 
+extern void DWRVMReset( void )
+/****************************/
+// Reset VM state without having to destroy/init
+// NOTE: This will ensure that allocations start from the lowest VM
+// address again, without actually freeing the memory that we have
+// allocated. Any existing memory will be reused.
+{
+    CurrBranch = 1;
+    NextLeaf = 0;
+}
+
 static void GetMoreBranches( void )
 /*********************************/
 // make a larger array to hold branch pointers in.
