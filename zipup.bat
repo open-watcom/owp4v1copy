@@ -1,11 +1,11 @@
 @echo on
 pushd
-set LABEL=open_watcom_0.8.1
-set PREFIX=open_watcom_0.8.1
+set LABEL=open_watcom_0.8.3
+set PREFIX=open_watcom_0.8.3
 set P4OPT=-f
 set ARCHIVES=c:\archives
 cdd %ARCHIVES%
-del /q *.zip
+del /q *.zip >& NUL
 
 rem ##########################################################################
 rem ZIP all Open Watcom source files
