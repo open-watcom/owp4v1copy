@@ -69,9 +69,13 @@ alt_error = 00
 add_br_ = -br
 !endif
 
-cflags_386 += -we-w0-zq -i$(positive_dir)
-cflags_i86 += -we-w0-zq -i$(positive_dir)
-cflags_axp += -we-w0-zq -i$(positive_dir)
+!ifndef noisy
+run_quietly = -zq
+!endif
+
+cflags_386 += -we-w0 -i$(positive_dir) $(run_quietly)
+cflags_i86 += -we-w0 -i$(positive_dir) $(run_quietly)
+cflags_axp += -we-w0 -i$(positive_dir) $(run_quietly)
 
 !ifeq arch 386
 cflags_386 += $(add_br_$(no_br_$^*))

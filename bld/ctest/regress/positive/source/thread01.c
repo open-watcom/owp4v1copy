@@ -35,14 +35,14 @@ static  void    a_thread( void *args ) {
     while( HoldThreads ) {
         Sleep( 0 );
     }
-    auto_integer++;
-    if( auto_integer != 101 ) {
-        printf( "auto_integer is not local to this thread: %d\n", _THREADID );
-        _fail;
-    }
     file_integer++;
     if( file_integer != 2 ) {
         printf( "file_integer is not local to this thread: %d\n", _THREADID );
+        _fail;
+    }
+    auto_integer++;
+    if( auto_integer != 101 ) {
+        printf( "auto_integer is not local to this thread: %d\n", _THREADID );
         _fail;
     }
     WaitForSingleObject( ThreadSem, -1 );
