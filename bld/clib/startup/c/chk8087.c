@@ -168,7 +168,7 @@ unsigned char __init_8087()
 
 _WCRTLINK void _fpreset( void )
 {
-    if( _RWD_real87 != 0 ) {
+    if( _RWD_8087 != 0 ) {
         __init_8087();
     }
 }

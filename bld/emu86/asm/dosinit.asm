@@ -29,52 +29,50 @@
 ;*
 ;*****************************************************************************
 
-
 include mdef.inc
+;include struct.inc
 
-        xref    __8087
+        modstart    initemu
 
-ifdef __DOS__
-ifndef __386__
-
-        xdefp   __old_8087_emu
-
-DGROUP  GROUP _DATA
-_DATA segment word 'DATA'
-        __old_8087_emu dw 0
-_DATA ends
-
-endif
-endif
-
-        modstart _old8087
-
-        xdefp    __old_8087
-        defp     __old_8087
-        fldz
-        fldz
-        fldz
-        fldz
-ifdef __DOS__
-ifndef __386__
-assume DS:DGROUP
-        push    ds
-if _MODEL and _BIG_DATA
-        mov     ax,DGROUP
-        mov     ds,ax
-endif
-        cmp     word ptr __old_8087_emu, 0
-        jz      l1
-        call    __old_8087_emu
-l1:     pop     ds
-endif
-endif
+        xdefp   ___init_emu
+        defn    ___init_emu
+        push    bp
+        mov     bp,sp
+        push    ax
+        finit                         ; initialize the '8087' emulator
+        fldcw   word ptr [bp - 2]     ; load control word
+        mov     sp,bp
+        mov     ax,3
+        pop     bp
         ret
-        endproc __old_8087
+        endproc ___init_emu
+
+        xdefp   ___init_old_emu
+        defn    ___init_old_emu
+        fldz                          ; put 8087 into 4 empty / 4 full state
+        fldz                          ; ...
+        fldz                          ; ...
+        fldz                          ; ...
+        ret
+        endproc ___init_old_emu
+
+        xdefp   ___emu_fstcw
+        defn    ___emu_fstcw
+        xchg   ax,bp
+        fstcw  word ptr [bp]
+        fwait
+        xchg   ax,bp
+        ret
+        endproc ___emu_fstcw
+
+        xdefp   ___emu_fldcw
+        defn    ___emu_fldcw
+        xchg   ax,bp
+        fldcw  word ptr [bp]
+        fwait
+        xchg   ax,bp
+        ret
+        endproc ___emu_fldcw
+
         endmod
-
-include xinit.inc
-
-        xinit   __old_8087,3
-
         end

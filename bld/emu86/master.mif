@@ -25,6 +25,7 @@ cpu_size =32
 !endif
 
 extra_a_flags=-fpc
+extra_a_flags_dosinit= -ms -fpi
 extra_a_flags_initemu = -ms -i"$(comp_cfg_dir)/h" -fpi87
 extra_a_flags_initemu2 = -ms -i"$(comp_cfg_dir)/h"
 extra_a_flags_initemuw = -ms -i"$(comp_cfg_dir)/h"
@@ -39,7 +40,7 @@ extra_a_flags_qnx = -DQNX$(cpu_size)
 
 extra_c_flags_qnx = -oais -s -i"$(new_qnx_h)" -DQNX$(cpu_size) -fpc
 
-objs_dos = initemu.obj emu8087.obj
+objs_dos = initemu.obj emu8087.obj dosinit.obj
 objs_os2 = initemu2.obj emu8087.obj
 objs_win = initemuw.obj
 

@@ -1,3 +1,34 @@
+;*****************************************************************************
+;*
+;*                            Open Watcom Project
+;*
+;*    Portions Copyright (c) 1983-2002 Sybase, Inc. All Rights Reserved.
+;*
+;*  ========================================================================
+;*
+;*    This file contains Original Code and/or Modifications of Original
+;*    Code as defined in and that are subject to the Sybase Open Watcom
+;*    Public License version 1.0 (the 'License'). You may not use this file
+;*    except in compliance with the License. BY USING THIS FILE YOU AGREE TO
+;*    ALL TERMS AND CONDITIONS OF THE LICENSE. A copy of the License is
+;*    provided with the Original Code and Modifications, and is also
+;*    available at www.sybase.com/developer/opensource.
+;*
+;*    The Original Code and all software distributed under the License are
+;*    distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+;*    EXPRESS OR IMPLIED, AND SYBASE AND ALL CONTRIBUTORS HEREBY DISCLAIM
+;*    ALL SUCH WARRANTIES, INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF
+;*    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR
+;*    NON-INFRINGEMENT. Please see the License for the specific language
+;*    governing rights and limitations under the License.
+;*
+;*  ========================================================================
+;*
+;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+;*               DESCRIBE IT HERE!
+;*
+;*****************************************************************************
+
 include mdef.inc
 include struct.inc
 include xinit.inc
@@ -23,23 +54,20 @@ public  FIARQQ
 FIARQQ  equ             0FE32H
 
 
-        extrn   __init_8087_emu : near
-        name    initemu
-
-extrn   __int34         : near
-extrn   __int3c         : near
-;========================================================
-
         xinit   __init_87_emulator,1
         xfini   __fini_87_emulator,1
 
 DGROUP  group   _DATA
         assume  ds:DGROUP
 _DATA   segment word public 'DATA'
-        extrn   __8087   : byte
-        extrn   __real87 : byte
-        extrn   __no87   : word
-        extrn   __8087cw : word
+        extrn   __8087          : byte
+        extrn   __real87        : byte
+        extrn   __no87          : word
+        extrn   __8087cw        : word
+        extrn   __init_emu      : word
+        extrn   __old_8087_emu  : word
+        extrn   "C",__dos_emu_fstcw : word
+        extrn   "C",__dos_emu_fldcw : word
 
 i34off  dw      0
 i34seg  dw      0
@@ -65,6 +93,14 @@ _DATA   ends
 
 _TEXT segment word public 'CODE'
 
+        extrn   __int34         : near
+        extrn   __int3c         : near
+        extrn   __init_8087_emu : near
+        extrn   ___init_old_emu : near
+        extrn   ___init_emu     : near
+        extrn   ___emu_fstcw    : near
+        extrn   ___emu_fldcw    : near
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;      void _init_87_emulator( void )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -78,11 +114,7 @@ xchg_vects      proc near
         push    di                      ; ...
         push    ds                      ; ...
         push    es                      ; ...
-if _MODEL and _BIG_DATA                 ; get addressability
-        mov     di,DGROUP               ; ...
-else                                    ; ...
         mov     di,ds                   ; ...
-endif                                   ; ...
         lea     si,i34off               ; point to vector table
         mov     al,34H                  ; for( v = 34H; v <= 3dH; ) {
         mov     cx,10                   ; - ...
@@ -109,7 +141,6 @@ grab:   mov     ah,35H                  ; - get old interrupt
         pop     bx                      ; save regs
         ret                             ; return to caller
 xchg_vects      endp
-
 
 ;       __no87 is not 0 if NO87 environment variable is present
 
@@ -165,12 +196,12 @@ endif                                   ; ...
         test    bx,bx                   ; if no 80x87 or no87 set
         _if     ne                      ; then
           mov   byte ptr __real87,0     ; - say we do not have a real 80x87
-          finit                         ; initialize the '8087' emulator
-          fldcw   word ptr __8087cw     ; load control word
-          fldz                          ; put 8087 into 4 empty / 4 full state
-          fldz                          ; ...
-          fldz                          ; ...
-          fldz                          ; ...
+          mov   ax,__8087cw
+          call  ___init_emu             ; initialize the '8087' emulator
+          mov   word ptr __init_emu, ___init_emu
+          mov   word ptr __old_8087_emu, ___init_old_emu
+          mov   word ptr __dos_emu_fstcw, ___emu_fstcw
+          mov   word ptr __dos_emu_fldcw, ___emu_fldcw
         _else                           ; else
           mov   byte ptr __real87,al    ; - we have a real 80x87 of type AL
         _endif                          ; endif
@@ -185,7 +216,16 @@ __init_87_emulator endp
 
 public __fini_87_emulator
 __fini_87_emulator proc near
+        push    ds
+if _MODEL and _BIG_DATA                 ; get addressability
+        mov     ax,DGROUP               ; ...
+        mov     ds,ax
+endif                                   ; ...
         call    xchg_vects
+        mov     word ptr __init_emu, 0
+        mov     word ptr __dos_emu_fstcw, 0
+        mov     word ptr __dos_emu_fldcw, 0
+        pop     ds
         ret
 __fini_87_emulator endp
 
