@@ -159,7 +159,7 @@ inc_path = ..\h;$(build_root)\hdr\dos;$(build_root)\watcom\h;$(%watcom)\h
 !endif
 
 !ifdef _WIN
-inc_path += ;$(%watcom)\h\win;$(build_root)\clib\h;$(build_root)\clib\defwin\h;$(wpi_dir)\h;$(watcom_dir)\os220_h
+inc_path += ;$(%watcom)\h\win;$(build_root)\clib\h;$(build_root)\clib\defwin\h;$(wpi_dir)\h;$(inc_dirs_sys)
 !endif
 
 .before
