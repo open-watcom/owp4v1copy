@@ -46,9 +46,9 @@
 extern hash_table       HandleToSectionTable;
 extern publics_struct   Publics;
 
-static int alpha_compare( const label_entry *entry1, const label_entry *entry2 )
+static int alpha_compare( const void *entry1, const void *entry2 )
 {
-    return( stricmp( (*entry1)->label.name, (*entry2)->label.name ) );
+    return( stricmp( (*(label_entry *)entry1)->label.name, (*(label_entry *)entry2)->label.name ) );
 }
 
 void CreatePublicsArray( void )
