@@ -1,0 +1,6 @@
+# Manifest file for C compiler binaries (NT host)
+
+binnt\wcc.exe
+binnt\wccd.dll
+binnt\wccd386.dll
+binnt\wcc386.exe

@@ -1,0 +1,6 @@
+# Manifest file for C runtime libraries (C/C++, DOS 16-bit target)
+
+lib286\dos\clibc.lib
+lib286\dos\clibh.lib
+lib286\dos\clibs.lib
+

@@ -1,0 +1,11 @@
+# Manifest file for help files (Watcom C/C++, DOS host)
+
+binw\cguide.ihp
+binw\clr.ihp
+binw\cmix.ihp
+binw\cpplib.ihp
+binw\c_readme.ihp
+binw\pguide.ihp		(not yet approved)
+binw\tools.ihp
+binw\wccerrs.ihp
+binw\wpperrs.ihp

@@ -1,0 +1,5 @@
+# Manifest file for debugger binaries (Watcom C/C++/Fortran, DOS & Win16 hosts)
+
+binw\dbglib.rex
+binw\dosserv.exe
+binw\netserv.exe

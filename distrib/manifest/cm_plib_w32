@@ -1,0 +1,4 @@
+# Manifest file for C++ runtime library binaries (C/C++/Fortran, NT 32-bit target)
+
+lib386\nt\plib3r.lib
+

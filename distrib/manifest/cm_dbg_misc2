@@ -1,0 +1,3 @@
+# Manifest file for debugger binaries (Watcom C/C++/Fortran, Win 3.x, 95, 98 & ME hosts)
+
+binw\wdebug.386

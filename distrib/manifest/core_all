@@ -1,0 +1,4 @@
+# Manifest file for common core binaries (Watcom C/C++, All hosts)
+
+binw\unicode.437
+binw\unicode.850

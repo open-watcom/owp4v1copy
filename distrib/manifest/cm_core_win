@@ -1,0 +1,19 @@
+# Manifest file for common core binaries (Watcom C/C++/Fortran, Win16 host)
+
+binw\drwatcom.exe
+binw\w386dll.ext
+binw\wacc.dll
+binw\wbind.exe
+binw\wddespy.exe
+binw\wemu387.386
+binw\wheapwlk.exe
+binw\win386.ext
+binw\wint32.dll
+binw\wspy.exe
+binw\wspyhk.dll
+binw\wzoom.exe
+
+
+
+
+

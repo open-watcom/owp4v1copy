@@ -1,0 +1,4 @@
+# Manifest file for common core binaries (Watcom C/C++, Dos & Win16 hosts)
+
+binw\wcl.exe
+binw\wcl386.exe

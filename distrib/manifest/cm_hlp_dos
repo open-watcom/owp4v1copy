@@ -1,0 +1,8 @@
+# Manifest file for common help files (Watcom C/C++/Fortran, DOS host)
+
+binw\clib.ihp
+binw\lguide.ihp
+binw\rescomp.ihp
+binw\wd.ihp
+binw\wprof.ihp
+

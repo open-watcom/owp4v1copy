@@ -1,0 +1,20 @@
+# Manifest file for common core binaries (Watcom C/C++, OS/2 host)
+
+binp\wcl.exe
+binp\wcl386.exe
+binp\dll\clbr110.dll
+binp\dll\clbr110.sym
+binp\dll\clbs110.dll
+binp\dll\clbs110.sym
+binp\dll\mt7r110.dll
+binp\dll\mt7r110.sym
+binp\dll\mt7s110.dll
+binp\dll\mt7s110.sym
+binp\dll\mthr110.dll
+binp\dll\mthr110.sym
+binp\dll\mths110.dll
+binp\dll\mths110.sym
+binp\dll\plbr110.dll
+binp\dll\plbr110.sym
+binp\dll\plbs110.dll
+binp\dll\plbs110.sym

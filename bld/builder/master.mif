@@ -9,16 +9,13 @@ name = builder
 !include defrule.mif
 !include deftarg.mif
 
-all: $(name).exe cdsay.exe sweep.exe wsplice.exe diff.exe
+all: $(name).exe cdsay.exe sweep.exe wsplice.exe diff.exe comstrip.exe
 
 extra_c_flags = -i..\..\pmake
 
 .c: ..\c;..\..\pmake
 
-OBJS  = builder.obj utils.obj runit.obj sys.obj # pmake.obj pmkcmd.obj
-COBJS = cdsay.obj
-SOBJS = sweep.obj
-WOBJS = wsplice.obj
+OBJS   = builder.obj utils.obj runit.obj sys.obj # pmake.obj pmkcmd.obj
 
 $(name).exe : $(OBJS)
         $(linker) $(lflags) name $^@ op map,quiet file {$(OBJS)}
@@ -37,5 +34,9 @@ wsplice.exe : wsplice.obj
         @copy $^. $(bld_bin)
 
 diff.exe : diff.obj
+        $(linker) $(lflags) name $^@ op map,quiet file { $< }
+        @copy $^. $(bld_bin)
+
+comstrip.exe : comstrip.obj
         $(linker) $(lflags) name $^@ op map,quiet file { $< }
         @copy $^. $(bld_bin)

@@ -1,0 +1,10 @@
+# Manifest file for common core binaries (Watcom C/C++/Fortran, All hosts)
+
+binw\1252.uni
+binw\bpatch.exe
+binw\cmdedit.txt
+binw\fcenable.exe
+binw\kanji.uni
+binw\ms2wlink.exe
+binw\techinfo.exe
+binw\wlsystem.lnk

@@ -1,0 +1,7 @@
+# Manifest file for Fortran runtime library (32-bit Windows target)
+
+lib386\nt\flib7.lib
+lib386\nt\flib7s.lib
+lib386\nt\flib.lib
+lib386\nt\flibs.lib
+

@@ -1,0 +1,5 @@
+# Manifest file for C compiler binaries (DOS & Win16 host)
+
+binw\wcc.exe
+binw\wcc386.exe
+

@@ -54,7 +54,6 @@ set more=-t
 set path=%owroot%\bin;%devdir%\build\bin;%owroot%\bat;%lang%\binw;%doc_root%\cmds;%defpath%
 set relroot=%owroot%
 set rm=-s
-set manifest=%owroot%\manifest
 set ver=11
 set watcom=%lang%
 set edpath=%lang%\eddat
