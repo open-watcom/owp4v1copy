@@ -66,6 +66,6 @@ librarian  += -q
 as         += -q
 rc         += -q
 
+bld_cl     += -zq
 bld_cc     += -zq
-bld_cpp    += -zq
 bld_link   += op q
