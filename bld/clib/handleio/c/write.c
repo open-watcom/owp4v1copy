@@ -38,7 +38,7 @@
 #include <errno.h>
 #include <stddef.h>
 #include <string.h>
-#ifdef __NT__
+#if defined(__NT__)
     #include <windows.h>
 #elif defined(__WINDOWS__)
     #include <windows.h>
@@ -57,7 +57,7 @@
 #include "defwin.h"
 #include "lseek.h"
 
-#ifdef __NT__
+#if defined(__NT__)
 #ifndef INVALID_SET_FILE_POINTER
 #define INVALID_SET_FILE_POINTER 0xFFFFFFFF
 #endif
@@ -101,33 +101,31 @@ static int zero_pad( int handle )           /* 09-jan-95 */
 /*******************************/
 {
 #if defined(__NT__)
-    HANDLE  h;
-    DWORD   dw_ptr;
-    DWORD   dw_error;
-    DWORD   number_of_bytes_written;
+    HANDLE      h;
+    DWORD       dw_ptr;
+    DWORD       dw_error;
+    DWORD       number_of_bytes_written;
     unsigned    write_amt;
-    __i64   cur_ptr;
-    __i64   end_ptr;
-    BOOL    rc;
-    char    zeroBuf[PAD_SIZE];
+    __i64       cur_ptr;
+    __i64       end_ptr;
+    BOOL        rc;
+    char        zeroBuf[PAD_SIZE];
 
     h = __getOSHandle( handle );
     dw_error = NO_ERROR;
 
     cur_ptr._64 = 0;
-    dw_ptr = SetFilePointer( h, cur_ptr._32[0],
-                &cur_ptr._32[1], FILE_CURRENT );
+    dw_ptr = SetFilePointer( h, cur_ptr._32[0], &cur_ptr._32[1], FILE_CURRENT );
     if( dw_ptr == INVALID_SET_FILE_POINTER ) { // this might be OK so
-    dw_error = GetLastError() ;
+        dw_error = GetLastError() ;
     }
     if( dw_error != NO_ERROR ) return( -1 );
     cur_ptr._32[0] = dw_ptr;
 
     end_ptr._64 = 0;
-    dw_ptr = SetFilePointer( h, end_ptr._32[0],
-                &end_ptr._32[1], FILE_END );
+    dw_ptr = SetFilePointer( h, end_ptr._32[0], &end_ptr._32[1], FILE_END );
     if( dw_ptr == INVALID_SET_FILE_POINTER ) { // this might be OK so
-    dw_error = GetLastError() ;
+        dw_error = GetLastError() ;
     }
     if( dw_error != NO_ERROR ) return( -1 );
     end_ptr._32[0] = dw_ptr;
@@ -135,57 +133,56 @@ static int zero_pad( int handle )           /* 09-jan-95 */
     memset( zeroBuf, 0x00, PAD_SIZE );
 
     while( end_ptr._64 < cur_ptr._64 ) {
-    if( (end_ptr._64 + PAD_SIZE) < cur_ptr._64 ) {
-        write_amt = PAD_SIZE;
-    } else {
-        write_amt = cur_ptr._64 - end_ptr._64;
-    }
-    rc = WriteFile( h, zeroBuf, write_amt, &number_of_bytes_written, NULL );
-    dw_error = GetLastError() ;
-    if( rc == 0 ) return( -1 );
-    end_ptr._64 = end_ptr._64 + write_amt;
+        if( (end_ptr._64 + PAD_SIZE) < cur_ptr._64 ) {
+            write_amt = PAD_SIZE;
+        } else {
+            write_amt = cur_ptr._64 - end_ptr._64;
+        }
+        rc = WriteFile( h, zeroBuf, write_amt, &number_of_bytes_written, NULL );
+        dw_error = GetLastError() ;
+        if( rc == 0 ) return( -1 );
+        end_ptr._64 = end_ptr._64 + write_amt;
     }
 
     if( cur_ptr._64 != end_ptr._64 ) {
-    dw_ptr = SetFilePointer( h, cur_ptr._32[0],
-                    &cur_ptr._32[1], FILE_BEGIN );
-    if( dw_ptr == INVALID_SET_FILE_POINTER ) { // this might be OK so
-        dw_error = GetLastError() ;
-    }
-    if( dw_error != NO_ERROR ) return( -1 );
+        dw_ptr = SetFilePointer( h, cur_ptr._32[0], &cur_ptr._32[1], FILE_BEGIN );
+        if( dw_ptr == INVALID_SET_FILE_POINTER ) { // this might be OK so
+            dw_error = GetLastError() ;
+        }
+        if( dw_error != NO_ERROR ) return( -1 );
     }
     return( 0 );
 #else
-    int     rc;
-    long    curPos, eodPos;
-    long    bytesToWrite;
+    int         rc;
+    long        curPos, eodPos;
+    long        bytesToWrite;
     unsigned    writeAmt;
-    char    zeroBuf[PAD_SIZE];
+    char        zeroBuf[PAD_SIZE];
 
     // Pad with zeros due to lseek() past EOF (POSIX)
-    curPos = __lseek( handle, 0L, SEEK_CUR ); /* current offset */
+    curPos = __lseek( handle, 0L, SEEK_CUR );   /* current offset */
     if( curPos == -1 )  return( -1 );
-    eodPos = __lseek( handle, 0L, SEEK_END ); /* end of data offset */
+    eodPos = __lseek( handle, 0L, SEEK_END );   /* end of data offset */
     if( eodPos == -1 )  return( -1 );
 
     if( curPos > eodPos ) {
-    bytesToWrite = curPos - eodPos;     /* amount to pad by */
+        bytesToWrite = curPos - eodPos;         /* amount to pad by */
 
-    if( bytesToWrite > 0 ) {        /* only write if needed */
-        memset( zeroBuf, 0x00, PAD_SIZE );  /* zero out a buffer */
-        do {                /* loop until done */
-        if( bytesToWrite > PAD_SIZE )
-            writeAmt = 512;
-        else
-            writeAmt = (unsigned)bytesToWrite;
-        rc = write( handle, zeroBuf, writeAmt );
-        if( rc < 0 )  return( rc );
-        bytesToWrite -= writeAmt;   /* more bytes written */
-        } while( bytesToWrite != 0 );
-    }
+        if( bytesToWrite > 0 ) {                /* only write if needed */
+            memset( zeroBuf, 0x00, PAD_SIZE );  /* zero out a buffer */
+            do {                                /* loop until done */
+                if( bytesToWrite > PAD_SIZE )
+                    writeAmt = 512;
+                else
+                    writeAmt = (unsigned)bytesToWrite;
+                rc = write( handle, zeroBuf, writeAmt );
+                if( rc < 0 )  return( rc );
+                bytesToWrite -= writeAmt;       /* more bytes written */
+            } while( bytesToWrite != 0 );
+        }
     } else {
-    curPos = __lseek( handle, curPos, SEEK_SET );
-    if( curPos == -1 )  return( -1 );
+        curPos = __lseek( handle, curPos, SEEK_SET );
+        if( curPos == -1 )  return( -1 );
     }
 
     return( 0 );                /* return success code */
@@ -201,20 +198,19 @@ static int os_write( int handle, const void *buffer, unsigned len, unsigned *amt
 /********************************************************************************/
 {
 #ifdef DEFAULT_WINDOWING
-    LPWDATA res;
+    LPWDATA     res;
 #endif
 #if defined(__NT__)
-    HANDLE  h;
-    int     rc;
+    HANDLE      h;
+    int         rc;
 #else
     tiny_ret_t  rc;
 #endif
 
     rc = 0;
 #ifdef DEFAULT_WINDOWING
-    if( _WindowsStdout != 0 &&
-    (res = _WindowsIsWindowedHandle( handle )) != 0 ) {
-    *amt = _WindowsStdout( res, buffer, len );
+    if( _WindowsStdout != 0 && (res = _WindowsIsWindowedHandle( handle )) != 0 ) {
+        *amt = _WindowsStdout( res, buffer, len );
     } else {
 #endif
 #if defined(__NT__)
@@ -238,7 +234,7 @@ static int os_write( int handle, const void *buffer, unsigned len, unsigned *amt
 #endif
 #if !defined(__NT__)
     if( TINY_ERROR(rc) ) {
-    rc = __set_errno_dos( TINY_INFO(rc) );
+        rc = __set_errno_dos( TINY_INFO(rc) );
     }
 #endif
     if( *amt != len ) {
@@ -257,18 +253,18 @@ static int os_write( int handle, const void *buffer, unsigned len, unsigned *amt
 /**********************************************************************/
 {
     unsigned    iomode_flags;
-    char    *buf;
+    char        *buf;
     unsigned    buf_size;
     unsigned    len_written, i, j;
 #if defined(__NT__)
-    HANDLE  h;
-    LONG    cur_ptr_low;
-    LONG    cur_ptr_high;
-    DWORD   rc1;
+    HANDLE      h;
+    LONG        cur_ptr_low;
+    LONG        cur_ptr_high;
+    DWORD       rc1;
 #else
     tiny_ret_t  rc1;
 #endif
-    int     rc2;
+    int         rc2;
 
     __handle_check( handle, -1 );
     iomode_flags = __GetIOMode( handle );
@@ -282,11 +278,11 @@ static int os_write( int handle, const void *buffer, unsigned len, unsigned *amt
     #endif
     }
     if( !(iomode_flags & _WRITE) ) {
-    __set_errno( EACCES );     /* changed from EBADF to EACCES 23-feb-89 */
-    return( -1 );
+        __set_errno( EACCES );     /* changed from EBADF to EACCES 23-feb-89 */
+        return( -1 );
     }
 
-    #ifdef __NT__
+    #if defined(__NT__)
     h = __getOSHandle( handle );
     #endif
 
@@ -294,19 +290,17 @@ static int os_write( int handle, const void *buffer, unsigned len, unsigned *amt
 
     _AccessFileH( handle );
     if( iomode_flags & _APPEND ) {
-    #ifdef __NT__
-
+    #if defined(__NT__)
         if( GetFileType( h ) == FILE_TYPE_DISK ) {
-        cur_ptr_low = 0;
-        cur_ptr_high = 0;
-        rc1 = SetFilePointer( h, cur_ptr_low,
-                    &cur_ptr_high, FILE_END );
-        if( rc1 == INVALID_SET_FILE_POINTER ) { // this might be OK so
-            if( GetLastError() != NO_ERROR ) {
-            _ReleaseFileH( handle );
-            return( __set_errno_nt() );
+            cur_ptr_low = 0;
+            cur_ptr_high = 0;
+            rc1 = SetFilePointer( h, cur_ptr_low, &cur_ptr_high, FILE_END );
+            if( rc1 == INVALID_SET_FILE_POINTER ) { // this might be OK so
+                if( GetLastError() != NO_ERROR ) {
+                    _ReleaseFileH( handle );
+                    return( __set_errno_nt() );
+                }
             }
-        }
         }
     #else
         #ifdef __OS2__
@@ -318,8 +312,8 @@ static int os_write( int handle, const void *buffer, unsigned len, unsigned *amt
         rc1 = TinySeek( handle, 0L, SEEK_END );
         #endif
         if( TINY_ERROR(rc1) ) {
-        _ReleaseFileH( handle );
-        return( __set_errno_dos( TINY_INFO(rc1) ) );
+            _ReleaseFileH( handle );
+            return( __set_errno_dos( TINY_INFO(rc1) ) );
         }
     #endif
     }
@@ -329,72 +323,74 @@ static int os_write( int handle, const void *buffer, unsigned len, unsigned *amt
 
     // Pad the file with zeros if necessary
     if( iomode_flags & _FILEEXT ) {
-    // turn off file extended flag
-    __SetIOMode_nogrow( handle, iomode_flags&(~_FILEEXT) );
+        // turn off file extended flag
+        __SetIOMode_nogrow( handle, iomode_flags&(~_FILEEXT) );
 
-    // It is not required to pad a file with zeroes on an NTFS file system;
-    // unfortunately it is required on FAT (and probably FAT32). (JBS)
-    rc2 = zero_pad( handle );
+        // It is not required to pad a file with zeroes on an NTFS file system;
+        // unfortunately it is required on FAT (and probably FAT32). (JBS)
+        rc2 = zero_pad( handle );
     }
 
     if( rc2 == 0 ) {
-    if( iomode_flags & _BINARY ) {  /* if binary mode */
-        rc2 = os_write( handle, buffer, len, &len_written );
-        /* end of binary mode part */
-    } else {    /* text mode */
-        i = stackavail();
-        if( i < 0x00b0 ) {
-        __STKOVERFLOW();    /* not enough stack space */
-        }
-        buf_size = 512;
-        if( i < (512 + 48) )  buf_size = 128;
-        #if defined(__AXP__) || defined(__PPC__)
-        buf = alloca( buf_size );
-        #else
-        buf = __alloca( buf_size );
-        #endif
-        j = 0;
-        for( i = 0; i < len; ) {
-        if( ((const char*)buffer)[i] == '\n' ) {
-            buf[j] = '\r';
-            ++j;
-            if( j == buf_size ) {
-            rc2 = os_write( handle, buf, buf_size, &j );
-            if( rc2 == -1 ) break;
-            len_written += j;
-            if( rc2 == ENOSPC ) break;
-            len_written = i;
-            j = 0;
+        if( iomode_flags & _BINARY ) {  /* if binary mode */
+            rc2 = os_write( handle, buffer, len, &len_written );
+            /* end of binary mode part */
+        } else {    /* text mode */
+            i = stackavail();
+            if( i < 0x00b0 ) {
+                __STKOVERFLOW();    /* not enough stack space */
             }
-        }
-        buf[j] = ((const char*)buffer)[i];
-        ++i;
-            ++j;
-            if( j == buf_size ) {
-            rc2 = os_write( handle, buf, buf_size, &j );
-            if( rc2 == -1 ) break;
-            len_written += j;
-            if( rc2 == ENOSPC ) break;
-            len_written = i;
-            j = 0;
+            buf_size = 512;
+            if( i < (512 + 48) ) {
+                buf_size = 128;
             }
+            #if defined(__AXP__) || defined(__PPC__)
+            buf = alloca( buf_size );
+            #else
+            buf = __alloca( buf_size );
+            #endif
+            j = 0;
+            for( i = 0; i < len; ) {
+                if( ((const char*)buffer)[i] == '\n' ) {
+                    buf[j] = '\r';
+                    ++j;
+                    if( j == buf_size ) {
+                        rc2 = os_write( handle, buf, buf_size, &j );
+                        if( rc2 == -1 ) break;
+                        len_written += j;
+                        if( rc2 == ENOSPC ) break;
+                        len_written = i;
+                        j = 0;
+                    }
+                }
+                buf[j] = ((const char*)buffer)[i];
+                ++i;
+                ++j;
+                if( j == buf_size ) {
+                    rc2 = os_write( handle, buf, buf_size, &j );
+                    if( rc2 == -1 ) break;
+                    len_written += j;
+                    if( rc2 == ENOSPC ) break;
+                    len_written = i;
+                    j = 0;
+                }
+            }
+            if( j ) {
+                rc2 = os_write( handle, buf, j, &i );
+                if( rc2 == ENOSPC ) {
+                    len_written += i;
+                } else {
+                    len_written = len;
+                }
+            }
+            /* end of text mode part */
         }
-        if( j ) {
-        rc2 = os_write( handle, buf, j, &i );
-        if( rc2 == ENOSPC ) {
-            len_written += i;
-        } else {
-            len_written = len;
-        }
-        }
-        /* end of text mode part */
-    }
     }
     _ReleaseFileH( handle );
     if( rc2 == -1 ) {
-    return( rc2 );
+        return( rc2 );
     } else {
-    return( len_written );
+        return( len_written );
     }
 }
 
@@ -404,8 +400,8 @@ static int os_write( int handle, const void *buffer, unsigned len, unsigned *amt
 _WCRTLINK int write( int handle, const void *buffer, unsigned len )
 /*****************************************************************/
 {
-    unsigned    total=0,writeamt;
-    int     rc;
+    unsigned    total = 0, writeamt;
+    int         rc;
 
     __handle_check( handle, -1 );
 
@@ -414,19 +410,18 @@ _WCRTLINK int write( int handle, const void *buffer, unsigned len )
 
     while( len > 0 ) {
     if( len > MAXBUFF ) {
-        writeamt = MAXBUFF;
-    } else {
-        writeamt = len;
-    }
-    rc = __write( handle, buffer, writeamt );
-    if( rc < 0 ) return( rc );
-    total += (unsigned) rc;
-    if( rc != writeamt ) return( total );
+            writeamt = MAXBUFF;
+        } else {
+            writeamt = len;
+        }
+        rc = __write( handle, buffer, writeamt );
+        if( rc < 0 ) return( rc );
+        total += (unsigned)rc;
+        if( rc != writeamt ) return( total );
 
-    len -= writeamt;
-    buffer = ((const char*)buffer) + writeamt;
+        len -= writeamt;
+        buffer = ((const char*)buffer) + writeamt;
     }
     return( total );
-
 }
 #endif
