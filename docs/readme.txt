@@ -20,21 +20,23 @@ the tools in.
 Environment variables used by Open Watcom
 ===========================================================
 
-For proper operation the Open Watcom compilers require few environment variables
-to be set up correctly. These variables differ slightly depending on the
-host platform (DOS, OS/2, Win32). The common variables are:
+For proper operation the Open Watcom compilers require few environment 
+variables o be set up correctly. These variables differ slightly depending 
+on the ost platform (DOS, OS/2, Win32). The common variables are:
 
  - PATH     - points to directories containing Open Watcom executables
  - WATCOM   - points to the directory where Open Watcom is installed
               and is used by various Open Watcom tools to locate files
  - EDPATH   - points to VI/VIW configuration files
- - INCLUDE  - points to directories containing header files is used by the
-              compilers
- - LIB      - points to directories containing library files; note that Open Watcom
-              linker is able to locate Open Watcom runtime libraries without this
-              variable
+ - INCLUDE  - points to directories containing header files used by the
+              C/C++ compilers	      
+ - FINCLUDE - points to directories containing header files used by the
+              FORTRAN compilers
+ - LIB      - points to directories containing library files; note that 
+              Open Watcom linker is able to locate Open Watcom runtime 
+	      libraries without this variable
  - WWINHELP - points to the directory on the CDROM drive where help files are
-              located. This may minimize hard disk space
+              located. This may minimize hard disk space requirements
 
 DOS specifics
 
@@ -62,10 +64,10 @@ OS/2 specifics
  - PATH      - must point to binp and binw directories, in that order
  - LIBPATH   - either the BEGINLIBPATH/ENDLIBPATH environment variable or the
                LIBPATH statement in CONFIG.SYS must point to the binp\dll
-               subdirectory of Open Watcom in order to let the OS find Open Watcom
-               DLLs
- - HELP      - points to binp\help to let Open Watcom GUI tools locate online help
-               files
+               subdirectory of Open Watcom in order to let the OS find 
+	       Open Watcom DLLs
+ - HELP      - points to binp\help to let Open Watcom GUI tools locate online 
+               help files
  - BOOKSHELF - points to binp\help to allow the IPF viewer (VIEW.EXE) locate
                Open Watcom online manuals
 
@@ -73,7 +75,7 @@ These environment variables can be either set up in your starup files (which
 is the most convenient method if Open Watcom is the only compiler you use)
 or you can use simple batch files to set these variables (useful if you
 need to switch between compilers, including different versions of
-Open Watcom compilers).
+Watcom/Open Watcom compilers).
 
 Below are several sample batch files for setting the environment variables on
 various host platforms. The WATCOM variable must naturally be adjusted
@@ -111,7 +113,7 @@ Win32 BAT file:
 SET WATCOM=C:\WATCOM
 SET PATH=%WATCOM%\BINNT;%WATCOM%\BINW;%PATH%
 SET EDPATH=%WATCOM%\EDDAT
-SET INCLUDE=%WATCOM%\H;%WATCOM%\MFC\INCLUDE;%WATCOM%\H\NT
+SET INCLUDE=%WATCOM%\H;%WATCOM%\H\NT
 REM SET LIB=
 REM SET WWINHELP=D:\BINW
 ---------------------------------------------------------------------------
