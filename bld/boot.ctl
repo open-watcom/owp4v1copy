@@ -34,3 +34,7 @@ set OWLINUXBUILD=bootstrap
 [ INCLUDE <DEVDIR>/ui/boot.ctl ]
 [ INCLUDE <DEVDIR>/vi/boot.ctl ]
 [ INCLUDE <DEVDIR>/help/boot.ctl ]
+[ INCLUDE <DEVDIR>/wsample/boot.ctl ]
+[ INCLUDE <DEVDIR>/aui/boot.ctl ]
+[ INCLUDE <DEVDIR>/gui/boot.ctl ]
+[ INCLUDE <DEVDIR>/wprof/boot.ctl ]

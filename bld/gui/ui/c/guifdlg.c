@@ -52,6 +52,9 @@
 #elif defined( __LINUX__ )
     #include <dirent.h>
     #include <unistd.h>
+    #if !defined( __WATCOMC__ ) // Remove when OW clib implements fnmatch
+        #include <fnmatch.h>
+    #endif
 #elif defined( UNIX )
     #include <dirent.h>
     #include <unistd.h>

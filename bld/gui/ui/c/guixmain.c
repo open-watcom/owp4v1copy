@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Mainline for applications using GUI library.
 *
 ****************************************************************************/
 
@@ -47,7 +46,12 @@
 #include "guizlist.h"
 #include "guideath.h"
 #include "guidead.h"
-#ifdef UNIX
+#ifdef __UNIX__
+    #ifndef __WATCOMC__
+        #include "clibext.h"
+    #endif
+    #include <termio.h>
+#elif defined( UNIX )
     #include "clibext.h"
     #include "stdtypes.h"
     #ifdef HP
@@ -86,7 +90,7 @@ int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
     char **             _argv;
     int                 _argc;
 
-    a_bool              In_raw_mode = FALSE;
+    bool                In_raw_mode = FALSE;
     struct termios      Saved_terminal_configuration;
 #endif
 

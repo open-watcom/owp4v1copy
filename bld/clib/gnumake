@@ -8,7 +8,7 @@ vpath %.c $(SRCDIRS)
 
 OBJECTS =
 OBJECTS += itoa.o ltoa.o alphabet.o splitpat.o split2.o makepath.o fullpath.o 
-OBJECTS += strlwr.o memicmp.o tell.o rotl.o seterrno.o strupr.o 
+OBJECTS += strlwr.o memicmp.o tell.o rotl.o seterrno.o strupr.o strnset.o
 OBJECTS += strrev.o filelen.o eof.o cmdname.o gtcmdunx.o searchen.o
 
 OBJECTS := $(foreach i,$(OBJECTS),$(OBJDIR)/$i)

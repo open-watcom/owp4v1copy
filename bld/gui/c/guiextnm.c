@@ -42,7 +42,7 @@ static char   GUIExtName[_MAX_PATH] = "";
 extern char * GUIGetExtName( void )
 {
     if( GUIExtName[0] == '\0' ) {
-#if !defined( WINDU ) && defined(UNIX)
+#if !defined( WINDU ) && defined(UNIX) && !defined(__LINUX__)
         _cmdname( GUIExtName );
         strcat( GUIExtName, ".res" );
         return( GUIExtName );

@@ -34,7 +34,9 @@
 #include <malloc.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include "trmem.h"
+#ifdef TRMEM
+    #include "trmem.h"
+#endif
 #include "guimem.h"
 
 #ifdef TRMEM

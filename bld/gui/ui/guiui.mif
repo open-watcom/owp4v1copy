@@ -96,11 +96,13 @@ sys_hooks = &
 
 sysobjs = $(wv_sysobjs) $(sys_hooks) $(sys_dep_objs)
 
+!ifndef bootstrap
 # memory tracker cover routines
 extra_c_flags_helpmem = $(trmem_cover_cflags) -fh=$^&.pch
+!endif
 
-extra_c_flags_guirdlg = -i"$(sdk_dir)/rc/wres/h"
-extra_c_flags_guirmenu = -i"$(sdk_dir)/rc/wres/h"
+extra_c_flags_guirdlg = -I"$(sdk_dir)/rc/wres/h"
+extra_c_flags_guirmenu = -I"$(sdk_dir)/rc/wres/h"
 
 wlib_opt = -p=32
 

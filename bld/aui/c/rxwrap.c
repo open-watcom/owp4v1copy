@@ -24,42 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  Cover routines to access the trmem memory tracker
+* Description:  Wrapper for regexp.c module. 
 *
 ****************************************************************************/
 
-#include "guiwind.h"
-#include "helpmem.h"
-#include <stdlib.h>
-#ifdef TRMEM
-    #include "trmem.h"
 
-    extern _trmem_hdl   GUIMemHandle;
-#endif
-
-void HelpMemFree( void *ptr )
-{
-#ifdef TRMEM
-    _trmem_free( ptr, _trmem_guess_who(), GUIMemHandle );
-#else
-    free( ptr );
-#endif
-}
-
-void *HelpMemAlloc( size_t size )
-{
-#ifdef TRMEM
-    return( _trmem_alloc( size, _trmem_guess_who(), GUIMemHandle ) );
-#else
-    return( malloc( size ) );
-#endif
-}
-
-void *HelpMemRealloc( void *ptr, size_t size )
-{
-#ifdef TRMEM
-    return( _trmem_realloc( ptr, size, _trmem_guess_who(), GUIMemHandle ) );
-#else
-    return( realloc( ptr, size ) );
-#endif
-}
+#include "wndregx.h"
+#include "../../posix/misc/regexp.c"

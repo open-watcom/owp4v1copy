@@ -1,7 +1,5 @@
 proj_name = aui
 
-.ERASE
-
 !ifndef aui_autodepends
 aui_autodepends = .AUTODEPEND
 !endif
@@ -14,7 +12,7 @@ suppress_zc = 1
 
 .EXTENSIONS: .dlg .rc
 
-inc_dirs = -I"$(aui_dir)/h" -I"$(gui_dir)/h" -I"$(posix_dir)/h"
+inc_dirs = -I. -I"$(aui_dir)/h" -I"$(gui_dir)/h" -I"$(posix_dir)/h"
 
 .c: .;$(aui_dir)/c;$(posix_dir)/misc
 .h: .;$(aui_dir)/h
@@ -33,8 +31,6 @@ extra_c_flags_os2 = -zu
 !else
 extra_c_flags_win = -zw
 !endif
-
-extra_c_flags_regexp = -fi=wndregx.h
 
 !ifdef pm
 dlgs = dlgrx.dlg dlgsrch.dlg dlgsrcha.dlg &
@@ -67,7 +63,7 @@ objs =  guimain.obj &
         wndutil.obj &
         wndchar.obj &
         wndpop.obj &
-        regexp.obj &
+        rxwrap.obj &
         wndscrol.obj &
         wndsel.obj &
         wndsrch.obj &

@@ -69,6 +69,13 @@ inc_dirs = -I"../h" -I"$(wsample_dir)/h" -I"$(aui_dir)/h" -I"$(gui_dir)/h" -I"$(
 
 # explicit rules
 #################
+!ifdef bootstrap
+$(proj_name).$(exe) : _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_objs) $(mad_objs) $(wprof_libs) $(sys_libs) $(resfile)
+    @rm -f finger.obj
+    @%make finger.obj
+    $(cl) $(clflags) $(objs) $(sys_objs) $(dip_objs) $(mad_objs) finger.obj $(wprof_libs) $(sys_libs) $(cl_libs) $(wres_lib)
+    wstrip -q -a -r  $^@ . $(resfile)
+!else
 $(proj_name).$(exe) : _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_objs) $(mad_objs) $(wprof_libs) $(sys_libs) $(resfile)
     @rm -f finger.obj
     @%make finger.obj
@@ -79,6 +86,7 @@ $(proj_name).$(exe) : _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_objs) $(ma
     $(rc) $(rc_flags) -k $(resfile) $^@
 !else
     $(rc_os2) $(rc_flags) $(resfile) $^@
+!endif
 !endif
 
 !ifeq host_os os2

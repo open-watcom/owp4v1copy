@@ -40,12 +40,17 @@
 #include "madimp.h"
 #include "madcli.h"
 
-#if defined(__386__) || defined(M_I86) || defined(__ALPHA__)
+#if defined( __386__ ) || defined( __I86__ ) || defined( __ALPHA__ ) || defined( __PPC__ )
    #define MNR_HOST_SIGNED      MNR_TWOS_COMP
-   #define ME_HOST              ME_LITTLE
    #define FLOAT_IEEE
 #else
    #error Host MAD type info not configured
+#endif
+
+#if defined( __BIG_ENDIAN__ )
+    #define ME_HOST             ME_BIG
+#else
+    #define ME_HOST             ME_LITTLE
 #endif
 
 const static unsigned EndMap[2][8] = {
