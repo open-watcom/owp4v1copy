@@ -1168,7 +1168,17 @@ dis_ref_type  X86GetRefType( WBIT w, dis_dec_ins *ins )
     case DI_X86_prefetchnta00:
     case DI_X86_prefetchnta01:
     case DI_X86_prefetchnta10:
+    case DI_X86_clflush00:
+    case DI_X86_clflush01:
+    case DI_X86_clflush10:
         return( DRT_X86_BYTEX );
+    case DI_X86_ldmxcsr00:
+    case DI_X86_ldmxcsr01:
+    case DI_X86_ldmxcsr10:
+    case DI_X86_stmxcsr00:
+    case DI_X86_stmxcsr01:
+    case DI_X86_stmxcsr10:
+        return( DRT_X86_XMM32 );
     }
 
     if( w == W_FULL ) {
@@ -3243,7 +3253,8 @@ dis_handler_return X86RegModRM32_Rev( dis_handle *h, void *d, dis_dec_ins *ins )
     code.full = ins->opcode;
     ins->num_ops = 0;
     ins->size += 3;
-    X86GetRegModRM_B( D_RM_REG, code.type1.mod, code.type1.rm, code.type1.mm, d, ins);
+    X86GetModRM_D( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_XMM32 );
+    X86GetReg32( W_DEFAULT, code.type1.mm, ins );
     X86XMMResetPrefixes();
     return( DHR_DONE );
 }
