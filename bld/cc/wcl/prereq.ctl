@@ -51,7 +51,4 @@ set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>
 set TMP_BUILD_PLATFORM=
 
     rm -f -r <PROJDIR>/<OBJDIR>
-    @rm -f <RELROOT>/bld/build/bin/bwcl386.*
-    @rm -f <RELROOT>/bld/build/binp/bwcl386.*
-    @rm -f <RELROOT>/bld/build/binnt/bwcl386.*
-    @rm -f <RELROOT>/bld/build/binl/bwcl386.*
+    wmake -h -f <DEVDIR>/build/mif/cleanp.mif platform=<BUILD_PLATFORM> file=bwcl386

@@ -82,18 +82,9 @@ set BUILD_PLATFORM=
     pmake -d all -h clean
     cdsay <PROJDIR>
     rm -f -r <PROJDIR>/<OBJDIR>
-    @rm -f <OWROOT>/bld/build/bin/bvi.*
-    @rm -f <OWROOT>/bld/build/bin/parsectl.*
-    @rm -f <OWROOT>/bld/build/bin/parsedyn.*
-    @rm -f <OWROOT>/bld/build/binp/bvi.*
-    @rm -f <OWROOT>/bld/build/binp/parsectl.*
-    @rm -f <OWROOT>/bld/build/binp/parsedyn.*
-    @rm -f <OWROOT>/bld/build/binnt/bvi.*
-    @rm -f <OWROOT>/bld/build/binnt/parsectl.*
-    @rm -f <OWROOT>/bld/build/binnt/parsedyn.*
-    @rm -f <OWROOT>/bld/build/binl/bvi*
-    @rm -f <OWROOT>/bld/build/binl/parsectl*
-    @rm -f <OWROOT>/bld/build/binl/parsedyn*
+    wmake -h -f <DEVDIR>/build/mif/cleanp.mif platform=<BUILD_PLATFORM> file=bvi
+    wmake -h -f <DEVDIR>/build/mif/cleanp.mif platform=<BUILD_PLATFORM> file=parsectl
+    wmake -h -f <DEVDIR>/build/mif/cleanp.mif platform=<BUILD_PLATFORM> file=parsedyn
 
 [ BLOCK <1> clean cprel2 ]
 #==================

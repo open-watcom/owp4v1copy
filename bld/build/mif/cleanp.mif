@@ -1,0 +1,13 @@
+#
+# clean prebuild executable
+#
+clean: .symbolic
+!ifeq platform dos386
+    @rm -f $(build_dir)/bin/$(file).exe
+!else ifeq platform os2386
+    @rm -f $(build_dir)/binp/$(file).exe
+!else ifeq platform nt386
+    @rm -f $(build_dir)/binnt/$(file).exe
+!else ifeq platform linux386
+    @rm -f $(build_dir)/binl/$(file)
+!endif

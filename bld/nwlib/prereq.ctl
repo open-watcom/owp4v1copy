@@ -59,7 +59,4 @@ set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>
 set TMP_BUILD_PLATFORM=
 
     rm -f -r <PROJDIR>/<OBJDIR>
-    @rm -f <RELROOT>/bld/build/bin/bwlib.*
-    @rm -f <RELROOT>/bld/build/binp/bwlib.*
-    @rm -f <RELROOT>/bld/build/binnt/bwlib.*
-    @rm -f <RELROOT>/bld/build/binl/bwlib.*
+    wmake -h -f <DEVDIR>/build/mif/cleanp.mif platform=<BUILD_PLATFORM> file=bwlib
