@@ -1,7 +1,7 @@
 @echo %verbose% off
 :: test.bat
 ::
-:: test of Open Watcom rm command
+:: test Open Watcom rm command
 ::
 
 set PROG=%devdir%\posix\src\rm\rm.exe
@@ -19,7 +19,7 @@ if not errorlevel 1 for %%C in (echo goto:failure) do %%C rmtest: %PROG% without
 %PROG% -? 2>nul
 if not errorlevel 1 for %%C in (echo goto:failure) do %%C rmtest: %PROG% -? should fail
 
-%PROG% -f -r -i -s -X 2>nul
+%PROG% -f -i -r -s -v -X 2>nul
 if not errorlevel 1 for %%C in (echo goto:failure) do %%C rmtest: %PROG% without files should fail
 
 copy NUL %FILENAME% > NUL

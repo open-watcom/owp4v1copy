@@ -46,13 +46,14 @@
 char                    *OptEnvVar = "rm";
 
 static const char       *usageMsg[] = {
-    "Usage: rm [-?firsX] [files]",
+    "Usage: rm [-?firsvX] [files]",
     "\tfiles       : files/directories to delete",
     "\tOptions: -? : print this list",
     "\t\t -f : force deletion of read-only files",
     "\t\t -i : inquire about each deletion",
     "\t\t -r : recursively delete all directories",
-    "\t\t -s : silent operation",
+    "\t\t -s : silent operation (default)",
+    "\t\t -v : verbose operation",
     "\t\t -X : match files by regular expressions",
     NULL
 };
@@ -60,7 +61,7 @@ static const char       *usageMsg[] = {
 int                     rflag = FALSE;
 int                     iflag = FALSE;
 int                     fflag = FALSE;
-int                     sflag = FALSE;
+int                     sflag = TRUE;
 int                     rxflag = FALSE;
 
 typedef struct dd {
@@ -80,13 +81,14 @@ int main( int argc, char *argv[] )
     DIR *d;
 
     /* process options */
-    while( ( ch = GetOpt( &argc, argv, "frisX", usageMsg ) ) != -1 ) {
+    while( ( ch = GetOpt( &argc, argv, "firsvX", usageMsg ) ) != -1 ) {
         switch( ch ) {
-        case 'f': fflag  = TRUE; break;
-        case 'r': rflag  = TRUE; break;
-        case 'i': iflag  = TRUE; break;
-        case 's': sflag  = TRUE; break;
-        case 'X': rxflag = TRUE; break;
+        case 'f': fflag  = TRUE;  break;
+        case 'i': iflag  = TRUE;  break;
+        case 'r': rflag  = TRUE;  break;
+        case 's': sflag  = TRUE;  break;
+        case 'v': sflag  = FALSE; break;
+        case 'X': rxflag = TRUE;  break;
         }
     }
     if( argc < 2 )
