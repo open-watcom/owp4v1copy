@@ -61,7 +61,7 @@
     #pragma library("rpcns4")
     #pragma library("rpcrt4")
     #pragma library("vdmdbg")
-    #pragma library("win32spl")
+//    #pragma library("win32spl")
     #pragma library("winmm")
     #pragma library("winstrm")
     #pragma library("wsock32")
