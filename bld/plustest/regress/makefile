@@ -8,7 +8,7 @@ test : .symbolic
     %append $(log_file) PASS $(%__CWD__)
 
 del_log : .symbolic
-    del $(log_file)
+    rm -f $(log_file)
 
 global : .symbolic
     %make common_clean

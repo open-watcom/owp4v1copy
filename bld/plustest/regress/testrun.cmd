@@ -1,10 +1,8 @@
 title C++ Test Stream
-rem must be early in case refresh refreshes testrun.cmd!
-p4 get //depot/plustest/...
 setlocal
 set plustest_name=result
-wmake del_log
-del *.sav
+wmake -h del_log
+if exist *.sav del *.sav
 rem
 rem figure out if any extra architectures have to be tested
 if not [%OS%] == [Windows_NT] goto not_nt
@@ -88,9 +86,6 @@ cd ..
 cd overload
 call testrun.cmd
 cd ..
-cd pcg
-call testrun.cmd
-cd ..
 cd perl
 call testrun.cmd
 cd ..
@@ -115,25 +110,13 @@ cd ..
 cd stepanov
 call testrun.cmd
 cd ..
-cd stl.old
-call testrun.cmd
-cd ..
-cd stl.mod
-call testrun.cmd
-cd ..
 cd stl.94
 call testrun.cmd
 cd ..
 cd stl.95
 call testrun.cmd
 cd ..
-cd str
-call testrun.cmd
-cd ..
 cd torture
-call testrun.cmd
-cd ..
-cd var
 call testrun.cmd
 cd ..
 cd winnt
