@@ -79,10 +79,6 @@ cflags += -si
 !endif
 !endif
 
-!ifdef plusplus_rtdll
-cflags += -br
-!endif
-
 # personal modifications can be made by including a local .mif file
 !ifdef %plusplus_local_mif
 !  include $(%plusplus_local_mif)
