@@ -93,6 +93,10 @@ segments from "USE16" to "USE32")
 same as ".586" or ".586p"
 (also defines "__386__" and changes the default USE attribute of
 segments from "USE16" to "USE32")
+.note 6{p}
+same as ".686" or ".686p"
+(also defines "__386__" and changes the default USE attribute of
+segments from "USE16" to "USE32")
 .note p
 protect mode
 .note add r
@@ -173,6 +177,8 @@ set module name
 set name of text segment
 .note o
 allow C form of octal constants
+.note zld
+remove file dependency information
 .note zq or q
 operate quietly
 .note ?  or h
@@ -181,6 +187,8 @@ print this message
 set warning level number
 .note we
 treat all warnings as errors
+.note wx
+set warning level to maximum setting
 .endnote
 .*
 .section Assembly Directives and Opcodes
@@ -203,6 +211,8 @@ opcodes and register names that are recognized by the assembler.
 .ix '.486p'
 .ix '.586'
 .ix '.586p'
+.ix '.686'
+.ix '.686p'
 .ix '.8086'
 .ix '.8087'
 :cmt. .ix 'aaa'
