@@ -44,14 +44,12 @@ export_name=export.def
 exportx_name=exportx.def
 exp_lib_flags = -z=$(export_name)
 exp_libx_flags = -z=$(exportx_name)
-!else
-!ifeq host_CPU axp
+!else ifeq host_CPU axp
 exp_lib_flags =
 exp_libx_flags =
 !else
 exp_lib_flags = -z
 exp_libx_flags = -z
-!endif
 !endif
 
 lbcfile = tmp.lbc
@@ -59,7 +57,10 @@ lbcfile = tmp.lbc
 libs : .symbolic $(target_lib) $(target_lib_x)
     @%null
 
-$(target_lib) : $(source_libs)
+$(target_lib) : $(source_libs) $(__MAKEFILES__)
+!ifeq linkage dynamic
+    @rm -f $(export_name)
+!endif
     %create $(lbcfile)
     @for %i in ($(source_libs)) do @%append $(lbcfile) +%i
     $(librarian) $(lib_flags) $(exp_lib_flags) $^@ @$(lbcfile)
@@ -70,7 +71,10 @@ $(target_lib) : $(source_libs)
     wtouch compile.tim
 
 !ifdef target_lib_x
-$(target_lib_x) : $(source_libs_x)
+$(target_lib_x) : $(source_libs_x) $(__MAKEFILES__)
+!ifeq linkage dynamic
+    @rm -f $(exportx_name)
+!endif
     %create $(lbcfile)
     @for %i in ($(source_libs_x)) do @%append $(lbcfile) +%i
     $(librarian) $(lib_flags) $(exp_libx_flags) $^@ @$(lbcfile)
