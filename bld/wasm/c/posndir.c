@@ -35,9 +35,9 @@
 
 #include "asmglob.h"
 #include "asmerr.h"
-#include "asmops1.h"
-#include "asmops2.h"
+#include "asmins.h"
 #include "directiv.h"
+#include "asmdefs.h"
 
 #include "womp.h"
 #include "pcobj.h"
@@ -47,14 +47,11 @@
 extern void             AsmError( int );
 extern direct_idx       FindClassLnameIdx( char *name );
 extern uint_32          GetCurrSegAlign( void );
-extern void             AsmByte( unsigned char );
 extern void             FlushCurrSeg( void );
 extern bool             CheckHaveSeg( void );
 
 /* stupid global vars that we may as well use since they are there */
-extern int_8            Use32;          // if 32-bit code is use
 extern seg_list         *CurrSeg;       // points to stack of opened segments
-extern  struct asm_tok  *AsmBuffer[];   // buffer to store token
 extern int              Token_Count;    // number of tokens on line
 
 typedef unsigned char   byte;

@@ -36,8 +36,8 @@
 #include "asmglob.h"
 #include "asmerr.h"
 #include "asmsym.h"
-#include "asmops1.h"//
-#include "asmops2.h"
+#include "asmins.h"
+#include "asmdefs.h"
 
 #ifdef _WASM_
     #include "directiv.h"
@@ -47,19 +47,14 @@
     #include "objrec.h"
     #include "myassert.h"
 
-    #define     Address         ( GetCurrAddr() )
     extern char                 Parse_Pass;     // phase of parsing
     extern int_8                PhaseError;
 
     extern int                  AddFieldToStruct( int );
-#else
-    extern uint_32              Address;
 #endif
 
 extern void             AsmError( int );
 extern int              BackPatch( struct asm_sym * );
-
-extern  struct asm_tok  *AsmBuffer[];   // buffer to store token
 
 #ifdef _WASM_
     static unsigned             AnonymousCounter = 0;

@@ -39,8 +39,7 @@
 #include "watcom.h"
 
 #include "asmglob.h"
-#include "asmops1.h"
-#include "asmops2.h"
+#include "asmins.h"
 #include "directiv.h"
 #include "condasm.h"
 #include "myassert.h"

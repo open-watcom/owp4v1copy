@@ -35,7 +35,7 @@
 #include "asmglob.h"
 #include "asmalloc.h"
 #include "asmerr.h"
-#include "asmins1.h"
+#include "asmins.h"
 #include "asmsym.h"
 #include "directiv.h"
 #include "myassert.h"

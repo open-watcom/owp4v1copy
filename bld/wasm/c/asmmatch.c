@@ -38,9 +38,7 @@
 #include <malloc.h>
 
 #include "asmglob.h"
-#include "asmops1.h"//
-#include "asmops2.h"
-#include "asmins1.h"
+#include "asmins.h"
 #include "asmopnds.h"
 #include "asmerr.h"
 #include "asmsym.h"
@@ -55,8 +53,6 @@
 extern int_8                    PhaseError;
 
 #endif
-
-extern const struct asm_ins ASMFAR AsmOpTable[];
 
 extern int OperandSize( unsigned long opnd );
 extern int InRange( unsigned long, unsigned );

@@ -30,14 +30,8 @@
 ****************************************************************************/
 
 
+#include "asmins.h"
 #include "asmopnds.h"
-#include "asmins1.h"
-
-#ifdef M_I86
- #define ASMFAR far
-#else
- #define ASMFAR
-#endif
 
 #define ins(tok,op1,byte1_info,op2,rm_info,opcode,rm_byte,cpu,prefix) \
                 {tok,prefix,byte1_info,rm_info,cpu,{op1,op2},opcode,rm_byte},
@@ -1162,3 +1156,7 @@ ins (T_XOR,             OP_M_DW,     0,      OP_I8,      no_WDS, 0x83,     0x30,
 ins (T_XOR,             OP_M,        0,      OP_R,       0,      0x30,     0x00,                     P_86,  LOCK)
 ins (T_XOR,             OP_M,        0,      OP_I,       0,      0x80,     0x30,                     P_86,  LOCK)
 };
+
+#undef  asm_op
+#define asm_op
+#include "asmops2.h"

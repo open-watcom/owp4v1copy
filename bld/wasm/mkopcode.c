@@ -124,7 +124,7 @@ main( int argc, char *argv[] )
     fprintf( out, "  #define asm_op(token,len,index) token\n" );
     fprintf( out, "  enum asm_token {\n" );
     fprintf( out, "#else\n" );
-    fprintf( out, "  char AsmChars[] = {\n" );
+    fprintf( out, "  extern char AsmChars[] = {\n" );
     for( i = 0; i < index; i++ ) {
         if( i % 10 == 0 )  fprintf( out, "/*%4d*/ ", i );
         fprintf( out, "'%c',", Chars[i] );

@@ -40,10 +40,6 @@
 #include "objrec.h"
 #include "asmsym.h"
 
-#ifndef asm_op
-#include "asmops2.h"
-#endif
-
 #define MAX_LNAME       255
 #define LNAME_NULL      0
 

@@ -42,8 +42,7 @@
 
 #include "asmglob.h"
 #include "asmalloc.h"
-#include "asmops1.h"
-#include "asmins1.h"
+#include "asmins.h"
 #include "asmsym.h"
 #include "directiv.h"
 #include "fatal.h"
@@ -66,7 +65,6 @@ extern void             ObjRecInit( void );
 extern void             DelErrFile();
 extern void             PrintStats();
 extern void             AsmInit( int, int, int );
-extern int              AsmScan( char *, char * );
 extern void             PrintfUsage( int first_ln );
 extern void             MsgPrintf1( int resourceid, char *token );
 extern void             InputQueueLine( char * );
@@ -76,7 +74,6 @@ extern void             AddStringToIncludePath( char * );
 extern int              cpu_directive( uint_16 );
 
 extern struct asm_code  *Code;          // store information for assembler
-extern struct asm_tok   *AsmBuffer[];   // buffer to store token
 extern const char       *FingerMsg[];
 
 File_Info               AsmFiles;       // files information

@@ -48,18 +48,12 @@
 #include <malloc.h>
 
 #include "asmglob.h"
-#include "asmops1.h"
-#include "asmops2.h"
-#include "asmins.h"
+#include "asminsd.h"
 #include "asmerr.h"
 #include "asmsym.h"
 #include "asmalloc.h"
 #include "condasm.h"
 #include "asmdefs.h"
-
-#undef  asm_op
-#define asm_op
-#include "asmops2.h"
 
 #ifdef _WASM_
 
@@ -96,8 +90,6 @@ extern int              data_init( int, int );
 
 #ifdef _WASM_
 
-#define Address         ( GetCurrAddr() )
-
 extern void             InputQueueLine( char * );
 extern int              directive( int , long );
 extern void             GetInsString( enum asm_token, char *, int );
@@ -121,8 +113,6 @@ extern seg_list         *CurrSeg;
 extern void             SetModuleDefSegment32( int flag );
 
 #else
-
-extern uint_32          Address;
 
 #define     directive( i, value )   cpu_directive( value )
 

@@ -37,18 +37,13 @@
 #include <stdio.h>
 
 #include "asmglob.h"
-#include "asmops1.h"
-#include "asmins1.h"
+#include "asmins.h"
 #include "directiv.h"
 #include "asmerr.h"
 #include "myassert.h"
 #include "asmalloc.h"
 #include "expand.h"
 #include "asmdefs.h"
-
-extern struct asm_tok   *AsmBuffer[];
-extern struct AsmCodeName AsmOpcode[];
-extern const struct asm_ins ASMFAR AsmOpTable[];
 
 extern void             AsmError( int );
 

@@ -39,8 +39,8 @@
 #include "watcom.h"
 #include "asmerr.h"
 #include "asmglob.h"
+#include "asmdefs.h"
 
-extern uint         LineNumber;
 extern File_Info    AsmFiles;   // files information
 
 extern char         *curr_src_line;

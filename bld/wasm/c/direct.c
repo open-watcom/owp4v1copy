@@ -39,9 +39,7 @@
 #include "asmglob.h"
 #include "asmalloc.h"
 #include "asmerr.h"
-#include "asmops1.h"
-#include "asmops2.h"
-#include "asmins1.h"
+#include "asmins.h"
 #include "namemgr.h"
 #include "asmsym.h"
 #include "asmerr.h"
@@ -53,6 +51,8 @@
 #include "fixup.h"
 #include "queue.h"
 #include "expand.h"
+
+#include "asmdefs.h"
 
 #include "directiv.h"
 #undef _DIRECT_H_
@@ -75,7 +75,6 @@ extern char             *ScanLine( char * );
 extern void             FlushCurrSeg( void );
 extern void             AsmError( int );
 extern int              InputQueueFile( char * );
-extern int              AsmScan( char *, char * );
 extern struct fixup     *CreateFixupRec( int );
 extern void             InputQueueLine( char * );
 extern void             AsmTakeOut( char * );
@@ -86,24 +85,17 @@ extern void             SetMangler( struct asm_sym *sym, char *mangle_type );
 
 static char *Check4Mangler( int *i );
 
-extern  const struct asm_ins    ASMFAR AsmOpTable[];
-extern  uint            LineNumber;
 extern  char            write_to_file;  // write if there is no error
 extern  uint_32         BufSize;
-extern  struct asm_tok  *AsmBuffer[];   // buffer to store token
-extern  struct AsmCodeName AsmOpcode[];
-extern  char            StringBuf[];
 extern  char            Parse_Pass;     // phase of parsing
 extern  int_8           Frame;
 extern  uint_8          Frame_Datum;
 extern  int_8           DefineProc;     // TRUE if the definition of procedure
                                         // has not ended
 extern dir_node         *CurrProc;
-extern int_8            Use32;          // if 32-bit code is use
 extern File_Info        AsmFiles;
 extern char             *CurrString;    // Current Input Line
 extern char             EndDirectiveFound;
-extern char             AsmChars[];
 extern int              Token_Count;    // number of tokens on line
 
 qdesc                   *LnameQueue = NULL; // queue of LNAME structs

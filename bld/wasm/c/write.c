@@ -44,10 +44,11 @@
 #include "asmglob.h"
 #include "asmerr.h"
 #include "asmsym.h"
-#include "asmops1.h"
+#include "asmins.h"
 #include "asmalloc.h"
 #include "fatal.h"
 #include "directiv.h"
+#include "asmdefs.h"
 
 #include "womp.h"
 #include "objio.h"
@@ -74,8 +75,6 @@ extern bool             PopLineQueue();
 extern void             set_cpu_parameters( void );
 extern void             set_fpu_parameters( void );
 
-extern uint_32          Address;
-extern unsigned char    *CodeBuffer;
 extern pobj_state       pobjState;      // for WOMP interface
 extern File_Info        AsmFiles;
 extern int              Token_Count;    // number of tokens on line

@@ -96,7 +96,6 @@
 /* global variables */
 extern char             *CodeBuffer;
 extern struct asm_tok   *AsmBuffer[];
-extern struct AsmCodeName AsmOpcode[];
 extern struct asmfixup  *InsFixups[3];
 extern struct asmfixup  *FixupHead;
 extern struct asm_code  *Code;

@@ -39,11 +39,10 @@
 #include "asmglob.h"
 #include "asmalloc.h"
 #include "asmerr.h"
-#include "asmops1.h"
-#include "asmops2.h"
-#include "asmins1.h"
+#include "asmins.h"
 #include "namemgr.h"
 #include "asmsym.h"
+#include "asmdefs.h"
 
 #include "womp.h"
 #include "pcobj.h"
@@ -54,17 +53,14 @@
 
 #include "expand.h"
 #include "directiv.h"
-extern  char            StringBuf[];
 extern int              Token_Count;    // number of tokens on line
-extern  struct asm_tok  *AsmBuffer[];   // buffer to store token
 extern dir_node         *CurrProc;
 extern  char            Parse_Pass;     // phase of parsing
-extern int              LineNumber;
 
 extern void             InputQueueLine( char * );
 extern void             PushLineQueue(void);
 extern void             wipe_space( char *token );
-extern int              AsmScan( char *, char * );
+extern int              AsmScan( char * );
 extern dir_node         *dir_insert( char *name, int tab );
 extern int              EvalExpr( int, int, int, bool );
 extern void             GetInsString( enum asm_token , char *, int );
@@ -280,7 +276,7 @@ int DefineConstant( int i, bool redefine, bool expand_early )
 int StoreConstant( char *name, char *value, int_8 redefine )
 /**********************************************************/
 {
-    AsmScan( value, StringBuf );
+    AsmScan( value );
     return( createconstant( name, FALSE, 0, redefine, FALSE ) );
 }
 

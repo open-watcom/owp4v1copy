@@ -32,11 +32,12 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "asmsym.h"//
-#include "asmops2.h"
+#include "asmsym.h"
+#include "asmins.h"
 #include "asmalloc.h"
 #include "asmerr.h"
 #include "asmglob.h"
+#include "asmdefs.h"
 
 #ifdef __USE_BSD
 #define stricmp strcasecmp
@@ -47,11 +48,8 @@
 #include "myassert.h"
 #include "directiv.h"
 
-#define Address         ( GetCurrAddr() )
-
 #else
 
-extern long     Address;
 struct asm_sym  *AsmSymHead;
 
 #endif

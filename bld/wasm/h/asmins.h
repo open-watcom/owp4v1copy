@@ -29,15 +29,22 @@
 *
 ****************************************************************************/
 
+#ifndef ASMINS_H
+#define ASMINS_H
+
+#ifdef M_I86
+    #define ASMFAR far
+#else
+    #define ASMFAR
+#endif
+
+#include "asmops1.h"
+#ifndef   asm_op
+    #include "asmops2.h"
+#endif
 
 #ifdef _WASM_
-
-    #include "asmops1.h"
-    #ifndef   asm_op
-        #include "asmops2.h"
-    #endif
-
-    struct asm_ins {
+    typedef struct asm_ins {
         unsigned short  token;                  /* T_ADD, etc */
         unsigned        allowed_prefix  : 3,    /* allowed prefix */
                         byte1_info      : 2,    /* flags for 1st byte */
@@ -48,7 +55,7 @@
         unsigned char   rm_byte;                /* mod_rm_byte */
     };
 #else
-struct asm_ins {
+    typedef struct asm_ins {
         unsigned        token           : 10,   /* T_ADD, etc */
 
                         allowed_prefix  : 3,    /* allowed prefix */
@@ -58,10 +65,10 @@ struct asm_ins {
         unsigned long   opnd_type[2];           /* asm_opnds */
         unsigned char   opcode;                 /* opcode byte */
         unsigned char   rm_byte;                /* mod_rm_byte */
-};
+    };
 #endif
 
-struct asm_code {
+typedef struct asm_code {
     struct {
         signed short ins;           // prefix before instruction, e.g. lock
         signed char  seg;           // segment register override
@@ -122,3 +129,8 @@ struct asm_code {
    OP_R ( without extension ) should follow OP_Rx
    OP_I ( without extension ) should follow OP_Ix  */
 
+extern const struct asm_ins ASMFAR AsmOpTable[];
+extern struct AsmCodeName AsmOpcode[];
+extern char AsmChars[];
+
+#endif

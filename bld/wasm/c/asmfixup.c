@@ -38,9 +38,7 @@
 #include <malloc.h>
 
 #include "asmglob.h"
-#include "asmops1.h"
-#include "asmops2.h"
-#include "asmins1.h"//
+#include "asmins.h"
 #include "asmopnds.h"
 #include "asmerr.h"
 #include "asmsym.h"

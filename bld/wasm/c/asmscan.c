@@ -37,10 +37,8 @@
 #include <limits.h>
 
 #include "asmglob.h"
-#include "asmops1.h"//
-#include "asmops2.h"
 #include "asmopnds.h"
-#include "asmins1.h"
+#include "asmins.h"
 #include "asmerr.h"
 #include "asmsym.h"
 #include "asmalloc.h"
@@ -61,10 +59,6 @@
 extern void             AsmError( int );
 
 char                                *CurrString; // Current Input Line
-extern struct AsmCodeName           AsmOpcode[];
-extern const struct asm_ins ASMFAR  AsmOpTable[];
-extern char                         AsmChars[];
-extern struct asm_tok               *AsmBuffer[];
 
 extern int get_instruction_position( char *string );
 
@@ -636,18 +630,19 @@ static int get_inc_path( unsigned int *buf_index, char **input, char **output )
 }
 #endif
 
-int AsmScan( char *string, char *stringbuf )
+int AsmScan( char *string )
 /******************************************/
 /*
 - perform syntax checking on scan line;
 - pass back tokens for later use;
 - string contains the WHOLE line to scan
-- stringbuf - buffer in which to store strings
 */
 {
     char                        *ptr;
     char                        *output_ptr;
     unsigned int                buf_index = 0;
+    // stringbuf - buffer in which to store strings
+    static char                 stringbuf[MAX_LINE_LEN];
 
     output_ptr = stringbuf;
 

@@ -37,14 +37,13 @@
 #include "asmglob.h"
 #include "asmalloc.h"
 #include "asmerr.h"
-#include "asmops1.h"
+#include "asmins.h"
 #include "directiv.h"
+#include "asmdefs.h"
 
 a_definition_struct Definition = { 0, NULL, NULL };
 
 extern  char            Parse_Pass;
-
-extern  struct asm_tok  *AsmBuffer[];   // buffer to store token
 
 extern dir_node         *dir_insert( char *, int );
 extern void             InputQueueLine( char * );

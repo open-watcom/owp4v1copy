@@ -41,12 +41,10 @@
 
 #include "asmglob.h"
 #include "asmdefs.h"
-#include "asmops1.h"//
-#include "asmops2.h"
 #include "asmerr.h"
 #include "asmsym.h"
 #include "asmalloc.h"
-#include "asmins1.h"
+#include "asmins.h"
 #include "asmopnds.h"
 #ifdef _WASM_
     #include "directiv.h"
@@ -61,16 +59,10 @@ extern struct asm_code  *Code;
 extern unsigned char    More_Array_Element;
 extern unsigned char    Last_Element_Size;
 
-extern struct asm_tok   *AsmBuffer[MAX_TOKEN];
-
 /* structure stuff from asmstruct */
 extern int              InitializeStructure( asm_sym *, int );
 extern int              AddFieldToStruct( int );
 extern int              GetStructSize( int );
-
-extern void             AsmCodeByte( char );
-extern void             AsmDataByte( char );
-extern void             AsmByte( char );
 
 #ifdef _WASM_
     extern int          ChangeCurrentLocation( bool, int_32 );
