@@ -9,12 +9,14 @@ usr="weditcw.dll" 	dir="binnt" 	cond="wnthost" 			where="c jc f77 jf77 ac"
 
 usr="epmlink.dll"	dir="binp\dll"	cond="os2host"			where="c jc f77 jf77"	desc="EPM editor interface DLL for IDE and source browser"
 
-[ DEFAULT type="s" dir="src\editdll" cond="samples" where="c jc f77 jf77" desc="codewright editor DLL source code" ]
-
-usr="weditcw.c"
-usr="wedit.doc"
-usr="wedit.h"
-usr="makefile"
-usr="weditcw.lnk"
-usr="weditcwn.lnk"
-usr="weditcw.h"
+# This needs redoing!
+#
+#[ DEFAULT type="s" dir="src\editdll" cond="samples" where="c jc f77 jf77" desc="codewright editor DLL source code" ]
+#
+#usr="weditcw.c"
+#usr="wedit.doc"
+#usr="wedit.h"
+#usr="makefile"
+#usr="weditcw.lnk"
+#usr="weditcwn.lnk"
+#usr="weditcw.h"

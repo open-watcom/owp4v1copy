@@ -54,14 +54,9 @@ usr="fmix.ihp"		where="f77 jf77"
 [ DEFAULT type="s" dir="binp\help" cond="os2_helpfiles helpfiles"]
 #-----------------------------------------------------------------------------
 # OS/2 help files
-#usr="wfcopts.hlp"	cond="wkframe"			where="f77 jf77"		desc="Help file for FORTRAN 77 compiler options"
 usr="wfcerrs.hlp"	cond="os2host"			where="f77 jf77"	desc="Help file for FORTRAN 77 compiler error messages"
-#usr="wccopts.hlp"	cond="wkframe"			where="c jc"		desc="Help file for C compiler options"
 usr="wccerrs.hlp"	cond="os2host"			where="c jc"		desc="Help file for C compiler error messages"
 usr="wpperrs.hlp"	cond="os2host cplusplus"	where="c jc"		desc="Help file for C++ compiler error messages"
-#usr="wvidopts.hlp"	cond="wkframe"			where="c jc f77 jf77"	desc="Help file for debugger options"
-#usr="wmakopts.hlp"	cond="wkframe"			where="c jc f77 jf77"	desc="Help file for make options"
-#usr="wlopts.hlp"	cond="wkframe"			where="c jc f77 jf77"	desc="Help file for linker options"
 usr="wbrw.hlp"		where="c jc"
 usr="wprof.hlp"		where="c jc f77 jf77"
 usr="ide.hlp"		where="c jc f77 jf77"

@@ -2,10 +2,10 @@
 [ DEFAULT ]
 
 #	OS2
-usr="dwarf.dll"		dir="binp\dll"	cond="os2host"			where="c jc f77 jf77"
-usr="codeview.dll"	dir="binp\dll"	cond="os2host"			where="c jc f77 jf77"
-usr="export.dll"	dir="binp\dll"	cond="os2host"			where="c jc f77 jf77"
-usr="watcom.dll"	dir="binp\dll"	cond="os2host"			where="c jc f77 jf77"
+usr="dwarf.d32"		dir="binp"	cond="os2host"			where="c jc f77 jf77"
+usr="codeview.d32"	dir="binp"	cond="os2host"			where="c jc f77 jf77"
+usr="export.d32"	dir="binp"	cond="os2host"			where="c jc f77 jf77"
+usr="watcom.d32"	dir="binp"	cond="os2host"			where="c jc f77 jf77"
 #	WINDOWS	
 usr="dwarf.dll"		dir="binw"	cond="winhost wintarg |"	where="c jc f77 jf77"
 usr="codeview.dll"	dir="binw"	cond="winhost wintarg |"	where="c jc f77 jf77"
