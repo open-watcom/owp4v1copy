@@ -1811,6 +1811,12 @@ version
 	}
     | version-pair comma-opt version-pair
 	{ $$.u.Version.High = $1; $$.u.Version.Low = $3; }
+    | version-pair comma-opt constant-expression
+        {
+            $$.u.Version.High = $1;
+            $$.u.Version.Low.HighWord = $3.Value;
+            $$.u.Version.Low.LowWord = 0;
+        }
     ;
 
 version-pair
