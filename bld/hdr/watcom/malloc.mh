@@ -20,7 +20,6 @@
 
 :include alloca.sp
 
-:segment !PENPOINT
 #define _HEAPOK         0
 #define _HEAPEMPTY      1       /* heap isn't initialized */
 #define _HEAPBADBEGIN   2       /* heap header is corrupted */
@@ -103,14 +102,10 @@ _WCRTLINK extern size_t _fmsize( void _WCFAR *__ptr );
 #endif
 _WCRTLINK extern size_t _memavl( void );
 _WCRTLINK extern size_t _memmax( void );
-:endsegment
 _WCRTLINK extern void * calloc( size_t __n, size_t __size );
 _WCRTLINK extern void free( void *__ptr );
 _WCRTLINK extern void * malloc( size_t __size );
 _WCRTLINK extern void * realloc( void *__ptr, size_t __size );
-:segment PENPOINT
-_WCRTLINK extern void * _smalloc( size_t __size );
-:elsesegment
 
 #if defined(_M_IX86)
 /* based heap function prototypes */
@@ -132,7 +127,6 @@ _WCRTLINK extern void __based(void) *_bmalloc( __segment __seg, size_t __size );
 _WCRTLINK extern size_t _bmsize( __segment __seg, void __based(void) *__mem );
 _WCRTLINK extern void __based(void) *_brealloc( __segment __seg, void __based(void) *__mem, size_t __size );
 #endif
-:endsegment
 :include poppack.sp
 :include cplusepi.sp
 #endif

@@ -20,7 +20,7 @@
 
 :include sizet.sp
 
-:segment QNX | PENPOINT
+:segment QNX
 #ifndef _SSIZE_T_DEFINED_
 #define _SSIZE_T_DEFINED_
  typedef signed ssize_t;
@@ -125,15 +125,6 @@ typedef unsigned short  sel_t;
 typedef unsigned int ino_t;     /* i-node # type */
 typedef int dev_t;              /* device code (drive #) */
 typedef long  off_t;            /* file offset value */
-:elsesegment PENPOINT
-
-/* Define POSIX 1003.1 types */
-
-typedef void*           dev_t;          /* device code (drive #) */
-typedef unsigned short  ino_t;          /* i-node # type */
-typedef short unsigned  mode_t;         /* Used for some file attributes */
-typedef long            off_t;          /* Used for file sizes, offsets */
-typedef short int       pid_t;          /* Used for process IDs */
 :endsegment
 
 :include cplusepi.sp

@@ -29,7 +29,7 @@
 
 #define RAND_MAX        32767u
 #define EXIT_SUCCESS    0
-:segment QNX | PENPOINT
+:segment QNX
 #define EXIT_FAILURE    1
 :elsesegment
 #define EXIT_FAILURE    0xff
@@ -110,12 +110,8 @@ _WCRTLINK extern int     system( const char *__string );
 #define atof(p)  strtod(p,(char **)NULL)
 #endif
 
-:segment QNX | PENPOINT
 :segment QNX
 #if defined(_POSIX_SOURCE) || defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
-:elsesegment PENPOINT
-#if defined(_POSIX_SOURCE) || defined(_PP_SOURCE) || !defined(NO_EXT_KEYS)
-:endsegment
 void             _exit( int __status );
 #endif
 :endsegment
@@ -226,12 +222,9 @@ _WCRTLINK extern void       _wsplitpath( const wchar_t *__path,
 _WCRTLINK extern int        _wsystem( const wchar_t *__cmd );
 :endsegment
 
-
-:segment !PENPOINT
 _WCRTLINK extern int     putenv( const char *__string );
 _WCRTLINK extern void    _searchenv( const char *__name, const char *__env_var,
                                      char *__buf );
-:endsegment
 :segment QNX
 extern int       need_usage( char **argv );
 extern int       print_usage( char **argv );
@@ -302,12 +295,6 @@ _WCRTLINK extern char   *_utoa( unsigned int __value, char *__buf, int __radix )
 #define _MAX_NAME    13  /* maximum length of file name (with extension) */
 #endif
 #endif
-:elsesegment PENPOINT
-#define _MAX_DRIVE      33      /*  maximum length of node name         */
-#define _MAX_NODE       33      /*  maximum length of node name         */
-#define _MAX_DIR        255     /*  maximum length of subdirectory      */
-#define _MAX_FNAME      33      /*  maximum length of a file name       */
-#define _MAX_EXT        33      /*  maximum length of a file extension  */
 :endsegment
 
 #define _MAX_PATH2 (_MAX_PATH+3) /* maximum size of output buffer
@@ -316,25 +303,10 @@ _WCRTLINK extern char   *_utoa( unsigned int __value, char *__buf, int __radix )
 :segment QNX
 _WCRTLINK extern char **environ;                /*  pointer to environment table */
 _WCRTLINK extern wchar_t **_wenviron;   /*  pointer to wide environment */
-:elsesegment !PENPOINT
-#if defined(__FUNCTION_DATA_ACCESS)
- #define environ (*__get_environ_ptr())
- #define _wenviron (*__get_wenviron_ptr())
- #define _fileinfo (*__get_fileinfo_ptr())
-#elif defined(__SW_BR) || defined(_RTDLL)
- #define environ   environ_br
- #define _wenviron _wenviron_br
- #define _fileinfo _fileinfo_br
-#endif
-_WCRTLINK extern char **_WCDATA environ;        /*  pointer to environment table */
-_WCRTLINK extern wchar_t **_WCDATA _wenviron; /*  pointer to wide environment */
-#if defined(__NT__)
- _WCRTLINK extern int _fileinfo;        /* for inheriting POSIX handles */
-#endif
 :endsegment
 
 :include errno.sp
-:segment !(PENPOINT|QNX)
+:segment !QNX
 #define _doserrno (*__get_doserrno_ptr())
 _WCRTLINK extern int                _doserrno;  /* DOS system error code value */
 #if !defined(__NETWARE__)
@@ -371,7 +343,6 @@ _WCRTLINK extern unsigned _WCDATA   __minreal;  /* DOS4GW var for WLINK MINREAL 
 _WCRTLINK extern unsigned long _WCDATA __win_alloc_flags; /* Windows allocation flags */
 _WCRTLINK extern unsigned long _WCDATA __win_realloc_flags;/* Windows reallocation flags */
 :endsegment
-:segment !PENPOINT
 :segment !QNX
 #if defined(__FUNCTION_DATA_ACCESS)
  #define _amblksiz (*__get_amblksiz_ptr())
@@ -433,7 +404,6 @@ _WCRTLINK extern void _WCNEAR *sbrk(int __increment);
 :endsegment
  typedef void (*onexit_t)();
 _WCRTLINK extern onexit_t onexit(onexit_t __func);
-:endsegment
 #endif
 
 :include poppack.sp

@@ -16,7 +16,7 @@
 
 :include wchar_t.sp
 
-:segment QNX | PENPOINT
+:segment QNX
 #ifndef __TYPES_H_INCLUDED
  #include <sys/types.h>
 #endif
@@ -172,25 +172,13 @@ typedef struct flock {
 #define O_EXCL          0x0400  /* exclusive open */
 #define _O_EXCL         0x0400  /* exclusive open */
 
-:elsesegment PENPOINT
-#define O_RDONLY        0x0000  /* open for read only */
-#define O_WRONLY        0x0001  /* open for write only */
-#define O_RDWR          0x0002  /* open for read and write */
-#define O_APPEND        0x0010  /* writes done at end of file */
-#define O_CREAT         0x0020  /* create new file */
-#define O_TRUNC         0x0040  /* truncate existing file */
-#define O_EXCL          0x0400  /* exclusive open */
-#define O_SHRMEM        0x0800  /* open file for sharing across process */
-
 :endsegment
 /*
  *  POSIX 1003.1 Prototypes.
  */
 _WCRTLINK extern int open( const char *__path, int __oflag, ... );
-:segment !PENPOINT
 _WCRTLINK extern int sopen( const char *__path, int __oflag, int __share, ... );
-:endsegment
-:segment QNX | PENPOINT
+:segment QNX
 _WCRTLINK extern int creat( const char *__path, mode_t __mode );
 :endsegment
 

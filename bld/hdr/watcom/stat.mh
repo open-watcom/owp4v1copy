@@ -29,7 +29,6 @@
 
 :include pshpackl.sp
 
-:segment !PENPOINT
 struct _stat {
         dev_t   st_dev;         /* disk drive file resides on */
         ino_t   st_ino;         /* this inode's #, not used for DOS */
@@ -185,7 +184,6 @@ struct _wstati64 {
 #define S_IFREG         0100000 /* regular */
 /* the following is not possible on PC */
 #define S_ISBLK( m )    0
-:endsegment
 #define S_ISFIFO( m )   (((m) & S_IFMT) == S_IFFIFO)
 #define S_ISCHR( m )    (((m) & S_IFMT) == S_IFCHR)
 #define S_ISDIR( m )    (((m) & S_IFMT) == S_IFDIR)
@@ -200,24 +198,22 @@ struct _wstati64 {
 #define S_IWRITE        0000200
 #define S_IEXEC         0000100
 
-/* group permission.  same as owner's on PC and PenPoint*/
+/* group permission.  same as owners on PC */
 #define S_IRWXG         0000070
 #define S_IRGRP         0000040
 #define S_IWGRP         0000020
 #define S_IXGRP         0000010
 
-/* other permission.  same as owner's on PC and PenPoint*/
+/* other permission.  same as owners on PC */
 #define S_IRWXO         0000007
 #define S_IROTH         0000004
 #define S_IWOTH         0000002
 #define S_IXOTH         0000001
-:segment !PENPOINT
 
 /* setuid, setgid, and sticky.  always false on PC */
 #define S_ISUID         0004000
 #define S_ISGID         0002000
 #define S_ISVTX         0001000
-:endsegment
 
 _WCRTLINK extern int fstat( int, struct stat * );
 _WCRTLINK extern int _fstat( int, struct _stat * );

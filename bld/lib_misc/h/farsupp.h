@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Far pointer support typedefs.
 *
 ****************************************************************************/
 
@@ -39,7 +38,7 @@
   #include "clibi64.h"
 #endif
 
-#if defined(__PENPOINT__) || defined(__AXP__) || defined(__PPC__)
+#if defined(__AXP__) || defined(__PPC__)
   #undef __FAR_SUPPORT__
   typedef CHAR_TYPE * FAR_STRING;
   typedef char      * FAR_ASCII_STRING;

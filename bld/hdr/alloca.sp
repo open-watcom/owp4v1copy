@@ -14,16 +14,11 @@
  #else
 :endsegment
   extern void  *__doalloca(size_t __size);
-:segment !PENPOINT
   #pragma aux stackavail __modify __nomemory;
-:endsegment
 
   #define __ALLOCA_ALIGN( s )   (((s)+(sizeof(int)-1))&~(sizeof(int)-1))
   #define __alloca( s )         __doalloca(__ALLOCA_ALIGN(s))
 
-:segment PENPOINT
-  #define alloca( s )   __alloca(s)
-:elsesegment
 :segment !QNX
   #if defined(__386__)
    extern void __GRO(size_t __size);
@@ -37,14 +32,10 @@
 :segment !QNX
   #endif
 :endsegment
-:endsegment
 
   #if defined(__386__)
    #pragma aux     __doalloca =              \
             "sub esp,eax"                    \
-:segment PENPOINT
-            "cmp al,[esp]" /* touch stack */ \
-:endsegment
             __parm __nomemory [__eax] __value [__esp] __modify __exact __nomemory [__esp];
   #elif defined(__SMALL__) || defined(__MEDIUM__) /* small data models */
    #pragma aux __doalloca = \

@@ -31,17 +31,11 @@
 :endsegment
 :segment !QNX
 ::
-:segment !PENPOINT
 #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
  #define BUFSIZ         4096
 #else
  #define BUFSIZ         512
 #endif
-:endsegment
-::
-:segment PENPOINT
-#define  BUFSIZ         512
-:endsegment
 ::
 #define _NFILES         20      /* number of files that can be handled */
 #define FILENAME_MAX    80
@@ -56,7 +50,7 @@ typedef struct  __iobuf {
     int                   _handle;      /* file handle */
     unsigned              _bufsize;     /* size of buffer */
     unsigned short        _ungotten;    /* used by ungetc and ungetwc */
-:segment QNX | PENPOINT
+:segment QNX
     struct __iobuf       *_unused;      /* spare entry */
 :endsegment
 } FILE;
@@ -69,39 +63,27 @@ typedef long    fpos_t;
 :include ext.sp
  #define FOPEN_MAX      _NFILES
  #define OPEN_MAX       FOPEN_MAX
-:segment PENPOINT
- #define PATH_MAX       254 /* maximum length of full pathname excl. '\0' */
-:elsesegment
  #if defined(__OS2__) || defined(__NT__)
   #define PATH_MAX      259 /* maximum length of full pathname excl. '\0' */
  #else
   #define PATH_MAX      143 /* maximum length of full pathname excl. '\0' */
  #endif
-:endsegment
 #else                   /* extensions not enabled */
  #define FOPEN_MAX      (_NFILES-2)
 #endif
 :endsegment
 
-:segment !PENPOINT
 #if defined(__FUNCTION_DATA_ACCESS)
  #define __iob (*__get_iob_ptr())
 #elif defined(__SW_BR) || defined(_RTDLL)
  #define __iob __iob_br
 #endif
 _WCRTLINK extern FILE _WCDATA __iob[];
-:endsegment
 /*
  *  Define macros to access the three default file pointer (and descriptors)
  *  provided to each process by default.  They will always occupy the
  *  first three file pointers in each processes' table.
  */
-:segment PENPOINT
-_WCRTLINK extern FILE *__get_iob_ptr(void);
-#define stdin (&(__get_iob_ptr()[0]))   /* standard input file  */
-#define stdout (&(__get_iob_ptr()[1]))  /* standard output file */
-#define stderr (&(__get_iob_ptr()[2]))  /* standard error file  */
-:elsesegment
 #define stdin   ((FILE *)&__iob[0])     /* standard input file  */
 #define stdout  ((FILE *)&__iob[1])     /* standard output file */
 #define stderr  ((FILE *)&__iob[2])     /* standard error file  */
@@ -113,9 +95,8 @@ _WCRTLINK extern FILE *__get_iob_ptr(void);
 #endif
 #endif
 :endsegment
-:endsegment
 
-:segment PENPOINT | QNX
+:segment QNX
 /* values for _flag field in FILE struct */
 :elsesegment
 /* values for _flag field in FILE struct and _iomode array */
@@ -138,7 +119,7 @@ _WCRTLINK extern FILE *__get_iob_ptr(void);
 #define _IOLBF  0x0040  /*  line buffering                  */
 #define _IONBF  0x0004  /*  no buffering                    */
 :endsegment
-:segment !(QNX | PENPOINT)
+:segment !QNX
 #define _BINARY 0x0040  /* file is binary, skip CRLF processing */
 :endsegment
 :segment !QNX
@@ -152,9 +133,6 @@ _WCRTLINK extern FILE *__get_iob_ptr(void);
 #define _DYNAMIC 0x4000 /* FILE is dynamically allocated   */
 #define _FILEEXT 0x8000 /* lseek with positive offset has been done */
 #define _COMMIT 0x0001  /* extended flag: commit OS buffers on flush */
-:segment PENPOINT
-#define _SHRMEM 0x8000  /* FILE and buffer are allocated from shared memory */
-:endsegment
 
 #define EOF         (-1)                /*  End of File/Error return code   */
 #define WEOF        ((wint_t)(-1))      /*  EOF equivalent for wide chars   */
@@ -240,7 +218,6 @@ _WCRTLINK extern int    fcloseall( void );
 _WCRTLINK extern FILE   *fdopen( int __handle, const char *__mode );
 _WCRTLINK extern FILE   *_fdopen( int __handle, const char *__mode );
 :endsegment
-:segment !PENPOINT
 _WCRTLINK extern int    _grow_handles( int __new_count );
 _WCRTLINK extern int    _fgetchar( void );
 _WCRTLINK extern int    fgetchar( void );
@@ -248,7 +225,6 @@ _WCRTLINK extern int    _fputchar( int __c );
 _WCRTLINK extern int    fputchar( int __c );
 _WCRTLINK extern FILE   *_fsopen( const char *__filename, const char *__mode,
                                   int __shflag );
-:endsegment
 _WCRTLINK extern int    flushall( void );
 _WCRTLINK extern int    vfscanf( FILE *__fp, const char *__format,
                                  __va_list __arg );
@@ -349,7 +325,7 @@ extern int      pclose( FILE *stream );
 #else
 #define getc(fp) \
         ((fp)->_cnt<=0 \
-:segment !(QNX | PENPOINT)
+:segment !QNX
         || (unsigned)((*(fp)->_ptr)-'\x0d')<=('\x1a'-'\x0d') \
 :endsegment
         ? fgetc(fp) \

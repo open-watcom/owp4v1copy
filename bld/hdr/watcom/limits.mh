@@ -71,15 +71,9 @@
 #endif
 
 :segment !QNX
-:segment PENPOINT
-#if defined(_POSIX_SOURCE) || defined(_PP_SOURCE) || !defined(NO_EXT_KEYS)
-:endsegment
 #define TZNAME_MAX  128             /*  The maximum number of bytes         */
                                     /*  supported for the name of a time    */
                                     /*  zone (not of the TZ variable).      */
-:segment PENPOINT
-#endif  /* _POSIX_SOURCE || _PP_SOURCE || !NO_EXT_KEYS */
-:endsegment
 :endsegment
 
 :segment QNX

@@ -40,13 +40,11 @@ _WCIRTLINK
 _WCRTLINK
 #endif
 extern int strcmp( const char *__s1, const char *__s2 );
-:segment !PENPOINT
 _WCRTLINK extern int strcoll( const char *__s1, const char *__s2 );
 _WCRTLINK extern int _stricoll( const char *__s1, const char *__s2 );
 _WCRTLINK extern int _strncoll( const char *__s1, const char *__s2, size_t __n );
 _WCRTLINK extern int _strnicoll( const char *__s1, const char *__s2, size_t __n );
 _WCRTLINK extern size_t strxfrm( char *__s1, const char *__s2, size_t __n );
-:endsegment
 _WCIRTLINK extern char *strcpy( char *__s1, const char *__s2 );
 _WCRTLINK extern size_t strcspn( const char *__s1, const char *__s2 );
 _WCRTLINK extern char *strerror( int __errnum );
@@ -65,7 +63,6 @@ _WCRTLINK extern char *strtok( char *__s1, const char *__s2 );
 
 /* WATCOM's Additional Functions (non-ANSI, non-POSIX) */
 
-:segment !PENPOINT
 #if !defined(_fmemccpy) || !defined(_INC_WINDOWSX)
 _WCRTLINK extern void _WCFAR *_fmemccpy( void _WCFAR *__s1, const void _WCFAR *__s2, int __c, size_t __n );
 #endif
@@ -160,7 +157,6 @@ _WCIRTLINK extern void movedata( unsigned __srcseg, unsigned __srcoff, unsigned 
 _WCRTLINK extern int bcmp( const void *__s1, const void *__s2, size_t __n );
 _WCRTLINK extern void bcopy( const void *__s1, void *__s2, size_t __n );
 _WCRTLINK extern void bzero( void *__s, size_t __n );
-:endsegment
 _WCRTLINK extern void *memccpy( void *__s1, const void *__s2, int __c, size_t __n );
 _WCRTLINK extern int memicmp( const void *__s1, const void *__s2, size_t __n );
 _WCRTLINK extern int _memicmp( const void *__s1, const void *__s2, size_t __n );

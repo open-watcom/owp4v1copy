@@ -1,6 +1,3 @@
-:segment PENPOINT
-:include penpoint/errno.mh
-:elsesegment
 /*
  *  errno.h     Error numbers
  *
@@ -215,4 +212,3 @@
 
 :include cplusepi.sp
 #endif
-:endsegment

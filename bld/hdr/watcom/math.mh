@@ -102,9 +102,6 @@ struct  exception {
 
 _WMRTLINK extern int    matherr( struct _exception * );
 _WMRTLINK extern double _matherr( struct _exception * );
-:segment PENPOINT
-_WMRTLINK extern void   _set_matherr( int (*__rtn)( struct _exception * ) );
-:endsegment
 
 _WCRTLINK extern int _dieeetomsbin( double *__x, double *__y );
 _WCRTLINK extern int _dmsbintoieee( double *__x, double *__y );

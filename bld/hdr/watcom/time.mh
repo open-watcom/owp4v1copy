@@ -22,12 +22,7 @@
 
 :include timet.sp
 
-:segment PENPOINT
-#define CLOCKS_PER_SEC  1000000
-#if defined(_POSIX_SOURCE) || defined(_PP_SOURCE) || !defined(NO_EXT_KEYS)
- #define CLK_TCK         CLOCKS_PER_SEC
-#endif
-:elsesegment DOS
+:segment DOS
 #define CLK_TCK         1000
 #define CLOCKS_PER_SEC  1000
 :endsegment
@@ -180,9 +175,6 @@ _WCRTLINK extern wchar_t *__wasctime( const struct tm *, wchar_t * );
 :segment QNX
 #if defined(_POSIX_SOURCE) || defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
 :endsegment
-:segment PENPOINT
-#if defined(_POSIX_SOURCE) || defined(_PP_SOURCE) || !defined(NO_EXT_KEYS)
-:endsegment
 _WCRTLINK extern void tzset( void );
 
 #if defined(__FUNCTION_DATA_ACCESS)
@@ -207,9 +199,6 @@ _WCRTLINK extern int    daylight;       /* d.s.t. indicator */
 #endif
 :endsegment
 :segment QNX
-#endif
-:endsegment
-:segment PENPOINT
 #endif
 :endsegment
 

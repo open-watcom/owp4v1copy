@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Internal CFE types.
 *
 ****************************************************************************/
 
@@ -709,7 +708,6 @@ enum {
     TS_NT,
     TS_WINDOWS,
     TS_CHEAP_WINDOWS,
-    TS_PENPOINT,
     TS_NETWARE,
     TS_QNX,
     TS_NETWARE5

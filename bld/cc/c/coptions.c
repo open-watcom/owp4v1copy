@@ -201,8 +201,6 @@ local void SetTargSystem()                               /* 07-aug-90 */
         TargSys = TS_CHEAP_WINDOWS;
     } else if( strcmp( SwData.sys_name, "NT" ) == 0 ) {
         TargSys = TS_NT;
-    } else if( strcmp( SwData.sys_name, "PENPOINT" ) == 0 ) {
-        TargSys = TS_PENPOINT;
     } else {
         TargSys = TS_OTHER;
     }
@@ -222,9 +220,7 @@ local void SetTargSystem()                               /* 07-aug-90 */
         }
         if( TargSys == TS_NETWARE5 ) PreDefine_Macro( "__NETWARE__" );
         PreDefine_Macro( "__NETWARE_386__" );
-        /* fall through */
-    case TS_PENPOINT:
-        /* PENPOINT & NETWARE used stack based calling conventions
+        /* NETWARE uses stack based calling conventions
            by default - silly people. */
         if( !CompFlags.register_conv_set ) {
             CompFlags.register_conventions = 0;

@@ -10,10 +10,6 @@
 :keep NOT_NETWARE
 :endsegment
 ::
-:segment !PENPOINT
-:keep NOT_PENPOINT
-:endsegment
-::
 :segment !UNICODE
 :keep NOT_UNICODE
 :endsegment

@@ -141,13 +141,6 @@ _WCRTLINK extern int    setmode( int __handle, int __mode );
 _WCRTLINK extern unsigned int sleep( unsigned int __seconds );
 _WCRTLINK extern int    unlink( const char *__path );
 _WCRTLINK extern ssize_t write( int __fildes, const void *__buf, size_t __len );
-:segment PENPOINT
-/*
- * The following are prototyped in fcntl.h
- * int open( const char *__path, int __oflag, ... );
- * int creat( const char *__path, mode_t __mode );
- */
-:endsegment
 :segment QNX
 extern unsigned alarm( unsigned int __seconds );
 extern int      chown( const char *__path, uid_t __owner, gid_t __group );

@@ -33,12 +33,10 @@ _WCRTLINK extern int kbhit(void);
   _WCIRTLINK extern unsigned outpd(unsigned __port, unsigned __value);
  #endif
 #endif
-:segment NOT_PENPOINT
 _WCRTLINK extern int putch(int __c);
 _WCRTLINK extern int ungetch(int __c);
 _WCRTLINK extern int vcprintf( const char *__format, __va_list __arg );
 _WCRTLINK extern int vcscanf( const char *__format, __va_list __arg );
-:endsegment
 
 #if defined(__INLINE_FUNCTIONS__) && defined(_M_IX86)
  #pragma intrinsic(inp,inpw,outp,outpw)
