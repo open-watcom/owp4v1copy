@@ -11,12 +11,12 @@ wcskip.obj
 
 lbc = tmp.lbc
 
-..\$(contain_lib) : $(template)
+../$(contain_lib) : $(template)
     @%create $(lbc)
     @for %i in ($(template)) do @%append $(lbc) +%i
-    wlib /b /c /n /q /t $^@ @$(lbc)
+    wlib -b -c -n -q -t $^@ @$(lbc)
 
-.cpp:..\..\cpp
+.cpp: ../../cpp
 .cpp.obj: .AUTODEPEND
     $(ppcompile) -xs-zm-zld @compflags $[@
 
