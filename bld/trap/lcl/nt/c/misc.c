@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -41,11 +40,11 @@
                            VDMCONTEXT_SEGMENTS | VDMCONTEXT_DEBUG_REGISTERS | \
                            VDMCONTEXT_FLOATING_POINT
 
-#if defined(MD_x86)
+#if defined( MD_x86 )
     #define CONTEXT_TO_USE CONTEXT_CONTROL | CONTEXT_INTEGER | \
                        CONTEXT_SEGMENTS | CONTEXT_DEBUG_REGISTERS | \
                        CONTEXT_FLOATING_POINT
-#elif defined(MD_axp) | defined(MD_ppc)
+#elif defined( MD_axp ) | defined( MD_ppc )
     #define CONTEXT_TO_USE CONTEXT_FULL
 #else
     #error CONTEXT_TO_USE not configured
@@ -56,12 +55,11 @@
  */
 BOOL MyGetThreadContext( thread_info *ti, PCONTEXT pc )
 {
-
 #ifdef WOW
     BOOL        rc;
 
-    if( (ti->is_wow || ti->is_dos) && UseVDMStuff ) {
-#if defined(MD_x86)
+    if( ( ti->is_wow || ti->is_dos ) && UseVDMStuff ) {
+#if defined( MD_x86 )
         VDMCONTEXT      vc;
 
         vc.ContextFlags = VDMCONTEXT_TO_USE;
@@ -78,13 +76,13 @@ BOOL MyGetThreadContext( thread_info *ti, PCONTEXT pc )
          * we zero out the high word of EIP, ESP or EBP as appropriate
          */
         if( !IsBigSel( pc->SegCs ) ) {
-            pc->Eip = (DWORD) (WORD) pc->Eip;
+            pc->Eip = ( DWORD ) ( WORD ) pc->Eip;
         }
         if( !IsBigSel( pc->SegSs ) ) {
-            pc->Esp = (DWORD) (WORD) pc->Esp;
-            pc->Ebp = (DWORD) (WORD) pc->Ebp;
+            pc->Esp = ( DWORD ) ( WORD ) pc->Esp;
+            pc->Ebp = ( DWORD ) ( WORD ) pc->Ebp;
         }
-#elif defined(MD_axp) | defined(MD_ppc)
+#elif defined( MD_axp ) | defined( MD_ppc )
         rc = 0;
 #else
         #error MyGetThreadContext not configured
@@ -99,7 +97,7 @@ BOOL MyGetThreadContext( thread_info *ti, PCONTEXT pc )
     return( GetThreadContext( ti->thread_handle, pc ) );
 #endif
 
-} /* MyGetThreadContext */
+}
 
 /*
  * MySetThreadContext - set the context for a specific thread
@@ -107,8 +105,8 @@ BOOL MyGetThreadContext( thread_info *ti, PCONTEXT pc )
 BOOL MySetThreadContext( thread_info *ti, PCONTEXT pc )
 {
 #ifdef WOW
-    if( (ti->is_wow || ti->is_dos) && UseVDMStuff ) {
-#if defined(MD_x86)
+    if( ( ti->is_wow || ti->is_dos ) && UseVDMStuff ) {
+#if defined( MD_x86 )
         VDMCONTEXT      vc;
         /*
          * VDMCONTEXT and CONTEXT are the same on an x86 machine.
@@ -118,7 +116,7 @@ BOOL MySetThreadContext( thread_info *ti, PCONTEXT pc )
         memcpy( &vc, pc, sizeof( CONTEXT ) );
         vc.ContextFlags = VDMCONTEXT_TO_USE;
         return( pVDMSetThreadContext( &DebugEvent, &vc ) );
-#elif defined(MD_axp) | defined(MD_ppc)
+#elif defined( MD_axp ) | defined( MD_ppc )
         return( FALSE );
 #else
         #error MySetThreadContext not configured
@@ -131,4 +129,4 @@ BOOL MySetThreadContext( thread_info *ti, PCONTEXT pc )
     pc->ContextFlags = CONTEXT_TO_USE;
     return( SetThreadContext( ti->thread_handle, pc ) );
 #endif
-} /* MySetThreadContext */
+}
