@@ -46,7 +46,7 @@ objs_nov_386 = sampnlm.obj realmode.obj nwhooks.obj settime.obj cpuspeed.obj pit
 
 objects = $(objs_$(target)_$(host_cpu)) sample.obj sampdata.obj io.obj sysio.obj wmsg.obj
 
-extra_c_flags =  -s -D_NO_LIB_PRAGMAS_
+extra_c_flags =  -s
 !ifeq machine NEC
 extra_c_flags += -d_NEC_PC
 !endif

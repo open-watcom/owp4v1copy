@@ -46,7 +46,7 @@ LIBNAME = wres
 # host_OS = dos
 # host_CPU = 386
 
-DEFS += -D_NO_LIB_PRAGMAS_ #-DNATURAL_PACK
+# DEFS += #-DNATURAL_PACK
 CFLAGS += $(OPT_PIC)
 
 $(OBJDIR)/lib$(LIBNAME).a : $(OBJDIR) $(OBJECTS)
