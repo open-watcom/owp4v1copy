@@ -337,7 +337,7 @@ defn    GetNElts                ; get the number of elements in an array
         and     CX,ADV_SUBSCRS  ; ...
         mov     AX,1            ; init number of elements count
         sub     DX,DX           ; . . .
-repeat:                         ; loop
+loop1:                          ; loop
           mov   BP,[DI]         ; - get number of elements
           or    DX,DX           ; - check high word
           _if   ne              ; - if not zero then
@@ -352,7 +352,7 @@ repeat:                         ; loop
             mul BP              ; - - update running total
           _endif                ; - endif
           add   DI,6            ; - point at next (hi-lo)
-        loop    repeat          ; - dec #sub's left to do, loop if more
+        loop    loop1           ; - dec #sub's left to do, loop if more
         mov     word ptr adv_elnum+0[BX],AX; set the # of elements in the array
         mov     word ptr adv_elnum+2[BX],DX; . . .
         ret                     ; return to caller

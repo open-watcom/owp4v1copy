@@ -178,10 +178,10 @@ OK:     mov     cl,cs:DataSize[bx]      ; get size of data
         mov     ax,ss                   ; set extra seg to data seg
         mov     es,ax                   ; . . .
         jcxz    done                    ; jump around pops if nothing to do
-repeat:                                 ; loop
+loop1:                                  ; loop
         pop     ax                      ; - get value
         stosw                           ; - store in IORslt and inc pointer
-        loop    repeat                  ; until done
+        loop    loop1                   ; until done
 done:   mov     ax,bx                   ; return type of io item
         jmp     IORegs
 endproc Prt
