@@ -1,5 +1,5 @@
 
-FIXUPP386(9d) recnum:1, offset:00000111h, len:001fh, chksum:1eh(1e)
+FIXUPP386(9d) recnum:1, offset:000000d4h, len:001fh, chksum:1eh(1e)
     0027h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
     002dh Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
     0033h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)

@@ -44,7 +44,7 @@ static void MakeDllName( char *dst, char const *src ){
         ++dst;
         ++src;
     }
-    *dst++ = 'D';
+    *dst++ = 'd';
     strcpy( dst, src );
 }
 
