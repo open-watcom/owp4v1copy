@@ -240,7 +240,7 @@ NULL };
 
 #define XMM_SUBREG( s, i, reg ) \
     REG( XMM##reg, s##i, s,     \
-    offsetof( mad_registers, x86.xmm.xmm[reg] )*16 + XMMS_##s * i,\
+    offsetof( mad_registers, x86.xmm.xmm[reg] )*8 + XMMS_##s * i,\
     XMMS_##s, XMM, NULL, L6, LX )
 
 #define MMX_SUBLIST( n )        \
