@@ -15,8 +15,13 @@
 #error The header algorithm requires C++
 #endif
 
-#include <iterator>
-#include <stdexcept>
+#ifndef _ITERATOR_INCLUDED
+  #include <iterator>
+#endif
+
+#ifndef _STDEXCEPT_INCLUDED
+  #include <stdexcept>
+#endif
 
 #define typename
 
@@ -65,6 +70,8 @@ namespace std {
     return( first );
   }
 
+:: Temporarly removed to avoid warnings due to possible compiler bug.
+#ifdef _NEVER
   // count( InputIterator, InputIterator, const Type & )
   // ***************************************************
   template< class InputIterator, class Type >
@@ -96,7 +103,7 @@ namespace std {
     }
     return( number );
   }
-
+#endif
 
   // equal( InputIterator1, InputIterator1, InputIterator2 )
   // *******************************************************
@@ -378,10 +385,8 @@ namespace std {
   // Sorting and related operations
   // ==============================
 
-  #ifdef _WATCOM_UNSUPPORTED
 :: A compiler bug appears to prevent this heap support from compiling.
-:: See the file bug02.cpp in the owstl regression tests.
-
+#ifdef _NEVER
   namespace _ow {
 
     template< class Int >
@@ -515,8 +520,7 @@ namespace std {
     make_heap( first, last );
     sort_heap( first, last );
   }
-
-  #endif
+#endif
 
   // min( const Type &, const Type & )
   // *********************************

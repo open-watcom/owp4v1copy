@@ -1,3 +1,33 @@
+/****************************************************************************
+*
+*                            Open Watcom Project
+*
+*    Portions Copyright (c) 1983-2002 Sybase, Inc. All Rights Reserved.
+*
+*  ========================================================================
+*
+*    This file contains Original Code and/or Modifications of Original
+*    Code as defined in and that are subject to the Sybase Open Watcom
+*    Public License version 1.0 (the 'License'). You may not use this file
+*    except in compliance with the License. BY USING THIS FILE YOU AGREE TO
+*    ALL TERMS AND CONDITIONS OF THE LICENSE. A copy of the License is
+*    provided with the Original Code and Modifications, and is also
+*    available at www.sybase.com/developer/opensource.
+*
+*    The Original Code and all software distributed under the License are
+*    distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+*    EXPRESS OR IMPLIED, AND SYBASE AND ALL CONTRIBUTORS HEREBY DISCLAIM
+*    ALL SUCH WARRANTIES, INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF
+*    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR
+*    NON-INFRINGEMENT. Please see the License for the specific language
+*    governing rights and limitations under the License.
+*
+*  ========================================================================
+*
+* Description:  This file contains the functional tests for the algorithms
+*               in <algorithm>.
+*
+****************************************************************************/
 
 #include <cstring>
 #include <algorithm>
@@ -69,6 +99,7 @@ bool find_test( )
 }
 
 
+#ifdef _NEVER
 bool count_test( )
 {
   bool rc = true;
@@ -100,7 +131,7 @@ bool count_test( )
 
   return( rc );
 }
-
+#endif
 
 bool equal_test( )
 {
@@ -387,7 +418,7 @@ int main( )
   try {
     if( !for_each_test( )   ) rc = 1;
     if( !find_test( )       ) rc = 1;
-    // The count test fails because of a compiler bug. See bug01.cpp.
+    // The count test fails because of a compiler bug.
     // if( !count_test( )      ) rc = 1;
     if( !equal_test( )      ) rc = 1;
     if( !copy_test( )       ) rc = 1;
