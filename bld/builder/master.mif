@@ -8,17 +8,24 @@ name = builder
 !include cproj.mif
 !include defrule.mif
 
+all: $(name).exe cdsay.exe
+
 extra_c_flags = -i..\..\pmake
 
 .c: ..\c;..\..\pmake
 
-OBJS = builder.obj utils.obj runit.obj sys$(host_OS).obj # pmake.obj pmkcmd.obj
+OBJS  = builder.obj utils.obj runit.obj sys$(host_OS).obj # pmake.obj pmkcmd.obj
+COBJS = cdsay.obj
 
 $(name).exe : $(OBJS)
         wlink $(lflags) name $^@ op map file {$(OBJS)}
+
+cdsay.exe : $(COBJS)
+        wlink $(lflags) name $^@ op map file {$(COBJS)}
 
 clean: .SYMBOLIC .EXPLICIT
         @if exist *.?bj del *.?bj
         @if exist *.exe del *.exe
         @if exist *.err del *.err
         @if exist *.map del *.map
+        @if exist *.sym del *.sym
