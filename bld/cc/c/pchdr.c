@@ -531,7 +531,11 @@ static void OutPutTypeIndexes()                         /* 02-jan-95 */
     int         i;
     struct type_indices typ_index;
 
+/*
+not ready for this change yet!
     for( i = TYPE_CHAR; i <= TYPE_LAST_ENTRY; i++ ) {
+*/
+    for( i = TYPE_CHAR; i <= TYPE_DOT_DOT_DOT; i++ ) {
         typ = BaseTypes[i];
         if( typ == NULL ) {
             typ_index.basetype_index[i] = 0;
