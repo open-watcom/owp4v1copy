@@ -163,7 +163,7 @@ BOOL __export FAR PASCAL AddDlgProc( HWND hwnd, WORD msg, WORD wparam,
     case WM_INITDIALOG:
         SetStaticText( hwnd, ADD_CNT, "0" );
         SetStaticText( hwnd, ADD_TOTAL, "0" );
-        parent = GetWindowWord( hwnd, GWW_HWNDPARENT );
+        parent = (HWND)GetWindowWord( hwnd, GWW_HWNDPARENT );
         GetClientRect( parent, &area );
         SetWindowPos( hwnd, NULL, -area.left, -area.top, 0, 0,
                       SWP_NOSIZE | SWP_NOZORDER );
@@ -234,9 +234,9 @@ HWND StartAdd( HWND parent, ListBoxInfo *info ) {
 
     AddCount = 0;
     AddTotal = 0;
-    DialProc = MakeProcInstance( AddDlgProc, Instance );
+    DialProc = MakeProcInstance( (FARPROC)AddDlgProc, Instance );
     if( DialProc != NULL ) {
-        dialog = JCreateDialog( Instance, "ADD_DLG", parent , DialProc );
+        dialog = JCreateDialog( Instance, "ADD_DLG", parent , (DLGPROC)DialProc );
         if( dialog != NULL ) {
             SetMenusForAdd( parent, TRUE );
             SetListBoxForAdd( info->box, TRUE );

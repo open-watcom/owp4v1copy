@@ -38,12 +38,12 @@
 #include "toolhelp.h"
 #endif
 
-BOOL MyModuleFindHandle( MODULEENTRY *me, HANDLE h )
+BOOL MyModuleFindHandle( MODULEENTRY FAR* me, HMODULE h )
 {
     BOOL        rc;
 
     me->dwSize = sizeof( MODULEENTRY );
-    rc = ModuleFindHandle( me, h );
+    rc = (ModuleFindHandle( me, h ) != NULL);
     me->szModule[MAX_MODULE_NAME] = 0;
     return( rc );
 
@@ -56,7 +56,7 @@ BOOL MyStackTraceNext( STACKTRACEENTRY *se )
 
 } /* MyStackTraceNext */
 
-BOOL MyTaskFindHandle( TASKENTRY *te, HANDLE h )
+BOOL MyTaskFindHandle( TASKENTRY *te, HTASK h )
 {
     te->dwSize = sizeof( TASKENTRY );
     return( TaskFindHandle( te, h ) );
@@ -111,7 +111,7 @@ BOOL MyGlobalNext( GLOBALENTRY *ge, WORD flags )
 
 } /* MyGlobalNext */
 
-BOOL MyGlobalEntryModule( GLOBALENTRY *ge, HANDLE hmod, WORD seg )
+BOOL MyGlobalEntryModule( GLOBALENTRY *ge, HMODULE hmod, WORD seg )
 {
 
     ge->dwSize = sizeof( GLOBALENTRY );
@@ -119,7 +119,7 @@ BOOL MyGlobalEntryModule( GLOBALENTRY *ge, HANDLE hmod, WORD seg )
 
 } /* MyGlobalEntryModule */
 
-BOOL MyGlobalEntryHandle( GLOBALENTRY *ge, HANDLE hmem )
+BOOL MyGlobalEntryHandle( GLOBALENTRY *ge, HMODULE hmem )
 {
 
     ge->dwSize = sizeof( GLOBALENTRY );

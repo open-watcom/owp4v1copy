@@ -177,8 +177,8 @@ void DoLogDialog( HWND hwnd )
 {
     FARPROC     fp;
 
-    fp = MakeProcInstance( LogDialog, Instance );
-    JDialogBox( Instance, "LOG", hwnd, fp );
+    fp = MakeProcInstance( (FARPROC)LogDialog, Instance );
+    JDialogBox( Instance, "LOG", hwnd, (DLGPROC)fp );
     FreeProcInstance( fp );
 
 } /* DoLogDialog */
@@ -646,7 +646,7 @@ static void logModuleSegments( MODULEENTRY *me )
     } else {
         for( i=0;i<512;i++ ) {
             if( MyGlobalEntryModule( &ge, me->hModule, i ) ) {
-                formatModuleSeg( i, ge.hBlock );
+                formatModuleSeg( i, (WORD)ge.hBlock );
             }
         }
     }

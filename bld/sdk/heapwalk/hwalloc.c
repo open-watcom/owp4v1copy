@@ -141,7 +141,7 @@ BOOL __export FAR PASCAL AllocDlgProc( HWND hwnd, WORD msg, WORD wparam,
     wparam = wparam;
     switch( msg ) {
     case WM_INITDIALOG:
-        parent = GetWindowWord( hwnd, GWW_HWNDPARENT );
+        parent = (HWND)GetWindowWord( hwnd, GWW_HWNDPARENT );
         GetClientRect( parent, &area );
         SetWindowPos( hwnd, NULL, -area.left, -area.top, 0, 0,
                       SWP_NOSIZE | SWP_NOZORDER );
@@ -289,9 +289,9 @@ void DoNBytes( HWND parent, WORD type ) {
     int                 ret;
 
     DialMode = type;
-    fp = MakeProcInstance( FreeNDlgProc, Instance );
+    fp = MakeProcInstance( (FARPROC)FreeNDlgProc, Instance );
     if( fp != NULL ) {
-        ret = JDialogBox( Instance, "FREE_N_DLG", parent, fp );
+        ret = JDialogBox( Instance, "FREE_N_DLG", parent, (DLGPROC)fp );
         if( ret != -1 ) {
             FreeProcInstance( fp );
             return;
@@ -300,8 +300,8 @@ void DoNBytes( HWND parent, WORD type ) {
     /* there's not enough memory to do the dialog
        so free some memory so we can do it */
     FreeAllMem();
-    fp = MakeProcInstance( FreeNDlgProc, Instance );
-    ret = JDialogBox( Instance, "FREE_N_DLG", parent, fp );
+    fp = MakeProcInstance( (FARPROC)FreeNDlgProc, Instance );
+    ret = JDialogBox( Instance, "FREE_N_DLG", parent, (DLGPROC)fp );
     FreeProcInstance( fp );
     AllocMem( FreeAmt );
 }

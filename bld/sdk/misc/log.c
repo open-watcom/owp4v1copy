@@ -267,9 +267,9 @@ void LogConfigure() {
 
     if( !LogCurInfo.init ) SetLogDef();
     if( LogCurInfo.config.type == LOG_TYPE_BUFFER ) flushLog( TRUE );
-    fp = MakeProcInstance( ConfigLogDlgProc, LogCurInfo.instance );
+    fp = MakeProcInstance( (FARPROC)ConfigLogDlgProc, LogCurInfo.instance );
     DialogBox( LogCurInfo.instance, "LOG_CFG_DLG",
-                LogCurInfo.hwnd, fp );
+                LogCurInfo.hwnd, (DLGPROC)fp );
     FreeProcInstance( fp );
 }
 
@@ -398,9 +398,9 @@ BOOL SpyLogOpen()
         break;
     case LOG_ACTION_QUERY:
         if( !access( LogCurInfo.config.curname, F_OK ) ) {
-            fp = MakeProcInstance( LogExistsDlgProc, LogCurInfo.instance );
+            fp = MakeProcInstance( (FARPROC)LogExistsDlgProc, LogCurInfo.instance );
             ret = DialogBox( LogCurInfo.instance, "LOG_EXISTS_DLG",
-                        LogCurInfo.hwnd, fp );
+                        LogCurInfo.hwnd, (DLGPROC)fp );
             FreeProcInstance( fp );
             switch( ret ) {
             case LOG_APPEND:

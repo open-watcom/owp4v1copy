@@ -37,7 +37,6 @@
 #include <string.h>
 #include <dos.h>
 #include <malloc.h>
-#define STRICT
 #ifdef __OS2_PM__
 #define INCL_WINDIALOGS
 #define INCL_WIN

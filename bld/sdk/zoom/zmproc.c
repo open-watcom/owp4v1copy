@@ -79,7 +79,7 @@ static void EndScrolling( MainWndInfo *info ) {
  * DoScroll - process messages from the scrollbars
  */
 
-static void DoScroll( HWND bar, WORD wparam, MainWndInfo *info ) {
+static void DoScroll( HWND bar, WPARAM wparam, MainWndInfo *info ) {
 
     int         delta;
     HDC         dc;
@@ -431,8 +431,8 @@ static displayAbout( HWND hwnd ) {
     FreeRCString( (char *)ai.title );
 }
 
-BOOL __export FAR PASCAL ZOOMMainWndProc( HWND hwnd, UINT msg, UINT wparam,
-                                    LONG lparam )
+BOOL __export FAR PASCAL ZOOMMainWndProc( HWND hwnd, UINT msg, WPARAM wparam,
+                                    LPARAM lparam )
 {
     MainWndInfo         *info;
     HDC                 dc;

@@ -45,7 +45,7 @@ void CenterDlg( HWND hwnd ) {
     RECT        area;
     WORD        x;
     WORD        y;
-    parent = GetWindowWord( hwnd, GWW_HWNDPARENT );
+    parent = (HWND)GetWindowWord( hwnd, GWW_HWNDPARENT );
     GetClientRect( parent, &area );
     x = -area.left;
     y = -area.top;

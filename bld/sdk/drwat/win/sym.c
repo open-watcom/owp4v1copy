@@ -318,9 +318,9 @@ static WORD horkyFindSegment( HMODULE mod, WORD seg ) {
     }
     do {
         if( ge.hOwner == mod && ge.wType == GT_MODULE ) {
-            ReadMem( ge.hBlock, 0x22, &offset, sizeof( offset ) );
+            ReadMem( (WORD)ge.hBlock, 0x22, &offset, sizeof( offset ) );
             offset += 8 + ( 10 * seg );
-            ReadMem( ge.hBlock, offset, &sel, sizeof( sel ) );
+            ReadMem( (WORD)ge.hBlock, offset, &sel, sizeof( sel ) );
             return( sel );
         }
     } while( GlobalNext( &ge, GLOBAL_ALL ) );
@@ -364,7 +364,7 @@ void DIGCLIENT DIPCliMapAddr( addr_ptr *addr, void *info ) {
         GlobalUnlock( ge.hBlock );
         sel = FP_SEG( ptr );
         if( sel == NULL ) {
-            sel = ge.hBlock + 1;
+            sel = (WORD)ge.hBlock + 1;
         }
         addr->segment = sel;
         addr->offset = 0;

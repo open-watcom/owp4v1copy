@@ -70,7 +70,7 @@ BOOL CheckIsModuleWin32App( HMODULE hmod, WORD *win32ds, WORD *win32cs,
     if( !GlobalEntryModule( &ge, hmod, 1 ) ) {
         return( 0 );
     }
-    ReadMem( ge.hBlock, 0, (LPVOID) &wedata, sizeof( wedata ) );
+    ReadMem( (WORD)ge.hBlock, 0, (LPVOID) &wedata, sizeof( wedata ) );
     if( memcmp( wedata.sig, win386Sig, sizeof( win386Sig) ) == 0 ||
         memcmp( wedata.sig, win386Sig2, sizeof( win386Sig2) ) == 0 ) {
         if( memcmp( wedata.new_sig, win386Sig, sizeof( win386Sig) ) == 0 ) {
@@ -81,11 +81,11 @@ BOOL CheckIsModuleWin32App( HMODULE hmod, WORD *win32ds, WORD *win32cs,
         if( !GlobalEntryModule( &ge, hmod, segnum ) ) {
             return( 0 );
         }
-        ReadMem( ge.hBlock, wedata.dataseg_off, (LPVOID) win32ds,
+        ReadMem( (WORD)ge.hBlock, wedata.dataseg_off, (LPVOID) win32ds,
                         sizeof( WORD ) );
-        ReadMem( ge.hBlock, wedata.stacksize_off, (LPVOID) win32initialeip,
+        ReadMem( (WORD)ge.hBlock, wedata.stacksize_off, (LPVOID) win32initialeip,
                         sizeof( DWORD ) );
-        ReadMem( ge.hBlock, wedata.codeinfo_off+4, (LPVOID) win32cs,
+        ReadMem( (WORD)ge.hBlock, wedata.codeinfo_off+4, (LPVOID) win32cs,
                         sizeof( WORD ) );
         return( 1 );
     }
@@ -105,9 +105,9 @@ void FlagWin32AppAsDebugged( HMODULE hmod )
     if( !GlobalEntryModule( &ge, hmod, 1 ) ) {
         return;
     }
-    ReadMem( ge.hBlock, 0, (LPVOID) &wedata, sizeof( wedata ) );
+    ReadMem( (WORD)ge.hBlock, 0, (LPVOID) &wedata, sizeof( wedata ) );
     if( !memcmp( wedata.sig, win386Sig, sizeof( win386Sig) ) ) {
-        WriteMem( ge.hBlock, 0, win386Sig2, 4 );
+        WriteMem( (WORD)ge.hBlock, 0, win386Sig2, 4 );
     }
 
 } /* FlagWin32AppAsDebugged */

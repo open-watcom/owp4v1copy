@@ -57,9 +57,9 @@ typedef struct {
  */
 static void CreateTheListBox( HWND parent, TBinfo *info, DWORD style ) {
 
-    HANDLE                      instance;
+    HINSTANCE                      instance;
 
-    instance = GetWindowWord( parent, GWW_HINSTANCE );
+    instance = (HINSTANCE)GetWindowWord( parent, GWW_HINSTANCE );
     info->boxhwnd =
         CreateWindow(
             "LISTBOX",                  /* Window class name */
@@ -73,7 +73,7 @@ static void CreateTheListBox( HWND parent, TBinfo *info, DWORD style ) {
             info->id,                   /* Window menu handle */
             instance,                   /* Program instance handle */
             NULL );                     /* Create parameters */
-    SendMessage( info->boxhwnd, WM_SETFONT, info->font, 0L );
+    SendMessage( info->boxhwnd, WM_SETFONT, (WPARAM)info->font, 0L );
 }
 
 void SizeTheListBox( HWND hwnd, TBinfo *info ) {
@@ -227,8 +227,8 @@ BOOL RegTextBox( HANDLE instance ) {
 /*
  * CreateTextBox - create a text box
  */
-TextBoxHdl CreateTextBox( HANDLE instance, HWND parent, HFONT font,
-                        HMENU boxid, char *(*fmt)(), WORD flags ) {
+TextBoxHdl CreateTextBox( HINSTANCE instance, HWND parent, HFONT font,
+                        HMENU boxid, char *(*fmt)(unsigned), WORD flags ) {
 
     HWND                hwnd;
     TBinfo              *info;

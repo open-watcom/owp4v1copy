@@ -339,17 +339,17 @@ void ReDisplayHeapList( HWND boxhwnd, GlobStateStruct *state ) {
                 }
             }
         } else {
-            curselector = state->sel.info.ge.hBlock;
-            topselector = state->top.info.ge.hBlock;
+            curselector = (WORD)state->sel.info.ge.hBlock;
+            topselector = (WORD)state->top.info.ge.hBlock;
             for( i=0; i < HeapListSize; i++ ) {
-                if( HeapList[i]->info.ge.hBlock == topselector
+                if( (WORD)HeapList[i]->info.ge.hBlock == topselector
                 && HeapList[i]->info.ge.dwAddress
                 == state->top.info.ge.dwAddress ) {
                     SendMessage( boxhwnd, LB_SETTOPINDEX, i, 0 );
                 }
 
                 if( state->sel_valid
-                && HeapList[i]->info.ge.hBlock == curselector
+                && (WORD)HeapList[i]->info.ge.hBlock == curselector
                 && HeapList[i]->info.ge.dwAddress
                 == state->sel.info.ge.dwAddress ) {
                     SendMessage( boxhwnd, LB_SETCURSEL, i, 0 );
@@ -423,7 +423,7 @@ static BOOL AddAllSelectors( WORD sel )
 
 static char GetMemFlag( heap_list *hl ) {
 
-    if( hl->info.ge.hBlock % 2 ) return( 'F' );
+    if( (WORD)hl->info.ge.hBlock % 2 ) return( 'F' );
     if( hl->info.ge.wType == GT_CODE || hl->info.ge.wType == GT_RESOURCE ) {
         if( hl->info.ge.wcLock == 0 && hl->info.ge.wcPageLock == 0 ) {
             return( 'D' );

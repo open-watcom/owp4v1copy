@@ -58,6 +58,8 @@ cflags = $(nodebugflags) -d2    # need a space: -bt=foo-d2 eats the -d2. Ugh!
 !endif
 !endif
 
+cflags += -dSTRICT
+
 !ifdef wpi_lib
 wpi_library=$(wpi_dir)\lib\$(wpi_lib).lib
 !endif

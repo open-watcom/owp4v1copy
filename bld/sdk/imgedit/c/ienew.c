@@ -286,7 +286,7 @@ int NewImage( int img_type, char *filename )
 
     if( img_type == UNDEF_IMG ) {
         fp = _wpi_makeprocinstance( (WPI_PROC)SelImgProc, Instance );
-        button_type = _wpi_dialogbox( HMainWindow, fp, Instance,
+        button_type = _wpi_dialogbox( HMainWindow, (DLGPROC)fp, Instance,
                                       SELECTIMAGE, 0L );
         _wpi_freeprocinstance( fp );
 
@@ -302,7 +302,7 @@ int NewImage( int img_type, char *filename )
     switch(imgType) {
     case BITMAP_IMG:
         fp = _wpi_makeprocinstance( (WPI_PROC)SelBitmapProc, Instance );
-        button_type = _wpi_dialogbox(HMainWindow, fp, Instance, BITMAPTYPE, 0L);
+        button_type = _wpi_dialogbox(HMainWindow, (DLGPROC)fp, Instance, BITMAPTYPE, 0L);
         _wpi_freeprocinstance( fp );
         if (button_type == DLGID_CANCEL) {
             imgType = UNDEF_IMG;

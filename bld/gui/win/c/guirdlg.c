@@ -197,7 +197,7 @@ bool GUIInsertResDialogControls( gui_window *wnd )
     WPI_ENUMPROC        enum_func;
 
     enum_func = _wpi_makeenumprocinstance( (WPI_PROC) InsertResDlgCntlFunc, GUIMainHInst );
-    _wpi_enumchildwindows( wnd->hwnd, enum_func, (LONG)wnd );
+    _wpi_enumchildwindows( wnd->hwnd, enum_func, (LPARAM)wnd );
     _wpi_freeprocinstance( (WPI_PROC)enum_func );
 
     return( TRUE );
@@ -212,7 +212,7 @@ bool GUIDoCreateResDialog( long dlg_id, HWND parent, void *data )
 {
     WPI_PROC    fp;
 
-    fp = _wpi_makeprocinstance( GUIDialogFunc, GUIMainHInst );
+    fp = _wpi_makeprocinstance( (WPI_PROC)GUIDialogFunc, GUIMainHInst );
     if( !fp ) {
         return( FALSE );
     }

@@ -94,7 +94,7 @@ BOOL __export FAR PASCAL NotifyHandler( WORD id, DWORD data )
         MyModuleFindHandle( &ptr->me, ptr->startdll.hModule );
         break;
     case NFY_DELMODULE:
-        MyModuleFindHandle( &ptr->me, data );
+        MyModuleFindHandle( &ptr->me, (HMODULE)data );
         break;
     case NFY_RIP:
         memcpy( &ptr->rip, (LPVOID) data, sizeof( NFYRIP ) );

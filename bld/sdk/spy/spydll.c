@@ -95,7 +95,7 @@ BOOL WINAPI LibMain( HINSTANCE inst, DWORD reason, LPVOID *ptr )
 
 #else
 
-int WINAPI LibMain( HANDLE hmod, WORD dataseg, WORD heap, LPSTR cmdline )
+int WINAPI LibMain( HINSTANCE hmod, WORD dataseg, WORD heap, LPSTR cmdline )
 {
     dataseg = dataseg;
     heap = heap;

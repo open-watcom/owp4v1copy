@@ -205,7 +205,7 @@ BOOL __export FAR PASCAL SummaryInfoProc( HWND hwnd, WORD msg, WORD wparam,
 static void initProcInst( void ) {
 
     if( dialCount == 0 ) {
-        dialProc = MakeProcInstance( SummaryInfoProc, Instance );
+        dialProc = MakeProcInstance( (FARPROC)SummaryInfoProc, Instance );
     }
     dialCount ++;
 } /* initProcInst */
@@ -218,7 +218,7 @@ void DisplayGlobHeapInfo( HWND parent ) {
 
     initProcInst();
     JCreateDialogParam( Instance, "GBL_HEAP_INFO", parent ,
-                                dialProc, GBL_INFO_DIALOG );
+                          (DLGPROC)dialProc, GBL_INFO_DIALOG );
 } /* DisplayGlobMemInfo */
 
 /*
@@ -228,7 +228,7 @@ void DisplayGlobHeapInfo( HWND parent ) {
 void DisplayMemManInfo( HWND parent ) {
 
     initProcInst();
-    JCreateDialogParam( Instance, "MEMMAN_INFO", parent, dialProc,
+    JCreateDialogParam( Instance, "MEMMAN_INFO", parent, (DLGPROC)dialProc,
                        MEM_INFO_DIALOG );
 } /* DisplayMemManInfo */
 
@@ -242,6 +242,6 @@ HWND DisplayLocalHeapInfo( HWND parent ) {
 
     initProcInst();
     dialog = JCreateDialogParam( Instance, "LCL_HEAP_INFO", parent,
-                                dialProc, LCL_INFO_DIALOG);
+                             (DLGPROC)dialProc, LCL_INFO_DIALOG);
     return( dialog );
 } /* DisplayLocalHeapInfo */

@@ -977,7 +977,7 @@ WPI_MRESULT CALLBACK GUIWindowProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
         case CTLCOLOR_LISTBOX :
         case CTLCOLOR_MSGBOX :
         case CTLCOLOR_STATIC :
-            ret = GUICtl3dCtlColorEx( msg, wparam, lparam );
+            ret = (WPI_MRESULT)GUICtl3dCtlColorEx( msg, wparam, lparam );
             if( ret == (HBRUSH)NULL ) {
                 SetBkColor( (HDC)wparam, GetNearestColor( (HDC)wparam,
                             GUIGetBack( wnd, GUI_BACKGROUND ) ) );

@@ -117,7 +117,7 @@ void ProcessMark( HWND owner, HANDLE instance, void (*fn)(char *) ) {
     if( WriteFn != NULL ) return;
     WriteFn = fn;
     fp = MakeProcInstance( (FARPROC)MarkDlgProc, instance );
-    DialogBox( instance, "MARK_DLG", owner, fp );
+    DialogBox( instance, "MARK_DLG", owner, (DLGPROC)fp );
     FreeProcInstance( fp );
     WriteFn = NULL;
 }

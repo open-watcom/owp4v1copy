@@ -945,7 +945,7 @@ extern int _wpi_getmetricpointsize( WPI_PRES pres, WPI_TEXTMETRIC *textmetric,
 
 extern void _wpi_enumfonts( WPI_PRES pres, char *facename,
                                         WPI_ENUMFONTPROC proc, char *data );
-extern void _wpi_enumchildwindows( HWND hwnd, WPI_ENUMPROC proc, LONG data );
+extern void _wpi_enumchildwindows( HWND hwnd, WPI_ENUMPROC proc, LPARAM data );
 
     #define _wpi_getnextwindow( hwnd ) WinGetNextWindow( hwnd )
 

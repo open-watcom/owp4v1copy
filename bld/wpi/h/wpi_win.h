@@ -287,14 +287,14 @@ extern void _wpi_getbitmapdim( HBITMAP bmp, int *pwidth, int *pheight );
     #define _wpi_makeprocinstance( proc, inst ) MakeProcInstance( proc, inst )
 
     #define _wpi_makeenumprocinstance( proc, inst ) \
-                                    MakeProcInstance( (FARPROC)proc, inst )
+                                    (WPI_ENUMPROC)MakeProcInstance( (FARPROC)proc, inst )
 
     #define _wpi_makelineddaprocinstance( proc, inst ) \
                                     (WPI_LINEDDAPROC)MakeProcInstance( (FARPROC)proc, inst )
 
     #define _wpi_defdlgproc( hwnd, msg, mp1, mp2 ) FALSE
 
-    #define _wpi_freeprocinstance( proc ) FreeProcInstance( proc )
+    #define _wpi_freeprocinstance( proc ) FreeProcInstance( (FARPROC)proc )
 
     #define _wpi_getclassproc( class ) (class)->lpfnWndProc
 
@@ -321,7 +321,7 @@ extern void _wpi_getbitmapdim( HBITMAP bmp, int *pwidth, int *pheight );
     #define _wpi_enddialog( hwnd, result ) EndDialog( hwnd, result )
 
     #define _wpi_dialogbox( parent, proc, inst, res_id, data ) \
-        DialogBoxParam( inst, res_id, parent, proc, (DWORD)(LPSTR) (data) )
+        DialogBoxParam( inst, res_id, parent, (DLGPROC)proc, (DWORD)(LPARAM)(data) )
 
     #define _wpi_setstretchbltmode( mem, mode ) SetStretchBltMode( mem, mode )
 
@@ -701,7 +701,7 @@ extern int _wpi_getmetricpointsize( WPI_PRES pres, WPI_TEXTMETRIC *tm,
         EnumFonts( pres, (LPSTR)facename, (FARPROC)(proc), (LPSTR)(data) )
 
     #define _wpi_enumchildwindows( hwnd, proc, lp ) \
-                EnumChildWindows( (HWND)(hwnd), (FARPROC)(proc), (LONG)(lp) )
+                EnumChildWindows( (HWND)(hwnd), (WNDENUMPROC)(proc), (LPARAM)(lp) )
 
     #define _wpi_getnextwindow( hwnd ) GetNextWindow( hwnd, GW_HWNDNEXT )
 

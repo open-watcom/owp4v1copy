@@ -66,7 +66,7 @@ DWORD GetRealCSIP( HANDLE htask, HANDLE *mod )
         if( !StackTraceNext( &se ) ) break;
         csip = MAKECSIP( se.wCS, se.wIP );
         ge.dwSize = sizeof( ge );
-        if( GlobalEntryHandle( &ge, se.wCS ) ) {
+        if( GlobalEntryHandle( &ge, (HGLOBAL)se.wCS ) ) {
             if( ge.hOwner == te.hModule ) break;
         }
     }

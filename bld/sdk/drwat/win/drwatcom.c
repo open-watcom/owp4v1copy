@@ -60,7 +60,7 @@ static void setUpMemWnd( void ) {
     MemFree( cfginfo );
 }
 
-int PASCAL WinMain( HANDLE currinst, HANDLE previnst, LPSTR cmdline, int cmdshow)
+int PASCAL WinMain( HINSTANCE currinst, HINSTANCE previnst, LPSTR cmdline, int cmdshow)
 {
     WNDCLASS    wc;
     MSG         msg;
@@ -70,7 +70,7 @@ int PASCAL WinMain( HANDLE currinst, HANDLE previnst, LPSTR cmdline, int cmdshow
     /*
      * don't let two of us run!
      */
-    GlobalPageLock( FP_SEG( IntHandler ) );
+    GlobalPageLock( (HGLOBAL)FP_SEG( IntHandler ) );
     cmdline = cmdline;
     cmdshow = cmdshow;
     _STACKLOW = 0;
@@ -149,11 +149,11 @@ int PASCAL WinMain( HANDLE currinst, HANDLE previnst, LPSTR cmdline, int cmdshow
      * set up handlers
      */
     faultFN = MakeProcInstance( (FARPROC)IntHandler, Instance );
-    notifyFN = MakeProcInstance( NotifyHandler, Instance );
+    notifyFN = MakeProcInstance( (FARPROC)NotifyHandler, Instance );
     if( !InterruptRegister( NULL, faultFN ) ) {
         Death( STR_CANT_HOOK_INTER );
     }
-    if( !NotifyRegister( NULL, notifyFN, NF_NORMAL | NF_RIP ) ) {
+    if( !NotifyRegister( NULL, (LPFNNOTIFYCALLBACK)notifyFN, NF_NORMAL | NF_RIP ) ) {
         InterruptUnRegister( NULL );
         Death( STR_CANT_HOOK_NOTIF );
     }
@@ -208,7 +208,7 @@ void Death( DWORD msgid, ... )
     JDialogFini();
     FiniSymbols();
     FreeRCString( AppName );
-    GlobalPageUnlock( FP_SEG( IntHandler ) );
+    GlobalPageUnlock( (HGLOBAL)FP_SEG( IntHandler ) );
     exit( 1 );
 
 } /* Death */
@@ -218,7 +218,7 @@ static int alertedState = 0;
 
 static void newIcon( HWND hwnd, HICON icon )
 {
-    SetClassWord( hwnd, GCW_HICON, icon );
+    SetClassWord( hwnd, GCW_HICON, (WORD)icon );
     if( IsIconic( hwnd ) ) {
         ShowWindow( hwnd, SW_HIDE );
         ShowWindow( hwnd, SW_SHOWMINNOACTIVE );

@@ -257,7 +257,7 @@ typedef struct heapconfiginfo {
  */
 extern char             *HeapWalkName;
 extern HWND             HeapWalkMainWindow;
-extern HANDLE           Instance;
+extern HINSTANCE        Instance;
 extern BOOL             ListingDPMI;
 extern WORD             HeapType;
 extern HWND             ListBox,TitleLine;
@@ -299,7 +299,7 @@ char *GetGlobalTextItem( unsigned i );
 char *GetLocalTextItem( unsigned i );
 
 /* hwproc.c */
-BOOL __export FAR PASCAL HeapWalkProc( HWND hwnd, WORD msg, WORD wparam, DWORD lparam );
+BOOL __export FAR PASCAL HeapWalkProc( HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam );
 void EndAdd( void );
 
 /* hwsort.c */
@@ -307,7 +307,7 @@ void SortHeapList( void );
 
 /* hwdisp.c */
 BOOL __export FAR PASCAL ItemDisplayProc( HWND hwnd, WORD msg, WORD wparam, DWORD lparam );
-void ShowHeapObject( WORD lbhdl );
+void ShowHeapObject( HWND lbhdl );
 
 /* hwsave.c */
 void PutOutGlobalHeader( FILE *fptr );
@@ -372,3 +372,4 @@ void InitializeStringTables( void );
 
 /* hwldstr */
 BOOL InitStringTable( void );
+char *AllocRCString( DWORD id );

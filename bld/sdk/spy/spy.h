@@ -30,8 +30,6 @@
 ****************************************************************************/
 
 
-#define WIN31
-#define STRICT
 #include <windows.h>
 #define MSG_RC_BASE     0
 #include "rcstr.h"

@@ -68,7 +68,7 @@ bool GUIMainTouched = FALSE;
 #include "win1632.h"
 #include <dos.h>
 
-int PASCAL WinMain( HANDLE hInstance, HANDLE hPrevInstance,
+int PASCAL WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance,
                     LPSTR lpCmdLine, int nShowCmd )
 {
     extern char **_argv;

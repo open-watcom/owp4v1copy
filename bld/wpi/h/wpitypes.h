@@ -144,7 +144,7 @@
     #define WPI_F_FONT                  LOGFONT
     #define WPI_PARAM1                  WPARAM
     #define WPI_PARAM2                  LPARAM
-    #define WPI_INST                    HANDLE
+    #define WPI_INST                    HINSTANCE
     #define WPI_HACCEL                  HANDLE
     #define WPI_MSG                     UINT
     #define WPI_QMSG                    MSG

@@ -209,7 +209,7 @@ static void MemDumpHeader( int hdl, MemWndInfo *info ) {
         write( hdl, buf, len );
     } else {
         ge.dwSize = sizeof( GLOBALENTRY );
-        GlobalEntryHandle( &ge, info->sel );
+        GlobalEntryHandle( &ge, (HGLOBAL)info->sel );
         RCsprintf( buf, MWND_BLOCK_ADDR, ge.dwAddress, &len );
         write( hdl, buf, len );
         RCsprintf( buf, MWND_BLOCK_HDL, ge.hBlock, &len );
@@ -983,8 +983,8 @@ BOOL __export FAR PASCAL MemDisplayProc( HWND hwnd, UINT msg, WPARAM wparam,
             break;
         case MEMINFO_OFFSET:
             inst = GET_HINSTANCE( hwnd );
-            fp = MakeProcInstance( OffsetProc, inst );
-            DialogBox( inst, "OFFSETDLG", hwnd, fp );
+            fp = MakeProcInstance( (FARPROC)OffsetProc, inst );
+            DialogBox( inst, "OFFSETDLG", hwnd, (DLGPROC)fp );
             FreeProcInstance( fp );
             break;
         }
@@ -1126,12 +1126,12 @@ static void DisplaySegInfo( HWND parent, HANDLE instance, MemWndInfo *info ) {
     mh = GetMenu( parent );
     EnableMenuItem( mh, MEMINFO_SHOW, MF_GRAYED );
     if( DialCount == 0 ) {
-        DialProc = MakeProcInstance( SegInfoProc, instance );
+        DialProc = MakeProcInstance( (FARPROC)SegInfoProc, instance );
     }
     DialCount ++;
     if( info->isdpmi ) {
         GetADescriptor( info->sel, &desc );
-        hwnd = CreateDialog( instance, "SEL_INFO", parent, DialProc );
+        hwnd = CreateDialog( instance, "SEL_INFO", parent, (DLGPROC)DialProc );
 
         sprintf( buf, "%04X", info->sel );
         SetDlgItemText( hwnd, SEL_INFO_SEL, buf );
@@ -1166,8 +1166,8 @@ static void DisplaySegInfo( HWND parent, HANDLE instance, MemWndInfo *info ) {
         SetDlgItemText( hwnd, SEL_INFO_ACCESS, buf );
     } else {
         ge.dwSize = sizeof( GLOBALENTRY );
-        GlobalEntryHandle( &ge, info->sel );
-        hwnd = CreateDialog( instance, "HDL_INFO", parent, DialProc );
+        GlobalEntryHandle( &ge, (HGLOBAL)info->sel );
+        hwnd = CreateDialog( instance, "HDL_INFO", parent, (DLGPROC)DialProc );
 
         sprintf( buf, "%04X", ge.hBlock );
         SetDlgItemText( hwnd, HDL_INFO_HDL, buf );
@@ -1251,7 +1251,7 @@ HWND DispMem( HANDLE instance, HWND parent, WORD seg, BOOL isdpmi ) {
     } else {
         memset( &ge, 0, sizeof( GLOBALENTRY ) );
         ge.dwSize = sizeof( GLOBALENTRY );
-        GlobalEntryHandle( &ge, seg );
+        GlobalEntryHandle( &ge, (HGLOBAL)seg );
         if( ge.wType == GT_CODE ) {
             info->disp_type = MemConfigInfo.code_disp_type;
         } else {

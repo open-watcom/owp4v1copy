@@ -370,12 +370,12 @@ BOOL __export FAR PASCAL DDEMainWndProc( HWND hwnd, UINT msg, WPARAM wparam,
             break;
         case DDEMENU_MSG_FILTER:
             fp = MakeProcInstance( (FARPROC)FilterDlgProc, Instance );
-            JDialogBoxParam( Instance, "MSG_FILTER_DLG", DDEMainWnd, fp, 1 );
+            JDialogBoxParam( Instance, "MSG_FILTER_DLG", DDEMainWnd, (DLGPROC)fp, 1 );
             FreeProcInstance( fp );
             break;
         case DDEMENU_CB_FILTER:
             fp = MakeProcInstance( (FARPROC)FilterDlgProc, Instance );
-            JDialogBoxParam( Instance, "CB_FILTER_DLG", DDEMainWnd, fp, 0 );
+            JDialogBoxParam( Instance, "CB_FILTER_DLG", DDEMainWnd, (DLGPROC)fp, 0 );
             FreeProcInstance( fp );
             break;
         case DDEMENU_ABOUT:

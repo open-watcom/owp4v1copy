@@ -79,7 +79,7 @@ WPI_PROC GUISubClassEditCombobox( HWND hwnd )
 
     e_info.success = FALSE;
     enum_func = _wpi_makeenumprocinstance( (WPI_PROC) GUIEnumFunc, GUIMainHInst );
-    _wpi_enumchildwindows( hwnd, enum_func, (DWORD)&e_info );
+    _wpi_enumchildwindows( hwnd, enum_func, (LPARAM)&e_info );
     if( e_info.success ) {
         return( e_info.old );
     }

@@ -1874,7 +1874,7 @@ void _wpi_enumfonts( WPI_PRES pres, char *facename, WPI_ENUMFONTPROC proc,
     }
 } /* _wpi_enumfonts */
 
-void _wpi_enumchildwindows( HWND hwnd, WPI_ENUMPROC proc, LONG data )
+void _wpi_enumchildwindows( HWND hwnd, WPI_ENUMPROC proc, LPARAM data )
 /************************************************************************/
 /* the hwnd sent to the enum proc is that of the frame window! use      */
 /* _wpi_getclient if you need the client window handle                  */
@@ -1888,7 +1888,7 @@ void _wpi_enumchildwindows( HWND hwnd, WPI_ENUMPROC proc, LONG data )
 
     hnext = WinGetNextWindow( henum );
     while( hnext && ret ) {
-        ret = proc( (HWND)hnext, (LONG)data );
+        ret = proc( hnext, (LONG)data );
         hnext = WinGetNextWindow( henum );
     }
     WinEndEnumWindows( henum );

@@ -242,7 +242,7 @@ static HWND ShowDialogHeapItem( heap_list *hl, HWND hwnd ) {
     SetWindowLong( hdl, 0, (DWORD)info );
     ShowWindow( hdl, SW_HIDE );
     if( DialCount == 0 ) {
-        DialProc = MakeProcInstance( DialogDispProc, Instance );
+        DialProc = MakeProcInstance( (FARPROC)DialogDispProc, Instance );
     }
 
     /*
@@ -253,7 +253,7 @@ static HWND ShowDialogHeapItem( heap_list *hl, HWND hwnd ) {
 
     GetDGroupItem( hl->szModule, &tmp );
     dial = CreateDialogIndirect( (HANDLE) tmp.info.ge.hBlock,
-                                 ptr, hdl, DialProc );
+                                 ptr, hdl, (DLGPROC)DialProc );
     if( dial == NULL ) {
         rcstr = AllocRCString( STR_SHOW );
         RCMessageBox( HeapWalkMainWindow, STR_CANT_CREATE_DLG,
@@ -504,9 +504,9 @@ BOOL __export FAR PASCAL ItemDisplayProc( HWND hwnd, WORD msg, WORD wparam,
                 DestroyWindow( info->menu_const );
             }
             if( DialCount == 0 ) {
-                DialProc = MakeProcInstance( DialogDispProc, Instance );
+                DialProc = MakeProcInstance( (FARPROC)DialogDispProc, Instance );
             }
-            info->menu_const = JCreateDialog( Instance, "MENU_CONST", hwnd, DialProc );
+            info->menu_const = JCreateDialog( Instance, "MENU_CONST", hwnd, (DLGPROC)DialProc );
             menu = GetMenu( hwnd );
             GetMenuString( menu, wparam, buf, 40, MF_BYCOMMAND );
             SetStaticText( info->menu_const, MENU_ITEM, buf );
@@ -528,7 +528,7 @@ BOOL __export FAR PASCAL ItemDisplayProc( HWND hwnd, WORD msg, WORD wparam,
     return( NULL );
 }
 
-void ShowHeapObject( WORD lbhandle )
+void ShowHeapObject( HWND lbhandle )
 {
     heap_list   *hl;
     int         index;
@@ -550,7 +550,7 @@ void ShowHeapObject( WORD lbhandle )
     if( hl->is_dpmi ) {
         memhdl = DispMem( Instance, HeapWalkMainWindow, hl->info.mem.sel, TRUE );
     } else if( hl->info.ge.hBlock != NULL ) {
-        memhdl = DispMem( Instance, HeapWalkMainWindow, hl->info.ge.hBlock, FALSE );
+        memhdl = DispMem( Instance, HeapWalkMainWindow, (WORD)hl->info.ge.hBlock, FALSE );
     }
     if( memhdl == NULL ) return;
     is_res = TRUE;

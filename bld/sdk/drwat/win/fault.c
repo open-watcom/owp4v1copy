@@ -43,8 +43,8 @@ static BOOL doLog;
 /*
  * IntDialog - handles input from user when a fault is received
  */
-BOOL __export FAR PASCAL IntDialog( HWND hwnd, WORD msg, WORD wparam,
-                                    DWORD lparam )
+BOOL __export FAR PASCAL IntDialog( HWND hwnd, UINT msg, WPARAM wparam,
+                                    LPARAM lparam )
 {
     char        buff[256];
     WORD        tmp;
@@ -212,8 +212,8 @@ WORD __cdecl FAR FaultHandler( fault_frame ff )
 
     LoadDbgInfo( );
     if( LogInfo.flags[LOGFL_AUTOLOG] != '1' ) {
-        fp = MakeProcInstance( IntDialog, Instance );
-        rc = JDialogBox( Instance, "INTERRUPT", NULL, fp );
+        fp = MakeProcInstance( (FARPROC)IntDialog, Instance );
+        rc = JDialogBox( Instance, "INTERRUPT", NULL, (DLGPROC)fp );
         FreeProcInstance( fp );
     } else {
         rc = KILL_APP;

@@ -39,7 +39,7 @@
 /*
  * NumToAddr - convert a segment number to an address
  */
-WORD NumToAddr( HANDLE modhandle, WORD num )
+WORD NumToAddr( HMODULE modhandle, WORD num )
 {
     GLOBALENTRY ge;
 

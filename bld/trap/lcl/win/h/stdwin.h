@@ -100,7 +100,7 @@ extern BOOL                     DLLLoadExpectingInt1;
 extern WORD                     CopySize;
 extern WORD                     NPXType;
 extern HWND                     DesktopWindow;
-extern HANDLE                   Instance;
+extern HINSTANCE                Instance;
 extern HANDLE                   DebuggerTask;
 extern HANDLE                   DebugeeTask;
 extern HANDLE                   DebugeeInstance;

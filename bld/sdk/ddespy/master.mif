@@ -21,6 +21,9 @@ extra_l_flags_win = option stack=7k option heapsize=2k lib windows.lib &
                     lib toolhelp.lib lib ddeml.lib lib commdlg.lib &
                     lib $(misc_dir)\ctl3d.lib
 
+extra_c_flags_nt = -dNOUSE3D
+extra_c_flags = -dSTRICT
+
 extra_l_flags_nt_axp  = lib ctl3d32.lib
 
 extra_l_flags     = option map

@@ -30,14 +30,14 @@
 ****************************************************************************/
 
 
-BOOL MyModuleFindHandle( MODULEENTRY *me, HANDLE h );
+BOOL MyModuleFindHandle( MODULEENTRY *me, HMODULE h );
 BOOL MyStackTraceNext( STACKTRACEENTRY *se );
-BOOL MyTaskFindHandle( TASKENTRY *te, HANDLE h );
+BOOL MyTaskFindHandle( TASKENTRY *te, HTASK h );
 BOOL MyTaskFirst( TASKENTRY *te );
 BOOL MyTaskNext( TASKENTRY *te );
 BOOL MyStackTraceCSIPFirst( STACKTRACEENTRY *se, WORD ss, WORD cs, WORD ip, WORD bp);
 BOOL MyStackTraceFirst( STACKTRACEENTRY *se, HANDLE h );
 BOOL MyGlobalFirst( GLOBALENTRY *ge, WORD flags );
 BOOL MyGlobalNext( GLOBALENTRY *ge, WORD flags );
-BOOL MyGlobalEntryModule( GLOBALENTRY *ge, HANDLE hmod, WORD seg );
-BOOL MyGlobalEntryHandle( GLOBALENTRY *ge, HANDLE hmem );
+BOOL MyGlobalEntryModule( GLOBALENTRY *ge, HMODULE hmod, WORD seg );
+BOOL MyGlobalEntryHandle( GLOBALENTRY *ge, HMODULE hmem );

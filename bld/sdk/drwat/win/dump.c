@@ -42,7 +42,7 @@
 #include "getcsip.h"
 #include "jdlg.h"
 
-static int              currTask;
+static HTASK            currTask;
 
 #define BLOCKSIZE 32000
 
@@ -393,8 +393,8 @@ void DumpTask( HWND hwnd )
 {
     FARPROC     fp;
 
-    fp = MakeProcInstance( DumpDialog, Instance );
-    JDialogBox( Instance, "DMPTASK", hwnd, fp );
+    fp = MakeProcInstance( (FARPROC)DumpDialog, Instance );
+    JDialogBox( Instance, "DMPTASK", hwnd, (DLGPROC)fp );
     FreeProcInstance( fp );
 
 } /* DumpTask */
@@ -530,8 +530,8 @@ BOOL __export FAR PASCAL DumpAnyDialog( HWND hwnd, WORD msg, WORD wparam,
             }
             break;
         case TASKCTL_DEBUG:
-            fp = MakeProcInstance( DebuggerOptDlg, Instance );
-            JDialogBox( Instance, "DEBUGGER_OPTS", hwnd, fp );
+            fp = MakeProcInstance( (FARPROC)DebuggerOptDlg, Instance );
+            JDialogBox( Instance, "DEBUGGER_OPTS", hwnd, (DLGPROC)fp );
             FreeProcInstance( fp );
             break;
 #if( 0 )
@@ -563,8 +563,8 @@ void DumpATask( HWND hwnd )
 {
     FARPROC     fp;
 
-    fp = MakeProcInstance( DumpAnyDialog, Instance );
-    JDialogBox( Instance, "TASKCTL", hwnd, fp );
+    fp = MakeProcInstance( (FARPROC)DumpAnyDialog, Instance );
+    JDialogBox( Instance, "TASKCTL", hwnd, (DLGPROC)fp );
     DumpDialogHwnd = 0;
     FreeProcInstance( fp );
 

@@ -50,7 +50,7 @@ extern WORD             FontWidth;
 extern WORD             FontHeight;
 
 static DWORD            Offset;
-static HANDLE           Sel;
+static WORD             Sel;
 static DWORD            Limit;
 static BOOL             Is32Bit;
 static char             StatBuf[50];

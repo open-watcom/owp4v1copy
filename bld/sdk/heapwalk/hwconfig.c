@@ -384,7 +384,7 @@ void HWConfigure( void ) {
 
     FARPROC             fp;
 
-    fp = MakeProcInstance( ConfigDlgProc, Instance );
-    JDialogBox( Instance, "HEAP_CONFIG", HeapWalkMainWindow, fp );
+    fp = MakeProcInstance( (FARPROC)ConfigDlgProc, Instance );
+    JDialogBox( Instance, "HEAP_CONFIG", HeapWalkMainWindow, (DLGPROC)fp );
     FreeProcInstance( fp );
 } /* HWConfigure */

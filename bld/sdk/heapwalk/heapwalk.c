@@ -158,7 +158,7 @@ static BOOL heapWalkInit( HANDLE currinst, HANDLE previnst, int cmdshow )
 /*
  * WinMain - main entry point
  */
-int PASCAL WinMain( HANDLE currinst, HANDLE previnst, LPSTR cmdline, int cmdshow)
+int PASCAL WinMain( HINSTANCE currinst, HINSTANCE previnst, LPSTR cmdline, int cmdshow)
 {
     MSG         msg;
 

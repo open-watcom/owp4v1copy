@@ -55,7 +55,7 @@ void Start386Debug( void )
     }
     if( WDebug386 ) {
         wint32DLL = LoadLibrary( "wint32.dll" );
-        if( wint32DLL < 32 ) {
+        if( (UINT)wint32DLL < 32 ) {
             WDebug386 = FALSE;
         } else {
             DoneWithInterrupt = (LPVOID) GetProcAddress( wint32DLL, "DoneWithInterrupt" );

@@ -97,7 +97,7 @@ dip_status DIPSysLoad( char *path, dip_client_routines *cli,
     dll = LoadModule( newpath, &parm_block );
     DIPLastHandle = dll;
     SetErrorMode( prev );
-    if( dll < 32 ) {
+    if( (UINT)dll < 32 ) {
         return( DS_ERR|DS_FOPEN_FAILED );
     }
     *sys_hdl = (unsigned long)transfer_block.unload;

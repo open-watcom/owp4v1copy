@@ -192,8 +192,8 @@ void DoConfig( HWND hwnd ) {
 
     FARPROC     fp;
 
-    fp = MakeProcInstance( ConfigDlgProc, Instance );
-    DialogBox( Instance, "ZOOM_CONFIGURE", hwnd, fp );
+    fp = MakeProcInstance( (FARPROC)ConfigDlgProc, Instance );
+    DialogBox( Instance, "ZOOM_CONFIGURE", hwnd, (DLGPROC)fp );
     FreeProcInstance( fp );
 }
 

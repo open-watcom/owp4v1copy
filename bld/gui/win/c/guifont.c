@@ -60,7 +60,7 @@ bool GUIChooseFont( HFONT font, LOGFONT *lf, HWND hwnd )
     bool        ret;
     WPI_PROC    func;
 #if !(defined(__NT__) || defined(WILLOWS))
-    HANDLE      h;
+    HINSTANCE   h;
 #endif
 #ifdef __WINDOWS_386__
     HINDIR      hIndir;
@@ -85,7 +85,7 @@ bool GUIChooseFont( HFONT font, LOGFONT *lf, HWND hwnd )
     func = ChooseFont;
 #else
     h = LoadLibrary( "COMMDLG.DLL" );
-    if( h < 32 ) {
+    if( (UINT)h < 32 ) {
         return( FALSE );
     }
     func = GetProcAddress( h, "ChooseFont" );
@@ -106,7 +106,7 @@ bool GUIChooseFont( HFONT font, LOGFONT *lf, HWND hwnd )
         FreeAlias16( lfAlias );
     }
 #else
-    ret = func( &cf );
+    ret = ((BOOL(*)(LPCHOOSEFONT))func)( &cf );
 #endif
 #if !(defined(__NT__) || defined(WILLOWS))
     FreeLibrary( h );

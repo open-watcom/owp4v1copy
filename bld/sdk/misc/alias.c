@@ -287,9 +287,9 @@ void Query4Aliases( AliasHdl hdl, HANDLE instance, HWND hwnd, char *title ) {
     WORD        ret;
 
     CurHdl = hdl;
-    fp = MakeProcInstance( AliasDlgProc, instance );
+    fp = MakeProcInstance( (FARPROC)AliasDlgProc, instance );
     for( ;; ) {
-        ret = DialogBoxParam( instance, "ALIAS_DLG", hwnd, fp, (DWORD)title );
+        ret = DialogBoxParam( instance, "ALIAS_DLG", hwnd, (DLGPROC)fp, (DWORD)title );
         if( ret != ALIAS_DO_MORE ) break;
     }
     FreeProcInstance( fp );
