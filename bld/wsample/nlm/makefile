@@ -1,3 +1,4 @@
+#pmake: all build os_nov cpu_386
 objects = realmode.obj nwhooks.obj sample.obj sampdata.obj sampnlm.obj &
           io.obj sysio.obj settime.obj wmsg.obj
 

@@ -9,19 +9,6 @@ set PROJDIR=<CWD>
     
 [ BLOCK <1> build rel2 ]
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
-# fixme: not all done yet
-    cdsay <projdir>\DOS
-    wmake -h 
-    cdsay <projdir>\NEC
-    wmake -h 
-    cdsay <projdir>\NLM
-    wmake -h 
-    cdsay <projdir>\PLS
-    wmake -h 
-    cdsay <projdir>\RSI
-    wmake -h 
-    cdsay <projdir>\WIN
-    wmake -h 
     cdsay <projdir>
 
 [ BLOCK <1> rel2 cprel2 ]
@@ -42,16 +29,4 @@ set PROJDIR=<CWD>
 [ BLOCK <1> clean ]
 #==================
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
-    cdsay <projdir>\DOS
-    wmake -h clean
-    cdsay <projdir>\NEC
-    wmake -h clean 
-    cdsay <projdir>\NLM
-    wmake -h clean 
-    cdsay <projdir>\PLS
-    wmake -h clean 
-    cdsay <projdir>\RSI
-    wmake -h clean 
-    cdsay <projdir>\WIN
-    wmake -h clean 
     cdsay <projdir>

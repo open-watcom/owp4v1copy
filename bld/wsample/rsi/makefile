@@ -1,3 +1,4 @@
+#pmake: all build os_dos cpu_386
 .NOCHECK
 
 .EXTENSIONS

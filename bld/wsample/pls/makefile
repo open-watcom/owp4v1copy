@@ -1,3 +1,4 @@
+#pmake: all build os_dos cpu_386
 .extensions:
 .extensions: .exe .exp .obj .nbj .asm .h .c
 

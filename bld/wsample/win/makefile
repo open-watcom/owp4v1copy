@@ -1,3 +1,4 @@
+#pmake: all build os_win cpu_i86
 .EXTENSIONS:
 .EXTENSIONS: .exe
 .EXTENSIONS: .obj

@@ -1,3 +1,5 @@
+#pmake: all os_dos cpu_286
+!include deftarg.mif
 objects = sample.obj sampdata.obj realmode.obj sampecs.obj io.obj sysio.obj &
           rmhooks.obj interc.obj memory.obj rmkint.obj sampexe.obj settime.obj &
           wmsg.obj

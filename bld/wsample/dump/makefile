@@ -1,3 +1,5 @@
+#pmake: all cpu_386
+!include deftarg.mif
 .ERASE
 
 !ifdef on_build_machine

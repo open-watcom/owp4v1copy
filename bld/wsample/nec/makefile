@@ -1,3 +1,4 @@
+#pmake: all build os_nec cpu_i86
 .erase
 
 objects = sample.obj sampdata.obj realmode.obj rmhooks.obj sampdos.obj &
