@@ -45,7 +45,6 @@ cdsay .
     <CPCMD> <devdir>/clib/startup/a/cstrtw16.asm <relroot>/rel2/src/startup/win/cstrtw16.asm
     <CPCMD> <devdir>/clib/startup/a/libentry.asm <relroot>/rel2/src/startup/win/libentry.asm
     <CPCMD> <devdir>/clib/startup/c/8087cw.c <relroot>/rel2/src/startup/8087cw.c
-    <CPCMD> <devdir>/clib/startup/a/adstart.asm <relroot>/rel2/src/startup/ads/adstart.asm
     <CPCMD> <devdir>/lib_misc/h/exitwmsg.h <relroot>/rel2/src/startup/os2/exitwmsg.h
     <CPCMD> <devdir>/clib/startup/h/initfini.h <relroot>/rel2/src/startup/386/initfini.h
     <CPCMD> <devdir>/clib/startup/h/initfini.h <relroot>/rel2/src/startup/os2/initfini.h
@@ -57,8 +56,6 @@ cdsay .
     <CPCMD> <devdir>/f77/src/*.* <relroot>/rel2/src/fortran/
     <CPCMD> <devdir>/f77/src/win/*.* <relroot>/rel2/src/fortran/win/
     <CPCMD> <devdir>/f77/src/dos/*.* <relroot>/rel2/src/fortran/dos/
-    <CPCMD> <devdir>/f77/src/ads/*.* <relroot>/rel2/src/fortran/ads/
-    <CPCMD> <devdir>/f77/src/ads/rel12/*.* <relroot>/rel2/src/fortran/ads/rel12/
     <CPCMD> <devdir>/f77/src/os2/*.* <relroot>/rel2/src/fortran/os2/
     <CPCMD> <devdir>/f77/samples/os2/*.* <relroot>/rel2/samples/fortran/os2/
     <CPCMD> <devdir>/f77/samples/os2/rexx/*.* <relroot>/rel2/samples/fortran/os2/rexx/

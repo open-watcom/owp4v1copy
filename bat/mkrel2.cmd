@@ -158,16 +158,13 @@ md %relroot%\%defrel%\src\startup
 md %relroot%\%defrel%\src\cpplib\contain
 md %relroot%\%defrel%\src\os2\pdd
 md %relroot%\%defrel%\src\startup\386
-md %relroot%\%defrel%\src\startup\ads
 md %relroot%\%defrel%\src\startup\dos
 md %relroot%\%defrel%\src\startup\os2
 md %relroot%\%defrel%\src\startup\win
 md %relroot%\%defrel%\src\fortran
 md %relroot%\%defrel%\src\fortran\dos
 md %relroot%\%defrel%\src\fortran\win
-md %relroot%\%defrel%\src\fortran\ads
 md %relroot%\%defrel%\src\fortran\os2
-md %relroot%\%defrel%\src\fortran\ads\rel12
 goto end
 :error
 @echo The relroot and defrel environment variables need to be set!

@@ -65,6 +65,7 @@ mkdir -p $RELROOT/$DEFREL/samples/cplbexam
 mkdir -p $RELROOT/$DEFREL/samples/dll
 mkdir -p $RELROOT/$DEFREL/samples/goodies
 mkdir -p $RELROOT/$DEFREL/samples/ide
+mkdir -p $RELROOT/$DEFREL/samples/os2
 mkdir -p $RELROOT/$DEFREL/samples/win
 mkdir -p $RELROOT/$DEFREL/samples/clibexam/kanji
 mkdir -p $RELROOT/$DEFREL/samples/clibexam/test
@@ -99,6 +100,7 @@ mkdir -p $RELROOT/$DEFREL/samples/ide/fortran/os2
 mkdir -p $RELROOT/$DEFREL/samples/ide/fortran/win
 mkdir -p $RELROOT/$DEFREL/samples/ide/fortran/win32
 mkdir -p $RELROOT/$DEFREL/samples/ide/fortran/win386
+mkdir -p $RELROOT/$DEFREL/samples/os2/dll
 mkdir -p $RELROOT/$DEFREL/samples/win/alarm
 mkdir -p $RELROOT/$DEFREL/samples/win/datactl
 mkdir -p $RELROOT/$DEFREL/samples/win/edit
@@ -158,13 +160,10 @@ mkdir -p $RELROOT/$DEFREL/src/startup
 mkdir -p $RELROOT/$DEFREL/src/cpplib/contain
 mkdir -p $RELROOT/$DEFREL/src/os2/pdd
 mkdir -p $RELROOT/$DEFREL/src/startup/386
-mkdir -p $RELROOT/$DEFREL/src/startup/ads
 mkdir -p $RELROOT/$DEFREL/src/startup/dos
 mkdir -p $RELROOT/$DEFREL/src/startup/os2
 mkdir -p $RELROOT/$DEFREL/src/startup/win
 mkdir -p $RELROOT/$DEFREL/src/fortran
 mkdir -p $RELROOT/$DEFREL/src/fortran/dos
 mkdir -p $RELROOT/$DEFREL/src/fortran/win
-mkdir -p $RELROOT/$DEFREL/src/fortran/ads
 mkdir -p $RELROOT/$DEFREL/src/fortran/os2
-mkdir -p $RELROOT/$DEFREL/src/fortran/ads/rel12
