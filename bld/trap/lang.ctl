@@ -48,7 +48,7 @@ cdsay .
 #    <CPCMD> <devdir>\bin\axpnt\???.dll <relroot>\rel2\axpnt\
 #    <CPCMD> <devdir>\bin\axpnt\???serv.exe <relroot>\rel2\axpnt\
 #nlm
-    <CPCMD> <devdir>\bin\nlm\???srv?.nlm <relroot>\rel2\nlm\
+    <CPCMD> <devdir>\bin\nlm\???serv?.nlm <relroot>\rel2\nlm\
 #qnx
 #    <CPCMD> <devdir>\bin\qnx\*.trp <relroot>\rel2\qnx\watcom\wd\
 #    <CPCMD> <devdir>\bin\qnx\parserv.qnx <relroot>\rel2\qnx\binq\parserv
