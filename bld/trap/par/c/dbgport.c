@@ -191,6 +191,11 @@
 #include "parallel.h"
 #include "dbgioctl.h"
 
+#if defined( __WATCOMC__ )
+typedef __int64 _int64;
+#define PORTSTDCALL STDCALL
+#endif
+
 #ifdef TRUE
 typedef UCHAR bool;
 #else
@@ -382,9 +387,9 @@ IOPM *IOPM_saved = 0;
 // the newly copied map is actually used.  Otherwise, the IOPM offset
 // points beyond the end of the TSS segment limit, causing any I/O
 // access by the user mode process to generate an exception.
-void Ke386SetIoAccessMap(int, IOPM *);
-void Ke386QueryIoAccessMap(int, IOPM *);
-void Ke386IoSetAccessProcess(PEPROCESS, int);
+void PORTSTDCALL Ke386SetIoAccessMap(int, IOPM *);
+void PORTSTDCALL Ke386QueryIoAccessMap(int, IOPM *);
+void PORTSTDCALL Ke386IoSetAccessProcess(PEPROCESS, int);
 
 void NTAPI ZwYieldExecution(void);
 
@@ -1101,7 +1106,7 @@ STATUS_NOT_A_DIRECTORY  - This device is not a directory.
 REMARKS:
 This routine is the dispatch for create requests.
 ****************************************************************************/
-NTSTATUS ParCreate(
+NTSTATUS PORTSTDCALL ParCreate(
     IN  PDEVICE_OBJECT  DeviceObject,
     IN  PIRP            Irp)
 {
@@ -1151,7 +1156,7 @@ Irp             - Supplies the I/O request packet.
 REMARKS:
 This is the IOCtl routine for this driver.
 ****************************************************************************/
-NTSTATUS ParIOCTL(
+NTSTATUS PORTSTDCALL ParIOCTL(
     IN  PDEVICE_OBJECT  DeviceObject,
     IN  PIRP            Irp)
 {
@@ -1223,7 +1228,7 @@ Irp             - Supplies the I/O request packet.
 REMARKS:
 This is the cleanup routine for this driver.
 ****************************************************************************/
-NTSTATUS ParCleanup(
+NTSTATUS PORTSTDCALL ParCleanup(
     IN  PDEVICE_OBJECT  DeviceObject,
     IN  PIRP            Irp)
 {
@@ -1241,7 +1246,7 @@ Irp             - Supplies the I/O request packet.
 REMARKS:
 This is the close routine for this driver.
 ****************************************************************************/
-NTSTATUS ParClose(
+NTSTATUS PORTSTDCALL ParClose(
     IN  PDEVICE_OBJECT  DeviceObject,
     IN  PIRP            Irp)
 {
@@ -1266,7 +1271,7 @@ REMARKS:
 This routine loops through the device list and cleans up after
 each of the devices.
 ****************************************************************************/
-VOID ParUnload(
+VOID PORTSTDCALL ParUnload(
     IN  PDRIVER_OBJECT  DriverObject)
 {
     PDEVICE_OBJECT          currentDevice;
@@ -1298,7 +1303,7 @@ REMARKS:
 This routine is called at system initialization time to initialize
 this driver.
 ****************************************************************************/
-NTSTATUS DriverEntry(
+NTSTATUS PORTSTDCALL DriverEntry(
     IN  PDRIVER_OBJECT  DriverObject,
     IN  PUNICODE_STRING RegistryPath)
 {
