@@ -188,8 +188,6 @@ h\nt\GL\glext.h
 h\nt\GL\glu.h
 lib386\nt\aclui.lib
 lib386\nt\advapi32.lib
-lib386\nt\avicap32.lib
-lib386\nt\avifil32.lib
 lib386\nt\cap.lib
 lib386\nt\comctl32.lib
 lib386\nt\comdlg32.lib
@@ -242,7 +240,6 @@ lib386\nt\msacm32.lib
 lib386\nt\msdmo.lib
 lib386\nt\msimg32.lib
 lib386\nt\msvcp60.lib
-lib386\nt\msvfw32.lib
 lib386\nt\mswsock.lib
 lib386\nt\nddeapi.lib
 lib386\nt\netapi32.lib

@@ -7,8 +7,6 @@ proj_name = w32api
 base_libs =        &
         aclui.lib &
         advapi32.lib &
-        avicap32.lib &
-        avifil32.lib &
         cap.lib &
         comctl32.lib &
         comdlg32.lib &
@@ -38,7 +36,6 @@ base_libs =        &
         msacm32.lib &
         msimg32.lib &
         msvcp60.lib &
-        msvfw32.lib &
         mswsock.lib &
         nddeapi.lib &
         netapi32.lib &
@@ -121,6 +118,12 @@ directx_libs = &
         msdmo.lib &
         quartz.lib
 
+vfw32_libs = &
+        msvfw32.lbc &
+        avicap32.lbc &
+        avifil32.lbc
+
+
 libs = $(base_libs) $(directx_libs)
 
 .def: ../lib;../lib/directx
@@ -159,17 +162,17 @@ kernel32.lib: kernel32.lbc
 dinput_objs = dinput_joy.obj dinput_joy2.obj dinput_kbd.obj dinput_mouse.obj &
         dinput_mouse2.obj
 
-dinput8.lib: dinput.lbc $(dinput_objs)
-        @%create $^&.lbc
-        @for %i in ($(dinput_objs)) do @%append $^&.lbc -+%i
+dinput8.lib: dinput8.lbc $(dinput_objs)
+        @%create tmp.lbc
+        @for %i in ($(dinput_objs)) do @%append tmp.lbc -+%i
         $(librarian) -b -c -n -io -ii $@ @$[@
-        $(librarian) -b -c $@ @$^&.lbc
+        $(librarian) -b -c $@ @tmp.lbc
 
 dinput.lib: dinput.lbc $(dinput_objs)
-        @%create $^&.lbc
-        @for %i in ($(dinput_objs)) do @%append $^&.lbc -+%i
+        @%create tmp.lbc
+        @for %i in ($(dinput_objs)) do @%append tmp.lbc -+%i
         $(librarian) -b -c -n -io -ii $@ @$[@
-        $(librarian) -b -c $@ @$^&.lbc
+        $(librarian) -b -c $@ @tmp.lbc
 
 dxerr8.lib: dxerr8.obj dxerr8w.obj
         $(librarian) -b -c -n $@ +$[@ +$]@
@@ -185,8 +188,9 @@ shell32.lib: shell32.lbc shell32.obj
         $(librarian) -b -c -n -io -ii $@ @$[@
         $(librarian) -b -c $@ +$]@
 
-vfw32.lib: msvfw32.lib avicap32.lib avifil32.lib
-        $(librarian) -b -c -n $@ +msvfw32.lib +avicap32.lib +avifil32.lib
+vfw32.lbc : $(vfw32_libs)
+        @%create $@
+        @for %i in ($(vfw32_libs)) do @%append $@ @ %i
 
 uuid.lib: uuid.obj mshtml-u.obj
 
