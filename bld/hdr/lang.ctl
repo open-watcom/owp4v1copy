@@ -16,13 +16,16 @@ cdsay .
 #================================
     <CPCMD> <PROJDIR>/dos/*.h*           <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/*.cnv          <RELROOT>/rel2/h/
+    <CPCMD> <PROJDIR>/dos/c*             <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/sys/*.h        <RELROOT>/rel2/h/sys/
     <CPCMD> <PROJDIR>/dos/win/*.h        <RELROOT>/rel2/h/win/
     <CPCMD> <PROJDIR>/linux/*.h*         <RELROOT>/rel2/lh/
+    <CPCMD> <PROJDIR>/linux/c*           <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/arpa/*.h     <RELROOT>/rel2/lh/arpa/
     <CPCMD> <PROJDIR>/linux/sys/*.h      <RELROOT>/rel2/lh/sys/
     <CPCMD> <PROJDIR>/linux/netinet/*.h  <RELROOT>/rel2/lh/netinet/
 #    <CPCMD> <PROJDIR>/qnx/*.h*           <RELROOT>/rel2/qh/
+#    <CPCMD> <PROJDIR>/qnx/c*             <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/sys/*.h        <RELROOT>/rel2/qh/sys/
 
 [ BLOCK <1> clean ]

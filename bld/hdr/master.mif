@@ -4,6 +4,9 @@ proj_name=hdr
 
 splice = wsplice -i.. -k$(system) $(options) ../common.sp $[@ $^@
 
+# Used to build the cname headers.
+csplice = wsplice -i.. -k$(system) -kCNAME $(options) ../common.sp $[@ $^@
+
 .EXTENSIONS
 .EXTENSIONS : .h .hpp .cnv .mh .mhp
 
@@ -83,7 +86,8 @@ common = &
         sys/locking.h &
         sys/stat.h &
         sys/timeb.h &
-        sys/types.h
+        sys/types.h &
+        cstdio
 
 DOS_files = &
       $(common) &
@@ -305,6 +309,13 @@ sys/time.h : linux/sys_time.mh ../readonly.sp ../cpluspro.sp ../lnxkpack.sp ../p
 !endif
 
 !include ../deps.mif
+
+#
+# Handle cname style headers as special cases. Implicit rules for
+# extensionless files seem awkward (especially for Linux?).
+#
+cstdio  : $(stdio_deps)
+        $(csplice)
 
 clean: .SYMBOLIC
       rm -f *.h sys/*.h *.hpp common.cnv

@@ -1,3 +1,6 @@
+# These dependency lists are used for both name.h and cname headers.
+stdio_deps = ../watcom/stdio.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../ext.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../valist.sp ../wchar_t.sp ../wctypet.sp
+
 assert.h        : ../watcom/assert.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp
 bios.h          : ../watcom/bios.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../poppack.sp ../pshpackl.sp
 bios98.h        : ../watcom/bios98.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../poppack.sp ../pshpackl.sp
@@ -51,7 +54,7 @@ signal.h        : ../watcom/signal.mh ../readonly.sp ../cplusepi.sp ../cpluspro.
 stdarg.h        : ../watcom/stdarg.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../valist.sp
 stddef.h        : ../watcom/stddef.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../null.sp ../ptrdiff.sp ../sizet.sp ../wchar_t.sp
 stdexcep.h      : ../watcom/stdexcep.mh ../readonly.sp ../crwat.sp
-stdio.h         : ../watcom/stdio.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../ext.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../valist.sp ../wchar_t.sp ../wctypet.sp
+stdio.h         : $(stdio_deps)
 stdiobuf.h      : ../watcom/stdiobuf.mh ../readonly.sp ../crwat.sp ../poppack.sp ../pshpackl.sp
 stdlib.h        : ../watcom/stdlib.mh ../readonly.sp ../alloca.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../errno.sp ../ext.sp ../maxpath.sp ../mbmax.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../wchar_t.sp
 streambu.h      : ../watcom/streambu.mh ../readonly.sp ../cpplock.sp ../crwat.sp ../poppack.sp ../pshpackl.sp
