@@ -57,6 +57,7 @@ set PROJDIR=<CWD>
     <CPCMD> library/os2.286/ms/clibs.lib                    <RELROOT>/rel2/lib286/os2/clibs.lib
     <CPCMD> library/os2.386/ms_r/clib3r.lib                 <RELROOT>/rel2/lib386/os2/clib3r.lib
     <CPCMD> library/os2.386/ms_s/clib3s.lib                 <RELROOT>/rel2/lib386/os2/clib3s.lib
+    <CPCMD> library/os2.386/ms_rd/clib3r.lib                <RELROOT>/rel2/lib386/os2/clib3rd.lib
 
     <CPCMD> startup/library/os2.286/ms/binmode.obj          <RELROOT>/rel2/lib286/os2/binmode.obj
     <CPCMD> startup/library/os2.286/ms/commode.obj          <RELROOT>/rel2/lib286/os2/commode.obj
@@ -80,6 +81,7 @@ set PROJDIR=<CWD>
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> library/winnt.386/ms_r/clib3r.lib               <RELROOT>/rel2/lib386/nt/clib3r.lib
     <CPCMD> library/winnt.386/ms_s/clib3s.lib               <RELROOT>/rel2/lib386/nt/clib3s.lib
+    <CPCMD> library/winnt.386/ms_rd/clib3r.lib              <RELROOT>/rel2/lib386/nt/clib3rd.lib
 
     <CPCMD> startup/library/winnt.386/ms_r/binmode.obj      <RELROOT>/rel2/lib386/nt/binmode.obj
     <CPCMD> startup/library/winnt.386/ms_r/commode.obj      <RELROOT>/rel2/lib386/nt/commode.obj
