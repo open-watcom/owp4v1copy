@@ -1,4 +1,4 @@
-#pmake:all build winnt threading dll merge axp static os_nt cpu_axp
+#pmake:all winnt threading dll merge axp static os_nt cpu_axp
 processor=axp
 subdir=_s
 system=winnt

@@ -1,4 +1,4 @@
-#pmake:winnt threading dll _dos ppc dynamic no_build os_nt cpu_ppc
+#pmake:winnt threading dll _dos ppc dynamic os_nt cpu_ppc
 processor=ppc
 system=winnt
 linkage=dynamic

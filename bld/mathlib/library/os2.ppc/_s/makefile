@@ -1,4 +1,4 @@
-#pmake:32bit os2 inline ppc static no_build os_os2 cpu_ppc
+#pmake:32bit os2 inline ppc static os_os2 cpu_ppc
 processor=ppc
 model=
 subdir=_s
