@@ -38,7 +38,7 @@
 
 
 _WCRTLINK int __F_NAME(isdigit,iswdigit)( c )
-        register int c;
+        register INTCHAR_TYPE c;
     {
         if( IS_ASCII( c ) ) {
             return( IsWhat( c ) & _DIGIT );

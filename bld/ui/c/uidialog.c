@@ -394,7 +394,7 @@ void *uiinitdialog( heading, attr, lines, extra_rows, maxlen, rpos, cpos )
     char                *heading;
     char                *lines[];
     ATTR                attr;
-    unsigned            extra_rows;
+    unsigned int        extra_rows;
     int                 maxlen, cpos, rpos;
 {
     VSCREEN             *vs;

@@ -469,7 +469,7 @@ static void openFiles( void )
     }
 }
 
-static void * objRead( void *hdl, int len )
+static void * objRead( void *hdl, size_t len )
 /*****************************************/
 {
     void *      retval;

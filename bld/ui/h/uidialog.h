@@ -172,10 +172,10 @@ extern char uihotspot( struct vscreen *, char *str, SAREA *parea, unsigned short
 extern char uidrawhottext( struct vscreen *, char *str, SAREA *parea, ATTR attr, ATTR hotattr, bool hidden, bool no_hotkey, bool centre_text );
 
 extern unsigned int ui_split_line(char **,char *,unsigned int );
-extern void *uiinitdialog(char *,int ,char **,unsigned int ,int ,int ,int );
+extern void *uiinitdialog(char *, ATTR, char **, unsigned int, int, int, int );
 extern void uifinidialog(void *);
 
-extern void *uibegdialog(char *,struct vfield *,int ,int ,int ,int );
+extern void *uibegdialog(char *, VFIELD *, ORD, ORD, int, int );
 extern bool uigetdialogarea( struct a_dialog *dialog, SAREA *area );
 extern EVENT uiprocessdialogevent( EVENT, struct a_dialog* );
 extern void uireinitdialog( struct a_dialog *, struct vfield *);

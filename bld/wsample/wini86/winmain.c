@@ -53,8 +53,8 @@ static char     sampleClass[] = "WsamplewClass";
 /*
  * About - about dialog message handler
  */
-BOOL __export FAR PASCAL About( HWND hwnd, unsigned message, WORD wparam,
-                                LONG lparam )
+BOOL __export FAR PASCAL About( HWND hwnd, UINT message, WPARAM wparam,
+                                LPARAM lparam )
 {
     lparam = lparam;
 
@@ -118,8 +118,8 @@ BOOL StartOutput( short x, short y )
 /*
  * MainDriver - message handler for sampler
  */
-long __export FAR PASCAL MainDriver( HWND hwnd, unsigned message, WORD wparam,
-                                        LONG lparam )
+long __export FAR PASCAL MainDriver( HWND hwnd, UINT message, WPARAM wparam,
+                                        LPARAM lparam )
 {
     FARPROC     proc;
 

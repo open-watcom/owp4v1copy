@@ -724,7 +724,7 @@ void RcMemFree( void * ptr )
     _LnkFree( ptr );
 }
 
-int  RcWrite( int hdl, const void *buf, int len )
+int  RcWrite( int hdl, const void *buf, size_t len )
 {
     hdl = hdl;
     WriteLoad( (void *) buf, len );

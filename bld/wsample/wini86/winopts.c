@@ -87,8 +87,8 @@ static BOOL getFile( char *fname )
 /*
  * About2 - processes messages for the about dialog.
  */
-BOOL __export FAR PASCAL About2( HWND hwnd, unsigned msg,
-                                WORD wparam, LONG lparam )
+BOOL __export FAR PASCAL About2( HWND hwnd, UINT msg,
+                                WPARAM wparam, LPARAM lparam )
 {
     lparam = lparam;
 
@@ -110,8 +110,8 @@ BOOL __export FAR PASCAL About2( HWND hwnd, unsigned msg,
 /*
  * StartUpDriver - the main message handling loop
  */
-long __export FAR PASCAL StartUpDriver( HWND hwnd, unsigned message,
-                                WORD wparam, LONG lparam )
+long __export FAR PASCAL StartUpDriver( HWND hwnd, UINT message,
+                                WPARAM wparam, LPARAM lparam )
 {
     FARPROC     farproc;
     HWND        tmpw;
@@ -175,8 +175,8 @@ long __export FAR PASCAL StartUpDriver( HWND hwnd, unsigned message,
 /*
  * SubClassProc - handles sub-classing of edit control
  */
-long __export FAR PASCAL SubClassProc( HWND hwnd, unsigned message,
-                                WORD wparam, LONG lparam )
+long __export FAR PASCAL SubClassProc( HWND hwnd, UINT message,
+                                WPARAM wparam, LPARAM lparam )
 {
 
     switch( message ) {

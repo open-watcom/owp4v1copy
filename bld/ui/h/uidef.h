@@ -112,13 +112,13 @@
     extern "C" {
 #endif
 
-int             intern          balloc(struct buffer *,int ,int );
+int             intern          balloc( BUFFER *, ORD, ORD );
 void            intern          battrflip( BUFFER *, int, int, int, int );
 void            intern          battribute( BUFFER *, int, int, int, int, ATTR );
 void            intern          uibcopy( BUFFER *, int, int, BUFFER *, int, int, int );
 void            intern          bframe(struct buffer *);
 void            intern          bfree(struct buffer *);
-void            intern          bfake( BUFFER *, int, int );
+void            intern          bfake( BUFFER *, ORD, ORD );
 void            intern          bfill( BUFFER *, int, int, ATTR, char, int );
 void            intern          blowup( BUFFER *, SAREA, char *, ATTR );
 void            intern          bpixel( BUFFER *, ORD, ORD, ATTR, char );

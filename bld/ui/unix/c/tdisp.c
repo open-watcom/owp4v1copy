@@ -112,11 +112,11 @@
 #if defined( SUN )
 #define __putp( str )   {tputs( str, 1, (int (*)(char))_con_putchar );}
 #elif defined( HP )  && ( OSVER >= 1100 ) && !defined( __GNUC__ )
-#define __putp( str ) {tputs( str, 1, (int(*)(int))_con_putchar );}
+#define __putp( str )   {tputs( str, 1, _con_putchar );}
 #elif defined( HP )
 #define __putp( str )   {tputs( str, 1, (void (*)(int))_con_putchar );}
 #elif defined( AIX )
-#define __putp( str )   {tputs( str, 1, (int (*)(int))_con_putchar  );}
+#define __putp( str )   {tputs( str, 1, _con_putchar );}
 #else
 #define __putp( str )   {tputs( str, 1, _con_putchar );}
 #endif
@@ -126,7 +126,7 @@ extern char     *GetTermType(void);
 
 bool    UserForcedTermRefresh= FALSE;
 
-static int _con_putchar( char ch )
+static int _con_putchar( int ch )
 {
     fputc( ch, UIConFile );
     return( 0 );

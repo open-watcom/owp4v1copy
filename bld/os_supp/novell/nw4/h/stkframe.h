@@ -97,7 +97,7 @@ struct debuggerStructure
 {
 	struct debuggerStructure *		DDSlink;
 	struct ResourceTagStructure *	DDSResourceTag;	/* 'DBUG' */
-	LONG							(*DDSdebuggerEntry)(struct StackFrame *stackFrame);
+	LONG							(*DDSdebuggerEntry)(StackFrame *stackFrame);
 	signed char						DDSPosition;/* changed from int for backwards compatibility*/
 	BYTE							DDSFlags;
 	BYTE							DDSReserved[2];

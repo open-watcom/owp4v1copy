@@ -95,7 +95,7 @@ typedef enum {
 
 struct WDRRoutines {                                    /* defaults */
     /* I/O routines */
-    void   (* read)( void *, dr_section, void *, int ); // read
+    void   (* read)( void *, dr_section, void *, size_t ); // read
     void   (* seek)( void *, dr_section, long );        // lseek
     /* memory routines */
     void * (* alloc)( size_t );                         // malloc

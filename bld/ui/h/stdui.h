@@ -540,7 +540,7 @@ extern          void            uirestorebackground( void );
 extern          void            uibarf( void );
 extern          void            uiblankarea( SAREA );
 extern          void            uiblankscreen( void );
-extern          void            uiblankattr( int );
+extern          void            uiblankattr( ATTR );
 extern          void           *uicalloc( unsigned , unsigned );
 extern          int             uichecklist( EVENT, EVENT _FARD * );
 extern          void            uiclose( VSCREEN _FARD * );

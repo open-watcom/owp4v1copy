@@ -147,7 +147,7 @@ static dip_status GetSectInfo( dig_fhandle f, uint_32 *sizes, uint_32 *bases ){
     return( DS_OK );
 }
 
-static void DWRRead( void *_f,  uint sect,  void *buff, int size ) {
+static void DWRRead( void *_f, dr_section sect, void *buff, size_t size ) {
 /******************************************************************/
     imp_image  f = _f;
     uint_32    base;
@@ -157,7 +157,7 @@ static void DWRRead( void *_f,  uint sect,  void *buff, int size ) {
 
 }
 
-static void DWRSeek( void *_f, uint sect, long offs ) {
+static void DWRSeek( void *_f, dr_section sect, long offs ) {
 /******************************************************/
     imp_image f = _f;
     long base;

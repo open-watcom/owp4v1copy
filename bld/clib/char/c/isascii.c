@@ -35,7 +35,7 @@
 #undef  isascii
 
 _WCRTLINK int __F_NAME(isascii,iswascii)( c )
-    register int c;
+    register INTCHAR_TYPE c;
 {
     return( (unsigned)(c) <= 0x7f );
 }

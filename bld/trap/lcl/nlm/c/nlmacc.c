@@ -694,7 +694,7 @@ void BigKludge( msb *m )
 #ifdef __NW40__
     static struct debuggerStructure DbgStruct = {
         NULL, NULL,
-        (LONG(*)(struct T_StackFrame *))DebugEntry, AT_FIRST, TSS_FRAME_BIT
+        (LONG(*)(StackFrame *))DebugEntry, AT_FIRST, TSS_FRAME_BIT
     };
 #else
     static T_DebuggerStruct DbgStruct = { NULL, NULL, DebugEntry };

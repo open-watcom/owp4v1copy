@@ -38,7 +38,7 @@
 
 
 _WCRTLINK int __F_NAME(isspace,iswspace)( c )
-        register int c;
+        register INTCHAR_TYPE c;
     {
         if( IS_ASCII( c ) ) {
             return( IsWhat( c ) & _SPACE );
