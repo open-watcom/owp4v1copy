@@ -36,7 +36,7 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <io.h>
+#include <unistd.h>
 #include <fcntl.h>
 #include <stdarg.h>
 

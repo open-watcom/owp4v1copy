@@ -42,8 +42,10 @@
 #include <fcntl.h>
 #include <stdarg.h>
 #include <ctype.h>
-#ifndef UNIX
+#if !defined( UNIX ) && !defined( __UNIX__ )
 #include <direct.h>
+#else
+#include <sys/stat.h>
 #endif
 
 #if defined( __WINDOWS__ ) || defined( __NT__ )
@@ -63,7 +65,7 @@
 #include "genctrl.h"
 #include "dlggen.h"
 #include "utils.h"
-#ifndef UNIX
+#if !defined( UNIX ) && !defined( __UNIX__ )
 #include "bdiff.h"
 #endif
 #if defined( WSQL )
@@ -632,7 +634,7 @@ static void EndHandle( char *source )
     int         length;
 
     length = strlen( source );
-#ifdef UNIX
+#if defined( UNIX ) || defined( __UNIX__ )
     if( source[ length - 1 ] != '/' ) {
         source[ length ] = '/';
         source[ length + 1 ] = '\0';
@@ -2228,7 +2230,7 @@ static bool GetFileInfo( int dir_index, int i, bool in_old_dir, bool *pzeroed )
     if( access( buff, F_OK ) != 0 ) {
         return( FALSE );
     }
-#ifdef UNIX
+#if defined( UNIX ) || defined( __UNIX__ )
     strcat( buff, "/" );
 #else
     strcat( buff, "\\" );
@@ -2628,7 +2630,7 @@ extern void SimDirNoSlash( int i, char *buff )
     strcpy( dir, DirInfo[ i ].desc );
     if( dir[0] != '.'  &&  dir[0] != '\0' ) {
         len = strlen( buff );
-#ifdef UNIX
+#if defined( UNIX ) || defined( __UNIX__ )
         if( len > 0 && buff[ len - 1 ] != '/' ) {
             buff[ len ] = '/';
             buff[ len + 1 ] = '\0';
@@ -2643,7 +2645,7 @@ extern void SimDirNoSlash( int i, char *buff )
     }
     len = strlen( buff );
 
-#ifdef UNIX
+#if defined( UNIX ) || defined( __UNIX__ )
     if( len > 1 && buff[ len - 1 ] == '/' ) {
         buff[len-1] = '\0';
     }
@@ -2671,7 +2673,7 @@ extern void SimGetDir( int i, char *buff )
 
     SimDirNoSlash( i, buff );
     len = strlen( buff );
-#ifdef UNIX
+#if defined( UNIX ) || defined( __UNIX__ )
     if( len > 0 && buff[ len - 1 ] != '/' ) {
         buff[ len ] = '/';
         buff[ len + 1 ] = '\0';
@@ -4033,7 +4035,7 @@ void MsgPut( int resourceid, va_list arglist )
         argbuf[i] = va_arg( arglist, char * );
     }
     switch( resourceid ) {
-#ifndef UNIX
+#if !defined( UNIX ) && !defined( __UNIX__ )
         case ERR_TWO_NAMES:     messageid = "IDS_TWONAMES";
                                 break;
         case ERR_WRONG_SIZE:    messageid = "IDS_BADLENGTH";
@@ -4075,7 +4077,7 @@ void PatchError( int format, ... )
 
     // don't give error message if the patch file cant be found
     // just continue
-#ifndef UNIX
+#if !defined( UNIX ) && !defined( __UNIX__ )
     if( format == ERR_CANT_FIND ) return;
 #endif
     if( GetVariableIntVal( "Debug" ) != 0 ) {
@@ -4089,7 +4091,7 @@ void FilePatchError( int format, ... )
 {
     va_list     args;
 
-#ifndef UNIX
+#if !defined( UNIX ) && !defined( __UNIX__ )
     if( format == ERR_CANT_FIND ) return;
     if( format == ERR_CANT_OPEN ) return;
 #endif

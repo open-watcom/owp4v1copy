@@ -33,7 +33,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include <io.h>
 #include <dirent.h>
 #include <string.h>
 #include <malloc.h>
@@ -430,7 +429,7 @@ extern bool CheckDrive( bool issue_message )
     max_targs = SimNumTargets();
     for( i = 0; i < max_targs; ++i ) {
         // get drive letter for each target
-        disks[ i ] = tolower( SimGetDriveLetter( i ) );
+        disks[ i ] = tolower( *SimGetDriveLetter( i ) );
     }
     // check for enough disk space, combine drives that are the same
     for( i = 0; i < max_targs; ++i ) {
@@ -1126,7 +1125,7 @@ static bool DoCopyFiles()
                 char    drive;
 
                 copy_error = CFE_NOERROR;
-                drive = SimGetTargTempDisk( SimDirTargNum( SimFileDirNum( filenum ) ) );
+                drive = *SimGetTargTempDisk( SimDirTargNum( SimFileDirNum( filenum ) ) );
                 if( UseTargetForTmpFile( drive ) ) {
                     GetTmpFileNameInTarget( drive, tmp_path );
                 } else {

@@ -34,7 +34,7 @@
 #include <stdlib.h>
 #include <process.h>
 #include <string.h>
-#include <io.h>
+#include <unistd.h>
 #include "gui.h"
 #include "setup.h"
 #include "setupinf.h"

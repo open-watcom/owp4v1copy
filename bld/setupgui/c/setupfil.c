@@ -33,15 +33,15 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <io.h>
-#ifndef UNIX
+#include <unistd.h>
+#if !defined( UNIX ) && !defined( __UNIX__ )
 #include <dos.h>
 #endif
 #include <ctype.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#ifdef UNIX
+#if defined( UNIX ) || defined( __UNIX__ )
 #include <time.h>
 #endif
 #if defined( __WINDOWS__ ) || defined( __NT__ )
@@ -63,7 +63,7 @@
 extern int GetOptionVarValue( vhandle var_handle, bool is_minimal );
 extern bool CheckForceDLLInstall( char *name );
 
-#ifndef UNIX
+#if !defined( UNIX ) && !defined( __UNIX__ )
 static bool             ModEnv( int );
 static bool             ModOS2Config( char *, char * );
 #endif
@@ -175,7 +175,7 @@ extern short GetBootDrive(void)
     drive = *(unsigned long *)DataBuf;
     return( (int)drive );
 }
-#elif defined( UNIX )
+#elif defined( UNIX ) || defined( __UNIX__ )
 extern short GetBootDrive(void)
 {
     return 0;
@@ -1102,7 +1102,7 @@ static void CheckVersion( char *path, char *drive, char *dir )
 {
     int                 fp, len, hours;
     char                am_pm, buf[ 100 ];
-#if defined( UNIX )
+#if defined( UNIX ) || defined( __UNIX__ )
     int                 check;
     struct stat *       statbuf;
     struct tm   *       timeptr;
@@ -1121,7 +1121,7 @@ static void CheckVersion( char *path, char *drive, char *dir )
     }
 
     // concat date and time to end of path
-#if defined( UNIX )
+#if defined( UNIX ) || defined( __UNIX__ )
     check = fstat( fp, statbuf );
     if( check == -1 ) {
         return;         // shouldn't happen
@@ -1144,7 +1144,7 @@ static void CheckVersion( char *path, char *drive, char *dir )
     _splitpath( path, drive, dir, NULL, NULL );
     _makepath( path, drive, dir, NULL, NULL );
     len = strlen( path );
-#if defined( UNIX )
+#if defined( UNIX ) || defined( __UNIX__ )
     sprintf( path + len, "  (%.2d-%.2d-%.2d %.2d:%.2d%cm)  ",
              timeptr->tm_mon + 1, timeptr->tm_mday, timeptr->tm_year, hours, timeptr->tm_min, am_pm );
 #else

@@ -29,13 +29,17 @@
 *
 ****************************************************************************/
 
-
+#if defined( UNIX ) || defined( __UNIX__ )
+#include <utime.h>
+#else
 #include <dos.h>
+#include <direct.h>
+#include <sys/utime.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include <io.h>
-#include <direct.h>
+#include <unistd.h>
 #include <string.h>
 #include <malloc.h>
 #include <fcntl.h>
@@ -43,7 +47,6 @@
 #include <setjmp.h>
 #include <limits.h>
 #include <process.h>
-#include <sys/utime.h>
 #include "gui.h"
 #include "text.h"
 #include "setupinf.h"

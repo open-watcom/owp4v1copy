@@ -37,15 +37,17 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <io.h>
+#include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <string.h>
 #include <malloc.h>
 #include <sys/types.h>
-#ifdef UNIX
+#if defined( UNIX )
 #include <utime.h>
 #include <clibext.h>
+#elif defined( __UNIX__ )
+#include <utime.h>
 #else
 #include <sys/utime.h>
 #endif
