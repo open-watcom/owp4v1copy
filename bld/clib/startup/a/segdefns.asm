@@ -46,7 +46,7 @@ if COMP_CFG_COFF
 DGROUP group _NULL,_AFTERNULL,CONST,_DATA,DATA,_BSS,STACK
 else
 ifdef __LINUX__
-DGROUP group _NULL,_AFTERNULL,CONST,_DATA,DATA,TIB,TI,TIE,XIB,XI,XIE,YIB,YI,YIE,_BSS,STACK
+DGROUP group _NULL,_AFTERNULL,CONST,_DATA,DATA,TIB,TI,TIE,XIB,XI,XIE,YIB,YI,YIE,_BSS
 else
 DGROUP group _NULL,_AFTERNULL,CONST,_DATA,DATA,_BSS,STACK,TIB,TI,TIE,XIB,XI,XIE,YIB,YI,YIE
 endif
@@ -127,15 +127,13 @@ DATA    ends
 _BSS    segment word public 'BSS'
 _BSS    ends
 
-ifdef __LINUX__
-STACK_SIZE      equ     1000h
-else
+ifndef __LINUX__
 STACK_SIZE      equ     10000h
-endif
 
 STACK   segment para stack 'STACK'
         db      (STACK_SIZE) dup(?)
 STACK   ends
+endif
 
 _TEXT   segment use32 word public 'CODE'
 _TEXT   ends
