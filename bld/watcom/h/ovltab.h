@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  overlay manager shared data structures definition
-*               they are used by WLINK and OVLLDR
+* Description:  Overlay manager shared data structures definition
+*               they are used by linker and overlay loader library.
 *
 ****************************************************************************/
 
@@ -37,7 +37,7 @@
 #define OVL_MAJOR_VERSION 3
 #define OVL_MINOR_VERSION 0
 
-#pragma pack( push, 1 );            /* make sure no structures are padded. */
+#pragma pack( push, 1 )             /* make sure no structures are padded. */
 
 typedef struct ovltab_entry {
     unsigned_16         flags_anc;  /* flags & number of ancestor */
@@ -121,8 +121,14 @@ typedef struct lvector {            /* long overlay vector */
     unsigned_8          jmp_op;
     dos_addr            target;
 } lvector;
-typedef lvector far * lvector_ptr;
 
-#pragma pack( pop );
+/* GCC is too dumb to understand far pointers; fortunately this typedef
+ * is only needed for building 16-bit overlay loader code.
+ */
+#if defined( __WATCOMC__ )
+typedef lvector __far * lvector_ptr;
+#endif
+
+#pragma pack( pop )
 
 #endif
