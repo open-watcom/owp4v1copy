@@ -49,22 +49,13 @@ void InitPurge()
 }
 
 
-static void Purge( void **ptr )
-{
-    if( *ptr != NULL ) {
-        CMemFree( *ptr );
-        *ptr = NULL;
-    }
-}
-
-
 void SwitchPurge()
 /****************/
 {
     SWITCHPTR                   sw;
     CASEPTR                     c_entry, c_tmp;
 
-    while( sw = SwitchStack ) {
+    while( (sw = SwitchStack) ) {
         SwitchStack = sw->prev_switch;
         c_entry = sw->case_list;
         while( c_entry != NULL ) {
@@ -92,6 +83,13 @@ void SrcPurge()
     }
 }
 
+static void Purge( char **ptr )
+{
+    if( *ptr != NULL ) {
+        CMemFree( *ptr );
+        *ptr = NULL;
+    }
+}
 
 void PurgeMemory()
 /****************/
@@ -105,8 +103,8 @@ void PurgeMemory()
     SrcPurge();
     SwitchPurge();
 //  PurgeBlockStack();
-    Purge( &HFileList );
-//  Purge( &ErrSym );           /* ErrSym is in CPermArea */
-    Purge( &SavedId );
+    Purge( & HFileList );
+//  Purge( &ErrSym );               /* ErrSym is in CPermArea */
+    Purge( & SavedId );
     FreePreCompiledHeader();
 }
