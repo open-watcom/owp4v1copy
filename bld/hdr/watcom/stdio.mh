@@ -42,7 +42,9 @@
 :endsegment
 
 struct __stream_link;
-typedef struct  __iobuf {
+typedef struct  __iobuf
+#if !defined(__OBSCURE_STREAM_INTERNALS)
+{
     unsigned char        *_ptr;         /* next character position */
     int                   _cnt;         /* number of characters left */
     struct __stream_link *_link;        /* location of associated struct */
@@ -53,7 +55,9 @@ typedef struct  __iobuf {
 :segment QNX
     struct __iobuf       *_unused;      /* spare entry */
 :endsegment
-} FILE;
+}
+#endif
+FILE;
 
 typedef long    fpos_t;
 
@@ -78,6 +82,7 @@ typedef long    fpos_t;
 #elif defined(__SW_BR) || defined(_RTDLL)
  #define __iob __iob_br
 #endif
+#if !defined(__OBSCURE_STREAM_INTERNALS)
 _WCRTLINK extern FILE _WCDATA __iob[];
 /*
  *  Define macros to access the three default file pointer (and descriptors)
@@ -92,6 +97,17 @@ _WCRTLINK extern FILE _WCDATA __iob[];
 #if !defined(__NT__)
 #define stdaux  ((FILE *)&__iob[3])     /* standard auxiliary file  */
 #define stdprn  ((FILE *)&__iob[4])     /* standard printer file  */
+#endif
+#endif
+#else
+#define stdin   (__get_std_file(0))     /* standard input file  */
+#define stdout  (__get_std_file(1))     /* standard output file */
+#define stderr  (__get_std_file(2))     /* standard error file  */
+#ifndef NO_EXT_KEYS     /* extensions enabled */
+#if !defined(__NT__)
+#define stdaux  (__get_std_file(3))     /* standard auxiliary file  */
+#define stdprn  (__get_std_file(4))     /* standard printer file  */
+#endif
 #endif
 #endif
 :endsegment
@@ -213,6 +229,8 @@ _WCRTLINK extern int    vsprintf( char *__s, const char *__format,
                                   __va_list __arg );
 
 :include ext.sp
+_WCRTLINK extern int    fileno(FILE *);
+_WCRTLINK extern int    _fileno(FILE *);
 _WCRTLINK extern int    fcloseall( void );
 :segment !QNX
 _WCRTLINK extern FILE   *fdopen( int __handle, const char *__mode );
@@ -313,16 +331,19 @@ extern int      pclose( FILE *stream );
 #endif
 :endsegment
 
+#if !defined(__OBSCURE_STREAM_INTERNALS)
 #define clearerr(fp)    ((fp)->_flag &= ~(_SFERR|_EOF))
 #define feof(fp)        ((fp)->_flag & _EOF)
 #define ferror(fp)      ((fp)->_flag & _SFERR)
 #define fileno(fp)      ((fp)->_handle)
 #define _fileno(fp)     ((fp)->_handle)
+#endif
 ::
 #if defined(__SW_BD) || defined(__SW_BM)
 #define getc(fp)        fgetc(fp)
 #define putc(c,fp)      fputc(c,fp)
 #else
+#if !defined(__OBSCURE_STREAM_INTERNALS)
 #define getc(fp) \
         ((fp)->_cnt<=0 \
 :segment !QNX
@@ -338,6 +359,7 @@ extern int      pclose( FILE *stream );
         : ((*(fp)->_ptr=(unsigned char)(c))=='\n') \
         ? fputc('\n',fp) \
         : ((fp)->_flag|=_DIRTY,(fp)->_cnt++,*(fp)->_ptr++))
+#endif
 #endif
 ::
 #define getchar()       getc(stdin)

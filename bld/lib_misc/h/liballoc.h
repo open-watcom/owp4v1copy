@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  These are macros that define the 'real' functions that
+*               the library memory allocators use.
 *
 ****************************************************************************/
 
@@ -36,23 +36,28 @@
 #include <malloc.h>
 
 #ifdef __NETWARE__
-    #define lib_malloc( x ) _NW_malloc( x )
-    #define lib_free( x ) _NW_free( x )
-    #define lib_realloc( x, y, z ) _NW_realloc( x, y, z )
-    #define lib_calloc( x, y ) _NW_calloc( x, y )
 
-//  #define lib_nmalloc( x ) _NW_malloc( x )
-//  #define lib_nfree( x ) _NW_free( x )
-//  #define lib_nrealloc( x, y ) _NW_realloc( x, y )
+    /*
+    //  NetWare uses Alloc and Free because the heap will not have 
+    //  been initialised at _Prelude time...
+    */
 
-//  #define lib_fmalloc( x ) _NW_malloc( x )
-//  #define lib_ffree( x ) _NW_free( x )
-//  #define lib_frealloc( x, y ) _NW_realloc( x, y )
-
+    #define lib_malloc( x )         _NW_malloc( x )
+    #define lib_free( x )           _NW_free( x )
+    #if defined (_NETWARE_CLIB)
+        #define lib_realloc( x, y, z)  _NW_realloc( x, y, z )
+    #else
+        #define lib_realloc( x, y)  _NW_realloc( x, y)
+    #endif
+    #define lib_calloc( x, y )      _NW_calloc( x, y )
 
     extern void *_NW_calloc( size_t __n,size_t __size );
     extern void *_NW_malloc( size_t );
+    #if defined (_NETWARE_CLIB)
     extern void *_NW_realloc( void *ptr,size_t size,size_t old);
+    #else
+    extern void *_NW_realloc( void *ptr,size_t size);
+    #endif
     extern void _NW_free( void *ptr );
 #else
     #define lib_malloc( x ) malloc( x )

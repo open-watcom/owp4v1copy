@@ -147,7 +147,7 @@ typedef struct thread_data {
     char _WCFAR                 *__nextftokP;
     // LDBL_DIG => 15 + 1 for decimal point + 1 for "e" + 3 for exponent => 20
     MAX_CHAR_TYPE               __cvt_buffer[20];
-    #if defined(__NT__)
+    #if defined(__NT__) || defined(_NETWARE_LIBC)
         unsigned long           thread_id;
     #elif defined(__QNX__)
         pid_t                   thread_id;
@@ -176,7 +176,7 @@ typedef struct thread_data {
     int __initthread( void *p );
 
     #define __THREADDATAPTR     ((thread_data *)(*__GetThreadPtr)())
-    #if defined(__OS2__) || defined(__NETWARE__)
+    #if defined(__OS2__) || defined(_NETWARE_CLIB)
         typedef struct thread_data_vector {
             thread_data *data;
             int         allocated_entry;
@@ -186,7 +186,7 @@ typedef struct thread_data {
         _WCRTLINK extern int *__threadid(void);
         #define _threadid (__threadid())
     #endif
-    #if defined(__NT__)
+    #if defined(__NT__) || defined(_NETWARE_LIBC)
         #define NO_INDEX        0xffffffffL
     #endif
     #if defined(__QNX__)

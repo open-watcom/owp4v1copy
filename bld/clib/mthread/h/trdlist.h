@@ -35,11 +35,13 @@
 
 #include "variety.h"
 
-#if defined( __NETWARE__ )
+#if defined( _NETWARE_CLIB )
   #define TID                   int
   #define GetCurrentThreadId()  (*__threadid())
   extern void           ThreadSwitch( void );
   extern void           *GetThreadID( void );
+#elif defined (_NETWARE_LIBC)
+  #include "nw_libc.h"
 #elif defined( __NT__ )
   #ifndef WIN32_LEAN_AND_MEAN
     #define WIN32_LEAN_AND_MEAN
@@ -81,6 +83,10 @@ int __AddThreadData( TID, thread_data * );
 
 // remove from list of thread data
 void __RemoveThreadData( TID );
+
+#if defined (_NETWARE_LIBC)
+void __RemoveAllThreadData( void );
+#endif
 
 // mark each entry in list of thread data for resize
 void __ResizeThreadDataList( void );

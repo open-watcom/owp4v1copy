@@ -1,4 +1,4 @@
-sw_c_common = -w4-zl-zld-zq-d__EXPOSE_STREAM_INTERNALS
+sw_c_common = -w4-zl-zld-zq
 sw_a_common = -zq
 sw_l_common = option quiet,impfile,caseexact reference __DLLstart_ disable 121
 !ifndef on_build_machine
@@ -93,7 +93,9 @@ sw_c_necwin_086   = -oax-r
 sw_c_necdos_386   = -oaxt-r
 sw_c_necwin_386   = -oaxt-d__CALL21__-r
 sw_c_nw_clib_386  = -oaxt-bm -d__far= -d__near= -d_NETWARE_CLIB -d2
-sw_c_nw_libc_386  = -oaxt-bm -d__far= -d__near= -d_NETWARE_LIBC -d_NETWARE_LIBC_THIN -d2
+sw_c_nw_clibl_386 = -oaxt-bm -d__far= -d__near= -d_NETWARE_CLIB -d_THIN_LIB -d2
+sw_c_nw_libc_386  = -oaxt-bm -d__far= -d__near= -d_NETWARE_LIBC -d2
+sw_c_nw_libcl_386 = -oaxt-bm -d__far= -d__near= -d_NETWARE_LIBC -d_THIN_LIB -d2
 sw_c_os2_286      = -oax-r
 sw_c_os2_386      = -oaxt-bm-r
 sw_c_os2_ppc      = -oaxt-bm
@@ -118,7 +120,9 @@ sw_a_necdos_386   =
 sw_a_necwin_086   =
 sw_a_necwin_386   =
 sw_a_nw_clib_386  = -d_NETWARE_CLIB -we
-sw_a_nw_libc_386  = -d_NETWARE_LIBC -d_NETWARE_LIBC_THIN -we
+sw_a_nw_clibl_386 = -d_NETWARE_CLIB -d_THIN_LIB -we
+sw_a_nw_libc_386  = -d_NETWARE_LIBC -we
+sw_a_nw_libc_386  = -d_NETWARE_LIBC -d_THIN_LIB -we
 sw_a_os2_286      =
 sw_a_os2_386      = -d__MT__
 sw_a_os2_ppc      = -d__MT__
@@ -143,7 +147,9 @@ sw_l_necdos_386   =
 sw_l_necwin_086   =
 sw_l_necwin_386   =
 sw_l_nw_clib_386  =
+sw_l_nw_clibl_386 =
 sw_l_nw_libc_386  =
+sw_l_nw_libcl_386 =
 sw_l_os2_286      =
 sw_l_os2_386      = sys os2v2 dll initinstance terminstance op manyautodata
 sw_l_os2_387      = sys os2v2 dll initinstance terminstance op manyautodata

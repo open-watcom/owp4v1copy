@@ -61,6 +61,8 @@ void __InitThreadData( thread_data *tdata )
     #elif defined( __NT__ )
         __init_stack_limits( &tdata->__stklowP, 0 );
         tdata->thread_id = GetCurrentThreadId();
+    #elif defined( _NETWARE_LIBC )
+        tdata->thread_id = GetCurrentThreadId();
     #elif defined( __QNX__ )
         tdata->thread_id = GetCurrentThreadId();
     #endif

@@ -44,6 +44,10 @@
 #include "exitwmsg.h"
 #include "osver.h"
 
+#if defined (_NETWARE_LIBC)
+#include "nw_libc.h"
+#endif
+
 #if defined( __QNX__ )
   #include "semaqnx.h"
   #include <sys/magic.h>
@@ -193,7 +197,7 @@ _WCRTLINK void __AccessSemaphore( semaphore_object *obj )
     TID tid;
 
     tid = GetCurrentThreadId();
-    #if defined( __NETWARE__ )
+    #if defined( _NETWARE_CLIB )
         if( tid == 0 ) return;
     #endif
     if( obj->owner != tid ) {
@@ -221,7 +225,13 @@ _WCRTLINK void __AccessSemaphore( semaphore_object *obj )
                 }
             #endif
             #if defined( __NETWARE__ )
-                while( obj->semaphore != 0 ) ThreadSwitch();
+                while( obj->semaphore != 0 ) 
+                    #if defined (_NETWARE_CLIB)
+                    ThreadSwitch();
+                    #else
+                    NXThreadYield();
+                    #endif
+
                 obj->semaphore = 1;
                 obj->initialized = 1;
             #elif defined( __NT__ )
@@ -244,7 +254,7 @@ _WCRTLINK void __ReleaseSemaphore( semaphore_object *obj )
     TID tid;
 
     tid = GetCurrentThreadId();
-    #if defined( __NETWARE__ )
+    #if defined( _NETWARE_CLIB )
         if( tid == 0 ) return;
     #endif
     if( obj->count > 0 ) {
@@ -281,6 +291,7 @@ void    __ReleaseIOB()
 {
     __ReleaseSemaphore( &IOBSemaphore );
 }
+
 
 
 void __AccessFileH( int handle )
@@ -366,6 +377,29 @@ _WCRTLINK void *__MultipleThread()
         if( tdata == NULL ) {
             tdata = __GetThreadData();
         } else if( tdata->__resize ) {
+            tdata = __ReallocThreadData();
+        }
+        SetLastError(old);
+        return( tdata );
+    #elif defined (_NETWARE_LIBC)
+        /*
+         * Preserve old error code -- important because this code can get
+         * called from _STK.
+         */
+        int old = GetLastError();
+        int ccode = 0;
+
+        thread_data *tdata = NULL;
+        
+        if(0 != (ccode = NXKeyGetValue(__NXSlotID, (void **) &tdata)))
+            tdata = NULL;
+
+        if( tdata == NULL ) 
+        {
+            tdata = __GetThreadData();
+        } 
+        else if( tdata->__resize ) 
+        {
             tdata = __ReallocThreadData();
         }
         SetLastError(old);
@@ -502,7 +536,6 @@ void __NTRemoveThread( int close_handle )
     }
 }
 
-
 static void __ThreadExit()
 /************************/
 {
@@ -586,7 +619,7 @@ void __InitMultipleThread()
 /*************************/
 {
     if( __GetThreadPtr != &__MultipleThread ) {
-        #if defined( __NETWARE__ )
+        #if defined( _NETWARE_CLIB )
         {
         /* __ThreadData[ 0 ] is used whenever GetThreadID() returns a pointer
            not in our __ThreadIDs list - ie. whenever it returns NULL, a
@@ -625,6 +658,20 @@ void __InitMultipleThread()
                     "Unable to initialize thread-specific data\r\n", 1 );
             }
         }
+        #elif defined (_NETWARE_LIBC)
+            InitSemaphore.semaphore     = 0;    /* sema4 is mutex in this case */
+            InitSemaphore.initialized   = 1;
+            //_ThreadExitRtn = &__ThreadExit;   - might need this at some point??
+            // Note: __AddThreadData uses the InitSemaphore, _AccessTDList & _ReleaseTDList
+
+            __FirstThreadData->thread_id = GetCurrentThreadId();
+
+            __AddThreadData( __FirstThreadData->thread_id, __FirstThreadData );
+            if(0 != NXKeySetValue(__NXSlotID, __FirstThreadData))
+            {
+                __fatal_runtime_error(
+                    "Unable to initialize thread-specific data\r\n", 1 );
+            }
         #elif defined( __NT__ )
             InitSemaphore.semaphore = __NTGetCriticalSection();
             InitSemaphore.initialized = 1;
@@ -644,24 +691,26 @@ void __InitMultipleThread()
         #endif
 
         // Set these up after we have created the InitSemaphore
+        #if !defined (_THIN_LIB)
         _AccessFileH      = &__AccessFileH;
         _ReleaseFileH     = &__ReleaseFileH;
         _AccessIOB        = &__AccessIOB;
         _ReleaseIOB       = &__ReleaseIOB;
+        #endif
         _AccessTDList     = &__AccessTDList;
         _ReleaseTDList    = &__ReleaseTDList;
         __AccessSema4     = &__AccessSemaphore;
         __ReleaseSema4    = &__ReleaseSemaphore;
         __CloseSema4      = &__CloseSemaphore;
         #if !defined( __NETWARE__ )
-            _AccessNHeap  = &__AccessNHeap;
-            _AccessFHeap  = &__AccessFHeap;
-            _ReleaseNHeap = &__ReleaseNHeap;
-            _ReleaseFHeap = &__ReleaseFHeap;
+        _AccessNHeap  = &__AccessNHeap;
+        _AccessFHeap  = &__AccessFHeap;
+        _ReleaseNHeap = &__ReleaseNHeap;
+        _ReleaseFHeap = &__ReleaseFHeap;
         #endif
         #if defined( __NT__ )
-            _AccessFList  = &__AccessFList;
-            _ReleaseFList = &__ReleaseFList;
+        _AccessFList  = &__AccessFList;
+        _ReleaseFList = &__ReleaseFList;
         #endif
         __GetThreadPtr  = &__MultipleThread;
     }
@@ -674,33 +723,37 @@ static void __FiniSema4s()              // called from finalizer
     int         i;
 
     _CloseSemaphore( &IOBSemaphore );
-    for( i = 0; i < MAX_SEMAPHORE; i++ ) {              /* 17-feb-93 */
+    for( i = 0; i < MAX_SEMAPHORE; i++ ) 
+    {              /* 17-feb-93 */
         _CloseSemaphore( &FileSemaphores[ i ] );
     }
     #if defined( __NT__ )
-        _CloseSemaphore( &FListSemaphore );
-        __NTFreeCriticalSection();
+    _CloseSemaphore( &FListSemaphore );
+    __NTFreeCriticalSection();
     #endif
     #if !defined( __QNX__ )
-        __FiniThreadProcessing();
-    #if !defined( __OS2_286__ )
+    __FiniThreadProcessing();
+        #if !defined( __OS2_286__ )
         // All thread data areas freed, including main process thread data
         // so mark first thread data pointer null. Note that OS/2 1.x does
         // not have __FirstThreadData at all.
         __FirstThreadData = NULL;
-    #endif
+        #endif
     #endif
     #if !defined( __NETWARE__ )
-        _heapshrink();
-        _CloseSemaphore( &NHeapSemaphore );
-        _CloseSemaphore( &FHeapSemaphore );
+    _heapshrink();
+    _CloseSemaphore( &NHeapSemaphore );
+    _CloseSemaphore( &FHeapSemaphore );
     #endif
     #if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
-        _CloseSemaphore( &TDListSemaphore );
-        _CloseSemaphore( &InitSemaphore );
+    _CloseSemaphore( &TDListSemaphore );
+    _CloseSemaphore( &InitSemaphore );
         #if defined( __NT__ )
-            __NTDeleteCriticalSection();
-            __NTThreadFini();
+        __NTDeleteCriticalSection();
+        __NTThreadFini();
+        #endif
+        #if defined (_NETWARE_LIBC)
+        __LibCThreadFini();
         #endif
     #endif
 }

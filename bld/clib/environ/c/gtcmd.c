@@ -41,6 +41,10 @@
     #include <wos2.h>
 #endif
 
+#if defined (_NETWARE_LIBC)
+#include <process.h>
+#endif
+
 #ifdef __NT__
 
     static char *OS_GET_CMD_LINE(void)
@@ -60,11 +64,15 @@
         return cmd;
     }
 
-#elif defined(__NETWARE__) || defined(__OSI__)
+#elif defined(_NETWARE_CLIB) || defined(__OSI__)
 
     extern char *_LpCmdLine;
     #define OS_GET_CMD_LINE()    _LpCmdLine
 
+#elif defined(_NETWARE_LIBC)
+
+    #define OS_GET_CMD_LINE()    getcmd(NULL)
+    
 #elif defined(__WIN386__)
 
     extern char _WCFAR *_wincmdptr;

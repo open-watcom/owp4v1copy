@@ -37,12 +37,12 @@
 #include "trdlist.h"
 #include "liballoc.h"
 
-#ifdef __NETWARE__
+#ifdef _NETWARE_CLIB
 void                    **__ThreadIDs;
 #endif
 
 #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
-    #if !defined(__NT__) && !defined(__QNX__)
+    #if !defined(__NT__) && !defined(__QNX__) && !defined(_NETWARE_LIBC)
         thread_data_vector      *__ThreadData;
     #endif
 #else
@@ -50,7 +50,7 @@ void                    **__ThreadIDs;
 #endif
 
 
-#if !defined(__NT__) && !defined(__QNX__)
+#if !defined(__NT__) && !defined(__QNX__) && !defined(_NETWARE_LIBC)
 void *__InitThreadProcessing()
 /****************************/
 {
@@ -94,12 +94,12 @@ void __FiniThreadProcessing()
 /***************************/
 {
 
-    #ifdef __NETWARE__
+    #ifdef _NETWARE_CLIB
         if( __ThreadIDs != NULL ) {
             lib_free( __ThreadIDs );
         }
     #endif
-    #if !defined(__NT__) && !defined(__QNX__)
+    #if !defined(__NT__) && !defined(__QNX__) && !defined(_NETWARE_LIBC)
         if( __ThreadData != NULL ) {
             unsigned    i;
             thread_data *tdata;
@@ -122,7 +122,8 @@ void __FiniThreadProcessing()
             lib_free( __ThreadData );
         }
     #endif
-    #if !defined(__NETWARE__) && (defined(__386__) || defined(__AXP__) || defined(__PPC__) )
+
+    #if !defined(_NETWARE_CLIB) && (defined(__386__) || defined(__AXP__) || defined(__PPC__) )
         __FreeThreadDataList();
     #endif
 }

@@ -24,45 +24,33 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Provides non-macro version of the _fileno macros for use
+*               by NetWare LibC thin library consumers.
 *
 ****************************************************************************/
 
+#include <stdio.h>
 
-#include "variety.h"
-#include "rtinit.h"
+#undef  _fileno
+#undef  fileno
 
-#if defined(__NT__)
-  extern unsigned __NTThreadInit( void );
-#elif defined (_NETWARE_LIBC)
-  extern unsigned __LibCThreadInit( void );
-#elif defined(__QNX__)
-#elif defined(__WARP__)
-  extern void *__InitThreadProcessing(void);
-#endif
-#if defined(__OS2_286__) || defined(__NETWARE__)
-    #if defined(__SW_BM)
-        int __imthread;
-    #endif
+#if defined (__NETWARE__) && defined (_THIN_LIB)
+
+_WCRTLINK int _fileno(FILE * pf)
+{
+    return(fileno(pf));
+}
+
 #else
-    extern void __InitMultipleThread();
 
-    static void __imthread_fn( void ) {
-        #if defined(__NT__)
-            if( !__NTThreadInit() ) return;
-        #elif defined(_NETWARE_LIB)
-            if( !__LibCThreadInit() ) return;
-        #elif defined(__QNX__)
-        #elif defined(__WARP__)
-            if( __InitThreadProcessing() == 0 ) return;
-        #endif
-        __InitMultipleThread();
-    }
+_WCRTLINK int _fileno(FILE * pf)
+{
+    return(pf->_handle);
+}
 
-    _WCRTLINK XI( __imthread, __imthread_fn, INIT_PRIORITY_RUNTIME + 1 )
-#endif
+_WCRTLINK int fileno(FILE * pf)
+{
+    return(pf->_handle);
+}
 
-#if defined(_M_IX86)
-  #pragma aux __imthread "*";
 #endif

@@ -35,12 +35,21 @@
 #include <io.h>
 #include "exitwmsg.h"
 
+#if defined (_NETWARE_CLIB)
 extern void             ExitThread( int,int );
+#endif
+#if defined (_NETWARE_LIBC)
+extern void             NXThreadExit( void *);
+#endif
 
 _WCRTLINK void __exit_with_msg( char *msg, unsigned retcode )
 {
     write( STDOUT_FILENO, msg, strlen( msg ) );
+#if defined (_NETWARE_CLIB)
     ExitThread( 0, retcode );
+#else
+    NXThreadExit(&retcode);
+#endif
 }
 
 _WCRTLINK void __fatal_runtime_error( char *msg, unsigned retcode )
@@ -50,3 +59,10 @@ _WCRTLINK void __fatal_runtime_error( char *msg, unsigned retcode )
         __exit_with_msg( msg, retcode );
     }
 }
+
+#if defined (_NETWARE_LIBC)
+_WCRTLINK void AbortWithStackOverflow( unsigned TID )
+{
+    __fatal_runtime_error("OpenWatcom RTL : Stack Overflow\n", TID);
+}
+#endif

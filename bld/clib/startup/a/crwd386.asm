@@ -54,8 +54,10 @@ _dynend      dd 0               ; top of dynamic data area
 _curbrk      dd 0               ; top of usable memory
 endif
 ifndef __QNX__
+ifndef _NETWARE_LIBC
 _LpCmdLine   dd 0               ; pointer to raw command line
 _LpPgmName   dd 0               ; pointer to program name (for argv[0])
+endif
 ifdef __NT__
 _LpDllName   dd 0               ; pointer to dll name (for OS/2,WIN32)
 _LpwCmdLine  dd 0               ; pointer to widechar raw command line
@@ -126,8 +128,10 @@ ifdef __DOS__
         public  __X32VM
         public  __x386_stacklow
 endif
+ifndef _NETWARE_LIBC
         public  "C",_LpCmdLine
         public  "C",_LpPgmName
+endif
 ifdef __NT__
         public  "C",_LpDllName
         public  "C",_LpwCmdLine

@@ -39,12 +39,18 @@
 #elif defined(__OS2__)
     #include <os2.h>
 #elif defined(__NETWARE__)
-    #include <owfileng.h>
+    #if defined (_NETWARE_CLIB)
+        #include <owfileng.h>
+    #endif
 #endif
 #include "iomode.h"
 #include "rtcheck.h"
 #include "seterrno.h"
 
+/*
+//  take fsync from LIBC import file
+*/
+#if !defined (_NETWARE_LIBC)
 
 _WCRTLINK int fsync( int handle )
 /*******************************/
@@ -68,6 +74,7 @@ _WCRTLINK int fsync( int handle )
         ret = -1;
     }
     #elif defined(__NETWARE__)
+
     if( FEFlushWrite( handle ) != 0 ) 
     {
         __set_errno( EBADF );
@@ -79,3 +86,5 @@ _WCRTLINK int fsync( int handle )
 
     return( ret );
 }
+
+#endif /* !defined (_NETWARE_LIBC) */

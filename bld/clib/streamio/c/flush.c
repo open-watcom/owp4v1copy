@@ -40,6 +40,8 @@
 #include "seterrno.h"
 #include "qwrite.h"
 
+#if !defined(_NETWARE_LIBC) && !defined (_THIN_LIB)
+
 _WCRTLINK int __flush( FILE *fp )
 {
     int         len;
@@ -96,3 +98,15 @@ _WCRTLINK int __flush( FILE *fp )
     _ReleaseFile( fp );
     return( ret );
 }
+
+#else
+
+/*
+//  Take flush from LibC
+*/
+_WCRTLINK int __flush( FILE *fp )
+{
+    return(fflush(fp));
+}
+
+#endif

@@ -39,7 +39,10 @@ cdsay .
     <CPCMD> startup\library\msdos.386\ms_s\adsstart.obj <relroot>\rel2\lib386\dos\adsstart.obj
     <CPCMD> startup\library\msdos.386\ms_s\adiestrt.obj <relroot>\rel2\lib386\dos\adiestrt.obj
     <CPCMD> startup\library\msdos.386\ms_s\adifstrt.obj <relroot>\rel2\lib386\dos\adifstrt.obj
-    <CPCMD> library\netware.386\ms_s\clibs.lib <relroot>\rel2\lib386\netware\clib3s.lib
+    <CPCMD> library\nw_libc.386\ms_s\clibs.lib <relroot>\rel2\lib386\netware\libc3s.lib
+    <CPCMD> library\nw_libcl.386\ms_s\clibs.lib <relroot>\rel2\lib386\netware\libcl3s.lib
+    <CPCMD> library\nw_clib.386\ms_s\clibs.lib <relroot>\rel2\lib386\netware\clib3s.lib
+    <CPCMD> library\nw_clibl.386\ms_s\clibs.lib <relroot>\rel2\lib386\netware\clibl3s.lib
     <CPCMD> startup\library\netware.386\ms_s\binmode.obj <relroot>\rel2\lib386\netware\binmode.obj
     <CPCMD> library\os2.286\mc\clibc.lib <relroot>\rel2\lib286\os2\clibc.lib
     <CPCMD> library\os2.286\mh\clibh.lib <relroot>\rel2\lib286\os2\clibh.lib

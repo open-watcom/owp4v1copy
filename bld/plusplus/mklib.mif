@@ -231,10 +231,10 @@ update : .symbolic $(target_lib)
 .asm : $(asm_dirs)
 
 .cpp.obj : $(comp_cpp)
-    *$(comp_cpp) -zld-nm=$[& $(pch_flags) $(br_flags$(sw_br_$[&)) $(etp_flags) @compflags $[@ $($[&_opt)
+    *$(comp_cpp) -d__OBSCURE_STREAM_INTERNALS -zld-nm=$[& $(pch_flags) $(br_flags$(sw_br_$[&)) $(etp_flags) @compflags $[@ $($[&_opt)
 
 .cpp.xbj : $(comp_cpp)
-    *$(comp_cpp) -xs-zld-nm=$[& $(pch_flags) $(br_flags$(sw_br_$[&)) $(etp_flags) -fo=.xbj @compflags $[@
+    *$(comp_cpp) -d__OBSCURE_STREAM_INTERNALS -xs-zld-nm=$[& $(pch_flags) $(br_flags$(sw_br_$[&)) $(etp_flags) -fo=.xbj @compflags $[@
 
 .c.obj :
     $(comp_c) $(etp_flags) @compflags $[@

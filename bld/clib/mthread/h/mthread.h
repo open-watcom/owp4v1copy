@@ -45,6 +45,13 @@
     BOOL        __NTAddThread( thread_data * );
     void        __NTRemoveThread( int );
   #endif
+  #if defined(_NETWARE_LIBC)
+    #include "nw_libc.h"
+    BOOL        __LibCThreadInit( void );
+    void        __LibCThreadFini( void );
+    BOOL        __LibCAddThread( thread_data * );
+    void        __LibCRemoveThread( int );
+  #endif
   #if defined(__OS2__)
     int         __OS2AddThread( TID, thread_data * );
     void        __OS2RemoveThread( void );

@@ -33,6 +33,11 @@
 #include "variety.h"
 #include <limits.h>
 
+#error see gtcmd.c for 'real' implementation for NetWare (CLIB and LibC)
+#error This file is not in the build
+
+#if 0
+
 extern char             *_LpCmdLine;
 
 _WCRTLINK int _bgetcmd( char *buffer, int len )
@@ -70,3 +75,4 @@ _WCRTLINK char *getcmd( char *buffer )
     return( buffer );
 }
 
+#endif
