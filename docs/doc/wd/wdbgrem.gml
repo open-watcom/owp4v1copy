@@ -398,6 +398,21 @@ A>parserv p378
 B>&dbgcmd. /tr=par;2 app
 .millust end
 .np
+.ix dbgport.sys
+.ix dbginst.exe
+Windows NT Note: Under Windows NT/2000/XP you must have the dbgport.sys
+device driver installed and loaded on your machine before the host
+debugger will be able to access the parallel port. To install this file
+manually, first copy it from %WATCOM%\binnt\dbgport.sys to
+%WINDOWS%\system32\drivers. Once the file has been copied, run the
+%WATCOM%\binnt\dbginst.exe program to install the device driver and
+activate it. You will need to have system administrator permissions in
+order to be able to run the dbginst.exe program. Once these two steps are
+done, the parallel port debugger can work. Note also that if you
+wish to do parallel port debuging on a target machine running Windows
+NT/2000/XP, you will need to follow the same set of steps on the target
+machine as well.
+.np
 If you are going to debug a DOS extender application, then you must
 also specify a trap file to the server program. The trap file must be
 specified before the port number. The following example shows how to
