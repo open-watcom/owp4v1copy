@@ -49,7 +49,7 @@ static TEMPLATE_HANDLE PMAddControl        ( TEMPLATE_HANDLE data, long style,
                                              char *text, PVOID presparms,
                                              ULONG presparmslen,
                                              PVOID ctldata, ULONG ctldatlen );
-static int          PMDynamicDialogBox     ( PVOID fn, HWND hwnd,
+static int          PMDynamicDialogBox     ( PFNWP fn, HWND hwnd,
                                              TEMPLATE_HANDLE data,
                                              PVOID dlgdata );
 
@@ -293,7 +293,7 @@ int PMDynamicDialogBox( PFNWP fn, HWND hwnd, TEMPLATE_HANDLE data,
     long rc;
     HWND handle;
 
-    handle = WinCreateDlg( HWND_DESKTOP, hwnd, (PFNWP)fn, (PDLGTEMPLATE)data,
+    handle = WinCreateDlg( HWND_DESKTOP, hwnd, fn, (PDLGTEMPLATE)data,
                            dlgdata );
     if ( !handle ) {
         return( 0 );
