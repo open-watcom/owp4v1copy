@@ -128,7 +128,7 @@ void Ack( HPIPE hdl )
 
 #define STACK_SIZE      8*1024
 
-static void StartThread( void (*rtn)(void*), a_link *link, a_pipe *me, a_pipe *him )
+static void StartThread( void (*rtn)(void FAR *), a_link *link, a_pipe *me, a_pipe *him )
 {
     void        *stack;
     threadinfo  *thread;
@@ -141,8 +141,9 @@ static void StartThread( void (*rtn)(void*), a_link *link, a_pipe *me, a_pipe *h
     _beginthread( rtn, stack, STACK_SIZE, thread );
 }
 
-void JoinPipeThread( threadinfo * thread )
+void JoinPipeThread( void FAR * _thread )
 {
+    threadinfo  *thread = (threadinfo *)_thread;
     char        buff[BUFF_LEN];
     APIRET      rc;
     USHORT      bytes_read;
@@ -174,8 +175,9 @@ void JoinPipeThread( threadinfo * thread )
 
 
 
-void ConnectThread( threadinfo * thread )
+void ConnectThread( void FAR * _thread )
 {
+    threadinfo  *thread = (threadinfo *)_thread;
     char        buff[BUFF_LEN];
     APIRET      rc;
     USHORT      bytes_read;
