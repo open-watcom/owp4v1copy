@@ -17,5 +17,5 @@ set PROJDIR=<CWD>
     mkdir <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
     wmake -h -f ../bootmake
-    <CPCMD> std.so <DEVDIR>/build/bin/std.trp
+    <CPCMD> std.so <DEVDIR>/build/bin/std.so
     cdsay <PROJDIR>

@@ -380,6 +380,7 @@ unsigned ReqRead_io( void )
      */
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
+#ifdef __WATCOMC__
     if( iopl( 3 ) == 0 ) {
         len = acc->len;
         switch( len ) {
@@ -396,6 +397,9 @@ unsigned ReqRead_io( void )
     } else {
         len = 0;
     }
+#else
+    len = 0;
+#endif
     return( len );
 }
 
@@ -416,6 +420,7 @@ unsigned ReqWrite_io( void )
     data = GetInPtr( sizeof( *acc ) );
     len = GetTotalSize() - sizeof( *acc );
     ret = GetOutPtr( 0 );
+#ifdef __WATCOMC__
     if( iopl( 3 ) == 0 ) {
         ret->len = len;
         switch( len ) {
@@ -432,6 +437,9 @@ unsigned ReqWrite_io( void )
     } else {
         ret->len = 0;
     }
+#else
+    ret->len = 0;
+#endif
     return( sizeof( *ret ) );
 }
 

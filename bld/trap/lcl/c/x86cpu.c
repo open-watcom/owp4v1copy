@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Detect x86 CPU type.
 *
 ****************************************************************************/
 
@@ -33,6 +32,8 @@
 #include "mad.h"
 #include "madx86.h"
 #include "x86cpu.h"
+
+#ifdef __WATCOMC__
 
 #if !defined(__386__)
     #define     Is8086()        (!IsNot8086())
@@ -120,7 +121,7 @@ extern unsigned Is486();
         value [AX] modify [BX]
 
 //
-// Intell
+// Intel
 // CPUID EDX bit 23 - MMX instructions -> MMX registers
 // CPUID EDX bit 25 - SSE instructions -> XMM registers
 //
@@ -171,4 +172,14 @@ main()
 {
     printf( "CPUType => %d\n", X86CPUType() );
 }
+#endif
+
+#else
+
+// Just say it's a 386 and be done with it
+unsigned X86CPUType( void )
+{
+    return( X86_386 );
+}
+
 #endif

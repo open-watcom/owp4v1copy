@@ -106,7 +106,11 @@ sys_ppc_nt   = sys ntppc_dll initinstance &
 targ_x86_os2    = $(name).dll
 targ_x86_os2v2  = $(name).d32
 targ_x86_qnx    = $(name).trp
+!ifdef bootstrap
+targ_x86_linux  = $(name).so
+!else
 targ_x86_linux  = $(name).trp
+!endif
 targ_x86_win    = $(name).dll
 targ_x86_dos    = $(name).trp
 targ_x86_nt     = $(name).dll

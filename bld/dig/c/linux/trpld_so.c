@@ -97,12 +97,13 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
     for( ptr = trapbuff; *ptr != '\0' && *ptr != ';'; ++ptr )
         ;
     parm = (*ptr != '\0') ? ptr + 1 : ptr;
-    filehndl = PathOpenTrap( trapbuff, ptr - trapbuff, "trp", trap_name, sizeof( trap_name ) );
+    filehndl = PathOpenTrap( trapbuff, ptr - trapbuff, "so", trap_name, sizeof( trap_name ) );
 
     parm = (*ptr != '\0') ? ptr + 1 : ptr;
 
     TrapFile = dlopen( trap_name, RTLD_NOW );
     if( TrapFile == NULL ) {
+	puts( dlerror() );
         sprintf( buff, TC_ERR_CANT_LOAD_TRAP, trapbuff );
         return( buff );
     }
