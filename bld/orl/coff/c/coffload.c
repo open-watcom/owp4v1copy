@@ -451,6 +451,8 @@ orl_return CoffLoadFileStructure( coff_file_handle coff_file_hnd )
     case ORL_MACHINE_TYPE_NONE:
     case ORL_MACHINE_TYPE_UNKNOWN:
         return( ORL_ERROR );
+    default:
+        break;
     }
     coff_file_hnd->num_symbols = f_hdr->num_symbols;
     coff_file_hnd->num_sections = f_hdr->num_sections;
