@@ -126,6 +126,14 @@ static struct enum_range const range_table[] =
       , I64Val( 0x00000000, 0xFFFFFFFF )
       , TYP_ULONG
     }
+,   {   I64Val( 0x80000000, 0x00000000 )
+      , I64Val( 0x7FFFFFFF, 0xFFFFFFFF )
+      , TYP_SLONG64
+    }
+,   {   I64Val( 0x00000000, 0x00000000 )
+      , I64Val( 0xFFFFFFFF, 0xFFFFFFFF )
+      , TYP_ULONG64
+    }
 };
     #define RANGE_INDEX_SINT 2
 #else
@@ -146,20 +154,17 @@ static struct enum_range const range_table[] =
 //
 static type_id figureOutBaseType( ENUM_DATA *edata )
 {
-    type_id base_type;
-    unsigned index;
-    signed_64 const* next_val;
+    type_id     base_type;
+    unsigned    index;
+    unsigned    step;
 
     index = edata->index;
-    next_val = &edata->next_value;
-    if( edata->has_sign ) {
-        for( ; index < ENUM_RNG_MAX ; index += 2 ) {
-            if( I64Cmp( next_val, &(range_table[ index ].lo.s64val) ) >= 0
-             && I64Cmp( next_val, &(range_table[ index ].hi.s64val) ) <= 0 ) break;
-        }
-    } else {
-        for( ; index < ENUM_RNG_MAX; index += 1 ) {
-            if( U64Cmp( next_val, &(range_table[ index ].hi.s64val) ) <= 0 ) break;
+    step = ( edata->has_sign ) ? 2 : 1;
+    for( ; index < ENUM_RNG_MAX; index += step ) {
+        if( edata->next_signed ) {
+            if( I64Cmp( &edata->next_value, &(range_table[ index ].lo.s64val) ) >= 0 ) break;
+        } else {
+            if( U64Cmp( &edata->next_value, &(range_table[ index ].hi.s64val) ) <= 0 ) break;
         }
     }
     if( index >= ENUM_RNG_MAX ) {
@@ -285,6 +290,10 @@ void MakeEnumMember( ENUM_DATA *edata, PTREE id, PTREE val )
         }
         edata->next_value = val->u.int64_constant;
         PTreeFree( val );
+    } else if( edata->next_signed ) {
+        if( edata->next_value.u.sign.v == 0 ) {
+            edata->next_signed = FALSE;
+        }
     }
     PTreeFree( id );
     edata->base_id = figureOutBaseType( edata );

@@ -52,7 +52,9 @@ File: source\diag0007.c
 (6,10): Error! E172: floating-point constant too large to represent
 (7,9): Error! E173: floating-point constant too small to represent
 File: source\diag0008.c
-(5,2): Error! E080: fill in test after MJC has scanner working
+(7,28): Error! E175: range of enum constants cannot be represented
+(9,1): Error! E175: range of enum constants cannot be represented
+(13,29): Error! E175: range of enum constants cannot be represented
 File: source\diag0009.c
 (22,12): Error! E584: constructor for variable 'a' cannot be bypassed
   definition: 'S a' in 'void test2( void )'
