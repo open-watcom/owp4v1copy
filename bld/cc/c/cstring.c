@@ -126,7 +126,7 @@ STRING_LITERAL *GetLiteral()
     while( CurToken == T_STRING ) {
         /* if one component is wide then the whole string is wide */
         if (is_wide)
-	    CompFlags.wide_char_string = 1;
+            CompFlags.wide_char_string = 1;
         len2 = RemoveEscapes( NULL );
         --len;
         if( CompFlags.wide_char_string ) {
