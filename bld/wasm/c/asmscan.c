@@ -393,7 +393,7 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
         buf->value = AsmOpTable[count].token;
         // count = AsmOpcode[count].position;
 
-        if( AsmOpTable[count].opnd_type[0] == OP_SPECIAL ) {
+        if( AsmOpTable[count].opnd_type[OPND1] == OP_SPECIAL ) {
             if( AsmOpTable[count].rm_byte & OP_REGISTER ) {
                 buf->token = T_REG;
                 #if 0

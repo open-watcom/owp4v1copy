@@ -202,7 +202,7 @@ static int output( int i )
         // special case for some 286 and 386 instructions
         AsmCodeByte( EXTENDED_OPCODE );
     }
-    if( rCode->info.opnd_type[0] == OP_MMX && rCode->info.opnd_type[1] == OP_MMX ) {
+    if( rCode->info.opnd_type[OPND1] == OP_MMX && rCode->info.opnd_type[OPND2] == OP_MMX ) {
         /* The reg and r/m fields are backwards */
         tmp = rCode->info.rm_byte;
         rCode->info.rm_byte = 0xc0 | ((tmp >> 3) & 0x7) | ((tmp << 3) & 0x38);
@@ -485,7 +485,7 @@ int match_phase_1( void )
             }
             break;
         case OP_I_3:                    // for INT only
-            if( ( ( cur_opnd & OP_I8 ) && Code->data[0] == 3 ) &&
+            if( ( ( cur_opnd & OP_I8 ) && Code->data[OPND1] == 3 ) &&
                                 Code->info.opnd_type[OPND2] == OP_NONE ) {
                 return( output( i ) );
             }
@@ -651,7 +651,9 @@ int match_phase_3( int *i, unsigned long determinant )
             }
             break;
         case OP_I8_U:
-            if( cur_opnd != OP_I8 && cur_opnd != OP_I16 ) {
+            if( ( cur_opnd != OP_I8 )
+                && ( cur_opnd != OP_I8_U )
+                && ( cur_opnd != OP_I16 ) ) {
                 break;
             }
             // range of unsigned 8-bit is 0 - 255

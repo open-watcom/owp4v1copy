@@ -1312,7 +1312,7 @@ static int reg( int i )
 
     temp = AsmOpcode[AsmBuffer[i]->value].position;
     reg = AsmOpTable[temp].opcode;
-    Code->info.opnd_type[Opnd_Count] = AsmOpTable[temp].opnd_type[1];
+    Code->info.opnd_type[Opnd_Count] = AsmOpTable[temp].opnd_type[OPND2];
     switch( AsmOpTable[temp].opnd_type[OPND2] ) {
     case OP_AL:
     case OP_R8:

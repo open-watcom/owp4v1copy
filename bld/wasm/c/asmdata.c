@@ -401,7 +401,7 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                 case 6:
                     // fixme -- this needs work .... check USE_32, etc
                     temp = FIX_PTR32;
-                    Code->info.opnd_type[0] = OP_J48;
+                    Code->info.opnd_type[OPND1] = OP_J48;
                     break;
                 default:
                     AsmError( NOT_IMPLEMENTED );
@@ -415,7 +415,7 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
             fixup = AddFixup( init_sym, temp );
             //          if( fixup == NULL ) return( ERROR );
             // fixme
-            InsFixups[0] = fixup;
+            InsFixups[OPND1] = fixup;
             data += fixup->offset;
                     
             for( cur_pos++;
@@ -564,7 +564,7 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                     case T_SEG:
                             
                         fixup = AddFixup( init_sym, temp );
-                        InsFixups[0] = fixup;
+                        InsFixups[OPND1] = fixup;
                         if( AsmBuffer[seg_off_operator_loc]->value == T_OFFSET ) {
                             data += fixup->offset;
                         }
