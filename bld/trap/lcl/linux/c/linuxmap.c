@@ -250,7 +250,13 @@ unsigned ReqMap_addr( void )
     ret = GetOutPtr( 0 );
     ret->lo_bound = 0;
     ret->hi_bound = ~(addr48_off)0;
-    ptrace( PTRACE_PEEKUSER, pid, (void *)offsetof( user_struct, start_code ), &val );
+    errno = 0;
+    if( (val = ptrace( PTRACE_PEEKUSER, pid, (void *)offsetof( user_struct, start_code ), &val )) == -1 ) {
+        if( errno ) {
+            Out( "ReqMap_addr: PTRACE_PEEKUSER failed!\n" );
+            return( sizeof( *ret ) );
+        }
+    }
     ret->out_addr.offset = acc->in_addr.offset + val;
 
     if( acc->handle > ModuleTop ) {
@@ -268,7 +274,7 @@ unsigned ReqMap_addr( void )
     OutNum( acc->handle );
     if( acc->in_addr.segment == MAP_FLAT_DATA_SELECTOR ||
         acc->in_addr.segment == flatDS ) {
-        ptrace( PTRACE_PEEKUSER, pid, (void *)offsetof( user_struct, u_tsize ), &val );
+        val = ptrace( PTRACE_PEEKUSER, pid, (void *)offsetof( user_struct, u_tsize ), &val );
         ret->out_addr.offset += val;
         ret->out_addr.segment = flatDS;
     } else {
