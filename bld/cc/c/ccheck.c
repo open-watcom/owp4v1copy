@@ -130,7 +130,7 @@ static int ChkParmPromotion( TYPEPTR *plist, int topLevelCheck )    /* 25-nov-94
     int         parm_count;
 
     parm_count = 1;
-    for(;;) {
+    for( ;; ) {
         typ = *plist++;
         if( typ == NULL ) break;
         while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
@@ -187,7 +187,9 @@ static cmp_type CompatibleStructs( TAGPTR tag1, TAGPTR tag2 )
     if( tag1->size != tag2->size )  return( NO );
     field1 = tag1->u.field_list;
     field2 = tag2->u.field_list;
-    for(;;) {
+    /* if either struct is undefined, let's be conservative */
+    if( (field1 == NULL) || (field2 == NULL) ) return( NO );
+    for( ;; ) {
         if( field1 == NULL ) break;
         if( field2 == NULL ) break;
         typ1 = field1->field_type;
@@ -198,7 +200,7 @@ static cmp_type CompatibleStructs( TAGPTR tag1, TAGPTR tag2 )
             if( (typ1->decl_type == TYPE_STRUCT  &&
                  typ2->decl_type == TYPE_STRUCT )    ||
                 (typ1->decl_type == TYPE_UNION   &&
-                 typ2->decl_type == TYPE_UNION  )    ) {
+                 typ2->decl_type == TYPE_UNION  ) ) {
                     if( CompatibleStructs( typ1->u.tag, typ2->u.tag )
                             != OK ) {
                         return( NO );
@@ -230,7 +232,7 @@ int ChkCompatibleFunction( TYPEPTR typ1, TYPEPTR typ2, int topLevelCheck )
             return ChkParmPromotion( plist1, topLevelCheck );
         }
         parm_count = 1;
-        for(;;) {
+        for( ;; ) {
             if( *plist1 == NULL  &&  *plist2 == NULL ) break;
             if( *plist1 == NULL  ||  *plist2 == NULL ) {
                 if ( topLevelCheck ) {
