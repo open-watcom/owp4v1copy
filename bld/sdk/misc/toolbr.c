@@ -242,7 +242,7 @@ toolbar *ToolBarInit( HWND parent )
 
     if( !GetClassInfo( instance, className, &wc ) ) {
         wc.style = CS_DBLCLKS;
-        wc.lpfnWndProc = (LPVOID) ToolBarWndProc;
+        wc.lpfnWndProc = ToolBarWndProc;
         wc.lpszMenuName = NULL;
         wc.cbClsExtra = 0;
         wc.cbWndExtra = sizeof( LPVOID );

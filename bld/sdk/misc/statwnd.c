@@ -198,7 +198,7 @@ int StatusWndInit( HINSTANCE hinstance, statushook hook, int extra,
     rc = TRUE;
     if( !GetClassInfo( hinstance, className, &wc ) ) {
         wc.style = CS_HREDRAW | CS_VREDRAW;
-        wc.lpfnWndProc = (LPVOID) StatusWndCallback;
+        wc.lpfnWndProc = StatusWndCallback;
         wc.cbClsExtra = 0;
         wc.cbWndExtra = extra;
         wc.hInstance = hinstance;
