@@ -4,64 +4,64 @@ EXPORTS
     glAreTexturesResident                       @2
     gluQuadricOrientation                       @3
     pglReleaseFrontBitmap                       @4
-    glEvalMesh                                  @5
-    glEvalMesh                                  @6
+    glEvalMesh1                                 @5
+    glEvalMesh2                                 @6
     gluGetNurbsProperty                         @7
     glPrioritizeTextures                        @8
-    glTexImage                                  @9
-    glTexImage                                  @10
-    glTexCoord                                  @11
-    glTexCoord                                  @12
-    glTexCoord                                  @13
-    glTexCoord                                  @14
-    glTexCoord                                  @15
-    glTexCoord                                  @16
-    glTexCoord                                  @17
-    glTexCoord                                  @18
-    glTexCoord                                  @19
-    glTexCoord                                  @20
-    glTexCoord                                  @21
-    glTexCoord                                  @22
-    glTexCoord                                  @23
-    glTexCoord                                  @24
-    glTexCoord                                  @25
-    glMapGrid                                   @26
-    glMapGrid                                   @27
-    glTexCoord                                  @28
-    glMapGrid                                   @29
-    glMapGrid                                   @30
+    glTexImage1D                                @9
+    glTexImage2D                                @10
+    glTexCoord1d                                @11
+    glTexCoord1f                                @12
+    glTexCoord1i                                @13
+    glTexCoord2d                                @14
+    glTexCoord2f                                @15
+    glTexCoord2i                                @16
+    glTexCoord1s                                @17
+    glTexCoord3d                                @18
+    glTexCoord3f                                @19
+    glTexCoord3i                                @20
+    glTexCoord2s                                @21
+    glTexCoord4d                                @22
+    glTexCoord4f                                @23
+    glTexCoord4i                                @24
+    glTexCoord3s                                @25
+    glMapGrid1d                                 @26
+    glMapGrid2d                                 @27
+    glTexCoord4s                                @28
+    glMapGrid1f                                 @29
+    glMapGrid2f                                 @30
     glAlphaFunc                                 @31
     glIsEnabled                                 @32
     glBlendFunc                                 @33
-    glNormal                                    @34
-    glNormal                                    @35
+    glNormal3bv                                 @34
+    glNormal3dv                                 @35
     glDepthFunc                                 @36
     glEdgeFlagv                                 @37
-    glNormal                                    @38
+    glNormal3fv                                 @38
     glClipPlane                                 @39
-    glNormal                                    @40
+    glNormal3iv                                 @40
     glDrawBuffer                                @41
     glFrontFace                                 @42
-    glTexCoord                                  @43
-    glTexCoord                                  @44
-    glTexCoord                                  @45
-    glTexCoord                                  @46
-    glTexCoord                                  @47
-    glTexCoord                                  @48
-    glTexCoord                                  @49
-    glTexCoord                                  @50
+    glTexCoord1dv                               @43
+    glTexCoord1fv                               @44
+    glTexCoord1iv                               @45
+    glTexCoord2dv                               @46
+    glTexCoord2fv                               @47
+    glTexCoord2iv                               @48
+    glTexCoord1sv                               @49
+    glTexCoord3dv                               @50
     glDepthMask                                 @51
-    glTexCoord                                  @52
-    glTexCoord                                  @53
+    glTexCoord3fv                               @52
+    glTexCoord3iv                               @53
     glReadBuffer                                @54
-    glTexCoord                                  @55
-    glNormal                                    @56
-    glTexCoord                                  @57
-    glTexCoord                                  @58
-    glTexCoord                                  @59
-    glTexCoord                                  @60
+    glTexCoord2sv                               @55
+    glNormal3sv                                 @56
+    glTexCoord4dv                               @57
+    glTexCoord4fv                               @58
+    glTexCoord4iv                               @59
+    glTexCoord3sv                               @60
     glClearIndex                                @61
-    glTexCoord                                  @62
+    glTexCoord4sv                               @62
     glMaterialf                                 @63
     gluDeleteNurbsRenderer                      @64
     gluEndCurve                                 @65
@@ -70,23 +70,23 @@ EXPORTS
     glColorMask                                 @68
     glPopAttrib                                 @69
     glDepthRange                                @70
-    glColor                                     @71
-    glColor                                     @72
-    glVertex                                    @73
-    glVertex                                    @74
-    glVertex                                    @75
+    glColor3ubv                                 @71
+    glColor4ubv                                 @72
+    glVertex2dv                                 @73
+    glVertex3dv                                 @74
+    glVertex4dv                                 @75
     glGetDoublev                                @76
-    glVertex                                    @77
-    glVertex                                    @78
+    glVertex2fv                                 @77
+    glVertex3fv                                 @78
     glRenderMode                                @79
     glCallLists                                 @80
-    glVertex                                    @81
-    glColor                                     @82
-    glColor                                     @83
-    glVertex                                    @84
-    glVertex                                    @85
+    glVertex4fv                                 @81
+    glColor3uiv                                 @82
+    glColor4uiv                                 @83
+    glVertex2iv                                 @84
+    glVertex3iv                                 @85
     glStencilOp                                 @86
-    glVertex                                    @87
+    glVertex4iv                                 @87
     glIndexMask                                 @88
     glGetString                                 @89
     gluPwlCurve                                 @90
@@ -97,26 +97,26 @@ EXPORTS
     glLineWidth                                 @95
     glClearColor                                @96
     glGetLightiv                                @97
-    glColor                                     @98
+    glColor3usv                                 @98
     glIsTexture                                 @99
-    glColor                                     @100
+    glColor4usv                                 @100
     glPopMatrix                                 @101
     glPixelZoom                                 @102
-    glVertex                                    @103
-    glVertex                                    @104
-    glVertex                                    @105
+    glVertex2sv                                 @103
+    glVertex3sv                                 @104
+    glVertex4sv                                 @105
     glDrawArrays                                @106
     gluCylinder                                 @107
     glPushAttrib                                @108
     glMatrixMode                                @109
     glMaterialfv                                @110
-    glEvalCoord                                 @111
-    glEvalCoord                                 @112
+    glEvalCoord1d                               @111
+    glEvalCoord2d                               @112
     glClearDepth                                @113
-    glEvalPoint                                 @114
-    glEvalCoord                                 @115
-    glEvalPoint                                 @116
-    glEvalCoord                                 @117
+    glEvalPoint1                                @114
+    glEvalCoord1f                               @115
+    glEvalPoint2                                @116
+    glEvalCoord2f                               @117
     glPixelMapfv                                @118
     glPointSize                                 @119
     glMaterialiv                                @120
@@ -149,26 +149,26 @@ EXPORTS
     glGetPointerv                               @147
     glStencilFunc                               @148
     glDeleteLists                               @149
-    glRasterPos                                 @150
-    glRasterPos                                 @151
-    glRasterPos                                 @152
-    glRasterPos                                 @153
-    glRasterPos                                 @154
-    glRasterPos                                 @155
+    glRasterPos2d                               @150
+    glRasterPos3d                               @151
+    glRasterPos4d                               @152
+    glRasterPos2f                               @153
+    glRasterPos3f                               @154
+    glRasterPos4f                               @155
     glGetTexEnvfv                               @156
-    glRasterPos                                 @157
-    glRasterPos                                 @158
-    glRasterPos                                 @159
+    glRasterPos2i                               @157
+    glRasterPos3i                               @158
+    glRasterPos4i                               @159
     glGetTexEnviv                               @160
     glGenTextures                               @161
     glMultMatrixd                               @162
     glPolygonMode                               @163
     glMultMatrixf                               @164
     glLineStipple                               @165
-    glRasterPos                                 @166
+    glRasterPos2s                               @166
     glBindTexture                               @167
-    glRasterPos                                 @168
-    glRasterPos                                 @169
+    glRasterPos3s                               @168
+    glRasterPos4s                               @169
     gluBeginCurve                               @170
     glPixelStoref                               @171
     gluEndPolygon                               @172
@@ -180,10 +180,10 @@ EXPORTS
     gluNewQuadric                               @178
     gluTessNormal                               @179
     glPassThrough                               @180
-    glEvalCoord                                 @181
-    glEvalCoord                                 @182
-    glEvalCoord                                 @183
-    glEvalCoord                                 @184
+    glEvalCoord1dv                              @181
+    glEvalCoord2dv                              @182
+    glEvalCoord1fv                              @183
+    glEvalCoord2fv                              @184
     gluTessVertex                               @185
     pglInternalGetCharBitmap                    @186
     glDrawElements                              @187
@@ -202,28 +202,28 @@ EXPORTS
     glLoadIdentity                              @200
     gluPartialDisk                              @201
     glIndexPointer                              @202
-    glRasterPos                                 @203
-    glRasterPos                                 @204
-    glRasterPos                                 @205
-    glRasterPos                                 @206
-    glRasterPos                                 @207
-    glRasterPos                                 @208
-    glRasterPos                                 @209
-    glRasterPos                                 @210
-    glRasterPos                                 @211
-    glRasterPos                                 @212
-    glRasterPos                                 @213
-    glRasterPos                                 @214
+    glRasterPos2dv                              @203
+    glRasterPos3dv                              @204
+    glRasterPos4dv                              @205
+    glRasterPos2fv                              @206
+    glRasterPos3fv                              @207
+    glRasterPos4fv                              @208
+    glRasterPos2iv                              @209
+    glRasterPos3iv                              @210
+    glRasterPos4iv                              @211
+    glRasterPos2sv                              @212
+    glRasterPos3sv                              @213
+    glRasterPos4sv                              @214
     gluPerspective                              @215
     gluErrorString                              @216
     pglCopyContext                              @217
     gluNextContour                              @218
     glEnd                                       @219
-    glCopyTexImage                              @220
-    glCopyTexImage                              @221
+    glCopyTexImage1D                            @220
+    glCopyTexImage2D                            @221
     glFeedbackBuffer                            @222
-    glTexSubImage                               @223
-    glTexSubImage                               @224
+    glTexSubImage1D                             @223
+    glTexSubImage2D                             @224
     pglSelectColorIndexPalette                  @225
     glColorMaterial                             @226
     glFogf                                      @227
@@ -254,8 +254,8 @@ EXPORTS
     glDeleteTextures                            @252
     gluDeleteQuadric                            @253
     glGetPixelMapusv                            @254
-    gluBuild                                    @255
-    gluBuild                                    @256
+    gluBuild1DMipmaps                           @255
+    gluBuild2DMipmaps                           @256
     gluQuadricNormals                           @257
     glEdgeFlagPointer                           @258
     glPolygonStipple                            @259
@@ -268,10 +268,10 @@ EXPORTS
     glTexCoordPointer                           @266
     gluTessEndPolygon                           @267
     gluQuadricCallback                          @268
-    glMap                                       @269
-    glMap                                       @270
-    glMap                                       @271
-    glMap                                       @272
+    glMap1d                                     @269
+    glMap2d                                     @270
+    glMap1f                                     @271
+    glMap2f                                     @272
     pglGrabFrontBitmap                          @273
     glPushClientAttrib                          @274
     glBegin                                     @275
@@ -307,18 +307,18 @@ EXPORTS
     glRectiv                                    @305
     gluGetTessProperty                          @306
     glRectsv                                    @307
-    glColor                                     @308
-    glColor                                     @309
-    glColor                                     @310
-    glColor                                     @311
+    glColor3b                                   @308
+    glColor4b                                   @309
+    glColor3d                                   @310
+    glColor4d                                   @311
     glLogicOp                                   @312
-    glColor                                     @313
-    glColor                                     @314
-    glColor                                     @315
+    glColor3f                                   @313
+    glColor4f                                   @314
+    glColor3i                                   @315
     glEndList                                   @316
-    glColor                                     @317
-    glColor                                     @318
-    glColor                                     @319
+    glColor4i                                   @317
+    glColor3s                                   @318
+    glColor4s                                   @319
     glPopName                                   @320
     glTexGend                                   @321
     glTexGenf                                   @322
@@ -341,54 +341,54 @@ EXPORTS
     glFrustum                                   @339
     gluLookAt                                   @340
     glScissor                                   @341
-    glCopyTexSubImage                           @342
-    glCopyTexSubImage                           @343
-    glNormal                                    @344
-    glNormal                                    @345
+    glCopyTexSubImage1D                         @342
+    glCopyTexSubImage2D                         @343
+    glNormal3b                                  @344
+    glNormal3d                                  @345
     glEdgeFlag                                  @346
-    glNormal                                    @347
-    glNormal                                    @348
+    glNormal3f                                  @347
+    glNormal3i                                  @348
     glCullFace                                  @349
-    glNormal                                    @350
+    glNormal3s                                  @350
     glEnableClientState                         @351
-    glColor                                     @352
-    glColor                                     @353
+    glColor3ub                                  @352
+    glColor4ub                                  @353
     glGetMapdv                                  @354
     glGetMapfv                                  @355
     glGetMapiv                                  @356
-    glVertex                                    @357
-    glVertex                                    @358
+    glVertex2d                                  @357
+    glVertex3d                                  @358
     glLoadName                                  @359
-    glVertex                                    @360
-    glVertex                                    @361
-    glVertex                                    @362
-    glVertex                                    @363
+    glVertex4d                                  @360
+    glVertex2f                                  @361
+    glVertex3f                                  @362
+    glVertex4f                                  @363
     glListBase                                  @364
-    glColor                                     @365
-    glColor                                     @366
-    gluOrtho                                    @367
-    glVertex                                    @368
-    glVertex                                    @369
-    glVertex                                    @370
-    glColor                                     @371
-    glColor                                     @372
-    glColor                                     @373
-    glColor                                     @374
+    glColor3ui                                  @365
+    glColor4ui                                  @366
+    gluOrtho2D                                  @367
+    glVertex2i                                  @368
+    glVertex3i                                  @369
+    glVertex4i                                  @370
+    glColor3bv                                  @371
+    glColor4bv                                  @372
+    glColor3dv                                  @373
+    glColor4dv                                  @374
     glCallList                                  @375
-    glColor                                     @376
-    glColor                                     @377
+    glColor3fv                                  @376
+    glColor4fv                                  @377
     gluQuadricDrawStyle                         @378
-    glColor                                     @379
-    glColor                                     @380
-    glColor                                     @381
-    glColor                                     @382
+    glColor3iv                                  @379
+    glColor4iv                                  @380
+    glColor3us                                  @381
+    glColor4us                                  @382
     pglUseFont                                  @383
     glGenLists                                  @384
-    glVertex                                    @385
-    glVertex                                    @386
-    glColor                                     @387
-    glColor                                     @388
-    glVertex                                    @389
+    glVertex2s                                  @385
+    glVertex3s                                  @386
+    glColor3sv                                  @387
+    glColor4sv                                  @388
+    glVertex4s                                  @389
     glDisableClientState                        @390
     glPushName                                  @391
     glGetError                                  @392

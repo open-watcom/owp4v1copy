@@ -4,8 +4,8 @@ EXPORTS
     glutSolidDodecahedron                       @2
     glutChangeToMenuEntry                       @3
     glutPassiveMotionFunc                       @4
-    glutBitmapTimesRoman                        @5
-    glutBitmapTimesRoman                        @6
+    glutBitmapTimesRoman10                      @5
+    glutBitmapTimesRoman24                      @6
     glutInitWindowPosition                      @7
     glutMainLoop                                @8
     glutWireCube                                @9
@@ -27,8 +27,8 @@ EXPORTS
     glutTimerFunc                               @25
     glutMouseFunc                               @26
     glutWireTorus                               @27
-    glutBitmap                                  @28
-    glutBitmap                                  @29
+    glutBitmap8By13                             @28
+    glutBitmap9By15                             @29
     glutAddSubMenu                              @30
     glutCreateMenu                              @31
     glutHideWindow                              @32
