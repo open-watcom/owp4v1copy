@@ -49,6 +49,20 @@
 :: of the allocator and auto_ptr templates. Allocator's max_size method
 :: also needs to be implemented.
 ::
+template<class Iterator, class T>
+inline void _RawConstruct( Iterator ptr, const T &value )
+{
+    typedef typename iterator_traits<Iterator>::value_type value_type;
+    new ( static_cast<void *>( &*ptr ) ) value_type( value );
+}
+
+template<class Iterator>
+inline void _RawDestroy( Iterator ptr )
+{
+    typedef typename iterator_traits<Iterator>::value_type value_type;
+    ptr->~value_type();
+}
+
 namespace std {
 
   template<class T> class allocator;
@@ -122,7 +136,7 @@ namespace std {
       _WCTRY {
           // Construct copies of value in the raw storage.
           while( first != last ) {
-              new ( static_cast<void *>( &*first ) ) value_type( value );
+              _RawConstruct( first, value );
               ++first;
           }
       }
@@ -130,7 +144,7 @@ namespace std {
       // If an exception occurs, destroy copies that were made successfully.
       catch( ... ) {
           while( bookmark != first ) {
-              bookmark->~value_type( );
+              _RawDestroy( bookmark );
               ++bookmark;
           }
           throw;
@@ -151,7 +165,7 @@ namespace std {
       _WCTRY {
           // Construct n copies of value in raw storage.
           while( n-- ) {
-              new ( static_cast<void *>( &*first ) ) value_type( value );
+              _RawConstruct( first, value );
               ++first;
           }
       }
@@ -159,7 +173,7 @@ namespace std {
       // If an exception occurs, destroy copies that were made successfully.
       catch( ... ) {
           while( bookmark != first ) {
-              bookmark->~value_type( );
+              _RawDestroy( bookmark );
               ++bookmark;
           }
           throw;
@@ -180,7 +194,7 @@ namespace std {
       _WCTRY {
           // Copy objects from input sequence to raw storage.
           while( first != last ) {
-              new ( static_cast<void *>( &*dest ) ) value_type( *first );
+              _RawConstruct( dest, *first );
               ++first;
               ++dest;
           }
@@ -190,7 +204,7 @@ namespace std {
       // If an exception occurs, destroy copies that were made successfully.
       catch( ... ) {
           while( bookmark != dest ) {
-              bookmark->~value_type( );
+              _RawDestroy( bookmark );
               ++bookmark;
           }
           throw;
