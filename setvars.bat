@@ -1,4 +1,7 @@
 @echo off
+REM *****************************************************************
+REM SETVARS - Windows NT version
+REM *****************************************************************
 REM NOTE: Do not use this batch file directly, but copy it and
 REM       modify it as necessary for your own use!!
 
@@ -13,7 +16,8 @@ set P4CLIENT=YOURCLIENT
 set P4PASSWD=YourPassword
 
 REM Change this to point to your OpenWatcom tree
-set owroot=d:\openwatcom
+REM Must be an 8.3 name!
+set owroot=d:\openwa~1
 set owdrive=d:
 
 REM Change this to point to your Watcom 11.0c directory
@@ -52,14 +56,12 @@ set lang_bld=%owroot%\bat
 set lc=-r
 set lib=%owroot%\bld\watcom\lib
 set more=-t
-set path=%owroot%\bin;%devdir%\build\bin;%owroot%\bat;%lang%\binnt;%lang%\binw;%devdir%\tools;%devdir%\cmds;%doc_root%\cmds;%defpath%
+set path=%owroot%\bin;%devdir%\build\binnt;%owroot%\bat;%lang%\binnt;%lang%\binw;%devdir%\tools;%devdir%\cmds;%doc_root%\cmds;%defpath%
 set relroot=%owroot%
 set rm=-s
 set manifest=%owroot%\manifest
 set rootdir=%owdrive%\
 set setupdr=%owdrive%
-set shell=cmd.exe
-set comspec=cmd.exe
 set tntdir=d:\tools\tnt6
 set tooldir=d:
 set tooldr=d:
@@ -76,6 +78,7 @@ set gml_root=%doc_root%\gml\dos
 set gmllib=%doc_root%\gml\syslib
 set hcdos=%doc_root%\cmds\hcdos32
 set hlpdir=%devdir%\online\hlp
+set win95hc=hcrtf
 
 %devdr%
 cd %devdir%
