@@ -759,7 +759,6 @@ local int GetByteSeq( void )
     too_many_bytes = 0;
     i = 0;
     for(;;) {
-#if _CPU == 8086  ||  _CPU == 386
         if( CurToken == T_STRING ) {    /* 06-sep-91 */
             Address = i;
             CodeBuffer = &buff[0];
@@ -775,7 +774,6 @@ local int GetByteSeq( void )
             NextToken();
             if( CurToken == T_COMMA )  NextToken();
         } else
-#endif
         if( CurToken == T_CONSTANT ) {
             if( i < MAXIMUM_BYTESEQ ) {
                 buff[ i++ ] = Constant;
@@ -854,9 +852,7 @@ local int GetByteSeq( void )
         uses_auto = InsertFixups( buff, i );
     }
     CompFlags.pre_processing = 2;
-#if _CPU == 8086  ||  _CPU == 386
     AsmSymFini();
-#endif
     return( uses_auto );
 }
 
