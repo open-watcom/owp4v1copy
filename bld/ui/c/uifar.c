@@ -161,7 +161,7 @@ intern void cdecl farcopy( LPPIXEL src, LPPIXEL dst, int len, int snow )
     _unused( snow );
     #if defined( __UNIX__ )
         memmove( dst, src, len*sizeof(PIXEL) );
-    #elif defined( NLM )
+    #elif defined( __NETWARE__ )
         // Netware compiled with "far" defined, but pointers aren't really
         // far, and there is no _fmemmove function, and we were getting
         // "pointer truncated" warnings before, so just cast. (SteveM)
