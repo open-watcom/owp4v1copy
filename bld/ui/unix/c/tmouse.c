@@ -216,23 +216,28 @@ static void GPM_parse( void )
     static int variety = 0;
     last_col = gpm_buf.x - 1;
     last_row = gpm_buf.y - 1;
+    /* clip */
+    if( last_col < 0 ) last_col = 0;
+    if( last_col >= UIData->width ) last_col = UIData->width - 1;
+    if( last_row < 0 ) last_row = 0;
+    if( last_row >= UIData->height ) last_row = UIData->height - 1;
     type = gpm_buf.tail.gpm_w1.type & 0xf;
-    if(variety == 0) {
+    if( variety == 0 ) {
         if( type == GPM_DRAG || type == GPM_DOWN || type == GPM_UP )
             variety = 1;
         else
             variety = 2;
     }
-    if (variety == 2)
+    if( variety == 2 )
         type = gpm_buf.tail.gpm_w2.type & 0xf;
-    if (type == GPM_DOWN) {
+    if( type == GPM_DOWN ) {
         if( gpm_buf.button & GPM_B_LEFT )
             last_status |= MOUSE_PRESS;
         if( gpm_buf.button & GPM_B_MIDDLE )
             last_status |= MOUSE_PRESS_MIDDLE;
         if( gpm_buf.button & GPM_B_RIGHT )
             last_status |= MOUSE_PRESS_RIGHT;
-    } else if (type == GPM_UP) {
+    } else if( type == GPM_UP ) {
         if( gpm_buf.button & GPM_B_LEFT )
             last_status &= ~MOUSE_PRESS;
         if( gpm_buf.button & GPM_B_MIDDLE )
