@@ -25,56 +25,38 @@
 #       some people don't have the linker variable in their makeinit
 #
 
-!include cproj.mif
-
-!ifndef linker
-linker=wlink
-!endif
-
-!ifndef watcom_h
-watcom_h = $(watcom_dir)\h
-!endif
-
 !ifeq           targos  dosos2
-!ifndef model
-model=c
-!endif
+modelos=c
 !else ifeq      targos  dos
-!ifndef model
-model=c
-!endif
-!else ifeq      targos  os2386
-!ifndef model
-model=f
-!endif
-!else ifeq      targos  pharlap
-!ifndef model
-model=f
-!endif
-!else ifeq      targos  nt386
-!ifndef model
-model=f
-!endif
+modelos=c
 !else ifeq      targos  qnx
-!ifndef model
-model=s
-!endif
+modelos=s
 !else ifeq      targos  qnx16
-!ifndef model
-model=c
-!endif
+modelos=c
+!else ifeq      targos  os2386
+modelos=f
+!else ifeq      targos  pharlap
+modelos=f
+!else ifeq      targos  nt386
+modelos=f
 !else ifeq      targos  ntaxp
+modelos=f
+!endif
 !ifndef model
-model = f
+model=$(modelos)
 !endif
-!endif
+memory_model_i86=$(model)
+memory_model_386=$(model)
+
+posixlib=$(posix_dir)\misc\$(targos)\posix$(model).lib
+
+!include cproj.mif
 
 .EXTENSIONS:
 .EXTENSIONS: .exe
 .EXTENSIONS: .cbj .sbj .lbj .mbj .fbj .obj
 .EXTENSIONS: .asm .c
 
-posixlib=$(posix_dir)\misc\$(targos)\posix$(model).lib
 obj_dir = $(posix_dir)\src\$(name)\$(targos)
 
 #
@@ -85,74 +67,9 @@ obj_dir = $(posix_dir)\src\$(name)\$(targos)
 #       define options for each specific operating system supported
 #
 
-librarian       = wlib
-
-!ifeq           targos  dosos2
-host_os         = os2
-host_cpu        = i86
-compiler        = $(comp286)
-env_variable    = wcc
-targos_cflags   = -m$(model)-bt=os2
-include_dirs    = $(lang_root)\h;$(inc_dirs_sys_os2);$(watcom_h)
-
-!else ifeq      targos  dos
-host_os         = dos
-host_cpu        = i86
-compiler        = $(comp286)
-env_variable    = wcc
-targos_cflags   = -m$(model)-bt=dos
-include_dirs    = $(lang_root)\h;$(watcom_h)
-
-!else ifeq      targos  os2386
-host_os         = os2
-host_cpu        = 386
-compiler        = $(comp386)
-env_variable    = wcc386
-targos_cflags   = -mf-bt=os2
-include_dirs    = $(lang_root)\h;$(inc_dirs_sys_os2);$(watcom_h)
-
-!else ifeq      targos  pharlap
-compiler        = $(comp386)
-env_variable    = wcc386
-targos_cflags   = -mf-bt=pharlap
-include_dirs    = $(lang_root)\h;$(watcom_h)
-
-!else ifeq      targos  nt386
-host_os         = nt
-host_cpu        = 386
-compiler        = $(comp386)
-env_variable    = wcc386
-targos_cflags   = -bt=NT -mf
-include_dirs    = $(watcom_nt_h);$(lang_root)\h;$(watcom_h)
-
-!else ifeq      targos  qnx
-host_os         = qnx
-host_cpu        = 386
-compiler        = $(comp386)
-env_variable    = wcc386
-targos_cflags   = -ms-bt=qnx
-include_dirs    = $(lang_root)\qh;$(watcom_h)
-
-!else ifeq      targos  qnx16
-host_os         = qnx
-host_cpu        = i86
-compiler        = $(comp286)
-env_variable    = wcc
-targos_cflags   = -mc-bt=qnx
-include_dirs    = $(lang_root)\qh;$(watcom_h)
-
-!else ifeq      targos  ntaxp
-compiler        = $(compaxp)
-env_variable    = wccaxp
-targos_cflags   = -bt=NT
-include_dirs    = $(lang_root)\h\nt;$(lang_root)\h;$(watcom_h)
-librarian       = wlibaxp
-linker          = wlink
-
-
+!ifeq      targos  pharlap
+extra_cflags   = -bt=pharlap $(extra_cflags)
 !endif
-
-common_cflags   = -zq-w4-we-d1-oxs
 
 !ifndef make_lib
 .obj: $(obj_dir)
@@ -163,31 +80,25 @@ common_cflags   = -zq-w4-we-d1-oxs
 
 .before:
 !ifndef make_lib
-        set include=$(posix_dir)\src\$(name);$(posix_dir)\h;$(include_dirs)
+extra_c_flags = -fo=$(obj_dir)\.obj -d__OS_$(targos)__ -dSTANDALONE_RX -i$(posix_dir)\src\$(name);$(posix_dir)\h;$(inc_path)
 !ifdef __MSDOS__
         @!if not exist $(obj_dir)\nul md $(obj_dir)     # for dos
 !else
         @!if not exist $(obj_dir) md $(obj_dir)         # for os2
 !endif
-        @set $(env_variable)=-fo=$(obj_dir)\.obj -d__OS_$(targos)__ -dSTANDALONE_RX
 !else
-        set include=$(posix_dir)\h;$(include_dirs)
-        @set $(env_variable)=-d__OS_$(targos)__ -dSTANDALONE_RX
-!endif
-
-!ifndef cflags
-cflags = $(targos_cflags)$(common_cflags)
+extra_c_flags = -fo=$(posix_dir)\misc\$(targos)\.$(model)bj -d__OS_$(targos)__ -dSTANDALONE_RX -i$(posix_dir)\h;$(inc_path)
 !endif
 
 .c.obj:
-        $(compiler) $[@ $(cflags) $(extra_cflags)
+        $(cc) $[@ $(cflags) $(extra_cflags)
 .c.cbj:
-        $(compiler) $[@ $(cflags) $(extra_cflags)
+        $(cc) $[@ $(cflags) $(extra_cflags)
 .c.lbj:
-        $(compiler) $[@ $(cflags) $(extra_cflags)
+        $(cc) $[@ $(cflags) $(extra_cflags)
 .c.fbj:
-        $(compiler) $[@ $(cflags) $(extra_cflags)
+        $(cc) $[@ $(cflags) $(extra_cflags)
 .c.sbj:
-        $(compiler) $[@ $(cflags) $(extra_cflags)
+        $(cc) $[@ $(cflags) $(extra_cflags)
 .c.mbj:
-        $(compiler) $[@ $(cflags) $(extra_cflags)
+        $(cc) $[@ $(cflags) $(extra_cflags)

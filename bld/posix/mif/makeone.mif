@@ -16,7 +16,7 @@
 #
 #       define the main target
 #
-lnk=$(name).lnk
+lnk=$(obj_dir)\$(name).lnk
 $(name).exe: $(objs) $(lnk) $(posixlib)
         $(linker) @$(lnk)
 !ifeq targos dosos2
@@ -32,7 +32,6 @@ $(LNK) : makefile $(objs)
         %create $(LNK)
         @%append $(lnk) name $(name).exe
         @%append $(LNK) debug all option quiet,caseexact,map
-        @%append $(LNK) path $(obj_dir)
         @%append $(LNK) lib $(posixlib)
 !ifeq targos dosos2
         @%append $(LNK) system os2 pmc
@@ -57,6 +56,7 @@ $(LNK) : makefile $(objs)
 !else ifeq targos qnx16
         @%append $(LNK) system qnx
 !endif
+        @%append $(LNK) path $(obj_dir)
         @for %i in ($(objs)) do @%append $(lnk) file %i
 !ifdef EXTRA_LNK
         @%make $(EXTRA_LNK)
