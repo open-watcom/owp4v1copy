@@ -40,6 +40,6 @@ emu387.qbj: emu387.asm $(INCS)
     $(libcomp386) -r-fpr $[* $(cflags) -i$(new_qnx_h) -fo=.qbj -DQNX32 -bt=qnx
 
 .psm.obj:
-    wasm -zq -ms -d_OS=_PLDT -dSEGMENTED -i$(mathlib_dir)\h\;$(watcom_dir)\h\;$(comp_cfg_dir)\h\ $[@
+    wasm -zq -3 -mf -i$(mathlib_dir)\h\;$(watcom_dir)\h\;$(comp_cfg_dir)\h\ $[@
 
 386sqrt.obj: 386sqrt.psm 386sqrt.inc 386fdld.inc 386ldfd.inc xception.inc
