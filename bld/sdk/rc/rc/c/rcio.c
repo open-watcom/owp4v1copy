@@ -588,6 +588,8 @@ extern void ClosePass2FilesAndFreeMem( void )
     case EXE_TYPE_PE:
         FreePEFileInfoPtrs( &old->u.PEInfo );
         break;
+    default: //EXE_TYPE_UNKNOWN
+        break;
     }
 
     if( tmp->IsOpen ) {
@@ -600,6 +602,8 @@ extern void ClosePass2FilesAndFreeMem( void )
         break;
     case EXE_TYPE_PE:
         FreePEFileInfoPtrs( &tmp->u.PEInfo );
+        break;
+    default: //EXE_TYPE_UNKNOWN
         break;
     }
     CloseResFiles( Pass2Info.ResFiles );
@@ -620,8 +624,9 @@ extern int RcPass2IoInit( void )
     if( noerror ) {
         noerror = openNewExeFileInfo( Pass2Info.TmpFileName,
                                       &(Pass2Info.TmpFile) );
-        tmpexe_exists = noerror;
     }
+    tmpexe_exists = noerror;
+
     if( noerror ) {
         Pass2Info.TmpFile.Type = Pass2Info.OldFile.Type;
         Pass2Info.TmpFile.WinHeadOffset = Pass2Info.OldFile.WinHeadOffset;
