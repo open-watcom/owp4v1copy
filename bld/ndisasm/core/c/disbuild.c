@@ -53,8 +53,6 @@ typedef struct {
     char                *handler;
 } ins_decode_data;
 
-typedef char ins_decode_check;
-
 #if DISCPU & DISCPU_axp
 
 ins_decode_data AXPDecodeTable1[] = {
