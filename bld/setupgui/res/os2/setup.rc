@@ -2,6 +2,7 @@
 #define ICON_SETUP  1
 
 ICON ICON_SETUP setup.ico
-BITMAP BITMAP_SPLASH "../splash.bmp"
+
+#include "splash.h"
 
 #include "gui.rc"

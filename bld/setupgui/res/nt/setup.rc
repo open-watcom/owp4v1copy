@@ -4,5 +4,7 @@
 
 ApplIcon    ICON      PRELOAD FIXED setup.ico
 ICN_DISK    ICON     PRELOAD FIXED disk.ico
-BITMAP_SPLASH	BITMAP	"../splash.bmp"
+
+#include "splash.h"
+
 #include "gui.rc"

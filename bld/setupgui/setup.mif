@@ -6,9 +6,11 @@ setupgui_autodepends = .AUTODEPEND
 
 .ERROR:
 
+additional_cleanup = *.i
+
 !include cproj.mif
 !include defrule.mif
-#!include deftarg.mif
+!include deftarg.mif
 
 !include wres.mif
 
@@ -120,9 +122,11 @@ extra_rc_flags_win = -30 -d_WIN
 extra_rc_flags_nt = -d_WINNT
 extra_rc_flags = -r $(extra_rc_flags_$(host_os))
 
+res_dir = ../res/$(host_os)
+
 rcx_out_os2 = $(rc_os2) -p -x
 rcx_out_win = $(rc) -30 -k
-rcx_out_nt = $(rc) -k
+rcx_out_nt  = $(rc) -k
 rc_out = $(rcx_out_$(host_os))
 
 !ifeq host_os os2
@@ -143,8 +147,10 @@ dep_res1 = ../h/setup.h setup.ico disk.ico gui.rc _guimsgs.gh
 ########################
 
 .c : ../c;$(build_root)/bdiff;$(build_root)/wpack/c;$(trmem_dir)
-.rc : res;$(gui_dir)/h
-.ico : res
+.rc : ../res;$(res_dir);$(gui_dir)/h
+.ico : $(res_dir)
+
+res_inc_dirs = -I"$(res_dir)" -I"../res" -I"$(gui_dir)/h"
 
 inc_dirs  = -I"../h" -I"$(sdk_dir)/misc" -I"$(build_root)/wpack/h"
 inc_dirs += -I"$(uidir)/h" -I"$(wpi_dir)/h" -I"$(aui_dir)/h" -I"$(gui_dir)/h"
@@ -257,87 +263,71 @@ setup.lnk : makefile ../setup.mif
 
 nonibm.obj : $(new_clib)/startup/c/nonibm.c
 
-setupui.res : ../setupui.rc $(dep_res1)
+setupui.res : setupui.rc $(dep_res1)
     $(rc_aui) -I"$(gui_dir)/h" $(inc_dirs_sys_win) $[@ -fo=setupui.res
 
-csetup.res : setup.rc $(dep_res1) ../wcc.bmp
-    cp ../wcc.bmp ../splash.bmp > $(nulldevice)
+csetup.res : setup.rc $(dep_res1) ../res/wcc.bmp
 !ifeq host_os os2
-    $(bld_cc) -p -fo=$[&.i -I"$(gui_dir)/h" $[@
-    $(rc_os2) -r foros2pm.rc
-    cp foros2pm.res $^@ > $(nulldevice)
+    $(bld_cc) -p -DCSETUP -fo=$[&.i -I"../res" -I"$(gui_dir)/h" $[@
+    $(rc_os2) -i ..\res -r ..\res\os2\foros2pm.rc $@
 !else
-    $(rc) $(rc_flags) $(extra_rc_flags) $(inc_path) -I"../h" $[@ -fo=$^@
+    $(rc) $(rc_flags) $(extra_rc_flags) -DCSETUP $(res_inc_dirs) $[@ -fo=$^@
 !endif
 
-jcsetup.res : setup.rc $(dep_res1) ../wcc.bmp
-    cp ../wcc.bmp ../splash.bmp > $(nulldevice)
+jcsetup.res : setup.rc $(dep_res1) ../res/wcc.bmp
 !ifeq host_os os2
-    $(bld_cc) -p -DJAPANESE_MESSAGES -zk0 -fo=$[&.i -I"$(gui_dir)/h" $[@
-    $(rc_os2) -r foros2pm.rc
-    cp foros2pm.res $^@ > $(nulldevice)
+    $(bld_cc) -p -DJCSETUP -DJAPANESE_MESSAGES -zk0 -fo=$[&.i -I"../res" -I"$(gui_dir)/h" $[@
+    $(rc_os2) -i ..\res -r ..\res\os2\foros2pm.rc $@
 !else
-    $(rc) $(rc_flags) $(extra_rc_flags) -dJAPANESE_MESSAGES -zk0 $(inc_path) -I"../h" $[@ -fo=$^@
+    $(rc) $(rc_flags) $(extra_rc_flags) -DJCSETUP -dJAPANESE_MESSAGES -zk0 $(res_inc_dirs) $[@ -fo=$^@
 !endif
 
-f77setup.res : setup.rc $(dep_res1) ../f77.bmp
-    cp ../f77.bmp ../splash.bmp > $(nulldevice)
+f77setup.res : setup.rc $(dep_res1) ../res/f77.bmp
 !ifeq host_os os2
-    $(bld_cc) -p -fo=$[&.i -I"$(gui_dir)/h" $[@
-    $(rc_os2) -r foros2pm.rc
-    cp foros2pm.res $^@ > $(nulldevice)
+    $(bld_cc) -p -DF77SETUP -fo=$[&.i -I"../res" -I"$(gui_dir)/h" $[@
+    $(rc_os2) -i ..\res -r ..\res\os2\foros2pm.rc $@
 !else
-    $(rc) $(rc_flags) $(extra_rc_flags) $(inc_path) -I"../h" $[@ -fo=$^@
+    $(rc) $(rc_flags) $(extra_rc_flags) -DF77SETUP $(res_inc_dirs) $[@ -fo=$^@
 !endif
 
-jfsetup.res : setup.rc $(dep_res1) ../f77.bmp
-    cp ../f77.bmp ../splash.bmp > $(nulldevice)
+jfsetup.res : setup.rc $(dep_res1) ../res/f77.bmp
 !ifeq host_os os2
-    $(bld_cc) -p -DJAPANESE_MESSAGES -zk0 -fo=$[&.i -I"$(gui_dir)/h" $[@
-    $(rc_os2) -r foros2pm.rc
-    cp foros2pm.res $^@ > $(nulldevice)
+    $(bld_cc) -p -DJFSETUP -DJAPANESE_MESSAGES -zk0 -fo=$[&.i -I"../res" -I"$(gui_dir)/h" $[@
+    $(rc_os2) -i ..\res -r ..\res\os2\foros2pm.rc $@
 !else
-    $(rc) $(rc_flags) $(extra_rc_flags) -DJAPANESE_MESSAGES -zk0 $(inc_path) -I"../h" $[@ -fo=$^@
+    $(rc) $(rc_flags) $(extra_rc_flags) -DJFSETUP -DJAPANESE_MESSAGES -zk0 $(res_inc_dirs) $[@ -fo=$^@
 !endif
 
-dbsetup.res : setup.rc $(dep_res1) ../wsql.bmp
-    cp ../wsql.bmp ../splash.bmp > $(nulldevice)
+dbsetup.res : setup.rc $(dep_res1) ../res/wsql.bmp
 !ifeq host_os os2
-    $(bld_cc) -p -fo=$[&.i -I"$(gui_dir)/h" $[@
-    $(rc_os2) -r foros2pm.rc
-    cp foros2pm.res $^@ > $(nulldevice)
+    $(bld_cc) -p -DDBSETUP -fo=$[&.i -I"../res" -I"$(gui_dir)/h" $[@
+    $(rc_os2) -i ..\res -r ..\res\os2\foros2pm.rc $@
 !else
-    $(rc) $(rc_flags) $(extra_rc_flags) $(inc_path) -I"../h" $[@ -fo=$^@
+    $(rc) $(rc_flags) $(extra_rc_flags) -DDBSETUP $(res_inc_dirs) $[@ -fo=$^@
 !endif
 
-jdbsetup.res : setup.rc $(dep_res1) ../wsql.bmp
-    cp ../wsql.bmp ../splash.bmp > $(nulldevice)
+jdbsetup.res : setup.rc $(dep_res1) ../res/wsql.bmp
 !ifeq host_os os2
-    $(bld_cc) -p -DJAPANESE_MESSAGES -zk0 -fo=$[&.i -I"$(gui_dir)/h" $[@
-    $(rc_os2) -r foros2pm.rc
-    cp foros2pm.res $^@ > $(nulldevice)
+    $(bld_cc) -p -DJDBSETUP -DJAPANESE_MESSAGES -zk0 -fo=$[&.i -I"../res" -I"$(gui_dir)/h" $[@
+    $(rc_os2) -i ..\res -r ..\res\os2\foros2pm.rc $@
 !else
-    $(rc) $(rc_flags) $(extra_rc_flags) -DJAPANESE_MESSAGES -zk0 $(inc_path) -I"../h" $[@ -fo=$^@
+    $(rc) $(rc_flags) $(extra_rc_flags) -DJDBSETUP -DJAPANESE_MESSAGES -zk0 $(res_inc_dirs) $[@ -fo=$^@
 !endif
 
-sdbsetup.res : setup.rc $(dep_res1) ../sqlserv.bmp
-    cp ../sqlserv.bmp ../splash.bmp > $(nulldevice)
+sdbsetup.res : setup.rc $(dep_res1) ../res/sqlserv.bmp
 !ifeq host_os os2
-    $(bld_cc) -p -fo=$[&.i -i"$(gui_dir)/h" $[@
-    $(rc_os2) -r foros2pm.rc
-    cp foros2pm.res $^@ > $(nulldevice)
+    $(bld_cc) -p -DSDBSETUP -fo=$[&.i -I"../res" -i"$(gui_dir)/h" $[@
+    $(rc_os2) -i ..\res -r ..\res\os2\foros2pm.rc $@
 !else
-    $(rc) $(rc_flags) $(extra_rc_flags) $(inc_path) -I"../h" $[@ -fo=$^@
+    $(rc) $(rc_flags) $(extra_rc_flags) -DSDBSETUP $(res_inc_dirs) $[@ -fo=$^@
 !endif
 
-setup.res : setup.rc $(dep_res1) ../generic.bmp
-    cp ../generic.bmp ../splash.bmp > $(nulldevice)
+setup.res : setup.rc $(dep_res1) ../res/generic.bmp
 !ifeq host_os os2
-    $(bld_cc) -p -fo=$[&.i -i"$(gui_dir)/h" $[@
-    $(rc_os2) -r foros2pm.rc
-    cp foros2pm.res $^@ > $(nulldevice)
+    $(bld_cc) -p -fo=$[&.i -I"../res" -i"$(gui_dir)/h" $[@
+    $(rc_os2) -i ..\res -r ..\res\os2\foros2pm.rc $@
 !else
-    $(rc) $(rc_flags) $(extra_rc_flags) $(inc_path) -I"../h" $[@ -fo=$^@
+    $(rc) $(rc_flags) $(extra_rc_flags) $(res_inc_dirs) $[@ -fo=$^@
 !endif
 
 dosstub.exe : ../stub/dosstub.c
@@ -381,6 +371,3 @@ sdbsetup.exe: virgin.exe sdbsetup.res
 
 _guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
     $[@ $^@ $(gui_msg_id_modifier)
-
-clean : .SYMBOLIC
-    rm -f *.obj *.exe *.err *.lnk *.res *.gh *.i *.map *.sym
