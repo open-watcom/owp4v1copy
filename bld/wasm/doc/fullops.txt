@@ -1,0 +1,168 @@
+		support
+
+abs		
+addr		no
+alias		yes
+align		yes
+.alpha		ignore
+assume		yes
+basic		?
+.break		no
+c		?
+casemap		no
+catstr		no
+.code		yes
+comm		yes
+comment		yes
+common		?
+compact		?
+.const		yes
+.continue	no
+.cref		ignore
+.data		yes
+.data?		yes
+.dosseg		yes
+dq		yes
+dt		yes
+echo		no
+else		yes
+elseif		yes
+end		yes
+endif		yes
+endp		yes
+ends		yes
+.endw		no
+eq		yes
+equ		yes
+equ2		yes
+.err
+.errb
+.errdef
+.errdif
+.errdifi
+.erre
+.erridn
+.erridni
+.errnb
+.errndef
+.errnz
+error
+even
+.exit
+export
+extern
+externdef
+extrn
+.fardata
+.fardata?
+farstack
+flat
+for
+forc
+fortran
+ge
+global
+group
+gt
+high
+highword
+huge
+if
+if1
+if2
+ifb
+ifdef
+ifdif
+ifdifi
+ife
+ifidn
+ifidni
+ifnb
+ifndef
+ignore
+include
+includelib
+invoke
+irp
+label
+large
+le
+length
+lengthof
+.lfcond
+.list
+.listall
+.listif
+.listmacro
+.listmacroall
+local
+low
+lowword
+lroffset
+lt
+macro
+mask
+medium
+memory
+mod
+.model
+name
+ne
+nearstack
+.nocref
+.nolist
+nothing
+opattr
+option
+org
+os_dos
+os_os2
+page
+para
+pascal
+popcontext
+private
+proc
+proto
+public
+purge
+pushcontext
+.radix
+readonly
+record
+.repeat
+.sall
+sbyte
+sdword
+segment
+.seq
+.sfcond
+size
+sizeof
+small
+.stack
+.startup
+stdcall
+struc
+struct
+subtitle
+subttl
+sword
+syscall
+textequ
+.tfcond
+this
+tiny
+title
+typedef
+union
+.until
+use16
+use32
+uses
+vararg
+watcom_c
+.while
+width
+.xcref
+.xlist
