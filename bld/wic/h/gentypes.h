@@ -66,7 +66,7 @@ void addBegSLListElem(pSLList pList, void *elem);
 void addBegSLListSLList(pSLList pList, pSLList listAdd, void (*action)(void *));
 
 /* Insert an element after current position in the list */
-insertSLListAfterCurrPosElem(pSLList pList, void *elem);
+void insertSLListAfterCurrPosElem(pSLList pList, void *elem);
 
 /* Set user data at current position to a specified value */
 void setCurrSLListPosElem(pSLList pList, void *elem);
