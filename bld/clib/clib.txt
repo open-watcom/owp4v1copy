@@ -21,7 +21,7 @@ notes on the estimated effort required to bring them to C99 conformance:
     math.h      - Requires compiler changes (new #pragma), many new functions
     setjmp.h    - Needs review, no changes expected
     signal.h    - Needs review, no changes expected
-    stdarg.h    - Needs review, no significant changes expected
+    stdarg.h    - Needs review, C99 va_copy added, likely conforming.
     stdbool.h   - Currently uses char for bool. Update when _Bool available
     stddef.h    - Needs review, no changes expected
     stdint.h    - C99 conforming
