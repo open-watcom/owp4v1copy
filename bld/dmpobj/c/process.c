@@ -693,47 +693,90 @@ static void DoLinNumsMS()
 static void DoLinNumsHLL()
 /************************/
 {
-    unsigned_16 line_num;
-    unsigned_16 file_num;
-    unsigned_32 offset;
-    unsigned_16 group;
-    unsigned_16 seg;
-    unsigned_32 count;
-    unsigned_32 i;
+    unsigned_16         line_num;
+    unsigned_16         file_num;
+    unsigned_32         offset;
+    static unsigned_16  type = 0x100;   // indicate no current type
+    unsigned_16         seg;
+    unsigned_16         base_grp;
+    unsigned_16         base_seg;
+    unsigned_32         count;
+    static unsigned_32  entry_num;
+    static unsigned_16  num_entries;
+    unsigned_32         size;
+    unsigned_32         i;
 
-    group = GetIndex();
-    seg   = GetIndex();
+    base_grp = GetIndex();
+    base_seg = GetIndex();
 
-    if( seg ) {
-        // We have the real line numbers record
-        GetLInt(); // Unknown purpose
-        count = GetLInt();
-        GetLInt(); // Unknown purpose
+    // New table is starting
+    if( type == 0x100 ) {
+        line_num = GetUInt();
 
+        if( !line_num ) {
+            // This is the first entry
+            type        = GetUInt();
+            num_entries = GetUInt();
+            seg         = GetUInt();
+            entry_num   = 0;
+        }
+        switch( type ) {
+        case 0:     // Source line numbers table
+            Output( INDENT "Source line numbers" CRLF );
+            size = GetLInt();   // Address of logical segment - filled out by
+                                // linker, zero in object file
+            break;
+        case 1:     // Listing line numbers table
+            Output( INDENT "Listing line numbers (not formatting data)" CRLF );
+            break;
+        case 2:     // Listing and line numbers combined
+            Output( INDENT "Source/listing line numbers (not formatting data)" CRLF );
+            break;
+        case 3:     // File names table
+            Output( INDENT "File names table" CRLF );
+            // Note - the descriptions are taken from LINK386 and are not
+            // necessarily correct, as IBM tools don't appear to use the
+            // 'start' and 'number of records' entries
+            size = GetLInt();
+            i = GetLInt();
+            Output( INDENT "Record Number of Start of Source: %5" CRLF, i );
+            i = GetLInt();
+            Output( INDENT "Number of Primary Source Records: %5" CRLF, i );
+            count = GetLInt();
+            break;
+        case 4:
+            Output( INDENT "Path table (not formatting data)" CRLF );
+            break;
+        }
+    } else {
+        Output( INDENT "Continuing previous LINNUM record" CRLF );
+    }
+    // Process entries in a table that may be a continuation from previous
+    // LINNUM record
+    switch( type ) {
+    case 0:             // line/offset info
         if( Descriptions )
             Output( INDENT "Src line   Src file  segment:offset" CRLF );
 
-        for( i = 0; i < count; i++ ) {
+        while( (entry_num < num_entries) && ((RecPtr - RecBuff) < RecLen) ) {
             line_num = GetUInt();
             file_num = GetUInt();
             offset   = GetLInt();
-            Output( INDENT "  %5  %5  %5:%X" CRLF, line_num, file_num, seg, offset );
+            Output( INDENT "  %5  %5  %5:%X" CRLF, line_num, file_num, base_seg, offset );
+            ++entry_num;
         }
-    } else {
-        // This is the record listing source files
-        GetUInt(); // Unknown purpose
-        GetUInt(); // Unknown purpose
-        count = GetLInt();
-        GetLInt(); // Number of bytes following - don't need this
-        i = GetLInt();
-        Output( INDENT "Record Number of Start of Source: %5" CRLF, i );
-        i = GetLInt();
-        Output( INDENT "Number of Primary Source Records: %5" CRLF, i );
-        count = GetLInt();
-        for( i = 0; i < count; i++ ) {
+        break;
+    case 3:             // file names table
+        while( (entry_num < num_entries) && ((RecPtr - RecBuff) < RecLen) ) {
             GetName();
-            Output( INDENT "  Source file %5: %N" CRLF, i + 1);
+            Output( INDENT "  Source file %5: %N" CRLF, entry_num + 1 );
+            ++entry_num;
         }
+        break;
+    }
+    if( entry_num == num_entries ) {
+        // We're done; otherwise table will continue in next LINNUM record
+        type = 0x100;
     }
 }
 

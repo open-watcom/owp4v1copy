@@ -271,13 +271,13 @@ void BackupByte( void )
     --RecPtr;
 }
 
-#if defined( M_I86 ) || defined( __386__ )
 unsigned_16 GetUInt( void )
 /*************************/
 {
     unsigned_16 word;
 
     word = *(unsigned_16 *)RecPtr;
+    CONV_LE_16( word );
     RecPtr += 2;
     return( word );
 }
@@ -288,32 +288,10 @@ unsigned_32 GetLInt( void )
     unsigned_32 dword;
 
     dword = *(unsigned_32 *)RecPtr;
+    CONV_LE_32( dword );
     RecPtr += 4;
     return( dword );
 }
-#else
-unsigned_16 GetUInt( void )
-/*************************/
-{
-    unsigned_16 lo;
-    unsigned_16 hi;
-
-    lo = GetByte();
-    hi = GetByte();
-    return( lo + (hi << 8) );
-}
-
-unsigned_32 GetLInt( void )
-/*************************/
-{
-    unsigned_32 lo;
-    unsigned_32 hi;
-
-    lo = GetUInt();
-    hi = GetUInt();
-    return( lo + (hi << 16 ) );
-}
-#endif
 
 unsigned_32 GetEither( void )
 /***************************/
@@ -328,12 +306,13 @@ unsigned_32 GetEither( void )
     return( value );
 }
 
-void GetName( void )
+byte GetName( void )
 /******************/
 {
     NameLen = GetByte();
     NamePtr = RecPtr;
     RecPtr += NameLen;
+    return( NameLen );
 }
 
 unsigned_16 GetIndex( void )

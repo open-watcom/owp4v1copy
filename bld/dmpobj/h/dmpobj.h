@@ -92,7 +92,7 @@ extern  void            BackupByte( void );
 extern  unsigned_16     GetUInt( void );
 extern  unsigned_32     GetLInt( void );
 extern  unsigned_32     GetEither( void );
-extern  void            GetName( void );    /* length prefixed name */
+extern  byte            GetName( void );    /* length prefixed name */
 extern  unsigned_16     GetIndex( void );
 extern  unsigned_32     GetVariable( void );
 extern  void            ResizeBuff( unsigned_16 reqd_len );
