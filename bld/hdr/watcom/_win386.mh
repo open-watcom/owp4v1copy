@@ -412,6 +412,8 @@ BOOL API _16TranslateMDISysAccel(HWND,LPMSG);
 #ifndef NOLFILEIO
 WORD API _16_lread( int, LPSTR, int );
 WORD API _16_lwrite( int, LPSTR, int );
+HFILE API _16_lopen( LPCSTR, int );
+HFILE API _16_lcreat( LPCSTR, int );
 #endif /* NOLFILEIO */
 #endif /* NOUSER */
 #ifndef NOHELP
@@ -1051,6 +1053,8 @@ typedef void * HINDIR;
 #ifndef NOLFILEIO
 #define _16_lread _lread
 #define _16_lwrite _lwrite
+#define _16_lopen _lopen
+#define _16_lcreat _lcreat
 #endif
 #endif /* NOUSER */
 #ifndef NOHELP

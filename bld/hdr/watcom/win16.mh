@@ -1884,6 +1884,10 @@ UINT	WINAPI	LocalSize(HLOCAL);
 UINT	WINAPI	LocalCompact(UINT);
 UINT	WINAPI	_lread(HFILE,void _huge*,UINT);
 UINT	WINAPI	_lwrite(HFILE,const void _huge*,UINT);
+HFILE	WINAPI	_lopen(LPCSTR,int);
+HFILE	WINAPI	_lcreat(LPCSTR,int);
+HFILE	WINAPI	_lclose(HFILE);
+LONG	WINAPI	_llseek(HFILE,LONG,int);
 HRSRC	WINAPI	FindResource(HINSTANCE,LPCSTR,LPCSTR);
 HGLOBAL	WINAPI	LoadResource(HINSTANCE,HRSRC);
 BOOL	WINAPI	FreeResource(HGLOBAL);
@@ -2233,6 +2237,10 @@ int	WINAPI	SetVoiceSound(int,DWORD,int);
 void	WINAPI	InvertRect(HDC,const RECT FAR*);
 HFILE	WINAPI	OpenFile(LPCSTR,OFSTRUCT FAR*,UINT);
 HWND	WINAPI	FindWindow(LPCSTR,LPCSTR);
+int	WINAPI	DlgDirList(HWND,LPSTR,int,int,UINT);
+BOOL	WINAPI	DlgDirSelect(HWND,LPSTR,int);
+int	WINAPI	SetTextCharacterExtra(HDC,int);
+int	WINAPI	GetTextCharacterExtra(HDC);
 
 #ifdef	STRICT
 HHOOK	WINAPI	SetWindowsHook(int,HOOKPROC);
