@@ -202,3 +202,5 @@ pick( SYMBOL_PREVIOUSLY_DEFINED,"'%s' is already defined",
 				"'%s' ‚ÍŠù‚É’è‹`‚³‚ê‚Ä‚¢‚Ü‚·" )
 pick( UNCLOSED_CONDITIONALS,	"%u unclosed conditional directive(s) detected" ,
 				"%u •Â‚¶‚Ä‚¢‚È‚¢ğŒ‹[—–½—ß‚ğŒŸo‚µ‚Ü‚µ‚½" )
+pick( WRONG_CPU_FOR_32BIT_SEGMENT, "Wrong CPU type for 32-bit segment" , 
+                                "Wrong CPU type for 32-bit segment")

@@ -115,7 +115,6 @@ int_8                   AssumeError;    // Error about assumed register
 int_8                   Frame;          // Frame of current fixup
 uint_8                  Frame_Datum;    // Frame datum of current fixup
 extern char             *CurrString;    // Current Input Line
-extern char             EndDirectiveFound;
 
 static int              in_epilogue = 0;
 extern seg_list         *CurrSeg;
@@ -1046,6 +1045,21 @@ int cpu_directive( uint_16 i )
 {
     int                 temp;
 
+    if( ( temp = comp_opt( i ) ) != EMPTY ) {
+        if( i == T_DOT_NO87 ) {
+            Code->info.cpu &= ~P_FPU_MASK;              // turn off FPU bits
+        } else if( temp & P_FPU_MASK ) {
+            Code->info.cpu &= ~P_FPU_MASK;              // turn off FPU bits
+            Code->info.cpu |= temp & P_FPU_MASK;        // turn on desired bit(s)
+        } else {
+            Code->info.cpu &= ~(P_CPU_MASK | P_PM);
+            Code->info.cpu |= temp & (P_CPU_MASK | P_PM);
+        }
+    } else {
+        AsmError( UNKNOWN_DIRECTIVE );
+        return( ERROR );
+    }
+
     #ifdef _WASM_
         MakeCPUConstant( (long)i );
         switch( i ) {
@@ -1073,21 +1087,7 @@ int cpu_directive( uint_16 i )
         }
     #endif
 
-    if( ( temp = comp_opt( i ) ) != EMPTY ) {
-        if( temp == P_NO87 ) {
-            Code->info.cpu &= ~P_FPU_MASK;              // turn off FPU bits
-        } else if( temp & P_FPU_MASK ) {
-            Code->info.cpu &= ~P_FPU_MASK;              // turn off FPU bits
-            Code->info.cpu |= temp & P_FPU_MASK;        // turn on desired bit(s)
-        } else {
-            Code->info.cpu &= ~(P_CPU_MASK | P_PM);
-            Code->info.cpu |= temp & (P_CPU_MASK | P_PM);
-        }
-        return( NOT_ERROR );
-    } else {
-        AsmError( UNKNOWN_DIRECTIVE );
-        return( ERROR );
-    }
+    return( NOT_ERROR );
 }
 
 
@@ -1858,11 +1858,8 @@ int AsmParse()
                         return ERROR;
                     }
                 }
-                return( directive( i, AsmBuffer[i]->value ) );
-            } else {
-                EndDirectiveFound = TRUE;
-                return NOT_ERROR;
             }
+            return( directive( i, AsmBuffer[i]->value ) );
             break;
 #endif
         case T_ID:

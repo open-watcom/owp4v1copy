@@ -57,9 +57,6 @@
 #include "expand.h"
 
 #include "directiv.h"
-// #undef _DIRECT_H_
-// #define _DIRECT_FIX_
-// #include "directiv.h"
 
 extern char             *ReadTextLine( char * );
 extern void             FlushCurrSeg( void );
@@ -88,7 +85,6 @@ extern dir_node         *CurrProc;
 extern int_8            Use32;          // if 32-bit code is use
 extern File_Info        AsmFiles;
 extern char             *CurrString;    // Current Input Line
-extern char             EndDirectiveFound;
 extern char             AsmChars[];
 extern int              Token_Count;    // number of tokens on line
 extern int              MacroLocalVarCounter;

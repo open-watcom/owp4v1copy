@@ -1402,6 +1402,11 @@ void find_use32( void )
         Use32 = ModuleInfo.defseg32;
     } else {
         Use32 = CurrSeg->seg->e.seginfo->segrec->d.segdef.use_32;
+#ifdef _WASM_
+        if( Use32 && ( ( Code->info.cpu & P_CPU_MASK ) < P_386 )) {
+            AsmError( WRONG_CPU_FOR_32BIT_SEGMENT );
+        }
+#endif
     }
 }
 
