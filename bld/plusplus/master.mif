@@ -643,7 +643,11 @@ project : .symbolic
 #
 global.chk : ../compile.gbl
     %make clean
+!ifdef __LINUX__
+    touch -r $[@ $^@
+!else
     wtouch -f $[@ $^@
+!endif
 
 clean global : .symbolic
     @rm -f *.?bj *.lib *.pch *.lst *.gh *.rc *.int *.res *.err *.tmp
