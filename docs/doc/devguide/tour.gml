@@ -44,8 +44,9 @@ that supported both the C language and FORTRAN and was portable across
 multiple platforms. Generation of tight code, availability on multiple
 platforms (DOS, Windows, OS/2 and Windows NT in one package) and the
 ability to cross-compile made Watcom C and C++ compilers quite popular
-in mid-1990s. Around 1994-1996, nearly all DOS games were developed
-with Watcom C.
+in mid-1990s. Around 1993-1996, nearly all DOS games were developed
+with Watcom C, including famous titles such as DOOM, Descent or Duke
+Nukem 3D.
 .np
 .ix 'VX-REXX'
 Watcom International, Inc. had other successful products besides its
@@ -101,6 +102,9 @@ The root of the Open Watcom directory tree can be in the root of
 any drive (if your OS uses drive letters) or in any directory, for
 instance
 .id e:\ow.
+Long filenames are not recommended if compatibility with DOS tools is
+desired. Directory names which include spaces are highly discouraged in
+any case.
 .np
 The main subdirectories in the Open Watcom root are the following:
 .begnote
@@ -115,11 +119,12 @@ along the
 .id PATH,
 the
 .us bat
-directory must be placed at or near the start of your
+directory should be placed at or near the start of your
 .id PATH
 environment variable.
 .note bin, binp
-contains miscellaneous binaries used in the build process.
+contains miscellaneous binaries used in the build process. The binp directory
+contains OS/2 executables, bin contains DOS or Win32 executables.
 .note bld
 is
 .us the
@@ -150,22 +155,26 @@ roughly corresponds to one "project". There's a lot of projects!
 .note as
 the Alpha AXP and PowerPC assembler. The x86 assembler lives separately.
 .note aui
-user interface library employed by the debugger.
+user interface library employed by the debugger and profiler.
 .note bdiff
 binary diff and patch utilities.
-.note bin
-some projects place built binaries here, particularly the debugger related ones.
+.note bmp2eps
+a utility for converting Windows bitmap files into EPS format, used for
+building documentation.
 .note brinfo
 part of the C++ source browser.
 .note browser
 the GUI C++ source browser.
 .note build
 directory holding build related files such as binaries used internally during
-build process and several master make include files. Worth seeing!
+build process and several master make include files which lie at the heart of
+the build system. Worth visiting!
 .note builder
 builder tool controlled by those
 .us lang.ctl
 files that are all over the place.
+.note causeway
+the popular CauseWay DOS extender, in a form buildable with Open Watcom tools.
 .note cc
 the C compiler front end.
 .note cfloat
@@ -181,36 +190,40 @@ command line editing utilities, pretty much obsolete.
 .note comp_cfg
 compiler configuration header files for various targets.
 .note cpp
-a simple C style preprocessor.
+a simple C style preprocessor used by several other projects.
+.note ctest
+C compiler regression tests. Run them often.
 .note cvpack
 the CV pack utility (for CodeView style debugging information).
 .note diff
 Open Watcom version of the popular utility.
 .note dig
-files used by debugger.
+files used primarily by the debugger &mdash this directory contains files that
+are shared between debugger, profiler, trap files and Dr. Watcom.
 .note dip
-Debug Information Processors, used by debugger.
+Debug Information Processors, used by debugger. The DIPs provide an
+interface between the debugger and various debug information formats.
 .note dmpobj
 a simple OMF dump utility.
 .note dwarf
 library for reading and writing DWARF style debugging information.
 .note editdll
-bridges between the IDE and external editors.
+interface modules between the IDE and external editors.
 .note emu
 80387 emulator library.
 .note emu86
 8087 emulator library.
 .note f77
-FORTRAN 77 compiler front end, runtime library and samples. All the
-FORTRAN stuff is crowded in there.
+FORTRAN 77 compiler front end, runtime library, regression tests and
+samples. All the FORTRAN stuff is crowded in there.
 .note fe_misc
-miscellaneous compiler front-end stuff.
+miscellaneous compiler front-end stuff shared between projects.
 .note fmedit
 form edit library, part of the SDK tools.
 .note graphlib
 Open Watcom graphics library for DOS.
 .note gui
-GUI library.
+GUI library used by IDE, debugger, source browser and other tools.
 .note hdr
 source files of header files distributed with the compilers.
 .note help
@@ -218,27 +231,33 @@ character mode help viewer (WHELP).
 .note idebatch
 batch processor for the IDE.
 .note lib_misc
-shared library.
+miscellaneous files shared between clib and other tools.
 .note mad
-Machine Architecture Definition used by debugger.
+Machine Architecture Description used by debugger.
 .note mathlib
 the math library.
 .note misc
-stuff that didn't fit anywhere else.
+stuff that didn't fit anywhere else. Not much really.
 .note mstools
 Microsoft clone tools, front ends for compilers and utilities.
+.note ncurses
+a version of the ncurses library used by Linux console tools.
 .note ndisasm
-the "new" disassembler.
+the "new" disassembler supporting variety of file format and
+instruction sets. Very handy.
 .note nwlib
-the "new" librarian.
+the "new" library manager.
 .note online
 place for finished online help files and associated header files.
 .note orl
 Object Reader Library, reads OMF, COFF and ELF object files.
+.note os2api
+headers and libraries for the OS/2 API (both 16-bit and 32-bit).
 .note owl
-Object Writer Library, brother of the above.
+Object Writer Library, brother of ORL.
 .note pgchart
-presentation graphics and chart library for DOS.
+presentation graphics and chart library for DOS (part of the graph
+library).
 .note plusplus
 another huge directory containing all C++ stuff. Compiler, runtime
 libraries, all that.
@@ -250,18 +269,25 @@ parallel make, tool used in the build process to roughly control
 what gets built.
 .note posix
 a bunch of POSIX utilites like cp, rm and so on. Not suffering from
-creeping featuritis but do the job and they're portable.
+creeping featuritis but they do the job and they're portable.
+.note rcsdll
+interface to various revision control systems, used by IDE and editor.
+.note re2c
+regular expression to C converter, used in C++ compiler build.
+.note redist
+miscellaneous redistributable files.
 .note rtdll
-C runtime DLLs.
+C, C++ and math runtime DLLs.
 .note sdk
 SDK tools like resource editor, resource compiler or dialog editor.
 Also the home of wres library which is used by many other projects.
-Many projects will use it when built in debug mode.
+.note setupgui
+source for the Open Watcom installer.
 .note src
-sample source code distributed with the compiler.
-.note sweep
-a simple utility that walks subdirectories and performs specified
-action in each.
+sample source code distributed with the compiler, some of it is
+used in the documentation.
+.note ssl
+internal tool used for debugger builds.
 .note techinfo
 ancient system information utility.
 .note trap
@@ -272,11 +298,15 @@ memory tracker library (good for discovering and plugging memory leaks).
 .note ui
 user interface library.
 .note vi
-Open Watcom vi editor, clone of the (not so) popular Unix editor.
+Open Watcom vi editor, clone of the popular (or not) Unix editor.
 .note viper
 the Open Watcom IDE.
 .note viprdemo
 IDE demo program.
+.note w16api
+headers and libraries for the Windows 3.x API.
+.note w32api
+headers and libraries for the Win32 API.
 .note w32loadr
 loaders for OS independent (OSI) binaries.
 .note wasm
@@ -287,8 +317,7 @@ contains internal headers and libraries shared by many projects.
 .note wclass
 an Open Watcom C++ class library.
 .note wdisasm
-disassembler supporting a variety of object formats and instruction
-sets. Very handy.
+old x86 disassembler, nearly obsolete.
 .note whpcvt
 Watcom Help Converter used for producing online documentation.
 .note wic
@@ -296,7 +325,7 @@ utility for converting include files between various languages.
 .note win386
 the Windows 386 extender.
 .note wl
-the Open Watcom linker.
+the Open Watcom linker, also contains the overlay manager library.
 .note wmake
 the make utility.
 .note womp
@@ -311,8 +340,6 @@ and OS/2 GUI programs from single source code.
 the Open Watcom profiler.
 .note wsample
 the execution sampler, companion tool to the profiler.
-.note wsplice
-splice utility for text file processing.
 .note wstrip
 strip utility for detaching or attaching debug information and/or
 resources.
@@ -349,9 +376,9 @@ Perforce repository but most people will find it much easier to
 get a source archive first. The source archives can be found
 at the Open Watcom web site,
 .id http://www.openwatcom.org/
-along with latest information on Perforce setup. You will need
-working installation of Open Watcom C/C++ 1.0 or later and some
-free disk space (one gigabyte should do).
+along with latest information on Perforce setup. You will generally
+need a working installation of the previous release of Open Watcom
+C/C++ and some free disk space to burn (one gigabyte should do).
 .np
 The Open Watcom source tree can be located in any directory
 on any drive. After extracting the source archive you will find
@@ -377,7 +404,7 @@ Now is the time to connect to Perforce. Again, most uptodate
 information can be found on the Open Watcom web site. If you followed
 the instructions correctly, no servers are down and no other unpredictable
 (or maybe predictable) things happened, you will have brought your source
-tree to the latest revision (aka tip revision).
+tree to the latest revision (aka tip or head revision).
 
 .section Gearing up for Building
 .*
@@ -387,49 +414,33 @@ tree to the latest revision (aka tip revision).
 Before you start building the Open Watcom tools proper, you will need to
 build several helper tools:
 .us builder, pmake, cdsay
-and at least some of the POSIX tools. These tools are not part of the
-regular build process because they don't change very often at all and
-because the build process won't work without them.
+and a few others. These tools have to be built manually because the build
+process won't work without them.
 .np
-The tools can be found in appropriately named subdirectories of the
+The tools can be found in appropriately named subdirectory of the
 .us bld
-directory:
+directory, which is named
 .us builder
-and
-.us cdsay
-live in the
-.us builder
-directory,
-.us pmake
-can be found under
-.us pmake
-and POSIX tools under
-.us posix.
-It is so simple that it seems almost pointless to point out the obvious.
+(showing complete lack of imagination).
 .np
-To build executables, go to a subdirectory of the project directory which sounds
-like it might be appropriate for your platform and run
+To build the required executables, go to a subdirectory of the project
+.us builder
+directory which sounds like it would be appropriate for your host platform
+and run
 .us wmake.
-If you set up everything correctly, you will end up with working binaries.
+If you set up everything correctly, you will end up with working binaries
+that were automatically copied into the right subdirectory of the
+.us build
+directory, and that directory is already on the
+.id PATH.
 If not, it's back to square one &mdash the most likely source of problems
 is incorrectly set up
 .us setvars
 batch file.
 .np
-Now that you have the tools binaries, you need to copy them to a directory
-on your
-.id PATH.
-The
-.us bin
-or
-.us binp
-(for OS/2 binaries) subdirectory in the Open Watcom root is usually a good
-place, but don't feel too constrained in your choice.
-.np
 If you've got this far &mdash congratulations, you've finished the one-time
 steps. You shouldn't need to redo them unless you decide to start from scratch,
-your harddrive decides to die or some similarly catastrophic event decides
-to happen.
+your harddrive decides to die or some similarly catastrophic event occurs.
 .np
 You should now read the next chapter that describes the build architecture
 and also lists the magic incantations necessary to invoke builds.

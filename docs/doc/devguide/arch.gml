@@ -5,25 +5,23 @@ compile on various people's machines and allow for easier ports to other
 architectures, every project which is developed under the Open Watcom Project
 should follow certain conventions as far as makefile layout is concerned.
 This section describes the conventions and requirements for these makefiles,
-as well as the steps needed to get projects to compile on a "build" machine.
+as well as the steps needed to get projects to compile.
 .np
 For those who do not desire a lecture on the preparation and maintenance of
 makefiles, feel free to skip straight to the Executive Summary at the end.
 .np
-Every build machine must have the mif project (
+Every development and build machine must have the mif project (
 .us bld\build\mif
 ) installed. That is taken care of by uncompressing the Open Watcom source
-archive and/or syncing up with Perforce. For the purposes of this document,
-every machine where a project can be built is considered a build machine,
-not just the "official" build server.
-
+archive and/or syncing up with Perforce.
+.*
 .section Makeinit
 .*
 .np
 .ix 'makeinit'
 All the magic starts with
 .us makeinit.
-Every build machine must have a
+Every development machine must have a
 .us makeinit
 file with the following defined therein:
 .begnote
@@ -69,10 +67,10 @@ Each makefile should be located in the object file directory - ie. no more
 of this silly cd'ing into the object directory based on crystal-balls and
 what not. The makefile must define the following:
 .begnote
-.note host_cpu:
-        architecture which the resulting executable code will run on.
 .note host_os:
         os which the resulting executable code will run on
+.note host_cpu:
+        architecture which the resulting executable code will run on.
 .note proj_name:
         the project name
 .endnote
@@ -82,8 +80,8 @@ Valid values for
 are 386, i86, axp, ppc. These should be self-explanatory.
 Valid values for
 .id host_os
-are dos, nt, os2, nov, qnx, win, osi. These should be self-explanatory for
-the most part, with one possible exception: osi stands for OS Independent,
+are dos, nt, os2, nov, qnx, win, osi, linux. These should be self-explanatory
+for the most part, with one possible exception: osi stands for OS Independent,
 the executables can run on multiple OSes if appropriate loader stub is
 provided.
 .np
@@ -94,12 +92,13 @@ variables, which can then be used to build the project. A list of the
 most important of these variables and what they can be used for is
 included below.
 .np
-A makefile can also include
+A makefile should also include
 .us deftarg.mif,
 for definition of the required clean target, and
 .us defrule.mif,
-which has the default compilation rules. A makefile is free to override
-these defaults as long as it follows the following conventions:
+which has the default build rules for C, C++ and assembly sources. A makefile
+is free to override these defaults as long as it follows the following
+conventions:
 .np
 .autonote
 .note
@@ -125,20 +124,6 @@ Our version of yacc
 .note $(RE2C):
 The regular-expression to C compiler
 .endnote
-.np
-note
-After the
-.us cproj.mif
-is included and before a command is run, the
-.id INCLUDE
-environment variable must be set to
-.id inc_path.
-A project is not allowed to set
-.id INCLUDE
-to something else - it may redefine certain elements of
-.id inc_path
- - see Include Paths below. This ensures that include paths can be
-easily controlled and tracked.
 .np
 .note
 When referring to other projects, a makefile should use the
@@ -173,8 +158,8 @@ set correctly
 .bull
 all depended upon projects have been built
 .bull
-any required executables from
-.us bld\build\bin
+any required executables from under
+.us bld\build
 are in the path
 .endbull
 .np
@@ -186,6 +171,15 @@ or pretend to be Jim Welch
 .* One of the original Watcom compiler developers
 .* .fn end
 in order to get a debuggable version of the executable.
+.np
+There is more than one way to switch between development and release build.
+A
+.id DEBUG_BUILD
+environment variable provides global control. When set to 1, debug builds
+are produced, otherwise release builds are created. When building individual
+projects with wmake, it is also possible to give the
+.us release
+macro on the wmake command line (0 means debug build, 1 means release build).
 .np
 Perhaps it should be noted that "releasable" build still contains debugging
 information, but only at the -d1 level and in a separate .sym file. In case
@@ -214,12 +208,12 @@ in along with the project and built as part of the build process (so that
 we don't have to check in zillions of binaries for all supported platforms). An
 important future consideration will be the ability to build on a different
 architecture. Please try and avoid weirdo tools that have no hope of running
-on an Alpha or PPC running NT. More general tools (yacc, re2c, w32bind) that
-are likely to be used by several projects should be copied up into the bin
-directories under
+on an Alpha or PPC running NT or on Linux. More general tools (yacc, re2c,
+w32bind) that are likely to be used by several projects should be copied up
+into the bin directories under
 .us bld\build
-&mdash bin for DOS, binp for OS/2 and binnt for some other OS, forget which.
-These tools should be referenced from the makefile as
+&mdash bin for DOS, binp for OS/2, binl for Linux and binnt for some other OS,
+forget which. These tools should be referenced from the makefile as
 .id $(bld_dir)\tool.
 If your tool cannot run under a particular OS, you should at least put
 a batchfile in that bin which echoes a message to that effect (to alert
@@ -264,7 +258,10 @@ means that after running "wmake clean", the directory should look exactly
 like a new installation of the project on a bare drive. !including
 .us deftarg.mif
 should do for most people who do not get creative with file extensions or
-generated source files.
+generated source files. If you do get creative, you may still use the
+default clean rule if you define the
+.id additional_cleanup
+macro that will identify your fancy file names and/or extensions.
 .np
 Do not underestimate the importance of proper cleanup. It guarantees that
 every part of a project can be built from scratch, ensuring that there
@@ -278,9 +275,10 @@ discovered that it can no longer be made.
 .np
 .ix 'pmake'
 Every makefile should contain a pmake line at the top. Pmake is a tool which
-was invented in order to make life easier with the clib project. Pmake, when
-run from a root directory, crawls down all subdirectories looking for files
-called
+was invented in order to make life easier with the clib project &mdash most
+people are not interested in building all 40+ versions of the clib when
+they're working on just one version. Pmake, when run from a root directory,
+crawls down all subdirectories looking for files called
 .us makefile.
 When it finds one, it checks to see if there is a wmake comment which looks
 like:
@@ -297,7 +295,7 @@ is implicit in every makefile and does not need to be listed explicitly
 .note build
 indicates that wmake should be run in this directory as part of the build process
 .note os_x
-for each x in the list of the valid host_os tokens (os_nt, os_nw, etc)
+for each x in the list of the valid host_os tokens (os_nt, os_dos, etc)
 .note cpu_x
 for each x in the list of the valid host_cpu tokens (cpu_386, cpu_ppc, etc)
 .note target_x
@@ -313,16 +311,16 @@ should have a pmake line which contains, at a minimum:
 .millust begin
 #pmake: build os_nt cpu_ppc
 .millust end
-Pmake also supports the concept of priority. The priority is specified as 
+Pmake also supports the concept of priority. The priority is specified as
 /nnn after the #pmake but before the colon (:) like so:
 .millust begin
 #pmake/50: build os_nt cpu_ppc
 .millust end
 Makefiles with lower priority are visited first. The default priority if not
 explicitly specified is 100. Pmake will visit subdirectories in depth first
-traversal order unless changed by the 
+traversal order unless changed by the
 .us -r
- option or the 
+ option or the
 .us priority
  value.
 .np
@@ -338,7 +336,7 @@ os_nt -h".
 .np
 Another very useful property of this setup is that it allows people to
 build libraries/binaries only for their host platform. This is especially
-convenient if they don't have all the necessary SDKs, Toollkits and
+convenient if they don't have all the necessary SDKs, Toolkits and
 whatnot installed and/or cannot run some or all of the platform specific
 tools required during builds. And this situation is the norm rather than
 exception &mdash only dedicated build servers usually have all necessary
@@ -372,7 +370,21 @@ Things get more interesting if cross compilers are thrown into the mix.
 In that case three components are required in the name: for instance a
 .us ntaxp.386
 directory can hold the Alpha AXP NT compiler producing 386 code.
-
+.np
+This is also why the macro names are somewhat counterintuitive &mdash most
+people would think of the
+.id host_os
+and
+.id host_cpu,
+as target OS and CPU. However, the 'target' designation is reserved for
+the target architecture of the generated binary. In the above case of
+a compiler that runs on Alpha AXP NT and produces 386 code, the makefile
+contains:
+.millust begin
+host_os    = nt
+host_cpu   = axp
+target_cpu = 386
+.millust end
 
 .section DLLs and Windowed Apps
 .*
@@ -396,21 +408,20 @@ as normal, and then, if creating a windowed app, set
 .ix 'include paths'
 The
 .id inc_path
-macro, which every project should set the include environment variable to
-before executing any build commands, is composed of several other variables.
+macro is composed of several other variables.
 Projects are able to hook any of these variables by redefining them after
 .us cproj.mif
-is included. The current, and likely to change, structure looks like this:
+is included. The current structure looks like this:
 .millust begin
-inc_path = inc_dirs | inc_dirs_$(host_os) | inc_dirs_sys
-inc_dirs_sys = inc_dirs_lang | inc_dirs_sys_$(host_os)
+inc_path      = inc_dirs | inc_dirs_$(host_os) | inc_dirs_sys
+inc_dirs_sys  = inc_dirs_lang | inc_dirs_sys_$(host_os)
 inc_dirs_lang = $(lang_root)\h
 .millust end
-So, a project should put any include directories it needs into inc_dirs - this
-includes
+So, a project should put any include directories it needs into
+.us inc_dirs
+&mdash note that this does not include
 .id $(watcom_dir)\h
-&mdash no project should assume anything will be set except the location of the
-(Open) Watcom C compiler header files and the appropriate system header files.
+which is part of the default include directory set.
 .np
 If it needs to, a project can override any and all of these &mdash for instance,
 the clib needs to be built with the next release header files, and so would
@@ -422,7 +433,17 @@ Any OS-specific header files needed by the project can be set in
 &mdash again, this should not include the standard system
 header files, which will be defined in
 .id inc_dirs_sys_$(host_os).
-
+.np
+Note that the build system previously used to set the
+.id INCLUDE
+environment variable to hold the contents of
+.us inc_dirs
+macro. This mechanism is now considered obsolete and should no longer used.
+Instead, include paths are passed directly on the command line. This also
+means that all include paths must be prepended with a -I switch, for example:
+.millust begin
+inc_dirs_sys_nt    = -I$(lang_root)\h\nt
+.millust end
 
 .section Executive Summary
 .*
@@ -450,26 +471,27 @@ Add
  = Foo to the top of master.mif
 .note
 Include the following files (in this order)
-.us cproj.mif, deftarg.mif, defrule.mif
+.us cproj.mif, defrule.mif, deftarg.mif
 in
 .us master.mif
 .note
 Add
 .id inc_dirs
-= {list of directories, separated by semi-colons, which your project needs
-in include path - this does not include OS-specific includes (ie
+= {list of directories, separated by spaces and each prepended with -I,
+which your project needs in include path - this does not include
+OS-specific includes (ie
 .us \lang\h\win
 )}
 .note
 Add
 .id extra_c_flags
-= {list of c flags, not including optimization, /w4, /zq. /we and model info,
-needed to compile your application} These should be host_os/host_cpu independant.
+= {list of c flags, not including optimization, -w4, -zq. -we and memory model info,
+needed to compile your application} These should be host_os/host_cpu independent.
 .note
 Add
 .id extra_l_flags
  = {list of linker directives, not incuding system or debug directives}
- Should be host_os/host_cpu independant.
+ Should be host_os/host_cpu independent.
 .note
 Use following to compile:
 .id $(cc) $(cflags)
