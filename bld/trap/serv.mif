@@ -57,6 +57,7 @@ targ_x86_qnx    = qnx\$(name).qnx
 targ_x86_linux  = linux\$(name).elf
 targ_x86_win    = bin\$(name).exe
 targ_x86_dos    = bin.$(machsuff)\$(name).exe
+targ_x86_rsi    = bin.$(machsuff)\$(name).exp
 targ_x86_cw     = bin.$(machsuff)\$(name).exe
 targ_x86_ads    = bin.$(machsuff)\$(name).exp
 !ifndef targ_pls
