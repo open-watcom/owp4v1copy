@@ -21,10 +21,10 @@ set PROJDIR=<CWD>
 [ INCLUDE <devdir>/cfloat/prereq.ctl ]
 [ INCLUDE <devdir>/owl/prereq.ctl ]
 [ INCLUDE <devdir>/dwarf/prereq.ctl ]
+[ INCLUDE <devdir>/wl/prereq.ctl ]
 [ INCLUDE <devdir>/wasm/prereq.ctl ]
 [ INCLUDE <devdir>/cg/prereq.ctl ]
 [ INCLUDE <devdir>/cc/prereq.ctl ]
-[ INCLUDE <devdir>/wl/prereq.ctl ]
 
 # compiled using watcom utilities
 [ INCLUDE <devdir>/hdr/lang.ctl ]

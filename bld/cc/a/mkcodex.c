@@ -45,10 +45,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <sys\types.h>
-#include <sys\stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <fcntl.h>
-#include <io.h>
+#include <unistd.h>
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
 
 struct bursts {
     unsigned short defs;
@@ -62,7 +65,7 @@ static char usage[] = "Usage: inp.file out.file\n";
 
 #define Xptr(x) (char*)(buff + x)
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     FILE        *fp;
     int         fi;
@@ -76,16 +79,17 @@ main(int argc, char *argv[])
     if( argc > 2 ) {
         fi = open( argv[1], O_BINARY );
         fp = fopen( argv[2], "w" );
+        stat( argv[1], &bufstat );
     } else {
-                printf( usage );
+        printf( usage );
     }
     buff = malloc( bufstat.st_size );
     read( fi, buff, bufstat.st_size );
-        close( fi );
+    close( fi );
     cb = (struct bursts *) Xptr( *(short*)buff );
     for(;;) {
         p = Xptr(cb->defs);
-        if( p - buff == NULL ) break;
+        if( (char *)p == buff ) break;
         for(;;) {
             fprintf( fp, "%s\n", p );
             while( *p != '\0' )  ++p;
@@ -112,6 +116,6 @@ main(int argc, char *argv[])
         cb++;
     }
     fclose( fp );
-        free( buff );
+    free( buff );
     return 0;
 }
