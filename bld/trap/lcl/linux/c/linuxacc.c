@@ -30,6 +30,7 @@
 
 /* started by Kendall Bennett
    continued by Bart Oldeman -- thanks to Andi Kleen's stepper.c example
+   5.5.2004 added XMM registers support JM
 
    still to do:
    * complete watchpoints
@@ -416,6 +417,28 @@ static void ReadFPU( struct x86_fpu *r )
     }
 }
 
+static void ReadFPUXMM( struct x86_fpu *r, struct x86_xmm *x  )
+{
+    user_fxsr_struct    regs;
+    int                 i;
+
+    memset( r, 0, sizeof( *r ) );
+    memset( x, 0, sizeof( *x ) );
+    if (sys_ptrace(PTRACE_GETFPXREGS, pid, 0, &regs) == 0) {
+        r->cw = regs.cwd;
+        r->sw = regs.swd;
+        r->tag = regs.twd;
+        r->ip_err.p.offset = regs.fip;
+        r->ip_err.p.segment = regs.fcs;
+        r->op_err.p.offset = regs.foo;
+        r->op_err.p.segment = regs.fos;
+        for( i = 0; i < 8; i++ )
+            memcpy(&r->reg[i],&regs.st_space[i],sizeof(r->reg[0]));
+        memcpy(x->xmm,regs.xmm_space,sizeof(x->xmm));
+        x->mxcsr = regs.mxcsr;
+    }
+}
+
 unsigned ReqRead_cpu()
 {
     ReadCPU( GetOutPtr( 0 ) );
@@ -434,7 +457,7 @@ unsigned ReqRead_regs( void )
 
     mr = GetOutPtr( 0 );
     ReadCPU( &mr->x86.cpu );
-    ReadFPU( &mr->x86.fpu );
+    ReadFPUXMM( &mr->x86.fpu, &mr->x86.xmm );
     return( sizeof( mr->x86 ) );
 }
 
@@ -493,6 +516,28 @@ static void WriteFPU( struct x86_fpu *r )
     sys_ptrace(PTRACE_SETFPREGS, pid, 0, &regs);
 }
 
+static void WriteFPUXMM( struct x86_fpu *r, struct x86_xmm *x )
+{
+    user_fxsr_struct    regs;
+    int                 i;
+
+    memset( &regs, 0, sizeof( regs ) );
+    if (sys_ptrace(PTRACE_GETFPXREGS, pid, 0, &regs) == 0) {
+        regs.cwd = r->cw;
+        regs.swd = r->sw;
+        regs.twd = r->tag;
+        regs.fip = r->ip_err.p.offset;
+        regs.fcs = r->ip_err.p.segment;
+        regs.foo = r->op_err.p.offset;
+        regs.fos = r->op_err.p.segment;
+        for( i = 0; i < 8; i++ )
+            memcpy(&regs.st_space[i],&r->reg[i],sizeof(r->reg[0]));
+        memcpy(regs.xmm_space,x->xmm,sizeof(x->xmm));
+        regs.mxcsr = x->mxcsr;
+        sys_ptrace(PTRACE_SETFPXREGS, pid, 0, &regs);
+    }
+}
+
 unsigned ReqWrite_cpu()
 {
     WriteCPU( GetInPtr( sizeof( write_cpu_req ) ) );
@@ -511,7 +556,7 @@ unsigned ReqWrite_regs( void )
 
     mr = GetInPtr( sizeof( write_regs_req ) );
     WriteCPU( &mr->x86.cpu );
-    WriteFPU( &mr->x86.fpu );
+    WriteFPUXMM( &mr->x86.fpu, &mr->x86.xmm );
     return( 0 );
 }
 
