@@ -1,4 +1,4 @@
-#pmake: all no_build lcl os_linux cpu_386 trap x86
+#pmake: all build lcl os_linux cpu_386 trap x86
 #
 # Create the Linux STD.TRP
 #

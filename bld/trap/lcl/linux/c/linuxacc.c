@@ -57,6 +57,7 @@ static pid_t            OrigPGrp;
 static watch_point  wpList[ MAX_WP ];
 static int          wpCount = 0;
 static pid_t        pid;
+static int          attached;
 static u_short      flatCS;
 static u_short      flatDS;
 
@@ -612,8 +613,10 @@ unsigned ReqProg_load()
         args[ SplitParms( parms, &args[1], len ) + 1 ] = NULL;
     }
     args[0] = parm_start;
+    attached = TRUE;
     pid = RunningProc( args[0], &name );
     if( pid == 0 ) {
+        attached = FALSE;
         args[0] = name;
         if( FindFilePath( TRUE, args[0], exe_name ) == 0 ) {
             exe_name[0] = '\0';
@@ -641,7 +644,11 @@ unsigned ReqProg_load()
         /* wait until it hits _start (upon execve) */
         if ( waitpid ( pid, &status, WUNTRACED ) < 0 )
             goto fail;
-        if ( !WIFSTOPPED( status ) || WSTOPSIG( status ) != SIGTRAP )
+        if ( !WIFSTOPPED( status ) )
+            goto fail;
+        if ( attached && ( WSTOPSIG( status ) != SIGSTOP ) )
+            goto fail;
+        if ( !attached && ( WSTOPSIG( status ) != SIGTRAP ) )
             goto fail;
         errno = 0;
     }
@@ -652,8 +659,12 @@ unsigned ReqProg_load()
     return( sizeof( *ret ) );
 fail:
     if ( pid != 0 && pid != -1 ) {
-        kill( pid, SIGKILL );
-        waitpid( pid, &status, 0 );
+        if ( attached ) {
+            sys_ptrace( PTRACE_DETACH, pid, 0, 0 );    
+        } else {            
+            kill( pid, SIGKILL );
+            waitpid( pid, &status, 0 );
+        }
     }
     
 }
@@ -663,9 +674,13 @@ unsigned ReqProg_kill()
     prog_kill_ret   *ret;
 
     if ( pid != 0 ) {
-        int status;
-        kill( pid, SIGKILL );
-        waitpid( pid, &status, 0 );
+        if ( attached ) {
+            sys_ptrace( PTRACE_DETACH, pid, 0, 0 );
+        } else {            
+            int status;
+            kill( pid, SIGKILL );
+            waitpid( pid, &status, 0 );
+        }
     }
     ret = GetOutPtr( 0 );
     ret->err = 0;
@@ -849,6 +864,11 @@ static unsigned ProgRun( int step )
         switch( ( ptrace_sig = WSTOPSIG( status ) ) ) {
         case SIGSEGV:
         case SIGILL:
+        case SIGFPE:
+        case SIGABRT:
+        case SIGBUS:
+        case SIGQUIT:
+        case SIGSYS:
             ret->conditions = COND_EXCEPTION;
             break;
         case SIGINT:
@@ -1022,6 +1042,11 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, int remote )
 
     setsignal(SIGTRAP, sighand, 0, NULL); 
     setsignal(SIGCHLD, sighand, 0, NULL); 
+    setsignal(SIGSYS, sighand, 0, NULL); 
+    setsignal(SIGQUIT, sighand, 0, NULL); 
+    setsignal(SIGBUS, sighand, 0, NULL); 
+    setsignal(SIGABRT, sighand, 0, NULL); 
+    setsignal(SIGFPE, sighand, 0, NULL); 
     setsignal(SIGSEGV, sighand, 0, NULL); 
     setsignal(SIGILL, sighand, 0, NULL); 
     setsignal(SIGINT, sighand, 0, NULL); 
