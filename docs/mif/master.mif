@@ -11,6 +11,9 @@ bldsrc_dir=..\..\bld
 !include ../mif/depends.mif
 !include ../mif/books.mif
 
+# if set to 1 then wgml displays warnings and statistics
+docs_verbose=0
+
 #############################################################
 #
 # There are declaration for every Open Watcom book.
@@ -71,7 +74,6 @@ proj_objs= &
 gml_drivers= &
     whelp.cop &
     whelpdrv.cop
-
 
 ####################################################
 #
@@ -369,14 +371,11 @@ prepare_wgml_opts : .PROCEDURE
 #
 # details about wgml processing
 #
-!ifndef %on_build_machine
+!ifeq docs_verbose 1
     @%append $(optfile_wgml) ( verbose
     @%append $(optfile_wgml) ( statistics
-!else ifeq %on_build_machine 1
-    @%append $(optfile_wgml) ( nowarning
 !else
-    @%append $(optfile_wgml) ( verbose
-    @%append $(optfile_wgml) ( statistics
+    @%append $(optfile_wgml) ( nowarning
 !endif
 
 ####################################################
