@@ -105,7 +105,7 @@ BOOL InitFirstInst( HANDLE hinst ) {
     return( RegisterClass( &wc ) );
 }
 
-int APIENTRY WinMain( HINSTANCE currinst, HINSTANCE previnst, LPSTR cmdline, int cmdshow)
+int WINAPI WinMain( HINSTANCE currinst, HINSTANCE previnst, LPSTR cmdline, int cmdshow)
 {
     HWND        hwnd;
 

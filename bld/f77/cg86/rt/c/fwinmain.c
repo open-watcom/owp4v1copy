@@ -74,7 +74,7 @@ static  void    CallFWINMAIN() {
 }
 
 
-int     APIENTRY WinMain( HINSTANCE thishandle, HINSTANCE prevhandle, LPSTR cmdline,
+int     WINAPI  WinMain( HINSTANCE thishandle, HINSTANCE prevhandle, LPSTR cmdline,
                          int cmdshow ) {
 //===========================================================================
 

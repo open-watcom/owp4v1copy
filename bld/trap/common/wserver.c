@@ -80,7 +80,7 @@ long _EXPORT FAR PASCAL WindowProc( HWND, unsigned, UINT, LONG );
 /*
  * WinMain - initialization, message loop
  */
-int APIENTRY WinMain( HINSTANCE this_inst, HINSTANCE prev_inst, LPSTR cmdline,
+int WINAPI WinMain( HINSTANCE this_inst, HINSTANCE prev_inst, LPSTR cmdline,
                       int cmdshow )
 {
     MSG         msg;
