@@ -73,6 +73,6 @@ void __cdecl _SNAPMain(int argc, char **argv, char **arge)
 //    memset( tdata, 0, __ThreadDataSize );
 //    tdata->__data_size = __ThreadDataSize;
     __InitRtns( 255 );
-    _amblksiz = 8 * 1024;       /* set minimum memory block allocation  */
     exit(main(argc,argv,arge));
 }
+

@@ -39,8 +39,7 @@ struct thread_data *__FirstThreadData = (struct thread_data *)&_STACKLOW;
 #include "rtdata.h"
 #include "initfini.h"
 
-#include <libc/init.h>
-#include <libc/exit.h>
+#include <os/imports.h>
 
 extern void __InitThreadData( thread_data * );
 

@@ -26,7 +26,7 @@
 *
 * Description:  Module to initialise the C runtime library for the SNAP
 *               binary portable DLLs. Called by the PE loader library when
-*               the DLL is first clib internals and set up the callbacks to
+*               the DLL is first loaded and set up the callbacks to
 *               platform specific code.
 *
 ****************************************************************************/
@@ -34,10 +34,8 @@
 
 #include <stdlib.h>
 #include <string.h>
-
-#include <libc/xfile.h>
-#include <libc/init.h>
-
+#include <os/imports.h>
+#include <os/init.h>
 #include "initfini.h"
 
 /*--------------------------- Global variables ----------------------------*/
@@ -53,7 +51,7 @@ LIBC_imports    _VARAPI ___imports;
 static void fatalErrorHandler( void )
 {
     xwrite( 0, FATAL_MSG, FATAL_MSG_LEN );
-    ___imports.abort();
+    ___imports.xabort();
 }
 
 /* Initialise the C runtime library from the passed in list of imports
@@ -83,6 +81,6 @@ int _CEXPORT InitLibC( LIBC_imports *imports, long os_type )
 /* Exit the C runtime library to clean up and free all allocated memory */
 void _CEXPORT TerminateLibC( void )
 {
-    //_Cleanupforexit();
+    __FiniRtns( 0, 255 );
 }
 

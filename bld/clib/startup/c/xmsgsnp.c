@@ -33,9 +33,7 @@
 #include <unistd.h>
 #include <string.h>
 #include "exitwmsg.h"
-
-#include <libc/init.h>
-#include <libc/exit.h>
+#include <os/imports.h>
 
 _WCRTLINK void __exit_with_msg( char _WCI86FAR *msg, unsigned retcode )
 {
