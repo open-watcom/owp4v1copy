@@ -204,13 +204,13 @@ name_debug=z
 !else
 name_debug=
 !endif
-target = $+$(bin_root)\$(targ_$(cpu)_$(os))$-
+target = $+$(bin_root)/$(targ_$(cpu)_$(os))$-
 !ifdef test
 name_debug=t
 !else
 name_debug=d
 !endif
-dtarget = $+$(bin_root)\$(targ_$(cpu)_$(os))$-
+dtarget = $+$(bin_root)/$(targ_$(cpu)_$(os))$-
 
 trperr_h = $(trap_dir)/h/_err.gh
 jtrperr_h = $(trap_dir)/h/_jerr.gh
@@ -286,13 +286,13 @@ eraseall.obj : $(trap_dir)/compile.gbl
 allcompopts = $(comp_opts) $($(which)_opts_$(cpu)_$(os)) $(extra_cflags) $(extra_flags_$[&)
 compile = $(cc) $[@ $(allcompopts)
 ppcompile = $(cpp) $[@ $(allcompopts)
-whole_inc_path = $(extra_incs);$(dig_dir)\h;$(trap_dir)\common\$(os);$(trap_dir)\common;$(trap_dir)\h;$(incs_$(os))
+whole_inc_path = $(extra_incs);$(dig_dir)/h;$(trap_dir)/common/$(os);$(trap_dir)/common;$(trap_dir)/h;$(incs_$(os))
 
-.c: ..\c;..\..\c;$(trap_dir)\common\$(os);$(trap_dir)\common;$(trap_dir)\c;$(extra_srcs)
-.cpp: ..\c;..\..\c;$(trap_dir)\common\$(os);$(trap_dir)\common;$(trap_dir)\c;$(extra_srcs)
+.c: ../c;../../c;$(trap_dir)/common/$(os);$(trap_dir)/common;$(trap_dir)/c;$(extra_srcs)
+.cpp: ../c;../../c;$(trap_dir)/common/$(os);$(trap_dir)/common;$(trap_dir)/c;$(extra_srcs)
 
 .c.obj: .autodepend
-        set IPATHS=-i$(whole_inc_path)
+        set IPATHS=-i"$(whole_inc_path)"
         $(compile)
 
 .cpp.obj: .autodepend
@@ -303,14 +303,14 @@ whole_inc_path = $(extra_incs);$(dig_dir)\h;$(trap_dir)\common\$(os);$(trap_dir)
         @set IPATHS=-i$(whole_inc_path)
         $(compile) -plc -fo=.i
 
-.asm: ..\asm;..\..\asm;$(trap_dir)\common\$(os);$(trap_dir)\common;$(extra_srcs)
+.asm: ../asm;../../asm;$(trap_dir)/common/$(os);$(trap_dir)/common;$(extra_srcs)
 
 .asm.obj:
         @set IPATHS=-i$(whole_inc_path)
 #        $(asm_$(cpu)) $(comp_opts) $(extra_aflags) $(extra_aflags_$[&) $[@
         $(as) $[@ $(asm_opts) $(extra_aflags) $(extra_aflags_$[&)
 
-.rc: ..\c;$(trap_dir)\common\$(os);$(trap_dir)\common;$(extra_srcs)
+.rc: ../c;$(trap_dir)/common/$(os);$(trap_dir)/common;$(extra_srcs)
 
 .rc.res: .autodepend
         $(rc) -r -i$(whole_inc_path) -bt=$(targ) -fo=$^&.res $[@

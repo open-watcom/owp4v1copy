@@ -33,11 +33,11 @@ extra_objs = &
 
 #       pgmexec.obj &
 
-extra_incs = $(lang_root)\h\nt;$(trap_dir)\lcl\dos\h
+extra_incs = $(lang_root)/h/nt;$(trap_dir)/lcl/dos/h
 extra_cflags = -dWOW
 
 !include $(trap_dir)/lcl/lcl.mif
 !include $(trap_dir)/trap.mif
 
-globals.obj :: ..\h\globals.h
+globals.obj :: ../h/globals.h
 

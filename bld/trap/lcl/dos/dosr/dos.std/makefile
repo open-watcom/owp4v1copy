@@ -16,7 +16,7 @@ std_objs = &
 
 extra_objs  = $(std_objs) realtrap.obj
 extra_dobjs = $(std_objs) dumtrap.obj
-extra_incs = $(trap_dir)\lcl\dos\h
+extra_incs = $(trap_dir)/lcl/dos/h
 
 extra_aflags_npxtype = -fpi87
 

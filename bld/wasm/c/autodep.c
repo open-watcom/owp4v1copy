@@ -24,14 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  Autodependancy functions
+* Description:  Autodependency functions
 *
 ****************************************************************************/
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <time.h>
 #include <stddef.h>
 #include <sys/stat.h>
 

@@ -8,8 +8,8 @@ objs_pls = plsord.obj   # must be first
 extra_linker = &
         op offset=0, objalign=4k &
         alias __DOSseg__=main_ &
-        lib $(plsdir)\wdos32,$(plsdir)\wdosx32 &
-        file $(plsdir)\dilseg
+        lib $(plsdir)/wdos32,$(plsdir)/wdosx32 &
+        file $(plsdir)/dilseg
 
 !include ../dos.srv/makefile
 

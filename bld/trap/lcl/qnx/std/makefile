@@ -16,6 +16,6 @@ extra_objs = &
         supp.obj &
         core.obj
 
-extra_incs = $(trap_dir)\lcl\h
+extra_incs = $(trap_dir)/lcl/h
 
 !include $(trap_dir)/trap.mif

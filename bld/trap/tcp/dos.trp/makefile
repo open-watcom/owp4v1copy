@@ -9,7 +9,7 @@ cpu = x86
 dos_large_model = 1
 
 extra_objs = $(remote_objs)
-extra_incs = $(%owroot)\contrib\wattcp\inc
+extra_incs = $(%owroot)/contrib/wattcp/inc
 extra_libs = $(%owroot)/contrib/wattcp/lib/wattcpwl.lib
 
 !include $(trap_dir)/trap.mif

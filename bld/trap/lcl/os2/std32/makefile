@@ -9,7 +9,7 @@ srv     = lcl
 cpu     = x86
 name    = std32
 
-extra_cflags =-i$(lang_root)\h\os2
+extra_cflags =-i"$(lang_root)/h/os2"
 
 extra_objs = &
         accmisc.obj &

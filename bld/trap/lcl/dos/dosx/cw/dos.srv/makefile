@@ -7,7 +7,7 @@ cpu = x86
 name = cwhelp
 
 extra_cflags = -dDOS4G -dDOSXHELP
-extra_incs = $(trap_dir)\lcl\dos\h;..\h
+extra_incs = $(trap_dir)/lcl/dos/h;../h
 extra_srcs = $(trap_dir)/lcl/dos/c
 extra_aflags_cwhelp = -i"../h"
 

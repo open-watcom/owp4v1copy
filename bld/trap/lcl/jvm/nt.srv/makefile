@@ -30,7 +30,7 @@ $(bin_root)/binnt/wdebug.zip : JVMHelp.java
     rm -rf sun
 
 extra_srcs = $(trap_dir)/lcl/nt/c
-extra_incs = $(trap_dir)\lcl\nt\h;$(trap_dir)\lcl\dos\h
+extra_incs = $(trap_dir)/lcl/nt/h;$(trap_dir)/lcl/dos/h
 extra_objs = $(jvmx_serv_objs) jvmacc.obj &
 
 ji_dll  = 'javai_g.dll'

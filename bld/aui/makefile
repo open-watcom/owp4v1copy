@@ -1,8 +1,8 @@
-inc_dirs_lang_qnx = $(lang_root)\qh
+inc_dirs_lang_qnx = $(lang_root)/qh
 !ifdef inc_dirs_lang_$(host_OS)
 inc_dirs_lang   = $(inc_dirs_lang_$(host_OS))
 !else
-inc_dirs_lang   = $(lang_root)\h
+inc_dirs_lang   = $(lang_root)/h
 !endif
 
 .before:
@@ -10,8 +10,8 @@ inc_dirs_lang   = $(lang_root)\h
 
 .extensions:
 .extensions: .exe .lib .obj .i .c .h .res .dlg .rc
-.c: $(auidir)\c;.
-.h: $(auidir)\h;.
+.c: $(auidir)/c;.
+.h: $(auidir)/h;.
 
 !ifdef on_build_machine
 copts = -zq -oxt -d1
@@ -44,9 +44,9 @@ librarian = wlib
 !ifdef pm
 dlgs = dlgrx.dlg dlgsrch.dlg dlgsrcha.dlg &
        japrx.dlg japsrch.dlg japsrcha.dlg
-auirc = $(auidir)\pmf\aui.rc
+auirc = $(auidir)/pmf/aui.rc
 !else
-auirc = $(auidir)\h\aui.rc
+auirc = $(auidir)/h/aui.rc
 !endif
 
 all : .symbolic $(auidir)/h/auistr.h aui.lib $(dlgs)
@@ -123,7 +123,7 @@ aui.lib : eraseall.obj $(objs) $(__makefiles__) $(auirc)
         @for %i in ($(objs)) do @%append tmp.lbc +%i
         $(librarian) -b -n aui @tmp.lbc
 
-.rc: ..\h
+.rc: ../h
 !ifdef pm
 $(auirc) : $(auidir)/h/aui.rc
     cp $[@ $^@
@@ -146,10 +146,10 @@ japsrch.dlg : ../h/japsrch.dlg
 japsrcha.dlg : ../h/japsrcha.dlg
     parsedlg -font $[@ japsrcha.dlg
 !else
-.dlg : ..\h
+.dlg : ../h
 !endif
 
-dlgfiles = dlgrx.h dlgsrch.h dlgrx.dlg dlgsrch.dlg dlgsrcha.dlg $(auidir)\h\auistr.h auistr.rc auigui.rc
+dlgfiles = dlgrx.h dlgsrch.h dlgrx.dlg dlgsrch.dlg dlgsrcha.dlg $(auidir)/h/auistr.h auistr.rc auigui.rc
 
 $(auidir)/h/auistr.h : $(auidir)/h/aui.msg $(auidir)/c/mkstr.c
         wcl386 -zq $]@
@@ -158,5 +158,5 @@ $(auidir)/h/auistr.h : $(auidir)/h/aui.msg $(auidir)/c/mkstr.c
 
 clean : .SYMBOLIC
         rm -f *.obj *.pch *.lib *.rc *.lbc *.dlg
-        rm -f $(auidir)\h\auistr.h
+        rm -f $(auidir)/h/auistr.h
 

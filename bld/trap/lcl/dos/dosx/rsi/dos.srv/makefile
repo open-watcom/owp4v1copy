@@ -21,7 +21,7 @@ extra_objs = &
         sbrk.obj
 
 extra_cflags = -dDOS4G -dDOSXHELP -zdp -zu
-extra_incs = $(trap_dir)\lcl\dos\h
+extra_incs = $(trap_dir)/lcl/dos/h
 extra_srcs = $(trap_dir)/lcl/dos/c;$(rsilib)
 
 extra_aflags_rsi87 = -fpi87

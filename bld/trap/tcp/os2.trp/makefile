@@ -6,7 +6,7 @@ srv = tcp
 cpu = x86
 
 extra_objs = $(remote_objs)
-extra_libs = $(watcom_dir)\lib\tcpipdll.lib
-extra_incs = $(watcom_dir)\os220_h\tcpip
+extra_libs = $(watcom_dir)/lib/tcpipdll.lib
+extra_incs = $(watcom_dir)/os220_h/tcpip
 
 !include $(trap_dir)/trap.mif

@@ -29,11 +29,11 @@ extra_objs = &
         dbgthrd.obj &
         core.obj
 
-extra_incs = $(trap_dir)\lcl\dos\h
+extra_incs = $(trap_dir)/lcl/dos/h
 extra_cflags =
 
 !include $(trap_dir)/lcl/lcl.mif
 !include $(trap_dir)/trap.mif
 
-globals.obj :: ..\h\globals.h
+globals.obj :: ../h/globals.h
 

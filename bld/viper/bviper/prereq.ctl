@@ -24,7 +24,7 @@
 
 [ BLOCK <BUILD_PLATFORM> linux386 ]
 #===============================
-    cdsay <projdir>\linux386
+    cdsay <projdir>/linux386
     wmake -h
-    <CPCMD> bviper.exe <owroot>\bld\build\binl\bviper.exe
+    <CPCMD> bviper.exe <owroot>/bld/build/binl/bviper.exe
     cdsay <projdir>
