@@ -27,28 +27,21 @@ use_bld_incs    = 0
 !endif
 
 !ifeq use_bld_incs 1
-cc_386          += -i$(bld_incs)
-cpp_386         += -i$(bld_incs)
+cc_386          += -i"$(bld_incs)"
+cpp_386         += -i"$(bld_incs)"
 !endif
 
 !endif
 
 !ifdef __LOADDLL__
-!loaddll wccaxp $(nlang_dll)\wccdaxp.dll
-!loaddll wppaxp $(nlang_dll)\wppdaxp.dll
-!loaddll wlink  $(nlang_dll)\wlink.dll
-!loaddll wlib   $(nlang_dll)\wlibd.dll
 !loaddll wcc    $(nlang_dll)\wccd.dll
 !loaddll wcc386 $(nlang_dll)\wccd386.dll
-!loaddll wcc386 $(nlang_dll)\wccd386.dll
-!loaddll wlib   $(nlang_dll)\wlibd.dll
 !loaddll wccaxp $(nlang_dll)\wccdaxp.dll
-!loaddll wppaxp $(nlang_dll)\wppdaxp.dll
+!loaddll wlib   $(nlang_dll)\wlibd.dll
 !loaddll wlink  $(nlang_dll)\wlink.dll
-!loaddll wcc    $(nlang_dll)\wccd.dll
-!loaddll wcc386 $(nlang_dll)\wccd386.dll
 !loaddll wpp    $(nlang_dll)\wppdi86.dll
 !loaddll wpp386 $(nlang_dll)\wppd386.dll
+!loaddll wppaxp $(nlang_dll)\wppdaxp.dll
 !endif
 
 !ifeq proj_name cc
