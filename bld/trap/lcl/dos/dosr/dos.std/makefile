@@ -4,7 +4,3 @@ host_OS = dos
 
 !include $(trap_dir)/lcl/dos/dosr/dosr.mif
 !include $(trap_dir)/master.mif
-
-realtrap.obj : ../asm/trap.asm
-
-dumtrap.obj : ../asm/trap.asm

@@ -38,14 +38,13 @@ sys_x86_os2  = sys os2 dll initinstance &
             export TrapInit_.1 &
             export TrapFini_.2 &
             export TrapRequest_.3 &
-            op modname=$^& &
-            lib $(os2286)
+            op modname=$^&
 sys_x86_os2v2  = sys os2v2 dll initinstance terminstance &
             export TrapInit_.1 &
             export TrapFini_.2 &
             export TrapRequest_.3 &
             op modname=$^&
-sys_x86_win  = sys windows dll &
+sys_x86_win  = sys windows_dll &
             export WEP.1 RESIDENT &
             export TRAPINIT.2 &
             export TRAPFINI.3 &
@@ -57,8 +56,7 @@ sys_x86_win  = sys windows dll &
             export SETHARDMODE.12 &
             export UNLOCKINPUT.13 &
             op modname=$^& &
-            option description $(description) &
-            file $(lang_root)/lib286/win/libentry.obj
+            option description $(description)
 sys_x86_nt   = sys nt_dll initinstance &
             export TrapInit_.1 &
             export TrapFini_.2 &

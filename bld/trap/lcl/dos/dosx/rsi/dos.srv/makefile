@@ -8,8 +8,6 @@ cpu = x86
 name = rsihelp
 which = SERVER
 
-rsidir = $(tools_root)
-
 extra_objs = &
         $(dosx_serv_objs) &
         dosredir.obj &
@@ -42,13 +40,11 @@ objs += $(lang_root)/lib286/dos/dos16m.obj &
         segs_16m.obj &
         magicstr.obj
 
-lf = tmp.lnk
-
 $(target) : $(extra_libs) $(objs) $(__MAKEFILES__)
-    @%create $(lf)
-    @%append $(lf) exp($^@) map($^&) log($^&.err)
-    @%append $(lf) -mpl -nod -DPMI -map -acg -farcall -auto -quiet -rtnerr 2
-    @for %i in ($(objs)) do @%append $(lf) %i
-    @%append $(lf) $(rsilib)/d16libc.lib
-    @%append $(lf) $(lang_root)/lib286/dos/clibc.lib $(extra_libs)
-    !$(rsidir)\glu @$(lf)
+    @%create tmp.lnk
+    @%append tmp.lnk exp($^@) map($^&) log($^&.err)
+    @%append tmp.lnk -mpl -nod -DPMI -map -acg -farcall -auto -quiet -rtnerr 2
+    @for %i in ($(objs)) do @%append tmp.lnk %i
+    @%append tmp.lnk $(rsilib)/d16libc.lib
+    @%append tmp.lnk $(lang_root)/lib286/dos/clibc.lib $(extra_libs)
+    -$(tools_root)\glu @tmp.lnk

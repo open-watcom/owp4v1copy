@@ -8,7 +8,7 @@ memory_model_i86 = c
 
 sys_dll = 1
 
-OBJS =  intmain.obj ints.obj int32.obj
+objs =  intmain.obj ints.obj int32.obj
 
 !include cproj.mif
 !include deftarg.mif
@@ -17,24 +17,23 @@ OBJS =  intmain.obj ints.obj int32.obj
 extra_c_flags = -s -fpc -zu -zw
 
 extra_l_flags_win = initinstance memory
-extra_l_flags_win += option heapsize=1k
-extra_l_flags_win += export WEP.1 RESIDENT
-extra_l_flags_win += segment CLASS 'CODE' PRELOAD FIXED
-extra_l_flags_win += segment CLASS 'FAR_DATA' PRELOAD FIXED
-extra_l_flags_win += segment CLASS 'BEGDATA' PRELOAD FIXED
-extra_l_flags_win += segment CLASS 'DATA' PRELOAD FIXED
-extra_l_flags_win += segment CLASS 'BSS' PRELOAD FIXED
-extra_l_flags_win += library windows,clibc,toolhelp
-extra_l_flags_win += file {$(objs)}
+
+extra_l_flags = option map, heapsize=1k
+extra_l_flags += export WEP.1 RESIDENT
+extra_l_flags += segment CLASS 'CODE' PRELOAD FIXED
+extra_l_flags += segment CLASS 'FAR_DATA' PRELOAD FIXED
+extra_l_flags += segment CLASS 'BEGDATA' PRELOAD FIXED
+extra_l_flags += segment CLASS 'DATA' PRELOAD FIXED
+extra_l_flags += segment CLASS 'BSS' PRELOAD FIXED
+extra_l_flags += library clibc
+extra_l_flags += file {$(objs)}
 
 w : .symbolic $(name).dll
         @%null
 
-$(name).dll: $(OBJS)
+$(name).dll: $(objs)
        $(linker) $(lflags) name $^@
 
 .c : ../c
-
-extra_a_flags = -fpc -mc
 
 .asm : ../asm
