@@ -31,12 +31,11 @@
 
 
 ifdef __386__
- include mdef.inc
  .387
 else
- include mdef.inc
  .8087
 endif
+include mdef.inc
 include struct.inc
 include math387.inc
 
@@ -46,12 +45,7 @@ include math387.inc
 
         modstart        asin387
 
-    if __WASM__ ge 100
         xdefp   "C",asin        ; double asin( double x )
-    else
-        xdefp   <"C",asin>      ; double asin( double x )
-    endif
-
 ;
 ;       asin(x) = atan( x / sqrt( 1 - x*x ) );
 ;

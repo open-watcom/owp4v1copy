@@ -30,12 +30,12 @@
 ;*****************************************************************************
 
 
-include mdef.inc
 ifdef __386__
  .387
 else
  .8087
 endif
+include mdef.inc
 include struct.inc
 include math387.inc
 

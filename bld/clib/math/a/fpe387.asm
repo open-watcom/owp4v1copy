@@ -40,11 +40,7 @@ include struct.inc
 include mdef.inc
 include extender.inc
 
-        if __WASM__ ge 100
-            xref        "C",__Enable_FPE        ; enable exceptions
-        else
-            xref        <"C",__Enable_FPE>      ; enable exceptions
-        endif
+        xref    "C",__Enable_FPE        ; enable exceptions
         xref    __Phar_hook_init_       ; setup interupts for Pharlap
         xref    __Phar_hook_fini_       ; restore interupts for Pharlap
         xref    __DOS4G_hook_init_      ; setup interupts for Rational
@@ -70,11 +66,7 @@ __RMAddr        dd      0
 
         enddata
 
-        if __WASM__ ge 100
-            xdefp       "C",__Init_FPE_handler
-        else
-            xdefp       <"C",__Init_FPE_handler>
-        endif
+        xdefp   "C",__Init_FPE_handler
 defp    __Init_FPE_handler
         _guess                          ; guess initialization required
           cmp   word ptr __PMSeg,0      ; - quit if already initialized
@@ -116,11 +108,7 @@ defp    __Init_FPE_handler
 endproc __Init_FPE_handler
 
 
-        if __WASM__ ge 100
-            xdefp       "C",__Fini_FPE_handler
-        else
-            xdefp       <"C",__Fini_FPE_handler>
-        endif
+        xdefp   "C",__Fini_FPE_handler
 defp    __Fini_FPE_handler
         cmp     word ptr __PMSeg,0      ; if not initialized
         _if     e                       ; - then

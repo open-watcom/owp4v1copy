@@ -82,22 +82,15 @@ endif
 
 
         defp    _dos_creat
-        if __WASM__ ge 100
-            xdefp   "C",_dos_creat
-        else
-            xdefp   <"C",_dos_creat>
-        endif
+        xdefp   "C",_dos_creat
 ;
 ;       unsigned _dos_creat( char *path, unsigned attr, int *handle )
 ;
         create  3Ch
         endproc _dos_creat
+
         defp    _dos_creatnew
-        if __WASM__ ge 100
-            xdefp   "C",_dos_creatnew
-        else
-            xdefp   <"C",_dos_creatnew>
-        endif
+        xdefp   "C",_dos_creatnew
 ;
 ;       unsigned _dos_creatnew( char *path, unsigned attr, int *handle )
 ;

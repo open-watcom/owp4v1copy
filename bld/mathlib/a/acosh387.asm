@@ -31,30 +31,20 @@
 
 
 ifdef __386__
- include mdef.inc
  .387
 else
- include mdef.inc
  .8087
 endif
+include mdef.inc
 include struct.inc
 include math387.inc
 
-    if __WASM__ ge 100
         xref    "C",__log87_err
-    else
-        xref    <"C",__log87_err>
-    endif
         xref    __8087  ; indicate that NDP instructions are present
 
         modstart    acosh387
 
-    if __WASM__ ge 100
         xdefp   "C",acosh       ; double acosh( double x )
-    else
-        xdefp   <"C",acosh>     ; double acosh( double x )
-    endif
-
 ;
 ;       acosh(x) = log(x + sqrt(x*x - 1.0)));
 ;

@@ -31,12 +31,11 @@
 
 
 ifdef __386__
- include mdef.inc
  .387
 else
- include mdef.inc
  .8087
 endif
+include mdef.inc
 include struct.inc
 include math387.inc
 
@@ -44,12 +43,7 @@ include math387.inc
 
         modstart        asinh387
 
-    if __WASM__ ge 100
         xdefp   "C",asinh       ; double asinh( double x )
-    else
-        xdefp   <"C",asinh>     ; double asinh( double x )
-    endif
-
 ;
 ;       asinh(x) = log(x + sqrt(x*x + 1.0)));
 ;       asinh(x) = - asinh( -x );

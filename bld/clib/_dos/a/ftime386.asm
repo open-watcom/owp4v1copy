@@ -40,11 +40,7 @@ include int21.inc
         modstart dosftime
 
         defp    _dos_getftime
-        if __WASM__ ge 100
-            xdefp       "C",_dos_getftime
-        else
-            xdefp       <"C",_dos_getftime>
-        endif
+        xdefp   "C",_dos_getftime
 ;
 ;       unsigned _dos_getftime( int handle,
 ;                               unsigned short *date,
@@ -80,12 +76,9 @@ ifdef __STACK__
 endif
         ret                     ; return to caller
         endproc _dos_getftime
+
         defp    _dos_setftime
-        if __WASM__ ge 100
-            xdefp       "C",_dos_setftime
-        else
-            xdefp       <"C",_dos_setftime>
-        endif
+        xdefp   "C",_dos_setftime
 ;
 ;       unsigned _dos_setftime( int handle,
 ;                               unsigned short date,

@@ -32,11 +32,7 @@
 
 include mdef.inc
 
-        if __WASM__ ge 100
-            xref    "C",__chk8087
-        else
-            xref    <"C",__chk8087>
-        endif
+        xref    "C",__chk8087
 
         name    _8087
 

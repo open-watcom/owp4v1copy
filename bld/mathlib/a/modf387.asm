@@ -31,12 +31,11 @@
 
 
 ifdef __386__
- include mdef.inc
  .387
 else
- include mdef.inc
  .8087
 endif
+include mdef.inc
 include math387.inc
 
         xref            __CHP
@@ -44,11 +43,7 @@ include math387.inc
 
         modstart        modf387
 
-    if __WASM__ ge 100
         xdefp   "C",modf        ; double modf( double x, double *iptr )
-    else
-        xdefp   <"C",modf>      ; double modf( double x, double *iptr )
-    endif
 
 ;  input:       x - on the stack
 ;               iptr on the stack

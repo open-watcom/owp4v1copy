@@ -30,12 +30,12 @@
 ;*****************************************************************************
 
 
-include mdef.inc
 ifdef __386__
  .387
 else
  .8087
 endif
+include mdef.inc
 include struct.inc
 include math387.inc
 
@@ -44,11 +44,7 @@ include math387.inc
 
         modstart        fmod387
 
-    if __WASM__ ge 100
         xdefp   "C",fmod        ; calc fmod(x,y)
-    else
-        xdefp   <"C",fmod>      ; calc fmod(x,y)
-    endif
 
 ifndef __386__
 if _MODEL and _BIG_CODE

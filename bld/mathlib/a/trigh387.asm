@@ -30,12 +30,12 @@
 ;*****************************************************************************
 
 
-include mdef.inc
 ifdef __386__
  .387
 else
  .8087
 endif
+include mdef.inc
 include struct.inc
 include math387.inc
 
@@ -56,15 +56,9 @@ ifdef __386__
     enddata
 endif
 
-    if __WASM__ ge 100
         xdefp   "C",sinh        ; calc sinh(fac1)
         xdefp   "C",cosh        ; calc cosh(fac1)
         xdefp   "C",tanh        ; calc tanh(fac1)
-    else
-        xdefp   <"C",sinh>      ; calc sinh(fac1)
-        xdefp   <"C",cosh>      ; calc cosh(fac1)
-        xdefp   <"C",tanh>      ; calc tanh(fac1)
-    endif
 
 ifndef __386__
 if _MODEL and _BIG_CODE

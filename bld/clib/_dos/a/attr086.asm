@@ -39,11 +39,7 @@ include struct.inc
         modstart dosattr
 
         defp    _dos_getfileattr
-        if __WASM__ ge 100
-            xdefp   "C",_dos_getfileattr
-        else
-            xdefp   <"C",_dos_getfileattr>
-        endif
+        xdefp   "C",_dos_getfileattr
 ;
 ;       unsigned _dos_getfileattr( char *path, unsigned *attr );
 ;
@@ -78,12 +74,9 @@ endif
         pop     BP              ; restore BP
         ret                     ; return to caller
         endproc _dos_getfileattr
+
         defp    _dos_setfileattr
-        if __WASM__ ge 100
-            xdefp   "C",_dos_setfileattr
-        else
-            xdefp   <"C",_dos_setfileattr>
-        endif
+        xdefp   "C",_dos_setfileattr
 ;
 ;       unsigned _dos_setfileattr( char *path, unsigned attr );
 ;

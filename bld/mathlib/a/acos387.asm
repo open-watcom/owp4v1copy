@@ -31,12 +31,11 @@
 
 
 ifdef __386__
- include mdef.inc
  .387
 else
- include mdef.inc
  .8087
 endif
+include mdef.inc
 include struct.inc
 include math387.inc
 
@@ -46,11 +45,7 @@ include math387.inc
 
         modstart        acos387
 
-    if __WASM__ ge 100
-        xdefp   "C",acos        ; double acos( double x )
-    else
-        xdefp   <"C",acos>      ; double acos( double x )
-    endif
+        xdefp           "C",acos        ; double acos( double x )
 
 
 ifdef __386__

@@ -31,22 +31,17 @@
 
 
 ifdef __386__
- include mdef.inc
  .387
 else
- include mdef.inc
  .8087
 endif
+include mdef.inc
 include math387.inc
 
-        xref            __8087  ; indicate that NDP instructions are present
-        modstart        fabs387
+        xref     __8087  ; indicate that NDP instructions are present
+        modstart fabs387
 
-    if __WASM__ ge 100
         xdefp    "C",fabs       ; double fabs( double x )
-    else
-        xdefp    <"C",fabs>     ; double fabs( double x )
-    endif
 
 ifndef __386__
 if _MODEL and _BIG_CODE

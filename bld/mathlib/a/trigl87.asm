@@ -31,12 +31,11 @@
 
 
 ifdef __386__
- include mdef.inc
  .387
 else
- include mdef.inc
  .8087
 endif
+include mdef.inc
 include struct.inc
 include math387.inc
 
@@ -46,15 +45,9 @@ include math387.inc
 
         modstart        trigl87
 
-    if __WASM__ ge 100
         xdefp   "C",_cosl       ; long double _cosl( long double x )
         xdefp   "C",_sinl       ; long double _sinl( long double x )
         xdefp   "C",_tanl       ; long double _tanl( long double x )
-    else
-        xdefp   <"C",_cosl>     ; long double _cosl( long double x )
-        xdefp   <"C",_sinl>     ; long double _sinl( long double x )
-        xdefp   <"C",_tanl>     ; long double _tanl( long double x )
-    endif
 
 ;  input:       x - on the stack
 ;  output:      cos of x in st(0)

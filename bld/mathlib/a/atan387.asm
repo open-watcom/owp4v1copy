@@ -30,12 +30,12 @@
 ;*****************************************************************************
 
 
-include mdef.inc
 ifdef __386__
  .387
 else
  .8087
 endif
+include mdef.inc
 include struct.inc
 include math387.inc
 
@@ -47,13 +47,8 @@ include math387.inc
         datasegment
         enddata
 
-    if __WASM__ ge 100
         xdefp   "C",atan        ; double atan( double x )
         xdefp   "C",atan2       ; double atan2( double y, double x )
-    else
-        xdefp   <"C",atan>      ; double atan( double x )
-        xdefp   <"C",atan2>     ; double atan2( double y, double x )
-    endif
 
 ifndef __386__
 if _MODEL and _BIG_CODE

@@ -86,13 +86,8 @@ endif
 ;=============================================================================
 jump16          macro   n, p
                 lss     sp,dword ptr [esp]      ; load 16-bit SS:SP
-                ifdef __WASM__
-                jmp     far ptr l16&n&&p        ; jump to 16-bit code segment
-ret32&n&&p      label   far
-                else
                 jmp     far ptr l16&n&p         ; jump to 16-bit code segment
 ret32&n&p       label   far
-                endif
                 lss     esp,fword ptr 4[ebp]    ; load 32-bit SS:ESP
                 endm
 
@@ -114,13 +109,8 @@ epi32           macro   n, p
 ;
 ;=============================================================================
 proc16          macro   n, p
-ifdef __WASM__
-p16&n&&p        proc    far
-l16&n&&p        label   far
-else
 p16&n&p         proc    far
 l16&n&p         label   far
-endif
                 mov     cx,ss                   ; set up 16-bit seg registers
                 mov     ds,cx                   ; ...
                 mov     es,cx                   ; ...
@@ -128,13 +118,8 @@ ifidn           <n>,<Pascal>
                 push    ax
 endif
                 call    dword ptr [bp]          ; call 16:16 function
-                ifdef __WASM__
-                jmp     far ptr _TEXT:ret32&n&&p; jump back to 32-bit segment
-p16&n&&p        endp
-                else
                 jmp     far ptr _TEXT:ret32&n&p ; jump back to 32-bit segment
 p16&n&p         endp
-                endif
                 endm
 
 

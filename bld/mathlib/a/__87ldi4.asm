@@ -39,13 +39,12 @@
 ;  Volatile:    none
 ;
 ifdef __386__
- include mdef.inc
  .386
  .387
 else
- include mdef.inc
  .8087
 endif
+include mdef.inc
 include math387.inc
 
         xref            __8087  ; indicate that NDP instructions are present

@@ -30,31 +30,22 @@
 ;*****************************************************************************
 
 
-include mdef.inc
 ifdef __386__
  .387
 else
  .8087
 endif
+include mdef.inc
 include struct.inc
 include math387.inc
 
         extern_chipbug
-    if __WASM__ ge 100
         xref    "C",__log87_err
-    else
-        xref    <"C",__log87_err>
-    endif
         xref    __8087  ; indicate that NDP instructions are present
 
         modstart    atanh387
 
-    if __WASM__ ge 100
         xdefp   "C",atanh       ; double atanh( double x )
-    else
-        xdefp   <"C",atanh>     ; double atanh( double x )
-    endif
-
 ;
 ;       atanh(x) = log( (1.0 + x) / (1.0 - x) ) / 2.0
 ;

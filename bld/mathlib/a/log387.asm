@@ -31,33 +31,22 @@
 
 
 ifdef __386__
- include mdef.inc
  .387
 else
- include mdef.inc
  .8087
 endif
+include mdef.inc
 include struct.inc
 include math387.inc
 
-    if __WASM__ ge 100
         xref    "C",__log87_err
-    else
-        xref    <"C",__log87_err>
-    endif
         xref    __8087  ; indicate that NDP instructions are present
 
         modstart    log387
 
-    if __WASM__ ge 100
         xdefp   "C",log         ; calc log(fac1)
         xdefp   "C",log2        ; calc log2(fac1)
         xdefp   "C",log10       ; calc log10(fac1)
-    else
-        xdefp   <"C",log>       ; calc log(fac1)
-        xdefp   <"C",log2>      ; calc log2(fac1)
-        xdefp   <"C",log10>     ; calc log10(fac1)
-    endif
 
 ifndef __386__
         if _MODEL and _BIG_CODE

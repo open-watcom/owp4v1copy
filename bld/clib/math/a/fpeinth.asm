@@ -62,11 +62,7 @@ SaveESP dd      0
 CW_MASK equ      CW_IM+CW_ZM+CW_OM
 
 
-        if __WASM__ ge 100
-            xdefp       "C",__Enable_FPE
-        else
-            xdefp       <"C",__Enable_FPE>
-        endif
+        xdefp   "C",__Enable_FPE
 defp    __Enable_FPE
         sub     ESP,4                   ; allocate space for control word
         fstcw   word ptr [ESP]          ; get control word

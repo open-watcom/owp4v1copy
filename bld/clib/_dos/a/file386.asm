@@ -40,11 +40,7 @@ include int21.inc
         modstart dosfile
 
         defp    _dos_close
-        if __WASM__ ge 100
-            xdefp       "C",_dos_close
-        else
-            xdefp       <"C",_dos_close>
-        endif
+        xdefp   "C",_dos_close
 ;
 ;       unsigned _dos_close( int handle );
 ;
@@ -59,12 +55,9 @@ endif
         pop     EBX             ; restore BX
         ret                     ; return to caller
         endproc _dos_close
+
         defp    _dos_commit
-        if __WASM__ ge 100
-            xdefp       "C",_dos_commit
-        else
-            xdefp       <"C",_dos_commit>
-        endif
+        xdefp   "C",_dos_commit
 ;
 ;       unsigned _dos_commit( int handle );
 ;
@@ -80,12 +73,9 @@ endif
         pop     EBX             ; restore BX
         ret                     ; return to caller
         endproc _dos_commit
+
         defp    _dos_open
-        if __WASM__ ge 100
-            xdefp       "C",_dos_open
-        else
-            xdefp       <"C",_dos_open>
-        endif
+        xdefp   "C",_dos_open
 ;
 ;       unsigned _dos_open( char *path, unsigned mode, int *handle )
 ;

@@ -86,19 +86,11 @@ Save87  dw      0
         dw      0
 endif
 
-    if __WASM__ ge 100
         xdefp   "C",__Enable_FPE
         ifndef  __OS2__
             xdefp       "C",__Init_FPE_handler
             xdefp       "C",__Fini_FPE_handler
         endif
-        else
-        xdefp   <"C",__Enable_FPE>
-        ifndef  __OS2__
-            xdefp       <"C",__Init_FPE_handler>
-            xdefp       <"C",__Fini_FPE_handler>
-        endif
-    endif
 
 defp    __Enable_FPE
         push    BP                      ; save BP

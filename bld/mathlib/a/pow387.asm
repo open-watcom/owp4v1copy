@@ -34,31 +34,22 @@
 ;   double pow( double x, double y )
 ;
 ifdef __386__
- include mdef.inc
  .387
 else
- include mdef.inc
  .8087
 endif
+include mdef.inc
 include struct.inc
 include math387.inc
 
         extern_chipbug
-    if __WASM__ ge 100
         xref    "C",__pow87_err
-    else
-        xref    <"C",__pow87_err>
-    endif
         xref    __@DEXP
         xref    __8087  ; indicate that NDP instructions are present
 
         modstart    pow387
 
-    if __WASM__ ge 100
         xdefp   "C",pow ; calc pow(x,y)
-    else
-        xdefp   <"C",pow>       ; calc pow(x,y)
-    endif
 
 ifndef __386__
         if _MODEL and _BIG_CODE

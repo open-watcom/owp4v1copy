@@ -39,11 +39,7 @@ include struct.inc
         modstart dosfind
 
         defp    _dos_findfirst
-        if __WASM__ ge 100
-            xdefp   "C",_dos_findfirst
-        else
-            xdefp   <"C",_dos_findfirst>
-        endif
+        xdefp   "C",_dos_findfirst
 ;
 ;       unsigned _dos_findfirst( char *path, unsigned attr, struct find_t *buf)
 ;       struct find_t {
@@ -96,12 +92,9 @@ else
         ret                     ; return to caller
 endif
         endproc _dos_findfirst
+
         defp    _dos_findnext
-        if __WASM__ ge 100
-            xdefp   "C",_dos_findnext
-        else
-            xdefp   <"C",_dos_findnext>
-        endif
+        xdefp   "C",_dos_findnext
 ;
 ;       unsigned _dos_findnext( struct find_t *buf)
 ;
@@ -122,12 +115,9 @@ endif
         pop     DX              ; restore DX
         ret                     ; return to caller
         endproc _dos_findnext
+
         defp    _dos_findclose
-        if __WASM__ ge 100
-            xdefp   "C",_dos_findclose
-        else
-            xdefp   <"C",_dos_findclose>
-        endif
+        xdefp   "C",_dos_findclose
 ;
 ;       unsigned _dos_findclose( struct find_t *buf)
 ;

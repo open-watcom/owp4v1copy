@@ -31,29 +31,20 @@
 
 
 ifdef __386__
- include mdef.inc
  .387
 else
- include mdef.inc
  .8087
 endif
+include mdef.inc
 include struct.inc
 include math387.inc
 
-    if __WASM__ ge 100
         xref    "C",__math87_err
-    else
-        xref    <"C",__math87_err>
-    endif
         xref    __8087  ; indicate that NDP instructions are present
 
         modstart    sqrt387
 
-    if __WASM__ ge 100
         xdefp   "C",sqrt        ; calc sqrt(fac1)
-    else
-        xdefp   <"C",sqrt>      ; calc sqrt(fac1)
-    endif
 
         defp    sqrt
 ifdef __386__

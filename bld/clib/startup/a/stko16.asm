@@ -56,11 +56,7 @@ _DATA   ends
         assume  ds:DGROUP
 
         xdefp   __STK
-        if __WASM__ ge 100
-            xdefp  "C",__STKOVERFLOW
-        else
-            xdefp  <"C",__STKOVERFLOW>
-        endif
+        xdefp   "C",__STKOVERFLOW
 
 dgroupp dw      DGROUP
 

@@ -33,8 +33,8 @@
 ;
 ;   interface to floating point library for trig functions
 ;
-include mdef.inc
 .387
+include mdef.inc
 include struct.inc
 include math387.inc
 
@@ -46,15 +46,9 @@ include math387.inc
         ;datasegment
         ;enddata
 
-    if __WASM__ ge 100
         xdefp   "C",sin         ; calc sin(fac1)
         xdefp   "C",cos         ; calc cos(fac1)
         xdefp   "C",tan         ; calc tan(fac1)
-    else
-        xdefp   <"C",sin>       ; calc sin(fac1)
-        xdefp   <"C",cos>       ; calc cos(fac1)
-        xdefp   <"C",tan>       ; calc tan(fac1)
-    endif
 
 ifndef __386__
 if _MODEL and _BIG_CODE

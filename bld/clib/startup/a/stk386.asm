@@ -48,14 +48,10 @@ include xinit.inc
 
         assume  ds:DGROUP
 
-        xdefp       __STK
-        xdefp       __CHK
-        xdefp       __GRO
-        if __WASM__ ge 100
-            xdefp  "C",__STKOVERFLOW
-        else
-            xdefp  <"C",__STKOVERFLOW>
-        endif
+        xdefp   __STK
+        xdefp   __CHK
+        xdefp   __GRO
+        xdefp   "C",__STKOVERFLOW
 
 
         defp    _init_stk
