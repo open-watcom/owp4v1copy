@@ -828,7 +828,7 @@ static  int  CompLink( void )
             strcat( Word, file );
             if( ! FileExtension( Word, OBJ_EXT ) ) { // if not .obj, compile
                 if( ! Flags.be_quiet ) {
-                    PrintMsg( "       %s %s %s", cc_name, Word, CC_Opts );
+                    PrintMsg( "       %s %s %s\n", cc_name, Word, CC_Opts );
                     fflush( stdout );
                 }
                 rc = spawnlp( P_WAIT, CC_Path, cc_name, Word, CC_Opts, NULL );
@@ -1019,7 +1019,7 @@ static  char  *MakePath( char *path )
 static  char  *GetName( char *path )
 /**********************************/
 {
-#ifndef __UNIX__    
+#ifndef __UNIX__
     static      DIR     *dirp;
     struct      dirent  *direntp;
 
