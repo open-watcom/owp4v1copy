@@ -4,7 +4,7 @@ books=c_readme ide wbrw wprof editor &
  resedt resacc resdlg resimg resmnu resstr &
  zoom heapwalk spy ddespy drwatcom drnt &
  clr cguide pguide lguide wlnkerrs tools wd rescomp &
- clib cpplib wccerrs wpperrs wrcerrs isv isvcpp isvfor &
+ clib cpplib wccerrs wpperrs wrcerrs &
  f_readme fuguide fpguide ftools f77graph f77lr wfcerrs &
  cmix fmix
 
@@ -14,7 +14,7 @@ books=c_readme ide wbrw wprof editor &
  resedt resacc resdlg resimg resmnu resstr &
  zoom heapwalk spy ddespy drwatcom drnt &
  clr cguide pguide lguide wlnkerrs tools wd rescomp &
- clib cpplib wccerrs wpperrs wrcerrs isv isvcpp isvfor &
+ clib cpplib wccerrs wpperrs wrcerrs &
  f_readme fuguide fpguide ftools f77graph f77lr wfcerrs &
  cbooks ebooks fbooks
 
@@ -24,7 +24,7 @@ books=c_readme wprof &
  cguide pguide lguide &
  tools wd &
  clr rescomp &
- clib cpplib wccerrs wpperrs isv isvcpp isvfor &
+ clib cpplib wccerrs wpperrs &
  f_readme fuguide fpguide ftools f77graph f77lr wfcerrs &
  cmix fmix
 
@@ -42,7 +42,7 @@ books=c_readme ide wbrw wprof &
  cguide pguide lguide &
  tools wd &
  clr rescomp &
- clib cpplib wccerrs wpperrs isv isvcpp isvfor &
+ clib cpplib wccerrs wpperrs &
  f_readme fuguide fpguide ftools f77graph f77lr wfcerrs &
  cmix fmix
 
@@ -73,8 +73,8 @@ book_objs=$(objs_cmn)
 book_incs=$(incs_cmn)
 book_src=foo
 
-!else ifeq hbook devguide 
-# devguide 
+!else ifeq hbook devguide
+# devguide
 book_title=$(company) Developer's Guide
 book_objs=$(objs_devguide) $(objs_cmn)
 book_incs=$(incs_devguide);$(incs_cmn)
@@ -565,7 +565,7 @@ book_src=wasaxp
 
 !else
 
-!error $(hbook) is Undefined $(company) documentation book 
+!error $(hbook) is Undefined $(company) documentation book
 
 !endif
 
