@@ -30,7 +30,7 @@
 !inject finfoptr.obj                     nt nta ntp
 !inject fileinfo.obj                     nt nta ntp
 !inject filelen.obj  d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 snp drv
-!inject fileno.obj   d16 d32             nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32
+!inject fileno.obj   d16 d32             nt nta ntp nvc ncl nvl nvl o16 o32 q16 q32 w16 w32 osi l32
 !inject fstat.obj    d16 d32                                                        w16 w32 osi
 !inject fstatos2.obj                                                o16 o32
 !inject fstatwnt.obj                     nt nta ntp
