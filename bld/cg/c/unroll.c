@@ -24,8 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Loop unrolling optimizations. Contains lots of obsolete
+*               and/or nonfunctional code. Currently doesn't work at all
+*               because other optimizations munge loops into a form this
+*               module doesn't expect.
 *
 ****************************************************************************/
 
@@ -151,6 +153,7 @@ extern  block   *DupBlock( block *blk )
     copy = MakeBlock( AskForNewLabel(), blk->targets );
     copy->class = ( blk->class & ~( LOOP_HEADER | ITERATIONS_KNOWN ) );
     copy->id = NO_BLOCK_ID;
+    copy->depth = blk->depth;
     copy->gen_id = blk->gen_id;
     copy->ins.hd.line_num = 0;
     copy->next_block = NULL;
@@ -763,7 +766,7 @@ extern  void    HoistCondition( block *head )
 {
     block_edge  *edge;
     block       *blk;
-    instruction *ins;
+    instruction *ins, *next;
 
     for( edge = head->input_edges; edge != NULL; edge = edge->next_source ) {
         if( edge->source->targets > 1 ) {
@@ -772,7 +775,8 @@ extern  void    HoistCondition( block *head )
     }
 
     for( blk = head; blk != NULL; blk = blk->edge[ 0 ].destination ) {
-        for( ins = blk->ins.hd.next; ins->head.opcode != OP_BLOCK; ins = ins->head.next ) {
+        ins = blk->ins.hd.next;
+        while( ins->head.opcode != OP_BLOCK ) {
             if( _OpIsCondition( ins->head.opcode ) ) {
                 RemoveIns( ins );
                 SuffixIns( head->ins.hd.prev, ins );
@@ -781,7 +785,9 @@ extern  void    HoistCondition( block *head )
             for( edge = head->input_edges; edge != NULL; edge = edge->next_source ) {
                 DupIns( edge->source->ins.hd.prev, ins, NULL, 0 );
             }
+            next = ins->head.next;
             FreeIns( ins );
+            ins = next;
         }
     }
     // should never reach here because we must have a conditional statement
