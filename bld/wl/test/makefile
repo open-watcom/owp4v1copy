@@ -1,7 +1,7 @@
 OBJS = ovl1.obj ovl2.obj ovl3.obj
 
 .c.obj:
-    wcc $[@ -ml -d2 -w4 -zq
+    wcc $[@ -ml -of -s -w4 -zq -d1 -oax
 
 main.exe : main.obj $(OBJS) $(__MAKEFILES__)
     %create tmp.lnk
@@ -15,11 +15,9 @@ main.exe : main.obj $(OBJS) $(__MAKEFILES__)
     %append tmp.lnk begin autosection
     @for %i in ($(OBJS)) do %append tmp.lnk file %i
     %append tmp.lnk end
-    %append tmp.lnk library ..\ovlldr\dovl.lib
-    %append tmp.lnk libpath \ow1\lib286
-    %append tmp.lnk libpath \ow1\lib286\dos
+    %append tmp.lnk library ..\ovlldr\wovl.lib
     %append tmp.lnk option area=0
-    wln @tmp.lnk
+    wlink @tmp.lnk
 
 clean: .symbolic
     rm -f *.obj main.exe
