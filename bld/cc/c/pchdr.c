@@ -860,7 +860,7 @@ void BuildPreCompiledHeader( char *filename )
     int         rc;
     char        *cwd;
 
-    if( FirstStmt != 0 || DataQuadSegIndex != -1 ) {
+    if( FirstStmt != 0 || DataQuadsAvailable() ) {
         PCHNote( PCHDR_NO_OBJECT );
         return;
     }

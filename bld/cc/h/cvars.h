@@ -448,7 +448,6 @@ global  unsigned        UnrollCount;    /* #pragma unroll(#); */
 global  unsigned char   InitialMacroFlag;
 global  unsigned char   Stack87;
 global  char            *ErrorFileName;
-global  int             DataQuadSegIndex;       /* cdinit */
 
 global struct  undef_names {
         struct undef_names *next;
@@ -539,6 +538,7 @@ extern  segment_id SymSegId( SYMPTR sym );
 
 extern  void    InitDataQuads(void);            /* cdinit */
 extern  void    FreeDataQuads(void);            /* cdinit */
+extern  int     DataQuadsAvailable(void);       /* cdinit */
 extern  int     StartDataQuadAccess(void);      /* cdinit */
 extern  DATA_QUAD *NextDataQuad(void);          /* cdinit */
 extern  void    InitSymData(TYPEPTR,TYPEPTR,int);       /* cdinit */

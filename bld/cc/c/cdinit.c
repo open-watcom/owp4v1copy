@@ -83,6 +83,7 @@ typedef struct data_quad_list {
 
 static DATA_QUAD_LIST  *DataQuadSegs[MAX_DATA_QUAD_SEGS];/* segments for data quads*/
 static DATA_QUAD_LIST  *CurDataQuad;
+static int             DataQuadSegIndex;
 static int             DataQuadIndex;
 
 local DATA_QUAD_LIST *NewDataQuad( void );
@@ -92,6 +93,12 @@ local void InitCharArray( TYPEPTR typ );
 local void InitWCharArray( TYPEPTR typ );
 local void StoreFloat( int float_type, unsigned long size );
 local void StoreInt64( TYPEPTR typ );
+
+int DataQuadsAvailable( void )
+{
+    return ( CurDataQuad != NULL &&
+             ( CurDataQuad->prev != NULL || CurDataQuad->next != NULL ) );
+}
 
 void InitDataQuads()
 {
@@ -118,7 +125,7 @@ void FreeDataQuads()
 
 int StartDataQuadAccess()
 {
-    if( DataQuadSegIndex != -1 ) {
+    if( DataQuadsAvailable() ) {
         CurDataQuad = DataQuadSegs[ 0 ]->next;
         return( 1 );                    // indicate data quads exist
     }

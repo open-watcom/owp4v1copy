@@ -226,7 +226,6 @@ void InitGlobalVars( void ){
     InitialMacroFlag        = 0;
     Stack87                 = 0;
     ErrorFileName           = NULL;
-    DataQuadSegIndex        = 0;    /* cdinit */
 
     UndefNames              = NULL;
 
