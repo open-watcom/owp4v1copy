@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Linker pass 2 routines
 *
 ****************************************************************************/
 
-
-/*
- *  OBJPASS2  : pass 2 of WATFOR-77 8086 linker
- *
-*/
 
 #include <string.h>
 #include "linkstd.h"
@@ -66,7 +60,7 @@ extern void ObjPass2( void )
     CurrSect = Root;/*  TAI */
     PModList( Root->mods );
     OvlPass2();
-    if( FmtData.type & MK_OVERLAYS && FmtData.u.dos.distribute ) {
+    if( ( FmtData.type & MK_OVERLAYS ) && FmtData.u.dos.distribute ) {
         ProcDistMods();
     } else {
         CurrSect = Root;
@@ -93,7 +87,8 @@ extern void PModList( mod_entry *head )
 extern void PModule( mod_entry *obj )
 /***********************************/
 {
-    if( !(obj->modinfo & MOD_NEED_PASS_2) ) return;
+    if( !( obj->modinfo & MOD_NEED_PASS_2 ) )
+        return;
     DEBUG(( DBG_BASE, "2 : processing module %s", obj->name ));
     CurrMod = obj;
     IterateModRelocs( CurrMod->relocs, CurrMod->sizerelocs, IncExecRelocs );
@@ -107,7 +102,8 @@ extern bool LoadObj( segdata *seg )
     seg_leader *leader;
 
     leader = seg->u.leader;
-    if( leader == NULL || DBISkip( leader->dbgtype ) ) return FALSE;
+    if( ( leader == NULL ) || DBISkip( leader->dbgtype ) )
+        return( FALSE );
     CurrRec.seg = seg;
     if( leader->group == NULL ) {
         CurrRec.addr = leader->seg_addr;
@@ -116,9 +112,8 @@ extern bool LoadObj( segdata *seg )
 #endif
     } else {
         CurrRec.addr = leader->group->grp_addr;
-        CurrRec.addr.off += SUB_ADDR(leader->seg_addr, leader->group->grp_addr);
+        CurrRec.addr.off += SUB_ADDR( leader->seg_addr, leader->group->grp_addr );
     }
     CurrRec.addr.off += seg->a.delta;
-    return TRUE;
+    return( TRUE );
 }
-

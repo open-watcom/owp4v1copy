@@ -270,10 +270,10 @@ extern void DBIAddrInfoScan( seg_leader *seg,
     if( seg->dbgtype != NOT_DEBUGGING_INFO )
         return;
     if( ( seg->class->flags & ( CLASS_STACK | CLASS_IDATA ) )
-        && ( FmtData.dll || ( FmtData.type & MK_PE) ) )
+        && ( FmtData.dll || ( FmtData.type & MK_PE ) ) )
         return;
     prev = RingStep( seg->pieces, NULL );
-    for(;;) {
+    for( ; ; ) {
         if( prev == NULL )
             return;
         if( !prev->isdead )
@@ -305,7 +305,7 @@ extern void DBIComment( void )
 }
 
 extern void DBIAddModule( mod_entry *obj, section *sect )
-/***********************************************************/
+/*******************************************************/
 // called just before publics have been assigned addresses between p1 & p2
 {
     if( LinkFlags & OLD_DBI_FLAG ) {
@@ -377,8 +377,8 @@ extern void DBIModGlobal( void *_sym )
     if( !IS_SYM_ALIAS( sym ) && !( sym->info & SYM_DEAD ) ) {
         if( IS_SYM_IMPORTED( sym )
             || ( sym->p.seg != NULL )
-            && ( sym->p.seg->u.leader->dbgtype == NOT_DEBUGGING_INFO )
-            && ( !sym->p.seg->isabs ) ) {
+                && ( sym->p.seg->u.leader->dbgtype == NOT_DEBUGGING_INFO )
+                && !sym->p.seg->isabs ) {
             DBIAddGlobal( sym );
         }
     }
@@ -446,7 +446,7 @@ extern unsigned CalcLineQty( unsigned size, bool is32bit )
 static bool DoLineWalk( void *_info, void *_cbfn )
 /************************************************/
 {
-    void        (*cbfn)( segdata *,void *, unsigned, bool ) = _cbfn;
+    void        (*cbfn)( segdata *, void *, unsigned, bool ) = _cbfn;
     lineinfo    *info = _info;
     unsigned    size;
     bool        is32bit;
@@ -460,8 +460,8 @@ static bool DoLineWalk( void *_info, void *_cbfn )
 }
 
 extern void DBILineWalk( void *lines,
-                         void (*cbfn)( segdata *,void *, unsigned, bool ) )
-/*************************************************************************/
+                         void (*cbfn)( segdata *, void *, unsigned, bool ) )
+/**************************************************************************/
 {
     RingLookup( lines, DoLineWalk, cbfn );
 }
@@ -470,7 +470,7 @@ static void DBIGenLines( mod_entry *mod )
 /***************************************/
 // called during pass 2 linnum processing
 {
-    void (*fn)( segdata *,void *, unsigned, bool );
+    void (*fn)( segdata *, void *, unsigned, bool );
 
     if( LinkFlags & OLD_DBI_FLAG ) {
         fn = ODBIGenLines;

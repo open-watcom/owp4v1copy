@@ -53,7 +53,7 @@
 #define EXE_MINOR_VERSION   0
 
 #define ADDR_INFO_LIMIT ( 63 * 1024U / sizeof( addrinfo ) )
-#define DEMAND_INFO_SPLIT (16*1024)
+#define DEMAND_INFO_SPLIT ( 16 * 1024 )
 
 typedef struct {
     unsigned_32 offset;
@@ -182,7 +182,7 @@ extern void ODBIP1Source( byte major, byte minor, char *name, int len )
         Master.obj_major_ver = major;
     if( major != Master.obj_major_ver ) {
         LnkMsg( LOC+WRN+MSG_CANT_USE_LOCALS, NULL );
-        CurrMod->modinfo &= ~(DBI_TYPE | DBI_LOCAL);
+        CurrMod->modinfo &= ~( DBI_TYPE | DBI_LOCAL );
     }
     if( minor > Master.obj_minor_ver ) {
         Master.obj_minor_ver = minor;
@@ -792,7 +792,7 @@ static unsigned_16 WriteSegValues( void )
     } else if( FmtData.type & MK_ID_SPLIT ) {
         segarray[0] = CODE_SEGMENT;
         segarray[1] = DATA_SEGMENT;
-        DBIWriteLocal( segarray, sizeof( unsigned_16) * 2 );
+        DBIWriteLocal( segarray, sizeof( unsigned_16 ) * 2 );
         return( sizeof( unsigned_16 ) * 2 );
     } else {
         buffer = (unsigned_16 *) TokBuff;

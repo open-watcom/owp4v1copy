@@ -187,7 +187,7 @@ static void ReOrderClasses( section *sec )
                     break;
                 currseg = prevseg->next_seg;
                 for( ;; ) {
-                    if( stricmp(currseg->segname, BegTextSegName) == 0 ) {
+                    if( stricmp( currseg->segname, BegTextSegName ) == 0 ) {
                         RingPromote( &currcl->segs, currseg, prevseg );
                         break;
                     }
@@ -234,7 +234,7 @@ static void CheckClassUninitialized( class_entry * currcl )
 }
 
 static void InsertPrevRing( seg_leader **list, seg_leader *curr,
-                            seg_leader *prev)
+                            seg_leader *prev )
 /**************************************************************/
 {
     if( prev == NULL ) {
@@ -261,7 +261,7 @@ static void SortSegments( void )
     bool                added;
 
 
-    for( currcl = Root->classlist; currcl != NULL; currcl = currcl->next_class){
+    for( currcl = Root->classlist; currcl != NULL; currcl = currcl->next_class ){
         foundgroup = FALSE;
         newlist = NULL;
         curr = RingPop( &currcl->segs );
@@ -281,7 +281,7 @@ static void SortSegments( void )
                 while( comp != NULL ) {
                     complen = strcspn( comp->segname, "$" );
                     if( ( complen == currlen )
-                         && ( memcmp( comp->segname, curr->segname, complen) == 0 ) ) {
+                        && ( memcmp( comp->segname, curr->segname, complen ) == 0 ) ) {
                         foundmatch = TRUE;
                         if( strcmp( comp->segname + complen,
                                     curr->segname + currlen ) > 0 ) {
@@ -307,7 +307,7 @@ static void SortSegments( void )
     }
 }
 
-#define CODECL_SIZE (sizeof( CodeClassName ) - 1)
+#define CODECL_SIZE ( sizeof( CodeClassName ) - 1 )
 
 extern bool IsCodeClass( char *name, unsigned namelen )
 /*****************************************************/
@@ -316,22 +316,22 @@ extern bool IsCodeClass( char *name, unsigned namelen )
         memicmp( name+namelen-CODECL_SIZE, CodeClassName, CODECL_SIZE ) == 0 );
 }
 
-#define CONSTCL_SIZE (sizeof( ConstClassName ) - 1)
+#define CONSTCL_SIZE ( sizeof( ConstClassName ) - 1 )
 
 extern bool IsConstClass( char *name, unsigned namelen )
 /******************************************************/
 {
     return( namelen >= CONSTCL_SIZE &&
-        memicmp(name+namelen-CONSTCL_SIZE, ConstClassName, CONSTCL_SIZE ) == 0);
+        memicmp( name + namelen - CONSTCL_SIZE, ConstClassName, CONSTCL_SIZE ) == 0 );
 }
 
-#define STACKCL_SIZE (sizeof( StackClassName ) - 1)
+#define STACKCL_SIZE ( sizeof( StackClassName ) - 1 )
 
 extern bool IsStackClass( char *name, unsigned namelen )
 /******************************************************/
 {
     return( namelen >= STACKCL_SIZE &&
-        memicmp(name+namelen-STACKCL_SIZE, StackClassName, STACKCL_SIZE ) == 0);
+        memicmp( name + namelen - STACKCL_SIZE, StackClassName, STACKCL_SIZE ) == 0 );
 }
 
 /* -----------------------Allocating Segments-------------------------------- */
@@ -420,7 +420,7 @@ extern void CalcAddresses( void )
         if( FmtData.objalign == NO_BASE_SPEC ) {
             if( FmtData.type & MK_PE ) {
                 if( !( LinkState & HAVE_I86_CODE ) ) {
-                    FmtData.objalign = (64*1024UL);
+                    FmtData.objalign = ( 64 * 1024UL );
                 } else {
                     FmtData.objalign = 4*1024;
                 }
@@ -497,7 +497,7 @@ static void AllocFileSegs( void )
         } else if( FmtData.type & MK_QNX ) {
             currgrp->grp_addr.seg = ToQNXSel( seg_num++ );
         } else if( FmtData.type & MK_PHAR_MULTISEG ) {
-            currgrp->grp_addr.seg = (seg_num << 3) | 4;
+            currgrp->grp_addr.seg = ( seg_num << 3 ) | 4;
             seg_num++;
         } else {
             currgrp->grp_addr.seg = seg_num++;
@@ -511,7 +511,7 @@ static void SetLeaderSeg( void *_seg )
 {
     seg_leader *        seg = _seg;
 
-    if( !(seg->info & SEG_ABSOLUTE) ) {
+    if( !( seg->info & SEG_ABSOLUTE ) ) {
         seg->seg_addr.seg = seg->group->grp_addr.seg;
     }
 }
@@ -557,7 +557,8 @@ static void FindUninitDataStart( void )
     setnext = TRUE;
     FmtData.dgroupsplitseg = NULL;
     FmtData.bsspad = 0;
-    if( !( LinkState & DOSSEG_FLAG ) ) return;
+    if( !( LinkState & DOSSEG_FLAG ) )
+        return;
     class = Root->classlist;
     while( class != NULL ) {
         if( !( class->flags & CLASS_HANDS_OFF ) ) {
@@ -689,7 +690,7 @@ extern void ConvertToFrame( targ_addr *addr, segment frame )
     unsigned long   off;
 
     if( FmtData.type & MK_REAL_MODE ) {
-        off = MK_REAL_ADDR( (int)(addr->seg - frame), addr->off );
+        off = MK_REAL_ADDR( (int)( addr->seg - frame ), addr->off );
         if( off > 0x10000 ) {
             LnkMsg( LOC+ERR+MSG_FRAME_INVALID, "ax", addr, frame );
         }
@@ -748,8 +749,8 @@ static int SymAddrCompare( const void *a, const void *b )
     symbol * left;
     symbol * right;
 
-    left = *((symbol **) a);
-    right = *((symbol **) b);
+    left = *((symbol **)a);
+    right = *((symbol **)b);
     if( left->addr.seg < right->addr.seg ) {
         return( -1 );
     } else if( left->addr.seg > right->addr.seg ) {
@@ -780,8 +781,8 @@ extern void FinishMapSort( void )
 
     if( ( MapFlags & MAP_GLOBAL ) && ( NumMapSyms > 0 ) ) {
         symarray = NULL;
-        if( NumMapSyms < ( UINT_MAX / sizeof(symbol *) ) - 1 ) {
-            _LnkAlloc( symarray, NumMapSyms * sizeof(symbol *) );
+        if( NumMapSyms < ( UINT_MAX / sizeof( symbol * ) ) - 1 ) {
+            _LnkAlloc( symarray, NumMapSyms * sizeof( symbol * ) );
         }
         currsym = symarray;
         ok = symarray != NULL;
@@ -809,9 +810,9 @@ static void WriteSymArray( symbol ** symarray, unsigned num )
 /***********************************************************/
 {
     if( MapFlags & MAP_ALPHA ) {
-        qsort( symarray, num, sizeof(symbol *), SymAlphaCompare );
+        qsort( symarray, num, sizeof( symbol * ), SymAlphaCompare );
     } else {
-        qsort( symarray, num, sizeof(symbol *), SymAddrCompare );
+        qsort( symarray, num, sizeof( symbol * ), SymAddrCompare );
     }
     do {
         XReportSymAddr( *symarray );
@@ -840,9 +841,9 @@ static bool DefPubSym( void *_pub, void *_info )
 
     if( pub->info & ( SYM_DEAD | SYM_IS_ALTDEF ) )
         return( FALSE );
-    if( IS_SYM_ALIAS(pub) )
+    if( IS_SYM_ALIAS( pub ) )
         return( FALSE );
-    if( IS_SYM_IMPORTED(pub) )
+    if( IS_SYM_IMPORTED( pub ) )
         return( FALSE );
     seg = pub->p.seg;
     if( seg != NULL ) {
@@ -897,7 +898,7 @@ extern void DoPubs( section *sect )
         && !( MapFlags & MAP_GLOBAL )
         && ( CurrMod->publist != NULL ) ) {
         _ChkAlloc( info.symarray,
-                        Ring2Count( CurrMod->publist ) * sizeof(symbol *) );
+                        Ring2Count( CurrMod->publist ) * sizeof( symbol * ) );
     }
     info.num = 0;
     info.first = TRUE;
@@ -1037,14 +1038,14 @@ static void FindFloatSyms( void )
     symbol *    sym;
 
     ClearFloatBits();
-    for( index = 0; index < (sizeof( FloatNames ) / sizeof( FloatNames[0] ));
+    for( index = 0; index < ( sizeof( FloatNames ) / sizeof( FloatNames[0] ) );
             index++ ) {
         sym = FindISymbol( FloatNames[ index ] );
         if( sym != NULL ) {
             SET_FFIX_VALUE( sym, index + 1 );
         }
     }
-    for( index = 0; index < (sizeof( IgnoreNames ) / sizeof( IgnoreNames[0] ));
+    for( index = 0; index < ( sizeof( IgnoreNames ) / sizeof( IgnoreNames[0] ) );
             index++ ) {
         sym = FindISymbol( IgnoreNames[ index ] );
         if( sym != NULL ) {

@@ -75,7 +75,7 @@ extern void ResetOvlSupp( void )
     AreaSize = 0xFFFF;
 }
 
-static void ParmWalkSections( section *sect, void (*rtn)(section *,void *),
+static void ParmWalkSections( section *sect, void (*rtn)( section *, void * ),
                               void *parm )
 /*************************************************************************/
 {
@@ -85,7 +85,7 @@ static void ParmWalkSections( section *sect, void (*rtn)(section *,void *),
     }
 }
 
-extern void ParmWalkAreas( OVL_AREA *ovl, void (*rtn)(section *,void *),
+extern void ParmWalkAreas( OVL_AREA *ovl, void (*rtn)( section *, void * ),
                            void *parm )
 /**********************************************************************/
 {
@@ -94,7 +94,7 @@ extern void ParmWalkAreas( OVL_AREA *ovl, void (*rtn)(section *,void *),
     }
 }
 
-static void WalkSections( section *sect, void (*rtn)(section *) )
+static void WalkSections( section *sect, void (*rtn)( section * ) )
 /***************************************************************/
 {
     for( ; sect != NULL; sect = sect->next_sect ) {
@@ -103,7 +103,7 @@ static void WalkSections( section *sect, void (*rtn)(section *) )
     }
 }
 
-extern void WalkAreas( OVL_AREA *ovl, void (*rtn)(section *) )
+extern void WalkAreas( OVL_AREA *ovl, void (*rtn)( section * ) )
 /************************************************************/
 {
     for( ; ovl != NULL; ovl = ovl->next_area ) {
@@ -218,10 +218,10 @@ static void AllocSections( section *first_sect )
                 AreaSize = min_size;
                 if( area_specified ) {
                     LnkMsg( WRN+MSG_AREA_TOO_SMALL, "l",
-                                                 (unsigned long)min_size *16);
+                                                 (unsigned long)min_size *16 );
                 }
             }
-            result = CurrLoc.seg + (unsigned long) (AreaSize - ovl_size);
+            result = CurrLoc.seg + (unsigned long) ( AreaSize - ovl_size );
             if( result > 0xFFFF ) {
                 LnkMsg( WRN+MSG_CANT_RESERVE_SPACE, "l",
                                                  (unsigned long)AreaSize << 4 );
@@ -278,7 +278,7 @@ extern void CalcOvl( void )
     /* calculate size of overlay table proper */
     temp = sizeof( ovl_null_table ) + ( OvlNum - 1 ) * sizeof( ovltab_entry );
     XDefSymAddr( OverlayTableEnd, CurrLoc.off + temp - sizeof( unsigned_16 ),
-                                                                 CurrLoc.seg);
+                                                                 CurrLoc.seg );
     fnode = OutFiles;
     while( fnode != NULL ) {
         fnode->ovlfnoff = temp;
@@ -342,7 +342,7 @@ static bool IsAncestor( int elder, section *ceorl )
 /*************************************************/
 /* Is overlay section # "elder" an ancestor of section "ceorl" */
 {
-    for(;;) {
+    for( ; ; ) {
         if( ceorl->ovl_num == elder )
             return( TRUE );
         if( ceorl->parent == NULL )
@@ -351,8 +351,8 @@ static bool IsAncestor( int elder, section *ceorl )
     }
 }
 
-#define NO_VECTOR( sym ) ((IS_SYM_COMMUNAL(sym)) \
-                            || ((sym)->u.d.ovlstate & OVL_FORCE))
+#define NO_VECTOR( sym ) ( ( IS_SYM_COMMUNAL( sym ) ) \
+                            || ( (sym)->u.d.ovlstate & OVL_FORCE ) )
 
 extern void OvlDefVector( symbol * sym )
 /**************************************/
@@ -364,13 +364,13 @@ extern void OvlDefVector( symbol * sym )
         return;
     sdata = sym->p.seg;
     if( sdata == NULL ) {
-        sym->u.d.ovlstate |= (OVL_FORCE | OVL_NO_VECTOR);
+        sym->u.d.ovlstate |= ( OVL_FORCE | OVL_NO_VECTOR );
         return;         /* NOTE: <--- premature return <----------- */
     } else {
         ovl_num = sdata->u.leader->class->section->ovl_num;
     }
     if( !sdata->iscode || ( ovl_num == 0 ) ) {      // not code or in root
-        sym->u.d.ovlstate |= (OVL_FORCE | OVL_NO_VECTOR);
+        sym->u.d.ovlstate |= ( OVL_FORCE | OVL_NO_VECTOR );
     } else {
         if( sym->info & SYM_REFERENCED ) {
             if( sym->u.d.ovlref != ovl_num ) {
@@ -404,7 +404,7 @@ static void OvlRefVector( symbol * sym )
 {
     unsigned_16 ovl_num;
 
-    if( IS_SYM_COMMUNAL(sym) )
+    if( IS_SYM_COMMUNAL( sym ) )
         return;
     if( ( sym->u.d.ovlstate & OVL_VEC_MASK ) != OVL_UNDECIDED )
         return;
@@ -445,7 +445,7 @@ extern void OvlUseVector( symbol * sym, extnode *newnode )
 {
     if( !( FmtData.type & MK_OVERLAYS ) )
         return;
-    if( IS_SYM_COMMUNAL(sym) )
+    if( IS_SYM_COMMUNAL( sym ) )
         return;
     if( ( sym->u.d.ovlstate & OVL_VEC_MASK ) != OVL_MAKE_VECTOR )
         return;
@@ -502,7 +502,7 @@ extern bool CheckOvlClass( char *clname, bool *isovlclass )
     list_of_names *     cnamelist;
     bool                retval;
 
-    retval = IsCodeClass( clname, strlen(clname) );
+    retval = IsCodeClass( clname, strlen( clname ) );
     cnamelist = OvlClasses;
     if( cnamelist == NULL ) {   /* check for anything ending in code */
         *isovlclass = retval;
@@ -817,7 +817,7 @@ extern void PadOvlFiles( void )
 
     fnode = OutFiles;
     for( fnode = OutFiles; fnode != NULL; fnode = fnode->next ) {
-        pad = 16 - (fnode->file_loc & 0xF);
+        pad = 16 - ( fnode->file_loc & 0xF );
         if( pad != 16 ) {
             if( fnode->handle == NIL_HANDLE ) {
                 OpenOvlFile( fnode );

@@ -47,7 +47,7 @@
 #include "dbgall.h"
 #include "loaddos.h"
 
-#define PARA_ALIGN( quant ) (((quant)+0xf) & ~0xf)
+#define PARA_ALIGN( quant ) ( ( ( quant ) + 0xf ) & ~0xf )
 
 unsigned_32             OvlTabOffset;
 
@@ -97,8 +97,8 @@ static void AssignFileLocs( section *sect )
 /*****************************************/
 {
     if( FmtData.u.dos.pad_sections ) {
-        sect->outfile->file_loc = (sect->outfile->file_loc+(SECTOR_SIZE-1))
-                                        & ~(SECTOR_SIZE-1);
+        sect->outfile->file_loc = ( sect->outfile->file_loc + ( SECTOR_SIZE - 1 ) )
+                                        & ~( SECTOR_SIZE - 1 );
     }
     sect->u.file_loc = sect->outfile->file_loc;
     sect->outfile->file_loc += PARA_ALIGN( sect->size )

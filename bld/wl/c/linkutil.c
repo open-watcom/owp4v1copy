@@ -61,9 +61,9 @@ static int ResWrite( int dummy, const void *buff, size_t size )
 /* redirect wres write to writeload */
 {
     dummy = dummy;
-    DbgAssert(dummy == Root->outfile->handle);
-    WriteLoad( (void *) buff, size);
-    return size;
+    DbgAssert( dummy == Root->outfile->handle );
+    WriteLoad( (void *) buff, size );
+    return( size );
 }
 
 extern int WLinkItself;
@@ -71,8 +71,8 @@ static long ResSeek( int handle, long position, int where )
 /*********************************************************/
 /* Workaround wres bug */
 {
-    if( where == SEEK_SET && handle == WLinkItself) {
-        return(QLSeek( handle, position + FileShift, where, NULL ) - FileShift);
+    if( ( where == SEEK_SET ) && ( handle == WLinkItself ) ) {
+        return( QLSeek( handle, position + FileShift, where, NULL ) - FileShift );
     } else {
         return( QLSeek( handle, position, where, NULL ) );
     }
@@ -81,7 +81,7 @@ static long ResSeek( int handle, long position, int where )
 static int ResClose( int handle )
 /*******************************/
 {
-    return close( handle );
+    return( close( handle ) );
 }
 
 static int ResRead( int handle, void * buffer, size_t len )
@@ -93,10 +93,10 @@ static int ResRead( int handle, void * buffer, size_t len )
 static long ResPos( int handle )
 /******************************/
 {
-    return QPos( handle );
+    return( QPos( handle ) );
 }
 
-WResSetRtns(ResOpen,ResClose,ResRead,ResWrite,ResSeek,ResPos,ChkLAlloc,LFree);
+WResSetRtns( ResOpen, ResClose, ResRead, ResWrite, ResSeek, ResPos, ChkLAlloc, LFree );
 #endif
 
 #if _LINKER != _DLLHOST
@@ -124,7 +124,7 @@ extern void WriteInfoStdOut( char *str, unsigned level, char *sym )
 extern char * GetEnvString( char *envname )
 /*****************************************/
 {
-    return getenv( envname );
+    return( getenv( envname ) );
 }
 
 extern bool GetAddtlCommand( unsigned cmd, char *buf )
@@ -132,13 +132,13 @@ extern bool GetAddtlCommand( unsigned cmd, char *buf )
 {
     cmd = cmd;
     buf = buf;
-    return FALSE;
+    return( FALSE );
 }
 
 extern bool IsStdOutConsole( void )
 /*********************************/
 {
-    return QIsDevice( STDOUT_HANDLE );
+    return( QIsDevice( STDOUT_HANDLE ) );
 }
 #endif
 
@@ -148,7 +148,7 @@ extern void WriteNulls( f_handle file, unsigned_32 len, char * name )
 {
     static unsigned NullArray[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
-    for(; len > sizeof( NullArray ); len -= sizeof( NullArray ) ) {
+    for( ; len > sizeof( NullArray ); len -= sizeof( NullArray ) ) {
         QWrite( file, NullArray, sizeof( NullArray ), name );
     }
     if( len > 0 ) {
@@ -159,7 +159,7 @@ extern void WriteNulls( f_handle file, unsigned_32 len, char * name )
 extern void CheckErr( void )
 /**************************/
 {
-    if( LinkState & (LINK_ERROR|STOP_WORKING) ) {
+    if( LinkState & ( LINK_ERROR | STOP_WORKING ) ) {
         WriteLibsUsed();
         Suicide();
     }
@@ -185,9 +185,9 @@ extern bool TestBit( byte * array, unsigned num )
 {
     byte        mask;
 
-    mask = 1 << (num % 8);
+    mask = 1 << ( num % 8 );
     num /= 8;
-    return( *(array + num) & mask );
+    return( *( array + num ) & mask );
 }
 
 extern void ClearBit( byte * array, unsigned num )
@@ -196,7 +196,7 @@ extern void ClearBit( byte * array, unsigned num )
 {
     byte        mask;
 
-    mask = 1 << (num % 8);
+    mask = 1 << ( num % 8 );
     num /= 8;
     array += num;
     *array &= ~mask;
@@ -211,7 +211,7 @@ extern char * ChkStrDup( char * str )
     len = strlen( str ) + 1;
     _ChkAlloc( copy, len  );
     memcpy( copy, str, len );
-    return copy;
+    return( copy );
 }
 
 extern void * ChkMemDup( void * mem, unsigned len  )
@@ -221,7 +221,7 @@ extern void * ChkMemDup( void * mem, unsigned len  )
 
     _ChkAlloc( copy, len  );
     memcpy( copy, mem, len );
-    return copy;
+    return( copy );
 }
 
 static void WalkModList( section *sect, void *rtn )
@@ -241,7 +241,7 @@ extern void WalkMods( void (*rtn)( mod_entry * ) )
     WalkList( (node *) LibModules, (void (*)(void *))rtn );
 }
 
-static void WalkClass( class_entry *class, void (*rtn)(seg_leader *) )
+static void WalkClass( class_entry *class, void (*rtn)( seg_leader * ) )
 /********************************************************************/
 {
     RingWalk( class->segs, (void (*)(void *))rtn );
@@ -277,7 +277,7 @@ static void WalkList( node *list, void (*fn)( void * ) )
 static bool CmpSegName( void *leader, void *name )
 /************************************************/
 {
-    return stricmp( ((seg_leader *)leader)->segname, name ) == 0;
+    return( stricmp( ((seg_leader *)leader)->segname, name ) == 0 );
 }
 
 extern seg_leader * FindSegment( char *name )
@@ -290,9 +290,11 @@ extern seg_leader * FindSegment( char *name )
     seg = NULL;
     for( class = Root->classlist; class != NULL; class = class->next_class ) {
         seg = RingLookup( class->segs, CmpSegName, name );
-        if( seg != NULL ) break;
+        if( seg != NULL ) {
+            break;
+        }
     }
-    return seg;
+    return( seg );
 }
 
 extern void LinkList( void **in_head, void *newnode )
@@ -336,7 +338,7 @@ extern name_list * AddNameTable( char *name, unsigned len, bool is_mod,
     for( ;; ) {
         imp = *owner;
         if( imp == NULL ) {
-            _PermAlloc( imp, sizeof(name_list) );
+            _PermAlloc( imp, sizeof( name_list ) );
             imp->next = NULL;
             imp->len = len;
             ReserveStringTable( &PermStrings, len + 1 );
@@ -346,12 +348,13 @@ extern name_list * AddNameTable( char *name, unsigned len, bool is_mod,
             *owner = imp;
             break;
         }
-        if( len == imp->len && memcmp(imp->name,name,len) == 0 ) break;
+        if( len == imp->len && memcmp( imp->name, name, len ) == 0 )
+            break;
         off += imp->len + 1;
         owner = &imp->next;
         ++index;
     }
-    return imp;
+    return( imp );
 }
 
 extern unsigned_16 binary_log( unsigned_16 value )
@@ -364,7 +367,7 @@ extern unsigned_16 binary_log( unsigned_16 value )
         return( 0 );
     }
     log = 15;
-    for(;;) {
+    for( ; ; ) {
         if( value & 0x8000 ) {  // done if high bit on
             break;
         }
@@ -384,7 +387,7 @@ extern unsigned_16 blog_32( unsigned_32 value )
         return( 0 );
     }
     log = 31;
-    for(;;) {
+    for( ; ; ) {
         if( value & 0x80000000 ) {  // done if high bit on
             break;
         }
@@ -426,11 +429,11 @@ extern char * RemovePath( char *name, int *len )
     return( namestart );
 }
 
-#define MAXDEPTH        (sizeof(unsigned)*8)
+#define MAXDEPTH        ( sizeof( unsigned ) * 8 )
 
 extern void VMemQSort( virt_mem base, unsigned n, unsigned width,
-                        void (*swapfn)(virt_mem, virt_mem),
-                        int (*cmpfn)(virt_mem, virt_mem) )
+                        void (*swapfn)( virt_mem, virt_mem ),
+                        int (*cmpfn)( virt_mem, virt_mem ) )
 /***************************************************************/
 // qsort stolen from clib, and suitably modified since we need to be able
 // to swap parallel arrays.
@@ -447,7 +450,7 @@ extern void VMemQSort( virt_mem base, unsigned n, unsigned width,
     auto unsigned n_stack[MAXDEPTH];
 
     sp = 0;
-    for(;;) {
+    for( ; ; ) {
         while( n > 1 ) {
             p1 = base + width;
             if( n == 2 ) {
@@ -458,7 +461,7 @@ extern void VMemQSort( virt_mem base, unsigned n, unsigned width,
             } else {
                 /* store mid element at base for pivot */
                 /* this will speed up sorting of a sorted list */
-                mid = base + (n >> 1) * width;
+                mid = base + ( n >> 1 ) * width;
                 swapfn( base, mid );
                 p2 = base;
                 count = 0;
@@ -472,11 +475,13 @@ extern void VMemQSort( virt_mem base, unsigned n, unsigned width,
                             swapfn( p1, p2 );
                         }
                     }
-                    if( comparison != 0 ) last_non_equal_count = count;
+                    if( comparison != 0 )
+                        last_non_equal_count = count;
                     p1 += width;
                 }
                 /* special check to see if all values compared are equal */
-                if( count == n-1  &&  last_non_equal_count == 0 ) break;
+                if( ( count == n-1 ) && ( last_non_equal_count == 0 ) )
+                    break;
                 if( count != 0 ) {  /* store pivot in right spot */
                     swapfn( base, p2 );
                 }
@@ -513,7 +518,8 @@ extern void VMemQSort( virt_mem base, unsigned n, unsigned width,
                 ++sp;
             }
         }
-        if( sp == 0 ) break;
+        if( sp == 0 )
+            break;
         --sp;
         base = base_stack[sp];
         n    = n_stack[sp];
@@ -521,7 +527,7 @@ extern void VMemQSort( virt_mem base, unsigned n, unsigned width,
 }
 
 #if _LINKER == _WATFOR77
-extern  void    Suicide(void);
+extern  void    Suicide( void );
 #else
 static void *SpawnStack;
 
@@ -585,11 +591,13 @@ extern group_entry *FindGroup( segment seg )
 
     group = Groups;
     for( ;; ) {
-        if( group == NULL ) break;
-        if( group->grp_addr.seg == seg ) break;
+        if( group == NULL )
+            break;
+        if( group->grp_addr.seg == seg )
+            break;
         group = group->next_group;
     }
-    return group;
+    return( group );
 }
 
 extern offset FindLinearAddr( targ_addr *addr )
@@ -599,9 +607,9 @@ extern offset FindLinearAddr( targ_addr *addr )
 
     group = FindGroup( addr->seg );
     if( group != NULL ) {
-        return addr->off + (group->linear - group->grp_addr.off);
+        return( addr->off + ( group->linear - group->grp_addr.off ) );
     }
-    return addr->off;
+    return( addr->off );
 }
 
 extern offset FindLinearAddr2( targ_addr *addr )
@@ -611,8 +619,7 @@ extern offset FindLinearAddr2( targ_addr *addr )
 
     group = FindGroup( addr->seg );
     if( group != NULL ) {
-        return addr->off + group->linear + FmtData.base;
+        return( addr->off + group->linear + FmtData.base );
     }
-    return addr->off;
+    return( addr->off );
 }
-

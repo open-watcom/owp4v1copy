@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  symbol/module tracing routines
 *
 ****************************************************************************/
 
-
-/*
- *  SYMTRACE : symbol/module tracing routines
- *
-*/
 
 #include <string.h>
 #include "linkstd.h"
@@ -98,7 +92,8 @@ static void CheckFileTrace( section * sect )
 {
     file_list *     list;
 
-    if( CurrTrace->found ) return;
+    if( CurrTrace->found )
+        return;
     for( list = sect->files; list != NULL; list = list->next_file ) {
         if( FNAMECMPSTR( list->file->name, CurrTrace->u.name ) == 0 ) {
             CurrTrace->found = TRUE;
@@ -180,4 +175,3 @@ extern void CleanTraces( void )
     }
     TraceList = NULL;
 }
-

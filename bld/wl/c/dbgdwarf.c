@@ -88,7 +88,7 @@ enum {
     SECT_NUM_SECTIONS
 };
 
-#pragma pack(1);
+#pragma pack( 1 );
 
 // die information
 
@@ -228,12 +228,12 @@ extern void DwarfP1ModuleFinished( mod_entry *mod )
     }
     if( mod->d.d->dasi.size > 0 ) {
         mod->d.d->dasi.addr = SectionTable[SECT_DEBUG_LINE].size;
-        mod->d.d->dasi.size += strlen(mod->name) + sizeof( stmt_prologue ) + 6;
+        mod->d.d->dasi.size += strlen( mod->name ) + sizeof( stmt_prologue ) + 6;
         SectionTable[SECT_DEBUG_LINE].size += mod->d.d->dasi.size;
         mod->d.d->pubsym.size += sizeof( unsigned_32 ); // DW_AT_STMT_LIST
     }
     mod->d.d->pubsym.addr = SectionTable[SECT_DEBUG_INFO].size;
-    mod->d.d->pubsym.size += strlen(mod->name) + sizeof( compunit_die ) + 1
+    mod->d.d->pubsym.size += strlen( mod->name ) + sizeof( compunit_die ) + 1
                              + COMPILE_UNIT_HDR_SIZE + 1;
     SectionTable[SECT_DEBUG_INFO].size += mod->d.d->pubsym.size;
 }
@@ -283,7 +283,7 @@ extern void DwarfAddModule( mod_entry *mod, section *sect )
                 arange_hdr.segment_size = 0;
             }
 //          memset( arange_hdr.padding, 0, sizeof( arange_hdr.padding ) );
-            PutInfo( mod->d.d->arange.addr, (void *) &arange_hdr,
+            PutInfo( mod->d.d->arange.addr, (void *)&arange_hdr,
                      sizeof( arange_prologue ) );
             mod->d.d->arange.addr += sizeof( arange_prologue );
         }
@@ -315,7 +315,7 @@ extern void DwarfAddModule( mod_entry *mod, section *sect )
             stmt_hdr.total_length = mod->d.d->dasi.size - sizeof( unsigned_32 );
             stmt_hdr.version = 2;
             stmt_hdr.prologue_length = sizeof( stmt_prologue )
-                        - offsetof(stmt_prologue, minimum_instruction_length)
+                        - offsetof( stmt_prologue, minimum_instruction_length )
                         + namelen + 6;
             stmt_hdr.minimum_instruction_length = DW_MIN_INSTR_LENGTH;
             stmt_hdr.default_is_stmt = 1;
@@ -435,7 +435,7 @@ extern void DwarfGenGlobal( symbol *sym, section *sect )
                 die.off += group->linear - group->grp_addr.off - Groups->linear;
             }
         }
-        die.isexternal = !(sym->info & SYM_STATIC);
+        die.isexternal = !( sym->info & SYM_STATIC );
         PutInfo( vmem_addr, &die, sizeof( symbol_die ) );
         vmem_addr += sizeof( symbol_die );
         if( FmtData.type & MK_SEGMENTED ) {
@@ -484,7 +484,7 @@ static void DwarfAddLines( segdata *seg, void * lines, unsigned size,
         } else {
             linedelta = (signed_32) lineptr->_286.linnum - prevline.linnum;
             addrdelta = lineptr->_286.off - prevline.off;
-            lineptr = (void *)((char *)lineptr + sizeof( ln_off_286 ));
+            lineptr = (void *)( (char *)lineptr + sizeof( ln_off_286 ) );
             size -= sizeof( ln_off_286 );
         }
         prevline.linnum += linedelta;
@@ -523,7 +523,7 @@ extern void DwarfGenLines( segdata *seg, void *lines, unsigned size,
     buff[1] = dwsize;
     buff[2] = DW_LNE_set_address;
     if( FmtData.type & MK_286 ) {
-        *((unsigned_16 *)&buff[3]) = seg->a.delta + seg->u.leader->seg_addr.off;
+        *( (unsigned_16 *)&buff[3] ) = seg->a.delta + seg->u.leader->seg_addr.off;
     } else {
         off = seg->a.delta + seg->u.leader->seg_addr.off;
         if( FmtData.type & ( MK_PE | MK_QNX_FLAT | MK_ELF ) ) {
@@ -532,7 +532,7 @@ extern void DwarfGenLines( segdata *seg, void *lines, unsigned size,
                 off += group->linear - group->grp_addr.off - Groups->linear;
             }
         }
-        *((unsigned_32 *)&buff[3]) = off;
+        *( (unsigned_32 *)&buff[3] ) = off;
     }
     dwsize += 2;
     PutInfo( vmem_addr, buff, dwsize );
@@ -540,7 +540,7 @@ extern void DwarfGenLines( segdata *seg, void *lines, unsigned size,
     if( FmtData.type & MK_SEGMENTED ) {
         buff[1] = 3;
         buff[2] = DW_LNE_set_segment;
-        *((unsigned_16 *)&buff[3]) = seg->u.leader->seg_addr.seg;
+        *( (unsigned_16 *)&buff[3] ) = seg->u.leader->seg_addr.seg;
         PutInfo( vmem_addr, buff, 5 );
         vmem_addr += 5;
     }
@@ -554,7 +554,7 @@ extern void DwarfGenLines( segdata *seg, void *lines, unsigned size,
         } else {
             linedelta = (signed_32) lineptr->_286.linnum - prevline.linnum;
             addrdelta = lineptr->_286.off - prevline.off;
-            lineptr = (void *)((char *)lineptr + sizeof( ln_off_286 ));
+            lineptr = (void *)( (char *)lineptr + sizeof( ln_off_286 ) );
             size -= sizeof( ln_off_286 );
         }
         prevline.linnum += linedelta;
@@ -858,7 +858,7 @@ extern void DwarfWriteDBI( void )
     WriteStringTable( &strtab, WriteLoad3, NULL );
     FiniStringTable( &strtab );
     virt_off += sh->sh_size;
-    virt_off += DwarfWriteTrailer(virt_off);
+    virt_off += DwarfWriteTrailer( virt_off );
     SeekLoad( savepos - shdr_size );
     WriteLoad( sect_header, shdr_size );
     _LnkFree( sect_header );

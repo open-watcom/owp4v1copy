@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  overlay support routines which can't be put in an overlay
 *
 ****************************************************************************/
 
-
-/*
-   OVERLAYS -- overlay support routines which can't be put in an overlay.
-*/
 
 #include "linkstd.h"
 #include "alloc.h"
@@ -73,7 +68,7 @@ extern void NumberSections( void )
 /********************************/
 {
     if( ( FmtData.type & MK_OVERLAYS ) && FmtData.u.dos.distribute ) {
-        _ChkAlloc( SectOvlTab, sizeof(section *) * (OvlNum + 1) );
+        _ChkAlloc( SectOvlTab, sizeof( section * ) * ( OvlNum + 1 ) );
         SectOvlTab[0] = Root;
     }
     OvlNum = 1;
@@ -144,7 +139,7 @@ extern section * GetOvlSect( char *clname )
 {
     section             *sect;
 
-    if( !(FmtData.type & MK_OVERLAYS) ) {
+    if( !( FmtData.type & MK_OVERLAYS ) ) {
         sect = Root;
     } else {
         sect = CheckOvlSect( clname );
