@@ -154,9 +154,6 @@ struct asm_sym *AsmLookup( char *name )
 {
     struct asm_sym      **sym_ptr;
     struct asm_sym      *sym;
-#ifdef _WASM_
-    char                is_current_loc = FALSE;
-#endif
 
     if( strlen( name ) > MAX_ID_LEN ) {
         AsmError( LABEL_TOO_LONG );
@@ -164,17 +161,15 @@ struct asm_sym *AsmLookup( char *name )
     }
 
     sym_ptr = AsmFind( name );
+    sym = *sym_ptr;
+    if( sym != NULL ) {
 #ifdef _WASM_
-    if( strcmp( name, "$" ) ==  0 ) {
-        is_current_loc = TRUE;
         /* current address operator */
-        if( *sym_ptr != NULL ) {
-            GetSymInfo( *sym_ptr );
-        }
-    }
+        if( strcmp( name, "$" ) ==  0 )
+            GetSymInfo( sym );
 #endif
-    if( *sym_ptr != NULL )
-        return( *sym_ptr );
+        return( sym );
+    }
 
     sym = AllocASym( name );
     if( sym != NULL ) {
@@ -182,7 +177,7 @@ struct asm_sym *AsmLookup( char *name )
         *sym_ptr = sym;
 
 #ifdef _WASM_
-        if( is_current_loc ) {
+        if( strcmp( name, "$" ) ==  0 ) {
             GetSymInfo( sym );
             sym->state = SYM_INTERNAL;
             sym->mem_type = T_NEAR;

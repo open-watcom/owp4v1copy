@@ -354,7 +354,7 @@ static void write_grp( void )
         for( seg = curr->e.grpinfo->seglist; seg; seg = seg->next ) {
             writeseg = TRUE;
             segminfo = (dir_node *)(seg->seg);
-            if( segminfo->sym.state != SYM_SEG ) {
+            if( ( segminfo->sym.state != SYM_SEG ) || ( segminfo->sym.segidx == 0 ) ) {
                 LineNumber = curr->line;
                 AsmError( SEG_NOT_DEFINED );
                 write_to_file = FALSE;
@@ -1134,7 +1134,7 @@ static void reset_seg_len( void )
     dir_node    *curr;
 
     for( curr = Tables[TAB_SEG].head; curr; curr = curr->next ) {
-        if( curr->sym.state != SYM_SEG ) {
+        if( ( curr->sym.state != SYM_SEG ) || ( curr->sym.segidx == 0 ) ) {
             AsmError( SEG_NOT_DEFINED );
             continue;
         }

@@ -6,6 +6,7 @@ allign &
 callimpl &
 datamix1 &
 datamix2 &
+dgroup &
 extprocf &
 extprocn &
 indirect &

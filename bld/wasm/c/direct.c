@@ -1291,6 +1291,9 @@ static dir_node *CreateGroup( char *name )
     if( grp == NULL ) {
         grp = dir_insert( name, TAB_GRP );
         LnameInsert( name );
+    } else if( grp->sym.state == SYM_UNDEFINED ) {
+        dir_change( grp, TAB_GRP );
+        LnameInsert( name );
     } else if( grp->sym.state != SYM_GRP ) {
         AsmErr( SYMBOL_PREVIOUSLY_DEFINED, name );
         grp = NULL;
@@ -1330,6 +1333,8 @@ int GrpDef( int i )
         new->seg = (dir_node *)AsmGetSymbol( name );
         if( new->seg == NULL ) {
             new->seg = dir_insert( name, TAB_SEG );
+        } else if( new->seg->sym.state == SYM_UNDEFINED ) {
+            dir_change( new->seg, TAB_SEG );
         } else if( new->seg->sym.state != SYM_SEG ) {
             AsmErr( SYMBOL_PREVIOUSLY_DEFINED, name );
             return( ERROR );
@@ -2291,14 +2296,12 @@ int SetAssume( int i )
             info->error = FALSE;
             info->symbol = NULL;
         } else {
-            sym = AsmGetSymbol( segloc );
-            if( sym == NULL ) {
-                if( Parse_Pass == PASS_1 ) {
-                    sym = &dir_insert( segloc, TAB_SEG )->sym;
-                } else {
-                    AsmErr( SYMBOL_S_NOT_DEFINED, segloc );
-                    return( ERROR );
-                }
+            sym = AsmLookup( segloc );
+            if( sym == NULL )
+                return( ERROR );
+            if ( ( Parse_Pass != PASS_1 ) && ( sym->state == SYM_UNDEFINED ) ) {
+                AsmErr( SYMBOL_S_NOT_DEFINED, segloc );
+                return( ERROR );
             }
             info->symbol = sym;
             info->flat = FALSE;
