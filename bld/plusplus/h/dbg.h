@@ -37,6 +37,7 @@
 #ifndef NDEBUG
 
 #include "dbgzap.h"
+#include "iosupp.h"
 
 // PROTOTYPES:
 
@@ -106,8 +107,8 @@ void DbgSetState(               // PRINT STATE VALUE SET, IF REQ'D
 ;
 void DumpCgFront(               // DUMP GENERATED CODE
     const char *prefix,         // - name added to print line
-    long disk_blk,              // - disk block
-    unsigned offset,            // - disk offset
+    DISK_ADDR disk_blk,         // - disk block
+    DISK_OFFSET offset,         // - disk offset
     void *instruction )         // - intermediate code
 ;
 void DumpClassInfo(             // DUMP CLASSINFO
