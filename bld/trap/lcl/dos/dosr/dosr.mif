@@ -15,6 +15,7 @@ std_objs = &
         x86cpu.obj
 
 extra_a_flags_npxtype = -fpi87
+extra_a_flags_dbgtrap = -fpi87
 
 extra_objs  = $(std_objs) realtrap.obj
 extra_dobjs = $(std_objs) dumtrap.obj

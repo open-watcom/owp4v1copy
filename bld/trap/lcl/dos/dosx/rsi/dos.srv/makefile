@@ -11,6 +11,11 @@ which = SERVER
 masmdir = $(tools_root)
 rsidir = $(tools_root)
 
+#until wasm gets fixed up
+
+assemble = $(masmdir)\masm -mx -s -I$(rsilib) -Dcompact $[@; # masm 5
+#assemble = ml -nologo -c -Cx -Zm -I$(rsilib) -Dcompact $[@ # masm 6
+
 extra_objs = &
         $(dosx_serv_objs) &
         dosredir.obj &
@@ -29,6 +34,8 @@ extra_c_flags = -dDOS4G -dDOSXHELP -zdp -zu
 extra_c_flags_rsiacc = -I"$(rsilib)"
 extra_c_flags_realmode = -I"$(rsilib)"
 extra_c_flags_dbglib = -I"$(rsilib)" -wcd=1177
+
+extra_a_flags_npxtype = -fpi87
 extra_a_flags_rsi87 = -fpi87
 extra_a_flags_segs_16m = -I"$(rsilib)" -Dcompact
 extra_a_flags_dbgliba = -I"$(rsilib)" -Dcompact
@@ -58,15 +65,13 @@ $(target) $(dtarget) : $(objs) $(__MAKEFILES__)
     @%append $(lf) $(rsilib)/$(libnam).lib $(lang_root)/lib286/dos/clibc.lib
     !$(rsidir)\glu @$(lf)
 
-#until wasm gets fixed up
+!ifdef assemble
+segs_16m.obj : segs_16m.asm
+    $(assemble)
 
-assemble = $(masmdir)\masm -mx -s -zd -I$(rsilib) -Dcompact $[@;
+dbgliba.obj : dbgliba.asm
+    $(assemble)
 
-segs_16m.obj: segs_16m.asm
-        $(assemble)
-
-dbgliba.obj: dbgliba.asm
-        $(assemble)
-
-rmhdlr.obj: rmhdlr.asm
-        $(assemble)
+rmhdlr.obj : rmhdlr.asm
+    $(assemble)
+!endif

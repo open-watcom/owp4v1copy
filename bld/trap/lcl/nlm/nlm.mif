@@ -3,6 +3,9 @@ extra_srcs = $(trap_dir)/lcl/nlm/c;$(trap_dir)/lcl/nlm/asm;$(trap_dir)/lcl/asm;$
 inc_dirs = ;$(trap_dir)/lcl/nlm/h
 
 extra_c_flags = -d__NW$(nlm_ver)0__ -dDEBUG_ME
+
+extra_a_flags_nlmintr = -fpi87
+
 extra_linker4 = module clib
 extra_linker3 =
 extra_linker = $(extra_linker$(nlm_ver)) debug all debug Novell
