@@ -24,25 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Performs enhanced Unix cp file I/O.
 *
 ****************************************************************************/
 
 
-/*
-   CPIO.C - perform enhanced unix cp file io
-
-   Date         By              Reason
-   ====         ==              ======
-   17-aug-90    Craig Eisler    defined
-   19-oct-91    Craig Eisler    more work
-   08-nov-91    Craig Eisler    cleaned up
-   28-jan-92    Craig Eisler    display time
-   25-mar-92    Craig Eisler    NT port
-   15-jun-92    Craig Eisler    more cleanup
-   22-jun-92    Craig Eisler    use NearAlloc
- */
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
@@ -51,10 +37,10 @@
 #include <fcntl.h>
 #include <io.h>
 #include <time.h>
-#include <sys\stat.h>
-#include <sys\utime.h>
+#include <sys/stat.h>
+#include <sys/utime.h>
 #include <dos.h>
-#if defined(__OS_os2v2__)
+#if defined(__OS_os2386__)
 #define  INCL_DOSFILEMGR
 #define  INCL_DOSERRORS
 #define  INCL_DOSMISC
@@ -67,7 +53,7 @@
  */
 int GrabFile( char *src, struct stat *stat_s, char *dest, char srcattr )
 {
-#if defined(__OS_os2v2__)
+#if defined(__OS_os2386__)
     int                 result;
 #else
     ctrl_block          *cb;
@@ -163,7 +149,7 @@ int GrabFile( char *src, struct stat *stat_s, char *dest, char srcattr )
         }
     }
 
-#if defined(__OS_os2v2__)
+#if defined(__OS_os2386__)
     if( !sflag ) {
         PrintALineThenDrop( "Copying file %s to %s", src, dest );
     }
@@ -253,7 +239,7 @@ int GrabFile( char *src, struct stat *stat_s, char *dest, char srcattr )
 
 } /* GrabFile */
 
-#if !defined(__OS_os2v2__)
+#if !defined(__OS_os2386__)
 /*
  * readABuffer - read a data buffer
  */

@@ -1,4 +1,4 @@
-targos = nt
+targos = os2386
 
 !ifndef model
 model=f

@@ -1,3 +1,3 @@
-targos          = alpha
+targos          = os2386
 
 !include $(posix_dir)\mif\makeall.mif

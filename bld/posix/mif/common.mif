@@ -40,7 +40,7 @@ model=c
 !ifndef model
 model=c
 !endif
-!else ifeq      targos  os2v2
+!else ifeq      targos  os2386
 !ifndef model
 model=f
 !endif
@@ -48,7 +48,7 @@ model=f
 !ifndef model
 model=f
 !endif
-!else ifeq      targos  nt
+!else ifeq      targos  nt386
 !ifndef model
 model=f
 !endif
@@ -60,7 +60,7 @@ model=s
 !ifndef model
 model=c
 !endif
-!else ifeq      targos  alpha
+!else ifeq      targos  ntaxp
 !ifndef model
 model = f
 !endif
@@ -96,7 +96,7 @@ env_variable    = wcc
 targos_cflags   = -m$(model)-bt=dos
 include_dirs    = $(lang_root)\h;$(watcom_h)
 
-!else ifeq      targos  os2v2
+!else ifeq      targos  os2386
 compiler        = $(comp386)
 env_variable    = wcc386
 targos_cflags   = -mf-bt=os2
@@ -108,7 +108,7 @@ env_variable    = wcc386
 targos_cflags   = -mf-bt=pharlap
 include_dirs    = $(lang_root)\h;$(watcom_h)
 
-!else ifeq      targos  nt
+!else ifeq      targos  nt386
 compiler        = $(comp386)
 env_variable    = wcc386
 targos_cflags   = -bt=NT -mf
@@ -126,7 +126,7 @@ env_variable    = wcc
 targos_cflags   = -mc-bt=qnx
 include_dirs    = $(lang_root)\qh;$(watcom_h)
 
-!else ifeq      targos  alpha
+!else ifeq      targos  ntaxp
 compiler        = $(compaxp)
 env_variable    = wccaxp
 targos_cflags   = -bt=NT

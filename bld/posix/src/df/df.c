@@ -30,9 +30,9 @@
 ****************************************************************************/
 
 
-#if defined( __OS_os2v2__ ) || defined( __OS_dosos2__ )
+#if defined( __OS_os2386__ ) || defined( __OS_dosos2__ )
 #include <os2.h>
-#elif defined( __OS_nt__ ) || defined( __OS_alpha__ )
+#elif defined( __OS_nt386__ ) || defined( __OS_ntaxp__ )
 #include <windows.h>
 #endif
 #include <stdio.h>
@@ -114,9 +114,9 @@ static drive_type dosDoGetDriveType( int drv )
 } /* doGetDriveType */
 #endif
 
-#if defined( __OS_os2v2__ ) || defined( __OS_dosos2__ )
+#if defined( __OS_os2386__ ) || defined( __OS_dosos2__ )
 
-#ifdef __OS_os2v2__
+#ifdef __OS_os2386__
 #define STUPID_UINT     unsigned long
 #else
 #define STUPID_UINT     unsigned short
@@ -191,7 +191,7 @@ unsigned _dos_getdiskfree( int dnum, struct diskfree_t *df )
     return( 0 );
 }
 
-#elif defined( __OS_nt__ ) || defined( __OS_alpha__ )
+#elif defined( __OS_nt386__ ) || defined( __OS_ntaxp__ )
 
 /*
  * doGetDriveType - get the type of drive A-Z

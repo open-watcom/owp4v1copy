@@ -1,4 +1,4 @@
-targos = alpha
+targos = ntaxp
 
 !ifndef model
 model=f

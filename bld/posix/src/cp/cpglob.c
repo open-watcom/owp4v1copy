@@ -24,22 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Enhanced Unix cp global variables.
 *
 ****************************************************************************/
 
 
-/*
-   CPGLOB.C - enhanced unix cp global variables
-
-   Date         By              Reason
-   ====         ==              ======
-   17-aug-90    Craig Eisler    defined
-   19-oct-91    Craig Eisler    more work
-   11-nov-91    Craig Eisler    cleaned up
-   20-jan-92    Craig Eisler    added rxflag
- */
 #include <stdio.h>
 #include <dos.h>
 #include "cp.h"

@@ -41,16 +41,16 @@ $(LNK) : makefile $(objs)
         @%append $(LNK) lib $(doscalls)
 !else ifeq targos dos
         @%append $(LNK) system dos
-!else ifeq targos os2v2
+!else ifeq targos os2386
         @%append $(LNK) system os2v2 pmc
 !else ifeq targos pharlap
         @%append $(lnk) name $(name).exp
         @%append $(LNK) system pharlap
         @%append $(LNK) option stack=4096
         @%append $(LNK) option offset=16384
-!else ifeq targos nt
+!else ifeq targos nt386
         @%append $(LNK) system nt
-!else ifeq targos alpha
+!else ifeq targos ntaxp
         @%append $(LNK) system ntaxp
 !else ifeq targos qnx
         @%append $(LNK) system qnx386

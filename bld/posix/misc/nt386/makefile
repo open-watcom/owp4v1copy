@@ -1,4 +1,5 @@
-targos = os2v2
+targos = nt386
+
 !ifndef model
 model=f
 !endif
