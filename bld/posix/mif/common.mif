@@ -8,7 +8,7 @@
 #   posix_dir   Must point to the root of the posix project.
 #
 #   targos      Must be a valid targos.
-#               i.e. include $(posix_dir)\mif\targos.mif before this file.
+#               i.e. include $(posix_dir)/mif/targos.mif before this file.
 #
 #   cflags      If defined, these options to the compiler override the
 #               defaults selected by this file.
@@ -18,7 +18,7 @@
 #   if make_lib isn't defined, then the following must be defined:
 #
 #   name        The name of the command which is being built.  The
-#               directory $(posix_dir)\src\$(name) must exist, and
+#               directory $(posix_dir)/src/$(name) must exist, and
 #               contain the source for the command.
 
 #
@@ -48,7 +48,7 @@ model=$(modelos)
 memory_model_i86=$(model)
 memory_model_386=$(model)
 
-posixlib=$(posix_dir)\misc\$(targos)\posix$(model).lib
+posixlib=$(posix_dir)/misc/$(targos)/posix$(model).lib
 
 !include cproj.mif
 
@@ -57,7 +57,7 @@ posixlib=$(posix_dir)\misc\$(targos)\posix$(model).lib
 .EXTENSIONS: .cbj .sbj .lbj .mbj .fbj .obj
 .EXTENSIONS: .asm .c
 
-obj_dir = $(posix_dir)\src\$(name)\$(targos)
+obj_dir = $(posix_dir)/src/$(name)/$(targos)
 
 #
 #       compiler options
@@ -75,21 +75,21 @@ extra_cflags   = -dWIN32 -d_WIN32
 
 !ifndef make_lib
 .obj: $(obj_dir)
-.c: $(posix_dir)\src\$(name);$(posix_dir)\misc
+.c: $(posix_dir)/src/$(name);$(posix_dir)/misc
 !else
-.c: $(posix_dir)\misc;$(lang_root)\src\startup
+.c: $(posix_dir)/misc;$(lang_root)/src/startup
 !endif
 
 .before:
 !ifndef make_lib
-extra_c_flags = -fo=$(obj_dir)\.obj -d__OS_$(targos)__ -dSTANDALONE_RX -i$(posix_dir)\src\$(name);$(posix_dir)\h;$(inc_path)
+extra_c_flags = -fo="$(obj_dir)/.obj" -d__OS_$(targos)__ -dSTANDALONE_RX -i"$(posix_dir)\src\$(name);$(posix_dir)\h;$(inc_path)"
 !ifdef __MSDOS__
         @!if not exist $(obj_dir)\nul md $(obj_dir)     # for dos
 !else
         @!if not exist $(obj_dir) md $(obj_dir)         # for os2
 !endif
 !else
-extra_c_flags = -fo=$(posix_dir)\misc\$(targos)\.$(model)bj -d__OS_$(targos)__ -dSTANDALONE_RX -i$(posix_dir)\h;$(inc_path)
+extra_c_flags = -fo="$(posix_dir)/misc/$(targos)/.$(model)bj" -d__OS_$(targos)__ -dSTANDALONE_RX -i"$(posix_dir)/h;$(inc_path)"
 !endif
 
 .c.obj:

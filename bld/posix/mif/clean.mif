@@ -2,12 +2,6 @@ clean : .symbolic
 !ifndef clean_dir
 clean_dir = .
 !endif
-        @if exist $(clean_dir)\*.ex? @erase $(clean_dir)\*.ex?
-        @if exist $(clean_dir)\*.?bj @erase $(clean_dir)\*.?bj
-        @if exist $(clean_dir)\*.map @erase $(clean_dir)\*.map
-        @if exist $(clean_dir)\*.lst @erase $(clean_dir)\*.lst
-        @if exist $(clean_dir)\*.smp @erase $(clean_dir)\*.smp
-        @if exist $(clean_dir)\*.lnk @erase $(clean_dir)\*.lnk
-        @if exist $(clean_dir)\*.lbc @erase $(clean_dir)\*.lbc
-        @if exist $(clean_dir)\*.lib @erase $(clean_dir)\*.lib
-        @if exist $(clean_dir)\*.err @erase $(clean_dir)\*.err
+        @rm -f $(clean_dir)/*.ex? $(clean_dir)/*.?bj $(clean_dir)/*.map
+        @rm -f $(clean_dir)/*.lst $(clean_dir)/*.smp $(clean_dir)/*.lnk
+        @rm -f $(clean_dir)/*.lbc $(clean_dir)/*.lib $(clean_dir)/*.err

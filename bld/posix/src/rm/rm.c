@@ -176,7 +176,7 @@ void DoRM( char *f )
      */
     fpath[0] = 0;
     for( i=strlen(f);i>=0;i--) {
-        if( f[i] == ':' || f[i] == '\\' ) {
+        if( f[i] == ':' || f[i] == '\\' || f[i] == '/' ) {
             fpath[i+1] = 0;
             for(j=i;j>=0;j--) fpath[j] = f[j];
             i = -1;
@@ -355,9 +355,9 @@ void RecursiveRM( char *dir )
      */
     strcpy(fname,dir);
     if( rxflag ) {
-        strcat( fname, "\\*" );
+        strcat( fname, "/*" );
     } else {
-        strcat(fname,"\\*.*");
+        strcat(fname,"/*.*");
     }
     DoRM( fname );
 
