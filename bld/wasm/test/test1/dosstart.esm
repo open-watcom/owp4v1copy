@@ -1,0 +1,288 @@
+.387
+		PUBLIC	_AliasList
+		EXTRN	SaveSave_:BYTE
+		EXTRN	StringIn_:BYTE
+		EXTRN	_end:BYTE
+		EXTRN	_edata:BYTE
+		EXTRN	InitRetrieve_:BYTE
+DGROUP		GROUP	_DATA,CONST,STACK
+FARD		SEGMENT	PARA PUBLIC USE16 'FAR_DATA'
+FARD		ENDS
+_TEXT		SEGMENT	PARA PUBLIC USE16 'CODE'
+		ASSUME CS:_TEXT, DS:DGROUP, SS:DGROUP
+    jmp       near ptr L$25
+L$1:
+    push      ax
+    jb        L$12
+    jb        L$11
+    insw      
+    and       byte ptr 73H[bx+di],ch
+    and       byte ptr 6cH[bx+di],ah
+    jb        L$13
+    popa      
+    jns       L$3
+    insb      
+    outsw     
+    popa      
+    DB	64H, 65H, 64H, 24H
+L$2:
+    inc       bx
+    popa      
+    outsb     
+    outsb     
+    outsw     
+    je        L$5
+    insb      
+    outsw     
+    arpl      word ptr 74H[bx+di],sp
+    and       byte ptr gs:72H[bx+si],dh
+    jbe       L$18
+    outsw     
+    jne       L$19
+    and       byte ptr 65H[bp],dh
+L$3:
+    jb        L$20
+    imul      bp,word ptr 6eH[bx],24H
+    add       byte ptr [bx+si],al
+    DB	0
+L$4:
+    add       ax,0d100H
+    into      
+L$5:
+    DD	SaveSave_
+L$6:
+    add       byte ptr [bx+si],al
+_AliasList:
+    add       byte ptr [bx+si],al
+    add       byte ptr [bx+si],al
+L$7:
+    add       byte ptr [bx+si],al
+L$8:
+    add       byte ptr [bx+si],al
+L$9:
+    add       byte ptr [bx+si],al
+    ror       si,1
+L$10:
+    cmp       ah,0aH
+    jne       L$21
+    push      ax
+    push      dx
+    push      bx
+    push      cx
+    mov       bx,0
+    mov       ax,4400H
+    int       21H
+    DB	0f7H, 0c2H, 80H
+L$11:
+    add       byte ptr 5bH[bx+di],bl
+    pop       dx
+    pop       ax
+    je        L$21
+    sti       
+    push      di
+    mov       di,sp
+L$12:
+    push      bp
+    push      es
+L$13:
+    push      si
+    push      ax
+    push      bx
+    push      cx
+    push      dx
+    push      ds
+    push      ds
+    push      dx
+    mov       ah,51H
+    int       21H
+    DB	2eH
+L$14:
+    cmp       bx,word ptr L$9
+L$15:
+    jb        L$16
+    mov       di,0
+    jmp       L$17
+L$16:
+    mov       di,1
+L$17:
+    pop       si
+    pop       ds
+    lea       ax,2[si]
+    mov       dx,ds
+L$18:
+    mov       cl,byte ptr [si]
+    mov       byte ptr cs:L$34,cl
+    mov       cx,DGROUP
+    mov       bx,offset DGROUP:L$34
+L$19:
+    push      si
+    mov       bp,sp
+    mov       si,ss
+L$20:
+    mov       ss,cx
+    mov       sp,offset DGROUP:L$33
+    push      ds
+    mov       es,word ptr cs:L$4
+    push      es
+    mov       ds,cx
+    push      di
+    call      near ptr StringIn_
+    pop       ds
+    mov       ss,si
+    mov       sp,bp
+    pop       si
+    mov       cl,byte ptr cs:L$35
+    mov       byte ptr 1[si],cl
+    pop       ds
+    pop       dx
+    pop       cx
+    pop       bx
+    pop       ax
+    pop       si
+    pop       es
+    pop       bp
+    pop       di
+    mov       al,0
+    iret      
+L$21:
+    jmp       dword ptr cs:L$7
+L$22:
+    lea       dx,L$2
+    jmp       L$24
+L$23:
+    lea       dx,L$1
+L$24:
+    push      cs
+    pop       ds
+    mov       ah,9
+    int       21H
+    jmp       near ptr L$30
+L$25:
+    mov       dx,es
+    mov       ax,0
+    mov       ds,ax
+    mov       di,80H
+    mov       cl,byte ptr es:[di]
+    xor       ch,ch
+L$26:
+    inc       di
+    dec       cx
+    cmp       byte ptr es:[di],20H
+    je        L$26
+    inc       cx
+    cmp       byte ptr es:[di],2dH
+    jne       L$31
+    cmp       byte ptr es:1[di],71H
+    je        L$27
+    cmp       byte ptr es:1[di],51H
+    jne       L$31
+L$27:
+    cli       
+    mov       dx,es
+    mov       ax,di
+    les       bx,dword ptr L$14
+    push      es
+    cmp       word ptr es:-2[bx],0ced1H
+    jne       L$22
+    mov       di,word ptr es:-8[bx]
+    mov       word ptr L$14,di
+    mov       di,word ptr es:-6[bx]
+    mov       word ptr L$15,di
+    cmp       word ptr es:-14H[bx],0ced1H
+    jne       L$28
+    mov       ds,word ptr es:-0eH[bx]
+    mov       si,ss
+    mov       di,sp
+    mov       ss,word ptr es:-0eH[bx]
+    mov       sp,offset DGROUP:L$33
+    call      dword ptr es:-12H[bx]
+    mov       ss,si
+    mov       sp,di
+L$28:
+    sti       
+    pop       ds
+    cmp       word ptr -0aH[bx],0
+    je        L$29
+    mov       es,word ptr -0aH[bx]
+    mov       ah,49H
+    int       21H
+L$29:
+    mov       es,word ptr -4[bx]
+    mov       ah,49H
+    int       21H
+L$30:
+    mov       al,0
+    mov       ah,4cH
+    int       21H
+L$31:
+    cli       
+    les       bx,dword ptr L$14
+    cmp       word ptr es:-2[bx],0ced1H
+    jne       L$32
+    jmp       near ptr L$23
+L$32:
+    mov       word ptr cs:L$7,bx
+    mov       word ptr cs:L$8,es
+    mov       word ptr L$14,offset L$10
+    mov       word ptr L$15,cs
+    sti       
+    mov       word ptr cs:L$9,dx
+    mov       es,dx
+    mov       bx,di
+    add       bx,cx
+    mov       byte ptr es:[bx],0
+    mov       bx,DGROUP
+    mov       word ptr cs:L$6,bx
+    mov       ss,bx
+    mov       sp,offset DGROUP:L$33
+    push      di
+    push      ax
+    push      es
+    mov       ax,DGROUP
+    mov       es,ax
+    mov       cx,offset DGROUP:_end
+    mov       di,offset DGROUP:_edata
+    sub       cx,di
+    mov       al,0
+    repe stosb 
+    pop       es
+    pop       ax
+    pop       di
+    mov       ds,bx
+    mov       bx,offset DGROUP:_end
+    mov       cl,4
+    shr       bx,cl
+    add       bx,DGROUP
+    mov       cx,es
+    sub       bx,cx
+    mov       cl,4
+    inc       bx
+    mov       ah,4aH
+    int       21H
+    mov       ax,di
+    call      near ptr InitRetrieve_
+    mov       al,0
+    mov       ah,31H
+    mov       dx,bx
+    int       21H
+_TEXT		ENDS
+_DATA		SEGMENT	PARA PUBLIC USE16 'DATA'
+    DB	03FH DUP(0,0,0,0,0,0,0,0)
+    DB	0, 0, 0, 0, 0, 0, 0, 0
+L$33:
+    DB	0
+L$34:
+    DB	0, 0
+L$35:
+    DB	0, 0, 5cH, 41H, 4cH, 49H, 41H, 53H
+    DB	2eH, 44H, 4fH, 53H, 0
+
+_DATA		ENDS
+CONST		SEGMENT	PARA PUBLIC USE16 'DATA'
+CONST		ENDS
+STACK		SEGMENT	PARA STACK USE16 'STACK'
+    ORG 0
+    ORG 200H
+STACK		ENDS
+
+		END

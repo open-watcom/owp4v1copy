@@ -1,0 +1,601 @@
+.387
+		PUBLIC	_cstart_
+		PUBLIC	_Not_Enough_Memory_
+		PUBLIC	__exit_
+		PUBLIC	__exit_with_msg_
+		PUBLIC	__GETDS
+		PUBLIC	__DOSseg__
+		PUBLIC	__first_data_16M
+		PUBLIC	d16_seginfo_struct
+		PUBLIC	__gdt
+		PUBLIC	__idt
+		PUBLIC	__rtcode
+		PUBLIC	__d16info
+		PUBLIC	__psp16M
+		PUBLIC	__env16M
+		PUBLIC	__mem16M
+		PUBLIC	__dummy16M
+		PUBLIC	__nullarea
+		PUBLIC	__main_data_16M
+		PUBLIC	__curbrk
+		PUBLIC	__psp
+		PUBLIC	__osmajor
+		PUBLIC	__osminor
+		PUBLIC	__osmode
+		PUBLIC	__HShift
+		PUBLIC	__STACKLOW
+		PUBLIC	__STACKTOP
+		PUBLIC	__cbyte
+		PUBLIC	__child
+		PUBLIC	__no87
+		PUBLIC	__get_ovl_stack
+		PUBLIC	__restore_ovl_stack
+		PUBLIC	__close_ovl_file
+		PUBLIC	___FPE_handler
+		PUBLIC	__FPE_handler
+		PUBLIC	__LpCmdLine
+		PUBLIC	__LpPgmName
+		PUBLIC	__ovlflag
+		PUBLIC	__intno
+		PUBLIC	__ovlvec
+		PUBLIC	__stack_16M
+		PUBLIC	__end_16M
+		EXTRN	stackavail_:BYTE
+		EXTRN	_end:BYTE
+		EXTRN	_edata:BYTE
+		EXTRN	__FInitRtns:BYTE
+		EXTRN	__CMain:BYTE
+		EXTRN	__FFiniRtns:BYTE
+		EXTRN	___d16_selectors:BYTE
+		EXTRN	__acrtused:BYTE
+DGROUP		GROUP	_NULL,_AFTERNULL,CONST,STRINGS,XIB,XI,XIE,YIB,YI,YIE,_DATA,DATA,BCSD,_BSS,STACK,VERYLAST
+_TEXT		SEGMENT	WORD PUBLIC USE16 'CODE'
+		ASSUME CS:_TEXT, DS:DGROUP, SS:DGROUP
+L$1:
+    DD	stackavail_
+_cstart_:
+    jmp       near ptr L$19
+    push      di
+    inc       cx
+    push      sp
+    inc       bx
+    dec       di
+    dec       bp
+    and       byte ptr 20H[bp+di],al
+    push      dx
+    jne       L$5
+    sub       ax,6954H
+    insw      
+    and       byte ptr gs:79H[bp+di],dh
+    jae       L$6
+    ins       word ptr [di],dx
+    and       byte ptr 6fH[bp+di],ah
+    and       byte ptr gs:73H[bx+di],ch
+    and       byte ptr 72H[bx+si],dh
+    outsw     
+    DB	76H
+L$2:
+    imul      sp,word ptr 65H[si],2064H
+    outsw     
+    outsb     
+    and       byte ptr 6eH[bx+di],ah
+    and       byte ptr [bp+si],ah
+    popa      
+    jae       L$3
+    imul      si,word ptr 22H[bp+di],6220H
+    popa      
+    jae       L$9
+    jae       L$4
+    popa      
+    outsb     
+    and       byte ptr fs:73H[bx+di],ch
+    and       byte ptr [bx+si],ch
+    arpl      word ptr [bx+di],bp
+    and       byte ptr 6fH[bp+di],al
+    jo        L$13
+    jb        L$11
+    push      2074H
+    DB	62H
+L$3:
+    jns       7dH
+    push      di
+    inc       cx
+    push      sp
+    inc       bx
+    dec       di
+    dec       bp
+    DB	20H, 49H
+L$4:
+    outsb     
+    je        L$13
+    jb        L$16
+    popa      
+    je        L$15
+    outsw     
+    outsb     
+    popa      
+    insb      
+    and       byte ptr 6fH[bp+di],al
+    jb        L$18
+    and       byte ptr cs:[bx+di],dh
+    cmp       word ptr [bx+si],di
+    cmp       byte ptr [di],ch
+    xor       word ptr [bx+di],di
+    cmp       word ptr [bp+di],si
+L$5:
+    and       byte ptr cs:6cH[bx+di],al
+    insb      
+    and       byte ptr 69H[bp+si],dh
+    push      7374H
+    and       byte ptr 65H[bp+si],dh
+    DB	73H
+L$6:
+    jb        10aH
+    DB	65H, 64H
+L$7:
+    or        ax,2a0aH
+L$8:
+    sub       ch,byte ptr [bp+si]
+    and       byte ptr 55H[bp],cl
+    dec       sp
+    dec       sp
+    and       byte ptr 73H[bx+di],ah
+    jae       L$23
+    outs      dx,byte ptr [esi]
+    insw      
+    outs      dx,byte ptr gs:[si]
+    DB	74H
+L$9:
+    and       byte ptr 65H[si],ah
+    je        L$24
+    arpl      word ptr 65H[si],si
+    or        ax,0aH
+L$10:
+    dec       si
+    outsw     
+    je        L$17
+    outs      dx,byte ptr gs:[si]
+    outsw     
+L$11:
+    jne       L$25
+    push      6d20H
+    ins       word ptr [di],dx
+    outsw     
+    jb        L$27
+    or        ax,0aH
+L$12:
+    arpl      word ptr 6eH[bx],bp
+L$13:
+    add       byte ptr [bx+si],al
+    DB	0
+L$14:
+    jb        139H
+    jno       L$28
+L$15:
+    imul      si,word ptr 65H[bp+si],2073H
+L$16:
+    inc       sp
+L$17:
+    dec       di
+    push      bx
+    das       
+	; The label referred to here is an undefined location
+    xor       word ptr 0a4dH,si
+    DB	0dH, 24H
+_Not_Enough_Memory_:
+    mov       bx,1
+L$18:
+    mov       ax,offset L$10
+    mov       dx,cs
+    jmp       near ptr __exit_with_msg_
+L$19:
+    mov       ax,0ff00H
+    mov       dx,78H
+    DB	0cdH
+L$20:
+    and       word ptr 74H[bx+si],ax
+    DD		; The label referred to here is an undefined location
+L$21
+    DW	L$14
+    push      cs
+    pop       ds
+    int       21H
+    mov       ax,4cffH
+    int       21H
+L$21:
+    sti       
+L$22:
+    mov       cx,DGROUP
+    mov       es,cx
+L$23:
+    mov       bx,offset DGROUP:_end
+    add       bx,0fH
+    DB	80H
+L$24:
+    jcxz      108H
+    mov       word ptr es:__STACKLOW,bx
+    mov       word ptr es:__psp,ds
+    mov       bx,offset DGROUP:__end_16M
+    add       bx,0fH
+L$25:
+    and       bx,0fff0H
+    jne       L$26
+    mov       bx,0fffeH
+L$26:
+    mov       word ptr es:__curbrk,bx
+    mov       ss,cx
+    mov       sp,bx
+    mov       word ptr es:__STACKTOP,bx
+    mov       di,ds
+    mov       es,di
+L$27:
+    mov       di,81H
+    mov       cl,byte ptr -1[di]
+    mov       ch,0
+    cld       
+L$28:
+    mov       al,20H
+    repe scasb 
+    lea       si,-1[di]
+    mov       dx,DGROUP
+    mov       es,dx
+    mov       di,word ptr es:__STACKLOW
+    mov       word ptr es:__LpCmdLine,di
+    mov       word ptr es:__LpCmdLine,es
+    je        L$29
+    inc       cx
+    repe movsb 
+L$29:
+    sub       al,al
+    stosb     
+    mov       al,0
+    stosb     
+    dec       di
+    mov       ah,30H
+    int       21H
+    mov       byte ptr es:__osmajor,al
+    mov       byte ptr es:__osminor,ah
+    mov       cx,di
+    cmp       al,3
+    jb        L$33
+    mov       ax,word ptr L$2
+    mov       dx,word ptr es:__psp
+    mov       ds,ax
+    sub       si,si
+    xor       bp,bp
+L$30:
+    mov       ax,word ptr [si]
+    or        ax,2020H
+    cmp       ax,6f6eH
+    jne       L$31
+    mov       ax,word ptr 2[si]
+    cmp       ax,3738H
+    jne       L$31
+    inc       bp
+L$31:
+    cmp       byte ptr [si],0
+    lodsb     
+    jne       L$31
+    cmp       byte ptr [si],0
+    jne       L$30
+    lodsb     
+    inc       si
+    inc       si
+L$32:
+    cmp       byte ptr [si],0
+    movsb     
+    jne       L$32
+L$33:
+    mov       si,cx
+    mov       word ptr es:__LpPgmName,si
+    mov       word ptr es:__LpPgmName,es
+    mov       dx,DGROUP
+    mov       ds,dx
+    mov       es,dx
+    mov       word ptr DGROUP:__no87,bp
+    mov       word ptr DGROUP:__STACKLOW,di
+    mov       cx,offset DGROUP:_end
+    mov       di,offset DGROUP:_edata
+    sub       cx,di
+    mov       al,0
+    repe stosb 
+    cmp       word ptr DGROUP:__get_ovl_stack,0
+    jne       L$34
+    mov       ax,offset L$39
+    mov       word ptr DGROUP:__get_ovl_stack,ax
+    mov       word ptr DGROUP:__get_ovl_stack,cs
+    mov       word ptr DGROUP:__restore_ovl_stack,ax
+    mov       word ptr DGROUP:__restore_ovl_stack,cs
+    mov       word ptr DGROUP:__close_ovl_file,ax
+    mov       word ptr DGROUP:__close_ovl_file,cs
+L$34:
+    xor       bp,bp
+    push      bp
+    mov       bp,sp
+    mov       ax,offset L$38
+    mov       word ptr DGROUP:___FPE_handler,ax
+    mov       word ptr DGROUP:___FPE_handler,cs
+    call      far ptr __FInitRtns
+    call      far ptr __CMain
+__exit_:
+    push      ax
+    mov       dx,DGROUP
+    mov       ds,dx
+    cld       
+    lea       di,DGROUP:__nullarea
+    mov       es,dx
+    mov       cx,10H
+    mov       ax,101H
+    repe scasw 
+    pop       ax
+    je        L$36
+    mov       bx,ax
+    mov       ax,offset L$8
+    mov       dx,cs
+__exit_with_msg_:
+    mov       sp,offset DGROUP:_end+80H
+    push      bx
+    push      ax
+    push      dx
+    mov       dx,seg L$1
+    mov       ds,dx
+    mov       dx,offset L$12
+    mov       ax,3d01H
+    int       21H
+    mov       bx,ax
+    pop       ds
+    pop       dx
+    mov       si,dx
+    cld       
+L$35:
+    lodsb     
+    cmp       al,0
+    jne       L$35
+    mov       cx,si
+    sub       cx,dx
+    dec       cx
+    mov       ah,40H
+    int       21H
+    pop       ax
+L$36:
+    mov       dx,DGROUP
+    mov       ds,dx
+    cmp       byte ptr DGROUP:__ovlflag,0
+    je        L$37
+    push      ax
+    mov       al,byte ptr DGROUP:__intno
+    mov       ah,25H
+    lds       dx,dword ptr DGROUP:__ovlvec
+    int       21H
+    pop       ax
+L$37:
+    push      ax
+    call      far ptr __FFiniRtns
+    pop       ax
+    mov       ah,4cH
+    int       21H
+__GETDS:
+    push      ss
+    pop       ds
+    ret       
+L$38:
+    retf      
+L$39:
+    retf      
+__DOSseg__:
+_TEXT		ENDS
+C_ETEXT		SEGMENT	PARA PUBLIC USE16 'ENDCODE'
+		ASSUME CS:C_ETEXT, DS:DGROUP, SS:DGROUP
+__first_data_16M:
+    DW	__first_data_16M
+    add       byte ptr [bx+si],al
+    add       byte ptr [bx+si],al
+    add       byte ptr [bx+si],al
+    add       byte ptr [bx+si],al
+    add       byte ptr [bx+si],al
+    add       byte ptr [bx+si],al
+    add       byte ptr [bx+si],al
+C_ETEXT		ENDS
+NULLSEG		SEGMENT	PARA PUBLIC USE16 'CODE'
+		ASSUME CS:NULLSEG, DS:DGROUP, SS:DGROUP
+    jmp       L$41
+    nop       
+    nop       
+d16_seginfo_struct:
+    inc       sp
+    dec       di
+    push      bx
+    das       
+    xor       word ptr L$43,si
+    add       ax,word ptr [bx+si]
+    DW	_cstart_
+    DW	_cstart_
+    add       byte ptr [bx+si],al
+    add       byte ptr [bx+si],al
+    DW	L$47
+    DW	_cstart_
+    DW	__first_data_16M
+    DW	DGROUP:__nullarea
+    DW	DGROUP:__nullarea
+    DW	DGROUP:__end_16M
+    DW	__gdt
+    DW	__idt
+    DW	__d16info
+    add       byte ptr [bx+si],al
+    DW	__rtcode
+    DW	__psp16M
+    DW	__env16M
+    DW	__mem16M
+    DW	__dummy16M
+L$41:
+    mov       dx,offset L$42
+    mov       ax,cs
+    mov       ds,ax
+    mov       ah,9
+    int       21H
+    mov       ax,4cffH
+    int       21H
+L$42:
+    inc       bp
+    pop       ax
+    inc       bp
+    and       byte ptr 61H[bx+si],ch
+	; The label referred to here is an undefined location
+    jae       6dH
+L$43:
+    outsb     
+    outsw     
+	; The label referred to here is an undefined location
+    je        71H
+    bound     sp,word ptr 65H[di]
+    outsb     
+    and       byte ptr 72H[bx+si],dh
+    outsw     
+    arpl      word ptr 73H[di],sp
+	; The label referred to here is an undefined location
+    jae       0c3H
+    and       byte ptr fs:79H[bp+si],ah
+    and       byte ptr 41H[di],cl
+    dec       bx
+    inc       bp
+    push      ax
+    dec       bp
+    or        cl,byte ptr [di]
+    and       al,0
+NULLSEG		ENDS
+GDTSEG		SEGMENT	PARA PUBLIC USE16 'FAR_DATA'
+__gdt:
+    DB	0, 0
+
+GDTSEG		ENDS
+IDTSEG		SEGMENT	PARA PUBLIC USE16 'FAR_DATA'
+__idt:
+    DB	0, 0
+
+IDTSEG		ENDS
+RTCODESEG		SEGMENT	PARA PUBLIC USE16 'FAR_DATA'
+__rtcode:
+    DB	0, 0
+
+RTCODESEG		ENDS
+RTDATASEG		SEGMENT	PARA PUBLIC USE16 'FAR_DATA'
+__d16info:
+    DB	0, 0
+
+RTDATASEG		ENDS
+PSPSEG		SEGMENT	PARA PUBLIC USE16 'FAR_DATA'
+__psp16M:
+    DB	0, 0
+
+PSPSEG		ENDS
+ENVSEG		SEGMENT	PARA PUBLIC USE16 'FAR_DATA'
+__env16M:
+    DB	0, 0
+
+ENVSEG		ENDS
+MEM0SEG		SEGMENT	PARA PUBLIC USE16 'FAR_DATA'
+__mem16M:
+    DB	0, 0
+
+MEM0SEG		ENDS
+DUMMY14		SEGMENT	PARA PUBLIC USE16 'FAR_DATA'
+__dummy16M:
+    DB	0, 0
+
+DUMMY14		ENDS
+OVI_DATA		SEGMENT	PARA PUBLIC USE16 'CODE'
+		ASSUME CS:OVI_DATA, DS:DGROUP, SS:DGROUP
+L$47:
+OVI_DATA		ENDS
+FAR_DATA		SEGMENT	BYTE PUBLIC USE16 'FAR_DATA'
+FAR_DATA		ENDS
+_NULL		SEGMENT	PARA PUBLIC USE16 'BEGDATA'
+__nullarea:
+__main_data_16M:
+    DB	1, 1, 1, 1, 1, 1, 1, 1
+    DB	1, 1, 1, 1, 1, 1, 1, 1
+    DB	1, 1, 1, 1, 1, 1, 1, 1
+    DB	1, 1, 1, 1, 1, 1, 1, 1
+
+_NULL		ENDS
+_AFTERNULL		SEGMENT	WORD PUBLIC USE16 'BEGDATA'
+    DB	0, 0
+
+_AFTERNULL		ENDS
+CONST		SEGMENT	WORD PUBLIC USE16 'DATA'
+CONST		ENDS
+STRINGS		SEGMENT	WORD PUBLIC USE16 'DATA'
+STRINGS		ENDS
+XIB		SEGMENT	WORD PUBLIC USE16 'DATA'
+XIB		ENDS
+XI		SEGMENT	WORD PUBLIC USE16 'DATA'
+XI		ENDS
+XIE		SEGMENT	WORD PUBLIC USE16 'DATA'
+XIE		ENDS
+YIB		SEGMENT	WORD PUBLIC USE16 'DATA'
+YIB		ENDS
+YI		SEGMENT	WORD PUBLIC USE16 'DATA'
+YI		ENDS
+YIE		SEGMENT	WORD PUBLIC USE16 'DATA'
+YIE		ENDS
+_DATA		SEGMENT	WORD PUBLIC USE16 'DATA'
+__curbrk:
+    DB	0, 0
+__psp:
+    DB	0, 0
+__osmajor:
+    DB	0
+__osminor:
+    DB	0
+__osmode:
+    DB	1
+__HShift:
+    DB	3
+__STACKLOW:
+    DB	0, 0
+__STACKTOP:
+    DB	0, 0
+__cbyte:
+    DB	0, 0
+__child:
+    DB	0, 0
+__no87:
+    DB	0, 0
+__get_ovl_stack:
+    DB	0, 0, 0, 0
+__restore_ovl_stack:
+    DB	0, 0, 0, 0
+__close_ovl_file:
+    DB	0, 0, 0, 0
+___FPE_handler:
+__FPE_handler:
+    DB	0, 0, 0, 0
+__LpCmdLine:
+    DB	0, 0, 0, 0
+__LpPgmName:
+    DB	0, 0, 0, 0
+__ovlflag:
+    DB	0
+__intno:
+    DB	0
+__ovlvec:
+    DB	0, 0, 0, 0
+
+_DATA		ENDS
+DATA		SEGMENT	WORD PUBLIC USE16 'DATA'
+DATA		ENDS
+BCSD		SEGMENT	WORD PUBLIC USE16 'DATA'
+BCSD		ENDS
+_BSS		SEGMENT	WORD PUBLIC USE16 'BSS'
+_BSS		ENDS
+
+STACK		SEGMENT	PARA STACK USE16 'STACK'
+    ORG 0
+__stack_16M    LABEL	BYTE
+    ORG 1000H
+STACK		ENDS
+
+VERYLAST		SEGMENT	PARA PRIVATE USE16 'STACK'
+VERYLAST		ENDS
+
+		END

@@ -109,13 +109,21 @@ asm=wasm -q
 	@%create $(cmd_file)
 	@%write $(cmd_file) @echo off
 	@%write $(cmd_file) @echo %1.asm ======================================================
-	@%write $(cmd_file) @$(asm) %1.asm >%1.lst 2>&1
+	@%write $(cmd_file) @$(asm) %1.asm >%1.tmp 2>&1
 	@%write $(cmd_file) @if not exist %1.chk goto next2
-        @%write $(cmd_file) @diff -b %1.lst %1.chk
+        @%write $(cmd_file) @diff -b %1.tmp %1.chk
 	@%write $(cmd_file) goto end
 	@%write $(cmd_file) :next2
-	@%write $(cmd_file) type %1.lst
+	@%write $(cmd_file) type %1.tmp
 	@%write $(cmd_file) :end
+	@%write $(cmd_file) @if not exist %1.esm goto next3
+	@%write $(cmd_file) @wdis -l=%1.dis -a %1.obj
+        @%write $(cmd_file) @diff -b %1.dis %1.esm
+	@%write $(cmd_file) :next3
+	@%write $(cmd_file) @if not exist %1.emp goto next4
+	@%write $(cmd_file) @dmpobj -q -l -rec=FIXUPP %1.obj
+        @%write $(cmd_file) @diff -b %1.lst %1.emp
+	@%write $(cmd_file) :next4
 	@for %x in ($(objs)) do @call $(cmd_file) %x
 
 debug : .SYMBOLIC

@@ -39,10 +39,11 @@ bar:    xor ax, ax
         jmp fword ptr 2h[ebx]
 
         jmp far ptr bar
-        jmp far bar
-;       jmpf bar
+        jmp far ptr bar
+        jmpf bar
+ifdef errors
         jmpf bx
-
+endif
         jmpf word ptr [bx]
         jmpf word ptr [bx]+2
         jmpf word ptr 2h[bx]

@@ -15,20 +15,28 @@ rep scasb
 rep scasw
 rep scasd
 
-scas byte ptr [eax]
-scas word ptr [eax]
-scas dword ptr [eax]
-
 scas foo
 scas bar
 scas sam
+
+rep scas foo
+rep scas bar
+rep scas sam
+
+scas byte ptr [eax]
+scas word ptr [eax]
+scas dword ptr [eax]
 
 rep scas byte ptr [eax]
 rep scas word ptr [eax]
 rep scas dword ptr [eax]
 
-rep scas foo
-rep scas bar
-rep scas sam
+scas byte ptr [bx]
+scas word ptr [bx]
+scas dword ptr [bx]
+
+rep scas byte ptr [bx]
+rep scas word ptr [bx]
+rep scas dword ptr [bx]
 
 end

@@ -15,15 +15,15 @@ extern foo:near
     call dword ptr 4000h
     nop
     nop
-    call dword 4000h
+    call dword ptr 4000h
     nop
     nop
     call word ptr 4000h
     nop
     nop
-    call word 4000h
+    call word ptr 4000h
     nop
     nop
-    call near 4000h
+    call near ptr 4000h
     nop
 end

@@ -13,7 +13,9 @@ extern j:proc
 call  b
 call  d
 call  e
-call  h
+ifdef errors
+  call  h
+endif
 call  far ptr i
 call  far ptr j
 

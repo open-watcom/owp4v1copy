@@ -1,0 +1,15 @@
+.387
+		PUBLIC	start
+_TEXT		SEGMENT	BYTE PUBLIC USE16 'CODE'
+		ASSUME CS:_TEXT, DS:DGROUP, SS:DGROUP
+start:
+    cpuid     
+    wrmsr     
+    rdtsc     
+    rdmsr     
+    mov       cr4,eax
+    mov       eax,cr4
+    ????      
+    mov       word ptr [si],0
+_TEXT		ENDS
+		END
