@@ -21,6 +21,12 @@ all_machine = at
 dot_machine =
 !endif
 
+!ifeq sys_windowed 1
+display = gui
+!else
+display = char
+!endif
+
 .EXTENSIONS : .dlg .str
 
 !include cproj.mif
@@ -293,7 +299,7 @@ dig_srcs+=;$(dig_dir)/c/dsx
 
 # libs
 ###########
-libs_win_i86_char       = $(aui_dir)/wini86/aui.lib $(gui_dir)/ui/wini86/gui.lib $(ui_dir)/win$(dot_machine)/wini86/ui.lib $(wres_dir)/lib/wreslw.lib
+libs_win_i86_char       = $(aui_dir)/wini86/aui.lib $(gui_dir)/ui/wini86/gui.lib $(ui_dir)/win$(dot_machine)/wini86/ui.lib $(wres_dir)/lib/wresl.lib
 libs_win_i86_gui        = $(aui_dir)/wini86/aui.lib $(gui_dir)/win/wini86/gui.lib
 libs_nt_386_char        = $(aui_dir)/nt386/aui.lib $(gui_dir)/ui/nt386/gui.lib $(ui_dir)/nt/nt386/ui.lib $(wres_dir)/lib/wresf.lib
 libs_nt_386_gui         = $(aui_dir)/nt386/aui.lib $(gui_dir)/win/nt386/gui.lib
@@ -353,13 +359,11 @@ resfile = $(resname).res
 
 $(exe_name) : eraseall.obj $(resfile) fingmsg.obj $(objs) $(sysobjs) $(libs) $(lnk)
         $(linker) $(lflags) name $^@ @$(lnk) $(endsect)
-!ifeq display char
+!ifneq sys_windowed 1
         wstrip -q -a -r $^@ . $(resfile)
-!else ifeq host_os win
-        $(rc) -k $(rc_flags) -i="$(rcinclude);$(lang_root)/h/win" $(resfile) $^@
-!else ifeq host_os nt
-        $(rc) -k $(rc_flags) -i="$(rcinclude);$(lang_root)/h/nt" $(resfile) $^@
-!else ifeq host_os os2
+!else ifneq host_os os2
+        $(rc) -k $(rc_flags) $(resfile) $^@
+!else
 !ifndef %use_os2tk_stuff
         @set opath=$(%path)
         @set path=$(lang_root)\binp
@@ -378,9 +382,6 @@ wd.lib : eraseall.obj litdef.gh $(engine_objs) $(sysobjs)
 $(lnk) : $(__MAKEFILES__)
     %create $(lnk)
     @%append $(lnk) option map,nocache
-!ifdef syslibs
-    @for %i in ($(syslibs)) do @%append $(lnk) library %i
-!endif
     @for %i in ($(libs))    do @%append $(lnk) library %i
     @for %i in ($(sysobjs)) do @%append $(lnk) file %i
     @%append $(lnk) file fingmsg.obj
@@ -397,7 +398,7 @@ bitmaps = &
         $(wv_dir)/win/zapant.ico &
         $(wv_dir)/os2/zapant.ico
 
-!ifeq display gui
+!ifeq sys_windowed 1
 bitmaps += &
         $(wv_dir)/win/8087.ico &
         $(wv_dir)/os2/8087.ico &
@@ -572,7 +573,7 @@ wvpm.res wvpmj.res : $(hdir)/wvpm.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles)
         cp foros2pm.res wvpmj.res
         @set include=$(%oinc)
 
-!ifeq display char
+!ifneq sys_windowed 1
 .dlg : $(hdir)
 !else ifneq host_os os2
 .dlg : $(hdir)

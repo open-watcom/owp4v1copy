@@ -5,7 +5,6 @@
 
 host_CPU=axp
 host_OS=nt
-display=char
 
 sysobjs =   &
     ntinit.obj &

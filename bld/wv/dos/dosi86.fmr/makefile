@@ -5,7 +5,6 @@
 
 host_OS=dos
 host_CPU=i86
-display=char
 
 machine=fmr
 

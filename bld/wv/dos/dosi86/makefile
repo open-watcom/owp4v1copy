@@ -5,7 +5,6 @@
 
 host_OS=dos
 host_CPU=i86
-display=char
 
 ovl_dos = 1
 # really_ovl_dos = 1

@@ -5,7 +5,6 @@
 
 host_OS=win
 host_CPU=i86
-display=char
 
 machine = nec
 

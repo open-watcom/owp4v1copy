@@ -5,7 +5,7 @@
 
 host_os  = dos
 host_cpu = 386
-display  = char
+
 machine  = nec
 
 syshdir = ../h;../../dos/h
