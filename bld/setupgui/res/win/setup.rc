@@ -4,6 +4,6 @@
 
 ApplIcon    ICON     PRELOAD FIXED setup.ico
 
-#include "splash.h"
+#include "splash.rc"
 
 #include "gui.rc"

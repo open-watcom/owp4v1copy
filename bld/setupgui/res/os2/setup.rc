@@ -3,6 +3,6 @@
 
 ICON ICON_SETUP "../res/os2/setup.ico"
 
-#include "splash.h"
+#include "splash.rc"
 
 #include "gui.rc"

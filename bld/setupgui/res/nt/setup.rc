@@ -5,6 +5,6 @@
 ApplIcon    ICON      PRELOAD FIXED setup.ico
 ICN_DISK    ICON     PRELOAD FIXED disk.ico
 
-#include "splash.h"
+#include "splash.rc"
 
 #include "gui.rc"
