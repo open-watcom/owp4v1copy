@@ -37,4 +37,4 @@ $(bin_root)\binp\dnmpbind.exe : $(objs)
 
 .c: ..\c
 .c.obj:
-    $(comp286) $[@ /d1 /w3 /oaxs /bm /zu /ml /i$(inc_dirs_sys_os2);$(trap_dir)\h
+    $(comp286) $[@ /d1 /w3 /oaxs /bm /zu /ml /i$(inc_dirs_sys);$(trap_dir)\h
