@@ -28,17 +28,19 @@
 *
 ****************************************************************************/
 
-#if defined(__OS2__) || defined(__NT__) || defined(__LINUX__)
+#if defined(__OS2__) || defined(__NT__) || defined(__UNIX__)
 #define MAX_CMD 10240
 #else
 #define MAX_CMD 130
 #endif
 
 #ifdef __UNIX__
-#define OBJ_EXT     ".o"
+#define OBJ_EXT                 ".o"
+#define OBJ_EXT_SECONDARY       ".obj"
 #define PATH_SEP    '/'
 #else
-#define OBJ_EXT     ".obj"
+#define OBJ_EXT                 ".obj"
+#define OBJ_EXT_SECONDARY       ".o"
 #define PATH_SEP    '\\'
 #endif
 
@@ -101,4 +103,3 @@ enum {
 #define pick(code,msg)  code
 #include "wclmsg.h"
 };
-

@@ -751,8 +751,9 @@ static  int  CompLink( void )
         while( file != NULL ) {         /* while more filenames: */
             strcpy( Word, path );
             strcat( Word, file );
-            if( ! FileExtension( Word, OBJ_EXT ) ) { // if not .obj, compile
-                if( ! Flags.be_quiet ) {
+            if( !FileExtension( Word, OBJ_EXT ) &&  // if not .obj or .o, compile
+                !FileExtension( Word, OBJ_EXT_SECONDARY ) ) {
+                if( !Flags.be_quiet ) {
                     PrintMsg( "       %s %s %s\n", cc_name, Word, CC_Opts );
                     fflush( stdout );
                 }
@@ -785,23 +786,8 @@ static  int  CompLink( void )
 
     if( ( Obj_List != NULL || Flags.do_link )  &&  Flags.no_link == FALSE ) {
         FindPath( "wlink" EXE_EXT, PathBuffer );
-        if( ! Flags.be_quiet ) {
-#if 1
+        if( !Flags.be_quiet ) {
             puts( "" );
-#else
-            // Michal Necasek thinks this makes excessively noisy output.
-            // I disagree but put it in disabled to serve us both.
-            // Walter Briscoe 2004-07-23
-            FILE        *atfp = fopen( Temp_Link+1, "r" );
-            char        buffer[_MAX_PATH];
-
-            PrintMsg( "       %s %s\n", LINK, Temp_Link );
-            if( atfp != NULL ) {
-                while( fgets( buffer, sizeof(buffer), atfp ) != NULL )
-                    fputs( buffer, stdout );
-                (void)fclose( atfp );
-            } /* Ignore failure to open file! */
-#endif
         }
         fflush( stdout );
         rc = spawnlp( P_WAIT, PathBuffer, LINK, Temp_Link, NULL );
