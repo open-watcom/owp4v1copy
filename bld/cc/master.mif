@@ -45,9 +45,6 @@ extra_c_flags_intlload = -D__header=\"fesupp.h\"
 extra_c_flags_intlload = -D__header="fesupp.h"
 !endif
 extra_c_flags_cmsg = -D__msg_file_prefix=$(intname)
-opts_cdata_nt = -DLARGEST_QUAD_INDEX=500
-opts_cdata_os2 = -DLARGEST_QUAD_INDEX=500
-extra_c_flag_cdata = $(opts_cdata_$(host_OS))
 
 # WASM stuff
 !ifeq target_cpu axp
