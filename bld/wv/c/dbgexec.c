@@ -181,6 +181,7 @@ bool SetMsgText( char *message, unsigned *conditions )
     char        *equal,*comma1,*comma2;
     address     addr,buff_addr;
     long        buff_len,sym_len;
+    long        num_returns;
     cmd_list    *cmds;
 
     if( memcmp( message, DEBUGGER_THREADID_COMMAND,
@@ -262,6 +263,14 @@ bool SetMsgText( char *message, unsigned *conditions )
         message += sizeof( DEBUGGER_UNLOADMODULE_COMMAND )-1;
         NoCRLF( message );
         SymUserModUnload( message );
+        return( FALSE );
+    } else if( memcmp( message, DEBUGGER_BREAKRETURN_COMMAND,
+                sizeof( DEBUGGER_BREAKRETURN_COMMAND )-1 ) == 0 ) {
+        message += sizeof( DEBUGGER_BREAKRETURN_COMMAND )-1;
+        NoCRLF( message );
+        if( !DlgScanLong( message, &num_returns ) )
+            return( TRUE );
+        // TODO: do something with num_returns value
         return( FALSE );
     } else {
         AddMessageText( message );
