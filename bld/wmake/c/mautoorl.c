@@ -86,7 +86,7 @@ static void bufferInit( void )
     orlBuffer = NULL;
 }
 
-static void *orlRead( void *handle, int bytes )
+static void *orlRead( void *handle, size_t bytes )
 /*********************************************/
 {
     int                 n;

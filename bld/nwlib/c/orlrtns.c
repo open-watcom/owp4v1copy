@@ -35,7 +35,7 @@
 static orl_handle       ORLHnd;
 static orl_funcs        OrlFuncs;
 
-static void * ObjRead( void *fil, int len )
+static void * ObjRead( void *fil, size_t len )
 /*****************************************/
 {
     buf_list *  buf;
