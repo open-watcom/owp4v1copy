@@ -171,6 +171,7 @@ extern void PreProcInit( void )
     curNest.skip = FALSE;
     curNest.elseFound = FALSE;
     nestLevel = 0;
+    lastChar = 0;
 }
 
 
@@ -1047,8 +1048,8 @@ extern STRM_T PreGetCH( void )
     }
 
     for(;;) {
-        if(( atStartOfLine == EOL  && !doingPreProc )  ||
-             t == TMP_EOL && !doingPreProc) {
+        if( (!doingPreProc)
+                && ( atStartOfLine == EOL || t == TMP_EOL )) {
             if (t == TMP_EOL) {
                 // Throw away the unwanted TMP character
                 t = GetCHR();
@@ -1090,10 +1091,6 @@ extern STRM_T PreGetCH( void )
 
 
         if( t == STRM_END ) {
-            if( nestLevel > 0 ) {
-                PrtMsg( WRN| EOF_BEFORE_ENDIF, directives[ D_ENDIF ] );
-                nestLevel = 0;          /* reset nesting level */
-            }
             curNest.skip = FALSE;       /* so we don't skip a later file */
             curNest.skip2endif = FALSE;
 
@@ -2058,4 +2055,8 @@ STATIC void unaryExpr (DATAVALUE* leftValue) {
         leftValue->type        = OP_ERROR;
         // error
     }
+}
+
+size_t GetNestLevel( void ) {
+    return ( nestLevel );
 }

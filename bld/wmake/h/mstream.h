@@ -53,7 +53,6 @@ typedef INT16   STRM_T;
                             /* bang                                      */
 #define TMP_LEX_START (-4)   /*  temporary place holder for lexParser*/
 
-
 /*
  * prototypes
  */
@@ -65,5 +64,6 @@ extern STRM_T GetCHR( void );
 extern void StreamInit( void );
 extern void StreamFini( void );
 extern RET_T GetFileLine( const char **pname, UINT16 *pline );
+extern int IsStreamEOF( void );
 
 #endif /* !_MSTREAM_H */

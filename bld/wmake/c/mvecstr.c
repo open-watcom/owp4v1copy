@@ -322,8 +322,8 @@ extern void CatVec( VECSTR dest, VECSTR src )
         cpyTxt( dest, cur->text, cur->len );
         myFree( cur );
     }
-    ((OURPTR)src)->d.head = NULL;
-    FreeVec( (OURPTR)src );
+    ((OURPTR)src)->next = freeVec;
+    freeVec = (OURPTR)src;
 }
 
 

@@ -46,6 +46,7 @@
 #include "mstream.h"
 #include "msuffix.h"
 #include "mmemory.h"
+#include "mpreproc.h"
 
 /*
  * This file implements something I'll call a "stream".  A stream consists
@@ -82,6 +83,7 @@ typedef struct streamEntry {
             char    *buf;       /* beginning of buffer                  */
             UINT16  line;       /* current line number                  */
             const char *name;   /* file name                            */
+            size_t nestLevel;   /* nest level of the file beginning     */
         } file;                 /* for SENT_FILE                        */
 
         struct {
@@ -112,6 +114,7 @@ typedef struct streamEntry {
 STATIC SENT *headSent;      /* stack of sents in use    */
 STATIC SENT *freeSent;      /* stack of free sents      */
 
+STATIC int flagEOF;
 
 STATIC SENT *getSENT( STYPE_T type )
 /***********************************
@@ -181,6 +184,7 @@ STATIC void pushFH( SENT *sent, int fh )
     sent->data.file.cur = sent->data.file.buf;
     sent->data.file.max = sent->data.file.buf;
     sent->data.file.line = 1;
+    sent->data.file.nestLevel = -1;
 }
 
 
@@ -197,6 +201,8 @@ STATIC BOOLEAN fillBuffer( void )
     assert( headSent != NULL && headSent->type == SENT_FILE );
 
     tmp = headSent;
+
+    if ( tmp->data.file.nestLevel == -1 ) tmp->data.file.nestLevel = GetNestLevel();
 
     tmp->data.file.cur = tmp->data.file.buf;
 
@@ -309,6 +315,7 @@ extern STRM_T GetCHR( void )
     SENT   *head;  /* this is just here for optimizing purposes */
     STRM_T result;
 
+    flagEOF = 0;
     for(;;) {
 
         head = headSent;
@@ -322,7 +329,11 @@ extern STRM_T GetCHR( void )
             /* GetFileLine() depends on the order of execution here */
             if( head->data.file.cur == head->data.file.max ) {
                 if( !fillBuffer() ) {
+                    if ( head->data.file.nestLevel != GetNestLevel() ) {
+                        PrtMsg( WRN|EOF_BEFORE_ENDIF, "endif" );
+                    }
                     popSENT();
+                    flagEOF = 1;
                     return( EOL );
                 }
             }
@@ -437,6 +448,10 @@ extern RET_T GetFileLine( const char **pname, UINT16 *pline )
     *pname = cur->data.file.name;
 
     return( RET_SUCCESS );
+}
+
+extern int IsStreamEOF( void ) {
+    return ( flagEOF );
 }
 
 
