@@ -32,7 +32,7 @@ winlibs =            &
     $(as) $[@
 
 .def.lbc:
-        vi -i -q -k ":set norc\n:r ../lib/$[.\n:source ../def16lbc.vi $*\n"
+        vi -d -i -q -s ../def16lbc.vi -p"$*" ../lib/$[.
 
 .lbc.lib:
         $(librarian) -b -n -p=16 -io -ii $@ @$<
