@@ -335,6 +335,7 @@ u_long  sys_brk(u_long brk);
 long    sys_open(const char * filename, int flags, int mode);
 long    sys_exit(int error_code);
 int     sys_getdents(u_int fd, struct dirent *dirp, u_int count);
+long    sys_socketcall(int call, u_long *args);
 
 #if 0
 struct itimerval;
@@ -531,7 +532,6 @@ long sys_getsockopt(int fd, int level, int optname,char *optval, int *optlen);
 long sys_shutdown(int fd, int how);
 long sys_sendmsg(int fd, struct msghdr *msg,unsigned flags);
 long sys_recvmsg(int fd, struct msghdr *msg,u_int flags);
-long sys_socketcall(int call, u_long *args);
 #endif
 
 #endif /* _ASM_I386_UNISTD_H_ */

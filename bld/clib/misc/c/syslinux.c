@@ -79,7 +79,13 @@ long sys_open(const char * filename, int flags, int mode)
 int sys_getdents(u_int fd, struct dirent *dirp, u_int count)
 {
     u_long res = sys_call3(SYS_getdents, fd, (u_long)dirp, count);
-    __syscall_return(int,res);    
+    __syscall_return(int,res);
+}
+
+long sys_socketcall(int call, u_long *args)
+{
+    u_long res = sys_call2(SYS_socketcall, call, (u_long)args);
+    __syscall_return(long, res);
 }
 
 _WCRTLINK char *getcwd( char *__buf, size_t __size )
@@ -304,7 +310,7 @@ _WCRTLINK int rename( const char *__old, const char *__new )
     u_long res = sys_call2(SYS_rename, (u_long)__old, (u_long)__new);
     __syscall_return(int,res);
 }
-    
+
 _WCRTLINK int truncate( const char *__path, off_t __length )
 {
     u_long res = sys_call2(SYS_truncate, (u_long)__path, __length);
