@@ -1,4 +1,4 @@
-#pmake: all build docs os_os2
+#pmake: build docs os_os2
 
 dotarget=os2
 

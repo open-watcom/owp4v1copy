@@ -1,4 +1,4 @@
-#pmake: all build docs os_nt
+#pmake: build docs os_nt
 
 dotarget=nt
 

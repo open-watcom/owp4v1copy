@@ -1,4 +1,4 @@
-#pmake: all build docs html
+#pmake: docs html
 
 dotarget=html
 

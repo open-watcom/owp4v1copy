@@ -1,4 +1,4 @@
-#pmake: all build docs os_win
+#pmake: build docs os_win
 
 dotarget=win
 

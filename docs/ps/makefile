@@ -1,4 +1,4 @@
-#pmake: all build docs ps
+#pmake: docs ps
 
 dotarget=ps
 
