@@ -36,8 +36,8 @@
 #include "cgswitch.h"
 #include "data.h"
 
-pointer                 HeadBlock;
-pointer                 BlockList;
+block *                 HeadBlock;
+block *                 BlockList;
 //pointer                 CurrBlock;
 int                     InsId;
 int                     TempId;

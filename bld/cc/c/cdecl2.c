@@ -290,7 +290,12 @@ local SYM_HANDLE VarDecl( SYMPTR sym, stg_classes stg_class )
     if( sym->naked ){          /* 25-jul-95 */
         CErr1( ERR_INVALID_DECLSPEC );
     }
-    if( SymLevel == 0 ) {
+
+    if( SymLevel == 0 ) 
+    {
+        /*
+        //  SymLevel == 0 is global scope (SymLevel is the count of nested {'s)
+        */
         if( stg_class == SC_AUTO  ||  stg_class == SC_REGISTER ) {
             CErr1( ERR_INV_STG_CLASS_FOR_GLOBAL );
             stg_class = SC_STATIC;
@@ -304,7 +309,12 @@ local SYM_HANDLE VarDecl( SYMPTR sym, stg_classes stg_class )
             }
             sym->u.var.segment = ThreadSeg;
         }
-    } else {
+    } 
+    else 
+    {
+        /*
+        //  SymLevel != 0 is function scoped (SymLevel is the count of nested {'s)
+        */
         if( stg_class == SC_NULL ) {
             stg_class = SC_AUTO;
         }
@@ -315,6 +325,16 @@ local SYM_HANDLE VarDecl( SYMPTR sym, stg_classes stg_class )
             if( sym->declspec != DECLSPEC_NONE ) {          /* 25-jul-95 */
                 CErr1( ERR_INVALID_DECLSPEC );
             }
+        }
+        /*
+        // static class variables can be thread local also
+        */
+        if( (stg_class == SC_STATIC) && (sym->declspec == DECLSPEC_THREAD) ) {          /* 06-JAN-03 */
+            if( !CompFlags.thread_data_present ){
+                ThreadSeg = DefThreadSeg();
+                CompFlags.thread_data_present = 1;
+            }
+            sym->u.var.segment = ThreadSeg;
         }
     }
     if( (Toggles & TOGGLE_UNREFERENCED) == 0 ) {
