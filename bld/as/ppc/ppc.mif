@@ -1,0 +1,22 @@
+splice_opts = -kAS_PPC
+
+as_extra_defines = -dAS_PPC
+
+as_cdir = $(as_dir)/ppc/c;$(as_dir)/c
+as_hdir = $(as_dir)/ppc/h;$(as_dir)/h
+as_ydir = $(as_dir)/ppc/y;$(as_dir)/y
+
+target_as_comm_objs = &
+    ppcfmt.obj &
+    ppcins.obj
+
+extra_c_flags_ppcfmt  = -fh
+extra_c_flags_ppcins  = -fh
+
+!ifdef __UNIX__
+asi_dir = $(as_dir)/ppc/inline/osi$(host_cpu)
+!else
+asi_dir = $(as_dir)\ppc\inline\osi$(host_cpu)
+!endif
+
+!include $(as_dir)/mif/master.mif

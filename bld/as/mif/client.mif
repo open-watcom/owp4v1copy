@@ -4,8 +4,8 @@
 #
 # AS in-line library
 #
-asminline_axp_lib_386 = $(as_dir)/axp/inline/osi386/asinline.lib
-asminline_axp_lib_axp = $(as_dir)/axp/inline/osiaxp/asinline.lib
+asminline_axp_lib_386 = $(as_dir)/alpha/inline/osi386/asinline.lib
+asminline_axp_lib_axp = $(as_dir)/alpha/inline/osiaxp/asinline.lib
 
 asminline_ppc_lib_386 = $(as_dir)/ppc/inline/osi386/asinline.lib
 asminline_ppc_lib_axp = $(as_dir)/ppc/inline/osiaxp/asinline.lib

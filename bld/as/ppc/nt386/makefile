@@ -4,4 +4,4 @@ host_os  = nt
 host_cpu = 386
 target_cpu = ppc
 
-!include $(as_dir)/mif/master.mif
+!include ../ppc.mif

@@ -4,4 +4,4 @@ host_os  = nt
 host_cpu = axp
 target_cpu = axp
 
-!include $(as_dir)/mif/master.mif
+!include ../alpha.mif
