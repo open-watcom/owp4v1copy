@@ -40,16 +40,8 @@
 #include "tmpdefs.h"
 #include "global.h"
 #include "fcdata.h"
-
-//=================== Back End Code Generation Routines ====================
-
-extern  cg_name         CGUnary(cg_op,cg_name,cg_type);
-extern  void            CGTrash(cg_name);
-extern  cg_name         CGAssign(cg_name,cg_name,cg_type);
-extern  temp_handle     CGTemp(cg_type);
-extern  cg_name         CGTempName(temp_handle,cg_type);
-extern  cg_name         *CGDuplicate(cg_name );
-extern  unsigned long   BETypeLength(cg_type);
+#include "model.h"
+#include "cgprotos.h"
 
 //=========================================================================
 

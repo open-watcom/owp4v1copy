@@ -1390,7 +1390,7 @@ extern cg_name _CGAPI CGAlign( cg_name name, uint alignment ) {
 }
 
 static  cg_name CGDuplicateArray[ 2 ];
-extern  cg_name _CGAPI CGDuplicate( cg_name name ) {
+extern  cg_name * _CGAPI CGDuplicate( cg_name name ) {
 /****************************************************/
     an          addr;
 #ifndef NDEBUG
