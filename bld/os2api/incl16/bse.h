@@ -32,5 +32,5 @@
 /* Base system */
 #include <bsedos.h>
 
-/* Device support */
-// #include <bsedev.h>
+/* Subsystem support */
+#include <bsesub.h>
