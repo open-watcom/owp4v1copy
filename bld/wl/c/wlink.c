@@ -88,6 +88,8 @@ extern void     ResetSymTrace( void );
 extern void     ResetLoadFile( void );
 extern void     ResetToc( void );
 
+extern void     SetSymCase( void );
+
 static  void    LnkInit();
 
 extern int              __nheapblk;
@@ -189,7 +191,6 @@ extern void ResetSubSystems( void )
     ResetMsg();
     VirtMemInit();
     ResetMisc();
-    ResetSym();
     Root = NewSection();
     ResetDBI();
     ResetMapIO();
@@ -378,6 +379,9 @@ static void ResetMisc( void )
     OvlFName = NULL;
     CurrMod = NULL;
     StackSize = 0x1000;
+    // set case sensitivity for symbols
+    ResetSym();
+    SetSymCase();
 }
 
 static void DoDefaultSystem( void )
