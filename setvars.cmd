@@ -51,7 +51,7 @@ set lang_bld=%owroot%\bat
 set lc=-r
 set lib=%owroot%\bld\watcom\lib
 set more=-t
-set path=%owroot%\binp;%devdir%\build\binp;%devdr%\bat;%lang%\binp;%lang%\binw;%devdr%\tools;%devdr%\cmds;%doc_root%\cmds;%defpath%
+set path=%owroot%\binp;%devdir%\build\binp;%devdir%\bat;%lang%\binp;%lang%\binw;%devdr%\tools;%devdir%\cmds;%doc_root%\cmds;%defpath%
 set relroot=%owroot%
 set rm=-s
 set manifest=%owroot%\manifest
@@ -68,6 +68,15 @@ set edpath=%lang%\eddat
 set wwinhelp=%owroot%\bld\online\hlp\ib
 set copycmd=/y
 set beginlibpath=%watcom%\binp\dll
-rem link 16-bit executables for OS/2 by default, not for DOS!
+
+rem Documentation variables
+set doc_root=%owroot%\docs
+set whelp=%doc_root%\doc\whelp
+set gml_root=%doc_root%\gml\os2
+set gmllib=%doc_root%\gml\syslib
+set whpcvt=%doc_root%\cmds\whpcvto2
+set hcdos=%doc_root%\cmds\hcdosos2
+set hlpdir=%devdir%\online\hlp
+
 %devdr%
 cd %devdir%
