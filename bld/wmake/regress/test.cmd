@@ -1,17 +1,25 @@
 @echo off
 SET TRMEM_CODE=1
 
-if not exist ERROR.OUT  goto not_exist
-    rm ERROR.OUT
-:not_exist
-if .%1. == .. goto usage
+set from=%cd%
+cd %devdir%\wmake\regress
+
+if exist error.out del error.out
+if .%1 == . goto usage
+
+REM ===========================
+REM Build utilities first 
+REM ===========================
+cd cmds
+wmake -h
+cd ..
 
 REM ===========================
 REM -- test1 - Multiple Dependents Test
 REM ===========================
 echo *****************************************************************
 cd TEST1
-call TEST %1 ..\ERROR.OUT
+call test %1 ..\error.out
 cd ..
 
 :tst2
@@ -20,7 +28,7 @@ REM -- TEST2 - Implicit Rules Test
 REM ===========================
 echo *****************************************************************
 cd IMPLICIT
-call TEST %1 ..\ERROR.OUT
+call test %1 ..\error.out
 cd ..
 
 :tst3
@@ -29,7 +37,7 @@ REM -- FORTEST - FOR LOOP TEST
 REM ===========================
 echo *****************************************************************
 cd FORTEST
-call TEST %1 ..\ERROR.OUT
+call test %1 ..\error.out
 cd ..
 
 :tst4
@@ -38,7 +46,7 @@ REM -- PRETEST - PRE COMPILER TEST
 REM ===========================
 echo *****************************************************************
 cd PRETEST
-call DOPRE %1 ..\ERROR.OUT
+call dopre %1 ..\error.out
 cd ..
 
 :tst5
@@ -47,7 +55,7 @@ REM -- UPDTEST - UPDATE TEST
 REM ===========================
 echo *****************************************************************
 cd UPDTEST
-call DOUPD %1 ..\ERROR.OUT
+call doupd %1 ..\error.out
 cd ..
 
 :tst6
@@ -57,7 +65,7 @@ REM -- ERRTEST - ERROR TEST
 REM ===========================
 echo *****************************************************************
 cd ERRTEST
-call ERROR %1 ..\ERROR.OUT
+call error %1 ..\error.out
 cd ..
 
 :tst7
@@ -67,7 +75,7 @@ REM -- INLINE TEST -
 REM ===========================
 echo *****************************************************************
 cd INLINE
-call TEST %1 ..\ERROR.OUT
+call test %1 ..\error.out
 cd ..
 
 :tst8
@@ -76,7 +84,7 @@ REM -- PREPROCESS TEST -
 REM ===========================
 echo *****************************************************************
 cd PREPROC
-call TEST %1 ..\ERROR.OUT
+call test %1 ..\error.out
 cd ..
 
 :tst9
@@ -85,7 +93,7 @@ REM -- MACROS TEST -
 REM ===========================
 echo *****************************************************************
 cd MACROS
-call TEST %1 ..\ERROR.OUT
+call test %1 ..\error.out
 cd ..
 
 :tst10
@@ -94,7 +102,7 @@ REM -- MISC TEST -
 REM ===========================
 echo *****************************************************************
 cd MISC
-call TEST %1 ..\ERROR.OUT
+call test %1 ..\error.out
 cd ..
 
 :tst11
@@ -103,7 +111,7 @@ REM -- LONG FILENAME TEST -
 REM ===========================
 echo *****************************************************************
 cd LONGFILE
-call TEST %1 ..\ERROR.OUT
+call test %1 ..\error.out
 cd ..
 
 
@@ -112,10 +120,11 @@ REM -- End of Test
 REM ===========================
 echo ************* DONE DONE DONE ********************
 
-if exist ERROR.OUT echo !!!!!!!! ERRORS FOUND !!!!!!!!!!
-if exist ERROR.OUT echo look at ERROR.OUT for listing
+if exist error.out echo !!!!!!!! ERRORS FOUND !!!!!!!!!!
+if exist error.out echo look at error.out for listing
 goto done
 :usage
 echo "%0 <prgname>"
 
 :done
+cd %from%
