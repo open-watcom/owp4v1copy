@@ -390,7 +390,7 @@ inspick( fild10,        "fild",         0x000080db,     0x0000f8fb,     X86FType
 inspick( fild6400,      "fild",         0x000028df,     0x0000f8ff,     X86FType1)
 inspick( fild6401,      "fild",         0x000068df,     0x0000f8ff,     X86FType1)
 inspick( fild6410,      "fild",         0x0000a8df,     0x0000f8ff,     X86FType1)
-inspick( fincstp,       "fincstp",      0x0000f7d9,     0x00000000,     X86FType4)
+inspick( fincstp,       "fincstp",      0x0000f7d9,     0x0000ffff,     X86FType4)
 inspick( fninit,        "fninit",       0x0000e3db,     0x0000ffff,     X86FType4)
 inspick( finit,         "finit",        0x00000000,     0x00000000,     NULL)
 inspick( fmul00,        "fmul",         0x000008d8,     0x0000f8fb,     X86FType2)
