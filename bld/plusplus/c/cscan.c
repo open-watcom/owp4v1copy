@@ -1019,6 +1019,14 @@ static int scanNum( int expanding )
         if( c == ONE_CASE( 'u' ) ) {
             saveNextChar();
             ConstType = TYP_ULONG;
+        } else if( c == ONE_CASE( 'L' ) ) {
+            c = ONE_CASE( saveNextChar() );
+            if( c == ONE_CASE( 'u' ) ) {
+                saveNextChar();
+                ConstType = TYP_ULONG64;
+            } else {
+                ConstType = TYP_SLONG64;
+            }                   
         } else if( ! U64IsI32( Constant64 ) ) { // Constant > 0x7FFFFFFFul
             ConstType = TYP_ULONG;
         }
@@ -1084,8 +1092,13 @@ static int scanNum( int expanding )
             }
             break;
         case ONE_CASE( 'L' ):
-            saveNextChar();
-            ConstType = TYP_ULONG;
+            c = ONE_CASE( saveNextChar() );
+            if( c == ONE_CASE( 'L' ) ) {
+                saveNextChar();
+                ConstType = TYP_ULONG64;
+            } else {
+                ConstType = TYP_ULONG;
+            }                   
             break;
         default:
             ConstType = TYP_UINT;
