@@ -19,7 +19,7 @@ sys_object =    wmain.sbj winfo.sbj wstr.sbj whndl.sbj &
                 wedit.sbj wtoolbar.sbj wribbon.sbj &
                 wdel.sbj wnewitem.sbj wsvobj.sbj wstr2rc.sbj
 
-!include ..\..\master.mif
+!include ..\..\mif\master.mif
 
 $(name).res: $(name).rc rename.dlg w_rc.h sys_rc.h wmsgfile.h &
              wstring.men strabout.dlg stredit.dlg

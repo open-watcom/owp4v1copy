@@ -20,7 +20,7 @@ sys_object =    wmain.sbj winfo.sbj wacc.sbj whndl.sbj &
                 wvk2str.sbj wdel.sbj wnewitem.sbj &
                 wkey.sbj wsvobj.sbj wacc2rc.sbj
 
-!include ..\..\master.mif
+!include ..\..\mif\master.mif
 
 $(name).res: $(name).rc rename.dlg w_rc.h sys_rc.h wmsgfile.h &
              accedit.dlg accabout.dlg acckey.dlg wacc.men

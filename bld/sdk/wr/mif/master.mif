@@ -49,19 +49,6 @@ object =    wrmain.obj wrmem.obj wrmsg.obj wrfindt.obj wrtmpfil.obj &
                 errors.rbj tmpctl.rbj autodep.rbj layer0.rbj param.rbj &
                 dbtable.rbj swchar.rbj sharedio.rbj
 
-!ifndef on_build_machine
-!ifdef build_root
-!ifeq host_OS nt
-!ifeq host_CPU 386
-copy_to=$(build_root)\nt\
-!else
-copy_to=$(build_root)\axp\
-!endif
-!else
-copy_to=$(build_root)\win\
-!endif
-!endif
-!endif
 
 !ifeq host_CPU axp
 OF =
@@ -116,7 +103,7 @@ HOME__DIR       =$+ $(%cwd) $-
         cd $(HOME__DIR)
 
 #------------- LIB
-$(name).lib: wrcmsg.h $(copy_to)$(name).dll
+$(name).lib: wrcmsg.h $(name).dll
         $(librarian) -b-q-n $(name) +$]@
 
 #------------- LINK
@@ -133,7 +120,7 @@ extra_l_flags_win = op rwr,stack=16k
 #extra_l_flags_win += segment  CLASS 'CODE' LOADONCALL MOVEABLE DISCARDABLE
 #extra_l_flags_win += segment  CLASS 'CODE' PRELOAD
 
-$(copy_to)$(name).dll: $(object) $(wres_lib) $(name).res
+$(name).dll: $(object) $(wres_lib) $(name).res
         *$(linker)  d a $(lflags) name $(name).dll lib $(wres_lib) file {$(object)}
         $(rc) $(rc_opts) -k $(name).res $(name).dll
 !ifdef TOOLS_10_0
@@ -143,10 +130,6 @@ $(copy_to)$(name).dll: $(object) $(wres_lib) $(name).res
 !endif
 !endif
 !endif
-!ifdef copy_to
-        copy $(name).dll $^@
-!endif
-
 
 #---------- TEST
 test_system_win_i86= windows

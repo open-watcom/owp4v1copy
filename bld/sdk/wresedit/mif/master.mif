@@ -49,13 +49,6 @@ cflags_all = -zq -w4
 
 !ifdef on_build_machine
 NODEBUG=1
-!else
-!ifdef build_root
-copy_to_nt_386  = $(build_root)\nt\
-copy_to_nt_axp  = $(build_root)\axp\
-copy_to_win_i86 = $(build_root)\win\
-copy_to         = $(copy_to_$(host_OS)_$(host_CPU))
-!endif
 !endif
 
 wbind           =wbind
@@ -97,10 +90,10 @@ extra_l_flags_win = library commdlg op stack=8k,rwr
 .BEFORE
         set INCLUDE=$(inc_path)
 
-$(name).lib: wmsgfile.h $(copy_to)$(name).dll
-        $(librarian) -b-q-n $(name) +$(copy_to)$(name).dll
+$(name).lib: wmsgfile.h $(name).dll
+        $(librarian) -b-q-n $(name) +$(name).dll
 
-$(copy_to)$(name).dll: $(object) $(wres_lib) $(name).res $(wr_lib)
+$(name).dll: $(object) $(wres_lib) $(name).res $(wr_lib)
         *$(linker) $(lflags) file {$(object)}
         $(rc) $(rc_opts) -k $(name).res $(name).dll
 !ifdef TOOLS_10_0
@@ -109,9 +102,6 @@ $(copy_to)$(name).dll: $(object) $(wres_lib) $(name).res $(wr_lib)
         whack $(name).dll
 !endif
 !endif
-!endif
-!ifdef copy_to
-        copy $(name).dll $(copy_to)$(name).dll
 !endif
 
 .c.sbj: .AUTODEPEND

@@ -26,20 +26,6 @@ fmedit_dir      = $(build_root)\fmedit
 !endif
 !endif
 
-!ifndef on_build_machine
-!ifdef build_root
-!ifeq host_OS nt
-!ifeq host_CPU axp
-copy_to = $(build_root)\axp\
-!else
-copy_to = $(build_root)\nt\
-!endif
-!else
-copy_to = $(build_root)\win\
-!endif
-!endif
-!endif
-
 wbind           = wbind
 rc_opts_win     = -bt=windows
 rc_opts_nt      = -bt=NT -d__NT__
@@ -116,7 +102,7 @@ inc_dirs = h;..\h;$(watcom_dir)\h;$(wres_dir)\h;$(wr_dir)\h;$(fmedit_dir)\dev;$(
 
 # explicit rules
 
-all : $(copy_to)$(name).exe .SYMBOLIC
+all : $(name).exe .SYMBOLIC
         @%null
 
 obj=obj
@@ -135,7 +121,7 @@ extra_l_flags_nt += runtime windows=4.0
 !endif
 extra_l_flags_win = op symfile,stack=32k,rwr library commdlg,ddeml
 
-$(copy_to)$(name).exe: wdemsgs.h $(OBJS) $(name).res $(wres_lib) $(fmedit_lib) $(wr_lib)
+$(name).exe: wdemsgs.h $(OBJS) $(name).res $(wres_lib) $(fmedit_lib) $(wr_lib)
         *$(linker) name $^. $(lflags) file {$(OBJS)}
         $(rc) $(rc_opts) -k $^&.res $^.
 !ifdef TOOLS_10_0
@@ -144,9 +130,6 @@ $(copy_to)$(name).exe: wdemsgs.h $(OBJS) $(name).res $(wres_lib) $(fmedit_lib) $
         whack $(name).exe
 !endif
 !endif
-!endif
-!ifdef copy_to
-        copy $^. $^@
 !endif
 
 $(name).res: wde.rc wde.men wde.msg wde.ico wde_rc.h wdemsgs.h wde.msg &

@@ -28,13 +28,6 @@ wstring_dir     =$(sdk_dir)\wresedit\wstring
 
 !ifdef on_build_machine
 NODEBUG=1
-!else
-!ifdef build_root
-copy_to_win_i86 = $(build_root)\win\
-copy_to_nt_386  = $(build_root)\nt\
-copy_to_nt_axp  = $(build_root)\axp\
-copy_to         = $(copy_to_$(host_OS)_$(host_CPU))
-!endif
 !endif
 
 wbind           =wbind
@@ -108,7 +101,7 @@ extra_l_flags_win = op stack=32k,rwr library commdlg,ddeml
 
 # explicit rules
 
-$(copy_to)$(name).exe: wremsgs.h $(OBJS) $(name).res $(wres_lib) $(resedit_libs) $(wr_lib)
+$(name).exe: wremsgs.h $(OBJS) $(name).res $(wres_lib) $(resedit_libs) $(wr_lib)
         *$(linker) $(lflags) file {$(OBJS)}
         $(rc) $(rc_opts) -k $(name).res $(name).exe
 !ifdef TOOLS_10_0
@@ -117,9 +110,6 @@ $(copy_to)$(name).exe: wremsgs.h $(OBJS) $(name).res $(wres_lib) $(resedit_libs)
         whack $(name).exe
 !endif
 !endif
-!endif
-!ifdef copy_to
-        copy $(name).exe $(copy_to)$(name).exe
 !endif
 
 $(name).res: $(name).rc $(name).men wremsgs.h wre.msg &
