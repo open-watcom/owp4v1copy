@@ -80,7 +80,7 @@ wbrowse.dll: $(objs) WRes.res makefile .autodepend
     @%append $(lnk) op osname='Windows NT' format windows nt dll
     @%append $(lnk) $(debug_link_opts)
     @for %i in ($(objs)) do @%append $(lnk) file %i
-    @%append $(lnk) run win=4.0 op Caseexact
+    @%append $(lnk) run win=4.0
     @%append $(lnk) lib $(lexlib_dir)/wclass/prod/wcmlla$(wclass_version).lib
     @%append $(lnk) libp $(lexlib_dir)/wclass/lib;$(%watcom)/lib386/nt;$(%watcom)/lib386
     @%append $(lnk) op resource=WRes.res

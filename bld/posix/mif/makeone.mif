@@ -31,7 +31,7 @@ $(name).exe: $(objs) $(lnk) $(posixlib)
 $(LNK) : $(objs)
         @%create $(LNK)
         @%append $(lnk) name $(name).exe
-        @%append $(LNK) debug all option quiet,caseexact,map
+        @%append $(LNK) debug all option quiet,map
         @%append $(LNK) lib $(posixlib)
 !ifeq targos dosos2
         @%append $(LNK) system os2 pmc

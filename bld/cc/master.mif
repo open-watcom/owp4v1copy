@@ -1,12 +1,13 @@
+proj_name = cc
+
 .continue
 .erase
 
-.EXTENSIONS:
-.EXTENSIONS:  .exe .exp .lib .obj .cpp .c .asm .h .gh .mif
+.EXTENSIONS: .gh
+#.EXTENSIONS:
+#.EXTENSIONS:  .exe .exp .lib .obj .cpp .c .asm .h .gh .mif
 
-.mif: $(mif_path)
-
-proj_name = cc
+#.mif: $(mif_path)
 
 !include cproj.mif
 !include deftarg.mif
@@ -246,7 +247,6 @@ $(dllname).dll : $(pre_obj_deps) $(rc_objs) $(dll_objs) $(dwarf_deps) $(cg_debug
         @if exist $^&.lnk @rm -f $^&.lnk
         @%write $^&.lnk name $@
         @%append $^&.lnk OP map
-        @%append $^&.lnk OP caseexact
         @%append $^&.lnk OP SYMFILE
         @%append $^&.lnk  $(wlink_opt_$(host_os)_$(host_cpu)_dll) initinstance terminstance
         @%append $^&.lnk $(wlink_dll_$(host_os))

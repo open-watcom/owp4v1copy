@@ -343,7 +343,7 @@ lnk_dbg = debug codeview
 setup.lnk : makefile ../setup.mif
     %create setup.lnk
     @%append setup.lnk $(lnk_dbg) option symfile
-    @%append setup.lnk option quiet, map, verbose, caseexact
+    @%append setup.lnk option quiet, map, verbose
 !ifndef ON_BUILD_MACHINE
     @%append setup.lnk option undefsok
 !endif
