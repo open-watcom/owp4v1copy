@@ -114,6 +114,13 @@ static int ACueDir( void *d, dr_line_dir *curr ){
     curr = curr;
     return( TRUE );
 }
+
+static int IsRelPathname( const char *name )
+{
+    /* Figure out if a pathname is relative - could be fancier */
+    return( (name[0] != '/') && (name[0] != '\\') );
+}
+
 unsigned        DIPENTRY DIPImpCueFile( imp_image_handle *ii,
                         imp_cue_handle *ic, char *buff, unsigned max )
 {
@@ -147,9 +154,9 @@ unsigned        DIPENTRY DIPImpCueFile( imp_image_handle *ii,
         return( 0 );
     }
     // If compilation unit has a DW_AT_comp_dir attribute, we need to
-    // stuff that in front of the (presumably relative) file pathname
+    // stuff that in front of the file pathname, unless that is absolute
     dir_len = DRGetCompDirBuff( cu_handle, NULL, 0 );
-    if( dir_len > 1 ) {     // Ignore empty strings
+    if( (dir_len > 1) && IsRelPathname( name ) ) {  // Ignore empty comp dirs
         if( max == 0 ) {
             len = NameCopy( buff, name, max ) + dir_len;
         } else {
@@ -162,7 +169,7 @@ unsigned        DIPENTRY DIPImpCueFile( imp_image_handle *ii,
             len = NameCopy( buff, dir_path, max );
             DCFree( dir_path );
             if( max > len + 1 ) {
-                len += NameCopy( buff + len, "/", 1 );
+                len += NameCopy( buff + len, "/", 1 + 1 );
                 len += NameCopy( buff + len, name, max - len );
             }
         }

@@ -615,13 +615,9 @@ extern unsigned NameCopy( char *to, char *from, unsigned max )
         if( len < max ) {
             max = len;
         } else {
-            max = max-1;
+            max = max - 1;
         }
-        if( max == 0 ) {    // Special case to prevent underflow
-            *to = *from;
-            ++to;
-        }
-        else {
+        if( max > 0 ) {     // Check max to prevent underflow
             do {
                 *to = *from;
                 ++to;
