@@ -2309,18 +2309,15 @@ $(docsrc_dir)\wd\dbgmem.bmp &
 $(docsrc_dir)\wd\dbgmmxb.bmp &
 $(docsrc_dir)\wd\dbgmod.bmp &
 $(docsrc_dir)\wd\dbgreg.bmp &
-$(docsrc_dir)\wd\dbgreg2.bmp &
 $(docsrc_dir)\wd\dbgrep.bmp &
 $(docsrc_dir)\wd\dbgshot.bmp &
 $(docsrc_dir)\wd\dbgsrc.bmp &
-$(docsrc_dir)\wd\dbgtest.bmp &
 $(docsrc_dir)\wd\dbgthrd.bmp &
 $(docsrc_dir)\wd\dbgvar.bmp &
+$(docsrc_dir)\wd\dbgxmmb.bmp &
 $(docsrc_dir)\wd\dlgbrk.bmp &
 $(docsrc_dir)\wd\dlgopt.bmp &
-$(docsrc_dir)\wd\dlgsrch.bmp &
 $(docsrc_dir)\wd\dlgwopt.bmp &
-$(docsrc_dir)\wd\dlgwopt2.bmp &
 $(docsrc_dir)\wd\symbuttn.gml &
 $(docsrc_dir)\wd\wdbg.gml &
 $(docsrc_dir)\wd\wdbgasm.gml &
@@ -2360,17 +2357,16 @@ dbgmem.ps &
 dbgmmxb.ps &
 dbgmod.ps &
 dbgreg.ps &
-dbgreg2.ps &
 dbgrep.ps &
 dbgshot.ps &
 dbgsrc.ps &
 dbgthrd.ps &
 dbgvar.ps &
+dbgxmmb.ps &
 dlgbrk.ps &
 dlgopt.ps &
 dlgsrch.ps &
 dlgwopt.ps &
-dlgwopt2.ps
 
 # wfg sub-directory
 incs_wfg = $(docsrc_dir)\wfg

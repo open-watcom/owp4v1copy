@@ -21,7 +21,7 @@ features:
 .*
 .section *refid=wndreg The CPU Register Window
 .*
-.figure *depth='1.31' *scale=100 *file='dbgreg2' The CPU Register Window
+.figure *depth='1.31' *scale=100 *file='dbgreg' The CPU Register Window
 .*
 .*
 .np

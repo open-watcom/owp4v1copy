@@ -626,7 +626,7 @@ if you are having trouble with double clicks.
 .section *refid=dlgwopt The Window Options Dialog
 .*
 .ix 'window' 'options'
-.figure *depth='3.57' *scale=100 *file='dlgwopt2' The Window Options Dialog
+.figure *depth='3.57' *scale=100 *file='dlgwopt' The Window Options Dialog
 .np
 Use the Window Options dialog to define options related to the
 debugger's various windows.
