@@ -4,14 +4,21 @@ proj_name=hdr
 
 splice = wsplice -i.. -k$(system) $(options) ../common.sp $[@ $^@
 
-# Used to build the cname headers.
+# Used to build C++ extensionless headers that have an associated .h header.
 csplice = wsplice -i.. -k$(system) -kCNAME $(options) ../common.sp $[@ $^@
+
+# Used to build C++ <limits> header (special case; see limits.mh)
+limitssplice = wsplice -i.. -k$(system) -kCPPLIMITS $(options) ../common.sp $[@ $^@
+
+# Used to build C++ <string> header (special case; see string.mh)
+stringsplice = wsplice -i.. -k$(system) -kCPPSTRING $(options) ../common.sp $[@ $^@
 
 .EXTENSIONS
 .EXTENSIONS : .h .hpp .cnv .mh .mhp
 
 common = &
         _comdef.h &
+        algorith &
         assert.h &
         complex.h &
         conio.h &
@@ -48,6 +55,7 @@ common = &
         jctype.h &
         jstring.h &
         jtime.h &
+        limits &
         limits.h &
         locale.h &
         malloc.h &
@@ -76,6 +84,7 @@ common = &
         stdlib.h &
         streambu &
         streambu.h &
+        string &
         string.h &
         string.hpp &
         strstrea &
@@ -440,17 +449,26 @@ strstrea : $(strstrea_deps)
 
 # Other headers from the C++ standard library.
 
+algorith : $(algorith_deps)
+         $(splice)
+
 function : $(function_deps)
-         $(csplice)
+         $(splice)
 
 iterator : $(iterator_deps)
-         $(csplice)
+         $(splice)
+
+limits   : $(limits_deps)
+         $(limitssplice)
 
 memory   : $(memory_deps)
          $(csplice)
 
+string   : $(string_deps)
+         $(stringsplice)
+
 utility  : $(utility_deps)
-         $(csplice)
+         $(splice)
 
 
 clean: .SYMBOLIC

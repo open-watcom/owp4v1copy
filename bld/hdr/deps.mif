@@ -7,7 +7,7 @@ ctype_deps = ../watcom/ctype.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../
 errno_deps = ../watcom/errno.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../errno.sp
 float_deps = ../watcom/float.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp
 iso646_deps = ../watcom/iso646.mh ../readonly.sp ../crwat.sp
-limits_deps = ../watcom/limits.mh ../readonly.sp ../crwatqnx.sp ../mbmax.sp
+limits_deps = ../watcom/limits.mh ../readonly.sp ../crwatqnx.sp ../crwat.sp ../mbmax.sp ../ext.sp ../unixext.sp
 locale_deps = ../watcom/locale.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../null.sp ../poppack.sp ../pshpackl.sp ../wchar_t.sp
 math_deps = ../watcom/math.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../poppack.sp ../pshpackl.sp
 setjmp_deps = ../watcom/setjmp.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../poppack.sp ../pshpackl.sp
@@ -35,6 +35,7 @@ strstrea_deps = ../watcom/strstrea.mh ../readonly.sp ../crwat.sp ../pshpackl.sp 
 
 # These dependency lists are for other C++ library headers.
 
+algorith_deps = ../watcom/algorith.mh ../readonly.sp ../crwat.sp
 function_deps = ../watcom/function.mh ../readonly.sp ../crwat.sp
 iterator_deps = ../watcom/iterator.mh ../readonly.sp ../crwat.sp
 memory_deps = ../watcom/memory.mh ../readonly.sp ../crwat.sp ../throws.sp

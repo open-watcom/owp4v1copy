@@ -1,0 +1,45 @@
+///////////////////////////////////////////////////////////////////////////
+// FILE: algorithm (Definitions of various algorithm templates)
+//
+:keep CPP_HDR
+:include crwat.sp
+//
+// Description: This header is part of the C++ standard library. It
+//              defines a collection of useful algorithm templates.
+///////////////////////////////////////////////////////////////////////////
+#ifndef _ALGORITHM_INCLUDED
+#define _ALGORITHM_INCLUDED
+:include readonly.sp
+
+#ifndef __cplusplus
+#error The header algorithm requires C++
+#endif
+
+:: This header is little more than a placeholder right now.
+:: Feel free to elaborate on it! :-)
+::
+namespace std {
+
+  template< class Type >
+  inline const Type &min( const Type &x, const Type &y )
+    { return( (y < x) ? y : x ); }
+
+  template< class Type >
+  inline const Type &max( const Type &x, const Type &y )
+    { return( (x < y) ? y : x ); }
+
+  template< class Type, class Compare >
+  inline const Type &min( const Type &x, const Type &y, Compare comp )
+    { return( comp( y, x ) ? y : x ); }
+
+  template< class Type, class Compare >
+  inline const Type &max( const Type &x, const Type &y, Compare comp )
+    { return( comp( x, y ) ? y : x ); }
+
+  template< class Type >
+  inline void swap( Type &x, Type &y )
+    { Type tmp(x); x = y; y = tmp; }
+
+} // namespace std
+
+#endif
