@@ -1,7 +1,9 @@
 proj_name = docs
 
+.OPTIMIZE
+
 .EXTENSIONS:
-.EXTENSIONS: .mif
+.EXTENSIONS: .mif .cop .pcd
 
 .mif : ..\mif
 
@@ -23,21 +25,23 @@ docsrc_dir=..\doc
 
 company=Open Watcom
 
+gml_whelp=$(%doc_root)\doc\whelp
+
 #
 # There should be settings for supported building platforms
 #
 !ifeq %build_platform dos386
-gml_path=$(%doc_root)\gml\dos\wgml
+gml_path=$(%doc_root)\gml\dos
 pgm_HCDOS=$(%doc_root)\cmds\hcdos
 OS2_TK=dummy
 
 !else ifeq %build_platform os2386
-gml_path=$(%doc_root)\gml\os2\wgml
+gml_path=$(%doc_root)\gml\os2
 pgm_HCDOS=$(%doc_root)\cmds\hcdosos2
 OS2_TK=dummy
 
 !else ifeq %build_platform nt386
-gml_path=$(%doc_root)\gml\dos\wgml
+gml_path=$(%doc_root)\gml\dos
 pgm_HCDOS=$(%doc_root)\cmds\hcdos32
 OS2_TK=dummy
 
@@ -49,19 +53,23 @@ OS2_TK=dummy
 #############################################################
 
 .BEFORE
- @echo **************************************************************
- @echo $(hbook)/$(book_src) : $(book_title)
- @echo **************************************************************
+    @echo **************************************************************
+    @echo $(hbook)/$(book_src) : $(book_title)
+    @echo **************************************************************
 
 #
 # project configuration files
 #
-proj_objs=..\lang.ctl &
-        ..\mif\depends.mif &
-        ..\mif\books.mif
-#       ..\mif\makebook.mif &
-#       ..\mif\clean.mif &
-#       makefile
+proj_objs= &
+    ..\lang.ctl &
+    ..\mif\depends.mif &
+    ..\mif\books.mif &
+    ..\mif\makebook.mif &
+    makefile
+
+gml_drivers= &
+    whelp.cop &
+    whelpdrv.cop
 
 ####################################################
 #
@@ -171,8 +179,6 @@ whpcvt_opts =-rtf -i -t -e -lk -b -hh -k -up -hn
 
 .EXTENSIONS: .hlp .hpj .cnt .rtf .hh .h .cn1
 
-.OPTIMIZE
-
 all : $(hbook).hlp $(hbook).h $(hbook).cnt .SYMBOLIC
     @copy $(hbook).h $(guitools_dir)\win95 > nul
 
@@ -196,7 +202,7 @@ $(hbook).cnt : $(hbook).cn1
     @%make compile_cnt
 !endif
 
-$(hbook).rtf $(hbook).cn1 $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs)
+$(hbook).rtf $(hbook).cn1 $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs) $(gml_drivers)
     @%make compile_gml_to_xxx
 
 !else ifeq dotarget win
@@ -229,7 +235,7 @@ $(hbook).hlp : $(hbook).hpj $(hbook).rtf $(hbook).hh
 $(hbook).hpj : $(proj_objs)
     @%make compile_hpj_win
 
-$(hbook).rtf $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs)
+$(hbook).rtf $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs) $(gml_drivers)
     @%make compile_gml_to_xxx
 
 
@@ -248,7 +254,7 @@ all : $(hbook).ihp $(hbook).h .SYMBOLIC
 $(hbook).ihp : $(hbook).ib $(hbook).h
     $(pgm_HCDOS) -h 25 -w 80 $(hbook).ib $(hbook).ihp
 
-$(hbook).ib $(hbook).h : $(book_objs) $(proj_objs)
+$(hbook).ib $(hbook).h : $(book_objs) $(proj_objs) $(gml_drivers)
     @%make compile_gml_to_xxx
 
 
@@ -264,7 +270,7 @@ $(hbook).ib $(hbook).h : $(book_objs) $(proj_objs)
 all : $(hbook).htm $(hbook).h .SYMBOLIC
         @%null
 
-$(hbook).htm $(hbook).h : $(book_objs) $(proj_objs)
+$(hbook).htm $(hbook).h : $(book_objs) $(proj_objs) $(gml_drivers)
 !ifdef book_bmroot
     @copy $(book_bmroot)\*.bmp $^: > nul
 !endif
@@ -281,11 +287,11 @@ $(hbook).htm $(hbook).h : $(book_objs) $(proj_objs)
 .EXTENSIONS: .ps
 
 all : $(hbook).ps .SYMBOLIC
-        @%null
+    @%null
 
 $(hbook).ps : $(book_objs) $(proj_objs)
-        @set GMLINC=$(book_incs);$(gml_incs);$(whelp_incs)
-        -$(%gml_path)\wgml $(book_src) ($(wgml_opts)
+    @set GMLINC=$(book_incs);$(gml_incs);$(whelp_incs)
+    -$(%gml_path)\wgml $(book_src) ($(wgml_opts)
 
 
 !else ifeq dotarget os2
@@ -312,7 +318,7 @@ $(hbook).hlp : $(hbook).ipf
 $(hbook).hlp : .symbolic
 !endif
 
-$(hbook).ipf $(hbook).h : $(book_objs) $(proj_objs)
+$(hbook).ipf $(hbook).h : $(book_objs) $(proj_objs) $(gml_drivers)
     @%make compile_gml_to_xxx
 
 !endif
@@ -345,7 +351,6 @@ compile_gml_to_xxx : .PROCEDURE
     @if not exist $*.idx @%create $*.idx
     @if not exist $*.tbl @%create $*.tbl
     @if not exist $*.kw @%create $*.kw
-    @set GMLLIB=.\;$(whelp_incs);$(%GMLLIB)
     @set GMLINC=.\;$(hlp_incs);$(whelp_incs);$(book_incs);$(gml_incs)
     -$(gml_path)\wgml $(book_src) ($(wgml_opts)
     @%create whpcvt.dat
@@ -362,6 +367,7 @@ compile_gml_to_xxx : .PROCEDURE
     @%create whpcvt.dat
     @for %p in ( $(whpcvt_opts_ext) -h ) do @echo %p >> whpcvt.dat
     whpcvt $(whpcvt_opts) -@ whpcvt.dat $*.ptf
+    @erase whpcvt.dat
 
 ####################################################
 compile_hpj_win : .PROCEDURE
@@ -448,5 +454,14 @@ compile_cnt_cp : .PROCEDURE
     @echo Done with vi scripts
 
 ####################################################
+
+.pcd : $(gml_whelp)
+.cop : .
+
+.pcd.cop :
+currGMLLIB=$+$(%GMLLIB)$-
+    @set GMLLIB=$(%cwd)
+    -$(gml_path)\gendev $(gml_whelp)\$^&.pcd
+    @set GMLLIB=$(currGMLLIB)
 
 !include clean.mif

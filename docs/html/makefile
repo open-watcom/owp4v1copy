@@ -1,4 +1,4 @@
-#pmake: docs html
+#pmake: all build docs html
 
 dotarget=html
 
@@ -7,7 +7,6 @@ dotarget=html
 !include books.mif
 
 all: .SYMBOLIC
-#       @for %b in ($(books)) do @wmake -h -f ..\mif\timestamp.mif hbook=%b dotarget=$(dotarget)
 !ifdef hbook
         @wmake -h -f ..\mif\makebook.mif hbook=$(hbook) dotarget=$(dotarget)
 !else

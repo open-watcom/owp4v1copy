@@ -18,10 +18,6 @@ set PROJDIR=<CWD>
     <CPCMD> <doc_root>\os2\*.hlp <relroot>\rel2\binp\help\
     <CPCMD> <doc_root>\nt\*.hlp  <relroot>\rel2\binnt\
     <CPCMD> <doc_root>\nt\*.cnt  <relroot>\rel2\binnt\
-    <CPCMD> <doc_root>\dos\*.h   <relroot>\bld\online\hlp\ib\
-    <CPCMD> <doc_root>\win\*.h   <relroot>\bld\online\hlp\win\
-    <CPCMD> <doc_root>\os2\*.h   <relroot>\bld\online\hlp\os2\
-    <CPCMD> <doc_root>\nt\*.h    <relroot>\bld\online\hlp\win95\
 
 [ BLOCK <1> clean ]
 #==================

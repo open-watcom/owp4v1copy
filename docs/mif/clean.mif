@@ -26,7 +26,10 @@ clean : .SYMBOLIC
  @if exist *.gml erase *.gml
  @if exist *.lay erase *.lay
  @if exist *.tim erase *.tim
+ @if exist *.cop erase *.cop
+ @if exist *.dat erase *.dat
 
 # useful to delete all windows .gid
  @if exist *.gid @attrib -h *.gid
  @if exist *.gid erase *.gid
+
