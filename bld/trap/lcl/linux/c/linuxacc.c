@@ -119,8 +119,12 @@ unsigned WriteMem( void *ptr, addr_off offv, unsigned size )
      */
     if( count ) {
         u_long  val;
-        if( ptrace( PTRACE_PEEKTEXT, pid, (void *)offv, &val ) != 0 )
-            return( size - count );
+
+        errno = 0;
+        if( (val = ptrace( PTRACE_PEEKTEXT, pid, (void *)offv, &val )) == -1 ) {
+            if( errno )
+                return( size - count );
+        }
 #if DEBUG_WRITEMEM
         Out( "writemem:" );
         OutNum( val );
@@ -161,8 +165,14 @@ unsigned ReadMem( void *ptr, addr_off offv, unsigned size )
 
     /* Read the process memory 32-bits at a time */
     for( count = size; count >= 4; count -= 4 ) {
-        if( ptrace( PTRACE_PEEKTEXT, pid, (void *)offv, data ) != 0 )
-            return( size - count );
+        u_long  val;
+	
+	errno = 0;
+        if( (val = ptrace( PTRACE_PEEKTEXT, pid, (void *)offv, &val )) == -1 ) {
+            if( errno )
+                return( size - count );
+        }
+	*(u_long *)data = val;
         data += 4;
         offv += 4;
         }
@@ -170,9 +180,12 @@ unsigned ReadMem( void *ptr, addr_off offv, unsigned size )
     /* Now handle last partial read if neccesary */
     if( count ) {
         u_long  val;
-    
-        if( ptrace( PTRACE_PEEKTEXT, pid, (void *)offv, &val ) != 0 )
-            return( size - count );
+
+        errno = 0;
+        if( (val = ptrace( PTRACE_PEEKTEXT, pid, (void *)offv, &val )) == -1 ) {
+            if( errno )
+                return( size - count );
+        }
         switch( count ) {
         case 1:
             *((unsigned_8*)data) = (unsigned_8)val;
@@ -571,12 +584,12 @@ unsigned ReqProg_load( void )
         }
 
 #if defined( MD_x86 )
-    if( !GetFlatSegs( &flatCS, &flatDS ) )
-        goto fail;
+        if( !GetFlatSegs( &flatCS, &flatDS ) )
+            goto fail;
 #endif
 
-    dbg_dyn = GetDebuggeeDynSection( exe_name );
-    AddProcess();
+        dbg_dyn = GetDebuggeeDynSection( exe_name );
+        AddProcess();
         errno = 0;
     }
     ret->err = errno;

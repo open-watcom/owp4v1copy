@@ -238,7 +238,7 @@ u_long GetDR6( void )
 {
     u_long  val;
 
-    ptrace( PTRACE_PEEKUSER, pid, O_DEBUGREG( 6 ), &val );
+    val = ptrace( PTRACE_PEEKUSER, pid, O_DEBUGREG( 6 ), &val );
     return( val );
 }
 

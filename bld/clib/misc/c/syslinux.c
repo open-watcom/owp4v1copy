@@ -255,18 +255,19 @@ _WCRTLINK long ptrace( int request, int pid, void *addr, void *data )
 {
     long    res,ret;
 
-    if( request > 0 && request < 4 )
+    /* Someone thought having ptrace() behave differently for the PEEK
+     * requests was a clever idea. Instead of error code, ptrace()
+     * returns the actual value and errno must be checked.
+     */
+    if( (request >= PTRACE_PEEKTEXT) && (request <= PTRACE_PEEKUSER) )
         *((long**)&data) = &ret;
     res = sys_call4( SYS_ptrace, request, pid, (u_long)addr, (u_long)data );
     if( res >= 0 ) {
-        if( request > 0 && request < 4 ) {
-            errno = 0;
+        if( (request >= PTRACE_PEEKTEXT) && (request <= PTRACE_PEEKUSER) ) {
             return( ret );
         }
-        return( (int)res );
     }
-    errno = -res;
-    return( -1 );
+    __syscall_return( long, res );
 }
 
 _WCRTLINK int readlink( const char *__path, char *__buf, size_t __bufsiz )
