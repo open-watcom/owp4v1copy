@@ -166,7 +166,7 @@ static BOOL AnyInstance( HANDLE this_inst, int cmdshow, LPSTR cmdline )
      */
     hwndMain = CreateWindow(
         ServerClass,            /* class */
-        "Open Watcom Debug Server",
+        ServName,
         WS_OVERLAPPEDWINDOW,    /* style */
         CW_USEDEFAULT,          /* init. x pos */
         CW_USEDEFAULT,          /* init. y pos */

@@ -6,8 +6,5 @@ srv = nmp
 cpu = x86
 
 extra_objs = $(remote_objs) nmpdos.obj
-resource_file = serv.res
 
 !include $(trap_dir)\serv.mif
-
-serv.res : serv.rc $(trap_dir)\common\win\winserv.rc

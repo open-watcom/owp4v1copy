@@ -6,8 +6,5 @@ srv = net
 cpu = x86
 
 extra_objs = $(remote_objs)
-resource_file = ..\h\serv.rc
 
 !include $(trap_dir)\serv.mif
-
-serv.res : $(resource_file) $(trap_dir)\common\win\winserv.rc

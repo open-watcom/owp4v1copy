@@ -6,6 +6,5 @@ srv = par
 cpu = x86
 
 extra_objs = $(remote_objs) pardos.obj
-resource_file = serv.res
 
 !include $(trap_dir)\serv.mif
