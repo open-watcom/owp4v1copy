@@ -1,4 +1,4 @@
-/*****************************************************************************
+/****************************************************************************
 *
 *                            Open Watcom Project
 *
@@ -24,35 +24,20 @@
 *
 *  ========================================================================
 *
-* Description:  Default section definitions.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 *****************************************************************************/
 
 
-#if defined( AS_ALPHA )
-    #define DEF_ALIGNMENT   16
-#elif defined( AS_PPC )
-    #define DEF_ALIGNMENT   8
-#elif defined( AS_MIPS )
-    #define DEF_ALIGNMENT   16
-#endif
-
-#define SEC_ATTR_READONLY_DATA  (OWL_SEC_ATTR_DATA|OWL_SEC_ATTR_PERM_READ)
-
-PICK( TEXT, ".text", OWL_SECTION_CODE, DEF_ALIGNMENT )
-PICK( DATA, ".data", OWL_SECTION_DATA, DEF_ALIGNMENT )
-PICK( BSS, ".bss", OWL_SECTION_BSS, DEF_ALIGNMENT )
-PICK( PDATA, ".pdata", OWL_SECTION_PDATA, DEF_ALIGNMENT )
-PICK( DEBUG_P, ".debug$P", OWL_SECTION_DEBUG, 0 )
-PICK( DEBUG_S, ".debug$S", OWL_SECTION_DEBUG, 0 )
-PICK( DEBUG_T, ".debug$T", OWL_SECTION_DEBUG, 0 )
-PICK( RDATA, ".rdata", SEC_ATTR_READONLY_DATA, DEF_ALIGNMENT )
-PICK( XDATA, ".xdata", SEC_ATTR_READONLY_DATA, DEF_ALIGNMENT )
-PICK( YDATA, ".ydata", SEC_ATTR_READONLY_DATA, DEF_ALIGNMENT )
-
-#ifdef AS_PPC
-PICK( RELDATA, ".reldata", OWL_SECTION_DATA, DEF_ALIGNMENT )
-PICK( TOCD, ".tocd", OWL_SECTION_DATA, DEF_ALIGNMENT )
-#endif
-
-#undef DEF_ALIGNMENT
+PICK( ENUM_NONE,        enum_NONE )                 // no qualifiers to enumerate instructions
+PICK( ENUM_OF_ADDL,     enum_OF_ADDL )              // operate format instructions such as ADDL
+PICK( ENUM_DTI_CVTQL,   enum_DTI_CVTQL )            // Data Type Independent FP instructions such as CVTQL
+PICK( ENUM_IEEE_ADDS,   enum_IEEE_ADDS_or_CVTTQ )   // IEEE FP instructions such as ADDS
+PICK( ENUM_IEEE_CMPTEQ, enum_IEEE_CMPTEQ )          // IEEE FP instructions such as CMPTEQ
+PICK( ENUM_IEEE_CVTQS,  enum_IEEE_CVTQS )           // IEEE FP instructions such as CVTQS
+PICK( ENUM_IEEE_CVTTQ,  enum_IEEE_ADDS_or_CVTTQ )   // IEEE FP instructions such as CVTTQ
+PICK( ENUM_VAX_ADDF,    enum_VAX_ADDF_or_CVTGQ )    // VAX FP instructions such as ADDF
+PICK( ENUM_VAX_CMPGEQ,  enum_VAX_CMPGEQ )           // VAX FP instructions such as CMPGEQ
+PICK( ENUM_VAX_CVTQF,   enum_VAX_CVTQF )            // VAX FP instructions such as CVTQF
+PICK( ENUM_VAX_CVTGQ,   enum_VAX_ADDF_or_CVTGQ )    // VAX FP instructions such as CVTGQ

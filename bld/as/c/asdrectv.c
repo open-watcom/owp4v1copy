@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Assembler directive processing.
 *
 ****************************************************************************/
 
@@ -839,16 +838,17 @@ static dir_table asm_directives[] = {
     #ifdef _STANDALONE_
     { ".version",   dirFuncIgnore,          DT_NOPARM,      LINE },
     #endif
-    #ifdef AS_ALPHA
+    #if defined( AS_ALPHA )
     { "unop",       dirFuncNop,             DT_NOP_NOP,     NONE },
     { "fnop",       dirFuncNop,             DT_NOP_FNOP,    NONE },
     { ".s_floating",dirFuncValues,          DT_VAL_FLOAT,   FLT | RFLT },
     { ".t_floating",dirFuncValues,          DT_VAL_DOUBLE,  FLT | RFLT },
     { ".word",      dirFuncValues,          DT_VAL_INT16,   INT | RINT | SYM },
-    #else // AS_PPC
+    #elif defined( AS_PPC )
     { ".word",      dirFuncValues,          DT_VAL_INT32,   INT | RINT | SYM },
     { ".little_endian", dirFuncIgnore,      DT_NOPARM,      LINE },
     { ".big_endian",    dirFuncUnsupported, DT_NOPARM,      LINE },
+    #elif defined( AS_MIPS )
     #endif
 };
 

@@ -1,4 +1,4 @@
-/*****************************************************************************
+/****************************************************************************
 *
 *                            Open Watcom Project
 *
@@ -24,35 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  Default section definitions.
+* Description:  MIPS instruction formats.
 *
-*****************************************************************************/
+****************************************************************************/
 
 
-#if defined( AS_ALPHA )
-    #define DEF_ALIGNMENT   16
-#elif defined( AS_PPC )
-    #define DEF_ALIGNMENT   8
-#elif defined( AS_MIPS )
-    #define DEF_ALIGNMENT   16
-#endif
-
-#define SEC_ATTR_READONLY_DATA  (OWL_SEC_ATTR_DATA|OWL_SEC_ATTR_PERM_READ)
-
-PICK( TEXT, ".text", OWL_SECTION_CODE, DEF_ALIGNMENT )
-PICK( DATA, ".data", OWL_SECTION_DATA, DEF_ALIGNMENT )
-PICK( BSS, ".bss", OWL_SECTION_BSS, DEF_ALIGNMENT )
-PICK( PDATA, ".pdata", OWL_SECTION_PDATA, DEF_ALIGNMENT )
-PICK( DEBUG_P, ".debug$P", OWL_SECTION_DEBUG, 0 )
-PICK( DEBUG_S, ".debug$S", OWL_SECTION_DEBUG, 0 )
-PICK( DEBUG_T, ".debug$T", OWL_SECTION_DEBUG, 0 )
-PICK( RDATA, ".rdata", SEC_ATTR_READONLY_DATA, DEF_ALIGNMENT )
-PICK( XDATA, ".xdata", SEC_ATTR_READONLY_DATA, DEF_ALIGNMENT )
-PICK( YDATA, ".ydata", SEC_ATTR_READONLY_DATA, DEF_ALIGNMENT )
-
-#ifdef AS_PPC
-PICK( RELDATA, ".reldata", OWL_SECTION_DATA, DEF_ALIGNMENT )
-PICK( TOCD, ".tocd", OWL_SECTION_DATA, DEF_ALIGNMENT )
-#endif
-
-#undef DEF_ALIGNMENT
+typedef enum {
+#define PICK( a, b, c, d, e ) a,
+#include "mipsfmt.inc"
+#undef PICK
+} mips_template;

@@ -57,13 +57,15 @@ extern void Banner( void ) {
     static bool printed = FALSE;
 
     if( _IsOption( BE_QUIET ) || printed ) return;
-    #if defined( AS_ALPHA )
+#if defined( AS_ALPHA )
     puts( banner1w( "Alpha AXP Assembler", "0.8" ) );
-    #elif defined( AS_PPC )
+#elif defined( AS_PPC )
     puts( banner1w( "PowerPC Assembler", "0.3" ) );
-    #else
+#elif defined( AS_MIPS )
+    puts( banner1w( "MIPS Assembler", "0.1" ) );
+#else
     #error unknown AS_CPU
-    #endif
+#endif
     puts( banner2a() );
     puts( banner3 );
     puts( banner3a );
