@@ -195,6 +195,7 @@ Options:
 -wcd=<num>    warning control: disable warning message <num>
 -wce=<num>    warning control: enable warning message <num>
 -we           treat all warnings as errors
+-wx           set warning level to maximum setting
 :segment Ti86
 -wo           warn about problems with overlaid code
 :endsegment
