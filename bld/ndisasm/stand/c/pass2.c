@@ -238,7 +238,7 @@ unsigned HandleAReference( dis_value value, int ins_size, ref_flags flags,
             }
             break;
         case ORL_RELOC_TYPE_REL_16:
-            if( IsIntelx86() ) {
+            if( IsIntelx86() && !(*r_entry)->no_val ) {
                 nvalue -= ins_size;
             }
             if( ( (*r_entry)->label->type != LTYP_GROUP ) &&
@@ -275,7 +275,14 @@ unsigned HandleAReference( dis_value value, int ins_size, ref_flags flags,
             // For some reason we add the instruction size to the value
             // of the displacement in a relative call and get a bad
             // offset, due to CORE implementation
-            nvalue -= ins_size;
+            //
+            // Main reason : 
+            // displacement with added instruction size
+            // is correct for relative addresses without relocate
+            //
+            if( !(*r_entry)->no_val ) {
+                nvalue -= ins_size;
+            }
             if( GetMachineType() == ORL_MACHINE_TYPE_I386 && GetFormat() == ORL_ELF ) {
                 // this is a little kluge because Brian's ELF files seem to have
                 // -4 in the implicit addend for calls and such BBB May 09, 1997
