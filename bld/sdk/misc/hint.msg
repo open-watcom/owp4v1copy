@@ -1,3 +1,3 @@
-pick( HINT_EMPTY,
-	" ",
-	" " )
+pick(   HINT_EMPTY,
+        " ",
+        " " )
