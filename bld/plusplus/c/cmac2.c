@@ -200,7 +200,8 @@ static unsigned addParmName( MAC_PARM **h, boolean add_name )
     size_t len;
     size_t len_1;
     MAC_PARM *parm_name;
-
+    if( CurToken == T_DOT_DOT_DOT )
+        strcpy( Buffer, "__VA_ARGS__" );
     len = strlen( Buffer );
     len_1 = len + 1;
     index = 0;
@@ -265,10 +266,16 @@ static MEPTR grabTokens(    // SAVE TOKENS IN A MACRO DEFINITION
     unsigned parm_index;
     unsigned prev_token;
     unsigned prev_non_ws_token;
+    unsigned has_var_args = 0;
 
     // MacroOverflow was called for the name of the macro + mentry already
     mentry = (MEPTR) MacroOffset;
     DbgAssert( ( MacroOverflow( mlen, 0 ), MacroOffset == (void*) mentry ) );
+    if( parm_cnt < 0 )
+    {
+        has_var_args = 1;
+        parm_cnt = -parm_cnt;
+    }
     mentry->parm_count = parm_cnt;
     mentry->macro_defn = mlen;
     prev_token = T_NULL;
@@ -317,7 +324,10 @@ static MEPTR grabTokens(    // SAVE TOKENS IN A MACRO DEFINITION
           case T_ID:
             parm_index = findParmName( parm_names );
             if( parm_index != 0 ) {
-                CurToken = T_MACRO_PARM;
+                if( has_var_args && parm_index == ( parm_cnt - 1 ) )
+                    CurToken = T_MACRO_VAR_PARM;
+                else
+                    CurToken = T_MACRO_PARM;
                 MacroOffsetAddChar( &mlen, 2, CurToken, parm_index - 1 );
             } else {
                 MacroOffsetAddChar( &mlen, 1, CurToken );
@@ -348,7 +358,9 @@ static MEPTR grabTokens(    // SAVE TOKENS IN A MACRO DEFINITION
             break;
         }
         if( CurToken != T_WHITE_SPACE ) {
-            if( prev_non_ws_token == T_MACRO_SHARP && CurToken != T_MACRO_PARM ) {
+            if( prev_non_ws_token == T_MACRO_SHARP && 
+                CurToken != T_MACRO_VAR_PARM &&
+                CurToken != T_MACRO_PARM ) {
                 CErr1( ERR_MUST_BE_MACRO_PARM );
             }
             prev_non_ws_token = CurToken;
@@ -367,7 +379,10 @@ static MEPTR grabTokens(    // SAVE TOKENS IN A MACRO DEFINITION
     mentry = (MEPTR) MacroOffset;       // MacroOffset could have changed
     TokenLocnAssign( mentry->defn, *locn );
     mentry->macro_len = mlen;
+    if( has_var_args )
+        InitialMacroFlag |= MACRO_HAS_VAR_ARGS;
     mptr = MacroDefine( mentry, mlen, name_len );
+    InitialMacroFlag &= ~MACRO_HAS_VAR_ARGS;
     BrinfDeclMacro( mptr );
     if( ! ( defn & MSCAN_MANY ) ) {
         while( CurToken == T_WHITE_SPACE ) {
@@ -384,7 +399,7 @@ static MEPTR grabTokens(    // SAVE TOKENS IN A MACRO DEFINITION
 MEPTR MacroScan(                // SCAN AND DEFINE A MACRO (#define, -d)
     macro_scanning defn )       // - scanning definition
 {
-    int parm_cnt;               // - parameter count
+    int parm_cnt, parm_end;     // - parameter count, end found
     unsigned name_len;          // - length of macro name
     MEPTR mptr;                 // - final macro defn
     MAC_PARM *parm_names;       // - macro parm names
@@ -412,9 +427,15 @@ MEPTR MacroScan(                // SCAN AND DEFINE A MACRO (#define, -d)
         NextToken();                /* grab the '(' */
         NextToken();
         parm_cnt = 0;               /* 0 ==> () following */
+        parm_end = 0;
         for( ;; ) {
             if( CurToken == T_RIGHT_PAREN ) break;
-            if( CurToken != T_ID ) {
+            if( parm_end ) {
+                Expecting( ")" );
+                return( NULL );
+            }
+            if( CurToken != T_ID &&
+                CurToken != T_DOT_DOT_DOT) {
                 Expecting( "identifier" );
                 return( NULL );
             }
@@ -422,6 +443,8 @@ MEPTR MacroScan(                // SCAN AND DEFINE A MACRO (#define, -d)
                 CErr2p( ERR_DUPLICATE_MACRO_PARM, Buffer );
             } else {
                 ++parm_cnt;
+                if( CurToken == T_DOT_DOT_DOT )
+                    parm_end = 1; // can have no further tokens
                 MacroOffsetAddMem( &mlen, Buffer, TokenLen + 1 );
             }
             NextToken();
@@ -438,7 +461,7 @@ MEPTR MacroScan(                // SCAN AND DEFINE A MACRO (#define, -d)
     /* grab replacement tokens */
     ppscan_mode = InitPPScan();         // enable T_PPNUMBER tokens
     mptr = grabTokens( &parm_names
-                     , parm_cnt + 1
+                     , parm_end?-(parm_cnt + 1):(parm_cnt + 1)
                      , defn
                      , name_len
                      , mlen

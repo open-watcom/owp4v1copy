@@ -70,7 +70,7 @@ struct macro_entry {
 #define MACRO_CAN_BE_REDEFINED                  0x02
 #define MACRO_USER_DEFINED                      0x04
 #define MACRO_REFERENCED                        0x08
-
+#define MACRO_HAS_VAR_ARGS                      0x10
 #define MACRO_PCH_CHECKED                       0x40
 #define MACRO_PCH_OVERRIDE                      0x80
 

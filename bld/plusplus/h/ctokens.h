@@ -270,6 +270,10 @@ pick( T_BEFORE_KEYWORDS, "",            TC_A3 ),
 
 #define LAST_KEYWORD    (T_AFTER_KEYWORDS-1)
 pick( T_AFTER_KEYWORDS, "",             TC_A3 ),
+  prec( NO_PREC )
+pick( T_MACRO_VAR_PARM, "macro var parm", TC_A1 ),
+  prec( NO_PREC )
+pick( T_MACRO_EMPTY_VAR_PARM, "macro var empty parm", TC_A1 ),
 pick( T_LAST_TOKEN,    "LAST",          TC_A3 )
 
 #endif
