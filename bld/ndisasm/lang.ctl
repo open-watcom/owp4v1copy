@@ -26,6 +26,8 @@ cdsay .
 <CPCMD> <PROJDIR>/dos386/wdis.sym <relroot>/rel2/binw/
 #<CPCMD> <PROJDIR>/ntaxp/wdis.exe <relroot>/rel2/axpnt/
 #<CPCMD> <PROJDIR>/ntaxp/wdis.sym <relroot>/rel2/axpnt/
+<CPCMD> <PROJDIR>/linux386/wdis.elf <relroot>/rel2/binl/wdis
+<CPCMD> <PROJDIR>/linux386/wdis.sym <relroot>/rel2/binl/
 
 [ BLOCK <1> clean ]
 #==================
