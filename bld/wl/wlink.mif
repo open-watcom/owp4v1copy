@@ -186,7 +186,6 @@ extra_c_flags_demangle = -I"$(lib_misc_dir)/h"
 extra_c_flags_idedrv = -dCHAIN_CALLBACK
 extra_c_flags_trmem = -I"$(trmem_dir)"
 extra_c_flags_dmem = -dTRACKER /fo=dmem.obj -of+ -I"$(trmem_dir)"
-extra_c_flags_dllentry = -I"$(lang_root)/h/$(host_OS)"
 extra_c_flags_msg = -I"$(lib_misc_dir)/h"
 extra_c_flags_amem = -dTRACKER /fo=amem.obj -I"$(trmem_dir)"
 extra_c_flags_rcstr = -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" $(force_include)"../h/wlrcmem.h" -DINSIDE_WLINK
