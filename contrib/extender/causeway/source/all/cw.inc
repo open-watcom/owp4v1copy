@@ -4,10 +4,10 @@
 ;of this macro is not obligatory, use your own version if you want. These are
 ;the low level functions. Other API emulations come later.
 ;
-Sys	macro p1
-	mov	ax,p1
-	int	31h
-	endm
+Sys     macro p1
+        mov     ax,p1
+        int     31h
+        endm
 
 
 ;-------------------------------------------------------------------------------
@@ -16,25 +16,25 @@ Sys	macro p1
 ;
 ;On Exit:
 ;
-;AX	- Selector for real mode segment address of 00000h, 4G limit.
-;BX	- Selector for current PSP segment. 100h limit.
-;[E]CX	- Dos transfer buffer size. Always <64k.
-;DX	- Dos transfer buffer real mode segment address.
-;ES:[E]SI	- Dos transfer buffer protected mode address. ESI+ECX ALWAYS <64k.
-;EDI	- System flags. Bits significant if set.
+;AX     - Selector for real mode segment address of 00000h, 4G limit.
+;BX     - Selector for current PSP segment. 100h limit.
+;[E]CX  - Dos transfer buffer size. Always <64k.
+;DX     - Dos transfer buffer real mode segment address.
+;ES:[E]SI       - Dos transfer buffer protected mode address. ESI+ECX ALWAYS <64k.
+;EDI    - System flags. Bits significant if set.
 ;
-;	0 - 32 bit code default.
+;       0 - 32 bit code default.
 ;
-;	1 - Virtual memory manager functional.
+;       1 - Virtual memory manager functional.
 ;
-;	2 \ Mode, 0 - raw, 1 - VCPI, 2 - DPMI.
-;	3 /
+;       2 \ Mode, 0 - raw, 1 - VCPI, 2 - DPMI.
+;       3 /
 ;
-;	4 - DPMI available.
-;	5 - VCPI available.
-;	6 - No memory managers.
+;       4 - DPMI available.
+;       5 - VCPI available.
+;       6 - No memory managers.
 ;
-;	7 - Descriptor table type. 0 - GDT, 1 - LDT.
+;       7 - Descriptor table type. 0 - GDT, 1 - LDT.
 ;
 ;NOTES:
 ;
@@ -50,7 +50,7 @@ Sys	macro p1
 ;remember it may be over written the next time you issue an INT in protected
 ;mode that requires segment&|offset pointers.
 ;
-Info	equ	0ff00h		;Get general purpose segment selectors.
+Info    equ     0ff00h          ;Get general purpose segment selectors.
 
 
 ;-------------------------------------------------------------------------------
@@ -59,8 +59,8 @@ Info	equ	0ff00h		;Get general purpose segment selectors.
 ;
 ;On Entry:
 ;
-;BL	- Interupt number.
-;ES:[E]DI	- Parameter block.
+;BL     - Interupt number.
+;ES:[E]DI       - Parameter block.
 ;
 ;On Exit:
 ;
@@ -75,7 +75,7 @@ Info	equ	0ff00h		;Get general purpose segment selectors.
 ;handlers and provides access to INT API's that would not otherwise be available
 ;using CauseWay.
 ;
-IntXX	equ	0ff01h
+IntXX   equ     0ff01h
 
 
 ;-------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ IntXX	equ	0ff01h
 ;
 ;On Entry:
 ;
-;ES:[E]DI	- Parameter block.
+;ES:[E]DI       - Parameter block.
 ;
 ;On Exit:
 ;
@@ -95,7 +95,7 @@ IntXX	equ	0ff01h
 ;This function works much the same as IntXX but provides a 16 bit FAR stack
 ;frame and the CS:IP values used to pass control to the real mode code.
 ;
-FarCallReal	equ	0ff02h
+FarCallReal     equ     0ff02h
 
 
 ;-------------------------------------------------------------------------------
@@ -104,14 +104,14 @@ FarCallReal	equ	0ff02h
 ;
 ;On Entry:
 ;
-;DS:[E]SI	- Call address.
-;ES:[E]DI	- Real mode register structure.
+;DS:[E]SI       - Call address.
+;ES:[E]DI       - Real mode register structure.
 ;
 ;On Exit:
 ;
 ;Carry set on error, else,
 ;
-;CX:DX	- Real mode address to trigger mode switch.
+;CX:DX  - Real mode address to trigger mode switch.
 ;
 ;NOTES:
 ;
@@ -120,7 +120,7 @@ FarCallReal	equ	0ff02h
 ;when given control in real mode will switch to protected mode and pass control
 ;to the protected mode routine supplied at entry to this function.
 ;
-GetCallBack	equ	0303h
+GetCallBack     equ     0303h
 
 
 ;-------------------------------------------------------------------------------
@@ -129,9 +129,9 @@ GetCallBack	equ	0303h
 ;
 ;On Entry:
 ;
-;CX:DX	- Real mode address returned by GetCallBack
+;CX:DX  - Real mode address returned by GetCallBack
 ;
-RelCallBack	equ	0304h
+RelCallBack     equ     0304h
 
 
 ;-------------------------------------------------------------------------------
@@ -140,15 +140,15 @@ RelCallBack	equ	0304h
 ;
 ;On Entry:
 ;
-;BL	- Interupt vector number.
+;BL     - Interupt vector number.
 ;
 ;On Exit:
 ;
 ;CF set on error else:-
 ;
-;CX:[E]DX	- selector:offset of handler.
+;CX:[E]DX       - selector:offset of handler.
 ;
-GetVect	equ	0204h
+GetVect equ     0204h
 
 
 ;-------------------------------------------------------------------------------
@@ -157,14 +157,14 @@ GetVect	equ	0204h
 ;
 ;On Entry:
 ;
-;BL	- Interupt vector number.
-;CX:[E]DX	- selector:offset of new handler.
+;BL     - Interupt vector number.
+;CX:[E]DX       - selector:offset of new handler.
 ;
 ;On Exit:
 ;
 ;CF set on error.
 ;
-SetVect	equ	0205h
+SetVect equ     0205h
 
 
 ;-------------------------------------------------------------------------------
@@ -173,15 +173,15 @@ SetVect	equ	0205h
 ;
 ;On Entry:
 ;
-;BL	- Interupt vector number.
+;BL     - Interupt vector number.
 ;
 ;On Exit:
 ;
 ;CF set on error else:-
 ;
-;CX:DX	- selector:offset of handler.
+;CX:DX  - selector:offset of handler.
 ;
-GetRVect	equ	0200h
+GetRVect        equ     0200h
 
 
 ;-------------------------------------------------------------------------------
@@ -190,14 +190,14 @@ GetRVect	equ	0200h
 ;
 ;On Entry:
 ;
-;BL	- Interupt vector number.
-;CX:DX	- selector:offset of new handler.
+;BL     - Interupt vector number.
+;CX:DX  - selector:offset of new handler.
 ;
 ;On Exit:
 ;
 ;CF set on error.
 ;
-SetRVect	equ	0201h
+SetRVect        equ     0201h
 
 
 ;-------------------------------------------------------------------------------
@@ -206,15 +206,15 @@ SetRVect	equ	0201h
 ;
 ;On Entry:
 ;
-;BL	- Exception vector number.
+;BL     - Exception vector number.
 ;
 ;On Exit:
 ;
 ;CF set on error else:-
 ;
-;CX:[E]DX	- selector:offset of handler.
+;CX:[E]DX       - selector:offset of handler.
 ;
-GetEVect	equ	0202h
+GetEVect        equ     0202h
 
 
 ;-------------------------------------------------------------------------------
@@ -223,14 +223,14 @@ GetEVect	equ	0202h
 ;
 ;On Entry:
 ;
-;BL	- Exception vector number.
-;CX:[E]DX	- selector:offset of new handler.
+;BL     - Exception vector number.
+;CX:[E]DX       - selector:offset of new handler.
 ;
 ;On Exit:
 ;
 ;CF set on error.
 ;
-SetEVect	equ	0203h
+SetEVect        equ     0203h
 
 
 ;-------------------------------------------------------------------------------
@@ -239,14 +239,14 @@ SetEVect	equ	0203h
 ;
 ;On Exit:
 ;
-;BX	- Selector.
+;BX     - Selector.
 ;
 ;NOTES:
 ;
 ;A selector is allocated and initialised with a base of 0, a limit of 0 and as
 ;read/write expand up data. Use SetSelDet to make the selector useful.
 ;
-GetSel	equ	0ff03h
+GetSel  equ     0ff03h
 
 
 ;-------------------------------------------------------------------------------
@@ -255,18 +255,18 @@ GetSel	equ	0ff03h
 ;
 ;On Entry:
 ;
-;CX	- Number of selectors.
+;CX     - Number of selectors.
 ;
 ;On Exit:
 ;
-;BX	- Base selector.
+;BX     - Base selector.
 ;
 ;NOTES:
 ;
 ;The selectors are allocated and initialised with a base of 0, a limit of 0 and
 ;as read/write expand up data. Use SetSelDet to make the selectors useful.
 ;
-GetSels	equ	0ff29h
+GetSels equ     0ff29h
 
 
 ;-------------------------------------------------------------------------------
@@ -275,9 +275,9 @@ GetSels	equ	0ff29h
 ;
 ;On Entry:
 ;
-;BX	- Selector.
+;BX     - Selector.
 ;
-RelSel	equ	0ff04h
+RelSel  equ     0ff04h
 
 
 ;-------------------------------------------------------------------------------
@@ -286,14 +286,14 @@ RelSel	equ	0ff04h
 ;
 ;On Entry:
 ;
-;BX	- Selector.
-;CL	- Default operation size. (0=16 bit,1=32 bit)
+;BX     - Selector.
+;CL     - Default operation size. (0=16 bit,1=32 bit)
 ;
 ;NOTES:
 ;
 ;Allows a selector to be converted to a type suitable for execution.
 ;
-CodeSel	equ	0ff05h
+CodeSel equ     0ff05h
 
 
 ;-------------------------------------------------------------------------------
@@ -303,13 +303,13 @@ CodeSel	equ	0ff05h
 ;
 ;On Entry:
 ;
-;BX	- Source selector
+;BX     - Source selector
 ;
 ;On Exit:
 ;
 ;If function was successful:
 ;Carry flag is clear.
-;AX	- New data selector
+;AX     - New data selector
 ;
 ;If function was not successful:
 ;Carry flag is set.
@@ -320,7 +320,7 @@ CodeSel	equ	0ff05h
 ;source selectors type. Can be used to provide access to variables in a code
 ;segment etc.
 ;
-AliasSel	equ	0ff06h
+AliasSel        equ     0ff06h
 
 
 ;-------------------------------------------------------------------------------
@@ -329,14 +329,14 @@ AliasSel	equ	0ff06h
 ;
 ;On Entry:
 ;
-;BX	- Selector
+;BX     - Selector
 ;
 ;On Exit:
 ;
-;CX:DX	- Linear base.
-;SI:DI	- Byte granular limit.
+;CX:DX  - Linear base.
+;SI:DI  - Byte granular limit.
 ;
-GetSelDet	equ	0ff07h
+GetSelDet       equ     0ff07h
 
 
 ;-------------------------------------------------------------------------------
@@ -345,14 +345,14 @@ GetSelDet	equ	0ff07h
 ;
 ;On Entry:
 ;
-;BX	- Selector
+;BX     - Selector
 ;
 ;On Exit:
 ;
-;EDX	- Linear base.
-;ECX	- Byte granular limit.
+;EDX    - Linear base.
+;ECX    - Byte granular limit.
 ;
-GetSelDet32	equ	0ff08h
+GetSelDet32     equ     0ff08h
 
 
 ;-------------------------------------------------------------------------------
@@ -361,11 +361,11 @@ GetSelDet32	equ	0ff08h
 ;
 ;On Entry:
 ;
-;BX	- Selector.
-;CX:DX	- Linear base.
-;SI:DI	- Byte granular limit.
+;BX     - Selector.
+;CX:DX  - Linear base.
+;SI:DI  - Byte granular limit.
 ;
-SetSelDet	equ	0ff09h
+SetSelDet       equ     0ff09h
 
 
 ;-------------------------------------------------------------------------------
@@ -374,11 +374,11 @@ SetSelDet	equ	0ff09h
 ;
 ;On Entry:
 ;
-;BX	- Selector.
-;EDX	- Linear base.
-;ECX	- Byte granular limit.
+;BX     - Selector.
+;EDX    - Linear base.
+;ECX    - Byte granular limit.
 ;
-SetSelDet32	equ	0ff0ah
+SetSelDet32     equ     0ff0ah
 
 
 ;-------------------------------------------------------------------------------
@@ -387,13 +387,13 @@ SetSelDet32	equ	0ff0ah
 ;
 ;On Entry:
 ;
-;CX:DX	- Size of block required in bytes. (-1:-1 to get maximum memory size)
+;CX:DX  - Size of block required in bytes. (-1:-1 to get maximum memory size)
 ;
 ;On Exit:
 ;
 ;Carry clear if OK &
 ;
-;BX	- Selector to access the block with.
+;BX     - Selector to access the block with.
 ;
 ;Else if CX:DX was -1, CX:DX is size of largest block available.
 ;
@@ -402,7 +402,7 @@ SetSelDet32	equ	0ff0ah
 ;This function allocates a block of extended (application) memory, and also a
 ;selector with a suitable base & limit.
 ;
-GetMem	equ	0ff0bh
+GetMem  equ     0ff0bh
 
 
 ;-------------------------------------------------------------------------------
@@ -411,15 +411,15 @@ GetMem	equ	0ff0bh
 ;
 ;On Entry:
 ;
-;CX:DX	- Size of block required in bytes.
+;CX:DX  - Size of block required in bytes.
 ;
 ;On Exit:
 ;
 ;Carry set on error else,
 ;
-;SI:DI	- selector:offset of allocated memory.
+;SI:DI  - selector:offset of allocated memory.
 ;
-GetMemSO	equ	0ff2ch
+GetMemSO        equ     0ff2ch
 
 
 ;-------------------------------------------------------------------------------
@@ -428,13 +428,13 @@ GetMemSO	equ	0ff2ch
 ;
 ;On Entry:
 ;
-;ECX	- Size of block required in bytes. (-1 to get maximum memory size)
+;ECX    - Size of block required in bytes. (-1 to get maximum memory size)
 ;
 ;On Exit:
 ;
 ;Carry clear if OK &
 ;
-;BX	- Selector to access the block with.
+;BX     - Selector to access the block with.
 ;
 ;Else if ECX was -1, ECX is size of largest block available.
 ;
@@ -443,7 +443,7 @@ GetMemSO	equ	0ff2ch
 ;This function allocates a block of extended (application) memory, and also a
 ;selector with a suitable base & limit.
 ;
-GetMem32	equ	0ff0ch
+GetMem32        equ     0ff0ch
 
 
 ;-------------------------------------------------------------------------------
@@ -452,8 +452,8 @@ GetMem32	equ	0ff0ch
 ;
 ;On Entry:
 ;
-;BX	- Selector for block.
-;CX:DX	- New size of block required in bytes.
+;BX     - Selector for block.
+;CX:DX  - New size of block required in bytes.
 ;
 ;On Exit:
 ;
@@ -467,7 +467,7 @@ GetMem32	equ	0ff0ch
 ;the selector origionaly allocated with GetMem is being used to access the
 ;memory.
 ;
-ResMem	equ	0ff0dh
+ResMem  equ     0ff0dh
 
 
 ;-------------------------------------------------------------------------------
@@ -476,16 +476,16 @@ ResMem	equ	0ff0dh
 ;
 ;On Entry:
 ;
-;SI:DI	- Selector:offset for block.
-;CX:DX	- New size of block required in bytes.
+;SI:DI  - Selector:offset for block.
+;CX:DX  - New size of block required in bytes.
 ;
 ;On Exit:
 ;
 ;Carry set on error else,
 ;
-;SI:DI	- selector:offset new block address.
+;SI:DI  - selector:offset new block address.
 ;
-ResMemSO	equ	0ff2dh
+ResMemSO        equ     0ff2dh
 
 
 ;-------------------------------------------------------------------------------
@@ -494,8 +494,8 @@ ResMemSO	equ	0ff2dh
 ;
 ;On Entry:
 ;
-;BX	- Selector for block.
-;ECX	- New size of block required in bytes.
+;BX     - Selector for block.
+;ECX    - New size of block required in bytes.
 ;
 ;On Exit:
 ;
@@ -509,7 +509,7 @@ ResMemSO	equ	0ff2dh
 ;the selector origionaly allocated with GetMem is being used to access the
 ;memory.
 ;
-ResMem32	equ	0ff0eh
+ResMem32        equ     0ff0eh
 
 
 ;-------------------------------------------------------------------------------
@@ -520,9 +520,9 @@ ResMem32	equ	0ff0eh
 ;
 ;On Entry:
 ;
-;BX	- Selector for block to release.
+;BX     - Selector for block to release.
 ;
-RelMem	equ	0ff0fh
+RelMem  equ     0ff0fh
 
 
 ;-------------------------------------------------------------------------------
@@ -531,9 +531,9 @@ RelMem	equ	0ff0fh
 ;
 ;On Entry:
 ;
-;SI:DI	- Selector:offset for block to release.
+;SI:DI  - Selector:offset for block to release.
 ;
-RelMemSO	equ	0ff2eh
+RelMemSO        equ     0ff2eh
 
 
 ;-------------------------------------------------------------------------------
@@ -542,19 +542,19 @@ RelMemSO	equ	0ff2eh
 ;
 ;On Entry:
 ;
-;CX:DX	- Size of block required in bytes.
+;CX:DX  - Size of block required in bytes.
 ;
 ;On Exit:
 ;
 ;Carry clear if OK &,
 ;
-;SI:DI	- Linear address of block allocated.
+;SI:DI  - Linear address of block allocated.
 ;
 ;NOTES:
 ;
 ;Addresses returned by this function may be >16M
 ;
-GetMemLinear	equ	0ff10h
+GetMemLinear    equ     0ff10h
 
 
 ;-------------------------------------------------------------------------------
@@ -563,19 +563,19 @@ GetMemLinear	equ	0ff10h
 ;
 ;On Entry:
 ;
-;ECX	- Size of block required in bytes.
+;ECX    - Size of block required in bytes.
 ;
 ;On Exit:
 ;
 ;Carry clear if OK &,
 ;
-;ESI	- Linear address of block allocated.
+;ESI    - Linear address of block allocated.
 ;
 ;NOTES:
 ;
 ;Addresses returned by this function may be >16M
 ;
-GetMemLinear32 equ	0ff11h
+GetMemLinear32 equ      0ff11h
 
 
 ;-------------------------------------------------------------------------------
@@ -584,14 +584,14 @@ GetMemLinear32 equ	0ff11h
 ;
 ;On Entry:
 ;
-;SI:DI	- Linear address of block to re-size.
-;CX:DX	- Size of block required in bytes.
+;SI:DI  - Linear address of block to re-size.
+;CX:DX  - Size of block required in bytes.
 ;
 ;On Exit:
 ;
 ;Carry clear if OK &,
 ;
-;SI:DI	- New linear address of block.
+;SI:DI  - New linear address of block.
 ;
 ;NOTES:
 ;
@@ -599,7 +599,7 @@ GetMemLinear32 equ	0ff11h
 ;of sufficient size exists, the existing memory will be copied to the free
 ;block and released, the new block then being alocated in place of the old.
 ;
-ResMemLinear	equ	0ff12h
+ResMemLinear    equ     0ff12h
 
 
 ;-------------------------------------------------------------------------------
@@ -608,14 +608,14 @@ ResMemLinear	equ	0ff12h
 ;
 ;On Entry:
 ;
-;ESI	- Linear address of block to re-size.
-;ECX	- Size of block required in bytes.
+;ESI    - Linear address of block to re-size.
+;ECX    - Size of block required in bytes.
 ;
 ;On Exit:
 ;
 ;Carry clear if OK &,
 ;
-;ESI	- New linear address of block.
+;ESI    - New linear address of block.
 ;
 ;NOTES:
 ;
@@ -623,7 +623,7 @@ ResMemLinear	equ	0ff12h
 ;of sufficient size exists, the existing memory will be copied to the free
 ;block and released, the new block then being alocated in place of the old.
 ;
-ResMemLinear32 equ	0ff13h
+ResMemLinear32 equ      0ff13h
 
 
 ;-------------------------------------------------------------------------------
@@ -632,11 +632,11 @@ ResMemLinear32 equ	0ff13h
 ;
 ;On Entry:
 ;
-;SI:DI	- Linear address of block to release.
+;SI:DI  - Linear address of block to release.
 ;
 ;On Exit:
 ;
-RelMemLinear	equ	0ff14h
+RelMemLinear    equ     0ff14h
 
 
 ;-------------------------------------------------------------------------------
@@ -645,11 +645,11 @@ RelMemLinear	equ	0ff14h
 ;
 ;On Entry:
 ;
-;ESI	- Linear address of block to release.
+;ESI    - Linear address of block to release.
 ;
 ;On Exit:
 ;
-RelMemLinear32 equ	0ff15h
+RelMemLinear32 equ      0ff15h
 
 
 ;-------------------------------------------------------------------------------
@@ -658,19 +658,19 @@ RelMemLinear32 equ	0ff15h
 ;
 ;On Entry:
 ;
-;EBX	- Size of block required in bytes.
+;EBX    - Size of block required in bytes.
 ;
 ;On Exit:
 ;
 ;Carry clear if OK &,
 ;
-;ESI	- Application relative linear address of block allocated.
+;ESI    - Application relative linear address of block allocated.
 ;
 ;NOTES:
 ;
 ;Addresses returned by this function are as an offset from the application.
 ;
-GetMemNear	equ	0ff16h
+GetMemNear      equ     0ff16h
 
 
 ;-------------------------------------------------------------------------------
@@ -679,14 +679,14 @@ GetMemNear	equ	0ff16h
 ;
 ;On Entry:
 ;
-;EBX	- Size of block required in bytes.
-;ESI	- application relative linear address of block to re-size.
+;EBX    - Size of block required in bytes.
+;ESI    - application relative linear address of block to re-size.
 ;
 ;On Exit:
 ;
 ;Carry clear if OK &,
 ;
-;ESI	- New application relative linear address of block.
+;ESI    - New application relative linear address of block.
 ;
 ;NOTES:
 ;
@@ -694,7 +694,7 @@ GetMemNear	equ	0ff16h
 ;of sufficient size exists, the existing memory will be copied to the free
 ;block and released, the new block then being allocated in place of the old.
 ;
-ResMemNear	equ	0ff17h
+ResMemNear      equ     0ff17h
 
 
 ;-------------------------------------------------------------------------------
@@ -703,11 +703,11 @@ ResMemNear	equ	0ff17h
 ;
 ;On Entry:
 ;
-;ESI	- Application relative linear address of block to release.
+;ESI    - Application relative linear address of block to release.
 ;
 ;On Exit:
 ;
-RelMemNear	equ	0ff18h
+RelMemNear      equ     0ff18h
 
 
 ;-------------------------------------------------------------------------------
@@ -716,13 +716,13 @@ RelMemNear	equ	0ff18h
 ;
 ;On Entry:
 ;
-;ESI	- Linear address to convert.
+;ESI    - Linear address to convert.
 ;
 ;On Exit:
 ;
-;ESI	- Application relative linear address.
+;ESI    - Application relative linear address.
 ;
-Linear2Near	equ	0ff19h
+Linear2Near     equ     0ff19h
 
 
 ;-------------------------------------------------------------------------------
@@ -731,13 +731,13 @@ Linear2Near	equ	0ff19h
 ;
 ;On Entry:
 ;
-;ESI	- Application relative linear address.
+;ESI    - Application relative linear address.
 ;
 ;On Exit:
 ;
-;ESI	- Linear address to convert.
+;ESI    - Linear address to convert.
 ;
-Near2Linear	equ	0ff1ah
+Near2Linear     equ     0ff1ah
 
 
 ;-------------------------------------------------------------------------------
@@ -746,8 +746,8 @@ Near2Linear	equ	0ff1ah
 ;
 ;On Entry:
 ;
-;BX:CX	- Starting linear address of memory to lock.
-;SI:DI	- Size of region to lock in bytes.
+;BX:CX  - Starting linear address of memory to lock.
+;SI:DI  - Size of region to lock in bytes.
 ;
 ;On Exit:
 ;
@@ -760,7 +760,7 @@ Near2Linear	equ	0ff1ah
 ;and above the memory being locked will also be locked if the specified region
 ;is not 4k aligned.
 ;
-LockMem	equ	0ff1bh
+LockMem equ     0ff1bh
 
 
 ;-------------------------------------------------------------------------------
@@ -769,8 +769,8 @@ LockMem	equ	0ff1bh
 ;
 ;On Entry:
 ;
-;ESI	- Starting linear address of memory to lock.
-;ECX	- Size of region to lock in bytes.
+;ESI    - Starting linear address of memory to lock.
+;ECX    - Size of region to lock in bytes.
 ;
 ;On Exit:
 ;
@@ -783,7 +783,7 @@ LockMem	equ	0ff1bh
 ;and above the memory being locked will also be locked if the specified region
 ;is not 4k aligned.
 ;
-LockMem32	equ	0ff1ch
+LockMem32       equ     0ff1ch
 
 
 ;-------------------------------------------------------------------------------
@@ -792,8 +792,8 @@ LockMem32	equ	0ff1ch
 ;
 ;On Entry:
 ;
-;BX:CX	- Starting linear address of memory to unlock
-;SI:DI	- Size of region to unlock in bytes
+;BX:CX  - Starting linear address of memory to unlock
+;SI:DI  - Size of region to unlock in bytes
 ;
 ;NOTES:
 ;
@@ -801,7 +801,7 @@ LockMem32	equ	0ff1ch
 ;Areas below and above the specified memory will also be un-locked if the
 ;specified region is not page aligned.
 ;
-UnLockMem	equ	0ff1dh
+UnLockMem       equ     0ff1dh
 
 
 ;-------------------------------------------------------------------------------
@@ -810,8 +810,8 @@ UnLockMem	equ	0ff1dh
 ;
 ;On Entry:
 ;
-;ESI	- Starting linear address of memory to unlock
-;ECX	- Size of region to unlock in bytes
+;ESI    - Starting linear address of memory to unlock
+;ECX    - Size of region to unlock in bytes
 ;
 ;NOTES:
 ;
@@ -819,7 +819,7 @@ UnLockMem	equ	0ff1dh
 ;Areas below and above the specified memory will also be un-locked if the
 ;specified region is not page aligned.
 ;
-UnLockMem32	equ	0ff1eh
+UnLockMem32     equ     0ff1eh
 
 
 ;-------------------------------------------------------------------------------
@@ -828,8 +828,8 @@ UnLockMem32	equ	0ff1eh
 ;
 ;On Entry:
 ;
-;ESI	- Starting linear address of memory to lock.
-;EBX	- Size of region to lock in bytes.
+;ESI    - Starting linear address of memory to lock.
+;EBX    - Size of region to lock in bytes.
 ;
 ;On Exit:
 ;
@@ -842,7 +842,7 @@ UnLockMem32	equ	0ff1eh
 ;and above the memory being locked will also be locked if the specified region
 ;is not 4k aligned.
 ;
-LockMemNear	equ	0ff1fh
+LockMemNear     equ     0ff1fh
 
 
 ;-------------------------------------------------------------------------------
@@ -851,8 +851,8 @@ LockMemNear	equ	0ff1fh
 ;
 ;On Entry:
 ;
-;ESI	- Starting linear address of memory to unlock
-;EBX	- Size of region to unlock in bytes
+;ESI    - Starting linear address of memory to unlock
+;EBX    - Size of region to unlock in bytes
 ;
 ;NOTES:
 ;
@@ -860,7 +860,7 @@ LockMemNear	equ	0ff1fh
 ;Areas below and above the specified memory will also be un-locked if the
 ;specified region is not page aligned.
 ;
-UnLockMemNear equ	0ff20h
+UnLockMemNear equ       0ff20h
 
 
 ;-------------------------------------------------------------------------------
@@ -869,21 +869,21 @@ UnLockMemNear equ	0ff20h
 ;
 ;On Entry:
 ;
-;BX	- Number of paragraphs (16 byte blocks) required.
+;BX     - Number of paragraphs (16 byte blocks) required.
 ;
 ;On Exit:
 ;
 ;If function was successful:
 ;Carry flag is clear.
 ;
-;AX	- Initial real mode segment of allocated block
-;DX	- Initial selector for allocated block
+;AX     - Initial real mode segment of allocated block
+;DX     - Initial selector for allocated block
 ;
 ;If function was not successful:
 ;Carry flag is set.
 ;
-;AX	- DOS error code.
-;BX	- Size of largest available block in paragraphs.
+;AX     - DOS error code.
+;BX     - Size of largest available block in paragraphs.
 ;
 ;NOTES:
 ;
@@ -895,7 +895,7 @@ UnLockMemNear equ	0ff20h
 ;size MOD 64K. 16-bit applications will always set the limit of the first
 ;descriptor to 64K.
 ;
-GetMemDOS	equ	0ff21h
+GetMemDOS       equ     0ff21h
 
 
 ;-------------------------------------------------------------------------------
@@ -905,8 +905,8 @@ GetMemDOS	equ	0ff21h
 ;
 ;On Entry:
 ;
-;BX	- New block size in paragraphs
-;DX	- Selector of block to modify
+;BX     - New block size in paragraphs
+;DX     - Selector of block to modify
 ;
 ;On Exit:
 ;
@@ -916,8 +916,8 @@ GetMemDOS	equ	0ff21h
 ;If function was not successful:
 ;Carry flag is set.
 ;
-;AX	- DOS error code:
-;BX	- Maximum block size possible in paragraphs
+;AX     - DOS error code:
+;BX     - Maximum block size possible in paragraphs
 ;
 ;NOTES:
 ;
@@ -926,7 +926,7 @@ GetMemDOS	equ	0ff21h
 ;a block grows past a 64K boundary then the allocation will fail if the next
 ;descriptor in the LDT is not free.
 ;
-ResMemDOS	equ	0ff22h
+ResMemDOS       equ     0ff22h
 
 
 ;-------------------------------------------------------------------------------
@@ -936,7 +936,7 @@ ResMemDOS	equ	0ff22h
 ;
 ;On Entry:
 ;
-;DX	- Selector of block to free.
+;DX     - Selector of block to free.
 ;
 ;On Exit:
 ;
@@ -946,14 +946,14 @@ ResMemDOS	equ	0ff22h
 ;If function was not successful:
 ;Carry flag is set.
 ;
-;AX	- DOS error code.
+;AX     - DOS error code.
 ;
 ;NOTES:
 ;
 ;All descriptors allocated for the memory block are automatically freed and
 ;therefore should not be accessed once the block is freed by this function.
 ;
-RelMemDOS	equ	0ff23h
+RelMemDOS       equ     0ff23h
 
 
 ;-------------------------------------------------------------------------------
@@ -962,9 +962,9 @@ RelMemDOS	equ	0ff23h
 ;
 ;On Exit:
 ;
-;BX	- Real mode segment of buffer.
-;DX	- Protected mode selector for buffer.
-;ECX	- Buffer size.
+;BX     - Real mode segment of buffer.
+;DX     - Protected mode selector for buffer.
+;ECX    - Buffer size.
 ;
 ;Notes:
 ;
@@ -975,7 +975,7 @@ RelMemDOS	equ	0ff23h
 ;should consider allocateing your own larger buffer and pass the address to
 ;CauseWay to speed this file I/O.
 ;
-GetDOSTrans	equ	0ff25h
+GetDOSTrans     equ     0ff25h
 
 
 ;-------------------------------------------------------------------------------
@@ -984,9 +984,9 @@ GetDOSTrans	equ	0ff25h
 ;
 ;On Entry:
 ;
-;BX	- Real mode segment of buffer.
-;DX	- Protected mode selector for buffer.
-;ECX	- Buffer size.
+;BX     - Real mode segment of buffer.
+;DX     - Protected mode selector for buffer.
+;ECX    - Buffer size.
 ;
 ;Notes:
 ;
@@ -1006,7 +1006,7 @@ GetDOSTrans	equ	0ff25h
 ;You can still use the default buffer for your own puposes even after setting a
 ;new address.
 ;
-SetDOSTrans	equ	0ff26h
+SetDOSTrans     equ     0ff26h
 
 
 ;-------------------------------------------------------------------------------
@@ -1015,9 +1015,9 @@ SetDOSTrans	equ	0ff26h
 ;
 ;On Exit:
 ;
-;ECX	- Current threshold.
+;ECX    - Current threshold.
 ;
-GetMCBSize	equ	0ff27h
+GetMCBSize      equ     0ff27h
 
 
 ;-------------------------------------------------------------------------------
@@ -1026,7 +1026,7 @@ GetMCBSize	equ	0ff27h
 ;
 ;On Entry:
 ;
-;ECX	- New value to set.
+;ECX    - New value to set.
 ;
 ;On Exit:
 ;
@@ -1054,7 +1054,7 @@ GetMCBSize	equ	0ff27h
 ;
 ;The value passed will be rounded up to the nearest 4k.
 ;
-SetMCBMax	equ	0ff28h
+SetMCBMax       equ     0ff28h
 
 
 ;-------------------------------------------------------------------------------
@@ -1063,9 +1063,9 @@ SetMCBMax	equ	0ff28h
 ;
 ;On Entry:
 ;
-;DS:EDX	- File name.
-;ES:ESI	- Command line. First byte is length, then real data.
-;CX	- Environment selector, 0 to use existing copy.
+;DS:EDX - File name.
+;ES:ESI - Command line. First byte is length, then real data.
+;CX     - Environment selector, 0 to use existing copy.
 ;
 ;On Exit:
 ;
@@ -1073,9 +1073,9 @@ SetMCBMax	equ	0ff28h
 ;
 ;Error codes:
 ;
-;1	- DOS file access error.
-;2	- Not a 3P file.
-;3	- Not enough memory.
+;1      - DOS file access error.
+;2      - Not a 3P file.
+;3      - Not enough memory.
 ;
 ;NOTES:
 ;
@@ -1083,7 +1083,7 @@ SetMCBMax	equ	0ff28h
 ;CauseWay so you are not restricted to ASCII values. It is still stored in the
 ;PSP at 80h though so the length is still limited to 127 bytes.
 ;
-cwExec	equ	0ff24h
+cwExec  equ     0ff24h
 
 
 ;-------------------------------------------------------------------------------
@@ -1093,21 +1093,21 @@ cwExec	equ	0ff24h
 ;
 ;On Entry:
 ;
-;DS:EDX	- File name.
+;DS:EDX - File name.
 ;
 ;On Exit:
 ;
 ;Carry set on error and AX = error code else,
 ;
-;CX:EDX	- Entry CS:EIP
-;BX:EAX	- Entry SS:ESP
-;SI	- PSP.
+;CX:EDX - Entry CS:EIP
+;BX:EAX - Entry SS:ESP
+;SI     - PSP.
 ;
 ;Error codes:
 ;
-;1	- DOS file access error.
-;2	- Not a 3P file.
-;3	- Not enough memory.
+;1      - DOS file access error.
+;2      - Not a 3P file.
+;3      - Not enough memory.
 ;
 ;NOTES:
 ;
@@ -1119,7 +1119,7 @@ cwExec	equ	0ff24h
 ;and then reset to the origional PSP the memory allocated will be released
 ;when the PSP is released.
 ;
-cwLoad	equ	0ff2ah
+cwLoad  equ     0ff2ah
 
 
 ;-------------------------------------------------------------------------------
@@ -1128,19 +1128,19 @@ cwLoad	equ	0ff2ah
 ;
 ;On Entry:
 ;
-;BX	- File handle.
+;BX     - File handle.
 ;
 ;On Exit:
 ;
 ;Carry set if not a CWC'd file else,
 ;
-;ECX	- Expanded data size.
+;ECX    - Expanded data size.
 ;
 ;NOTES:
 ;
 ;The file pointer is not altered by this function.
 ;
-cwcInfo	equ	0ff2bh
+cwcInfo equ     0ff2bh
 
 
 ;-------------------------------------------------------------------------------
@@ -1149,20 +1149,20 @@ cwcInfo	equ	0ff2bh
 ;
 ;On Entry:
 ;
-;BX	- Source file handle.
-;ES:EDI	- Destination memory.
+;BX     - Source file handle.
+;ES:EDI - Destination memory.
 ;
 ;On Exit:
 ;
 ;Carry set on error and EAX is error code else,
 ;
-;ECX	- Expanded data length.
+;ECX    - Expanded data length.
 ;
 ;Error codes:
 ;
-;	1 = Error during file access.
-;	2 = Bad data.
-;	3 = Not a CWC'd file.
+;       1 = Error during file access.
+;       2 = Bad data.
+;       3 = Not a CWC'd file.
 ;
 ;NOTES:
 ;
@@ -1176,7 +1176,7 @@ cwcInfo	equ	0ff2bh
 ;then the file pointer will be moved to whatever comes after the compressed
 ;data.
 ;
-cwcLoad	equ	0fffbh
+cwcLoad equ     0fffbh
 
 
 ;-------------------------------------------------------------------------------
@@ -1187,23 +1187,23 @@ cwcLoad	equ	0fffbh
 ;       For far calls, SS:SP & Flags are filled in by the extender.
 ;
 RealRegsStruc struc
-Real_EDI	dd ?	;EDI
-Real_ESI	dd ?	;ESI
-Real_EBP	dd ?	;EBP
-	dd ?	;Reserved.
-Real_EBX	dd ?	;EBX
-Real_EDX	dd ?	;EDX
-Real_ECX	dd ?	;ECX
-Real_EAX	dd ?	;EAX
-Real_Flags	dw ?	;FLAGS
-Real_ES	dw ?	;ES
-Real_DS	dw ?	;DS
-Real_FS	dw ?	;FS
-Real_GS	dw ?	;GS
-Real_IP	dw ?	;IP
-Real_CS	dw ?	;CS
-Real_SP	dw ?	;SP
-Real_SS	dw ?	;SS
+Real_EDI        dd ?    ;EDI
+Real_ESI        dd ?    ;ESI
+Real_EBP        dd ?    ;EBP
+        dd ?    ;Reserved.
+Real_EBX        dd ?    ;EBX
+Real_EDX        dd ?    ;EDX
+Real_ECX        dd ?    ;ECX
+Real_EAX        dd ?    ;EAX
+Real_Flags      dw ?    ;FLAGS
+Real_ES dw ?    ;ES
+Real_DS dw ?    ;DS
+Real_FS dw ?    ;FS
+Real_GS dw ?    ;GS
+Real_IP dw ?    ;IP
+Real_CS dw ?    ;CS
+Real_SP dw ?    ;SP
+Real_SS dw ?    ;SS
 RealRegsStruc ends
 
 
@@ -1211,46 +1211,46 @@ RealRegsStruc ends
 ;
 ;Now the extended PSP structure.
 ;
-EPSP_Struc		struc
-		db 256 dup (?)
- EPSP_Parent		dw ?		;Selector of parent/previous PSP, 0 for none.
- EPSP_Next		dw ?		;Next PSP.
- EPSP_Resource	dd ?		;Linear address of resource tracking table. 0
-				;for none.
- EPSP_mcbHead	dd ?		;Linear address of MCB memory head. 0 for none.
- EPSP_mcbMaxAlloc	dd ?		;Size of MCB chunks.
- EPSP_DTA		df ?		;DTA address.
- EPSP_TransProt	dw ?		;Transfer buffer address.
- EPSP_TransReal	dw ?		;Transfer buffer real mode segment value.
- EPSP_TransSize	dd ?		;Transfer buffer size.
- EPSP_SSESP		df ?		;Return SS:ESP to use.
- EPSP_INTMem		dd ?		;linear address of interrupt/exception vector
-				;save buffer. 0 for none.
- EPSP_DPMIMem	dw ?		;selector for DPMI state save buffer. 0 for
-				;none.
- EPSP_MemBase	dd ?		;Program linear load address.
- EPSP_MemSize	dd ?		;Program memory size.
- EPSP_SegBase	dw ?		;Base program selector.
- EPSP_SegSize	dw ?		;Number of program selectors.
+EPSP_Struc              struc
+                db 256 dup (?)
+ EPSP_Parent            dw ?            ;Selector of parent/previous PSP, 0 for none.
+ EPSP_Next              dw ?            ;Next PSP.
+ EPSP_Resource  dd ?            ;Linear address of resource tracking table. 0
+                                ;for none.
+ EPSP_mcbHead   dd ?            ;Linear address of MCB memory head. 0 for none.
+ EPSP_mcbMaxAlloc       dd ?            ;Size of MCB chunks.
+ EPSP_DTA               df ?            ;DTA address.
+ EPSP_TransProt dw ?            ;Transfer buffer address.
+ EPSP_TransReal dw ?            ;Transfer buffer real mode segment value.
+ EPSP_TransSize dd ?            ;Transfer buffer size.
+ EPSP_SSESP             df ?            ;Return SS:ESP to use.
+ EPSP_INTMem            dd ?            ;linear address of interrupt/exception vector
+                                ;save buffer. 0 for none.
+ EPSP_DPMIMem   dw ?            ;selector for DPMI state save buffer. 0 for
+                                ;none.
+ EPSP_MemBase   dd ?            ;Program linear load address.
+ EPSP_MemSize   dd ?            ;Program memory size.
+ EPSP_SegBase   dw ?            ;Base program selector.
+ EPSP_SegSize   dw ?            ;Number of program selectors.
 
- EPSP_NearBase	dd ?		;NEAR function address translation base.
+ EPSP_NearBase  dd ?            ;NEAR function address translation base.
 
- EPSP_RealENV	dw ?		;Origional real mode environment SEGMENT.
+ EPSP_RealENV   dw ?            ;Origional real mode environment SEGMENT.
 
- EPSP_NextPSP	dd ?		;Pointer to next PSP
- EPSP_LastPSP	dd ?		;Pointer to last PSP
+ EPSP_NextPSP   dd ?            ;Pointer to next PSP
+ EPSP_LastPSP   dd ?            ;Pointer to last PSP
 
- EPSP_Exports	dd ?		;Pointer to export list.
- EPSP_Imports	dd ?		;Pointer to import list.
+ EPSP_Exports   dd ?            ;Pointer to export list.
+ EPSP_Imports   dd ?            ;Pointer to import list.
 
- EPSP_Links		dd ?		;Count of linked modules.
+ EPSP_Links             dd ?            ;Count of linked modules.
 
- EPSP_ExecCount	dd ?		;PMode pointer to exec counter.
+ EPSP_ExecCount dd ?            ;PMode pointer to exec counter.
 
- EPSP_EntryCSEIP	df ?		;Entry CS:EIP for DLL's
+ EPSP_EntryCSEIP        df ?            ;Entry CS:EIP for DLL's
 
- EPSP_PSPSel		dw ?		;This PSP's selector.
+ EPSP_PSPSel            dw ?            ;This PSP's selector.
 
-EPSP_Struc		ends
+EPSP_Struc              ends
 
 
