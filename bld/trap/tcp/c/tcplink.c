@@ -93,7 +93,7 @@
     #include "novhax.h"
 #endif
 
-#if !defined (NDEBUG) && defined ( __NETWARE__ )
+#if defined ( __NETWARE__ )
     #include "debugme.h"
 #else
     #define _DBG_THREAD( x )

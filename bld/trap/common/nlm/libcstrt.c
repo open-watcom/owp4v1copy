@@ -66,7 +66,7 @@ extern LONG _LibCPrelude(
     LONG                                NLMfileHandle,
     LONG                                (*readRoutineP)(),
     LONG                                customDataOffset,
-    LONG                                customDataSize 
+    LONG                                customDataSize
     );
 
 extern int main( int arg, char **argv ); // defined by user
@@ -101,7 +101,7 @@ static char                             *Command;
 
 char *getcmd( char *buff )
 {
-    if( buff == NULL ) 
+    if( buff == NULL )
         return( Command );
     strcpy( buff, Command );
     return( buff );
@@ -301,10 +301,10 @@ void ConsolePrintf( char *format, ... )
 {
     if( DebugMode ){
         ActivateScreen( debugScreen );
-        OutputToScreenWithPointer( 
-            debugScreen, 
+        OutputToScreenWithPointer(
+            debugScreen,
             format,
-            (BYTE *)&format + sizeof( char * ) 
+            (BYTE *)&format + sizeof( char * )
             );
          SetInputToOutputCursorPosition( screenID );
       }
@@ -332,12 +332,12 @@ LONG _PreludeHook(
          LONG                             customDataSize )
 {
     /*
-    //  We have hooked prelude primarily so we can store a copy of the command 
+    //  We have hooked prelude primarily so we can store a copy of the command
     //  line after LibC has memset our globals!
     */
     LONG status = _LibCPrelude(
-        NLMHandle, 
-        initializationErrorScreenID, 
+        NLMHandle,
+        initializationErrorScreenID,
         cmdLineP,
         loadDirectoryPath,
         uninitializedDataLength,
@@ -358,13 +358,14 @@ int      __init_environment(void *  reserved){
 #ifdef DEBUG_ME
     if( cmdLineP[0] == '?' || ( cmdLineP[0] == '-' && cmdLineP[1] == 'h' ) ) {
         OutputToScreen( systemConsoleScreen, "Use -d[options]\r\n" );
+        OutputToScreen( systemConsoleScreen, "  options are:\r\n" );
         OutputToScreen( systemConsoleScreen, "      b = initial break\r\n" );
         OutputToScreen( systemConsoleScreen, "      a = all\r\n" );
         OutputToScreen( systemConsoleScreen, "      t = threads\r\n" );
         OutputToScreen( systemConsoleScreen, "      d = debug regs\r\n" );
         OutputToScreen( systemConsoleScreen, "      e = events\r\n" );
         OutputToScreen( systemConsoleScreen, "      i = IO\r\n" );
-        OutputToScreen( systemConsoleScreen, "      x = Network Events\r\n" );
+        OutputToScreen( systemConsoleScreen, "      x = network events\r\n" );
         OutputToScreen( systemConsoleScreen, "      m = misc\r\n" );
         OutputToScreen( systemConsoleScreen, "      r = requests\r\n" );
         OutputToScreen( systemConsoleScreen, "      o = errors\r\n" );
@@ -412,36 +413,36 @@ int      __init_environment(void *  reserved){
     }
 #endif
 
-    ScreenTag = AllocateResourceTag( 
-        MyNLMHandle, 
+    ScreenTag = AllocateResourceTag(
+        MyNLMHandle,
         "Debug server screens",
         ScreenSignature );
-    AllocTag = AllocateResourceTag( 
-        MyNLMHandle, 
+    AllocTag = AllocateResourceTag(
+        MyNLMHandle,
         "Debug server work area",
         AllocSignature );
-    SemaphoreTag = AllocateResourceTag( 
-        MyNLMHandle, 
+    SemaphoreTag = AllocateResourceTag(
+        MyNLMHandle,
         "Debug server semaphores",
         SemaphoreSignature );
-    ProcessTag = AllocateResourceTag( 
-        MyNLMHandle, 
+    ProcessTag = AllocateResourceTag(
+        MyNLMHandle,
         "Debug server processes",
         ProcessSignature );
-    TimerTag = AllocateResourceTag( 
-        MyNLMHandle, 
+    TimerTag = AllocateResourceTag(
+        MyNLMHandle,
         "Debugger time out",
         TimerSignature );
-    InterruptTag = AllocateResourceTag( 
-        MyNLMHandle, 
+    InterruptTag = AllocateResourceTag(
+        MyNLMHandle,
         "Debugger interrupts",
         InterruptSignature );
-    DebugTag = AllocateResourceTag( 
-        MyNLMHandle, 
+    DebugTag = AllocateResourceTag(
+        MyNLMHandle,
         "WVIDEO Debugger",
         DebuggerSignature );
-    BreakTag = AllocateResourceTag( 
-        MyNLMHandle, 
+    BreakTag = AllocateResourceTag(
+        MyNLMHandle,
         "WVIDEO Break Points",
         BreakpointSignature );
 

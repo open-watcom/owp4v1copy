@@ -315,13 +315,14 @@ LONG _Prelude(
 #ifdef DEBUG_ME
     if( cmdLineP[0] == '?' || ( cmdLineP[0] == '-' && cmdLineP[1] == 'h' ) ) {
         OutputToScreen( systemConsoleScreen, "Use -d[options]\r\n" );
+        OutputToScreen( systemConsoleScreen, "  options are:\r\n" );
         OutputToScreen( systemConsoleScreen, "      b = initial break\r\n" );
         OutputToScreen( systemConsoleScreen, "      a = all\r\n" );
         OutputToScreen( systemConsoleScreen, "      t = threads\r\n" );
         OutputToScreen( systemConsoleScreen, "      d = debug regs\r\n" );
         OutputToScreen( systemConsoleScreen, "      e = events\r\n" );
         OutputToScreen( systemConsoleScreen, "      i = IO\r\n" );
-        OutputToScreen( systemConsoleScreen, "      i = IPX\r\n" );
+        OutputToScreen( systemConsoleScreen, "      x = network events\r\n" );
         OutputToScreen( systemConsoleScreen, "      m = misc\r\n" );
         OutputToScreen( systemConsoleScreen, "      r = requests\r\n" );
         OutputToScreen( systemConsoleScreen, "      o = errors\r\n" );
