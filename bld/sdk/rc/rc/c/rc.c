@@ -136,6 +136,8 @@ static int Pass2( void )
         case EXE_TYPE_PE:
             noerror = MergeResExePE();
             break;
+        default: //EXE_TYPE_UNKNOWN
+            break;
         }
         RcPass2IoShutdown( noerror );
     }
