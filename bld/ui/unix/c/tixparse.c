@@ -401,7 +401,7 @@ static unsigned char default_tix[] = {
     0xff, ' ' | 0x80
 };
 
-static char alt_keys[] = "QWERTYUIOP\0\0\0\0ASDFGHJKL\0\0\0\0\0ZXCVBNM";
+static char alt_keys[] = "QWERTYUIOP[]\r\0ASDFGHJKL;'`\0\\ZXCVBNM,./";
 static char alt_num_keys[] = "1234567890-=";
 static char esc_str[] = "\033A";
 
@@ -434,8 +434,10 @@ static int do_default( void )
         if ( alt_keys[i] ) {
             esc_str[1] = alt_keys[i];
             TrieAdd( 0x110 + i, esc_str );
-            esc_str[1] += 0x20;
-            TrieAdd( 0x110 + i, esc_str );
+            if( alt_keys[i] >= 'A' && alt_keys[i] <= 'Z' ) {
+                esc_str[1] += 0x20;
+                TrieAdd( 0x110 + i, esc_str );
+            }
         }
     }
     for( i = 0; i < sizeof( alt_num_keys ); i++ ) {
