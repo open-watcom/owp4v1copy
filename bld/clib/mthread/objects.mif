@@ -24,7 +24,7 @@
 
 !include ../../../../objlist.mif
 
-!ifndef on_build_machine
+!ifeq release 0
 mthread_opts  =-d__RUNTIME_CHECKS__
 trdlist_opts  =-d__RUNTIME_CHECKS__
 !endif

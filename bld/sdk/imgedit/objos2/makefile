@@ -17,7 +17,7 @@ $(name).res : $(rcdeps)
 
 $(lnk) : makefile ../imgedit2.mif
         %create $(lnk)
-!ifndef on_build_machine
+!ifeq release 0
         @%append $(lnk) debug all
 !endif
         @%append $(lnk) system os2v2_pm

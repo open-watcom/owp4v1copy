@@ -55,7 +55,8 @@ $(lnk) : $(__MAKEFILES__)
         %create $(lnk)
         @%append $(lnk) option map, quiet
         @%append $(lnk) debug all
-!ifdef on_build_machine
+!ifeq release 0
+!else
         @%append $(lnk) option symfile
 !endif
         @%append $(lnk) name $(name)

@@ -10,7 +10,8 @@ extra_c_flags = -s -zl -zld -d__RT__
 extra_c_flags_386 = -fp$(fp_model) -m$(model) -zp1
 extra_c_flags_i86 = -fp$(fp_model) -m$(model)
 
-!ifdef on_build_machine
+!ifeq release 0
+!else
 extra_c_flags_i86 += -fpr
 extra_c_flags_386 += -fpr
 !endif
@@ -716,14 +717,14 @@ files = $(rt) $(both) $(dep_rt) $(dep_both) $(ifns) $(xfns) $(math) $(ufns)
 
 lbc_file=tmp.lbc
 
-!ifdef on_build_machine
+!ifeq release 0
+w_lib = $(librarian)
+!else
 !ifeq host_CPU axp
 w_lib = $(librarian) -t
 !else
 w_lib = $(librarian) -s -t
 !endif
-!else
-w_lib = $(librarian)
 !endif
 
 all: $(lib_name).lib .symbolic

@@ -41,19 +41,19 @@ all : .symbolic wovl.lib dovl.lib dovls.lib dovll.lib dovln.lib
 wovl.lib : $(allobjs)
     %create tmp.lbc
     @for %i in ($?) do %append tmp.lbc -+%i
-!ifdef on_build_machine
-    wlib $(lib_opts)/s/t wovl @tmp.lbc
-!else
+!ifeq release 0
     wlib $(lib_opts) wovl @tmp.lbc
+!else
+    wlib $(lib_opts)/s/t wovl @tmp.lbc
 !endif
 
 wmovl.lib : $(mtobjs)
     %create tmp.lbc
     @for %i in ($?) do %append tmp.lbc -+%i
-!ifdef on_build_machine
-    wlib $(lib_opts)/s/t wmovl @tmp.lbc
-!else
+!ifeq release 0
     wlib $(lib_opts) wmovl @tmp.lbc
+!else
+    wlib $(lib_opts)/s/t wmovl @tmp.lbc
 !endif
 
 dovl.lib : $(allobjs)

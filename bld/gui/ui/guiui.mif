@@ -85,7 +85,7 @@ help_objext=obj
 
 wv_sysobjs += $(help_objs)
 
-!ifndef on_build_machine
+!ifeq release 0
 wv_sysobjs += uibarf.obj
 !endif
 

@@ -9,12 +9,6 @@ uncompressed=1
 !include $(define_target_include)
 !include cproj.mif
 
-!ifdef on_build_machine
-!   ifeq on_build_machine 0
-!       undef on_build_machine
-!   endif
-!endif
-
 # !ifdef on_JWW_machine
 # uncompressed=1
 # !endif
@@ -28,7 +22,8 @@ target_xbjs = $(xbjs)
 !endif
 
 lib_flags = -b -c
-!ifdef on_build_machine
+!ifeq release 0
+!else
 lib_flags += -t
 !ifeq host_CPU axp
 !else
@@ -38,7 +33,7 @@ lib_flags += -s
 
 !ifdef on_JWW_machine
 lib_page_size = -p=64
-!else ifndef on_build_machine
+!else ifeq release 0
 !else
 !endif
 !ifndef lib_page_size
@@ -106,7 +101,7 @@ asm_flags = -zq-w4 $(asm_model) -fo=.obj -i"$(watcom_dir)/h"
 !ifdef on_JWW_machine
 comp_flags += -d2
 comp_cpp += -ew
-!else ifndef on_build_machine
+!else ifeq release 0
 comp_flags += -d2
 !else
 comp_flags += -d1 -dNDEBUG
@@ -241,7 +236,7 @@ update : .symbolic $(target_lib)
 
 !include $(plusplus_dir)/clean.mif
 
-!ifndef on_build_machine
+!ifeq release 0
 !ifdef define_deps_include
 obj_deps_ext=obj
 !include $(define_deps_include)

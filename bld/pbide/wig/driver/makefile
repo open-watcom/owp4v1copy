@@ -7,7 +7,7 @@ lnk = $(name).lnk
 !include deftarg.mif
 
 cflags  = -bt=windows -zW -bd -zq -otexan -s -zq -fpc -w4 -ml -zu -fo=obj\.obj
-!ifndef on_build_machine
+!ifeq release 0
 cflags += -d2
 !endif
 

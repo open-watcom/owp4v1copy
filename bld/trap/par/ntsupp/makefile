@@ -4,15 +4,15 @@
 
 all: dbginst.exe .SYMBOLIC
 
-!ifdef on_build_machine
-
-debug_compiler=
-debug_linker=-debug:none
-
-!else
+!ifeq release 0
 
 debug_compiler=/Z7 /Odi
 debug_linker=-debug:none -debugtype:both /pdb:none
+
+!else
+
+debug_compiler=
+debug_linker=-debug:none
 
 !endif
 

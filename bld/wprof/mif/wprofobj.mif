@@ -11,7 +11,7 @@ dig_os          = $(dig_os_$(host_OS))
 
 srcmgt_obj = srcmgt.obj
 
-!ifndef on_build_machine
+!ifeq release 0
 debug_objs = dumpmem.obj
 !endif
 

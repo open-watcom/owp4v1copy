@@ -2,10 +2,10 @@
 
 !include deftarg.mif
 
-!ifdef on_build_machine
-debug_info =
-!else
+!ifeq release 0
 debug_info = debug line
+!else
+debug_info =
 !endif
 
 .BEFORE:

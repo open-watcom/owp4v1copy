@@ -29,10 +29,10 @@ objs += &
     filelist.obj &
     wig.obj
 
-!ifdef on_build_machine
-ccopt += -d1 -dNDEBUG
-!else
+!ifeq release 0
 ccopt += -d2 -dDEBUG
+!else
+ccopt += -d1 -dNDEBUG
 !endif
 
 $(name).$(ext) : $(objs) $(lnk)
@@ -40,7 +40,8 @@ $(name).$(ext) : $(objs) $(lnk)
 
 $(lnk) : ../mif/master.mif makefile
         %create $(lnk)
-!ifdef on_build_machine
+!ifeq release 0
+!else
         @%append $(lnk) option symfile
 !endif
         @for %i in ($(libs)) do @@%append $(lnk) library %i

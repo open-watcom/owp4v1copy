@@ -17,7 +17,7 @@ objs_asm = fshand.obj
 
 objs_c =
 
-!ifndef on_build_machine
+!ifeq release 0
 objs_c +=   rtdbgst.obj
 objs_c +=   rtdbgcom.obj
 !endif

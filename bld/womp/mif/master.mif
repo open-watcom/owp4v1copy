@@ -76,7 +76,7 @@ womp.lnk : objfiles.mif master.mif
     @%append $^@ SYSTEM $(form_exe)
 !endif
 !endif
-!ifndef on_build_machine
+!ifeq release 0
     @%append $^@ DEBUG all
 !endif
 !ifeq form_exe pharlap

@@ -23,10 +23,10 @@ c_opts = -w4 -zp1
 comp = $(comp386)
 c_opts += -mf
 model = f
-asm_opts = -3-w3-mf-zq-d1-fp$(fp_model) -i="$(f77_dir)/lg86/rt/asm" -i="$(watcom_h)"
+asm_opts = -3-w4-mf-zq-d1-fp$(fp_model) -i="$(f77_dir)/lg86/rt/asm" -i="$(watcom_h)"
 !else
 comp = $(comp286)
-asm_opts = -w3-ml-zq-d1-fp$(fp_model) -i="$(f77_dir)/lg86/rt/asm" -i="$(watcom_h)"
+asm_opts = -w4-ml-zq-d1-fp$(fp_model) -i="$(f77_dir)/lg86/rt/asm" -i="$(watcom_h)"
 c_opts += -ml-zc
 model = l
 !endif
@@ -50,7 +50,8 @@ c_opts +=-d__NEC__
 !endif
 
 wlib_opts = -b-n
-!ifdef on_build_machine
+!ifeq release 0
+!else
 wlib_opts += -s-t
 !endif
 
@@ -88,10 +89,10 @@ wlib_opts += -s-t
 .asm.obj:
     $(as) $[* -fo=$(share_objs)$^. $(asm_opts)
 
-!ifdef on_build_machine
-c_opts += -d1
-!else
+!ifeq release 0
 c_opts += -d2
+!else
+c_opts += -d1
 !endif
 compile = $(comp) $(c_opts) $[*
 

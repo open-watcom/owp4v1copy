@@ -10,7 +10,7 @@ exe             = .exe
 
 inc_dirs = $(orl_dir)\h;$(orl_dir)\elf\h;$(orl_dir)\coff\h;$(watcom_dir)\h;$(trmem_dir)
 
-!ifndef on_build_machine
+!ifeq release 0
 extra_c_flags_test      = -of+
 extra_c_flags_trmemcvr  = -dTRMEM -of+
 extra_c_flags_trmem     = -dTRMEM -of+
@@ -24,7 +24,7 @@ extra_l_flags           = library $(orl_dir)\o\orl.lib
 test_objs       =   test$(obj) &
                     getopt$(obj) &
                     trmemcvr$(obj)
-!ifndef on_build_machine
+!ifeq release 0
 test_objs       +=  trmem$(obj)
 !endif
 

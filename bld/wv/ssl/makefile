@@ -5,7 +5,7 @@
 .extensions:
 .extensions: .prs .ssl
 
-!ifndef on_build_machine
+!ifeq release 0
 verbose = /v
 !endif
 

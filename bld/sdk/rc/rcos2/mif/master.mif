@@ -11,7 +11,7 @@ name = wrc2
 .EXTENSIONS :
 .EXTENSIONS : .obj .cpp .c .h .mif .y .key .gh
 
-!ifndef on_build_machine
+!ifeq release 0
 !ifeq host_OS nt
 !ifneq host_CPU axp
 TRACK_MEM_OPTS = -dRCMEM_DEBUG
@@ -42,7 +42,7 @@ objs =  ytab.obj &
 objs += rcdll.obj libmain.obj idemsgpr.obj
 !endif
 
-!ifndef on_build_machine
+!ifeq release 0
 !ifeq WRC_USE_TRMEM 1
 objs += trmem.obj
 !endif

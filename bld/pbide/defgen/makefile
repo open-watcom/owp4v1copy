@@ -18,7 +18,7 @@ $(name).exe : $(objs) $(lnk)
 
 $(name).lnk : makefile
         %create $(lnk)
-!ifndef on_build_machine
+!ifeq release 0
         @%append $(lnk) debug all
 !endif
         @%append $(lnk) system dos4g

@@ -133,7 +133,7 @@ as_stand_objs   = main$(obj) &
                   ppmacro$(obj) &
                   ppmem$(obj) &
                   trmemcvr$(obj)
-!ifndef on_build_machine
+!ifeq release 0
 as_stand_objs   += trmem$(obj)
 !endif
 
@@ -145,7 +145,7 @@ as_objs         = $(as_comm_objs) $(as_stand_objs)
 asi_objs        = $(as_comm_objs) $(as_inline_objs)
 
 asi_test_objs   = asitest$(obj) trmemcvr$(obj)
-!ifndef on_build_machine
+!ifeq release 0
 asi_test_objs   += trmem$(obj)
 !endif
 

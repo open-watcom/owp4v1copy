@@ -13,7 +13,7 @@ wrc_autodepends = .AUTODEPEND
 
 .EXTENSIONS : .y .key .gh .res .rc
 
-!ifndef on_build_machine
+!ifeq release 0
 !ifeq host_os nt
 !ifneq host_cpu axp
 TRACK_MEM_OPTS = -dRCMEM_DEBUG
@@ -42,7 +42,7 @@ objs =  ytab.obj &
 objs += rcdll.obj libmain.obj idemsgpr.obj
 !endif
 
-!ifndef on_build_machine
+!ifeq release 0
 !ifeq WRC_USE_TRMEM 1
 objs += trmem.obj
 !endif
@@ -121,7 +121,7 @@ bindit : .PROCEDURE
 !endif
 
 ytab.obj : ytab.c param.h ytab.gh
-#!ifndef on_build_machine
+#!ifeq release 0
 #       $(CC) -nm=rc.y $(CFLAGS) $[*
 #!else
         $(CC) $(CFLAGS) $[*

@@ -1,6 +1,6 @@
 iofdefg.$(obj_deps_ext) : iofdefg.cpp iofefg.cpp
 
-!ifndef on_build_machine
+!ifeq release 0
 
 flf.$(obj_deps_ext) : flfattac.cpp flfclose.cpp flfconde.cpp flfconfd.cpp &
                       flfconsf.cpp flfdestr.cpp flfopen.cpp  flfoprot.cpp &

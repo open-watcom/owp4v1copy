@@ -1,4 +1,4 @@
-!ifndef on_build_machine
+!ifeq release 0
 
 string.$(obj_deps_ext) : &
             allocrep.cpp allomusz.cpp appendst.cpp compchar.cpp compstr.cpp &

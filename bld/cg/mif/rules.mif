@@ -29,7 +29,8 @@ extra_c_flags_trmem     = $(track_flags_$(host_cpu))
 
 wlib_parms      = -b
 
-!ifdef on_build_machine
+!ifeq release 0
+!else
 std_defines = -dNDEBUG
 !endif
 

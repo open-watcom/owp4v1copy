@@ -55,7 +55,7 @@ wv_objs = &
 mem_objs = &
        guimem.obj     &
 
-!ifndef on_build_machine
+!ifeq release 0
 mem_objs += &
        trmemcvr.obj   &
        trmem.obj
@@ -75,7 +75,8 @@ inc_dirs += ../h;../../h;$(trmem_dir);$(help_dir)/h;
 
 extra_c_flags += -s -fh
 
-!ifdef on_build_machine
+!ifeq release 0
+!else
 track =
 !endif
 
@@ -97,7 +98,7 @@ extra_c_flags_nov += -4s-dNLM
 extra_c_flags_trmem = $(track) -fh=$^&.pch
 extra_c_flags_trmemcvr = $(track) -fh=$^&.pch
 extra_c_flags_guimem = $(track)
-!ifndef on_build_machine
+!ifeq release 0
 extra_c_flags_guimem += -fh=$^&.pch
 !endif
 

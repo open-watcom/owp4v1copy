@@ -49,7 +49,7 @@ objsize = xmem.obj fcbswap.obj clset.obj hist.obj samefile.obj &
         wingen.obj printf.obj getspcmd.obj &
         selrgn.obj cstatus.obj help.obj &
         readstr.obj tab_e_c.obj gencfg.obj fts.obj
-!ifndef on_build_machine
+!ifeq release 0
 !ifeq vi_trmem 1
 extraobjs += trmem.obj trmemcvr.obj
 !endif

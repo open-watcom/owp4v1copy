@@ -16,7 +16,7 @@ msgfiles = drwatcom.msg $(sdk_misc)\savelbox.msg $(sdk_misc)\memwnd.msg &
 cflags= -ml-zq-2-s-zu-d1-zW-fpc-w4 -i=$(sdk_misc) -fo=obj\.obj
 
 
-!ifndef on_build_machine
+!ifeq release 0
 cflags += -d2
 !endif
 
@@ -70,7 +70,7 @@ $(name).res : $(name).rc stackt.dlg ..\common\stat.dlg ..\common\intdlg.dlg &
 
 $(lnk) : makefile $(disasm)\compile.tim
         %create $(lnk)
-!ifndef on_build_machine
+!ifeq release 0
         @%append $(lnk) debug all
 !endif
         @%append $(lnk) system windows

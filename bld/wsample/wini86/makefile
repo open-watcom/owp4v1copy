@@ -45,7 +45,7 @@ xname=wsamplew
 
 ../bin/$(xname).exe : $(objects) $(xname).res makefile
     @%write $(lnk) option map,quiet
-!ifndef on_build_machine
+!ifeq release 0
     @%append $(lnk) debug all op symfile
 !endif
     @for %i in ($objects) do @%append $(lnk) file %i

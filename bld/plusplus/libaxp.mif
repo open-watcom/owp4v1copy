@@ -4,7 +4,7 @@
 uncompressed = 1
 host_CPU = axp
 comp_cpp = $(plusplus_dir)\bin\rpp$(host_CPU)12.exe
-!ifndef on_build_machine
+!ifeq release 0
 !ifdef comp_cpp_axp
 comp_cpp = $(comp_cpp_axp)
 !endif

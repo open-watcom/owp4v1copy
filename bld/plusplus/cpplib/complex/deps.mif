@@ -1,4 +1,4 @@
-!ifndef on_build_machine
+!ifeq release 0
 
 complex.$(obj_deps_ext) : &
              abs.cp acos.cpp acosh.cpp arg.cpp asin.cpp asinh.cpp atan.cpp &

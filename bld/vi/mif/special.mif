@@ -28,7 +28,7 @@ extra_c_flags_regexp = -DREGEXP -fi=rxsupp.h
 .c : $(viper_dir)/ideact
 .c : $(posix_dir)/misc
 
-!ifndef on_build_machine
+!ifeq release 0
 !ifeq vi_trmem 1
 !ifneq host_CPU axp
 extra_c_flags += -of+

@@ -16,9 +16,7 @@ librarian=wlib
 !   define STD_LIB      *$(librarian) -q -n
 !   define MKS_ECHO     %null
 
-!ifdef on_build_machine
-CMN_CFLAGS = -ox-s-w4-v-d1
-!else
+!ifeq release 0
 !ifndef %MAKE_DEBUG
 !ifdef codeview
 CMN_CFLAGS += -hc-d1-s
@@ -28,6 +26,8 @@ CMN_CFLAGS = -ox-s-w4-v-d2
 !else
 CMN_CFLAGS = -ox-s-w4-v -$(%MAKE_DEBUG)
 !endif
+!else
+CMN_CFLAGS = -ox-s-w4-v-d1
 !endif
 
 # makefiles can override this if they want

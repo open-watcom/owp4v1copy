@@ -10,7 +10,7 @@ name=wig
 compiler=wcc
 objs = error.obj
 
-!ifndef on_build_machine
+!ifeq release 0
 ccopt += -dTRMEM -of+
 objs += $(trmem_dir)\trmemcvr.obj $(trmem_dir)\trmem.obj
 !endif

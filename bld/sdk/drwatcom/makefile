@@ -59,7 +59,7 @@ $(name).res : $(name).rc stackt.dlg stat.dlg intdlg.dlg $(name).ico &
 
 $(lnk) : makefile $(disasm)/compile.tim
         %create $(lnk)
-!ifndef on_build_machine
+!ifeq release 0
         @%append $(lnk) debug all
 !endif
         @%append $(lnk) system windows

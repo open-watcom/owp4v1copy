@@ -1,4 +1,4 @@
-!ifndef on_build_machine
+!ifeq release 0
 
 libpath_os2_386     =lib386/os2
 libpath_os2_387     =lib386/os2

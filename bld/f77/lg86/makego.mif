@@ -149,7 +149,7 @@ $(exe).lnk : $(f77_dir)/lg86/files.mif $(f77_dir)/lg86/rt/rt.mif $(f77_dir)/lg86
 !ifeq form dos4g
         @%append $^@ option stub=wstubq.exe
 !else ifeq form pharlap
-!ifndef on_build_machine
+!ifeq release 0
         @%append $^@ option stub=$(pharlap)stub386.exe
 !endif
 !endif

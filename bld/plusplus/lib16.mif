@@ -9,7 +9,7 @@ comp_cpp = $(plusplus_dir)/bin/rpp$(host_CPU)12
 comp_cpp = $(plusplus_dir)\bin\rpp$(host_CPU)12.exe
 !endif
 
-!ifndef on_build_machine
+!ifeq release 0
 !ifdef comp_cpp_i86
 comp_cpp = $(comp_cpp_i86)
 !endif

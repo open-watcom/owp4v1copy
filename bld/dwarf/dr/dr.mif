@@ -26,7 +26,8 @@ copts += -$(dbg)-hw #use a debug option
 copts += -oaxt-d1 #optimize
 !endif
 copts += -i="../h;$(inc_dirs_lang);$(watcom_dir)/h"
-!ifdef on_build_machine
+!ifeq release 0
+!else
 copts += -dNDEBUG
 !endif
 !ifdef __LINUX__

@@ -21,10 +21,10 @@ objs = nmpbind.obj nmpos2.obj
 extra_c_flags = -bm -zu
 extra_l_flags = op stack=8k
 
-!ifdef on_build_machine
-default_targ    = w
-!else
+!ifeq release 0
 default_targ    = d
+!else
+default_targ    = w
 !endif
 
 first : $(default_targ) .SYMBOLIC

@@ -6,10 +6,10 @@
 !ifdef debug_version
 !   define wcdeb        -d2
 !else
-!   ifdef on_build_machine
-!      define wcdeb        -d1
-!   else
+!   ifeq release 0
 !      define wcdeb        -d2
+!   else
+!      define wcdeb        -d1
 !   endif
 !endif
 
@@ -300,7 +300,8 @@ setup.exe: $(GENDEPS)
     wlink name $* @setup.lnk
 !ifndef ui_os2
 !   ifdef rational
-!      ifdef on_build_machine
+!      ifeq release 0
+!      else
           @ren setup.exe x.exe
           @cp $(rsi_root)\bin\dos4g.exe d4g.exe
           @$(rsi_root)\bin\expmod d4g.exe pmem=384 xmax=384
@@ -344,7 +345,7 @@ setup.lnk : makefile ../setup.mif
     %create setup.lnk
     @%append setup.lnk $(lnk_dbg) option symfile
     @%append setup.lnk option quiet, map, verbose
-!ifndef ON_BUILD_MACHINE
+!ifeq release 0
     @%append setup.lnk option undefsok
 !endif
 !ifeq VERSION _WIN

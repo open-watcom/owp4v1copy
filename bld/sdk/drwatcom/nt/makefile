@@ -8,7 +8,7 @@ msgfiles = drnt.msg ../../misc/about.msg ../../misc/savelbox.msg &
 
 cflags= -zq-oaxt-s-fpc-w4 -mf-4-bt=nt-fo=obj/.obj
 
-!ifndef on_build_machine
+!ifeq release 0
 cflags += -d2
 # cflags += -dDEBUG
 !endif
@@ -70,7 +70,7 @@ $(name).res : $(name).rc $(resources)
 
 $(lnk) : makefile
         %create $(lnk)
-!ifndef on_build_machine
+!ifeq release 0
         @%append $(lnk) debug all
 !endif
         @%append $(lnk) sys nt_win

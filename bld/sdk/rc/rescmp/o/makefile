@@ -42,7 +42,7 @@ $(NAME).exe : $(OBJS) $(wresdir)lib\wres$(MODEL).lib $(LNK)
 
 $(LNK): makefile
         @%write $(LNK) option quiet
-!ifndef on_build_machine
+!ifeq release 0
         @%append $(LNK) debug all
 !endif
         @%append $(LNK) sys dos

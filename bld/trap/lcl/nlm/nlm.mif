@@ -9,8 +9,8 @@ extra_a_flags_nlmintr = -fpi87
 extra_linker4 = module clib
 extra_linker3 =
 extra_linker = $(extra_linker$(nlm_ver)) debug all debug Novell
-!ifdef on_build_machine
-name= $(srv)serv$(nlm_ver)
-!else
+!ifeq release 0
 name= $(srv)srv$(nlm_ver)
+!else
+name= $(srv)serv$(nlm_ver)
 !endif

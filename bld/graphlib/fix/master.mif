@@ -1,11 +1,11 @@
-!ifdef on_build_machine
-clibdir_s = $(build_root)/clib/library/msdos.086/ms/clibs.lib
-clibdir_3 = $(build_root)/clib/library/msdos.386/ms_r/clibs.lib
-clibdir_q = $(build_root)/clib/library/qnx.286/ms/clibs.lib
-!else
+!ifeq release 0
 clibdir_s = $(%watcom)/lib286/dos/clibs.lib
 clibdir_3 = $(%watcom)/lib386/dos/clib3r.lib
 clibdir_q = $(%watcom)/lib286/qnx/clibs.lib
+!else
+clibdir_s = $(build_root)/clib/library/msdos.086/ms/clibs.lib
+clibdir_3 = $(build_root)/clib/library/msdos.386/ms_r/clibs.lib
+clibdir_q = $(build_root)/clib/library/qnx.286/ms/clibs.lib
 !endif
 
 !ifeq host_OS dos

@@ -11,7 +11,8 @@ source_libs_x = $(libx)
 !endif
 
 lib_flags = -b -c -n -t
-!ifdef on_build_machine
+!ifeq release 0
+!else
 !ifeq host_CPU axp
 !else
 lib_flags += -s
@@ -20,7 +21,7 @@ lib_flags += -s
 
 !ifdef on_JWW_machine
 lib_page_size = -p=64
-!else ifndef on_build_machine
+!else ifeq release 0
 lib_page_size = -p=64
 !else
 !endif

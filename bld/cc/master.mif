@@ -171,14 +171,14 @@ extra_c_flags += $(defines)
 def_targ = wcc$(target_CPU)
 !endif
 !ifndef def_targ
-!ifdef on_build_machine
-def_targ_os2    = $(dllexe).exe
-def_targ_nt     = $(dllexe).exe
-def_targ        = $(xname)
-!else
+!ifeq release 0
 def_targ_os2    = $(dllexe).exe
 def_targ_nt     = $(dllexe).exe
 def_targ        = $(dxname)
+!else
+def_targ_os2    = $(dllexe).exe
+def_targ_nt     = $(dllexe).exe
+def_targ        = $(xname)
 !endif
 !ifdef def_targ_$(host_os)
 def_targ        = $(def_targ_$(host_os))
@@ -209,7 +209,8 @@ $(xname): eraseall.obj $(pre_obj_deps) $(cc_objs) $(dwarf_deps) $(cg_deps) $(cc_
         rm -f $^&.rex
 !endif
 !ifeq   host_os qnx
-!ifdef  on_build_machine
+!ifeq release 0
+!else
         serialize $(xname) wcc
 !endif
 !endif
@@ -229,7 +230,8 @@ $(cxname): eraseall.obj $(pre_obj_deps) $(cc_objs) $(dwarf_deps) $(cg_stub_deps)
         rm -f $^&.rex
 !endif
 !ifeq   host_os qnx
-!ifdef  on_build_machine
+!ifeq release 0
+!else
         serialize $(cxname) wcc
 !endif
 !endif
@@ -255,10 +257,10 @@ $(dllname).dll : $(pre_obj_deps) $(rc_objs) $(dll_objs) $(dwarf_deps) $(cg_debug
 !ifdef as_lib_$(target_cpu)
         @%append $^&.lnk lib $(asinline_axp_lib)
 !endif
-!ifdef  on_build_machine
-        @%append $^&.lnk $(cg_libs)
-!else
+!ifeq release 0
         @%append $^&.lnk $(cg_debug_libs)
+!else
+        @%append $^&.lnk $(cg_libs)
 !endif
         $(linker) $(ldebug_$(host_cpu))  @$^&.lnk
 !ifdef build_rc_$(host_os)_$(host_cpu)

@@ -40,7 +40,8 @@
 .extensions: .exe .rex .exp .obj .c .asm
 
 .before
-!ifdef on_build_machine
+!ifeq release 0
+!else
     set watcom=$(%relroot)\$(%defrel)
     set include=
     set dos_include=$(%watcom)\h

@@ -79,7 +79,8 @@ extra_c_flags_preproc = -zm
 extra_c_flags_ppexpr = -zm
 extra_c_flags_ppmacro = -zm
 
-!ifdef on_build_machine
+!ifeq release 0
+!else
 NODEBUG=1
 !endif
 

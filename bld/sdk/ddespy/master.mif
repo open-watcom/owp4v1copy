@@ -42,7 +42,7 @@ msgfiles  = $(sdk_dir)/misc/about.msg $(sdk_dir)/misc/log.msg &
 $(name).exe : rcstr.gh $(objs) $(name).res
         $(LINKER) $(lflags) name $^@ file { $(objs) }
 !ifeq host_CPU axp
-!ifndef on_build_machine
+!ifeq release 0
         cvpack $(name).exe
         wstrip $(name).exe $(name).exe $(name).sym
 !endif

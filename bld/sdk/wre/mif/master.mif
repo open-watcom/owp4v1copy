@@ -30,7 +30,8 @@ wacc_dir        =$(sdk_dir)/wresedit/waccel
 wmenu_dir       =$(sdk_dir)/wresedit/wmenu
 wstring_dir     =$(sdk_dir)/wresedit/wstring
 
-!ifdef on_build_machine
+!ifeq release 0
+!else
 NODEBUG=1
 !endif
 

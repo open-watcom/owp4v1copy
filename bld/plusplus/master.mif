@@ -8,9 +8,8 @@ proj_name = plusplus
 .mif: $(mif_path)
 
 !ifndef plusplus_release
-!  ifeq release 1
-!    define plusplus_release
-!  else ifdef on_build_machine
+!  ifeq release 0
+!  else
 !    define plusplus_release
 !  endif
 !endif

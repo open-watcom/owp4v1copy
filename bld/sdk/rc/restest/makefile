@@ -6,7 +6,7 @@ lnknt = $(nament).lnk
 cflags= -zq-s-zW-fpc-w4
 cflagswin= -2-zW -fo=obj\$[&.obj -ml
 cflagsnt= -mf-3-bt=nt-fo=nbj\.nbj -i=$(watcom_nt_h)
-!ifndef on_build_machine
+!ifeq release 0
 cflags += -d2
 !endif
 

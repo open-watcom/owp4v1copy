@@ -114,7 +114,7 @@ all : $(wspy_to_build_$(host_OS)) .SYMBOLIC
 $(name).exe : $(objs) $(name).res $(dllname).lib
         $(linker) $(lflags) name $^@ file { $(objs) }
 !ifeq host_CPU axp
-!ifndef on_build_machine
+!ifeq release 0
         cvpack $(name).exe
         wstrip $(name).exe $(name).exe $(name).sym
 !endif
