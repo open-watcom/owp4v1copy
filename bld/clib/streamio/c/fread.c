@@ -31,9 +31,7 @@
 
 #include "variety.h"
 #include <stdio.h>
-#if !defined(__QNX__)
-#include <io.h>
-#endif
+#include <unistd.h>
 #include "fileacc.h"
 #include <string.h>
 #include <errno.h>

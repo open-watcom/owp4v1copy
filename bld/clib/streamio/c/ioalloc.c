@@ -32,11 +32,7 @@
 #include "variety.h"
 #include <stdio.h>
 #include "liballoc.h"
-#if defined(__QNX__)
 #include <unistd.h>
-#else
-#include <io.h>
-#endif
 #include "rtdata.h"
 
 extern  void    __chktty(FILE *);

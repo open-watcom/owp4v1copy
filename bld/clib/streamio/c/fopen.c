@@ -47,7 +47,7 @@
 #include "seterrno.h"
 #include "defwin.h"
 
-#if defined(__QNX__)
+#if defined(__UNIX__)
  #define PMODE ( S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH )
 #else
  #define PMODE ( S_IREAD | S_IWRITE )
@@ -141,7 +141,7 @@ extern  int     __doclose( FILE *fp, int );
                 if( gottextbin ) {
                     alive = 0;
                 } else {
-                    #if !defined(__QNX__)
+                    #if !defined(__UNIX__)
                         flags |= _BINARY;
                     #endif
                     gottextbin = 1;
@@ -174,7 +174,7 @@ extern  int     __doclose( FILE *fp, int );
     /*
      * Handle defaults for any unspecified options.
      */
-#if !defined(__QNX__)
+#if !defined(__UNIX__)
     if( !gottextbin ) {
         if( _RWD_fmode == O_BINARY )  flags |= _BINARY;
     }
@@ -210,7 +210,7 @@ static FILE *__F_NAME(__doopen,__wdoopen)( const CHAR_TYPE *name,
         }
         #if defined(__NETWARE__)
             open_mode |= O_BINARY;
-        #elif defined(__QNX__)
+        #elif defined(__UNIX__)
         #else
             if( file_flags & _BINARY ) {
                 open_mode |= O_BINARY;
@@ -232,7 +232,7 @@ static FILE *__F_NAME(__doopen,__wdoopen)( const CHAR_TYPE *name,
         }
         #if defined(__NETWARE__)
             open_mode |= O_BINARY;
-        #elif defined(__QNX__)
+        #elif defined(__UNIX__)
         #else
             if( file_flags & _BINARY ) {
                 open_mode |= O_BINARY;

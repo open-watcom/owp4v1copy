@@ -32,11 +32,7 @@
 #include "variety.h"
 #include <stdio.h>
 #include <string.h>
-#if defined(__QNX__)
 #include <unistd.h>
-#else
-#include <io.h>
-#endif
 #include "fileacc.h"
 
 

@@ -32,13 +32,13 @@
 #include "variety.h"
 #include <stddef.h>
 #include <string.h>
+
+#ifdef M_I86
 #if defined(__QNX__)
 #include <i86.h>
 #else
 #include <dos.h>
 #endif
-
-#ifdef M_I86
 
 extern  int     i86_memeq( const char _WCFAR *, const char _WCFAR *, int );
 

@@ -32,12 +32,7 @@
 #include "variety.h"
 #include "widechar.h"
 #include <stdio.h>
-#if defined(__QNX__)
 #include <unistd.h>
-#else
-#include <conio.h>
-#include <io.h>
-#endif
 #include "fileacc.h"
 #include <errno.h>
 #include "rtdata.h"
@@ -78,13 +73,13 @@ _WCRTLINK int fgetc( FILE *fp )
 
     /*** Deal with stream orientation ***/
     #ifndef __NETWARE__
-        if( _FP_ORIENTATION(fp) != _BYTE_ORIENTED ) 
+        if( _FP_ORIENTATION(fp) != _BYTE_ORIENTED )
         {
-            if( _FP_ORIENTATION(fp) == _NOT_ORIENTED ) 
+            if( _FP_ORIENTATION(fp) == _NOT_ORIENTED )
             {
                 _FP_ORIENTATION(fp) = _BYTE_ORIENTED;
-            } 
-            else 
+            }
+            else
             {
                 _ReleaseFile( fp );
                 return( EOF );              /* error return */
@@ -92,13 +87,13 @@ _WCRTLINK int fgetc( FILE *fp )
         }
     #endif
 
-    if(( fp->_flag & _READ ) == 0 ) 
+    if(( fp->_flag & _READ ) == 0 )
     {
         __set_errno( EBADF );
         fp->_flag |= _SFERR;
         c = EOF;
-    } 
-    else 
+    }
+    else
     {
 #if 0
         /*** If the buffer is _DIRTY, resync it before reading ***/
@@ -112,35 +107,35 @@ _WCRTLINK int fgetc( FILE *fp )
         fp->_cnt--;
         // it is important that this remain a relative comparison
         // to ensure that the getc() macro works properly
-        if( fp->_cnt < 0 ) 
+        if( fp->_cnt < 0 )
         {
             c = __F_NAME(__filbuf,__wfilbuf)(fp);
-        } 
-        else 
+        }
+        else
         {
             c = *(char*)fp->_ptr;
             fp->_ptr++;
         }
     }
     #if !defined(__QNX__)
-        if( ! (fp->_flag & _BINARY) ) 
+        if( ! (fp->_flag & _BINARY) )
         {
-            if( c == '\r' ) 
+            if( c == '\r' )
             {
                 fp->_cnt--;
                 // it is important that this remain a relative comparison
                 // to ensure that the getc() macro works properly
-                if( fp->_cnt < 0 ) 
+                if( fp->_cnt < 0 )
                 {
                     c = __F_NAME(__filbuf,__wfilbuf)(fp);
-                } 
-                else 
+                }
+                else
                 {
                     c = *(CHAR_TYPE*)fp->_ptr & CHARMASK;
                     fp->_ptr += CHARSIZE;
                 }
             }
-            if( c == DOS_EOF_CHAR ) 
+            if( c == DOS_EOF_CHAR )
             {
                 fp->_flag |= _EOF;
                 c = EOF;
@@ -156,34 +151,34 @@ _WCRTLINK int fgetc( FILE *fp )
 static int __read_wide_char( FILE *fp, wchar_t *wc )
 /**************************************************/
 {
-    if( fp->_flag & _BINARY ) 
+    if( fp->_flag & _BINARY )
     {
         /*** Read a wide character ***/
         return( fread( wc, sizeof(wchar_t), 1, fp ) );
-    } 
-    else 
+    }
+    else
     {
         char            mbc[MB_CUR_MAX];
         wchar_t         wcTemp;
         int             rc;
 
         /*** Read the multibyte character ***/
-        if( !fread( &mbc[0], 1, 1, fp ) )  
+        if( !fread( &mbc[0], 1, 1, fp ) )
             return( 0 );
-        if( _ismbblead( mbc[0] ) ) 
+        if( _ismbblead( mbc[0] ) )
         {
-            if( !fread( &mbc[1], 1, 1, fp ) )  
+            if( !fread( &mbc[1], 1, 1, fp ) )
                 return( 0 );
         }
 
         /*** Convert it to wide form ***/
         rc = mbtowc( &wcTemp, mbc, MB_CUR_MAX );
-        if( rc >= 0 ) 
+        if( rc >= 0 )
         {
             *wc = wcTemp;
             return( 1 );
-        } 
-        else 
+        }
+        else
         {
             __set_errno( EILSEQ );
             return( 0 );
@@ -200,13 +195,13 @@ _WCRTLINK wint_t fgetwc( FILE *fp )
 
     /*** Deal with stream orientation ***/
     #ifndef __NETWARE__
-        if( _FP_ORIENTATION(fp) != _WIDE_ORIENTED ) 
+        if( _FP_ORIENTATION(fp) != _WIDE_ORIENTED )
         {
-            if( _FP_ORIENTATION(fp) == _NOT_ORIENTED ) 
+            if( _FP_ORIENTATION(fp) == _NOT_ORIENTED )
             {
                 _FP_ORIENTATION(fp) = _WIDE_ORIENTED;
-            } 
-            else 
+            }
+            else
             {
                 _ReleaseFile( fp );
                 return( WEOF );             /* error return */
@@ -215,14 +210,14 @@ _WCRTLINK wint_t fgetwc( FILE *fp )
     #endif
 
     /*** Read the character ***/
-    if( !__read_wide_char( fp, &c ) ) 
+    if( !__read_wide_char( fp, &c ) )
     {
         _ReleaseFile( fp );
         return( WEOF );
     }
-    if( !(fp->_flag & _BINARY)  &&  c == L'\r' ) 
+    if( !(fp->_flag & _BINARY)  &&  c == L'\r' )
     {
-        if( !__read_wide_char( fp, &c ) ) 
+        if( !__read_wide_char( fp, &c ) )
         {
             _ReleaseFile( fp );
             return( WEOF );
@@ -238,11 +233,11 @@ _WCRTLINK wint_t fgetwc( FILE *fp )
 
 int __F_NAME(__filbuf,__wfilbuf)( FILE *fp )
 {
-    if( __F_NAME(__fill_buffer,__wfill_buffer)( fp ) == 0 ) 
+    if( __F_NAME(__fill_buffer,__wfill_buffer)( fp ) == 0 )
     {
         return( EOF );
-    } 
-    else 
+    }
+    else
     {
         fp->_cnt -= CHARSIZE;
         fp->_ptr += CHARSIZE;
@@ -252,13 +247,13 @@ int __F_NAME(__filbuf,__wfilbuf)( FILE *fp )
 
 int __F_NAME(__fill_buffer,__wfill_buffer)( FILE *fp )
 {
-    if( _FP_BASE(fp) == NULL ) 
+    if( _FP_BASE(fp) == NULL )
     {
         __ioalloc( fp );
     }
-    if( fp->_flag & _ISTTY ) 
+    if( fp->_flag & _ISTTY )
     {                      /* 20-aug-90 */
-        if( fp->_flag & (_IONBF | _IOLBF) ) 
+        if( fp->_flag & (_IONBF | _IOLBF) )
         {
             __flushall( _ISTTY );           /* flush all TTY output */
         }
@@ -270,19 +265,19 @@ int __F_NAME(__fill_buffer,__wfill_buffer)( FILE *fp )
         (fp->_flag & _IONBF) ? CHARSIZE : fp->_bufsize );
 #else
     if(( fp->_flag & (_IONBF|_ISTTY)) == (_IONBF|_ISTTY) &&
-       ( fileno( fp ) == STDIN_FILENO )) 
+       ( fileno( fp ) == STDIN_FILENO ))
     {
         int c;                      /* JBS 31-may-91 */
 
         fp->_cnt = 0;
         c = getche();
-        if( c != EOF ) 
+        if( c != EOF )
         {
             *(CHAR_TYPE*)fp->_ptr = c;
             fp->_cnt = CHARSIZE;
         }
-    } 
-    else 
+    }
+    else
     {
 #ifndef __NETWARE__
         fp->_cnt = __qread( fileno( fp ), fp->_ptr,
@@ -293,13 +288,13 @@ int __F_NAME(__fill_buffer,__wfill_buffer)( FILE *fp )
 #endif
     }
 #endif
-    if( fp->_cnt <= 0 ) 
+    if( fp->_cnt <= 0 )
     {
-        if( fp->_cnt == 0 ) 
+        if( fp->_cnt == 0 )
         {
             fp->_flag |= _EOF;
-        } 
-        else 
+        }
+        else
         {
             fp->_flag |= _SFERR;
             fp->_cnt = 0;
