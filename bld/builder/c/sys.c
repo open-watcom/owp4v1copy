@@ -40,17 +40,15 @@
 
 #if defined( __NT__ ) || defined( __OS2__ )
 
+#define BUFSIZE 256
+
 char    *CmdProc;
 extern bool Quiet;
 
 #ifdef __NT__
-#define BUFSIZE 256
-#define COMSPEC "ComSpec"
+  #define COMSPEC "ComSpec"
 #else
-/* for some reason OS2 has a global buffer, but NT a local buffer */
-#define BUFSIZE 32768
-static char    buff[BUFSIZE + 1];
-#define COMSPEC "COMSPEC"
+  #define COMSPEC "COMSPEC"
 #endif
 
 #endif
@@ -99,13 +97,13 @@ void SysInit( int argc, char *argv[] )
 {
 #if defined( __NT__ ) || defined( __OS2__ )
     SysInitTitle(argc, argv);
-  
+
     CmdProc = getenv( COMSPEC );
-    
+
     if( CmdProc == NULL ) {
         Fatal( "Can not find command processor" );
     }
-#endif    
+#endif
 }
 
 unsigned SysRunCommand( const char *cmd )
@@ -116,9 +114,7 @@ unsigned SysRunCommand( const char *cmd )
     int         my_std_error;
     int         bytes_read;
     int         rc;
-#ifdef __NT__
     char        buff[BUFSIZE + 1];
-#endif      
 
     my_std_output = dup( STDOUT_FILENO );
     my_std_error = dup( STDERR_FILENO );
@@ -149,7 +145,7 @@ unsigned SysRunCommand( const char *cmd )
 #else
     /* no pipes for DOS so we call "system" and hence cannot log */
     return system(cmd);
-#endif    
+#endif
 }
 
 unsigned SysChDir( char *dir )
