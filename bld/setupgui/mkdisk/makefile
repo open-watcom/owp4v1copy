@@ -32,13 +32,7 @@ all : $(commands) .SYMBOLIC
 mkdisk.exe : mkdisk.obj
     $(linker) $(lflags) name $@ file {$<}
 
-mksetup.exe : mksetup.obj
-    $(linker) $(lflags) name $@ file {$<}
-    
 packsize.exe : packsize.obj
-    $(linker) $(lflags) name $@ file {$<}
-
-mkdisk.exp : mkdisk.obj
     $(linker) $(lflags) name $@ file {$<}
 
 splitfil.exe : splitfil.obj
