@@ -23,7 +23,6 @@ objs +=  trmemcvr.obj trmem.obj
 
 $(name).exe : $(objs) $(lnk)
         wlink @$(lnk)
-        @%make bindit
 
 $(lnk) : $(__makefiles__)
         %create $(lnk)

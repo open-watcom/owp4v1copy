@@ -161,7 +161,9 @@ void main( int argc, char *argv[] ) {
         printf( "ui failed\n" );
         return;
     } else {
-    #ifndef __OS2__
+    #ifdef __OS2__
+        initmouse( 2 );  /* the 0=mouseless,1=mouse,2=initialized mouse */
+    #else
         uiinitgmouse( 2 );  /* the 0=mouseless,1=mouse,2=initialized mouse */
         FlipCharacterMap();
     #endif
