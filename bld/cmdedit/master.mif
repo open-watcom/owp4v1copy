@@ -2,6 +2,11 @@ proj_name = cmdedit
 
 cmdedit_autodepends = .AUTODEPEND
 
+.EXTENSIONS:
+.EXTENSIONS: .exe .ubj .obj .cbj .cpp .c .h .asm .mif
+
+.mif: $(mif_path)
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
@@ -33,9 +38,6 @@ os2cmdshellobjs = $+ $(cmdfiles) $-
 dopt=d1
 !endif
 
-.EXTENSIONS:
-.EXTENSIONS: .exe .ubj .obj .cbj .c .h .asm
-
 extra_a_flags = -d_MODEL=_SMALL -fo=$^.
 extra_a_flags_dos = -d_OS=_DOS
 extra_a_flags_os2 = -d_OS=_OS2
@@ -48,9 +50,6 @@ extra_a_flags_os2 = -d_OS=_OS2
 
 .c.cbj:
         $(comp286) $< /w3 /oxs /d1 /fo=.cbj /zq /d__CMDSHELL__ #
-
-.asm.cbj : .AUTODEPEND
-        $(as) $(aflags) $(extra_a_flags_$[&) $<
 
 .before:
         set include=$(inc_dirs_sys)

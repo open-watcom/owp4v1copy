@@ -569,8 +569,9 @@ ytab.c ytab.gh : ../y/plusplus.y ../c/yydriver.c
 !else
     diff y.out ../y/check.out
 !endif
-    if exist ytab.gh rm ytab.gh
-    mv ytab.h ytab.gh
+    rm -f ytab.gh
+    cp ytab.h ytab.gh
+    rm -f ytab.h
 
 ./optencod.exe: $(fe_misc_dir)/c/optencod.c
     $(bld_cl) $[@ $(wcl_util_opts) -i"$(fe_misc_dir)/h"

@@ -1,6 +1,8 @@
 proj_name = trap
 
+!ifndef trap_autodepends
 trap_autodepends = .AUTODEPEND
+!endif
 
 suppress_zc = 1
 
@@ -71,7 +73,7 @@ bin_root = $(bin_root_wv)
 
 # cflags stuff
 ###############
-extra_c_flags +=-D$(which) -D_$(machine)_PC -DMD_$(cpu)
+extra_c_flags += -D$(which) -D_$(machine)_PC -DMD_$(cpu) -s
 
 !ifdef japanese
 extra_c_flags += -DJAPANESE_MESSAGES

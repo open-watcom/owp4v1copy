@@ -1,21 +1,26 @@
 proj_name = browse
 name = wbrw
 
+!ifndef browse_autodepends
+browse_autodepends = .AUTODEPEND
+!endif
+
 .extensions:
-.extensions: .exe .obj .cpp .gpp .c .y .mif
+.extensions: .exe .obj .cpp .gpp .c .asm .y .mif
 
 .mif : $(mif_path)
-.mif : ../mif
+
 sys_windowed = 1
+
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
 
-.c: ..\cpp;..\merge\c;$(posix_dir)\misc;$(lib_misc_dir)\c
-.cpp: ..\cpp;..\brg\cpp
-.gpp: ..\gen
+.c: ../cpp;../merge/c;$(posix_dir)/misc;$(lib_misc_dir)/c
+.cpp: ../cpp;../brg/cpp
+.gpp: ../gen
 
-!include template.mif
+!include ../mif/template.mif
 
 ext = obj
 OBJECTS = $+$(template)$-
@@ -31,12 +36,12 @@ ext = mbr
 mbr_files = $+$(template)$-
 !endif
     
-inc_dirs_nt     = $(wclass_dir)\win\hpp;$(guitools_dir)\win;
-inc_dirs_win    = $(wclass_dir)\win\hpp;$(guitools_dir)\win;
-inc_dirs_dos    = $(wclass_dir)\dos\hpp;$(guitools_dir)\os2;
-inc_dirs_os2    = $(wclass_dir)\pm\hpp;$(guitools_dir)\os2;
+inc_dirs_nt     = $(wclass_dir)/win/hpp;$(guitools_dir)/win;
+inc_dirs_win    = $(wclass_dir)/win/hpp;$(guitools_dir)/win;
+inc_dirs_dos    = $(wclass_dir)/dos/hpp;$(guitools_dir)/os2;
+inc_dirs_os2    = $(wclass_dir)/pm/hpp;$(guitools_dir)/os2;
 
-inc_dirs    = ..\h;..\brg\h;..\gen;$(wclass_dir)\hpp;$(gui_dir)\h;$(dwarf_dir)\dr\h;$(posix_dir)\h;..\contain\h;$(editdll_dir)
+inc_dirs    = ../h;../brg/h;../gen;$(wclass_dir)/hpp;$(gui_dir)/h;$(dwarf_dir)/dr/h;$(posix_dir)/h;../contain/h;$(editdll_dir)
 
 .before:
     SET INCLUDE=$(inc_path)
@@ -77,18 +82,18 @@ rc_flags_win    = -bt=windows -K
 rc_flags_os2    = -p
 rc_flags    = $(rc_flags_$(host_OS))
 
-rc_file_nt  = ..\res\wbrw.rc
-rc_file_win = ..\res\wbrw.rc
-rc_file_os2 = ..\res\wbrwpm.rc
+rc_file_nt  = ../res/wbrw.rc
+rc_file_win = ../res/wbrw.rc
+rc_file_os2 = ../res/wbrwpm.rc
 rc_file     = $(rc_file_$(host_OS))
 
 #linker
-LIBS_win    = $(watcom_dir)\lib\dwarfrlw.lib $(gui_dir)\win\guiwinl.lib $(wclass_dir)\win\obj\wclass.lib $(misc_dir)\ctl3d.lib
-LIBS_nt_axp = $(watcom_dir)\lib\draxp.lib $(gui_dir)\win\guintaxp.lib $(wclass_dir)\win\axp\wclass.lib
-LIBS_nt_386 = $(watcom_dir)\lib\dwarfrp.lib $(gui_dir)\win\guintf.lib $(wclass_dir)\win\nt\wclass.lib
+LIBS_win    = $(watcom_dir)/lib/dwarfrlw.lib $(gui_dir)/win/guiwinl.lib $(wclass_dir)/win/obj/wclass.lib $(misc_dir)/ctl3d.lib
+LIBS_nt_axp = $(watcom_dir)/lib/draxp.lib $(gui_dir)/win/guintaxp.lib $(wclass_dir)/win/axp/wclass.lib
+LIBS_nt_386 = $(watcom_dir)/lib/dwarfrp.lib $(gui_dir)/win/guintf.lib $(wclass_dir)/win/nt/wclass.lib
 LIBS_nt     = $(LIBS_NT_$(HOST_CPU))
-LIBS_os2    = $(watcom_dir)\lib\dwarfrp.lib $(gui_dir)\win\guios2f.lib $(wclass_dir)\pm\obj32\wclass.lib
-LIBS_dos    = $(watcom_dir)\lib\dwarfrp.lib $(gui_dir)\ui\guidosf.lib $(ui_dir)\dos\uilibf.lib
+LIBS_os2    = $(watcom_dir)/lib/dwarfrp.lib $(gui_dir)/win/guios2f.lib $(wclass_dir)/pm/obj32/wclass.lib
+LIBS_dos    = $(watcom_dir)/lib/dwarfrp.lib $(gui_dir)/ui/guidosf.lib $(ui_dir)/dos/uilibf.lib
 
 LIBS    = $(LIBS_$(host_OS))
 

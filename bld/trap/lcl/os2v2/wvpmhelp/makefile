@@ -17,6 +17,8 @@ bin_root = $(bin_root_wv)
 !endif
 !endif
 
+extra_c_flags = -s -fpc
+
 inc_dirs = $(trap_dir)/h
 
 bdir = $(bin_root)/binp
@@ -49,14 +51,6 @@ $(bdir)/wdpmhelp.exe: _err.gh _jerr.gh pmhelp.obj pmhelp.res
     $(rc_os2) pmhelp.res $^@
 
 .c: ../c
-
-#.c.obj:
-#        $(comp286) $[* -bt=os2 -zq-fpc-d1-oais-s-w3-mc-zu-i$(watcom_dir)\h;$(lang_root)\h\os21x;$(watcom_dir)\os220_h;$(trap_dir)\h
-
-#.c.lbj
-#        $(comp286) $[* -bt=os2 -zq-fpc-d1-ml-zu-w3-s-i$(lang_root)\h\os21x;$(trap_dir)\h -fo=.lbj
-
-#pmlock.obj : pmlock.c ../h/wdpmhelp.h
 
 pmhelp.res: ../h/pmhelp.rc ../h/wdpmhelp.h
         @set oinc=$(%include)
