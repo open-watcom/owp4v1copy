@@ -1,4 +1,4 @@
-#pmake: all build os_qnx cpu_i86
+#pmake: os_qnx cpu_i86
 
 targos          = qnx16
 
