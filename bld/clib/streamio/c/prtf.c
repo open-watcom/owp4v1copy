@@ -38,7 +38,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#ifdef __WIDECHAR__
 #include <mbstring.h>
+#endif
 #include "ftos.h"
 #if defined(__LONG_LONG_SUPPORT__)
     #include "clibi64.h"

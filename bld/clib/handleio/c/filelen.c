@@ -40,7 +40,7 @@
 #endif
 /* most includes should go after this line */
 #include <stdio.h>
-#ifdef __UNIX__
+#if defined(__UNIX__) || defined(__SNAP__)
     #include <unistd.h>
 #else
     #include <io.h>

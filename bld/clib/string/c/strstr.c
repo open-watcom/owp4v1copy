@@ -33,7 +33,7 @@
 #include "widechar.h"
 #include <stddef.h>
 #include <string.h>
-#ifdef _M_IX86
+#if defined(_M_IX86) && !defined(__SNAP__)
  #include <i86.h>
 #endif
 

@@ -21,7 +21,9 @@
 #endif
 
 :endsegment
+:segment !NO_WIDECHAR
 :include wchar_t.sp
+:endsegment
 
 :segment !DOS
 #ifndef __TYPES_H_INCLUDED
@@ -134,24 +136,34 @@ _WCRTLINK extern void   _WCNEAR *sbrk(int incr);
 :segment QNX
 #endif
 :endsegment
+:segment !SNAP
 _WCRTLINK extern int    chdir( const char *__path );
+:endsegment
 _WCRTLINK extern int    close( int __fildes );
+:segment !SNAP
 _WCRTLINK extern int    dup( int __fildes );
 _WCRTLINK extern char   *getcwd( char *__buf, size_t __size );
 _WCRTLINK extern char   *_getcwd( char *__buf, size_t __size );
 _WCRTLINK extern pid_t  getpid( void );
+:endsegment
 _WCRTLINK extern int    isatty( int __fildes );
 _WCRTLINK extern off_t  lseek( int __fildes, off_t __offset, int __whence );
 _WCRTLINK extern ssize_t read( int __fildes, void *__buffer, size_t __len );
+:segment !SNAP
 _WCRTLINK extern int    rmdir( const char *__path );
+:endsegment
 :segment QNX | LINUX
 #if !(defined(SYSV) || defined(BSD) || defined(XENIX) || defined(_UNIX_H_INCLUDED))
 :endsegment
+:segment !SNAP
 _WCRTLINK extern int    setmode( int __handle, int __mode );
+:endsegment
 :segment QNX | LINUX
 #endif
 :endsegment
+:segment !SNAP
 _WCRTLINK extern unsigned int sleep( unsigned int __seconds );
+:endsegment
 _WCRTLINK extern int    unlink( const char *__path );
 _WCRTLINK extern ssize_t write( int __fildes, const void *__buf, size_t __len );
 :segment QNX | LINUX
@@ -216,7 +228,9 @@ _WCRTLINK extern int    execvp( const char *__file, const char *const __argv[] )
 
 :include ext.sp
 
+:segment !SNAP
 _WCRTLINK extern int    chsize( int __fildes, long __size );
+:endsegment
 _WCRTLINK extern int    eof( int __fildes );
 _WCRTLINK extern long   filelength( int __fildes );
 _WCRTLINK extern off_t  tell( int __fildes );

@@ -30,7 +30,7 @@
 
 
 #include "variety.h"
-#include <io.h>
+#include <unistd.h>
 #include <os/imports.h>
 
 _WCRTLINK int access( const char *pathname, int pmode )

@@ -31,7 +31,7 @@
 
 #include "variety.h"
 #include <stdio.h>
-#include <io.h>
+#include <fcntl.h>
 #include "rtcheck.h"
 #include <os/imports.h>
 

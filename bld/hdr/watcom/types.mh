@@ -20,12 +20,14 @@
 
 :include sizet.sp
 
-:segment LINUX
+:segment LINUX | QNX | SNAP
 #ifndef _SSIZE_T_DEFINED_
 #define _SSIZE_T_DEFINED_
 typedef signed ssize_t;
 #endif
+:endsegment
 
+:segment LINUX
 #ifndef _LIMITS_H_INCLUDED
  #include <limits.h>
 #endif
@@ -82,11 +84,6 @@ typedef long            blkcnt_t;
 typedef quad_t          loff_t;
 
 :elsesegment QNX
-#ifndef _SSIZE_T_DEFINED_
-#define _SSIZE_T_DEFINED_
-typedef signed ssize_t;
-#endif
-
 #ifndef _LIMITS_H_INCLUDED
  #include <limits.h>
 #endif
@@ -180,7 +177,7 @@ typedef quad *          qaddr_t;
 typedef unsigned long   fixpt_t;
 typedef int             key_t;
 typedef unsigned short  sel_t;
-:elsesegment DOS
+:elsesegment DOS | SNAP
 typedef unsigned int ino_t;     /* i-node # type */
 typedef int dev_t;              /* device code (drive #) */
 typedef long  off_t;            /* file offset value */

@@ -38,7 +38,9 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/types.h>
+#ifndef __SNAP__
 #include <sys/stat.h>
+#endif
 #include "liballoc.h"
 #include "fileacc.h"
 #include "rtdata.h"
@@ -57,7 +59,7 @@ FILE *__allocfp( int handle )
     _AccessIOB();
     /* Try and take one off the recently closed list */
     link = _RWD_cstream;
-    if( link != NULL ) 
+    if( link != NULL )
     {
         _RWD_cstream = link->next;
         fp = link->stream;
@@ -66,12 +68,12 @@ FILE *__allocfp( int handle )
     }
     /* See if there is a static FILE structure available. */
     end = &_RWD_iob[_NFILES];
-    for( fp = _RWD_iob; fp < end; ++fp ) 
+    for( fp = _RWD_iob; fp < end; ++fp )
     {
-        if( (fp->_flag & (_READ | _WRITE)) == 0 ) 
+        if( (fp->_flag & (_READ | _WRITE)) == 0 )
         {
             link = lib_malloc( sizeof( __stream_link ) );
-            if( link == NULL ) 
+            if( link == NULL )
                 goto no_mem;
             flags = _READ | _WRITE;
             goto got_one;
@@ -80,7 +82,7 @@ FILE *__allocfp( int handle )
     /* Allocate a new dynamic structure */
     flags = _DYNAMIC | _READ | _WRITE;
     link = lib_malloc( sizeof( __stream_link ) + sizeof( FILE ) );
-    if( link == NULL ) 
+    if( link == NULL )
         goto no_mem;
     fp = (FILE *)(link + 1);
 got_one:
@@ -112,12 +114,12 @@ void __freefp( FILE * fp )
 
     _AccessIOB();
     owner = &_RWD_ostream;
-    for( ;; ) 
+    for( ;; )
     {
         link = *owner;
-        if( link == NULL ) 
+        if( link == NULL )
             return;
-        if( link->stream == fp ) 
+        if( link->stream == fp )
             break;
         owner = &link->next;
     }
@@ -134,7 +136,7 @@ void __purgefp()
     __stream_link *     next;
 
     _AccessIOB();
-    while( _RWD_cstream != NULL ) 
+    while( _RWD_cstream != NULL )
     {
         next = _RWD_cstream->next;
         lib_free( _RWD_cstream );

@@ -38,7 +38,9 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/types.h>
+#ifndef __SNAP__
 #include <sys/stat.h>
+#endif
 #if defined(__NT__)
 #include <windows.h>
 #endif

@@ -32,7 +32,9 @@
 #include "variety.h"
 #include "widechar.h"
 #include <errno.h>
-#include <process.h>
+#ifndef __SNAP__
+ #include <process.h>
+#endif
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -91,8 +93,10 @@ static size_t init_name()
     #if defined(__UNIX__)
         p = __tmpdir( p );
     #endif
+    #if !defined(__SNAP__)
     *p++ = '_';
     p = __F_NAME(putbits,_wputbits)( p, getpid() );
+    #endif
     #if defined(__QNX__)
         *p++ = '.';
         p = __F_NAME(putbits,_wputbits)( p, (unsigned short)getnid() );

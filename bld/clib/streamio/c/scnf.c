@@ -46,7 +46,7 @@
 #endif
 #include "farsupp.h"
 #include "myvalist.h"
-#ifndef __NETWARE__
+#if !defined(__NETWARE__) && defined(__WIDECHAR__)
     #include <mbstring.h>
 #endif
 

@@ -72,7 +72,7 @@ _WCRTLINK int _nheapset( unsigned int fill )
             curr = mhp->freehead.next;
             for(;;) {
                 if( curr == (frlptr) &mhp->freehead ) break;
-                #if defined(_M_IX86)
+                #if defined(_M_IX86) && !defined(__SNAP__)
                     _fmemset( (void _WCFAR *)(curr + 1), fill, curr->len - sizeof(frl) );
                 #else
                     memset( (void *)(curr + 1), fill, curr->len - sizeof(frl) );

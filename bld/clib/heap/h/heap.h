@@ -32,7 +32,12 @@
 #include "variety.h"
 
 #if defined(_M_IX86)
+#if defined(__SNAP__)
+  unsigned short FP_SEG( const volatile void __far * );
+  #pragma aux    FP_SEG = __parm __caller [eax dx] __value [dx];
+#else
 #include <i86.h>
+#endif
 #endif
 
 #if !defined(__DOS_EXT__)

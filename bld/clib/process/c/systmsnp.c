@@ -31,7 +31,6 @@
 
 #include "variety.h"
 #include <stdlib.h>
-#include <process.h>
 #include <os/imports.h>
 
 _WCRTLINK int system( const char *cmd )

@@ -42,6 +42,7 @@
     #include "tinyos2.h"
     #define INCL_DOSMEMMGR
     #include <wos2.h>
+#elif defined(__SNAP__)
 #elif defined(_M_IX86)
     #include "tinyio.h"
 #endif

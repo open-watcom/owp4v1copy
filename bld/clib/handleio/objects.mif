@@ -26,10 +26,10 @@
 !inject dup2wnt.obj                      nt nta ntp
 !inject dupos2.obj                                          o16 o32
 !inject dupwnt.obj                       nt nta ntp
-!inject eof.obj      d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+!inject eof.obj      d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
 !inject finfoptr.obj                     nt nta ntp
 !inject fileinfo.obj                     nt nta ntp
-!inject filelen.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+!inject filelen.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
 !inject fileno.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 !inject fstat.obj    d16 d32                                                w16 w32 osi
 !inject fstatos2.obj                                        o16 o32

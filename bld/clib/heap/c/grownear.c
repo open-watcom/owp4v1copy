@@ -37,9 +37,6 @@
 #include "heapacc.h"
 #include "heap.h"
 #include <errno.h>
-#if defined(_M_IX86)
- #include <i86.h>
-#endif
 #if defined(__DOS_EXT__)
  #include "extender.h"
  #include "tinyio.h"

@@ -221,11 +221,13 @@ SNAP_files = &
         assert.h &
         ctype.h &
         errno.h &
+        fcntl.h &
         float.h &
         limits.h &
         locale.h &
         malloc.h &
         math.h &
+        search.h &
         setjmp.h &
         share.h &
         signal.h &
@@ -235,6 +237,7 @@ SNAP_files = &
         stdlib.h &
         string.h &
         time.h &
+        unistd.h &
         sys/types.h
 
 !if 0
