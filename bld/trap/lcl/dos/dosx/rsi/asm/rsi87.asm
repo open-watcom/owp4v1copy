@@ -32,7 +32,10 @@
 
                 NAME    NPXType
 
-no87    ; get the fp emulation bit off
+;no87    ; get the fp emulation bit off
+; correct use is /fpi87 switch on  command line, .no87 directive is used for
+; temporary coprocessor instructions switch off
+
 .386
 .387
 
@@ -92,8 +95,7 @@ Read387_ proc   near
         fnsave   [bx]
         wait
         db      66H
-        ;fnrstor  [bx]
-        db      0ddH, 027H      ; till wasm gets fixed up
+        fnrstor  [bx]
         wait
         pop     edi
         pop     bx
@@ -111,8 +113,7 @@ Write387_ proc  near
         movzx   edi,bx
         wait
         db      66h
-        ;fnrstor  [bx]
-        db      0ddH, 027H      ; till wasm gets fixed up
+        fnrstor  [bx]
         wait
         pop     edi
         pop     bx
