@@ -7,7 +7,7 @@ set PROJDIR=<CWD>
 [ BLOCK <BUILD_PLATFORM> linux386 ]
 #================================
     echo Building the dwarf write library
-    mkdir -p  <PROJDIR>/dw/<OBJDIR>
+    mkdir <PROJDIR>/dw/<OBJDIR>
     cdsay <PROJDIR>/dw/<OBJDIR>
     wmake -h -f ../o/makefile bootstrap=1
     cdsay <PROJDIR>

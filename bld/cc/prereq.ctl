@@ -7,7 +7,7 @@ set PROJDIR=<CWD>
 [ BLOCK <BUILD_PLATFORM> linux386 ]
 #==================================
     echo Building the wcc386 bootstrap
-    mkdir -p <PROJDIR>/<OBJDIR>
+    mkdir <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
     cp -f ../linux386.386/target.h .
     wmake -h -f ../linux386.386/makefile bootstrap=1

@@ -33,10 +33,10 @@
 #include <ctype.h>
 #include <time.h>
 #include <stdlib.h>
+#include <sys/stat.h>
 #ifdef __UNIX__
 #include <unistd.h>
 #include <dirent.h>
-#include <sys/stat.h>
 #else
 #include <direct.h>
 #include <dos.h>
@@ -371,6 +371,18 @@ static unsigned ProcCopy( char *cmd, bool test_abit )
     return( 0 );
 }
 
+#ifndef __UNIX__
+static unsigned ProcMkdir( char *cmd )
+{
+    struct stat sb;
+
+    if ( -1 == stat( cmd, &sb ) )
+        return( mkdir( cmd ) );
+    else
+        return( 0 );
+}
+#endif
+
 #if 0
 void PMakeOutput( char *str )
 {
@@ -442,6 +454,10 @@ unsigned RunIt( char *cmd )
         res = ProcCopy( SkipBlanks( cmd + sizeof( "COPY" ) ), FALSE );
     } else if( BUILTIN( "ACOPY" ) ) {
         res = ProcCopy( SkipBlanks( cmd + sizeof( "ACOPY" ) ), TRUE );
+#ifndef __UNIX__
+    } else if( BUILTIN( "MKDIR" ) ) {
+        res = ProcMkdir( SkipBlanks( cmd + sizeof( "MKDIR" ) ) );
+#endif
 #if 0
     } else if( BUILTIN( "PMAKE" ) ) {
         res = ProcPMake( SkipBlanks( cmd + sizeof( "PMAKE" ) ) );

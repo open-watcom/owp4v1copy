@@ -23,7 +23,7 @@ set BUILD_PLATFORM=
     cdsay <PROJDIR>\bind\dos386
     wmake -h
     cdsay <PROJDIR>
-    if not exist <PROJDIR>\<OBJDIR> mkdir <PROJDIR>\<OBJDIR>
+    mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
     wmake -h -f ../dos386/makefile bname=bvi prebuild=1
     <CPCMD> bvi.exe <DEVDIR>/build/bin/
@@ -38,7 +38,7 @@ set BUILD_PLATFORM=
     cdsay <PROJDIR>\bind\os2386
     wmake -h
     cdsay <PROJDIR>
-    if not exist <PROJDIR>\<OBJDIR> mkdir <PROJDIR>\<OBJDIR>
+    mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
     wmake -h -f ../os2386/makefile bname=bvi prebuild=1
     <CPCMD> bvi.exe <DEVDIR>/build/binp/
@@ -53,7 +53,7 @@ set BUILD_PLATFORM=
     cdsay <PROJDIR>\bind\nt386
     wmake -h
     cdsay <PROJDIR>
-    if not exist <PROJDIR>\<OBJDIR> mkdir <PROJDIR>\<OBJDIR>
+    mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
     wmake -h -f ../nt386/makefile bname=bvi prebuild=1
     <CPCMD> bvi.exe <DEVDIR>/build/binnt/
@@ -68,7 +68,7 @@ set BUILD_PLATFORM=
     cdsay <PROJDIR>/bind/linux386
     wmake -h
     cdsay <PROJDIR>
-    mkdir -p <PROJDIR>/<OBJDIR>
+    mkdir <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
     wmake -h -f ../linux386/makefile bname=bvi prebuild=1
     <CPCMD> bvi.exe <DEVDIR>/build/binl/bvi

@@ -7,7 +7,7 @@ set PROJDIR=<CWD>
 [ BLOCK <BUILD_PLATFORM> linux386 ]
 #==================================
     echo Building the 386 codegen bootstrap
-    mkdir -p <PROJDIR>/intel/386/<OBJDIR>
+    mkdir <PROJDIR>/intel/386/<OBJDIR>
     cdsay <PROJDIR>/intel/386/<OBJDIR>
     wmake -h -f ../linux386/makefile bootstrap=1
     cdsay <PROJDIR>

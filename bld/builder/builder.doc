@@ -147,6 +147,9 @@ turned off.
 Write the text to the screen and any log file(s). The text may contains macros
 which are expanded first.
 
+        MKDIR new_dir
+
+Create a new directory called "new_dir". BUILDER will not attempt to create the directory if it already exists.
 
 PMAKE is not currently built into BUILDER whatever the following says!
 #if 0
