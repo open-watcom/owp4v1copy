@@ -44,8 +44,15 @@ _DATA   segment word public 'DATA'
 
         public  __8087
         public  __real87
+
 __8087  db      0               ; 0 => no 8087, otherwise 8087 present
 __real87 db     0               ; 0 => no 8087, otherwise 8087 present
+
+ifdef __DOS__
+public  __old_8087_emu
+__old_8087_emu dw 0
+endif
+
 _DATA   ends
 
 

@@ -33,17 +33,9 @@
 include mdef.inc
 
         xref    __8087
-
 ifdef __DOS__
 ifndef __386__
-
-        xdefp   __old_8087_emu
-
-DGROUP  GROUP _DATA
-_DATA segment word 'DATA'
-        __old_8087_emu dw 0
-_DATA ends
-
+        xred    __old_8087_emu, word
 endif
 endif
 
