@@ -537,7 +537,7 @@ static SCOPE checkColonColon( SCOPE scope, PTREE id, SCOPE not_nested )
             if( ScopeId( not_nested ) == SCOPE_TEMPLATE_DECL ) {
                 scope_type = findGenericType( not_nested, name );
             } else {
-                CErr2p( ERR_UNDECLARED_CLASS_SYM, name );
+                CErr2p( ERR_UNDECLARED_CLASSNAMESPACE_SYM, name );
             }
         } else {
             CErr2p( ERR_UNDECLARED_NESTED_CLASS_SYM, name );
