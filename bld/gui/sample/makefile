@@ -146,7 +146,7 @@ sample.$(ext) : $(objs) $(guilib) $(uilib) $(sysdep) $(LNK)
         $(rc) -k $(rcopt) $(sysdep)
 !endif
 !ifneq os w386
-        copy/b $(name).exe+$(name).sym
+        copy /b $(name).exe+$(name).sym
 !endif
 !else
 !ifeq sys pharlap

@@ -15,7 +15,7 @@ $(libname).lib : $(dllname).imp $(static_objs)
     $(librarian) $(lib_flags) $(lib_flags_new) -irn $^@ @$(dllname).imp $(static_objs)
 
 $(dllname).imp : $(dllname).lbc $(rtdll_dir)\trimlbc.vi $(rtdll_dir)\add_br.vi
-    copy $(dllname).lbc $(dllname).imp
+    cp $(dllname).lbc $(dllname).imp
 !ifeq system os2
     vi -q -s $(rtdll_dir)\trimlbc.vi $(dllname).imp
 !endif

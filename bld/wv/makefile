@@ -430,7 +430,7 @@ post_process :.PROCEDURE
 !ifeq host_OS dos
 !ifeq host_CPU 386
 !ifdef really_ovl_dos
-        copy dv.map $(lnk2)
+        cp dv.map $(lnk2)
         vi -d -q -s ..\mapfix.vi $(lnk2)
         $(linker) $(symfile) $(%DEBUG) name $(bdir)\$(%NAME).$(EXE) @$(lnk) @$(lnk2) $(endsect)
         @%null
@@ -639,10 +639,10 @@ wvpm.res wvpmj.res : $(hdir)\wvpm.rc $(bitmaps) $(rcfiles) .autodepend
 
         $(rc_os2) -i $(inc_dirs_sys_os2_386) -r $(hdir)\foros2pm.rc .\foros2pm.res
         del wvpm.i
-        copy foros2pm.res wvpm.res
-        copy wvpmj.i wvpm.i
+        cp foros2pm.res wvpm.res
+        cp wvpmj.i wvpm.i
         $(rc_os2) -i $(inc_dirs_sys_os2_386) -r $(hdir)\foros2pm.rc .\foros2pm.res
-        copy foros2pm.res wvpmj.res
+        cp foros2pm.res wvpmj.res
 
 !ifndef %use_os2tk_stuff
 

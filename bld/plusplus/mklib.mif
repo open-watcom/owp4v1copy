@@ -216,7 +216,7 @@ asm_flags += -bt=qnx
 !endif
 
 reference : .symbolic $(target_lib)
-    copy $(target_lib) $(plusplus_dir)\bin
+    cp $(target_lib) $(plusplus_dir)\bin
 
 update : .symbolic $(target_lib)
     $(librarian) -b -c -n -q -s -t $(lang_root)\$(production_lib)\$(target_lib) +$(target_lib)

@@ -71,11 +71,11 @@ clean : .SYMBOLIC
         -rm -f $(LIB_DIR)\*.lib
 
 update : .SYMBOLIC
-    #@copy $(MAIN_DIR)\read.me $(UPD_DIR)
-    @copy $(MAIN_DIR)\h\wpi.h $(UPD_DIR)\h
-    @copy $(MAIN_DIR)\h\wpi_win.h $(UPD_DIR)\h
-    @copy $(MAIN_DIR)\h\wpi_os2.h $(UPD_DIR)\h
-    @copy $(LIB_DIR)\$(libname).lib $(UPD_DIR)\lib
+    #@cp $(MAIN_DIR)\read.me $(UPD_DIR)
+    @cp $(MAIN_DIR)\h\wpi.h $(UPD_DIR)\h
+    @cp $(MAIN_DIR)\h\wpi_win.h $(UPD_DIR)\h
+    @cp $(MAIN_DIR)\h\wpi_os2.h $(UPD_DIR)\h
+    @cp $(LIB_DIR)\$(libname).lib $(UPD_DIR)\lib
 
 wpi_win.obj : wpi_win.c wpi_win.h wpitypes.h wpi.h
 wpi_os2.obj : wpi_os2.c wpi_os2.h wpitypes.h wpi.h

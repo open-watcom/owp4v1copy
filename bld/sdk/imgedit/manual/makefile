@@ -31,12 +31,12 @@ vihelp.src: imged.gml .SYMBOLIC
    -wgmlp 'imged' ( line verbose stat pass 2 cpi 10 &
         out vihelp.src proc vihelp file help
     vi -q -sremtoc.vi vihelp.src
-    @copy toc.src vitoc.src
+    @cp toc.src vitoc.src
 
 vihelp2: .SYMBOLIC
-    copy vihelp2.src vihelp.src
+    cp vihelp2.src vihelp.src
     vi -q -sremtoc.vi vihelp.src
-    @copy toc.src vitoc.src
+    @cp toc.src vitoc.src
 
 toc: .SYMBOLIC
     egrep '^  ..[^ ]' vitoc.src >t1

@@ -101,4 +101,4 @@ all : ../lib/$(name).lib .SYMBOLIC
         @rm -f $(lbcfile)
 
 clean : .SYMBOLIC .EXPLICIT
-    -@rm -f *.obj $(wres_dir)/lib/$(name).lib
+    -@rm -f *.?bj *.err *.trk $(wres_dir)/lib/$(name).lib

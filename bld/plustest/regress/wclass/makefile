@@ -59,7 +59,7 @@ wmsgdlg.obj &
 wwinmain.obj
 
 test : .symbolic test.exe
-    copy test.exe test.ice
+    cp test.exe test.ice
     %make global
     %append $(log_file) PASS $(%__CWD__)
     ren test.ice test.exe

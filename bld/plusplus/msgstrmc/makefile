@@ -33,7 +33,7 @@ msgstrmc.exe : $(OBJS) makefile msgstrmc.lnk
     $(comp286plus) $[* $(compiler)
 
 reference : .symbolic
-    copy msgstrmc.exe $(plusplus_dir)\bin
+    cp msgstrmc.exe $(plusplus_dir)/bin
 
 global : .symbolic
     del *.obj >nul

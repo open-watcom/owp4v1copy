@@ -243,7 +243,7 @@ cont.lnk : $(__MAKEFILES__)
     @%append $^@ FILE memchk
     
 save : .symbolic
-    if exist exec.out copy exec.out $(save_out).sav
+    if exist exec.out cp exec.out $(save_out).sav
     
 global : .symbolic
     @%make common_clean

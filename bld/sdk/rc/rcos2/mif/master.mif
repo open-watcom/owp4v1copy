@@ -110,8 +110,8 @@ ytab.obj : ytab.c param.h ytab.gh
 
 ytab.c ytab.gh : rc.y $(wrc2_dir)\y\yydriver.c rcmem.h
         $(yacc) -d -b $[@ $[:yydriver.c  >nul
-        @copy ytab.c $(wrc2_dir)\c
-        @copy ytab.h $(wrc2_dir)\h\ytab.gh
+        @cp ytab.c $(wrc2_dir)/c
+        @cp ytab.h $(wrc2_dir)/h/ytab.gh
         @del ytab.h
         @del ytab.c
 
@@ -119,8 +119,8 @@ weights1.gh keyword1.gh : rc1.key
         $(bld_cl) $(fe_misc_dir)\c\findhash.c $(wcl_util_opts)
         findhash $[@ >nul
         del findhash.*
-        copy keywords.gh $(wrc2_dir)\h\keyword1.gh
-        copy weights.gh $(wrc2_dir)\h\weights1.gh
+        cp keywords.gh $(wrc2_dir)/h/keyword1.gh
+        cp weights.gh $(wrc2_dir)/h/weights1.gh
         @del keywords.gh
         @del weights.gh
 
@@ -128,20 +128,20 @@ weights2.gh keyword2.gh : rc2.key
         $(bld_cl) $(fe_misc_dir)\c\findhash.c $(wcl_util_opts)
         findhash $[@ >nul
         del findhash.*
-        copy keywords.gh $(wrc2_dir)\h\keyword2.gh
-        copy weights.gh $(wrc2_dir)\h\weights2.gh
+        cp keywords.gh $(wrc2_dir)/h/keyword2.gh
+        cp weights.gh $(wrc2_dir)/h/weights2.gh
         @del keywords.gh
         @del weights.gh
 
-$(NAME).res : rcmsg.h usage.rc usagej.rc $(wrc2_dir)\rc.rc
+$(NAME).res : $(wrc2_dir)\h\rcmsg.h usage.rc usagej.rc $(wrc2_dir)\rc.rc
         $(rc) -bt=windows -r $(wrc2_dir)\rc.rc -fo=$(NAME).res
 
-rcmsg.h : $(wrc2_dir)\h\rc.msg
-        copy $(wrc2_dir)\h\rc.msg rc.msg
-        vi -q -i -s $(sdk_dir)\misc\msgtoh.vi -p"tmp.h" rc.msg
-        del rc.msg
-        copy tmp.h $(wrc2_dir)\h\rcmsg.h
-        del tmp.h
+$(wrc2_dir)\h\rcmsg.h : $(wrc2_dir)\h\rc.msg
+#        cp $[@ rc.msg
+        vi -q -i -s $(sdk_dir)\misc\msgtoh.vi -p"$^@" $[@
+#        del rc.msg
+#        copy tmp.h $(wrc2_dir)\h\rcmsg.h
+#        del tmp.h
 
 usage.rc : $(wrc2_dir)/usage.sp
         $(bld_bin)\wsplice -kENGLISH -kIS_RC -k$(host_OS) $(splice_opts) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" ../usage.sp usage.rc

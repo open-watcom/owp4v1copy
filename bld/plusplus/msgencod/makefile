@@ -41,4 +41,4 @@ global : .symbolic
     rm -f *.obj *.exe *.gh *.lnk
 
 reference : .symbolic msgencod.exe
-    copy msgencod.exe ..\bin
+    cp msgencod.exe ../bin

@@ -4,7 +4,10 @@
 # orl, plusplus, dwarf, watcom, trmem and stkdepth
 
 proj_name = wlink
+
 !include cproj.mif
+!include defrule.mif
+
 !include wres.mif
 
 !ifndef patch_level
@@ -149,13 +152,13 @@ cflags_all += -fo=$@
 !endif
 wcl_util_opts = -ox -zq
 
-extra_c_flags_ntio = -I"$(wres_dir)/h"
-extra_c_flags_posixio = -I"$(wres_dir)/h"
+extra_c_flags_ntio = -i"$(wres_dir)/h"
+extra_c_flags_posixio = -i"$(wres_dir)/h"
 extra_c_flags_linkio = -i"$(wres_dir)/h"
-extra_c_flags_objorl = -I"$(orl_dir)/h"
-extra_c_flags_dbgdwarf = -I"$(dwarf_dir)/dw/h"
-extra_c_flags_loadpe = -I. -I"../h" -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -DINSIDE_WLINK
-extra_c_flags_loados2 = -I"$(wres_dir)/h"
+extra_c_flags_objorl = -i"$(orl_dir)/h"
+extra_c_flags_dbgdwarf = -i"$(dwarf_dir)/dw/h"
+extra_c_flags_loadpe = -i. -i"../h" -I"$(wrc_dir)/h" -i"$(wres_dir)/h" -DINSIDE_WLINK
+extra_c_flags_loados2 = -i"$(wres_dir)/h"
 
 exe_cflags = $+$(cflags)$-
 
@@ -208,24 +211,20 @@ inc_dirs = .;../h
 execomp = $(cc)
 !endif
 
-compile = $(cc) $(cflags) $[@
+compile = $(cc) $[@ $(cflags)
 
 extra_rc_flags_qnx = -D_UNIX
 extra_rc_flags_linux = -D_UNIX
 extra_rc_flags = $(extra_rc_flags_$(host_OS))
 
-.mif : $(mif_path)
-
 .c: ../c
-
-!include defrule.mif
 
 lnk = tmp.lnk
 
 exe = $(bin_prefix)wl.$(extend)
 stubexe = $(bin_prefix)wlstub.exe
 
-$(exe) : global.chk $(c_objs) $(extra_objs) $(libs) wlink.res
+$(exe) : global.chk ../h/rc.msg $(c_objs) $(extra_objs) $(libs) wlink.res
     @%make wlink.res
     @%create $(lnk)
     @%append $(lnk) $(lflags)
@@ -264,7 +263,7 @@ $(stubexe) : $(stub_objs)
     $(linker) @$(slnk)
 
 version.rc : ../h/wlver.rc
-    $(bld_cl) $(fe_misc_dir)/c/genverrc.c $(wcl_util_opts) -d_VERSION=$(bld_ver)
+    $(bld_cl) $(fe_misc_dir)\c\genverrc.c $(wcl_util_opts) -d_VERSION=$(bld_ver)
     genverrc ../h/wlver.rc version.rc $$ wlink.dll $(patch_level)
     rm -f genverrc.*
 
@@ -333,24 +332,18 @@ rcstr.obj : $(wrc_dir)/c/rcstr.c
 wlink.res : ../h/wlink.rc ../h/lnkerror.rc ../h/wlnkmsg.h ../h/lnkerror.msg ../h/wlink.msg ../h/rcmsg.h
         $(rc) -zk -r -bt=windows $(extra_rc_flags) -fo=$^@ $[@ -I"$(watcom_dir)/h"
 
-../h/rcmsg.h : $(wrc_dir)/h/rc.msg
-        cp $(wrc_dir)/h/rc.msg ../h/rc.msg
+../h/rc.msg : $(wrc_dir)/h/rc.msg
+        cp $[@ $^@
+
+../h/rcmsg.h : ../h/rc.msg
 !ifdef __LINUX__
-        perl $(sdk_dir)/misc/msgtoh.pl < ../h/rc.msg | sed 's/0$$/800/' > tmp.h
+        perl $(sdk_dir)/misc/msgtoh.pl < $[@ | sed 's/0$$/800/' > tmp.h
 !else
-        vi -q -i -s $(sdk_dir)/misc/msgtoh.vi -p"tmp.h" ../h/rc.msg
-        vi -q -i -s ../h/rcrebase.vi tmp.h
+        vi -d -q -i -s $(sdk_dir)/misc/msgtoh.vi -p"tmp.h" $[@
+        vi -d -q -i -s ../h/rcrebase.vi tmp.h
 !endif
         cp tmp.h ../h/rcmsg.h
         rm -f tmp.h
-
-clean: .SYMBOLIC .EXPLICIT
-        @rm -f *.?bj
-        @%make killnonobj
-
-killnonobj: .SYMBOLIC .EXPLICIT
-        @rm -f *.lnk *.exe *.dll *.lib *.res *.err *.map *.lst
-        @rm -f *.tmp *.ilk *.sym grok*.* ../h/rcmsg.h
 
 global.chk : ../compile.gbl
     @%make clean
@@ -362,3 +355,8 @@ global.chk : ../compile.gbl
 
 .BEFORE:
      @set INCLUDE=$(inc_path)
+
+clean: .SYMBOLIC .EXPLICIT
+        rm -f *.?bj *.lnk *.exe *.dll *.lib *.res
+        rm -f *.err *.map *.lst *.tmp *.ilk *.sym
+        rm -f ../h/rc.msg ../h/rcmsg.h version.rc

@@ -68,154 +68,154 @@ __err : errsrc.exe .symbolic
         $(%check_out) $(f77_dir)\lg86\nec\errmsgw.rc
 !ifndef checkin
         errsrc eo r
-        copy errcod.h $(f77_dir)\cg86\rt\h\errcod.h
+        cp errcod.h $(f77_dir)\cg86\rt\h\errcod.h
         del errcod.h
-        copy errmsg.c $(f77_dir)\cg86\rt\c\errmsg.c
+        cp errmsg.c $(f77_dir)\cg86\rt\c\errmsg.c
         del errmsg.c
-        copy errmsg.rc $(f77_dir)\cg86\rt\c\errmsg.rc
+        cp errmsg.rc $(f77_dir)\cg86\rt\c\errmsg.rc
         del errmsg.rc
-        copy errgrp.c $(f77_dir)\cg86\rt\c\errgrp.c
+        cp errgrp.c $(f77_dir)\cg86\rt\c\errgrp.c
         del errgrp.c
         del errmsg.msg
         errsrc eoic
-        copy errcod.h $(f77_dir)\cg86\cp\h\errcodi.h
+        cp errcod.h $(f77_dir)\cg86\cp\h\errcodi.h
         del errcod.h
-        copy errmsg.c $(f77_dir)\cg86\cp\h\errmsgi.c
+        cp errmsg.c $(f77_dir)\cg86\cp\h\errmsgi.c
         del errmsg.c
-        copy errmsg.rc $(f77_dir)\cg86\cp\h\errmsgi.rc
+        cp errmsg.rc $(f77_dir)\cg86\cp\h\errmsgi.rc
         del errmsg.rc
-        copy errgrp.c $(f77_dir)\cg86\cp\h\errgrpi.c
+        cp errgrp.c $(f77_dir)\cg86\cp\h\errgrpi.c
         del errgrp.c
         del errmsg.msg
         errsrc eo3c
-        copy errcod.h $(f77_dir)\cg86\cp\h\errcod3.h
+        cp errcod.h $(f77_dir)\cg86\cp\h\errcod3.h
         del errcod.h
-        copy errmsg.c $(f77_dir)\cg86\cp\h\errmsg3.c
+        cp errmsg.c $(f77_dir)\cg86\cp\h\errmsg3.c
         del errmsg.c
-        copy errmsg.rc $(f77_dir)\cg86\cp\h\errmsg3.rc
+        cp errmsg.rc $(f77_dir)\cg86\cp\h\errmsg3.rc
         del errmsg.rc
-        copy errgrp.c $(f77_dir)\cg86\cp\h\errgrp3.c
+        cp errgrp.c $(f77_dir)\cg86\cp\h\errgrp3.c
         del errgrp.c
         del errmsg.msg
         errsrc eorc
-        copy errcod.h $(f77_dir)\cg86\cp\h\errcodr.h
+        cp errcod.h $(f77_dir)\cg86\cp\h\errcodr.h
         del errcod.h
-        copy errmsg.c $(f77_dir)\cg86\cp\h\errmsgr.c
+        cp errmsg.c $(f77_dir)\cg86\cp\h\errmsgr.c
         del errmsg.c
-        copy errmsg.rc $(f77_dir)\cg86\cp\h\errmsgr.rc
+        cp errmsg.rc $(f77_dir)\cg86\cp\h\errmsgr.rc
         del errmsg.rc
-        copy errgrp.c $(f77_dir)\cg86\cp\h\errgrpr.c
+        cp errgrp.c $(f77_dir)\cg86\cp\h\errgrpr.c
         del errgrp.c
         del errmsg.msg
         errsrc ew
-        copy errcod.h $(f77_dir)\lg86\h\errcod.h
+        cp errcod.h $(f77_dir)\lg86\h\errcod.h
         del errcod.h
-        copy errmsg.c $(f77_dir)\lg86\c\errmsg.c
+        cp errmsg.c $(f77_dir)\lg86\c\errmsg.c
         del errmsg.c
-        copy errmsg.rc $(f77_dir)\lg86\h\errmsgw.rc
+        cp errmsg.rc $(f77_dir)\lg86\h\errmsgw.rc
         del errmsg.rc
-        copy errgrp.c $(f77_dir)\lg86\c\errgrp.c
+        cp errgrp.c $(f77_dir)\lg86\c\errgrp.c
         del errgrp.c
         sed -e 's/^$#define    //' -e 's/ / EQU /' $(f77_dir)\lg86\h\errcod.h >$(f77_dir)\lg86\rt\asm\errcod.inc
         del errmsg.msg
         errsrc ew r
-        copy errcod.h $(f77_dir)\lg86\rt\h\errcod.h
+        cp errcod.h $(f77_dir)\lg86\rt\h\errcod.h
         del errcod.h
-        copy errmsg.c $(f77_dir)\lg86\rt\c\errmsg.c
+        cp errmsg.c $(f77_dir)\lg86\rt\c\errmsg.c
         del errmsg.c
-        copy errmsg.rc $(f77_dir)\lg86\rt\c\errmsg.rc
+        cp errmsg.rc $(f77_dir)\lg86\rt\c\errmsg.rc
         del errmsg.rc
-        copy errgrp.c $(f77_dir)\lg86\rt\c\errgrp.c
+        cp errgrp.c $(f77_dir)\lg86\rt\c\errgrp.c
         del errgrp.c
         del errmsg.msg
         errsrc elic
-        copy errcod.h $(f77_dir)\wfl\h\errcodi.h
+        cp errcod.h $(f77_dir)\wfl\h\errcodi.h
         del errcod.h
-        copy errmsg.c $(f77_dir)\wfl\h\errmsgi.c
+        cp errmsg.c $(f77_dir)\wfl\h\errmsgi.c
         del errmsg.c
-        copy errmsg.rc $(f77_dir)\wfl\h\errmsgi.rc
+        cp errmsg.rc $(f77_dir)\wfl\h\errmsgi.rc
         del errmsg.rc
-        copy errgrp.c $(f77_dir)\wfl\h\errgrpi.c
+        cp errgrp.c $(f77_dir)\wfl\h\errgrpi.c
         del errgrp.c
         del errmsg.msg
         errsrc el3c
-        copy errcod.h $(f77_dir)\wfl\h\errcod3.h
+        cp errcod.h $(f77_dir)\wfl\h\errcod3.h
         del errcod.h
-        copy errmsg.c $(f77_dir)\wfl\h\errmsg3.c
+        cp errmsg.c $(f77_dir)\wfl\h\errmsg3.c
         del errmsg.c
-        copy errmsg.rc $(f77_dir)\wfl\h\errmsg3.rc
+        cp errmsg.rc $(f77_dir)\wfl\h\errmsg3.rc
         del errmsg.rc
-        copy errgrp.c $(f77_dir)\wfl\h\errgrp3.c
+        cp errgrp.c $(f77_dir)\wfl\h\errgrp3.c
         del errgrp.c
         del errmsg.msg
         errsrc elrc
-        copy errcod.h $(f77_dir)\wfl\h\errcodr.h
+        cp errcod.h $(f77_dir)\wfl\h\errcodr.h
         del errcod.h
-        copy errmsg.c $(f77_dir)\wfl\h\errmsgr.c
+        cp errmsg.c $(f77_dir)\wfl\h\errmsgr.c
         del errmsg.c
-        copy errmsg.rc $(f77_dir)\wfl\h\errmsgr.rc
+        cp errmsg.rc $(f77_dir)\wfl\h\errmsgr.rc
         del errmsg.rc
-        copy errgrp.c $(f77_dir)\wfl\h\errgrpr.c
+        cp errgrp.c $(f77_dir)\wfl\h\errgrpr.c
         del errgrp.c
         del errmsg.msg
 #       errsrc jo r
-#       copy errmsg.rc $(f77_dir)\cg86\rt\c\jerrmsg.rc
+#       cp errmsg.rc $(f77_dir)\cg86\rt\c\jerrmsg.rc
 #       del errmsg.rc
 #       del errcod.h
 #       del errmsg.c
 #       del errgrp.c
 #       del errmsg.msg
         errsrc joic
-        copy errmsg.rc $(f77_dir)\cg86\cp\h\jerrmsgi.rc
+        cp errmsg.rc $(f77_dir)\cg86\cp\h\jerrmsgi.rc
         del errmsg.rc
         del errcod.h
         del errmsg.c
         del errgrp.c
         del errmsg.msg
         errsrc jo3c
-        copy errmsg.rc $(f77_dir)\cg86\cp\h\jerrmsg3.rc
+        cp errmsg.rc $(f77_dir)\cg86\cp\h\jerrmsg3.rc
         del errmsg.rc
         del errcod.h
         del errmsg.c
         del errgrp.c
         del errmsg.msg
         errsrc jorc
-        copy errmsg.rc $(f77_dir)\cg86\cp\h\jerrmsgr.rc
+        cp errmsg.rc $(f77_dir)\cg86\cp\h\jerrmsgr.rc
         del errmsg.rc
         del errcod.h
         del errmsg.c
         del errgrp.c
         del errmsg.msg
         errsrc jw
-        copy errmsg.rc $(f77_dir)\lg86\nec\errmsgw.rc
+        cp errmsg.rc $(f77_dir)\lg86\nec\errmsgw.rc
         del errmsg.rc
         del errcod.h
         del errmsg.c
         del errgrp.c
         del errmsg.msg
 #       errsrc jw r
-#       copy errmsg.rc $(f77_dir)\lg86\rt\c\jerrmsg.rc
+#       cp errmsg.rc $(f77_dir)\lg86\rt\c\jerrmsg.rc
 #       del errmsg.rc
 #       del errcod.h
 #       del errmsg.c
 #       del errgrp.c
 #       del errmsg.msg
         errsrc jlic
-        copy errmsg.rc $(f77_dir)\wfl\h\jerrmsgi.rc
+        cp errmsg.rc $(f77_dir)\wfl\h\jerrmsgi.rc
         del errmsg.rc
         del errcod.h
         del errmsg.c
         del errgrp.c
         del errmsg.msg
         errsrc jl3c
-        copy errmsg.rc $(f77_dir)\wfl\h\jerrmsg3.rc
+        cp errmsg.rc $(f77_dir)\wfl\h\jerrmsg3.rc
         del errmsg.rc
         del errcod.h
         del errmsg.c
         del errgrp.c
         del errmsg.msg
         errsrc jlrc
-        copy errmsg.rc $(f77_dir)\wfl\h\jerrmsgr.rc
+        cp errmsg.rc $(f77_dir)\wfl\h\jerrmsgr.rc
         del errmsg.rc
         del errcod.h
         del errmsg.c

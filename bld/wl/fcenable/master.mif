@@ -21,10 +21,6 @@ prj = fcenable.exe
 
 .c: ..\c;$(lang_root)\src\startup
 
-lflags_dos = system dos
-lflags_nt  = system nt
-lflags_os2 = system os2 pmcompat
-
 $(prj) : $(objs)
-        $(linker) $(lflags_$(host_OS)) n $(prj) op map f {$(objs)}
+        $(linker) $(lflags) name $(prj) op map f {$(objs)}
 

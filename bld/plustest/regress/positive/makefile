@@ -215,7 +215,7 @@ test.lnk : makefile
     @%append $^@ OPTION quiet, noredef
 
 save : .symbolic
-    if exist exec.out copy exec.out s$(arch)_$(alt_error).sav
+    if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
 
 global : .symbolic
     @if exist failure del failure

@@ -38,10 +38,10 @@ all: graph386.lib graph983.lib
 
 graph386.lib : ..\..\o.3s\graph3s.lib ..\..\o.3r\graph3r.lib &
                $(build_root)\pgchart\o.3r\chart3r.lib $(build_root)\pgchart\o.3s\chart3s.lib
-    copy ..\..\o.3s\graph3s.lib ..\..\o.3r\tmp.lib
+    cp ..\..\o.3s\graph3s.lib ..\..\o.3r\tmp.lib
     $(lib) /b /q ..\..\o.3r\tmp -globals -bit -sqrtf -std -hercfont -cgautils -egautils -vgautils -hgcutils -svgautil -font8x8
     $(lib) /b /q ..\..\o.3r\tmp +..\..\o.3r\graph3r.lib
-    copy $(build_root)\pgchart\o.3r\chart3r.lib chart.lib
+    cp $(build_root)\pgchart\o.3r\chart3r.lib chart.lib
     $(lib) /b /q chart.lib + $(build_root)\pgchart\o.3s\chart3s.lib
     set srclib=tmp
     set targlib=graph386
@@ -55,10 +55,10 @@ graph386.lib : ..\..\o.3s\graph3s.lib ..\..\o.3r\graph3r.lib &
 
 graph983.lib : ..\..\o.n3s\graph3s.lib ..\..\o.n3r\graph3r.lib &
                $(build_root)\pgchart\o.3r\chart3r.lib $(build_root)\pgchart\o.3s\chart3s.lib
-    copy ..\..\o.n3s\graph3s.lib ..\..\o.n3r\tmp.lib
+    cp ..\..\o.n3s\graph3s.lib ..\..\o.n3r\tmp.lib
     $(lib) /b /q ..\..\o.n3r\tmp -globals -bit -sqrtf -std -necutils -font8x8
     $(lib) /b /q ..\..\o.n3r\tmp +..\..\o.n3r\graph3r.lib
-    copy $(build_root)\pgchart\o.3r\chart3r.lib chart.lib
+    cp $(build_root)\pgchart\o.3r\chart3r.lib chart.lib
     $(lib) /b /q chart.lib + $(build_root)\pgchart\o.3s\chart3s.lib
     set srclib=tmp
     set targlib=graph983
@@ -90,12 +90,12 @@ graphq.lib : ..\..\o.qs\graphs.lib $(build_root)\pgchart\o.s\charts.lib
 all: graphq3r.lib graphq3s.lib
 
 graphq3r.lib : ..\..\o.q3r\graph3r.lib $(build_root)\pgchart\o.3r\chart3r.lib
-    copy ..\..\o.q3r\graph3r.lib graphq3r.lib
+    cp ..\..\o.q3r\graph3r.lib graphq3r.lib
     $(lib) /b /q graphq3r.lib + $(build_root)\pgchart\o.3r\chart3r.lib
 #    objstrip /n graphq3r.lib
 
 graphq3s.lib : ..\..\o.q3r\graph3r.lib $(build_root)\pgchart\o.3s\chart3s.lib
-    copy ..\..\o.q3s\graph3s.lib graphq3s.lib
+    cp ..\..\o.q3s\graph3s.lib graphq3s.lib
     $(lib) /b /q graphq3s.lib + $(build_root)\pgchart\o.3s\chart3s.lib
 #    objstrip /n graphq3s.lib
 
@@ -106,7 +106,7 @@ graphq3s.lib : ..\..\o.q3r\graph3r.lib $(build_root)\pgchart\o.3s\chart3s.lib
 
 fixlib : .procedure
 # get library - add fsmath, dummy, chart library
-    copy $(%objdir)$(%srclib).lib $(%targlib).lib
+    cp $(%objdir)$(%srclib).lib $(%targlib).lib
     $(lib) /b /q $(%targlib).lib +$(%objdir)dummy +$(%objdir)fsmath +$(%chartlib)
 
 !endif

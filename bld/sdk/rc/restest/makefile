@@ -30,7 +30,7 @@ resources =  verinfo.dlg test.rc resname.dlg
 
 $(name).exe : $(objs) $(lnk) $(name).res
         wlink @$(lnk)
-        copy $(name).exe $(name)u.exe
+        cp $(name).exe $(name)u.exe
         $(RC) -k $(name).res
 
 $(name).res : $(name).rc $(resources)
@@ -51,7 +51,7 @@ $(lnk) : makefile
 
 $(nament).exe : $(msgh) $(ntobjs) $(lnknt) $(nament).res
         wlink @$(lnknt)
-        copy $(nament).exe $(nament)u.exe
+        cp $(nament).exe $(nament)u.exe
         $(RC) -k $(nament).res
 
 $(nament).res : $(name).rc $(resources)

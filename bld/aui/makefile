@@ -126,7 +126,7 @@ aui.lib : eraseall.obj $(objs) $(__makefiles__) $(auirc)
 .rc: ..\h
 !ifdef pm
 $(auirc) : $(auidir)\h\aui.rc
-    copy $(auidir)\h\aui.rc
+    cp $[@ $^@
 
 dlgrx.dlg : ..\h\dlgrx.dlg
     parsedlg -font ..\h\dlgrx.dlg dlgrx.dlg

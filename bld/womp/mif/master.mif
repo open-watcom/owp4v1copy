@@ -53,7 +53,7 @@ womp.$(exe) wompj.$(exe) : womp.res wompj.res womp.lnk $(objs)
 !ifeq form_exe os2
     $(binder)\bind.exe womp.exe $(doscalls) $(apilib)
 !endif
-    copy womp.$(exe) wompj.$(exe)
+    cp womp.$(exe) wompj.$(exe)
     wstrip /a /r /q womp.$(exe) . womp.res
     wstrip /a /r /q wompj.$(exe) . wompj.res
 #
@@ -105,7 +105,7 @@ usagej.rc : ../usage.sp
 !ifdef __LINUX__
     perl $(sdk_dir)/misc/msgtoh.pl < $< | sed '/0$$/d' > $^@
 !else
-    vi -q -d -i -s ..\h\makemsg.vi -p "$^@" $[@
+    vi -q -d -i -s ..\h\makemsg.vi -p"$^@" $[@
 !endif
 
 !include $(womp_dir)/mif/depends.mif

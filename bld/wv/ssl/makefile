@@ -27,7 +27,7 @@ java.prs : java.ssl pp_c.ssl $(common)
 .ssl.prs
         ssl $(verbose) $[@ $^@
 !ifndef on_build_machine
-        @copy $^@ $(bdir) >nul
+    @cp $^@ $(bdir) >nul
 !endif
 
 clean: .SYMBOLIC

@@ -42,7 +42,7 @@ msgstrm.dos : makefile $(objs)
     $(comp286plus) $[* $(compiler)
 
 reference : .symbolic
-    copy msgstrm.exe $(plusplus_dir)\bin
+    cp msgstrm.exe $(plusplus_dir)/bin
 
 global : .symbolic
     if exist *.obj @del *.obj >nul

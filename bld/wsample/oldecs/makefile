@@ -20,7 +20,7 @@ jname=wsmpecsj
     @for %i in ($(objects)) do @%append tmp.lnk file %i
 !include ..\setsize.mif
     wlink @tmp.lnk
-    copy ..\bin\$(xname).exe ..\bin\$(jname).exe
+    cp ..\bin\$(xname).exe ..\bin\$(jname).exe
     wstrip /q /a /r ..\bin\$(xname).exe . $(xname).res
     wstrip /q /a /r ..\bin\$(jname).exe . $(jname).res
 

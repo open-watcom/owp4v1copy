@@ -112,11 +112,11 @@ clean: .SYMBOLIC .EXPLICIT
         @if exist $(wpi_dir)\lib\$(libname).lib del $(wpi_dir)\lib\$(libname).lib
 
 update : .SYMBOLIC
-    #@copy $(wpi_dir)\read.me $(UPD_DIR)
-    @copy $(wpi_dir)\h\wpi.h $(UPD_DIR)\h
-    @copy $(wpi_dir)\h\wpi_win.h $(UPD_DIR)\h
-    @copy $(wpi_dir)\h\wpi_os2.h $(UPD_DIR)\h
-    @copy $(wpi_dir)\lib\$(libname).lib $(UPD_DIR)\lib
+    #@cp $(wpi_dir)/read.me $(UPD_DIR)
+    @cp $(wpi_dir)/h/wpi.h $(UPD_DIR)/h
+    @cp $(wpi_dir)/h/wpi_win.h $(UPD_DIR)/h
+    @cp $(wpi_dir)/h/wpi_os2.h $(UPD_DIR)/h
+    @cp $(wpi_dir)/lib/$(libname).lib $(UPD_DIR)/lib
 
 wpi_win.obj : wpi_win.c wpi_win.h wpitypes.h wpi.h
 wpi_os2.obj : wpi_os2.c wpi_os2.h wpitypes.h wpi.h

@@ -98,6 +98,6 @@ libpath_linux_386       =lib386/linux
 updlibpath =$(libpath_$(system)_$(processor))
 
 update : .symbolic $(libname).lib
-    if exist $(%watcom)/$(updlibpath)/$(updlibname) copy $(libname).lib $(%watcom)/$(updlibpath)/$(updlibname)
+    if exist $(%watcom)/$(updlibpath)/$(updlibname) cp $(libname).lib $(%watcom)/$(updlibpath)/$(updlibname)
 
 !endif

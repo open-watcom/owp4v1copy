@@ -145,7 +145,7 @@ $(name).exe : $(msgh) $(objs) $(name).res
 !endif
 
 $(msgh) : $(mastermsg)
-        vi -i -q "-k :source ..\\\\..\\\\misc\\\\msgtoh.vi $(msgh)\n" $(mastermsg)
+        vi -d -q -i -s ../../misc/msgtoh.vi -p"$(msgh)" $(mastermsg)
 
 $(mastermsg) : $(msgfiles)
         $(cc) -zk0 -p -i=$(sdk_dir)\misc $(wimgedit_dir)\h\wimgedit.msg -fo=$(mastermsg)

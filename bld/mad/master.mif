@@ -2,10 +2,10 @@
 # Master makefile for creating MAD's
 #
 
-.CONTINUE
-.ERASE
-.EXTENSIONS
-.EXTENSIONS : .exe .lan .obj .i .h .c .asm .mif
+#.CONTINUE
+#.ERASE
+#.EXTENSIONS
+#.EXTENSIONS : .exe .lan .obj .i .h .c .asm .mif
 
 !ifndef bin_root
 !ifdef bin_root_wv
@@ -15,7 +15,7 @@ bin_root = $(bin_root_wv)
 
 host_OS = $(os)
 
-.mif: $(mif_path)
+#.mif: $(mif_path)
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif

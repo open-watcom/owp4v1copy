@@ -59,7 +59,7 @@ $(name).exe : $(msgh) $(objs) $(name).res
         $(RC) $(rc_flags) $(rcopts2) $(name).res
 
 $(msgh) : $(mastermsg)
-        vi -i -q "-k :source ..\\\\..\\\\misc\\\\msgtoh.vi $(msgh)\n" $(mastermsg)
+        vi -d -q -i -s ../../misc/msgtoh.vi -p"$(msgh)" $(mastermsg)
 
 $(mastermsg) : $(msgfiles)
         $(cc) -zk0 -p -i=$(sdk_dir)\misc $(wddespy_dir)\ddespy.msg -fo=$(mastermsg)

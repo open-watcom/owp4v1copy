@@ -74,7 +74,7 @@ $(lnk) : makefile
         @for %i in ($(disasm)) do @%append $(lnk) file %i
 
 $(msgh) : $(mastermsg)
-       vi -i -q "-k :source ..\\\\..\\\\misc\\\\msgtoh.vi $(msgh)\n" $(mastermsg)
+       vi -d -q -i -s ../../misc/msgtoh.vi -p"$(msgh)" $(mastermsg)
         -del *.obj
 
 $(mastermsg) : $(msgfiles)

@@ -150,7 +150,7 @@ $(asi_lib) : $(asi_objs)
         $(librarian) -b -q $^. @$^&.clb
 
 $(asi_lib_j) : $(asi_lib) asmsgj$(obj)
-        copy $(asi_lib) $(asi_lib_j)
+        cp $[@ $^@
         $(librarian) -b -q $(asi_lib_j) -asmsg.obj
         $(librarian) -b -q $(asi_lib_j) +asmsgj.obj
 

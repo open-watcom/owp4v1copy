@@ -38,11 +38,11 @@ $(name).exe : $(msgh) $(objs) $(name).res
         $(RC) $(rc_flags) $(rcopts2) $(name).res
 
 $(name)j.exe : $(name).exe $(name)j.res
-        copy $(name).exe $(name)j.exe
+        cp $(name).exe $(name)j.exe
         $(RC) $(rc_flags) $(rcopts2) $(name)j.res
 
 $(msgh) : $(mastermsg)
-        vi -i -q "-k :source ..\\\\..\\\\misc\\\\msgtoh.vi $(msgh)\n" $(mastermsg)
+        vi -d -q -i -s ../../misc/msgtoh.vi -p"$(msgh)" $(mastermsg)
 
 $(mastermsg) : $(msgfiles)
         $(cc) -zk0 -p $(wzoom_dir)\wzoom.msg -fo=$(mastermsg)

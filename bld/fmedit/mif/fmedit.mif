@@ -15,11 +15,11 @@ CPPFILE=pp
 
 !ifeq build_target NT
 !   ifdef %DLL_DIR_NT
-!      define copy_dll copy $^@ $(%DLL_DIR_NT)\$^.
+!      define copy_dll cp $^@ $(%DLL_DIR_NT)\$^.
 !   endif
 !else
 !   ifdef %DLL_DIR
-!      define copy_dll copy $^@ $(%DLL_DIR)\$^.
+!      define copy_dll cp $^@ $(%DLL_DIR)\$^.
 !   endif
 !endif
 

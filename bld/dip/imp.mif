@@ -2,12 +2,12 @@
 # Master makefile for creating DIP's
 #
 
-.CONTINUE
-.ERASE
-.EXTENSIONS
-.EXTENSIONS : .lan .exe .obj .i .h .c .asm .mif
+#.CONTINUE
+#.ERASE
+#.EXTENSIONS
+#.EXTENSIONS : .lan .exe .obj .i .h .c .asm .mif
 
-.mif: $(mif_path)
+#.mif: $(mif_path)
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif

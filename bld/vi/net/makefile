@@ -43,7 +43,7 @@ EXES = vi.exe vip.exe
 all : .symbolic $(VIS) $(DATS) $(HLPS) $(BINDERS) $(EXES)
 
 netcopy : .procedure
-        copy $[@ $^@
+        cp $[@ $^@
 
 ed.cfg :: $(lang)\eddat\ed.cfg
         @%make netcopy

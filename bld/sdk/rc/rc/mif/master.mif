@@ -2,7 +2,6 @@ proj_name = wrc
 name = wrc
 
 !include cproj.mif
-#!include deftarg.mif
 !include defrule.mif
 
 #always use the most up to date wres library
@@ -150,14 +149,12 @@ weights2.gh keyword2.gh : rc2.key ./findhash.exe
 $(name).res : rcmsg.h usage.rc usagej.rc $(wrc_dir)/rc.rc
         $(rc) -bt=windows -r $]@ -fo=$(name).res
 
-rcmsg.h : $(wrc_dir)/h/rc.msg
-        cp $< rc.msg
+../h/rcmsg.h : ../h/rc.msg
 !ifdef __LINUX__
-        perl $(sdk_dir)/misc/msgtoh.pl < rc.msg > tmp.h
+        perl $(sdk_dir)/misc/msgtoh.pl < $[@ > tmp.h
 !else
-        vi -q -i -s $(sdk_dir)\misc\msgtoh.vi -p"tmp.h" rc.msg
+        vi -d -q -i -s $(sdk_dir)/misc/msgtoh.vi -p"tmp.h" $[@
 !endif
-        rm -f rc.msg
         cp tmp.h $(wrc_dir)/h/rcmsg.h
         rm -f tmp.h
 
@@ -171,20 +168,12 @@ hash1.obj : hash1.c weights1.gh
 hash2.obj : hash2.c weights2.gh
 
 clean: .SYMBOLIC .EXPLICIT
-!ifeq sys_dll 1
-        @rm -f $(name).dll
-        @rm -f $(name).lib
-!else
-        @rm -f $(name).exe
-!endif
-        @rm -f $(name).map
-        @rm -f usage*.rc
-        @rm -f *.obj
-        @rm -f $(wrc_dir)\h\*.gh
-        @rm -f $(wrc_dir)\c\ytab.c
-        @rm -f $(wrc_dir)\o\ytab.obj
-        @rm -f *.res *.err *.sym rcmsg.gh findhash.exe
-        @rm -f $(wrc_dir)\h\rcmsg.h
+    rm -f *.?bj *.lnk *.exe *.dll *.lib *.map *.rc *.res
+    rm -f *.sym *.tmp *.ilk *.lst *.err *.trk
+    rm -f ../h/ytab.gh ../c/ytab.c
+    rm -f ../h/keyword1.gh ../h/keyword2.gh
+    rm -f ../h/weights1.gh ../h/weights2.gh
+    rm -f ../h/rcmsg.h
 
 # implicit rules
 .c.obj: .autodepend

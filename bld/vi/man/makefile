@@ -54,12 +54,12 @@ vihelp.src: vi.gml .SYMBOLIC
     @%append $(optsfile) ( file help
    -$(wgml) vi ( file $(optsfile)
     vi -q -sremtoc.vi vihelp.src
-    @copy toc.src vitoc.src
+    @cp toc.src vitoc.src
 
 vihelp2: .SYMBOLIC
-    copy vihelp2.src vihelp.src
+    cp vihelp2.src vihelp.src
     vi -q -sremtoc.vi vihelp.src
-    @copy toc.src vitoc.src
+    @cp toc.src vitoc.src
 
 toc: .SYMBOLIC
     egrep '^  ..[^ ]' vitoc.src >t1

@@ -15,4 +15,4 @@ objs =              &
         param.obj
 
 $(proj_name).exe : $(objs)
-        $(linker) option quiet $(lflags) name $^. file { $< }
+        $(linker) $(lflags) name $^. file { $< }

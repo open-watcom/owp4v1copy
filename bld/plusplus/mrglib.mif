@@ -46,7 +46,7 @@ libs : .symbolic $(target_lib) $(target_lib_x)
 $(target_lib) : $(source_libs)
     %create $(lbcfile)
     @for %i in ($(source_libs)) do @%append $(lbcfile) +%i
-    $(librarian) -q $(lib_flags) $(exp_lib_flags) $^@ @$(lbcfile)
+    $(librarian) $(lib_flags) $(exp_lib_flags) $^@ @$(lbcfile)
 !ifeq linkage dynamic
     vi -q -s $(plusplus_cpplib_dir)\export.vi $(export_name)
 !endif
@@ -57,7 +57,7 @@ $(target_lib) : $(source_libs)
 $(target_lib_x) : $(source_libs_x)
     %create $(lbcfile)
     @for %i in ($(source_libs_x)) do @%append $(lbcfile) +%i
-    $(librarian) -q $(lib_flags) $(exp_libx_flags) $^@ @$(lbcfile)
+    $(librarian) $(lib_flags) $(exp_libx_flags) $^@ @$(lbcfile)
 !ifeq linkage dynamic
     vi -q -s $(plusplus_cpplib_dir)\export.vi $(exportx_name)
 !endif
@@ -66,15 +66,15 @@ $(target_lib_x) : $(source_libs_x)
 !endif
 
 reference : .symbolic $(target_lib)
-    copy $(target_lib) $(plusplus_dir)\bin
+    cp $(target_lib) $(plusplus_dir)/bin
 !ifdef target_lib_x
-    copy $(target_lib_x) $(plusplus_dir)\bin
+    cp $(target_lib_x) $(plusplus_dir)/bin
 !endif
 
 update : .symbolic $(target_lib)
-    $(librarian) -b -c -n -q -s -t $(lang_root)\$(production_lib)\$(target_lib) +$(target_lib)
+    $(librarian) -b -c -n -s -t $(lang_root)\$(production_lib)\$(target_lib) +$(target_lib)
 !ifdef target_lib_x
-    $(librarian) -b -c -n -q -s -t $(lang_root)\$(production_lib)\$(target_lib_x) +$(target_lib_x)
+    $(librarian) -b -c -n -s -t $(lang_root)\$(production_lib)\$(target_lib_x) +$(target_lib_x)
 !endif
 
 .EXTENSIONS:
