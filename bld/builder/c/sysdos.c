@@ -32,6 +32,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <dos.h>
+#include <process.h>
 #include "builder.h"
 
 void SysInit( int argc, char *argv[] )
@@ -42,8 +43,15 @@ void SysInit( int argc, char *argv[] )
 
 unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
 {
-    /* no pipes for DOS so we call "system" and hence cannot log */
-    int rc = system( cmd );
+    /* no pipes for DOS so we call spawn with P_WAIT and hence cannot log */
+    char *cmdnam = strdup( cmd );
+    char *sp = strchr( cmdnam, ' ' );
+    int rc;
+    if ( sp != NULL ) {
+        *sp = '\0';
+        sp++;
+    }
+    rc = spawnlp( P_WAIT, cmd, sp, NULL );
     *readpipe = -1;
     return rc;
 }
