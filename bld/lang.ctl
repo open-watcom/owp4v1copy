@@ -49,13 +49,13 @@ echo Bootstrapping compiler using GNU tools...
 #
 #        RC builds resource file libraries for everybody
 [ INCLUDE <DEVDIR>/fmedit/lang.ctl ]
-#        BWPI needs to be done before BSDK
+#        WPI needs to be done before SDK
 [ INCLUDE <DEVDIR>/wpi/lang.ctl ]
-#        BSDK must be done after BDISASM ?
+#        SDK must be done after DISASM?
 [ INCLUDE <DEVDIR>/sdk/lang.ctl ]
-#        Librarys for different Programs as next
+#        Librariess for different program are next
 [ INCLUDE <DEVDIR>/aui/lang.ctl ]
-#        BWPI must be done before BSDK and hui, dui and lui
+#        WPI must be done before SDK and UI libs
 [ INCLUDE <DEVDIR>/gui/lang.ctl ]
 [ INCLUDE <DEVDIR>/wclass/lang.ctl ]
 [ INCLUDE <DEVDIR>/ncurses/lang.ctl ]
@@ -63,10 +63,10 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/ui/lang.ctl ]
 #        OWL/ORL must be done early so that clients are up-to-date
 [ INCLUDE <DEVDIR>/owl/lang.ctl ]
-#        BAS must be done after BOWL but before BCFE
+#        AS must be done after OWL but before CFE
 [ INCLUDE <DEVDIR>/as/lang.ctl ]
 [ INCLUDE <DEVDIR>/orl/lang.ctl ]
-#        BDWARF must be done early so that DWARF library users are up-to-date
+#        DWARF must be done early so that DWARF library users are up-to-date
 [ INCLUDE <DEVDIR>/dwarf/lang.ctl ]
 #
 #        Now build Open Watcom libraries
@@ -85,23 +85,23 @@ echo Bootstrapping compiler using GNU tools...
 #        graphics library must be made after C library
 [ INCLUDE <DEVDIR>/graphlib/lang.ctl ]
 [ INCLUDE <DEVDIR>/nwlib/lang.ctl ]
-#        BRCSDLL must be before BVI and BVIPER
+#        RCSDLL must be before VI and VIPER
 [ INCLUDE <DEVDIR>/rcsdll/lang.ctl ]
 #
-#       Then build the compilers
+#       Now build the compilers
 #
-#       BW32LDR must be done before EXE's that use the loader
+#       W32LDR must be done before EXEs that use the loader
 [ INCLUDE <DEVDIR>/w32loadr/lang.ctl ]
 #
 #        Starting with the code generators
 #
-#        BWOMP must be done before BWASM and F77, now it is not necessary
+#        WOMP must be done before WASM and F77, now it is not necessary
 #[ INCLUDE <DEVDIR>/womp/lang.ctl ]
-#        BWASM must be done early so that inline assembler users are up-to-date
-#        now it is not necessary, it can be anywhere
+#        WASM must be done early so that inline assembler users are uptodate
+#        (no longer necessary, can be anywhere)
 [ INCLUDE <DEVDIR>/wasm/lang.ctl ]
 [ INCLUDE <DEVDIR>/cg/lang.ctl ]
-#        c front ends must be built after code generator
+#        C front ends must be built after code generator
 [ INCLUDE <DEVDIR>/cc/lang.ctl ]
 [ INCLUDE <DEVDIR>/cc/wcl/lang.ctl ]
 [ INCLUDE <DEVDIR>/plusplus/lang.ctl ]
@@ -162,14 +162,11 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/wic/lang.ctl ]
 [ INCLUDE <DEVDIR>/redist/lang.ctl ]
 [ INCLUDE <DOC_ROOT>/lang.ctl ]
-
-# deal with the project which contains this file last --- the BAT directory
-# BATDIR Builder Control file
-# ===========================
-[ INCLUDE <LANG_BLD>/wproj.ctl ]
-
-# Do CDSAY to see end time
+#
+#        Do CDSAY to see end time
+#
 cdsay .
-
-# clean build tools, must be last item
+#
+#        Clean build tools, must be last item (self destructs)
+#
 [ INCLUDE <DEVDIR>/builder/clean.ctl ]

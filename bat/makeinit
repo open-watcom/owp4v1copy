@@ -11,4 +11,4 @@ build_dir    = $(%DEVDIR)\build
 
 .mif: $(mif_path)
 !include cdirs.mif
-!include $(%BATDIR)/bat/makecomm
+!include $(%OWROOT)/bat/makecomm

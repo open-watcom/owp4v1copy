@@ -50,14 +50,14 @@ a_dbg_flags = -d1
 .before
 !ifeq release 0
 !else
-    set watcom=$(%relroot)\$(%defrel)
+    set watcom=$(%RELROOT)\rel2
     set include=
-    set dos_include=$(%watcom)\h
-    set nt_include=$(%watcom)\h
-    set os2_include=$(%watcom)\h
-    set qnx_include=$(%watcom)\qh
-    set windows_include=$(%watcom)\h\win;$(%watcom)\h
-    set path=$(%watcom)\binnt;$(%watcom)\binw;$(%path)
+    set dos_include=$(%WATCOM)\h
+    set nt_include=$(%WATCOM)\h
+    set os2_include=$(%WATCOM)\h
+    set qnx_include=$(%WATCOM)\qh
+    set windows_include=$(%WATCOM)\h\win;$(%WATCOM)\h
+    set path=$(%WATCOM)\binnt;$(%WATCOM)\binw;$(%PATH)
 !endif
 
 !ifndef defwin

@@ -48,11 +48,9 @@ set OBJDIR=prebuild
 
 REM Stuff for the Open Watcom build environment
 set BUILD_PLATFORM=os2386
-set BATDIR=%OWROOT%
 set BLD_VER=14
 set BLD_VER_STR=1.4
 set BUILDER_CTL=lang.ctl
-set DEFREL=rel2
 set DEVDIR=%OWROOT%\bld
 set DISTROOT=%OWROOT%\distrib
 set RELROOT=%OWROOT%

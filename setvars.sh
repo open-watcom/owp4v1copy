@@ -48,11 +48,9 @@ export OBJDIR=bootstrp
 
 # Stuff for the Open Watcom build environment
 export BUILD_PLATFORM=linux386
-export BATDIR=$OWROOT
 export BLD_VER=14
 export BLD_VER_STR=1.4
 export BUILDER_CTL=lang.ctl
-export DEFREL=rel2
 export DEVDIR=$OWROOT/bld
 export DISTROOT=%OWROOT%/distrib
 export RELROOT=$OWROOT
