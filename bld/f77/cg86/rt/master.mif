@@ -1,5 +1,8 @@
 proj_name = f77
 
+memory_model_i86=$(model)
+memory_model_386=$(model)
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
@@ -7,8 +10,8 @@ proj_name = f77
 #------------------------ compiler options
 
 extra_c_flags = -s -zl -zld -d__RT__
-extra_c_flags_386 = -fp$(fp_model) -m$(model) -zp1
-extra_c_flags_i86 = -fp$(fp_model) -m$(model)
+extra_c_flags_386 = -fp$(fp_model) -zp1
+extra_c_flags_i86 = -fp$(fp_model)
 
 !ifeq release 1
 extra_c_flags_i86 += -fpr
