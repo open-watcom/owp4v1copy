@@ -1,0 +1,18 @@
+proj_name = dmpobj
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+inc_dirs = $(dmpobj_dir)\h
+
+.c: ..\c
+
+objs =                  &
+        dmpobj.obj      &
+        objread.obj     &
+        output.obj      &
+        process.obj
+
+$(proj_name).exe : $(objs)
+        $(linker) option quiet $(lflags) name $^. file { $< }

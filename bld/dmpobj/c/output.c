@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OMF dumper output routines.
 *
 ****************************************************************************/
 
@@ -116,7 +115,7 @@ static char *toDec16( char *dest, unsigned_16 num )
 
     orig = dest;
     str = dest + ( 3 * sizeof( unsigned ) / sizeof( char ) );
-    if( num > INT_MAX ) {       /* 'cause div takes ints not unsigneds...*/
+    if( num > 32767 ) {       /* 'cause div takes ints not unsigneds...*/
         ++dest;
         *--str = '0' + num % 10U;
         num /= 10U;     /* now it should be less than INT_MAX... */

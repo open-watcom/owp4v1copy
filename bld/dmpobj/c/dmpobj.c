@@ -24,14 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OMF file dump utility.
 *
 ****************************************************************************/
 
 
 #include <ctype.h>
 #include <stdlib.h>
+#include "banner.h"
 
 #include "dmpobj.h"
 
@@ -74,6 +74,11 @@ void main( int argc, char **argv )
 
     OutputInit();
     OutputSetFH( stdout );
+
+    Output( banner1w( "OMF Dump Utility", BAN_VER_STR ) CRLF );
+    Output( banner2a() CRLF );
+    Output( banner3 CRLF );
+    Output( banner3a CRLF );
 
     Descriptions = FALSE;
     InterpretComent = TRUE;

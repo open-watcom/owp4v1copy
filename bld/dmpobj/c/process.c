@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OMF record processing - heart of the dump utility.
 *
 ****************************************************************************/
 
@@ -35,6 +34,14 @@
 #include <string.h>
 
 #include "dmpobj.h"
+
+enum {
+    DBG_UNKNOWN,
+    DBG_CODEVIEW,
+    DBG_HLL
+};
+
+int  DbgStyle = DBG_CODEVIEW;
 
 typedef unsigned short  DOSDATE_T;
 
@@ -318,8 +325,21 @@ static int doEasyOmf( byte c_bits ) {
 
 static int doMSOmf( void ) {
 
-    Output( INDENT "---- Microsoft extensions present ----" CRLF );
     IsIntel = FALSE;
+    GetName();
+    Output( INDENT "---- \"New OMF\" extensions present <%N> ----" CRLF );
+    if( strncmp( NamePtr, "CV", 2 ) == 0 ) {
+        Output( INDENT "Microsoft CodeView style debugging information" CRLF );
+        DbgStyle = DBG_CODEVIEW;
+    } else if( strncmp( NamePtr, "HL", 2 ) == 0 ) {
+        Output( INDENT "IBM HLL style debugging information" CRLF );
+        DbgStyle = DBG_HLL;
+    }
+    else {
+        Output( INDENT "Unknown debugging information style" CRLF );
+        DbgStyle = DBG_UNKNOWN;
+    }
+
     return( 1 );
 }
 
@@ -625,8 +645,8 @@ void ProcComDef( void )
 }
 
 
-static void DoLinNums()
-/*********************/
+static void DoLinNumsMS()
+/**********************/
 {
     unsigned_16 line_num;
     unsigned_32 offset;
@@ -659,12 +679,68 @@ static void DoLinNums()
     }
 }
 
+static void DoLinNumsHLL()
+/************************/
+{
+    unsigned_16 line_num;
+    unsigned_16 file_num;
+    unsigned_32 offset;
+    unsigned_16 group;
+    unsigned_16 seg;
+    unsigned_32 count;
+    unsigned_32 i;
+
+    group = GetIndex();
+    seg   = GetIndex();
+
+    if( seg ) {
+        // We have the real line numbers record
+        GetLInt(); // Unknown purpose
+        count = GetLInt();
+        GetLInt(); // Unknown purpose
+
+        if( Descriptions )
+            Output( INDENT "Src line   Src file  segment:offset" CRLF );
+
+        for( i = 0; i < count; i++ ) {
+            line_num = GetUInt();
+            file_num = GetUInt();
+            offset   = GetLInt();
+            Output( INDENT "  %5  %5  %5:%X" CRLF, line_num, file_num, seg, offset );
+        }
+    } else {
+        // This is the record listing source files
+        GetUInt(); // Unknown purpose
+        GetUInt(); // Unknown purpose
+        count = GetLInt();
+        GetLInt(); // Number of bytes following - don't need this
+        i = GetLInt();
+        Output( INDENT "Record Number of Start of Source: %5" CRLF, i );
+        i = GetLInt();
+        Output( INDENT "Number of Primary Source Records: %5" CRLF, i );
+        count = GetLInt();
+        for( i = 0; i < count; i++ ) {
+            GetName();
+            Output( INDENT "  Source file %5: %N" CRLF, i + 1);
+        }
+    }
+}
 
 void ProcLinNums( void )
 /**********************/
 {
-    getBase( TRUE );
-    DoLinNums();
+    switch( DbgStyle ) {
+    case DBG_CODEVIEW:
+        getBase( TRUE );
+        DoLinNumsMS();
+        break;
+    case DBG_HLL:
+        DoLinNumsHLL();
+        break;
+    default:
+        Output( INDENT "Unknown debugging style - not interpreting LINNUM"
+                " records" CRLF);
+    }
 }
 
 
@@ -681,7 +757,7 @@ void ProcLineSym()
         Output( " - continued" );
     }
     Output( CRLF );
-    DoLinNums();
+    DoLinNumsMS();
 }
 
 
