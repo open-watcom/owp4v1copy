@@ -1,5 +1,5 @@
 @echo off
-rm -f %distroot%\archives\*.ace
+rm -f %distroot%\os2inst\*.ace
 rm mkacec.log
 cd %relroot%\%defrel%
 rm filesc
@@ -95,6 +95,11 @@ rem comstrip %distroot%\manifest\f_samples >> filesc
 comstrip %distroot%\manifest\misc_src >> filesc
 comstrip %distroot%\manifest\os2api >> filesc
 comstrip %distroot%\manifest\w32api >> filesc
+comstrip %distroot%\manifest\ext_causeway >> filesc
+comstrip %distroot%\manifest\ext_dos4gw >> filesc
+comstrip %distroot%\manifest\ext_dos32a >> filesc
+comstrip %distroot%\manifest\ext_pmodew >> filesc
 echo ACEing up files...
-ace a %distroot%\archives\owc.ace @filesc >> %distroot%\mkacec.log 2>&1
+ace a %distroot%\os2inst\owc.ace @filesc >> %distroot%\mkacec.log 2>&1
+cd %distroot%
 echo All done!

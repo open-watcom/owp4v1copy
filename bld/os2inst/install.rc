@@ -450,7 +450,7 @@ BEGIN
                                        I_Info2, 190, 102, 196, 22, WC_STATIC,
                                             SS_TEXT | DT_WORDBREAK | WS_GROUP |
                                             WS_VISIBLE
-        CONTROL "A SETENV.CMD file is useful if you use other compilers and/or other versions of %PRODUCT%. You will need to run SETENV.CMD each time before you can use %PRODUCT%.",
+        CONTROL "A SETVARS.CMD file is useful if you use other compilers and/or other versions of %PRODUCT%. You will need to run SETVARS.CMD each time before you can use %PRODUCT%.",
                                        I_Info3, 190, 72, 196, 32, WC_STATIC,
                                             SS_TEXT | DT_WORDBREAK | WS_GROUP |
                                             WS_VISIBLE
@@ -461,7 +461,7 @@ BEGIN
                                             BS_AUTORADIOBUTTON | WS_TABSTOP |
                                             WS_VISIBLE
                 CTLDATA 6, 1, 0
-        CONTROL "Create SETENV.CMD only",   I_Updates2,
+        CONTROL "Create SETVARS.CMD only",   I_Updates2,
                                         201, 33, 127, 10, WC_BUTTON,
                                             BS_AUTORADIOBUTTON | WS_TABSTOP |
                                             WS_VISIBLE
@@ -496,7 +496,7 @@ BEGIN
                                        I_Info1, 192, 102, 196, 31, WC_STATIC,
                                             SS_TEXT | DT_WORDBREAK | WS_GROUP |
                                             WS_VISIBLE
-        CONTROL "You can remove %PRODUCT% at any time after installation by running the Uninstall utility.",
+        CONTROL "", /*"You can remove %PRODUCT% at any time after installation by running the Uninstall utility.",*/
                                        I_Info2, 191, 62, 195, 37, WC_STATIC,
                                             SS_TEXT | DT_WORDBREAK | WS_GROUP |
                                             WS_VISIBLE

@@ -1,3 +1,4 @@
+#pmake: build os_os2 sfxinst
 
 host_os  = os2
 host_cpu = 386

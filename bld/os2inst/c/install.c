@@ -108,7 +108,7 @@ int ftpgetfound = 0;
 
 /* Config.Sys -- Note the drive letter gets replaced with the boot drive letter
                  It is just a place holder. (For the next 3 entries)             */
-char csfile[] = "C:\\CONFIG.tst";
+char csfile[] = "C:\\CONFIG.SYS";
 /* Backup Config.Sys filename */
 char bufile[] = "C:\\CONFIG.OLD";
 /* Installation Log Database -- Used for uninstallation and aborting */
@@ -362,9 +362,8 @@ void viewfile(char *filename, HAB localhab)
 {
     HWND hwndFrame, /*hwndMLE,*/ hwndClient;
     ULONG flStyle = FCF_MINMAX | FCF_SYSMENU | FCF_TITLEBAR |
-        FCF_SIZEBORDER | FCF_SHELLPOSITION | FCF_TASKLIST;
-    PPRESPARAMS ppp;
-    char deffont[] = "9.Warpsans";
+                    FCF_SIZEBORDER | FCF_SHELLPOSITION | FCF_TASKLIST;
+    char deffont[] = "10.System Monospaced";
 
     WinRegisterClass(localhab, "VIEW", ViewWndProc, CS_SIZEREDRAW, 32);
 
@@ -372,15 +371,9 @@ void viewfile(char *filename, HAB localhab)
                                   &flStyle, "VIEW", filename, 0L,
                                   NULLHANDLE, 0L, &hwndClient);
 
-    ppp = malloc((sizeof(ULONG) * 3) + strlen(deffont) + 1);
-    ppp->cb = (sizeof(ULONG) * 2) + strlen(deffont) + 1;
-    ppp->aparam[0].id = PP_FONTNAMESIZE;
-    ppp->aparam[0].cb = strlen(deffont)+1;
-    memcpy(&ppp->aparam[0].ab, deffont, strlen(deffont)+1);
-
     hwndMLE = WinCreateWindow(hwndFrame, WC_MLE, "",
                               WS_VISIBLE | MLS_VSCROLL | MLS_WORDWRAP | MLS_READONLY | MLS_BORDER,
-                              0,0,100,100, hwndFrame, HWND_TOP, 999L, NULL, ppp);
+                              0,0,100,100, hwndFrame, HWND_TOP, 999L, NULL, NULL);
 
     WinSetWindowPos(hwndFrame, HWND_TOP, 0, 0, 0, 0, SWP_MAXIMIZE | SWP_ZORDER);
     WinSetWindowPos(hwndMLE, HWND_TOP, 0, 0, 0, 0, SWP_SHOW);
@@ -392,6 +385,8 @@ void viewfile(char *filename, HAB localhab)
         FILE *f;
         char buffer[MLE_BUFFER_SIZE];
         ULONG bytes, point = -1;
+
+        WinSetPresParam(hwndMLE, PP_FONTNAMESIZE, strlen(deffont) + 1, deffont);
 
         if ((f = fopen(filename, "rb")) != NULL) {
             WinSendMsg(hwndMLE, MLM_SETIMPORTEXPORT, MPFROMP(buffer), MPFROMLONG(MLE_BUFFER_SIZE));
@@ -1149,7 +1144,7 @@ void configsys_update(void)
 
                 temp[z] = 0;
                 tmpptr2 = replaceem(tmpptr);
-                tmpptr = &temp[z+1];
+                tmpptr = &temp[z + 1];
                 removeline(tmpptr2);
                 configsys[configfilecount] = tmpptr2;
                 fprintf(logfile, "<CFAddLine>,%s,%s\r\n", currentcf, tmpptr2);
@@ -1186,7 +1181,7 @@ void configsys_update(void)
                     break;
                 case 3:
                     argn = 0;
-                    updateset(arg1, arg2, (int)(arg3[0]-'0'));
+                    updateset(arg1, arg2, (int)(arg3[0] - '0'));
                     arg1 = &temp[z + 1];
                     arg2 = arg3 = NULL;
                     break;
@@ -2459,7 +2454,7 @@ MRESULT EXPENTRY InstallerDlgProc(HWND hWnd, ULONG msg, MPARAM mp1, MPARAM mp2)
 }
 
 /* Product specific post-install routine */
-/* For Open Watcom we update the setenv.cmd file */
+/* For Open Watcom we update the setvars.cmd file */
 void user_postinstall(void)
 {
     FILE    *f;
@@ -2470,7 +2465,7 @@ void user_postinstall(void)
 
     /* Construct the full pathname */
     strcpy(fname, installdir);
-    strcat(fname, "\\setenv.cmd");
+    strcat(fname, "\\setvars.cmd");
 
     if ((f = fopen(fname, "rb")) == NULL)
         return;
