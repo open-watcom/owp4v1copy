@@ -978,8 +978,8 @@ void ProcModEnd( void )
 
     mod_type = GetByte();
     Output( INDENT "mod type:%smain module %s" CRLF,
-        ( mod_type & 0x2 ) ? "":"non-",
-        ( mod_type & 0x1 ) ? "with start address" : ""
+        ( mod_type & 0x80 ) ? "":"non-",
+        ( mod_type & 0x40 ) ? "with start address" : ""
     );
     if( mod_type & 0x1 && !EndRec() ) {
         typ = GetByte();
