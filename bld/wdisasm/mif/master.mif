@@ -110,10 +110,10 @@ usage.u : ../usage.sp
         $(bld_bin)\wsplice -kENGLISH -k$(host_OS) -t8 -u ../usage.sp usage.u
 
 usage.rc : ../usage.sp
-        $(bld_bin)\wsplice -kENGLISH -kIS_RC -k$(host_OS) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\""../usage.sp usage.rc
+        $(bld_bin)\wsplice -kENGLISH -kIS_RC -k$(host_OS) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" ../usage.sp usage.rc
 
 usagej.rc : ../usage.sp
-        $(bld_bin)\wsplice -kJAPANESE -kIS_RC -k$(host_OS) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\""../usage.sp usagej.rc
+        $(bld_bin)\wsplice -kJAPANESE -kIS_RC -k$(host_OS) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" ../usage.sp usagej.rc
 
 msg.gh : ../wdisasm.msg
         vi -q -d -i "-k:set magic\n:g!/^pick/d\n:w!tmp.msg\n:q!\n" ..\wdisasm.msg

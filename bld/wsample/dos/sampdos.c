@@ -117,7 +117,7 @@ extern void SetTimerRate( char ** );
 extern void RecordCGraph( void );
 
 extern seg      GetPSP(void);
-extern void     DOSLoadProg( char *, pblock *, void REPORT_TYPE (*)() );
+extern void     DOSLoadProg( char *, pblock near *, void REPORT_TYPE (*)() );
 extern void     DOSRunProg( seg_offset * );
 extern void     FAR_PTR ovl_handler( short );
 
@@ -183,7 +183,7 @@ StartProg( char *cmd, char *prog, char *args )
     seg_offset          ovl_tbl;
     struct ovl_header   FAR_PTR *ovl;
     pblock              parms;
-    void                (*fn)();
+    void REPORT_TYPE    (*fn)();
     void                *ovl_struct;
 
     cmd = cmd;
@@ -197,7 +197,7 @@ StartProg( char *cmd, char *prog, char *args )
     parms.fcb01.offset  = 0x5c; /* formatted parameter area 1 (FCB) */
     parms.fcb02.segment = parms.fcb01.segment;
     parms.fcb02.offset  = 0x6c; /* formatted parameter area 2 (FCB) */
-    fn = (void (*)()) report;
+    fn = (void REPORT_TYPE (*)()) report;
     DOSLoadProg( prog, (pblock near *) &parms, fn );
     /* Will load prog to memory ready to DOSRunProg.
        Will also cause prog to chain to report after its execution.

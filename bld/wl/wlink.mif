@@ -171,11 +171,11 @@ extra_l_flags += l { $(libs) }
 extra_l_flags += $(wlink_extralnk)
 !endif
 
-!ifdef nec
-lflags_dos_386 = sys dos4g
-!else
-lflags_dos_386 = sys x32r
-!endif
+#!ifdef nec
+#lflags_dos_386 = sys dos4g
+#!else
+#lflags_dos_386 = sys causeway
+#!endif
 extra_l_flags_qnx = op res=wlink.u, st=24k, off=32k
 
 !ifeq sys_dll 1
@@ -260,7 +260,7 @@ $(exe) : global.chk $(c_objs) $(extra_objs) $(libs) wlink.res
 !ifeq host_OS dos
 !ifdef nec
 !else
-    x32fix $(exe)
+    #x32fix $(exe)
 !endif
 !endif
 !ifeq sys_dll 1

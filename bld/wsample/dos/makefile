@@ -1,5 +1,7 @@
 .erase
 
+linker = *wlink
+
 objects = sample.obj sampdata.obj realmode.obj rmhooks.obj sampdos.obj &
           io.obj sysio.obj timasm.obj interc.obj sampexe.obj settime.obj &
           wmsg.obj

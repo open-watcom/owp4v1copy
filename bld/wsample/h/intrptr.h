@@ -30,5 +30,5 @@
 ****************************************************************************/
 
 
-typedef void interrupt far (far *intrptr)();
+typedef void interrupt far (*intrptr)();
 #define _CHAIN_TO( x ) (*x)()

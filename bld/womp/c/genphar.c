@@ -430,6 +430,7 @@ STATIC int writeBakpat( obj_rec *objr, pobj_state *state ) {
     }
     /* NYI: convert 16-bit BAKPATs to 32-bit... */
     Fatal( MSG_NO_16BIT_BAKPAT );
+    return 0;
 }
 
 STATIC int writeComdat( obj_rec *objr, pobj_state *state ) {
