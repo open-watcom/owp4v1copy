@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  C expression parsing.
 *
 ****************************************************************************/
 
@@ -1533,6 +1532,7 @@ local TREEPTR ExprOpnd()
             break;
         case T_BAD_TOKEN:
             CErr1( BadTokenInfo );
+            BadTokenInfo = 0;
             NextToken();
             tree = ErrorNode( NULL );
             break;

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  C lexical analyzer. Closely coupled with preprocessor.
 *
 ****************************************************************************/
 
@@ -386,7 +385,6 @@ int doScanFloat()
 {
     int         c;
 
-    BadTokenInfo = 0;
     c = CurrChar;
     if( c == '.' ) {
         while( (c = SaveNextChar()) >= '0' && c <= '9' ) ;
@@ -654,7 +652,6 @@ int ScanNum()
         enum { SUFF_NONE,SUFF_U, SUFF_L,SUFF_UL,  SUFF_I, SUFF_UI } suffix;
     }con;
 
-    BadTokenInfo = 0;
     Constant = 0;
     TokenLen = 1;
     c = CurrChar;
@@ -1183,7 +1180,6 @@ int CharConst( int char_type )
         BadTokenInfo = ERR_INV_CHAR_CONSTANT;
         return( T_BAD_TOKEN );
     }
-    BadTokenInfo = 0;
     token = T_CONSTANT;
     i = 0;
     value = 0;
