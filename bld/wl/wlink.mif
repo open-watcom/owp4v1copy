@@ -143,7 +143,7 @@ cflags_axp = -hc
 !endif
 
 cflags_386 =                    # get rid of the -zc
-cflags_all = -w4 -we -zq -zp4
+cflags_all = -w4 -we -zp4
 wcl_util_opts = -ox -zq
 
 extra_c_flags_ntio = /i=$(wres_dir)\h
@@ -315,9 +315,6 @@ global.obj : global.c ..\h\globals.h ..\h\specials.h
 
 cmdline.obj : cmdline.c ..\h\whoami.h
         $(compile)
-
-ring2.obj : ring.c
-        $(compile) /dPARAM2 /fo=ring2.obj
 
 demangle.obj : $(lib_misc_dir)\c\demangle.c
         $(compile) /i=$(lib_misc_dir)\h
