@@ -795,8 +795,8 @@ static void X86GetModRM_L(WBIT w, MOD mod, RM rm, void * d,
 /*=====================================================================*/
 /*               Get MOD/RM as Operand                                 */
 /*=====================================================================*/
-static void X86GetModRM(WBIT w, MOD mod, RM rm, void * d,
-                         dis_dec_ins *ins, dis_ref_type ref_type)
+static void X86GetModRM( WBIT w, MOD mod, RM rm, void * d,
+                         dis_dec_ins *ins, dis_ref_type ref_type )
 /**********************************************************************
  */
 {
@@ -807,29 +807,29 @@ static void X86GetModRM(WBIT w, MOD mod, RM rm, void * d,
     }
 }
 
-static void X86GetModRM_D(WBIT w, MOD mod, RM rm, void * d,
-                         dis_dec_ins *ins)
+static void X86GetModRM_D( WBIT w, MOD mod, RM rm, void * d,
+                         dis_dec_ins *ins, dis_ref_type ref_type )
 /**********************************************************************
  * 32-Bit Operand Version
  */
 {
     if( DIF_X86_ADDR_LONG & ins->flags ) {
-        X86GetModRM_L(w, mod, rm, d ,ins, DRT_X86_DWORD, X86GetRegister_D);
+        X86GetModRM_L(w, mod, rm, d ,ins, ref_type, X86GetRegister_D);
     } else {
-        X86GetModRM_S(w, mod, rm, d ,ins, DRT_X86_DWORD, X86GetRegister_D);
+        X86GetModRM_S(w, mod, rm, d ,ins, ref_type, X86GetRegister_D);
     }
 }
 
 static void X86GetModRM_W(WBIT w, MOD mod, RM rm, void * d,
-                         dis_dec_ins *ins)
+                         dis_dec_ins *ins, dis_ref_type ref_type)
 /**********************************************************************
  * 16-Bit Operand Version
  */
 {
     if( DIF_X86_ADDR_LONG & ins->flags ) {
-        X86GetModRM_L(w, mod, rm, d ,ins, DRT_X86_WORD, X86GetRegister_W);
+        X86GetModRM_L(w, mod, rm, d ,ins, ref_type, X86GetRegister_W);
     } else {
-        X86GetModRM_S(w, mod, rm, d ,ins, DRT_X86_WORD, X86GetRegister_W);
+        X86GetModRM_S(w, mod, rm, d ,ins, ref_type, X86GetRegister_W);
     }
 }
 
@@ -1154,6 +1154,21 @@ dis_ref_type  X86GetRefType( WBIT w, dis_dec_ins *ins )
     case DI_X86_fxrstor01:
     case DI_X86_fxrstor10:
         return( DRT_X86_BYTE512 );
+    case DI_X86_prefetch:
+    case DI_X86_prefetchw:
+    case DI_X86_prefetcht000:
+    case DI_X86_prefetcht001:
+    case DI_X86_prefetcht010:
+    case DI_X86_prefetcht100:
+    case DI_X86_prefetcht101:
+    case DI_X86_prefetcht110:
+    case DI_X86_prefetcht200:
+    case DI_X86_prefetcht201:
+    case DI_X86_prefetcht210:
+    case DI_X86_prefetchnta00:
+    case DI_X86_prefetchnta01:
+    case DI_X86_prefetchnta10:
+        return( DRT_X86_BYTEX );
     }
 
     if( w == W_FULL ) {
@@ -2250,9 +2265,9 @@ dis_handler_return X86SRegModRM_16( dis_handle *h, void * d, dis_dec_ins *ins )
         if( ins->op[0].base == DR_NONE ) {
             return ( DHR_INVALID );
         }
-        X86GetModRM_W(W_DEFAULT, code.type2.mod, code.type2.rm, d, ins);
+        X86GetModRM_W(W_DEFAULT, code.type2.mod, code.type2.rm, d, ins, DRT_X86_WORD);
     } else {
-        X86GetModRM_W(W_DEFAULT, code.type2.mod, code.type2.rm, d, ins);
+        X86GetModRM_W(W_DEFAULT, code.type2.mod, code.type2.rm, d, ins, DRT_X86_WORD);
         X86GetSReg( W_DEFAULT, code.type2.reg, ins );
         if( ins->op[1].base == DR_NONE ) {
             return( DHR_INVALID );
@@ -2558,7 +2573,7 @@ dis_handler_return X86RegModRM_24C( dis_handle *h, void *d, dis_dec_ins *ins )
         ins->op[0].base  = X86GetRegister_D( W_DEFAULT, code.type1.reg, ins );
         ins->op[0].type  = DO_REG;
         ++ins->num_ops;
-        X86GetModRM_W(W_DEFAULT, code.type1.mod, code.type1.rm, d, ins);
+        X86GetModRM_W(W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_WORD);
     } else {
         if( ins->flags & DIF_X86_OPND_LONG ) {
             ins->op[0].base  = X86GetRegister_D( W_DEFAULT, code.type1.reg, ins );
@@ -3256,7 +3271,7 @@ dis_handler_return X86MMRegModRMMixed( dis_handle *h, void *d, dis_dec_ins *ins 
         X86XMMGetModRM( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_XMM64 );
         break;
     case DI_X86_movd_1:     // mm,r32/m32
-        X86GetModRM_D( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins );
+        X86GetModRM_D( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_XMM32 );
         break;
     }
     X86XMMResetPrefixes();
@@ -3279,10 +3294,10 @@ dis_handler_return X86MMRegModRMMixedImm( dis_handle *h, void *d, dis_dec_ins *i
     case DI_X86_pinsrw00_1: // mm,m16,imm
     case DI_X86_pinsrw01_1: // mm,m16,imm
     case DI_X86_pinsrw10_1: // mm,m16,imm
-        X86GetModRM_W( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins );
+        X86GetModRM_W( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_XMM16 );
         break;
     case DI_X86_pinsrw11_1: // mm,r32,imm
-        X86GetModRM_D( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins );
+        X86GetModRM_D( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_XMM32 );
         break;
     }
     X86GetUImmedVal( S_BYTE, W_DEFAULT, d, ins );
@@ -3303,7 +3318,7 @@ dis_handler_return X86MMRegModRMMixed_Rev( dis_handle *h, void *d, dis_dec_ins *
 
     switch( ins->type ) {
     case DI_X86_movd_3:     // r32/m32,mm
-        X86GetModRM_D( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins );
+        X86GetModRM_D( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_XMM32 );
         break;
     }
     X86GetMM( code.type1.mm, ins );
@@ -3332,7 +3347,7 @@ dis_handler_return X86XMMRegModRMMixed( dis_handle *h, void *d, dis_dec_ins *ins
     case DI_X86_cvtsi2sd:   // x,r32/m32
     case DI_X86_cvtsi2ss:   // x,r32/m32
     case DI_X86_movd_2:     // x,r32/m32
-        X86GetModRM_D( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins );
+        X86GetModRM_D( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_XMM32 );
         break;
     }
     X86XMMResetPrefixes();
@@ -3355,10 +3370,10 @@ dis_handler_return X86XMMRegModRMMixedImm( dis_handle *h, void *d, dis_dec_ins *
     case DI_X86_pinsrw00_2: // x,m16,imm
     case DI_X86_pinsrw01_2: // x,m16,imm
     case DI_X86_pinsrw10_2: // x,m16,imm
-        X86GetModRM_W( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins );
+        X86GetModRM_W( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_XMM16 );
         break;
     case DI_X86_pinsrw11_2: // x,r32,imm
-        X86GetModRM_D( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins );
+        X86GetModRM_D( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_XMM32 );
         break;
     }
     X86GetUImmedVal( S_BYTE, W_DEFAULT, d, ins );
@@ -3379,7 +3394,7 @@ dis_handler_return X86XMMRegModRMMixed_Rev( dis_handle *h, void *d, dis_dec_ins 
 
     switch( ins->type ) {
     case DI_X86_movd_4:     // r32/m32,x
-        X86GetModRM_D( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins );
+        X86GetModRM_D( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_XMM32 );
         break;
     }
     X86GetXMM( code.type1.mm, ins );
