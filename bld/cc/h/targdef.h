@@ -52,6 +52,7 @@
 #define _CMS            3
 #define _MVS            4
 #define _NT             5
+#define _LINUX          6
 
 /*      for _HOST macro
         8086    on an 8086 machine running DOS

@@ -31,32 +31,26 @@
 
 #include "cvars.h"
 
-#if _OS == _QNX
+#if (_OS == _QNX) || (_OS == _LINUX)
 #include <stdlib.h>
 
 extern char **_argv;
 
-#ifndef __WATCOMC__
 static char const *NextUsage( char const *p ) {
     while( *p ) {
         ++p;
     }
     return( p + 1 );
 }
-#endif
 
 void CCusage()
 {
-#ifdef __WATCOMC__
-    print_usage( _argv );
-#else
     char const *p;
     p = UsageText();
     while( *p != '\0' ) {
         ConsMsg( p );
         p= NextUsage( p );
     }
-#endif
 }
 
 #else

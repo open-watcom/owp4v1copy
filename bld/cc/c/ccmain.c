@@ -58,6 +58,11 @@
     #include <fcntl.h>
     #include <unistd.h>
     #include <sys/stat.h>
+#elif _OS == _LINUX
+    #include <stdio.h>
+    #include <fcntl.h>
+    #include <unistd.h>
+    #include <sys/stat.h>
 #else
     #include "dos.h"
     #include <io.h>
@@ -152,7 +157,7 @@ int FrontEnd( char **cmdline )
     return( ErrCount );
 }
 
-#if defined(__QNX__)
+#if defined(__QNX__) || defined(__LINUX__)
 #define IS_PATH_SEP( ch ) ((ch) == '/')
 #else
 #define IS_PATH_SEP( ch ) ((ch) == '/' || (ch) == '\\')
@@ -181,7 +186,7 @@ local void MakeTmpName( char *fname )
         fname[ MAX_TMP_PATH ] = '\0';
         i = strlen( fname );
         if( i > 0 && !IS_PATH_SEP( fname[i-1] )
-        #if _OS != _QNX
+        #if (_OS != _QNX) && (_OS != _LINUX)
                 && fname[i-1] != ':'
         #endif
             ) {
@@ -192,7 +197,7 @@ local void MakeTmpName( char *fname )
     #endif
 }
 
-#if _OS == _QNX
+#if (_OS == _QNX) || (_OS == _LINUX)
 
 void OpenPageFile()
 {
@@ -253,7 +258,7 @@ void OpenPageFile()
 
 void CloseFiles()
 {
-    #if _OS != _QNX
+    #if (_OS != _QNX) && (_OS != _LINUX)
         auto char fname[ _MAX_PATH ];
     #endif
 
@@ -284,7 +289,7 @@ void CloseFiles()
     }
     if( PageFile != NULL ) {
         fclose( PageFile );
-        #if _OS != _QNX
+        #if (_OS != _QNX) && (_OS != _LINUX)
             MakeTmpName( fname );
             remove( fname );
         #endif

@@ -696,7 +696,7 @@ struct  global_comp_flags {  // things that live across compiles
         unsigned cc_reuse               : 1;    /* in a resuable version batch, dll*/
         unsigned cc_first_use           : 1;    /* first time thru           */
 };
-#if _OS == _QNX
+#if (_OS == _QNX) || (_OS == _LINUX)
 #define errout  stderr
 #else
 #define errout  stdout

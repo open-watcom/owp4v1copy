@@ -59,5 +59,7 @@ unsigned char _dos_switch_char()
         return( '/' );
 #elif _OS == _QNX
         return( '-' );
+#elif _OS == _LINUX
+        return( '-' );
 #endif
     }

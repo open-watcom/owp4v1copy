@@ -24,29 +24,29 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Compiler target description file for Linux x86 host
 *
 ****************************************************************************/
 
-#if defined(__QNX__) || defined(__LINUX__)
- #define C_PATH         "../c"
- #define H_PATH         "../h"
- #define PATH_SEP       "/"
- #define INCLUDE_SEP    ':'
- #define OBJ_EXT        ".o"
-#elif defined(__DOS__) || defined(__OS2__) || defined(__NT__) || defined(__OSI__)
- #define C_PATH         "..\\c"
- #define H_PATH         "..\\h"
- #define PATH_SEP       "\\"
- #define INCLUDE_SEP    ';'
- #define OBJ_EXT        ".obj"
-#else
- #error IOPATH.H not configured for system
+
+/*  size of data types on target machine */
+
+#ifndef _TARGET_INCLUDED
+#define _TARGET_INCLUDED
+#include "target32.h"
+#include "targdef.h"
+#include "langenvd.h"
+
+#define VERSION         PRODUCTION
+
+#define _MACHINE        _PC
+#define _CPU            386
+
+#define _OS             _LINUX
+#define _EMS            0
+
+#define __TGT_SYS       __TGT_SYS_X86
+
+#define _HOST           386
 #endif
-#define DEF_EXT         ".def"
-#define ERR_EXT         ".err"
-#define MBR_EXT         ".mbr"
-#define C_EXT           ".c"
-#define CPP_EXT         ".i"
 

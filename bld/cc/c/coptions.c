@@ -66,7 +66,7 @@ char    *OptParm;
 #define PEGGED( r )     unsigned peg_##r##s_used        : 1;    \
                         unsigned peg_##r##s_on          : 1
 
-static struct 
+static struct
 {
     char        *sys_name;
 
@@ -81,7 +81,7 @@ static struct
         SW_CPU5,        /*  Target Pentium              */
         SW_CPU6         /*  Target Pentium-Pro          */
     }cpu;
-    
+
     enum    /* TARGET FPU SUPPORT */
     {
         SW_FPU_DEF,     /*  No target FPU specified     */
@@ -193,11 +193,11 @@ local void SetTargSystem()                               /* 07-aug-90 */
 
     PreDefine_Macro( "__WATCOM_INT64__" );
     PreDefine_Macro( "_INTEGRAL_MAX_BITS=64" );
-    if( SwData.sys_name == NULL ) 
+    if( SwData.sys_name == NULL )
     {
         #if _CPU == 386 || _CPU == 8086
             #if defined( __OSI__ )
-                switch( __OS ) 
+                switch( __OS )
                 {                        // 11-mar-94
                 case OS_DOS:
                 case OS_WIN:
@@ -214,6 +214,8 @@ local void SetTargSystem()                               /* 07-aug-90 */
                 _SetConstTarg( "netware" );
             #elif _OS == _QNX
                 _SetConstTarg( "qnx" );
+            #elif _OS == _LINUX
+                _SetConstTarg( "linux" );
             #elif _OS == _OS2
                 _SetConstTarg( "os2" );
             #elif _OS == _NT
@@ -231,36 +233,36 @@ local void SetTargSystem()                               /* 07-aug-90 */
         #endif
     }
 
-    if( strcmp( SwData.sys_name, "DOS" ) == 0 ) 
+    if( strcmp( SwData.sys_name, "DOS" ) == 0 )
     {
         TargSys = TS_DOS;
-    } 
-    else if( strcmp( SwData.sys_name, "NETWARE" ) == 0 ) 
+    }
+    else if( strcmp( SwData.sys_name, "NETWARE" ) == 0 )
     {
         TargSys = TS_NETWARE;
-    } 
-    else if( strcmp( SwData.sys_name, "NETWARE5" ) == 0 ) 
+    }
+    else if( strcmp( SwData.sys_name, "NETWARE5" ) == 0 )
     {
         TargSys = TS_NETWARE5;
-    } 
-    else if( strcmp( SwData.sys_name, "WINDOWS" ) == 0 ) 
+    }
+    else if( strcmp( SwData.sys_name, "WINDOWS" ) == 0 )
     {
         TargSys = TS_WINDOWS;
-    } 
-    else if( strcmp( SwData.sys_name, "CHEAP_WINDOWS" ) == 0 ) 
+    }
+    else if( strcmp( SwData.sys_name, "CHEAP_WINDOWS" ) == 0 )
     {
         TargSys = TS_CHEAP_WINDOWS;
-    } 
-    else if( strcmp( SwData.sys_name, "NT" ) == 0 ) 
+    }
+    else if( strcmp( SwData.sys_name, "NT" ) == 0 )
     {
         TargSys = TS_NT;
-    } 
-    else 
+    }
+    else
     {
         TargSys = TS_OTHER;
     }
 
-    switch( TargSys ) 
+    switch( TargSys )
     {
     case TS_DOS:
         PreDefine_Macro( "MSDOS" );
@@ -273,18 +275,18 @@ local void SetTargSystem()                               /* 07-aug-90 */
         /* fall through */
     case TS_NETWARE5:
         /* no "fpr" for Netware 5.0 */
-        if( SwData.mem == SW_M_DEF ) 
+        if( SwData.mem == SW_M_DEF )
         {
             SwData.mem = SW_MS;
         }
-        if( TargSys == TS_NETWARE5 ) 
+        if( TargSys == TS_NETWARE5 )
             PreDefine_Macro( "__NETWARE__" );
         PreDefine_Macro( "__NETWARE_386__" );
-        /* 
+        /*
         //  NETWARE uses stack based calling conventions
         //  by default - silly people.
         */
-        if( !CompFlags.register_conv_set ) 
+        if( !CompFlags.register_conv_set )
         {
             CompFlags.register_conventions = 0;
         }
@@ -307,12 +309,12 @@ local void SetTargSystem()                               /* 07-aug-90 */
     case TS_WINDOWS:
         #if _CPU == 386
             PreDefine_Macro( "__WINDOWS_386__" );
-            if( !SwData.peg_fs_used ) 
+            if( !SwData.peg_fs_used )
             {
                 SwData.peg_fs_on = 0;
                 SwData.peg_fs_used = 1;
             }
-            switch( SwData.fpt ) 
+            switch( SwData.fpt )
             {
             case SW_FPT_DEF:
             case SW_FPT_EMU:
@@ -321,7 +323,7 @@ local void SetTargSystem()                               /* 07-aug-90 */
             }
             TargetSwitches |= WINDOWS | CHEAP_WINDOWS;
         #elif _CPU == 8086
-            if( !SwData.peg_ds_used ) 
+            if( !SwData.peg_ds_used )
             {
                 SwData.peg_ds_on = 1;
                 SwData.peg_ds_used = 1;
@@ -1543,7 +1545,7 @@ char *ProcessOption( struct option const *op_table, char *p, char *option_start 
                             if( c == '\0' ) break;
                             if( c == ' ' ) break;
                             if( c == '\t' ) break;
-                            #if _OS != _QNX
+                            #if (_OS != _QNX) && (_OS != _LINUX)
                                 if( c == SwitchChar ) break;
                             #endif
                             ++j;
@@ -1607,7 +1609,7 @@ char *CollectEnvOrFileName( char *str )
         ++str;
         if( ch == ' ' ) break;
         if( ch == '\t' ) break;
-        #if _OS != _QNX
+        #if (_OS != _QNX) && (_OS != _LINUX)
             if( ch == '-' ) break;
             if( ch == SwitchChar ) break;
         #endif
@@ -1640,7 +1642,7 @@ char *ReadIndirectFile()
             if( ch == '\r' || ch == '\n' ) {
                 *str = ' ';
             }
-            #if _OS != _QNX
+            #if (_OS != _QNX) && (_OS != _LINUX)
                 if( ch == 0x1A ) {      // if end of file
                     *str = '\0';        // - mark end of str
                     break;
@@ -1710,7 +1712,7 @@ local void ProcOptions( char *str )
                         if( *str == '\0' ) break;
                         if( *str == ' '  ) break;
                         if( *str == '\t'  ) break;              /* 16-mar-91 */
-                        #if _OS != _QNX
+                        #if (_OS != _QNX) && (_OS != _LINUX)
                             if( *str == SwitchChar ) break;
                         #endif
                         ++str;

@@ -580,6 +580,13 @@ static  void    CalcMemSize() {
             MemorySize = memory_available;
         }
     }
+    #elif defined( __LINUX__ )
+        if( size_requested != 0 ) {
+            MemorySize = size_requested;
+        } else {
+            MemorySize = _16M;
+        }
+        memory_available = _16M;
     #endif
     if( max_size_queried || size_queried ) {
         myitoa( (int)(memory_available/_1K), CopyStr( (char *)"Maximum WCGMEMORY=", (char *)buff ) );
