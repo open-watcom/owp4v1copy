@@ -24,15 +24,23 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  BIOS-style functions for *nix
 *
 ****************************************************************************/
 
 
-#include "banner.h"
+#include <stdio.h>
+#include "vi.h"
+#include "win.h"
+#include "keys.h"
 
-char near DATESTAMP_T[] = __TIME__;
-char near DATESTAMP_D[] = __DATE__;
-char near AUTHOR[] = banner2( "1991" );
-char near VERSIONT[] = _VI_VERSION_;
+long BIOSGetColorRegister( short a ) { return( 0 ); }
+void BIOSSetNoBlinkAttr() {}
+void BIOSSetBlinkAttr() {}
+void BIOSSetColorRegister( short reg, char r, char g, char b ) {}
+void BIOSSetCursor( char page, char row, char col ) {}
+short BIOSGetCursor( char page ) { return 0; }
+int KeyboardInit( void ) { return 0; }
+short BIOSGetKeyboard( char extended ) { return 0; }
+short BIOSKeyboardHit( char a ) { return 0; }
+void MyVioShowBuf( unsigned offset, int length ) {}

@@ -30,9 +30,6 @@
 ****************************************************************************/
 
 
-#include "banner.h"
+#include <stdio.h>
+#include "vi.h"
 
-char near DATESTAMP_T[] = __TIME__;
-char near DATESTAMP_D[] = __DATE__;
-char near AUTHOR[] = banner2( "1991" );
-char near VERSIONT[] = _VI_VERSION_;

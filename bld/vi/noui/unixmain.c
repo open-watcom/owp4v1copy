@@ -30,9 +30,40 @@
 ****************************************************************************/
 
 
-#include "banner.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <malloc.h>
+#ifdef __WATCOMC__
+#include <process.h>
+#endif
+#include "vi.h"
+#include "source.h"
+#include "stack.h"
 
-char near DATESTAMP_T[] = __TIME__;
-char near DATESTAMP_D[] = __DATE__;
-char near AUTHOR[] = banner2( "1991" );
-char near VERSIONT[] = _VI_VERSION_;
+#ifndef __WATCOMC__
+int _argc;
+char **_argv;
+#endif
+
+void main( int argc, char *argv[] )
+{
+    static char buffer[PATH_MAX];
+    argc = argc;
+#ifndef __WATCOMC__
+    _argc = argc;
+    _argv = argv;
+#endif
+    EXEName = _cmdname(buffer);
+#ifdef __WATCOMC__
+    InitialStack();
+#endif
+    VarAddGlobalStr( "OS", "linux" );
+    Comspec = getenv( "SHELL" );
+    InitializeEditor();
+#ifdef __WATCOMC__
+    FinalStack();
+#endif
+    EditMain();
+
+} /* main */

@@ -29,10 +29,26 @@
 *
 ****************************************************************************/
 
+#include <stdio.h>
+#include "vi.h"
+#include "mouse.h"
 
-#include "banner.h"
+/*
+ * SetMouseSpeed - set mouse movement speed
+ */
+void SetMouseSpeed( int speed ) {}
 
-char near DATESTAMP_T[] = __TIME__;
-char near DATESTAMP_D[] = __DATE__;
-char near AUTHOR[] = banner2( "1991" );
-char near VERSIONT[] = _VI_VERSION_;
+/*
+ * PollMouse - poll the mouse for it's state
+ */
+void PollMouse( int *status, int *row, int *col ) {}
+
+/*
+ * InitMouse - initialize the mouse
+ */
+void InitMouse( void ) {}
+
+/*
+ * FiniMouse - done with the mouse
+ */
+void FiniMouse( void ) {}

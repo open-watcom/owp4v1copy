@@ -206,7 +206,7 @@ int GenerateConfiguration( char *fname, bool is_cmdline )
         setvbuf( f, buff, _IOFBF, VBUF_SIZE );
     }
     MyFprintf( f, "#\n# WATCOM %s %s configuration file\n# %s\n#\n",
-                TITLE, VERSION, AUTHOR );
+                TITLE, VERSIONT, AUTHOR );
     if( is_cmdline ) {
         GetDateTimeString( token );
         MyFprintf( f,"# File generated on %s\n#\n", token );

@@ -8,7 +8,11 @@ inc_dirs = $(rcsdll_dir);$(posix_dir)/h;$(inc_dirs_trmem);$(watcom_dir)/h;
 inc_dirs_dos = $(curses_dir)/h;
 !endif
 
+!ifdef prebuild
+inc_dirs_linux = $(ui_dir)/h;$(ui_dir)/unix/h;
+!else
 inc_dirs_linux = $(ncurses_dir)/h;$(ui_dir)/h;$(ui_dir)/unix/h;
+!endif
 
 winstuff = $(watcom_dir)/h;$(sdk_dir)/misc;$(wpi_dir)/h;$(datactl_dir);
 

@@ -654,7 +654,7 @@ int EnterHexKey( void )
  */
 int DoVersion( void )
 {
-    Message1( "\"%s\" v%s  %s %s", TITLE,VERSION, DATESTAMP_T, DATESTAMP_D );
+    Message1( "\"%s\" v%s  %s %s", TITLE,VERSIONT, DATESTAMP_T, DATESTAMP_D );
     Message2( "%s", AUTHOR );
     return( DO_NOT_CLEAR_MESSAGE_WINDOW );
 

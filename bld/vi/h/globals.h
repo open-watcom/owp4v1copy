@@ -36,7 +36,7 @@
 /* strings */
 extern char near TITLE[];
 extern char near AUTHOR[];
-extern char near VERSION[];
+extern char near VERSIONT[];
 extern char near DATESTAMP_T[];
 extern char near DATESTAMP_D[];
 extern char near MSG_CHARACTERS[];

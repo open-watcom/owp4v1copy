@@ -95,7 +95,7 @@ libs =               &
 .c: ../lib
 
 .def.lbc:
-        $(vi) -k ":source ../def2lbc.vi ../lib/$[. $*\n"
+        $(vi) -s ../def2lbc.vi -p"../lib/$[. $*"
 
 .lbc.lib:
         $(librarian) -b -c -n -io -ii $@ @$<

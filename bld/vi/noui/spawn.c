@@ -24,15 +24,29 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  spawn a command with proper screen and keyboard restore
 *
 ****************************************************************************/
 
+#include <stdio.h>
+#include <stdlib.h>
+#include "vi.h"
 
-#include "banner.h"
+char *ExeExtensions[] = {""};
+int ExeExtensionCount = sizeof( ExeExtensions ) / sizeof( char * );
 
-char near DATESTAMP_T[] = __TIME__;
-char near DATESTAMP_D[] = __DATE__;
-char near AUTHOR[] = banner2( "1991" );
-char near VERSIONT[] = _VI_VERSION_;
+char *InternalCommands[] = {
+    ""
+};
+
+int InternalCommandCount = sizeof( InternalCommands ) / sizeof( char * );
+
+void ResetSpawnScreen( void ) {}
+
+int MySpawn( char *cmd )
+{
+    int rc;
+
+    rc = system( cmd );
+    return( rc );
+}
