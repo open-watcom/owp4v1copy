@@ -3,6 +3,7 @@
 # Nested macro substitution
 #
 temp0 = HELLO
+temp0 = $(temp0) # Used to result in excessive nesting failure.
 temp1 = $(temp0)
 temp2 =
 temp3 = $(temp2)

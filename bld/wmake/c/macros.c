@@ -1217,7 +1217,7 @@ STATIC char *DeMacroName( char *text, const char *name )
     VECSTR  macroname;
     int     lengthToClose;
 
-    assert( name != NULL && text != NULL && Glob.microsoft );
+    assert( name != NULL && text != NULL );
 
     current = text;
     oldptr  = text;
@@ -1301,21 +1301,9 @@ extern void DefMacro( const char *name )
 
     assert( IsMacroName( name ) );
 
-    /*
-     *  This is needed because in Microsoft defining a macro
-     *  can have a recursive call defined variable is part of the
-     *  macro definition or else an infinite loop might result
-     *  ie. TEMP = $(TEMP) would result in an infinite loop
-     *      so we need to force expansion of $(TEMP) if it is microsoft
-     *      option
-     */
-    if( Glob.microsoft ) {
-        temp  = PartDeMacro( FALSE );
-        value = DeMacroName( temp, name );
-        FreeSafe( temp );
-    } else {
-        value = PartDeMacro( FALSE );
-    }
+    temp  = PartDeMacro( FALSE );
+    value = DeMacroName( temp, name );
+    FreeSafe( temp );
 
     if( *name == ENVVAR || (Glob.microsoft && getenv( name ) != NULL ) ) {
         if( *name != ENVVAR ) {

@@ -164,7 +164,7 @@ echo # ---------------------------
 echo #   Macro Test 8
 echo # ---------------------------
 
-%1 -ms -h -f MACRO08 > tmp.out 2>&1
+%1 -h -f MACRO08 > tmp.out 2>&1
 diff -b MACRO08.CMP tmp.out
 if errorlevel 1 goto err8
     @echo # MACRO08 successful

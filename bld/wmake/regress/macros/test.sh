@@ -100,7 +100,7 @@ do_check
 
 TEST=8
 print_header
-$1 -h -ms -f macro08 -a > tmp.out 2>&1
+$1 -h -f macro08 > tmp.out 2>&1
 diff -b macro08.cmp tmp.out
 do_check
 
