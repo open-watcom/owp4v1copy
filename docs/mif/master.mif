@@ -234,13 +234,13 @@ prepare_whpcvt_opts : .PROCEDURE
 !ifeq dotarget os2
     @%append $(optfile_whpcvt) -ipf
     @%append $(optfile_whpcvt) -tl
-    @%append $(optfile_whpcvt) "$(book_title)"
+    @%append $(optfile_whpcvt) $(book_title)
 !else ifeq dotarget dos
     @%append $(optfile_whpcvt) -ib
     @%append $(optfile_whpcvt) -dt
-    @%append $(optfile_whpcvt) "Table of Contents"
+    @%append $(optfile_whpcvt) Table of Contents
     @%append $(optfile_whpcvt) -ds
-    @%append $(optfile_whpcvt) "$(book_title)"
+    @%append $(optfile_whpcvt) $(book_title)
     @%append $(optfile_whpcvt) -t
     @%append $(optfile_whpcvt) -e
     @%append $(optfile_whpcvt) -lk
@@ -253,7 +253,7 @@ prepare_whpcvt_opts : .PROCEDURE
 !else ifeq dotarget html
     @%append $(optfile_whpcvt) -html
     @%append $(optfile_whpcvt) -tl
-    @%append $(optfile_whpcvt) "$(book_title)"
+    @%append $(optfile_whpcvt) $(book_title)
 !else
     @%append $(optfile_whpcvt) -rtf
     @%append $(optfile_whpcvt) -t
