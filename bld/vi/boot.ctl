@@ -17,4 +17,5 @@ set PROJDIR=<CWD>
     mkdir <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
     wmake -h -f ../bootmake
+    <CPCMD> vi.exe <DEVDIR>/build/bin/vi
     cdsay <PROJDIR>
