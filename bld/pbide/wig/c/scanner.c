@@ -171,7 +171,7 @@ int compKeywords( char *p1, keyword *p2 ) {
     return( stricmp( p1, p2->key ) );
 }
 
-id_type checkKeyWord( char *text ) {
+id_type checkKeyWord( const char *text ) {
 /***********************************/
 
     keyword             *item;

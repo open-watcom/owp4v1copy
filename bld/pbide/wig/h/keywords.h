@@ -43,7 +43,7 @@ typedef struct keyword {
 } keyword;
 
 
-extern keyword  Statements[];
+extern const keyword Statements[];
 extern keyword  DataTypes[];
 
 extern int      IsPtrType( id_type );

@@ -39,7 +39,7 @@
 #include "ytab.h"
 #include "keywords.h"
 
-keyword         Statements[] = {
+const keyword Statements[] = {
         NULL, "end",            ST_END,         FALSE,
         NULL, "forward",        ST_FORWARD,     FALSE,
         NULL, "from",           ST_FROM,        FALSE,
