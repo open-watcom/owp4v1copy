@@ -762,3 +762,55 @@ extern void DUIRemoveBreak( void *bp )
     RemovePoint( bp );
 }
 
+extern void SetMADMenuItems( void )
+/**********************************/
+{
+}
+
+extern void FPUChangeOptions( void )
+/**********************************/
+{
+}
+
+extern void MMXChangeOptions( void )
+/**********************************/
+{
+}
+
+bool DUIImageLoaded( image_entry *image, bool load,
+                     bool already_stopping, bool *force_stop )
+/************************************************************/
+{
+    char buff[256];
+
+    already_stopping=already_stopping;
+    force_stop= force_stop;
+    if( load ) {
+        sprintf( buff, "%s '%s'", LIT( DLL_Loaded ), image->image_name );
+    } else {
+        sprintf( buff, "%s '%s'", LIT( DLL_UnLoaded ), image->image_name );
+    }
+    DUIDlgTxt( buff );
+    return( FALSE );
+}
+
+void DUICopySize( void *cookie, long size )
+/***************************/
+{
+    size = size;
+    cookie = cookie;
+}
+
+void DUICopyCopied( void *cookie, long size )
+/*****************************/
+{
+    size = size;
+    cookie = cookie;
+}
+
+bool DUICopyCancelled( void * cookie )
+/************************************/
+{
+    cookie = cookie;
+    return( FALSE );
+}

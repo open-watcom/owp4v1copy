@@ -11,11 +11,12 @@ sys_windowed = 1
 dll = 1
 extra_c_flags= -br
 
-all1 : $(exe_name) wd.lib .SYMBOLIC
-        @%null
+all : dve.exe .SYMBOLIC
 
-sysobjs = ntstub.obj ntfilio.obj winlkup.obj winchk.obj ntcmd.obj ntfinfo.obj stubdb.obj
+sysobjs = ntstub.obj ntfilio.obj winlkup.obj winchk.obj ntcmd.obj ntfinfo.obj
 
 !include ../../master.mif
 
-extra_l_flags_nt = lib wd.lib
+dve.exe : eraseall.obj $(resfile) stubdb.obj wd.lib $(__MAKEFILES__)
+        $(linker) sys nt name $^@ debug all op symf,map file stubdb.obj lib wd.lib
+        $(rc) $(rc_flags) -k $(resfile) dve.exe

@@ -370,7 +370,7 @@ $(exe_name) : eraseall.obj $(resfile) fingmsg.obj $(objs) $(sysobjs) $(libs) $(l
 !endif
 !endif
 
-wd.lib : eraseall.obj $(engine_objs) $(sysobjs)
+wd.lib : eraseall.obj litdef.gh $(engine_objs) $(sysobjs)
         @%create tmp.lbc
         @for %i in ($(engine_objs) $(sysobjs)) do @%append tmp.lbc +%i
         $(librarian) -b -n wd.lib @tmp.lbc
@@ -531,7 +531,7 @@ rcfiles = &
 wvui.res : $(hdir)/wvui.rc auistr.gh _guimsgs.gh $(rcfiles) .autodepend
         $(rc_aui) -ad -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
 
-wvntdll.res : $(hdir)/strings.rc .autodepend
+wvntdll.res : $(hdir)/strings.rc litdef.gh .autodepend
         $(rc) $(rc_flags) -r -ad -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
 
 wvwin.res : $(hdir)/wvwin.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
