@@ -852,7 +852,6 @@ static int write_pub()
         sym = (asm_sym *)first->data;
         if( sym->state == SYM_UNDEFINED ) {
             AsmErr( SYMBOL_S_NOT_DEFINED, sym->name );
-            curr = curr->next;
             return( ERROR );
         }
         seg = sym->segidx;

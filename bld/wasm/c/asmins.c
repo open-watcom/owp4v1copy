@@ -704,9 +704,6 @@ static int mem( int i )
     if( !ConstantOnly )
 #endif
     {
-#ifdef _WASM_
-        Label_Idx = -1;  // used in check_assume()      // JBS 2000/04/06
-#endif
         if( mem2code( ss, index, base ) == ERROR ) {
             return( ERROR );
         }
