@@ -80,6 +80,21 @@ if errorlevel 1 goto err5
 
 :test6
 
+echo # ---------------------------
+echo #   Miscellaneous Test 6
+echo # ---------------------------
+
+%1 -a -c -h -f MISC06 > tmp.out 2>&1
+diff -b MISC06.CMP tmp.out
+if errorlevel 1 goto err6
+    @echo # MISC06 successful
+    goto test7
+:err6
+    @echo ## MISC ## >> %2
+    @echo Error: MISC #6 unsuccessful!!! | tee -a %2
+
+:test7
+
 goto done
 :usage
 echo usage: %0 prgname errorfile

@@ -1420,13 +1420,6 @@ typedef struct {
     BIT bVerbose : 1;
 } rm_flags;
 
-STATIC RET_T handleRMSyntaxError( void )
-/***************************************/
-{
-    PrtMsg( ERR| SYNTAX_ERROR_IN, dosInternals[ COM_RM ] );
-    return( RET_ERROR );
-}
-
 STATIC RET_T getRMArgs( const char *line, rm_flags *flags, const char **pfile )
 /******************************************************************************
  * returns RET_WARN when there are no more arguments
@@ -1453,7 +1446,7 @@ STATIC RET_T getRMArgs( const char *line, rm_flags *flags, const char **pfile )
                         flags->bVerbose = TRUE;
                         break;
                     default:
-                        return( handleRMSyntaxError() );
+                        return( RET_ERROR );
                 }
                 p++;
             }
@@ -1475,37 +1468,38 @@ STATIC RET_T getRMArgs( const char *line, rm_flags *flags, const char **pfile )
     return( RET_SUCCESS );
 }
 
-STATIC BOOLEAN doRM( const char *file, rm_flags *flags )
-/*******************************************************
- */
+STATIC BOOLEAN doRM( const char *file, const rm_flags *flags )
+/************************************************************/
 {
     int rv;
 
     rv = unlink( file );
-    if( 0 != rv && flags->bForce ) {
+    if( 0 != rv && flags->bForce && EACCES == errno ) {
         unsigned attribute;
 
         _dos_getfileattr( file, &attribute );
-        if( attribute & _A_RDONLY ) {
+        if( _A_RDONLY == ( attribute & ( _A_RDONLY | _A_VOLID | _A_SUBDIR ) ) ) {
             _dos_setfileattr( file, _A_NORMAL );
             rv = unlink( file );
         }
     }
-    if( 0 != rv && !flags->bForce ) {
+    if( flags->bForce && ENOENT == errno )
+        rv = 0;
+    if( 0 != rv )
         PrtMsg( ERR| SYSERR_DELETING_FILE, file );
-    } else if( flags->bVerbose ) {
+    else if( flags->bVerbose && ENOENT != errno )
         PrtMsg( INF| DELETING_FILE, file );
-    }
 
     return( 0 == rv );
 }
 
-STATIC RET_T handleRM( char *cmd )
-/*********************************
+STATIC RET_T handleRM( const char *cmdname, const char *cmd )
+/************************************************************
  * RM [-f -v] <file> ...
  *
  * -f   Force deletion of read-only files.
  * -v   Verbose operation.
+ * Other flags are handled by rm.exe
  */
 {
     rm_flags    flags;
@@ -1513,25 +1507,26 @@ STATIC RET_T handleRM( char *cmd )
     const char  *pfname;
 
     rt = getRMArgs( cmd, &flags, &pfname );
-    while( RET_SUCCESS == rt ) {
-        if( strpbrk( pfname, WILD_METAS ) == NULL ) {
-            doRM( pfname, &flags );
+    if( RET_SUCCESS == rt ) {
+        do {
+            if( strpbrk( pfname, WILD_METAS ) == NULL )
+                if( !doRM( pfname, &flags ) )
+                    return( RET_ERROR );
+            else {
+                const char    *dfile;
 
-        } else {
-            const char    *dfile;
-
-            dfile = DoWildCard( pfname );
-            if( dfile && strcmp(dfile,pfname) ) {
-                do {
-                    if( !doRM( dfile, &flags ) )
-                        return( RET_ERROR );
-
-                } while( dfile = DoWildCard( NULL ) );
+                dfile = DoWildCard( pfname );
+                if( dfile && strcmp( dfile, pfname ) ) {
+                    do {
+                        if( !doRM( dfile, &flags ) )
+                            return( RET_ERROR );
+                    } while( dfile = DoWildCard( NULL ) );
+                }
             }
-        }
+        } while( RET_SUCCESS == ( rt = getRMArgs( NULL, NULL, &pfname ) ) );
+    } else
+        rt = mySystem( cmdname, cmd );
 
-        rt = getRMArgs( NULL, NULL, &pfname );
-    }
     if( RET_WARN == rt )
         rt = RET_SUCCESS;
 
@@ -1726,7 +1721,7 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
         case COM_FOR:   my_ret = handleFor( cmd );          break;
         case COM_IF:    my_ret = handleIf( cmd );           break;
 #if !defined( __UNIX__ )
-        case COM_RM:    my_ret = handleRM( cmd );           break;
+        case COM_RM:    my_ret = handleRM( cmdname, cmd );  break;
 #endif
 #if defined( __OS2__ ) || defined( __NT__ ) || defined( __UNIX__ )
         case COM_CD:    /* fall through */
