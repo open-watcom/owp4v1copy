@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Font handling.
 *
 ****************************************************************************/
 
-
-/*
-FONT:  Font handling
-*/
 
 #include "font.h"
 #include "hcerrors.h"
@@ -275,6 +270,7 @@ void HFFont::setFont( uint_16 font )
 uint_16 HFFont::selectFont( short index, int lnum, char const fname[] )
 {
     uint_16 result = _curNum;
+    int     i;
 
     // First, find the index of the font.
     FontName    *current = _firstName;
@@ -289,7 +285,7 @@ uint_16 HFFont::selectFont( short index, int lnum, char const fname[] )
     // Now, find the first font descriptor with that index.
     _curDesc->_index = current->_sysNum;
     FontDesc    *newdesc = _firstDesc;
-    for( int i=0; newdesc != NULL; newdesc = newdesc->_nextDesc, ++i ){
+    for( i=0; newdesc != NULL; newdesc = newdesc->_nextDesc, ++i ){
         if( newdesc->_index != _curDesc->_index ) continue;
         if( newdesc->_flags != _curDesc->_flags ) continue;
         if( newdesc->_halfPoints != _curDesc->_halfPoints ) continue;

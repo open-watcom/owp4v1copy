@@ -167,6 +167,8 @@ void WEXPORT WFileName::merge( const char* name )
 
 void WEXPORT WFileName::relativeTo( const char* f )
 {
+    int     i;
+
     _splitpath( *this, _x.drive, _x.dir, _x.fname, _x.ext );
     if( _x.dir[0] == '\\' ) {
         FullName        s;
@@ -174,7 +176,7 @@ void WEXPORT WFileName::relativeTo( const char* f )
         if( s.dir[0] == '\\' && strieq( s.drive, _x.drive ) ) {
             _x.drive[0] = '\0';
             int b = 0;
-            for( int i=1; _x.dir[i] != '\0' && s.dir[i] != '\0'; i++ ) {
+            for( i=1; _x.dir[i] != '\0' && s.dir[i] != '\0'; i++ ) {
                 if( tolower( _x.dir[i] ) != tolower( s.dir[i] ) ) break;
                 if( s.dir[i] == '\\' ) b = i;
             }
@@ -203,7 +205,9 @@ void WEXPORT WFileName::absoluteTo( const char* f )
 {
 //
     int icount = size();
-    for( int i=0; i<icount; i++ ) {
+    int i, j, k;
+
+    for( i=0; i<icount; i++ ) {
         if( strncmp( &(*this)[i], "$(", 2 ) == 0 ) {
             return;
         }
@@ -219,13 +223,13 @@ void WEXPORT WFileName::absoluteTo( const char* f )
     if( _x.dir[0] == '\\' ) {
         strcpy( s.dir, _x.dir );
     } else if( _x.dir[0] == '.' ) {
-        for( int i=0; strnicmp( &_x.dir[i], "..\\", 3 )==0; i += 3 );
+        for( i=0; strnicmp( &_x.dir[i], "..\\", 3 )==0; i += 3 );
         int slen = strlen( s.dir );
         if( slen > 0 && s.dir[ slen-1 ] == '\\' ) {
             s.dir[ slen-1 ] = '\0';
         }
-        for( int j=0; j < i; j += 3 ) {
-            for( int k=strlen( s.dir ); k>0; k-- ) {
+        for( j=0; j < i; j += 3 ) {
+            for( k=strlen( s.dir ); k>0; k-- ) {
                 if( s.dir[k] == '\\' ) break;
             }
             s.dir[k] = '\0';

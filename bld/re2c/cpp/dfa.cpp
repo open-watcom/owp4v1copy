@@ -27,31 +27,31 @@ void prtCh(ostream &o, uchar c){
     case '\a': o << "\\a"; break;
     case '\\': o << "\\\\"; break;
     default:
-	if(isprint(oc))
-	    o << (char) oc;
-	else
-	    o << '\\' << octCh(c/64) << octCh(c/8) << octCh(c);
+    if(isprint(oc))
+        o << (char) oc;
+    else
+        o << '\\' << octCh(c/64) << octCh(c/8) << octCh(c);
     }
 }
 
 void printSpan(ostream &o, uint lb, uint ub){
     if(lb > ub)
-	o << "*";
+    o << "*";
     o << "[";
     if((ub - lb) == 1){
-	prtCh(o, lb);
+    prtCh(o, lb);
     } else {
-	prtCh(o, lb);
-	o << "-";
-	prtCh(o, ub-1);
+    prtCh(o, lb);
+    o << "-";
+    prtCh(o, ub-1);
     }
     o << "]";
 }
 
 uint Span::show(ostream &o, uint lb){
     if(to){
-	printSpan(o, lb, ub);
-	o << " " << to->label << "; ";
+    printSpan(o, lb, ub);
+    o << " " << to->label << "; ";
     }
     return ub;
 }
@@ -59,17 +59,17 @@ uint Span::show(ostream &o, uint lb){
 ostream& operator<<(ostream &o, const State &s){
     o << "state " << s.label;
     if(s.rule)
-	o << " accepts " << s.rule->accept;
+    o << " accepts " << s.rule->accept;
     o << "\n";
     uint lb = 0;
     for(uint i = 0; i < s.go.nSpans; ++i)
-	lb = s.go.span[i].show(o, lb);
+    lb = s.go.span[i].show(o, lb);
     return o;
 }
 
 ostream& operator<<(ostream &o, const DFA &dfa){
     for(State *s = dfa.head; s; s = s->next)
-	o << s << "\n\n";
+    o << s << "\n\n";
     return o;
 }
 
@@ -85,22 +85,22 @@ State::~State(){
 
 static Ins **closure(Ins **cP, Ins *i){
     while(!isMarked(i)){
-	mark(i);
-	*(cP++) = i;
-	if(i->i.tag == FORK){
-	    cP = closure(cP, i + 1);
-	    i = (Ins*) i->i.link;
-	} else if(i->i.tag == GOTO){
-	    i = (Ins*) i->i.link;
-	} else
-	    break;
+    mark(i);
+    *(cP++) = i;
+    if(i->i.tag == FORK){
+        cP = closure(cP, i + 1);
+        i = (Ins*) i->i.link;
+    } else if(i->i.tag == GOTO){
+        i = (Ins*) i->i.link;
+    } else
+        break;
     }
     return cP;
 }
 
 struct GoTo {
-    Char	ch;
-    void	*to;
+    Char    ch;
+    void    *to;
 };
 
 DFA::DFA(Ins *ins, uint ni, uint lb, uint ub, Char *rep)
@@ -116,50 +116,50 @@ DFA::DFA(Ins *ins, uint ni, uint lb, uint ub, Char *rep)
     toDo = NULL;
     findState(work, closure(work, &ins[0]) - work);
     while(toDo){
-	State *s = toDo;
-	toDo = s->link;
+    State *s = toDo;
+    toDo = s->link;
 
-	Ins **cP, **iP, *i;
-	uint nGoTos = 0;
+    Ins **cP, **iP, *i;
+    uint nGoTos = 0, j;
 
-	s->rule = NULL;
-	for(iP = s->kernel; i = *iP; ++iP){
-	    if(i->i.tag == CHAR){
-		for(Ins *j = i + 1; j < (Ins*) i->i.link; ++j){
-		    if(!(j->c.link = goTo[j->c.value - lb].to))
-			goTo[nGoTos++].ch = j->c.value;
-		    goTo[j->c.value - lb].to = j;
-		}
-	    } else if(i->i.tag == TERM){
-		if(!s->rule || ((RuleOp*) i->i.link)->accept < s->rule->accept)
-		    s->rule = (RuleOp*) i->i.link;
-	    }
-	}
+    s->rule = NULL;
+    for(iP = s->kernel; i = *iP; ++iP){
+        if(i->i.tag == CHAR){
+        for(Ins *j = i + 1; j < (Ins*) i->i.link; ++j){
+            if(!(j->c.link = goTo[j->c.value - lb].to))
+            goTo[nGoTos++].ch = j->c.value;
+            goTo[j->c.value - lb].to = j;
+        }
+        } else if(i->i.tag == TERM){
+        if(!s->rule || ((RuleOp*) i->i.link)->accept < s->rule->accept)
+            s->rule = (RuleOp*) i->i.link;
+        }
+    }
 
-	for(uint j = 0; j < nGoTos; ++j){
-	    GoTo *go = &goTo[goTo[j].ch - lb];
-	    i = (Ins*) go->to;
-	    for(cP = work; i; i = (Ins*) i->c.link)
-		cP = closure(cP, i + i->c.bump);
-	    go->to = findState(work, cP - work);
-	}
+    for(j = 0; j < nGoTos; ++j){
+        GoTo *go = &goTo[goTo[j].ch - lb];
+        i = (Ins*) go->to;
+        for(cP = work; i; i = (Ins*) i->c.link)
+        cP = closure(cP, i + i->c.bump);
+        go->to = findState(work, cP - work);
+    }
 
-	s->go.nSpans = 0;
-	for(j = 0; j < nc;){
-	    State *to = (State*) goTo[rep[j]].to;
-	    while(++j < nc && goTo[rep[j]].to == to);
-	    span[s->go.nSpans].ub = lb + j;
-	    span[s->go.nSpans].to = to;
-	    s->go.nSpans++;
-	}
+    s->go.nSpans = 0;
+    for(j = 0; j < nc;){
+        State *to = (State*) goTo[rep[j]].to;
+        while(++j < nc && goTo[rep[j]].to == to);
+        span[s->go.nSpans].ub = lb + j;
+        span[s->go.nSpans].to = to;
+        s->go.nSpans++;
+    }
 
-	for(j = nGoTos; j-- > 0;)
-	    goTo[goTo[j].ch - lb].to = NULL;
+    for(j = nGoTos; j-- > 0;)
+        goTo[goTo[j].ch - lb].to = NULL;
 
-	s->go.span = new Span[s->go.nSpans];
-	memcpy((char*) s->go.span, (char*) span, s->go.nSpans*sizeof(Span));
+    s->go.span = new Span[s->go.nSpans];
+    memcpy((char*) s->go.span, (char*) span, s->go.nSpans*sizeof(Span));
 
-	(void) new Match(s);
+    (void) new Match(s);
 
     }
     delete [] work;
@@ -170,8 +170,8 @@ DFA::DFA(Ins *ins, uint ni, uint lb, uint ub, Char *rep)
 DFA::~DFA(){
     State *s;
     while(s = head){
-	head = s->next;
-	delete s;
+    head = s->next;
+    delete s;
     }
 }
 
@@ -180,33 +180,34 @@ void DFA::addState(State **a, State *s){
     s->next = *a;
     *a = s;
     if(a == tail)
-	tail = &s->next;
+    tail = &s->next;
 }
 
 State *DFA::findState(Ins **kernel, uint kCount){
     Ins **cP, **iP, *i;
+    State *s;
 
     kernel[kCount] = NULL;
 
     cP = kernel;
     for(iP = kernel; i = *iP; ++iP){
-	 if(i->i.tag == CHAR || i->i.tag == TERM){
-	     *cP++ = i;
-	} else {
-	     unmark(i);
-	}
+     if(i->i.tag == CHAR || i->i.tag == TERM){
+         *cP++ = i;
+    } else {
+         unmark(i);
+    }
     }
     kCount = cP - kernel;
     kernel[kCount] = NULL;
 
-    for(State *s = head; s; s = s->next){
-	 if(s->kCount == kCount){
-	     for(iP = s->kernel; i = *iP; ++iP)
-		 if(!isMarked(i))
-		     goto nextState;
-	     goto unmarkAll;
-	 }
-	 nextState:;
+    for(s = head; s; s = s->next){
+     if(s->kCount == kCount){
+         for(iP = s->kernel; i = *iP; ++iP)
+         if(!isMarked(i))
+             goto nextState;
+         goto unmarkAll;
+     }
+     nextState:;
     }
 
     s = new State;
@@ -219,7 +220,7 @@ State *DFA::findState(Ins **kernel, uint kCount){
 
 unmarkAll:
     for(iP = kernel; i = *iP; ++iP)
-	 unmark(i);
+     unmark(i);
 
     return s;
 }

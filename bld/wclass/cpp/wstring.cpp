@@ -385,7 +385,8 @@ int WEXPORT WString::trim( bool beg, bool end )
     if( beg ) {
         if( _value != NULL ) {
             int len = strlen( _value );
-            for( int i=0; i<len; i++ ) {
+            int i;
+            for( i=0; i<len; i++ ) {
                 if( _value[ i ] != ' ' ) break;
             }
             if( i ) chop( i );
@@ -394,7 +395,8 @@ int WEXPORT WString::trim( bool beg, bool end )
     if( end ) {
         if( _value != NULL ) {
             int len = strlen( _value );
-            for( int i=len; i>0; i-- ) {
+            int i;
+            for( i=len; i>0; i-- ) {
                 if( _value[ i-1 ] != ' ' ) break;
             }
             if( i-len ) chop( i-len );

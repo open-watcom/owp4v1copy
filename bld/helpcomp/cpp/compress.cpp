@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  WinHelp-style LZ77 compression.
 *
 ****************************************************************************/
 
-
-/*
-COMPRESS:  WinHelp-style LZ77 compression
-*/
 
 #include "compress.h"
 #include <string.h>
@@ -200,10 +195,12 @@ void CompReader::reset( CompWriter *riter, int nodump )
 
 void CompReader::shuffle()
 {
+    int     i;
+
     memmove( _buffer, _buffer+_first, _last-_first );
     HCTick();
 
-    for( int i=0; i<_last-_first && i<_current; ++i ){
+    for( i=0; i<_last-_first && i<_current; ++i ){
     if( _indices[i+_first] < _first ){
         _indices[i] = HTABLE_NIL;
     } else {

@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Scanning of .rtf files.
 *
 ****************************************************************************/
 
-
-/*
-SCANNING:  .RTF file scanning
-*/
 
 #include <ctype.h>
 #include <stdlib.h>
@@ -174,7 +169,9 @@ TokenTypes Scanner::handleSlash( Token * tok )
 int Scanner::isSpecial( char c )
 {
     static char const specials[] = "-:\\_{|}";
-    for( int i=0; i<7; i++ ){
+    int     i;
+
+    for( i=0; i<7; i++ ){
     if( c == specials[i] ) break;
     }
     return specials[i] != '\0';
@@ -206,10 +203,11 @@ void Scanner::pullCommand( Token * tok )
 {
     char    current;
     char    num_string[7];
+    int     i;
 
     tok->_text[0] = (char) nextch( );
 
-    for( int i=1; i<BUF_SIZE-1; i++ ){
+    for( i=1; i<BUF_SIZE-1; i++ ){
     current = nextch( );
 
     if( !islower( current ) ) break;
@@ -280,9 +278,11 @@ void Scanner::pullText( Token * tok )
 
 void Scanner::pullHex( Token * tok )
 {
-    char result[3];
-    char current;
-    for(int i=0; i<2; ++i){
+    char    result[3];
+    char    current;
+    int     i;
+
+    for( i=0; i<2; ++i ) {
     current = nextch( );
     if( !isxdigit( current ) ){
         break;

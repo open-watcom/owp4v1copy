@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Parsing of .hpj files.
 *
 ****************************************************************************/
 
-
-/*
-HPJREAD:  .HPJ file parsing
-*/
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -182,8 +177,10 @@ int HPJScanner::getLine()
 
 char *HPJScanner::getArg( int start_pos )
 {
+    int     i;
+
     // Eat whitespace.
-    for( int i = start_pos; isspace( _curLine[i] ) ; i++ ){
+    for( i = start_pos; isspace( _curLine[i] ) ; i++ ){
     if( _curLine[i] == '\0' ) break;
     }
 

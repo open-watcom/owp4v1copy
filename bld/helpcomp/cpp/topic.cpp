@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Write help text in .hlp format.
 *
 ****************************************************************************/
 
-
-/*
-TOPIC:  write help text in .HLP format
-*/
 
 #include <string.h>
 #include "topic.h"
@@ -679,6 +674,8 @@ uint_32 TextHeader::attrData( int index )
 void TextHeader::dumpTo( TopicLink *dest )
 {
     char    *location = dest->_myData;
+    int     i;
+
     *( (uint_16*) location ) = (uint_16) ( (2*_headerSize) | 0x8000 );
     location += sizeof( uint_16 );
     if( _textSize < INT_SMALL_LIMIT ){
@@ -693,7 +690,7 @@ void TextHeader::dumpTo( TopicLink *dest )
     location += sizeof( uint_32 );
 
     // Print out the paragraph attributes.
-    for( int i=0; i < TOP_BORDER; i++ ){
+    for( i=0; i < TOP_BORDER; i++ ){
     if( _flags & _parBits[i] ){
         if( _spacing[i] & 0x1 ){
         *((uint_16*) location) = _spacing[i];

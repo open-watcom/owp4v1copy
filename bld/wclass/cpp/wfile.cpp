@@ -160,7 +160,9 @@ WString& WEXPORT WFile::gets( WString& str )
 
 void WEXPORT WFile::gets( char* str, int len )
 {
-    for( int i=0; !_eof && i<len; i++ ) {
+    int     i;
+
+    for( i=0; !_eof && i<len; i++ ) {
         str[i] = getch();
         if( str[i] == CR || str[i] == LF || str[i] == NC ) {
             ungetch( str[i] );
@@ -172,8 +174,10 @@ void WEXPORT WFile::gets( char* str, int len )
 
 void WEXPORT WFile::gets_exact( char* str, int len )
 {
+    int     i;
+
     // read exactly len bytes -- don't stop for separator characters ( CR/LF )
-    for( int i=0; !_eof && i<len; i++ ) {
+    for( i=0; !_eof && i<len; i++ ) {
         str[i] = getch();
         if( str[i] == NC ) {
             ungetch( str[i] );

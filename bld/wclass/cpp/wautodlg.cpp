@@ -78,6 +78,7 @@ void WAutoDialog::initialize() {
     WText       *t;
     WPoint      avg;
     WPoint      max;
+    int         i;
 
     int x = WSystemMetrics::dialogFrameWidth();
     int y = WSystemMetrics::dialogFrameHeight();
@@ -86,7 +87,7 @@ void WAutoDialog::initialize() {
     int t_w = 0;
     int t_h = 0;
     int icount = _prompts->count();
-    for( int i = 0; i < icount; i++ ) {
+    for( i = 0; i < icount; i++ ) {
         updateExtents( _prompts->cStringAt( i ), &t_w, &t_h );
     }
 
