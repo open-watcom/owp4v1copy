@@ -34,7 +34,7 @@
 !inject dosinite.obj                d32i     nci
 !inject efcvt.obj    d16c d16i d32c d32i ncc nci wnc wni axp ntp op
 !inject efgfmt.obj   d16c d16i d32c d32i ncc nci wnc wni axp ntp op
-#!inject emustub.obj  d16c                        wnc
+!inject emustub.obj  d16c                        wnc
 !inject evalpoly.obj d16c d16i d32c d32i ncc nci wnc wni axp ntp op
 !inject exp.obj      d16c      d32c      ncc     wnc     axp ntp op
 !inject exp387.obj        d16i      d32i     nci     wni
