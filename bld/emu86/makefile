@@ -24,11 +24,11 @@ incfiles = &
 .c.obj:
     $(libcomp286) $[* $(cflags)
 
-.c.qbj:
-    $(libcomp286) $[* $(cflags) -i$(new_qnx_h) -fo=.qbj -DQNX16 -bt=QNX
+#.c.qbj:
+#    $(libcomp286) $[* $(cflags) -i$(new_qnx_h) -fo=.qbj -DQNX16 -bt=QNX
 
-.c.rbj:
-    $(libcomp286) $[* $(cflags) -i$(new_qnx_h) -fo=.rbj -DQNX32 -bt=QNX
+#.c.rbj:
+#    $(libcomp286) $[* $(cflags) -i$(new_qnx_h) -fo=.rbj -DQNX32 -bt=QNX
 
 all: .SYMBOLIC noemu87.lib emu87.lib emuos2.lib emuwin.lib &
                 emu87_16.qnx emu87_32.qnx emu87.qnx

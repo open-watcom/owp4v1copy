@@ -32,8 +32,8 @@ emu387.obj: emu387.asm $(INCS)
 #emu387w.obj: emu387.asm $(INCS)
 #    wasm /d_OS=_PLDT /d__WIN387__ /I$(mathlib_dir)\h /I$(emu386) $[@
 
-emu387.qbj: emu387.asm $(INCS)
-    *wasm -3 -bt=qnx /dOFFSET32=OFFSET /dSEGMENTED /d_OS=_QNX /I$(mathlib_dir)\h /I$(emu386) -fo=.qbj $[@
+#emu387.qbj: emu387.asm $(INCS)
+#    *wasm -3 -bt=qnx /dOFFSET32=OFFSET /dSEGMENTED /d_OS=_QNX /I$(mathlib_dir)\h /I$(emu386) -fo=.qbj $[@
 
 .c : ..\emu86
 .c.qbj:
