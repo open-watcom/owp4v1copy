@@ -49,6 +49,13 @@ typedef	CTLSTYLE FAR *LPCTLSTYLE;
 typedef	CTLINFO *PCTLINFO;
 typedef	CTLINFO FAR *LPCTLINFO;
 
+#ifdef STRICT
+typedef	DWORD (CALLBACK *LPFNSTRTOID)(LPCSTR);
+#else
+typedef	DWORD (CALLBACK *LPFNSTRTOID)(LPSTR);
+#endif
+typedef	UINT (CALLBACK *LPFNIDTOSTR)(UINT,LPSTR,UINT);
+
 #ifdef	__cplusplus
 }
 #endif
