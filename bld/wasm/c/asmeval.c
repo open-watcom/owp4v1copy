@@ -355,7 +355,7 @@ static void MakeConst( expr_list *token )
     token->type = EXPR_CONST;
     token->indirect = FALSE;
     token->explicit = FALSE;
-    token->expr_type = FALSE;
+    token->expr_type = EMPTY;
 }
 
 static void TokenAssign( expr_list *t1, expr_list *t2 )
