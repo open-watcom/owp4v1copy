@@ -413,7 +413,7 @@ extern void __strerror( int __max, int __errnum, char *__buf );
 #endif
 
 :: The header <_strdef.h> is indirectly included below.
-#include <stdexcept>
+#include <stdexcep>
 
 namespace std {
 
