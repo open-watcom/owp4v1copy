@@ -16,7 +16,7 @@ cdsay .
 #================================
     <CPCMD> <PROJDIR>/dos/*.h*           <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/*.cnv          <RELROOT>/rel2/h/
-    <CPCMD> <PROJDIR>/dos/c*.            <RELROOT>/rel2/h/
+    <CPCMD> <PROJDIR>/dos/c*             <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/algorith       <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/bitset         <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/complex        <RELROOT>/rel2/h/
@@ -53,7 +53,7 @@ cdsay .
     <CPCMD> <PROJDIR>/dos/sys/*.h        <RELROOT>/rel2/h/sys/
     <CPCMD> <PROJDIR>/dos/win/*.h        <RELROOT>/rel2/h/win/
     <CPCMD> <PROJDIR>/linux/*.h*         <RELROOT>/rel2/lh/
-    <CPCMD> <PROJDIR>/linux/c*.          <RELROOT>/rel2/lh/
+    <CPCMD> <PROJDIR>/linux/c*           <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/algorith     <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/bitset       <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/complex      <RELROOT>/rel2/lh/
