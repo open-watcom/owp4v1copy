@@ -37,13 +37,9 @@ hw_reg_set DefaultVarParms[] = {
 
 
 hw_reg_set DefaultParms[] = {
-#ifndef WCPP
         HW_D_4( HW_AX, HW_BX, HW_CX, HW_DX ) /*+HW_ST1+HW_ST2+HW_ST3+HW_ST4*/,
-#endif
         0 };
 
-#if _CPU == 8086 || _CPU == 386
-#ifndef WCPP
         char Registers[] = {            /* table for TableLookup*/
                 'e','s',NC,             /* should agree with RegBits*/
                 'd','s',NC,
@@ -67,16 +63,6 @@ hw_reg_set DefaultParms[] = {
                 's','p',NC,
                 'f','s',NC,
                 'g','s',NC,
-#if _CPU == 386
-                'e','a','x',NC,
-                'e','b','x',NC,
-                'e','c','x',NC,
-                'e','d','x',NC,
-                'e','s','i',NC,
-                'e','d','i',NC,
-                'e','b','p',NC,
-                'e','s','p',NC,
-#endif
                 NC };
 
         hw_reg_set RegBits[] ={
@@ -102,16 +88,6 @@ hw_reg_set DefaultParms[] = {
                                 HW_D( HW_SP ),
                                 HW_D( HW_FS ),
                                 HW_D( HW_GS ),
-#if _CPU == 386
-                                HW_D( HW_EAX ),
-                                HW_D( HW_EBX ),
-                                HW_D( HW_ECX ),
-                                HW_D( HW_EDX ),
-                                HW_D( HW_ESI ),
-                                HW_D( HW_EDI ),
-                                HW_D( HW_EBP ),
-                                HW_ESP,
-#endif
  };
 
 /*      these are the registers that Microsoft saves and restores */
@@ -1024,7 +1000,3 @@ struct  inline_funcs Common_Functions[] = {
   { ".max",    &C_max,     C_max_parms,     C_max_ret,     C_max_saves     },
   { NULL }
  };
-
-#endif
-
-#endif

@@ -33,14 +33,9 @@
 #define NC '\0'
 
 hw_reg_set DefaultParms[] = {
-#if _CPU == 8086
-        HW_AX+HW_BX+HW_CX+HW_DX+HW_ST1+HW_ST2+HW_ST3+HW_ST4,
-#elif _CPU == 386
         HW_D_4( HW_EAX,HW_EBX,HW_ECX,HW_EDX ) /*+HW_ST1+HW_ST2+HW_ST3+HW_ST4*/,
-#endif
         { 0 } };
 
-#ifndef WCPP
         char Registers[] = {            /* table for TableLookup*/
                 'e','s',NC,             /* should agree with RegBits*/
                 'd','s',NC,
@@ -62,7 +57,6 @@ hw_reg_set DefaultParms[] = {
                 'd','i',NC,
                 'b','p',NC,
                 's','p',NC,
-#if _CPU == 386
                 'f','s',NC,
                 'g','s',NC,
                 'e','a','x',NC,
@@ -73,7 +67,6 @@ hw_reg_set DefaultParms[] = {
                 'e','d','i',NC,
                 'e','b','p',NC,
                 'e','s','p',NC,
-#endif
                 NC };
 
         hw_reg_set RegBits[] ={ HW_D( HW_ES ),
@@ -96,7 +89,6 @@ hw_reg_set DefaultParms[] = {
                                 HW_D( HW_DI ),
                                 HW_D( HW_BP ),
                                 HW_D( HW_SP ),
-#if _CPU == 386
                                 HW_D( HW_FS ),
                                 HW_D( HW_GS ),
                                 HW_D( HW_EAX ),
@@ -107,7 +99,6 @@ hw_reg_set DefaultParms[] = {
                                 HW_D( HW_EDI ),
                                 HW_D( HW_BP ),
                                 HW_D( HW_SP ),
-#endif
  };
 
 hw_reg_set DefaultVarParms[] = {
@@ -1441,5 +1432,3 @@ struct  inline_funcs Common_Functions[] = {
   { ".max",    &C_max,    C_max_parms,     C_max_ret,     C_max_saves      },
   { NULL }
  };
-
-#endif

@@ -29,13 +29,17 @@
 *
 ****************************************************************************/
 
+#ifndef __PDEFN2_H
+#define __PDEFN2_H
 
 global struct toggle            ToggleNames[];
-global  hw_reg_set              DefaultParms[];
 #if _CPU == 370
 global  linkage_regs            DefaultLinkage;
 global  linkage_regs            OSLinkage;
 #endif
+global  hw_reg_set              DefaultParms[];
+global  hw_reg_set              CdeclParms[];
+global  hw_reg_set              PascalParms[];
 global  hw_reg_set              DefaultVarParms[];
 global  hw_reg_set              RegBits[];
 global  hw_reg_set              MSC_Save;
@@ -56,3 +60,4 @@ global  struct  inline_funcs    SBigData_Functions[];
 global  struct  inline_funcs    Common_Functions[];
 global  struct  inline_funcs    _8087_Functions[];
 
+#endif

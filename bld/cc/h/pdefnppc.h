@@ -30,29 +30,19 @@
 ****************************************************************************/
 
 
-#ifndef __PDEFN2_H
-#define __PDEFN2_H
-global struct toggle            ToggleNames[];
-global  hw_reg_set              DefaultParms[];
-global  hw_reg_set              CdeclParms[];
-global  hw_reg_set              PascalParms[];
-global  hw_reg_set              DefaultVarParms[];
-global  hw_reg_set              RegBits[];
-global  hw_reg_set              MSC_Save;
-global  char                    Registers[];
-global  struct  aux_info        InlineInfo;
-global  struct  inline_funcs    SInline_Functions[];
-global  struct  inline_funcs    Inline_Functions[];
-#if _CPU == 8086
-global  struct  inline_funcs    ZF_Data_Functions[];
-global  struct  inline_funcs    ZP_Data_Functions[];
-global  struct  inline_funcs    DF_Data_Functions[];
-global  struct  inline_funcs    DP_Data_Functions[];
-#else
-global  struct  inline_funcs    Flat_Functions[];
-global  struct  inline_funcs    BigData_Functions[];
-global  struct  inline_funcs    SBigData_Functions[];
-#endif
-global  struct  inline_funcs    Common_Functions[];
-global  struct  inline_funcs    _8087_Functions[];
-#endif
+hw_reg_set DefaultParms[] = {
+        HW_D( HW_EMPTY )
+};
+
+hw_reg_set DefaultLinkage[] = {
+        HW_D( HW_R16 ),
+        HW_D( HW_R17 ),
+        HW_D( HW_R18 ),
+        HW_D( HW_R19 ),
+        HW_D( HW_R20 ),
+        HW_D( HW_R21 ),
+};
+
+hw_reg_set DefaultVarParms[] = {
+        HW_D( HW_EMPTY )
+};

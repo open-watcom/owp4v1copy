@@ -377,15 +377,12 @@ void SetCurrInfo( void )
         CurrInfo = &DefaultInfo;
         break;
     case M_CDECL:
-//      CompFlags.cdecl_defined = 1;
         CurrInfo = &CdeclInfo;
         break;
     case M_PASCAL:
-//      CompFlags.pascal_defined = 1;
         CurrInfo = &PascalInfo;
         break;
     case M_FORTRAN:
-//      CompFlags.fortran_defined = 1;
         CurrInfo = &FortranInfo;
         break;
     case M_SYSTEM:

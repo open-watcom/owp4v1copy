@@ -770,9 +770,9 @@ extern  void    SetCurrInfo(void);              /* cpragma */
 extern  void    XferPragInfo(char*,char*);      /* cpragma */
 extern  void    EnableDisableMessage(int,unsigned);/* cpragma */
 
-extern  void    AsmStmt(void);                  /* cprag86 */
-extern  void    PragAux(void);                  /* cprag86 */
-extern  hw_reg_set PragRegName(char *);         /* cprag86 */
+extern  void    AsmStmt(void);                  /* cprag??? */
+extern  void    PragAux(void);                  /* cprag??? */
+extern  hw_reg_set PragRegName(char *);         /* cprag??? */
 
 extern  void    InitPurge(void);                /* cpurge */
 extern  void    PurgeMemory(void);              /* cpurge */

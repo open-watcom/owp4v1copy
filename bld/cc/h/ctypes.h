@@ -171,7 +171,7 @@ typedef enum BASED_KIND{
 /* matches CTypeSizes[] table in ctype.c */
 /* matches CGDataType[] table in cgen2.c */
 /* matches CTypenames[] table in cgdump.c */
-/* matches AsmDataType[] table in cprag86.c */
+/* matches AsmDataType[] table in cpragx86.c */
 typedef enum DATA_TYPE {
     TYPE_CHAR  =    0,      /* signed char */
     TYPE_UCHAR,
