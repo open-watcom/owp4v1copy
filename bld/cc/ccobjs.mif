@@ -1,5 +1,6 @@
 common_objs = &
         ascii.obj &
+        asmstmt.obj &
         casian.obj &
         ccheck.obj &
         ccmain.obj &

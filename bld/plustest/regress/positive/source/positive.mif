@@ -152,26 +152,23 @@ opt_vf18 = -za
 opt_link_opt32 = option stack=128k
 !endif
 
+#
+# architecture specific options
+#
 !ifeq arch axp
 # AXP specific
-!endif
-
-!ifeq arch 386
+!else ifeq arch 386
 # 386 specific
 opt_init12 = -mf
 opt_opt13 = -fpd
 opt_vf17 = -zv
-
 opt_link_vf17 = option vfremoval
-!endif
-
-!ifeq arch i86
+!else ifeq arch i86
 # i86 specific
 opt_opt13 = -fpd
 opt_opt29 = -3 -zff
 opt_opt31 = -3 -zff
 opt_vf17 = -zv
-
 opt_link_vf17 = option vfremoval
 !endif
 
@@ -193,6 +190,7 @@ positive_tests = &
     asm05.$(ext) &
     asm06.$(ext) &
     asm07.$(ext) &
+    asm08.$(ext) &
     alttok1.$(ext) &
     based01.$(ext) &
     based02.$(ext) &

@@ -33,15 +33,11 @@
 #include "cgswitch.h"
 #include "pragdefn.h"
 #include "asinline.h"
+#include "asmstmt.h"
 
 static  hw_reg_set      StackParms[] = { HW_D( HW_EMPTY ) };
 static  hw_reg_set      AsmRegsSaved = HW_D( HW_FULL );
 static  int             AsmFuncNum;
-
-#define MAX_NUM_INS     256
-
-extern uint_32  *AsmCodeBuffer;
-extern uint_32  AsmCodeAddress;
 
 void AsmWarning( char *msg )
 /**************************/
@@ -202,10 +198,10 @@ hw_reg_set PragRegName( char *str )
 static byte_seq_reloc *GetFixups( void )
 /**************************************/
 {
-    asmreloc       *reloc;
+    asmreloc        *reloc;
     byte_seq_reloc  *head,*new;
-    byte_seq_reloc **lnk;
-    SYM_HANDLE     sym_handle;
+    byte_seq_reloc  **lnk;
+    SYM_HANDLE      sym_handle;
 
     head = NULL;
     lnk = &head;
@@ -222,126 +218,133 @@ static byte_seq_reloc *GetFixups( void )
     return( head );
 }
 
-static int EndOfAsmStmt( void )
-/*****************************/
+local int GetByteSeq( void )
+/**************************/
 {
-    if( CurToken == T_EOF )
-        return( TRUE );
-    if( CurToken == T_NULL )
-        return( TRUE );
-    if( CurToken == T___ASM )
-        return( TRUE );
-    if( CurToken == T_RIGHT_BRACE )
-        return( TRUE );
-    if( CurToken == T_SEMI_COLON )
-        return( TRUE );
-    return( FALSE );
+    auto unsigned char  buff[ MAXIMUM_BYTESEQ + 32 ];
+    int                 code_length;
+    int                 uses_auto;
+    char                too_many_bytes;
+
+    AsmInit();
+    CompFlags.pre_processing = 1;       /* enable macros */
+    NextToken();
+    too_many_bytes = 0;
+    uses_auto = 0;
+    AsmSysSetCodeBuffer( buff );
+    code_length = 0;
+    for(;;) {
+        if( CurToken == T_STRING ) {    /* 06-sep-91 */
+            AsmSysSetCodeAddr( code_length );
+            AsmSysParseLine( Buffer );
+            code_length = AsmSysGetCodeAddr();
+            NextToken();
+            if( CurToken == T_COMMA ) {
+                NextToken();
+            }
+        } else if( CurToken == T_CONSTANT ) {
+            buff[ code_length++ ] = Constant;
+            NextToken();
+        } else {
+            break;
+        }
+        if( code_length > MAXIMUM_BYTESEQ ) {
+            if( ! too_many_bytes ) {
+                CErr1( ERR_TOO_MANY_BYTES_IN_PRAGMA );
+                too_many_bytes = 1;
+            }
+            code_length = 0;          // reset index to we don't overrun buffer
+        }
+    }
+    if( too_many_bytes ) {
+        uses_auto = 0;
+    } else {
+        risc_byte_seq *seq;
+
+        seq = (risc_byte_seq *) CMemAlloc( sizeof( risc_byte_seq ) + code_length );
+        seq->relocs = GetFixups();
+        seq->length = code_length;
+        memcpy( &seq->data[0], buff, code_length );
+        CurrInfo->code = seq;
+    }
+    FreeAsmFixups();
+    CompFlags.pre_processing = 2;
+    AsmFini();
+    return( uses_auto );
 }
 
-void GetAsmLine( void )
+void AsmSysInit( void )
 /*********************/
 {
-    CompFlags.pre_processing = 1;       // cause T_NULL token at end of line
-    if( strcmp( Buffer, "_emit" ) == 0 ) {
-        NextToken();                    // get numeric constant
-        if( CurToken != T_CONSTANT ) {
-            ExpectConstant();
-        } else {
-            AsmCodeBuffer[AsmCodeAddress++] = Constant;
-            NextToken();
-        }
-    } else {
-        enum TOKEN  LastToken = T_DOT;
-        char        buf[256] = { '\0' };
-
-        for(;;) {
-            if( EndOfAsmStmt() )
-                break;
-            if(( LastToken != T_DOT )
-              && ( CurToken != T_XOR ))
-                strncat( buf, " ", 255 );
-            strncat( buf, Buffer, 255 );
-            LastToken = CurToken;
-            NextToken();
-        }
-        if( buf[0] != '\0' ){
-            AsmLine( buf );
-        }
-    }
-    CompFlags.pre_processing = 0;
+    AsmInit();
 }
 
-void AsmStmt( void )
-/******************/
+void AsmSysFini( void )
+/*********************/
 {
-    int                 i;
-    int                 too_many_bytes;
-    int                 uses_auto;
-    uint_32             buff[MAX_NUM_INS];
-    auto char           name[8];
+    AsmFini();
+}
+
+uint_32 AsmSysGetCodeAddr( void )
+/******************************/
+{
+    return( AsmCodeAddress );
+}
+
+void AsmSysSetCodeAddr( uint_32 len )
+/***********************************/
+{
+    AsmCodeAddress = len;
+}
+
+void AsmSysSetCodeBuffer( void *buf )
+/***********************************/
+{
+    AsmCodeBuffer = buf;
+}
+
+void AsmSysParseLine( char *line )
+/********************************/
+{
+    AsmLine( line );
+}
+
+void AsmSysMakeInlineAsmFunc( int too_many_bytes )
+/************************************************/
+{
+    int                 code_length;
     SYM_HANDLE          sym_handle;
     TREEPTR             tree;
+    int                 uses_auto;
+    auto char           name[8];
 
-    // indicate that we are inside an __asm statement so scanner will
-    // allow tokens unique to the assembler. e.g. 21h
-    CompFlags.inside_asm_stmt = 1;
-    NextToken();
-    AsmInit();
-    AsmCodeBuffer = &buff[0];
-    AsmCodeAddress = 0;
-    too_many_bytes = 0;
-    if( CurToken == T_LEFT_BRACE ) {
-        NextToken();
-        for(;;) {               // grab assembler lines
-            GetAsmLine();
-            if( AsmCodeAddress >= sizeof( buff ) ) {
-                if( ! too_many_bytes ) {
-                    CErr1( ERR_TOO_MANY_BYTES_IN_PRAGMA );
-                    too_many_bytes = 1;
-                }
-                AsmCodeAddress = 0;    // reset index to we don't overrun buffer
-            }
-            if( CurToken == T_RIGHT_BRACE ) break;
-            if( CurToken == T_EOF ) break;
-            NextToken();
-        }
-        CompFlags.pre_processing = 0;
-        CompFlags.inside_asm_stmt = 0;
-        NextToken();
-    } else {
-        GetAsmLine();           // grab single assembler instruction
-        CompFlags.pre_processing = 0;
-        CompFlags.inside_asm_stmt = 0;
-        if( CurToken == T_NULL ) {
-            NextToken();
-        }
-    }
-    i = AsmCodeAddress;
-    if( i != 0 ) {
+    uses_auto = 0;
+    code_length = AsmSysGetCodeAddr();
+    if( code_length != 0 ) {
         sprintf( name, "F.%d", AsmFuncNum );
         ++AsmFuncNum;
         CreateAux( name );
         *CurrInfo = DefaultInfo;
         CurrInfo->use = 1;
-        CurrInfo->save = AsmRegsSaved;  // indicate no registers saved ??
+        CurrInfo->save = AsmRegsSaved;  // indicate no registers saved
         if( too_many_bytes ) {
-            uses_auto = 0;
-        }else{
+             uses_auto = 0;
+        } else {
             risc_byte_seq *seq;
 
-            seq = (risc_byte_seq *) CMemAlloc( sizeof(risc_byte_seq)+i );
+            seq = (risc_byte_seq *) CMemAlloc( sizeof( risc_byte_seq ) + code_length );
             seq->relocs = GetFixups();
-            seq->length = i;
-            memcpy( &seq->data[0], buff, i );
+            seq->length = code_length;
+            memcpy( &seq->data[0], AsmCodeBuffer, code_length );
             CurrInfo->code = seq;
         }
         FreeAsmFixups();
         if( uses_auto ) {
-            //
-            //  We want to force the calling routine to set up a [E]BP frame
-            //  for the use of this pragma. This is done by saying the pragma
-            //  modifies the [E]SP register. A kludge, but it works.
-            //
+            /*
+               We want to force the calling routine to set up a [E]BP frame
+               for the use of this pragma. This is done by saying the pragma
+               modifies the [E]SP register. A kludge, but it works.
+            */
 //          HW_CTurnOff( CurrInfo->save, HW_SP );
         }
         CurrEntry->info = CurrInfo;
@@ -356,66 +359,10 @@ void AsmStmt( void )
         tree->expr_type = GetType( TYPE_VOID );
         AddStmt( tree );
     }
-    AsmFini();
 }
 
-local int GetByteSeq( void )
-/**************************/
+char const *AsmSysDefineByte( void )
+/**********************************/
 {
-    uint_32             buff[MAX_NUM_INS];
-    int                 i;
-    int                 uses_auto;
-    char                too_many_bytes;
-
-    AsmInit();
-    CompFlags.pre_processing = 1;       /* enable macros */
-    NextToken();
-    too_many_bytes = 0;
-    i = 0;
-    for(;;) {
-        if( CurToken == T_STRING ) {    /* 06-sep-91 */
-            AsmCodeBuffer = buff;
-            AsmCodeAddress = i;
-            AsmLine( Buffer );
-            i = AsmCodeAddress;
-            if( i >= sizeof( buff ) ) {
-                if( ! too_many_bytes ) {
-                    CErr1( ERR_TOO_MANY_BYTES_IN_PRAGMA );
-                    too_many_bytes = 1;
-                }
-                i = 0;          // reset index to we don't overrun buffer
-            }
-            NextToken();
-            if( CurToken == T_COMMA ) {
-                NextToken();
-            }
-        } else if( CurToken == T_CONSTANT ) {
-            if( i < sizeof( buff ) ) {
-                buff[ i++ ] = Constant;
-            } else {
-                if( ! too_many_bytes ) {
-                    CErr1( ERR_TOO_MANY_BYTES_IN_PRAGMA );
-                    too_many_bytes = 1;
-                }
-            }
-            NextToken();
-        }else{
-            break;
-        }
-    }
-    if( too_many_bytes ) {
-        uses_auto = 0;
-    }else{
-        risc_byte_seq *seq;
-
-        seq = (risc_byte_seq *) CMemAlloc( sizeof(risc_byte_seq)+i );
-        seq->relocs = GetFixups();
-        seq->length = i;
-        memcpy( &seq->data[0], buff, i );
-        CurrInfo->code = seq;
-    }
-    FreeAsmFixups();
-    CompFlags.pre_processing = 2;
-    AsmFini();
-    return( uses_auto );
+    return( ".byte " );
 }

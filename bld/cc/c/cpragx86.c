@@ -34,6 +34,7 @@
 #include "pragdefn.h"
 #include "pdefn2.h"
 #include "asminlin.h"
+#include "asmstmt.h"
 
 local   void    GetParmInfo( void );
 local   void    GetRetInfo( void );
@@ -44,7 +45,7 @@ local   int     GetByteSeq( void );
 extern  TREEPTR     CurFuncNode;
 
 static  int             AsmFuncNum;
-static  hw_reg_set      AsmRegsSaved = { HW_D( HW_FULL ) };
+static  hw_reg_set      AsmRegsSaved = HW_D( HW_FULL );
 static  hw_reg_set      StackParms[] = { HW_D( HW_EMPTY ) };
 #if _CPU == 386
 static  hw_reg_set      OptlinkParms[] = {
@@ -58,7 +59,8 @@ static  hw_reg_set      STOSBParms[] = {
 };
 #endif
 
-void PragmaInit()
+void PragmaInit( void )
+/*********************/
 {
     call_class  call_type;
     int         cpu;
@@ -74,17 +76,17 @@ void PragmaInit()
 #endif
     AsmFuncNum = 0;
     switch( GET_CPU( ProcRevision ) ) {
-    case CPU_86:        cpu = 0; break;
-    case CPU_186:       cpu = 1; break;
-    case CPU_286:       cpu = 2; break;
-    case CPU_386:       cpu = 3; break;
-    case CPU_486:       cpu = 4; break;
-    case CPU_586:       cpu = 5; break;
-    case CPU_686:       cpu = 6; break;
+    case CPU_86:    cpu = 0; break;
+    case CPU_186:   cpu = 1; break;
+    case CPU_286:   cpu = 2; break;
+    case CPU_386:   cpu = 3; break;
+    case CPU_486:   cpu = 4; break;
+    case CPU_586:   cpu = 5; break;
+    case CPU_686:   cpu = 6; break;
     }
     switch( GET_FPU( ProcRevision ) ) {
-    case FPU_NONE:      fpu = 0; break;
-    default:    fpu = 1; break;
+    case FPU_NONE:  fpu = 0; break;
+    default:        fpu = 1; break;
     }
 
     AsmInit( cpu, fpu, use32, 1 );
@@ -267,7 +269,8 @@ void PragmaInit()
 }
 
 
-static int GetAliasInfo()
+static int GetAliasInfo( void )
+/*****************************/
 {
     int         isfar16;
     auto char   buff[256];
@@ -304,7 +307,8 @@ static int GetAliasInfo()
 }
 
 
-void PragAux()
+void PragAux( void )
+/******************/
 {
     struct {
         unsigned f_call   : 1;
@@ -386,7 +390,8 @@ typedef enum {
         FIXWORD_RELOFF
 } fix_words;
 
-local fix_words FixupKeyword()
+local fix_words FixupKeyword( void )
+/**********************************/
 {
     if( CurToken == T_FLOAT ) {
         NextToken();                    /* 20-jun-92 */
@@ -400,6 +405,7 @@ local fix_words FixupKeyword()
 
 
 enum sym_state AsmQueryExternal( char *name )
+/*******************************************/
 {
     SYM_HANDLE sym_handle;
     auto SYM_ENTRY sym;
@@ -430,6 +436,7 @@ enum sym_state AsmQueryExternal( char *name )
 #endif
 
 static int CodePtrType( int flags )
+/*********************************/
 {
     if( flags & FLAG_FAR ) {
         return( SYM_FFAR );
@@ -444,6 +451,7 @@ static int CodePtrType( int flags )
 
 
 static int PtrType( TYPEPTR typ, int flags )
+/******************************************/
 {
     while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
     if( typ->decl_type == TYPE_FUNCTION ) {
@@ -498,6 +506,7 @@ static enum sym_type AsmDataType[] = {
 };
 
 local int AsmType( TYPEPTR typ, int flags )
+/*****************************************/
 {
     while( typ->decl_type == TYPE_TYPEDEF )  typ = typ->object;
     switch( typ->decl_type ) {
@@ -522,6 +531,7 @@ local int AsmType( TYPEPTR typ, int flags )
 }
 
 enum sym_type AsmQueryType( char *name )
+/**************************************/
 {
     SYM_HANDLE sym_handle;
     auto SYM_ENTRY sym;
@@ -533,6 +543,7 @@ enum sym_type AsmQueryType( char *name )
 }
 
 static int InsertFixups( unsigned char *buff, unsigned i )
+/********************************************************/
 {
                         /* additional slop in buffer to simplify the code */
     unsigned char       temp[ MAXIMUM_BYTESEQ + 1 + 2*sizeof(long) ];
@@ -726,6 +737,7 @@ static int InsertFixups( unsigned char *buff, unsigned i )
 
 
 local void AddAFix( unsigned i, char *name, unsigned type, unsigned long off )
+/****************************************************************************/
 {
     struct asmfixup     *fix;
 
@@ -739,7 +751,8 @@ local void AddAFix( unsigned i, char *name, unsigned type, unsigned long off )
     FixupHead = fix;
 }
 
-local void FreeAsmFixups()
+local void FreeAsmFixups( void )
+/******************************/
 {
     struct asmfixup     *fix;
 
@@ -753,9 +766,10 @@ local void FreeAsmFixups()
 
 
 local int GetByteSeq( void )
+/**************************/
 {
     auto unsigned char  buff[ MAXIMUM_BYTESEQ + 32 ];
-    int                 i;
+    int                 code_length;
     char                *name;
     unsigned long       offset;
     unsigned            fixword;
@@ -765,40 +779,29 @@ local int GetByteSeq( void )
     CompFlags.pre_processing = 1;       /* enable macros */
     NextToken();
     too_many_bytes = 0;
-    i = 0;
+    uses_auto = 0;
+    AsmSysSetCodeBuffer( buff );
+    code_length = 0;
     for(;;) {
         if( CurToken == T_STRING ) {    /* 06-sep-91 */
-            Address = i;
-            CodeBuffer = &buff[0];
-            AsmLine( Buffer );
-            i = Address;
-            if( i >= MAXIMUM_BYTESEQ ) {
-                if( ! too_many_bytes ) {
-                    CErr1( ERR_TOO_MANY_BYTES_IN_PRAGMA );
-                    too_many_bytes = 1;
-                }
-                i = 0;          // reset index to we don't overrun buffer
-            }
+            AsmSysSetCodeAddr( code_length );
+            AsmSysParseLine( Buffer );
+            code_length = AsmSysGetCodeAddr();
             NextToken();
-            if( CurToken == T_COMMA )  NextToken();
-        } else
-        if( CurToken == T_CONSTANT ) {
-            if( i < MAXIMUM_BYTESEQ ) {
-                buff[ i++ ] = Constant;
-            } else {
-                if( ! too_many_bytes ) {
-                    CErr1( ERR_TOO_MANY_BYTES_IN_PRAGMA );
-                    too_many_bytes = 1;
-                }
+            if( CurToken == T_COMMA ) {
+                NextToken();
             }
+        } else if( CurToken == T_CONSTANT ) {
+            buff[ code_length++ ] = Constant;
             NextToken();
         } else {
             fixword = FixupKeyword();
-            if( fixword == FIXWORD_NONE ) break;
+            if( fixword == FIXWORD_NONE )
+                break;
             if( fixword == FIXWORD_FLOAT ) {
 #if _CPU == 8086
                 if( GET_FPU_EMU( ProcRevision ) ) {
-                    AddAFix( i, NULL, FIX_SEG, 0 );
+                    AddAFix( code_length, NULL, FIX_SEG, 0 );
                 }
 #endif
             } else { /* seg or offset */
@@ -825,41 +828,42 @@ local int GetByteSeq( void )
                 switch( fixword ) {
                 case FIXWORD_RELOFF:
 #if _CPU == 8086
-                    AddAFix( i, name, FIX_RELOFF16, offset );
-                    i += 2;
+                    AddAFix( code_length, name, FIX_RELOFF16, offset );
+                    code_length += 2;
 #else
-                    AddAFix( i, name, FIX_RELOFF32, offset );
-                    i += 4;
+                    AddAFix( code_length, name, FIX_RELOFF32, offset );
+                    code_length += 4;
 #endif
                     break;
                 case FIXWORD_OFFSET:
 #if _CPU == 8086
-                    AddAFix( i, name, FIX_OFF16, offset );
-                    i += 2;
+                    AddAFix( code_length, name, FIX_OFF16, offset );
+                    code_length += 2;
 #else
-                    AddAFix( i, name, FIX_OFF32, offset );
-                    i += 4;
+                    AddAFix( code_length, name, FIX_OFF32, offset );
+                    code_length += 4;
 #endif
                     break;
                 case FIXWORD_SEGMENT:
-                    AddAFix( i, name, FIX_SEG, 0 );
-                    i += 2;
+                    AddAFix( code_length, name, FIX_SEG, 0 );
+                    code_length += 2;
                     break;
                 }
-                if( i > MAXIMUM_BYTESEQ ) {
-                    if( ! too_many_bytes ) {
-                        CErr1( ERR_TOO_MANY_BYTES_IN_PRAGMA );
-                        too_many_bytes = 1;
-                    }
-                }
             }
+        }
+        if( code_length > MAXIMUM_BYTESEQ ) {
+            if( ! too_many_bytes ) {
+                CErr1( ERR_TOO_MANY_BYTES_IN_PRAGMA );
+                too_many_bytes = 1;
+            }
+            code_length = 0;          // reset index to we don't overrun buffer
         }
     }
     if( too_many_bytes ) {
         FreeAsmFixups();
         uses_auto = 0;
     } else {
-        uses_auto = InsertFixups( buff, i );
+        uses_auto = InsertFixups( buff, code_length );
     }
     CompFlags.pre_processing = 2;
     AsmSymFini();
@@ -868,6 +872,7 @@ local int GetByteSeq( void )
 
 
 hw_reg_set PragRegName( char *str )
+/*********************************/
 {
     int         i;
     char        *p;
@@ -897,6 +902,7 @@ hw_reg_set PragRegName( char *str )
 
 
 local void GetParmInfo( void )
+/****************************/
 {
     struct {
         unsigned f_pop           : 1;
@@ -938,6 +944,7 @@ local void GetParmInfo( void )
 
 
 local void GetRetInfo( void )
+/***************************/
 {
     struct {
         unsigned f_no8087        : 1;
@@ -969,6 +976,7 @@ local void GetRetInfo( void )
 
 
 local void GetSTRetInfo( void )
+/*****************************/
 {
     struct {
         unsigned f_float        : 1;
@@ -1006,6 +1014,7 @@ local void GetSTRetInfo( void )
 
 
 local void GetSaveInfo( void )
+/****************************/
 {
     hw_reg_set  modlist;
     hw_reg_set  default_flt_n_seg;
@@ -1048,65 +1057,59 @@ local void GetSaveInfo( void )
     }
 }
 
-void GetAsmLine()
+void AsmSysInit( void )
+/*********************/
 {
-    char        buf[256];
-    int         AsmLineNo;
-
-    AsmLineNo = TokenLine;
-    CompFlags.pre_processing = 1;       // cause T_NULL token at end of line
-    if( strcmp( Buffer, "_emit" ) == 0 ) {
-        NextToken();                    // get numeric constant
-        if( CurToken != T_CONSTANT ) {
-            ExpectConstant();
-        } else {
-            CodeBuffer[Address++] = Constant;
-            NextToken();
-        }
-    } else {
-        buf[0] = '\0';
-        for(;;) {
-            if( CurToken == T_SEMI_COLON ) {
-                // ; .ASM comment
-                for(;;) {
-                    NextToken();
-                    if( CurToken == T_EOF ) break;
-                    if( CurToken == T_NULL ) break;
-                }
-                break;
-            }
-            if( CurToken == T_EOF ) break;
-            if( CurToken == T_NULL ) break;
-            if( CurToken == T___ASM ) break;
-            if( CurToken == T_RIGHT_BRACE ) break;
-            strncat( buf, Buffer, 255 );
-            if( CurToken != T_DOT )
-                strncat( buf, " ", 255 );
-            NextToken();
-        }
-        TokenLine = AsmLineNo;
-        AsmLine( buf );
-    }
-    CompFlags.pre_processing = 0;       // cause T_NULL token at end of line
 }
 
-static void MakeInlineAsmFunc( unsigned char *buff )
+void AsmSysFini( void )
+/*********************/
 {
-    int                 i;
+    AsmSymFini();
+}
+
+uint_32 AsmSysGetCodeAddr( void )
+/******************************/
+{
+    return( Address );
+}
+
+void AsmSysSetCodeAddr( uint_32 len )
+/***********************************/
+{
+    Address = len;
+}
+
+void AsmSysSetCodeBuffer( void *buf )
+/***********************************/
+{
+    CodeBuffer = buf;
+}
+
+void AsmSysParseLine( char *line )
+/********************************/
+{
+    AsmLine( line );
+}
+
+void AsmSysMakeInlineAsmFunc( int code_ovrflw )
+/*********************************************/
+{
+    int                 code_length;
     SYM_HANDLE          sym_handle;
     TREEPTR             tree;
     int                 uses_auto;
     auto char           name[8];
 
-    i = Address;
-    if( i != 0 ) {
+    code_length = AsmSysGetCodeAddr();
+    if( code_length != 0 ) {
         sprintf( name, "F.%d", AsmFuncNum );
         ++AsmFuncNum;
         CreateAux( name );
         *CurrInfo = DefaultInfo;
         CurrInfo->use = 1;
         CurrInfo->save = AsmRegsSaved;  // indicate no registers saved
-        uses_auto = InsertFixups( buff, i );
+        uses_auto = InsertFixups( CodeBuffer, code_length );
         if( uses_auto ) {
             /*
                We want to force the calling routine to set up a [E]BP frame
@@ -1129,45 +1132,8 @@ static void MakeInlineAsmFunc( unsigned char *buff )
     }
 }
 
-void AsmStmt()
+char const *AsmSysDefineByte( void )
+/**********************************/
 {
-    int                 too_many_bytes;
-    auto unsigned char  buff[ MAXIMUM_BYTESEQ + 32 ];
-
-    // indicate that we are inside an __asm statement so scanner will
-    // allow tokens unique to the assembler. e.g. 21h
-    CompFlags.inside_asm_stmt = 1;
-    NextToken();
-    CodeBuffer = &buff[0];
-    Address = 0;
-    if( CurToken == T_LEFT_BRACE ) {
-        NextToken();
-        too_many_bytes = 0;
-        for(;;) {               // grab assembler lines
-            GetAsmLine();
-            if( Address >= MAXIMUM_BYTESEQ ) {
-                if( ! too_many_bytes ) {
-                    CErr1( ERR_TOO_MANY_BYTES_IN_PRAGMA );
-                    too_many_bytes = 1;
-                }
-                Address = 0;    // reset index to we don't overrun buffer
-            }
-            if( CurToken == T_RIGHT_BRACE ) break;
-            if( CurToken == T_EOF ) break;
-            NextToken();
-        }
-        CompFlags.pre_processing = 0;
-        CompFlags.inside_asm_stmt = 0;
-        MakeInlineAsmFunc( buff );
-        NextToken();
-    } else {
-        GetAsmLine();           // grab single assembler instruction
-        CompFlags.pre_processing = 0;
-        CompFlags.inside_asm_stmt = 0;
-        MakeInlineAsmFunc( buff );
-        if( CurToken == T_NULL ) {
-            NextToken();
-        }
-    }
-    AsmSymFini();
+    return( "db " );
 }
