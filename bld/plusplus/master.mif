@@ -219,6 +219,7 @@ exe = $(final_exe_$(host_os))
 # optencod options and targets for various hosts
 optencod_opt_qnx = -u usage.u
 optencod_targ_qnx = qnx
+optencod_targ_linux = linux
 !ifndef plusplus_release
 optencod_targ_dbg = dbg
 !endif
