@@ -24,17 +24,12 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  data common to all files in the overlay manager.
 ;*
 ;*****************************************************************************
 
 
-;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-;<>
-;<> OVLDATA:    data common to all files in the overlay manager.
-;<>
-;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+        name    ovldata
 
 _TEXT   segment word '_OVLCODE' PUBLIC
         assume  CS:_TEXT

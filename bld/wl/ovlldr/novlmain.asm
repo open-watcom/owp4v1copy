@@ -24,18 +24,13 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Dynamic Overlay Manager
 ;*
 ;*****************************************************************************
 
 
 ;        page    64,110
-;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-;<>
-;<> NOVLMAIN:   Overlay Manager
-;<>
-;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+
 ;   NOTE!  A few of the routines that walk up the stack here assume that
 ;       BP != 0 on entry.  This seems reasonable, but means that _cstart_
 ;       should do:
@@ -46,6 +41,23 @@
 ;       enough - if somehow an init routine ends up in an overlay (i.e.,
 ;       someone puts it there) then bp could be zero on entry.
 ;
+
+;       For multithreaded database, there will be several stack chains to chase
+;       This involves:
+;               Chasing through Context_list, a linked list of task contexts
+;                       0       saved bp (0 if active task, use BPChain instead)
+;                       2       saved sp
+;                       4       link to next context
+;       There may be multiple return traps per overlay (up to one per stack)
+;       Since we don't want to have more than one segment per overlay, all
+;       the return traps point to the same trap; there is a list of
+;       (bp,list,offset) sets at the end of the trap followed by a zero bp
+;       value.  This increases the size of a return trap to:
+;               14      original size (one thread)
+;               24      6 bytes times 4 additional threads
+;                2      0 at end of list
+;               --
+;               40
 
         include struct.inc
         include novlldr.inc
@@ -60,10 +72,20 @@
 DGROUP  group   _DATA
 
 _DATA   segment byte 'DATA' PUBLIC
+
+ifdef OVL_MULTITHREAD
+        extrn   _Context_list:word
+endif
+
 _DATA   ends
 
 _TEXT   segment para '_OVLCODE' PUBLIC
+
+ifdef OVL_MULTITHREAD
+        assume  CS:_TEXT,SS:DGROUP
+else
         assume  CS:_TEXT
+endif
 
         extrn   __NOVLTINIT__:near
         extrn   __WOVLLDR__:near
@@ -265,11 +287,23 @@ __OVLSCANCALLCHAIN__ proc near
         push    BP
         push    ES
         push    DS
+ifdef OVL_MULTITHREAD
+        mov     BP,_Context_list; get list before switching DS
+endif
         mov     AX,CS           ; set ds == cs for speed (& size)
         mov     BX,ENTRIES_M_1 + ove_start_para
         mov     DS,AX           ; (pipelined) set ds == cs
         mov     DX,0ffffh       ; DX is head of linked list
+ifdef OVL_MULTITHREAD
+      _loop
+        push    BP              ; save context
+        mov     BP,tl_saved_bp[bp] ; get bp
+        test    BP,BP           ; is it valid?
+        jne     sc_beg          ; yes
+        mov     BP,DS:BPChain   ; active task - use start of bp chain
+else
         mov     BP,DS:BPChain   ; start of bp chain
+endif
         jmp     short sc_beg
         EVEN
         _loop
@@ -293,6 +327,12 @@ sc_beg:   mov   SI,4[BP]        ; get possible segment
           mov   [BX+SI],DX      ; store the linked list head
           mov   DX,SI           ; change the head
         _endloop                ; continue looping
+ifdef OVL_MULTITHREAD
+        pop     BP              ; get context
+        mov     BP,tl_next[BP]
+        test    BP,BP           ; at end of list?
+      _until e                  ; loop if not
+endif
         mov     AX,DX           ; get return value
         pop     DS
         pop     ES
@@ -320,8 +360,28 @@ __OVLBUILDRETTRAP__ proc near
         push    BP
         push    DS
         push    CX
+ifdef OVL_MULTITHREAD
+        push    BX
+        mov     BP,_Context_list; get list of contexts
+endif
         mov     DS,DX           ; set ds to rt_seg
+ifdef OVL_MULTITHREAD
+;        mov     BX,rt_traps     ; initialize to point to first trap
+        mov     BX,offset rt_traps     ; initialize to point to first trap
+        mov     byte ptr DS:rt_call_far,CALL_FAR
+        mov     word ptr DS:rt_entry,offset __OVLRETTRAP__
+        mov     word ptr DS:rt_entry+2,seg __OVLRETTRAP__
+        mov     word ptr DS:rt_old_code_handle,AX
+      _loop                     ; extra loop for each context
+        mov     DS:te_context[BX],BP    ; assume this thread needs trap
+        push    BP              ; save context
+        mov     BP,tl_saved_bp[BP] ; get saved bp
+        test    BP,BP           ; is it the active task?
+        jne     bd_1a           ; yes, get started
+        mov     BP,BPChain      ; get BP of active task
+else
         mov     BP,BPChain      ; get BP
+endif
         jmp     short bd_1a
         _loop
           shl   CX,1            ; restore bp
@@ -329,17 +389,25 @@ __OVLBUILDRETTRAP__ proc near
 bd_1a:    mov   CX,[BP]         ; get next bp
           mov   DX,4[BP]        ; get (possible) segment
           shr   CX,1            ; check if near or far ret
+ifdef OVL_MULTITHREAD
+          je    skip_context    ; NULL => not on this thread...
+endif
           _loopif nc            ; was near so try again
           cmp   DX,AX           ; is it our handle?
         _until e                ; loop until our handle
                                 ; fill in the return trap & modify stack
         mov     DX,2[BP]        ; get original ret addr
+ifdef OVL_MULTITHREAD
+        mov     word ptr DS:te_stack_trap[BX],BP
+        mov     word ptr DS:te_ret_offset[BX],DX
+else
         mov     byte ptr DS:rt_call_far,CALL_FAR
         mov     word ptr DS:rt_entry,offset __OVLRETTRAP__
         mov     word ptr DS:rt_entry+2,seg __OVLRETTRAP__
         mov     word ptr DS:rt_stack_trap,BP
         mov     word ptr DS:rt_old_code_handle,AX
         mov     word ptr DS:rt_ret_offset,DX
+endif
         xor     DX,DX           ; zero head of list
         mov     4[BP],DS        ;set far ret to the ret trap
         mov     2[BP],DX        ;. . .
@@ -356,7 +424,19 @@ bd_1a:    mov   CX,[BP]         ; get next bp
           mov   4[BP],DX        ; add it to the list
           mov   DX,BP           ; . . .
         _endloop                ; continue loop
+ifdef OVL_MULTITHREAD
+        mov     word ptr DS:te_ret_list[BX],DX
+        add     BX,size TRAP_ENTRY
+skip_context:
+        pop     BP
+        mov     BP,tl_next[BP]  ; get next context
+        test    BP,BP
+      _until    e               ; loop until end of list
+        mov     word ptr DS:te_stack_trap[BX],0 ; mark end of list
+        pop     BX
+else
         mov     word ptr DS:rt_ret_list,DX
+endif
         pop     CX
         pop     DS
         pop     BP
@@ -364,10 +444,17 @@ bd_1a:    mov   CX,[BP]         ; get next bp
 __OVLBUILDRETTRAP__ endp
 
 
+;ifdef OVL_MULTITHREAD
+;
+; unsigned near __OVLUNDORETTRAP__( unsigned rt_seg, unsigned new_handle );
+;
+;else
 ;
 ; void near __OVLUNDORETTRAP__( unsigned stack_trap, unsigned ret_offset,
 ;       unsigned ret_list, unsigned new_handle );
 ;
+;endif
+
         public  __OVLUNDORETTRAP__
 __OVLUNDORETTRAP__ proc near
 ;
@@ -377,6 +464,54 @@ __OVLUNDORETTRAP__ proc near
 ; was invoked).
 ;
         push    BP
+ifdef OVL_MULTITHREAD
+
+; Return != 0 if the return trap is still used, 0 if no longer needed
+
+        push    BX
+        push    CX
+        push    SI
+        push    DS
+        mov     DS,AX           ; get segment of trap
+;        mov     BX,rt_traps     ; start at first trap
+        mov     BX,offset rt_traps     ; start at first trap
+        xor     SI,SI           ; used = FALSE
+        _loop                   ; loop for each context
+          mov   CX,te_stack_trap[BX]
+          test  CX,CX
+          _quif e               ; done when stack_trap == 0
+          mov   BP,te_context[BX]
+          mov   BP,tl_saved_bp[BP]
+          test  BP,BP
+          _if   e
+            mov BP,CS:BPChain   ; get BP of active task
+          _endif
+          cmp   CX,BP           ; if stack_trap >= BP
+          _if   ae
+            mov BP,CX
+            mov 4[BP],DX        ;   set proper return segment
+            mov AX,te_ret_offset[BX];   and offset
+            mov 2[BP],AX
+            inc SI              ;   used = TRUE
+          _endif
+          mov   AX,te_ret_list[BX]
+          _loop
+            cmp AX,CX           ; are we done yet? i.e. BP == 0 or BP is
+            _quif b             ; . . . below chain
+            mov BP,AX
+            inc byte ptr [BP]   ; set the far bit
+            mov AX,4[BP]        ; get the link
+            mov 4[BP],DX        ; store new_handle as segment of return
+            inc SI              ; used = TRUE
+          _endloop
+          add   BX,size TRAP_ENTRY
+        _endloop
+        mov     AX,SI           ; set return code
+        pop     DS
+        pop     SI
+        pop     CX
+        pop     BX
+else
         cmp     AX,BPChain      ; check if we can remove trap from stack
         _if     ae              ; we can if the stack is below us
           mov   BP,AX           ; get offset of stack_trap
@@ -392,6 +527,7 @@ __OVLUNDORETTRAP__ proc near
           mov   BX,CX           ; get the new_handle
           xchg  BX,4[BP]        ; store handle and get next link
         _endloop
+endif
         pop     BP
         ret
 __OVLUNDORETTRAP__ endp
@@ -408,7 +544,17 @@ __OVLFIXCALLCHAIN__ proc near
 ;
         push    BP
         push    CX
+ifdef OVL_MULTITHREAD
+        mov     BP,_Context_list
+        _loop
+          push  BP
+          mov   BP,tl_saved_bp[BP]
+          test  BP,BP
+          jne   fix_start       ; used saved bp if not current task
+          mov   BP,CS:BPChain   ; otherwise use BPChain
+else
         mov     BP,CS:BPChain   ; get the BP on entry
+endif
         jmp     short fix_start
         _loop
           shl   CX,1            ; fix the BP.
@@ -422,6 +568,12 @@ fix_start:
           _loopif ne            ; continue loop if not right seg
           mov   4[BP],DX        ; set new value
         _endloop
+ifdef OVL_MULTITHREAD
+          pop   BP              ; restore context
+          mov   BP,tl_next[BP]  ; get next context
+          test  BP,BP
+        _until e                ; until NULL
+endif
         pop     CX
         pop     BP
         ret
@@ -459,13 +611,28 @@ __NCheckRetAddr__ proc near
           mov   AX,DI           ; save overlay number in ax
           shl   DI,CL           ; . . . multiply
           pop   CX              ; restore CX
-          test  byte ptr CS:__OVLTAB__.ov_entries - size OVLTAB_ENTRY + ove_flags_anc + 1[DI],10H
+;          test  byte ptr CS:ENTRIES_M_1 + ove_flags_anc + 1[DI],10H
+          test  byte ptr CS:(__OVLTAB__.ov_entries - size OVLTAB_ENTRY) + ove_flags_anc + 1[DI],10H
                                 ; check if FLAG_RET_TRAP set
           _quif e               ; . . .
           inc   DX              ; this is a return trap
           mov   4[BX],AX        ; set the overlay number
-          mov   DI,word ptr ES:10H + rt_old_code_handle
+ifdef OVL_MULTITHREAD
+;          mov   AX,10H + rt_traps; find the active context
+          mov   AX,10H + offset rt_traps; find the active context
+          _loop                 ; (assume return trap is in active stack)
+            mov DI,AX           ; save pointer
+            mov DI,ES:te_context[DI]
+            cmp word ptr SS:tl_saved_bp[DI],0
+            _quif e
+            add AX,size TRAP_ENTRY
+          _endloop              ; done when found active context
+          mov   DI,AX
+          mov   AX,ES:te_ret_offset[DI]
+else
           mov   AX,word ptr ES:10H + rt_ret_offset
+endif
+          mov   DI,word ptr ES:10H + rt_old_code_handle
           mov   2[BX],DI        ; give seg to debugger
           mov   [BX],AX         ; give offset to debugger
         _endguess
@@ -507,11 +674,24 @@ do_ret_trap proc near
         push    CX                      ; . . .
         push    BX                      ; . . .
         push    DS                      ; . . .
-        dec     AX                      ; get the overlay number
-        mov     DS,AX                   ; . . .
-        mov     AX,word ptr DS:0EH      ; . . .
-        mov     CX,AX                   ; save overlay number
+        dec     AX                      ; get the overlay number and
+        mov     DS,AX                   ; get return offset
+ifdef OVL_MULTITHREAD
+;        mov     AX,10H + rt_traps
+        mov     AX,10H + offset rt_traps
+        _loop
+          mov   BX,AX
+          add   AX,size TRAP_ENTRY      ; (note that loop must end)
+          mov   CX,te_ret_offset[BX]    ; get return offset
+          mov   BX,te_context[BX]       ; get context
+          cmp   word ptr SS:tl_saved_bp[BX],0
+        _until  e                       ; until active task found
+        mov     BX,CX                   ; save return offset
+else
         mov     BX,word ptr DS:010H + rt_ret_offset; save return offset
+endif
+        mov     AX,word ptr DS:0EH      ; get the overlay number
+        mov     CX,AX                   ; save overlay number
         call    __LoadNewOverlay__      ; load overlay
         mov     __OVLCAUSE__,BX         ; save offset of return
         mov     __OVLCAUSE__+2,AX       ; save segment of return
@@ -572,11 +752,16 @@ __NOVLLDR__ endp
 
 
 longjmp_wrap proc far
+ifdef OVL_MULTITHREAD
+        mov     BPChain,BP
+        call    __OVLLONGJMP__
+else
         push    BX
         mov     BPChain,BP
         mov     BX,BP
         call    __OVLLONGJMP__
         pop     BX
+endif
 NullHook proc far
         ret
 NullHook endp

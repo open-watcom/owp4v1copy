@@ -24,13 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Add overlay area to new overlay loader
 *
 ****************************************************************************/
 
-
-//  NADDAREA:   Add overlay area to new overlay loader
 
 #include "novlldr.h"
 

@@ -24,13 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  New (Whoosh) overlay loader.
 *
 ****************************************************************************/
 
-
-// NOVLLDR:      New (Whoosh) overlay loader.
 
 #include "novlldr.h"
 
@@ -63,6 +60,13 @@ void Do286Copy( void *d, void *s, size_t len_in_paras );
         modify exact [si di cx];
 
 /**************************************************************************/
+
+#ifdef OVL_MULTITHREAD
+// Extra flag used only for the Multi-threaded overlay manager
+
+#define FLAG_ACTIVE_TRAP        1       // Assumes flags start at 0x8000
+
+#endif
 
 static void near AllocSeg( unsigned seg, unsigned amount, unsigned area_seg )
 /***************************************************************************/
@@ -243,7 +247,11 @@ static unsigned near UnloadSection( ovltab_entry_ptr ovl, unsigned ovl_num )
     DeMungeVectors( FP_OFF( ovl ), ovl_num, ovl->code_handle );
     if( ovl->start_para != 0 ) {
         /* was in call chain - build a ret trap */
+#ifdef OVL_MULTITHREAD
+        rt_seg = Allocate( RET_TRAP_PARA );
+#else
         rt_seg = Allocate( 1 );
+#endif
         __OVLBUILDRETTRAP__( ovl->code_handle, rt_seg );
         ovl->code_handle = rt_seg;
         ovl->flags_anc |= FLAG_RET_TRAP;
@@ -285,7 +293,11 @@ static unsigned near UnloadNonChained( unsigned amount, unsigned start_ovl )
         }
         if( ( ovl->flags_anc & FLAG_INMEM ) && ( ovl->start_para == 0 ) ) {
             if( OVL_ACCESSES( ovl ) != 0 ) {
+#ifdef OVL_MULTITHREAD
+                OVL_ACCESSES( ovl ) -= 1;
+#else
                 OVL_ACCESSES( ovl ) = 0;
+#endif
             } else {
                 area = MK_FP( UnloadSection( ovl, curr_ovl ), 0 );
                 if( area->free_paras >= amount ) {
@@ -316,7 +328,11 @@ static int near UnloadChained( unsigned amount, unsigned_16 far *call_chain )
         ovl_num = *call_chain >> 4;
         ovl = &__OVLTAB__.entries[ ovl_num - 1 ];
         if( OVL_ACCESSES( ovl ) != 0 ) {
+#ifdef OVL_MULTITHREAD
+            OVL_ACCESSES( ovl ) -= 1;
+#else
             OVL_ACCESSES( ovl ) = 0;
+#endif
             call_chain = &ovl->start_para;      /* advance pointer */
         } else {
             *call_chain = ovl->start_para;      /* unlink from call chain */
@@ -405,6 +421,9 @@ static void near MoveRetTrap( unsigned to_seg, ovltab_entry_ptr ovl )
     unsigned_16 far *           stkptr;
     ret_trap_ptr                rt;
     ret_trap_ptr                rt_new;
+#ifdef OVL_MULTITHREAD
+    unsigned                    i;
+#endif
 
     rt = MK_FP( ovl->code_handle - 1, 0x10 );
     rt_new = MK_FP( to_seg - 1, 0x10 );
@@ -412,11 +431,27 @@ static void near MoveRetTrap( unsigned to_seg, ovltab_entry_ptr ovl )
     rt_new->call_far = CALL_FAR_INSTRUCTION;            /* standard stuff */
     rt_new->rt_entry.off = FP_OFF( __OVLRETTRAP__ );
     rt_new->rt_entry.seg = FP_SEG( __OVLRETTRAP__ );
+#ifdef OVL_MULTITHREAD
+    rt_new->old_code_handle = rt->old_code_handle;
+    for( i = 0; rt->traps[i].stack_trap != 0; ++i ) {
+        rt_new->traps[i].ret_offset = rt->traps[i].ret_offset;
+        rt_new->traps[i].ret_list = rt->traps[i].ret_list;
+        rt_new->traps[i].stack_trap = rt->traps[i].stack_trap;
+        rt_new->traps[i].context = rt->traps[i].context;
+        if( !(ovl->flags_anc & FLAG_ACTIVE_TRAP) ) {
+            stkptr = MK_FP( FP_SEG( &stkptr ), rt->traps[i].stack_trap + 4 );
+            /* fix the stack up */
+            *stkptr = to_seg;
+        }
+    }
+    rt_new->traps[i].stack_trap = 0;
+#else
     rt_new->ret_offset = rt->ret_offset;                /* copy the trap */
     rt_new->ret_list = rt->ret_list;
     rt_new->stack_trap = rt->stack_trap;
     stkptr = MK_FP( FP_SEG( &stkptr ), rt->stack_trap + 4 );/* fix the stack up */
     *stkptr = to_seg;
+#endif
     ovl->code_handle = to_seg;
     ovl->flags_anc |= FLAG_CHANGED;
 }
@@ -471,7 +506,11 @@ static unsigned near DefragmentMem( unsigned amount, unsigned area_seg )
         ovl = &__OVLTAB__.entries[ *descptr - 1 ];
         if( ovl->flags_anc & FLAG_RET_TRAP ) {
             MoveRetTrap( to_seg, ovl );
+#ifdef OVL_MULTITHREAD
+            num_paras = RET_TRAP_PARA;
+#else
             num_paras = 1;
+#endif
         } else {
             MoveSection( to_seg, ovl );
             num_paras = ovl->num_paras;
@@ -568,14 +607,22 @@ unsigned near __LoadNewOverlay__( unsigned ovl_num )
 {
     ovltab_entry_ptr    ovl;
     unsigned            segment;
+#ifdef OVL_MULTITHREAD
+    unsigned            rt_seg;
+#else
     unsigned            stack_trap;
     unsigned            ret_offset;
     unsigned            ret_list;
     ret_trap_ptr        rt;
+#endif
 
     ovl = &__OVLTAB__.entries[ ovl_num - 1 ];
     if( !(ovl->flags_anc & FLAG_INMEM) ) {
         if( ovl->flags_anc & FLAG_RET_TRAP ) {
+#ifdef OVL_MULTITHREAD
+            // Prevent fixups of the return trap for this overlay
+            ovl->flags_anc |= FLAG_ACTIVE_TRAP;
+#else
             rt = MK_FP( ovl->code_handle, 0 );
             stack_trap = rt->stack_trap;
             ret_offset = rt->ret_offset;
@@ -588,13 +635,24 @@ unsigned near __LoadNewOverlay__( unsigned ovl_num )
                move it or throw it out :> */
         } else {
             stack_trap = 0;
+#endif
         }
         segment = ForceAllocate( ovl->num_paras );
+#ifdef OVL_MULTITHREAD
+        if( ovl->flags_anc & FLAG_RET_TRAP ) {
+            rt_seg = ovl->code_handle;
+            FreeSeg( rt_seg, RET_TRAP_PARA, __WhichArea__( rt_seg ) );
+            ovl->flags_anc &= ~(FLAG_RET_TRAP|FLAG_ACTIVE_TRAP);
+            __OVLUNDORETTRAP__( rt_seg, segment );
+            OVL_ACCESSES( ovl ) = 1; /* this overlay has been accessed */
+        }
+#else
         if( stack_trap != 0 ) {
             ovl->flags_anc &= ~FLAG_RET_TRAP;
             __OVLUNDORETTRAP__( stack_trap, ret_offset, ret_list, segment );
             OVL_ACCESSES( ovl ) = 1; /* this overlay has been accessed */
         }
+#endif
         ovl->code_handle = segment;
         *(desc_ptr)MK_FP( segment - 1, 0xE ) = ovl_num;
         ovl->flags_anc |= FLAG_CHANGED;
@@ -731,20 +789,31 @@ extern unsigned long far __FINDOVLADDR__( unsigned unused, unsigned segment )
 }
 
 
+#ifdef OVL_MULTITHREAD
+extern unsigned_32 near __OVLLONGJMP__( unsigned ovl_num, unsigned segment )
+#else
 extern unsigned_32 near __OVLLONGJMP__( unsigned ovl_num, unsigned segment,
                                                             unsigned bp_chain )
+#endif
 /*****************************************************************************/
 /* Ensure that ovl_num is loaded into memory.  Return the segment of ovl_num
  * in DX.  Check all return traps; and move them to higher stack locations
  * if required. This function is wrapped by longjmp_wrap in novlmain.asm */
 {
     ovltab_entry_ptr    ovl;
+#ifdef OVL_MULTITHREAD
+    unsigned_16         rt_seg;
+#else
     ret_trap_ptr        rt;
+#endif
 
     /* check return traps */
     for( ovl = &__OVLTAB__.entries[ 0 ];
             FP_OFF( ovl ) < FP_OFF( &__OVLTABEND__ ); ++ovl ) {
         if( (ovl->flags_anc & FLAG_RET_TRAP) == 0 ) continue;
+#ifdef OVL_MULTITHREAD
+        rt_seg = ovl->code_handle;
+#else
         rt = MK_FP( ovl->code_handle, 0 );
         if( rt->stack_trap >= bp_chain ) continue; /* trap safe */
         if( rt->ret_list < bp_chain ) {
@@ -752,14 +821,25 @@ extern unsigned_32 near __OVLLONGJMP__( unsigned ovl_num, unsigned segment,
             FreeSeg( FP_SEG( rt ), 1, __WhichArea__( FP_SEG( rt ) ) );
             continue;  /* trap removed */
         }
+#endif
         /*
             __OVLUNDORETTRAP__ only undoes things down to the head of the bp
             chain.  We know from above conditions that there must be
             at least one occurance above the bp_chain head.  This could
             be faster; but it gets more complicated.
         */
+#ifdef OVL_MULTITHREAD
+        if( __OVLUNDORETTRAP__( rt_seg, rt_seg ) == 0 ) {
+            ovl->flags_anc &= ~FLAG_RET_TRAP;
+            FreeSeg( rt_seg, RET_TRAP_PARA, __WhichArea__( rt_seg ) );
+            /* trap removed */
+        } else {
+            __OVLBUILDRETTRAP__( rt_seg, rt_seg );
+        }
+#else
         __OVLUNDORETTRAP__( rt->stack_trap, 0, rt->ret_list, FP_SEG( rt ) );
         __OVLBUILDRETTRAP__( FP_SEG( rt ), FP_SEG( rt ) );
+#endif
     }
     if( ovl_num == 0 ) return( (unsigned_32)segment << 16 );
     segment = __LoadNewOverlay__( ovl_num );
@@ -815,9 +895,26 @@ extern void far __NOVLDUMP__( void )
             ret_trap_ptr        rt;
             unsigned_16         ret;
             unsigned_16 far     *stk_ptr;
+#ifdef OVL_MULTITHREAD
+            int                 i;
+#endif
 
             rt = MK_FP( ovl->code_handle, 0 );
             cprintf( "  return trap:" CRLF );
+#ifdef OVL_MULTITHREAD
+            for( i = 0; rt->traps[i].stack_trap != 0; ++i ) {
+                cprintf( "  Thread=%d", i );
+                cprintf( "    ret_offset=%04xh, stack_trap=%04xh" CRLF,
+                    rt->traps[i].ret_offset, rt->traps[i].stack_trap );
+                cprintf( "    ret_list=%04xh", rt->traps[i].ret_list );
+                ret = rt->traps[i].ret_list;
+                while( ret != 0 ) {
+                    stk_ptr = MK_FP( FP_SEG( &stk_ptr ), ret+4 );
+                    ret = *stk_ptr;
+                    cprintf( ", %04xh", ret );
+                }
+            }
+#else
             cprintf( "    ret_offset=%04xh, stack_trap=%04xh" CRLF,
                 rt->ret_offset, rt->stack_trap );
             cprintf( "    ret_list=%04xh", rt->ret_list );
@@ -827,6 +924,7 @@ extern void far __NOVLDUMP__( void )
                 ret = *stk_ptr;
                 cprintf( ", %04xh", ret );
             }
+#endif
             cprintf( CRLF );
         }
         cprintf( CRLF );

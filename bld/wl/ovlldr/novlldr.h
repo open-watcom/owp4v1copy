@@ -24,13 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  New (Whoosh) overlay loader definitions.
 *
 ****************************************************************************/
 
-
-// NOVLLDR:      New (Whoosh) overlay loader definitions.
 
 #include <dos.h>
 #include <stddef.h>
@@ -43,8 +40,17 @@ extern  int near __OVLFIXCALLCHAIN__( unsigned old, unsigned new );
 extern  void near __OVLBUILDRETTRAP__( unsigned old_handle, unsigned rt_seg );
 extern  unsigned near __OVLSCANCALLCHAIN__( void );
 extern  void near __OVLRETTRAP__( void );
+
+#ifdef OVL_MULTITHREAD
+
+extern  unsigned near __OVLUNDORETTRAP__( unsigned rt_seg,
+                                                unsigned new_handle );
+#else
+
 extern  void near __OVLUNDORETTRAP__( unsigned stack_trap, unsigned ret_offset,
                                 unsigned ret_list, unsigned new_handle );
+#endif
+
 extern  void near __NOVLLDR__( void );
 extern  unsigned near __WhichArea__( unsigned seg );
 extern  void near __OVLINITAREA__( unsigned seg, unsigned size );
@@ -201,6 +207,51 @@ typedef area_list far *area_list_ptr;
 
     09-jun-91 DJG
 */
+/*  Multithreaded applications can require more than one set of
+    (stack_trap,ret_list,offset)
+    Follow it by a 0 for stack_trap
+
+    28-jun-83 DPY
+*/
+
+#ifdef OVL_MULTITHREAD
+
+typedef struct {
+    unsigned_16 stack_trap;     /* offset of bp for this trap on stack */
+    unsigned_16 ret_list;       /* beginning of linked list */
+    unsigned_16 ret_offset;     /* offset of original ret addr */
+    unsigned_16 context;        /* offset of context for this trap */
+} trap_entry;
+
+/* List of tasks for multithreading
+    28-jun-93   DPY
+   Must reflect code in engine RNKERNEL.C
+*/
+
+typedef struct {
+    unsigned_16 saved_bp;       // is 0 for active task (us BPChain instead)
+    unsigned_16 saved_sp;
+    unsigned_16 next;
+}       task_list;
+
+extern task_list *      Context_list;
+
+#define MAX_THREAD      5
+
+typedef struct {
+    /* any changes to structure should also be done in novlldr.inc */
+    unsigned_8  call_far;
+    dos_addr    rt_entry;       /* entry into return trap handler */
+    unsigned_8  pad;
+    unsigned_16 old_code_handle; /* for the debugger */
+    trap_entry  traps[MAX_THREAD];/* set of return traps */
+    unsigned_16 end_of_list;    /* End of list if all threads used */
+} ret_trap;
+
+#define RET_TRAP_PARA   ((sizeof(ret_trap)+sizeof(unsigned_16)+15)/16)
+
+#else
+
 typedef struct {
     /* any changes to structure should also be done in novlldr.inc */
     unsigned_8  call_far;
@@ -212,5 +263,8 @@ typedef struct {
     unsigned_16 stack_trap;     /* offset of bp for this trap on stack */
     /* cannot be greater than 14 bytes! see memory notes above for reason */
 } ret_trap;
+#endif
+
 typedef ret_trap far *ret_trap_ptr;
+
 #define CALL_FAR_INSTRUCTION    0x9a

@@ -24,56 +24,9 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Multithread Dynamic Overlay Manager
 ;*
 ;*****************************************************************************
 
 
-;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-;<>
-;<> NOVLLDR:    New Overlay Manager definitions
-;<>
-;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-
-        include ovltab.inc
-
-;
-;       See novlldr.h for docs on these structures.
-;
-
-TRAP_ENTRY STRUC
-    te_stack_trap       dw      ?
-    te_ret_list         dw      ?
-    te_ret_offset       dw      ?
-    te_context          dw      ?
-TRAP_ENTRY ENDS
-
-RET_TRAP STRUC
-    rt_call_far         db      ?
-    rt_entry            dd      ?
-    rt_pad              db      ?
-    rt_old_code_handle  dw      ?
-    rt_traps            db      size TRAP_ENTRY dup(?)
-RET_TRAP ENDS
-
-CALL_FAR                equ     9aH
-
-TASK_LIST STRUC
-    tl_saved_bp         dw      ?
-    tl_saved_sp         dw      ?
-    tl_next             dw      ?
-TASK_LIST ENDS
-
-FREE_BLOCK STRUC
-    fb_next             dw      ?
-    fb_prev             dw      ?
-    fb_num_paras        dw      ?
-FREE_BLOCK ENDS
-
-AREA_LIST STRUC
-    al_fblk             db      size FREE_BLOCK dup(?)
-    al_next             dw      ?
-    al_size             dw      ?
-    al_free_paras       dw      ?
-AREA_LIST ENDS
+        include novlmain.asm

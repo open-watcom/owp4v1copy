@@ -24,14 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Overlay loader IO routines.
 *
 ****************************************************************************/
 
 
-
-// OVLIO:       Overlay loader IO routines.
 
 #include "ovlstd.h"
 

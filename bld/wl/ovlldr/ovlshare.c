@@ -24,13 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  set the sharing flags used by the overlay manager
 *
 ****************************************************************************/
 
-
-//  OVLSHARE.C  - set the sharing flags used by the overlay manager
 
 #include "ovlstd.h"
 

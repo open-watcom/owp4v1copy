@@ -24,23 +24,41 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  New Overlay Manager definitions
 ;*
 ;*****************************************************************************
 
-
-;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
-;<>
-;<> NOVLLDR:    New Overlay Manager definitions
-;<>
-;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 
         include ovltab.inc
 
 ;
 ;       See novlldr.h for docs on these structures.
 ;
+
+ifdef OVL_MULTITHREAD
+
+TRAP_ENTRY STRUC
+    te_stack_trap       dw      ?
+    te_ret_list         dw      ?
+    te_ret_offset       dw      ?
+    te_context          dw      ?
+TRAP_ENTRY ENDS
+
+RET_TRAP STRUC
+    rt_call_far         db      ?
+    rt_entry            dd      ?
+    rt_pad              db      ?
+    rt_old_code_handle  dw      ?
+    rt_traps            db      size TRAP_ENTRY dup(?)
+RET_TRAP ENDS
+
+TASK_LIST STRUC
+    tl_saved_bp         dw      ?
+    tl_saved_sp         dw      ?
+    tl_next             dw      ?
+TASK_LIST ENDS
+
+else
 
 RET_TRAP STRUC
     rt_call_far         db      ?
@@ -51,6 +69,9 @@ RET_TRAP STRUC
     rt_ret_list         dw      ?
     rt_stack_trap       dw      ?
 RET_TRAP ENDS
+
+endif
+
 CALL_FAR                equ     9aH
 
 FREE_BLOCK STRUC

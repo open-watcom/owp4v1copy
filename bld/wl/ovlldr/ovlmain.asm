@@ -24,208 +24,163 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Standard Overlay Manager
 ;*
 ;*****************************************************************************
 
 
 ifdef OVL_SMALL
-
-    name        sovlmain
-
+        name    sovlmain
 else
-
-    name        lovlmain
-
+        name    lovlmain
 endif
 
-    OVL_DOS3 = 2
-
-    COMM        __close_ovl_file:dword
+        comm    __close_ovl_file:dword
 
 DGROUP  group   _DATA
 
 _DATA   segment byte 'DATA' PUBLIC
 _DATA   ends
 
-_TEXT   segment para '_OVLCODE' PUBLIC
+_TEXT   segment dword '_OVLCODE' PUBLIC
         assume  CS:_TEXT
 
 ifdef OVL_SMALL
-    EXTRN       __SDBG_HANDLER__:near
-    EXTRN       __SOVLTINIT__:near
-    EXTRN       __SOVLPARINIT__:near
-    EXTRN       __SOVLSETRTN__:near
-    EXTRN       __SOVLLOAD__:near
+        public  __SOVLLDR__
+        public  __SOVLINIT__
+        public  __SDBG_HOOK__
+        extrn   __SOVLTINIT__:near
+        extrn   __SOVLLOAD__:near
+        extrn   __SOVLSETRTN__:near
+        extrn   __SDBG_HANDLER__:far
+        extrn   __SOVLPARINIT__:near
 else
-    EXTRN       __LDBG_HANDLER__:near
-    EXTRN       __LOVLTINIT__:near
-    EXTRN       __LOVLPARINIT__:near
-    EXTRN       __LOVLSETRTN__:near
-    EXTRN       __LOVLLOAD__:near
+        public  __LOVLLDR__
+        public  __LOVLINIT__
+        public  __LDBG_HOOK__
+        extrn   __LOVLTINIT__:near
+        extrn   __LOVLLOAD__:near
+        extrn   __LOVLSETRTN__:near
+        extrn   __LDBG_HANDLER__:far
+        extrn   __LOVLPARINIT__:near
 endif
-    EXTRN       __OVLPSP__:word
-    EXTRN       __TopStack__:BYTE
-    EXTRN       __OVLFLAGS__:word
-    EXTRN       __OVLDOPAR__:BYTE
-    EXTRN       __CloseOvl__:far
-    EXTRN       __SaveRegs__:word
-    EXTRN       __OVLCAUSE__:word
-    EXTRN       __OVLISRET__:BYTE
+        extrn   __OVLPSP__:word
+        extrn   __OVLCAUSE__:word
+        extrn   __OVLDOPAR__:byte
+        extrn   __OVLISRET__:byte
+        extrn   __SaveRegs__:word
+        extrn   __TopStack__:byte
+        extrn   __OVLFLAGS__:word
+        extrn   __CloseOvl__:far
 
-caller_ss       dw ?
-caller_sp       dw ?
+SaveSS          dw      ?
+SaveSP          dw      ?
 
-NullHook:       retf
-
-;
-;   void __?OVLINIT__( DOS EXE startup parms )
-;
-
-ifdef OVL_SMALL
-
-__SOVLINIT__ proc far public
-
-else
-
-__LOVLINIT__ proc far public
-
-endif
-
-        jmp         short around
-        dw          2112h
-
-ifdef OVL_SMALL
-
-PUBLIC  __SDBG_HOOK__
-__SDBG_HOOK__   DD        NullHook
-                DW        offset _TEXT:__SDBG_HANDLER__
-
-else
-
-PUBLIC  __LDBG_HOOK__
-__LDBG_HOOK__   DD        NullHook
-                DW        offset _TEXT:__LDBG_HANDLER__
-
-endif
-
-around:
-        mov     word ptr cs:__OVLPSP__,es
-        mov     word ptr cs:caller_ss,ss
-        mov     word ptr cs:caller_sp,sp
-        cli
-        mov     ax,cs
-        mov     ss,ax
-        mov     sp,offset _TEXT:__TopStack__
-        sti
-        mov     word ptr cs:__OVLFLAGS__,0
-        mov     ax,3000H
-        int     21H
-        cmp     al,3
-        jb      L$5
-        or      word ptr cs:__OVLFLAGS__,OVL_DOS3
-L$5:
-
-ifdef OVL_SMALL
-
-        call    near ptr __SOVLTINIT__
-        mov     bx,ax
-        call    near ptr __SOVLPARINIT__
-
-else
-
-        call    near ptr __LOVLTINIT__
-        mov     bx,ax
-        call    near ptr __LOVLPARINIT__
-
-endif
-
-        mov     byte ptr cs:__OVLDOPAR__,al
-        cli
-        mov     ss,word ptr cs:caller_ss
-        mov     sp,word ptr cs:caller_sp
-        sti
-        push    ds
-        mov     ax,DGROUP
-        mov     ds,ax
-        mov     word ptr __close_ovl_file,offset _TEXT:__CloseOvl__
-        mov     word ptr __close_ovl_file+2,cs
-        pop     ds
-        push    dx
-        push    bx
-
-ifdef OVL_SMALL
-
-        jmp     dword ptr cs:__SDBG_HOOK__
-
-__SOVLINIT__    endp
-
-else
-
-        jmp     dword ptr cs:__LDBG_HOOK__
-
-__LOVLINIT__    endp
-
-endif
-
-;
-;   void __?OVLLDR__( void )
-;
-
-ALIGN 4
-
-ifdef OVL_SMALL
-
-__SOVLLDR__ proc near public
-
-else
-
-__LOVLLDR__ proc near public
-
-endif
-
-        mov     word ptr cs:__SaveRegs__,ax
-        mov     word ptr cs:__SaveRegs__+2,bp
-        mov     bp,sp
-        mov     ax,word ptr 2[bp]
-        mov     word ptr cs:__OVLCAUSE__,ax
-        mov     ax,word ptr 4[bp]
-        mov     word ptr cs:__OVLCAUSE__+2,ax
-        mov     byte ptr cs:__OVLISRET__,0
-        pop     bp
-        mov     ax,word ptr cs:[bp]
-        pushf
-
-ifdef OVL_SMALL
-
-        call    near ptr __SOVLSETRTN__
-        call    near ptr __SOVLLOAD__
-
-else
-
-        call    near ptr __LOVLSETRTN__
-        call    near ptr __LOVLLOAD__
-
-endif
-
-        popf
-        add     bp,2
-        push    bp
-        mov     bp,word ptr cs:__SaveRegs__+2
-        mov     ax,word ptr cs:__SaveRegs__
+NullHook proc   far
         ret
+NullHook endp
 
 ifdef OVL_SMALL
-
-__SOVLLDR__     endp
-
+__SOVLINIT__ proc far
 else
+__LOVLINIT__ proc far
+endif
+        jmp     short around
+                dw 2112H
+ifdef OVL_SMALL
+__SDBG_HOOK__   dd NullHook
+                dw __SDBG_HANDLER__
+else
+__LDBG_HOOK__   dd NullHook
+                dw __LDBG_HANDLER__
+endif
+around:
+        mov     word ptr __OVLPSP__,ES      ; save segment address of PSP
+        mov     word ptr SaveSS,SS          ; save actual SS:SP
+        mov     word ptr SaveSP,SP          ; ...
+        cli                                 ; set SS:SP to temporary stack
+        mov     AX,CS                       ; ...
+        mov     SS,AX                       ; ...
+        mov     SP,offset __TopStack__      ; ...
+        sti                                 ; ...
+        mov     CS:__OVLFLAGS__,0           ; initialize __OVLFLAGS__
+        mov     ax,3000h                    ; get dos version number
+        int     21h                         ; ...
+        cmp     al,3                        ; check if version 3 or greater
+        jb      not_dos3                    ; ...
+        or      CS:__OVLFLAGS__,2           ; set OVL_DOS3 flag
+not_dos3:
+ifdef OVL_SMALL
+        call    __SOVLTINIT__               ; initialize overlays
+        mov     BX,AX                       ; save AX register
+        call    __SOVLPARINIT__             ; initialize bank stack
+else
+        call    __LOVLTINIT__               ; initialize overlays
+        mov     BX,AX                       ; save AX register
+        call    __LOVLPARINIT__             ; initialize bank stack
+endif
+        mov     byte ptr __OVLDOPAR__,AL    ; save status of || overlay support
+        cli                                 ; set SS:SP to actual stack
+        mov     SS,word ptr SaveSS          ; ...
+        mov     SP,word ptr SaveSP          ; ...
+        sti                                 ; ...
+        push    DS                          ; save DS
+        mov     ax,seg DGROUP               ; get seg of DGROUP
+        mov     ds,ax                       ; ...
+        mov     word ptr DS:__close_ovl_file,offset __CloseOvl__
+        mov     word ptr DS:__close_ovl_file+2,CS
+        pop     DS                          ; restore DS
+        push    DX                          ; push actual start segment
+        push    BX                          ; push actual start offset
+ifdef OVL_SMALL
+        jmp     dword ptr CS:__SDBG_HOOK__  ; hook into debugger if it's there
+__SOVLINIT__ endp
+else
+        jmp     dword ptr CS:__LDBG_HOOK__  ; hook into debugger if it's there
+__LOVLINIT__ endp
+endif
 
-__LOVLLDR__     endp
+align 4
 
+ifdef OVL_SMALL
+__SOVLLDR__ proc   near
+else
+__LOVLLDR__ proc   near
+endif
+        mov     word ptr CS:__SaveRegs__+0,AX   ; save registers
+        mov     word ptr CS:__SaveRegs__+2,BP   ; ...
+        mov     BP,SP                           ; peek at the stack
+        mov     AX,2[BP]                        ; get cause of overlay load
+        mov     CS:__OVLCAUSE__,AX              ; stash it
+ifdef OVL_SMALL                                 ; ...
+        mov     CS:__OVLCAUSE__+2,CS            ; ...
+else
+        mov     AX,4[BP]                        ; ...
+        mov     CS:__OVLCAUSE__+2,AX            ; stash it
+endif
+        mov     byte ptr __OVLISRET__,0         ; indicate not a return
+        pop     BP                              ; remove return address offset
+        mov     AX,CS:[BP]                      ; get overlay to load
+        pushf                                   ; save flags
+ifdef OVL_SMALL
+        call    __SOVLSETRTN__                  ; change the next ret address.
+        call    __SOVLLOAD__                    ; load overlay
+else
+        call    __LOVLSETRTN__                  ; change the next ret address.
+        call    __LOVLLOAD__                    ; load overlay
+endif
+        popf                                    ; restore flags
+        add     BP,2                            ; skip overlay # when returning.
+        push    BP                              ; restore return offset
+        mov     BP,word ptr CS:__SaveRegs__+2   ; restore registers
+        mov     AX,word ptr CS:__SaveRegs__+0   ; ...
+        ret                                     ; return
+ifdef OVL_SMALL
+__SOVLLDR__ endp
+else
+__LOVLLDR__ endp
 endif
 
 _TEXT   ends
 
-END
+        end

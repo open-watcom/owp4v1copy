@@ -21,8 +21,8 @@ set PROJDIR=<CWD>
     <CPCMD> <PROJDIR>/ms2wlink/dosi86/ms2wlink.exe      <RELROOT>/rel2/binw/ms2wlink.exe
     <CPCMD> <PROJDIR>/fcenable/dosi86/fcenable.exe      <RELROOT>/rel2/binw/fcenable.exe
     <CPCMD> <PROJDIR>/wlbin.lnk                         <RELROOT>/rel2/binw/wlink.lnk
-#    <CPCMD> <PROJDIR>/ovlldr/wovl.lib                  <RELROOT>/rel2/lib286/dos/wovl.lib
-#    <CPCMD> <PROJDIR>/ovlldr/wmovl.lib                 <RELROOT>/rel2/lib286/dos/wmovl.lib
+    <CPCMD> <PROJDIR>/ovlldr/wovl.lib                   <RELROOT>/rel2/lib286/dos/wovl.lib
+    <CPCMD> <PROJDIR>/ovlldr/wmovl.lib                  <RELROOT>/rel2/lib286/dos/wmovl.lib
 
   [ IFDEF (os_os2 "") <2*> ]
     <CPCMD> <PROJDIR>/os2386.dll/wlstub.exe             <RELROOT>/rel2/binp/wlink.exe

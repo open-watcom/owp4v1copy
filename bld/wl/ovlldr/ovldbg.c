@@ -24,18 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Overlay debugger support.
 *
 ****************************************************************************/
 
 
-// OVLDBG:       Overlay debugger support.
-
 #include <stddef.h>
 #include <dos.h>
 #if defined(OVL_MULTITHREAD)
-#include "movlldr.h"
+#include "novlldr.h"
 #elif defined(OVL_WHOOSH)
 #include "novlldr.h"
 #else
