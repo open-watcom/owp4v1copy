@@ -52,8 +52,10 @@ bindextra = -d$(vi_dir)\dat\winbind.dat
 $(name) : $(special) $(objs) $(objsroot) $(objinit) $(other) $(videps) master.mif $(mifdep)
         $(cc) $(cflags) version.c -fo=.ybj
         $(linker) $(lflags) name $(lname) file version.ybj file {$(objsroot)} $(start_flags) file {$(objinit)} $(more_flags) file {$(objs)} $(final_flags) $(rcsdll)
-!ifeq ED vi386
+!ifeq host_os dos
+!ifeq host_cpu 386
 #        $(tnt_dir)\bin\rebind $(tnt_dir)\bin\rtk\tntb.exe $(ED).exp -exe $(name)
+!endif
 !endif
 !ifdef sys_windowed
 !ifeq host_os win
@@ -81,11 +83,13 @@ $(name) : $(special) $(objs) $(objsroot) $(objinit) $(other) $(videps) master.mi
 !endif
 !endif
 
-!ifeq ED viw
+!ifeq host_os win
+!ifeq host_cpu i86
 tags : ../win/tags .SYMBOLIC
 
 ../win/tags: vi.tag
     ctags @vi.tag -f$^@
+!endif
 !endif
 
 
