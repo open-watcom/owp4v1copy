@@ -406,6 +406,10 @@ static int get_id( unsigned int *buf_index, char **input, char **output )
                 }
                 #endif
             } else if( AsmOpTable[count].rm_byte & OP_RES_ID ) {
+                if( buf->value == T_PWORD )
+                    buf->value = T_FWORD;
+                else if( buf->value == T_DP )
+                    buf->value = T_DF;
                 buf->token = T_RES_ID;
             } else if( AsmOpTable[count].rm_byte & OP_UNARY_OPERATOR ) {
                 buf->token = T_UNARY_OPERATOR;
