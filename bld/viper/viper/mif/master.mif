@@ -52,7 +52,7 @@ $(name).exe : $(OBJECTS) $(LIBS) viper.res
 !else
         $(linker) $(lflags) name $(name) op map, de $(description) f {$(OBJECTS)} lib {$(LIBS)}
         set opath=$(%path)
-        set path=$(os2_toolkit)\bin
+	set path=$(rc_os2_path)
         $(rc_os2) -p -x viper.res $^@
         set path=$(%opath)
 !endif
