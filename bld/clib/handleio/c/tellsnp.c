@@ -32,11 +32,10 @@
 #include "variety.h"
 #include <sys/types.h>
 #include <unistd.h>
-
-#include <libc/init.h>
-#include <libc/xfile.h>
+#include <os/imports.h>
 
 _WCRTLINK long (tell)( int fd )         /* return current file position */
 {
-    return( xlseek( fd, 0L, SEEK_CUR ) );
+    return xlseek( fd, 0L, SEEK_CUR );
 }
+

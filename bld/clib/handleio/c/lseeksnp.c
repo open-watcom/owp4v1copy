@@ -32,17 +32,10 @@
 #include "variety.h"
 #include <stdio.h>
 #include "rtcheck.h"
-
-#include <libc/init.h>
-#include <libc/xfile.h>
+#include <os/imports.h>
 
 _WCRTLINK long lseek( int handle, long offset, int origin )
 {
-    long            out_offset;
-
     __handle_check( handle, -1 );
-
-    out_offset = xlseek( handle, offset, origin );
-
-    return( out_offset );  /* return seek position */
+    return xlseek( handle, offset, origin );
 }

@@ -32,9 +32,7 @@
 #include "variety.h"
 #include <stdio.h>
 #include <stdarg.h>
-
-#include <libc/init.h>
-#include <libc/xfile.h>
+#include <os/imports.h>
 
 
 /* open() and sopen() are identical under SNAP, since the extra share

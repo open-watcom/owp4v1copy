@@ -32,18 +32,12 @@
 #include "variety.h"
 #include <stdio.h>
 #include "rtcheck.h"
-
-#include <libc/init.h>
-#include <libc/xfile.h>
+#include <os/imports.h>
 
 
 int __close( int handle )
 {
-    int         rc;
-
     __handle_check( handle, -1 );
-
-    rc = xclose( handle );
-
-    return( rc );
+    return xclose( handle );
 }
+

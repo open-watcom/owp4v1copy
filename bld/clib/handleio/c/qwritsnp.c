@@ -33,9 +33,7 @@
 #include <unistd.h>
 #include <limits.h>
 #include "rtcheck.h"
-
-#include <libc/init.h>
-#include <libc/xfile.h>
+#include <os/imports.h>
 
 #define MAX_OS_TRANSFER (((unsigned)INT_MAX+1) - 512)
 
@@ -59,3 +57,4 @@ unsigned __qwrite( int file, void *buffer, unsigned len )
         len -= amount;
     }
 }
+

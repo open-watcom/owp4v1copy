@@ -33,17 +33,10 @@
 #include <stdio.h>
 #include <io.h>
 #include "rtcheck.h"
-
-#include <libc/init.h>
-#include <libc/xfile.h>
+#include <os/imports.h>
 
 _WCRTLINK int write ( int handle, const void *buffer, unsigned len )
-/*******************************************************************/
 {
-    int     rc;
-
-    rc = xwrite( handle, buffer, len );
-
-    return rc;
+    return xwrite( handle, buffer, len );
 }
 
