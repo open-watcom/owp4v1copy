@@ -353,6 +353,8 @@ char *ForceSlash( char *name, char slash )
     return save;
 }
 
+static char *CreateFileName( char *template, char *extension, bool forceext );
+
 void DumpDepFile( void )
 {
     FNAMEPTR curr;
@@ -362,14 +364,8 @@ void DumpDepFile( void )
         {
             return;
         }
-        if( DependTarget )
-        {
-            fprintf( DepFile, "%s :", ForceSlash( DependTarget, DependForceSlash ) );
-        }
-        else
-        {
-            fprintf( DepFile, "%s :", ForceSlash( ObjFileName( OBJ_EXT ), DependForceSlash ) );
-        }
+        fprintf( DepFile, "%s :",
+                ForceSlash( CreateFileName( DependTarget, OBJ_EXT, FALSE ), DependForceSlash ) );
         for( ; curr; curr = curr->next )
         {
             if( curr->rwflag && !SrcFileInRDir( curr ) )
@@ -576,9 +572,7 @@ char *ObjFileName( char *ext )
 
 char *DepFileName()
 {
-    if( !DependFileName ) 
-         return( CreateFileName( DependFileName, DEP_EXT, FALSE ) );
-    return DependFileName;
+    return( CreateFileName( DependFileName, DEP_EXT, FALSE ) );
 }
 
 char *ErrFileName()
