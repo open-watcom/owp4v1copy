@@ -1,5 +1,5 @@
-include test.inc
-include osdef.inc
+;include test.inc
+;include osdef.inc
 include mdef.inc
 include struct.inc
 
