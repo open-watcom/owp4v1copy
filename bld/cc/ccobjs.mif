@@ -38,7 +38,9 @@ common_objs = &
         strsave.obj &
         swchar.obj &
         watcom.obj &
+!ifndef bootstrap
         cmatherr.obj &
+!endif
         cgetch.obj &
         cmacadd.obj &
         asmalloc.obj &
