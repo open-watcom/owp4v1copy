@@ -48,7 +48,7 @@ typedef callstruct __FAR *LPCALLMSG;
 
 static HHOOK            callHookHandle, getHookHandle;
 static BOOL             isFiltering = FALSE;
-static HANDLE           dllInstance;
+static HINSTANCE        dllInstance;
 
 #ifndef __NT__
  void (WINAPI *HandleMessage)( LPMSG pmsg );
@@ -116,7 +116,7 @@ int __export WINAPI WEP( int res )
 /*
  * CallWndProcFilter - hook for calls to wndprocs
  */
-DWORD CALLBACK CallWndProcFilter( int ncode, WPARAM wparam, LPARAM lparam )
+LRESULT CALLBACK CallWndProcFilter( int ncode, WPARAM wparam, LPARAM lparam )
 {
     MSG         msg;
     LPCALLMSG   pcm;
@@ -136,7 +136,7 @@ DWORD CALLBACK CallWndProcFilter( int ncode, WPARAM wparam, LPARAM lparam )
 /*
  * GetMessageFilter - hook for get message
  */
-DWORD CALLBACK GetMessageFilter( int ncode, WPARAM wparam, LPARAM lparam )
+LRESULT CALLBACK GetMessageFilter( int ncode, WPARAM wparam, LPARAM lparam )
 {
 
     if( ncode >= 0 ) {
