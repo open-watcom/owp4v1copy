@@ -369,6 +369,9 @@ static TEMPLATE_SPECIALIZATION *newTemplateSpecialization(
     tspec->defn_found = FALSE;
     tspec->free = FALSE;
 
+    // partial specializations not allowed yet
+    DbgAssert( ( tspec->spec_args == NULL ) || ( arg_count == 0 ) );
+
     getArgList( args, tspec->type_list, tspec->arg_names, NULL );
     return( tspec );
 }
@@ -860,12 +863,17 @@ void TemplateDeclFini( void )
             tspec = mergeClassTemplates( data, sym );
         } else if( data->spec_args == NULL ) {
             sym = newTemplateSymbol( data );
-            tspec = RingFirst( sym->u.tinfo->specializations );
+            if( sym != NULL ) {
+                tspec = RingFirst( sym->u.tinfo->specializations );
+            }
         } else {
             /* TODO: error message */
             DbgAssert( 0 );
         }
-        addClassTemplateMember( data, sym, tspec );
+
+        if( ( sym != NULL ) && ( tspec != NULL ) ) {
+            addClassTemplateMember( data, sym, tspec );
+        }
     }
     if( CErrOccurred( &(data->errors) ) ) {
         if( sym != NULL ) {
