@@ -156,6 +156,9 @@ static unsigned FindFilePath( char *name, char *result )
         end = strrchr( cmd, '/' );
         if( end != NULL ) {
             *end = '\0';
+	    /* look in the executable's directory */
+            len = TryOnePath( cmd, &tmp, name, result );
+            if( len != 0 ) return( len );
             end = strrchr( cmd, '/' );
             if( end != NULL ) {
                 /* look in the wd sibling directory of where the command
@@ -166,7 +169,7 @@ static unsigned FindFilePath( char *name, char *result )
             }
         }
     }
-    return( TryOnePath( "/usr/watcom/wd", &tmp, name, result ) );
+    return( TryOnePath( "/opt/watcom/wd", &tmp, name, result ) );
 }
 
 unsigned FullPathOpen( char const *name, char *ext, char *result, unsigned max_result )
