@@ -94,7 +94,7 @@ presenting an overview of its structure and highlighting some of the more
 memorable sights.
 .np
 The Open Watcom directory structure mostly mirrors the layout used by
-the Watcom/Sybase build server but ht has been cleaned up, straightened
+the Watcom/Sybase build server but it has been cleaned up, straightened
 out and unified, although there still may be some warts.
 .np
 The root of the Open Watcom directory tree can be in the root of
