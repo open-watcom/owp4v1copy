@@ -4,6 +4,12 @@ proj_name = emu
 !include deftarg.mif
 !include defrule.mif
 
+!ifndef emu_autodepends
+emu_autodepends = .AUTODEPEND
+!endif
+
+.ERASE
+
 .EXTENSIONS: .psm
 
 INCS = &
@@ -20,29 +26,24 @@ INCS = &
 .psm : ../asm
 .asm : ../asm
 
-as_flags = -i"$(mathlib_dir)/h;$(emu386)/inc"
+extra_a_flags = -i"$(mathlib_dir)/h;$(emu386)/inc"
+extra_a_flags_dos = -d_OS=_PLDT -dSEGMENTED
+extra_a_flags_qnx = -d_OS=_QNX -dSEGMENTED
+extra_a_flags_win = -mf -d_OS=_PLDT -d__WIN387__
+extra_c_flags_qnx = -oais-s-w3 -i$(new_qnx_h) -dQNX32
 
 !ifeq host_OS dos
-
-extra_as_flags = -d_OS=_PLDT -dSEGMENTED
 
 emu387.lib: emu387.obj 386inite.obj
     $(librarian) -s -t -n -b $@ +emu387.obj +386inite.obj
 
 !else ifeq host_OS qnx
 
-extra_as_flags = -d_OS=_QNX -dSEGMENTED
-objs = qnxemu87.obj emu387.obj fpeqnx.obj
-
-.c.obj:
-    $(cc) $[* -oais-s-w3 -i$(new_qnx_h) -dQNX32
-
-emu387: $(objs)
-    $(linker) $(lflags) name $^@ file { $(objs) } opt priv=0,map,long,quiet,res=../../emu86/emu87.u
+emu387: qnxemu87.obj emu387.obj fpeqnx.obj
+    $(linker) $(lflags) name $^@ file { $< } opt priv=0,map,long,quiet,res=../../emu86/emu87.u
 
 !else ifeq host_OS win
 
-extra_as_flags = -mf -d_OS=_PLDT -d__WIN387__
 INCS += win30vxd.inc
 
 !else
@@ -52,9 +53,9 @@ emu387.lib: 386stub.obj
 
 !endif
 
-.psm.obj:
-    $(as) $[@ -fo=$@ -mf -d_OS=_PLDT $(as_flags) -i"$(watcom_dir)/h/;$(comp_cfg_dir)/h"
+.psm.obj: .AUTODEPEND
+    $(as) $(aflags) $(extra_a_flags_$[&) $[@ -fo=$@ -mf -i"$(watcom_dir)/h/;$(comp_cfg_dir)/h"
 
-emu387.obj: emu387.asm $(INCS)
-    $(as) $[@ $(as_flags) $(extra_as_flags)
+emu387.obj: emu387.asm .AUTODEPEND
+    $(as) $(aflags) $(extra_a_flags_$[&) $[@
     wtouch compile.tim

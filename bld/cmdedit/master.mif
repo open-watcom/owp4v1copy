@@ -1,4 +1,5 @@
 proj_name = cmdedit
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
@@ -33,6 +34,10 @@ dopt=d1
 .EXTENSIONS:
 .EXTENSIONS: .exe .ubj .obj .cbj .c .h .asm
 
+extra_a_flags = -d_MODEL=_SMALL -fo=$^.
+extra_a_flags_dos = -d_OS=_DOS
+extra_a_flags_os2 = -d_OS=_OS2
+
 .asm: ..
 .c: ..
 
@@ -42,8 +47,11 @@ dopt=d1
 .c.cbj:
         $(comp286) $< /w3 /oxs /d1 /fo=.cbj /zq /d__CMDSHELL__ #
 
-.asm.cbj:
-        $(as) -zq -d_MODEL=_SMALL -d_OS=_OS2 -fo=$^&.cbj $<
+.asm.cbj : .AUTODEPEND
+        $(as) $(aflags) $(extra_a_flags_$[&) $<
+
+.asm.obj : .AUTODEPEND
+        $(as) $(aflags) $(extra_a_flags_$[&) $<
 
 .before:
         set include=$(inc_dirs_sys)
@@ -52,9 +60,6 @@ lnk = tmp.lnk
 dolink = $(linker)
 
 !ifeq host_OS dos
-
-.asm.obj:
-        $(as) -zq -d_MODEL=_SMALL -d_OS=_DOS $<
 
 .c.obj:
         $(comp286) $< /w3 /dDOS /oas /s /$(dopt) /zq #
@@ -82,9 +87,6 @@ dcmdedit.exe: $(tstobjs) makefile
 !endif
 
 !ifeq host_OS os2
-
-.asm.obj:
-        $(as) -zq -d_MODEL=_SMALL -d_OS=_OS2 $<
 
 .c.obj:
         $(comp286) $< /w3 /oxs /d1 /fo=.obj /zq #

@@ -18,8 +18,11 @@ cflags_os2 = -bt=os2 -zq -os -s -d1 -w3 -d__OS2__ -i$(inc_dirs_sys)
 .c.obj:
     $(cc) $(cflags_$(host_OS)) $<
 
-.asm.obj:
-    $(as) -zq -fo=$^@ $[@
+.asm.obj : .AUTODEPEND
+    $(as) $(aflags) $(extra_a_flags_$[&) $[@
+
+#.asm.obj:
+#    $(as) -zq -fo=$^@ $[@
 
 os2objs = techinfo.obj ptype.obj pbus.obj pprefix.obj ndptype.obj
 dosobjs = $(os2objs) monint.obj

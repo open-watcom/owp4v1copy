@@ -1,5 +1,5 @@
-sw_c_common =-ox-w4-zq-zl-zld
-sw_a_common =-zq
+sw_c_common =-ox-w4-zl-zld
+sw_a_common =-w4
 
 !ifdef __LINUX__
 sw_c_common +=-fo=.obj

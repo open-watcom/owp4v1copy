@@ -39,8 +39,8 @@ objs = $(name).obj link.obj int21.obj
 $(name).exe : $(OBJS) $(LNK)
        $(linker) $(lflags) option stack=1500 name $(name) file {$(objs)}
 
-.asm.obj : $[*
-        $(as) -bt=DOS -ms -q -d1 $[*
+.asm.obj : .AUTODEPEND
+        $(as) $(aflags) $(extra_a_flags_$[&) $[@
 
 !else ifeq host_OS win
 
