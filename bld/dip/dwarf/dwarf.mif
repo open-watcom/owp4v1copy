@@ -18,8 +18,8 @@ imp_objs = &
 
 name = dwarf
 
-extra_incs = $(dwarf_dir)\dr\h;$(lib_misc_dir)\h
-extra_srcs = $(lib_misc_dir)\c
+extra_incs = $(dwarf_dir)/dr/h;$(lib_misc_dir)/h
+extra_srcs = $(lib_misc_dir)/c
 extra_cflags =  -DDIP_PRIORITY=DP_DEFAULT
 
 !include ../../imp.mif

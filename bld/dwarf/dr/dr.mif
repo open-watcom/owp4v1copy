@@ -9,15 +9,15 @@ comp_osi_386    = $(comp386) -fpc -zc
 comp_qnx_386    = $(comp386) -fpc -zc -ms
 comp_osi_axp    = *wccaxp
 
-lib_os2_i86     = $(watcom_dir)\lib\dwarfrlp.lib
-lib_win_i86     = $(watcom_dir)\lib\dwarfrlw.lib
+lib_os2_i86     = $(watcom_dir)/lib/dwarfrlp.lib
+lib_win_i86     = $(watcom_dir)/lib/dwarfrlw.lib
 !ifdef inline_vmem
-lib_osi_386     = $(watcom_dir)\lib\dwarfrp.lib
+lib_osi_386     = $(watcom_dir)/lib/dwarfrp.lib
 !else
-lib_osi_386     = $(watcom_dir)\lib\dwarfrpd.lib
+lib_osi_386     = $(watcom_dir)/lib/dwarfrpd.lib
 !endif
-lib_qnx_386     = $(watcom_dir)\lib\dwarfrps.lib
-lib_osi_axp     = $(watcom_dir)\lib\draxp.lib
+lib_qnx_386     = $(watcom_dir)/lib/dwarfrps.lib
+lib_osi_axp     = $(watcom_dir)/lib/draxp.lib
 
 copts = -s-wx-we-zq        #default warning, warnings are errors, quiet
 !ifdef dbg
@@ -25,9 +25,12 @@ copts += -$(dbg)-hw #use a debug option
 !else
 copts += -oaxt-d1 #optimize
 !endif
-copts += -i=..\h;$(inc_dirs_lang);$(watcom_dir)\h
+copts += -i="../h;$(inc_dirs_lang);$(watcom_dir)/h"
 !ifdef on_build_machine
 copts += -dNDEBUG
+!endif
+!ifdef __LINUX__
+copts += -fo=.obj
 !endif
 
 !ifdef inline_vmem
@@ -61,20 +64,20 @@ c_objs = $+$(template)$-
 
 $(lib_$(host_OS)_$(host_CPU)) : $(c_objs)
         @if exist $^*.bak attrib -r $^*.bak
-        $(librarian_$(host_CPU)) /b /q /n $^@ $(c_objs)
+        $(librarian_$(host_CPU)) -b -q -n $^@ $(c_objs)
 
 compile = $(comp_$(host_OS)_$(host_CPU)) $(copts)
 
-.c: ..\c
+.c: ../c
 .c.obj: .AUTODEPEND
         $(compile) $[*.c
 
 .c.i:
         $(compile) $[*.c -pc -fo=.i
 
-drutils.obj : ..\c\drutils.c .AUTODEPEND
-    $(compile) $[*.c /i=$(lib_misc_dir)\h
+drutils.obj : ../c/drutils.c .AUTODEPEND
+    $(compile) $[*.c -i="$(lib_misc_dir)/h"
 
-drsearch.obj : ..\c\drsearch.c .AUTODEPEND
-    $(compile) $[*.c /i=$(posix_dir)\h
+drsearch.obj : ../c/drsearch.c .AUTODEPEND
+    $(compile) $[*.c -i="$(posix_dir)/h"
 

@@ -22,6 +22,7 @@ comp_os2_i86    = $(comp286)
 comp_os2_386    = $(comp386)
 comp_qnx_i86    = $(comp286)
 comp_qnx_386    = $(comp386) -ms
+comp_linux_386  = $(comp386)
 comp_win_i86    = $(comp286)
 comp_dos_386    = $(comp386)
 comp_nt_386     = $(comp386)
@@ -37,24 +38,32 @@ sys_os2_i86     = os2 dll export DIPLOAD op modname=$(name)
 sys_os2_386     = os2v2 dll export DIPLOAD op modname=$(name)
 sys_qnx_i86     = qnx disable 1023
 sys_qnx_386     = pharlap rex disable 1023,1014
+sys_linux_386   = pharlap rex disable 1023,1014
 sys_win_i86     = windows op modname=$(name),rwr
 sys_dos_386     = pharlap rex disable 1023,1014
 sys_nt_386      = nt_dll export DIPLOAD op modname=$(name) $(sys_nt_386_$(name))
 sys_nt_axp      = ntaxp_dll export DIPLOAD op modname=$(name)
 
-dip_os2_i86     = $(bin_root)\binp\dll\$(name).dll
-dip_os2_386     = $(bin_root)\binp\dll\$(name).d32
-dip_qnx_i86     = $(bin_root)\qnx\$(name).dip
-dip_qnx_386     = $(bin_root)\qnx\$(name).dip
-dip_win_i86     = $(bin_root)\bin\$(name).dll
-dip_dos_386     = $(bin_root)\bin\$(name).dip
-dip_nt_386      = $(bin_root)\binnt\$(name).dll
-dip_nt_axp      = $(bin_root)\axpnt\$(name).dll
+dip_os2_i86     = $(bin_root)/binp/dll/$(name).dll
+dip_os2_386     = $(bin_root)/binp/dll/$(name).d32
+dip_qnx_i86     = $(bin_root)/qnx/$(name).dip
+dip_qnx_386     = $(bin_root)/qnx/$(name).dip
+dip_linux_386   = $(bin_root)/linux/$(name).dip
+dip_win_i86     = $(bin_root)/bin/$(name).dll
+dip_dos_386     = $(bin_root)/bin/$(name).dip
+dip_nt_386      = $(bin_root)/binnt/$(name).dll
+dip_nt_axp      = $(bin_root)/axpnt/$(name).dll
 
 clib_os2_i86    = clibl
 clib_os2_386    = clib3r
 clib_qnx_i86    = clibl
 clib_qnx_386    = clib3r
+!ifdef __LINUX__
+clib_linux_386  = $(clib_dir)/library/linux.386/ms_r/clibs.lib &
+$(mathlib_dir)/library/msdos.387/ms_r/maths.lib
+!else
+clib_linux_386  = clib3r
+!endif
 clib_win_i86    = clibl
 clib_dos_386    = clib3r
 clib_nt_386     = clib3r
@@ -68,13 +77,21 @@ targ = $(host_OS)
 
 
 comp_opts_i86 = -ml -fpc -zc -zu
-comp_opts_386 = -fpc -zc
+comp_opts_386 = -zc
 comp_opts_axp =
+!ifeq host_OS linux
+comp_opts_386 += -fpi87
+!else
+comp_opts_386 += -fpc
+!endif
 
-comp_opts = -d__DIP__ -zq -w3 -bt=$(targ) -i..\h;..\..\h;$(dig_dir)\h;$(inc_dirs_lang);$(watcom_dir)\h
+comp_opts = -d__DIP__ -zq -w3 -bt=$(targ) -i"../h;../../h;$(dig_dir)/h;$(inc_dirs_lang);$(watcom_dir)/h"
 
 !ifdef extra_incs
-comp_opts += -i$(extra_incs)
+comp_opts += -i"$(extra_incs)"
+!endif
+!ifdef __LINUX__
+comp_opts += -fo=.obj
 !endif
 
 !ifdef on_build_machine
@@ -96,7 +113,7 @@ comp_opts       += -dDEBUG
 
 compile = $(comp_$(host_OS)_$(host_CPU)) $(comp_opts_$(host_CPU)) $(comp_opts) $(extra_cflags) $[@
 
-.c: ..\c;..\..\c;$(extra_srcs)
+.c: ../c;../../c;$(extra_srcs)
 
 .c.obj: .autodepend
         $(compile)

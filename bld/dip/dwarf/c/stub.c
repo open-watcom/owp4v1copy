@@ -34,7 +34,7 @@
         Stub definitions to stop the C library from hauling in stuff
         we don't want.
 */
-#if defined(__NT__) || defined(__DOS__) || defined(__OS2__) || defined(__QNX__)
+#if defined(__NT__) || defined(__DOS__) || defined(__OS2__) || defined(__UNIX__)
 
 #pragma off(unreferenced);
 double _matherr( why, who, arg1, arg2, result )
