@@ -63,10 +63,10 @@ emu8087.2bj: emu8087.asm $(incfiles)
     wasm -i$(emu386)\ -i$(mathlib_dir)\h\ -d__PROTMODE__ $[* -fo=.2bj
 
 emu8087.obj: emu8087.asm $(incfiles)
-    wasm -i$(emu386)\ -i$(mathlib_dir)\h\ $[*
+    wasm -ms -i$(emu386)\ -i$(mathlib_dir)\h\ $[*
 
 initemu.obj: initemu.asm
-    wasm -ms -i$(emu386)\ -i$(mathlib_dir)\h\ -i$(comp_cfg_dir)\h\ $[*
+    wasm -ms -fpi87 -i$(emu386)\ -i$(mathlib_dir)\h\ -i$(comp_cfg_dir)\h\ $[*
 
 
 
