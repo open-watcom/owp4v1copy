@@ -18,6 +18,7 @@ cdsay .
     <CPCMD> <PROJDIR>/dos/*.cnv          <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/c*.            <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/fstream        <RELROOT>/rel2/h/
+    <CPCMD> <PROJDIR>/dos/function       <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/iomanip        <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/ios            <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/iosfwd         <RELROOT>/rel2/h/
@@ -28,11 +29,13 @@ cdsay .
     <CPCMD> <PROJDIR>/dos/ostream        <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/streambu       <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/strstrea       <RELROOT>/rel2/h/
+    <CPCMD> <PROJDIR>/dos/utility        <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/sys/*.h        <RELROOT>/rel2/h/sys/
     <CPCMD> <PROJDIR>/dos/win/*.h        <RELROOT>/rel2/h/win/
     <CPCMD> <PROJDIR>/linux/*.h*         <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/c*.          <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/fstream      <RELROOT>/rel2/lh/
+    <CPCMD> <PROJDIR>/linux/function     <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/iomanip      <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/ios          <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/iosfwd       <RELROOT>/rel2/lh/
@@ -43,12 +46,14 @@ cdsay .
     <CPCMD> <PROJDIR>/linux/ostream      <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/streambu     <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/strstrea     <RELROOT>/rel2/lh/
+    <CPCMD> <PROJDIR>/linux/utility      <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/arpa/*.h     <RELROOT>/rel2/lh/arpa/
     <CPCMD> <PROJDIR>/linux/sys/*.h      <RELROOT>/rel2/lh/sys/
     <CPCMD> <PROJDIR>/linux/netinet/*.h  <RELROOT>/rel2/lh/netinet/
 #    <CPCMD> <PROJDIR>/qnx/*.h*           <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/c*             <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/fstream        <RELROOT>/rel2/qh/
+#    <CPCMD> <PROJDIR>/qnx/function       <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/iomanip        <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/ios            <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/iosfwd         <RELROOT>/rel2/qh/
@@ -59,6 +64,7 @@ cdsay .
 #    <CPCMD> <PROJDIR>/qnx/ostream        <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/streambu       <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/strstrea       <RELROOT>/rel2/qh/
+#    <CPCMD> <PROJDIR>/qnx/utility        <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/sys/*.h        <RELROOT>/rel2/qh/sys/
 
 [ BLOCK <1> clean ]

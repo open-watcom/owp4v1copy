@@ -35,8 +35,10 @@ strstrea_deps = ../watcom/strstrea.mh ../readonly.sp ../crwat.sp ../pshpackl.sp 
 
 # These dependency lists are for other C++ library headers.
 
+function_deps = ../watcom/function.mh ../readonly.sp ../crwat.sp
 iterator_deps = ../watcom/iterator.mh ../readonly.sp ../crwat.sp
 memory_deps = ../watcom/memory.mh ../readonly.sp ../crwat.sp ../throws.sp
+utility_deps = ../watcom/utility.mh ../readonly.sp ../crwat.sp
 
 # The follow describe the dependences for the various *.h files.
 # Dependencies for the extensionless C++ headers are currently in the

@@ -1,0 +1,88 @@
+///////////////////////////////////////////////////////////////////////////
+// FILE: utility (Utility templates)
+//
+:keep CPP_HDR
+:include crwat.sp
+//
+// Description: This header is part of the C++ standard library. It
+//              defines a few useful helper templates that don't fit
+//              well in any of the other headers.
+///////////////////////////////////////////////////////////////////////////
+#ifndef _UTILITY_INCLUDED
+#define _UTILITY_INCLUDED
+
+:include readonly.sp
+
+#ifndef __cplusplus
+#error The header utility requires C++
+#endif
+
+namespace std {
+
+  namespace rel_ops {
+
+    template< class T >
+    bool operator!=( const T &x, const T &y )
+    {
+      return( !( x == y ) );
+    }
+
+    template< class T >
+    bool operator>( const T &x, const T &y )
+    {
+      return( y < x );
+    }
+
+    template< class T >
+    bool operator<=( const T &x, const T &y )
+    {
+      return( !( y < x ) );
+    }
+
+    template< class T >
+    bool operator>=( const T &x, const T &y )
+    {
+      return( !( x < y ) );
+    }
+
+  }
+
+  // Pair support
+
+  template< class T, class U >
+  struct pair {
+    typedef T first_type;
+    typedef U second_type;
+
+    T first;
+    U second;
+
+    pair( ) { }
+    pair( const T &x, const U &y ) : first(x), second(y) { }
+  };
+
+  template< class T, class U >
+  inline
+  bool operator==( const pair< T, U > &x, const pair< T, U > &y )
+  {
+    return( x.first == y.first && x.second == y.second );
+  }
+
+  template< class T, class U >
+  inline
+  bool operator<( const pair< T, U > &x, const pair< T, U > &y )
+  {
+    return( x.first < y.first ||
+            ( !( y.first < x.first ) && x.second < y.second ) );
+  }
+
+  template< class T, class U >
+  inline
+  pair< T, U > make_pair( const T &x, const U &y )
+  {
+    return( pair< T, U >( x, y ) );
+  }
+
+}
+
+#endif
