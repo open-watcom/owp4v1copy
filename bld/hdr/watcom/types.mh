@@ -32,7 +32,7 @@ typedef signed ssize_t;
 
 /* Define POSIX 1003.1 types */
 
-typedef __int64         dev_t;  /* Combination of node and device   */
+typedef unsigned short  dev_t;  /* Combination of node and device   */
 #ifndef _GID_T_DEFINED_
  typedef int            gid_t;  /* Used for group IDs               */
  #define _GID_T_DEFINED_
