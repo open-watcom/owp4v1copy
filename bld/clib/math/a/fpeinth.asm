@@ -186,7 +186,6 @@ opcode: mov     BX,ES:[EDI]             ; get opcode
           mov   ESP,SaveESP             ; - ...
           pop   _STACKLOW               ; - restore old stacklow
           mov   SaveSS,0                ; - indicate handler can be re-entered
-endif
         _endguess                       ; endguess
         fclex                           ; clear exceptions that may have
                                         ; occurred as a result of handling the
