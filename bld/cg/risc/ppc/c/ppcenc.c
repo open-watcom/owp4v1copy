@@ -407,6 +407,7 @@ static  void    doLoadStore( instruction *ins, bool load ) {
         mem = ins->result;
         op = storeOpcodes[ ins->type_class ];
     }
+    assert( op != 0 );
     assert( reg->n.class == N_REGISTER );
     getMemEncoding( mem, &index, &offset );
     GenMEMINS( op, RegTrans( reg->r.reg ), index, offset );
@@ -939,6 +940,8 @@ extern  void EmitInsReloc( ppc_ins ins, pointer sym, owl_reloc_type type ) {
     oc.sym = sym;
     oc.reloc = type;
     InputOC( (any_oc *)&oc );
+#else
+    _Zoiks( ZOIKS_091 );
 #endif
 }
 
