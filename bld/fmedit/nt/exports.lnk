@@ -13,10 +13,10 @@ export _DisplayError.12
 export _Draw.13
 export _DrawConstText.14
 export _ExecuteCurrObject.15
-export _FMAddClipBoard.16
+export _FMAddClipboard.16
 export _FMClipObjExists.17
 export _FMEditWndProc.18
-export _FMNewClipBoard.19
+export _FMNewClipboard.19
 export _FMPasteValid.20
 export _FMResetClipboard.21
 export _FMTranslateAccelerator.22

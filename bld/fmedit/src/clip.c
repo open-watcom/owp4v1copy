@@ -93,7 +93,7 @@ void WINEXP FMResetClipboard()
     }
   }
 
-void WINEXP FMNewClipBoard()
+void WINEXP FMNewClipboard()
 /**************************/
 
   {
@@ -156,7 +156,7 @@ static DLIST * FindInsertPoint( OBJPTR original )
   }
 
 
-void WINEXP FMAddClipBoard( OBJPTR original, OBJPTR copy )
+void WINEXP FMAddClipboard( OBJPTR original, OBJPTR copy )
 /********************************************************/
 
 /* Add obj to the list of copy objects */
