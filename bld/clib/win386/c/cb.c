@@ -219,7 +219,7 @@ CALLBACKPTR DoEmitCode( int argcnt, int bytecnt, char *array,
     CBJumpTable[i] = (DWORD) emitWhere  - *_DataSelectorBaseAddr
                                         + *_CodeSelectorBaseAddr;
     if( i > MaxCBIndex )  MaxCBIndex = i;
-    *_32BitCallBackAddr = (void (far * far *)(void))&_32BitCallBack;
+    *_32BitCallBackAddr = (void (far *)(void))&_32BitCallBack;
     return( (char *)_16BitCallBackAddr - (i+1) * CB_CODE_SIZE );
 
 } /* DoEmitCode */
