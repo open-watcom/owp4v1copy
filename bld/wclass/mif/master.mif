@@ -17,8 +17,7 @@ extra_c_flags_i86_dos   = -fpc
 extra_c_flags_i86_win   = -fpc-zm-zc
 extra_c_flags_i86       = $+$(extra_c_flags_$(host_CPU))$-
 
-#too many warnings...
-cflags_all      = -zq -w4
+cflags_all      = -zq-w4-we
 
 WCLASS_OBJS = &
         wabout.obj &
