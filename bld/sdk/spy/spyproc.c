@@ -144,9 +144,9 @@ static void setSingleWindow( HWND hwnd, HWND selwin )
 /*
  * SaveExtra - save extra to file
  */
-void SaveExtra( void *f )
+void SaveExtra( FILE *f )
 {
-    SpyLogTitle( fileno( (FILE *)f ) );
+    SpyLogTitle( fileno( f ) );
 
 } /* SaveExtra */
 
