@@ -67,15 +67,15 @@ debugfmt = dwarf
 
 !ifeq debugfmt codeview
 cdebug_fmt  = -hc
-ldebug_fmt  = debug c
+ldebug_fmt  = debug codeview
 cldebug_fmt = -hc
 !else ifeq debugfmt watcom # supported only on intel
 cdebug_fmt  = -hw          # cg for axp and ppc don't use it
-ldebug_fmt  = debug w
+ldebug_fmt  = debug watcom
 cldebug_fmt = -hw
 !else
-#cdebug_fmt  = -hd              # defaul format
-ldebug_fmt  = debug d
+#cdebug_fmt  = -hd              # default format
+ldebug_fmt  = debug dwarf
 cldebug_fmt = -hd
 !endif
 
