@@ -46,27 +46,37 @@ The following example is the "&demo." program adapted for Windows.
 
 int PASCAL WinMain( HANDLE hInstance, HANDLE hPrevInst,
                     LPSTR lpCmdLine, int nCmdShow )
-  {
+{
     MessageBox( NULL, "Hello world",
                 "&product. for Windows",
                 MB_OK | MB_TASKMODAL );
     return( 0 );
-  }
+}
 .do end
 .el .do begin
+#include <stdio.h>
+
 void main()
-  {
-     printf( "Hello world\n" );
-  }
+{
+    printf( "Hello world\n" );
+}
 .do end
 .millust end
 .np
 The goal of this program is to display the message "Hello world"
 on the screen.
+.if '&bldnam' ne 'nt' .do begin
 .ix 'MessageBox'
 The
 .id MessageBox
 Windows API function is used to accomplish this task.
+.do end
+.el .do begin
+.ix 'printf'
+The C library
+.id printf
+routine is used to accomplish this task.
+.do end
 .do end
 .*
 .if '&lang' eq 'FORTRAN 77' .do begin

@@ -50,9 +50,9 @@ For our example, we are going to use the famous "&demo." program.
 #include <stdio.h>
 
 void main()
-  {
-     printf( "Hello world\n" );
-  }
+{
+    printf( "Hello world\n" );
+}
 .millust end
 .np
 The C++ version of this program follows:
