@@ -659,35 +659,33 @@ static int DataPut( char data, unsigned long wait )
 }
 
 #pragma off(unreferenced);
-unsigned RemoteGet( void *rec, unsigned len )
+unsigned RemoteGet( char *rec, unsigned len )
 #pragma on(unreferenced);
 {
     unsigned    get_len;
     unsigned    i;
-    char        *ptr;
 
     get_len = DataGet( RELINQUISH );
     if( get_len & 0x80 ) {
         get_len = ((get_len & 0x7f) << 8) | DataGet( KEEP );
     }
     i = get_len;
-    for( ptr = rec; i != 0; --i, ++ptr ) {
-        *ptr = DataGet( KEEP );
+    for( ; i != 0; --i, ++rec ) {
+        *rec = DataGet( KEEP );
     }
     return( get_len );
 }
 
-unsigned RemotePut( void *snd, unsigned len )
+unsigned RemotePut( char *snd, unsigned len )
 {
     unsigned    count;
-    char        *ptr;
 
     if( len >= 0x80 ) {
         DataPut( (len >> 8) | 0x80, RELINQUISH );
     }
     DataPut( len & 0xff, RELINQUISH );
-    for( count = len, ptr = snd; count != 0; --count, ++ptr ) {
-        DataPut( *ptr, KEEP );
+    for( count = len; count != 0; --count, ++snd ) {
+        DataPut( *snd, KEEP );
     }
     return( len );
 }

@@ -383,7 +383,7 @@ unsigned ReqProg_load()
             _DBG_Writeln( "GetPacket" );
             len = GetPacket();
             _DBG_Writeln( "RemovePacket" );
-            RemovePacket( sizeof( *ret ), ret );
+            RemovePacket( sizeof( *ret ), (char*)ret );
         } else {
             len = DoAccess();
         }
@@ -401,7 +401,7 @@ unsigned ReqProg_load()
                 _DBG_Writeln( "StartPacket" );
                 StartPacket();
                 _DBG_Writeln( "AddPacket" );
-                AddPacket( sizeof( erracc ), &erracc );
+                AddPacket( sizeof( erracc ), (char*)&erracc );
                 _DBG_Writeln( "PutPacket" );
                 PutPacket();
                 _DBG_Writeln( "GetPacket" );
@@ -418,7 +418,7 @@ unsigned ReqProg_load()
             _DBG_Writeln( "StartPacket" );
             StartPacket();
             _DBG_Writeln( "AddPacket" );
-            AddPacket( sizeof( killacc ), &killacc );
+            AddPacket( sizeof( killacc ), (char*)&killacc );
             _DBG_Writeln( "PutPacket" );
             PutPacket();
             _DBG_Writeln( "GetPacket" );

@@ -633,38 +633,36 @@ static int DataPut(
 
 unsigned RemoteGet(
         PDEVICE_EXTENSION ext,
-        void *rec,
+        char *rec,
         unsigned len )
 {
         unsigned    get_len;
         unsigned    i;
-        UCHAR        *ptr;
 
         get_len = DataGet( ext, RELINQUISH );
         if( get_len & 0x80 ) {
                 get_len = ((get_len & 0x7f) << 8) | DataGet( ext, KEEP );
         }
         i = get_len;
-        for( ptr = rec; i != 0; --i, ++ptr ) {
-                *ptr = DataGet( ext, KEEP );
+        for( ; i != 0; --i, ++rec ) {
+                *rec = DataGet( ext, KEEP );
         }
         return( get_len );
 }
 
 unsigned RemotePut(
         PDEVICE_EXTENSION ext,
-        void *snd,
+        char *snd,
         unsigned len )
 {
         unsigned    count;
-        UCHAR        *ptr;
 
         if( len >= 0x80 ) {
                 DataPut( ext, ((len >> 8) | 0x80), RELINQUISH );
         }
         DataPut( ext, (len & 0xff), RELINQUISH );
-        for( count = len, ptr = snd; count != 0; --count, ++ptr ) {
-                DataPut( ext, *ptr, KEEP );
+        for( count = len; count != 0; --count, ++snd ) {
+                DataPut( ext, *snd, KEEP );
         }
         return( len );
 }

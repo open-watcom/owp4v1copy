@@ -147,7 +147,7 @@ targ = os2
 targ = $(os)
 !endif
 
-comp_opts += -D$(which) -D_$(machine)_PC -DMD_$(cpu) -zq-w3-bt=$(targ) @IPATHS $(%COMP_DEBUG)
+comp_opts += -D$(which) -D_$(machine)_PC -DMD_$(cpu) -zq-w4-bt=$(targ) @IPATHS $(%COMP_DEBUG)
 !ifdef japanese
 comp_opts += -DJAPANESE_MESSAGES
 !endif

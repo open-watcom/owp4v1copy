@@ -121,7 +121,7 @@ static unsigned FullGet( void *get, unsigned len )
     return( got );
 }
 
-unsigned RemoteGet( void *rec, unsigned len )
+unsigned RemoteGet( char *rec, unsigned len )
 {
     unsigned_16         rec_len;
 
@@ -137,7 +137,7 @@ unsigned RemoteGet( void *rec, unsigned len )
     return( rec_len );
 }
 
-unsigned RemotePut( void *rec, unsigned len )
+unsigned RemotePut( char *rec, unsigned len )
 {
     unsigned_16         send_len;
 

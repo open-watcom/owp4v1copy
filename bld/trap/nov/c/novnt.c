@@ -66,7 +66,7 @@ bool Terminate( void )
     return( FALSE );
 }
 
-unsigned RemoteGet( void *rec, unsigned len )
+unsigned RemoteGet( char *rec, unsigned len )
 {
     unsigned    got;
     unsigned    total;
@@ -83,7 +83,7 @@ unsigned RemoteGet( void *rec, unsigned len )
     return( total );
 }
 
-unsigned RemotePut( void *snd, unsigned len )
+unsigned RemotePut( char *snd, unsigned len )
 {
 
     while( len >= MAX_DATA_SIZE ) {

@@ -54,27 +54,27 @@ unsigned PutPacket()
     unsigned rc;
 
     _DBG_Writeln( "in PutPacket()" );
-    rc = RemotePut( (void *)PackBuff, PackInd );
+    rc = RemotePut( PackBuff, PackInd );
     PackInd = 0;
     return( rc );
 }
 
-unsigned PutBuffPacket( unsigned len, void *buff )
+unsigned PutBuffPacket( unsigned len, char *buff )
 {
     unsigned rc;
 
     _DBG_Writeln( "in PutBuffPacket()" );
-    rc = RemotePut( (void *)buff, len );
+    rc = RemotePut( buff, len );
     PackInd = 0;
     return( rc );
 }
 
-void AddPacket( int len, void *ptr )
+void AddPacket( int len, char *ptr )
 {
     if( ( len + PackInd ) > MAX_PACK_LEN ) {
         len = MAX_PACK_LEN - PackInd;
     }
-    memcpy( (char *)&PackBuff[PackInd], (char *)ptr, len );
+    memcpy( &PackBuff[PackInd], ptr, len );
     PackInd += len;
 }
 
@@ -82,21 +82,21 @@ unsigned GetPacket()
 {
     _DBG_Writeln( "in GetPacket()" );
     PackInd = 0;
-    return( RemoteGet( (void *)PackBuff, MAX_PACK_LEN ) );
+    return( RemoteGet( PackBuff, MAX_PACK_LEN ) );
 }
 
-void RemovePacket( int len, void *ptr )
+void RemovePacket( int len, char *ptr )
 {
     if( ( len + PackInd ) > MAX_PACK_LEN ) {
         len = MAX_PACK_LEN - PackInd;
     }
-    memcpy( (char *)ptr, (char *)&PackBuff[PackInd], len );
+    memcpy( ptr, &PackBuff[PackInd], len );
     PackInd += len;
 }
 
-void *GetPacketBuffPtr()
+char *GetPacketBuffPtr()
 {
-    return( (void *)&PackBuff[PackInd] );
+    return( &PackBuff[PackInd] );
 }
 
 unsigned MaxPacketSize()

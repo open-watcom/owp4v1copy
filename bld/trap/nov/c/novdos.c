@@ -241,7 +241,7 @@ static char WaitTimeout( ECB *ecb, unsigned timeout, int can )
     }
 }
 
-static unsigned DoRemoteGet( void *rec, unsigned len )
+static unsigned DoRemoteGet( char *rec, unsigned len )
 {
     int         i;
     unsigned    recvd;
@@ -277,7 +277,7 @@ static unsigned DoRemoteGet( void *rec, unsigned len )
     return( recvd );
 }
 
-static unsigned DoRemotePut( void *snd, unsigned len )
+static unsigned DoRemotePut( char *snd, unsigned len )
 {
     _INITECB( SendECB, SendHead, 2, SPX );
     SendHead.connectControl |= 0x10;
@@ -289,12 +289,12 @@ static unsigned DoRemotePut( void *snd, unsigned len )
     return( len );
 }
 
-unsigned RemoteGet( void *rec, unsigned len )
+unsigned RemoteGet( char *rec, unsigned len )
 {
     return( DoRemoteGet( rec, len ) );
 }
 
-unsigned RemotePut( void *snd, unsigned len )
+unsigned RemotePut( char *snd, unsigned len )
 {
     while( len >= MAX_DATA_SIZE ) {
         if( DoRemotePut( snd, MAX_DATA_SIZE ) == REQUEST_FAILED ) {

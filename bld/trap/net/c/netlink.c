@@ -73,7 +73,7 @@ extern unsigned char NetBIOS( NCB far * );
 NCB         NetCtlBlk;
 
 
-unsigned RemoteGet( void *rec, unsigned len )
+unsigned RemoteGet( char *rec, unsigned len )
 {
     NetCtlBlk.buff = rec;
     NetCtlBlk.length = len;
@@ -82,7 +82,7 @@ unsigned RemoteGet( void *rec, unsigned len )
     return( NetCtlBlk.length );
 }
 
-unsigned RemotePut( void *rec, unsigned len )
+unsigned RemotePut( char *rec, unsigned len )
 {
     NetCtlBlk.buff = rec;
     NetCtlBlk.length = len;

@@ -181,7 +181,7 @@ char RemoteConnect( void )
 }
 
 
-unsigned RemoteGet( void *data, unsigned length )
+unsigned RemoteGet( char *data, unsigned length )
 {
     unsigned short      bytes_read;
     unsigned short      tmp;
@@ -199,7 +199,7 @@ unsigned RemoteGet( void *data, unsigned length )
 }
 
 
-unsigned RemotePut( void *data, unsigned length )
+unsigned RemotePut( char *data, unsigned length )
 {
     unsigned short      bytes_written;
     unsigned short      real_length;

@@ -963,7 +963,7 @@ void RemoteDisco( void )
 
 /* Return:  Number of bytes received                                    */
 
-unsigned RemoteGet( void *rec, unsigned max_len )
+unsigned RemoteGet( char *rec, unsigned max_len )
 {
     unsigned timeout;             /* time limit for getting the data */
     char     err;                 /* storing the # of Errors the other side
@@ -989,7 +989,7 @@ unsigned RemoteGet( void *rec, unsigned max_len )
 /*========================================================================*/
 
 
-unsigned RemotePut( void *send, unsigned len )
+unsigned RemotePut( char *send, unsigned len )
 {
     unsigned timeout;             /* time limit for getting the data */
     int      result;              /* result of BlockSend() operation */

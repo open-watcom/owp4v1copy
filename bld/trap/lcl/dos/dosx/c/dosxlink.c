@@ -95,7 +95,7 @@
 
 
 
-unsigned RemoteGet( void *rec, unsigned len )
+unsigned RemoteGet( char *rec, unsigned len )
 {
     unsigned received;
 #ifdef SERVER
@@ -127,7 +127,7 @@ unsigned RemoteGet( void *rec, unsigned len )
     return( received );
 }
 
-unsigned RemotePut( void *snd, unsigned len )
+unsigned RemotePut( char *snd, unsigned len )
 {
 #ifdef SERVER
     long buff;
