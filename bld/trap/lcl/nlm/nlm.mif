@@ -5,7 +5,6 @@ extra_cflags = /d__NW$(nlm_ver)0__ /dDEBUG_ME
 extra_linker4 = module clib
 extra_linker3 =
 extra_linker = $(extra_linker$(nlm_ver)) debug all debug Novell
-extra_aflags = -3
 !ifdef on_build_machine
 name= $(srv)serv$(nlm_ver)
 !else

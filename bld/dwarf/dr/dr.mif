@@ -1,9 +1,7 @@
-.extensions:
-.extensions: .lib .obj .lan .i .c .mif
 
-.mif: $(mif_path)
 !include cproj.mif
 !include defrule.mif
+!include deftarg.mif
 
 comp_os2_i86    = $(comp286) -fpc -zc -ml -zu
 comp_win_i86    = $(comp286) -fpc -zc -ml -zu -zW
@@ -80,5 +78,3 @@ drutils.obj : ..\c\drutils.c .AUTODEPEND
 drsearch.obj : ..\c\drsearch.c .AUTODEPEND
     $(compile) $[*.c /i=$(posix_dir)\h
 
-clean : .symbolic
-        rm -f *.obj *.exe *.map *.lib *.lbc *.err *.i *.tbj

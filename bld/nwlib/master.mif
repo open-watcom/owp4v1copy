@@ -1,7 +1,9 @@
 # be very careful with the ordering of the cproj.mif and defrule.mif
 proj_name       = wlib
+
 !include cproj.mif
 !include defrule.mif
+!include deftarg.mif
 
 .c: $(trmem_dir);../c;$(lib_misc_dir)/c;$(watcom_dir)/c
 .h: $(trmem_dir);../h;$(watcom_dir)/h
@@ -98,7 +100,8 @@ $(proj_name).lib: $(targ_name)
     $(librarian) -b-n $^@ + $(targ_name)
 !endif
 
-$(targ_name): ../h/msg.gh $(wlib_objs) wlib.res $(wlib_libs)
+#$(targ_name): ../h/msg.gh $(wlib_objs) wlib.res $(wlib_libs)
+$(targ_name): msg.gh $(wlib_objs) wlib.res $(wlib_libs)
 !ifeq host_OS osi
     $(linker) $(lflags_$(host_OS)_$(host_CPU)) $(common_lflags) $(extra_lflags_$(host_OS)) name wlib.rex file { $(wlib_objs) } lib { $(wlib_libs) }
     $(bld_bin)/w32bind wlib.rex $@ $(tools_root)/os2ldr.exe
@@ -108,22 +111,26 @@ $(targ_name): ../h/msg.gh $(wlib_objs) wlib.res $(wlib_libs)
 !endif
     wstrip -q -a -r $^@ . wlib.res
 
-error.obj : ../h/msg.gh error.c
+#error.obj : ../h/msg.gh error.c
+error.obj : msg.gh error.c
 
 wcl_flags = -fe=$@
-../mkstr.exe : ../mkstr.c ../wlib.msg
+#../mkstr.exe : ../mkstr.c ../wlib.msg
+mkstr.exe : ../mkstr.c ../wlib.msg
     $(bld_cl) $(wcl_flags) $[@ -I..
 
-../h/msg.gh : ../mkstr.exe
+#../h/msg.gh : ../mkstr.exe
+msg.gh : mkstr.exe
     *$< $@
 
 !ifeq host_OS qnx
 msg_rc_flags = /d__QNX__
 !endif
 
-wlib.res : ../wlib.rc ../wlib.msg ../h/msg.gh
+#wlib.res : ../wlib.rc ../wlib.msg ../h/msg.gh
+wlib.res : ../wlib.rc ../wlib.msg msg.gh
         $(rc) -bt=windows -r -zk0 -fo=$^@ $(msg_rc_flags) $[@ 
 
-clean: .SYMBOLIC .EXPLICIT
-        rm -f *.?bj *.lnk *.exe *.lib *.res *.clb *.dll *.err
-        rm -f *.sym *.map *.pch *.gh ../h/msg.gh ../mkstr.exe
+#clean: .SYMBOLIC .EXPLICIT
+#        rm -f *.?bj *.lnk *.exe *.lib *.res *.clb *.dll *.err
+#        rm -f *.sym *.map *.pch *.gh ../h/msg.gh ../mkstr.exe

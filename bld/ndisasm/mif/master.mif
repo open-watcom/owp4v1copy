@@ -1,9 +1,11 @@
 proj_name = wdis
 
-.extensions:
-.extensions: .lan .exe .obj .rc .c .h .gh .msg .mif .cpp
+#.extensions:
+#.extensions: .lan .exe .obj .rc .c .h .gh .msg .mif .cpp
 
-.mif: $(mif_path)
+#.mif: $(mif_path)
+
+.extensions: .rc .gh .msg
 
 !include cproj.mif
 !include defrule.mif

@@ -1,6 +1,8 @@
 proj_name = dwarf
+
 !include cproj.mif
 !include defrule.mif
+!include deftarg.mif
 
 objs = &
 dwabbrev.obj &
@@ -40,9 +42,9 @@ inc_dirs = $(watcom_dir)/h
 .c : $(dwarf_dir)/dw/c
 
 dw$(model).lib : dwabenum.i $(objs)
-        @%create tmp.lbc
-        @for %i in ($(objs)) do @%append tmp.lbc +%i
-        $(librarian) -n -b -q $^@ @tmp.lbc
+        @%create lbc.tmp
+        @for %i in ($(objs)) do @%append lbc.tmp +%i
+        $(librarian) -n -b -q $^@ @lbc.tmp
         wtouch compile.tim
 
 ./dwmakeab.exe : dwmakeab.tbj dwutils.tbj
@@ -67,5 +69,5 @@ dwabbrev.obj : dwabbrev.c dwabinfo.i
 testcli.exe : testcli.obj testtest.obj testdump.obj dw$(model).lib
         $(link) $(lflags) op quiet,map file testcli,testtest,testdump lib dw$(model).lib
 
-clean : .symbolic
-        @rm -f *.obj *.exe *.map *.lib *.lbc *.err *.i *.tbj *.tim
+#clean : .symbolic
+#        @rm -f *.obj *.exe *.map *.lib *.lbc *.err *.i *.tbj *.tim

@@ -2,6 +2,7 @@ proj_name = orl
 
 !include cproj.mif
 !include defrule.mif
+!include deftarg.mif
 
 obj             = .obj
 exe             = .exe
@@ -21,8 +22,6 @@ bin_os2_386 = os2.dll
 
 .c: $(orl_dir)/c;$(orl_dir)/elf/c;$(orl_dir)/coff/c;$(orl_dir)/omf/c
 .h: $(orl_dir)/h;$(orl_dir)/elf/h;$(orl_dir)/coff/h;$(orl_dir)/omf/h
-
-lbc = ../tmp.lbc
 
 inc_dirs = $(orl_dir)/h;$(orl_dir)/elf/h;$(orl_dir)/coff/h;$(orl_dir)/omf/h;$(watcom_dir)/h
 
@@ -55,9 +54,9 @@ orl_objs        = orlentry$(obj) &
                         $(coff_objs)
 
 ../$(bin_$(host_OS)_$(host_CPU))/orl.lib : $(orl_objs)
-        @%create $(lbc)
-        @for %i in ($(orl_objs)) do @%append $(lbc) -+%i
-        $(librarian) -b $^@ @"$(lbc)"
+        @%create lbc.tmp
+        @for %i in ($(orl_objs)) do @%append lbc.tmp -+%i
+        $(librarian) -b $^@ @lbc.tmp
 
-clean: .SYMBOLIC .EXPLICIT
-        rm -f *.?bj *.lnk *.exe *.lib *.res *.clb *.err $(lbc)
+#clean: .SYMBOLIC .EXPLICIT
+#        rm -f *.?bj *.lnk *.exe *.lib *.res *.clb *.err $(lbc)

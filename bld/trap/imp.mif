@@ -186,7 +186,7 @@ comp_opts += -D$(which) -D_$(machine)_PC -DMD_$(cpu) -zq-w4-bt=$(targ) @IPATHS $
 !ifdef japanese
 comp_opts += -DJAPANESE_MESSAGES
 !endif
-asm_opts = -bt=$(targ)-w4
+asm_opts = -bt=$(targ) -w4
 
 !ifdef on_build_machine
 default_targ    = w
