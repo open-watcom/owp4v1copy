@@ -46,7 +46,20 @@ unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
 {
     int pipe_fd[2];
     pid_t pid;
+    char *cmdnam = strdup( cmd );
+    char *sp = cmdnam;
+    const char **argv = malloc( strlen( cmd ) * sizeof ( char * ) );
+    int i = 0;
 
+    while ( sp != NULL ) {
+        argv[i++] = sp;
+        sp = strchr( sp, ' ' );
+        if ( sp != NULL ) {
+            *sp = '\0';
+            sp++;
+        }
+    }
+    argv[i] = NULL;
     if( pipe( pipe_fd ) == -1)
         return( errno );
     if ( dup2( pipe_fd[1], STDOUT_FILENO ) == -1 )
@@ -57,9 +70,11 @@ unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
     pid = fork();
     if ( pid == -1 ) return ( -1 );
     if ( pid == 0 ) {
-        execl( "/bin/sh", "sh", "-c", cmd, NULL );
+        execvp( cmdnam, argv );
         exit( 127 );
     }
+    free( cmdnam );
+    free( argv );
     *readpipe = pipe_fd[0];
     return 0;
 }

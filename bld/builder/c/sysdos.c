@@ -51,8 +51,9 @@ unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
         *sp = '\0';
         sp++;
     }
-    rc = spawnlp( P_WAIT, cmd, sp, NULL );
+    rc = spawnlp( P_WAIT, cmdnam, cmdnam, sp, NULL );
     *readpipe = -1;
+    free( cmdnam );
     return rc;
 }
 
