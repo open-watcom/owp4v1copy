@@ -68,6 +68,21 @@ extern  int     CFOrder( cfloat *float1, cfloat *float2 ) {
     return( 0 );        /* | float1 | == | float2 |*/
 }
 
+static  int     Max( int a, int b ) {
+/***********************************/
+
+    if( b > a ) return( b );
+    return( a );
+}
+
+
+static  int     Min( int a, int b ) {
+/***********************************/
+
+    if( b < a ) return( b );
+    return( a );
+}
+
 static  cfloat  *CSSum( cfloat *op1, cfloat *op2, int (*arith)() ) {
 /******************************************************************/
 
@@ -260,20 +275,4 @@ extern  void    CFClean( cfloat *f ) {
     }
     f->len = tailindex + 1;
     f->mant[ tailindex + 1 ] = 0;
-}
-
-
-static  int     Max( int a, int b ) {
-/***********************************/
-
-    if( b > a ) return( b );
-    return( a );
-}
-
-
-static  int     Min( int a, int b ) {
-/***********************************/
-
-    if( b < a ) return( b );
-    return( a );
 }

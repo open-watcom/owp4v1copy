@@ -130,6 +130,24 @@ static void CSkip( void )
 {
 }
 
+static void IncLevel( int value )
+{
+    struct cpp_info *cpp;
+
+    cpp = VstkPush( &vstkPp );
+    pp_stack = cpp;
+    SrcFileGetTokenLocn( &cpp->locn );
+    cpp->cpp_type = PRE_IF;
+    cpp->processing = 0;
+    if( NestLevel == SkipLevel ) {
+        if( value ) {
+            ++SkipLevel;
+            cpp->processing = 1;
+        }
+    }
+    ++NestLevel;
+}
+
 static void CSkipIf( void )
 {
     IncLevel( 0 );
@@ -472,6 +490,13 @@ MEPTR MacroScan(                // SCAN AND DEFINE A MACRO (#define, -d)
     return( mptr );
 }
 
+static void ChkEOL( void )
+{
+    if( CurToken != T_NULL && CurToken != T_EOF ) {
+        Expecting( "end of line" );
+    }
+}
+
 static void ppIf( int value )    // PREPROCESSOR IF
 {
     if( SrcFileGuardedIf( value ) ) {
@@ -553,24 +578,6 @@ static void CElif( void )
     }
 }
 
-static void IncLevel( int value )
-{
-    struct cpp_info *cpp;
-
-    cpp = VstkPush( &vstkPp );
-    pp_stack = cpp;
-    SrcFileGetTokenLocn( &cpp->locn );
-    cpp->cpp_type = PRE_IF;
-    cpp->processing = 0;
-    if( NestLevel == SkipLevel ) {
-        if( value ) {
-            ++SkipLevel;
-            cpp->processing = 1;
-        }
-    }
-    ++NestLevel;
-}
-
 static void wantEOL( void )
 {
     if( CurToken != T_NULL && CurToken != T_EOF ) {
@@ -637,13 +644,6 @@ static void CUnDef( void )
     MacroUndefine( TokenLen );
     NextToken();
     ChkEOL();
-}
-
-static void ChkEOL( void )
-{
-    if( CurToken != T_NULL && CurToken != T_EOF ) {
-        Expecting( "end of line" );
-    }
 }
 
 static void CLine( void )

@@ -1492,6 +1492,25 @@ static void warnAboutHiding( CLASS_DATA *data )
     }
 }
 
+static void createVFPtrField( CLASS_DATA *data, boolean do_creation )
+{
+    TYPE vfptr_type;
+    CLASSINFO *info;
+
+    if( do_creation ) {
+        vfptr_type = MakeVFTableFieldType( TRUE );
+        data->vf_offset = addTypeField( data, vfptr_type );
+    }
+#ifndef NDEBUG
+    else if( data->own_vfptr ) {
+        CFatal( "vfptr created twice" );
+    }
+#endif
+    info = data->info;
+    info->has_vfptr = TRUE;
+    data->own_vfptr = TRUE;
+}
+
 DECL_SPEC *ClassEnd( void )
 /*************************/
 {
@@ -1720,25 +1739,6 @@ static void propagateKnowledge( CLASSINFO *from, CLASSINFO *to, prop_type what )
             to->lattice = TRUE;
         }
     }
-}
-
-static void createVFPtrField( CLASS_DATA *data, boolean do_creation )
-{
-    TYPE vfptr_type;
-    CLASSINFO *info;
-
-    if( do_creation ) {
-        vfptr_type = MakeVFTableFieldType( TRUE );
-        data->vf_offset = addTypeField( data, vfptr_type );
-    }
-#ifndef NDEBUG
-    else if( data->own_vfptr ) {
-        CFatal( "vfptr created twice" );
-    }
-#endif
-    info = data->info;
-    info->has_vfptr = TRUE;
-    data->own_vfptr = TRUE;
 }
 
 boolean ClassIsDefaultCtor( SYMBOL sym, TYPE class_type )

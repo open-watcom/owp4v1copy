@@ -434,7 +434,32 @@ static int nextMToken( unsigned prev_token )
     return( CurToken );
 }
 
+static void saveParm(
+    MEPTR               fmentry,
+    int                 parm_cnt,
+    MACRO_ARG           *macro_parms,
+    TOKEN_LIST          *token_list,
+    int                 total,
+    BUFFER_HDR          **h )
+{
+    TOKEN_LIST *last_token;
+    char *p;
 
+    *h = TokenBufAddChar( *h, T_NULL );
+    if( parm_cnt < fmentry->parm_count - 1 ) {
+        p = CMemAlloc( total + TokenBufTotalSize( *h ) + 1 );
+        macro_parms[ parm_cnt ].arg = p;
+        if( token_list != NULL ) {
+            last_token = token_list;
+            do {
+                token_list = token_list->next;
+                p = stvcpy( p, token_list->buf, token_list->length );
+            } while( token_list != last_token );
+            RingFree( &token_list );
+        }
+        *h = TokenBufMove( *h, p );
+    }
+}
 
 static MACRO_ARG *collectParms( MEPTR fmentry )
 {
@@ -574,33 +599,6 @@ static MACRO_ARG *collectParms( MEPTR fmentry )
     return( macro_parms );
 }
 
-
-static void saveParm(
-    MEPTR               fmentry,
-    int                 parm_cnt,
-    MACRO_ARG           *macro_parms,
-    TOKEN_LIST          *token_list,
-    int                 total,
-    BUFFER_HDR          **h )
-{
-    TOKEN_LIST *last_token;
-    char *p;
-
-    *h = TokenBufAddChar( *h, T_NULL );
-    if( parm_cnt < fmentry->parm_count - 1 ) {
-        p = CMemAlloc( total + TokenBufTotalSize( *h ) + 1 );
-        macro_parms[ parm_cnt ].arg = p;
-        if( token_list != NULL ) {
-            last_token = token_list;
-            do {
-                token_list = token_list->next;
-                p = stvcpy( p, token_list->buf, token_list->length );
-            } while( token_list != last_token );
-            RingFree( &token_list );
-        }
-        *h = TokenBufMove( *h, p );
-    }
-}
 
 #ifndef NDEBUG
 void DumpMTokens( MACRO_TOKEN *mtok )

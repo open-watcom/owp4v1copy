@@ -116,32 +116,6 @@ extern  char    *CFCnvFS( cfloat *f, char *buffer, int maxlen ) {
     return( buffer );
 }
 
-
-extern  cfloat  *CFCnvSF( char *bstart, char *bend ) {
-/****************************************************/
-
-/* Syntax accepted by this converter:*/
-/**/
-/* { at least 0 blanks }  < - | + >*/
-/*               { at least 1 digit } < . { at least 0 digits } >*/
-/*       or      . { at least 1 digit }*/
-/*               < E | e < - | + > { at least 1 digit } >*/
-
-    cfloat      *number;
-    char        saved;
-
-    saved = *bend;
-    if( saved != NULLCHAR ) {
-        *bend = NULLCHAR;                  /* KLUGE!!!*/
-    }
-    number = CFAlloc( bend - bstart );
-    DoConvert( number, bstart );
-    if( saved != NULLCHAR ) {
-        *bend = saved;                     /* un-KLUGE*/
-    }
-    return( number );
-}
-
 static  void            DoConvert( cfloat *number, char *bstart ) {
 /*****************************************************************/
 
@@ -206,6 +180,31 @@ static  void            DoConvert( cfloat *number, char *bstart ) {
     CFClean( number );
 }
 
+
+extern  cfloat  *CFCnvSF( char *bstart, char *bend ) {
+/****************************************************/
+
+/* Syntax accepted by this converter:*/
+/**/
+/* { at least 0 blanks }  < - | + >*/
+/*               { at least 1 digit } < . { at least 0 digits } >*/
+/*       or      . { at least 1 digit }*/
+/*               < E | e < - | + > { at least 1 digit } >*/
+
+    cfloat      *number;
+    char        saved;
+
+    saved = *bend;
+    if( saved != NULLCHAR ) {
+        *bend = NULLCHAR;                  /* KLUGE!!!*/
+    }
+    number = CFAlloc( bend - bstart );
+    DoConvert( number, bstart );
+    if( saved != NULLCHAR ) {
+        *bend = saved;                     /* un-KLUGE*/
+    }
+    return( number );
+}
 
 extern  cfloat  *CFCopy( cfloat *old ) {
 /***************************************/
