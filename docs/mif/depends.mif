@@ -135,8 +135,8 @@ $(docsrc_dir)\cl\void.gml &
 $(docsrc_dir)\cl\volatile.gml
 
 # cmn sub-directory
-incs_cmn = $(docsrc_dir)\cmn &
-objs_cmn = 
+incs_cmn = $(docsrc_dir)\cmn 
+objs_cmn = &
 $(docsrc_dir)\cmn\386arch.gml &
 $(docsrc_dir)\cmn\86arch.gml &
 $(docsrc_dir)\cmn\about.gml &
@@ -1950,13 +1950,13 @@ $(docsrc_dir)\lr\clibref.gml &
 $(docsrc_dir)\lr\f77graph.gml &
 $(docsrc_dir)\lr\nobanfox.gml &
 $(docsrc_dir)\lr\os2help.gml &
-$(docsrc_dir)\lr\symbols.gml &
+$(docsrc_dir)\lr\symbols.gml 
 incs_lr3+=;$(incs_lr1)
-$(objs_lr1) &
+objs_lr3+= $(objs_lr1)
 
 # lr;lr\ge;lr\gp;lr\gr;lr\src sub-directory
 bmroot_lr2 = $(docsrc_dir)\lr\ge
-incs_lr2 = $(incs_lr3);$(docsrc_dir)\lr\ge;$(docsrc_dir\lr\gp);$(doscrc_dir)lr\gr
+incs_lr2 = $(incs_lr3);$(docsrc_dir)\lr\ge;$(docsrc_dir)\lr\gp;$(docsrc_dir)\lr\gr
 objs_lr2 = $(objs_lr3) &
 $(docsrc_dir)\lr\ge\eg_arc.bmp &
 $(docsrc_dir)\lr\ge\eg_arc.c &

@@ -5,6 +5,8 @@ proj_name = docs
 
 .mif : ..\mif
 
+all: all_ .SYMBOLIC
+
 # location of documentation sources
 docsrc_dir=..\doc
 
@@ -29,7 +31,7 @@ company=Open Watcom
 !ifeq %build_platform dos386
 pgm_wgml=%doc_root%\gml\dos\wgml
 pgm_whpcvt=whpcvt
-pgm_HCDOS=%doc_root%\cmds\hcdos32
+pgm_HCDOS=%doc_root%\cmds\hcdos
 pgm_WIN31HC=%doc_root%\cmds\hcp
 pgm_WAT31HC=whc
 pgm_WIN95HC=%doc_root%\cmds\hcrtf
@@ -68,8 +70,7 @@ OS2_TK=dummy
 #
 # project configuration files
 #
-proj_objs=lang.ctl &
-	..\lang.ctl &
+proj_objs=..\lang.ctl &
 	..\mif\depends.mif &
 	..\mif\books.mif 
 #	..\mif\makebook.mif &
@@ -184,7 +185,7 @@ whpcvt_opts += -hn
 
 .OPTIMIZE
 
-all : $(hbook).hlp $(hbook).h $(hbook).cnt .SYMBOLIC
+all_ : $(hbook).hlp $(hbook).h $(hbook).cnt .SYMBOLIC
 	@%null
 
 $(hbook).hlp : $(hbook).hpj $(hbook).rtf $(hbook).hh $(hbook).cnt
@@ -219,7 +220,7 @@ $(hbook).rtf $(hbook).cn1 $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs)
 
 .EXTENSIONS: .hlp .hpj .hh .h .rtf
 
-all : $(hbook).hlp $(hbook).h .SYMBOLIC
+all_ : $(hbook).hlp $(hbook).h .SYMBOLIC
     @%null
 
 $(hbook).hlp : $(hbook).hpj $(hbook).rtf $(hbook).hh
@@ -253,7 +254,7 @@ $(hbook).rtf $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs)
 
 .EXTENSIONS: .ihp .ib .h
 
-all : $(hbook).ihp $(hbook).h .SYMBOLIC
+all_ : $(hbook).ihp $(hbook).h .SYMBOLIC
 	@%null
 
 $(hbook).ihp : $(hbook).ib $(hbook).h
@@ -291,12 +292,12 @@ $(hbook).htm $(hbook).h : $(book_objs) $(proj_objs)
 
 .EXTENSIONS: .ps
 
-all : $(hbook).ps .SYMBOLIC
+all_ : $(hbook).ps .SYMBOLIC
 	@%null
 
 $(hbook).ps : $(book_objs) $(proj_objs)
 	@set GMLINC=$(book_incs);$(gml_incs);$(whelp_incs)
-	-*$(%GML_ROOT)\wgml $(book_src) ($(wgml_opts)
+	-$(%GML_ROOT)\wgml $(book_src) ($(wgml_opts)
 
 
 !else ifeq dotarget os2
@@ -358,16 +359,16 @@ compile_gml_to_xxx : .PROCEDURE
     @if not exist $*.kw @%create $*.kw
     @set GMLLIB=.\;$(whelp_incs);$(%GMLLIB)
     @set GMLINC=.\;$(hlp_incs);$(whelp_incs);$(book_incs);$(gml_incs)
-    -*$(%GML_ROOT)\wgml $(book_src) ($(wgml_opts)
+    -$(%GML_ROOT)\wgml $(book_src) ($(wgml_opts)
     whpcvt $(whpcvt_opts) $*
     @%create sysusr02.gml
-    -*$(%GML_ROOT)\wgml $(book_src) ($(wgml_opts)
+    -$(%GML_ROOT)\wgml $(book_src) ($(wgml_opts)
     @if exist $*.cn1 @erase $*.cn1
-    @rename sysusr03.gml $*.cn1
+    @ren sysusr03.gml $*.cn1
     @if exist $*.h @erase $*.h
-    @rename sysusr02.gml $*.h
+    @ren sysusr02.gml $*.h
     @if exist $*.mix @erase $*.mix
-    @rename sysusr01.gml $*.mix
+    @ren sysusr01.gml $*.mix
     whpcvt $(whpcvt_opts) -h $*
 
 ####################################################
