@@ -48,7 +48,7 @@ _WCRTLINK int _bgetcmd( char *buffer, int len )
     cmd    = MK_FP( _RWD_psp, 0x0080 );
     cmdlen = *cmd++;
 
-    while ((cmdlen > 0) && isspace(*cmd))
+    while ((cmdlen > 0) && (*cmd == ' ' || *cmd == '\t'))
     {
         ++cmd;
         --cmdlen;

@@ -57,7 +57,7 @@
             }
             if( *cmd ) cmd++;
         } else {
-            while (*cmd && !isspace(*cmd)) {
+            while (*cmd && *cmd != ' ' && *cmd != '\t') {
                 ++cmd;
             }
         }
@@ -146,7 +146,7 @@ _WCRTLINK int _bgetcmd( char *buffer, int len )
     if (!cmd)
         return 0;
 
-    while (isspace(*cmd))
+    while (*cmd == ' ' || *cmd == '\t')
         ++cmd;
 
     for (cmdlen = 0, tmp = cmd; *tmp; ++tmp, ++cmdlen)

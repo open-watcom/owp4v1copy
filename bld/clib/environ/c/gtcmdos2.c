@@ -76,7 +76,7 @@ _WCRTLINK int _bgetcmd( char *buffer, int len )
     #endif
     while( *cmd ) ++cmd;        /* skip over second copy of program name */
     ++cmd;
-    while( isspace( *cmd ) ) cmd++; /* trim leading blanks */
+    while( *cmd == ' ' || *cmd == '\t' ) cmd++; /* trim leading blanks */
 
     if( buffer == 0 ) {
         int i;
