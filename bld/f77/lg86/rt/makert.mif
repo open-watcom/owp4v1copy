@@ -63,13 +63,13 @@ $(if_lib) : $(ifbuild)
 #
 $(libname) :    $(fcode_headers) $(if_lib) &
                 $(obj_rt_0) $(obj_rt_1) $(obj_rt_2) $(lib).lbc
-    wlib $(wlib_opts) $(libname) @$(lib).lbc +$(if_lib)
+    $(librarian) $(wlib_opts) $(libname) @$(lib).lbc +$(if_lib)
 
 #
 # create resource file for error messages
 #
 ../errmsg.res : ../c/errmsg.rc ../h/errcod.h
-    wrc -r -fo=$^@ -dMSG_LANG_BASE=0 -dMSG_LANG_SPACING=0 $[@
+    $(rc_aui) -fo=$^@ -dMSG_LANG_BASE=0 -dMSG_LANG_SPACING=0 $[@
 
 #
 # build the .lbc file

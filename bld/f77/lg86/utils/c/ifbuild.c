@@ -55,11 +55,11 @@ extern  const byte __FAR IFSelect[];
 
 #define IF_IND  0x10            // if indicator
 #define SEG_CS          0x2e
-#if _TARGET == _8086
-#define CALL    0x9a            // "seg CS, far call"
-#else
-#define CALL    0xe8            // "seg CS, near call"
-#endif
+//#if _TARGET == _8086
+#define CALLI86    0x9a            // "seg CS, far call"
+//#else
+#define CALL386    0xe8            // "seg CS, near call"
+//#endif
 
 #define STATIC
 
@@ -97,7 +97,9 @@ STATIC void writeTabent( FILE *out, int if_num, int is_386 ) {
             is_386 ? "32" : "", IFNames[ if_num ] );
     } else {
         // generate a null table entry
-        fprintf( out, "\tdb\t%d,%d\n\tdd\t0\n\t%s\t0\n", SEG_CS, CALL,
+//        fprintf( out, "\tdb\t%d,%d\n\tdd\t0\n\t%s\t0\n", SEG_CS, CALL,
+//            is_386 ? "dd" : "dw" );
+        fprintf( out, "\tdb\t%d,%d\n\tdd\t0\n\t%s\t0\n", SEG_CS, is_386 ? CALL386 : CALLI86,
             is_386 ? "dd" : "dw" );
     }
 }

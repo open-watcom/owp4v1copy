@@ -7,14 +7,18 @@ if_lib = ../ifns/if386.lib
 if_lib = ../ifns/if.lib
 !endif
 
+!ifdef __UNIX__
 share_objs = ../ifns/
+!else
+share_objs = ..\ifns\
+!endif
 !include $(f77_dir)/lg86/comp.mif
 .asm: ../ifns
 .c: ../ifns
 
 !include ../ifns/ifns.mif
 $(if_lib) : $(obj_ifns) ../ifns/if.lbc
-        wlib /b/n/q $^@ @$]@
+        $(librarian) -b-n $^@ @$]@
         rm -f ../ifns/*.obj
         rm -f ../ifns/if.lbc
 

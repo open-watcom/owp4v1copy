@@ -24,11 +24,9 @@ comp = $(comp386)
 c_opts += -mf
 model = f
 asm_opts = -3-w3-mf-zq-d1-fp$(fp_model) -i="$(f77_dir)/lg86/rt/asm" -i="$(watcom_h)"
-asm_o_opt = -fo=
 !else
 comp = $(comp286)
 asm_opts = -w3-ml-zq-d1-fp$(fp_model) -i="$(f77_dir)/lg86/rt/asm" -i="$(watcom_h)"
-asm_o_opt = -fo=
 c_opts += -ml-zc
 model = l
 !endif
@@ -51,7 +49,7 @@ c_opts +=-d__MT__
 c_opts +=-d__NEC__
 !endif
 
-wlib_opts = -b-n-q
+wlib_opts = -b-n
 !ifdef on_build_machine
 wlib_opts += -s-t
 !endif
@@ -85,10 +83,10 @@ wlib_opts += -s-t
 .asm: $(f77_dir)/lg86/rt/asm386
 !endif
 .asm.xbj:
-    $(as) $[* $(asm_o_opt)$^. $(asm_opts)
+    $(as) $[* -fo=$^. $(asm_opts)
 
 .asm.obj:
-    $(as) $[* $(asm_o_opt)$(share_objs)$^. $(asm_opts)
+    $(as) $[* -fo=$(share_objs)$^. $(asm_opts)
 
 !ifdef on_build_machine
 c_opts += -d1
