@@ -179,26 +179,24 @@ def_fpu_flags_win_i86   = -fpi
   # must be -fpc or -fpi
 def_fpu_flags_qnx_i86   = -fpi
   ######
-  # Extenders should have emulator support, but
-  # DOS4GW has it, CauseWay doesn't
-  # if any problems occure than we can change it to -fpc
-def_fpu_flags_dos_386   = -fpi87
+  # Extenders don't have emulator support
+def_fpu_flags_dos_386   = -fpi
   ######
   # OS/2 ????
-def_fpu_flags_os2_386   = -fpi87
+def_fpu_flags_os2_386   = -fpi
   ######
   # OW 386 Windows extender has 387 emulator support
   # must be -fpi87
-def_fpu_flags_win_386   = -fpi87
+def_fpu_flags_win_386   = -fpi
   ######
   # QNX doesn't have emulator support, but OW has it
-def_fpu_flags_qnx_386   = -fpi87
+def_fpu_flags_qnx_386   = -fpi
   ######
   # WIN32 systems have emulator support in kernel
-def_fpu_flags_nt_386    = -fpi87
+def_fpu_flags_nt_386    = -fpi
   ######
   # LINUX has emulator support in kernel
-def_fpu_flags_linux_386 = -fpi87
+def_fpu_flags_linux_386 = -fpi
   ######
   # NOVELL ?????
 def_fpu_flags_nov_386   = -fpc
@@ -206,7 +204,7 @@ def_fpu_flags_nov_386   = -fpc
   # should be compatible with all 386 platforms
   # I ignore Novell seting
   # I thing Novell doesn't use any OSI objects
-def_fpu_flags_osi_386   = -fpi87
+def_fpu_flags_osi_386   = -fpi
   ######
 
 !ifdef fpu_flags_$(host_os)_$(host_cpu)
