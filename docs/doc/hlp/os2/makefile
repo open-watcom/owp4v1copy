@@ -1,4 +1,3 @@
-
 !ifndef hbook
 hbook=tools
 !endif
@@ -30,12 +29,14 @@ gml_opts = set dotarget os2
 !include ..\makefile
 
 $(hbook).inf : $(hbook).ipf
+    set ipfcartwork=$(book_incs)
     ipfc $(hbook).ipf /inf | tee /a $(hbook).log
     if exist $(hbook).inf copy $(hbook).inf $(%HLPDIR)\os2 > nul
     if exist $(hbook).h   copy $(hbook).h   $(%HLPDIR)\os2 > nul
 
 !ifdef book_os2_help
 $(hbook).hlp : $(hbook).ipf
+    set ipfcartwork=$(book_incs)
     ipfc $(hbook).ipf
     if exist $(hbook).hlp copy $(hbook).hlp $(%HLPDIR)\os2 > nul
 !else

@@ -1,15 +1,11 @@
 @echo off
-if exist y:\os2\send.exe y:\os2\send /a=c
-rem clog gml.log
 set t1=%gml%
 set t2=%gmllib%
 set t3=%gmlpag%
 set t4=%gmlinc%
 set t5=%gmlopt%
-if "[%gml%]"=="[]" set gml=r:\wgml\os2\wgml.exe
-if "[%gml%]"=="[]" set gml=e:\gml\os2\wgml.exe
-if "[%gmllib%]"=="[]" set gmllib=r:\wgml\syslib
-if "[%gmllib%]"=="[]" set gmllib=e:\gml\syslib
+if "[%gml%]"=="[]" set gml=%doc_root%\gml\os2\wgml.exe
+if "[%gmllib%]"=="[]" set gmllib=%doc_root%\gml\syslib
 if "[%gmlpag%]"=="[]" set gmlpag=%TMPDIR%
 if "[%gmlinc%]"=="[]" set gmlinc=cg;fg;lg;qa;cmn;gml
 if "[%1]" == "[c]" set gmlinc=cl;cl\nbmine;gml;whelp
@@ -18,6 +14,7 @@ rem if "[%1]" == "[c]" set gmlinc=cl;gml;whelp
 rem if "[%1]" == "[C]" set gmlinc=cl;gml;whelp
 rem if "[%1]" == "[c]" set gmllib=cl\syslib
 if "[%1]" == "[C]" set gmllib=cl\syslib
+if "[%1]" == "[test]" set gmlinc=test;cmn;gml;whelp
 if "[%1]" == "[cguide]" set gmlinc=cg;lg;cmn;plusplus;gml;whelp
 if "[%1]" == "[CGUIDE]" set gmlinc=cg;lg;cmn;plusplus;gml;whelp
 if "[%1]" == "[cguideq]" set gmlinc=cg;lg;cmn;plusplus;gml;whelp
@@ -112,5 +109,3 @@ set t2=
 set t3=
 set t4=
 set t5=
-rem clog
-if exist y:\os2\send.exe y:\os2\send /a
