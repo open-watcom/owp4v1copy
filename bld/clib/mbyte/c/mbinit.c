@@ -108,6 +108,7 @@ int __mbinit( int codepage )
     unsigned char           lowerBound, upperBound;
 #elif defined __WINDOWS__
     DWORD                   version;
+    int                     countVal;
 #elif defined __LINUX__
 #endif
 
@@ -168,10 +169,8 @@ int __mbinit( int codepage )
         if( leadBytes[0] )  __IsDBCS = 1;       /* set __IsDBCS if needed */
         for( countRange=0; !(leadBytes[countRange]==0x00 &&
              leadBytes[countRange+1]==0x00); countRange+=2 ) {
-            for( countVal=leadBytes[countRange];
-                 countVal<=leadBytes[countRange+1]; countVal++ ) {
-                __MBCSIsTable[countVal+1] = _MB_LEAD;
-            }
+            set_dbcs_table( leadBytes[countRange], 
+                            leadBytes[countRange+1] );
         }
         /*** Update __MBCodePage ***/
         if( codepage == 0 ) {
