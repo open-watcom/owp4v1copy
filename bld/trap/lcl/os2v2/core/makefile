@@ -13,11 +13,9 @@ cpu     = x86
 name    = core
 which   = TRAP
 
-extra_cflags = -DLINUXCORE
+extra_cflags = -DLINUXCORE -bd
 
 extra_srcs = $(trap_dir)/lcl/linux/c
-
-inc_dirs = -I"$(orl_dir)/h"
 
 extra_objs =          &
         linuxcore.obj &
@@ -27,8 +25,5 @@ extra_objs =          &
         supp.obj      &
         core.obj
 
-extra_libs = $(orl_lib) $(os2386)
-
-!include $(orl_dir)/client.mif
 !include $(trap_dir)/lcl/lcl.mif
 !include $(trap_dir)/master.mif

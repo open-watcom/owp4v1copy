@@ -19,9 +19,5 @@ extra_objs = &
         supp.obj &
         core.obj
 	
-extra_libs = $(orl_lib)
-
-inc_dirs = -I"$(trap_dir)/lcl/h" -I"$(orl_dir)/h"
-
-!include $(orl_dir)/client.mif
+!include $(trap_dir)/lcl/lcl.mif
 !include $(trap_dir)/master.mif

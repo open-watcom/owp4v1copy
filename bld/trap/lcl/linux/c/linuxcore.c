@@ -32,6 +32,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include "trpimp.h"
@@ -40,9 +41,16 @@
 #include "squish87.h"
 #include "mad.h"
 #include "madregs.h"
-#include "orl.h"
 
 extern unsigned FindFilePath( int exe, char *name, char *result );
+
+#ifdef __BIG_ENDIAN__
+    #define SWAP_16     CONV_LE_16
+    #define SWAP_32     CONV_LE_32
+#else
+    #define SWAP_16     CONV_BE_16
+    #define SWAP_32     CONV_BE_32
+#endif
 
 #define NO_FILE         (-1)
 
@@ -53,11 +61,32 @@ enum {
     MH_PROC
 };
 
-typedef struct buff_entry       *buff_list;
-struct buff_entry {
-    buff_list   next;
-    char        buff[1];
+struct user_regs_struct {
+    unsigned_32     ebx;
+    unsigned_32     ecx;
+    unsigned_32     edx;
+    unsigned_32     esi;
+    unsigned_32     edi;
+    unsigned_32     ebp;
+    unsigned_32     eax;
+    unsigned_16     ds;
+    unsigned_16     __ds;
+    unsigned_16     es;
+    unsigned_16     __es;
+    unsigned_16     fs;
+    unsigned_16     __fs;
+    unsigned_16     gs;
+    unsigned_16     __gs;
+    unsigned_32     orig_eax;
+    unsigned_32     eip;
+    unsigned_16     cs;
+    unsigned_16     __cs;
+    unsigned_32     eflags;
+    unsigned_32     esp;
+    unsigned_16     ss;
+    unsigned_16     __ss;
 };
+
 
 struct {
     unsigned                    loaded                  : 1;
@@ -65,9 +94,11 @@ struct {
     unsigned                    read_gdts               : 1;
     unsigned                    dbg32                   : 1;
     unsigned                    mapping_shared          : 1;
+    unsigned                    swap_bytes              : 1;
+    int                         err_no;
     int                         fd;
-    orl_handle                  orl;
-    buff_list                   buf_list;
+    Elf32_Ehdr                  *e_hdr;
+    Elf32_Phdr                  *e_phdr;
 //    struct      _dumper_hdr     hdr;
 } core_info;
 
@@ -92,6 +123,95 @@ static void OutNum( unsigned i )
 }
 #endif
 
+
+/* Initially it was thought that we could use the ORL to deal with ELF core
+ * files. Unfortunately ELF core dumps may not have any sections (just segments),
+ * and the ORL is entirely unsuitable for dealing with that as it is all based
+ * around the concept of sections. Therefore we have simple ELF parsing code
+ * right here - we'd only need a very very small subset of ORL anyway.
+ */
+
+/* Read ELF header and check if it's roughly what we're expecting */
+int elf_read_hdr( int fd, Elf32_Ehdr *e_hdr )
+{
+//    Elf32_Phdr  phdr;
+//    size_t      i;
+    int     result = FALSE;
+
+    lseek( fd, 0, SEEK_SET );
+    if( read( fd, e_hdr, sizeof( *e_hdr ) ) >= sizeof( *e_hdr ) &&
+        memcmp( e_hdr->e_ident, ELF_SIGNATURE, 4 ) == 0 &&
+        e_hdr->e_ident[EI_CLASS] == ELFCLASS32) {
+#ifdef __BIG_ENDIAN__
+        if( e_hdr->e_ident[EI_DATA] == ELFDATA2LSB )
+            core_info.swap_bytes = TRUE;
+#else
+        if( e_hdr->e_ident[EI_DATA] == ELFDATA2MSB )
+            core_info.swap_bytes = TRUE;
+#endif
+        if( core_info.swap_bytes ) {
+            SWAP_16( e_hdr->e_type );
+            SWAP_16( e_hdr->e_machine );
+            SWAP_32( e_hdr->e_version );
+            SWAP_32( e_hdr->e_entry );
+            SWAP_32( e_hdr->e_phoff );
+            SWAP_32( e_hdr->e_shoff );
+            SWAP_32( e_hdr->e_flags );
+            SWAP_16( e_hdr->e_ehsize );
+            SWAP_16( e_hdr->e_phentsize );
+            SWAP_16( e_hdr->e_phnum );
+            SWAP_16( e_hdr->e_shentsize );
+            SWAP_16( e_hdr->e_shnum );
+            SWAP_16( e_hdr->e_shstrndx );
+        }
+        if( e_hdr->e_phoff != 0 && e_hdr->e_phentsize >= sizeof( Elf32_Phdr ) ) {
+            result = TRUE;
+        }
+    }
+    return( result );
+}
+
+/* Read ELF program headers */
+int elf_read_phdr( int fd, Elf32_Ehdr *e_hdr, Elf32_Phdr **pp_hdr )
+{
+    Elf32_Phdr      *e_phdr;
+    int             i;
+    int             result = FALSE;
+
+    *pp_hdr = malloc( sizeof( *e_phdr ) * e_hdr->e_phnum );
+    if( *pp_hdr != NULL ) {
+        int         error = FALSE;
+
+        e_phdr = *pp_hdr;
+        if( lseek( fd, e_hdr->e_phoff, SEEK_SET ) == e_hdr->e_phoff ) {
+            for( i = 0; i < e_hdr->e_phnum; i++ ) {
+                if( read( fd, e_phdr, sizeof( *e_phdr ) ) < sizeof( *e_phdr ) ) {
+                    error = TRUE;
+                    break;
+                }
+                /* Skip any extra bytes that might be present */
+                if( lseek( fd, e_hdr->e_phentsize - sizeof( *e_phdr ), SEEK_CUR ) < 0 ) {
+                    error = TRUE;
+                    break;
+                }
+                if( core_info.swap_bytes ) {
+                    SWAP_32( e_phdr->p_type );
+                    SWAP_32( e_phdr->p_offset );
+                    SWAP_32( e_phdr->p_vaddr );
+                    SWAP_32( e_phdr->p_paddr );
+                    SWAP_32( e_phdr->p_filesz );
+                    SWAP_32( e_phdr->p_memsz );
+                    SWAP_32( e_phdr->p_flags );
+                    SWAP_32( e_phdr->p_align );
+                }
+                e_phdr++;
+            }
+        }
+        if( !error )
+            result = TRUE;
+    }
+    return( result );
+}
 
 unsigned ReqGet_sys_config( void )
 {
@@ -172,8 +292,9 @@ unsigned ReqRead_mem( void )
 {
     read_mem_req        *acc;
     void                *ret;
-//    unsigned            i;
+    unsigned            i;
     unsigned            len;
+    Elf32_Phdr          *e_phdr;
 
     acc = GetInPtr(0);
     ret = GetOutPtr(0);
@@ -181,24 +302,42 @@ unsigned ReqRead_mem( void )
         return( 0 );
     }
     len = acc->len;
-#if 0
-    for( i = 0; i < core_info.hdr.numsegs; ++i ) {
-        if( core_info.segs[i].real_seg == acc->mem_addr.segment ) {
-            if( acc->mem_addr.offset >= core_info.segs[i].seg_len ) {
-                len = 0;
-            } else if( acc->mem_addr.offset+len > core_info.segs[i].seg_len ) {
-                len = core_info.segs[i].seg_len - acc->mem_addr.offset;
-            }
-            if( len != 0 ) {
-                lseek( core_info.fd, core_info.segs[i].file_off + acc->mem_addr.offset,
-                         SEEK_SET );
-                len = read( core_info.fd, ret, len );
-                if( len == -1 ) len = 0;
-            }
-            return( len );
+    e_phdr = core_info.e_phdr;
+    for( i = 0; i < core_info.e_hdr->e_phnum ; ++i, ++e_phdr ) {
+        int             read_len;
+        Elf32_Off       rel_ofs;    // Relative offset within segment
+
+        if( e_phdr->p_type != PT_LOAD ) continue;
+        if( (acc->mem_addr.offset < e_phdr->p_vaddr) ||
+            (acc->mem_addr.offset > e_phdr->p_vaddr + e_phdr->p_memsz - 1) ) {
+            continue;
         }
+        rel_ofs  = acc->mem_addr.offset - e_phdr->p_vaddr;
+        /* Adjust length if pointing past end of segment */
+        if( (acc->mem_addr.offset + len) > (e_phdr->p_vaddr + e_phdr->p_memsz) ) {
+            len = rel_ofs + len - e_phdr->p_memsz;
+        }
+        read_len = len;
+        /* Adjust length to read from file if p_memsz > p_filesz */
+        if( (acc->mem_addr.offset + len) > (e_phdr->p_vaddr + e_phdr->p_filesz) ) {
+            read_len = e_phdr->p_filesz - rel_ofs;
+            if( read_len < 0 )
+                read_len = 0;
+        }
+        if( len != 0 ) {
+            if( read_len != 0 ) {
+                lseek( core_info.fd, e_phdr->p_offset + rel_ofs, SEEK_SET );
+                read_len = read( core_info.fd, ret, read_len );
+                if( read_len == -1 ) {
+                    return( 0 );
+                }
+            }
+            if( read_len < len ) {
+                memset( (unsigned_8 *)ret + read_len, 0, len - read_len );
+            }
+        }
+        return( len );
     }
-#endif
     return( 0 );
 }
 
@@ -230,26 +369,30 @@ unsigned ReqWrite_io( void )
 
 static void ReadCPU( struct x86_cpu *r )
 {
+    struct user_regs_struct     regs;
+
     memset( r, 0, sizeof( *r ) );
     if( core_info.loaded ) {
-#if 0
-        r->eax = core_info.hdr.reg.ax;
-        r->ebx = core_info.hdr.reg.bx;
-        r->ecx = core_info.hdr.reg.cx;
-        r->edx = core_info.hdr.reg.dx;
-        r->esi = core_info.hdr.reg.si;
-        r->edi = core_info.hdr.reg.di;
-        r->ebp = core_info.hdr.reg.bp;
-        r->esp = core_info.hdr.reg.sp;
-        r->eip = core_info.hdr.reg.ip;
-        r->efl = core_info.hdr.reg.fl;
-        r->cs = core_info.hdr.reg.cs;
-        r->ds = core_info.hdr.reg.ds;
-        r->ss = core_info.hdr.reg.ss;
-        r->es = core_info.hdr.reg.es;
-        r->fs = core_info.hdr.reg.fs;
-        r->gs = core_info.hdr.reg.gs;
-#endif
+// TODO: correctly determine the offset of the register struct in core file
+        lseek( core_info.fd, 0x1ec, SEEK_SET );
+        if( read( core_info.fd, &regs, sizeof( regs ) ) == sizeof( regs ) ) {
+            r->eax = regs.eax;
+            r->ebx = regs.ebx;
+            r->ecx = regs.ecx;
+            r->edx = regs.edx;
+            r->esi = regs.esi;
+            r->edi = regs.edi;
+            r->ebp = regs.ebp;
+            r->esp = regs.esp;
+            r->eip = regs.eip;
+            r->efl = regs.eflags;
+            r->cs  = regs.cs;
+            r->ds  = regs.ds;
+            r->ss  = regs.ss;
+            r->es  = regs.es;
+            r->fs  = regs.fs;
+            r->gs  = regs.gs;
+        }
     }
 }
 
@@ -302,32 +445,30 @@ unsigned ReqWrite_regs( void )
     return( 0 );
 }
 
-static bool LoadPmdHeader( char *name )
+static int load_core_header( const char *core_name )
 {
-#if 0
-    struct stat     tmp;
-    char            result[256];
+    int         fd;
+    int         result;
 
-    if( TryOnePath( ":/usr/dumps", &tmp, name, result ) == 0 ) return( FALSE );
-    core_info.fd = open( result, O_RDONLY );
-    if( core_info.fd < 0 ) return( FALSE );
-    if( read( core_info.fd, &core_info.hdr, sizeof( core_info.hdr ) )
-            != sizeof( core_info.hdr ) ) {
-        close( core_info.fd );
-        core_info.fd = NO_FILE;
-        errno = ENOEXEC;
-        return( FALSE );
+    result = FALSE;
+    if( core_info.e_hdr == NULL ) {
+        core_info.e_hdr = malloc( sizeof( *core_info.e_hdr ) );
+        if( core_info.e_hdr == NULL )
+            return( result );
     }
-    if( core_info.hdr.signature != DUMP_SIGNATURE
-     || core_info.hdr.version != DUMP_VERSION
-     || core_info.hdr.errnum != 0 ) {
-        close( core_info.fd );
-        core_info.fd = NO_FILE;
-        errno = ENOEXEC;
-        return( FALSE );
+    fd = open( core_name, O_RDONLY );
+    if( fd < 0 )
+        return( result );
+
+    core_info.fd = fd;
+    if( !elf_read_hdr( fd, core_info.e_hdr ) ) {
+        close( fd );
+    } else {
+        if( elf_read_phdr( fd, core_info.e_hdr, &core_info.e_phdr ) ) {
+            result = TRUE;
+        }
     }
-#endif
-    return( TRUE );
+    return( result );
 }
 
 unsigned ReqProg_load( void )
@@ -348,12 +489,12 @@ unsigned ReqProg_load( void )
         ret->err = ENOENT;
         return( sizeof( *ret ) );
     }
-    errno = 0;
-    LoadPmdHeader( argv );
+    core_info.err_no = 0;
+    load_core_header( argv );
     ret->flags = LD_FLAG_IS_STARTED | LD_FLAG_IS_PROT | LD_FLAG_IS_32;
     ret->task_id = 123; //core_info.hdr.psdata.pid;
-    ret->err = errno;
-    if( errno == 0 ) {
+    ret->err = core_info.err_no;
+    if( core_info.err_no == 0 ) {
         core_info.loaded = TRUE;
     } else {
         close( core_info.fd );
@@ -450,7 +591,6 @@ unsigned ReqRedirect_stdout( void )
 
 unsigned ReqFile_string_to_fullpath( void )
 {
-    struct  stat                chk;
     unsigned_16                 len;
     char                        *name;
     char                        *fullname;
@@ -470,7 +610,15 @@ unsigned ReqFile_string_to_fullpath( void )
         len = FindFilePath( TRUE, name, fullname );
     } else {
         save_handle = core_info.fd;
-        if( LoadPmdHeader( name ) ) {
+        if( load_core_header( name ) ) {
+            // TODO: this should figure out the name of the executable
+            // that caused the core dump.
+            name = "cdump";
+            strcpy( fullname, name );
+            len = strlen( fullname );
+#if 0
+            struct stat     chk;
+
             name = "/foo/bar"; //core_info.hdr.psdata.un.proc.name;
             if( stat( name, &chk ) != 0 ) {
                 /* try it without the node number */
@@ -480,7 +628,6 @@ unsigned ReqFile_string_to_fullpath( void )
                     chk.st_mtime = 0;
                 }
             }
-#if 0
             if( core_info.ignore_timestamp || chk.st_mtime == core_info.hdr.cmdtime ) {
                 len = StrCopy( name, fullname ) - fullname;
             }
@@ -529,6 +676,7 @@ unsigned ReqGet_lib_name( void )
     get_lib_name_ret    *ret;
     char                *name;
 
+    // TODO: we could probably figure out what shared libs were loaded
     acc = GetInPtr(0);
     ret = GetOutPtr( 0 );
     name = GetOutPtr( sizeof( *ret ) );
@@ -536,35 +684,17 @@ unsigned ReqGet_lib_name( void )
     case MH_NONE:
     case MH_DEBUGGEE:
         ret->handle = MH_SLIB;
-        if( core_info.dbg32 ) {
-            strcpy( name, "/boot/sys/Slib32" );
-        } else {
-            strcpy( name, "/boot/sys/Slib16" );
-        }
+        strcpy( name, "/boot/sys/Slib32" );
         break;
     case MH_SLIB:
         ret->handle = MH_PROC;
-#if 0
-        if( core_info.hdr.osdata.sflags & _PSF_32BIT ) {
-            strcpy( name, "/boot/sys/Proc32" );
-        } else {
-            strcpy( name, "/boot/sys/Proc16" );
-        }
-#endif
+        strcpy( name, "/boot/sys/Proc32" );
         break;
     default:
         ret->handle = MH_NONE;
         name[0] = '\0';
         break;
     }
-#if 0
-    if( core_info.read_gdts ) {
-        core_info.mapping_shared = TRUE;
-    } else {
-        name[0] = '\0';
-        ret->handle = MH_NONE;
-    }
-#endif
     return( sizeof( *ret ) + 1 + strlen( name ) );
 }
 
@@ -623,46 +753,6 @@ unsigned ReqThread_get_extra( void )
 }
 #endif
 
-static void * orl_read( void *hdl, unsigned int len )
-/***************************************************/
-{
-    buff_list   ptr;
-
-    ptr = malloc( sizeof( *core_info.buf_list ) + len - 1 );
-    ptr->next = core_info.buf_list;
-    core_info.buf_list = ptr;
-    if( read( (int)hdl, ptr->buff, len ) != len ) {
-        free( ptr );
-        return( NULL );
-    }
-    return( ptr->buff );
-}
-
-static long orl_seek( void *hdl, long pos, int where )
-/****************************************************/
-{
-    return( lseek( (int)hdl, pos, where ) );
-}
-
-static void free_orl_buffers( void )
-/**********************************/
-{
-    buff_list   next;
-
-    while( core_info.buf_list ) {
-        next = core_info.buf_list->next;
-        free( core_info.buf_list );
-        core_info.buf_list = next;
-    }
-}
-
-static orl_funcs orl_imports = {
-    orl_read,
-    orl_seek,
-    malloc,
-    free
-};
-
 trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
 {
     trap_version ver;
@@ -680,7 +770,6 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
             ++parm;
         }
     }
-    core_info.orl = ORLInit( &orl_imports );
     err[0] = '\0'; /* all ok */
     ver.major = TRAP_MAJOR_VERSION;
     ver.minor = TRAP_MINOR_VERSION;
@@ -690,6 +779,4 @@ trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )
 
 void TRAPENTRY TrapFini( void )
 {
-    free_orl_buffers();
-    ORLFini( core_info.orl );
 }
