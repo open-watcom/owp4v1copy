@@ -489,6 +489,9 @@ walk_result MemReference( int opnd, mad_disasm_data *dd, MEMREF_WALKER *wk, cons
     case DRT_X86_FARPTR48:
         th = X86T_F32_PTR;
         break;
+    case DRT_X86_FARPTR32:
+        th = X86T_F16_PTR;
+        break;
     default:
         th = X86T_BYTE;
         break;
