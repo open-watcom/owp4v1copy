@@ -47,9 +47,11 @@ prereq_win = $(guitools_dir)/win/ide.h
 prereq_os2 = $(guitools_dir)/os2/ide.h
 
 .before:
-        set include=$(inc_path)
+        @set include=$(inc_path)
 
-$(name).exe : $(prereq_$(host_os)) $(OBJECTS) $(LIBS) viper.res
+all: $(prereq_$(host_os)) $(name).exe .SYMBOLIC
+
+$(name).exe : $(OBJECTS) $(LIBS) viper.res
 !ifneq host_OS os2
         $(linker) $(lflags) name $(name) op map, de $(description) f {$(OBJECTS)} lib {$(LIBS)}
         $(rc) $(rc_flags) -k viper.res $^@
@@ -83,9 +85,9 @@ _guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
         $[@ $^@ $(gui_msg_id_modifier)
 
 !ifdef prereq_$(host_os)
-$(prereq_$(host_os)): .SYMBOLIC
+$(prereq_$(host_os)): .ALWAYS
 curr_dir=$+$(%cwd)$-
         @cd $(%DOC_ROOT)\$(host_os)
-        @wmake hbook=ide
+        @wmake -h hbook=ide header=1
         @cd $(curr_dir)
 !endif

@@ -5,10 +5,7 @@ name = wbrw
 browse_autodepends = .AUTODEPEND
 !endif
 
-.extensions:
-.extensions: .exe .obj .cpp .gpp .c .asm .y .mif
-
-.mif : $(mif_path)
+.extensions: .gpp
 
 sys_windowed = 1
 
@@ -47,9 +44,9 @@ inc_dirs_os2    = $(wclass_dir)/pm/hpp;$(guitools_dir)/os2;
 inc_dirs    = ../h;../brg/h;../gen;$(wclass_dir)/hpp;$(gui_dir)/h;$(dwarf_dir)/dr/h;$(posix_dir)/h;../contain/h;$(editdll_dir)
 
 .before:
-    set include=$(inc_path)
+    @set include=$(inc_path)
 
-cflags_all  = -zq -w4
+extra_c_flags = -w4
 !ifdef DBG
 extra_c_flags_i86 = -zc-zm-zw
 !else
@@ -127,7 +124,9 @@ prereq_win = $(guitools_dir)/win/wbrw.h
 prereq_os2 = $(guitools_dir)/os2/wbrw.h
 prereq_dos = $(guitools_dir)/os2/wbrw.h
 
-$(name).exe : $(prereq_$(host_os)) $(OBJECTS) $(LIBS)
+all: $(prereq_$(host_os)) $(name).exe .SYMBOLIC
+
+$(name).exe : $(OBJECTS) $(LIBS)
     $(linker) $(lflags) name $(name).$(exe_ext) file {$(OBJECTS)} lib {$(LIBS)}
 !ifeq host_OS os2
     $(rc_os2) $(rc_flags) $(rc_file) $^@
@@ -139,24 +138,16 @@ $(name).exe : $(prereq_$(host_os)) $(OBJECTS) $(LIBS)
     @for %i in ($(mbr_files)) do @%append browser.wbr file %i
 !endif
 
-#compiling
-
-cppflags    = $(cflags) $(extra_cpp_flags)
-
-.cpp.obj:
+.gpp.obj: .AUTODEPEND
     @set include=$(inc_path)
-    $(cpp) $(cppflags) $(extra_c_flags_$[&) $[@
-
-.gpp.obj:
-    @set include=$(inc_path)
-    $(cpp) $(cppflags) $(extra_c_flags_$[&) $[@
+    $(cpp) $(cflags) $(extra_cpp_flags) $(extra_c_flags_$[&) $[@
 
 dmem.obj : mem.cpp
 
 !ifdef prereq_$(host_os)
-$(prereq_$(host_os)): .SYMBOLIC
+$(prereq_$(host_os)): .ALWAYS
 curr_dir=$+$(%cwd)$-
         @cd $(%DOC_ROOT)\$(host_os)
-        @wmake hbook=wbrw
+        @wmake -h hbook=wbrw header=1
         @cd $(curr_dir)
 !endif
