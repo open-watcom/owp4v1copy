@@ -87,47 +87,47 @@ enum {
     DELETE_DIR
 };
 
-char                    *Product;
-long                    DiskSize;
-int                     BlockSize;
-char                    *RelRoot;
-char                    *PackDir;
-char                    *Setup;
-FILE_INFO               *FileList = NULL;
-PATH_INFO               *PathList = NULL;
-LIST                    *AppSection = NULL;
-LIST                    *IconList = NULL;
-LIST                    *SupplimentList = NULL;
-LIST                    *IniList = NULL;
-LIST                    *AutoList = NULL;
-LIST                    *CfgList = NULL;
-LIST                    *EnvList = NULL;
-LIST                    *DialogList = NULL;
-LIST                    *BootTextList = NULL;
-LIST                    *ExeList = NULL;
-LIST                    *TargetList = NULL;
-LIST                    *LabelList = NULL;
-LIST                    *UpgradeList = NULL;
-LIST                    *AutoSetList = NULL;
-LIST                    *AfterList = NULL;
-LIST                    *BeforeList = NULL;
-LIST                    *EndList = NULL;
-LIST                    *DeleteList = NULL;
-LIST                    *ForceDLLInstallList = NULL;
-LIST                    *ErrMsgList = NULL;
-LIST                    *SetupErrMsgList = NULL;
-unsigned                DiskNum;
-unsigned                MaxDiskFiles;
-int                     FillFirst = 1;
-int                     Lang = 1;
-int                     Upgrade = FALSE;
-int                     Verbose = FALSE;
-int                     IgnoreMissingFiles = FALSE;
-char                    *Include;
-const char              MksetupInf[] = "mksetup.inf";
+static char                 *Product;
+static long                 DiskSize;
+static int                  BlockSize;
+static char                 *RelRoot;
+static char                 *PackDir;
+static char                 *Setup;
+static FILE_INFO            *FileList = NULL;
+static PATH_INFO            *PathList = NULL;
+static LIST                 *AppSection = NULL;
+static LIST                 *IconList = NULL;
+static LIST                 *SupplimentList = NULL;
+static LIST                 *IniList = NULL;
+static LIST                 *AutoList = NULL;
+static LIST                 *CfgList = NULL;
+static LIST                 *EnvList = NULL;
+static LIST                 *DialogList = NULL;
+static LIST                 *BootTextList = NULL;
+static LIST                 *ExeList = NULL;
+static LIST                 *TargetList = NULL;
+static LIST                 *LabelList = NULL;
+static LIST                 *UpgradeList = NULL;
+static LIST                 *AutoSetList = NULL;
+static LIST                 *AfterList = NULL;
+static LIST                 *BeforeList = NULL;
+static LIST                 *EndList = NULL;
+static LIST                 *DeleteList = NULL;
+static LIST                 *ForceDLLInstallList = NULL;
+static LIST                 *ErrMsgList = NULL;
+static LIST                 *SetupErrMsgList = NULL;
+static unsigned             MaxDiskFiles;
+static int                  FillFirst = 1;
+static int                  Lang = 1;
+static int                  Upgrade = FALSE;
+static int                  Verbose = FALSE;
+static int                  IgnoreMissingFiles = FALSE;
+static char                 *Include;
+static const char           MksetupInf[] = "mksetup.inf";
 
 
 static char *mygets( char *buf, unsigned len, FILE *fp )
+/******************************************************/
 {
     char        *p,*q,*start;
     int         lang;
@@ -177,8 +177,7 @@ static char *mygets( char *buf, unsigned len, FILE *fp )
 
 
 static void AddToList( LIST *new, LIST **list )
-//=============================================
-
+/*********************************************/
 {
     while( *list != NULL ) {
         list = &((*list)->next);
@@ -187,9 +186,8 @@ static void AddToList( LIST *new, LIST **list )
 }
 
 
-long FileSize( char *file )
-//=========================
-
+static long FileSize( char *file )
+/********************************/
 {
     struct stat         stat_buf;
 
@@ -203,8 +201,7 @@ long FileSize( char *file )
 
 
 int CheckParms( int *pargc, char **pargv[] )
-//======================================
-
+/******************************************/
 {
     struct stat         stat_buf;
     char                **argv;
@@ -274,7 +271,7 @@ int CheckParms( int *pargc, char **pargv[] )
 
 
 int AddTarget( char *target )
-//===========================
+/***************************/
 {
     int                 count;
     LIST                *new, *curr;
@@ -341,7 +338,7 @@ static char *GetBracketedString( const char *src, char **end )
 
 
 int AddPath( char *path, int target, int parent )
-//===============================================
+/***********************************************/
 {
     int                 count;
     PATH_INFO           *new, *curr;
@@ -759,6 +756,7 @@ int ReadList( FILE *fp )
 
 
 static FILE *PathOpen( char *name )
+/*********************************/
 {
     FILE        *fp;
     char        buf[_MAX_PATH];
@@ -776,11 +774,9 @@ static FILE *PathOpen( char *name )
 }
 
 static char *ReplaceEnv( char *file_name )
-//========================================
-
+/****************************************/
 // if file_name is of the form $env_var$\name, replace with
 // value of the environment variable
-
 {
     char                *p, *q, *e, *var;
     char                buff[ _MAX_PATH ];
@@ -825,8 +821,7 @@ static char *ReplaceEnv( char *file_name )
 static char             SectionBuf[ SECTION_BUF_SIZE ];
 
 void ReadSection( FILE *fp, char *section, LIST **list )
-//======================================================
-
+/******************************************************/
 {
     LIST                *new;
     int                 file_curr = 0;
@@ -930,8 +925,7 @@ void ReadSection( FILE *fp, char *section, LIST **list )
 
 
 void ReadInfFile( void )
-//======================
-
+/**********************/
 {
     FILE                *fp;
     char                ver_buf[ 80 ];
@@ -948,6 +942,7 @@ void ReadInfFile( void )
 
 
 static void fput36( FILE *fp, long value )
+/****************************************/
 {
     char        buff[30];
 
@@ -960,6 +955,7 @@ static void fput36( FILE *fp, long value )
 }
 
 void DumpSizes( FILE *fp, FILE_INFO *curr )
+/*****************************************/
 {
     size_list   *csize;
 
@@ -995,6 +991,7 @@ void DumpSizes( FILE *fp, FILE_INFO *curr )
 }
 
 int CheckForDuplicateFiles( void )
+/********************************/
 {
     FILE_INFO           *file1,*file2;
     size_list           *name1,*name2;
@@ -1023,8 +1020,7 @@ int CheckForDuplicateFiles( void )
 
 
 void DumpFile( FILE *out, char *fname )
-//=====================================
-
+/*************************************/
 {
     FILE                *in;
     char                *buf;
@@ -1058,8 +1054,7 @@ void DumpFile( FILE *out, char *fname )
 
 
 int CreateScript( long init_size, unsigned padding )
-//==============================================
-
+/**************************************************/
 {
     int                 disk;
     long                curr_size, this_disk, extra;
@@ -1300,8 +1295,7 @@ int CreateScript( long init_size, unsigned padding )
 
 
 int MakeScript( void )
-//====================
-
+/********************/
 {
     int                 disks;
     FILE_INFO           *curr;
@@ -1350,182 +1344,56 @@ int MakeScript( void )
     return( disks );
 }
 
-#define NUM_LINES       23
-#define PRODUCT_LINE    3
 
-
-char                    *BootText[ NUM_LINES ] =
+char * GetPath( int pos )
+/***********************/
 {
-"",
-"",
-"    Welcome to",
-"        insert_product_name_here",
-"",
-"",
-"",
-"    from",
-"        WATCOM International Corp.",
-"        415 Phillip Street",
-"        Waterloo, Ontario",
-"        Canada, N2L 3X2",
-"",
-"        (519) 886-3700",
-"        FAX: (519) 747-4971",
-"",
-"",
-"",
-"",
-"    Insert a DOS diskette",
-"    press any key to start DOS...",
-"",
-""
-};
+    int                 count;
+    PATH_INFO           *curr;
 
-
-void CreateBootFile( void )
-//=========================
-
-{
-    int                 line;
-    LIST                *list;
-    FILE                *fp;
-
-    line = PRODUCT_LINE;
-    for( list = BootTextList; list != NULL; list = list->next ) {
-        BootText[ line ] = list->item;
-        ++line;
+    count = 1;
+    for( curr = PathList; curr != NULL; curr = curr->next ) {
+        if( count == pos )
+            return( curr->path );
+        ++count;
     }
-    fp = fopen( "__boot__", "w" );
-    if( fp == NULL ) {
-        printf( "Cannot create boot text file '__boot__'\n" );
-    } else {
-        for( line = 0; line < NUM_LINES; ++line ) {
-            fprintf( fp, "%s\n", BootText[ line ] );
-        }
-        fclose( fp );
-    }
+    return( NULL );
 }
 
 
-void NewDisk( FILE *fp )
-//======================
-
+void CreateFileList( FILE *fp )
+/*****************************/
 {
-    fprintf( fp, "\ncall %%DSDISK%% %2.2u %%1 %%2 %%3 %%4 %%5 %%6\n", ++DiskNum );
-}
-
-
-void EndDisk( FILE *fp )
-//======================
-
-{
-    fprintf( fp, "call %%DEDISK%% %2.2u %%1 %%2 %%3 %%4 %%5 %%6\n", DiskNum );
-}
-
-
-void NextDisk( FILE *fp )
-//=======================
-
-{
-    EndDisk( fp );
-    NewDisk( fp );
-}
-
-void OneFile( FILE *fp, char *dir, char *name, char *dst )
-{
-    fprintf( fp, "call %%DCOPY%% " );
-    if( dir != NULL ) fprintf( fp, "%s\\", dir );
-    fprintf( fp, "%s", name );
-    if( dst != NULL ) {
-        fprintf( fp, "\t%s", dst );
-    }
-    fprintf( fp, "\n" );
-}
-
-void CreateBatch( FILE *fp )
-//=========================================
-
-{
-    int                 i;
-    long                curr_size, this_disk, extra;
     FILE_INFO           *curr;
-    LIST                *list;
-    char                buff[80];
-    unsigned            nfiles;
+    size_list           *list;
+    char                *path;
 
-    DiskNum = 0;
-    fprintf( fp, "call initmk %%1 %%2 %%3 %%4 %%5 %%6\n" );
-    NewDisk( fp );
-
-    OneFile( fp, NULL, Setup, "setup.exe" );
-    OneFile( fp, NULL, "setup.inf", NULL );
-    for( list = ExeList; list != NULL; list = list->next ) {
-        OneFile( fp, NULL, list->item, NULL );
-    }
-    this_disk = FileSize( Setup ) + FileSize( "setup.inf" );
-    for( list = ExeList; list != NULL; list = list->next ) {
-        this_disk += FileSize( list->item );
-    }
-
-    if( !FillFirst ) this_disk = DiskSize;
-    nfiles = 0;
     for( curr = FileList; curr != NULL; curr = curr->next ) {
-        if( ++nfiles > MaxDiskFiles ) {
-            nfiles = 0;
-            NextDisk( fp );
-            this_disk = 0;
-        }
-        curr_size = RoundUp( curr->cmp_size, BlockSize );
-        if( this_disk == DiskSize ) {
-            NextDisk( fp );
-            this_disk = 0;
-        }
-        if( this_disk + curr_size > DiskSize ) {
-            // place what will fit onto the current disk
-            extra = DiskSize - this_disk;
-            fprintf( fp, "splitfil %s\\%s %ld %ld\n", PackDir, curr->pack,
-                         extra, DiskSize );
-            sprintf( buff, "%s.1", curr->pack );
-            OneFile( fp, PackDir, buff, NULL );
-            fprintf( fp, "del %s\\%s.1\n", PackDir, curr->pack );
-            // place rest of current file on subsequent disks
-            curr_size -= extra;
-            for( i = 2; ; ++i ) {
-                NextDisk( fp );
-                sprintf( buff, "%s.%d", curr->pack, i );
-                OneFile( fp, PackDir, buff, NULL );
-                fprintf( fp, "del %s\\%s.%d\n", PackDir, curr->pack, i );
-                if( curr_size <= DiskSize ) break;
-                curr_size -= DiskSize;
-            }
-            this_disk = curr_size;
-            nfiles = 1;
-        } else {
-            OneFile( fp, PackDir, curr->pack, NULL );
-            this_disk += curr_size;
+        path = GetPath( curr->path );
+        if( path != NULL )
+            fprintf( fp, "%s/", path );
+        fprintf( fp, "%s\n", curr->file );
+        for( list = curr->sizes; list != NULL; list = list->next ) {
+            if( path != NULL )
+                fprintf( fp, "%s/", path );
+            fprintf( fp, "%s\n", list->name );
         }
     }
-    EndDisk( fp );
-    fprintf( fp, "\ncall finimk %%1 %%2 %%3 %%4 %%5 %%6\n" );
 }
 
 
-void CreateDisks( void )
-//======================
-
+void MakeLaundryList( void )
+/**************************/
 {
     FILE                *fp;
 
-    if( BootTextList != NULL ) {
-        CreateBootFile();
-    }
-    // create DODISK.BAT
-    fp = fopen( "dodisk.bat", "w" );
+    // create archive.lst
+    fp = fopen( "instarch.lst", "w" );
     if( fp == NULL ) {
-        printf( "Cannot create file 'dodisk.bat'\n" );
+        printf( "Cannot create file 'instarch.lst'\n" );
         fp = stdout;
     }
-    CreateBatch( fp );
+    CreateFileList( fp );
     if( fp != stdout ) {
         fclose( fp );
     }
@@ -1533,8 +1401,7 @@ void CreateDisks( void )
 
 
 int main( int argc, char *argv[] )
-//================================
-
+/********************************/
 {
     int                 ok;
     FILE                *fp;
@@ -1557,6 +1424,6 @@ int main( int argc, char *argv[] )
     fclose( fp );
     printf( "Making script...\n" );
     MakeScript();
-    CreateDisks();
+    MakeLaundryList();
     return( 0 );
 }
