@@ -50,7 +50,7 @@ set PROJDIR=<CWD>
 #    <CPCMD> <PROJDIR>/os2i86/vi2r.exe          <RELROOT>/rel2/binp/vi16.exe
     <CPCMD> <PROJDIR>/os2386/vi2.exe            <RELROOT>/rel2/binp/vi.exe
     <CPCMD> <PROJDIR>/ctags/os2386/ctags.exe    <RELROOT>/rel2/binp/ctags.exe
-#    <CPCMD> <PROJDIR>/bind/os2386/edbind.exe   <RELROOT>/rel2/binp/edbind.exe
+    <CPCMD> <PROJDIR>/bind/os2386/edbind.exe    <RELROOT>/rel2/binp/edbind.exe
 
   [ IFDEF (os_qnx) <2*> ]
     <CPCMD> <PROJDIR>/qnxi86/viq.qnx            <RELROOT>/rel2/qnx/binq/vi
@@ -58,7 +58,7 @@ set PROJDIR=<CWD>
   [ IFDEF (os_linux "") <2*> ]
     <CPCMD> <PROJDIR>/linux386/vil.exe          <RELROOT>/rel2/binl/vi
     <CPCMD> <PROJDIR>/linux386/vil.sym          <RELROOT>/rel2/binl/vi.sym
-    <CPCMD> <PROJDIR>/ctags/linux386/ctags.exe  <RELROOT>/rel2/binl/ctags.exe
+    <CPCMD> <PROJDIR>/ctags/linux386/ctags.exe  <RELROOT>/rel2/binl/ctags
     <CPCMD> <PROJDIR>/bind/linux386/edbind.exe  <RELROOT>/rel2/binl/edbind
 
 [ BLOCK <1> clean ]
