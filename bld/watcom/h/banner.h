@@ -64,8 +64,8 @@
 
 #define banner2a() "Portions Copyright (c) 1984-2002 Sybase, Inc. All Rights Reserved."
 
-#define banner3       "Source code is available under the Sybase Open Watcom Public License.\n" \
-                      "See http://www.openwatcom.org for more details."
+#define banner3       "Source code is available under the Sybase Open Watcom Public License.\r\n" \
+                      "See http://www.openwatcom.org/ for details."
 
 #define banner1ps(p,v)  "Powersoft " banner1p1(p) " " banner1p2(v)
 #define banner2ps       banner2a()

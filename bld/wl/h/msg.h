@@ -68,7 +68,7 @@ enum msg_num {
     #define IDV
 #endif
 
-pick( PRODUCT,                  banner1( IDV "OpenWatcom Linker", _WLINK_VERSION_ ) ),
+pick( PRODUCT,                  banner1( IDV "Open Watcom Linker", _WLINK_VERSION_ ) ),
 pick( COPYRIGHT,                banner2( "1985" ) ),
 pick( TRADEMARK,                banner3 ),
 };
