@@ -4,7 +4,7 @@
 #define _TFAR __far
 #define _TSAVE __saveregs
 void _trash_fs();
-#pragma aux _trash_fs = "nop" modify [fs];
+#pragma aux _trash_fs = "nop" modify [fs]
 #else
 #define _TFAR
 #define _TSAVE
@@ -38,8 +38,10 @@ unsigned doBuffer( int _TFAR *buffer )
 }
 
 unsigned _TSAVE db( int _TFAR *buffer ) {
+    unsigned line;
+
     _trash_fs();
-    unsigned line = doBuffer( buffer );
+    line = doBuffer( buffer );
     _trash_fs();
     return line;
 }
