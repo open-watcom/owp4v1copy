@@ -511,7 +511,7 @@ typedef struct _GINFOSEG {
     UCHAR   amecRAS[32];
     UCHAR   csgWindowableVioMax;
     UCHAR   csgPMMax;
-} GINFOSEG;
+} GINFOSEG, FAR *PGINFOSEG;
 
 typedef struct _LINFOSEG {
     PID     pidCurrent;
@@ -531,7 +531,7 @@ typedef struct _LINFOSEG {
     USHORT  cbHeap;
     HMODULE hmod;
     SEL     selDS;
-} LINFOSEG;
+} LINFOSEG, FAR *PLINFOSEG;
 
 USHORT APIENTRY DosGetInfoSeg(PSEL GlobalSeg, PSEL LocalSeg);
 

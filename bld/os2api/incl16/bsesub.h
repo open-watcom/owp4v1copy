@@ -58,46 +58,46 @@ typedef SHANDLE    HKBD;
 typedef HKBD FAR   *PHKBD;
 
 typedef struct _KBDKEYINFO {
-   UCHAR    chChar;
-   UCHAR    chScan;
-   UCHAR    fbStatus;
-   UCHAR    bNlsShift;
-   USHORT   fsState;
-   ULONG    time;
+    UCHAR  chChar;
+    UCHAR  chScan;
+    UCHAR  fbStatus;
+    UCHAR  bNlsShift;
+    USHORT fsState;
+    ULONG  time;
 }KBDKEYINFO, FAR *PKBDKEYINFO;
 
 typedef struct _KBDHWID {
-   USHORT length;
-   USHORT kbd_id;
-   USHORT reserved1;
-   USHORT reserved2;
+    USHORT length;
+    USHORT kbd_id;
+    USHORT reserved1;
+    USHORT reserved2;
 }KBDHWID, FAR *PKBDHWID;
 
 typedef struct _KBDINFO {
-   USHORT cb;
-   USHORT fsMask;
-   USHORT chTurnAround;
-   USHORT fsInterim;
-   USHORT fsState;
-}KBDINFO, FAR *PKBDINFO;
+    USHORT cb;
+    USHORT fsMask;
+    USHORT chTurnAround;
+    USHORT fsInterim;
+    USHORT fsState;
+} KBDINFO, FAR *PKBDINFO;
 
 typedef struct _STRINGINBUF {
-  USHORT cb;
-  USHORT cchIn;
-}STRINGINBUF, FAR *PSTRINGINBUF;
+    USHORT cb;
+    USHORT cchIn;
+} STRINGINBUF, FAR *PSTRINGINBUF;
 
 typedef struct _KBDTRANS {
-  UCHAR      chChar;
-  UCHAR      chScan;
-  UCHAR      fbStatus;
-  UCHAR      bNlsShift;
-  USHORT     fsState;
-  ULONG      time;
-  USHORT     fsDD;
-  USHORT     fsXlate;
-  USHORT     fsShift;
-  USHORT     sZero;
-}KBDTRANS, FAR *PKBDTRANS;
+    UCHAR  chChar;
+    UCHAR  chScan;
+    UCHAR  fbStatus;
+    UCHAR  bNlsShift;
+    USHORT fsState;
+    ULONG  time;
+    USHORT fsDD;
+    USHORT fsXlate;
+    USHORT fsShift;
+    USHORT sZero;
+} KBDTRANS, FAR *PKBDTRANS;
 
 USHORT APIENTRY KbdCharIn(PKBDKEYINFO CharData, USHORT IOWait, HKBD KbdHandle);
 USHORT APIENTRY KbdClose(HKBD KbdHandle);
@@ -118,6 +118,104 @@ USHORT APIENTRY KbdSetStatus(PKBDINFO Structure, HKBD KbdHandle);
 USHORT APIENTRY KbdStringIn(PCH CharBuffer, PSTRINGINBUF Length, USHORT IOWait, HKBD KbdHandle);
 USHORT APIENTRY KbdSynch(USHORT IOWait);
 USHORT APIENTRY KbdXlate(PKBDTRANS XlateRecord, HKBD KbdHandle);
+
+#endif
+
+#ifdef INCL_MOU
+
+#define MR_MOUGETNUMBUTTONS 0x00000001
+#define MR_MOUGETNUMMICKEYS 0x00000002
+#define MR_MOUGETDEVSTATUS  0x00000004
+#define MR_MOUGETNUMQUEEL   0x00000008
+#define MR_MOUREADEVENTQUE  0x00000010
+#define MR_MOUGETSCALEFACT  0x00000020
+#define MR_MOUGETEVENTMASK  0x00000040
+#define MR_MOUSETSCALEFACT  0x00000080
+#define MR_MOUSETEVENTMASK  0x00000100
+#define MR_MOUOPEN          0x00000800
+#define MR_MOUCLOSE         0x00001000
+#define MR_MOUGETPTRSHAPE   0x00002000
+#define MR_MOUSETPTRSHAPE   0x00004000
+#define MR_MOUDRAWPTR       0x00008000
+#define MR_MOUREMOVEPTR     0x00010000
+#define MR_MOUGETPTRPOS     0x00020000
+#define MR_MOUSETPTRPOS     0x00040000
+#define MR_MOUINITREAL      0x00080000
+#define MR_MOUSETDEVSTATUS  0x00100000
+
+#define MHK_BUTTON1 1
+#define MHK_BUTTON2 2
+#define MHK_BUTTON3 4
+
+#define MOU_NODRAW  1
+#define MOU_DRAW    0
+#define MOU_MICKEYS 2
+#define MOU_PELS    0
+
+
+typedef SHANDLE    HMOU;
+typedef HMOU FAR   *PHMOU;
+
+typedef struct _MOUQUEINFO {
+    USHORT cEvents;
+    USHORT cmaxEvents;
+} MOUQUEINFO, FAR *PMOUQUEINFO;
+
+typedef struct _PTRLOC {
+    USHORT row;
+    USHORT col;
+} PTRLOC, FAR *PPTRLOC;
+
+typedef struct _PTRSHAPE {
+    USHORT cb;
+    USHORT col;
+    USHORT row;
+    USHORT colHot;
+    USHORT rowHot;
+} PTRSHAPE, FAR *PPTRSHAPE;
+
+typedef struct _SCALEFACT {
+    USHORT rowScale;
+    USHORT colScale;
+} SCALEFACT, FAR *PSCALEFACT;
+
+typedef struct _MOUEVENTINFO {
+    USHORT fs;
+    ULONG  time;
+    USHORT row;
+    USHORT col;
+} MOUEVENTINFO, FAR *PMOUEVENTINFO;
+
+typedef struct _NOPTRRECT {
+    USHORT row;
+    USHORT col;
+    USHORT cRow;
+    USHORT cCol;
+} NOPTRRECT, FAR *PNOPTRRECT;
+
+USHORT APIENTRY MouClose(HMOU DeviceHandle);
+USHORT APIENTRY MouDeRegister(VOID);
+USHORT APIENTRY MouDrawPtr(HMOU DeviceHandle);
+USHORT APIENTRY MouFlushQue(HMOU DeviceHandle);
+USHORT APIENTRY MouGetDevStatus(PUSHORT DeviceStatus, HMOU DeviceHandle);
+USHORT APIENTRY MouGetEventMask(PUSHORT EventMask, HMOU DeviceHandle);
+USHORT APIENTRY MouGetNumButtons(PUSHORT NumberOfButtons, HMOU DeviceHandle);
+USHORT APIENTRY MouGetNumMickeys(PUSHORT NumberOfMickeys, HMOU DeviceHandle);
+USHORT APIENTRY MouGetNumQueEl(PMOUQUEINFO QueDataRecord, HMOU DeviceHandle);
+USHORT APIENTRY MouGetPtrPos(PPTRLOC PtrPos, HMOU DeviceHandle);
+USHORT APIENTRY MouGetPtrShape(PBYTE PtrBuffer, PPTRSHAPE PtrDefRec, HMOU DeviceHandle);
+USHORT APIENTRY MouGetScaleFact(PSCALEFACT ScaleStruct, HMOU DeviceHandle);
+USHORT APIENTRY MouInitReal(PSZ DriverName);
+USHORT APIENTRY MouOpen(PSZ DriverName, PHMOU DeviceHandle);
+USHORT APIENTRY MouReadEventQue(PMOUEVENTINFO Buffer, PUSHORT ReadType, HMOU DeviceHandle);
+USHORT APIENTRY MouRegister(PSZ ModuleName, PSZ EntryName, ULONG Mask);
+USHORT APIENTRY MouRemovePtr(PNOPTRRECT PtrArea, HMOU DeviceHandle);
+USHORT APIENTRY MouSetDevStatus(PUSHORT DeviceStatus, HMOU DeviceHandle);
+USHORT APIENTRY MouSetEventMask(PUSHORT EventMask, HMOU DeviceHandle);
+USHORT APIENTRY MouSetPtrPos(PPTRLOC PtrPos, HMOU DeviceHandle);
+USHORT APIENTRY MouSetPtrShape(PBYTE PtrBuffer, PPTRSHAPE PtrDefRec, HMOU DeviceHandle);
+USHORT APIENTRY MouSetScaleFact(PSCALEFACT ScaleStruct, HMOU DeviceHandle);
+USHORT APIENTRY MouSynch(USHORT IOWait);
 
 #endif
 
@@ -161,102 +259,124 @@ USHORT APIENTRY KbdXlate(PKBDTRANS XlateRecord, HKBD KbdHandle);
 #define VGMT_GRAPHICS      2
 #define VGMT_DISABLEBURST  4
 
+#define VSRWI_SAVEANDREDRAW 0
+#define VSRWI_REDRAW        1
+
+#define VSRWN_SAVE          0
+#define VSRWN_REDRAW        1
+
+#define UNDOI_GETOWNER      0
+#define UNDOI_RELEASEOWNER  1
+
+#define UNDOK_ERRORCODE     0
+#define UNDOK_TERMINATE     1
+
+#define LOCKIO_NOWAIT 0
+#define LOCKIO_WAIT   1
+
+#define LOCK_SUCCESS  0
+#define LOCK_FAIL     1
+
+#define VP_NOWAIT      0
+#define VP_WAIT        1
+#define VP_OPAQUE      0
+#define VP_TRANSPARENT 2
 
 typedef SHANDLE    HVIO;
 typedef HVIO FAR   *PHVIO;
 
 typedef struct _VIOCONFIGINFO {
-   USHORT  cb;
-   USHORT  adapter;
-   USHORT  display;
-   ULONG   cbMemory;
-   USHORT  Configuration;
-   USHORT  VDHVersion;
-   USHORT  Flags;
-   ULONG   HWBufferSize;
-   ULONG   FullSaveSize;
-   ULONG   PartSaveSize;
-   USHORT  EMAdaptersOFF;
-   USHORT  EMDisplaysOFF;
-}VIOCONFIGINFO, FAR *PVIOCONFIGINFO;
+    USHORT  cb;
+    USHORT  adapter;
+    USHORT  display;
+    ULONG   cbMemory;
+    USHORT  Configuration;
+    USHORT  VDHVersion;
+    USHORT  Flags;
+    ULONG   HWBufferSize;
+    ULONG   FullSaveSize;
+    ULONG   PartSaveSize;
+    USHORT  EMAdaptersOFF;
+    USHORT  EMDisplaysOFF;
+} VIOCONFIGINFO, FAR *PVIOCONFIGINFO;
 
 typedef struct _VIOCURSORINFO {
-   USHORT   yStart;
-   USHORT   cEnd;
-   USHORT   cx;
-   USHORT   attr;
-}VIOCURSORINFO, FAR *PVIOCURSORINFO;
+    USHORT   yStart;
+    USHORT   cEnd;
+    USHORT   cx;
+    USHORT   attr;
+} VIOCURSORINFO, FAR *PVIOCURSORINFO;
 
 typedef struct _VIOFONTINFO {
-   USHORT  cb;
-   USHORT  type;
-   USHORT  cxCell;
-   USHORT  cyCell;
-   PVOID   pbData;
-   USHORT  cbData;
-}VIOFONTINFO, FAR *PVIOFONTINFO;
+    USHORT  cb;
+    USHORT  type;
+    USHORT  cxCell;
+    USHORT  cyCell;
+    PVOID   pbData;
+    USHORT  cbData;
+} VIOFONTINFO, FAR *PVIOFONTINFO;
 
 typedef struct _VIOMODEINFO {
-   USHORT cb;
-   UCHAR  fbType;
-   UCHAR  color;
-   USHORT col;
-   USHORT row;
-   USHORT hres;
-   USHORT vres;
-   UCHAR  fmt_ID;
-   UCHAR  attrib;
-   ULONG  buf_addr;
-   ULONG  buf_length;
-   ULONG  full_length;
-   ULONG  partial_length;
-   PCH    ext_data_addr;
-}VIOMODEINFO, FAR *PVIOMODEINFO;
+    USHORT cb;
+    UCHAR  fbType;
+    UCHAR  color;
+    USHORT col;
+    USHORT row;
+    USHORT hres;
+    USHORT vres;
+    UCHAR  fmt_ID;
+    UCHAR  attrib;
+    ULONG  buf_addr;
+    ULONG  buf_length;
+    ULONG  full_length;
+    ULONG  partial_length;
+    PCH    ext_data_addr;
+} VIOMODEINFO, FAR *PVIOMODEINFO;
 
 typedef struct _VIOPHYSBUF {
-   PBYTE    pBuf;
-   ULONG    cb;
-   SEL      asel[1];
-}VIOPHYSBUF, FAR *PVIOPHYSBUF;
+    PBYTE    pBuf;
+    ULONG    cb;
+    SEL      asel[1];
+} VIOPHYSBUF, FAR *PVIOPHYSBUF;
 
 typedef struct _VIOPALSTATE {
-   USHORT  cb;
-   USHORT  type;
-   USHORT  iFirst;
-   USHORT  acolor[1];
-}VIOPALSTATE, FAR *PVIOPALSTATE;
+    USHORT  cb;
+    USHORT  type;
+    USHORT  iFirst;
+    USHORT  acolor[1];
+} VIOPALSTATE, FAR *PVIOPALSTATE;
 
 typedef struct _VIOOVERSCAN {
-   USHORT  cb;
-   USHORT  type;
-   USHORT  color;
-}VIOOVERSCAN, FAR *PVIOOVERSCAN;
+    USHORT  cb;
+    USHORT  type;
+    USHORT  color;
+} VIOOVERSCAN, FAR *PVIOOVERSCAN;
 
 typedef struct _VIOINTENSITY {
-   USHORT  cb;
-   USHORT  type;
-   USHORT  fs;
-}VIOINTENSITY, FAR *PVIOINTENSITY;
+    USHORT  cb;
+    USHORT  type;
+    USHORT  fs;
+} VIOINTENSITY, FAR *PVIOINTENSITY;
 
 typedef struct _VIOCOLORREG {
-   USHORT  cb;
-   USHORT  type;
-   USHORT  firstcolorreg;
-   USHORT  numcolorregs;
-   PCH     colorregaddr;
-}VIOCOLORREG, FAR *PVIOCOLORREG;
+    USHORT  cb;
+    USHORT  type;
+    USHORT  firstcolorreg;
+    USHORT  numcolorregs;
+    PCH     colorregaddr;
+} VIOCOLORREG, FAR *PVIOCOLORREG;
 
 typedef struct _VIOSETULINELOC {
-   USHORT  cb;
-   USHORT  type;
-   USHORT  scanline;
-}VIOSETULINELOC, FAR *PVIOSETULINELOC;
+    USHORT  cb;
+    USHORT  type;
+    USHORT  scanline;
+} VIOSETULINELOC, FAR *PVIOSETULINELOC;
 
 typedef struct _VIOSETTARGET {
-   USHORT  cb;
-   USHORT  type;
-   USHORT  defaultalgorithm;
-}VIOSETTARGET, FAR *PVIOSETTARGET;
+    USHORT  cb;
+    USHORT  type;
+    USHORT  defaultalgorithm;
+} VIOSETTARGET, FAR *PVIOSETTARGET;
 
 USHORT APIENTRY VioDeRegister(VOID);
 USHORT APIENTRY VioEndPopUp(HVIO VioHandle);
@@ -314,4 +434,3 @@ USHORT APIENTRY VioWrtNChar(PBYTE Cell, USHORT Times, USHORT Row, USHORT Column,
 USHORT APIENTRY VioWrtTTY(PCH CharStr, USHORT Length, HVIO VioHandle);
 
 #endif
-
