@@ -453,7 +453,7 @@ int OpenPgmFile()
 }
 
 
-static char *CreateFileName( char *template, char *extension )
+static char *CreateFileName( char *template, char *extension, bool forceext )
 {
     #if _OS != _CMS
         char buff[ _MAX_PATH2 ];
@@ -466,7 +466,7 @@ static char *CreateFileName( char *template, char *extension )
         path = (template == NULL) ? WholeFName : template;
 
         _splitpath2( path, buff, &drive, &dir, &fname, &ext );
-        if( template == NULL || ext[0] == '\0' ) {
+        if( forceext || template == NULL || ext[0] == '\0' ) {
             ext = extension;
         }
         if( fname[0] == '\0' || fname[0] == '*' ) {
@@ -492,13 +492,13 @@ static char *CreateFileName( char *template, char *extension )
 
 char *ObjFileName( char *ext )
 {
-    return( CreateFileName( ObjectFileName, ext ) );
+    return( CreateFileName( ObjectFileName, ext, FALSE ) );
 }
 
 char *ErrFileName()
 {
     if( ErrorFileName == NULL ) return( NULL );
-    return( CreateFileName( ErrorFileName, ERR_EXT ) );
+    return( CreateFileName( ErrorFileName, ERR_EXT, FALSE ) );
 }
 
 void PrtChar( int c )
@@ -646,7 +646,7 @@ FILE *OpenBrowseFile()
     FILE        *mbr_file;
 
     if( CompFlags.cpp_output_to_file ) {                /* 29-sep-90 */
-        strcpy(   name,  ObjFileName( MBR_EXT ) );
+        strcpy(   name,  CreateFileName( ObjectFileName, MBR_EXT, TRUE ) );
     } else {
         _splitpath2( SrcFName, buff, NULL, NULL, &fname, NULL );
         _makepath( name, NULL, NULL, fname, MBR_EXT );
