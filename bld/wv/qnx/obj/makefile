@@ -21,4 +21,4 @@ sysobjs = &
 
 syslnk : .PROCEDURE
     @%append $(lnk) sys qnx386 flat
-    @%append $(lnk) opt stack = 0x8000, offset=0x9000, resource=wvqnx.u
+    @%append $(lnk) opt stack = 0x8000, offset=0x9000, resource=..\wvqnx.u
