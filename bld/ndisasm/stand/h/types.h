@@ -132,9 +132,9 @@ struct externs_struct {
 
 // others
 
-#define MAX_LINE_LEN 255
+#define MAX_SYM_LEN  1024           // C++
+#define MAX_LINE_LEN MAX_SYM_LEN
 #define CMD_LINE_LEN 128
-#define MAX_SYM_LEN  1024       // C++
 
 #define TAB_WIDTH 8
 
