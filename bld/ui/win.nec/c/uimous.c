@@ -56,7 +56,7 @@ extern void MouseInt2( unsigned, unsigned, unsigned, unsigned, unsigned );
                         0x36 0x89 0x4c 0x02 \
                         0x36 0x89 0x54 0x04 \
                         parm [ax] [si] modify [bx cx dx];
-extern MouseState( unsigned, struct mouse_data near * );
+extern void MouseState( unsigned, struct mouse_data near * );
 
 extern unsigned long uiclock( void );
 

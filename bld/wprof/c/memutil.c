@@ -48,8 +48,8 @@
 extern void fatal(char *msg,... );
 
 
-STATIC * profTryAlloc( size_t );
-STATIC * profTryRealloc( void *, size_t );
+STATIC void * profTryAlloc( size_t );
+STATIC void * profTryRealloc( void *, size_t );
 #ifdef TRMEM
 STATIC void profMemCheck( char * );
 #endif
@@ -155,8 +155,8 @@ extern void WndMemFini()
 
 
 
-STATIC * profTryAlloc( size_t size )
-/**********************************/
+STATIC void * profTryAlloc( size_t size )
+/***************************************/
 {
     void *  mem;
 
@@ -175,8 +175,8 @@ STATIC * profTryAlloc( size_t size )
 
 
 
-STATIC * profTryRealloc( void * p, size_t new_size )
-/**************************************************/
+STATIC void * profTryRealloc( void * p, size_t new_size )
+/*******************************************************/
 {
     void *  new;
 

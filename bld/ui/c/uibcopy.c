@@ -33,7 +33,7 @@
 #include <stdio.h>
 #include "uidef.h"
 
-extern          cdecl intern     farcopy( LPPIXEL, LPPIXEL, int, int );
+extern  void    cdecl intern     farcopy( LPPIXEL, LPPIXEL, int, int );
 
 
 void intern uibcopy( sptr, srow, scol, dptr, drow, dcol, len )

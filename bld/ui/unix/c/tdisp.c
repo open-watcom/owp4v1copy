@@ -185,7 +185,7 @@ static bool TIARev=     0;      // inverted (reverse)
 static bool TIAACS=     0;      // alternate character set
 
 // True if clearing/filling operations will use the current back colour
-static TI_FillColourSet= FALSE;
+static bool TI_FillColourSet= FALSE;
 
 // Macros for various terminfo capabilities
 #define TI_CURSOR_OFF()         if( _capable_of( cursor_invisible ) ) { \
@@ -639,9 +639,9 @@ static void TI_SETCOLOUR( register int f, register int b )
 /********************************************************/
 {
     // an array of colour brightnesses
-    static      colorpri[]={ 0, 1, 4, 2, 6, 5, 3, 7 };
+    static int  colorpri[]={ 0, 1, 4, 2, 6, 5, 3, 7 };
     // vga to ansi conversion table
-    static      colorans[]={ 0, 4, 2, 6, 1, 5, 3, 7 };
+    static int  colorans[]={ 0, 4, 2, 6, 1, 5, 3, 7 };
 
 QNXDebugPrintf2( "TI_SETCOLOUR: %d %d", f, b );
 

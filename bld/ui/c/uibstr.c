@@ -33,8 +33,8 @@
 #include <stdio.h>
 #include "uidef.h"
 
-extern  cdecl intern     farcopy( LPPIXEL, LPPIXEL, int, int );
-extern  cdecl intern     farstring( LPPIXEL, int, int, int, char __FAR *);
+extern  void cdecl intern farcopy( LPPIXEL, LPPIXEL, int, int );
+extern  void cdecl intern farstring( LPPIXEL, int, int, int, char __FAR *);
 
 
 void intern bstring( register BUFFER            *bptr,

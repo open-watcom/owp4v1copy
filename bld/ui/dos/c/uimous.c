@@ -55,7 +55,7 @@ extern void MouseInt2( unsigned short, unsigned short,
                         0x36 0x89 0x4c 0x02 \
                         0x36 0x89 0x54 0x04 \
                         parm [ax] [si] modify [bx cx dx];
-extern MouseState( unsigned, struct mouse_data near * );
+extern void MouseState( unsigned, struct mouse_data near * );
 
 #else
 
@@ -64,7 +64,7 @@ extern MouseState( unsigned, struct mouse_data near * );
                         0x36 0x66 0x89 0x4e 0x02 \
                         0x36 0x66 0x89 0x56 0x04 \
                         parm [ax] [esi] modify [bx cx dx];
-extern MouseState( unsigned short, struct mouse_data near * );
+extern void MouseState( unsigned short, struct mouse_data near * );
 
 #endif
 
