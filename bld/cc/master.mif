@@ -160,8 +160,8 @@ def_targ_os2    = $(dllexe).exe
 def_targ_nt     = $(dllexe).exe
 def_targ        = $(xname)
 !else
-def_targ_os2    = $(dllexe).exe
-def_targ_nt     = $(dllexe).exe
+def_targ_os2    = $(dxname)
+def_targ_nt     = $(dxname)
 def_targ        = $(dxname)
 !endif
 !ifdef def_targ_$(host_os)

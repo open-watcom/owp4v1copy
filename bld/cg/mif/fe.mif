@@ -16,7 +16,11 @@ obj_dir = $(host_os)$(host_cpu)
 obj_dir = $(host_os)$(host_cpu).rtd
 !endif
 
+!ifeq release 0
+o_dir_386 = $(cg_dir)/intel/386/$(obj_dir).dbg
+!else
 o_dir_386 = $(cg_dir)/intel/386/$(obj_dir)
+!endif
 i_dir_386 = $(cg_dir)/intel/386/h;$(cg_dir)/intel/h
 
 o_dir_i86 = $(cg_dir)/intel/i86/$(obj_dir)
