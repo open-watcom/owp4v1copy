@@ -1426,7 +1426,7 @@ dis_handler_return X86SReg_8( dis_handle *h, void *d, dis_dec_ins *ins)
         ++ins->num_ops;
         break;
     }
-
+#if 0
     if( DIF_X86_OPND_SIZE & ins->flags ) {
         if( DIF_X86_OPND_LONG & ins->flags ) {
             switch( ins->type ) {
@@ -1442,6 +1442,7 @@ dis_handler_return X86SReg_8( dis_handle *h, void *d, dis_dec_ins *ins)
             }
         }
     }
+#endif
     return( DHR_DONE );
 }
 
@@ -1697,7 +1698,9 @@ dis_handler_return X86Imm_8( dis_handle *h, void *d, dis_dec_ins *ins)
         }
         if( DIF_X86_OPND_SIZE & ins->flags ) {
             if( DIF_X86_OPND_LONG & ins->flags ) {
-                ins->type = DI_X86_pushd;
+                if( (ins->op[0].value & 0xffff0000) == 0 ) {
+                    ins->type = DI_X86_pushd;
+                }
             } else {
                 ins->type = DI_X86_pushw;
             }
@@ -1777,6 +1780,7 @@ dis_handler_return X86Reg_8( dis_handle *h, void *d , dis_dec_ins *ins)
         ++ins->num_ops;
         break;
     }
+#if 0
     if( DIF_X86_OPND_SIZE & ins->flags ) {
         if( DIF_X86_OPND_LONG & ins->flags ) {
             switch( ins->type ) {
@@ -1792,6 +1796,7 @@ dis_handler_return X86Reg_8( dis_handle *h, void *d , dis_dec_ins *ins)
             }
         }
     }
+#endif
     return( DHR_DONE );
 }
 
@@ -1983,7 +1988,7 @@ dis_handler_return X86SReg_16( dis_handle *h, void *d, dis_dec_ins *ins)
         ++ins->num_ops;
         break;
     }
-
+#if 0
     if( DIF_X86_OPND_SIZE & ins->flags ) {
         if( DIF_X86_OPND_LONG & ins->flags ) {
             switch( ins->type ) {
@@ -2005,6 +2010,7 @@ dis_handler_return X86SReg_16( dis_handle *h, void *d, dis_dec_ins *ins)
             }
         }
     }
+#endif
     return( DHR_DONE );
 }
 
@@ -2051,7 +2057,7 @@ dis_handler_return X86ModRM_16( dis_handle *h, void *d, dis_dec_ins *ins)
         ++ins->num_ops;
         break;
     }
-
+#if 0
     if( DIF_X86_OPND_SIZE & ins->flags ) {
         if( DIF_X86_OPND_LONG & ins->flags ) {
             switch( ins->type ) {
@@ -2067,6 +2073,7 @@ dis_handler_return X86ModRM_16( dis_handle *h, void *d, dis_dec_ins *ins)
             }
         }
     }
+#endif
     return( DHR_DONE );
 }
 
