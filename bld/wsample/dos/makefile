@@ -30,7 +30,7 @@ xname   =   wsample
     wasm $[*
 
 $(xname).res : ..\h\wsample.rc ..\h\wmsg.h
-        wrc /zk0 /r /dDOS /fo=$^. ..\h\wsample.rc
+        wrc /bt=windows /zk0 /r /dDOS /fo=$^. ..\h\wsample.rc
 
 wmsg.obj: ..\c\wmsg.c ..\h\wmsg.h
     $(comp286) $[* $cflags
