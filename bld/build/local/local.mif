@@ -72,9 +72,12 @@ bld_cc = $(cc)
 bld_link = $(cc)
 librarian += -fa
 
+cppflags_386 = -D_M_IX86 -D__386__
+cppflags_ppc = -D__PPC__
+
 inc_dirs = -I$(watcom_dir)/h -I../h
 cppflags = $(inc_dirs) $(defines) -DNDEBUG -D__UNIX__ -D__LINUX__ &
--D__SMALL__ -D_M_IX86 -DUNIX -DLINUX -D__386__ -D__FLAT__ &
+-D__SMALL__ -DUNIX -DLINUX -D__FLAT__ $(cppflags_$(host_cpu)) &
 -D_WCUNALIGNED="__attribute__((packed))"
 cflags = $(extra_c_flags) $(cppflags) -g -c -Wall -funsigned-char -pipe -O -o $@
 
