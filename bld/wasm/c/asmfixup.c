@@ -180,88 +180,86 @@ int BackPatch( struct asm_sym *sym )
             continue;
         }
 #else
-        if( patch->name == sym->name ) {
-#endif
-            size = 0;
-            switch( patch->fix_type ) {
-            case FIX_RELOFF8:
-                size = 1;
-                /* fall through */
-            case FIX_RELOFF16:
-                if( size == 0 ) size = 2;
-                /* fall through */
-            case FIX_RELOFF32:
-                if( size == 0 ) size = 4;
-                patch_addr = patch->fix_loc;
-                // calculate the displacement
-                disp = patch->offset + Address - patch_addr - size;
-                max_disp = (1UL << ((size * 8)-1)) - 1;
-                if( disp > max_disp || disp < (-max_disp-1) ) {
-#ifdef _WASM_
-                    PhaseError = TRUE;
-                    switch( size ) {
-                    case 1:
-                        if( Code->use32 ) {
-                            sym->offset += 3;
-                            AsmByte( 0 );
-                            AsmByte( 0 );
-                        } else {
-                            sym->offset += 1;
-                            AsmByte( 0 );
-                        }
-                        break;
-                    case 2:
-                        sym->offset += 2;
-                        AsmByte( 0 );
-                        AsmByte( 0 );
-                    case 4:
-#if 0
-                        AsmError( JUMP_OUT_OF_RANGE );
-                        sym->fixup = NULL;
-                        return( ERROR );
-#else
-                        AsmWarn( 4, JUMP_OUT_OF_RANGE );
-                        return( NOT_ERROR );
-#endif
-                    }
-#else
-                    AsmError( JUMP_OUT_OF_RANGE );
-                    FixupHead = NULL;
-                    return( ERROR );
-#endif
-                }
-                // patching
-                // fixme 93/02/15 - this can screw up badly if it is on pass 1
-#ifdef _WASM_
-                if( Parse_Pass != PASS_1 && !PhaseError ) {
-#endif
-                    while( size > 0 ) {
-                        CodeBuffer[patch_addr] = disp;
-                        disp >>= 8;
-                        patch_addr++;
-                        size--;
-                    }
-#ifdef _WASM_
-                }
-#endif
-                AsmFree( patch );
-                break;
-                    default:
-#ifdef _WASM_
-                        patch->next = sym->fixup;
-                        sym->fixup = patch;
-#else
-                        patch->next = FixupHead;
-                        FixupHead = patch;
-#endif
-                        break;
-            }
-#ifndef _WASM_
-        } else {
+        if( patch->name != sym->name ) {
             patch->next = FixupHead;
             FixupHead = patch;
+            continue;
         }
 #endif
+        size = 0;
+        switch( patch->fix_type ) {
+        case FIX_RELOFF8:
+            size = 1;
+            /* fall through */
+        case FIX_RELOFF16:
+            if( size == 0 ) size = 2;
+            /* fall through */
+        case FIX_RELOFF32:
+            if( size == 0 ) size = 4;
+            patch_addr = patch->fix_loc;
+            // calculate the displacement
+            disp = patch->offset + Address - patch_addr - size;
+            max_disp = (1UL << ((size * 8)-1)) - 1;
+            if( disp > max_disp || disp < (-max_disp-1) ) {
+#ifdef _WASM_
+                PhaseError = TRUE;
+                switch( size ) {
+                case 1:
+                    if( Code->use32 ) {
+                        sym->offset += 3;
+                        AsmByte( 0 );
+                        AsmByte( 0 );
+                    } else {
+                        sym->offset += 1;
+                        AsmByte( 0 );
+                    }
+                    break;
+                case 2:
+                    sym->offset += 2;
+                    AsmByte( 0 );
+                    AsmByte( 0 );
+                case 4:
+#if 0
+                    AsmError( JUMP_OUT_OF_RANGE );
+                    sym->fixup = NULL;
+                    return( ERROR );
+#else
+                    AsmWarn( 4, JUMP_OUT_OF_RANGE );
+                    return( NOT_ERROR );
+#endif
+                }
+#else
+                AsmError( JUMP_OUT_OF_RANGE );
+                FixupHead = NULL;
+                return( ERROR );
+#endif
+            }
+            // patching
+            // fixme 93/02/15 - this can screw up badly if it is on pass 1
+#ifdef _WASM_
+            if( Parse_Pass != PASS_1 && !PhaseError ) {
+#endif
+                while( size > 0 ) {
+                    CodeBuffer[patch_addr] = disp;
+                    disp >>= 8;
+                    patch_addr++;
+                    size--;
+                }
+#ifdef _WASM_
+            }
+#endif
+            AsmFree( patch );
+            break;
+        default:
+#ifdef _WASM_
+            patch->next = sym->fixup;
+            sym->fixup = patch;
+#else
+            patch->next = FixupHead;
+            FixupHead = patch;
+#endif
+            break;
+        }
     }
     return( NOT_ERROR );
 }
