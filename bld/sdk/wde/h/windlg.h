@@ -48,7 +48,7 @@ typedef WORD INFOTYPE;
 #define ROUND_CLASSLEN( a ) a
 #define _ISFAR  __far
 #define _FARmemcpy      _fmemcpy
-/* #define MK_FP32( a ) a */
+#define MK_FP32( a ) a
 typedef BYTE INFOTYPE;
 #endif
 

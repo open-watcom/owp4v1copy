@@ -32,7 +32,10 @@
 
 #include <stdio.h>
 #include <windows.h>
-#include <toolhelp.h>
+#include <windows.h>
+#ifndef __NT__
+#include "toolhelp.h"
+#endif
 
 /*
  * GetRealCSIP - get the CS:IP of a stopped task, cuz microsoft only tells

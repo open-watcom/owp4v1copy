@@ -36,7 +36,9 @@
 #include <stdlib.h>
 #include <dos.h>
 #include <windows.h>
-#include <toolhelp.h>
+#ifndef __NT__
+#include "toolhelp.h"
+#endif
 #include "types.h"
 #include "seginfo.h"
 #include "segmem.h"

@@ -34,7 +34,9 @@
 #include <string.h>
 #include <dos.h>
 #include <windows.h>
-#include <toolhelp.h>
+#ifndef __NT__
+#include "toolhelp.h"
+#endif
 #include "descript.h"
 #include "wdebug.h"
 

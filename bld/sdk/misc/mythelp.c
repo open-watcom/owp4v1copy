@@ -34,7 +34,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
-#include <toolhelp.h>
+#ifndef __NT__
+#include "toolhelp.h"
+#endif
 
 BOOL MyModuleFindHandle( MODULEENTRY *me, HANDLE h )
 {

@@ -36,7 +36,9 @@
 #include <stdlib.h>
 #include <dos.h>
 #include <windows.h>
-#include <toolhelp.h>
+#ifndef __NT__
+#include "toolhelp.h"
+#endif
 #include "segmem.h"
 
 static WORD win386Sig[2] = { 0xDEAD,0xBEEF };
