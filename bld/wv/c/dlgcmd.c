@@ -78,7 +78,8 @@ static bool CmdEvent( gui_window * gui, gui_event gui_ev, void * param )
         switch( id ) {
         case CTL_CMD_LIST:
             DlgClickHistory( gui, CTL_CMD_EDIT, CTL_CMD_LIST );
-            if( gui_ev == GUI_CONTROL_CLICKED ) return( TRUE );
+            if( gui_ev == GUI_CONTROL_CLICKED )
+                return( TRUE );
             /* fall through */
         case CTL_CMD_SYMBOL:
             SymComplete( gui, CTL_CMD_EDIT );
@@ -86,10 +87,10 @@ static bool CmdEvent( gui_window * gui, gui_event gui_ev, void * param )
         case CTL_CMD_OK:
             text = GUIGetText( gui, CTL_CMD_EDIT );
             if( text != NULL ) {
-                if( text[0] != '\0' ) {
+                if( text[0] != '\0' )
                     WndSaveToHistory( CmdHistory, text );
-                }
                 DoCmd( text );
+                GUIMemFree( text );
             }
             break;
         }

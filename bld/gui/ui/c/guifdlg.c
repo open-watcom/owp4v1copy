@@ -884,6 +884,7 @@ static process_rc processFileName( gui_window *gui )
     }
     txt = alloca( strlen( tmp ) + 1 );
     if( txt == NULL ) {
+        GUIMemFree( tmp );
         return( PROCESS_FALSE );
     }
     strcpy( txt, tmp );
