@@ -30,6 +30,7 @@
 
         include novlldr.inc
 
+
 ifdef OVL_SMALL
         name    sovlmain
 else
@@ -46,26 +47,16 @@ _DATA   ends
 _TEXT   segment dword '_OVLCODE' PUBLIC
         assume  CS:_TEXT
 
-ifdef OVL_SMALL
-        public  __SOVLLDR__
-        public  __SOVLINIT__
-        public  __SDBG_HOOK__
-        extrn   __SOVLTINIT__:near
-        extrn   __SOVLLOAD__:near
-        extrn   __SOVLSETRTN__:near
-        extrn   __SDBG_HANDLER__:far
-        extrn   __SOVLPARINIT__:near
-else
-        public  __LOVLLDR__
-        public  __LOVLINIT__
-        public  __LDBG_HOOK__
-        extrn   __LOVLTINIT__:near
-        extrn   __LOVLLOAD__:near
-        extrn   __LOVLSETRTN__:near
-        extrn   __LDBG_HANDLER__:far
-        extrn   __LOVLPARINIT__:near
-endif
-        extrn   __OVLPSP__:word
+XNAME   public, OVLLDR
+XNAME   public, OVLINIT
+XNAME   public, DBG_HOOK
+XNAME   extrn,  OVLTINIT,   :near
+XNAME   extrn,  OVLLOAD,    :near
+XNAME   extrn,  OVLSETRTN,  :near
+XNAME   extrn,  DBG_HANDLER,:far
+XNAME   extrn,  OVLPARINIT, :near
+
+        extrn   __OVLPSP__  :word
         extrn   __OVLCAUSE__:word
         extrn   __OVLDOPAR__:byte
         extrn   __OVLISRET__:byte
@@ -81,21 +72,14 @@ NullHook proc   far
         ret
 NullHook endp
 
-ifdef OVL_SMALL
-__SOVLINIT__ proc far
-else
-__LOVLINIT__ proc far
-endif
+XPROC   OVLINIT, far
         jmp     short around
 
-                dw OVL_SIGNATURE
-ifdef OVL_SMALL
-__SDBG_HOOK__   dd NullHook
-                dw __SDBG_HANDLER__
-else
-__LDBG_HOOK__   dd NullHook
-                dw __LDBG_HANDLER__
-endif
+        dw OVL_SIGNATURE
+
+XNAME , DBG_HOOK, <dd NullHook>
+
+XNAME   dw, DBG_HANDLER
 
 around:
         mov     word ptr __OVLPSP__,ES      ; save segment address of PSP
@@ -113,15 +97,11 @@ around:
         jb      not_dos3                    ; ...
         or      CS:__OVLFLAGS__,2           ; set OVL_DOS3 flag
 not_dos3:
-ifdef OVL_SMALL
-        call    __SOVLTINIT__               ; initialize overlays
+
+XNAME   call,   OVLTINIT                    ; initialize overlays
         mov     BX,AX                       ; save AX register
-        call    __SOVLPARINIT__             ; initialize bank stack
-else
-        call    __LOVLTINIT__               ; initialize overlays
-        mov     BX,AX                       ; save AX register
-        call    __LOVLPARINIT__             ; initialize bank stack
-endif
+XNAME   call,   OVLPARINIT                  ; initialize bank stack
+
         mov     byte ptr __OVLDOPAR__,AL    ; save status of || overlay support
         cli                                 ; set SS:SP to actual stack
         mov     SS,word ptr SaveSS          ; ...
@@ -135,21 +115,15 @@ endif
         pop     DS                          ; restore DS
         push    DX                          ; push actual start segment
         push    BX                          ; push actual start offset
-ifdef OVL_SMALL
-        jmp     dword ptr CS:__SDBG_HOOK__  ; hook into debugger if it's there
-__SOVLINIT__ endp
-else
-        jmp     dword ptr CS:__LDBG_HOOK__  ; hook into debugger if it's there
-__LOVLINIT__ endp
-endif
+
+XNAME   <jmp dword ptr CS:>, DBG_HOOK       ; hook into debugger if it's there
+
+XENDP   OVLINIT
+
 
 align 4
 
-ifdef OVL_SMALL
-__SOVLLDR__ proc   near
-else
-__LOVLLDR__ proc   near
-endif
+XPROC   OVLLDR, near
         mov     word ptr CS:__SaveRegs__+0,AX   ; save registers
         mov     word ptr CS:__SaveRegs__+2,BP   ; ...
         mov     BP,SP                           ; peek at the stack
@@ -165,24 +139,17 @@ endif
         pop     BP                              ; remove return address offset
         mov     AX,CS:[BP]                      ; get overlay to load
         pushf                                   ; save flags
-ifdef OVL_SMALL
-        call    __SOVLSETRTN__                  ; change the next ret address.
-        call    __SOVLLOAD__                    ; load overlay
-else
-        call    __LOVLSETRTN__                  ; change the next ret address.
-        call    __LOVLLOAD__                    ; load overlay
-endif
+
+XNAME   call,   OVLSETRTN                       ; change the next ret address.
+XNAME   call,   OVLLOAD                         ; load overlay
+
         popf                                    ; restore flags
         add     BP,2                            ; skip overlay # when returning.
         push    BP                              ; restore return offset
         mov     BP,word ptr CS:__SaveRegs__+2   ; restore registers
         mov     AX,word ptr CS:__SaveRegs__+0   ; ...
         ret                                     ; return
-ifdef OVL_SMALL
-__SOVLLDR__ endp
-else
-__LOVLLDR__ endp
-endif
+XENDP   OVLLDR
 
 _TEXT   ends
 

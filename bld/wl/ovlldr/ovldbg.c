@@ -369,10 +369,10 @@ int far NAME( DBG_HANDLER )( int service, void far *data )
 
     ret = FALSE;
     switch( service ) {
-    case OVLDBG_READ_STATE:
+    case OVLDBG_GET_OVERLAY_STATE:
         ret = SaveOvlState( data );
         break;
-    case OVLDBG_WRITE_STATE:
+    case OVLDBG_SET_OVERLAY_STATE:
         ret = RestoreOvlState( data );
         break;
     case OVLDBG_TRANSLATE_VECTOR_ADDR:
@@ -388,11 +388,11 @@ int far NAME( DBG_HANDLER )( int service, void far *data )
         ret = __NCheckRetAddr__( data );
 #endif
         break;
-    case OVLDBG_GET_OVL_TABLE:
+    case OVLDBG_GET_OVL_TBL_ADDR:
         *(void far *far *)data = &__OVLTAB__;
         break;
 #ifdef OVL_WHOOSH
-    case OVLDBG_GET_REMAP_ENTRY:
+    case OVLDBG_GET_MOVED_SECTION:
         ret = GetChangedSections( data );
         break;
 #endif

@@ -89,3 +89,27 @@ AREA_LIST STRUC
 AREA_LIST ENDS
 
 OVL_SIGNATURE   equ     2112h
+
+XNAME macro prefix, symb, suffix
+ifdef OVL_SMALL
+    prefix __S&symb&__ suffix
+else
+    prefix __L&symb&__ suffix
+endif
+endm
+
+XPROC macro symb, dist
+ifdef OVL_SMALL
+    __S&symb&__ proc dist
+else
+    __L&symb&__ proc dist
+endif
+endm
+
+XENDP macro symb
+ifdef OVL_SMALL
+    __S&symb&__ endp
+else
+    __L&symb&__ endp
+endif
+endm

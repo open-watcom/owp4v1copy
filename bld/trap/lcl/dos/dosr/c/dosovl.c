@@ -97,14 +97,14 @@ unsigned ReqOvl_state_size( void )
 unsigned ReqOvl_read_state( void )
 /********************************/
 {
-    OvlRequest( OVLDBG_READ_STATE, GetOutPtr( 0 ) );
+    OvlRequest( OVLDBG_GET_OVERLAY_STATE, GetOutPtr( 0 ) );
     return( OvlStateSize );
 }
 
 unsigned ReqOvl_write_state( void )
 {
     SetUsrTask(); /* overlay manager needs access to its file table */
-    OvlRequest( OVLDBG_WRITE_STATE, GetInPtr( sizeof( ovl_write_state_req ) ) );
+    OvlRequest( OVLDBG_SET_OVERLAY_STATE, GetInPtr( sizeof( ovl_write_state_req ) ) );
     SetDbgTask();
     return( 0 );
 }
@@ -149,7 +149,7 @@ unsigned ReqOvl_get_remap_entry( void )
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
-    ret->remapped = OvlRequest( OVLDBG_GET_REMAP_ENTRY, &acc->ovl_addr );
+    ret->remapped = OvlRequest( OVLDBG_GET_MOVED_SECTION, &acc->ovl_addr );
     ret->ovl_addr = acc->ovl_addr;
     return( sizeof( *ret ) );
 }
@@ -174,7 +174,7 @@ unsigned ReqOvl_get_data( void )
         ovltab_entry    *curr;
 
         if( addr.mach.segment == 0 ) {
-            OvlRequest( OVLDBG_GET_OVL_TABLE, &tbl );
+            OvlRequest( OVLDBG_GET_OVL_TBL_ADDR, &tbl );
             if( ( tbl->prolog.major == OVL_MAJOR_VERSION )
                 && ( tbl->prolog.minor == OVL_MINOR_VERSION ) ) {
                 num_sects = 0;

@@ -28,6 +28,8 @@
 ;*
 ;*****************************************************************************
 
+        include novlldr.inc
+
 
 ifdef OVL_SMALL
         name    sovlret
@@ -49,51 +51,34 @@ _DATA   ends
 _TEXT   segment byte '_OVLCODE' PUBLIC
         assume  CS:_TEXT
 
-ifdef OVL_SMALL
-        public  __SOVLSETRTN__
-        public  __SCHPOVLLDR__
-        public  __SCheckRetAddr__
-        public  __SOVLPARINIT__
-        extrn   __SOVLLOAD__:near
-else
-        public  __LOVLSETRTN__
-        public  __LCHPOVLLDR__
-        public  __LCheckRetAddr__
-        public  __LOVLPARINIT__
-        extrn   __LOVLLOAD__:near
-endif
-        extrn   __BankStack__:word
-        extrn   __BankBeg__:byte
-        extrn   __SaveRegs__:word
-        extrn   __OVLCAUSE__:word
-        extrn   __OVLISRET__:byte
+XNAME   public, OVLSETRTN
+XNAME   public, CHPOVLLDR
+XNAME   public, CheckRetAddr
+XNAME   public, OVLPARINIT
+XNAME   extrn,  OVLLOAD,     :near
 
-ifdef OVL_SMALL
-__SCHPOVLLDR__ proc near
-else
-__LCHPOVLLDR__ proc near
-endif
+        extrn   __BankStack__:word
+        extrn   __BankBeg__  :byte
+        extrn   __SaveRegs__ :word
+        extrn   __OVLCAUSE__ :word
+        extrn   __OVLISRET__ :byte
+
+XPROC   CHPOVLLDR, near
         mov     CS:__SaveRegs__+0,AX; save registers
         mov     CS:__SaveRegs__+2,BX; ...
         pop     BX                  ; remove return address offset
         mov     AX,CS:[BX]          ; get overlay to load
         pushf                       ; save flags
-ifdef OVL_SMALL
-        call    __SOVLSETRTN__      ; change the next return address.
-else
-        call    __LOVLSETRTN__      ; change the next return address.
-endif
+
+XNAME   call,   OVLSETRTN           ; change the next return address.
+
         popf                        ; restore flags
         add     BX,2                ; skip the overlay number
         push    BX                  ; restore return offset
         mov     BX,CS:__SaveRegs__+2; restore registers
         mov     AX,CS:__SaveRegs__+0; ...
         ret                         ; return
-ifdef OVL_SMALL
-__SCHPOVLLDR__ endp
-else
-__LCHPOVLLDR__ endp
-endif
+XENDP   CHPOVLLDR
 
 
 ; the stack looks like this:
@@ -109,11 +94,7 @@ endif
 
 ; ALL registers MUST be preserved (nuking flags is OK)
 
-ifdef OVL_SMALL
-__SOVLSETRTN__ proc near
-else
-__LOVLSETRTN__ proc near
-endif
+XPROC   OVLSETRTN, near
         push    BP                          ; save BP
         mov     BP,SP                       ; get pointer to stack
         push    BX                          ; save BX
@@ -133,11 +114,7 @@ endif
         pop     BX                          ; restore BX
         pop     BP                          ; restore BP
         ret
-ifdef OVL_SMALL
-__SOVLSETRTN__ endp
-else
-__LOVLSETRTN__ endp
-endif
+XENDP   OVLSETRTN
 
 ; this pops a return address and an overlay number off the bank stack. if the
 ; overlay corresponding to the overlay number is not loaded, it will be loaded
@@ -146,16 +123,15 @@ PopEntry proc near
         je      nope                        ; if not at bottom then
         push    AX                          ; - save AX
         mov     AX,CS:[BX-ENTRY_SIZE]       ; - get PREVIOUS overlay number.
-ifdef OVL_SMALL
-        call    __SOVLLOAD__                ; - load the overlay.
-else
-        call    __LOVLLOAD__                ; - load the overlay.
-endif
+
+XNAME   call,   OVLLOAD                     ; - load the overlay.
+
         pop     AX                          ; - restore AX
 nope:                                       ; endif
         mov     CS:__BankStack__,BX         ; store bank stack pointer
         ret
 PopEntry endp
+
 
 ifdef OVL_SMALL
 OvlReturn proc near
@@ -208,85 +184,71 @@ done:   pop     BX
         ret
 PurgeBankStack endp
 
-ifdef OVL_SMALL
-__SOVLPARINIT__ proc near
-else
-__LOVLPARINIT__ proc near
-endif
-            push    DS
-            mov     AX,seg DGROUP
-            mov     DS,AX
-            mov     word ptr DS:__get_ovl_stack,offset RetBankStack
-            mov     word ptr DS:__restore_ovl_stack,offset PurgeBankStack
-            mov     word ptr DS:__get_ovl_stack+2,CS
-            mov     word ptr DS:__restore_ovl_stack+2,CS
-            mov     AL,1            ; signal that || overlay support is in.
-            pop     DS
-            ret
-ifdef OVL_SMALL
-__SOVLPARINIT__ endp
-else
-__LOVLPARINIT__ endp
-endif
+
+XPROC   OVLPARINIT, near
+        push    DS
+        mov     AX,seg DGROUP
+        mov     DS,AX
+        mov     word ptr DS:__get_ovl_stack,offset RetBankStack
+        mov     word ptr DS:__restore_ovl_stack,offset PurgeBankStack
+        mov     word ptr DS:__get_ovl_stack+2,CS
+        mov     word ptr DS:__restore_ovl_stack+2,CS
+        mov     AL,1                ; signal that || overlay support is in.
+        pop     DS
+        ret
+XENDP   OVLPARINIT
 
 ;; The following routine is used for debugger support
 
 ; a far pointer to an ovl_addr is passed in DX:AX
 
+
+XPROC   CheckRetAddr, near
+        push    ds                  ; save registers
+        push    bx
+        push    si
+        mov     ds,dx               ; get segment of data
+        mov     bx,ax               ; get offset of data
+        xor     ax,ax               ; assume not return address
+        cmp     word ptr [bx], offset OvlReturn ; is it the overlay return
+        jne     not_ret             ; ... code offset?
+        mov     dx,cs               ; is it the overlay return segment?
+        cmp     dx,2[bx]            ; ...
+        jne     not_ret             ; ...
+        ; The address given is the overlay manager return code
+        ; the section id has the number of levels down the overlay stack
+        ; that the real address is to be found
+        mov     ax,4[bx]            ; get levels down
+        inc     ax                  ; add one
 ifdef OVL_SMALL
-__SCheckRetAddr__ proc near
+        shl     ax,1                ; multiply by four
+        shl     ax,1                ; ...
 else
-__LCheckRetAddr__ proc near
+        shl     ax,1                ; multiply by six
+        mov     dx,ax               ; ...
+        shl     ax,1                ; ...
+        add     ax,dx               ; ...
 endif
-            push    ds          ; save registers
-            push    bx
-            push    si
-            mov     ds,dx       ; get segment of data
-            mov     bx,ax       ; get offset of data
-            xor     ax,ax       ; assume not return address
-            cmp     word ptr [bx], offset OvlReturn ; is it the overlay return
-            jne     not_ret     ; ... code offset?
-            mov     dx,cs       ; is it the overlay return segment?
-            cmp     dx,2[bx]    ; ...
-            jne     not_ret     ; ...
-            ; The address given is the overlay manager return code
-            ; the section id has the number of levels down the overlay stack
-            ; that the real address is to be found
-            mov     ax,4[bx]    ; get levels down
-            inc     ax          ; add one
-ifdef OVL_SMALL
-            shl     ax,1        ; multiply by four
-            shl     ax,1        ; ...
-else
-            shl     ax,1        ; multiply by six
-            mov     dx,ax       ; ...
-            shl     ax,1        ; ...
-            add     ax,dx       ; ...
-endif
-            mov     si,CS:__BankStack__; get current bank stack
-            sub     si,ax       ; adjust to proper level
-            xor     ax,ax       ; assume at bottom of bank stack
-            cmp     si,offset __BankBeg__; are we at the bottom of the stack?
-            je      bottom      ; if not then
-            mov     ax,cs:[si-ENTRY_SIZE] ; - get true (previous)section number
-bottom:                         ; endif
-            mov     4[bx],ax    ; save section number
-            mov     ax,cs:2[si] ; get true offset
-            mov     0[bx],ax    ; and save it
+        mov     si,CS:__BankStack__ ; get current bank stack
+        sub     si,ax               ; adjust to proper level
+        xor     ax,ax               ; assume at bottom of bank stack
+        cmp     si,offset __BankBeg__ ; are we at the bottom of the stack?
+        je      bottom              ; if not then
+        mov     ax,cs:[si-ENTRY_SIZE] ; - get true (previous)section number
+bottom:                             ; endif
+        mov     4[bx],ax            ; save section number
+        mov     ax,cs:2[si]         ; get true offset
+        mov     0[bx],ax            ; and save it
 ifndef OVL_SMALL
-            mov     ax,cs:4[si] ; get true segment
-            mov     2[bx],ax    ; and save it
+        mov     ax,cs:4[si]         ; get true segment
+        mov     2[bx],ax            ; and save it
 endif
-            mov     ax,1        ; return TRUE
-not_ret:    pop     si          ; restore registers
-            pop     bx
-            pop     ds
-            ret
-ifdef OVL_SMALL
-__SCheckRetAddr__ endp
-else
-__LCheckRetAddr__ endp
-endif
+        mov     ax,1                ; return TRUE
+not_ret:pop     si                  ; restore registers
+        pop     bx
+        pop     ds
+        ret
+XENDP   CheckRetAddr
 
 _TEXT   ends
 

@@ -34,8 +34,8 @@
 #include <stddef.h>
 #include "ovlstd.h"
 
-extern void             NAME( OVLLDR )(void);
-extern void near        NAME( OVLMUNGE )(void *);
+extern void             NAME( OVLLDR )( void );
+extern void near        NAME( OVLMUNGE )( void * );
 extern void             (far * far NAME( DBG_HOOK ) )();
 extern void near        NAME( CHPOVLLDR )( void );
 #define LOADOVERLAY     NAME( LoadOverlay )
@@ -169,7 +169,7 @@ static void DeMungeVectors( int ovl_num )
 #ifdef OVL_SMALL
         if( vect->sec_num == ovl_num ) {
             vect->call_op = CALL_INSTRUCTION;
-            vect->ldr_addr = (unsigned)NAME(OVLLDR)
+            vect->ldr_addr = (unsigned)NAME( OVLLDR )
                                        - (unsigned)(&vect->ldr_addr) - 2;
 #else
         if( vect->u.v.sec_num == ovl_num ) {

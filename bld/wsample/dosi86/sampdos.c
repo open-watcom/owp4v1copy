@@ -135,7 +135,7 @@ void WriteOvl( unsigned req_ovl, char is_return, unsigned offset, unsigned seg )
     ovl->ovl.addr.offset = offset-1;
     Info.d.count[ SAMP_OVL_LOAD ].size += size;
     Info.d.count[ SAMP_OVL_LOAD ].number += 1;
-    OvlHandler( OVLDBG_READ_STATE, ovl->ovl.ovl_map );
+    OvlHandler( OVLDBG_GET_OVERLAY_STATE, ovl->ovl.ovl_map );
     SampWrite( ovl, ovl->pref.length );
     /* find out what overlays moved */
     remap_blk.pref.tick = CurrTick;
@@ -143,7 +143,7 @@ void WriteOvl( unsigned req_ovl, char is_return, unsigned offset, unsigned seg )
     remap_blk.pref.kind = SAMP_REMAP_SECTION;
     xlat_addr.sect = 0;
     for(;;) {
-        if( !OvlHandler( OVLDBG_GET_REMAP_ENTRY, &xlat_addr ) )
+        if( !OvlHandler( OVLDBG_GET_MOVED_SECTION, &xlat_addr ) )
             break;
         remap_blk.remap.data[ 0 ].section = xlat_addr.sect;
         remap_blk.remap.data[ 0 ].segment = FP_SEG( xlat_addr.addr );
@@ -200,7 +200,7 @@ void StartProg( char *cmd, char *prog, char *args )
             fatal();
         }
         OvlStruct = ovl_struct;
-        OvlHandler( OVLDBG_GET_OVL_TABLE, &ovl_tbl );
+        OvlHandler( OVLDBG_GET_OVL_TBL_ADDR, &ovl_tbl );
         ovl->hook = &ovl_handler;
         SamplerOff++;   /* don't time overlay initialization */
     }
