@@ -18,4 +18,5 @@ set PROJDIR=<CWD>
     cdsay <PROJDIR>/<OBJDIR>
     wmake -h -f ../bootmake
     <CPCMD> re2c.exe <DEVDIR>/build/bin/re2c
+    <CPCMD> re2c.exe <DEVDIR>/build/binl/re2c
     cdsay <PROJDIR>
