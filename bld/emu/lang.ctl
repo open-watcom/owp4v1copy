@@ -35,7 +35,7 @@ set PROJDIR=<CWD>
   [ IFDEF (os_nov "") <2*> ]
     <CPCMD> <DEVDIR>/emu/stub386/emu387.lib <RELROOT>/rel2/lib386/netware/emu387.lib
 
-  [ IFDEF (os_qnx "") <2*> ]
+  [ IFDEF (os_qnx) <2*> ]
     <CPCMD> <DEVDIR>/emu/stub386/emu387.lib <RELROOT>/rel2/lib386/qnx/emu387.lib
     <CPCMD> <DEVDIR>/emu/qnx386/emu387      <RELROOT>/rel2/qnx/binq/emu387
 
