@@ -173,7 +173,6 @@ target: $(def_targ) .SYMBOLIC
         @%null
 
 # Our stuff
-!include $(cc_dir)/deps.mif
 !include $(cc_dir)/ccobjs.mif
 
 !ifdef bootstrap
