@@ -242,7 +242,7 @@ static void EmitDQuad( DATA_QUAD *dq )
                     ++segment;
                     BESetSeg( segment );
                 }
-            else if( (int)(amount + size) < 0 ) {
+            } else if( (int)(amount + size) < 0 ) {
                 DGSeek( DGTell() - size );
                 amount += size;
                 size = 0;
