@@ -7,8 +7,17 @@ splice = wsplice -i.. -k$(system) $(options) ../common.sp $[@ $^@
 # Used to build C++ extensionless headers that have an associated .h header.
 csplice = wsplice -i.. -k$(system) -kCNAME $(options) ../common.sp $[@ $^@
 
+# Used to build C++ <complex> header (special case; see complex.mh)
+complexsplice = wsplice -i.. -k$(system) -kCPPCOMPLEX $(options) ../common.sp $[@ $^@
+
 # Used to build C++ <limits> header (special case; see limits.mh)
 limitssplice = wsplice -i.. -k$(system) -kCPPLIMITS $(options) ../common.sp $[@ $^@
+
+# Used to build C++ <locale> header (special case; see locale.mh)
+localesplice = wsplice -i.. -k$(system) -kCPPLOCALE $(options) ../common.sp $[@ $^@
+
+# Used to build C++ <memory> header (special case; see memory.mh)
+memorysplice = wsplice -i.. -k$(system) -kCPPMEMORY $(options) ../common.sp $[@ $^@
 
 # Used to build C++ <string> header (special case; see string.mh)
 stringsplice = wsplice -i.. -k$(system) -kCPPSTRING $(options) ../common.sp $[@ $^@
@@ -21,10 +30,31 @@ common = &
         _strdef.h &
         algorith &
         assert.h &
+        bitset &
+        cassert &
+        cctype &
+        cerrno &
+        cfloat &
+        ciso646 &
+        climits &
+        clocale &
+        cmath &
+        complex &
         complex.h &
         conio.h &
         crtdbg.h &
+        csetjmp &
+        csignal &
+        cstdarg &
+        cstddef &
+        cstdio &
+        cstdlib &
+        cstring &
+        ctime &
         ctype.h &
+        cwchar &
+        cwctype &
+        deque &
         env.h &
         errno.h &
         except.h &
@@ -59,23 +89,33 @@ common = &
         jtime.h &
         limits &
         limits.h &
+        list &
+        locale &
         locale.h &
         malloc.h &
+        map &
         math.h &
         mbctype.h &
         mbstring.h &
         mem.h &
         memory &
         mmintrin.h &
+        new &
         new.h &
+        numeric &
         ostream &
         ostream.h &
         pgchart.h &
         process.h &
+        queue &
         search.h &
+        set &
         setjmp.h &
         share.h &
         signal.h &
+        sstream &
+        sstream.h &
+        stack &
         stdarg.h &
         stdbool.h &
         stddef.h &
@@ -92,12 +132,18 @@ common = &
         string.hpp &
         strstrea &
         strstrea.h &
+        sys/locking.h &
+        sys/stat.h &
+        sys/timeb.h &
+        sys/types.h &
         tchar.h &
         time.h &
         typeinfo &
         typeinfo.h &
         utility &
+        valarray &
         varargs.h &
+        vector &
         wcdefs.h &
         wcexcept.h &
         wchar.h &
@@ -117,29 +163,7 @@ common = &
         wcstack.h &
         wctype.h &
         wcvbase.h &
-        wcvector.h &
-        sys/locking.h &
-        sys/stat.h &
-        sys/timeb.h &
-        sys/types.h &
-        cassert &
-        cctype &
-        cerrno &
-        cfloat &
-        ciso646 &
-        climits &
-        clocale &
-        cmath &
-        csetjmp &
-        csignal &
-        cstdarg &
-        cstddef &
-        cstdio &
-        cstdlib &
-        cstring &
-        ctime &
-        cwchar &
-        cwctype
+        wcvector.h
 
 DOS_files = &
       $(common) &
@@ -445,6 +469,9 @@ istream  : $(istream_deps)
 ostream  : $(ostream_deps)
          $(csplice)
 
+sstream  : $(sstream_deps)
+         $(csplice)
+
 streambu : $(streambu_deps)
          $(csplice)
 
@@ -454,6 +481,15 @@ strstrea : $(strstrea_deps)
 # Other headers from the C++ standard library.
 
 algorith : $(algorith_deps)
+         $(splice)
+
+bitset   : $(bitset_deps)
+         $(splice)
+
+complex  : $(complex_deps)
+         $(complexsplice)
+
+deque    : $(deque_deps)
          $(splice)
 
 exceptio : $(exception_deps)
@@ -468,8 +504,32 @@ iterator : $(iterator_deps)
 limits   : $(limits_deps)
          $(limitssplice)
 
+list     : $(list_deps)
+         $(splice)
+
+locale   : $(locale_deps)
+         $(localesplice)
+
+map      : $(map_deps)
+         $(splice)
+
 memory   : $(memory_deps)
+         $(memorysplice)
+
+new      : $(new_deps)
          $(csplice)
+
+numeric  : $(numeric_deps)
+         $(splice)
+
+queue    : $(queue_deps)
+         $(splice)
+
+set      : $(set_deps)
+         $(splice)
+
+stack    : $(stack_deps)
+         $(splice)
 
 stdexcep : $(stdexcept_deps)
          $(csplice)
@@ -481,6 +541,12 @@ typeinfo : $(typeinfo_deps)
          $(csplice)
 
 utility  : $(utility_deps)
+         $(splice)
+
+valarray : $(valarray_deps)
+         $(splice)
+
+vector   : $(vector_deps)
          $(splice)
 
 

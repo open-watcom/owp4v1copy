@@ -1,5 +1,6 @@
 # Manifest file for C runtime library header files (C/C++/Fortran)
 
+h\_comdef.h
 h\assert.h
 h\bios.h
 h\common.cnv
@@ -44,20 +45,17 @@ h\stdbool.h
 h\stddef.h
 h\stdint.h
 h\stdio.h
-h\stdiobuf.h
 h\stdlib.h
 h\string.h
-h\tchar.h
-h\time.h
-h\typeinfo.h
-h\unistd.h
-h\varargs.h
-h\wchar.h
-h\wctype.h
-h\wdefwin.h
-h\_comdef.h
 h\sys\locking.h
 h\sys\stat.h
 h\sys\timeb.h
 h\sys\types.h
 h\sys\utime.h
+h\tchar.h
+h\time.h
+h\unistd.h
+h\varargs.h
+h\wchar.h
+h\wctype.h
+h\wdefwin.h

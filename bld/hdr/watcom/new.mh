@@ -1,15 +1,30 @@
-//
-//  new.h -- C++ default storage allocators
+///////////////////////////////////////////////////////////////////////////
+// FILE: new/new.h (Dynamic memory support)
 //
 :keep CPP_HDR
 :include crwat.sp
 //
+// Description: This header is part of the C++ standard library.
+///////////////////////////////////////////////////////////////////////////
+:segment !CNAME
 #ifndef _NEW_H_INCLUDED
 #define _NEW_H_INCLUDED
+
+:include readonly.sp
+
+#ifndef _NEW_INCLUDED
+  #include <new>
+#endif
+
+#endif
+:elsesegment
+#ifndef _NEW_INCLUDED
+#define _NEW_INCLUDED
+
 :include readonly.sp
 
 #ifndef __cplusplus
-#error new.h is for use with C++
+#error The header new requires C++
 #endif
 
 #ifndef _COMDEF_H_INCLUDED
@@ -39,3 +54,4 @@ _WPRTLINK extern PFU _set_new_handler( PFU );
 :endsegment
 
 #endif
+:endsegment

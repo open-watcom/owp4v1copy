@@ -1,0 +1,22 @@
+///////////////////////////////////////////////////////////////////////////
+// FILE: bitset (...)
+//
+:keep CPP_HDR
+:include crwat.sp
+//
+// Description: This header is part of the C++ standard library.
+///////////////////////////////////////////////////////////////////////////
+#ifndef _BITSET_INCLUDED
+#define _BITSET_INCLUDED
+
+:include readonly.sp
+
+#ifndef __cplusplus
+#error The header bitset requires C++
+#endif
+
+namespace std {
+
+} // End of namespace std.
+
+#endif

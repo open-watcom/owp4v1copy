@@ -1,3 +1,4 @@
+:segment !CPPCOMPLEX
 //
 //  complex.h   Complex Numbers
 //
@@ -6,6 +7,7 @@
 //
 #ifndef _COMPLEX_H_INCLUDED
 #define _COMPLEX_H_INCLUDED
+
 :include readonly.sp
 
 #ifndef __cplusplus
@@ -418,3 +420,31 @@ inline double norm( Complex const &__cv ) {
 
 #endif /* defined __cplusplus */
 #endif
+:elsesegment
+:: Note that <complex> has nothing to do with <complex.h>. Both targets
+:: are being generated from this file because of their common name, not
+:: because they represent the same facility.
+::
+///////////////////////////////////////////////////////////////////////////
+// FILE: complex (...)
+//
+:keep CPP_HDR
+:include crwat.sp
+//
+// Description: This header is part of the C++ standard library.
+///////////////////////////////////////////////////////////////////////////
+#ifndef _COMPLEX_INCLUDED
+#define _COMPLEX_INCLUDED
+
+:include readonly.sp
+
+#ifndef __cplusplus
+#error The header complex requires C++
+#endif
+
+namespace std {
+
+} // namespace std
+
+#endif
+:endsegment

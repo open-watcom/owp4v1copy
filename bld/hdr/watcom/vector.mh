@@ -1,0 +1,22 @@
+///////////////////////////////////////////////////////////////////////////
+// FILE: vector (...)
+//
+:keep CPP_HDR
+:include crwat.sp
+//
+// Description: This header is part of the C++ standard library.
+///////////////////////////////////////////////////////////////////////////
+#ifndef _VECTOR_INCLUDED
+#define _VECTOR_INCLUDED
+
+:include readonly.sp
+
+#ifndef __cplusplus
+#error The header vector requires C++
+#endif
+
+namespace std {
+
+} // End of namespace std.
+
+#endif

@@ -1,6 +1,6 @@
 
 FILE        : bld\hdr\readme.txt
-LAST REVISED: 2004-04-27
+LAST REVISED: 2004-08-05
 SUBJECT     : Overview of the header project.
 
 This file is intended to provide developers working on the header
@@ -88,15 +88,47 @@ dependencies, wmake macros are defined in deps.mif, one for each .mh
 file, that are subsequently used to define dependencies for both header
 forms. Note that it is awkward to work with extensionless files with
 wmake. Currently the rules for building each cname file is explicitly
-spelled out in master.mif. A better way of handling this could be
-imagined.
+spelled out in master.mif.
 
 Standard C++98 also specifies many additional headers besides those
-describing the C library. The header project generates by a name.h form
-and a "cname form" (extensionless) for the headers that support
-iostreams. However, most of the other C++ headers are generated only in
-their cname form. Note, however, that the header <memory> has a
-corresponding, but unrelated, C header named <memory.h>.
+describing the C library. In particular:
+
+<algorithm>        <istream>            <set>
+<bitset>           <iterator>           <sstream>
+<complex>          <limits>             <stack>
+<deque>            <list>               <stdexcept>
+<exception>        <locale>             <streambuf>
+<fstream>          <map>                <string>
+<functional>       <memory>             <typeinfo>
+<iomanip>          <new>                <utility>
+<ios>              <numeric>            <valarray>
+<iosfwd>           <ostream>            <vector>
+<iostream>         <queue>
+
+For compatibility with older Open Watcom programs the header project
+generates by a name.h form and a "cname form" (extensionless) for the
+headers that support IOstreams and for certain other headers that
+existed in Open Watcom v1.2 or before (new.h, exceptio.h, stdexcep.h,
+and typeinfo.h). However, the newer C++ headers are generated only in
+their extensionless form. Note, however, that the files complex.mh,
+limits.mh, locale.mh, memory.mh, and string.mh are more complicatd. In
+some cases (complex.mh, memory.mh) an unrelated .h header is generated
+in addition to the C++ standard extensionless header. In other cases
+(limits.mh, locale.mh, and string.mh) three files are generated: the C
+library .h header, the C++ library "cname" header, and another C++
+library header that is extensionless. This adds complications to the
+control files.
+
+Notice that several of the official header names in the C++ library are
+longer than eight characters. To support the DOS host, Open Watcom
+always stores these headers in 8.3 filename format, truncating the name
+if necessary. Programmers may still refer to the long name in their
+programs---and they are encouraged to do so. The Open Watcom compiler
+will look for a truncated name if it can't open the long name.
+
+In addition to the headers required by the C and C++ standards, Open
+Watcom also provides several non-standard headers and headers that are
+part of Open Watcom's library.
 
 NOTES
 
@@ -140,3 +172,8 @@ NOTES
    students of C and C++. Every reasonable effort should be made to
    maintain a high degree of readibility in the headers. It is one of
    OW's strengths.
+
+6. If you add headers to the header project that need to be distributed
+   as part of the official Open Watcom release, be sure to update the
+   manifest files in distrib\manifest. The files to update are
+   cm_clib_hdr for C headers and plib_hdr for C++ headers.
