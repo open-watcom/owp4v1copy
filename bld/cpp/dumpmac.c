@@ -43,7 +43,7 @@ main( int argc, char *argv[] )
 
     dumpheap();
     if( argc < 2 ) {
-        cprintf( "Usage: testpp filename\r\n" );
+        cprintf( "Usage: dumpmac filename\r\n" );
         exit( 1 );
     }
     if( argv[2] != NULL ) {
@@ -114,9 +114,9 @@ void PP_Dump_Macros()
                         printf( "#define %s %s ", me->name,
                                 me->replacement_list );
                         if( val.type == PPTYPE_SIGNED ) {
-                            printf( "(value=%ld)\n", val.ivalue );
+                            printf( "(value=%ld)\n", val.val.ivalue );
                         } else {
-                            printf( "(value=%luUL)\n", val.uvalue );
+                            printf( "(value=%luUL)\n", val.val.uvalue );
                         }
                     }
                 }
