@@ -75,34 +75,34 @@ typedef enum ppstate_t {
 
 // PREPROCESSOR DATA:
 
-global  unsigned PPState;       // pre-processor state (ppstate_t)
-global  int     CurToken;       // current token
-global  unsigned BadTokenInfo;  // error message that describes why T_BAD_TOKEN is bad
-global  int     TokenLen;       // length of current token
-global  int     TokenLine;      // line # of current token
-global  int     TokenColumn;    // column # of current token
-global  int     CurrChar;       // current character
-global  int     ConstType;      // type of constant
-global  signed_64 Constant64;       // value of constant: 33-64 bits
-global  int     NestLevel;      // pre-processing level of #if
-global  int     SkipLevel;      // pre-processing level of #if to skip to
-global  char    *SavedId;       // saved id when doing look ahead
-global  int     LAToken;        // look ahead token
-global  char    InitialMacroFlag;// current value to init macro flags to
-global  MACADDR_T MacroOffset;  // first free byte in MacroSegment
-global  char    __Time[10];     // "HH:MM:SS" for __TIME__ macro
-global  char    __Date[12];     // "MMM DD YYYY" for __DATE__ macro
-global  FILE    *CppFile;       /* output for preprocessor */
-global  char    *ForceInclude;
-global  char    *SrcFName;      /* source file name without suffix */
-global  char    *WholeFName;    /* whole file name with suffix */
-global  char    PreProcChar;    /* preprocessor directive indicator */
-global  int     SwitchChar;     // DOS switch character
+global  unsigned    PPState;            // pre-processor state (ppstate_t)
+global  enum TOKEN  CurToken;           // current token
+global  unsigned    BadTokenInfo;       // error message that describes why T_BAD_TOKEN is bad
+global  int         TokenLen;           // length of current token
+global  int         TokenLine;          // line # of current token
+global  int         TokenColumn;        // column # of current token
+global  int         CurrChar;           // current character
+global  int         ConstType;          // type of constant
+global  signed_64   Constant64;         // value of constant: 33-64 bits
+global  int         NestLevel;          // pre-processing level of #if
+global  int         SkipLevel;          // pre-processing level of #if to skip to
+global  char *      SavedId;            // saved id when doing look ahead
+global  int         LAToken;            // look ahead token
+global  char        InitialMacroFlag;   // current value to init macro flags to
+global  MACADDR_T   MacroOffset;        // first free byte in MacroSegment
+global  char        __Time[10];         // "HH:MM:SS" for __TIME__ macro
+global  char        __Date[12];         // "MMM DD YYYY" for __DATE__ macro
+global  FILE *      CppFile;            /* output for preprocessor */
+global  char *      ForceInclude;
+global  char *      SrcFName;           /* source file name without suffix */
+global  char *      WholeFName;         /* whole file name with suffix */
+global  char        PreProcChar;        /* preprocessor directive indicator */
+global  int         SwitchChar;         // DOS switch character
 
 // token buffer
 // extra 16 is for unrolled scanning loops
 // extra uint_32 is for buffer overrun checking in debugging compiler
-global  char    Buffer[BUF_SIZE+16+sizeof(uint_32)];
+global  char        Buffer[BUF_SIZE+16+sizeof(uint_32)];
 
 extern  int     (*NextChar)();  // next-character routine (initialized in SRCFILE)
 
