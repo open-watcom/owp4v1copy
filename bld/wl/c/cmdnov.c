@@ -39,6 +39,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
+#include <stdlib.h>
 #include "linkstd.h"
 #include "alloc.h"
 #include "command.h"
@@ -52,6 +53,8 @@
 static bool             GetNovImport( void );
 static bool             GetNovExport( void );
 extern bool             ProcNLM( void );
+
+static bool				ProcModuleTypeN( int n );
 
 static bool IsNetWarePrefix(const char * pToken, int nLen)
 {
@@ -462,8 +465,17 @@ extern bool ProcCopyright( void )
 extern bool ProcNovell( void )
 /****************************/
 {
-    if( !ProcOne( NovModels, SEP_NO, FALSE ) ) {  // get file type
-        ProcNLM();
+    if( !ProcOne( NovModels, SEP_NO, FALSE ) ) 
+	{  // get file type
+		int		nType = 0;
+
+		if((nType = atoi(Token.this)) > 0)
+		{
+			GetToken( SEP_NO, TOK_INCLUDE_DOT);
+			ProcModuleTypeN(nType);
+		}
+		else
+			ProcNLM();
     }
     if( !GetToken( SEP_QUOTE, TOK_INCLUDE_DOT )  ) {    // get description
         FmtData.u.nov.description = NULL;
@@ -612,6 +624,14 @@ extern bool     ProcModuleType12( void )
     return( TRUE );
 }
 #endif
+
+static bool     ProcModuleTypeN( int n )
+/*************************/
+{
+    Extension = E_NLM;
+    FmtData.u.nov.moduletype = n;
+    return( TRUE );
+}
 
 
 static bool GetNovModule( void )

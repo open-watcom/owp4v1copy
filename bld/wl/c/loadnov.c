@@ -537,7 +537,8 @@ extern void FiniNovellLoadFile( void )
 	{
 		len = __min__((pPeriod - lastslash), NOV_MAX_NAME_LEN);
 		strncpy(module_name, lastslash, len);
-		strncpy(&module_name[len], pPeriod, NOV_MAX_EXT_LEN + 1);	/* + period */
+		strncpy(&module_name[len], pPeriod, NOV_MAX_EXT_LEN + 2);	/* + period and null */
+		module_name[len + NOV_MAX_EXT_LEN + 1] = '\0';
 	}
 	else
 	{
