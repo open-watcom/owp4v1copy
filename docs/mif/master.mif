@@ -210,7 +210,7 @@ all : $(hbook).pdf .SYMBOLIC
     @%null
 
 $(hbook).pdf : $(hbook).ps
-    -ps2pdf -r600 $[@ $(hbook).pdf
+    -ps2pdf12 -r600 $[@ $(hbook).pdf
 
 ####################################################
 #
