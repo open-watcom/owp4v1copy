@@ -264,25 +264,33 @@ STATIC char *procFlags( const char **argv, const char **log_name )
             case 'Z':   Glob.hold      = TRUE;  break;
                 /* these options require a filename */
             case 'F':
+                p = *(argv + 1);
+                if( p == NULL ) {
+                    PrtMsg( ERR| INVALID_FILE_OPTION, select, option );
+                    Usage();
+                }
+                checkCtrl( p );
+                if (( p[0] == '-' ) && ( p[1] == NULLCHAR )) {
+                    // stdin
+                } else if (( p[0] == '-' ) || ( p[0] == Glob.swchar )) {
+                    PrtMsg( ERR| INVALID_FILE_OPTION, select, option );
+                    Usage();
+                }
+                new = MallocSafe( sizeof( *new ) );
+                new->name = (char *)p;
+                new->next = filesToDo;
+                filesToDo = new;
+                argv++;
+                break;
             case 'L':
                 p = *(argv + 1);
                 if(( p == NULL ) || ( p[0] == '-' ) || ( p[0] == Glob.swchar )) {
                     PrtMsg( ERR| INVALID_FILE_OPTION, select, option );
                     Usage();
                 }
-                argv++;
                 checkCtrl( p );
-                switch( toupper( option ) ) {
-                case 'F':
-                    new = MallocSafe( sizeof( *new ) );
-                    new->name = (char *)p;
-                    new->next = filesToDo;
-                    filesToDo = new;
-                    break;
-                case 'L':
-                    *log_name = p;
-                    break;
-                }
+                *log_name = p;
+                argv++;
                 break;
             default:
                 PrtMsg( ERR| INVALID_OPTION, select, option );
