@@ -196,9 +196,40 @@ static unsigned ReadMem( void *ptr, addr_off offv, unsigned size )
     return( size - count );
 }
 
-Elf32_Dyn *GetDebuggeeDynSection( void )
+Elf32_Dyn *GetDebuggeeDynSection( const char *exe_name )
 {
-    return( (Elf32_Dyn *)0x08049810 );
+    Elf32_Dyn   *result;
+    Elf32_Ehdr  ehdr;
+    Elf32_Phdr  phdr;
+    int         fd;
+    size_t      i;
+
+    result = NULL;
+    fd = open( exe_name, O_RDONLY );
+    if( fd < 0 )
+        return( result );
+    /* Obtain the address of the dynamic section from the program
+     * header. If anything unexpected happens, give up
+     */
+    if( read( fd, &ehdr, sizeof( ehdr ) ) >= sizeof( ehdr ) &&
+        memcmp( ehdr.e_ident, ELF_SIGNATURE, 4 ) == 0 &&
+        ehdr.e_phentsize >= sizeof( phdr ) ) {
+        for( i = 0; i < ehdr.e_phnum; i++ ) {
+            if( read( fd, &phdr, sizeof phdr ) < sizeof( phdr ) )
+                break;
+            if( phdr.p_type == PT_DYNAMIC ) {
+                result = (Elf32_Dyn *)phdr.p_vaddr;
+                break;
+            }
+            if( lseek( fd, ehdr.e_phentsize - sizeof( phdr ), SEEK_CUR ) < 0 )
+                break;
+        }
+    }
+    close( fd );
+    Out( "DynSection at: " );
+    OutNum( (size_t)result );
+    Out( "\n" );
+    return( result );
 }
 
 /* Copy dynamic linker rendezvous structure from debuggee's address space
@@ -797,7 +828,7 @@ unsigned ReqProg_load( void )
         }
 	if( !GetFlatSegs( &flatCS, &flatDS ) )
 	    goto fail;
-	dbg_dyn = GetDebuggeeDynSection();
+        dbg_dyn = GetDebuggeeDynSection( exe_name );
         errno = 0;
     }
     ret->err = errno;
