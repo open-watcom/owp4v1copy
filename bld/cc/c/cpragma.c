@@ -53,6 +53,8 @@ local void SetPackAmount( void );
 local void PragPack( void );
 local void PragAllocText( void );
 local void PragEnableDisableMessage( int enable );
+local void PragSTDCOption( void );
+local void PragAddExtRef ( char * );
 static void PragMessage( void );
 static void PragEnum ( void );
 static void PragLibs( void );
@@ -63,7 +65,8 @@ static void PragUnroll( void );
 static void PragReadOnlyFile( void );
 static void PragReadOnlyDir( void );
 static void PragOnce( void );
-
+static void PragSTDC( void );
+static void PragExtRef( void );
 local void CopyParms( void );
 local void CopyLinkage( void );
 local void CopyCode( void );
@@ -139,6 +142,10 @@ void CPragma( void )
             PragOnce();
         } else if( PragRecog( "unroll" ) ) {
             PragUnroll();
+        } else if( PragRecog( "STDC" ) ) {
+            PragSTDC();
+        } else if( PragRecog( "extref" ) ) {
+            PragExtRef();
         } else {
             return;                     /* don't recognize anything */
         }
@@ -947,3 +954,48 @@ static void PragOnce( void )
 {
     SetSrcFNameOnce();
 }
+
+local void PragSTDCOption( void )
+{
+    if( PragRecog( "ON" ) ) {
+    }
+    else if( PragRecog( "OFF" ) ) {
+    }
+    else if( PragRecog( "DEFAULT" ) ) {
+    }
+}
+
+// form:
+// #pragma STDC (FP_CONTRACT|FENV_ACCESS|CX_LIMITED_RANGE) (ON|OFF|DEFAULT)
+//
+static void PragSTDC( void )
+{
+    if( PragRecog( "FP_CONTRACT" ) ) {
+           PragSTDCOption();
+    }
+    else if( PragRecog( "FENV_ACCESS" ) ) {
+           PragSTDCOption();
+    }
+    else if( PragRecog( "CX_LIMITED_RANGE" ) ) {
+           PragSTDCOption();
+    }
+}
+
+local void PragAddExtRef ( char *symbol )
+{
+    SpcSymbol( symbol, SC_EXTERN  );
+}
+
+// #pragma extref symbolname
+//
+static void PragExtRef( void )
+{
+    while( CurToken == T_ID ) {
+        PragAddExtRef( Buffer );
+        NextToken();
+        if( CurToken == T_SEMI_COLON ) {
+            NextToken();
+        }
+    }
+}
+
