@@ -3101,33 +3101,25 @@ int WritePrologue( void )
     }
 
     if( info->localsize != 0 || info->parasize != 0 || info->is_vararg ) {
-
-        /* Push BP or EBP */
-        if( Use32 ) {
-            strcpy( buffer, "push ebp" );
-        } else {
+        // write prolog code
+        if(( Code->info.cpu & P_CPU_MASK ) < P_286 ) {
+            // write 8086 prolog code
+            // Push BP
+            // Mov BP, SP
+            // Sub SP, the number of localbytes
             strcpy( buffer, "push bp" );
-        }
-        InputQueueLine( buffer );
-
-        /* Move SP/ESP to BP/EBP */
-        if( Use32 ) {
-            strcpy( buffer, "mov ebp, esp" );
-        } else {
-            strcpy( buffer, "mov bp, sp" );
-        }
-        InputQueueLine( buffer );
-
-        /* Substract SP/ESP by the number of localbytes */
-        if( info->localsize != 0 ) {
-            if( Use32 ) {
-                strcpy( buffer, "sub esp, " );
-            } else {
-                strcpy( buffer, "sub sp, " );
-            }
-            sprintf( buffer+strlen(buffer), "%d", info->localsize );
             InputQueueLine( buffer );
+            strcpy( buffer, "mov bp, sp" );
+            InputQueueLine( buffer );
+            strcpy( buffer, "sub sp, " );
+            sprintf( buffer+strlen(buffer), "%d", info->localsize );
+        } else {
+            // write 80286 and above prolog code
+            // ENTER the number of localbytes, 0
+            strcpy( buffer, "enter " );
+            sprintf( buffer+strlen(buffer), "%d, 0", info->localsize );
         }
+        InputQueueLine( buffer );
     }
 
     /* Push the registers */
@@ -3164,22 +3156,20 @@ static void write_epilogue( void )
     pop_register( CurrProc->e.procinfo->regslist );
 
     if( info->localsize == 0 && info->parasize == 0 && !(info->is_vararg) ) return;
-
-    if( info->localsize != 0 ) {
-        /* Move BP/EBP to SP/ESP */
-        if( Use32 ) {
-            strcpy( buffer, "mov esp, ebp" );
-        } else {
+    // write epilog code
+    if(( Code->info.cpu & P_CPU_MASK ) < P_286 ) {
+        // write 8086 epilog code
+        // Mov SP, BP
+        // POP BP
+        if( info->localsize != 0 ) {
             strcpy( buffer, "mov sp, bp" );
+            InputQueueLine( buffer );
         }
-        InputQueueLine( buffer );
-    }
-
-    /* Pop BP or EBP */
-    if( Use32 ) {
-        strcpy( buffer, "pop ebp" );
-    } else {
         strcpy( buffer, "pop bp" );
+    } else {
+        // write 80286 and above epilog code
+        // LEAVE
+        strcpy( buffer, "leave" );
     }
     InputQueueLine( buffer );
 }
