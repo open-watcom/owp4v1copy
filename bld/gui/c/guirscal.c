@@ -37,6 +37,6 @@ extern void GUIGetRoundScale( gui_coord * scale )
     gui_rect screen;
 
     GUIGetScreen( &screen );
-    scale->x = ( (long)scale->x * screen.width ) / screen.width;
-    scale->y = ( (long)scale->y * screen.height ) / screen.height;
+    scale->x = ( scale->x / screen.width ) * screen.width;
+    scale->y = ( scale->y / screen.height ) * screen.height;
 }
