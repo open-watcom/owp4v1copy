@@ -432,45 +432,101 @@ f(xyz)("Hello\n")       f(printf)("Hello\n")
 .do end
 .*
 .section Variable Argument Macros
+.*
+.pp
+.ix 'variable argument macros'
 Macros may be defined to take optional additional parameters.  This is
-done using the ellipsis(...) keyword as the last parameter.  There can be
-no further parameters past the variable argument, and errors will be
-generated if the preprocessor finds anything other than a closing ")"
-after the ellipsis.  The variable arguments are referenced together with
-__VA_ARGS__.  Special behavior of pasting this parameter with a comma can
-result in the comma dissappearing (This extension is not specified in the 
-standard).  The only token to which this applies is a comma. Any other token
-word, etc which __VA_ARGS__ is pasted with is not removed.
-The __VA_ARG__ parameter may be converted to a string.
+accomplished using the
+.mono ...
+(ellipsis) keyword as the last parameter in the macro declaration.
+There may be no further parameters past the variable argument, and errors
+will be generated if the preprocessor finds anything other than a closing
+parenthesis after the ellipsis.  The variable arguments may be referenced
+as a whole using the
+.kwpp __VA_ARGS__
+keyword. Special behavior of pasting this parameter with a comma can
+result in the comma being removed (this is an extension to the standard).
+The only token to which this applies is a comma. Any other token
+which
+.kwpp __VA_ARGS__
+is pasted with is not removed.
+The
+.kwpp __VA_ARGS__
+parameter may be converted to a string using the
+.mono #
+operator. Consider the following examples of macros
+with variable number of arguments:
 
 .millust begin
-#define shuffle1( a, b, ... )   b,__VA_ARGS__##,a
+#define shuffle1( a, b, ... )  b,__VA_ARGS__##,a
 #define shuffle2( a, b, ... )  b,## __VA_ARGS__,a
 #define shuffle3( a, b, ... )  b,## __VA_ARGS__##,a
 #define showlist( ... )        #__VA_ARGS__
 #define args( f, ... )         __VA_ARGS__
 .millust end
 
-It's safe to assume that any time a comma is used near __VA_ARGS__ that 
-"##" should be used to paste them together.  Both shuffle1, shuffle2
-are okay examples of pasting __VA_ARGS__ with a comma; either the leading
-or trailing comma may be concated, and if __VA_ARGS__ is empty, the comma
-likewise is 'emptied'.  The macro shuffle3 works also; the sequence of 
-concantenations happens from left to right, so first the ',' and empty 
-__VA_ARGS__ is concantenated into nothing, then the trailing comma is 
-concatentated with b.  Some example usages...
-
+It is safe to assume that any time a comma is used near
+.kwpp __VA_ARGS__
+the
+.mono ##
+operator should be used to paste them together. Both
+.mono shuffle1
+and
+.mono shuffle2
+macros are valid examples of pasting
+.kwpp __VA_ARGS__
+together with a comma; either the leading or trailing comma may be
+concatenated, and if
+.kwpp __VA_ARGS__
+is empty, the comma is removed. The macro
+.mono shuffle3
+works as well; the sequence of concantenations happens from left
+to right, hence first the comma and empty
+.kwpp __VA_ARGS__
+are concantenated and both are removed, afterwards the trailing comma
+is concatentated with
+.mono b.
+Several example usages of the above macros follow:
+..sk 1 c
+.if &e'&nobox eq 0 .do begin
+.boxdef
+..if '&format' eq '7x9' ..th ..do begin
+.  .boxcol 20
+.  .boxcol 19
+..do end
+..el ..do begin
+.  .boxcol 23
+.  .boxcol 22
+..do end
+.boxbeg
+›Invocation           ›After Substitution
+.boxline
+.mono ›shuffle(x,y,z)           ›y,z,x
+.boxline
+.mono ›shuffle(x,y)             ›y,x
+.boxline
+.mono ›shuffle(a,b,c,d,e)       ›b,c,d,e,a
+.boxline
+.mono ›showlist(x,y,z)          ›"x,y,z"
+.boxline
+.mono ›args("%d+%d=%d",a,b,c)   ›a,b,c
+.boxline
+.mono ›args("none")             ›
+.boxend
+.do end
+.el .do begin
 .millust begin
+Invocation              After Substitution
+---------------------   --------------------
 shuffle(x,y,z)          y,z,x
-shuffle(x,y)            y,x     // the second ',' dissappears
-shuffle(a,b,c,d,e)      b,c,d,e,a  
+shuffle(x,y)            y,x     // second ',' dissappears
+shuffle(a,b,c,d,e)      b,c,d,e,a
 showlist(x,y,z)         "x,y,z"
 args("%s",charptr)      charptr
 args("%d+%d=%d",a,b,c)  a,b,c
-args("none")                    // nothing.
+args("none")                    // nothing
 .millust end
-
-
+.do end
 .*
 .section Rescanning for Further Replacement
 .*
