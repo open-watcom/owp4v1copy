@@ -51,7 +51,7 @@ COMMANDS += &
 #    cp &
 #    df &
 #    du &
-#    egrep &
+    egrep &
 #    fgrep &
 #    gnutar &
     ls &
