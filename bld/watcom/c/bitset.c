@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
+#include <errno.h>
 
 /*
  * Program to generate a set of macros to manipulate a fixed-length (but
