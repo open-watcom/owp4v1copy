@@ -24,13 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Remote file access.
 *
 ****************************************************************************/
 
 
-#define LOGGING 1
+//#define LOGGING 1
 
 #include <string.h>
 #include "dbgdefn.h"
