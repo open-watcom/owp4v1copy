@@ -757,11 +757,11 @@ extern void TargOrAttr( TARGET *targ, TATTR attr )
 
 
 #pragma off(unreferenced);
-STATIC BOOLEAN resetEx( TARGET *targ, void *ptr )
+STATIC BOOLEAN resetEx( void *targ, void *ptr )
 #pragma on (unreferenced);
 /***********************************************/
 {
-    targ->executed = TRUE;
+    ((TARGET *)targ)->executed = TRUE;
     return( FALSE );
 }
 

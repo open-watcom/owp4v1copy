@@ -74,9 +74,10 @@ STATIC dep_handle RESFirstDep( dep_handle file )
     return( file );
 }
 
-STATIC void RESTransDep( res_info *file, char **name, time_t *stamp )
-/*******************************************************************/
+STATIC void RESTransDep( dep_handle f, char **name, time_t *stamp )
+/*****************************************************************/
 {
+    res_info    *file = f;
 
     *name = &file->curr->name[ 0 ];
     *stamp = file->curr->time;
