@@ -1,3 +1,4 @@
+#pmake: all build os_win cpu_i86
 name = wheapwlk
 
 msgh = rcstr.h
