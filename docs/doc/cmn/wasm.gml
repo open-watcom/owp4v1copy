@@ -142,6 +142,8 @@ same as ".287" or ".287p"
 same as ".387" or ".387p"
 .note fp5
 same as ".587" or ".587p"
+.note fp6
+same as ".687" or ".687p"
 .note i=<directory>
 add directory to list of include directories
 .note j or s
@@ -320,9 +322,11 @@ opcodes and register names that are recognized by the assembler.
 :cmt. .ix 'ecx'
 :cmt. .ix 'edi'
 :cmt. .ix 'edx'
+:cmt. .ix '.else'
 :cmt. .ix 'else'
 :cmt. .ix 'elseif'
 :cmt. .ix 'end'
+:cmt. .ix '.endif'
 :cmt. .ix 'endif'
 :cmt. .ix 'endp'
 :cmt. .ix 'ends'
@@ -472,6 +476,7 @@ opcodes and register names that are recognized by the assembler.
 :cmt. .ix 'hlt'
 :cmt. .ix 'huge'
 :cmt. .ix 'idiv'
+:cmt. .ix '.if'
 :cmt. .ix 'if'
 :cmt. .ix 'if1'
 :cmt. .ix 'if2'
@@ -596,7 +601,7 @@ opcodes and register names that are recognized by the assembler.
 :cmt. .ix 'near'
 :cmt. .ix 'nearstack'
 :cmt. .ix 'neg'
-:cmt. .ix 'no87'
+:cmt. .ix '.no87'
 .ix '.nocref'
 .ix '.nolist'
 :cmt. .ix 'nop'
@@ -770,34 +775,35 @@ opcodes and register names that are recognized by the assembler.
 ~.186           .286           .286c          .286p
 ~.287           .386           .386p          .387
 ~.486           .486p          .586           .586p
-~.8086          .8087          aaa            aad
-aam            aas            abs            adc
-add            addr           ah             al
-alias          align          .alpha         and
-arpl           assume         at             ax
-basic          bh             bl             bound
-bp             .break         bsf            bsr
-bswap          bt             btc            btr
-bts            bx             byte           c
-call           callf          casemap        catstr
-cbw            cdq            ch             cl
-clc            cld            cli            clts
-cmc            cmp            cmps           cmpsb
-cmpsd          cmpsw          cmpxchg        cmpxchg8b
-~.code          comm           comment        common
-compact        .const         .continue      cpuid
-cr0            cr2            cr3            cr4
-~.cref          cs             cwd            cwde
-cx             daa            das            .data
-~.data?         db             dd             dec
-df             dh             di             div
-dl             .dosseg        dp             dq
-dr0            dr1            dr2            dr3
-dr6            dr7            ds             dt
-dup            dw             dword          dx
-eax            ebp            ebx            echo
-ecx            edi            edx            else
-elseif         end            endif          endp
+~.686           .686p          .8086          .8087
+aaa            aad            aam            aas
+abs            adc            add            addr
+ah             al             alias          align
+~.alpha         and            arpl           assume
+at             ax             basic          bh
+bl             bound          bp             .break
+bsf            bsr            bswap          bt
+btc            btr            bts            bx
+byte           c              call           callf
+casemap        catstr         cbw            cdq
+ch             cl             clc            cld
+cli            clts           cmc            cmp
+cmps           cmpsb          cmpsd          cmpsw
+cmpxchg        cmpxchg8b      .code          comm
+comment        common         compact        .const
+~.continue      cpuid          cr0            cr2
+cr3            cr4            .cref          cs
+cwd            cwde           cx             daa
+das            .data          .data?         db
+dd             dec            df             dh
+di             div            dl             .dosseg
+dp             dq             dr0            dr1
+dr2            dr3            dr6            dr7
+ds             dt             dup            dw
+dword          dx             eax            ebp
+ebx            echo           ecx            edi
+edx            .else          else           elseif
+end            .endif         endif          endp
 ends           .endw          enter          eq
 equ            equ2           .err           .errb
 ~.errdef        .errdif        .errdifi       .erre
@@ -835,81 +841,81 @@ fucomp         fucompp        fwait          fword
 fxam           fxch           fxtract        fyl2x
 fyl2xp1        ge             global         group
 gs             gt             high           highword
-hlt            huge           idiv           if
-if1            if2            ifb            ifdef
-ifdif          ifdifi         ife            ifidn
-ifidni         ifnb           ifndef         ignore
-imul           in             inc            include
-includelib     ins            insb           insd
-insw           int            into           invd
-invlpg         invoke         iret           iretd
-irp            ja             jae            jb
-jbe            jc             jcxz           je
-jecxz          jg             jge            jl
-jle            jmp            jmpf           jna
-jnae           jnb            jnbe           jnc
-jne            jng            jnge           jnl
-jnle           jno            jnp            jns
-jnz            jo             jp             jpe
-jpo            js             jz             label
-lahf           lar            large          lds
-le             lea            leave          length
-lengthof       les            .lfcond        lfs
-lgdt           lgs            lidt           .list
-~.listall       .listif        .listmacro     .listmacroall
-lldt           lmsw           local          lock
-lods           lodsb          lodsd          lodsw
-loop           loope          loopne         loopnz
-loopz          low            lowword        lroffset
-lsl            lss            lt             ltr
-macro          mask           medium         memory
-mod            .model         mov            movs
-movsb          movsd          movsw          movsx
-movzx          mul            name           ne
-near           nearstack      neg            no87
-~.nocref        .nolist        nop            not
-nothing        offset         opattr         option
-or             org            os_dos         os_os2
-out            outs           outsb          outsd
-outsw          para           pascal         pop
-popa           popad          popcontext     popf
-popfd          private        proc           proto
-ptr            public         purge          push
-pusha          pushad         pushcontext    pushf
-pushfd         pword          qword          .radix
-rcl            rcr            rdmsr          rdtsc
-readonly       record         rep            repe
-~.repeat        repne          repnz          repz
-ret            retf           retn           rol
-ror            rsm            sahf           sal
-~.sall          sar            sbb            sbyte
-scas           scasb          scasd          scasw
-sdword         seg            segment        .seq
-seta           setae          setb           setbe
-setc           sete           setg           setge
-setl           setle          setna          setnae
-setnb          setnbe         setnc          setne
-setng          setnge         setnl          setnle
-setno          setnp          setns          setnz
-seto           setp           setpe          setpo
-sets           setz           .sfcond        sgdt
-shl            shld           short          shr
-shrd           si             sidt           size
-sizeof         sldt           small          smsw
-sp             ss             st             .stack
-~.startup       stc            std            stdcall
-sti            stos           stosb           stosd
-stosw          str            struc          struct
-sub            sword          syscall        tbyte
-test           textequ        .tfcond        this
-tiny           tr3            tr4            tr5
-tr6            tr7            typedef        union
-~.until         use16          use32          uses
-vararg         verr           verw           wait
-watcom_c       wbinvd         .while         width
-word           wrmsr          xadd           xchg
-~.xcref         xlat           xlatb          .xlist
-xor
+hlt            huge           idiv           .if
+if             if1            if2            ifb
+ifdef          ifdif          ifdifi         ife
+ifidn          ifidni         ifnb           ifndef
+ignore         imul           in             inc
+include        includelib     ins            insb
+insd           insw           int            into
+invd           invlpg         invoke         iret
+iretd          irp            ja             jae
+jb             jbe            jc             jcxz
+je             jecxz          jg             jge
+jl             jle            jmp            jmpf
+jna            jnae           jnb            jnbe
+jnc            jne            jng            jnge
+jnl            jnle           jno            jnp
+jns            jnz            jo             jp
+jpe            jpo            js             jz
+label          lahf           lar            large
+lds            le             lea            leave
+length         lengthof       les            .lfcond
+lfs            lgdt           lgs            lidt
+~.list          .listall       .listif        .listmacro
+~.listmacroall  lldt           lmsw           local
+lock           lods           lodsb          lodsd
+lodsw          loop           loope          loopne
+loopnz         loopz          low            lowword
+lroffset       lsl            lss            lt
+ltr            macro          mask           medium
+memory         mod            .model         mov
+movs           movsb          movsd          movsw
+movsx          movzx          mul            name
+ne             near           nearstack      neg
+~.no87          .nocref        .nolist        nop
+not            nothing        offset         opattr
+option         or             org            os_dos
+os_os2         out            outs           outsb
+outsd          outsw          para           pascal
+pop            popa           popad          popcontext
+popf           popfd          private        proc
+proto          ptr            public         purge
+push           pusha          pushad         pushcontext
+pushf          pushfd         pword          qword
+~.radix         rcl            rcr            rdmsr
+rdtsc          readonly       record         rep
+repe           .repeat        repne          repnz
+repz           ret            retf           retn
+rol            ror            rsm            sahf
+sal            .sall          sar            sbb
+sbyte          scas           scasb          scasd
+scasw          sdword         seg            segment
+~.seq           seta           setae          setb
+setbe          setc           sete           setg
+setge          setl           setle          setna
+setnae         setnb          setnbe         setnc
+setne          setng          setnge         setnl
+setnle         setno          setnp          setns
+setnz          seto           setp           setpe
+setpo          sets           setz           .sfcond
+sgdt           shl            shld           short
+shr            shrd           si             sidt
+size           sizeof         sldt           small
+smsw           sp             ss             st
+~.stack         .startup       stc            std
+stdcall        sti            stos           stosb
+stosd          stosw          str            struc
+struct         sub            sword          syscall
+tbyte          test           textequ        .tfcond
+this           tiny           tr3            tr4
+tr5            tr6            tr7            typedef
+union          .until         use16          use32
+uses           vararg         verr           verw
+wait           watcom_c       wbinvd         .while
+width          word           wrmsr          xadd
+xchg           .xcref         xlat           xlatb
+~.xlist         xor
 .millust end
 .*
 .section Unsupported Directives
@@ -954,11 +960,14 @@ The following is a list of directives that are flagged by the
 .ix 'catstr'
 .ix '.continue'
 .ix 'echo'
+.ix '.else'
 .ix 'endmacro'
+.ix '.endif'
 .ix '.endw'
 .ix '.exit'
 .ix 'high'
 .ix 'highword'
+.ix '.if'
 .ix 'invoke'
 .ix 'low'
 .ix 'lowword'
@@ -982,13 +991,14 @@ The following is a list of directives that are flagged by the
 .ix 'width'
 .millust begin
 addr           .break         casemap        catstr
-~.continue      echo           endmacro       .endw
-~.exit          high           highword       invoke
-low            lowword        lroffset       mask
-opattr         option         popcontext     proto
-purge          pushcontext    .radix         record
-~.repeat        .startup       this           typedef
-union          .until         .while         width
+~.continue      echo           .else          endmacro
+~.endif         .endw          .exit          high
+highword       .if            invoke         low
+lowword        lroffset       mask           opattr
+option         popcontext     proto          purge
+pushcontext    .radix         record         .repeat
+~.startup       this           typedef        union
+~.until         .while         width
 .millust end
 .*
 .section &asmname. Diagnostic Messages

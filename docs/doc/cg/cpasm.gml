@@ -705,7 +705,8 @@ std       sti       stos      stosb     stosd     stosw
 str       sub       tbyte     test      tr3       tr4       
 tr5       tr6       tr7       verr      verw      wait      
 wbinvd    word      wrmsr     xadd      xchg      xlat      
-xlatb     xor       .millust end
+xlatb     xor
+.millust end
 .np
 A separate assembler is also included with this product and is
 described in the
