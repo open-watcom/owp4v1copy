@@ -18,4 +18,4 @@ objs =  cwhelp.obj &
         c2asm.obj
 
 $(target) $(dtarget) : eraseall.obj $(objs) $(__MAKEFILES__)
-    wlink system causeway name $^@ op map, stub=cwdstub.exe f {$(objs)} l ..\lib\system
+    $(linker) system causeway name $^@ op map, stub=cwdstub.exe f {$(objs)} l ..\lib\system
