@@ -4,13 +4,7 @@
 all : $(objfiles) $(libname).lib .symbolic
     @%null
 
-$(libname).lib : $(objs) $(libs) .precious
-!ifeq linkage dynamic
-    # Carl Young : 2003-11-19
-    # force a delete of the library. defeats the object of .precious but we have a bug in wlib apparently!?
-    # next thing is to fix the bug!
-    @rm -f $^@
-!endif
+$(libname).lib : $(objs) $(libs)
     $(librarian) $(lib_flags) $(lib_flags_linkage) $^@ $(objs) $(libs)
 !ifeq linkage dynamic
     $(vi) -s $(lib_misc_dir)/vi/export.vi tmp.def
@@ -26,13 +20,13 @@ $(libname).lib : $(objs) $(libs) .precious
     if exist e86sqrt.obj $(librarian) $(lib_flags) $^@ -+e86sqrt.obj
 !endif
 
-.cpp.obj :
+.cpp.obj : .autodepend
     *$(cpp) $[@ -I"$(include_c_path)" $(build_target) $(cpp_flags) $(c_dbg_flags)
 
-.c.obj :
+.c.obj : .autodepend
     *$(cc) $[@ -I"$(include_c_path)" $(build_target) $(c_flags) $(c_dbg_flags) $($^&_flags)
 
-.asm.obj :
+.asm.obj : .autodepend
     *$(as) $[@ $(include_a_path) $(build_target) $(a_flags) $(a_dbg_flags) $($^&_flags)
 
 .c   : ../../../c

@@ -43,9 +43,7 @@ cpu_size =32
 !endif
 
 extra_a_flags = -ms
-extra_a_flags_dos = -zld
-extra_a_flags_os2 = -zld -d__PROTMODE__
-extra_a_flags_win = -zld
+extra_a_flags_os2 = -d__PROTMODE__
 extra_a_flags_qnx = -d__PROTMODE__ -DQNX$(cpu_size)
 
 extra_a_flags_dosinit  = -fpi
@@ -56,9 +54,9 @@ extra_a_flags_emu8087  = -fpc -i"../inc" -i"$(emu386)/inc" -i"$(mathlib_dir)/h"
 extra_a_flags_emustub =
 
 extra_c_flags = -s
-extra_c_flags_dos = -zl -zld -zls
-extra_c_flags_os2 = -zl -zld -zls
-extra_c_flags_win = -zl -zld -zls
+extra_c_flags_dos = -zl -zls
+extra_c_flags_os2 = -zl -zls
+extra_c_flags_win = -zl -zls
 extra_c_flags_qnx = -oais -i"$(new_qnx_h)" -DQNX$(cpu_size)
 
 objs_dos = initemu.obj emu8087.obj dosinit.obj

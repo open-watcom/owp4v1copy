@@ -1,7 +1,7 @@
-sw_c_common =-oax-w4-zl-zld
+sw_c_common =-oax-w4-zl
 sw_a_common =
 
-!ifdef __LINUX__
+!ifdef __UNIX__
 sw_c_common +=-fo=.obj
 sw_a_common +=-fo=.obj
 !endif
@@ -69,7 +69,7 @@ sw_c_linux    =
 sw_c_netware  =
 sw_c_qnx      =
 
-sw_a_intel   = -w4 -zld -e -dPDIV
+sw_a_intel   = -w4 -e -dPDIV
 sw_a_static  =
 sw_a_dynamic = -d__MAKE_DLL_MATHLIB -d_EXPORT
 sw_a_alias   = -d__MAKE_DLL_MATHLIB -d_EXPORT

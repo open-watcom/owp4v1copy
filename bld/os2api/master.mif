@@ -1,6 +1,7 @@
 proj_name =  os2api
 
 !include cproj.mif
+!include defrule.mif
 !include deftarg.mif
 
 .EXTENSIONS : .lbc .def
@@ -65,12 +66,6 @@ componentsmmpm2 =    &
 .obj.lib:
         $(librarian) -b -c -n $@ $<
 
-.c.obj:
-        $(cc) -i$(inc_dirs) -fo=.obj -zq-w4-we-dNDEBUG -zc -oaxt -d1 $<
-
-.asm.obj:
-        $(as) -fo=.obj -zq -d1 -zld $<
-
 os2.lib: lib286.lbc msgseg.obj
         $(librarian) -b -c -n -io -ii -p=32 $@ @$<
         $(librarian) -b -c -p=32 $@ +msgseg.obj
@@ -97,8 +92,3 @@ mmpm2.lib: mmpm2all.lbc
 mmpm2all.lbc: $(componentsmmpm2)
         cat $< > $@
 
-#clean: .SYMBOLIC .EXPLICIT
-#        @if exist *.lbc @del *.lbc
-#        @if exist *.lib @del *.lib
-#        @if exist *.bak @del *.bak
-#        @if exist *.obj @del *.obj

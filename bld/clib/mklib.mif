@@ -10,16 +10,16 @@ lib_flags    +=-p=16
 all : $(objfiles) $(libname).lib .symbolic
     @%null
 
-$(libname).lib : $(objs) .precious
+$(libname).lib : $(objs)
     $(librarian) $(lib_flags) $(lib_flags_new) $^@ $(objs)
 
-.cpp.obj :
+.cpp.obj : .autodepend
     $(cpp) $[@ $(include_c_path) $(build_target) $($[&_opts) $(cpp_flags) $($[&_postopts)
 
-.c.obj :
+.c.obj : .autodepend
     $(cc) $[@ $(include_c_path) $(build_target) $($[&_opts) $(c_flags) $($[&_postopts) $(c_dbg_flags)
 
-.asm.obj :
+.asm.obj : .autodepend
     $(as) $[@ $(include_a_path) $(build_target) $($[&_opts) $(a_flags) $($[&_postopts) $(a_dbg_flags)
 
 # KB: I changed this below so that if you specify 'source_root' on the wmake command

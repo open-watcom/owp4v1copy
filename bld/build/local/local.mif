@@ -17,6 +17,7 @@ blib       += -q -zld
 # redirect standard tools to pre-build versions
 as = $(bas)
 vi = $(bvi)
+librarian = $(blib)
 
 !ifdef %open_nlang_root
 lang_root = $(%open_nlang_root)

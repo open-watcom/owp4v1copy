@@ -54,7 +54,7 @@ inc_dirs = -I"../h" -I"$(build_root)/graphlib/h" -I"$(build_root)/watcom/h" -I"$
 
 .c: ../c
 
-extra_c_flags = -zl -zld -d_FARD= -nm=$[&$(suffix_$(convention)) -fo=$@
+extra_c_flags = -zl -d_FARD= -nm=$[&$(suffix_$(convention)) -fo=$@
 
 extra_c_flags_386_register = -3r
 extra_c_flags_386_stack = -3s -d__STACK

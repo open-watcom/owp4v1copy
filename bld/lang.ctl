@@ -27,14 +27,14 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/helpcomp/lang.ctl ]
 [ INCLUDE <DEVDIR>/bmp2eps/lang.ctl ]
 [ INCLUDE <DEVDIR>/ssl/lang.ctl ]
-[ INCLUDE <DEVDIR>/posix/prereq.ctl ]
 [ INCLUDE <DEVDIR>/wstub/lang.ctl ]
 [ INCLUDE <DEVDIR>/vi/prereq.ctl ]
+#        Prebuild new WLIB for build process
+[ INCLUDE <DEVDIR>/nwlib/prereq.ctl ]
+[ INCLUDE <DEVDIR>/posix/prereq.ctl ]
 #
 #        Prebuild newest WASM version for build process
 [ INCLUDE <DEVDIR>/wasm/prereq.ctl ]
-#        Prebuild new WLIB for build process
-[ INCLUDE <DEVDIR>/nwlib/prereq.ctl ]
 #
 #        Before building anything for real, create up-to-date header files
 #

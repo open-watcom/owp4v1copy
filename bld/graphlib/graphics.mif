@@ -5,7 +5,9 @@ graph_autodepends = .AUTODEPEND
 suppress_zc = 1
 
 memory_model_i86 = s
-!ifneq host_os os2
+!ifeq host_os dos
+memory_model_386 = s
+!else ifeq host_os qnx
 memory_model_386 = s
 !endif
 
@@ -172,7 +174,7 @@ inc_dirs += -I"$(hdr_dir)/dos"
 
 .c: ../c
 
-extra_c_flags = -zl -zld -nm=$[&$(suffix_$(convention)) -D_SUPERVGA -D_FARD= $(extra_c_flags_$(machine)) -fo=$@
+extra_c_flags = -zl -nm=$[&$(suffix_$(convention)) -D_SUPERVGA -D_FARD= $(extra_c_flags_$(machine)) -fo=$@
 
 extra_c_flags_i86 = -nt=GRAPH_TEXT -D_CGRAPH=_loadds
 extra_c_flags_386_register = -3r
@@ -181,7 +183,7 @@ extra_c_flags_386 = $(extra_c_flags_386_$(convention)) -nt=_TEXT -D_CGRAPH=
 
 extra_c_flags_qnx = -bt=dos # ?????
 
-extra_a_flags = -ms -zld -i"../inc" $(extra_a_flags_$(machine)) -fo=$@
+extra_a_flags = -ms -i"../inc" $(extra_a_flags_$(machine)) -fo=$@
 
 extra_a_flags_i86 = -D_TEXT=GRAPH_TEXT
 extra_a_flags_386_register = -3r

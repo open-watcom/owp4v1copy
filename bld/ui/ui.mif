@@ -5,6 +5,8 @@ target: $(name).lib
 
 ui_trmem = 1
 
+ui_autodepends = .autodepend
+
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
@@ -20,60 +22,57 @@ extra_c_flags_trmem = $(trmem_cflags)
 # memory tracker cover routines
 extra_c_flags_uialloc = $(trmem_cover_cflags)
 
-obj = obj
-ui_autodepends = .AUTODEPEND
-
 objfiles = &
-        uialloc.$(obj)  uiarea.$(obj)   uiattr.$(obj)   uiback.$(obj)   &
-        uiballoc.$(obj) uiband.$(obj)   uibarf.$(obj)   uibattr.$(obj)  &
-        uibcopy.$(obj)  uibfake.$(obj)  uibfill.$(obj)  uibgnd.$(obj)   &
-        uibios.$(obj)   uiblank.$(obj)  uibox.$(obj)    uibpix.$(obj)   &
-        uibstr.$(obj)   uicheck.$(obj)  uiconfig.$(obj) uicurs.$(obj)   &
-        uidata.$(obj)   uidchfld.$(obj) uidebug.$(obj)  uidevent.$(obj) &
-        uidialcb.$(obj) uidialog.$(obj) uidirty.$(obj)  uidlgfcn.$(obj) &
-        uiev.$(obj)     uifar.$(obj)    uifmem.$(obj)   uiforce.$(obj)  &
-        uigadget.$(obj) uigchar.$(obj)  uiget.$(obj)    uihotspt.$(obj) &
-        uiinit.$(obj)   uiledit.$(obj)  uilist.$(obj)   uilstbox.$(obj) &
-        uimem.$(obj)    uimenu.$(obj)   uimenucr.$(obj) uimget.$(obj)   &
-        uimisc.$(obj)   uimousev.$(obj) uipad.$(obj)    uipget.$(obj)   &
-        uipopup.$(obj)  uiprot.$(obj)   uirefer.$(obj)  uirfrsh.$(obj)  &
-        uisnow.$(obj)   uispawn.$(obj)  uitab.$(obj)    uivattr.$(obj)  &
-        uivedit.$(obj)  uivfill.$(obj)  uivfld.$(obj)   uivhide.$(obj)  &
-        uivline.$(obj)  uivmove.$(obj)  uivopen.$(obj)  uivscrn.$(obj)  &
-        uivstr.$(obj)   uivutil.$(obj)  uiwin.$(obj)    uiyield.$(obj)
+        uialloc.obj  uiarea.obj   uiattr.obj   uiback.obj   &
+        uiballoc.obj uiband.obj   uibarf.obj   uibattr.obj  &
+        uibcopy.obj  uibfake.obj  uibfill.obj  uibgnd.obj   &
+        uibios.obj   uiblank.obj  uibox.obj    uibpix.obj   &
+        uibstr.obj   uicheck.obj  uiconfig.obj uicurs.obj   &
+        uidata.obj   uidchfld.obj uidebug.obj  uidevent.obj &
+        uidialcb.obj uidialog.obj uidirty.obj  uidlgfcn.obj &
+        uiev.obj     uifar.obj    uifmem.obj   uiforce.obj  &
+        uigadget.obj uigchar.obj  uiget.obj    uihotspt.obj &
+        uiinit.obj   uiledit.obj  uilist.obj   uilstbox.obj &
+        uimem.obj    uimenu.obj   uimenucr.obj uimget.obj   &
+        uimisc.obj   uimousev.obj uipad.obj    uipget.obj   &
+        uipopup.obj  uiprot.obj   uirefer.obj  uirfrsh.obj  &
+        uisnow.obj   uispawn.obj  uitab.obj    uivattr.obj  &
+        uivedit.obj  uivfill.obj  uivfld.obj   uivhide.obj  &
+        uivline.obj  uivmove.obj  uivopen.obj  uivscrn.obj  &
+        uivstr.obj   uivutil.obj  uiwin.obj    uiyield.obj
 
-# system type            dos  d_fmr  d_nec  nlm  nt   os2  qnx  unix  win  w_nec
-# builder builds         yes  no     no     no   yes  yes  no   yes   yes  no
-#===============================================================================
-!inject cdisp.$(obj)                                       qnx
-!inject cmouse.$(obj)                                      qnx
-!inject charmap.$(obj)   dos
-!inject ctkeyb.$(obj)                                      qnx  unix
-!inject ctkeyb2.$(obj)                                          unix
-!inject gmouse.$(obj)    dos
-!inject kbwait.$(obj)                                           unix
-!inject tdisp.$(obj)                                       qnx  unix
-!inject tixparse.$(obj)                                    qnx  unix
-!inject tixsupp.$(obj)                                     qnx  unix
-!inject tmouse.$(obj)                                      qnx  unix
-!inject trie.$(obj)                                        qnx  unix
-!inject uibmous.$(obj)   dos         d_nec  nlm  nt  os2   qnx  unix  win  w_nec
-!inject uichlen.$(obj)        d_fmr  d_nec  nlm  nt  os2   qnx  unix  win  w_nec
-!inject uicurshk.$(obj)  dos
-!inject uievent.$(obj)                           nt
-!inject uimous.$(obj)    dos  d_fmr  d_nec  nlm      os2   qnx  unix  win  w_nec
-!inject uiextrn.$(obj)                                     qnx  unix
-!inject uihook.$(obj)    dos                               qnx  unix
-!inject uikeyb.$(obj)    dos  d_fmr  d_nec  nlm      os2   qnx  unix  win  w_nec
-!inject uimapch.$(obj)   dos
-!inject uiproxy.$(obj)                                     qnx
-!inject uiscrname$(obj)                     nlm
-!inject uiscreen.$(obj)              d_nec                                 w_nec
-!inject uiswap.$(obj)                                                      w_nec
-!inject uitime.$(obj)                d_nec
-!inject uiupdate.$(obj)              d_nec                                 w_nec
-!inject uiutil.$(obj)    dos  d_fmr  d_nec
-!inject uivirt.$(obj)                                      qnx  unix
+# system type         dos  d_fmr  d_nec  nlm  nt   os2  qnx  unix  win  w_nec
+# builder builds      yes  no     no     no   yes  yes  no   yes   yes  no
+#============================================================================
+!inject cdisp.obj                                       qnx
+!inject cmouse.obj                                      qnx
+!inject charmap.obj   dos
+!inject ctkeyb.obj                                      qnx  unix
+!inject ctkeyb2.obj                                          unix
+!inject gmouse.obj    dos
+!inject kbwait.obj                                           unix
+!inject tdisp.obj                                       qnx  unix
+!inject tixparse.obj                                    qnx  unix
+!inject tixsupp.obj                                     qnx  unix
+!inject tmouse.obj                                      qnx  unix
+!inject trie.obj                                        qnx  unix
+!inject uibmous.obj   dos         d_nec  nlm  nt  os2   qnx  unix  win  w_nec
+!inject uichlen.obj        d_fmr  d_nec  nlm  nt  os2   qnx  unix  win  w_nec
+!inject uicurshk.obj  dos
+!inject uievent.obj                           nt
+!inject uimous.obj    dos  d_fmr  d_nec  nlm      os2   qnx  unix  win  w_nec
+!inject uiextrn.obj                                     qnx  unix
+!inject uihook.obj    dos                               qnx  unix
+!inject uikeyb.obj    dos  d_fmr  d_nec  nlm      os2   qnx  unix  win  w_nec
+!inject uimapch.obj   dos
+!inject uiproxy.obj                                     qnx
+!inject uiscrnameobj                     nlm
+!inject uiscreen.obj              d_nec                                 w_nec
+!inject uiswap.obj                                                      w_nec
+!inject uitime.obj                d_nec
+!inject uiupdate.obj              d_nec                                 w_nec
+!inject uiutil.obj    dos  d_fmr  d_nec
+!inject uivirt.obj                                      qnx  unix
 
 # This check is partial! A full check is tedious. W.Briscoe 2004-11-26
 # extra_files must be set in including makefile as mapping of other data is not 1 to 1.
@@ -91,7 +90,7 @@ extra_c_flags += -os-s
 !include trmem.mif
 
 $(name).lib: $(objfiles)
-        $(librarian) -b -n $^@ $<
+        $(librarian) -b -n -p=16 $^@ $<
 
 !ifeq SAMPLE_MODE WIN_C_M_J
 sample.exe : samplew.obj sampdial.obj $(name).lib

@@ -127,7 +127,7 @@ define_c +=-D__USE_RW
 !endif
 
 # -xr has to be on in case the user uses -xr
-extra_c_flags=-zl-zld-xr-fhwe
+extra_c_flags=-zl-xr-fhwe
 !ifdef mthreaded
 extra_c_flags +=-bm
 !endif
@@ -205,13 +205,13 @@ comp_cpp = $(comp_cpp_$(host_cpu))
 
 .asm : $(asm_dirs)
 
-.cpp.obj : $(comp_cpp)
+.cpp.obj : .autodepend
     *$(comp_cpp) -zq $(comp_flags) $(br_flags_$(sw_br_$[&)) $(inc_dirs) -fo=.obj -nm=$[& $(pch_flags) $(extra_cpp_flags_$[&) $[@
 
-.cpp.xbj : $(comp_cpp)
+.cpp.xbj : .autodepend
     *$(comp_cpp) -zq -xs $(comp_flags) $(br_flags_$(sw_br_$[&)) $(inc_dirs) -fo=.xbj -nm=$[& $(pch_flags_x) $(extra_cpp_flags_x_$[&) $[@
 
-.asm.obj :
+.asm.obj : .autodepend
     $(as) $(aflags) $[@
 
 !ifeq release 0

@@ -1,6 +1,9 @@
 proj_name = w16api
 
+w16api_autodepends = .autodepend
+
 !include cproj.mif
+!include defrule.mif
 !include deftarg.mif
 
 .EXTENSIONS : .lbc .def
@@ -27,9 +30,6 @@ winlibs =            &
 
 .def: ../lib
 .asm: ../asm
-
-.asm.obj:
-        $(as) $(aflags) -zld $[@ -fo=.obj
 
 .def.lbc:
         $(vi) -s ../def16lbc.vi -p"$*" ../lib/$[.
