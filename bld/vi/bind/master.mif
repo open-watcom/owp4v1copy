@@ -1,7 +1,6 @@
 proj_name = edbind
 name = edbind
 
-.mif : $(mif_path)
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
@@ -13,16 +12,16 @@ linker = wlink9xx
 .c : ..
 
 extra_c_flags = -s
+extra_c_flags_i86 = -fpc
 extra_c_flags_386 = -fpc
 
-inc_dirs = ..\..\h;$(watcom_dir)\h
+inc_dirs = ../../h;$(watcom_dir)/h
 
 extra_l_flags_os2 = op stack=12k,heap=8k
 extra_l_flags_nt = op stack=20k
-extra_l_flags = name $(name)
 
 edbind.exe: main.obj
-        $(linker) $(lflags) file main.obj name $^@
+        $(linker) $(lflags) file $[@ name $^@
 #!ifeq host_OS os2
 #       $(binder)\bind edbind.exe $(apilib) $(doscalls)
 #!endif

@@ -10,6 +10,7 @@ cdsay .
 
 [ BLOCK <1> build rel2 ]
 #========================
+    [ INCLUDE prereq.ctl ]
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h bind=1
 
 [ BLOCK <1> rel2 cprel2 ]
@@ -34,6 +35,7 @@ cdsay .
     <CPCMD> <devdir>/vi/bind/dosi86/edbind.exe <relroot>/rel2/binw/edbind.exe
     <CPCMD> <devdir>/vi/bind/nt386/edbind.exe <relroot>/rel2/binnt/edbind.exe
 #    <CPCMD> <devdir>/vi/bind/os2386/edbind.exe <relroot>/rel2/binp/edbind.exe
+#    <CPCMD> <devdir>/vi/bind/linux386/edbind.exe <relroot>/rel2/binl/edbind.
 
     <CPCMD> <devdir>/vi/dat/v*.cmd <relroot>/rel2/binp/
     <CPCMD> <devdir>/vi/dat/v*.bat <relroot>/rel2/binw/
