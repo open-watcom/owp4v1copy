@@ -257,9 +257,7 @@ static void printMasmHeader( section_ptr sec )
     orl_group_handle    grp;
     char                comname[ MAX_LINE_LEN ];
 
-    // Check if we need to display this segment
     size = ORLSecGetSize( sec->shnd );
-    if( !size && !( DFormat & DFF_ASM ) ) return;
 
     // Load all necessary information
     name = sec->name;

@@ -425,7 +425,7 @@ orl_sec_offset HandleRefInData( ref_entry r_entry, void *data, bool asmLabels )
         if( asmLabels && types[rv] ) {
             BufferConcat( types[rv] );
         }
-        HandleAReference(*((long *)data), 0, RFLAG_DEFAULT, r_entry->offset,
+        HandleAReference(*((long *)data), 0, RFLAG_DEFAULT | RFLAG_IS_IMMED, r_entry->offset,
                          r_entry->offset + rv, &r_entry, buff );
         BufferConcat( buff );
         break;
@@ -433,7 +433,7 @@ orl_sec_offset HandleRefInData( ref_entry r_entry, void *data, bool asmLabels )
         if( asmLabels ) {
             BufferConcat( types[rv] );
         }
-        HandleAReference(*((long *)data), 0, RFLAG_DEFAULT, r_entry->offset,
+        HandleAReference(*((long *)data), 0, RFLAG_DEFAULT | RFLAG_IS_IMMED, r_entry->offset,
                          r_entry->offset + rv, &r_entry, buff );
         BufferConcat( buff );
         break;
@@ -441,7 +441,7 @@ orl_sec_offset HandleRefInData( ref_entry r_entry, void *data, bool asmLabels )
         if( asmLabels ) {
             BufferConcat( types[rv] );
         }
-        HandleAReference(*((short*)data), 0, RFLAG_DEFAULT, r_entry->offset,
+        HandleAReference(*((short*)data), 0, RFLAG_DEFAULT | RFLAG_IS_IMMED, r_entry->offset,
                          r_entry->offset + rv, &r_entry, buff );
         BufferConcat( buff );
         break;
@@ -449,7 +449,7 @@ orl_sec_offset HandleRefInData( ref_entry r_entry, void *data, bool asmLabels )
         if( asmLabels ) {
             BufferConcat( types[rv] );
         }
-        HandleAReference(*((char *)data), 0, RFLAG_DEFAULT, r_entry->offset,
+        HandleAReference(*((char *)data), 0, RFLAG_DEFAULT | RFLAG_IS_IMMED, r_entry->offset,
                          r_entry->offset + rv, &r_entry, buff );
         BufferConcat( buff );
         break;
@@ -457,7 +457,7 @@ orl_sec_offset HandleRefInData( ref_entry r_entry, void *data, bool asmLabels )
         if( asmLabels ) {
             BufferConcat( types[rv] );
         }
-        HandleAReference( 0, 0, RFLAG_DEFAULT, r_entry->offset,
+        HandleAReference( 0, 0, RFLAG_DEFAULT | RFLAG_IS_IMMED, r_entry->offset,
                           r_entry->offset + rv, &r_entry, buff );
         BufferConcat( buff );
         if( *((long *)data)!=0 || *((long *)data+4)!=0 ) {
@@ -686,57 +686,80 @@ return_val DumpASMSection( section_ptr sec, char * contents,
 static return_val bssUnixASMSection( section_ptr sec, orl_sec_size size,
                                      label_entry l_entry )
 {
-    orl_sec_offset              offset = 0;
     orl_sec_offset              dsiz = 0;
     char                        *prefix;
+    label_entry                 prev_entry;
 
-    if( !size ) return( OKAY );
+    if( ( size == 0 ) && ( l_entry == NULL ) )
+        return( OKAY );
 
     PrintHeader( sec );
-    while( l_entry ) {
-        if( ( l_entry->type == LTYP_SECTION ) &&
-          !strcmp( l_entry->label.name, sec->name ) ) {
-            l_entry = l_entry->next;
-        } else if( offset >= l_entry->offset ) {
+    prev_entry = NULL;
+    for( ; l_entry != NULL; l_entry = l_entry->next ) {
+        if( ( l_entry->type == LTYP_SECTION )
+            && ( strcmp( l_entry->label.name, sec->name ) == 0 ) ) {
+            continue;
+        } else if( prev_entry == NULL ) {
+            prev_entry = l_entry;
+            continue;
+        } else if( prev_entry->offset > l_entry->offset ) {
+            continue;
+        } else if( prev_entry->offset == l_entry->offset ) {
             dsiz = 0;
             prefix = "";
-            if( !l_entry->next ) {
-                if( offset < size ) {
-                    dsiz = size - offset;
-                    prefix = "    .lcomm\t";
-                }
-            } else if( offset < l_entry->next->offset ) {
-                dsiz = l_entry->next->offset - offset;
-                prefix = "    .lcomm\t";
-            }
-
-            switch( l_entry->type ) {
-            case LTYP_UNNAMED:
-                BufferStore( "%s%c$%d", prefix, LabelChar,
-                             l_entry->label.number );
-                break;
-            case LTYP_SECTION:
-            case LTYP_NAMED:
-                BufferStore( "%s%s", prefix, l_entry->label.name );
-                break;
-            default:
-                break;
-            }
-
-            if( dsiz ) {
-                BufferStore( ", 0x%08x", dsiz );
-            } else {
-                BufferConcat( ":" );
-            }
-
-            l_entry = l_entry->next;
-            BufferConcatNL();
-            BufferPrint();
         } else {
-            offset = l_entry->offset;
+            dsiz = l_entry->offset - prev_entry->offset;
+            prefix = "    .lcomm\t";
         }
+        switch( prev_entry->type ) {
+        case LTYP_UNNAMED:
+            BufferStore( "%s%c$%d", prefix, LabelChar,
+                prev_entry->label.number );
+            break;
+        case LTYP_SECTION:
+        case LTYP_NAMED:
+            BufferStore( "%s%s", prefix, prev_entry->label.name );
+            break;
+        default:
+            break;
+        }
+        if( dsiz ) {
+            BufferStore( ", 0x%08x", dsiz );
+        } else {
+            BufferConcat( ":" );
+        }
+        BufferConcatNL();
+        BufferPrint();
+        prev_entry = l_entry;
     }
-
+    if( prev_entry != NULL ) {
+        if( prev_entry->offset < size ) {
+            dsiz = size - prev_entry->offset;
+            prefix = "    .lcomm\t";
+        } else {
+            dsiz = 0;
+            prefix = "";
+        }
+        switch( prev_entry->type ) {
+        case LTYP_UNNAMED:
+            BufferStore( "%s%c$%d", prefix, LabelChar,
+                prev_entry->label.number );
+            break;
+        case LTYP_SECTION:
+        case LTYP_NAMED:
+            BufferStore( "%s%s", prefix, prev_entry->label.name );
+            break;
+        default:
+            break;
+        }
+        if( dsiz ) {
+            BufferStore( ", 0x%08x", dsiz );
+        } else {
+            BufferConcat( ":" );
+        }
+        BufferConcatNL();
+        BufferPrint();
+    }
     BufferConcatNL();
     BufferPrint();
 
@@ -746,12 +769,12 @@ static return_val bssUnixASMSection( section_ptr sec, orl_sec_size size,
 static return_val bssMasmASMSection( section_ptr sec, orl_sec_size size,
                                      label_entry l_entry )
 {
-    int                         offset = -1;
+    int     offset = -1;
 
     PrintHeader( sec );
 
-    if( size > 0 ) {
-        while( l_entry ) {
+    for( ; l_entry != NULL; l_entry = l_entry->next ) {
+        if( l_entry->type != LTYP_SECTION ) {
             if( offset != l_entry->offset ) {
                 BufferStore( "    ORG " );
                 BufferHex( 8, l_entry->offset );
@@ -759,31 +782,29 @@ static return_val bssMasmASMSection( section_ptr sec, orl_sec_size size,
                 BufferConcatNL();
                 BufferPrint();
             }
-
-            if( l_entry->type != LTYP_SECTION ) {
-                switch( l_entry->type ) {
-                    case LTYP_UNNAMED:
-                        BufferStore("%c$%d", LabelChar, l_entry->label.number );
-                        break;
-                    case LTYP_SECTION:
-                    case LTYP_NAMED:
-                        BufferStore("%s", l_entry->label.name );
-                        break;
-                }
-
-                BufferConcat( "    LABEL\tBYTE" );
-                BufferConcatNL();
-                BufferPrint();
+            
+            switch( l_entry->type ) {
+            case LTYP_UNNAMED:
+                BufferStore("%c$%d", LabelChar, l_entry->label.number );
+                break;
+            case LTYP_SECTION:
+            case LTYP_NAMED:
+                BufferStore("%s", l_entry->label.name );
+                break;
             }
-            l_entry = l_entry->next;
+            
+            BufferConcat( "    LABEL\tBYTE" );
+            BufferConcatNL();
+            BufferPrint();
         }
-
+    }
+    if( ( size > 0 ) && ( size > offset ) ) {
         BufferStore( "    ORG " );
         BufferHex( 8, size );
         BufferConcatNL();
         BufferPrint();
     }
-
+    
     PrintTail( sec );
 
     BufferConcatNL();
