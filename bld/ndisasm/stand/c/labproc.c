@@ -102,7 +102,7 @@ static label_entry insertLabelInMiddle( label_list sec_label_list, label_entry e
     return( entry );
 }
 
-static label_entry addLabel( label_list sec_label_list, label_entry entry, orl_sec_handle sym_hnd )
+static label_entry addLabel( label_list sec_label_list, label_entry entry, orl_symbol_handle sym_hnd )
 {
     if( sec_label_list->first == NULL ) {
         sec_label_list->first = entry;
@@ -121,7 +121,7 @@ static label_entry addLabel( label_list sec_label_list, label_entry entry, orl_s
         entry = insertLabelInMiddle( sec_label_list, entry );
     }
     // add entry to list
-    if( sym_hnd != 0 ) {
+    if( sym_hnd != NULL ) {
         HashTableInsert( SymbolToLabelTable, (hash_value) sym_hnd, (hash_data) entry );
     }
     return( entry );
