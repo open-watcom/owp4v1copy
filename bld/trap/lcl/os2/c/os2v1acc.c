@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 1.x debug core.
 *
 ****************************************************************************/
 
@@ -296,7 +295,7 @@ static void DoGetMSW( void )
 
 static char stack[1024];
 
-static long TaskExecute( long (*rtn)() )
+static long TaskExecute( void (*rtn)() )
 {
     TRACEBUF    buff;
 

@@ -93,7 +93,7 @@ void APIENTRY SoftModeThread( thread_data *thread )
 
     rc = WinThreadAssocQueue( HabDebugger, thread->hmq );
     PSetHmqDebugee( thread->hmq, HwndDummy );
-    rc = WinSetHook( HabDebugger, NULL, HK_SENDMSG, PSendMsgHookProc, HookDLL );
+    rc = WinSetHook( HabDebugger, NULL, HK_SENDMSG, (PFN)PSendMsgHookProc, HookDLL );
     while( WinQuerySendMsg( HabDebugger, NULL, thread->hmq, &qmsg ) ) {
         WinReplyMsg( HabDebugger, NULL, thread->hmq, (MRESULT) 0 );
     }
@@ -107,7 +107,7 @@ void APIENTRY SoftModeThread( thread_data *thread )
             WinDefWindowProc( qmsg.hwnd, qmsg.msg, qmsg.mp1, qmsg.mp2 );
         }
     }
-    WinReleaseHook( HabDebugger, NULL, HK_SENDMSG, PSendMsgHookProc, HookDLL );
+    WinReleaseHook( HabDebugger, NULL, HK_SENDMSG, (PFN)PSendMsgHookProc, HookDLL );
     PSetHmqDebugee( thread->hmq, NULL );
     WinThreadAssocQueue( HabDebugger, NULL );
     WinPostMsg( HwndDebugger, WM_QUIT, 0, 0 ); // tell debugger we're done
@@ -300,6 +300,6 @@ void TellSoftModeHandles( HAB hab, HWND hwnd )
 VOID InitSoftDebug( VOID )
 {
     DosLoadModule( NULL, 0, HOOKER, &HookDLL );
-    DosGetProcAddr( HookDLL, "SENDMSGHOOKPROC", &PSendMsgHookProc );
-    DosGetProcAddr( HookDLL, "SETHMQDEBUGEE", &PSetHmqDebugee );
+    DosGetProcAddr( HookDLL, "SENDMSGHOOKPROC", (PFN*)&PSendMsgHookProc );
+    DosGetProcAddr( HookDLL, "SETHMQDEBUGEE", (PFN*)&PSetHmqDebugee );
 }

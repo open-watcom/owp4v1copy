@@ -9,6 +9,7 @@ components286 =      &
         ansicall.lbc &
         doscalls.lbc &
         kbdcalls.lbc &
+        moncalls.lbc &
         moucalls.lbc &
         msg.lbc      &
         nampipes.lbc &

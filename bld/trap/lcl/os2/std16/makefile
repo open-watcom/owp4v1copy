@@ -11,6 +11,8 @@ cpu     = x86
 name    = std16
 which = TRAP
 
+extra_a_flags = -fpi87
+
 extra_objs = &
         accmisc.obj &
         os2v1acc.obj &

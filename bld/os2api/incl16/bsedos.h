@@ -57,6 +57,12 @@ extern "C" {
 #define PRTYD_MINIMUM (-31)
 #define PRTYD_MAXIMUM   31
 
+#define DCWA_PROCESS     0
+#define DCWA_PROCESSTREE 1
+
+#define DCWW_WAIT   0
+#define DCWW_NOWAIT 1
+
 typedef struct _RESULTCODES {
     USHORT codeTerminate;
     USHORT codeResult;

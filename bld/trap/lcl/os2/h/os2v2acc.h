@@ -127,7 +127,7 @@ extern USHORT           FlatCS,FlatDS;
     }
 
 bool CausePgmToLoadThisDLL( ULONG startLinear );
-long TaskExecute( long (*rtn)() );
+long TaskExecute( void (*rtn)() );
 #pragma aux DoOpen parm [ dx ax ] [ bx ] [ cx ];
 void DoOpen( char far *name, int mode, int flags );
 #pragma aux DoClose parm [ ax ];
