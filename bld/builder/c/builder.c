@@ -43,11 +43,7 @@
 #include "builder.h"
 
 #define DEFCTLNAME      "BUILDER.CTL"
-#ifdef __UNIX__
 #define DEFCTLENV       "BUILDER_CTL"
-#else
-#define DEFCTLENV       DEFCTLNAME
-#endif
 
 #define DEF_BACKUP      1
 #define MAX_BACKUP      9

@@ -8,14 +8,16 @@ commands, called control files.
         --------------------------------------
 
 If no -c command line options are specified, BUILDER looks for an environment
-variable called "BUILDER.CTL". The value of that environment variable is
+variable called "BUILDER_CTL". The value of that environment variable is
 used as name of the default control file. If the variable is not defined, the
 file called "BUILDER.CTL" is used. It first checks the current directory, if
 the file is not present it will check the parent directories, up to the root
 of the current drive. If BUILDER.CTL has not yet been found, the PATH
 environment variable is checked. This means that you can put the BUILDER.CTL
 in the root directory of a project, and a "BUILDER" command will find it
-no matter what project directory you're located in.
+no matter what project directory you're located in. Originally the environment
+variable "BUILDER.CTL" was used. That is not a valid name in Linux;
+"BUILDER_CTL" is not a valid MS-DOS filename.
 
 
         Macro Substitution
@@ -134,6 +136,7 @@ Copy the source file to the destination file. The src_file may have
 wild card characters in it. The destination file may only be a full pathname,
 or it may end in a '\' or '/' character, in which case the source file
 name is used in the destination.
+BUILDER will attempt to create the destination path if it does not exist and the source file exists.
 
         ACOPY src_file dst_file
 
