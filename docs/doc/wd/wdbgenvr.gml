@@ -340,6 +340,8 @@ Window/Application
 Run/Go
 .note F6
 Window/Next
+.note F7
+Run/Run to Cursor
 .note F8
 Run/Trace Into
 .note F9
@@ -860,6 +862,11 @@ Displays the FPU registers and their values.
 .*
 Displays the MMX (multi-media extension) registers and their values.
 .refalso wndmmx
+.*
+.menuitem XMM Registers
+.*
+Displays the XMM (SSE) registers and their values.
+.refalso wndxmm
 .*
 .menuitem Stack
 .*
