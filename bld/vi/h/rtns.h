@@ -62,9 +62,9 @@ void SpecialFclose( GENERIC_FILE * );
 int SpecialFgets( char *, int, GENERIC_FILE * );
 
 /* change.c */
-int DoSubstitute( void **, void ** );
-int DoLineSubstitute( void **, void ** );
-int DoChangeLineEnd( void **, void ** );
+int DoSubstitute( event **, event ** );
+int DoLineSubstitute( event **, event ** );
+int DoChangeLineEnd( event **, event ** );
 
 /* cledit.c */
 int EditFile( char *, int );
@@ -110,10 +110,10 @@ int Cut( linenum, int, linenum, int, int );
 int ReadDataFile( char *, int *, char **, int **, bool );
 
 /* delete.c */
-int DoDeleteRegion( void **, void ** );
-int DoDeleteLineEnd( void **, void ** );
-int DoDeleteCharAtCursor( void **, void ** );
-int DoDeleteCharBeforeCursor( void **, void ** );
+int DoDeleteRegion( event **, event ** );
+int DoDeleteLineEnd( event **, event ** );
+int DoDeleteCharAtCursor( event **, event ** );
+int DoDeleteCharBeforeCursor( event **, event ** );
 int DeleteSelectedRegion( void );
 int YankSelectedRegion( void );
 
@@ -543,12 +543,12 @@ int GetCopyOfLineRange( linenum, linenum, fcb **, fcb ** );
 void LineYankMessage( linenum, linenum );
 
 /* llrtns.c */
-void AddLLItemAtEnd( void *, void *, void * );
-void InsertLLItemAfter( void *, void *, void * );
-void InsertLLItemBefore( void *, void *, void * );
-void *DeleteLLItem( void *, void *, void * );
-void ReplaceLLItem( void *, void *, void *, void * );
-bool ValidateLL( void *, void * );
+void AddLLItemAtEnd( ss **, ss **, ss * );
+void InsertLLItemAfter( ss **, ss *, ss * );
+void InsertLLItemBefore( ss **, ss *, ss * );
+void *DeleteLLItem( ss **, ss **, ss * );
+void ReplaceLLItem( ss **, ss **, ss *, ss * );
+bool ValidateLL( ss *, ss * );
 
 /* mapkey.c */
 int MapKey( int flag, char *data );

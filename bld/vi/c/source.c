@@ -42,7 +42,7 @@
 
 static void finiSource( labels *, vlist *, sfile *, undo_stack * );
 static int initSource( vlist *, char *);
-static int barfScript( char *, void *, void *,int *, char *);
+static int barfScript( char *, sfile *, vlist *,int *, char *);
 static void addResidentScript( char *, sfile *, labels * );
 static resident *residentScript( char * );
 static void finiSourceErrFile( char * );

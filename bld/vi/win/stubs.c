@@ -45,7 +45,7 @@ void GetClockStart( void ){}
 void GetSpinStart( void ){}
 void WindowAuxUpdate( window_id id, int x, int y ){}
 void DrawBorder( window_id id ){}
-void PushMouseEventHandler( void far *ptr ){}
+void PushMouseEventHandler( mouse_callback cb ){}
 void PopMouseEventHandler( void ){}
 void WindowBorderData( window_id id, char *c, int x ){}
 void ResizeWindowRelative( window_id id, int p1, int p2, int p3, int p4, int flags ){}

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Tool bar stuff
 *
 ****************************************************************************/
 
@@ -40,12 +39,9 @@
 #include "keys.h"
 #include "color.h"
 #include "bitmap.h"
-/*
- * Tool bar stuff
- */
 
 typedef struct tool_item {
-    struct tool_item    *next, *prev;
+    ss                  tool_head;
     UINT                id;
     HBITMAP             bmp;
     char                is_blank:1;
@@ -57,8 +53,8 @@ typedef struct tool_item {
 } tool_item;
 
 static void             *toolBar = NULL;
-static tool_item        *toolBarHead = NULL;
-static tool_item        *toolBarTail = NULL;
+static ss               *toolBarHead = NULL;
+static ss               *toolBarTail = NULL;
 static BOOL             fixedToolBar;
 // static RECT          fixedRect;
 static bool             userClose = TRUE;
@@ -68,11 +64,13 @@ RECT                    ToolBarFloatRect;
 
 int HandleToolCommand( UINT id )
 {
+    ss          *p;
     tool_item   *item;
     int         len, rc;
     char        *str;
 
-    for( item = toolBarHead; item != NULL; item = item->next ) {
+    for( p = toolBarHead; p != NULL; p = p->next ) {
+        item = (tool_item *)p;
         if( item->id == id ) {
             len = strlen( item->cmd ) + 1;
             str = alloca( len );
@@ -89,16 +87,17 @@ int HandleToolCommand( UINT id )
 
 static void nukeButtons( void )
 {
-    tool_item   *tool, *tmp;
+    ss          *p;
+    tool_item   *tool;
 
-    tool = toolBarHead;
-    while( tool != NULL ) {
-        tmp = tool->next;
+    p = toolBarHead;
+    while( p != NULL ) {
+        tool = (tool_item *)p;
+        p = p->next;
         if( tool->bmp ) {
             DeleteObject( tool->bmp );
         }
         MemFree( tool );
-        tool = tmp;
     }
     toolBarHead = NULL;
     toolBarTail = NULL;
@@ -166,18 +165,19 @@ static void newToolBarWindow( void )
  */
 void ToolBarHelp( HWND hwnd, UINT id, BOOL isdown )
 {
-    tool_item           *item;
+    ss                 *p;
 
     hwnd = hwnd;
     SetMenuHelpString( NULL );
     if( isdown ) {
-        item = toolBarHead;
-        while( item != NULL ) {
+        p = toolBarHead;
+        while( p != NULL ) {
+            tool_item *item = (tool_item *)p;
             if( item->id == id ) {
                 SetMenuHelpString( item->help );
                 break;
             }
-            item = item->next;
+            p = p->next;
         }
     }
     UpdateStatusWindow();
@@ -285,7 +285,7 @@ static void addToolBarItem( tool_item *item )
  */
 void NewToolBar( RECT *rect )
 {
-    tool_item   *curr;
+    ss          *curr;
     RECT         covered;
 
     if( toolBar ) {
@@ -298,8 +298,8 @@ void NewToolBar( RECT *rect )
     }
     createToolBar( rect );
     curr = toolBarHead;
-    while( curr != NULL ) {
-        addToolBarItem( curr );
+    while( curr != NULL ) {            
+        addToolBarItem( (tool_item *)curr );
         curr = curr->next;
     }
     UpdateToolBar( toolBar );
@@ -365,7 +365,7 @@ int AddBitmapToToolBar( char *data )
     if( toolBar ) {
         addToolBarItem( item );
     }
-    AddLLItemAtEnd( &toolBarHead, &toolBarTail, item );
+    AddLLItemAtEnd( &toolBarHead, &toolBarTail, &item->tool_head );
     return( ERR_NO_ERR );
 
 } /* AddBitmapToToolBar */
@@ -377,21 +377,22 @@ int DeleteFromToolBar( char *data )
 {
     char        buffer[ MAX_STR ];
     int         index;
-    tool_item   *item;
+    ss         *p;
 
     NextWord1( data, buffer );
     index = atoi( buffer );
     // index should be (base 1) index of tool in list
     if( index > 0 ) {
-        item = toolBarHead;
-        while( item != NULL ) {
+        p = toolBarHead;
+        while( p != NULL ) {
             index -= 1;
             if( index == 0 ) break;
-            item = item->next;
+            p = p->next;
         }
-        if( item ) {
+        if( p ) {
+            tool_item *item = (tool_item *)p;
             ToolBarDeleteItem( toolBar, item->id );
-            DeleteLLItem( &toolBarHead, &toolBarTail, item );
+            DeleteLLItem( &toolBarHead, &toolBarTail, p );
             if( item->bmp != NULL ) {
                 DeleteObject( item->bmp );
             }
@@ -440,10 +441,12 @@ HWND GetToolbarWindow( void )
  */
 void BarfToolBarData( FILE *f )
 {
+    ss          *p;
     tool_item   *citem;
 
-    citem = toolBarHead;
-    while( citem != NULL ) {
+    p = toolBarHead;
+    while( p != NULL ) {
+        citem = (tool_item *)p;
         if( citem->dont_save ) {
             /* do nothing */
         } else if( citem->is_blank ) {
@@ -452,7 +455,7 @@ void BarfToolBarData( FILE *f )
             MyFprintf( f, "addtoolbaritem %s \"%s\" %s\n", citem->name,
                             citem->help, citem->cmd );
         }
-        citem = citem->next;
+        p = p->next;
     }
 
 } /* BarfToolBarData */

@@ -35,10 +35,6 @@
 
 #include "vi.h"
 
-typedef struct ss {
-struct ss *next,*prev;
-} ss;
-
 /*
  * AddLLItemAtEnd - create a new item at the tail of a linked list
  */

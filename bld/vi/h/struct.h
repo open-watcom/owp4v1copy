@@ -37,6 +37,10 @@ typedef unsigned short ushort;
 typedef unsigned long ulong;
 typedef unsigned short vi_key;
 
+typedef struct ss {
+    struct ss *next,*prev;
+} ss;
+
 typedef struct {
     char        height;
     char        width;

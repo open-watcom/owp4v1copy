@@ -117,7 +117,7 @@ void RefreshColorbar( void );
 void RefreshSSbar( void );
 void RefreshFontbar( void );
 void SetSaveConfig( void );
-void BarfToolBarData( void * );
+void BarfToolBarData( FILE * );
 DWORD GetEditStyle( bool is_max );
 void EditDrawScrollBars( HWND hwnd );
 void SetWindowTitle( HWND hwnd );
