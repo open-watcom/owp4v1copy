@@ -600,6 +600,7 @@ static int mem( int i )
             if( sym->state == SYM_STRUCT ) {
                 /* kludge: ignore structures, people using MASM 6.x stuff */
                 i++;
+                sym = field;
                 continue;
             } else if( sym->state == SYM_STRUCT_FIELD ) {
                 //ConstantOnly = TRUE;
@@ -612,7 +613,6 @@ static int mem( int i )
                 field_flag = 1;
                 continue;
             } else {
-                SET_ADRSIZ( Code, SymIs32( sym ));
 #endif
                 ConstantOnly = FALSE;
                 if( id_flag > 0 ) {
@@ -695,6 +695,9 @@ static int mem( int i )
         i++;
     }
 #ifdef _WASM_
+    if(( sym != NULL ) && ( index == EMPTY ) && ( base == EMPTY )) {
+        SET_ADRSIZ( Code, SymIs32( sym ));
+    }
     if( !ConstantOnly && !Modend )
 #else
     if( !ConstantOnly )
