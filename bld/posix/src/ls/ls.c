@@ -99,7 +99,7 @@ static const char *usageMsg[] = {
 /*
  * start of mainline
  */
-main( int argc, char *argv[] )
+int main( int argc, char *argv[] )
 {
     DIR         *d;
     char        filebuff[_MAX_PATH];
@@ -216,8 +216,7 @@ main( int argc, char *argv[] )
         DoLS( NULL, todo[i] );
     }
     free( todo );
-    exit( 0 );
-
+    return( 0 );
 } /* main */
 
 /*

@@ -72,7 +72,7 @@ static const char * usageMsg[] = {
 /*
  * main - handle command line parms
  */
-main( int argc, char *argv[] )
+int main( int argc, char *argv[] )
 {
     int                 i;
     char                destination[_MAX_PATH];
@@ -196,7 +196,7 @@ main( int argc, char *argv[] )
     }
     CopyOneFile( argv[2], argv[1] );
     doneCP();
-
+    return( 0 );
 } /* main */
 
 /*

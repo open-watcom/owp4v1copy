@@ -60,7 +60,7 @@ NULL
 char *OptEnvVar = "which";
 
 
-static writeNL( const char *buf )
+static void writeNL( const char *buf )
 {
     write( 1, buf, strlen( buf ) );
     write( 1, "\n", 1 );
