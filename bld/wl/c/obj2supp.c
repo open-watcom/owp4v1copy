@@ -299,7 +299,11 @@ static void CheckRWData( frame_spec *targ, targ_addr *addr )
                                   && IsReadOnly( LastSegData ) ) {
         if(( !IS_SYM_IMPORTED( targ->u.sym ))
             && ( !IsReadOnly( GetFrameSegData( targ )))) {
-            LnkMsg( LOC+WRN+MSG_RELOC_TO_RWDATA_SEG, "a", addr );
+            const char *name = targ->u.sym->name;
+
+            if( !name )
+                name = "identifier unavailable";
+            LnkMsg( LOC+WRN+MSG_RELOC_TO_RWDATA_SEG, "a1", addr, name );
         }
     }
 }

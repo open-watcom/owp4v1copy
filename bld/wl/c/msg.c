@@ -293,11 +293,7 @@ static unsigned MakeExeName( char * buff, unsigned max )
         str = FmtData.osname;
     } else {
         format = FmtData.type;
-        for( ;; ) {
-            num = blog_32( format );
-            format &= ~(1 << num);
-            if( format == 0 ) break;
-        }
+        num = 31 - blog_32( format );
         Msg_Get( MSG_FILE_TYPES_0 + num, rc_buff );
         str = rc_buff;
     }
@@ -404,9 +400,16 @@ static void MessageFini( unsigned num, char *buff, unsigned len, bool waserror )
     }
 }
 
-extern void LnkMsg( unsigned num, char *types, ... )
-/**************************************************/
-/* report a linker message */
+extern void LnkMsg(
+    unsigned    num,    // A message number + control flags
+    char        *types, // Conversion qualifiers
+    ... )               // Arguments to interpolate into message
+/**************************************************
+ * report a linker message
+ *
+ * num   selects a message containing substitutions; both printf and %digit
+ * types is either NULL or the order of interpolated arguments.
+ */
 {
     va_list     args;
     int         which_file = 0;
@@ -416,7 +419,8 @@ extern void LnkMsg( unsigned num, char *types, ... )
     char        rc_buff[RESOURCE_MAX_SIZE];
     char        buff[ MAX_MSG_SIZE ];
 
-    if( !TestBit( MsgFlags, num & NUM_MSK ) ) return;
+    if( !TestBit( MsgFlags, num & NUM_MSK ) )
+        return;
     CurrSymName = NULL;
     LocateFile( num );
     len = 0;
@@ -476,6 +480,7 @@ extern void LnkMsg( unsigned num, char *types, ... )
     va_start( args, types );
     Msg_Get( num & NUM_MSK, rc_buff );
     Msg_Put_Args( rc_buff, &MsgArgInfo, types, &args );
+    va_end( args );
     len += FmtStr( &buff[len], MAX_MSG_SIZE - len, rc_buff );
     MessageFini( num, buff, len, waserror );
 }

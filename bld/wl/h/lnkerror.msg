@@ -269,8 +269,8 @@ pick(	 MSG_INV_MESSAGE_FILE,		"%s is an invalid message file" ,
 					"%s は無効なメッセージ・ファイルです" )
 pick(	 MSG_INCORRECT_NUM_AREAS,	"need exactly 1 overlay area with dynamic overlay manager" ,
 					"ダイナミック・オーバレイ・マネージャのオーバレイ領域が必要です" )
-pick(	 MSG_RELOC_TO_RWDATA_SEG,	"relocation to a read/write data segment found at %a" ,
-					"%a に READ/WRITE データセグメントへのリロケーションがあります" )
+pick(    MSG_RELOC_TO_RWDATA_SEG,	"relocation to a read/write data segment found at %a(%1)" ,
+					"%a(%1) に READ/WRITE データセグメントへのリロケーションがあります" )
 pick(	 MSG_TOO_MANY_ERRORS,		"too many errors encountered" ,
 					"エラーが多すぎます" )
 pick(	 MSG_INV_FILENAME,		"invalid filename '%s'" ,
