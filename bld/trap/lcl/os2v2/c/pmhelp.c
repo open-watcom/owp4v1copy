@@ -136,7 +136,7 @@ void LockIt()
 
 static void SwitchBack()
 {
-    USHORT      written;
+    ULONG       written;
     static      pmhelp_packet data;
 
     data.command = PMHELP_SWITCHBACK;
@@ -146,7 +146,7 @@ static void SwitchBack()
 
 VOID APIENTRY ServiceRequests(VOID)
 {
-    USHORT              len;
+    ULONG               len;
     pmhelp_packet       data;
 
 #ifdef DEBUG
@@ -273,8 +273,7 @@ MRESULT EXPENTRY MyWindowProc(HWND hwnd, USHORT msg, MPARAM mp1, MPARAM mp2)
 }
 
 
-#define STACK_SIZE 8192
-static char     stack[STACK_SIZE];
+#define STACK_SIZE 16384
 
 INT main(int argc, char **argv)
 {
@@ -319,7 +318,7 @@ INT main(int argc, char **argv)
                    height, SWP_MOVE | SWP_SHOW | SWP_SIZE | SWP_ACTIVATE));
 
     /* Spawn the thread waiting for commands from the debugger */
-    AbortIf(DosCreateThread((PFNTHREAD)ServiceRequests, &tid, stack + STACK_SIZE));
+    AbortIf(DosCreateThread(&tid, (PFNTHREAD)ServiceRequests, 0, CREATE_READY, STACK_SIZE));
 
     /* Message loop */
     while (WinGetMsg(Hab, &qmsg, 0L, 0, 0)) {

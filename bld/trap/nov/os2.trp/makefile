@@ -1,6 +1,6 @@
-#pmake: all build trap remote os_os2 cpu_i86 cpu_386 nov x86
+#pmake: trap remote os_os2 cpu_i86 nov
 
-os = os2
+os  = os2
 srv = nov
 cpu = x86
 

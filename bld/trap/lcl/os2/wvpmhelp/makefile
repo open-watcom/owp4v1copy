@@ -1,7 +1,13 @@
-#pmake: all all build os_os2 lcl cpu_386 cpu_386 support x86
+#pmake: os_os2 lcl cpu_386 support
 #
 # Create WDPMHELP.EXE, WDPMHOOK.DLL
 #
+
+host_os  = os2
+host_cpu = i86
+
+!include cproj.mif
+!include deftarg.mif
 
 .EXTENSIONS
 .EXTENSIONS : .dll .lbj .obj .c .asm .res .rc
@@ -63,20 +69,11 @@ $(bdir)\wdpmhelp.exe: pmhelp.lbj pmhelp.res
 
 pmlock.obj : pmlock.c ..\h\wdpmhelp.h
 
-#.rc.res:
-#       @set oinc=$(%include)
-#       set include=$(watcom_dir)\os220_h;$(%include)
-#       set opath=$(%path)
-#       set path=$(%toolkit)\os2bin
-#        $(%toolkit)\os2bin\rc -r $*.rc
-#       set path=$(%opath)
-#       @set include=$(%oinc)
-
-pmhelp.res: pmhelp.rc ..\h\wdpmhelp.h
+pmhelp.res: ..\h\pmhelp.rc ..\h\wdpmhelp.h
         @set oinc=$(%include)
         @set include=$(lang_root)\h\os21x;..\h;$(%include)
         @set opath=$(%path)
         @set path=$(lang_root)\binp
-        $(lang_root)\binp\rc -r pmhelp.rc
+        $(lang_root)\binp\rc -r ..\h\pmhelp.rc .\pmhelp.res
         @set path=$(%opath)
         @set include=$(%oinc)

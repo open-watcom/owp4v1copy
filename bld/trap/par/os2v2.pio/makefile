@@ -1,4 +1,4 @@
-#pmake: all build trap remote os_os2 cpu_i86 cpu_386 par x86
+#pmake: build trap remote os_os2 cpu_386 par
 
 # This is a quick and dirty project because it is OS/2 specific and
 # intended to be temporary; Yes, I know it breaks all known rules. Once
@@ -8,6 +8,7 @@
 
 !include cproj.mif
 !include cdirs.mif
+!include deftarg.mif
 
 target = $(%devdir)\bin\binp\dll
 

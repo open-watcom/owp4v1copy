@@ -48,8 +48,8 @@ machsuff=
 machsuff=$+$(machine)$-
 !endif
 
-targ_x86_os2    = binp\$(name).exe
-targ_x86_os2v2  = binp\$(name)2.exe
+targ_x86_os2    = binp\$(name)1.exe
+targ_x86_os2v2  = binp\$(name).exe
 targ_x86_qnx    = qnx\$(name).qnx
 targ_x86_win    = bin\$(name).exe
 targ_x86_dos    = bin.$(machsuff)\$(name).exe

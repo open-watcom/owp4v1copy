@@ -32,7 +32,7 @@ cdsay .
     <CPCMD> <devdir>\bin\binp\dll\wdsplice.dll <relroot>\rel2\binp\dll\
     <CPCMD> <devdir>\bin\binp\dll\wdio.dll <relroot>\rel2\binp\dll\
     <CPCMD> <devdir>\bin\binp\???serv.exe <relroot>\rel2\binp\
-    <CPCMD> <devdir>\bin\binp\???serv2.exe <relroot>\rel2\binp\
+#   <CPCMD> <devdir>\bin\binp\???serv1.exe <relroot>\rel2\binp\
     <CPCMD> <devdir>\bin\binp\wdpmhelp.exe <relroot>\rel2\binp\
     <CPCMD> <devdir>\bin\binp\nmpbind.exe <relroot>\rel2\binp\
 #windows
@@ -58,4 +58,4 @@ cdsay .
 
 [ BLOCK <1> clean ]
 #==================
-    sweep killobjs
+    pmake -d all <2> <3> <4> <5> <6> <7> <8> <9> -h clean

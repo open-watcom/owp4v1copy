@@ -1,7 +1,10 @@
-#pmake: all all build os_os2 lcl cpu_386 cpu_386 support x86
+#pmake: os_os2 lcl cpu_386 support
 #
 # Create OS2V2HLP.EXE
 #
+
+!include cproj.mif
+!include deftarg.mif
 
 !ifndef bin_root
 !ifdef bin_root_wv
