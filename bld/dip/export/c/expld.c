@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Export DIP module loading functions.
+* Description:  Export DIP Loading/unloading of symbolic information.
 *
 ****************************************************************************/
 
@@ -41,9 +41,13 @@
 #include "exenov.h"
 #include "exeelf.h"
 
-/*
-        Loading/unloading symbolic information.
-*/
+#if defined( __WATCOMC__ ) && defined( __386__ )
+
+/* WD looks for this symbol to determine module bitness */
+int __nullarea;
+#pragma aux __nullarea "*";
+
+#endif
 
 typedef union {
         dos_exe_header  mz;
@@ -57,7 +61,7 @@ static struct {
     unsigned long       fpos;
     unsigned            len;
     unsigned            off;
-    unsigned_8          data[128];
+    unsigned_8          data[256];
 } Buff;
 
 unsigned long BSeek( dig_fhandle h, unsigned long p, dig_seek w )
@@ -971,13 +975,13 @@ static dip_status TryELF( dig_fhandle h, imp_image_handle *ii )
                     break;
                 case STT_NOTYPE:
                 case STT_OBJECT:
-                    if( sym.st_shndx > SHN_UNDEF && sym.st_shndx < head.e_shnum ) {
+                    if( sym.st_shndx < head.e_shnum ) {
                         ds = AddSymbol( ii, MAP_FLAT_DATA_SELECTOR, sym.st_value,
                                             len, name );
                     }
                     break;
                 case STT_FUNC:
-                    if( sym.st_shndx > SHN_UNDEF && sym.st_shndx < head.e_shnum ) {
+                    if( sym.st_shndx < head.e_shnum ) {
                         ds = AddSymbol( ii, MAP_FLAT_CODE_SELECTOR, sym.st_value,
                                             len, name );
                     }
