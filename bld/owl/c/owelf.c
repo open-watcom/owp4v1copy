@@ -147,7 +147,6 @@ static void prepareSymbolTable( owl_file_handle file, elf_special_section *sym_s
     elf_syms = (Elf32_Sym *)sym_sect->buffer;
     emitBogusSymbol( elf_syms );
     next_local_index = 1;
-    printf("global %d local %d\n", file->symbol_table->num_global_symbols, file->symbol_table->num_local_symbols);
     next_global_index = file->symbol_table->num_global_symbols + file->symbol_table->num_local_symbols;
     for( sym = file->symbol_table->head; sym != NULL; sym = sym->next ) {
         if( sym->flags & OWL_SYM_DEAD ) continue;
@@ -156,10 +155,8 @@ static void prepareSymbolTable( owl_file_handle file, elf_special_section *sym_s
         } else {
             sym->index = next_global_index--;
         }
-        printf("emitting elf symbol #%d\n", num++);
         emitElfSymbol( sym, &elf_syms[ sym->index ] );
     }
-    printf("global %d local %d\n", next_global_index, next_local_index);
     assert( ( next_global_index + 1 ) == next_local_index );
     assert( next_local_index == ( file->symbol_table->num_local_symbols + 1 ) );
 }
