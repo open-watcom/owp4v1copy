@@ -22,6 +22,7 @@ set owroot=d:\openwa~1
 REM Change this to point to your existing Open Watcom installation
 set watcom=c:\c\ow10
 
+
 REM Change this to the install location of GhostScript for PDF creation (optional)
 set GHOSTSCRIPT=C:\gs\gs7.04
 
@@ -37,14 +38,9 @@ set default_windowing=0
 REM Set this variable to 0 to suppress documentation build
 set DOC_BUILD=1
 
-REM Change the default command prompt
-prompt $p$g
-
 REM setup right COMSPEC for non-standard COMSPEC setting on NT based systems
 if '%OS%' == 'Windows_NT' set COMSPEC=%windir%\system32\cmd.exe
 
-REM Make the window bigger
-mode 80,50
 cls
 echo Open Watcom compiler build environment
 
@@ -64,8 +60,17 @@ set lang=%watcom%
 set include=%lang%\h;%lang%\h\win;%devdir%\watcom\h
 set lang_bld=%owroot%\bat
 set lib=%owroot%\bld\watcom\lib
-set path=%owroot%\bin;%devdir%\build\binnt;%owroot%\bat;%lang%\binnt;%lang%\binw;%lang%\binp;%doc_root%\cmds;%defpath%
-set watcom=%lang%
+
+REM split up path for easy checking.
+set path=%owroot%\bin;
+set path=%path%%devdir%\build\binnt;
+set path=%path%%owroot%\bat;
+set path=%path%%lang%\binnt;
+set path=%path%%lang%\binw;
+set path=%path%%lang%\binp;
+set path=%path%%doc_root%\cmds;
+set path=%path%%defpath%
+
 set edpath=%lang%\eddat
 set wwinhelp=%owroot%\bld\online\hlp\ib
 set copycmd=/y
