@@ -45,6 +45,7 @@ Today   Unique(8.3)  Unique          Source  Type  Use(d by)         Comments
 .hlp    .owh         .owhelp         eddat   text  vi/viw            Conflicts with others
 .wpj    .owp         .owproject              text  ide               Project defined in IDE.
 
+.int    .owi         .owlocale       binnt   bin   ?                 Some type of locale info?
 .uni    .owu         .owunicode      binw    bin   ?
 .NNN    .NNN         .NNN            binw    bin                     Non-constant extension
 
@@ -54,8 +55,7 @@ Today   Unique(8.3)  Unique          Source  Type  Use(d by)         Comments
 .dbg                                 binw    text  wd/wdw            Only possible to load manually.
 .trp                                 binw    bin   wd                DOS only, no need for new ext.
 .prs    .owp         .owlangdef      binw    bin   wd/wdw            Src expression syntax file
-
-.int    .owi         .owlocale       binnt   bin   ?
+.d32    .d32                                 bin   wd OS/2 trap      May change to .dll in future
 
 The extensions below represents text files in general meant to be read by 
 humans for informational purposes. All of the in use in OW today.
@@ -63,14 +63,14 @@ So far, most seems not to want to create a new extension for that,
 just rename all to .txt. (Ignore read only usage property)
 
 .doc    .txt                                 text  read only
-.d32    .txt                                 text  read only
 .w32    .txt                                 text  read only
 .txt    .txt                                 text  read only
 .faq    .txt                                 text  read only
 
 The extensions below is a list of general, well known extensions, 
-that can be handled in a commonly expected fashion, by one ore more 
-of th OW tools
+that could be handled in a commonly expected fashion, by one ore more 
+of th OW tools. They should be possbile to associate with OW tools
+if the users wants it.
 
 .c .h .cpp .hpp .for .fi .asm .inc .mak .txt
 
