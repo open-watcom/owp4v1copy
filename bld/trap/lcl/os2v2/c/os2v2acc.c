@@ -406,9 +406,18 @@ void WriteRegs( uDB_t *buff )
 
 void ReadRegs( uDB_t *buff )
 {
-
     buff->Cmd = DBG_C_ReadReg;
     CallDosDebug( buff );
+}
+
+void ReadXMMRegs( struct x86_xmm *xmm_regs )
+{
+    TaskReadXMMRegs( xmm_regs );
+}
+
+void WriteXMMRegs( struct x86_xmm *xmm_regs )
+{
+    TaskWriteXMMRegs( xmm_regs );
 }
 
 void ReadLinear( char *data, ULONG lin, USHORT size )
@@ -855,6 +864,7 @@ unsigned ReqRead_regs( void )
         Buff.Len    = DBG_LEN_387;      /* for 2.0: size of register state */
         Buff.Index  = 0;                /* for 2.0: must be 0 */
         CallDosDebug( &Buff );
+        ReadXMMRegs( &mr->x86.xmm );
     }
     return( sizeof( mr->x86 ) );
 }
@@ -873,6 +883,7 @@ unsigned ReqWrite_regs( void )
         Buff.Len    = DBG_LEN_387;      /* for 2.0: buffer size */
         Buff.Index  = 0;                /* for 2.0: must be zero */
         CallDosDebug( &Buff );
+        WriteXMMRegs( &mr->x86.xmm );
     }
     return( 0 );
 }

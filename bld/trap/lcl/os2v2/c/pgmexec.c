@@ -51,32 +51,32 @@
  We copy it into the debuggee and run it there. We also load the DLL in this
  trap file. Due to the way DLLs are implemented on OS/2, we know that the
  addresses of routines in the DLL mapped in the debuggee will be identical
- to addresses that we see in the debugger context.
+ to addresses that we see in the debugger context (because the trap file
+ and the debuggee always run on the same machine).
 
 ****************************************************************************/
 
+
 #include <stddef.h>
 #include <string.h>
-#include <i86.h>
 #define INCL_BASE
 #define INCL_DOSDEVICES
 #define INCL_DOSMEMMGR
 #define INCL_DOSSIGNALS
 #include <os2.h>
-#include <os2dbg.h>
 #include <string.h>
 #include "dosdebug.h"
-#include "bsexcpt.h"
 #include "trpimp.h"
 #include "os2trap.h"
 #include "os2v2acc.h"
+#include "madregs.h"
 #include "splice.h"
 
 #define LOAD_HELPER_DLL_SIZE      8
 
 extern uDB_t            Buff;
 
-bool CausePgmToLoadHelperDLL(ULONG startLinear)
+bool CausePgmToLoadHelperDLL( ULONG startLinear )
 {
     HMODULE     hmodHelper;
     char        savecode[LOAD_HELPER_DLL_SIZE];
@@ -91,19 +91,19 @@ bool CausePgmToLoadHelperDLL(ULONG startLinear)
     /*
      * save a chunk of the program's code, and put in LoadThisDLL instead
      */
-    if (DosQueryModuleHandle("wdsplice", &hmodHelper) != 0)
-        return FALSE;
+    if( DosQueryModuleHandle( "wdsplice", &hmodHelper ) != 0 )
+        return( FALSE );
 
-    if (DosQueryModuleName(hmodHelper, BUFF_SIZE, szHelperDLL) != 0)
-        return FALSE;
+    if( DosQueryModuleName( hmodHelper, BUFF_SIZE, szHelperDLL ) != 0 )
+        return( FALSE );
 
     codesize = (char *)EndLoadHelperDLL - (char *)LoadHelperDLL;
-    if (codesize > LOAD_HELPER_DLL_SIZE)
-        return FALSE;
-    ReadLinear(savecode, startLinear, codesize);
-    if (Buff.Cmd != DBG_N_Success)
-        return FALSE;
-    WriteLinear((char*)LoadHelperDLL, startLinear, codesize);
+    if( codesize > LOAD_HELPER_DLL_SIZE )
+        return( FALSE );
+    ReadLinear( savecode, startLinear, codesize );
+    if( Buff.Cmd != DBG_N_Success )
+        return( FALSE );
+    WriteLinear( (char*)LoadHelperDLL, startLinear, codesize );
 
     /*
      * set up the stack for the routine LoadHelperDLL; first set up
@@ -114,15 +114,15 @@ bool CausePgmToLoadHelperDLL(ULONG startLinear)
     size = sizeof(loadstack_t) + dll_name_len;
     loadstack = (loadstack_t*)TempStack;
     Buff.ESP -= size;
-    strcpy(loadstack->load_name, szHelperDLL);
+    strcpy( loadstack->load_name, szHelperDLL );
     // Offsets must be relative to where loadstack will end up!
-    loadstack->mod_name  = (PSZ)(MakeItFlatNumberOne(Buff.SS, Buff.ESP) + 20);
-    loadstack->phmod     = (HMODULE*)(MakeItFlatNumberOne(Buff.SS, Buff.ESP) + 16);
+    loadstack->mod_name  = (PSZ)(MakeItFlatNumberOne( Buff.SS, Buff.ESP ) + 20);
+    loadstack->phmod     = (HMODULE*)(MakeItFlatNumberOne( Buff.SS, Buff.ESP ) + 16);
     loadstack->fail_name = loadstack->mod_name;  // Reuse buffer
     loadstack->fail_len  = dll_name_len;
-    len = WriteBuffer((char *)loadstack, Buff.SS, Buff.ESP, size);
-    if (len != size)
-        return FALSE;
+    len = WriteBuffer( (char *)loadstack, Buff.SS, Buff.ESP, size );
+    if( len != size )
+        return( FALSE );
 
     /*
      * set up flat CS:EIP, SS:ESP for execution; note that this works for
@@ -130,7 +130,7 @@ bool CausePgmToLoadHelperDLL(ULONG startLinear)
      */
     Buff.EIP = startLinear;
     Buff.CS  = FlatCS;
-    Buff.ESP = MakeItFlatNumberOne(Buff.SS, Buff.ESP);
+    Buff.ESP = MakeItFlatNumberOne( Buff.SS, Buff.ESP );
     Buff.SS  = FlatDS;
     Buff.DS  = FlatDS;
     Buff.ES  = FlatDS;
@@ -138,9 +138,9 @@ bool CausePgmToLoadHelperDLL(ULONG startLinear)
     /*
      * execute LoadThisDLL on behalf of the program
      */
-    WriteRegs(&Buff);
-    DebugExecute(&Buff, DBG_C_Go, FALSE);
-    if (Buff.Cmd != DBG_N_Breakpoint) {
+    WriteRegs( &Buff );
+    DebugExecute( &Buff, DBG_C_Go, FALSE );
+    if( Buff.Cmd != DBG_N_Breakpoint ) {
         rc = FALSE;
     } else {
         rc = TRUE;
@@ -148,15 +148,16 @@ bool CausePgmToLoadHelperDLL(ULONG startLinear)
     /*
      * put back original memory contents
      */
-    WriteLinear(savecode, startLinear, codesize);
-    return rc;
+    WriteLinear( savecode, startLinear, codesize );
+    return( rc );
 }
 
-long TaskExecute(void (*rtn)())
+
+long TaskExecute( void (*rtn)() )
 {
     long        retval;
 
-    if (CanExecTask) {
+    if( CanExecTask ) {
         ExpectingAFault = TRUE;
         Buff.CS  = FlatCS;
         Buff.EIP = (ULONG)rtn;
@@ -164,131 +165,155 @@ long TaskExecute(void (*rtn)())
         Buff.DS  = FlatDS;
         Buff.ES  = FlatDS;
         Buff.ESP = (ULONG)(TempStack + TEMPSTACK_SIZE);
-        WriteRegs(&Buff);
+        WriteRegs( &Buff );
         /*
          * writing registers with invalid selectors will fail
          */
-        if (Buff.Cmd != DBG_N_Success) {
+        if( Buff.Cmd != DBG_N_Success ) {
             retval = -1;
         } else {
-            DebugExecute(&Buff, DBG_C_Go, FALSE);
+            DebugExecute( &Buff, DBG_C_Go, FALSE );
             retval = Buff.EAX;
         }
         ExpectingAFault = FALSE;
-        return retval;
+        return( retval );
     } else {
-        return -1;
+        return( -1 );
     }
 }
 
 
-static void saveRegs(uDB_t *save)
+static void saveRegs( uDB_t *save )
 {
     save->Pid = Pid;
     save->Tid = 0;
-    ReadRegs(save);
+    ReadRegs( save );
 }
 
 
-long TaskOpenFile(char *name, int mode, int flags)
+long TaskOpenFile( char *name, int mode, int flags )
 {
     uDB_t       save;
     long        rc;
 
-    saveRegs(&save);
-    WriteLinear(name, (ULONG)&XferBuff, strlen(name) + 1);
+    saveRegs( &save );
+    WriteLinear( name, (ULONG)&XferBuff, strlen(name) + 1 );
     Buff.EAX = (ULONG)&XferBuff;
     Buff.EDX = mode;
     Buff.ECX = flags;
-    rc = TaskExecute(DoOpen);
-    WriteRegs(&save);
-    return rc;
+    rc = TaskExecute( DoOpen );
+    WriteRegs( &save );
+    return( rc );
 }
 
 
-long TaskCloseFile(HFILE hdl)
+long TaskCloseFile( HFILE hdl )
 {
     uDB_t       save;
     long        rc;
 
-    saveRegs(&save);
+    saveRegs( &save );
     Buff.EAX = hdl;
-    rc = TaskExecute(DoClose);
-    WriteRegs(&save);
-    return rc;
+    rc = TaskExecute( DoClose );
+    WriteRegs( &save );
+    return( rc );
 }
 
-HFILE TaskDupFile(HFILE old, HFILE new)
+
+HFILE TaskDupFile( HFILE old, HFILE new )
 {
     uDB_t       save;
     long        rc;
 
-    saveRegs(&save);
+    saveRegs( &save );
     Buff.EAX = old;
     Buff.EDX = new;
-    rc = TaskExecute(DoDupFile);
-    WriteRegs(&save);
-    return rc;
+    rc = TaskExecute( DoDupFile );
+    WriteRegs( &save );
+    return( rc );
 }
 
-extern void DoReadWord(void);
-extern void DoWriteWord(void);
 
-
-bool TaskReadWord(USHORT seg, ULONG off, USHORT *data)
+bool TaskReadWord( USHORT seg, ULONG off, USHORT *data )
 {
     uDB_t       save;
     bool        rc;
 
-    saveRegs(&save);
+    saveRegs( &save );
     Buff.EBX = off;
     Buff.GS  = seg;
-    TaskExecute(DoReadWord);
-    if (Buff.Cmd != DBG_N_Breakpoint) {
+    TaskExecute( DoReadWord );
+    if( Buff.Cmd != DBG_N_Breakpoint ) {
         rc = FALSE;
     } else {
         rc = TRUE;
-        *data = (USHORT) Buff.EAX;
+        *data = (USHORT)Buff.EAX;
     }
-    WriteRegs(&save);
-    return rc;
+    WriteRegs( &save );
+    return( rc );
 }
 
-bool TaskWriteWord(USHORT seg, ULONG off, USHORT data)
+
+bool TaskWriteWord( USHORT seg, ULONG off, USHORT data )
 {
     uDB_t       save;
     bool        rc;
 
-    saveRegs(&save);
+    saveRegs( &save );
     Buff.EAX = data;
     Buff.EBX = off;
     Buff.GS  = seg;
-    TaskExecute(DoWriteWord);
-    if (Buff.Cmd != DBG_N_Breakpoint) {
+    TaskExecute( DoWriteWord );
+    if( Buff.Cmd != DBG_N_Breakpoint ) {
         rc = FALSE;
     } else {
         rc = TRUE;
     }
-    WriteRegs(&save);
-    return rc;
+    WriteRegs( &save );
+    return( rc );
 }
 
-void TaskPrint(char *ptr, unsigned len)
+
+void TaskPrint( char *ptr, unsigned len )
 {
     uDB_t       save;
 
-    saveRegs(&save);
-    while (len > sizeof(XferBuff)) {
-        WriteLinear(ptr, (ULONG)&XferBuff, sizeof(XferBuff));
+    saveRegs( &save );
+    while( len > sizeof( XferBuff ) ) {
+        WriteLinear( ptr, (ULONG)&XferBuff, sizeof( XferBuff ) );
         Buff.EAX = (ULONG)&XferBuff;
-        Buff.EDX = sizeof(XferBuff);
-        TaskExecute(DoWritePgmScrn);
-        ptr += sizeof(XferBuff);
-        len -= sizeof(XferBuff);
+        Buff.EDX = sizeof( XferBuff );
+        TaskExecute( DoWritePgmScrn );
+        ptr += sizeof( XferBuff );
+        len -= sizeof( XferBuff );
     }
-    WriteLinear(ptr, (ULONG)&XferBuff, len);
+    WriteLinear( ptr, (ULONG)&XferBuff, len );
     Buff.EAX = (ULONG)&XferBuff;
     Buff.EDX = len;
-    TaskExecute(DoWritePgmScrn);
-    WriteRegs(&save);
+    TaskExecute( DoWritePgmScrn );
+    WriteRegs( &save );
+}
+
+
+void TaskReadXMMRegs( struct x86_xmm *xmm_regs )
+{
+    uDB_t       save;
+
+    saveRegs( &save );
+    Buff.EAX = (ULONG)&XferBuff;
+    TaskExecute( DoReadXMMRegs );
+    ReadLinear( (void*)xmm_regs, (ULONG)&XferBuff, sizeof( *xmm_regs ) );
+    WriteRegs( &save );
+}
+
+
+void TaskWriteXMMRegs( struct x86_xmm *xmm_regs )
+{
+    uDB_t       save;
+
+    saveRegs( &save );
+    WriteLinear( (void*)xmm_regs, (ULONG)&XferBuff, sizeof( *xmm_regs ) );
+    Buff.EAX = (ULONG)&XferBuff;
+    TaskExecute( DoWriteXMMRegs );
+    WriteRegs( &save );
 }

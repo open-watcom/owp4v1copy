@@ -35,6 +35,8 @@
 #define INCL_BASE
 #include <os2.h>
 
+#define MD_x86
+#include "madregs.h"
 #include "splice.h"
 
 /* We need separate stack for executing spliced code. We really wouldn't
@@ -47,7 +49,7 @@ char __export XferBuff[XFERBUFF_SIZE];
 #define OPEN_CREATE  1
 #define OPEN_PRIVATE 2
 
-long OpenFile(char *name, ULONG mode, int flags)
+long OpenFile( char *name, ULONG mode, int flags )
 {
     HFILE       hdl;
     ULONG       action;
@@ -55,82 +57,104 @@ long OpenFile(char *name, ULONG mode, int flags)
     ULONG       openmode;
     APIRET      rc;
 
-    if (flags & OPEN_CREATE) {
+    if( flags & OPEN_CREATE ) {
         openflags = 0x12;
         openmode = 0x2042;
     } else {
         openflags = 0x01;
         openmode = mode | 0x2040;
     }
-    if (flags & OPEN_PRIVATE) {
+    if( flags & OPEN_PRIVATE ) {
         openmode |= 0x80;
     }
-    rc = DosOpen(name,          /* name */
-                &hdl,           /* handle to be filled in */
-                &action,        /* action taken */
-                0,              /* initial allocation */
-                0,              /* normal file */
-                openflags,      /* open the file */
-                openmode,       /* deny-none, inheritance */
-                0);             /* reserved */
-    if (rc != 0)
+    rc = DosOpen( name,          /* name */
+                 &hdl,           /* handle to be filled in */
+                 &action,        /* action taken */
+                 0,              /* initial allocation */
+                 0,              /* normal file */
+                 openflags,      /* open the file */
+                 openmode,       /* deny-none, inheritance */
+                 0 );             /* reserved */
+    if( rc != 0 )
         return 0xFFFF0000 | rc;
-    return hdl;
+    return( hdl );
 }
 
 
-void        BreakPoint(ULONG);
+void BreakPoint(ULONG);
 #pragma aux BreakPoint = 0xCC parm [eax] aborts;
 
-void doReadWord(void);
+void doReadWord( void );
 #pragma aux doReadWord =           \
     "mov  ax, word ptr gs:[ebx]"   \
     "int  3";
 
-void __export DoReadWord(void)
+void __export DoReadWord( void )
 {
     doReadWord();
 }
 
-void doWriteWord(void);
+void doWriteWord( void );
 #pragma aux doWriteWord =          \
     "mov  word ptr gs:[ebx], ax"   \
     "int  3";
 
-void __export DoWriteWord(void)
+void __export DoWriteWord( void )
 {
     doWriteWord();
 }
 
-void __export DoOpen(char *name, int mode, int flags)
+void __export DoOpen( char *name, int mode, int flags )
 {
-    BreakPoint(OpenFile(name, mode, flags));
+    BreakPoint( OpenFile( name, mode, flags ) );
 }
 
-void __export DoClose(HFILE hdl)
+void __export DoClose( HFILE hdl )
 {
-    BreakPoint(DosClose(hdl));
+    BreakPoint( DosClose( hdl ) );
 }
 
-void __export DoDupFile(HFILE old, HFILE new)
+void __export DoDupFile( HFILE old, HFILE new )
 {
     HFILE       new_t;
     USHORT      rc;
 
     new_t = new;
-    rc = DosDupHandle(old, &new_t);
-    if (rc != 0) {
-        BreakPoint((HFILE)-1);
+    rc = DosDupHandle( old, &new_t );
+    if( rc != 0 ) {
+        BreakPoint( (HFILE) - 1 );
     } else {
-        BreakPoint(new_t);
+        BreakPoint( new_t );
     }
 }
 
-void _export DoWritePgmScrn(char *buff, ULONG len)
+void __export DoWritePgmScrn( char *buff, ULONG len )
 {
     ULONG   written;
 
-    DosWrite(2, buff, len, &written);
-    BreakPoint(0);
+    DosWrite( 2, buff, len, &written );
+    BreakPoint( 0 );
 }
 
+
+void fxsave( unsigned char *addr );
+#pragma aux fxsave parm [eax] =  \
+    0x0F 0xAE 0x00; // "fxsave [eax]"
+
+void __export DoReadXMMRegs( struct x86_xmm *xmm_regs )
+{
+    unsigned char   fxsave_buff[ 512 + 16 ];
+    unsigned char   *aligned_buf;
+
+    /* The FXSAVE buffer must be 16-byte aligned! */
+    aligned_buf = (unsigned char*)(((unsigned)fxsave_buff + 15) & ~15);
+    fxsave( aligned_buf );
+    memcpy( xmm_regs->xmm, aligned_buf + 160, 8 * 16 );
+    xmm_regs->mxcsr = *(unsigned_32*)(aligned_buf + 20);
+    BreakPoint( 0 );
+}
+
+void __export DoWriteXMMRegs( struct x86_xmm *xmm_regs )
+{
+    BreakPoint( 0 );
+}

@@ -15,6 +15,8 @@ objs = splice.obj
 
 extra_l_flags = op oneautodata, map
 
+inc_dirs = $(dig_dir)/h
+
 .c: ../c
 
 wdsplice.dll : $(objs)
