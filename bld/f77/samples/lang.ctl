@@ -9,8 +9,7 @@ cdsay .
 [ INCLUDE <LANG_BLD>\wproj.ctl ]
 
 [ BLOCK <1> build rel2 ]
-    cdsay windll
-    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h cover16.obj
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
     cdsay <projdir>
 
 [ BLOCK <1> rel2 cprel2 ]

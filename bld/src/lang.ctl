@@ -10,8 +10,8 @@ set PROJDIR=<CWD>
 cdsay .
 
 [ BLOCK <1> build rel2 ]
-    cdsay ..\f77\samples\windll
-    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h cover16.obj
+    cdsay ..\f77\samples
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
     cdsay <PROJDIR>
 
 [ BLOCK <1> rel2 cprel2 ]

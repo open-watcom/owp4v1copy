@@ -1,4 +1,3 @@
-#pmake: all build os_win cpu_i86 cpu_386
 compile286 = wfc
 f16flags = -quiet -explicit -nowarn -d2 -windows
 
