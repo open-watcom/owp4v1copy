@@ -710,6 +710,7 @@ static unsigned ProgRun( int step )
     prog_go_ret         *ret;
     void                (*old)(int);
     int                 debug_continue;
+    int                 inside_signal = FALSE;
 
     if( pid == 0 )
         return( 0 );
@@ -724,13 +725,25 @@ static unsigned ProgRun( int step )
     /* we only want child-generated SIGINTs now */
     do {
         old = setsig( SIGINT, SIG_IGN );
-        if( step ) {
+        if( step && !inside_signal ) {
             ptrace( PTRACE_SINGLESTEP, pid, NULL, (void *)ptrace_sig );
         } else {
             ptrace( PTRACE_CONT, pid, NULL, (void *)ptrace_sig );
         }
         waitpid( pid, &status, 0 );
         setsig( SIGINT, old );
+        
+#if defined( MD_x86 )
+        ptrace( PTRACE_GETREGS, pid, NULL, &regs );
+#elif defined( MD_ppc )
+        regs.eip = ptrace( PTRACE_PEEKUSER, pid, REGSIZE * PT_NIP, NULL );
+        regs.esp = ptrace( PTRACE_PEEKUSER, pid, REGSIZE * PT_R1, NULL );
+#endif
+        Out( " eip " );
+        OutNum( regs.eip );
+        Out( "\n" );
+        
+        inside_signal = FALSE;                
         debug_continue = FALSE;
         if( WIFSTOPPED( status ) ) {
             switch( ( ptrace_sig = WSTOPSIG( status ) ) ) {
@@ -759,7 +772,13 @@ static unsigned ProgRun( int step )
                  * to continue the debuggee until we get a signal
                  * that we need to handle
                  */
+                Out( "Unknown signal " );
+                OutNum( ptrace_sig );
+                Out( "\n" );
                 debug_continue = TRUE;
+//                inside_signal = TRUE;
+                // continue debugger
+                // if we come back to original EIP, single or continue
                 break;
             }
         } else if( WIFEXITED( status ) ) {
@@ -770,83 +789,74 @@ static unsigned ProgRun( int step )
             goto end;
         }
     } while( debug_continue );
+
+    if( ret->conditions == COND_BREAK ) {
 #if defined( MD_x86 )
-    if( ptrace( PTRACE_GETREGS, pid, NULL, &regs ) == 0 ) {
+        if( regs.eip == rdebug.r_brk + sizeof( old_ld_bp ) ) {
 #elif defined( MD_ppc )
-    errno = 0;
-    if( (regs.eip = ptrace( PTRACE_PEEKUSER, pid, REGSIZE * PT_NIP, NULL )) != -1 || !errno ) {
-        regs.esp = ptrace( PTRACE_PEEKUSER, pid, REGSIZE * PT_R1, NULL );
+        if( regs.eip == rdebug.r_brk ) {
 #endif
-        Out( " eip " );
-        OutNum( regs.eip );
-        Out( "\n" );
-        if( ret->conditions == COND_BREAK ) {
-#if defined( MD_x86 )
-            if( regs.eip == rdebug.r_brk + sizeof( old_ld_bp ) ) {
-#elif defined( MD_ppc )
-            if( regs.eip == rdebug.r_brk ) {
-#endif
-                int         psig = 0;
-                void        (*oldsig)(int);
-                bp_t        opcode = BRK_POINT;
-        
-                /* The dynamic linker breakpoint was hit, meaning that
-                 * libraries are being loaded or unloaded. This gets a bit
-                 * tricky because we must restore the original code that was
-                 * at the breakpoint and execute it, but we still want to
-                 * keep the breakpoint.
-                 */
-                WriteMem( &old_ld_bp, rdebug.r_brk, sizeof( old_ld_bp ) );
-                ReadMem( &rdebug, (addr48_off)dbg_rdebug, sizeof( rdebug ) );
-                Out( "ld breakpoint hit, state is " );
-                switch( rdebug.r_state ) {
-                case RT_ADD:
-                    Out( "RT_ADD\n" );
-                    ld_state = RT_ADD;
-                    AddOneLib( rdebug.r_map );
-                    break;
-                case RT_DELETE:
-                    Out( "RT_DELETE\n" );
-                    ld_state = RT_DELETE;
-                    break;
-                case RT_CONSISTENT:
-                    Out( "RT_CONSISTENT\n" );
-                    if( ld_state == RT_DELETE )
-                        DelOneLib( rdebug.r_map );
-                    ld_state = RT_CONSISTENT;
-                    break;
-                default:
-                    Out( "error!\n" );
-                    break;
-                }
-                regs.orig_eax = -1;
-#if defined( MD_x86 )
-                regs.eip--;
-                ptrace( PTRACE_SETREGS, pid, NULL, &regs );
-#endif
-                oldsig = setsig( SIGINT, SIG_IGN );
-                ptrace( PTRACE_SINGLESTEP, pid, NULL, (void *)psig );
-                waitpid( pid, &status, 0 );
-                setsig( SIGINT, oldsig );
-                WriteMem( &opcode, rdebug.r_brk, sizeof( old_ld_bp ) );
-                ret->conditions = COND_LIBRARIES;
-            } else {
-#if defined( MD_x86 )
-                Out( "decrease eip(sigtrap)\n" );
-                regs.orig_eax = -1;
-                regs.eip--;
-                ptrace( PTRACE_SETREGS, pid, NULL, &regs );
-#endif
+            int         psig = 0;
+            void        (*oldsig)(int);
+            bp_t        opcode = BRK_POINT;
+    
+            /* The dynamic linker breakpoint was hit, meaning that
+             * libraries are being loaded or unloaded. This gets a bit
+             * tricky because we must restore the original code that was
+             * at the breakpoint and execute it, but we still want to
+             * keep the breakpoint.
+             */
+            WriteMem( &old_ld_bp, rdebug.r_brk, sizeof( old_ld_bp ) );
+            ReadMem( &rdebug, (addr48_off)dbg_rdebug, sizeof( rdebug ) );
+            Out( "ld breakpoint hit, state is " );
+            switch( rdebug.r_state ) {
+            case RT_ADD:
+                Out( "RT_ADD\n" );
+                ld_state = RT_ADD;
+                AddOneLib( rdebug.r_map );
+                break;
+            case RT_DELETE:
+                Out( "RT_DELETE\n" );
+                ld_state = RT_DELETE;
+                break;
+            case RT_CONSISTENT:
+                Out( "RT_CONSISTENT\n" );
+                if( ld_state == RT_DELETE )
+                    DelOneLib( rdebug.r_map );
+                ld_state = RT_CONSISTENT;
+                break;
+            default:
+                Out( "error!\n" );
+                break;
             }
+            regs.orig_eax = -1;
+#if defined( MD_x86 )
+            regs.eip--;
+            ptrace( PTRACE_SETREGS, pid, NULL, &regs );
+#endif
+            oldsig = setsig( SIGINT, SIG_IGN );
+            ptrace( PTRACE_SINGLESTEP, pid, NULL, (void *)psig );
+            waitpid( pid, &status, 0 );
+            setsig( SIGINT, oldsig );
+            WriteMem( &opcode, rdebug.r_brk, sizeof( old_ld_bp ) );
+            ret->conditions = COND_LIBRARIES;
+        } else {
+#if defined( MD_x86 )
+            Out( "decrease eip(sigtrap)\n" );
+            regs.orig_eax = -1;
+            regs.eip--;
+            ptrace( PTRACE_SETREGS, pid, NULL, &regs );
+#endif
         }
-        orig_eax = regs.orig_eax;
-        last_eip = regs.eip;
-        ret->program_counter.offset = regs.eip;
-        ret->program_counter.segment = regs.cs;
-        ret->stack_pointer.offset = regs.esp;
-        ret->stack_pointer.segment = regs.ss;
-        ret->conditions |= COND_CONFIG;
     }
+    orig_eax = regs.orig_eax;
+    last_eip = regs.eip;
+    ret->program_counter.offset = regs.eip;
+    ret->program_counter.segment = regs.cs;
+    ret->stack_pointer.offset = regs.esp;
+    ret->stack_pointer.segment = regs.ss;
+    ret->conditions |= COND_CONFIG;
+
     /* If debuggee has dynamic section, try getting the r_debug struct
      * every time the debuggee stops. The r_debug data may not be available
      * immediately after the debuggee process loads.
