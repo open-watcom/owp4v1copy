@@ -1,4 +1,3 @@
-#proj_name = w32api
 
 !include cproj.mif
 
@@ -140,7 +139,6 @@ ddk_libs = &
         videoprt.lib &
         win32k.lib
 
-#libs = $(base_libs) $(ddk_libs) $(directx_libs)
 libs = $($(proj_name)_libs)
 
 .def: ../../lib;../../lib/directx;../../lib/ddk;
@@ -163,17 +161,28 @@ libs = $($(proj_name)_libs)
 # wmake exploits the special WATCOM readdir(wildcard) property...
 all: $(libs) .SYMBOLIC
 !ifdef __UNIX__
+!ifeq proj_name base
         /bin/sh -c 'for i in ../../include/*.h; do wmake -h -f ../../fix/new_h.mif file=$$i; done'
-        /bin/sh -c 'for i in ../../include/ddk/*.h; do wmake -h -f ../../fix/new_h.mif file=$$i; done'
-        /bin/sh -c 'for i in ../../include/directx/*.h; do wmake -h -f ../../fix/new_h.mif file=$$i; done'
         /bin/sh -c 'for i in ../../include/GL/*.h; do wmake -h -f ../../fix/new_h.mif file=$$i; done'
+!else ifeq proj_name ddk
+        /bin/sh -c 'for i in ../../include/ddk/*.h; do wmake -h -f ../../fix/new_h.mif file=$$i; done'
+!else ifeq proj_name directx
+        /bin/sh -c 'for i in ../../include/directx/*.h; do wmake -h -f ../../fix/new_h.mif file=$$i; done'
+!endif
 !else
+!ifeq proj_name base
         @for %i in (../../include/*.h) do @wmake -h -f ../../fix/new_h.mif file=%i
-        @for %i in (../../include/ddk/*.h) do @wmake -h -f ../../fix/new_h.mif file=%i
-        @for %i in (../../include/directx/*.h) do @wmake -h -f ../../fix/new_h.mif file=%i
         @for %i in (../../include/GL/*.h) do @wmake -h -f ../../fix/new_h.mif file=%i
+!else ifeq proj_name ddk
+        @for %i in (../../include/ddk/*.h) do @wmake -h -f ../../fix/new_h.mif file=%i
+!else ifeq proj_name directx
+        @for %i in (../../include/directx/*.h) do @wmake -h -f ../../fix/new_h.mif file=%i
+!endif
 !endif
         $(vi) -s ../../fix/fix_h.vi
+
+kernel32.lib: kernel32.lbc
+        $(librarian) -b -c -p=16 -n -io -ii $@ @$<
 
 dinput_objs = dinput_joy.obj dinput_joy2.obj dinput_kbd.obj dinput_mouse.obj &
         dinput_mouse2.obj
