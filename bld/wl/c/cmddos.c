@@ -137,7 +137,7 @@ extern bool ProcBegin( void )
     section *       sect;
 
     LinkState |= FMT_SPECIFIED;      // she must want DOS mode.
-    if( OvlLevel > 0 && FmtData.u.dos.dynamic ) {
+    if( ( OvlLevel > 0 ) && FmtData.u.dos.dynamic ) {
         CmdFlags &= ~CF_AUTOSECTION;        // merge old area with this.
     } else {
         oldsect = CurrSect;
@@ -153,7 +153,7 @@ extern bool ProcBegin( void )
     }
     OvlLevel++;
     while( ProcOne( Sections, SEP_NO, FALSE ) != FALSE ) {}  // NULL LOOP
-    if( OvlLevel == 0 || !FmtData.u.dos.dynamic ) {
+    if( ( OvlLevel == 0 ) || !FmtData.u.dos.dynamic ) {
         CurrFList = oldflist;
         CurrSect = oldsect;
     }
@@ -282,8 +282,8 @@ static bool AddNoVector( void )
     symbol *    sym;
 
     sym = SymXOp( ST_CREATE | ST_REFERENCE, Token.this, Token.len );
-    sym->u.d.ovlstate |= (OVL_FORCE | OVL_NO_VECTOR);
-    return TRUE ;
+    sym->u.d.ovlstate |= ( OVL_FORCE | OVL_NO_VECTOR );
+    return( TRUE );
 }
 
 extern bool ProcNoVector( void )
@@ -373,7 +373,7 @@ extern void CmdOvlFini( void )
         LnkMsg( LOC+LINE+FTL+MSG_EXPECTING_END, NULL );
     }
     if( FmtData.u.dos.dynamic &&
-        (Root->areas == NULL || Root->areas->next_area != NULL) ) {
+        ( ( Root->areas == NULL ) || ( Root->areas->next_area != NULL ) ) ) {
         Ignite();
         LnkMsg( LOC+LINE+FTL+MSG_INCORRECT_NUM_AREAS, NULL );
     }

@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  routines for producing DWARF debugging information
 *
 ****************************************************************************/
 
-
-/*
- *  DBGDWARF -- routines for producing DWARF debugging information
- *
-*/
 
 #include <string.h>
 #include <setjmp.h>
@@ -208,8 +202,8 @@ extern void DwarfInit( void )
 extern void DwarfInitModule( mod_entry *mod )
 /*******************************************/
 {
-    _PermAlloc( mod->d.d, sizeof(dwarfmodinfo) );
-    memset( mod->d.d, 0, sizeof(dwarfmodinfo) );
+    _PermAlloc( mod->d.d, sizeof( dwarfmodinfo ) );
+    memset( mod->d.d, 0, sizeof( dwarfmodinfo ) );
 }
 
 extern void DwarfP1ModuleScanned( void )
@@ -220,24 +214,26 @@ extern void DwarfP1ModuleScanned( void )
 extern void DwarfP1ModuleFinished( mod_entry *mod )
 /*************************************************/
 {
-    if( MOD_NOT_DEBUGGABLE(mod) ) return;
+    if( MOD_NOT_DEBUGGABLE( mod ) )
+        return;
     CurrMod = mod;
-    if( mod->modinfo & MOD_DBI_SEEN ) return;
+    if( mod->modinfo & MOD_DBI_SEEN )
+        return;
     DBILineWalk( mod->lines, DwarfAddLines );
     Ring2Walk( mod->publist, DBIModGlobal );
     if( FmtData.type & MK_SEGMENTED ) {
-        SectionTable[SECT_DEBUG_ABBREV].size = sizeof(SegmentedStandardAbbrevs);
+        SectionTable[SECT_DEBUG_ABBREV].size = sizeof( SegmentedStandardAbbrevs );
     } else {
-        SectionTable[SECT_DEBUG_ABBREV].size = sizeof(FlatStandardAbbrevs);
+        SectionTable[SECT_DEBUG_ABBREV].size = sizeof( FlatStandardAbbrevs );
     }
     if( mod->d.d->dasi.size > 0 ) {
         mod->d.d->dasi.addr = SectionTable[SECT_DEBUG_LINE].size;
-        mod->d.d->dasi.size += strlen(mod->name) + sizeof(stmt_prologue) + 6;
+        mod->d.d->dasi.size += strlen(mod->name) + sizeof( stmt_prologue ) + 6;
         SectionTable[SECT_DEBUG_LINE].size += mod->d.d->dasi.size;
-        mod->d.d->pubsym.size += sizeof(unsigned_32); // DW_AT_STMT_LIST
+        mod->d.d->pubsym.size += sizeof( unsigned_32 ); // DW_AT_STMT_LIST
     }
     mod->d.d->pubsym.addr = SectionTable[SECT_DEBUG_INFO].size;
-    mod->d.d->pubsym.size += strlen(mod->name) + sizeof(compunit_die) + 1
+    mod->d.d->pubsym.size += strlen(mod->name) + sizeof( compunit_die ) + 1
                              + COMPILE_UNIT_HDR_SIZE + 1;
     SectionTable[SECT_DEBUG_INFO].size += mod->d.d->pubsym.size;
 }
@@ -245,14 +241,14 @@ extern void DwarfP1ModuleFinished( mod_entry *mod )
 extern void DwarfStoreAddrInfo( mod_entry *mod )
 /**********************************************/
 {
-    if( !(mod->modinfo & MOD_DBI_SEEN) ) {
+    if( !( mod->modinfo & MOD_DBI_SEEN ) ) {
         if( mod->d.d->arange.size > 0 ) {
             mod->d.d->arange.addr = SectionTable[SECT_DEBUG_ARANGE].size;
-            mod->d.d->arange.size += sizeof(arange_prologue);
+            mod->d.d->arange.size += sizeof( arange_prologue );
             if( FmtData.type & MK_SEGMENTED ) {
-                mod->d.d->arange.size += sizeof(segmented_arange_tuple);
+                mod->d.d->arange.size += sizeof( segmented_arange_tuple );
             } else {
-                mod->d.d->arange.size += sizeof(flat_arange_tuple);
+                mod->d.d->arange.size += sizeof( flat_arange_tuple );
             }
             SectionTable[SECT_DEBUG_ARANGE].size += mod->d.d->arange.size;
         }
@@ -272,53 +268,53 @@ extern void DwarfAddModule( mod_entry *mod, section *sect )
     unsigned_32         stmt_list;
 
     sect = sect;
-    if( !(mod->modinfo & MOD_DBI_SEEN) ) {
+    if( !( mod->modinfo & MOD_DBI_SEEN ) ) {
         namelen = strlen( mod->name );
         if( mod->d.d->arange.size > 0 ) {
             mod->d.d->arange.addr += SectionTable[SECT_DEBUG_ARANGE].addr;
-            arange_hdr.length = mod->d.d->arange.size - sizeof(unsigned_32);
+            arange_hdr.length = mod->d.d->arange.size - sizeof( unsigned_32 );
             arange_hdr.version = 2;
             arange_hdr.debug_offset = mod->d.d->pubsym.addr
                                       + SectionTable[SECT_DEBUG_INFO].start;
-            arange_hdr.offset_size = sizeof(offset);
+            arange_hdr.offset_size = sizeof( offset );
             if( FmtData.type & MK_SEGMENTED ) {
-                arange_hdr.segment_size = sizeof(segment);
+                arange_hdr.segment_size = sizeof( segment );
             } else {
                 arange_hdr.segment_size = 0;
             }
-//          memset( arange_hdr.padding, 0, sizeof(arange_hdr.padding) );
+//          memset( arange_hdr.padding, 0, sizeof( arange_hdr.padding ) );
             PutInfo( mod->d.d->arange.addr, (void *) &arange_hdr,
-                     sizeof(arange_prologue) );
-            mod->d.d->arange.addr += sizeof(arange_prologue);
+                     sizeof( arange_prologue ) );
+            mod->d.d->arange.addr += sizeof( arange_prologue );
         }
         mod->d.d->pubsym.addr += SectionTable[SECT_DEBUG_INFO].addr;
-        compuhdr.length = mod->d.d->pubsym.size - sizeof(unsigned_32);
+        compuhdr.length = mod->d.d->pubsym.size - sizeof( unsigned_32 );
         compuhdr.version = 2;
         compuhdr.abbrev_offset = SectionTable[SECT_DEBUG_ABBREV].start;
-        compuhdr.addr_size = sizeof(offset);
+        compuhdr.addr_size = sizeof( offset );
         PutInfo( mod->d.d->pubsym.addr, (void *) &compuhdr,
-                                        sizeof(compuhdr_prologue) );
-        mod->d.d->pubsym.addr += sizeof(compuhdr_prologue);
+                                        sizeof( compuhdr_prologue ) );
+        mod->d.d->pubsym.addr += sizeof( compuhdr_prologue );
         if( mod->d.d->dasi.size > 0 ) {
             die.abbrev_code = COMPUNIT_ABBREV_CODE;
         } else {
             die.abbrev_code = CU_NOLINE_ABBREV_CODE;
         }
-        PutInfo( mod->d.d->pubsym.addr, &die, sizeof(compunit_die) );
-        mod->d.d->pubsym.addr += sizeof(compunit_die);
+        PutInfo( mod->d.d->pubsym.addr, &die, sizeof( compunit_die ) );
+        mod->d.d->pubsym.addr += sizeof( compunit_die );
         if( mod->d.d->dasi.size > 0 ) {
             stmt_list = mod->d.d->dasi.addr
                             + SectionTable[SECT_DEBUG_LINE].start;
-            PutInfo( mod->d.d->pubsym.addr, &stmt_list, sizeof(unsigned_32) );
-            mod->d.d->pubsym.addr += sizeof(unsigned_32);
+            PutInfo( mod->d.d->pubsym.addr, &stmt_list, sizeof( unsigned_32 ) );
+            mod->d.d->pubsym.addr += sizeof( unsigned_32 );
         }
         PutInfo( mod->d.d->pubsym.addr, mod->name, namelen + 1 );
         mod->d.d->pubsym.addr += namelen + 1;
         if( mod->d.d->dasi.size > 0 ) {
             mod->d.d->dasi.addr += SectionTable[SECT_DEBUG_LINE].addr;
-            stmt_hdr.total_length = mod->d.d->dasi.size - sizeof(unsigned_32);
+            stmt_hdr.total_length = mod->d.d->dasi.size - sizeof( unsigned_32 );
             stmt_hdr.version = 2;
-            stmt_hdr.prologue_length = sizeof(stmt_prologue)
+            stmt_hdr.prologue_length = sizeof( stmt_prologue )
                         - offsetof(stmt_prologue, minimum_instruction_length)
                         + namelen + 6;
             stmt_hdr.minimum_instruction_length = DW_MIN_INSTR_LENGTH;
@@ -336,8 +332,8 @@ extern void DwarfAddModule( mod_entry *mod, section *sect )
             stmt_hdr.standard_opcode_lengths[7] = 0;
             stmt_hdr.standard_opcode_lengths[8] = 0;
             PutInfo( mod->d.d->dasi.addr, (void *) &stmt_hdr,
-                                          sizeof(stmt_prologue) );
-            mod->d.d->dasi.addr += sizeof(stmt_prologue);
+                                          sizeof( stmt_prologue ) );
+            mod->d.d->dasi.addr += sizeof( stmt_prologue );
             buff = alloca( namelen + 6 );
             buff[0] = 0;        // no include directories;
             memcpy( &buff[1], mod->name, namelen + 1 );
@@ -359,18 +355,19 @@ extern void DwarfGenModule( void )
     unsigned            size;
     unsigned_8          nulldie;
 
-    if( CurrMod->modinfo & MOD_DBI_SEEN ) return;
+    if( CurrMod->modinfo & MOD_DBI_SEEN )
+        return;
     if( CurrMod->d.d->arange.size > 0 ) {       // write out terminator arange
         if( FmtData.type & MK_SEGMENTED ) {
-            size = sizeof(segmented_arange_tuple);
+            size = sizeof( segmented_arange_tuple );
         } else {
-            size = sizeof(flat_arange_tuple);
+            size = sizeof( flat_arange_tuple );
         }
         memset( &tuple, 0, size );
         PutInfo( CurrMod->d.d->arange.addr, &tuple, size );
     }
     nulldie = 0;
-    PutInfo( CurrMod->d.d->pubsym.addr, &nulldie, sizeof(unsigned_8) );
+    PutInfo( CurrMod->d.d->pubsym.addr, &nulldie, sizeof( unsigned_8 ) );
 }
 
 static void DefAClass( void *_seg )
@@ -398,7 +395,8 @@ extern void DwarfDefClass( class_entry *cl, unsigned_32 size )
 // all of them.
 {
     size = size;        // to avoid a warning
-    if( (cl->flags & CLASS_HANDS_OFF) != CLASS_DWARF ) return;
+    if( ( cl->flags & CLASS_HANDS_OFF ) != CLASS_DWARF )
+        return;
     DBIClass = cl;
     RingWalk( cl->segs, DefAClass );
 }
@@ -407,9 +405,9 @@ extern void DwarfAddGlobal( symbol *sym )
 /***************************************/
 {
     sym = sym;
-    CurrMod->d.d->pubsym.size += strlen(sym->name) + sizeof(symbol_die) + 1;
+    CurrMod->d.d->pubsym.size += strlen( sym->name ) + sizeof( symbol_die ) + 1;
     if( FmtData.type & MK_SEGMENTED ) {
-        CurrMod->d.d->pubsym.size += sizeof(symbol_seg);
+        CurrMod->d.d->pubsym.size += sizeof( symbol_seg );
     }
 }
 
@@ -423,29 +421,29 @@ extern void DwarfGenGlobal( symbol *sym, section *sect )
     size_t      len;
 
     sect = sect;
-    if( !(CurrMod->modinfo & MOD_DBI_SEEN) ) {
-        if( sym->p.seg == NULL || sym->p.seg->iscode ) {
+    if( !( CurrMod->modinfo & MOD_DBI_SEEN ) ) {
+        if( ( sym->p.seg == NULL ) || ( sym->p.seg->iscode ) ) {
             die.abbrev_code = LABEL_ABBREV_CODE;
         } else {
             die.abbrev_code = VARIABLE_ABBREV_CODE;
         }
         vmem_addr = CurrMod->d.d->pubsym.addr;
         die.off = sym->addr.off;
-        if( FmtData.type & (MK_PE|MK_QNX_FLAT|MK_ELF) ) {
+        if( FmtData.type & ( MK_PE | MK_QNX_FLAT | MK_ELF ) ) {
             group = sym->p.seg->u.leader->group;
             if( group != NULL ) {
                 die.off += group->linear - group->grp_addr.off - Groups->linear;
             }
         }
         die.isexternal = !(sym->info & SYM_STATIC);
-        PutInfo( vmem_addr, &die, sizeof(symbol_die) );
-        vmem_addr += sizeof(symbol_die);
+        PutInfo( vmem_addr, &die, sizeof( symbol_die ) );
+        vmem_addr += sizeof( symbol_die );
         if( FmtData.type & MK_SEGMENTED ) {
             symseg.len = 3;
             symseg.loc_op = DW_OP_const2u;
             symseg.seg = sym->addr.seg;
-            PutInfo( vmem_addr, &symseg, sizeof(symbol_seg) );
-            vmem_addr += sizeof(symbol_seg);
+            PutInfo( vmem_addr, &symseg, sizeof( symbol_seg ) );
+            vmem_addr += sizeof( symbol_seg );
         }
         len = strlen( sym->name ) + 1;
         PutInfo( vmem_addr, sym->name, len );
@@ -474,7 +472,7 @@ static void DwarfAddLines( segdata *seg, void * lines, unsigned size,
     } else {
         dwsize = 15;    // start and end sequence with 32-bit offset
     }
-    if( !(FmtData.type & MK_SEGMENTED) ) {
+    if( !( FmtData.type & MK_SEGMENTED ) ) {
         dwsize -= 5;    // size of LNE_segment burst
     }
     while( size > 0 ) {
@@ -482,12 +480,12 @@ static void DwarfAddLines( segdata *seg, void * lines, unsigned size,
             linedelta = (signed_32) lineptr->_386.linnum - prevline.linnum;
             addrdelta = lineptr->_386.off - prevline.off;
             lineptr++;
-            size -= sizeof(ln_off_386);
+            size -= sizeof( ln_off_386 );
         } else {
             linedelta = (signed_32) lineptr->_286.linnum - prevline.linnum;
             addrdelta = lineptr->_286.off - prevline.off;
             lineptr = (void *)((char *)lineptr + sizeof( ln_off_286 ));
-            size -= sizeof(ln_off_286);
+            size -= sizeof( ln_off_286 );
         }
         prevline.linnum += linedelta;
         prevline.off += addrdelta;
@@ -511,7 +509,8 @@ extern void DwarfGenLines( segdata *seg, void *lines, unsigned size,
     char                buff[ 3 + 2 * MAX_LEB128 ];
 
     seg = seg;
-    if( CurrMod->modinfo & MOD_DBI_SEEN ) return;
+    if( CurrMod->modinfo & MOD_DBI_SEEN )
+        return;
     prevline.off = 0;
     prevline.linnum = 1;
     vmem_addr = CurrMod->d.d->dasi.addr;
@@ -527,7 +526,7 @@ extern void DwarfGenLines( segdata *seg, void *lines, unsigned size,
         *((unsigned_16 *)&buff[3]) = seg->a.delta + seg->u.leader->seg_addr.off;
     } else {
         off = seg->a.delta + seg->u.leader->seg_addr.off;
-        if( FmtData.type & (MK_PE|MK_QNX_FLAT|MK_ELF) ) {
+        if( FmtData.type & ( MK_PE | MK_QNX_FLAT | MK_ELF ) ) {
             group = seg->u.leader->group;
             if( group != NULL ) {
                 off += group->linear - group->grp_addr.off - Groups->linear;
@@ -551,12 +550,12 @@ extern void DwarfGenLines( segdata *seg, void *lines, unsigned size,
             linedelta = (signed_32) lineptr->_386.linnum - prevline.linnum;
             addrdelta = lineptr->_386.off - prevline.off;
             lineptr++;
-            size -= sizeof(ln_off_386);
+            size -= sizeof( ln_off_386 );
         } else {
             linedelta = (signed_32) lineptr->_286.linnum - prevline.linnum;
             addrdelta = lineptr->_286.off - prevline.off;
             lineptr = (void *)((char *)lineptr + sizeof( ln_off_286 ));
-            size -= sizeof(ln_off_286);
+            size -= sizeof( ln_off_286 );
         }
         prevline.linnum += linedelta;
         prevline.off += addrdelta;
@@ -585,11 +584,11 @@ static void DwarfAddAddrAdd( segdata *sdata, offset delta, offset size,
     delta = delta;
     size = size;
     cookie = cookie;
-    if( isnewmod && !(sdata->o.mod->modinfo & MOD_DBI_SEEN) ) {
+    if( isnewmod && !( sdata->o.mod->modinfo & MOD_DBI_SEEN ) ) {
         if( FmtData.type & MK_SEGMENTED ) {
-            sdata->o.mod->d.d->arange.size += sizeof(segmented_arange_tuple);
+            sdata->o.mod->d.d->arange.size += sizeof( segmented_arange_tuple );
         } else {
-            sdata->o.mod->d.d->arange.size += sizeof(flat_arange_tuple);
+            sdata->o.mod->d.d->arange.size += sizeof( flat_arange_tuple );
         }
     }
 }
@@ -607,13 +606,13 @@ static offset GetNewAddrOffset( segdata *sdata, offset delta )
     group_entry *group;
 
     off = sdata->u.leader->seg_addr.off + delta;
-    if( FmtData.type & (MK_PE|MK_QNX_FLAT|MK_ELF) ) {
+    if( FmtData.type & ( MK_PE | MK_QNX_FLAT | MK_ELF ) ) {
         group = sdata->u.leader->group;
         if( group != NULL ) {
             off += group->linear - group->grp_addr.off - Groups->linear;
         }
     }
-    return off;
+    return( off );
 }
 
 static void DwarfGenAddrInit( segdata *sdata, void *_tuple )
@@ -637,18 +636,19 @@ static void DwarfGenAddrAdd( segdata *sdata, offset delta, offset size,
     mod_entry * mod;
     unsigned    tup_size;
 
-    if( !isnewmod ) return;
+    if( !isnewmod )
+        return;
     mod = sdata->o.mod;
-    if( !(mod->modinfo & MOD_DBI_SEEN) ) {
+    if( !( mod->modinfo & MOD_DBI_SEEN ) ) {
         if( FmtData.type & MK_SEGMENTED ) {
             tuple->s.length = size;
-            tup_size = sizeof(segmented_arange_tuple);
+            tup_size = sizeof( segmented_arange_tuple );
             if( sdata->u.leader->class->flags & CLASS_STACK ) {
                 tuple->s.length = StackSize;
             }
         } else {
             tuple->f.length = size;
-            tup_size = sizeof(flat_arange_tuple);
+            tup_size = sizeof( flat_arange_tuple );
             if( sdata->u.leader->class->flags & CLASS_STACK ) {
                 tuple->f.length = StackSize;
             }
@@ -677,7 +677,7 @@ extern void DwarfAddrSectStart( section *sect )
 {
     int index;
 
-    if( sect == Root && SectionTable[SECT_DEBUG_ABBREV].size > 0 ) {
+    if( ( sect == Root ) && ( SectionTable[SECT_DEBUG_ABBREV].size > 0 ) ) {
         for( index = 0; index < SECT_NUM_SECTIONS; index++ ) {
             if( index != SECT_DEBUG_ABBREV ) {
                 SectionTable[index].addr = DBIAlloc( SectionTable[index].size );
@@ -748,7 +748,7 @@ static unsigned_32 WriteELFSections( unsigned_32 file_off, unsigned_32 curr_off,
         }
     }
     for( addidx = 0; addidx < SECT_NUM_SECTIONS; addidx++ ) {
-        if( SectionTable[addidx].size != 0 && SectionTable[addidx].start == 0 ){
+        if( ( SectionTable[addidx].size != 0 ) && ( SectionTable[addidx].start == 0 ) ) {
             FillHeader( hdr, SectionTable[addidx].name, strtab, curr_off );
             hdr->sh_size = SectionTable[addidx].size;
             WriteDwarfSect( addidx, hdr->sh_size );
@@ -756,7 +756,7 @@ static unsigned_32 WriteELFSections( unsigned_32 file_off, unsigned_32 curr_off,
             hdr++;
         }
     }
-    return curr_off;
+    return( curr_off );
 }
 
 static bool CheckDBISeg( void *seg, void *num )
@@ -765,7 +765,7 @@ static bool CheckDBISeg( void *seg, void *num )
     if( ((seg_leader *)seg)->size != 0 ) {
         (*(int *)num)++;
     }
-    return FALSE;
+    return( FALSE );
 }
 
 extern int DwarfCountDebugSections( void )
@@ -779,14 +779,14 @@ extern int DwarfCountDebugSections( void )
         RingLookup( DBIClass->segs, CheckDBISeg, &num );
     }
     for( index = 0; index < SECT_NUM_SECTIONS; index++ ) {
-        if( SectionTable[index].size != 0 && SectionTable[index].start == 0 ) {
+        if( ( SectionTable[index].size != 0 ) && ( SectionTable[index].start == 0 ) ) {
             num++;
         }
     }
     if( FmtData.type & MK_OVERLAYS ) {
         num++;
     }
-    return num;
+    return( num );
 }
 
 extern offset DwarfWriteTrailer( offset curr_off )
@@ -795,12 +795,12 @@ extern offset DwarfWriteTrailer( offset curr_off )
     TISTrailer  trailer;
 
     trailer.size = curr_off;
-    trailer.size += sizeof(TISTrailer);
+    trailer.size += sizeof( TISTrailer );
     trailer.signature = TIS_TRAILER_SIGNATURE;
     trailer.vendor = 0;
     trailer.type = 0;
-    WriteLoad( &trailer, sizeof(TISTrailer) );
-    return sizeof(TISTrailer);
+    WriteLoad( &trailer, sizeof( TISTrailer ) );
+    return( sizeof( TISTrailer ) );
 }
 
 extern offset DwarfElfWriteDBI( offset curr_off, stringtable *strtab,
@@ -808,7 +808,7 @@ extern offset DwarfElfWriteDBI( offset curr_off, stringtable *strtab,
 /*******************************************************************/
 {
     curr_off = WriteELFSections( curr_off, curr_off, dbgsecbegin, strtab );
-    return curr_off;
+    return( curr_off );
 }
 
 extern void DwarfWriteDBI( void )
@@ -832,24 +832,24 @@ extern void DwarfWriteDBI( void )
     elf_header.e_version = EV_CURRENT;
     elf_header.e_entry = 0;
     elf_header.e_phoff = 0;
-    elf_header.e_shoff = sizeof(elf_header);
+    elf_header.e_shoff = sizeof( elf_header );
     elf_header.e_flags = 0;
-    elf_header.e_ehsize = sizeof(elf_header);
-    elf_header.e_phentsize = sizeof(Elf32_Phdr);
+    elf_header.e_ehsize = sizeof( elf_header );
+    elf_header.e_phentsize = sizeof( Elf32_Phdr );
     elf_header.e_phnum = 0;
-    elf_header.e_shentsize = sizeof(Elf32_Shdr);
+    elf_header.e_shentsize = sizeof( Elf32_Shdr );
     elf_header.e_shnum = 2;     // reserve 2 for null header & string table
     elf_header.e_shnum += DwarfCountDebugSections();
     elf_header.e_shstrndx = elf_header.e_shnum - 1;     // last entry
-    WriteLoad( &elf_header, sizeof(Elf32_Ehdr) );
-    shdr_size = sizeof(Elf32_Shdr) * elf_header.e_shnum;
+    WriteLoad( &elf_header, sizeof( Elf32_Ehdr ) );
+    shdr_size = sizeof( Elf32_Shdr ) * elf_header.e_shnum;
     _ChkAlloc( sect_header, shdr_size );
     savepos = PosLoad() + shdr_size;
     SeekLoad( savepos );
-    memset( sect_header, 0, sizeof(Elf32_Shdr) );   // first fill in the null section
+    memset( sect_header, 0, sizeof( Elf32_Shdr ) );   // first fill in the null section
     InitStringTable( &strtab, FALSE );
     CharStringTable( &strtab, 0 );
-    virt_off = sizeof(Elf32_Ehdr)+shdr_size;
+    virt_off = sizeof( Elf32_Ehdr ) + shdr_size;
     virt_off = WriteELFSections( savepos, virt_off, sect_header+1, &strtab );
     sh = sect_header + elf_header.e_shstrndx;
     FillHeader( sh, ".shstrtab", &strtab, virt_off );
