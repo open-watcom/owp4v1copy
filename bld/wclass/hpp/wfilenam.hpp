@@ -35,10 +35,8 @@
 
 #include "wstring.hpp"
 
-extern "C" {
-        #include <stdlib.h>
-        #include <time.h>
-};
+#include <stdlib.h>
+#include <time.h>
 
 WCLASS WFileName : public WString {
     Declare( WFileName )
