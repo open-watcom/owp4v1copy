@@ -77,12 +77,6 @@ sigtab  SignalTable[] = {
         { SIG_DFL, XCPT_INTEGER_OVERFLOW }              /* SIGIOVFL */
 };
 
-void    __sigabort() {
-/********************/
-
-    raise( SIGABRT );
-}
-
 
 _WCRTLINK int   __sigfpe_handler( int fpe ) {
 /***********************************/
@@ -100,6 +94,7 @@ _WCRTLINK int   __sigfpe_handler( int fpe ) {
     }
     return( -1 );
 }
+
 
 static  ULONG   __syscall xcpt_handler( PEXCEPTIONREPORTRECORD pxcpt,
                                   PEXCEPTIONREGISTRATIONRECORD registration,
@@ -193,10 +188,10 @@ static  ULONG   __syscall xcpt_handler( PEXCEPTIONREPORTRECORD pxcpt,
                     pxcpt->ExceptionInfo[0] != XCPT_SIGNAL_BREAK ) {
                     continue;
                 }
-		if( sig == SIGTERM &&
-		    pxcpt->ExceptionInfo[0] != XCPT_SIGNAL_KILLPROC ) {
-		    continue;
-		}
+        if( sig == SIGTERM &&
+            pxcpt->ExceptionInfo[0] != XCPT_SIGNAL_KILLPROC ) {
+            continue;
+        }
                 if( (_RWD_sigtab[sig].func == SIG_IGN) ) {
                     return( XCPT_CONTINUE_EXECUTION );
                 }
@@ -215,6 +210,47 @@ static  ULONG   __syscall xcpt_handler( PEXCEPTIONREPORTRECORD pxcpt,
         }
     }
     return( XCPT_CONTINUE_SEARCH );
+}
+
+
+void    __SigInit() {
+/*******************/
+
+#if defined( __SW_BM )
+    int         i;
+
+    for( i = 1; i <= __SIGLAST; ++i ) {
+        _RWD_sigtab[ i ] = SignalTable[ i ];
+    }
+#endif
+    __XCPTHANDLER->prev_structure = NULL;
+    __XCPTHANDLER->ExceptionHandler = &xcpt_handler;
+}
+
+
+void    __SigFini() {
+/*******************/
+
+#if defined( __SW_BM )
+    ULONG               nesting;
+    APIRET              rc;
+    __EXCEPTION_RECORD  *rr;
+
+    rr = __XCPTHANDLER;
+    if( rr && rr->prev_structure ) {
+        do {
+            rc = DosSetSignalExceptionFocus( SIG_UNSETFOCUS, &nesting );
+        } while( rc == NO_ERROR && nesting > 0 );
+        DosUnsetExceptionHandler( rr );
+    }
+#endif
+}
+
+
+void    __sigabort() {
+/********************/
+
+    raise( SIGABRT );
 }
 
 
@@ -303,39 +339,6 @@ _WCRTLINK int raise( int sig ) {
     return( 0 );
 }
 
-
-void    __SigInit() {
-/*******************/
-
-#if defined( __SW_BM )
-    int         i;
-
-    for( i = 1; i <= __SIGLAST; ++i ) {
-        _RWD_sigtab[ i ] = SignalTable[ i ];
-    }
-#endif
-    __XCPTHANDLER->prev_structure = NULL;
-    __XCPTHANDLER->ExceptionHandler = &xcpt_handler;
-}
-
-
-void    __SigFini() {
-/*******************/
-
-#if defined( __SW_BM )
-    ULONG               nesting;
-    APIRET              rc;
-    __EXCEPTION_RECORD  *rr;
-
-    rr = __XCPTHANDLER;
-    if( rr && rr->prev_structure ) {
-        do {
-            rc = DosSetSignalExceptionFocus( SIG_UNSETFOCUS, &nesting );
-        } while( rc == NO_ERROR && nesting > 0 );
-        DosUnsetExceptionHandler( rr );
-    }
-#endif
-}
 
 _WCRTLINK extern  void  (*__sig_init_rtn)(void);
 _WCRTLINK extern  void  (*__sig_fini_rtn)(void);
