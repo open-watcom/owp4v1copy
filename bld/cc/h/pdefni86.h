@@ -169,7 +169,7 @@ enum    asm_codes {
         in_ax_dx= 0xed,
         out_dx_al=0xee,
         out_dx_ax=0xef,
-        rep     = 0xf2,
+        rep     = 0xf3,
         repnz   = 0xf2,
         repz    = 0xf3,
         cli     = 0xfa,
