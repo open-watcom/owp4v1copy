@@ -17,11 +17,10 @@ objs =                  &
        code.obj         &
        dfa.obj          &
        main.obj         &
-       memchk.obj       &
        parser.obj       &
        scanner.obj      &
        substr.obj       &
        translat.obj
 
 $(proj_name).exe : $(objs)
-        $(linker) option quiet $(lflags) name $^. file { $< }
+        $(linker) option quiet op stack=8k $(lflags) name $^. file { $< }
