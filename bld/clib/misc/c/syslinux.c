@@ -44,6 +44,7 @@
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/ptrace.h>
+#include <sys/utsname.h>
 #include "syslinux.h"
 
 /* user-visible error numbers are in the range -1 - -124 */
@@ -178,6 +179,12 @@ _WCRTLINK int stat( const char *filename, struct stat * __buf )
     __syscall_return(int,res);
 }
 
+_WCRTLINK int lstat( const char *filename, struct stat * __buf )
+{
+    u_long res = sys_call2(SYS_lstat, (u_long)filename, (u_long)__buf);
+    __syscall_return(int,res);
+}
+
 _WCRTLINK int fstat( int __fildes, struct stat * __buf )
 {
     u_long res = sys_call2(SYS_fstat, __fildes, (u_long)__buf);
@@ -200,6 +207,12 @@ _WCRTLINK off_t lseek( int __fildes, off_t __offset, int __whence )
 {
     u_long res = sys_call3(SYS_lseek, __fildes, __offset, __whence);
     __syscall_return(off_t,res);
+}
+
+_WCRTLINK int _llseek( unsigned int __fildes, unsigned long __hi, unsigned long __lo, loff_t *__res, unsigned int __whence)
+{
+    u_long res = sys_call5(SYS__llseek, __fildes, __hi, __lo, (u_long)__res, __whence);
+    __syscall_return(int,res);
 }
 
 _WCRTLINK int close( int __fildes )
@@ -240,20 +253,20 @@ _WCRTLINK int select( int __width, fd_set * __readfds, fd_set * __writefds, fd_s
 
 _WCRTLINK int ptrace(int request, int pid, int addr, int data)
 {
-	long    res,ret;
-	
+        long    res,ret;
+
     if (request > 0 && request < 4)
         *((long**)&data) = &ret;
     res = sys_call4(SYS_ptrace, request, pid, addr, data);
-	if (res >= 0) {
-		if (request > 0 && request < 4) {
-			errno = 0;
-			return (ret);
-		}
-		return (int)res;
-	}
-	errno = -res;
-	return -1;
+        if (res >= 0) {
+                if (request > 0 && request < 4) {
+                        errno = 0;
+                        return (ret);
+                }
+                return (int)res;
+        }
+        errno = -res;
+        return -1;
 }
 
 _WCRTLINK int readlink( const char *__path, char *__buf, size_t __bufsiz )
@@ -517,3 +530,16 @@ _WCRTLINK int    setuid( uid_t __newuserid )
     u_long res = sys_call1(SYS_setuid, __newuserid);
     __syscall_return(int,res);
 }
+
+_WCRTLINK void sync( void )
+{
+    (void) sys_call0(SYS_sync);
+    return;
+}
+
+_WCRTLINK int    uname ( struct utsname *__name)
+{
+    u_long res = sys_call1(SYS_uname, (u_long)__name);
+    __syscall_return(int,res);
+}
+

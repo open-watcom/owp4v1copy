@@ -291,6 +291,7 @@ LINUX_files = &
         sys/ioctl.h &
         sys/mount.h &
         sys/ptrace.h &
+        sys/utsname.h &
         sys/wait.h &
         sys/socket.h &
         netinet/in.h &

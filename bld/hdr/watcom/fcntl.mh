@@ -67,6 +67,8 @@
 #define O_TEXT      000000  /*  Text file   (DOS thing)     */
 #define O_BINARY    000000  /*  Binary file (DOS thing)     */
 
+#define O_LARGEFILE 0100000 /*  support files > 2G, allow _llseek() */
+
 /*
  *  fcntl() requests
  */

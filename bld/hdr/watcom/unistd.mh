@@ -197,6 +197,7 @@ _WCRTLINK extern int    setreuid(uid_t real, uid_t effective);
 _WCRTLINK extern pid_t  setsid( void );
 _WCRTLINK extern int    setuid( uid_t __newuserid );
 _WCRTLINK extern int    symlink( const char *__pname, const char *__slink );
+_WCRTLINK extern void   sync( void );
 _WCRTLINK extern long   sysconf( int __name );
 _WCRTLINK extern pid_t  tcgetpgrp( int __fildes );
 _WCRTLINK extern int    tcsetpgrp( int __fildes, pid_t __pgrp_id );
@@ -244,7 +245,6 @@ struct _psinfo2; /* for C++ */
 _WCRTLINK extern int    qnx_getids( pid_t pid, struct _psinfo2 *info);
 _WCRTLINK extern int    qnx_setids( pid_t pid, int id, unsigned subtype );
 _WCRTLINK extern int    qnx_sync( nid_t nid );
-_WCRTLINK extern void   sync( void );
 _WCRTLINK extern int    unlock( int __fildes, long __offset, long __nbytes );
 :endsegment
 
@@ -268,6 +268,7 @@ _WCRTLINK extern int    ioperm( unsigned long __from, unsigned long __num, int _
 _WCRTLINK extern int    iopl( int __level );
 _WCRTLINK extern int    nice( int __val );
 _WCRTLINK extern void   usleep( unsigned long __usec );
+_WCRTLINK extern int    _llseek( unsigned int __fildes, unsigned long __hi, unsigned long __lo, loff_t *__res, unsigned int __whence);
 :endsegment
 :segment QNX
 #if defined(__386__)
