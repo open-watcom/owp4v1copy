@@ -750,14 +750,6 @@ typedef struct _SOCKET_ADDRESS_LIST {
     SOCKET_ADDRESS  Address[1];
 } SOCKET_ADDRESS_LIST, * LPSOCKET_ADDRESS_LIST;
 
-#ifndef __BLOB_T_DEFINED /* also in wtypes.h */
-#define __BLOB_T_DEFINED
-typedef struct _BLOB {
-	ULONG	cbSize;
-	BYTE	*pBlobData;
-} BLOB,*PBLOB,*LPBLOB;
-#endif
-
 typedef struct _WSAQuerySetA
 {
 	DWORD	dwSize;

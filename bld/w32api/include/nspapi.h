@@ -3,7 +3,6 @@
 #if __GNUC__ >=3
 #pragma GCC system_header
 #endif
-#include <wtypes.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,6 +37,13 @@ extern "C" {
 #define SERVICE_FLUSH		3
 #define SERVICE_FLAG_HARD	0x00000002
     
+#ifndef __BLOB_T_DEFINED /* also in wtypes.h */
+#define __BLOB_T_DEFINED
+typedef struct _BLOB {
+	ULONG   cbSize;
+	BYTE    *pBlobData;
+} BLOB,*PBLOB,*LPBLOB;
+#endif
 typedef struct _SOCKET_ADDRESS {
 	LPSOCKADDR lpSockaddr;
 	INT iSockaddrLength;
@@ -74,8 +80,17 @@ typedef struct _SERVICE_INFO {
 } SERVICE_INFO, *LPSERVICE_INFO;
 
 typedef void *LPSERVICE_ASYNC_INFO;
-INT WINAPI SetService(DWORD,DWORD,DWORD,LPSERVICE_INFO,LPSERVICE_ASYNC_INFO,LPDWORD);
-INT WINAPI GetAddressByName(DWORD,LPGUID,LPTSTR,LPINT,DWORD,LPSERVICE_ASYNC_INFO,LPVOID,LPDWORD,LPTSTR,LPDWORD);
+INT WINAPI SetServiceA(DWORD,DWORD,DWORD,LPSERVICE_INFO,LPSERVICE_ASYNC_INFO,LPDWORD);
+INT WINAPI SetServiceW(DWORD,DWORD,DWORD,LPSERVICE_INFO,LPSERVICE_ASYNC_INFO,LPDWORD);
+INT WINAPI GetAddressByNameA(DWORD,LPGUID,LPTSTR,LPINT,DWORD,LPSERVICE_ASYNC_INFO,LPVOID,LPDWORD,LPTSTR,LPDWORD);
+INT WINAPI GetAddressByNameW(DWORD,LPGUID,LPTSTR,LPINT,DWORD,LPSERVICE_ASYNC_INFO,LPVOID,LPDWORD,LPTSTR,LPDWORD);
+#ifdef UNICODE
+#define SetService SetServiceW
+#define GetAddressByName GetAddressByNameW
+#else
+#define SetService SetServiceA
+#define GetAddressByName GetAddressByNameA
+#endif
 
 #ifdef __cplusplus
 }
