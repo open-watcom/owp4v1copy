@@ -33,7 +33,14 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <direct.h>
+
+#if defined(__UNIX__)
+    #include <dirent.h>
+    #include <sys/stat.h>
+#else
+    #include <direct.h>
+#endif
+
 #include "ctags.h"
 #include "banner.h"
 
@@ -249,9 +256,19 @@ static void processFileList( char *ptr )
         return;
     }
     while( (dirent = readdir( dirp )) != NULL ) {
-        if( dirent->d_attr & (_A_SUBDIR|_A_VOLID ) ) {
-            continue;
+
+#ifdef __UNIX__
+        {
+            struct stat buf;
+            stat( dirent->d_name, &buf );
+            if ( S_ISDIR( buf.st_mode ) )
+                continue;
         }
+#else
+        if( dirent->d_attr & (_A_SUBDIR|_A_VOLID ) )
+            continue;
+#endif
+
         _splitpath2( dirent->d_name, buff2, NULL, NULL, &fname, &ext );
         _makepath( path, drive, dir, fname, ext );
         strlwr( path );
