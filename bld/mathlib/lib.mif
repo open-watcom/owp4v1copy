@@ -12,7 +12,7 @@ lib_flags =-b -c -p=16
 !ifdef on_build_machine
 !ifeq processor axp
 !else
-lib_flags    +=-s -t
+lib_flags    += -s -t
 !endif
 !endif
 
