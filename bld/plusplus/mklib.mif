@@ -110,7 +110,7 @@ asm_flags += -DNDEBUG
 !endif
 
 !ifeq linkage dynamic
-br_flags=-D__MAKE_DLL_CPPLIB
+br_flags=-D__MAKE_DLL_CPPLIB -D__MAKE_DLL_WRTLIB
 br_flags_yes=-br
 !else
 br_flags=

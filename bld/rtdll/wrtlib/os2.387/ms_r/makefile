@@ -1,4 +1,4 @@
-#pmake:all small register 32bit inline os2 iX86 rtdll no_build os_os2 cpu_386
+#pmake: no_build small register 32bit inline os2 iX86 rtdll os_os2 cpu_386
 component=wrtlib
 processor=387
 model=ms

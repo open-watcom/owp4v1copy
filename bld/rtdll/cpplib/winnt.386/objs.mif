@@ -4,7 +4,7 @@ __ifx__        =nt3$(dllname_$(convention))mt
 dll_libs = $+ &
     $(pfx__)/$(__ifx__)$(dllname_profile).dll/plbxmt3$(dllname_$(convention)).lib &
     ../../../clib/$(system).386/$(subdir)/clib3$(dllname_$(convention)).lib &
-    ../../../mathlib/$(system).387/$(subdir)/clib.lib &
+    ../../../mathlib/$(system).387/$(subdir)/clib3$(dllname_$(convention)).lib &
     $(pfx__)/$(__ifx__)/plbxmt3$(dllname_$(convention)).lib &
     $-
 

@@ -1,6 +1,8 @@
 .extensions:
 .extensions: .lib .imp .lbc .dll .obj .c .cpp .asm
 
+.IGNORE
+
 !ifdef profile
 option_symfile =
 !else
@@ -12,7 +14,7 @@ patch_level=0
 !endif
 
 $(libname).lib : $(dllname).imp $(static_objs)
-    $(librarian) $(lib_flags) $(lib_flags_new) -irn $^@ @$(dllname).imp $(static_objs)
+    $(librarian) $(lib_flags) $(lib_flags_new) -p=16 -irn $^@ @$(dllname).imp $(static_objs)
 
 $(dllname).imp : $(dllname).lbc $(rtdll_dir)/trimlbc.vi $(rtdll_dir)/add_br.vi
     cp $(dllname).lbc $(dllname).imp
@@ -27,9 +29,16 @@ $(dllname).imp : $(dllname).lbc $(rtdll_dir)/trimlbc.vi $(rtdll_dir)/add_br.vi
 res_objs = $(dllname).rc
 extra_libs = kernel32.lib user32.lib advapi32.lib
 !endif
+!ifeq component wrtlib
+!ifeq convention stack
+lnk_alias = alias _HugeValue_br=_HugeValue, _IsTable_br=_IsTable
+!else
+lnk_alias = alias __HugeValue_br=__HugeValue, __IsTable_br=__IsTable
+!endif
+!endif
 
 $(dllname).dll $(dllname).lbc : $(res_objs) $(dll_objs) $(dll_libs) tmp.def
-    $(linker) debug dwarf $(option_symfile) $(l_flags) $(dllbase) op map name $(dllname).dll file { $(dll_objs) } export { @$]@ } lib { $(dll_libs) $(extra_libs) }
+    $(linker) debug dwarf $(option_symfile) $(l_flags) $(dllbase) op map name $(dllname).dll file { $(dll_objs) } export { @$]@ } lib { $(dll_libs) $(extra_libs) } $(lnk_alias)
 !ifeq system winnt
     $(rc) $(rc_flags) -i"$(%watcom)/h/nt" $(dllname).rc $(dllname).dll
 !endif

@@ -1,4 +1,4 @@
-#pmake/25:all small stack 32bit os2 iX86 rtdll build os_os2 cpu_386
+#pmake/25: build2 small stack 32bit os2 iX86 rtdll os_os2 cpu_386
 component=clib
 processor=386
 model=ms

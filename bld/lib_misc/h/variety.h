@@ -197,12 +197,21 @@
         #undef _WPRTLINK
         #undef _WPIRTLINK
         #if defined(__NT__)
-            #define _WCRTLINK __declspec(dllexport)
-            #define _WCIRTLINK __declspec(dllexport)
-            #define _WMRTLINK __declspec(dllimport)
-            #define _WMIRTLINK __declspec(dllimport)
-            #define _WPRTLINK __declspec(dllimport)
-            #define _WPIRTLINK __declspec(dllimport)
+            #if defined( __MAKE_DLL_WRTLIB )
+                #define _WCRTLINK __declspec(dllexport)
+                #define _WCIRTLINK __declspec(dllexport)
+                #define _WMRTLINK
+                #define _WMIRTLINK
+                #define _WPRTLINK
+                #define _WPIRTLINK
+            #else
+                #define _WCRTLINK __declspec(dllexport)
+                #define _WCIRTLINK __declspec(dllexport)
+                #define _WMRTLINK __declspec(dllimport)
+                #define _WMIRTLINK __declspec(dllimport)
+                #define _WPRTLINK __declspec(dllimport)
+                #define _WPIRTLINK __declspec(dllimport)
+            #endif
         #elif defined(__WARP__)
             #define _WCRTLINK __declspec(dllexport)
             #define _WCIRTLINK __declspec(dllexport)
@@ -220,12 +229,21 @@
         #undef _WPRTLINK
         #undef _WPIRTLINK
         #if defined(__NT__)
-            #define _WCRTLINK __declspec(dllimport)
-            #define _WCIRTLINK __declspec(dllimport)
-            #define _WMRTLINK __declspec(dllexport)
-            #define _WMIRTLINK __declspec(dllexport)
-            #define _WPRTLINK __declspec(dllimport)
-            #define _WPIRTLINK __declspec(dllimport)
+            #if defined( __MAKE_DLL_WRTLIB )
+                #define _WCRTLINK
+                #define _WCIRTLINK
+                #define _WMRTLINK __declspec(dllexport)
+                #define _WMIRTLINK __declspec(dllexport)
+                #define _WPRTLINK
+                #define _WPIRTLINK
+            #else
+                #define _WCRTLINK __declspec(dllimport)
+                #define _WCIRTLINK __declspec(dllimport)
+                #define _WMRTLINK __declspec(dllexport)
+                #define _WMIRTLINK __declspec(dllexport)
+                #define _WPRTLINK __declspec(dllimport)
+                #define _WPIRTLINK __declspec(dllimport)
+            #endif
         #elif defined(__WARP__)
             #define _WCRTLINK
             #define _WCIRTLINK
@@ -243,12 +261,21 @@
         #undef _WPRTLINK
         #undef _WPIRTLINK
         #if defined(__NT__)
-            #define _WCRTLINK __declspec(dllimport)
-            #define _WCIRTLINK __declspec(dllimport)
-            #define _WMRTLINK __declspec(dllimport)
-            #define _WMIRTLINK __declspec(dllimport)
-            #define _WPRTLINK __declspec(dllexport)
-            #define _WPIRTLINK __declspec(dllexport)
+            #if defined( __MAKE_DLL_WRTLIB )
+                #define _WCRTLINK
+                #define _WCIRTLINK
+                #define _WMRTLINK
+                #define _WMIRTLINK
+                #define _WPRTLINK __declspec(dllexport)
+                #define _WPIRTLINK __declspec(dllexport)
+            #else
+                #define _WCRTLINK __declspec(dllimport)
+                #define _WCIRTLINK __declspec(dllimport)
+                #define _WMRTLINK __declspec(dllimport)
+                #define _WMIRTLINK __declspec(dllimport)
+                #define _WPRTLINK __declspec(dllexport)
+                #define _WPIRTLINK __declspec(dllexport)
+            #endif
         #elif defined(__WARP__)
             #define _WCRTLINK
             #define _WCIRTLINK

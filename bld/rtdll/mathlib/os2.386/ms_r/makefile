@@ -1,4 +1,4 @@
-#pmake/50:all small register 32bit calls os2 iX86 rtdll build os_os2 cpu_386
+#pmake/50: build2 small register 32bit calls os2 iX86 rtdll os_os2 cpu_386
 component=mathlib
 processor=386
 model=ms

@@ -27,13 +27,13 @@ dll_objs = $+ &
     $(new_clib)/startup$(__cifx__)clibdwnt.obj &
     $-
 
-targdir = $(plusplus_cplib_dir)/runtime/$(__pifx__).dll/
-!include $(plusplus_cplib_dir)/runtime/static.mif
+targdir = $(plusplus_cpplib_dir)/runtime/$(__pifx__).dll/
+!include $(plusplus_cpplib_dir)/runtime/static.mif
 targdir =
 
 static_objs += $+ &
     $(new_clib)/startup$(__cifx__)cstrtwnt.obj &
-    $(new_clib)/startup$(__cifx__)cstrtwwt.obj &
+#    $(new_clib)/startup$(__cifx__)cstrtwwt.obj &
     $(new_clib)/startup$(__cifx__)dcinit.obj &
     $(new_clib)/startup$(__cifx__)dmndwnt.obj &
     $(new_clib)/startup$(__cifx__)dstrt386.obj &

@@ -1,4 +1,4 @@
-#pmake/75:all small register 32bit calls winnt iX86 rtdll build os_nt cpu_386 cpplib
+#pmake/75: build2 small register 32bit calls winnt iX86 rtdll os_nt cpu_386 cpplib
 component=cpplib
 processor=386
 model=ms

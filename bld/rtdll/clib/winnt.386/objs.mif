@@ -3,7 +3,7 @@ __ifx__ =/library/$(system).$(processor)/$(subdir)/
 
 !ifdef profile
 dll_libs = $+ &
-    $(pfx__)/library/$(system).$(processor)/ms_rp/clib3$(dllname_$(convention)).lib &
+    $(pfx__)/library/$(system).$(processor)/$(model)_rp/clib3$(dllname_$(convention)).lib &
     $-
 !else
 dll_libs = $+ &

@@ -1,4 +1,4 @@
-#pmake/75:all small stack 32bit calls os2 iX86 rtdll build os_os2 cpu_386 cpplib
+#pmake/75: build2 small stack 32bit calls os2 iX86 rtdll os_os2 cpu_386 cpplib
 component=cpplib
 processor=386
 model=ms
