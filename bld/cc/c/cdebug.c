@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Routines to emit type debugging information.
 *
 ****************************************************************************/
 
@@ -98,36 +97,6 @@ static void RevTypeList()
 }
 #endif
 
-static int SimpleTypedef( TYPEPTR typ )
-{
-    TYPEPTR     *typp;
-
-    while( typ != NULL ) {
-        switch( typ->decl_type ) {
-        case TYPE_TYPEDEF:
-        case TYPE_ARRAY:
-        case TYPE_POINTER:
-            typ = typ->object;
-            break;
-        case TYPE_FUNCTION:
-            if( typ->u.parms != NULL ) {
-                for( typp = typ->u.parms; *typp != NULL; ++typp ) {
-                    if( !SimpleTypedef( *typp ) ) return( FALSE );
-                }
-            }
-            typ = typ->object;
-            break;
-        case TYPE_STRUCT:
-        case TYPE_UNION:
-        case TYPE_ENUM:
-            return( FALSE );
-        default:
-            return( TRUE );
-        }
-    }
-    return( TRUE );
-}
-
 static void EmitADBType( TYPEPTR typ )
 {
     switch( typ->decl_type ) {
@@ -138,8 +107,7 @@ static void EmitADBType( TYPEPTR typ )
         if( typ->u.tag->name[0] == '\0' ) break;
         goto dump_type;
     case TYPE_TYPEDEF:
-        if( !(CompFlags.dump_types_with_names
-                || SimpleTypedef( typ )) ) break;
+        if( !CompFlags.dump_types_with_names ) break;
         if( CompFlags.no_debug_type_names ) break;
     dump_type:
 #if 0
@@ -447,4 +415,3 @@ dbug_type FEDbgRetType( CGSYM_HANDLE cgsym_handle )
         return( DBG_NIL_TYPE );
     }
 }
-
