@@ -113,7 +113,7 @@ namespace std {
 
   // equal( InputIterator1, InputIterator1, InputIterator2, BinaryPredicate )
   // ************************************************************************
-  template< class InputIterator1, class InputIterator2, BinaryPredicate >
+  template< class InputIterator1, class InputIterator2, class BinaryPredicate >
   bool equal( InputIterator1 first1,
               InputIterator1 last1,
               InputIterator2 first2,
@@ -145,20 +145,19 @@ namespace std {
     return( result );
   }
 
-  // copy_backwards( Bidirectional1, Bidirectional1, Bidirectional2 )
+  // copy_backward( Bidirectional1, Bidirectional1, Bidirectional2 )
   // ****************************************************************
   template< class Bidirectional1, class Bidirectional2 >
-  Bidirectional2 copy_backwards( Bidirectional1 first,
-                                 Bidirectional1 last,
-                                 Bidirectional2 result )
+  Bidirectional2 copy_backward( Bidirectional1 first,
+                                Bidirectional1 last,
+                                Bidirectional2 result )
   {
     if( first == last ) return( result );
     while( --last != first ) {
-      *result = *last;
-      --result;
+      *--result = *last;
     }
-    *result = *last;
-    return( --result );
+    *--result = *last;
+    return( result );
   }
 
   // swap( Type &, Type & )
@@ -218,7 +217,7 @@ namespace std {
   OutputIterator transform( InputIterator1 first1,
                             InputIterator1 last1,
                             InputIterator2 first2,
-                            OutputIterator result;
+                            OutputIterator result,
                             BinaryOperation bop )
   {
     while( first1 != last1 ) {
@@ -244,8 +243,8 @@ namespace std {
     }
   }
 
-  // replace( ForwardIterator, ForwardIterator, Predicate, const Type & )
-  // ********************************************************************
+  // replace_if( ForwardIterator, ForwardIterator, Predicate, const Type & )
+  // ***********************************************************************
   template< class ForwardIterator, class Predicate, class Type >
   void replace_if( ForwardIterator first,
                    ForwardIterator last,
@@ -308,7 +307,7 @@ namespace std {
 
   // fill_n( OutputIterator, Size, const Type & )
   // ********************************************
-  template< class OutputIterator, class Size class Type >
+  template< class OutputIterator, class Size, class Type >
   void fill_n( OutputIterator first, Size n, const Type &value )
   {
     unsigned long long i = 0ULL, max(n);
@@ -332,7 +331,7 @@ namespace std {
 
   // generate_n( OutputIterator, Size, Generator )
   // *********************************************
-  template< class OutputIterator, class Size class Generator >
+  template< class OutputIterator, class Size, class Generator >
   void generate_n( OutputIterator first, Size n, Generator gen )
   {
     unsigned long long i = 0ULL, max(n);

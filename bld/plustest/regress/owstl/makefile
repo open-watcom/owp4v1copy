@@ -32,6 +32,7 @@ cflags_i86 += -zq-fpi87-fp5-ml
 cflags_axp += -zq
 
 tests = &
+	alg01.$(exe)    &
         fun01.$(exe)    &
         lim01.$(exe)    &
         string01.$(exe) &
@@ -48,6 +49,8 @@ test : .symbolic test.lnk $(tests)
 # Note that there must be no space before the redirection symbol - otherwise
 # echo will emit the space character and subsequent diff will fail. This
 # way is more transparent than keeping trailing blanks in the check file.
+    @echo -------alg01--------->> test.out
+    $(run) alg01 >> test.out
     @echo -------fun01--------->> test.out
     $(run) fun01 >>test.out
     @echo -------lim01--------->> test.out
