@@ -46,6 +46,8 @@
 
 #define MAX_SECS    255
 
+bool    byte_swap = FALSE;
+
 struct section_data Sections[DR_DEBUG_NUM_SECTS];
 
 typedef struct _dump_options {
@@ -218,8 +220,9 @@ void main( int argc, char *argv[] )
     orl_handle                  o_hnd;
     orl_file_handle             o_fhnd;
     orl_funcs                   funcs;
-    int                         file;
     orl_file_format             type;
+    orl_file_flags              o_flags;
+    int                         file;
     int                         c;
     char                        *secs[MAX_SECS];
     int                         num_secs = 0;
@@ -271,6 +274,18 @@ void main( int argc, char *argv[] )
         return;
     }
 
+    o_flags = ORLFileGetFlags( o_fhnd );
+
+#ifdef __BIG_ENDIAN__
+    if( o_flags & ORL_FILE_FLAG_LITTLE_ENDIAN ) {
+        byte_swap = TRUE;
+    }
+#else
+    if( o_flags & ORL_FILE_FLAG_BIG_ENDIAN ) {
+        byte_swap = TRUE;
+    }
+#endif
+
     if( num_secs ) {
         for( c = 0; c < num_secs; c++ ) {
             sectionFound = 0;
@@ -305,8 +320,8 @@ void main( int argc, char *argv[] )
     DumpSections();
 
     freeBuffList();
-    #ifdef TRMEM
+#ifdef TRMEM
     TRMemPrtList();
-    #endif
+#endif
     TRMemClose();
 }

@@ -37,9 +37,12 @@
 #include <malloc.h>
 
 #include "watcom.h"
+#include "bool.h"
 #include "dw.h"
 #include "dwarf.h"
 #include "client.h"
+
+extern bool byte_swap;
 
 typedef struct {
     uint_32     value;
@@ -230,6 +233,32 @@ static char *sectionNames[] = {
     ".debug_ref"
 };
 
+
+static uint_32  getU32( uint_32 *src )
+{
+    if( byte_swap ) {
+#ifdef __BIG_ENDIAN__
+        return( GET_LE_32( *src ) );
+#else
+        return( GET_BE_32( *src ) );
+#endif
+    } else {
+        return( *src );
+    }
+}
+
+static uint_16  getU16( uint_16 *src )
+{
+    if( byte_swap ) {
+#ifdef __BIG_ENDIAN__
+        return( GET_LE_16( *src ) );
+#else
+        return( GET_BE_16( *src ) );
+#endif
+    } else {
+        return( *src );
+    }
+}
 
 static int compareTable( const void *_a, const void *_b ) {
     readable_name *a = (readable_name *)_a;
@@ -438,12 +467,12 @@ static void dumpInfo( const uint_8 *input, uint length ) {
 
     p = input;
     while( p - input < length ) {
-        unit_length = *(uint_32 *)p;
+        unit_length = getU32( (uint_32 *)p );
         unit_base = p + sizeof( uint_32 );
         address_size = *(p+10);
-	abbrev_offset = *(uint_32 *)(p+6);
+        abbrev_offset = getU32( (uint_32 *)(p+6) );
         printf( "Length: %08lx\nVersion: %04lx\nAbbrev: %08lx\nAddress Size %02lx\n",
-            unit_length, *(uint_16 *)(p+4), abbrev_offset, address_size );
+            unit_length, getU16( (uint_16 *)(p+4) ), abbrev_offset, address_size );
         p += 11;
         while( p - unit_base < unit_length ) {
             printf( "offset %08lx: ", p - input );
@@ -469,12 +498,12 @@ static void dumpInfo( const uint_8 *input, uint length ) {
                 case DW_FORM_addr:
                     switch( address_size ) {
                     case 4:
-                        tmp = *(uint_32 *)p;
+                        tmp = getU32( (uint_32 *)p );
                         p += sizeof( uint_32 );
                         printf( "\t%08lx\n", tmp );
                         break;
                     case 2:
-                        tmp = *(uint_16 *)p;
+                        tmp = getU16( (uint_16 *)p );
                         p += sizeof( uint_16 );
                         printf( "\t%04lx\n", tmp );
                         break;
@@ -497,14 +526,14 @@ static void dumpInfo( const uint_8 *input, uint length ) {
                     p += len;
                     break;
                 case DW_FORM_block2:
-                    len = *(uint_16 *)p;
+                    len = getU16( (uint_16 *)p );
                     p += sizeof( uint_16 );
                     printf( "\n" );
                     dumpHex( p, len );
                     p += len;
                     break;
                 case DW_FORM_block4:
-                    len = *(uint_32 *)p;
+                    len = getU32( (uint_32 *)p );
                     p += sizeof( uint_32 );
                     printf( "\n" );
                     dumpHex( p, len );
@@ -516,12 +545,12 @@ static void dumpInfo( const uint_8 *input, uint length ) {
                     break;
                 case DW_FORM_data2:
                 case DW_FORM_ref2:
-                    printf( "\t%04x\n", *(uint_16 *)p );
+                    printf( "\t%04x\n", getU16( (uint_16 *)p ) );
                     p += sizeof( uint_16 );
                     break;
                 case DW_FORM_data4:
                 case DW_FORM_ref4:
-                    printf( "\t%08lx\n", *(uint_32 *)p );
+                    printf( "\t%08lx\n", getU32( (uint_32 *)p ) );
                     p += sizeof( uint_32 );
                     break;
                 case DW_FORM_flag:
@@ -540,7 +569,7 @@ static void dumpInfo( const uint_8 *input, uint length ) {
                     p += strlen( p ) + 1;
                     break;
                 case DW_FORM_strp:  /* 4 byte index into .debug_str */
-                    printf_debug_str(*(unsigned long *)p);
+                    printf_debug_str( getU32( (unsigned long *)p ) );
                     p += 4;
                     break;
                 case DW_FORM_udata:
@@ -549,7 +578,7 @@ static void dumpInfo( const uint_8 *input, uint length ) {
                     printf( "\t%08lx\n", tmp );
                     break;
                 case DW_FORM_ref_addr:  //KLUDGE should really check addr_size
-                    printf( "\t%08lx\n", *((uint_32 *)p) );
+                    printf( "\t%08lx\n", getU32( ((uint_32 *)p) ) );
                     p += sizeof(uint_32);
                     break;
                 default:
@@ -576,7 +605,7 @@ extern void dumpAbbrevs( const char *input, uint length ) {
         if( p > input + length ) break;
         p = DecodeULEB128( p, &tmp );
         printf( "Code: %08lx\n", tmp );
-	if( tmp == 0 ) continue;
+    if( tmp == 0 ) continue;
         if( p >= input + length ) break;
         p = DecodeULEB128( p, &tmp );
         printf( "\t%s\n", getTAG( tmp ) );
@@ -675,16 +704,16 @@ static void dumpLines(
 
     p = input;
     while( p - input < length ) {
-        unit_length = *(uint_32 *)p;
+        unit_length = getU32( (uint_32 *)p );
         p += sizeof( uint_32 );
         unit_base = p;
 
         printf( "total_length: 0x%08lx (%u)\n", unit_length, unit_length );
 
-        printf( "version: 0x%04x\n", *(uint_16 *)p );
+        printf( "version: 0x%04x\n", getU16( (uint_16 *)p ) );
         p += sizeof( uint_16 );
 
-        printf( "prologue_length: 0x%08lx (%u)\n", *(uint_32 *)p, *(uint_32 *)p );
+        printf( "prologue_length: 0x%08lx (%u)\n", getU32( (uint_32 *)p ), getU32( (uint_32 *)p ) );
         p += sizeof( uint_32 );
 
         min_instr = *p;
@@ -765,10 +794,10 @@ static void dumpLines(
                     initState( &state, default_is_stmt );
                     break;
                 case DW_LNE_set_address:
-                    tmp = *(uint_32 *)p;
+                    tmp = getU32( (uint_32 *)p );
                     p += sizeof( uint_32 );
                     #if 0   /* Why did they choose 6 byte here?  */
-                    tmp_seg = *(uint_16 *)p;
+                    tmp_seg = getU16( (uint_16 *)p );
                     p += sizeof( uint_16 );
                     printf( "SET_ADDRESS %04x:%08lx\n", tmp_seg, tmp );
                     #else
@@ -831,7 +860,7 @@ static void dumpLines(
                     state.address += ( ( 255 - opcode_base ) / line_range ) * min_instr;
                     break;
                 case DW_LNS_fixed_advance_pc:
-                    tmp = *(uint_16 *)p;
+                    tmp = getU16( (uint_16 *)p );
                     p += sizeof( uint_16 );
                     printf( " %04x\n", tmp );
                     state.address += tmp;
@@ -888,10 +917,10 @@ static void dumpRef(
     p = input;
 
     while( p - input < length ) {
-        unit_length = *(uint_32 *)p;
+        unit_length = getU32( (uint_32 *)p );
         p += sizeof( uint_32 );
         unit_base = p;
-        printf( "total_length: %08lx\n", *(uint_32 *)p );
+        printf( "total_length: %08lx\n", getU32( (uint_32 *)p ) );
 
         while( p - unit_base < unit_length ) {
             op_code = *p++;
@@ -899,7 +928,7 @@ static void dumpRef(
                 printf( "%s", getReferenceOp( op_code ) );
                 switch( op_code ) {
                 case REF_BEGIN_SCOPE:
-                    printf( " %08lx\n", *(uint_32 *)p );
+                    printf( " %08lx\n", getU32( (uint_32 *)p ) );
                     p += sizeof( uint_32 );
                     break;
                 case REF_END_SCOPE:
@@ -922,7 +951,7 @@ static void dumpRef(
                 op_code -= REF_CODE_BASE;
                 printf( "REF line += %d, column += %d, %08lx\n",
                     op_code / REF_COLUMN_RANGE, op_code % REF_COLUMN_RANGE,
-                    *(uint_32 *)p
+                    getU32( (uint_32 *)p )
                 );
                 p += sizeof( uint_32 );
             }
