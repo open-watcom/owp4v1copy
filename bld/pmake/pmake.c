@@ -83,7 +83,7 @@ pmake_data              Options;
 char                    Buff[512];
 char                    *CmdLine;
 char                    saveDirBuff[_MAX_PATH];
-char                    *SaveDir = & saveDirBuff;
+char                    *SaveDir = saveDirBuff;
 
 
 static char *StringCopy( char *dst, char *src )

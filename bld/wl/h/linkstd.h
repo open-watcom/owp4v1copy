@@ -31,7 +31,11 @@
 
 
 #include "linkmach.h"
+#ifdef __WATCOMC__
 #include "whoami.h"
+#else
+#include <whoami.h>
+#endif
 #include "standard.h"
 #include "taddr.h"
 #include "debug.h"
