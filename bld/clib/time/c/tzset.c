@@ -31,10 +31,6 @@
 #include "variety.h"
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h>
-#ifndef TZNAME_MAX
-#define TZNAME_MAX 128 // Only defined in UNIX <limits.h>
-#endif
 #include <time.h>
 #ifdef __NT__
  #include <windows.h>
@@ -51,6 +47,8 @@
  *              or
  *          <std><offset>[<dst>[<offset>]][,<start>[/<time>],<end>[/<time>]]]
  */
+
+//#define TZNAME_MAX    128     /* defined in <limits.h> */
 
 struct tm       __start_dst = { /* start of daylight savings */
     0, 0, 2,                    /* M4.1.0/02:00:00 default */
