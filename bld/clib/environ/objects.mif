@@ -28,5 +28,3 @@
 !inject wenvptr.obj  d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32
 
 !include ../../../../objlist.mif
-
-searchen_opts=-os

@@ -27,5 +27,5 @@
 
 !include ../../../../objlist.mif
 
-uasctime_opts=-os
-ustrftim_opts=-os
+uasctime_postopts=-os
+ustrftim_postopts=-os

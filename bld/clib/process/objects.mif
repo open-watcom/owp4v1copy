@@ -105,14 +105,14 @@ objsuffix=files
 !include ../../../../objlist.mif
 objprefix=
 
-cenvarg_opts    =-os
-exve_opts       =-os
-exveos2_opts    =-os
-exveqnx_opts    =-os
-exvewnt_opts    =-os
-exvpe_opts      =-os
-exvpeqnx_opts   =-os
-spve_opts       =-os
-spveqnx_opts    =-os
-spvpe_opts      =-os
-spvpeqnx_opts   =-os
+cenvarg_postopts    =-os
+exve_postopts       =-os
+exveos2_postopts    =-os
+exveqnx_postopts    =-os
+exvewnt_postopts    =-os
+exvpe_postopts      =-os
+exvpeqnx_postopts   =-os
+spve_postopts       =-os
+spveqnx_postopts    =-os
+spvpe_postopts      =-os
+spvpeqnx_postopts   =-os

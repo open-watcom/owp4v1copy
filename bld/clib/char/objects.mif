@@ -36,17 +36,17 @@
 
 !include ../../../../objlist.mif
 
-uisalpha_opts=-os
-uisascii_opts=-os
-uiscntrl_opts=-os
-uisdigit_opts=-os
-uisgraph_opts=-os
-uislower_opts=-os
-uisprint_opts=-os
-uispunct_opts=-os
-uisspace_opts=-os
-uisupper_opts=-os
-uisxdig_opts =-os
-utolower_opts=-os
-utoupper_opts=-os
-uisalnum_opts=-os
+uisalpha_postopts=-os
+uisascii_postopts=-os
+uiscntrl_postopts=-os
+uisdigit_postopts=-os
+uisgraph_postopts=-os
+uislower_postopts=-os
+uisprint_postopts=-os
+uispunct_postopts=-os
+uisspace_postopts=-os
+uisupper_postopts=-os
+uisxdig_postopts =-os
+utolower_postopts=-os
+utoupper_postopts=-os
+uisalnum_postopts=-os

@@ -11,7 +11,7 @@
 286_sub_opt =-of
 386_sub_opt =
 axp_sub_opt =
-bsearch_opts=-os$($(processor)_sub_opt)
-lfind_opts  =-os$($(processor)_sub_opt)
-lsearch_opts=-os$($(processor)_sub_opt)
-qsort_opts  =-os$($(processor)_sub_opt)
+bsearch_opts=$($(processor)_sub_opt)
+lfind_opts  =$($(processor)_sub_opt)
+lsearch_opts=$($(processor)_sub_opt)
+qsort_opts  =$($(processor)_sub_opt)

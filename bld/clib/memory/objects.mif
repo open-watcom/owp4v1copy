@@ -30,5 +30,3 @@
 
 !include ../../../../objlist.mif
 
-umemchr_opts=-os
-umemcmp_opts=-os
