@@ -1,0 +1,28 @@
+
+FIXUPP(9c) recnum:1, offset:000002eeh, len:0090h, chksum:08h(08)
+    0044h Seg   POINTER      Frame: TARGET    Target: EI(1)
+    0086h Seg   OFFSET       Frame: TARGET    Target: SI(2),00000052h
+    009eh Seg   OFFSET       Frame: TARGET    Target: SI(3),00000201h
+    00a1h Seg   BASE         Frame: TARGET    Target: GI(1)
+    00a4h Seg   OFFSET       Frame: GI(1)     Target: SI(3),00000201h
+    00aeh Seg   OFFSET       Frame: GI(1)     Target: SI(3),00000200h
+    00b4h Seg   OFFSET       Frame: TARGET    Target: SI(2),00000040h
+    00bbh Self  OFFSET       Frame: TARGET    Target: EI(2)
+    00c6h Seg   OFFSET       Frame: TARGET    Target: SI(3),00000203h
+    00dah Seg   OFFSET       Frame: TARGET    Target: SI(2),0000004eh
+    00deh Seg   OFFSET       Frame: TARGET    Target: SI(2),0000001dh
+    00e4h Seg   OFFSET       Frame: TARGET    Target: SI(2),00000003h
+    0152h Seg   OFFSET       Frame: GI(1)     Target: SI(3),00000200h
+    018bh Seg   OFFSET       Frame: TARGET    Target: SI(2),0000004eh
+    0190h Seg   OFFSET       Frame: TARGET    Target: SI(2),00000050h
+    0196h Seg   OFFSET       Frame: TARGET    Target: SI(2),00000056h
+    01a0h Seg   OFFSET       Frame: TARGET    Target: SI(2),00000052h
+    01adh Seg   BASE         Frame: TARGET    Target: GI(1)
+    01b2h Seg   OFFSET       Frame: TARGET    Target: SI(2),00000048h
+    01b7h Seg   OFFSET       Frame: GI(1)     Target: SI(3),00000200h
+    01bdh Seg   BASE         Frame: TARGET    Target: GI(1)
+    01c2h Seg   OFFSET       Frame: GI(1)     Target: EI(5)
+    01c5h Seg   OFFSET       Frame: GI(1)     Target: EI(4)
+    01d3h Seg   OFFSET       Frame: GI(1)     Target: EI(5)
+    01dbh Seg   BASE         Frame: TARGET    Target: GI(1)
+    01ebh Self  OFFSET       Frame: TARGET    Target: EI(3)

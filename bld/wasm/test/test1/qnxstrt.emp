@@ -1,0 +1,16 @@
+
+FIXUPP(9c) recnum:1, offset:000000fdh, len:0011h, chksum:ceh(ce)
+    0004h Seg   OFFSET       Frame: TARGET    Target: SI(1)
+    0006h Seg   OFFSET       Frame: TARGET    Target: SI(1)
+    0008h Seg   OFFSET       Frame: TARGET    Target: SI(1)
+    000ah Seg   BASE         Frame: TARGET    Target: GI(1)
+
+FIXUPP(9c) recnum:2, offset:00000181h, len:0021h, chksum:03h(03)
+    0004h Self  OFFSET       Frame: TARGET    Target: EI(5)
+    001eh Seg   OFFSET       Frame: TARGET    Target: SI(1)
+    0021h Self  OFFSET       Frame: TARGET    Target: EI(4)
+    002bh Self  OFFSET       Frame: TARGET    Target: EI(1)
+    0043h Seg   OFFSET       Frame: TARGET    Target: SI(1)
+    0046h Self  OFFSET       Frame: TARGET    Target: EI(2)
+    0055h Seg   OFFSET       Frame: TARGET    Target: SI(1)
+    0058h Self  OFFSET       Frame: TARGET    Target: EI(3)

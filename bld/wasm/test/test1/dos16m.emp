@@ -1,0 +1,72 @@
+
+FIXUPP(9c) recnum:1, offset:000005b6h, len:0005h, chksum:41h(41)
+    0000h Seg   BASE         Frame: TARGET    Target: SI(2)
+
+FIXUPP(9c) recnum:2, offset:00000631h, len:004dh, chksum:33h(33)
+    000eh Seg   OFFSET       Frame: TARGET    Target: SI(1),00000004h
+    0010h Seg   BASE         Frame: TARGET    Target: SI(1),00000004h
+    0016h Seg   BASE         Frame: TARGET    Target: SI(12)
+    0018h Seg   BASE         Frame: TARGET    Target: SI(1),00000004h
+    001ah Seg   BASE         Frame: TARGET    Target: SI(2)
+    001ch Seg   BASE         Frame: TARGET    Target: SI(14)
+    001eh Seg   BASE         Frame: TARGET    Target: SI(14)
+    0020h Seg   BASE         Frame: TARGET    Target: SI(29)
+    0022h Seg   BASE         Frame: TARGET    Target: SI(4)
+    0024h Seg   BASE         Frame: TARGET    Target: SI(5)
+    0026h Seg   BASE         Frame: TARGET    Target: SI(7)
+    002ah Seg   BASE         Frame: TARGET    Target: SI(6)
+    002ch Seg   BASE         Frame: TARGET    Target: SI(8)
+    002eh Seg   BASE         Frame: TARGET    Target: SI(9)
+    0030h Seg   BASE         Frame: TARGET    Target: SI(10)
+    0032h Seg   BASE         Frame: TARGET    Target: SI(11)
+    0035h Seg   OFFSET       Frame: TARGET    Target: SI(3),00000044h
+
+FIXUPP(9c) recnum:3, offset:000009a8h, len:011fh, chksum:2eh(2e)
+    0000h Seg   POINTER      Frame: TARGET    Target: EI(4)
+    00e9h Seg   OFFSET       Frame: TARGET    Target: SI(1),000000b8h
+    00feh Seg   OFFSET       Frame: TARGET    Target: SI(1),000000d2h
+    010bh Seg   BASE         Frame: TARGET    Target: GI(1)
+    0110h Seg   OFFSET       Frame: GI(1)     Target: EI(6)
+    011bh Seg   OFFSET       Frame: GI(1)     Target: SI(24),00000008h
+    0120h Seg   OFFSET       Frame: GI(1)     Target: SI(24),00000002h
+    0123h Seg   OFFSET       Frame: GI(1)     Target: SI(29)
+    0133h Seg   OFFSET       Frame: GI(1)     Target: SI(24)
+    013ch Seg   OFFSET       Frame: GI(1)     Target: SI(24),0000000ah
+    0153h Seg   BASE         Frame: TARGET    Target: GI(1)
+    015ah Seg   OFFSET       Frame: GI(1)     Target: SI(24),00000008h
+    015fh Seg   OFFSET       Frame: GI(1)     Target: SI(24),00000022h
+    0164h Seg   OFFSET       Frame: GI(1)     Target: SI(24),00000022h
+    0178h Seg   OFFSET       Frame: GI(1)     Target: SI(24),00000004h
+    017dh Seg   OFFSET       Frame: GI(1)     Target: SI(24),00000005h
+    018bh Seg   OFFSET       Frame: GI(1)     Target: SI(24),00000002h
+    01bfh Seg   OFFSET       Frame: GI(1)     Target: SI(24),00000026h
+    01c4h Seg   OFFSET       Frame: GI(1)     Target: SI(24),00000026h
+    01c7h Seg   BASE         Frame: TARGET    Target: GI(1)
+    01cfh Seg   OFFSET       Frame: GI(1)     Target: SI(24),00000010h
+    01d3h Seg   OFFSET       Frame: GI(1)     Target: SI(24),00000008h
+    01d6h Seg   OFFSET       Frame: GI(1)     Target: EI(6)
+    01d9h Seg   OFFSET       Frame: GI(1)     Target: EI(5)
+    01e3h Seg   OFFSET       Frame: GI(1)     Target: SI(24),00000012h
+    01e9h Seg   OFFSET       Frame: TARGET    Target: SI(1),00000289h
+    01ech Seg   OFFSET       Frame: GI(1)     Target: SI(24),00000012h
+    01f0h Seg   OFFSET       Frame: GI(1)     Target: SI(24),00000012h
+    01f3h Seg   OFFSET       Frame: GI(1)     Target: SI(24),00000016h
+    01f7h Seg   OFFSET       Frame: GI(1)     Target: SI(24),00000016h
+    01fah Seg   OFFSET       Frame: GI(1)     Target: SI(24),0000001ah
+    01feh Seg   OFFSET       Frame: GI(1)     Target: SI(24),0000001ah
+    0206h Seg   OFFSET       Frame: TARGET    Target: SI(1),00000288h
+    0209h Seg   OFFSET       Frame: GI(1)     Target: SI(24),0000001eh
+    020dh Seg   OFFSET       Frame: GI(1)     Target: SI(24),0000001eh
+    0210h Seg   POINTER      Frame: TARGET    Target: EI(2)
+    0215h Seg   POINTER      Frame: TARGET    Target: EI(1)
+    021bh Seg   BASE         Frame: TARGET    Target: GI(1)
+    0222h Seg   OFFSET       Frame: GI(1)     Target: SI(14)
+    0234h Seg   OFFSET       Frame: TARGET    Target: SI(1),00000097h
+    0239h Seg   OFFSET       Frame: GI(1)     Target: EI(6)
+    023fh Seg   BASE         Frame: TARGET    Target: SI(1)
+    0244h Seg   OFFSET       Frame: TARGET    Target: SI(1),000000cch
+    0262h Seg   BASE         Frame: TARGET    Target: GI(1)
+    0268h Seg   OFFSET       Frame: GI(1)     Target: SI(24),0000002ah
+    026fh Seg   OFFSET       Frame: GI(1)     Target: SI(24),0000002bh
+    0275h Seg   OFFSET       Frame: GI(1)     Target: SI(24),0000002ch
+    027ch Seg   POINTER      Frame: TARGET    Target: EI(3)
