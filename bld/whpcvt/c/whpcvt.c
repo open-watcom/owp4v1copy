@@ -815,7 +815,7 @@ static int valid_args(
                     }
                 }
 
-                _new( argv[argc], i );
+                _new( argv[argc], i + 1 );
                 strcpy( argv[argc], line );
             }
             fclose( opt_file );
