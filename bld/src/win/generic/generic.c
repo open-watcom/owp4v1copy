@@ -3,7 +3,7 @@
 #include <malloc.h>
 #include "genwin.h"
 
-HINSTANCE          MyInstance;
+HINSTANCE       MyInstance;
 static char     GenericClass[32]="GenericClass";
 
 static BOOL FirstInstance( HINSTANCE );
@@ -21,7 +21,7 @@ int PASCAL WinMain( HINSTANCE this_inst, HINSTANCE prev_inst, LPSTR cmdline,
 
     MyInstance = this_inst;
 #ifdef __WINDOWS_386__
-    sprintf( GenericClass,"GenericClass%d", this_inst );
+    sprintf( GenericClass, "GenericClass%d", this_inst );
     prev_inst = 0;
 #endif
     if( !prev_inst ) {
@@ -81,7 +81,7 @@ static BOOL AnyInstance( HINSTANCE this_inst, int cmdshow, LPSTR cmdline )
      */
     hwnd = CreateWindow(
         GenericClass,           /* class */
-        "Open WATCOM Generic Kind Of Application",   /* caption */
+        "Open Watcom Generic Kind Of Application",   /* caption */
         WS_OVERLAPPEDWINDOW,    /* style */
         CW_USEDEFAULT,          /* init. x pos */
         CW_USEDEFAULT,          /* init. y pos */

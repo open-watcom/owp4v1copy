@@ -19,7 +19,7 @@ static void DoCmdLine( LPSTR cmdline );
 
 HWND            FrameWindow;    /* The classic MDI frame window     */
 HWND            ClientWindow;   /* And the client window attached   */
-HINSTANCE          Instance;       /* Convenient to have handy         */
+HINSTANCE       Instance;       /* Convenient to have handy         */
 
 /*
  * WinMain - initialization, parsing of the command line, message loop
@@ -164,7 +164,7 @@ static BOOL InitInstance( int cmdshow )
      */
     FrameWindow = CreateWindow(
         FrameClass,             /* class */
-        "Open WATCOM Icon Viewer",   /* caption */
+        "Open Watcom Icon Viewer",   /* caption */
         WS_OVERLAPPEDWINDOW,    /* style */
         CW_USEDEFAULT,          /* init. x pos */
         CW_USEDEFAULT,          /* init. y pos */

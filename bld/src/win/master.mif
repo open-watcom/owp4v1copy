@@ -34,20 +34,20 @@ CFLAGS += -i=$(%WATCOM)\h;$(%WATCOM)\h\nt
 CFLAGS += -i=$(%WATCOM)\h;$(%WATCOM)\h\win
 !endif
 
-CFLAGS += -oaxt -d2 -w4
+CFLAGS += -zq -oaxt -d2 -w4
 
 $(name).exe : $(OBJS) $(name).res $(LNK)
     wlink @$(LNK)
     @%make bindit
 
 $(name).res : $(name).rc $(resources)
-    wrc -r -i=.. -fo=.\$(name).res $(res1_flags) $[@
+    wrc -q -r -i=.. -fo=.\$(name).res $(res1_flags) $[@
 
 $(LNK) : $(lnk_dependencies)
     %create $(LNK)
     @%append $(LNK) debug all
     @%append $(LNK) name $(name)
-    @%append $(LNK) op map
+    @%append $(LNK) op map, quiet
     @%make linkit
     @for %i in ($(OBJS)) do @%append $(LNK) file %i
 
@@ -68,10 +68,10 @@ $(LNK) : $(lnk_dependencies)
         $(CC) $(CFLAGS) $[*
 
 clean: .symbolic
-    @erase *.obj
-    @erase *.err
-    @erase *.exe
-    @erase *.lnk
-    @erase *.res
-    @erase *.rex
-    @erase *.lib
+    @if exist *.obj erase *.obj
+    @if exist *.err erase *.err
+    @if exist *.exe erase *.exe
+    @if exist *.lnk erase *.lnk
+    @if exist *.res erase *.res
+    @if exist *.rex erase *.rex
+    @if exist *.lib erase *.lib

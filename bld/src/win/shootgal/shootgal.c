@@ -112,8 +112,8 @@ static BOOL AnyInstance( HINSTANCE this_inst, int cmdshow )
      */
     window_handle = CreateWindow(
         ShootGalClass,           /* class */
-        "Open WATCOM Shooting Gallery - Sample Application",   /* caption */
-        WS_OVERLAPPEDWINDOW | WS_VSCROLL | WS_HSCROLL,    /* style */
+        "Open Watcom Shooting Gallery - Sample Application",    /* caption */
+        WS_OVERLAPPEDWINDOW | WS_VSCROLL | WS_HSCROLL,          /* style */
         CW_USEDEFAULT,          /* init. x pos */
         CW_USEDEFAULT,          /* init. y pos */
         CW_USEDEFAULT,          /* init. x size */

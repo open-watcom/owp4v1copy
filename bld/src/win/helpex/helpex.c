@@ -6,8 +6,6 @@
                HelpEx loads library MenuHook, which detects F1 keystrokes in
                the HelpEx application menus.
 
-   Modifyed by WATCOM Systems Inc. For C/386 for Windows.
-
    FUNCTIONS:
 
    WinMain() - Calls initialization function, processes message loop.
@@ -28,7 +26,7 @@
 
 char       _class[64];
 HWND       hWnd;               /* Handle to main window */
-HINSTANCE     hInst;              /* Handle to instance data*/
+HINSTANCE  hInst;              /* Handle to instance data*/
 BOOL       bHelp = FALSE;      /* Help mode flag; TRUE = "ON"*/
 HCURSOR    hHelpCursor;        /* Cursor displayed when in help mode*/
 char       szHelpFileName[EXE_NAME_MAX_SIZE+1];    /* Help file name*/

@@ -3,7 +3,7 @@
 #include "edit.h"
 #include "win1632.h"
 
-char            EditTitle[] = "Open WATCOM Edit Example";
+char            EditTitle[] = "Open Watcom Edit Example";
 psupp           PrinterSupport;
 static char     EditClass[32]="EditClass";
 

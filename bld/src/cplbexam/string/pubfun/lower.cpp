@@ -2,7 +2,7 @@
 
 void main( void ) {
 
-    String    s ("Open WATCOM C++ compiler");
+    String    s ("Open Watcom C++ compiler");
 
     cout << "String \"" << s << "\" in lower-case: "
          << "\"" <<  s.lower() << "\"" << endl;
