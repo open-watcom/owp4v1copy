@@ -51,5 +51,7 @@ debug_linker=-debug:none
 # "drvinst -r DbgPort" to remove
 #
 #
-dbginst.exe : ..\c\dbginst.c
-        wcl386 -zq -w4 -bm-bt=nt-l=nt-D_WIN32-DWIN32 -i$(lang_root)\h\nt ..\c\dbginst.c $(lang_root)\lib386\nt\advapi32.lib
+inc_path = $(lang_root)/h/nt
+dbginst.exe : ../c/dbginst.c
+        set INCLUDE=$(inc_path);$(%INCLUDE)
+        wcl386 -zq -w4 -bm-bt=nt-l=nt-D_WIN32-DWIN32 $<
