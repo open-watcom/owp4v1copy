@@ -204,7 +204,7 @@ void InitDebugLine(
 {
     stmt_prologue prol = {
         0,
-        2,
+        DWARF_IMPL_VERSION,
         sizeof( stmt_prologue )
                 - offsetof( stmt_prologue, minimum_instruction_length ),
         DW_MIN_INSTR_LENGTH,
@@ -212,7 +212,21 @@ void InitDebugLine(
         DWLINE_BASE,
         DWLINE_RANGE,
         DWLINE_OPCODE_BASE,
-        { 0, 1, 1, 1, 1, 0, 0, 0, 0 }
+        {   /* LEB128 args  - Instruction op-code       */
+            0,              /* DW_LNS_copy              */
+            1,              /* DW_LNS_advance           */
+            1,              /* DW_LNS_advance_line      */
+            1,              /* DW_LNS_set_file          */
+            1,              /* DW_LNS_set_column        */
+            0,              /* DW_LNS_negate_stmt       */
+            0,              /* DW_LNS_set_basic_block   */
+            0,              /* DW_LNS_const_add_pc      */
+            0               /* DW_LNS_fixed_advance_pc  */
+            /*
+            //  GNU sets the last entry to 1. This is (maybe?) incorrect as the DW_LNS_fixed_advance_pc
+            //  opcode has a fixed uhalf (uint_16)argument, not a (U)LEB128 argument.
+            */
+        }
     };
 
     static uint_8 const terminators[] = {0,0};

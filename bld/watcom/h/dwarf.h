@@ -47,6 +47,8 @@ extern "C" {
 
 */
 
+#define DWARF_IMPL_VERSION  2   /* uint_16 */
+
 /*
     IMPORTANT:
         TAG_*, AT_*, and FORM_* MUST be #define's since they are used in
@@ -198,7 +200,14 @@ typedef enum {
     DW_LNE_end_sequence = 1,
     DW_LNE_set_address,
     DW_LNE_define_file,
+#if 1
+    /*
+    //  Carl Young - 2004-07-05
+    //  Despite recognizing the need for this extended opcode, I disagree with its use. Dwarf 3
+    //  may yet add more extended instructions which will screw us over using enumeration value 4!
+    */
     DW_LNE_set_segment
+#endif
 }dw_lne;
 
 /* Macinfo type encodings: figure 36 */
