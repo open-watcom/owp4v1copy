@@ -1,5 +1,7 @@
 proj_name = wdis
 
+target_cpu = all
+
 !ifndef wdis_autodepends
 wdis_autodepends = .AUTODEPEND
 !endif

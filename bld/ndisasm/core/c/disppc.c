@@ -35,13 +35,14 @@
 #include "distypes.h"
 #include "dis.h"
 
+#if DISCPU & DISCPU_ppc
+
 extern long SEX( unsigned long v, unsigned bit );
 
-extern const dis_range          *PPCRangeTable[];
+extern const dis_range          PPCRangeTable[];
+extern const int                PPCRangeTablePos[];
 extern const unsigned char      PPCMaxInsName;
 extern const unsigned short     DisRegisterTable[];
-
-#if DISCPU & DISCPU_ppc
 
 #define MK_SPR(a,b) (((a)<<5)|(b))
 
@@ -1296,9 +1297,7 @@ static dis_handler_return PPCDecodeTableCheck( int page, dis_dec_ins *ins )
 }
 
 const dis_cpu_data PPCData = {
-    PPCRangeTable, PPCDecodeTableCheck, PPCInsHook, PPCFlagHook, PPCOpHook, &PPCMaxInsName, 4
+    PPCRangeTable, PPCRangeTablePos, PPCDecodeTableCheck, PPCInsHook, PPCFlagHook, PPCOpHook, &PPCMaxInsName, 4
 };
-#else
 
-const dis_cpu_data PPCData;
 #endif

@@ -35,12 +35,13 @@
 #include "distypes.h"
 #include "dis.h"
 
+#if DISCPU & DISCPU_jvm
+
 extern long SEX( unsigned long v, unsigned bit );
 
-extern const dis_range          *JVMRangeTable[];
+extern const dis_range          JVMRangeTable[];
+extern const int                JVMRangeTablePos[];
 extern const unsigned char      JVMMaxInsName;
-
-#if DISCPU & DISCPU_jvm
 
 static unsigned GetUByte( void *d, unsigned off )
 {
@@ -271,9 +272,7 @@ static dis_handler_return JVMDecodeTableCheck( int page, dis_dec_ins *ins )
 }
 
 const dis_cpu_data JVMData = {
-    JVMRangeTable, JVMDecodeTableCheck, JVMInsHook, JVMFlagHook, JVMOpHook, &JVMMaxInsName, 1
+    JVMRangeTable, JVMRangeTablePos, JVMDecodeTableCheck, JVMInsHook, JVMFlagHook, JVMOpHook, &JVMMaxInsName, 1
 };
-#else
 
-const dis_cpu_data JVMData;
 #endif

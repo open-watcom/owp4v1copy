@@ -483,8 +483,8 @@ static void BuildStringTable()
 }
 
 
-static void BuildRanges( FILE *fp, ins_decode_data **_data, unsigned *_num,
-                char *prefix, int number )
+static int BuildRanges( FILE *fp, ins_decode_data **_data, unsigned *_num,
+                char *prefix )
 {
     unsigned            i;
     unsigned            j;
@@ -504,11 +504,10 @@ static void BuildRanges( FILE *fp, ins_decode_data **_data, unsigned *_num,
     int                 dumped_entries;
     
     unsigned            num = *_num;
-    ins_decode_data      *data = *_data;
+    ins_decode_data     *data = *_data;
 
     dumped_entries = 0;
     first_sel = SelIndex;
-    fprintf( fp, "\nconst dis_range %sRangeTable%d[] = {\n", prefix, number );
     head = malloc( sizeof( *head ) + num * sizeof( head->entry[0] ) );
     if( head == NULL ) {
         fprintf( stderr, "out of memory!\n" );
@@ -576,8 +575,8 @@ static void BuildRanges( FILE *fp, ins_decode_data **_data, unsigned *_num,
                     --i;
                 }
             }
-            dumped_entries = 1;
-            fprintf( fp, " { 0x%2.2x, 0x%2.2x, 0x%4.4x },\n", shifted_mask, shift, SelIndex );
+            dumped_entries++;
+            fprintf( fp, "    { 0x%2.2x, 0x%2.2x, 0x%4.4x },\n", shifted_mask, shift, SelIndex );
             curr_mask = (unsigned long) shifted_mask << shift;
             for( i = 0; i <= shifted_mask; ++i ) {
                 for( j = 0; j < head->num; ++j ) {
@@ -625,14 +624,15 @@ static void BuildRanges( FILE *fp, ins_decode_data **_data, unsigned *_num,
         if( head == NULL ) break;
     }
     if( !dumped_entries ) {
-        fprintf( fp, " { 0x00, 0x00, 0x0000 },\n" );
+        dumped_entries++;
+        fprintf( fp, "    { 0x00, 0x00, 0x0000 },\n" );
     }
-    fprintf( fp, "};\n" );
     for( ; first_sel < SelIndex; ++first_sel ) {
         if( SelTable[first_sel] > 0 ) {
             SelTable[first_sel] = data[ SelTable[first_sel] - 1 ].idx;
         }
     }
+    return( dumped_entries );
 }
 
 #define INVALID_INS     "????"
@@ -650,6 +650,8 @@ int main( void )
     string_data     **insnames;
     ins_decode_data **decode;
     unsigned        *num_ins;
+    int             *listl;
+    int             line_no;
 
     fp = fopen( "distbls.gh", "w" );
     if( fp == NULL ) {
@@ -664,12 +666,11 @@ int main( void )
         insnames = mach->ins_names;
         num_ins = mach->num_ins;
         max_name = sizeof( INVALID_INS ) - 1;
-        for( ; *insnames != NULL ; ) {
+        for( ; *insnames != NULL ; ++insnames ) {
             for( j = 0; j < *num_ins; ++j ) {
                 len = AddString( &(*insnames)[j] );
                 if( len > max_name ) max_name = len;
             }
-            ++insnames;
             ++num_ins;
         }
         fprintf( fp, "const unsigned char %sMaxInsName = %u;\n\n",
@@ -694,16 +695,14 @@ int main( void )
     }
     fprintf( fp, "};\n\n" );
     for( i = 0, mach = AMachine ; i < NUM_ELTS( AMachine ); ++i, ++mach ) {
-        decode = mach->decode;
         num_ins = mach->num_ins;
-        for( ; *decode != NULL ; ) {
+        for( decode = mach->decode; *decode != NULL ; ++decode ) {
             for( j = 0; j < *num_ins; ++j ) {
                 if( strcmp( (*decode)[j].handler, "NULL" ) != 0 ) {
                     fprintf( fp, "extern dis_handler_return %s( dis_handle *, void *, dis_dec_ins * );\n",
                         (*decode)[j].handler );
                 }
             }
-            ++decode;
             ++num_ins;
         }
     }
@@ -711,10 +710,11 @@ int main( void )
     fprintf( fp, "    { 0x%4.4x, 0x00000001, 0x00000000, NULL },\n", InvalidIns.string_idx );
     for( i = 0, mach = AMachine ; i < NUM_ELTS( AMachine ); ++i, ++mach ) {
         fprintf( fp, "\n    /* Machine:%s */\n\n", mach->prefix );
-        decode = mach->decode;
         insnames = mach->ins_names;
         num_ins = mach->num_ins;
-        for( ; *decode != NULL ; ) {
+        len = 1;
+        for( decode = mach->decode; *decode != NULL ; ++decode ) {
+            fprintf( fp, "    /* Table_%d */\n\n", len++ );
             for( j = 0; j < *num_ins; ++j ) {
                 fprintf( fp, "    { 0x%4.4x, 0x%8.8lx, 0x%8.8lx, %s }, /* %s */\n",
                     (*insnames)[j].string_idx,
@@ -724,7 +724,6 @@ int main( void )
                     (*decode)[j].idx_name );
             }
             fprintf( fp, "\n" );
-            ++decode;
             ++insnames;
             ++num_ins;
         }
@@ -747,21 +746,26 @@ int main( void )
     }
     fprintf( fp, "};\n" );
     for( i = 0, mach = AMachine ; i < NUM_ELTS( AMachine ); ++i, ++mach ) {
-        decode = mach->decode;
         num_ins = mach->num_ins;
         j = 0;
-        do {
-            BuildRanges( fp, decode, num_ins, mach->prefix, ++j );
-            ++decode;
+        len = 0;
+        listl = NULL;
+        fprintf( fp, "\nconst dis_range %sRangeTable[] = {\n", mach->prefix );
+        for( decode = mach->decode; *decode != NULL; ++decode ) {
+            fprintf( fp, "\n    /* Table_%d */\n\n", ( len + 1 ) );
+            listl = realloc( listl, ( len + 1 ) * sizeof( int ) );
+            listl[ len++ ] = j;
+            j += BuildRanges( fp, decode, num_ins, mach->prefix );
             ++num_ins;
-        } while( *decode != NULL );
-        fprintf( fp, "\nconst dis_range *%sRangeTable[] = {\n", mach->prefix );
-        len = j;
-        for( j = 0; j < len; ) {
-            fprintf( fp, "    %sRangeTable%d,\n", mach->prefix, ++j );
         }
-        fprintf( fp, "    NULL\n" );
         fprintf( fp, "};\n" );
+        fprintf( fp, "\nconst int %sRangeTablePos[] = {\n", mach->prefix );
+        for( j = 0; j < len; ++j ) {
+            fprintf( fp, "    %d,\n", listl[ j ] );
+        }
+        fprintf( fp, "    -1\n" );
+        fprintf( fp, "};\n" );
+        free( listl );
     }
     fprintf( fp, "\nconst dis_selector DisSelectorTable[] = {\n" );
     for( i = 0; i < SelIndex; ++i ) {

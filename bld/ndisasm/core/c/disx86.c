@@ -35,14 +35,15 @@
 #include "distypes.h"
 #include "dis.h"
 
+#if DISCPU & DISCPU_x86
+
 extern long SEX( unsigned long v, unsigned bit );
 
-extern const dis_range          *X86RangeTable[];
+extern const dis_range          X86RangeTable[];
+extern const int                X86RangeTablePos[];
 extern const unsigned char      X86MaxInsName;
 extern const dis_ins_descript   DisInstructionTable[];
 extern const unsigned short     DisRefTypeTable[];
-
-#if DISCPU & DISCPU_x86
 
 typedef union {
     unsigned_8 full;
@@ -4030,9 +4031,7 @@ static dis_handler_return X86DecodeTableCheck( int page, dis_dec_ins *ins )
 }
 
 const dis_cpu_data X86Data = {
-    X86RangeTable, X86DecodeTableCheck, X86InsHook, X86FlagHook, X86OpHook, &X86MaxInsName, 1
+    X86RangeTable, X86RangeTablePos, X86DecodeTableCheck, X86InsHook, X86FlagHook, X86OpHook, &X86MaxInsName, 1
 };
-#else
 
-const dis_cpu_data X86Data;
 #endif

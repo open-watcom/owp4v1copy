@@ -34,14 +34,16 @@
 #include <ctype.h>
 #include "distypes.h"
 #include "dis.h"
+
+#if DISCPU & DISCPU_sparc
+
 #include "bool.h"
 #include "sparcenc.h"
 
 extern long SEX( unsigned long v, unsigned bit );
 
-#if DISCPU & DISCPU_sparc
-
-extern const dis_range          *SPARCRangeTable[];
+extern const dis_range          SPARCRangeTable[];
+extern const int                SPARCRangeTablePos[];
 extern const unsigned char      SPARCMaxInsName;
 
 #define _SparcReg( x )          ( (x) + DR_SPARC_r0 )
@@ -336,9 +338,7 @@ static dis_handler_return SPARCDecodeTableCheck( int page, dis_dec_ins *ins )
 }
 
 const dis_cpu_data SPARCData = {
-    SPARCRangeTable, SPARCDecodeTableCheck, SPARCInsHook, SPARCFlagHook, SPARCOpHook, &SPARCMaxInsName, 4
+    SPARCRangeTable, SPARCRangeTablePos, SPARCDecodeTableCheck, SPARCInsHook, SPARCFlagHook, SPARCOpHook, &SPARCMaxInsName, 4
 };
-#else
 
-const dis_cpu_data SPARCData;
 #endif

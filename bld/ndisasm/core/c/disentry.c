@@ -36,11 +36,21 @@
 #include "dis.h"
 #include "distbls.gh"
 
+#if DISCPU & DISCPU_axp
 extern const dis_cpu_data       AXPData;
+#endif
+#if DISCPU & DISCPU_ppc
 extern const dis_cpu_data       PPCData;
+#endif
+#if DISCPU & DISCPU_x86
 extern const dis_cpu_data       X86Data;
+#endif
+#if DISCPU & DISCPU_jvm
 extern const dis_cpu_data       JVMData;
+#endif
+#if DISCPU & DISCPU_sparc
 extern const dis_cpu_data       SPARCData;
+#endif
 
 long SEX( unsigned long v, unsigned bit )
 {
@@ -88,21 +98,31 @@ dis_return DisInit( dis_cpu cpu, dis_handle *h )
 {
     h->cpu = cpu;
     switch( cpu ) {
+#if DISCPU & DISCPU_axp
     case DISCPU_axp:
         h->d = &AXPData;
         break;
+#endif
+#if DISCPU & DISCPU_ppc
     case DISCPU_ppc:
         h->d = &PPCData;
         break;
+#endif
+#if DISCPU & DISCPU_x86
     case DISCPU_x86:
         h->d = &X86Data;
         break;
+#endif
+#if DISCPU & DISCPU_jvm
     case DISCPU_jvm:
         h->d = &JVMData;
         break;
+#endif
+#if DISCPU & DISCPU_sparc
     case DISCPU_sparc:
         h->d = &SPARCData;
         break;
+#endif
     default:
         return( DR_FAIL );
     }
@@ -143,26 +163,28 @@ dis_return DisDecode( dis_handle *h, void *d, dis_dec_ins *ins )
 {
     int                         curr;
     const dis_range             *table;
-    const dis_range             **curr_table;
     dis_return                  dr;
     unsigned                    idx;
     unsigned                    start;
     dis_handler_return          hr;
     int                         page;
+    int const                   *pos;
+    int                         offs;
 
     start = 0;
+    table = h->d->range;
     for( ;; ) {
         dr = DisCliGetData( d, start, sizeof( ins->opcode ), &ins->opcode );
         if( dr != DR_OK ) return( dr );
         page = 0;
-        for( curr_table = h->d->range ; *curr_table != NULL ; ++curr_table, ++page ) {
+        for( pos = h->d->range_pos ; *pos != -1 ; ++pos, ++page ) {
             if( h->d->decode_check( page, ins ) != DHR_DONE )
                 continue;
-            table = *curr_table;
+            offs = *pos;
             curr = 0;
             for( ;; ) {
-                idx = (ins->opcode >> table[curr].shift) & table[curr].mask;
-                curr = DisSelectorTable[idx + table[curr].index];
+                idx = (ins->opcode >> table[curr+offs].shift) & table[curr+offs].mask;
+                curr = DisSelectorTable[idx + table[curr+offs].index];
                 if( curr >= 0 ) break;
                 curr = -curr;
             }
@@ -170,7 +192,7 @@ dis_return DisDecode( dis_handle *h, void *d, dis_dec_ins *ins )
                 break;
             }
         }
-        if( *curr_table == NULL ) {
+        if( *pos == -1 ) {
             BadOpcode( h, ins );
             break;
         }
