@@ -1,9 +1,27 @@
-wgml = $(%gml_path)\wgml
+#pmake: 386
+host_cpu = 386
+
+!include cproj.mif
+
+#
+# There should be settings for supported building platforms
+#
+!ifeq %build_platform dos386
+wgml = $(%DOC_ROOT)\gml\dos\wgml
+!else ifeq %build_platform os2386
+wgml = $(%DOC_ROOT)\gml\os2\wgml
+!else ifeq %build_platform nt386
+wgml = $(%DOC_ROOT)\gml\dos\wgml
+!else
+!error Unsupported building platform !!!!!!
+!endif
+
 optsfile=wgmlopts.tmp
 
 .before
-    set gmlinc=pict;$(%doc_root)\doc\gml
-    set gmlpag=%TEMP%
+    set GMLLIB=$(%DOC_ROOT)\gml\syslib;
+    set GMLINC=.;pict;$(%DOC_ROOT)\doc\gml;
+    set GMLPAG=%TEMP%
 
 all : vi.ps .SYMBOLIC
 #all : vi.ps vi.hlp .SYMBOLIC
@@ -26,12 +44,12 @@ vi.ps : vi.gml settings.gml intro.gml basic.gml &
     @%append $(optsfile) ( statistics
     -$(wgml) vi ( file $(optsfile)
 
-#    -wgml stat.vi.gml (file nb7x9ps index pass 1 cpi 20 stat verb
-#    -wgml vi.gml (file nb7x9ps index pass 1 cpi 20 stat verb
-#    -wgml vi.gml (file nb7x9ps pass 1 cpi 20 stat verb
+#    -$(wgml) stat.vi.gml (file nb7x9ps index pass 1 cpi 20 stat verb
+#    -$(wgml) vi.gml (file nb7x9ps index pass 1 cpi 20 stat verb
+#    -$(wgml) vi.gml (file nb7x9ps pass 1 cpi 20 stat verb
 #    -$(wgml) vi.gml (file nb7x9ps pass 1 cpi 20 stat verb dev term nopause out *.res
 
-vi.hlp: wgmlst.cop vihelp.src toc vihlp
+vi.hlp: vihelp.src toc vihlp
         @erase vitoc.hlp
         @erase toc.hlp
         @erase toc.ind
@@ -66,20 +84,14 @@ toc: .SYMBOLIC
     $(vi) -s tocind.vi t1
     $(vi) -s links.vi vitoc.src
     $(vi) -s toc.vi vitoc.src
-    erase t1
+#    erase t1
 
 vihlp: toc .SYMBOLIC
     @copy toc.ind+toc.hlp+links.hlp+index.hlp+vihelp.src t2
     $(vi) -s help.vi t2
-    erase t2
+#    erase t2
 #    sorthelp -w 80 -h 25 t1 t2 >sorthelp.out
 #    sorthelp t1
 
-wgmlst.cop: help.cop helpdrv.cop
-    %null
-
-help.cop: .SYMBOLIC
-    $(%gml_path)\gendev help
-
-helpdrv.cop: .SYMBOLIC
-    $(%gml_path)\gendev helpdrv
+clean: .SYMBOLIC
+    rm -f sysusr*.* *.ps *.tmp *.lay *.src t1 t2
