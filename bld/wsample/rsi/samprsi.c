@@ -115,7 +115,7 @@ void GetCommArea()
         Comm.in_hook = 1;               /* don't record this sample */
     } else {
         D32DebugRead( CommonAddr.offset, CommonAddr.segment, 0,
-                                                 &Comm, sizeof( Comm ) );
+                                                 (char*)&Comm, sizeof( Comm ) );
     }
 }
 
@@ -136,7 +136,7 @@ void GetNextAddr()
         addr.segment = CommonAddr.segment;
         addr.offset = Comm.cgraph_top;
         D32DebugRead( addr.offset, addr.segment, 0,
-                                 &stack_entry, sizeof( stack_entry ) );
+                                 (char*)&stack_entry, sizeof( stack_entry ) );
         CGraphOff = stack_entry.ip;
         CGraphSeg = stack_entry.cs;
         Comm.cgraph_top = stack_entry.ptr;
@@ -151,7 +151,7 @@ void ResetCommArea()
         Comm.push_no = 0;
         CommonAddr.offset += 11;
         D32DebugWrite( CommonAddr.offset, CommonAddr.segment, 0,
-                                                         &Comm.pop_no, 4 );
+                                                         (char*)&Comm.pop_no, 4 );
         CommonAddr.offset -= 11;
     }
 }
