@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-#include "asmglob.h"//
+#include "asmglob.h"
 #include "asmops1.h"
 #include "asmops2.h"
 #include "asmopnds.h"
@@ -49,7 +49,7 @@
 extern int_8                    Label_Idx;      // used in check_assume()
 extern int_8                    PhaseError;
 /* prototypes */
-int operator( int mem_type, uint_8 fix_mem_type );
+int ptr_operator( int mem_type, uint_8 fix_mem_type );
 int jmp( int i );
 
 extern int              mem2code( char, int, int );
@@ -340,13 +340,13 @@ int jmp( int i )                // Bug: can't handle indirect jump
                 break;
             case T_FWORD:
             case T_PWORD:
-                if( operator( T_FWORD, TRUE ) == ERROR ) return( ERROR );
+                if( ptr_operator( T_FWORD, TRUE ) == ERROR ) return( ERROR );
                 break;
             default:
                 Code->mem_type = sym->mem_type;
             }
         }
-        if( operator( T_PTR, FALSE ) == ERROR ) return( ERROR ); // fixme
+        if( ptr_operator( T_PTR, FALSE ) == ERROR ) return( ERROR ); // fixme
 
         if( !Code->use32 && MEM_TYPE( Code->mem_type, DWORD ) ) {
             Code->distance = T_FAR;
@@ -557,7 +557,7 @@ int jmp( int i )                // Bug: can't handle indirect jump
     return( NOT_ERROR );
 }
 
-int operator( int mem_type, uint_8 fix_mem_type )
+int ptr_operator( int mem_type, uint_8 fix_mem_type )
 /***********************************************/
 /*
   determine what should be done with SHORT, NEAR, FAR, BYTE, WORD, DWORD, PTR

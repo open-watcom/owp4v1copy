@@ -50,7 +50,7 @@
 #include "asmglob.h"
 #include "asmops1.h"
 #include "asmops2.h"
-#include "asmins.h" ////
+#include "asmins.h"
 #include "asmerr.h"
 #include "asmsym.h"
 #include "asmalloc.h"
@@ -75,7 +75,7 @@
 
 #endif
 
-extern int              operator( int, uint_8 );
+extern int              ptr_operator( int, uint_8 );
 extern int              jmp( int i );
 extern void             MakeConstant( long );
 
@@ -610,8 +610,8 @@ static int mem( int i )
                 //ConstantOnly = TRUE;
                 Code->data[Opnd_Count] += sym->offset;
                 // fixme
-                if( operator( sym->mem_type, FALSE ) == ERROR ) return( ERROR );
-                //if( operator( T_PTR, FALSE ) == ERROR ) return( ERROR );
+                if( ptr_operator( sym->mem_type, FALSE ) == ERROR ) return( ERROR );
+                //if( ptr_operator( T_PTR, FALSE ) == ERROR ) return( ERROR );
                 i++;
                 sym = field;
                 field_flag = 1;
@@ -658,10 +658,10 @@ static int mem( int i )
 #ifdef _WASM_
                     if( !Modend ) {
 #endif
-                        if( operator( sym->mem_type, FALSE ) == ERROR ) {
+                        if( ptr_operator( sym->mem_type, FALSE ) == ERROR ) {
                             return ERROR;
                         }
-                        if( operator( T_PTR, FALSE ) == ERROR ) return( ERROR );
+                        if( ptr_operator( T_PTR, FALSE ) == ERROR ) return( ERROR );
 #ifdef _WASM_
                     }
 #endif
@@ -724,7 +724,7 @@ static int mem( int i )
                 return( ERROR );
             }
         } else {
-            if( operator( T_PTR, FALSE ) == ERROR ) return( ERROR );
+            if( ptr_operator( T_PTR, FALSE ) == ERROR ) return( ERROR );
         }
     }
 #endif
@@ -1792,7 +1792,7 @@ int AsmParse()
             if( AsmBuffer[i]->value == T_PTR ) {
                 if( AsmBuffer[i - 1]->token == T_RES_ID ) {
                     if( AsmBuffer[i - 1]->value != T_PTR ) {
-                        if( operator( AsmBuffer[i]->value, TRUE ) == ERROR ) {
+                        if( ptr_operator( AsmBuffer[i]->value, TRUE ) == ERROR ) {
                             return( ERROR );
                         }
                         break;
@@ -1802,7 +1802,7 @@ int AsmParse()
                 AsmError( NO_SIZE_GIVEN_BEFORE_PTR_OPERATOR );
                 return( ERROR );
             }
-             else if( operator( AsmBuffer[i]->value, TRUE ) == ERROR ) {
+             else if( ptr_operator( AsmBuffer[i]->value, TRUE ) == ERROR ) {
                 return( ERROR );
             }
             cur_opnd = OP_NONE;
