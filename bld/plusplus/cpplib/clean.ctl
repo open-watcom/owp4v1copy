@@ -3,24 +3,24 @@
 
 [ BLOCK <BUILD_PLATFORM> dos386 ]
 #================================
-    cdsay <PROJDIR>\..\dosi86
+    cdsay <PROJDIR>/../dos386.i86
     wmake -h -k clean
-    cdsay ..\dos386
+    cdsay ../dos386.386
     wmake -h -k clean
     cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
-    cdsay <PROJDIR>\..\os2i86
+    cdsay <PROJDIR>/../os2386.i86
     wmake -h -k clean
-    cdsay ..\os2386
+    cdsay ../os2386.386
     wmake -h -k clean
     cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
-    cdsay <PROJDIR>\..\nti86
+    cdsay <PROJDIR>/../nt386.i86
     wmake -h -k clean
-    cdsay ..\nt386
+    cdsay ../nt386.386
     wmake -h -k clean
     cdsay <PROJDIR>
