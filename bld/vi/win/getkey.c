@@ -29,6 +29,14 @@
 *
 ****************************************************************************/
 
+/*
+  Modified:     By:             Reason:
+  ---------     ---             -------
+  July 28 02    ff              changed ConvertWierdCharacter() and 
+                                MapVirtualKeyToVIKey() to correctly handle
+                                characters not translatable by ToAscii().
+                                (Like the Start Menu key on my keyboard :-) ).
+*/
 
 #include "winvi.h"
 #include "keys.h"
@@ -185,7 +193,7 @@ int ConvertWierdCharacter( WORD vk, WORD data )
     #endif
 
     GetKeyboardState( keyboard_state );
-    ToAscii( vk, scancode, keyboard_state, &newkey, FALSE );
+    if (ToAscii( vk, scancode, keyboard_state, &newkey, FALSE ) == 0) return 0;
 
     return( (char)newkey );
 }
@@ -214,6 +222,8 @@ int MapVirtualKeyToVIKey( WORD vk, WORD data )
         t = vk - 'A';
         if( ctrldown && altdown ) {
             ch = ConvertWierdCharacter( vk, data );
+            // check if found no translation:
+            if (ch == 0) return( -1 );
         } else if( ctrldown ) {
             ch = VI_KEY( CTRL_A ) + t;
         } else if( shiftdown && capsdown ) {

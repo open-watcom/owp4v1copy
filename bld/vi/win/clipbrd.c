@@ -24,11 +24,21 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Handles the interaction to the Windows clipboard.
 *
 ****************************************************************************/
 
+/*
+  Modified:     By:             Reason:
+  ---------     ---             -------
+  July 28 02    ff              changed AddFcbsToClipboard():
+                                  the last \n\r is not written to the clipboard
+                                changed GetClipboardSavebuf():
+                                  an extra \n\r is added to the buffer read from the clipboard
+                                (this seems to be the easiest fix to a complicated crash bug,
+                                 which happens if you paste a line with exactly one \n\r at the 
+                                 end copied from another application)
+*/
 
 #include "winvi.h"
 #include <string.h>
@@ -158,6 +168,7 @@ int AddFcbsToClipboard( fcb *head, fcb *tail )
     long                size;
     int                 i;
     GLOBALHANDLE        hglob;
+    BOOL crlf_left_to_write = 0;
 
     if( !openClipboardForWrite() ) {
         return( ERR_CLIPBOARD );
@@ -200,14 +211,22 @@ int AddFcbsToClipboard( fcb *head, fcb *tail )
         FetchFcb( cfcb );
         cline = cfcb->line_head;
         while( cline != NULL ) {
+            // one CRLF left to write?
+            if (crlf_left_to_write)
+            {
+                // yes: write it
+                crlf_left_to_write = 0;
+                *ptr = CR;
+                INC_POINTER( ptr );
+                *ptr = LF;
+                INC_POINTER( ptr );
+            }
             for( i=0;i<cline->len;i++ ) {
                 *ptr = cline->data[i];
                 INC_POINTER( ptr );
             }
-            *ptr = CR;
-            INC_POINTER( ptr );
-            *ptr = LF;
-            INC_POINTER( ptr );
+            // remember to write one CRLF next time
+            crlf_left_to_write = 1;
             cline = cline->next;
         }
         if( cfcb == tail ) {
@@ -215,6 +234,7 @@ int AddFcbsToClipboard( fcb *head, fcb *tail )
         }
         cfcb = cfcb->next;
     }
+    // the last CRLF is omitted
     *ptr = 0;
     GlobalUnlock( hglob );
     SetClipboardData( CF_TEXT, hglob );
@@ -318,6 +338,14 @@ int GetClipboardSavebuf( savebuf *clip )
             strcpy( clip->first.data, ReadBuffer );
             record_done = TRUE;
         } else {
+            // add CRLF to end of buffer
+            if( i >= MAX_IO_BUFFER - 2 )
+            {
+                addAnFcb( &head, &tail, i );
+                i = 0;
+            }
+            ReadBuffer[i++] = CR;
+            ReadBuffer[i++] = LF;
             addAnFcb( &head, &tail, i );
         }
     } else if( !is_flushed ) {
