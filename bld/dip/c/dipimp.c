@@ -199,10 +199,8 @@ int PASCAL WinMain( HINSTANCE this_inst, HINSTANCE prev_inst,
 }
 #elif defined( M_I86 )
 #pragma aux DIPLOAD "*" loadds
-#elif defined( __AXP__ ) || defined( __PPC__ )
-/* nothing to do */
 #else
-#error dipimp.c not configured for system
+/* nothing to do for Alpha, PowerPC etc. */
 #endif
 
 #if defined( __DOS__ ) || defined( __UNIX__ )
@@ -215,7 +213,7 @@ dip_imp_routines *DIPLOAD( dip_status *status, dip_client_routines *client )
 #if defined(__WINDOWS__) && !defined(__386__)
     {
         FARPROC start;
-   
+
         start = MakeProcInstance( (FARPROC)DIPImpStartup, ThisInst );
         *status = ((dip_status(DIPENTRY*)(void)) start)();
         FreeProcInstance( start );
