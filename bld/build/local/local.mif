@@ -38,6 +38,7 @@ cpp_386         = *$(nlang_bin)\wpp386 -zq -i$(bld_incs)
 !loaddll wppaxp $(nlang_dll)\wppdaxp.dll
 !loaddll wlink  $(nlang_dll)\wlink.dll
 !loaddll wlib   $(nlang_dll)\wlibd.dll
+!loaddll wcc    $(nlang_dll)\wccd.dll
 !loaddll wcc386 $(nlang_dll)\wccd386.dll
 !loaddll $(nlang_bin)\wcc386 $(nlang_dll)\wccd386.dll
 !loaddll $(nlang_bin)\wlib   $(nlang_dll)\wlibd.dll
