@@ -35,23 +35,23 @@ defines_tree    = -dNEWCFE
 
 defines = $(defines_$(cc_version)) -dlocal=static
 # international data files
-intname = wcc$(target_CPU)
+intname = wcc$(target_cpu)
 
 !ifeq release 1
 opts_cscan_386  = -5r
-extra_opts_cscan = $(opts_cscan_$(host_CPU)) -oaxt
+extra_opts_cscan = $(opts_cscan_$(host_cpu)) -oaxt
 !endif
 extra_opts_cgen386 = -dBY_C_FRONT_END
 extra_opts_idedll  = -bd
 extra_opts_intlload = -d__header="fesupp.h"
-extra_opts_cmsg = -d__target_CPU=$(intname)
+extra_opts_cmsg = -d__target_cpu=$(intname)
 
 # WASM stuff
-!ifeq target_CPU axp
+!ifeq target_cpu axp
 inline_asm_dir = $(as_dir)
 inline_asm_h = $(as_dir)\alpha\h;$(as_dir)\h;$(owl_dir)\h
 !else
-!ifeq target_CPU ppc
+!ifeq target_cpu ppc
 inline_asm_dir = $(as_dir)
 inline_asm_h = $(as_dir)\ppc\h;$(as_dir)\h;$(owl_dir)\h
 !else
@@ -75,7 +75,7 @@ pre_deps_qnx = wcc.u
 pre_deps_osi = $(tools_root)\os2ldr.exe
 
 # other goofy stuff
-pre_obj_deps = $(pre_deps_$(host_OS)) $(cc_dir)\h\code$(target_CPU).gh usage.gh msgtxt.gh msgdefs.gh msgattr.gh
+pre_obj_deps = $(pre_deps_$(host_os)) $(cc_dir)\h\code$(target_cpu).gh usage.gh msgtxt.gh msgdefs.gh msgattr.gh
 
 pre_obj_deps += $(intname)01.int
 #
@@ -96,6 +96,7 @@ final_exe_os2   = exe
 final_exe_osi   = exe
 final_exe_nt    = exe
 final_exe_qnx   = qnx
+final_exe_linux = elf
 
 # WLINK .DLL options for the various hosts
 wlink_dll_os2           = option manyautodata
@@ -108,12 +109,12 @@ wlink_opt_nt_axp_dll    = sys ntaxp_dll
 as_lib_ppc      = 1
 as_lib_axp      = 1
 
-xname = $(bin_dir)\wcc$(target_CPU)c.$(final_exe_$(host_OS))
-dxname = $(bin_dir)\wcc$(target_CPU)d.$(final_exe_$(host_OS))
-dllexet = $(bin_dir)\wcc$(target_CPU)t
-dllexe = $(bin_dir)\wcc$(target_CPU)e
-dllname = $(bin_dir)\wccd$(target_CPU)e
-cxname = $(bin_dir)\wcc$(target_CPU)s.$(final_exe_$(host_OS))
+xname = $(bin_dir)\wcc$(target_cpu)c.$(final_exe_$(host_os))
+dxname = $(bin_dir)\wcc$(target_cpu)d.$(final_exe_$(host_os))
+dllexet = $(bin_dir)\wcc$(target_cpu)t
+dllexe = $(bin_dir)\wcc$(target_cpu)e
+dllname = $(bin_dir)\wccd$(target_cpu)e
+cxname = $(bin_dir)\wcc$(target_cpu)s.$(final_exe_$(host_os))
 
 # systems where version resources must be added to .DLL
 build_rc_nt_386 = nt
@@ -148,8 +149,8 @@ def_targ_os2    = $(dllexe).exe
 def_targ_nt     = $(dllexe).exe
 def_targ        = $(dxname)
 !endif
-!ifdef def_targ_$(host_OS)
-def_targ        = $(def_targ_$(host_OS))
+!ifdef def_targ_$(host_os)
+def_targ        = $(def_targ_$(host_os))
 !endif
 !endif
 
@@ -164,11 +165,11 @@ $(xname): eraseall.obj $(pre_obj_deps) $(cc_objs) $(dwarf_deps) $(cg_deps) $(cc_
         @%make linkfile
         @%append $^&.lnk $(cg_libs)
         $(linker) $(lflags) @$^&.lnk
-!ifeq   host_OS osi
+!ifeq   host_os osi
         $(bld_bin)\w32bind $^&.rex $^&.exe $(bld_bin)\os2ldr.exe
         erase $^&.rex
 !endif
-!ifeq   host_OS qnx
+!ifeq   host_os qnx
 !ifdef  on_build_machine
         serialize $(xname) wcc
 !endif
@@ -183,11 +184,11 @@ $(cxname): eraseall.obj $(pre_obj_deps) $(cc_objs) $(dwarf_deps) $(cg_stub_deps)
         @%make linkfile
         @%append $^&.lnk $(cg_stub_libs)
         $(linker) $(lflags) @$^&.lnk
-!ifeq   host_OS osi
+!ifeq   host_os osi
         $(bld_bin)\w32bind $^&.rex $^&.exe $(tools_root)\os2ldr.exe
         erase $^&.rex
 !endif
-!ifeq   host_OS qnx
+!ifeq   host_os qnx
 !ifdef  on_build_machine
         serialize $(cxname) wcc
 !endif
@@ -203,12 +204,12 @@ $(dllname).dll : $(pre_obj_deps) $(dll_objs) $(dwarf_deps) $(cg_debug_deps) $(cc
         @%append $^&.lnk OP map
         @%append $^&.lnk OP caseexact
         @%append $^&.lnk OP SYMFILE
-        @%append $^&.lnk  $(wlink_opt_$(host_OS)_$(host_CPU)_dll) initinstance terminstance
-        @%append $^&.lnk $(wlink_dll_$(host_OS))
+        @%append $^&.lnk  $(wlink_opt_$(host_os)_$(host_cpu)_dll) initinstance terminstance
+        @%append $^&.lnk $(wlink_dll_$(host_os))
         @%append $^&.lnk $(wlink_opt_common)
         @for %i in ( $(dll_objs) ) do @%append $^&.lnk file %i
         @%append $^&.lnk lib $(dwarf_lib)
-!ifdef as_lib_$(target_CPU)
+!ifdef as_lib_$(target_cpu)
         @%append $^&.lnk lib $(asinline_axp_lib)
 !endif
 !ifdef  on_build_machine
@@ -216,12 +217,12 @@ $(dllname).dll : $(pre_obj_deps) $(dll_objs) $(dwarf_deps) $(cg_debug_deps) $(cc
 !else
         @%append $^&.lnk $(cg_debug_libs)
 !endif
-        $(linker) $(ldebug_$(host_CPU))  @$^&.lnk
-!ifdef build_rc_$(host_OS)_$(host_CPU)
+        $(linker) $(ldebug_$(host_cpu))  @$^&.lnk
+!ifdef build_rc_$(host_os)_$(host_cpu)
         $(bld_cl) $(fe_misc_dir)\c\genverrc.c $(wcl_util_opts) -d_VERSION=$(bld_ver)
-        genverrc ..\rc\r_$(host_OS)$(host_CPU).rc cc.rc $$ $^@ $(patch_level)
+        genverrc ..\rc\r_$(host_os)$(host_cpu).rc cc.rc $$ $^@ $(patch_level)
         del genverrc.*
-        $(rc) -q -bt=$(build_rc_$(host_OS)_$(host_CPU)) cc.rc $^@
+        $(rc) -q -bt=$(build_rc_$(host_os)_$(host_cpu)) cc.rc $^@
 !endif
 
 $(dllname).lib : $(dllname).dll
@@ -248,14 +249,14 @@ $(dllexe).exe : $(dlldrv_obj) $(dllname).lib
 linkfile: .procedure
         @if exist $^&.lnk @erase $^&.lnk
         @%write $^&.lnk name $^*
-        @%append $^&.lnk $(wlink_opt_$(host_OS))
+        @%append $^&.lnk $(wlink_opt_$(host_os))
         @%append $^&.lnk $(wlink_opt_common)
         @for %i in ( $(cc_objs) ) do @%append $^&.lnk file %i
 #       @for %i in ( $(cg_objs) ) do @%append $^&.lnk file $(o_dir)\%i
-#       @for %i in ( $($(host_OS)_objs) ) do @%append $^&.lnk file $(o_dir)\%i
+#       @for %i in ( $($(host_os)_objs) ) do @%append $^&.lnk file $(o_dir)\%i
 #       @for %i in ( $(mem_objs) ) do @%append $^&.lnk file $(o_dir)\%i
         @%append $^&.lnk lib $(dwarf_lib)
-!ifdef as_lib_$(target_CPU)
+!ifdef as_lib_$(target_cpu)
         @%append $^&.lnk lib $(asinline_axp_lib)
 !endif
 $(cc_dir)\h\codei86.gh : ..\a\codei86.asm ..\a\mkcode.c
@@ -287,12 +288,12 @@ $(cc_dir)\h\codeppc.gh :
         echo // Dummy file > $@
 
 usage.gh: ../usage.sp
-        $(bld_bin)\wsplice -k T$(target_CPU) -k H$(host_CPU) -k OS_$(host_OS)  "-f\"%s\0\"" ../usage.sp usage.gh
+        $(bld_bin)\wsplice -k T$(target_cpu) -k H$(host_cpu) -k OS_$(host_os)  "-f\"%s\0\"" ../usage.sp usage.gh
 
 wcc.u: ../usage.sp
-        $(bld_bin)\wsplice -k T$(target_CPU) -k H$(host_CPU) -k OS_$(host_OS) -u -t8 ../usage.sp wcc.u
+        $(bld_bin)\wsplice -k T$(target_cpu) -k H$(host_cpu) -k OS_$(host_os) -u -t8 ../usage.sp wcc.u
 usage01.int : $(fe_misc_dir)\c\usageenc.c ../jusage.sp
-        $(bld_bin)\wsplice -k T$(target_CPU) -k H$(host_CPU) -k OS_$(host_OS) ../jusage.sp usageenc.in
+        $(bld_bin)\wsplice -k T$(target_cpu) -k H$(host_cpu) -k OS_$(host_os) ../jusage.sp usageenc.in
         $(bld_cl) $[@ $(wcl_util_opts)
         usageenc.exe usageenc.in usage01.int
         del usageenc.*
@@ -314,5 +315,5 @@ bin_dir_os2     = binp
 bin_dir_dos     = binw
 
 install: $(dxname) .SYMBOLIC .EXPLICIT
-        cp $(dxname) $(%watcom)\$(bin_dir_$(host_OS))\wcc$(target_CPU).exe
+        cp $(dxname) $(%watcom)\$(bin_dir_$(host_os))\wcc$(target_cpu).exe
 wccexed: $(dxname) .SYMBOLIC .EXPLICIT

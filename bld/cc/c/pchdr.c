@@ -36,7 +36,9 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #ifdef __WATCOMC__
+#if (_OS != _QNX) && (_OS != _LINUX)
     #include <direct.h>
+#endif
     #include <share.h>
 #endif
 #if (_OS == _QNX) || (_OS == _LINUX)
