@@ -1,4 +1,4 @@
-plustest_name = positive
+ctest_name = positive
 !include ..\environ.mif
 
 positive_dir = source
