@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Utility routines for the command line parser.
 *
 ****************************************************************************/
 
-
-/*
- *  CMDUTILS : utility routines for the command line parser
- *
-*/
 
 #include <string.h>
 #include <stdlib.h>
@@ -68,13 +62,13 @@ static  char            *DefExt[] = {           /* see LINK.H */
     ".ovl",
     ".dll",
     ".exp",
-    ".nlm",	/* netware loadable module	*/
-    ".lan",	/* LAN driver				*/
-    ".dsk",	/* disk driver				*/
-    ".nam",	/* name space module		*/
-	".msl",	/* mirrored server link		*/
-	".ham",	/* host adapter module		*/
-	".cdm",	/* custom device module		*/
+    ".nlm", /* netware loadable module  */
+    ".lan", /* LAN driver               */
+    ".dsk", /* disk driver              */
+    ".nam", /* name space module        */
+    ".msl", /* mirrored server link     */
+    ".ham", /* host adapter module      */
+    ".cdm", /* custom device module     */
     ".com",
     ".rex",
 #if _OS == _QNX || _OS == _LINUX
@@ -189,7 +183,7 @@ extern bool ProcArgListEx( bool (*rtn)( void ), tokcontrol ctrl ,cmdfilelist *re
     } else {
         if(resetpoint && bfilereset)
             return TRUE;
-        if( GetTokenEx( SEP_NO, ctrl, resetpoint, &bfilereset) == FALSE ) 
+        if( GetTokenEx( SEP_NO, ctrl, resetpoint, &bfilereset) == FALSE )
             return( FALSE );
         do {
             if(resetpoint && bfilereset)
@@ -271,7 +265,7 @@ extern bool MatchOne( parse_entry *entry , sep_type req , char * match, int len 
                 ret = TRUE;
                 return ( ret );
             }
-            if( *key == '\0' || tolower( *ptr ) != tolower( *key ) ) 
+            if( *key == '\0' || tolower( *ptr ) != tolower( *key ) )
                 break;
             ptr++;
             key++;
@@ -494,29 +488,28 @@ extern bool GetTokenEx( sep_type req, tokcontrol ctrl, cmdfilelist *resetpoint, 
     need_sep = TRUE;
     for(;;) {                           /* finite state machine */
 
-		/*
-		//	carl.young
-		//	We had a situation where an input file (in this case a Novell 
-		//	import or export file) does not have the consistent format
-		//	expected from this FSM code. If the skipToNext flag is set,
-		//	then we just skip to the next token and return rather than
-		//	reporting an error.
-		//	For reference the import files looked like:
-		//		(PREFIX)
-		//			symbol1,
-		//			symbol2,
-		//			symbolnm1,
-		//			symboln
-		//
-		//	Note the missing comma separator after the prefix token. The
-		//	prefix token(s) may also appear anywhere in the file.
-		*/
+        /*
+        //  carl.young
+        //  We had a situation where an input file (in this case a Novell
+        //  import or export file) does not have the consistent format
+        //  expected from this FSM code. If the skipToNext flag is set,
+        //  then we just skip to the next token and return rather than
+        //  reporting an error.
+        //  For reference the import files looked like:
+        //      (PREFIX)
+        //          symbol1,
+        //          symbol2,
+        //          symbolnm1,
+        //          symboln
+        //
+        //  Note the missing comma separator after the prefix token. The
+        //  prefix token(s) may also appear anywhere in the file.
+        */
 
-		if( (Token.skipToNext) && (req == SEP_COMMA) )
-		{
-			Token.skipToNext = 0;
-			need_sep = FALSE;
-		}
+        if( (Token.skipToNext) && (req == SEP_COMMA) ) {
+            Token.skipToNext = 0;
+            need_sep = FALSE;
+        }
 
         switch( Token.where ) {
         case MIDST:
@@ -583,7 +576,7 @@ extern bool GetTokenEx( sep_type req, tokcontrol ctrl, cmdfilelist *resetpoint, 
                         if( hmm == ',' || hmm == '=' ) return( FALSE );
                         break;
                     case SEP_COMMA:
-						if(hmm != ',' )	return( FALSE);
+                        if(hmm != ',' ) return( FALSE);
                         Token.next++;
                         break;
                     case SEP_EQUALS:
@@ -640,11 +633,10 @@ extern bool GetTokenEx( sep_type req, tokcontrol ctrl, cmdfilelist *resetpoint, 
                 Token.next = Token.this;        /* re-process last token */
             }
             Token.quoted = FALSE;
-            if(resetpoint && (CmdFile == resetpoint))
-            {
-                if(*Token.next == ',')
+            if( resetpoint && (CmdFile == resetpoint) ) {
+                if( *Token.next == ',' )
                     break;
-                if(pbreset)
+                if( pbreset )
                     *pbreset = TRUE;            /* Show we have hit a file end-point for a directive */
                 return FALSE;
             }
