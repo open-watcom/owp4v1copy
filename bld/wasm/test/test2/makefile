@@ -84,49 +84,34 @@ test &
 timer &
 tmp
 
-test : .SYMBOLIC
 !ifndef asm
-asm=wasm -q -c
+asm=wasm -q
 !endif
-	@%create $(cmd_file)
-	@%write $(cmd_file) @echo off
-	@%write $(cmd_file) @echo %1.asm ======================================================
-	@%write $(cmd_file) @$(asm) %1.asm >%1.tmp 2>&1
-	@%write $(cmd_file) @if not exist %1.chk goto next2
-        @%write $(cmd_file) @diff -b %1.tmp %1.chk
-	@%write $(cmd_file) goto end
-	@%write $(cmd_file) :next2
-	@%write $(cmd_file) type %1.tmp
-	@%write $(cmd_file) :end
-	@%write $(cmd_file) @wdis -l=%1.dis -a %1.obj
-	@%write $(cmd_file) @if not exist %1.esm goto next3
-        @%write $(cmd_file) @diff -b %1.dis %1.esm
-	@%write $(cmd_file) :next3
-	@%write $(cmd_file) @dmpobj -q -l -rec=FIXUPP %1.obj
-	@%write $(cmd_file) @if not exist %1.emp goto next4
-        @%write $(cmd_file) @diff -b %1.lst %1.emp
-	@%write $(cmd_file) :next4
-	@for %x in ($(objs)) do @call $(cmd_file) %x
 
-debug : .SYMBOLIC
+all : $(cmd_file) $(objs)
+	@call $(cmd_file)
+
+$(cmd_file) : .SYMBOLIC
 	@%create $(cmd_file)
 	@%write $(cmd_file) @echo off
-	@%write $(cmd_file) @echo %1.asm ======================================================
-	@%write $(cmd_file) @$(asm) %1.asm -q -d6
-	@%write $(cmd_file) @if not exist %1.err goto next1
-	@%write $(cmd_file) @if not exist %1.chk goto next2
-        @%write $(cmd_file) @diff -b %1.err %1.chk
-	@%write $(cmd_file) goto next1
-	@%write $(cmd_file) :next2
-	@%write $(cmd_file) type %1.err
-	@%write $(cmd_file) :next1
-	@for %x in ($(objs)) do @call $(cmd_file) %x
+
+$(objs) : .SYMBOLIC
+	@%append $(cmd_file) @echo $^@.asm ======================================================
+	@%append $(cmd_file) @$(asm) $(asm_flags_$^@) $^@.asm >$^@.tmp 2>&1
+	@%append $(cmd_file) @if not exist $^@.chk goto next$^@a
+        @%append $(cmd_file) @diff -b $^@.tmp $^@.chk
+	@%append $(cmd_file) goto next$^@c
+	@%append $(cmd_file) :next$^@a
+	@%append $(cmd_file) type $^@.tmp
+	@%append $(cmd_file) :next$^@c
+	@%append $(cmd_file) @wdis -l=$^@.dis -a $^@.obj
+	@%append $(cmd_file) @if not exist $^@.esm goto next$^@b
+        @%append $(cmd_file) @diff -b $^@.dis $^@.esm
+	@%append $(cmd_file) :next$^@b
+	@%append $(cmd_file) @dmpobj -q -l -rec=FIXUPP $^@.obj
+	@%append $(cmd_file) @if not exist $^@.emp goto next$^@c
+        @%append $(cmd_file) @diff -b $^@.lst $^@.emp
+	@%append $(cmd_file) :next$^@c
 
 clean : .SYMBOLIC
-	@%create $(cmd_file)
-	@%write $(cmd_file) @echo off
-	@%write $(cmd_file) @if exist %1.obj del %1.obj
-	@%write $(cmd_file) @if exist %1.err del %1.err
-	@for %x in ($(objs)) do @call $(cmd_file) %x
-	@if exist test_tmp.cmd del test_tmp.cmd
-	@if exist mem.trk erase mem.trk
+	rm -f *.obj *.err *.dis *.lst *.tmp test_tmp.cmd mem.trk
