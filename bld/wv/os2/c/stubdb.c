@@ -29,7 +29,8 @@
 ****************************************************************************/
 
 
-#include "windows.h"
+#define INCL_DOS
+#include <os2.h>
 #include "dbgdefn.h"
 #include "dbgmem.h"
 #include "dbginfo.h"
@@ -46,34 +47,54 @@
 #include <ctype.h>
 #include <process.h>
 
-extern void             FlushEOC(void);
-extern char             *DupStr(char*);
-extern void             DoCmd(char*);
+extern void             FlushEOC( void );
+extern char             *DupStr( char * );
+extern void             DoCmd( char * );
 extern bool             InsMemRef( mad_disasm_data *dd );
 extern address          GetCodeDot();
-extern void             *WndAsmInspect(address addr);
+extern void             *WndAsmInspect( address addr );
 extern void             DebugMain();
 extern void             DebugFini();
-extern void             DoInput(void);
+extern void             DoInput( void );
 extern void             DlgCmd( void );
 extern void             UnAsm( address addr, unsigned max, char *buff );
 extern address          GetCodeDot();
-extern char             *DupStr(char*);
+extern char             *DupStr( char * );
 extern bool             DUIGetSourceLine( cue_handle *ch, char *buff, unsigned len );
 extern void             ExecTrace( trace_cmd_type type, debug_level level );
 extern unsigned         Go( bool );
-extern void             *OpenSrcFile(cue_handle *);
-extern int              FReadLine(void   *,int ,int ,char *,int );
-extern void             FDoneSource(void         *);
+extern void             *OpenSrcFile( cue_handle * );
+extern int              FReadLine( void *, int, int, char *, int );
+extern void             FDoneSource( void * );
+extern var_node         *VarGetDisplayPiece( var_info *i, int row, int piece, int *pdepth, int *pinherit );
 
 
 extern debug_level      DbgLevel;
 extern char             *TxtBuff;
 extern unsigned char    CurrRadix;
-static char             *CmdData;
 static bool             Done;
 extern char             *TrpFile;
+extern char             *CmdStart;
 
+unsigned                NumLines;
+unsigned                NumColumns;
+
+char *_LITDOS_invalid_function = "invalid function";
+char *_LITDOS_file_not_found = "file not found";
+char *_LITDOS_path_not_found = "path not found";
+char *_LITDOS_too_many_open_files = "too many open files";
+char *_LITDOS_access_denied = "access denied";
+char *_LITDOS_invalid_handle = "invalid handle";
+char *_LITDOS_memory_control = "memory control";
+char *_LITDOS_insufficient_memory = "insufficient memory";
+char *_LITDOS_invalid_address = "invalid address";
+char *_LITDOS_invalid_environment = "invalid environment";
+char *_LITDOS_invalid_format = "invalid format";
+char *_LITDOS_invalid_access_code = "invalid access code";
+char *_LITDOS_invalid_data = "invalid data";
+char *_LITDOS_invalid_drive = "invalid drive";
+char *_LITDOS_remove_cd = "remove cd";
+char *_LITDOS_not_same_device = "not same device";
 
 void WndMemInit( void )
 {
@@ -98,21 +119,9 @@ bool DUIClose()
     return( TRUE );
 }
 
-char *GetCmdArg( int num )
-{
-    if( num != 0 ) return( NULL );
-    return( CmdData );
-}
-
-void SetCmdArgStart( int num, char far *ptr )
-{
-    num = num;
-    CmdData = ptr;
-}
-
 var_info        Locals;
-HANDLE          Requestsem;
-HANDLE          Requestdonesem;
+HEV             Requestsem;
+HEV             Requestdonesem;
 
 static void DumpLocals()
 {
@@ -120,6 +129,7 @@ static void DumpLocals()
     address     addr;
     int         row;
     int         depth;
+    int         inherit;
     var_node    *v;
 
     if( !_IsOn( SW_TASK_RUNNING ) ) {
@@ -128,10 +138,10 @@ static void DumpLocals()
         VarOkToCache( &Locals, TRUE );
     }
     for( row = 0;; ++row ) {
-        v = VarGetDisplayPiece( &Locals, row, VAR_PIECE_GADGET, &depth );
+        v = VarGetDisplayPiece( &Locals, row, VAR_PIECE_GADGET, &depth, &inherit );
         if( v == NULL ) break;
-        v = VarGetDisplayPiece( &Locals, row, VAR_PIECE_NAME, &depth );
-        v = VarGetDisplayPiece( &Locals, row, VAR_PIECE_VALUE, &depth );
+        v = VarGetDisplayPiece( &Locals, row, VAR_PIECE_NAME, &depth, &inherit );
+        v = VarGetDisplayPiece( &Locals, row, VAR_PIECE_VALUE, &depth, &inherit );
         switch( v->gadget ) {
         case VARGADGET_NONE:
             printf( "  " );
@@ -149,7 +159,7 @@ static void DumpLocals()
             printf( "<-" );
             break;
         }
-        VarBuildName( v, TRUE );
+        VarBuildName( &Locals, v, TRUE );
         printf( " %-20s %s\n", TxtBuff, v->value );
     }
     if( !_IsOn( SW_TASK_RUNNING ) ) {
@@ -165,7 +175,7 @@ static void DumpSource()
     DIPHDL( cue, ch );
 
     if( _IsOn( SW_TASK_RUNNING ) ) {
-        printf( "I don't know where the task is.  It's running\n" );
+        printf( "I don't know where the task is. It's running\n" );
     }
     if( DeAliasAddrCue( NO_MOD, GetCodeDot(), ch ) == SR_NONE ||
         !DUIGetSourceLine( ch, buff, sizeof( buff ) ) ) {
@@ -184,11 +194,14 @@ enum {
 
 bool RequestDone;
 
-DWORD WINAPI ControlFunc( void *parm )
+VOID APIENTRY ControlFunc( ULONG parm )
 {
+    ULONG   ulCount;
+
     parm = parm;
     do {
-        WaitForSingleObject( Requestsem, INFINITE ); // wait for Request
+        DosWaitEventSem( Requestsem, SEM_INDEFINITE_WAIT ); // wait for Request
+        DosResetEventSem( Requestsem, &ulCount );
         switch( Req ) {
         case REQ_GO:
             Go( TRUE );
@@ -202,46 +215,48 @@ DWORD WINAPI ControlFunc( void *parm )
         }
         DoInput();
         _SwitchOff( SW_TASK_RUNNING );
-        ReleaseSemaphore( Requestdonesem, 1, NULL ); // signal req done
+        DosPostEventSem( Requestdonesem );
     } while( Req != REQ_BYE );
-    return( 0 ); // thread over!
+    return; // thread over!
 }
 
 void RunRequest( int req )
 {
+    ULONG   ulCount;
+
     if( _IsOn( SW_TASK_RUNNING ) ) return;
-    WaitForSingleObject( Requestdonesem, INFINITE ); // wait for last request to finish
+    DosWaitEventSem( Requestdonesem, SEM_INDEFINITE_WAIT ); // wait for last request to finish
+    DosResetEventSem( Requestdonesem, &ulCount );
     Req = req;
     _SwitchOn( SW_TASK_RUNNING );
-    ReleaseSemaphore( Requestsem, 1, NULL ); // tell worker to go
+    DosPostEventSem( Requestsem ); // tell worker to go
 }
 
 int main( int argc, char **argv )
 {
     char        buff[256];
-    DWORD       tid;
-    HANDLE      hThread;
+    TID         tid;
+    APIRET      rc;
 
     MemInit();
-    SetErrorMode( SEM_FAILCRITICALERRORS );
     getcmd( buff );
-    CmdData = buff;
+    CmdStart = buff;
     DebugMain();
     _SwitchOff( SW_ERROR_STARTUP );
     DoInput();
     VarInitInfo( &Locals );
-    Requestsem = CreateSemaphore( NULL, 0, 1, NULL );
-    Requestdonesem = CreateSemaphore( NULL, 0, 1, NULL );
-    ReleaseSemaphore( Requestdonesem, 1, NULL ); // signal req done
-    hThread = CreateThread( NULL, 0, (LPTHREAD_START_ROUTINE)ControlFunc, NULL, 0, &tid );
-    if (hThread == NULL) {
-        MessageBox( NULL, "Error creating thread!", "Stubugger", MB_APPLMODAL+MB_OK );
+    DosCreateEventSem( NULL, &Requestsem, 0, FALSE );
+    DosCreateEventSem( NULL, &Requestdonesem, 0, FALSE );
+    DosPostEventSem( Requestdonesem ); // signal req done
+    rc = DosCreateThread( &tid, ControlFunc, 0, 0, 32768 );
+    if( rc != 0 ) {
+        printf( "Stubugger: Error creating thread!\n" );
     }
     while( !Done ) {
         DlgCmd();
     }
-    CloseHandle( Requestsem );
-    CloseHandle( Requestdonesem );
+    DosCloseEventSem( Requestsem );
+    DosCloseEventSem( Requestdonesem );
     DebugFini();
     RunRequest( REQ_BYE );
     MemFini();
@@ -253,7 +268,7 @@ void DlgCmd()
     char        buff[256];
 
     printf( "DBG>" );
-    fflush( stdout );
+    fflush( stdout );   // not really necessary
     gets( buff );
     if( buff[0] != '\0' && buff[1] == '\0' ) {
         switch( tolower( buff[0] ) ) {
@@ -279,12 +294,12 @@ void DlgCmd()
             if( _IsOn( SW_REMOTE_LINK ) ) {
                 printf( "Can't break remote task!\n" );
             } else {
-                HANDLE hmod;
-                FARPROC proc;
-                hmod = GetModuleHandle( TrpFile );
-                proc = GetProcAddress( hmod, (LPSTR)5 );
+                HMODULE hmod;
+                PFN     proc = NULL;
+
+                DosQueryModuleHandle( TrpFile, &hmod );
+                DosQueryProcAddr( hmod, 5, 0, &proc );
                 if( proc != NULL ) proc();
-                CloseHandle( hmod );
             }
             // break the task
             break;
@@ -303,7 +318,8 @@ extern char *DUILoadString( int id )
     char        *ret;
     int         size;
 
-    size = LoadString( GetModuleHandle( NULL ), id, buff, sizeof( buff ) );
+    size = WinLoadString( 0, NULLHANDLE, id, sizeof( buff ), buff );
+//    size = LoadString( GetModuleHandle( NULL ), id, buff, sizeof( buff ) );
     buff[size]='\0';
     ret = DbgAlloc( size+1 );
     strcpy( ret, buff );
@@ -693,12 +709,9 @@ void VarRestoreWndFromScope( void *wnd )
 }
 void PopErrBox( char *buff )
 {
-    MessageBox( (HWND) NULL, buff, LIT( Debugger_Startup_Error ),
-            MB_OK | MB_ICONHAND | MB_SYSTEMMODAL );
-}
-void KillDebugger( int ret_code )
-{
-    ExitProcess( ret_code );
+    printf( "%s: %s\n", buff, LIT( Debugger_Startup_Error ) );
+//    MessageBox( (HWND) NULL, buff, LIT( Debugger_Startup_Error ),
+//            MB_OK | MB_ICONHAND | MB_SYSTEMMODAL );
 }
 
 void DUIEnterCriticalSection()
@@ -822,4 +835,9 @@ bool DUICopyCancelled( void * cookie )
 {
     cookie = cookie;
     return( FALSE );
+}
+
+unsigned OnAnotherThread( unsigned(*a)(), unsigned b, void *c, unsigned d, void *e )
+{
+    return( a( b, c, d, e ) );
 }

@@ -17,6 +17,6 @@ sysobjs = ntstub.obj ntfilio.obj winlkup.obj winchk.obj ntcmd.obj ntfinfo.obj
 
 !include ../../master.mif
 
-dve.exe : eraseall.obj $(resfile) stubdb.obj wd.lib $(__MAKEFILES__)
+dve.exe : $(resfile) stubdb.obj wd.lib $(__MAKEFILES__)
         $(linker) sys nt name $^@ debug all op symf,map file stubdb.obj lib wd.lib
         $(rc) $(rc_flags) -k $(resfile) dve.exe

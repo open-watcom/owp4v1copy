@@ -48,7 +48,8 @@ extern void     DebugMain( void );
 extern void     DebugFini( void );
 extern char     *StrCopy( char *, char * );
 
-static char             *CmdStart;
+char            *CmdStart;
+
 static volatile bool    BrkPending;
 
 #if 0

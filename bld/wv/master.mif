@@ -555,6 +555,11 @@ wvui.res : $(hdir)/wvui.rc auistr.gh _guimsgs.gh $(rcfiles) usage.rc usagej.rc .
 wvntdll.res : $(hdir)/strings.rc litdef.gh .autodepend
         $(rc) $(rc_flags) -r -ad $(rcinclude) $(inc_dirs_sys_win) $[@ -fo=$^@
 
+wvpmdll.res : $(hdir)/strings.rc litdef.gh .autodepend
+        *wcc -dRC -I"$(aui_dir)/os2386.pm" $(rcinclude) -p -pw=0 -fo=wvpm.i $[@
+        $(rc_os2) -I $(lang_root)/h/os2 -r $(hdir)\foros2pm.rc .\wvpmdll.res
+        del wvpm.i
+
 wvwin.res : $(hdir)/wvwin.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
         $(rc) $(rc_flags) -r -ad -k $(rcinclude) $(inc_dirs_sys_win) $[@ -fo=$^@
 
