@@ -774,8 +774,8 @@ static  int  CompLink( void )
         file = GetName( Word );         /* get first matching filename */
         path = MakePath( Word );        /* isolate path portion of filespec */
         while( file != NULL ) {         /* while more filenames: */
-            strcpy( Word, path );
-            strcat( Word, file );
+            BuildQuotedFName( Word, path, file, "\"" );
+
             if( !FileExtension( Word, OBJ_EXT ) &&  // if not .obj or .o, compile
                 !FileExtension( Word, OBJ_EXT_SECONDARY ) ) {
                 if( !Flags.be_quiet ) {

@@ -96,6 +96,7 @@ void    BuildLinkFile( void );
 void    AddName( char *, FILE * );
 char    *MakePath( char * );
 char    *GetName( char * );
+int     BuildQuotedFName( char *buffer, const char *path, const char *filename, const char *quote_char );
 
 enum {
 #undef E

@@ -53,6 +53,7 @@ extern char *DebugOptions[] = {
 };
 
 void PrintMsg( const char *fmt, ... )
+/***********************************/
 {
     char        c;
     int         i;
@@ -96,15 +97,20 @@ void  Fputnl( char *text, FILE *fptr )
 }
 
 void BuildLinkFile()
+/******************/
 {
+    char quoted[_MAX_PATH ];
+
     fputs( "name ", Fp );
-    Fputnl( Exe_Name, Fp );
+    BuildQuotedFName( quoted, "", Exe_Name, "'" );
+    Fputnl( quoted, Fp );
     if( Flags.map_wanted ) {
         if( Map_Name == NULL ) {
             Fputnl( "option map", Fp );
         } else {
             fputs( "option map=", Fp );
-            Fputnl( Map_Name, Fp );
+            BuildQuotedFName( quoted, "", Map_Name, "'" );
+            Fputnl( quoted, Fp );
         }
     }
     if( Libs[0] != '\0' ) {
@@ -134,6 +140,7 @@ void  AddName( char *name, FILE *link_fp )
 {
     struct list *curr_name, *last_name, *new_name;
     char path  [_MAX_PATH ];
+    char quoted[_MAX_PATH ];
     char buff1[_MAX_PATH2];
     char buff2[_MAX_PATH2];
     char *drive;
@@ -170,7 +177,8 @@ void  AddName( char *name, FILE *link_fp )
         _makepath( path, drive, dir, fname, extension );
         name = path;
     }
-    Fputnl( name, link_fp );
+    BuildQuotedFName( quoted, "", name, "'" );
+    Fputnl( quoted, link_fp );
 }
 
 
@@ -244,4 +252,20 @@ void FindPath( char *name, char *buf )
         PrintMsg( WclMsgs[ UNABLE_TO_FIND ], name );
         exit( 1 );
     }
+}
+
+int BuildQuotedFName( char *buffer, const char *path, const char *filename, const char *quote_char )
+/**************************************************************************************************/
+{
+    int has_space = 0;
+
+    if( strchr( path, ' ' ) != NULL ) has_space = 1;
+    if( strchr( filename, ' ' ) != NULL ) has_space = 1;
+
+    strcpy( buffer, has_space ? quote_char : "" );
+    strcat( buffer, path);
+    strcat( buffer, filename);
+    strcat( buffer, has_space ? quote_char : "" );
+
+    return has_space;
 }
