@@ -102,6 +102,7 @@ struct  exception {
 
 _WMRTLINK extern int    matherr( struct _exception * );
 _WMRTLINK extern double _matherr( struct _exception * );
+_WMRTLINK void _set_matherr( int (*rtn)( struct _exception * ) );
 :segment !SNAP & !SNAPDRV
 
 _WCRTLINK extern int _dieeetomsbin( double *__x, double *__y );
