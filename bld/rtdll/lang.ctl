@@ -38,25 +38,25 @@ set PROJDIR=<CWD>
 #    <CPCMD> mathlib/os2.386/ms_r/clib3r.lib    <RELROOT>/rel2/lib386/os2/mthrdll.lib
 #    <CPCMD> mathlib/os2.386/ms_r/mthr*.dll     <RELROOT>/rel2/binp/dll/
 #    <CPCMD> mathlib/os2.386/ms_r/mthr*.sym     <RELROOT>/rel2/binp/dll/
-#    <CPCMD> mathlib/os2.387/ms_r/clib.lib      <RELROOT>/rel2/lib386/os2/mt7rdll.lib
+#    <CPCMD> mathlib/os2.387/ms_r/clib3r.lib    <RELROOT>/rel2/lib386/os2/mt7rdll.lib
 #    <CPCMD> mathlib/os2.387/ms_r/mt7r*.dll     <RELROOT>/rel2/binp/dll/
 #    <CPCMD> mathlib/os2.387/ms_r/mt7r*.sym     <RELROOT>/rel2/binp/dll/
 #    <CPCMD> mathlib/os2.386/ms_s/clib3s.lib    <RELROOT>/rel2/lib386/os2/mthsdll.lib
 #    <CPCMD> mathlib/os2.386/ms_s/mths*.dll     <RELROOT>/rel2/binp/dll/
 #    <CPCMD> mathlib/os2.386/ms_s/mths*.sym     <RELROOT>/rel2/binp/dll/
-#    <CPCMD> mathlib/os2.387/ms_s/clib.lib      <RELROOT>/rel2/lib386/os2/mt7sdll.lib
+#    <CPCMD> mathlib/os2.387/ms_s/clib3s.lib    <RELROOT>/rel2/lib386/os2/mt7sdll.lib
 #    <CPCMD> mathlib/os2.387/ms_s/mt7s*.dll     <RELROOT>/rel2/binp/dll/
 #    <CPCMD> mathlib/os2.387/ms_s/mt7s*.sym     <RELROOT>/rel2/binp/dll/
     <CPCMD> mathlib/os2.386/mf_r/clib3r.lib    <RELROOT>/rel2/lib386/os2/mthrdll.lib
     <CPCMD> mathlib/os2.386/mf_r/mthr*.dll     <RELROOT>/rel2/binp/dll/
     <CPCMD> mathlib/os2.386/mf_r/mthr*.sym     <RELROOT>/rel2/binp/dll/
-    <CPCMD> mathlib/os2.387/mf_r/clib.lib      <RELROOT>/rel2/lib386/os2/mt7rdll.lib
+    <CPCMD> mathlib/os2.387/mf_r/clib3r.lib    <RELROOT>/rel2/lib386/os2/mt7rdll.lib
     <CPCMD> mathlib/os2.387/mf_r/mt7r*.dll     <RELROOT>/rel2/binp/dll/
     <CPCMD> mathlib/os2.387/mf_r/mt7r*.sym     <RELROOT>/rel2/binp/dll/
     <CPCMD> mathlib/os2.386/mf_s/clib3s.lib    <RELROOT>/rel2/lib386/os2/mthsdll.lib
     <CPCMD> mathlib/os2.386/mf_s/mths*.dll     <RELROOT>/rel2/binp/dll/
     <CPCMD> mathlib/os2.386/mf_s/mths*.sym     <RELROOT>/rel2/binp/dll/
-    <CPCMD> mathlib/os2.387/mf_s/clib.lib      <RELROOT>/rel2/lib386/os2/mt7sdll.lib
+    <CPCMD> mathlib/os2.387/mf_s/clib3s.lib    <RELROOT>/rel2/lib386/os2/mt7sdll.lib
     <CPCMD> mathlib/os2.387/mf_s/mt7s*.dll     <RELROOT>/rel2/binp/dll/
     <CPCMD> mathlib/os2.387/mf_s/mt7s*.sym     <RELROOT>/rel2/binp/dll/
 
@@ -137,33 +137,33 @@ set PROJDIR=<CWD>
 #    <CPCMD> mathlib/winnt.386/ms_r/clib3r.lib  <RELROOT>/rel2/lib386/nt/mthrdll.lib
 #    <CPCMD> mathlib/winnt.386/ms_r/mthr*.dll   <RELROOT>/rel2/binnt/
 #    <CPCMD> mathlib/winnt.386/ms_r/mthr*.sym   <RELROOT>/rel2/binnt/
-#    <CPCMD> mathlib/winnt.387/ms_r/clib.lib    <RELROOT>/rel2/lib386/nt/mt7rdll.lib
+#    <CPCMD> mathlib/winnt.387/ms_r/clib3r.lib  <RELROOT>/rel2/lib386/nt/mt7rdll.lib
 #    <CPCMD> mathlib/winnt.387/ms_r/mt7r*.dll   <RELROOT>/rel2/binnt/
 #    <CPCMD> mathlib/winnt.387/ms_r/mt7r*.sym   <RELROOT>/rel2/binnt/
 #    <CPCMD> mathlib/winnt.386/ms_rp/clib3r.lib <RELROOT>/rel2/lib386/nt/mthrpdll.lib
 #    <CPCMD> mathlib/winnt.386/ms_rp/mthrp*.dll <RELROOT>/rel2/binnt/
-#    <CPCMD> mathlib/winnt.387/ms_rp/clib.lib   <RELROOT>/rel2/lib386/nt/mt7rpdll.lib
+#    <CPCMD> mathlib/winnt.387/ms_rp/clib3r.lib <RELROOT>/rel2/lib386/nt/mt7rpdll.lib
 #    <CPCMD> mathlib/winnt.387/ms_rp/mt7rp*.dll <RELROOT>/rel2/binnt/
 #    <CPCMD> mathlib/winnt.386/ms_s/clib3s.lib  <RELROOT>/rel2/lib386/nt/mthsdll.lib
 #    <CPCMD> mathlib/winnt.386/ms_s/mths*.dll   <RELROOT>/rel2/binnt/
 #    <CPCMD> mathlib/winnt.386/ms_s/mths*.sym   <RELROOT>/rel2/binnt/
-#    <CPCMD> mathlib/winnt.387/ms_s/clib.lib    <RELROOT>/rel2/lib386/nt/mt7sdll.lib
+#    <CPCMD> mathlib/winnt.387/ms_s/clib3s.lib  <RELROOT>/rel2/lib386/nt/mt7sdll.lib
 #    <CPCMD> mathlib/winnt.387/ms_s/mt7s*.dll   <RELROOT>/rel2/binnt/
 #    <CPCMD> mathlib/winnt.387/ms_s/mt7s*.sym   <RELROOT>/rel2/binnt/
     <CPCMD> mathlib/winnt.386/mf_r/clib3r.lib  <RELROOT>/rel2/lib386/nt/mthrdll.lib
     <CPCMD> mathlib/winnt.386/mf_r/mthr*.dll   <RELROOT>/rel2/binnt/
     <CPCMD> mathlib/winnt.386/mf_r/mthr*.sym   <RELROOT>/rel2/binnt/
-    <CPCMD> mathlib/winnt.387/mf_r/clib.lib    <RELROOT>/rel2/lib386/nt/mt7rdll.lib
+    <CPCMD> mathlib/winnt.387/mf_r/clib3r.lib  <RELROOT>/rel2/lib386/nt/mt7rdll.lib
     <CPCMD> mathlib/winnt.387/mf_r/mt7r*.dll   <RELROOT>/rel2/binnt/
     <CPCMD> mathlib/winnt.387/mf_r/mt7r*.sym   <RELROOT>/rel2/binnt/
     <CPCMD> mathlib/winnt.386/mf_rp/clib3r.lib <RELROOT>/rel2/lib386/nt/mthrpdll.lib
     <CPCMD> mathlib/winnt.386/mf_rp/mthrp*.dll <RELROOT>/rel2/binnt/
-    <CPCMD> mathlib/winnt.387/mf_rp/clib.lib   <RELROOT>/rel2/lib386/nt/mt7rpdll.lib
+    <CPCMD> mathlib/winnt.387/mf_rp/clib3r.lib <RELROOT>/rel2/lib386/nt/mt7rpdll.lib
     <CPCMD> mathlib/winnt.387/mf_rp/mt7rp*.dll <RELROOT>/rel2/binnt/
     <CPCMD> mathlib/winnt.386/mf_s/clib3s.lib  <RELROOT>/rel2/lib386/nt/mthsdll.lib
     <CPCMD> mathlib/winnt.386/mf_s/mths*.dll   <RELROOT>/rel2/binnt/
     <CPCMD> mathlib/winnt.386/mf_s/mths*.sym   <RELROOT>/rel2/binnt/
-    <CPCMD> mathlib/winnt.387/mf_s/clib.lib    <RELROOT>/rel2/lib386/nt/mt7sdll.lib
+    <CPCMD> mathlib/winnt.387/mf_s/clib3s.lib  <RELROOT>/rel2/lib386/nt/mt7sdll.lib
     <CPCMD> mathlib/winnt.387/mf_s/mt7s*.dll   <RELROOT>/rel2/binnt/
     <CPCMD> mathlib/winnt.387/mf_s/mt7s*.sym   <RELROOT>/rel2/binnt/
 
