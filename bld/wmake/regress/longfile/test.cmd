@@ -38,6 +38,21 @@ if errorlevel 1 goto err2
     @echo Error: Long FileName #2 unsuccessful!!! | tee -a %2
 
 :test3
+echo # ---------------------------
+echo #   Long FileName Test 3
+echo # ---------------------------
+rm tmp.out
+rem This one MUST NOT use -a switch!
+%1 -h -ms -f LONG03 > tmp.out 2>&1
+diff -b LONG03.CMP tmp.out
+if errorlevel 1 goto err2
+    @echo # LONG03 successful
+    goto test4
+:err2
+    @echo ## Long FileName ## >> %2
+    @echo Error: Long FileName #3 unsuccessful!!! | tee -a %2
+
+:test4
 
 goto done
 :usage
