@@ -42,7 +42,9 @@
 extern const trap_requests *TrapLoad( trap_callbacks *client );
 #endif
 
+#ifndef __WATCOMC__
 extern char **environ;
+#endif
 
 static const trap_requests      *TrapFuncs;
 static PE_MODULE *TrapFile;
@@ -79,7 +81,7 @@ int PathOpenTrap( char const *name, unsigned len, char *ext, char *trap_name, in
 {
     char    path[_MAX_PATH];
 
-    len = min(len,sizeof(path)); 
+    len = min(len,sizeof(path));
     memcpy( path, name, len );
     path[ len ] = '\0';
     return( FullPathOpen( path, ext, trap_name, trap_name_len ) );
@@ -98,7 +100,7 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
     for( ptr = trapbuff; *ptr != '\0' && *ptr != ';'; ++ptr ) ;
     parm = (*ptr != '\0') ? ptr + 1 : ptr;
     filehndl = PathOpenTrap( trapbuff, ptr - trapbuff, "trp", trap_name, sizeof(trap_name) );
-    
+
     parm = (*ptr != '\0') ? ptr + 1 : ptr;
 
 #if !defined( BUILTIN_TRAP_FILE )
