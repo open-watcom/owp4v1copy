@@ -82,7 +82,7 @@ $(exename) :
     $(%link)
 !else ifeq form dos4g
 $(exename) :
-    @set link=$(linker) name $(exedir)/$(exe) @$(exe).lnk
+    @set link=$(linker) name $(exename) @$(exe).lnk
     $(%link)
 !else
 $(exename) :
@@ -90,7 +90,7 @@ $(exename) :
     $(%link)
 !endif
 !ifdef resource_file
-    wstrip -q -a -r $(exedir)/$(exe) . $(resource_file)
+    wstrip -q -a -r $(exename) . $(resource_file)
 !endif
 
 #
@@ -102,7 +102,11 @@ $(exe).lnk : $(f77_dir)/lg86/files.mif $(f77_dir)/lg86/rt/rt.mif $(f77_dir)/lg86
     @echo Creating $^@
     @%create $^@
 !ifdef share_objs
+!ifdef __LINUX__
+    @%append $^@ path .:$(share_objs).
+!else
     @%append $^@ path .;$(share_objs).
+!endif
 !endif
     @%append $^@ debug all option symfile
     @for %i in ($(libs)) do @%append $^@ lib %i

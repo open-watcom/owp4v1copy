@@ -35,7 +35,7 @@
 #include "dbgtoggl.h"
 #include <string.h>
 #include <stddef.h>
-#include "..\..\dos\h\dbgscrn.h"
+#include "../../dos/h/dbgscrn.h"
 #define STRICT
 #include <windows.h>
 

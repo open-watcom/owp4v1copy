@@ -32,7 +32,7 @@
 
 #include "dbgdefn.h"
 #include "dbgtoggl.h"
-#include "..\..\dos\h\dbgscrn.h"
+#include "../../dos/h/dbgscrn.h"
 
 
 extern unsigned         Lookup(char *,char *, unsigned);

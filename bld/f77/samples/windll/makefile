@@ -29,7 +29,7 @@ link_opts_32 = &
 .EXTENSIONS: .dll .exe .rex .obj .for .c
 
 .BEFORE
-    set finclude=$(%watcom)\src\fortran\win;$(%finclude)
+    set finclude=$(%watcom)/src/fortran/win;$(%finclude)
 
 all : gen16.exe gen32.exe gen16v.exe gen32v.exe .SYMBOLIC
     @echo All done! Install and run the examples under Windows.
@@ -124,7 +124,7 @@ cover16.dll : cover16.obj
     @del tmp.lnk
 
 cover16.obj : cover16.c
-    set include=$(%watcom)\h\win;$(%include)
+    set include=$(%watcom)/h/win;$(%include)
     $(c286) cover16 $(dllflags) $(c16flags)
 
 

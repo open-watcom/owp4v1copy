@@ -24,7 +24,7 @@ link_opts_32 = &
 .EXTENSIONS: .dll .exe .rex .obj .for .c
 
 .BEFORE
-    set finclude=$(%watcom)\src\fortran\win;$(%finclude)
+    set finclude=$(%watcom)/src/fortran/win;$(%finclude)
 
 all : ellips16.exe ellips32.exe fwcopy16.exe fwcopy32.exe .SYMBOLIC
     @echo All done! Run the examples under Windows!
