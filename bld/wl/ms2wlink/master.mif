@@ -1,0 +1,38 @@
+proj_name = wlink
+
+!include cproj.mif
+!include deftarg.mif
+
+objs = &
+fileio.obj &
+keyword.obj &
+mem.obj &
+ms2wlink.obj &
+parsems.obj &
+utils.obj
+
+.extensions:
+.extensions: .exe .obj .c
+
+copts_i86   = /fpc/oaxt /mc /d1 /w4 /we
+copts_386   = /fpc/oaxt /d1 /w4 /we
+
+!ifdef on_build_machine
+copts += -zq
+!endif
+
+compile = $(cc_$(host_CPU)) $[* $(copts_$(host_CPU))
+prj = ms2wlink.exe
+
+.c: ..\c
+
+.c.obj:
+        $(compile) /bt=$(host_OS)
+
+lflags_dos = system dos
+lflags_nt = system nt
+lflags_os2 = system os2 pmcompat op stack=8k
+
+$(prj) : $(objs)
+        $(linker) $(lflags_$(host_OS)) n $(prj) op map f {$(objs)}
+

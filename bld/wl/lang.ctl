@@ -16,8 +16,12 @@ cdsay .
 #========================
 #    <CPCMD> <devdir>\wl\qnx\wl.exe <relroot>\rel2\qnx\binq\wlink
 #    <CPCMD> <devdir>\wl\qnx\wl.sym <relroot>\rel2\qnx\sym\wlink.sym
-    <CPCMD> <devdir>\wl\ms2wlink\o\ms2wlink.exe <relroot>\rel2\binw\ms2wlink.exe
-    <CPCMD> <devdir>\wl\fcenable\o\fcenable.exe <relroot>\rel2\binw\fcenable.exe
+    <CPCMD> <devdir>\wl\ms2wlink\dosi86\ms2wlink.exe <relroot>\rel2\binw\ms2wlink.exe
+    <CPCMD> <devdir>\wl\ms2wlink\nt386\ms2wlink.exe <relroot>\rel2\binnt\ms2wlink.exe
+    <CPCMD> <devdir>\wl\ms2wlink\os2i86\ms2wlink.exe <relroot>\rel2\binp\ms2wlink.exe
+    <CPCMD> <devdir>\wl\fcenable\dosi86\fcenable.exe <relroot>\rel2\binw\fcenable.exe
+    <CPCMD> <devdir>\wl\fcenable\nt386\fcenable.exe <relroot>\rel2\binnt\fcenable.exe
+    <CPCMD> <devdir>\wl\fcenable\os2i86\fcenable.exe <relroot>\rel2\binp\fcenable.exe
 # Removed: KB
 #    <CPCMD> <devdir>\wl\ovlldr\wovl.lib <relroot>\rel2\lib286\dos\wovl.lib
 #    <CPCMD> <devdir>\wl\ovlldr\wmovl.lib <relroot>\rel2\lib286\dos\wmovl.lib
