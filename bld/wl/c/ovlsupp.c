@@ -63,7 +63,6 @@ static targ_addr    Stash;
 unsigned_16         AreaSize;
 
 static void         AllocAreas( OVL_AREA *area );
-static void         GetVecAddr( int vecnum, targ_addr *addr );
 static void         ShortVectors( symbol *loadsym );
 static void         LongVectors( symbol *loadsym );
 static void         PutOvlInfo( unsigned off, void *src, unsigned len );
@@ -482,7 +481,7 @@ extern void IndirectCall( symbol *sym )
     }
 }
 
-static void GetVecAddr( int vecnum, targ_addr *addr )
+extern void GetVecAddr( int vecnum, targ_addr *addr )
 /***************************************************/
 /* return address of overlay vector in canonical form */
 {
@@ -495,46 +494,6 @@ static void GetVecAddr( int vecnum, targ_addr *addr )
         addr->off += (vecnum - 1) * sizeof( lvector );
     }
 }
-
-#ifdef OVERLAY_VERSION1
-// NYI  broken from removal of thread
-extern void OvlForceVect( thread *thd, bool indirect )
-/****************************************************/
-{
-    symbol  *sym;
-
-    if( !(FmtData.type & MK_OVERLAYS) )
-        return;
-    if( !(thd->flags & TRD_SYMBOL) )
-        return;
-    sym = thd->s.sym;
-    if( IS_SYM_COMMUNAL(sym) )
-        return;
-    if( (sym->u.d.ovlstate & OVL_VEC_MASK) != OVL_MAKE_VECTOR )
-        return;
-    if( !(indirect || (sym->u.d.ovlstate & OVL_ALWAYS)) )
-        return;
-    /* taking the address of a function -- must use vector */
-    GetVecAddr( sym->u.d.ovlref, &thd->addr );
-}
-
-extern void GetVecAddr2( int vecnum, thread *targ )
-/*************************************************/
-/* return address of overlay vector in canonical form */
-{
-    unsigned int        temp;
-
-    targ->addr = OvlvecAddr;
-    if( FmtData.u.dos.ovl_short ) {
-        /* short address -- fits into 16 bits */
-        temp = (vecnum - 1) * sizeof( svector ) + offsetof( svector, call );
-    } else {
-        /* long address -- put in canonical form */
-        temp = (vecnum - 1) * sizeof( lvector ) + offsetof( lvector, call );
-    }
-    targ->addr.off += temp;
-}
-#endif
 
 extern bool CheckOvlClass( char *clname, bool *isovlclass )
 /*********************************************************/
@@ -863,8 +822,7 @@ extern void PadOvlFiles( void )
             if( fnode->handle == NIL_HANDLE ) {
                 OpenOvlFile( fnode );
             }
-            WriteNulls( fnode->handle, pad, fnode->fname );
-            fnode->file_loc += pad;
+            PadBuffFile( fnode, pad );
         }
     }
 }

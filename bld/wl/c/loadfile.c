@@ -224,7 +224,7 @@ extern void GetStkAddr( void )
                 PhoneyStack();
             } else
 #endif
-                    if( !(FmtData.type & (MK_COM|MK_PE|MK_QNX|MK_ELF)) ) {
+            if( !(FmtData.type & (MK_COM|MK_PE|MK_QNX|MK_ELF)) ) {
                 LnkMsg( WRN+MSG_STACK_NOT_FOUND, NULL );
                 StackAddr.seg = 0;
                 StackAddr.off = 0;
@@ -953,6 +953,19 @@ extern void PadLoad( unsigned long size )
 
     if( size == 0 ) return;
     outfile = CurrSect->outfile;
+    if( outfile->buffer != NULL ) {
+        WriteBuffer( NULL, size, outfile, SetToZero );
+    } else {
+        WriteNulls( outfile->handle, size, outfile->fname );
+    }
+}
+
+extern void PadBuffFile( outfilelist *outfile, unsigned long size )
+/*****************************************************************/
+/* pad out load file with zeros */
+{
+    if( size == 0 )
+        return;
     if( outfile->buffer != NULL ) {
         WriteBuffer( NULL, size, outfile, SetToZero );
     } else {

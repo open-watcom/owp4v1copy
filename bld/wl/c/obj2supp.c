@@ -88,6 +88,8 @@ static void             Relocate( fix_data *fix, frame_spec *targ );
 
 #define GET_S16( P )    (*(signed_16 *)(P))
 
+#define FIX_POINTER_MASK ( FIX_BASE | FIX_HIGH | FIX_OFFSET_MASK )
+
 extern void ResetObj2Supp( void )
 /*******************************/
 {
@@ -136,7 +138,7 @@ static void TraceFixup( fix_type type, frame_spec *targ )
                 DCERelocRef( targ->u.sym, !CurrRec.seg->iscode );
             }
             if( !(type & FIX_REL) && overlay ) {
-                switch( type & (FIX_OFFSET_MASK|FIX_BASE|FIX_HIGH) ) {
+                switch( type & FIX_POINTER_MASK ) {
                 case FIX_OFFSET_16:
                     if( FmtData.u.dos.ovl_short ) {
                         IndirectCall( targ->u.sym );
@@ -393,6 +395,11 @@ static void BuildReloc( save_fixup *save, frame_spec *targ, frame_spec *frame )
     }
     if( IsTargAbsolute( targ ) ) {
         fix.type |= FIX_ABS;
+    }
+    if( ( FmtData.type & MK_OVERLAYS ) && ( targ->type == FIX_FRAME_EXT ) ) {
+        if( targ->u.sym->u.d.ovlref && ( ( targ->u.sym->u.d.ovlstate & OVL_VEC_MASK ) == OVL_FORCE ) ) {
+            GetVecAddr( targ->u.sym->u.d.ovlref, &fix.tgt_addr );
+        }
     }
     /*
      * it is necessary to copy also two bytes before reloc position to addbuf
@@ -1082,9 +1089,9 @@ static bool FarCallOpt( fix_data *fix )
         return FALSE;
     if( fix->type & FIX_ABS )
         return FALSE;
-    if( fix->type & FIX_BASE_OFFSET_16 ) {
+    if( ( fix->type & FIX_POINTER_MASK ) == FIX_BASE_OFFSET_16 ) {
         is32bit = FALSE;
-    } else if( fix->type & FIX_BASE_OFFSET_32 ) {
+    } else if( ( fix->type & FIX_POINTER_MASK ) == FIX_BASE_OFFSET_32 ) {
         is32bit = TRUE;
     } else {
         return FALSE;
@@ -1139,12 +1146,14 @@ static bool FarCallOpt( fix_data *fix )
                 }
                 code -= 1;
                 LastOptimized = fix->loc_addr.off;
-                LastOptType = fix->type;
+                LastOptType = fix->type & FIX_POINTER_MASK;
             } else {
-                if( (LastOptType == FIX_BASE_OFFSET_16 && fix->loc_addr.off >= 5
-                        && LastOptimized == fix->loc_addr.off - 5)
-                 || (LastOptType == FIX_BASE_OFFSET_32 && fix->loc_addr.off >= 7
-                        && LastOptimized == fix->loc_addr.off - 7) ) {
+                if( ( LastOptType == FIX_BASE_OFFSET_16 )
+                    && ( fix->loc_addr.off >= 5 )
+                    && ( LastOptimized == fix->loc_addr.off - 5 )
+                 || ( LastOptType == FIX_BASE_OFFSET_32 )
+                    && ( fix->loc_addr.off >= 7 )
+                    && ( LastOptimized == fix->loc_addr.off - 7 ) ) {
                     PUT_U8( code - 1, SS_OVERRIDE );
                 }
                 PUT_U8( code + 1, CS_OVERRIDE );

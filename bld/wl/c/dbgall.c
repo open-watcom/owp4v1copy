@@ -237,7 +237,8 @@ extern void DBIPreAddrCalc( void )
     if( LinkFlags & NOVELL_DBI_FLAG ) {
         WalkMods( AddNovGlobals );
     }
-    if( !(LinkFlags & ANY_DBI_FLAG) ) return;
+    if( !(LinkFlags & ANY_DBI_FLAG) )
+        return;
     if( LinkFlags & OLD_DBI_FLAG ) {
         modptr = ODBIP1ModuleFinished;
         segptr = ODBIAddAddrInfo;
@@ -266,13 +267,17 @@ extern void DBIAddrInfoScan( seg_leader *seg,
     offset      size;
     bool        isnewmod;
 
-    if( seg->dbgtype != NOT_DEBUGGING_INFO ) return;
+    if( seg->dbgtype != NOT_DEBUGGING_INFO )
+        return;
     if( seg->class->flags & (CLASS_STACK|CLASS_IDATA)
-                && (FmtData.dll || FmtData.type & MK_PE) ) return;
+                && (FmtData.dll || FmtData.type & MK_PE) )
+        return;
     prev = RingStep( seg->pieces, NULL );
     for(;;) {
-        if( prev == NULL ) return;
-        if( !prev->isdead ) break;
+        if( prev == NULL )
+            return;
+        if( !prev->isdead )
+            break;
         prev = RingStep( seg->pieces, prev );
     }
     initfn( prev, cookie );
@@ -316,7 +321,8 @@ extern void DBIGenModule( void )
 /******************************/
 // called at the end of pass2 for a module
 {
-    if( MOD_NOT_DEBUGGABLE(CurrMod) ) return;
+    if( MOD_NOT_DEBUGGABLE(CurrMod) )
+        return;
     if( LinkFlags & ANY_DBI_FLAG ) {
         Ring2Walk( CurrMod->segs, DBIGenLocal );
         DBIGenLines( CurrMod );
@@ -421,7 +427,8 @@ extern void DBIAddLines( segdata *seg, void *line, unsigned size, bool is32bit )
     _PermAlloc( info, sizeof(lineinfo) + size - 1 );
     info->seg = seg;
     info->size = size;
-    if( is32bit ) info->size |= LINE_IS_32BIT;
+    if( is32bit )
+        info->size |= LINE_IS_32BIT;
     memcpy( info->data, line, size );
     RingAppend( &CurrMod->lines, info );
 }
@@ -480,7 +487,8 @@ extern virt_mem DBIAlloc( unsigned long size )
 /********************************************/
 // handy virtual memory allocation routine used inside the debug info generators
 {
-    if( size == 0 ) return( 0 );
+    if( size == 0 )
+        return( 0 );
     return( AllocStg( size ) );
 }
 
@@ -558,7 +566,8 @@ extern void WriteDBI( void )
     outfilelist symfile;
     outfilelist *save;
 
-    if( !(LinkFlags & ANY_DBI_FLAG) ) return;
+    if( !(LinkFlags & ANY_DBI_FLAG) )
+        return;
     if( SymFileName != NULL ) {
         InitBuffFile( &symfile, SymFileName );
         OpenBuffFile( &symfile );

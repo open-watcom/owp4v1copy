@@ -82,6 +82,7 @@ extern void             CloseBuffFile( outfilelist * );
 extern void             WriteLoad3( void *, char *, unsigned );
 extern void             WriteLoad( void *, unsigned long );
 extern void             PadLoad( unsigned long );
+extern void             PadBuffFile( outfilelist *, unsigned long );
 extern void             SeekLoad( unsigned long );
 extern void             SeekEndLoad( unsigned long );
 extern unsigned long    PosLoad( void );
