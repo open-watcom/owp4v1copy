@@ -1,5 +1,4 @@
 proj_name = wprof
-fname = wprof$(machine)
 
 !include cproj.mif
 !include defrule.mif
@@ -11,7 +10,7 @@ fname = wprof$(machine)
 .c : ../c;$(dig_srcs);$(watcom_dir)/c
 .h : ../h
 
-!ifeq host_OS qnx
+!ifeq host_os qnx
 exe = qnx
 !else
 exe = exe
@@ -25,7 +24,7 @@ extra_c_flags   = -s
 extra_c_flags   += -zs
 !endif
 !ifdef wprof_trmem
-!ifneq host_CPU AXP
+!ifneq host_cpu axp
 extra_c_flags   += -of+
 !endif
 !endif
@@ -76,15 +75,15 @@ rcinclude= -I. -I"../h" -I"$(dig_dir)/h" -I"$(aui_dir)/h" -I"$(gui_dir)" -I"$(gu
 
 inc_dirs = -I"../h" -I"$(wsample_dir)/h" -I"$(aui_dir)/h" -I"$(gui_dir)/h" -I"$(trmem_dir)" -I"$(dig_dir)/h"
 
-# exlicit rules
-################
-$(fname).$(exe) : _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_objs) $(mad_objs) $(wprof_libs) $(sys_libs) $(resfile)
+# explicit rules
+#################
+$(proj_name).$(exe) : _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_objs) $(mad_objs) $(wprof_libs) $(sys_libs) $(resfile)
     @rm -f finger.obj
     @%make finger.obj
     $(linker) name $^@ $(lflags) op map file {$(objs) $(dip_objs) $(mad_objs) finger.obj} lib {$(wprof_libs) $(sys_libs)}
 !ifneq sys_windowed 1
     wstrip -q -a -r  $^@ . $(resfile)
-!else ifneq host_OS os2
+!else ifneq host_os os2
     $(rc) $(rc_flags) -k $(resfile) $^@
 !else
     $(rc_os2) $(rc_flags) $(resfile) $^@
