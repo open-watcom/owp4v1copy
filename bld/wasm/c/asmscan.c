@@ -58,7 +58,7 @@
 
 extern void             AsmError( int );
 
-char                                *CurrString; // Current Input Line
+char                    *CurrString; // Current Input Line
 
 extern int get_instruction_position( char *string );
 
@@ -145,6 +145,15 @@ done_scanning_float:
     return( NOT_ERROR );
 }
 
+static void array_mul_add(char *buf, unsigned base, unsigned num, unsigned size) {
+
+    while( size-- > 0 ) {
+        num += *buf * base;
+        *(buf++) = num;
+        num >>= 8;
+    }
+}
+
 static int get_number( struct asm_tok *buf, char **input, char **output )
 /***********************************************************************/
 {
@@ -156,7 +165,6 @@ static int get_number( struct asm_tok *buf, char **input, char **output )
     unsigned            base = 0;
     unsigned            digits_seen;
     unsigned long       val;
-    unsigned            down_shift;
 
 #define VALID_BINARY    0x0003
 #define VALID_OCTAL     0x00ff
@@ -295,29 +303,16 @@ done_scan:
     **output = '\0';
     (*output)++;
     *input = ptr + extra;
-    val = 0;
-    buf->extra_value = 0;
-    switch( base ) {
-    case 2:     down_shift = 31; break;
-    case 8:     down_shift = 29; break;
-    case 16:    down_shift = 28; break;
-    default:    down_shift = 0;  break;
-    }
+    memset(buf->bytes, 0, sizeof(buf->bytes));
     while( dig_start < ptr ) {
-        if( down_shift != 0 ) {
-            /* for DQ initializations */
-            buf->extra_value *= base;
-            buf->extra_value |= val >> down_shift;
-        }
-        val *= base;
         if( isdigit( *dig_start ) ) {
-            val += *dig_start - '0';
+            val = *dig_start - '0';
         } else {
-            val += tolower( *dig_start ) - 'a' + 10;
+            val = tolower( *dig_start ) - 'a' + 10;
         }
+        array_mul_add( buf->bytes, base, val, sizeof( buf->bytes ) );
         ++dig_start;
     }
-    buf->value = val;
     return( NOT_ERROR );
 } /* get_number */
 

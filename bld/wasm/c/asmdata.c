@@ -136,7 +136,6 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
 {
     int                 cur_pos = start_pos;
     char                count;
-    long                value;
     char                *char_ptr;
     char                negative = FALSE;
     
@@ -237,8 +236,8 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                 negative = FALSE;
                 break;
             }
-            value = AsmBuffer[cur_pos]->value;
             count = 0;
+            char_ptr = AsmBuffer[cur_pos]->bytes;
 #ifdef _WASM_
             if( sym && Parse_Pass == PASS_1 ) {
                 sym->total_length++;
@@ -251,12 +250,8 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
             if( !struct_field ) {
 #endif
                 while( count < no_of_bytes ) {
-                    AsmDataByte( value );
-                    value >>= 8;
+                    AsmDataByte( *(char_ptr++) );
                     count++;
-                    if( count == sizeof( value ) ) {
-                        value = AsmBuffer[cur_pos]->extra_value;
-                    }
                 }
 #ifdef _WASM_
             } else {

@@ -384,8 +384,7 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
             break;
         }
         new[i].token = AsmBuffer[start + i]->token;
-        new[i].value = AsmBuffer[start + i]->value;
-        new[i].extra_value = AsmBuffer[start + i]->extra_value;
+        memcpy( new[i].bytes, AsmBuffer[start + i]->bytes, sizeof( new[i].bytes ) );
         if( AsmBuffer[start+i]->string_ptr == NULL ) {
             new[i].string_ptr = NULL;
         } else {
