@@ -48,7 +48,7 @@ double _matherr( why, who, arg1, arg2, result )
 
 #else   /* version 8.5 */
 
-double _matherr( struct exception *p )
+double _matherr( struct _exception *p )
 /************************************/
 {
     return( p->retval );
