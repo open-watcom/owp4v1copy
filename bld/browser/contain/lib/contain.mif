@@ -7,7 +7,7 @@ wchash.obj &
 wclist.obj &
 wcskip.obj
 
-lbc = $(%RAMDISK)\tmp.lbc
+lbc = tmp.lbc
 
 ..\$(contain_lib) : $(template)
     @%create $(lbc)
