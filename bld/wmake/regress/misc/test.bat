@@ -1,6 +1,6 @@
 @echo off
 echo # ===========================
-echo # Start Miscellaneous Test 
+echo # Start Miscellaneous Test
 echo # ===========================
 
 if .%2 == . goto usage
@@ -9,13 +9,13 @@ echo # ---------------------------
 echo #   Miscellaneous Test 1
 echo # ---------------------------
 
-del tmp.out
-%1 -c -h -f MISC01 -l tmp.out
+rm tmp.out
+%1 -c -h -f MISC01 > tmp.out 2>&1
 diff -b MISC01.CMP tmp.out
 if errorlevel 1 goto err1
     @echo # MISC01 successful
     goto test2
-:err1 
+:err1
     @echo ## MISC ## >> %2
     @echo Error: MISC #1 unsuccessful!!! | tee -a %2
 
@@ -25,8 +25,8 @@ echo # ---------------------------
 echo #   Miscellaneous Test 2
 echo # ---------------------------
 
-del tmp.out
-%1 -c -h -f MISC02 -l tmp.out
+rm tmp.out
+%1 -c -h -f MISC02 > tmp.out 2>&1
 diff -b MISC02.CMP tmp.out
 if errorlevel 1 goto err2
     @echo # MISC02 successful
@@ -41,8 +41,8 @@ echo # ---------------------------
 echo #   Miscellaneous Test 3
 echo # ---------------------------
 
-del tmp.out
-%1 -a -c -h -f MISC03 -l tmp.out
+rm tmp.out
+%1 -a -c -h -f MISC03 > tmp.out 2>&1
 diff -b MISC03.CMP tmp.out
 if errorlevel 1 goto err3
     @echo # MISC03 successful
@@ -57,8 +57,8 @@ echo # ---------------------------
 echo #   Miscellaneous Test 4
 echo # ---------------------------
 
-del tmp.out
-%1 -a -c -h -f MISC04 -l tmp.out
+rm tmp.out
+%1 -a -c -h -f MISC04 > tmp.out 2>&1
 diff -b MISC04.CMP tmp.out
 if errorlevel 1 goto err4
     @echo # MISC04 successful
@@ -73,8 +73,8 @@ echo # ---------------------------
 echo #   Miscellaneous Test 5
 echo # ---------------------------
 
-del tmp.out
-%1 -a -c -h -f MISC05 test1 test2 test3 -l tmp.out
+rm tmp.out
+%1 -a -c -h -f MISC05 test1 test2 test3 > tmp.out 2>&1
 diff -b MISC05.CMP tmp.out
 if errorlevel 1 goto err5
     @echo # MISC05 successful
@@ -89,4 +89,4 @@ goto done
 :usage
 echo usage: %0 prgname errorfile
 :done
-if exist tmp.out del tmp.out
+if exist tmp.out rm tmp.out
