@@ -91,7 +91,7 @@ static int              sleepProcId = 0;
 
 static seg_offset       CommonAddr;
 
-#define STACK_SIZE 4096
+#define STACK_SIZE 32768
 
 unsigned NextThread( unsigned tid )
 {
@@ -112,7 +112,7 @@ void InitTimerRate()
 
 void SetTimerRate( char **cmd )
 {
-    SleepTime = GetNumber( 27, 1000, cmd, 10 );
+    SleepTime = GetNumber( 1, 1000, cmd, 10 );
 }
 
 unsigned long TimerRate()
