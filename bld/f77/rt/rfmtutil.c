@@ -348,7 +348,7 @@ void    R_FIFloat() {
     int         width;
 
     fcb = IOCB->fileinfo;
-    fmtptr = IOCB->fmtptr;
+    fmtptr = &IOCB->fmtptr->fmt2;
     typ = IOCB->typ;
     ChkBuffLen( fmtptr->fld1 );
     switch( typ ) {
@@ -468,7 +468,7 @@ void    R_FOF() {
 
     fcb = IOCB->fileinfo;
     buf = &fcb->buffer[ fcb->col ];
-    fmt = IOCB->fmtptr;
+    fmt = &IOCB->fmtptr->fmt2;
     wid = fmt->fld1;
     if( GetRealRtn( &val, wid ) ) {
         R_F2F( val, buf, wid, fmt->fld2, (IOCB->flags & IOF_PLUS) != 0,
@@ -494,7 +494,7 @@ void    R_FOE( int exp, char ch ) {
 
     fcb = IOCB->fileinfo;
     buf = &fcb->buffer[ fcb->col ];
-    fmt = IOCB->fmtptr;
+    fmt = &IOCB->fmtptr->fmt3;
     wid = fmt->fld1;
     if( GetRealRtn( &value, wid ) ) {
         // if Ew.d or Dw.d format, exp == 0
