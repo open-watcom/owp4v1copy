@@ -400,8 +400,8 @@ pick( STR_ABOUT_VERSION, // NOT USED
 	"",
 	"" )
 pick( STR_ABOUT_COPYRIGHT_YEAR,
-	"1994",
-	"1994" )
+	"2002",
+	"2002" )
 #ifdef CHICAGO
 pick( STR_ABOUT_TITLE,
 	"About Dr. WATCOM for Windows 95",

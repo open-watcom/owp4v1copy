@@ -198,8 +198,8 @@ pick( STR_ABOUT_VERSION,
 	"", //NOT USED
 	"" )
 pick( STR_ABOUT_COPYRIGHT_YEAR,
-	"1994",
-	"1994" )
+	"2002",
+	"2002" )
 pick( STR_ABOUT_TITLE,
 	"About WATCOM DDE Spy",
 	"WATCOM DDE Spyƒo|ƒWƒ‡ƒ“î•ñ" )

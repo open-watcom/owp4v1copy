@@ -557,8 +557,8 @@ pick(	WIE_ABOUTTEXT,
 	"WATCOM Image Editor for Windows" )
 #endif
 pick(	WIE_ABOUTFIRSTYEAR,
-	"1994",
-	"1994" )
+	"2002",
+	"2002" )
 pick(	WIE_ABOUTTITLE,
 	"About the WATCOM Image Editor",
 	"About the WATCOM Image Editor" )
