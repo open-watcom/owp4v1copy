@@ -64,9 +64,9 @@ bas             = $(as)
 bld_cl          = wcl386 -l=$(bld_sys) -i"$(bld_incs)"
 bld_cc          = *wcc386 -i"$(bld_incs)"
 !ifdef __LINUX__
-bas             = *$(bld_dir)/bwasm
+bas             = *$(bld_bin)/bwasm
 !else
-bas             = *$(bld_dir)\bwasm
+bas             = *$(bld_bin)\bwasm
 !endif
 !endif
 bld_link        = *wlink sys $(bld_sys)
