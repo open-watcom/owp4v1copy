@@ -55,6 +55,7 @@ void KillTrap()
 char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
 {
     char                trpfile[256];
+    char                trpfullname[_MAX_PATH];
     char                *ptr;
     char                *parm;
     char                *dst;
@@ -79,15 +80,15 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
         *dst++ = chr;
         ++ptr;
     }
-    if( !have_ext ) {
-        *dst++ = '.';
-        *dst++ = 't';
-        *dst++ = 'r';
-        *dst++ = 'p';
-    }
     *dst = '\0';
+    if( !have_ext )
+        strcat( trpfile, ".trp" );
+
+    _searchenv( trpfile, "PATH", trpfullname );
+
     parm = (*ptr != '\0') ? ptr + 1 : ptr;
-    TrapFile = PE_loadLibrary( trpfile );
+
+    TrapFile = PE_loadLibrary( trpfullname );
     if( TrapFile == NULL ) {
         TrapFile = 0;
         strcpy( buff, TC_ERR_CANT_LOAD_TRAP );
