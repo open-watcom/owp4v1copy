@@ -227,6 +227,13 @@ _WCRTLINK extern wchar_t *_wdoserror( int __errnum );
 
 _WCRTLINK extern wchar_t *_ustrtok( wchar_t *, const wchar_t * );
 
+:segment LINUX
+/* Additional Linux Functions */
+
+_WCRTLINK extern int strcasecmp( const char *__s1, const char *__s2 );
+_WCRTLINK extern int strncasecmp( const char *__s1, const char *__s2, size_t __n );
+:endsegment
+
 :segment QNX
 /* QNX's Additional Functions (non-ANSI, non-POSIX) */
 
