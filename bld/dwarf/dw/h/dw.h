@@ -180,6 +180,7 @@ typedef enum dw_sectnum{
     DW_DEBUG_LOC,
     DW_DEBUG_ABBREV,
     DW_DEBUG_MACINFO,
+    DW_DEBUG_STR,
     DW_DEBUG_REF,
     DW_DEBUG_MAX
 }dw_sectnum;

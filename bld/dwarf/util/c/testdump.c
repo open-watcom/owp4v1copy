@@ -226,6 +226,7 @@ static char *sectionNames[] = {
     ".debug_loc",
     ".debug_abbrev",
     ".debug_macinfo",
+    ".debug_str",
     ".debug_ref"
 };
 
@@ -409,6 +410,15 @@ uint_8 *findAbbrev( uint_32 code ) {
     }
 }
 
+static void printf_debug_str( unsigned int offset )
+{
+    if( offset > Sections[ DW_DEBUG_STR ].max_offset ) {
+        printf( "\tstring @ .debug_str+%u (invalid offset)\n",
+               offset );
+    } else {
+        printf( "\t\"%s\"\n", Sections[ DW_DEBUG_STR ].data + offset );
+    }
+}
 
 static void dumpInfo( const char *input, uint length ) {
 
@@ -528,11 +538,7 @@ static void dumpInfo( const char *input, uint length ) {
                     p += strlen( p ) + 1;
                     break;
                 case DW_FORM_strp:  /* 4 byte index into .debug_str */
-                    #if 0
-                    // printf_debug_str(*(unsigned long *)p);
-                    #else
-                    printf("\tstring @ .debug_str+%u\n", *(unsigned long *)p);
-                    #endif
+                    printf_debug_str(*(unsigned long *)p);
                     p += 4;
                     break;
                 case DW_FORM_udata:
@@ -930,6 +936,9 @@ void DumpSections( void ) {
             break;
         case DW_DEBUG_REF:
             dumpRef( Sections[ sect ].data, Sections[ sect ].max_offset );
+            break;
+        case DW_DEBUG_STR:
+            // Strings are displayed when dumping other sections
             break;
         default:
             dumpHex( Sections[ sect ].data, Sections[ sect ].max_offset );
