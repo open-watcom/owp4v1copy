@@ -212,6 +212,8 @@ extern void DoCmdFile( char *fname )
         /* restrict set to automatically decided ones */
 #if _OS == _QNX
 #define LAST_CHANCE MK_QNX|MK_OS2_NE|MK_OS2_LX|MK_OS2_LE
+#elif _OS == _LINUX
+#define LAST_CHANCE MK_ELF|MK_OS2_NE|MK_OS2_LX|MK_OS2_LE
 #elif _OS == _NT
 #define LAST_CHANCE MK_PE|MK_WINDOWS|MK_OS2_LX|MK_OS2_NE|MK_WIN_VXD
 #else
