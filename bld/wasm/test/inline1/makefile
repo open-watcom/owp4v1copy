@@ -1,7 +1,12 @@
 
 objs = &
+bug31 &
+extprocf &
+extprocn
 
 dev_objs = &
-bug31
+
+c_flags_extprocf = -ms
+c_flags_extprocn = -ml
 
 !include ../testi.mif

@@ -8,7 +8,10 @@ log_file=testasm.log
     @%create $(tmp_file)
     @set CHK_CHECK=-@diff -i -b $(name).out $(name).chk
     @set ESM_CHECK1=-@wdis -l=$(name).dis -a $(name).obj
-    @set ESM_CHECK2=-@diff -i -b $(name).dis $(name).esm
+!ifdef fix_wdis_lst
+    @set ESM_CHECK2=-@vi -d -q -i -k ":so fixlst.vi\nZZ" $(name).dis
+!endif
+    @set ESM_CHECK3=-@diff -i -b $(name).dis $(name).esm
     @set EMP_CHECK1=-@dmpobj -q -l -rec=FIXUPP $(name).obj
     @set EMP_CHECK2=-@diff -i -b $(name).lst $(name).emp
 
@@ -18,7 +21,8 @@ all: $(name).out $(name).chk $(name).obj $(name).esm $(name).emp .symbolic
     $(%CHK_CHECK) >>$(log_file)
     @if errorlevel 1 @SET TESTASM=!!! Test unsuccessful !!!
     $(%ESM_CHECK1)
-    $(%ESM_CHECK2) >>$(log_file)
+    $(%ESM_CHECK2)
+    $(%ESM_CHECK3) >>$(log_file)
     @if errorlevel 1 @SET TESTASM=!!! Test unsuccessful !!!
     $(%EMP_CHECK1)
     $(%EMP_CHECK2) >>$(log_file)
@@ -35,12 +39,14 @@ $(name).chk: .existsonly
 $(name).obj: .existsonly
     @set ESM_CHECK1=@%null
     @set ESM_CHECK2=@%null
+    @set ESM_CHECK3=@%null
     @set EMP_CHECK1=@%null
     @set EMP_CHECK2=@%null
 
 $(name).esm: .existsonly
 #    @set ESM_CHECK1=@%null
-    @set ESM_CHECK2=@%null
+#    @set ESM_CHECK2=@%null
+    @set ESM_CHECK3=@%null
 
 $(name).emp: .existsonly
 #    @set EMP_CHECK1=@%null
