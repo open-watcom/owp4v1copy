@@ -743,7 +743,7 @@ local void InitUnion( TYPEPTR typ, TYPEPTR ctyp )
     for(;;) {                           // skip unnamed bit fields
         if( field == NULL ) break;              // 12-nov-94
         ftyp = field->field_type;
-        while( ftyp->decl_type == TYPE_TYPEDEF ) ftyp = typ->object;
+        while( ftyp->decl_type == TYPE_TYPEDEF ) ftyp = ftyp->object;
         if( field->name[0] != '\0' ) break;
         if( ftyp->decl_type == TYPE_STRUCT ) break;      /* 03-feb-95 */
         if( ftyp->decl_type == TYPE_UNION ) break;
