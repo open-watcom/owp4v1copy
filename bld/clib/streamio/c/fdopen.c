@@ -35,14 +35,17 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <ctype.h>
+#ifdef __WIDECHAR__
+    #include <wctype.h>
+#endif
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #ifndef __SNAP__
-#include <sys/stat.h>
+    #include <sys/stat.h>
 #endif
 #if defined(__NT__)
-#include <windows.h>
+    #include <windows.h>
 #endif
 #include "fileacc.h"
 #include "iomode.h"

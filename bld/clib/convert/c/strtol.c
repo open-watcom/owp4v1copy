@@ -34,7 +34,11 @@
 #include "widechar.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
+#ifdef __WIDECHAR__
+    #include <wctype.h>
+#else    
+    #include <ctype.h>
+#endif    
 #include <errno.h>
 #include <limits.h>
 #include "seterrno.h"

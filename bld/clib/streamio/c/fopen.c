@@ -36,11 +36,14 @@
 #include <stdarg.h>
 #include <unistd.h>
 #include <ctype.h>
+#ifdef __WIDECHAR__
+    #include <wctype.h>
+#endif
 #include <errno.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #ifndef __SNAP__
-#include <sys/stat.h>
+    #include <sys/stat.h>
 #endif
 #include "fileacc.h"
 #include "fmode.h"

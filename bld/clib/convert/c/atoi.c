@@ -33,8 +33,11 @@
 #include "variety.h"
 #include "widechar.h"
 #include <stdio.h>
-#include <ctype.h>
-
+#ifdef __WIDECHAR__
+    #include <wctype.h>
+#else
+    #include <ctype.h>
+#endif
 
 _WCRTLINK int __F_NAME(atoi,_wtoi)( const CHAR_TYPE *p )  /* convert ASCII string to integer */
     {

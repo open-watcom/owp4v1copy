@@ -33,7 +33,11 @@
 #include "widechar.h"
 #include "watcom.h"
 #include <stdio.h>
-#include <ctype.h>
+#ifdef __WIDECHAR__
+    #include <wctype.h>
+#else
+    #include <ctype.h>    
+#endif
 #include <stdlib.h>
 
 _WCRTLINK long long int __F_NAME(atoll,_wtoll)( const CHAR_TYPE *p )  /* convert ASCII string to long long int */

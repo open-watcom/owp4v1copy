@@ -33,7 +33,11 @@
 #include "variety.h"
 #include "widechar.h"
 #include <stdio.h>
-#include <ctype.h>
+#ifdef __WIDECHAR__
+    #include <wctype.h>
+#else
+    #include <ctype.h>    
+#endif
 #include <stdlib.h>
 
 
