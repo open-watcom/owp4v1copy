@@ -1052,6 +1052,7 @@ static unsigned ProgRun( int step )
     int                 status;
     prog_go_ret         *ret;
     void                (*old)(int);
+    int                 debug_continue;
 
     if( pid == 0 )
         return( 0 );
@@ -1064,59 +1065,54 @@ static unsigned ProgRun( int step )
     }
 
     /* we only want child-generated SIGINTs now */
-    old = signal( SIGINT, SIG_IGN );
-    if( step ) {
-        sys_ptrace( PTRACE_SINGLESTEP, pid, 0, (void *)ptrace_sig );
-    } else {
-        sys_ptrace( PTRACE_CONT, pid, 0, (void *)ptrace_sig );
-    }
-    waitpid( pid, &status, 0 );
-    signal( SIGINT, old );
-    if( WIFSTOPPED( status ) ) {
-        switch( ( ptrace_sig = WSTOPSIG( status ) ) ) {
-        case SIGSEGV:
-        case SIGILL:
-        case SIGFPE:
-        case SIGABRT:
-        case SIGBUS:
-        case SIGQUIT:
-        case SIGSYS:
-            last_sig = ptrace_sig;
-            ret->conditions = COND_EXCEPTION;
-            ptrace_sig = 0;
-            break;
-        case SIGINT:
-            ret->conditions = COND_USER;
-            ptrace_sig = 0;
-            break;
-        case SIGTRAP:
-            ret->conditions = step ? COND_TRACE : COND_BREAK;
-            Out( "sigtrap\n" );
-            ptrace_sig = 0;
-            break;
-        case SIGCHLD:
-        case SIGIO:
-            /* Use a watch condition to ignore these signals */
-            ret->conditions = COND_WATCH;
-            ptrace_sig = 0;
-            break;
-        default:
-            /* For signals that we do not wish to handle, for now
-             * return a watch condition which will allow the debugger
-             * to continue the debuggee process.
-             */
-            Out( "unknown signal\n" );
-            ret->conditions = COND_WATCH;
-            ptrace_sig = 0;
-            break;
+    do {
+        old = signal( SIGINT, SIG_IGN );
+        if( step ) {
+            sys_ptrace( PTRACE_SINGLESTEP, pid, 0, (void *)ptrace_sig );
+        } else {
+            sys_ptrace( PTRACE_CONT, pid, 0, (void *)ptrace_sig );
         }
-    } else if( WIFEXITED( status ) ) {
-        Out( "WIFEXITED\n" );
-        at_end = TRUE;
-        ret->conditions = COND_TERMINATE;
-        ptrace_sig = 0;
-        goto end;
-    }
+        waitpid( pid, &status, 0 );
+        signal( SIGINT, old );
+        debug_continue = FALSE;
+        if( WIFSTOPPED( status ) ) {
+            switch( ( ptrace_sig = WSTOPSIG( status ) ) ) {
+            case SIGSEGV:
+            case SIGILL:
+            case SIGFPE:
+            case SIGABRT:
+            case SIGBUS:
+            case SIGQUIT:
+            case SIGSYS:
+                last_sig = ptrace_sig;
+                ret->conditions = COND_EXCEPTION;
+                ptrace_sig = 0;
+                break;
+            case SIGINT:
+                ret->conditions = COND_USER;
+                ptrace_sig = 0;
+                break;
+            case SIGTRAP:
+                ret->conditions = step ? COND_TRACE : COND_BREAK;
+                Out( "sigtrap\n" );
+                ptrace_sig = 0;
+                break;
+            default:
+                /* For signals that we do not wish to handle, we need
+                 * to continue the debuggee until we get a signal 
+                 * that we need to handle
+                 */
+                debug_continue = TRUE;
+                break;             
+            }
+        } else if( WIFEXITED( status ) ) {
+            Out( "WIFEXITED\n" );
+            at_end = TRUE;
+            ret->conditions = COND_TERMINATE;
+            ptrace_sig = 0;
+            goto end;
+        }
+    } while( debug_continue );        
     if( sys_ptrace( PTRACE_GETREGS, pid, 0, &regs ) == 0 ) {
         Out( " eip " );
         OutNum( regs.eip );
