@@ -72,11 +72,18 @@
 #include <string.h>
 #include <stdarg.h>
 #include <ctype.h>
+#include <limits.h>
 #include <sys/stat.h>
 #ifdef __QNX__
 #include <utime.h>
 #else
 #include <sys/utime.h>
+#endif
+#ifndef _MAX_PATH2
+#define _MAX_PATH2 PATH_MAX+4
+#endif
+#ifdef __USE_BSD
+#define stricmp strcasecmp
 #endif
 
 //#define local static
@@ -450,7 +457,7 @@ local void OutputString( char *p, char *record )
             switch( *p ) {
             case 's':
                 col = 0;
-                for( r = record; *r != '\0'; ++r ) {
+                for( r = record; *r != '\0' && !(*r == '\r' && *(r+1) == '\0'); ++r ) {
                     if( *r != '\t' || TabStop == 0 ) {
                         fputc( *r, OutputFile );
                         ++col;

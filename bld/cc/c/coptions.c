@@ -47,6 +47,9 @@
 #ifdef __OSI__
  #include "ostype.h"
 #endif
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
 
 struct  option {
     char        *option;
@@ -1015,6 +1018,7 @@ void Set_ZE()           { CompFlags.extensions_enabled = 1; }
 void Set_ZG()           { CompFlags.generate_prototypes = 1; }
 
 void Set_ZI()           { CompFlags.extra_stats_wanted = 1; }
+#ifdef __WATCOMC__
 void Set_ZKU()
 {
     CompFlags.use_unicode = 1;
@@ -1051,6 +1055,7 @@ void Set_ZKL()
     CompFlags.use_unicode = 0;          /* 05-jun-91 */
     SetDBChar( -1 );                   /* set double-byte char type to defualt */
 }
+#endif
 void Set_ZL()                   { CompFlags.emit_library_with_main = 0; }
 void Set_ZLF()                  { CompFlags.emit_library_any  = 1; }
 void Set_ZLD()                  { CompFlags.emit_dependencies = 0; }
@@ -1368,6 +1373,7 @@ struct option const CFE_Options[] = {
     { "ze",     0,              Set_ZE },
     { "zg",     0,              Set_ZG },
     { "zi",     0,              Set_ZI },
+#ifdef __WATCOMC__
     { "zk0u",   0,              Set_ZK0U },
     { "zk0",    0,              Set_ZK0 },
     { "zk1",    0,              Set_ZK1 },
@@ -1375,6 +1381,7 @@ struct option const CFE_Options[] = {
     { "zk3",    0,              Set_ZK3 },
     { "zkl",    0,              Set_ZKL },
     { "zku*",   0,              Set_ZKU },
+#endif
     { "zld",    0,              Set_ZLD },
     { "zlf",    0,              Set_ZLF },
     { "zl",     0,              Set_ZL },

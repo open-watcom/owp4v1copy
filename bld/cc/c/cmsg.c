@@ -75,6 +75,7 @@ static char const *MsgPrefix[grp_index_max] = {
 #endif
 #define _mkstr( a ) #a
 #define _str( a ) _mkstr( a )
+#ifdef __WATCOMC__
 void InitMsg( void )
 {
     internationalData = LoadInternationalData( _str( __target_CPU ) );
@@ -85,6 +86,7 @@ void FiniMsg( void )
         FreeInternationalData( internationalData );
     }
 }
+#endif
 static char const EUsage[] = {
 #include "usage.gh"
 "\0" };

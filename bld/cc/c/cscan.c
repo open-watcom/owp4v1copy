@@ -567,8 +567,8 @@ is64:
 }
 
 static cnv_cc Cnv16( void ){
-    char *curr;
-    char c;
+    unsigned char *curr;
+    unsigned char c;
     int len;
     unsigned long value;
     uint64   value64;

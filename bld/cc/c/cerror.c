@@ -32,6 +32,7 @@
 
 #include "cvars.h"
 #include "iopath.h"
+#include "target.h"
 #include <stdarg.h>
 
 #if 0
@@ -72,7 +73,7 @@ static void CMsgInfo( cmsg_info *info, msg_codes msgnum, va_list args ){
         }
     }
     msgstr = CGetMsgStr( msgnum );
-    _vbprintf( info->msgtxt,MAX_MSG_LEN, msgstr, args );
+    _vsnprintf( info->msgtxt,MAX_MSG_LEN, msgstr, args );
     info->line = line;
     info->fname = fname;
 }
@@ -105,7 +106,7 @@ void FmtCMsg( char *buff, cmsg_info *info ){
     len = 0;
     if( info->line != 0 ) {
         if( info->fname != NULL ) {
-            len += _bprintf( &buff[len], MAX_MSG_LEN-len,  "%s(%u): ",
+            len += _snprintf( &buff[len], MAX_MSG_LEN-len,  "%s(%u): ",
                       info->fname, info->line  );
         }
     }else{
@@ -113,7 +114,7 @@ void FmtCMsg( char *buff, cmsg_info *info ){
     }
     code_prefix = CGetMsgPrefix( info->msgnum );
     phrase = MsgClassPhrase( info->class );
-    len += _bprintf(&buff[len], MAX_MSG_LEN-len, "%s %s%03d: ",
+    len += _snprintf(&buff[len], MAX_MSG_LEN-len, "%s %s%03d: ",
               phrase, code_prefix, info->msgnum );
 }
 
@@ -246,7 +247,7 @@ void CNote( int msgnum, ... ){
 
     va_start( args1, msgnum );
     msgstr = CGetMsgStr( msgnum );
-    _vbprintf( msgbuf,MAX_MSG_LEN, msgstr, args1 );
+    _vsnprintf( msgbuf,MAX_MSG_LEN, msgstr, args1 );
     NoteMsg( msgbuf );
 }
 
@@ -259,7 +260,7 @@ void PCHNote( int msgnum, ... ){
     if( !CompFlags.no_pch_warnings ) {
         va_start( args1, msgnum );
         msgstr = CGetMsgStr( msgnum );
-        _vbprintf( msgbuf,MAX_MSG_LEN, msgstr, args1 );
+        _vsnprintf( msgbuf,MAX_MSG_LEN, msgstr, args1 );
         NoteMsg( msgbuf );
     }
 }

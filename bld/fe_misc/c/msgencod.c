@@ -39,7 +39,15 @@
 #include <stddef.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#ifdef __WATCOMC__
 #include <sys/utime.h>
+#else
+#include <sys/types.h>
+#include <utime.h>
+#endif
+#ifdef __USE_BSD
+#define stricmp strcasecmp
+#endif
 
 #include "lsspec.h"
 #include "encodlng.h"

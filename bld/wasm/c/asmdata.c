@@ -35,6 +35,9 @@
 #ifndef _WASM_
     #include <malloc.h>
 #endif
+#ifndef min
+#define min(x,y) (((x) < (y)) ? (x) : (y))
+#endif
 
 #include "asmglob.h"
 #include "asmdefs.h"

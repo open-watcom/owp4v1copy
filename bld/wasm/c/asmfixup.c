@@ -66,7 +66,6 @@ struct asmfixup         *InsFixups[3];
 
 struct fixup            *FixupListHead; // head of list of fixups
 struct fixup            *FixupListTail;
-extern void             AsmByte( unsigned char );
 
 #ifdef _WASM_
     extern int_8        PhaseError;

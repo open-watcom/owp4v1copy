@@ -35,14 +35,24 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <share.h>
+#ifdef __WATCOMC__
+    #include <direct.h>
+    #include <share.h>
+#endif
 #if _OS == _QNX
     #define PMODE       S_IRUSR+S_IWUSR+S_IRGRP+S_IWGRP+S_IROTH+S_IWOTH
 #else
-    #include <direct.h>
     #define PMODE       S_IRWXU
 #endif
-
+#ifndef O_BINARY
+    #define O_BINARY  0
+#endif
+#ifdef SH_DENYWR
+    #define sopen4 sopen
+#else
+    #define sopen4(a,b,c,d) open((a),(b),(d))
+    #define sopen(a,b,c) open((a),(b))
+#endif
 
 extern  TAGPTR  TagHash[TAG_HASH_SIZE + 1];
 
@@ -147,7 +157,7 @@ static void InitPHVars( void ){
 
 static void CreatePHeader( char *filename )
 {
-    PH_handle = sopen( filename, O_WRONLY|O_CREAT|O_TRUNC|O_BINARY, SH_DENYRW, PMODE );
+    PH_handle = sopen4( filename, O_WRONLY|O_CREAT|O_TRUNC|O_BINARY, SH_DENYRW, PMODE );
     if( PH_handle == -1 ) {
         longjmp( PH_jmpbuf, 1 );
     }

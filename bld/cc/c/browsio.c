@@ -34,11 +34,7 @@
 #include "exeelf.h"
 #include "iopath.h"
 #include <stdarg.h>
-#if defined(__QNX__)
- #include <unistd.h>
-#else
- #include <direct.h>
-#endif
+#include <unistd.h>
 #include "dw.h"
 
 static uint_32          relocValues[ DW_W_MAX ];
@@ -378,24 +374,25 @@ static void dw_reloc( uint section, uint reloc_type, ... )
 static void dw_seek( uint section, long offset, uint mode )
 /*********************************************************/
 {
+    unsigned long ofs = offset;
     switch( mode ) {
     case DW_SEEK_SET:
         break;
     case DW_SEEK_CUR:
-        offset = DWSections[section].offset + offset;
+        ofs = DWSections[section].offset + offset;
         break;
     case DW_SEEK_END:
-        offset = DWSections[section].length - offset;
+        ofs = DWSections[section].length - offset;
         break;
     }
     #ifdef __DD__
     printf( "DW_SEEK (%d:%d): offset: %d\n",
         section,
         DWSections[section].length,
-        offset );
+        ofs );
     #endif
-    if( DWSections[section].offset != offset ) {
-        DWSections[section].offset = offset;
+    if( DWSections[section].offset != ofs ) {
+        DWSections[section].offset = ofs;
         if( DWSections[section].offset > DWSections[section].length ) {
             DWSections[section].length = DWSections[section].offset;
         }
@@ -477,7 +474,7 @@ dw_client DwarfInit( void )
     cu.model           = DW_MODEL_NONE;
     cu.inc_list        = inclist;
     cu.inc_list_len    = incsize;
-    cu.dbg_pch         = NULL;
+    cu.dbg_pch         = 0;
     DWBeginCompileUnit( client, &cu );
     CMemFree( inclist );
     DWDeclFile( client, fname );

@@ -44,7 +44,7 @@ struct  tokens {
 
 typedef struct macro_token {
         struct macro_token *next;
-        char    token;
+        byte    token;
         char    data[1];
 } MACRO_TOKEN;
 
@@ -64,6 +64,13 @@ NESTED_MACRO *NestedMacros;
 MACRO_TOKEN  *TokenList;
 MACRO_TOKEN  *MacroExpansion();
 MACRO_TOKEN *NestedMacroExpansion( int );
+
+local void SaveParm( MEPTR      mentry,
+                     int        i,
+                     int        parm_cnt,
+                     MACRO_ARG  *macro_parms,
+                     struct tokens *token_list,
+                     int        total );
 
 struct special_macro_names {
         char    *name;
@@ -555,7 +562,7 @@ local void SaveParm( MEPTR      mentry,
 
 #ifndef NDEBUG
 
-void DumpMDefn( char *p )
+void DumpMDefn( unsigned char *p )
     {
         int c;
 
@@ -961,7 +968,7 @@ static MACRO_TOKEN **NextString( MACRO_TOKEN **lnk, unsigned i )
     return( lnk );
 }
 
-local MACRO_TOKEN *BuildString(  char *p )
+local MACRO_TOKEN *BuildString(  byte *p )
 {
     MACRO_TOKEN    *head;
     MACRO_TOKEN   **lnk;
@@ -1053,14 +1060,14 @@ local MACRO_TOKEN *BuildString(  char *p )
 }
 
 
-MACRO_TOKEN *BuildMTokenList( char __FAR *p, MACRO_ARG *macro_parms )
+MACRO_TOKEN *BuildMTokenList( byte __FAR *p, MACRO_ARG *macro_parms )
 {
     MACRO_TOKEN *mtok;
     MACRO_TOKEN  *head;
     MACRO_TOKEN **lnk;
     NESTED_MACRO *nested;
-    char __FAR  *p2;
-    char        buf[2];
+    byte __FAR  *p2;
+    byte        buf[2];
     enum TOKEN  prev_token;
 
     head = NULL;

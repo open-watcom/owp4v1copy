@@ -43,7 +43,7 @@
 //      __TGT_SYS_X86 is the default
 //
 
-#include "LangEnvD.h"
+#include "langenvd.h"
 
 #ifndef __TGT_SYS
     #define __TGT_SYS __TGT_SYS_X86

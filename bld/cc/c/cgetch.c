@@ -84,7 +84,7 @@ static int ReadBuffer( FCB *srcfcb )
     } while( srcfcb->src_cnt < 0 );
     if( CompFlags.cpp_line_wanted ) {
     //hoke up a newline so #line comes out after last token in include
-        if( eof( fileno( srcfcb->src_fp ) ) ){
+        if( feof( srcfcb->src_fp ) ){
             if(  srcfcb->src_ptr[ srcfcb->src_cnt-1 ] != '\n' ){
                 srcfcb->src_ptr[ srcfcb->src_cnt ] = '\n';  // mark end of buffer
                 srcfcb->src_cnt++;

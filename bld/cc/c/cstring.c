@@ -38,8 +38,16 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#ifndef _MAX_PATH
+#define _MAX_PATH (PATH_MAX+1)
+#endif
+#ifndef O_BINARY
+#define O_BINARY 0
+#endif
+
 extern TREEPTR         CurFuncNode;
 
+#ifdef __WATCOMC__
 static int OpenUnicodeFile( char *filename )
 {
     int         handle;
@@ -101,6 +109,7 @@ char *LoadUnicodeTable( char *str )
     }
     return( str );
 }
+#endif
 
 void StringInit()
 {

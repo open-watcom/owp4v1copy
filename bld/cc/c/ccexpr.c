@@ -39,8 +39,6 @@
 extern  TYPEPTR TypeName();
 extern  TYPEPTR TypeOf();                       /* cnode */
 extern  int     EnumLookup();                   /* cenum */
-extern  FMEPTR  MacroLookup();
-extern  TOKEN   NextToken();
 extern  TREEPTR Expr13();
 extern  void    MustRecog();
 extern  unsigned long SizeOfArg();              /* csizeof */
@@ -311,7 +309,7 @@ local long int CExpr11()
 
 local long int ConstId()
     {
-        register long int value;
+        register long value;
         register int    enum_var;
         auto     struct enum_info ei;
 
@@ -338,7 +336,7 @@ local long int ConstId()
             enum_var = EnumLookup( HashValue, Buffer, &ei );
             NextToken();
             if( enum_var ) {
-                value = ei.value;
+                value = (long)(ei.value);
             } else {
                 CErr2p( ERR_NOT_A_CONSTANT_EXPR, Buffer );
                 value = 0;

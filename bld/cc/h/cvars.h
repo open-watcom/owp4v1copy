@@ -221,7 +221,7 @@ global  BLOCKPTR LoopStack;
 global  SWITCHPTR SwitchStack;
 
 global  int     MacroDepth;
-global  char    *MacroPtr;
+global  byte    *MacroPtr;
 global  MEPTR   NextMacro;
 global  MEPTR   UndefMacroList;
 global  MEPTR   __FAR *MacHash;     /* [ MACRO_HASH_SIZE ] */
@@ -377,12 +377,12 @@ global  int     LeafGetCount, LeafRepCount;
 #define SYMBUFS_PER_SEG 16
 #define SYM_SEG_SIZE    (SYM_BUF_SIZE*SYMBUFS_PER_SEG)
 
-#define MAX_QUAD_SEGS (LARGEST_QUAD_INDEX/(QUADS_PER_BUF*QUADBUFS_PER_SEG)+1)
-#define MAX_LEAF_SEGS (LARGEST_LEAF_INDEX/(LEAFS_PER_BUF*LEAFBUFS_PER_SEG)+1)
 #define MAX_SYM_SEGS  (LARGEST_SYM_INDEX/(SYMS_PER_BUF*SYMBUFS_PER_SEG)+1)
 
 global  struct seg_info SymSegs[MAX_SYM_SEGS];  /* segments for symbols */
 #ifndef NEWCFE
+#define MAX_QUAD_SEGS (LARGEST_QUAD_INDEX/(QUADS_PER_BUF*QUADBUFS_PER_SEG)+1)
+#define MAX_LEAF_SEGS (LARGEST_LEAF_INDEX/(LEAFS_PER_BUF*LEAFBUFS_PER_SEG)+1)
 global  struct seg_info QuadSegs[MAX_QUAD_SEGS];/* segments for quads */
 global  struct seg_info LeafSegs[MAX_LEAF_SEGS];/* segments for leafs */
 
@@ -639,8 +639,8 @@ extern  int     ParmsToBeReversed(int,struct aux_info *);
 extern  char    *SrcFullPath( char *, char const *, unsigned );
 
 //cfold2.c
-extern  void CastFloatValue(TREEPTR,int);
-extern  void CastConstValue(TREEPTR,int);
+extern  void CastFloatValue( TREEPTR leaf, DATA_TYPE newtype );
+extern  void CastConstValue(TREEPTR,DATA_TYPE);
 extern  void DoConstFold(TREEPTR);
 extern  void FoldExprTree(TREEPTR);
 extern  bool BoolConstExpr( void );
@@ -715,9 +715,7 @@ extern  void    CppStackFini(void);
 //cmacadd.c
 extern  void    AllocMacroSegment(unsigned);
 extern  void    FreeMacroSegments(void);
-extern  void    MacLkAdd(MEPTR,int,int);
 extern  void    MacLkAdd( MEPTR mentry, int len, enum macro_flags flags );
-extern  void    MacroAdd(MEPTR,char *,int,int);
 extern  void    MacroAdd( MEPTR mentry, char *buf, int len, enum macro_flags flags );
 extern  int     MacroCompare(MEPTR,MEPTR);
 extern  void    MacroCopy(MPTR_T,MACADDR_T,unsigned);

@@ -38,6 +38,10 @@
 #include "asmerr.h"
 #include "asmglob.h"
 
+#ifdef __USE_BSD
+#define stricmp strcasecmp
+#endif
+
 #ifdef _WASM_
 
 #include "myassert.h"

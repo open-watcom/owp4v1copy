@@ -39,7 +39,6 @@
 #else
  typedef char __FAR * SYM_NAMEPTR;
 #endif
-extern SYM_NAMEPTR SymName();
 
 #include "cg.h"
 #include "cgaux.h"
@@ -241,7 +240,7 @@ typedef struct type_definition {
                 struct {                        /* TYPE_FIELD or TYPE_UFIELD */
                     unsigned char field_width;  /* # of bits */
                     unsigned char field_start;  /* # of bits to << by */
-                    char          field_type;   /* TYPE_xxxx of field */
+                    unsigned char field_type;   /* TYPE_xxxx of field */
                 } f;
                 union {
                     struct array_info *array;   /* TYPE_ARRAY */
@@ -453,8 +452,8 @@ typedef struct  {
                 } var;
         } u;
 #if _HOST == 386
-        char    opr;            /* contains T_xxxx token value */
-        char    flags;
+        byte    opr;            /* contains T_xxxx token value */
+        byte    flags;
 #else
         int     opr;            /* contains T_xxxx token value */
         int     flags;

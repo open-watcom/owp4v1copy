@@ -39,6 +39,10 @@
 #include "asmerr.h"
 #include "asmglob.h"
 
+#ifdef __USE_BSD
+#define strnicmp strncasecmp
+#endif
+
 extern struct AsmCodeName           AsmOpcode[];
 extern char                         AsmChars[];
 

@@ -46,7 +46,7 @@ struct  macro_parm {
 };
 
 /* Actual macro definition is at (char *)mentry + mentry->macro_defn */
-typedef enum macro_flags {
+enum macro_flags {
         MACRO_DEFINED_BEFORE_FIRST_INCLUDE  =   0x01,
         MACRO_CAN_BE_REDEFINED              =   0x02,
         MACRO_USER_DEFINED                  =   0x04,
