@@ -1,3 +1,30 @@
+2002-09-18  Eric R. Krause  <ekrause_98@users.sourceforge.net>
+
+	* include/winuser.h (DS_SHELLFONT): Define.
+
+2002-09-17  Daniel Schlyder  <daniel@dascdev.net>
+
+	* include/winnt.h (VER_SUITE_BLADE): Define.
+
+2002-09-17  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/shlobj.h (SHGetSpecialFolderPath[AW]):
+	Add _WIN32_IE guard. Correct prototype for wide version.
+	(SHGetFolderPath): Add comment on shfolder.dll.
+	(SHGetFolderLocation): Add prototyope for WinME and W2K.
+	(SHGetFolderPathAndSubDir[AW]): Add prototypes for XP.
+
+2002-09-16  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* lib/shell32.def (SHGetFolderPath[AW]): Add comment.
+	* lib/shfolder.def: New file.
+
+2002-09-12  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winsock.h (timeval): Guard struct and associated
+	macros with _TIMEVAL_DEFINED.
+	* include/winsock2.h (timeval): Likewise.
+
 2002-09-11  Danny Smith  <dannysmith@users.sourceforge.net>
 
 	* lib/shell32.def (SHBindtoParent,SHCreateDirectoryEx[AW],

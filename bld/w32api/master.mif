@@ -63,6 +63,7 @@ libs =               &
         secur32.lib &
         setupapi.lib &
         shell32.lib &
+        shfolder.lib &
         shlwapi.lib &
         svrapi.lib &
         tapi32.lib &
