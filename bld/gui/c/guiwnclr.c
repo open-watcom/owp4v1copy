@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Defines basic color scheme for each window component.
 *
 ****************************************************************************/
 
@@ -38,7 +37,8 @@
 
 static gui_colour_set Default[GUI_NUM_ATTRS] =
 {
-    /*  fore            back */
+#ifndef __NT__    /* May need a && !GUI flag as well? */
+    /*  fore/text       backgr. */
     { GUI_WHITE,        GUI_BLUE        }, // GUI_MENU_PLAIN
     { GUI_BRIGHT_WHITE, GUI_BLUE        }, // GUI_MENU_STANDOUT
     { GUI_GREY,         GUI_BLUE        }, // GUI_MENU_GRAYED
@@ -52,6 +52,24 @@ static gui_colour_set Default[GUI_NUM_ATTRS] =
     { GUI_BRIGHT_WHITE, GUI_RED         }, // GUI_ICON
     { GUI_GREY,         GUI_BLACK       }, // GUI_MENU_GRAYED_ACTIVE
     { GUI_GREY,         GUI_CYAN        }, // GUI_FRAME_RESIZE,
+#else
+    /* GUI_BRIGHT_WHITE will be GetSysColor(COLOR_WINDOW)  */
+    /* GUI_WHITE        will be GetSysColor(COLOR_BTNFACE) */
+    /* and so on and so forth. See InitSystemRGB() in guicolor.c */
+    { GUI_BRIGHT_GREEN, GUI_BRIGHT_BLUE   }, // GUI_MENU_PLAIN
+    { GUI_BLUE,         GUI_BRIGHT_GREEN  }, // GUI_MENU_STANDOUT
+    { GUI_GREY,         GUI_BRIGHT_BLUE   }, // GUI_MENU_GRAYED
+    { GUI_BROWN,        GUI_BLUE,         }, // GUI_MENU_ACTIVE    (selected in list)
+    { GUI_BRIGHT_BLUE,  GUI_BRIGHT_GREEN  }, // GUI_MENU_ACTIVE_STANDOUT
+    { GUI_BLACK,        GUI_GREY          }, // GUI_BACKGROUND
+    { GUI_BLUE,         GUI_GREY          }, // GUI_MENU_FRAME
+    { GUI_GREY,         GUI_WHITE         }, // GUI_TITLE_INACTIVE
+    { GUI_BLUE,         GUI_GREY          }, // GUI_FRAME_ACTIVE,
+    { GUI_BLACK,        GUI_GREY          }, // GUI_FRAME_INACTIVE
+    { GUI_BLUE,         GUI_GREY          }, // GUI_ICON
+    { GUI_BLUE,         GUI_GREY          }, // GUI_MENU_GRAYED_ACTIVE
+    { GUI_BLACK,        GUI_WHITE         }, // GUI_FRAME_RESIZE,
+#endif
 };
 
 bool GUISetColours( gui_window * wnd, int num_attrs, gui_colour_set * colours )
