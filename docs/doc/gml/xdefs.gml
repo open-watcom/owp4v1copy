@@ -15,10 +15,11 @@
 .do end
 :set symbol="cpyyear"   value="2002".
 .dm cpyrit begin
-Copyright by WATCOM International Corp. &*, &cpyyear.. All rights reserved.
+Portions Copyright (c) &*, &cpyyear. Sybase, Inc. All Rights Reserved.
 .dm cpyrit end
 .dm trdmrk begin
-WATCOM is a trademark of Sybase, Inc. and its subsidiaries.
+Source code is available under the Sybase Open Watcom Public License.
+See http://www.openwatcom.org/ for details.
 .dm trdmrk end
 :set symbol="ver"       value="1".
 :set symbol="rev"       value="1".

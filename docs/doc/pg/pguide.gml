@@ -119,7 +119,6 @@
 :INCLUDE file='DYNLINK'.
 :INCLUDE file='OS2PM'.
 :INCLUDE file='OS2PDD'.
-:INCLUDE file='WKFRAME'.
 .helppref
 .*
 .do end
@@ -135,12 +134,6 @@
 .do end
 .*
 .if '&target' eq 'DOS' .do begin
-.*
-.sepsect AutoCAD ADS Programming Guide
-.*
-.helppref AutoCAD:
-:INCLUDE file='PGADS'.
-.helppref
 .*
 .sepsect Novell NLM Programming Guide
 .*

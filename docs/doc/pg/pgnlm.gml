@@ -45,7 +45,7 @@ The following special notes apply to developing applications for NetWare.
 .if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
 .autonote
 .note
-You must compile your source files with the "/bt=NETWARE" option.
+You must compile your source files with the "&sw.bt=NETWARE" option.
 This will cause the compiler to:
 .begbull $compact
 .bull
@@ -66,11 +66,11 @@ in the libraries.
 .note
 You must compile your source files with the small memory model option
 ("ms").
-This is accomplished by specifying the "/bt=NETWARE" option.
+This is accomplished by specifying the "&sw.bt=NETWARE" option.
 .note
 You must compile your source files with one of the stack-based calling
 convention options ("3s", "4s" or "5s").
-This is accomplished by specifying the "/bt=NETWARE" option.
+This is accomplished by specifying the "&sw.bt=NETWARE" option.
 .note
 You must set the
 .ev NETWARE_INCLUDE
@@ -78,7 +78,7 @@ environment variable to point to the
 .fi &pathnamup.\NOVH
 directory.
 This environment variable will be searched first when you compile with
-the "/bt=NETWARE" option.
+the "&sw.bt=NETWARE" option.
 Alternatively, you can set the
 .ev INCLUDE
 environment variable to include
@@ -86,14 +86,14 @@ environment variable to include
 before other include directories.
 .note
 If you are using the compile and link utility &wclvarup32.,
-you must use the following options: "/l=NETWARE /bt=NETWARE".
+you must use the following options: "&sw.l=NETWARE &sw.bt=NETWARE".
 .note
 You must specify
 .millust begin
 system NETWARE
 .millust end
 when linking an NLM.
-This is automatic if you are using &wclvarup32. and the "/l=NETWARE"
+This is automatic if you are using &wclvarup32. and the "&sw.l=NETWARE"
 option.
 .note
 If you are using other Netware APIs such as NWSNUT, then you
@@ -138,7 +138,7 @@ You must specify
 system NETWARE
 .millust end
 when linking an NLM.
-This is automatic if you are using &wclvarup32. and the "/l=NETWARE"
+This is automatic if you are using &wclvarup32. and the "&sw.l=NETWARE"
 option.
 .endnote
 .do end

@@ -6,7 +6,7 @@
 .sr bldmsg = 'a DOS/4G executable'
 .sr bldexe = '.exe'
 .sr bldrun = ''
-.sr blddbg = '&dbgcmd/trap=rsi'
+.sr blddbg = '&dbgcmd /trap=rsi'
 .sr bldhost = 'DOS'
 .sr wclcmd = &wclcmd32.
 .sr wclcmdup = &wclcmdup32.

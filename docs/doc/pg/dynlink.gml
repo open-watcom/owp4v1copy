@@ -18,7 +18,7 @@
 .*
 .if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
 .if '&targetos' eq 'Windows NT' .do begin
-:set symbol="tgtopts"   value="/bm ".
+:set symbol="tgtopts"   value="&sw.bm ".
 .do end
 :set symbol="dll_init"  value="__dll_initialize".
 :set symbol="dll_term"  value="__dll_terminate".
@@ -400,6 +400,7 @@ BOOL APIENTRY LibMain( HANDLE hinstDLL,
 }
 .do end
 .el .if '&targetos' eq 'OS/2 2.x' .do begin
+#include <os2.h>
 
 #if defined(__cplusplus)
 #define EXTERNC extern "C"
@@ -407,7 +408,7 @@ BOOL APIENTRY LibMain( HANDLE hinstDLL,
 #define EXTERNC
 #endif
 
-unsigned LibMain( unsigned hmod, unsigned termination )
+unsigned APIENTRY LibMain( unsigned hmod, unsigned termination )
 {
     if( termination ) {
         /* DLL is detaching from process */
@@ -616,7 +617,7 @@ the return value is ignored.
 .do end
 .el .if '&targetos' eq 'OS/2 2.x' .do begin
 .np
-Starting with version 11, 32-bit OS/2 DLLs can include a
+32-bit OS/2 DLLs can include a
 .kw LibMain
 entry point when you are using the &product run-time libraries.
 .begnote Arguments:
@@ -630,13 +631,13 @@ This is a handle for the DLL.
 A 0 value indicates that the DLL is attaching to the address space of
 the current process as a result of the process starting up or as a
 result of a call to
-.kw LoadLibrary.
+.kw DosLoadModule.
 A DLL can use this opportunity to initialize any instance data.
 .np
 A non-zero value indicates that the DLL is detaching from the address
 space of the calling process as a result of either a normal
 termination or of a call to
-.kw FreeLibrary.
+.kw DosFreeModule.
 .*
 .note Return Value
 .*
@@ -647,9 +648,9 @@ function returns 1 if initialization succeeds or 0 if initialization fails.
 If the return value is 0 when
 .kw LibMain
 is called because the process uses the
-.kw LoadLibrary
+.kw DosLoadModule
 function,
-.kw LoadLibrary returns NULL.
+.kw DosLoadModule returns an error.
 .np
 If the return value is 0 when
 .kw LibMain
@@ -664,7 +665,7 @@ Assume the above example is contained in the file
 We can compile the file using the following command.
 Note that we must specify the "bd" compiler option.
 .millust begin
-&prompt.&ccmd32 /bd dllsamp
+&prompt.&ccmd32 &sw.bd dllsamp
 .millust end
 .np
 Before we can link our example, we must create a linker directive file
@@ -752,30 +753,6 @@ command.
 A file called
 .fi dllsamp.dll
 will be created.
-:cmt. .np
-:cmt. Special versions of the &product run-time libraries are used for
-:cmt. creating dynamic link libraries.
-:cmt. The following lists these libraries and the compiler options that
-:cmt. cause the libraries to be used.
-:cmt. .ix 'libraries for creating dynamic link libraries'
-:cmt. .if '&lang' eq 'FORTRAN 77' .do begin
-:cmt. .millust begin
-:cmt. Library Name    Compiler Option
-:cmt. ------------    ---------------
-:cmt. flibdl          /bd         /fpc
-:cmt. flibdl7         /bd         /fpi, fpi87 or /fpi287
-:cmt. flibdls         /bd   /sc   /fpc
-:cmt. flibdl7s        /bd   /sc   /fpi, fpi87 or /fpi287
-:cmt. .millust end
-:cmt. .do end
-:cmt. .if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
-:cmt. .millust begin
-:cmt. Library Name       Compiler Option
-:cmt. ------------    ---------------------
-:cmt. clibdl3r        /bd   /3r, /4r or /5r
-:cmt. clibdl3s        /bd   /3s, /4s or /5r
-:cmt. .millust end
-:cmt. .do end
 .*
 .section Using Dynamic Link Libraries
 .*
@@ -888,7 +865,7 @@ int main( void )
 We can compile and link our sample application by issuing the
 following command.
 .millust begin
-&prompt.&wclcmd32 &tgtopts./l=&tgtosname dlltest dllsamp.lib
+&prompt.&wclcmd32 &tgtopts.&sw.l=&tgtosname dlltest dllsamp.lib
 .millust end
 .np
 If we had created a linker directive file of "IMPORT" directives
@@ -919,7 +896,7 @@ convention.
 To compile and link our sample application, we would issue the
 following command.
 .millust begin
-&prompt.&wclcmd32 &tgtopts./l=&tgtosname dlltest /"@dllimps"
+&prompt.&wclcmd32 &tgtopts.&sw.l=&tgtosname dlltest &sw."@dllimps"
 .millust end
 .*
 .section The Dynamic Link Library Data Area

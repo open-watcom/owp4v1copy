@@ -10,7 +10,7 @@
 :set symbol="tgtfile" value="mthread".
 .*
 .if '&lang' eq 'FORTRAN 77' .do begin
-:set symbol="tgtopts"   value="/bm".
+:set symbol="tgtopts"   value="&sw.bm".
 :set symbol="include" value="include".
 :set symbol="begthread" value="beginthread".
 :set symbol="endthread" value="endthread".
@@ -25,10 +25,10 @@
 .*
 .if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
 .   .if '&targetos' eq 'OS/2 2.x' .do begin
-:set symbol="tgtopts"   value="/bt=os2 /bm".
+:set symbol="tgtopts"   value="&sw.bt=os2 &sw.bm".
 .   .do end
 .   .el .do begin
-:set symbol="tgtopts"   value="/bt=nt /bm".
+:set symbol="tgtopts"   value="&sw.bt=nt &sw.bm".
 .   .do end
 :set symbol="include" value="header".
 :set symbol="begthread" value="_beginthread".
@@ -112,34 +112,6 @@ to affect the execution of other threads.
 Therefore, each thread should contain its own instance of this
 variable.
 .do end
-:cmt. .np
-:cmt. Special run-time libraries are required to solve these problems.
-:cmt. You must link with these special run-time libraries when creating a
-:cmt. multi-threaded application.
-:cmt. The following lists these libraries and the compiler options that
-:cmt. cause the libraries to be used.
-:cmt. .if '&lang' eq 'FORTRAN 77' .do begin
-:cmt. .millust begin
-:cmt. Library Name    Compiler Option
-:cmt. ------------    ---------------
-:cmt. flibmt          /bm         /fpc
-:cmt. flibmt7         /bm         /fpi, fpi87 or /fpi287
-:cmt. flibmts         /bm   /sc   /fpc
-:cmt. flibmt7s        /bm   /sc   /fpi, fpi87 or /fpi287
-:cmt. .millust end
-:cmt. .do end
-:cmt. .if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
-:cmt. .millust begin
-:cmt. Library Name       Compiler Option
-:cmt. ------------    ---------------------
-:cmt. clibmt3r        /bm   /3r, /4r or /5r
-:cmt. clibmt3s        /bm   /3s, /4s or /5r
-:cmt. .millust end
-:cmt. .do end
-:cmt. .np
-:cmt. The "bm" compiler option must be specified when compiling modules of a
-:cmt. multi-threaded application.
-:cmt. These libraries are automatically used when this option is specified.
 .*
 .section Creating Threads
 .*
@@ -666,7 +638,7 @@ directories
 We can now compile and link the application by issuing the following
 command.
 .millust begin
-&prompt.&wclcmd &tgtopts /l=&tgtosname &tgtfile
+&prompt.&wclcmd &tgtopts &sw.l=&tgtosname &tgtfile
 .millust end
 .np
 The "bm" option must be specified since we are creating a
@@ -707,7 +679,7 @@ global variable
 Under 32-bit OS/2, there is no limit to the number of threads an
 application can create.
 However, due to the way in which multiple threads are supported in the
-WATCOM libraries, there is a small performance penalty once the number
+&company libraries, there is a small performance penalty once the number
 of threads exceeds the default limit of 32 (this number includes the
 initial thread).
 If you are creating more than 32 threads and wish to avoid this

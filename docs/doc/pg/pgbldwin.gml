@@ -204,10 +204,10 @@ yourself to determine the relationship between the object code and the
 original source language code.
 .if '&bldnam' eq 'win386' .do begin
 .np
-Once again, the "&bldexe." file must be combined with WATCOM's 32-bit
+Once again, the "&bldexe." file must be combined with &company.'s 32-bit
 Windows supervisor
 .fi WIN386.EXT
-using the WATCOM Bind utility.
+using the &company Bind utility.
 This step is described in the previous section.
 .do end
 .np

@@ -15,7 +15,7 @@ The chapters in this section describe the 32-bit Tenberry Software
 Key differences are:
 .begbull
 .bull
-&dos4g will only execute programs built with a WATCOM 32-bit compiler
+&dos4g will only execute programs built with a &company 32-bit compiler
 such as &cmpname and linked with its run-time libraries.
 .bull
 .ix '&dos4gprd' 'VMM restriction'

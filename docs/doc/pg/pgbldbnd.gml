@@ -3,10 +3,10 @@
 .ix WBIND.EXE
 .ix supervisor
 .ix 'Windows supervisor'
-The "&bldexe" file must now be combined with WATCOM's 32-bit Windows
+The "&bldexe" file must now be combined with &company.'s 32-bit Windows
 supervisor
 .fi WIN386.EXT
-using the WATCOM Bind utility.
+using the &company Bind utility.
 .fi WBIND.EXE
 combines your 32-bit application code and data (".rex" file) with the
 32-bit Windows supervisor.
@@ -49,7 +49,7 @@ The square brackets [ ] denote items which are optional.
 .begnote $break $setptnt 15
 .ix WBIND
 .mnote WBIND
-is the name of the WATCOM Bind utility.
+is the name of the &company Bind utility.
 .mnote file_spec
 is the name of the 32-bit Windows EXE to bind.
 .mnote -d

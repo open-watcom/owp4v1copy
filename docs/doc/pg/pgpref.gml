@@ -36,8 +36,6 @@ QNX Programming Guide
 .if '&target' eq 'DOS' .do begin
 .*
 .bull
-AutoCAD ADS Programming Guide
-.bull
 Novell NLM Programming Guide
 .bull
 Mixed Language Programming
@@ -82,14 +80,11 @@ are trademarks of Digital Equipment Corporation.
 .*
 .if '&target' eq 'DOS' .do begin
 .np
-AutoCAD Development System is a trademark of Autodesk, Inc.
-.*
-.np
 DOS/4G and DOS/16M are trademarks of Tenberry Software, Inc.
 .*
 .np
 OS/2 is a trademark of International Business Machines Corp.
-IBM Developer's WorkFrame/2, Presentation Manager, and OS/2 are
+IBM Developer's Toolkit, Presentation Manager, and OS/2 are
 trademarks of International Business Machines Corp.
 .do end
 IBM is a registered trademark of International Business Machines Corp.

@@ -84,12 +84,12 @@ The following program demonstrates the method used with DOS/4GW.
 * The following program shows how to access screen memory
 * from a FORTRAN program under the DOS/4GW DOS extender.
 
-* Compile & Link: wfl386 /l=dos4g fscreen
+* Compile & Link: wfl386 -l=dos4g fscreen
 
       program screen
 
 * Allocatable arrays must be declared by specifying their
-* dimensions using colons only (see WATCOM FORTRAN 77
+* dimensions using colons only (see &company FORTRAN 77
 * Language Reference on the ALLOCATE statement for details).
 
       character*1 screen(:,:)
@@ -130,7 +130,7 @@ The following program demonstrates this method.
     SCREEN.C - This example shows how to write directly
     to screen memory under the DOS/4GW dos-extender.
 
-    Compile & Link: wcl386 /l=dos4g SCREEN
+    Compile & Link: wcl386 -l=dos4g SCREEN
  */
 #include <stdio.h>
 #include <dos.h>
@@ -177,7 +177,7 @@ The following example illustrates this technique.
     SCREENPL.C - This example shows how to write directly
     to screen memory under the Phar Lap DOS extender.
 
-    Compile & Link: wcl386 /l=pharlap SCREENPL
+    Compile & Link: wcl386 -l=pharlap SCREENPL
  */
 #include <stdio.h>
 #include <dos.h>
@@ -212,17 +212,6 @@ Please refer to the chapter entitled "386|DOS-Extender System Calls"
 in Phar Lap's
 .book 386|DOS-Extender Reference Manual
 for details.
-:cmt. .*
-:cmt. .section Writing to Video Memory under Ergo OS/386
-:cmt. .*
-:cmt. .np
-:cmt. .ix 'video memory' 'using Ergo'
-:cmt. The Ergo DOS extender uses a method similar to that of Phar Lap for
-:cmt. screen access.
-:cmt. The general screen selector for Ergo is 0x1F, but other methods are
-:cmt. also provided for writing to the monochrome monitor or to the color
-:cmt. monitor.
-:cmt. Please consult Ergo's documentation for details.
 .*
 .endlevel
 .do end
@@ -256,7 +245,7 @@ any interrupt calls that are supported in protected mode by DOS/4GW.
 * and GET DTA are used.
 
 * Compile & Link: set finclude=\watcom\src\fortran\dos
-*                 wfl386 /l=dos4g dta
+*                 wfl386 -l=dos4g dta
 
 *$pragma aux GetDS = "mov ax,ds" value [ax]
 
@@ -355,13 +344,13 @@ The following program illustrates this procedure.
 .code begin
 * FMEMORY.FOR
 * This example shows how to get information about free
-* memory using DPMI call 0500h under DOS/4GW using WATCOM
+* memory using DPMI call 0500h under DOS/4GW using &company
 * FORTRAN 77.  Note that only the first field of the
 * structure is guaranteed to contain a valid value; any
 * field not returned by DOS/4GW is set to -1 (0FFFFFFFFh).
 
 * Compile & Link:   set finclude=\watcom\src\fortran\dos
-*                   wfl386 /l=dos4g fmemory
+*                   wfl386 -l=dos4g fmemory
 
 * Pragma to get the default data segment
 
@@ -445,7 +434,7 @@ The following program illustrates this procedure.
     guaranteed to contain a valid value; any field that
     is not returned by DOS/4GW is set to -1 (0FFFFFFFFh).
 
-    Compile & Link: wcl386 /l=dos4g memory
+    Compile & Link: wcl386 -l=dos4g memory
  */
 #include <i86.h>
 #include <dos.h>
@@ -520,7 +509,7 @@ The following example illustrates how to use this system call from a
     amount of physical memory present under Phar Lap
     386|DOS-Extender v4.0.
 
-    Compile & Link: wcl386 /l=pharlap MEMPLS40
+    Compile & Link: wcl386 -l=pharlap MEMPLS40
  */
 #include <dos.h>
 #include <stdio.h>
@@ -591,7 +580,7 @@ The following program demonstrates the techniques mentioned above.
     field that is not returned by the DPMI implementation
     is set to -1 (0FFFFFFFFh).
 
-    Compile & Link: wcl386 /l=win386 /zw memwin
+    Compile & Link: wcl386 -l=win386 -zw memwin
     Bind: wbind -n memwin
  */
 #include <windows.h>
@@ -715,7 +704,7 @@ This example is similar to the screen memory access example.
     status under DOS/4GW by looking at the ROM BIOS
     keyboard status byte in low memory.
 
-    Compile & Link: wcl386 /l=dos4g keystat
+    Compile & Link: wcl386 -l=dos4g keystat
  */
 #include <stdio.h>
 #include <dos.h>
@@ -775,7 +764,7 @@ The following example illustrates this technique.
     status under 386|DOS-Extender by looking at the ROM
     BIOS keyboard status byte in low memory.
 
-    Compile & Link: wcl386 /l=pharlap keystapl
+    Compile & Link: wcl386 -l=pharlap keystapl
  */
 #include <stdio.h>
 #include <dos.h>
@@ -821,22 +810,6 @@ Please refer to the chapter entitled "Program Environment"
 in Phar Lap's
 .book 386|DOS-Extender Reference Manual
 for more information on segment selectors available to your program.
-:cmt. .*
-:cmt. .section Accessing the First Megabyte under Ergo OS/386
-:cmt. .*
-:cmt. .np
-:cmt. .ix 'DOS memory' 'using Ergo'
-:cmt. .ix 'real-mode memory' 'using Ergo'
-:cmt. The Ergo DOS extender uses a method similar to that of Phar Lap for
-:cmt. accessing real memory.
-:cmt. The selector for the first megabyte under Ergo is 0x37, but otherwise
-:cmt. the method for accessing the memory is identical to the method
-:cmt. outlined for the Phar Lap DOS extender.
-:cmt. Please refer to
-:cmt. .us Notes about 32-bit Programs
-:cmt. in Ergo's
-:cmt. .us Developer's Reference Manual
-:cmt. for more information on segment selectors available to your program.
 .*
 .endlevel
 .*
@@ -879,7 +852,7 @@ application.
     SPWNRD4G.C - The following program demonstrates how to
     spawn another DOS/4GW application.
 
-    Compile and link: wcl386 /l=dos4g spwnrd4g
+    Compile and link: wcl386 -l=dos4g spwnrd4g
  */
 #include <process.h>
 #include <stdio.h>
@@ -905,7 +878,7 @@ void main()
 /*
     SPWNDD4G.C - Will be spawned by the SPWNRD4G program.
 
-    Compile & Link: wcl386 /l=dos4g spwndd4g
+    Compile & Link: wcl386 -l=dos4g spwndd4g
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -938,7 +911,7 @@ options, as demonstrated by the following programs.
     spawn a Phar Lap application.
 
     Compile & Link:
-    wcl386 /l=pharlap /"runt minr=300K,maxr=400K" spwnrpls
+    wcl386 -l=pharlap -"runt minr=300K,maxr=400K" spwnrpls
  */
 #include <process.h>
 #include <stdio.h>
@@ -962,7 +935,7 @@ void main()
 /*
     SPWNDPLS.C - Will be spawned by the SPWNRPLS program.
 
-    Compile & Link: wcl386 /l=pharlap spwndpls
+    Compile & Link: wcl386 -l=pharlap spwndpls
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -1006,7 +979,7 @@ application.
     MOUSE.C - The following program demonstrates how
     to use the mouse interrupt (0x33) with DOS/4GW.
 
-    Compile and link: wcl386 /l=dos4g mouse
+    Compile and link: wcl386 -l=dos4g mouse
 */
 #include <stdio.h>
 #include <dos.h>
@@ -1187,7 +1160,7 @@ that aren't supported in protected mode.
     will call DOS int 21, function 39h, "Create
     Directory".
 
-    Compile & Link: wcl386 /l=dos4g simulate
+    Compile & Link: wcl386 -l=dos4g simulate
 */
 #include <i86.h>
 #include <dos.h>
@@ -1302,7 +1275,7 @@ test the COM1 handling.
     BIMODAL.C - The following program demonstrates how
     to set up a bi-modal interrupt handler for DOS/4GW
 
-    Compile and link: wcl386 /l=dos4g bimodal bimo.obj
+    Compile and link: wcl386 -l=dos4g bimodal bimo.obj
 */
 
 #include <stdio.h>

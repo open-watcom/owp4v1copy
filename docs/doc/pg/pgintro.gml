@@ -15,7 +15,7 @@
 .if '&target' eq 'DOS' .do begin
 This document contains guides to application development for several
 environments including 16-bit DOS, 32-bit extended DOS, Windows 3.x,
-32-bit extended Windows 3.x, Windows NT, OS/2, AutoCAD and Novell
+32-bit extended Windows 3.x, Windows NT/2000/XP, Win9x, OS/2, and Novell
 NLMs.
 It also describes mixed language (C, FORTRAN) application development.
 .do end
@@ -64,7 +64,7 @@ Windows 3.x Programming Guide
 .note Porting Non-GUI Applications to 16-bit Windows 3.x
 .note Creating 32-bit Windows 3.x Applications
 .note Porting Non-GUI Applications to 32-bit Windows 3.x
-.note The WATCOM 32-bit Windows Extender
+.note The &company 32-bit Windows Extender
 .note Windows 3.x 32-bit Programming Overview
 .note Windows 32-Bit Dynamic Link Libraries
 .note Interfacing Visual Basic and &product DLLs
@@ -109,12 +109,6 @@ OS/2 Programming Guide
 .note OS/2 Multi-threaded Applications
 .note OS/2 Dynamic Link Libraries
 .note Programming for OS/2 Presentation Manager
-.note Using the IBM OS/2 WorkFrame/2
-.endnote
-.bull
-AutoCAD ADS Programming Guide
-.begnote $compact
-.note Creating AutoCAD Applications
 .endnote
 .bull
 Novell NLM Programming Guide

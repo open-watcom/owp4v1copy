@@ -124,7 +124,7 @@ following command.
 If you wish to use the default windowing system, you must recompile
 your application and specify a special option, namely "bw".
 .millust begin
-&prompt.&ccmd32 /bw hello
+&prompt.&ccmd32 -bw hello
 .millust end
 .np
 We now link our application with the following command.
@@ -145,15 +145,6 @@ This is achieved by calling PM API functions directly from your &lang
 program.
 The techniques for developing these applications can be found in the
 .book OS/2 Technical Library.
-To order the Technical Library, call one of the following numbers.
-.millust begin
-In Canada:            1-800-465-1234
-In the United States: 1-800-426-7282 (OS/2 2.0, 2.1)
-                      1-800-879-2755 (OS/2 Warp)
-.millust end
-.np
-You can also order copies of these books from an IBM authorized dealer
-or IBM representative.
 .if '&lang' eq 'FORTRAN 77' .do begin
 .np
 A number of &lang include files (files with extension
@@ -388,7 +379,7 @@ You can compile, link and run this demonstration by issuing the following
 commands.
 .millust begin
 &prompt.&setcmd finclude=&pathnam.&pc.src&pc.fortran&pc.os2
-&prompt.&wclcmd32 /l=os2v2_pm fshapes
+&prompt.&wclcmd32 &sw.l=os2v2_pm fshapes
 &prompt.fshapes
 .millust end
 .do end
