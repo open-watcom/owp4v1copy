@@ -10,8 +10,25 @@ Application Programming Interface (API).
 We will illustrate the steps to creating &bldsys applications by
 taking a small sample application and showing you how to compile,
 link, run and debug it.
+.if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
+.if '&bldos.' eq 'Windows 3.x' .do begin
+.np
+Note - It is supposed you are working on the host with &bldos. installed.
+If you are on the host with any other operating system you should setup
+INCLUDE environment variable correctly to compile for &bldsys target.
+.np
+You can do that by command (DOS, OS/2, NT)
+.np
+set INCLUDE=%WATCOM%\h;%WATCOM%\h\win
+.np
+or by command (LINUX)
+.np
+export INCLUDE=$WATCOM/h:$WATCOM/h/win
+.do end
+.do end
 .*
-.section The Sample Application
+.if '&bldnam' ne 'nt' .section The Sample GUI Application
+.el .section The Sample Character-mode Application
 .*
 .np
 To demonstrate the creation of &bldsys applications, we introduce a
@@ -22,8 +39,9 @@ simple sample program.
 :set symbol="demoup"    value="HELLO".
 :set symbol="demosuff"  value=".c".
 .ix '&bldsys application'
-The following example is the "hello" program adapted for Windows.
+The following example is the "&demo." program adapted for Windows.
 .millust begin
+.if '&bldnam' ne 'nt' .do begin
 #include <windows.h>
 
 int PASCAL WinMain( HANDLE hInstance, HANDLE hPrevInst,
@@ -34,6 +52,13 @@ int PASCAL WinMain( HANDLE hInstance, HANDLE hPrevInst,
                 MB_OK | MB_TASKMODAL );
     return( 0 );
   }
+.do end
+.el .do begin
+void main()
+  {
+     printf( "Hello world\n" );
+  }
+.do end
 .millust end
 .np
 The goal of this program is to display the message "Hello world"
@@ -47,9 +72,10 @@ Windows API function is used to accomplish this task.
 .if '&lang' eq 'FORTRAN 77' .do begin
 :set symbol="demo"      value="sieve".
 :set symbol="demoup"    value="SIEVE".
-:set symbol="demosuff"  value="".
+:set symbol="demosuff"  value=".for".
 For our example, we are going to use the "sieve" program.
 .code begin
+.if '&bldnam' ne 'nt' .do begin
 *$include winapi.fi
 *$noreference
       INTEGER*2 FUNCTION FWINMAIN( hInstance, hPrevInstance,
@@ -64,6 +90,14 @@ For our example, we are going to use the "sieve" program.
 * This program computes the prime numbers between 1 and 10,000
 * using the Sieve of Eratosthenes algorithm.
 
+.do end
+.el .do begin
+.code break
+* This program computes the prime numbers between 1 and 10,000
+* using the Sieve of Eratosthenes algorithm.
+
+      IMPLICIT NONE
+.do end
       INTEGER UPBOUND
       PARAMETER (UPBOUND=10000)
       INTEGER I, K, PRIMES
@@ -86,11 +120,17 @@ For our example, we are going to use the "sieve" program.
           ENDIF
       ENDDO
 .code break
+.if '&bldnam' ne 'nt' .do begin
       WRITE(BUFFER, FORM) 'The Number of Primes between 1 and ',
      &      UPBOUND, ' are: ', PRIMES
       CALL MessageBox( 0, BUFFER,
      &           'Sieve of Eratosthenes'c,
      &           MB_OK .OR. MB_TASKMODAL )
+.do end
+.el .do begin
+      PRINT FORM, 'The Number of Primes between 1 and ', UPBOUND,
+     1            ' are: ', PRIMES
+.do end
       END
 .code end
 .ix 'sieve'
@@ -104,7 +144,8 @@ algorithm to accomplish this task.
 .*
 We will take you through the steps necessary to produce this result.
 .*
-.section Building and Running the Sample &bldos Application
+.if '&bldnam' ne 'nt' .section Building and Running the GUI Application
+.el .section Building and Running the Character-mode Application
 .*
 .np
 .ix 'building &bldos applications'
@@ -112,7 +153,7 @@ To compile and link our example program which is stored in the file
 .fi &demo..&langsuff
 .ct , enter the following command:
 .millust begin
-&prompt.&wclcmd. &sw.l=&bldnam.&bldswt. &demo.&demosuff.
+&prompt.&wclcmd. &sw.l=&bldnam. &bldswt. &demo.&demosuff.
 .millust end
 .np
 The typical messages that appear on the screen are shown in the
@@ -149,7 +190,8 @@ The resultant &bldsys application
 .fi &demoup..EXE
 can now be run under &bldos..
 .*
-.section Debugging the Sample &bldos Application
+.if '&bldnam' ne 'nt' .section Debugging the GUI Application
+.el .section Debugging the Character-mode Application
 .*
 .np
 .ix 'debugging &bldos applications'
@@ -173,7 +215,7 @@ appropriate debug directives for the &lnkname..
 For example, to compile and link the "&demo." program with debugging
 information, the following command may be issued.
 .millust begin
-&prompt.&wclcmd. &sw.l=&bldnam.&bldswt. &sw.&debugopt. &demo.&demosuff.
+&prompt.&wclcmd. &sw.l=&bldnam. &bldswt. &sw.&debugopt. &demo.&demosuff.
 .millust end
 .np
 The typical messages that appear on the screen are shown in the

@@ -45,7 +45,7 @@ simple sample program.
 :set symbol="demo"      value="hello".
 :set symbol="demoup"    value="HELLO".
 :set symbol="demosuff"  value=".c".
-For our example, we are going to use the famous "hello" program.
+For our example, we are going to use the famous "&demo." program.
 .millust begin
 #include <stdio.h>
 
@@ -78,7 +78,7 @@ The C++ version uses the "iostream" library to accomplish this task.
 .if '&lang' eq 'FORTRAN 77' .do begin
 :set symbol="demo"      value="sieve".
 :set symbol="demoup"    value="SIEVE".
-:set symbol="demosuff"  value="".
+:set symbol="demosuff"  value=".for".
 For our example, we are going to use the "sieve" program.
 .code begin
 * This program computes the prime numbers between 1 and 10,000
@@ -118,7 +118,7 @@ algorithm to accomplish this task.
 .*
 We will take you through the steps necessary to produce this result.
 .*
-.section Building and Running the Non-GUI &bldos Application
+.section Building and Running the Non-GUI Application
 .*
 .np
 Very little effort is required to port an existing &lang application
@@ -128,7 +128,7 @@ You must compile and link the file
 .fi &demo.&demosuff
 specifying the "bw" option.
 .millust begin
-&prompt.&wclcmd. &sw.l=&bldnam.&bldswt. &demo.&demosuff.
+&prompt.&wclcmd. &sw.l=&bldnam. &bldswt. &demo.&demosuff.
 .millust end
 .np
 The typical messages that appear on the screen are shown in the
@@ -165,10 +165,10 @@ The resultant &bldsys application
 .fi &demoup..EXE
 can now be run under &bldos as a Windows GUI application.
 .*
-.section Debugging the Non-GUI &bldos Application
+.section Debugging the Non-GUI Application
 .*
 .np
-.ix 'debugging &bldos applications'
+.ix 'debugging Non-GUI &bldsys applications'
 Let us assume that you wish to debug your application in order to
 locate an error in programming.
 In the previous section, the "&demo" program was compiled with default
@@ -189,7 +189,7 @@ appropriate debug directives for the &lnkname..
 For example, to compile and link the "&demo" program with debugging
 information, the following command may be issued.
 .millust begin
-&prompt.&wclcmd. &sw.l=&bldnam.&bldswt. &sw.&debugopt. &demo.&demosuff.
+&prompt.&wclcmd. &sw.l=&bldnam. &bldswt. &sw.&debugopt. &demo.&demosuff.
 .millust end
 .np
 The typical messages that appear on the screen are shown in the
@@ -198,7 +198,7 @@ following illustration.
 .im &wclcmd.2
 .code end
 .np
-The "&debugopt" option requests the maximum amount of debugging
+The "&debugopt." option requests the maximum amount of debugging
 information that can be provided by the &cmpname compiler.
 .kw &wclcmdup
 will make sure that this debugging information is included in the
@@ -212,7 +212,7 @@ The
 "bytes"
 .do end
 value is larger than in the previous example since selection of the
-"&debugopt" option results in fewer code optimizations by default.
+"&debugopt." option results in fewer code optimizations by default.
 You can request more optimization by specifying the appropriate
 options.
 However, you do so at the risk of making it more difficult for

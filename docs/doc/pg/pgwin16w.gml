@@ -1,11 +1,12 @@
 .* ------- 16-bit Windows
+.sr sw = '-'
 .sr bldsys = '16-bit Windows 3.x'
 .sr bldos  = 'Windows 3.x'
 .if '&lang' eq 'FORTRAN 77' .do begin
-.sr bldswt = '&sw.bw&sw.win'
+.sr bldswt = '&sw.bw &sw.win'
 .do end
 .if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
-.sr bldswt = '&sw.bw&sw.bt=windows '
+.sr bldswt = '&sw.bw &sw.bt=windows'
 .do end
 .sr bldnam = 'windows'
 .sr bldmsg = 'a Windows 16-bit executable'

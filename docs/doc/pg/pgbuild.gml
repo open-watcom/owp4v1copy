@@ -62,7 +62,7 @@ oriented tools, we introduce a simple sample program.
 :set symbol="demoup"    value="HELLO".
 :set symbol="demosuff"  value=".c".
 .ix '&demo program'
-For our example, we are going to use the famous "hello" program.
+For our example, we are going to use the famous "&demo." program.
 .millust begin
 #include <stdio.h>
 
@@ -95,7 +95,7 @@ The C++ version uses the "iostream" library to accomplish this task.
 .if '&lang' eq 'FORTRAN 77' .do begin
 :set symbol="demo"      value="sieve".
 :set symbol="demoup"    value="SIEVE".
-:set symbol="demosuff"  value="".
+:set symbol="demosuff"  value=".for".
 .if '&target' eq 'QNX' .do begin
 :set symbol="demosuff"  value=".f".
 .do end
@@ -232,12 +232,12 @@ For example, to compile and link the "&demo" program with debugging
 information, the following command may be issued.
 .if '&target' eq 'QNX' .do begin
 .millust begin
-&prompt.&wclcmd &sw.&debugopt &demoname.&demo.&demosuff
+&prompt.&wclcmd &sw.&debugopt. &demoname.&demo.&demosuff
 .millust end
 .do end
 .el .do begin
 .millust begin
-&prompt.&wclcmd &sw.l=&bldnam &sw.&debugopt &demoname.&demo.&demosuff
+&prompt.&wclcmd &sw.l=&bldnam. &sw.&debugopt. &demoname.&demo.&demosuff
 .millust end
 .do end
 .np
@@ -247,7 +247,7 @@ following illustration.
 .im &wclcmd.2
 .code end
 .np
-The "&debugopt" option requests the maximum amount of debugging
+The "&debugopt." option requests the maximum amount of debugging
 information that can be provided by the &cmpname compiler.
 .kw &wclcmdup
 will make sure that this debugging information is included in the
@@ -267,7 +267,7 @@ The
 value
 .do end
 is larger than in the previous example since selection of the
-"&debugopt" option results in fewer code optimizations by default.
+"&debugopt." option results in fewer code optimizations by default.
 You can request more optimization by specifying the appropriate
 options.
 However, you do so at the risk of making it more difficult for

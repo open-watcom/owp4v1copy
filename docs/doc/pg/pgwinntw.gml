@@ -5,7 +5,7 @@
 .sr bldswt = '&sw.bw'
 .do end
 .if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
-.sr bldswt = '&sw.bw&sw.bt=windows '
+.sr bldswt = '&sw.bw &sw.bt=windows'
 .do end
 .sr bldnam = 'nt_win'
 .sr bldmsg = 'a Windows NT windowed executable'

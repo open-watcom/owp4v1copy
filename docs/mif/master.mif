@@ -340,6 +340,10 @@ prepare_wgml_opts : .PROCEDURE
     @%append $(optfile_wgml) ( cpinch 10
     @%append $(optfile_wgml) ( index
     @%append $(optfile_wgml) ( setsymbol dotarget $(dotarget)
+# add default windowing for NT
+#    @%append $(optfile_wgml) ( setsymbol defwinnt 1
+# add default windowing for OS/2
+#    @%append $(optfile_wgml) ( setsymbol defwinos2 1
 #--------------------------------------
 # settings for on-line help processing
 #--------------------------------------
@@ -352,6 +356,10 @@ prepare_wgml_opts : .PROCEDURE
     @%append $(optfile_wgml) ( setsymbol dohelp 1
     @%append $(optfile_wgml) ( output (t:2200)$(hbook)
     @%append $(optfile_wgml) ( setsymbol dotarget $(dotarget)
+# add default windowing for NT
+#    @%append $(optfile_wgml) ( setsymbol defwinnt 1
+# add default windowing for OS/2
+#    @%append $(optfile_wgml) ( setsymbol defwinos2 1
     @%append $(optfile_wgml) ( setsymbol book $(hbook)
 !endif
 !ifeq hbook cpplib

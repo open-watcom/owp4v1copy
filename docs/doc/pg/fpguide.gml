@@ -85,7 +85,8 @@
 .helppref NT:
 :INCLUDE file='WINNT'.
 :INCLUDE file='PGWINNT'.
-.if '&defwin' eq 'Windows NT' .do begin
+:INCLUDE file='PGWINNTC'.
+.if '&defwinnt' eq '1' .do begin
 :INCLUDE file='PGWINNTW'.
 .do end
 :set symbol="targetos" value="Windows NT"

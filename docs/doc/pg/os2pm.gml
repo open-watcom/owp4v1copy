@@ -42,7 +42,7 @@ of user-interface tools such as menus, icons, scroll bars, etc. However,
 porting a console oriented application to Presentation Manager often
 requires significant effort and a substantial redesign of the application.
 .*
-.if '&defwin' eq 'OS/2' .do begin
+.if '&defwinos2' eq '1' .do begin
 An application that was not designed as a windowed application (such
 as a DOS application) can run as a Presentation Manager application.
 This is achieved by a default windowing system that is optionally
@@ -52,7 +52,7 @@ The following sections describe the default windowing system.
 .*
 .beglevel
 .*
-.if '&defwin' eq 'OS/2' .do begin
+.if '&defwinos2' eq '1' .do begin
 .im winio
 .do end
 .*
@@ -133,7 +133,7 @@ following command.
 &prompt.&lnkcmd sys os2v2 fullscreen file hello
 .millust end
 .*
-.if '&defwin' eq 'OS/2' .do begin
+.if '&defwinos2' eq '1' .do begin
 .np
 If you wish to use the default windowing system, you must recompile
 your application and specify a special option, namely "bw".
