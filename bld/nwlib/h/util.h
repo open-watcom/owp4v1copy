@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Librarian helper functions prototypes.
 *
 ****************************************************************************/
 
@@ -46,3 +45,4 @@ extern bool SameFile( char *a, char *b );
 extern char *FormSym(char*);
 extern char *WlibGetEnv( char *name);
 extern void Banner();
+extern char *LibFormat( void );

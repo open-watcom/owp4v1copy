@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Librarian interface to ORL.
 *
 ****************************************************************************/
 
@@ -116,7 +115,7 @@ static obj_file *DoOpenObjFile( char *name, libfile hdl, long offset )
             file->orl = ORLFileInit( ORLHnd, file, format );
             if( Options.libtype == WL_TYPE_MLIB ) {
                 if( (ORLFileGetFlags( file->orl ) & VALID_ORL_FLAGS) != VALID_ORL_FLAGS ) {
-                    FatalError( ERR_NOT_LIB, "64-bit or big-endian" );
+                    FatalError( ERR_NOT_LIB, "64-bit or big-endian", LibFormat() );
                 }
             }
             if( !file->orl ) {

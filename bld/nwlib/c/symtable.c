@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Librarian symbol table processing.
 *
 ****************************************************************************/
 
@@ -737,7 +736,7 @@ void AddObjectSymbols( arch_header *arch, libfile io, long offset )
         orl = file->orl;
         if( ORLFileGetFormat( file->orl ) == ORL_COFF ) {
             if( Options.libtype == WL_TYPE_MLIB ) {
-                FatalError( ERR_NOT_LIB, "COFF" );
+                FatalError( ERR_NOT_LIB, "COFF", LibFormat() );
             }
             Options.coff_found = 1;
         } else {
@@ -748,7 +747,7 @@ void AddObjectSymbols( arch_header *arch, libfile io, long offset )
         }
     } else {
         if( Options.libtype == WL_TYPE_MLIB ) {
-            FatalError( ERR_NOT_LIB, "OMF" );
+            FatalError( ERR_NOT_LIB, "OMF", LibFormat() );
         }
         if( Options.elf_found == 1 ) {
             FatalError( ERR_MIXED_OBJ, "ELF", "OMF" );

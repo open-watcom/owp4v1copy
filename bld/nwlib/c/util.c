@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Miscellaneous librarian utility functions.
 *
 ****************************************************************************/
 
@@ -207,4 +206,14 @@ char    *FormSym( char *name )
         __demangle_l( name, 0, buff, sizeof( buff ) );
     }
     return( buff );
+}
+
+char *LibFormat( void )
+{
+    switch( Options.libtype ) {
+    case WL_TYPE_AR:    return( "AR" );
+    case WL_TYPE_MLIB:  return( "MLIB" );
+    case WL_TYPE_OMF:   return( "LIB" );
+    default:            return( "unknown format" );
+    }
 }

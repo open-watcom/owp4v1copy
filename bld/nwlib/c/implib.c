@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Import library creation.
 *
 ****************************************************************************/
 
@@ -341,7 +340,7 @@ static void peAddImport( arch_header *arch, libfile io )
 
     LibSeek( io, 0x00, SEEK_SET );
     if( Options.libtype == WL_TYPE_MLIB ) {
-    FatalError( ERR_NOT_LIB, "COFF" );
+    FatalError( ERR_NOT_LIB, "COFF", LibFormat() );
     }
     if( Options.coff_found || ( Options.libtype == WL_TYPE_AR && !Options.omf_found ) ) {
     coff_obj = TRUE;
@@ -688,7 +687,7 @@ void ProcessImport( char *name )
         break;
     case WL_TYPE_COFF:
         if( Options.libtype != WL_TYPE_AR ) {
-        FatalError( ERR_NOT_LIB, "COFF" );
+        FatalError( ERR_NOT_LIB, "COFF", LibFormat() );
         }
         coffAddImportOverhead( arch, DLLName, Options.processor );
 
@@ -712,7 +711,7 @@ void ProcessImport( char *name )
         break;
     case WL_TYPE_OMF:
         if( Options.libtype == WL_TYPE_MLIB ) {
-        FatalError( ERR_NOT_LIB, "OMF" );
+        FatalError( ERR_NOT_LIB, "OMF", LibFormat() );
         }
         if( ordinal == 0 ) {
         OmfMKImport( arch, ordinal, DLLName, symName, exportedName, NAMED );
