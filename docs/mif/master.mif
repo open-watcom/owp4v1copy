@@ -211,6 +211,14 @@ $(hbook).ps : $(book_objs) $(proj_objs)
 all : $(hbook).pdf .SYMBOLIC
     @%null
 
+# Note that this relies on the fact that you are building from the pdf directory
+# and the ps directory belongs to the same parent directory. not good but I don't
+# have a better solution for now.
+$(hbook).ps : $(book_objs) $(proj_objs)
+    cd ../ps
+    wmake hbook=$(hbook)
+    cd ../pdf
+
 $(hbook).pdf : $(hbook).ps
     -ps2pdf12 -r600 $[@ $(hbook).pdf
 
