@@ -17,6 +17,7 @@ cdsay .
 
 #NT stuff
     <CPCMD> include\*.h <relroot>\rel2\h\nt\
+    <CPCMD> include\GL\*.h <relroot>\rel2\h\nt\GL\
     <CPCMD> nt386\*.lib <relroot>\rel2\lib386\nt\
 
 [ BLOCK <1> clean ]

@@ -1,3 +1,6 @@
+#include <rpc.h>
+#include <rpcndr.h>
+
 #ifndef _WTYPES_H
 #define _WTYPES_H
 #if __GNUC__ >=3
@@ -163,6 +166,7 @@ typedef struct tagDEC {
 		ULONGLONG Lo64;
 	} DUMMYUNIONNAME2;
 } DECIMAL;
+typedef void *HMETAFILEPICT;
 #ifdef __cplusplus
 }
 #endif

@@ -19,6 +19,7 @@ md %relroot%\%defrel%\qnx\watcom
 md %relroot%\%defrel%\qnx\watcom\wd
 md %relroot%\%defrel%\h\win
 md %relroot%\%defrel%\h\nt
+md %relroot%\%defrel%\h\nt\GL
 md %relroot%\%defrel%\qh
 md %relroot%\%defrel%\qh\sys
 md %relroot%\%defrel%\lib286
