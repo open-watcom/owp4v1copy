@@ -122,56 +122,56 @@ static int get_precedence( int i )
 
     switch( token ) {
 #ifdef _WASM_
-        case T_UNARY_OPERATOR:
-            switch( AsmBuffer[i]->value ) {
-                case T_LENGTH:
-                case T_SIZE:
-                case T_LENGTHOF:
-                case T_SIZEOF:
-                    return( 3 );
-                case T_SEG:
-                case T_OFFSET:
-                    return( 5 );
-            }
-            break;
-        case T_INSTR:
-            switch( AsmBuffer[i]->value ) {
-                case T_MOD:
-                case T_SHL:
-                case T_SHR:
-                    return( 8 );
-                case T_EQ:
-                case T_NE:
-                case T_LT:
-                case T_LE:
-                case T_GT:
-                case T_GE:
-                    return( 10 );
-                case T_NOT:
-                    return( 11 );
-                case T_AND:
-                    return( 12 );
-                case T_OR:
-                case T_XOR:
-                    return( 13 );
-            }
-#endif
-        case T_COLON:
-            return( 4 );
-        case T_POSITIVE:
-        case T_NEGATIVE:
-            return( 7 );
-        case '*':
-        case '/':
+    case T_UNARY_OPERATOR:
+        switch( AsmBuffer[i]->value ) {
+        case T_LENGTH:
+        case T_SIZE:
+        case T_LENGTHOF:
+        case T_SIZEOF:
+            return( 3 );
+        case T_SEG:
+        case T_OFFSET:
+            return( 5 );
+        }
+        break;
+    case T_INSTR:
+        switch( AsmBuffer[i]->value ) {
+        case T_MOD:
+        case T_SHL:
+        case T_SHR:
             return( 8 );
-        case '+':
-        case '-':
-            return( 9 );
-        case T_DOT:
-            return( 2 );
-        default:
-            /**/myassert( 0 );
-            break;
+        case T_EQ:
+        case T_NE:
+        case T_LT:
+        case T_LE:
+        case T_GT:
+        case T_GE:
+            return( 10 );
+        case T_NOT:
+            return( 11 );
+        case T_AND:
+            return( 12 );
+        case T_OR:
+        case T_XOR:
+            return( 13 );
+        }
+#endif
+    case T_COLON:
+        return( 4 );
+    case T_POSITIVE:
+    case T_NEGATIVE:
+        return( 7 );
+    case '*':
+    case '/':
+        return( 8 );
+    case '+':
+    case '-':
+        return( 9 );
+    case T_DOT:
+        return( 2 );
+    default:
+        /**/myassert( 0 );
+        break;
     }
     return( ERROR );
 }
@@ -261,29 +261,29 @@ static int_8 is_unary( int i, char sign )
     }
 
     switch( tok ) {
-        case T_INSTR:
-            if( AsmBuffer[i]->value == T_NOT ) {
+    case T_INSTR:
+        if( AsmBuffer[i]->value == T_NOT ) {
+            return( TRUE );
+        }
+        break;
+    case T_POSITIVE:
+    case T_NEGATIVE:
+        return( TRUE );
+    case '+':
+    case '-':
+        if( sign ) {
+            // sign operator is allowed
+            if( tok == '+' ) {
+                AsmBuffer[i]->token = T_POSITIVE;
+                return( TRUE );
+            } else if( tok == '-' ) {
+                AsmBuffer[i]->token = T_NEGATIVE;
                 return( TRUE );
             }
-            break;
-        case T_POSITIVE:
-        case T_NEGATIVE:
-            return( TRUE );
-        case '+':
-        case '-':
-            if( sign ) {
-                // sign operator is allowed
-                if( tok == '+' ) {
-                    AsmBuffer[i]->token = T_POSITIVE;
-                    return( TRUE );
-                } else if( tok == '-' ) {
-                    AsmBuffer[i]->token = T_NEGATIVE;
-                    return( TRUE );
-                }
-            }
-            break;
-        default:
-            break;
+        }
+        break;
+    default:
+        break;
     }
     return( FALSE );
 }
@@ -402,494 +402,494 @@ static int calculate( expr_list *token_1,expr_list *token_2, uint_8 index )
     token_1->string = NULL;
 
     switch( token ) {
-        case T_POSITIVE:
-            /*
-             * The only format allowed is:
-             *        + constant
-             */
+    case T_POSITIVE:
+        /*
+         * The only format allowed is:
+         *        + constant
+         */
 
-            MakeConst( token_2 );
-            if( token_2->type != EXPR_CONST ) {
-                AsmError( POSITIVE_SIGN_CONSTANT_EXPECTED );
-                return( ERROR );
-            }
-            token_1->type = EXPR_CONST;
-            token_1->value = token_2->value;
-            break;
-        case T_NEGATIVE:
-            /*
-             * The only format allowed is:
-             *        - constant
-             */
+        MakeConst( token_2 );
+        if( token_2->type != EXPR_CONST ) {
+            AsmError( POSITIVE_SIGN_CONSTANT_EXPECTED );
+            return( ERROR );
+        }
+        token_1->type = EXPR_CONST;
+        token_1->value = token_2->value;
+        break;
+    case T_NEGATIVE:
+        /*
+         * The only format allowed is:
+         *        - constant
+         */
 
-            MakeConst( token_2 );
-            if( token_2->type != EXPR_CONST ) {
-                AsmError( NEGATIVE_SIGN_CONSTANT_EXPECTED );
-                return( ERROR );
-            }
-            token_1->type = EXPR_CONST;
-            token_1->value = -token_2->value;
-            break;
-        case '+':
-            /*
-             * The only formats allowed are:
-             *        constant + constant
-             *        constant + address
-             *         address + register       ( only inside [] )
-             *        register + register       ( only inside [] )
-             *        register + constant       ( only inside [] )
-             *        address  + address        ( only inside [] )
-             */
+        MakeConst( token_2 );
+        if( token_2->type != EXPR_CONST ) {
+            AsmError( NEGATIVE_SIGN_CONSTANT_EXPECTED );
+            return( ERROR );
+        }
+        token_1->type = EXPR_CONST;
+        token_1->value = -token_2->value;
+        break;
+    case '+':
+        /*
+         * The only formats allowed are:
+         *        constant + constant
+         *        constant + address
+         *         address + register       ( only inside [] )
+         *        register + register       ( only inside [] )
+         *        register + constant       ( only inside [] )
+         *        address  + address        ( only inside [] )
+         */
 
-            if( check_same( token_1, token_2, EXPR_CONST ) ) {
+        if( check_same( token_1, token_2, EXPR_CONST ) ) {
 
-                token_1->value += token_2->value;
+            token_1->value += token_2->value;
 
-            } else if( check_same( token_1, token_2, EXPR_ADDR ) ) {
+        } else if( check_same( token_1, token_2, EXPR_ADDR ) ) {
 
-                fix_struct_value( token_1 );
-                fix_struct_value( token_2 );
-                index_connect( token_1, token_2 );
-                token_1->indirect |= token_2->indirect;
-                if( token_1->sym != NULL ) {
-                    if( token_2->sym != NULL ) {
-                        AsmError( SYNTAX_ERROR );
-                        return( ERROR );
-                    }
-                } else if( token_2->sym != NULL ) {
-                    token_1->label = token_2->label;
-                    token_1->sym = token_2->sym;
-                }
-                token_1->value += token_2->value;
-
-            } else if( check_both( token_1, token_2, EXPR_CONST, EXPR_ADDR ) ) {
-
-                if( token_1->type == EXPR_CONST ) {
-                    token_2->value += token_1->value;
-                    token_2->indirect |= token_1->indirect;
-                    TokenAssign( token_1, token_2 );
-                } else {
-                    token_1->value += token_2->value;
-                }
-                fix_struct_value( token_1 );
-
-            } else if( check_both( token_1, token_2, EXPR_ADDR, EXPR_REG ) ) {
-
-                    if( token_1->type == EXPR_REG ) {
-                        if( token_2->instr != EMPTY ) {
-                            AsmError( LABEL_IS_EXPECTED );
-                            return( ERROR );
-                        }
-                        index_connect( token_2, token_1 );
-                        token_2->indirect |= token_1->indirect;
-                        TokenAssign( token_1, token_2 );
-                    } else {
-                        index_connect( token_1, token_2 );
-                        token_1->indirect |= token_2->indirect;
-                    }
-                    fix_struct_value( token_1 );
-                
-            } else if( check_same( token_1, token_2, EXPR_REG ) ) {
-
-                    index_connect( token_1, token_2 );
-                    token_1->indirect |= token_2->indirect;
-                    token_1->type = EXPR_ADDR;
-                
-            } else if( check_both( token_1, token_2, EXPR_CONST, EXPR_REG ) ) {
-
-                    if( token_2->type == EXPR_REG ) {
-                        token_1->base_reg = token_2->base_reg;
-                        token_1->idx_reg = token_2->idx_reg;
-                        token_2->base_reg = EMPTY;
-                        token_2->idx_reg = EMPTY;
-                    }
-                    token_1->value += token_2->value;
-                    token_1->indirect |= token_2->indirect;
-                    token_1->type = EXPR_ADDR;
-            } else {
-                    /* Error */
-                    AsmError( ADDITION_CONSTANT_EXPECTED );
+            fix_struct_value( token_1 );
+            fix_struct_value( token_2 );
+            index_connect( token_1, token_2 );
+            token_1->indirect |= token_2->indirect;
+            if( token_1->sym != NULL ) {
+                if( token_2->sym != NULL ) {
+                    AsmError( SYNTAX_ERROR );
                     return( ERROR );
+                }
+            } else if( token_2->sym != NULL ) {
+                token_1->label = token_2->label;
+                token_1->sym = token_2->sym;
             }
-            break;
-        case T_DOT:
-            /*
-             * The only formats allowed are:
-             *        register . address
-             *        address  . address
-             *        address  . constant
-             */
+            token_1->value += token_2->value;
 
-            if( check_same( token_1, token_2, EXPR_ADDR ) ) {
+        } else if( check_both( token_1, token_2, EXPR_CONST, EXPR_ADDR ) ) {
 
-                index_connect( token_1, token_2 );
-                token_1->indirect |= token_2->indirect;
-                if( token_1->sym != NULL ) {
-                    if( token_2->sym != NULL ) {
-                        AsmError( SYNTAX_ERROR );
-                        return( ERROR );
-                    }
-                } else if( token_2->sym != NULL ) {
-                    token_1->label = token_2->label;
-                    token_1->sym = token_2->sym;
-                }
-                if( token_2->mbr != NULL ) {
-                    token_1->mbr = token_2->mbr;
-                }
+            if( token_1->type == EXPR_CONST ) {
+                token_2->value += token_1->value;
+                token_2->indirect |= token_1->indirect;
+                TokenAssign( token_1, token_2 );
+            } else {
                 token_1->value += token_2->value;
-
-            } else if( check_both( token_1, token_2, EXPR_CONST, EXPR_ADDR ) ) {
-
-                if( token_1->type == EXPR_CONST ) {
-                    token_2->indirect |= token_1->indirect;
-                    token_2->value += token_1->value;
-                    TokenAssign( token_1, token_2 );
-                } else {
-                    token_1->value += token_2->value;
-                }
-
-            } else if( check_both( token_1, token_2, EXPR_ADDR, EXPR_REG ) ) {
-
-                if( token_1->type == EXPR_REG ) {
-                    if( token_2->instr != EMPTY ) {
-                        AsmError( LABEL_IS_EXPECTED );
-                        return( ERROR );
-                    }
-                    index_connect( token_2, token_1 );
-                    token_2->indirect |= token_1->indirect;
-                    TokenAssign( token_1, token_2 );
-                } else {
-                    index_connect( token_1, token_2 );
-                    token_1->indirect |= token_2->indirect;
-                }
-
-            } else if( check_both( token_1, token_2, EXPR_CONST, EXPR_REG ) ) {
-
-                if( token_2->type == EXPR_REG ) {
-                    token_1->base_reg = token_2->base_reg;
-                    token_1->idx_reg = token_2->idx_reg;
-                    token_2->base_reg = EMPTY;
-                    token_2->idx_reg = EMPTY;
-                }
-                token_1->value += token_2->value;
-                token_1->indirect |= token_2->indirect;
-                token_1->type = EXPR_ADDR;
-            } else {
-                /* Error */
-                AsmError( SYNTAX_ERROR );
-                return( ERROR );
             }
-            break;
-        case '-':
-            /*
-             * The only formats allowed are:
-             *        constant - constant
-             *         address - constant       ( only in this order )
-             *         address - address
-             *        register - constant       ( only inside [] and in this
-             *                                    order )
-             */
+            fix_struct_value( token_1 );
 
-            MakeConst( token_2 );
-            if( check_same( token_1, token_2, EXPR_CONST ) ) {
-
-                token_1->value -= token_2->value;
-
-            } else if( token_1->type == EXPR_ADDR &&
-                       token_2->type == EXPR_CONST ) {
-
-                token_1->value -= token_2->value;
-                fix_struct_value( token_1 );
-
-            } else if( check_same( token_1, token_2, EXPR_ADDR ) ){
-
-                fix_struct_value( token_1 );
-                fix_struct_value( token_2 );
-                if( token_2->label == EMPTY ) {
-                    token_1->value -= token_2->value;
-                    token_1->base_reg = token_2->base_reg;
-                    token_1->idx_reg = token_2->idx_reg;
-                    token_1->scale = token_2->scale;
-                    token_1->indirect |= token_2->indirect;
-                } else {
-                    if( token_1->label == EMPTY ) {
-                        AsmError( SYNTAX_ERROR );
-                        return( ERROR );
-                    }
-                    sym = token_1->sym;
-                    if( sym == NULL )
-                        return( ERROR );
-#ifdef _WASM_
-                    if( Parse_Pass > PASS_1 && sym->state == SYM_UNDEFINED ) {
-                        AsmError( LABEL_NOT_DEFINED );
-                        return( ERROR );
-                    }
-                    token_1->value += sym->offset;
-#else
-                    token_1->value += sym->addr;
-#endif
-                    sym = token_2->sym;
-                    if( sym == NULL )
-                        return( ERROR );
-
-#ifdef _WASM_
-                    if( Parse_Pass > PASS_1 && sym->state == SYM_UNDEFINED ) {
-                        AsmError( LABEL_NOT_DEFINED );
-                        return( ERROR );
-                    }
-                    token_1->value -= sym->offset;
-#else
-                    token_1->value -= sym->addr;
-#endif
-                    token_1->value -= token_2->value;
-                    token_1->label = EMPTY;
-                    token_1->sym = NULL;
-                    token_1->base_reg = token_2->base_reg;
-                    token_1->idx_reg = token_2->idx_reg;
-                    token_1->scale = token_2->scale;
-                    if( token_1->base_reg == EMPTY && token_1->idx_reg == EMPTY ) {
-                        token_1->type = EXPR_CONST;
-                        token_1->indirect = FALSE;
-                    } else {
-                        token_1->type = EXPR_ADDR;
-                        token_1->indirect |= token_2->indirect;
-                    }
-                    token_1->explicit = FALSE;
-                    token_1->expr_type = EMPTY;
-                }
-
-            } else if( token_1->type == EXPR_REG &&
-                        token_2->type == EXPR_CONST ) {
-
-                token_1->value = -1 * token_2->value;
-                token_1->indirect |= token_2->indirect;
-                token_1->type = EXPR_ADDR;
-
-            } else {
-                /* Error */
-                AsmError( SUBTRACTION_CONSTANT_EXPECTED );
-                return( ERROR );
-            }
-            break;
-        case '*':
-            /*
-             * The only formats allowed are:
-             *        constant * constant
-             *        register * scaling factor ( 1, 2, 4 or 8 )
-             *                   386 only
-             */
-            MakeConst( token_1 );
-            MakeConst( token_2 );
-            if( check_same( token_1, token_2, EXPR_CONST ) ) {
-                token_1->value *= token_2->value;
-            } else if( check_both( token_1, token_2, EXPR_REG, EXPR_CONST ) ) {
-                /* scaling factor */
-                if( token_2->type == EXPR_REG ) {
-                    /* scale * reg */
-                    token_1->idx_reg = token_2->base_reg;
-                    token_1->base_reg = EMPTY;
-                    token_1->scale = token_1->value;
-                    token_1->value = 0;
-                    token_2->base_reg = EMPTY;
-                } else {
-                    /* reg * scale */
-                    token_1->idx_reg = token_1->base_reg;
-                    token_1->base_reg = EMPTY;
-                    token_1->scale = token_2->value;
-                }
-                token_1->indirect |= token_2->indirect;
-                token_1->type = EXPR_ADDR;
-            } else {
-                AsmError( MULTIPLICATION_CONSTANT_EXPECTED );
-                return( ERROR );
-            }
-            break;
-        case '/':
-            /*
-             * The only formats allowed are:
-             *        constant / constant
-             */
-            MakeConst( token_1 );
-            MakeConst( token_2 );
-            if( check_same( token_1, token_2, EXPR_CONST ) ) {
-                token_1->value /= token_2->value;
-            } else {
-                AsmError( DIVISION_CONSTANT_EXPECTED );
-                return( ERROR );
-            }
-            break;
-        case T_COLON:
-            /*
-             * The only formats allowed are:
-             *        register : anything ----- segment override
-             *           label : address ( label = address with no offset
-             *                             and no instruction attached;
-             *                             also only segment or group is
-             *                             allowed. )
-             */
-            if( token_2->override != EMPTY ) {
-                 /* Error */
-                 AsmError( MORE_THAN_ONE_OVERRIDE );
-                 return( ERROR );
-            }
+        } else if( check_both( token_1, token_2, EXPR_ADDR, EXPR_REG ) ) {
 
             if( token_1->type == EXPR_REG ) {
+                if( token_2->instr != EMPTY ) {
+                    AsmError( LABEL_IS_EXPECTED );
+                    return( ERROR );
+                }
+                index_connect( token_2, token_1 );
+                token_2->indirect |= token_1->indirect;
+                TokenAssign( token_1, token_2 );
+            } else {
+                index_connect( token_1, token_2 );
+                token_1->indirect |= token_2->indirect;
+            }
+            fix_struct_value( token_1 );
+                
+        } else if( check_same( token_1, token_2, EXPR_REG ) ) {
 
-                 if( token_1->base_reg != EMPTY && token_1->idx_reg != EMPTY ) {
-                     AsmError( ILLEGAL_USE_OF_REGISTER );
-                     return( ERROR );
-                 }
-                 token_2->override = token_1->base_reg;
-                 token_2->indirect |= token_1->indirect;
-                 token_2->type = EXPR_ADDR;
-                 TokenAssign( token_1, token_2 );
+            index_connect( token_1, token_2 );
+            token_1->indirect |= token_2->indirect;
+            token_1->type = EXPR_ADDR;
+                
+        } else if( check_both( token_1, token_2, EXPR_CONST, EXPR_REG ) ) {
 
-            } else if( token_2->type == EXPR_ADDR
-                && token_1->type == EXPR_ADDR
-                && token_1->override == EMPTY
-                && token_1->instr == EMPTY
-                && token_1->value == 0
-                && token_1->base_reg == EMPTY
-                && token_1->idx_reg == EMPTY ) {
+            if( token_2->type == EXPR_REG ) {
+                token_1->base_reg = token_2->base_reg;
+                token_1->idx_reg = token_2->idx_reg;
+                token_2->base_reg = EMPTY;
+                token_2->idx_reg = EMPTY;
+            }
+            token_1->value += token_2->value;
+            token_1->indirect |= token_2->indirect;
+            token_1->type = EXPR_ADDR;
+        } else {
+            /* Error */
+            AsmError( ADDITION_CONSTANT_EXPECTED );
+            return( ERROR );
+        }
+        break;
+    case T_DOT:
+        /*
+         * The only formats allowed are:
+         *        register . address
+         *        address  . address
+         *        address  . constant
+         */
 
+        if( check_same( token_1, token_2, EXPR_ADDR ) ) {
+
+            index_connect( token_1, token_2 );
+            token_1->indirect |= token_2->indirect;
+            if( token_1->sym != NULL ) {
+                if( token_2->sym != NULL ) {
+                    AsmError( SYNTAX_ERROR );
+                    return( ERROR );
+                }
+            } else if( token_2->sym != NULL ) {
+                token_1->label = token_2->label;
+                token_1->sym = token_2->sym;
+            }
+            if( token_2->mbr != NULL ) {
+                token_1->mbr = token_2->mbr;
+            }
+            token_1->value += token_2->value;
+
+        } else if( check_both( token_1, token_2, EXPR_CONST, EXPR_ADDR ) ) {
+
+            if( token_1->type == EXPR_CONST ) {
+                token_2->indirect |= token_1->indirect;
+                token_2->value += token_1->value;
+                TokenAssign( token_1, token_2 );
+            } else {
+                token_1->value += token_2->value;
+            }
+
+        } else if( check_both( token_1, token_2, EXPR_ADDR, EXPR_REG ) ) {
+
+            if( token_1->type == EXPR_REG ) {
+                if( token_2->instr != EMPTY ) {
+                    AsmError( LABEL_IS_EXPECTED );
+                    return( ERROR );
+                }
+                index_connect( token_2, token_1 );
+                token_2->indirect |= token_1->indirect;
+                TokenAssign( token_1, token_2 );
+            } else {
+                index_connect( token_1, token_2 );
+                token_1->indirect |= token_2->indirect;
+            }
+
+        } else if( check_both( token_1, token_2, EXPR_CONST, EXPR_REG ) ) {
+
+            if( token_2->type == EXPR_REG ) {
+                token_1->base_reg = token_2->base_reg;
+                token_1->idx_reg = token_2->idx_reg;
+                token_2->base_reg = EMPTY;
+                token_2->idx_reg = EMPTY;
+            }
+            token_1->value += token_2->value;
+            token_1->indirect |= token_2->indirect;
+            token_1->type = EXPR_ADDR;
+        } else {
+            /* Error */
+            AsmError( SYNTAX_ERROR );
+            return( ERROR );
+        }
+        break;
+    case '-':
+        /*
+         * The only formats allowed are:
+         *        constant - constant
+         *         address - constant       ( only in this order )
+         *         address - address
+         *        register - constant       ( only inside [] and in this
+         *                                    order )
+         */
+
+        MakeConst( token_2 );
+        if( check_same( token_1, token_2, EXPR_CONST ) ) {
+
+            token_1->value -= token_2->value;
+
+        } else if( token_1->type == EXPR_ADDR &&
+                   token_2->type == EXPR_CONST ) {
+
+            token_1->value -= token_2->value;
+            fix_struct_value( token_1 );
+
+        } else if( check_same( token_1, token_2, EXPR_ADDR ) ){
+
+            fix_struct_value( token_1 );
+            fix_struct_value( token_2 );
+            if( token_2->label == EMPTY ) {
+                token_1->value -= token_2->value;
+                token_1->base_reg = token_2->base_reg;
+                token_1->idx_reg = token_2->idx_reg;
+                token_1->scale = token_2->scale;
+                token_1->indirect |= token_2->indirect;
+            } else {
+                if( token_1->label == EMPTY ) {
+                    AsmError( SYNTAX_ERROR );
+                    return( ERROR );
+                }
                 sym = token_1->sym;
                 if( sym == NULL )
                     return( ERROR );
-
-                if( AsmBuffer[token_1->label]->token == T_RES_ID ) {
-                    /* Kludge for "FLAT" */
-                    AsmBuffer[token_1->label]->token = T_ID;
-                }
 #ifdef _WASM_
-                if( sym->state == SYM_GRP || sym->state == SYM_SEG ) {
-                    token_2->override = token_1->label;
-                    token_2->indirect |= token_1->indirect;
-                    TokenAssign( token_1, token_2 );
-                } else {
-                    AsmError( ONLY_SEG_OR_GROUP_ALLOWED );
+                if( Parse_Pass > PASS_1 && sym->state == SYM_UNDEFINED ) {
+                    AsmError( LABEL_NOT_DEFINED );
                     return( ERROR );
                 }
+                token_1->value += sym->offset;
 #else
-                AsmError( ONLY_SEG_OR_GROUP_ALLOWED );
-                return( ERROR );
+                token_1->value += sym->addr;
 #endif
-            } else {
-                 AsmError( REG_OR_LABEL_EXPECTED_IN_OVERRIDE );
-                 return( ERROR );
-            }
-            break;
-#ifdef _WASM_
-        case T_INSTR:
-            MakeConst( token_1 );
-            MakeConst( token_2 );
-            if( AsmBuffer[index]->value == T_NOT ) {
-                if( token_2->type != EXPR_CONST ) {
-                    AsmError( CONSTANT_EXPECTED );
-                    return( ERROR );
-                }
-                token_1->type = EXPR_CONST;
-            } else {
-                if( !check_same( token_1, token_2, EXPR_CONST ) ) {
-                    AsmError( CONSTANT_EXPECTED );
-                    return( ERROR );
-                }
-            }
-            switch( AsmBuffer[index]->value ) {
-                case T_EQ:
-                    token_1->value = ( token_1->value == token_2->value ? -1:0 );
-                    break;
-                case T_NE:
-                    token_1->value = ( token_1->value != token_2->value ? -1:0 );
-                    break;
-                case T_LT:
-                    token_1->value = ( token_1->value < token_2->value ? -1:0 );
-                    break;
-                case T_LE:
-                    token_1->value = ( token_1->value <= token_2->value ? -1:0 );
-                    break;
-                case T_GT:
-                    token_1->value = ( token_1->value > token_2->value ? -1:0 );
-                    break;
-                case T_GE:
-                    token_1->value = ( token_1->value >= token_2->value ? -1:0 );
-                    break;
-                case T_MOD:
-                    token_1->value %= token_2->value;
-                    break;
-                case T_SHL:
-                    token_1->value = token_1->value << token_2->value;
-                    break;
-                case T_SHR:
-                    token_1->value = token_1->value >> token_2->value;
-                    break;
-                case T_NOT:
-                    token_1->value = ~(token_2->value);
-                    break;
-                case T_AND:
-                    token_1->value &= token_2->value;
-                    break;
-                case T_OR:
-                    token_1->value |= token_2->value;
-                    break;
-                case T_XOR:
-                    token_1->value ^= token_2->value;
-                    break;
-            }
-            break;
-        case T_UNARY_OPERATOR:
-            if( token_2->type != EXPR_ADDR ) {
-                AsmError( LABEL_IS_EXPECTED );
-                return( ERROR );
-            } else if( token_2->instr != EMPTY ) {
-                AsmError( LABEL_IS_EXPECTED );
-                return( ERROR );
-            }
-            switch( AsmBuffer[index]->value ) {
-            case T_LENGTH:
-            case T_SIZE:
-            case T_LENGTHOF:
-            case T_SIZEOF:
                 sym = token_2->sym;
-                if( token_2->mbr != NULL ) {
-                    sym = token_2->mbr;
-                }
                 if( sym == NULL )
                     return( ERROR );
-                switch( AsmBuffer[index]->value ) {
-                case T_LENGTH:
-                    token_1->value = sym->first_length;
-                    if( sym->mem_type != T_STRUCT ) {
-                        break;
-                    }
-                case T_LENGTHOF:
-                    token_1->value = sym->total_length;
-                    break;
-                case T_SIZE:
-                    token_1->value = sym->first_size;
-                    if( sym->mem_type != T_STRUCT ) {
-                        break;
-                    }
-                case T_SIZEOF:
-                    token_1->value = sym->total_size;
-                    break;
+
+#ifdef _WASM_
+                if( Parse_Pass > PASS_1 && sym->state == SYM_UNDEFINED ) {
+                    AsmError( LABEL_NOT_DEFINED );
+                    return( ERROR );
                 }
+                token_1->value -= sym->offset;
+#else
+                token_1->value -= sym->addr;
+#endif
+                token_1->value -= token_2->value;
                 token_1->label = EMPTY;
                 token_1->sym = NULL;
-                token_1->base_reg = EMPTY;
-                token_1->idx_reg = EMPTY;
-                token_1->override = EMPTY;
-                token_1->instr = EMPTY;
-                token_1->type = EXPR_CONST;
-                token_1->indirect = FALSE;
+                token_1->base_reg = token_2->base_reg;
+                token_1->idx_reg = token_2->idx_reg;
+                token_1->scale = token_2->scale;
+                if( token_1->base_reg == EMPTY && token_1->idx_reg == EMPTY ) {
+                    token_1->type = EXPR_CONST;
+                    token_1->indirect = FALSE;
+                } else {
+                    token_1->type = EXPR_ADDR;
+                    token_1->indirect |= token_2->indirect;
+                }
                 token_1->explicit = FALSE;
                 token_1->expr_type = EMPTY;
-                break;
-            default:
+            }
+
+        } else if( token_1->type == EXPR_REG &&
+                   token_2->type == EXPR_CONST ) {
+
+            token_1->value = -1 * token_2->value;
+            token_1->indirect |= token_2->indirect;
+            token_1->type = EXPR_ADDR;
+
+        } else {
+            /* Error */
+            AsmError( SUBTRACTION_CONSTANT_EXPECTED );
+            return( ERROR );
+        }
+        break;
+    case '*':
+        /*
+         * The only formats allowed are:
+         *        constant * constant
+         *        register * scaling factor ( 1, 2, 4 or 8 )
+         *                   386 only
+         */
+        MakeConst( token_1 );
+        MakeConst( token_2 );
+        if( check_same( token_1, token_2, EXPR_CONST ) ) {
+            token_1->value *= token_2->value;
+        } else if( check_both( token_1, token_2, EXPR_REG, EXPR_CONST ) ) {
+            /* scaling factor */
+            if( token_2->type == EXPR_REG ) {
+                /* scale * reg */
+                token_1->idx_reg = token_2->base_reg;
+                token_1->base_reg = EMPTY;
+                token_1->scale = token_1->value;
+                token_1->value = 0;
+                token_2->base_reg = EMPTY;
+            } else {
+                /* reg * scale */
+                token_1->idx_reg = token_1->base_reg;
+                token_1->base_reg = EMPTY;
+                token_1->scale = token_2->value;
+            }
+            token_1->indirect |= token_2->indirect;
+            token_1->type = EXPR_ADDR;
+        } else {
+            AsmError( MULTIPLICATION_CONSTANT_EXPECTED );
+            return( ERROR );
+        }
+        break;
+    case '/':
+        /*
+         * The only formats allowed are:
+         *        constant / constant
+         */
+        MakeConst( token_1 );
+        MakeConst( token_2 );
+        if( check_same( token_1, token_2, EXPR_CONST ) ) {
+            token_1->value /= token_2->value;
+        } else {
+            AsmError( DIVISION_CONSTANT_EXPECTED );
+            return( ERROR );
+        }
+        break;
+    case T_COLON:
+        /*
+         * The only formats allowed are:
+         *        register : anything ----- segment override
+         *           label : address ( label = address with no offset
+         *                             and no instruction attached;
+         *                             also only segment or group is
+         *                             allowed. )
+         */
+        if( token_2->override != EMPTY ) {
+            /* Error */
+            AsmError( MORE_THAN_ONE_OVERRIDE );
+            return( ERROR );
+        }
+
+        if( token_1->type == EXPR_REG ) {
+
+            if( token_1->base_reg != EMPTY && token_1->idx_reg != EMPTY ) {
+                AsmError( ILLEGAL_USE_OF_REGISTER );
+                return( ERROR );
+            }
+            token_2->override = token_1->base_reg;
+            token_2->indirect |= token_1->indirect;
+            token_2->type = EXPR_ADDR;
+            TokenAssign( token_1, token_2 );
+
+        } else if( token_2->type == EXPR_ADDR
+            && token_1->type == EXPR_ADDR
+            && token_1->override == EMPTY
+            && token_1->instr == EMPTY
+            && token_1->value == 0
+            && token_1->base_reg == EMPTY
+            && token_1->idx_reg == EMPTY ) {
+
+            sym = token_1->sym;
+            if( sym == NULL )
+                return( ERROR );
+
+            if( AsmBuffer[token_1->label]->token == T_RES_ID ) {
+                /* Kludge for "FLAT" */
+                AsmBuffer[token_1->label]->token = T_ID;
+            }
+#ifdef _WASM_
+            if( sym->state == SYM_GRP || sym->state == SYM_SEG ) {
+                token_2->override = token_1->label;
+                token_2->indirect |= token_1->indirect;
                 TokenAssign( token_1, token_2 );
-                token_1->instr = index;
+            } else {
+                AsmError( ONLY_SEG_OR_GROUP_ALLOWED );
+                return( ERROR );
+            }
+#else
+            AsmError( ONLY_SEG_OR_GROUP_ALLOWED );
+            return( ERROR );
+#endif
+        } else {
+            AsmError( REG_OR_LABEL_EXPECTED_IN_OVERRIDE );
+            return( ERROR );
+        }
+        break;
+#ifdef _WASM_
+    case T_INSTR:
+        MakeConst( token_1 );
+        MakeConst( token_2 );
+        if( AsmBuffer[index]->value == T_NOT ) {
+            if( token_2->type != EXPR_CONST ) {
+                AsmError( CONSTANT_EXPECTED );
+                return( ERROR );
+            }
+            token_1->type = EXPR_CONST;
+        } else {
+            if( !check_same( token_1, token_2, EXPR_CONST ) ) {
+                AsmError( CONSTANT_EXPECTED );
+                return( ERROR );
+            }
+        }
+        switch( AsmBuffer[index]->value ) {
+        case T_EQ:
+            token_1->value = ( token_1->value == token_2->value ? -1:0 );
+            break;
+        case T_NE:
+            token_1->value = ( token_1->value != token_2->value ? -1:0 );
+            break;
+        case T_LT:
+            token_1->value = ( token_1->value < token_2->value ? -1:0 );
+            break;
+        case T_LE:
+            token_1->value = ( token_1->value <= token_2->value ? -1:0 );
+            break;
+        case T_GT:
+            token_1->value = ( token_1->value > token_2->value ? -1:0 );
+            break;
+        case T_GE:
+            token_1->value = ( token_1->value >= token_2->value ? -1:0 );
+            break;
+        case T_MOD:
+            token_1->value %= token_2->value;
+            break;
+        case T_SHL:
+            token_1->value = token_1->value << token_2->value;
+            break;
+        case T_SHR:
+            token_1->value = token_1->value >> token_2->value;
+            break;
+        case T_NOT:
+            token_1->value = ~(token_2->value);
+            break;
+        case T_AND:
+            token_1->value &= token_2->value;
+            break;
+        case T_OR:
+            token_1->value |= token_2->value;
+            break;
+        case T_XOR:
+            token_1->value ^= token_2->value;
+            break;
+        }
+        break;
+    case T_UNARY_OPERATOR:
+        if( token_2->type != EXPR_ADDR ) {
+            AsmError( LABEL_IS_EXPECTED );
+            return( ERROR );
+        } else if( token_2->instr != EMPTY ) {
+            AsmError( LABEL_IS_EXPECTED );
+            return( ERROR );
+        }
+        switch( AsmBuffer[index]->value ) {
+        case T_LENGTH:
+        case T_SIZE:
+        case T_LENGTHOF:
+        case T_SIZEOF:
+            sym = token_2->sym;
+            if( token_2->mbr != NULL ) {
+                sym = token_2->mbr;
+            }
+            if( sym == NULL )
+                return( ERROR );
+            switch( AsmBuffer[index]->value ) {
+            case T_LENGTH:
+                token_1->value = sym->first_length;
+                if( sym->mem_type != T_STRUCT ) {
+                    break;
+                }
+            case T_LENGTHOF:
+                token_1->value = sym->total_length;
+                break;
+            case T_SIZE:
+                token_1->value = sym->first_size;
+                if( sym->mem_type != T_STRUCT ) {
+                    break;
+                }
+            case T_SIZEOF:
+                token_1->value = sym->total_size;
                 break;
             }
+            token_1->label = EMPTY;
+            token_1->sym = NULL;
+            token_1->base_reg = EMPTY;
+            token_1->idx_reg = EMPTY;
+            token_1->override = EMPTY;
+            token_1->instr = EMPTY;
+            token_1->type = EXPR_CONST;
+            token_1->indirect = FALSE;
+            token_1->explicit = FALSE;
+            token_1->expr_type = EMPTY;
             break;
+        default:
+            TokenAssign( token_1, token_2 );
+            token_1->instr = index;
+            break;
+        }
+        break;
 #endif
     }
     token_1->empty = FALSE;
@@ -1119,93 +1119,93 @@ static int is_expr( int i )
 {
     switch( AsmBuffer[i]->token ) {
 #ifdef _WASM_
-        case T_INSTR:
-        case T_RES_ID:
-            switch( AsmBuffer[i]->value ) {
-                case T_FLAT:
-                    DefFlatGroup();
-                    /* fall through */
-                case T_EQ:
-                case T_NE:
-                case T_LT:
-                case T_LE:
-                case T_GT:
-                case T_GE:
-                case T_MOD:
-                case T_NUM:
-                    return( TRUE );
-                case T_SHL:
-                case T_SHR:
-                case T_NOT:
-                case T_AND:
-                case T_OR:
-                case T_XOR:
-                    if( i == 0 ) {
-                        /* It is an instruction instead */
-                        return( FALSE );
-                    } else if( AsmBuffer[i-1]->token == T_COLON ) {
-                        /* It is an instruction instead */
-                        return( FALSE );
-                    } else if( AsmBuffer[i-1]->value == T_LOCK ) {
-                        /* It is an instruction:
-                                 lock and dword ptr [ebx], 1
-                        */
-                        return( FALSE );
-                    } else {
-                        return( TRUE );
-                    }
-                default:
-                    return( FALSE );
-            }
-        case T_UNARY_OPERATOR:
-//              case T_SEG:
-//              case T_OFFSET:
-            if( i+1 < TokCnt ) {
-                return( TRUE );
-            }
-            return( FALSE );
-#endif
-        case T_REG:
-            return( AsmBuffer[i]->value != T_ST );
-        case '+':
-        case '-':
-            /* hack to stop asmeval from hanging on floating point numbers */
-            if( AsmBuffer[i+1]->token == T_FLOAT ) return( FALSE );
-        case '*':
-        case '/':
+    case T_INSTR:
+    case T_RES_ID:
+        switch( AsmBuffer[i]->value ) {
+        case T_FLAT:
+            DefFlatGroup();
+            /* fall through */
+        case T_EQ:
+        case T_NE:
+        case T_LT:
+        case T_LE:
+        case T_GT:
+        case T_GE:
+        case T_MOD:
         case T_NUM:
-        case T_OP_BRACKET:
-        case T_CL_BRACKET:
-        case T_OP_SQ_BRACKET:
-        case T_CL_SQ_BRACKET:
-            return(  TRUE );
-        case T_COLON:
-#ifdef _WASM_
-            if( i == 1 || ( AsmBuffer[i+1]->token == T_DIRECTIVE &&
-                            AsmBuffer[i+1]->value == T_EQU2 ) ) {
-                /* It is the colon following the label or it is a := */
-                return( FALSE );
-            } else {
-                return( TRUE );
-            }
-#else
             return( TRUE );
-#endif
-        case T_PATH:
-            return( FALSE );
-        case T_ID:
+        case T_SHL:
+        case T_SHR:
+        case T_NOT:
+        case T_AND:
+        case T_OR:
+        case T_XOR:
             if( i == 0 ) {
-                /* It is a label */
+                /* It is an instruction instead */
+                return( FALSE );
+            } else if( AsmBuffer[i-1]->token == T_COLON ) {
+                /* It is an instruction instead */
+                return( FALSE );
+            } else if( AsmBuffer[i-1]->value == T_LOCK ) {
+                /* It is an instruction:
+                         lock and dword ptr [ebx], 1
+                */
                 return( FALSE );
             } else {
                 return( TRUE );
             }
-        case T_STRING:
-            return( TRUE );
-        case T_DOT:
-            return( TRUE );
         default:
             return( FALSE );
+        }
+    case T_UNARY_OPERATOR:
+//        case T_SEG:
+//        case T_OFFSET:
+        if( i+1 < TokCnt ) {
+            return( TRUE );
+        }
+        return( FALSE );
+#endif
+    case T_REG:
+        return( AsmBuffer[i]->value != T_ST );
+    case '+':
+    case '-':
+        /* hack to stop asmeval from hanging on floating point numbers */
+        if( AsmBuffer[i+1]->token == T_FLOAT ) return( FALSE );
+    case '*':
+    case '/':
+    case T_NUM:
+    case T_OP_BRACKET:
+    case T_CL_BRACKET:
+    case T_OP_SQ_BRACKET:
+    case T_CL_SQ_BRACKET:
+        return(  TRUE );
+    case T_COLON:
+#ifdef _WASM_
+        if( i == 1 || ( AsmBuffer[i+1]->token == T_DIRECTIVE &&
+                        AsmBuffer[i+1]->value == T_EQU2 ) ) {
+            /* It is the colon following the label or it is a := */
+            return( FALSE );
+        } else {
+            return( TRUE );
+        }
+#else
+        return( TRUE );
+#endif
+    case T_PATH:
+        return( FALSE );
+    case T_ID:
+        if( i == 0 ) {
+            /* It is a label */
+            return( FALSE );
+        } else {
+            return( TRUE );
+        }
+    case T_STRING:
+        return( TRUE );
+    case T_DOT:
+        return( TRUE );
+    default:
+        return( FALSE );
     }
 }
 
