@@ -34,6 +34,7 @@
 
 extern  char    *Tokens[];
 
+/* matches table of type in ctypes.h */
 char    *CTypeNames[] = {
         "signed char",
         "unsigned char",
@@ -58,8 +59,16 @@ char    *CTypeNames[] = {
         "<typdef>",
         "<ufield>",
         "...",
-        "<char>"
-        "<wide char>"
+        "<char>",
+        "<wide char>",
+        "long double",
+        "float _Complex",
+        "double _Complex",
+        "long double _Complex",
+        "float _Imaginary",
+        "double _Imaginary",
+        "long double _Imaginary",
+        "_Bool",
  };
 
 static  char   do_message_output; /* Optimize output for human */
@@ -367,6 +376,7 @@ static void DumpFlags( int flags, TYPEPTR typ, STRCHUNK *fp )
 
     if( flags & FLAG_VOLATILE ) put_keyword( T_VOLATILE, fp );
     if( flags & FLAG_CONST )    put_keyword( T_CONST, fp );
+    if( flags & FLAG_RESTRICT ) put_keyword( T_RESTRICT, fp );
     if( flags & FLAG_NEAR ) {
         if( flags & FLAG_FAR  ) {
             put_keyword( T___INTERRUPT, fp );

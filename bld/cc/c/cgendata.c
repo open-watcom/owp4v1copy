@@ -192,6 +192,10 @@ void EmitDQuad( DATA_QUAD *dq )
         DGBytes( sizeof(double), (char *)&dq->u.double_value );
         size += sizeof( double );
         break;
+    case T_LONG_DOUBLE:
+        DGBytes( sizeof(long_double), (char *)&dq->u.long_double_value );
+        size += sizeof( long_double );
+        break;
     case T_STRING:
         EmitStrPtr( dq->u.string_leaf, data_type );
         size += size_of_item;

@@ -410,8 +410,8 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
         if( !IdenticalType( typ2->object, typ1 ) ){
             ret_val = NO;
         }
-    }else if( typ1->decl_type > TYPE_LAST_ENTRY  ||
-            typ2->decl_type > TYPE_LAST_ENTRY ) {
+    }else if( typ1->decl_type >= TYPE_LAST_ENTRY  ||
+            typ2->decl_type >= TYPE_LAST_ENTRY ) {
             ret_val = NO;
     }else if( top_level == 0 ){
         ret_val = CompTable[ typ1->decl_type ][ typ2->decl_type ];

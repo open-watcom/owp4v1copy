@@ -40,6 +40,10 @@
 
 #include "cg.h"
 #include "cgaux.h"
+
+/* only for long_double */
+#include "xfloat.h"
+
 typedef back_handle BACK_HANDLE;
 typedef label_handle LABEL_HANDLE;
 typedef char *NAME_HANDLE;
@@ -165,6 +169,9 @@ typedef enum BASED_KIND{
 }BASED_KIND;
 
 /* matches CTypeSizes[] table in ctype.c */
+/* matches CGDataType[] table in cgen2.c */
+/* matches CTypenames[] table in cgdump.c */
+/* matches AsmDataType[] table in cprag86.c */
 typedef enum DATA_TYPE {
         TYPE_CHAR  =    0,      /* signed char */
         TYPE_UCHAR,
@@ -201,7 +208,8 @@ typedef enum DATA_TYPE {
         TYPE_BOOL,
 
         TYPE_UNUSED,            /* an unused type (a unref'd function) */
-        TYPE_LAST_ENTRY=TYPE_UNUSED,
+
+        TYPE_LAST_ENTRY         /* make sure this is always last */
     }DATA_TYPE;
 
 //#define TYPE_LONG_DOUBLE        TYPE_DOUBLE
@@ -459,6 +467,7 @@ typedef struct  {
                 long    long_values[2];
                 int64   long64;
                 double  double_value;
+                long_double long_double_value;
                 STR_HANDLE       string_leaf;
                 struct  {
                         long    offset;

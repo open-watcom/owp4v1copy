@@ -453,6 +453,7 @@ static int PtrType( TYPEPTR typ, int flags )
     }
 }
 
+/* matches enum DataType in ctypes.h */
 static enum sym_type AsmDataType[] = {
         SYM_INT1,       /* TYPE_CHAR,*/
         SYM_INT1,       /* TYPE_UCHAR,*/
@@ -478,8 +479,16 @@ static enum sym_type AsmDataType[] = {
         0,              /* TYPE_UFIELD,*/
         0,              /* TYPE_DOT_DOT_DOT,*/
         SYM_INT1,       /* TYPE_PLAIN_CHAR,*/
-        0,              /* TYPE_UNUSED,  */
         SYM_INT2,       /* TYPE_WCHAR,  */
+        SYM_FLOAT10,    /* TYPE_LONG_DOUBLE */
+        0,              /* TYPE_FCOMPLEX, */
+        0,              /* TYPE_DCOMPLEX, */
+        0,              /* TYPE_LDCOMPLEX, */
+        SYM_FLOAT4,     /* TYPE_FIMAGINARY, */
+        SYM_FLOAT8,     /* TYPE_DIMAGINARY, */
+        SYM_FLOAT10,    /* TYPE_LDIMAGINARY, */
+        SYM_INT1,       /* TYPE_BOOL, */
+        0,              /* TYPE_UNUSED,  */
 };
 
 local int AsmType( TYPEPTR typ )

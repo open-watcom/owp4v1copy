@@ -711,6 +711,9 @@ void InitSymData( TYPEPTR typ, int level )
     case TYPE_DOUBLE:
         StoreFloat( T_DOUBLE );
         break;
+    case TYPE_LONG_DOUBLE:
+        StoreFloat( T_DOUBLE );
+        break;
     case TYPE_POINTER:
         StorePointer( typ, T_ID );
         break;

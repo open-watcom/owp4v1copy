@@ -363,12 +363,10 @@ static dw_handle dwarfType( TYPEPTR typ, DC_CONTROL control )
         dh = DWFundamental( Client, "double", DW_FT_FLOAT, TypeSize( typ ) );
         type_update( typ, TF2_DWARF_DEF, dh );
         break;
-#if 0
     case TYPE_LONG_DOUBLE:
         dh = DWFundamental( Client, "long double", DW_FT_FLOAT, TypeSize( typ ) );
         type_update( typ, TF2_DWARF_DEF, dh );
         break;
-#endif
     case TYPE_ENUM:
         dh = dwarfEnum( typ );
         break;
