@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  _matherr() implementation.
 *
 ****************************************************************************/
 
@@ -52,13 +51,11 @@ static const char * const Msgs[] = {
         "Partial loss of significance"
    };
 
-#if !defined(__PENPOINT__)
-  int   (*_RWD_matherr)( struct exception * ) =
-  #if defined(__AXP__) || defined(__PPC__)
-    matherr;
-  #elif defined(_M_IX86)
-    __matherr;
-  #endif
+int   (*_RWD_matherr)( struct exception * ) =
+#if defined(__AXP__) || defined(__PPC__)
+  matherr;
+#elif defined(_M_IX86)
+  __matherr;
 #endif
 
 _WMRTLINK void _set_matherr( int (*rtn)( struct exception * ) )

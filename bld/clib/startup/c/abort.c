@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Platform independent abort() implementation.
 *
 ****************************************************************************/
 
@@ -42,9 +41,7 @@
 
 void __terminate();
 
-#if !defined(__PENPOINT__)
 void    (*_RWD_abort)() = __terminate;
-#endif
 
 #if defined(__QNX__)
 /*

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Platform independent fopen() implementation.
 *
 ****************************************************************************/
 
@@ -48,7 +47,7 @@
 #include "seterrno.h"
 #include "defwin.h"
 
-#if defined(__PENPOINT__)  ||  defined(__QNX__)
+#if defined(__QNX__)
  #define PMODE ( S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH )
 #else
  #define PMODE ( S_IREAD | S_IWRITE )
@@ -58,20 +57,6 @@
  extern unsigned                __NFiles;
 #endif
 
-
-#if defined(__PENPOINT__)
-static int __F_NAME(sopen,_wsopen)( const CHAR_TYPE *path, int oflag,
-                                    int share, ... )
-{
-    va_list  ap;
-    int      mode;
-
-    va_start( ap, share );
-    mode = va_arg( ap, int );
-    va_end( ap );
-    return( open( path, oflag, mode ) );
-}
-#endif
 
 extern  FILE    *__allocfp( int handle );
 extern  void    __freefp(FILE *);
@@ -156,7 +141,7 @@ extern  int     __doclose( FILE *fp, int );
                 if( gottextbin ) {
                     alive = 0;
                 } else {
-                    #if !defined(__PENPOINT__) && !defined(__QNX__)
+                    #if !defined(__QNX__)
                         flags |= _BINARY;
                     #endif
                     gottextbin = 1;
@@ -189,7 +174,7 @@ extern  int     __doclose( FILE *fp, int );
     /*
      * Handle defaults for any unspecified options.
      */
-#if !defined(__PENPOINT__) && !defined(__QNX__)
+#if !defined(__QNX__)
     if( !gottextbin ) {
         if( _RWD_fmode == O_BINARY )  flags |= _BINARY;
     }
@@ -225,7 +210,6 @@ static FILE *__F_NAME(__doopen,__wdoopen)( const CHAR_TYPE *name,
         }
         #if defined(__NETWARE__)
             open_mode |= O_BINARY;
-        #elif defined(__PENPOINT__)
         #elif defined(__QNX__)
         #else
             if( file_flags & _BINARY ) {
@@ -248,7 +232,6 @@ static FILE *__F_NAME(__doopen,__wdoopen)( const CHAR_TYPE *name,
         }
         #if defined(__NETWARE__)
             open_mode |= O_BINARY;
-        #elif defined(__PENPOINT__)
         #elif defined(__QNX__)
         #else
             if( file_flags & _BINARY ) {

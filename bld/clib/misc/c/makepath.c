@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Platform independent _makepath() implementation.
 *
 ****************************************************************************/
 
@@ -40,9 +39,7 @@
 
 #undef _makepath
 
-#if defined(__PENPOINT__)
-  #define PC '\\'
-#elif defined(__QNX__)
+#if defined(__QNX__)
   #define PC '/'
 #else   /* DOS, OS/2, Windows, Netware */
   #define PC '\\'
@@ -50,9 +47,9 @@
 #endif
 
 
-#if defined(__PENPOINT__) || defined(__QNX__)
+#if defined(__QNX__)
 
-/* create full PENPOINT/QNX path name from the components */
+/* create full QNX path name from the components */
 
 _WCRTLINK void __F_NAME(_makepath,_wmakepath)(
         CHAR_TYPE           *path,

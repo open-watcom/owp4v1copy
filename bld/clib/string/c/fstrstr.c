@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  _fstrstr() implementation.
 *
 ****************************************************************************/
 
@@ -33,7 +32,7 @@
 #include "variety.h"
 #include <stddef.h>
 #include <string.h>
-#if defined(__PENPOINT__)  ||  defined(__QNX__)
+#if defined(__QNX__)
 #include <i86.h>
 #else
 #include <dos.h>

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Platform independent worker routines for scanf().
 *
 ****************************************************************************/
 
@@ -60,11 +59,7 @@
 
 #define STOP_CHR 0xFFFFFFFF
 
-#if defined(__PENPOINT__)
-  #define EFG_SCANF __cnvs2d
-#else
-  #define EFG_SCANF (*__EFG_scanf)
-#endif
+#define EFG_SCANF (*__EFG_scanf)
 
 /* internal file/string get, unget routines */
 #ifdef __WINDOWS_386__

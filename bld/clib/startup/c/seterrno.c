@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  __set_errno() implementation.
 *
 ****************************************************************************/
 
@@ -57,7 +56,7 @@ _WCRTLINK int __set_EINVAL()
         return( -1 );
     }
 
-#if !defined(__QNX__) && !defined(__PENPOINT__) && !defined(__NETWARE__)
+#if !defined(__QNX__) && !defined(__NETWARE__)
 _WCRTLINK void __set_doserrno( unsigned int err )
     {
         _RWD_doserrno = err;

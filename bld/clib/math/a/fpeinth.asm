@@ -24,15 +24,11 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  80x87 interrupt handler.
 ;*
 ;*****************************************************************************
 
 
-;
-; FPEINTH       : 80x87 interrupt handler
-;
 .8087
 .386p
 
@@ -42,13 +38,8 @@ include stword.inc
 include env387.inc
 include fstatus.inc
 
-ifndef  __PENPOINT__
 ifndef  __NETWARE__
         xref            __GETDS
-endif
-endif
-ifdef  __PENPOINT__
-        xref            __FPE_user
 endif
         xref            __8087  ; indicate that NDP instructions are present
 
@@ -56,20 +47,16 @@ endif
 
         datasegment
 
-ifndef  __PENPOINT__
         extrn   __FPE_handler   : dword
         extrn   "C",_STACKLOW   : dword
-endif
 
 TInf    db 00h,00h,00h,00h,00h,00h,00h,80h,0ffh,7fh
 F8Inf   db 0ffh,0ffh,0ffh,0ffh,0ffh,0ffh,0efh,7fh
 F4Inf   db 0ffh,0ffh,7fh,7fh
-ifndef  __PENPOINT__
         db      512 dup(0)
 FPEStk  label byte
 SaveSS  dw      0
 SaveESP dd      0
-endif
         enddata
 
 CW_MASK equ      CW_IM+CW_ZM+CW_OM
@@ -121,16 +108,10 @@ __FPE2Handler_ label byte
         fwait                           ; wait for 80x87
         fdisi                           ; disable interrupts
         sti                             ; enable CPU interrupts
-ifndef  __PENPOINT__
 ifndef  __NETWARE__
         call    __GETDS                 ; load DS
 endif
-endif
 ifdef __NETWARE__
-        push    SS                      ; load DS
-        pop     DS                      ; ...
-endif
-ifdef __PENPOINT__
         push    SS                      ; load DS
         pop     DS                      ; ...
 endif
@@ -189,7 +170,6 @@ opcode: mov     BX,ES:[EDI]             ; get opcode
         _guess                          ; guess exception to be handled
           cmp   CL,FPE_OK               ; - check if exception allowed
           _quif e                       ; - quit if exception not allowed
-ifndef  __PENPOINT__
 ;         cmp   SaveSS,0                ; - check if already in handler
 ;         _quif ne                      ; - quit if already in handler
           push  _STACKLOW               ; - save old stack low
@@ -200,11 +180,7 @@ ifndef  __PENPOINT__
           lea   ESP,FPEStk              ; - ...
           lea   EAX,FPEStk-512          ; - set stack low variable
           mov   _STACKLOW,EAX           ; - set stack low variable
-endif
           movzx EAX,CL                  ; - set floating point status
-ifdef  __PENPOINT__
-          call  __FPE_user              ; - call user's handler
-else
           call  __FPE_handler           ; - call user's handler
           mov   SS,SaveSS               ; - restore stack pointer
           mov   ESP,SaveESP             ; - ...

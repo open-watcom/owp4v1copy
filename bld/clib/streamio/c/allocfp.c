@@ -24,17 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Platform independent __allocfp() implementation.
 *
 ****************************************************************************/
 
 
 #include "variety.h"
-#if defined(__PENPOINT__)
-#include <clsmgr.h>
-#include <ostypes.h>
-#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -49,11 +44,7 @@
 #include "rtdata.h"
 #include "seterrno.h"
 
-#ifdef __PENPOINT__
-#define KEEP_FLAGS (_READ|_WRITE|_DYNAMIC|_SHRMEM)
-#else
 #define KEEP_FLAGS (_READ|_WRITE|_DYNAMIC)
-#endif
 
 FILE *__allocfp( int handle )
 {
@@ -73,11 +64,7 @@ FILE *__allocfp( int handle )
         goto got_one;
     }
     /* See if there is a static FILE structure available. */
-#if defined(__PENPOINT__)
-    end = &_RWD_iob[NUM_STD_STREAMS];
-#else
     end = &_RWD_iob[_NFILES];
-#endif
     for( fp = _RWD_iob; fp < end; ++fp ) {
         if( (fp->_flag & (_READ | _WRITE)) == 0 ) {
             link = lib_malloc( sizeof( __stream_link ) );
@@ -88,17 +75,7 @@ FILE *__allocfp( int handle )
     }
     /* Allocate a new dynamic structure */
     flags = _DYNAMIC | _READ | _WRITE;
-#if defined(__PENPOINT__)
-    if( handle > NUM_STD_STREAMS &&
-        stsOK == ObjectCall(msgCan, (OBJECT)handle, (P_ARGS)objCapCall)) {
-        flags |= _SHRMEM;
-        link = _smalloc( sizeof( __stream_link ) + sizeof( FILE ) );
-    } else {
-        link = lib_malloc( sizeof( __stream_link ) + sizeof( FILE ) );
-    }
-#else
     link = lib_malloc( sizeof( __stream_link ) + sizeof( FILE ) );
-#endif
     if( link == NULL ) goto no_mem;
     fp = (FILE *)(link + 1);
 got_one:

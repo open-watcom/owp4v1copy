@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Platform independent fgetc() implementation.
 *
 ****************************************************************************/
 
@@ -33,7 +32,7 @@
 #include "variety.h"
 #include "widechar.h"
 #include <stdio.h>
-#if defined(__PENPOINT__)  ||  defined(__QNX__)
+#if defined(__QNX__)
 #include <unistd.h>
 #else
 #include <conio.h>
@@ -51,9 +50,7 @@
 extern  void    __ioalloc( FILE * );
 extern  int     __flushall( int );
 
-#if defined(__PENPOINT__)
- #define __qread( h, b, l ) (read( h, b, l ) )
-#elif defined(__QNX__)
+#if defined(__QNX__)
  extern int  __qread( int handle, char *buffer, unsigned len );
 #elif defined(NETWARE)
  #define DOS_EOF_CHAR   0x1a
@@ -115,7 +112,7 @@ _WCRTLINK int fgetc( FILE *fp )
             fp->_ptr++;
         }
     }
-    #if !defined(__PENPOINT__) && !defined(__QNX__)
+    #if !defined(__QNX__)
         if( ! (fp->_flag & _BINARY) ) {
             if( c == '\r' ) {
                 fp->_cnt--;
@@ -233,10 +230,7 @@ int __F_NAME(__fill_buffer,__wfill_buffer)( FILE *fp )
     }
     fp->_flag &= ~_UNGET;                           /* 10-mar-90 */
     fp->_ptr = _FP_BASE(fp);
-#if defined(__PENPOINT__)
-    fp->_cnt = __qread( fileno( fp ), fp->_ptr,
-                        (fp->_flag & _IONBF) ? CHARSIZE : fp->_bufsize );
-#elif defined(__QNX__)
+#if defined(__QNX__)
     fp->_cnt = __qread( fileno( fp ), fp->_ptr,
                         (fp->_flag & _IONBF) ? CHARSIZE : fp->_bufsize );
 #else

@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  tmpfile() implementation.
+* Description:  Platform independent tmpfile() implementation.
 *
 ****************************************************************************/
 
@@ -45,13 +45,8 @@
 #include "seterrno.h"
 #include "openmode.h"
 
-#if defined(__PENPOINT__)
- #define OPEN_MODE O_RDWR | O_CREAT
- #define PMODE ( S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH )
-#else
- #define OPEN_MODE O_RDWR | O_CREAT | O_BINARY
- #define PMODE ( S_IREAD | S_IWRITE )
-#endif
+#define OPEN_MODE O_RDWR | O_CREAT | O_BINARY
+#define PMODE ( S_IREAD | S_IWRITE )
 
 /* Netware doesn't define these */
 /* Symbolic constants for the access() function */
@@ -139,9 +134,7 @@ _WCRTLINK FILE *tmpfile(void)           /* create a temporary file */
                 our_errno = errno;
                 remove( name2 );
                 __set_errno( our_errno );
-#if !defined(__PENPOINT__)
                 return( NULL );
-#endif
             }
             // The rename didn't work or we couldn't open the renamed file.
             // One of two possibilities:

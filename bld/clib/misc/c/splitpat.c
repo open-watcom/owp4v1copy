@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Platform independent _splitpath() implementation.
 *
 ****************************************************************************/
 
@@ -40,9 +39,7 @@
 
 #undef _splitpath
 
-#if defined(__PENPOINT__)
-  #define PC '\\'
-#elif defined(__QNX__)
+#if defined(__QNX__)
   #define PC '/'
 #else   /* DOS, OS/2, Windows, Netware */
   #define PC '\\'
@@ -98,9 +95,9 @@ static void copypart( CHAR_TYPE *buf, const CHAR_TYPE *p, int len, int maxlen )
 #define _MAX_NODE   _MAX_DRIVE  /*  maximum length of node name w/ '\0' */
 #endif
 
-/* split full PENPOINT/QNX path name into its components */
+/* split full QNX path name into its components */
 
-/* Under PENPOINT/QNX we will map drive to node, dir to dir, and
+/* Under QNX we will map drive to node, dir to dir, and
  * filename to (filename and extension)
  *          or (filename) if no extension requested.
  */
@@ -127,10 +124,9 @@ CHAR_TYPE           *drive,
 #endif
 
     /* take apart specification like -> //0/hd/user/fred/filename.ext for QNX */
-    /* take apart specification like -> \\disk2\fred\filename.ext for PenPoint */
     /* take apart specification like -> c:\fred\filename.ext for DOS, OS/2 */
 
-#if defined(__PENPOINT__) || defined(__QNX__)
+#if defined(__QNX__)
 
     /* process node/drive specification */
     startp = path;
@@ -199,7 +195,6 @@ CHAR_TYPE           *drive,
 #endif
 
     /* process /user/fred/filename.ext for QNX */
-    /* process \fred\filename.ext for PenPoint, DOS, OS/2 */
     /* process /fred/filename.ext for DOS, OS/2 */
     dotp = NULL;
     fnamep = path;
@@ -230,7 +225,7 @@ CHAR_TYPE           *drive,
                 path = _mbsinc( path );
             #endif
         #endif
-#if defined(__PENPOINT__) || defined(__QNX__)
+#if defined(__QNX__)
         if( ch == PC ) {
 #else /* DOS, OS/2, Windows, Netware */
         if( ch == PC  ||  ch == ALT_PC ) {

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Platform independent chktty() implementation.
 *
 ****************************************************************************/
 
@@ -33,7 +32,7 @@
 #include "variety.h"
 #include <stdio.h>
 #include <malloc.h>
-#if defined(__PENPOINT__)  ||  defined(__QNX__)
+#if defined(__QNX__)
 #include <unistd.h>
 #else
 #include <io.h>

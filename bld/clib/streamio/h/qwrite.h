@@ -32,8 +32,6 @@
 
 #if defined(__NETWARE__)
     #define __qwrite( h, b, l ) write( h, (void *)b, l )
-#elif defined(__PENPOINT__)
-    #define __qwrite( h, b, l ) write( h, b, l )
 #else
     extern unsigned __qwrite( int, const void *, unsigned );
 #endif

@@ -51,10 +51,6 @@
     #ifdef __NETWARE__
         #define _INITTHETIME
         #define _THE_TIME       (__THREADDATAPTR->__The_timeP)
-    #elif defined(__PENPOINT__)
-        void __alloctime( void );
-        #define _INITTHETIME    __alloctime();
-        #define _THE_TIME       _RWD_time
     #else
         #define _INITTHETIME
         static  struct  tm        The_time;

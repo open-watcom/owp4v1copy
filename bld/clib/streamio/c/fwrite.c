@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Platform independent fwrite() implementation.
 *
 ****************************************************************************/
 
@@ -68,7 +67,7 @@ _WCRTLINK size_t fwrite( const void *buf, size_t size, size_t n, FILE *fp )
     oflag = fp->_flag & (_SFERR|_EOF);      /* JBS 27-jan-92 */
     fp->_flag &= ~(_SFERR|_EOF);                    /* JBS 27-jan-92 */
     count = 0;
-#if !defined(__PENPOINT__)  &&  !defined(__QNX__)
+#if !defined(__QNX__)
     if( fp->_flag & _BINARY ) {             /* binary I/O */
 #else
     {
@@ -109,7 +108,7 @@ _WCRTLINK size_t fwrite( const void *buf, size_t size, size_t n, FILE *fp )
             count += bytes;
             bytes_left -= bytes;
         } while( bytes_left && !ferror( fp ) );
-#if !defined(__PENPOINT__)  &&  !defined(__QNX__)
+#if !defined(__QNX__)
     } else {        /* text I/O */
         const char *    bufptr;
         int             not_buffered;

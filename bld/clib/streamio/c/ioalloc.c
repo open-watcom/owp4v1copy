@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Platform independent __ioalloc() implementation.
 *
 ****************************************************************************/
 
@@ -33,7 +32,7 @@
 #include "variety.h"
 #include <stdio.h>
 #include "liballoc.h"
-#if defined(__PENPOINT__)  ||  defined(__QNX__)
+#if defined(__QNX__)
 #include <unistd.h>
 #else
 #include <io.h>
@@ -58,15 +57,7 @@ void __ioalloc( fp )
             fp->_bufsize = BUFSIZ;
         }
     }
-#if defined(__PENPOINT__)
-    if( fp->_flag & _SHRMEM ) {
-        _FP_BASE(fp) = _smalloc( fp->_bufsize );
-    } else {
-        _FP_BASE(fp) = lib_malloc( fp->_bufsize );
-    }
-#else
     _FP_BASE(fp) = lib_malloc( fp->_bufsize );
-#endif
     if( _FP_BASE(fp) == NULL ) {
         fp->_flag &= ~ ( _IONBF | _IOLBF | _IOFBF );
         fp->_flag |= _IONBF;        /* can't get big buffer */

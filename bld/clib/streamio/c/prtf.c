@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  __prtf() - low level string formatter.
 *
 ****************************************************************************/
 
-
-/*
- * __prtf -- CLIB low level string formatter
- */
 
 #define __LONG_LONG_SUPPORT__
 
@@ -80,9 +75,7 @@
 
 typedef int             bool;
 
-#if defined(__PENPOINT__)
-  #define EFG_PRINTF _EFG_Format
-#elif defined(__QNX__)
+#if defined(__QNX__)
   #define EFG_PRINTF __EFG_Format
 #else
   #define EFG_PRINTF (*__EFG_printf)

@@ -24,17 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Platform independent fread() implementation.
 *
 ****************************************************************************/
 
 
 #include "variety.h"
 #include <stdio.h>
-#if defined(__PENPOINT__)
-#include <unistd.h>
-#elif !defined(__QNX__)
+#if !defined(__QNX__)
 #include <io.h>
 #endif
 #include "fileacc.h"
@@ -44,9 +41,7 @@
 #include "seterrno.h"
 
 
-#if defined(__PENPOINT__)
- #define __qread( h, b, l ) read( h, b, l )
-#elif defined(__QNX__)
+#if defined(__QNX__)
  extern int  __qread( int handle, char *buffer, unsigned len );
 #elif defined(__NETWARE__)
  #define __qread( h, b, l ) read( h, b, l )
@@ -91,7 +86,7 @@ _WCRTLINK size_t fread( char *buf, size_t size, size_t n, FILE *fp )
         __ioalloc( fp );                        /* allocate buffer */
     }
     len_read = 0;
-#if !defined(__PENPOINT__)  &&  !defined(__QNX__)
+#if !defined(__QNX__)
     if( fp->_flag & _BINARY )
 #endif
     {
@@ -138,7 +133,7 @@ _WCRTLINK size_t fread( char *buf, size_t size, size_t n, FILE *fp )
                 if( __fill_buffer( fp ) == 0 )  break;
             }
         } /* end for */
-#if !defined(__PENPOINT__)  &&  !defined(__QNX__)
+#if !defined(__QNX__)
     } else {
         for(;;) {
             int c;

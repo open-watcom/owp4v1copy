@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Platform independent fdopen() implementation.
 *
 ****************************************************************************/
 
@@ -38,8 +37,8 @@
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <sys\types.h>
-#include <sys\stat.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #if defined(__NT__)
 #include <windows.h>
 #endif
@@ -78,13 +77,11 @@ _WCRTLINK FILE *__F_NAME(fdopen,_wfdopen)( int handle, const CHAR_TYPE *access_m
     #endif
     if( flags == 0 ) return( NULL );
 
-#if !defined(__PENPOINT__)
 #if !defined(__NETWARE__)
     /* make sure the handle has the same text/binary mode */
     if( __iomode( handle, flags ) == -1 ) {
         return( NULL );
     }
-#endif
 #endif
     fp = __allocfp( handle );               /* JBS 30-aug-91 */
     if( fp ) {
@@ -105,14 +102,13 @@ _WCRTLINK FILE *__F_NAME(fdopen,_wfdopen)( int handle, const CHAR_TYPE *access_m
             fseek( fp, 0L, SEEK_END );
         }
         __chktty( fp );                     /* JBS 31-may-91 */
-#if !defined(__PENPOINT__) && !defined(__QNX__) && !defined(__NETWARE__)
+#if !defined(__QNX__) && !defined(__NETWARE__)
         __SetIOMode( handle, flags );
 #endif
     }
     return( fp );
 }
 
-#if !defined(__PENPOINT__)
 #if !defined(__NETWARE__)
 
 static int __iomode( int handle, int amode )
@@ -149,5 +145,4 @@ static int __iomode( int handle, int amode )
     return(0);
 }
 
-#endif
 #endif

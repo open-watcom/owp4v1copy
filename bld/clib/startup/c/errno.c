@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  errno related functions.
 *
 ****************************************************************************/
 
@@ -48,13 +47,6 @@ _WCRTLINK int *__get_errno_ptr()
 #else
     return( (int *)&__MAGIC.Errno );
 #endif
-}
-
-#elif defined(__PENPOINT__)
-
-_WCRTLINK int *__get_errno_ptr()
-{
-    return( &_RWD_errno );
 }
 
 #else

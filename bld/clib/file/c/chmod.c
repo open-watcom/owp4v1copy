@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DOS platform chmod() implementation.
 *
 ****************************************************************************/
 
@@ -99,15 +98,6 @@ extern  unsigned long _BDchmode(const char *,unsigned);
 
 _WCRTLINK int __F_NAME(chmod,_wchmod)( const CHAR_TYPE *pathname, int pmode )
 {
-#if defined(__PENPOINT__)
-
-    pathname = pathname;
-    pmode = pmode;
-
-    __set_errno( EACCES );  /* Go will provide their own version of chmod */
-    return( -1 );
-
-#else
     unsigned long rc;
     unsigned ax, dx;
 
@@ -124,6 +114,5 @@ _WCRTLINK int __F_NAME(chmod,_wchmod)( const CHAR_TYPE *pathname, int pmode )
     ax = rc & 0xffff;
     dx = rc >> 16;
     return _dosret0( ax, dx );
-#endif
 }
 

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  __chk8087 and other FPU related functions.
 *
 ****************************************************************************/
 
@@ -74,7 +73,7 @@ extern  char __test8087( void );
     value [al];
 #endif
 
-#if !defined(__PENPOINT__) && !defined(__QNX__) && !defined(__OS2_386__)
+#if !defined(__QNX__) && !defined(__OS2_386__)
 
 struct  _87state {              /* 80x87 save area */
 #if defined(__386__)
@@ -154,11 +153,11 @@ static void __rest_8087( struct _87state * __fs )
 {
     __frstor( __fs );
 }
-#endif  /* ! __QNX__ && !__PENPOINT && !__OS2__ */
+#endif  /* ! __QNX__ && && !__OS2__ */
 
 unsigned char __init_8087()
 {
-#if !defined(__PENPOINT__) && !defined(__QNX__) && !defined(__OS2_386__)
+#if !defined(__QNX__) && !defined(__OS2_386__)
     if( _RWD_real87 != 0 ) {            /* if our emulator, don't worry */
         _RWD_Save8087 = __save_8087;    /* point to real save 8087 routine */
         _RWD_Rest8087 = __rest_8087;    /* point to real restore 8087 routine */

@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  fclose() implementation.
+* Description:  Platform independent fclose() implementation.
 *
 ****************************************************************************/
 
@@ -96,7 +96,7 @@ int __doclose( FILE *fp, int close_handle )
     }
 
     if( close_handle ) {
-        #if defined(__QNX__) || defined(__NETWARE__) || defined(__PENPOINT__)
+        #if defined(__QNX__) || defined(__NETWARE__)
             // we don't get to implement the close function on these systems
             ret |= close( fileno( fp ) );
         #else

@@ -36,11 +36,9 @@
 #include "variety.h"
 #include <time.h>
 
-#ifndef __PENPOINT__
-  extern int       __dst_adjust;
-  extern struct tm __start_dst; /* start of daylight savings */
-  extern struct tm __end_dst;   /* end of daylight savings */
-#endif
+extern int       __dst_adjust;
+extern struct tm __start_dst; /* start of daylight savings */
+extern struct tm __end_dst;   /* end of daylight savings */
 
 #define SECONDS_FROM_1900_TO_1970       2208988800UL
 #define SECONDS_PER_DAY                 (24*60*60UL)

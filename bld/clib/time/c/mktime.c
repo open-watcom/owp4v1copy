@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Platform independent mktime() implementation.
 *
 ****************************************************************************/
 
@@ -125,52 +124,3 @@ _WCRTLINK time_t mktime( struct tm *t )
     }
     return( seconds );
 }
-
-#if defined(__PENPOINT__)
-_WCRTLINK time_t _gmmktime( struct tm *t )
-{
-    int         month;
-    int         year;
-    long        days;
-    long        seconds;
-    short const *month_start;
-
-    month_start = __diyr;
-    month = t->tm_mon % 12;                 /* put tm_mon into range */
-    year = t->tm_year + t->tm_mon / 12;
-    while( month < 0 ) {
-        --year;
-        month += 12;
-    }
-    if( year < 0 ) return( (time_t)-1 );
-    if( __leapyear( year + 1900 ) ) month_start = __dilyr;
-    days = (unsigned)year * 365         /* # of days in the years */
-         + ((year + 3 ) >> 2)           /* # of leap years before year*/
-         + month_start[ month ]         /* # of days to 1st of month*/
-         + t->tm_mday - 1;              /* day of the month */
-    if( year !=0 ) --days;              /* 1900 is not a leap year */
-    seconds = (((long)(t->tm_hour))*60L + (long)(t->tm_min))*60L + t->tm_sec;
-    /* seconds needs to be positive for __brktime */
-    while( seconds < 0 ) {
-        days -= 1;
-        seconds += SECONDS_PER_DAY;
-    }
-    __brktime( days, seconds, 0L, t );
-    while( seconds < 0 ) {
-        days -= 1;
-        seconds += SECONDS_PER_DAY;
-    }
-    if( days < (DAYS_FROM_1900_TO_1970 - 1) ) {
-        return( (time_t)-1 );
-    }
-    if( days == (DAYS_FROM_1900_TO_1970 - 1) ) {
-        seconds -= SECONDS_PER_DAY;
-        if( seconds < 0 ) {
-            return( (time_t)-1 );
-        }
-    } else {
-        seconds += (days - DAYS_FROM_1900_TO_1970) * SECONDS_PER_DAY;
-    }
-    return( seconds );
-}
-#endif

@@ -11,7 +11,6 @@ include_c_os2_386  =;$(%watcom)\h\os2
 include_c_os2_387  =;$(%watcom)\h\os2
 include_c_os2_ppc  =;$(%watcom)\h\os2ppc
 include_c_os2      =;$(include_c_os2_$(processor));$(hdr_dir)\dos
-include_c_penpoint =;$(watcom_dir)\pen_h;$(hdr_dir)\penpoint
 include_c_windows  =;$(%watcom)\h\win;$(hdr_dir)\dos
 include_c_winnt    =;$(%watcom)\h\nt;$(hdr_dir)\dos
 !else
@@ -23,7 +22,6 @@ include_c_os2_386  =;$(%watcom)\h\os2
 include_c_os2_387  =;$(%watcom)\h\os2
 include_c_os2_ppc  =;$(%watcom)\h\os2ppc
 include_c_os2      =;$(include_c_os2_$(processor));$(%watcom)\h
-include_c_penpoint =;$(watcom_dir)\pen_h;$(hdr_dir)\penpoint
 include_c_windows  =;$(%watcom)\h\win;$(%watcom)\h
 include_c_winnt    =;$(%watcom)\h\nt;$(%watcom)\h
 !endif

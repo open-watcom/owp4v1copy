@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Platform independent tmpnam() implementation.
 *
 ****************************************************************************/
 
@@ -63,9 +62,7 @@
         _PPPPPPP.UUU
 */
 
-#if defined(__PENPOINT__)
-  void __alloctmpnambuf( void );
-#elif !defined(__NETWARE__)
+#if !defined(__NETWARE__)
   static CHAR_TYPE _tmpname[L_tmpnam];
 #endif
 
@@ -75,20 +72,6 @@
  extern int             GetThreadID( void );
 #elif defined(__QNX__)
  extern char *__tmpdir( char * );
-#endif
-
-#if defined(__PENPOINT__)
-static void __alloctmpnambuf()
-{
-    if( _RWD_tmpnambuf != NULL ) return;
-
-    _RWD_tmpnambuf = lib_malloc( L_tmpnam * sizeof( wchar_t ) );
-    if( _RWD_tmpnambuf == NULL ) {
-        __fatal_runtime_error(
-                "Not enough memory to allocate tmpnam buffer\r\n", 1 );
-    }
-    _RWD_tmpnambuf[0] = NULLCHAR;
-}
 #endif
 
 static CHAR_TYPE *__F_NAME(putbits,_wputbits)( CHAR_TYPE *p, unsigned val )
@@ -135,9 +118,6 @@ _WCRTLINK CHAR_TYPE *__F_NAME(tmpnam,_wtmpnam)( CHAR_TYPE *buf )
     CHAR_TYPE   *tmpnmb;
 
     err = _RWD_errno;
-    #if defined(__PENPOINT__)
-        __alloctmpnambuf();
-    #endif
                             // JBS 99/10/18 rewrote for thread safety
     _AccessIOB();           // prevent same name in multi-threaded apps
     tmpnmb = (CHAR_TYPE *)_RWD_tmpnambuf;

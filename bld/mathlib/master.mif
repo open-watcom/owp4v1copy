@@ -16,7 +16,6 @@ clib_host_os_necwin  =dos
 clib_host_os_netware =nov
 clib_host_os_os2     =os2
 clib_host_os_osi     =osi
-clib_host_os_penpoint=pen
 clib_host_os_qnx     =qnx
 clib_host_os_windows =win
 clib_host_os_winnt   =nt

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Platform independent fputc() implementation.
 *
 ****************************************************************************/
 
@@ -80,7 +79,7 @@ _WCRTLINK int fputc( int c, FILE *fp )
     flags = _IONBF;
     if( c == '\n' ) {
         flags = _IONBF | _IOLBF;
-        #if !defined(__PENPOINT__)  &&  !defined(__QNX__)
+        #if !defined(__QNX__)
             if( !(fp->_flag & _BINARY) ) {
                 fp->_flag |= _DIRTY;
                 *(char*)fp->_ptr = '\r';   /* '\n' -> '\r''\n' */

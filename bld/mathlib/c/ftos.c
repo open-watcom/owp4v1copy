@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Float to string conversion routines.
 *
 ****************************************************************************/
 
@@ -80,7 +79,6 @@ extern  int     __Nan_Inf( double, char * );
 
 #define SIG_DIGITS              17
 
-#if !defined(__PENPOINT__)
 static int MaxPrec = {
         SIG_DIGITS              /* maximum allowed precision */
 };
@@ -92,7 +90,6 @@ void _SetMaxPrec( value )
     {
         MaxPrec = value;
     }
-#endif
 
 /**************************************************************************/
 /***                                                                    ***/

@@ -24,15 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  C++ handle oriented open.
 *
 ****************************************************************************/
 
 
 #include "variety.h"
 #include <stdio.h>
-#if defined(__QNX__) || defined(__PENPOINT__)
+#if defined(__QNX__)
  #include <unistd.h>
 #else
  #include <io.h>
@@ -85,7 +84,7 @@ _WCRTLINK int __plusplus_open( const char *name, int *pios_mode, int prot )
     if( ios_mode & __nocreate ) {
         mode &= ~O_CREAT;
     }
-    #if defined(__QNX__) || defined(__PENPOINT__)
+    #if defined(__QNX__)
         *pios_mode &= ~(__binary|__text);
     #else
         if( ios_mode & __binary ) {

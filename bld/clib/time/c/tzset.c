@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Platform independent tzset() implementation.
 *
 ****************************************************************************/
 
@@ -53,8 +52,6 @@
 
 //#define TZNAME_MAX    128     /* defined in <limits.h> */
 
-/* PenPoint FXX: Move these to protected storage */
-
 struct tm __start_dst =                         /* start of daylight savings */
         { 0, 0, 2,                              /* M4.1.0/02:00:00 default */
           1, 3, 0,                              /* i.e., 1st Sunday of Apr */
@@ -81,24 +78,6 @@ static struct {
     unsigned    cache_OS_TZ : 1;
     unsigned    have_OS_TZ : 1;
 } tzFlag = { 1, 0 };
-
-#if defined(__PENPOINT__)
-
-#undef tzset
-#include "liballoc.h"
-
-void __alloctime()
-{
-    if( _RWD_tzinfo != NULL ) return;
-
-    _RWD_tzinfo = lib_malloc( sizeof( struct _tzdata ) );
-    if( _RWD_tzinfo == NULL ) {
-        __fatal_runtime_error(
-            "Not enough memory to allocate time structures\r\n", 1 );
-    }
-}
-
-#endif
 
 int __DontCacheOSTZ( void )
 {

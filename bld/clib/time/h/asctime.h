@@ -48,10 +48,7 @@
 
     #endif
 #else
-    #if defined(__PENPOINT__)
-        void __alloctime( void );
-        #define _INITRESULT     __alloctime();
-    #elif defined(__NETWARE__)
+    #if defined(__NETWARE__)
         #define _RESULT __THREADDATAPTR->__asctimeP
         #define _INITRESULT
     #else
