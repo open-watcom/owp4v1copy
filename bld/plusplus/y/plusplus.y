@@ -481,6 +481,15 @@ goal-symbol
         $$ = $2;
         t = YYEOFTOKEN;
     }
+    | Y_EXPRESSION_SPECIAL type-specifiers declaring-declarator initializer
+    {
+        CheckDeclarationDSpec( state->gstack->u.dspec, GetCurrScope() );
+        GStackPop( &(state->gstack) );
+        $$ = $3->id;
+        $3->id = NULL;
+        FreeDeclInfo( $3 );
+        t = YYEOFTOKEN;
+    }
     | Y_EXPR_DECL_SPECIAL expr-decl-stmt
     {
         $$ = $2;

@@ -232,6 +232,7 @@ positive_tests = &
     cmdln02.$(ext) &
     cmdln03.$(ext) &
     cmdln04.$(ext) &
+    cond1.$(ext) &
     conv01.$(ext) &
     conv02.$(ext) &
     conv03.$(ext) &
