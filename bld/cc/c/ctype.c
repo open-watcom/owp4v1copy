@@ -37,7 +37,7 @@ extern  unsigned SymTypedef;
 extern FIELDPTR FieldCreate( char *name );
 
 local TYPEPTR StructDecl(int,int);
-local TYPEPTR ComplexDecl(int,int);
+//local TYPEPTR ComplexDecl(int,int);
 static void SetPlainCharType( int char_type );
 local void CheckBitfieldType( TYPEPTR typ );
 
@@ -209,11 +209,14 @@ void CTypeInit()
     for( base_type = TYPE_CHAR; base_type < TYPE_LAST_ENTRY; ++base_type ) {
         CTypeCounts[ base_type ] = 0;
         size = CTypeSizes[ base_type ];
+        /*
         if ( base_type == TYPE_FCOMPLEX || base_type == TYPE_DCOMPLEX
                             || base_type == TYPE_LDCOMPLEX ) {
             BaseTypes[ base_type ] = ComplexDecl( TYPE_STRUCT, FALSE );
             BaseTypes[ base_type ]->decl_type = base_type;
-        } else if( size != 0  ||  base_type == TYPE_VOID  ||
+        } else
+        */
+        if( size != 0  ||  base_type == TYPE_VOID  ||
                             base_type == TYPE_DOT_DOT_DOT ) {
             BaseTypes[ base_type ] = TypeNode( base_type, NULL );
         } else {
@@ -1202,11 +1205,10 @@ local unsigned long GetComplexFields( TYPEPTR decl )
     _CHECK_SIZE( struct_size );
     return( struct_size );
 }
-*/
+
 
 local TYPEPTR ComplexDecl( int decl_typ, int packed )
 {
-/*
     TYPEPTR     typ;
     TAGPTR      tag;
     int         saved_packamount;
@@ -1229,11 +1231,8 @@ local TYPEPTR ComplexDecl( int decl_typ, int packed )
     PackAmount = saved_packamount;
 
     return( typ );
-*/
-    return NULL;
 }
-
-
+*/
 
 local void CheckBitfieldType( TYPEPTR typ )
 {
