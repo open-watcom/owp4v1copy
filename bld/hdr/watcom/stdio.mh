@@ -13,12 +13,10 @@
 #endif
 
 :include pshpackl.sp
-:segment !NO_WIDECHAR
 
 :include wchar_t.sp
 
 :include wctypet.sp
-:endsegment
 
 :include sizet.sp
 
@@ -210,15 +208,21 @@ _WCRTLINK extern size_t fwrite( const void *__ptr, size_t __size, size_t __n,
                                 FILE *__fp );
 _WCRTLINK extern int    getc( FILE *__fp );
 _WCRTLINK extern int    getchar( void );
+:segment !SNAP & !SNAPDRV
 _WCRTLINK extern int    _getw( FILE *__fp );
+:endsegment
 _WCRTLINK extern char   *gets( char *__s );
 _WCRTLINK extern void   perror( const char *__s );
+:segment !SNAP & !SNAPDRV
 _WCRTLINK extern FILE * _popen( const char *__command, const char *__mode );
 _WCRTLINK extern int    _pclose( FILE *__fp );
+:endsegment
 _WCRTLINK extern int    printf( const char *__format, ... );
 _WCRTLINK extern int    putc( int __c, FILE *__fp );
 _WCRTLINK extern int    putchar( int __c );
+:segment !SNAP & !SNAPDRV
 _WCRTLINK extern int    _putw( int __binint, FILE *__fp );
+:endsegment
 _WCRTLINK extern int    puts( const char *__s );
 _WCRTLINK extern int    remove( const char *__filename );
 _WCRTLINK extern int    rename( const char *__old, const char *__new );
@@ -229,7 +233,9 @@ _WCRTLINK extern int    setvbuf( FILE *__fp, char *__buf, int __mode,
                                  size_t __size );
 _WCRTLINK extern int    sprintf( char *__s, const char *__format, ... );
 _WCRTLINK extern int    sscanf( const char *__s, const char *__format, ... );
+:segment !SNAP & !SNAPDRV
 _WCRTLINK extern char * _tempnam( char *__dir, char *__prefix );
+:endsegment
 _WCRTLINK extern FILE   *tmpfile( void );
 _WCRTLINK extern char   *tmpnam( char *__s );
 _WCRTLINK extern int    ungetc( int __c, FILE *__fp );
@@ -240,6 +246,7 @@ _WCRTLINK extern int    vsprintf( char *__s, const char *__format,
                                   __va_list __arg );
 
 :include ext.sp
+:segment !SNAPDRV
 _WCRTLINK extern int    fileno(FILE *);
 _WCRTLINK extern int    _fileno(FILE *);
 _WCRTLINK extern int    fcloseall( void );
@@ -254,7 +261,9 @@ _WCRTLINK extern int    _fputchar( int __c );
 _WCRTLINK extern int    fputchar( int __c );
 _WCRTLINK extern FILE   *_fsopen( const char *__filename, const char *__mode,
                                   int __shflag );
+:endsegment
 _WCRTLINK extern int    flushall( void );
+:segment !SNAPDRV
 _WCRTLINK extern int    vfscanf( FILE *__fp, const char *__format,
                                  __va_list __arg );
 _WCRTLINK extern int    vscanf( const char *__format, __va_list __arg );
@@ -332,6 +341,7 @@ _WCRTLINK extern FILE * _wpopen( const wchar_t *__command, const wchar_t *__mode
  char   *input_line( FILE *, char *, int );
 #endif
 :endsegment
+:endsegment
 #endif
 
 :segment QNX | LINUX
@@ -342,8 +352,8 @@ extern FILE     *fdopen( int __handle, const char *__mode );
 extern FILE     *popen( const char *__filename, const char *__mode );
 extern int      pclose( FILE *stream );
 #endif
-:endsegment
 
+:endsegment
 #if !defined(__OBSCURE_STREAM_INTERNALS)
 #define clearerr(fp)    ((fp)->_flag &= ~(_SFERR|_EOF))
 #define feof(fp)        ((fp)->_flag & _EOF)

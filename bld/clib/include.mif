@@ -24,6 +24,7 @@ include_c_linux    =;$(hdr_dir)/linux
 include_c_windows  =;$(hdr_dir)/dos/win;$(inc_dirs_sys_win);$(hdr_dir)/dos
 include_c_winnt    =;$(inc_dirs_sys_nt);$(hdr_dir)/dos
 include_c_snap     =;$(hdr_dir)/snap;$(%SCITECH)/include/clib
+include_c_snapdrv  =;$(hdr_dir)/snapdrv;$(%SCITECH)/include/clib
 !else
 include_c_generic  =;$(%WATCOM)/h
 include_c_kanji    =;$(%WATCOM)/h
@@ -48,6 +49,7 @@ include_c_winnt_axp=$(inc_dirs_sys_nt)
 include_c_winnt_ppc=$(inc_dirs_sys_nt)
 include_c_winnt    =$(inc_dirs_sys_nt);$(%WATCOM)/h
 include_c_snap     =;$(%WATCOM)/snaph;$(%SCITECH)/include/clib
+include_c_snapdrv  =;$(%WATCOM)/drvh;$(%SCITECH)/include/clib
 !endif
 
 include_c_path =-i"$(include_default)$(include_c_$(system))$(include_watcom)"
@@ -69,5 +71,6 @@ include_a_windows  =
 include_a_winnt    =
 include_a_linux    =
 include_a_snap     =
+include_a_snapdrv  =
 
 include_a_path =-i"$(include_default)$(include_a_$(system))$(include_watcom)"

@@ -54,7 +54,7 @@ _WCRTLINK extern void   *bsearch( const void *__key, const void *__base,
                                   size_t __nmemb, size_t __size,
                                   int (*__compar)(const void *__pkey,
                                                   const void *__pbase) );
-:segment !SNAP
+:segment !SNAP & !SNAPDRV
 _WCRTLINK extern void    break_on( void );
 _WCRTLINK extern void    break_off( void );
 :endsegment
@@ -71,6 +71,7 @@ _WCRTLINK
 #endif
 extern ldiv_t ldiv( long int __numer, long int __denom );
 _WCRTLINK extern void   *malloc( size_t __size );
+:segment !NO_WIDECHAR
 _WCRTLINK extern int     mblen( const char *__s, size_t __n );
 _WCRTLINK extern size_t  mbstowcs( wchar_t *__pwcs, const char *__s,
                                    size_t __n );
@@ -78,6 +79,7 @@ _WCRTLINK extern int     mbtowc( wchar_t *__pwc, const char *__s, size_t __n );
 _WCRTLINK extern size_t  wcstombs( char *__s, const wchar_t *__pwcs,
                                    size_t __n );
 _WCRTLINK extern int     wctomb( char *__s, wchar_t __wchar );
+:endsegment
 _WCRTLINK extern void    qsort( void *__base, size_t __nmemb, size_t __size,
                                 int (*__compar)( const void *, const void * ) );
 _WCRTLINK extern int     rand( void );
@@ -109,6 +111,7 @@ _WCRTLINK void           _exit( int __status );
 
 :include ext.sp
 
+:segment !SNAPDRV
 :segment QNX
 _WCRTLINK extern unsigned atoh( const char *__nptr );
 :endsegment
@@ -127,7 +130,9 @@ _WCRTLINK extern char   *_fullpath( char *__buf, const char *__path,
                                     size_t __size );
 _WMRTLINK extern char   *gcvt( double __val, int __ndig, char *__buf );
 _WMRTLINK extern char   *_gcvt( double __val, int __ndig, char *__buf );
+:endsegment
 _WCRTLINK extern char   *itoa( int __value, char *__buf, int __radix );
+:segment !SNAPDRV
 _WCRTLINK extern char   *_itoa( int __value, char *__buf, int __radix );
 #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
 _WCIRTLINK
@@ -141,13 +146,16 @@ _WCIRTLINK
 _WCRTLINK
 #endif
 extern unsigned long _lrotr( unsigned long __value, unsigned int __shift );
+:endsegment
 _WCRTLINK extern char   *ltoa( long int __value, char *__buf, int __radix );
+:segment !SNAPDRV
 _WCRTLINK extern char   *_ltoa( long int __value, char *__buf, int __radix );
 _WCRTLINK extern void    _makepath( char *__path, const char *__drive,
                                     const char *__dir, const char *__fname,
                                     const char *__ext );
 _WCIRTLINK extern unsigned int _rotl( unsigned int __value, unsigned int __shift );
 _WCIRTLINK extern unsigned int _rotr( unsigned int __value, unsigned int __shift );
+:segment !NO_WIDECHAR
 
 _WMRTLINK extern wchar_t *_wecvt( double __val, int __ndig, int *__dec,
                                   int *__sign );
@@ -204,28 +212,36 @@ _WCRTLINK extern void       _wsplitpath( const wchar_t *__path,
 
 _WCRTLINK extern int        _wsystem( const wchar_t *__cmd );
 :endsegment
+:endsegment
 
-
+:endsegment
 _WCRTLINK extern int     putenv( const char *__string );
+:segment !SNAPDRV
 _WCRTLINK extern void    _searchenv( const char *__name, const char *__env_var,
                                      char *__buf );
+:endsegment
 :segment QNX
 _WCRTLINK extern int     need_usage( char **argv );
 _WCRTLINK extern int     print_usage( char **argv );
 _WCRTLINK extern void    searchenv( const char *__name, const char *__env_var,
                             char *__buf );
 :endsegment
+:segment !SNAPDRV
 _WCRTLINK extern void    _splitpath2( const char *__inp, char *__outp,
                                       char **__drive, char **__dir,
                                       char **__fn, char **__ext );
 _WCRTLINK extern void    _splitpath( const char *__path, char *__drive,
                                      char *__dir, char *__fname, char *__ext );
+:endsegment
 _WCRTLINK extern void    swab( char *__src, char *__dest, int __num );
 _WCRTLINK extern char   *ultoa( unsigned long int __value, char *__buf,
                                 int __radix );
+:segment !SNAPDRV
 _WCRTLINK extern char   *_ultoa( unsigned long int __value, char *__buf,
                                 int __radix );
+:endsegment
 _WCRTLINK extern char   *utoa( unsigned int __value, char *__buf, int __radix );
+:segment !SNAPDRV
 _WCRTLINK extern char   *_utoa( unsigned int __value, char *__buf, int __radix );
 
 #if defined(__INLINE_FUNCTIONS__)
@@ -234,6 +250,7 @@ _WCRTLINK extern char   *_utoa( unsigned int __value, char *__buf, int __radix )
   #pragma intrinsic(_lrotl,_lrotr)
  #endif
 #endif
+:endsegment
 
 /* min and max macros */
 #if !defined(__max)
@@ -292,7 +309,9 @@ _WCRTLINK extern char   *_utoa( unsigned int __value, char *__buf, int __radix )
 #endif
 :endsegment
 _WCRTLINK extern char **_WCNEAR environ;        /*  pointer to environment table */
+:segment !NO_WIDECHAR
 _WCRTLINK extern wchar_t **_WCNEAR _wenviron; /*  pointer to wide environment */
+:endsegment
 :segment !QNX & !LINUX
 #if defined(__NT__)
  _WCRTLINK extern int _fileinfo;        /* for inheriting POSIX handles */
@@ -373,7 +392,7 @@ _WCRTLINK extern unsigned char _WCNEAR _osminor;    /*  O/S minor version # */
 :endsegment
 extern  int       __argc;       /* number of cmd line args */
 extern  char    **__argv;       /* vector of cmd line args */
-:segment !QNX & !LINUX
+:segment !QNX & !LINUX & !NO_WIDECHAR
 #if defined(__NT__) || (defined(__OS2__) && (defined(__386__) || defined(__PPC__)))
 extern  int       __wargc;      /* number of wide cmd line args */
 extern  wchar_t **__wargv;      /* vector of wide cmd line args */

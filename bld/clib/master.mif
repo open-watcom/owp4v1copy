@@ -24,6 +24,7 @@ clib_host_os_windows    =win
 clib_host_os_winnt      =nt
 clib_host_os_linux      =linux
 clib_host_os_snap       =snap
+clib_host_os_snapdrv    =snapdrv
 host_os=$(clib_host_os_$(system))
 
 !include cproj.mif

@@ -1,8 +1,8 @@
 # Note: Still need to clone the Linux stuff from QNX. Only the basic stuff is here for now
 #       just top get it compiling.
 #
-#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-#==============================================================================================
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
+#==================================================================================================
 !inject cenvarg.obj  d16 d32             nt nta ntp         o16 o32
 !inject cwaitos2.obj                                        o16 o32
 !inject cwaitwnt.obj                     nt nta ntp
@@ -44,7 +44,7 @@
 !inject signlo32.obj                                            o32
 !inject signlq16.obj                                                q16
 !inject signlwnt.obj                     nt nta ntp
-!inject signlsnp.obj                                                                        snp
+!inject signlsnp.obj                                                                        snp drv
 !inject sigsy.obj    d16 d32                                                w16
 !inject sigsyo16.obj                                        o16
 !inject _slashc.obj  d16 d32             nt nta ntp         o16 o32
@@ -72,7 +72,7 @@
 !inject spvunx.obj                                                  q16 q32             l32
 !inject system.obj   d16 d32             nt nta ntp         o16 o32         w16 w32
 !inject systemlx.obj                                                                    l32
-!inject systmsnp.obj                                                                        snp
+!inject systmsnp.obj                                                                        snp drv
 !inject ucenvarg.obj                     nt nta ntp
 !inject udospwnt.obj                     nt nta ntp
 !inject uexl.obj     d16                 nt nta ntp         o16 o32
@@ -95,12 +95,12 @@
 !inject usystem.obj  d16 d32             nt nta ntp         o16 o32         w16 w32
 !inject waitos2.obj                                         o16 o32
 !inject waitwnt.obj                      nt nta ntp
-!inject _raise.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32     l32 snp
+!inject _raise.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32     l32 snp drv
 
 !include ../../../../objlist.mif
 
-#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-#==========================================================================================
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
+#==================================================================================================
 !inject ergospwn.obj     d32
 
 objsuffix=files

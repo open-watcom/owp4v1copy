@@ -29,6 +29,10 @@
 *               the DLL is first loaded and set up the callbacks to
 *               platform specific code.
 *
+* TODO: Modify this for SNAP application imports! We may want to use
+*       different exported names here so driver DLL's and app DLL's will
+*       not get confused.
+*
 ****************************************************************************/
 
 
@@ -81,6 +85,6 @@ int _CEXPORT InitLibC( LIBC_imports *imports, long os_type )
 /* Exit the C runtime library to clean up and free all allocated memory */
 void _CEXPORT TerminateLibC( void )
 {
-    __FiniRtns( 0, 255 );
+    __FiniRtns( 0, FINI_PRIORITY_EXIT-1 );
 }
 

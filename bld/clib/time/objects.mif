@@ -1,24 +1,24 @@
-#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-#==============================================================================================
-!inject asctime.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+#                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
+#==================================================================================================
+!inject asctime.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
 !inject clock.obj    d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
-!inject clocksnp.obj                                                                        snp
+!inject clocksnp.obj                                                                        snp drv
 !inject dyltptr.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
 !inject ftime.obj    d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject ftimeqnx.obj                                                q16 q32
 !inject ftimelnx.obj                                                                    l32
-!inject gmtime.obj   d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
+!inject gmtime.obj   d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp drv
 !inject gtctm.obj    d16 d32                                                w16 w32 osi
 !inject gtctmos2.obj                                        o16 o32
 !inject gtctmwnt.obj                     nt nta ntp
-!inject localtim.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-!inject mktime.obj   d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
+!inject localtim.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp drv
+!inject mktime.obj   d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp drv
 !inject strdate.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-!inject strftime.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+!inject strftime.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
 !inject strtime.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
 !inject time.obj     d16 d32             nt nta ntp         o16 o32         w16 w32 osi
-!inject timesnp.obj                                                                         snp
-!inject timeutil.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
+!inject timesnp.obj                                                                         snp drv
+!inject timeutil.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp drv
 !inject tmznptr.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
 !inject tzfile.obj                                                                      l32
 !inject tzset.obj    d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp

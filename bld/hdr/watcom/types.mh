@@ -20,7 +20,7 @@
 
 :include sizet.sp
 
-:segment LINUX | QNX | SNAP
+:segment LINUX | QNX | SNAP | SNAPDRV
 #ifndef _SSIZE_T_DEFINED_
 #define _SSIZE_T_DEFINED_
 typedef signed ssize_t;
@@ -177,7 +177,7 @@ typedef quad *          qaddr_t;
 typedef unsigned long   fixpt_t;
 typedef int             key_t;
 typedef unsigned short  sel_t;
-:elsesegment DOS | SNAP
+:elsesegment DOS | SNAP | SNAPDRV
 typedef unsigned int ino_t;     /* i-node # type */
 typedef int dev_t;              /* device code (drive #) */
 typedef long  off_t;            /* file offset value */

@@ -24,7 +24,8 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  Import stubs for platform dependent C library functions.
+;* Description:  Import stubs for platform dependent C library functions
+;*               for SNAP applications.
 ;*
 ;*****************************************************************************
 

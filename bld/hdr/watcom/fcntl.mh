@@ -254,7 +254,7 @@ typedef struct flock {
 #define O_EXCL          0x0400  /* exclusive open */
 #define _O_EXCL         0x0400  /* exclusive open */
 
-:elsesegment SNAP
+:elsesegment SNAP | SNAPDRV
 :include pshpackl.sp
 
 #ifndef __OS_IMPORTS_H

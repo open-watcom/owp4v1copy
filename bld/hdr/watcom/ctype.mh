@@ -12,12 +12,10 @@
  #include <_comdef.h>
 #endif
 
-:segment !NO_WIDECHAR
 :include wchar_t.sp
 
 :include wctypet.sp
 
-:endsegment
 #define _LOWER  0x80
 #define _UPPER  0x40
 #define _DIGIT  0x20
@@ -38,13 +36,19 @@ _WCRTLINK extern int    ispunct(int);
 _WCRTLINK extern int    isspace(int);
 _WCRTLINK extern int    isupper(int);
 _WCRTLINK extern int    isxdigit(int);
+:segment !SNAP & !SNAPDRV
 _WCRTLINK extern int    isleadbyte(int);
+:endsegment
 _WCRTLINK extern int    tolower(int);
+:segment !SNAP & !SNAPDRV
 _WCRTLINK extern int    _tolower(int);
+:endsegment
 _WCRTLINK extern int    toupper(int);
+:segment !SNAP & !SNAPDRV
 _WCRTLINK extern int    _toupper(int);
 _WCRTLINK extern int    __iscsymf(int);
 _WCRTLINK extern int    __iscsym(int);
+:endsegment
 :segment !NO_WIDECHAR
 
 _WCRTLINK extern int    iswalpha(wint_t);
@@ -93,8 +97,10 @@ _WCRTLINK extern const char _WCDATA _IsTable[257];
 #define isspace(__c)  ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & _SPACE)
 #define isupper(__c)  ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & _UPPER)
 #define isxdigit(__c) ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & _XDIGT)
+:segment !SNAP & !SNAPDRV
 #define __iscsymf(__c) (isalpha(__c)||((__c)=='_'))
 #define __iscsym(__c)  (isalnum(__c)||((__c)=='_'))
+:endsegment
 #endif
 
 :include cplusepi.sp

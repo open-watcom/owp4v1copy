@@ -3,7 +3,7 @@
 # the "real" symbol.
 
 #file           actual name     aliased name    systems
-################################################################################################################
+#######################################################################################################################
 #               #               #               DOS-16
 #               #               #               #   DOS-32
 #               #               #               #   #   NT-386
@@ -21,114 +21,115 @@
 #               #               #               #   #   #   #   #   #   #   #   #   #   #   #   #   #   LINUX
 #               #               #               #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   SNAP
 #               #               #               #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #
-#               #               #               #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #
-################################################################################################################
+#               #               #               #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   SNAPDRV
+#               #               #               #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #   #
+#######################################################################################################################
 access          access          _access         d16 d32 nt  nta ntp         o16 o32         w16 w32
 close_          close           _close          d16 d32 nt  nta ntp         o16 o32         w16 w32
 cwait_          cwait           _cwait                  nt  nta ntp         o16 o32
-dup___          dup             _dup            d16 d32 nt  nta ntp         o16 o32         w16 w32 osi     snp
-fdopen          fdopen          _fdopen         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-fgetch          fgetchar        _fgetchar       d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+dup___          dup             _dup            d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
+fdopen          fdopen          _fdopen         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+fgetch          fgetchar        _fgetchar       d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 fgetwc          fgetwchar       _fgetwchar      d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
-fputch          fputchar        _fputchar       d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+fputch          fputchar        _fputchar       d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 fputwc          fputwchar       _fputwchar      d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
-fstat_          fstat           _fstat          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi     snp
-ftime_          ftime           _ftime          d16 d32 nt  nta ntp         o16 o32 q16 q21 w16 w32 osi l32 snp
-getch_          getch           _getch          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-getche          getche          _getche         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-getcwd          getcwd          _getcwd         d16 d32 nt  nta ntp         o16 o32         w16 w32 osi     snp
+fstat_          fstat           _fstat          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
+ftime_          ftime           _ftime          d16 d32 nt  nta ntp         o16 o32 q16 q21 w16 w32 osi l32
+getch_          getch           _getch          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+getche          getche          _getche         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+getcwd          getcwd          _getcwd         d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 getws_          getws           _getws          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
 dopen_          _hdopen         _dopen          d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32     l32
-_isasc          isascii         __isascii       d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-iscsym          __iscsym        iscsym          d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-iscsyf          __iscsymf       iscsymf         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-ismbbk          _ismbbkalpha    _ismbbkalnum    d16 d32 nt  nta ntp         o16 o32         w16 w32 osi     snp
-islead          _ismbblead      isleadbyte      d16 d32 nt  nta ntp         o16 o32         w16 w32 osi     snp
-itoa__          itoa            _itoa           d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-utoa__          utoa            _utoa           d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+_isasc          isascii         __isascii       d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+iscsym          __iscsym        iscsym          d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+iscsyf          __iscsymf       iscsymf         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+ismbbk          _ismbbkalpha    _ismbbkalnum    d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
+islead          _ismbblead      isleadbyte      d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
+itoa__          itoa            _itoa           d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+utoa__          utoa            _utoa           d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 lockin          locking         _locking        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
-lseek_          lseek           _lseek          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi     snp
-ltoa__          ltoa            _ltoa           d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-ultoa_          ultoa           _ultoa          d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-tccmp_          _mbccmp         _tccmp          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tccpy_          _mbccpy         _tccpy          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tclen_          _mbclen         _tclen          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcschr          _mbschr         _tcschr         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-mbscol          _mbscmp         _mbscoll        d16 d32 nt  nta ntp         o16 o32         w16 w32 osi     snp
-tcscmp          _mbscmp         _tcscmp         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcscol          _mbscmp         _tcscoll        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcscsp          _mbscspn        _tcscspn        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcsdec          _mbsdec         _tcsdec         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-mbsico          _mbsicmp        _mbsicoll       d16 d32 nt  nta ntp         o16 o32         w16 w32 osi     snp
-tcsicm          _mbsicmp        _tcsicmp        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcsico          _mbsicmp        _tcsicoll       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcsinc          _mbsinc         _tcsinc         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcscle          _mbslen         _tcsclen        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcslwr          _mbslwr         _tcslwr         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcsnbc          _mbsnbcnt       _tcsnbcnt       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcsnca          _mbsnbcat       _tcsncat        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-mbsnbc          _mbsnbcmp       _mbsnbcoll      d16 d32 nt  nta ntp         o16 o32         w16 w32 osi     snp
-tcsncm          _mbsnbcmp       _tcsncmp        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcsnco          _mbsnbcmp       _tcsncoll       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcsncp          _mbsnbcpy       _tcsncpy        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcsncc          _mbsncat        _tcsnccat       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcnccm          _mbsncmp        _tcsnccmp       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcnccn          _mbsnccnt       _tcsnccnt       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-mbsnco          _mbsncmp        _mbsncoll       d16 d32 nt  nta ntp         o16 o32         w16 w32 osi     snp
-tcncco          _mbsncmp        _tcsnccoll      d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcnccp          _mbsncpy        _tcsnccpy       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-mbsnic          _mbsnicmp       _mbsnicoll      d16 d32 nt  nta ntp         o16 o32         w16 w32 osi     snp
-tcsnci          _mbsnicmp       _tcsncicmp      d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcncic          _mbsnicmp       _tcsncicoll     d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcsncs          _mbsnset        _tcsncset       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcsnex          _mbsnextc       _tcsnextc       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-mbsnbi          _mbsnbicmp      _mbsnbicoll     d16 d32 nt  nta ntp         o16 o32         w16 w32 osi     snp
-tcsnic          _mbsnbicmp      _tcsnicmp       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcnico          _mbsnbicmp      _tcsnicoll      d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcsnin          _mbsninc        _tcsninc        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcsnse          _mbsnbset       _tcsnset        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcspbr          _mbspbrk        _tcspbrk        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcsrch          _mbsrchr        _tcsrchr        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcsrev          _mbsrev         _tcsrev         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcsset          _mbsset         _tcsset         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcsspn          _mbsspn         _tcsspn         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcspnp          _mbsspnp        _tcsspnp        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcsstr          _mbsstr         _tcsstr         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcstok          _mbstok         _tcstok         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-tcsupr          _mbsupr         _tcsupr         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
+lseek_          lseek           _lseek          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
+ltoa__          ltoa            _ltoa           d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+ultoa_          ultoa           _ultoa          d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+tccmp_          _mbccmp         _tccmp          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tccpy_          _mbccpy         _tccpy          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tclen_          _mbclen         _tclen          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcschr          _mbschr         _tcschr         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+mbscol          _mbscmp         _mbscoll        d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
+tcscmp          _mbscmp         _tcscmp         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcscol          _mbscmp         _tcscoll        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcscsp          _mbscspn        _tcscspn        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcsdec          _mbsdec         _tcsdec         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+mbsico          _mbsicmp        _mbsicoll       d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
+tcsicm          _mbsicmp        _tcsicmp        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcsico          _mbsicmp        _tcsicoll       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcsinc          _mbsinc         _tcsinc         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcscle          _mbslen         _tcsclen        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcslwr          _mbslwr         _tcslwr         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcsnbc          _mbsnbcnt       _tcsnbcnt       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcsnca          _mbsnbcat       _tcsncat        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+mbsnbc          _mbsnbcmp       _mbsnbcoll      d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
+tcsncm          _mbsnbcmp       _tcsncmp        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcsnco          _mbsnbcmp       _tcsncoll       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcsncp          _mbsnbcpy       _tcsncpy        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcsncc          _mbsncat        _tcsnccat       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcnccm          _mbsncmp        _tcsnccmp       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcnccn          _mbsnccnt       _tcsnccnt       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+mbsnco          _mbsncmp        _mbsncoll       d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
+tcncco          _mbsncmp        _tcsnccoll      d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcnccp          _mbsncpy        _tcsnccpy       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+mbsnic          _mbsnicmp       _mbsnicoll      d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
+tcsnci          _mbsnicmp       _tcsncicmp      d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcncic          _mbsnicmp       _tcsncicoll     d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcsncs          _mbsnset        _tcsncset       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcsnex          _mbsnextc       _tcsnextc       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+mbsnbi          _mbsnbicmp      _mbsnbicoll     d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
+tcsnic          _mbsnbicmp      _tcsnicmp       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcnico          _mbsnbicmp      _tcsnicoll      d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcsnin          _mbsninc        _tcsninc        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcsnse          _mbsnbset       _tcsnset        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcspbr          _mbspbrk        _tcspbrk        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcsrch          _mbsrchr        _tcsrchr        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcsrev          _mbsrev         _tcsrev         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcsset          _mbsset         _tcsset         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcsspn          _mbsspn         _tcsspn         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcspnp          _mbsspnp        _tcsspnp        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcsstr          _mbsstr         _tcsstr         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcstok          _mbstok         _tcstok         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+tcsupr          _mbsupr         _tcsupr         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
 memicm          memicmp         _memicmp        d16 d32 nt  nta ntp         o16 o32         w16 w32
 mkdir_          mkdir           _mkdir          d16 d32 nt  nta ntp         o16 o32         w16 w32
 open__          open            _open           d16 d32 nt  nta ntp         o16 o32         w16 w32
 putenv          putenv          _putenv         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
 putws_          putws           _putws          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
-stat__          stat            _stat           d16 d32 nt  nta ntp         o16 o32         w16 w32 osi     snp
-strdup          __clib_strdup   _strdup         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-cstrdu          __clib_strdup   strdup          d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-cwcsdu          __clib_wcsdup   _wcsdup         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+stat__          stat            _stat           d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
+strdup          __clib_strdup   _strdup         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+cstrdu          __clib_strdup   strdup          d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
+cwcsdu          __clib_wcsdup   _wcsdup         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 strcmp          stricmp         strcmpi         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-stricm          stricmp         _stricmp        d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-strico          stricmp         _stricoll       d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-strlwr          strlwr          _strlwr         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-strnco          strncmp         _strncoll       d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-strnic          strnicmp        _strnicmp       d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-stnico          strnicmp        _strnicoll      d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-strnse          strnset         _strnset        d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-strrev          strrev          _strrev         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-strset          strset          _strset         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-strspn          strspnp         _strspnp        d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-strupr          strupr          _strupr         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+stricm          stricmp         _stricmp        d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+strico          stricmp         _stricoll       d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+strlwr          strlwr          _strlwr         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+strnco          strncmp         _strncoll       d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+strnic          strnicmp        _strnicmp       d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+stnico          strnicmp        _strnicoll      d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+strnse          strnset         _strnset        d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+strrev          strrev          _strrev         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+strset          strset          _strset         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+strspn          strspnp         _strspnp        d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+strupr          strupr          _strupr         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 strcc_          stricmp         strcasecmp                                                              l32
 strncc          strnicmp        strncasecmp                                                             l32
-tolowe          tolower         _tolower        d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-touppe          toupper         _toupper        d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
-tzset_          tzset           _tzset          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-utime_          utime           _utime          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi     snp
+tolowe          tolower         _tolower        d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+touppe          toupper         _toupper        d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+tzset_          tzset           _tzset          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
+utime_          utime           _utime          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 w_acce          _waccess        _w_access       d16 d32 nt  nta ntp         o16 o32         w16 w32
 wcscmp          _wcsicmp        wcscmpi         d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
 wcsico          _wcsicmp        _wcsicoll       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
 wcsnco          wcsncmp         _wcsncoll       d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
 wcnico          _wcsnicmp       _wcsnicoll      d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
-w_fsop          _wfsopen        _w_fsopen       d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp
+w_fsop          _wfsopen        _w_fsopen       d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 w_full          _wfullpath      _w_fullpath     d16 d32 nt  nta ntp         o16 o32         w16 w32
 itow__          _itow           _witoa          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
 ltow__          _ltow           _wltoa          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32

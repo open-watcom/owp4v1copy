@@ -3,7 +3,7 @@
  *
 :include crwat.sp
  */
-:segment SNAP
+:segment SNAP | SNAPDRV
 
 /* We don't support assertions in BPD's. Use the CHECK() macro instead */
 

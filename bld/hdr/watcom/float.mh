@@ -226,6 +226,7 @@ _WCRTLINK extern unsigned _control87(unsigned,unsigned);
 _WCRTLINK extern void     _fpreset(void);
 _WMRTLINK extern unsigned _status87(void);
 _WMRTLINK extern int      _finite(double);
+
 #endif
 
 :include cplusepi.sp

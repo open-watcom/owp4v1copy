@@ -18,5 +18,6 @@ bt_windows    =$(bt_windows_$(processor)) -bt=WINDOWS
 bt_winnt      =-bt=NT
 bt_linux      =-bt=linux
 bt_snap       =-bt=SNAP
+bt_snapdrv    =-bt=SNAP -D__SNAPDRV__
 
 build_target = $(bt_$(system))
