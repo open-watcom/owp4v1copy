@@ -818,6 +818,9 @@ extern bint LoadImageOverlays( void )
     image_info *    curr_image;
     int             image_index;
 
+    /* assume 32-bit addresses until proven otherwise */
+    exeFlags.is_32_bit = TRUE;
+
     image_index = 0;
     while( image_index < CurrSIOData->image_count ) {
         curr_image = CurrSIOData->curr_image;
