@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Execution Sampler data file dump utility.
 *
 ****************************************************************************/
 
@@ -40,6 +39,7 @@
 #include <time.h>
 
 #include "watcom.h"
+#include "banner.h"
 #include "sample.h"
 
 char *Types[] = {
@@ -82,14 +82,15 @@ void main( int argc, char **argv )
     count_info          *count;
 
 
+    puts( banner1w( "Sample File Dump Utility", _WSAMP_VERSION_ ) );
+    puts( banner2( "1989" ) );
+    puts( banner3 );
+    puts( banner3a );
+
     if( argc != 2 && argc != 3 ) {
         puts( "usage: SMPDUMP <sample_file> [-q]" );
         exit( 1 );
     }
-    puts( "WATCOM Sample File Dump Utility  Version 1.1" );
-    puts( "Copyright by WATCOM Systems Inc. 1989, 1990, 1991."
-                                                "  All rights reserved." );
-    puts( "WATCOM is a trademark of WATCOM Systems Inc." );
     data = malloc( 63L*1024+512 );
     quiet = 0;
     if( argc == 3 && strcmp( argv[2], "-q" ) == 0 ) {
