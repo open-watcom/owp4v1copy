@@ -1493,6 +1493,8 @@ addrsetb:
         call    DumpReply2File
 @@pastrregs:
         call    REQ_READ_CPU
+        dec     esi             ; REQ_READ_CPU already incremented esi and
+        inc     ecx             ; decremented ecx - don't do it twice
         call    REQ_READ_FPU
         ret
         endps
@@ -1507,6 +1509,8 @@ addrsetb:
         call    DumpReply2File
 @@pastwregs:
         call    REQ_WRITE_CPU
+        dec     esi             ; REQ_READ_CPU already incremented esi and
+        inc     ecx             ; decremented ecx - don't do it twice
         call    REQ_WRITE_FPU
         ret
         endps
