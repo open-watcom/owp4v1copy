@@ -561,7 +561,7 @@ wvpm.res wvpmj.res : $(hdir)/wvpm.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles)
         @set opath=$(%path)
         @set path=$(lang_root)\binp
 !endif
-        $(rc_os2) -i $(inc_dirs_sys_os2_386) -r $(hdir)\foros2pm.rc .\foros2pm.res
+        $(rc_os2) -i $(lang_root)/h/os2 -r $(hdir)\foros2pm.rc .\foros2pm.res
         del wvpm.i
 
 !ifndef %use_os2tk_stuff
@@ -575,7 +575,7 @@ wvpm.res wvpmj.res : $(hdir)/wvpm.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles)
         @set path=$(lang_root)\binp
 !endif
 
-        $(rc_os2) -i $(inc_dirs_sys_os2_386) -r $(hdir)\foros2pm.rc .\foros2pm.res
+        $(rc_os2) -i $(lang_root)/h/os2 -r $(hdir)\foros2pm.rc .\foros2pm.res
 
 !ifndef %use_os2tk_stuff
         @set path=$(%opath)
