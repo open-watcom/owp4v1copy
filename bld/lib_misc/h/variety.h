@@ -171,6 +171,8 @@
     #define __UNIX__
     #if defined(__386__)
         #define __LINUX_386__
+    #elif defined(__PPC__)
+        #define __LINUX_PPC__
     #else
         #error unrecognized processor for Linux
     #endif
