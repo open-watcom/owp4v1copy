@@ -114,7 +114,11 @@ extra_objs = linkio.obj virtmem.obj
 !ifeq host_OS qnx
 extra_objs = posixio.obj virtmem.obj
 !else
+!ifeq host_OS linux
+extra_objs = posixio.obj virtmem.obj
+!else
 extra_objs = ntio.obj virtpage.obj
+!endif
 !endif
 !endif
 
@@ -199,7 +203,7 @@ extend = exe
 
 # and finally, the miscellaneous macro definitions
 
-inc_dirs = ..\h;$(watcom_dir)\h;$(lang_root)\h;$(inc_dirs_sys_$(host_os))
+inc_dirs = ..\h;$(watcom_dir)\h;$(inc_dirs_sys_$(host_os))
 
 !ifndef execomp
 execomp = $(cc) -i$(inc_dirs)
