@@ -1,9 +1,15 @@
+proj_name = w16api
+
+!include cproj.mif
+
 lib = wlib
 cc = wcc386
 
 .EXTENSIONS : .lbc .def
 
 libs =               &
+        $(sdk_dir)\misc\ctl3d.lib &
+        $(watcom_dir)\lib\winsock.lib &
         ctl3d.lib    &
         winsock.lib
 
@@ -18,6 +24,8 @@ libs =               &
 $(libs):
 
 clean: .SYMBOLIC .EXPLICIT
+        @if exist $(watcom_dir)\lib\winsock.lib @del $(watcom_dir)\lib\winsock.lib
+        @if exist $(sdk_dir)\misc\ctl3d.lib @del $(sdk_dir)\misc\ctl3d.lib
         @if exist *.lbc @del *.lbc
         @if exist *.lib @del *.lib
         @if exist *.bak @del *.bak
