@@ -92,6 +92,14 @@ unsigned __LibMain( unsigned hmod, unsigned termination )
     unsigned    rc;
 
     if( termination != 0 ) {
+        // If we're running with single DGROUP and tried to load
+        // twice, do not run any termination code! Also reset the
+        // process counter so that the already loaded DLL can
+        // terminate properly
+        if( processes > 1 ) {
+            --processes;
+            return( 0 );
+        }
         rc = LibMain( hmod, termination );
         --processes;
         #ifndef __SW_BR
