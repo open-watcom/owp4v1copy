@@ -360,7 +360,7 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
     if( typ1->decl_type == TYPE_VOID || typ2->decl_type == TYPE_VOID ){
     // allow  void ** with any **
         if( top_level==1 || !CompFlags.strict_ANSI ){
-            if ( !assign_compar || top_level > 1 ) {
+            if ( !assign_compar || (top_level > 1 && !CompFlags.extensions_enabled) ) {
                 CWarn1( WARN_PCTYPE_MISMATCH, ERR_PCTYPE_MISMATCH );
             }
             return( ret_val ); // void *  and  anything *
