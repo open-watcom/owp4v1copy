@@ -72,7 +72,7 @@ char *dos4g_path()
     return( "\\dos4gw.exe" );
 }
 
-main( int argc, char *argv[] )
+void main( int argc, char *argv[] )
 {
     char        *av[4];
     auto char   cmdline[128];

@@ -90,7 +90,7 @@ void    R_TrapFiniLG() {
 static  TID     timerThreadID;
 
 
-static APIENTRY timerThread( void *parm ) {
+static void APIENTRY timerThread( void *parm ) {
 //=========================================
 
     parm = parm;

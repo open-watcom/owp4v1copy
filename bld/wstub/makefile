@@ -14,6 +14,6 @@ wstub.exe : wstub.obj
 wstubq.exe : wstubq.obj
         $(linker) file $[@ name $^@ op map sys dos
 wstub.obj : wstub.c
-        $(cc) -bt=dos $[@ -oaxs -fo=$^@
+        $(cc) -bt=dos $[@ -oaxs -w4-we -fo=$^@
 wstubq.obj : wstub.c
-        $(cc) -bt=dos $[@ -oaxs -dQUIET -fo=$^@
+        $(cc) -bt=dos $[@ -oaxs -w4-we -dQUIET -fo=$^@
