@@ -34,14 +34,28 @@
 #include <signal.h>
 #include <os/imports.h>
 
+#if 0
+/* TODO: This is going to require some work to get going with SNAP. We
+ *       may need to build a system where we install dynamic wrappers
+ *       around the signal handlers, maybe on the OS specific side
+ *       of the fence that will translate calling conventions as well
+ *       as signal numbers. Or since we need to translate calling
+ *       conventions before we can call xsignal, maybe that should be
+ *       internal and the OS imports could provide a function to get
+ *       access to a list of supported signal numbers that match up
+ *       with the generic signal numbers for the BPD runtime library.
+ *
+ *       Note of course that all this is moot for device drivers, since
+ *       signals do not make sense for device drivers.
+ */
 _WCRTLINK void (*signal( int sig, void (*func)(int) ))( int )
 {
-    // TODO: FIX THIS BEFORE USING!!
-    return (void*)xsignal( sig, (void*)func );
+    return xsignal( sig, func );
 }
 
 _WCRTLINK int raise( int sig )
 {
     return xraise( sig );
 }
+#endif
 
