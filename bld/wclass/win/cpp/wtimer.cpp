@@ -63,7 +63,9 @@ WEXPORT WTimer::~WTimer() {
 /*************************/
 
     stop();
+#ifndef __NT__
     FreeProcInstance( _procInst );
+#endif
 }
 
 
