@@ -8,24 +8,28 @@ wcl_autodepends = .AUTODEPEND
 !include deftarg.mif
 !include defrule.mif
 
+objs = wcl.obj
 !ifeq host_os dos
-objs = swchar.obj
+objs += swchar.obj
 !endif
 
 extra_c_flags = -s
-extra_c_flags_swchar = -i"../../h"
+
+!ifeq target_cpu i86
+name = wcl.exe
+!else ifeq target_cpu 386
+name = wcl386.exe
+extra_c_flags += -DWCL386
+!else ifeq target_cpu axp
+name = wclaxp.exe
+extra_c_flags += -DWCLAXP
+!endif
+
+extra_c_flags_swchar = -i"../../h;../../dos386.i86;$(comp_cfg_dir)/h"
 
 extra_l_flags = op map
 
 .c: ..;../../c
 
-all: wcl.exe wcl386.exe wclaxp.exe
-
-wcl.exe : wcli86.obj $(objs)
-        $(linker) $(lflags) name $^@ file {$<}
-
-wcl386.exe : wcl386.obj $(objs)
-        $(linker) $(lflags) name $^@ file {$<}
-
-wclaxp.exe : wclaxp.obj $(objs)
+$(name) : $(objs)
         $(linker) $(lflags) name $^@ file {$<}
