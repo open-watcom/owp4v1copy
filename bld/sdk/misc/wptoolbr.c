@@ -280,7 +280,7 @@ toolbar *ToolBarInit( HWND parent )
     appInst = instance;
 
     if( !toolBarClassRegistered ) {
-        wc.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+        wc.style = CS_SAVEBITS | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
         wc.lpfnWndProc = (LPVOID) ToolBarWndProc;
         wc.lpszMenuName = NULL;
         wc.cbClsExtra = 0;
@@ -547,7 +547,7 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
 #ifndef __OS2_PM__
 #if defined (__NT__)
     if ( LOBYTE(LOWORD(GetVersion())) >= 4 && (bar->is_fixed) ) {
-        CreateWindow( className, NULL, ( disp->style ^ WS_BORDER ),
+        CreateWindow( className, NULL, WS_CHILD, //( disp->style ),
             disp->area.left, disp->area.top, width, height,
             bar->owner, (HMENU) HNULL, GET_HINSTANCE( bar->owner ), bar );
     }
