@@ -34,6 +34,7 @@
 #define  INCL_DOSMISC
 #include <os2.h>
 
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -101,13 +102,13 @@ char *LoadTrap(char *trapbuff, char *buff, trap_version *trap_ver)
     strcat(trpname, ".D32");
     if (DosSearchPath(SEARCH_IGNORENETERRS | SEARCH_ENVIRONMENT | SEARCH_CUR_DIRECTORY,
             "PATH", trpname, trppath, sizeof(trppath)) != 0) {
-        strcpy(buff, TC_ERR_CANT_LOAD_TRAP);
+        sprintf( buff, TC_ERR_CANT_LOAD_TRAP, trpname );
         return buff;
         }
 
     rc = DosLoadModule(NULL, 0, trppath, &hmodDll);
     if (rc != 0) {
-        strcpy(buff, TC_ERR_CANT_LOAD_TRAP);
+        sprintf( buff, TC_ERR_CANT_LOAD_TRAP, trppath );
         return buff;
     }
     strcpy(buff, TC_ERR_WRONG_TRAP_VERSION);

@@ -357,8 +357,8 @@ wdpick( OUT_OF_DOS_MEMORY,
     "jOut of DOS Memory" )
 
 wdpick( CANT_LOAD_TRAP_FILE,
-    "Can't load trap file",
-    "jCan't load trap file" )
+    "Cannot load trap file (%s)",
+    "jCannot load trap file (%s)" )
 
 wdpick( INCORRECT_TRAP_FILE_VERSION,
     "Incorrect trap file version",

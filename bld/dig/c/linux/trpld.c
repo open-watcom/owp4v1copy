@@ -71,8 +71,7 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
 
     TrapFile = PE_loadLibrary_handle( GetSystemHandle( filehndl ) );
     if( TrapFile == NULL ) {
-        TrapFile = 0;
-        strcpy( buff, TC_ERR_CANT_LOAD_TRAP );
+        sprintf( buff, TC_ERR_CANT_LOAD_TRAP, trapbuff );
         return( buff );
     }
     InitFunc = PE_getProcAddress( TrapFile, "TrapInit_" );

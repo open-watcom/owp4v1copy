@@ -31,6 +31,7 @@
 
 
 #include <dos.h>
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "tinyio.h"
@@ -72,7 +73,7 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
     parm = (*ptr != '\0') ? ptr + 1 : ptr;
     filehndl = PathOpen( trapbuff, ptr - trapbuff, "trp" );
     if( filehndl <= 0 ) {
-        strcpy( buff, TC_ERR_CANT_LOAD_TRAP );
+        sprintf( buff, TC_ERR_CANT_LOAD_TRAP, trapbuff );
         return( buff );
     }
     strcpy( buff, TC_ERR_WRONG_TRAP_VERSION );

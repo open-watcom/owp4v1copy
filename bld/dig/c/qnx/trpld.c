@@ -82,7 +82,7 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
     parm = (*ptr != '\0') ? ptr + 1 : ptr;
     filehndl = PathOpen( trapbuff, ptr - trapbuff, "trp" );
     if( filehndl <= 0 ) {
-        strcpy( buff, TC_ERR_CANT_LOAD_TRAP );
+        sprintf( buff, TC_ERR_CANT_LOAD_TRAP, trapbuff );
         return( buff );
     }
     TrapCode = ReadInImp( filehndl );
@@ -94,7 +94,7 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
     ld_func = (void *)TrapCode->init_rtn;
     TrapFuncs = ld_func( &TrapCallbacks );
     if( TrapFuncs == NULL ) {
-        strcpy( buff, TC_ERR_CANT_LOAD_TRAP );
+        sprintf( buff, TC_ERR_CANT_LOAD_TRAP, trapbuff );
         return( buff );
     }
     *trap_ver = TrapFuncs->init_func( parm, init_error, trap_ver->remote );
