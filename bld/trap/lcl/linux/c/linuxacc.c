@@ -39,66 +39,90 @@
 #include "mad.h"
 #include "madregs.h"
 
+// TODO: Need signals and execve() in runtime library to make this work!!
+
 static struct {
     unsigned long       in;
     unsigned long       out;
     unsigned long       err;
 } StdPos;
 
-#define MAX_WP  32
+#define MAX_WP          32
+
 //struct _watch_struct    WatchPoints[ MAX_WP ];
-short   WatchCount = 0;
+static short    watchCount = 0;
+static pid_t    pid;
 
-#if 0
-#define MAX_MEM_TRANS   256
-static unsigned MoveMem( int op, char *data, addr_seg segv, addr_off offv, unsigned size )
+static unsigned WriteBuffer( char *data, addr_off offv, unsigned size )
 {
-    unsigned            length;
-    unsigned            trans;
-    unsigned            amount;
-    struct _seginfo     info;
+    int count;
 
-    if( ProcInfo.pid == 0 ) return( 0 );
-    if( qnx_segment_info( ProcInfo.proc, ProcInfo.pid, segv, &info ) == -1 ) {
-        info.nbytes = 0;
-    }
-    if( offv >= info.nbytes ) {
-        size = 0;
-    } else if( offv + size > info.nbytes ) {
-        size = info.nbytes - offv;
-    }
-    length = size;
-    for( ;; ) {
-        if( length == 0 ) break;
-        trans = (length > MAX_MEM_TRANS) ? MAX_MEM_TRANS : length;
-        if( __qnx_debug_xfer( ProcInfo.proc, ProcInfo.pid, op, data, trans, offv, segv ) != 0 ) {
-            /* something went wrong. need to find out how much trans'ed */
-            //NYI
-            amount = 0;
-        } else {
-            amount = trans;
+    /* Write the process memory 32-bits at a time. Kind of silly that
+     * Linux does not have an extended ptrace call to read and write
+     * blocks of data from the debuggee process, but this is what we
+     * need to do for now.
+     */
+    for (count = size; count >= 4; count -= 4) {
+        if (sys_ptrace(PTRACE_POKETEXT, pid, offv, data) != 0)
+            return size - count;
+        data += 4;
+        offv += 4;
         }
-        data += amount;
-        offv += amount;
-        length -= amount;
-        if( amount != trans ) break;
-    }
-    return( size - length );
-}
-#endif
 
-static unsigned WriteBuffer( char *data, addr_seg segv, addr_off offv, unsigned size )
-{
-    // TODO: Write the buffer of data to the debuggee!
-//    return( MoveMem( _DEBUG_MEM_WR, data, segv, offv, size ) );
-    return 0;
+    /* Now handle last partial write if neccesary */
+    if (count) {
+        u_long  val;
+        switch (count) {
+            case 1:
+                val = (u_long)(*((unsigned_8*)data));
+                break;
+            case 2:
+                val = (u_long)(*((unsigned_16*)data));
+                break;
+            case 3:
+                val = ((u_long)(*((unsigned_8*)(data+0))) << 0) |
+                      ((u_long)(*((unsigned_8*)(data+1))) << 8) |
+                      ((u_long)(*((unsigned_8*)(data+2))) << 16);
+                break;
+            }
+        if (sys_ptrace(PTRACE_POKETEXT, pid, offv, &val) != 0)
+            return size - count;
+        }
+    return size;
 }
 
-static unsigned ReadBuffer( char *data, addr_seg segv, addr_off offv, unsigned size )
+static unsigned ReadBuffer( char *data, addr_off offv, unsigned size )
 {
-    // TODO: Read the buffer of data from the debuggee!
-//    return( MoveMem( _DEBUG_MEM_RD, data, segv, offv, size ) );
-    return 0;
+    int count;
+
+    /* Read the process memory 32-bits at a time */
+    for (count = size; count >= 4; count -= 4) {
+        if (sys_ptrace(PTRACE_PEEKTEXT, pid, offv, data) != 0)
+            return size - count;
+        data += 4;
+        offv += 4;
+        }
+
+    /* Now handle last partial read if neccesary */
+    if (count) {
+        u_long  val;
+        if (sys_ptrace(PTRACE_PEEKTEXT, pid, offv, &val) != 0)
+            return size - count;
+        switch (count) {
+            case 1:
+                *((unsigned_8*)data) = (unsigned_8)val;
+                break;
+            case 2:
+                *((unsigned_16*)data) = (unsigned_16)val;
+                break;
+            case 3:
+                *((unsigned_8*)(data+0)) = (unsigned_8)(val >> 0);
+                *((unsigned_8*)(data+1)) = (unsigned_8)(val >> 8);
+                *((unsigned_8*)(data+2)) = (unsigned_8)(val >> 16);
+                break;
+            }
+        }
+    return size - count;
 }
 
 unsigned ReqGet_sys_config()
@@ -126,85 +150,52 @@ unsigned ReqMap_addr()
 {
     map_addr_req    *acc;
     map_addr_ret    *ret;
-//    unsigned        seg;
 
-    // TODO: Not sure what this does. Maps process memory or something!?
+    // TODO: This appears to a segment and offset address in the
+    //       process disk image address space to a real segment/offset
+    //       space in virtual memory. We need to figure out what segment
+    //       this address corresponds to within the process and
+    //       convert the address appropriately (using FlatCS/FlatDS as necessary).
+    //
+    // TODO: See the NT implementation for ideas!
     acc = GetInPtr(0);
     ret = GetOutPtr(0);
     ret->lo_bound = 0;
     ret->hi_bound = ~(addr48_off)0;
     ret->out_addr.offset = acc->in_addr.offset;
-/*  seg = acc->in_addr.segment;
-    switch( seg ) {
-    case MAP_FLAT_CODE_SELECTOR:
-        seg = 0x04;
-        break;
-    case MAP_FLAT_DATA_SELECTOR:
-        seg = 0x0c;
-        break;
-    }
-    if( ProcInfo.pid != 0 ) {
-        switch( acc->handle ) {
-        case MH_DEBUGGEE:
-            if( ProcInfo.flat ) {
-                switch( acc->in_addr.segment & ~PRIV_MASK ) {
-                case 0x04:
-                case MAP_FLAT_CODE_SELECTOR & ~PRIV_MASK:
-                // case MAP_FLAT_DATA_SELECTOR & ~PRIV_MASK: Same as above
-                    ret->out_addr.offset += ProcInfo.code_offset;
-                    break;
-                default:
-                    ret->out_addr.offset += ProcInfo.data_offset;
-                    break;
-                }
-            }
-            break;
-        case MH_SLIB:
-            slib = GetSLibTable( ProcInfo.dbg32 );
-            seg += slib.segment - 4;
-            break;
-        case MH_PROC:
-            seg += 0xE0 - 4;
-            break;
-        }
-    }
-    if( ProcInfo.sflags & _PSF_PROTECTED ) {
-        ret->out_addr.segment = (seg & ~PRIV_MASK) | ProcInfo.priv_level;
-    }*/
     return( sizeof( *ret ) );
 }
 
 unsigned ReqChecksum_mem()
 {
-//    addr_off            offv;
-//    u_short             length;
-//    u_short             size;
-//    int                 i;
-//    u_short             amount;
+    char                buf[256];
+    addr_off            offv;
+    u_short             length;
+    u_short             size;
+    int                 i;
+    u_short             amount;
     u_long              sum;
     checksum_mem_req    *acc;
     checksum_mem_ret    *ret;
 
-    // TODO: Checksum the memory block in debuggee?
     acc = GetInPtr(0);
     ret = GetOutPtr(0);
     sum = 0;
-/*  if( ProcInfo.pid != 0 ) {
+    if( pid != 0 ) {
         length = acc->len;
         offv = acc->in_addr.offset;
         for( ;; ) {
-            if( length == 0 ) break;
-            size = (length > sizeof( UtilBuff )) ? sizeof( UtilBuff ) : length;
-            amount = MoveMem( _DEBUG_MEM_RD, UtilBuff, acc->in_addr.segment,
-                                offv, size );
-            for( i = amount; i != 0; --i ) {
-                sum += UtilBuff[ i - 1 ];
-            }
+            if( length == 0 )
+                break;
+            size = (length > sizeof( buf )) ? sizeof( buf ) : length;
+            amount = ReadBuffer( buf, offv, size );
+            for( i = amount; i != 0; --i )
+                sum += buf[ i - 1 ];
             offv += amount;
             length -= amount;
             if( amount != size ) break;
         }
-    }*/
+    }
     ret->result = sum;
     return( sizeof( *ret ) );
 }
@@ -215,8 +206,8 @@ unsigned ReqRead_mem()
     unsigned        len;
 
     acc = GetInPtr(0);
-    len = ReadBuffer(GetOutPtr(0),acc->mem_addr.segment,acc->mem_addr.offset,acc->len);
-    return( len );
+    len = ReadBuffer(GetOutPtr(0),acc->mem_addr.offset,acc->len);
+    return( acc->len );
 }
 
 unsigned ReqWrite_mem()
@@ -228,34 +219,38 @@ unsigned ReqWrite_mem()
     acc = GetInPtr(0);
     ret = GetOutPtr(0);
     len = GetTotalSize() - sizeof(*acc);
-    ret->len = WriteBuffer( GetInPtr(sizeof(*acc)), acc->mem_addr.segment, acc->mem_addr.offset, len );
+    ret->len = WriteBuffer( GetInPtr(sizeof(*acc)), acc->mem_addr.offset, len );
     return( sizeof( *ret ) );
 }
 
 unsigned ReqRead_io()
 {
-    read_io_req     *acc;
-    void            *ret;
-    unsigned        len;
+    read_io_req *acc;
+    void        *ret;
+    unsigned    len;
 
-    // TODO: Handle I/O port reads for debuggee process!
+    /* Perform I/O on the target machine on behalf of the debugger.
+     * Since there are no kernel API's in Linux to do this, we just
+     * enable IOPL and use regular I/O. We will bail if we can't get
+     * IOPL=3, so the debugger trap file will need to be run as root
+     * before it can be used for I/O access.
+     */
     acc = GetInPtr(0);
     ret = GetOutPtr(0);
-/*  if( __qnx_debug_xfer( ProcInfo.proc, ProcInfo.pid, _DEBUG_IO_RD, &port, acc->len,
-            acc->IO_offset, 0 ) == 0 ) {
+    if (iopl(3) == 0) {
         len = acc->len;
         switch( len ) {
         case 1:
-            *( (unsigned_8 *)ret ) = port.byte;
+            *((unsigned_8*)ret) = inpb( acc->IO_offset );
             break;
         case 2:
-            *( (unsigned_16 *)ret ) = port.word;
+            *((unsigned_16*)ret) = inpw( acc->IO_offset );
             break;
         case 4:
-            *( (unsigned_32 *)ret ) = port.dword;
+            *((unsigned_32*)ret) = inpd( acc->IO_offset );
             break;
         }
-    } else */{
+    } else {
         len = 0;
     }
     return( len );
@@ -268,29 +263,32 @@ unsigned ReqWrite_io()
     void            *data;
     unsigned        len;
 
-    // TODO: Handle I/O port writes for debuggee process!
+    /* Perform I/O on the target machine on behalf of the debugger.
+     * Since there are no kernel API's in Linux to do this, we just
+     * enable IOPL and use regular I/O. We will bail if we can't get
+     * IOPL=3, so the debugger trap file will need to be run as root
+     * before it can be used for I/O access.
+     */
     acc = GetInPtr(0);
     data = GetInPtr( sizeof( *acc ) );
     len = GetTotalSize() - sizeof( *acc );
     ret = GetOutPtr(0);
-    ret->len = 0;
-/*  switch( len ) {
-    case 1:
-        port.byte = *( (unsigned_8 *)data );
-        break;
-    case 2:
-        port.word = *( (unsigned_16 *)data );
-        break;
-    case 4:
-        port.dword = *( (unsigned_32 *)data );
-        break;
-    }
-    if( __qnx_debug_xfer( ProcInfo.proc, ProcInfo.pid, _DEBUG_IO_WR, &port, len,
-            acc->IO_offset, 0 ) != 0 ) {
-        ret->len = 0;
-    } else {
+    if (iopl(3) == 0) {
         ret->len = len;
-    }*/
+        switch( len ) {
+        case 1:
+            outpb( acc->IO_offset, *((unsigned_8*)data) );
+            break;
+        case 2:
+            outpw( acc->IO_offset, *((unsigned_16*)data) );
+            break;
+        case 4:
+            outpd( acc->IO_offset, *((unsigned_32*)data) );
+            break;
+        }
+    } else {
+        ret->len = 0;
+    }
     return( sizeof( *ret ) );
 }
 
@@ -412,10 +410,10 @@ unsigned ReqSet_watch()
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
     for( size = acc->size; size != 0; --size ) {
-//        WatchPoints[ WatchCount ].seg = acc->watch_addr.segment;
-//        WatchPoints[ WatchCount ].off = acc->watch_addr.offset;
+//        WatchPoints[ watchCount ].seg = acc->watch_addr.segment;
+//        WatchPoints[ watchCount ].off = acc->watch_addr.offset;
         ++acc->watch_addr.offset;
-        ++WatchCount;
+        ++watchCount;
     }
     ret->err = 0;
     ret->multiplier = 1000;
@@ -424,7 +422,7 @@ unsigned ReqSet_watch()
 
 unsigned ReqClear_watch()
 {
-    WatchCount = 0; /* assume all are cleared at the same time */
+    watchCount = 0; /* assume all are cleared at the same time */
     return( 0 );
 }
 
