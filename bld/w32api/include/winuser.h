@@ -1990,22 +1990,12 @@ extern "C" {
 #if(WINVER >= 0x0400)
 #define ENDSESSION_LOGOFF    0x80000000
 #endif /* WINVER >= 0x0400 */
-#define OBJID_WINDOW 0x00000000
-#define OBJID_SYSMENU 0xFFFFFFFF
-#define OBJID_TITLEBAR 0xFFFFFFFE
-#define OBJID_MENU 0xFFFFFFFD
-#define OBJID_CLIENT 0xFFFFFFFC
-#define OBJID_VSCROLL 0xFFFFFFFB
-#define OBJID_HSCROLL 0xFFFFFFFA
-#define OBJID_SIZEGRIP 0xFFFFFFF9
-#define OBJID_CARET 0xFFFFFFF8
-#define OBJID_CURSOR 0xFFFFFFF7
-#define OBJID_ALERT 0xFFFFFFF6
-#define OBJID_SOUND 0xFFFFFFF5
 #if(WINVER >= 0x0500)
 #define ASFW_ANY ((DWORD)-1)
 #define LSFW_LOCK 1
 #define LSFW_UNLOCK 2
+#define LWA_COLORKEY 1
+#define LWA_ALPHA 2
 #endif
 #define GA_PARENT 1
 #define GA_ROOT 2
@@ -2959,6 +2949,8 @@ BOOL WINAPI EnumDisplayMonitors(HDC,LPCRECT,MONITORENUMPROC,LPARAM);
 #ifndef NOGDI
 BOOL WINAPI EnumDisplaySettingsA(LPCSTR,DWORD,PDEVMODEA);
 BOOL WINAPI EnumDisplaySettingsW(LPCWSTR,DWORD,PDEVMODEW);
+BOOL WINAPI EnumDisplayDevicesA(LPCSTR,DWORD,PDISPLAY_DEVICEA,DWORD);
+BOOL WINAPI EnumDisplayDevicesW(LPCWSTR,DWORD,PDISPLAY_DEVICEW,DWORD);
 #endif
 int WINAPI EnumPropsA(HWND,PROPENUMPROCA);
 int WINAPI EnumPropsW(HWND,PROPENUMPROCW);
@@ -3189,6 +3181,7 @@ void WINAPI mouse_event(DWORD,DWORD,DWORD,DWORD,DWORD);
 BOOL WINAPI MoveWindow(HWND,int,int,int,int,BOOL);
 DWORD WINAPI MsgWaitForMultipleObjects(DWORD,CONST HANDLE*,BOOL,DWORD,DWORD);
 DWORD WINAPI MsgWaitForMultipleObjectsEx(DWORD,CONST HANDLE*,DWORD,DWORD,DWORD);
+void WINAPI NotifyWinEvent(DWORD,HWND,LONG,LONG);
 DWORD WINAPI OemKeyScan(WORD);
 BOOL WINAPI OemToCharA(LPCSTR,LPSTR);
 BOOL WINAPI OemToCharBuffA(LPCSTR,LPSTR,DWORD);
@@ -3361,6 +3354,7 @@ int WINAPI wvsprintfW(LPWSTR,LPCWSTR,va_list arglist);
 #if(WINVER >= 0x0500)
 BOOL WINAPI AllowSetForegroundWindow(DWORD);
 BOOL WINAPI LockSetForegroundWindow(UINT);
+BOOL WINAPI SetLayeredWindowAttributes(HWND,COLORREF,BYTE,DWORD);
 #endif
 
 #ifdef UNICODE
@@ -3518,6 +3512,7 @@ typedef NONCLIENTMETRICSW NONCLIENTMETRICS,*LPNONCLIENTMETRICS;
 #define ChangeDisplaySettings ChangeDisplaySettingsW
 #define CreateDesktop CreateDesktopW
 #define EnumDisplaySettings EnumDisplaySettingsW
+#define EnumDisplayDevices  EnumDisplayDevicesW
 #endif /* NOGDI */
 #else /* UNICODE */
 #define EDITWORDBREAKPROC EDITWORDBREAKPROCA
@@ -3674,6 +3669,7 @@ typedef NONCLIENTMETRICSA NONCLIENTMETRICS,*LPNONCLIENTMETRICS;
 #define ChangeDisplaySettings ChangeDisplaySettingsA
 #define CreateDesktop CreateDesktopA
 #define EnumDisplaySettings EnumDisplaySettingsA
+#define EnumDisplayDevices  EnumDisplayDevicesA
 #endif /* NOGDI */
 #endif /* UNICODE */
 #endif /* RC_INVOKED */

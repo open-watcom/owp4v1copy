@@ -131,6 +131,7 @@ h\nt\tlhelp32.h
 h\nt\unknwn.h
 h\nt\userenv.h
 h\nt\w32api.h
+h\nt\winable.h
 h\nt\winbase.h
 h\nt\wincon.h
 h\nt\wincrypt.h
@@ -204,6 +205,7 @@ lib386\nt\ntdll.lib
 lib386\nt\odbc32.lib
 lib386\nt\odbccp32.lib
 lib386\nt\ole32.lib
+lib386\nt\oleacc.lib
 lib386\nt\oleaut32.lib
 lib386\nt\olecli32.lib
 lib386\nt\oledlg.lib

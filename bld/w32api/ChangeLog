@@ -1,3 +1,172 @@
+2003-06-02  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/ddk/ntpoapi.h (POWER_INFORMATION_LEVEL): Remove.
+	* include/winnt.h (POWER_INFORMATION_LEVEL): Add.
+	* include/ddk/winddk.h (SINGLE_LIST_ENTRY,SLIST_HEADER):
+	Remove.
+	* include/ddk/ndis.h (NdisAllocateSpinLock): Add missing '\'.
+
+2003-05-30  Mattia Barbon  <mbarbon@dsi.unive.it>
+
+	* lib/oleacc.def: New file.
+	* include/winable.h: New file.
+	* include/oleacc.h: Add extern "C" guard.
+	(NAVDIR_*, ROLE_*, STATE_*): Add missing constants.
+	(AccessibleChildren, AccessibleObjectFromEvent,
+	AccessibleObjectFromPoint, AccessibleObjectFromWindow,
+	CreateStdAccessibleProxy[AW], GetOleaccVersionInfo, GetRoleText[AW],
+	GetStateText[AW], LresultFromObject, ObjectFromLresult,
+	WindowFromAccessibleObject): Add prototypes and UNICODE mappings.
+	* include/winuser.h (NotifyWinEvent): Add prototype.
+	(OBJID_WINDOW, OBJID_SYSMENU, OBJID_TITLEBAR,
+	OBJID_MENU, OBJID_CLIENT, OBJID_VSCROLL, OBJID_HSCROLL,
+	OBJID_SIZEGRIP, OBJID_CARET, OBJID_CURSOR, OBJID_ALERT,
+	OBJID_SOUND): Move from here to...
+	* include/winable.h (OBJID_WINDOW, OBJID_SYSMENU, OBJID_TITLEBAR,
+	OBJID_MENU, OBJID_CLIENT, OBJID_VSCROLL, OBJID_HSCROLL,
+	OBJID_SIZEGRIP, OBJID_CARET, OBJID_CURSOR, OBJID_ALERT,
+	OBJID_SOUND): Here, as per documentation.
+	* lib/test.c: Include winable.h.
+	* lib/user32.def (NotifyWinEvent): Add missing export.
+
+2003-05-30  Bang Jun-Young  <junyoung@netbsd.org>
+
+	* include/winbase.h (HeapCompact): Correct prototype.
+	* include/winnt.h (SINGLE_LIST_ENTRY, SLIST_ENTRY,
+	SLIST_HEADER): Add.
+
+2003-05-27  Andrew C. Stadt <acstadt@sympatico.ca>
+
+	* include/winuser.h (LWA_COLORKEY, LWA_ALPHA): Add defines.
+
+2003-05-25  Bill C. Riemers  <cygwin@docbill.net>
+
+	* include/winuser.h (EnumDisplayDevicesW): Fix typo.
+
+2003-05-23  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winuser.h (EnumDisplayDevices[AW]): Add prototypes.
+	* include/wingdi.h (DISPLAY_DEVICE): UNICODE it.
+
+2003-05-23  Andrew Dunbar <hippietrail@users.sourceforge.net>
+
+	* include/wingdi.h (GCP_RESULTS[AW]) Correct type of
+	lpGlyphs field to LPWSTR.
+
+2003-05-21  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/wincrypt.h (PLAINTEXTKEYBLOB, OPAQUEKEYBLOB,
+	PUBLICKEYBLOBEX, SYMMETRICWRAPKEYBLOB) Add defines.
+	(PP_*): Add defines.
+	(CryptContextAddRef): Add prototype.
+	Thanks to: Shura Zam  <debil_urod@users.sourceforge.net>
+
+2003-05-18  Manu B  <manubee@users.sourceforge.net>
+	
+	* include/commctrl.h (TVSORTCB): Rename old TV_SORTCB structure.
+
+2003-05-18  Bang Jun-Young <junyoung@netbsd.org>
+
+	* include/winbase.h (CREATE_DEFAULT_ERROR_MODE,
+	DEBUG_PROCESS, DEBUG_ONLY_THIS_PROCESS, CREATE_SUSPENDED,
+	DETACHED_PROCESS, CREATE_NEW_CONSOLE, NORMAL_PRIORITY_CLASS,
+	IDLE_PRIORITY_CLASS, HIGH_PRIORITY_CLASS, REALTIME_PRIORITY_CLASS,
+	CREATE_NEW_PROCESS_GROUP, CREATE_UNICODE_ENVIRONMENT,
+	CREATE_SEPARATE_WOW_VDM, CREATE_SHARED_WOW_VDM, CREATE_FORCEDOS,
+	CREATE_NO_WINDOW): Convert to hexadecimal form for better
+	readability.
+	(BELOW_NORMAL_PRIORITY_CLASS, ABOVE_NORMAL_PRIORITY_CLASS,
+	CREATE_BREAKAWAY_FROM_JOB, CREATE_WITH_USERPROFILE): Add.
+
+2003-05-15  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/ddk/ndis.h (NDIS30_MINIPORT_CHARACTERISTICS_S):
+	Unname anonymous unions if NONAMELESSUNION not defined.
+
+2003-05-14  Bang Jun-Young  <junyoung@netbsd.org>
+
+	* include/winbase.h (GMEM_VALID_FLAGS): Add.
+
+2003-05-13  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/prsht.h (PROPSHEETHEADER[AW]: Mark
+	anonymous unions as GCC extension.
+
+2003-05-13  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/oleidl.h  (LPENUMOLEDOCUMENTVIEWS): Remove typedef.
+	(IEnumOleDocumentViews): Remove commented out DECLARE_ENUMERATOR.
+	* include/docobj.h  (LPENUMOLEDOCUMENTVIEWS): Add typedef (previously
+	commented out).
+	(IEnumOleDocumentViews): Add definition using DECLARE_ENUMERATOR.
+
+2003-05-12  Earnie Boyd  <earnie@users.sf.net>
+
+	* include/commctrl.h: (MCSC_BACKGROUND, MCSC_TEXT, MCSC_TITLEBK,
+	MCSC_TITLETEXT, MCSC_MONTHBK, MCSCTRAILTEXT): Define.
+	Thanks to: Robert Wishlaw  <rwishlaw @ shaw . ca>
+
+2003-05-12  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/olectl.h (IOleControl,IOleControlSite,ISimpleFrameSite,
+	IErrorLog,IPropertyBag,IPersistPropertyBag,IPersistStreamInit,
+	IPersistMemory,IPropertyNotifySink,IProvideClassInfo,
+	IProvideClassInfo2,IConnectionPointContainer,
+	IEnumConnectionPoints,IConnectionPoint,IEnumConnections,
+	IClassFactory2,ISpecifyPropertyPages,IPerPropertyBrowsing,
+	IPropertyPageSite,IPropertyPage,IPropertyPage2,IFont,IFontDisp,
+	IPicture,IPictureDisp): Move from here to...
+	* include/ocidl.h (IOleControl,IOleControlSite,ISimpleFrameSite,
+	IErrorLog,IPropertyBag,IPersistPropertyBag,IPersistStreamInit,
+	IPersistMemory,IPropertyNotifySink,IProvideClassInfo,
+	IProvideClassInfo2,IConnectionPointContainer,
+	IEnumConnectionPoints,IConnectionPoint,IEnumConnections,
+	IClassFactory2,ISpecifyPropertyPages,IPerPropertyBrowsing,
+	IPropertyPageSite,IPropertyPage,IPropertyPage2,IFont,IFontDisp,
+	IPicture,IPictureDisp): Here, as per documentation.
+
+2003-05-12  Mattia Barbon  <mbarbon@dsi.unive.it>
+
+	* include/oleauto.h (VarR8FromDec, VarDecFromR8): Add prototypes.
+	* include/winbase.h (TerminateJobObject,
+	AssignProcessToJobObject): Likewise.
+	* include/servprov.h: New header.
+	* lib/test.c: Include servprov.h.
+
+2003-05-10  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/shlguid.h (CGID_ShellServiceObject): Declare.
+	* lib/uuid.c (CGID_ShellServiceObject): Define guid.
+	Thanks to Chris Sutcliffe  <ir0nh34d#users.sourceforge.net> 
+	* include/winuser.h (SetLayeredWindowAttributes): Add prototype.
+	* lib/user32.def (SetLayeredWindowAttributes): Add stub.
+	* lib/uuid.c (CGID_Explorer, CGID_ShellDocView): Define guids.
+
+2003-05-05  Danny Smith  <dannysmith@users.sourceforge.net>
+
+ 	* include/commctrl.h (STATUSCLASSNAME, TOOLBARCLASSNAME,
+	TOOLTIPS_CLASS, TRACKBAR_CLASS, UPDOWN_CLASS, PROGRESS_CLASS,
+	HOTKEY_CLASS): Remove dupicate defines for UNICODE case.
+
+2003-05-02  Steven Edwards  <Steven_Ed4153@yahoo.com>
+
+	* include/richedit.h (EM_FINDTEXTEXW, EM_FINDTEXTW,
+	EM_GETAUTOURLDETECT, EM_GETBIDIOPTIONS, EM_GETEDITSTYLE,
+	EM_GETIMECOLOR, EM_GETIMEOPTIONS, EM_GETPUNCTUATION,
+	EM_GETWORDWRAPMODE, EM_RECONVERSION, EM_SETBIDIOPTIONS,
+	EM_SETEDITSTYLE, EM_SETIMECOLOR, EM_SETIMEOPTIONS,
+	EM_SETPALETTE, EM_SETPUNCTUATION, EM_SETTEXTEX,
+	EM_SETWORDWRAPMODE, RICHEDIT_CLASS10A): Add defines.
+
+2003-05-02  Francois Ferrand  <typz@sourceforge.users.net>
+
+	* include/commctrl.h (TBM_*): Add missing trackbar defines.
+
+2003-05-02  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/cplext.h (CPLPAGE_MOUSE_WHEEL,
+	CPLPAGE_DISPLAY_BACKGROUND): Add defines.
+
 2003-04-30  Danny Smith  <dannysmith@users.sourceforge.net>
 
 	* include/wingdi.h (DC_PEN, DC_BRUSH): Add defines.
@@ -111,7 +280,7 @@
 
 	* lib/uuid.c (IID_IHTML*): Add new GUID definitions.
 	* include/mshtml.h (IHTMLElementCollection, IHTMLLinkElement,
-	IHTMLImgElement): Add intetface definitions.
+	IHTMLImgElement): Add interface definitions.
 
 2003-03-29  Danny Smith  <dannysmith@users.sourceforge.net>
 

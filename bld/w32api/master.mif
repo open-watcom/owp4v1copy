@@ -47,6 +47,7 @@ libs =               &
         odbc32.lib &
         odbccp32.lib &
         ole32.lib &
+        oleacc.lib &
         oleaut32.lib &
         olecli32.lib &
         oledlg.lib &

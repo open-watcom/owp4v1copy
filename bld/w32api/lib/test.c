@@ -79,6 +79,7 @@
 #include <ocidl.h>
 #include <ole2ver.h>
 #include <oleacc.h>
+#include <winable.h>
 #include <olectl.h>
 #include <oledlg.h>
 #include <docobj.h>
@@ -88,6 +89,7 @@
 #include <rpcproxy.h>
 #include <exdisp.h>
 #include <mshtml.h>
+#include <servprov.h>
 
 #else
 #undef BOOL
