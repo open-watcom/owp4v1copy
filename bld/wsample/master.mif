@@ -164,7 +164,7 @@ $(xname).exp : $(objects) $(__MAKEFILES__)
     @for %i in ($(objects)) do @%append tmp.lnk %i
     @%append tmp.lnk $(rsilib)/d16libc.lib
     @%append tmp.lnk $(lang_root)/lib286/dos/clibc.lib
-    @%append tmp.lnk $(wres_dir)/lib/wrescp.lib
+    @%append tmp.lnk $(wres_lib)
     -$(rsidir)\glu @tmp.lnk
 !else ifeq target nov
 $(xname).nlm : $(xname).res  $objects makefile
