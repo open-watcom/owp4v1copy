@@ -85,8 +85,7 @@ class __CLASSTYPE CL_Map;
 
 // The iostream classes are declared this way, rather than including
 // iostream.h, to minimize preprocessing time:
-class istream;
-class ostream;
+#include <iosfwd.h>
 
 
 typedef CL_Object*  CL_ObjectPtr;

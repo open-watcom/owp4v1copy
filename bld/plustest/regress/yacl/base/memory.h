@@ -52,7 +52,8 @@
 //
 // all blocks still allocated at the end of the main program are printed on
 // {\tt cout}.
-class ostream;
+#include <iosfwd.h>
+
 class CL_MemoryLeakChecker {
 public:
     CL_MemoryLeakChecker (ostream& stream);
