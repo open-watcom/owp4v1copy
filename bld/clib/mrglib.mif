@@ -25,7 +25,7 @@ $(libname).lib : $(libs)
     %create tmp.lbc
     @for %i in ($(libs)) do @%append tmp.lbc +%i
 !ifeq linkage dynamic
-    if exist export.def erase export.def
+    @rm -f export.def
 !endif
     $(librarian) $(lib_flags) $(lib_flags_new) $(lib_flags_linkage) $^@ @tmp.lbc +timstamp.obj
 !ifeq linkage dynamic
