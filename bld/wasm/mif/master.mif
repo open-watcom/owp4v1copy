@@ -174,18 +174,15 @@ usagej.u : $(proj_path)/h/usage.sp
 
 msg.gh : $(proj_path)/h/asmshare.msg
 !ifdef __LINUX__
-        perl $(sdk_dir)/misc/msgtoh.pl < $[@ > t.msg
-        sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_RC_BASE-1/' t.msg > $^@
-        rm -f t.msg
+        perl $(sdk_dir)/misc/msgtoh.pl < $[@ | sed -e '/0$$/d' > $^@
 !else
         vi -q -d -i -s $(proj_path)/h/makemsg.vi -p"$^@" $[@
 !endif
 
 wasmmsg.gh : $(proj_path)/h/$(proj_name).msg
 !ifdef __LINUX__
-        perl $(sdk_dir)/misc/msgtoh.pl < $[@ > t.msg
-        sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_WASM_RC_BASE-1/' t.msg > $^@
-        rm -f t.msg
+        perl $(sdk_dir)/misc/msgtoh.pl < $[@ | &
+        sed -e '/0$$/d' -e 's/MSG_RC_BASE/MSG_WASM_RC_BASE/' > $^@
 !else
         vi -q -d -i -s $(proj_path)/h/makewmsg.vi -p"$^@" $[@
 !endif
