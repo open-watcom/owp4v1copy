@@ -15,7 +15,7 @@ cpcmd = cp
 
 all: $(name).exe langdat.exe cdsay.exe sweep.exe wsplice.exe diff.exe comstrip.exe
 
-extra_c_flags = -i"../../pmake"
+inc_dirs = -I"../../pmake"
 
 .c: ../c;../../pmake
 
@@ -24,33 +24,33 @@ sys_os2 = sys.obj sysos2.obj sysdoscd.obj
 sys_nt = sys.obj sysnt.obj sysdoscd.obj
 sys_linux = sys.obj sysposix.obj
 
-OBJS     = builder.obj utils.obj runit.obj $(sys_$(host_os)) pmake.obj
-L_OBJS   = langdat.obj utils.obj $(sys_$(host_os))
+objs     = builder.obj utils.obj runit.obj $(sys_$(host_os)) pmake.obj
+l_objs   = langdat.obj utils.obj $(sys_$(host_os))
 
 $(name).exe : $(OBJS)
-        $(linker) $(lflags) name $^@ op map file {$(OBJS)}
+        $(cl) $(clflags) $(objs)
         $(cpcmd) $^. $(bld_bin)
 
-langdat.exe : $(L_OBJS)
-        $(linker) $(lflags) name $^@ op map file {$(L_OBJS)}
+langdat.exe : $(l_objs)
+        $(cl) $(clflags) $(l_objs)
         $(cpcmd) $^. $(bld_bin)
 
 cdsay.exe : cdsay.obj
-        $(linker) $(lflags) name $^@ op map file { $< }
+        $(cl) $(clflags) $<
         $(cpcmd) $^. $(bld_bin)
 
 sweep.exe : sweep.obj
-        $(linker) $(lflags) name $^@ op map file { $< }
+        $(cl) $(clflags) $<
         $(cpcmd) $^. $(bld_bin)
 
 wsplice.exe : wsplice.obj
-        $(linker) $(lflags) name $^@ op map file { $< }
+        $(cl) $(clflags) $<
         $(cpcmd) $^. $(bld_bin)
 
 diff.exe : diff.obj
-        $(linker) $(lflags) name $^@ op map,quiet file { $< }
+        $(cl) $(clflags) $<
         $(cpcmd) $^. $(bld_bin)
 
 comstrip.exe : comstrip.obj
-        $(linker) $(lflags) name $^@ op map file { $< }
+        $(cl) $(clflags) $<
         $(cpcmd) $^. $(bld_bin)
