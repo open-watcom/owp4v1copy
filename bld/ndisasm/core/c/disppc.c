@@ -1413,12 +1413,12 @@ static unsigned PPCOpHook( dis_handle *h, void *d, dis_dec_ins *ins,
             *p='\0';
             break;
         default:
-	    break;
+        break;
         }
     default:
         break;
     }
-    if( flags & DFF_AXP_SYMBOLIC_REG ) {
+    if( flags & DFF_SYMBOLIC_REG ) {
         op = &ins->op[op_num];
         switch( op->base ) {
         case DR_PPC_r1:
@@ -1442,11 +1442,7 @@ static dis_handler_return PPCDecodeTableCheck( int page, dis_dec_ins *ins )
 static void ByteSwap( dis_handle *h, void *d, dis_dec_ins *ins )
 {
     if( h->need_bswap ) {
-#ifdef __BIG_ENDIAN__
-        CONV_LE_32( ins->opcode );
-#else
-        CONV_BE_32( ins->opcode );
-#endif
+        SWAP_32( ins->opcode );
     }
 }
 

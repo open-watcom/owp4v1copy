@@ -163,7 +163,7 @@ void HandleArgs( char *cmd )
     char *                      ptr;
     bool                        list_file = FALSE;
 
-    DFormat |= DFF_PSEUDO | DFF_AXP_SYMBOLIC_REG;
+    DFormat |= DFF_PSEUDO | DFF_SYMBOLIC_REG;
     cmd = skipBlanks( cmd );
     if( *cmd == '\0' || *cmd == '?' ) {
         printUsage( NULL );
@@ -215,7 +215,7 @@ void HandleArgs( char *cmd )
                             ++cmd;
                             break;
                         case 'r':
-                            DFormat ^= DFF_AXP_SYMBOLIC_REG;
+                            DFormat ^= DFF_SYMBOLIC_REG;
                             ++cmd;
                             break;
                         case 'i':

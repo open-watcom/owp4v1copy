@@ -148,6 +148,9 @@ static void determine_file_specs( elf_file_handle elf_file_hnd, Elf32_Ehdr *e_hd
     case EM_PPC_O:
         elf_file_hnd->machine_type = ORL_MACHINE_TYPE_PPC601;
         break;
+    case EM_MIPS:
+        elf_file_hnd->machine_type = ORL_MACHINE_TYPE_R3000;
+        break;
     default:
         elf_file_hnd->machine_type = ORL_MACHINE_TYPE_NONE;
     }
@@ -345,8 +348,16 @@ static orl_return load_elf_sec_handles( elf_file_handle elf_file_hnd, orl_sec_of
             break;
         case ORL_SEC_TYPE_RELOCS:
         case ORL_SEC_TYPE_RELOCS_EXPADD:
-            associated_index[loop] = s_hdr->sh_info - 1;
-            associated2_index[loop] = s_hdr->sh_link - 1;
+            // Certain funky toolchains produce two reloc sections for each
+            // section containing relocations (both .rel and .rela) and one of
+            // them is empty. We have to ignore the empty one!
+            if( s_hdr->sh_size != 0 ) {
+                associated_index[loop] = s_hdr->sh_info - 1;
+                associated2_index[loop] = s_hdr->sh_link - 1;
+            } else {
+                associated_index[loop] = -1;
+                associated2_index[loop] = -1;
+            }
             break;
         default:
             break;

@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  ELF symbol and relocation (x86 and PPC) handling.
+* Description:  ELF format low level (symbols and relocations) processing.
 *
 ****************************************************************************/
 
@@ -266,12 +266,40 @@ static orl_reloc_type convert386Reloc( elf_reloc_type elf_type ) {
 }
 
 
+static orl_reloc_type convertMIPSReloc( elf_reloc_type elf_type ) {
+    switch( elf_type ) {
+    case R_MIPS_NONE:
+        return( ORL_RELOC_TYPE_ABSOLUTE );
+    case R_MIPS_16:
+        return( ORL_RELOC_TYPE_WORD_16 );
+    case R_MIPS_32:
+        return( ORL_RELOC_TYPE_WORD_32 );
+    case R_MIPS_REL32:
+        return( ORL_RELOC_TYPE_REL_32 );
+    case R_MIPS_HI16:
+        return( ORL_RELOC_TYPE_HALF_HI );
+    case R_MIPS_LO16:
+        return( ORL_RELOC_TYPE_HALF_LO );
+    case R_MIPS_GOT16:
+        return( ORL_RELOC_TYPE_GOT_16 );
+    case R_MIPS_CALL16:
+        return( ORL_RELOC_TYPE_GOT_16 );
+    default:
+        assert( 0 );
+    }
+    return( ORL_RELOC_TYPE_NONE );
+}
+
+
 orl_reloc_type ElfConvertRelocType( elf_file_handle elf_file_hnd, elf_reloc_type elf_type ) {
     switch( elf_file_hnd->machine_type ) {
     case ORL_MACHINE_TYPE_PPC601:
         return( convertPPCReloc( elf_type ) );
     case ORL_MACHINE_TYPE_I386:
         return( convert386Reloc( elf_type ) );
+    case ORL_MACHINE_TYPE_R3000:
+    case ORL_MACHINE_TYPE_R4000:
+        return( convertMIPSReloc( elf_type ) );
     default:
         assert( 0 );
     }

@@ -24,17 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  Memory references for Alpha AXP CPUs.
+* Description:  Memory references for MIPS CPUs.
 *
 ****************************************************************************/
 
 
 refpick( BYTE, "" )
+refpick( HALF, "" )
 refpick( WORD, "" )
-refpick( LWORD, "" )
-refpick( QWORD, "" )
-refpick( FFLOAT, "" )
-refpick( GFLOAT, "" )
-refpick( DFLOAT, "" )
+refpick( DWORD, "" )
 refpick( SFLOAT, "" )
-refpick( TFLOAT, "" )
+refpick( DFLOAT, "" )

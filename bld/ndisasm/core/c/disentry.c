@@ -50,6 +50,9 @@ extern const dis_cpu_data       JVMData;
 #if DISCPU & DISCPU_sparc
 extern const dis_cpu_data       SPARCData;
 #endif
+#if DISCPU & DISCPU_mips
+extern const dis_cpu_data       MIPSData;
+#endif
 
 long SEX( unsigned long v, unsigned bit )
 {
@@ -122,6 +125,11 @@ dis_return DisInit( dis_cpu cpu, dis_handle *h, bool swap_bytes )
         h->d = &SPARCData;
         break;
 #endif
+#if DISCPU & DISCPU_mips
+    case DISCPU_mips:
+        h->d = &MIPSData;
+        break;
+#endif
     default:
         return( DR_FAIL );
     }
@@ -145,6 +153,7 @@ void DisDecodeInit( dis_handle *h, dis_dec_ins *ins )
     case DISCPU_axp:
     case DISCPU_ppc:
     case DISCPU_sparc:
+    case DISCPU_mips:
         ins->size = sizeof( unsigned_32 );
         break;
     }

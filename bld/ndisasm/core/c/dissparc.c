@@ -300,7 +300,7 @@ static unsigned SPARCFlagHook( dis_handle *h, void *d, dis_dec_ins *ins,
 
 static dis_register sparcTranslate( dis_register reg ) {
 
-    if( reg >= DR_SPARC_r0 && reg < DR_SPARC_r31 ) {
+    if( reg >= DR_SPARC_r0 && reg <= DR_SPARC_r31 ) {
         reg += DR_SPARC_g0 - DR_SPARC_r0;
         switch( reg ) {
         case DR_SPARC_i6:
@@ -321,12 +321,12 @@ static unsigned SPARCOpHook( dis_handle *h, void *d, dis_dec_ins *ins,
 {
     dis_operand *op;
 
-    if( flags & DFF_AXP_SYMBOLIC_REG ) {
+    if( flags & DFF_SYMBOLIC_REG ) {
         op = &ins->op[op_num];
-        if( op->base >= DR_SPARC_r0 && op->base < DR_SPARC_r31 ) {
+        if( op->base >= DR_SPARC_r0 && op->base <= DR_SPARC_r31 ) {
             op->base = sparcTranslate( op->base );
         }
-        if( op->index >= DR_SPARC_r0 && op->index < DR_SPARC_r31 ) {
+        if( op->index >= DR_SPARC_r0 && op->index <= DR_SPARC_r31 ) {
             op->index = sparcTranslate( op->index );
         }
     }
@@ -341,11 +341,7 @@ static dis_handler_return SPARCDecodeTableCheck( int page, dis_dec_ins *ins )
 static void ByteSwap( dis_handle *h, void *d, dis_dec_ins *ins )
 {
     if( h->need_bswap ) {
-#ifdef __BIG_ENDIAN__
-        CONV_LE_32( ins->opcode );
-#else
-        CONV_BE_32( ins->opcode );
-#endif
+        SWAP_32( ins->opcode );
     }
 }
 

@@ -634,6 +634,14 @@ static return_val initORL( void )
                     QuoteChar = '\"';
                 }
                 break;
+            case ORL_MACHINE_TYPE_R3000:
+            case ORL_MACHINE_TYPE_R4000:
+                if( DisInit( DISCPU_mips, &DHnd, byte_swap ) != DR_OK ) {
+                    ORLFini( ORLHnd );
+                    PrintErrorMsg( OKAY, WHERE_UNSUPPORTED_PROC );
+                    return( ERROR );
+                }
+                break;
             case ORL_MACHINE_TYPE_I386:
             case ORL_MACHINE_TYPE_I8086:
                 if( DisInit( DISCPU_x86, &DHnd, byte_swap ) != DR_OK ) {

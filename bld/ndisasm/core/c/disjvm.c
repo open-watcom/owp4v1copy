@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Instruction decoding for Java Virtual Machine.
 *
 ****************************************************************************/
 
@@ -287,5 +286,5 @@ static unsigned JVMPostOpHook( dis_handle *h, void *d, dis_dec_ins *ins,
 }
 
 const dis_cpu_data JVMData = {
-    JVMRangeTable, JVMRangeTablePos, JVMPreprocHook, JVMDecodeTableCheck, JVMInsHook, JVMFlagHook, JVMOpHook, JVMPostHook, &JVMMaxInsName, 1
+    JVMRangeTable, JVMRangeTablePos, JVMPreprocHook, JVMDecodeTableCheck, JVMInsHook, JVMFlagHook, JVMOpHook, JVMPostOpHook, &JVMMaxInsName, 1
 };
