@@ -16,7 +16,7 @@ $(libname).lib : $(objs) $(libs) .precious
     $(librarian) $(lib_flags) $(lib_flags_linkage) $^@ $(objs) $(libs)
 !ifeq linkage dynamic
     vi -q -s $(lib_misc_dir)\vi\export.vi tmp.def
-    cat export.def tmp.def > tmp2.def
+    cat ..\..\..\export.$(processor) tmp.def > tmp2.def
     sort < tmp2.def > tmp3.def
     -uniq < tmp3.def > export.def
     @erase tmp.def
