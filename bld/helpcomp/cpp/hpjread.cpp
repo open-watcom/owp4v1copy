@@ -31,7 +31,12 @@
 
 #include <stdlib.h>
 #include <ctype.h>
+#ifdef __UNIX__
+#include <dirent.h>
+#include <unistd.h>
+#else
 #include <direct.h>
+#endif
 #include "hpjread.h"
 #include "hcerrors.h"
 #include "parsing.h"
