@@ -90,6 +90,9 @@ OS2_TK = dummy
 !ifdef dep_$(dotarget)
 .BEFORE
     @set GMLLIB=$(gml_lib);
+!ifeq docs_verbose 1
+    @echo GMLLIB=$(gml_lib);
+!endif
 !ifneq header 1
     @echo **************************************************************
     @echo $(dotarget) : $(hbook)/$(book_src) : $(book_title)
@@ -221,6 +224,9 @@ $(hbook).htm $(hbook).h : $(book_objs) $(proj_objs)
 
 $(hbook).ps : $(book_objs) $(book_objs_ps) $(proj_objs)
     @set GMLINC=$(book_incs);$(whelp_incs);$(gml_incs)
+!ifeq docs_verbose 1
+    @echo GMLINC=$(book_incs);$(whelp_incs);$(gml_incs)
+!endif
     %make prepare_wgml_opts
     -$(wgml) $(book_src) ( file $(optfile_wgml)
 
@@ -400,6 +406,8 @@ prepare_wgml_opts : .PROCEDURE
 !endif
 !ifeq hbook cpplib
     @%append $(optfile_wgml) ( setsymbol target DOS
+!else ifeq hbook guitool
+    @%append $(optfile_wgml) ( setsymbol allinone 1
 !endif
 #
 # details about wgml processing
@@ -439,6 +447,9 @@ compile_gml_to_xxx : .PROCEDURE
     @if not exist $*.tbl @%create $*.tbl
     @if not exist $*.kw @%create $*.kw
     @set GMLINC=.;$(whelp_incs);$(gml_lib);$(hlp_incs);$(book_incs);$(gml_incs);
+!ifeq docs_verbose 1
+    @echo GMLINC=.;$(whelp_incs);$(gml_lib);$(hlp_incs);$(book_incs);$(gml_incs);
+!endif
     @%make prepare_wgml_opts
     -$(wgml) $(book_src) ( file $(optfile_wgml)
     @%make prepare_whpcvt_opts
