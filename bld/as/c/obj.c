@@ -228,8 +228,8 @@ void ObjEmitLabel( sym_handle sym ) {
     doStackLabel( sym, type, linkage );
 }
 
-void ObjEmitNumericLabel( int_32 label_num ) {
-//********************************************
+void ObjEmitNumericLabel( uint_32 label_num ) {
+//*********************************************
 // Stacks up the numeric label in the list for ObjEmitData to emit
 
     owl_sym_type        type;
