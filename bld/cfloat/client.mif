@@ -1,5 +1,31 @@
-# .mif file for clients
+#
+# CFLOAT library
+#
 cfloat_lib_386 = $(cfloat_dir)/osi386/cf.lib
 cfloat_lib_axp = $(cfloat_dir)/osiaxp/cf.lib
-cfloat_lib     = $(cfloat_lib_$(host_CPU))
+
+#
+# CFLOAT dependencies
+#
+cfloat_dep_386 = $(cfloat_dir)/osi386/compile.tim
+cfloat_dep_axp = $(cfloat_dir)/osiaxp/compile.tim
+
+#
+# CFLOAT run-time DLL used
+#
+!ifeq $(proj_name)_rtdll 1
+!endif
+
+#
+!ifdef bootstrap
+cfloat_lib = $(cfloat_dir)/dw/$(%OBJDIR)/cf.lib
+cfloat_dep = $(cfloat_dir)/dw/$(%OBJDIR)/compile.tim
+!else ifdef dwarf_dw_lib_$(host_os)_$(host_cpu)
+cfloat_lib = $(cfloat_lib_$(host_os)_$(host_cpu))
+cfloat_dep = $(cfloat_dep_$(host_os)_$(host_cpu))
+!else
+cfloat_lib = $(cfloat_lib_$(host_cpu))
+cfloat_dep = $(cfloat_dep_$(host_cpu))
+!endif
+
 cfloat_include = $(cfloat_dir)/h
