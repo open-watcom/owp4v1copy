@@ -46,15 +46,15 @@
 #include <string.h>
 
 #ifdef __386__
- #define OUTFILE        "..\\h\\code386.gh"
+ #define OUTFILE        "../h/code386.gh"
 #else
- #define OUTFILE        "..\\h\\codei86.gh"
+ #define OUTFILE        "../h/codei86.gh"
 #endif
 
 struct bursts {
-        char    *defs;
-        char    *name;
-        char    *burst;
+        unsigned char    *defs;
+        unsigned char    *name;
+        unsigned char    *burst;
 };
 extern struct bursts Functions[];
 
@@ -64,7 +64,7 @@ main()
     FILE        *fp;
     int         i;
     int         len;
-    char        *p;
+    unsigned char *p;
     struct bursts *cb;
 
     fp = fopen( OUTFILE, "w" );
