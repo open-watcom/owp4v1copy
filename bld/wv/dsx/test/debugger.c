@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  DOS protected mode debugging test app.
+* Description:  DOS protected mode debugging test app (16-bit executable).
 *
 ****************************************************************************/
 
@@ -39,11 +39,8 @@
 #include <io.h>
 #include "tinyio.h"
 
-#define _PUSH_BP        0x55
-#define _POP_BP         0x5d
 #define RM_STACK_SIZE   ( 8 * 1024 )
 #define MAX_STATE_SIZE  100
-#define BUFF_SIZE       10
 #define NB_VECTORS      256
 #define SAVE_STATE      0
 #define RESTORE_STATE   1
@@ -249,6 +246,7 @@ extern void main( void )
         if( !getaddrs() ) {
             _debug( "could not get raw switch and state save addresses" );
         } else {
+
             segread( &PMRegs );
             hook_vects( MK_FP( PMRegs.cs, FP_OFF( &PM66Handler ) ),
                         &rm_66_handler, &OldPMHandler, &OldRMHandler );
