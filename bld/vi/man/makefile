@@ -20,7 +20,7 @@ vi.ps : vi.gml settings.gml intro.gml basic.gml &
     @%create $(optsfile)
     @%append $(optsfile) ( file nb7x9ps
     @%append $(optsfile) ( index
-    @%append $(optsfile) ( passes 3
+    @%append $(optsfile) ( passes 2
     @%append $(optsfile) ( cpinch 20
     @%append $(optsfile) ( verbose
     @%append $(optsfile) ( statistics
