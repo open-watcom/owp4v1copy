@@ -74,12 +74,25 @@ static uint BldObjString( aux_info *aux, char *name, uint len,
     for(;;) {
         if( idx >= buff_size - 1 ) break;
         if( *pattern == NULLCHAR ) break;
-        if( (*pattern == '*') || (*pattern == '^') ) {
+        if( *pattern == '^' ) {
             count = len;
             if( idx + count > buff_size - 1 ) {
                 count = buff_size - idx - 1;
             }
             memcpy( &buff[idx], name, count );
+            idx += count;
+        } else if( *pattern == '*' ) {
+            count = len;
+            if( idx + count > buff_size - 1 ) {
+                count = buff_size - idx - 1;
+            }
+
+            if( aux->sym_len > 0 ) {
+                memcpy( &buff[idx], aux->sym_name, aux->sym_len );
+            } else {
+                memcpy( &buff[idx], name, count );
+            }
+
             idx += count;
         } else if( *pattern == '!' ) {
             count = len;

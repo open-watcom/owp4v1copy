@@ -41,11 +41,11 @@
 hw_reg_set              StackParms[] = { HW_D( HW_EMPTY ) };
 
 #if _TARGET == _8086 || _TARGET == _80386
-  char                  IF_names[] = "IF@*";
-  char                  IF_Xnames[] = "IF@X*";
+  char                  IF_names[] = "IF@^";
+  char                  IF_Xnames[] = "IF@X^";
 #elif _TARGET == _AXP || _TARGET == _PPC
-  char                  IF_names[] = "_IF_*";
-  char                  IF_Xnames[] = "_IF_X*";
+  char                  IF_names[] = "_IF_^";
+  char                  IF_Xnames[] = "_IF_X^";
 #else
   #error Unknown OS
 #endif
@@ -131,7 +131,7 @@ aux_info                RtRtnInfo = {
         &RtRtnParms,
         NULL,
         HW_D( HW_SI ),
-        "RT@*",
+        "RT@^",
         NULL,
         0 };
 
@@ -143,7 +143,7 @@ aux_info                RtStopInfo = {
         &RtRtnParms,
         NULL,
         HW_D( HW_SI ),
-        "RT@*",
+        "RT@^",
         NULL,
         0 };
 
@@ -155,7 +155,7 @@ aux_info                RtVarInfo = {
         &StackParms,
         NULL,
         HW_D( HW_SI ),
-        "RT@*",
+        "RT@^",
         NULL,
         0 };
 
@@ -167,7 +167,7 @@ aux_info                CoRtnInfo = {
         &RtRtnParms,
         NULL,
         HW_D( HW_SI ),
-        "RT@*",
+        "RT@^",
         NULL,
         0 };
 
@@ -245,7 +245,7 @@ aux_info                DefaultInfo = {
         NULL,
         HW_D( HW_SI ),
 #endif
-        "*",
+        "^",
         NULL,
         0 };
 
@@ -341,7 +341,7 @@ aux_info                RtRtnInfo = {
         &RtRtnParms,
         NULL,
         HW_D( HW_ESI ),
-        "RT@*",
+        "RT@^",
         NULL,
         0 };
 
@@ -353,7 +353,7 @@ aux_info                RtStopInfo = {
         &RtRtnParms,
         NULL,
         HW_D( HW_ESI ),
-        "RT@*",
+        "RT@^",
         NULL,
         0 };
 
@@ -365,7 +365,7 @@ aux_info                RtVarInfo = {
         &StackParms,
         NULL,
         HW_D( HW_ESI ),
-        "RT@*",
+        "RT@^",
         NULL,
         0 };
 
@@ -377,7 +377,7 @@ aux_info                CoRtnInfo = {
         &RtRtnParms,
         NULL,
         HW_D( HW_ESI ),
-        "RT@*",
+        "RT@^",
         NULL,
         0 };
 
@@ -455,7 +455,7 @@ aux_info                DefaultInfo = {
         NULL,
         HW_D( HW_ESI ),
 #endif
-        "*",
+        "^",
         NULL,
         0 };
 
@@ -480,7 +480,7 @@ aux_info                RtRtnInfo = {
         &RtRtnParms,
         NULL,
         HW_D( HW_EMPTY ),
-        "__RT_*",
+        "__RT_^",
         NULL,
         0 };
 
@@ -492,7 +492,7 @@ aux_info                RtStopInfo = {
         &RtRtnParms,
         NULL,
         HW_D( HW_EMPTY ),
-        "__RT_*",
+        "__RT_^",
         NULL,
         0 };
 
@@ -504,7 +504,7 @@ aux_info                RtVarInfo = {
         &StackParms,
         NULL,
         HW_D( HW_EMPTY ),
-        "__RT_*",
+        "__RT_^",
         NULL,
         0 };
 
@@ -516,7 +516,7 @@ aux_info                CoRtnInfo = {
         &RtRtnParms,
         NULL,
         HW_D( HW_EMPTY ),
-        "__RT_*",
+        "__RT_^",
         NULL,
         0 };
 
@@ -594,7 +594,7 @@ aux_info                DefaultInfo = {
         NULL,
         HW_D( HW_EMPTY ),
 #endif
-        "*",
+        "^",
         NULL,
         0 };
 
