@@ -99,14 +99,19 @@ int __CacheOSTZ( void )
     return( old_flag );
 }
 
-static void tryOSTimeZone( void )
+static int tryOSTimeZone( char *tz )
 {
     if( tzFlag.cache_OS_TZ && tzFlag.have_OS_TZ ) {
         /* calling the OS can be expensive and many programs don't care */
-        return;
+        return( 1 );
     }
     tzFlag.have_OS_TZ = 1;
-#ifdef __NT__
+#ifndef __LINUX__
+    if ( tz != NULL ) {
+        return( 0 );
+    }
+#endif
+#if defined( __NT__ )
     {
         auto TIME_ZONE_INFORMATION  tz_info;
         size_t                      rc;
@@ -142,8 +147,10 @@ static void tryOSTimeZone( void )
             _RWD_dst_adjust = 60L * 60L;
         }
 
-        return;
+        return( 1 );
     }
+#elif defined (__LINUX__)
+    return( __read_tzfile( tz ) );
 #endif
 }
 
@@ -154,9 +161,7 @@ _WCRTLINK void tzset( void )
         char    *tz;
 
         tz = getenv( "TZ" );
-        if( tz == NULL ) {
-            tryOSTimeZone();
-        } else {
+        if( ! tryOSTimeZone( tz ) && tz != NULL ) {
             __parse_tz( tz );
         }
     #endif

@@ -46,6 +46,10 @@ _WCRTLINK struct tm *_localtime( const time_t *timer, struct tm *t )
 
     tzset();
     tod = *timer;
+    t->tm_isdst = -1;
+#ifdef __LINUX__
+    __check_tzfile( tod, t );
+#endif
     __brktime( DAYS_FROM_1900_TO_1970, tod, _RWD_timezone, t );
 
     if( __isindst( t ) ) {

@@ -100,10 +100,7 @@ _WCRTLINK time_t mktime( struct tm *t )
     tzset();
     seconds += _RWD_timezone;       /* add in seconds from GMT */
     /* if we are in d.s.t. then subtract __dst_adjust from seconds */
-    if( t->tm_isdst < 0 ) {         /* if we are not sure */
-        __isindst( t );             /* - determine if we are in d.s.t. */
-    }
-    if( t->tm_isdst > 0 ) {
+    if( __isindst( t ) ) {          /* - determine if we are in d.s.t. */
         seconds -= _RWD_dst_adjust;
     }
     while( seconds < 0 ) {

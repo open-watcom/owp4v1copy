@@ -153,6 +153,10 @@ int __isindst( struct tm *t )
     struct tm *start;
     struct tm *end;
 
+    // already determined -- if we are sure
+    if ( t->tm_isdst >= 0 ) {
+        return( t->tm_isdst );
+    }
     dst = 0;
     // if zone doesn't have a daylight savings period
     if( _RWD_daylight == 0 ) {
