@@ -122,7 +122,7 @@ static WREHintItem WREHints[] =
 ,   { IDM_LOAD_SYMBOLS          , WRE_HINT_LOAD_SYMBOLS         }
 ,   { IDM_EDIT_SYMBOLS          , WRE_HINT_VIEW_SYMBOLS         }
 ,   { IDM_SAVE_SYMBOLS          , WRE_HINT_WRITE_SYMBOLS        }
-,   { -1                        , NULL                          }
+,   { -1                        , 0                             }
 };
 
 static WREPopupHintItem WREPopupHints[] =

@@ -646,7 +646,7 @@ long WINIEXP EAtomWndProc( HWND wnd, unsigned message,
         break;
 
     }
-    return( NULL );
+    return( 0L );
   }
 
 extern void InitEAtom()
@@ -657,7 +657,7 @@ extern void InitEAtom()
   {
     WNDCLASS wc;
 
-    wc.style = NULL;
+    wc.style = 0;
     wc.lpfnWndProc = EAtomWndProc;      /* Function to retrieve messages for*/
                                         /* windows of this class.           */
     wc.cbClsExtra = 0;                  /* No per-class extra data.         */

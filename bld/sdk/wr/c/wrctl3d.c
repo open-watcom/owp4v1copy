@@ -207,7 +207,7 @@ WORD WR_EXPORT WRCtl3dGetVer( void )
     if( wrCtl3dGetVer ) {
         return( wrCtl3dGetVer() );
     }
-    return( NULL );
+    return( 0 );
 }
 
 BOOL WR_EXPORT WRCtl3dEnabled( void )
@@ -255,7 +255,7 @@ LONG WR_EXPORT WRCtl3dDlgFramePaint( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
     if( wrCtl3dDlgFramePaint ) {
         return( wrCtl3dDlgFramePaint( hwnd, msg, wp, lp ) );
     }
-    return( NULL );
+    return( 0L );
 }
 
 BOOL WR_EXPORT WRCtl3dAutoSubclass(HANDLE hndl )

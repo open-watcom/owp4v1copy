@@ -331,7 +331,7 @@ BOOL IEHData2Mem( HDDEDATA hData, void **mem, uint_32 *size )
 
     *size = (uint_32)DdeGetData( hData, NULL, 0, 0 );
     if( *size == 0 ) {
-        return( NULL );
+        return( FALSE );
     }
 
     *mem = MemAlloc( *size );
@@ -449,7 +449,7 @@ BOOL IEStartDDEEditSession( void )
     ok = ( EditFormat != DDENone );
 
     if( ok ) {
-        hData = DdeClientTransaction( NULL, (HSZ)NULL, IEClientConv, hFileItem,
+        hData = DdeClientTransaction( NULL, 0, IEClientConv, hFileItem,
                                       IEClipFormats[EditFormat].format,
                                       XTYP_REQUEST, TIME_OUT, &ret );
         ok = ( hData != (HDDEDATA)NULL );
@@ -461,7 +461,7 @@ BOOL IEStartDDEEditSession( void )
     }
 
     if( ok ) {
-        hData = DdeClientTransaction( NULL, (HSZ)NULL, IEClientConv, hDataItem,
+        hData = DdeClientTransaction( NULL, 0, IEClientConv, hDataItem,
                                       IEClipFormats[EditFormat].format,
                                       XTYP_REQUEST, TIME_OUT, &ret );
     }

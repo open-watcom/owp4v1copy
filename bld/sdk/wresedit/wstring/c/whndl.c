@@ -119,7 +119,7 @@ WStringHandle WGetEditSessionHandle ( WStringEditInfo *info )
     WHndlInfo *hinfo;
 
     if ( !info || !( hinfo = WFindHndlInfoR ( info ) ) ) {
-        return ( NULL );
+        return ( 0 );
     }
 
     return ( hinfo->hndl );
