@@ -33,10 +33,12 @@ cdsay .
     <CPCMD> <devdir>/vi/ctags/dos386/ctags.exe <relroot>/rel2/binw/ctags.exe
     <CPCMD> <devdir>/vi/ctags/nt386/ctags.exe <relroot>/rel2/binnt/ctags.exe
 #    <CPCMD> <devdir>/vi/ctags/ntaxp/ctags.exe <relroot>/rel2/axpnt/ctags.exe
+    <CPCMD> <devdir>/vi/ctags/linux386/ctags.exe <relroot>/rel2/binl/ctags.exe
+
     <CPCMD> <devdir>/vi/bind/dosi86/edbind.exe <relroot>/rel2/binw/edbind.exe
     <CPCMD> <devdir>/vi/bind/nt386/edbind.exe <relroot>/rel2/binnt/edbind.exe
 #    <CPCMD> <devdir>/vi/bind/os2386/edbind.exe <relroot>/rel2/binp/edbind.exe
-#    <CPCMD> <devdir>/vi/bind/linux386/edbind.exe <relroot>/rel2/binl/edbind.
+    <CPCMD> <devdir>/vi/bind/linux386/edbind.exe <relroot>/rel2/binl/edbind.
 
     <CPCMD> <devdir>/vi/dat/v*.cmd <relroot>/rel2/binp/
     <CPCMD> <devdir>/vi/dat/v*.bat <relroot>/rel2/binw/

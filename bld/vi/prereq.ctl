@@ -20,6 +20,8 @@ set BUILD_PLATFORM=
     wmake -h
     <CPCMD> parsectl.exe <owroot>\bld\build\bin\
     <CPCMD> parsedyn.exe <owroot>\bld\build\bin\
+    cdsay <PROJDIR>\bind\dos386
+    wmake -h
     cdsay <PROJDIR>
     if not exist <PROJDIR>\<OBJDIR> mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
@@ -33,6 +35,8 @@ set BUILD_PLATFORM=
     wmake -h
     <CPCMD> parsectl.exe <owroot>\bld\build\binp\
     <CPCMD> parsedyn.exe <owroot>\bld\build\binp\
+    cdsay <PROJDIR>\bind\os2386
+    wmake -h
     cdsay <PROJDIR>
     if not exist <PROJDIR>\<OBJDIR> mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
@@ -46,6 +50,8 @@ set BUILD_PLATFORM=
     wmake -h
     <CPCMD> parsectl.exe <owroot>\bld\build\binnt\
     <CPCMD> parsedyn.exe <owroot>\bld\build\binnt\
+    cdsay <PROJDIR>\bind\nt386
+    wmake -h
     cdsay <PROJDIR>
     if not exist <PROJDIR>\<OBJDIR> mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
@@ -59,6 +65,8 @@ set BUILD_PLATFORM=
     wmake -h
     <CPCMD> parsectl.exe <owroot>/bld/build/binl/parsectl
     <CPCMD> parsedyn.exe <owroot>/bld/build/binl/parsedyn
+    cdsay <PROJDIR>/bind/linux386
+    wmake -h
     cdsay <PROJDIR>
     mkdir -p <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
@@ -68,6 +76,11 @@ set BUILD_PLATFORM=
 
 [ BLOCK <1> clean ]
 #==================
+    cdsay <PROJDIR>/ctl
+    pmake -d all -h clean
+    cdsay <PROJDIR>/bind
+    pmake -d all -h clean
+    cdsay <PROJDIR>
     rm -f -r <PROJDIR>/<OBJDIR>
     @rm -f <owroot>/bld/build/bin/bvi.*
     @rm -f <owroot>/bld/build/bin/parsectl.*
