@@ -9,3 +9,4 @@ here:
 
     http://www.wattcp.com
 
+To build the library, go to the src subdirectory and run 'wmake -ms'.
