@@ -37,14 +37,26 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#ifdef __UNIX__
+#define IS_PATH_SEP(x) ((x) == '/')
+#include <dirent.h>
+#include <sys/stat.h>
+#else
+#define IS_PATH_SEP(x) (((x) == '\\') || (x) == '/')
 #include <direct.h>
-#include <assert.h>
 #include <dos.h>
+#endif
+#include <assert.h>
 #include <setjmp.h>
 #include <stdarg.h>
+#include "watcom.h"
 #include "pmake.h"
 
+#ifdef __UNIX__
+#define DEFAULT_MAKE_CMD        "wmake"
+#else
 #define DEFAULT_MAKE_CMD        "wmake.exe"
+#endif
 #define DEFAULT_MAKE_FILE       "makefile"
 #define DEFAULT_PRIORITY        100
 #define ALL_TARGET              "all"
@@ -225,7 +237,11 @@ static void EnQueue( char *path )
         qp->next = NULL;
         qp->depth = QueueHead->depth + 1;
         p = StringCopy( qp->name, QueueHead->name );
+#ifdef __UNIX__
+        p = StringCopy( p, "/" );
+#else
         p = StringCopy( p, "\\" );
+#endif
         StringCopy( p, path );
         QueueTail->next = qp;
         QueueTail = qp;
@@ -248,7 +264,7 @@ static void DeQueue( void )
 static int CountDepth( char *path, int slashcount )
 {
     while( *path != '\0' ) {
-        if( *path == '\\' ) {
+        if( IS_PATH_SEP( *path ) ) {
             slashcount++;
         }
         path++;
@@ -260,7 +276,11 @@ static int CountDepth( char *path, int slashcount )
 static char *PrependDotDotSlash( char *str, int count )
 {
     while( count-- ) {
+#ifdef __UNIX__
+        str = StringCopy( str, "../" );
+#else
         str = StringCopy( str, "..\\" );
+#endif
     }
     return( str );
 }
@@ -280,11 +300,11 @@ static char *RelativePath( char *oldpath, char *newpath )
         ofs++;
     }
     // oldpath is a prefix of newpath
-    if( oldpath[ofs] == '\0' && newpath[ofs] == '\\' ) {
+    if( oldpath[ofs] == '\0' && IS_PATH_SEP( newpath[ofs] ) ) {
         return( &newpath[ofs+1] );
     }
     // newpath is a prefix of oldpath
-    if( newpath[0] == '\0' && oldpath[ofs] == '\\' ) {
+    if( newpath[0] == '\0' && IS_PATH_SEP( oldpath[ofs]) ) {
         newdepth = CountDepth( newpath, 0 );
         olddepth = CountDepth( oldpath, 0 );
         tp = PrependDotDotSlash( Buff, olddepth - newdepth );
@@ -294,7 +314,7 @@ static char *RelativePath( char *oldpath, char *newpath )
     /* back up to start of directory */
     for( ;; ) {
         if( ofs == 0 ) break;
-        if( newpath[ofs-1] == '\\' ) break;
+        if( IS_PATH_SEP( newpath[ofs-1] ) ) break;
         --ofs;
     }
     newpath += ofs;
@@ -351,7 +371,7 @@ static void TestDirectory( dirqueue *head, char *makefile )
     unsigned    len;
 
     if( Options.verbose ) {
-        sprintf( Buff, ">>> PMAKE >>> %s\\%s", head->name, makefile );
+        sprintf( Buff, ">>> PMAKE >>> %s/%s", head->name, makefile );
         PMakeOutput( "" );
         PMakeOutput( Buff );
     }
@@ -381,6 +401,9 @@ static void ProcessDirectoryQueue( void )
     struct dirent       *dp;
     dirqueue            *head;
     char                *makefile;
+#ifdef __UNIX__
+    struct stat          buf;
+#endif
 
     makefile = Options.makefile;
     if( makefile == NULL ) {
@@ -394,7 +417,11 @@ static void ProcessDirectoryQueue( void )
                 if( DoneFlag ) return;
                 dp = readdir( dirh );
                 if( dp == NULL ) break;
+#ifdef __UNIX__
+                if ( !stat( dp->d_name, &buf ) && S_ISDIR( buf.st_mode ) ) {
+#else
                 if( dp->d_attr & _A_SUBDIR ) {
+#endif
                     if( dp->d_name[0] == '.' ) {
                         if( dp->d_name[1] == '.' || dp->d_name[1] == '\0' ) continue;
                     }

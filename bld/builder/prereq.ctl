@@ -3,18 +3,25 @@
 
 [ BLOCK <BUILD_PLATFORM> dos386 ]
 #================================
-    cdsay <projdir>\dos386
+    cdsay <PROJDIR>/dos386
     wmake -h
-    cdsay <projdir>
+    cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
-    cdsay <projdir>\os2386
+    cdsay <PROJDIR>/os2386
     wmake -h
-    cdsay <projdir>
+    cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
-    cdsay <projdir>\nt386
+    cdsay <PROJDIR>/nt386
     wmake -h
-    cdsay <projdir>
+    cdsay <PROJDIR>
+
+[ BLOCK <BUILD_PLATFORM> linux386 ]
+#==================================
+    cdsay <PROJDIR>
+    <MAKE> -f gnumake
+    cdsay <PROJDIR>
+

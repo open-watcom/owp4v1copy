@@ -1,0 +1,31 @@
+vpath %.c c
+vpath %.o $(OBJDIR)
+vpath % $(OBJDIR)
+
+$(OBJDIR)/%.o: %.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
+
+CPPFLAGS = -Ih -I../watcom/h -D__UNIX__ -DUNIX
+LDFLAGS = -L../clib/bootstrp
+LDLIBS = -lwatcom
+
+UTILS = cdsay sweep wsplice diff comstrip
+UTILS := $(foreach i,$(UTILS),$(OBJDIR)/$i)
+
+all: $(OBJDIR) $(UTILS) $(OBJDIR)/builder
+	cp $(UTILS) ../build/binl
+
+$(OBJDIR)/builder: $(foreach i,sys.o builder.o utils.o runit.o,$(OBJDIR)/$i)
+
+cdsay: $(OBJDIR)/cdsay.o
+
+sweep: $(OBJDIR)/sweep.o
+
+wsplice: $(OBJDIR)/wsplice.o
+
+diff: $(OBJDIR)/diff.o
+
+comstrip: $(OBJDIR)/comstrip.o
+
+$(OBJDIR):
+	mkdir $(OBJDIR)

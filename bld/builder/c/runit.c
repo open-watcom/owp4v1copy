@@ -33,15 +33,24 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
+#include <stdlib.h>
+#ifdef __UNIX__
+#include <dirent.h>
+#include <sys/stat.h>
+#else
 #include <direct.h>
 #include <env.h>
 #include <dos.h>
+#endif
+#include "watcom.h"
 #include "builder.h"
 
 #define BSIZE   256
 #define SCREEN  79
 const char Equals[] =   "========================================"\
                         "========================================";
+
+extern bool Quiet;
 
 static void LogDir( char *dir )
 {
@@ -84,9 +93,11 @@ void ResetArchives( copy_entry *list )
 
     while( list != NULL ) {
         next = list->next;
+#ifndef __UNIX__
         if( _dos_getfileattr( list->src, &attr ) == 0 ) {
             _dos_setfileattr( list->src, attr & ~_A_ARCH );
         }
+#endif
         free( list );
         list = next;
     }
@@ -131,6 +142,7 @@ static copy_entry *BuildList( char *src, char *dst, bool test_abit )
             _fullpath( head->dst, dst, sizeof( head->dst ) );
             break;
         }
+#ifndef __UNIX__
         if( test_abit ) {
             fp = fopen( head->dst, "rb" );
             if( fp != NULL ) fclose( fp );
@@ -141,6 +153,7 @@ static copy_entry *BuildList( char *src, char *dst, bool test_abit )
                 head = NULL;
             }
         }
+#endif
         return( head );
     }
     directory = opendir( src );
@@ -153,7 +166,18 @@ static copy_entry *BuildList( char *src, char *dst, bool test_abit )
     for( ;; ) {
         dent = readdir( directory );
         if( dent == NULL ) break;
+#ifdef __UNIX__
+        {
+            struct stat buf;
+            size_t len = strlen( src );
+            strcat( src, dent->d_name );
+            stat( src, &buf );
+            src[len] = '\0';
+            if ( S_ISDIR( buf.st_mode ) ) continue;
+        }
+#else
         if( dent->d_attr & (_A_SUBDIR|_A_VOLID) ) continue;
+#endif
         curr = Alloc( sizeof( *curr ) );
         curr->next = NULL;
         _splitpath2( src, buff, &drive, &dir, &fn, &ext );
@@ -167,6 +191,7 @@ static copy_entry *BuildList( char *src, char *dst, bool test_abit )
             break;
         }
         _fullpath( curr->dst, full, sizeof( curr->dst ) );
+#ifndef __UNIX__
         if( test_abit ) {
             fp = fopen( curr->dst, "rb" );
             if( fp != NULL ) fclose( fp );
@@ -176,6 +201,7 @@ static copy_entry *BuildList( char *src, char *dst, bool test_abit )
                 continue;
             }
         }
+#endif
         *owner = curr;
         owner = &curr->next;
     }
@@ -228,6 +254,14 @@ static unsigned ProcOneCopy( char *src, char *dst )
     /* set the date back? */
     fclose( sp );
     fclose( dp );
+#ifdef __UNIX__
+    {
+        /* copy permissions: mostly necessary for the "x" bit */
+        struct stat buf;
+        stat( src, &buf );
+        chmod( dst, buf.st_mode );
+    }
+#endif
     return( 0 );
 }
 
@@ -343,6 +377,8 @@ unsigned RunIt( char *cmd )
         }
     } else if( BUILTIN( "SET" ) ) {
         res = ProcSet( SkipBlanks( cmd + sizeof( "SET" ) ) );
+    } else if( BUILTIN( "ECHO" ) ) {
+        Log( Quiet, "%s\n", SkipBlanks( cmd + sizeof( "ECHO" ) ) );
     } else if( BUILTIN( "COPY" ) ) {
         res = ProcCopy( SkipBlanks( cmd + sizeof( "COPY" ) ), FALSE );
     } else if( BUILTIN( "ACOPY" ) ) {

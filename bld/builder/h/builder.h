@@ -35,7 +35,7 @@
 #include "bool.h"
 
 typedef struct copy_entry copy_entry;
-typedef struct copy_entry {
+struct copy_entry {
     copy_entry  *next;
     char        src[_MAX_PATH];
     char        dst[_MAX_PATH];
@@ -72,4 +72,4 @@ unsigned        RunIt( char * );
 void            ResetArchives( copy_entry * );
 void            SysInit( int argc, char *argv[] );
 unsigned        SysRunCommand( const char * );
-unsigned        SysChdir( const char * );
+unsigned        SysChdir( char * );

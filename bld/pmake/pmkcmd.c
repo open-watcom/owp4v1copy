@@ -30,22 +30,27 @@
 ****************************************************************************/
 
 
-#include <process.h>
 #include <unistd.h>
 #include <signal.h>
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <direct.h>
 #include <assert.h>
+#include <errno.h>
+#ifndef __UNIX__
+#include <direct.h>
+#include <process.h>
 #include <dos.h>
+#endif
 #include <setjmp.h>
 #include <stdarg.h>
 #include "pmake.h"
 
 #if defined(__OS2__)
     #define TMPBAT "tmp.cmd"
+#elif defined(__UNIX__)
+    #define TMPBAT "./tmp.sh"
 #else
     #define TMPBAT "tmp.bat"
 #endif
@@ -64,7 +69,12 @@ void WriteCmdFile( pmake_data *data )
             TMPBAT, strerror( errno ) );
         exit( EXIT_FAILURE );
     }
+#ifdef __UNIX__
+    fprintf( fp, "#!/bin/sh\n" );
+    fchmod( fileno( fp ), 0777 );
+#else    
     fprintf( fp, "@echo off\n" );
+#endif
     for( curr = data->dir_list; curr != NULL ; curr = curr->next ) {
         if( curr->dir_name[0] != '\0' ) {
             fprintf( fp, "cd %s\n", curr->dir_name );
@@ -134,8 +144,16 @@ void PrintHelp( void )
 
 char                    CmdBuff[512];
 
+#ifndef __WATCOMC__
+char **_argv;
+
+int main( int argc, char **argv )
+{
+    _argv = argv;
+#else
 int main( void )
 {
+#endif
     pmake_data *data;
 
     getcmd( CmdBuff );

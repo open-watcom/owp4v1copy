@@ -74,7 +74,7 @@
 #include <ctype.h>
 #include <limits.h>
 #include <sys/stat.h>
-#ifdef __QNX__
+#ifdef __UNIX__
 #include <utime.h>
 #else
 #include <sys/utime.h>
@@ -661,7 +661,11 @@ local void AddIncludePathList(  // ADD TO PATH LIST
         Error( "Unable to allocate %d bytes for path list entry: %s", size, path );
     } else {
         memcpy( lptr->path, path, size + 1 );
+#ifdef __UNIX__
+        lptr->path[size] = '/';
+#else
         lptr->path[size] = '\\';
+#endif
         lptr->path[size+1] = 0;
         lptr->next = NULL;
         p = IncPathList;

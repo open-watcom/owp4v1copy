@@ -1,0 +1,16 @@
+vpath %.o: $(OBJDIR)
+
+all: $(OBJDIR) $(OBJDIR)/pmake
+
+CPPFLAGS = -I../watcom/h -D__UNIX__
+LDFLAGS = -L../clib/bootstrp
+LDLIBS = -lwatcom
+
+$(OBJDIR)/%.o: %.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
+
+$(OBJDIR)/pmake: $(OBJDIR)/pmake.o $(OBJDIR)/pmkcmd.o
+
+$(OBJDIR):
+	mkdir $(OBJDIR)
+

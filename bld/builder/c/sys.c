@@ -30,12 +30,15 @@
 
 
 #include <sys/types.h>
-#include <direct.h>
-#include <string.h>
-#include <ctype.h>
+#ifndef __UNIX__
 #include <dos.h>
 #include <process.h>
+#include <direct.h>
+#endif
+#include <string.h>
+#include <ctype.h>
 #include <unistd.h>
+#include "watcom.h"
 #include "builder.h"
 
 #if defined( __NT__ ) || defined( __OS2__ )
@@ -128,6 +131,8 @@ unsigned SysRunCommand( const char *cmd )
     close( pipe_fd[1] );
     dup2( my_std_output, STDOUT_FILENO );
     dup2( my_std_error, STDERR_FILENO );
+    close( my_std_output );
+    close( my_std_error );
     if( rc == -1 ) {
         close( pipe_fd[0] );
         return( -1 );
@@ -139,8 +144,6 @@ unsigned SysRunCommand( const char *cmd )
         Log( Quiet, "%s", buff );
     }
     close( pipe_fd[0] );
-    close( my_std_output );
-    close( my_std_error );
     return( 0 );
 #else
     /* no pipes for DOS so we call "system" and hence cannot log */
@@ -148,7 +151,7 @@ unsigned SysRunCommand( const char *cmd )
 #endif
 }
 
-unsigned SysChDir( char *dir )
+unsigned SysChdir( char *dir )
 {
     char        *end;
     unsigned    len;
@@ -167,9 +170,11 @@ unsigned SysChDir( char *dir )
         }
         break;
     }
+#ifndef __UNIX__
     if( len > 2 && dir[1] == ':' ) {
         _dos_setdrive( toupper( dir[0] ) - 'A' + 1, &total );
     }
+#endif
     retval = chdir( dir );
 
     SysSetTitle( Title );

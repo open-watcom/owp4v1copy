@@ -32,11 +32,21 @@
 
 #include <string.h>
 #include <ctype.h>
+#ifdef __UNIX__
+#include <stdlib.h>
+#else
 #include <env.h>
 #include <direct.h>
+#endif
+#include "watcom.h"
 #include "builder.h"
 
 #define DEFCTLNAME      "BUILDER.CTL"
+#ifdef __UNIX__
+#define DEFCTLENV       "BUILDER_CTL"
+#else
+#define DEFCTLENV       DEFCTLNAME
+#endif
 
 #define DEF_BACKUP      1
 #define MAX_BACKUP      9
@@ -502,10 +512,14 @@ int main( int argc, char *argv[] )
     SysInit( argc, argv );
     ProcessOptions( argv + 1 );
     if( CtlList == NULL ) {
-        p = getenv( DEFCTLNAME );
+        p = getenv( DEFCTLENV );
         if( p == NULL ) p = DEFCTLNAME;
         if( !SearchUpDirs( p, Line ) ) {
+#ifdef __WATCOMC__
             _searchenv( p, "PATH", Line );
+#else
+            Line[0] = '\0';
+#endif
             if( Line[0] == '\0' ) {
                 Fatal( "Can not find '%s'\n", p );
             }

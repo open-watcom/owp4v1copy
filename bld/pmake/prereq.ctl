@@ -21,3 +21,11 @@
     wmake -h
     <CPCMD> pmake.exe <owroot>\bld\build\binnt\pmake.exe
     cdsay <projdir>
+
+[ BLOCK <BUILD_PLATFORM> linux386 ]
+#==================================
+    cdsay <PROJDIR>
+    <MAKE> -f gnumake
+    <CPCMD> <OBJDIR>/pmake <owroot>/bld/build/binl/pmake
+    cdsay <PROJDIR>
+

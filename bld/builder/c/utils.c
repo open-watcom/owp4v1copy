@@ -33,7 +33,10 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdarg.h>
+#ifndef __UNIX__
 #include <share.h>
+#endif
+#include "watcom.h"
 #include "builder.h"
 
 void Fatal( const char *str, ... )
