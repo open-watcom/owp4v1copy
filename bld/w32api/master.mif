@@ -6,7 +6,7 @@ proj_name = w32api
 .EXTENSIONS :
 .EXTENSIONS : .lib .wlc .def
 
-libs =  	     &
+libs =               &
         advapi32.lib &
         cap.lib &
         comctl32.lib &
@@ -84,8 +84,7 @@ libs =  	     &
 .def: ..\lib
 
 .def.wlc:
-        copy $< $@
-        vi -i -q "-k :source ..\\\\def2wlc.vi $*\n" $@
+        vi -i -q -k ":set norc\n:r ../lib/$[.\n:source ../def2wlc.vi $*\n"
 
 .wlc.lib:
         $(lib) -q -n -io -ii $@ @$<
