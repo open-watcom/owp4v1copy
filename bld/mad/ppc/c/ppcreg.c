@@ -125,6 +125,11 @@ const ppc_reg_info RegList[] = {
     #include "ppcregs.h"
 };
 
+// For 64-bit registers displayed as 32-bit - 32GPRs + sp, lr, iar, ctr, msr
+// NB: Relies on the fact that all the DWORD registers are grouped together
+// in a single block.
+static ppc_reg_info RegListHalf[32 + 5];
+
 static ppc_reg_info             **RegSubList;
 
 static const mad_toggle_strings CPUToggleList[] =
@@ -334,8 +339,12 @@ static mad_status       CPUGetPiece( unsigned piece,
     unsigned    idx;
 
     if( !FindEntry( CPUNumeric, piece, &idx, disp_type ) ) return( MS_FAIL );
+    *reg = &RegList[idx].info;
     if( !(MADState->reg_state[CPU_REG_SET] & CT_EXTENDED) ) {
-        if( *disp_type == PPCT_H_DWORD ) *disp_type = PPCT_H_WORD;
+        if( *disp_type == PPCT_H_DWORD ) {
+            *disp_type = PPCT_H_WORD;
+            *reg = &RegListHalf[idx - IDX_r0].info;
+        }
     }
     //NYI: if extended & ~ 64 bit mode, downshift to 32-bit display.
     //     Also, if 64 <=> 32 bit switch, tell client to redraw window
@@ -352,7 +361,6 @@ static mad_status       CPUGetPiece( unsigned piece,
     *descript = DescriptBuff;
     *max_descript = 0;
     *max_value = 0;
-    *reg = &RegList[idx].info;
     strcpy( DescriptBuff, (*reg)->name );
     return( MS_OK );
 }
@@ -689,6 +697,7 @@ mad_status RegInit()
     unsigned    i;
     unsigned    max;
     unsigned    curr;
+    unsigned    half_idx = 0;
     mad_status  ms;
 
     max = 0;
@@ -697,6 +706,14 @@ mad_status RegInit()
         case RS_DWORD:
             curr = RegList[i].info.bit_start / (sizeof(unsigned_64)*BITS_PER_BYTE);
             if( curr > max ) max = curr;
+            RegListHalf[half_idx] = RegList[i];
+#if defined( __BIG_ENDIAN__ )
+            // kludge for 64-bit registers displayed as 32-bit - need to
+            // skip 32 bits!
+            RegListHalf[half_idx].info.bit_start += 32;
+#endif
+            RegListHalf[half_idx].info.bit_size = 32;
+            ++half_idx;
             break;
         }
     }
