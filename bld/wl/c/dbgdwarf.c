@@ -395,7 +395,7 @@ extern void DwarfDefClass( class_entry *cl, unsigned_32 size )
 // all of them.
 {
     size = size;        // to avoid a warning
-    if( ( cl->flags & CLASS_HANDS_OFF ) != CLASS_DWARF )
+    if( ( cl->flags & CLASS_DEBUG_INFO ) != CLASS_DWARF )
         return;
     DBIClass = cl;
     RingWalk( cl->segs, DefAClass );

@@ -400,11 +400,14 @@ static void BuildReloc( save_fixup *save, frame_spec *targ, frame_spec *frame )
     if( IsTargAbsolute( targ ) ) {
         fix.type |= FIX_ABS;
     }
-    if( ( FmtData.type & MK_OVERLAYS ) && ( targ->type == FIX_FRAME_EXT ) ) {
-        if( targ->u.sym->u.d.ovlref
-            && ( ( targ->u.sym->u.d.ovlstate & OVL_VEC_MASK ) == OVL_FORCE ) ) {
-            GetVecAddr( targ->u.sym->u.d.ovlref, &fix.tgt_addr );
-        }
+
+    if( ( FmtData.type & MK_OVERLAYS )
+        && ( ( fix.type & FIX_REL ) == 0 )
+        && ( targ->type == FIX_FRAME_EXT )
+        && targ->u.sym->u.d.ovlref
+        && ( ( targ->u.sym->u.d.ovlstate & OVL_VEC_MASK ) == OVL_MAKE_VECTOR ) ) {
+        // redirect target to appropriate vector entry
+        GetVecAddr( targ->u.sym->u.d.ovlref, &fix.tgt_addr );
     }
     /*
      * it is necessary to copy also two bytes before reloc position to addbuf

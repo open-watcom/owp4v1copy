@@ -235,10 +235,9 @@ extern void WalkMods( void (*rtn)( mod_entry * ) )
 /************************************************/
 {
     CurrSect = Root;
-    WalkList( (node *) Root->mods, (void (*)(void *))rtn );
-    ParmWalkOvl( WalkModList, rtn );
+    ParmWalkAllSects( WalkModList, rtn );
     CurrSect = Root;
-    WalkList( (node *) LibModules, (void (*)(void *))rtn );
+    WalkList( (node *)LibModules, (void (*)(void *))rtn );
 }
 
 static void WalkClass( class_entry *class, void (*rtn)( seg_leader * ) )
@@ -261,8 +260,7 @@ extern void SectWalkClass( section *sect, void *rtn )
 extern void WalkLeaders( void (*rtn)( seg_leader * ) )
 /****************************************************/
 {
-    SectWalkClass( Root, rtn );
-    ParmWalkOvl( SectWalkClass, rtn );
+    ParmWalkAllSects( SectWalkClass, rtn );
 }
 
 static void WalkList( node *list, void (*fn)( void * ) )

@@ -64,8 +64,7 @@ static void AutoGroupSect( section * sec );
 extern void AutoGroup( void )
 /***************************/
 {
-    AutoGroupSect( Root );
-    ProcAllOvl( &AutoGroupSect );
+    ProcAllSects( &AutoGroupSect );
     SortGroupList();
     FindSplitGroups();
     if( NumGroups == 0 ) {
@@ -81,7 +80,7 @@ static void AutoGroupSect( section * sec )
 
     CurrGroup = NULL;
     for( class = sec->classlist; class != NULL; class = class->next_class ) {
-        if( !( class->flags & CLASS_HANDS_OFF ) ) {
+        if( !( class->flags & CLASS_DEBUG_INFO ) ) {
             PackClass( class, sec );
         }
     }

@@ -58,14 +58,12 @@ extern void             PadOvlFiles( void );
 
 /* in overlays.c */
 
+extern void             ProcAllSects( void (*)( section * ) );
 extern void             ProcAllOvl( void (*)( section * ) );
-extern void             ParmWalkOvl( void (*)( section *, void * ), void * );
+extern void             ParmWalkAllSects( void (*)( section *, void * ), void * );
+extern void             ParmWalkAllOvl( void (*)( section *, void * ), void * );
 extern void             NumberSections( void );
 extern void             FillOutFilePtrs( void );
-extern void             DBIOvlPass2( void );
-extern void             DBIOvlFini( void );
-extern void             WriteOvlSecs( void );
-extern void             DBIAddrOvlStart( void );
 extern void             TryDefVector( symbol * );
 extern void             TryUseVector( symbol *, extnode * );
 extern section *        GetOvlSect( char * );

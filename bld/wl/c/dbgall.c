@@ -151,7 +151,7 @@ extern void DBIColClass( class_entry *class )
 extern unsigned_16 DBIColSeg( class_entry *class )
 /************************************************/
 {
-    switch( class->flags & CLASS_HANDS_OFF ) {
+    switch( class->flags & CLASS_DEBUG_INFO ) {
     case CLASS_DWARF:
         if( CurrMod->modinfo & DBI_TYPE ) {
             CurrMod->modinfo |= MOD_DBI_SEEN;
@@ -503,7 +503,7 @@ extern void DBIAddrStart( void )
     if( LinkFlags & CV_DBI_FLAG ) {
         CVAddrStart();
     }
-    DBIAddrSectStart( Root );
+    ProcAllSects( DBIAddrSectStart );
 }
 
 extern void DBIAddrSectStart( section * sect )

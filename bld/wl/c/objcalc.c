@@ -312,8 +312,8 @@ static void SortSegments( void )
 extern bool IsCodeClass( char *name, unsigned namelen )
 /*****************************************************/
 {
-    return( namelen >= CODECL_SIZE &&
-        memicmp( name+namelen-CODECL_SIZE, CodeClassName, CODECL_SIZE ) == 0 );
+    return( ( namelen >= CODECL_SIZE )
+        && ( memicmp( name + namelen - CODECL_SIZE, CodeClassName, CODECL_SIZE ) == 0 ) );
 }
 
 #define CONSTCL_SIZE ( sizeof( ConstClassName ) - 1 )
@@ -321,8 +321,8 @@ extern bool IsCodeClass( char *name, unsigned namelen )
 extern bool IsConstClass( char *name, unsigned namelen )
 /******************************************************/
 {
-    return( namelen >= CONSTCL_SIZE &&
-        memicmp( name + namelen - CONSTCL_SIZE, ConstClassName, CONSTCL_SIZE ) == 0 );
+    return( ( namelen >= CONSTCL_SIZE )
+        && ( memicmp( name + namelen - CONSTCL_SIZE, ConstClassName, CONSTCL_SIZE ) == 0 ) );
 }
 
 #define STACKCL_SIZE ( sizeof( StackClassName ) - 1 )
@@ -330,8 +330,8 @@ extern bool IsConstClass( char *name, unsigned namelen )
 extern bool IsStackClass( char *name, unsigned namelen )
 /******************************************************/
 {
-    return( namelen >= STACKCL_SIZE &&
-        memicmp( name + namelen - STACKCL_SIZE, StackClassName, STACKCL_SIZE ) == 0 );
+    return( ( namelen >= STACKCL_SIZE )
+        && ( memicmp( name + namelen - STACKCL_SIZE, StackClassName, STACKCL_SIZE ) == 0 ) );
 }
 
 /* -----------------------Allocating Segments-------------------------------- */
@@ -473,7 +473,6 @@ extern void CalcAddresses( void )
         ReallocFileSegs();
     }
     DBIAddrStart();
-    DBIAddrOvlStart();
     WalkLeaders( CalcInitSize );
     DefinePublics();
 }
@@ -540,7 +539,7 @@ static void ReallocFileSegs( void )
         }
     }
     for( class = Root->classlist; class != NULL; class = class->next_class ){
-        if( !( class->flags & CLASS_HANDS_OFF ) ) {
+        if( !( class->flags & CLASS_DEBUG_INFO ) ) {
             RingWalk( class->segs, SetLeaderSeg );
         }
     }
@@ -561,7 +560,7 @@ static void FindUninitDataStart( void )
         return;
     class = Root->classlist;
     while( class != NULL ) {
-        if( !( class->flags & CLASS_HANDS_OFF ) ) {
+        if( !( class->flags & CLASS_DEBUG_INFO ) ) {
             if( class->flags & CLASS_LXDATA_SEEN ) {
                 setnext = TRUE;
             } else if( setnext ) {
@@ -644,7 +643,7 @@ extern void AllocClasses( class_entry *class )
 
     while( class != NULL ) {
         DEBUG(( DBG_OLD, "Allocating class %s", class->name ));
-        if( class->flags & CLASS_HANDS_OFF ) {
+        if( class->flags & CLASS_DEBUG_INFO ) {
             /* don't *really* allocate room for these guys */
             save = CurrLoc;
             CurrLoc.off = 0;

@@ -64,8 +64,7 @@ extern void CheckTraces( void )
         next = info->next;
         if( info->member == NULL ) {
             CurrTrace = info;
-            CheckFileTrace( Root );
-            ProcAllOvl( CheckFileTrace );
+            ProcAllSects( CheckFileTrace );
             if( !info->found ) {
                 LnkMsg( WRN+MSG_TRACE_OBJ_NOT_FOUND, "s", info->u.name );
                 _LnkFree( info->u.name );

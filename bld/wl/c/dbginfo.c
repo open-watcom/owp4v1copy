@@ -437,7 +437,7 @@ static void AllocDBIClasses( class_entry *class )
     group_entry *group;
 
     while( class != NULL ) {
-        if( class->flags & ( CLASS_MS_TYPE | CLASS_MS_LOCAL ) ) {
+        if( class->flags & CLASS_DEBUG_INFO ) {
             group = AllocGroup( AutoGrpName, &DBIGroups );
             group->grp_addr.seg = 0;
             RingLookup( class->segs, AllocASeg, group );
@@ -825,8 +825,7 @@ extern void OWriteDBI( void )
     }
     DBISourceLang = NULL;
     Master.seg_size = WriteSegValues();
-    WriteDBISecs( Root );
-    WriteOvlSecs();
+    ProcAllSects( WriteDBISecs );
     Master.debug_size = DBISize;
     if( Master.obj_major_ver == 0 )
         Master.obj_major_ver = 1;

@@ -607,7 +607,7 @@ extern void CVDefClass( class_entry *class, unsigned_32 size )
 {
     group_entry *group;
 
-    if( ( class->flags & CLASS_HANDS_OFF ) == CLASS_DWARF )
+    if( ( class->flags & CLASS_DEBUG_INFO ) == CLASS_DWARF )
         return;
     SectAddrs[CVSECT_MISC] += size;
     group = AllocGroup( AutoGrpName, &DBIGroups );

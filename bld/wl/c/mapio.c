@@ -220,7 +220,7 @@ static void WriteAbsSegs( class_entry *cl )
     Msg_Write_Map( MSG_MAP_TITLE_ABS_SEG_1 );
     WriteMapNL( 1 );
     while( cl != NULL ) {
-        if( ( cl->flags & CLASS_HANDS_OFF ) == 0 ) {
+        if( ( cl->flags & CLASS_DEBUG_INFO ) == 0 ) {
             RingWalk( cl->segs, WriteAbsSeg );
         }
         cl = cl->next_class;
@@ -261,7 +261,7 @@ extern void WriteSegs( class_entry *firstcl )
         Msg_Write_Map( MSG_MAP_TITLE_SEGMENTS_1 );
         WriteMapNL( 1 );
         while( cl != NULL ) {
-            if( ( cl->flags & CLASS_HANDS_OFF ) == 0 ) {
+            if( ( cl->flags & CLASS_DEBUG_INFO ) == 0 ) {
                 RingWalk( cl->segs, WriteNonAbsSeg );
             }
             cl = cl->next_class;
@@ -358,7 +358,7 @@ static void WriteVerbSeg( void *_seg )
     if( seg->isdead )
         return;
     leader = seg->u.leader;
-    if( leader->class->flags & CLASS_HANDS_OFF )
+    if( leader->class->flags & CLASS_DEBUG_INFO )
         return;
     WriteFormat( 16, leader->segname );
     WriteFormat( 38, leader->class->name );
@@ -405,7 +405,7 @@ static bool CheckSymRecList( void *_info, void *sym )
 {
     symrecinfo *info = _info;
     
-    return( sym == info->sym && CurrMod == info->mod );
+    return( ( sym == info->sym ) && ( CurrMod == info->mod ) );
 }
 
 static void AddSymRecList( symbol *sym, symrecinfo **head )

@@ -339,6 +339,8 @@ extern void FiniDOSLoadFile( void )
     if( FmtData.type & MK_OVERLAYS ) {
         PadOvlFiles();
     }
+    // output debug info into root main output file
+    CurrSect = Root;
     WriteDBI();
     hdr_size = PARA_ALIGN( (unsigned long)Root->relocs * sizeof( dos_addr )
                                                                  + hdr_size );

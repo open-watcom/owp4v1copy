@@ -330,8 +330,7 @@ extern void FreeRelocInfo( void )
             FreeGroupRelocs( group );
         }
     } else if( Root != NULL ) {
-        FreeRelocSect( Root );
-        ProcAllOvl( FreeRelocSect );
+        ProcAllSects( FreeRelocSect );
     }
     if( FmtData.type & MK_QNX ) {
         FreeRelocList( FloatFixups );

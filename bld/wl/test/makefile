@@ -1,15 +1,22 @@
 OBJS = ovl1.obj ovl2.obj ovl3.obj
 
+!ifdef dwarf
+cform = -hd
+lform = debug dwarf
+!else
+cform = -hw
+lform = debug watcom all
+!endif
+
 .c.obj:
-    wcc $[@ -ml -of -s -w4 -zq -d2 -hw
+    wcc $[@ -ml -of -s -w4 -zq -d2 $(cform)
 
 main.exe : main.obj $(OBJS) $(__MAKEFILES__)
     %create tmp.lnk
-    %append tmp.lnk debug watcom
-    %append tmp.lnk debug all
+    %append tmp.lnk $(lform)
     %append tmp.lnk name main
     %append tmp.lnk system dos
-    %append tmp.lnk option map,verbose
+    %append tmp.lnk option map,verbose,symfile
     %append tmp.lnk sort global
     %append tmp.lnk file main
     %append tmp.lnk option dynamic
@@ -21,4 +28,4 @@ main.exe : main.obj $(OBJS) $(__MAKEFILES__)
     wlink @tmp.lnk
 
 clean: .symbolic
-    rm -f *.obj main.exe
+    rm -f *.obj main.exe *.lnk *.sym *.map *.err

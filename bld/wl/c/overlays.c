@@ -39,6 +39,15 @@
 #include "distrib.h"
 #include "overlays.h"
 
+extern void ProcAllSects( void (*rtn)( section * ) )
+/**************************************************/
+{
+    rtn( Root );
+    if( FmtData.type & MK_OVERLAYS ) {
+        WalkAreas( Root->areas, rtn );
+    }
+}
+
 extern void ProcAllOvl( void (*rtn)( section * ) )
 /************************************************/
 {
@@ -47,8 +56,17 @@ extern void ProcAllOvl( void (*rtn)( section * ) )
     }
 }
 
-extern void ParmWalkOvl( void (*rtn)( section *, void * ), void *parm )
-/*********************************************************************/
+extern void ParmWalkAllSects( void (*rtn)( section *, void * ), void *parm )
+/**************************************************************************/
+{
+    rtn( Root, parm );
+    if( FmtData.type & MK_OVERLAYS ) {
+        ParmWalkAreas( Root->areas, rtn, parm );
+    }
+}
+
+extern void ParmWalkAllOvl( void (*rtn)( section *, void * ), void *parm )
+/************************************************************************/
 {
     if( FmtData.type & MK_OVERLAYS ) {
         ParmWalkAreas( Root->areas, rtn, parm );
@@ -79,35 +97,6 @@ extern void FillOutFilePtrs( void )
 /*********************************/
 {
     ProcAllOvl( FillOutPtr );
-}
-
-extern void DBIOvlPass2( void )
-/*****************************/
-{
-    ProcAllOvl( DBIP2Start );
-}
-
-extern void DBIOvlFini( void )
-/****************************/
-{
-    ProcAllOvl( DBIFini );
-    if( NonSect != NULL ) {
-        DBIFini( NonSect );
-    }
-}
-
-#if _LINKER != _WATFOR77
-extern void WriteOvlSecs( void )
-/******************************/
-{
-    ProcAllOvl( WriteDBISecs );
-}
-#endif
-
-extern void DBIAddrOvlStart( void )
-/*********************************/
-{
-    ProcAllOvl( DBIAddrSectStart );
 }
 
 extern void TryDefVector( symbol * sym )
