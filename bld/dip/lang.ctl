@@ -69,8 +69,8 @@ set PROJDIR=<CWD>
         <CPCMD> <DEVDIR>/dip/watcom/linux386/watcom.sym     <RELROOT>/rel2/binl/
         <CPCMD> <DEVDIR>/dip/codeview/linux386/codeview.dip <RELROOT>/rel2/binl/
         <CPCMD> <DEVDIR>/dip/codeview/linux386/codeview.sym <RELROOT>/rel2/binl/
-#        <CPCMD> <DEVDIR>/dip/export/linux386/export.dip     <RELROOT>/rel2/binl/
-#        <CPCMD> <DEVDIR>/dip/export/linux386/export.sym     <RELROOT>/rel2/binl/
+        <CPCMD> <DEVDIR>/dip/export/linux386/export.dip     <RELROOT>/rel2/binl/
+        <CPCMD> <DEVDIR>/dip/export/linux386/export.sym     <RELROOT>/rel2/binl/
 
   [ IFDEF axp <2*> ]
 #        <CPCMD> <DEVDIR>/dip/dwarf/ntaxp/dwarf.dll          <RELROOT>/rel2/axpnt/
