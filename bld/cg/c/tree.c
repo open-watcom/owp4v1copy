@@ -361,6 +361,7 @@ extern  tn  TGCompare(  cg_op op,  tn left,  tn rite,  type_def  *tipe ) {
 */
 
     tn      new;
+    tn_btn  left_tn_btn;
     bool    can_demote;
 
     can_demote = TRUE;
@@ -382,7 +383,8 @@ extern  tn  TGCompare(  cg_op op,  tn left,  tn rite,  type_def  *tipe ) {
     rite = TGConvert( rite, tipe );
     new = FoldCompare( op, left, rite, tipe );
     if( new != NULL ) return( new );
-    new = FoldBitCompare( op, (tn_btn)left, rite );
+    left_tn_btn.t = left;
+    new = FoldBitCompare( op, left_tn_btn, rite );
     if( new != NULL ) return( new );
     new = FoldPostGetsCompare( op, left, rite, tipe );
     if( new != NULL ) return( new );

@@ -1260,7 +1260,7 @@ static  an Flip( an name, bool op_false, bool op_true ) {
 
     if( op_false ) {
         if( op_true ) {
-            FlowOff( name );
+            FlowOff( (bn)name );
             name = BGInteger( FETrue(), TypeInteger );
         } else {
             temp = (*(bn *)&name)->f;
@@ -1271,7 +1271,7 @@ static  an Flip( an name, bool op_false, bool op_true ) {
         if( op_true ) {
             /* nothing*/
         } else {
-            FlowOff( name );
+            FlowOff( (bn)name );
             name = BGInteger( 0, TypeInteger );
         }
     }
