@@ -719,6 +719,8 @@ extern          void            uiforceevflush( void );
 extern          int             uiisdbcs(); // bool
 extern          int             uionnec();      // bool
 extern          int             uicharlen( int ); // returns 2 if dbcs lead byte
+extern          void            UIMemOpen( void );
+extern          void            UIMemClose( void );
 
 #ifdef __cplusplus
 }

@@ -57,6 +57,7 @@ echo Bootstrapping compiler using GNU tools...
 [ INCLUDE <DEVDIR>/gui/lang.ctl ]
 [ INCLUDE <DEVDIR>/wclass/lang.ctl ]
 [ INCLUDE <DEVDIR>/ncurses/lang.ctl ]
+#        UI can be deferred until VI is to be built. W.Briscoe 2004-11-25
 [ INCLUDE <DEVDIR>/ui/lang.ctl ]
 #        OWL/ORL must be done early so that clients are up-to-date
 [ INCLUDE <DEVDIR>/owl/lang.ctl ]

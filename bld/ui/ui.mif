@@ -3,19 +3,32 @@ name = ui
 
 target: $(name).lib
 
+ui_trmem = 1
+
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
 
-.c: ../c;../../c;$(extra_cdir)
+.c: ../c;../../c;$(extra_cdir);$(trmem_dir)
 .h: ../h;../../h;$(extra_hdir)
 
 inc_dirs += -I"../h" -I"../../h"
 
+# memory tracker routines
+extra_c_flags_trmem = $(trmem_cflags)
+
+# memory tracker cover routines
+extra_c_flags_uialloc = $(trmem_cover_cflags)
+
 obj = obj
 !include ../objfiles.mif
+objfiles += $(trmem_objs)
 
+!ifeq release 1
 extra_c_flags += -os-s
+!endif
+
+!include trmem.mif
 
 $(name).lib: $(objfiles)
         $(librarian) -b $^@ $<
