@@ -12,17 +12,6 @@ extern	"C" {
 #define	WINVER	0x30a
 #endif
 
-/* Default is STRICT syntax */
-#ifdef	NO_STRICT
-#ifdef	STRICT
-#undef	STRICT
-#endif
-#else
-#ifndef	STRICT
-#define	STRICT
-#endif
-#endif
-
 #define	VOID	void
 #define	FAR	_far
 #define	NEAR	_near
@@ -1794,7 +1783,7 @@ typedef	void	(CALLBACK* TIMERPROC)(HWND,UINT,UINT,DWORD);
 typedef	BOOL	(CALLBACK* PROPENUMPROC)(HWND,LPCSTR,HANDLE);
 typedef	BOOL	(CALLBACK* WNDENUMPROC)(HWND,LPARAM);
 typedef	int	(CALLBACK* MFENUMPROC)(HDC,HANDLETABLE FAR*,METARECORD FAR*,int,LPARAM);
-typedef	int	(CALLBACK* FONTENUMPROC)(const LOGFONT FAR*,const NEWTEXTMETRIC FAR*,int,LPARAM);
+typedef	int	(CALLBACK* FONTENUMPROC)(const ENUMLOGFONT FAR*,const NEWTEXTMETRIC FAR*,int,LPARAM);
 typedef	void	(CALLBACK* LINEDDAPROC)(int,int,LPARAM);
 typedef	BOOL	(CALLBACK* GRAYSTRINGPROC)(HDC,LPARAM,int);
 typedef	int	(CALLBACK* GOBJENUMPROC)(void FAR*,LPARAM);
