@@ -316,6 +316,8 @@ back_handle DgStringConst(          // STORE STRING CONSTANT WITH NULL
             old_seg = BESetSeg( str_seg );
 #if _CPU == _AXP
             DGAlign( TARGET_INT );
+#else
+            DGAlign( str_align );   // NT requires word aligned wide strings
 #endif
             DGLabel( handle );
             DGString( str->string, str->len );

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Source code string literal processing.
 *
 ****************************************************************************/
 
@@ -260,6 +259,8 @@ TREEPTR StringLeaf( int flags )
         }
     }
     if( strlit == 0 ) {
+        if( CompFlags.wide_char_string )
+            flags |= STRLIT_WIDE;
         new_lit->flags = flags;
         ++LitCount;
         LitPoolSize += CLitLength;
@@ -285,5 +286,6 @@ TREEPTR StringLeaf( int flags )
     if( CurFunc != NULL ) {                             /* 22-feb-92 */
         CurFuncNode->op.func.flags &= ~FUNC_OK_TO_INLINE;
     }
+
     return( leaf_index );
 }

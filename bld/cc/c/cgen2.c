@@ -24,13 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Interface to Optimizing code generator.
 *
 ****************************************************************************/
 
-
-// Interface to Optimizing code generator
 
 #include "cvars.h"
 #include "cg.h"
@@ -665,7 +662,7 @@ static cg_name IndexOperator( cg_name op1, OPNODE *node, cg_name op2 )
     if( element_size != 1 ) {
         index_type = T_INTEGER;
         #if _CPU == 8086
-            if(( node->flags & OPFLAG_HUGEPTR) || 
+            if(( node->flags & OPFLAG_HUGEPTR) ||
                ((TargetSwitches & (BIG_DATA|CHEAP_POINTER))==BIG_DATA &&
                 (node->flags & (OPFLAG_NEARPTR | OPFLAG_FARPTR))==0)) {
                 index_type = T_INT_4;
@@ -1908,8 +1905,8 @@ local void EmitLiteral( STR_HANDLE strlit )
     segment_id  old_segment;
 
     old_segment = BESetSeg( StringSegment( strlit ) );
-    if( OptSize == 0 ) {                /* if optimize for time */
-        DGAlign( TARGET_INT );          /* align to word boundary */
+    if( strlit->flags & STRLIT_WIDE ) {
+        DGAlign( TARGET_SHORT );    /* NT requires word aligned wide strings */
     }
     DGLabel( strlit->cg_back_handle );
     EmitBytes( strlit );
