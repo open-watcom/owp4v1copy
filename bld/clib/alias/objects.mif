@@ -1,2 +1,2 @@
-!include ..\..\..\objs.mif
+#!include ..\..\..\objs.mif
 !include ..\..\..\..\objlist.mif
