@@ -65,6 +65,12 @@ extern void DRWalkPubName( DRPUBWLK callback, void *data )
     str_len = sizeof( str_buff );
     while( pos < finish ) {
         DWRVMRead( pos, &header, sizeof( header ) );
+        if( DWRCurrNode->byte_swap ) {
+            SWAP_32( header.len );
+            SWAP_16( header.version );
+            SWAP_32( header.dbg_pos );
+            SWAP_32( header.dbg_length );
+        }
         if( header.version != DWARF_VERSION ) DWREXCEPT( DREXCEP_BAD_DBG_VERSION );
         unit_end = pos + header.len + sizeof( uint_32 );
         pos += sizeof( header );

@@ -105,7 +105,7 @@ Module::Module( const char *name, WCValSList<String> & enabled,
 
     checkSourceTime();
 
-    _dbgInfo = DRDbgInit( this, _dataFile->getDRSizes() );
+    _dbgInfo = DRDbgInit( this, _dataFile->getDRSizes(), false );
     DRSetDebug( _dbgInfo );
 }
 

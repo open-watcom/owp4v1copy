@@ -103,7 +103,12 @@ extern void DRWalkARange( DRARNGWLK callback, void *data )
     file->finish = file->pos + DWRCurrNode->sections[DR_DEBUG_ARANGES].size;
     for( ;; ) {
         if( file->pos >= file->finish ) break;
-        SectRead( file, &header, sizeof( header )  );
+        SectRead( file, &header, sizeof( header ) );
+        if( DWRCurrNode->byte_swap ) {
+            SWAP_32( header.len );
+            SWAP_16( header.version );
+            SWAP_32( header.dbg_pos );
+        }
         if( header.version != DWARF_VERSION ) DWREXCEPT( DREXCEP_BAD_DBG_VERSION );
         arange.dbg = header.dbg_pos+base;
         arange.addr_size = header.addr_size;

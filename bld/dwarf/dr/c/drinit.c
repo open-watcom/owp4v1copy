@@ -146,8 +146,8 @@ static void ReadAbbrevTable( struct dr_dbg_info *dbg )
     dbg->abbrevs = abbrevs;
 }
 
-static dr_dbg_handle  InitDbgHandle( void *file, unsigned long *sizes )
-/*********************************************************************/
+static dr_dbg_handle  InitDbgHandle( void *file, unsigned long *sizes, int byteswap )
+/***********************************************************************************/
 {
     dr_dbg_handle       dbg;
     int                 i;
@@ -159,6 +159,7 @@ static dr_dbg_handle  InitDbgHandle( void *file, unsigned long *sizes )
     dbg->abbrevs = NULL;
     dbg->addr_size = 0;
     dbg->wat_version = 0; /* zero means not Watcom DWARF */
+    dbg->byte_swap = byteswap;
     dbg->last_ccu = &dbg->compunit;
     for( i = 0; i < DR_DEBUG_NUM_SECTS; i++ ) {
         dbg->sections[i].size = *sizes;
@@ -243,12 +244,12 @@ static void ReadFileTable( void )
     DWRCurrNode->addr_size = addr_size;
 }
 
-dr_dbg_handle DRDbgInit( void * file, unsigned long * sizes )
-/***********************************************************/
+dr_dbg_handle DRDbgInit( void * file, unsigned long * sizes, int byteswap )
+/*************************************************************************/
 {
     dr_dbg_handle       dbg;
 
-    dbg = InitDbgHandle( file, sizes );
+    dbg = InitDbgHandle( file, sizes, byteswap );
     if( dbg != NULL ) {
         ReadAbbrevTable( dbg );
         ReadFileTable();
@@ -299,12 +300,12 @@ static void ReadCompUnits( struct dr_dbg_info *dbg )
     DWRCurrNode->addr_size = addr_size;
 }
 
-dr_dbg_handle DRDbgInitNFT( void * file, unsigned long * sizes )
-/**************************************************************/
+dr_dbg_handle DRDbgInitNFT( void * file, unsigned long * sizes, int byteswap )
+/****************************************************************************/
 {
     dr_dbg_handle       dbg;
 
-    dbg = InitDbgHandle( file, sizes );
+    dbg = InitDbgHandle( file, sizes, byteswap );
     if( dbg != NULL ) {
         ReadCompUnits( dbg );
     }

@@ -31,7 +31,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <i86.h>
 #include "drpriv.h"
 /*
  * this virtual memory system has been set up in such a way that when
@@ -517,13 +516,17 @@ extern unsigned_16 DWRVMReadWord( dr_handle hdl )
     off = NODE_OFF(vm);
     target = node->mem + off;
     if( off != MAX_NODE_SIZE - 1 ) {  // we can read both bytes now.
-        return( *((unsigned_16 *)target) );
+        // must not swap bytes in source buffer!
+        off = *((unsigned_16 *)target);
     } else {
         off = *target;
         vm.l++;
         //node = AccessPage( vm );
         ACCESSPAGE( node, vm );                     // ITB
         off |= ((unsigned_16)*node->mem) << 8;
+    }
+    if( DWRCurrNode->byte_swap ) {
+        SWAP_16( off );
     }
     return( off );
 }
@@ -543,7 +546,8 @@ extern unsigned_32 DWRVMReadDWord( dr_handle hdl )
     off = NODE_OFF(vm);
     target = node->mem + off;
     if( off <= MAX_NODE_SIZE - 4 ) {  // we can read both bytes now.
-        return( *((unsigned_32 *)target) );
+        // must not swap bytes in source buffer!
+        result = *((unsigned_32 *)target);
     } else {
         off = MAX_NODE_SIZE - off;
         memcpy( &result, target, off );
@@ -551,6 +555,9 @@ extern unsigned_32 DWRVMReadDWord( dr_handle hdl )
         //node = AccessPage( vm );
         ACCESSPAGE( node, vm );                     // ITB
         memcpy( (char *)&result + off, node->mem, 4 - off );
+    }
+    if( DWRCurrNode->byte_swap ) {
+        SWAP_32( result );
     }
     return( result );
 }

@@ -29,8 +29,8 @@
 ****************************************************************************/
 
 
-dr_dbg_handle DRDbgInit( void *, unsigned long * );
-dr_dbg_handle DRDbgInitNFT( void *, unsigned long * ); /* no file table */
+dr_dbg_handle DRDbgInit( void *, unsigned long *, int );
+dr_dbg_handle DRDbgInitNFT( void *, unsigned long *, int ); /* no file table */
 void DRDbgFini( dr_dbg_handle );
 extern dr_dbg_handle  DRSetDebug( dr_dbg_handle );
 extern dr_dbg_handle  DRGetDebug();

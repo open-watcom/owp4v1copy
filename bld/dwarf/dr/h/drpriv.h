@@ -95,6 +95,7 @@ struct dr_dbg_info {
     compunit_info       *last_ccu;
     unsigned_8          addr_size;
     unsigned_8          wat_version;// compatibility flag for non-standard data
+    unsigned_8          byte_swap;
 };
 
 extern struct dr_dbg_info * DWRCurrNode;
@@ -102,3 +103,11 @@ extern struct dr_dbg_info * DWRCurrNode;
 
 #define ABBREV_TABLE_GUESS 500
 #define ABBREV_TABLE_INCREMENT 100
+
+#ifdef __BIG_ENDIAN__
+    #define SWAP_16     CONV_LE_16
+    #define SWAP_32     CONV_LE_32
+#else
+    #define SWAP_16     CONV_BE_16
+    #define SWAP_32     CONV_BE_32
+#endif

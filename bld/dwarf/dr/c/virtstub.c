@@ -174,3 +174,23 @@ extern unsigned DWRGetStrBuff( dr_handle drstr, char *buf, unsigned max )
     }
     return( len );
 }
+
+extern unsigned_16 DWRVMReadWord( dr_handle hdl )
+/***********************************************/
+{
+    unsigned_16     word = *((unsigned_16 _WCUNALIGNED *)(hdl));
+
+    if( DWRCurrNode->byte_swap ) {
+        SWAP_16( word );
+    }
+    return( word );
+}
+
+extern unsigned_32 DWRVMReadDWord( dr_handle hdl )
+/************************************************/
+{    unsigned_32    dword = *((unsigned_32 _WCUNALIGNED *)(hdl));
+    if( DWRCurrNode->byte_swap ) {
+        SWAP_32( dword );
+    }
+    return( dword );
+}
