@@ -59,10 +59,12 @@ typedef struct nested_macros {
         char    substituting_parms;
 } NESTED_MACRO;
 
-NESTED_MACRO *NestedMacros;
-MACRO_TOKEN  *TokenList;
-MACRO_TOKEN  *MacroExpansion();
-MACRO_TOKEN *NestedMacroExpansion( int );
+static NESTED_MACRO *NestedMacros;
+static MACRO_TOKEN  *TokenList;
+static MACRO_TOKEN  *MacroExpansion();
+static MACRO_TOKEN  *NestedMacroExpansion( int );
+
+static int MacroBeingExpanded ( MEPTR mentry );
 
 local void SaveParm( MEPTR      mentry,
                      int        i,
@@ -76,12 +78,12 @@ struct special_macro_names {
         int     value;
  };
 static struct special_macro_names  SpcMacros[] = {
-        "__LINE__",     MACRO_LINE,
-        "__FILE__",     MACRO_FILE,
-        "__DATE__",     MACRO_DATE,
-        "__TIME__",     MACRO_TIME,
-        "__STDC__",     MACRO_STDC,
-        NULL,       0
+        {"__LINE__",     MACRO_LINE},
+        {"__FILE__",     MACRO_FILE},
+        {"__DATE__",     MACRO_DATE},
+        {"__TIME__",     MACRO_TIME},
+        {"__STDC__",     MACRO_STDC},
+        {NULL,       0}
  };
 
 
@@ -127,9 +129,9 @@ void MacroInit(void)
 }
 
 static struct special_macro_names  SpcMacroCompOnly[] = {
-        "__FUNCTION__", MACRO_FUNC,
-        "__func__", MACRO_FUNC,
-        NULL,       0
+        {"__FUNCTION__", MACRO_FUNC},
+        {"__func__", MACRO_FUNC},
+        {NULL,       0}
  };
 
 void MacroAddComp(void)
@@ -210,7 +212,7 @@ void GetMacroToken(void)
         }
         CurToken = mtok->token;
         i = 0;
-        while( Buffer[i] = mtok->data[i] )i++;
+        while( (Buffer[i] = mtok->data[i]) )i++;
         switch( CurToken ) {
         case T_UNEXPANDABLE_ID:
             if( ! CompFlags.doing_macro_expansion ) {
@@ -267,6 +269,8 @@ void GetMacroToken(void)
             }
             flag.next_token = TRUE;
             break;
+        default:
+            break;
         }
         if( ! flag.keep_token ) {
             TokenList = mtok->next;
@@ -291,7 +295,7 @@ local int ExpandMacroToken( int i )
     case T_SAVED_ID:
     case T_BAD_TOKEN:                                   /* 07-apr-91 */
         ++MacroPtr;
-        while( Buffer[i] = *MacroPtr++ ){
+        while( (Buffer[i] = *MacroPtr++) ){
             ++i;
             if( i >= BUF_SIZE-2 ){
                 CErr1( ERR_TOKEN_TRUNCATED );
@@ -305,14 +309,14 @@ local int ExpandMacroToken( int i )
     case T_STRING:                                      /* 15-dec-91 */
         Buffer[i++] = '"';
         ++MacroPtr;
-        while( Buffer[i] = *MacroPtr++ )  ++i;
+        while( (Buffer[i] = *MacroPtr++) )  ++i;
         Buffer[i++] = '"';
         Buffer[i] = '\0';
         break;
     default:                                            /* 28-mar-90 */
         p = Tokens[ *MacroPtr ];
         ++MacroPtr;
-        while( Buffer[i] = *p++ )  ++i;
+        while( (Buffer[i] = *p++) )  ++i;
         break;
     }
     return( i );
@@ -472,6 +476,9 @@ static MACRO_ARG *CollectParms(void)
             case T_BAD_TOKEN:                           /* 07-apr-91 */
                 j += strlen( Buffer );
                 ++j;
+                break;
+            default:
+                break;
             }
             if( MTokenLen + j >= BUF_SIZE ) { /* if not enough space */
                 *token_tail = (struct tokens *)
@@ -505,7 +512,11 @@ static MACRO_ARG *CollectParms(void)
             case T_STRING:
             case T_BAD_TOKEN:                           /* 07-apr-91 */
                 j = 0;
-                while( TokenBuf[MTokenLen++] = Buffer[j++] ) ;
+                while( (TokenBuf[MTokenLen++] = Buffer[j++]) )
+                    /* empty */;
+                break;
+            default:
+                break;
             }
         }
         if( prev_tok == T_WHITE_SPACE ) --MTokenLen;
@@ -731,7 +742,7 @@ int Expandable( MACRO_TOKEN *mtok, int macro_parm )
     return( 0 );
 }
 
-int MacroBeingExpanded( MEPTR mentry )
+static int MacroBeingExpanded( MEPTR mentry )
 {
     NESTED_MACRO *nested;
 
@@ -762,7 +773,7 @@ MACRO_TOKEN *ExpandNestedMacros( MACRO_TOKEN *head, int rescanning )
             // if macro and not being expanded, then expand it
             // only tokens available for expansion are those in mtok list
             i = 0;
-            while( Buffer[i] = mtok->data[i] ) i++;
+            while( (Buffer[i] = mtok->data[i]) ) i++;
             CalcHash( Buffer, i );
             if( IdLookup() == T_MACRO ) {
                 if( rescanning ) {
