@@ -33,11 +33,11 @@ wcl386d.exe: wcl.c swchar.obj wclhelp.h wclmsg.h
 
 wclos2.exe: wcl.c swchar.obj wclhelp.h wclmsg.h
         $(comp386) wcl /dWCLI86 /os /s /d1 /zq /d__OS2 /bt=os2 /fo=.2bj
-        wlink $(wl_opt) system os2v2 pmc file wcl.2bj
+        wlink $(wl_opt) system os2v2 pmc name $^@ file wcl.2bj
 
 wcl386o2.exe: wcl.c swchar.obj wclhelp.h wclmsg.h
         $(comp386) wcl /dWCL386 /d__OS2 /fo=wcl386.2bj /os /s /zq /d1 /bt=os2
-        wlink $(wl_opt) system os2v2 pmc file wcl386.2bj
+        wlink $(wl_opt) system os2v2 pmc name $^@ file wcl386.2bj
 
 wclaxp.exe: wcl.c swchar.obj wclhelp.h wclmsg.h
         $(comp286) wcl /dWCLAXP /d__DOS /fo=wclaxp.obj /os /s /zq /d1 /bt=dos
