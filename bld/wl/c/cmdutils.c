@@ -642,6 +642,8 @@ extern bool GetTokenEx( sep_type req, tokcontrol ctrl, cmdfilelist *resetpoint, 
             Token.quoted = FALSE;
             if(resetpoint && (CmdFile == resetpoint))
             {
+                if(*Token.next == ',')
+                    break;
                 if(pbreset)
                     *pbreset = TRUE;            /* Show we have hit a file end-point for a directive */
                 return FALSE;
