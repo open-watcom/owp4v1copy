@@ -50,7 +50,7 @@ extern "C" {
 #endif
 
 #ifdef __GNUC__
-#define PACKED __attribute__((packed))
+#define PACKED(e) e __attribute__((packed))
 #ifndef _fastcall
 #define _fastcall __attribute__((fastcall))
 #endif
@@ -76,7 +76,7 @@ extern "C" {
 #define _declspec(e) __attribute__((e))
 #endif
 #elif defined(__WATCOMC__)
-#define PACKED
+#define PACKED(e) _Packed e 
 #else
 #define PACKED
 #define _cdecl
