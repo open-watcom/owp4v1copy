@@ -1,0 +1,90 @@
+in the UI directory, create a PSWEEP.FIL containing the lines
+
+    exclude DOS\UILIBMW.LIB
+    exclude DOS\UILIBLW.LIB
+    exclude OS2\UILIBSW.LIB
+    exclude OS2\UILIBLW.LIB
+    exclude OS2\UILIBMW.LIB
+    exclude QNX\UILIBMW.LIB
+    exclude WIN\UILIBMW.LIB
+
+In the Build root create the following directories
+
+    bdiff          bin            binp           c              chkmouse
+    clib           cmdedit        codegen        emu            emu86
+    f77            graphlib       h              hlp            install
+    misc           nlm            qh             src            techinfo
+    ui             uiforms        watcom         wbed           wdisasm
+    wfl            win            win386         windows        wl
+    wlib           wmake          womp           wpack          wprof
+    wsample        wstrip         wstub          wtouch         wv
+    xmem           qnx
+
+Create a \TMP directory on every drive
+
+An example autoexec:
+
+    set watcom=c:\lang
+    set home=c:
+    set glob=c:\etc\glob.exe
+    set help=c:\etc
+    set ROOTDIR=c:\
+    set TMPDIR=j:\
+    set ramd=j
+    set ramdisk=j:
+    set devdir=g:\bld
+    set devdr=g
+    set BLDDR=g:
+    set TOOLDR=c:
+    set relroot=e:
+    set qnx_key=wcc
+    set testmode=
+
+an example WPROJ.RC
+
+    e:\pat              x:\groupdir\cproj\patch
+    e:\distrib          x:\groupdir\cproj\distrib
+    c:\plum             x:\groupdir\cproj\plum
+    c:\tools            x:\groupdir\cproj\build
+    c:\lang             r:\lang
+    g:\bld\windows      x:\groupdir\cproj\windows
+    g:\bld\wstub        x:\groupdir\cproj\wstub
+    g:\bld\c            x:\groupdir\cproj\c
+    g:\bld\chkmouse     x:\groupdir\cproj\chkmouse
+    g:\bld\clib         x:\groupdir\cproj\clib
+    g:\bld\cmdedit      x:\groupdir\cproj\cmdedit
+    g:\bld\codegen      x:\groupdir\cproj\codegen
+    g:\bld\emu          x:\groupdir\cproj\emu
+    g:\bld\emu86        x:\groupdir\cproj\emu86
+    g:\bld\graphlib     x:\groupdir\cproj\graphlib
+    g:\bld\h            x:\groupdir\cproj\h
+    g:\bld\wpack        x:\groupdir\cproj\wpack
+    g:\bld\install      x:\groupdir\cproj\install
+    g:\bld\qh           x:\groupdir\cproj\qh
+    g:\bld\hlp          x:\groupdir\cproj\hlp
+    g:\bld\womp         x:\groupdir\cproj\womp
+    g:\bld\wbed         x:\groupdir\cproj\wbed
+    g:\bld\wdisasm      x:\groupdir\cproj\wdisasm
+    g:\bld\wl           x:\groupdir\cproj\wl
+    g:\bld\wlib         x:\groupdir\cproj\wlib
+    g:\bld\wmake        x:\groupdir\cproj\wmake
+    g:\bld\wprof        x:\groupdir\cproj\wprof         2.0.1
+    g:\bld\wsample      x:\groupdir\cproj\wsample
+    g:\bld\wstrip       x:\groupdir\cproj\wstrip
+    g:\bld\wtouch       x:\groupdir\cproj\wtouch
+    g:\bld\wv           x:\groupdir\cproj\wv
+    g:\bld\watcom       x:\groupdir\utils\watcom
+    g:\bld\f77          x:\groupdir\cproj\f77
+    g:\bld\wfl          x:\groupdir\cproj\wfl
+    g:\bld\misc         x:\groupdir\cproj\misc
+    g:\bld\ui           x:\groupdir\utils\ui
+    g:\bld\uiforms      x:\groupdir\cproj\uiforms
+    g:\bld\bdiff        x:\groupdir\cproj\bdiff
+    g:\bld\src          x:\groupdir\cproj\src
+    g:\bld\win386       x:\groupdir\cproj\win386
+    g:\bld\xmem         x:\groupdir\cproj\xmem
+    g:\bld\techinfo     x:\groupdir\utils\techinfo
+
+To make the "release" disk
+    execute MKRELDIR with parms REL1, REL2, PACK
+    make the PAT and DISTRIB directory

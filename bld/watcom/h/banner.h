@@ -54,7 +54,7 @@
 #define banner1p1(p)  p
 #define banner1p2(v)  "Version " v
 #define banner1(p,v) banner1p1(p) " " banner1p2(v)
-#define banner1w(p,v) "Watcom " banner1p1(p) " " banner1p2(v)
+#define banner1w(p,v) "OpenWatcom " banner1p1(p) " " banner1p2(v)
 
 #define banner2p1(year) "Copyright by Sybase, Inc., and its subsidiaries, " \
                       year ", " CURR_YEAR
@@ -84,7 +84,7 @@
 #elif _BANVER == 1090
     #define BAN_VER_STR "10.9" _BETA_
 #elif _BANVER == 1100
-    #define BAN_VER_STR "11.0c" _BETA_
+    #define BAN_VER_STR "1.0" _BETA_
 #else
     #error **** Specified Banner version not supported ****
     #define BAN_VER_STR "12.0" _BETA_

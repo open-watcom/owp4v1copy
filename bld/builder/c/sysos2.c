@@ -101,7 +101,7 @@ unsigned SysRunCommand( const char *cmd )
     return( 0 );
 }
 
-unsigned SysChDir( const char *dir )
+unsigned SysChDir( char *dir )
 {
     char        *end;
     unsigned    len;

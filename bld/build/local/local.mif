@@ -13,7 +13,7 @@ nlang_tools     = 1
 !ifdef %open_nlang_root
 lang_root = $(%open_nlang_root)
 !else
-lang_root = d:\nlang
+lang_root = $(%dwatcom)
 !endif
 %WATCOM=$+$(lang_root)$-
 %PATH=$+$(lang_root)\binnt;$(lang_root)\binw;$(%PATH)$-

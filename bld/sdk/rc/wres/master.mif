@@ -1,13 +1,6 @@
 #
 #  Makefile for   WRes library
 #
-#   Date        Name        Reason
-#   ----        ----        ------
-#   10 May 90   Steve B.    created
-#   07 Oct 91   Craig Eisler    cleaned up
-#   13 Oct 92   Jim Randall     added large model pegged stuff
-#   21 May 93   Wes Nelson      added last of large model windows stuff
-
 # path names used in the script
 
 proj_name = wres
