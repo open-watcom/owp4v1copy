@@ -85,6 +85,22 @@ typedef struct liblist {
     char                name[1];
 } libnamelist;
 
+typedef struct {
+    f_handle    incfhdl;
+    unsigned    currpos;
+    char *      buffer;
+    unsigned    num;
+    void        (*cbfn)(void *, void *);
+    carve_t     cv;
+} perm_read_info;
+
+typedef struct {
+    stringtable strtab;
+    unsigned    currpos;
+    f_handle    incfhdl;
+    void        (*prepfn)( void *, void * );
+} perm_write_info;
+
 /* data and functions used for permanent data structure storage */
 
 extern stringtable      PermStrings;
@@ -112,8 +128,8 @@ extern void     IncP2Start( void );
 extern void     PermSaveFixup( void *, unsigned );
 extern void     PermStartMod( mod_entry * );
 extern void     PermEndMod( mod_entry * );
-extern void     WritePermFile( void *, void *, unsigned );
-extern void     ReadPermFile( void *, void *, unsigned );
+extern void     WritePermFile( perm_write_info *, void *, unsigned );
+extern void     ReadPermFile( perm_read_info *, void *, unsigned );
 extern void     IterateModRelocs( unsigned,unsigned,unsigned (*)(void *));
 extern void *   GetSegContents( segdata *, virt_mem );
 extern void *   GetAltdefContents( segdata * );

@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  PERMDATA:  routines for making some linker data permanent
 *
 ****************************************************************************/
 
-
-/*
- *  PERMDATA:  routines for making some linker data permanent
- *
- */
 
 #include <string.h>
 #include <stdio.h>
@@ -110,13 +104,6 @@ extern void ResetPermData( void )
     InitStringTable( &PrefixStrings, TRUE );
     InitStringTable( &StoredRelocs, FALSE );
 }
-
-typedef struct {
-    stringtable strtab;
-    unsigned    currpos;
-    f_handle    incfhdl;
-    void        (*prepfn)( void *, void * );
-} perm_write_info;
 
 
 static void MarkDLLInfo( dll_sym_info *dll )
@@ -597,15 +584,6 @@ extern void WritePermData( void )
     QWrite( info.incfhdl, &hdr, sizeof(inc_file_header), IncFileName );
     QClose( info.incfhdl, IncFileName );
 }
-
-typedef struct {
-    f_handle    incfhdl;
-    unsigned    currpos;
-    char *      buffer;
-    unsigned    num;
-    void        (*cbfn)(void *, void *);
-    carve_t     cv;
-} perm_read_info;
 
 extern void ReadPermFile( perm_read_info *info, void *data, unsigned len )
 /************************************************************************/

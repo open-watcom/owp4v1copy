@@ -29,6 +29,7 @@
 *
 ****************************************************************************/
 
+#include "exepe.h"
 
 #define PE_DEFAULT_BASE (0x400000UL)
 #define PE_BSS_SHIFT    16
@@ -36,7 +37,7 @@
 
 extern void             DoAddResource( char * );
 extern void             FiniPELoadFile( void );
-extern void             ReadPEExportTable( f_handle, void * );
+extern void             ReadPEExportTable( f_handle, pe_hdr_table_entry * );
 extern void             AllocPETransferTable( void );
 extern void             GenPEToc( void );
 extern void             ChkPEData( void );

@@ -107,10 +107,16 @@ typedef struct {
     frame_type  type;
 } frame_spec;
 
+typedef struct {
+    unsigned_32 flags;
+    unsigned_32 off;
+    void *      target;
+} save_fixup;
+
 // functions external to obj2supp
 
-extern unsigned IncExecRelocs( void * );
-extern unsigned IncSaveRelocs( void * );
-extern unsigned RelocMarkSyms( void *fix );
+extern unsigned IncExecRelocs( save_fixup * );
+extern unsigned IncSaveRelocs( save_fixup * );
+extern unsigned RelocMarkSyms( save_fixup * );
 extern void     RelocStartMod( void );
 extern void     StoreFixup(offset, fix_type, frame_spec *, frame_spec *,offset);
