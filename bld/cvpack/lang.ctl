@@ -14,11 +14,11 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>\cvpack\qnx\cvpack.exe     <relroot>\rel2\qnx\binq\cvpack
     <CPCMD> <devdir>\cvpack\dos386\cvpack.exe  <relroot>\rel2\binw\cvpack.exe
     <CPCMD> <devdir>\cvpack\os2386\cvpack.exe  <relroot>\rel2\binp\cvpack.exe
     <CPCMD> <devdir>\cvpack\nt386\cvpack.exe   <relroot>\rel2\binnt\cvpack.exe
-#    <CPCMD> <devdir>\cvpack\ntaxp\cvpack.exe  <relroot>\rel2\axpnt\cvpack.exe
+#    <CPCMD> <devdir>\cvpack\ntaxp\cvpack.exe   <relroot>\rel2\axpnt\cvpack.exe
+#    <CPCMD> <devdir>\cvpack\qnx386\cvpack.exe  <relroot>\rel2\qnx\binq\cvpack
 
 [ BLOCK <1> clean ]
 #==================

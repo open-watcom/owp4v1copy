@@ -25,16 +25,11 @@ object_files += typemap.obj typearray.obj typerecord.obj common.obj
 
 common_include = $(h_dir)common.hpp $(h_dir)cverror.hpp $(makefile)
 
-object_list = cvpack.obj,retrieve.obj,cverror.obj,packtype.obj,subsect.obj
-object_list += ,cssymbol.obj,makeexe.obj,symdis.obj,typemap.obj
-object_list += ,typearray.obj,typerecord.obj,common.obj
-
 .EXTENSIONS:
 .EXTENSIONS: .exe .obj .asm .cpp .hpp
 
-#lflags = sys $(host_OS) debug dwarf option symfile=$(proj_name).sym name $(exe_file)
 $(exe_file) : $(object_files) $(makefile)
-    $(linker) $(lflags) FILE $(object_list)
+    $(linker) $(lflags) FILE { $(object_files) }
 
 .cpp : $(cpp_dir)
 .hpp : $(h_dir)
