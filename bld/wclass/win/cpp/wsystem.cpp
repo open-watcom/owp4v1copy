@@ -189,12 +189,12 @@ WProcAddr WEXPORT WSystemService::getProcAddr( WModuleHandle mod_handle,
                                                const char *proc ) {
 /*****************************************************************/
 
-    return( GetProcAddress( mod_handle, proc ) );
+    return( (WProcAddr) GetProcAddress( (HINSTANCE) mod_handle, proc ) );
 }
 
 
 void WEXPORT WSystemService::freeLibrary( WModuleHandle mod_handle ) {
 /********************************************************************/
 
-    FreeLibrary( mod_handle );
+    FreeLibrary( (HINSTANCE) mod_handle );
 }
