@@ -190,6 +190,7 @@ lflags_linux_386 = sys linux
 lflags_nt_386   = sys nt_win
 lflags_nt_axp   = sys ntaxp_win
 lflags_os2_386  = sys os2v2_pm
+lflags_os2_i86  = sys os2_pm
 !endif
 !ifdef sys_dll
 #this is equally bad
