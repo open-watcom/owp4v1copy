@@ -58,7 +58,7 @@ int           __cdecl _abnormal_termination(void);
 #define EXCEPTION_EXECUTE_HANDLER        1
 #define EXCEPTION_CONTINUE_SEARCH        0
 #ifndef EXCEPTION_CONTINUE_EXECUTION
-#define EXCEPTION_CONTINUE_EXECUTION    -1
+#define EXCEPTION_CONTINUE_EXECUTION   (-1)
 #endif
 
 :include cplusepi.sp
