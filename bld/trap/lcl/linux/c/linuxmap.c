@@ -58,7 +58,8 @@ static int              ModuleTop;
  */
 #define NO_DYN_MEM
 #ifdef NO_DYN_MEM
-static lib_load_info    module_info_array[32];
+#define MAX_MODULES     256
+static lib_load_info    module_info_array[MAX_MODULES];
 #endif
 
 /*
@@ -119,11 +120,16 @@ void AddLib( struct link_map *lmap )
 {
     lib_load_info       *lli;
 
-    ModuleTop++;
 #ifdef NO_DYN_MEM
+    if( ModuleTop >= (MAX_MODULES-1) ) {
+        Out( "Module array is too small!\n" );
+        return;
+    }
+    ModuleTop++;
     lli = &module_info_array[0];
 #else
     /* This code is not terribly efficient */
+    ModuleTop++;
     lli = malloc( ModuleTop * sizeof( lib_load_info ) );
     memset( lli, 0, ModuleTop * sizeof( lib_load_info ) );
     memcpy( lli, moduleInfo, ( ModuleTop - 1 ) *sizeof( lib_load_info ) );
