@@ -3,7 +3,7 @@
 
 cmd_file = test_tmp.cmd
 
-objs1 = &
+objs = &
 486 &
 adc &
 add &
@@ -85,9 +85,7 @@ test &
 try &
 xadd &
 xchg &
-xor
-
-objs2 = &
+xor &
 asmbug1 &
 asmbug2 &
 asmbug3 &
@@ -125,22 +123,14 @@ test_files : .SYMBOLIC
 	@%write $(cmd_file) wdis -a -l %1
 	@%write $(cmd_file) vi -d -q -k ":so fixlst.vi\nZZ" %1.lst
 	@%write $(cmd_file) ..\reverse %1.lst
+	@%write $(cmd_file) if exist %1.chk goto next
 	@%write $(cmd_file) diff -b %1.lst %1.asm
+	@%write $(cmd_file) goto end
+	@%write $(cmd_file) :next
+	@%write $(cmd_file) diff -b %1.lst %1.chk
+	@%write $(cmd_file) :end
 	@%write $(cmd_file) set cmplr=
-	@for %x in ($(objs1)) do @call $(cmd_file) %x $(ccomp)
-	@%create $(cmd_file)
-	@%write $(cmd_file) @echo off
-	@%write $(cmd_file) echo %1 ================================================================
-	@%write $(cmd_file) set cmplr=%2
-	@%write $(cmd_file) if exist %1.c rm %1.c
-	@%write $(cmd_file) vi -d -q -k ":r %1.bug\n:so toc.vi\n:0r cinit.vi\n:w %1.c\n:q!\n"
-	@%write $(cmd_file) %cmplr% %1 -s -ot -zm -zq
-	@%write $(cmd_file) wdis -a -l %1
-	@%write $(cmd_file) vi -d -q -k ":so fixlst.vi\nZZ" %1.lst
-	@%write $(cmd_file) ..\reverse %1.lst
-	@%write $(cmd_file) diff -b %1.lst %1.bug
-	@%write $(cmd_file) set cmplr=
-	@for %x in ($(objs2)) do @call $(cmd_file) %x $(ccomp)
+	@for %x in ($(objs)) do @call $(cmd_file) %x $(ccomp)
 
 
 clean : .SYMBOLIC
@@ -150,8 +140,7 @@ clean : .SYMBOLIC
 	@%write $(cmd_file) @if exist %1.lst del %1.lst
 	@%write $(cmd_file) @if exist %1.c del %1.c
 	@%write $(cmd_file) @if exist %1.err del %1.err
-	@for %x in ($(objs1)) do @call $(cmd_file) %x
-	@for %x in ($(objs2)) do @call $(cmd_file) %x
+	@for %x in ($(objs)) do @call $(cmd_file) %x
 	@if exist reverse.obj erase reverse.obj
 	@if exist ..\reverse.exe erase ..\reverse.exe
 	@if exist test_tmp.cmd erase test_tmp.cmd
