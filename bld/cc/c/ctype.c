@@ -430,7 +430,6 @@ static void DeclSpecifiers( char    *plain_int,
             break;
         case T_INLINE:
         case T___INLINE:
-            if( flags & FLAG_INLINE )CErr1( ERR_REPEATED_MODIFIER );
             flags |= FLAG_INLINE;
             break;
         case T__PACKED:
