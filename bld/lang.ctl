@@ -18,13 +18,16 @@ echo Languages Build <1>
 [ INCLUDE <devdir>\helpcomp\lang.ctl ]
 [ INCLUDE <devdir>\ssl\lang.ctl ]
 #
+#        Next build online docs. This will create required header files
+#        as a by-product.
+#
+[ INCLUDE <doc_root>\lang.ctl ]
+#
 #        Before building anything for real, create up-to-date header files
 #
 [ INCLUDE <devdir>\hdr\lang.ctl ]
 #        Same for Win32 headers/import libs
 [ INCLUDE <devdir>\w32api\lang.ctl ]
-#        This used to be part of HDR
-#[ INCLUDE <devdir>\nwsdk\lang.ctl ]
 #
 #        Next step, build libraries used by various projects
 #
