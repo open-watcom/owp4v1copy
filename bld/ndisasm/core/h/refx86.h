@@ -46,8 +46,8 @@ refpick( DWORDF, "dword" )
 refpick( QWORDF, "qword" )
 refpick( FARPTR48, "fword" )
 refpick( FARPTR32, "dword" )
-refpick( MEM1624, "" )  // 32 bits instead of 24 is still fetched
-refpick( MEM1632, "" )
+refpick( MEM1624, "fword" )  // 32 bits instead of 24 is still fetched
+refpick( MEM1632, "fword" )
 refpick( MM64, "" )
 refpick( XMM16, "" )
 refpick( XMM32, "" )
