@@ -7,22 +7,22 @@ extern "C" {
 #endif
 
 #ifdef INCL_DOS
-    #define INCL_DOSDATETIME
-    #define INCL_DOSDEVICES
-    #define INCL_DOSFILEMGR
-    #define INCL_DOSINFOSEG
-    #define INCL_DOSMEMMGR
-    #define INCL_DOSMISC
-    #define INCL_DOSMODULEMGR
-    #define INCL_DOSMONITORS
-    #define INCL_DOSNLS
-    #define INCL_DOSNMPIPES
-    #define INCL_DOSPROCESS
-    #define INCL_DOSQUEUES
-    #define INCL_DOSRESOURCES
-    #define INCL_DOSSEMAPHORES
-    #define INCL_DOSSESMGR
-    #define INCL_DOSSIGNALS
+  #define INCL_DOSDATETIME
+  #define INCL_DOSDEVICES
+  #define INCL_DOSFILEMGR
+  #define INCL_DOSINFOSEG
+  #define INCL_DOSMEMMGR
+  #define INCL_DOSMISC
+  #define INCL_DOSMODULEMGR
+  #define INCL_DOSMONITORS
+  #define INCL_DOSNLS
+  #define INCL_DOSNMPIPES
+  #define INCL_DOSPROCESS
+  #define INCL_DOSQUEUES
+  #define INCL_DOSRESOURCES
+  #define INCL_DOSSEMAPHORES
+  #define INCL_DOSSESMGR
+  #define INCL_DOSSIGNALS
 #endif
 
 #define CCHMAXPATH          260
@@ -422,6 +422,9 @@ USHORT APIENTRY DosWriteQueue(HQUEUE QueueHandle, USHORT Request, USHORT DataLen
 
 #ifdef INCL_DOSSEMAPHORES
 
+#define SEM_INDEFINITE_WAIT  (-1L)
+#define SEM_IMMEDIATE_RETURN   0
+
 typedef LHANDLE     HSYSSEM;
 typedef HSYSSEM FAR *PHSYSSEM;
 
@@ -607,10 +610,7 @@ USHORT APIENTRY DosGetResource2(HMODULE ModHandle, USHORT TypeID, USHORT NameID,
 
 #endif
 
-#ifdef INCL_DOSDATETIME
-
-typedef SHANDLE     HTIMER;
-typedef HTIMER FAR  *PHTIMER;
+#if (defined(INCL_DOSDATETIME) || !defined(INCL_NOCOMMON))
 
 typedef struct _DATETIME {
     UCHAR   hours;
@@ -626,6 +626,14 @@ typedef struct _DATETIME {
 
 USHORT APIENTRY DosGetDateTime(PDATETIME DateTime);
 USHORT APIENTRY DosSetDateTime(PDATETIME DateTime);
+
+#endif
+
+#ifdef INCL_DOSDATETIME
+
+typedef SHANDLE     HTIMER;
+typedef HTIMER FAR  *PHTIMER;
+
 USHORT APIENTRY DosTimerAsync(ULONG TimeInterval, HSEM SemHandle, PHTIMER Handle);
 USHORT APIENTRY DosTimerStart(ULONG TimeInterval, HSEM SemHandle, PHTIMER Handle);
 USHORT APIENTRY DosTimerStop(HTIMER Handle);

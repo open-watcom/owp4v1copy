@@ -50,6 +50,20 @@ extern "C" {
   #endif
 #endif
 
+#ifdef INCL_WINMLE
+  #ifndef INCL_WINENTRYFIELDS
+    #define INCL_WINENTRYFIELDS
+  #endif
+#endif
+
+#ifdef INCL_WINCOMMON
+  #define INCL_WINWINDOWMGR
+#endif
+
+#ifdef INCL_ERRORS
+  #define INCL_WINERRORS
+#endif
+
 #define MPFROMP(p)          ((MPARAM)(VOID FAR *)(p))
 #define MPFROMHWND(hwnd)    ((MPARAM)(HWND)(hwnd))
 #define MPFROMCHAR(ch)      ((MPARAM)(USHORT)(ch))
@@ -429,8 +443,8 @@ HWND   APIENTRY WinWindowFromDC(HDC);
 #define WM_SUBSTITUTESTRING     0x003c
 #define WM_MATCHMNEMONIC        0x003d
 #define WM_SAVEAPPLICATION      0x003e
-#define WM_HELPBASE             0x0F00 /* Start of msgs for help manager   */
-#define WM_HELPTOP              0x0FFF /* End of msgs for help manager     */
+#define WM_HELPBASE             0x0F00
+#define WM_HELPTOP              0x0FFF
 #define WM_USER                 0x1000
 
 #define COMMANDMSG(pmsg) ((struct _COMMANDMSG FAR *)((PBYTE)pmsg - sizeof(MPARAM) * 2))
@@ -474,6 +488,75 @@ BOOL    APIENTRY WinRegisterUserMsg(HAB,USHORT,SHORT,SHORT,SHORT,SHORT,SHORT);
 MRESULT APIENTRY WinSendMsg(HWND,USHORT,MPARAM,MPARAM);
 BOOL    APIENTRY WinSetMsgMode(HAB,PSZ,SHORT);
 BOOL    APIENTRY WinSetSynchroMode(HAB,SHORT);
+
+#endif
+
+#if defined(INCL_WINMESSAGEMGR)
+
+#define BMSG_POST        0x0000
+#define BMSG_SEND        0x0001
+#define BMSG_POSTQUEUE   0x0002
+#define BMSG_DESCENDANTS 0x0004
+#define BMSG_FRAMEONLY   0x0008
+
+#define CVR_ALIGNLEFT   0x0001
+#define CVR_ALIGNBOTTOM 0x0002
+#define CVR_ALIGNRIGHT  0x0004
+#define CVR_ALIGNTOP    0x0008
+#define CVR_REDRAW      0x0010
+
+#define HT_NORMAL      0
+#define HT_TRANSPARENT (-1)
+#define HT_DISCARD     (-2)
+#define HT_ERROR       (-3)
+
+#define QS_KEY         0x0001
+#define QS_MOUSEBUTTON 0x0002
+#define QS_MOUSEMOVE   0x0004
+#define QS_MOUSE       0x0006
+#define QS_TIMER       0x0008
+#define QS_PAINT       0x0010
+#define QS_POSTMSG     0x0020
+#define QS_SEM1        0x0040
+#define QS_SEM2        0x0080
+#define QS_SEM3        0x0100
+#define QS_SEM4        0x0200
+#define QS_SENDMSG     0x0400
+
+#define SMIM_ALL         0x0EFF
+#define SMI_NOINTEREST   0x0001
+#define SMI_INTEREST     0x0002
+#define SMI_RESET        0x0004
+#define SMI_AUTODISPATCH 0x0008
+
+#define WPM_TEXT         0x0001
+#define WPM_CTLDATA      0x0002
+#define WPM_PRESPARAMS   0x0004
+#define WPM_CCHTEXT      0x0008
+#define WPM_CBCTLDATA    0x0010
+#define WPM_CBPRESPARAMS 0x0020
+
+typedef struct _WNDPARAMS {
+    USHORT fsStatus;
+    USHORT cchText;
+    PSZ    pszText;
+    USHORT cbPresParams;
+    PVOID  pPresParams;
+    USHORT cbCtlData;
+    PVOID  pCtlData;
+} WNDPARAMS, FAR *PWNDPARAMS;
+
+BOOL   APIENTRY WinBroadcastMsg(HWND,USHORT,MPARAM,MPARAM,USHORT);
+BOOL   APIENTRY WinInSendMsg(HAB);
+USHORT APIENTRY WinMsgMuxSemWait(PUSHORT,PVOID,LONG);
+USHORT APIENTRY WinMsgSemWait(HSEM,LONG);
+BOOL   APIENTRY WinPostQueueMsg(HMQ,USHORT,MPARAM,MPARAM);
+BOOL   APIENTRY WinQueryMsgPos(HAB,PPOINTL);
+ULONG  APIENTRY WinQueryMsgTime(HAB);
+ULONG  APIENTRY WinQueryQueueStatus(HWND);
+BOOL   APIENTRY WinSetClassMsgInterest(HAB,PSZ,USHORT,SHORT);
+BOOL   APIENTRY WinSetMsgInterest(HWND,USHORT,SHORT);
+BOOL   APIENTRY WinWaitMsg(HAB,USHORT,USHORT);
 
 #endif
 

@@ -153,6 +153,18 @@ typedef struct _DRIVDATA {
     CHAR abGeneralData[1];
 } DRIVDATA, FAR *PDRIVDATA;
 
+typedef struct _DEVOPENSTRUC {
+    PSZ       pszLogAddress;
+    PSZ       pszDriverName;
+    PDRIVDATA pdriv;
+    PSZ       pszDataType;
+    PSZ       pszComment;
+    PSZ       pszQueueProcName;
+    PSZ       pszQueueProcParams;
+    PSZ       pszSpoolerParams;
+    PSZ       pszNetworkParams;
+} DEVOPENSTRUC, FAR *PDEVOPENSTRUC;
+
 #define FATTR_SEL_ITALIC            0x0001
 #define FATTR_SEL_UNDERSCORE        0x0002
 #define FATTR_SEL_OUTLINE           0x0008
