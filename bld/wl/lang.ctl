@@ -14,8 +14,8 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-#    <CPCMD> <devdir>/wl/qnx/wl.exe <relroot>/rel2/qnx/binq/wlink
-#    <CPCMD> <devdir>/wl/qnx/wl.sym <relroot>/rel2/qnx/sym/wlink.sym
+#    <CPCMD> <devdir>/wl/qnx386/wl.exe <relroot>/rel2/qnx/binq/wlink
+#    <CPCMD> <devdir>/wl/qnx386/wl.sym <relroot>/rel2/qnx/sym/wlink.sym
     <CPCMD> <devdir>/wl/ms2wlink/dosi86/ms2wlink.exe <relroot>/rel2/binw/ms2wlink.exe
     <CPCMD> <devdir>/wl/ms2wlink/nt386/ms2wlink.exe <relroot>/rel2/binnt/ms2wlink.exe
     <CPCMD> <devdir>/wl/ms2wlink/os2i86/ms2wlink.exe <relroot>/rel2/binp/ms2wlink.exe
@@ -33,13 +33,13 @@ cdsay .
     <CPCMD> <devdir>/wl/wlsystem.lnk <relroot>/rel2/binw/wlsystem.lnk
     <CPCMD> <devdir>/wl/dos386/wl.exe <relroot>/rel2/binw/wlink.exe
 #    <CPCMD> <devdir>/wl/386nec/wl.exe <relroot>/rel2/n98bw/wlink.exe
-    <CPCMD> <devdir>/wl/os2dll/wlstub.exe <relroot>/rel2/binp/wlink.exe
-    <CPCMD> <devdir>/wl/os2dll/wl.dll <relroot>/rel2/binp/dll/wlink.dll
-    <CPCMD> <devdir>/wl/nt386/wlstub.exe <relroot>/rel2/binnt/wlink.exe
-    <CPCMD> <devdir>/wl/nt386/wl.dll <relroot>/rel2/binnt/wlink.dll
-    <CPCMD> <devdir>/wl/nt386dll/wl.dll <relroot>/rel2/binnt/rtdll/wlink.dll
-#    <CPCMD> <devdir>/wl/axp/wlstub.exe <relroot>/rel2/axpnt/wlink.exe
-#    <CPCMD> <devdir>/wl/axp/wl.dll <relroot>/rel2/axpnt/wlink.dll
+    <CPCMD> <devdir>/wl/os2386.dll/wlstub.exe <relroot>/rel2/binp/wlink.exe
+    <CPCMD> <devdir>/wl/os2386.dll/wl.dll <relroot>/rel2/binp/dll/wlink.dll
+    <CPCMD> <devdir>/wl/nt386.dll/wlstub.exe <relroot>/rel2/binnt/wlink.exe
+    <CPCMD> <devdir>/wl/nt386.dll/wl.dll <relroot>/rel2/binnt/wlink.dll
+    <CPCMD> <devdir>/wl/nt386.rtd/wl.dll <relroot>/rel2/binnt/rtdll/wlink.dll
+#    <CPCMD> <devdir>/wl/ntaxp.dll/wlstub.exe <relroot>/rel2/axpnt/wlink.exe
+#    <CPCMD> <devdir>/wl/ntaxp.dll/wl.dll <relroot>/rel2/axpnt/wlink.dll
 #   cat <devdir>\wl\wlsystem.lnk <devdir>\wl\wlqnx.lnk ><relroot>\rel2\qnx\etc\wlink.lnk
 # linux
     <CPCMD> <devdir>/wl/wlbinl.lnk <relroot>/rel2/binl/wlink.lnk

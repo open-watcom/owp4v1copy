@@ -23,10 +23,14 @@ suppress_bd = 1
 
 inc_dirs = .;../h;
 
-.c: ../c;$(watcom_dir)/c;$(wrc_dir)/c;$(lib_misc_dir)/c
+.c: ../c;$(watcom_dir)/c;$(wrc_dir)/c;$(lib_misc_dir)/c;$(trmem_dir)
 
 !ifndef patch_level
 patch_level=0
+!endif
+
+!ifeq release 0
+wlink_trmem = 1
 !endif
 
 # first, set up the list of object files
@@ -147,14 +151,9 @@ extra_objs = ntio.obj virtpage.obj
 extra_objs += dllentry.obj idemsgpr.obj idedrv.obj
 !endif
 
-!ifeq wlink_trmem 1
-!ifeq host_CPU 386
-extra_objs += dmem.obj trmem.obj
-!else
-extra_objs += amem.obj trmem.obj
-!endif
-!else
 extra_objs += mem.obj
+!ifeq wlink_trmem 1
+extra_objs += trmem.obj
 !endif
 
 ################
@@ -162,7 +161,7 @@ extra_objs += mem.obj
 
 # now get all of the c flags set properly
 
-!ifneq release_wlink 1
+!ifeq release 0
 cflags_axp = -hc
 !endif
 
@@ -184,15 +183,21 @@ extra_c_flags_loadpe = -I. -I"../h" -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -DINSIDE_
 extra_c_flags_loados2 = -I"$(wres_dir)/h"
 extra_c_flags_demangle = -I"$(lib_misc_dir)/h"
 extra_c_flags_idedrv = -dCHAIN_CALLBACK
-extra_c_flags_trmem = -I"$(trmem_dir)"
-extra_c_flags_dmem = -dTRACKER /fo=dmem.obj -of+ -I"$(trmem_dir)"
 extra_c_flags_msg = -I"$(lib_misc_dir)/h"
-extra_c_flags_amem = -dTRACKER /fo=amem.obj -I"$(trmem_dir)"
 extra_c_flags_rcstr = -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" $(force_include)"../h/wlrcmem.h" -DINSIDE_WLINK
 extra_c_flags_exerespe = -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" -DINSIDE_WLINK
 extra_c_flags_sharedio = -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" -DINSIDE_WLINK
 extra_c_flags_stubidedrv = -dSTATIC_LINKAGE -fo=$^&.obj
 extra_c_flags_drvmsgpr = -fo=$^&.obj
+extra_c_flags_trmem = -I"$(trmem_dir)"
+
+!ifeq wlink_trmem 1
+extra_c_flags_mem = -dTRACKER -I"$(trmem_dir)"
+!ifneq host_CPU axp
+extra_c_flags_mem += -of+ 
+!endif
+!endif
+
 !ifdef sys_dll
 # invoke -bd switch for one module in dll
 extra_c_flags_wlink = -bd
