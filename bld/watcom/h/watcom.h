@@ -134,13 +134,15 @@ typedef unsigned_64     signed_64;
     /* Macros to get big endian data */
     #define GET_BE_16(w)    (w)
     #define GET_BE_32(w)    (w)
-
     /* Macros to convert little endian data in place */
     #define CONV_LE_16(w)   (w) = ((((w) & 0xFF) << 8) | (((w) & 0xFF00) >> 8))
     #define CONV_LE_32(w)   (w) = ((((w) & 0xFF) << 24) | (((w) & 0xFF00) << 8) | (((w) & 0xFF0000) >> 8) | (((w) & 0xFF000000) >> 24))
     /* Macros to convert big endian data in place */
     #define CONV_BE_16(w)
     #define CONV_BE_32(w)
+    /* Macros to swap byte order */
+    #define SWAP_16     CONV_LE_16
+    #define SWAP_32     CONV_LE_32
 #else
     /* Macros to get little endian data */
     #define GET_LE_16(w)    (w)
@@ -154,6 +156,9 @@ typedef unsigned_64     signed_64;
     /* Macros to convert big endian data in place */
     #define CONV_BE_16(w)   (w) = ((((w) & 0xFF) << 8) | (((w) & 0xFF00) >> 8))
     #define CONV_BE_32(w)   (w) = ((((w) & 0xFF) << 24) | (((w) & 0xFF00) << 8) | (((w) & 0xFF0000) >> 8) | (((w) & 0xFF000000) >> 24))
+    /* Macros to swap byte order */
+    #define SWAP_16     CONV_BE_16
+    #define SWAP_32     CONV_BE_32
 #endif
 
 #endif

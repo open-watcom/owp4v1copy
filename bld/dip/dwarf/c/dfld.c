@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DWARF debug information loading.
 *
 ****************************************************************************/
 
@@ -44,14 +43,6 @@
 #include "exeelf.h"
 #include "tistrail.h"
 
-
-#ifdef __BIG_ENDIAN__
-    #define SWAP_16     CONV_LE_16
-    #define SWAP_32     CONV_LE_32
-#else
-    #define SWAP_16     CONV_BE_16
-    #define SWAP_32     CONV_BE_32
-#endif
 
 typedef struct imp_image_handle *imp_image;
 
