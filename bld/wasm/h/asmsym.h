@@ -67,20 +67,6 @@ enum sym_state {
 
 };
 
-enum sym_type {
-        SYM_INT1,               /* a byte variable */
-        SYM_INT2,               /* a word variable */
-        SYM_INT4,               /* a dword variable */
-        SYM_INT6,               /* a 32-bit far pointer */
-        SYM_FLOAT4,             /* a 4 byte floating point variable */
-        SYM_FLOAT8,             /* an 8 byte floating point variable */
-        SYM_FLOAT10,            /* a 10 byte floating point variable */
-        SYM_NEAR2,              /* a 16-bit near routine */
-        SYM_NEAR4,              /* a 32-bit near routine */
-        SYM_FAR2,               /* a 16-bit far routine */
-        SYM_FAR4                /* a 32-bit far routine */
-};
-
 struct asmfixup {
         struct asmfixup         *next;
         char                    *name;
@@ -109,7 +95,6 @@ typedef enum {
         MT_SDWORD,
         MT_QWORD,
         MT_FWORD,
-        MT_PWORD,
         MT_TBYTE,
 
         MT_SHORT,
@@ -156,7 +141,21 @@ extern struct asm_sym *AsmGetSymbol( char *name );
 #ifdef _WASM_
     extern void AsmTakeOut( char *name );
     extern int AsmChangeName( char *old, char *new );
-#endif
+#else
+
+enum sym_type {
+        SYM_INT1,               /* a byte variable */
+        SYM_INT2,               /* a word variable */
+        SYM_INT4,               /* a dword variable */
+        SYM_INT6,               /* a 32-bit far pointer */
+        SYM_FLOAT4,             /* a 4 byte floating point variable */
+        SYM_FLOAT8,             /* an 8 byte floating point variable */
+        SYM_FLOAT10,            /* a 10 byte floating point variable */
+        SYM_NEAR2,              /* a 16-bit near routine */
+        SYM_NEAR4,              /* a 32-bit near routine */
+        SYM_FAR2,               /* a 16-bit far routine */
+        SYM_FAR4                /* a 32-bit far routine */
+};
 
 /*
    The following function is supplied by the user of the mini-assembler.
@@ -175,6 +174,8 @@ extern enum sym_state   AsmQueryExternal( char *name );
    constants.
 */
 extern enum sym_type    AsmQueryType( char *name );
+
+#endif
 
 extern struct asmfixup  *FixupHead;
 

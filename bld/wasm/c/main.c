@@ -1226,17 +1226,3 @@ static void parse_cmdline( char **cmdline )
         Fatal( MSG_CANNOT_OPEN_FILE, msgbuf );
     }
 }
-
-/* The following are functions needed by the original stand-alone assembler */
-
-extern enum sym_state   AsmQueryExternal( char *name )
-{
-    name = name;
-    return SYM_UNDEFINED;
-}
-
-extern enum sym_type    AsmQueryType( char *name )
-{
-    name = name;
-    return SYM_INT1;
-}
