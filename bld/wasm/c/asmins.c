@@ -2092,7 +2092,9 @@ int AsmParse()
             if( AsmBuffer[i-1]->token == T_MINUS ) {
                 rCode->data[Opnd_Count] *= -1;
             }
+#ifdef _WASM_
             AsmWarn( 4, FLOAT_OPERAND );
+#endif
             break;
         case T_CL_SQ_BRACKET:
             break;
