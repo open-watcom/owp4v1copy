@@ -43,8 +43,12 @@
 #include "fcbmem.h"
 #include "win.h"
 #ifdef TRMEM
-    #include <fcntl.h>
-    #include <io.h>
+    #include <fcntl.h> // For O_RDWR, O_CREAT, and O_TEXT.
+    #ifdef __UNIX__
+    #include <unistd.h> // For write and close
+    #else
+    #include <io.h> // For write and close
+    #endif
     #include <stdlib.h>
     #include "trmem.h"
 
