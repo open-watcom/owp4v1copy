@@ -328,9 +328,9 @@ dw_loc_label    DWENTRY DWLocNewLabel( dw_client, dw_loc_id __loc );
 void            DWENTRY DWLocSetLabel( dw_client, dw_loc_id __loc,
                             dw_loc_label __label );
 void            DWENTRY DWLocReg( dw_client, dw_loc_id __loc,
-                            int __reg );
+                            uint __reg );
 void            DWENTRY DWLocPiece( dw_client, dw_loc_id __loc,
-                            int __size );
+                            uint __size );
 void            DWENTRY DWLocStatic( dw_client, dw_loc_id __loc,
                             dw_sym_handle __sym );
 void            DWENTRY DWLocSym( dw_client, dw_loc_id,

@@ -628,7 +628,6 @@ void emitEnum(
         fprintf( fp, "    %s,\n", abbrevInfo[ u ].name );
     }
     fprintf( fp, "    AB_MAX\n};" );
-    fclose( fp );
 }
 
 size_t topOfEncoding;
@@ -695,8 +694,8 @@ void emitEncodings(
     since they are compile-time constant, and much smaller.
 */
     uint                        u;
-    char *                      end;
-    char *                      p;
+    uint_8 *                    end;
+    uint_8 *                    p;
     uint_32 const*              data;
 
     topOfEncoding = 0;

@@ -45,9 +45,11 @@
 // #define NDEBUG 1  // leave asserts around for now
 #ifdef NDEBUG
 #define _Assert(__ignore)       ((void)0)
-#else
+#elif defined(__WATCOMC__)
 extern  void            __assert( int, char *, char *, int );
 #define _Assert(__e)    ((__e)?(void)(0):__assert(0,#__e,__FILE__,__LINE__ ))
+#else
+#define _Assert(__e)    ((__e)?(void)(0):__assert(#__e,__FILE__,__LINE__ ))
 #endif
 
 #endif
