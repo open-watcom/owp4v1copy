@@ -10,7 +10,7 @@ target: $(name).lib
 .c: ../c;../../c;$(extra_cdir)
 .h: ../h;../../h;$(extra_hdir)
 
-inc_dirs += ../h;../../h;$(extra_hdir)
+inc_dirs += $(lang_root)/h;../h;../../h;$(extra_hdir)
 
 obj = obj
 !include ../objfiles.mif

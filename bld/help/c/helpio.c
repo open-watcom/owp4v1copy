@@ -34,6 +34,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <direct.h>
 #include "helpio.h"
 
 #if defined(UNIX)

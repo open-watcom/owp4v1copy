@@ -36,11 +36,11 @@
 #include <string.h>
 #include <ctype.h>
 #include <unistd.h>
-#ifndef __UNIX__
+//#ifndef __UNIX__
 #include <direct.h>
-#else
-#include <dirent.h>
-#endif
+//#else
+//#include <dirent.h>
+//#endif
 #include <process.h>
 #include <malloc.h>
 #include <conio.h>

@@ -85,7 +85,7 @@ extra_l_flags_osi += option symfile
 .key : $(wrc_dir)/hash
 .h : $(wrc_dir)/h;$(trmem_dir)
 
-inc_dirs = .;$(wrc_dir)/h;$(wres_dir)/h;$(watcom_dir)/h;$(cpp_dir);$(trmem_dir)
+inc_dirs = .;$(lang_root)/h;$(wrc_dir)/h;$(wres_dir)/h;$(watcom_dir)/h;$(cpp_dir);$(trmem_dir)
 
 .before:
         @set include=$(inc_path)

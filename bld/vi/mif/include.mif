@@ -2,7 +2,7 @@
 inc_dirs_trmem = $(trmem_dir)
 !endif
 
-inc_dirs = $(rcsdll_dir);$(posix_dir)/h;$(inc_dirs_trmem);$(watcom_dir)/h;
+inc_dirs = $(lang_root)/h;$(rcsdll_dir);$(posix_dir)/h;$(inc_dirs_trmem);$(watcom_dir)/h;
 
 !ifdef curses
 inc_dirs_dos = $(curses_dir)/h;

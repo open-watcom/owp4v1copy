@@ -31,6 +31,7 @@
 
 
 #include <malloc.h>
+#include <stdio.h>
 #ifdef __WATCOMC__
 #include <process.h>
 #endif

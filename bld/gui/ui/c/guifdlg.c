@@ -58,7 +58,7 @@
     #include <sys/disk.h>
     #include <fnmatch.h>
 #elif defined( __LINUX__ )
-    #include <dirent.h>
+    #include <direct.h>
     #include <unistd.h>
 #elif defined( UNIX )
     #include <dirent.h>
@@ -588,40 +588,6 @@ static bool isrdonly( struct dirent *dent, char *path )
         bit = S_IWOTH;
     }
     return( !(dent->d_stat.st_mode & bit) );
-}
-#elif defined(UNIX) || defined(__UNIX__)
-static bool isdir( struct dirent *dent, char *path )
-{
-    struct stat stats;
-
-    // FIXME: implement a "_stat2()" equivalent.
-    //_stat2( path, dent->d_name, &stats );
-    stat( dent->d_name, &stats );
-    return( S_ISDIR( stats.st_mode ) );
-}
-
-static bool isrdonly( struct dirent *dent, char *path )
-{
-    unsigned    bit;
-    uid_t       user;
-    struct stat stats;
-
-    user = geteuid();
-    if( user == 0 ) {
-        /* we're root - we can alway write the file */
-        return( FALSE );
-    }
-    // FIXME: implement a "_stat2()" equivalent.
-    //_stat2( path, dent->d_name, &stats );
-    stat( dent->d_name, &stats );
-    if( stats.st_uid == user ) {
-        bit = S_IWUSR;
-    } else if( stats.st_gid == getegid() ) {
-        bit = S_IWGRP;
-    } else {
-        bit = S_IWOTH;
-    }
-    return( (stats.st_mode & bit) == 0 );
 }
 #else
 static bool isdir( struct dirent *dent, char *path )

@@ -51,11 +51,11 @@
 #include "brinfo.h"
 #include "autodept.h"
 
-#if defined(__UNIX__)
- #include <dirent.h>
-#else
+//#if defined(__UNIX__)
+// #include <dirent.h>
+//#else
  #include <direct.h>
-#endif
+//#endif
 
 typedef struct buf_alloc BUF_ALLOC;
 struct buf_alloc {              // BUF_ALLOC -- allocated buffer
@@ -723,12 +723,12 @@ static void ioSuppTempOpen(             // OPEN TEMPORARY FILE
     auto char   fname[ _MAX_PATH ];
 
     mode = O_RDWR | O_CREAT | O_EXCL;
-    #if defined(__UNIX__)
+//    #if defined(__UNIX__)
         // Unix files are always binary
-        mode |= O_TEMP;
-    #else
+//        mode |= O_TEMP;
+//    #else
         mode |= O_BINARY;
-    #endif
+//    #endif
     for(;;) {
         tempFname( fname );
         #if defined(__DOS__)

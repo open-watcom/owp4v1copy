@@ -71,7 +71,7 @@ wpi_library=$(wpi_dir)/lib/$(wpi_lib).lib
 .h:     ../h;../../h;$(wpi_dir)/h
 .msg:   ../../h
 
-inc_dirs += ../h;../../h;$(trmem_dir);$(help_dir)/h;
+inc_dirs += ../h;../../h;$(trmem_dir);$(help_dir)/h;$(lang_root)/h;
 
 extra_c_flags += -s -fh
 

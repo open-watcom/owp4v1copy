@@ -49,11 +49,11 @@
 #include "dw.h"
 #include "exeelf.h"
 
-#if defined(__UNIX__)
- #include <unistd.h>
-#else
+//#if defined(__UNIX__)
+// #include <unistd.h>
+//#else
  #include <direct.h>
-#endif
+//#endif
 
 
 typedef struct cppdw_section {

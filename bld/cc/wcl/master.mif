@@ -4,6 +4,8 @@ proj_name = wcl
 wcl_autodepends = .AUTODEPEND
 !endif
 
+inc_dirs=.;$(lang_root)/h;
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
