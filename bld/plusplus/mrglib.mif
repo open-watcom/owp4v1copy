@@ -18,11 +18,18 @@ lib_flags += -s
 !endif
 !endif
 
-!ifdef on_JWW_machine
-lib_page_size = -p=64
-!else ifeq release 0
-lib_page_size = -p=64
+!ifndef lib_page_size
+!ifeq release 0
+!ifdef debug_lib_page_size
+lib_page_size = $(debug_lib_page_size)
 !else
+lib_page_size = -p=64
+!endif
+!else
+!ifdef release_lib_page_size
+lib_page_size = $(release_lib_page_size)
+!endif
+!endif
 !endif
 !ifndef lib_page_size
 lib_page_size = -p=16

@@ -9,10 +9,6 @@ uncompressed=1
 !include $(define_target_include)
 !include cproj.mif
 
-# !ifdef on_JWW_machine
-# uncompressed=1
-# !endif
-
 !ifndef target_objs
 target_objs = $(objs)
 !endif
@@ -30,10 +26,16 @@ lib_flags += -s
 !endif
 !endif
 
-!ifdef on_JWW_machine
-lib_page_size = -p=64
-!else ifeq release 0
+!ifndef lib_page_size
+!ifeq release 0
+!ifdef debug_lib_page_size
+lib_page_size = $(debug_lib_page_size)
+!endif
 !else
+!ifdef release_lib_page_size
+lib_page_size = $(release_lib_page_size)
+!endif
+!endif
 !endif
 !ifndef lib_page_size
 lib_page_size = -p=16
@@ -97,10 +99,7 @@ asm_flags =
 asm_flags = -zq-w4 $(asm_model) -fo=.obj -i"$(watcom_dir)/h"
 !endif
 
-!ifdef on_JWW_machine
-comp_flags += -d2
-comp_cpp += -ew
-!else ifeq release 0
+!ifeq release 0
 comp_flags += -d2
 !else
 comp_flags += -d1 -dNDEBUG
