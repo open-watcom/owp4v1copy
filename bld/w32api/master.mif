@@ -100,10 +100,6 @@ libs =               &
 
 $(libs):
 
-kernel32.lib: kernel32.lbc kernel32.obj
-        $(lib) -b -c -q -n -io -ii $@ @$*
-        $(lib) -b -c -q  $@ +$*
-
 dinput.lib: dinput.lbc dinput.obj
         $(lib) -b -c -q -n -io -ii $@ @$*
         $(lib) -b -c -q  $@ +$*
