@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Header file to set up internal trap debugging code
 *
 ****************************************************************************/
 
@@ -48,6 +47,57 @@
 #define DBG_BLANK                       0x20
 #define DBG_BELL                        0x07
 
+#ifdef __LINUX__
+#define _DBG_KeyWait()
+
+#include <unistd.h>
+
+extern void _DBG_DumpMultChars( uint_8 ch, uint_32 count, uint_32 fhandle );
+#pragma aux _DBG_DumpMultChars =                                        \
+    "push   ebp"                                                        \
+    "mov    ebp, esp"                                                   \
+    "sub    esp, edx"           /* make space for edx chars */          \
+    "mov    edi, esp"                                                   \
+    "mov    ecx, edx"           /* count in ecx */                      \
+    "rep    stosb"              /* replicate chars in buffer */         \
+    "mov    ecx, esp"           /* now ecx points to string */          \
+    "mov    eax,4"                                                      \
+    "int    0x80"                                                       \
+    "mov    esp, ebp"                                                   \
+    "pop    ebp"                                                        \
+    parm [ al ] [ edx ] [ ebx ]                                         \
+    modify [eax ecx esi edi];
+
+extern void _DBG_DumpChar( uint_8 ch, uint_32 fhandle );
+#pragma aux _DBG_DumpChar =                                             \
+    "push   eax"                                                        \
+    "mov    ecx, esp"           /* now ecx points to char */            \
+    "mov    edx, 1"             /* number of bytes to write */          \
+    "mov    eax,4"                                                      \
+    "int    0x80"                                                       \
+    "pop    eax"                                                        \
+    parm [ al ] [ ebx ];
+
+extern uint_8 _DBG_HexChar( uint_8 digit );
+#pragma aux _DBG_HexChar =                                              \
+    "and    al, 0fh"      /* the digit is in the low 4 bits */          \
+    "cmp    al, 09h"                                                    \
+    "jg     L2"                                                         \
+    "add    al, '0'"                                                    \
+    "jmp    L3"                                                         \
+    "L2:"                                                               \
+    "sub    al, 0ah"                                                    \
+    "add    al, 'a'"                                                    \
+    "L3:"                                                               \
+    parm [ al ];
+
+extern void _DBG_DumpStr( char *str, uint_32 len, uint_32 fhandle );
+#pragma aux _DBG_DumpStr =                                              \
+    "mov    eax,4"                                                      \
+    "int    0x80"                                                       \
+    parm [ecx] [edx] [ebx];
+
+#else
 
 extern void _DBG_KeyWait( void );
 #pragma aux _DBG_KeyWait =                                              \
@@ -118,6 +168,7 @@ extern void _DBG_DumpStr( char far *str, uint_16 len, uint_16 fhandle );
     "pop        ds      "                                               \
     parm [ ax dx ] [ cx ] [ bx ]                                        \
     modify exact [ ax bx cx dx ];
+#endif
 
 
 #define _DBG_Request( n )       ( (access_req)(n) >= REQ__LAST ?        \

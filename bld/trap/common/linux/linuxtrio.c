@@ -24,18 +24,19 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Trap I/O functions for Linux
 *
 ****************************************************************************/
 
-
+#define DEBUG_TRAP
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <termios.h>
 #include <conio.h>
+#include "trapdbg1.h"
+#include "trapdbg2.h"
 #include "trpimp.h"
 
 extern char RWBuff[];
