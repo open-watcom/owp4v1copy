@@ -208,10 +208,18 @@ STATIC BOOLEAN fillBuffer( void )
 
     tmp->data.file.cur = tmp->data.file.buf;
 
-    max = read( tmp->data.file.fh, tmp->data.file.buf, FILE_BUFFER_SIZE );
+    max = read( tmp->data.file.fh, tmp->data.file.buf, FILE_BUFFER_SIZE - 1 );
     if( max < 0 ) {     /* 31-jul-91 DJG */
         PrtMsg( ERR| READ_ERROR, tmp->data.file.name );
         max = 0;
+    } else if ( max > 0 && tmp->data.file.buf[max - 1] == '\r' ) {
+        /* read one more character if it ends in \r (possibly CRLF) */
+        int max2 = read( tmp->data.file.fh, &tmp->data.file.buf[max], 1 );
+        if( max2 < 0 ) {     /* 13-sep-03 BEO */
+            PrtMsg( ERR| READ_ERROR, tmp->data.file.name );
+            max2 = 0;
+        }
+        max += max2;
     }
     tmp->data.file.max = tmp->data.file.buf + max;
     return( max > 0 );
@@ -351,9 +359,6 @@ extern STRM_T GetCHR( void )
                 result = EOL;
             }
             if( result == EOL ) {
-                /* ignore \r in \n\r */
-                if( head->data.file.cur[0] == '\r' )
-                    head->data.file.cur++;
                 head->data.file.line++;
             }
             return( result );
