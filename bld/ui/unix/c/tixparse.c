@@ -461,6 +461,14 @@ static int do_default( void )
         TrieAdd( EV_CTRL_END, "\033[1;5F" );
         TrieAdd( EV_CTRL_PAGE_UP, "\033[5;5~" );
         TrieAdd( EV_CTRL_PAGE_DOWN, "\033[6;5~" );
+
+        /* slightly older xterms report these sequences... */
+        TrieAdd( EV_CTRL_CURSOR_UP, "\033[O5A" );
+        TrieAdd( EV_CTRL_CURSOR_DOWN, "\033[O5B" );
+        TrieAdd( EV_CTRL_CURSOR_RIGHT, "\033[O5C" );
+        TrieAdd( EV_CTRL_CURSOR_LEFT, "\033[O5D" );
+        TrieAdd( EV_CTRL_HOME, "\033[O5H" );
+        TrieAdd( EV_CTRL_END, "\033[O5F" );
     }
     return( 1 );
 }
