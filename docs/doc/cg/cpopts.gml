@@ -1415,7 +1415,7 @@ target name.
 .if &e'&$SWbw eq 1 .do begin
 :OPT refid='SWbw' name='bw'.
 .ix 'options' 'bw'
-(OS/2, Win16, Win32 only)
+(Win16 only)
 This option causes the compiler to import a special symbol so that the
 default windowing library code is linked into your application.
 The presence of
@@ -2760,12 +2760,6 @@ The compiler will generate an object file in Phar Lap Easy OMF-386
 The macro
 .kwm __SW_EZ
 will be predefined if "ez" is selected.
-.if '&target' eq 'PP' .do begin
-.fn begin
-Any options marked with a "&optdag" must not be used for PenPoint
-application development.
-.fn end
-.do end
 .do end
 .*
 .if &e'&$SWfc eq 1 .do begin
@@ -2945,11 +2939,11 @@ processing that the compiler does by default (see "ft" above).
 :OPT refid='SWfzh' name='fzh'.
 .ix 'options' 'fzh'
 (C++ only)
-This option can be used to stop the compiler from automatically adding 
-extensions to include files. The default behaviour of the compiler is to 
-search for the specified file, then to try known extensions if the file 
-specifier does not have an extension. Thus, #include <string> could be 
-matched by 'string', 'string.h' or 'string.hpp' (see "fzs" below). The 
+This option can be used to stop the compiler from automatically adding
+extensions to include files. The default behaviour of the compiler is to
+search for the specified file, then to try known extensions if the file
+specifier does not have an extension. Thus, #include <string> could be
+matched by 'string', 'string.h' or 'string.hpp' (see "fzs" below). The
 macro
 .kwm __SW_FZH
 will be defined when this switch is used.
@@ -2959,11 +2953,11 @@ will be defined when this switch is used.
 :OPT refid='SWfzs' name='fzs'.
 .ix 'options' 'fzs'
 (C++ only)
-This option can be used to stop the compiler from automatically adding 
-extensions to source files. The default behaviour of the compiler is to 
-search for the specified file, then to try known extensions if the file 
-specifier does not have an extension. Thus, 'src_file' could be matched 
-by 'src_file', 'src_file.cpp' or 'src_file.cc' (see "fzh" above). The 
+This option can be used to stop the compiler from automatically adding
+extensions to source files. The default behaviour of the compiler is to
+search for the specified file, then to try known extensions if the file
+specifier does not have an extension. Thus, 'src_file' could be matched
+by 'src_file', 'src_file.cpp' or 'src_file.cc' (see "fzh" above). The
 macro
 .kwm __SW_FZS
 will be defined when this switch is used.
@@ -3081,7 +3075,7 @@ object file.
 :OPT refid='SWzlf' name='zlf'.&optdag.
 .ix 'options' 'zlf'
 The "zlf" option tells the compilers to emit references for all default
-library information into the compiled object file. See also the options 
+library information into the compiled object file. See also the options
 "zl", "zld" and "zls".
 .do end
 .*
@@ -3090,8 +3084,8 @@ library information into the compiled object file. See also the options
 .ix 'options' 'zls'
 The "zls" option tells the compilers to remove automatically inserted
 symbols. These symbols are usually used to force symbol references
-to be fixed up from the run-time libraries. An example would be 
-the symbol __DLLstart_, that is inserted into any object file that has 
+to be fixed up from the run-time libraries. An example would be
+the symbol __DLLstart_, that is inserted into any object file that has
 a DllMain() function defined within its source file.
 .do end
 .*
@@ -3313,25 +3307,12 @@ void main( )
 }
 .exam end
 .np
-.if &version ge 110 .do begin
 In the above example, the default alignment "zp8" will cause the
 pointer and integer items to be aligned on even addresses
 although the array "date" is 9 bytes in length.
 The items are 2-byte aligned when sizeof(item) is 2 and 4-byte
 aligned when sizeof(item) is 4.
-.do end
-.el .if &version ge 107 .do begin
-In the above example, the default alignment "zp4" will cause the
-pointer and integer items to be aligned on even addresses
-although the array "date" is 9 bytes in length.
-The items are 2-byte aligned when sizeof(item) is 2 and 4-byte
-aligned when sizeof(item) is 4.
-.do end
-.el .do begin
-In the above example, the default alignment "zp1" will cause the
-pointer and integer items to be aligned on odd addresses since the
-array "date" is 9 bytes in length.
-.do end
+.np
 On computer systems that have a 16-bit (or 32-bit) bus, improved
 performance can be obtained when pointer, integer and floating-point
 items are aligned on an even boundary.

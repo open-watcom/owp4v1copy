@@ -825,7 +825,6 @@ Offset
 .monooff
 .millust end
 .do end
-.if '&target' ne 'PP' .do begin
 .if '&machine' eq '8086' .do begin
 .millust begin
 .us Big Code Model
@@ -858,17 +857,11 @@ Offset
 .monooff
 .millust end
 .do end
-.do end
 .autonote Notes:
 .note
 The return address is the top element on the stack.
 In a small code model, the return address is
-.if '&target' ne 'PP' .do begin
-&nearsize.
-.do end
-.el .do begin
 &nearsize; in a big code model, the return address is &farsize..
-.do end
 .endnote
 .if '&machine' eq '8086' .do begin
 :set symbol="s_o1" value=" 2".
@@ -938,7 +931,6 @@ Offset
 .monooff
 .millust end
 .do end
-.if '&target' ne 'PP' .do begin
 .if '&machine' eq '8086' .do begin
 .millust begin
 .us Big Code Model
@@ -975,16 +967,9 @@ Offset
 .monooff
 .millust end
 .do end
-.do end
 .pc
 As the above diagrams show, the third argument is at offset &s_o2 from
-register &bpup in a small code
-.if '&target' eq 'PP' .do begin
-model.
-.do end
-.el .do begin
-model and offset &b_o2 in a big code model.
-.do end
+register &bpup in a small code model and offset &b_o2 in a big code model.
 .np
 Upon exit from
 .id myrtn,
@@ -1042,7 +1027,6 @@ _TEXT   $ends
 :cmt.         $end
 .monooff
 .millust end
-.if '&target' ne 'PP' .do begin
 .millust begin
 .us Large Memory Model (big code, big data)
 .monoon
@@ -1078,7 +1062,6 @@ MYRTN_TEXT ends
 :cmt.         $end
 .monooff
 .millust end
-.do end
 .tb set
 .tb
 .autonote Notes:
@@ -1099,10 +1082,8 @@ any segment containing executable code must belong to the segment
 "_TEXT" and the class "CODE".
 The segment "_TEXT" must have a "combine" type of "PUBLIC".
 On entry, CS contains the segment address of the segment "_TEXT".
-.if '&target' ne 'PP' .do begin
 In a big code model there is no restriction on the naming of segments
 which contain executable code.
-.do end
 .note
 In a small data model, segment register DS contains the segment address
 of the group "DGROUP".
@@ -1110,10 +1091,8 @@ This is not the case in a big data model.
 .note
 When writing assembly language functions for the small code model, you
 must declare them as "near".
-.if '&target' ne 'PP' .do begin
 If you wish to write assembly language functions for the big code model,
 you must declare them as "far".
-.do end
 .note
 In general, when naming segments for your code or data,
 you should follow the conventions described in the section entitled
@@ -1159,7 +1138,6 @@ Offset
  24     |                |
 .monooff
 .millust end
-.if '&target' ne 'PP' .do begin
 .millust begin
 .us Big Code Model
 .monoon
@@ -1180,17 +1158,11 @@ Offset
  28     |                |
 .monooff
 .millust end
-.do end
 .autonote Notes:
 .note
 The return address is the top element on the stack.
 In a small code model, the return address is
-.if '&target' ne 'PP' .do begin
-&nearsize.
-.do end
-.el .do begin
 &nearsize; in a big code model, the return address is &farsize..
-.do end
 .endnote
 :set symbol="s_o1" value=" 4".
 :set symbol="s_o2" value=" 8".
@@ -1232,7 +1204,6 @@ Offset
  28     |                |
 .monooff
 .millust end
-.if '&target' ne 'PP' .do begin
 .millust begin
 .us Big Code Model
 .monoon
@@ -1255,7 +1226,6 @@ Offset
  32     |                |
 .monooff
 .millust end
-.do end
 .pc
 As the above diagrams show, the argument are all on the stack and are
 referenced by specifying an offset from register &bpup..
@@ -1310,7 +1280,6 @@ _TEXT   $ends
 :cmt.        $end
 .monooff
 .millust end
-.if '&target' ne 'PP' .do begin
 .millust begin
 .us Large Memory Model (big code, big data)
 .monoon
@@ -1346,7 +1315,6 @@ MYRTN_TEXT ends
 :cmt.        $end
 .monooff
 .millust end
-.do end
 .tb set
 .tb
 .autonote Notes:
@@ -1373,10 +1341,8 @@ any segment containing executable code must belong to the segment "_TEXT"
 and the class "CODE".
 The segment "_TEXT" must have a "combine" type of "PUBLIC".
 On entry, CS contains the segment address of the segment "_TEXT".
-.if '&target' ne 'PP' .do begin
 In a big code model there is no restriction on the naming of segments
 which contain executable code.
-.do end
 .note
 In a small data model, segment register DS contains the segment address
 of the group "DGROUP".
@@ -1384,10 +1350,8 @@ This is not the case in a big data model.
 .note
 When writing assembly language functions for the small code model, you
 must declare them as "near".
-.if '&target' ne 'PP' .do begin
 If you wish to write assembly language functions for the big code model,
 you must declare them as "far".
-.do end
 .note
 In general, when naming segments for your code or data,
 you should follow the conventions described in the section entitled
@@ -1760,16 +1724,12 @@ This function has been written for a small code model.
 Any segment containing executable code must belong to the class "CODE"
 and the segment "_TEXT".
 On entry, CS contains the segment address of the segment "_TEXT".
-.if '&target' ne 'PP' .do begin
 The above restrictions do not apply in a big code memory model.
-.do end
 .note
 When writing assembly language functions for a small code model, you
 must declare them as "near".
-.if '&target' ne 'PP' .do begin
 If you wish to write assembly language functions for a big code model,
 you must declare them as "far".
-.do end
 .endnote
 .*
 .section Returning Values in 80x87-based Applications

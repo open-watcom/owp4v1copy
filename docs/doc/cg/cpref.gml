@@ -149,10 +149,6 @@ are trademarks of Digital Equipment Corporation.
 .do end
 .*
 .np
-AutoCAD Development System is a trademark of Autodesk, Inc.
-.do end
-.*
-.np
 DOS/4G and DOS/16M are trademarks of Tenberry Software, Inc.
 .*
 .np
@@ -163,7 +159,7 @@ High C is a trademark of MetaWare, Inc.
 OS/2 is a trademark of International Business Machines Corp.
 .do end
 .el .do begin
-IBM Developer's WorkFrame/2, Presentation Manager, and OS/2 are
+IBM Developer's Toolkit, Presentation Manager, and OS/2 are
 trademarks of International Business Machines Corp.
 .do end
 IBM is a registered trademark of International Business Machines Corp.
@@ -189,10 +185,6 @@ QNX is a registered trademark of QNX Software Systems Ltd.
 .*
 .np
 UNIX is a registered trademark of UNIX System Laboratories, Inc.
-.*
-:cmt. .np
-:cmt. &vpname and Nextware are trademarks owned by or licensed
-:cmt. to Nextware, a division of Blue Sky Software Corp.
 .*
 .np
 .im wtrdmrk

@@ -7,27 +7,7 @@ The &product library routines are described in the
 manual, and the
 .book &company C++ Class Library Reference
 manual.
-.if '&target' eq 'PP' .do begin
-The PenPoint kernel functions are described in "PenPoint Architectural
-Reference, Volume II, Part 9: System Services".
-.np
-The &cmpcname library for PenPoint is located under the
-.fi &pathnamup&libdirup
-directory.
-.millust begin
-        \penpoint\sdk
-             |
----.---------+---------.---
-   |         |         |
-  lib       inc      sample
-   |         |         |
-.millust end
-.np
-The name of the library containing the &cmpcname library routines
-is called
-.fi PENPOINT.LIB.
-.do end
-.el .if '&target' eq 'QNX' .do begin
+.if '&target' eq 'QNX' .do begin
 .*
 .section &product Library Directory Structure
 .*
@@ -337,8 +317,6 @@ CLIB3R.LIB   (flat/small models, "3r", "4r" or "5r" option)
 CLIB3S.LIB   (flat/small models, "3s", "4s" or "5s" option)
 .millust end
 .do end
-.*
-.if '&target' ne 'PP' .do begin
 .*
 .if '&target' eq 'QNX' .do begin
 .*
@@ -1202,14 +1180,6 @@ CSTRTX32.ASM (startup for FlashTek DOS Extender)
 CMAIN386.C   (final part of initialization sequence)
 .millust end
 .np
-.cp 8
-.us Under
-.fi &pathnamup&pc.SRC&pc.STARTUP&pc.ADS
-.ix 'ADSTART.ASM'
-.millust begin
-ADSTART.ASM  (startup for AutoCAD Development System)
-.millust end
-.np
 .ix 'CMAIN386.C'
 The assembler files
 .fi CSTRT*.ASM
@@ -1266,48 +1236,4 @@ must be compiled to produce the object file
 This file must be specified before the &product libraries in the
 linker command file in order to replace the standard "argv"
 processing.
-.do end
-.*
-:cmt. .if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
-:cmt. .if '&target' ne 'QNX' .do begin
-:cmt. .*
-:cmt. .section Compatibility with Other Compilers
-:cmt. .*
-:cmt. .np
-:cmt. .ix 'COMMON.CNV'
-:cmt. .ix 'calling conventions'
-:cmt. .ix 'pragma'
-:cmt. .ix 'memory model'
-:cmt. .ix 'code generation'
-:cmt. The &product code generator supports customized code generation
-:cmt. through the use of the "auxiliary" pragma.
-:cmt. Pragmas are described in the
-:cmt. chapters entitled :HDREF refid='prg86'. and :HDREF refid='prg386'.
-:cmt. This capability permits interfacing to code produced by other
-:cmt. compilers.
-:cmt. .np
-:cmt. To select &company Express C compatibility, you must do two things.
-:cmt. .autonote
-:cmt. .note
-:cmt. You must include the
-:cmt. .fi common.cnv
-:cmt. file as part of the source input stream.
-:cmt. This file contains the pragma which defines the &company Express C
-:cmt. calling conventions.
-:cmt. This file can be included simply by using the &product "fi" option on
-:cmt. the command line.
-:cmt. .note
-:cmt. You must specify the &product "mm" option on the command line.
-:cmt. This option selects the "medium" memory model employed by &company
-:cmt. Express C.
-:cmt. .endnote
-:cmt. .keep
-:cmt. .np
-:cmt. The following example illustrates these two points.
-:cmt. .exam begin 1
-:cmt. &prompt.&ccmd16 utils &sw.fi=&pathnam.&hdrdir.&pc.common.cnv &sw.mm
-:cmt. .exam end
-:cmt. .do end
-:cmt. .do end
-.*
 .do end

@@ -1449,12 +1449,6 @@ and
 to be equivalent to the
 .kwm __near
 keyword.
-.if '&target' eq 'PP' .do begin
-.fn begin
-Any keywords marked with a "&optdag" must not be used for PenPoint
-application development.
-.fn end
-.do end
 .*
 .note __far &optdag.
 .ix 'keywords' '__far'
@@ -2668,15 +2662,6 @@ The following declaration would be flagged in error.
 .exam begin
 __declspec(naked) static int data_object = 0;
 .exam end
-:CMT. .bull
-:CMT. The
-:CMT. .kwm naked
-:CMT. attribute cannot be used in a function prototype.
-:CMT. It can only be used in the definition of a function.
-:CMT. The following declaration would be flagged in error.
-:CMT. .exam begin
-:CMT. int __declspec( naked ) int foo( int x );
-:CMT. .exam end
 .endbull
 .*
 .note __declspec( dllimport )
@@ -2823,38 +2808,8 @@ calling convention.
 .*
 .np
 .ix 'code generation'
-:cmt. .if '&target' eq 'QNX' .do begin
-:cmt. .ix 'front end'
-:cmt. .ix 'back end'
-:cmt. The &product compilers consist of two principal components which we
-:cmt. call the "front end" and the "back end".
-:cmt. The front end is a compiler which understands the syntax and semantics
-:cmt. of the ANSI C programming language.
-:cmt. The front end translates your specification of a program into an
-:cmt. intermediate form which it communicates to the back end.
-:cmt. The back end is a code generator which transforms this intermediate
-:cmt. form into machine language instructions and emits these instructions
-:cmt. to an object file.
-:cmt. .np
-:cmt. This scheme is implemented as a single process under QNX.
-:cmt. The following diagram illustrates the processes involved in
-:cmt. compiling a C source file and producing an object file.
-:cmt. :image depth='1.25i' file='cgenqnx' text='Code Transformation'.
-:cmt. .np
-:cmt. The compiler has been compiled with the large (big code, big data)
-:cmt. memory model.
-:cmt. Unless the
-:cmt. .ev WCGMEMORY
-:cmt. environment variable is set, the code generator uses as much memory as
-:cmt. is required to perform its optimization.
-:cmt. As such, it may use all available memory on the computer.
-:cmt. The code generator performs such optimizations as common subexpression
-:cmt. elimination, global flow analysis, and so on.
-:cmt. .do end
-:cmt. .el .do begin
 The &company Code Generator performs such optimizations as common
 subexpression elimination, global flow analysis, and so on.
-:cmt. .do end
 .np
 In some cases, the code generator can do a better job of optimizing
 code if it could utilize more memory.
