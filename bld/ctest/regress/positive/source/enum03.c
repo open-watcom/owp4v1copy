@@ -1,6 +1,9 @@
 #include "fail.h"
 #include <stdio.h>
 
+#define TEST_SIGNED(x) ( ( x - 1 ) - x < 0 )
+#define TEST_UNSIGNED(x) ( ( x - 1 ) - x > 0 )
+
 typedef enum {
     en81_3 = -0x7F,
     en81_1 = 0x7F,
@@ -115,6 +118,28 @@ int main( int argc, char **argv )
     if( i2 != x2 ) fail(__LINE__);
     if( j2 != y2 ) fail(__LINE__);
     if( k2 != z2 ) fail(__LINE__);
+
+// test signed values
+
+    if( TEST_UNSIGNED( en81_1 ) ) fail(__LINE__);
+    if( TEST_UNSIGNED( en82_1 ) ) fail(__LINE__);
+    if( TEST_UNSIGNED( en161_1 ) ) fail(__LINE__);
+    if( TEST_UNSIGNED( en162_1 ) ) fail(__LINE__);
+    if( TEST_UNSIGNED( en321_1 ) ) fail(__LINE__);
+    if( TEST_UNSIGNED( en322_1 ) ) fail(__LINE__);
+    if( TEST_UNSIGNED( en641_1 ) ) fail(__LINE__);
+    if( TEST_UNSIGNED( en642_1 ) ) fail(__LINE__);
+#if !defined( __I86__ )
+    if( TEST_UNSIGNED( en163_1 ) ) fail(__LINE__);
+#endif
+
+// test unsigned values
+
+#if defined( __I86__ )
+    if( TEST_SIGNED( en163_1 ) ) fail(__LINE__);
+#endif
+    if( TEST_SIGNED( en323_1 ) ) fail(__LINE__);
+    if( TEST_SIGNED( en643_1 ) ) fail(__LINE__);
 
     _PASS;
 }
