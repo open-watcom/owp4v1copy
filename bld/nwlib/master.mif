@@ -103,12 +103,14 @@ $(proj_name).lib: $(targ_name)
 !ifeq bootstrap 1
 inc_dirs=-I. -I../h -I$(orl_dir)/h -I$(trmem_dir) -I$(lib_misc_dir)/h -I$(watcom_dir)/h 
 defines = -DIDE_PGM -D__stdcall=
+wlib_libs = $(clib_dir)/$(%OBJDIR)/libwatcom.a &
+$(wres_dir)/$(%OBJDIR)/libwres.a $(orl_dir)/$(%OBJDIR)/liborl.a
 targ_name = $(proj_name)
 !endif
 
 $(targ_name): msg.gh $(wlib_objs) wlib.res $(wlib_libs)
 !ifeq bootstrap 1
-    $(cc) -g -o $@ -L$(clib_dir)/$(%OBJDIR) -L$(wres_dir)/$(%OBJDIR) -L$(orl_dir)/$(%OBJDIR) $(wlib_objs) -lwatcom -lorl -lwres
+    $(cc) -g -o $@ $(wlib_objs) $(wlib_libs)
 !else ifeq host_OS osi
     $(linker) $(lflags_$(host_OS)_$(host_CPU)) $(common_lflags) $(extra_lflags_$(host_OS)) name wlib.rex file { $(wlib_objs) } lib { $(wlib_libs) }
     $(bld_bin)/w32bind wlib.rex $@ $(tools_root)/os2ldr.exe

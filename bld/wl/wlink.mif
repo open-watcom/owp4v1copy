@@ -344,8 +344,8 @@ force_include = -include
 rcstr.obj : $(wrc_dir)/c/rcstr.c
         $(compile) -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" $(force_include)"../h/wlrcmem.h" -DINSIDE_WLINK
 
-wlink.res : rcmsg.h ../h/wlink.rc ../h/lnkerror.rc ../h/wlnkmsg.h ../h/lnkerror.msg ../h/wlink.msg
-        $(rc) -zk -r -bt=windows $(extra_rc_flags) -fo=$^@ $[@ -I"$(watcom_dir)/h"
+wlink.res : rcmsg.h ../h/wlink.msg ../h/lnkerror.rc ../h/wlnkmsg.h ../h/lnkerror.msg ../h/wlink.rc
+        $(rc) -zk -r -bt=windows $(extra_rc_flags) -fo=$^@ $]@ -I"$(wrc_dir)/h" -I"$(watcom_dir)/h"
 
 rcmsg.h : $(wrc_dir)/h/rc.msg
 !ifdef __LINUX__

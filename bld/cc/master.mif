@@ -198,6 +198,7 @@ target: $(def_targ) .SYMBOLIC
 !ifdef bootstrap
 xname = wcc$(target_cpu)
 cg_deps =
+dwarf_deps =
 !endif
 
 $(xname): eraseall.obj $(pre_obj_deps) $(cc_objs) $(dwarf_deps) $(cg_deps) $(cc_dir)/ccobjs.mif
