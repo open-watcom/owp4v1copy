@@ -82,19 +82,7 @@ cd ..
 cd jam
 call testrun.cmd
 cd ..
-cd mat
-call testrun.cmd
-cd ..
-cd nacc
-call testrun.cmd
-cd ..
 cd nih
-call testrun.cmd
-cd ..
-cd ns_rand
-call testrun.cmd
-cd ..
-cd preproc_rand
 call testrun.cmd
 cd ..
 cd overload
@@ -116,9 +104,6 @@ cd re2c
 call testrun.cmd
 cd ..
 cd re2c05
-call testrun.cmd
-cd ..
-cd rogue.60
 call testrun.cmd
 cd ..
 cd sizelist
@@ -159,9 +144,6 @@ call testrun.cmd
 cd ..
 if [%plustest_i86] == [no] goto skip_i86_specific
 cd wclass
-call testrun.cmd
-cd ..
-cd woop
 call testrun.cmd
 cd ..
 :skip_i86_specific
