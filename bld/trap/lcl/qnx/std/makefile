@@ -1,4 +1,4 @@
-#pmake: build lcl qnx 16 32 trap x86
+#pmake: all lcl qnx 16 32 trap x86
 #
 # Create the QNX STD.TRP
 #

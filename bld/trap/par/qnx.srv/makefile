@@ -1,4 +1,4 @@
-#pmake: build serv remote qnx 16 32 par x86
+#pmake: all serv remote qnx 16 32 par x86
 
 os = qnx
 srv = par

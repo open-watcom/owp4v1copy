@@ -1,4 +1,4 @@
-#pmake: build trap remote qnx 16 32 ser x86
+#pmake: all trap remote qnx 16 32 ser x86
 
 os = qnx
 srv = ser
