@@ -6,7 +6,7 @@ wpack_autodepends = .AUTODEPEND
 !include deftarg.mif
 !include defrule.mif
 
-inc_dirs = -I"$(wpack_dir)/h" -I$(wtouch_dir) -I"$(wtouch_dir)/$(host_os)$(host_cpu)"
+inc_dirs = -I"$(wpack_dir)/h" -I$(wtouch_dir)
 
 .c: ../c;$(wtouch_dir)
 
@@ -31,3 +31,8 @@ extra_l_flags = op map
 
 $(proj_name).exe : $(objs)
         $(linker) $(lflags) name $^@ file { $< }
+
+dtparse.obj : msg.gh
+
+msg.gh : $(wtouch_dir)/wtouch.msg $(wtouch_dir)/msg.vi
+        $(vi) -s $]@ $[@
