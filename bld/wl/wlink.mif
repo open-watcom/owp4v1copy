@@ -199,13 +199,13 @@ extend = exe
 
 # and finally, the miscellaneous macro definitions
 
-inc_dirs = ..\h;$(watcom_dir)\h;$(inc_dirs_sys)
+inc_dirs = ..\h
 
 !ifndef execomp
-execomp = $(cc) -i$(inc_dirs)
+execomp = $(cc) -i$(inc_path)
 !endif
 
-compile = $(cc) $(cflags) $[@ -i$(inc_dirs)
+compile = $(cc) $(cflags) $[@ -i$(inc_path)
 
 !ifeq host_OS qnx
 extra_rc_flags = /d_QNX
@@ -320,11 +320,11 @@ demangle.obj : $(lib_misc_dir)\c\demangle.c
         $(compile) /i=$(lib_misc_dir)\h
 
 exerespe.obj : $(wrc_dir)\c\exerespe.c
-        $(cc) $(cflags) $[@ -i$(wrc_dir)\h;$(wres_dir)\h;$(watcom_dir)\h /dINSIDE_WLINK -i$(inc_dirs)
+        $(cc) $(cflags) $[@ -i$(wrc_dir)\h;$(wres_dir)\h;$(watcom_dir)\h /dINSIDE_WLINK -i$(inc_path)
 #        $(compile) -i$(wrc_dir)\h;$(wres_dir)\h;$(watcom_dir)\h /dINSIDE_WLINK
 
 sharedio.obj : $(wrc_dir)\c\sharedio.c
-        $(cc) $(cflags) $[@ -i$(wrc_dir)\h;$(wres_dir)\h;$(watcom_dir)\h /dINSIDE_WLINK -i$(inc_dirs)
+        $(cc) $(cflags) $[@ -i$(wrc_dir)\h;$(wres_dir)\h;$(watcom_dir)\h /dINSIDE_WLINK -i$(inc_path)
 #        $(compile) -i$(wrc_dir)\h;$(wres_dir)\h;$(watcom_dir)\h /dINSIDE_WLINK
 
 rcstr.obj : $(wrc_dir)\c\rcstr.c

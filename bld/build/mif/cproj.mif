@@ -176,15 +176,15 @@ rc_flags_axp    = -d__AXP__
 rc_flags        = $(rc_flags_$(host_os)) $(rc_flags_$(host_cpu))
 
 !ifdef use_os2tk_hdrs
-inc_dirs_sys_os2_386 = $(os2_toolkit)\h
-inc_dirs_sys_os2_i86 = $(os2_ddk)\base\h
+inc_dirs_sys_os2_386 = $(os2_toolkit)\h;
+inc_dirs_sys_os2_i86 = $(os2_ddk)\base\h;
 !else
-inc_dirs_sys_os2_386 = $(lang_root)\h\os2
-inc_dirs_sys_os2_i86 = $(lang_root)\h\os21x
+inc_dirs_sys_os2_386 = $(lang_root)\h\os2;
+inc_dirs_sys_os2_i86 = $(lang_root)\h\os21x;
 !endif
-inc_dirs_sys_nt    = $(lang_root)\h\nt
-inc_dirs_sys_win   = $(lang_root)\h\win
-inc_dirs_sys_os2   = $(inc_dirs_sys_os2_$(host_cpu))
+inc_dirs_sys_nt    = $(lang_root)\h\nt;
+inc_dirs_sys_win   = $(lang_root)\h\win;
+inc_dirs_sys_os2   = $(inc_dirs_sys_os2_$(host_cpu));
 inc_dirs_sys_dos   =
 inc_dirs_sys_nov   =
 inc_dirs_sys_qnx   =
@@ -201,7 +201,7 @@ inc_dirs_lang   = $(lang_root)\h
 !endif
 
 inc_dirs_sys    = $(inc_dirs_lang);$(inc_dirs_sys_$(host_os))
-inc_path        = $(inc_dirs);$(inc_dirs_$(host_os));$(inc_dirs_sys);$(watcom_dir)\h
+inc_path        = $(inc_dirs);$(inc_dirs_$(host_os));$(inc_dirs_sys)$(watcom_dir)\h
 
 cc              = $(cc_$(host_cpu))
 cpp             = $(cpp_$(host_cpu))
