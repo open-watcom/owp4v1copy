@@ -11,7 +11,7 @@ extra_linker = &
         lib $(plsdir)\wdos32,$(plsdir)\wdosx32 &
         file $(plsdir)\dilseg
 
-!include ..\dos.srv\makefile
+!include ../dos.srv/makefile
 
 plsord.obj : plsord.asm
         $(as) $[@

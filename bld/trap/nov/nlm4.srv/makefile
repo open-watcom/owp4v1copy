@@ -2,4 +2,4 @@
 
 nlm_ver = 4
 
-!include ..\nlm3.srv\makefile
+!include ../nlm3.srv/makefile
