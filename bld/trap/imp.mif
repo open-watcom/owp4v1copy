@@ -83,7 +83,7 @@ libs_axp_nt             = clib
 
 libs_ppc_nt             = clib
 
-incs_os2        = $(inc_dirs_sys_os2_386);$(watcom_dir)\h;$(lang_root)\h
+incs_os2        = $(inc_dirs_sys_os2_i86);$(watcom_dir)\h;$(lang_root)\h
 incs_os2v2      = $(inc_dirs_sys_os2_386);$(watcom_dir)\h;$(lang_root)\h
 incs_qnx        = $(watcom_dir)\qh;$(watcom_dir)\h;$(lang_root)\qh
 incs_win        = $(lang_root)\h\win;$(watcom_dir)\h;$(lang_root)\h

@@ -1,10 +1,10 @@
 #pmake: all build cpu_386 os_os2
+
+!include cproj.mif
+!include deftarg.mif
+
 CC = wpp386
-!ifeq tools_10_0 1
-CFLAGS = -d2-w4-bd-zq-mf-bt=os2 -i=$(watcom_os220_h)
-!else
-CFLAGS = -d2-w4-bd-zq-mf-bt=os2 -i=$(lang_root)\h\os2
-!endif
+CFLAGS = -d2-w4-bd-zq-mf-bt=os2 -i=$(lang_root)\h;$(inc_dirs_sys_os2_386)
 OBJS = rcsdll.obj inifile.obj
 
 .EXTENSIONS:
