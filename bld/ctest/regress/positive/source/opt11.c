@@ -1,7 +1,7 @@
 // fails 16/32-bit X86 compiler -d2
 #include "fail.h"
 
-#ifdef _M_IX86
+#ifdef __I86__
 volatile unsigned long ch[32];
 #else
 volatile unsigned long long ch[32];
