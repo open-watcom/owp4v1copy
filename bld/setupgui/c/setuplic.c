@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Installer support for licensing/branding.
 *
 ****************************************************************************/
 
@@ -34,8 +33,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
-#if !defined( UNIX ) && !defined( __UNIX__ )
-#include <dos.h>
+#if !defined( __UNIX__ )
+  #include <dos.h>
 #endif
 #include <ctype.h>
 #include <fcntl.h>
@@ -46,8 +45,8 @@
   #include <windows.h>
 #endif
 #if defined( __OS2__ )
-    #define INCL_DOSMISC
-    #include <os2.h>
+  #define INCL_DOSMISC
+  #include <os2.h>
 #endif
 
 #include "gui.h"
@@ -65,7 +64,7 @@ extern void     ReadVariablesFile( char * );
 extern a_bool   ReadBlock( char *, char *, void *, long );
 extern a_bool   WriteBlock( char *, char *, void *, long );
 #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-    extern int  MSBackOffice;
+extern int      MSBackOffice;
 #endif
 
 static bool is_null_name( char *str )
@@ -124,24 +123,23 @@ extern bool ApplyLicense(void)
     struct stat         stat_buf;
     bool                alreadylicensed;
     dlg_state           return_state;
-    #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-        char            sms_ini[ _MAX_PATH ];
-        char            name[ 80 ];
-        char            company[ 80 ];
-    #endif
+#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
+    char                sms_ini[ _MAX_PATH ];
+    char                name[ 80 ];
+    char                company[ 80 ];
+#endif
 
 
-    #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-        if( GetVariableIntVal( "ApplyLicense" ) != 1
-        && GetVariableIntVal( "$IsLicConCur" ) == 1
-        && MSBackOffice ) {
-            return( TRUE );
-        }
-        if( GetVariableIntVal( "ApplyLicense" ) == 1
-        && MSBackOffice ) {
-            SetVariableByName( "$IsLicConCur", "1" );
-        }
-    #endif
+#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
+    if( GetVariableIntVal( "ApplyLicense" ) != 1
+    && GetVariableIntVal( "$IsLicConCur" ) == 1
+    && MSBackOffice ) {
+        return( TRUE );
+    }
+    if( GetVariableIntVal( "ApplyLicense" ) == 1 && MSBackOffice ) {
+        SetVariableByName( "$IsLicConCur", "1" );
+    }
+#endif
     alreadylicensed = FALSE;
     p = GetVariableStrVal("LicenseExe");
     if( p == NULL ) {
@@ -202,7 +200,7 @@ extern bool ApplyLicense(void)
     if( licname != NULL ) {
         alreadylicensed = TRUE;
     }
-    #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
+#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
         // For MSBackOffice, with per-seat licensing, get the user name
         // and company name from c:\SMS.ini.  If that fails, do not license.
 
@@ -220,7 +218,7 @@ extern bool ApplyLicense(void)
                 licname = name;
                 liccompname = company;
             } else {
-            #if defined( WINNT )
+#if defined( WINNT )
                 HKEY    key_handle;
                 long    result;
                 DWORD   size;
@@ -295,7 +293,7 @@ extern bool ApplyLicense(void)
                     break;
                 }
 
-            #elif defined( WIN )
+#elif defined( WIN )
                 #define STRING_SIZE 256
                 char    ini_name[ STRING_SIZE ];
                 char    ini_company[ STRING_SIZE ];
@@ -323,11 +321,11 @@ extern bool ApplyLicense(void)
                     licname = ini_name;
                     liccompname = ini_company;
                 }
-            #endif
+#endif
             }
         }
 
-    #endif
+#endif
 
     SetVariableByName( "LicenseName", licname );
     SetVariableByName( "LicenseCompanyName", liccompname );
@@ -369,7 +367,6 @@ void StampFile( char *filename )
 
     ReplaceVars( filebuf, filename );
     if( ReadBlock( filebuf, DBPARMS_TAG_STR, &parm, sizeof( a_db_parms ) ) ) {
-
         time_of_day = time( NULL );
         _localtime( &time_of_day, &tmbuf );
         parm.EvalTimeStamp = tmbuf.tm_year * 365L + tmbuf.tm_yday;      // day since 1900

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Generate dynamic dialogs.
 *
 ****************************************************************************/
 
@@ -54,7 +53,7 @@
 #include "gendlg.h"
 #include "utils.h"
 #include "ctype.h"
-#ifdef UNIX
+#if !defined( __WATCOMC__ )
 #include <clibext.h>
 #endif
 

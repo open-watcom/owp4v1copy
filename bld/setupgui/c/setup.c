@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Setup program mainline.
 *
 ****************************************************************************/
 
@@ -52,7 +51,6 @@ extern void DoSpawn( when_time );
 extern void SetupTitle();
 extern void DeleteObsoleteFiles();
 extern void ResetDiskInfo(void);
-extern void EspeciallyUglyLittleKanjiiKludge();
 extern void StampEvalFiles();
 extern void SelfRegisterDynamo();
 extern void MakeEmbedded();
@@ -289,7 +287,7 @@ static bool CheckWin95Uninstall( int argc, char **argv )
 bool CheckValidDisketteDrive( char *dst_str )
 /***********************************/
 {
-#if defined( UNIX ) || defined( __UNIX__ )
+#if defined( __UNIX__ )
     return( TRUE );
 #else
     if( !IsDiskette( dst_str[0] ) ) return( FALSE );
@@ -357,7 +355,6 @@ extern bool DoMainLoop( dlg_state * state )
     bool                ret = FALSE;
 
     // initialize decompression facility
-    EspeciallyUglyLittleKanjiiKludge();
     SetupTitle();
     SetupTextTable();
 //    InitIO();

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Installer GUI status bar.
 *
 ****************************************************************************/
 
@@ -33,9 +32,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#if !defined( UNIX ) && !defined( __UNIX__ )
-#include <conio.h>
-#endif
 #include "gui.h"
 #include "guiutil.h"
 #include "guikey.h"
@@ -67,17 +63,17 @@ static char             StatusBarBuf[256];
 int                     MsgLine0 = STAT_BLANK;
 bool                    CancelSetup = FALSE;
 #ifdef PATCH
-    extern int  IsPatch;
+extern int              IsPatch;
 #endif
 #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-    extern int          MSBackOffice;
-    extern void         BkOfficePercent( int );
+extern int              MSBackOffice;
+extern void             BkOfficePercent( int );
 #endif
 
-#if defined( UNIX ) || defined( __UNIX__ )
-#include "stdui.h"
+#if defined( __UNIX__ )
+  #include "stdui.h"
 #elif defined( _UI )
-#include <stdui.h>
+  #include <stdui.h>
 #endif
 
 
@@ -247,7 +243,7 @@ extern void StatusAmount( long parts_complete, long parts_injob )
 extern bool StatusCancelled( void )
 /*********************************/
 {
-    #ifndef _UI
+#ifndef _UI
     {
         WPI_QMSG                msg;
         extern WPI_INST         GUIMainHInst;
@@ -258,7 +254,7 @@ extern bool StatusCancelled( void )
             _wpi_dispatchmessage( GUIMainHInst, &msg );
         }
     }
-    #else
+#else
     {
         extern EVENT GUIUIProcessEvent( EVENT );
         extern char  GUIProcessEvent( EVENT );
@@ -276,7 +272,7 @@ extern bool StatusCancelled( void )
         }
         uipoplist();
     }
-    #endif
+#endif
     return( CancelSetup );
 }
 
@@ -307,7 +303,7 @@ static bool StatusEventProc( gui_window *gui, gui_event gui_ev, void *parm )
                            LINE0_COL*CharSize.x, WND_STATUS_TEXT, GUI_NO_COLUMN );
         GUIDrawTextExtent( gui, StatusLine1, strlen( StatusLine1 ), LINE1_ROW,
                            LINE1_COL*CharSize.x, WND_STATUS_TEXT, GUI_NO_COLUMN );
-        #ifdef _UI
+#ifdef _UI
         {
             #include "uigchar.h"
             int         len1, len2;
@@ -340,7 +336,7 @@ static bool StatusEventProc( gui_window *gui, gui_event gui_ev, void *parm )
             GUIDrawText( gui, StatusBarBuf, StatusBarLen, STATUS_ROW+1,
                          StatusBarRect.x, WND_STATUS_TEXT );
         }
-        #else
+#else
         {
             gui_coord   coord;
             int         str_len, width, height;
@@ -414,7 +410,7 @@ static bool StatusEventProc( gui_window *gui, gui_event gui_ev, void *parm )
             end.x = start.x;                           // right side
             GUIDrawLine( gui, &start, &end, GUI_PEN_SOLID, 1, WND_STATUS_FRAME );
         }
-        #endif
+#endif
         return( FALSE );
     }
 
@@ -495,23 +491,6 @@ static gui_control_info Cancel = {
 
 extern gui_ord BitMapBottom;
 
-
-void EspeciallyUglyLittleKanjiiKludge()
-/*************************************/
-{
-#if 0
-    if( GetVariableIntVal( "IsJapanese" ) ) {
-        GUIMemFree( LIT( OK ) );
-        GUIMemFree( LIT( XYes ) );
-        GUIMemFree( LIT( XNo ) );
-        GUIMemFree( LIT( Cancel ) );
-        GUIStrDup( "&OK", &LIT( OK ) );         // nyi - translate these
-        GUIStrDup( "&Yes", &LIT( XYes ) );
-        GUIStrDup( "&No", &LIT( XNo ) );
-        GUIStrDup( "&Cancel", &LIT( Cancel ) );
-    }
-#endif
-}
 
 extern bool OpenStatusWindow( char *title )
 /*****************************************/

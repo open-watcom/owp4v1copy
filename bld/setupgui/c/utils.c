@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#if defined( UNIX ) || defined( __UNIX__ )
+#if defined( __UNIX__ )
     #include <utime.h>
 #else
     #include <dos.h>
@@ -166,7 +166,7 @@ typedef struct {
 
 static drive_info       Drives[32];
 
-#if defined(__DOS__)
+#if defined( __DOS__ )
 
 int __far critical_error_handler( unsigned deverr,
                   unsigned errcode,
@@ -183,11 +183,11 @@ typedef __far (HANDLER)( unsigned deverr,
                   unsigned far *devhdr );
 static void NoHardErrors()
 {
-#if defined(__OS2__)
+#if defined( __OS2__ )
     DosError( FERR_DISABLEHARDERR );
-#elif defined(__DOS__)
+#elif defined( __DOS__ )
     _harderr( (HANDLER *)critical_error_handler );
-#elif defined( __WINDOWS__) || defined(__NT__)
+#elif defined( __WINDOWS__ ) || defined( __NT__ )
     SetErrorMode( SEM_FAILCRITICALERRORS );
 #endif
 }
@@ -310,11 +310,11 @@ static bool DoSpawnCmd( char *cmd )
 {
     bool        rc;
 
-    #if defined(__WINDOWS__)
+#if defined( __WINDOWS__ )
     {
     rc = WinSpawnWait( cmd );
     }
-    #elif defined(__NT__)
+#elif defined( __NT__ )
     {
     DWORD exit_code;
     if( NTSpawnWait( cmd, &exit_code, 0, 0, 0 ) ) {
@@ -323,13 +323,13 @@ static bool DoSpawnCmd( char *cmd )
         rc = FALSE;
     }
     }
-    #elif defined(__OS2__)
+#elif defined( __OS2__ )
     {
     int     code;
     OS2SpawnWait( cmd, &code );
     rc = code == 0;
     }
-    #elif defined(_UI)
+#elif defined( _UI )
     {
     system( cmd );
     rc = TRUE;
@@ -347,14 +347,14 @@ void DoSpawn( when_time when )
 
     num_spawns = SimNumSpawns();
     for( i = 0; i < num_spawns; ++i ) {
-    if( when != SimWhen( i ) )
-        continue;
-    if( !SimEvalSpawnCondition( i ) )
-        continue;
-    SimGetSpawnCommand( buff, i );
-    if( buff[0] == '\0' )
-        continue;
-    DoSpawnCmd( buff );
+        if( when != SimWhen( i ) )
+            continue;
+        if( !SimEvalSpawnCondition( i ) )
+            continue;
+        SimGetSpawnCommand( buff, i );
+        if( buff[0] == '\0' )
+            continue;
+        DoSpawnCmd( buff );
     }
 }
 
@@ -432,7 +432,7 @@ static unsigned GetDriveInfo( int drive, bool removable )
         memset( info, 0, sizeof( *info ) );
     if( drive == 0 ) return( 0 );
         NoHardErrors();
-    #if defined(__OS2__)
+#if defined( __OS2__ )
     {
         typedef struct {
             BYTE cmdinfo;
@@ -512,7 +512,7 @@ static unsigned GetDriveInfo( int drive, bool removable )
             }
         }
     }
-    #elif defined(__NT__)
+#elif defined(__NT__)
     {
         char        root[4];
         DWORD       sectors_per_cluster;
@@ -534,7 +534,7 @@ static unsigned GetDriveInfo( int drive, bool removable )
         info->diskette = drive_type == DRIVE_REMOVABLE;
         info->fixed = drive_type == DRIVE_FIXED;
     }
-    #else
+#else
     {
         extern long diskette( int );
         extern long remote( int );
@@ -617,7 +617,7 @@ static unsigned GetDriveInfo( int drive, bool removable )
             info->free_space = LONG_MAX;
         }
     }
-    #endif
+#endif
     if( !removable ) {
         int         io;
         char        path[_MAX_PATH];
@@ -845,6 +845,7 @@ bool DriveInfoIsAvailable( char *path )
     }
 #else
     struct diskfree_t info;
+
     if( isalpha( *path ) != 0 ) {
         if( _getdiskfree( toupper( *path ) - 'A' + 1, &info ) == 0 ) {
             return( TRUE );
@@ -1233,11 +1234,11 @@ extern bool CheckDrive( bool issue_message )
         }
         drive[ strlen( drive ) - 1 ] = i + 1 + '0';
 #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) )
-            if( space[ i ].drive[ 0 ] == '\\' && space[ i ].drive[ 1 ] == '\\'
-            && ( !DriveInfoIsAvailable( space[ i ].drive )
-                 || !IsDriveWritable( space[ i ].drive ) ) ) {
-                strcpy( buff, "" );
-            }
+        if( space[ i ].drive[ 0 ] == '\\' && space[ i ].drive[ 1 ] == '\\'
+        && ( !DriveInfoIsAvailable( space[ i ].drive )
+             || !IsDriveWritable( space[ i ].drive ) ) ) {
+            strcpy( buff, "" );
+        }
 #endif
         SetVariableByName( drive, buff );
     }
@@ -1245,7 +1246,7 @@ extern bool CheckDrive( bool issue_message )
 }
 
 static void SetFileDate( char *dst_path, time_t date )
-/**************************************************/
+/****************************************************/
 {
     struct utimbuf      timebuf;
 
@@ -1255,7 +1256,7 @@ static void SetFileDate( char *dst_path, time_t date )
 }
 
 static void SameFileDate( char *src_path, char *dst_path )
-/****************************************************/
+/********************************************************/
 {
     struct stat         statblk;
 
@@ -1266,97 +1267,26 @@ static void SameFileDate( char *src_path, char *dst_path )
 // ********************Functions for Deleting Files***********************
 
 extern bool DoDeleteFile( char *Path )
-/**********************************/
+/************************************/
 {
     int         returnvalue;
 
     returnvalue = unlink( Path );
     if( returnvalue == 0 ) {
-    return( TRUE );
+        return( TRUE );
     } else {
-    return( FALSE );
+        return( FALSE );
     }
 }
 
 // ******************* Functions for Copying Files ***************************
 
 extern COPYFILE_ERROR DoCopyFile( char *src_path, char *dst_path, int append )
-/******************************************************************************/
+/****************************************************************************/
 {
-#if 0
-    const WORD          buffer_size = 32 * 1024;
-    int                 src_files, dst_files;
-    WORD                bytes_read, date, time, style, bytes_written;
-    OFSTRUCT            src, dst;
-    char _far           *pbuff;
-    GLOBALHANDLE        mem_handle;
-
-    src_files = OpenFile( src_path, &src, OF_READ );
-    if( src_files == -1 ) return( CFE_CANTOPENSRC );
-
-    mem_handle = GlobalAlloc( GMEM_MOVEABLE, buffer_size );
-    if( mem_handle == NULL ) {
-    _lclose( src_files );
-    return( CFE_NOMEMORY );
-    }
-
-    if( append ) {
-    style = OF_READWRITE;
-    } else {
-    style = OF_CREATE | OF_WRITE;
-    }
-    dst_files = OpenFile( dst_path, &dst, style );
-    if( dst_files == -1 ) {
-    _lclose( src_files );
-    GlobalFree( mem_handle );
-    dst_files = OpenFile( dst_path, &dst, OF_READ );
-    if( dst_files != -1 ) {
-        // read only file
-        _lclose( dst_files );
-        return( CFE_DSTREADONLY );
-    }
-    return( CFE_CANTOPENDST );
-    }
-    if( append ) {
-    _llseek( dst_files, 0, SEEK_END );
-    }
-
-    pbuff = GlobalLock( mem_handle );
-    do {
-    bytes_read = _lread( src_files, pbuff, buffer_size );
-    bytes_written = _lwrite( dst_files, pbuff, bytes_read );
-    BumpStatus( bytes_written );
-    if( bytes_written != bytes_read || StatusCancelled() ) {
-        _lclose( dst_files );
-        _lclose( src_files );
-        GlobalUnlock( mem_handle );
-        GlobalFree( mem_handle );
-        if( bytes_written == bytes_read ) {
-        // copy was aborted, delete destination file
-        DoDeleteFile( src_path );
-        return( CFE_ABORT );
-        }
-        // error writing file - probably disk full
-        SetupError( "IDS_WRITEERROR" );
-        return( CFE_ERROR );
-    }
-    } while( bytes_read == buffer_size );
-    GlobalUnlock( mem_handle );
-
-    // Make the destination file have the same time stamp as the source file.
-    _dos_getftime( src_files, (unsigned short *)&date, (unsigned short*)&time );
-    _dos_setftime( dst_files, date, time );
-    _lclose( dst_files );
-
-    GlobalFree( mem_handle );
-    _lclose( src_files );
-#else
-static char lastchance[1024];
+    static char         lastchance[1024];
     size_t              buffer_size = 16 * 1024;
     int                 src_files, dst_files;
-#if 0
-    int                 date, time;
-#endif
     int                 bytes_read, bytes_written, style;
     char                *pbuff;
 
@@ -1364,95 +1294,62 @@ static char lastchance[1024];
     if( src_files == -1 ) return( CFE_CANTOPENSRC );
 
     for( ;; ) {
-    pbuff = GUIMemAlloc( buffer_size );
-    if( pbuff != NULL ) break;
-    buffer_size >>= 1;
-    if( buffer_size < sizeof(lastchance) ) {
-        pbuff = lastchance;
-        buffer_size = sizeof(lastchance);
-        break;
-    }
+        pbuff = GUIMemAlloc( buffer_size );
+        if( pbuff != NULL ) break;
+        buffer_size >>= 1;
+        if( buffer_size < sizeof(lastchance) ) {
+            pbuff = lastchance;
+            buffer_size = sizeof(lastchance);
+            break;
+        }
     }
 
     if( append ) {
-    style = O_RDWR + O_BINARY;
+        style = O_RDWR + O_BINARY;
     } else {
-    style = O_CREAT + O_TRUNC + O_WRONLY + O_BINARY;
+        style = O_CREAT + O_TRUNC + O_WRONLY + O_BINARY;
     }
     dst_files = open( dst_path, style, S_IREAD + S_IWRITE );
     if( dst_files == -1 ) {
-    close( src_files );
-    if( pbuff != lastchance ) GUIMemFree( pbuff );
-    dst_files = open( dst_path, O_RDONLY );
-    if( dst_files != -1 ) {
-        // read only file
-        close( dst_files );
-        return( CFE_DSTREADONLY );
-    }
-    return( CFE_CANTOPENDST );
+        close( src_files );
+        if( pbuff != lastchance ) GUIMemFree( pbuff );
+        dst_files = open( dst_path, O_RDONLY );
+        if( dst_files != -1 ) {
+            // read only file
+            close( dst_files );
+            return( CFE_DSTREADONLY );
+        }
+        return( CFE_CANTOPENDST );
     }
     if( append ) {
-    lseek( dst_files, 0, SEEK_END );
+        lseek( dst_files, 0, SEEK_END );
     }
 
     do {
-    bytes_read = read( src_files, pbuff, buffer_size );
-    bytes_written = write( dst_files, pbuff, bytes_read );
-    BumpStatus( bytes_written );
-    if( bytes_written != bytes_read || StatusCancelled() ) {
-        close( dst_files );
-        close( src_files );
-        if( bytes_written == bytes_read ) {
-        // copy was aborted, delete destination file
-        DoDeleteFile( dst_path );
-        return( CFE_ABORT );
+        bytes_read = read( src_files, pbuff, buffer_size );
+        bytes_written = write( dst_files, pbuff, bytes_read );
+        BumpStatus( bytes_written );
+        if( bytes_written != bytes_read || StatusCancelled() ) {
+            close( dst_files );
+            close( src_files );
+            if( bytes_written == bytes_read ) {
+                // copy was aborted, delete destination file
+                DoDeleteFile( dst_path );
+                return( CFE_ABORT );
+            }
+            // error writing file - probably disk full
+            if( pbuff != lastchance ) GUIMemFree( pbuff );
+            SetupError( "IDS_WRITEERROR" );
+            return( CFE_ERROR );
         }
-        // error writing file - probably disk full
-        if( pbuff != lastchance ) GUIMemFree( pbuff );
-        SetupError( "IDS_WRITEERROR" );
-        return( CFE_ERROR );
-    }
     } while( bytes_read == buffer_size );
 
     // Make the destination file have the same time stamp as the source file.
-#if 0
-  #ifdef __OS2__
-    {
-    APIRET          rc;
-    FILESTATUS3     srcinfobuff;
-    FILESTATUS3     dstinfobuff;
-
-    rc = DosQueryFileInfo( src_files, FIL_STANDARD, &srcinfobuff,
-                sizeof(FILESTATUS3) );
-    if( rc !=0 ) {
-        MsgBox( NULL, "IDS_QUERYFILEERROR", GUI_OK, rc);
-    }
-    rc = DosQueryFileInfo( dst_files, FIL_STANDARD, &dstinfobuff,
-                sizeof(FILESTATUS3) );
-    if( rc !=0 ) {
-        MsgBox( NULL, "IDE_QUERYFILEERROR", GUI_OK, rc);
-    }
-    dstinfobuff.fdateCreation = srcinfobuff.fdateCreation;
-    dstinfobuff.ftimeCreation = srcinfobuff.ftimeCreation;
-
-    rc = DosSetFileInfo( dst_files, FIL_STANDARD, &dstinfobuff,
-                sizeof(FILESTATUS3) );
-    if( rc !=0 ) {
-        MsgBox( NULL, "IDE_SETFILEERROR", GUI_OK, rc);
-    }
-
-    }
-  #else
-    _dos_getftime( src_files, (unsigned short *)&date, (unsigned short *)&time );
-    _dos_setftime( dst_files, (unsigned short)date, (unsigned short)time );
-  #endif
-#endif
     close( dst_files );
 
     SameFileDate( src_path, dst_path );
     if( pbuff != lastchance ) GUIMemFree( pbuff );
     close( src_files );
-#endif
     return( CFE_NOERROR );
 }
 
@@ -1477,26 +1374,26 @@ static bool CreateDirectoryTree()
 
     num_total_install = 0;
     for( i = 0; i < max_dirs; i++ ) {
-    if( SimDirUsed( i ) ) {
-        ++num_total_install;
-    }
+        if( SimDirUsed( i ) ) {
+            ++num_total_install;
+        }
     }
     if( num_total_install != 0 ) {
-    StatusLines( STAT_CREATEDIRECTORY, "" );
-    StatusAmount( 0, num_total_install );
+        StatusLines( STAT_CREATEDIRECTORY, "" );
+        StatusAmount( 0, num_total_install );
     }
     num_installed = 0;
     for( i = 0; i < max_dirs; i++ ) {
-    if( SimDirUsed( i ) ) {
-        if( !CreateDstDir( i, dst_path ) ) return( FALSE );
-        StatusLines( STAT_SAME, dst_path );
-        StatusAmount( ++num_installed, num_total_install );
-        if( StatusCancelled() ) return( FALSE );
-    }
+        if( SimDirUsed( i ) ) {
+            if( !CreateDstDir( i, dst_path ) ) return( FALSE );
+            StatusLines( STAT_SAME, dst_path );
+            StatusAmount( ++num_installed, num_total_install );
+            if( StatusCancelled() ) return( FALSE );
+        }
     }
     if( num_total_install != 0 ) {
-    StatusLines( STAT_SAME, "" );
-    StatusAmount( num_total_install, num_total_install );
+        StatusLines( STAT_SAME, "" );
+        StatusAmount( num_total_install, num_total_install );
     }
     return( TRUE );
 }
@@ -1512,53 +1409,51 @@ static bool RelocateFiles()
     char                src_path[ _MAX_PATH ];
     char                dir[ _MAX_PATH ];
     char                file_desc[ MAXBUF ];
-
     int                 max_files = SimNumFiles();
 
     num_total_install = 0;
     for( filenum = 0; filenum < max_files; filenum++ ) {
-    if( SimFileRemove( filenum ) ) continue;
-    max_subfiles = SimNumSubFiles( filenum );
-    for( subfilenum = 0; subfilenum < max_subfiles; ++subfilenum ) {
-        if( SimSubFileInOldDir( filenum, subfilenum ) ) {
-        num_total_install += SimSubFileSize( filenum, subfilenum );
+        if( SimFileRemove( filenum ) ) continue;
+        max_subfiles = SimNumSubFiles( filenum );
+        for( subfilenum = 0; subfilenum < max_subfiles; ++subfilenum ) {
+            if( SimSubFileInOldDir( filenum, subfilenum ) ) {
+                num_total_install += SimSubFileSize( filenum, subfilenum );
+            }
         }
-    }
     }
 
     if( num_total_install != 0 ) {
-    StatusLines( STAT_RELOCATING, "" );
-    StatusAmount( 0, num_total_install );
+        StatusLines( STAT_RELOCATING, "" );
+        StatusAmount( 0, num_total_install );
     }
     num_installed = 0;
     for( filenum = 0; filenum < max_files; filenum++ ) {
-    if( SimFileRemove( filenum ) ) continue;
-    max_subfiles = SimNumSubFiles( filenum );
-    for( subfilenum = 0; subfilenum < max_subfiles; ++subfilenum ) {
-        if( SimSubFileInOldDir( filenum, subfilenum ) ) {
-
-        SimFileOldDir( filenum, dir );
-        SimSubFileName( filenum, subfilenum, file_desc );
-        _makepath( src_path, NULL, dir, file_desc, NULL );
-        SimFileDir( filenum, dir );
-        _makepath( dst_path, NULL, dir, file_desc, NULL );
-        StatusLines( STAT_SAME, src_path );
-        if( SimSubFileInNewDir( filenum, subfilenum ) ) {
-            remove( dst_path );
+        if( SimFileRemove( filenum ) ) continue;
+        max_subfiles = SimNumSubFiles( filenum );
+        for( subfilenum = 0; subfilenum < max_subfiles; ++subfilenum ) {
+            if( SimSubFileInOldDir( filenum, subfilenum ) ) {
+                SimFileOldDir( filenum, dir );
+                SimSubFileName( filenum, subfilenum, file_desc );
+                _makepath( src_path, NULL, dir, file_desc, NULL );
+                SimFileDir( filenum, dir );
+                _makepath( dst_path, NULL, dir, file_desc, NULL );
+                StatusLines( STAT_SAME, src_path );
+                if( SimSubFileInNewDir( filenum, subfilenum ) ) {
+                    remove( dst_path );
+                }
+                if( DoCopyFile( src_path, dst_path, FALSE ) != CFE_NOERROR ) {
+                    return( FALSE );
+                }
+                SameFileDate( src_path, dst_path );
+                remove( src_path );
+                num_installed += SimSubFileSize( filenum, subfilenum );
+                StatusAmount( num_installed, num_total_install );
+            }
         }
-        if( DoCopyFile( src_path, dst_path, FALSE ) != CFE_NOERROR ) {
-            return( FALSE );
-        }
-        SameFileDate( src_path, dst_path );
-        remove( src_path );
-        num_installed += SimSubFileSize( filenum, subfilenum );
-        StatusAmount( num_installed, num_total_install );
-        }
-    }
     }
     if( num_total_install != 0 ) {
-    StatusLines( STAT_RELOCATING, "" );
-    StatusAmount( num_total_install, num_total_install );
+        StatusLines( STAT_RELOCATING, "" );
+        StatusAmount( num_total_install, num_total_install );
     }
     return( TRUE );
 }
@@ -1573,15 +1468,15 @@ static void GetSrcPath( char *src_path, char *file_name, int disk_num )
     strcpy( src_dir, GetVariableStrVal( "SrcDir" ) );
     switch( SrcInstState ) {
     case SRC_CD:
-    len = strlen( src_dir );
-    if( len > 0 && src_dir[ len - 1 ] != '\\' ) {
-        src_dir[ len - 1 ] = '\\';
-        ++len;
-    }
-    sprintf( &src_dir[len], "diskimgs\\disk%2.2u", disk_num+1 );
-    break;
+        len = strlen( src_dir );
+        if( len > 0 && src_dir[ len - 1 ] != '\\' ) {
+            src_dir[ len - 1 ] = '\\';
+            ++len;
+        }
+        sprintf( &src_dir[len], "diskimgs\\disk%2.2u", disk_num+1 );
+        break;
     case SRC_DISK:
-    break;
+        break;
     }
     _makepath( src_path, NULL, src_dir, file_name, NULL );
 }
@@ -1616,9 +1511,9 @@ static void UpdateCheckList( char *name, vhandle var_handle )
     file_check  *check;
 
     for( check = FileCheckThisPack; check != NULL; check = check->next ) {
-    if( stricmp( name, check->name ) == 0 ) {
-        check->var_handle = var_handle;
-    }
+        if( stricmp( name, check->name ) == 0 ) {
+            check->var_handle = var_handle;
+        }
     }
 }
 
@@ -1628,9 +1523,9 @@ static void TransferCheckList()
     file_check  *check,*next;
 
     for( check = FileCheckThisPack; check != NULL; check = next ) {
-    next = check->next;
-    check->next = FileCheck;
-    FileCheck = check;
+        next = check->next;
+        check->next = FileCheck;
+        FileCheck = check;
     }
     FileCheckThisPack = NULL;
 }
@@ -1642,22 +1537,21 @@ static bool CheckPendingFiles()
     gui_message_return  ret;
 
     for( curr = FileCheck; curr != NULL; curr = next ) {
-    next = curr->next;
-    if( curr->is_dll ) {
-        ret = CheckInstallDLL( curr->name, curr->var_handle );
-    } else {
-        ret = CheckInstallNLM( curr->name, curr->var_handle );
-    }
-    if( ret == GUI_RET_CANCEL ) return( FALSE );
-    GUIMemFree( curr->name );
-    GUIMemFree( curr );
+        next = curr->next;
+        if( curr->is_dll ) {
+            ret = CheckInstallDLL( curr->name, curr->var_handle );
+        } else {
+            ret = CheckInstallNLM( curr->name, curr->var_handle );
+        }
+        if( ret == GUI_RET_CANCEL ) return( FALSE );
+        GUIMemFree( curr->name );
+        GUIMemFree( curr );
     }
     return( TRUE );
 }
 
 static void CopySetupInfFile()
 /****************************/
-
 {
     char                *p;
     char                dst_path[ _MAX_PATH ];
@@ -1666,16 +1560,15 @@ static void CopySetupInfFile()
     // if DoCopyInf variable is set, copy/delete setup.inf
     p = GetVariableStrVal( "DoCopyInf" );
     if( ( p != NULL ) && ( strlen( p ) > 0 ) ) {
-    ReplaceVars( tmp_path, p );
-    _makepath( dst_path, NULL, tmp_path, "setup.inf", NULL );
-    if( VarGetIntVal( UnInstall ) ) {
-        remove( dst_path );
-    } else {
-        p = GetVariableStrVal( "SetupInfFile" );
-        DoCopyFile( p, dst_path, FALSE );
+        ReplaceVars( tmp_path, p );
+        _makepath( dst_path, NULL, tmp_path, "setup.inf", NULL );
+        if( VarGetIntVal( UnInstall ) ) {
+            remove( dst_path );
+        } else {
+            p = GetVariableStrVal( "SetupInfFile" );
+            DoCopyFile( p, dst_path, FALSE );
+        }
     }
-    }
-
 }
 
 static bool DoCopyFiles()
@@ -1690,9 +1583,9 @@ static bool DoCopyFiles()
     char                file_name[ _MAX_FNAME + _MAX_EXT ];
     char                file_desc[ MAXBUF ], dir[ _MAX_PATH ], disk_desc[ MAXBUF ];
     char                old_dir[ _MAX_PATH ];
-    #if defined( WSQL )
-    char            file_ext[ _MAX_EXT ];
-    #endif
+#if defined( WSQL )
+    char                file_ext[ _MAX_EXT ];
+#endif
     long                num_total_install;
     long                num_installed;
     unsigned            i;
@@ -1708,79 +1601,79 @@ static bool DoCopyFiles()
 
     num_total_install = 0;
     for( filenum = 0; filenum < max_files; filenum++ ) {
-    SimFileDir( filenum, dir );
-    if( SimFileAdd( filenum ) && !SimFileUpToDate( filenum ) ) {
-        num_total_install += SimFileSize( filenum );
-        if( SimFileSplit( filenum ) ) {
-        num_total_install += SimFileSize( filenum );
-        }
-        max_subfiles = SimNumSubFiles( filenum );
-        for( subfilenum = 0; subfilenum < max_subfiles; ++subfilenum ) {
-        if( SimSubFileReadOnly( filenum, subfilenum ) ) {
-            SimSubFileName( filenum, subfilenum, file_desc );
-            _makepath( tmp_path, NULL, dir, file_desc, NULL );
-            if( !PromptUser( tmp_path,
-                     "ReadOnlyFile",
-                     "RO_Skip_Dialog",
-                     "RO_Replace_Old",
-                     &value ) ) return( FALSE );
-            if( value ) {
-            chmod( tmp_path, S_IWRITE );
-            #if defined( WSQL )
-                // if read-only file is .db file, erase .log file also
-                _splitpath( file_desc, NULL, NULL, file_name, file_ext );
-                if( stricmp( file_ext, ".db" ) == 0 ) {
-                _makepath( tmp_path, NULL, dir, file_name, "log" );
-                chmod( tmp_path, S_IWRITE );
-                remove( tmp_path );
-                }
-            #endif
+        SimFileDir( filenum, dir );
+        if( SimFileAdd( filenum ) && !SimFileUpToDate( filenum ) ) {
+            num_total_install += SimFileSize( filenum );
+            if( SimFileSplit( filenum ) ) {
+                num_total_install += SimFileSize( filenum );
             }
-        }
-        if( SimSubFileNewer( filenum, subfilenum ) ) {
-            SimSubFileName( filenum, subfilenum, file_desc );
+            max_subfiles = SimNumSubFiles( filenum );
+            for( subfilenum = 0; subfilenum < max_subfiles; ++subfilenum ) {
+                if( SimSubFileReadOnly( filenum, subfilenum ) ) {
+                    SimSubFileName( filenum, subfilenum, file_desc );
+                    _makepath( tmp_path, NULL, dir, file_desc, NULL );
+                    if( !PromptUser( tmp_path,
+                             "ReadOnlyFile",
+                             "RO_Skip_Dialog",
+                             "RO_Replace_Old",
+                             &value ) ) return( FALSE );
+                    if( value ) {
+                        chmod( tmp_path, S_IWRITE );
+#if defined( WSQL )
+                        // if read-only file is .db file, erase .log file also
+                        _splitpath( file_desc, NULL, NULL, file_name, file_ext );
+                        if( stricmp( file_ext, ".db" ) == 0 ) {
+                            _makepath( tmp_path, NULL, dir, file_name, "log" );
+                            chmod( tmp_path, S_IWRITE );
+                            remove( tmp_path );
+                        }
+#endif
+                    }
+                }
+                if( SimSubFileNewer( filenum, subfilenum ) ) {
+                    SimSubFileName( filenum, subfilenum, file_desc );
 //                  _splitpath( file_desc, NULL, NULL, NULL, file_ext );
-            _makepath( tmp_path, NULL, dir, file_desc, NULL );
-            if( !PromptUser( tmp_path,
-                    "NewerFile",
-                    "Newer_Skip_Dialog",
-                    "Newer_Replace_Old",
-                    &value ) ) return( FALSE );
-            if( value ) {
-            SetFileDate( tmp_path, SimSubFileDate( filenum, subfilenum )-1 );
-            }
-        }
-        }
-    } else if( SimFileRemove( filenum ) ) {
-        max_subfiles = SimNumSubFiles( filenum );
-        for( subfilenum = 0; subfilenum < max_subfiles; ++subfilenum ) {
-        if( !SimSubFileExists( filenum, subfilenum ) ) continue;
-        if( SimSubFileReadOnly( filenum, subfilenum ) ) {
-            SimSubFileName( filenum, subfilenum, file_desc );
-            _makepath( tmp_path, NULL, dir, file_desc, NULL );
-            if( !PromptUser( tmp_path,
-                     "DeleteReadOnlyFile",
-                     "RO_Skip_Remove",
-                     "RO_Remove_Old",
-                     &value ) ) return( FALSE );
-            if( value ) {
-            chmod( tmp_path, S_IWRITE );
-            num_total_install += OVERHEAD_SIZE;
-            #if defined( WSQL )
-                // if read-only file is .db file, erase .log file also
-                _splitpath( file_desc, NULL, NULL, file_name, file_ext );
-                if( stricmp( file_ext, ".db" ) == 0 ) {
-                _makepath( tmp_path, NULL, dir, file_name, "log" );
-                chmod( tmp_path, S_IWRITE );
-                remove( tmp_path );
+                    _makepath( tmp_path, NULL, dir, file_desc, NULL );
+                    if( !PromptUser( tmp_path,
+                            "NewerFile",
+                            "Newer_Skip_Dialog",
+                            "Newer_Replace_Old",
+                            &value ) ) return( FALSE );
+                    if( value ) {
+                        SetFileDate( tmp_path, SimSubFileDate( filenum, subfilenum )-1 );
+                    }
                 }
-            #endif
             }
-        } else {
-            num_total_install += OVERHEAD_SIZE;
+        } else if( SimFileRemove( filenum ) ) {
+            max_subfiles = SimNumSubFiles( filenum );
+            for( subfilenum = 0; subfilenum < max_subfiles; ++subfilenum ) {
+                if( !SimSubFileExists( filenum, subfilenum ) ) continue;
+                if( SimSubFileReadOnly( filenum, subfilenum ) ) {
+                    SimSubFileName( filenum, subfilenum, file_desc );
+                    _makepath( tmp_path, NULL, dir, file_desc, NULL );
+                    if( !PromptUser( tmp_path,
+                             "DeleteReadOnlyFile",
+                             "RO_Skip_Remove",
+                             "RO_Remove_Old",
+                             &value ) ) return( FALSE );
+                    if( value ) {
+                        chmod( tmp_path, S_IWRITE );
+                        num_total_install += OVERHEAD_SIZE;
+#if defined( WSQL )
+                        // if read-only file is .db file, erase .log file also
+                        _splitpath( file_desc, NULL, NULL, file_name, file_ext );
+                        if( stricmp( file_ext, ".db" ) == 0 ) {
+                            _makepath( tmp_path, NULL, dir, file_name, "log" );
+                            chmod( tmp_path, S_IWRITE );
+                            remove( tmp_path );
+                        }
+#endif
+                    }
+                } else {
+                    num_total_install += OVERHEAD_SIZE;
+                }
+            }
         }
-        }
-    }
     }
 
     num_installed = 0;
@@ -1790,256 +1683,251 @@ static bool DoCopyFiles()
     /* remove files first so we don't go over disk space estimate */
 
     for( filenum = 0; filenum < max_files; filenum++ ) {
-    if( SimFileRemove( filenum ) ) {
-        SimFileDir( filenum, dir );
-        max_subfiles = SimNumSubFiles( filenum );
-        for( subfilenum = 0; subfilenum < max_subfiles; ++subfilenum ) {
-        if( !SimSubFileExists( filenum, subfilenum ) ) continue;
-        num_installed += OVERHEAD_SIZE;
-        SimSubFileName( filenum, subfilenum, file_desc );
-        _makepath( tmp_path, NULL, dir, file_desc, NULL );
-        StatusLines( STAT_REMOVING, tmp_path );
-        remove( tmp_path );
-        if( SimSubFileInOldDir( filenum, subfilenum ) ) {
-            SimFileOldDir( filenum, old_dir );
-            _makepath( tmp_path, NULL, old_dir, file_desc, NULL );
-            StatusLines( STAT_REMOVING, tmp_path );
-            remove( tmp_path );
+        if( SimFileRemove( filenum ) ) {
+            SimFileDir( filenum, dir );
+            max_subfiles = SimNumSubFiles( filenum );
+            for( subfilenum = 0; subfilenum < max_subfiles; ++subfilenum ) {
+                if( !SimSubFileExists( filenum, subfilenum ) ) continue;
+                num_installed += OVERHEAD_SIZE;
+                SimSubFileName( filenum, subfilenum, file_desc );
+                _makepath( tmp_path, NULL, dir, file_desc, NULL );
+                StatusLines( STAT_REMOVING, tmp_path );
+                remove( tmp_path );
+                if( SimSubFileInOldDir( filenum, subfilenum ) ) {
+                    SimFileOldDir( filenum, old_dir );
+                    _makepath( tmp_path, NULL, old_dir, file_desc, NULL );
+                    StatusLines( STAT_REMOVING, tmp_path );
+                    remove( tmp_path );
+                }
+                StatusAmount( num_installed, num_total_install );
+                if( StatusCancelled() ) return( FALSE );
+            }
         }
-        StatusAmount( num_installed, num_total_install );
-        if( StatusCancelled() ) return( FALSE );
-        }
-    }
     }
 
     /* now go ahead and add files */
 
     for( filenum = 0; filenum < max_files; filenum++ ) {
-    if( !SimFileAdd( filenum ) || SimFileUpToDate( filenum ) ) {
-        while( split != NULL ) {
-        junk = split;
-        split = split->next;
-        GUIMemFree( junk->src_path );
-        GUIMemFree( junk );
-        }
-        owner_split = &split;
-        *owner_split = NULL;
-        continue;
-    }
-    SimFileDir( filenum, dir );
-    SimGetFileDesc( filenum, file_desc );
-    SimGetFileName( filenum, file_name );
-    disk_num = SimFileDisk( filenum, disk_desc );
-
-//      _splitpath( file_desc, NULL, NULL, NULL, file_ext );
-    _makepath( dst_path, NULL, dir, file_desc, NULL );
-
-    if( GetVariableIntVal( "NoDiskImages" ) == 1 ) {
-        int len;
-        char *p;
-
-        strcpy( src_path, GetVariableStrVal( "SrcDir" ) );
-        p = GetVariableStrVal( "DstDir" );
-        len = strlen( src_path );
-        if( len > 0 && src_path[ len - 1 ] != '\\' ) {
-        strcat( src_path, "\\" );
-        }
-        len = strlen( p );
-        if( strncmp( dir, p, len ) == 0 ) {
-        if( dir[len] == '\\' ) len++; // if 1st char to concat is a backslash, skip it
-        strcat( src_path, dir+len ); // get rid of the dest directory, just keep the subdir
-        } else {
-        // use the macro as the directory name   eg: cd_drive:\winsys\filename
-        SimTargetDirName( SimDirTargNum( SimFileDirNum( filenum ) ), tmp_path );
-        len = strlen( GetVariableStrVal( tmp_path ) );
-        strcat( src_path, tmp_path );
-        strcat( src_path, dir + len );
-        }
-        p = src_path + strlen(src_path);
-        strcat( src_path, file_desc );
-
-
-        if( StatusCancelled() ) {
-        return( FALSE );
-        }
-
-        max_subfiles = SimNumSubFiles( filenum );
-        for( subfilenum = 0; subfilenum < max_subfiles; ++subfilenum ) {
-
-        do {
-
-            SimSubFileName( filenum, subfilenum, file_desc );
-            var_handle = SimSubFileVar( filenum, subfilenum );
-            _makepath( tmp_path, NULL, dir, file_desc, NULL );
-
-            *p='\0'; // nuke name from end of src_path
-            strcat( src_path, file_desc );
-            StatusLines( STAT_COPYINGFILE, tmp_path );
-            UnPackHook( tmp_path );
-            copy_error = DoCopyFile( src_path, tmp_path, FALSE );
-
-            switch( copy_error ) {
-            case CFE_ABORT:
-            case CFE_ERROR:
-            ret = GUI_RET_CANCEL;
-            break;
-            case CFE_BAD_CRC:
-            MsgBox( NULL, "IDS_BADCRC", GUI_OK, src_path );
-            ret = GUI_RET_CANCEL;
-            break;
-            case CFE_NOERROR:
-            case CFE_DSTREADONLY:
-            copy_error = CFE_NOERROR;
-            break;
-            case CFE_NOMEMORY:
-            ret = MsgBox( NULL, "IDS_NOMEMORYCOPY", GUI_RETRY_CANCEL );
-            break;
-            case CFE_CANTOPENSRC:
-            ret = MsgBox( NULL, "IDS_CANTOPENSRC", GUI_RETRY_CANCEL, src_path  );
-            break;
-            case CFE_CANTOPENDST:
-            ret = MsgBox( NULL, "IDS_CANTOPENDST", GUI_RETRY_CANCEL, tmp_path );
-            break;
-            }
-            if( ret == GUI_RET_CANCEL ) return( FALSE );
-        } while( copy_error != CFE_NOERROR );
-
-        SetVariableByHandle( var_handle, tmp_path );
-        UpdateCheckList( tmp_path, var_handle );
-        }
-        TransferCheckList();
-    } else {
-
-        do {
-        SimGetFileName( filenum, file_name );
-        GetSrcPath( src_path, file_name, disk_num );
-        if( StatusCancelled() ) {
-            return( FALSE );
-        }
-        if( SimFileLastSplit( filenum ) ) {
-            bool append;
-            char    *drive;
-
-            copy_error = CFE_NOERROR;
-            drive = SimGetTargTempDisk( SimDirTargNum( SimFileDirNum( filenum ) ) );
-            if( drive == NULL ) {
-            return( FALSE );
-            }
-            if( UseTargetForTmpFile( *drive ) ) {
-            GetTmpFileNameInTarget( *drive, tmp_path );
-            } else {
-            #if defined( WINNT ) || defined( WIN )
-                GetTmpFileNameUNC( drive, tmp_path );
-            #else
-                GetTmpFileName( *drive, tmp_path );
-            #endif
-            }
-            append = FALSE;
-            i = 0;
+        if( !SimFileAdd( filenum ) || SimFileUpToDate( filenum ) ) {
             while( split != NULL ) {
-            junk = split;
-            split = split->next;
-            StatusLines( STAT_COPYINGFILE, junk->src_path );
-            for( ;; ) {
-                copy_error = DoCopyFile( junk->src_path, tmp_path, append );
-                if( copy_error == CFE_CANTOPENSRC ) {
-                SetVariableByName( "DiskDesc", junk->disk_desc );
-                return_state = DoDialog( "InsertDisk" );
-                if( return_state == DLG_CAN || return_state == DLG_DONE ) {
-                    return( FALSE );
-                }
-                } else {
-                break;
-                }
-            }
-            ++i;
-            StatusAmount( num_installed + i * SimFileSize( filenum ) / num_splits, num_total_install );
-            if( StatusCancelled() ) return( FALSE );
-            append = TRUE;
-            if( copy_error != CFE_NOERROR ) break;
-            GUIMemFree( junk->src_path );
-            GUIMemFree( junk->disk_desc );
-            GUIMemFree( junk );
+                junk = split;
+                split = split->next;
+                GUIMemFree( junk->src_path );
+                GUIMemFree( junk );
             }
             owner_split = &split;
             *owner_split = NULL;
-            num_splits = 0;
-            if( copy_error == CFE_NOERROR ) {
-            StatusLines( STAT_COPYINGFILE, file_desc );
-            for(;;) {
-                copy_error = DoCopyFile( src_path, tmp_path, TRUE );
-                if( copy_error == CFE_CANTOPENSRC ) {
-                SetVariableByName( "DiskDesc", disk_desc );
-                return_state = DoDialog( "InsertDisk" );
-                if( return_state == DLG_CAN || return_state == DLG_DONE ) {
-                    return( FALSE );
-                }
-                } else {
-                break;
-                }
-            }
-            if( StatusCancelled() ) return( FALSE );
-            if( copy_error == CFE_NOERROR ) {
-                num_installed += SimFileSize( filenum );
-                StatusAmount( num_installed, num_total_install );
-                copy_error = PerformDecode( tmp_path, dir, (unsigned_32) 0 );
-                remove( tmp_path );
-            }
-            }
-        } else if( SimFileSplit( filenum ) ) {
-            *owner_split = GUIMemAlloc( sizeof( split_file ) );
-            ++num_splits;
-            GUIStrDup( src_path, &((*owner_split)->src_path) );
-            GUIStrDup( disk_desc, &((*owner_split)->disk_desc) );
-            owner_split = &((*owner_split)->next);
-            *owner_split = NULL;
-            copy_error = CFE_NOERROR;
-        } else {
-            StatusLines( STAT_COPYINGFILE, file_desc );
-            copy_error = PerformDecode( src_path, dir, (unsigned_32) 0 );
+            continue;
         }
+        SimFileDir( filenum, dir );
+        SimGetFileDesc( filenum, file_desc );
+        SimGetFileName( filenum, file_name );
+        disk_num = SimFileDisk( filenum, disk_desc );
 
-        switch( copy_error ) {
-        case CFE_ERROR:
-            ret = GUI_RET_CANCEL;
-            break;
-        case CFE_BAD_CRC:
-            MsgBox( NULL, "IDS_BADCRC", GUI_OK, src_path );
-            ret = GUI_RET_CANCEL;
-            break;
-        case CFE_NOERROR:
+//      _splitpath( file_desc, NULL, NULL, NULL, file_ext );
+        _makepath( dst_path, NULL, dir, file_desc, NULL );
+
+        if( GetVariableIntVal( "NoDiskImages" ) == 1 ) {
+            int len;
+            char *p;
+
+            strcpy( src_path, GetVariableStrVal( "SrcDir" ) );
+            p = GetVariableStrVal( "DstDir" );
+            len = strlen( src_path );
+            if( len > 0 && src_path[ len - 1 ] != '\\' ) {
+                strcat( src_path, "\\" );
+            }
+            len = strlen( p );
+            if( strncmp( dir, p, len ) == 0 ) {
+                if( dir[len] == '\\' ) len++; // if 1st char to concat is a backslash, skip it
+                strcat( src_path, dir+len ); // get rid of the dest directory, just keep the subdir
+            } else {
+                // use the macro as the directory name   eg: cd_drive:\winsys\filename
+                SimTargetDirName( SimDirTargNum( SimFileDirNum( filenum ) ), tmp_path );
+                len = strlen( GetVariableStrVal( tmp_path ) );
+                strcat( src_path, tmp_path );
+                strcat( src_path, dir + len );
+            }
+            p = src_path + strlen(src_path);
+            strcat( src_path, file_desc );
+
+            if( StatusCancelled() ) {
+                return( FALSE );
+            }
+
             max_subfiles = SimNumSubFiles( filenum );
             for( subfilenum = 0; subfilenum < max_subfiles; ++subfilenum ) {
-            SimSubFileName( filenum, subfilenum, file_desc );
-            var_handle = SimSubFileVar( filenum, subfilenum );
-            _makepath( tmp_path, NULL, dir, file_desc, NULL );
-            SetVariableByHandle( var_handle, tmp_path );
-            UpdateCheckList( tmp_path, var_handle );
+                do {
+                    SimSubFileName( filenum, subfilenum, file_desc );
+                    var_handle = SimSubFileVar( filenum, subfilenum );
+                    _makepath( tmp_path, NULL, dir, file_desc, NULL );
+
+                    *p='\0'; // nuke name from end of src_path
+                    strcat( src_path, file_desc );
+                    StatusLines( STAT_COPYINGFILE, tmp_path );
+                    UnPackHook( tmp_path );
+                    copy_error = DoCopyFile( src_path, tmp_path, FALSE );
+
+                    switch( copy_error ) {
+                    case CFE_ABORT:
+                    case CFE_ERROR:
+                        ret = GUI_RET_CANCEL;
+                        break;
+                    case CFE_BAD_CRC:
+                        MsgBox( NULL, "IDS_BADCRC", GUI_OK, src_path );
+                        ret = GUI_RET_CANCEL;
+                        break;
+                    case CFE_NOERROR:
+                    case CFE_DSTREADONLY:
+                        copy_error = CFE_NOERROR;
+                        break;
+                    case CFE_NOMEMORY:
+                        ret = MsgBox( NULL, "IDS_NOMEMORYCOPY", GUI_RETRY_CANCEL );
+                        break;
+                    case CFE_CANTOPENSRC:
+                        ret = MsgBox( NULL, "IDS_CANTOPENSRC", GUI_RETRY_CANCEL, src_path  );
+                        break;
+                    case CFE_CANTOPENDST:
+                        ret = MsgBox( NULL, "IDS_CANTOPENDST", GUI_RETRY_CANCEL, tmp_path );
+                        break;
+                    }
+                    if( ret == GUI_RET_CANCEL ) return( FALSE );
+                } while( copy_error != CFE_NOERROR );
+
+                SetVariableByHandle( var_handle, tmp_path );
+                UpdateCheckList( tmp_path, var_handle );
             }
             TransferCheckList();
-            break;
-        case CFE_NOMEMORY:
-            ret = MsgBox( NULL, "IDS_NOMEMORYCOPY", GUI_RETRY_CANCEL );
-            break;
-        case CFE_CANTOPENSRC:
-            SetVariableByName( "DiskDesc", disk_desc );
-            return_state = DoDialog( "InsertDisk" );
-            if( return_state == DLG_CAN || return_state == DLG_DONE ) {
-            return( FALSE );
-            }
-            break;
-        case CFE_CANTOPENDST:
-            ret = MsgBox( NULL, "IDS_CANTOPENDST_NONAME", GUI_RETRY_CANCEL );
-            break;
-        }
-        if( ret == GUI_RET_CANCEL ) return( FALSE );
+        } else {
+            do {
+                SimGetFileName( filenum, file_name );
+                GetSrcPath( src_path, file_name, disk_num );
+                if( StatusCancelled() ) {
+                    return( FALSE );
+                }
+                if( SimFileLastSplit( filenum ) ) {
+                    bool append;
+                    char    *drive;
 
-        } while( copy_error != CFE_NOERROR );
-    }
-    num_installed += SimFileSize( filenum );
-    if( num_installed > num_total_install ) num_installed = num_total_install;
-    StatusAmount( num_installed, num_total_install );
-    if( StatusCancelled() ) return( FALSE );
+                    copy_error = CFE_NOERROR;
+                    drive = SimGetTargTempDisk( SimDirTargNum( SimFileDirNum( filenum ) ) );
+                    if( drive == NULL ) {
+                        return( FALSE );
+                    }
+                    if( UseTargetForTmpFile( *drive ) ) {
+                        GetTmpFileNameInTarget( *drive, tmp_path );
+                    } else {
+#if defined( WINNT ) || defined( WIN )
+                        GetTmpFileNameUNC( drive, tmp_path );
+#else
+                        GetTmpFileName( *drive, tmp_path );
+#endif
+                    }
+                    append = FALSE;
+                    i = 0;
+                    while( split != NULL ) {
+                        junk = split;
+                        split = split->next;
+                        StatusLines( STAT_COPYINGFILE, junk->src_path );
+                        for( ;; ) {
+                            copy_error = DoCopyFile( junk->src_path, tmp_path, append );
+                            if( copy_error == CFE_CANTOPENSRC ) {
+                                SetVariableByName( "DiskDesc", junk->disk_desc );
+                                return_state = DoDialog( "InsertDisk" );
+                                if( return_state == DLG_CAN || return_state == DLG_DONE ) {
+                                    return( FALSE );
+                                }
+                            } else {
+                                break;
+                            }
+                        }
+                        ++i;
+                        StatusAmount( num_installed + i * SimFileSize( filenum ) / num_splits, num_total_install );
+                        if( StatusCancelled() ) return( FALSE );
+                        append = TRUE;
+                        if( copy_error != CFE_NOERROR ) break;
+                        GUIMemFree( junk->src_path );
+                        GUIMemFree( junk->disk_desc );
+                        GUIMemFree( junk );
+                    }
+                    owner_split = &split;
+                    *owner_split = NULL;
+                    num_splits = 0;
+                    if( copy_error == CFE_NOERROR ) {
+                        StatusLines( STAT_COPYINGFILE, file_desc );
+                        for(;;) {
+                            copy_error = DoCopyFile( src_path, tmp_path, TRUE );
+                            if( copy_error == CFE_CANTOPENSRC ) {
+                                SetVariableByName( "DiskDesc", disk_desc );
+                                return_state = DoDialog( "InsertDisk" );
+                                if( return_state == DLG_CAN || return_state == DLG_DONE ) {
+                                    return( FALSE );
+                                }
+                            } else {
+                                break;
+                            }
+                        }
+                        if( StatusCancelled() ) return( FALSE );
+                        if( copy_error == CFE_NOERROR ) {
+                            num_installed += SimFileSize( filenum );
+                            StatusAmount( num_installed, num_total_install );
+                            copy_error = PerformDecode( tmp_path, dir, (unsigned_32) 0 );
+                            remove( tmp_path );
+                        }
+                    }
+                } else if( SimFileSplit( filenum ) ) {
+                    *owner_split = GUIMemAlloc( sizeof( split_file ) );
+                    ++num_splits;
+                    GUIStrDup( src_path, &((*owner_split)->src_path) );
+                    GUIStrDup( disk_desc, &((*owner_split)->disk_desc) );
+                    owner_split = &((*owner_split)->next);
+                    *owner_split = NULL;
+                    copy_error = CFE_NOERROR;
+                } else {
+                    StatusLines( STAT_COPYINGFILE, file_desc );
+                    copy_error = PerformDecode( src_path, dir, (unsigned_32) 0 );
+                }
+
+                switch( copy_error ) {
+                case CFE_ERROR:
+                    ret = GUI_RET_CANCEL;
+                    break;
+                case CFE_BAD_CRC:
+                    MsgBox( NULL, "IDS_BADCRC", GUI_OK, src_path );
+                    ret = GUI_RET_CANCEL;
+                    break;
+                case CFE_NOERROR:
+                    max_subfiles = SimNumSubFiles( filenum );
+                    for( subfilenum = 0; subfilenum < max_subfiles; ++subfilenum ) {
+                    SimSubFileName( filenum, subfilenum, file_desc );
+                        var_handle = SimSubFileVar( filenum, subfilenum );
+                        _makepath( tmp_path, NULL, dir, file_desc, NULL );
+                        SetVariableByHandle( var_handle, tmp_path );
+                        UpdateCheckList( tmp_path, var_handle );
+                    }
+                    TransferCheckList();
+                    break;
+                case CFE_NOMEMORY:
+                    ret = MsgBox( NULL, "IDS_NOMEMORYCOPY", GUI_RETRY_CANCEL );
+                    break;
+                case CFE_CANTOPENSRC:
+                    SetVariableByName( "DiskDesc", disk_desc );
+                    return_state = DoDialog( "InsertDisk" );
+                    if( return_state == DLG_CAN || return_state == DLG_DONE ) {
+                        return( FALSE );
+                    }
+                    break;
+                case CFE_CANTOPENDST:
+                    ret = MsgBox( NULL, "IDS_CANTOPENDST_NONAME", GUI_RETRY_CANCEL );
+                    break;
+                }
+                if( ret == GUI_RET_CANCEL ) return( FALSE );
+            } while( copy_error != CFE_NOERROR );
+        }
+        num_installed += SimFileSize( filenum );
+        if( num_installed > num_total_install ) num_installed = num_total_install;
+        StatusAmount( num_installed, num_total_install );
+        if( StatusCancelled() ) return( FALSE );
     }
     if( !CheckPendingFiles() ) return( FALSE );
     StatusAmount( num_total_install, num_total_install );
@@ -2055,9 +1943,9 @@ static void RemoveUnusedDirs()
     int         max_dirs = SimNumDirs();
 
     for( i = 0; i < max_dirs; i++ ) {
-    if( !SimDirUsed( i ) ) {
-        RemoveDstDir( i, dst_path );
-    }
+        if( !SimDirUsed( i ) ) {
+            RemoveDstDir( i, dst_path );
+        }
     }
 }
 
@@ -2069,9 +1957,9 @@ static void RemoveExtraFiles()
     char                dst_path[ _MAX_PATH ];
 
     if( VarGetIntVal( UnInstall ) ) {
-    // delete saved autoexec's and config's
-    p = GetVariableStrVal( "DstDir" );
-    #if defined( __NT__ )
+        // delete saved autoexec's and config's
+        p = GetVariableStrVal( "DstDir" );
+#if defined( __NT__ )
         // Windows NT
         strcpy( dst_path, p );
         strcat( dst_path, "\\CHANGES.ENV" );
@@ -2083,22 +1971,22 @@ static void RemoveExtraFiles()
         strcpy( dst_path, p );
         strcat( dst_path, "\\CONFIG.W95" );
         remove( dst_path );
-    #elif defined( __OS2__ )
+#elif defined( __OS2__ )
         strcpy( dst_path, p );
         strcat( dst_path, "\\CONFIG.OS2" );
         remove( dst_path );
-    #else
+#else
         strcpy( dst_path, p );
         strcat( dst_path, "\\AUTOEXEC.DOS" );
         remove( dst_path );
         strcpy( dst_path, p );
         strcat( dst_path, "\\CONFIG.DOS" );
         remove( dst_path );
-    #endif
-    #if defined( WSQL )
+#endif
+#if defined( WSQL )
         LicenseFileName( dst_path );
         remove( dst_path );
-    #endif
+#endif
     }
 }
 
@@ -2112,16 +2000,16 @@ extern  void DetermineSrcState( char *src_dir )
     // if installing from CD or hard disk, add DISK# to source path
     len = strlen( src_dir );
     if( len > 0 && src_dir[ len - 1 ] != '\\' ) {
-    src_dir[ len ] = '\\';
-    src_dir[ len + 1 ] = '\0';
+        src_dir[ len ] = '\\';
+        src_dir[ len + 1 ] = '\0';
     }
     strcat( src_dir, "diskimgs\\disk01" );
     if( access( src_dir, F_OK ) == 0 ) {
-    SetVariableByName( "SrcIsCD", "1" );
-    SrcInstState = SRC_CD;
+        SetVariableByName( "SrcIsCD", "1" );
+        SrcInstState = SRC_CD;
     } else {
-    SetVariableByName( "SrcIsCD", "0" );
-    SrcInstState = SRC_DISK;
+        SetVariableByName( "SrcIsCD", "0" );
+        SrcInstState = SRC_DISK;
     }
     src_dir[ len ] = '\0';
 }
@@ -2178,9 +2066,9 @@ extern bool CopyAllFiles( void )
     if( !CreateDirectoryTree() ) return( FALSE );
     CheckRemoveODBC();
     if( !RelocateFiles() ) return( FALSE );
-    #if defined( __OS2__ ) && !defined( _UI )
+#if defined( __OS2__ ) && !defined( _UI )
     LabelDirs();    // add labels (long names) to directories
-    #endif
+#endif
     if( !DoCopyFiles() ) return( FALSE );
     CopySetupInfFile();
     AdjustODBCUsage();
@@ -2203,21 +2091,21 @@ static bool NukePath( char *path, int stat )
     if( path_end > path && path_end[-1] == '\\' ) --path_end;
     *path_end = '\\';
     while( info = readdir( d ) ) {
-    strcpy( path_end+1, info->d_name );
-    if( info->d_attr & _A_SUBDIR ) {
-        if( info->d_name[0] != '.' ) {
-        if( !NukePath( path, stat ) ) return( FALSE );
-        rmdir( path );
+        strcpy( path_end+1, info->d_name );
+        if( info->d_attr & _A_SUBDIR ) {
+            if( info->d_name[0] != '.' ) {
+            if( !NukePath( path, stat ) ) return( FALSE );
+                rmdir( path );
+            }
+        } else {
+            if( info->d_attr & (_A_RDONLY+_A_SYSTEM+_A_HIDDEN) ) {
+                chmod( path, S_IWRITE );
+            }
+            if( remove( path ) != 0 ) {
+                return( FALSE );
+            }
         }
-    } else {
-        if( info->d_attr & (_A_RDONLY+_A_SYSTEM+_A_HIDDEN) ) {
-        chmod( path, S_IWRITE );
-        }
-        if( remove( path ) != 0 ) {
-        return( FALSE );
-        }
-    }
-    StatusLines( stat, path );
+        StatusLines( stat, path );
     }
     *path_end = '\0';
     closedir( d );
@@ -2242,7 +2130,7 @@ static bool FormatDisk( char *dst_path, char *disk_desc )
     strcpy( vol, "/v:" );
     strcat( vol, disk_desc );
     GetSrcPath( rsp_path, "format.rsp", 0 );
-    #ifdef __WINDOWS__
+#if defined( __WINDOWS__ )
     {
     char                    buff[MAXBUF];
 
@@ -2253,7 +2141,7 @@ static bool FormatDisk( char *dst_path, char *disk_desc )
     }
     rc = WinSpawnWait( buff ) != 0;
     }
-    #elif defined(__NT__)
+#elif defined( __NT__ )
     {
     if( GetVariableIntVal( "IsWin95" ) != 0 ) {
         // Here we spawn command.com, telling it to run format,
@@ -2268,9 +2156,9 @@ static bool FormatDisk( char *dst_path, char *disk_desc )
         comspec[ 0 ] = '\x0';
         strcpy( comspec, getenv( "COMSPEC" ) );
         if( comspec == NULL || comspec[ 0 ] == '\x0' ) {
-        strcpy( next, "command.com" );
+            strcpy( next, "command.com" );
         } else {
-        strcpy( next, comspec );
+            strcpy( next, comspec );
         }
         rsp = open( rsp_path, O_RDONLY + O_BINARY );
         nul = open( "nul", O_RDWR+O_BINARY );
@@ -2285,7 +2173,7 @@ static bool FormatDisk( char *dst_path, char *disk_desc )
         rc = spawnlp(P_WAIT, next, next, "/c", "FORMAT", drv, "/u", vol, NULL );
         if( saved_stdin == TRUE ) {
         if( dup2( dup_stdin, STDIN_FILENO ) == -1 ) return( FALSE );
-        close( dup_stdin );
+            close( dup_stdin );
         }
         close( rsp );
         close( nul );
@@ -2304,7 +2192,7 @@ static bool FormatDisk( char *dst_path, char *disk_desc )
         if( !NTSpawnWait( buff, &exit_code, dup_read,
                   GetStdHandle( STD_OUTPUT_HANDLE ),
                   GetStdHandle( STD_ERROR_HANDLE ) ) ) {
-        return( FALSE );
+            return( FALSE );
         }
         CloseHandle( read_handle );
         CloseHandle( dup_read );
@@ -2312,7 +2200,7 @@ static bool FormatDisk( char *dst_path, char *disk_desc )
         rc = exit_code;
     }
     }
-    #elif defined(__OS2__)
+#elif defined( __OS2__ )
     {
     char                    buff[MAXBUF];
 
@@ -2321,7 +2209,7 @@ static bool FormatDisk( char *dst_path, char *disk_desc )
         return( FALSE );
     }
     }
-    #elif defined(_UI)
+#elif defined( _UI )
     {
     int             rsp,nul;
     int             dup_stdin;
@@ -2342,7 +2230,7 @@ static bool FormatDisk( char *dst_path, char *disk_desc )
     close( rsp );
     close( nul );
     }
-    #endif
+#endif
     GUISpawnEnd();
     return( rc == 0 );
 }
@@ -2360,41 +2248,41 @@ static dlg_state PromptForDisk( int disk_num, char *dst_path, long size_needed, 
     SetVariableByName( "DiskDesc", disk_desc );
     SetVariableByName( "FormattedDiskInfo", "" );
     if( GetVariableIntVal( "FormatDisks" ) && size_needed != 0 ) {
-    for( ;; ) {
-        state = DoDialog( dlg_name );
-        if( state != DLG_NEXT ) return( state );
-        if( FormatDisk( dst_path, disk_desc ) ) break;
-        SetVariableByName( "FormattedDiskInfo", GetVariableStrVal("IDS_FORMATTING_FAILED") );
-    }
+        for( ;; ) {
+            state = DoDialog( dlg_name );
+            if( state != DLG_NEXT ) return( state );
+            if( FormatDisk( dst_path, disk_desc ) ) break;
+            SetVariableByName( "FormattedDiskInfo", GetVariableStrVal("IDS_FORMATTING_FAILED") );
+        }
     } else {
     state = DoDialog( dlg_name );
     if( state != DLG_NEXT ) return( state );
     for( ;; ) {
         for( ;; ) {
-        // Format if needed
-        GUIRefresh();
-        free_space = GetFreeDiskSpace( dst_path[0], TRUE );
-        if( free_space == -1 ) {
-            SetVariableByName( "FormattedDiskInfo", GetVariableStrVal("IDS_DISK_NOT_WRITEABLE") );
-            state = DoDialog( dlg_name );
-            if( state != DLG_NEXT ) return( state );
-        } else if( free_space < size_needed ) {
-            path[0] = dst_path[0];
-            path[1] = ':';
-            path[2] = '\\';
-            path[3] = '\0';
-            if( NukePath( path, STAT_ERASING_DISKETTE ) ) {
+            // Format if needed
+            GUIRefresh();
             free_space = GetFreeDiskSpace( dst_path[0], TRUE );
-            if( free_space >= size_needed ) break;
-            SetVariableByName( "FormattedDiskInfo", GetVariableStrVal("IDS_DISK_NOT_ENOUGH_FREE") );
+            if( free_space == -1 ) {
+                SetVariableByName( "FormattedDiskInfo", GetVariableStrVal("IDS_DISK_NOT_WRITEABLE") );
+                state = DoDialog( dlg_name );
+                if( state != DLG_NEXT ) return( state );
+            } else if( free_space < size_needed ) {
+                path[0] = dst_path[0];
+                path[1] = ':';
+                path[2] = '\\';
+                path[3] = '\0';
+                if( NukePath( path, STAT_ERASING_DISKETTE ) ) {
+                    free_space = GetFreeDiskSpace( dst_path[0], TRUE );
+                    if( free_space >= size_needed ) break;
+                    SetVariableByName( "FormattedDiskInfo", GetVariableStrVal("IDS_DISK_NOT_ENOUGH_FREE") );
+                } else {
+                    SetVariableByName( "FormattedDiskInfo", GetVariableStrVal("IDS_DISK_NOT_WRITEABLE") );
+                }
+                state = DoDialog( dlg_name );
+                if( state != DLG_NEXT ) return( state );
             } else {
-            SetVariableByName( "FormattedDiskInfo", GetVariableStrVal("IDS_DISK_NOT_WRITEABLE") );
+                break;
             }
-            state = DoDialog( dlg_name );
-            if( state != DLG_NEXT ) return( state );
-        } else {
-            break;
-        }
         }
         path[0] = dst_path[0];
         strcpy( path+1, ":\\__setup_.tmp" );
@@ -2416,9 +2304,9 @@ static dlg_state CopyToDisk( int disk_num, char *src_path, char *dst_path )
 {
     dlg_state   state;
     if( disk_num != DiskNum ) {
-    state = PromptForDisk( disk_num, dst_path, DisketteSize, "InsertFormattedDisk" );
-    if( state != DLG_NEXT ) return( state );
-    DiskNum = disk_num;
+        state = PromptForDisk( disk_num, dst_path, DisketteSize, "InsertFormattedDisk" );
+        if( state != DLG_NEXT ) return( state );
+        DiskNum = disk_num;
     }
     StatusLines( STAT_CREATING_DISKS, dst_path );
     return( DoCopyFile( src_path, dst_path, FALSE ) == CFE_NOERROR ? DLG_NEXT : DLG_CAN );
@@ -2437,17 +2325,17 @@ extern int CountDisks( bool *pused )
     num_disks = 0;
     SimCalcAddRemove();
     for( filenum = 0; filenum < max_files; filenum++ ) {
-    if( SimFileAdd( filenum ) || full ) {
-        disk_num = SimFileDiskNum( filenum );
-        if( pused != NULL ) pused[ disk_num ] = TRUE;
-        if( disk_num != last_disk_num ) {
-        if( disk_num == 1 && last_disk_num == -1 ) {
-            ++num_disks; // no files on first disk
+        if( SimFileAdd( filenum ) || full ) {
+            disk_num = SimFileDiskNum( filenum );
+            if( pused != NULL ) pused[ disk_num ] = TRUE;
+            if( disk_num != last_disk_num ) {
+                if( disk_num == 1 && last_disk_num == -1 ) {
+                    ++num_disks; // no files on first disk
+                }
+                last_disk_num = disk_num;
+                ++num_disks;
+            }
         }
-        last_disk_num = disk_num;
-        ++num_disks;
-        }
-    }
     }
     return( num_disks );
 }
@@ -2462,14 +2350,14 @@ static bool WriteAutoSetValues( char *path )
     dlg_state   return_state;
 
     if( DiskNum != 0 ) {
-    return_state = PromptForDisk( 0, path, 0, "InsertDisk1" );
-    if( return_state == DLG_CAN || return_state == DLG_DONE ) {
-        return( FALSE );
-    }
+        return_state = PromptForDisk( 0, path, 0, "InsertDisk1" );
+        if( return_state == DLG_CAN || return_state == DLG_DONE ) {
+            return( FALSE );
+        }
     }
     if( GetVariableIntVal( "FullInstall" ) != 0 ) {
-    remove( path );
-    return( TRUE );
+        remove( path );
+        return( TRUE );
     }
     io = fopen( path, "w" );
     if( io == NULL ) return( TRUE );
@@ -2479,11 +2367,11 @@ static bool WriteAutoSetValues( char *path )
     fputs( buff, io );
     var_handle = NextGlobalVar( NO_VAR );
     while( var_handle != NO_VAR ) {
-    if( VarGetAutoSetCond( var_handle ) != NULL ) {
-        sprintf( buff, "%s=%s\n", VarGetName( var_handle ), VarGetIntVal( var_handle ) ? "true" : "false" );
-        fputs( buff, io );
-    }
-    var_handle = NextGlobalVar( var_handle );
+        if( VarGetAutoSetCond( var_handle ) != NULL ) {
+            sprintf( buff, "%s=%s\n", VarGetName( var_handle ), VarGetIntVal( var_handle ) ? "true" : "false" );
+            fputs( buff, io );
+        }
+        var_handle = NextGlobalVar( var_handle );
     }
     fclose( io );
     return( TRUE );
@@ -3036,9 +2924,9 @@ static void DefineVars()
 }
 
 extern bool GetDirParams( int                   argc,
-              char **               argv,
-              char **               inf_name,
-              char **               tmp_path )
+                          char **               argv,
+                          char **               inf_name,
+                          char **               tmp_path )
 /********************************************************/
 {
     char                buff[ _MAX_PATH ];
@@ -3095,7 +2983,7 @@ extern bool GetDirParams( int                   argc,
                 MSBackOffice = TRUE;
                 // falling through!!!
 #endif
-            case 'i': // No screen output (requires SkipDialogs below aas well)
+            case 'i': // No screen output (requires SkipDialogs below as well)
             case 'I':
                 Invisible = TRUE;
                 // falling through!!!
@@ -3130,9 +3018,8 @@ extern bool GetDirParams( int                   argc,
     return TRUE;
 }
 
-extern bool FreeDirParams( char **              inf_name,
-               char **              tmp_path )
-/********************************************************/
+extern bool FreeDirParams( char **inf_name, char **tmp_path )
+/***********************************************************/
 {
     if( inf_name == NULL || tmp_path == NULL ) return FALSE;
 
@@ -3250,13 +3137,13 @@ extern void CloseDownMessage( bool installed_ok )
             MsgBox( NULL, "IDS_UNSETUPCOMPLETE", GUI_OK );
         } else {
             if( ConfigModified ) {
-#if defined(__NT__)
+#if defined( __NT__ )
                 MsgBox( NULL, "IDS_NT_REBOOT", GUI_OK );
-#elif defined(__OS2__)
+#elif defined( __OS2__ )
                 MsgBox( NULL, "IDS_OS2_REBOOT", GUI_OK );
-#elif defined(__DOS__)
+#elif defined( __DOS__ )
                 MsgBox( NULL, "IDS_DOS_REBOOT", GUI_OK );
-#elif defined(__WINDOWS__)
+#elif defined( __WINDOWS__ )
                 MsgBox( NULL, "IDS_WINDOWS_REBOOT", GUI_OK );
 #endif
             } else {
