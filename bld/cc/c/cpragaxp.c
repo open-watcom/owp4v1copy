@@ -31,7 +31,6 @@
 
 #include "cvars.h"
 #include "cgswitch.h"
-#include "target.h"
 #include "pragdefn.h"
 #include "pdefn2.h"
 #include "asinline.h"

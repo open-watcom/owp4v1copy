@@ -35,7 +35,6 @@
 #include "iopath.h"
 #include <stdarg.h>
 #include <unistd.h>
-#include "dw.h"
 
 static uint_32          relocValues[ DW_W_MAX ];
 

@@ -30,8 +30,8 @@
 ****************************************************************************/
 
 
-#include <ctype.h>
 #include "cvars.h"
+#include <ctype.h>
 #include "cg.h"
 #include "cgswitch.h"
 #include "pragdefn.h"

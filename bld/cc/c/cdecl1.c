@@ -30,7 +30,6 @@
 
 
 #include "cvars.h"
-#include "toggle.h"
 #include "pragdefn.h"
 #include "cgswitch.h"
 #include "langenv.h"

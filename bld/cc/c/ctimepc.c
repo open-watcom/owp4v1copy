@@ -31,7 +31,6 @@
 
 
 #include "cvars.h"
-#include <time.h>
 
 static char *Months[] = {
         "Jan", "Feb", "Mar", "Apr", "May", "Jun",

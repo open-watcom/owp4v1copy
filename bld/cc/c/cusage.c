@@ -32,7 +32,6 @@
 #include "cvars.h"
 
 #if (_OS == _QNX) || (_OS == _LINUX)
-#include <stdlib.h>
 
 static char const *NextUsage( char const *p ) {
     while( *p ) {

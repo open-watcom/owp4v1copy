@@ -59,6 +59,7 @@ extra_c_flags_cems = -fh=pch01.pch
 extra_c_flags_cenum = -fh=pch01.pch
 extra_c_flags_cerror = -fh=pch01.pch
 extra_c_flags_cexpr2 = -fh=pch01.pch
+extra_c_flags_cfeinfo = -fh=pch01.pch
 extra_c_flags_cfold2 = -fh=pch01.pch
 extra_c_flags_cgen2 = -fh=pch01.pch
 extra_c_flags_cgendata = -fh=pch01.pch
@@ -73,9 +74,10 @@ extra_c_flags_cmemmgr = -fh=pch01.pch
 extra_c_flags_cmodel = -fh=pch01.pch
 extra_c_flags_cname = -fh=pch01.pch
 extra_c_flags_coptions = -fh=pch01.pch
-extra_c_flags_cprag86 = -fh=pch01.pch
+extra_c_flags_cpragx86 = -fh=pch01.pch
 extra_c_flags_cpragma = -fh=pch01.pch
 extra_c_flags_cpurge = -fh=pch01.pch
+extra_c_flags_cscan = -fh=pch01.pch
 extra_c_flags_csizeof = -fh=pch01.pch
 extra_c_flags_cstats = -fh=pch01.pch
 extra_c_flags_cstmt2 = -fh=pch01.pch

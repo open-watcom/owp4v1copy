@@ -30,7 +30,6 @@
 
 
 #include "cvars.h"
-#include "dw.h"
 #include "browsio.h"
 #include "standard.h"
 #include "cg.h"
