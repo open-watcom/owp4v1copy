@@ -41,5 +41,7 @@ pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
    wmake -i -h clean
    cdsay <PROJDIR>/dlgprs/o
    wmake -i -h clean
+   cdsay <PROJDIR>/gen
+   wmake -i -h clean
    cd <PROJDIR>
    pmake -d all <2> <3> <4> <5> <6> <7> <8> <9> -h clean

@@ -21,18 +21,13 @@ dialog_source = $+$(dialogs)$-
 ext = gh
 dialog_headers = $+$(dialogs)$-
 
-dlg_dir = ..\res\dlg
-bnd_dir = ..\bnd
+dlg_dir = ../res/dlg
 
-!ifdef __NT__
-dlgprs = ..\dlgprs\o\dlgprsnt
-!else ifdef __OS2__
-dlgprs = ..\dlgprs\o\dlgprsp
+!ifdef __LINUX__
+parse = ../dlgprs/o/dlgprs.exe $[@ ../bnd/$[&.bnd $[&.gh $^@
 !else
-dlgprs = ..\dlgprs\o\dlgprs
+parse = ..\dlgprs\o\dlgprs $[@ ..\bnd\$[&.bnd $[&.gh $^@
 !endif
-
-parse = $(dlgprs) $[@ $(bnd_dir)\$[&.bnd $[&.gh $^@
 
 .BEFORE
     @set dos4g=quiet
@@ -51,3 +46,5 @@ compile.tim : $(dialog_source) $(dialog_headers)
 .dlg.gh:
     $(parse)
 
+clean: .SYMBOLIC
+    rm -f *.gh *.gpp *.tim
