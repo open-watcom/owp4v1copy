@@ -70,6 +70,8 @@ set gmllib=%doc_root%\gml\syslib
 set hcdos=%doc_root%\cmds\hcdos32
 set hlpdir=%devdir%\online\hlp
 set win95hc=hcrtf
+set wat31hc=whc
+set win31hc=hc31
 
 %devdr%
 cd %devdir%
