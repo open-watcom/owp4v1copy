@@ -34,7 +34,7 @@
 #if defined( __NT__ )
 #define _CGDLLEXPORT    __stdcall __export
 #define _CGAPI          __stdcall
-#elif defined( __OS2V2__ )
+#elif defined( __OS2V2__ ) || defined( __OS2__ ) && !defined(__I86__)
 #define _CGDLLEXPORT    __syscall __export
 #define _CGAPI          __syscall
 #else

@@ -29,11 +29,16 @@
 *
 ****************************************************************************/
 
-
+#ifdef __OS2__
+#define INCL_DOS
+#include <os2.h>
+#else
 #define STRICT
 #include <windows.h>
 // this is defined by windows.h - MS are such idiots
 #undef IGNORE
+#endif
+
 #define BY_CLI
 #include "standard.h"
 #include "coderep.h"
@@ -66,20 +71,40 @@ char *defaultDLLName =
 
 cg_interface *CGFuncTable;
 
+#ifdef __OS2__
+static HMODULE dllHandle;
+#else
 static HANDLE   dllHandle;
+#endif
 
 int BEDLLLoad( char *dll_name ) {
 /*******************************/
+
+#ifdef __OS2__
+#define SIZE 32
+    unsigned char badfile[SIZE];
+#endif
+    int retval;
 
     if( dll_name == NULL ) {
         dll_name = defaultDLLName;
     }
     CGFuncTable = NULL;
+#ifdef __OS2__
+    retval = DosLoadModule( (PSZ)badfile, SIZE, (PSZ)dll_name, &dllHandle );
+#else
     dllHandle = LoadLibrary( dll_name );
-    if( dllHandle != 0 ) {
+    retval = ( dllHandle == 0 );
+#endif
+    if( retval == 0 ) {
         cg_interface * _CGDLLEXPORT (*func_ptr)( fe_interface * );
+#ifdef __OS2__
+        retval = DosQueryProcAddr( dllHandle, 0, (PSZ)"_BEDLLInit@4", (PFN*)&func_ptr );
+#else
         func_ptr = (cg_interface * _CGDLLEXPORT(*)( fe_interface * ))GetProcAddress( dllHandle, "_BEDLLInit@4" );
-        if( func_ptr != 0 ) {
+        retval = ( func_ptr == 0 );
+#endif
+        if( retval == 0 ) {
             CGFuncTable = func_ptr( &FERtnTable );
             return( TRUE );
         }
@@ -90,10 +115,16 @@ int BEDLLLoad( char *dll_name ) {
 void BEDLLUnload() {
 /******************/
 
+#ifdef __OS2__
+    DosFreeModule( dllHandle );
+#else
     FreeLibrary( dllHandle );
+#endif
 }
 
 bool TBreak() {
 
     return( FALSE );
 }
+
+

@@ -74,7 +74,7 @@
         #define         WANT_RFX
     #endif
     #define     TRAPENTRY TRAPFAR __saveregs
-#elif defined(__OS2__)
+#elif defined(__OS2__) && defined(__I86__)
     #undef          WANT_FILE_INFO
     #undef          WANT_ENV
     #undef          WANT_ASYNC
@@ -83,7 +83,7 @@
     #define         WANT_THREAD
     #define     WANT_RFX
     #define     TRAPENTRY TRAPFAR __saveregs
-#elif defined(__OS2V2__)
+#elif defined(__OS2V2__) || defined(__OS2__) && !defined(__I86__)
     #undef          WANT_FILE_INFO
     #undef          WANT_ENV
     #undef          WANT_ASYNC
