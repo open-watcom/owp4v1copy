@@ -61,6 +61,9 @@ typedef struct  __iobuf
 }
 #else
 {
+   /* need at least one member in a structure (for c)            *
+    * if the internals are obscure, this size should be unknown. */
+   char private[];
 }
 #endif
 FILE;
