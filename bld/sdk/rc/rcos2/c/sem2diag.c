@@ -145,6 +145,7 @@ extern FullDialogBoxControlOS2 * SemOS2InitDiagCtrl( void )
     newctrl->prev = NULL;
     newctrl->children = NULL;
     newctrl->framectl = 0;
+    newctrl->presParams = NULL;
 
     return( newctrl );
 }
