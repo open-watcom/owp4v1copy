@@ -44,16 +44,11 @@
 #include <os2.h>
 
 #define BUFSIZE 256
-char    *CmdProc;
 
 void SysInit( int argc, char *argv[] )
 {
     argc = argc;
     argv = argv;
-    CmdProc = getenv( "COMSPEC" );
-    if( CmdProc == NULL ) {
-        Fatal( "Can not find command processor" );
-    }
 }
 
 unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
@@ -63,20 +58,28 @@ unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
     HFILE       pipe_output;
     HFILE       std_output;
     HFILE       std_error;
+    char        *cmdnam = strdup( cmd );
+    char        *sp = strchr( cmdnam, ' ' );
+
+    if ( sp != NULL ) {
+        *sp = '\0';
+        sp++;
+    }
 
     std_output = 1;
-    std_error = 2;
+    std_error  = 2;
     rc = DosCreatePipe( &pipe_input, &pipe_output, BUFSIZE );
     if( rc != 0 ) return( rc );
     rc = DosDupHandle( pipe_output, &std_output );
     if( rc != 0 ) return( rc );
     rc = DosDupHandle( pipe_output, &std_error );
     if( rc != 0 ) return( rc );
-    DosClose( pipe_output );    
-    rc = spawnl( P_NOWAITO, CmdProc, CmdProc, "/c", cmd, NULL );
+    DosClose( pipe_output );
+    rc = spawnl( P_NOWAITO, cmdnam, cmdnam, sp, NULL );
     DosClose( std_output );
     DosClose( std_error );
     *readpipe = _hdopen( (int) pipe_input, O_RDONLY );
+    free( cmdnam );
     return rc;
 }
 
