@@ -87,13 +87,11 @@ struct  option {
 
 static struct SWData {
     char calling_convention;
-    char naming_convention;
     char protect_mode;
     int cpu;
     int fpu;
 } SWData = {
     0,  // no calling convention
-    0,  // no naming convention
     0,  // real mode CPU instructions set
     0,  // default CPU 8086
     -1  // unspecified FPU
@@ -214,12 +212,8 @@ static void SetCPU(void)
     for( tmp=OptParm; tmp < OptScanPtr; tmp++ ) {
         if( *tmp == 'r' ) {
             SWData.calling_convention = *tmp;
-            SWData.naming_convention = 0;
         } else if( *tmp == 's' ) {
             SWData.calling_convention = *tmp;
-            SWData.naming_convention = 0;
-        } else if( *tmp == '_' ) {
-            SWData.naming_convention = *tmp;
         } else if( *tmp == 'p' ) {
             SWData.protect_mode = TRUE;
         } else if( *tmp == '"' ) {
@@ -426,7 +420,7 @@ global_options Options = {
     /* quiet            */      FALSE,
     /* banner_printed   */      FALSE,
     /* debug_flag       */      FALSE,
-    /* naming_convention*/      DO_NOTHING,
+    /* naming_convention*/      ADD_USCORES,
     /* floating_point   */      DO_FP_EMULATION,
     /* output_data_in_code_records */   TRUE,
 
@@ -814,13 +808,6 @@ void set_cpu_parameters( void )
     } else if( SWData.calling_convention == 's' ) {
         add_constant( "__STACK__" );
         Options.naming_convention = DO_NOTHING;
-    }
-    if( SWData.naming_convention == '_' ) {
-        if( Options.naming_convention == DO_NOTHING ) {
-            Options.naming_convention = REMOVE_USCORES;
-        } else {
-            Options.naming_convention = DO_NOTHING;
-        }
     }
     switch( SWData.cpu ) {
     case 0:

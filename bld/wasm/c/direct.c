@@ -2121,6 +2121,7 @@ int Model( int i )
         case TOK_PROC_FORTRAN:
         case TOK_PROC_PASCAL:
         case TOK_PROC_C:
+        case TOK_PROC_WATCOM_C:
         case TOK_PROC_STDCALL:
         case TOK_PROC_SYSCALL:
             ModuleInfo.langtype = TypeInfo[type].value;
