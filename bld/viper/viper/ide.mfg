@@ -1611,7 +1611,7 @@ Rule NLMS, , l?2e?
 
 Rule TXT
   Target *.txt *.h *.hpp *.c *.cc *.cpp *.def *.cfg *.rc *.asm
-  Target *.sqc *.sqp *.ipf *.for *.fap *.fi
+  Target *.sqc *.sqp *.ipf *.for *.fap *.fi *.xml
   Action "&Edit Text"
     HotKey CTRL E
     Default
