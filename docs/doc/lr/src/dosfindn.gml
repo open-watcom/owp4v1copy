@@ -3,12 +3,12 @@
 unsigned _dos_findnext( struct find_t *buffer );
 
 struct find_t {
-  char reserved[21];      /* reserved for use by DOS   */
-  char attrib;            /* attribute byte for file   */
-  unsigned short wr_time; /* time of last write to file*/
-  unsigned short wr_date; /* date of last write to file*/
-  unsigned long  size;    /* length of file in bytes   */
-  char name[13];          /* null-terminated filename  */
+    char reserved[21];      /* reserved for use by DOS   */
+    char attrib;            /* attribute byte for file   */
+    unsigned short wr_time; /* time of last write to file*/
+    unsigned short wr_date; /* date of last write to file*/
+    unsigned long  size;    /* length of file in bytes   */
+    char name[13];          /* null-terminated filename  */
 };
 .ixfunc2 '&DosFunc' &func
 .funcend
@@ -40,18 +40,18 @@ accordingly.
 #include <&doshdr>
 .exmp break
 void main()
-  {
-    struct find_t  fileinfo;
-    unsigned rc;        /* return code */
+{
+    struct find_t   fileinfo;
+    unsigned        rc;         /* return code */
 .exmp break
     /* Display name and size of "*.c" files */
     rc = _dos_findfirst( "*.c", _A_NORMAL, &fileinfo );
     while( rc == 0 ) {
-      printf( "%14s %10ld\n", fileinfo.name,
-                              fileinfo.size );
-      rc = _dos_findnext( &fileinfo );
+        printf( "%14s %10ld\n", fileinfo.name,
+                                fileinfo.size );
+        rc = _dos_findnext( &fileinfo );
     }
-  }
+}
 .exmp end
 .class DOS
 .system

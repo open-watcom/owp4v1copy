@@ -17,15 +17,15 @@ unsigned _dos_findclose( struct find_t *buffer );
 .ixfunc2 '&DosFunc' _dos_findnext
 
 struct find_t {
-  char reserved[21];      /* reserved for use by DOS   */
-  char attrib;            /* attribute byte for file   */
-  unsigned short wr_time; /* time of last write to file*/
-  unsigned short wr_date; /* date of last write to file*/
-  unsigned long  size;    /* length of file in bytes   */
+    char reserved[21];      /* reserved for use by DOS   */
+    char attrib;            /* attribute byte for file   */
+    unsigned short wr_time; /* time of last write to file*/
+    unsigned short wr_date; /* date of last write to file*/
+    unsigned long  size;    /* length of file in bytes   */
 #if defined(__OS2__) || defined(__NT__)
-  char name[256];         /* null-terminated filename  */
+    char name[256];         /* null-terminated filename  */
 #else
-  char name[13];          /* null-terminated filename  */
+    char name[13];          /* null-terminated filename  */
 #endif
 };
 .if &'length(&wfunc.) ne 0 .do begin
@@ -43,15 +43,15 @@ unsigned _wdos_findclose( struct _wfind_t *buffer );
 .ixfunc2 '&Wide' _wdos_findnext
 
 struct _wfind_t {
-  char reserved[21];      /* reserved for use by DOS    */
-  char attrib;            /* attribute byte for file    */
-  unsigned short wr_time; /* time of last write to file */
-  unsigned short wr_date; /* date of last write to file */
-  unsigned long  size;    /* length of file in bytes    */
+    char reserved[21];      /* reserved for use by DOS    */
+    char attrib;            /* attribute byte for file    */
+    unsigned short wr_time; /* time of last write to file */
+    unsigned short wr_date; /* date of last write to file */
+    unsigned long  size;    /* length of file in bytes    */
 #if defined(__OS2__) || defined(__NT__)
-  wchar_t name[256];      /* null-terminated filename   */
+    wchar_t name[256];      /* null-terminated filename   */
 #else
-  wchar_t name[13];       /* null-terminated filename   */
+    wchar_t name[13];       /* null-terminated filename   */
 #endif
 };
 .do end
@@ -95,7 +95,10 @@ included in the search.
 .point
 If
 .kw _A_VOLID
-is specified, then only volume-ID's are included in the search.
+is specified, then volume-ID's are also included in the search. Note:
+The
+.kw _A_VOLID
+attribute is not supported on systems other than DOS (e.g. Win32, OS/2).
 .point
 .kw _A_RDONLY
 and
@@ -170,21 +173,21 @@ accordingly.
 #include <&doshdr>
 .exmp break
 void main()
-  {
-    struct find_t  fileinfo;
-    unsigned rc;        /* return code */
+{
+    struct find_t   fileinfo;
+    unsigned        rc;         /* return code */
 .exmp break
     /* Display name and size of "*.c" files */
     rc = _dos_findfirst( "*.c", _A_NORMAL, &fileinfo );
     while( rc == 0 ) {
-      printf( "%14s %10ld\n", fileinfo.name,
-                              fileinfo.size );
-      rc = _dos_findnext( &fileinfo );
+        printf( "%14s %10ld\n", fileinfo.name,
+                                fileinfo.size );
+        rc = _dos_findnext( &fileinfo );
     }
     #if defined(__OS2__)
     _dos_findclose( &fileinfo );
     #endif
-  }
+}
 .exmp end
 .class DOS
 .system
