@@ -99,7 +99,7 @@ STATIC void printLine( int *h, const char *buf, unsigned size )
 STATIC void MemCheck( void )
 /**************************/
 {
-    static busy = FALSE;    /* protect against recursion thru PrtMsg */
+    static int busy = FALSE;    /* protect against recursion thru PrtMsg */
 
     if( !busy ) {
         busy = TRUE;
