@@ -149,7 +149,7 @@ proj_obj += trmem.obj trmemcvr.obj
 #explicit rules
 ######
 
-$(exc_name) : fullops.gh inlnops.gh wmpmsg.gh $(link_name) $(name).res $(proj_obj)
+$(exc_name) : fullops.gh wmpmsg.gh $(link_name) $(name).res $(proj_obj)
 !ifeq  host_OS qnx
         @%make usage.u
 !endif
@@ -211,9 +211,6 @@ wasmmsg.gh : $(proj_path)/h/$(proj_name).msg
 !endif
 
 ###################################################################
-
-inlnops.gh: $(proj_path)/inlnops.tok ./mkopcode.exe
-        $]@ $(proj_path)/inlnops.tok $^@
 
 fullops.gh: $(proj_path)/fullops.tok $(proj_path)/inlnops.tok ./mkopcode.exe
         $]@ $(proj_path)/fullops.tok $(proj_path)/inlnops.tok $^@
