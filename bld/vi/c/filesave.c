@@ -233,6 +233,7 @@ int SaveFile( char *name, linenum start, linenum end, int dammit )
         i = FileOpen( fn, existflag,O_TRUNC | O_WRONLY | O_BINARY | O_CREAT,
                     WRITEATTRS, &fileHandle);
         if( i ) {
+            Message1( strerror( errno ) );
             return( i );
         }
     } else {
