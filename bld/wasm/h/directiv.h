@@ -130,7 +130,7 @@ enum {
     END_COMMENT
 };                      // parms to Comment
 
-typedef enum irp_type {
+enum irp_type {
         IRP_CHAR,
         IRP_WORD,
         IRP_REPEAT

@@ -52,7 +52,11 @@
 
 extern int_8                    PhaseError;
 
+static void AddLinnumData( void );
+
 #endif
+
+int match_phase_3( int *i, unsigned long determinant );
 
 #ifdef _WASM_
 extern int AddFloatingPointEmulationFixup( const struct asm_ins ASMFAR *, bool );

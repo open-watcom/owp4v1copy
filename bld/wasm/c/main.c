@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  WASM top level module + command line parser
 *
 ****************************************************************************/
 
@@ -72,6 +71,18 @@ extern void             PushLineQueue(void);
 extern void             AddStringToIncludePath( char * );
 
 extern const char       *FingerMsg[];
+
+       int              trademark( void );
+static void             usage_msg( void );
+static void             set_some_kinda_name( char token, char *name );
+static void             get_fname( char *token, int type );
+static void             add_constant( char *string );
+static void             do_envvar_cmdline( char *envvar );
+static int              set_build_target( void );
+static void             main_fini( void );
+static void             main_init( void );
+static void             open_files( void );
+static void             parse_cmdline( char **cmdline );
 
 File_Info               AsmFiles;       // files information
 pobj_state              pobjState;      // object file information for WOMP
@@ -1206,7 +1217,7 @@ static int ProcOptions( char *str, int *level )
 }
 
 static void parse_cmdline( char **cmdline )
-/*************************************************/
+/*****************************************/
 {
     char msgbuf[80];
     int  level = 0;

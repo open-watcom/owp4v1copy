@@ -65,6 +65,8 @@ extern dir_node         *dir_insert( char *name, int tab );
 extern void             GetInsString( enum asm_token , char *, int );
 extern int              MakeLabel( char *symbol_name, memtype mem_type );
 
+static int createconstant( char *name, bool value, int start, bool redefine, bool expand_early );
+
 #define    MAX_EQU_NESTING      20
 
 static label_list *label_cmp( char *name, label_list *head )

@@ -81,6 +81,8 @@ extern void             GetInsString( enum asm_token, char *, int );
 extern void             SetMangler( struct asm_sym *sym, char *mangle_type );
 
 static char *Check4Mangler( int *i );
+void         find_use32( void );
+static int   token_cmp( char **token, int start, int end );
 
 extern  char            write_to_file;  // write if there is no error
 extern  uint_32         BufSize;

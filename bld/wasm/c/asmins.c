@@ -85,6 +85,8 @@ extern int              MakeLabel( char *, memtype );
 extern int              dup_array( asm_sym *, char, char );
 extern int              data_init( int, int );
 
+static void             SizeString( unsigned op_size );
+
 #ifdef _WASM_
 
 extern void             InputQueueLine( char * );
@@ -92,6 +94,8 @@ extern int              directive( int , long );
 extern void             GetInsString( enum asm_token, char *, int );
 extern int              SymIs32( struct asm_sym *sym );
 extern void             find_use32( void );
+
+static void             check_assume( int default_reg );
 
 extern  int_8           DefineProc;     // TRUE if the definition of procedure
                                         // has not ended

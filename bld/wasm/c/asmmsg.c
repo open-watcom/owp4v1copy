@@ -50,6 +50,10 @@ extern int              MsgGet( int resourceid, char *buffer );
 extern int              trademark( void );
 extern char             *get_curr_filename( void );
 
+static void AsmSuicide( void );
+void PutMsg( FILE *fp, char *prefix, int msgnum, va_list args );
+void OpenErrFile( void );
+void PrtMsg( prefix, msgnum, args1, args2 );
 void print_include_file_nesting_structure( void );
 
 #include <stdarg.h>
