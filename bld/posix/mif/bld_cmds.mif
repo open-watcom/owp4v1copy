@@ -18,7 +18,7 @@ COMMANDS = &
 #    dirname &
 #    env &
 #    expand &
-#    false &
+    false &
 #    fmt &
 #    fold &
     head &
@@ -34,7 +34,7 @@ COMMANDS = &
 #    tail &
     tee &
 #    tr &
-#    true &
+    true &
     trunc &
 #    unexpand &
     uniq &
