@@ -424,8 +424,8 @@ static struct option const cmdl_options[] = {
 #endif    
     { "d+",     0,        Ignore },
     { "d$",     0,        DefineMacro },
-    { "e=#",    0,        SetErrorLimit },
     { "e",      0,        SetStopEnd },
+    { "e=#",    0,        SetErrorLimit },
     { "fe=@",   0,        Set_FR },
     { "fi=@",   0,        Set_FI },
     { "fo=@",   0,        Set_FO },
