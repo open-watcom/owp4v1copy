@@ -28,18 +28,17 @@
 *
 ****************************************************************************/
 
+#include <errno.h>
 #include "syslinux.h"
 
 /* user-visible error numbers are in the range -1 - -124 */
 
-#define __syscall_return(type, res)                         \
-do {                                                        \
-    if ((unsigned long)(res) >= (unsigned long)(-125)) {    \
-        errno = -(res);                                     \
-        res = -1;                                           \
-    }                                                       \
-    return (type) (res);                                    \
-} while (0)
+#define __syscall_return(type, res)                     \
+if ((u_long)(res) >= (u_long)(-125)) {                  \
+    errno = -(res);                                     \
+    res = (u_long)-1;                                   \
+}                                                       \
+return (type)(res);
 
 u_long sys_brk(u_long brk)
 {
@@ -56,8 +55,48 @@ long sys_exit(int error_code)
     return sys_call1(SYS_exit,error_code);
 }
 
-ssize_t sys_write(u_int fd, const char * buf,size_t count)
+    // TODO!
+#if 0
+sys_open
+_WCRTLINK int open( const char *__path, int __oflag, ... )
 {
-    return sys_call3(SYS_write, fd, (u_long)buf, count);
+    return 0;
+}
+#endif
+
+_WCRTLINK int fstat( int __fildes, struct stat * __buf )
+{
+    u_long res = sys_call2(SYS_fstat, __fildes, (u_long)__buf);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK ssize_t read( int __fildes, void *__buf, size_t __len )
+{
+    u_long res = sys_call3(SYS_read, __fildes, (u_long)__buf, __len);
+    __syscall_return(ssize_t,res);
+}
+
+_WCRTLINK ssize_t write( int __fildes, const void *__buf, size_t __len )
+{
+    u_long res = sys_call3(SYS_write, __fildes, (u_long)__buf, __len);
+    __syscall_return(ssize_t,res);
+}
+
+_WCRTLINK off_t lseek( int __fildes, off_t __offset, int __whence )
+{
+    u_long res = sys_call3(SYS_lseek, __fildes, __offset, __whence);
+    __syscall_return(off_t,res);
+}
+
+_WCRTLINK int close( int __fildes )
+{
+    u_long res = sys_call1(SYS_close, __fildes);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int fsync( int __fildes )
+{
+    u_long res = sys_call1(SYS_fsync, __fildes);
+    __syscall_return(int,res);
 }
 

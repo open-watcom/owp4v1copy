@@ -24,38 +24,22 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of isatty() for Linux
 *
 ****************************************************************************/
 
 
-#ifndef _RTCHECK_H_INCLUDED
-#define _RTCHECK_H_INCLUDED
-
-#include "variety.h"
-#include <errno.h>
-#include "seterrno.h"
+#include <sys/types.h>
+#include <sys/stat.h>
 
 
-#if ( defined(__NT__) || defined(__RUNTIME_HANDLE_CHECKS__) )   \
-    && ( !defined(__NETWARE__) && !defined(__QNX__)             \
-    && !defined(__OSI__) )
+_WCRTLINK int isatty( int __fildes )
+{
+    struct stat buf;
 
-    extern unsigned __NFiles;
-
-    #define __handle_check( __h, __r )                          \
-                    if( (__h) < 0  ||  (__h) > __NFiles ) {     \
-                        __set_errno( EBADF );                   \
-                        return( __r );                          \
-                    }
-
-#else
-
-    #define __handle_check( __h, __r )
-
-#endif
-
-
-#endif
+    if( fstat( __fildes, &buf ) == -1 ) {
+        return( 0 );
+    }
+    return( S_ISCHR( buf.st_mode ) != 0 );
+}
 

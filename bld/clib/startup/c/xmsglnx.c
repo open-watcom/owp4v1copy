@@ -38,8 +38,8 @@
 
 _WCRTLINK void __exit_with_msg( char _WCI86FAR *msg, unsigned retcode )
 {
-    sys_write(1,msg,strlen(msg));
-    sys_exit( retcode );
+    write(1,msg,strlen(msg));
+    exit( retcode );
 }
 
 _WCRTLINK void __fatal_runtime_error( char _WCI86FAR *msg, unsigned retcode )

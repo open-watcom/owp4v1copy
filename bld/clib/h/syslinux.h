@@ -333,7 +333,6 @@ u_long sys_call5(u_long func,u_long r_ebx,u_long r_ecx,u_long r_edx,u_long r_esi
 
 u_long  sys_brk(u_long brk);
 long    sys_exit(int error_code);
-ssize_t sys_write(u_int fd, const char * buf,size_t count);
 
 #if 0
 struct itimerval;
