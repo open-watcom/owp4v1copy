@@ -8,8 +8,8 @@ testx	ends
 
 .code
 .386
-	mov es:[di].ts32_cs, cs
-	mov es:[di].ts32_eip, offset exec_continue
+	mov es:[di].testx.ts32_cs, cs
+	mov es:[di].testx.ts32_eip, offset exec_continue
 	mov ax, cs
 	xor ax,cx
 

@@ -23,9 +23,9 @@ $(name).obj: .existsonly
     @set EMP_CHECK2=@%null
 
 $(name).esm: .existsonly
-    @set ESM_CHECK1=@%null
+#    @set ESM_CHECK1=@%null
     @set ESM_CHECK2=@%null
 
 $(name).emp: .existsonly
-    @set EMP_CHECK1=@%null
+#    @set EMP_CHECK1=@%null
     @set EMP_CHECK2=@%null
