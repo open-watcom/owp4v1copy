@@ -38,6 +38,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -519,6 +520,7 @@ extern void WriteProfileStrings( bool uninstall )
     }
 }
 
+#if defined( __NT__ )  ||  defined( __WINDOWS__ )
 static bool IsWin40()
 {
 #if defined(WINNT)
@@ -537,6 +539,7 @@ static bool IsWin40()
     return FALSE;
 #endif
 }
+#endif
 
 
 void SetDialogFont()

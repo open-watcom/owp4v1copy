@@ -182,7 +182,7 @@ static void NoHardErrors()
     #if defined(__OS2__)
     DosError( FERR_DISABLEHARDERR );
     #elif defined(__DOS__)
-    _harderr( (HANDLER __far*)critical_error_handler );
+    _harderr( (HANDLER *)critical_error_handler );
     #elif defined( __WINDOWS__) || defined(__NT__)
     SetErrorMode( SEM_FAILCRITICALERRORS );
     #endif

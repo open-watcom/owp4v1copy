@@ -24,25 +24,21 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Function prototypes for hash table manipulation.
 *
 ****************************************************************************/
 
 
-/*
-*   COMMENTS: Function prototypes for hash table
-*/
-
-typedef void    *hash_handle;
-typedef char    *hash_key;
-typedef void    *hash_data;
+typedef void        *hash_handle;
+typedef char        *hash_key;
+typedef const char  *hash_key_const;
+typedef void        *hash_data;
 
 /* standard compare function return, 0 if equal, < 0 if s1 < s2, > 0 is s1 > s2
  */
-typedef int     (*hash_key_cmp)( hash_key s1, hash_key s2 );
+typedef int     (*hash_key_cmp)( hash_key_const s1, hash_key_const s2 );
 
 extern hash_handle      HashInit( unsigned int size, hash_key_cmp func );
 extern int              HashInsert( hash_handle h, hash_key k, hash_data d );
-extern hash_data        HashFind( hash_handle h, hash_key k );
+extern hash_data        HashFind( hash_handle h, hash_key_const k );
 extern void             HashFini( hash_handle h );

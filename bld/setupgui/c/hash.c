@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Hash table to speed up install search.
 *
 ****************************************************************************/
 
-
-/*
-* Comments: Hash table to spped up install search
-*/
 
 #include <stdlib.h>
 #include <string.h>
@@ -94,8 +89,8 @@ int             HashInsert( hash_handle h, hash_key k, hash_data d ) {
 }
 
 
-hash_data       HashFind( hash_handle h, hash_key k ) {
-/*****************************************************/
+hash_data       HashFind( hash_handle h, hash_key_const k ) {
+/***********************************************************/
 
     hash_table          *ht = (hash_table *)h;
     unsigned int        i;
@@ -104,7 +99,7 @@ hash_data       HashFind( hash_handle h, hash_key k ) {
     assert( h );
     assert( k );
 
-    i = hashKey( ht->size, k );
+    i = hashKey( ht->size, (char *)k );
     he = ht->table[i];
 
     while( he ) {

@@ -24,17 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Functions controlling the abstract type "a_variable".
+*               The only reference to the GlobalVarList is through these
+*               functions.
 *
 ****************************************************************************/
 
-
-/*
-*   COMMENTS: Functions contolling the abstract type "a_variable"
-*         The only reference to the GlobalVarList is through these
-*         functions.
-*/
 
 #include <string.h>
 #include <stdlib.h>
