@@ -26,6 +26,7 @@ cdsay .
 #   <CPCMD> <devdir>/vi/os2i86/vi2r.exe <relroot>/rel2/binp/vi16.exe
     <CPCMD> <devdir>/vi/os2386/vi2.exe <relroot>/rel2/binp/vi.exe
 #    <CPCMD> <devdir>/vi/qnxi86/viq.qnx <relroot>/rel2/qnx/binq/vi.
+    <CPCMD> <devdir>/vi/linux386/vil.exe <relroot>/rel2/binl/vi.
     <CPCMD> <devdir>/vi/ctags/os2386/ctags.exe <relroot>/rel2/binp/ctags.exe
     <CPCMD> <devdir>/vi/ctags/dos386/ctags.exe <relroot>/rel2/binw/ctags.exe
     <CPCMD> <devdir>/vi/ctags/nt386/ctags.exe <relroot>/rel2/binnt/ctags.exe
