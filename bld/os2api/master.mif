@@ -39,6 +39,10 @@ components386 =      &
         sesmgr.lbc   &
         viocalls.lbc
 
+componentsrexx =     &
+        rexx.lbc     &
+        rexxapi.lbc
+
 .def .asm : ..\$(srcdir)
 
 .def.lbc:
@@ -68,6 +72,12 @@ os2386.lib: lib386.lbc msgseg32.obj
         $(lib) -b -c -q -p=32 $@ +msgseg32.obj
 
 lib386.lbc: $(components386)
+        cat $< > $@
+
+rexx.lib: rexxall.lbc
+        $(lib) -b -c -q -n -io -ii -p=32 $@ @$<
+
+rexxall.lbc: $(componentsrexx)
         cat $< > $@
 
 clean: .SYMBOLIC .EXPLICIT
