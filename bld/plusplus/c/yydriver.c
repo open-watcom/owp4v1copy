@@ -1255,6 +1255,14 @@ static void newClassMemberInstStack( PARSE_STACK *stack )
     newDeclStack( stack );
 }
 
+static void doPopRestartDecl( PARSE_STACK *state )
+{
+    RESTART_PARSE *restart;
+
+    restart = StackPop( &(state->restart) );
+    CarveFree( carveRESTART_PARSE, restart );
+}
+
 static void deleteStack( PARSE_STACK *stack )
 {
     PARSE_STACK *check_stack;
@@ -1310,14 +1318,6 @@ static void pushRestartDecl( PARSE_STACK *state )
         printf("===============================================================================\n");
     }
 #endif
-}
-
-static void doPopRestartDecl( PARSE_STACK *state )
-{
-    RESTART_PARSE *restart;
-
-    restart = StackPop( &(state->restart) );
-    CarveFree( carveRESTART_PARSE, restart );
 }
 
 #define restartDeclOK( restart ) \
@@ -2196,6 +2196,13 @@ DECL_INFO *ParseException( void )
     return( exception );
 }
 
+static void parseEpilogue( void )
+{
+    /* current token state is end-of-file */
+    TemplateProcessInstantiations();
+    CompFlags.parsing_finished = 1;
+}
+
 void ParseDecls( void )
 /*********************/
 {
@@ -2259,13 +2266,6 @@ void ParseDecls( void )
         LinkageReset();
     }
     parseEpilogue();
-}
-
-static void parseEpilogue( void )
-{
-    /* current token state is end-of-file */
-    TemplateProcessInstantiations();
-    CompFlags.parsing_finished = 1;
 }
 
 PTREE ParseExprDecl( void )

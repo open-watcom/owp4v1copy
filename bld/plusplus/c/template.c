@@ -554,6 +554,47 @@ static TYPE doParseClassTemplate( TEMPLATE_INFO *tinfo, REWRITE *defn,
     return( new_type );
 }
 
+static SYMBOL dupTemplateParm( SYMBOL old_parm )
+{
+    SYMBOL sym;
+
+    sym = AllocSymbol();
+    sym->id = old_parm->id;
+    sym->sym_type = old_parm->sym_type;
+    sym->flag = old_parm->flag;
+    switch( old_parm->id ) {
+    case SC_STATIC:
+        if( old_parm->flag & SF_CONSTANT_INT64 ) {
+            sym->flag |= SF_CONSTANT_INT64;
+            sym->u.pval = old_parm->u.pval;
+        } else {
+            sym->u.uval = old_parm->u.uval;
+        }
+        break;
+    case SC_ADDRESS_ALIAS:
+        sym->u.alias = old_parm->u.alias;
+        break;
+    }
+    return( sym );
+}
+
+static void copyWithNewNames( SCOPE old_scope, char **names )
+{
+    SYMBOL curr;
+    SYMBOL stop;
+    SYMBOL sym;
+
+    curr = NULL;
+    stop = ScopeOrderedStart( old_scope );
+    for(;;) {
+        curr = ScopeOrderedNext( stop, curr );
+        if( curr == NULL ) break;
+        sym = dupTemplateParm( curr );
+        sym = ScopeInsert( GetCurrScope(), sym, *names );
+        ++names;
+    }
+}
+
 static void defineAllClassDecls( SYMBOL sym )
 {
     /*
@@ -1245,30 +1286,6 @@ static SYMBOL templateArgTypedef( TYPE type )
     return tsym;
 }
 
-static SYMBOL dupTemplateParm( SYMBOL old_parm )
-{
-    SYMBOL sym;
-
-    sym = AllocSymbol();
-    sym->id = old_parm->id;
-    sym->sym_type = old_parm->sym_type;
-    sym->flag = old_parm->flag;
-    switch( old_parm->id ) {
-    case SC_STATIC:
-        if( old_parm->flag & SF_CONSTANT_INT64 ) {
-            sym->flag |= SF_CONSTANT_INT64;
-            sym->u.pval = old_parm->u.pval;
-        } else {
-            sym->u.uval = old_parm->u.uval;
-        }
-        break;
-    case SC_ADDRESS_ALIAS:
-        sym->u.alias = old_parm->u.alias;
-        break;
-    }
-    return( sym );
-}
-
 static void injectTemplateParms( TEMPLATE_INFO *tinfo, SCOPE scope, PTREE parms )
 {
     PTREE list;
@@ -1556,23 +1573,6 @@ void TemplateHandleClassMember( DECL_INFO *dinfo )
     data->member_found = TRUE;
     data->template_name = SimpleTypeName( dinfo->id->u.subtree[0]->type );
     FreeDeclInfo( dinfo );
-}
-
-static void copyWithNewNames( SCOPE old_scope, char **names )
-{
-    SYMBOL curr;
-    SYMBOL stop;
-    SYMBOL sym;
-
-    curr = NULL;
-    stop = ScopeOrderedStart( old_scope );
-    for(;;) {
-        curr = ScopeOrderedNext( stop, curr );
-        if( curr == NULL ) break;
-        sym = dupTemplateParm( curr );
-        sym = ScopeInsert( GetCurrScope(), sym, *names );
-        ++names;
-    }
 }
 
 static boolean sameParmArgNames( SCOPE parm_scope, char **arg_names )

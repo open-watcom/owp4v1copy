@@ -427,6 +427,158 @@ static boolean GetAliasInfo(
     return retn;
 }
 
+static void GetParmInfo(
+    void )
+    {
+    struct {
+        unsigned f_pop           : 1;
+        unsigned f_reverse       : 1;
+        unsigned f_loadds        : 1;
+        unsigned f_nomemory      : 1;
+        unsigned f_list          : 1;
+    } have;
+
+    have.f_pop           = 0;
+    have.f_reverse       = 0;
+    have.f_loadds        = 0;
+    have.f_nomemory      = 0;
+    have.f_list          = 0;
+    for( ;; ) {
+        if( !have.f_pop && PragRecog( "caller" ) ) {
+            CurrInfo->_class |= CALLER_POPS;
+            have.f_pop = 1;
+        } else if( !have.f_pop && PragRecog( "routine" ) ) {
+            CurrInfo->_class &= ~ CALLER_POPS;
+            have.f_pop = 1;
+        } else if( !have.f_reverse && PragRecog( "reverse" ) ) {
+            CurrInfo->_class |= REVERSE_PARMS;
+            have.f_reverse = 1;
+        } else if( !have.f_nomemory && PragRecog( "nomemory" ) ) {
+            CurrInfo->_class |= NO_MEMORY_READ;
+            have.f_nomemory = 1;
+        } else if( !have.f_loadds && PragRecog( "loadds" ) ) {
+            CurrInfo->_class |= LOAD_DS_ON_CALL;
+            have.f_loadds = 1;
+        } else if( !have.f_list && PragSet() != T_NULL ) {
+            PragManyRegSets();
+            have.f_list = 1;
+        } else {
+            break;
+        }
+    }
+}
+
+static void GetSTRetInfo(
+    void )
+{
+    struct {
+        unsigned f_float        : 1;
+        unsigned f_struct       : 1;
+        unsigned f_allocs       : 1;
+        unsigned f_list         : 1;
+    } have;
+
+    have.f_float  = 0;
+    have.f_struct = 0;
+    have.f_allocs = 0;
+    have.f_list   = 0;
+    for( ;; ) {
+        if( !have.f_float && PragRecog( "float" ) ) {
+            have.f_float = 1;
+            CurrInfo->_class |= NO_FLOAT_REG_RETURNS;
+        } else if( !have.f_struct && PragRecog( "struct" ) ) {
+            have.f_struct = 1;
+            CurrInfo->_class |= NO_STRUCT_REG_RETURNS;
+        } else if( !have.f_allocs && PragRecog( "routine" ) ) {
+            have.f_allocs = 1;
+            CurrInfo->_class |= ROUTINE_RETURN;
+        } else if( !have.f_allocs && PragRecog( "caller" ) ) {
+            have.f_allocs = 1;
+            CurrInfo->_class &= ~ROUTINE_RETURN;
+        } else if( !have.f_list && PragSet() != T_NULL ) {
+            have.f_list = 1;
+            CurrInfo->_class |= SPECIAL_STRUCT_RETURN;
+            CurrInfo->streturn = PragRegList();
+        } else {
+            break;
+        }
+    }
+}
+
+static void GetRetInfo(
+    void )
+{
+    struct {
+        unsigned f_no8087        : 1;
+        unsigned f_list          : 1;
+        unsigned f_struct        : 1;
+    } have;
+
+    have.f_no8087  = 0;
+    have.f_list    = 0;
+    have.f_struct  = 0;
+    CurrInfo->_class &= ~ NO_8087_RETURNS;
+    for( ;; ) {
+        if( !have.f_no8087 && PragRecog( "no8087" ) ) {
+            have.f_no8087 = 1;
+            HW_CTurnOff( CurrInfo->returns, HW_FLTS );
+            CurrInfo->_class |= NO_8087_RETURNS;
+        } else if( !have.f_list && PragSet() != T_NULL ) {
+            have.f_list = 1;
+            CurrInfo->_class |= SPECIAL_RETURN;
+            CurrInfo->returns = PragRegList();
+        } else if( !have.f_struct && PragRecog( "struct" ) ) {
+            have.f_struct = 1;
+            GetSTRetInfo();
+        } else {
+            break;
+        }
+    }
+}
+
+static void GetSaveInfo(
+    void )
+{
+    hw_reg_set      modlist;
+    hw_reg_set      default_flt_n_seg;
+    hw_reg_set      flt_n_seg;
+
+    struct {
+        unsigned f_exact        : 1;
+        unsigned f_nomemory     : 1;
+        unsigned f_list         : 1;
+    } have;
+
+    have.f_exact    = 0;
+    have.f_nomemory = 0;
+    have.f_list     = 0;
+    for( ;; ) {
+        if( !have.f_exact && PragRecog( "exact" ) ) {
+            CurrInfo->_class |= MODIFY_EXACT;
+            have.f_exact = 1;
+        } else if( !have.f_nomemory && PragRecog( "nomemory" ) ) {
+            CurrInfo->_class |= NO_MEMORY_CHANGED;
+            have.f_nomemory = 1;
+        } else if( !have.f_list && PragSet() != T_NULL ) {
+            modlist = PragRegList();
+            have.f_list = 1;
+        } else {
+            break;
+        }
+    }
+    if( have.f_list ) {
+        HW_Asgn( default_flt_n_seg, DefaultInfo.save );
+        HW_CTurnOn( CurrInfo->save, HW_FULL );
+        if( !have.f_exact && !CompFlags.save_restore_segregs ) {
+            HW_CAsgn( flt_n_seg, HW_FLTS );
+            HW_CTurnOn( flt_n_seg, HW_SEGS );
+            HW_TurnOff( CurrInfo->save, flt_n_seg );
+            HW_OnlyOn( default_flt_n_seg, flt_n_seg );
+            HW_TurnOn( CurrInfo->save, default_flt_n_seg );
+        }
+        HW_TurnOff( CurrInfo->save, modlist );
+    }
+}
 
 static void doPragAux(                   // #PRAGMA AUX ...
     void )
@@ -1246,164 +1398,6 @@ hw_reg_set PragRegName(         // GET REGISTER NAME
         HW_CAsgn( name, HW_EMPTY );
     }
     return( name );
-}
-
-
-
-static void GetParmInfo(
-    void )
-    {
-    struct {
-        unsigned f_pop           : 1;
-        unsigned f_reverse       : 1;
-        unsigned f_loadds        : 1;
-        unsigned f_nomemory      : 1;
-        unsigned f_list          : 1;
-    } have;
-
-    have.f_pop           = 0;
-    have.f_reverse       = 0;
-    have.f_loadds        = 0;
-    have.f_nomemory      = 0;
-    have.f_list          = 0;
-    for( ;; ) {
-        if( !have.f_pop && PragRecog( "caller" ) ) {
-            CurrInfo->_class |= CALLER_POPS;
-            have.f_pop = 1;
-        } else if( !have.f_pop && PragRecog( "routine" ) ) {
-            CurrInfo->_class &= ~ CALLER_POPS;
-            have.f_pop = 1;
-        } else if( !have.f_reverse && PragRecog( "reverse" ) ) {
-            CurrInfo->_class |= REVERSE_PARMS;
-            have.f_reverse = 1;
-        } else if( !have.f_nomemory && PragRecog( "nomemory" ) ) {
-            CurrInfo->_class |= NO_MEMORY_READ;
-            have.f_nomemory = 1;
-        } else if( !have.f_loadds && PragRecog( "loadds" ) ) {
-            CurrInfo->_class |= LOAD_DS_ON_CALL;
-            have.f_loadds = 1;
-        } else if( !have.f_list && PragSet() != T_NULL ) {
-            PragManyRegSets();
-            have.f_list = 1;
-        } else {
-            break;
-        }
-    }
-}
-
-
-static void GetRetInfo(
-    void )
-{
-    struct {
-        unsigned f_no8087        : 1;
-        unsigned f_list          : 1;
-        unsigned f_struct        : 1;
-    } have;
-
-    have.f_no8087  = 0;
-    have.f_list    = 0;
-    have.f_struct  = 0;
-    CurrInfo->_class &= ~ NO_8087_RETURNS;
-    for( ;; ) {
-        if( !have.f_no8087 && PragRecog( "no8087" ) ) {
-            have.f_no8087 = 1;
-            HW_CTurnOff( CurrInfo->returns, HW_FLTS );
-            CurrInfo->_class |= NO_8087_RETURNS;
-        } else if( !have.f_list && PragSet() != T_NULL ) {
-            have.f_list = 1;
-            CurrInfo->_class |= SPECIAL_RETURN;
-            CurrInfo->returns = PragRegList();
-        } else if( !have.f_struct && PragRecog( "struct" ) ) {
-            have.f_struct = 1;
-            GetSTRetInfo();
-        } else {
-            break;
-        }
-    }
-}
-
-
-static void GetSTRetInfo(
-    void )
-{
-    struct {
-        unsigned f_float        : 1;
-        unsigned f_struct       : 1;
-        unsigned f_allocs       : 1;
-        unsigned f_list         : 1;
-    } have;
-
-    have.f_float  = 0;
-    have.f_struct = 0;
-    have.f_allocs = 0;
-    have.f_list   = 0;
-    for( ;; ) {
-        if( !have.f_float && PragRecog( "float" ) ) {
-            have.f_float = 1;
-            CurrInfo->_class |= NO_FLOAT_REG_RETURNS;
-        } else if( !have.f_struct && PragRecog( "struct" ) ) {
-            have.f_struct = 1;
-            CurrInfo->_class |= NO_STRUCT_REG_RETURNS;
-        } else if( !have.f_allocs && PragRecog( "routine" ) ) {
-            have.f_allocs = 1;
-            CurrInfo->_class |= ROUTINE_RETURN;
-        } else if( !have.f_allocs && PragRecog( "caller" ) ) {
-            have.f_allocs = 1;
-            CurrInfo->_class &= ~ROUTINE_RETURN;
-        } else if( !have.f_list && PragSet() != T_NULL ) {
-            have.f_list = 1;
-            CurrInfo->_class |= SPECIAL_STRUCT_RETURN;
-            CurrInfo->streturn = PragRegList();
-        } else {
-            break;
-        }
-    }
-}
-
-
-static void GetSaveInfo(
-    void )
-{
-    hw_reg_set      modlist;
-    hw_reg_set      default_flt_n_seg;
-    hw_reg_set      flt_n_seg;
-
-    struct {
-        unsigned f_exact        : 1;
-        unsigned f_nomemory     : 1;
-        unsigned f_list         : 1;
-    } have;
-
-    have.f_exact    = 0;
-    have.f_nomemory = 0;
-    have.f_list     = 0;
-    for( ;; ) {
-        if( !have.f_exact && PragRecog( "exact" ) ) {
-            CurrInfo->_class |= MODIFY_EXACT;
-            have.f_exact = 1;
-        } else if( !have.f_nomemory && PragRecog( "nomemory" ) ) {
-            CurrInfo->_class |= NO_MEMORY_CHANGED;
-            have.f_nomemory = 1;
-        } else if( !have.f_list && PragSet() != T_NULL ) {
-            modlist = PragRegList();
-            have.f_list = 1;
-        } else {
-            break;
-        }
-    }
-    if( have.f_list ) {
-        HW_Asgn( default_flt_n_seg, DefaultInfo.save );
-        HW_CTurnOn( CurrInfo->save, HW_FULL );
-        if( !have.f_exact && !CompFlags.save_restore_segregs ) {
-            HW_CAsgn( flt_n_seg, HW_FLTS );
-            HW_CTurnOn( flt_n_seg, HW_SEGS );
-            HW_TurnOff( CurrInfo->save, flt_n_seg );
-            HW_OnlyOn( default_flt_n_seg, flt_n_seg );
-            HW_TurnOn( CurrInfo->save, default_flt_n_seg );
-        }
-        HW_TurnOff( CurrInfo->save, modlist );
-    }
 }
 
 static boolean parmSetsIdentical( hw_reg_set *parms1, hw_reg_set *parms2 )

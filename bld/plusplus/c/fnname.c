@@ -319,45 +319,14 @@ static void appendSymName(      // APPEND A SYMBOL's MANGLED NAME
     }
 }
 
+static void appendScopeMangling(// APPEND CLASS SCOPES
+    SCOPE scope );              // - current scope
+
 static void appendScopedSymName(// APPEND A SCOPED SYMBOL NAME
     SYMBOL sym )
 {
     appendSymName( sym );
     appendScopeMangling( sym->name->containing );
-}
-
-static void appendTypedSymName( // APPEND A SYMBOL's TYPED MANGLED NAME
-    SYMBOL sym )                // - the symbol
-{
-    appendSymName( sym );
-    appendType( sym->sym_type, sym->name->name, TM_NULL );
-}
-
-static void appendFullSymName(  // APPEND A SYMBOL's FULL MANGLED NAME
-    SYMBOL sym )                // - the symbol
-{
-    appendSymName( sym );
-    appendScopeMangling( sym->name->containing );
-    appendType( sym->sym_type, sym->name->name, TM_NULL );
-}
-
-static void appendBase32UInt(   // CONCATENATE A BASE 32 TARGET UNSIGNED LONG
-    target_ulong number )       // - the number
-{
-    char buff[16];
-
-    ultoa( number, buff, 32 );
-    appendStr( buff );
-}
-
-static void appendDelta(        // CONCATENATE A DELTA OPERATION
-    target_offset_t offset )    // - the offset
-{
-    char buff[16];
-
-    buff[0] = 'o';
-    ultoa( offset, &buff[1], 31 );
-    appendStr( buff );
 }
 
 static char *className(         // GET CLASS' NAME
@@ -376,12 +345,6 @@ static void appendClassName(    // APPEND A CLASS' NAME
     TYPE class_type )           // - the class type
 {
     appendReplName( className( class_type ) );
-}
-
-static void appendTypeFlags(    // APPEND TYPE FLAGS
-    type_flag flags )           // - the flags
-{
-    appendModifier( flags, NULL );
 }
 
 static void appendBasedMod(     // APPEND A BASED MODIFIER
@@ -464,89 +427,11 @@ static void appendModifier(     // APPEND A MODIFIER
     }
 }
 
-static void appendTemplateParm( // APPEND A TEMPLATE PARM
-    SYMBOL sym )
+static void appendTypeFlags(    // APPEND TYPE FLAGS
+    type_flag flags )           // - the flags
 {
-    target_long val;
-    char delim;
-
-    if( SymIsConstantInt( sym ) ) {
-        val = sym->u.sval;
-        appendChar( IN_TEMPARG_INT );
-        delim = IN_TEMPARG_POSITIVE_INT;
-        if( val < 0 ) {
-            delim = IN_TEMPARG_NEGATIVE_INT;
-            val = -val;
-        }
-        appendBase32UInt( val );
-        appendChar( delim );
-    } else if( SymIsTypedef( sym ) ) {
-        appendChar( IN_TEMPARG_TYPE );
-        appendType( sym->sym_type, sym->name->name, TM_INCLUDE_FIRST_DIM );
-    } else {
-        sym = SymAddressOf( sym );
-        if( sym != NULL ) {
-            appendStr( IN_MANGLE2 );
-            appendFullSymName( sym );
-        }
-    }
+    appendModifier( flags, NULL );
 }
-
-static void appendScopeMangling(// APPEND CLASS SCOPES
-    SCOPE scope )               // - current scope
-{
-    SCOPE next;
-    SYMBOL curr;
-    SYMBOL stop;
-    SYMBOL fn_symbol;
-    char buff[ 1 + sizeof( unsigned long ) * 2 + 1 ];
-
-    for(;;) {
-        if( scope == NULL ) break;
-        switch( ScopeId( scope ) ) {
-        case SCOPE_FILE:
-            appendNameSpaceName( scope );
-            break;
-        case SCOPE_CLASS:
-            appendChar( IN_CLASS_DELIM );
-            appendClassName( ScopeClass( scope ) );
-            break;
-        case SCOPE_FUNCTION:
-            fn_symbol = ScopeFunction( scope );
-            DbgAssert( fn_symbol != NULL );
-            appendChar( IN_CLASS_DELIM );
-            appendStr( IN_MANGLE2 );
-            appendTypedSymName( fn_symbol );
-            break;
-        case SCOPE_BLOCK:
-            buff[0] = '.';
-            ultoa( (unsigned long) ScopeIndex( scope ), &buff[1], 31 );
-            appendChar( IN_CLASS_DELIM );
-            appendStr( buff );
-            appendStr( IN_NAME_SUFFIX );
-            for(;;) {
-                next = scope->enclosing;
-                if( ScopeId( next ) != SCOPE_BLOCK ) break;
-                scope = next;
-                DbgAssert( ScopeId( scope ) == SCOPE_BLOCK );
-            }
-            break;
-        case SCOPE_TEMPLATE_PARM:
-            curr = NULL;
-            stop = ScopeOrderedStart( scope );
-            appendChar( IN_CLASS_DELIM );
-            appendChar( IN_CLASS_DELIM );
-            for(;;) {
-                curr = ScopeOrderedNext( stop, curr );
-                if( curr == NULL ) break;
-                appendTemplateParm( curr );
-            }
-            break;
-        }
-        scope = scope->enclosing;
-    }
-}
-
 
 static void appendTypeContinue( // APPEND A TYPE MANGLING (NO NEAR/FAR PREFIX)
     TYPE type,                  // - type
@@ -724,6 +609,122 @@ static void appendType(         // APPEND A TYPE MANGLING
     appendTypeContinue( type, name, control );
 }
 
+static void appendTypedSymName( // APPEND A SYMBOL's TYPED MANGLED NAME
+    SYMBOL sym )                // - the symbol
+{
+    appendSymName( sym );
+    appendType( sym->sym_type, sym->name->name, TM_NULL );
+}
+
+static void appendFullSymName(  // APPEND A SYMBOL's FULL MANGLED NAME
+    SYMBOL sym )                // - the symbol
+{
+    appendSymName( sym );
+    appendScopeMangling( sym->name->containing );
+    appendType( sym->sym_type, sym->name->name, TM_NULL );
+}
+
+static void appendBase32UInt(   // CONCATENATE A BASE 32 TARGET UNSIGNED LONG
+    target_ulong number )       // - the number
+{
+    char buff[16];
+
+    ultoa( number, buff, 32 );
+    appendStr( buff );
+}
+
+static void appendDelta(        // CONCATENATE A DELTA OPERATION
+    target_offset_t offset )    // - the offset
+{
+    char buff[16];
+
+    buff[0] = 'o';
+    ultoa( offset, &buff[1], 31 );
+    appendStr( buff );
+}
+
+static void appendTemplateParm( // APPEND A TEMPLATE PARM
+    SYMBOL sym )
+{
+    target_long val;
+    char delim;
+
+    if( SymIsConstantInt( sym ) ) {
+        val = sym->u.sval;
+        appendChar( IN_TEMPARG_INT );
+        delim = IN_TEMPARG_POSITIVE_INT;
+        if( val < 0 ) {
+            delim = IN_TEMPARG_NEGATIVE_INT;
+            val = -val;
+        }
+        appendBase32UInt( val );
+        appendChar( delim );
+    } else if( SymIsTypedef( sym ) ) {
+        appendChar( IN_TEMPARG_TYPE );
+        appendType( sym->sym_type, sym->name->name, TM_INCLUDE_FIRST_DIM );
+    } else {
+        sym = SymAddressOf( sym );
+        if( sym != NULL ) {
+            appendStr( IN_MANGLE2 );
+            appendFullSymName( sym );
+        }
+    }
+}
+
+static void appendScopeMangling(// APPEND CLASS SCOPES
+    SCOPE scope )               // - current scope
+{
+    SCOPE next;
+    SYMBOL curr;
+    SYMBOL stop;
+    SYMBOL fn_symbol;
+    char buff[ 1 + sizeof( unsigned long ) * 2 + 1 ];
+
+    for(;;) {
+        if( scope == NULL ) break;
+        switch( ScopeId( scope ) ) {
+        case SCOPE_FILE:
+            appendNameSpaceName( scope );
+            break;
+        case SCOPE_CLASS:
+            appendChar( IN_CLASS_DELIM );
+            appendClassName( ScopeClass( scope ) );
+            break;
+        case SCOPE_FUNCTION:
+            fn_symbol = ScopeFunction( scope );
+            DbgAssert( fn_symbol != NULL );
+            appendChar( IN_CLASS_DELIM );
+            appendStr( IN_MANGLE2 );
+            appendTypedSymName( fn_symbol );
+            break;
+        case SCOPE_BLOCK:
+            buff[0] = '.';
+            ultoa( (unsigned long) ScopeIndex( scope ), &buff[1], 31 );
+            appendChar( IN_CLASS_DELIM );
+            appendStr( buff );
+            appendStr( IN_NAME_SUFFIX );
+            for(;;) {
+                next = scope->enclosing;
+                if( ScopeId( next ) != SCOPE_BLOCK ) break;
+                scope = next;
+                DbgAssert( ScopeId( scope ) == SCOPE_BLOCK );
+            }
+            break;
+        case SCOPE_TEMPLATE_PARM:
+            curr = NULL;
+            stop = ScopeOrderedStart( scope );
+            appendChar( IN_CLASS_DELIM );
+            appendChar( IN_CLASS_DELIM );
+            for(;;) {
+                curr = ScopeOrderedNext( stop, curr );
+                if( curr == NULL ) break;
+                appendTemplateParm( curr );
+            }
+            break;
+        }
+        scope = scope->enclosing;
+    }
+}
 
 static char *formatGlobalName(       // GET C++ GLOBAL NAME
     SYMBOL sym )                // - symbol

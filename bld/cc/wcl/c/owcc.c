@@ -206,6 +206,25 @@ static int FileExtension( char *p, char *ext )
     return( 0 );                        // indicate no match
 }
 
+static void AddDirective( char *directive )
+/*********************************/
+{
+    struct directives *p;
+    struct directives *p2;
+
+    p = MemAlloc( sizeof(struct directives) );
+    p->next = NULL;
+    p->directive = MemAlloc( strlen( directive ) + 1 );
+    strcpy( p->directive, Word );
+    if( Directive_List == NULL ) {
+        Directive_List = p;
+    } else {
+        p2 = Directive_List;
+        while( p2->next != NULL )  p2 = p2->next;
+        p2->next = p;
+    }
+}
+
 static  int  Parse( int argc, char **argv )
 /************************/
 {
@@ -502,26 +521,6 @@ static  int  Parse( int argc, char **argv )
         }
     }
     return( 0 );
-}
-
-
-static void AddDirective( char *directive )
-/*********************************/
-{
-    struct directives *p;
-    struct directives *p2;
-
-    p = MemAlloc( sizeof(struct directives) );
-    p->next = NULL;
-    p->directive = MemAlloc( strlen( directive ) + 1 );
-    strcpy( p->directive, Word );
-    if( Directive_List == NULL ) {
-        Directive_List = p;
-    } else {
-        p2 = Directive_List;
-        while( p2->next != NULL )  p2 = p2->next;
-        p2->next = p;
-    }
 }
 
 static int useCPlusPlus( char *p )

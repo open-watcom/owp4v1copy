@@ -100,186 +100,6 @@ static void fnovNumCandidatesSet( FNOV_DIAG *fnov_diag, FNOV_LIST *candidates )
 
 
 //--------------------------------------------------------------------
-// FNOV_LIST Support
-//--------------------------------------------------------------------
-
-void FnovListFree( FNOV_LIST **plist )
-/************************************/
-// free memory used by list of overloaded functions
-{
-    FNOV_LIST *ptr;
-
-    RingIterBeg( *plist, ptr ) {
-        if( ptr->rankvector ) {
-            deleteRank( ptr->rankvector, ptr->num_args );
-        }
-        if( ptr->free_args ) {
-            CMemFree( ptr->alist );
-        }
-    } RingIterEnd( ptr )
-    RingCarveFree( carveFNOVLIST, plist );
-}
-
-typedef enum                // LENT -- flags for addListEntry
-{   LENT_DEFAULT    =0x00   // - default: add to candidates
-,   LENT_MATCH      =0x01   // - add to matches
-,   LENT_TPL_CHECK  =0x02   // - check for template candidate
-,   LENT_FREE_ARGS  =0x04   // - mark args to be freed
-} LENT;
-
-static void addListEntry( FNOV_CONTROL control, FNOV_INFO *info, SYMBOL sym,
-/**************************************************************************/
-    arg_list *alist, LENT flags )
-// add an entry to list of overloaded functions
-{
-    FNOV_LIST    *new;
-    FNOV_LIST    **hdr;     // - header for list addition
-
-    if( flags & LENT_MATCH ) {
-        hdr = info->pmatch;
-    } else {
-        hdr = info->pcandidates;
-    }
-    // allocate and initialize the storage
-    new = RingCarveAlloc( carveFNOVLIST, hdr );
-    new->sym  = sym;
-    new->alist = alist;
-    if( control & FNC_RANK_RETURN ) {
-        new->num_args = 1;
-    } else {
-        new->num_args = alist->num_args;
-    }
-    if( flags & LENT_FREE_ARGS ) {
-        new->free_args = TRUE;
-    } else {
-        new->free_args = FALSE;
-    }
-    new->member = ((control & FNC_MEMBER) != 0 );
-    new->stdops = ((control & FNC_STDOPS) != 0 );
-    new->rankvector = NULL;
-    initRankVector( FNC_DEFAULT, &new->thisrank, 1 );
-    new->thisrank.rank = OV_RANK_EXACT;
-    new->flags = TF1_NULL;
-    if( flags & LENT_TPL_CHECK ) {
-        if( SymIsFunctionTemplateModel( sym ) ) {
-            info->has_template = TRUE;
-        }
-    }
-}
-
-
-//--------------------------------------------------------------------
-// Diagnostic Support
-//--------------------------------------------------------------------
-
-void FnovFreeDiag( FNOV_DIAG *fnov_diag )
-{
-    if( fnov_diag != NULL ) {
-        fnov_diag->num_candidates = LIST_FREE;
-        FnovListFree( &fnov_diag->diag_ambig );
-        fnov_diag->diag_ambig = NULL;
-        FnovListFree( &fnov_diag->diag_reject );
-        fnov_diag->diag_reject = NULL;
-    }
-}
-
-static void setFnovDiagnosticAmbigList( FNOV_DIAG *fnov_diag, FNOV_LIST **ambig )
-/************************************************************************/
-{
-    if( fnov_diag == NULL ) {
-        FnovListFree( ambig );
-    } else {
-        if( fnov_diag->diag_ambig != NULL ) {
-            FnovListFree( &fnov_diag->diag_ambig );
-        }
-        fnov_diag->diag_ambig = *ambig;
-    }
-}
-
-static void setFnovDiagnosticRejectList( FNOV_DIAG *fnov_diag,
-                                         FNOV_LIST **reject )
-/***********************************************************/
-{
-    if( fnov_diag == NULL ) {
-        FnovListFree( reject );
-    } else {
-        if( fnov_diag->diag_reject != NULL ) {
-            FnovListFree( &fnov_diag->diag_reject );
-        }
-        fnov_diag->diag_reject = *reject;
-    }
-}
-
-static SYMBOL getNextDiagnosticEntry( FNOV_LIST **list )
-/******************************************************/
-{
-    SYMBOL      sym = NULL;
-    FNOV_LIST   *head;
-
-    head = RingPop( list );
-    if( head != NULL ) {
-        sym = head->sym;
-        head->next = head;
-        FnovListFree( &head );
-    }
-    return( sym );
-}
-
-SYMBOL FnovNextAmbiguousEntry( FNOV_DIAG *fnov_diag )
-/**********************************************/
-{
-    return getNextDiagnosticEntry( &fnov_diag->diag_ambig );
-}
-
-SYMBOL FnovGetAmbiguousEntry( FNOV_DIAG *fnov_diag, FNOV_LIST **ptr )
-/*******************************************************************/
-{
-    SYMBOL sym;
-
-    sym = NULL;
-    if( *ptr == NULL ) {
-        if( fnov_diag != NULL && fnov_diag->diag_ambig != NULL ) {
-            sym = fnov_diag->diag_ambig->sym;
-            *ptr = fnov_diag->diag_ambig->next;
-        }
-    } else if( ( fnov_diag == NULL) || (*ptr != fnov_diag->diag_ambig) ) {
-        sym = (*ptr)->sym;
-        *ptr = (*ptr)->next;
-    }
-    return( sym );
-}
-
-SYMBOL FnovNextRejectEntry( FNOV_DIAG *fnov_diag )
-/*******************************************/
-{
-    return getNextDiagnosticEntry( &fnov_diag->diag_reject );
-}
-
-int FnovRejectParm( FNOV_DIAG *fnov_diag )
-/****************************************/
-{
-    FNOV_RANK   *rank;
-    int         index;
-    int         num_args;
-
-    if( ( fnov_diag != NULL ) && ( fnov_diag->diag_reject != NULL ) ) {
-        rank = fnov_diag->diag_reject->rankvector;
-        num_args = fnov_diag->diag_reject->num_args;
-        if( (num_args == 0) || (rank->control & FNC_RANK_RETURN) ) {
-            num_args = 1;
-        }
-        for( index = 0; index < num_args ; index++, rank++ ) {
-            if( rank->rank >= OV_RANK_NO_MATCH ) return( index );
-        }
-        if( fnov_diag->diag_reject->member != 0 ) {
-            if( fnov_diag->diag_reject->thisrank.rank >= OV_RANK_NO_MATCH ) return( -1 );
-        }
-    }
-    return( -2 );
-}
-
-
-//--------------------------------------------------------------------
 // FNOV_RANK Support
 //--------------------------------------------------------------------
 
@@ -461,6 +281,185 @@ FNOV_INTRNL_CONTROL ictl, PTREE *src_ptree )
             FnovCvFlagsRank( srcflags, tgtflags, &curr->thisrank );
         }
     } RingIterEnd( curr )
+}
+
+//--------------------------------------------------------------------
+// FNOV_LIST Support
+//--------------------------------------------------------------------
+
+void FnovListFree( FNOV_LIST **plist )
+/************************************/
+// free memory used by list of overloaded functions
+{
+    FNOV_LIST *ptr;
+
+    RingIterBeg( *plist, ptr ) {
+        if( ptr->rankvector ) {
+            deleteRank( ptr->rankvector, ptr->num_args );
+        }
+        if( ptr->free_args ) {
+            CMemFree( ptr->alist );
+        }
+    } RingIterEnd( ptr )
+    RingCarveFree( carveFNOVLIST, plist );
+}
+
+typedef enum                // LENT -- flags for addListEntry
+{   LENT_DEFAULT    =0x00   // - default: add to candidates
+,   LENT_MATCH      =0x01   // - add to matches
+,   LENT_TPL_CHECK  =0x02   // - check for template candidate
+,   LENT_FREE_ARGS  =0x04   // - mark args to be freed
+} LENT;
+
+static void addListEntry( FNOV_CONTROL control, FNOV_INFO *info, SYMBOL sym,
+/**************************************************************************/
+    arg_list *alist, LENT flags )
+// add an entry to list of overloaded functions
+{
+    FNOV_LIST    *new;
+    FNOV_LIST    **hdr;     // - header for list addition
+
+    if( flags & LENT_MATCH ) {
+        hdr = info->pmatch;
+    } else {
+        hdr = info->pcandidates;
+    }
+    // allocate and initialize the storage
+    new = RingCarveAlloc( carveFNOVLIST, hdr );
+    new->sym  = sym;
+    new->alist = alist;
+    if( control & FNC_RANK_RETURN ) {
+        new->num_args = 1;
+    } else {
+        new->num_args = alist->num_args;
+    }
+    if( flags & LENT_FREE_ARGS ) {
+        new->free_args = TRUE;
+    } else {
+        new->free_args = FALSE;
+    }
+    new->member = ((control & FNC_MEMBER) != 0 );
+    new->stdops = ((control & FNC_STDOPS) != 0 );
+    new->rankvector = NULL;
+    initRankVector( FNC_DEFAULT, &new->thisrank, 1 );
+    new->thisrank.rank = OV_RANK_EXACT;
+    new->flags = TF1_NULL;
+    if( flags & LENT_TPL_CHECK ) {
+        if( SymIsFunctionTemplateModel( sym ) ) {
+            info->has_template = TRUE;
+        }
+    }
+}
+
+
+//--------------------------------------------------------------------
+// Diagnostic Support
+//--------------------------------------------------------------------
+
+void FnovFreeDiag( FNOV_DIAG *fnov_diag )
+{
+    if( fnov_diag != NULL ) {
+        fnov_diag->num_candidates = LIST_FREE;
+        FnovListFree( &fnov_diag->diag_ambig );
+        fnov_diag->diag_ambig = NULL;
+        FnovListFree( &fnov_diag->diag_reject );
+        fnov_diag->diag_reject = NULL;
+    }
+}
+
+static void setFnovDiagnosticAmbigList( FNOV_DIAG *fnov_diag, FNOV_LIST **ambig )
+/************************************************************************/
+{
+    if( fnov_diag == NULL ) {
+        FnovListFree( ambig );
+    } else {
+        if( fnov_diag->diag_ambig != NULL ) {
+            FnovListFree( &fnov_diag->diag_ambig );
+        }
+        fnov_diag->diag_ambig = *ambig;
+    }
+}
+
+static void setFnovDiagnosticRejectList( FNOV_DIAG *fnov_diag,
+                                         FNOV_LIST **reject )
+/***********************************************************/
+{
+    if( fnov_diag == NULL ) {
+        FnovListFree( reject );
+    } else {
+        if( fnov_diag->diag_reject != NULL ) {
+            FnovListFree( &fnov_diag->diag_reject );
+        }
+        fnov_diag->diag_reject = *reject;
+    }
+}
+
+static SYMBOL getNextDiagnosticEntry( FNOV_LIST **list )
+/******************************************************/
+{
+    SYMBOL      sym = NULL;
+    FNOV_LIST   *head;
+
+    head = RingPop( list );
+    if( head != NULL ) {
+        sym = head->sym;
+        head->next = head;
+        FnovListFree( &head );
+    }
+    return( sym );
+}
+
+SYMBOL FnovNextAmbiguousEntry( FNOV_DIAG *fnov_diag )
+/**********************************************/
+{
+    return getNextDiagnosticEntry( &fnov_diag->diag_ambig );
+}
+
+SYMBOL FnovGetAmbiguousEntry( FNOV_DIAG *fnov_diag, FNOV_LIST **ptr )
+/*******************************************************************/
+{
+    SYMBOL sym;
+
+    sym = NULL;
+    if( *ptr == NULL ) {
+        if( fnov_diag != NULL && fnov_diag->diag_ambig != NULL ) {
+            sym = fnov_diag->diag_ambig->sym;
+            *ptr = fnov_diag->diag_ambig->next;
+        }
+    } else if( ( fnov_diag == NULL) || (*ptr != fnov_diag->diag_ambig) ) {
+        sym = (*ptr)->sym;
+        *ptr = (*ptr)->next;
+    }
+    return( sym );
+}
+
+SYMBOL FnovNextRejectEntry( FNOV_DIAG *fnov_diag )
+/*******************************************/
+{
+    return getNextDiagnosticEntry( &fnov_diag->diag_reject );
+}
+
+int FnovRejectParm( FNOV_DIAG *fnov_diag )
+/****************************************/
+{
+    FNOV_RANK   *rank;
+    int         index;
+    int         num_args;
+
+    if( ( fnov_diag != NULL ) && ( fnov_diag->diag_reject != NULL ) ) {
+        rank = fnov_diag->diag_reject->rankvector;
+        num_args = fnov_diag->diag_reject->num_args;
+        if( (num_args == 0) || (rank->control & FNC_RANK_RETURN) ) {
+            num_args = 1;
+        }
+        for( index = 0; index < num_args ; index++, rank++ ) {
+            if( rank->rank >= OV_RANK_NO_MATCH ) return( index );
+        }
+        if( fnov_diag->diag_reject->member != 0 ) {
+            if( fnov_diag->diag_reject->thisrank.rank >= OV_RANK_NO_MATCH ) return( -1 );
+        }
+    }
+    return( -2 );
 }
 
 //--------------------------------------------------------------------

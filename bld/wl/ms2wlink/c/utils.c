@@ -24,16 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  UTILS : utility routines for the MS linker file translator
 *
 ****************************************************************************/
-
-
-/*
- *  UTILS : utility routines for the MS linker file translator
- *
-*/
 
 #include <stdlib.h>
 #include <string.h>
@@ -100,9 +93,10 @@ extern char *FileName( char *buff, int len, char etype, bool force )
     cnt = 0;
     while( cnt != len ) {
         cnt++;
-        if( *--namptr == '\\' ) break;
+        --namptr;
+        if( *namptr == '\\' || *namptr == '/' ) break;
     }
-    if( *namptr == '\\' ) {
+    if( *namptr == '\\' || *namptr == '/' ) {
         namptr++;
     }
     cnt = len - ( (int) namptr - (int) buff );
@@ -125,11 +119,38 @@ extern char *FileName( char *buff, int len, char etype, bool force )
     return( ptr );
 }
 
+extern void AddCommand( char *msg, int prompt, bool verbatim )
+/************************************************************/
+{
+    cmdentry *  cmd;
+    cmdentry *  list;
+
+    cmd = MemAlloc( sizeof( cmdentry ) );
+    cmd->command = msg;
+    cmd->asis = verbatim;
+    cmd->next = NULL;
+    list = Commands[ prompt ];
+    if( list == NULL ) {
+        Commands[ prompt ] = cmd;
+    } else {                         // always add at the end of the list.
+        while( list->next != NULL ) {
+            list = list->next;
+        }
+        list->next = cmd;
+    }
+}
+
 extern void Warning( char *msg, int prompt )
 /******************************************/
 // print a warning to the linker command file in the form of a linker comment.
 {
     AddCommand( Msg2Splice( "# ", msg ), prompt, TRUE );
+}
+
+extern void AddOption( char *msg )
+/********************************/
+{
+    AddCommand( Msg2Splice( "option ", msg ), OPTION_SLOT, TRUE );
 }
 
 extern void AddNumOption( char *msg, unsigned value )
@@ -182,12 +203,6 @@ extern void NotNecessary( char *msg )
     MemFree( msg2 );
 }
 
-extern void AddOption( char *msg )
-/********************************/
-{
-    AddCommand( Msg2Splice( "option ", msg ), OPTION_SLOT, TRUE );
-}
-
 extern char * Msg2Splice( char *msg1, char *msg2 )
 /************************************************/
 // splice 2 messages together
@@ -224,27 +239,6 @@ extern char * Msg3Splice( char *msg1, char *msg2, char *msg3 )
     return( all );
 }
 
-extern void AddCommand( char *msg, int prompt, bool verbatim )
-/************************************************************/
-{
-    cmdentry *  cmd;
-    cmdentry *  list;
-
-    cmd = MemAlloc( sizeof( cmdentry ) );
-    cmd->command = msg;
-    cmd->asis = verbatim;
-    cmd->next = NULL;
-    list = Commands[ prompt ];
-    if( list == NULL ) {
-        Commands[ prompt ] = cmd;
-    } else {                         // always add at the end of the list.
-        while( list->next != NULL ) {
-            list = list->next;
-        }
-        list->next = cmd;
-    }
-}
-
 extern char * FindNotAsIs( int slot )
 /***********************************/
 // search through the given slot for a command which isn't marked "asis"
@@ -274,6 +268,19 @@ static char * FindObjectName( void )
         }
     }
     return( msg );
+}
+
+static void PromptStart( char * msg, int prompt )
+/***********************************************/
+{
+    char *  text;
+
+    text = PromptText[ prompt ];
+    QWrite( STDERR_HANDLE, text, strlen( text ), "console" );
+    QWrite( STDERR_HANDLE, "[", 1, "console" );
+    if( msg != NULL ) {
+        QWrite( STDERR_HANDLE, msg, strlen( msg ), "console" );
+    }
 }
 
 extern void OutPutPrompt( int prompt )
@@ -308,19 +315,6 @@ extern void OutPutPrompt( int prompt )
         QWrite( STDERR_HANDLE, DefExt[ prompt ], 4, "console" );
     }
     QWrite( STDERR_HANDLE, "]:", 2, "console" );
-}
-
-static void PromptStart( char * msg, int prompt )
-/***********************************************/
-{
-    char *  text;
-
-    text = PromptText[ prompt ];
-    QWrite( STDERR_HANDLE, text, strlen( text ), "console" );
-    QWrite( STDERR_HANDLE, "[", 1, "console" );
-    if( msg != NULL ) {
-        QWrite( STDERR_HANDLE, msg, strlen( msg ), "console" );
-    }
 }
 
 // spawn/suicide support.

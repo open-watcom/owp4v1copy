@@ -24,16 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  PARSEMS : Routines for parsing Microsoft command files.
 *
 ****************************************************************************/
-
-
-/*
- *  PARSEMS : Routines for parsing Microsoft command files.
- *
-*/
 
 #include <string.h>
 #include <ctype.h>
@@ -71,6 +64,15 @@ extern void *       FindNotAsIs( int );
 extern bool         MakeToken( sep_type, bool );
 extern bool         GetNumber( unsigned long * );
 extern char *       ToString( void );
+
+extern void EatWhite( void )
+/**************************/
+{
+    while(*CmdFile->current == ' ' || *CmdFile->current == '\t'
+                                          || *CmdFile->current == '\r') {
+        CmdFile->current++;
+    }
+}
 
 extern bool InitParsing( void )
 /*****************************/
@@ -110,6 +112,190 @@ extern void FreeParserMem( void )
         MemFree( CmdFile );
         CmdFile = nextone;
     }
+}
+
+static void NextPrompt( int *prompt )
+/***********************************/
+{
+    (*prompt)++;
+    if( *prompt >= 5 ) {
+        CmdFile->where = ENDOFCMD;
+    } else if( OverlayLevel > 0 ) {
+        Warning( "ending overlay parenthesis not found", OVERLAY_SLOT );
+        OverlayLevel = 0;
+    }
+}
+
+static void GetNewLine( prompt )
+/******************************/
+{
+    if( CmdFile->how == NONBUFFERED ) {
+        if( QReadStr( CmdFile->file, CmdFile->buffer, MAX_LINE,CmdFile->name )){
+            CmdFile->where = ENDOFFILE;
+        } else {
+            CmdFile->where = MIDST;
+        }
+        CmdFile->current = CmdFile->buffer;
+    } else if( CmdFile->how == BUFFERED ) {               // interactive.
+        CmdFile->where = MIDST;
+        while( *CmdFile->current != '\n' ) {       //go until next line found;
+            if( *CmdFile->current == '\0' ) {
+                CmdFile->where = ENDOFFILE;
+                break;
+            }
+            CmdFile->current++;
+        }
+    } else {
+        CmdFile->how = INTERACTIVE;
+        CmdFile->oldhow = INTERACTIVE;
+        OutPutPrompt( prompt );
+        if( QReadStr( STDIN_HANDLE, CmdFile->buffer, MAX_LINE, "console" ) ) {
+            CmdFile->where = ENDOFCMD;
+        } else {
+            CmdFile->where = MIDST;
+        }
+        CmdFile->current = CmdFile->buffer;
+    }
+}
+
+static void RestoreCmdLine( void )
+/********************************/
+// Restore a saved command line.
+{
+    void *  temp;
+
+    QClose( CmdFile->file, CmdFile->name );
+    MemFree( CmdFile->name );
+    MemFree( CmdFile->buffer );
+    temp = CmdFile->next;
+    MemFree( CmdFile );
+    CmdFile = temp;
+}
+
+extern void ParseDefFile( void )
+/******************************/
+// parse a .def file
+{
+    char        hmm;
+
+    while( CmdFile->where != ENDOFFILE ) {
+        switch( CmdFile->where ) {
+        case MIDST:
+            EatWhite();
+            hmm = *CmdFile->current;
+            switch( hmm ) {
+            case '\0':
+                if( CmdFile->how == BUFFERED ) {
+                    CmdFile->where = ENDOFFILE;
+                    break;
+                }                // NOTE the fall through.
+            case '\n':
+                if( CmdFile->how == BUFFERED ) {
+                    CmdFile->current++;
+                } else {
+                    CmdFile->where = ENDOFLINE;
+                }
+                break;
+            case ';':
+                CmdFile->where = ENDOFLINE;    // a comment.
+                break;
+            default:          // must be a command
+                ProcessDefCommand();
+                break;
+            }
+            break;
+        case ENDOFLINE:
+            GetNewLine( DEF_SLOT );
+            break;
+        }
+    }
+    RestoreCmdLine();
+}
+
+extern void StartNewFile( char *fname )
+/*************************************/
+{
+    cmdfilelist *   newfile;
+    unsigned long   size;
+
+    newfile = MemAlloc( sizeof( cmdfilelist ) );
+    newfile->name = fname;
+    newfile->file = NIL_HANDLE;
+    newfile->next = CmdFile;
+    CmdFile = newfile;
+    CmdFile->buffer = NULL;
+    newfile->file = QOpenR( newfile->name );
+    size = QFileSize( newfile->file );
+    if( size < 65510 ) {       // if can alloc a chunk big enough
+        CmdFile->buffer = TryAlloc( size + 1 );
+        if( CmdFile->buffer != NULL ) {
+            size = QRead( newfile->file, CmdFile->buffer, size, newfile->name );
+            *(CmdFile->buffer + size) = '\0';
+            CmdFile->where = MIDST;
+            CmdFile->how = BUFFERED;
+            CmdFile->current = CmdFile->buffer;
+        }
+    }
+    if( CmdFile->buffer == NULL ) {  // if couldn't buffer for some reason.
+        CmdFile->where = ENDOFLINE;
+        CmdFile->how = NONBUFFERED;
+        CmdFile->buffer = MemAlloc( MAX_LINE + 1 );// have to have at least this
+        CmdFile->current = CmdFile->buffer;        // much RAM or death ensues.
+    }
+}
+
+static void ProcessDefFile( void )
+/********************************/
+{
+    cmdentry *  cmd;
+
+    if( Commands[ DEF_SLOT ] == NULL ) {
+        return;
+    }
+    HaveDefFile = 1;
+    cmd = Commands[ DEF_SLOT ];
+    StartNewFile( FileName( cmd->command, strlen( cmd->command ), E_DEF,FALSE));
+    ParseDefFile();
+}
+
+static void ProcessFileName( int prompt )
+/***************************************/
+// process a file name and put it into the proper slot.
+{
+    char *  name;
+    char *  msg;
+
+    if( OverlayLevel > 0 ) {
+        prompt = OVERLAY_SLOT;
+    }
+    if( !MakeToken( SEP_NO, TRUE ) ) {
+        Error( "file name not recognized" );
+    } else {
+        if( (prompt == MAP_SLOT || prompt == RUN_SLOT || prompt == DEF_SLOT)
+                                          && FindNotAsIs( prompt ) != NULL ) {
+            msg = Msg3Splice( "only one ",PromptText[ prompt ], "allowed" );
+            Warning( msg, prompt );
+            MemFree( msg );
+        } else {
+            name = FileName( CmdFile->token, CmdFile->len, prompt, FALSE );
+            AddCommand( name, prompt, FALSE );
+        }
+    }
+}
+
+extern void DirectiveError( void )
+/********************************/
+{
+    char *  msg;
+    int     offset;
+
+    offset = 22 + CmdFile->len;
+    msg = alloca( offset + 2 );
+    memcpy( msg, "directive error near '", 22 );
+    memcpy( msg+22, CmdFile->token, CmdFile->len );
+    *( msg + offset) = '\'';
+    *( msg + offset + 1) = '\0';
+    Error( msg );
 }
 
 extern void ParseMicrosoft( void )
@@ -232,172 +418,6 @@ extern void ParseMicrosoft( void )
     ProcessDefFile();
 }
 
-static void NextPrompt( int *prompt )
-/***********************************/
-{
-    (*prompt)++;
-    if( *prompt >= 5 ) {
-        CmdFile->where = ENDOFCMD;
-    } else if( OverlayLevel > 0 ) {
-        Warning( "ending overlay parenthesis not found", OVERLAY_SLOT );
-        OverlayLevel = 0;
-    }
-}
-
-static void ProcessDefFile( void )
-/********************************/
-{
-    cmdentry *  cmd;
-
-    if( Commands[ DEF_SLOT ] == NULL ) {
-        return;
-    }
-    HaveDefFile = 1;
-    cmd = Commands[ DEF_SLOT ];
-    StartNewFile( FileName( cmd->command, strlen( cmd->command ), E_DEF,FALSE));
-    ParseDefFile();
-}
-
-extern void ParseDefFile( void )
-/******************************/
-// parse a .def file
-{
-    char        hmm;
-
-    while( CmdFile->where != ENDOFFILE ) {
-        switch( CmdFile->where ) {
-        case MIDST:
-            EatWhite();
-            hmm = *CmdFile->current;
-            switch( hmm ) {
-            case '\0':
-                if( CmdFile->how == BUFFERED ) {
-                    CmdFile->where = ENDOFFILE;
-                    break;
-                }                // NOTE the fall through.
-            case '\n':
-                if( CmdFile->how == BUFFERED ) {
-                    CmdFile->current++;
-                } else {
-                    CmdFile->where = ENDOFLINE;
-                }
-                break;
-            case ';':
-                CmdFile->where = ENDOFLINE;    // a comment.
-                break;
-            default:          // must be a command
-                ProcessDefCommand();
-                break;
-            }
-            break;
-        case ENDOFLINE:
-            GetNewLine( DEF_SLOT );
-            break;
-        }
-    }
-    RestoreCmdLine();
-}
-
-static void ProcessFileName( int prompt )
-/***************************************/
-// process a file name and put it into the proper slot.
-{
-    char *  name;
-    char *  msg;
-
-    if( OverlayLevel > 0 ) {
-        prompt = OVERLAY_SLOT;
-    }
-    if( !MakeToken( SEP_NO, TRUE ) ) {
-        Error( "file name not recognized" );
-    } else {
-        if( (prompt == MAP_SLOT || prompt == RUN_SLOT || prompt == DEF_SLOT)
-                                          && FindNotAsIs( prompt ) != NULL ) {
-            msg = Msg3Splice( "only one ",PromptText[ prompt ], "allowed" );
-            Warning( msg, prompt );
-            MemFree( msg );
-        } else {
-            name = FileName( CmdFile->token, CmdFile->len, prompt, FALSE );
-            AddCommand( name, prompt, FALSE );
-        }
-    }
-}
-
-static void GetNewLine( prompt )
-/******************************/
-{
-    if( CmdFile->how == NONBUFFERED ) {
-        if( QReadStr( CmdFile->file, CmdFile->buffer, MAX_LINE,CmdFile->name )){
-            CmdFile->where = ENDOFFILE;
-        } else {
-            CmdFile->where = MIDST;
-        }
-        CmdFile->current = CmdFile->buffer;
-    } else if( CmdFile->how == BUFFERED ) {               // interactive.
-        CmdFile->where = MIDST;
-        while( *CmdFile->current != '\n' ) {       //go until next line found;
-            if( *CmdFile->current == '\0' ) {
-                CmdFile->where = ENDOFFILE;
-                break;
-            }
-            CmdFile->current++;
-        }
-    } else {
-        CmdFile->how = INTERACTIVE;
-        CmdFile->oldhow = INTERACTIVE;
-        OutPutPrompt( prompt );
-        if( QReadStr( STDIN_HANDLE, CmdFile->buffer, MAX_LINE, "console" ) ) {
-            CmdFile->where = ENDOFCMD;
-        } else {
-            CmdFile->where = MIDST;
-        }
-        CmdFile->current = CmdFile->buffer;
-    }
-}
-
-extern void StartNewFile( char *fname )
-/*************************************/
-{
-    cmdfilelist *   newfile;
-    unsigned long   size;
-
-    newfile = MemAlloc( sizeof( cmdfilelist ) );
-    newfile->name = fname;
-    newfile->file = NIL_HANDLE;
-    newfile->next = CmdFile;
-    CmdFile = newfile;
-    CmdFile->buffer = NULL;
-    newfile->file = QOpenR( newfile->name );
-    size = QFileSize( newfile->file );
-    if( size < 65510 ) {       // if can alloc a chunk big enough
-        CmdFile->buffer = TryAlloc( size + 1 );
-        if( CmdFile->buffer != NULL ) {
-            size = QRead( newfile->file, CmdFile->buffer, size, newfile->name );
-            *(CmdFile->buffer + size) = '\0';
-            CmdFile->where = MIDST;
-            CmdFile->how = BUFFERED;
-            CmdFile->current = CmdFile->buffer;
-        }
-    }
-    if( CmdFile->buffer == NULL ) {  // if couldn't buffer for some reason.
-        CmdFile->where = ENDOFLINE;
-        CmdFile->how = NONBUFFERED;
-        CmdFile->buffer = MemAlloc( MAX_LINE + 1 );// have to have at least this
-        CmdFile->current = CmdFile->buffer;        // much RAM or death ensues.
-    }
-}
-
-
-extern void EatWhite( void )
-/**************************/
-{
-    while(*CmdFile->current == ' ' || *CmdFile->current == '\t'
-                                          || *CmdFile->current == '\r') {
-        CmdFile->current++;
-    }
-}
-
-
 extern bool MakeToken( sep_type separator, bool include_fn )
 /**********************************************************/
 // include_fn == TRUE if '.' and ':' are allowed to be part of the token
@@ -505,35 +525,6 @@ extern bool MakeToken( sep_type separator, bool include_fn )
         return( FALSE );
     }
     return( TRUE );
-}
-
-static void RestoreCmdLine( void )
-/********************************/
-// Restore a saved command line.
-{
-    void *  temp;
-
-    QClose( CmdFile->file, CmdFile->name );
-    MemFree( CmdFile->name );
-    MemFree( CmdFile->buffer );
-    temp = CmdFile->next;
-    MemFree( CmdFile );
-    CmdFile = temp;
-}
-
-extern void DirectiveError( void )
-/********************************/
-{
-    char *  msg;
-    int     offset;
-
-    offset = 22 + CmdFile->len;
-    msg = alloca( offset + 2 );
-    memcpy( msg, "directive error near '", 22 );
-    memcpy( msg+22, CmdFile->token, CmdFile->len );
-    *( msg + offset) = '\'';
-    *( msg + offset + 1) = '\0';
-    Error( msg );
 }
 
 extern bool GetNumber( unsigned long * pnt )

@@ -500,6 +500,19 @@ static void ProcData( void )
     }
 }
 
+static void AddToBuffer( char *cmd, int len )
+/*******************************************/
+{
+    if( BufferLeft - (len+1) < 0 ) {
+        Warning( "too many code attributes", OPTION_SLOT );
+    } else {
+        BufferLeft -= len + 1;
+        *OptionBuffer++ = ' ';
+        memcpy( OptionBuffer, cmd, len );
+        OptionBuffer += len;
+    }
+}
+
 static void ProcPreload( void )
 /*****************************/
 {
@@ -534,19 +547,6 @@ static void ProcNoIopl( void )
 /****************************/
 {
     AddToBuffer( "noiopl", 6 );
-}
-
-static void AddToBuffer( char *cmd, int len )
-/*******************************************/
-{
-    if( BufferLeft - (len+1) < 0 ) {
-        Warning( "too many code attributes", OPTION_SLOT );
-    } else {
-        BufferLeft -= len + 1;
-        *OptionBuffer++ = ' ';
-        memcpy( OptionBuffer, cmd, len );
-        OptionBuffer += len;
-    }
 }
 
 static void ProcConforming( void )

@@ -151,6 +151,35 @@ static RKD initFNOV_TYPE( FNOV_TYPE *ft, TYPE basic, PTREE* pt )
     return RkdForTypeId( basic->id );
 }
 
+static void completeFNOV_TYPE( FNOV_TYPE* ft )
+/********************************************/
+{
+#if 0
+    TYPE basic = ft->basic;
+
+    if( ( basic->id == TYP_POINTER )
+      ||( basic->id == TYP_MEMBER_POINTER ) ) {
+        ft->final = TypeModExtract( basic->of
+                                  , &ft->finalflag
+                                  , &ft->finalbase
+                                  , TC1_NOT_ENUM_CHAR | TC1_NOT_MEM_MODEL );
+    }
+#else
+    ft->final = TypeModExtract( ft->basic->of
+                              , &ft->finalflag
+                              , &ft->finalbase
+                              , TC1_NOT_ENUM_CHAR | TC1_NOT_MEM_MODEL );
+    if( ft->final != NULL ) {
+        while( ft->final->id == TYP_POINTER ) {
+            ft->final = TypeModExtract( ft->final->of
+                                      , &ft->finalflag
+                                      , &ft->finalbase
+                                      , TC1_NOT_ENUM_CHAR | TC1_NOT_MEM_MODEL );
+        }
+    }
+#endif
+}
+
 TYPE *CompareWP13332(
 /*******************/
     TYPE *first_type
@@ -208,36 +237,6 @@ TYPE *CompareWP13332(
     }
     return( better );
 }
-
-static void completeFNOV_TYPE( FNOV_TYPE* ft )
-/********************************************/
-{
-#if 0
-    TYPE basic = ft->basic;
-
-    if( ( basic->id == TYP_POINTER )
-      ||( basic->id == TYP_MEMBER_POINTER ) ) {
-        ft->final = TypeModExtract( basic->of
-                                  , &ft->finalflag
-                                  , &ft->finalbase
-                                  , TC1_NOT_ENUM_CHAR | TC1_NOT_MEM_MODEL );
-    }
-#else
-    ft->final = TypeModExtract( ft->basic->of
-                              , &ft->finalflag
-                              , &ft->finalbase
-                              , TC1_NOT_ENUM_CHAR | TC1_NOT_MEM_MODEL );
-    if( ft->final != NULL ) {
-        while( ft->final->id == TYP_POINTER ) {
-            ft->final = TypeModExtract( ft->final->of
-                                      , &ft->finalflag
-                                      , &ft->finalbase
-                                      , TC1_NOT_ENUM_CHAR | TC1_NOT_MEM_MODEL );
-        }
-    }
-#endif
-}
-
 
 static boolean fromConstZero( FNOV_CONV *conv )
 /*********************************************/
