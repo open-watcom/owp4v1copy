@@ -988,7 +988,10 @@ Tool WLINK "Linker"
     VSwitch  1, ?????, "Export names(,):", exp, " ", MULTI, REQ, ""
   Family Advanced
     CSwitch  0, ?????, "Verbose", "op v", OFF
-    CSwitch  0, ?????, "Case sensitive link", "op c", OFF
+    RGroup "Case sensitive link"
+        RSwitch 0, ?????, "Linker default", , ON
+        RSwitch 0, ?????, "Yes:", "op c", OFF
+        RSwitch 0, ?????, "No:", "op nocase", OFF
     VSwitch  0, ?????, "Error count:", "op maxe", =, ONE, REQ, 25
     CSwitch  0, w?6??, "Check relocation of RW data", "op rwr", OFF
     CSwitch  0, ?????, "Dosseg", "op d", OFF
