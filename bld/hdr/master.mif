@@ -211,7 +211,8 @@ LINUX_files = &
         sys/times.h &
         sys/ioctl.h &
         sys/ptrace.h &
-        sys/wait.h
+        sys/wait.h &
+        sys/socket.h
 
 all : $($(system)_files) .symbolic
     @%null

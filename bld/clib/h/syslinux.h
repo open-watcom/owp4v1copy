@@ -288,6 +288,27 @@
 #define SYS_set_thread_area     243
 
 /*
+ * internal sub-numbers for SYS_socketcall
+ */
+#define SYS_SOCKET                1
+#define SYS_BIND                  2
+#define SYS_CONNECT               3
+#define SYS_LISTEN                4
+#define SYS_ACCEPT                5
+#define SYS_GETSOCKNAME           6
+#define SYS_GETPEERNAME           7
+#define SYS_SOCKETPAIR            8
+#define SYS_SEND                  9
+#define SYS_RECV                 10
+#define SYS_SENDTO               11
+#define SYS_RECVFROM             12
+#define SYS_SHUTDOWN             13
+#define SYS_SETSOCKOPT           14
+#define SYS_GETSOCKOPT           15
+#define SYS_SENDMSG              16
+#define SYS_RECVMSG              17
+
+/*
  * Inline assembler for calling Linux system calls
  */
 
@@ -335,7 +356,7 @@ u_long  sys_brk(u_long brk);
 long    sys_open(const char * filename, int flags, int mode);
 long    sys_exit(int error_code);
 int     sys_getdents(u_int fd, struct dirent *dirp, u_int count);
-long    sys_socketcall(int call, u_long *args);
+long    __socketcall(int call, u_long *args);
 
 #if 0
 struct itimerval;

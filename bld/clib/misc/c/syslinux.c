@@ -82,7 +82,7 @@ int sys_getdents(u_int fd, struct dirent *dirp, u_int count)
     __syscall_return(int,res);
 }
 
-long sys_socketcall(int call, u_long *args)
+long __socketcall(int call, u_long *args)
 {
     u_long res = sys_call2(SYS_socketcall, call, (u_long)args);
     __syscall_return(long, res);
