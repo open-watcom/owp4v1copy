@@ -401,14 +401,8 @@ bool GUIWndInit( unsigned DClickInterval, gui_window_styles style )
     Style = style;
     GUISysInit( 0 );
     _wpi_setdoubleclicktime( DClickInterval );
-#ifdef __NT__
-    /* I do not think this fix is specific for NT. Should apply to all users */
-    /* With high resolution displays, on WIN, OS/2 or X11... RR              */
-    GUISetScreen( 0, 0, 640, 480 );
-#else
     GUISetScreen( 0, 0, _wpi_getsystemmetrics( SM_CXSCREEN ),
                         _wpi_getsystemmetrics( SM_CYSCREEN ) );
-#endif
     GUIInitDialog();
     return( TRUE );
 }
@@ -1071,7 +1065,7 @@ WPI_MRESULT CALLBACK GUIWindowProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
         }
         if( !EditControlHasFocus ) {
             if( SetFocusToParent() ) {
-                return( 0l );
+                return( 0L );
             }
         }
         break;
@@ -1079,7 +1073,7 @@ WPI_MRESULT CALLBACK GUIWindowProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
     case WM_VSCROLL :
     case WM_HSCROLL :
         GUIProcessScrollMsg( wnd, msg, wparam, lparam );
-        return( 0l );
+        return( 0L );
 #ifdef __NT__
     case WM_MOUSEWHEEL :
         {
@@ -1093,8 +1087,8 @@ WPI_MRESULT CALLBACK GUIWindowProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
         // Note to self: Fix it...
         // Seems like the main app window gets the message, rather than
         // the MDI clients...
-        
-        gcWheelDelta = HIWORD(wparam);         
+
+        gcWheelDelta = HIWORD(wparam);
         wKey = LOWORD(wparam);
         // Scroll wheel upwards  gives  120
         //    "     "   downward   "   -120
@@ -1102,20 +1096,20 @@ WPI_MRESULT CALLBACK GUIWindowProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
         if (gcWheelDelta > 0) {
             // positive - scroll up
             if (wKey == MK_CONTROL || wKey == MK_SHIFT)
-               GUIProcessScrollMsg( wnd, WM_VSCROLL, SB_PAGEUP, 0l );
+               GUIProcessScrollMsg( wnd, WM_VSCROLL, SB_PAGEUP, 0L );
             else
-               GUIProcessScrollMsg( wnd, WM_VSCROLL, SB_LINEUP, 0l );
+               GUIProcessScrollMsg( wnd, WM_VSCROLL, SB_LINEUP, 0L );
         } else {
             // negative - scroll down
             if (wKey == MK_CONTROL || wKey == MK_SHIFT)
-               GUIProcessScrollMsg( wnd, WM_VSCROLL, SB_PAGEDOWN, 0l );
+               GUIProcessScrollMsg( wnd, WM_VSCROLL, SB_PAGEDOWN, 0L );
             else
-               GUIProcessScrollMsg( wnd, WM_VSCROLL, SB_LINEDOWN, 0l );
+               GUIProcessScrollMsg( wnd, WM_VSCROLL, SB_LINEDOWN, 0L );
         }
-        // Inform GUI system we are done with scrolling for now. 
+        // Inform GUI system we are done with scrolling for now.
         GUIProcessScrollMsg( wnd, WM_VSCROLL, SB_ENDSCROLL, 0 );
         }
-        return( 0l );           
+        return( 0L );
 #endif
     case WM_MOVE :
         use_defproc = TRUE;
@@ -1271,7 +1265,7 @@ WPI_MRESULT CALLBACK GUIWindowProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
         es.endsession = (bool)wparam;
         es.logoff = (bool)( lparam == 0x80000000L );
         GUIEVENTWND( wnd, GUI_ENDSESSION, &es );
-        return( 0l );
+        return( 0L );
     }
     case WM_QUERYENDSESSION : {
         gui_end_session     es;
@@ -1281,7 +1275,7 @@ WPI_MRESULT CALLBACK GUIWindowProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
         if( !GUIEVENTWND( wnd, GUI_QUERYENDSESSION, &es ) ) {
             return( TRUE );
         }
-        return( 0l );
+        return( 0L );
     }
 #endif
     case WM_COMMAND:
@@ -1327,12 +1321,12 @@ WPI_MRESULT CALLBACK GUIWindowProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
                 }
             }
         }
-        return( 0l );
+        return( 0L );
 
     // Message to deal with tray icons (Win 95 and NT 4.0 ).
     case WM_TRAYCALLBACK :
         TrayCallBack( hwnd, wparam, lparam );
-        return( 0l );
+        return( 0L );
 
     case WM_DESTROY :
         wnd->flags |= DOING_DESTROY;
@@ -1348,7 +1342,7 @@ WPI_MRESULT CALLBACK GUIWindowProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
             _wpi_postquitmessage( 0 );
             Posted = TRUE;
         }
-        return( 0l );
+        return( 0L );
     default:
         use_defproc = TRUE;
     }
