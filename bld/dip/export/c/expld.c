@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Export DIP module loading functions.
 *
 ****************************************************************************/
 
@@ -93,7 +92,7 @@ unsigned BRead( dig_fhandle h, void *b, unsigned s )
     unsigned    want;
 
     if( s > sizeof( Buff.data ) ) {
-        Buff.fpos = DCSeek( h, (int)Buff.off - (int)Buff.len, DIG_CUR );
+        Buff.fpos = DCSeek( h, (int)Buff.fpos + (int)Buff.off - (int)Buff.len, DIG_ORG );
         Buff.len = 0;
         Buff.off = 0;
         if( Buff.fpos == -1UL ) return( 0 );
