@@ -45,7 +45,7 @@
 #include "wmsg.h"
 #include "os.h"
 
-#include <ownwthread.h>
+#include <ownwthrd.h>
 
 extern void StartTimer();
 extern void StopTimer();

@@ -1,5 +1,5 @@
-#ifndef _OWNWTHREAD_H_F39997A6_88FC_434B_B339_554BE343B3E8
-#define _OWNWTHREAD_H_F39997A6_88FC_434B_B339_554BE343B3E8
+#ifndef _OWNWTHRD_H_F39997A6_88FC_434B_B339_554BE343B3E8
+#define _OWNWTHRD_H_F39997A6_88FC_434B_B339_554BE343B3E8
 /****************************************************************************
 *
 *                            Open Watcom Project
@@ -68,4 +68,4 @@ int	GetThreadID
 }
 #endif
 
-#endif /* _OWNWTHREAD_H_F39997A6_88FC_434B_B339_554BE343B3E8 */
+#endif /* _OWNWTHRD_H_F39997A6_88FC_434B_B339_554BE343B3E8 */
