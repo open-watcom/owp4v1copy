@@ -60,6 +60,7 @@
 %token Y_CONTAINER
 %token Y_CONTROL
 %token Y_CTEXT
+%token Y_CTLDATA
 %token Y_CURSOR
 %token Y_DEFAULTICON
 %token Y_DEFPUSHBUTTON
@@ -103,6 +104,7 @@
 %token Y_POUND_PRAGMA
 %token Y_PRELOAD
 %token Y_PRESPARAMS
+%token Y_PSZ
 %token Y_PURE
 %token Y_PUSHBUTTON
 %token Y_RADIOBUTTON
@@ -151,18 +153,18 @@
 %type <fullmemflags>    resource-options
 %type <token>           resource-option
 %type <string>          file-name
-%type <integral>        fontweight
 %type <accflags>        acc-item-option
 %type <accflags>        acc-item-options
 %type <menuflags>       menu-item-options
 %type <token>           menu-item-option
 %type <menuptr>         menu-section
+%type <menuptr>         submenu-section
 %type <menuptr>         menu-items
-%type <menuitem>        menu-item
-%type <normalmenuitem>  menu-entry-stmt
-%type <normalmenuitem>  menu-entry-defn
+%type <menufull>        menu-item
+%type <menuitem>        menu-entry-stmt
+%type <menuitem>        menu-entry-defn
+%type <menufull>        submenu-entry-stmt
 %type <string>          menu-text
-%type <integral>        menu-result
 %type <integral>        size-x
 %type <integral>        size-y
 %type <integral>        size-w
@@ -173,36 +175,42 @@
 %type <diagopts>        menu-stmt
 %type <diagopts>        font-stmt
 %type <diagopts>        diag-options-stmt
-%type <token>           dialog
+%type <token>           dialogtemplate
 %type <dataelem>        diag-data-elements
 %type <nameorord>       ctl-class-name
-%type <integral>        point-size
-%type <string>          typeface
-%type <diaghead>        diag-options-section
 %type <diagctrllist>    diag-control-section
 %type <diagctrllist>    diag-control-stmts
 %type <diagctrl>        diag-control-stmt
+%type <diagctrl>        dialog-stmt
 %type <diagctrlopts>    cntl-text-options
 %type <diagctrlopts>    cntl-options
-%type <diagctrl>        ltext-stmt
-%type <diagctrl>        rtext-stmt
-%type <diagctrl>        ctext-stmt
 %type <diagctrl>        autocheckbox-stmt
 %type <diagctrl>        autoradiobutton-stmt
 %type <diagctrl>        checkbox-stmt
-%type <diagctrl>        pushbutton-stmt
-%type <diagctrl>        listbox-stmt
-%type <diagctrl>        groupbox-stmt
-%type <diagctrl>        defpushbutton-stmt
-%type <diagctrl>        radiobutton-stmt
-%type <diagctrl>        edittext-stmt
 %type <diagctrl>        combobox-stmt
+%type <diagctrl>        container-stmt
+%type <diagctrl>        ctext-stmt
+%type <diagctrl>        defpushbutton-stmt
+%type <diagctrl>        edittext-stmt
+%type <diagctrl>        groupbox-stmt
+%type <diagctrl>        listbox-stmt
+%type <diagctrl>        ltext-stmt
+%type <diagctrl>        mle-stmt
+%type <diagctrl>        notebook-stmt
+%type <diagctrl>        pushbutton-stmt
+%type <diagctrl>        radiobutton-stmt
+%type <diagctrl>        rtext-stmt
+%type <diagctrl>        slider-stmt
+%type <diagctrl>        spinbutton-stmt
+%type <diagctrl>        valueset-stmt
 %type <diagctrl>        icon-stmt
 %type <diagctrl>        control-stmt
 %type <nameorord>       icon-name
 %type <diagctrlopts>    icon-parms
 %type <integral>        cntl-id
 %type <resid>           cntl-text
+%type <maskint>         cntl-style
+%type <maskint>         frame-style
 %type <integral>        string-id
 %type <stritem>         string-item
 %type <strtable>        string-items
@@ -212,11 +220,9 @@
 %type <token>           resource-type
 %type <dataelem>        raw-data-section
 %type <dataelem>        raw-data-items
-%type <dlghelpid>       helpId-opt
-%type <integral>        menuId
-%type <integral>        menuType
-%type <integral>        menuState
-%type <integral>        helpId
+%type <integral>        menu-id
+%type <integral>        menuitem-style
+%type <integral>        menuitem-attrib
 
 %start goal-symbol
 
@@ -243,8 +249,9 @@ normal-resource
     | rcdata-resource
     | user-defined-resource
     | menu-resource
-    | dlg-resource
+    | dlg-template
     | message-table-resource
+    | dlginclude-resource
     ;
 
 name-id
@@ -311,6 +318,8 @@ keyword-name
         { $$ = Y_CONTROL; }
     | Y_CTEXT
         { $$ = Y_CTEXT; }
+    | Y_CTLDATA
+        { $$ = Y_CTLDATA; }
     | Y_CURSOR
         { $$ = Y_CURSOR; }
     | Y_DEFAULTICON
@@ -444,11 +453,20 @@ comma-opt
     | /* nothing */
     ;
 
+dlginclude-resource
+    : Y_DLGINCLUDE name-id file-name
+        { SemOS2AddDlgincResource( $2, $3.string ); }
+    ;
+
 single-line-resource
     : resource-type name-id file-name
-        { SemAddSingleLineResource( $2, $1, NULL, $3.string ); }
+        { SemOS2AddSingleLineResource( $2, $1, NULL, $3.string ); }
     | resource-type name-id resource-options file-name
-        { SemAddSingleLineResource( $2, $1, &($3), $4.string ); }
+        { SemOS2AddSingleLineResource( $2, $1, &($3), $4.string ); }
+    | Y_DEFAULTICON file-name
+        { SemOS2AddSingleLineResource( NULL, Y_DEFAULTICON, NULL, $2.string ); }
+    | Y_DEFAULTICON resource-options file-name
+        { SemOS2AddSingleLineResource( NULL, Y_DEFAULTICON, &($2), $3.string ); }
     ;
 
 resource-options
@@ -486,8 +504,6 @@ file-name
 resource-type
     : Y_BITMAP
         { $$ = Y_BITMAP; }
-    | Y_DEFAULTICON
-        { $$ = Y_DEFAULTICON; }
     | Y_FONT
         { $$ = Y_FONT; }
     | Y_ICON
@@ -497,16 +513,16 @@ resource-type
     ;
 
 user-defined-resource
-    : name-id comma-opt type-id user-defined-data
+    : Y_RESOURCE type-id comma-opt name-id user-defined-data
         {
-            SemAddResourceFree( $1, $3,
-                    MEMFLAG_PURE | MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE, $4 );
+            SemAddResourceFree( $4, $2,
+                    MEMFLAG_PURE | MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE, $5 );
         }
-    | name-id comma-opt type-id resource-options user-defined-data
+    | Y_RESOURCE type-id comma-opt name-id resource-options user-defined-data
         {
-            SemCheckMemFlags( &($4), 0, MEMFLAG_DISCARDABLE | MEMFLAG_MOVEABLE,
+            SemCheckMemFlags( &($5), 0, MEMFLAG_DISCARDABLE | MEMFLAG_MOVEABLE,
                     MEMFLAG_PURE );
-            SemAddResourceFree( $1, $3, $4.flags, $5 );
+            SemAddResourceFree( $4, $2, $5.flags, $6 );
         }
     ;
 
@@ -518,9 +534,7 @@ user-defined-data
     ;
 
 raw-data-section
-    : Y_BEGIN raw-data-items Y_END
-       { $$ = $2; }
-    | Y_LBRACE raw-data-items Y_RBRACE
+    : Y_CTLDATA raw-data-items
        { $$ = $2; }
     ;
 
@@ -705,14 +719,14 @@ acc-item-option
     ;
 
 menu-resource
-    : name-id Y_MENU menu-section
-        { SemWriteMenu( $1, MEMFLAG_PURE|MEMFLAG_MOVEABLE|MEMFLAG_DISCARDABLE,
+    : Y_MENU name-id menu-section
+        { SemOS2WriteMenu( $2, MEMFLAG_PURE | MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
                     $3, Y_MENU ); }
-    | name-id Y_MENU resource-options menu-section
+    | Y_MENU name-id resource-options menu-section
         {
             SemCheckMemFlags( &($3), 0, MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
                             MEMFLAG_PURE );
-            SemWriteMenu( $1, $3.flags, $4, Y_MENU );
+            SemOS2WriteMenu( $2, $3.flags, $4, Y_MENU );
         }
     ;
 
@@ -725,27 +739,22 @@ menu-section
 
 menu-items
     : menu-item
-        { $$ = SemNewMenu( $1 ); }
+        { $$ = SemOS2NewMenu( $1 ); }
     | menu-items menu-item
-        { $$ = SemAddMenuItem( $1, $2 ); }
+        { $$ = SemOS2AddMenuItem( $1, $2 ); }
     ;
 
-menuId
+menu-id
     : constant-expression
       { $$ = $1.Value; }
     ;
 
-menuType
+menuitem-style
     : constant-expression
       { $$ = $1.Value; }
     ;
 
-menuState
-    : constant-expression
-      { $$ = $1.Value; }
-    ;
-
-helpId
+menuitem-attrib
     : constant-expression
       { $$ = $1.Value; }
     ;
@@ -755,10 +764,11 @@ menu-item
         {
             $$.next = NULL;
             $$.prev = NULL;
-            $$.UseUnicode = (CmdLineParms.TargetOS == RC_TARGET_OS_WIN32);
-            $$.IsPopup = FALSE;
-            $$.item.normal = $1;
+            $$.item = $1;
+            $$.submenu = NULL;
         }
+    | submenu-entry-stmt
+        { $$ = $1; }
     ;
 
 menu-entry-stmt
@@ -766,62 +776,70 @@ menu-entry-stmt
         { $$ = $2; }
     ;
 
+submenu-entry-stmt
+    : Y_SUBMENU menu-text Y_COMMA menu-id submenu-section
+        {
+            $$.item.ItemStyle = OS2_MIS_SUBMENU | OS2_MIS_TEXT;
+            $$.item.ItemAttrs = 0;
+            $$.item.ItemCmd   = $4;
+            $$.item.ItemText  = $2.string;
+            $$.submenu        = $5;
+        }
+    | Y_SUBMENU menu-text Y_COMMA menu-id Y_COMMA menuitem-style submenu-section
+        {
+            $$.item.ItemStyle = OS2_MIS_SUBMENU | $6;
+            $$.item.ItemAttrs = 0;
+            $$.item.ItemCmd   = $4;
+            $$.item.ItemText  = $2.string;
+            $$.submenu        = $7;
+        }
+    | Y_SUBMENU menu-text Y_COMMA menu-id Y_COMMA menuitem-style
+                Y_COMMA menuitem-attrib submenu-section
+        {
+            $$.item.ItemStyle = OS2_MIS_SUBMENU | $6;
+            $$.item.ItemAttrs = $8;
+            $$.item.ItemCmd   = $4;
+            $$.item.ItemText  = $2.string;
+            $$.submenu        = $9;
+        }
+     ;
+
+submenu-section
+    : Y_BEGIN menu-items Y_END
+        { $$ = $2; }
+    | Y_LBRACE menu-items Y_RBRACE
+        { $$ = $2; }
+    ;
+
 menu-entry-defn
-    : Y_SEPARATOR comma-opt
+    : Y_SEPARATOR
         {
-            $$.type = MT_SEPARATOR;
-            $$.menuData.ItemText = NULL;
-            $$.menuData.ItemID = 0;
-            $$.menuData.ItemFlags = 0;
-            $$.menuExData.ItemType = MENUEX_SEPARATOR;
-            $$.menuExData.ItemState = 0;
+            $$.ItemStyle = OS2_MIS_SEPARATOR;
+            $$.ItemAttrs = OS2_MIA_DISABLED;
+            $$.ItemCmd   = -1;
+            $$.ItemText  = NULL;
         }
-    | menu-text comma-opt
+    | menu-text Y_COMMA menu-id
         {
-            $$.type = MT_MENUEX_NO_ID;
-            $$.menuData.ItemText = $1.string;
-            $$.menuData.ItemID = 0;
-            $$.menuData.ItemFlags = 0;
-            $$.menuExData.ItemType = 0L;
-            $$.menuExData.ItemState = 0L;
+            $$.ItemStyle = OS2_MIS_TEXT;
+            $$.ItemAttrs = 0;
+            $$.ItemCmd   = $3;
+            $$.ItemText  = $1.string;
         }
 
-    | menu-text comma-opt menu-result comma-opt
+    | menu-text Y_COMMA menu-id Y_COMMA menuitem-style
         {
-            $$.type = MT_EITHER;
-            $$.menuData.ItemText = $1.string;
-            $$.menuData.ItemID = $3;
-            $$.menuData.ItemFlags = 0;
-            $$.menuExData.ItemType = 0L;
-            $$.menuExData.ItemState = 0L;
+            $$.ItemStyle = $5;
+            $$.ItemAttrs = 0;
+            $$.ItemCmd   = $3;
+            $$.ItemText  = $1.string;
         }
-    | menu-text comma-opt menu-result comma-opt menuType comma-opt
+    | menu-text Y_COMMA menu-id Y_COMMA menuitem-style Y_COMMA menuitem-attrib
         {
-            $$.type = MT_MENUEX;
-            $$.menuData.ItemText = $1.string;
-            $$.menuData.ItemID = $3;
-            $$.menuData.ItemFlags = 0;
-            $$.menuExData.ItemType = $5;
-            $$.menuExData.ItemState = 0L;
-        }
-
-    | menu-text comma-opt menu-result comma-opt menuType comma-opt
-                menuState comma-opt
-        {
-            $$.type = MT_MENUEX;
-            $$.menuData.ItemText = $1.string;
-            $$.menuData.ItemID = $3;
-            $$.menuData.ItemFlags = 0;
-            $$.menuExData.ItemType = $5;
-            $$.menuExData.ItemState = $7;
-        }
-
-    | menu-text comma-opt menu-result comma-opt menu-item-options comma-opt
-        {
-            $$.type = MT_MENU;
-            $$.menuData.ItemText = $1.string;
-            $$.menuData.ItemID = $3;
-            $$.menuData.ItemFlags = $5;
+            $$.ItemStyle = $5;
+            $$.ItemAttrs = $7;
+            $$.ItemCmd   = $3;
+            $$.ItemText  = $1.string;
         }
     ;
 
@@ -829,16 +847,11 @@ menu-text
     : string-constant
     ;
 
-menu-result
-    : constant-expression
-        { $$ = $1.Value; }
-    ;
-
 menu-item-options
     : menu-item-option
-        { $$ = SemAddFirstMenuOption( $1 ); }
+        { $$ = SemOS2AddFirstMenuOption( $1 ); }
     | menu-item-options comma-opt menu-item-option
-        { $$ = SemAddMenuOption( $1, $3 ); }
+        { $$ = SemOS2AddMenuOption( $1, $3 ); }
     ;
 
 menu-item-option
@@ -848,45 +861,25 @@ menu-item-option
         { $$ = Y_HELP; }
     ;
 
-dialog
-    : Y_DIALOG
-        { $$ = Y_DIALOG; }
+dialogtemplate
+    : Y_DLGTEMPLATE
+        { $$ = Y_DLGTEMPLATE; }
+    | Y_WINDOWTEMPLATE
+        { $$ = Y_WINDOWTEMPLATE; }
     ;
 
-helpId-opt
-    : comma-opt constant-expression
-       { $$.HelpId = $2.Value; $$.HelpIdDefined = TRUE; }
-    | /* nothing */
-       { $$.HelpId = 0; $$.HelpIdDefined = FALSE; }
-    ;
-
-dlg-resource
-    : name-id dialog size-info helpId-opt diag-options-section
-              diag-control-section
+dlg-template
+    : dialogtemplate name-id diag-control-section
         {
-            SemWriteDialogBox( $1,
-               MEMFLAG_PURE|MEMFLAG_MOVEABLE|MEMFLAG_DISCARDABLE,
-               $3, $5, $6, $4, $2 );
+            SemOS2WriteDialogTemplate( $2,
+               MEMFLAG_PURE | MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
+               $3 );
         }
-    | name-id dialog size-info helpId-opt diag-control-section
-        {
-            SemWriteDialogBox( $1,
-               MEMFLAG_PURE|MEMFLAG_MOVEABLE|MEMFLAG_DISCARDABLE,
-               $3, NULL, $5, $4, $2 );
-        }
-    | name-id dialog resource-options comma-opt size-info helpId-opt
-               diag-options-section diag-control-section
+    | dialogtemplate name-id resource-options diag-control-section
         {
             SemCheckMemFlags( &($3), 0, MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
                             MEMFLAG_PURE );
-            SemWriteDialogBox( $1, $3.flags, $5, $7, $8, $6, $2 );
-        }
-    | name-id dialog resource-options comma-opt size-info helpId-opt
-                diag-control-section
-        {
-            SemCheckMemFlags( &($3), 0, MEMFLAG_MOVEABLE | MEMFLAG_DISCARDABLE,
-                            MEMFLAG_PURE );
-            SemWriteDialogBox( $1, $3.flags, $5, NULL, $7, $6, $2 );
+            SemOS2WriteDialogTemplate( $2, $3.flags, $4 );
         }
     ;
 
@@ -915,13 +908,6 @@ size-h
         { $$ = $1.Value; }
     ;
 
-diag-options-section
-    : diag-options-stmt
-        { $$ = SemNewDiagOptions( &($1) ); }
-    | diag-options-section diag-options-stmt
-        { $$ = SemDiagOptions( $1, &($2) ); }
-    ;
-
 diag-options-stmt
     : menu-stmt
     | font-stmt
@@ -948,59 +934,32 @@ ctl-class-name
     | Y_LISTBOX
         { $$ = ResStrToNameOrOrd( "LISTBOX" ); }
     | constant-expression
-        { $$ = ResNumToNameOrOrd( $1.Value ); }
+        { $$ = ResNumToNameOrOrd( $1.Value | 0x80 ); }
+    /* A little hack - OS/2 standard window classes are defined like this:
+       #define WC_BUTTON ((PSZ)0xffff0003L)
+       Since PSZ doesn't mean anything to RC, it won't recognize the
+       constant. So we add a special case to get rid of the PSZ. Not very
+       clean but works.
+     */
+    | Y_LPAREN Y_LPAREN Y_PSZ Y_RPAREN constant-expression Y_RPAREN
+        { $$ = ResNumToNameOrOrd( $5.Value | 0x80 ); }
     ;
 
 font-stmt
-    : Y_FONT point-size comma-opt typeface
+    : Y_FONT comma-opt
         {
             $$.token = Y_FONT;
-            $$.Opt.Font.PointSize = $2;
-            $$.Opt.Font.FontName = $4.string;
-            $$.Opt.Font.FontWeight = 0;
+            $$.Opt.Font.FontName = NULL;
             $$.Opt.Font.FontItalic = 0;
             $$.Opt.Font.FontExtra = 1;
-            $$.Opt.Font.FontWeightDefined = FALSE;
-            $$.Opt.Font.FontItalicDefined = FALSE;
         }
-    | Y_FONT point-size comma-opt typeface comma-opt fontweight
-        {
-            $$.token = Y_FONT;
-            $$.Opt.Font.PointSize = $2;
-            $$.Opt.Font.FontName = $4.string;
-            $$.Opt.Font.FontWeight = $6;
-            $$.Opt.Font.FontItalic = 0;
-            $$.Opt.Font.FontExtra = 1;
-            $$.Opt.Font.FontWeightDefined = TRUE;
-            $$.Opt.Font.FontItalicDefined = FALSE;
-        }
-    ;
-
-fontweight
-    : constant-expression
-      { $$ = $1.Value; }
-    ;
-
-point-size
-    : constant-expression
-        { $$ = $1.Value; }
-    ;
-
-typeface
-    : string-constant
     ;
 
 diag-control-section
     : Y_BEGIN diag-control-stmts Y_END
-        {
-            $$ = $2;
-        }
+        { $$ = $2; }
     | Y_LBRACE diag-control-stmts Y_RBRACE
         { $$ = $2; }
-    | Y_BEGIN Y_END
-        { $$ = SemEmptyDiagCtrlList(); }
-    | Y_LBRACE Y_RBRACE
-        { $$ = SemEmptyDiagCtrlList(); }
     ;
 
 diag-data-elements
@@ -1011,27 +970,34 @@ diag-data-elements
 
 diag-control-stmts
     : diag-control-stmt diag-data-elements
-        { $$ = SemNewDiagCtrlList( $1, $2 ); }
+        { $$ = SemOS2NewDiagCtrlList( $1, $2 ); }
     | diag-control-stmts diag-control-stmt diag-data-elements
-        { $$ = SemAddDiagCtrlList( $1, $2, $3 ); }
+        { $$ = SemOS2AddDiagCtrlList( $1, $2, $3 ); }
     ;
 
 diag-control-stmt
-    : ltext-stmt
-    | rtext-stmt
-    | ctext-stmt
-    | autocheckbox-stmt
+    : autocheckbox-stmt
     | autoradiobutton-stmt
     | checkbox-stmt
-    | pushbutton-stmt
-    | listbox-stmt
-    | groupbox-stmt
-    | defpushbutton-stmt
-    | radiobutton-stmt
-    | edittext-stmt
     | combobox-stmt
+    | container-stmt
+    | ctext-stmt
+    | defpushbutton-stmt
+    | edittext-stmt
+    | groupbox-stmt
     | icon-stmt
+    | listbox-stmt
+    | ltext-stmt
+    | mle-stmt
+    | notebook-stmt
+    | pushbutton-stmt
+    | radiobutton-stmt
+    | rtext-stmt
+    | slider-stmt
+    | spinbutton-stmt
+    | valueset-stmt
     | control-stmt
+    | dialog-stmt
     ;
 
 cntl-text-options
@@ -1044,26 +1010,31 @@ cntl-text-options
     ;
 
 cntl-options
-    : comma-opt cntl-id comma-opt size-info
+    : comma-opt cntl-id comma-opt size-info comma-opt
         {
             $$.ID = $2;
             $$.Size = $4;
             $$.Style.Mask = 0;
+            $$.Style.Value = 0;
             $$.Text = NULL;
-            $$.ExtendedStyle = 0L;
-            $$.HelpId = 0L;
-            $$.HelpIdDefined = FALSE;
         }
-    | comma-opt cntl-id comma-opt size-info comma-opt
+    | comma-opt cntl-id comma-opt size-info comma-opt cntl-style
         {
             $$.ID = $2;
             $$.Size = $4;
-            /* $$.Style = 0L; */
+            $$.Style = $6;
             $$.Text = NULL;
-            $$.ExtendedStyle = 0L;
-            $$.HelpId = 0L;
-            $$.HelpIdDefined = FALSE;
         }
+    ;
+
+cntl-style
+    : constant-expression
+      { $$ = $1; }
+    ;
+
+frame-style
+    : constant-expression
+      { $$ = $1; }
     ;
 
 cntl-id
@@ -1071,74 +1042,106 @@ cntl-id
         { $$ = $1.Value; }
     ;
 
-ltext-stmt
-    : Y_LTEXT cntl-text-options
-        { $$ = SemNewDiagCtrl( Y_LTEXT, $2 ); }
-    ;
-
-rtext-stmt
-    : Y_RTEXT cntl-text-options
-        { $$ = SemNewDiagCtrl( Y_RTEXT, $2 ); }
-    ;
-
-ctext-stmt
-    : Y_CTEXT cntl-text-options
-        { $$ = SemNewDiagCtrl( Y_CTEXT, $2 ); }
-    ;
-
 autocheckbox-stmt
     : Y_AUTOCHECKBOX cntl-text-options
-        { $$ = SemNewDiagCtrl( Y_AUTOCHECKBOX, $2 ); }
+        { $$ = SemOS2NewDiagCtrl( Y_AUTOCHECKBOX, $2 ); }
     ;
 
 autoradiobutton-stmt
     : Y_AUTORADIOBUTTON cntl-text-options
-        { $$ = SemNewDiagCtrl( Y_AUTORADIOBUTTON, $2 ); }
+        { $$ = SemOS2NewDiagCtrl( Y_AUTORADIOBUTTON, $2 ); }
     ;
 
 checkbox-stmt
     : Y_CHECKBOX cntl-text-options
-        { $$ = SemNewDiagCtrl( Y_CHECKBOX, $2 ); }
+        { $$ = SemOS2NewDiagCtrl( Y_CHECKBOX, $2 ); }
     ;
 
-pushbutton-stmt
-    : Y_PUSHBUTTON cntl-text-options
-        { $$ = SemNewDiagCtrl( Y_PUSHBUTTON, $2 ); }
+combobox-stmt
+    : Y_COMBOBOX cntl-text-options
+        { $$ = SemOS2NewDiagCtrl( Y_COMBOBOX, $2 ); }
     ;
 
-listbox-stmt
-    : Y_LISTBOX cntl-options
-        { $$ = SemNewDiagCtrl( Y_LISTBOX, $2 ); }
+container-stmt
+    : Y_CONTAINER cntl-options
+        { $$ = SemOS2NewDiagCtrl( Y_CONTAINER, $2 ); }
     ;
 
-groupbox-stmt
-    : Y_GROUPBOX cntl-text-options
-        { $$ = SemNewDiagCtrl( Y_GROUPBOX, $2 ); }
+ctext-stmt
+    : Y_CTEXT cntl-text-options
+        { $$ = SemOS2NewDiagCtrl( Y_CTEXT, $2 ); }
     ;
 
 defpushbutton-stmt
     : Y_DEFPUSHBUTTON cntl-text-options
-        { $$ = SemNewDiagCtrl( Y_DEFPUSHBUTTON, $2 ); }
+        { $$ = SemOS2NewDiagCtrl( Y_DEFPUSHBUTTON, $2 ); }
+    ;
+
+edittext-stmt
+    : Y_EDITTEXT cntl-text-options
+        { $$ = SemOS2NewDiagCtrl( Y_EDITTEXT, $2 ); }
+    | Y_ENTRYFIELD cntl-text-options
+        { $$ = SemOS2NewDiagCtrl( Y_EDITTEXT, $2 ); }
+    ;
+
+groupbox-stmt
+    : Y_GROUPBOX cntl-text-options
+        { $$ = SemOS2NewDiagCtrl( Y_GROUPBOX, $2 ); }
+    ;
+
+listbox-stmt
+    : Y_LISTBOX cntl-options
+        { $$ = SemOS2NewDiagCtrl( Y_LISTBOX, $2 ); }
+    ;
+
+ltext-stmt
+    : Y_LTEXT cntl-text-options
+        { $$ = SemOS2NewDiagCtrl( Y_LTEXT, $2 ); }
+    ;
+
+mle-stmt
+    : Y_MLE cntl-text-options
+        { $$ = SemOS2NewDiagCtrl( Y_MLE, $2 ); }
+    ;
+
+notebook-stmt
+    : Y_NOTEBOOK cntl-options
+        { $$ = SemOS2NewDiagCtrl( Y_NOTEBOOK, $2 ); }
+    ;
+
+pushbutton-stmt
+    : Y_PUSHBUTTON cntl-text-options
+        { $$ = SemOS2NewDiagCtrl( Y_PUSHBUTTON, $2 ); }
     ;
 
 radiobutton-stmt
     : Y_RADIOBUTTON cntl-text-options
-        { $$ = SemNewDiagCtrl( Y_RADIOBUTTON, $2 ); }
+        { $$ = SemOS2NewDiagCtrl( Y_RADIOBUTTON, $2 ); }
     ;
 
-edittext-stmt
-    : Y_EDITTEXT cntl-options
-        { $$ = SemNewDiagCtrl( Y_EDITTEXT, $2 ); }
+rtext-stmt
+    : Y_RTEXT cntl-text-options
+        { $$ = SemOS2NewDiagCtrl( Y_RTEXT, $2 ); }
     ;
 
-combobox-stmt
-    : Y_COMBOBOX cntl-options
-        { $$ = SemNewDiagCtrl( Y_COMBOBOX, $2 ); }
+slider-stmt
+    : Y_SLIDER cntl-options
+        { $$ = SemOS2NewDiagCtrl( Y_SLIDER, $2 ); }
+    ;
+
+spinbutton-stmt
+    : Y_SPINBUTTON cntl-options
+        { $$ = SemOS2NewDiagCtrl( Y_SPINBUTTON, $2 ); }
+    ;
+
+valueset-stmt
+    : Y_VALUESET cntl-options
+        { $$ = SemOS2NewDiagCtrl( Y_VALUESET, $2 ); }
     ;
 
 icon-stmt
     : Y_ICON icon-name comma-opt cntl-id comma-opt icon-parms
-        { $6.Text = $2; $6.ID = $4; $$ = SemNewDiagCtrl( Y_ICON, $6 ); }
+        { $6.Text = $2; $6.ID = $4; $$ = SemOS2NewDiagCtrl( Y_ICON, $6 ); }
     ;
 
 icon-name
@@ -1154,7 +1157,6 @@ icon-parms
             $$.Size.width = 0;          /* ignore width, height, style */
             $$.Size.height = 0;
             $$.Style.Mask = 0;
-            $$.ExtendedStyle = 0L;
         }
     | size-x comma-opt size-y comma-opt size-w comma-opt size-h
         {
@@ -1163,21 +1165,32 @@ icon-parms
             $$.Size.width = $5;         /* ignore style */
             $$.Size.height = $7;
             $$.Style.Mask = 0;
-            $$.ExtendedStyle = 0L;
+        }
+    | size-x comma-opt size-y comma-opt size-w comma-opt size-h comma-opt cntl-style
+        {
+            $$.Size.x = $1;
+            $$.Size.y = $3;
+            $$.Size.width = $5;
+            $$.Size.height = $7;
+            $$.Style = $9;
         }
     ;
 
 control-stmt
-    : Y_CONTROL cntl-text comma-opt cntl-id comma-opt ctl-class-name comma-opt
-                    comma-opt size-info
+    : Y_CONTROL string-constant comma-opt cntl-id comma-opt size-info comma-opt
+                ctl-class-name
         {
-            /* TODO $$ = SemSetControlData( $7, $4, $8, $2, $6, 0L, NULL ); */
+            IntMask mask = {0};
+            $$ = SemOS2SetControlData( ResStrToNameOrOrd( $2.string ),
+                                       $4, $6, $8, mask, NULL );
+            RcMemFree( $2.string );
         }
-
-    | Y_CONTROL cntl-text comma-opt cntl-id comma-opt ctl-class-name comma-opt
-                    comma-opt size-info comma-opt helpId-opt
+    | Y_CONTROL string-constant comma-opt cntl-id comma-opt size-info comma-opt
+                ctl-class-name comma-opt cntl-style
         {
-            /* TODO $$ = SemSetControlData( $7, $4, $9, $2, $6, $11.Value, NULL ); */
+            $$ = SemOS2SetControlData( ResStrToNameOrOrd( $2.string ),
+                                       $4, $6, $8, $10, NULL );
+            RcMemFree( $2.string );
         }
     ;
 
@@ -1185,8 +1198,29 @@ cntl-text
     : name-id
     ;
 
+dialog-stmt
+    : Y_DIALOG cntl-text-options
+        {
+            IntMask mask = {0};
+            $$ = SemOS2SetWindowData( $2, mask, NULL );
+        }
+    | Y_DIALOG cntl-text-options Y_COMMA frame-style
+        {
+            $$ = SemOS2SetWindowData( $2, $4, NULL );
+        }
+    | Y_DIALOG cntl-text-options diag-control-section
+        {
+            IntMask mask = {0};
+            $$ = SemOS2SetWindowData( $2, mask, $3 );
+        }
+    | Y_DIALOG cntl-text-options Y_COMMA frame-style diag-control-section
+        {
+            $$ = SemOS2SetWindowData( $2, $4, $5 );
+        }
+    ;
+
 string-constant
-    : Y_STRING
+    : string-group
     | Y_LSQ_BRACKET string-group Y_RSQ_BRACKET
         {
             $$ = $2;
@@ -1300,6 +1334,8 @@ unary-exp
     | Y_BITNOT unary-exp
         { $$.Value = ~ $2.Value; $$.Mask = $2.Mask; }
     | Y_NOT unary-exp
+        { $$.Value = ! $2.Value; $$.Mask = $2.Mask; }
+    | Y_NOT_KEYWORD unary-exp
         { $$.Value = ! $2.Value; $$.Mask = $2.Mask; }
     ;
 

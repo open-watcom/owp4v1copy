@@ -44,6 +44,8 @@
 #include "errprt.h"
 #include "rcmsg.h"
 
+#include "os2res.h"
+
 typedef uint_16         YYCHKTYPE;
 typedef uint_16         YYACTTYPE;
 typedef uint_16         YYPLHSTYPE;
@@ -62,17 +64,16 @@ typedef union {
     ResLocation                 resloc;
     FullMemFlags                fullmemflags;
     MenuFlags                   menuflags;
-    FullMenuPtr                 menuptr;
-    FullMenuItem                menuitem;
-    FullMenuItemPopup           popupmenuitem;
-    MenuItemNormalData          normalmenuitem;
+    FullMenuPtrOS2              menuptr;
+    FullMenuItemOS2             menufull;
+    MenuItemOS2                 menuitem;
     DialogSizeInfo              sizeinfo;
     FullDialogOptions           diagopts;
     ResNameOrOrdinal *          nameorord;
     FullDialogBoxHeader *       diaghead;
-    FullDialogBoxControl *      diagctrl;
-    FullDiagCtrlList *          diagctrllist;
-    FullDiagCtrlOptions         diagctrlopts;
+    FullDialogBoxControlOS2 *   diagctrl;
+    FullDiagCtrlListOS2 *       diagctrllist;
+    FullDiagCtrlOptionsOS2      diagctrlopts;
     StringItem                  stritem;
     FullStringTable *           strtable;
     RawDataItem                 rawitem;
