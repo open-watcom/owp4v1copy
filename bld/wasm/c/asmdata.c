@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  data directive DB,DW,DD,... and structure processing
 *
 ****************************************************************************/
 
@@ -40,7 +39,7 @@
 #include "asmfixup.h"
 
 #ifdef _WASM_
-#include "directiv.h"
+  #include "directiv.h"
 #endif
 
 #ifndef min
@@ -81,7 +80,6 @@ static void little_endian( char *string, char no_of_bytes )
         strrev( string );
     }
     return;
-
 }
 
 static void output_float( char index, char no_of_bytes, char negative )
@@ -97,9 +95,8 @@ static void output_float( char index, char no_of_bytes, char negative )
         char_ptr = (char *)strtotb( AsmBuffer[index]->string_ptr, &tbyte, negative );
     } else {
         double_value = strtod( AsmBuffer[index]->string_ptr, NULL );
-        if( negative ) {
+        if( negative )
             double_value *= -1;
-        }
         switch( no_of_bytes ) {
         case BYTE_4:
             float_value = double_value;
@@ -143,17 +140,16 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
         ( cur_pos < Token_Count ) && ( AsmBuffer[cur_pos]->token != T_FINAL );
         cur_pos++ ) {
 #ifdef _WASM_
-        if( AsmBuffer[cur_pos]->token == T_RES_ID ) {
+        if( AsmBuffer[cur_pos]->token == T_RES_ID )
             continue;
-        }
         tmp = cur_pos;
-        if( check_override( &tmp ) == ERROR ) {
+        if( check_override( &tmp ) == ERROR )
             return( ERROR );
-        }
         cur_pos = tmp;
 #endif
         if(( cur_pos == Token_Count - 1 )
-            && ( AsmBuffer[cur_pos]->token == T_CL_BRACKET )) break;
+            && ( AsmBuffer[cur_pos]->token == T_CL_BRACKET ))
+            break;
         switch( AsmBuffer[cur_pos]->token ) {
         case T_QUESTION_MARK:
             if( cur_pos != start_pos ) {
@@ -178,7 +174,9 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
             
             if( sym && Parse_Pass == PASS_1 ) {
                 sym->total_size+=no_of_bytes;
-                if( first ) sym->first_size+=no_of_bytes;
+                if( first ) {
+                    sym->first_size+=no_of_bytes;
+                }
             }
 #else
             count = 0;
@@ -210,7 +208,8 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
             if( AsmBuffer[cur_pos+1]->token == T_RES_ID &&
                 AsmBuffer[cur_pos+1]->value == T_DUP ) {
                 cur_pos = dup_array( sym, cur_pos, no_of_bytes );
-                if( cur_pos == ERROR ) return( ERROR );
+                if( cur_pos == ERROR )
+                    return( ERROR );
                 break;
             }
                 
@@ -220,8 +219,10 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                     break;
                 case T_PLUS:
                 case T_MINUS:
-                    if( AsmBuffer[cur_pos - 2]->token == T_COMMA ) break;
-                    if( cur_pos - 1 == start_pos ) break;
+                    if( AsmBuffer[cur_pos - 2]->token == T_COMMA )
+                        break;
+                    if( cur_pos - 1 == start_pos )
+                        break;
                 default:
                     AsmError( EXPECTING_COMMA );
                     return( ERROR );
@@ -251,7 +252,8 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                 }
 #ifdef _WASM_
             } else {
-                if( the_struct == NULL ) break;
+                if( the_struct == NULL )
+                    break;
                 Definition.curr_struct->e.structinfo->size += no_of_bytes;
                 the_struct->total_size+=no_of_bytes;
                 the_struct->total_length++;
@@ -324,7 +326,8 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                 }
 #ifdef _WASM_
             } else {
-                if( the_struct == NULL ) break;
+                if( the_struct == NULL )
+                    break;
                 Definition.curr_struct->e.structinfo->size += no_of_bytes;
                 the_struct->total_size+=no_of_bytes;
                 the_struct->total_length++;
@@ -361,7 +364,8 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                     
             init_sym = AsmLookup( AsmBuffer[cur_pos]->string_ptr );
                     
-            if( init_sym == NULL ) return( ERROR );
+            if( init_sym == NULL )
+                return( ERROR );
                     
 #ifdef _WASM_
             switch( init_sym->state ) {
@@ -438,7 +442,8 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
             }
                     
 #ifdef _WASM_
-            if( store_fixup( 0 ) == ERROR ) return( ERROR );
+            if( store_fixup( 0 ) == ERROR )
+                return( ERROR );
 #endif
             /* now actually output the data */
             ptr = (char *)&data;
@@ -513,7 +518,8 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
             if( cur_pos + 1 < Token_Count ) {
                 if( AsmBuffer[++cur_pos]->token == T_ID ) {
                     init_sym = AsmLookup( AsmBuffer[cur_pos]->string_ptr );
-                    if( init_sym == NULL ) return( ERROR );
+                    if( init_sym == NULL )
+                        return( ERROR );
                         
                     if( AsmBuffer[seg_off_operator_loc]->value == T_OFFSET ) {
                         if( init_sym->state == SYM_STACK ) {
@@ -569,7 +575,8 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                             data += fixup->offset;
                         }
 #ifdef _WASM_
-                        if( store_fixup( 0 ) == ERROR ) return( ERROR );
+                        if( store_fixup( 0 ) == ERROR )
+                            return( ERROR );
 #endif
                         break;
 #ifdef _WASM_
@@ -636,7 +643,8 @@ static int array_element( asm_sym *sym, char start_pos, char no_of_bytes )
                         }
 #ifdef _WASM_
                     } else {
-                        if( the_struct == NULL ) break;
+                        if( the_struct == NULL )
+                            break;
                         Definition.curr_struct->e.structinfo->size += no_of_bytes;
                         the_struct->total_size += no_of_bytes;
                         the_struct->total_length++;
@@ -695,16 +703,17 @@ int dup_array( asm_sym *sym, char start_pos, char no_of_bytes )
             }
 
             cur_pos++;
-            #ifdef _WASM_
+#ifdef _WASM_
             was_first = first;
-            #endif
+#endif
             while( count > 0 ) {
                 /* in case there was a "," inside the dup */
-                #ifdef _WASM_
+#ifdef _WASM_
                 first = was_first;
-                #endif
+#endif
                 returned_pos = array_element(sym,cur_pos,no_of_bytes );
-                if( returned_pos == ERROR ) return( ERROR );
+                if( returned_pos == ERROR )
+                    return( ERROR );
                 count--;
             }
             if( AsmBuffer[returned_pos]->token != T_CL_BRACKET ) {
@@ -713,7 +722,8 @@ int dup_array( asm_sym *sym, char start_pos, char no_of_bytes )
             }
         } else {
             returned_pos = array_element(sym,cur_pos,no_of_bytes );
-            if( returned_pos == ERROR ) return( ERROR );
+            if( returned_pos == ERROR )
+                return( ERROR );
             if( AsmBuffer[returned_pos]->token != T_CL_BRACKET ) {
                 /* array_element hit T_FINAL so stop */
                 return( returned_pos );
@@ -723,9 +733,9 @@ int dup_array( asm_sym *sym, char start_pos, char no_of_bytes )
             return( returned_pos );
         }
         cur_pos = returned_pos + 2;
-        #ifdef _WASM_
+#ifdef _WASM_
         first = FALSE;
-        #endif
+#endif
     }
     return( array_element(sym,cur_pos,no_of_bytes ) );
 }
@@ -749,7 +759,9 @@ int data_init( int sym_loc, int initializer_loc )
 
     if( sym_loc >= 0 ) {
         sym = AsmLookup( AsmBuffer[sym_loc]->string_ptr );
-        if( sym == NULL ) return( ERROR );
+        if( sym == NULL ) {
+            return( ERROR );
+        }
     }
 
     switch( AsmBuffer[initializer_loc]->value ) {
@@ -820,69 +832,71 @@ int data_init( int sym_loc, int initializer_loc )
         return( ERROR );
     }
 
-    #ifdef _WASM_
-        if( sym_loc >= 0 && AsmBuffer[ sym_loc ]->value == T_LABEL ) {
-            label_dir = TRUE;
-            sym_loc--;
-        }
-        if( sym_loc < 0 ) {
-            if( Definition.struct_depth != 0 ) {
-                if( Parse_Pass == PASS_1 ) {
-                    AddFieldToStruct( initializer_loc );
-                    struct_field = TRUE;
-                } else {
-                    return( NOT_ERROR );
-                }
+#ifdef _WASM_
+    if( sym_loc >= 0 && AsmBuffer[ sym_loc ]->value == T_LABEL ) {
+        label_dir = TRUE;
+        sym_loc--;
+    }
+    if( sym_loc < 0 ) {
+        if( Definition.struct_depth != 0 ) {
+            if( Parse_Pass == PASS_1 ) {
+                AddFieldToStruct( initializer_loc );
+                struct_field = TRUE;
+            } else {
+                return( NOT_ERROR );
             }
         }
-    #endif
+    }
+#endif
 
     if( More_Array_Element == TRUE ) {
         More_Array_Element = FALSE;
     } else if( sym_loc >= 0 ) {
-        #ifdef _WASM_
-            /* defining a field in a structure */
-            if( Definition.struct_depth != 0 ) {
-                if( Parse_Pass == PASS_1 ) {
-                    sym->offset = AddFieldToStruct( initializer_loc );
-                    struct_field = TRUE;
-                    sym->state = SYM_STRUCT_FIELD;
-                    sym->mem_type = mem_type;
-                    if( dup_array( sym, initializer_loc + 1, no_of_bytes ) == ERROR ) {
-                        return( ERROR );
-                    }
-                }
-                return( NOT_ERROR );
-            }
-
+#ifdef _WASM_
+        /* defining a field in a structure */
+        if( Definition.struct_depth != 0 ) {
             if( Parse_Pass == PASS_1 ) {
-                if( sym->state != SYM_UNDEFINED ) {
-                    // redefine label
-                    AsmError( SYMBOL_ALREADY_DEFINED );
+                sym->offset = AddFieldToStruct( initializer_loc );
+                struct_field = TRUE;
+                sym->state = SYM_STRUCT_FIELD;
+                sym->mem_type = mem_type;
+                if( dup_array( sym, initializer_loc + 1, no_of_bytes ) == ERROR ) {
                     return( ERROR );
                 }
-            } else {
-                old_offset = sym->offset;
             }
-            GetSymInfo( sym );
-            if( Parse_Pass != PASS_1 && sym->offset != old_offset ) {
-                PhaseError = TRUE;
-            }
-        #else
+            return( NOT_ERROR );
+        }
+
+        if( Parse_Pass == PASS_1 ) {
             if( sym->state != SYM_UNDEFINED ) {
                 // redefine label
                 AsmError( SYMBOL_ALREADY_DEFINED );
                 return( ERROR );
             }
-        #endif
+        } else {
+            old_offset = sym->offset;
+        }
+        GetSymInfo( sym );
+        if( Parse_Pass != PASS_1 && sym->offset != old_offset ) {
+            PhaseError = TRUE;
+        }
+#else
+        if( sym->state != SYM_UNDEFINED ) {
+            // redefine label
+            AsmError( SYMBOL_ALREADY_DEFINED );
+            return( ERROR );
+        }
+#endif
         sym->state = SYM_INTERNAL;
         sym->mem_type = mem_type;
         BackPatch( sym );
     }
-    #ifdef _WASM_
-        if( mem_type == T_STRUCT ) return( NOT_ERROR );
-        if( label_dir ) return( NOT_ERROR );
-    #endif
+#ifdef _WASM_
+    if( mem_type == T_STRUCT )
+        return( NOT_ERROR );
+    if( label_dir )
+        return( NOT_ERROR );
+#endif
     if( dup_array( sym, initializer_loc + 1, no_of_bytes ) == ERROR ) {
         return( ERROR );
     }

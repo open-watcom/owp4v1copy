@@ -37,8 +37,8 @@
 #include "asmalloc.h"
 
 #ifdef _WASM_
-#include "directiv.h"
-#include "myassert.h"
+  #include "directiv.h"
+  #include "myassert.h"
 #endif
 
 struct asmfixup         *InsFixups[3];
@@ -60,7 +60,8 @@ void add_frame( void )
     
     if( Parse_Pass != PASS_1 ) {
         fixup = InsFixups[Opnd_Count];
-        if( fixup == NULL ) return;
+        if( fixup == NULL )
+            return;
         fixup->frame = Frame;
         fixup->frame_datum = Frame_Datum;
     }
@@ -502,10 +503,13 @@ int store_fixup( int index )
 {
     struct fixup        *fixnode;
 
-    if( Parse_Pass == PASS_1 ) return( NOT_ERROR );
-    if( InsFixups[index] == NULL ) return( NOT_ERROR );
+    if( Parse_Pass == PASS_1 )
+        return( NOT_ERROR );
+    if( InsFixups[index] == NULL )
+        return( NOT_ERROR );
     fixnode = CreateFixupRec( index );
-    if( fixnode == NULL ) return( ERROR );
+    if( fixnode == NULL )
+        return( ERROR );
 
     if( FixupListHead == NULL ) {
         FixupListTail = FixupListHead = fixnode;
@@ -529,7 +533,8 @@ int MakeFpFixup( struct asm_sym *sym )
     AddFixup( sym, FIX_OFF16, OPTJ_NONE );
     Frame = old_frame;
     Opnd_Count = old_count;
-    if( store_fixup( 2 ) == ERROR ) return( ERROR ); // extra entry in insfixups
+    if( store_fixup( 2 ) == ERROR )
+        return( ERROR ); // extra entry in insfixups
     return( NOT_ERROR );
 }
 

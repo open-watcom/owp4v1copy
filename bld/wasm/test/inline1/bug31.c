@@ -2,6 +2,7 @@
 extern "C" {
 #endif
 
+
 extern void jmp1( void );
 #pragma aux jmp1 =         \
 "        xor  ax, ax    "  \
@@ -35,8 +36,9 @@ void test (void)
 {
     jmp1();
     jmp2();
-    }
+}
+
 
 #ifdef __cplusplus
-    }
+}
 #endif

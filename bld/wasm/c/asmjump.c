@@ -37,7 +37,7 @@
 #include "asmfixup.h"
 
 #ifdef _WASM_
-    #include "directiv.h"
+  #include "directiv.h"
 #endif
 
 /* prototypes */
@@ -101,7 +101,9 @@ static void jumpExtend( int far_flag )
 
     /* there MUST be a conditional jump instruction in asmbuffer */
     for( i=0; ; i++ ) {
-        if( AsmBuffer[i]->token==T_INSTR && IS_JMP( AsmBuffer[i]->value ) ) break;
+        if( AsmBuffer[i]->token==T_INSTR && IS_JMP( AsmBuffer[i]->value ) ) {
+            break;
+        }
     }
 
     AsmWarn( 4, EXTENDING_JUMP );
@@ -486,8 +488,8 @@ int jmp( struct asm_sym *sym )                // Bug: can't handle indirect jump
             case T_SHORT:
             case T_NEAR:
                 if( Opnd_Count == OPND1 && Code->mem_type_fixed ) {
-                AsmError( CANNOT_USE_SHORT_OR_NEAR );
-                return( ERROR );
+                    AsmError( CANNOT_USE_SHORT_OR_NEAR );
+                    return( ERROR );
                 }
                 /* fall through */
             case T_FAR:
@@ -505,13 +507,13 @@ int jmp( struct asm_sym *sym )                // Bug: can't handle indirect jump
                         Code->info.opnd_type[Opnd_Count] = OP_I16;
                     }
                 } else {
-                if( oper_32( Code )) {
-                    fixup_type = FIX_PTR32;
-                    Code->info.opnd_type[Opnd_Count] = OP_J48;
-                } else {
-                    fixup_type = FIX_PTR16;
-                    Code->info.opnd_type[Opnd_Count] = OP_J32;
-                }
+                    if( oper_32( Code ) ) {
+                        fixup_type = FIX_PTR32;
+                        Code->info.opnd_type[Opnd_Count] = OP_J48;
+                    } else {
+                        fixup_type = FIX_PTR16;
+                        Code->info.opnd_type[Opnd_Count] = OP_J32;
+                    }
                 }
                 break;
             case T_BYTE:
@@ -785,7 +787,7 @@ int ptr_operator( memtype mem_type, uint_8 fix_mem_type )
             }
         }
     } else {
-        if(( mem_type != EMPTY ) && ( Code->mem_type_fixed == FALSE )) {
+        if( ( mem_type != EMPTY ) && ( Code->mem_type_fixed == FALSE ) ) {
 #ifdef _WASM_
             if( mem_type != T_STRUCT ) {
 #endif

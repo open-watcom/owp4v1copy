@@ -52,14 +52,18 @@ static  unsigned        MsgShift;
 extern  long            FileShift;
 
 extern  int             trademark( void );
+
 #ifdef __OSI__
- extern char            *_Copyright;
+
+extern char             *_Copyright;
+
 #endif
 
 #define NO_RES_MESSAGE "Error: could not open message resource file.\r\n"
 #define NO_RES_SIZE (sizeof(NO_RES_MESSAGE)-1)
 
 #ifndef __UNIX__
+
 static const unsigned char PressReturn[] = {
 "    (Press return to continue)"
 };
@@ -172,12 +176,12 @@ void PrintfUsage( int first_ln )
     unsigned    count;
 
     count = trademark();
-    #ifdef __OSI__
-        if( _Copyright != NULL ) {
-            puts( _Copyright );
-            count += 1;
-        }
-    #endif
+#ifdef __OSI__
+    if( _Copyright != NULL ) {
+        puts( _Copyright );
+        count += 1;
+    }
+#endif
     for( ;; first_ln++ ) {
 #ifndef __UNIX__
         if( ++count >= 23 ) {

@@ -36,6 +36,7 @@
 #include "directiv.h"
 #include "mangle.h"
 
+
 /* constants used by the name manglers ( changes ) */
 #define     NORMAL              0
 #define     USCORE_FRONT        1
@@ -68,42 +69,42 @@ static char *CMangler( struct asm_sym *sym, char *buffer )
     uint                additional_size = 1; // for null
 
     if( Options.watcom_c_mangler ) {
-    switch( Options.naming_convention ) {
-    case DO_NOTHING:
-        return( AsmMangler( sym, buffer ));
-    case ADD_USCORES:
-        if( sym->state == SYM_PROC ) {
-            changes |= USCORE_BACK;
-        } else {
-            switch( sym->mem_type ) {
-            case T_NEAR:
-            case T_FAR:
-            case EMPTY:
+        switch( Options.naming_convention ) {
+        case DO_NOTHING:
+            return( AsmMangler( sym, buffer ));
+        case ADD_USCORES:
+            if( sym->state == SYM_PROC ) {
                 changes |= USCORE_BACK;
-                break;
-            default:
-                changes |= USCORE_FRONT;
+            } else {
+                switch( sym->mem_type ) {
+                case T_NEAR:
+                case T_FAR:
+                case EMPTY:
+                    changes |= USCORE_BACK;
+                    break;
+                default:
+                    changes |= USCORE_FRONT;
+                }
             }
-        }
-        break;
-    case REMOVE_USCORES:
-        if( sym->state == SYM_PROC ) {
-            changes |= REM_USCORE_BACK;
-        } else {
-            switch( sym->mem_type ) {
-            case T_NEAR:
-            case T_FAR:
-            case EMPTY:
+            break;
+        case REMOVE_USCORES:
+            if( sym->state == SYM_PROC ) {
                 changes |= REM_USCORE_BACK;
-                break;
-            default:
-                changes |= REM_USCORE_FRONT;
+            } else {
+                switch( sym->mem_type ) {
+                case T_NEAR:
+                case T_FAR:
+                case EMPTY:
+                    changes |= REM_USCORE_BACK;
+                    break;
+                default:
+                    changes |= REM_USCORE_FRONT;
+                }
             }
         }
-    }
-    if( sym->state == SYM_PROC ) {
+        if( sym->state == SYM_PROC ) {
             if( ( sym->langtype == LANG_C ) || ( sym->langtype == LANG_STDCALL ) ) {
-            changes |= USCORE_BACK;
+                changes |= USCORE_BACK;
             } else if( ( sym->langtype >= LANG_BASIC ) && ( sym->langtype <= LANG_PASCAL ) ) {
                 changes |= UPPERCASE;
             }

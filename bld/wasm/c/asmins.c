@@ -49,8 +49,8 @@
 #include "asmeval.h"
 
 #ifdef _WASM_
-#include "directiv.h"
-#include "myassert.h"
+  #include "directiv.h"
+  #include "myassert.h"
 #endif
 
 extern int              match_phase_1( void );
@@ -107,7 +107,7 @@ static int              mem2code( char, int, int, asm_sym * );
 /* moved here from asmline */
 static struct asm_tok   tokens[MAX_TOKEN];
 
-struct asm_tok  *AsmBuffer[MAX_TOKEN];  // buffer to store token
+struct asm_tok          *AsmBuffer[MAX_TOKEN];  // buffer to store token
 
 #ifdef _WASM_
 void find_frame( struct asm_sym *sym )
@@ -258,7 +258,8 @@ static void check_assume( struct asm_sym *sym, enum prefix_reg default_reg )
     enum assume_reg     def_reg;
 
     /**/myassert( sym != NULL );
-    if( sym->state == SYM_UNDEFINED ) return;
+    if( sym->state == SYM_UNDEFINED )
+        return;
 
     switch( default_reg ) {
         case PREFIX_SS:
@@ -404,13 +405,15 @@ static int mem( int i )
                     AsmError( CANNOT_USE_386_ADDRESSING_MODE_WITH_CURRENT_CPU_SETTING );
                     return( ERROR );
                 }
-                if( !Code->use32 ) Code->prefix.adrsiz = TRUE;
+                if( !Code->use32 )
+                    Code->prefix.adrsiz = TRUE;
                 break;
             case T_BX:
             case T_BP:
             case T_SI:
             case T_DI:
-                if( Code->use32 ) Code->prefix.adrsiz = TRUE;
+                if( Code->use32 )
+                    Code->prefix.adrsiz = TRUE;
                 break;
             default:
                 AsmError( INVALID_MEMORY_POINTER );
@@ -419,7 +422,8 @@ static int mem( int i )
             switch( AsmBuffer[i + 1]->token ) {
             case T_TIMES :  // 386, cur reg is index
                 if( (Code->info.cpu&P_CPU_MASK) >= P_386 ) {
-                    if( !Code->use32 ) Code->prefix.adrsiz = TRUE;
+                    if( !Code->use32 )
+                        Code->prefix.adrsiz = TRUE;
                     index = AsmBuffer[i]->value;
                     switch( index ) {
                     case T_ESP:
@@ -431,7 +435,8 @@ static int mem( int i )
                         AsmError( INVALID_INDEX_REGISTER );
                         return( ERROR );
                     default:
-                        if( !Code->use32 ) Code->prefix.adrsiz = TRUE;
+                        if( !Code->use32 )
+                            Code->prefix.adrsiz = TRUE;
                         i += 2;
                         if( AsmBuffer[i]->token == T_NUM ) {
                             switch( AsmBuffer[i]->value ) {
@@ -1354,7 +1359,8 @@ static int reg( int i )
     case OP_DX: /* only appears in "in" and "out" instructions  */
     case OP_R16:
         Code->info.opcode |= W_BIT;             // set w-bit
-        if( Code->use32 ) Code->prefix.opsiz = TRUE;
+        if( Code->use32 )
+            Code->prefix.opsiz = TRUE;
         break;
     case OP_MMX:
         break;
@@ -1423,7 +1429,8 @@ static int reg( int i )
             return( ERROR );
         }
         Code->info.opcode |= W_BIT;             // set w-bit
-        if( !Code->use32 ) Code->prefix.opsiz = TRUE;
+        if( !Code->use32 )
+            Code->prefix.opsiz = TRUE;
         break;
     case OP_TR:                 // Test registers
         switch( AsmBuffer[i]->value ) {
@@ -1890,7 +1897,7 @@ static int process_address( expr_list *opndx )
         case T_FAR:
             type = 1;
             break;
-            }
+        }
         if( Code->info.token == T_LEA ) {
             type = 0;
         }
@@ -2002,7 +2009,8 @@ static int process_reg( expr_list *opndx )
     case OP_DX: /* only appears in "in" and "out" instructions  */
     case OP_R16:
         Code->info.opcode |= W_BIT;             // set w-bit
-        if( Code->use32 ) Code->prefix.opsiz = TRUE;
+        if( Code->use32 )
+            Code->prefix.opsiz = TRUE;
         break;
     case OP_MMX:
         break;
@@ -2047,7 +2055,8 @@ static int process_reg( expr_list *opndx )
             return( ERROR );
         }
         Code->info.opcode |= W_BIT;             // set w-bit
-        if( !Code->use32 ) Code->prefix.opsiz = TRUE;
+        if( !Code->use32 )
+            Code->prefix.opsiz = TRUE;
         break;
     case OP_TR:                 // Test registers
         switch( AsmBuffer[opndx->base_reg]->value ) {
@@ -2128,8 +2137,10 @@ int AsmParse( void )
         Code->use32 = FALSE;
     }
     i = proc_check();
-    if( i == ERROR ) return( ERROR );
-    if( i == TRUE ) return( NOT_ERROR );
+    if( i == ERROR )
+        return( ERROR );
+    if( i == TRUE )
+        return( NOT_ERROR );
 #endif
 
     //init
@@ -2265,7 +2276,8 @@ int AsmParse( void )
             if( i + 1 < Token_Count ) {
                 if( AsmBuffer[++i]->token == T_ID ) {
                     sym = AsmLookup( AsmBuffer[i]->string_ptr );
-                    if( sym == NULL ) return ERROR;
+                    if( sym == NULL )
+                        return ERROR;
 
                     switch( AsmBuffer[operator_loc]->value ) {
                     case T_OFFSET:
@@ -2311,7 +2323,9 @@ int AsmParse( void )
                             find_frame( sym );
 #endif
                             fixup = AddFixup( sym, temp, OPTJ_NONE );
-                            if( fixup == NULL ) return( ERROR );
+                            if( fixup == NULL ) {
+                                return( ERROR );
+                            }
 #ifdef _WASM_
                         }
 #endif
@@ -2754,7 +2768,8 @@ static void SizeString( unsigned op_size )
     case 1:
         Code->mem_type = T_BYTE;
         Code->info.opcode &= NOT_W_BIT;
-        if( Code->use32 ) Code->prefix.opsiz = FALSE;
+        if( Code->use32 )
+            Code->prefix.opsiz = FALSE;
         break;
     case 2:
         Code->mem_type = T_WORD;
@@ -2812,7 +2827,10 @@ static int check_size( void )
             case OP_AL:
                 Code->info.opcode &= NOT_W_BIT;         // clear w-bit
             case OP_EAX:
-                if( Code->use32 ) Code->prefix.opsiz = FALSE;
+                if( Code->use32 ) {
+                    Code->prefix.opsiz = FALSE;
+                }
+                break;
             }
         }
         break;
@@ -2824,7 +2842,9 @@ static int check_size( void )
             case OP_AL:
                 Code->info.opcode &= NOT_W_BIT;         // clear w-bit
             case OP_EAX:
-                if( Code->use32 ) Code->prefix.opsiz = FALSE;
+                if( Code->use32 ) {
+                    Code->prefix.opsiz = FALSE;
+                }
             }
         }
         break;
@@ -2834,7 +2854,8 @@ static int check_size( void )
         /* fall through */
     case T_MOVS:
     case T_OUTS:
-        if( op_size == 0 ) op_size = OperandSize( op2 );
+        if( op_size == 0 )
+            op_size = OperandSize( op2 );
 
         SizeString( op_size );
         break;
@@ -2892,11 +2913,11 @@ static int check_size( void )
             state = ERROR;
         }
         if( (Code->info.cpu&(P_CPU_MASK|P_PM)) <= P_286p ) {
-        // offset can only be 16-bit if CPU is 286 and down
+            // offset can only be 16-bit if CPU is 286 and down
             if( op2 > OP_I16 ) {
-            AsmError( OFFSET_TOO_BIG );
-            state = ERROR;
-        }
+                AsmError( OFFSET_TOO_BIG );
+                state = ERROR;
+            }
         }
         // swap the 2 opnds to make output easier
         if( InsFixups[OPND2] != NULL ) {
@@ -2948,10 +2969,12 @@ static int check_size( void )
         op1_size = OperandSize( op1 );
         switch( op1_size ) {
         case 2:
-            if( Code->use32 ) Code->prefix.opsiz = TRUE;
+            if( Code->use32 )
+                Code->prefix.opsiz = TRUE;
             break;
         case 4:
-            if( Code->use32 ) Code->prefix.opsiz = FALSE;
+            if( Code->use32 )
+                Code->prefix.opsiz = FALSE;
             break;
         default:
             AsmError( INVALID_SIZE );
@@ -3084,30 +3107,31 @@ static int check_size( void )
                     switch( op2_size ) {
                     case 1:
                         Code->mem_type = T_BYTE;
-                        #ifdef _WASM_
-                            if( Parse_Pass == PASS_1 && ( op2 & OP_I ) ) {
-                                AsmWarn( 1, ASSUMING_BYTE );
-                            }
-                        #endif
+#ifdef _WASM_
+                        if( Parse_Pass == PASS_1 && ( op2 & OP_I ) ) {
+                            AsmWarn( 1, ASSUMING_BYTE );
+                        }
+#endif
                         break;
                     case 2:
                         Code->mem_type = T_WORD;
                         Code->info.opcode |= W_BIT;
-                        #ifdef _WASM_
-                            if( Parse_Pass == PASS_1 && ( op2 & OP_I ) ) {
-                                AsmWarn( 1, ASSUMING_WORD );
-                            }
-                        #endif
-                        if( Code->use32 ) Code->prefix.opsiz = TRUE;
+#ifdef _WASM_
+                        if( Parse_Pass == PASS_1 && ( op2 & OP_I ) ) {
+                            AsmWarn( 1, ASSUMING_WORD );
+                        }
+#endif
+                        if( Code->use32 )
+                            Code->prefix.opsiz = TRUE;
                         break;
                     case 4:
                         Code->mem_type = T_DWORD;
                         Code->info.opcode |= W_BIT;
-                        #ifdef _WASM_
-                            if( Parse_Pass == PASS_1 && ( op2 & OP_I ) ) {
-                                AsmWarn( 1, ASSUMING_DWORD );
-                            }
-                        #endif
+#ifdef _WASM_
+                        if( Parse_Pass == PASS_1 && ( op2 & OP_I ) ) {
+                            AsmWarn( 1, ASSUMING_DWORD );
+                        }
+#endif
                         break;
                     }
                 }
@@ -3129,10 +3153,14 @@ void AsmInit( int cpu, int fpu, int use32, int extn )
         AsmBuffer[count] = &tokens[count];
     }
 
-    if( use32 < 0 ) use32 = 0; // default is 16-bit segment
-    if( cpu < 0 ) cpu = 0;     // default is 8086 CPU
-    if( fpu < 0 ) fpu = 1;     // default is FPU use
-    if( extn < 0 ) extn = 0;   // default is no CPU extension instructions
+    if( use32 < 0 )
+        use32 = 0;   // default is 16-bit segment
+    if( cpu < 0 )
+        cpu = 0;     // default is 8086 CPU
+    if( fpu < 0 )
+        fpu = 1;     // default is FPU use
+    if( extn < 0 )
+        extn = 0;    // default is no CPU extension instructions
     switch( use32 ) {
     case 0:
         Code->use32 = 0;
@@ -3144,33 +3172,42 @@ void AsmInit( int cpu, int fpu, int use32, int extn )
     switch( cpu ) {
     case 0:
         Code->info.cpu |= P_86;
-        if( fpu ) Code->info.cpu |= P_87;
+        if( fpu )
+            Code->info.cpu |= P_87;
         break;
     case 1:
         Code->info.cpu |= P_186;
-        if( fpu ) Code->info.cpu |= P_87;
+        if( fpu )
+            Code->info.cpu |= P_87;
         break;
     case 2:
         Code->info.cpu |= P_286p;
-        if( fpu ) Code->info.cpu |= P_287;
+        if( fpu )
+            Code->info.cpu |= P_287;
         break;
     case 3:
         Code->info.cpu |= P_386p;
-        if( fpu ) Code->info.cpu |= P_387;
+        if( fpu )
+            Code->info.cpu |= P_387;
         break;
     case 4:
         Code->info.cpu |= P_486p;
-        if( fpu ) Code->info.cpu |= P_387;
+        if( fpu )
+            Code->info.cpu |= P_387;
         break;
     case 5:
         Code->info.cpu |= P_586p;
-        if( fpu ) Code->info.cpu |= P_387;
-        if( extn ) Code->info.cpu |= P_K3D | P_MMX;
+        if( fpu )
+            Code->info.cpu |= P_387;
+        if( extn )
+            Code->info.cpu |= P_K3D | P_MMX;
         break;
     case 6:
         Code->info.cpu |= P_686p;
-        if( fpu ) Code->info.cpu |= P_387;
-        if( extn ) Code->info.cpu |= P_K3D | P_MMX | P_SSE | P_SSE2 | P_SSE3;
+        if( fpu )
+            Code->info.cpu |= P_387;
+        if( extn )
+            Code->info.cpu |= P_K3D | P_MMX | P_SSE | P_SSE2 | P_SSE3;
         break;
     }
 
