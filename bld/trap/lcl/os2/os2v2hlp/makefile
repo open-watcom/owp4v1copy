@@ -9,16 +9,10 @@ host_OS = os2
 !include deftarg.mif
 !include defrule.mif
 
-!ifndef bin_root
-!ifdef bin_root_wv
-bin_root = $(bin_root_wv)
-!endif
-!endif
-
-w : .symbolic $(bin_root)/binp/dll/os2v2hlp.exe
+w : .symbolic os2v2hlp.exe
         @%null
 
-$(bin_root)/binp/dll/os2v2hlp.exe : os2v2hlp.obj
+os2v2hlp.exe : os2v2hlp.obj
         $(linker) system os2v2 lx op dosseg name $^@ f os2v2hlp &
                 imp DOS32WRITE DOSCALLS.282,DOS32DEBUG DOSCALLS.317
 

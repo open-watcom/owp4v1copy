@@ -10,13 +10,13 @@ cpu = x86
 name = jvmhelp
 which = SERVER
 
-dall : .symbolic d $(bin_root)/binnt/wdebug.zip
+dall : .symbolic d wdebug.zip
     @%null
 
-wall : .symbolic w $(bin_root)/binnt/wdebug.zip
+wall : .symbolic w wdebug.zip
     @%null
 
-$(bin_root)/binnt/wdebug.zip : JVMHelp.java
+wdebug.zip : JVMHelp.java
     set classpath=.;$(javasdk)/lib/classes.zip
     $(javasdk)/bin/javac JVMHelp.java > JVMHelp.err
     type JVMHelp.err
@@ -24,10 +24,10 @@ $(bin_root)/binnt/wdebug.zip : JVMHelp.java
     !if not exist sun/tools/nul md sun/tools
     !if not exist sun/tools/debug/nul md sun/tools/debug
     cp jvm*.class sun/tools/debug
-    rm -f $(bin_root)/binnt/wdebug.zip
-    $(bld_bin)/zip -r -0 $(bin_root)/binnt/wdebug.zip sun/*.*
+    rm -f wdebug.zip
+    $(bld_bin)/zip -r -0 wdebug.zip sun/*.*
 !ifdef lexusbld
-    newer $(bin_root)/binnt/wdebug.zip $(lexlib_dir)/tools/system/wdebug.zip "^copy &f $#f > nul"
+    newer wdebug.zip $(lexlib_dir)/tools/system/wdebug.zip "^copy &f $#f > nul"
 !endif
     rm -rf sun
 

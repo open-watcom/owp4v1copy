@@ -56,19 +56,12 @@ memory_model_386 = s
 !endif
 
 !include cproj.mif
-!include deftarg.mif
 !include defrule.mif
 
 !ifeq which SERVER
 !include $(trap_dir)/serv.mif
 !else
 !include $(trap_dir)/trap.mif
-!endif
-
-!ifndef bin_root
-!ifdef bin_root_wv
-bin_root = $(bin_root_wv)
-!endif
 !endif
 
 # cflags stuff
@@ -177,13 +170,13 @@ name_debug=z
 !else
 name_debug=
 !endif
-target = $+$(bin_root)/$(targ_$(cpu)_$(os))$-
+target = $+$(targ_$(cpu)_$(os))$-
 !ifdef test
 name_debug=t
 !else
 name_debug=d
 !endif
-dtarget = $+$(bin_root)/$(targ_$(cpu)_$(os))$-
+dtarget = $+$(targ_$(cpu)_$(os))$-
 
 trperr_h = _err.gh
 jtrperr_h = _jerr.gh
@@ -271,3 +264,7 @@ inc_dirs+=;$(ow_nwoss_root)/nw$(nlm_ver)/h;$(ow_nwoss_root)/nw$(nlm_ver)/src;$(o
 #################
 .rc.res: .AUTODEPEND
         $(rc) -r -i"$(inc_path)" -bt=$(targ) $[@ -fo=$^@
+
+clean: .SYMBOLIC
+        rm -f *.obj *.dll *.d32 *.exe *.exp *.nlm *.trp 
+        rm -f *.err *.map *.sym mem.trk

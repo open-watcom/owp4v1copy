@@ -17,24 +17,16 @@ description = \'Open Watcom Debugger PM Helper\'
 description = 'Open Watcom Debugger PM Helper'
 !endif
 
-!ifndef bin_root
-!ifdef bin_root_wv
-bin_root = $(bin_root_wv)
-!endif
-!endif
-
 extra_c_flags = -s -fpc
 
 inc_dirs = $(trap_dir)/h
 
-bdir = $(bin_root)/binp
-
-w d : $(bdir)/dll/wdpmhook.dll $(bdir)/wdpmhelp.exe .SYMBOLIC
+w d : wdpmhook.dll wdpmhelp.exe .SYMBOLIC
         @%null
 
 tmplnk = tmp.lnk
 
-$(bdir)/dll/wdpmhook.dll: pmhook.obj
+wdpmhook.dll: pmhook.obj
     @%write  $(tmplnk) name $^@ sys os2v2 dll
     @%append $(tmplnk) debug all op symf
     @%append $(tmplnk) option map
@@ -43,7 +35,7 @@ $(bdir)/dll/wdpmhook.dll: pmhook.obj
     @%append $(tmplnk) export SendMsgHookProc.1,SetHmqDebugee.2
     $(linker) @$(tmplnk)
 
-$(bdir)/wdpmhelp.exe: _err.gh _jerr.gh pmhelp.obj pmhelp.res
+wdpmhelp.exe: _err.gh _jerr.gh pmhelp.obj pmhelp.res
     @%write  $(tmplnk) name $^@ system os2v2 pm
     @%append $(tmplnk) debug all op symf
     @%append $(tmplnk) option map

@@ -219,26 +219,6 @@ syshdir = ../h
 sysadir = ../asm
 !endif
 
-# bdir
-#######
-bdir_dos_i86_at         = $(bin_root_wv)/bin
-bdir_dos_i86_nec        = $(bin_root_wv)/bin.nec
-bdir_dos_i86_fmr        = $(bin_root_wv)/bin.fmr
-bdir_win_i86_at         = $(bin_root_wv)/bin
-bdir_win_i86_nec        = $(bin_root_wv)/bin.nec
-bdir_dos_386_at         = $(bin_root_wv)/bin
-bdir_dos_386_nec        = $(bin_root_wv)/bin.nec
-bdir_nt_386_at          = $(bin_root_wv)/binnt
-bdir_os2_i86_at         = $(bin_root_wv)/binp
-bdir_os2_386_at         = $(bin_root_wv)/binp
-bdir_qnx_i86_at         = $(bin_root_wv)/qnx
-bdir_qnx_386_at         = $(bin_root_wv)/qnx
-bdir_linux_386_at       = $(bin_root_wv)/linux
-bdir_nt_axp_at          = $(bin_root_wv)/axpnt
-
-bdir = $(bdir_$(host_OS)_$(host_CPU)_$(all_machine))
-bdir = .
-
 # exe_name
 ###########
 exe_qnx = qnx
@@ -249,18 +229,7 @@ EXE = $(exe_$(host_OS))
 EXE = exe
 !endif
 
-tail_char_win   = c
-tail_gui        = w
-
-!ifdef tail_$(display)_$(host_OS)
-tail_exe = $(tail_$(display)_$(host_OS))
-!else ifdef tail_$(display)
-tail_exe = $(tail_$(display))
-!else
-tail_exe =
-!endif
-
-exe_name = $(bdir)/dv$(tail_exe).$(EXE)
+exe_name = wv.$(EXE)
 
 # cflags
 #########

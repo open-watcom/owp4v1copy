@@ -12,20 +12,12 @@ host_cpu = i86
 .EXTENSIONS
 .EXTENSIONS : .dll .lbj .obj .c .asm .res .rc
 
-!ifndef bin_root
-!ifdef bin_root_wv
-bin_root = $(bin_root_wv)
-!endif
-!endif
-
-bdir = $(bin_root)/binp
-
-w d : $(bdir)/dll/wdpmhook.dll $(bdir)/wdpmhelp.exe .SYMBOLIC
+w d : wdpmhook.dll wdpmhelp.exe .SYMBOLIC
         @%null
 
 tmplnk = tmp.lnk
 
-$(bdir)/dll/wdpmhook.dll: pmhook.obj loadstd.obj
+wdpmhook.dll: pmhook.obj loadstd.obj
     @%write  $(tmplnk) name $^@ sys os2 dll initglobal
     @%append $(tmplnk) debug all op symfile
     @%append $(tmplnk) option dosseg,quiet
@@ -37,7 +29,7 @@ $(bdir)/dll/wdpmhook.dll: pmhook.obj loadstd.obj
     @%append $(tmplnk) segment class 'BSS' shared
     $(linker) @$(tmplnk)
 
-$(bdir)/wdpmhelp.exe: pmhelp.lbj pmhelp.res
+wdpmhelp.exe: pmhelp.lbj pmhelp.res
     @%write  $(tmplnk) name $^@ system os2 pm
     @%append $(tmplnk) debug all op symfile
     @%append $(tmplnk) file pmhelp.lbj
@@ -52,7 +44,7 @@ $(bdir)/wdpmhelp.exe: pmhelp.lbj pmhelp.res
     @%append $(tmplnk) option heapsize=1024
     @%append $(tmplnk) option protmode
     $(linker) @$(tmplnk)
-    $(lang_root)\binp\rc pmhelp.res $(bdir)\wdpmhelp.exe
+    $(lang_root)\binp\rc pmhelp.res wdpmhelp.exe
 
 .c: ../c
 

@@ -19,15 +19,15 @@ sys_x86_linux = sys linux
 
 sys_axp_nt    = sys ntaxp
 
-targ_x86_os2   = binp/$(name)cli1.exe
-targ_x86_os2v2 = binp/$(name)cli.exe
-targ_x86_qnx   = qnx/$(name)cli.qnx
-targ_x86_linux = linux/$(name)cli.elf
-targ_x86_win   = bin/$(name)cliw.exe
-targ_x86_dos   = bin/$(name)cli.exe
-targ_x86_nt    = binnt/$(name)cli.exe
+targ_x86_os2   = $(name)cli1.exe
+targ_x86_os2v2 = $(name)cli.exe
+targ_x86_qnx   = $(name)cli.qnx
+targ_x86_linux = $(name)cli.elf
+targ_x86_win   = $(name)cliw.exe
+targ_x86_dos   = $(name)cli.exe
+targ_x86_nt    = $(name)cli.exe
 
-targ_axp_nt    = axpnt/$(name)cli.exe
+targ_axp_nt    = $(name)cli.exe
 
 TRAP_objs     = testcli.obj
 TRAP_remote_objs =
@@ -106,17 +106,17 @@ machsuff=
 machsuff=$+$(machine)$-
 !endif
 
-targ_x86_os2    = binp/dll/$(name).dll
-targ_x86_os2v2  = binp/dll/$(name).d32
-targ_x86_qnx    = qnx/$(name).trp
-targ_x86_linux  = linux/$(name).trp
-targ_x86_win    = bin.$(machsuff)/$(name).dll
-targ_x86_dos    = bin.$(machsuff)/$(name).trp
-targ_x86_nt     = binnt/$(name).dll
+targ_x86_os2    = $(name).dll
+targ_x86_os2v2  = $(name).d32
+targ_x86_qnx    = $(name).trp
+targ_x86_linux  = $(name).trp
+targ_x86_win    = $(name).dll
+targ_x86_dos    = $(name).trp
+targ_x86_nt     = $(name).dll
 
-targ_axp_nt     = axpnt/$(name).dll
+targ_axp_nt     = $(name).dll
 
-targ_ppc_nt     = ppcnt/$(name).dll
+targ_ppc_nt     = $(name).dll
 
 TRAP_objs   = $(os)strt.obj
 TRAP_remote_objs = remote.obj

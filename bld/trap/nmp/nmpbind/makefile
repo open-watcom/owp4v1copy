@@ -16,12 +16,6 @@ nmpbind_autodepends = .AUTODEPEND
 !include deftarg.mif
 !include defrule.mif
 
-!ifndef bin_root
-!ifdef bin_root_wv
-bin_root = $(bin_root_wv)
-!endif
-!endif
-
 objs = nmpbind.obj nmpos2.obj
 
 extra_c_flags = -bm -zu
@@ -36,16 +30,16 @@ default_targ    = d
 first : $(default_targ) .SYMBOLIC
         @%null
 
-w : $(bin_root)/binp/nmpbind.exe .SYMBOLIC
+w : nmpbind.exe .SYMBOLIC
         @%null
 
-d : $(bin_root)/binp/dnmpbind.exe .SYMBOLIC
+d : dnmpbind.exe .SYMBOLIC
         @%null
 
-$(bin_root)/binp/nmpbind.exe : _err.gh _jerr.gh $(objs)
+nmpbind.exe : _err.gh _jerr.gh $(objs)
     $(linker) $(lflags) file {$objs} name $^@ 
 
-$(bin_root)/binp/dnmpbind.exe : _err.gh _jerr.gh $(objs)
+dnmpbind.exe : _err.gh _jerr.gh $(objs)
     $(linker) $(lflags) file {$objs} name $^@
 
 .c: ../c

@@ -8,13 +8,6 @@ dip_autodepends = .autodepend
 
 !include cproj.mif
 !include defrule.mif
-!include deftarg.mif
-
-!ifndef bin_root
-!ifdef bin_root_wv
-bin_root = $(bin_root_wv)
-!endif
-!endif
 
 sys_nt_386_javavm       = op offset=0x6e800000
 sys_nt_386_export       = op offset=0x6ec00000
@@ -32,15 +25,16 @@ sys_dos_386     = pharlap rex disable 1023,1014
 sys_nt_386      = nt_dll export DIPLOAD op modname=$(name) $(sys_nt_386_$(name))
 sys_nt_axp      = ntaxp_dll export DIPLOAD op modname=$(name)
 
-dip_os2_i86     = $(bin_root)/binp/dll/$(name).dll
-dip_os2_386     = $(bin_root)/binp/dll/$(name).d32
-dip_qnx_i86     = $(bin_root)/qnx/$(name).dip
-dip_qnx_386     = $(bin_root)/qnx/$(name).dip
-dip_linux_386   = $(bin_root)/linux/$(name).dip
-dip_win_i86     = $(bin_root)/bin/$(name).dll
-dip_dos_386     = $(bin_root)/bin/$(name).dip
-dip_nt_386      = $(bin_root)/binnt/$(name).dll
-dip_nt_axp      = $(bin_root)/axpnt/$(name).dll
+dip_os2_i86     = $(name).dll
+dip_os2_386     = $(name).d32
+dip_qnx_i86     = $(name).dip
+dip_qnx_386     = $(name).dip
+dip_linux_386   = $(name).dip
+dip_win_i86     = $(name).dll
+dip_dos_386     = $(name).dip
+dip_nt_386      = $(name).dll
+dip_nt_axp      = $(name).dll
+exe_name = $(dip_$(host_os)_$(host_cpu))
 
 clib_os2_i86    = clibl
 clib_os2_386    = clib3r
@@ -67,10 +61,12 @@ inc_dirs = $(extra_incs);$(dig_dir)/h
 
 objs = dipimp.obj $(imp_objs)
 
-$(dip_$(host_os)_$(host_cpu)) : $(objs) $(imp_libs) $(__MAKEFILES__)
+$(exe_name) : $(objs) $(imp_libs) $(__MAKEFILES__)
         $(linker) op map $(dbg_opts) &
                 sys $(sys_$(host_os)_$(host_cpu)) &
                 name $^@ &
                 file {$(objs)} &
                 library {$(clib_$(host_os)_$(host_cpu)) $(imp_libs)}
 
+clean: .SYMBOLIC
+    rm -f *.obj *.dll *.dip *.d32 *.map *.sym *.err

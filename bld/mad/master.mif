@@ -7,12 +7,6 @@ project_name = mad
 .CONTINUE
 .ERASE
 
-!ifndef bin_root
-!ifdef bin_root_wv
-bin_root = $(bin_root_wv)
-!endif
-!endif
-
 memory_model_i86 = l
 memory_model_386 = f
 !ifeq host_os qnx
@@ -21,17 +15,18 @@ memory_model_386 = s
 
 !include cproj.mif
 !include defrule.mif
-!include deftarg.mif
 
 name = mad$(mad)
-mad_os2_i86 = $(bin_root)/binp/dll/$(name).dll
-mad_os2_386 = $(bin_root)/binp/dll/$(name).d32
-mad_qnx_386 = $(bin_root)/qnx/$(name).mad
-mad_linux_386 = $(bin_root)/linux/$(name).mad
-mad_win_i86 = $(bin_root)/bin/$(name).dll
-mad_dos_386 = $(bin_root)/bin/$(name).mad
-mad_nt_386  = $(bin_root)/binnt/$(name).dll
-mad_nt_axp  = $(bin_root)/axpnt/$(name).dll
+mad_os2_i86   = $(name).dll
+mad_os2_386   = $(name).d32
+mad_qnx_386   = $(name).mad
+mad_linux_386 = $(name).mad
+mad_win_i86   = $(name).dll
+mad_dos_386   = $(name).mad
+mad_nt_386    = $(name).dll
+mad_nt_axp    = $(name).dll
+
+exe_name = $(mad_$(host_os)_$(host_cpu))
 
 # cflags stuff
 ###############
@@ -82,7 +77,7 @@ objs =  madimp.obj $(imp_objs)
 
 # explicit rules
 ##################
-$(mad_$(host_os)_$(host_cpu)) : eraseall.obj $(objs)
+$(exe_name) : eraseall.obj $(objs)
         $(linker) $(lflags) name $^@ file {$(objs)} library {$(libs)}
 !ifdef lexusbld
         @newer $^@ $(lexlib_dir)\tools\system\$^. "^copy &f $#f > nul"
@@ -91,3 +86,6 @@ $(mad_$(host_os)_$(host_cpu)) : eraseall.obj $(objs)
 eraseall.obj : ../compile.gbl ../../compile.gbl $(extra_gbls)
         rm -f *.obj
         wtouch eraseall.obj
+
+clean: .SYMBOLIC
+        rm -f *.obj *.dll *.d32 *.mad *.err *.map *.sym mem.trk

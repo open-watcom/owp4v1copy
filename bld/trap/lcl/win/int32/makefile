@@ -14,12 +14,6 @@ OBJS =  intmain.obj ints.obj int32.obj
 !include deftarg.mif
 !include defrule.mif
 
-!ifndef bin_root
-!ifdef bin_root_wv
-bin_root = $(bin_root_wv)
-!endif
-!endif
-
 extra_c_flags = -s -fpc -zu -zw
 
 extra_l_flags_win = initinstance memory
@@ -33,10 +27,10 @@ extra_l_flags_win += segment CLASS 'BSS' PRELOAD FIXED
 extra_l_flags_win += library windows,clibc,toolhelp
 extra_l_flags_win += file {$(objs)}
 
-w : .symbolic $(bin_root)/bin/$(name).dll
+w : .symbolic $(name).dll
         @%null
 
-$(bin_root)/bin/$(name).dll: $(OBJS)
+$(name).dll: $(OBJS)
        $(linker) $(lflags) name $^@
 
 .c : ../c

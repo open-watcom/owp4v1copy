@@ -49,32 +49,31 @@ machsuff=
 machsuff=$+$(machine)$-
 !endif
 
-targ_x86_os2    = binp/$(name)1.exe
-targ_x86_os2v2  = binp/$(name).exe
-targ_x86_qnx    = qnx/$(name).qnx
-targ_x86_linux  = linux/$(name).elf
-targ_x86_win    = bin/$(name).exe
-targ_x86_dos    = bin.$(machsuff)/$(name).exe
-targ_x86_rsi    = bin.$(machsuff)/$(name).exp
-targ_x86_cw     = bin.$(machsuff)/$(name).exe
-targ_x86_ads    = bin.$(machsuff)/$(name).exp
+targ_x86_os2    = $(name)1.exe
+targ_x86_os2v2  = $(name).exe
+targ_x86_qnx    = $(name).qnx
+targ_x86_linux  = $(name).elf
+targ_x86_win    = $(name).exe
+targ_x86_dos    = $(name).exe
+targ_x86_rsi    = $(name).exp
+targ_x86_cw     = $(name).exe
+targ_x86_ads    = $(name).exp
 !ifndef targ_pls
-targ_x86_pls    = bin.$(machsuff)/$(name).exp
+targ_x86_pls    = $(name).exp
 !endif
 !ifeq srv jvm
-targ_x86_nt     = binnt/jvmhlp_g.dll
+targ_x86_nt     = jvmhlp_g.dll
 !endif
 !ifeq srv msj
-targ_x86_nt     = binnt/msjhlp.dll
+targ_x86_nt     = msjhlp.dll
 !else
-targ_x86_nt     = binnt/$(name).exe
+targ_x86_nt     = $(name).exe
 !endif
-targ_x86_nlm    = nlm/$(name).nlm
-targ_x86_penpoint= pen/$(name).dll
+targ_x86_nlm    = $(name).nlm
 
-targ_axp_nt     = axpnt/$(name).exe
+targ_axp_nt     = $(name).exe
 
-targ_ppc_nt     = ppcnt/$(name).exe
+targ_ppc_nt     = $(name).exe
 
 objs_nlm        = nlmstrt.obj
 
