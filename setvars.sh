@@ -57,7 +57,6 @@ export RELROOT=$OWROOT
 export DWATCOM=$WATCOM
 export DOC_ROOT=$OWROOT/docs
 export INCLUDE=$WATCOM/lh:$DEVDIR/watcom/h
-export LANG_BLD=$OWROOT/bat
 export LIB=$OWROOT/bld/watcom/lib
 export EDPATH=$WATCOM/eddat
 export PATH=$DEVDIR/build/binl:$OWROOT/bat:$WATCOM/binl:$DOC_ROOT/cmds:$DEFPATH

@@ -57,7 +57,6 @@ set RELROOT=%OWROOT%
 set DWATCOM=%WATCOM%
 set DOC_ROOT=%OWROOT%\docs
 set INCLUDE=%WATCOM%\h;%WATCOM%\h\win;%DEVDIR%\watcom\h
-set LANG_BLD=%OWROOT%\bat
 set LIB=%OWROOT%\bld\watcom\lib
 set EDPATH=%WATCOM%\eddat
 set PATH=%OWROOT%\bin;%DEVDIR%\build\bin;%OWROOT%\bat;%WATCOM%\binw;%DOC_ROOT%\cmds;%DEFPATH%

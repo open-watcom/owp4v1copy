@@ -3,8 +3,7 @@
 
 set PROJDIR=<CWD>
 
-[ INCLUDE <LANG_BLD>/master.ctl ]
-[ INCLUDE <LANG_BLD>/wproj.ctl ]
+[ INCLUDE <OWROOT>/bat/master.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
 [ BLOCK <1> build rel2 ]
@@ -28,7 +27,7 @@ set PROJDIR=<CWD>
 
   [ IFDEF (cpu_axp) <2*> ]
     <CPCMD> <DEVDIR>/wprof/ntaxp/wprof.exe      <RELROOT>/rel2/axpnt/wprof.exe
-    
+
   [ IFDEF (os_linux "") <2*> ]
     <CPCMD> <DEVDIR>/wprof/linux386/wprof.exe   <RELROOT>/rel2/binl/wprof
     <CPCMD> <DEVDIR>/wprof/linux386/wprof.sym   <RELROOT>/rel2/binl/wprof.sym

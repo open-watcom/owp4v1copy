@@ -3,8 +3,7 @@
 
 set PROJDIR=<CWD>
 
-[ INCLUDE <LANG_BLD>/master.ctl ]
-[ INCLUDE <LANG_BLD>/wproj.ctl ]
+[ INCLUDE <OWROOT>/bat/master.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
 set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
@@ -12,7 +11,7 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 [ BLOCK <OWLINUXBUILD> bootstrap ]
 #=================================
     set BUILD_PLATFORM=<BUILD_PLATFORM>boot
-    
+
 [ BLOCK <1> clean ]
 #==================
     echo rm -f -r <PROJDIR>/<OBJDIR>
