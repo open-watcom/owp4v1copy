@@ -1,5 +1,5 @@
 @echo off
-rem do some error checking here before we start creating gobs of directories
+rem do some sanity checks here before we start creating gobs of directories
 if .%relroot%. == .. goto error
 if .%defrel%. == .. goto error
 md %relroot%\%defrel%
@@ -36,9 +36,6 @@ md %relroot%\%defrel%\lib386
 md %relroot%\%defrel%\nlm
 md %relroot%\%defrel%\samples
 md %relroot%\%defrel%\src
-md %relroot%\%defrel%\vp
-md %relroot%\%defrel%\windir
-md %relroot%\%defrel%\winsys
 md %relroot%\%defrel%\binnt\rtdll
 md %relroot%\%defrel%\binp\dll
 md %relroot%\%defrel%\binp\help
@@ -127,17 +124,17 @@ md %relroot%\%defrel%\samples\fortran\os2\dll
 md %relroot%\%defrel%\samples\fortran\os2\rexx
 md %relroot%\%defrel%\samples\fortran\win32
 md %relroot%\%defrel%\samples\fortran\win
-md %relroot%\%defrel%\samples\WIN\ALARM\WIN16
-md %relroot%\%defrel%\samples\WIN\ALARM\WIN32
-md %relroot%\%defrel%\samples\WIN\ALARM\WIN386
-md %relroot%\%defrel%\samples\win\DATACTL\WIN386
+md %relroot%\%defrel%\samples\win\alarm\win16
+md %relroot%\%defrel%\samples\win\alarm\win32
+md %relroot%\%defrel%\samples\win\alarm\win386
+md %relroot%\%defrel%\samples\win\datactl\win386
 md %relroot%\%defrel%\samples\fortran\win32\dll
 md %relroot%\%defrel%\samples\fortran\win\dll
-md %relroot%\%defrel%\samples\WIN\DATACTL\WIN16
-md %relroot%\%defrel%\samples\WIN\DATACTL\WIN32
-md %relroot%\%defrel%\samples\WIN\EDIT\WIN16
-md %relroot%\%defrel%\samples\WIN\EDIT\WIN32
-md %relroot%\%defrel%\samples\WIN\EDIT\WIN386
+md %relroot%\%defrel%\samples\win\datactl\win16
+md %relroot%\%defrel%\samples\win\datactl\win32
+md %relroot%\%defrel%\samples\win\edit\win16
+md %relroot%\%defrel%\samples\win\edit\win32
+md %relroot%\%defrel%\samples\win\edit\win386
 md %relroot%\%defrel%\src\cpplib
 md %relroot%\%defrel%\src\editdll
 md %relroot%\%defrel%\src\inc
