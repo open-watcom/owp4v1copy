@@ -1,9 +1,8 @@
-#pmake: all os_qnx dwarf cpu_386
+#pmake: os_qnx dwarf cpu_386
 
-host_OS = qnx
-host_CPU = 386
+host_os  = qnx
+host_cpu = 386
 
-imp_libs = &
-         $(watcom_dir)/lib/dwarfrps.lib
+imp_libs = $(watcom_dir)/lib/dwarfrps.lib
 
 !include ../dwarf.mif

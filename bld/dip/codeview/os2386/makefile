@@ -1,6 +1,6 @@
-#pmake: all build all os_os2 codeview cpu_386
+#pmake: build os_os2 codeview cpu_386
 
-host_OS = os2
-host_CPU = 386
+host_os  = os2
+host_cpu = 386
 
 !include ../codeview.mif

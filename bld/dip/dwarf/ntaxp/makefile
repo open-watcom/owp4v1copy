@@ -1,8 +1,8 @@
 #pmake: os_nt dwarf axp
 
-host_OS = nt
-host_CPU = axp
+host_os  = nt
+host_cpu = axp
 
-imp_libs = &
-         $(watcom_dir)/lib/draxp.lib
+imp_libs = $(watcom_dir)/lib/draxp.lib
+
 !include ../dwarf.mif

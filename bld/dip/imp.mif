@@ -2,12 +2,10 @@
 # Master makefile for creating DIP's
 #
 
-#.CONTINUE
-#.ERASE
-#.EXTENSIONS
-#.EXTENSIONS : .lan .exe .obj .i .h .c .asm .mif
+proj_name = dip
 
-#.mif: $(mif_path)
+dip_autodepends = .autodepend
+
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
@@ -18,24 +16,14 @@ bin_root = $(bin_root_wv)
 !endif
 !endif
 
-comp_os2_i86    = $(comp286)
-comp_os2_386    = $(comp386)
-comp_qnx_i86    = $(comp286)
-comp_qnx_386    = $(comp386) -ms
-comp_linux_386  = $(comp386)
-comp_win_i86    = $(comp286)
-comp_dos_386    = $(comp386)
-comp_nt_386     = $(comp386)
-comp_nt_axp     = *wccaxp
-
 sys_nt_386_javavm       = op offset=0x6e800000
 sys_nt_386_export       = op offset=0x6ec00000
 sys_nt_386_codeview     = op offset=0x6ed00000
 sys_nt_386_watcom       = op offset=0x6ee00000
 sys_nt_386_dwarf        = op offset=0x6ef00000
 
-sys_os2_i86     = os2 dll export DIPLOAD op modname=$(name)
-sys_os2_386     = os2v2 dll export DIPLOAD op modname=$(name)
+sys_os2_i86     = os2 dll export DIPLOAD
+sys_os2_386     = os2v2 dll export DIPLOAD
 sys_qnx_i86     = qnx disable 1023
 sys_qnx_386     = pharlap rex disable 1023,1014
 sys_linux_386   = pharlap rex disable 1023,1014
@@ -69,68 +57,20 @@ clib_dos_386    = clib3r
 clib_nt_386     = clib3r
 clib_nt_axp     = clib
 
-!ifeq host_OS win
-targ = windows
-!else
-targ = $(host_OS)
-!endif
+extra_c_flags     = -d__DIP__
+extra_c_flags_i86 = -ml -fpc -zc -zu
+extra_c_flags_386 = -fpc
 
-
-comp_opts_i86 = -ml -fpc -zc -zu
-comp_opts_386 = -zc
-comp_opts_axp =
-comp_opts_386 += -fpc
-
-comp_opts = -d__DIP__ -zq -w3 -bt=$(targ) -i"../h;../../h;$(dig_dir)/h;$(inc_dirs_lang);$(watcom_dir)/h"
-
-!ifdef extra_incs
-comp_opts += -i"$(extra_incs)"
-!endif
-!ifdef __LINUX__
-comp_opts += -fo=.obj
-!endif
-
-!ifdef on_build_machine
-comp_opts       += -d1 -oaxt
-dbg_opts        = d a op symfile
-!else
-!ifdef dbg
-comp_opts_i86   += -hw
-comp_opts_386   += -hw
-comp_opts       += -d2 -s
-dbg_opts        = d watcom all
-comp_opts       += -dDEBUG
-!else
-comp_opts       += -d1 -s
-dbg_opts        = d a op symfile
-comp_opts       += -dDEBUG
-!endif
-!endif
-
-compile = $(comp_$(host_OS)_$(host_CPU)) $(comp_opts_$(host_CPU)) $(comp_opts) $(extra_cflags) $[@
+inc_dirs = $(extra_incs);$(dig_dir)/h
 
 .c: ../c;../../c;$(extra_srcs)
 
-.c.obj: .autodepend
-        $(compile)
+objs = dipimp.obj $(imp_objs)
 
-.c.i:
-        $(compile) -p -fo=.i
-
-objs = &
-        dipimp.obj &
-        $(imp_objs)
-
-$(dip_$(host_OS)_$(host_CPU)) : eraseall.obj $(objs) $(imp_libs) $(__MAKEFILES__)
-        *wlink op quiet,map $(dbg_opts) &
-                sys $(sys_$(host_OS)_$(host_CPU)) &
+$(dip_$(host_os)_$(host_cpu)) : $(objs) $(imp_libs) $(__MAKEFILES__)
+        $(linker) op map $(dbg_opts) &
+                sys $(sys_$(host_os)_$(host_cpu)) &
                 name $^@ &
                 file {$(objs)} &
-                library {$(clib_$(host_OS)_$(host_CPU)) $(imp_libs)}
+                library {$(clib_$(host_os)_$(host_cpu)) $(imp_libs)}
 
-lexusbld : .symbolic $(dip_$(host_OS)_$(host_CPU))
-        @newer $[@ $(lexlib_dir)\tools\system\$[. "^copy &f $#f > nul"
-
-eraseall.obj : ../$(name).gbl ../../compile.gbl
-        if exist *.obj erase *.obj
-        wtouch eraseall.obj

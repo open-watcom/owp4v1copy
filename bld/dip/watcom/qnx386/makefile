@@ -1,6 +1,6 @@
-#pmake: all os_qnx watcom cpu_386
+#pmake: os_qnx watcom cpu_386
 
-host_OS = qnx
-host_CPU = 386
+host_os  = qnx
+host_cpu = 386
 
 !include ../watcom.mif

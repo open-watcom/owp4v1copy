@@ -1,6 +1,6 @@
-#pmake: all build os_nt export cpu_386
+#pmake: build os_nt export cpu_386
 
-host_OS = nt
-host_CPU = 386
+host_os  = nt
+host_cpu = 386
 
 !include ../export.mif

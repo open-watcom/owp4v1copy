@@ -1,7 +1,8 @@
-#pmake: all build os_linux dwarf cpu_386
+#pmake: build os_linux dwarf cpu_386
 
-host_OS = linux
-host_CPU = 386
+host_os  = linux
+host_cpu = 386
 
 imp_libs = $(watcom_dir)/lib/dwarfrpd.lib
+
 !include ../dwarf.mif
