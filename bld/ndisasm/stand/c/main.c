@@ -520,9 +520,9 @@ static label_entry dumpLabel( label_entry l_entry, section_ptr sec,
             BufferStore("%c$%d:", LabelChar, l_entry->label.number );
             BufferConcatNL();
             break;
-        case( LTYP_SECTION ):
-        case( LTYP_NAMED ):
-            if( sec && !strncmp( l_entry->label.name, sec->name, 8 ) )
+        case LTYP_SECTION:
+        case LTYP_NAMED:
+            if( strcmp( l_entry->label.name, sec->name ) == 0 )
                 break;
         default:
             PrintLinePrefix( NULL, loop, end, 1, 0 );
@@ -681,9 +681,9 @@ static void bssSection( section_ptr sec, orl_sec_size size, unsigned pass )
     label_list                  sec_label_list;
     label_entry                 l_entry;
 
-    if( pass == 1 ) {
+    if( pass == 1 )
         return;
-    }
+
     /* Obtain the Symbol Table */
     data_ptr = HashTableQuery( HandleToLabelListTable, (hash_value) sec->shnd );
     if( data_ptr ) {
@@ -697,19 +697,18 @@ static void bssSection( section_ptr sec, orl_sec_size size, unsigned pass )
 
     while( l_entry != NULL ){
         switch( l_entry->type ){
-            case LTYP_UNNAMED:
-                PrintLinePrefix( NULL, l_entry->offset, size, 1, 0 );
-                BufferStore("%c$%d:\n", LabelChar, l_entry->label.number );
+        case LTYP_UNNAMED:
+            PrintLinePrefix( NULL, l_entry->offset, size, 1, 0 );
+            BufferStore("%c$%d:\n", LabelChar, l_entry->label.number );
+            break;
+        case LTYP_SECTION:
+            if( strcmp( l_entry->label.name, sec->name ) == 0 )
                 break;
-            case LTYP_SECTION:
-                if( strcmp( l_entry->label.name, sec->name ) ==0 ) {
-                    break;
-                }
-                /* Fall through */
-            case LTYP_NAMED:
-                PrintLinePrefix( NULL, l_entry->offset, size, 1, 0 );
-                BufferStore("%s:\n", l_entry->label.name );
-                break;
+            /* Fall through */
+        case LTYP_NAMED:
+            PrintLinePrefix( NULL, l_entry->offset, size, 1, 0 );
+            BufferStore("%s:\n", l_entry->label.name );
+            break;
         }
         BufferPrint();
         l_entry = l_entry->next;
@@ -805,7 +804,7 @@ static hash_table emitGlobls()
                     name = l_entry->label.name;
                     if( ( l_entry->binding != ORL_SYM_BINDING_LOCAL ) &&
                         (l_entry->type == LTYP_NAMED) &&
-                        strncmp(name,sec->name,8) ) {
+                        strcmp( name, sec->name ) ) {
                         BufferConcat( globl );
                         BufferConcat( name );
                         BufferConcatNL();

@@ -528,7 +528,7 @@ static label_entry dumpAsmLabel( label_entry l_entry, section_ptr sec,
                 break;
             /* fall through */
         case( LTYP_NAMED ):
-            if( sec && !strncmp( l_entry->label.name, sec->name, 8 ) )
+            if( strcmp( l_entry->label.name, sec->name ) == 0 )
                 break;
             /* fall through */
         case( LTYP_UNNAMED ):

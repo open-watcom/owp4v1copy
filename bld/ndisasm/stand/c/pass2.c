@@ -84,7 +84,8 @@ static label_entry handleLabels( char *sec_name, orl_sec_offset offset, label_en
         switch( l_entry->type ) {
         case LTYP_SECTION:
         case LTYP_NAMED:
-            if( strcmp( l_entry->label.name, sec_name ) == 0 ) continue;
+            if( strcmp( l_entry->label.name, sec_name ) == 0 )
+                continue;
             break;
         case LTYP_ABSOLUTE:
         case LTYP_FUNC_INFO:
@@ -467,7 +468,7 @@ unsigned DisCliValueString( void *d, dis_dec_ins *ins, unsigned op_num,
     return( strlen( buff ) );
 }
 
-static void processDataInCode( char *contents, struct pass2 *data,
+static void processDataInCode( section_ptr sec, char *contents, struct pass2 *data,
                                orl_sec_size size, label_entry *l_entry )
 {
     orl_sec_size        offset;
@@ -475,11 +476,11 @@ static void processDataInCode( char *contents, struct pass2 *data,
     offset = data->loop + size;
     if( DFormat & DFF_ASM ) {
         DumpASMDataFromSection( contents, data->loop, offset, l_entry,
-                                &(data->r_entry), NULL );
+                                &(data->r_entry), sec );
         BufferPrint();
     } else {
         DumpDataFromSection( contents, data->loop, offset, l_entry,
-                             &(data->r_entry), NULL );
+                             &(data->r_entry), sec );
     }
     while( data->r_entry && ( data->r_entry->offset < offset ) ) {
         data->r_entry = data->r_entry->next;
@@ -537,7 +538,7 @@ num_errors DoPass2( section_ptr sec, char *contents, orl_sec_size size,
         }
         if( st && ( data.loop >= st->start ) ) {
             decoded.size = 0;
-            processDataInCode( contents, &data, st->end - data.loop, &l_entry );
+            processDataInCode( sec, contents, &data, st->end - data.loop, &l_entry );
             st = st->next;
             continue;
         }
@@ -551,7 +552,7 @@ num_errors DoPass2( section_ptr sec, char *contents, orl_sec_size size,
             if( is_intel || IsDataReloc( data.r_entry ) ) {
                 // we just skip the data
                 decoded.size = 0;
-                processDataInCode( contents, &data, RelocSize( data.r_entry ),
+                processDataInCode( sec, contents, &data, RelocSize( data.r_entry ),
                                    &l_entry );
                 continue;
             }
@@ -576,7 +577,7 @@ num_errors DoPass2( section_ptr sec, char *contents, orl_sec_size size,
                     and label process from offset of actual label.
                 */
                 decoded.size = 0;
-                processDataInCode( contents, &data, l_entry->offset - data.loop, &l_entry );
+                processDataInCode( sec, contents, &data, l_entry->offset - data.loop, &l_entry );
                 continue;
             }
             l_entry = handleLabels( sec->name, data.loop, l_entry, size );
