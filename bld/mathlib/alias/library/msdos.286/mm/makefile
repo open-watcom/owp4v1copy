@@ -1,4 +1,4 @@
-#pmake:all medium 16bit calls msdos iX86 static build os_dos cpu_i86 alias
+#pmake:all medium 16bit calls msdos iX86 static build os_dos cpu_i86 alias os_os2
 processor=286
 model=mm
 system=msdos

@@ -1,4 +1,4 @@
-#pmake:all large 16bit inline windows iX86 static build os_windows cpu_i86 alias
+#pmake:all large 16bit inline windows iX86 static build os_windows cpu_i86 alias os_win os_os2
 processor=287
 model=ml
 system=windows
