@@ -890,7 +890,6 @@ namespace std {
       const CharT *s,
       size_type n )
   {
-    // Inefficient. Go with it for now.
     return( insert( pos, basic_string( s, n ) ) );
   }
 
@@ -902,7 +901,6 @@ namespace std {
       size_type pos,
       const CharT *s )
   {
-    // Inefficient. Go with it for now.
     return( insert( pos, basic_string( s ) ) );
   }
 
@@ -916,7 +914,6 @@ namespace std {
       size_type n,
       CharT c )
   {
-    // Inefficient. Go with it for now.
     return( insert( pos, basic_string( n, c ) ) );
   }
 
@@ -1158,6 +1155,66 @@ namespace std {
     return( rfind( basic_string( 1, c ), pos ) );
   }
 
+  // find_first_of( const basic_string &, size_type ) const
+  // ******************************************************
+  template< class CharT, class Traits, class Allocator >
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find_first_of(
+      const basic_string &str,
+      size_type pos ) const
+  {
+    size_type index = pos;
+
+    if( filled < index ) return( npos );
+
+    while( index < filled ) {
+      for( size_type i = 0; i < str.filled; ++i ) {
+        if( Traits::eq( buffer[index], str.buffer[i] ) == true ) {
+          return( index );
+        }
+      }
+      ++index;
+    }
+
+    return( npos );
+  }
+
+  // find_first_of( const CharT *, size_type, size_type ) const
+  // **********************************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find_first_of(
+      const CharT *s,
+      size_type pos,
+      size_type n ) const
+  {
+    return( find_first_of( basic_string( s, n ), pos ) );
+  }
+
+  // find_first_of( const CharT *, size_type ) const
+  // ***********************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find_first_of(
+      const CharT *s,
+      size_type pos ) const
+  {
+    return( find_first_of( basic_string( s ), pos ) );
+  }
+
+  // find_first_of( CharT, size_type ) const
+  // ***************************************
+  template< class CharT, class Traits, class Allocator >
+  inline
+  typename basic_string< CharT, Traits, Allocator >::size_type
+    basic_string< CharT, Traits, Allocator >::find_first_of(
+      CharT c,
+      size_type pos ) const
+  {
+    return( find_first_of( basic_string( 1, c ), pos ) );
+  }
 
   // ======================================
   // Ordinary functions using basic_string.

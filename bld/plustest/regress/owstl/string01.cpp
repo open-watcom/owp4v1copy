@@ -480,6 +480,32 @@ bool rfind_test( )
   return( rc );
 }
 
+bool find_first_of_test()
+{
+  bool rc = true;
+  std::string s1( "Hello, World!" );
+  if( s1.find_first_of( "eoW" ) != 1 ) {
+    std::cout << "find_first_of FAIL 0001\n"; rc = false;
+  }
+  if( s1.find_first_of( "eoW", 1 ) != 1 ) {
+    std::cout << "find_first_of FAIL 0002\n"; rc = false;
+  }
+  if( s1.find_first_of( "eoW", 2 ) != 4 ) {
+    std::cout << "find_first_of FAIL 0003\n"; rc = false;
+  }
+  if( s1.find_first_of( "!" ) != 12 ) {
+    std::cout << "find_first_of FAIL 0004\n"; rc = false;
+  }
+  if( s1.find_first_of( "!", 13 ) != std::string::npos ) {
+    std::cout << "find_first_of FAIL 0005\n"; rc = false;
+  }
+  if( s1.find_first_of( "z#+" ) != std::string::npos ) {
+    std::cout << "find_first_of FAIL 0006\n"; rc = false;
+  }
+
+  return( rc );
+}
+
 // Main Program
 // ============
 
@@ -488,17 +514,18 @@ int main( )
   int rc = 0;
 
   try {
-    if( !construct_test( )  ) rc = 1;
-    if( !assign_test( )     ) rc = 1;
-    if( !access_test( )     ) rc = 1;
-    if( !relational_test( ) ) rc = 1;
-    if( !iterator_test( )   ) rc = 1;
-    if( !append_test( )     ) rc = 1;
-    if( !insert_test( )     ) rc = 1;
-    if( !erase_test( )      ) rc = 1;
-    if( !cstr_test( )       ) rc = 1;
-    if( !find_test( )       ) rc = 1;
-    if( !rfind_test( )      ) rc = 1;
+    if( !construct_test( )    ) rc = 1;
+    if( !assign_test( )       ) rc = 1;
+    if( !access_test( )       ) rc = 1;
+    if( !relational_test( )   ) rc = 1;
+    if( !iterator_test( )     ) rc = 1;
+    if( !append_test( )       ) rc = 1;
+    if( !insert_test( )       ) rc = 1;
+    if( !erase_test( )        ) rc = 1;
+    if( !cstr_test( )         ) rc = 1;
+    if( !find_test( )         ) rc = 1;
+    if( !rfind_test( )        ) rc = 1;
+    if( !find_first_of_test() ) rc = 1;
   }
   catch( out_of_range e ) {
     std::cout << "Unexpected out_of_range exception: " << e.what( ) << "\n";

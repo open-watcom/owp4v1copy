@@ -455,6 +455,14 @@ namespace std {
       size_type rfind( const CharT *s, size_type pos = npos ) const;
       size_type rfind( CharT c, size_type pos = npos ) const;
 
+      size_type find_first_of( const basic_string &str,
+                               size_type pos = 0 ) const;
+      size_type find_first_of( const CharT *s,
+                               size_type pos,
+                               size_type n ) const;
+      size_type find_first_of( const CharT *s, size_type pos = 0 ) const;
+      size_type find_first_of( CharT c, size_type pos = 0 ) const;
+
     private:
       Allocator mem;      // Object used to get and release memory.
       pointer   buffer;   // Points at start of string.
