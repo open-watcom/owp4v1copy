@@ -385,8 +385,7 @@ void __loadds __cdecl FaultHandler( volatile fault_frame ff )
         if( rc == RUN_REDIRECT ) {
             ExecuteRedirect();
         } else if( rc == ACCESS_SEGMENT ) {
-            LPINT ip = MK_FP( SegmentToAccess+1, 0 );
-            AVolatileInt = *ip;
+            AVolatileInt = *(LPINT) MK_FP( SegmentToAccess+1, 0 );
         } else {
             break;
         }
