@@ -1,6 +1,6 @@
 #include "stdio.h"
 #define MAX_SIZE 120
-main( int argc, char *argv[] )
+int main( int argc, char *argv[] )
 {
     FILE *fp;
     int len;
@@ -10,12 +10,17 @@ main( int argc, char *argv[] )
     char *loc;
     char linebuffer[MAX_SIZE];
 
-    fp = fopen( argv[1], "r" );
+    if( ( fp = fopen( argv[1], "r" )) == NULL )
+        return 1;
+
     fseek( fp, -1, SEEK_END );
     len = ftell( fp );
     fseek( fp, 0, SEEK_SET );
 
     buffer = (char*)malloc( len + 1 );
+    if( buffer == NULL )
+        return 2;
+
     buffer[len] = '\0';
     loc = buffer+len;
 
@@ -30,9 +35,11 @@ main( int argc, char *argv[] )
     /* now dump it back out */
 
     fclose( fp );
-    fp = fopen( argv[1], "w" );
+    if(( fp = fopen( argv[1], "w" )) == NULL)
+        return 3;
 
     fputs( buffer + offset, fp );
 
     fclose( fp );
+    return 0;
 }
