@@ -115,6 +115,8 @@ uint_8                  Frame_Datum;    // Frame datum of current fixup
 extern char             *CurrString;    // Current Input Line
 extern char             EndDirectiveFound;
 
+static int              in_epilogue = 0;
+
 #else
 
 extern uint_32          Address;
@@ -124,7 +126,6 @@ extern uint_32          Address;
 #endif
 
 int                     curr_ptr_type;
-static int              in_epilogue = 0;
 
 void make_inst_hash_table( void );
 
