@@ -99,6 +99,8 @@ static void decodeMsg(          // DECODE MESSAGE
     /* encodeRaw always adds a trailing space, remove it */
     if( ( endp != tgt ) && ( endp[-1] == ' ' ) ) {
         endp[-1] = '\0';
+    } else {
+        *endp = '\0';
     }
 }
 
