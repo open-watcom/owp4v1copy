@@ -247,14 +247,21 @@ void __parse_tz( char * tz )
     }
 }
 
-static void tryOSTimeZone( void )
+static int tryOSTimeZone( const char *tz )
 {
-    if( tzFlag.cache_OS_TZ && tzFlag.have_OS_TZ )
-        return;     /* calling OS can be expensive; many programs don't care */
-    /* Assume that even if we end up not getting the TZ from OS, we won't have
-     * any better luck if we try later.
-     */
-    tzFlag.have_OS_TZ = 1;
+    if( tz == NULL ) {
+        /* calling OS can be expensive; many programs don't care */
+        if( tzFlag.cache_OS_TZ && tzFlag.have_OS_TZ )
+            return( 1 );
+        /* Assume that even if we end up not getting the TZ from OS,
+            we won't have any better luck if we try later. */
+        tzFlag.have_OS_TZ = 1;
+    } else {
+        tzFlag.have_OS_TZ = 0;
+#ifndef __LINUX__
+        return( 0 );
+#endif
+    }
 #if defined( __NT__ )
     {
         auto TIME_ZONE_INFORMATION  tz_info;
@@ -287,26 +294,23 @@ static void tryOSTimeZone( void )
             _RWD_timezone = 5L * 60L * 60L;
             _RWD_dst_adjust = 60L * 60L;
         }
-
-        return;
+        return( 1 );
     }
 #elif defined( __LINUX__ )
-//    __read_tzfile( tz );    TODO: Ought to be fixed, but I don't know how!
-    __read_tzfile( NULL );
+    return( __read_tzfile( tz ) );
+#else
+    return( 1 );
 #endif
-    return;
 }
 
 _WCRTLINK void tzset( void )
 /**************************/
 {
     #ifndef __NETWARE__
-    char    *tz;
+    char        *tz;
 
     tz = getenv( "TZ" );
-    if( tz == NULL )
-        tryOSTimeZone();
-    else
+    if( !tryOSTimeZone( tz ) && tz != NULL )
         __parse_tz( tz );
     #endif
 }
