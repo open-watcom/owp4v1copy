@@ -10,4 +10,3 @@ comp_cpp = $(comp_cpp_axp)
 !endif
 !endif
 comp_c = $(cc_$(host_CPU))
-asm_a = $(as_$(host_CPU))

@@ -72,8 +72,8 @@ sw_a_dynamic = -d__MAKE_DLL_CLIB -d_EXPORT
 sw_a_register = -5r
 sw_a_stack    = -5s
 
-sw_a_086 = -e -fpc-0r -w4 -zld
-sw_a_286 = -e -fpc-2r -w4 -zld
+sw_a_086 = -e -fpc-0 -w4 -zld
+sw_a_286 = -e -fpc-2 -w4 -zld
 sw_a_386 = -e -fpc -w4 -zld
 sw_a_axp =
 sw_a_ppc =
