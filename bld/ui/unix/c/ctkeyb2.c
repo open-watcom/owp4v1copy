@@ -32,6 +32,7 @@
 
 #include "ctkeyb.h"
 #include <termios.h>
+#include <sys/ioctl.h>
 
 static struct termios   SaveTermSet;
 static pid_t            SavePGroup;
@@ -77,6 +78,21 @@ int ck_flush()
 int ck_shift_state()
 /*************************/
 {
+#ifdef __LINUX__
+    /* read the shift state on the Linux console. Works only locally. */
+    /* and WARNING: see console_ioctl(4)                              */
+    char shift_state = 6;
+    if( ioctl( 0, TIOCLINUX, &shift_state ) >= 0 ) {
+        /* Linux console modifiers */
+        ShftState &= ~(S_SHIFT|S_CTRL|S_ALT);
+        if( shift_state & 1 )
+            ShftState |= S_SHIFT;
+        if( shift_state & ( 2 | 8 ) )
+            ShftState |= S_ALT;
+        if( shift_state & 4 )
+            ShftState |= S_CTRL;
+    }
+#endif
     return( ShftState );
 }
 int ck_restore()

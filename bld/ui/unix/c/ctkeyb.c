@@ -309,6 +309,11 @@ EVENT ck_keyboardevent()
     static unsigned short       real_shift;
 
     ev = TrieRead();
+    ck_shift_state();
+    if( ShftState != ( real_shift | sticky ) ) {
+        /* did it change? */
+        real_shift = ShftState;
+    }
     switch( ev ) {
     case EV_STICKY_FUNC:
         sticky ^= S_FUNC;
