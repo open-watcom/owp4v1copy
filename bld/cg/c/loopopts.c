@@ -2538,7 +2538,7 @@ static  bool    PointerOk( name *op ) {
 
     if( _POINTER_GETS_NEAR_BOUNDS != 0 ) return( FALSE );
     if( op->n.name_class == PT ) return( TRUE );
-    if( op->n.name_class != CP ) return( TRUE );
+    if( op->n.name_class == CP ) return( TRUE );
     if( op->n.name_class != U2 ) return( FALSE );
     if( op->n.class != N_TEMP ) return( FALSE );
     if( ( op->t.temp_flags & INDEXED ) == EMPTY ) return( FALSE );
@@ -2554,6 +2554,7 @@ static  bool    DangerousTypeChange( induction *var, induction *other ) {
 
     invariant   *invar;
 
+    if( var->type_class == other->type_class ) return( FALSE );
     if( PointerOk( other->name ) ) return( FALSE );
     invar = other->invar;
     while( invar != NULL ) {
@@ -2692,7 +2693,7 @@ static  bool    ReplUses( induction *var, induction *rep,
     iv_usage    op2use;
 
     if( ins->head.opcode == OP_CMP_EQUAL
-    || DangerousTypeChange( var, rep ) == FALSE ) {
+    && DangerousTypeChange( var, rep ) == FALSE ) {
         op1use = Uses( ins->operands[ 0 ], var->name ); /* UNUSED | USED_AS_OP*/
         op2use = Uses( ins->operands[ 1 ], var->name ); /* UNUSED | USED_AS_OP*/
         if( op1use == USED_AS_OPERAND ) {
