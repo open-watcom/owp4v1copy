@@ -258,22 +258,29 @@ linkfile: .procedure
         @%append $^&.lnk lib $(asinline_axp_lib)
 !endif
 $(cc_dir)\h\codei86.gh : ..\a\codei86.asm ..\a\mkcode.c
-        masm /mx /I$(watcom_dir)\h /s ..\a\codei86.asm;
-        wcc /zq /ox ..\a\mkcode.c @ipaths
-        wcl  mkcode.obj codei86.obj /fe=mkcode /zq
+        wasm -i=$(watcom_dir)\h ..\a\codei86.asm
+        wcc -zq -ox ..\a\mkcode.c @ipaths
+!ifdef __OS2__
+        wcl -l=os2 mkcode.obj codei86.obj -fe=mkcode -zq
+!else
+        wcl  mkcode.obj codei86.obj -fe=mkcode -zq
+!endif
         mkcode
         erase mkcode.obj
         erase mkcode.exe
         erase codei86.obj
 
 $(cc_dir)\h\code386.gh : ..\a\code386.asm ..\a\mkcode.c
-        masm /mx /I$(watcom_dir)\h /s ..\a\code386.asm;
-        wcc386 /zq $(popt) /ox ..\a\mkcode.c @ipaths
-        wcl386 mkcode.obj code386.obj /fe=mkcode /zq
+        wasm -i=$(watcom_dir)\h ..\a\code386.asm
+        wcc386 -zq $(popt) -ox ..\a\mkcode.c @ipaths
+        wcl386 mkcode.obj code386.obj -fe=mkcode -zq
         mkcode
         erase mkcode.obj
         erase mkcode.exe
         erase code386.obj
+
+$(cc_dir)\h\codeaxp.gh :
+        echo // Dummy file > $@
 
 usage.gh: ../usage.sp
         $(bld_bin)\wsplice -k T$(target_CPU) -k H$(host_CPU) -k OS_$(host_OS)  "-f\"%s\0\"" ../usage.sp usage.gh
