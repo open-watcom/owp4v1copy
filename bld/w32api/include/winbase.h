@@ -1292,13 +1292,8 @@ DWORD WINAPI GetFirmwareEnvironmentVariableW(LPCWSTR,LPCWSTR,PVOID,DWORD);
 BOOL WINAPI FlushFileBuffers(HANDLE);
 BOOL WINAPI FlushInstructionCache(HANDLE,PCVOID,DWORD);
 BOOL WINAPI FlushViewOfFile(PCVOID,DWORD);
-#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)
 DWORD WINAPI FormatMessageA(DWORD,PCVOID,DWORD,DWORD,LPSTR,DWORD,va_list*);
 DWORD WINAPI FormatMessageW(DWORD,PCVOID,DWORD,DWORD,LPWSTR,DWORD,va_list*);
-#else
-DWORD WINAPI FormatMessageA(DWORD,PCVOID,DWORD,DWORD,LPSTR,DWORD,char**);
-DWORD WINAPI FormatMessageW(DWORD,PCVOID,DWORD,DWORD,LPWSTR,DWORD,char**);
-#endif
 BOOL WINAPI FreeEnvironmentStringsA(LPSTR);
 BOOL WINAPI FreeEnvironmentStringsW(LPWSTR);
 BOOL WINAPI FreeLibrary(HMODULE);
@@ -2004,11 +1999,7 @@ typedef PCACTCTXW PCACTCTX;
 #endif
 #define FindResource FindResourceW
 #define FindResourceEx FindResourceExW
-#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)
 #define FormatMessage FormatMessageW
-#else
-#define FormatMessage(a,b,c,d,e,f,g) FormatMessageW(a,b,c,d,e,f,*(g))
-#endif
 #define FreeEnvironmentStrings FreeEnvironmentStringsW
 #define GetAtomName GetAtomNameW
 #define GetBinaryType GetBinaryTypeW
@@ -2204,11 +2195,7 @@ typedef PCACTCTXA PCACTCTX;
 #endif
 #define FindResource FindResourceA
 #define FindResourceEx FindResourceExA
-#if !defined(__WATCOMC__) || defined(__AXP__) || defined(__PPC__)
 #define FormatMessage FormatMessageA
-#else
-#define FormatMessage(a,b,c,d,e,f,g) FormatMessageA(a,b,c,d,e,f,*(g))
-#endif
 #define FreeEnvironmentStrings FreeEnvironmentStringsA
 #define GetAtomName GetAtomNameA
 #define GetBinaryType GetBinaryTypeA
