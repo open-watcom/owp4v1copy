@@ -497,11 +497,12 @@ static bool IsCallValue( TREEPTR tree )
     }
     return( ret );
 }
+
 // This RVALUE thing is backwards -mjc
 local TREEPTR TakeRValue( TREEPTR tree, int void_ok )
 {
     TYPEPTR             typ;
-    char                sym_flags;
+    sym_flags           symb_flags;
     type_modifiers      decl_flags;
     target_uint         value;
     SYM_ENTRY           sym;
@@ -535,9 +536,9 @@ local TREEPTR TakeRValue( TREEPTR tree, int void_ok )
             decl_flags = FlagOps( tree->op.flags );
             if( tree->op.opr == OPR_PUSHADDR ) {
                 SymGet( &sym, tree->op.sym_handle );
-                sym_flags = sym.flags;
+                symb_flags = sym.flags;
                 sym.flags |= SYM_REFERENCED | SYM_ASSIGNED;
-                if( sym_flags != sym.flags ) {
+                if( symb_flags != sym.flags ) {
                     SymReplace( &sym, tree->op.sym_handle );
                 }
             }
@@ -549,13 +550,13 @@ local TREEPTR TakeRValue( TREEPTR tree, int void_ok )
         }
     } else if( typ->decl_type == TYPE_FUNCTION ) {
 
-        sym_flags = FLAG_NONE;
+        symb_flags = FLAG_NONE;
         if( tree->op.opr == OPR_PUSHADDR ) {
             SymGet( &sym, tree->op.sym_handle );
             decl_flags = sym.attrib;
-            sym_flags = sym.flags;
+            symb_flags = sym.flags;
             sym.flags |= SYM_REFERENCED | SYM_ADDR_TAKEN;
-            if( sym_flags != sym.flags ) {
+            if( symb_flags != sym.flags ) {
                     SymReplace( &sym, tree->op.sym_handle );
             }
         }else if( tree->op.opr == OPR_POINTS ){
@@ -574,7 +575,7 @@ local TREEPTR TakeRValue( TREEPTR tree, int void_ok )
         }
         if( tree->op.opr == OPR_PUSHSYM || tree->op.opr == OPR_PUSHADDR ) {
             SymGet( &sym, tree->op.sym_handle );
-            sym_flags = sym.flags;
+            symb_flags = sym.flags;
             sym.flags |= SYM_REFERENCED;                /* 07-jun-89 */
             if( CompFlags.label_dropped == 0  &&  SizeOfCount == 0 ) {
                 if( sym.level != 0      &&
@@ -589,7 +590,7 @@ local TREEPTR TakeRValue( TREEPTR tree, int void_ok )
                     }
                 }
             }
-            if( sym_flags != sym.flags ) {
+            if( symb_flags != sym.flags ) {
                 SymReplace( &sym, tree->op.sym_handle );
             }
         }
