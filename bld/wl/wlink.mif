@@ -5,6 +5,9 @@
 
 proj_name = wlink
 
+# get rid of the -zc
+suppress_zc = 1
+
 !include cproj.mif
 !include defrule.mif
 
@@ -148,12 +151,9 @@ extra_objs += mem.obj
 cflags_axp = -hc
 !endif
 
-cflags_386 =                    # get rid of the -zc
-cflags_all = -w4 -we -zp4
-!ifdef __LINUX__
-cflags_all += -fo=$@
-!endif
 wcl_util_opts = -ox -zq
+
+extra_c_flags = -zp4
 
 extra_c_flags_ntio = -I"$(wres_dir)/h"
 extra_c_flags_posixio = -I"$(wres_dir)/h"
@@ -164,10 +164,6 @@ extra_c_flags_loadpe = -I. -I"../h" -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -DINSIDE_
 extra_c_flags_loados2 = -I"$(wres_dir)/h"
 
 exe_cflags = $+$(cflags)$-
-
-!ifeq sys_dll 1
-cflags_all += -bd
-!endif
 
 # now get all of the linker flags set properly
 

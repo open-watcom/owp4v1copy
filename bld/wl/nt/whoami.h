@@ -57,4 +57,4 @@
 
 // remove assertions
 
-#define NDEBUG
+//#define NDEBUG

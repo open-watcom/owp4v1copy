@@ -102,10 +102,14 @@ cflags_all      =-w4-we
 cflags_all      += -fo=.obj
 !endif
 
-cflags_386      = $(model_switch_$(host_cpu))-zc
+cflags_386      = $(model_switch_$(host_cpu))
 cflags_i86      = $(model_switch_$(host_cpu))
 cflags_axp      =
 cflags_ppc      =
+
+!ifndef suppress_zc
+cflags_386      += -zc
+!endif
 
 cflags_nt       = -bt=nt
 cflags_win      = -bt=windows
