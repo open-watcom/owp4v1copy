@@ -400,6 +400,7 @@ positive_tests = &
     fntemp16.$(ext) &
     fold01.$(ext) &
     fold02.$(ext) &
+    for01.$(ext) &
     friend1.$(ext) &
     friend2.$(ext) &
     gpf01.$(ext) &

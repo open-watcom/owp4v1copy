@@ -638,9 +638,7 @@ static void parseForStmt( void )
             jumpBlkLabel( &loop->outside, O_IF_FALSE );
         }
     }
-    if( CompFlags.use_old_for_scope ) {
-        openScope();
-    }
+    openScope();
 }
 
 
@@ -1451,6 +1449,8 @@ static boolean endOfStmt(       // PROCESS END-OF-STATEMENT
             closeScope();
             doJUMP( IC_LABEL_CS, O_GOTO, top_block->u.l.top_loop );
             dumpOutsideLabel( top_block );
+            if( id == CS_FOR && !CompFlags.use_old_for_scope )
+              closeScope( );
             CgFrontLabfreeCs( 3 );
             break;
         case CS_DO:
