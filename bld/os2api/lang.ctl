@@ -17,8 +17,10 @@ cdsay .
 #16-bit stuff
     <CPCMD> incl16\*.h   <relroot>\rel2\h\os21x\
     <CPCMD> os2286\*.lib <relroot>\rel2\lib286\os2\
+#32-bit stuff
+#   <CPCMD> incl32\*.h   <relroot>\rel2\h\os2\
+    <CPCMD> os2386\*.lib <relroot>\rel2\lib386\os2\
 
 [ BLOCK <1> clean ]
 #==================
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
-

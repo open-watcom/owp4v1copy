@@ -1,10 +1,8 @@
 lib = wlib
-cc = wcc386
-as = wasm
+cc  = wcc386
+as  = wasm
 
 .EXTENSIONS : .lbc .def
-
-lib286 = os2.lib
 
 components286 =      &
         ansicall.lbc &
@@ -19,10 +17,28 @@ components286 =      &
         sesmgr.lbc   &
         viocalls.lbc
 
-.def .asm : ..\lib286
+components386 =      &
+        bdcalls.lbc  &
+        doscalls.lbc &
+        helpmgr.lbc  &
+        kbdcalls.lbc &
+        moncalls.lbc &
+        moucalls.lbc &
+        msg.lbc      &
+        nampipes.lbc &
+        nls.lbc      &
+        pmctls.lbc   &
+        pmgpi.lbc    &
+        pmshapi.lbc  &
+        pmwin.lbc    &
+        quecalls.lbc &
+        sesmgr.lbc   &
+        viocalls.lbc
+
+.def .asm : ..\$(srcdir)
 
 .def.lbc:
-        vi -i -q -k ":set norc\n:r ../lib286/$[.\n:source ../def2lbc.vi $*\n"
+        vi -i -q -k ":set norc\n:r ../$(srcdir)/$[.\n:source ../def2lbc.vi $*\n"
 
 .lbc.lib:
         $(lib) -b -c -q -n -io -ii $@ @$<
@@ -36,11 +52,18 @@ components286 =      &
 .asm.obj:
         $(as) -zq -d1 $<
 
-$(lib286): lib286.lbc msgseg.obj
+os2.lib: lib286.lbc msgseg.obj
         $(lib) -b -c -q -n -io -ii -p=32 $@ @$<
         $(lib) -b -c -q -p=32 $@ +msgseg.obj
 
 lib286.lbc: $(components286)
+        cat $< > $@
+
+os2386.lib: lib386.lbc msgseg32.obj
+        $(lib) -b -c -q -n -io -ii -p=32 $@ @$<
+        $(lib) -b -c -q -p=32 $@ +msgseg32.obj
+
+lib386.lbc: $(components386)
         cat $< > $@
 
 clean: .SYMBOLIC .EXPLICIT

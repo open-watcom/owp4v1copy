@@ -1,0 +1,32 @@
+LIBRARY PMSHAPI
+EXPORTS
+    PrfQueryProfileSize                         @101
+    PrfOpenProfile                              @102
+    PrfCloseProfile                             @103
+    PrfRemoveProgram                            @104
+    PrfDestroyGroup                             @106
+    PrfQueryProfile                             @107
+    PrfReset                                    @108
+    PrfAddProgram                               @109
+    PrfChangeProgram                            @110
+    PrfQueryDefinition                          @111
+    PrfQueryProgramTitles                       @113
+    PrfQueryProfileInt                          @114
+    PrfQueryProfileString                       @115
+    PrfWriteProfileString                       @116
+    PrfQueryProfileData                         @117
+    PrfWriteProfileData                         @118
+    WinStartApp                                 @119
+    WinAddSwitchEntry                           @120
+    WinCreateSwitchEntry                        @121
+    WinQuerySessionTitle                        @122
+    WinChangeSwitchEntry                        @123
+    WinQuerySwitchEntry                         @124
+    WinQuerySwitchHandle                        @125
+    WinQuerySwitchList                          @126
+    WinQueryTaskSizePos                         @127
+    WinQueryTaskTitle                           @128
+    WinRemoveSwitchEntry                        @129
+    WinTerminateApp                             @130
+    WinSwitchToProgram                          @131
+    WinSwitchProgramRegister                    @156
