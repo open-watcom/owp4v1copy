@@ -51,3 +51,10 @@ samples\goodies\spwndd4g.c
 samples\goodies\spwndpls.c
 samples\goodies\spwnrd4g.c
 samples\goodies\spwnrpls.c
+samples\os2\mthread.c
+samples\os2\shapes.c
+samples\os2\shapes.cpp
+samples\os2\dll\dllsamp.c
+samples\os2\dll\dllsamp.lnk
+samples\os2\dll\dlltest.c
+

@@ -40,8 +40,6 @@ src\os2\pdd\stratini.c
 src\os2\pdd\timer.c
 src\pgdemo.c
 src\pmhello.c
-src\shapes.c
-src\shapes.cpp
 src\startup\386\cmain386.c
 src\startup\386\cstrt386.asm
 src\startup\386\cstrto32.asm
