@@ -117,9 +117,11 @@ struct Glob {
 
 extern struct Glob Glob;
 extern const char FAR * BuiltIns;
+extern const char FAR * MSBuiltIn;
+extern const char FAR * UNIXBuiltIn;
 extern const char FAR * SuffixList;
 extern const char FAR * MSSuffixList;
-extern const char FAR * MSBuiltIn;
+extern const char FAR * UNIXSuffixList;
 
 extern int ExitSafe( int rc );
 extern void Header( void );

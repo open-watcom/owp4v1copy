@@ -56,8 +56,8 @@
 #   include "tinyio.h"
 #endif
 #else
-#   include "make.h"
 #   include "mtypes.h"
+#   include "make.h"
 #endif
 
 
@@ -118,6 +118,11 @@ const char FAR *MSSuffixList = {
 };
 
 
+const char FAR *UNIXSuffixList = {
+    ".SUFFIXES: "
+        ".exe .obj .c .y .l .f"
+};
+
 /*
  * Be careful that this doesn't exceed 2048 characters.  Note that this is just
  * one big string - not an array of strings.
@@ -175,10 +180,45 @@ const char FAR* MSBuiltIn = {
 
 };
 
+const char FAR* UNIXBuiltIn = {
+     "YACC=yacc\n"
+     "YFLAGS=\n"
+     "LEX=lex\n"
+     "LFLAGS=\n"
+     "LDFLAGS=\n"
+     "CC=cl\n"
+     "FC=fl\n"
+     "CFLAGS=-nologo\n"
+     ".c.exe:\n"
+     "    $(CC) $(CFLAGS) $(LDFLAGS) $<\n"
+     ".f.exe:\n"
+     "    $(FC) $(FFLAGS) $(LDFLAGS) $<\n"
+     ".c.obj:\n"
+     "    $(CC) $(CFLAGS) -c $<\n"
+     ".f.obj:\n"
+     "    $(FC) $(FFLAGS) -c $<\n"
+     ".y.obj:\n"
+     "    $(YACC) $(YFLAGS) $<\n"
+     "    $(CC) $(CFLAGS) -c y.tab.c\n"
+     "    del y.tab.c\n"
+     "    move y.tab.obj $@\n"
+     ".l.obj:\n"
+     "    $(LEX) $(LFLAGS) $<\n"
+     "    $(CC) $(CFLAGS) -c lex.yy.c\n"
+     "    del lex.yy.c\n"
+     "    move lex.yy.obj $@\n"
+     ".y.c:\n"
+     "    $(YACC) $(YFLAGS) $<\n"
+     "    move y.tab.c $@\n"
+     ".l.c:\n"
+     "    $(LEX) $(LFLAGS) $<\n"
+     "    move lex.yy.c $@\n"
+};
+
 /*
  * This is the table indexed by users of the is... functions.
  * The program 'cretype.exe' is used to rebuild this table.
  */
-extern const UINT8 IsArray[] = {
+const UINT8 IsArray[] = {
 #include "isarray.gh"
 };

@@ -31,8 +31,9 @@
 
 #include <string.h>
 
-#include "make.h"
 #include "massert.h"
+#include "mtypes.h"
+#include "make.h"
 #include "mmemory.h"
 #include "mhash.h"
 #include "mmisc.h"
@@ -40,7 +41,6 @@
 #include "mrcmsg.h"
 #include "msg.h"
 #include "mtarget.h"
-#include "mtypes.h"
 
 
 /* just for people to copy in */
@@ -61,8 +61,8 @@ STATIC NKLIST     *freeNKLists;
 STATIC SLIST      *freeSLists;
 
 #ifdef CLEAN_ENVIRONMENT_VAR
-extern ELIST *NewEList( void )
-/*****************************
+ELIST *NewEList( void )
+/**********************
  * allocate a FLIST, fill in default values
  */
 {
@@ -78,8 +78,8 @@ extern ELIST *NewEList( void )
 }
 #endif
 
-extern FLIST *NewFList( void )
-/*****************************
+FLIST *NewFList( void )
+/**********************
  * allocate a FLIST, fill in default values
  */
 {
@@ -94,8 +94,8 @@ extern FLIST *NewFList( void )
     return( (FLIST *) CallocSafe( sizeof( FLIST ) ) );
 }
 
-extern NKLIST *NewNKList( void )
-/*****************************
+NKLIST *NewNKList( void )
+/************************
  * allocate a NKLIST, fill in default values
  */
 {
@@ -111,8 +111,8 @@ extern NKLIST *NewNKList( void )
 }
 
 
-extern SLIST *NewSList( void )
-/*****************************
+SLIST *NewSList( void )
+/**********************
  * allocate a NKLIST, fill in default values
  */
 {
@@ -128,8 +128,8 @@ extern SLIST *NewSList( void )
 }
 
 
-extern TLIST *NewTList( void )
-/*****************************
+TLIST *NewTList( void )
+/**********************
  * allocate a TLIST, fill in default values
  */
 {
@@ -145,8 +145,8 @@ extern TLIST *NewTList( void )
 }
 
 
-extern void RenameTarget( TARGET *targ, const char *newname )
-/***********************************************************/
+void RenameTarget( TARGET *targ, const char *newname )
+/****************************************************/
 {
     (void) RemHashNode( targTab, targ->node.name, CASESENSITIVE );
     if( targ->node.name != NULL ) {
@@ -157,8 +157,8 @@ extern void RenameTarget( TARGET *targ, const char *newname )
 }
 
 
-extern TARGET *NewTarget( const char *name )
-/*******************************************
+TARGET *NewTarget( const char *name )
+/************************************
  * allocate a newtarget with name, and default values
  */
 {
@@ -176,8 +176,8 @@ extern TARGET *NewTarget( const char *name )
 }
 
 
-extern TARGET *FindTarget( const char *name )
-/********************************************
+TARGET *FindTarget( const char *name )
+/*************************************
  * be sure that name has been FixName'd!
  */
 {
@@ -188,13 +188,13 @@ extern TARGET *FindTarget( const char *name )
 
 
 #pragma on (check_stack);
-extern CLIST *DotCList( enum DotNames dot )
-/*****************************************
+CLIST *DotCList( enum DotNames dot )
+/***********************************
  * find clist associated with dotname
  */
 {
-    char    name[ MAX_DOT_NAME ];
-    TARGET  *cur;
+    char                name[ MAX_DOT_NAME ];
+    TARGET const       *cur;
 
     name[ 0 ] = DOT;
     FixName( strcpy( name + 1, DotNames[ dot ] ) );
@@ -209,8 +209,8 @@ extern CLIST *DotCList( enum DotNames dot )
 #pragma off(check_stack);
 
 
-extern DEPEND *NewDepend( void )
-/******************************/
+DEPEND *NewDepend( void )
+/***********************/
 {
     DEPEND *dep;
 
@@ -224,8 +224,8 @@ extern DEPEND *NewDepend( void )
 }
 
 
-extern CLIST *NewCList( void )
-/**************************/
+CLIST *NewCList( void )
+/*********************/
 {
     CLIST *c;
 
@@ -239,8 +239,8 @@ extern CLIST *NewCList( void )
 }
 
 // Duplicate the inline file information of the CLIST
-STATIC FLIST *DupFList( FLIST *old )
-/**********************************/
+STATIC FLIST *DupFList( const FLIST *old )
+/****************************************/
 {
     FLIST *new;
     FLIST *cur;
@@ -279,8 +279,8 @@ STATIC FLIST *DupFList( FLIST *old )
     return( head );
 }
 
-STATIC SLIST *DupSList( SLIST *old )
-/**********************************/
+STATIC SLIST *DupSList( const SLIST *old )
+/****************************************/
 {
     SLIST *new;
     SLIST *cur;
@@ -311,8 +311,8 @@ STATIC SLIST *DupSList( SLIST *old )
 }
 
 
-extern CLIST *DupCList( CLIST *old )
-/**********************************/
+CLIST *DupCList( const CLIST *old )
+/*********************************/
 {
     CLIST *new;
     CLIST *cur;
@@ -341,14 +341,15 @@ extern CLIST *DupCList( CLIST *old )
     return( head );
 }
 
-extern TLIST *DupTList ( TLIST * old)
-/**********************************
+TLIST *DupTList( const TLIST * old )
+/***********************************
  *  duplicate the tlist
  */
 {
-    TLIST *new;
-    TLIST *currentNew;
-    TLIST *currentOld;
+    TLIST              *new;
+    TLIST              *currentNew;
+    TLIST const        *currentOld;
+
     new = NULL;
     if ( old != NULL ) {
         new = NewTList();
@@ -366,8 +367,9 @@ extern TLIST *DupTList ( TLIST * old)
     return (new);
 
 }
-extern DEPEND *DupDepend( DEPEND *old )
-/*************************************/
+
+DEPEND *DupDepend( const DEPEND *old )
+/************************************/
 /* doesn't recursively descend old->next, or old->targs->target->depend */
 {
     DEPEND  *new;
@@ -386,8 +388,8 @@ extern DEPEND *DupDepend( DEPEND *old )
 }
 
 
-extern void FreeTList( TLIST *tlist )   /* non-recursive */
-/***********************************/
+void FreeTList( TLIST *tlist )   /* non-recursive */
+/****************************/
 {
     TLIST   *cur;
 
@@ -400,8 +402,8 @@ extern void FreeTList( TLIST *tlist )   /* non-recursive */
 }
 
 /* frees the no keep list */
-extern void FreeNKList( NKLIST *nklist )   /* non-recursive */
-/***********************************/
+void FreeNKList( NKLIST *nklist )   /* non-recursive */
+/*******************************/
 {
     NKLIST   *cur;
 
@@ -415,8 +417,8 @@ extern void FreeNKList( NKLIST *nklist )   /* non-recursive */
 }
 
 /* frees the sufsuf list */
-extern void FreeSList( SLIST *slist )   /* non-recursive */
-/***********************************/
+void FreeSList( SLIST *slist )   /* non-recursive */
+/****************************/
 {
     SLIST   *cur;
 
@@ -433,8 +435,8 @@ extern void FreeSList( SLIST *slist )   /* non-recursive */
 
 
 /* frees the inline file information for the clist */
-extern void FreeFList( FLIST *flist )   /* non-recursive */
-/***********************************/
+void FreeFList( FLIST *flist )   /* non-recursive */
+/****************************/
 {
     FLIST   *cur;
 
@@ -449,8 +451,8 @@ extern void FreeFList( FLIST *flist )   /* non-recursive */
 }
 
 #ifdef CLEAN_ENVIRONMENT_VAR
-extern void FreeEList( ELIST *elist )   /* non-recursive */
-/***********************************/
+void FreeEList( ELIST *elist )   /* non-recursive */
+/****************************/
 {
     ELIST   *cur;
 
@@ -466,8 +468,8 @@ extern void FreeEList( ELIST *elist )   /* non-recursive */
 }
 #endif
 
-extern void FreeCList( CLIST *clist )
-/***********************************/
+void FreeCList( CLIST *clist )
+/****************************/
 {
     CLIST    *cur;
 
@@ -482,8 +484,8 @@ extern void FreeCList( CLIST *clist )
 }
 
 
-extern void FreeDepend( DEPEND *dep )   /* free's tlist, and clist */
-/***********************************/
+void FreeDepend( DEPEND *dep )   /* free's tlist, and clist */
+/****************************/
 {
     DEPEND *cur;
 
@@ -510,8 +512,8 @@ STATIC void freeTarget( TARGET *targ )
 }
 
 
-extern void KillTarget( const char *name )
-/*****************************************
+void KillTarget( const char *name )
+/**********************************
  * name is not FreeTarget because one must be careful when using this
  * function that the target is not a member of some TLIST
  */
@@ -555,9 +557,9 @@ STATIC TARGET *findOrNewTarget( const char *tname, BOOLEAN mentioned )
 }
 
 
-extern RET_T WildTList( TLIST **list, const char *base, BOOLEAN mentioned ,
+RET_T WildTList( TLIST **list, const char *base, BOOLEAN mentioned ,
                         BOOLEAN expandWildCardPath)
-/***************************************************************************
+/********************************************************************
  * Build a TLIST using base as a wildcarded path.  Uses DoWildCard().
  * Pushes targets onto list.
  */
@@ -570,10 +572,10 @@ extern RET_T WildTList( TLIST **list, const char *base, BOOLEAN mentioned ,
     TLIST       *endOfList;
     const char  *file;
 
-
     if (expandWildCardPath) {
         /* we want to expand the wildCard path */
         file = DoWildCard( base );
+        assert( file != NULL );
         if( strpbrk( file, WILD_METAS ) != NULL ) {
             PrtMsg( ERR|LOC| NO_EXISTING_FILE_MATCH, file );
             return( RET_ERROR );
@@ -592,8 +594,8 @@ extern RET_T WildTList( TLIST **list, const char *base, BOOLEAN mentioned ,
         file = DoWildCard( NULL );
     }
 
-
     /* reverse the target list  */
+    assert( temp );
     current = temp;
     temp    = temp->next;
     current->next = NULL;
@@ -617,9 +619,8 @@ extern RET_T WildTList( TLIST **list, const char *base, BOOLEAN mentioned ,
 }
 
 
-
-extern void PrintCList( CLIST *clist )
-/************************************/
+void PrintCList( const CLIST *clist )
+/***********************************/
 {
     for( ; clist != NULL; clist = clist->next ) {
         PrtMsg( INF|NEOL| JUST_A_TAB );
@@ -628,8 +629,8 @@ extern void PrintCList( CLIST *clist )
 }
 
 
-extern void PrintTargFlags( TARGET *targ )
-/****************************************/
+void PrintTargFlags( const TARGET *targ )
+/***************************************/
 {
     if( targ->attr.prec ) {
         PrtMsg( INF|NEOL| PTARG_DOTNAME, DotNames[ DOT_PRECIOUS ] );
@@ -652,14 +653,13 @@ extern void PrintTargFlags( TARGET *targ )
 }
 
 
-#pragma off(unreferenced);
 STATIC BOOLEAN printTarg( void *node, void *ptr )
 #pragma on (unreferenced);
-/***********************************************/
+/*****************************************************/
 {
-    TARGET  *targ = node;
-    DEPEND  *curdep;
-    TLIST   *curtlist;
+    TARGET const       * const targ = node;
+    DEPEND const       *curdep;
+    TLIST const        *curtlist;
 
     if( targ->special ) {
         return( FALSE );             /* don't print special targets */
@@ -705,8 +705,8 @@ STATIC BOOLEAN printTarg( void *node, void *ptr )
 STATIC void printDot( enum DotNames dot )
 /***************************************/
 {
-    char    buf[ MAX_DOT_NAME ];
-    CLIST   *cmds;
+    char                buf[ MAX_DOT_NAME ];
+    CLIST const        *cmds;
 
     cmds = DotCList( dot );
     if( cmds == NULL ) {
@@ -719,8 +719,8 @@ STATIC void printDot( enum DotNames dot )
 }
 
 
-extern void PrintTargets( void )
-/******************************/
+void PrintTargets( void )
+/***********************/
 {
     enum DotNames   i;
 
@@ -733,8 +733,8 @@ extern void PrintTargets( void )
     WalkHashTab( targTab, printTarg, NULL );
 }
 
-extern void TargInitAttr( TATTR *attr )
-/*************************************/
+void TargInitAttr( TATTR *attr )
+/******************************/
 {
     attr->prec = FALSE;
     attr->symb = FALSE;
@@ -745,8 +745,8 @@ extern void TargInitAttr( TATTR *attr )
     attr->existsonly = FALSE;
 }
 
-extern void TargOrAttr( TARGET *targ, TATTR attr )
-/************************************************/
+void TargOrAttr( TARGET *targ, TATTR attr )
+/*****************************************/
 {
     targ->attr.prec |= attr.prec;
     targ->attr.symb |= attr.symb;
@@ -761,14 +761,14 @@ extern void TargOrAttr( TARGET *targ, TATTR attr )
 #pragma off(unreferenced);
 STATIC BOOLEAN resetEx( void *targ, void *ptr )
 #pragma on (unreferenced);
-/***********************************************/
+/*********************************************/
 {
     ((TARGET *)targ)->executed = TRUE;
     return( FALSE );
 }
 
-extern void ResetExecuted( void )
-/*******************************/
+void ResetExecuted( void )
+/************************/
 {
     WalkHashTab( targTab, resetEx, NULL );
 }
@@ -847,8 +847,8 @@ STATIC RET_T cleanupLeftovers( void )
     return( RET_ERROR );
 }
 
-extern void TargetInit( void )
-/****************************/
+void TargetInit( void )
+/*********************/
 {
     targTab = NULL;
     freeDepends = NULL;
@@ -868,7 +868,7 @@ extern void TargetInit( void )
 #pragma off(unreferenced);
 STATIC BOOLEAN walkFree( void *targ, void *ptr )
 #pragma on (unreferenced);
-/************************************************/
+/**********************************************/
 {
     freeTarget( (TARGET*)targ );
     return( FALSE );
@@ -876,13 +876,14 @@ STATIC BOOLEAN walkFree( void *targ, void *ptr )
 #endif
 
 
-extern void TargetFini( void )
-/****************************/
+void TargetFini( void )
+/*********************/
 {
 #ifndef NDEBUG
     WalkHashTab( targTab, walkFree, NULL );
     FreeHashTab( targTab );
     targTab = NULL;
-    while (cleanupLeftovers() != RET_ERROR);
+    while( cleanupLeftovers() != RET_ERROR )
+        ;
 #endif
 }

@@ -28,13 +28,15 @@
 *
 ****************************************************************************/
 
-#if !defined(__UNIX__)
+#include <sys/types.h>
+#if !defined( __UNIX__ )
  #include <direct.h>
  #include <dos.h>
 #endif
 #include <fcntl.h>
+#include <sys/stat.h>
 #include <unistd.h>
-#if defined(__WATCOMC__) || !defined(__LINUX__)
+#if defined( __WATCOMC__ ) || !defined( __LINUX__ )
 #include <process.h>
 #endif
 #ifdef __LINUX__
@@ -43,13 +45,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <time.h>
+#ifdef DLLS_IMPLEMENTED
+#include <idedrv.h>
+#endif
 
-#include "macros.h"
-#include "make.h"
 #include "massert.h"
+#include "mtypes.h"
+#include "mtarget.h"
+#include "macros.h"
+#include "msysdep.h"
+#include "make.h"
 #include "mcache.h"
 #include "mmemory.h"
 #include "mexec.h"
@@ -59,15 +65,9 @@
 #include "mrcmsg.h"
 #include "msg.h"
 #include "msuffix.h"
-#include "mtarget.h"
-#include "mtypes.h"
 #include "mupdate.h"
 #include "mvecstr.h"
 
-#include "msysdep.h"
-#ifdef DLLS_IMPLEMENTED
-#include <idedrv.h>
-#endif
 STATIC  UINT8           lastErrorLevel;
 STATIC  UINT16          tmpFileNumber;          /* temp file number         */
 STATIC  char            tmpFileChar  ;          /* temp file number chari   */
@@ -198,7 +198,6 @@ STATIC const char *const dosInternals[] = {   /* COMMAND.COM commands */
     "RMDIR",
     "SET",
 #define COM_SET     31
-#define LEN_SET     3
     "SETLOCAL",
     "SHIFT",
     "START",
@@ -299,7 +298,7 @@ STATIC NKLIST* noKeepList;              /* contains the list of files that
                                            needs to be cleaned when wmake
                                            exits */
 
-STATIC char *createTmpFileName ( void )
+STATIC char *createTmpFileName( void )
 /*
  * create file name for temporary file
  */
@@ -310,69 +309,70 @@ STATIC char *createTmpFileName ( void )
     char*   tmpPath;
     char    fileName[_MAX_PATH];
 
-    tmpPath    = GetMacroValue(TEMPENVVAR);
-    if (tmpPath == NULL  && !Glob.microsoft) {
-        tmpPath = getenv(TEMPENVVAR);
-        if (tmpPath != NULL) {
-            tmpPath = StrDupSafe(tmpPath);
+    tmpPath    = GetMacroValue( TEMPENVVAR );
+    if( tmpPath == NULL && !Glob.microsoft ) {
+        tmpPath = getenv( TEMPENVVAR );
+        if( tmpPath != NULL ) {
+            tmpPath = StrDupSafe( tmpPath );
         }
     }
 
-    if (tmpPath == NULL) {
-        tmpPath = StrDupSafe("");
+    if( tmpPath == NULL ) {
+        tmpPath = StrDupSafe( "" );
     }
 
-    for (;;) {
+    for( ;; ) {
         tmpFileChar = tmpFileNumber % 26 + 'a' ;
         buf = StartVec();
-        FmtStr(fileName, "wm%c%u.tmp",tmpFileChar,tmpFileNumber);
-        if (tmpPath != NULL) {
-            if (strlen(tmpPath) >= _MAX_PATH) {
-                PrtMsg(ERR|FTL|TMP_PATH_TOO_LONG);
-                FreeVec(buf);
-                FreeSafe(tmpPath);
-                return (NULL);
-            } else if (strlen(tmpPath) + strlen(fileName) >= _MAX_PATH) {
-                PrtMsg(ERR|FTL|TMP_PATH_TOO_LONG);
-                FreeSafe(tmpPath);
-                FreeVec(buf);
-                return (NULL);
+        FmtStr( fileName, "wm%c%u.tmp", tmpFileChar, tmpFileNumber );
+        if( tmpPath != NULL ) {
+            if( strlen( tmpPath ) >= _MAX_PATH ) {
+                PrtMsg( ERR|FTL|TMP_PATH_TOO_LONG );
+                FreeVec( buf );
+                FreeSafe( tmpPath );
+                return( NULL );
+            } else if( strlen( tmpPath ) + strlen( fileName ) >= _MAX_PATH ) {
+                PrtMsg( ERR|FTL|TMP_PATH_TOO_LONG );
+                FreeSafe( tmpPath );
+                FreeVec( buf );
+                return( NULL );
             }
         }
-        if (tmpPath == NULL ) {
-            WriteVec(buf,fileName);
-            result = FinishVec(buf);
+        if( tmpPath == NULL ) {
+            WriteVec( buf, fileName );
+            result = FinishVec( buf );
         } else {
-            WriteVec(buf,tmpPath);
-            if (tmpPath[strlen(tmpPath)-1] != BACKSLASH) {
+            WriteVec( buf, tmpPath );
+            if( tmpPath[strlen( tmpPath )-1] != BACKSLASH ) {
                 buf2 = StartVec();
-                WriteVec(buf2,"\\");
-                CatVec(buf,buf2);
+                WriteVec( buf2, "\\" );
+                CatVec( buf, buf2 );
             }
             buf2 = StartVec();
-            WriteVec(buf2,fileName);
-            CatVec(buf,buf2);
-            result = FinishVec(buf);
+            WriteVec( buf2, fileName );
+            CatVec( buf, buf2 );
+            result = FinishVec( buf );
         }
 
 
-        if (!existFile(result)) {
+        if( !existFile( result ) ) {
             /* touch the file */
-            TouchFile(result);
-            FreeSafe(tmpPath);
-            return (result);
+            TouchFile( result );
+            FreeSafe( tmpPath );
+            return( result );
 
         } else {
-            FreeSafe(result);
+            FreeSafe( result );
         }
-        tmpFileNumber = (tmpFileNumber + time (NULL) ) % 100000;
+        tmpFileNumber = (UINT16) ( ( tmpFileNumber + time( NULL ) ) % 100000 );
     }
 
 }
 
 
-STATIC RET_T processInlineFile (int handle, char* body, char* fileName,
-                                BOOLEAN writeToFile) {
+STATIC RET_T processInlineFile( int handle, const char* body, const char* fileName, 
+                                BOOLEAN writeToFile )
+{
     int    index;
     RET_T  ret  ;
     char*  DeMacroBody;
@@ -385,22 +385,22 @@ STATIC RET_T processInlineFile (int handle, char* body, char* fileName,
     currentSent = 0;
     ret         = RET_SUCCESS;
 
-    assert(body != NULL);
+    assert( body != NULL );
 
     // we will push the whole body back into the stream to be fully
     // deMacroed
-    while (body [index] != NULLCHAR ) {
-        if (body[index] == EOL) {
-            InsString(body+currentSent, FALSE );
+    while( body [index] != NULLCHAR ) {
+        if( body[index] == EOL ) {
+            InsString( body+currentSent, FALSE );
             DeMacroBody = ignoreWSDeMacro( FALSE, ForceDeMacro() );
             currentSent = index + 1;
-            if (writeToFile) {
-                if (strlen(DeMacroBody) !=
-                        write(handle,DeMacroBody,strlen(DeMacroBody))) {
+            if( writeToFile ) {
+                if( strlen( DeMacroBody ) !=
+                        write( handle, DeMacroBody, strlen( DeMacroBody ) ) ) {
                     ret = RET_ERROR;
                 }
-                if (body[index+1] != NULLCHAR) {
-                    if (write(handle,"\n",1) != 1) {
+                if( body[index+1] != NULLCHAR ) {
+                    if( write( handle, "\n", 1 ) != 1 ) {
                         ret = RET_ERROR;
                     }
                 }
@@ -409,97 +409,99 @@ STATIC RET_T processInlineFile (int handle, char* body, char* fileName,
                     PrtMsg( INF|NEOL| JUST_A_TAB );
                 }
                 outText = StartVec();
-                WriteVec(outText,"echo.");
-                if (DeMacroBody != NULL) {
-                    if (strlen(DeMacroBody) > 0) {
-                        WriteVec(outText,DeMacroBody);
+                WriteVec( outText, "echo." );
+                if( DeMacroBody != NULL ) {
+                    if( strlen( DeMacroBody ) > 0 ) {
+                        WriteVec( outText, DeMacroBody );
                     }
-                    FreeSafe (DeMacroBody);
+                    FreeSafe( DeMacroBody );
                 }
-                if (firstTime == TRUE) {
-                    WriteVec(outText," > ");
+                if( firstTime == TRUE ) {
+                    WriteVec( outText, " > " );
                     firstTime = FALSE;
                 } else {
-                    WriteVec(outText," >> ");
+                    WriteVec( outText, " >> " );
                 }
-                WriteVec(outText, fileName);
-                DeMacroBody = FinishVec(outText);
-                PrtMsg( INF|PRNTSTR,DeMacroBody);
+                WriteVec( outText, fileName );
+                DeMacroBody = FinishVec( outText );
+                PrtMsg( INF|PRNTSTR, DeMacroBody );
             }
-            FreeSafe(DeMacroBody);
+            FreeSafe( DeMacroBody );
         }
         index++;
     }
-    return (ret);
+    return( ret );
 }
 
-STATIC RET_T writeLineByLine(int handle, char* body) {
-    return (processInlineFile(handle, body, NULL, TRUE));
+STATIC RET_T writeLineByLine( int handle, const char *body )
+{
+    return( processInlineFile( handle, body, NULL, TRUE ) );
 }
 
 
-STATIC char* RemoveBackSlash ( const char* inString ) {
-/************************************
+STATIC char* RemoveBackSlash( const char* inString )
+/***************************************************
  * remove backslash from \"
  */
-
+{
     char    buffer[_MAX_PATH];
     char    *current;
     int     pos;
 
-    assert ( inString != NULL);
+    assert( inString != NULL );
     current = (char*) inString;
     pos = 0;
 
-    while (*current != NULLCHAR &&
-           pos < _MAX_PATH - 1) {
-        if (*current == BACKSLASH) {
-            if (*(current+1) == DOUBLEQUOTE) {
+    while( *current != NULLCHAR && 
+           pos < _MAX_PATH - 1 ) {
+        if( *current == BACKSLASH ) {
+            if( *( current+1 ) == DOUBLEQUOTE ) {
                 buffer[pos++] = DOUBLEQUOTE;
                 current = current + 2;
                 continue;
             }
         }
-        buffer[pos++] = *(current ++);
+        buffer[pos++] = *( current ++ );
 
     }
     buffer[pos] = NULLCHAR;
 
-    return (StrDupSafe(buffer));
+    return( StrDupSafe( buffer ) );
 
 }
 
 
-STATIC RET_T VerbosePrintTempFile(FLIST *head) {
+STATIC RET_T VerbosePrintTempFile( const FLIST *head )
+{
 
-    FLIST* current;
-    RET_T  ret;
+    FLIST const        *current;
+    RET_T               ret;
 
     current = head;
-    while (current != NULL) {
-        assert(current->fileName != NULL);
-        ret = processInlineFile(0,current->body,current->fileName,FALSE);
+    while( current != NULL ) {
+        assert( current->fileName != NULL );
+        ret = processInlineFile( 0, current->body, current->fileName, FALSE );
         current = current->next;
 
     }
-    return (ret);
+    return( ret );
 }
 
-STATIC RET_T createFile (FLIST *head) {
-/***********************************
+STATIC RET_T createFile( const FLIST *head )
+/*******************************************
  * create file given information in the FLIST
  */
-
+{
     NKLIST *temp;
     int    handle;
     char   *fileName;
     char   *tmpFileName;
     RET_T  ret;
 
-    assert (head != NULL);
+    assert( head != NULL );
     ret = RET_SUCCESS;
 
-    if (head->fileName != NULL) {
+    if( head->fileName != NULL ) {
         /* Push the filename back into the stream
          * and then get it back out using DeMacro to fully DeMacro
          */
@@ -511,19 +513,19 @@ STATIC RET_T createFile (FLIST *head) {
         ret = RET_ERROR;
     }
 
-    if (head != NULL && ret != RET_ERROR) {
-        tmpFileName = RemoveBackSlash (fileName);
-        handle = open (tmpFileName, O_TEXT| O_WRONLY | O_CREAT | O_TRUNC,
-                       S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
-        if (handle != -1) {
-            if (writeLineByLine(handle,head->body) == RET_ERROR) {
+    if( ret != RET_ERROR ) {
+        tmpFileName = RemoveBackSlash( fileName );
+        handle = open( tmpFileName, O_TEXT| O_WRONLY | O_CREAT | O_TRUNC, 
+                       S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP );
+        if( handle != -1 ) {
+            if( writeLineByLine( handle, head->body ) == RET_ERROR ) {
                 PrtMsg( ERR| ERROR_WRITING_FILE, tmpFileName );
                 ret = RET_ERROR;
             }
-            if (close(handle) != -1) {
-                if (head->keep == FALSE) {
+            if( close( handle ) != -1 ) {
+                if( head->keep == FALSE ) {
                     temp = NewNKList();
-                    temp->fileName = StrDupSafe (tmpFileName);
+                    temp->fileName = StrDupSafe( tmpFileName );
                     temp->next     = noKeepList;
                     noKeepList     = temp;
                 }
@@ -537,9 +539,9 @@ STATIC RET_T createFile (FLIST *head) {
             ret = RET_ERROR;
         }
     }
-    FreeSafe ( fileName );
-    FreeSafe (tmpFileName);
-    return (ret);
+    FreeSafe( fileName );
+    FreeSafe( tmpFileName );
+    return( ret );
 }
 
 
@@ -547,8 +549,8 @@ STATIC RET_T createFile (FLIST *head) {
 // modifies the command text to show the temporary file names
 // assumption is that all << are removed for explicitly defined
 // file names so the only << left are for temporary files
-STATIC RET_T writeInlineFiles (FLIST *head, char** commandIn) {
-
+STATIC RET_T writeInlineFiles( FLIST *head, char** commandIn )
+{
     char  *cmdText;
     FLIST *current;
     RET_T  ret;
@@ -557,30 +559,30 @@ STATIC RET_T writeInlineFiles (FLIST *head, char** commandIn) {
     int   index; // current index of cmdText
     NKLIST *temp;
 
-    assert(*commandIn != NULL);
+    assert( *commandIn != NULL );
 
     cmdText    = *commandIn;
     ret        = RET_SUCCESS;
     newCommand = StartVec();
-    WriteVec(newCommand,"");
+    WriteVec( newCommand, "" );
     index      = 0;
     start      = index;
     current    = head;
 
-    while (current        != NULL        &&
+    while( current        != NULL        && 
            ret            == RET_SUCCESS &&
-           cmdText[index] != NULLCHAR) {
+           cmdText[index] != NULLCHAR ) {
 
         // if the filename is the inline symbol then we need change
         // the filename into a temp filename
-        if (strcmp(current->fileName,INLINE_SYMBOL) == 0) {
-            while (1) {
-                if (cmdText[index] == LESSTHAN) {
-                    if (cmdText[index+1] == LESSTHAN) {
+        if( strcmp( current->fileName, INLINE_SYMBOL ) == 0 ) {
+            for( ;; ) {
+                if( cmdText[index] == LESSTHAN ) {
+                    if( cmdText[index+1] == LESSTHAN ) {
                         index += 2;
                         break;
                     }
-                } else if (cmdText[index] == NULLCHAR) {
+                } else if( cmdText[index] == NULLCHAR ) {
                     /* not possible to come here*/
                     ret = RET_ERROR;
                     break;
@@ -588,32 +590,32 @@ STATIC RET_T writeInlineFiles (FLIST *head, char** commandIn) {
                 ++index;
 
             }
-            if (ret == RET_ERROR) {
+            if( ret == RET_ERROR ) {
                 break;
             }
-            CatNStrToVec(newCommand,cmdText+start,index-start-2);
+            CatNStrToVec( newCommand, cmdText+start, index-start-2 );
             start = index;
-            FreeSafe(current->fileName);
+            FreeSafe( current->fileName );
             current->fileName = createTmpFileName();
 
-            CatStrToVec(newCommand,current->fileName);
+            CatStrToVec( newCommand, current->fileName );
         }
-        if (!Glob.noexec) {
-            ret = createFile(current);
+        if( !Glob.noexec ) {
+            ret = createFile( current );
         } else {
-            if (current->keep == FALSE) {
+            if( current->keep == FALSE ) {
                 temp = NewNKList();
-                temp->fileName = StrDupSafe (current->fileName);
+                temp->fileName = StrDupSafe( current->fileName );
                 temp->next     = noKeepList;
                 noKeepList     = temp;
             }
         }
         current = current->next;
     }
-    CatNStrToVec(newCommand,cmdText+start,strlen(cmdText) - start);
-    FreeSafe(cmdText);
-    *commandIn = FinishVec(newCommand);
-    return (ret);
+    CatNStrToVec( newCommand, cmdText+start, strlen( cmdText ) - start );
+    FreeSafe( cmdText );
+    *commandIn = FinishVec( newCommand );
+    return( ret );
 }
 
 
@@ -625,7 +627,7 @@ STATIC int findInternal( const char *cmd )
  * expects cmd to be just the command - ie: no args
  */
 {
-    char **key;
+    char * const *key;
     size_t len;
     auto char buff[ COM_MAX_LEN ];
 
@@ -634,9 +636,9 @@ STATIC int findInternal( const char *cmd )
     if( isalpha( *cmd ) && cmd[1] == ':' && cmd[2] == NULLCHAR ) {
         return( CNUM );
     }
-    for(;;) {
+    for( ;; ) {
         key = bsearch( &cmd, dosInternals, CNUM, sizeof( char * ),
-               (int (*)(const void*, const void*)) KWCompare );
+              ( int ( * )( const void*, const void* ) ) KWCompare );
         if( key != NULL ) break;
         len = strlen( cmd );
         if( len > 1 && len < COM_MAX_LEN ) {
@@ -650,7 +652,7 @@ STATIC int findInternal( const char *cmd )
         }
         return( -1 );
     }
-    return( key - (char **)dosInternals );
+    return( key - (char **) dosInternals );
 }
 
 
@@ -671,12 +673,12 @@ STATIC RET_T percentMake( char *arg )
 
     ret = RET_ERROR;
     start = arg;
-    for(;;) {
+    for( ;; ) {
         start = SkipWS( start );
         if( *start == NULLCHAR ) break;
         more_targets = FALSE;
         finish = start;
-        for(;;) {
+        for( ;; ) {
             if( *finish == NULLCHAR ) break;
             if( isws( *finish ) ) {
                 more_targets = TRUE;
@@ -713,9 +715,9 @@ STATIC RET_T percentMake( char *arg )
 }
 
 
-STATIC void closeCurrentFile( void ) {
-/************************************/
-
+STATIC void closeCurrentFile( void )
+/**********************************/
+{
     if( currentFileHandle != -1 ) {
         close( currentFileHandle );
     }
@@ -727,11 +729,11 @@ STATIC void closeCurrentFile( void ) {
 }
 
 
-STATIC RET_T percentWrite( char *arg, enum write_type type )
-/**********************************************************/
+STATIC RET_T percentWrite( const char *arg, enum write_type type )
+/****************************************************************/
 {
     char        *p;
-    char        *text;
+    char const  *text;
     char        *fn;
     char const  *cmd_name;
     int         open_flags;
@@ -746,15 +748,15 @@ STATIC RET_T percentWrite( char *arg, enum write_type type )
     p = SkipWS( arg );
     fn = p;
 
-    if (*p != DOUBLEQUOTE) {
+    if( *p != DOUBLEQUOTE ) {
         while( isfilec( *p ) ) ++p;
     } else {
         ++p;    // Skip the first quote
         ++fn;
-        while (*p!= DOUBLEQUOTE && *p!= NULLCHAR) {
+        while( *p!= DOUBLEQUOTE && *p!= NULLCHAR ) {
              ++p;
         }
-        if (*p!= NULLCHAR) {
+        if( *p!= NULLCHAR ) {
             *p = NULLCHAR;
             p++;
         }
@@ -828,27 +830,27 @@ STATIC RET_T percentWrite( char *arg, enum write_type type )
 }
 
 
-STATIC RET_T percentCmd( char *cmdname, char *arg )
-/**************************************************
+STATIC RET_T percentCmd( const char *cmdname, char *arg )
+/********************************************************
  * handle our special percent commands
  */
 {
-    char    **key;
-    char    *ptr;
-    int     num;
+    char const * const *key;
+    char const         *ptr;
+    int                 num;
 
     assert( cmdname != NULL && arg != NULL );
 
     ptr = cmdname + 1;
     key = bsearch( &ptr, percentCmds, PNUM, sizeof( char * ),
-          (int (*) (const void*, const void*)) KWCompare );
+          (int (*) ( const void*, const void* ) ) KWCompare );
 
     if( key == NULL ) {
         PrtMsg( ERR| UNKNOWN_PERCENT_CMD );
         closeCurrentFile();
         return( RET_ERROR );
     } else {
-        num = key - (char **)percentCmds;
+        num = key - (char const **) percentCmds;
     }
 
     if( Glob.noexec && num != PER_MAKE ) {
@@ -859,19 +861,15 @@ STATIC RET_T percentCmd( char *cmdname, char *arg )
     case PER_ABORT:
         closeCurrentFile();
         exit( ExitSafe( EXIT_ERROR ) );
-        break;
 
     case PER_APPEND:
         return( percentWrite( arg, WR_APPEND ) );
-        break;
 
     case PER_CREATE:
         return( percentWrite( arg, WR_CREATE ) );
-        break;
 
     case PER_MAKE:
         return( percentMake( arg ) );
-        break;
 
     case PER_NULL:
         break;
@@ -879,7 +877,6 @@ STATIC RET_T percentCmd( char *cmdname, char *arg )
     case PER_QUIT:
         closeCurrentFile();
         exit( ExitSafe( EXIT_OK ) );
-        break;
 
     case PER_STOP:
         closeCurrentFile();
@@ -890,7 +887,6 @@ STATIC RET_T percentCmd( char *cmdname, char *arg )
 
     case PER_WRITE:
         return( percentWrite( arg, WR_WRITE ) );
-        break;
 
     default:
         assert( FALSE );
@@ -907,15 +903,15 @@ STATIC RET_T intSystem( char *cmd )
     pid_t pid = fork();
     int status;
     
-    if ( pid == -1 )
+    if( pid == -1 )
         return -1;
-    if ( pid == 0 ) {
+    if( pid == 0 ) {
         execl( "/bin/sh", "sh", "-c", cmd, NULL );
         exit( 127 );
     }
-    for (;;) {
-        if ( waitpid( pid, &status, 0) == -1 ) {
-            if ( errno == EINTR ) {
+    for( ;; ) {
+        if( waitpid( pid, &status, 0 ) == -1 ) {
+            if( errno == EINTR ) {
                 continue;
             }
             status = -1;
@@ -926,8 +922,8 @@ STATIC RET_T intSystem( char *cmd )
 }
 #endif
 
-STATIC RET_T mySystem( const char *cmdname, char *cmd )
-/******************************************************
+STATIC RET_T mySystem( const char *cmdname, const char *cmd )
+/************************************************************
  * execute a command using system()
  */
 {
@@ -945,7 +941,7 @@ STATIC RET_T mySystem( const char *cmdname, char *cmd )
 #else
     retcode = system( cmd );
 #endif
-    lastErrorLevel = retcode;
+    lastErrorLevel = (UINT8) retcode;
     if( retcode < 0 ) {
         PrtMsg( ERR| UNABLE_TO_EXEC, cmdname );
     }
@@ -956,8 +952,8 @@ STATIC RET_T mySystem( const char *cmdname, char *cmd )
 }
 
 
-STATIC RET_T handleSet( char *cmd )
-/**********************************
+STATIC RET_T handleSet( const char *cmd )
+/****************************************
  * "SET" {ws}* <name> {ws}* "="[<value>]
  */
 {
@@ -1002,7 +998,7 @@ STATIC RET_T handleSet( char *cmd )
     ++p;                        /* advance to character after '=' */
 
                         /* +1 for '=' (already +1 for '\0' in ENV_TRACKER) */
-    env = MallocSafe( sizeof( ENV_TRACKER )+ 1 + (endname - name) + strlen(p) );
+    env = MallocSafe( sizeof( ENV_TRACKER )+ 1 +( endname - name ) + strlen( p ) );
     FmtStr( env->value, "%s=%s", name, p );
     retcode = PutEnvSafe( env );
     if( retcode != 0 ) {
@@ -1012,8 +1008,8 @@ STATIC RET_T handleSet( char *cmd )
 }
 
 
-STATIC RET_T handleIf( char *cmd )
-/*********************************
+STATIC RET_T handleIf( const char *cmd )
+/***************************************
  *          { ERRORLEVEL <number> }
  * IF [NOT] { <str1> == <str2>    } <command>
  *          { EXIST <file>        }
@@ -1022,8 +1018,8 @@ STATIC RET_T handleIf( char *cmd )
     BOOLEAN     not;        /* flag for not keyword                     */
     BOOLEAN     condition;  /* whether the condition was T or F         */
     char        *p;         /* used to scan the string                  */
-    char        *tmp1;      /* one of NOT | ERRORLEVEL | <str1> | EXIST */
-    char        *tmp2;      /* one of <number> | "==" | <file> | <str2> */
+    char const  *tmp1;      /* one of NOT | ERRORLEVEL | <str1> | EXIST */
+    char const  *tmp2;      /* one of <number> | "==" | <file> | <str2> */
     char        *end1;      /* location of end of tmp1 string           */
     char        save;       /* save character                           */
     const char  *file;      /* for checking file existence              */
@@ -1094,7 +1090,7 @@ STATIC RET_T handleIf( char *cmd )
     } else {
         *end1 = save;
         p = end1;           /* back up to end of 1st token */
-        for(;;) {
+        for( ;; ) {
             while( *p != NULLCHAR && *p != '=' ) ++p;
             if( *p == NULLCHAR ) {
                 PrtMsg( ERR| SYNTAX_ERROR_IN, dosInternals[ COM_IF ] );
@@ -1136,7 +1132,7 @@ STATIC RET_T handleForSyntaxError( void )
 }
 
 
-STATIC RET_T getForArgs( char *line, const char **pvar, char **pset,
+STATIC RET_T getForArgs( const char *line, const char **pvar, char **pset,
     const char **pcmd )
 /************************************************************************/
 {
@@ -1156,7 +1152,7 @@ STATIC RET_T getForArgs( char *line, const char **pvar, char **pset,
         ( p[1] != '%' && !isalpha( p[1] ) ) ) {
         return( handleForSyntaxError() );
     }
-    *pvar = (const char *)p;
+    *pvar = (const char *) p;
 
                             /* move to end of <var> */
     while( isalpha( *p ) || *p == '%' ) ++p;
@@ -1196,7 +1192,7 @@ STATIC RET_T getForArgs( char *line, const char **pvar, char **pset,
 
     p = SkipWS( p + 3 );    /* move to beginning of cmd */
 
-    *pcmd = (const char *)p;
+    *pcmd = (const char *) p;
 
     return( RET_SUCCESS );
 }
@@ -1212,7 +1208,7 @@ STATIC const char *nextVar( const char *str, const char *var, size_t varlen )
     assert( str != NULL && var != NULL && *var == '%' );
 
     p = strchr( str, '%' );
-    for(;;) {
+    for( ;; ) {
         if( p == NULL ) {
             return( NULL );
         }
@@ -1257,8 +1253,8 @@ STATIC void doForSubst( const char *var, size_t varlen,
 
 
 #pragma on (check_stack);
-STATIC RET_T handleFor( char *line )
-/***********************************
+STATIC RET_T handleFor( const char *line )
+/*****************************************
  * "FOR" {ws}* "%"["%"]<var> {ws}+ "IN" {ws}+ "("<set>")" {ws}+ "DO" {ws}+ <cmd>
  */
 {
@@ -1357,8 +1353,8 @@ STATIC RET_T handleFor( char *line )
 STATIC RET_T handleCD( char *cmd )
 /********************************/
 {
-    char    *p;     /* pointer to walk with */
-    char    *s;
+    char       *p;     /* pointer to walk with */
+    char const *s;
 
     closeCurrentFile();
     p = cmd;
@@ -1384,8 +1380,8 @@ STATIC RET_T handleCD( char *cmd )
 
 
 #if     defined( __OS2__ ) || defined( __NT__ )
-STATIC RET_T handleChangeDrive( char *cmd )
-/*****************************************/
+STATIC RET_T handleChangeDrive( const char *cmd )
+/***********************************************/
 {
     unsigned drive_index;
     unsigned total;
@@ -1489,7 +1485,7 @@ STATIC UINT16 makeTmpEnv( char *arg )
     ENV_TRACKER *env;
 
     tmp = 1;
-    for(;;) {
+    for( ;; ) {
         FmtStr( buf, "WMAKE%d", tmp );
         if( getenv( buf ) == NULL ) break;
         ++tmp;
@@ -1519,7 +1515,7 @@ STATIC void killTmpEnv( UINT16 tmp )
 }
 #else
 #pragma off(unreferenced);
-STATIC UINT16 makeTmpEnv( char *cmd ) { return( 0 ); }
+STATIC UINT16 makeTmpEnv( const char *cmd ) { return( 0 ); }
 STATIC void killTmpEnv( UINT16 tmp ) {}
 #pragma on (unreferenced);
 #endif
@@ -1543,7 +1539,7 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
 
     percent_cmd = cmd[0] == '%';
     arg = cmd + ( percent_cmd ? 1 : 0 );    /* split cmd name from args */
-    while( !(isws( *arg ) || *arg == Glob.swchar || *arg == '+' ||
+    while( !( isws( *arg ) || *arg == Glob.swchar || *arg == '+' ||
         *arg == '=' || *arg == NULLCHAR ) ) {
         ++arg;
     }
@@ -1581,7 +1577,7 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
         /* pass to shell because of '>','<' or '|' */
         flags |= FLAG_SHELL;
     }
-    if(( flags & FLAG_ENV_ARGS ) != 0 && ( flags & FLAG_SHELL ) == 0 ) {
+    if( ( flags & FLAG_ENV_ARGS ) != 0 && ( flags & FLAG_SHELL ) == 0 ) {
         tmp_env = makeTmpEnv( arg );
     }
 /*
@@ -1632,27 +1628,27 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
         } else {
             retcode = OSExecDLL( dll_cmd, argv[1] );
 #ifdef DLLS_IMPLEMENTED
-            if ( retcode != IDEDRV_SUCCESS ) {
-                if ( retcode == IDEDRV_ERR_RUN_FATAL ) {
+            if( retcode != IDEDRV_SUCCESS ) {
+                if( retcode == IDEDRV_ERR_RUN_FATAL ) {
                     retcode = 2;
-                } else if ( retcode == IDEDRV_ERR_RUN_EXEC ) {
+                } else if( retcode == IDEDRV_ERR_RUN_EXEC ) {
                     retcode = 1;
-                } else if ( retcode == IDEDRV_ERR_RUN ) {
-                    PrtMsg ( ERR | DLL_BAD_RETURN_STATUS,
-                                  dll_cmd->inf.dll_name);
+                } else if( retcode == IDEDRV_ERR_RUN ) {
+                    PrtMsg( ERR | DLL_BAD_RETURN_STATUS, 
+                                  dll_cmd->inf.dll_name );
                     retcode = 4;
-                } else if ( retcode == IDEDRV_ERR_LOAD ||
+                } else if( retcode == IDEDRV_ERR_LOAD || 
                             retcode == IDEDRV_ERR_UNLOAD ) {
-                    PrtMsg (ERR | UNABLE_TO_LOAD_DLL,
-                                  dll_cmd->inf.dll_name);
+                    PrtMsg( ERR | UNABLE_TO_LOAD_DLL, 
+                                  dll_cmd->inf.dll_name );
                     retcode = 4;
                 } else {
-                    PrtMsg (ERR | DLL_BAD_INIT_STATUS,
-                                  dll_cmd->inf.dll_name);
+                    PrtMsg( ERR | DLL_BAD_INIT_STATUS, 
+                                  dll_cmd->inf.dll_name );
                     retcode = 4;
                 }
 #else
-            if ( retcode != 0 ) {
+            if( retcode != 0 ) {
                 PrtMsg( ERR| UNABLE_TO_EXEC, cmdname );
                 retcode = 4;
 #endif
@@ -1660,7 +1656,7 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
                 retcode = 0;
             }
         }
-        lastErrorLevel = retcode;
+        lastErrorLevel = (UINT8) retcode;
         my_ret = retcode ? RET_ERROR : RET_SUCCESS;
     }
     if( flags & FLAG_ENV_ARGS ) {    /* cleanup for makeTmpEnv */
@@ -1688,7 +1684,7 @@ STATIC RET_T execLine( char *line )
                 | ( Glob.shell ? FLAG_SHELL : 0 );
 
     p = line;               /* process @*!- and strip leading ws */
-    for(;;) {
+    for( ;; ) {
         p = SkipWS( p );
 
         if( *p == '@' ) {
@@ -1720,29 +1716,31 @@ STATIC RET_T execLine( char *line )
 }
 
 
-extern RET_T ExecCList( CLIST *clist )
-/***********************************/
+RET_T ExecCList( CLIST *clist )
+/*****************************/
 {
-    char    *line;
-    RET_T   ret;
-    FLIST   *currentFlist;
+    char               *line;
+    RET_T               ret;
+    FLIST const        *currentFlist;
+
+    assert( clist != NULL );
 
     while( clist != NULL ) {
-        ret = writeInlineFiles(clist->inlineHead,
-                               &(clist->text));
+        ret = writeInlineFiles( clist->inlineHead,
+                               &( clist->text ) );
         currentFlist = clist->inlineHead;
-        if (ret == RET_SUCCESS) {
+        if( ret == RET_SUCCESS ) {
             UnGetCH( STRM_MAGIC );
             InsString( clist->text, FALSE );
             line = DeMacro( STRM_MAGIC );
             GetCHR();        /* eat STRM_MAGIC */
-            if (Glob.verbose && ret == RET_SUCCESS) {
-                 ret = VerbosePrintTempFile(currentFlist);
+            if( Glob.verbose ) {
+                 ret = VerbosePrintTempFile( currentFlist );
             }
             ret = execLine( line );
             FreeSafe( line );
-            if (ret != RET_SUCCESS) {
-                return (ret);
+            if( ret != RET_SUCCESS ) {
+                return( ret );
             }
         } else {
             closeCurrentFile();
@@ -1757,44 +1755,44 @@ extern RET_T ExecCList( CLIST *clist )
 
 
 // deletes the file specified in the nokeeplist
-STATIC void destroyNKList () {
-
-    NKLIST* temp;
-    VECSTR  outText;
-    char    *tempstr;
+STATIC void destroyNKList( void )
+{
+    NKLIST const       *temp;
+    VECSTR              outText;
+    char               *tempstr;
 
     temp = noKeepList;
-    while (temp != NULL) {
-        if (Glob.noexec) {
-            if (!Glob.noheader) {
+    while( temp != NULL ) {
+        if( Glob.noexec ) {
+            if( !Glob.noheader ) {
                 PrtMsg( INF|NEOL| JUST_A_TAB );
             }
             outText = StartVec();
-            WriteVec(outText,"del ");
-            WriteVec(outText,temp->fileName);
-            tempstr = FinishVec(outText);
-            PrtMsg( INF|PRNTSTR,tempstr);
-            FreeSafe(tempstr);
+            WriteVec( outText, "del " );
+            WriteVec( outText, temp->fileName );
+            tempstr = FinishVec( outText );
+            PrtMsg( INF|PRNTSTR, tempstr );
+            FreeSafe( tempstr );
         }
-        remove(temp->fileName);
+        remove( temp->fileName );
         temp = temp->next;
     }
-    FreeNKList(noKeepList);
+    FreeNKList( noKeepList );
 }
 
-extern void ExecInit( void )
-/**************************/
+void ExecInit( void )
+/*******************/
 {
     lastErrorLevel = 0;
     currentFileName = NULL;
     currentFileHandle = -1;
     /* Take any number first */
-    tmpFileNumber   = time (NULL) % 100000;
+    tmpFileNumber   = (UINT16) ( time( NULL ) % 100000 );
 }
 
 
-extern void ExecFini( void )
-/**************************/
+void ExecFini( void )
+/*******************/
 {
     // destroy all the files that will not be kept
     destroyNKList();

@@ -24,13 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  wmake input analysis
 *
 ****************************************************************************/
 
 #include <unistd.h>
-#include <signal.h>
 #include <string.h>
 #include <stdlib.h>
 #ifdef __OS2__
@@ -40,9 +38,12 @@
 #include <process.h>
 #endif
 
+#include "massert.h"
+#include "mtypes.h"
+#include "mtarget.h"
+#include "msysdep.h"
 #include "macros.h"
 #include "make.h"
-#include "massert.h"
 #include "mcache.h"
 #include "mmemory.h"
 #include "mexec.h"
@@ -51,11 +52,8 @@
 #include "mrcmsg.h"
 #include "msg.h"
 #include "msuffix.h"
-#include "mtarget.h"
-#include "mtypes.h"
 #include "mupdate.h"
 #include "mvecstr.h"
-#include "msysdep.h"
 #include "mautodep.h"
 #if defined( __WINDOWS__ )
 #define STRICT
@@ -76,35 +74,47 @@ STATIC void doBuiltIns( const char *makeopts )
     char buf[ 2048 ];
     char *cpy;
 
-    DoingBuiltIn = TRUE;
     if( !Glob.overide ) {
+        DoingBuiltIn = TRUE;
         FmtStr( buf, "%F", BuiltIns );
         cpy = MallocSafe( 2048 + strlen( makeopts ) );
         FmtStr( cpy, buf, makeopts );
         InsString( cpy, FALSE );
         list = Parse();
         FreeTList( list );
-        if (Glob.microsoft) {
-            FmtStr( buf, "%F", MSSuffixList );
+        strcpy(cpy, "MAKE=" );
+        if( _cmdname( cpy + sizeof "MAKE=" - 1 ) == NULL )
+            strcat( cpy, "wmake" );
+        InsString( cpy, FALSE );
+        list = Parse();
+        FreeTList( list );
+        if( Glob.microsoft | Glob.unix ) {
+            const char *suffices = MSSuffixList;
+            const char *builtins = MSBuiltIn; 
+            FmtStr( cpy, "%%MAKEFLAGS=$(%%MAKEFLAGS) %F", makeopts );
+            InsString( cpy, FALSE );
+            list = Parse();
+            FreeTList( list );
+            if( Glob.unix ) {
+                suffices = UNIXSuffixList;
+                builtins = UNIXBuiltIn;
+            }
+            FmtStr( buf, "%F", builtins );
             FmtStr( cpy, buf, makeopts );
             InsString( cpy, FALSE );
             list = Parse();
             FreeTList( list );
-            FmtStr( buf, "%F", MSBuiltIn );
-            FmtStr( cpy, buf, makeopts );
-            InsString( cpy, FALSE );
-            list = Parse();
-            FreeTList( list );
+            FmtStr( buf, "%F", suffices );
         } else {
             FmtStr( buf, "%F", SuffixList );
-            FmtStr( cpy, buf, makeopts );
-            InsString( cpy, FALSE );
-            list = Parse();
-            FreeTList( list );
         }
-        FreeSafe(cpy);
+        FmtStr( cpy, buf, makeopts );
+        InsString( cpy, FALSE );
+        list = Parse();
+        FreeTList( list );
+        FreeSafe( cpy );
+        DoingBuiltIn = FALSE;
     }
-    DoingBuiltIn = FALSE;
 }
 #pragma off(check_stack);
 
@@ -118,8 +128,8 @@ static void setFirstTarget( TLIST *potential_first )
     firstTargFound = potential_first;
 }
 
-extern void Header( void )
-/*************************/
+void Header( void )
+/*****************/
 {
     if( Glob.noheader ) {
         return;
@@ -162,7 +172,7 @@ STATIC void handleMacroDefn( char *buf )
         pos = 0;
         while( buf[ pos ] != NULLCHAR &&
                buf[ pos ] != '=' ) {
-            buf[ pos ] = toupper( buf[ pos ] );
+            buf[ pos ] = (char) toupper( buf[ pos ] );
             ++pos;
         }
 
@@ -192,163 +202,186 @@ STATIC void checkCtrl( const char *p )
 {
     assert( p != NULL );
 
-    while( *p ) {               /* scan for control characters */
-        if( !isprint( *p ) ) {
-            PrtMsg( FTL| CTRL_CHAR_IN_CMD, *p );
+    if( p )
+        while( *p ) {          /* scan for control characters */
+            if( !isprint( *p ) ) {
+                PrtMsg( FTL| CTRL_CHAR_IN_CMD, *p );
+            }
+            ++p;
         }
-        ++p;
-    }
 }
 
 
-STATIC char *procFlags( const char **argv, const char **log_name )
-/*****************************************************************
+STATIC char *procFlags( char const * const *argv, const char **log_name )
+/************************************************************************
  * process the flags, macro=defn, and targets from the command line
  * writes targets to mustTargs, files to fileToDo, and defines macros
  * it is important to have the ms switch first to have correct functionality
  * of some features in microsoft compatability
  */
 {
-    VECSTR  makeopts;   /* collect options for __MAKEOPTS__ here    */
     char    select;     /* - or swchar (*argv)[0]                   */
     char    option;     /* the option (*argv)[1]                    */
     const char *p;      /* working pointer to *argv                 */
     NODE    *new;       /* for adding a new file                    */
+    int      options[256 + 1] = { 0 };
 
-    p = argv[1];
-    if( p != NULL && p[0] == '?' && p[1] == NULLCHAR ) {
-        Usage();
-    }
-    /*
-    //  added this as StartVec leaks vectors if Usage exits
-    //  bit paranoid but I just adjusted the above test
-    */
-    if( p != NULL && ( p[0] == '-' || p[0] == Glob.swchar ) 
-        && p[1] != NULLCHAR &&  p[1] == '?' && p[2] == NULLCHAR ) {
-        Usage();
+    if( ( p = argv[1] ) != NULL ) {
+        if( strcmp( p, "?" ) == 0 
+        || ( p[0] == '-' || p[0] == Glob.swchar ) && strcmp( p+1, "?" ) == 0 ) {
+            Usage();
+        }
     }
 
     Glob.macreadonly = TRUE;
 
-    makeopts = StartVec();
-
-    for( ++argv; *argv != NULL; ++argv ) {
-        p = *argv;
-        checkCtrl( p );
-        select = p[0];
-        option = p[1];
-        if( ( select == '-' || select == Glob.swchar ) &&
-            option != NULLCHAR && p[2] == NULLCHAR ) {
-            switch( toupper( option ) ) {
-            case '?':   Usage();                break;
-            case 'A':   Glob.all       = TRUE;  break;
-            case 'B':   Glob.block     = TRUE;  break;
-            case 'C':   Glob.nocheck   = TRUE;  break;
-            case 'D':   Glob.debug     = TRUE;  break;
-            case 'E':   Glob.erase     = TRUE;  break;
-            case 'H':   Glob.noheader  = TRUE;  break;
-            case 'I':   Glob.ignore    = TRUE;  break;
-            case 'J':   Glob.rcs_make  = TRUE;  break;
-            case 'K':   Glob.cont      = TRUE;  break;
-            case 'M':   Glob.nomakeinit= TRUE;  break;
-            case 'N':   Glob.noexec    = TRUE;  break;
-            case 'O':   Glob.optimize  = TRUE;  break;
-            case 'P':   Glob.print     = TRUE;  break;
-            case 'Q':   Glob.query     = TRUE;  break;
-            case 'R':   Glob.overide   = TRUE;  break;
-            case 'S':   Glob.silent    = TRUE;  break;
-            case 'T':   Glob.touch     = TRUE;  break;
-            case 'U':   Glob.unix      = TRUE;  break;
-            case 'V':   Glob.verbose   = TRUE;  break;
-            case 'W':   Glob.auto_depends = TRUE;break;
+    while( *++argv != NULL ) {
+        checkCtrl( p = *argv );
+        select = p[0], option = (char) toupper( p[1] );
+        if( select == '-' || select == Glob.swchar ) {
+            if( option != NULLCHAR && p[2] == NULLCHAR ) {
+                switch( option ) {
+                case '?':   Usage();                break;
+                case 'A':   Glob.all       = TRUE;  break;
+                case 'B':   Glob.block     = TRUE;  break;
+                case 'C':   Glob.nocheck   = TRUE;  break;
+                case 'D':   Glob.debug     = TRUE;  break;
+                case 'E':   Glob.erase     = TRUE;  break;
+                case 'H':   Glob.noheader  = TRUE;  break;
+                case 'I':   Glob.ignore    = TRUE;  break;
+                case 'J':   Glob.rcs_make  = TRUE;  break;
+                case 'K':   Glob.cont      = TRUE;  break;
+                case 'M':   Glob.nomakeinit= TRUE;  break;
+                case 'N':   Glob.noexec    = TRUE;  break;
+                case 'O':   Glob.optimize  = TRUE;  break;
+                case 'P':   Glob.print     = TRUE;  break;
+                case 'Q':   Glob.query     = TRUE;  break;
+                case 'R':   Glob.overide   = TRUE;  break;
+                case 'S':   Glob.silent    = TRUE;  break;
+                case 'T':   Glob.touch     = TRUE;  break;
+                case 'U':   Glob.unix      = TRUE;  break;
+                case 'V':   Glob.verbose   = TRUE;  break;
+                case 'W':   Glob.auto_depends = TRUE;break;
 #ifdef CACHE_STATS
-            case 'X':   Glob.cachestat = TRUE;  break;
+                case 'X':   Glob.cachestat = TRUE;  break;
 #endif
-            case 'Y':   Glob.show_offenders = TRUE; break;
-            case 'Z':   Glob.hold      = TRUE;  break;
-                /* these options require a filename */
-            case 'F':
-                p = *(argv + 1);
-                if( p == NULL ) {
-                    PrtMsg( ERR| INVALID_FILE_OPTION, select, option );
+                case 'Y':   Glob.show_offenders = TRUE; break;
+                case 'Z':   Glob.hold      = TRUE;  break;
+                    /* these options require a filename */
+                case 'F':
+                case 'L':
+                    if( ( p = *++argv ) == NULL ) {
+                        PrtMsg( ERR| INVALID_FILE_OPTION, select, option );
+                        Usage();
+                    }
+                    checkCtrl( p );
+                    if( option == 'F' ) {
+                        if ( ( p[0] == '-' ) && ( p[1] == NULLCHAR ) ) {
+                            // stdin
+                        } else if ( ( p[0] == '-' ) || ( p[0] == Glob.swchar ) ) {
+                            PrtMsg( ERR| INVALID_FILE_OPTION, select, option );
+                            Usage();
+                        }
+                        new = MallocSafe( sizeof( *new ) );
+                        new->name = (char *) p;
+                        new->next = filesToDo;
+                        filesToDo = new;
+                    } else
+                        *log_name = p;
+                    break;
+                default:
+                    PrtMsg( ERR| INVALID_OPTION, select, option );
                     Usage();
+                    break;
                 }
-                checkCtrl( p );
-                if (( p[0] == '-' ) && ( p[1] == NULLCHAR )) {
-                    // stdin
-                } else if (( p[0] == '-' ) || ( p[0] == Glob.swchar )) {
-                    PrtMsg( ERR| INVALID_FILE_OPTION, select, option );
-                    Usage();
-                }
-                new = MallocSafe( sizeof( *new ) );
-                new->name = (char *)p;
-                new->next = filesToDo;
-                filesToDo = new;
-                argv++;
-                break;
-            case 'L':
-                p = *(argv + 1);
-                if(( p == NULL ) || ( p[0] == '-' ) || ( p[0] == Glob.swchar )) {
-                    PrtMsg( ERR| INVALID_FILE_OPTION, select, option );
-                    Usage();
-                }
-                checkCtrl( p );
-                *log_name = p;
-                argv++;
-                break;
-            default:
-                PrtMsg( ERR| INVALID_OPTION, select, option );
-                Usage();
-                break;
+                options[ ( option | 0x20 ) + 1 ] = TRUE;
+                continue;
             }
-            if( toupper( option ) != 'F' ) {
-                WriteVec( makeopts, p );
-                WriteVec( makeopts, " " );
-            }
-        } else if( ( select == '-' || select == Glob.swchar ) &&
-            toupper(option) == 'M'  && toupper(p[2]) == 'S' &&
-            toupper(p[3]) == NULLCHAR ) {
-            Glob.microsoft = TRUE;
-            Glob.nocheck   = TRUE;
-        } else if( ( select == '-' || select == Glob.swchar ) &&
-            toupper(option) == 'S'  && toupper(p[2]) == 'N' &&
-            toupper(p[3]) == NULLCHAR ) {
-            Glob.silentno  = TRUE;
-        } else {
-            if( strpbrk( p, "=#" ) != NULL ) {     /* is macro=defn */
-                handleMacroDefn( (char*)p );
-            } else {                /* is a target */
-                handleTarg( p );
+            if( toupper( p[3]) == NULLCHAR ) {
+                if( option == 'M'  && toupper( p[2] ) == 'S' ) {
+                    Glob.microsoft = TRUE;
+                    Glob.nocheck   = TRUE;
+                    options[ ( option | 0x20 ) + 1 ] = TRUE;
+                    continue;
+                }
+                if( option == 'S'  && toupper( p[2] ) == 'N' ) {
+                    Glob.silentno  = TRUE;
+                    options[ ( option | 0x20 ) + 1 ] = TRUE;
+                    continue;
+                }
             }
         }
+        if( strpbrk( p, "=#" ) != NULL ) {     /* is macro=defn */
+            handleMacroDefn( (char*) p );
+        } else {                /* is a target */
+            handleTarg( p );
+        }
+    } // while( *++argv != NULL )
+
+    if( Glob.microsoft && Glob.unix ) {
+        PrtMsg( ERR| INCOMPATIBLE__OPTIONS, select, option );
+        Usage();
     }
 
     Glob.macreadonly = FALSE;
 
-    return( FinishVec( makeopts ) );
+    {
+        // 120 allows for 30 options.
+        size_t const optsize = 120 + ( ( *log_name ) ? strlen( *log_name ) + 1: 0 ) + 1;
+        char * const makeopts = MallocSafe( optsize );
+        unsigned opt_index;
+        char default_option[] = " -?";
+
+        makeopts[0] = 0;
+        opt_index = 'a' - 1;
+        while( ++opt_index <= 'z' ) {
+            if( options[ opt_index + 1 ] ) {
+                switch( opt_index ) {
+                case 'f':
+                case 'n':
+                    break;
+                case 'l':
+                    strcat( makeopts, ( *makeopts ) ? " -l " : "-l " );
+                    strcat( makeopts, *log_name );
+                    break;
+                case 'm':
+                    if( Glob.nomakeinit ) {
+                        strcat( makeopts, ( *makeopts ) ? " -m" : "-m" );
+                    }
+                    if( Glob.microsoft ) {
+                        strcat( makeopts, ( *makeopts ) ? " -ms" : "-ms" );
+                    }
+                    break;
+                case 's':
+                    if( Glob.silentno ) {
+                        strcat( makeopts, ( *makeopts ) ? " -sn" : "-sn" );
+                    } else {
+                        strcat( makeopts, ( *makeopts ) ? " -s" : "-s" );
+                    }
+                    break;
+                default:
+                    default_option[2] = (char) opt_index;
+                    strcat( makeopts, default_option + (int) ( *makeopts == '\0' ) );
+                }
+            }
+
+        }
+        return( makeopts );
+    }
 }
 
 
-STATIC const char *procLogName( const char **argv )
+STATIC const char *procLogName( const char * const *argv )
 /*****************************************************************
  Find log file name
  */
 {
     const char *p;      /* working pointer to *argv                 */
 
-    p = argv[1];
-    if ( p == NULL) return NULL;
-    for( ++argv; *argv != NULL; ++argv ) {
+    while( *++argv != NULL ) {
         p = *argv;
-        if((( p[0] == '-' ) || ( p[0] == Glob.swchar ))
-                && ( toupper( p[1] ) == 'L' )
-                && ( p[2] == NULLCHAR )) {
-            p = *(argv + 1);
-            if(( p[0] == '-' ) || ( p[0] == Glob.swchar )) {
-                return NULL;
-            } else {
-                return p;
-            }
+        if( ( ( p[0] == '-' ) || ( p[0] == Glob.swchar ) ) && ( toupper( p[1] ) == 'L' ) && ( p[2] == NULLCHAR ) ) {
+            return ( ( p = *++argv ) == NULL || ( p[0] == '-' ) || ( p[0] == Glob.swchar ) ) ? NULL : p;
         }
     }
     return( NULL );
@@ -369,7 +402,7 @@ STATIC void parseFiles( void )
 
                                     /* process makeinit */
     if( !Glob.nomakeinit ) {
-        if (Glob.microsoft) {
+        if ( Glob.microsoft ) {
             ret = InsFile( TOOLSINI_NAME, TRUE );
         } else {
             ret = InsFile( MAKEINIT_NAME, TRUE );
@@ -437,9 +470,9 @@ STATIC void print( void )
     PrintTargets();
 }
 
-STATIC void ignoreNoCommands( TLIST *targ )
+STATIC void ignoreNoCommands( const TLIST *targ )
 {
-    TLIST *current;
+    TLIST const *current;
 
     current = targ;
     // set targets to be OK if there are no commands to update it
@@ -476,12 +509,12 @@ STATIC RET_T doMusts( void )
 STATIC void globInit( void )
 /**************************/
 {
-    Glob.swchar = SwitchChar();
+    Glob.swchar = (char) SwitchChar();
 }
 
 
-STATIC void init( const char **argv )
-/***********************************/
+STATIC void init( char const * const *argv )
+/******************************************/
 {
     char    *makeopts;
     char const *log_name;
@@ -505,7 +538,7 @@ STATIC void init( const char **argv )
 #endif
 #endif
 #ifdef __OS2__
-    _grow_handles(100); /* Some OS/2 versions allow only 20 files open by default */
+    _grow_handles( 100 ); /* Some OS/2 versions allow only 20 files open by default */
 #endif
     filesToDo = NULL;
     mustTargs = NULL;
@@ -519,8 +552,8 @@ STATIC void init( const char **argv )
 }
 
 
-extern int ExitSafe( int rc )
-/***************************/
+int ExitSafe( int rc )
+/********************/
 {
     static BOOLEAN busy = FALSE;    /* recursion protection */
 
@@ -531,15 +564,15 @@ extern int ExitSafe( int rc )
         }
 #ifndef NDEBUG
         while( filesToDo != NULL ) {
-            NODE *cur = filesToDo;
+            NODE * const cur = filesToDo;
             filesToDo = cur->next;
             FreeSafe( cur );
         }
         if( mustTargs != NULL ) {
             FreeTList( mustTargs );
         }
-        if (firstTargFound != NULL) {
-            FreeTList ( firstTargFound );
+        if ( firstTargFound != NULL ) {
+            FreeTList( firstTargFound );
         }
 #endif
 
@@ -569,23 +602,22 @@ char **_argv;
 #pragma off(unreferenced);
 #endif
 #if !defined( __WINDOWS__ )
-extern int main( int argc, char **argv )
+int main( int argc, char * const *argv )
 #else
-extern int wmake_main( int argc, char **argv )
+int wmake_main( int argc, char * const *argv )
 #endif
 #ifdef __WATCOMC__
 #pragma on (unreferenced);
 #endif
 /*********************************************/
 {
-
     assert( argv[argc] == NULL );       /* part of ANSI standard */
 #ifndef __WATCOMC__
     _argv = argv;
 #endif
     InitSignals();
     InitHardErr();
-    init( (const char **)argv );        /* initialize, process cmdline */
+    init( (const char **) argv );        /* initialize, process cmdline */
     Header();
     parseFiles();
     if( Glob.print ) {

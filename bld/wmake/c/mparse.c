@@ -31,20 +31,19 @@
 
 #include <string.h>
 
+#include "massert.h"
+#include "mtypes.h"
+#include "mstream.h"
+#include "mlex.h"
+#include "mtarget.h"
 #include "macros.h"
 #include "make.h"
-#include "massert.h"
 #include "mmemory.h"
-#include "mmisc.h"
-#include "mlex.h"
 #include "mparse.h"
 #include "mpreproc.h"
 #include "mrcmsg.h"
 #include "msg.h"
-#include "mstream.h"
 #include "msuffix.h"
-#include "mtarget.h"
-#include "mtypes.h"
 #include "mupdate.h"
 #include "mvecstr.h"
 
@@ -55,9 +54,9 @@ STATIC TLIST   *firstTarget;       /* first set of targets parsed
 
 
 
-STATIC void ignoring( TOKEN_T t, BOOLEAN free )
-/**********************************************
- * print message saying ignoring token, and if free then LexMaybeFree( t )
+STATIC void ignoring( TOKEN_T t, BOOLEAN freelex )
+/*************************************************
+ * print message saying ignoring token, and if freelex then LexMaybeFree( t )
  */
 {
     enum MsgClass y;
@@ -82,8 +81,8 @@ STATIC void ignoring( TOKEN_T t, BOOLEAN free )
 
     PrtMsg( ERR|LOC| IGNORE_OUT_OF_PLACE_M, y );
 
-    if( free ) {
-        LexMaybeFree( y );
+    if( freelex ) {
+        LexMaybeFree( (TOKEN_T) y );
     }
 }
 
@@ -138,19 +137,17 @@ STATIC TOKEN_T buildTargs( TLIST **dest, TOKEN_T t )
 }
 
 
-STATIC void setSColon( TLIST *tlist, BOOLEAN scolon )
-/****************************************************
+STATIC void setSColon( const TLIST *tlist, BOOLEAN scolon )
+/**********************************************************
  * Set the targets in tlist to scolon.  Check if any are being
  * coerced to double colon, and print an error message.
  */
 {
-    TARGET  *curtarg;
-    DEPEND  *curdep;
                                 /* set up scolon or dcolon */
     for( ; tlist != NULL; tlist = tlist->next ) {
-        curtarg = tlist->target;
+        TARGET * const curtarg = tlist->target;
+
         if( !curtarg->special ) {
-            curdep = curtarg->depend;
             if( curtarg->depend == NULL ) {
                     /* initial declaration of target */
                 curtarg->scolon = scolon;
@@ -163,8 +160,8 @@ STATIC void setSColon( TLIST *tlist, BOOLEAN scolon )
 }
 
 
-STATIC void linkDepend( TLIST *tlist, DEPEND *dep, TATTR attr )
-/**************************************************************
+STATIC void linkDepend( const TLIST *tlist, DEPEND *dep, TATTR attr )
+/********************************************************************
  * Attach a copy of dep to each target in tlist.  Also OR in the attribute
  * flags for each target.  The pointer to dep is given to the first target.
  */
@@ -261,14 +258,10 @@ STATIC DEPEND *buildDepend( TATTR *pattr )
     DEPEND  *dep;
     TLIST   **list;
     TOKEN_T t;
-    BOOLEAN InitialEntry;  // This is for the MS Option where an empty
-                           // dependents list corresponds to .symbolic
 
     dep = NewDepend();
     *pattr = FalseAttr;
     list = &dep->targs;
-
-    InitialEntry = TRUE;
 
     for(;;) {
         t = LexToken( LEX_PARSER );
@@ -276,8 +269,6 @@ STATIC DEPEND *buildDepend( TATTR *pattr )
         if( t == EOL || t == STRM_END ) {
             break;
         }
-
-        InitialEntry = FALSE;
 
         switch( t ) {
         case TOK_DOTNAME:
@@ -375,8 +366,8 @@ STATIC void checkFirstTarget ( void )
     }
 }
 
-STATIC void setFirstTarget( TLIST *tlist )
-/****************************************/
+STATIC void setFirstTarget( const TLIST *tlist )
+/**********************************************/
 {
     /* Check to see if first targets are still valid */
     checkFirstTarget();
@@ -389,8 +380,8 @@ STATIC void setFirstTarget( TLIST *tlist )
 }
 
 
-STATIC void parseTargWarning( TLIST *walk )
-/******************************************
+STATIC void parseTargWarning( const TLIST *walk )
+/************************************************
  * we check if any targets are not special, and print a warning if so
  */
 {
@@ -428,7 +419,7 @@ STATIC void parseTargDep( TOKEN_T t, TLIST **btlist )
     nodep = t == EOL || t == STRM_END;  /* check if there wasn't a colon */
 
         /* set the scolon attribute for each of these targets */
-    setSColon( *btlist, t == TOK_SCOLON || nodep );
+    setSColon( *btlist, (int) ( t == TOK_SCOLON || nodep ) );
 
     if( !nodep ) {
         dep = buildDepend( &attr );
@@ -479,7 +470,7 @@ STATIC void parseExtensions( void )
              * if microsoft option is set we put it in anyway don't
              * care whether or not it exists
              */
-            } else if (Glob.microsoft) {
+            } else if( Glob.microsoft | Glob.unix ) {
                 FreeSafe( CurAttr.ptr );
             } else {
                 PrtMsg( ERR|LOC| REDEF_OF_SUFFIX, CurAttr.ptr );
@@ -538,11 +529,11 @@ STATIC void parseDotName( TOKEN_T t, TLIST **btlist )
 
 
 /* links the clist to the sufsuf target */
-STATIC void linkClistSufsuf (TARGET *curtarg,
-                             CLIST  *clist,
-                             char   *cur_target_path,
-                             char   *cur_depend_path) {
-
+STATIC void linkClistSufsuf( const TARGET *curtarg,
+                             const CLIST  *clist,
+                             const char   *cur_target_path,
+                             const char   *cur_depend_path )
+{
     DEPEND *walk;
     SLIST  *slist;
 
@@ -589,17 +580,17 @@ STATIC void linkClistSufsuf (TARGET *curtarg,
 }
 
 STATIC void linkCList( TLIST *btlist, CLIST *bclist ,
-                       char  *cur_target_path, char *cur_depend_path)
-/****************************************************
+                       const char  *cur_target_path, const char *cur_depend_path)
+/********************************************************************************
  * attach bclist to each target in btlist
  */
 {
-    CLIST   *clisthead;
-    CLIST   *clistcur;
-    TLIST   *tlist;
-    DEPEND  **walk;
-    CLIST   **walkClist;
-    TARGET  *curtarg;
+    CLIST             *clisthead;
+    CLIST             *clistcur;
+    TLIST const        *tlist;
+    DEPEND * const     *walk;
+    CLIST             **walkClist;
+    TARGET const      *curtarg;
 
     assert( btlist != NULL );
 
@@ -632,7 +623,7 @@ STATIC void linkCList( TLIST *btlist, CLIST *bclist ,
         if( curtarg->scolon ) {
             /* check if it's an scolon, and attempt more than one clist */
             if( clisthead != NULL && (*walk)->clist != NULL ) {
-                if (Glob.microsoft) {
+                if( Glob.microsoft | Glob.unix ) {
                     PrtMsg( WRN|LOC| MORE_THAN_ONE_CLIST, curtarg->node.name );
                 } else {
                     PrtMsg( ERR|LOC| MORE_THAN_ONE_CLIST, curtarg->node.name );
@@ -750,8 +741,8 @@ STATIC void parseSuf( void )
 
 
 
-STATIC char *getFileName (char* intext, int *offset){
-/************************************************
+STATIC char *getFileName( const char* intext, int *offset )
+/**********************************************************
  * get the filename from the given text
  * if there is no file name then get the text body
  * offset - how long after the << is the file name
@@ -760,12 +751,12 @@ STATIC char *getFileName (char* intext, int *offset){
  * we do it later but still we create an FLIST for
  * the temp file anyway
  */
-
+{
     VECSTR  tempStr;
     char*   ret;
     BOOLEAN doubleQuote;    //are there double quotes
 
-    assert (intext != NULL && offset != NULL);
+    assert( intext != NULL && offset != NULL );
 
     *offset     = 0;
     doubleQuote = FALSE;
@@ -774,7 +765,7 @@ STATIC char *getFileName (char* intext, int *offset){
         doubleQuote = TRUE;
         *offset     = 1;
     }
-    while (1) {
+    for( ;; ) {
         if (intext[*offset] == NULLCHAR) {
             break;
         } else if ((isws(intext[*offset])          ||
@@ -824,18 +815,18 @@ STATIC char *getFileName (char* intext, int *offset){
 
 
 
-STATIC void getBody (FLIST* head) {
-/************************************
+STATIC void getBody( FLIST *head )
+/*********************************
  * get the body of the file from the input stream
  */
+{
+    FLIST      *current;
 
-    FLIST* current;
-
-    TOKEN_T t;
-    VECSTR  buf;
-    VECSTR  bufTemp;
-    char*   temp;
-    char*   currChar;
+    TOKEN_T     t;
+    VECSTR      buf;
+    VECSTR      bufTemp;
+    char       *temp;
+    char const *currChar;
 
     current = head;
     if (current == NULL) {
@@ -843,11 +834,10 @@ STATIC void getBody (FLIST* head) {
     }
 
     /* Inlinelevel == the number of inline files we need to create */
-    while (inlineLevel >  0    &&
-           current     != NULL) {
+    while( inlineLevel > 0 && current != NULL ) {
         buf = StartVec();
         WriteVec(buf,"");
-        while (1) {
+        for( ;; ) {
             t = PreGetCH();
             if (t == STRM_END) {
                 UnGetCH(t);
@@ -862,8 +852,7 @@ STATIC void getBody (FLIST* head) {
                      * two characters are <<
                      */
                      currChar = temp+2;
-                     while (*currChar != NULLCHAR &&
-                            isws(*currChar)) {
+                     while (*currChar != NULLCHAR && isws(*currChar)) {
                          ++currChar;
                      }
                      if (*currChar == NULLCHAR) {
@@ -906,8 +895,8 @@ STATIC void getBody (FLIST* head) {
  * cmdText is also modified it removes the file name information and
  * substitutes it with the actual file name that is going to be used
  */
-STATIC FLIST* GetInlineFile (char** commandIn) {
-
+STATIC FLIST* GetInlineFile( char** commandIn )
+{
     int     offset;
     int     index;
     FLIST*  head;
@@ -949,6 +938,7 @@ STATIC FLIST* GetInlineFile (char** commandIn) {
                     current = NewFList();
                     head    = current;
                 } else {
+                    assert( current != NULL );
                     current->next = NewFList();
                     current       = current->next;
                 }
@@ -980,11 +970,10 @@ STATIC FLIST* GetInlineFile (char** commandIn) {
     *commandIn = FinishVec(newCommand);
     getBody(head);
     return(head);
-
 }
 
-STATIC char* formatPathName(const char * inPath) {
-
+STATIC char *formatPathName( const char *inPath )
+{
     char   buf [_MAX_PATH];
 
     if (inPath != NULL) {
@@ -993,18 +982,18 @@ STATIC char* formatPathName(const char * inPath) {
     } else {
         return (NULL);
     }
-
 }
 
 
 
 
-STATIC void getCurTargDepPath (char ** cur_targ_path,
-                               char ** cur_dep_path) {
+STATIC void getCurTargDepPath( char **cur_targ_path,
+                               char **cur_dep_path )
 /*
  * this is to get the current target path and dependent path
  * when sufsuf is created
  */
+{
     if (*cur_targ_path != NULL) {
         FreeSafe (*cur_targ_path);
     }
@@ -1029,8 +1018,8 @@ STATIC void getCurTargDepPath (char ** cur_targ_path,
 }
 
 
-extern TLIST *Parse( void )
-/***************************
+TLIST *Parse( void )
+/*******************
  * Call LexToken, and dispatch to appropriate routine
  */
 {
@@ -1063,8 +1052,7 @@ extern TLIST *Parse( void )
          * when the actual filenames are resolved
          */
         if (btlist != NULL) {
-            ImplicitDeMacro = Glob.microsoft &&
-                              btlist->target->sufsuf;
+            ImplicitDeMacro = ( Glob.microsoft | Glob.unix ) && btlist->target->sufsuf;
         }
         t = LexToken( LEX_PARSER );
         ImplicitDeMacro = FALSE;
@@ -1086,7 +1074,7 @@ extern TLIST *Parse( void )
                 }
                 cur_target_path = NULL;
                 cur_depend_path = NULL;
-                if (Glob.microsoft && token_filename == TRUE)  {
+                if( ( Glob.microsoft | Glob.unix ) && token_filename == TRUE )  {
                     exPop();
                     token_filename = FALSE;
                 }
@@ -1122,10 +1110,7 @@ extern TLIST *Parse( void )
                      *       rule we must deMacro the text the same
                      *       way as wmake does for microsoft option
                      */
-                    if (btlist != NULL) {
-                        ImplicitDeMacro = Glob.microsoft &&
-                              btlist->target->sufsuf;
-                    }
+                    ImplicitDeMacro = ( Glob.microsoft | Glob.unix ) && btlist->target->sufsuf;
                     newclist->inlineHead = GetInlineFile(&(newclist->text));
                     ImplicitDeMacro = FALSE;
                     bclist = newclist;
@@ -1146,7 +1131,7 @@ extern TLIST *Parse( void )
             break;
         case TOK_FILENAME:
             parseTargDep( t, &btlist );
-            if (Glob.microsoft && btlist != NULL)  {
+            if( ( Glob.microsoft | Glob.unix ) && btlist != NULL ) {
                 if (btlist->target != NULL && btlist->target->depend != NULL) {
                     exPush(btlist->target,btlist->target->depend,NULL);
                     token_filename = TRUE;
@@ -1169,16 +1154,16 @@ extern TLIST *Parse( void )
 }
 
 
-extern void ParseInit( void )
-/***************************/
+void ParseInit( void )
+/********************/
 {
     inlineLevel   = 0;
     DoingUpdate = FALSE;
 }
 
 
-extern void ParseFini( void )
-/***************************/
+void ParseFini( void )
+/********************/
 {
 }
 

@@ -109,7 +109,7 @@
 #define CHANGING_DRIVE                   52
 #define OS_CORRUPTED                     53
 #define READ_ERROR                       54
-#define ERR_BLANK_2                      55
+#define INCOMPATIBLE__OPTIONS            55
 #define ERR_BLANK_3                      56
 #define ERR_BLANK_4                      57
 #define ERR_BLANK_5                      58
@@ -242,13 +242,14 @@ typedef struct table_type {
     char        *msgtype;
 } TABLE_TYPE;
 
-extern int MsgInit();
+extern int MsgInit( void );
 extern int MsgGet( int resourceid, char *buffer );
 extern void MsgGetTail( int resourceid, char *buffer );
-extern void MsgFini();
+extern void MsgFini( void );
 extern int MsgReOrder( int resourceid, char *buff, char **paratype );
 extern BOOLEAN ResAutoDep( char *name, time_t stamp, BOOLEAN (*chk)(time_t,time_t), time_t *pmax_time );
 
+// extern long FileShift; /* This is defined in %devdir%\sdk\rc\wres\c\loadstr.c */ incompatible with mautores.c W.Briscoe 20031106
 #else
 /* this is a table storing msg id's which need two parameters for PrtMsg.
  * keep it in order. see PARA_TABLE in mrcmsg.c.
