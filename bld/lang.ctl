@@ -11,6 +11,7 @@ echo Languages Build <1>
 
 #       First of all build prerequisite utilities
 [ INCLUDE <devdir>\yacc\lang.ctl ]
+[ INCLUDE <devdir>\ssl\lang.ctl ]
 #
 #       Before building anything for real, create up-to-date header files
 #
@@ -53,19 +54,15 @@ echo Languages Build <1>
 [ INCLUDE <devdir>\mathlib\lang.ctl ]
 [ INCLUDE <devdir>\cfloat\lang.ctl ]
 [ INCLUDE <devdir>\win386\lang.ctl ]
-#        build C++ libraries after C library
-[ INCLUDE <devdir>\plusplus\cpplib\lang.ctl ]
 #        src must be made after the C library
 [ INCLUDE <devdir>\src\lang.ctl ]
 #        graphics library must be made after C library
 [ INCLUDE <devdir>\graphlib\lang.ctl ]
-#        rtdll must be made after all other libraries
-[ INCLUDE <devdir>\rtdll\lang.ctl ]
 [ INCLUDE <devdir>\nwlib\lang.ctl ]
 #        BRCSDLL must be before BVI and BVIPER
 [ INCLUDE <devdir>\rcsdll\lang.ctl ]
 #
-#       Then build the tools
+#       Then build the compilers
 #
 #       BW32LDR must be done before EXE's that use the loader
 [ INCLUDE <devdir>\w32loadr\lang.ctl ]
@@ -87,6 +84,13 @@ echo Languages Build <1>
 [ INCLUDE <devdir>\f77\lang.ctl ]
 [ INCLUDE <devdir>\f77\samples\lang.ctl ]
 [ INCLUDE <devdir>\wl\lang.ctl ]
+#
+#        Now we can build the C++ libraries - must be done after C library
+#        as well as after the C++ compilers
+#
+[ INCLUDE <devdir>\plusplus\cpplib\lang.ctl ]
+#        rtdll must be made after all other libraries
+[ INCLUDE <devdir>\rtdll\lang.ctl ]
 #
 #        Now let's build the utilities and other stuff
 #
