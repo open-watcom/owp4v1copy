@@ -1,3 +1,5 @@
+target_cpu = axp
+
 imp_objs = &
         axpaddr.obj &
         axpctrl.obj &
@@ -6,7 +8,5 @@ imp_objs = &
         axpcall.obj &
         axpdisas.obj &
         axptrace.obj
-
-mad = axp
 
 !include ../../master.mif

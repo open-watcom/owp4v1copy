@@ -1,3 +1,5 @@
+target_cpu = ppc
+
 imp_objs = &
         ppcaddr.obj &
         ppcctrl.obj &
@@ -6,7 +8,5 @@ imp_objs = &
         ppccall.obj &
         ppcdisas.obj &
         ppctrace.obj
-
-mad = ppc
 
 !include ../../master.mif

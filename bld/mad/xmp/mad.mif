@@ -1,3 +1,8 @@
+#
+# Change this macro name to whatever the name of your machine is
+#
+target_cpu = xmp
+
 imp_objs = &
         xmpaddr.obj &
         xmpctrl.obj &
@@ -6,11 +11,6 @@ imp_objs = &
         xmpcall.obj &
         xmpdisas.obj &
         xmptrace.obj
-
-#
-# Change this macro name to whatever the name of your machine is
-#
-mad = xmp
 
 #
 # Set 'extr_incs' to the directories where any extra include files are

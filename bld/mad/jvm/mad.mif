@@ -1,3 +1,5 @@
+target_cpu = jvm
+
 imp_objs = &
         jvmaddr.obj &
         jvmctrl.obj &
@@ -6,8 +8,6 @@ imp_objs = &
         jvmcall.obj &
         jvmdisas.obj &
         jvmtrace.obj
-
-mad = jvm
 
 extra_incs = $(javasdk)/include;$(javasdk)/include/win32;$(java_src_dir)/src/win32/java/include;$(lang_root)/h/nt
 
