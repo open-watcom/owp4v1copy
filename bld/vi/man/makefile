@@ -1,11 +1,8 @@
-.before
-    set gmlinc=pict;d:\doc\gml
-    set gmllib=c:\gml
-    set gmlpag=%RAMDRV%:\;c:\tmp
-    @-clog vi.err
+wgml = $(%gml_root)\wgml
 
-.after
-    @-clog
+.before
+    set gmlinc=pict;$(%doc_root)\doc\gml
+    set gmlpag=%TEMP%
 
 vi.ps : vi.gml settings.gml intro.gml basic.gml &
         inter.gml advan.gml vipref.gml &
@@ -19,10 +16,10 @@ vi.ps : vi.gml settings.gml intro.gml basic.gml &
 #    -wgml stat.vi.gml (file nb7x9ps index pass 1 cpi 20 stat verb
 #    -wgml vi.gml (file nb7x9ps index pass 1 cpi 20 stat verb
 #    -wgml vi.gml (file nb7x9ps pass 1 cpi 20 stat verb
-    -wgmlp vi.gml (file nb7x9ps pass 1 cpi 20 stat verb dev term nopause out *.res
+    -$(wgml) vi.gml (file nb7x9ps pass 1 cpi 20 stat verb dev term nopause out *.res
 
 full : .SYMBOLIC
-    -wgmlp vi.gml (file nb7x9ps index pass 3 cpi 20 stat verb
+    -$(wgml) vi.gml (file nb7x9ps index pass 3 cpi 20 stat verb
 
 vi.hlp: wgmlst.cop vihelp.src toc vihlp
         @erase vitoc.hlp
@@ -35,7 +32,7 @@ vi.hlp: wgmlst.cop vihelp.src toc vihlp
         @%null
 
 vihelp.src: vi.gml .SYMBOLIC
-   -wgmlp 'vi' ( line verbose stat pass 2 cpi 10 &
+   -$(wgml) 'vi' ( line verbose stat pass 2 cpi 10 &
         out vihelp.src proc vihelp file help
     vi -q -sremtoc.vi vihelp.src
     @copy toc.src vitoc.src
