@@ -3,7 +3,7 @@
 host_os  = qnx
 host_cpu = 386
 
-MODEL = s
+memory_model_386 = s
 libname = sqnx
 
 !include ../master.mif

@@ -61,11 +61,6 @@ extra_c_flags += -d_NO_LIB_PRAGMAS_
 extra_c_flags += -r
 !endif
 
-!ifdef MODEL
-mem_model_i86 = -m$(MODEL)
-mem_model_386 = -m$(MODEL)
-!endif
-
 !ifdef CONV
 extra_c_flags += -3$(CONV)
 !endif
