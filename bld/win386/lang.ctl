@@ -27,4 +27,4 @@ cdsay .
 [ BLOCK <1> clean ]
 #==================
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
-    @rm -f obj\*.?bj asm\dllthk.asm c\dllthunk.c asm\winglue.asm h\winglue.inc
+    @rm -f obj\*.?bj asm\dllthk.asm c\dllthunk.c asm\winglue.asm h\winglue.inc ext\win386.ext

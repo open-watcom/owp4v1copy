@@ -52,7 +52,7 @@ pStackMin       equ     000CH
 pStackBot       equ     000EH
 
 
-        DOSSEG
+        .DOSSEG
 
 _BSS          segment word public 'BSS' use16
 _BSS          ends
@@ -174,13 +174,13 @@ LibEntry PROC FAR
         push    cx
         call    LOCALINIT
         or      ax,ax           ; did it do it ok ?
-        jz      error           ; quit if it failed
+        jz      error1           ; quit if it failed
 
 callc:
         call    LibMain         ; invoke the 'C' routine (result in AX)
         jmp     short exit      ; LibMain is responsible for stack clean up
 
-error:
+error1:
 
         pop     si               ; clean up stack on a LocalInit error
         pop     es

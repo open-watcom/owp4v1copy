@@ -9,7 +9,6 @@
         set INCLUDE = $(win31_hdrs);$(bld_h);..\h;$(watcom_h)
 
 CC = $(comp286)
-ASM = masm
 
 EXTRALNK = extra.lnk
 LNK = lnk.lnk
@@ -32,6 +31,7 @@ $(LNK) : makefile ..\win386.mif
     @%append $(LNK) @$(EXTRALNK)
     @%append $(LNK) option modname=win38600
     @%append $(LNK) option desc '                                                                                '
+    @%append $(LNK) option nocaseexact
     @%append $(LNK) option map,nodefault
     @%append $(LNK) option symf=$(EXTNAME).sym
     @%append $(LNK) library win31
@@ -60,6 +60,6 @@ $(LNK) : makefile ..\win386.mif
 .c.obj :
         $(CC) $[* $(CFLAGS) -fo=..\obj\$^&.obj
 .asm.obj :
-        $(ASM) /I$(MINCLUDE) /mx /s /Zd $[* ..\obj\$^&.obj;
+        wasm -w2 -i=$(MINCLUDE) $[* -fo=..\obj\$^&.obj
 .asm.dbj :
-        $(ASM) /I$(MINCLUDE) /DDLL32 /mx /s /Zd $[* ..\obj\$^&.dbj;
+        wasm -w2 -i=$(MINCLUDE) -dDLL32 $[* -fo=..\obj\$^&.dbj
