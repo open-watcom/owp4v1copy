@@ -325,7 +325,7 @@ libs_win_i86_gui        = $(aui_dir)\win\aui.lib $(gui_dir)\win\guiwinl.lib
 libs_nt_386_char        = $(aui_dir)\nt\aui.lib $(gui_dir)\ui\guintf.lib $(ui_dir)\nt\uilibf.lib $(wres_dir)\lib\wresf.lib
 libs_nt_386_gui         = $(aui_dir)\nt\aui.lib $(gui_dir)\win\guintf.lib
 libs_os2_i86_char       = $(aui_dir)\ol\aui.lib $(gui_dir)\ui\guios2l.lib $(ui_dir)\os2\uilibl.lib $(wres_dir)\lib\wresl.lib
-libs_os2_i86_gui        = $(aui_dir)\pm\aui.lib $(gui_dir)\win\guios2l.lib $(lang_root)\lib286\os2\os2.lib
+libs_os2_i86_gui        = $(aui_dir)\pm\aui.lib $(gui_dir)\win\guios2l.lib $(os2286)
 libs_os2_386_char       = $(aui_dir)\of\aui.lib $(gui_dir)\ui\guios2f.lib $(ui_dir)\os2\uilibf.lib $(wres_dir)\lib\wresf.lib
 libs_os2_386_gui        = $(aui_dir)\pmf\aui.lib $(gui_dir)\win\guios2f.lib
 libs_dos_386_char       = $(aui_dir)\of\aui.lib $(gui_dir)\ui\guidosf.lib $(ui_dir)\$(machine)dos\uilibf.lib $(wres_dir)\lib\wresf.lib
@@ -626,7 +626,7 @@ wvnt.res : $(hdir)\wvwin.rc $(bitmaps) $(rcfiles) .autodepend
 
 wvpm.res wvpmj.res : $(hdir)\wvpm.rc $(bitmaps) $(rcfiles) .autodepend
         @set oinc=$(%include)
-        set include=$(watcom_dir)\os220_h;$(rcinclude);$(%include)
+        set include=$(inc_dirs_sys);$(rcinclude);$(%include)
         wcc -dRC -i$(aui_dir)\pmf;$(rcinclude) -p -pw=0 -fo=wvpm.i $(hdir)\wvpm.rc
         wcc -dRC -i$(aui_dir)\pmf;$(rcinclude) -p -pw=0 -fo=wvpmj.i $(hdir)\wvpm.rc /dJAPANESE_MESSAGES
         set opath=$(%path)
