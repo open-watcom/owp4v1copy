@@ -175,12 +175,7 @@ struct  exception {
 
 _WMRTLINK extern int    matherr( struct _exception * );
 _WMRTLINK extern double _matherr( struct _exception * );
-:: The 'auto' keyword was added to work around W604/W594 in the C++ compiler
-#ifdef __cplusplus
-_WMRTLINK void _set_matherr( auto int (*rtn)( struct _exception * ) );
-#else
-_WMRTLINK void _set_matherr( int (*rtn)( struct _exception * ) );
-#endif
+_WMRTLINK extern void   _set_matherr( int (*rtn)( struct _exception * ) );
 :segment !SNAP & !SNAPDRV
 
 _WCRTLINK extern int _dieeetomsbin( double *__x, double *__y );
@@ -191,19 +186,21 @@ _WCRTLINK extern int _fmsbintoieee( float *__x, float *__y );
 
 #endif /* EXTENSIONS */
 
-:: At the time of this writing, #pragma intrinsic can't deal with
-:: functions in a namespace. Thus the intrinsic declarations of the
-:: math functions are not part of cmath. See bugzilla bug #379.
-:segment !CNAME
 #if !defined( __NO_MATH_OPS ) && defined(_M_IX86)
 /*
-    Defining the __NO_MATH_OPS macro will stop the compiler from recogizing
-    the following functions as intrinsic operators.
+    Defining the __NO_MATH_OPS macro will stop the compiler from
+    recognizing the following functions as intrinsic operators.
 */
- #pragma intrinsic(log,cos,sin,tan,sqrt,fabs,pow,atan2,fmod)
- #pragma intrinsic(acos,asin,atan,cosh,exp,log10,sinh,tanh)
-#endif
+:segment CNAME
+namespace std {
+  #pragma intrinsic(log,cos,sin,tan,sqrt,fabs,pow,atan2,fmod)
+  #pragma intrinsic(acos,asin,atan,cosh,exp,log10,sinh,tanh)
+}
+:elsesegment
+#pragma intrinsic(log,cos,sin,tan,sqrt,fabs,pow,atan2,fmod)
+#pragma intrinsic(acos,asin,atan,cosh,exp,log10,sinh,tanh)
 :endsegment
+#endif
 
 :include poppack.sp
 :segment CNAME

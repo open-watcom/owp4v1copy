@@ -173,14 +173,23 @@ _WCRTLINK extern int     system( const char *__string );
 }
 :endsegment
 
-:segment !CNAME
 #if defined(__INLINE_FUNCTIONS__)
- #pragma intrinsic(abs,div,labs)
- #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
+:segment CNAME
+namespace std {
+  #pragma intrinsic(abs,div,labs)
+  #if defined(__386__) || defined(__AXP__) || defined(__PPC__)
+    #pragma intrinsic(ldiv)
+  #endif
+}
+:elsesegment
+#pragma intrinsic(abs,div,labs)
+#if defined(__386__) || defined(__AXP__) || defined(__PPC__)
   #pragma intrinsic(ldiv)
- #endif
+#endif
+:endsegment
 #endif
 
+:segment !CNAME
 #define atof(p)  strtod(p,(char **)NULL)
 :endsegment
 
