@@ -272,13 +272,65 @@ static copy_entry *BuildList( char *src, char *dst, bool test_abit )
     return( head );
 }
 
+static int mkdir_nested( char *path )
+{
+    struct stat sb;
+    char        pathname[ FILENAME_MAX ];
+    char        *p;
+    char        *end;
+
+    p = pathname;
+    strncpy( pathname, path, FILENAME_MAX );
+    end = pathname + strlen( pathname );
+
+#ifndef __UNIX__
+    /* special case for drive letters */
+    if( p[0] && p[1] && p[1] == ':' ) {
+        p += 2;
+        if( (p[0] == '/') || (p[0] == '\\') )
+            ++p;
+    }
+#endif
+
+    /* find the next path component */
+    while( p < end ) {
+        while( (p < end) && (*p != '/') && (*p != '\\') )
+            ++p;
+        *p = '\0';
+
+        /* check if pathname exists */
+        if( stat( pathname, &sb ) == -1 ) {
+            int rc;
+
+#ifdef __UNIX__
+            rc = mkdir( pathname, S_IRWXU | S_IRWXG | S_IRWXO );
+#else
+            rc = mkdir( pathname );
+#endif
+            if( rc != 0 ) {
+                Log( FALSE, "Can not create directory '%s': %s\n", pathname, strerror( errno ) );
+                return( -1 );
+            }
+        } else {
+            /* make sure it really is a directory */
+            if( !S_ISDIR( sb.st_mode ) ) {
+                Log( FALSE, "Can not create directory '%s': file with the same name already exists\n", pathname );
+                return( -1 );
+            }
+        }
+        /* put back the path separator - forward slash always works */
+        *p++ = '/';
+    }
+    return( 0 );
+}
+
 static unsigned ProcOneCopy( char *src, char *dst )
 {
     FILE        *sp;
     FILE        *dp;
     unsigned    len;
     unsigned    out;
-    static char buff[32U*1024];
+    static char buff[32 * 1024];
 
     sp = fopen( src, "rb" );
     if( sp == NULL ) {
@@ -303,11 +355,7 @@ static unsigned ProcOneCopy( char *src, char *dst )
         }
         if( end ) {
             end[0] = 0;
-#ifdef __UNIX__
-            mkdir( buff, S_IRWXU | S_IRWXG | S_IRWXO );
-#else
-            mkdir( buff );
-#endif
+            mkdir_nested( buff );
             dp = fopen( dst, "wb" );
         }
         if( !dp ) {
@@ -407,16 +455,7 @@ static unsigned ProcCopy( char *cmd, bool test_abit )
 
 static unsigned ProcMkdir( char *cmd )
 {
-    struct stat sb;
-
-    if( -1 == stat( cmd, &sb ) )
-#ifdef __UNIX__
-        return( mkdir( cmd, S_IRWXU | S_IRWXG | S_IRWXO ) );
-#else
-        return( mkdir( cmd ) );
-#endif
-    else
-        return( 0 );
+    return( mkdir_nested( cmd ) );
 }
 
 void PMakeOutput( char *str )
