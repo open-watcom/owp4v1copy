@@ -128,6 +128,20 @@ STATIC int_32 makeHexNumber (char* inString,
                              int*  stringLength);
 STATIC void doElIf( BOOLEAN (*logical)(void), enum directiveTok tok );
 
+// local functions
+STATIC void parseExpr (DATAVALUE* leftVal, char* inString);
+STATIC void logorExpr (DATAVALUE* leftVal);
+STATIC void logandExpr (DATAVALUE* leftVal);
+STATIC void bitorExpr (DATAVALUE* leftVal);
+STATIC void bitxorExpr (DATAVALUE* leftVal);
+STATIC void bitandExpr (DATAVALUE* leftVal);
+STATIC void equalExpr (DATAVALUE* leftVal);
+STATIC void relateExpr (DATAVALUE* leftVal);
+STATIC void shiftExpr (DATAVALUE* leftValue);
+STATIC void addExpr (DATAVALUE* leftValue);
+STATIC void multExpr (DATAVALUE* leftValue);
+STATIC void unaryExpr (DATAVALUE* leftValue);
+
 STATIC char* currentPtr;        // Pointer to current start in string
 STATIC TOKEN_TYPE currentToken; // Contains the information for the current token
 
@@ -892,9 +906,11 @@ STATIC void bangInclude( void )
 {
     char    *text;
     char    *temp = NULL;
+#ifdef __WATCOMC__
     char    *current;
     char    full_path[ _MAX_PATH ];
     RET_T   ret;
+#endif
 
     assert( !curNest.skip );
 
@@ -1028,6 +1044,8 @@ STATIC void handleBang( void )
             case D_INJECT:  bangInject();       break;
             case D_LOADDLL: bangLoadDLL();      break;
             case D_UNDEF:   bangUnDef();        break;
+            default:
+                break;
             }
         } else {
                     /* otherwise, we just eat it up */

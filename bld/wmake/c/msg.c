@@ -51,6 +51,10 @@
 STATIC const char *logName;
 STATIC int logFH;
 
+static void reOrder( va_list args, char *paratype );
+static void positnArg( va_list args, UINT16 size );
+static void waitForKey( void );
+
 #if defined( __WINDOWS__ )
 extern void Output( char * );
 #endif
@@ -64,7 +68,7 @@ typedef union msg_arg {
 } MSG_ARG;
 
 STATIC MSG_ARG ArgValue[2];
-STATIC USEARGVALUE = 0; /* set to non_zero if ArgValue is used */
+STATIC int USEARGVALUE = 0; /* set to non_zero if ArgValue is used */
 
 /*
  * now we do some pre-processor magic, and build msgText[]
@@ -87,7 +91,7 @@ STATIC char *strApp( char *dest, const char *src )
 {
     assert( dest != NULL && src != NULL );
 
-    while( *dest = *src ) {
+    while( (*dest = *src) ) {
         ++dest;
         ++src;
     }
@@ -365,13 +369,13 @@ extern void PrtMsg( enum MsgClass num, ... )
 {
     va_list         args;
     char            buff[ 1024 ];
-    enum MsgClass   pref;
+    enum MsgClass   pref = M_ERROR;
     unsigned        len;
     unsigned        class;
     const char      *fname;
     UINT16          fline;
     int             fh;
-    char            wefchar;    /* W, E, or F */
+    char            wefchar = 'F';    /* W, E, or F */
     char            *str;
     char            msgbuff[MAX_RESOURCE_SIZE];
     char            *paratype;
@@ -614,7 +618,7 @@ static void reOrder( va_list args, char *paratype )
     }
 }
 
-void positnArg( va_list args, UINT16 size )
+static void positnArg( va_list args, UINT16 size )
 /******************************************
  * the reordered parameter are passed to FmtStr as a union of 4 bytes.
  * so we have to take two more bytes out for int, char *, etc, when we use
