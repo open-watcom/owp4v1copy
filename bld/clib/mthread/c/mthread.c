@@ -454,7 +454,7 @@ thread_data *__AllocInitThreadData( thread_data *tdata )
 /******************************************************/
 {
     if( tdata == NULL ) {
-        tdata = lib_malloc( __ThreadDataSize );
+        tdata = lib_calloc( 1, __ThreadDataSize );
         if( tdata != NULL ) {
             tdata->__allocated = 1;
             tdata->__data_size = __ThreadDataSize;
