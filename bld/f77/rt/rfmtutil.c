@@ -870,15 +870,26 @@ static  int     Div10S( real val ) {
 }
 
 
+    //  this function is called to determine if a number printed in G
+    //  format is printed with the E format or the F format
+
 static  int     Div10L( double val ) {
 //====================================
 
     int         retn;
 
-    if( val < DInfinity.value ) {
+    unsigned short int * ui = (unsigned short int *) & val;
+    if ( (ui [3] & 0x7FF0) == 0x7FF0 ) {    /* NaN or Inf */
+        return( INT_MAX );
+    }
+
+    if ( val < DInfinity.value ) {
         retn = -1;
         while( val >= 1 ) {
           retn++;
+              //   check for runaway due to a NaN
+          // if ( retn == 1000 )
+             // return ( INT_MAX );
           val /= 10;
         }
         return( retn );
