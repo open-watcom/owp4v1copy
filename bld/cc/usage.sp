@@ -10,7 +10,7 @@ Usage: wcc [options] file [options]
 :endsegment
 ::
 Options:
-:segment !OS_qnx
+:segment !OS_qnx & !OS_linux
             ( /option is also accepted )
 :endsegment
 :segment T386

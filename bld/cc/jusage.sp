@@ -10,7 +10,7 @@
 :endsegment
 ::
 Options:
-:segment !OS_qnx
+:segment !OS_qnx & !OS_linux
 	    ( /option is also accepted )
 :endsegment
 :segment T386
@@ -105,7 +105,6 @@ Options:
 -ms	      スモール･メモリ･モデル(スモール･コード/スモール･データ)
 :elsesegment Ti86
 -mc	      コンパクト･メモリ･モデル(スモール･コード/ラージ･データ)
--mf	      フラット･メモリ･モデル(ｽﾓｰﾙ･ｺｰﾄﾞ/CS=DS=SS=ESを仮定したｽﾓｰﾙ･ﾃﾞｰﾀ)
 -mh	      ヒュージ･メモリ･モデル(ラージ･コード/ヒュージ･データ)
 -ml	      ラージ･メモリ･モデル(ラージ･コード/ラージ･データ)
 -mm	      ミディアム･メモリ･モデル(ラージ･コード/スモール･データ)
