@@ -2,7 +2,7 @@ compile = $(comp286) $[* /d2 /ml /zW
 auilib = $(auidir)\win\aui.lib
 guilib = $(guidir)\ui\guiwinl.lib
 uilib = $(uidir)\win\uilibl.lib
-reslib = $(watcomdir)\lib\wreslw.lib
+reslib = $(watcomdir)lib\wreslw.lib
 resfile = appui.res
 
 app.exe : $(objs) app.lnk $(auilib) $(guilib) $(uilib) $(resfile) $(reslib)

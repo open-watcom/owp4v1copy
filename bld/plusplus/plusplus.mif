@@ -21,7 +21,7 @@ wcc = $(comp$(config_source_arch))
 asm = $(asm$(config_source_arch))
 
 .before
-    set include=$(watcomdir)\h;$(%include)
+    set include=$(watcomdir)h;$(%include)
 
 .y: ..\y
 .y.c:

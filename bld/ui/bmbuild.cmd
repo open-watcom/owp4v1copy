@@ -17,7 +17,7 @@ rem Note that the INCLUDE environment variable has to change to get the
 rem QNX headers.
 rem
 set saveinc=%include%
-set include=%watcomdir%\h;%watcom%\qh
+set include=%watcomdir%h;%watcom%\qh
 cd %uidir%\qnx\os32q
 wmake /h /k
 cd %uidir%
