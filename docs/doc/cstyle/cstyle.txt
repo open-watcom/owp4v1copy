@@ -186,7 +186,8 @@ the line needs to be broken up appropriately. Recommended formatting is
 as follows:
 
 void my_long_function( first_complex_type *arg1, second_complex_type *arg2,
-                       int arg3, third_complex_type *arg4 ) {
+    int arg3, third_complex_type *arg4 )
+{
     // function body goes here
 }
 
@@ -273,10 +274,11 @@ When you have an if-else statement nested in another if-else statement,
 put braces around the nested if-else. For example:
 
 if( foo ) {
-    if( bar )
+    if( bar ) {
         win();
-    else
+    } else {
         lose();
+    }
 }
 
 rather than the less legible:
@@ -497,9 +499,10 @@ without the static modifier. When formatting global variables, try to
 format them such that the names of the variables align on "tab stop"
 columns. For example:
 
-int             my_var1;
-long            my_var2;
-my_structue     my_structure = {
+// 45678 1 234567  column counter for illustration.
+int         my_var1;
+long        my_var2;
+my_structue my_structure = {
     ...
 };
 
@@ -510,10 +513,11 @@ Declarations of local variables should be formatted similarly to those
 of global variables, as detailed above. For example:
 
 void foo( void )
+// 45678 1 234567  column counter for illustration.
 {
     int         my_var1;
     long        my_var2;
-    void        *my_ptr;
+    void const  *my_ptr;
 
     // code follows here
 }
@@ -526,8 +530,8 @@ Comments and Commenting Style
 
 Commenting code is extremely important. Comments serve as an aid to the
 human readers of source code; they are a form of engineering etiquette.
-Comments should always be used to clarify otherwise obscure code,
-however do not comment too liberally. If the code itself describes
+Comments should always be used to clarify otherwise obscure code.
+However do not comment too liberally. If the code itself describes
 concisely what is happening, do NOT provide a comment explaining the
 obvious! Comments should always be neat and readable - haphazardly
 placed comments are almost as bad as haphazardly formatted source code.
@@ -613,8 +617,17 @@ All C header files should be formatted in the following manner:
 
 #ifndef _HEADER_H_INCLUDED  /* Include guard. The #define name should be   */
 #define _HEADER_H_INCLUDED  /* the same as the header (ie: header.h here). */
+/* HEADER_H_INCLUDED would be in the user's "namespace". Implementation headers
+ * for end-user have to use names in the implementation "namespace".
+ * e.g.
+ * #ifndef _STDLIB_H_INCLUDED
+ * #define _STDLIB_H_INCLUDED
+ * ...
+ * #endif
+ * There is no problem in using implementation names anywhere in Open Watcom
+ */
 
-#include <stdio.h>      /* Include any dependant include files */
+#include <stdio.h>      /* Include any dependent include files */
 
 /* If necessary, declare structure packing; The __Packed keyword may be
  * used on individual basis instead of the #pragma.
@@ -641,7 +654,7 @@ extern "C" {            /* Use "C" linkage when in C++ mode */
 }                       /* End of "C" linkage for C++ */
 #endif
 
-#endif  /* __HEADER_H */
+#endif  /* _HEADER_H_INCLUDED */
 ------------------------------------------------------------------------------
 
 Structure packing warrants further note. For structures that are only used
@@ -737,6 +750,7 @@ Any public global variables must be declared in the header file in the
 declarations, format them so that the names of the variables align on
 "tab stops". For example:
 
+// 45678 1 2345678 2 2345678
 extern int          my_var1;
 extern ulong        my_var2;
 extern score_reg    my_structure;
