@@ -86,7 +86,7 @@ libs_axp_nt             = clib
 libs_ppc_nt             = clib
 
 incs_os2        = $(lang_root)\h\os21x;$(watcom_dir)\h;$(lang_root)\h
-incs_os2v2      = $(watcom_dir)\os220_h;$(watcom_dir)\h;$(lang_root)\h
+incs_os2v2      = $(lang_root)\h\os2;$(watcom_dir)\h;$(lang_root)\h
 incs_qnx        = $(watcom_dir)\qh;$(watcom_dir)\h;$(lang_root)\qh
 incs_win        = $(lang_root)\h\win;$(watcom_dir)\h;$(lang_root)\h
 incs_dos        = $(watcom_dir)\h;$(lang_root)\h
