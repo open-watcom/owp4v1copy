@@ -306,7 +306,7 @@ int UnquoteFName( char *dst, int maxlen, const char *src )
                 pos++;
 
                 if ( pos < ( maxlen - 1 ) ) {
-                    *dst = t;
+                    *dst++ = t;
                     pos++;
                 }
             }
