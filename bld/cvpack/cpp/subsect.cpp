@@ -157,9 +157,11 @@ void SstGlobalTypes::Append( LFLocalTypeRecord* typeRecord )
 void SstGlobalTypes::Put( ExeMaker& eMaker ) const
 {
     unsigned_32 offset = 0;
+    uint        i;
+
     eMaker.DumpToExe( (unsigned_32) 0 );
     eMaker.DumpToExe( (unsigned_32) _globalTypingInfo.Entries() );
-    for ( uint i = ToTypeIndex(0); i < ToTypeIndex(_globalTypingInfo.Entries()); i++ ) {
+    for ( i = ToTypeIndex(0); i < ToTypeIndex(_globalTypingInfo.Entries()); i++ ) {
         eMaker.DumpToExe( offset );
         offset += _globalTypingInfo[i] -> Length();
     }
@@ -343,10 +345,12 @@ bool NameHashTable::TryToInsert( SymbolStruct* sym )
 void NameHashTable::Put( ExeMaker& eMaker ) const
 /***********************************************/
 {
+    uint    i;
+
     eMaker.DumpToExe( (unsigned_16) _cHash);
     eMaker.DumpToExe((unsigned_16) 0);
     unsigned_32  chain_offset = 0;
-    for ( uint i = 0; i < _cHash; i++ ) {
+    for ( i = 0; i < _cHash; i++ ) {
         eMaker.DumpToExe(chain_offset);
         chain_offset += _cTab[i].entries() * (2*LONG_WORD);
     }

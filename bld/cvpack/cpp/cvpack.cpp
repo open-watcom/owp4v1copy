@@ -126,12 +126,13 @@ uint CVpack::DoSstModule()
 {
     char*       buffer;
     unsigned_32 length;
+    uint        module;
 
-    for ( uint module = 1;
-          _aRetriever.ReadSubsection(buffer,length,sstModule,module);
+    for( module = 1;
+          _aRetriever.ReadSubsection( buffer, length, sstModule, module );
           module++ ) {
-        _newDir.Insert(sstModule,module,OFBase(),length);
-        _eMaker.DumpToExe(buffer,length);
+        _newDir.Insert( sstModule, module, OFBase(), length );
+        _eMaker.DumpToExe( buffer, length );
     }
     return module-1;
 }
@@ -139,7 +140,7 @@ uint CVpack::DoSstModule()
 void CVpack::DumpSig()
 /********************/
 {
-    _eMaker.DumpToExe(NB09, LONG_WORD);
+    _eMaker.DumpToExe( NB09, LONG_WORD );
 }
 
 uint CVpack::DoSrcModule( const uint module )
@@ -147,6 +148,7 @@ uint CVpack::DoSrcModule( const uint module )
 {
     unsigned_32 length;
     char*       buffer;
+
     if ( _aRetriever.ReadSubsection(buffer,length,sstSrcModule,module) ) {
         _newDir.Insert(sstSrcModule,module,OFBase(),length);
         _eMaker.DumpToExe(buffer,length);
@@ -163,6 +165,7 @@ uint CVpack::DoSegMap()
     uint        cSeg = 0;
     unsigned_32 length;
     char*       buffer;
+
     if ( _aRetriever.ReadSubsection(buffer,length,sstSegMap) ) {
         cSeg = * (unsigned_16 *) buffer;
         _newDir.Insert(sstSegMap,MODULE_INDEPENDENT,OFBase(),length);
@@ -170,7 +173,7 @@ uint CVpack::DoSegMap()
     } else {
         throw MiscError("no sstSegMap present.");
     }
-    return cSeg;
+    return( cSeg );
 }
 
 void CVpack::DoAlignSym( SstAlignSym*      alignSym,

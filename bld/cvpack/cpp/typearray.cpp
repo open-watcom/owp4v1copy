@@ -83,8 +83,10 @@ unsigned_32 GlobalHashContainer::HFn( VariantString& var )
 GlobalTypeArray::GlobalTypeArray()
 /********************************/
 {
+    unsigned_8  i;
+
     _mapTypeArray[0] = NULL;
-    for ( unsigned_8 i = LF_MODIFIER; i <= LF_ARRAY; i++ ) {
+    for ( i = LF_MODIFIER; i <= LF_ARRAY; i++ ) {
         _mapTypeArray[i] = new GlobalListContainer;
     }
     for ( i = LF_CLASS; i <= LF_ENUM; i++ ) {
