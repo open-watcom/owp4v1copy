@@ -305,6 +305,12 @@ static int get_operand( expr_list *new, int *start, int end, bool (*is_expr)(int
             }
         } else {
             new->sym = AsmGetSymbol( AsmBuffer[i]->string_ptr );
+            if( new->sym == NULL ) {
+                if( error_msg )
+                    AsmErr( SYMBOL_S_NOT_DEFINED, AsmBuffer[i]->string_ptr );
+                new->type = EXPR_UNDEF;
+                return( ERROR );
+            }
 #if 0
 // FIXME !!!!! 
 // problem with aliases and equ directive
