@@ -136,8 +136,10 @@ int SaveFileAs( void )
         return( rc );
     }
     // rename current file
-    FileLower( fn );
-    sprintf( cmd, "set filename %s", fn );
+#if (defined __DOS__ || defined __WINDOWS__ || defined __WINDOWS_386__)    // this is stupid for all case-preserving systems like NT
+    FileLower( fn );          
+#endif    
+    sprintf( cmd, "set filename \"%s\"", fn );
     RunCommandLine( cmd );
     UpdateLastFileList( fn );
 
