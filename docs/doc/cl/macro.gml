@@ -431,6 +431,47 @@ f(xyz)("Hello\n")       f(printf)("Hello\n")
 .millust end
 .do end
 .*
+.section Variable Argument Macros
+Macros may be defined to take optional additional parameters.  This is
+done using the ellipsis(...) keyword as the last parameter.  There can be
+no further parameters past the variable argument, and errors will be
+generated if the preprocessor finds anything other than a closing ")"
+after the ellipsis.  The variable arguments are referenced together with
+__VA_ARGS__.  Special behavior of pasting this parameter with a comma can
+result in the comma dissappearing (This extension is not specified in the 
+standard).  The only token to which this applies is a comma. Any other token
+word, etc which __VA_ARGS__ is pasted with is not removed.
+The __VA_ARG__ parameter may be converted to a string.
+
+.millust begin
+#define shuffle1( a, b, ... )   b,__VA_ARGS__##,a
+#define shuffle2( a, b, ... )  b,## __VA_ARGS__,a
+#define shuffle3( a, b, ... )  b,## __VA_ARGS__##,a
+#define showlist( ... )        #__VA_ARGS__
+#define args( f, ... )         __VA_ARGS__
+.millust end
+
+It's safe to assume that any time a comma is used near __VA_ARGS__ that 
+"##" should be used to paste them together.  Both shuffle1, shuffle2
+are okay examples of pasting __VA_ARGS__ with a comma; either the leading
+or trailing comma may be concated, and if __VA_ARGS__ is empty, the comma
+likewise is 'emptied'.  The macro shuffle3 works also; the sequence of 
+concantenations happens from left to right, so first the ',' and empty 
+__VA_ARGS__ is concantenated into nothing, then the trailing comma is 
+concatentated with b.  Some example usages...
+
+.millust begin
+shuffle(x,y,z)          y,z,x
+shuffle(x,y)            y,x     // the second ',' dissappears
+shuffle(a,b,c,d,e)      b,c,d,e,a  
+showlist(x,y,z)         "x,y,z"
+args("%s",charptr)      charptr
+args("%d+%d=%d",a,b,c)  a,b,c
+args("none")                    // nothing.
+.millust end
+
+
+.*
 .section Rescanning for Further Replacement
 .*
 .pp
