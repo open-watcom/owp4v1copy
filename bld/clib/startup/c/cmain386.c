@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  386 implementation of __CMain().
 *
 ****************************************************************************/
 
@@ -55,7 +54,7 @@ extern  char            *__ASTACKPTR;   /* alternate stack pointer */
     {
         #if !defined(__OSI__)
             /* allocate alternate stack for F77 */
-            __ASTACKPTR = (char *)alloca( __ASTACKSIZ ) + __ASTACKSIZ;
+            __ASTACKPTR = (char *)__alloca( __ASTACKSIZ ) + __ASTACKSIZ;
         #endif
         __CommonInit();
         exit( wmain( ___wArgc, ___wArgv ) );
@@ -71,7 +70,7 @@ extern  char            *__ASTACKPTR;   /* alternate stack pointer */
     {
         #if !defined(__OSI__)
             /* allocate alternate stack for F77 */
-            __ASTACKPTR = (char *)alloca( __ASTACKSIZ ) + __ASTACKSIZ;
+            __ASTACKPTR = (char *)__alloca( __ASTACKSIZ ) + __ASTACKSIZ;
         #endif
         __CommonInit();
         exit( main( ___Argc, ___Argv ) );
