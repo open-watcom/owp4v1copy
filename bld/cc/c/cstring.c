@@ -124,11 +124,13 @@ STRING_LITERAL *GetLiteral()
     is_wide = CompFlags.wide_char_string;
     NextToken();
     while( CurToken == T_STRING ) {
+        /* if one component is wide then the whole string is wide */
+        if (is_wide)
+	    CompFlags.wide_char_string = 1;
         len2 = RemoveEscapes( NULL );
         --len;
         if( CompFlags.wide_char_string ) {
             if( len != 0 ) --len;
-            /* if one component is wide then the whole string is wide */
             is_wide = 1;
         }
         p = (STRING_LITERAL *)CMemAlloc( sizeof( STRING_LITERAL )

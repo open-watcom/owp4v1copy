@@ -6,6 +6,7 @@ wchar_t a3[9] = { 'a' };
 wchar_t a4[] = L"";
 char a5[] = "";
 char a6[] = "x";
+wchar_t a7[] = L"t" "e" "st";
 
 int main()
 {
@@ -15,5 +16,6 @@ int main()
     if( sizeof(a4) != 2 ) _fail;
     if( sizeof(a5) != 1 ) _fail;
     if( sizeof(a6) != 2 ) _fail;
+    if( sizeof(a7) != 10 ) _fail;
     _PASS;
 }
