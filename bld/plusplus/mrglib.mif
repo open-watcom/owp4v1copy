@@ -19,6 +19,8 @@ lib_flags += -s
 !endif
 !ifdef on_JWW_machine
 lib_flags += -p=64
+!else ifndef on_build_machine
+lib_flags += -p=64
 !else
 lib_flags += -p=16
 !endif

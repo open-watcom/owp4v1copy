@@ -1456,9 +1456,7 @@ void SrcFileScanCppComment()
 boolean IsSrcFilePrimary(       // DETERMINE IF PRIMARY SOURCE FILE
     SRCFILE sf )                // - a source file
 {
-    boolean is_primary = ( sf != NULL ) && ( sf->parent == NULL );
-    DbgAssert( is_primary == ((sf!=NULL)&&(sf->primary)) );
-    return is_primary;
+    return(( sf != NULL ) && sf->primary );
 }
 
 
@@ -1514,7 +1512,7 @@ void SrcFileCommand(            // MARK CURRENT SOURCE FILE AS A COMMAND FILE
 boolean IsSrcFileLibrary(       // DETERMINE IF SOURCE FILE IS #include <file.h>
     SRCFILE sf )                // - a source file
 {
-    return ( sf != NULL ) && sf->lib_inc;
+    return(( sf != NULL ) && sf->lib_inc );
 }
 
 

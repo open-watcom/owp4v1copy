@@ -27,7 +27,7 @@ target_objs = $(objs)
 target_xbjs = $(xbjs)
 !endif
 
-lib_flags = -b -c -q
+lib_flags = -b -c
 !ifdef on_build_machine
 lib_flags += -t
 !ifeq host_CPU axp
@@ -35,7 +35,10 @@ lib_flags += -t
 lib_flags += -s
 !endif
 !endif
+
 !ifdef on_JWW_machine
+lib_flags += -p=64
+!else ifndef on_build_machine
 lib_flags += -p=64
 !else
 lib_flags += -p=16
@@ -98,13 +101,13 @@ asm_flags =
 asm_flags = -zq-w4 $(asm_model) -fo=.obj -i"$(watcom_dir)/h"
 !endif
 
-!ifdef on_build_machine
-comp_flags += -dNDEBUG
-!else ifdef on_JWW_machine
+!ifdef on_JWW_machine
 comp_flags += -d2
 comp_cpp += -ew
+!else ifndef on_build_machine
+comp_flags += -d2
 !else
-comp_flags += -d1
+comp_flags += -d1 -dNDEBUG
 !endif
 
 !ifeq linkage dynamic
