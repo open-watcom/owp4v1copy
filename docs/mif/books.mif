@@ -4,18 +4,18 @@
 !inject c_readme    dos  html  nt  os2  pdf  ps  win
 !inject cbooks                 nt
 !inject cguide      dos        nt  os2  pdf  ps  win
-!inject cguideq          html           pdf  ps      
+!inject cguideq          html           pdf  ps
 !inject clbtst
 !inject clib        dos        nt  os2  pdf  ps  win
 !inject clib_fox
 !inject clib_nec
 !inject clib_pp
 !inject clibnt
-!inject clibqnx          html           pdf  ps      
+!inject clibqnx          html           pdf  ps
 !inject clr         dos  html  nt  os2  pdf  ps  win
 !inject clslib
 !inject cpplib      dos  html  nt  os2  pdf  ps  win
-!inject cw          dos        nt  os2  pdf  ps    
+!inject cw          dos        nt  os2  pdf  ps
 !inject ddespy                 nt                win
 !inject devguide
 !inject drnt                   nt                win
@@ -29,7 +29,7 @@
 !inject fpguide     dos        nt  os2  pdf  ps  win
 !inject ftools      dos        nt  os2  pdf  ps  win
 !inject fuguide     dos        nt  os2  pdf  ps  win
-!inject guitool                         pdf  ps     
+!inject guitool                         pdf  ps
 !inject heapwalk               nt                win
 !inject ide                    nt  os2           win
 !inject lguide      dos        nt  os2  pdf  ps  win
@@ -479,6 +479,7 @@ book_src=wccerrs
 # wd
 book_title=$(company) Debugger Guide
 book_objs=$(objs_wd)
+book_objs_ps=$(objs_wd_ps)
 book_incs=$(incs_wd)
 book_bmroot=$(bmroot_wd)
 book_src=wdbg

@@ -2290,59 +2290,32 @@ incs_wd = $(docsrc_dir)\wd
 objs_wd = &
 $(docsrc_dir)\wd\brian.ans &
 $(docsrc_dir)\wd\dbg87.bmp &
-$(docsrc_dir)\wd\dbg87.ps &
 $(docsrc_dir)\wd\dbgacc.bmp &
-$(docsrc_dir)\wd\dbgacc.ps &
 $(docsrc_dir)\wd\dbgass.bmp &
-$(docsrc_dir)\wd\dbgass.ps &
 $(docsrc_dir)\wd\dbgbrk.bmp &
-$(docsrc_dir)\wd\dbgbrk.ps &
 $(docsrc_dir)\wd\dbgcall.bmp &
-$(docsrc_dir)\wd\dbgcall.ps &
 $(docsrc_dir)\wd\dbgfpu.bmp &
-$(docsrc_dir)\wd\dbgfpu.ps &
 $(docsrc_dir)\wd\dbgfunc.bmp &
-$(docsrc_dir)\wd\dbgfunc.ps &
 $(docsrc_dir)\wd\dbgglob.bmp &
-$(docsrc_dir)\wd\dbgglob.ps &
 $(docsrc_dir)\wd\dbgimg.bmp &
-$(docsrc_dir)\wd\dbgimg.ps &
 $(docsrc_dir)\wd\dbgio.bmp &
-$(docsrc_dir)\wd\dbgio.ps &
 $(docsrc_dir)\wd\dbglog.bmp &
-$(docsrc_dir)\wd\dbglog.ps &
 $(docsrc_dir)\wd\dbgmem.bmp &
-$(docsrc_dir)\wd\dbgmem.ps &
 $(docsrc_dir)\wd\dbgmmxb.bmp &
-$(docsrc_dir)\wd\dbgmmxb.ps &
 $(docsrc_dir)\wd\dbgmod.bmp &
-$(docsrc_dir)\wd\dbgmod.ps &
 $(docsrc_dir)\wd\dbgreg.bmp &
-$(docsrc_dir)\wd\dbgreg.ps &
 $(docsrc_dir)\wd\dbgreg2.bmp &
-$(docsrc_dir)\wd\dbgreg2.ps &
 $(docsrc_dir)\wd\dbgrep.bmp &
-$(docsrc_dir)\wd\dbgrep.ps &
 $(docsrc_dir)\wd\dbgshot.bmp &
-$(docsrc_dir)\wd\dbgshot.ps &
 $(docsrc_dir)\wd\dbgsrc.bmp &
-$(docsrc_dir)\wd\dbgsrc.ps &
 $(docsrc_dir)\wd\dbgtest.bmp &
 $(docsrc_dir)\wd\dbgthrd.bmp &
-$(docsrc_dir)\wd\dbgthrd.ps &
 $(docsrc_dir)\wd\dbgvar.bmp &
-$(docsrc_dir)\wd\dbgvar.ps &
-$(docsrc_dir)\wd\dbgwvar.ps &
 $(docsrc_dir)\wd\dlgbrk.bmp &
-$(docsrc_dir)\wd\dlgbrk.ps &
 $(docsrc_dir)\wd\dlgopt.bmp &
-$(docsrc_dir)\wd\dlgopt.ps &
 $(docsrc_dir)\wd\dlgsrch.bmp &
-$(docsrc_dir)\wd\dlgsrch.ps &
 $(docsrc_dir)\wd\dlgwopt.bmp &
-$(docsrc_dir)\wd\dlgwopt.ps &
 $(docsrc_dir)\wd\dlgwopt2.bmp &
-$(docsrc_dir)\wd\dlgwopt2.ps &
 $(docsrc_dir)\wd\symbuttn.gml &
 $(docsrc_dir)\wd\tmp.gml &
 $(docsrc_dir)\wd\wdbg.gml &
@@ -2367,6 +2340,33 @@ $(docsrc_dir)\wd\wdbgstrt.gml &
 $(docsrc_dir)\wd\wdbgsymb.gml &
 $(docsrc_dir)\wd\wdbgtech.gml &
 $(docsrc_dir)\wd\wdbgwire.gml
+objs_wd_ps = &
+dbg87.ps &
+dbgacc.ps &
+dbgass.ps &
+dbgbrk.ps &
+dbgcall.ps &
+dbgfpu.ps &
+dbgfunc.ps &
+dbgglob.ps &
+dbgimg.ps &
+dbgio.ps &
+dbglog.ps &
+dbgmem.ps &
+dbgmmxb.ps &
+dbgmod.ps &
+dbgreg.ps &
+dbgreg2.ps &
+dbgrep.ps &
+dbgshot.ps &
+dbgsrc.ps &
+dbgthrd.ps &
+dbgvar.ps &
+dlgbrk.ps &
+dlgopt.ps &
+dlgsrch.ps &
+dlgwopt.ps &
+dlgwopt2.ps
 
 # wfg sub-directory
 incs_wfg = $(docsrc_dir)\wfg
