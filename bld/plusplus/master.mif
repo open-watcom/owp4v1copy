@@ -614,7 +614,7 @@ target_as_386=bwasm -zq -3 -w4
 target_as_ppc=wasmppc -zq -w4
 
 xcode$(target_cpu).tmp: $(cc_dir)/a/code$(target_cpu).asm
-        $(target_as_$(target_cpu)) $[@
+        $(target_as_$(target_cpu)) -fo=.obj $[@
         $(linker) format dos com op nodefault file code$(target_cpu).obj name $^@ disable 1023,1080
 
 ./mkcode.exe: $(cc_dir)/a/mkcode.c
