@@ -38,3 +38,6 @@ clean : .symbolic
         @if exist rm.exe @erase rm.exe
         !@wmake -h -f $(posix_dir)/misc/$(targos)/makefile clean clean_dir=$(posix_dir)/misc/$(targos)
         rm -f *.ex? *.?bj *.map *.lst *.smp *.lnk *.lbc *.lib *.err
+
+clean_build : .symbolic
+        @for %i in ($(commands)) do @rm -f $(build_path)%i.exe

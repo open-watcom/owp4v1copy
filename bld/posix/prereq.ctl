@@ -44,3 +44,6 @@ set TMP_BUILD_PLATFORM=
     wmake -h -f <PROJDIR>/mif/makeall.mif prebuild=1 clean
     cdsay <PROJDIR>
     rm -f -r <PROJDIR>/<OBJDIR>
+    wmake -h -f <PROJDIR>/mif/makeall.mif prebuild=1 build_path=<OWROOT>\bld\build\bin\ clean_build
+    wmake -h -f <PROJDIR>/mif/makeall.mif prebuild=1 build_path=<OWROOT>\bld\build\binp\ clean_build
+    wmake -h -f <PROJDIR>/mif/makeall.mif prebuild=1 build_path=<OWROOT>\bld\build\binnt\ clean_build
