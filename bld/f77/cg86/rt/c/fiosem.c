@@ -62,6 +62,7 @@
 
 #else
 
+  #define STRICT
   #include <windows.h>
 
   #define       _FTID           DWORD

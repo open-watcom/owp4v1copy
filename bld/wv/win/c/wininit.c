@@ -45,6 +45,7 @@
 #include "tinyio.h"
 #endif
 
+#define STRICT
 #include "windows.h"
 #include "win1632.h"
 #include "dbgmem.h"

@@ -39,6 +39,9 @@ extern "C" {
     #define INCLUDE_COMMDLG_H
     #define INCLUDE_CDERR_H
 #endif
+    #ifndef STRICT
+    #define STRICT
+    #endif
     #include <windows.h>
 #if defined( __WINDOWS__ ) && !defined( __386__ )
     #include <ddeml.h>

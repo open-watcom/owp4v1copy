@@ -33,6 +33,7 @@
 #include <string.h>
 #include <io.h>
 #include <ctype.h>
+#define STRICT
 #include <windows.h>
 #include "memwnd.h"
 #include "segmem.h"

@@ -32,6 +32,7 @@
 #include <malloc.h>
 #include <string.h>
 #include <stdlib.h>
+#define STRICT
 #include <windows.h>
 #include "win1632.h"
 

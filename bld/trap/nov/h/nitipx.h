@@ -32,6 +32,9 @@
 
 
 #ifdef __WINDOWS__
+    #ifndef STRICT
+    #define STRICT
+    #endif
     #include <windows.h>
 #else
     #ifndef PROLOG

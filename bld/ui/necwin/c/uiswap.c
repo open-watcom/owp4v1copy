@@ -39,6 +39,7 @@
  *       initialize everything has to be just right.
  */
 
+#define STRICT
 #include <windows.h>
 #include <dos.h>
 #include <string.h>

@@ -35,6 +35,7 @@
 #include "uidef.h"
 #include "uimouse.h"
 #include "biosui.h"
+#define STRICT
 #include "windows.h"
 
 static int MouseX,MouseY,MouseStatusBits;

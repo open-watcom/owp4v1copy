@@ -30,6 +30,7 @@
 ****************************************************************************/
 
 
+#define STRICT
 #include <windows.h>
 #include <string.h>
 #include <assert.h>

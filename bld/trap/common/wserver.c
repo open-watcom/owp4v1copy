@@ -29,6 +29,7 @@
 ****************************************************************************/
 
 
+#define STRICT
 #include <windows.h>
 #include <stdio.h>
 #include <malloc.h>
@@ -63,8 +64,8 @@ static bool     Connected;
 static bool     Linked;
 static bool     OneShot;
 
-static BOOL FirstInstance( HANDLE );
-static BOOL AnyInstance( HANDLE, int, LPSTR );
+static BOOL FirstInstance( HINSTANCE );
+static BOOL AnyInstance( HINSTANCE, int, LPSTR );
 #ifdef __NT__
 extern void TellHWND( HWND );
 #endif
@@ -108,7 +109,7 @@ int PASCAL WinMain( HINSTANCE this_inst, HINSTANCE prev_inst, LPSTR cmdline,
  * FirstInstance - register window class for the application,
  *                 and do any other application initialization
  */
-static BOOL FirstInstance( HANDLE this_inst )
+static BOOL FirstInstance( HINSTANCE this_inst )
 {
     WNDCLASS    wc;
     BOOL        rc;
@@ -149,7 +150,7 @@ static void EnableMenus( HWND hwnd, BOOL connected, BOOL session )
  * AnyInstance - do work required for every instance of the application:
  *                create the window, initialize data
  */
-static BOOL AnyInstance( HANDLE this_inst, int cmdshow, LPSTR cmdline )
+static BOOL AnyInstance( HINSTANCE this_inst, int cmdshow, LPSTR cmdline )
 {
     char        *err;
 

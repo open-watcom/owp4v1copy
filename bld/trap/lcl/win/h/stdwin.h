@@ -31,6 +31,7 @@
 
 
 #define _WINDOWS_16_
+#define STRICT
 #include <windows.h>
 #include <toolhelp.h>
 #include "trpimp.h"

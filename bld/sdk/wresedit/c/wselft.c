@@ -30,6 +30,7 @@
 ****************************************************************************/
 
 
+#define STRICT
 #include <windows.h>
 #include "wglbl.h"
 #include "wrdll.h"

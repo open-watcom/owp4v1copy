@@ -39,6 +39,7 @@
 #include <fcntl.h>
 #include <io.h>
 #include <time.h>
+#define STRICT
 #include <windows.h>
 #include "font.h"
 #include "segmem.h"

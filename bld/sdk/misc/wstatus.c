@@ -41,6 +41,7 @@
 
 #else
 
+#define STRICT
 #include <windows.h>
 
 #endif

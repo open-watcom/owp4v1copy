@@ -31,6 +31,7 @@
 
 
 #if defined( __NT__ )  ||  defined( __WINDOWS__ )
+    #define STRICT
     #include <windows.h>
     #include <commdlg.h>
     #include "fontstr.h"

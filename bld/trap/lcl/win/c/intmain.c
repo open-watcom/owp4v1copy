@@ -31,6 +31,7 @@
 
 
 #include <stdio.h>
+#define STRICT
 #include <windows.h>
 
 int WINAPI LibMain( HINSTANCE hmod, WORD dataseg, WORD heap, LPSTR cmdline )

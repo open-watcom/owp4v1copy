@@ -33,10 +33,6 @@
 #ifndef WINHDR_INCLUDED
 #define WINHDR_INCLUDED
 
-#if !defined(__386__) || defined(__NT__)
-    #define STRICT
-#endif
-
 #if defined(__NT__)
     #define _WINSOCKAPI_
 #endif
@@ -48,6 +44,9 @@
     #include "os2win.h"
 #else
     #define HAS_HWND
+    #ifndef STRICT
+    #define STRICT
+    #endif
     #include <windows.h>
     #include "win1632.h"
 #endif

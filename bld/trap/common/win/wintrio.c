@@ -35,6 +35,7 @@
 #include <stddef.h>
 #include <stdarg.h>
 #include <string.h>
+#define STRICT
 #include <windows.h>
 #include "winserv.h"
 

@@ -32,6 +32,7 @@
 
 #include "guiwind.h"
 #include <malloc.h>
+#define STRICT
 #include <windows.h>
 #include "trmem.h"
 #ifdef TRMEM

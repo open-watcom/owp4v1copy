@@ -48,7 +48,6 @@
     #endif
 #elif defined __WINDOWS__
     #include <windows.h>
-    #include <win16.h>
 #endif
 #include <string.h>
 #include <mbstring.h>

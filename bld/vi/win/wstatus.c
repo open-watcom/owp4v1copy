@@ -37,6 +37,7 @@
 #include "utils.h"
 #include "statwnd.h"
 #include "wstatus.h"
+#define STRICT
 #include "windows.h"
 #include "watcom.h"
 

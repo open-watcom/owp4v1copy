@@ -37,6 +37,7 @@
 #include <ctype.h>
 #include <direct.h>
 #include <stdlib.h>
+#define STRICT
 #include <windows.h>
 #include <commdlg.h>
 #include "savelbox.h"

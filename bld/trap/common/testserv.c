@@ -48,6 +48,7 @@ void TaskFini()
 #endif
 
 #ifdef __WINDOWS__
+#define STRICT
 #include "windows.h"
 HANDLE  Instance;
 

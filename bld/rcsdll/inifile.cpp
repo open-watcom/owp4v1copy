@@ -59,6 +59,7 @@
         #endif
     }
 #elif defined( __WINDOWS__ ) || defined( __NT__ )
+    #define STRICT
     #include <windows.h>
     int MyGetProfileString( char *dir, char *filename, char *section,
                             char *key, char *def, char *buffer, int len )

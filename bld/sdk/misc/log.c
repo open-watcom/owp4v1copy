@@ -37,6 +37,7 @@
 #include <io.h>
 #include <fcntl.h>
 #include <time.h>
+#define STRICT
 #include <windows.h>
 #include <commdlg.h>
 #include "log.h"

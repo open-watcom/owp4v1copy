@@ -126,6 +126,7 @@ dip_imp_routines        ImpInterface = {
 #elif defined( __WINDOWS__)
 
 #include <stdlib.h>
+#define STRICT
 #include <windows.h>
 #include <i86.h>
 

@@ -31,6 +31,7 @@
 
 
 #include <stdio.h>
+#define STRICT
 #include "windows.h"
 
 #define PB_DLLDBG_CLASS         "PB_DLLDBG_CLASS"

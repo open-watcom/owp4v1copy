@@ -31,6 +31,9 @@
 
 
 #ifdef __WIN__
+    #ifndef STRICT
+    #define STRICT
+    #endif
     #include <windows.h>
 #endif
 

@@ -33,6 +33,7 @@
 /* FMERROR - report form editting error messages */
 
 #include <string.h>
+#define STRICT
 #include <windows.h>
 
 #include "fmedit.def"

@@ -30,6 +30,9 @@
 ****************************************************************************/
 
 
+#ifndef STRICT
+#define STRICT
+#endif
 #include <windows.h>
 #define MSG_RC_BASE     0
 #include "rcstr.h"

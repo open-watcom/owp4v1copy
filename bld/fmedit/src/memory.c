@@ -34,6 +34,7 @@
 
 #include <malloc.h>
 #include <string.h>
+#define STRICT
 #include <windows.h>
 
 #define BUFFERLENGTH 30

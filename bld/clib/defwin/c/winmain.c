@@ -78,7 +78,7 @@ _WCRTLINK extern char **    ___Argv;    /* argument vector */
 /*
  * DefaultWinMain - main windows entry point
  */
-_WCRTLINK int PASCAL DefaultWinMain( HANDLE inst, HANDLE previnst,
+_WCRTLINK int PASCAL DefaultWinMain( HINSTANCE inst, HINSTANCE previnst,
         LPSTR cmd, int show, int (*pmain)( int, char ** ) )
 {
     int rc;

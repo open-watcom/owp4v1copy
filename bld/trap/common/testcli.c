@@ -42,6 +42,7 @@
 full_block      Data;
 
 #ifdef __WINDOWS__
+#define STRICT
 #include "windows.h"
 HANDLE  Instance;
 #endif

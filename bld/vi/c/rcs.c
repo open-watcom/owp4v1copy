@@ -53,6 +53,7 @@ extern RCSFiniFn                RCSFini = NULL;
 #endif
 
 #if defined( __WINDOWS__ ) || defined( __NT__ )
+    #define STRICT
     #include <windows.h>
 
     #define GET_ADDR( inst, name, proc, type ) proc = (type)GetProcAddress( inst, name )

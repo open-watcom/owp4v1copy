@@ -34,6 +34,7 @@
 #include "uidef.h"
 #include "uiforce.h"
 
+#define STRICT
 #include <windows.h>
 
 extern EVENT                            Event;

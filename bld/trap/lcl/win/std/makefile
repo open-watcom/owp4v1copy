@@ -45,7 +45,6 @@ extra_linker = &
         import ToolHelpHook KERNEL &
         export NOTIFYHANDLER.9 &
         export DEBUGHOOK.11 &
-        export WEP RESIDENT &
         lib toolhelp &
         option heapsize=1k &
         segment CLASS 'CODE' PRELOAD FIXED &

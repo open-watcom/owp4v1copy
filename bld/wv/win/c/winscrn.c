@@ -38,6 +38,7 @@
 #include <stddef.h>
 #include "..\..\dos\h\dbgscrn.h"
 #include "dbgtoggl.h"
+#define STRICT
 #include "windows.h"
 #include "winscrn.h"
 #include "swap.h"

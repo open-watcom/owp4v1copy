@@ -32,6 +32,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#define STRICT
 #include <windows.h>
 #include <sys\stat.h>
 #include <io.h>

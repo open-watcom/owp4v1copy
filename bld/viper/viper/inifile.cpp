@@ -101,6 +101,7 @@
         return( rc );
     }
 #elif defined( __WINDOWS__ ) || defined( __NT__ )
+    #define STRICT
     #include <windows.h>
     int MyGetProfileString( const char *dir, const char *filename,
                             const char *section, const char *key,

@@ -31,6 +31,7 @@
 
 
 #include <stdio.h>
+#define STRICT
 #include <windows.h>
 #include "stubs.h"
 

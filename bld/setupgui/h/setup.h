@@ -35,6 +35,7 @@
 #include "guitypes.h"
 #if defined( __WINDOWS__ )
     #include "setupdlg.h"
+    #define STRICT
     #include <windows.h>
 #elif defined( __NT__ )
     #include "setupdlg.h"

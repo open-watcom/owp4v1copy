@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <string.h>
+#define STRICT
 #include <windows.h>
 #include "packet.h"
 #include "winserv.h"

@@ -36,6 +36,7 @@
 
 #include "common.h"
 #if _OS == _OS_WIN || _OS == _OS_NT
+#define STRICT
 #include <windows.h>
 #endif
 #include "aui.h"

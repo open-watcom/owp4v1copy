@@ -35,6 +35,9 @@
 #if defined( __cplusplus )
 extern "C" {
 #endif
+#ifndef STRICT
+#define STRICT
+#endif
 #include <windows.h>
 
 #if defined( __cplusplus )

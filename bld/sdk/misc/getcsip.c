@@ -31,7 +31,7 @@
 
 
 #include <stdio.h>
-#include <windows.h>
+#define STRICT
 #include <windows.h>
 #ifndef __NT__
 #include "toolhelp.h"

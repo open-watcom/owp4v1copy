@@ -46,6 +46,7 @@
 extern "C" {
     #include <malloc.h>
     #if defined( __WINDOWS__ ) || defined( __NT__ )
+        #define STRICT
         #include <windows.h>    //temporary ?
     #endif
 //    int __nonIBM();

@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <dos.h>
+#define STRICT
 #include <windows.h>
 #include <malloc.h>
 #include <ole.h>

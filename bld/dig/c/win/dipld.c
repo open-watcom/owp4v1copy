@@ -33,6 +33,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <i86.h>
+#define STRICT
 #include <windows.h>
 #include "watcom.h"
 #include "dip.h"

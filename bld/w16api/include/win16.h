@@ -293,10 +293,10 @@ typedef	DWORD	COLORREF;
 #define	WS_POPUPWINDOW	(WS_POPUP | WS_BORDER | WS_SYSMENU)
 #define	WS_CHILDWINDOW	(WS_CHILD)
 /* Obsolete style names */
-#define WS_TILED            WS_OVERLAPPED
-#define WS_ICONIC           WS_MINIMIZE
-#define WS_SIZEBOX          WS_THICKFRAME
-#define WS_TILEDWINDOW      WS_OVERLAPPEDWINDOW
+#define WS_TILED WS_OVERLAPPED
+#define WS_ICONIC WS_MINIMIZE
+#define WS_SIZEBOX WS_THICKFRAME
+#define WS_TILEDWINDOW WS_OVERLAPPEDWINDOW
 
 /* Static Control Styles */
 #define	SS_LEFT	0L
@@ -1443,24 +1443,43 @@ typedef	DWORD	COLORREF;
 #define	HS_DIAGCROSS	5
 
 /* CallMsgFilter() and WH_SYS/MSGFILTER context codes */
-#define MSGF_DIALOGBOX           0
-#define MSGF_MENU                2
-#define MSGF_MOVE                3
-#define MSGF_SIZE                4
-#define MSGF_SCROLLBAR           5
-#define MSGF_NEXTWINDOW          6
-#define MSGF_MAINLOOP            8
-#define MSGF_USER                4096
+#define MSGF_DIALOGBOX 0
+#define MSGF_MENU 2
+#define MSGF_MOVE 3
+#define MSGF_SIZE 4
+#define MSGF_SCROLLBAR 5
+#define MSGF_NEXTWINDOW 6
+#define MSGF_MAINLOOP 8
+#define MSGF_USER 4096
 
 /* Accent Modes */
-#define S_NORMAL      0
-#define S_LEGATO      1
-#define S_STACCATO    2
+#define S_NORMAL 0
+#define S_LEGATO 1
+#define S_STACCATO 2
 
 /* WaitSoundState() constants */
-#define S_QUEUEEMPTY        0
-#define S_THRESHOLD         1
-#define S_ALLTHRESHOLD      2
+#define S_QUEUEEMPTY 0
+#define S_THRESHOLD 1
+#define S_ALLTHRESHOLD 2
+
+/* OpenFile() Flags */
+#define	OF_READ	0x0000
+#define	OF_WRITE	0x0001
+#define	OF_READWRITE	0x0002
+#define	OF_SHARE_COMPAT	0x0000
+#define	OF_SHARE_EXCLUSIVE	0x0010
+#define	OF_SHARE_DENY_WRITE	0x0020
+#define	OF_SHARE_DENY_READ	0x0030
+#define	OF_SHARE_DENY_NONE	0x0040
+#define	OF_PARSE	0x0100
+#define	OF_DELETE	0x0200
+#define	OF_VERIFY	0x0400
+#define	OF_SEARCH	0x0400
+#define	OF_CANCEL	0x0800
+#define	OF_CREATE	0x1000
+#define	OF_PROMPT	0x2000
+#define	OF_EXIST	0x4000
+#define	OF_REOPEN	0x8000
 
 DECLARE_HANDLE(HTASK);
 DECLARE_HANDLE(HRSRC);
@@ -2172,31 +2191,33 @@ BOOL	WINAPI	WinHelp(HWND,LPCSTR,UINT,DWORD);
 int	WINAPI	GetDeviceCaps(HDC,int);
 int	FAR CDECL	wsprintf(LPSTR,LPCSTR,...);
 UINT	WINAPI	SetHandleCount(UINT);
-int WINAPI	Escape(HDC,int,int,LPCSTR,void FAR*);
-HDC     WINAPI CreateDC(LPCSTR, LPCSTR, LPCSTR, const void FAR*);
-HDC     WINAPI CreateIC(LPCSTR, LPCSTR, LPCSTR, const void FAR*);
-HDC     WINAPI CreateCompatibleDC(HDC);
-BOOL    WINAPI DeleteDC(HDC);
-int     WINAPI lstrcmp(LPCSTR, LPCSTR);
-int     WINAPI lstrcmpi(LPCSTR, LPCSTR);
-LPSTR   WINAPI lstrcpy(LPSTR, LPCSTR);
-LPSTR   WINAPI lstrcat(LPSTR, LPCSTR);
-int     WINAPI lstrlen(LPCSTR);
-LPSTR   WINAPI lstrcpyn(LPSTR, LPCSTR, int);
-void    WINAPI hmemcpy(void _huge*, const void _huge*, long);
-int     WINAPI SetMapMode(HDC, int);
-int     WINAPI GetMapMode(HDC);
-int     WINAPI WaitSoundState(int);
-int     WINAPI OpenSound(void);
-void    WINAPI CloseSound(void);
-int     WINAPI StartSound(void);
-int     WINAPI StopSound(void);
-int     WINAPI SetVoiceQueueSize(int, int);
-int     WINAPI SetVoiceNote(int, int, int, int);
-int     WINAPI SetVoiceAccent(int, int, int, int, int);
-int     WINAPI SetVoiceEnvelope(int, int, int);
-int     WINAPI SetVoiceSound(int, DWORD, int);
-void    WINAPI InvertRect(HDC, const RECT FAR*);
+int	WINAPI	Escape(HDC,int,int,LPCSTR,void FAR*);
+HDC	WINAPI	CreateDC(LPCSTR,LPCSTR,LPCSTR,const void FAR*);
+HDC	WINAPI	CreateIC(LPCSTR,LPCSTR,LPCSTR,const void FAR*);
+HDC	WINAPI	CreateCompatibleDC(HDC);
+BOOL	WINAPI	DeleteDC(HDC);
+int	WINAPI	lstrcmp(LPCSTR,LPCSTR);
+int	WINAPI	lstrcmpi(LPCSTR,LPCSTR);
+LPSTR	WINAPI	lstrcpy(LPSTR,LPCSTR);
+LPSTR	WINAPI	lstrcat(LPSTR,LPCSTR);
+int	WINAPI	lstrlen(LPCSTR);
+LPSTR	WINAPI	lstrcpyn(LPSTR,LPCSTR,int);
+void	WINAPI	hmemcpy(void _huge*,const void _huge*,long);
+int	WINAPI	SetMapMode(HDC,int);
+int	WINAPI	GetMapMode(HDC);
+int	WINAPI	WaitSoundState(int);
+int	WINAPI	OpenSound(void);
+void	WINAPI	CloseSound(void);
+int	WINAPI	StartSound(void);
+int	WINAPI	StopSound(void);
+int	WINAPI	SetVoiceQueueSize(int,int);
+int	WINAPI	SetVoiceNote(int,int,int,int);
+int	WINAPI	SetVoiceAccent(int,int,int,int,int);
+int	WINAPI	SetVoiceEnvelope(int,int,int);
+int	WINAPI	SetVoiceSound(int,DWORD,int);
+void	WINAPI	InvertRect(HDC,const RECT FAR*);
+HFILE	WINAPI	OpenFile(LPCSTR,OFSTRUCT FAR*,UINT);
+HWND	WINAPI	FindWindow(LPCSTR,LPCSTR);
 
 #ifdef	STRICT
 HHOOK	WINAPI	SetWindowsHook(int,HOOKPROC);

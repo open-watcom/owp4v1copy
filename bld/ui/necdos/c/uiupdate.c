@@ -40,6 +40,7 @@
 #include "uibox.h"
 
 #ifdef __WINDOWS__
+#define STRICT
 #include <windows.h>
 
 extern WORD FAR *       WindowsKernelPointerTo_A000h;

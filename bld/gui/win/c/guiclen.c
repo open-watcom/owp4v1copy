@@ -35,6 +35,7 @@
 #if defined(__NT__)
     #include <winnls.h>
 #elif defined __WINDOWS__
+    #define STRICT
     #include <windows.h>
 #endif
 
