@@ -45,7 +45,7 @@ void __win87em_fldcw(unsigned int);
 #pragma aux __win87em_fldcw = \
         "push   bx"                                     \
         "mov    bx, 4h"                                 \
-        "call   far _fpmath"                            \
+        "call   far ptr _fpmath"                        \
         "pop    bx"                                     \
         parm [ax]
 
@@ -53,7 +53,7 @@ unsigned int __win87em_fstcw(void);
 #pragma aux __win87em_fstcw = \
         "push   bx"                                     \
         "mov    bx, 5h"                                 \
-        "call   far _fpmath"                            \
+        "call   far ptr _fpmath"                        \
         "pop    bx"                                     \
         value [ax]
 
