@@ -30,9 +30,5 @@
 ****************************************************************************/
 
 
-/* Following is special define for including XP XML file in .rc */
-
-#define IDR_MANIFEST  1
-
 #define BITMAP_SPLASH           1001
 #define WPROF_ICON              1002
