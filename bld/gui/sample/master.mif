@@ -8,7 +8,7 @@ LNK=sample.lnk
 source_dir = $(guidir)\sample\c
 name = sample
 !ifeq type win
-rcopt += -i=$(guidir)\$(type);$(sdk_dir)\misc
+rcopt += -i=$(guidir)\$(type);$(guidir)\h;$(sdk_dir)\misc;$(inc_dirs_sys)
 !else
 rcopt += -i=$(guidir)\$(type);$(sdk_dir)\misc;$(guidir)\win
 !endif
@@ -137,13 +137,13 @@ samp2.$(ext) : samp2.obj $(guilib) $(uilib) $(LNK)
 .c:     $(source_dir);$(os_source_dir);$(os_extra_dir)
 .h:     ..\h
 
-$(rcname).res : _guimsgs.gh ../$(rcname).rc ../$(rcname).dlg
+$(rcname).res : ../$(rcname).rc ../$(rcname).dlg _guimsgs.gh
 !ifeq os pm
         @set oinc=$(%include)
         #set include=$(watcom_dir)\os220_h;$(%include)
         set include=$(inc_dirs_sys_os2);$(%include)
         copy $(sdk_dir)\misc\closebmp.bmp
-        wcc -p -i..;..\h;$(guidir)\$(type) ..\$(rcname).rc -fo=tmp.rc
+        wcc -p -i..;..\h;..\..\h;$(guidir)\$(type) ..\$(rcname).rc -fo=tmp.rc
         @%write $(rcname).rc $#include <os2.h>
         copy $(rcname).rc+tmp.rc
         del tmp.rc
@@ -151,10 +151,9 @@ $(rcname).res : _guimsgs.gh ../$(rcname).rc ../$(rcname).dlg
         set path=$(lang_root)\binp
         #@$(lang_root)\binp\rc -r $(rcname).rc
         rc -r $(rcname).rc
-        del $(rcname).rc
+        del closebmp.bmp
         set path=$(%opath)
         @set include=$(%oinc)
-        del closebmp.bmp
 !else
         $(rc) $(rcopt) -r $[@ -fo=$^@
 !endif
