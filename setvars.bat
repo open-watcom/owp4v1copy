@@ -2,7 +2,7 @@
 REM NOTE: Do not use this batch file directly, but copy it and
 REM       modify it as necessary for your own use!!
 
-REM: Set up default path information variable
+REM Set up default path information variable
 set DEFPATH=%PATH%;
 set DOS4G=quiet
 
@@ -32,7 +32,7 @@ mode 80,50
 cls
 echo OpenWatcom compiler build environment
 
-rem Stuff from Watcom for the build environment
+REM Stuff for the Open Watcom build environment
 set rsidir=d:\rsi
 set batdir=%owdrive%
 set bld_ver=110
@@ -51,7 +51,7 @@ set lang_bld=%owroot%\bat
 set lc=-r
 set lib=%owroot%\bld\watcom\lib
 set more=-t
-set path=%owroot%\bin;%devdir%\build\bin;%devdr%\bat;%lang%\binnt;%lang%\binw;%devdr%\tools;%devdr%\cmds;%doc_root%\cmds;%defpath%
+set path=%owroot%\bin;%devdir%\build\bin;%devdir%\bat;%lang%\binnt;%lang%\binw;%devdir%\tools;%devdir%\cmds;%doc_root%\cmds;%defpath%
 set relroot=%owroot%
 set rm=-s
 set manifest=%owroot%\manifest
@@ -67,5 +67,15 @@ set watcom=%lang%
 set edpath=%lang%\eddat
 set wwinhelp=%owroot%\bld\online\hlp\ib
 set copycmd=/y
+
+REM Documentation related variables
+set doc_root=%owroot%\docs
+set whelp=%doc_root%\doc\whelp
+set gml_root=%doc_root%\gml\dos
+set gmllib=%doc_root%\gml\syslib
+set whpcvt=%doc_root%\cmds\whpcvt32
+set hcdos=%doc_root%\cmds\hcdos32
+set hlpdir=%devdir%\online\hlp
+
 %devdr%
 cd %devdir%
