@@ -62,6 +62,7 @@ extern  HANDLE      *__OSHandles;
 
 extern  unsigned    __GetIOMode( int __handle );
 extern  unsigned    __SetIOMode( int __handle, unsigned __value );
+extern  unsigned    __CloseIOMode( int __handle );
 
 #endif
 

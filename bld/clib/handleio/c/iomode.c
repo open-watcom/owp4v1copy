@@ -79,6 +79,13 @@ unsigned __GetIOMode( unsigned handle )
     return( __io_mode[handle] );
 }
 
+void __CloseIOMode( unsigned handle )
+{
+    if( handle < __NFiles ) {
+        __io_mode[handle] = 0;    /* we're closing it; smite _INITIALIZED */
+    }
+}
+
 // For F77 to call
 
 unsigned __IOMode( unsigned handle )

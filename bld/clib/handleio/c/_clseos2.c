@@ -66,6 +66,6 @@ int __close( int handle )
         }
 #endif
     }
-    __SetIOMode( handle, 0 );
+    __CloseIOMode( handle );
     return( rv );
 }

@@ -71,6 +71,6 @@ int __close( int hid )
         rc = __set_errno_nt();
     }
     __freePOSIXHandle( hid );
-    __SetIOMode( hid, 0 );
+    __CloseIOMode( hid );
     return( rc );
 }

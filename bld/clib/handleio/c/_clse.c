@@ -39,9 +39,6 @@
 #include "seterrno.h"
 #include "defwin.h"
 
-extern  unsigned __NFiles;              /* maximum # of files we can open */
-extern  unsigned *__io_mode;
-
 int __close( int handle )
 {
     tiny_ret_t rc;
@@ -67,8 +64,6 @@ int __close( int handle )
         __set_errno( EBADF );
         rv = -1;
     }
-    if( handle < __NFiles ) {
-        __io_mode[handle] = 0;    /* we're closing it; smite _INITIALIZED */
-    }
+    __CloseIOMode( handle );
     return( rv );
 }
