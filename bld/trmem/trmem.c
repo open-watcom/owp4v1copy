@@ -39,7 +39,6 @@
 #endif
 
 #ifdef __WINDOWS__
-#define STRICT
 #include <windows.h>
 #include <toolhelp.h>
 #endif
