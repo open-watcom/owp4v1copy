@@ -1,8 +1,6 @@
 .CONTINUE
 .IGNORE
 
-cmd_file = test_tmp.cmd
-
 objs = &
 486 &
 adc &
@@ -103,47 +101,24 @@ asmbug13
 .exe : ..
 .c : ..
 
-test : reverse.exe .SYMBOLIC
-!ifndef ccomp
-ccomp=wcc386
+!ifndef testcomp
+testcomp=wcc386
 !endif 
-	@%make test_files
+
+all : clean reverse.exe $(objs) .SYMBOLIC
 
 reverse.exe : reverse.c
 	wcl ..\reverse.c -fe=..\reverse.exe
 
-test_files : .SYMBOLIC
-	@%create $(cmd_file)
-	@%write $(cmd_file) @echo off
-	@%write $(cmd_file) echo %1 ================================================================
-	@%write $(cmd_file) set cmplr=%2
-	@%write $(cmd_file) if exist %1.c rm %1.c
-	@%write $(cmd_file) vi -d -q -k ":r %1.asm\n:so toc.vi\n:0r cinit.vi\n:w %1.c\n:q!\n"
-	@%write $(cmd_file) %cmplr% %1 -s -ot -zm -zq
-	@%write $(cmd_file) wdis -a -l %1
-	@%write $(cmd_file) vi -d -q -k ":so fixlst.vi\nZZ" %1.lst
-	@%write $(cmd_file) ..\reverse %1.lst
-	@%write $(cmd_file) if exist %1.chk goto next
-	@%write $(cmd_file) diff -b %1.lst %1.asm
-	@%write $(cmd_file) goto end
-	@%write $(cmd_file) :next
-	@%write $(cmd_file) diff -b %1.lst %1.chk
-	@%write $(cmd_file) :end
-	@%write $(cmd_file) set cmplr=
-	@for %x in ($(objs)) do @call $(cmd_file) %x $(ccomp)
-
+$(objs) : .SYMBOLIC
+	@echo $@ ================================================================
+	@rm -f $@.c
+	@vi -d -q -k ":r $@.asm\n:so toc.vi\n:0r cinit.vi\n:w $@.c\n:q!\n"
+	@$(testcomp) $@.c -s -ot -zm -zq -fo=.obj
+	@wdis -a -l $@.obj
+	@vi -d -q -k ":so fixlst.vi\nZZ" $@.lst
+	@..\reverse $@.lst
+        @wmake -h -f ../checki.mif name=$@
 
 clean : .SYMBOLIC
-	@%create $(cmd_file)
-	@%write $(cmd_file) @echo off
-	@%write $(cmd_file) @if exist %1.obj del %1.obj
-	@%write $(cmd_file) @if exist %1.lst del %1.lst
-	@%write $(cmd_file) @if exist %1.c del %1.c
-	@%write $(cmd_file) @if exist %1.err del %1.err
-	@for %x in ($(objs)) do @call $(cmd_file) %x
-	@if exist reverse.obj erase reverse.obj
-	@if exist ..\reverse.exe erase ..\reverse.exe
-	@if exist test_tmp.cmd erase test_tmp.cmd
-	@if exist mem.trk erase mem.trk
-
-
+	@rm -f *.obj *.lst *.c *.err reverse.obj ..\reverse.exe mem.trk

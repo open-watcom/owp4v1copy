@@ -1,0 +1,31 @@
+.nocheck
+.before
+    @set CHK_CHECK=-@diff -i -b $(name).tmp $(name).chk
+    @set ESM_CHECK1=-@wdis -l=$(name).dis -a $(name).obj
+    @set ESM_CHECK2=-@diff -i -b $(name).dis $(name).esm
+    @set EMP_CHECK1=-@dmpobj -q -l -rec=FIXUPP $(name).obj
+    @set EMP_CHECK2=-@diff -i -b $(name).lst $(name).emp
+
+all: $(name).chk $(name).obj $(name).esm $(name).emp .symbolic
+    $(%CHK_CHECK)
+    $(%ESM_CHECK1)
+    $(%ESM_CHECK2)
+    $(%EMP_CHECK1)
+    $(%EMP_CHECK2)
+
+$(name).chk: .existsonly
+    @set CHK_CHECK=-@type $(name).tmp
+
+$(name).obj: .existsonly
+    @set ESM_CHECK1=@%null
+    @set ESM_CHECK2=@%null
+    @set EMP_CHECK1=@%null
+    @set EMP_CHECK2=@%null
+
+$(name).esm: .existsonly
+    @set ESM_CHECK1=@%null
+    @set ESM_CHECK2=@%null
+
+$(name).emp: .existsonly
+    @set EMP_CHECK1=@%null
+    @set EMP_CHECK2=@%null
