@@ -27,6 +27,7 @@ libs =               &
         glu32.lib &
         glut.lib &
         glut32.lib &
+        igmpagnt.lib &
         imagehlp.lib &
         imm32.lib &
         iphlpapi.lib &
@@ -70,6 +71,7 @@ libs =               &
         shell32.lib &
         shfolder.lib &
         shlwapi.lib &
+        snmpapi.lib &
         svrapi.lib &
         tapi32.lib &
         th32.lib &
@@ -89,6 +91,7 @@ libs =               &
         wldap32.lib &
         wow32.lib &
         ws2_32.lib &
+        wsnmp32.lib &
         wsock32.lib &
         wst.lib
 

@@ -1,6 +1,6 @@
 #ifndef _WINUSER_H
 #define _WINUSER_H
-#if __GNUC__ >=3
+#if __GNUC__ >= 3
 #pragma GCC system_header
 #endif
 
@@ -381,8 +381,16 @@ extern "C" {
 #define DC_ICON	4
 #define DC_TEXT	8
 #define DC_INBUTTON	16
+#if (_WIN32_WINDOWS >= 0x0410 || _WIN32_WINNT >= 0x0500)
+#define DC_GRADIENT	32
+#endif
+#if ( _WIN32_WINNT >= 0x0501)
+#define DC_BUTTONS	0x1000
+#endif
+/* Where are these documented?   */
 #define DC_CAPTION	(DC_ICON|DC_TEXT|DC_BUTTONS)
 #define DC_NC	(DC_CAPTION|DC_FRAME)
+
 #define BDR_RAISEDOUTER	1
 #define BDR_SUNKENOUTER	2
 #define BDR_RAISEDINNER	4
@@ -443,6 +451,10 @@ extern "C" {
 #define DFCS_INACTIVE	256
 #define DFCS_PUSHED	512
 #define DFCS_CHECKED	1024
+#if (WINVER >= _W2K)
+#define DFCS_TRANSPARENT	0x800
+#define DFCS_HOT	0x1000
+#endif /* WINVER >= _W2K */
 #define DFCS_ADJUSTRECT	0x2000
 #define DFCS_FLAT	0x4000
 #define DFCS_MONO	0x8000
@@ -732,18 +744,34 @@ extern "C" {
 #define DWLP_MSGRESULT 0
 #define DWL_USER 8
 #define DWLP_USER 8
+#if (_WIN32_WINNT >= 0x0501)
+#define QS_ALLEVENTS 1215
+#define QS_ALLINPUT 1279
+#else
 #define QS_ALLEVENTS 191
 #define QS_ALLINPUT 255
+#endif
+#define QS_ALLPOSTMESSAGE 256
 #define QS_HOTKEY 128
+#if (_WIN32_WINNT >= 0x0501)
+#define QS_INPUT 1031
+#else
 #define QS_INPUT 7
+#endif
 #define QS_KEY 1
 #define QS_MOUSE 6
 #define QS_MOUSEBUTTON 4
 #define QS_MOUSEMOVE 2
 #define QS_PAINT 32
 #define QS_POSTMESSAGE 8
+#if (_WIN32_WINNT >= 0x0501)
+#define QS_RAWINPUT 1024
+#endif
 #define QS_SENDMESSAGE 64
 #define QS_TIMER 16
+#define MWMO_WAITALL 1
+#define MWMO_ALERTABLE 2
+#define MWMO_INPUTAVAILABLE 4
 #define COLOR_3DDKSHADOW 21
 #define COLOR_3DFACE 15
 #define COLOR_3DHILIGHT 20
@@ -2168,7 +2196,7 @@ typedef struct {
 	short y;
 	short cx;
 	short cy;
-} DLGTEMPLATE,*LPDLGTEMPLATE;
+} DLGTEMPLATE,*LPDLGTEMPLATE,*LPDLGTEMPLATEA,*LPDLGTEMPLATEW;
 typedef const DLGTEMPLATE *LPCDLGTEMPLATE;
 #pragma pack(pop)
 typedef struct tagDRAWITEMSTRUCT {

@@ -60,6 +60,7 @@ h\nt\lzexpand.h
 h\nt\mapi.h
 h\nt\mciavi.h
 h\nt\mcx.h
+h\nt\mgmtapi.h
 h\nt\mmsystem.h
 h\nt\mshtml.h
 h\nt\mswsock.h
@@ -122,6 +123,7 @@ h\nt\shellapi.h
 h\nt\shlguid.h
 h\nt\shlobj.h
 h\nt\shlwapi.h
+h\nt\snmp.h
 h\nt\sql.h
 h\nt\sqlext.h
 h\nt\sqltypes.h
@@ -132,6 +134,7 @@ h\nt\svcguid.h
 h\nt\tlhelp32.h
 h\nt\unknwn.h
 h\nt\userenv.h
+h\nt\vfw.h
 h\nt\w32api.h
 h\nt\winable.h
 h\nt\winbase.h
@@ -152,6 +155,7 @@ h\nt\winnt.h
 h\nt\winperf.h
 h\nt\winreg.h
 h\nt\winresrc.h
+h\nt\winsnmp.h
 h\nt\winsock.h
 h\nt\winsock2.h
 h\nt\winspool.h
@@ -189,6 +193,7 @@ lib386\nt\glaux.lib
 lib386\nt\glu32.lib
 lib386\nt\glut.lib
 lib386\nt\glut32.lib
+lib386\nt\igmpagnt.lib
 lib386\nt\imagehlp.lib
 lib386\nt\imm32.lib
 lib386\nt\iphlpapi.lib
@@ -232,6 +237,7 @@ lib386\nt\setupapi.lib
 lib386\nt\shell32.lib
 lib386\nt\shfolder.lib
 lib386\nt\shlwapi.lib
+lib386\nt\snmpapi.lib
 lib386\nt\svrapi.lib
 lib386\nt\tapi32.lib
 lib386\nt\th32.lib
@@ -251,5 +257,6 @@ lib386\nt\winstrm.lib
 lib386\nt\wldap32.lib
 lib386\nt\wow32.lib
 lib386\nt\ws2_32.lib
+lib386\nt\wsnmp32.lib
 lib386\nt\wsock32.lib
 lib386\nt\wst.lib

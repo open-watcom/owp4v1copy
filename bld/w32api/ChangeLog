@@ -1,3 +1,174 @@
+003-08-29  Steve Cleary  <scleary@jerviswebb.com>
+
+	* include/winuser.h (QS_ALLPOSTMESSAGE, QS_RAWINPUT): Add defines.
+	(QS_INPUT, QS_ALLINPUT, QS_ALLEVENTS): Adjust by OR'ing	with
+	QS_RAWINPUT for _WIN32_WINNT >= 0x0501.
+	(MWMO_*): Add flags.
+
+	* include/wincrypt.h (MS_ENHANCED_PROV[AW], MS_STRONG_PROV[AW],
+	MS_DEF_RSA_SIG_PROV[AW], MS_DEF_RSA_SCHANNEL_PROV[AW],
+	MS_DEF_DSS_PROV[AW], MS_DEF_DSS_DH_PROV[AW], MS_ENH_DSS_DH_PROV[AW],
+	MS_DEF_DH_SCHANNEL_PROV[AW], MS_SCARD_PROV[AW]): Add definitions.
+
+2003-08-26  Danny Smith <dannysmith@users.sourceforge.net>
+
+	* lib/test.c: Add vfw.h to includes.
+	* include/mmsystem.h: Add #ifndef guard to definition of
+	mmioFOURCC macro.
+	* include/vfw.h: Protect __OBJC__ from COM declarations.
+
+2003-08-26  Filip Navara  <xnavara@volny.cz>
+
+	* include/vfw.h: New file.
+
+2003-08-26  Filip Navara  <xnavara@volny.cz>
+
+	* include/ddk/winddk.h (RTL_REGISTRY_*): Add defines.
+	(IoSetCompletionRoutine): Cast _CompletionRoutine arg to
+	PIO_COMPLETION_ROUTINE.
+
+2003-08-26  Danny Smith <dannysmith@users.sourceforge.net>
+
+	* lib/test.c: Add snmp.h, winsnmp.h amd mgmtapi.h to
+	includes.
+
+2003-08-26  Filip Navara  <xnavara@volny.cz>
+
+	* include/snmp.h: New file.
+	* include/winsnmp.h: New file.
+	* include/mgmtapi.h: New file.
+	* lib/snmpapi.def: New file.
+	* lib/wsnmp32.def: New file.
+	* lib/igmpagnt.def: New file.
+	* lib/mgmtapi.def (SnmpMgrCtl) Add stub.
+	(SnmpMgrGetTrapEx): Ditto.
+	(SnmpMgrMIB2Disk): Remove.
+	(dbginit): Remove.
+
+2003-08-25  Steven Edwards  <Steven_Ed4153@yahoo.com>
+
+	* include/ddk/ntifs.h: Change all C++ style comments to C.
+	* include/GL/gl.h: Ditto.
+
+2003-08-25  Martin Fuchs  <Martin-Fuchs@gmx.net>
+
+	* include/shlobj.h (SFGAO_GHOSTED): Correct.
+	(SFGAO_HIDDEN): Add define.
+
+2003-08-25  Filip Navara  <xnavara@volny.cz>
+
+	* include/commctrl.h (ILCF_*): Add defines.
+	(ILD_*): Ditto.
+	(HDS_*); Ditto.
+	(IPN_FIRST, IPN_LAST): Cast to UINT.
+	(SBN_FIRST, SBN_LAST): Add defines.
+	(PGN_*): Ditto.
+	(HDF_JUSTIFYMASK): Fix typo.
+	(HDM_*): Add defines.
+	(HICF_*): Ditto.
+	(I_INDENTCALLBACK,I_IMAGENONE): Ditto.
+	(TBSTATE_MARKED): Add define.
+	(TBSTYLE_EX_*): Add defines.
+	(TBCDRF_*): Ditto.
+	(IDB_HIST_SMALL_COLOR,IDB_HIST_LARGE_COLOR): Ditto.
+	(TB_*): Ditto.
+	(TBN_*): Ditto.
+	(TBNRF_*): Ditto.
+	(TTF_*): Ditto.
+	(TBCD_*): Ditto.
+	(TBDDRET_*): Ditto.
+	(TBIMHT_*): Ditto.
+	(TTM_*): Ditto.
+	(UDM_*): Ditto.
+	(TBIF_BYINDEX): Define as hex constant.
+	(CDIS_*): Add defines.
+	(CDDS_SUBITEM): Add define.
+	(LVIF_*): Add defines.
+	(LVM_*): Ditto.
+	(LVGIT_UNFOLDED): Add define.
+	(TVM_): Add defines.
+	(TVE_EXPANDPARTIAL): Add define.
+	(TVGN_LASTVISIBLE): Ditto.
+	(TVN_*): Add defines.
+	(TVNRET_*): Add defines.
+	(TCIF_STATE): Add define.
+	(NM_TOOLTIPSCREATED): Ditto.
+	(CCM_*): Add defines.
+	(INFOTIPSIZE): Add numeric value.
+	(ODT_LISTVIEW): Ditto.
+	(MCM_GETMAXTODAYWIDTH): Ditto.
+	(MCHT_*): Add defines.
+	(UDM_SETRANGE32,UDM_GETRANGE32): Define in terms of WM_USER.
+	(PGF_*): Add defines.
+	(PGM_*): Ditto.
+	(TBINSERTMARK): Add structure.
+	(LPIMAGEINFO) Add typedef.
+	(LPHDHITTESTINFO): Ditto.
+	(NMLVGETINFOTIP[AW]: Add structures.
+	(NMTBCUSTOMDRAW): Add structure.
+	(TTTOOLINFOA_V*_SIZE): Add macros.
+	(TTTOOLINFOW_V1_SIZE): Ditto.
+	(IMAGELISTDRAWPARAMS): Add new members for WXP.
+	(LVITEM[AW]: Ditto.
+	(TCITEM[AW]):Ditto.
+	(CCSIZEOF_STRUCT): Correct macro definition.
+	(ListView_*): Add new macros.
+	(HIMAGELIST): Correct typedef.
+	(HTREEITEM): Ditto.
+
+2003-08-25   Danny Smith <dannysmith@users.sourceforge.net>
+
+	* commctrl.h (TC_HITTESTINFO): Remove. Add defines for
+	TCHITTESTINFO for backward compatibility.
+	(TC_ITEM[AW]): Rename to TCITEM[AW]. Add defines for backward
+	compatibility.
+
+2003-08-24   Danny Smith <dannysmith@users.sourceforge.net>
+
+	* include/objidl.h (COBJMACROS): Define macros only
+	if using C interace.
+	* include/unknwn.h: Ditto.
+	* include/comcat.h: Ditto.
+
+2003-08-24  Filip Navara  <xnavara@volny.cz>
+
+	* include/prsht.h (PSH_WIZARDHASFINISH, PSH_WIZARD_LITE,
+	PSH_NOCONTEXTHELP): Define.
+	(PSH_WIZARD97): Fix definition for _WIN32_IE >= 0x500.
+	* include/winuser.h (DFCS_TRANSPARENT, DFCS_HOT): Define.
+	(LPDLGTEMPLATE[AW]): Add typedefs.
+
+2003-08-22  Filip Navara  <xnavara@volny.cz>
+
+	* include/aclapi.h (BuildImpersonateExplicitAccessWithName[AW]):
+	Add prototypes.
+	BuildImpersonateTrustee[AW]): Add prototypes.
+	GetMultipleTrustee[AW]): Add prototypes.
+	GetMultipleTrusteeOperation[AW]): Add prototypes.
+
+2003-08-22   Danny Smith <dannysmith@users.sourceforge.net>
+
+        * include/winnt.h (IMAGE_SUBSYSTEM_XBOX): Add define. 
+
+2003-08-22  Mihai Preda <mihai_preda@users.sourceforge.net>
+
+	* include/shlobj.h (IPersistFolder::GetClassID):
+	Correct declaration.
+	(CMF_*) Add missing defines.
+
+2003-08-22   Danny Smith <dannysmith@users.sourceforge.net>
+
+        * include/winuser.h (DC_BUTTONS): Add define.
+
+2003-08-22  Andrew Greenwood  <lists@silverblade.co.uk>
+
+        * include/winuser.h (DC_GRADIENT): Add define.
+
+2003-08-22  Martin Fuchs  <Martin-Fuchs@gmx.net>
+
+	* include/commctrl.h (BTNS_*): Define BTNS_* as successors to the
+	older TBSTYLE_* constants.
+
 2003-08-18  Danny Smith <dannysmith@users.sourceforge.net>
 
 	* include/commctrl.h (TB_*) Group defines together. 

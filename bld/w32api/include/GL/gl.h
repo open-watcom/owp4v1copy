@@ -1,4 +1,4 @@
-/* $Id: gl.h,v 1.2 2003/02/09 14:02:30 earnie Exp $ */
+/* $Id: gl.h,v 1.3 2003/08/25 02:02:37 dannysmith Exp $ */
 
 /*
  * Mesa 3-D graphics library
@@ -65,11 +65,11 @@
 
 /* GLAPI, part 2 */
 #if !defined(GLAPI)
-#  if defined(_MSC_VER)                        // Microsoft Visual C++
+#  if defined(_MSC_VER)                        /* Microsoft Visual C++ */
 #    define GLAPI __declspec(dllimport)
-#  elif defined(__LCC__) && defined(__WIN32__) // LCC-Win32
+#  elif defined(__LCC__) && defined(__WIN32__) /* LCC-Win32 */
 #    define GLAPI __stdcall
-#  else                                        // Others (e.g. MinGW, Cygwin, non-win32)
+#  else                                        /* Others (e.g. MinGW, Cygwin, non-win32) */
 #    define GLAPI extern
 #  endif
 #endif
