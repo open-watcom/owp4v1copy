@@ -1,0 +1,216 @@
+.EXTENSIONS:
+.EXTENSIONS: .mif
+
+.mif : ..\mif
+
+!ifeq dotarget nt
+####################################################
+#
+# makefile for WIN32 help files
+#
+####################################################
+
+.EXTENSIONS: .hlp .hpj .cnt .hh .rtf .h .cn1 .h1 .whp
+
+
+!ifeq hbook cmix
+all : .SYMBOLIC
+!else ifeq hbook fmix
+all : .SYMBOLIC
+!else
+all : $(hbook).hlp $(hbook).h $(hbook).cnt .SYMBOLIC
+!endif
+	@%null
+
+!include master.mif
+
+$(hbook).hlp : $(hbook).hpj $(hbook).rtf $(hbook).hh $(hbook).h $(hbook).cnt
+    $(%WIN95HC) -xn $*.hpj
+
+$(hbook).rtf $(hbook).hh : $(hbook).whp
+    whpcvt $(whpcvt_opts) $*
+
+$(hbook).hpj : $(hbook).whp
+    @%make compile_hpj_nt
+
+$(hbook).whp $(hbook).h $(hbook).cn1 : $(book_objs) $(proj_objs)
+    @%make compile_gml_to_whp
+
+!ifeq hbook cbooks
+$(hbook).cnt : $(docsrc_dir)\gs\$(hbook).cnt
+    @copy $(docsrc_dir)\gs\$(hbook).cnt $(hbook).cnt > nul
+!else ifeq hbook ebooks
+$(hbook).cnt : $(docsrc_dir)\gs\$(hbook).cnt
+    @copy $(docsrc_dir)\gs\$(hbook).cnt $(hbook).cnt > nul
+!else ifeq hbook fbooks
+$(hbook).cnt : $(docsrc_dir)\gs\$(hbook).cnt
+    @copy $(docsrc_dir)\gs\$(hbook).cnt $(hbook).cnt > nul
+!else
+$(hbook).cnt : $(hbook).cn1
+    @%make compile_cnt
+!endif
+
+
+!else ifeq dotarget win
+####################################################
+#
+# makefile for WIN help files
+#
+####################################################
+
+.EXTENSIONS: .hlp .hpj .hh .h .rtf .cn1 .h1 .whp
+
+!ifeq hbook cbooks
+all : .SYMBOLIC
+!else ifeq hbook ebooks
+all : .SYMBOLIC
+!else ifeq hbook fbooks
+all : .SYMBOLIC
+!else
+all : $(hbook).hlp $(hbook).h .SYMBOLIC
+!endif
+    @%null
+
+
+!include master.mif
+
+
+$(hbook).hlp : $(hbook).hpj $(hbook).rtf $(hbook).hh $(hbook).h
+!ifeq hbook c_readme
+    $(%WIN31HC) $(hbook).hpj
+!else ifeq hbook f_readme
+    $(%WIN31HC) $(hbook).hpj
+!else ifeq hbook cpplib
+    $(%WIN31HC) $(hbook).hpj
+!else ifeq hbook cmix
+    $(%WIN31HC) $(hbook).hpj
+!else ifeq hbook fmix
+    $(%WIN31HC) $(hbook).hpj
+!else
+    $(%WAT31HC) $(hbook).hpj
+!endif
+
+$(hbook).rtf $(hbook).hh : $(hbook).whp
+    whpcvt $(whpcvt_opts) $*
+
+$(hbook).hpj : $(hbook).whp
+    @%make compile_hpj_win
+
+$(hbook).whp $(hbook).h : $(book_objs) $(proj_objs)
+    @%make compile_gml_to_whp
+
+
+
+!else ifeq dotarget dos
+####################################################
+#
+# makefile for DOS help files
+#
+####################################################
+
+.EXTENSIONS: .ihp .ib .h .cn1 .h1 .whp
+
+
+all : $(hbook).ihp $(hbook).h .SYMBOLIC
+	@%null
+
+!include master.mif
+
+
+$(hbook).ihp : $(hbook).ib $(hbook).h
+    $(%HCDOS) -h 25 -w 80 $(hbook).ib $(hbook).ihp
+
+$(hbook).ib : $(hbook).whp
+    whpcvt $(whpcvt_opts) $*
+
+$(hbook).whp $(hbook).h : $(book_objs) $(proj_objs)
+    @%make compile_gml_to_whp
+
+
+
+!else ifeq dotarget html
+####################################################
+#
+# makefile for html help files
+#
+####################################################
+
+.EXTENSIONS: .htm .h .cn1 .h1 .whp
+
+
+all : $(hbook).htm $(hbook).h .SYMBOLIC
+	@%null
+
+!include master.mif
+
+$(hbook).htm : $(hbook).whp
+    whpcvt $(whpcvt_opts) $*
+
+$(hbook).whp : $(book_objs) $(proj_objs)
+!ifdef book_bmroot
+    copy $(book_bmroot)\*.bmp $^ > nul
+!endif
+    @%make compile_gml_to_whp
+
+
+
+!else ifeq dotarget ps
+####################################################
+#
+# makefile for Post Script documentation
+#
+####################################################
+
+.EXTENSIONS: .ps
+
+
+all : $(hbook).ps .SYMBOLIC
+	@%null
+
+
+!include master.mif
+
+
+$(hbook).ps : $($^&_objs) $(proj_objs)
+	@%make compile_gml_to_ps
+
+
+
+
+!else ifeq dotarget os2
+####################################################
+#
+# makefile for OS2 help files
+#
+####################################################
+
+.EXTENSIONS: .ipf .hlp .inf .h .cn1 .h1 .whp
+
+
+all : $(hbook).inf $(hbook).hlp $(hbook).h .SYMBOLIC
+	@%null
+
+!include master.mif
+
+$(hbook).ipf : $(hbook).whp
+    whpcvt $(whpcvt_opts) $*
+    @%create $^*.tbl
+
+$(hbook).whp : $(book_objs) $(proj_objs)
+    @%make compile_gml_to_whp
+
+$(hbook).inf : $(hbook).ipf
+    set ipfcartwork=$(book_incs)
+    ipfc $(hbook).ipf /inf
+
+!ifdef book_os2_help
+$(hbook).hlp : $(hbook).ipf
+    set ipfcartwork=$(book_incs)
+    ipfc $(hbook).ipf
+!else
+$(hbook).hlp : .symbolic
+!endif
+
+ipftarg : .symbolic $(hbook).ipf
+
+!endif
