@@ -24,16 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Utilities for processing creation of NE format files,
+*               used by 16-bit OS/2 and Windows.
 *
 ****************************************************************************/
 
-
-/*
-   LOADOS2 : utilities for processing creation of OS2 EXE file
-
-*/
 
 #include <string.h>
 #include <ctype.h>
@@ -140,6 +135,7 @@ static void WriteOS2Data( unsigned_32 stub_len, os2_exe_header *exe_head )
 
     group_num = 0;
     for( group = Groups; group != NULL; group = group->next_group ) {
+        if( group->totalsize == 0 ) continue;   // DANGER DANGER DANGER <--!!!
         segrec.info = group->segflags;
         // write segment
         segrec.min = MAKE_EVEN( group->totalsize );
@@ -814,6 +810,7 @@ extern void FiniOS2LoadFile()
         dgroup_size = DataGroup->totalsize;
     }
     for( group = Groups; group != NULL; group = group->next_group ) {
+        if( group->totalsize == 0 ) continue;   // DANGER DANGER DANGER <--!!!
         imageguess += group->size;
         exe_head.segments++;
     }
@@ -1012,6 +1009,7 @@ static void SetGroupFlags( void )
     group_entry *   group;
 
     for( group = Groups; group != NULL; group = group->next_group ) {
+        if( group->totalsize == 0 ) continue;   // DANGER DANGER DANGER <--!!!
         group->segflags |= DEF_SEG_ON;
         Ring2Walk( group->leaders, CheckGrpFlags );
         /* for some insane reason, level 2 segments must be marked as
