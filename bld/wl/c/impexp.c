@@ -124,6 +124,11 @@ extern void AddToExportList( entry_export *exp )
     size_t              len;
     size_t              currlen;
 
+    if( (FmtData.type & MK_WIN_VXD) && (FmtData.u.os2.exports != NULL)) {
+        LnkMsg( LOC+LINE+FTL+MSG_TOO_MANY_EXPORTS, NULL );
+        FreeAnExport( exp );
+        return;
+    }
     place = NULL;
     owner = &FmtData.u.os2.exports;
     len = strlen( exp->name );

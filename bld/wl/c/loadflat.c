@@ -48,6 +48,7 @@
 #include "impexp.h"
 #include "ring.h"
 #include "dbgall.h"
+#include "vxd_ddb.h"
 
 #define PAGE_COUNT( size )  (((size)+(OSF_DEF_PAGE_SIZE-1))>>OSF_PAGE_SHIFT)
 #define PAGEMAP_BUF_SIZE (MAX_HEADROOM / sizeof(map_entry) * (unsigned long)OSF_DEF_PAGE_SIZE)
@@ -403,6 +404,21 @@ static unsigned WriteDataPages( unsigned long loc )
     return( last_page );
 }
 
+void SetHeaderVxDInfo(os2_flat_header *exe_head) 
+/**********************************************/
+/* setup VxD specific info in the header */
+{
+    symbol       *sym;
+    vxd_ddb      *ddb;
+
+    sym = FmtData.u.os2.exports->sym;
+    if( sym != NULL ) {
+        ddb = (vxd_ddb*)((sym->p.seg)->data);
+        exe_head->r.vxd.device_ID = ddb->req_device_number;
+        exe_head->r.vxd.DDK_version = ddb->SDK_version;
+    }
+}    
+
 extern void FiniOS2FlatLoadFile( void )
 /*************************************/
 /* make an OS/2 flat model executable file */
@@ -441,6 +457,9 @@ extern void FiniOS2FlatLoadFile( void )
     exe_head.fixup_size = curr_loc - exe_head.fixpage_off;
     curr_loc = NullAlign( 512 );    /* align to sector boundry */
     exe_head.page_off = curr_loc;
+    if( FmtData.type & MK_WIN_VXD ) {
+        SetHeaderVxDInfo(&exe_head);
+    }
     last_page = WriteDataPages( curr_loc );
     if( FmtData.type & (MK_OS2_LE|MK_WIN_VXD) ) {
         exe_head.l.last_page = last_page;
@@ -489,8 +508,6 @@ extern void FiniOS2FlatLoadFile( void )
             exe_head.flags |= VXD_DEVICE_DRIVER_3x;
         }
 //        exe_head.heapsize  = FmtData.u.os2.heapsize;
-//        exe_head.r.vxd.device_ID = 0;
-        exe_head.r.vxd.DDK_version = 0x030a;
     } else { // OS/2 flags settings
         if( FmtData.dll ) {
             exe_head.flags |= OSF_IS_DLL;
