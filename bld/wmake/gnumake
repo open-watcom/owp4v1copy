@@ -21,7 +21,7 @@ $(OBJDIR)/usageend.h: $(OBJDIR)/usage.rc $(OBJDIR)/usagej.rc
 $(OBJDIR)/cretype : cretype.c
 	$(CC) -o $@ $<
 
-$(OBJDIR)/isarray.inc : $(OBJDIR)/cretype
+$(OBJDIR)/isarray.gh : $(OBJDIR)/cretype
 	$< > $@
 
 $(OBJDIR)/wmake.res : h/wmake.rc h/mrcmsg.h $(OBJDIR)/usage.rc $(OBJDIR)/usagej.rc
@@ -33,7 +33,7 @@ INCLUDE = -I$(OBJDIR) -Ih -I../watcom/h -I../sdk/rc/rc/h -I../lib_misc/h -I../dw
 CPPFLAGS = $(DEFS) $(INCLUDE)
 CFLAGS = -g -W -Wall 
 
-$(OBJDIR)/%.o: %.c $(OBJDIR)/usageend.h $(OBJDIR)/isarray.inc
+$(OBJDIR)/%.o: %.c $(OBJDIR)/usageend.h $(OBJDIR)/isarray.gh
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 $(OBJDIR)/wmake: $(OBJS) $(OBJDIR)/wmake.res
@@ -44,4 +44,4 @@ $(OBJDIR):
 	mkdir $(OBJDIR)
 
 clean:
-	rm -f *.o usageend.h
+	rm -f *.o *.gh

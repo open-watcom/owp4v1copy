@@ -19,7 +19,7 @@ mlexprs.obj  :  mlexprs.c    macros.h make.h massert.h mmemory.h mmisc.h    &
 mglob.obj    :  mglob.c      macros.h make.h massert.h mcache.h mmemory.h   &
                 mexec.h mhash.h mmisc.h mrcmsg.h msg.h mparse.h mpreproc.h  &
                 mstream.h msuffix.h mlex.h mtarget.h mtypes.h mupdate.h     &
-                mvecstr.h msysdep.h make.h mtypes.h isarray.inc
+                mvecstr.h msysdep.h make.h mtypes.h isarray.gh
 
 msuffix.obj  :  msuffix.c    make.h massert.h mcache.h mmemory.h mhash.h    &
                 mmisc.h mpathgrp.h mrcmsg.h msg.h msuffix.h mtarget.h       &

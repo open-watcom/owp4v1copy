@@ -225,7 +225,7 @@
 // etc...
 // #define USAGE_LN_31                  191
 
-#include "usageend.h"
+#include "usageend.gh"
 
 #define MSG_LANG_SPACING        1000
 

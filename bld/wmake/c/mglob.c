@@ -104,9 +104,11 @@ const char FAR *BuiltIns = {
 
 #elif defined( __QNX__ )
     "__QNX__=\n"
+    "__UNIX__=\n"
 
 #elif defined( __LINUX__ )    
     "__LINUX__=\n"
+    "__UNIX__=\n"
 
 #endif
 };
@@ -188,5 +190,5 @@ const char FAR* MSBuiltIn = {
  * The program 'cretype.exe' is used to rebuild this table.
  */
 extern const UINT8 IsArray[] = {
-#include "isarray.inc"
+#include "isarray.gh"
 };
