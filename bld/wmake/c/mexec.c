@@ -1496,6 +1496,8 @@ STATIC BOOLEAN doRM( const char *file, const rm_flags *flags )
     else if( flags->bVerbose && ENOENT != errno )
         PrtMsg( INF| DELETING_FILE, file );
 
+    CacheRelease();     /* so that the cache is updated */
+
     return( 0 == rv );
 }
 
