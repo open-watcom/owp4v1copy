@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 Linear Executable (LE/LX) format structures.
 *
 ****************************************************************************/
 
@@ -33,8 +32,6 @@
 #ifndef _EXEFLAT_H
 
 #pragma pack(push,1);
-
-/* OS2 Flat executable format structures */
 
 #define OSF_FLAT_RESERVED 20
 
@@ -111,9 +108,9 @@ typedef struct os2_flat_header {
  *  |   |      | | |          | |        |   +-> single data flag
  *  |   |      | | |          | |        +-----> if DLL, per-process
  *  |   |      | | |          | |                initialization
- *  |   |          | | |          | +--------------> no internal fixups.
+ *  |   |      | | |          | +--------------> no internal fixups.
  *  |   |      | | |          +----------------> no external fixups.
- *  |   |          +-+-+---------------------------> PM compatibility flags
+ *  |   |      +-+-+---------------------------> PM compatibility flags
  *  |   +------------------------------------------> errors during link
  *  |                            (not executable)
  *  +----------------------------------------------> 1=DLL, 0=program file
@@ -135,7 +132,7 @@ typedef struct os2_flat_header {
 #define OSF_PM_COMPATIBLE           0x0200
 #define OSF_PM_APP                  0x0300
 #define OSF_LINK_ERROR          0x2000
-#define OSF_IS_DLL          0x8000
+#define OSF_IS_DLL              0x8000
 #define OSF_IS_PROT_DLL         0x00010000UL
 #define OSF_DEVICE_DRIVER       0x00020000UL
 #define OSF_PHYS_DEVICE         0x00020000UL
@@ -158,8 +155,8 @@ typedef struct object_record {
  *  x x x x  x x x x      x x x x      x x x x
  *  | | | |    | | |      | | | |      | | | |
  *  | | | |    | | |      | | | |      | | | +-> readable object
- *  | | | |        | | |      | | | |      | | +---> writeable object
- *  | | | |        | | |      | | | |      | +-----> executable object
+ *  | | | |    | | |      | | | |      | | +---> writeable object
+ *  | | | |    | | |      | | | |      | +-----> executable object
  *  | | | |    | | |      | | | |      +-------> resource object
  *  | | | |    | | |      | | | +--------------> discardable object
  *  | | | |    | | |      | | +----------------> sharable object
@@ -279,10 +276,10 @@ typedef struct flat_res_table {
 #define OSF_IMP_ORD_REF     0x01
 #define OSF_IMP_NAME_REF    0x02
 #define OSF_INT_ENT_REF     0x03
-#define OSF_ADD_FIX     0x04
+#define OSF_ADD_FIX         0x04
 #define OSF_TARGET_OFF      0x10
 #define OSF_ADD_FIX_32      0x20
-#define OSF_OBJ_ORD     0x40
+#define OSF_OBJ_ORD         0x40
 #define OSF_ORD_FLAG        0x80
 
 #pragma pack(pop);
