@@ -1027,9 +1027,8 @@ pushcontext    .radix         record         .repeat
 .np
 There are a few specific features in &asmname.
 .np
-.begnote
-.mnote Naming convention
-.endnote
+.beglevel
+.section Naming convention
 .millust begin
                  Procedure   Variable
 Convention         Name        Name
@@ -1043,14 +1042,14 @@ BASIC               '^'         '^'
 FORTRAN             '^'         '^'
 PASCAL              '^'         '^'
 .millust end
-Note: 
-.np
-1. WASM uses MASM compatible names when -zcm command line option is used.
-.np
-2. In STDCALL procedures name 'nn' is overall parametrs size in bytes.
-.begnote
-.mnote &company "C" name mangler
+.autonote Notes:
+.note
+WASM uses MASM compatible names when -zcm command line option is used.
+.note
+In STDCALL procedures name 'nn' is overall parametrs size in bytes.
 .endnote
+.np
+.section &company "C" name mangler
 .millust begin
 Command line     Procedure     Others
   option           Name        Names
@@ -1058,11 +1057,9 @@ Command line     Procedure     Others
 0,1,2              '*_'        '_*'
 3,4,5,6 with r     '*_'        '_*'
 3,4,5,6 with s      '*'        '*'
-
 .millust end
-.begnote
-.mnote Calling convention
-.endnote
+.np
+.section Calling convention
 .millust begin
                       Parameters    Parameters   Cleanup caller
 Convention   Vararg    passed by       order         stack
@@ -1075,10 +1072,12 @@ BASIC         no       stack       left to right    yes
 FORTRAN       no       stack       left to right    yes
 PASCAL        no       stack       left to right    yes
 .millust end
-Note:
-.np
-1. For STDCALL procedures WASM automaticaly cleanup caller stack,
-except vararg parameter is used.
+.autonote Notes:
+.note
+For STDCALL procedures WASM automaticaly cleanup caller stack,
+except case when vararg parameter is used.
+.endnote
+.endlevel
 .*
 .section &asmname. Diagnostic Messages
 .*
