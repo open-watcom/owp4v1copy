@@ -9,7 +9,7 @@ set PROJDIR=<CWD>
 
 [ BLOCK <1> build rel2 ]
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
-    cdsay .
+    cdsay <PROJDIR>
 
 [ BLOCK <1> rel2 cprel2 acprel2 ]
 #================================
@@ -86,45 +86,46 @@ set PROJDIR=<CWD>
   [ ENDIF ]
 
   [ IFDEF (cpu_axp) <2*> ]          # AXP target from 386 hosts
-    <CPCMD> nt386.axp/wccaxpe.exe <RELROOT>/rel2/binnt/wccaxp.exe
-    <CPCMD> nt386.axp/wccaxpe.sym <RELROOT>/rel2/binnt/wccaxp.sym
-    <CPCMD> nt386.axp/wccdaxpe.dll <RELROOT>/rel2/binnt/wccdaxp.dll
-    <CPCMD> nt386.axp/wccdaxpe.sym <RELROOT>/rel2/binnt/wccdaxp.sym
-    <CPCMD> nt386.axp/wccaxp01.int <RELROOT>/rel2/binnt/wccaxp01.int
-    <CPCMD> os2386.axp/wccaxpe.exe <RELROOT>/rel2/binp/wccaxp.exe
-    <CPCMD> os2386.axp/wccaxpe.sym <RELROOT>/rel2/binp/wccaxp.sym
+    <CPCMD> nt386.axp/wccaxpe.exe   <RELROOT>/rel2/binnt/wccaxp.exe
+    <CPCMD> nt386.axp/wccaxpe.sym   <RELROOT>/rel2/binnt/wccaxp.sym
+    <CPCMD> nt386.axp/wccdaxpe.dll  <RELROOT>/rel2/binnt/wccdaxp.dll
+    <CPCMD> nt386.axp/wccdaxpe.sym  <RELROOT>/rel2/binnt/wccdaxp.sym
+    <CPCMD> nt386.axp/wccaxp01.int  <RELROOT>/rel2/binnt/wccaxp01.int
+    <CPCMD> os2386.axp/wccaxpe.exe  <RELROOT>/rel2/binp/wccaxp.exe
+    <CPCMD> os2386.axp/wccaxpe.sym  <RELROOT>/rel2/binp/wccaxp.sym
     <CPCMD> os2386.axp/wccdaxpe.dll <RELROOT>/rel2/binp/dll/wccdaxp.dll
     <CPCMD> os2386.axp/wccdaxpe.sym <RELROOT>/rel2/binp/dll/wccdaxp.sym
     <CPCMD> os2386.axp/wccaxp01.int <RELROOT>/rel2/binp/wccaxp01.int
-#    <CPCMD> ntaxp.axp/wccaxpc.exe <RELROOT>/rel2/axpnt/wccaxp.exe
-#    <CPCMD> ntaxp.axp/wccaxpc.exe <RELROOT>/rel2/axpnt/wccaxp.sym
-#    <CPCMD> ntaxp.axp/wccaxpe.exe <RELROOT>/rel2/axpnt/wccaxp.exe
+#    <CPCMD> ntaxp.axp/wccaxpc.exe  <RELROOT>/rel2/axpnt/wccaxp.exe
+#    <CPCMD> ntaxp.axp/wccaxpc.exe  <RELROOT>/rel2/axpnt/wccaxp.sym
+#    <CPCMD> ntaxp.axp/wccaxpe.exe  <RELROOT>/rel2/axpnt/wccaxp.exe
 #    <CPCMD> ntaxp.axp/wccdaxpe.dll <RELROOT>/rel2/axpnt/wccdaxp.dll
 #    <CPCMD> ntaxp.axp/wccaxp01.int <RELROOT>/rel2/axpnt/wccaxp01.int
 
   [ IFDEF (cpu_ppc) <2*> ]          # PPC target from 386 hosts
-    <CPCMD> nt386.ppc/wccppce.exe <RELROOT>/rel2/binnt/wccppc.exe
-    <CPCMD> nt386.ppc/wccppce.sym <RELROOT>/rel2/binnt/wccppc.sym
-    <CPCMD> nt386.ppc/wccdppce.dll <RELROOT>/rel2/binnt/wccdppc.dll
-    <CPCMD> nt386.ppc/wccdppce.sym <RELROOT>/rel2/binnt/wccdppc.sym
-    <CPCMD> nt386.ppc/wccppc01.int <RELROOT>/rel2/binnt/wccppc01.int
-    <CPCMD> os2386.ppc/wccppce.exe <RELROOT>/rel2/binp/wccppc.exe
-    <CPCMD> os2386.ppc/wccppce.sym <RELROOT>/rel2/binp/wccppc.sym
+    <CPCMD> nt386.ppc/wccppce.exe   <RELROOT>/rel2/binnt/wccppc.exe
+    <CPCMD> nt386.ppc/wccppce.sym   <RELROOT>/rel2/binnt/wccppc.sym
+    <CPCMD> nt386.ppc/wccdppce.dll  <RELROOT>/rel2/binnt/wccdppc.dll
+    <CPCMD> nt386.ppc/wccdppce.sym  <RELROOT>/rel2/binnt/wccdppc.sym
+    <CPCMD> nt386.ppc/wccppc01.int  <RELROOT>/rel2/binnt/wccppc01.int
+    <CPCMD> os2386.ppc/wccppce.exe  <RELROOT>/rel2/binp/wccppc.exe
+    <CPCMD> os2386.ppc/wccppce.sym  <RELROOT>/rel2/binp/wccppc.sym
     <CPCMD> os2386.ppc/wccdppce.dll <RELROOT>/rel2/binp/dll/wccdppc.dll
     <CPCMD> os2386.ppc/wccdppce.sym <RELROOT>/rel2/binp/dll/wccdppc.sym
-#    <CPCMD> ntppc.ppc/wccppce.exe <RELROOT>/rel2/ppcnt/wccppc.exe
-#    <CPCMD> ntppc.ppc/wccppce.sym <RELROOT>/rel2/ppcnt/wccppc.sym
+#    <CPCMD> ntppc.ppc/wccppce.exe  <RELROOT>/rel2/ppcnt/wccppc.exe
+#    <CPCMD> ntppc.ppc/wccppce.sym  <RELROOT>/rel2/ppcnt/wccppc.sym
 #    <CPCMD> ntppc.ppc/wccdppce.dll <RELROOT>/rel2/ppcnt/wccdppc.dll
 #    <CPCMD> ntppc.ppc/wccdppce.sym <RELROOT>/rel2/ppcnt/wccdppc.sym
 #    <CPCMD> ntppc.ppc/wccppc01.int <RELROOT>/rel2/ppcnt/wccppc01.int
 
-  [ IFDEF (os_qnx "") <2*> ]
-#    <CPCMD> qnx386.i86/wcci86c.qnx <RELROOT>/rel2/qnx/binq/wcc.
-#    <CPCMD> qnx386.i86/wcci86c.sym <RELROOT>/rel2/qnx/sym/wcc.sym
-#    <CPCMD> qnx386.386/wcc386c.qnx <RELROOT>/rel2/qnx/binq/wcc386.
-#    <CPCMD> qnx386.386/wcc386c.sym <RELROOT>/rel2/qnx/sym/wcc.sym
+  [ IFDEF (os_qnx) <2*> ]
+    <CPCMD> qnx386.i86/wcci86c.qnx  <RELROOT>/rel2/qnx/binq/wcc.
+    <CPCMD> qnx386.i86/wcci86c.sym  <RELROOT>/rel2/qnx/sym/wcc.sym
+    <CPCMD> qnx386.386/wcc386c.qnx  <RELROOT>/rel2/qnx/binq/wcc386.
+    <CPCMD> qnx386.386/wcc386c.sym  <RELROOT>/rel2/qnx/sym/wcc.sym
 
 [ BLOCK <1> clean ]
 #==================
     pmake -d all <2> <3> <4> <5> <6> <7> <8> <9> -h clean
-    cdsay .
+    cdsay <PROJDIR>
+

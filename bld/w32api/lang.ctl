@@ -7,8 +7,6 @@ set PROJDIR=<CWD>
 [ INCLUDE <LANG_BLD>/wproj.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
-cdsay .
-
 [ BLOCK <1> build rel2 ]
 #=======================
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
@@ -18,6 +16,7 @@ cdsay .
 #================================
 #NT stuff
     <CPCMD> READ*.*         <RELROOT>/rel2/readme.w32
+  [ IFDEF (os_nt "") <2*> ]
     <CPCMD> nt386/include/*.h     <RELROOT>/rel2/h/nt/
     <CPCMD> nt386/include/GL/*.h  <RELROOT>/rel2/h/nt/GL/
     <CPCMD> nt386/*.lib     <RELROOT>/rel2/lib386/nt/
@@ -25,3 +24,5 @@ cdsay .
 [ BLOCK <1> clean ]
 #==================
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
+    cd <PROJDIR>
+

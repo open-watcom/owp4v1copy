@@ -21,8 +21,8 @@ set PROJDIR=<CWD>
     <CPCMD> <PROJDIR>/cmd/*.cmd          <RELROOT>/rel2/binp/
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> <PROJDIR>/nt386/rcsdll.dll   <RELROOT>/rel2/binnt/rcsdll.dll
-  [ IFDEF (cpu_axp "") <2*> ]
-#    <CPCMD> <PROJDIR>/ntaxp/rcsdll.dll   <RELROOT>/rel2/axpnt/rcsdll.dll
+  [ IFDEF (cpu_axp) <2*> ]
+    <CPCMD> <PROJDIR>/ntaxp/rcsdll.dll   <RELROOT>/rel2/axpnt/rcsdll.dll
 
 [ BLOCK <1> clean ]
 #==================

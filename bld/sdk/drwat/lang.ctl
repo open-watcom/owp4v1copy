@@ -17,7 +17,7 @@ set PROJDIR=<CWD>
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> <DEVDIR>/sdk/drwat/nt/nt386/drwatcom.exe <RELROOT>/rel2/binnt/drwatcom.exe
     <CPCMD> <DEVDIR>/sdk/drwat/nt/win95/drwatcom.exe <RELROOT>/rel2/binnt/_drwin95.exe
-  [ IFDEF (cpu_axp "") <2*> ]
+  [ IFDEF (cpu_axp) <2*> ]
     <CPCMD> <DEVDIR>/sdk/drwat/nt/ntaxp/drwatcom.exe <RELROOT>/rel2/axpnt/drwatcom.exe
 
 [ BLOCK <1> clean ]

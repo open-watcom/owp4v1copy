@@ -107,7 +107,7 @@ set PROJDIR=<CWD>
     <CPCMD> <DEVDIR>/trap/par/ntsupp/dbgport.sys                    <RELROOT>/rel2/binnt/
     <CPCMD> <DEVDIR>/trap/par/ntsupp/dbginst.exe                    <RELROOT>/rel2/binnt/
 
-  [ IFDEF (cpu_axp "") <2*> ]
+  [ IFDEF (cpu_axp) <2*> ]
     <CPCMD> <DEVDIR>/trap/lcl/nt/stdaxp/std.dll                     <RELROOT>/rel2/axpnt/
     <CPCMD> <DEVDIR>/trap/nov/ntaxp.trp/nov.dll                     <RELROOT>/rel2/axpnt/
     <CPCMD> <DEVDIR>/trap/nov/ntaxp.srv/novserv.exe                 <RELROOT>/rel2/axpnt/
@@ -122,7 +122,7 @@ set PROJDIR=<CWD>
     <CPCMD> <DEVDIR>/trap/ser/nlm3.srv/serserv3.nlm                 <RELROOT>/rel2/nlm/
     <CPCMD> <DEVDIR>/trap/ser/nlm4.srv/serserv4.nlm                 <RELROOT>/rel2/nlm/
 
-  [ IFDEF (os_qnx "") <2*> ]
+  [ IFDEF (os_qnx) <2*> ]
     <CPCMD> <DEVDIR>/trap/lcl/qnx/pmd/pmd.trp                       <RELROOT>/rel2/qnx/watcom/wd/
     <CPCMD> <DEVDIR>/trap/lcl/qnx/std/std.trp                       <RELROOT>/rel2/qnx/watcom/wd/
     <CPCMD> <DEVDIR>/trap/par/qnx.trp/par.trp                       <RELROOT>/rel2/qnx/watcom/wd/

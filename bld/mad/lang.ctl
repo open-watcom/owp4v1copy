@@ -37,8 +37,8 @@ set PROJDIR=<CWD>
 #    <CPCMD> <DEVDIR>/mad/x86/ntaxp/madx86.dll    <RELROOT>/rel2/axpnt/
 #    <CPCMD> <DEVDIR>/mad/axp/ntaxp/madaxp.dll    <RELROOT>/rel2/axpnt/
 #    <CPCMD> <DEVDIR>/mad/ppc/ntaxp/madppc.dll    <RELROOT>/rel2/axpnt/
-  [ IFDEF (os_qnx "") <2*> ]
-#    <CPCMD> <DEVDIR>/mad/x86/qnx386/madx86.mad   <RELROOT>/rel2/qnx/watcom/wd/
+  [ IFDEF (os_qnx) <2*> ]
+    <CPCMD> <DEVDIR>/mad/x86/qnx386/madx86.mad   <RELROOT>/rel2/qnx/watcom/wd/
 #    <CPCMD> <DEVDIR>/mad/axp/qnx386/madaxp.mad   <RELROOT>/rel2/qnx/watcom/wd/
 #    <CPCMD> <DEVDIR>/mad/ppc/qnx386/madppc.mad   <RELROOT>/rel2/qnx/watcom/wd/
   [ IFDEF (os_linux "") <2*> ]

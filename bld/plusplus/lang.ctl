@@ -49,7 +49,7 @@ set PROJDIR=<CWD>
     <CPCMD> <PROJDIR>/os2386.386/wppd386.dll   <RELROOT>/rel2/binp/dll/wppd386.dll
     <CPCMD> <PROJDIR>/os2386.386/wppd386.sym   <RELROOT>/rel2/binp/dll/wppd386.sym
     <CPCMD> <PROJDIR>/os2386.386/wpp38601.int  <RELROOT>/rel2/binp/dll/wpp38601.int
-
+  [ ENDIF ]
 #
 # 386 OSI hosted compilers
 #
@@ -77,15 +77,15 @@ set PROJDIR=<CWD>
 #
 # 386 QNX hosted compilers
 #
-  [ IFDEF (os_qnx "") <2*> ]
+  [ IFDEF (os_qnx) <2*> ]
 #  i86 target
-#    <CPCMD> <PROJDIR>/qnx386.i86/wcppi86.qnx   <RELROOT>/rel2/qnx/binq/wpp.
-#    <CPCMD> <PROJDIR>/qnx386.i86/wcppi86.sym   <RELROOT>/rel2/qnx/sym/wpp.sym
-#    <CPCMD> <PROJDIR>/qnx386.i86/wppi8601.int  <RELROOT>/rel2/qnx/sym/wppi8601.int
+    <CPCMD> <PROJDIR>/qnx386.i86/wcppi86.qnx   <RELROOT>/rel2/qnx/binq/wpp.
+    <CPCMD> <PROJDIR>/qnx386.i86/wcppi86.sym   <RELROOT>/rel2/qnx/sym/wpp.sym
+    <CPCMD> <PROJDIR>/qnx386.i86/wppi8601.int  <RELROOT>/rel2/qnx/sym/wppi8601.int
 #  386 target
-#    <CPCMD> <PROJDIR>/qnx386.386/wcpp386.qnx   <RELROOT>/rel2/qnx/binq/wpp386.
-#    <CPCMD> <PROJDIR>/qnx386.386/wcpp386.sym   <RELROOT>/rel2/qnx/sym/wpp386.sym
-#    <CPCMD> <PROJDIR>/qnx386.386/wpp38601.int  <RELROOT>/rel2/qnx/sym/wpp38601.int
+    <CPCMD> <PROJDIR>/qnx386.386/wcpp386.qnx   <RELROOT>/rel2/qnx/binq/wpp386.
+    <CPCMD> <PROJDIR>/qnx386.386/wcpp386.sym   <RELROOT>/rel2/qnx/sym/wpp386.sym
+    <CPCMD> <PROJDIR>/qnx386.386/wpp38601.int  <RELROOT>/rel2/qnx/sym/wpp38601.int
 
 #
 # 386 Linux hosted compilers

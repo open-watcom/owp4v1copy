@@ -21,12 +21,12 @@ set PROJDIR=<CWD>
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> nt386/wlib.exe   <RELROOT>/rel2/binnt/wlib.exe
     <CPCMD> nt386/wlibd.dll  <RELROOT>/rel2/binnt/wlibd.dll
-  [ IFDEF (cpu_axp "") <2*> ]
-#    <CPCMD> ntaxp/wlib.exe   <RELROOT>/rel2/axpnt/wlib.exe
-#    <CPCMD> ntaxp/wlibd.dll  <RELROOT>/rel2/axpnt/wlibd.dll
-  [ IFDEF (os_qnx "") <2*> ]
-#    <CPCMD> qnx386/wlib.exe  <RELROOT>/rel2/qnx/wlib.
-#    <CPCMD> qnx386/wlib.sym  <RELROOT>/rel2/qnx/wlib.sym
+  [ IFDEF (cpu_axp) <2*> ]
+    <CPCMD> ntaxp/wlib.exe   <RELROOT>/rel2/axpnt/wlib.exe
+    <CPCMD> ntaxp/wlibd.dll  <RELROOT>/rel2/axpnt/wlibd.dll
+  [ IFDEF (os_qnx) <2*> ]
+    <CPCMD> qnx386/wlib.exe  <RELROOT>/rel2/qnx/wlib.
+    <CPCMD> qnx386/wlib.sym  <RELROOT>/rel2/qnx/wlib.sym
   [ IFDEF (os_linux "") <2*> ]
     <CPCMD> linux386/wlib.exe  <RELROOT>/rel2/binl/wlib
     <CPCMD> linux386/wlib.sym  <RELROOT>/rel2/binl/wlib.sym

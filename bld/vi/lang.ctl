@@ -41,7 +41,7 @@ set PROJDIR=<CWD>
     <CPCMD> <PROJDIR>/ctags/nt386/ctags.exe     <RELROOT>/rel2/binnt/ctags.exe
     <CPCMD> <PROJDIR>/bind/nt386/edbind.exe     <RELROOT>/rel2/binnt/edbind.exe
 
-  [ IFDEF (cpu_axp "") <2*> ]
+  [ IFDEF (cpu_axp) <2*> ]
     <CPCMD> <PROJDIR>/ntaxp/viaxp.exe           <RELROOT>/rel2/axpnt/vi.exe
     <CPCMD> <PROJDIR>/ntaxp.win/viaxpw.exe      <RELROOT>/rel2/axpnt/viw.exe
     <CPCMD> <PROJDIR>/ctags/ntaxp/ctags.exe     <RELROOT>/rel2/axpnt/ctags.exe
@@ -52,7 +52,7 @@ set PROJDIR=<CWD>
     <CPCMD> <PROJDIR>/ctags/os2386/ctags.exe    <RELROOT>/rel2/binp/ctags.exe
 #    <CPCMD> <PROJDIR>/bind/os2386/edbind.exe   <RELROOT>/rel2/binp/edbind.exe
 
-  [ IFDEF (os_qnx "") <2*> ]
+  [ IFDEF (os_qnx) <2*> ]
     <CPCMD> <PROJDIR>/qnxi86/viq.qnx            <RELROOT>/rel2/qnx/binq/vi
 
   [ IFDEF (os_linux "") <2*> ]

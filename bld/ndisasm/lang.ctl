@@ -24,10 +24,10 @@ set PROJDIR=<CWD>
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> <PROJDIR>/nt386/wdis.exe    <RELROOT>/rel2/binnt/
     <CPCMD> <PROJDIR>/nt386/wdis.sym    <RELROOT>/rel2/binnt/
-  [ IFDEF (cpu_axp "") <2*> ]
+  [ IFDEF (cpu_axp) <2*> ]
     #<CPCMD> <PROJDIR>/ntaxp/wdis.exe    <RELROOT>/rel2/axpnt/
     #<CPCMD> <PROJDIR>/ntaxp/wdis.sym    <RELROOT>/rel2/axpnt/
-  [ IFDEF (os_qnx "") <2*> ]
+  [ IFDEF (os_qnx) <2*> ]
     #<CPCMD> <PROJDIR>/qnx386/wdis.qnx   <RELROOT>/rel2/qnx/binq/wdis
     #<CPCMD> <PROJDIR>/qnx386/wdis.sym   <RELROOT>/rel2/qnx/sym/
   [ IFDEF (os_linux "") <2*> ]
