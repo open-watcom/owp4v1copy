@@ -53,6 +53,7 @@
 #define         EV_ENTER                0x10D
 #define         EV_CTRL_ENTER           0x00A
 #define         EV_CTRL_RETURN          0x00A
+#define         EV_CTRL_BACKSPACE       0x07F
 #define         EV_ESCAPE               0x11B
 /*
  * This next one isn't all that useful on AT-class machines, I grant you.
