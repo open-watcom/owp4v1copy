@@ -5,6 +5,6 @@ model=ms
 subdir=ms_r
 system=winnt
 convention=register
-!include $(rtdll)\master.mif
-!include ..\objs.mif
-!include $(rtdll)\mkdll.mif
+!include $(rtdll)/master.mif
+!include ../objs.mif
+!include $(rtdll)/mkdll.mif

@@ -9,4 +9,4 @@ form            = nt
 __386__         =
 share_objs      = ..\obj387\
 
-!include        ..\makego.mif
+!include        ../makego.mif

@@ -23,5 +23,5 @@ rc_opts         = -30 -q -bt=$(build_target)
 win_library     = $(%WATCOM)\lib286\win\windows.lib
 c_library       = $(%WATCOM)\lib286\win\clibl.lib
 
-!include ..\mif\fmedit.mif
+!include ../mif/fmedit.mif
 

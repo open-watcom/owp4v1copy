@@ -2,4 +2,4 @@
 host_CPU = 386
 host_OS = dos
 
-!include ..\mif\master.mif
+!include ../mif/master.mif

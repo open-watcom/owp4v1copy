@@ -3,4 +3,4 @@ host_OS = os2
 host_CPU = 386
 OS2F=1
 
-!include ..\master.mif
+!include ../master.mif

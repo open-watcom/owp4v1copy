@@ -5,6 +5,6 @@ host_CPU = 386
 
 PM = 1
 
-!include ..\mif\master.mif
+!include ../mif/master.mif
 
 lflags_os2_i86  = sys os2v2_pm

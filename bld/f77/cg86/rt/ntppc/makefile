@@ -10,4 +10,4 @@ fp_model        =
 is_MT           =
 is_DLL          =
 
-!include ..\master.mif
+!include ../master.mif

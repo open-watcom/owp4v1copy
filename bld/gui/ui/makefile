@@ -92,7 +92,7 @@ wv_sysobjs = &
           guiclen.obj &
 
 help_objext=obj
-!include $(help_dir)\help.mif
+!include $(help_dir)/help.mif
 
 wv_sysobjs += $(help_objs)
 
@@ -111,7 +111,7 @@ sysobjs = $(wv_sysobjs) $(sys_hooks) $(sys_dep_objs)
 
 sysinclude +=;$(ui_dir)\h;$(watcom_dir)\h;$(sdk_dir)\rc\wres\h
 
-!include ..\..\makefile
+!include ../../makefile
 
 guikey.obj :    guikey.c
            $(compile)

@@ -1,6 +1,6 @@
 .ERROR:
 
-!include ..\project.mif
+!include ../project.mif
 !include cproj.mif
 
 !ifdef debug_version

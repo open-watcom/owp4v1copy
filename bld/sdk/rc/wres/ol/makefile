@@ -3,4 +3,4 @@ host_OS = dos
 host_CPU = i86
 libname = l
 
-!include ..\master.mif
+!include ../master.mif

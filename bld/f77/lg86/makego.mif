@@ -2,7 +2,7 @@
 #   MAKEGO.MIF: makefile for generating WATFOR77 Load and Go compiler
 #
 
-!include $(f77_dir)\lg86\comp.mif
+!include $(f77_dir)/lg86/comp.mif
 
 !ifndef incl_errmsgs
 resource_file = errmsg.res
@@ -11,7 +11,7 @@ resource_file = errmsg.res
 #
 # get the obj file macros and overlay configurations
 #
-!include $(f77_dir)\lg86\files.mif
+!include $(f77_dir)/lg86/files.mif
 
 #
 # these are the extra lnk files we require
@@ -52,12 +52,12 @@ $(exename) :
 #
 # get the fcodes information
 #
-!include $(f77_dir)\lg86\fcodes.mif
+!include $(f77_dir)/lg86/fcodes.mif
 
 #
 # get the ifbuild information
 #
-!include $(f77_dir)\lg86\ifbuild.mif
+!include $(f77_dir)/lg86/ifbuild.mif
 
 #
 # build the compiler
@@ -197,7 +197,7 @@ errmsg.obj : errmsg.c
 #
 # code that we steal from WOMP
 #
-!include $(womp_dir)\watfor\files.mif
+!include $(womp_dir)/watfor/files.mif
 !ifdef __386__
 $(womp_dir)\watfor\obj386\wompobj.lib : wmpmsg.gh $(womp_srcs)
     @wmake -h -f $(womp_dir)\watfor\makefile $(__MAKEOPTS__) __386__=

@@ -11,4 +11,4 @@ _qnx =          q
 asm_cmd =       wasm
 asm_flags =     -zq -ms -i..\inc -d_MODEL=_SMALL
 
-!include ..\graphics.mif
+!include ../graphics.mif

@@ -3,4 +3,4 @@ model = l
 
 guilib  = $(guidir)\win\guiwin$(model).lib
 
-!include ..\setup.mif
+!include ../setup.mif

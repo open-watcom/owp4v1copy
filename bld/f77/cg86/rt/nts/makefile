@@ -11,4 +11,4 @@ is_MT           =
 is_DLL          =
 is_stack        =
 
-!include ..\master.mif
+!include ../master.mif

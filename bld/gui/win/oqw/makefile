@@ -131,7 +131,7 @@ sysobjs +=             &
           ctl3d32.obj
 !endif
 
-!include ..\..\makefile
+!include ../../makefile
 
 cflags += -DWILLOWS -DTWIN32 -fpi
 

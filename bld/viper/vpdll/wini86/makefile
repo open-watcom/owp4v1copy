@@ -2,5 +2,5 @@
 host_OS = win
 host_CPU = i86
 
-!include ..\master.mif
+!include ../master.mif
 

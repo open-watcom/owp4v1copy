@@ -1,7 +1,7 @@
 #
 # WATCOM Debugger makefile (RFX)
 #
-!include $(wvdir)\make.wv
+!include $(wvdir)/make.wv
 dig_os = $(os)
 !include $(dig_dir)/mif/trpcli.mif
 

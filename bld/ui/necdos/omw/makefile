@@ -3,4 +3,4 @@ host_CPU = i86
 host_OS = dos
 MODEL = M
 
-!include ..\makefile
+!include ../makefile

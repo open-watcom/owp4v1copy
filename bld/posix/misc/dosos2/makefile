@@ -4,4 +4,4 @@ targos = dosos2
 model=c
 !endif
 
-!include $(posix_dir)\mif\makelib.mif
+!include $(posix_dir)/mif/makelib.mif

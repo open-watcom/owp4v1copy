@@ -8,7 +8,7 @@ inc_dirs = $(help_dir)\h;$(uidir)\h;$(trmem_dir)
 
 .c: ..\c;$(trmem_dir)
 
-!include ..\help.mif
+!include ../help.mif
 
 objs =  main.obj filelist.obj
 objs += $(help_objs)

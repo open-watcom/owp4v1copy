@@ -5,4 +5,4 @@ guilib  = $(guidir)\ui\guidos$(model).lib
 uilib   = $(uidir)\dos\uilib$(model).lib
 reslib = $(wres_dir)\lib\wresl.lib
 
-!include ..\setup.mif
+!include ../setup.mif

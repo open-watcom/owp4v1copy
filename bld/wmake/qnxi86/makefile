@@ -4,4 +4,4 @@ host_cpu = i86
 
 compact = 1
 
-!include ..\mif\master.mif
+!include ../mif/master.mif

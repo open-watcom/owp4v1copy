@@ -112,7 +112,7 @@ sysobjs +=             &
           ctl3d32.obj
 !endif
 
-!include ..\..\makefile
+!include ../../makefile
 
 rm_wpi :  $(wpi_dir)\h\wpicomp.h .SYMBOLIC
         @-rm $(sysobjs)

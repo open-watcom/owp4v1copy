@@ -1,4 +1,4 @@
-!include $(womp_dir)\watfor\files.mif
+!include $(womp_dir)/watfor/files.mif
 
 .c: $(womp_dir)\c
 
@@ -24,4 +24,4 @@ $(womp_dir)\watfor\obj\wompobj.lib : wmpmsg.gh $(womp_objs)
     del tmp.lbc
 
 __watfor__      =
-!include $(womp_dir)\mif\master.mif
+!include $(womp_dir)/mif/master.mif

@@ -5,4 +5,4 @@ host_cpu = 386
 
 memory_model_386 = s
 
-!include ..\mif\master.mif
+!include ../mif/master.mif

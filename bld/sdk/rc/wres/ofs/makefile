@@ -4,4 +4,4 @@ host_CPU = 386
 CONV = s
 libname = fs
 
-!include ..\master.mif
+!include ../master.mif

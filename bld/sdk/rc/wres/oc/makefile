@@ -4,4 +4,4 @@ host_CPU = i86
 MODEL = c
 libname = c
 
-!include ..\master.mif
+!include ../master.mif

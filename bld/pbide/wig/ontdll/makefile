@@ -8,4 +8,4 @@ compiler=wcc386
 objs = pbide.obj errdll.obj
 ext = dll
 
-!include ..\mif\master.mif
+!include ../mif/master.mif

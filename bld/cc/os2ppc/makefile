@@ -2,4 +2,4 @@
 host_CPU = 386
 host_OS = os2
 target_CPU = ppc
-!include ..\master.mif
+!include ../master.mif

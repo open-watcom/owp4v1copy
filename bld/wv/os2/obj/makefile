@@ -21,7 +21,7 @@ sysobjs =            &
         os2filio.obj &
         os2scrn.obj
 
-!include ..\..\makefile
+!include ../../makefile
 
 syslnk : .PROCEDURE
     @%append $(lnk) system os2 pmc

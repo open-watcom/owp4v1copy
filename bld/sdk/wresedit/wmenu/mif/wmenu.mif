@@ -20,7 +20,7 @@ sys_object =    wmain.sbj w_menu.sbj winfo.sbj whndl.sbj &
                 wdel.sbj wnewitem.sbj &
                 wsvobj.sbj wprev.sbj wmen2rc.sbj
 
-!include ..\..\mif\master.mif
+!include ../../mif/master.mif
 
 $(name).res: $(name).rc rename.dlg w_rc.h sys_rc.h wmsgfile.h &
              wmenu.men menabout.dlg menedit.dlg

@@ -7,4 +7,4 @@ fp_model        = c
 exe             = watfor77
 form            = dos
 
-!include        ..\makego.mif
+!include        ../makego.mif

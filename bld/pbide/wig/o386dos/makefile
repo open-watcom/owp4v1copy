@@ -12,4 +12,4 @@ ccopt += -dTRMEM -of+
 objs += trmemcvr.obj trmem.obj
 !endif
 
-!include ..\mif\master.mif
+!include ../mif/master.mif

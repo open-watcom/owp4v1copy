@@ -10,4 +10,4 @@ debug_link_opts=d all
 
 !endif
 
-!include ..\wbrowse.mif
+!include ../wbrowse.mif

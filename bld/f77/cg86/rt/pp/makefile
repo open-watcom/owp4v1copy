@@ -9,4 +9,4 @@ model           = f
 fp_model        = c
 is_stack        =
 
-!include ..\master.mif
+!include ../master.mif

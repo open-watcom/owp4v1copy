@@ -3,8 +3,8 @@ CC = wcc386
 CFLAGS = -bt=nt
 res1_flags = -bt=nt
 
-!include ..\alarm.mif
-!include ..\..\master.mif
+!include ../alarm.mif
+!include ../../master.mif
 
 linkit : .PROCEDURE
     @%append $(LNK) system nt_win

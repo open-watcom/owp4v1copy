@@ -7,7 +7,7 @@ convention=register
 linkage=dynamic
 profile=1
 mathlib_rtdll=1
-!include $(mathlib_dir)\objects.mif
-!include $(mathlib_dir)\master.mif
-!include $(mathlib_dir)\mklib.mif
-!include $(mathlib_dir)\deps.mif
+!include $(mathlib_dir)/objects.mif
+!include $(mathlib_dir)/master.mif
+!include $(mathlib_dir)/mklib.mif
+!include $(mathlib_dir)/deps.mif

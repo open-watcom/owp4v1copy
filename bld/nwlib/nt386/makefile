@@ -4,4 +4,4 @@ host_os  = nt
 host_cpu = 386
 wlib_dll = 1
 
-!include ..\master.mif
+!include ../master.mif

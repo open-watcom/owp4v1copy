@@ -3,4 +3,4 @@ host_OS = dos
 host_CPU = i86
 vroomed = 1
 
-!include ..\mif\master.mif
+!include ../mif/master.mif

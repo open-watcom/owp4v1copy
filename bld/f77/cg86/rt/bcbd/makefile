@@ -8,4 +8,4 @@ lib_name        = flibl
 model           = l
 fp_model        = c
 
-!include ..\master.mif
+!include ../master.mif

@@ -20,7 +20,7 @@ sysobjs =   &
     dsxmem.obj
 
 
-!include ..\..\makefile
+!include ../../makefile
 
 syslnk : .PROCEDURE
     @%append $(lnk) sys dos4g op stack=12k

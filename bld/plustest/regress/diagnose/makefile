@@ -1,9 +1,9 @@
 plustest_name = diagnose
-!include ..\environ.mif
+!include ../environ.mif
 
 diagnose_dir = source
 
-!include $(diagnose_dir)\diagnose.mif
+!include $(diagnose_dir)/diagnose.mif
 
 diagnose_opts += -ew -we -wx -e1000 -zq -eq
 archdep_opts = -dARCH=$(arch) -fr=.ser 

@@ -3,4 +3,4 @@
 host_OS     = nt
 host_CPU    = axp
 
-!include ..\..\cvtres.mif
+!include ../../cvtres.mif

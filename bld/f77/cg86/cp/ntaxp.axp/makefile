@@ -6,4 +6,4 @@ host_CPU        = axp
 # code generator project definitions
 target_CPU      = axp
 
-!include ..\master.mif
+!include ../master.mif

@@ -8,4 +8,4 @@ sys_dll          = 1
 wlink_rtdll      = 1
 add_version_info = 1
 
-!include ..\wlink.mif
+!include ../wlink.mif

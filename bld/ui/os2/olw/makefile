@@ -4,4 +4,4 @@ host_cpu = i86
 host_os  = os2
 MODEL    = L
 
-!include ..\makefile
+!include ../makefile

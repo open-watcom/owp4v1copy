@@ -1,5 +1,5 @@
 plustest_name = wclass
-!include ..\environ.mif
+!include ../environ.mif
 
 !ifeq arch 386
 !define arch i86

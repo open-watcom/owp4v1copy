@@ -6,4 +6,4 @@ host_CPU        = 386
 # code generator project definitions
 target_CPU      = 386
 
-!include ..\master.mif
+!include ../master.mif

@@ -9,4 +9,4 @@ model           = s
 fp_model        = i87
 is_NEC          =
 
-!include ..\master.mif
+!include ../master.mif

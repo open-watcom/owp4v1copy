@@ -5,4 +5,4 @@ WINDOWS = 1
 IS_GUI = y
 libname = lw
 
-!include ..\master.mif
+!include ../master.mif

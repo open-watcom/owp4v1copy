@@ -7,7 +7,7 @@ extra_l_flags_nt = op stack=1024k commit stack=32k
 !include deftarg.mif
 !include defrule.mif
 
-!include $(cg_dir)\mif\fe.mif
+!include $(cg_dir)/mif/fe.mif
 !include wres.mif
 !include mlibs.mif
 
@@ -51,7 +51,7 @@ asm_opts  = -oc -zq -we -i=$(f77_dir)\cg86\inc -i=$(watcom_dir)\h
     $(as) $[* $(asm_opts)
 !endif
 
-!include ..\files.mif
+!include ../files.mif
 
 !ifdef memtrack
 fobjs += trmem.obj trmemcvr.obj

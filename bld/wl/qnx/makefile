@@ -4,4 +4,4 @@ host_os  = qnx
 host_cpu = 386
 
 release_wlink = 1
-!include ..\wlink.mif
+!include ../wlink.mif

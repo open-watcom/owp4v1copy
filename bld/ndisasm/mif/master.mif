@@ -104,4 +104,4 @@ wdis.u : ./mkuse.exe wdis.msg
 clean: .SYMBOLIC .EXPLICIT
         @rm -f *.?bj *.lnk *.exe *.lib *.res *.clb
         @rm -f *.err *.c *.sym *.map
-        @rm ../*.exe ../stand/h/*.gh
+        @rm -f ../*.exe ../stand/h/*.gh

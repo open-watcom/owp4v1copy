@@ -11,4 +11,4 @@ sysinclude=$(lang_root)\h\os21x;
 target : sample.exe .SYMBOLIC
     @%null
 
-!include ..\makefile
+!include ../makefile

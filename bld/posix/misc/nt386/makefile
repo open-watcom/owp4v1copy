@@ -4,4 +4,4 @@ targos = nt386
 model=f
 !endif
 
-!include $(posix_dir)\mif\makelib.mif
+!include $(posix_dir)/mif/makelib.mif

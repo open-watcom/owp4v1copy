@@ -16,7 +16,7 @@ EXE=nlm
 .before
     set include=$(inc_dirs_lang_netware);$(watcom_nw40_h);$(watcom_h);$(%WATCOM)\h;$(%include)
 
-!include ..\makefile
+!include ../makefile
 
 sample2.$(EXE) : sample.obj sampdial.obj ..\$(LIBNAME).lib
     %create sample.lnk

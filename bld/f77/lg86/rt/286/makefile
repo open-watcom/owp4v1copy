@@ -3,4 +3,4 @@ lib             = wflib
 form            = dos
 
 fcnovect_lnk = $(wf)lg86\fcnovect.lnk
-!include        ..\makert.mif
+!include        ../makert.mif

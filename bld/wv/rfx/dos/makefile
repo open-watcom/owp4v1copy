@@ -4,4 +4,4 @@ bin     = bin
 form    = dos
 
 !include deftarg.mif
-!include ..\makefile
+!include ../makefile

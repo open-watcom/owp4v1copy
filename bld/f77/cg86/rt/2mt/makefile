@@ -9,4 +9,4 @@ model           = l
 fp_model        = c
 is_MT           =
 
-!include ..\master.mif
+!include ../master.mif

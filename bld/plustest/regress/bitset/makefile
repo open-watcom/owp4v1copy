@@ -1,5 +1,5 @@
 plustest_name = bitset
-!include ..\environ.mif
+!include ../environ.mif
 
 !ifdef test1
 cflags_386 = -d2-4r

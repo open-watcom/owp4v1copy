@@ -10,4 +10,4 @@ xflags=-zw
 wpi_lib=wpi_w386
 wlib_opt=-p=32
 
-!include ..\makefile
+!include ../makefile

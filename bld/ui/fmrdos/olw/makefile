@@ -5,4 +5,4 @@ host_OS = dos
 MODEL = L
 pdir = ..\..
 
-!include ..\makefile
+!include ../makefile

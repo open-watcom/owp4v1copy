@@ -4,4 +4,4 @@ host_CPU = 386
 
 machine = nec
 
-!include ..\mif\master.mif
+!include ../mif/master.mif

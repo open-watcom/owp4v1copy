@@ -2,5 +2,5 @@
 host_OS = nt
 host_CPU = 386
 drwatcom_95 = 1
-!include ..\..\mif\master.mif
+!include ../../mif/master.mif
 

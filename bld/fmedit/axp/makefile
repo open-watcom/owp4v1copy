@@ -27,4 +27,4 @@ inc_dirs        = $(watcom_dir)\h;$(fsrc_dir);$(fdev_dir);$(%WIN_INCLUDE)
 rc_opts         = -q -bt=$(build_target)
 __ALPHA__       = 1
 
-!include ..\mif\fmedit.mif
+!include ../mif/fmedit.mif

@@ -12,4 +12,4 @@ cpu = alpha
 guilib  = $(guidir)\win\guintaxp$(model).lib
 guihdir = $(guidir)\h
 
-!include ..\setup.mif
+!include ../setup.mif

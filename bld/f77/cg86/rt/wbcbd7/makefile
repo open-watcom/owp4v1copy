@@ -8,4 +8,4 @@ lib_name        = flib7l
 model           = l
 fp_model        = i
 
-!include ..\master.mif
+!include ../master.mif

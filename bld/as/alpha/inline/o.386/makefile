@@ -7,4 +7,4 @@ cpu = alpha
 inline_as = 1
 asi_build_lib = 1
 
-!include $(as_dir)\mif\master.mif
+!include $(as_dir)/mif/master.mif

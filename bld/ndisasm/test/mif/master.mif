@@ -11,7 +11,7 @@ name = dis
 
 dis_test=1
 
-!include $(disasm_dir)\core\dis.mif
+!include $(disasm_dir)/core/dis.mif
 
 obj             = .obj
 exe             = .exe

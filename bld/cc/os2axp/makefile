@@ -4,4 +4,4 @@ host_OS = os2
 host_CG = os220
 target_CPU = axp
 cc_version = tree
-!include ..\master.mif
+!include ../master.mif

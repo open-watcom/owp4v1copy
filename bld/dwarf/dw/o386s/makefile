@@ -2,4 +2,4 @@
 model = s
 host_OS = nt
 host_CPU = 386
-!include ..\dw.mif
+!include ../dw.mif

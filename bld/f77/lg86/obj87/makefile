@@ -7,4 +7,4 @@ fp_model        = i87
 exe             = watfor87
 form            = dos
 
-!include        ..\makego.mif
+!include        ../makego.mif

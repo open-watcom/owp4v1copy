@@ -8,5 +8,5 @@
 host_OS = osi
 host_CPU = 386
 
-!include ..\mif\master.mif
+!include ../mif/master.mif
 

@@ -3,4 +3,4 @@
 host_OS = os2
 host_CPU = i86
 
-!include ..\dr.mif
+!include ../dr.mif

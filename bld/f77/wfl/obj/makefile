@@ -6,4 +6,4 @@ host_CPU        = i86
 # FORTRAN project definitions
 target_CPU      = i86
 
-!include ..\master.mif
+!include ../master.mif

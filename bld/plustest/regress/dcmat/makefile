@@ -1,5 +1,5 @@
 plustest_name = dcmat
-!include ..\environ.mif
+!include ../environ.mif
 
 objs = &
     compmat.obj &

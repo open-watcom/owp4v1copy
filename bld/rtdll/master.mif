@@ -28,6 +28,6 @@ nlang_tools = 1
 
 !include cproj.mif
 
-!include $(clib_dir)\flags.mif
-!include $(rtdll_dir)\dllname.mif
-!include $(rtdll_dir)\dllbase.mif
+!include $(clib_dir)/flags.mif
+!include $(rtdll_dir)/dllname.mif
+!include $(rtdll_dir)/dllbase.mif

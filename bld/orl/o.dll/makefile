@@ -3,4 +3,4 @@ host_OS = nt
 host_CPU = 386
 orl_rtdll = 1
 
-!include ..\mif\master.mif
+!include ../mif/master.mif

@@ -3,5 +3,5 @@
 host_OS = nt
 host_CPU = 386
 
-!include ..\master.mif
+!include ../master.mif
 

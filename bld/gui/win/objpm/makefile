@@ -12,7 +12,7 @@ xflags=-zu-s
 wpi_lib=wpi_pm16
 wlib_opt = /p=32
 
-!include ..\makefile
+!include ../makefile
 
 #guifdlg.obj : $(guidir)\ui\c\guifdlg.c
 #           $($(compiler)) $(guidir)\ui\c\guifdlg.c /d__OS2__ $(cflags)

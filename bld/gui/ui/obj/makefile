@@ -7,4 +7,4 @@ compiler = comp286
 model=l
 xflags=-of
 
-!include ..\makefile
+!include ../makefile

@@ -29,7 +29,7 @@ disasm = $(build_root)\wdisasm\vid\ofw
 .EXTENSIONS: .asm .c .h
 
 dip_os = nt
-!include $(dip_dir)\client.mif
+!include $(dip_dir)/client.mif
 
 objs = global.obj param.obj procctl.obj dipcli.obj memory.obj&
         drwatcom.obj drproc.obj handler.obj sym.obj memview.obj&

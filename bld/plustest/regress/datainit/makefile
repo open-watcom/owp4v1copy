@@ -1,5 +1,5 @@
 plustest_name = datainit
-!include ..\environ.mif
+!include ../environ.mif
 
 exes = &
 idata01.$(exe) &

@@ -10,4 +10,4 @@ model = s
 track =
 sysinclude=$(lang_root)\qh;
 
-!include ..\makefile
+!include ../makefile

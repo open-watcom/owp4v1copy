@@ -1,4 +1,4 @@
-!include $(posix_dir)\mif\targos.mif
+!include $(posix_dir)/mif/targos.mif
 
 all : .symbolic lib $(commands)
         @%null

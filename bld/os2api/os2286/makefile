@@ -7,4 +7,4 @@ srcdir = lib286
 
 all: os2.lib
 
-!include ..\master.mif
+!include ../master.mif

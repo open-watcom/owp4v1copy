@@ -1,9 +1,9 @@
 ctest_name = positive
-!include ..\environ.mif
+!include ../environ.mif
 
 positive_dir = source
 
-!include $(positive_dir)\positive.mif
+!include $(positive_dir)/positive.mif
 
 !ifdef test1
 cflags_386 = -d2-mf

@@ -8,13 +8,13 @@
 #   93/04/23    Alex Brodsky    SA library for both 8086 and 80386 now
 
 in_sa_library=1
-!include $(f77_dir)\lg86\comp.mif
+!include $(f77_dir)/lg86/comp.mif
 
 #
 # get the obj file macros
 #
-!include $(f77_dir)\lg86\rt\rt.mif
-!include $(f77_dir)\lg86\rt\sa.mif
+!include $(f77_dir)/lg86/rt/rt.mif
+!include $(f77_dir)/lg86/rt/sa.mif
 
 
 #
@@ -31,13 +31,13 @@ all: $(libname) ..\errmsg.res .symbolic
 !ifeq form dos
 fcnovect_lnk = $(f77_dir)\lg86\fcnovect.lnk
 !endif
-!include $(f77_dir)\lg86\fcodes.mif
+!include $(f77_dir)/lg86/fcodes.mif
 
 
 #
 # get the intrinsic function files
 #
-!include $(f77_dir)\lg86\ifbuild.mif
+!include $(f77_dir)/lg86/ifbuild.mif
 !ifdef __386__
 if_lib = ..\ifns\if386.lib
 !else

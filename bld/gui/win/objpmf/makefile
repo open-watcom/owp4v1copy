@@ -11,4 +11,4 @@ xflags=-s
 wpi_lib=wpi_os2f
 wlib_opt = /p=32
 
-!include ..\makefile
+!include ../makefile

@@ -5,4 +5,4 @@ NT = NT
 IS_GUI = y
 libname = fnt
 
-!include ..\master.mif
+!include ../master.mif

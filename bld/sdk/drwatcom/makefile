@@ -22,7 +22,7 @@ disasm = $(build_root)\wdisasm\vid\olw
 .EXTENSIONS: .asm .c .h .dlg
 
 dip_os = win
-!include $(dip_dir)\client.mif
+!include $(dip_dir)/client.mif
 
 objs =  drwatcom.obj fault.obj globals.obj &
         notify.obj winproc.obj debug.obj dump.obj disasm.obj &

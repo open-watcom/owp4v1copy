@@ -1,5 +1,5 @@
 plustest_name = field64
-!include ..\environ.mif
+!include ../environ.mif
 
 !ifdef test1
 cflags_386 = -d2-fpd

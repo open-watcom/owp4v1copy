@@ -80,7 +80,7 @@ inc_dirs = -I$(watcom_dir)/h -I../h
 cppflags = $(inc_dirs) $(defines) -DNDEBUG -D__UNIX__ -D__LINUX__ &
 -D__SMALL__ -D_M_IX86 -DUNIX -DLINUX -D__386__ -D__FLAT__ &
 -D_WCUNALIGNED="__attribute__((packed))"
-cflags = $(extra_c_flags) $(cppflags) -c -Wall -funsigned-char -pipe -O -o $@
+cflags = $(extra_c_flags) $(cppflags) -g -c -Wall -funsigned-char -pipe -O -o $@
 
 # options for single source utility compilations
 wcl_util_opts = -funsigned-char -Wall $(cppflags) $(ldflags) -o $[&.exe &

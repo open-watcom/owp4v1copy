@@ -3,4 +3,4 @@ host_CPU = 386
 host_OS = nt
 MODEL = F
 
-!include ..\makefile
+!include ../makefile

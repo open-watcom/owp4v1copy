@@ -3,8 +3,8 @@ CC = wccaxp
 CFLAGS = -bt=nt
 res1_flags = -bt=nt
 
-!include ..\testctl.mif
-!include ..\..\master.mif
+!include ../testctl.mif
+!include ../../master.mif
 
 linkit : .PROCEDURE
     @%append $(LNK) system ntaxp_win

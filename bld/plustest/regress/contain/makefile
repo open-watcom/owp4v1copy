@@ -1,7 +1,7 @@
 plustest_name = contain
 # this is a long test so quit if something goes wrong
 no_continue = yes
-!include ..\environ.mif
+!include ../environ.mif
 
 !ifdef test1
 save_out = $(arch)_1

@@ -5,4 +5,4 @@
 
 machine = nec
 
-!include ..\objc\makefile
+!include ../objc/makefile

@@ -16,7 +16,7 @@ sysobjs =   &
     winchk.obj &
     winlkup.obj
 
-!include ..\..\makefile
+!include ../../makefile
 
 syslnk : .PROCEDURE
     @%append $(lnk) system nt

@@ -1,5 +1,5 @@
 plustest_name = winnt
-!include ..\environ.mif
+!include ../environ.mif
 
 !ifdef test1
 cflags = -oxa-d1

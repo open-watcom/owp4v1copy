@@ -15,7 +15,7 @@
 #
 
 # get the run-time overlays
-!include $(f77_dir)\lg86\rt\rt.mif
+!include $(f77_dir)/lg86/rt/rt.mif
 
 obj_0 =
 

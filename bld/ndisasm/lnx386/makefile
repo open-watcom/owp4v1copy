@@ -3,4 +3,4 @@
 host_CPU = 386
 host_OS = linux
 
-!include ..\mif\master.mif
+!include ../mif/master.mif

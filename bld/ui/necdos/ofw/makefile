@@ -7,4 +7,4 @@ WCPPEXE=wcpp386
 FORM=DOS4G
 EXTRA=/bt=DOS
 
-!include ..\makefile
+!include ../makefile

@@ -4,7 +4,7 @@ proj_name = bviper
 !include deftarg.mif
 !include defrule.mif
 
-!include ..\lib.mif
+!include ../lib.mif
 
 inc_dirs = $(wclass_dir)\hpp;$(gui_dir)\h;$(viper_dir)\mviper
 

@@ -1,5 +1,5 @@
 plustest_name = re2c
-!include ..\environ.mif
+!include ../environ.mif
 
 !ifdef test1
 cflags = -d2

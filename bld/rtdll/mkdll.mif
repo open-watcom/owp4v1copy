@@ -39,5 +39,5 @@ tmp.def : $(dll_def) $(__MAKEFILES__)
     %create $^@
     @for %i in ($(dll_def)) do @%append $^@ @%i
 
-!include $(clib_dir)\clean.mif
-!include $(rtdll_dir)\upddll.mif
+!include $(clib_dir)/clean.mif
+!include $(rtdll_dir)/upddll.mif

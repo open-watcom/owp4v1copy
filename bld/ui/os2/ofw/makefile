@@ -11,7 +11,7 @@ WCCEXE=wcc386p
 WCPPEXE=wcpp386
 FORM=os2v2
 
-!include ..\makefile
+!include ../makefile
 
 sample2.$(EXE) : sample.obj sampdial.obj ..\$(LIBNAME).lib
     %create sample.lnk

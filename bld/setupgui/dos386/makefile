@@ -10,4 +10,4 @@ reslib = $(wres_dir)\lib\wres$(model).lib
 #reslib = clib3r
 #!endif
 
-!include ..\setup.mif
+!include ../setup.mif

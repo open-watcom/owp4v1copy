@@ -1,5 +1,5 @@
 plustest_name = sizelist
-!include ..\environ.mif
+!include ../environ.mif
 
 !ifdef test1
 cflags = -d2

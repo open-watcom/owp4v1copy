@@ -138,5 +138,5 @@ graphp.2bj : ..\..\c\seginit.c
 
 !endif
 
-graphics_prefix = ..\
-!include ..\..\o.s\makefile
+graphics_prefix = ../
+!include ../../o.s/makefile

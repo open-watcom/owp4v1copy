@@ -320,4 +320,4 @@ wntw_axp.exe : $(srcfile)
     wlink SYSTEM ntaxp_win $(link_opts) $(link_axp) FILE $^*
     @del *.obj>nul
 
-!include ..\mif\clean.mif
+!include ../mif/clean.mif

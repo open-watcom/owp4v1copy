@@ -7,4 +7,4 @@ os = os2v2
 
 extra_objs = localos2.obj os22flio.obj
 
-!include ..\master.mif
+!include ../master.mif

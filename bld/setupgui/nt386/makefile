@@ -6,4 +6,4 @@ guihdir = $(guidir)\h
 uilib   = $(uidir)\nt\uilib$(model).lib
 utillib = $(DBDIR)\utils\ut$(model)386t.lib
 
-!include ..\setup.mif
+!include ../setup.mif

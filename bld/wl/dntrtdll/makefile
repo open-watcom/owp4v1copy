@@ -5,4 +5,4 @@ sys_dll = 1
 wlink_rtdll = 1
 wlink_trmem = 1
 wlink_extralnk = op symf
-!include ..\wlink.mif
+!include ../wlink.mif

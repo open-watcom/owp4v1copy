@@ -9,4 +9,4 @@ wreslib=wreslw
 target : sample.exe .SYMBOLIC
     @%null
 
-!include ..\makefile
+!include ../makefile

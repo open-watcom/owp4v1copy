@@ -2,4 +2,4 @@
 host_CPU = axp
 host_OS = nt
 target_CPU = ppc
-!include ..\master.mif
+!include ../master.mif

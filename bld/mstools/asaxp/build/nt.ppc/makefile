@@ -3,4 +3,4 @@
 host_OS     = nt
 host_CPU    = ppc
 
-!include ..\..\asaxp.mif
+!include ../../asaxp.mif

@@ -4,4 +4,4 @@ host_OS = osi
 host_CPU = 386
 #inline_vmem=yes
 
-!include ..\dr.mif
+!include ../dr.mif

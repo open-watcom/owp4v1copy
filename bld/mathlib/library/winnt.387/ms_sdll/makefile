@@ -5,7 +5,7 @@ subdir=ms_sdll
 system=winnt
 convention=stack
 linkage=dynamic
-!include $(mathlib_dir)\objects.mif
-!include $(mathlib_dir)\master.mif
-!include $(mathlib_dir)\mklib.mif
-!include $(mathlib_dir)\deps.mif
+!include $(mathlib_dir)/objects.mif
+!include $(mathlib_dir)/master.mif
+!include $(mathlib_dir)/mklib.mif
+!include $(mathlib_dir)/deps.mif

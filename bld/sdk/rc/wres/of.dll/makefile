@@ -4,7 +4,7 @@ host_CPU = 386
 wres_rtdll = 1
 libname = fdll
 
-!include ..\master.mif
+!include ../master.mif
 
 lexusbld : .symbolic all
     @if not exist $(lexlib_dir)\wres\lib mkdir $(lexlib_dir)\wres\lib

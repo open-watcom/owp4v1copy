@@ -4,4 +4,4 @@ host_CPU = i86
 PEGGED = 1
 libname = lp
 
-!include ..\master.mif
+!include ../master.mif

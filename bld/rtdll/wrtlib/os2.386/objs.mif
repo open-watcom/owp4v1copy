@@ -29,7 +29,7 @@ dll_objs = $+ &
     $-
 
 targdir = $(plusplus_cpplib_dir)\runtime\$(__pifx__).dll\
-!include $(plusplus_cpplib_dir)\runtime\static.mif
+!include $(plusplus_cpplib_dir)/runtime/static.mif
 targdir =
 
 static_objs += $+ &

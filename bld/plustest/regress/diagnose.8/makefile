@@ -2,11 +2,11 @@
 # 8.0.1 branch diagnostic test stream
 #
 plustest_name = diag8
-!include ..\environ.mif
+!include ../environ.mif
 
 diagnose_dir = ..\diagnose\source
 
-!include $(diagnose_dir)\diagnose.mif
+!include $(diagnose_dir)/diagnose.mif
 !ifeq arch 386
 opt_diag0253  += -ei	# make Intel match the AXP compiler for now
 !endif

@@ -10,4 +10,4 @@ cdecl =         _loadds
 fard =
 _386 =
 
-!include ..\pgchart.mif
+!include ../pgchart.mif

@@ -6,8 +6,8 @@ dig_os_win      = win
 
 dig_os          = $(dig_os_$(host_OS))
 
-!include $(dig_dir)\mif\dipcli.mif
-!include $(dig_dir)\mif\madcli.mif
+!include $(dig_dir)/mif/dipcli.mif
+!include $(dig_dir)/mif/madcli.mif
 
 srcmgt_obj = srcmgt.obj
 

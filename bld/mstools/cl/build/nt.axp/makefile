@@ -3,4 +3,4 @@
 host_OS     = nt
 host_CPU    = axp
 
-!include ..\..\cl.mif
+!include ../../cl.mif

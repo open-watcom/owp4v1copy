@@ -13,4 +13,4 @@ WCPPEXE=wcc386
 EXTRA=$(deffp)/4r/bt=qnx
 FORM=qnx386
 
-!include ..\makefile
+!include ../makefile

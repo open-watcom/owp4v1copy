@@ -8,4 +8,4 @@ lib_name        = flib7
 model           = s
 fp_model        = i87
 
-!include ..\master.mif
+!include ../master.mif

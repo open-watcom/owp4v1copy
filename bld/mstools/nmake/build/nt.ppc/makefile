@@ -3,4 +3,4 @@
 host_OS     = nt
 host_CPU    = ppc
 
-!include ..\..\nmake.mif
+!include ../../nmake.mif

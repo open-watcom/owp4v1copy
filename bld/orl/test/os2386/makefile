@@ -2,4 +2,4 @@
 host_OS  = os2
 host_CPU = 386
 
-!include ..\mif\test.mif
+!include ../mif/test.mif

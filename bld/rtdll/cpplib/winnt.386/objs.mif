@@ -28,10 +28,10 @@ dll_objs = $+ &
     $-
 
 targdir = $(pfx__)\runtime\$(__ifx__)$(letter_profile).dll\
-!include $(pfx__)\runtime\static.mif
+!include $(pfx__)/runtime/static.mif
 objs = $+ $(static_objs) $-
 targdir = $(pfx__)\iostream\$(__ifx__)$(letter_profile).dll\
-!include $(pfx__)\iostream\static.mif
+!include $(pfx__)/iostream/static.mif
 objs += $+ $(static_objs) $-
 targdir =
 static_objs = $+ $(objs) $-

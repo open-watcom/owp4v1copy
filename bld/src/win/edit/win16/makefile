@@ -3,8 +3,8 @@ CC = wcc
 CFLAGS = -zW
 res1_flags = -bt=windows -30
 
-!include ..\edit.mif
-!include ..\..\master.mif
+!include ../edit.mif
+!include ../../master.mif
 
 linkit : .PROCEDURE
     @%append $(LNK) system windows

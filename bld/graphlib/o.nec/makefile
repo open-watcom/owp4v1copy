@@ -12,4 +12,4 @@ asm_cmd =       wasm
 asm_flags =     -zq -q -ms -i..\inc -d_MODEL=_SMALL -d_NEC_PC
 _NEC_PC =       1
 
-!include ..\graphics.mif
+!include ../graphics.mif

@@ -1,1 +1,1 @@
-!include ..\mif\master.mif
+!include ../mif/master.mif

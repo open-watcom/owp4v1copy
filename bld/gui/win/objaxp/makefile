@@ -8,4 +8,4 @@ sysinclude = $(watcom_dir)\nt_h
 wpi_lib=wpi_axp
 axp=1
 
-!include ..\makefile
+!include ../makefile

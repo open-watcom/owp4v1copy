@@ -8,4 +8,4 @@ sysinclude = $(watcom_dir)\nt_h
 compiler = comp386
 model=f
 
-!include ..\makefile
+!include ../makefile

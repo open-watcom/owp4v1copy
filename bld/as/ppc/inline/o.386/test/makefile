@@ -7,4 +7,4 @@ cpu = ppc
 inline_as = 1
 test_inline_as = 1
 
-!include $(as_dir)\mif\master.mif
+!include $(as_dir)/mif/master.mif

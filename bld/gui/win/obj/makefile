@@ -10,4 +10,4 @@ xflags=-zu-zw-zW
 wpi_lib=wpi_win
 wlib_opt=/p=32
 
-!include ..\makefile
+!include ../makefile

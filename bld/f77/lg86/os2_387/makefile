@@ -10,4 +10,4 @@ __386__         =
 oshdrs          = $(inc_dirs_sys_os2)
 share_objs      = ..\obj387\
 
-!include        ..\makego.mif
+!include        ../makego.mif

@@ -1,6 +1,6 @@
 # pp11 has incorrect output
 plustest_name = preproc
-!include ..\environ.mif
+!include ../environ.mif
 
 comp = $(wpp_$(arch))
 !ifdef test_cc

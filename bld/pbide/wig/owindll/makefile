@@ -12,4 +12,4 @@ objs = pbide.obj errdll.obj
 libs = ddeml.lib
 ext = dll
 
-!include ..\mif\master.mif
+!include ../mif/master.mif

@@ -9,4 +9,4 @@ use_ems         =
 # code generator project definitions
 target_CPU      = i86
 
-!include ..\master.mif
+!include ../master.mif

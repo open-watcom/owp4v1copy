@@ -18,13 +18,13 @@ jname=wsmpecsj
     @%append tmp.lnk libpath $(wres_dir)\lib
     @%append tmp.lnk lib wress
     @for %i in ($(objects)) do @%append tmp.lnk file %i
-!include ..\setsize.mif
+!include ../setsize.mif
     wlink @tmp.lnk
     cp ..\bin\$(xname).exe ..\bin\$(jname).exe
     wstrip /q /a /r ..\bin\$(xname).exe . $(xname).res
     wstrip /q /a /r ..\bin\$(jname).exe . $(jname).res
 
-!include ..\objsize.mif
+!include ../objsize.mif
 
 .c: .;..\dos;..\c
 .c.obj :

@@ -4,4 +4,4 @@ targos = qnx
 model=s
 !endif
 
-!include $(posix_dir)\mif\makelib.mif
+!include $(posix_dir)/mif/makelib.mif

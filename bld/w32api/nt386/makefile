@@ -5,4 +5,4 @@ host_OS         = nt
 
 inc_dirs = ..\include
 
-!include ..\master.mif
+!include ../master.mif

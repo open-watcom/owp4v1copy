@@ -9,9 +9,9 @@
 #
 
 make_lib = 1
-!include $(posix_dir)\mif\targos.mif
-!include $(posix_dir)\mif\common.mif
-!include $(posix_dir)\mif\lib.mif
+!include $(posix_dir)/mif/targos.mif
+!include $(posix_dir)/mif/common.mif
+!include $(posix_dir)/mif/lib.mif
 
 #
 #       define the main target
@@ -27,4 +27,4 @@ $(lib) : makefile $(posix_dir)\mif\lib.mif
         @%create $(LIB)
         @for %i in ($(LIBOBJS)) do @%append $(lib) -+%i
 
-!include $(posix_dir)\mif\clean.mif
+!include $(posix_dir)/mif/clean.mif

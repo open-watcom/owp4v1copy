@@ -3,4 +3,4 @@ host_CPU = 386
 host_OS = nt
 target_CPU = 386
 cc_version = tree
-!include ..\master.mif
+!include ../master.mif

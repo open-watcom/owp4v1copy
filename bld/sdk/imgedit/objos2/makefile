@@ -5,7 +5,7 @@ resflags =-r > nul
 comp = $(comp386)
 # extras =
 
-!include ..\imgedit2.mif
+!include ../imgedit2.mif
 
 .before
         @set wcc=-i=%os2drv%\toolkt21\c\os2h

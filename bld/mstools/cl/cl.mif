@@ -1,4 +1,4 @@
-!include ..\..\..\master.mif
+!include ../../../master.mif
 
 
 clstub_objs     = clstub.obj $(mstools_stub_obj) $(mstools_objs)
@@ -82,4 +82,4 @@ optparse.ppc optdata.ppc :  optencod.exe ms.gml
         optencod.exe ..\..\gml\ms.gml ..\..\h\optdata.ppc ..\..\c\optparse.ppc ..\..\h\usagemsg.ppc ppc
 
 
-!include ..\..\..\build.mif
+!include ../../../build.mif

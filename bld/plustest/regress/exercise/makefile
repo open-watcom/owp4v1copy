@@ -1,5 +1,5 @@
 plustest_name = exercise
-!include ..\environ.mif
+!include ../environ.mif
 
 exes = &
 chkcl.$(exe) &

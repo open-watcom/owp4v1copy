@@ -5,4 +5,4 @@ host_OS  = nt
 
 cpu = ppc
 
-!include $(as_dir)\mif\master.mif
+!include $(as_dir)/mif/master.mif

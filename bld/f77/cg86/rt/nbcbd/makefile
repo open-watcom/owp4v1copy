@@ -9,4 +9,4 @@ model           = l
 fp_model        = c
 is_NEC          =
 
-!include ..\master.mif
+!include ../master.mif

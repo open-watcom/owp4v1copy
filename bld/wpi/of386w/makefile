@@ -2,4 +2,4 @@
 host_OS = win
 host_CPU = 386
 
-!include ..\master.mif
+!include ../master.mif

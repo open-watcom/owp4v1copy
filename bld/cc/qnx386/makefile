@@ -4,4 +4,4 @@ host_os    = qnx
 host_cpu   = 386
 target_cpu = 386
 
-!include ..\master.mif
+!include ../master.mif

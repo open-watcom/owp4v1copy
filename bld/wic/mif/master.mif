@@ -27,7 +27,7 @@ lang_prefix = j
 
 extra_c_flags = -d$(LANGUAGE) -i..\h -fpc -zp1 # -oailt -s -3r
 
-!include ..\mif\objsdef.mif                #   get objs macro
+!include ../mif/objsdef.mif                #   get objs macro
 
 ##############################################################################
 

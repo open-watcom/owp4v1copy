@@ -6,7 +6,7 @@ resflags =-zk0 -r -d__NT__ -bt=NT -fo=..\objnt\$(name).res $(resdir)$(name).rc
 wr_dir=$(sdk_dir)\wr
 wres_dir=$(sdk_dir)\rc\wres
 
-!include ..\imgedit.mif
+!include ../imgedit.mif
 
 .before
         @set wcc386=-i=$(sdk_dir)\misc;$(watcom_nt_h)

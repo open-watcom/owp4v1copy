@@ -3,7 +3,7 @@ processor=287
 model=ms
 system=msdos
 linkage=static
-!include ..\..\..\objects.mif
-!include $(mathlib_dir)\master.mif
-!include $(mathlib_dir)\mklib.mif
-!include ..\..\..\deps.mif
+!include ../../../objects.mif
+!include $(mathlib_dir)/master.mif
+!include $(mathlib_dir)/mklib.mif
+!include ../../../deps.mif

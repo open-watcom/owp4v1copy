@@ -3,4 +3,4 @@
 model = l
 host_OS = dos
 host_CPU = i86
-!include ..\dw.mif
+!include ../dw.mif

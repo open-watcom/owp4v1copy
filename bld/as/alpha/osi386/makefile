@@ -5,4 +5,4 @@ host_OS  = osi
 
 cpu = alpha
 
-!include $(as_dir)\mif\master.mif
+!include $(as_dir)/mif/master.mif

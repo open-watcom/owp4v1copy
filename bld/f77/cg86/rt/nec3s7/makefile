@@ -10,4 +10,4 @@ fp_model        = i87
 is_stack        =
 is_NEC          =
 
-!include ..\master.mif
+!include ../master.mif

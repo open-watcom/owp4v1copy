@@ -3,8 +3,8 @@ CC = wcc386
 CFLAGS = -zW
 res1_flags = -bt=windows -30
 
-!include ..\generic.mif
-!include ..\..\master.mif
+!include ../generic.mif
+!include ../../master.mif
 
 linkit : .PROCEDURE
     @%append $(LNK) system win386

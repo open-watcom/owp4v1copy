@@ -7,4 +7,4 @@ release_wlink    = 1
 sys_dll          = 1
 add_version_info = 1
 
-!include ..\wlink.mif
+!include ../wlink.mif

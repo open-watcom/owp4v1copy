@@ -1,4 +1,4 @@
 #pmake: all build os_win cpu_i86
 
 host_OS = win
-!include ..\master.mif
+!include ../master.mif

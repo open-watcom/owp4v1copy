@@ -11,4 +11,4 @@ sysinclude=$(watcom_dir)\os220_h;
 target : sample.exe .SYMBOLIC
     @%null
 
-!include ..\makefile
+!include ../makefile

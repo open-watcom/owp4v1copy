@@ -5,4 +5,4 @@ objs =  tar.obj create.obj extract.obj buffer.obj getoopt.obj &
 # any other configuration
 extra_cflags=-DUSG -DMSDOS -DNONAMES -DDEF_AR_FILE="ARCHIVE.TAR" -DDEFBLOCKING=20
 
-!include $(posix_dir)\mif\makeone.mif
+!include $(posix_dir)/mif/makeone.mif

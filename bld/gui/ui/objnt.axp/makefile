@@ -7,4 +7,4 @@ sysinclude = $(watcom_dir)\nt_h
 
 !define axp
 
-!include ..\makefile
+!include ../makefile

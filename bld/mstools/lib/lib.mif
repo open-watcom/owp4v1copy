@@ -1,4 +1,4 @@
-!include ..\..\..\master.mif
+!include ../../../master.mif
 
 inc_dirs            += -i$(lib_misc_dir)\h;$(orl_dir)\h
 
@@ -89,4 +89,4 @@ optparse.c optdata.h :  optencod.exe ms.gml
         optencod.exe ..\..\gml\ms.gml ..\..\h\optdata.h ..\..\c\optparse.c ..\..\h\usagemsg.h i86
 
 
-!include ..\..\..\build.mif
+!include ../../../build.mif

@@ -4,4 +4,4 @@ host_OS = win
 
 MODEL = L
 
-!include ..\makefile
+!include ../makefile

@@ -6,4 +6,4 @@ host_cpu = 386
 release_wlink = 1
 sys_dll       = 1
 
-!include ..\wlink.mif
+!include ../wlink.mif

@@ -1,3 +1,3 @@
 host_CPU = axp
 
-!include ..\makefile
+!include ../makefile

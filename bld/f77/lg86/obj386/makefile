@@ -8,4 +8,4 @@ exe             = wf386
 form            = dos4g
 __386__         =
 
-!include        ..\makego.mif
+!include        ../makego.mif

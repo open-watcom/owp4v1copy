@@ -4,4 +4,4 @@ host_CPU = 386
 libname = fnos
 no_stack = 1
 
-!include ..\master.mif
+!include ../master.mif

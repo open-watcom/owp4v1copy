@@ -4,4 +4,4 @@ form            = dos
 share_objs      = ..\obj87\
 japan_objs      =
 
-!include        ..\makego.mif
+!include        ../makego.mif

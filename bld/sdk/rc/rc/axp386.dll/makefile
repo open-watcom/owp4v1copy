@@ -2,4 +2,4 @@
 host_OS = nt
 host_CPU = axp
 sys_dll = 1
-!include ..\mif\master.mif
+!include ../mif/master.mif

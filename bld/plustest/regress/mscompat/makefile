@@ -1,5 +1,5 @@
 plustest_name = mscompat
-!include ..\environ.mif
+!include ../environ.mif
 
 files_err = &
 diag0011$(ext) &

@@ -163,14 +163,4 @@ $(wrc_dir)/h/ytab.gh : $(wrc_dir)/y/rc.y $(wrc_dir)/y/yydriver.c $(wrc_dir)/h/rc
         $(cc) $(cflags) $(RC__DIR)\c\$^& -DWR_COMPILED -pc > $^&.rpp
 
 clean : .SYMBOLIC
-        @-rm *.?bj
-        @-rm *.lib
-        @-rm *.dll
-        @-rm *.map
-        @-rm *.lnk
-        @-rm *.res
-        @-rm *.err
-        @-rm *.pp
-        @-rm *.h
-        @-rm *.pch
-        @-rm *.sym
+        @rm -f *.?bj *.lib *.dll *.map *.lnk *.res *.err *.pp *.h *.pch *.sym

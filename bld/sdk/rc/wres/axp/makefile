@@ -5,4 +5,4 @@ host_CPU = axp
 NT = NT
 libname = axp
 
-!include ..\master.mif
+!include ../master.mif

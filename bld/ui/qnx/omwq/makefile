@@ -5,4 +5,4 @@ host_cpu = i86
 
 MODEL = M
 
-!include ..\makefile
+!include ../makefile

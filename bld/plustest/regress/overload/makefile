@@ -1,5 +1,5 @@
 plustest_name = overload
-!include ..\environ.mif
+!include ../environ.mif
 
 exes = &
 addr01.$(exe) &

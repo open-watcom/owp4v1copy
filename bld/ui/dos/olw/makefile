@@ -4,4 +4,4 @@ host_OS = dos
 MODEL = L
 EXTRA=/of
 
-!include ..\makefile
+!include ../makefile

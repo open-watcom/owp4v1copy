@@ -3,4 +3,4 @@
 host_os  = qnx
 host_cpu = i86
 
-!include ..\mif\master.mif
+!include ../mif/master.mif

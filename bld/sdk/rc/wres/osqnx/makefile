@@ -6,4 +6,4 @@ host_cpu = 386
 MODEL = s
 libname = sqnx
 
-!include ..\master.mif
+!include ../master.mif

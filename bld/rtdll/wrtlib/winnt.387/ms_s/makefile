@@ -5,6 +5,6 @@ model=ms
 subdir=ms_s
 system=winnt
 convention=stack
-!include $(rtdll)\master.mif
-!include ..\objs.mif
-!include $(rtdll)\mkdll.mif
+!include $(rtdll)/master.mif
+!include ../objs.mif
+!include $(rtdll)/mkdll.mif

@@ -5,4 +5,4 @@ __386__         =
 share_objs      = ..\obj387\
 japan_objs      =
 
-!include        ..\makego.mif
+!include        ../makego.mif

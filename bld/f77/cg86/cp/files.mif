@@ -1,8 +1,8 @@
-!include ..\tdfiles.mif
-!include ..\emsfiles.mif
-!include ..\i86files.mif
-!include ..\386files.mif
-!include ..\axpfiles.mif
+!include ../tdfiles.mif
+!include ../emsfiles.mif
+!include ../i86files.mif
+!include ../386files.mif
+!include ../axpfiles.mif
 
 # system independent compile-time files
 

@@ -7,6 +7,6 @@
 host_CPU    = i86
 host_OS     = dos
 
-!include ..\master.mif
+!include ../master.mif
 
 
