@@ -29,9 +29,15 @@ $# just in case anyone is curious ...
 on_build_machine = $(%on_build_machine)
 !endif
 tools_root  = $(%TOOLDR)\tools
-tnt_dir  = $(tools_root)\tnt6
-os2_tools_root  = $(tools_root)\os2tools
 os2_toolkit     = $(%os2tkroot)
+
+# if you wish to use the OS/2 Toolkit headers/libraries, set the environment
+# variable; default is OS/2 headers/libraries in the Watcom tree
+!ifdef %use_os2tk_stuff
+use_os2tk_hdrs = $(%use_os2tk_stuff)
+use_os2tk_libs = $(%use_os2tk_stuff)
+!endif
+
 nlang_root      = $(%dwatcom)
 build_root      = $(%devdir)
 online_dir      = $(%devdir)\online
@@ -254,7 +260,6 @@ objcycle_dir=$(build_root)\objcycle
 #
 wat_utils=$(build_root)\watcom
 watcom_nt_h=$(lang_root)\h\nt
-watcom_os220_h=$(lang_root)\h\os2
 watcom_h=$(wat_utils)\h
 watcom_lib=$(wat_utils)\lib
 

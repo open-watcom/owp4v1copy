@@ -168,7 +168,11 @@ rc_flags_axp    = -d__AXP__
 
 rc_flags        = $(rc_flags_$(host_OS)) $(rc_flags_$(host_CPU))
 
+!ifdef use_os2tk_hdrs
+inc_dirs_sys_os2_386 = $(os2_toolkit)\h
+!else
 inc_dirs_sys_os2_386 = $(lang_root)\h\os2
+!endif
 inc_dirs_sys_os2_i86 = $(lang_root)\h\os21x
 inc_dirs_sys_nt = $(lang_root)\h\nt
 inc_dirs_sys_win= $(lang_root)\h\win
