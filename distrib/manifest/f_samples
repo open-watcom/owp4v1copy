@@ -14,6 +14,7 @@ samples\fortran\os2\rexx\func2.for
 samples\fortran\os2\rexx\funcload.fi
 samples\fortran\os2\rexx\funcload.for
 samples\fortran\os2\rexx\makefile
+samples\fortran\os2\rexx\readme.txt
 samples\fortran\os2\rexx\rxsutils.fi
 samples\fortran\os2\rexx\rxsutils.for
 samples\fortran\os2\rexx\testdll.cmd
