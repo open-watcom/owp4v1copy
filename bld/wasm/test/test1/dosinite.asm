@@ -1,5 +1,5 @@
 ; need to resolve this extension business
-_OS=_PLDT
+;_OS=_PLDT
 ; fixme:
 ; This file contains translations that should be made in the asm source files.
 ; They are being done here as a stopgap measure.

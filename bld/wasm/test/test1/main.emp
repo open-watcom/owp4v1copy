@@ -1,5 +1,5 @@
 
-FIXUPP386(9d) recnum:1, offset:000007e4h, len:0162h, chksum:adh(ad)
+FIXUPP386(9d) recnum:1, offset:000007c8h, len:012ah, chksum:28h(28)
     0006h Self  OFFSET386    Frame: TARGET    Target: EI(43)
     0023h Seg   OFFSET386    Frame: GI(1)     Target: EI(42)
     005ch Self  OFFSET386    Frame: TARGET    Target: EI(41)
@@ -9,21 +9,21 @@ FIXUPP386(9d) recnum:1, offset:000007e4h, len:0162h, chksum:adh(ad)
     00f4h Self  OFFSET386    Frame: TARGET    Target: EI(40)
     0102h Self  OFFSET386    Frame: TARGET    Target: EI(39)
     0107h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
-    011dh Seg   OFFSET386    Frame: GI(1)     Target: SI(4),00000003h
-    0126h Seg   OFFSET386    Frame: GI(1)     Target: SI(4),00000004h
-    0131h Seg   OFFSET386    Frame: GI(1)     Target: SI(4),00000004h
+    011dh Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
+    0126h Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
+    0131h Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
     014bh Self  OFFSET386    Frame: TARGET    Target: EI(38)
     0155h Self  OFFSET386    Frame: TARGET    Target: EI(37)
     015ah Self  OFFSET386    Frame: TARGET    Target: EI(36)
-    0166h Seg   OFFSET386    Frame: GI(1)     Target: SI(4),00000007h
+    0166h Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
     017fh Self  OFFSET386    Frame: TARGET    Target: EI(43)
     0196h Self  OFFSET386    Frame: TARGET    Target: EI(35)
     01a0h Self  OFFSET386    Frame: TARGET    Target: EI(39)
     01aah Self  OFFSET386    Frame: TARGET    Target: EI(43)
-    01bfh Seg   OFFSET386    Frame: GI(1)     Target: SI(4),00000003h
-    01ceh Seg   OFFSET386    Frame: GI(1)     Target: SI(4),0000000fh
-    01e0h Seg   OFFSET386    Frame: GI(1)     Target: SI(4),0000000fh
-    01e5h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000a5h
+    01bfh Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
+    01ceh Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
+    01e0h Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
+    01e5h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
     01ebh Self  OFFSET386    Frame: TARGET    Target: EI(34)
     0204h Self  OFFSET386    Frame: TARGET    Target: EI(43)
     0211h Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
@@ -43,7 +43,7 @@ FIXUPP386(9d) recnum:1, offset:000007e4h, len:0162h, chksum:adh(ad)
     02b9h Self  OFFSET386    Frame: TARGET    Target: EI(28)
     02beh Self  OFFSET386    Frame: TARGET    Target: EI(27)
     02d2h Self  OFFSET386    Frame: TARGET    Target: EI(43)
-    02dfh Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000a9h
+    02dfh Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
     02e4h Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
     02e9h Self  OFFSET386    Frame: TARGET    Target: EI(26)
     02eeh Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
@@ -52,11 +52,11 @@ FIXUPP386(9d) recnum:1, offset:000007e4h, len:0162h, chksum:adh(ad)
     0304h Self  OFFSET386    Frame: TARGET    Target: EI(25)
     030ch Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
     0311h Self  OFFSET386    Frame: TARGET    Target: EI(24)
-    0316h Seg   OFFSET386    Frame: GI(1)     Target: SI(5),00000018h
-    031ch Seg   OFFSET386    Frame: GI(1)     Target: SI(5),00000018h
+    0316h Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
+    031ch Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
     0325h Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
     032ch Self  OFFSET386    Frame: TARGET    Target: EI(25)
-    0335h Seg   OFFSET386    Frame: GI(1)     Target: SI(5),00000018h
+    0335h Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
     033bh Self  OFFSET386    Frame: TARGET    Target: EI(23)
     0352h Self  OFFSET386    Frame: TARGET    Target: EI(43)
     037fh Self  OFFSET386    Frame: TARGET    Target: EI(22)
@@ -64,192 +64,194 @@ FIXUPP386(9d) recnum:1, offset:000007e4h, len:0162h, chksum:adh(ad)
     0393h Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
     039dh Self  OFFSET386    Frame: TARGET    Target: EI(25)
     03bch Self  OFFSET386    Frame: TARGET    Target: EI(21)
-    03cbh Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000abh
+    03cbh Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
     03e3h Self  OFFSET386    Frame: TARGET    Target: EI(20)
     03eeh Self  OFFSET386    Frame: TARGET    Target: EI(19)
-    03f4h Self  OFFSET386    Frame: TARGET    Target: EI(18)
 
-FIXUPP386(9d) recnum:2, offset:00000d47h, len:013fh, chksum:ceh(ce)
-    0001h Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
-    000ch Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
-    0011h Self  OFFSET386    Frame: TARGET    Target: EI(17)
-    0017h Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
-    0021h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000afh
-    0037h Self  OFFSET386    Frame: TARGET    Target: EI(20)
-    0042h Self  OFFSET386    Frame: TARGET    Target: EI(19)
-    0048h Self  OFFSET386    Frame: TARGET    Target: EI(18)
-    004dh Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
-    0058h Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
-    005dh Self  OFFSET386    Frame: TARGET    Target: EI(17)
-    0063h Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
-    006dh Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000b3h
-    0083h Self  OFFSET386    Frame: TARGET    Target: EI(20)
-    008eh Self  OFFSET386    Frame: TARGET    Target: EI(19)
-    0094h Self  OFFSET386    Frame: TARGET    Target: EI(18)
-    0099h Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
-    00a4h Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
-    00a9h Self  OFFSET386    Frame: TARGET    Target: EI(17)
-    00cah Self  OFFSET386    Frame: TARGET    Target: EI(21)
-    00e2h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000b3h
-    00eeh Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000afh
-    0104h Self  OFFSET386    Frame: TARGET    Target: EI(17)
-    012fh Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
-    0134h Self  OFFSET386    Frame: TARGET    Target: EI(21)
-    013bh Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000b7h
-    0142h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000b7h
-    015ah Self  OFFSET386    Frame: TARGET    Target: EI(20)
-    0165h Self  OFFSET386    Frame: TARGET    Target: EI(19)
-    016bh Self  OFFSET386    Frame: TARGET    Target: EI(18)
-    0177h Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
-    0189h Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
-    018eh Self  OFFSET386    Frame: TARGET    Target: EI(17)
-    01a1h Self  OFFSET386    Frame: TARGET    Target: EI(43)
-    01c0h Self  OFFSET386    Frame: TARGET    Target: EI(16)
-    028ah Self  OFFSET386    Frame: TARGET    Target: EI(43)
-    02c7h Seg   OFFSET386    Frame: GI(1)     Target: EI(15)
-    02d7h Self  OFFSET386    Frame: TARGET    Target: EI(14)
-    02e3h Self  OFFSET386    Frame: TARGET    Target: EI(13)
-    02f7h Self  OFFSET386    Frame: TARGET    Target: EI(43)
-    0304h Self  OFFSET386    Frame: TARGET    Target: EI(12)
-    030ah Seg   OFFSET386    Frame: GI(1)     Target: SI(4),00000005h
-    0318h Seg   OFFSET386    Frame: GI(1)     Target: SI(4),00000006h
-    0325h Seg   OFFSET386    Frame: GI(1)     Target: SI(4),0000000bh
-    0356h Self  OFFSET386    Frame: TARGET    Target: EI(33)
-    035eh Self  OFFSET386    Frame: TARGET    Target: EI(33)
-    0365h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000b8h
-    036ah Self  OFFSET386    Frame: TARGET    Target: EI(16)
-    037bh Self  OFFSET386    Frame: TARGET    Target: EI(11)
-    038fh Self  OFFSET386    Frame: TARGET    Target: EI(43)
-    039fh Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000c0h
-    03a7h Self  OFFSET386    Frame: TARGET    Target: EI(10)
-    03aeh Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000c2h
-    03b6h Self  OFFSET386    Frame: TARGET    Target: EI(10)
-    03bfh Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000c0h
-    03c7h Self  OFFSET386    Frame: TARGET    Target: EI(10)
-    03d1h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000c2h
-    03d9h Self  OFFSET386    Frame: TARGET    Target: EI(10)
-    03f1h Self  OFFSET386    Frame: TARGET    Target: EI(9)
-
-FIXUPP386(9d) recnum:3, offset:00001288h, len:01aeh, chksum:ceh(ce)
-    002ah Self  OFFSET386    Frame: TARGET    Target: EI(8)
-    0053h Seg   OFFSET386    Frame: GI(1)     Target: SI(4),0000000bh
-    0073h Self  OFFSET386    Frame: TARGET    Target: EI(18)
-    008dh Self  OFFSET386    Frame: TARGET    Target: EI(19)
-    0095h Self  OFFSET386    Frame: TARGET    Target: EI(18)
-    00afh Self  OFFSET386    Frame: TARGET    Target: EI(17)
-    00bch Self  OFFSET386    Frame: TARGET    Target: EI(7)
-    00d2h Self  OFFSET386    Frame: TARGET    Target: EI(7)
-    00e0h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000c4h
-    00edh Self  OFFSET386    Frame: TARGET    Target: EI(6)
-    0113h Self  OFFSET386    Frame: TARGET    Target: EI(43)
-    0120h Self  OFFSET386    Frame: TARGET    Target: EI(9)
-    0152h Self  OFFSET386    Frame: TARGET    Target: EI(5)
-    015ch Self  OFFSET386    Frame: TARGET    Target: EI(39)
-    0161h Seg   OFFSET386    Frame: TARGET    Target: SI(1),0000098fh
-    0165h Seg   OFFSET386    Frame: TARGET    Target: SI(1),00000998h
-    0169h Seg   OFFSET386    Frame: TARGET    Target: SI(1),000009a1h
-    016dh Seg   OFFSET386    Frame: TARGET    Target: SI(1),000009aah
-    0171h Seg   OFFSET386    Frame: TARGET    Target: SI(1),000009b3h
-    0175h Seg   OFFSET386    Frame: TARGET    Target: SI(1),000009bch
-    0179h Seg   OFFSET386    Frame: TARGET    Target: SI(1),000009c7h
-    017dh Seg   OFFSET386    Frame: TARGET    Target: SI(1),000009c5h
-    0182h Seg   OFFSET386    Frame: GI(1)     Target: SI(4),00000005h
-    019ch Seg   OFFSET386    Frame: TARGET    Target: SI(1),00000950h
-    01a3h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000c7h
-    01ach Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000cch
-    01b5h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000d0h
-    01beh Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000d4h
-    01c7h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000d8h
-    01d0h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000dch
-    01dfh Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000e0h
-    01e7h Self  OFFSET386    Frame: TARGET    Target: EI(6)
-    01f2h Self  OFFSET386    Frame: TARGET    Target: EI(6)
-    01fah Self  OFFSET386    Frame: TARGET    Target: EI(4)
-    0205h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000e2h
-    020dh Self  OFFSET386    Frame: TARGET    Target: EI(6)
-    0218h Self  OFFSET386    Frame: TARGET    Target: EI(6)
-    021dh Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000e5h
-    0225h Self  OFFSET386    Frame: TARGET    Target: EI(6)
-    022dh Self  OFFSET386    Frame: TARGET    Target: EI(4)
-    0241h Self  OFFSET386    Frame: TARGET    Target: EI(43)
-    024eh Self  OFFSET386    Frame: TARGET    Target: EI(9)
-    0280h Self  OFFSET386    Frame: TARGET    Target: EI(5)
-    028ah Self  OFFSET386    Frame: TARGET    Target: EI(39)
-    0292h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000eeh
-    0299h Seg   OFFSET386    Frame: GI(1)     Target: SI(4),00000006h
-    02f7h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000f6h
-    0300h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000feh
-    0309h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),00000103h
-    0312h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),00000108h
-    031bh Seg   OFFSET386    Frame: GI(1)     Target: SI(2),0000010eh
-    0324h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),00000115h
-    032dh Seg   OFFSET386    Frame: GI(1)     Target: SI(2),0000011bh
-    0337h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),00000120h
-    033fh Seg   OFFSET386    Frame: GI(1)     Target: SI(4),00000006h
-    0347h Self  OFFSET386    Frame: TARGET    Target: EI(6)
-    0354h Self  OFFSET386    Frame: TARGET    Target: EI(3)
-    035eh Self  OFFSET386    Frame: TARGET    Target: EI(39)
-    0369h Self  OFFSET386    Frame: TARGET    Target: EI(6)
-    0371h Self  OFFSET386    Frame: TARGET    Target: EI(4)
-    037ch Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000e2h
-    0384h Self  OFFSET386    Frame: TARGET    Target: EI(6)
-    038fh Self  OFFSET386    Frame: TARGET    Target: EI(6)
-    0394h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000e5h
-    039ch Self  OFFSET386    Frame: TARGET    Target: EI(6)
-    03a4h Self  OFFSET386    Frame: TARGET    Target: EI(4)
-    03b8h Self  OFFSET386    Frame: TARGET    Target: EI(43)
-
-FIXUPP386(9d) recnum:4, offset:000017f3h, len:00a9h, chksum:aah(aa)
-    0037h Self  OFFSET386    Frame: TARGET    Target: EI(5)
-    004ch Self  OFFSET386    Frame: TARGET    Target: EI(41)
-    0134h Seg   OFFSET386    Frame: GI(1)     Target: SI(4),0000000ah
-    0149h Seg   OFFSET386    Frame: GI(1)     Target: SI(4),0000000ah
-    0165h Self  OFFSET386    Frame: TARGET    Target: EI(3)
-    016fh Self  OFFSET386    Frame: TARGET    Target: EI(39)
-    0179h Seg   OFFSET386    Frame: GI(1)     Target: SI(4),00000005h
-    0189h Seg   OFFSET386    Frame: GI(1)     Target: SI(4),00000006h
-    01a3h Self  OFFSET386    Frame: TARGET    Target: EI(11)
-    01aeh Seg   OFFSET386    Frame: GI(1)     Target: SI(4),00000002h
-    01bah Seg   OFFSET386    Frame: GI(1)     Target: SI(4),00000001h
-    01e5h Seg   OFFSET386    Frame: GI(1)     Target: SI(4),00000009h
-    01f1h Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
-    01f7h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),00000123h
-    01fdh Self  OFFSET386    Frame: TARGET    Target: EI(34)
-    0220h Self  OFFSET386    Frame: TARGET    Target: EI(3)
-    022ah Self  OFFSET386    Frame: TARGET    Target: EI(39)
-    0282h Self  OFFSET386    Frame: TARGET    Target: EI(3)
-    028ch Self  OFFSET386    Frame: TARGET    Target: EI(39)
-    0292h Seg   OFFSET386    Frame: GI(1)     Target: SI(4),00000003h
-    02aah Seg   OFFSET386    Frame: GI(1)     Target: SI(4),00000003h
-    02bah Self  OFFSET386    Frame: TARGET    Target: EI(3)
-    02c4h Self  OFFSET386    Frame: TARGET    Target: EI(39)
-    02f1h Self  OFFSET386    Frame: TARGET    Target: EI(43)
-    033ch Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
-    034ch Self  OFFSET386    Frame: TARGET    Target: EI(22)
-    0357h Self  OFFSET386    Frame: TARGET    Target: EI(25)
-    036dh Self  OFFSET386    Frame: TARGET    Target: EI(43)
+FIXUPP386(9d) recnum:2, offset:00000cf0h, len:0107h, chksum:d5h(d5)
+    0000h Self  OFFSET386    Frame: TARGET    Target: EI(18)
+    0005h Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
+    0010h Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
+    0015h Self  OFFSET386    Frame: TARGET    Target: EI(17)
+    001bh Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
+    0025h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    003bh Self  OFFSET386    Frame: TARGET    Target: EI(20)
+    0046h Self  OFFSET386    Frame: TARGET    Target: EI(19)
+    004ch Self  OFFSET386    Frame: TARGET    Target: EI(18)
+    0051h Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
+    005ch Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
+    0061h Self  OFFSET386    Frame: TARGET    Target: EI(17)
+    0067h Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
+    0071h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    0087h Self  OFFSET386    Frame: TARGET    Target: EI(20)
+    0092h Self  OFFSET386    Frame: TARGET    Target: EI(19)
+    0098h Self  OFFSET386    Frame: TARGET    Target: EI(18)
+    009dh Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
+    00a8h Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
+    00adh Self  OFFSET386    Frame: TARGET    Target: EI(17)
+    00ceh Self  OFFSET386    Frame: TARGET    Target: EI(21)
+    00e6h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    00f2h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    0108h Self  OFFSET386    Frame: TARGET    Target: EI(17)
+    0133h Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
+    0138h Self  OFFSET386    Frame: TARGET    Target: EI(21)
+    013fh Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    0146h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    015eh Self  OFFSET386    Frame: TARGET    Target: EI(20)
+    0169h Self  OFFSET386    Frame: TARGET    Target: EI(19)
+    016fh Self  OFFSET386    Frame: TARGET    Target: EI(18)
+    017bh Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
+    018dh Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
+    0192h Self  OFFSET386    Frame: TARGET    Target: EI(17)
+    01a5h Self  OFFSET386    Frame: TARGET    Target: EI(43)
+    01c4h Self  OFFSET386    Frame: TARGET    Target: EI(16)
+    028eh Self  OFFSET386    Frame: TARGET    Target: EI(43)
+    02cbh Seg   OFFSET386    Frame: GI(1)     Target: EI(15)
+    02dbh Self  OFFSET386    Frame: TARGET    Target: EI(14)
+    02e7h Self  OFFSET386    Frame: TARGET    Target: EI(13)
+    02fbh Self  OFFSET386    Frame: TARGET    Target: EI(43)
+    0308h Self  OFFSET386    Frame: TARGET    Target: EI(12)
+    030eh Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
+    031ch Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
+    0329h Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
+    035ah Self  OFFSET386    Frame: TARGET    Target: EI(33)
+    0362h Self  OFFSET386    Frame: TARGET    Target: EI(33)
+    0369h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    036eh Self  OFFSET386    Frame: TARGET    Target: EI(16)
+    037fh Self  OFFSET386    Frame: TARGET    Target: EI(11)
     0393h Self  OFFSET386    Frame: TARGET    Target: EI(43)
+    03a3h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    03abh Self  OFFSET386    Frame: TARGET    Target: EI(10)
+    03b2h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    03bah Self  OFFSET386    Frame: TARGET    Target: EI(10)
+    03c3h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    03cbh Self  OFFSET386    Frame: TARGET    Target: EI(10)
+    03d5h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    03ddh Self  OFFSET386    Frame: TARGET    Target: EI(10)
 
-FIXUPP386(9d) recnum:5, offset:00001a09h, len:0025h, chksum:cdh(cd)
-    000fh Seg   OFFSET386    Frame: GI(1)     Target: SI(2),00000009h
-    0013h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),00000026h
-    0017h Seg   OFFSET386    Frame: GI(1)     Target: SI(2),0000006fh
-    001bh Seg   OFFSET386    Frame: GI(1)     Target: SI(2),000000a3h
+FIXUPP386(9d) recnum:3, offset:00000f89h, len:005fh, chksum:a9h(a9)
+    0001h Self  OFFSET386    Frame: TARGET    Target: EI(9)
+    0031h Self  OFFSET386    Frame: TARGET    Target: EI(8)
+    005ah Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
+    007ah Self  OFFSET386    Frame: TARGET    Target: EI(18)
+    0094h Self  OFFSET386    Frame: TARGET    Target: EI(19)
+    009ch Self  OFFSET386    Frame: TARGET    Target: EI(18)
+    00b6h Self  OFFSET386    Frame: TARGET    Target: EI(17)
+    00c3h Self  OFFSET386    Frame: TARGET    Target: EI(7)
+    00d9h Self  OFFSET386    Frame: TARGET    Target: EI(7)
+    00e7h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    00f4h Self  OFFSET386    Frame: TARGET    Target: EI(6)
+    011ah Self  OFFSET386    Frame: TARGET    Target: EI(43)
+    0127h Self  OFFSET386    Frame: TARGET    Target: EI(9)
+    0159h Self  OFFSET386    Frame: TARGET    Target: EI(5)
+    0163h Self  OFFSET386    Frame: TARGET    Target: EI(39)
+    0168h Seg   OFFSET386    Frame: TARGET    Target: SI(1)
+    016ch Seg   OFFSET386    Frame: TARGET    Target: SI(1)
+    0170h Seg   OFFSET386    Frame: TARGET    Target: SI(1)
+    0174h Seg   OFFSET386    Frame: TARGET    Target: SI(1)
+    0178h Seg   OFFSET386    Frame: TARGET    Target: SI(1)
+    017ch Seg   OFFSET386    Frame: TARGET    Target: SI(1)
+    0180h Seg   OFFSET386    Frame: TARGET    Target: SI(1)
+    0184h Seg   OFFSET386    Frame: TARGET    Target: SI(1)
 
-FIXUPP386(9d) recnum:6, offset:00001e30h, len:0084h, chksum:6bh(6b)
+FIXUPP386(9d) recnum:4, offset:000013f2h, len:00ebh, chksum:78h(78)
+    0001h Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
+    001bh Seg   OFFSET386    Frame: TARGET    Target: SI(1)
+    0022h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    002bh Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    0034h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    003dh Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    0046h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    004fh Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    005eh Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    0066h Self  OFFSET386    Frame: TARGET    Target: EI(6)
+    0071h Self  OFFSET386    Frame: TARGET    Target: EI(6)
+    0079h Self  OFFSET386    Frame: TARGET    Target: EI(4)
+    0084h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    008ch Self  OFFSET386    Frame: TARGET    Target: EI(6)
+    0097h Self  OFFSET386    Frame: TARGET    Target: EI(6)
+    009ch Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    00a4h Self  OFFSET386    Frame: TARGET    Target: EI(6)
+    00ach Self  OFFSET386    Frame: TARGET    Target: EI(4)
+    00c0h Self  OFFSET386    Frame: TARGET    Target: EI(43)
+    00cdh Self  OFFSET386    Frame: TARGET    Target: EI(9)
+    00ffh Self  OFFSET386    Frame: TARGET    Target: EI(5)
+    0109h Self  OFFSET386    Frame: TARGET    Target: EI(39)
+    0111h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    0118h Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
+    0176h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    017fh Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    0188h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    0191h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    019ah Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    01a3h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    01ach Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    01b6h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    01beh Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
+    01c6h Self  OFFSET386    Frame: TARGET    Target: EI(6)
+    01d3h Self  OFFSET386    Frame: TARGET    Target: EI(3)
+    01ddh Self  OFFSET386    Frame: TARGET    Target: EI(39)
+    01e8h Self  OFFSET386    Frame: TARGET    Target: EI(6)
+    01f0h Self  OFFSET386    Frame: TARGET    Target: EI(4)
+    01fbh Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    0203h Self  OFFSET386    Frame: TARGET    Target: EI(6)
+    020eh Self  OFFSET386    Frame: TARGET    Target: EI(6)
+    0213h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    021bh Self  OFFSET386    Frame: TARGET    Target: EI(6)
+    0223h Self  OFFSET386    Frame: TARGET    Target: EI(4)
+    0237h Self  OFFSET386    Frame: TARGET    Target: EI(43)
+    02aeh Self  OFFSET386    Frame: TARGET    Target: EI(5)
+    02c3h Self  OFFSET386    Frame: TARGET    Target: EI(41)
+    03abh Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
+    03c0h Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
+    03dch Self  OFFSET386    Frame: TARGET    Target: EI(3)
+    03e6h Self  OFFSET386    Frame: TARGET    Target: EI(39)
+    03f0h Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
+
+FIXUPP386(9d) recnum:5, offset:0000171dh, len:0062h, chksum:81h(81)
+    000ch Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
+    0026h Self  OFFSET386    Frame: TARGET    Target: EI(11)
+    0031h Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
+    003dh Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
+    0068h Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
+    0074h Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
+    007ah Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    0080h Self  OFFSET386    Frame: TARGET    Target: EI(34)
+    00a3h Self  OFFSET386    Frame: TARGET    Target: EI(3)
+    00adh Self  OFFSET386    Frame: TARGET    Target: EI(39)
+    0105h Self  OFFSET386    Frame: TARGET    Target: EI(3)
+    010fh Self  OFFSET386    Frame: TARGET    Target: EI(39)
+    0115h Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
+    012dh Seg   OFFSET386    Frame: GI(1)     Target: SI(4)
+    013dh Self  OFFSET386    Frame: TARGET    Target: EI(3)
+    0147h Self  OFFSET386    Frame: TARGET    Target: EI(39)
+    0174h Self  OFFSET386    Frame: TARGET    Target: EI(43)
+    01bfh Seg   OFFSET386    Frame: GI(1)     Target: SI(5)
+    01cfh Self  OFFSET386    Frame: TARGET    Target: EI(22)
+    01dah Self  OFFSET386    Frame: TARGET    Target: EI(25)
+    01f0h Self  OFFSET386    Frame: TARGET    Target: EI(43)
+    0216h Self  OFFSET386    Frame: TARGET    Target: EI(43)
+
+FIXUPP386(9d) recnum:6, offset:000018ech, len:0015h, chksum:0eh(0e)
+    000fh Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    0013h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    0017h Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+    001bh Seg   OFFSET386    Frame: GI(1)     Target: SI(2)
+
+FIXUPP386(9d) recnum:7, offset:00001cffh, len:0050h, chksum:d4h(d4)
     0002h Seg   POINTER386   Frame: GI(1)     Target: SI(5)
-    0013h Seg   POINTER386   Frame: GI(1)     Target: SI(4),0000000bh
-    002ch Seg   POINTER386   Frame: GI(1)     Target: SI(5),00000018h
-    003eh Seg   POINTER386   Frame: GI(1)     Target: SI(4),00000003h
-    004ch Seg   POINTER386   Frame: GI(1)     Target: SI(4),0000000ah
-    0065h Seg   POINTER386   Frame: GI(1)     Target: SI(4),00000006h
-    0075h Seg   POINTER386   Frame: GI(1)     Target: SI(4),00000005h
-    008bh Seg   POINTER386   Frame: GI(1)     Target: SI(4),00000001h
+    0013h Seg   POINTER386   Frame: GI(1)     Target: SI(4)
+    002ch Seg   POINTER386   Frame: GI(1)     Target: SI(5)
+    003eh Seg   POINTER386   Frame: GI(1)     Target: SI(4)
+    004ch Seg   POINTER386   Frame: GI(1)     Target: SI(4)
+    0065h Seg   POINTER386   Frame: GI(1)     Target: SI(4)
+    0075h Seg   POINTER386   Frame: GI(1)     Target: SI(4)
+    008bh Seg   POINTER386   Frame: GI(1)     Target: SI(4)
     009dh Seg   POINTER386   Frame: GI(1)     Target: SI(4)
-    00abh Seg   POINTER386   Frame: GI(1)     Target: SI(4),00000002h
-    00bdh Seg   POINTER386   Frame: GI(1)     Target: SI(4),00000004h
-    00d3h Seg   POINTER386   Frame: GI(1)     Target: SI(4),00000009h
-    00e5h Seg   POINTER386   Frame: GI(1)     Target: SI(4),00000008h
-    00f9h Seg   POINTER386   Frame: GI(1)     Target: SI(4),00000007h
+    00abh Seg   POINTER386   Frame: GI(1)     Target: SI(4)
+    00bdh Seg   POINTER386   Frame: GI(1)     Target: SI(4)
+    00d3h Seg   POINTER386   Frame: GI(1)     Target: SI(4)
+    00e5h Seg   POINTER386   Frame: GI(1)     Target: SI(4)
+    00f9h Seg   POINTER386   Frame: GI(1)     Target: SI(4)
     010bh Seg   POINTER386   Frame: TARGET    Target: SI(1)
-    01beh Seg   POINTER386   Frame: GI(1)     Target: SI(4),0000000fh
+    01beh Seg   POINTER386   Frame: GI(1)     Target: SI(4)
