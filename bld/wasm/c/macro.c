@@ -521,6 +521,7 @@ int ExpandMacro( int tok_count)
         buffer[0]='\0';
         for( count=0; count < macro_name_loc; count++ ) {
             strcat( buffer, AsmBuffer[count]->string_ptr );
+            strcat( buffer, " " );
         }
         InputQueueLine( buffer );
     }
