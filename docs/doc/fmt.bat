@@ -9,12 +9,8 @@ if ["%gmllib%"]==[""] set gmllib=%doc_root%\gml\syslib
 if ["%gmlpag%"]==[""] set gmlpag=%TMPDIR%
 if not ["%gmlinc%"]==[""] goto NOINC
 set gmlinc=cg;fg;lg;gs;cmn;gml
-if ["%1"] == ["c"] set gmlinc=cl;cl\nbmine;gml;whelp
-if ["%1"] == ["C"] set gmlinc=cl;cl\nbmine;gml;whelp
-rem if ["%1"] == ["c"] set gmlinc=cl;gml;whelp
-rem if ["%1"] == ["C"] set gmlinc=cl;gml;whelp
-if ["%1"] == ["c"] set gmllib=cl\syslib
-if ["%1"] == ["C"] set gmllib=cl\syslib
+if ["%1"] == ["c"] set gmlinc=cl;gml;whelp
+if ["%1"] == ["C"] set gmlinc=cl;gml;whelp
 :NOINC
 if ["%1"] == ["devguide"] set gmlinc=devguide;cmn;gml;whelp
 if ["%1"] == ["cguide"] set gmlinc=cg;lg;cmn;plusplus;gml;whelp

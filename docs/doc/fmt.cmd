@@ -8,12 +8,8 @@ if "[%gml%]"=="[]" set gml=%doc_root%\gml\os2\wgml.exe
 if "[%gmllib%]"=="[]" set gmllib=%doc_root%\gml\syslib
 if "[%gmlpag%]"=="[]" set gmlpag=%TMPDIR%
 if "[%gmlinc%]"=="[]" set gmlinc=cg;fg;lg;qa;cmn;gml
-if "[%1]" == "[c]" set gmlinc=cl;cl\nbmine;gml;whelp
-if "[%1]" == "[C]" set gmlinc=cl;cl\nbmine;gml;whelp
-rem if "[%1]" == "[c]" set gmlinc=cl;gml;whelp
-rem if "[%1]" == "[C]" set gmlinc=cl;gml;whelp
-rem if "[%1]" == "[c]" set gmllib=cl\syslib
-if "[%1]" == "[C]" set gmllib=cl\syslib
+if "[%1]" == "[c]" set gmlinc=cl;gml;whelp
+if "[%1]" == "[C]" set gmlinc=cl;gml;whelp
 if "[%1]" == "[devguide]" set gmlinc=devguide;cmn;gml;whelp
 if "[%1]" == "[cguide]" set gmlinc=cg;lg;cmn;plusplus;gml;whelp
 if "[%1]" == "[CGUIDE]" set gmlinc=cg;lg;cmn;plusplus;gml;whelp
