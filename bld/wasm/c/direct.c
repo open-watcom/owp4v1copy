@@ -786,7 +786,11 @@ void FreeAliasQueue( void )
 {
     if( AliasQueue != NULL ) {
         while( AliasQueue->head != NULL ) {
-            AsmFree( QDequeue( AliasQueue ) );
+            queuenode   *node;
+
+            node = QDequeue( AliasQueue );
+            AsmFree( node->data );
+            AsmFree( node );
         }
         AsmFree( AliasQueue );
     }
