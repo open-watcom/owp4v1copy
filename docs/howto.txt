@@ -5,23 +5,38 @@ This document provides a brief overview of the Open Watcom documentation
 system and lists most of the steps necessary for editing and producing
 online or printed documents.
 
+It is useful to note that the online documentation is almost, but not quite,
+independent of the rest of the Open Watcom compilers and tools. The one
+important exception is online help files for Open Watcom GUI tools. Formatting
+online documentation generates include files containing #defines designating
+help entries. These are used during building of the tools binaries. If the
+binaries are not built with the right header files, the online help will
+be out of sync and will not be all that helpful.
+
 
 How to Set it up
 ================
 
-A Win32-based or OS/2 system can be used to produce most of the documentation.
+A Win32 or OS/2 system can be used to produce most of the documentation.
 OS/2 Warp is required for the final step in producing the OS/2 online help
 files (unless you have an IPF compiler that runs under Win32) and Win32 system
-is needed for producing Windows help files. DOS may partially work too but
-is untested at this time.
+is needed for producing Windows help files (unless you can run the required
+help compilers under OS/2). DOS may work too but it is untested at this time.
 
-The environment variable "doc_root" must point to the doc tree (the place
-where cmds, doc, gml, helpc and Hlp directories are located).
+The environment variable "doc_root" must point to the root of the doc
+tree (the place where cmds, doc, gml, and Hlp directories are located).
+If you're wondering where the Hlp directory is, run mkdocs.bat/mkdocs.cmd
+located in the bat directory. But first you'll need to do something like
 
-e.g., set doc_root=d:\OpenWatcom\docs
+ set doc_root=d:\OpenWatcom\docs
 
 Add %doc_root%\cmds to your PATH. Your PATH must also contain the Watcom C/C++
-binary directories appropriate for your host platform.
+binary directories appropriate for your host platform (for wmake). This is
+taken care of automatically by using setvars.cmd/setvars.bat.
+
+Note that to produce Windows and/or OS/2 online documentation, you will need
+the appropriate SDKs and Toolkits containing the platform specific online
+help compilers.
 
 
 How to Build Postscript Versions of the Documentation
@@ -66,7 +81,8 @@ resolved.  If a message appears that says more passes are required to
 resolve things then specify "pass 3".
 
 The output file is of type ".ps". You should be able to send this to
-any Postscript printer.
+any PostScript printer or view in GhostScript or convert to PDF or
+whatever it is you do with PostScript files.
 
 
 How to Build Online Help Versions of the Documentation
@@ -79,6 +95,7 @@ For Microsoft Help format (both old and new help formats):
     Run doit.bat to create all online help.
 
     Look at doit.bat for a hint on how to do one document at a time.
+    Or read on if you're lazy.
 
     The Win16 format help files (*.hlp) are copied to the
     %doc_root%\Hlp\win directory. The Win32 format help files (*.hlp,
@@ -91,6 +108,7 @@ For Watcom Help format (for Watcom WHELP command):
     Run doit.bat to create all online help.
 
     Look at doit.bat for a hint on how to do one document at a time.
+    Or read on if you're lazy.
 
     The WHELP format help files (*.ihp) are copied to the
     %doc_root%\Hlp\ib directory.
@@ -102,6 +120,7 @@ For OS/2 Help format:
     Run doit.bat to create all the IPF files for the OS/2 IPF compiler.
 
     Look at doit.bat for a hint on how to do one document at a time.
+    Or read on if you're lazy.
 
     Transfer the IPF files, bitmap files, etc. to an OS/2 system.
 
@@ -114,6 +133,7 @@ For OS/2 Help format:
     Run doit.cmd under OS/2 to produce the INF and HLP files.
 
     Look at doit.cmd for a hint on how to do one document at a time.
+    Or read on if you're lazy.
 
     Note: If, under OS/2, you get a "memory exhausted" (out of memory)
     message from the IPF compiler then, under Win32, erase the WHP and IPF
@@ -123,6 +143,12 @@ For OS/2 Help format:
 
     The OS/2 format help files (*.INF, *.HLP) should be moved to the
     %doc_root%\Hlp\os2 directory on the Win32 platform.
+
+    To format one document at a time, go to the appropriate directory
+    (for instance docs\doc\hlp\os2) and run wmake with argument
+    hbook=<book_name> where <book_name> is one of the online books listed
+    above.
+
 
 How to Update the Documentation
 ===============================
@@ -153,9 +179,10 @@ For a good example of user-defined Script tags, see
 %doc_root%\doc\gml\fmtmacro.gml. GML tags can also be defined. For a
 good example of user-defined GML tags, see %doc_root%\doc\gml\cppextra.gml.
 
-I am describing these tags to you, not so that you can begin defining
+These tags are described here for you, not so that you can begin defining
 your own tags, but so that you will recognize them in the ASCII text
-that comprises the documentation.
+that comprises the documentation. But of course no-one's stopping you
+from defining your own tags if you feel so inclined.
 
 Here's a snippet from one of the doc files.
 
@@ -195,11 +222,11 @@ copy of the document and see what it looks like.
 
 The WATCOM GML program (WGML) is a compiler/interpreter that reads the
 document's source files to produce an output file. In our case, we
-want Postscript for printing and we want another form for generation
+want PostScript for printing and we want another form for generation
 of online help. This second form is a non-printable form that is
 suitable for post-processing to turn it into IPF for the OS/2 IPF
-compiler, RTF for the WinHelp tools, or a special Watcom-defined
-format for used with a DOS-based help tool (WHELP).
+compiler, RTF for the WinHelp tools, special Watcom-defined format
+for use with a DOS-based help tool (WHELP) or the ever-popular HTML.
 
 If you are a programmer, you'll be somewhat comfortable with the whole
 process of turning ASCII text into documentation. WGML is a text
@@ -210,6 +237,7 @@ and is, of course, much faster with today's processors. The C Library
 Reference comprising 1,241 pages takes 2 1/2 minutes to format into
 Postscript on a 400 MHz Pentium-II.
 
+
 Diagnostic Messages
 ===================
 
@@ -217,9 +245,3 @@ If you see ***WARNING*** messages issued by WGML, you can ignore them.
 If you see ***ERROR*** messages, you cannot ignore them.
 
 Good Luck!
-
-
-Problems
-========
-I'll try to answer via E-mail.
-Jack.Schueler@Sybase.com

@@ -1,13 +1,17 @@
 
-  Getting up to Speed on OpenWatcom
-  =================================
+  Getting up to Speed on Open Watcom
+  ==================================
 
 Here's a quick intro on the build layout and build process as
-they used to be at Watcom/Sybase. The OpenWatcom layout is
+they used to be at Watcom/Sybase. The Open Watcom layout is
 slightly different and many parts of the build process are broken
-due to removal of third-party tools, headers and libraries.
+currently due to removal of third-party tools, headers and libraries.
+The original Watcom/Sybase setup placed all directories in d:\. It
+is however perfectly possible to place them wherever you wish, for
+instance w:\openwatcom. Where this file refers to d:\, substitute your
+Open Watcom root location (stored in the owroot environment variable).
 
-1) build machine layout:
+1) Default build machine layout:
 
 d:\
     bld
@@ -37,14 +41,15 @@ d:\
 
 
 ------------------------------
-2) to set up a new machine:
+2) To set up a new machine:
 
-  - modify setvars.bat/setvars.cmd to reflect your setup
+  - Modify setvars.bat/setvars.cmd to reflect your setup. See comments
+    within the file for additional information.
 
-d:\bat\makeinit, d:\bat\makecomm may have some machine specific info,
+    d:\bat\makeinit, d:\bat\makecomm may have some machine specific info,
     but should be ok if you don't change any locations
 
-    your path should look something like this if you are on NT:
+    Your path should look something like this if you are on NT:
 
     PATH=C:\WINNT\system32;
     C:\WINNT;
@@ -55,8 +60,14 @@ d:\bat\makeinit, d:\bat\makecomm may have some machine specific info,
     d:\tools;
     d:\bld\build\binnt
 
+  - Create directories not included in source archives/Perforce. This is
+    primarily the rel2 tree where finished binaries, libraries, include
+    files etc. end up. To do this, simply run mkrel2.bat/mkrel2.cmd which
+    should care of everything provided that you have your environment
+    variables set up correctly.
+
 ------------------------------
-3) priming the pump
+3) Priming the pump:
 
 Besides the Watcom C/C++ 11.0c binaries you'll need a few other executables
 used by the build process, primarily builder and pmake. Their source is in
@@ -66,53 +77,67 @@ subdirectory of \bld\build appropriate to your host platform. Perhaps
 someone will automate this process. For now consider it an aptitude test.
 
 ------------------------------
-4) build process
+4) Build process:
 
-We use the watcom c/c++ compilers and watcom wmake to build our tools,
+We use the Watcom C/C++ compilers and Watcom wmake to build our tools,
 but at the top level we have a tool which oversees traversing the build tree,
 deciding which projects to build for what platforms, logging the results to
-a file, and copying the finished software into the release tree (rel2)
+a file, and copying the finished software into the release tree (rel2),
+making fully automated builds a possibility.
 
 This tool is BUILDER.EXE
 
-see d:\bld\builder\builder.doc for detailed info on the tool
+see d:\bld\builder\builder.doc for detailed info on the tool and the source
+if the documentation doesn't satisfy you.
 
-here's how we use it:
+Here's how we use it:
 
-each project has a "lang.ctl" builder script file
-if you go to a project directory and run builder, it will make only that project
-if you go to \bld and run builder, it will build everything
+Each project has a "lang.ctl" builder script file.
+If you go to a project directory and run builder, it will make only that
+project; if you go to \bld and run builder, it will build everything
 the overall build uses \bat\lang.ctl which includes all of the individual
-project lang.ctl files that we use
+project lang.ctl files that we use. Note that if you run builder, it will
+traverse directories upwards until it finds a lang.ctl (or it hits the
+root and still doesn't find anything, but then you must have done something
+wrong).
 
-results are logged to "build.log" in the current project directory (or d:\bld)
-the previous build.log file is copied to build.lo1
+Results are logged to "build.log" in the current project directory (or d:\bld),
+the previous build.log file is copied to build.lo1.
+
+Common commands:
 
 builder build - build the software
 builder rel2  - build the software, and copy it into the "rel2" release tree
 builder clean - erase object files, exe's, etc. so you can build from scratch
 
-many of the projects use the "pmake" features of builder (see builder.doc)
-to determine what to build, pmake source is in \bld\pmake.
+Many of the projects use the "pmake" features of builder (see builder.doc).
+To determine what to build, pmake source is in \bld\pmake.
 
-Each makefile has a comment line at the top of the file which is read by pmake
-
-most of our lang.ctl files will have a line similar to this:
+Each makefile has a comment line at the top of the file which is read by pmake.
+Most of our lang.ctl files will have a line similar to this:
 
 pmake -d build -h ...
 
 this will cause wmake to be run in every subdirectory where the makefile
-contains "build" on the #pmake line
+contains "build" on the #pmake line.
 
-you can also specify more parmeters to build a smaller subset of files.
+You can also specify more parmeters to build a smaller subset of files. This
+is especially useful if you do not have all required tools/headers/libraries
+for all target platforms.
 
 For example:
 
-builder rel2 os_nt will (generally) build only the NT version of the tools
+builder rel2 os_nt
+
+will (generally) build only the NT version of the tools.
+
+A word of warning: running a full build may take upwards of two hours on
+a ~1GHz machine. There is a LOT to build! This is not your ol' OS kernel
+or a single-host, single-target C/C++ compiler.
 
 It is generally possible to build specific binaries/libraries by going to
 their directory and running wmake. For instance to build the OS/2 version
 of WLINK you can go to \bld\wl\os2386 and run wmake there (note that the
-process won't successfully finish unless several needed libraries are built).
+process won't successfully finish unless several required libraries are built).
 Builder is useful for making full builds while running wmake in the right spot
-is useful during development.
+is handy during development.
