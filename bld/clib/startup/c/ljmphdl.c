@@ -33,7 +33,7 @@
 #include "variety.h"
 #include "ljmphdl.h"
 
-static default_handler( void _WCFAR *p ) {
+static void default_handler( void _WCFAR *p ) {
     p = p;
 }
 #if defined(_M_IX86)
