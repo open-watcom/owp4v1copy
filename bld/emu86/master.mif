@@ -1,0 +1,80 @@
+proj_name = emu86
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+#
+# EMU87 makefile
+#
+.EXTENSIONS:
+.EXTENSIONS: .exe .obj .asm .c .inc .new
+cflags = -oais -s -zq -w3
+incfiles = &
+ fpe86.inc e86fsld.inc e86ldfs.inc   &
+ e86ldfd.inc e86fdld.inc e86i4ld.inc e86ldi8.inc e86i8ld.inc &
+ e86ldi4.inc e86flda.inc e86fldc.inc e86fldm.inc e86fldd.inc &
+ e86fprem.inc e86poly.inc e86log.inc e86round.inc &
+ e86sqrt.inc e86atan.inc sindata.inc e86sin.inc e86f2xm1.inc &
+ memops.new stkops.new
+
+.c: ..\c
+.asm: ..\asm
+.inc: ..\inc
+.new: ..\inc
+
+as_flags_dos_i86 = -ms
+as_flags_os2_i86 = -ms
+as_flags_win_i86 = -ms
+as_flags_qnx_i86 = -ms -DQNX16 -D__PROTMODE__
+as_flags_qnx_386 = -mf -DQNX32 -D__PROTMODE__x
+
+.asm.obj:
+    $(as) -zq -bt=$(host_OS) -fpi87 -i$(emu86)\inc -i$(mathlib_dir)\h -i$(comp_cfg_dir)\h\ $[@ $(as_flags_$(host_OS)_$(host_CPU))
+
+as_flags2_dos = -ms
+as_flags2_os2 = -d__PROTMODE__
+as_flags2_qnx =
+
+objs_dos = initemu.obj emu8087.obj
+objs_os2 = initemu2.obj emu8087.obj
+objs_win = initemuw.obj
+
+!ifeq host_OS qnx
+
+!ifeq host_CPU cpu_i86
+
+all: emu87_16.qnx emu87.qnx
+
+emu86_16: qnxemu87.obj emu8087.obj fpeqnx.obj
+    $(linker) system qnx name $^@ file qnxemu87.obj,emu8087.obj,fpeqnx.obj opt priv=0,map,long,quiet,res=emu87.u
+
+emu86 : qemu87.obj
+    $(linker) system qnx name $^@ file qemu87.obj opt map,quiet,res=..\emu87.u
+
+.c.obj:
+    $(cc) $[* $(cflags) -i$(new_qnx_h) -DQNX16 -bt=QNX
+
+!else
+
+emu86_32: qnxemu87.obj emu8087.obj fpeqnx.obj
+    $(linker) system qnx name $^@ file qnxemu87.obj,emu8087.obj,fpeqnx.obj opt priv=0,map,long,quiet,res=..\emu87.u
+
+.c.obj:
+    $(cc) $[* $(cflags) -i$(new_qnx_h) -DQNX32 -bt=QNX
+
+!endif
+
+!else ifeq host_OS stub
+
+noemu87.lib: emustub.obj
+    $(librarian) -n -b noemu87 +emustub
+
+!endif
+
+emu87.lib: $(objs_$(host_OS))
+    $(librarian) -q -n -b emu87 $(objs_$(host_OS))
+
+emu8087.obj: emu8087.asm $(incfiles)
+    $(as) $(as_flags2_$(host_OS)) -zq -i..\inc;$(emu386)\inc -i$(mathlib_dir)\h\ $[*
+
