@@ -25,7 +25,7 @@
 *  ========================================================================
 *
 * Description:  Table of x86 opcodes and corresponding decode routines.
-*                only for extension SSE, SSE2 and SSE3 with 0xF3 prefix
+*             only for extension SSE, SSE2 and SSE3 with REPE prefix (0xF3)
 *
 ****************************************************************************/
 
@@ -56,7 +56,8 @@ inspick( movsldup,	"movsldup",	0x0000120f,	0x0000ffff,	X86XMMRegModRM )	// sse3
 inspick( movss_1,	"movss",	0x0000100f,	0x0000ffff,	X86XMMRegModRM32 )	// sse	
 inspick( movss_2,	"movss",	0x0000110f,	0x0000ffff,	X86XMMRegModRM32_Rev ) 	// sse	
 inspick( mulss,		"mulss",	0x0000590f,	0x0000ffff,	X86XMMRegModRM32 )	// sse	
-inspick( pause,		"pause",	0x00000090,	0x000000ff,	X86NoOp_8 )		// sse2	
+// Part of xchg
+inspick( pause,		"pause",	0x00000090,	0x00000000,	NULL )		// sse2	
 inspick( pshufhw,	"pshufhw",	0x0000700f,	0x0000ffff,	X86XMMRegModRMImm ) 	// sse2	
 inspick( rcpss,		"rcpss",	0x0000530f,	0x0000ffff,	X86XMMRegModRM32 )	// sse	
 inspick( rsqrtss,	"rsqrtss",	0x0000520f,	0x0000ffff,	X86XMMRegModRM32 )	// sse	

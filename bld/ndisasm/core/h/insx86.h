@@ -30,8 +30,8 @@
 ****************************************************************************/
 
 /*
- * It must be processed after extended instruction table in insx86e.h.
- * It is opcode map with prefix processing.
+ * It must be processed as first instruction table before any others
+ * It is opcode map with full prefix processing.
  *
  */
 
@@ -290,7 +290,9 @@ inspick( shr2,          "shr",          0x000028c0,     0x000038fe,     X86ModRM
 inspick( sar,           "sar",          0x000038d0,     0x000038fc,     X86Shift_16)
 inspick( sar2,          "sar",          0x000038c0,     0x000038fe,     X86ModRMImm_16)
 inspick( sgdt,          "sgdt",         0x0000010f,     0x0038ffff,     X86ModRM_24)
-inspick( sidt,          "sidt",         0x0008010f,     0x0038ffff,     X86ModRM_24)
+inspick( sidt00,        "sidt",         0x0008010f,     0x00f8ffff,     X86ModRM_24)
+inspick( sidt01,        "sidt",         0x0048010f,     0x00f8ffff,     X86ModRM_24)
+inspick( sidt10,        "sidt",         0x0088010f,     0x00f8ffff,     X86ModRM_24)
 inspick( sldt,          "sldt",         0x0000000f,     0x0038ffff,     X86ModRM_24)
 inspick( shld,          "shld",         0x0000a50f,     0x0000ffff,     X86RegModRM_24B)
 inspick( shld2,         "shld",         0x0000a40f,     0x0000ffff,     X86RegModRM_24B)

@@ -25,7 +25,7 @@
 *  ========================================================================
 *
 * Description:  Table of x86 opcodes and corresponding decode routines.
-*                only for extension SSE, SSE2 and SSE3 with 0x66 prefix
+*          only for extension SSE, SSE2 and SSE3 with OPND_SIZE prefix (0x66)
 *
 ****************************************************************************/
 

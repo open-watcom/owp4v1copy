@@ -25,7 +25,8 @@
 *  ========================================================================
 *
 * Description:  Table of x86 opcodes and corresponding decode routines.
-*          only for extension 3DNow!, MMX, SSE, SSE2 and SSE3 without prefix
+*          only for extension 3DNow!, MMX, SSE, SSE2 and SSE3 
+*          without OPND_SIZE, REPNE and REPE prefixes
 *
 ****************************************************************************/
 

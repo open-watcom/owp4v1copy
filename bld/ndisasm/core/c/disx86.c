@@ -1174,7 +1174,9 @@ dis_ref_type  X86GetRefType( WBIT w, dis_dec_ins *ins )
             case DI_X86_lgdt:
             case DI_X86_lidt:
             case DI_X86_sgdt:
-            case DI_X86_sidt:
+            case DI_X86_sidt00:
+            case DI_X86_sidt01:
+            case DI_X86_sidt10:
                 return( DRT_X86_MEM1632 );
             default:
                 return( DRT_X86_DWORD );
@@ -1196,7 +1198,9 @@ dis_ref_type  X86GetRefType( WBIT w, dis_dec_ins *ins )
             case DI_X86_lgdt:
             case DI_X86_lidt:
             case DI_X86_sgdt:
-            case DI_X86_sidt:
+            case DI_X86_sidt00:
+            case DI_X86_sidt01:
+            case DI_X86_sidt10:
                 return( DRT_X86_MEM1624 );
             default:
                 return( DRT_X86_WORD );
@@ -1732,7 +1736,12 @@ dis_handler_return X86Reg_8( dis_handle *h, void *d , dis_dec_ins *ins)
     switch( ins->type ) {
     case DI_X86_xchg2:
         if( code.type2.reg == REG_AX ) {
-            ins->type = DI_X86_nop;
+            if( ins->flags & DIF_X86_REPE ) {
+                ins->type = DI_X86_pause;
+                ins->flags &= ~DIF_X86_REPE;
+            } else {
+                ins->type = DI_X86_nop;
+            }
         } else {
             X86GetReg( W_DEFAULT,REG_AX,ins );
             X86GetReg( W_DEFAULT, code.type2.reg, ins );
@@ -2443,7 +2452,9 @@ dis_handler_return X86ModRM_24( dis_handle *h, void *d, dis_dec_ins *ins )
         case DI_X86_lgdt:
         case DI_X86_lidt:
         case DI_X86_sgdt:
-        case DI_X86_sidt:
+        case DI_X86_sidt00:
+        case DI_X86_sidt01:
+        case DI_X86_sidt10:
         case DI_X86_cmpxchg8b:
             return( DHR_INVALID );
         }
@@ -3235,8 +3246,9 @@ dis_handler_return X86MMRegModRMMixed( dis_handle *h, void *d, dis_dec_ins *ins 
 
     X86GetMM( code.type1.mm, ins );
     switch( ins->type ) {
+    case DI_X86_cvtpd2pi:  // mm,x/m128
     case DI_X86_cvttpd2pi:  // mm,x/m128
-        X86XMMGetModRM( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_XMM64 );
+        X86XMMGetModRM( W_DEFAULT, code.type1.mod, code.type1.rm, d, ins, DRT_X86_XMM128 );
         break;
     case DI_X86_cvtps2pi:   // mm,x/m64
     case DI_X86_cvttps2pi:  // mm,x/m64
@@ -3617,7 +3629,9 @@ static unsigned UnixMangleName( dis_dec_ins *ins, char *p, unsigned len )
     case DI_X86_setle:
     case DI_X86_setg:
     case DI_X86_sgdt:
-    case DI_X86_sidt:
+    case DI_X86_sidt00:
+    case DI_X86_sidt01:
+    case DI_X86_sidt10:
     case DI_X86_sldt:
     case DI_X86_str:
     case DI_X86_verr:

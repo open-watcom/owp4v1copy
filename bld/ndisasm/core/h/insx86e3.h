@@ -25,7 +25,7 @@
 *  ========================================================================
 *
 * Description:  Table of x86 opcodes and corresponding decode routines.
-*                only for extension SSE, SSE2 and SSE3 with 0xF2 prefix
+*             only for extension SSE, SSE2 and SSE3 with REPNE prefix (0xF2)
 *
 ****************************************************************************/
 
