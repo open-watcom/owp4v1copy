@@ -28,7 +28,7 @@
 
 // C99 types in stdlib.h.
 using std::div_t;
-using std::ldiv_t;
+using std::ldivt;
 #ifndef _SIZE_T_DEFINED
 #define _SIZE_T_DEFIEND
 #define _SIZE_T_DEFINED_
@@ -514,6 +514,16 @@ _WCRTLINK extern onexit_t onexit(onexit_t __func);
 :include poppack.sp
 :segment CNAME
 :include cplusepi.sp
+:endsegment
+
+:segment CNAME
+:: For C++ provide the appropriate overloaded signatures. These signatures
+:: must not be extern "C" (which is why they are down here).
+namespace std {
+  inline long int abs( long int __x ) { return( labs( __x ) ); }
+  inline ldiv_t div( long int __n, long int __d )
+    { return( ldiv( __n, __d ) ); } 
+}
 :endsegment
 
 :segment !CNAME
