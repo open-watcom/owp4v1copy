@@ -34,16 +34,7 @@
 #include <malloc.h>
 
 #include "ssl.h"
-
-
-extern void             Dump( char *, ... );
-extern void             Error( char *, ... );
-extern void             OutStartSect( char *, unsigned );
-extern void             OutWord( unsigned );
-extern void             OutByte( char );
-extern void             OutEndSect( void );
-extern unsigned         SrcLine( void );
-
+#include "sslint.h"
 
 
 instruction     *FirstIns;
@@ -439,7 +430,7 @@ static unsigned Locate(void)
         case INS_IN_CHOICE:
         case INS_CHOICE:
             loc += sizeof( char ) + sizeof( char ) + ins->operand *
-                       ( sizeof( char ) + sizeof( unsigned ) );
+                       ( sizeof( char ) + sizeof( unsigned short ) );
             if( ins->ins & INS_LONG ) loc += ins->operand * sizeof( char );
             break;
         case INS_SET_RESULT:

@@ -30,6 +30,8 @@
 ****************************************************************************/
 
 
+#pragma enum minimum;
+
 typedef enum {
         INS_INPUT,
         INS_IN_ANY,
@@ -50,3 +52,5 @@ typedef enum {
         /* indicates that instruction has long form */
         INS_LONG        = 0x80
 } op_code;
+
+#pragma enum pop;

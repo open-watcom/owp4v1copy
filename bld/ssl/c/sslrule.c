@@ -33,30 +33,7 @@
 #include <stdio.h>
 
 #include "ssl.h"
-
-extern void             Error( char *, ... );
-extern void             WantColon(void);
-extern void             Scan(void);
-extern instruction      *GenNewLbl(void);
-extern void             GenLabel( instruction * );
-extern void             GenExportLabel( instruction * );
-extern void             GenInput( unsigned );
-extern void             GenOutput( unsigned );
-extern void             GenError( unsigned );
-extern void             GenInputAny(void);
-extern void             GenJump( instruction * );
-extern void             GenReturn(void);
-extern void             GenSetResult( unsigned );
-extern void             GenLblCall( instruction * );
-extern instruction      *GenInpChoice(void);
-extern instruction      *GenChoice(void);
-extern void             GenSetParm( unsigned );
-extern void             GenSemCall( unsigned );
-extern void             GenTblLabel( instruction *, instruction *, unsigned );
-extern void             GenKill(void);
-extern symbol           *Lookup( class );
-extern symbol           *NewSym( class );
-
+#include "sslint.h"
 
 extern token            CurrToken;
 

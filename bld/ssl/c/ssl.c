@@ -44,13 +44,7 @@
 #undef T_EOF
 #undef T_COMMA
 #include "ssl.h"
-
-
-extern void     Decls(void);
-extern void     Rules(void);
-extern void     DumpSymTbl(void);
-extern void     GenCode(void);
-extern void     DumpGenCode(void);
+#include "sslint.h"
 
 
 token           CurrToken;
@@ -84,14 +78,14 @@ void OutByte( unsigned char byte )
     }
 }
 
-void OutWord( unsigned word )
+void OutWord( unsigned short word )
 {
 
     OutByte( word & 0xff );
     OutByte( word >> 8 );
 }
 
-void OutStartSect( char *name, unsigned len )
+void OutStartSect( char *name, unsigned short len )
 {
     if( Language ) {
         fputs( "char ", PrsFile );
@@ -160,7 +154,7 @@ int NextChar()
     return( next );
 }
 
-unsigned SrcLine(void)
+unsigned short SrcLine(void)
 {
     return( LineNum );
 }
@@ -217,7 +211,7 @@ static CloseFiles(void)
 }
 
 
-unsigned GetNum(void)
+unsigned short GetNum(void)
 {
     char        *end;
     unsigned    value;

@@ -36,15 +36,8 @@
 #include <ctype.h>
 
 #include "ssl.h"
+#include "sslint.h"
 
-
-extern void             Error( char *, ... );
-extern void             Dump( char *, ... );
-extern instruction      *GenNewLbl( void );
-extern void             OutStartSect( char *, unsigned );
-extern void             OutByte( char );
-extern void             OutWord( unsigned );
-extern void             OutEndSect( void );
 
 extern char     TokenBuff[];
 extern unsigned TokenLen;
@@ -156,7 +149,7 @@ static void AddToList( token_list *list, char *name, unsigned value )
     token_entry *curr;
     token_entry *new;
 
-    len = strlen( name )+(sizeof(char) + sizeof(unsigned));
+    len = strlen( name )+(sizeof(char) + sizeof(unsigned short));
     list->len += len;
     owner = &list->head;
     for( ;; ) {

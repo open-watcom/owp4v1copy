@@ -24,13 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  SSL structures and enums.
 *
 ****************************************************************************/
 
 
 #include "sslops.h"
+
+#pragma pack(push, 1);
 
 #define MAX_TOKEN_LEN   256
 
@@ -81,38 +82,38 @@ typedef enum { CLASS_INPUT,
 } class;
 
 
-#define NO_LOCATION ((unsigned)-1)
+#define NO_LOCATION ((unsigned short)-1)
 
 typedef struct instruction {
         struct instruction      *flink, *blink;
-        unsigned                location;
-        unsigned                operand;
+        unsigned short          location;
+        unsigned short          operand;
         void                    *ptr;
         op_code                 ins;
 } instruction;
 
 typedef struct choice_entry {
         struct choice_entry     *link;
-        unsigned                value;
+        unsigned short          value;
         instruction             *lbl;
 } choice_entry;
 
 typedef union {
         unsigned        token;          /* for tokens */
         struct {                        /* for semantic actions */
-            unsigned    value;
-            struct symbol *ret;
-            struct symbol *parm;
+            unsigned short value;
+            struct symbol  *ret;
+            struct symbol  *parm;
         }               sem;
         struct {                        /* for rules */
             instruction *lbl;
-            struct symbol *ret;
-            unsigned    exported        : 1;
-            unsigned    defined         : 1;
+            struct symbol    *ret;
+            unsigned short   exported        : 1;
+            unsigned short   defined         : 1;
         }               rule;
         struct {                        /* for type values */
-            struct symbol *type;
-            unsigned    value;
+            struct symbol   *type;
+            unsigned short  value;
         }               enums;
 } values;
 
@@ -123,3 +124,5 @@ typedef struct symbol {
         values          v;
         class           typ;
 } symbol;
+
+#pragma pack(pop);

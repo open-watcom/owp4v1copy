@@ -33,16 +33,7 @@
 #include <stdlib.h>
 
 #include "ssl.h"
-
-
-extern void     Error( char *, ... );
-extern void     WantColon(void);
-extern void     Scan(void);
-extern symbol   *NewSym( class );
-extern symbol   *Lookup( class );
-extern void     NewAlias( void * );
-extern unsigned GetNum(void);
-
+#include "sslint.h"
 
 
 extern token    CurrToken;
