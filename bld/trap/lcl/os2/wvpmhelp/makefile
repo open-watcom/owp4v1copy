@@ -23,8 +23,8 @@ wdpmhook.dll: pmhook.obj loadstd.obj
     @%append $(tmplnk) option dosseg,quiet
     @%append $(tmplnk) option map
     @%append $(tmplnk) file loadstd,pmhook
-    @%append $(tmplnk) library $(watcom_dir)/lib/os2.lib
-    @%append $(tmplnk) export SendMsgHookProc.1,SetHmqDebugee.2
+    @%append $(tmplnk) library os2.lib
+    @%append $(tmplnk) export SENDMSGHOOKPROC.1,SETHMQDEBUGEE.2
     @%append $(tmplnk) segment class 'DATA' shared
     @%append $(tmplnk) segment class 'BSS' shared
     $(linker) @$(tmplnk)
