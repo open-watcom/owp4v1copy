@@ -1,6 +1,6 @@
-structjn.asm(11): Warning! W528: Cannot address with assumed register
-structjn.asm(13): Warning! W528: Cannot address with assumed register
-structjn.asm(15): Warning! W528: Cannot address with assumed register
-structjn.asm(11): Warning! W528: Cannot address with assumed register
-structjn.asm(13): Warning! W528: Cannot address with assumed register
-structjn.asm(15): Warning! W528: Cannot address with assumed register
+structjn.asm(12): Warning! W528: Cannot address with assumed register
+structjn.asm(14): Warning! W528: Cannot address with assumed register
+structjn.asm(16): Warning! W528: Cannot address with assumed register
+structjn.asm(12): Warning! W528: Cannot address with assumed register
+structjn.asm(14): Warning! W528: Cannot address with assumed register
+structjn.asm(16): Warning! W528: Cannot address with assumed register
