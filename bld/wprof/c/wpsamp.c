@@ -231,7 +231,7 @@ static bint         absGraphBar;
 static bint         relGraphBar;
 static char         relData[20];
 static char         absData[20];
-static char         lineData[6];
+static char         lineData[64];
 
 
 wnd_info WPSampleInfo = {
@@ -278,10 +278,12 @@ STATIC void * sampleCreateWin()
     wnd_create_struct   info;
     char *              title;
 
-    title = __alloca( 255 );
+#define TITLE_LEN       255
+
+    title = __alloca( TITLE_LEN );
     if( title == NULL ) return( NULL );
     WndInitCreateStruct( &info );
-    sprintf( title, LIT( Sample_Data ), CurrSIOData->samp_file_name );
+    snprintf( title, TITLE_LEN, LIT( Sample_Data ), CurrSIOData->samp_file_name );
     info.text = title;
     info.info = &WPSampleInfo;
     info.extra = CurrSIOData;
@@ -498,9 +500,9 @@ STATIC bint sampleProcStatus( a_window * wnd, int row, int piece,
         line->text = LIT( Empty_Str );
         abs_count = curr_sio->abs_count;
         rel_count = curr_sio->rel_count;
-        sprintf( relData, "%ld.%ld%%", rel_count/10,
+        snprintf( relData, sizeof( relData ), "%ld.%ld%%", rel_count/10,
                  rel_count-((rel_count/10)*10) );
-        sprintf( absData, "%ld.%ld%%", abs_count/10,
+        snprintf( absData, sizeof( absData ), "%ld.%ld%%", abs_count/10,
                  abs_count-((abs_count/10)*10) );
         if( WPPixelTruncWidth( WndMaxCharX( wnd ) / 2 ) == 0 ) {
             point_adjust = WndMaxCharX( wnd ) / 2;
@@ -577,7 +579,8 @@ STATIC bint sampleProcStatus( a_window * wnd, int row, int piece,
         line->indent = SEPARATOR_POINT + WndMaxCharX( wnd );
         curr_sio = WndExtra( wnd );
         if( curr_sio->level_open == LEVEL_ROUTINE ) {
-            sprintf( lineData, "%s: %.5d", statusHeaders[curr_sio->level_open],
+            snprintf( lineData, sizeof( lineData ), "%s: %.5d",
+                     statusHeaders[curr_sio->level_open],
                      curr_sio->curr_display_row+1 );
             line->text = lineData;
         } else {
