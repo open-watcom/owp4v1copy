@@ -66,6 +66,7 @@ typedef enum {
     OWL_CPU_PPC,
     OWL_CPU_ALPHA,
     OWL_CPU_MIPS,
+    OWL_CPU_INTEL
 } owl_cpu;
 
 typedef enum {

@@ -191,6 +191,11 @@ static void resolveLabelNames( owl_file_handle file ) {
              */
             if( sym->num_relocs == 0 && sym->x.func == NULL ) {
                 sym->flags |= OWL_SYM_DEAD;
+                if( _OwlLinkageGlobal(sym->linkage) ) {
+                    file->symbol_table->num_global_symbols--;
+                } else {
+                    file->symbol_table->num_local_symbols--;
+                }
             } else {
                 makeUniqueName( file, sym, index++ );
             }
@@ -246,6 +251,11 @@ static void resolveComdefSymbols( owl_file_handle file ) {
         if( comdefSection( curr ) ) {
             sym = curr->comdat_sym;
             size = curr->size;
+            if( _OwlLinkageGlobal(curr->sym->linkage) ) {
+                file->symbol_table->num_global_symbols--;
+            } else {
+                file->symbol_table->num_local_symbols--;
+            }
             curr->sym->flags |= OWL_SYM_DEAD;           // section sym no longer needed
             OWLSectionFree( curr );
             // if sym was null then client made section which shouldn't exist...

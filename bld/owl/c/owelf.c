@@ -58,7 +58,7 @@ static unsigned numSymbols( owl_file_handle file ) {
 }
 
 // must correspond to owl_cpu in owl.h
-static Elf32_Half machineTypes[] = { EM_PPC, EM_ALPHA, EM_MIPS };
+static Elf32_Half machineTypes[] = { EM_PPC, EM_ALPHA, EM_MIPS, EM_386 };
 
 static void writeFileHeader( owl_file_handle file ) {
 //***************************************************
@@ -140,22 +140,26 @@ static void prepareSymbolTable( owl_file_handle file, elf_special_section *sym_s
     unsigned            next_local_index;
     unsigned            next_global_index;
     Elf32_Sym           *elf_syms;
+    unsigned num = 0;
 
     sym_sect->length = ( numSymbols( file ) + 1 ) * sizeof( Elf32_Sym );
     sym_sect->buffer = _ClientAlloc( file, sym_sect->length );
     elf_syms = (Elf32_Sym *)sym_sect->buffer;
     emitBogusSymbol( elf_syms );
     next_local_index = 1;
+    printf("global %d local %d\n", file->symbol_table->num_global_symbols, file->symbol_table->num_local_symbols);
     next_global_index = file->symbol_table->num_global_symbols + file->symbol_table->num_local_symbols;
     for( sym = file->symbol_table->head; sym != NULL; sym = sym->next ) {
         if( sym->flags & OWL_SYM_DEAD ) continue;
-        if( sym->linkage == OWL_SYM_STATIC ) {
+        if( !(_OwlLinkageGlobal(sym->linkage)) ) {
             sym->index = next_local_index++;
         } else {
             sym->index = next_global_index--;
         }
+        printf("emitting elf symbol #%d\n", num++);
         emitElfSymbol( sym, &elf_syms[ sym->index ] );
     }
+    printf("global %d local %d\n", next_global_index, next_local_index);
     assert( ( next_global_index + 1 ) == next_local_index );
     assert( next_local_index == ( file->symbol_table->num_local_symbols + 1 ) );
 }
@@ -373,6 +377,9 @@ static void prepareRelocSections( owl_file_handle file ) {
     char                buffer[ MAX_SECTION_NAME + 5 ];
 
     switch( file->info->cpu ) {
+    case OWL_CPU_INTEL:
+        useRela = FALSE;
+        break;
     default:
         useRela = TRUE; // This seems to be the common case
         break;

@@ -41,7 +41,8 @@
 static uint_16 cpuTypes[] = {
     IMAGE_FILE_MACHINE_POWERPC,
     IMAGE_FILE_MACHINE_ALPHA,
-    IMAGE_FILE_MACHINE_R4000 };
+    IMAGE_FILE_MACHINE_R4000,
+    IMAGE_FILE_MACHINE_I386};
 
 #define _OWLIndexToCOFFIndex( x )       ( (x) + FIRST_USER_SECTION )
 #define _OWLStringIndexToCOFFStringIndex( x )   ( (x) + 4 )

@@ -87,6 +87,22 @@ static Elf32_Word elfRelocTypesPPC[] = {
 // Someone should really make these up...
 static Elf32_Word elfRelocTypesAlpha[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 };
 
+static Elf32_Word elfRelocTypes386[] = {
+    R_386_NONE,
+    R_386_32,
+    R_386_NONE,
+    R_386_NONE,
+    R_386_NONE,
+    R_386_PC32,
+    R_386_NONE,
+    R_386_NONE,
+    R_386_NONE,
+    R_386_32,
+    R_386_32,
+    R_386_GOT32,
+    R_386_NONE,
+};
+
 Elf32_Word OWLENTRY ElfRelocType( owl_reloc_type reloc_type, owl_cpu cpu ) {
 //**************************************************************************
 
@@ -98,6 +114,9 @@ Elf32_Word OWLENTRY ElfRelocType( owl_reloc_type reloc_type, owl_cpu cpu ) {
         break;
     case OWL_CPU_ALPHA:
         elf_relocs = elfRelocTypesAlpha;
+        break;
+    case OWL_CPU_INTEL:
+        elf_relocs = elfRelocTypes386;
         break;
     default:
         assert( 0 );
@@ -168,6 +187,8 @@ unsigned OWLENTRY OWLRelocBitMask( owl_file_handle file, owl_reloc_info *reloc )
     case OWL_CPU_ALPHA:
         mask_array = &alphaMasks;
         break;
+    case OWL_CPU_INTEL:
+        return 0xffffffff;
     case OWL_CPU_MIPS:
         assert( 0 );
     }
@@ -181,13 +202,15 @@ owl_offset OWLENTRY OWLRelocTargetDisp( owl_section_handle section, owl_offset f
     owl_cpu     cpu;
 
     cpu = section->file->info->cpu;
-    if( cpu == OWL_CPU_ALPHA ) {
-        from += 4;  // Alpha uses updated PC
+    if( cpu == OWL_CPU_ALPHA || cpu == OWL_CPU_INTEL ) {
+        from += 4;  // Intel and Alpha use updated PC
     } // PPC & MIPS uses current PC
-    assert( ( to % 4 ) == 0 );
-    assert( ( from % 4 ) == 0 );
+    if (cpu != OWL_CPU_INTEL) { // no alignment restrictions for INTEL
+        assert( ( to % 4 ) == 0 );
+        assert( ( from % 4 ) == 0 );
+    }
     ret = to - from;
-    if( cpu == OWL_CPU_PPC ) {
+    if( cpu == OWL_CPU_PPC || cpu == OWL_CPU_INTEL) {
         return( ret );
     }
     return( ret >> 2 );
