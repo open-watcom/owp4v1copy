@@ -16,15 +16,15 @@ memory_model_i86 = $(MODEL)
 
 
 wres_nt_axp = WRESAXP.LIB
-wres_nt_386 = WRESF.LIB
+wres_nt_386 = wresf.lib
 !ifeq memory_model_386 s
 wres_qnx_386 = WRESSQNX.LIB
 !else
-wres_qnx_386 = WRESF.LIB
+wres_qnx_386 = wresf.lib
 !endif
 
 !ifndef wres_lib_dir
-wres_lib_dir = $(wres_dir)\lib
+wres_lib_dir = $(wres_dir)/lib
 !endif
 !ifdef PEGGED
 wres_l = WRESLP.LIB
@@ -38,9 +38,9 @@ wres_c = WRESC.LIB
 wres_s = WRESS.LIB
 wres_i86 = $(wres_$(memory_model_i86))
 !ifdef STACK
-wres_386 = WRESFS.LIB
+wres_386 = wresfs.lib
 !else
-wres_386 = WRESF.LIB
+wres_386 = wresf.lib
 !endif
 
 !ifdef $(proj_name)_rtdll
@@ -51,7 +51,7 @@ wres_nt_386 = WRESFDLL.LIB
 !endif
 
 !ifdef wres_$(host_OS)_$(host_CPU)
-wres_lib = $(wres_lib_dir)\$(wres_$(host_OS)_$(host_CPU))
+wres_lib = $(wres_lib_dir)/$(wres_$(host_OS)_$(host_CPU))
 !else
-wres_lib = $(wres_lib_dir)\$(wres_$(host_CPU))
+wres_lib = $(wres_lib_dir)/$(wres_$(host_CPU))
 !endif

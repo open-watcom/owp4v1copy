@@ -98,6 +98,9 @@ cflags_all      =-w4-we
 !ifeq release 1
 cflags_all      +=-dNDEBUG
 !endif
+!ifdef __LINUX__
+cflags_all      += -fo=.obj
+!endif
 
 cflags_386      = $(model_switch_$(host_cpu))-zc
 cflags_i86      = $(model_switch_$(host_cpu))
@@ -175,6 +178,41 @@ rc_flags_axp    = -d__AXP__
 
 rc_flags        = $(rc_flags_$(host_os)) $(rc_flags_$(host_cpu))
 
+!ifdef __LINUX__
+
+!ifdef use_os2tk_hdrs
+inc_dirs_sys_os2_386 = $(os2_toolkit)/h;
+inc_dirs_sys_os2_i86 = $(os2_ddk)/base/h;
+!else
+inc_dirs_sys_os2_386 = $(lang_root)/h/os2;
+inc_dirs_sys_os2_i86 = $(lang_root)/h/os21x;
+!endif
+inc_dirs_sys_nt    = $(lang_root)/h/nt;
+inc_dirs_sys_win   = $(lang_root)/h/win;
+inc_dirs_sys_os2   = $(inc_dirs_sys_os2_$(host_cpu))
+inc_dirs_sys_dos   =
+inc_dirs_sys_nov   =
+inc_dirs_sys_qnx   =
+inc_dirs_sys_linux =
+
+inc_dirs_lang_qnx     = $(lang_root)/qh;
+inc_dirs_lang_linux   = $(lang_root)/lh;
+inc_dirs_lang_netware = $(ow_nwoss_root)/common/h;
+
+!ifdef inc_dirs_lang_$(host_os)
+inc_dirs_lang   = $(inc_dirs_lang_$(host_os))
+!else
+inc_dirs_lang   = $(lang_root)/h;
+!endif
+
+inc_dirs_sys    = $(inc_dirs_lang)$(inc_dirs_sys_$(host_os))
+inc_path        = $(inc_dirs);$(inc_dirs_$(host_os))$(inc_dirs_sys)$(watcom_dir)/h
+
+yacc            = $(bld_bin)/yacc
+re2c            = $(bld_bin)/re2c
+
+!else
+
 !ifdef use_os2tk_hdrs
 inc_dirs_sys_os2_386 = $(os2_toolkit)\h;
 inc_dirs_sys_os2_i86 = $(os2_ddk)\base\h;
@@ -184,32 +222,35 @@ inc_dirs_sys_os2_i86 = $(lang_root)\h\os21x;
 !endif
 inc_dirs_sys_nt    = $(lang_root)\h\nt;
 inc_dirs_sys_win   = $(lang_root)\h\win;
-inc_dirs_sys_os2   = $(inc_dirs_sys_os2_$(host_cpu));
+inc_dirs_sys_os2   = $(inc_dirs_sys_os2_$(host_cpu))
 inc_dirs_sys_dos   =
 inc_dirs_sys_nov   =
 inc_dirs_sys_qnx   =
 inc_dirs_sys_linux =
 
-inc_dirs_lang_qnx     = $(lang_root)\qh
-inc_dirs_lang_linux   = $(lang_root)\lh
-inc_dirs_lang_netware = $(ow_nwoss_root)\common\h
+inc_dirs_lang_qnx     = $(lang_root)\qh;
+inc_dirs_lang_linux   = $(lang_root)\lh;
+inc_dirs_lang_netware = $(ow_nwoss_root)\common\h;
 
 !ifdef inc_dirs_lang_$(host_os)
 inc_dirs_lang   = $(inc_dirs_lang_$(host_os))
 !else
-inc_dirs_lang   = $(lang_root)\h
+inc_dirs_lang   = $(lang_root)\h;
 !endif
 
-inc_dirs_sys    = $(inc_dirs_lang);$(inc_dirs_sys_$(host_os))
-inc_path        = $(inc_dirs);$(inc_dirs_$(host_os));$(inc_dirs_sys)$(watcom_dir)\h
+inc_dirs_sys    = $(inc_dirs_lang)$(inc_dirs_sys_$(host_os))
+inc_path        = $(inc_dirs);$(inc_dirs_$(host_os))$(inc_dirs_sys)$(watcom_dir)\h
+
+yacc            = $(bld_bin)\yacc
+re2c            = $(bld_bin)\re2c
+
+!endif
 
 cc              = $(cc_$(host_cpu))
 cpp             = $(cpp_$(host_cpu))
 linker          = $(linker_$(host_cpu))
 librarian       = $(librarian_$(host_cpu))
 as              = $(as_$(host_cpu))
-yacc            = $(bld_bin)\yacc
-re2c            = $(bld_bin)\re2c
 
 !include bhost.mif
 !include local.mif

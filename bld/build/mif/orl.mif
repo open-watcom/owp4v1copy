@@ -19,4 +19,4 @@ orl_os2_386 = os2.dll
 !endif
 !endif
 
-orl_lib = $(orl_dir)\$(orl_$(host_os)_$(host_cpu))\orl.lib
+orl_lib = $(orl_dir)/$(orl_$(host_os)_$(host_cpu))/orl.lib
