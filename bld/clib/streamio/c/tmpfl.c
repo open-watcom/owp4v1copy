@@ -24,13 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  tmpfile() implementation.
 *
 ****************************************************************************/
 
 
 #include "variety.h"
+#include "rtinit.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -64,6 +64,8 @@
 #endif
 
 void __MkTmpFile( char *buf, int num );
+void __RmTmpFile( FILE *fp );
+extern  void    (*__RmTmpFileFn)( FILE *fp );
 
 char __tmpfnext = _TMP_INIT_CHAR;
 
@@ -158,3 +160,16 @@ _WCRTLINK FILE *tmpfile(void)           /* create a temporary file */
     }
 }
 
+/* tmpfil() pulls in a lot of overhead that many programs do not need. But */
+/* since temp files are removed on program shutdown, the code to remove    */
+/* them would always get linked in even if the program never heard of temp */
+/* files. Since we know that temporary files can _only_ be created through */
+/* tmpfile(), we can have a dummy __RmTmpFile() by default and use the     */
+/* real thing only if tmpfil() was called.                                 */
+void __Init_Tmpfl(void)
+{
+    // Just assign the function address
+    __RmTmpFileFn = __RmTmpFile;
+}
+
+AXI( __Init_Tmpfl, INIT_PRIORITY_RUNTIME )

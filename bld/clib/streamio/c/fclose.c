@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  fclose() implementation.
 *
 ****************************************************************************/
 
@@ -44,7 +43,7 @@ extern  void    __freefp( FILE *fp );
 extern  int     __flush( FILE *fp );
 extern  int     __close( int );
 #if !defined(__QNX__)
-extern  void    __RmTmpFile( FILE *fp );
+void    (*__RmTmpFileFn)( FILE *fp );
 #endif
 
 _WCRTLINK int fclose( FILE *fp )
@@ -111,7 +110,7 @@ int __doclose( FILE *fp, int close_handle )
 #ifndef __QNX__
     /* this never happens under QNX */
     if( fp->_flag & _TMPFIL ) {     /* if this is a temporary file */
-        __RmTmpFile( fp );
+        __RmTmpFileFn( fp );
     }
 #endif
     _ReleaseFile( fp );
