@@ -100,7 +100,7 @@ typedef struct save_state {
 
 static  save_state      *StateCurr;
 static  save_state      *StateLast;
-static  int             NumStateEntries;
+static  int             NumStateEntries = 0;
 
 extern long             GetDataLong(void);
 extern void             StartupErr(char *);
@@ -314,7 +314,7 @@ static void FreeState( save_state *state )
     --NumStateEntries;
 }
 
-unsigned        CurrRegSize;
+unsigned        CurrRegSize = 0;
 
 void ResizeRegData()
 {
@@ -327,14 +327,18 @@ void ResizeRegData()
     new_size = MADRegistersSize();
     if( new_size > CurrRegSize ) {
         /* should I zero out new memory? */
+        /* Yes, it is neccessary for debug version */
         found_dbgregs = FALSE;
         state = StateCurr;
         for( ;; ) {
             old = state;
-            _Realloc( state, sizeof( save_state ) + new_size );
+            _Alloc( state, sizeof( save_state ) + new_size );
             if( state == NULL ) {
                 ReportMADFailure( MS_NO_MEM );
                 new_size = CurrRegSize;
+            } else {
+                memset( state, 0, sizeof( save_state ) + new_size );
+                memcpy( state, old, sizeof( save_state ) );
             }
             if( old == StateCurr ) StateCurr = state;
             if( old == StateLast ) StateLast = state;
@@ -351,11 +355,13 @@ void ResizeRegData()
         if( !found_dbgregs ) {
             /* just a machine state on it's own */
             ms = DbgRegs;
-            _Realloc( ms, sizeof( machine_state ) + new_size );
+            _Alloc( ms, sizeof( machine_state ) + new_size );
             if( ms == NULL ) {
                 ReportMADFailure( MS_NO_MEM );
                 new_size = CurrRegSize;
             } else {
+                memset( ms, 0, sizeof( machine_state ) + new_size );
+                memcpy( ms, DbgRegs, sizeof( machine_state ) );
                 if( DbgRegs == PrevRegs ) PrevRegs = ms;
                 DbgRegs = ms;
             }

@@ -85,6 +85,7 @@ extern void             VarChangeOptions();
 extern void             RegChangeOptions();
 extern void             FPUChangeOptions();
 extern void             MMXChangeOptions();
+extern void             XMMChangeOptions();
 extern void             AsmChangeOptions();
 extern void             FuncChangeOptions();
 extern void             GlobChangeOptions();
@@ -123,6 +124,7 @@ typedef enum {
     MWT_REG,
     MWT_FPU,
     MWT_MMX,
+    MWT_XMM,
     MWT_LAST
 } mad_window_toggles;
 
@@ -138,6 +140,7 @@ static char SetNameTab[] = {
     "REGister\0"
     "Fpu\0"
     "MMx\0"
+    "XMm\0"
     "Bell\0"
     "Call\0"
     "Dclick\0"
@@ -165,6 +168,7 @@ extern void     ModConf();
 extern void     RegConf();
 extern void     FPUConf();
 extern void     MMXConf();
+extern void     XMMConf();
 extern void     DClickConf();
 extern void     TabConf();
 extern void     TypeConf();
@@ -186,6 +190,7 @@ extern void     ModSet();
 extern void     RegSet();
 extern void     FPUSet();
 extern void     MMXSet();
+extern void     XMMSet();
 extern void     DClickSet();
 extern void     BellSet();
 extern void     TabSet();
@@ -208,6 +213,7 @@ static void (* const SetJmpTab[])() = {
     &RegSet,
     &FPUSet,
     &MMXSet,
+    &XMMSet,
     &BellSet,
     &CallSet,
     &DClickSet,
@@ -236,6 +242,7 @@ static void (* SetConfJmpTab[])() = {
     &RegConf,
     &FPUConf,
     &MMXConf,
+    &XMMConf,
     &BellConf,
     &CallConf,
     &DClickConf,
@@ -545,6 +552,13 @@ static bool DoOneToggle( mad_window_toggles wt )
             return( TRUE );
         }
         break;
+    case MWT_XMM:
+        RegFindData( MTK_XMM, &rsd );
+        if( rsd == NULL ) {
+            PendingAdd( SysConfig.mad, wt, start, len );
+            return( TRUE );
+        }
+        break;
     }
     bit = 1;
     toggles = GetMADToggleList( rsd );
@@ -701,6 +715,10 @@ static walk_result DumpToggles( mad_handle mh, void *d )
         break;
     case MWT_MMX:
         RegFindData( MTK_CUSTOM, &rsd );
+        if( rsd == NULL ) return( WR_CONTINUE );
+        break;
+    case MWT_XMM:
+        RegFindData( MTK_XMM, &rsd );
         if( rsd == NULL ) return( WR_CONTINUE );
         break;
     default:
@@ -947,6 +965,18 @@ static void MMXSet()
 static void MMXConf()
 {
     ConfWindowSwitches( NULL, 0, NULL, MWT_MMX );
+}
+
+
+static void XMMSet()
+{
+    ToggleWindowSwitches( NULL, 0, NULL, MWT_XMM );
+    MMXChangeOptions();
+}
+
+static void XMMConf()
+{
+    ConfWindowSwitches( NULL, 0, NULL, MWT_XMM );
 }
 
 

@@ -128,6 +128,9 @@ unsigned GetMADMaxFormatWidth( mad_type_handle th )
     case MTK_FLOAT:
         memset( &tmp, 0, sizeof( tmp ) );
         break;
+    case MTK_XMM:
+        memset( &tmp, 0, sizeof( tmp ) );
+        break;
     }
     new = MADTypePreferredRadix( th );
     old = NewCurrRadix( new );

@@ -30,17 +30,30 @@
 ****************************************************************************/
 
 
-MENU_ITEM( MENU_MAIN_OPEN_WATCH,                XWatches  )
-MENU_ITEM( MENU_MAIN_OPEN_LOCALS,               XLocals  )
-MENU_ITEM( MENU_MAIN_OPEN_FILESCOPE,            File_XVariables  )
-MENU_ITEM( MENU_MAIN_OPEN_GLOBALS,              XGlobals )
-MENU_BAR
-MENU_ITEM( MENU_MAIN_OPEN_REGISTER,             XRegisters  )
-MENU_ITEM( MENU_MAIN_OPEN_FPU,                  XFPU_Registers  )
-MENU_ITEM( MENU_MAIN_OPEN_MMX,                  MMXXRegisters  )
-MENU_ITEM( MENU_MAIN_OPEN_XMM,                  XMMXRegisters  )
-MENU_ITEM( MENU_MAIN_OPEN_STACK,                XStack  )
-MENU_ITEM( MENU_MAIN_OPEN_IO,                   XIO_Ports  )
-MENU_ITEM( MENU_MAIN_OPEN_MEMORY_AT,            XMemory_at_  )
-MENU_BAR
-MENU_ITEM( MENU_MAIN_OPEN_LOG,                  LXog )
+#include "dbgdefn.h"
+#include "dbgwind.h"
+#include "dbgreg.h"
+#include "dbgtoggl.h"
+#include "dbginfo.h"
+#include "dbgitem.h"
+#include "madcli.h"
+#include <string.h>
+
+extern void             RegFindData( mad_type_kind kind, mad_reg_set_data const **pdata );
+extern a_window *WndMadRegOpen( mad_type_kind kind, wnd_class class, gui_resource *icon );
+extern void MadRegChangeOptions( a_window *wnd );
+
+void XMMChangeOptions()
+{
+    WndForAllClass( WND_XMM, MadRegChangeOptions );
+}
+
+extern WNDOPEN WndXMMOpen;
+extern a_window *WndXMMOpen()
+{
+    const mad_reg_set_data      *rsd;
+
+    RegFindData( MTK_XMM, &rsd );
+    if( rsd == NULL ) return( NULL );
+    return( WndMadRegOpen( MTK_XMM, WND_XMM, &XMMIcon ) );
+}

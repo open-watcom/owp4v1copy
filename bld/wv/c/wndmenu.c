@@ -434,6 +434,8 @@ void SetMADMenuItems( void )
     WndEnableMainMenu( MENU_MAIN_OPEN_FPU, rsd != NULL );
     RegFindData( MTK_CUSTOM, &rsd );
     WndEnableMainMenu( MENU_MAIN_OPEN_MMX, rsd != NULL );
+    RegFindData( MTK_XMM, &rsd );
+    WndEnableMainMenu( MENU_MAIN_OPEN_XMM, rsd != NULL );
 }
 
 static void ForAllMenus( void (*rtn)( gui_menu_struct *menu, int num_menus ) )
@@ -783,6 +785,9 @@ extern bool     WndMainMenuProc( a_window *wnd, unsigned id )
         break;
     case MENU_MAIN_OPEN_MMX:
         WndClassInspect( WND_MMX );
+        break;
+    case MENU_MAIN_OPEN_XMM:
+        WndClassInspect( WND_XMM );
         break;
     case MENU_MAIN_OPEN_SOURCE:
         WndClassInspect( WND_SOURCE );

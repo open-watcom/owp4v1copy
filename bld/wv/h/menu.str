@@ -333,6 +333,11 @@ MENU_STR( MMXXRegisters,
 	"jMM&X Registers",
 	"Show the contents of the MMX registers",
 	"jShow the contents of the MMX registers" )
+MENU_STR( XMMXRegisters,
+	"XMM Registers",
+	"jXMM Registers",
+	"Show the contents of the XMM registers",
+	"jShow the contents of the XMM registers" )
 MENU_STR( XFPU_Registers,
 	"&FPU Registers",
 	"j&FPU Registers",

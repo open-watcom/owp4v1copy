@@ -777,6 +777,11 @@ extern void MMXChangeOptions( void )
 {
 }
 
+extern void XMMChangeOptions( void )
+/**********************************/
+{
+}
+
 bool DUIImageLoaded( image_entry *image, bool load,
                      bool already_stopping, bool *force_stop )
 /************************************************************/

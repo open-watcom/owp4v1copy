@@ -175,6 +175,7 @@ ui_objs = &
         dbgwmem.obj &
         dbgwregs.obj &
         dbgwmmx.obj &
+        dbgwxmm.obj &
         dbgwmadr.obj &
         dbgwtogl.obj &
         dbgwvar.obj &
