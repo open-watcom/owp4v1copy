@@ -54,6 +54,8 @@ cdsay .
 #    cdsay ..\qnx386
 #    wmake /h /k
     cd ..
+    wmake /h /k /f mkwppref.mif host_CPU=386
+    wmake /h /k /f mkwppref.mif host_CPU=i86
 
 [ BLOCK <1> rel2 cprel2 acprel2 ]
 #================================

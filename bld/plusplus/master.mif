@@ -268,6 +268,9 @@ depends_drv = $(pre_obj_deps) $(dlldrv_objs)
 # DOS executables
 #
 
+$(exe_ref_name).exe : $(depends_exe) pexebld.lnk
+    $(linker) $(lflags) NAME $^* @pexebld
+
 $(exe_dbg_name).exe : $(depends_exe) pexedbg.lnk
     $(linker) $(lflags) NAME $^* @pexedbg
 
