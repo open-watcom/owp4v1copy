@@ -46,6 +46,10 @@ objs_nov_386 = sampnlm.obj realmode.obj nwhooks.obj settime.obj cpuspeed.obj pit
 
 objects = $(objs_$(target)_$(host_cpu)) sample.obj sampdata.obj io.obj sysio.obj wmsg.obj
 
+extra_c_flags =  -s -D_NO_LIB_PRAGMAS_
+!ifeq machine NEC
+extra_c_flags += -d_NEC_PC
+!endif
 
 extra_c_flags_dos_dos = -dREPORT_TYPE=__interrupt -dFAR_PTR=__far
 extra_c_flags_dos_rsi = -dREPORT_TYPE= -dFAR_PTR=__far -zu
@@ -55,11 +59,6 @@ extra_c_flags_win     = -dREPORT_TYPE= -dFAR_PTR=__far -zu -zw -orlt
 extra_c_flags_nov     = -dREPORT_TYPE= -dFAR_PTR= -dNETWARE -3s -zp1
 extra_c_flags_nt      = -dREPORT_TYPE= -dFAR_PTR=
 extra_c_flags_os2     = -dREPORT_TYPE= -dFAR_PTR=
-
-extra_c_flags =  -s -D_NO_LIB_PRAGMAS_
-!ifeq machine NEC
-extra_c_flags += -d_NEC_PC
-!endif
 
 extra_c_flags_i86     = -fpc -2
 extra_c_flags_386     = -fpc
@@ -195,7 +194,7 @@ $(xname).exp : $(objects) $(xname).res $(wres_lib) $(__MAKEFILES__)
     @%append tmp.lnk lib $(plsdir)/wdosx32.lib
     @%append tmp.lnk lib $(wres_lib)
     @%append tmp.lnk lib $(lang_root)/lib386/dos/clib3r.lib
-    @%append tmp.lnk lib $(lang_root)/lib386/math387r.lib
+    @%append tmp.lnk lib $(lang_root)/lib386/math3r.lib
     @%append tmp.lnk option maxdata=0
     @%append tmp.lnk runtime maxreal=1023K
     @%append tmp.lnk runtime maxibuf=4K
