@@ -163,7 +163,7 @@ static char *replace_parm( parm_list *parms, char *start, char len, asmlines *ls
 
             AsmFree( old_line );
 
-            return( new_line + PLACEHOLDER_SIZE );  /* ptr to char after #dd */
+            return( new_line + before + PLACEHOLDER_SIZE );  /* ptr to char after #dd */
         }
         count++;
     }
@@ -186,6 +186,7 @@ static void put_parm_placeholders_in_line( asmlines *linestruct, parm_list *parm
     line = linestruct->line;
     for( tmp = line; *tmp != '\0'; ) {
         /* scan across the string for space, &, " - to start a word */
+        line = tmp;
         for( ; *tmp != '\0'; tmp++ ) {
             if( is_valid_id_char( *tmp ) ) {
                 if( tmp == line ) break; /* ok to start at beginning of line */
@@ -490,6 +491,8 @@ int ExpandMacro( int tok_count)
     int         macro_name_loc;
     char        expansion_flag = FALSE;
     int         exp_start;
+    int         nesting_depth;
+    char        *ptr;
 
     if( AsmBuffer[count]->token == T_FINAL ) return( tok_count );
 
@@ -633,13 +636,27 @@ int ExpandMacro( int tok_count)
 
     /* now actually fill in the parms */
     PushLineQueue();
+    nesting_depth = 0;
     for( lnode = info->data; lnode != NULL; lnode = lnode->next ) {
         line = fill_in_parms( lnode, info->parmlist );
-        if( lineis( line, "local" ) ) {
-            AsmScan( line, StringBuf );
-            if( macro_local() == ERROR ) return( ERROR );
-            AsmFree( line );
-            continue;
+        if( lineis( line, "endm" ) ) {
+            if( nesting_depth ) {
+                nesting_depth--;
+            }
+        } else if( lineis( line, "local" ) ) {
+            if( nesting_depth == 0 ) {
+                AsmScan( line, StringBuf );
+                if( macro_local() == ERROR ) return( ERROR );
+                AsmFree( line );
+                continue;
+            }
+        } else {
+            ptr = line;
+            while( *ptr != '\0' && !isspace( *ptr ) ) ptr++; // skip 1st token
+            while( isspace( *ptr ) ) ptr++; // skip all spaces
+            if( lineis( ptr, "macro" ) ) {
+                nesting_depth++;
+            }
         }
         InputQueueLine( line );
         AsmFree( line );
