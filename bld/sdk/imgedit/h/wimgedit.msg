@@ -607,6 +607,25 @@ pick(   WIE_256COLOUR16X16,
     "16x16, 256 Color",
     "16x16, 256 Color" )
 
+pick(   WIE_2COLOUR64X64,
+    "64x64,   2 Color",
+    "64x64,   2 Color" )
+pick(   WIE_16COLOUR64X64,
+    "64x64,  16 Color",
+    "64x64,  16 Color" )
+pick(   WIE_256COLOUR64X64,
+    "64x64, 256 Color",
+    "64x64, 256 Color" )
+pick(   WIE_2COLOUR96X96,
+    "96x96,   2 Color",
+    "96x96,   2 Color" )
+pick(   WIE_16COLOUR96X96,
+    "96x96,  16 Color",
+    "96x96,  16 Color" )
+pick(   WIE_256COLOUR96X96,
+    "96x96, 256 Color",
+    "96x96, 256 Color" )
+
 pick(   WIE_TRUECOLOUR32X32,
     "32x32, True Color",
     "32x32, True Color" )
