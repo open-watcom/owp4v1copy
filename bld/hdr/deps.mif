@@ -53,7 +53,6 @@ complex.h       : ../watcom/complex.mh ../readonly.sp ../crwat.sp ../poppack.sp 
 conio.h         : ../watcom/conio.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../valist.sp
 crtdbg.h        : ../watcom/crtdbg.mh ../readonly.sp ../crwat.sp ../cplusepi.sp ../cpluspro.sp
 cstdlib.h       : ../watcom/cstdlib.mh ../readonly.sp ../crwat.sp
-cstring.h       : ../watcom/cstring.mh ../readonly.sp ../crwat.sp
 ctype.h         : $(ctype_deps)
 direct.h        : ../watcom/direct.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../dskfreet.sp ../poppack.sp ../pshpackl.sp ../wchar_t.sp
 dos.h           : ../watcom/dos.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../dskfreet.sp ../poppack.sp ../pshpackl.sp ../wchar_t.sp
