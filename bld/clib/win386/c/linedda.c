@@ -32,7 +32,7 @@
 
 #include "cover.h"
 
-void PASCAL _Cover_LineDDA( int x1, int y1, int x2, int y2, LINEDDAPROC p,
+void PASCAL _Cover_LineDDA( int x1, int y1, int x2, int y2, FARPROC p,
                         LPARAM data )
 {
     LineDDA( x1, y1, x2, y2, SetProc( p, GETPROC_LINEDDA ), (LPARAM) data );
