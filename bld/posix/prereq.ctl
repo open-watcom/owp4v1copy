@@ -16,7 +16,7 @@ set BUILD_PLATFORM=
 #================================
     mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
-    wmake -h -f ../systems/dos386/makefile prebuild=1
+    wmake -h -f ../systems/dos/makefile prebuild=1
     <CPCMD> *.exe <OWROOT>\bld\build\bin\
     cdsay <PROJDIR>
 
