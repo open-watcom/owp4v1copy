@@ -23,9 +23,6 @@ type="s"	dir="lib386\dos"	usr="cstrtx3r.obj"	cond="dostarg 3r"	where="c jc f77 j
 type="s"	dir="lib386\dos"	usr="cstrtx3s.obj"	cond="dostarg 3s"	where="c jc f77 jf77"
 type="s"	dir="lib386\dos"	usr="binmode.obj"	cond="dostarg 3r 3s |"	where="c jc f77 jf77"
 type="s"	dir="lib386\dos"	usr="commode.obj"	cond="dostarg 3r 3s |"	where="c jc f77 jf77"
-type="s"	dir="lib386\dos"	usr="adsstart.obj"	cond="adstarg"		where="c jc f77 jf77"
-type="s"	dir="lib386\dos"	usr="adiestrt.obj"	cond="adstarg"		where="c jc f77 jf77"
-type="s"	dir="lib386\dos"	usr="adifstrt.obj"	cond="adstarg"		where="c jc f77 jf77"
 
 type="l"	dir="lib386\netware"	usr="clib3s.lib"	cond="nlmtarg"		where="c jc f77 jf77"
 type="s"	dir="lib386\netware"	usr="binmode.obj"	cond="nlmtarg"		where="c jc f77 jf77"

@@ -21,7 +21,6 @@ type="e" dir="axpnt"	usr="wd.exe"		cond="alphahost alphatarg |"			where="ac"			d
 type="e" dir="axpnt"	usr="wdw.exe"		cond="alphahost alphatarg |"			where="ac"			descr="GUI debugger"
 
 # Debugger Command Files
-type="s" dir="binw"	usr="ads.dbg"		cond="adstarg"					where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
 type="s" dir="binw"	usr="animate.dbg"							where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
 type="s" dir="binw"	usr="bcnt.dbg"								where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
 type="s" dir="binw"	usr="bif.dbg"								where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"

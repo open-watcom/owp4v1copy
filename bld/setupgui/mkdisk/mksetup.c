@@ -124,6 +124,7 @@ unsigned                MaxDiskFiles;
 int                     FillFirst = 1;
 int                     Lang = 1;
 int                     Upgrade = FALSE;
+int                     Verbose = FALSE;
 char                    *Include;
 const char              MksetupInf[] = "mksetup.inf";
 
@@ -251,6 +252,8 @@ int CheckParms( int *pargc, char **pargv[] )
                 Include = (*pargv)[1]+2;
             } else if( tolower( (*pargv)[1][1] ) == 'u' ) {
                 Upgrade = TRUE;
+            } else if( tolower( (*pargv)[1][1] ) == 'v' ) {
+                Verbose = TRUE;
             } else {
                 printf( "Unrecognized option %s\n", (*pargv)[1] );
             }
@@ -565,21 +568,26 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
 
             // if the path differs, start a new pack file
             if( curr->path != path_dir ) {
-                printf( "\nPath for archive '%s' changed to '%s'\n", curr->pack, path );
                 sprintf( archive_name, "pck%05d", pack_num++ );
                 archive = strdup( archive_name );
-                printf( "Changing archive to '%s'\n", archive );
+                if( Verbose ) {
+                    printf( "\nPath for archive '%s' changed to '%s'\n",
+                        curr->pack, path );
+                    printf( "Changing archive to '%s'\n", archive );
+                }
                 curr = curr->next;
                 break;
             }
             // if the condition differs, start a new pack file
             if( strcmp( curr->condition, cond ) != 0 ) {
-                printf( "\nCondition for archive '%s' changed:\n", curr->pack );
-                printf( "Old: <%s>\n", curr->condition );
-                printf( "New: <%s>\n", cond );
                 sprintf( archive_name, "pck%05d", pack_num++ );
                 archive = strdup( archive_name );
-                printf( "Changing archive to '%s'\n", archive );
+                if( Verbose ) {
+                    printf( "\nCondition for archive '%s' changed:\n", curr->pack );
+                    printf( "Old: <%s>\n", curr->condition );
+                    printf( "New: <%s>\n", cond );
+                    printf( "Changing archive to '%s'\n", archive );
+                }
                 curr = curr->next;
                 break;
             }
