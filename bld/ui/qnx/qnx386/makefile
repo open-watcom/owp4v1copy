@@ -2,6 +2,7 @@
 
 host_os  = qnx
 host_cpu = 386
+extra_files = $(qnx)
 
 memory_model_386 = s
 
