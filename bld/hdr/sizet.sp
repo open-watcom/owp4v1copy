@@ -17,7 +17,7 @@ typedef std::size_t __size_t;
 namespace std {
 typedef unsigned size_t;
 }
-typedef std::size_t __size_t
+typedef std::size_t __size_t;
 #endif
 #ifndef _SIZE_T_DEFINED
 #define _SIZE_T_DEFINED
