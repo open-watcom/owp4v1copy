@@ -1,7 +1,7 @@
 #pmake:all small stack 32bit netware time iX86 static build os_nov cpu_386
 processor=386
 model=ms
-system=netware
+system=nw_clib
 convention=stack
 linkage=static
 !include ..\..\..\objects.mif

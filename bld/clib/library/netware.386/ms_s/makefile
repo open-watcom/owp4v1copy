@@ -2,7 +2,7 @@
 processor=386
 model=ms
 subdir=ms_s
-system=netware
+system=nw_clib
 linkage=static
 convention=stack
 !include $(clib_dir)\master.mif
