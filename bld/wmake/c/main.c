@@ -155,14 +155,14 @@ STATIC void handleMacroDefn( char *buf )
         /* NOP - eat all the characters */
     }
 
-    if (Glob.microsoft) {
+    if( Glob.microsoft ) {
         Glob.macreadonly = FALSE;
         /* Insert twice because in nmake declaring a macro in the command line */
         /* is equivalent to declaring one as is and one that is all upper case */
         pos = 0;
-        while (buf[pos] != NULLCHAR &&
-               buf[pos] != '=') {
-            buf[pos] = toupper(buf[pos]);
+        while( buf[ pos ] != NULLCHAR &&
+               buf[ pos ] != '=' ) {
+            buf[ pos ] = toupper( buf[ pos ] );
             ++pos;
         }
 
@@ -172,6 +172,7 @@ STATIC void handleMacroDefn( char *buf )
         }
         Glob.macreadonly = TRUE;
     }
+    FreeSafe( buf );
 }
 
 
