@@ -50,7 +50,11 @@
 
 extern void _wpi_free( void * ptr );
 extern void * _wpi_malloc( size_t size );
-extern void * _wpi_realloc( void *ptr, size_t size );
+//extern void * _wpi_realloc( void *ptr, size_t size );
+
+#ifndef _wpi_realloc
+#define _wpi_realloc(ptr,x) realloc(ptr,x)
+#endif
 
 #ifndef _wpi_malloc2
 #define _wpi_malloc2(ptr,x) ptr = (void *) _wpi_malloc( sizeof( *ptr ) * x )
@@ -85,13 +89,6 @@ extern void * _wpi_realloc( void *ptr, size_t size );
      * This is used by paul to add new functions.  It is temporary.
      */
     #include "new_os2.h"
-#endif
-
-#ifdef _WPI_TEST2_
-    /*
-     * This is used by david to add new functions.  It is temporary.
-     */
-    #include "djb_os2.h"
 #endif
 
 #else

@@ -79,7 +79,7 @@ void *gmem_realloc(
 #ifdef PLAT_OS2
     return( realloc( ptr, (size_t) size ) );
 #else
-    HANDLE              hld;
+    HGLOBAL             hld;
 
     if( ptr != NULL ) {
         hld = _wpi_getglobalhdl( ptr );
@@ -109,7 +109,7 @@ void gmem_free(
 #ifdef PLAT_OS2
     free( mem );
 #else
-    HANDLE              hld;
+    HGLOBAL             hld;
 
     if( mem != NULL ) {
         hld = _wpi_getglobalhdl( mem );

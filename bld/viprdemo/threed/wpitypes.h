@@ -36,7 +36,6 @@
  Description:
  ============
     Some stuff for windows development.
-
 */
 
 #include <setjmp.h>
@@ -44,21 +43,84 @@
  * For developers concerned about NT issues, win1632.h is included here
  * to macro from windows to nt.
  */
-#ifndef __OS2_PM__
-#include "win1632.h"
-#else
+#if defined( __OS2_PM__ ) || defined( __OS2__ )
 #include "pm1632.h"
+#else
+#include "win1632.h"
+#endif
+
+#ifdef __WINDOWS_386__
+    #define _W386FAR                    __far
+#else
+    #define _W386FAR
 #endif
 
 #define WPI_SIZEWINBMPFILEHDR           14
 #define WPI_SIZEWINBMPINFOHDR           40
+#define WPI_SIZEOS2BMPFILEHDR           78
+#define WPI_SIZEOS2BMPINFOHDR           64
 
 #pragma pack( 1 )
 /*************************/
 /* new types - both ways */
 /*************************/
 
-#ifndef __OS2_PM__      // Windows Side
+#if defined( __OS2_PM__ ) || defined( __OS2__ )
+    // PM Side
+    #define WPI_ERROR_ON_CREATE         1
+    #define WPI_ERRORID                 ERRORID
+    #define WPI_MRESULT                 MRESULT
+    #define WPI_MINMAXINFO              TRACKINFO
+    #define WPI_CLASSPROC               PFNWP
+    #define WPI_HICON                   LONG
+    #define WPI_HCURSOR                 LONG
+    #define WPI_TASK                    TID
+    #define WPI_CATCHBUF                jmp_buf
+    #define WPI_HLIB                    HLIB
+    #define WPI_BITMAPINFO              PM1632_BITMAPINFO2
+    #define WPI_BITMAP                  PM1632_BITMAPINFOHEADER2
+    #define WPI_BITMAPINFOHEADER        PM1632_BITMAPINFOHEADER2
+    #define WPI_BITMAPFILEHEADER        BITMAPFILEHEADER
+    #define WPI_BMPBITS                 PBYTE
+    #define WPI_TEXTMETRIC              FONTMETRICS
+    #define WPI_LPTEXTMETRIC            FONTMETRICS*
+    #define WPI_LOGFONT                 FONTMETRICS
+    #define WPI_LPLOGFONT               FONTMETRICS*
+    #define WPI_FONT                    FATTRS*
+    #define WPI_F_FONT                  wpi_f_font
+    #define WPI_PARAM1                  MPARAM
+    #define WPI_PARAM2                  MPARAM
+    #define WPI_HACCEL                  HACCEL
+    #define WPI_MSG                     PM1632_WINDOW_MSG
+    #define WPI_QMSG                    QMSG
+    #define WPI_WNDPROC                 PFNWP 
+    #define WPI_PROC                    PFNWP
+    #define WPI_PRES                    HPS
+    #define WPI_POINT                   POINTL
+    #define WPI_PPOINT                  PPOINTL
+    #define WPI_LPPOINT                 PPOINTL
+    #define WPI_PRECT                   PRECTL
+    #define WPI_RECT                    RECTL
+    #define WPI_RECTDIM                 LONG
+    #define WPI_COLOUR                  COLOR
+    #define WPI_RGBQUAD                 PM1632_RGB2
+    #define WPI_INT2ULONG               ULONG
+    #define WPI_DLGRESULT               MRESULT
+    #define WPI_DLGRESULT2              MRESULT
+    typedef void (__export APIENTRY *WPI_LINEDDAPROC) ( int, int, WPI_PARAM2 );
+    typedef BOOL (__export APIENTRY *WPI_ENUMPROC) ( HWND, LONG );
+    typedef int (__export APIENTRY *WPI_ENUMFONTPROC) ( WPI_LPLOGFONT,
+                                                        WPI_LPTEXTMETRIC,
+                                                        unsigned int, PSZ );
+    typedef struct WPI_INST {
+        HAB                     hab;
+        HMODULE                 mod_handle;
+    } WPI_INST;
+    #define WPI_MENUITEM                MENUITEM
+    #define WPI_MENUSTATE               MENUITEM
+
+    #define WC_GROUPBOX                 WC_STATIC
+#else
     #define WPI_ERROR_ON_CREATE         -1
     #define WPI_ERRORID                 int
     #define WPI_MRESULT                 LONG
@@ -79,6 +141,7 @@
     #define WPI_LOGFONT                 LOGFONT
     #define WPI_LPLOGFONT               LPLOGFONT
     #define WPI_FONT                    HFONT
+    #define WPI_F_FONT                  LOGFONT
     #define WPI_PARAM1                  WPARAM
     #define WPI_PARAM2                  LPARAM
     #define WPI_INST                    HINSTANCE
@@ -93,6 +156,7 @@
     #define WPI_PRECT                   LPRECT
     #define WPI_RECTDIM                 int
     #define WPI_COLOUR                  COLORREF
+    #define WPI_WNDPROC                 WNDPROC
     #define WPI_PROC                    FARPROC
     #define WPI_ENUMFONTPROC            int CALLBACK
     #define WPI_LINEDDAPROC             LINEDDAPROC
@@ -130,96 +194,13 @@
     #define WC_SCROLLBAR                "scrollbar"
     #define WC_STATIC                   "static"
     #define WC_GROUPBOX                 "button"
-#else                   // PM Side
-    #define WPI_ERROR_ON_CREATE         1
-    #define WPI_ERRORID                 ERRORID
-    #define WPI_MRESULT                 MRESULT
-    #define WPI_MINMAXINFO              TRACKINFO
-    #define WPI_CLASSPROC               PFNWP
-    #define WPI_HICON                   LONG
-    #define WPI_HCURSOR                 LONG
-    #define WPI_TASK                    TID
-    #define WPI_CATCHBUF                jmp_buf
-    #define WPI_HLIB                    HLIB
-    #define WPI_BITMAPINFO              PM1632_BITMAPINFO2
-    #define WPI_BITMAP                  PM1632_BITMAPINFOHEADER2
-    #define WPI_BITMAPINFOHEADER        PM1632_BITMAPINFOHEADER2
-    #define WPI_BITMAPFILEHEADER        BITMAPFILEHEADER
-    #define WPI_BMPBITS                 PBYTE
-    #define WPI_TEXTMETRIC              FONTMETRICS
-    #define WPI_LPTEXTMETRIC            FONTMETRICS*
-    #define WPI_LOGFONT                 FONTMETRICS
-    #define WPI_LPLOGFONT               FONTMETRICS*
-    #define WPI_FONT                    FATTRS*
-    #define WPI_PARAM1                  MPARAM
-    #define WPI_PARAM2                  MPARAM
-    #define WPI_HACCEL                  HACCEL
-    #define WPI_MSG                     PM1632_WINDOW_MSG
-    #define WPI_QMSG                    QMSG
-    #define WPI_PROC                    PFNWP
-    #define WPI_PRES                    HPS
-    #define WPI_POINT                   POINTL
-    #define WPI_PPOINT                  PPOINTL
-    #define WPI_LPPOINT                 PPOINTL
-    #define WPI_PRECT                   PRECTL
-    #define WPI_RECT                    RECTL
-    #define WPI_RECTDIM                 LONG
-    #define WPI_COLOUR                  COLOR
-    #define WPI_RGBQUAD                 PM1632_RGB2
-    #define WPI_INT2ULONG               ULONG
-    #define WPI_DLGRESULT               MRESULT
-    #define WPI_DLGRESULT2              MRESULT
-    typedef void (__export APIENTRY *WPI_LINEDDAPROC) ( int, int, WPI_PARAM2 );
-    typedef BOOL (__export APIENTRY *WPI_ENUMPROC) ( HWND, LONG );
-    typedef int (__export APIENTRY *WPI_ENUMFONTPROC) ( WPI_LPLOGFONT,
-                                                        WPI_LPTEXTMETRIC,
-                                                        unsigned int, PSZ );
-    typedef struct WPI_INST {
-        HAB                     hab;
-        HMODULE                 mod_handle;
-    } WPI_INST;
-    #define WPI_MENUITEM                MENUITEM
-    #define WPI_MENUSTATE               MENUITEM
-
-    #define WC_GROUPBOX                 WC_STATIC
 #endif
 
 /*******************************/
 /* types from one to the other */
 /*******************************/
 
-#ifndef __OS2_PM__              // Windows Side
-    #define LIT_END                     NULL
-    #define LIT_SORTASCENDING           NULL
-    #define LIT_SORTDESCENDING          NULL
-    #define LIT_NONE                    -1
-    #define LIT_FIRST                   NULL
-    #define LIT_SELECT                  NULL
-    #define LIT_UNSELECT                NULL
-    #define HINI                        short
-    #define MRESULT                     LONG
-    #define WM_DLGCOMMAND               WM_COMMAND
-    #define KEY_ASYNC_DOWN              0x8000
-    #define KEY_ASYNC_PRESSED           0x0001
-    #define WPI_VERT_MULT               1
-    #define ULONG                       unsigned long
-    #define NULLHANDLE                  NULL
-    #define HFILE                       int
-    #define HFILE_FORMAT                int
-    #define HMQ                         HANDLE
-    #define DLGID_OK                    IDOK
-    #define DLGID_CANCEL                IDCANCEL
-    #define COLOR_ENTRYFIELD            COLOR_WINDOW
-    #define COLOR_DIALOGBACKGROUND      COLOR_WINDOW
-    #define SWP_MOVE                    0
-    #define SWP_SIZE                    0
-    #define SWP_ZORDER                  0
-    #define DT_TEXTATTRS                0
-    #define CMDSRC_MENU                 0
-    #define CS_MOVENOTIFY               0       // no Windows Equivalent
-    #define MLM_SETSEL                  EM_SETSEL
-    #define MLM_GETSEL                  EM_GETSEL
-#else                           // PM Side
+#if defined( __OS2_PM__ ) || defined( __OS2__ )
     #ifndef NULLHANDLE
     #define NULLHANDLE                  (LHANDLE) 0
     #endif
@@ -260,10 +241,10 @@
     #define HELP_CONTEXT                0x0001
     #define HELP_QUIT                   0x0002
     #define HELP_INDEX                  0x0003
-    #define HELP_CONTENTS               0x0003
+    #define HELP_CONTENTS               0x0006
     #define HELP_HELPONHELP             0x0004
     #define HELP_SETINDEX               0x0005
-    #define HELP_SETCONTENTS            0x0005
+    #define HELP_SETCONTENTS            0x0007
     #define HELP_CONTEXTPOPUP           0x0008
     #define HELP_FORCEFILE              0x0009
     #define HELP_KEY                    0x0101
@@ -489,6 +470,8 @@
     #define WM_INITDIALOG               WM_INITDLG
     #define LOGPIXELSX                  CAPS_HORIZONTAL_RESOLUTION
     #define LOGPIXELSY                  CAPS_VERTICAL_RESOLUTION
+    #define WPI_LOGPIXELSX_FONT         CAPS_HORIZONTAL_FONT_RES
+    #define WPI_LOGPIXELSY_FONT         CAPS_VERTICAL_FONT_RES
     #define HORZRES                     CAPS_WIDTH
     #define VERTRES                     CAPS_HEIGHT
     #define NUMCOLORS                   CAPS_COLORS
@@ -636,12 +619,16 @@
     #define DIB_RGB_COLORS              0
 
     #define MLM_GETSEL                  MLM_QUERYSEL
+    #define EM_LIMITTEXT                EM_SETTEXTLIMIT
     #define EM_GETSEL                   EM_QUERYSEL
     #define CB_SETEDITSEL               EM_SETSEL
     #define CB_GETEDITSEL               EM_QUERYSEL
 
     /* map modes */
     #define MM_TEXT                     0       // not used in OS/2
+
+    /* text out modes */
+    #define WPI_CLIPPED                 CHS_CLIP
 
 typedef struct {
     DWORD       lStructSize;    /* */
@@ -705,7 +692,8 @@ typedef enum {
     WPI_BRUSH_OBJ       = 3,
     WPI_NULLBRUSH_OBJ   = 4,
     WPI_BITMAP_OBJ      = 5,
-    WPI_PATBRUSH_OBJ    = 6
+    WPI_PATBRUSH_OBJ    = 6,
+    WPI_HLWBRUSH_OBJ    = 7,
 } WPI_OBJECTTYPE;
 
 typedef struct {
@@ -734,10 +722,53 @@ typedef WPI_HANDLE      WPI_HBRUSH;
 typedef WPI_HANDLE      WPI_HPEN;
 typedef WPI_HANDLE      WPI_HBITMAP;
 
-#endif
+/* This is used in OS/2 much like a Windows LOGFONT. Use it only
+   with the '_wpi_f_*' functions */
+typedef struct {
+    BOOL                retrieved;      // TRUE: struct set by get_f_attrs
+    FATTRS              attr;
+    CHARBUNDLE          bundle;
+    LONG                pt_size;        // only set if retrieved = TRUE
+} wpi_f_font;
 
-#ifndef __OS2_PM__
+#else
+    #define LIT_END                     NULL
+    #define LIT_SORTASCENDING           NULL
+    #define LIT_SORTDESCENDING          NULL
+    #define LIT_NONE                    -1
+    #define LIT_FIRST                   NULL
+    #define LIT_SELECT                  NULL
+    #define LIT_UNSELECT                NULL
+    #define HINI                        short
+    #define MRESULT                     LONG
+    #define WM_DLGCOMMAND               WM_COMMAND
+    #define KEY_ASYNC_DOWN              0x8000
+    #define KEY_ASYNC_PRESSED           0x0001
+    #define WPI_VERT_MULT               1
+    #define ULONG                       unsigned long
+    #define NULLHANDLE                  NULL
+    #define HFILE                       int
+    #define HFILE_FORMAT                int
+    #define HMQ                         HANDLE
+    #define DLGID_OK                    IDOK
+    #define DLGID_CANCEL                IDCANCEL
+    #define COLOR_ENTRYFIELD            COLOR_WINDOW
+    #define COLOR_DIALOGBACKGROUND      COLOR_WINDOW
+    #define SWP_MOVE                    0
+    #define SWP_SIZE                    0
+    #define SWP_ZORDER                  0
+    #define DT_TEXTATTRS                0
+    #define CMDSRC_MENU                 0
+    #define CS_MOVENOTIFY               0       // no Windows Equivalent
+    #define MLM_SETSEL                  EM_SETSEL
+    #define MLM_GETSEL                  EM_GETSEL
+
+    /* text out modes */
+    #define WPI_CLIPPED                 ETO_CLIPPED
+
     #define MPFROMSHORT( s1 )           s1
+    #define WPI_LOGPIXELSX_FONT         LOGPIXELSX
+    #define WPI_LOGPIXELSY_FONT         LOGPIXELSY
 #endif
 
 #pragma pack()

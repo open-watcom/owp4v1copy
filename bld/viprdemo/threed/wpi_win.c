@@ -111,7 +111,7 @@ BOOL _wpi_getmenustate( HMENU hmenu, unsigned id, WPI_MENUSTATE *state,
         return( FALSE );
     }
     *state = GetMenuState( hmenu, id, (by_position ? MF_BYPOSITION : MF_BYCOMMAND) );
-    return( *state != -1 );
+    return( *state != (unsigned short)-1 );
 }
 
 void _wpi_getmenuflagsfromstate( WPI_MENUSTATE *state, unsigned *menu_flags,
@@ -345,15 +345,15 @@ void _wpi_suspendthread( UINT thread_id, WPI_QMSG *msg )
     }
 } /* _wpi_suspendthread */
 
-void _wpi_setmaxtracksize( WPI_MINMAXINFO *info, int width, int height )
-/**********************************************************************/
+void _wpi_setmaxtracksize( WPI_MINMAXINFO _W386FAR *info, int width, int height )
+/*******************************************************************************/
 {
     info->ptMaxSize.x = width;
     info->ptMaxSize.y = height;
 } /* _wpi_setmaxtracksize */
 
-void _wpi_setmintracksize( WPI_MINMAXINFO *info, int width, int height )
-/**********************************************************************/
+void _wpi_setmintracksize( WPI_MINMAXINFO _W386FAR *info, int width, int height )
+/*******************************************************************************/
 {
     info->ptMinTrackSize.x = width;
     info->ptMinTrackSize.y = height;

@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #define INCL_PM
 #define INCL_DOSPROCESS
@@ -46,10 +47,20 @@
 #define INCL_DOSSEMAPHORES
 #define INCL_DOSMISC
 #define INCL_DOSDEVICES
+#define INCL_DOSNLS
 #include <os2.h>
 #include "wpi.h"
 
 #define PATBRUSHID 200   /* This is the constant id for pattern brushes */
+static char sys_font_facename[] = "System Proportional";
+static BOOL GotSysFont = FALSE;
+static FATTRS SysFont;
+#define NUM_SYS_FONTS 5
+#define IDEAL_SYSFONT_HEIGHT 10
+static int SysFontHeight = 0;
+static int SysFontWidth = 0;
+
+#define PI 3.14159265
 
         /*---------------------------------------------------------
          * The following functions are static.
@@ -109,7 +120,7 @@ static unsigned _wpi_getmenuitemidfrompos( HMENU hmenu, unsigned pos )
     MRESULT     result;
 
     result = WinSendMsg( hmenu, MM_ITEMIDFROMPOSITION, (WPI_PARAM1)pos, NULL );
-    if( result != MIT_ERROR ) {
+    if( result != (MRESULT)MIT_ERROR ) {
         return( (unsigned)result );
     }
     return( -1 );
@@ -246,6 +257,18 @@ void GetClientRect( HWND hwnd, WPI_RECT *prect )
         /*---------------------------------------------------------
          * The following functions have the WPI naming convention.
          *---------------------------------------------------------*/
+
+BOOL _wpi_showwindow( HWND hwnd, int state )
+/******************************************/
+{
+    BOOL                ret = TRUE;
+    if( state == SW_HIDE ) {
+        ret = ret && WinShowWindow( hwnd, FALSE );
+    } else {
+        ret = ret && WinShowWindow( hwnd, TRUE );
+    }
+    return( ret && WinSetWindowPos( hwnd, HWND_TOP, 0, 0, 0, 0, state ) );
+}
 
 HINI _wpi_openinifile( WPI_INST inst, char *name )
 /************************************************/
@@ -448,7 +471,9 @@ int _wpi_dialogbox( HWND parent, WPI_PROC proc, WPI_INST inst, int res_id,
 
     new_dlg = WinLoadDlg( HWND_DESKTOP, parent, proc, inst.mod_handle,
                                             (ULONG)res_id, (PVOID)data );
-//    WinSetFocus( HWND_DESKTOP, new_dlg );
+    if( new_dlg == (HWND)NULL ) {
+        return( -1 );
+    }
     ret = WinProcessDlg( new_dlg );
     WinDestroyWindow( new_dlg );
     return( ret );
@@ -699,12 +724,6 @@ void _wpi_pie( WPI_PRES pres, int xx1, int yy1, int xx2, int yy2,
     ARCPARAMS           arcp;
     FIXED               start, end;
 
-    arcp.lP = 1;
-    arcp.lQ = 1;
-    arcp.lR = 0;
-    arcp.lS = 0;
-    GpiSetArcParams( pres, &arcp );
-
     cen.x = xx1 + ( xx2 - xx1 ) / 2;
     cen.y = yy1 + ( yy2 - yy1 ) / 2;
 
@@ -730,11 +749,17 @@ void _wpi_pie( WPI_PRES pres, int xx1, int yy1, int xx2, int yy2,
     }
 #endif
 
+    arcp.lP = (xx2 - xx1) / 2;
+    arcp.lQ = (yy1 - yy2) / 2;
+    arcp.lR = 0;
+    arcp.lS = 0;
+    GpiSetArcParams( pres, &arcp );
+
     GpiSetCurrentPosition( pres, &cen );
 
     GpiBeginArea( pres, BA_BOUNDARY | BA_ALTERNATE );
 
-    GpiPartialArc( pres, &cen, MAKEFIXED( (xx2 - xx1) / 2, 0 ), start, end );
+    GpiPartialArc( pres, &cen, MAKEFIXED( 1, 0 ), start, end );
 
     GpiEndArea( pres );
 } /* _wpi_pie */
@@ -808,9 +833,11 @@ WPI_HANDLE _wpi_selectbitmap( WPI_PRES pres, WPI_HANDLE bitmap )
 
     obj = (WPI_OBJECT *)bitmap;
 
-    old_obj = _wpi_malloc( sizeof(WPI_OBJECT) );
-    old_obj->type = WPI_BITMAP_OBJ;
-    old_obj->bitmap = GpiSetBitmap( pres, obj->bitmap );
+    if( obj != NULL ) {
+        old_obj = _wpi_malloc( sizeof(WPI_OBJECT) );
+        old_obj->type = WPI_BITMAP_OBJ;
+        old_obj->bitmap = GpiSetBitmap( pres, obj->bitmap );
+    }
 
     return( (WPI_HANDLE)old_obj );
 } /* _wpi_selectbitmap */
@@ -836,8 +863,12 @@ void _wpi_deletebitmap( WPI_HANDLE bmp )
 
     obj = (WPI_OBJECT *)bmp;
 
-    GpiDeleteBitmap( obj->bitmap );
-    _wpi_free( obj );
+    if( obj != NULL ) {
+        if( obj->bitmap != (HBITMAP)NULL ) {
+            GpiDeleteBitmap( obj->bitmap );
+        }
+        _wpi_free( obj );
+    }
 } /* _wpi_deletebitmap */
 
 #ifdef __FLAT__
@@ -959,7 +990,8 @@ BOOL _wpi_insertmenu( HMENU hmenu, unsigned pos, unsigned menu_flags,
         _wpi_free( new_text );
     }
 
-    return( ( result != MIT_MEMERROR ) && ( result != MIT_ERROR ) );
+    return( ( result != (MRESULT)MIT_MEMERROR ) &&
+            ( result != (MRESULT)MIT_ERROR ) );
 }
 
 BOOL _wpi_appendmenu( HMENU hmenu, unsigned menu_flags,
@@ -1167,22 +1199,139 @@ UINT _wpi_getmenuitemid( HMENU hmenu, unsigned pos )
 
 WPI_FONT _wpi_selectfont( WPI_PRES hps, WPI_FONT wfont )
 {
-    FATTRS      *oldwfont;
-    FONTMETRICS fm;
-    SIZEF       box;
+    FATTRS              *oldwfont;
+    FONTMETRICS         fm;
+    SIZEF               box;
+    WPI_FONT            tmp_wfont;
+    WPI_FONT            tmp_font;
+    int                 pix_per_inch;
+    int                 pix_per_point;
+    LONG                num_fonts;
+    LONG                ltemp = 0L;
+    PFONTMETRICS        pfm;
+    int                 i, diff;
+    int                 closest = -1;
+    int                 selected = -1;
+    int                 point_size_x, point_size_y;
+//    LONG              matched;
 
-    box.cx = MAKEFIXED( wfont->lAveCharWidth , 0 );
-    box.cy = MAKEFIXED( wfont->lMaxBaselineExt, 0 );
-    GpiSetCharBox( hps, &box );
     GpiQueryFontMetrics( hps, sizeof(FONTMETRICS), &fm );
     oldwfont = (FATTRS *) _wpi_malloc( sizeof(FATTRS) );
     if( oldwfont ) {
         _wpi_getfontattrs( &fm, oldwfont );
     }
+
+    _wpi_malloc2( tmp_wfont, 1 );
+    memcpy( tmp_wfont, wfont, sizeof( FATTRS ) );
     GpiSetCharSet( hps, 0L );
     GpiDeleteSetId( hps, 1L );
-    GpiCreateLogFont( hps, NULL, 1L, wfont );
+    if( (tmp_wfont)->szFacename == NULL
+                    || strlen( (tmp_wfont)->szFacename ) < 1 ) {
+
+        /* get default font */
+
+        tmp_font = _wpi_getsystemfont();
+        memcpy( tmp_wfont, tmp_font, sizeof( FATTRS ) );
+        tmp_wfont->lMaxBaselineExt = SysFontHeight;
+        tmp_wfont->lAveCharWidth = SysFontWidth;
+        if( GpiCreateLogFont( (WPI_PRES) hps, (PSTR8) NULL, 1L,
+                            (PFATTRS) tmp_wfont ) == FONT_MATCH ) {
+            goto found;
+        }
+        GpiDeleteSetId( hps, 1L );
+        goto notfound;
+    }
+
+    /* Conceed defeat, look for it manually */
+    num_fonts = GpiQueryFonts( (HPS) hps,
+                (ULONG) QF_PUBLIC | QF_PRIVATE,
+                (PSZ) (wfont)->szFacename,
+                (PLONG) &ltemp, (LONG) sizeof( FONTMETRICS ),
+                (PFONTMETRICS) NULL );
+    if( num_fonts != 0 && num_fonts != GPI_ALTERROR ) {
+        _wpi_malloc2( pfm, num_fonts );
+        ltemp = GpiQueryFonts( (HPS) hps,
+                    (ULONG) QF_PUBLIC | QF_PRIVATE,
+                    (PSZ) (wfont)->szFacename,
+                    (PLONG) &num_fonts,
+                    (LONG) sizeof( FONTMETRICS ),
+                    (PFONTMETRICS) pfm );
+        for( i = 0; i < num_fonts; i++ ) {
+            if( pfm[i].fsDefn & FM_DEFN_OUTLINE
+                        && pfm[i].fsDefn & FM_DEFN_GENERIC ) {
+#if 0
+                _wpi_getfontattrs( &pfm[i], tmp_wfont );
+                (tmp_wfont)->fsFontUse = FATTR_FONTUSE_OUTLINE;
+                (tmp_wfont)->fsType = 0;
+#endif
+                memset( tmp_wfont, 0, sizeof( FATTRS ) );
+                (tmp_wfont)->usRecordLength = sizeof( FATTRS );
+                (tmp_wfont)->fsFontUse = FATTR_FONTUSE_OUTLINE | FATTR_FONTUSE_NOMIX;
+                (tmp_wfont)->idRegistry = pfm[i].idRegistry;
+                strcpy( (tmp_wfont)->szFacename, pfm[i].szFacename );
+                (tmp_wfont)->lMatch = pfm[i].lMatch;
+                (tmp_wfont)->fsSelection = (wfont)->fsSelection;
+                (tmp_wfont)->usCodePage = pfm[i].usCodePage;
+                (tmp_wfont)->fsType = 0;
+                (tmp_wfont)->lMaxBaselineExt = pfm[i].lMaxBaselineExt;
+                (tmp_wfont)->lAveCharWidth = pfm[i].lAveCharWidth;
+                if( GpiCreateLogFont( (WPI_PRES) hps, (PSTR8) NULL, (LONG) 1L,
+                        (PFATTRS) tmp_wfont ) == FONT_MATCH ) {
+                    _wpi_free( pfm );
+                    goto found;
+                }
+                GpiDeleteSetId( hps, 1L );
+            }
+            if( closest != 0 ) {
+                diff = abs( pfm[i].sNominalPointSize / 10 - (wfont)->lMaxBaselineExt );
+                if( diff < closest || closest == -1 ) {
+                    closest = diff;
+                    selected = i;
+                }
+            }
+            if( pfm[i].lMatch == (wfont)->lMatch ) {
+                selected = i;
+                i = num_fonts;
+                break;
+            }
+        }
+        if( selected > 0 ) {
+            _wpi_getfontattrs( &pfm[selected], tmp_wfont );
+            (tmp_wfont)->fsType = 0;
+            (tmp_wfont)->fsSelection = (wfont)->fsSelection;
+            if( GpiCreateLogFont( (WPI_PRES) hps, (PSTR8) NULL, (LONG) 1L,
+                                    (PFATTRS) tmp_wfont ) == FONT_MATCH ) {
+                _wpi_free( pfm );
+                goto found;
+            }
+        }
+        _wpi_free( pfm );
+        goto notfound;
+    }
+
+ notfound:
+
+    GpiSetCharSet( hps, LCID_DEFAULT );
+    _wpi_free( tmp_wfont );
+    return( (WPI_FONT)oldwfont );
+ found:
+
+    _wpi_free( tmp_wfont );
+
     GpiSetCharSet( hps, 1L );
+
+    /* Critical for printing                            */
+    pix_per_inch = min( _wpi_devicecapableinch( hps, LOGPIXELSX ),
+                    _wpi_devicecapableinch( hps, LOGPIXELSY ) );
+    pix_per_point = ( pix_per_inch + 71 ) / 72;
+
+    /* Set the font size ( for outline/sizeable fonts ) */
+    point_size_x = ( wfont->lAveCharWidth ) * pix_per_point;
+    point_size_y = ( wfont->lMaxBaselineExt ) * pix_per_point;
+    box.cx = MAKEFIXED( point_size_x, 0 );
+    box.cy = MAKEFIXED( point_size_y, 0 );
+    GpiSetCharBox( hps, &box );
+
     return( (WPI_FONT)oldwfont );
 }
 
@@ -1201,7 +1350,11 @@ void _wpi_getfontattrs( FONTMETRICS *fm, WPI_FONT attr )
     attr->fsType = fm->fsType;
     attr->lMaxBaselineExt = fm->lMaxBaselineExt;
     attr->lAveCharWidth = fm->lAveCharWidth;
-    attr->fsFontUse = FATTR_FONTUSE_OUTLINE;
+    if( fm->fsDefn & FM_DEFN_OUTLINE ) {
+        attr->fsFontUse = FATTR_FONTUSE_OUTLINE;
+    } else {
+        attr->fsFontUse = 0;
+    }
 }
 
 BOOL _wpi_setscrollpos( HWND parent, int scroll, int pos, BOOL redraw )
@@ -1212,11 +1365,10 @@ BOOL _wpi_setscrollpos( HWND parent, int scroll, int pos, BOOL redraw )
 
     scroll_bar =  _wpi_getscrollhwnd( parent, scroll );
 
-    if( scroll_bar != NULLHANDLE ) {
-        return( (BOOL)(WinSendMsg(scroll_bar, SBM_SETPOS, MPFROMSHORT( pos ), 0)) );
+    if( scroll_bar == NULLHANDLE ) {
+        scroll_bar = parent;
     }
-
-    return( FALSE );
+    return( (BOOL)(WinSendMsg(scroll_bar, SBM_SETPOS, MPFROMSHORT( pos ), 0)) );
 }
 
 int _wpi_getscrollpos( HWND parent, int scroll )
@@ -1225,7 +1377,7 @@ int _wpi_getscrollpos( HWND parent, int scroll )
 
     scroll_bar =  _wpi_getscrollhwnd( parent, scroll );
     if( scroll_bar == NULLHANDLE ) {
-        return( 0 );
+        scroll_bar = parent;
     }
     return( (int) WinSendMsg( scroll_bar, SBM_QUERYPOS, 0, 0 ) );
 }
@@ -1239,7 +1391,7 @@ BOOL _wpi_setscrollrange( HWND parent, int scroll, int min, int max, BOOL redraw
 
     scroll_bar =  _wpi_getscrollhwnd( parent, scroll );
     if( scroll_bar == NULLHANDLE ) {
-        return( FALSE );
+        scroll_bar = parent;
     }
     pos = (SHORT) WinSendMsg( scroll_bar, SBM_QUERYPOS, 0, 0 );
     return( (BOOL) WinSendMsg( scroll_bar, SBM_SETSCROLLBAR, MPFROMSHORT(pos),
@@ -1253,9 +1405,7 @@ BOOL _wpi_getscrollrange( HWND parent, int scroll, int *min, int *max )
 
     scroll_bar =  _wpi_getscrollhwnd( parent, scroll );
     if( scroll_bar == NULLHANDLE ) {
-        *min = 0;
-        *max = 0;
-        return( FALSE );
+        scroll_bar = parent;
     }
     ret = WinSendMsg( scroll_bar, SBM_QUERYRANGE, 0, 0 );
     *min = SHORT1FROMMP( ret );
@@ -1270,11 +1420,6 @@ BOOL _wpi_drawtext( WPI_PRES hps, char *text, int len,
     return( TRUE );
 }
 
-static char sys_font_facename[] = "System Proportional";
-static BOOL GotSysFont = FALSE;
-static FATTRS SysFont;
-#define NUM_SYS_FONTS 5
-#define IDEAL_SYSFONT_HEIGHT 10
 #define GETSYSFONT_DIST(i) (abs( fonts[i].lEmHeight - 10 ) )
 WPI_FONT _wpi_getsystemfont( void )
 {
@@ -1293,6 +1438,7 @@ WPI_FONT _wpi_getsystemfont( void )
 
         GpiQueryFonts( pres, QF_PUBLIC, sys_font_facename, &num_fonts,
                        sizeof( FONTMETRICS ), fonts );
+        _wpi_releasepres( HWND_DESKTOP, pres );
 
         for( i = 0; i < num_fonts; ++i ) {
             if( fonts[i].lEmHeight == IDEAL_SYSFONT_HEIGHT ) {
@@ -1312,10 +1458,13 @@ WPI_FONT _wpi_getsystemfont( void )
         }
 
         if( selected_font != -1 ) {
-            memset( &SysFont, 0, sizeof(FATTRS) );
-            SysFont.usRecordLength = sizeof( FATTRS );
-            SysFont.lMatch = fonts[selected_font].lMatch;
-            strcpy( SysFont.szFacename, fonts[selected_font].szFacename );
+            _wpi_getfontattrs( &fonts[selected_font], &SysFont );
+            SysFont.fsType = 0;
+            SysFont.fsSelection = 0;
+            SysFontHeight = SysFont.lMaxBaselineExt;
+            SysFontWidth = SysFont.lAveCharWidth;
+            SysFont.lMaxBaselineExt = IDEAL_SYSFONT_HEIGHT;
+            SysFont.lAveCharWidth = IDEAL_SYSFONT_HEIGHT;
             GotSysFont = TRUE;
         } else {
             return( NULL );
@@ -1368,6 +1517,182 @@ void _wpi_enddialog( HWND hwnd, ULONG result )
     WinDismissDlg( hwnd, result );
 }
 
+HBRUSH _wpi_createnullbrush( void )
+/**********************************************************************/
+{
+    WPI_OBJECT  *null_brush;
+
+    null_brush = _wpi_malloc( sizeof(WPI_OBJECT) );
+    memset( null_brush, 0, sizeof(WPI_OBJECT) );
+    null_brush->type = WPI_NULLBRUSH_OBJ;
+    null_brush->brush.info.usSymbol = PATSYM_BLANK;
+    null_brush->brush.info.usMixMode = FM_LEAVEALONE;
+    return( (HBRUSH)null_brush );
+} /* _wpi_createnullbrush */
+
+HBRUSH _wpi_createpatternbrush( WPI_HANDLE bitmap )
+/**********************************************************************/
+{
+    WPI_OBJECT          *obj;
+    WPI_OBJECT          *brush;
+
+    obj = (WPI_OBJECT *)bitmap;
+    brush = _wpi_malloc( sizeof(WPI_OBJECT) );
+    brush->type = WPI_PATBRUSH_OBJ;
+    brush->brush.info.usMixMode = FM_OVERPAINT;
+    brush->brush.bitmap = obj->bitmap;
+    brush->brush.info.usBackMixMode = BM_OVERPAINT;
+    brush->brush.info.usSet = PATBRUSHID;
+
+    return( (HBRUSH)brush );
+} /* _wpi_createpatternbrush */
+
+
+HBRUSH _wpi_createsolidbrush( WPI_COLOUR colour )
+/**********************************************************************/
+{
+    WPI_OBJECT  *new_brush;
+
+    new_brush = _wpi_malloc( sizeof(WPI_OBJECT) );
+    memset( new_brush, 0, sizeof(WPI_OBJECT) );
+
+    new_brush->type = WPI_BRUSH_OBJ;
+    new_brush->brush.info.usSymbol = PATSYM_SOLID;
+    new_brush->brush.info.lColor = colour;
+    new_brush->brush.info.usMixMode = FM_OVERPAINT;
+
+    return( (HBRUSH)new_brush );
+} /* _wpi_createsolidbrush */
+
+void _wpi_getoldbrush( WPI_PRES pres, HBRUSH oldobj )
+/***************************************************/
+{
+    WPI_OBJECT  *oldbrush;
+
+    oldbrush = (WPI_OBJECT *)oldobj;
+    if( oldbrush->type == WPI_PATBRUSH_OBJ ) {
+        GpiSetAttrs( pres, PRIM_AREA, ABB_COLOR | ABB_SET,
+                                                0L, &(oldbrush->brush.info) );
+    } else {
+        GpiSetAttrs( pres, PRIM_AREA, ABB_COLOR | ABB_SYMBOL | ABB_MIX_MODE,
+                                                0L, &(oldbrush->brush.info) );
+    }
+    _wpi_free( oldbrush );
+} /* _wpi_getoldbrush */
+
+void _wpi_setlogbrushsolid( LOGBRUSH *brush )
+/*******************************************/
+{
+    brush->usMixMode = FM_OVERPAINT;
+    brush->usSymbol = PATSYM_SOLID;
+} /* _wpi_setlogbrushsolid */
+
+void _wpi_setlogbrushnull( LOGBRUSH *brush )
+/******************************************/
+{
+    brush->usMixMode = FM_LEAVEALONE;
+#if 0
+    // This should explicitly null ou the background
+    brush->usSymbol = PATSYM_SOLID;
+#else
+    // this probably leaves the background area alone
+    brush->usSymbol = PATSYM_BLANK;
+#endif
+} /* _wpi_setlogbrushnull */
+
+void _wpi_setlogbrushhollow( LOGBRUSH *brush )
+/********************************************/
+{
+    brush->usMixMode = FM_OVERPAINT;
+    brush->usSymbol = PATSYM_NOSHADE;
+} /* _wpi_setlogbrushhollow */
+
+HBRUSH _wpi_createbrush( LOGBRUSH *log_brush )
+/********************************************/
+
+{
+    WPI_OBJECT          *brush;
+
+    brush = (WPI_OBJECT *)_wpi_malloc( sizeof( WPI_OBJECT ) );
+    brush->brush.info = *log_brush;
+
+    if( log_brush->usMixMode == FM_LEAVEALONE ) {
+        brush->type = WPI_NULLBRUSH_OBJ;
+    } else {
+        switch( log_brush->usSymbol ) {
+
+        case PATSYM_NOSHADE:
+            /* OS/2 has no concept of a hollow brush like Windows. The best
+               equivalent is to use a pattern brush, drawn in the background
+               colour. I tried a solid brush, and it didn't work. See
+               'selectbrush/object' for the other changes nesc. djp */
+            brush->type = WPI_HLWBRUSH_OBJ;
+            brush->brush.info.usSymbol = BS_HATCHED;
+            break;
+
+        case PATSYM_BLANK:
+            brush->type = WPI_NULLBRUSH_OBJ;
+            break;
+
+        default:
+            /*
+            case PATSYM_HATCH:
+            case PATSYM_SOLID:
+            case PATSYM_DEFAULT:
+            */
+            brush->type = WPI_BRUSH_OBJ;
+            break;
+        }
+    }
+
+    return( (HBRUSH) brush );
+}
+
+HBRUSH _wpi_selectbrush( WPI_PRES pres, HBRUSH obj )
+/**************************************************/
+{
+    WPI_OBJECT  *brush;
+    WPI_OBJECT  *old_brush;
+
+    brush = (WPI_OBJECT *)obj;
+    old_brush = _wpi_malloc( sizeof(WPI_OBJECT) );
+    _OldBrush( pres, old_brush );
+
+    switch( brush->type ) {
+
+    case WPI_HLWBRUSH_OBJ:
+        _wpi_setlogbrushcolour( &(brush->brush.info), GetBkColor( pres ) );
+        /**** FALL THROUGH INTO WPI_BRUSH_OBJ ****/
+
+    case WPI_BRUSH_OBJ:         /* Solid brushes */
+        GpiSetAttrs( pres, PRIM_AREA, ABB_COLOR | ABB_SYMBOL,
+                                                0L, &(brush->brush.info) );
+        break;
+
+    case WPI_PATBRUSH_OBJ:      /* Pattern brushes */
+        GpiSetPatternSet( pres, 0 ); /* Reset the selected pattern to default */
+        /* set background and foreground colors */
+        brush->brush.info.lColor = GpiQueryColor( pres );
+        brush->brush.info.lBackColor = GpiQueryBackColor( pres );
+        /* give the bitmap an id */
+        GpiSetBitmapId(pres, brush->brush.bitmap, brush->brush.info.usSet );
+        GpiSetAttrs( pres, PRIM_AREA, ABB_COLOR | ABB_BACK_COLOR |
+                           ABB_MIX_MODE | ABB_BACK_MIX_MODE | ABB_SET,
+                                                  0L, &(brush->brush.info) );
+        break;
+
+    case WPI_NULLBRUSH_OBJ:     /* NULL brushes */
+        GpiSetAttrs( pres, PRIM_AREA, ABB_COLOR | ABB_MIX_MODE,
+                                                0L, &(brush->brush.info) );
+        break;
+    default :
+        return( ( HBRUSH ) NULL );
+    }
+
+    return( (HBRUSH)old_brush );
+} /* _wpi_selectbrush */
+
+
 WPI_HANDLE __wpi_selectobject( WPI_PRES pres, WPI_HANDLE v_obj, void *v_old_obj )
 /**********************************************************************/
 {
@@ -1392,6 +1717,10 @@ WPI_HANDLE __wpi_selectobject( WPI_PRES pres, WPI_HANDLE v_obj, void *v_old_obj 
                                 LBB_WIDTH | LBB_TYPE, &(old_obj->pen) );
         GpiSetAttrs( pres, PRIM_LINE, LBB_MIX_MODE, 0L, &(obj->pen) );
         break;
+
+    case WPI_HLWBRUSH_OBJ:
+        _wpi_setlogbrushcolour( &(obj->brush.info), GetBkColor( pres ) );
+        /**** FALL THROUGH INTO WPI_BRUSH_OBJ ****/
 
     case WPI_BRUSH_OBJ:
         _OldBrush( pres, old_obj );
@@ -1441,53 +1770,6 @@ void _wpi_deleteobject( WPI_HANDLE object )
     }
     _wpi_free( obj );
 } /* _wpi_deleteobject */
-
-HBRUSH _wpi_createnullbrush( void )
-/**********************************************************************/
-{
-    WPI_OBJECT  *null_brush;
-
-    null_brush = _wpi_malloc( sizeof(WPI_OBJECT) );
-    memset( null_brush, 0, sizeof(WPI_OBJECT) );
-    null_brush->type = WPI_NULLBRUSH_OBJ;
-    null_brush->brush.info.usSymbol = PATSYM_BLANK;
-    null_brush->brush.info.usMixMode = FM_LEAVEALONE;
-    return( (HBRUSH)null_brush );
-} /* _wpi_createnullbrush */
-
-HBRUSH _wpi_createpatternbrush( WPI_HANDLE bitmap )
-/**********************************************************************/
-{
-    WPI_OBJECT          *obj;
-    WPI_OBJECT          *brush;
-
-    obj = (WPI_OBJECT *)bitmap;
-    brush = _wpi_malloc( sizeof(WPI_OBJECT) );
-    brush->type = WPI_PATBRUSH_OBJ;
-    brush->brush.info.usMixMode = FM_OVERPAINT;
-    brush->brush.bitmap = obj->bitmap;
-    brush->brush.info.usBackMixMode = BM_OVERPAINT;
-    brush->brush.info.usSet = PATBRUSHID;
-
-    return( (HBRUSH)brush );
-} /* _wpi_createpatternbrush */
-
-
-HBRUSH _wpi_createsolidbrush( WPI_COLOUR colour )
-/**********************************************************************/
-{
-    WPI_OBJECT  *new_brush;
-
-    new_brush = _wpi_malloc( sizeof(WPI_OBJECT) );
-    memset( new_brush, 0, sizeof(WPI_OBJECT) );
-
-    new_brush->type = WPI_BRUSH_OBJ;
-    new_brush->brush.info.usSymbol = PATSYM_SOLID;
-    new_brush->brush.info.lColor = colour;
-    new_brush->brush.info.usMixMode = FM_OVERPAINT;
-
-    return( (HBRUSH)new_brush );
-} /* _wpi_createsolidbrush */
 
 HPEN _wpi_createnullpen( void )
 /**********************************************************************/
@@ -1560,61 +1842,6 @@ void _wpi_getoldpen( WPI_PRES pres, HPEN oldobj )
     _wpi_free( oldpen );
 } /* _wpi_getoldpen */
 
-HBRUSH _wpi_selectbrush( WPI_PRES pres, HBRUSH obj )
-/**************************************************/
-{
-    WPI_OBJECT  *brush;
-    WPI_OBJECT  *old_brush;
-
-    brush = (WPI_OBJECT *)obj;
-    old_brush = _wpi_malloc( sizeof(WPI_OBJECT) );
-    _OldBrush( pres, old_brush );
-
-    switch( brush->type ) {
-    case WPI_BRUSH_OBJ:         /* Solid brushes */
-        GpiSetAttrs( pres, PRIM_AREA, ABB_COLOR | ABB_SYMBOL,
-                                                0L, &(brush->brush.info) );
-        break;
-
-    case WPI_PATBRUSH_OBJ:      /* Pattern brushes */
-        GpiSetPatternSet( pres, 0 ); /* Reset the selected pattern to default */
-        /* set background and foreground colors */
-        brush->brush.info.lColor = GpiQueryColor( pres );
-        brush->brush.info.lBackColor = GpiQueryBackColor( pres );
-        /* give the bitmap an id */
-        GpiSetBitmapId(pres, brush->brush.bitmap, brush->brush.info.usSet );
-        GpiSetAttrs( pres, PRIM_AREA, ABB_COLOR | ABB_BACK_COLOR |
-                           ABB_MIX_MODE | ABB_BACK_MIX_MODE | ABB_SET,
-                                                  0L, &(brush->brush.info) );
-        break;
-
-    case WPI_NULLBRUSH_OBJ:     /* NULL brushes */
-        GpiSetAttrs( pres, PRIM_AREA, ABB_COLOR | ABB_MIX_MODE,
-                                                0L, &(brush->brush.info) );
-        break;
-    default :
-        return( ( HBRUSH ) NULL );
-    }
-
-    return( (HBRUSH)old_brush );
-} /* _wpi_selectbrush */
-
-void _wpi_getoldbrush( WPI_PRES pres, HBRUSH oldobj )
-/***************************************************/
-{
-    WPI_OBJECT  *oldbrush;
-
-    oldbrush = (WPI_OBJECT *)oldobj;
-    if( oldbrush->type == WPI_PATBRUSH_OBJ ) {
-        GpiSetAttrs( pres, PRIM_AREA, ABB_COLOR | ABB_SET,
-                                                0L, &(oldbrush->brush.info) );
-    } else {
-        GpiSetAttrs( pres, PRIM_AREA, ABB_COLOR | ABB_SYMBOL | ABB_MIX_MODE,
-                                                0L, &(oldbrush->brush.info) );
-    }
-    _wpi_free( oldbrush );
-} /* _wpi_getoldbrush */
-
 void _wpi_enumfonts( WPI_PRES pres, char *facename, WPI_ENUMFONTPROC proc,
                                                                 char *data )
 /************************************************************************/
@@ -1647,7 +1874,7 @@ void _wpi_enumfonts( WPI_PRES pres, char *facename, WPI_ENUMFONTPROC proc,
     }
 } /* _wpi_enumfonts */
 
-void _wpi_enumchildwindows( HWND hwnd, WPI_ENUMPROC proc, LONG data )
+void _wpi_enumchildwindows( HWND hwnd, WPI_ENUMPROC proc, LPARAM data )
 /************************************************************************/
 /* the hwnd sent to the enum proc is that of the frame window! use      */
 /* _wpi_getclient if you need the client window handle                  */
@@ -1661,7 +1888,7 @@ void _wpi_enumchildwindows( HWND hwnd, WPI_ENUMPROC proc, LONG data )
 
     hnext = WinGetNextWindow( henum );
     while( hnext && ret ) {
-        ret = proc( (HWND)hnext, (LONG)data );
+        ret = proc( hnext, (LONG)data );
         hnext = WinGetNextWindow( henum );
     }
     WinEndEnumWindows( henum );
@@ -1931,8 +2158,16 @@ void _wpi_setclipboarddata( WPI_INST inst, UINT format, WPI_HANDLE data,
         obj = (WPI_OBJECT *)data;
         WinSetClipbrdData( inst.hab, (ULONG)obj->bitmap, (ULONG)format,
                                                                 CFI_HANDLE );
-    } else {
-        WinSetClipbrdData( inst.hab, (ULONG)data, (ULONG)format, CFI_POINTER );
+    } else if( format == CF_TEXT ) {
+        PCHAR           tmp;
+
+        /* has to be allocated with DosAllocSharedMem */
+        if( DosAllocSharedMem( (PPVOID)&tmp, NULL, strlen( (char *)data ) + 100,
+                            PAG_WRITE | PAG_READ | OBJ_GIVEABLE
+                            | OBJ_GETTABLE | PAG_COMMIT ) == 0 ) {
+            strcpy( tmp, (char *)data );
+        }
+        WinSetClipbrdData( inst.hab, (ULONG)tmp, (ULONG)format, CFI_POINTER );
     }
 } /* _wpi_setclipboarddata */
 #endif
@@ -2025,8 +2260,10 @@ BOOL _wpi_trackpopupmenu( HMENU hmenu, ULONG flags, LONG x, LONG y,
     WPI_QMSG    msg;
     HAB         ab;
     BOOL        quit_loop;
+    BOOL        discard_msg;
     char        class_name[10];
     WPI_POINT   pt;
+    WPI_RECT    rect;
 
     pt.x = x;
     pt.y = y;
@@ -2046,9 +2283,12 @@ BOOL _wpi_trackpopupmenu( HMENU hmenu, ULONG flags, LONG x, LONG y,
         return( FALSE );
     }
 
+    WinSetCapture( HWND_DESKTOP, hmenu );
+
     quit_loop = FALSE;
 
     while( !quit_loop ) {
+        discard_msg = FALSE;
         if( !WinPeekMsg( ab, &msg, NULLHANDLE, 0, 0, PM_NOREMOVE ) ) {
             if( !WinWaitMsg( ab, 0, 0 ) ) {
                 return( FALSE );
@@ -2056,6 +2296,23 @@ BOOL _wpi_trackpopupmenu( HMENU hmenu, ULONG flags, LONG x, LONG y,
             WinPeekMsg( ab, &msg, NULLHANDLE, 0, 0, PM_NOREMOVE );
         }
         switch ( msg.msg ) {
+        case WM_MOUSEMOVE:
+            // a mousemove in the menu is ok
+            if( ( msg.hwnd == hmenu ) ) {
+                break;
+            }
+            // a mousemove in a window that is not the menu AND not a
+            // child of the desktop means we chuck the msg
+            if( _wpi_getparent( msg.hwnd ) != HWND_DESKTOP ) {
+                discard_msg = TRUE;
+            } else {
+                // lets make sure this child of the desktop is a menu!!
+                WinQueryClassName( msg.hwnd, 9, class_name );
+                if( memcmp( class_name, "#4", 2 ) ) {
+                    discard_msg = TRUE;
+                }
+            }
+            break;
         case WM_LBUTTONUP:
         case WM_RBUTTONUP:
         case WM_MBUTTONUP:
@@ -2063,9 +2320,13 @@ BOOL _wpi_trackpopupmenu( HMENU hmenu, ULONG flags, LONG x, LONG y,
         case WM_RBUTTONDOWN:
         case WM_MBUTTONDOWN:
             // clicking in the menu is ok
-            if( ( msg.hwnd == hmenu ) ) {
-                break;
-            }
+            // the following code is commented out 'cause the menu
+            // window will set mouse capture. As a result button down
+            // messages outside the window will still come here -- Wes
+            //if( ( msg.hwnd == hmenu ) ) {
+                //break;
+            //}
+
             // clicking in a window that is not the menu AND not a
             // child of the desktop means a non popup menu was clicked
             if( _wpi_getparent( msg.hwnd ) != HWND_DESKTOP ) {
@@ -2074,7 +2335,16 @@ BOOL _wpi_trackpopupmenu( HMENU hmenu, ULONG flags, LONG x, LONG y,
                 // lets make sure this child of the desktop is a menu!!
                 WinQueryClassName( msg.hwnd, 9, class_name );
                 if( memcmp( class_name, "#4", 2 ) ) {
+                    // the window is not a menu
                     quit_loop = TRUE;
+                } else {
+                    // the window is a menu
+                    pt.x = (LONG) SHORT1FROMMP( msg.mp1 );
+                    pt.y = (LONG) SHORT2FROMMP( msg.mp1 );
+                    WinQueryWindowRect( msg.hwnd, &rect );
+                    if( !WinPtInRect( ab, &rect, &pt ) ) {
+                        quit_loop = TRUE;
+                    }
                 }
             }
             break;
@@ -2106,9 +2376,13 @@ BOOL _wpi_trackpopupmenu( HMENU hmenu, ULONG flags, LONG x, LONG y,
             //WinShowWindow( hmenu, FALSE );
         } else {
             WinGetMsg( ab, &msg, NULLHANDLE, 0, 0 );
-            WinDispatchMsg( ab, &msg );
+            if( !discard_msg ) {
+                WinDispatchMsg( ab, &msg );
+            }
         }
     }
+
+    WinSetCapture( HWND_DESKTOP, (HWND)NULL );
 
     return( TRUE );
 }
@@ -2125,7 +2399,7 @@ WPI_HANDLE _wpi_getclipboarddata( WPI_INST inst, UINT format )
         obj = _wpi_malloc( sizeof(WPI_OBJECT) );
         obj->type = WPI_BITMAP_OBJ;
         obj->bitmap = WinQueryClipbrdData( inst.hab, (ULONG)format );
-    } else if( format >  CF_MMPMLAST ) {
+    } else {
         /* Your own defined format */
         return( WinQueryClipbrdData( inst.hab, (ULONG)format ) );
     }
@@ -2210,33 +2484,6 @@ LONG _wpi_getbitmapstruct( WPI_HANDLE bitmap, WPI_BITMAP *info )
     return( sizeof( WPI_BITMAP ) );
 } /* _wpi_getbitmapstruct */
 
-void _wpi_setlogbrushsolid( LOGBRUSH *brush )
-/*******************************************/
-{
-    brush->usMixMode = FM_OVERPAINT;
-    brush->usSymbol = PATSYM_SOLID;
-} /* _wpi_setlogbrushsolid */
-
-void _wpi_setlogbrushnull( LOGBRUSH *brush )
-/******************************************/
-{
-    brush->usMixMode = FM_LEAVEALONE;
-#if 0
-    // This should explicitly null ou the background
-    brush->usSymbol = PATSYM_SOLID;
-#else
-    // this probably leaves the background area alone
-    brush->usSymbol = PATSYM_BLANK;
-#endif
-} /* _wpi_setlogbrushnull */
-
-void _wpi_setlogbrushhollow( LOGBRUSH *brush )
-/********************************************/
-{
-    brush->usMixMode = FM_OVERPAINT;
-    brush->usSymbol = PATSYM_NOSHADE;
-} /* _wpi_setlogbrushhollow */
-
 void _wpi_setqmsgvalues( WPI_QMSG *qmsg, HWND hwnd, WPI_MSG message,
                         WPI_PARAM1 parm1, WPI_PARAM2 parm2, ULONG wpi_time,
                         WPI_POINT wpi_pt )
@@ -2277,39 +2524,6 @@ void _wpi_getqmsgvalues( WPI_QMSG qmsg, HWND *hwnd, WPI_MSG *message,
     }
 } /* _wpi_getqmsgvalues */
 
-
-HBRUSH _wpi_createbrush( LOGBRUSH *log_brush )
-/********************************************/
-
-{
-    WPI_OBJECT          *brush;
-
-    brush = (WPI_OBJECT *)_wpi_malloc( sizeof( WPI_OBJECT ) );
-    brush->brush.info = *log_brush;
-
-    if( log_brush->usMixMode == FM_LEAVEALONE ) {
-        brush->type = WPI_NULLBRUSH_OBJ;
-    } else {
-        switch( log_brush->usSymbol ) {
-
-        case PATSYM_NOSHADE:
-        case PATSYM_BLANK:
-            brush->type = WPI_NULLBRUSH_OBJ;
-            break;
-
-        default:
-            /*
-            case PATSYM_HATCH:
-            case PATSYM_SOLID:
-            case PATSYM_DEFAULT:
-            */
-            brush->type = WPI_BRUSH_OBJ;
-            break;
-        }
-    }
-
-    return( (HBRUSH) brush );
-}
 
 void _wpi_setrectvalues( WPI_RECT *rect, WPI_RECTDIM in_left, WPI_RECTDIM
                         in_top, WPI_RECTDIM in_right, WPI_RECTDIM in_bottom )
@@ -2444,8 +2658,10 @@ int _wpi_devicecapableinch( WPI_PRES pres, int what )
     dc = GpiQueryDevice( pres );
     DevQueryCaps( dc, (LONG)what, 1L, &result );
 
-    result *= 2.54;
-    result /= 100.;
+    if( what != WPI_LOGPIXELSY_FONT && what != WPI_LOGPIXELSX_FONT ) {
+        result *= 2.54;
+        result /= 100.;
+    }
 
     return( (int)result );
 } /* _wpi_devicecapableinch */
@@ -2518,9 +2734,17 @@ int _wpi_getdibits( WPI_PRES pres, WPI_HANDLE bitmap, UINT start, UINT count,
 /* According to windows, the bitmap should not be selected into the pres.   */
 /* so I assume it isn't here either.                                        */
 {
-    HBITMAP     oldbitmap;
-    WPI_OBJECT  *obj;
-    int         ret;
+    HBITMAP             oldbitmap;
+    HBITMAP             oldbitmap2;
+    WPI_OBJECT          *obj;
+    HDC                 hdc;
+    HPS                 memhps;
+    int                 ret;
+    HAB                 hab;
+    SIZEL               sizl = { 0L, 0L };
+    DEVOPENSTRUC        dop = { 0L, "DISPLAY", NULL, 0L,
+                                0L, 0L, 0L, 0L, 0L };
+    ERRORID             err;
 
     notused = notused;
 
@@ -2529,7 +2753,18 @@ int _wpi_getdibits( WPI_PRES pres, WPI_HANDLE bitmap, UINT start, UINT count,
         return( 0 );
     }
     oldbitmap = GpiSetBitmap( pres, obj->bitmap );
+    hab = WinQueryAnchorBlock( HWND_DESKTOP );
     ret = (int)GpiQueryBitmapBits(pres, (LONG)start, (LONG)count, buffer, info);
+    err = WinGetLastError( hab );
+    if( ret == -1 ) {
+        hdc = DevOpenDC( hab, OD_MEMORY, "*", 5L, (PDEVOPENDATA)&dop, NULLHANDLE );
+        memhps = GpiCreatePS( hab, hdc, &sizl, PU_PELS | GPIA_ASSOC );
+        oldbitmap2 = GpiSetBitmap( memhps, obj->bitmap );
+        ret = (int)GpiQueryBitmapBits( memhps, (LONG)start, (LONG)count, buffer, info);
+        GpiSetBitmap( memhps, oldbitmap2 );
+        GpiDestroyPS( memhps );
+        DevCloseDC( hdc );
+    }
     GpiSetBitmap( pres, oldbitmap );
 
     return( ret );
@@ -2598,18 +2833,20 @@ int _wpi_selectcliprgn( WPI_PRES pres, HRGN rgn )
 HFILE _wpi_fileopen( LPSTR filename, int format )
 /***********************************************/
 {
+#if 0   // this definition seems to interfere with C lib IO
     PM1632_FILESIZETYPE         action;
     HFILE                       hfile;
 
-    format = format;
+    if( !(format & (OPEN_SHARE_DENYREAD | OPEN_SHARE_DENYWRITE
+                        | OPEN_SHARE_DENYREADWRITE | OPEN_SHARE_DENYNONE)) ) {
+        format |= OPEN_SHARE_DENYNONE;
+    }
 
     if( DosOpen( (PSZ)filename, &hfile, &action, 0L, FILE_NORMAL,
                 OPEN_ACTION_FAIL_IF_NEW | OPEN_ACTION_OPEN_IF_EXISTS,
-                OPEN_SHARE_DENYWRITE | OPEN_FLAGS_NOINHERIT |
-                OPEN_ACCESS_READWRITE, 0L ) != 0 ) {
+                format, 0L ) != 0 ) {
         hfile = -1;
     }
-
 #ifdef __FLAT__
     DosDevIOCtl( hfile, 0x08, 0x00, 0, 0, 0, 0, 512L, 0 );
 #else
@@ -2617,20 +2854,50 @@ HFILE _wpi_fileopen( LPSTR filename, int format )
     // DosDevIOCtl( hfile, 0x08, 0x00, 0, 0, 0, 0, 512L, 0 );
 #endif
     return( hfile );
+#else
+    char                *fmt;
+    FILE                *f;
+
+    switch( format ) {
+
+    case OF_READ:
+        fmt = "r";
+        break;
+
+    case OF_WRITE:
+        fmt = "w";
+        break;
+
+    default:
+        return( -1 );
+    }
+    f = fopen( filename, fmt );
+    if( f == NULL ) {
+        return( -1 );
+    }
+
+    /* an HFILE is a long, so this next line works */
+    return( (HFILE) f );
+#endif
+
 } /* _wpi_fileopen */
 
 HFILE _wpi_filecreate( LPSTR filename, int format )
 /*************************************************/
 {
+
+#if 0   // this definition seems to interfere with C lib IO
     PM1632_FILESIZETYPE         action;
     HFILE                       hfile;
 
-    format = format;
+    if( !(format & (OPEN_SHARE_DENYREAD | OPEN_SHARE_DENYWRITE
+                        | OPEN_SHARE_DENYREADWRITE | OPEN_SHARE_DENYNONE)) ) {
+        format |= OPEN_SHARE_DENYNONE;
+    }
 
     if( DosOpen( (PSZ)filename, &hfile, &action, 0L, FILE_NORMAL,
-                    OPEN_ACTION_CREATE_IF_NEW | OPEN_ACTION_REPLACE_IF_EXISTS,
-                    OPEN_SHARE_DENYWRITE | OPEN_FLAGS_NOINHERIT |
-                    OPEN_ACCESS_READWRITE, 0L ) != 0 ) {
+                OPEN_ACTION_CREATE_IF_NEW | OPEN_ACTION_REPLACE_IF_EXISTS,
+                format, 0L ) != 0 ) {
         hfile = -1;
     }
 
@@ -2641,11 +2908,16 @@ HFILE _wpi_filecreate( LPSTR filename, int format )
     // DosDevIOCtl( hfile, 0x08, 0x00, 0, 0, 0, 0, 512L, 0 );
 #endif
     return( hfile );
+#else
+    return( _wpi_fileopen( filename, format ) );
+#endif
+
 } /* _wpi_filecreate */
 
 PM1632_FILESIZETYPE _wpi_fileclose( HFILE hfile )
 /***********************************************/
 {
+#if 0   // this definition seems to interfere with C lib IO
     PM1632_FILESIZETYPE     ret;
 
     ret = (PM1632_FILESIZETYPE)DosClose( hfile );
@@ -2656,12 +2928,16 @@ PM1632_FILESIZETYPE _wpi_fileclose( HFILE hfile )
     // DosDevIOCtl( hfile, 0x08, 0x00, 0, 0, 0, 0, 512L, 0 );
 #endif
     return( ret );
+#else
+    return( fclose( (void *)hfile ) );
+#endif
 } /* _wpi_fileclose */
 
 PM1632_FILESIZETYPE _wpi_filewrite( HFILE hfile, void *buf,
                                                     PM1632_FILESIZETYPE size )
 /****************************************************************************/
 {
+#if 0   // this definition seems to interfere with C lib IO
     PM1632_FILESIZETYPE len;
     PM1632_APIRET       ret;
 
@@ -2670,12 +2946,16 @@ PM1632_FILESIZETYPE _wpi_filewrite( HFILE hfile, void *buf,
         len = 0;
     }
     return( len );
+#else
+    return( fwrite( buf, 1, size, (void *)hfile ) );
+#endif
 } /* _wpi_filewrite */
 
 PM1632_FILESIZETYPE _wpi_fileread( HFILE hfile, void *buf,
                                                     PM1632_FILESIZETYPE size )
 /****************************************************************************/
 {
+#if 0   // this definition seems to interfere with C lib IO
     PM1632_FILESIZETYPE     len;
     PM1632_APIRET           ret;
 
@@ -2684,6 +2964,9 @@ PM1632_FILESIZETYPE _wpi_fileread( HFILE hfile, void *buf,
         len = 0;
     }
     return( len );
+#else
+    return( fread( buf, 1, size, (void *)hfile ) );
+#endif
 } /* _wpi_fileread */
 
 BOOL _wpi_textout( WPI_PRES pres, int left, int top, LPSTR text, ULONG len )
@@ -2699,6 +2982,21 @@ BOOL _wpi_textout( WPI_PRES pres, int left, int top, LPSTR text, ULONG len )
 
     return( success );
 } /* _wpi_textout */
+
+BOOL _wpi_exttextout( WPI_PRES pres, int left, int top, UINT options,
+                      WPI_RECT *rect, LPSTR text, ULONG len, LPINT spacing )
+/**************************************************************************/
+{
+    WPI_POINT   pt;
+    BOOL        success;
+
+    pt.x = (LONG)left;
+    pt.y = (LONG)top;
+
+    success = GpiCharStringPosAt( pres, &pt, rect, options, (LONG)len, text,
+                                                            (PLONG)spacing);
+    return( success );
+} /* _wpi_exttextout */
 
 int _wpi_intersectcliprect( WPI_PRES pres, WPI_RECTDIM left, WPI_RECTDIM top,
                                         WPI_RECTDIM right, WPI_RECTDIM bottom )
@@ -2866,7 +3164,7 @@ void _wpi_gettextextent( WPI_PRES pres, LPSTR string, int len_string,
     t_min = min( pts[TXTBOX_TOPLEFT].x, pts[TXTBOX_TOPRIGHT].x );
     t_min = min( t_min, pts[TXTBOX_BOTTOMLEFT].x );
     t_min = min( t_min, pts[TXTBOX_BOTTOMRIGHT].x );
-    *width = t_max - t_min;
+    *width = abs( t_max - t_min );
 
     t_max = max( pts[TXTBOX_TOPLEFT].y, pts[TXTBOX_TOPRIGHT].y );
     t_max = max( t_max, pts[TXTBOX_BOTTOMLEFT].y );
@@ -2875,7 +3173,8 @@ void _wpi_gettextextent( WPI_PRES pres, LPSTR string, int len_string,
     t_min = min( t_min, pts[TXTBOX_BOTTOMLEFT].y );
     t_min = min( t_min, pts[TXTBOX_BOTTOMRIGHT].y );
 
-    *height = t_max - t_min;
+    *height = abs( t_max - t_min );
+
 } /* _wpi_gettextextent */
 
 void _wpi_getinidirectory( WPI_INST inst, LPSTR dir_info, int size )
@@ -2923,11 +3222,27 @@ void _wpi_getrestoredrect( HWND hwnd, WPI_RECT *prect )
     SWP swp;
 
     WinQueryWindowPos( hwnd, &swp );
+    if( PM1632SWP_FLAG( swp ) & SWP_MINIMIZE ) {
+        // this is seriously hokey so if anyone figures out a better
+        // way to do this change this code - Wes
 
-    prect->xLeft   = swp.x;
-    prect->yBottom = swp.y;
-    prect->xRight  = swp.x + swp.cx;
-    prect->yTop    = swp.y + swp.cy;
+        // if the window is minimized lets restore it then minimize it
+        _wpi_setredraw( hwnd, FALSE );
+        _wpi_restorewindow( hwnd );
+        WinQueryWindowPos( hwnd, &swp );
+        prect->xLeft   = swp.x;
+        prect->yBottom = swp.y;
+        prect->xRight  = swp.x + swp.cx;
+        prect->yTop    = swp.y + swp.cy;
+        _wpi_minimizewindow( hwnd );
+        _wpi_setredraw( hwnd, TRUE );
+    } else {
+        prect->xLeft   = swp.x;
+        prect->yBottom = swp.y;
+        prect->xRight  = swp.x + swp.cx;
+        prect->yTop    = swp.y + swp.cy;
+    }
+
 } /* _wpi_getrestoredrect */
 
 void _wpi_setrgbquadvalues( WPI_RGBQUAD *rgb, BYTE red, BYTE green,
@@ -2951,7 +3266,7 @@ void _wpi_gettextface( WPI_PRES pres, int size, LPSTR buf )
     int                         min_size;
 
     GpiQueryFontMetrics( pres, sizeof( FONTMETRICS ), &metric );
-    min_size = min( size, strlen( metric.szFacename ) );
+    min_size = min( size, strlen( metric.szFacename ) + 1 );
     strncpy( buf, metric.szFacename, min_size );
 } /* _wpi_gettextface */
 
@@ -3129,4 +3444,472 @@ DWORD _wpi_getmessagepos( WPI_INST inst )
     ret = MAKEULONG( x, y );
     return( ret );
 } /* _wpi_getmessagepos */
+
+int _wpi_getprivateprofilestring( HINI hini, LPSTR app,
+                LPSTR key, LPSTR def, LPSTR buf, int size, LPSTR dummy )
+/**********************************************************************/
+{
+    ULONG                       len;
+
+    dummy = dummy;
+
+    len = PrfQueryProfileString( hini, app, key, def, buf, size );
+    if( len != 0 && len < size && buf[len-1] != '\0' ) {
+        buf[len] = '\0';
+    }
+
+    return( (int)len );
+}
+
+HMODULE _wpi_loadlibrary( WPI_INST inst, LPSTR name )
+/***************************************************/
+
+{
+#if 0
+    return( WinLoadLibrary( (inst).hab, name ) );
+#else
+    HMODULE                     module;
+
+    inst = inst;
+
+    DosLoadModule( 0, 0, name, &module );
+
+    return( module );
+#endif
+}
+
+void _wpi_freelibrary( WPI_INST inst, HMODULE module )
+/****************************************************/
+
+
+{
+#if 0
+    WinDeleteLibrary( (inst).hab, module );
+#else
+
+    inst = inst;
+    DosFreeModule( module );
+#endif
+}
+
+WPI_PROC _wpi_loadprocedure( WPI_INST inst, HMODULE module, LPSTR proc )
+/**********************************************************************/
+
+{
+#ifdef __386__
+    PFN         addr;
+
+    inst = inst;
+    DosQueryProcAddr( module, 0, proc, &addr );
+
+    return( (WPI_PROC)addr );
+#else
+    return( WinLoadProcedure( (inst).hab, module, proc ) );
+#endif
+}
+
+/***** _WPI_F_* Font Functions *****/
+/* These functions are a set of replacement WPI font functions
+   which should work. All the other functions are crap; this
+   is an attempt to do it right. DJP */
+
+#define FONT_SET_ID     1       // font index in the PRES which we use
+
+void _wpi_f_setfontescapement( WPI_F_FONT *font, LONG angle )
+/***********************************************************/
+/* In Windows, the escapement is in tenths of degrees */
+
+{
+    /* The '50's below are important. On a Laserwriter PS printer,
+       using 200 causes outline fonts to come out on an angle
+       (i.e. yet another OS/2 bug). */
+    font->bundle.ptlShear.x = 50 * sin( 2 * PI * angle / 3600 );
+    font->bundle.ptlShear.y = 50 * cos( 2 * PI * angle / 3600 );
+}
+
+void _wpi_f_setfontorientation( WPI_F_FONT *font, LONG angle )
+/************************************************************/
+/* In Windows, the orientation is in tenths of degrees */
+
+{
+    /* The '50's below are important. On a Laserwriter PS printer,
+       using 200 causes outline fonts to come out on an angle
+       (i.e. yet another OS/2 bug). */
+    font->bundle.ptlAngle.x = 50 * cos( 2 * PI * angle / 3600 );
+    font->bundle.ptlAngle.y = 50 * sin( 2 * PI * angle / 3600 );
+}
+
+void _wpi_f_setfontfacename( WPI_F_FONT *font, PSZ name )
+/*******************************************************/
+
+{
+    font->attr.szFacename[0] = '\0';
+    if( name != NULL ) {
+        if( strcmp( name, "MS Sans Serif" ) == 0 ) {
+            strcpy( font->attr.szFacename, "Helvetica" );
+        } else if( strcmp( name, "MS Serif" ) == 0 ) {
+            strcpy( font->attr.szFacename, "Times New Roman" );
+        } else if( strcmp( name, "Arial" ) == 0 ) {
+            strcpy( font->attr.szFacename, "Helvetica" );
+        } else if( strcmp( name, "Times" ) == 0 ) {
+            strcpy( font->attr.szFacename, "Times New Roman" );
+        } else {
+            strcpy( font->attr.szFacename, name );
+        }
+    }
+}
+
+HFONT _wpi_f_createfont( WPI_F_FONT *font )
+/*****************************************/
+
+{
+    /* In Windows, the CreateFont function takes a LOGFONT and builds
+       a HFONT. With our WPI_F_FONT structure in WPI OS/2, we don't
+       really need this. But, somebody may build a WPI_F_FONT,
+       call this function, then return the result. Hence,
+       we do have to allocates and copy it */
+
+    WPI_F_FONT                  *copy_font;
+
+    _wpi_malloc2( copy_font, 1 );
+
+    memcpy( copy_font, font, sizeof( *font ) );
+
+    return( (LONG)copy_font );
+}
+
+void _wpi_f_getoldfont( WPI_PRES pres, HFONT ofont )
+/**************************************************/
+
+{
+    WPI_F_FONT                  *font;
+
+    font = (void *) ofont;
+    GpiSetCharSet( pres, LCID_DEFAULT );
+    GpiDeleteSetId( pres, FONT_SET_ID );        // delete any leftover first
+    GpiCreateLogFont( pres, NULL, FONT_SET_ID, &font->attr );
+    GpiSetCharSet( pres, FONT_SET_ID );
+    if( font->attr.fsFontUse & FATTR_FONTUSE_OUTLINE ) {
+        /* set character attrs too */
+        GpiSetAttrs( pres, PRIM_CHAR, CBB_BOX | CBB_ANGLE | CBB_SHEAR,
+                                                        0, &font->bundle );
+    }
+
+    _wpi_free( font );
+}
+
+static WPI_F_FONT *get_f_attrs( WPI_PRES pres, WPI_F_FONT *font )
+/***************************************************************/
+/* get the current font information in the pres into the font structure */
+
+{
+    FONTMETRICS                 fm;
+    HDC                         dc;
+    LONG                        vert_res;
+
+    GpiQueryFontMetrics( pres, sizeof(FONTMETRICS), &fm );
+
+    font->attr.usRecordLength = sizeof( FATTRS );
+
+    font->attr.fsSelection = fm.fsSelection;
+    font->attr.lMatch = fm.lMatch;
+    strcpy( font->attr.szFacename, fm.szFacename );
+    font->attr.idRegistry = fm.idRegistry;
+    font->attr.lMaxBaselineExt = fm.lMaxBaselineExt;
+    font->attr.lAveCharWidth = fm.lAveCharWidth;
+    if( fm.fsDefn & FM_DEFN_OUTLINE ) {
+        font->attr.fsFontUse = FATTR_FONTUSE_OUTLINE;
+        GpiQueryCharShear( pres, &font->bundle.ptlShear );
+        GpiQueryCharAngle( pres, &font->bundle.ptlAngle );
+        GpiQueryCharBox( pres, &font->bundle.sizfxCell );
+
+        /* compute point size */
+        dc = GpiQueryDevice( pres );
+        DevQueryCaps( dc, CAPS_VERTICAL_FONT_RES, 1L, &vert_res );
+
+        font->pt_size = font->bundle.sizfxCell.cy * 72 / vert_res;
+    } else {
+        font->pt_size = fm.sNominalPointSize / 10;
+    }
+
+    font->retrieved = TRUE;
+
+    return( font );
+}
+
+static BOOL find_font( WPI_PRES pres, FATTRS *attr, WPI_F_FONT *font )
+/********************************************************************/
+
+{
+    HDC                         dc;
+    LONG                        horz_res;
+    LONG                        vert_res;
+    LONG                        num_fonts;
+    FONTMETRICS                 *fonts;
+    int                         i;
+    int                         best_outline;
+    int                         best_outline_diff;
+    SHORT                       size;
+    int                         size_diff;
+    SIZEF                       sizef;
+    BOOL                        found_match;
+
+    dc = GpiQueryDevice( pres );
+
+    DevQueryCaps( dc, CAPS_HORIZONTAL_FONT_RES, 1L, &horz_res );
+    DevQueryCaps( dc, CAPS_VERTICAL_FONT_RES,   1L, &vert_res );
+
+    memset( attr, 0, sizeof( *attr ) );
+    attr->usRecordLength = sizeof( FATTRS );
+    if( font->attr.szFacename[0] == '\0' ) {
+        /* default font requested. The books claim that we can just
+           set the facename to the null string, and it will select
+           the default font for the DC */
+
+        return( TRUE );
+    }
+
+    /* First, see if we can match the font with an image
+       font based on the definition resolution and the size */
+
+    num_fonts = 0;
+    num_fonts = GpiQueryFonts( pres, QF_PUBLIC, font->attr.szFacename,
+                                   &num_fonts, 0L, NULL);
+    if( num_fonts == 0 ) {
+        return( FALSE );
+    }
+
+    fonts = _wpi_malloc( num_fonts * sizeof( FONTMETRICS ) );
+    GpiQueryFonts( pres, QF_PUBLIC, font->attr.szFacename,
+                    &num_fonts, (LONG) sizeof( FONTMETRICS ), fonts );
+
+    found_match = FALSE;
+    best_outline = -1;
+    size = font->pt_size * 10;
+    for( i = 0; i < num_fonts; i++ ) {
+        size_diff = abs( size - fonts[i].sNominalPointSize );
+        if( fonts[i].fsDefn & FM_DEFN_OUTLINE ) {
+            /* outline font. Record it if it is a good fit */
+            if( best_outline == -1 ||
+                ( best_outline_diff < size_diff &&
+                ( font->attr.usCodePage == 0 ||
+                fonts[i].usCodePage == 0 ||
+                ( font->attr.usCodePage == fonts[i].usCodePage ) ) ) ) {
+                best_outline = i;
+                best_outline_diff = size_diff;
+            }
+        } else {
+            if( fonts[i].sXDeviceRes == (SHORT) horz_res &&
+                fonts[i].sYDeviceRes == (SHORT) vert_res &&
+                fonts[i].sNominalPointSize == (SHORT) size &&
+                ( font->attr.usCodePage == 0 ||
+                fonts[i].usCodePage == 0 ||
+                ( font->attr.usCodePage == fonts[i].usCodePage ) ) ) {
+                /* this is a good image font match. Select it */
+                break;
+            }
+        }
+    }
+
+    size = font->pt_size;
+    if( i == num_fonts ) {
+        if( best_outline != -1 ) {
+            /* use an outline font */
+            found_match = TRUE;
+            i = best_outline;
+            attr->fsFontUse |= FATTR_FONTUSE_OUTLINE;
+            attr->lMatch = 0;
+
+            /* the size is unusual for OS/2. The conversion to
+               logical units has to be by you, not the OS.
+               So this is what that does */
+            sizef.cx = MAKEFIXED( size * horz_res / 72, 0 );
+            sizef.cy = MAKEFIXED( size * vert_res / 72, 0 );
+            font->bundle.sizfxCell = sizef;
+            attr->lMaxBaselineExt = 0;
+            attr->lAveCharWidth = 0;
+        }
+    } else {
+        found_match = TRUE;
+        attr->fsFontUse &= ~FATTR_FONTUSE_OUTLINE;
+        attr->lMatch = fonts[i].lMatch;
+        attr->lMaxBaselineExt = fonts[i].lMaxBaselineExt;
+        attr->lAveCharWidth = fonts[i].lAveCharWidth;
+    }
+
+    if( found_match ) {
+        strcpy( attr->szFacename, fonts[i].szFacename );
+        attr->fsSelection = font->attr.fsSelection;
+        attr->idRegistry = fonts[i].idRegistry;
+        attr->usCodePage = fonts[i].usCodePage;
+        //attr->fsType ... // doesn't need to be set
+    }
+
+    _wpi_free( fonts );
+
+    return( found_match );
+}
+
+
+HFONT _wpi_f_selectfont( WPI_PRES pres, HFONT f )
+/***********************************************/
+/* this code mimics the behaviour of the OS/2 font palette program.
+   Hence, corresponding fonts in the palette program and
+   from this code will appear the same. */
+
+{
+    WPI_F_FONT                  *font;
+    FATTRS                      attr;
+    ULONG                       mask;
+    char                        old_face[FACESIZE];
+    char                        tmp_face[500];
+    WPI_F_FONT                  *old_font;
+    BOOL                        find_normal;
+    CHARBUNDLE                  bundle;
+
+    font = (void *)f;
+
+    _wpi_malloc2( old_font, 1 );
+    get_f_attrs( pres, old_font );
+
+    /* The OS/2 font palette will choose a non-synthesized bold/italic
+       font by title, if you ask for a 'bold' one */
+    find_normal = TRUE;
+    if( font->attr.fsSelection & FATTR_SEL_ITALIC ||
+                                font->attr.fsSelection & FATTR_SEL_BOLD ) {
+        strcpy( old_face, font->attr.szFacename );
+        strcpy( tmp_face, font->attr.szFacename );
+        if( font->attr.fsSelection & FATTR_SEL_BOLD ) {
+            strcat( tmp_face, " Bold" );
+        }
+        if( font->attr.fsSelection & FATTR_SEL_ITALIC ) {
+            strcat( tmp_face, " Italic" );
+        }
+        if( strlen( tmp_face ) < FACESIZE ) {
+            strcpy( font->attr.szFacename, tmp_face );
+            if( find_font( pres, &attr, font ) ) {
+                find_normal = FALSE;
+                attr.fsSelection &= ~FATTR_SEL_BOLD;
+                attr.fsSelection &= ~FATTR_SEL_ITALIC;
+            }
+            strcpy( font->attr.szFacename, old_face );
+        }
+    }
+    if( find_normal ) {
+        find_font( pres, &attr, font );
+    }
+
+    /* select the font in the PS */
+    GpiSetCharSet( pres, LCID_DEFAULT );
+    GpiDeleteSetId( pres, FONT_SET_ID );        // delete any leftover first
+    GpiCreateLogFont( pres, (PSTR8) NULL, FONT_SET_ID, &attr );
+    GpiSetCharSet( pres, FONT_SET_ID );
+
+    /* set the charbundle features */
+    if( attr.fsFontUse & FATTR_FONTUSE_OUTLINE ) {
+        mask = CBB_BOX;
+        if( font->bundle.ptlAngle.x != 0 || font->bundle.ptlAngle.y != 0 ) {
+            mask |= CBB_ANGLE;
+        }
+        if( font->bundle.ptlShear.x != 0 || font->bundle.ptlShear.y != 0 ) {
+            mask |= CBB_SHEAR;
+        }
+        GpiSetAttrs( pres, PRIM_CHAR, mask, 0, &font->bundle );
+    } else {
+        /* we stil must set the attrs for image fonts. AND, DON'T TRY
+           and set these to 'defaults'; the defaults are different for
+           different devices! */
+        bundle.ptlAngle.x = 1;
+        bundle.ptlAngle.y = 0;
+        bundle.ptlShear.x = 0;
+        bundle.ptlShear.y = 1;
+        GpiSetAttrs( pres, PRIM_CHAR,
+                        CBB_ANGLE | CBB_SHEAR | CBB_BOX, CBB_BOX, &bundle );
+    }
+
+    return( (HFONT) old_font );
+}
+
+void _wpi_f_getsystemfont( WPI_PRES in_pres, WPI_F_FONT *font )
+/*************************************************************/
+
+{
+    FATTRS                      attr;
+    WPI_F_FONT                  old_font;
+    WPI_PRES                    pres;
+
+    if( in_pres == NULL ) {
+        /* assume screen */
+        pres = _wpi_getpres( HWND_DESKTOP );
+    } else {
+        pres = in_pres;
+    }
+    /* select a default font into the presentation space */
+    memset( &attr, 0, sizeof( attr ) );
+    attr.usRecordLength = sizeof( FATTRS );
+
+    get_f_attrs( pres, &old_font );
+
+    GpiSetCharSet( pres, LCID_DEFAULT );
+    GpiDeleteSetId( pres, FONT_SET_ID );        // delete any leftover first
+    GpiCreateLogFont( pres, (PSTR8) NULL, FONT_SET_ID, &attr );
+    GpiSetCharSet( pres, FONT_SET_ID );
+
+    get_f_attrs( pres, font );
+
+    _wpi_f_deletefont( (WPI_F_FONT *)_wpi_f_selectfont( pres,
+                                                (HFONT)&old_font ) );
+
+    if( in_pres == NULL ) {
+        _wpi_releasepres( HWND_DESKTOP, pres );
+    }
+}
+
+void _wpi_f_default( WPI_F_FONT *font )
+/*************************************/
+/* this is here, rather than wpi_os2.h, so that people don't have
+   to recompile the world when we change WPI_F_FONT */
+
+{
+    memset( font, 0, sizeof( *font ) );
+}
+
+LONG _wpi_f_getfontsize( WPI_F_FONT *font )
+/*****************************************/
+
+{
+    return( font->pt_size );
+}
+
+/***** end of _WPI_F_* Font Functions *****/
+
+
+BOOL _wpi_is_dbcs( void )
+/***********************/
+
+{
+    COUNTRYCODE                 code;
+    UCHAR                       dbcs_env[12];
+
+    code.country = 0;
+    code.codepage = 0;
+    #ifdef __386__
+        DosQueryDBCSEnv( 12, &code, dbcs_env );
+    #else
+        DosGetDBCSEv( 12, &code, dbcs_env );
+    #endif
+
+    return( dbcs_env[0] | dbcs_env[1] );
+}
+
+void _wpi_fix_dbcs( HWND dlg )
+/****************************/
+
+{
+    /* stolen from David Brandow's code in VX-REXX. */
+    #define DBCS_FONT   "10.Mincho"
+
+    WinRemovePresParam( dlg, PP_FONTNAMESIZE );
+    WinSetPresParam( dlg, PP_FONTNAMESIZE, sizeof(DBCS_FONT), DBCS_FONT );
+}
 

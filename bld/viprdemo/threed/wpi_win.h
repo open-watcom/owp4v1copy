@@ -45,13 +45,19 @@
 
     #define WPI_MAKEPOINT(wp, lp, pt) MAKE_POINT( pt, lp );
 
+    #define _wpi_isrectempty( inst, prect ) \
+                      IsRectEmpty( prect )
+
     #define _wpi_intersectrect( inst, prdest, prsrc1, prsrc2 ) \
                                 IntersectRect( prdest, prsrc1, prsrc2 )
 
 extern void _wpi_setpoint( WPI_POINT *pt, int x, int y );
 
-    #define _wpi_moveto( pres, point ) \
-                            MoveToEx( pres, (point)->x, (point)->y, NULL )
+#ifdef __NT__
+    #define _wpi_moveto( pres, point ) MoveToEx( pres, (point)->x, (point)->y, NULL )
+#else
+    #define _wpi_moveto( pres, point ) MoveTo( pres, (point)->x, (point)->y )
+#endif
 
     #define _wpi_movetoex( pres, point, extra ) \
         MoveToEx( pres, (point)->x, (point)->y, extra )
@@ -90,8 +96,8 @@ extern void _wpi_getpaintrect( PAINTSTRUCT *ps, WPI_RECT *rect );
 
     #define _wpi_muldiv( a, b, c ) MulDiv( a, b, c )
 
-void _wpi_setmaxtracksize( WPI_MINMAXINFO *info, int width, int height );
-void _wpi_setmintracksize( WPI_MINMAXINFO *info, int width, int height );
+void _wpi_setmaxtracksize( WPI_MINMAXINFO _W386FAR *info, int width, int height );
+void _wpi_setmintracksize( WPI_MINMAXINFO _W386FAR *info, int width, int height );
 
     #define _wpi_setdoubleclicktime( rate ) SetDoubleClickTime( rate )
 
@@ -206,7 +212,9 @@ extern WPI_PRES _wpi_createcompatiblepres( WPI_PRES pres, WPI_INST inst, HDC *hd
 
     #define _wpi_loadaccelerators( inst, id ) LoadAccelerators( inst, id )
 
-    #define _wpi_getscreenpres() NULL
+    #define _wpi_getscreenpres() GetDC( GetDesktopWindow() )
+
+    #define _wpi_releasescreenpres( hps ) ReleaseDC( GetDesktopWindow(), hps )
 
     #define _wpi_loadbitmap( inst, id ) LoadBitmap( inst, id )
 
@@ -283,14 +291,14 @@ extern void _wpi_getbitmapdim( HBITMAP bmp, int *pwidth, int *pheight );
     #define _wpi_makeprocinstance( proc, inst ) MakeProcInstance( proc, inst )
 
     #define _wpi_makeenumprocinstance( proc, inst ) \
-                                    MakeProcInstance( (FARPROC)proc, inst )
+                                    (WPI_ENUMPROC)MakeProcInstance( (FARPROC)proc, inst )
 
     #define _wpi_makelineddaprocinstance( proc, inst ) \
-                                    MakeProcInstance( (FARPROC)proc, inst )
+                                    (WPI_LINEDDAPROC)MakeProcInstance( (FARPROC)proc, inst )
 
     #define _wpi_defdlgproc( hwnd, msg, mp1, mp2 ) FALSE
 
-    #define _wpi_freeprocinstance( proc ) FreeProcInstance( proc )
+    #define _wpi_freeprocinstance( proc ) FreeProcInstance( (FARPROC)proc )
 
     #define _wpi_getclassproc( class ) (class)->lpfnWndProc
 
@@ -317,7 +325,7 @@ extern void _wpi_getbitmapdim( HBITMAP bmp, int *pwidth, int *pheight );
     #define _wpi_enddialog( hwnd, result ) EndDialog( hwnd, result )
 
     #define _wpi_dialogbox( parent, proc, inst, res_id, data ) \
-        DialogBoxParam( inst, res_id, parent, proc, (DWORD)(LPSTR) (data) )
+        DialogBoxParam( inst, res_id, parent, (DLGPROC)proc, (DWORD)(LPARAM)(data) )
 
     #define _wpi_setstretchbltmode( mem, mode ) SetStretchBltMode( mem, mode )
 
@@ -388,9 +396,13 @@ extern void _wpi_getintwrectvalues( WPI_RECT rect, int *left, int *top,
 
     #define _wpi_getparent( hwnd ) GetParent( hwnd )
 
+    #define _wpi_setparent( win, parent ) SetParent( win, parent )
+
     #define _wpi_ischild( hwnd1, hwnd2 ) IsChild( hwnd1, hwnd2 )
 
     #define _wpi_getowner( hwnd ) GetWindow( hwnd, GW_OWNER )
+
+    #define _wpi_setowner( win, parent ) SetParent( win, parent )
 
     #define _wpi_getvk( parm1, parm2 ) (parm1)
 
@@ -427,18 +439,17 @@ extern void _wpi_getintwrectvalues( WPI_RECT rect, int *left, int *top,
 
     #define _wpi_ismessage( msg, id ) ( (msg).message == (id) )
 
-    #define _wpi_isntdblclk( parm1, parm2 ) (HIWORD( parm2 ) != LBN_DBLCLK)
+    #define _wpi_isntdblclk( parm1, parm2 ) \
+                 (GET_WM_COMMAND_CMD( parm1, parm2 ) != LBN_DBLCLK)
 
     #define _wpi_createbrush( log_brush ) CreateBrushIndirect( log_brush )
 
     #define _wpi_deletebrush( brush )  DeleteObject( brush )
 
 #ifdef __NT__
-    #define _wpi_setbrushorigin( pres, pt ) \
-                                SetBrushOrgEx( pres, (pt)->x, (pt)->y, NULL )
+    #define _wpi_setbrushorigin( pres, pt ) SetBrushOrgEx( pres, (pt)->x, (pt)->y, NULL )
 #else
-    #define _wpi_setbrushorigin( pres, pt ) \
-                                SetBrushOrg( pres, (pt)->x, (pt)->y )
+    #define _wpi_setbrushorigin( pres, pt ) SetBrushOrg( pres, (pt)->x, (pt)->y )
 #endif
 
     #define _wpi_setlogbrushsolid( plogbrush ) (plogbrush)->lbStyle = BS_SOLID
@@ -501,6 +512,90 @@ extern void _wpi_suspendthread( UINT thread_id, WPI_QMSG *msg );
     #define _wpi_textout( pres, left, top, text, len ) \
                                         TextOut( pres, left, top, text, len )
 
+    #define _wpi_exttextout( hdc, x, y, opt, pr, str, len, spacing ) \
+                           ExtTextOut( hdc, x, y, opt, pr, str, len, spacing )
+
+    /***** _WPI_F_* Font Functions *****/
+    /* These functions are a set of replacement WPI font functions
+       which should work. All the other functions are crap; this
+       is an attempt to do it right. DJP */
+
+    #define _wpi_f_setfontitalic( font, style ) \
+                        (font)->lfItalic = (style) ? -1 : 0
+
+    #define _wpi_f_setfontunderline( font, style ) \
+                        (font)->lfUnderline = (style) ? -1 : 0
+
+    #define _wpi_f_setfontstrikeout( font, style ) \
+                        (font)->lfStrikeOut = (style) ? -1 : 0
+
+    #define _wpi_f_setfontbold( font, style ) \
+                        (font)->lfWeight = (style) ? 700 : 400
+
+    #define _wpi_f_getfontitalic( font ) \
+                        ( (font)->lfItalic )
+
+    #define _wpi_f_getfontunderline( font ) \
+                        ( (font)->lfUnderline )
+
+
+    #define _wpi_f_getfontstrikeout( font ) \
+                        ( (font)->lfStrikeOut )
+
+    #define _wpi_f_getfontbold( font ) \
+                        ( ( (font)->lfWeight == 700 ) ? 1 : 0 )
+
+    #define _wpi_f_setfontsize( font, point_size, pix_size ) \
+        (font)->lfHeight = pix_size
+
+    #define _wpi_f_getfontsize( font ) \
+                        ( (font)->lfHeight )
+
+    #define _wpi_f_default( font ) \
+                        ( memset( font, 0, sizeof( *font ) ) )
+
+    #define _wpi_f_setfontescapement( font, escapement ) \
+                        (font)->lfEscapement = (escapement)
+
+    #define _wpi_f_setfontorientation( font, orientation ) \
+                        (font)->lfOrientation = (orientation)
+
+    #define _wpi_f_setfontcharset( font, set ) \
+                        (font)->lfCharSet = (set)
+
+    #define _wpi_f_getfontcharset( font ) \
+                        (font)->lfCharSet
+
+    #define _wpi_f_setfontfacename( font, name ) \
+                strcpy( (font)->lfFaceName, ( (name) != NULL ) ? (name) : "" )
+
+    #define _wpi_f_getfontfacename( font ) \
+                ( (font)->lfFaceName )
+
+    #define _wpi_f_setfontprecision( font, out, clip ) \
+        (font)->lfOutPrecision = (out); \
+        (font)->lfClipPrecision = (clip);
+
+    #define _wpi_f_setfontquality( font, quality ) \
+        (font)->lfQuality = (quality);
+
+    #define _wpi_f_setfontpitch( font, pitch ) \
+        (font)->lfPitchAndFamily = (pitch);
+
+    #define _wpi_f_deletefont( hfont ) \
+                         DeleteObject( hfont )
+
+    #define _wpi_f_selectfont( hdc, font ) SelectObject( hdc, font )
+
+    #define _wpi_f_getoldfont( hdc, oldfont ) SelectObject( hdc, oldfont )
+
+    #define _wpi_f_getsystemfont( hdc, font ) \
+        GetObject( GetStockObject( SYSTEM_FONT ), sizeof( *(font) ), (font) )
+
+    #define _wpi_f_createfont( font ) \
+                CreateFontIndirect( font )
+
+    /**** end of _WPI_F_* Font Functions *****/
     #define _wpi_getdeffm( fm ) (fm) = (fm)
 
     #define _wpi_getfontfacename( font ) ((font).lfFaceName)
@@ -613,7 +708,7 @@ extern int _wpi_getmetricpointsize( WPI_PRES pres, WPI_TEXTMETRIC *tm,
         EnumFonts( pres, (LPSTR)facename, (FARPROC)(proc), (LPSTR)(data) )
 
     #define _wpi_enumchildwindows( hwnd, proc, lp ) \
-                EnumChildWindows( (HWND)(hwnd), (FARPROC)(proc), (LONG)(lp) )
+                EnumChildWindows( (HWND)(hwnd), (WNDENUMPROC)(proc), (LPARAM)(lp) )
 
     #define _wpi_getnextwindow( hwnd ) GetNextWindow( hwnd, GW_HWNDNEXT )
 
@@ -621,11 +716,13 @@ extern int _wpi_getmetricpointsize( WPI_PRES pres, WPI_TEXTMETRIC *tm,
 
     #define _wpi_getbackcolour( pres ) GetBkColor( pres )
 
-    #define _wpi_switchbuttoncode( parm1, parm2 ) HIWORD( parm2 )
+    #define _wpi_switchbuttoncode( parm1, parm2 ) \
+                                         GET_WM_COMMAND_CMD( parm1, parm2 )
 
     #define _wpi_getid( parm1 ) LOWORD( parm1 )
 
-    #define _wpi_isbuttoncode( parm1, parm2, code ) ( HIWORD( parm2 ) == (code))
+    #define _wpi_isbuttoncode( parm1, parm2, code ) \
+                         ( GET_WM_COMMAND_CMD( parm1, parm2 ) == (code))
 
     #define _wpi_isbuttonchecked( hwnd, id ) IsDlgButtonChecked( hwnd, id )
 
@@ -709,12 +806,12 @@ extern void _wpi_setbmphdrvalues( WPI_BITMAPINFOHEADER *bmih, ULONG size,
                         (GetMenuState(hmenu, id, MF_BYCOMMAND) & MF_CHECKED)
 
     #define _wpi_isitemenabled(hmenu, id) \
-                        (!(GetMenuState(hmenu, id, MF_BYCOMMAND) & (MF_GRAYED|MF_DISABLED)))
+            (!(GetMenuState(hmenu, id, MF_BYCOMMAND) & (MF_GRAYED|MF_DISABLED)))
 
     #define _wpi_getcurrentsysmenu(hwnd) GetSystemMenu(hwnd, FALSE)
 
     #define _wpi_ismenucommand( parm1, parm2 ) \
-                                    ( GET_WM_COMMAND_HWND( parm1, parm2 ) == 0 )
+                                ( GET_WM_COMMAND_HWND( parm1, parm2 ) == 0 )
 
     #define _wpi_deletesysmenupos( hmenu, pos ) \
                                         DeleteMenu(hmenu, pos, MF_BYPOSITION)
@@ -791,7 +888,7 @@ extern void _wpi_gettextextent( WPI_PRES pres, LPSTR string, int len_string,
     #define _wpi_setwindowpos(hwnd, z, x, y, cx, cy, flags) \
                                     SetWindowPos(hwnd, z, x, y, cx, cy, flags)
 
-    #define _wpi_iswindow( inst, hwnd ) IsWindow( hwnd )
+    #define _wpi_iswindow( inst, hwnd ) ( IsWindow( hwnd ) != 0 ) // NT returns 0,1 - Win95 returns 0,0xff348900 Ouch!
 
     #define _wpi_iswindowshowing( hwnd ) TRUE
 
@@ -832,14 +929,13 @@ extern void _wpi_gettextextent( WPI_PRES pres, LPSTR string, int len_string,
 
     #define _wpi_unrealizeobject( hobj ) UnrealizeObject( hobj )
 
-#ifndef __NT__
-    #define _wpi_getlocalhdl( mem ) LocalHandle( LOWORD( mem ) )
-    #define _wpi_getglobalhdl( mem ) GlobalHandle( HIWORD( mem ) )
-#else
+#ifdef __NT__
     #define _wpi_getlocalhdl( mem ) LocalHandle( mem )
     #define _wpi_getglobalhdl( mem ) GlobalHandle( mem )
+#else
+    #define _wpi_getlocalhdl( mem ) LocalHandle( (void NEAR*)LOWORD( mem ) )
+    #define _wpi_getglobalhdl( mem ) (HGLOBAL)LOWORD(GlobalHandle( (UINT)HIWORD( mem ) ))
 #endif
-
 
     #define _wpi_getmenu( hframe ) GetMenu( hframe )
 
@@ -869,7 +965,7 @@ extern void _wpi_gettextextent( WPI_PRES pres, LPSTR string, int len_string,
 
     #define _wpi_destroycursor( hcur ) DestroyCursor( hcur )
 
-    #define _wpi_setcursor( new ) SetCursor( new )
+    #define _wpi_setcursor( newcursor ) SetCursor( newcursor )
 
     #define _wpi_setclipboarddata( inst, format, data, is_bitmap ) \
         SetClipboardData( format, data )
@@ -956,7 +1052,7 @@ extern void _wpi_getbitmapparms( HBITMAP bitmap, int *width, int *height,
 
     #define GET_WM_VSCROLL_CMD( wp, lp ) GET_WM_VSCROLL_CODE( wp, lp )
 
-    #define SHORT1FROMMP( parm1 ) parm1
+    #define SHORT1FROMMP( parm1 ) LOWORD( parm1 )
 
     #define MPFROM2SHORT( s1, s2 ) MAKELONG( s1, s2 )
 
@@ -989,7 +1085,7 @@ extern void _wpi_setrestoredrect( HWND hwnd, WPI_RECT *prect );
 
     #define _wpi_getupdaterect( hwnd, prect ) GetUpdateRect(hwnd, prect, FALSE)
 
-extern WPI_PROC _wpi_subclasswindow( HWND hwnd, WPI_PROC new );
+extern WPI_PROC _wpi_subclasswindow( HWND hwnd, WPI_PROC newcursor );
 
 extern BOOL _wpi_insertmenu( HMENU hmenu, unsigned pos, unsigned menu_flags,
                              unsigned attr_flags, unsigned id,
@@ -1064,10 +1160,10 @@ extern BOOL _wpi_getmenutext( HMENU hmenu, unsigned id, char *text, int ctext,
     #define _wpi_freemenutext( ptext ) // do nothing
 
     #define _wpi_is_close_menuselect( p1, p2 ) \
-        ( (GET_WM_MENUSELECT_FLAGS( p1, p2 )) == (UINT)-1 )
+        ( (GET_WM_MENUSELECT_FLAGS( p1, p2 )) == (WORD)-1 )
 
     #define _wpi_trackpopupmenu( hmenu, flags, x, y, parent ) \
-        TrackPopupMenu( hmenu, flags, x, y, NULL, parent, NULL )
+        TrackPopupMenu( hmenu, flags, x, y, 0, parent, 0 )
 
 extern void _wpi_setrgbquadvalues( WPI_RGBQUAD *rgb, BYTE red, BYTE green,
                                                     BYTE blue, BYTE option );
@@ -1082,3 +1178,6 @@ extern int _wpi_dlg_command( HWND dlg_hld, WPI_MSG *msg, WPI_PARAM1 *parm1,
                                                             WPI_PARAM2 *parm2 );
     #define _wpi_linedda( x1, y1, x2, y2, proc, lp ) \
                                             LineDDA( x1, y1, x2, y2, proc, lp )
+
+    #define _wpi_is_dbcs() ( FALSE )
+    #define _wpi_fix_dbcs( dlg )

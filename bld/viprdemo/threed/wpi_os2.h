@@ -31,7 +31,6 @@
 
 
 /*--------------------------------------------------------------------------
-
    FUNCTIONS
         NOTE- When adding macros to this file, be sure to append them to the
               END of the file.  This file will eventually be converted to
@@ -124,9 +123,9 @@
 
     #define GlobalAlloc( flags, size ) _wpi_malloc( (size_t) size )
 
-    #define GlobalFree( hmem ) free( (void *) hmem )
+    #define GlobalFree( hmem ) _wpi_free( (void *) hmem )
 
-    #define GlobalReAlloc( hmem, size, flags ) (HANDLE) realloc( hmem, size )
+    #define GlobalReAlloc( hmem, size, flags ) (HANDLE) _wpi_realloc( hmem, size )
 
     #define LocalHandle( ptr ) ptr
 
@@ -139,9 +138,9 @@
 
     #define LocalAlloc( flags, size ) _wpi_malloc( (size_t) size )
 
-    #define LocalFree( hmem ) free( (void *) hmem )
+    #define LocalFree( hmem ) _wpi_free( (void *) hmem )
 
-    #define LocalReAlloc(hmem, size, flags) realloc((void *)hmem, (size_t)size)
+    #define LocalReAlloc(hmem, size, flags) _wpi_realloc((void *)hmem, (size_t)size)
 
     #define Catch( buf ) setjmp( buf )
 
@@ -197,6 +196,9 @@ extern void GetWindowRect( HWND hwnd, WPI_RECT *rect );
 
     #define _wpi_intersectrect( inst, prdest, prsrc1, prsrc2 ) \
                       WinIntersectRect( inst.hab, prdest, prsrc1, prsrc2 )
+
+    #define _wpi_isrectempty( inst, prect ) \
+                      WinIsRectEmpty( inst.hab, prect )
 
     #define _wpi_lptodp( pres, line, num ) \
         // nothing
@@ -443,6 +445,8 @@ extern void _wpi_deletebitmap( WPI_HANDLE bmp );
 
     #define _wpi_getscreenpres() WinGetScreenPS( HWND_DESKTOP )
 
+    #define _wpi_releasescreenpres( hps ) // nothing
+
 extern WPI_HANDLE _wpi_loadbitmap( WPI_INST inst, int id );
 extern void _wpi_getbitmapdim( WPI_HANDLE hbmp, int *pwidth, int *pheight );
 extern WPI_PRES _wpi_getpres( HWND hwnd );
@@ -589,6 +593,8 @@ extern int _wpi_selectcliprgn( WPI_PRES pres, HRGN rgn );
 
     #define _wpi_getowner( hwnd ) PM1632WinQueryWindow( hwnd, QW_OWNER )
 
+    #define _wpi_setowner( win, who ) WinSetOwner( win, who )
+
     #define _wpi_getvk( parm1, parm2 ) SHORT2FROMMP( parm2 )
 
     #define _wpi_getmousex( parm1, parm2 ) ( ( (SHORT) parm1 ) )
@@ -677,6 +683,97 @@ extern BOOL _wpi_textout( WPI_PRES pres, int left, int top, LPSTR text, ULONG
         (attr)->lAveCharWidth = (fm).lAveCharWidth; \
         (attr)->fsFontUse = FATTR_FONTUSE_NOMIX;
 
+
+    /***** _WPI_F_* Font Functions *****/
+    /* These functions are a set of replacement WPI font functions
+       which should work. All the other functions are crap; this
+       is an attempt to do it right. DJP */
+
+    #define _wpi_f_setfontitalic( font, style ) \
+                        (font)->attr.fsSelection = \
+                        ( (font)->attr.fsSelection & ~FATTR_SEL_ITALIC ) + \
+                        ( (style) ? FATTR_SEL_ITALIC : 0 )
+
+    #define _wpi_f_setfontunderline( font, style ) \
+                        (font)->attr.fsSelection = \
+                        ( (font)->attr.fsSelection & ~FATTR_SEL_UNDERSCORE ) + \
+                        ( (style) ? FATTR_SEL_UNDERSCORE : 0 )
+
+    #define _wpi_f_setfontstrikeout( font, style ) \
+                        (font)->attr.fsSelection = \
+                        ( (font)->attr.fsSelection & ~FATTR_SEL_STRIKEOUT ) + \
+                        ( (style) ? FATTR_SEL_STRIKEOUT : 0 )
+
+    #define _wpi_f_setfontbold( font, style ) \
+                        (font)->attr.fsSelection = \
+                        ( (font)->attr.fsSelection & ~FATTR_SEL_BOLD ) + \
+                        ( (style) ? FATTR_SEL_BOLD : 0 )
+
+    #define _wpi_f_getfontitalic( font ) \
+                ( ( (font)->attr.fsSelection & FATTR_SEL_ITALIC ) ? 1 : 0 )
+
+    #define _wpi_f_getfontunderline( font ) \
+                ( ( (font)->attr.fsSelection & FATTR_SEL_UNDERSCORE ) ? 1 : 0 )
+
+    #define _wpi_f_getfontstrikeout( font ) \
+                ( ( (font)->attr.fsSelection & FATTR_SEL_STRIKEOUT ) ? 1 : 0 )
+
+    #define _wpi_f_getfontbold( font ) \
+                ( ( (font)->attr.fsSelection & FATTR_SEL_BOLD ) ? 1 : 0 )
+
+    //#define _wpi_f_setfontsizeable( font, is_sizeable )
+    // shouldn't be done. Changes font selection algorithm
+
+    #define _wpi_f_setfontsize( font, point_size, pix_size ) \
+        (font)->pt_size = point_size
+
+    extern LONG _wpi_f_getfontsize( WPI_F_FONT *font );
+
+    //#define _wpi_f_setfontwidth( font, width )
+        // Although OS/2 does make it possible to set this,
+        // it doesn't make a lot of sense. You can't do it in Windows,
+        // and it would be wierd in OS/2.
+
+    extern void _wpi_f_default( WPI_F_FONT *font );
+
+    extern void _wpi_f_setfontescapement( WPI_F_FONT *font, LONG escapement );
+
+    extern void _wpi_f_setfontorientation( WPI_F_FONT *font, LONG orientation );
+
+    #define _wpi_f_setfontcharset( font, set ) \
+        (font)->attr.usCodePage = set
+
+    #define _wpi_f_getfontcharset( font ) \
+        ( (font)->attr.usCodePage )
+
+    extern void _wpi_f_setfontfacename( WPI_F_FONT *font, PSZ name );
+
+    #define _wpi_f_getfontfacename( font ) \
+        ( (font)->attr.szFacename )
+
+    #define _wpi_f_setfontprecision( font, out, clip ) \
+        // nothing
+
+    #define _wpi_f_setfontquality( font, quality ) \
+        // nothing
+
+    #define _wpi_f_setfontpitch( font, pitch ) \
+        // nothing
+
+    #define _wpi_f_deletefont( font ) \
+        _wpi_free( (WPI_F_FONT *) font )
+
+    extern HFONT _wpi_f_selectfont( WPI_PRES pres, HFONT font );
+
+    extern void _wpi_f_getoldfont( WPI_PRES pres, HFONT oldfont );
+
+    extern void _wpi_f_getsystemfont( WPI_PRES pres, WPI_F_FONT *font );
+
+    extern HFONT _wpi_f_createfont( WPI_F_FONT *font );
+
+    /**** end of _WPI_F_* Font Functions *****/
+
+
     #define _wpi_getfontfacename( font ) (font).szFacename
 
     #define _wpi_setfontbold( font, bold ) \
@@ -735,6 +832,8 @@ extern BOOL _wpi_textout( WPI_PRES pres, int left, int top, LPSTR text, ULONG
 
     #define _wpi_isfontsizeable( font ) ( (font)->fsDefn & FM_DEFN_OUTLINE )
 
+    #define _wpi_isfonthldsizeable( font_hld ) ( (font_hld)->fsFontUse & FATTR_FONTUSE_OUTLINE )
+
     #define _wpi_setfontsizeable( font, is_sizeable ) \
         { \
             BOOL                wpi_tmp; \
@@ -753,11 +852,16 @@ extern BOOL _wpi_textout( WPI_PRES pres, int left, int top, LPSTR text, ULONG
         (font)->lAveCharWidth = width;
 
     #define _wpi_setfontpointsize( font, size, pixel_size, match_no ) \
-        if( (font)->fsDefn & FM_DEFN_OUTLINE ) { \
+        if( ( (font)->fsDefn & FM_DEFN_OUTLINE ) \
+                        || ( (font)->lMaxBaselineExt == 0 ) \
+                        || ( (font)->lAveCharWidth == 0 ) ){ \
             (font)->lMaxBaselineExt = size; \
             (font)->lAveCharWidth = size; \
         } \
         (font)->sNominalPointSize = size * 10; \
+        if( (font)->sMaximumPointSize < size * 10 ) { \
+            (font)->sMaximumPointSize = size * 10; \
+        } \
         if( (match_no) >= 0 ) { \
             (font)->lMatch = (match_no); \
         }
@@ -841,7 +945,7 @@ extern int _wpi_getmetricpointsize( WPI_PRES pres, WPI_TEXTMETRIC *textmetric,
 
 extern void _wpi_enumfonts( WPI_PRES pres, char *facename,
                                         WPI_ENUMFONTPROC proc, char *data );
-extern void _wpi_enumchildwindows( HWND hwnd, WPI_ENUMPROC proc, LONG data );
+extern void _wpi_enumchildwindows( HWND hwnd, WPI_ENUMPROC proc, LPARAM data );
 
     #define _wpi_getnextwindow( hwnd ) WinGetNextWindow( hwnd )
 
@@ -863,12 +967,11 @@ extern int _wpi_intersectcliprect( WPI_PRES pres, WPI_RECTDIM left,
                     WPI_RECTDIM top, WPI_RECTDIM right, WPI_RECTDIM bottom );
 extern BOOL _wpi_setviewportorg( WPI_PRES pres, int x, int y );
 
-    #define _wpi_loadlibrary( inst, name ) WinLoadLibrary( (inst).hab, name )
+extern HMODULE _wpi_loadlibrary( WPI_INST inst, LPSTR name );
 
-    #define _wpi_freelibrary( inst, hlib ) WinDeleteLibrary( (inst).hab, hlib )
+extern void _wpi_freelibrary( WPI_INST inst, HMODULE module );
 
-    #define _wpi_loadprocedure( inst, lib, proc ) \
-                                    WinLoadProcedure( (inst).hab, lib, proc )
+extern WPI_PROC _wpi_loadprocedure( WPI_INST inst, HMODULE mod, LPSTR proc );
 
     #define _wpi_loadstring( inst, id, value, len ) \
         WinLoadString( (inst).hab, (inst).mod_handle, (ULONG)id, (LONG)len, \
@@ -1119,8 +1222,8 @@ extern HINI _wpi_openinifile( WPI_INST inst, char *name );
     #define _wpi_getprivateprofileint( hini, app, key, default, name ) \
             PrfQueryProfileInt( hini, app, key, default )
 
-    #define _wpi_getprivateprofilestring( hini, app, key, default, returned, size, name ) \
-            PrfQueryProfileString( hini, app, key, default, returned, size )
+extern int _wpi_getprivateprofilestring( HINI hini, LPSTR app,
+                LPSTR key, LPSTR def, LPSTR buf, int size, LPSTR dummy );
 
     #define _wpi_writeprivateprofilestring( hini, app, key, data, name ) \
             PrfWriteProfileString( hini, app, key, data )
@@ -1266,6 +1369,9 @@ extern void _wpi_drawmenubar( HWND hwnd );
 
 extern HWND _wpi_getparent( HWND hwnd );
 
+    #define _wpi_setparent( win, parent ) \
+        WinSetParent( win, parent, TRUE )
+
     #define _wpi_getkeystate( vkey ) \
                                 WinGetKeyState( HWND_DESKTOP, (int)(vkey) )
 
@@ -1298,3 +1404,7 @@ extern int _wpi_dlg_command( HWND dlg_hld, WPI_MSG *msg, WPI_PARAM1 *parm1,
                                                         WPI_PARAM2 *parm2 );
 extern void _wpi_linedda( int x1, int y1, int x2, int y2,
                                     WPI_LINEDDAPROC line_proc, WPI_PARAM2 lp );
+
+extern BOOL _wpi_is_dbcs( void );
+
+extern void _wpi_fix_dbcs( HWND dlg );

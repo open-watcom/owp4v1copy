@@ -53,7 +53,11 @@
 
 extern void _wpi_setpoint( WPI_POINT *pt, int x, int y );
 
+#ifdef __NT__
+    #define _wpi_moveto( pres, point ) MoveToEx( pres, (point)->x, (point)->y, NULL )
+#else
     #define _wpi_moveto( pres, point ) MoveTo( pres, (point)->x, (point)->y )
+#endif
 
     #define _wpi_movetoex( pres, point, extra ) \
         MoveToEx( pres, (point)->x, (point)->y, extra )
@@ -442,8 +446,11 @@ extern void _wpi_getintwrectvalues( WPI_RECT rect, int *left, int *top,
 
     #define _wpi_deletebrush( brush )  DeleteObject( brush )
 
-    #define _wpi_setbrushorigin( pres, pt ) \
-                                        SetBrushOrg( pres, (pt)->x, (pt)->y )
+#ifdef __NT__
+    #define _wpi_setbrushorigin( pres, pt ) SetBrushOrgEx( pres, (pt)->x, (pt)->y, NULL )
+#else
+    #define _wpi_setbrushorigin( pres, pt ) SetBrushOrg( pres, (pt)->x, (pt)->y )
+#endif
 
     #define _wpi_setlogbrushsolid( plogbrush ) (plogbrush)->lbStyle = BS_SOLID
 
@@ -922,9 +929,13 @@ extern void _wpi_gettextextent( WPI_PRES pres, LPSTR string, int len_string,
 
     #define _wpi_unrealizeobject( hobj ) UnrealizeObject( hobj )
 
-    #define _wpi_getlocalhdl( mem ) LocalHandle( LOWORD( mem ) )
-
-    #define _wpi_getglobalhdl( mem ) GlobalHandle( HIWORD( mem ) )
+#ifdef __NT__
+    #define _wpi_getlocalhdl( mem ) LocalHandle( mem )
+    #define _wpi_getglobalhdl( mem ) GlobalHandle( mem )
+#else
+    #define _wpi_getlocalhdl( mem ) LocalHandle( (void NEAR*)LOWORD( mem ) )
+    #define _wpi_getglobalhdl( mem ) (HGLOBAL)LOWORD(GlobalHandle( (UINT)HIWORD( mem ) ))
+#endif
 
     #define _wpi_getmenu( hframe ) GetMenu( hframe )
 
