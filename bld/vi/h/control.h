@@ -67,10 +67,10 @@
   #define _FAR
 #endif
 
-#if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
-  #define _NEAR
-#else
+#if defined( M_I86 )
   #define _NEAR near
+#else
+  #define _NEAR
 #endif
 
 #ifndef max
