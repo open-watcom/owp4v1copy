@@ -68,6 +68,8 @@ static BOOL readIconFromData( BYTE *data, char *fname  )
         return( FALSE );
     }
     num_of_images = iconfile->count;
+
+    /* See biBitCount test below...
     for (i=0; i < num_of_images; ++i) {
         if (iconfile->resources[i].colour_count != 2 &&
             iconfile->resources[i].colour_count != 8 &&
@@ -79,6 +81,8 @@ static BOOL readIconFromData( BYTE *data, char *fname  )
             return(FALSE);
         }
     }
+    */
+        
     node = MemAlloc( sizeof(img_node) * num_of_images );
 
     hdc = GetDC( NULL );

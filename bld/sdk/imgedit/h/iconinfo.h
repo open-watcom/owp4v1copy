@@ -34,7 +34,7 @@
 #define DELETE_ICON_OP  1
 #define ADD_ICON_OP     2
 #define SEL_ICON_OP     3
-#define NUM_OF_ICONS    8
+#define NUM_OF_ICONS    10
 
 typedef struct {
     char        *text;

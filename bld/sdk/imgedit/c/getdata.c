@@ -180,10 +180,12 @@ void GetImageData( an_img *img, img_node *node )
 
     h = &(img->bm->bmiHeader);
 
-    aRgbq = MemAlloc(RGBQ_SIZE(h->biBitCount));
-    SetRGBValues(aRgbq, (1<<(h->biBitCount)));
-    memcpy( img->bm->bmiColors, aRgbq, RGBQ_SIZE(h->biBitCount) );
-    MemFree(aRgbq);
+    if (h->biBitCount < 9) {
+        aRgbq = MemAlloc(RGBQ_SIZE(h->biBitCount));
+        SetRGBValues(aRgbq, (1<<(h->biBitCount)));
+        memcpy( img->bm->bmiColors, aRgbq, RGBQ_SIZE(h->biBitCount) );
+        MemFree(aRgbq);
+    }
 
     getXorBits( img->bm, img->xor_mask, node );
 

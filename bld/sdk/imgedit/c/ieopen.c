@@ -260,7 +260,10 @@ static BOOL readInIconFile( char *fname  )
         WImgEditError( WIE_ERR_BAD_ICON_FILE, filename );
         return( FALSE );
     }
+
     num_of_images = iconfile->count;
+
+    /* See biBitCount test below...
     for (i=0; i < num_of_images; ++i) {
         if (iconfile->resources[i].colour_count != 2 &&
             iconfile->resources[i].colour_count != 8 &&
@@ -271,19 +274,9 @@ static BOOL readInIconFile( char *fname  )
             fclose( fp );
             return(FALSE);
         }
-#ifdef JAMIE
-        {
-            char msg[80];
-            int ncolours;
-            HDC  hdc;
-            hdc = GetDC( NULL );
-            ncolours = GetDeviceCaps(hdc, NUMCOLORS);
-            sprintf(msg, "colour_count = %d, ncolours = %d",
-                    iconfile->resources[i].colour_count, ncolours);
-            MessageBox(HMainWindow, msg, "FYI", MB_OK);
-        }
-#endif
     }
+    */
+
     node = MemAlloc( sizeof(img_node) * num_of_images );
 
     hdc = GetDC( NULL );
@@ -359,6 +352,8 @@ BOOL readIconFromData( void *data, char *fname, WRInfo *info,
         return( FALSE );
     }
     num_of_images = iconfile->count;
+
+    /* See biBitCount test below...
     for( i=0; i < num_of_images; ++i ) {
         if (iconfile->resources[i].colour_count != 2 &&
             iconfile->resources[i].colour_count != 8 &&
@@ -370,6 +365,8 @@ BOOL readIconFromData( void *data, char *fname, WRInfo *info,
             return(FALSE);
         }
     }
+    */
+    
     node = MemAlloc( sizeof(img_node) * num_of_images );
 
     hdc = GetDC( NULL );
