@@ -33,7 +33,7 @@
 #include <stdio.h>
 #include <windows.h>
 
-int WINAPI LibMain( HANDLE hmod, WORD dataseg, WORD heap, LPSTR cmdline )
+int WINAPI LibMain( HINSTANCE hmod, WORD dataseg, WORD heap, LPSTR cmdline )
 {
     hmod = hmod;
     dataseg = dataseg;

@@ -340,7 +340,7 @@ enum {
 };
 
 #if defined(__WINDOWS__) && !defined(__NT__)
-#define DIGREGISTER     __pascal
+#define DIGREGISTER     __far __pascal
 #define DIGENTRY        __export DIGREGISTER
 #define DIGCLIENT       __loadds
 #endif

@@ -50,11 +50,11 @@ static int              (TRAPENTRY*GetHwndFunc)();
 extern trap_version     TrapVer;
 extern unsigned         (TRAPENTRY*ReqFunc)( unsigned, mx_entry *,
                                              unsigned, mx_entry * );
-static HANDLE           dll;
+static HINSTANCE    dll;
 
 int HardModeRequired;
 
-HANDLE toolhelp;
+HINSTANCE toolhelp;
 
 void KillTrap()
 {
@@ -69,7 +69,7 @@ void KillTrap()
     UnLockInput = NULL;
     GetHwndFunc = NULL;
     FreeLibrary( dll );
-    if( toolhelp > 32 ) FreeLibrary( toolhelp );
+    if( (UINT)toolhelp > 32 ) FreeLibrary( toolhelp );
 }
 
 char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
@@ -118,7 +118,7 @@ char *LoadTrap( char *trapbuff, char *buff, trap_version *trap_ver )
     prev = SetErrorMode( SEM_NOOPENFILEERRORBOX );
     dll = LoadLibrary( trpfile );
     SetErrorMode( prev );
-    if( dll < 32 ) {
+    if( (UINT)dll < 32 ) {
         strcpy( buff, TC_ERR_CANT_LOAD_TRAP );
         return( buff );
     }

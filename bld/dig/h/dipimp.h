@@ -136,7 +136,7 @@ extern const char       DIPImpName[];
 
 unsigned        DIGENTRY DIPImpQueryHandleSize( handle_kind );
 dip_status      DIGENTRY DIPImpMoreMem( unsigned );
-dip_status      DIGENTRY DIPImpStartup();
+dip_status      DIGENTRY DIPImpStartup( void );
 void            DIGENTRY DIPImpShutdown( void );
 void            DIGENTRY DIPImpCancel( void );
 

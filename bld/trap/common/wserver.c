@@ -223,8 +223,8 @@ static bool Exit = FALSE;
 /*
  * WindowProc - handle messages for the main application window
  */
-LONG _EXPORT FAR PASCAL WindowProc( HWND hwnd, unsigned msg,
-                                     UINT wparam, LONG lparam )
+LRESULT _EXPORT FAR PASCAL WindowProc( HWND hwnd, UINT msg,
+                                     WPARAM wparam, LPARAM lparam )
 {
     FARPROC     proc;
     char        *err;
@@ -234,8 +234,8 @@ LONG _EXPORT FAR PASCAL WindowProc( HWND hwnd, unsigned msg,
     case WM_COMMAND:
         switch( LOWORD( wparam ) ) {
         case MENU_ABOUT:
-            proc = MakeProcInstance( AboutDlgProc, Instance );
-            DialogBox( Instance,"AboutBox", hwnd, proc );
+            proc = MakeProcInstance( (FARPROC)AboutDlgProc, Instance );
+            DialogBox( Instance,"AboutBox", hwnd, (DLGPROC)proc );
             FreeProcInstance( proc );
             break;
 
@@ -292,10 +292,10 @@ LONG _EXPORT FAR PASCAL WindowProc( HWND hwnd, unsigned msg,
 
             break;
         case MENU_OPTIONS:
-            proc = MakeProcInstance( OptionsDlgProc, Instance );
+            proc = MakeProcInstance( (FARPROC)OptionsDlgProc, Instance );
             if( Linked ) RemoteUnLink();
             Linked = FALSE;
-            DialogBox( Instance, "Options", hwnd, proc );
+            DialogBox( Instance, "Options", hwnd, (DLGPROC)proc );
             FreeProcInstance( proc );
             break;
         case MENU_EXIT:

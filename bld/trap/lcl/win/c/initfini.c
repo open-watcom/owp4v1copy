@@ -59,12 +59,12 @@ char *InitDebugging( void )
 
     DebuggerState=ACTIVE;
     StartWDebug386();
-    faultInstance = MakeProcInstance( IntHandler, Instance );
+    faultInstance = MakeProcInstance( (FARPROC)IntHandler, Instance );
     if( !InterruptRegister( NULL, faultInstance ) ) {
         return( TRP_WIN_Failed_to_get_interrupt_hook );
     }
-    notifyInstance = MakeProcInstance( NotifyHandler, Instance );
-    if( !NotifyRegister( NULL, notifyInstance,
+    notifyInstance = MakeProcInstance( (FARPROC)NotifyHandler, Instance );
+    if( !NotifyRegister( NULL, (LPFNNOTIFYCALLBACK)notifyInstance,
                          NF_NORMAL | NF_RIP ) ) {
         return( TRP_WIN_Failed_to_get_notify_hook );
     }
@@ -73,7 +73,7 @@ char *InitDebugging( void )
         faultInstance, notifyInstance, Instance ));
     if( WDebug386 ) {
         wint32 = LoadLibrary( "wint32.dll" );
-        if( wint32 < 32 ) {
+        if( (UINT)wint32 < 32 ) {
             WDebug386 = FALSE;
         } else {
             DoneWithInterrupt = (LPVOID) GetProcAddress( wint32, "DoneWithInterrupt" );

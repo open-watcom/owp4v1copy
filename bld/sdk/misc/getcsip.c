@@ -43,7 +43,7 @@
  *               useful!!)
  */
 #define MAKECSIP( cs, ip ) ( ((DWORD) (cs) << 16L) + (DWORD) (ip) )
-DWORD GetRealCSIP( HANDLE htask, HANDLE *mod )
+DWORD GetRealCSIP( HTASK htask, HMODULE *mod )
 {
     DWORD               csip;
     STACKTRACEENTRY     se;

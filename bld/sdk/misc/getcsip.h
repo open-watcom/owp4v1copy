@@ -30,4 +30,4 @@
 ****************************************************************************/
 
 
-DWORD GetRealCSIP( HANDLE htask, HANDLE *mod );
+DWORD GetRealCSIP( HTASK htask, HMODULE *mod );

@@ -183,7 +183,8 @@ typedef void    (far *ESRAddr)();
 #ifdef __WINDOWS__
 #define ESRFUNC __export __far __pascal
 DWORD           IPXTaskID;
-FARPROC         IPXFuncs[ IPX_MAX_FUNCS ];
+typedef int     (WINAPI *NOVWINAPI)();
+NOVWINAPI       IPXFuncs[ IPX_MAX_FUNCS ];
 extern          void SetLinkName( char* );
 #else
 #define ESRFUNC
@@ -528,19 +529,19 @@ char *RemoteLink( char *name, char server )
 
     #ifdef __WINDOWS__
     {
-        HANDLE          ipxspx;
-        HANDLE          netapi;
-        HANDLE          netware;
+        HINSTANCE       ipxspx;
+        HINSTANCE       netapi;
+        HMODULE         netware;
 
-        GlobalPageLock( FP_SEG( &SAPECB ) );
+        GlobalPageLock( (HGLOBAL)FP_SEG( &SAPECB ) );
         netware = GetModuleHandle( "NETWARE.DRV" );
         ipxspx = LoadLibrary( "NWIPXSPX.DLL" );
         netapi = LoadLibrary( "NWCALLS.DLL" );
-        if( ipxspx < 32 ) return( TRP_ERR_IPX_SPX_not_present );
-        if( netapi < 32 ) return( TRP_ERR_Netware_API_not_present );
+        if( (UINT)ipxspx < 32 ) return( TRP_ERR_IPX_SPX_not_present );
+        if( (UINT)netapi < 32 ) return( TRP_ERR_Netware_API_not_present );
         if( netware == NULL ) return( TRP_ERR_NETWAREDRV_not_present );
 #define str( x ) #x
-#define GetAddr( hdl, x ) IPXFuncs[x] = GetProcAddress( hdl, str( x ) )
+#define GetAddr( hdl, x ) IPXFuncs[x] = (NOVWINAPI)GetProcAddress( hdl, str( x ) )
 #define GetIPXAddr( x ) GetAddr( ipxspx, x )
         GetAddr( netapi, NWReadPropertyValue );
         GetIPXAddr( IPXInitialize );
@@ -622,6 +623,6 @@ void RemoteUnLink( void )
     #endif
     IPXSPXDeinit();
     #ifdef __WINDOWS__
-        GlobalPageUnlock( FP_SEG( &SAPECB ) );
+        GlobalPageUnlock( (HGLOBAL)FP_SEG( &SAPECB ) );
     #endif
 }

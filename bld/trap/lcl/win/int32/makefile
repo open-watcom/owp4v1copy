@@ -11,7 +11,7 @@ bin_root = $(bin_root_wv)
 !endif
 !endif
 
-CFLAGS = -zq -s -oas -fpc -mc -w3 -d1 -i=$(%lang)\h;$(%lang)\h\win;$(watcom_dir)\h
+CFLAGS = -zq -s -oas -fpc -mc -w3 -d1 -dSTRICT -i=$(%lang)\h;$(%lang)\h\win;$(watcom_dir)\h
 
 OBJS =  intmain.obj ints.obj int32.obj
 

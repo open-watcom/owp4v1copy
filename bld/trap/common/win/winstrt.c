@@ -33,11 +33,11 @@
 #include "windows.h"
 #include "trpimp.h"
 
-HANDLE  Instance;
-HWND    DesktopWindow;
-DWORD   WindowsFlags;
+HINSTANCE  Instance;
+HWND       DesktopWindow;
+DWORD      WindowsFlags;
 
-int WINAPI LibMain( HANDLE hmod, WORD dataseg, WORD heap, LPSTR cmdline )
+int WINAPI LibMain( HINSTANCE hmod, WORD dataseg, WORD heap, LPSTR cmdline )
 {
     dataseg=dataseg;heap=heap;cmdline=cmdline;
     Instance=hmod;

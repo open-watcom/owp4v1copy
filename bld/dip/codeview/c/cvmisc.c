@@ -57,7 +57,7 @@ dip_status      DIPENTRY DIPImpMoreMem( unsigned size )
     return( (VMShrink() != 0) ? DS_OK : DS_FAIL );
 }
 
-dip_status      DIPENTRY DIPImpStartup()
+dip_status      DIPENTRY DIPImpStartup(void)
 {
     return( DS_OK );
 }
