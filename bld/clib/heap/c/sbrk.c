@@ -88,11 +88,11 @@ _WCRTLINK void _WCNEAR *sbrk( int increment ) {
             h = LocalAlloc( LMEM_FIXED, increment );
             if( h == NULL ) {
                 errno = ENOMEM;
-                h = -1;
+                h = (HANDLE)(-1);
             }
         } else {
             errno = EINVAL;
-            h = -1;
+            h = (HANDLE)(-1);
         }
         return( (void _WCNEAR *) h );
     #else

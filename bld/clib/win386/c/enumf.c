@@ -34,6 +34,5 @@
 
 short PASCAL _Cover_EnumFonts( HDC dc, LPSTR face, FARPROC p, LPSTR data )
 {
-    return( EnumFonts( dc, face, SetProc( p, GETPROC_ENUMFONTS ),
-                    data ) );
+    return( EnumFonts( dc, face, SetProc( p, GETPROC_ENUMFONTS ), (LPARAM)data ) );
 }

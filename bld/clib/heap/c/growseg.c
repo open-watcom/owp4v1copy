@@ -112,7 +112,7 @@ unsigned __GrowSeg( unsigned short seg, unsigned int amount )
             {
                 HANDLE hmem;
 
-                hmem = GlobalHandle( seg );
+                hmem = (HANDLE)GlobalHandle( seg );
                 if( hmem == NULL ) {
                     return( 0 );
                 }

@@ -38,5 +38,5 @@ short PASCAL _Cover_EnumFontFamilies( HDC dc,
                                       LPSTR data )
 {
     return( EnumFontFamilies( dc, family, SetProc( p, GETPROC_ENUMFONTS ),
-                    data ) );
+                    (LPARAM)data ) );
 }

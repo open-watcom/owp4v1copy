@@ -34,5 +34,5 @@
 
 FARPROC PASCAL _Cover_SetWindowsHook( int type, FARPROC p )
 {
-    return( SetWindowsHook( type, SetProc( p, GETPROC_SETWINDOWSHOOK ) ) );
+    return( (FARPROC)SetWindowsHook( type, SetProc( p, GETPROC_SETWINDOWSHOOK ) ) );
 }
