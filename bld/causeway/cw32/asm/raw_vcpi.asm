@@ -279,8 +279,7 @@ rv1_NoGDTMove:
         pop     ds
         mov     ecx,4096/4
         cld
-        db 67h
-        rep     movsd
+        rep     movs d[edi],[esi]
         pop     ds
         mov     eax,Page1stLinear+4
         mov     Page1stLinear,eax
@@ -306,8 +305,7 @@ rv1_No1stMove:
         pop     ds
         mov     ecx,4096/4
         cld
-        db 67h
-        rep     movsd
+        rep     movs d[edi],[esi]
         pop     ds
         mov     eax,PageALIASLinear+4
         mov     PageALIASLinear,eax
@@ -332,8 +330,7 @@ rv1_NoALIASMove:
         pop     ds
         mov     ecx,4096/4
         cld
-        db 67h
-        rep     movsd
+        rep     movs d[edi],[esi]
         pop     ds
         mov     eax,PageDIRLinear+4
         mov     PageDIRLinear,eax
@@ -1729,8 +1726,7 @@ rv29_NotInt:    sub     esi,4
         pop     es
         pop     ds
         mov     ecx,(4+4+4+4+4+4+4+4+2+2+2+2+2+2)/4
-        db 67h
-        rep     movsd
+        rep     movs d[edi],[esi]
         pop     es
         pop     ds
         pop     edi
@@ -1831,8 +1827,7 @@ rv29_Back:      pushf
         push    fs
         pop     ds
         mov     ecx,(4+4+4+4+4+4+4+4+2+2+2+2+2+2)/4
-        db 67h
-        rep     movsd
+        rep     movs d[edi],[esi]
         pop     ds
         pop     edi
         pop     esi

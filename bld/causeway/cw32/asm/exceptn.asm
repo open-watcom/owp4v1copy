@@ -772,8 +772,7 @@ exc20_ok:       or      InExcep,-1
 exc20_SP320:    mov     edi,offset DebugBuffer
         mov     ecx,(4+4+4+4+4+4+4)+(2+2+2+2)
         cld
-        db 67h
-        rep     movsb           ;copy registers off the stack.
+        rep     movs b[edi],[esi]    ;copy registers off the stack.
         ;
         test    BYTE PTR es:ExcepSystemFlags,1
         jz      exc20_Use32Bit17
@@ -781,14 +780,11 @@ exc20_SP320:    mov     edi,offset DebugBuffer
         movzx   eax,w[ebp+(4+4+4+4+4+4+4)+(2+2+2+2)+(2+2)]
         mov     es:DebugExceptionCode,eax
         add     esi,2+2+2               ;skip return address/flags.
-        db 67h
-        movsw
+        movs    w[edi],[esi]
         add     edi,2
-        db 67h
-        movsw
+        movs    w[edi],[esi]
         add     edi,2
-        db 67h
-        movsw
+        movs    w[edi],[esi]
         add     edi,2
         jmp     exc20_Use16Bit17
         ;
@@ -797,8 +793,7 @@ exc20_Use32Bit17:       mov     eax,[esp+(4+4+4+4+4+4+4)+(2+2+2+2)+(4+4)]
         add     esi,4+4+4               ;skip return address/flags.
         mov     ecx,4+4+4
         cld
-        db 67h
-        rep     movsb           ;get real return address.
+        rep     movs b[edi],[esi]       ;get real return address.
 exc20_Use16Bit17:       ;
         test    BYTE PTR es:ExcepSystemFlags,1
         jz      exc20_Use32Bit678

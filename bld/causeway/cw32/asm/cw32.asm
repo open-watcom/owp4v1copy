@@ -1977,8 +1977,7 @@ cw5_1:  jnz     InitError
         mov     ecx,4096/4
         xor     eax,eax
         cld
-        db 67h
-        rep     stosd
+        rep     stos d[edi]
         call    d[fCR3Flush]
         mov     LinearEntry,1024
 ;
@@ -2001,8 +2000,7 @@ cw5_1:  jnz     InitError
         mov     ecx,4096/4
         xor     eax,eax
         cld
-        db 67h
-        rep     stosd           ;clear it.
+        rep     stos d[edi]    ;clear it.
         mov     eax,LinearEntry
         shl     eax,12          ;get linear address.
         mov     PageDETLinear,eax
@@ -2035,8 +2033,7 @@ cw5_1:  jnz     InitError
         mov     ecx,4096/4
         mov     eax,MEM_FILL
         cld
-        db 67h
-        rep     stosd           ;copy old to new.
+        rep     stos d[edi]    ;copy old to new.
         mov     esi,PageDETLinear
         mov     eax,0
         mov     edx,LinearEntry+8       ;get physical address again.
@@ -2064,8 +2061,7 @@ cw5_1:  jnz     InitError
         mov     ecx,4096/4
         mov     eax,MEM_FILL
         cld
-        db 67h
-        rep     stosd           ;copy old to new.
+        rep     stos d[edi]    ;copy old to new.
         mov     esi,PageDETLinear
         mov     eax,1
         mov     edx,LinearEntry+8       ;get physical address again.
@@ -2096,8 +2092,7 @@ cw5_1:  jnz     InitError
         push    es
         pop     ds
         cld
-        db 67h
-        rep     movsd           ;copy old to new.
+        rep     movs d[edi],[esi]       ;copy old to new.
         pop     ds
         mov     eax,PageALIASLinear
         mov     PageALIASLinear+4,eax
@@ -2150,8 +2145,7 @@ COMMENT !
         push    es
         pop     ds
         cld
-        db 67h
-        rep     movsd           ;copy old to new.
+        rep     movs d[edi],[esi]     ;copy old to new.
         pop     ds
         ;
         ;Make variables point to new memory.
@@ -2212,8 +2206,7 @@ END COMMENT !
         push    es
         pop     ds
         cld
-        db 67h
-        rep     movsd           ;copy old to new.
+        rep     movs d[edi],[esi]    ;copy old to new.
         pop     ds
         ;
         ;Make variables point to new memory.
@@ -2321,8 +2314,7 @@ cw5_2:  call    d[fPhysicalGetPage]     ;try to allocate a page.
         push    es
         pop     ds
         cld
-        db 67h
-        rep     movsd           ;Copy it up their.
+        rep     movs d[edi],[esi]    ;Copy it up their.
         pop     ds
 ;
 ;Setup DPMI emulator selectors.
@@ -2401,8 +2393,7 @@ cw5_6:  call    d[fPhysicalGetPage]     ;try to allocate a page.
         mov     ecx,(8192*8)+8192
         cld
         xor     al,al
-        db 67h
-        rep     stosb
+        rep     stos b[edi]
         mov     edi,MDTLinear+4
         or      DWORD PTR es:[edi],-1           ;Force VCPI values to not used.
         ;
@@ -2433,8 +2424,7 @@ cw5_6:  call    d[fPhysicalGetPage]     ;try to allocate a page.
         mov     ds,ax
         mov     ecx,GDT_Entries*8
         cld
-        db 67h
-        rep     movsb
+        rep     movs b[edi],[esi]
         pop     ds
         ;
         ;Set new GDT values.
@@ -3111,8 +3101,7 @@ cw5_InProtected:        mov     ax,mDataSegment
         mov     si,seg _apiCode
         shl     esi,4
         mov     ecx,offset _apiCodeEnd-_apiCodeStart
-        db 67h
-        rep     movsb
+        rep     movs b[edi],[esi]
         pop     es
         pop     ds
 ;
@@ -3420,8 +3409,7 @@ cw5_e0: cmp     w[di],-1                ;end of the list?
         mov     ds,RealSegment
         mov     es,bx
         xor     edi,edi
-        db 67h
-        rep     movsb
+        rep     movs b[edi],[esi]
         pop     es
         pop     ds
         pop     di

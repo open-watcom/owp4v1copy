@@ -1646,27 +1646,22 @@ inter19_Use16Bit16:     ;Retrieve register values and get outa here.
         mov     edi,offset ExceptionEBP
         mov     ecx,(4+4+4+4+4+4+4)+(4+4+4+4)
         cld
-        db 67h
-        rep     movsb           ;copy registers off the stack.
+        rep     movs b[edi],[esi]       ;copy registers off the stack.
         ;
         test    BYTE PTR cs:DpmiEmuSystemFlags,1
         jz      inter19_Use32Bit17
         add     esi,2+2+2               ;skip return address/flags.
-        db 67h
-        movsw
+        movs    w[edi],[esi]
         add     edi,2
-        db 67h
-        movsw
+        movs    w[edi],[esi]
         add     edi,2
-        db 67h
-        movsw
+        movs    w[edi],[esi]
         add     edi,2
         jmp     inter19_Use16Bit17
 inter19_Use32Bit17:     add     esi,4+4+4               ;skip return address/flags.
         mov     ecx,4+4+4
         cld
-        db 67h
-        rep     movsb           ;get real return address.
+        rep     movs b[edi],[esi]       ;get real return address.
 inter19_Use16Bit17:     ;
         test    BYTE PTR cs:DpmiEmuSystemFlags,1
         jz      inter19_Use32Bit678
