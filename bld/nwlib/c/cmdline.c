@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Librarian command line parsing.
 *
 ****************************************************************************/
 
@@ -264,18 +263,21 @@ static bool ParseOption( char **pc, char *buff )
                         DuplicateOption( start );
                     }
                     Options.libtype = WL_TYPE_MLIB;
+                    Options.elf_found = 1;
                     break;
                 case 'a':
                     if( Options.libtype ) {
                         DuplicateOption( start );
                     }
                     Options.libtype = WL_TYPE_AR;
+                    Options.coff_found = 1;
                     break;
                 case 'o':
                     if( Options.libtype ) {
                         DuplicateOption( start );
                     }
                     Options.libtype = WL_TYPE_OMF;
+                    Options.omf_found = 1;
                     break;
                 default:
                     return ( FALSE );
