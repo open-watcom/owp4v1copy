@@ -53,80 +53,33 @@
 #endif
 
 #include "addrfold.h"
+#include "bgcall.h"
+#include "bldcall.h"
 #include "bldins.h"
+#include "blips.h"
+#include "data.h"
+#include "display.h"
+#include "foldins.h"
+#include "inline.h"
+#include "makeaddr.h"
+#include "namelist.h"
+#include "optask.h"
+#include "patch.h"
+#include "rgtbl.h"
+#include "stack.h"
+#include "treeprot.h"
+#include "treeconv.h"
+#include "treefold.h"
+#include "typemap.h"
+#include "types.h"
 
-extern  type_def    *TypeBoolean;
-extern  type_def    *TypeProcParm;
-extern  type_def    *TypePtr;
-extern  type_def    *TypeInteger;
-extern  type_def    *TypeUnsigned;
-extern  type_def    *TypeNone;
-extern  type_def    *TypeHugeInteger;
-extern  type_def    *TypeLongInteger;
-extern  type_def    *TypeNearInteger;
-extern  type_length TypeClassSize[];
-extern  type_class_def  Unsigned[];
-extern  type_class_def  Signed[];
+#if _TARGET & ( _TARG_80386 | _TARG_IAPX86 )
+#include "i86segs.h"
+#endif
 
-extern  name        *SAllocUserTemp(pointer,type_class_def,type_length);
-extern  pointer     SafeRecurse(pointer(*)(),pointer);
-extern  an      AddrEval(an);
-extern  an      BGCall(cn,bool,bool);
-extern  void        BGAddParm(cn,an);
-extern  type_def    *PassParmType(sym_handle,type_def*,call_class);
-extern  an      PassProcParm(an);
-extern  cn      BGInitCall(an,type_def*,aux_handle);
-extern  void        BGFiniLabel(label_handle);
-extern  label_handle    AskForNewLabel();
-extern  void        BGZapBase(name*,type_def*);
-extern  an      MakeTempAddr(name*,type_def*);
-extern  label_handle    BGGetEntry();
-extern  an      FoldConsCompare(opcode_defs,tn,tn,type_def*);
-extern  void        TGBlip();
-extern  bool        FoldIfFalse(tn,label_handle);
-extern  bool        FoldIfTrue(tn,label_handle);
-extern  tn      FoldFlNot(tn);
-extern  tn      FoldFlOr(tn,tn);
-extern  tn      FoldFlAnd(tn,tn);
-extern  an      MakeConst(pointer,type_def*);
-extern  tn      FoldBitCompare(opcode_defs,btn,tn);
-extern  tn      FoldCompare(opcode_defs,tn,tn,type_def*);
-extern  tn      FoldPostGetsCompare(opcode_defs,tn,tn,type_def*);
-extern  an      AddrCopy(an);
-extern  cg_name     CGBinary(cg_op,cg_name,cg_name,cg_type);
-extern  cg_name     CGInteger(signed_32,cg_type);
-extern  tn      FoldCnvRnd(cg_op,tn,type_def*);
-extern  tn      Fold1sComp(tn,type_def*);
-extern  tn      FoldUMinus(tn,type_def*);
-extern  tn      FoldLog(cg_op,tn,type_def*);
-extern  tn      FoldSqrt(tn,type_def*);
-extern  tn      FoldXor(tn,tn,type_def*);
-extern  tn      FoldOr(tn,tn,type_def*);
-extern  tn      FoldAnd(tn,tn,type_def*);
-extern  tn      FoldRShift(tn,tn,type_def*);
-extern  tn      FoldLShift(tn,tn,type_def*);
-extern  tn      FoldMod(tn,tn,type_def*);
-extern  tn      FoldDiv(tn,tn,type_def*);
-extern  tn      FoldTimes(tn,tn,type_def*);
-extern  tn      FoldMinus(tn,tn,type_def*);
-extern  tn      FoldPlus(tn,tn,type_def*);
-extern  tn      FoldPow(tn,tn,type_def*);
-extern  type_def    *TypeAddress(cg_type);
-extern  type_def    *ClassType(type_class_def);
-extern  type_class_def  TypeClass(type_def*);
-extern  void        TGDemote(tn,type_def*);
-extern  void        AddrDemote(an);
-extern  bool        NeedPtrConvert(an,type_def*);
-extern  void        BGStartInline(sym_handle);
-extern  void        BGAddInlineParm(an);
-extern  an      BGStopInline(tn,type_def*);
-extern  name        *SegName( name *op );
-extern  an      TNPatch( tn );
-extern  hw_reg_set  StackReg();
-
-extern  tn      TGConvert( tn, type_def * );
-extern  an      TreeGen( tn );
-
+static  void    FreeTreeNode( tn node );
+static  void    DoAnd( an left, unsigned_32 mask, tn node );
+static  void    Control( cg_op op, tn node, label_handle lbl, bool gen );
 
 static  pointer TreeFrl;
 
@@ -174,7 +127,7 @@ static type_class_def SubMat[] = {
     Routines TGxxxx build up the expression trees. TNxxx tear them down.
 */
 
-static  tn  NewTreeNode() {
+static  tn  NewTreeNode( void ) {
 /******************************
     gimme a new tree node
 */
@@ -385,6 +338,8 @@ static bool RHSLongPointer( tn rite )
     case CL_ADDR_GLOBAL:
     case CL_ADDR_TEMP:
         return( TRUE );
+    default:
+        break;
     }
     } else {
     switch( rite->tipe->refno ) {
@@ -421,13 +376,13 @@ extern  tn  TGCompare(  cg_op op,  tn left,  tn rite,  type_def  *tipe ) {
     && ( ( left->tipe->attr & ~TYPE_SIGNED ) == ( tipe->attr & ~TYPE_SIGNED ) ) ) {
     tipe = left->tipe;
     } else {
-    tipe = ResultType( left, rite, tipe, &BinMat, can_demote );
+    tipe = ResultType( left, rite, tipe, BinMat, can_demote );
     }
     left = TGConvert( left, tipe );
     rite = TGConvert( rite, tipe );
     new = FoldCompare( op, left, rite, tipe );
     if( new != NULL ) return( new );
-    new = FoldBitCompare( op, (btn)left, rite );
+    new = FoldBitCompare( op, (tn_btn)left, rite );
     if( new != NULL ) return( new );
     new = FoldPostGetsCompare( op, left, rite, tipe );
     if( new != NULL ) return( new );
@@ -528,7 +483,7 @@ static  type_def  *BinResult( cg_op op, tn *l, tn *r, type_def *tipe,
     case O_DIV:
     case O_MOD:
     otipe = tipe;
-    tipe = ResultType( left, rite, tipe, &BinMat, FALSE );
+    tipe = ResultType( left, rite, tipe, BinMat, FALSE );
     if( otipe == TypeNone ) { /* do integer divide to make C happy.*/
         if( tipe->refno == T_UINT_1 || tipe->refno == T_INT_1 ) {
         tipe = TypeInteger;
@@ -570,7 +525,7 @@ static  type_def  *BinResult( cg_op op, tn *l, tn *r, type_def *tipe,
         rite = TGConvert( rite, TypeNearInteger );
         }
     } else {
-        tipe = ResultType( left, rite, tipe, &BinMat, FALSE );
+        tipe = ResultType( left, rite, tipe, BinMat, FALSE );
         if( tipe->attr & TYPE_POINTER ) {
         if( !( left->tipe->attr & TYPE_POINTER ) ) {
             temp = rite;
@@ -621,7 +576,7 @@ static  type_def  *BinResult( cg_op op, tn *l, tn *r, type_def *tipe,
     break;
     case O_MINUS:
 
-    tipe = ResultType( left, rite, tipe, &SubMat, FALSE );
+    tipe = ResultType( left, rite, tipe, SubMat, FALSE );
     /* pointer subtraction yields a different result type than ops!*/
     if( tipe->refno == TypeHugeInteger->refno
      && left->tipe->refno == T_HUGE_POINTER
@@ -653,7 +608,7 @@ static  type_def  *BinResult( cg_op op, tn *l, tn *r, type_def *tipe,
     left = TGConvert( left, tipe );
     break;
     case O_TIMES:
-    tipe = ResultType( left, rite, tipe, &BinMat, FALSE );
+    tipe = ResultType( left, rite, tipe, BinMat, FALSE );
     #if _TARGET & _TARG_IAPX86
         if( tipe->refno == T_INT_4 &&
         left->tipe->length <= 2 && rite->tipe->length <= 2 ) {
@@ -684,22 +639,22 @@ static  type_def  *BinResult( cg_op op, tn *l, tn *r, type_def *tipe,
     case O_AND:
     case O_OR:
     case O_XOR:
-    tipe = ResultType( left, rite, tipe, &BinMat, TRUE );
+    tipe = ResultType( left, rite, tipe, BinMat, TRUE );
     left = TGConvert( left, tipe );
     rite = TGConvert( rite, tipe );
     break;
     case O_POW:
     case O_ATAN2:
     case O_FMOD:
-    tipe = ResultType( left, rite, tipe, &BinMat, FALSE );
+    tipe = ResultType( left, rite, tipe, BinMat, FALSE );
     left = TGConvert( left, tipe );
     rite = TGConvert( rite, tipe );
     break;
     case O_COMMA:
-    tipe = ResultType( left, rite, tipe, &BinMat, TRUE );
+    tipe = ResultType( left, rite, tipe, BinMat, TRUE );
     break;
     case O_SIDE_EFFECT:
-    tipe = ResultType( rite, left, tipe, &BinMat, TRUE );
+    tipe = ResultType( rite, left, tipe, BinMat, TRUE );
     break;
     default:
     _Zoiks( ZOIKS_054 );
@@ -744,6 +699,8 @@ static  tn  BinFold( cg_op op, tn left, tn rite, type_def *tipe ) {
     return( TGNode( TN_SIDE_EFFECT, O_NOP, left, rite, left->tipe ) );
     case O_POW:
     return( FoldPow( left, rite, tipe ) );
+    default:
+        break;
     }
     return( NULL );
 }
@@ -1482,6 +1439,8 @@ static  name    *TNFindBase( tn node ) {
     case O_PTR_TO_FORIEGN:
     case O_CONVERT:
         return( SafeRecurse( TNFindBase, node->u.left ) );
+    default:
+        break;
     }
     if( _IsntModel( FORTRAN_ALIASING ) ) return( NULL );
     if( node->op != O_POINTS ) return( NULL );
@@ -1493,6 +1452,8 @@ static  name    *TNFindBase( tn node ) {
     case TN_LV_ASSIGN:
     case TN_LV_PRE_GETS:
         return( SafeRecurse( TNFindBase, node->u.left->rite ) );
+    default:
+        break;
     }
     node = node->u.left;
     if( node->class != TN_LEAF ) return( NULL );
@@ -1505,6 +1466,8 @@ static  name    *TNFindBase( tn node ) {
                         op->n.name_class, op->n.size );
     }
     return( op );
+    default:
+        break;
     }
     return( NULL );
 }

@@ -41,6 +41,7 @@
 #include "typedef.h"
 #include "zoiks.h"
 
+#include "namelist.h"
 extern  void            FreeTable(sym_handle);
 extern  type_class_def  RegClass(hw_reg_set);
 extern  type_def        *ClassType(type_class_def);

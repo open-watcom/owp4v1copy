@@ -24,30 +24,21 @@
 *
 *  ========================================================================
 *
-* Description:  Prototypes for patch.c; the DeadBeef stuff seems to be
-*               truely dead beef.
+* Description:  Prototypes for *blips.c
 *
 ****************************************************************************/
-
-#ifndef INVALID
-#include "objrep.h"
-#endif
-
-#if 0
-extern void DeadBeef();
-#pragma aux DeadBeef = 0xDE 0xAD 0xBE 0xEF;
-#define Bytes_008 DeadBeef(); DeadBeef();
-#define Bytes_016 Bytes_008 Bytes_008
-#define Bytes_032 Bytes_016 Bytes_016
-#define Bytes_064 Bytes_032 Bytes_032
-#define Bytes_128 Bytes_064 Bytes_064
-#define Bytes_256 Bytes_128 Bytes_128
-#define Bytes_512 Bytes_256 Bytes_256
-#define PatchArea() Bytes_512 Bytes_256
-#endif
-
-extern patch *BGNewPatch(void);
-extern an TNPatch(tn node);
-extern cg_name BGPatchNode(patch *hdl, type_def *tipe);
-extern void BGPatchInteger(patch *hdl, signed_32 value);
-extern void BGFiniPatch(patch *hdl);
+extern void FiniBlip(void);
+extern void InitBlip(void);
+extern bool WantZoiks2(void);
+extern void LNBlip(source_line_number num);
+extern void TGBlip(void);
+extern void LPBlip(void);
+extern void URBlip(void);
+extern void SXBlip(void);
+extern void EXBlip(void);
+extern void GRBlip(void);
+extern void IMBlip(void);
+extern void SCBlip(void);
+extern void PSBlip(void);
+extern void PLBlip(void);
+extern void DGBlip(void);

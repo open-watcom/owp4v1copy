@@ -44,7 +44,7 @@ extern  an      Arithmetic( an name, type_def *tipe );
 extern  bn      BGCompare( cg_op op, an left, an rite,
                            label_handle entry, type_def *tipe );
 extern  bn      Boolean( an node, label_handle entry );
-extern  label_handle    BGGetEntry();
+extern  label_handle    BGGetEntry( void );
 extern  void    BG3WayControl( an node, label_handle lt,
                                label_handle eq, label_handle gt );
 extern  void    BGControl( cg_op op, bn expr, label_handle lbl );

@@ -24,30 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  Prototypes for patch.c; the DeadBeef stuff seems to be
-*               truely dead beef.
+* Description:  Prototypes for inline.c
 *
 ****************************************************************************/
-
-#ifndef INVALID
-#include "objrep.h"
-#endif
-
-#if 0
-extern void DeadBeef();
-#pragma aux DeadBeef = 0xDE 0xAD 0xBE 0xEF;
-#define Bytes_008 DeadBeef(); DeadBeef();
-#define Bytes_016 Bytes_008 Bytes_008
-#define Bytes_032 Bytes_016 Bytes_016
-#define Bytes_064 Bytes_032 Bytes_032
-#define Bytes_128 Bytes_064 Bytes_064
-#define Bytes_256 Bytes_128 Bytes_128
-#define Bytes_512 Bytes_256 Bytes_256
-#define PatchArea() Bytes_512 Bytes_256
-#endif
-
-extern patch *BGNewPatch(void);
-extern an TNPatch(tn node);
-extern cg_name BGPatchNode(patch *hdl, type_def *tipe);
-extern void BGPatchInteger(patch *hdl, signed_32 value);
-extern void BGFiniPatch(patch *hdl);
+extern void BGStartInline(sym_handle proc_sym);
+extern void BGAddInlineParm(an addr);
+extern an BGStopInline(cg_name handle, type_def *tipe);
+extern void BGProcInline(sym_handle proc_sym, type_def *tipe);
+extern void BGParmInline(sym_handle sym, type_def *tipe);
+extern void BGRetInline(an addr, type_def *tipe);
+extern bool BGInInline(void);
+extern int BGInlineDepth(void);

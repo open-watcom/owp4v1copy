@@ -24,12 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  The type_def typedef
 *
 ****************************************************************************/
 
-
+#ifndef TYPEDEF_H
+#define TYPEDEF_H
 typedef enum {
         TYPE_FLOAT      = 0x01,
         TYPE_SIGNED     = 0x02,
@@ -45,3 +45,4 @@ typedef struct type_def {
         type_length     align;
 #endif
 } type_def;
+#endif

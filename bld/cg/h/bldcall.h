@@ -24,30 +24,21 @@
 *
 *  ========================================================================
 *
-* Description:  Prototypes for patch.c; the DeadBeef stuff seems to be
-*               truely dead beef.
+* Description:  Prototypes for bldcall.c
 *
 ****************************************************************************/
-
-#ifndef INVALID
-#include "objrep.h"
-#endif
-
-#if 0
-extern void DeadBeef();
-#pragma aux DeadBeef = 0xDE 0xAD 0xBE 0xEF;
-#define Bytes_008 DeadBeef(); DeadBeef();
-#define Bytes_016 Bytes_008 Bytes_008
-#define Bytes_032 Bytes_016 Bytes_016
-#define Bytes_064 Bytes_032 Bytes_032
-#define Bytes_128 Bytes_064 Bytes_064
-#define Bytes_256 Bytes_128 Bytes_128
-#define Bytes_512 Bytes_256 Bytes_256
-#define PatchArea() Bytes_512 Bytes_256
-#endif
-
-extern patch *BGNewPatch(void);
-extern an TNPatch(tn node);
-extern cg_name BGPatchNode(patch *hdl, type_def *tipe);
-extern void BGPatchInteger(patch *hdl, signed_32 value);
-extern void BGFiniPatch(patch *hdl);
+extern type_class_def AddCallBlock(sym_handle sym, type_def *tipe);
+extern void FreeCallNode(cn call);
+extern cn BGInitCall(an node, type_def *tipe, aux_handle aux);
+extern void BGAddParm(cn call, an parm);
+extern void BGAutoDecl(sym_handle sym, type_def *tipe);
+extern name *DoParmDecl(sym_handle sym, type_def *tipe, hw_reg_set reg);
+extern void BGParmDecl(sym_handle sym, type_def *tipe);
+extern void AddCallIns(instruction *ins, cn call);
+extern void ReverseParmNodeList(pn *owner);
+extern void PushParms(pn parm, call_state *state);
+extern void ReserveStack(call_state *state, instruction *prev, type_length len);
+extern void ParmIns(pn parm, call_state *state);
+extern void BGZapBase(name *base, type_def *tipe);
+extern void BGReturn(an retval, type_def *tipe);
+extern bool AssgnParms(cn call, bool in_line);
