@@ -127,7 +127,7 @@ wlib_libs += $(clib_dir)/$(%OBJDIR)/libwatcom.a
 
 !ifeq sys_dll 1
 wlib.exe: $(stub_objs) $(proj_name).lib
-    $(linker) $(mode_lflags) $(exe_lflags_$(host_os$(host_cpu))) $(extra_l_flags) name $^@ file { $(stub_objs) } lib $(proj_name).lib
+    $(linker) $(mode_lflags) $(exe_lflags_$(host_os)_$(host_cpu)) $(extra_l_flags) name $^@ file { $(stub_objs) } lib $(proj_name).lib
 
 $(proj_name).lib: $(targ_name)
     @rm -f $^@
