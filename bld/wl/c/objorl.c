@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Object file processing routines specific to ORL.
 *
 ****************************************************************************/
 
-
-/*
- *  OBJORL:  object file processing routines specific to ORL
- *
-*/
 
 #include <unistd.h>
 #include <string.h>
@@ -580,7 +574,7 @@ static orl_return ProcSymbol( orl_symbol_handle symhdl )
     }
     if( type & ORL_SYM_TYPE_DEBUG ) return ORL_OKAY;
     if( type & (ORL_SYM_TYPE_OBJECT|ORL_SYM_TYPE_FUNCTION) ||
-        (type & (ORL_SYM_TYPE_NOTYPE|ORL_SYM_TYPE_UNDEFINED) && 
+        (type & (ORL_SYM_TYPE_NOTYPE|ORL_SYM_TYPE_UNDEFINED) &&
          name != NULL)) {
         namelen = strlen( name );
         if( namelen == 0 ) {
@@ -906,6 +900,11 @@ extern unsigned long ORLPass1( void )
     LinkState |= DOSSEG_FLAG;
     PermStartMod( CurrMod );
     filehdl = InitFile();
+    if( filehdl == NULL ) {
+        LnkMsg( FTL+MSG_BAD_OBJECT, "s", CurrMod->f.source->file->name );
+        CurrMod->f.source->file->flags |= INSTAT_IOERR;
+        return -1;
+    }
     if( CheckFlags( filehdl ) ) {
         if( LinkState & HAVE_PPC_CODE && !FmtData.toc_initialized ) {
             InitToc();
