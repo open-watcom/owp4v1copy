@@ -79,8 +79,8 @@ $(cg_dir)/h/lbit.gh : ./bitset.exe $(cg_dir)/mif/cg.mif
 $(cg_dir)/h/dbit.gh : ./bitset.exe $(cg_dir)/mif/cg.mif
     $[@ $(dbit_size) _DBit dom_bit_set $(cg_dir)/h/dbit.gh
 
-$(cg_dir)/h/cgprotos.gh : $(cg_dir)/h/cgfuntab.h $(cg_dir)/h/cgapicvr.h
-    $(cc) $(protos_opts) $(cg_dir)/h/cgapicvr.h -I$(cg_dir)/h
+$(cg_dir)/h/cgprotos.gh : $(cg_dir)/h/cgapicvr.h $(cg_dir)/h/cgfuntab.h
+    $(cc) $(protos_opts) $[@ -I"$(cg_dir)/h"
 
-$(cg_dir)/h/feprotos.gh : $(cg_dir)/h/cgfertns.h $(cg_dir)/h/cgfecvr.h
-    $(cc) $(protos_opts) $(cg_dir)/h/cgfecvr.h -I$(cg_dir)/h
+$(cg_dir)/h/feprotos.gh : $(cg_dir)/h/cgfecvr.h $(cg_dir)/h/cgfertns.h
+    $(cc) $(protos_opts) $[@ -I"$(cg_dir)/h"
