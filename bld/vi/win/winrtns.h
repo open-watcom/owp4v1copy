@@ -48,7 +48,7 @@ window_id NewMsgWindow( void );
 window_id NewStatWindow( void );
 void RecalcStatusBarSize( window_id );
 bool WindowsKeyPush( WORD, WORD );
-int MenuCommand( unsigned int );
+int MenuCommand( UINT );
 void StatusLine( int, char *, int );
 
 // display.c

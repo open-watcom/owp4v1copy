@@ -54,7 +54,7 @@ window CommandWindow = {
 
 window_id CommandId = NO_WINDOW;
 
-LONG WINEXP CommandWindowProc( HWND, unsigned, UINT, LONG );
+LONG WINEXP CommandWindowProc( HWND, UINT, WPARAM, LPARAM );
 
 static char *className = "CommandWindow";
 

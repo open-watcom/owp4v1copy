@@ -46,10 +46,10 @@
 #define MAX_CMDLINE     500
 
 #if defined (_THIN_LIB)
-    extern int      __init_environment( 
+    extern int      __init_environment(
         void *  reserved
         );
-    extern int     __deinit_environment( 
+    extern int     __deinit_environment(
         void *  reserved
         );
     extern void * GetNLMHandle(
@@ -235,16 +235,16 @@ extern int __init_environment(void *  reserved)
     _saved_DS = __DS();
     atexit( MyExitRtn );
 
-    AllocRTag = AllocateResourceTag( 
-        GetNLMHandle(), 
+    AllocRTag = AllocateResourceTag(
+        GetNLMHandle(),
         "OpenWATCOM CLIB Memory",
         AllocSignature );
 
-    if( __InitThreadProcessing() == NULL ) 
+    if( __InitThreadProcessing() == NULL )
     {
         retcode = -1;
-    } 
-    else 
+    }
+    else
     {
         __InitRtns( 1 );
         InitFiniLevel = 1;
@@ -345,7 +345,7 @@ extern void __VersionEnforcement( void )
 }
 #endif
 
-extern void __exit( int rc )
+extern void __exit( unsigned rc )
 {
     __FiniRtns( 0, InitFiniLevel );
     _exit( rc );

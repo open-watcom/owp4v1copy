@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  The implementation of the data control library and the 
+* Description:  The implementation of the data control library and the
 *               dynamic template library for VIW.
 *
 ****************************************************************************/
@@ -54,15 +54,15 @@
 //   third parameter: the dialog's window handle
 //   fourth parameter: pointer to dialog data struct
 //   fifth parameter: boolean (no idea what it is for) (MISSING!!!)
-BOOL ctl_check_start( ctl_elt *, HANDLE, HWND, void *, BOOL );
-BOOL ctl_radio_start( ctl_elt *, HANDLE, HWND, void *, BOOL );
-BOOL ctl_text_start( ctl_elt *, HANDLE, HWND, void *, BOOL );
-BOOL ctl_combo_start( ctl_elt *, HANDLE, HWND, void *, BOOL );
-BOOL ctl_dcombo_start( ctl_elt *, HANDLE, HWND, void *, BOOL );
-BOOL ctl_int_start( ctl_elt *, HANDLE, HWND, void *, BOOL );
-BOOL ctl_float_start( ctl_elt *, HANDLE, HWND, void *, BOOL );
-BOOL ctl_rint_start( ctl_elt *, HANDLE, HWND, void *, BOOL );
-BOOL ctl_rfloat_start( ctl_elt *, HANDLE, HWND, void *, BOOL );
+static BOOL ctl_check_start( ctl_elt *, HANDLE, HWND, void *, BOOL );
+static BOOL ctl_radio_start( ctl_elt *, HANDLE, HWND, void *, BOOL );
+static BOOL ctl_text_start( ctl_elt *, HANDLE, HWND, void *, BOOL );
+static BOOL ctl_combo_start( ctl_elt *, HANDLE, HWND, void *, BOOL );
+static BOOL ctl_dcombo_start( ctl_elt *, HANDLE, HWND, void *, BOOL );
+static BOOL ctl_int_start( ctl_elt *, HANDLE, HWND, void *, BOOL );
+static BOOL ctl_float_start( ctl_elt *, HANDLE, HWND, void *, BOOL );
+static BOOL ctl_rint_start( ctl_elt *, HANDLE, HWND, void *, BOOL );
+static BOOL ctl_rfloat_start( ctl_elt *, HANDLE, HWND, void *, BOOL );
 
 // The *_finish functions will be called to retain the control element
 // data into the dialog data struct.
@@ -71,27 +71,27 @@ BOOL ctl_rfloat_start( ctl_elt *, HANDLE, HWND, void *, BOOL );
 //   third parameter: the dialog's window handle
 //   fourth parameter: pointer to dialog data struct
 //   fifth parameter: finish_type (no idea what it is for) (MISSING!!!)
-BOOL ctl_check_finish( ctl_elt *, HANDLE, HWND, void *, finish_type );
-BOOL ctl_radio_finish( ctl_elt *, HANDLE, HWND, void *, finish_type );
-BOOL ctl_text_finish( ctl_elt *, HANDLE, HWND, void *, finish_type );
-BOOL ctl_combo_finish( ctl_elt *, HANDLE, HWND, void *, finish_type );
-BOOL ctl_dcombo_finish( ctl_elt *, HANDLE, HWND, void *, finish_type );
-BOOL ctl_int_finish( ctl_elt *, HANDLE, HWND, void *, finish_type );
-BOOL ctl_float_finish( ctl_elt *, HANDLE, HWND, void *, finish_type );
-BOOL ctl_rint_finish( ctl_elt *, HANDLE, HWND, void *, finish_type );
-BOOL ctl_rfloat_finish( ctl_elt *, HANDLE, HWND, void *, finish_type );
+static BOOL ctl_check_finish( ctl_elt *, HANDLE, HWND, void *, finish_type );
+static BOOL ctl_radio_finish( ctl_elt *, HANDLE, HWND, void *, finish_type );
+static BOOL ctl_text_finish( ctl_elt *, HANDLE, HWND, void *, finish_type );
+static BOOL ctl_combo_finish( ctl_elt *, HANDLE, HWND, void *, finish_type );
+static BOOL ctl_dcombo_finish( ctl_elt *, HANDLE, HWND, void *, finish_type );
+static BOOL ctl_int_finish( ctl_elt *, HANDLE, HWND, void *, finish_type );
+static BOOL ctl_float_finish( ctl_elt *, HANDLE, HWND, void *, finish_type );
+static BOOL ctl_rint_finish( ctl_elt *, HANDLE, HWND, void *, finish_type );
+static BOOL ctl_rfloat_finish( ctl_elt *, HANDLE, HWND, void *, finish_type );
 
-// The *_modified functions will be called to query if the control element 
+// The *_modified functions will be called to query if the control element
 // was modified.
 //   first parameter: pointer to the control element data
 //   second parameter: the wParam of the message
 //   third parameter: the lParam of the message
-BOOL ctl_check_modified( ctl_elt *, int, LONG );
-BOOL ctl_text_modified( ctl_elt *, int, LONG );
-BOOL ctl_combo_modified( ctl_elt *, int, LONG );
-BOOL ctl_radio_modified( ctl_elt *, int, LONG );
+static BOOL ctl_check_modified( ctl_elt *, UINT, LONG );
+static BOOL ctl_text_modified( ctl_elt *, UINT, LONG );
+static BOOL ctl_combo_modified( ctl_elt *, UINT, LONG );
+static BOOL ctl_radio_modified( ctl_elt *, UINT, LONG );
 
-// The control table: Contains the 
+// The control table: Contains the
 ctl_action Ctl_int_actions[] =
 {
     { NULL, NULL, NULL }, // empty dummy, since we are starting to count from one
@@ -112,7 +112,7 @@ ctl_action Ctl_int_actions[] =
 // The ctl_dlg_ functions
 
 BOOL ctl_dlg_init( WPI_INST inst, HWND dlg, void *ptr, void *ctl_ptr)
-/******************************************************************/
+/*******************************************************************/
 /* initialize a data control. Returns TRUE if it gets up OK. Could return
    FALSE if a data error occurs */
 {
@@ -134,7 +134,7 @@ BOOL ctl_dlg_init( WPI_INST inst, HWND dlg, void *ptr, void *ctl_ptr)
 }
 
 BOOL ctl_dlg_done( WPI_INST inst, HWND dlg, void *ptr, void *ctl_ptr)
-/******************************************************************/
+/*******************************************************************/
 /* finalize a data control. Returns TRUE if all field verification is ok,
    FALSE otherwise */
 {
@@ -157,8 +157,8 @@ BOOL ctl_dlg_done( WPI_INST inst, HWND dlg, void *ptr, void *ctl_ptr)
     return( TRUE );
 }
 
-void ctl_dlg_process( void *ctl_ptr, WPI_PARAM1 wparam, WPI_PARAM2 lparam )
-/**************************************************************/
+void  ctl_dlg_process( void *ctl_ptr, WPI_PARAM1 wparam, WPI_PARAM2 lparam )
+/**************************************************************************/
 /* this routine must be called for all WM_COMMAND events sent to the
    dialog. */
 {
@@ -182,6 +182,7 @@ void ctl_dlg_process( void *ctl_ptr, WPI_PARAM1 wparam, WPI_PARAM2 lparam )
 }
 
 BOOL ctl_dlg_reset( WPI_INST ___a, HWND dlg, void *ptr, void *ctl_ptr, BOOL ___b)
+/*******************************************************************************/
 /* this routine must be called to reset the dialog to the given state */
 {
     // simply call the ctl_dlg_init routine
@@ -197,7 +198,7 @@ void dyn_tpl_init( void *dyn_def, HWND dlg_hld )
     int                 num;
     dyn_tpl_dim         *dim; // pointer to the current dyn_tpl_dim object
     dyn_tpl_dlg         *dyn = dyn_def; // so app doesn't have to do type cast
-    char                *dimptr = (char*)&dyn->tpls; // points to the start of the next 
+    char                *dimptr = (char*)&dyn->tpls; // points to the start of the next
                                                      // dyn_tpl_dim object
     int                 *int_ctr; // used to count the ints
     int                 i;
@@ -258,7 +259,7 @@ void dyn_tpl_process( void *dyn_def, HWND dlg_hld, WPI_PARAM1 parm1, WPI_PARAM2 
     int                 num;
     dyn_tpl_dim         *dim; // pointer to the current dyn_tpl_dim object
     dyn_tpl_dlg         *dyn = dyn_def; // so app doesn't have to do type cast
-    char                *dimptr = (char*)&dyn->tpls; // points to the start of the next 
+    char                *dimptr = (char*)&dyn->tpls; // points to the start of the next
                                                      // dyn_tpl_dim object
     int                 *int_ctr; // used to count the ints
     int                 i;
@@ -326,8 +327,8 @@ void dyn_tpl_process( void *dyn_def, HWND dlg_hld, WPI_PARAM1 parm1, WPI_PARAM2 
 ////////////////////////////////////////////////////////////////////////////
 // Check field implementation
 
-BOOL ctl_check_start( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, BOOL ___b )
-/********************************************************************/
+static BOOL ctl_check_start( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, BOOL ___b )
+/**************************************************************************************/
 /* start check field */
 {
     inst = inst;
@@ -337,8 +338,8 @@ BOOL ctl_check_start( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, BOOL ___b 
     return( TRUE );
 }
 
-BOOL ctl_check_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_type ___f )
-/*********************************************************************/
+static BOOL ctl_check_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_type ___f )
+/**********************************************************************************************/
 /* end check field */
 {
     inst = inst;
@@ -348,8 +349,8 @@ BOOL ctl_check_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_ty
     return( TRUE );
 }
 
-BOOL ctl_check_modified( ctl_elt *elt, UINT wparam, LONG lparam )
-/***************************************************************/
+static BOOL ctl_check_modified( ctl_elt *elt, UINT wparam, LONG lparam )
+/**********************************************************************/
 {
     WORD        cmd;
     WORD        id;
@@ -368,12 +369,12 @@ BOOL ctl_check_modified( ctl_elt *elt, UINT wparam, LONG lparam )
 ////////////////////////////////////////////////////////////////////////////
 // Combo list box implementation
 
-WORD ctl_combo_add_msg( HWND, int );
-WORD ctl_combo_sel_msg( HWND, int );
-WORD ctl_combo_get_msg( HWND, int );
+static WORD ctl_combo_add_msg( HWND, int );
+static WORD ctl_combo_sel_msg( HWND, int );
+static WORD ctl_combo_get_msg( HWND, int );
 
-BOOL ctl_combo_start( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, BOOL ___b )
-/********************************************************************/
+static BOOL ctl_combo_start( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, BOOL ___b )
+/**************************************************************************************/
 /* start a combo list box */
 {
     char                value[50];
@@ -406,8 +407,8 @@ BOOL ctl_combo_start( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, BOOL ___b 
     return( TRUE );
 }
 
-BOOL ctl_combo_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_type ___f )
-/*********************************************************************/
+static BOOL ctl_combo_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_type ___f )
+/**********************************************************************************************/
 /* finish a combo list box */
 {
     inst = inst;
@@ -419,8 +420,8 @@ BOOL ctl_combo_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_ty
     return( TRUE );
 }
 
-BOOL ctl_combo_modified( ctl_elt *elt, UINT wparam, LONG lparam )
-/***************************************************************/
+static BOOL ctl_combo_modified( ctl_elt *elt, UINT wparam, LONG lparam )
+/**********************************************************************/
 {
     WORD        id;
     WORD        cmd;
@@ -449,8 +450,8 @@ static BOOL is_listbox( HWND dlg, int ctl )
     return( FALSE );
 }
 
-WORD ctl_combo_add_msg( HWND dlg, int ctl )
-/*****************************************/
+static WORD ctl_combo_add_msg( HWND dlg, int ctl )
+/************************************************/
 {
     if( is_listbox( dlg, ctl ) ) {
         return( LB_ADDSTRING );
@@ -459,8 +460,8 @@ WORD ctl_combo_add_msg( HWND dlg, int ctl )
     }
 }
 
-WORD ctl_combo_sel_msg( HWND dlg, int ctl )
-/*****************************************/
+static WORD ctl_combo_sel_msg( HWND dlg, int ctl )
+/************************************************/
 {
     if( is_listbox( dlg, ctl ) ) {
         return( LB_SETCURSEL );
@@ -469,8 +470,8 @@ WORD ctl_combo_sel_msg( HWND dlg, int ctl )
     }
 }
 
-WORD ctl_combo_get_msg( HWND dlg, int ctl )
-/*****************************************/
+static WORD ctl_combo_get_msg( HWND dlg, int ctl )
+/************************************************/
 {
     if( is_listbox( dlg, ctl ) ) {
         return( LB_GETCURSEL );
@@ -479,12 +480,12 @@ WORD ctl_combo_get_msg( HWND dlg, int ctl )
     }
 }
 
-WORD ctl_combo_add_msg( HWND, int );
-WORD ctl_combo_sel_msg( HWND, int );
-WORD ctl_combo_get_msg( HWND, int );
+static WORD ctl_combo_add_msg( HWND, int );
+static WORD ctl_combo_sel_msg( HWND, int );
+static WORD ctl_combo_get_msg( HWND, int );
 
-BOOL ctl_dcombo_start( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, BOOL ___b )
-/*********************************************************************/
+static BOOL ctl_dcombo_start( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, BOOL ___b )
+/***************************************************************************************/
 /* start a dynamic combo list box */
 {
     char                *str;
@@ -516,8 +517,8 @@ BOOL ctl_dcombo_start( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, BOOL ___b
     return( TRUE );
 }
 
-BOOL ctl_dcombo_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_type ___f )
-/**********************************************************************/
+static BOOL ctl_dcombo_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_type ___f )
+/***********************************************************************************************/
 /* finish a dynamic combo list box */
 {
     inst = inst;
@@ -532,8 +533,8 @@ BOOL ctl_dcombo_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_t
 ////////////////////////////////////////////////////////////////////////////
 // Float field implementation
 
-BOOL ctl_float_start( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, BOOL ___b )
-/********************************************************************/
+static BOOL ctl_float_start( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, BOOL ___b )
+/**************************************************************************************/
 /* start a float field */
 {
     char                buf[50];
@@ -558,8 +559,8 @@ BOOL ctl_float_start( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, BOOL ___b 
     return( TRUE );
 }
 
-BOOL ctl_float_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_type ___f )
-/*********************************************************************/
+static BOOL ctl_float_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_type ___f )
+/**********************************************************************************************/
 /* end a float field */
 {
     char                str[50];
@@ -585,8 +586,8 @@ BOOL ctl_float_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_ty
 ////////////////////////////////////////////////////////////////////////////
 // Ranged float field implementation
 
-BOOL ctl_rfloat_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_type ___f )
-/**********************************************************************/
+static BOOL ctl_rfloat_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_type ___f )
+/***********************************************************************************************/
 /* end an float field */
 {
     float               value;
@@ -622,8 +623,8 @@ BOOL ctl_rfloat_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_t
 ////////////////////////////////////////////////////////////////////////////
 // Integer field implementation
 
-BOOL ctl_int_start( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, BOOL ___b )
-/******************************************************************/
+static BOOL ctl_int_start( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, BOOL ___b )
+/************************************************************************************/
 /* start an integer field */
 {
     inst = inst;
@@ -633,8 +634,8 @@ BOOL ctl_int_start( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, BOOL ___b )
     return( TRUE );
 }
 
-BOOL ctl_int_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_type ___f )
-/*******************************************************************/
+static BOOL ctl_int_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_type ___f )
+/********************************************************************************************/
 /* end an int field */
 {
     BOOL                ok;
@@ -656,8 +657,8 @@ BOOL ctl_int_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_type
 ////////////////////////////////////////////////////////////////////////////
 // Ranged int field implementation
 
-BOOL ctl_rint_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_type ___f )
-/********************************************************************/
+static BOOL ctl_rint_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_type ___f )
+/*********************************************************************************************/
 /* end an int field */
 {
     int                 value;
@@ -693,8 +694,8 @@ BOOL ctl_rint_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_typ
 ////////////////////////////////////////////////////////////////////////////
 // Radio button implementation
 
-BOOL ctl_radio_start( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, BOOL ___b )
-/********************************************************************/
+static BOOL ctl_radio_start( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, BOOL ___b )
+/**************************************************************************************/
 /* start a radio button */
 {
     int                 value;
@@ -711,8 +712,8 @@ BOOL ctl_radio_start( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, BOOL ___b 
     return( TRUE );
 }
 
-BOOL ctl_radio_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_type ___f )
-/*********************************************************************/
+static BOOL ctl_radio_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_type ___f )
+/**********************************************************************************************/
 /* finish a radio button */
 {
     int                 control;
@@ -731,8 +732,8 @@ BOOL ctl_radio_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_ty
     return( TRUE );
 }
 
-BOOL ctl_radio_modified( ctl_elt *elt, UINT wparam, LONG lparam )
-/************************************************************/
+static BOOL ctl_radio_modified( ctl_elt *elt, UINT wparam, LONG lparam )
+/**********************************************************************/
 {
     WORD        id;
     WORD        cmd;
@@ -751,8 +752,8 @@ BOOL ctl_radio_modified( ctl_elt *elt, UINT wparam, LONG lparam )
 ////////////////////////////////////////////////////////////////////////////
 // Text field implementation
 
-BOOL ctl_text_start( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, BOOL ___b )
-/*******************************************************************/
+static BOOL ctl_text_start( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, BOOL ___b )
+/*************************************************************************************/
 /* start a text field */
 {
     inst = inst;
@@ -762,8 +763,8 @@ BOOL ctl_text_start( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, BOOL ___b )
     return( TRUE );
 }
 
-BOOL ctl_text_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_type ___f )
-/********************************************************************/
+static BOOL ctl_text_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_type ___f )
+/*********************************************************************************************/
 /* end a text field */
 {
     char                *str;
@@ -779,8 +780,8 @@ BOOL ctl_text_finish( ctl_elt *elt, HANDLE inst, HWND dlg, void *ptr, finish_typ
     return( TRUE );
 }
 
-BOOL ctl_text_modified( ctl_elt *elt, UINT wparam , LONG lparam )
-/***********************************************************/
+static BOOL ctl_text_modified( ctl_elt *elt, UINT wparam , LONG lparam )
+/**********************************************************************/
 {
     WORD        id;
     WORD        cmd;

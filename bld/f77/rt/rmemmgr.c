@@ -24,23 +24,15 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Run time memory manager.
 *
 ****************************************************************************/
 
-
-//
-//  RMEMMGR : Run time memory manager
-//
 
 #include "ftnstd.h"
 #if _OPT_CG == _OFF
 #include "bglobal.h"
 #endif
-
-extern  void            *_SysMemAlloc(int);
-extern  void            _SysMemFree(void *);
 
 
 void            *RMemAlloc( int size ) {

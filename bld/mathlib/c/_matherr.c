@@ -58,7 +58,7 @@ int   (*_RWD_matherr)( struct exception * ) =
   __matherr;
 #endif
 
-_WMRTLINK void _set_matherr( int (*rtn)( struct exception * ) )
+_WMRTLINK void _set_matherr( int (*rtn)( struct _exception * ) )
 {
     _RWD_matherr = rtn;
 }
@@ -73,8 +73,8 @@ void __rterrmsg( const int errcode, const char *funcname )
     fputc( '\n', fp );
 }
 
-_WMRTLINK double _matherr( struct exception *excp )
-/***************************************/
+_WMRTLINK double _matherr( struct _exception *excp )
+/**************************************************/
     {
         if( (*_RWD_matherr)( excp ) == 0 ) {
             __rterrmsg( excp->type, excp->name );
