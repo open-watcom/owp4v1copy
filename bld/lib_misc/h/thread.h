@@ -150,11 +150,8 @@ typedef struct thread_data {
     MAX_CHAR_TYPE               __cvt_buffer[20];
     #if defined(__NT__) || defined(_NETWARE_LIBC)
         unsigned long           thread_id;
-    #elif defined(__QNX__)
+    #elif defined(__UNIX__)
         pid_t                   thread_id;
-    #elif defined(__LINUX__)
-        // TODO: Linux thread ID!
-        unsigned long           thread_id;  // silent compiler only
     #endif
     #if defined(__NT__)
         void                    *thread_handle;
