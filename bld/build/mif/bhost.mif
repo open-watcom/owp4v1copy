@@ -60,13 +60,20 @@ nulldevice      = nul
 bld_cl          = wclaxp -l=$(bld_sys) -i"$(bld_incs)"
 bld_cc          = *wccaxp -i"$(bld_incs)"
 bas             = $(as)
+
 !else
 bld_cl          = wcl386 -l=$(bld_sys) -i"$(bld_incs)"
 bld_cc          = *wcc386 -i"$(bld_incs)"
 !ifdef __LINUX__
-bas             = *$(bld_bin)/bwasm
+bas_386         = *$(bld_bin)/bwasm
+bas_i86         = *$(bld_bin)/bwasm
+bas_axp         = *wasaxp
+bas_ppc         = *wasppc
 !else
-bas             = *$(bld_bin)\bwasm
+bas_386         = *$(bld_bin)\bwasm
+bas_i86         = *$(bld_bin)\bwasm
+bas_axp         = *wasaxp
+bas_ppc         = *wasppc
 !endif
 !endif
 bld_link        = *wlink sys $(bld_sys)

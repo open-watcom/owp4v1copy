@@ -90,4 +90,4 @@ $(defines) $(libs)
 !endif
 !endif
 
-as = $(bas)
+as = $(bas_$(host_cpu))
