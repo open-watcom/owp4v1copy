@@ -1317,7 +1317,6 @@ extern void DefMacro( const char *name )
                 + strlen( name ) + strlen( EnvVarValue ) + 1 );
         FmtStr( env->value, "%s=%s", name + 1, EnvVarValue );
         FreeSafe( value );
-        FreeSafe( EnvVarValue );
         PutEnvSafe( env );
     } else {
         if (Glob.microsoft){
@@ -1344,6 +1343,7 @@ extern void DefMacro( const char *name )
             addMacro( name, value );
         }
     }
+    FreeSafe( EnvVarValue );
 }
 
 
