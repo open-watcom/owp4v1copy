@@ -36,8 +36,12 @@ h\exstring.h
 h\fstream.h
 h\generic.h
 h\iomanip.h
+h\ios.h
+h\iosfwd.h
 h\iostream.h
+h\istream.h
 h\new.h
+h\ostream.h
 h\stdexcep.h
 h\streambu.h
 h\strstrea.h
