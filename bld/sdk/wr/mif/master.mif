@@ -180,6 +180,7 @@ ytab.gh : $(wrc_dir)/y/rc.y $(wrc_dir)/y/yydriver.c $(wrc_dir)/h/rcmem.h
         $(yacc) -d -b $[@ $(wrc_dir)/y/yydriver.c >$(nulldevice)
         @cp ytab.h ytab.gh
         @rm -f ytab.h
+        @rm -f ytab.c # ytab.c isn't used
 
 $(name).res: ../h/wr.rc .AUTODEPEND
         $(rc) $(rc_flags) -r -ad -DWR_COMPILED $[@ -fo=$^@
