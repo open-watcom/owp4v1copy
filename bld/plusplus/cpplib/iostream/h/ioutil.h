@@ -60,9 +60,12 @@ extern int __FlagsToBase( long __format_flags );
 
 class __WATCOM_ios {
 public:
-    static void *find_user_word( ios *pios, int index );
-    static void free_xalloc_storage( ios *pios );
-    static ios::iostate writeitem( ostream &ostrm, char const *buffer, int size, int fill_offset );
+    static void *find_user_word( std::ios *pios, int index );
+    static void free_xalloc_storage( std::ios *pios );
+    static std::ios::iostate writeitem( std::ostream &ostrm,
+                                        char const *buffer,
+                                        int size,
+                                        int fill_offset );
 };
 
 // defined in CLIB

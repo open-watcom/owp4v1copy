@@ -16,6 +16,12 @@
 #ifndef _IOS_INCLUDED
   #include <ios>
 #endif
+using std::streampos;
+using std::streamoff;
+using std::ios;
+using std::dec;
+using std::hex;
+using std::oct;
 
 #endif
 :elsesegment
@@ -32,9 +38,6 @@
  #include <_comdef.h>
 #endif
 
-:: Placeholder declaration.
-namespace std { }
-
 // Define EOF to be the same as that used with C.
 #if !defined( EOF )
     #define EOF (-1)
@@ -48,22 +51,26 @@ namespace std { }
 
 :include cpplock.sp
 
-// Position in the stream (absolute value, 0 is first byte):
-typedef long streampos;
-
-// Offset from current position in the stream:
-typedef long streamoff;
-
-// These are referred to in class ios, but are defined later, or elsewhere:
+// This is referred to in class ios, but is defined later, or elsewhere:
 class _WPRTLINK __WATCOM_ios;
-class _WPRTLINK istream;
-class _WPRTLINK ostream;
-class _WPRTLINK streambuf;
 
-// **************************** IOS ******************************************
+namespace std {
+
+  // Position in the stream (absolute value, 0 is first byte):
+  typedef long streampos;
+
+  // Offset from current position in the stream:
+  typedef long streamoff;
+
+  // These are referred to in class ios, but are defined later, or elsewhere:
+  class _WPRTLINK istream;
+  class _WPRTLINK ostream;
+  class _WPRTLINK streambuf;
+
+  // **************************** IOS ****************************************
 :include pshpackl.sp
-class _WPRTLINK ios {
-public:
+  class _WPRTLINK ios {
+  public:
     enum io_state {                   // Error state
         goodbit = 0x00,               // - no errors
         badbit  = 0x01,               // - operation failed, may not proceed
@@ -173,13 +180,13 @@ public:
     __lock *__i_lock;        // ios data member operations
     static __lock *__x_lock; // xalloc/bitalloc operations
 
-protected:
+  protected:
     ios();
 
     void init( streambuf *__sb );
     void setstate( ios::iostate __orbits );
 
-private:
+  private:
     streambuf *__strmbuf;
     ostream   *__tied_stream;
     long       __format_flags;
@@ -195,126 +202,128 @@ private:
 
     friend class __WATCOM_ios;
     int : 0;
-};
+  };
 :include poppack.sp
 
-inline streambuf *ios::rdbuf() const {
+  inline streambuf *ios::rdbuf() const {
     return( __strmbuf );
-}
+  }
 
-inline ios::iostate ios::rdstate() const {
+  inline ios::iostate ios::rdstate() const {
     return( __error_state );
-}
+  }
 
-inline int ios::good() const {
+  inline int ios::good() const {
     return( __error_state == 0 );
-}
+  }
 
-inline int ios::bad() const {
+  inline int ios::bad() const {
     return( __error_state & ios::badbit );
-}
+  }
 
-inline int ios::fail() const {
+  inline int ios::fail() const {
     return( __error_state & (ios::failbit|ios::badbit) );
-}
+  }
 
-inline int ios::eof() const {
+  inline int ios::eof() const {
     return( __error_state & ios::eofbit );
-}
+  }
 
-inline ios::iostate ios::exceptions() const {
+  inline ios::iostate ios::exceptions() const {
     return( __enabled_exceptions );
-}
+  }
 
-inline ios::operator void * () const {
+  inline ios::operator void * () const {
     return( (void *) (fail()==0) );
-}
+  }
 
-inline int ios::operator ! () const {
+  inline int ios::operator ! () const {
     return( fail() );
-}
+  }
 
-inline ios::fmtflags ios::setf( ios::fmtflags __onbits ) {
+  inline ios::fmtflags ios::setf( ios::fmtflags __onbits ) {
     __lock_it( __i_lock );
     ios::fmtflags __old_flags = __format_flags;
     __format_flags           |= __onbits;
     return( __old_flags );
-}
+  }
 
-inline ios::fmtflags ios::setf( ios::fmtflags __onbits, ios::fmtflags __mask ) {
+  inline ios::fmtflags ios::setf( ios::fmtflags __onbits, ios::fmtflags __mask ) {
     __lock_it( __i_lock );
     ios::fmtflags __old_flags = __format_flags;
     __format_flags           &= ~__mask;
     __format_flags           |= __onbits & __mask;
     return( __old_flags );
-}
+  }
 
-inline ios::fmtflags ios::unsetf( ios::fmtflags __offbits ) {
+  inline ios::fmtflags ios::unsetf( ios::fmtflags __offbits ) {
     __lock_it( __i_lock );
     ios::fmtflags __old_flags = __format_flags;
     __format_flags           &= ~__offbits;
     return( __old_flags );
-}
+  }
 
-inline ios::fmtflags ios::flags( ios::fmtflags __flags ) {
+  inline ios::fmtflags ios::flags( ios::fmtflags __flags ) {
     __lock_it( __i_lock );
     ios::fmtflags __old_flags = __format_flags;
     __format_flags            = __flags;
     return( __old_flags );
-}
+  }
 
-inline ios::fmtflags ios::flags() const {
+  inline ios::fmtflags ios::flags() const {
     return( __format_flags );
-}
+  }
 
-inline char ios::fill( char __fillchar ) {
+  inline char ios::fill( char __fillchar ) {
     __lock_it( __i_lock );
     char __old_fill  = __fill_character;
     __fill_character = __fillchar;
     return( __old_fill );
-}
+  }
 
-inline char ios::fill() const {
+  inline char ios::fill() const {
     return( __fill_character );
-}
+  }
 
-inline int ios::precision( int __precision ) {
+  inline int ios::precision( int __precision ) {
     __lock_it( __i_lock );
     int __old_precision = __float_precision;
     __float_precision   = __precision;
     return( __old_precision );
-}
+  }
 
-inline int ios::precision() const {
+  inline int ios::precision() const {
     return( __float_precision );
-}
+  }
 
-inline int ios::width( int __width ) {
+  inline int ios::width( int __width ) {
     __lock_it( __i_lock );
     int __old_width = __field_width;
     __field_width   = __width;
     return( __old_width );
-}
+  }
 
-inline int ios::width() const {
+  inline int ios::width() const {
     return( __field_width );
-}
+  }
 
-inline ostream *ios::tie( ostream *__ostrm ) {
+  inline ostream *ios::tie( ostream *__ostrm ) {
     __lock_it( __i_lock );
     ostream *__old_tie = __tied_stream;
     __tied_stream      = __ostrm;
     return( __old_tie );
-}
+  }
 
-inline ostream *ios::tie() const {
+  inline ostream *ios::tie() const {
     return( __tied_stream );
-}
+  }
 
-// **************************** MANIPULATORS *********************************
-_WPRTLINK extern ios &dec( ios & );
-_WPRTLINK extern ios &hex( ios & );
-_WPRTLINK extern ios &oct( ios & );
+  // **************************** MANIPULATORS *******************************
+  _WPRTLINK extern ios &dec( ios & );
+  _WPRTLINK extern ios &hex( ios & );
+  _WPRTLINK extern ios &oct( ios & );
+
+} // namespace std
 
 #endif
 :endsegment

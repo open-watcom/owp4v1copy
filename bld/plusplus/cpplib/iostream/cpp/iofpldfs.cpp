@@ -31,24 +31,6 @@
 
 
 #error not used anymore (will be deleted!)
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// %     Copyright (C) 1992, by WATCOM International Inc.  All rights    %
-// %     reserved.  No part of this software may be reproduced or        %
-// %     used in any form or by any means - graphic, electronic or       %
-// %     mechanical, including photocopying, recording, taping or        %
-// %     information storage and retrieval systems - except with the     %
-// %     written permission of WATCOM International Inc.                 %
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//
-//  Modified    By              Reason
-//  ========    ==              ======
-//  93/05/26    Greg Bentz      pull floating point out of istream/ostream
-//  93/10/08    Greg Bentz      make LDFloatToString set scale_factor to 1
-//                              for _Ftos when 'G' format
-//  93/10/25    Raymond Tang    Split into separate files.
-//  94/04/06    Greg Bentz      combine header files
-//  95/06/19    Greg Bentz      indirect call to math library
-//                              *** OBSOLETE ***
 
 #ifdef __SW_FH
 #include "iost.h"
@@ -56,23 +38,25 @@
 #include "variety.h"
 #include <float.h>
 #include <stdlib.h>
-#include <iostream.h>
+#include <iostream>
 #endif
 #include "ioutil.h"
 #include "iofhdr.h"
 
-char *__LDFloatToString( long double &f, int precision,
-/**********************************************************/
-    ios::fmtflags format_flags, int *length_ptr ) {
-// Convert a "long double" floating-point value to a string.
-// If "ios::fixed" or "ios::scientific" is specified, use that form.
-// Otherwise, use "scientific" only if the exponent is < -4 or > precision.
-// Perform rounding, if necessary.
+// Convert a "long double" floating-point value to a string. If
+// "ios::fixed" or "ios::scientific" is specified, use that form.
+// Otherwise, use "scientific" only if the exponent is < -4 or >
+// precision. Perform rounding, if necessary.
+
+char *__LDFloatToString( long double &f,
+                         int precision,
+                         std::ios::fmtflags format_flags,
+                         int *length_ptr ) {
 
     char         *buffer;
     int           dec;
     int           sign;
-    ios::fmtflags notation;
+    std::ios::fmtflags notation;
     int           exponent;
     int           fixed;
     int           round_digit;
@@ -89,11 +73,11 @@ char *__LDFloatToString( long double &f, int precision,
 
     buffer   = __EFG_fcvt( f, LDBL_DIG, &dec, &sign );
     exponent = dec - 1;
-    notation = (format_flags & ios::floatfield);
-    if( notation == 0  ||  notation == ios::floatfield ) {
+    notation = (format_flags & std::ios::floatfield);
+    if( notation == 0  ||  notation == std::ios::floatfield ) {
         fixed = (exponent >= -4  &&  exponent <= precision);
     } else {
-        fixed = (notation == ios::fixed);
+        fixed = (notation == std::ios::fixed);
     }
 
     // Round the number at the digit following the precision digit:
@@ -126,7 +110,7 @@ char *__LDFloatToString( long double &f, int precision,
         newlen  = precision + 4;         // d.pppppE+ee
         newlen += (abs( exponent ) < 100) ? 2 : 3;
     }
-    if( sign || format_flags & ios::showpos ) {
+    if( sign || format_flags & std::ios::showpos ) {
         newlen++;
     }
     res_buffer = new char[newlen+1];
@@ -138,7 +122,7 @@ char *__LDFloatToString( long double &f, int precision,
     bufptr             = res_buffer;
     if( sign ) {
         *(bufptr++) = '-';
-    } else if( format_flags & ios::showpos ) {
+    } else if( format_flags & std::ios::showpos ) {
         *(bufptr++) = '+';
     }
     if( fixed ) {
@@ -179,7 +163,7 @@ char *__LDFloatToString( long double &f, int precision,
         }
         bufptr += precision;
         end_digits  = bufptr;
-        *(bufptr++) = (char)((format_flags & ios::uppercase) ? 'E' : 'e');
+        *(bufptr++) = (char)((format_flags & std::ios::uppercase) ? 'E' : 'e');
         *(bufptr++) = (char)((exponent >= 0) ? '+' : '-');
         if( exponent < 0 ) {
             exponent = -exponent;
@@ -193,7 +177,7 @@ char *__LDFloatToString( long double &f, int precision,
 
     // If "showpoint" is not specified, then we must trim trailing zeros
     // and the decimal point:
-    if( (format_flags & ios::showpoint) == 0 ) {
+    if( (format_flags & std::ios::showpoint) == 0 ) {
         ptr = end_digits;
         while( *--ptr == '0' ) {
         }

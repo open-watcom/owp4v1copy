@@ -29,26 +29,12 @@
 *
 ****************************************************************************/
 
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// %     Copyright (C) 1992, by WATCOM International Inc.  All rights    %
-// %     reserved.  No part of this software may be reproduced or        %
-// %     used in any form or by any means - graphic, electronic or       %
-// %     mechanical, including photocopying, recording, taping or        %
-// %     information storage and retrieval systems - except with the     %
-// %     written permission of WATCOM International Inc.                 %
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//
-//  Modified    By              Reason
-//  ========    ==              ======
-//  95/06/19    Greg Bentz      indirect calls to math library
-
 #ifdef __SW_FH
 #include "iost.h"
 #else
 #include "variety.h"
 #include <errno.h>
-#include <iostream.h>
+#include <iostream>
 #endif
 #include "stdlib.h"
 #include "rtinit.h"

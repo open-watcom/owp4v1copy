@@ -17,6 +17,18 @@
 #ifndef _ISTREAM_INCLUDED
   #include <istream>
 #endif
+using std::istream;
+using std::ws;
+using std::iostream;
+
+// All included names should also be in the global namespace.
+#ifndef _IOS_H_INCLUDED
+  #include <ios.h>
+#endif
+
+#ifndef _OSTREAM_H_INCLUDED
+  #include <ostream.h>
+#endif
 
 #endif
 :elsesegment
@@ -33,17 +45,20 @@
  #include <_comdef.h>
 #endif
 
-:: Placeholder declaration.
-namespace std { }
-
 #ifndef _IOS_INCLUDED
   #include <ios>
 #endif
 
-// **************************** ISTREAM **************************************
+#ifndef _OSTREAM_INCLUDED
+  #include <ostream>
+#endif
+
+namespace std {
+
+  // **************************** ISTREAM ************************************
 :include pshpackl.sp
-class _WPRTLINK istream : virtual public ios {
-public:
+  class _WPRTLINK istream : virtual public ios {
+  public:
     istream( streambuf *__sb );
     istream( istream const &__istrm );
     virtual ~istream();
@@ -96,7 +111,7 @@ public:
     int        peek();
     int        sync();
 
-protected:
+  protected:
     istream();
     void     eatwhite();
     istream &do_get( char &__c );
@@ -106,21 +121,21 @@ protected:
     int      ipfx1( void );
     int      do_ipfx( int __noskipws );
 
-private:
+  private:
     int __last_read_length;
-};
+  };
 :include poppack.sp
 
-inline istream &istream::operator >> ( signed char *__buf ) {
+  inline istream &istream::operator >> ( signed char *__buf ) {
     return( *this >> (char *) __buf );
-}
+  }
 
-inline istream &istream::operator >> ( unsigned char *__buf ) {
+  inline istream &istream::operator >> ( unsigned char *__buf ) {
     return( *this >> (char *) __buf );
-}
+  }
 
 #ifdef __BIG_INLINE__
-inline istream &istream::operator >> ( char &__c ) {
+  inline istream &istream::operator >> ( char &__c ) {
     __lock_it( __i_lock );
     if( ipfx0() ) {
         if( rdbuf()->in_avail() ) {
@@ -131,27 +146,29 @@ inline istream &istream::operator >> ( char &__c ) {
         isfx();
     }
     return( *this );
-}
+  }
 #endif
 
-inline istream &istream::operator >> ( signed char &__c ) {
+  inline istream &istream::operator >> ( signed char &__c ) {
     return( *this >> (char &) __c );
-}
+  }
 
-inline istream &istream::operator >> ( unsigned char &__c ) {
+  inline istream &istream::operator >> ( unsigned char &__c ) {
     return( *this >> (char &) __c );
-}
+  }
 
-inline istream &istream::get( signed char *__buf, int __len, char __delim ) {
+  inline istream &istream::get( signed char *__buf, int __len, char __delim ) {
     return( get( (char *)__buf, __len, __delim ) );
-}
+  }
 
-inline istream &istream::get( unsigned char *__buf, int __len, char __delim ) {
+  inline istream &istream::get( unsigned char *__buf,
+                                int __len,
+                                char __delim ) {
     return( get( (char *)__buf, __len, __delim ) );
-}
+  }
 
 #ifdef __BIG_INLINE__
-inline istream &istream::get( char &__c ) {
+  inline istream &istream::get( char &__c ) {
     __lock_it( __i_lock );
     if( ipfx1() ) {
         if( rdbuf()->in_avail() ) {
@@ -164,29 +181,31 @@ inline istream &istream::get( char &__c ) {
         __last_read_length = 0;
     }
     return( *this );
-}
+  }
 #endif
 
-inline istream &istream::get( signed char &__c ) {
+  inline istream &istream::get( signed char &__c ) {
     return( get( (char &) __c ) );
-}
+  }
 
-inline istream &istream::get( unsigned char &__c ) {
+  inline istream &istream::get( unsigned char &__c ) {
     return( get( (char &) __c ) );
-}
+  }
 
-inline istream &istream::getline( signed char *__buf, int __len,
-    char __delim ) {
+  inline istream &istream::getline( signed char *__buf,
+                                    int __len,
+                                    char __delim ) {
     return( getline( (char *)__buf, __len, __delim ) );
-}
+  }
 
-inline istream &istream::getline( unsigned char *__buf, int __len,
-    char __delim ) {
+  inline istream &istream::getline( unsigned char *__buf,
+                                    int __len,
+                                    char __delim ) {
     return( getline( (char *)__buf, __len, __delim ) );
-}
+  }
 
 #ifdef __BIG_INLINE__
-inline istream &istream::read( char *__buf, int __len ) {
+  inline istream &istream::read( char *__buf, int __len ) {
     __lock_it( __i_lock );
     if( ipfx1() ) {
         if( rdbuf()->in_avail() > __len ) {
@@ -199,45 +218,43 @@ inline istream &istream::read( char *__buf, int __len ) {
         __last_read_length = 0;
     }
     return( *this );
-}
+  }
 #endif
 
-inline istream &istream::read( signed char *__buf, int __len ) {
+  inline istream &istream::read( signed char *__buf, int __len ) {
     return( read( (char *) __buf, __len ) );
-}
+  }
 
-inline istream &istream::read( unsigned char *__buf, int __len ) {
+  inline istream &istream::read( unsigned char *__buf, int __len ) {
     return( read( (char *) __buf, __len ) );
-}
+  }
 
-inline int istream::ipfx0( void ) {
+  inline int istream::ipfx0( void ) {
     __lock_it( __i_lock );
     return( ((flags()&ios::skipws) || !good() || tie()) ? do_ipfx( 0 ) : 1);
-}
+  }
 
-inline int istream::ipfx1( void ) {
+  inline int istream::ipfx1( void ) {
     __lock_it( __i_lock );
     return( (!good() || tie()) ? do_ipfx( 1 ) : 1);
-}
+  }
 
-inline void istream::isfx() {
-}
+  inline void istream::isfx() {
+  }
 
-inline int istream::gcount() const {
+  inline int istream::gcount() const {
     return( __last_read_length );
-}
+  }
 
-// **************************** MANIPULATORS *********************************
-_WPRTLINK extern istream &   ws( istream & );
 
-#ifndef _OSTREAM_INCLUDED
-  #include <ostream>
-#endif
+  // **************************** MANIPULATORS *******************************
+  _WPRTLINK extern istream &   ws( istream & );
 
-// **************************** IOSTREAM *************************************
+
+  // **************************** IOSTREAM ***********************************
 :include pshpackl.sp
-class _WPRTLINK iostream : public istream, public ostream {
-public:
+  class _WPRTLINK iostream : public istream, public ostream {
+  public:
     iostream( streambuf *__sb );
     iostream( ios const &__strm );
     virtual ~iostream();
@@ -245,10 +262,12 @@ public:
     iostream & operator = ( streambuf *__sb );
     iostream & operator = ( ios const &__strm );
 
-protected:
+  protected:
     iostream();
-};
+  };
 :include poppack.sp
+
+} // namespace std
 
 #endif
 :endsegment

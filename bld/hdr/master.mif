@@ -26,11 +26,13 @@ common = &
         fcntl.h &
         fenv.h &
         float.h &
+        fstream &
         fstream.h &
         generic.h &
         graph.h &
         i86.h &
         inttypes.h &
+        iomanip &
         iomanip.h &
         ios &
         ios.h &
@@ -69,9 +71,11 @@ common = &
         stdio.h &
         stdiobuf.h &
         stdlib.h &
+        streambu &
         streambu.h &
         string.h &
         string.hpp &
+        strstrea &
         strstrea.h &
         tchar.h &
         time.h &
@@ -401,7 +405,13 @@ cwchar  : $(wchar_deps)
 cwctype : $(wctype_deps)
         $(csplice)
 
-# IOStream headers.
+# Standard IOStream headers.
+
+fstream  : $(fstream_deps)
+         $(csplice)
+
+iomanip  : $(iomanip_deps)
+         $(csplice)
 
 ios      : $(ios_deps)
          $(csplice)
@@ -416,6 +426,12 @@ istream  : $(istream_deps)
          $(csplice)
 
 ostream  : $(ostream_deps)
+         $(csplice)
+
+streambu : $(streambu_deps)
+         $(csplice)
+
+strstrea : $(strstrea_deps)
          $(csplice)
 
 

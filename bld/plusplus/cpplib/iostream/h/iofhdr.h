@@ -29,26 +29,6 @@
 *
 ****************************************************************************/
 
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-// %     Copyright (C) 1992, by WATCOM International Inc.  All rights    %
-// %     reserved.  No part of this software may be reproduced or        %
-// %     used in any form or by any means - graphic, electronic or       %
-// %     mechanical, including photocopying, recording, taping or        %
-// %     information storage and retrieval systems - except with the     %
-// %     written permission of WATCOM International Inc.                 %
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-//
-//  Modified    By              Reason
-//  ========    ==              ======
-//  93/05/26    Greg Bentz      pull floating point out of istream/ostream
-//  93/10/08    Greg Bentz      make LDFloatToString set scale_factor to 1
-//                              for _Ftos when 'G' format
-//  93/10/25    Raymond Tang    Split into separate files.
-//  95/06/19    Greg Bentz      indirect calls to math library
-//  99/10/12    J.B.Schueler    moved definition of enums to IOFOUTFL.CPP
-//                              where only they are used
-
 #ifndef __IOFHDR_H_INCLUDED
 #define __IOFHDR_H_INCLUDED
 
@@ -56,8 +36,8 @@
 #include <float.h>
 #include "xfloat.h"
 
-extern ios::iostate __GetLDFloat( streambuf *, char *);
-extern void __LDFloatToString( char *, double const *, int, ios::fmtflags);
+extern std::ios::iostate __GetLDFloat( streambuf *, char *);
+extern void __LDFloatToString( char *, double const *, int, std::ios::fmtflags);
 
 typedef void  (*_type_EFG_cnvs2d)( char *, double * );
 typedef int   (*_type_EFG_cnvd2f)( double *, float * );

@@ -17,6 +17,27 @@
 #ifndef _IOSTREAM_INCLUDED
   #include <iostream>
 #endif
+using std::cin;
+using std::cout;
+using std::cerr;
+using std::clog;
+
+// All included names should also be in the global namespace.
+#ifndef _IOS_H_INCLUDED
+  #include <ios.h>
+#endif
+
+#ifndef _STREAMBUF_H_INCLUDED
+ #include <streambu.h>
+#endif
+
+#ifndef _ISTREAM_H_INCLUDED
+  #include <istream.h>
+#endif
+
+#ifndef _OSTREAM_H_INCLUDED
+  #include <ostream.h>
+#endif
 
 #endif
 :elsesegment
@@ -27,12 +48,10 @@
 #ifndef __cplusplus
 #error The header iostream requires C++
 #endif
+
 #ifndef _COMDEF_H_INCLUDED
  #include <_comdef.h>
 #endif
-
-:: Placeholder declaration
-namespace std { }
 
 enum {
     DEFAULT_PUTBACK_SIZE = 4,
@@ -44,10 +63,8 @@ enum {
   #include <ios>
 #endif
 
-// **************************** STREAMBUF ************************************
-// For compatibility with other vendors who include "streambuf" in IOSTREAM.H
-#ifndef _STREAMBUF_H_INCLUDED
- #include <streambu.h>
+#ifndef _STREAMBUF_INCLUDED
+ #include <streambu>
 #endif
 
 #ifndef _ISTREAM_INCLUDED
@@ -59,10 +76,13 @@ enum {
 #endif
 
 // **************************** PREDEFINED STREAMS ***************************
- _WPRTLINK extern istream _WCDATA cin;
- _WPRTLINK extern ostream _WCDATA cout;
- _WPRTLINK extern ostream _WCDATA cerr;
- _WPRTLINK extern ostream _WCDATA clog;
+
+namespace std {
+  _WPRTLINK extern istream _WCDATA cin;
+  _WPRTLINK extern ostream _WCDATA cout;
+  _WPRTLINK extern ostream _WCDATA cerr;
+  _WPRTLINK extern ostream _WCDATA clog;
+}
 
 #endif
 :endsegment
