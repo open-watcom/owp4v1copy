@@ -4,6 +4,7 @@ cc = wcc386
 .EXTENSIONS : .lbc .def
 
 libs =               &
+        ctl3d.lib    &
         winsock.lib
 
 .def: ..\lib

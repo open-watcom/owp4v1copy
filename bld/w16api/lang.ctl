@@ -15,6 +15,7 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 acprel2 ]
 
     <CPCMD> wini86\winsock.lib <relroot>\bld\watcom\lib\
+    <CPCMD> wini86\ctl3d.lib <relroot>\bld\sdk\misc\
 #    <CPCMD> wini86\*.lib <relroot>\rel2\lib286\win\
 
 [ BLOCK <1> clean ]
