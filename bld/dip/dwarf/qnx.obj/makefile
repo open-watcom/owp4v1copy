@@ -1,4 +1,4 @@
-#pmake: build qnx dwarf 386
+#pmake: all qnx dwarf 386
 
 host_OS = qnx
 host_CPU = 386
