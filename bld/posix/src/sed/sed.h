@@ -1,7 +1,7 @@
 /* sed.h -- types and constants for the stream editor */
 
 /* data area sizes used by both modules */
-#define MAXBUF          4000    /* current line buffer size */
+#define MAXBUF          8192    /* current line buffer size */
 #define MAXAPPENDS      20      /* maximum number of appends */
 #define MAXTAGS         9       /* tagged patterns are \1 to \9 */
 
@@ -46,6 +46,7 @@ struct  cmd_t                           /* compiled-command representation */
         FILE    *fout;                  /* associated output file descriptor */
         struct
         {
+                unsigned nthone  :11;   /* if !0 only nth replace */
                 unsigned allbut  : 1;   /* was negation specified? */
                 unsigned global  : 1;   /* was p postfix specified? */
                 unsigned print   : 2;   /* was g postfix specified? */

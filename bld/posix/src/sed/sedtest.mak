@@ -18,15 +18,18 @@ sed = $(%testsed
 sed = sed
 !endif
 
-all: .symbolic sedcomp sedexec spencer.bat
-    .\spencer.bat
+!include cproj.mif
+
+all: .symbolic sedcomp sedexec spencer.bat susv3
+    .\spencer.bat 2>&1 | tee spencer.log
+    @$(sed) -n "1s/.*/spencer.bat failed!/p" spencer.log
 
 sedcomp: .symbolic &
      main compile cmdcomp rhscomp recomp cmdline address gettext resolve ycomp
     @%null
 
 clean: .symbolic
-    rm -f afore after xpect scrip spencer.bat
+    rm -f afore after xpect scrip spencer.bat spencer.log listto.*
 
 main: .symbolic noargs badarg enarg fgarg noef badsquig labels
     @%null
@@ -64,6 +67,8 @@ fgarg: .symbolic
 noef: .symbolic
     > afore echo hello
     $(sed) -n p afore > after
+    diff afore after
+    $(sed) -e "" afore > after
     diff afore after
 
 badsquig: .symbolic
@@ -103,11 +108,15 @@ emptyre: .symbolic
     diff afore after
     $(sed) -e 1!d -e //p -n afore >after # This looks wrong! WFB 20040730
     diff afore after
-    $(sed) -n -e $$p afore # This failed before 20040730. WFB
+    $(sed) -n -e $$p afore > after 2>&1 # This failed before 20040730. WFB
     diff afore after
     >>afore echo world
     $(sed) -n -e "1,2 p" afore > after 2>&1
     diff afore after
+    # Curiously, this scenario should not give a diagnostic WFB 20040815
+    $(sed) -n -e "2,1 p" afore > after 2>&1
+    > xpect echo world
+    diff after xpect
     $(sed) -n -e 1;2p afore > after 2>&1
     diff afore after
     $(sed) -n -e 1;p afore > after 2>&1 || true
@@ -157,7 +166,7 @@ equals: .symbolic
     >>afore echo world
     > xpect echo 1
     >>xpect echo 2
-    $(sed) -n /h/,/l/= afore > after 2>&1 || true
+    $(sed) -n /h/,/l/= afore > after 2>&1
     diff after xpect
 
 q: .symbolic
@@ -167,7 +176,7 @@ q: .symbolic
     $(sed) /h/,/l/q afore > after 2>&1 || true
     diff after xpect
     > xpect echo hello
-    $(sed) /h/q afore > after 2>&1 || true
+    $(sed) /h/q afore > after 2>&1
     diff after xpect
 
 label: .symbolic
@@ -178,7 +187,7 @@ label: .symbolic
     > xpect echo sed: duplicate label :label
     $(sed) -e :label -e :label nul > after 2>&1 || true
     diff after xpect
-    $(sed) :label afore > after 2>&1 || true
+    $(sed) :label afore > after 2>&1
     diff afore after
 
 branch: .symbolic
@@ -253,11 +262,23 @@ s: .symbolic
     >>xpect echo world
     $(sed) -n N;s/l/L/Pw afore > after 2>&1
     diff after xpect
+    > xpect echo helLo
+    $(sed) -n s/l/L/2p afore > after 2>&1
+    diff after xpect
+    > xpect echo sed: bad value for match count on s command s/l/L/0
+    $(sed) s/l/L/0 afore > after 2>&1 || true
+    diff after xpect
+    > xpect echo sed: bad value for match count on s command s/l/L/2048
+    $(sed) s/l/L/2047 afore > after 2>&1
+    diff afore after
+    $(sed) s/l/L/2048 afore > after 2>&1 || true
+    diff after xpect
 
 l: .symbolic
     > afore echo hello
     >>afore echo world
-    > xpect echo hello\nworld
+    > xpect echo hello
+    >>xpect echo world$$
     $(sed) -n N;l afore > after 2>&1
     diff after xpect
     $(sed) -n N;lwafter afore
@@ -292,7 +313,7 @@ rhscomp: .symbolic
     $(sed) s/l/\1/ afore > after 2>&1 || true
     diff after xpect
     > xpect echo helo
-    $(sed) s/\(l\)\1/\1/ afore > after 2>&1 || true
+    $(sed) s/\(l\)\1/\1/ afore > after 2>&1
     diff after xpect
     > xpect echo sed: garbled command s/l/l
     $(sed) s/l/l afore > after 2>&1 || true
@@ -315,8 +336,8 @@ recomp: .symbolic starplusdol set handle_cket
     > xpect echo row ollehld
     $(sed) s/\(.\)\(.\)\(.\)\(.\)\(.\)\(.\)\(.\)\(.\)\(.\)/\9\8\7\6\5\4\3\2\1/ afore > after
     diff after xpect
-    > xpect echo sed: garbled command s/\(.\)\(.\)\(.\)\(.\)\(.\)\(.\)\(.\)\(.\)\(.\)\(.\)/\9\8\7\6\5\4\3\2\1/
-    $(sed) s/\(.\)\(.\)\(.\)\(.\)\(.\)\(.\)\(.\)\(.\)\(.\)\(.\)/\9\8\7\6\5\4\3\2\1/ afore > after 2>&1 || true
+    > xpect echo row ollehd
+    $(sed) s/\(.\)\(.\)\(.\)\(.\)\(.\)\(.\)\(.\)\(.\)\(.\)\(.\)/\9\8\7\6\5\4\3\2\1/ afore > after
     diff after xpect
     > xpect echo sed: garbled command s/\(.\)\)//
     $(sed) s/\(.\)\)// afore > after 2>&1 || true
@@ -462,6 +483,8 @@ address: .symbolic
     diff afore after
     $(sed) -n $$p afore afore > after 2>&1
     diff afore after
+    $(sed) -n \hehp afore > after 2>&1
+    diff afore after
     $(sed) -n /e/p afore > after 2>&1
     diff afore after
     $(sed) -n 1p afore > after 2>&1
@@ -501,22 +524,82 @@ ycomp: .symbolic
     $(sed) -f scrip afore > after 2>&1 || true
     diff after xpect
     > xpect echo abclo
-    $(sed) y/h\e\\/abc/ afore > after 2>&1
+    $(sed) y/he\\/abc/ afore > after 2>&1
     diff after xpect
     > afore echo hello
     >>afore echo world
     > xpect echo hello world
+    # "If a backslash followed by an 'n' appear in string1 or string2,
+    # the two characters shall be handled as a single <newline>."
     $(sed) "N;y/\n/ /" afore > after 2>&1
     diff after xpect
     > afore echo hello
+    > xpect echo h
+    >>xpect echo llo
+    $(sed) y/e/\n/ afore > after 2>&1
+    diff after xpect
+    # "If the number of characters in string1 and string2 are not equal,
+    # or if any of the characters in string1 appear more than once,
+    # the results are undefined."
+    > afore echo hello
     > xpect echo sed: garbled command y/a//
     $(sed) y/a// afore > after 2>&1 || true
+    diff after xpect
+    > xpect echo sed: garbled command y//a/
+    $(sed) y//a/ afore > after 2>&1 || true
+    diff after xpect
+    > xpect echo sed: garbled command y/hh/el/
+    $(sed) y/hh/el/ afore > after 2>&1 || true
+    diff after xpect
+    # Any character other than backslash or <newline>
+    # can be used instead of slash to delimit the strings.
+    > xpect echo HELLO
+    $(sed) yaheloaHELOa afore > after 2>&1
+    diff after xpect
+    > xpect echo sed: error processing: y\helo\HELO\
+    $(sed) y\helo\HELO\ afore > after 2>&1 || true
+    diff after xpect
+    > xpect echo sed: garbled command y\\helo\\HELO\\
+    $(sed) y\\helo\\HELO\\ afore > after 2>&1 || true
+    diff after xpect
+    > xpect echo sed: garbled command y
+    # "If the delimiter is not 'n' , within string1 and string2,
+    # the delimiter itself can be used as a literal character
+    # if it is preceded by a backslash."
+    # [ "If the delimiter is not 'n'" because \n has a special meaning.]
+    > xpect echo HELLh
+    $(sed) yh\helohHEL\hh afore > after 2>&1
+    diff after xpect
+    # "If a backslash character is immediately followed by a backslash
+    # character in string1 or string2, the two backslash characters shall be
+    # counted as a single literal backslash character. The meaning of a
+    # backslash followed by any character that is not 'n' , a backslash, or the
+    # delimiter character is undefined."
+    >>afore echo w\rld
+    > xpect echo h
+    >>xpect echo llo wo\ld
+    $(sed) "N;y/\\r\ne/o\\ \n/" afore > after 2>&1
+    diff after xpect
+    > xpect echo sed: garbled command yh\h\?elohHEL\hh
+    $(sed) yh\h\?elohHEL\hh afore > after 2>&1 || true
+    diff after xpect
+    > xpect echo sed: garbled command yh\helohH\?L\hh
+    $(sed) yh\helohH\?L\hh afore > after 2>&1 || true
+    diff after xpect
+    > xpect echo sed: garbled command y
+    > script echo y
+    >>script echo helo
+    >>script echo HELO
+    $(sed) -f script afore > after 2>&1 || true
     diff after xpect
     > xpect echo sed: garbled command y/a/ 
     $(sed) y/a/ afore > after 2>&1 || true
     diff after xpect
     > xpect echo sed: garbled command y/a/b
     $(sed) y/a/b afore > after 2>&1 || true
+    diff after xpect
+    > xpect echo sed: garbled command y/\h/\h/
+    $(sed) y/\h/\h/ afore > after 2>&1 || true
     diff after xpect
 
 sedexec: .symbolic execute selected match advance substitute dosub place listto command getline memeql readout
@@ -567,6 +650,12 @@ match: .symbolic
     > afore echo hello
     > xpect echo heLLo
     $(sed) -g s/l/L/ afore > after 2>&1
+    diff after xpect
+    > xpect echo heLlo
+    $(sed) s/l/L/ afore > after 2>&1
+    diff after xpect
+    > xpect echo hellO
+    $(sed) s/./O/5 afore > after 2>&1
     diff after xpect
 
 advance: .symbolic mtype
@@ -746,9 +835,37 @@ listto: .symbolic
     # CR completes the command list
     > afore echo hello TAB	NL # There is an intentional tab character on this line WFB 20040801
     >>afore echo line end
-    > xpect echo hello TAB\tNL\nline end
+    > xpect echo hello TAB\tNL\nline end$$
+    > xpect echo hello TAB\tNL
+    >>xpect echo line end$$
     $(sed) -n N;l afore > after 2>&1
     diff after xpect
+    $(bld_cl) <<listto.c $(wcl_util_opts)
+    $#include <stdio.h>
+    void main( void ) {
+        int i = 0;
+        putc( i, stdout );
+        fprintf( stdout, "%c%s\n", 0, "This sed silently ignores data between NUL and NL" );
+        fprintf( stdout, "%s%c", "This sed quietly terminates a line with a decimal 26 character", 26 );
+        while( ++i < 256 )
+            putc( i, stdout );
+    }
+<<
+    listto | sed -n l > after 2>&1
+    diff after <<
+$$
+This sed quietly terminates a line with a decimal 26 character$$
+\01\02\03\04\05\06\a\b\t$$
+\v\f\0e\0f\10\11\12\13\14\15\16\17\18\19$$
+\1b\1c\1d\1e\1f !"$#$$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNO\
+PQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\7f\80\81\82\83\
+\84\85\86\87\88\89\8a\8b\8c\8d\8e\8f\90\91\92\93\94\95\96\97\98\
+\99\9a\9b\9c\9d\9e\9f\a0\a1\a2\a3\a4\a5\a6\a7\a8\a9\aa\ab\ac\ad\
+\ae\af\b0\b1\b2\b3\b4\b5\b6\b7\b8\b9\ba\bb\bc\bd\be\bf\c0\c1\c2\
+\c3\c4\c5\c6\c7\c8\c9\ca\cb\cc\cd\ce\cf\d0\d1\d2\d3\d4\d5\d6\d7\
+\d8\d9\da\db\dc\dd\de\df\e0\e1\e2\e3\e4\e5\e6\e7\e8\e9\ea\eb\ec\
+\ed\ee\ef\f0\f1\f2\f3\f4\f5\f6\f7\f8\f9\fa\fb\fc\fd\fe\ff$$
+<<
 
 command: .symbolic
     > afore echo hello
@@ -793,8 +910,9 @@ command: .symbolic
     diff after xpect
     $(sed) b afore > after 2>&1
     diff afore after
+    > xpect echo hello$$
     $(sed) -n l afore > after 2>&1
-    diff afore after
+    diff after xpect
     >>afore echo world
     > scrip echo a\
     >>scrip echo universe
@@ -1001,18 +1119,148 @@ $#0:a[^A-^C]?c:a^Bc wmake can't handle SOH, STX or ETX in an inline file
 2:abc):-
 <<
 1i\
-@echo %debug% off\
-rem On Windows 2000, a presumed race condition sometimes produces diagnostics:\
-rem The process tried to write to a nonexistent pipe.\
-rem This is with lines like "echo -| sed fail"\
-rem I think the sequence is equivalent to:\
-rem open pipe\
-rem sed fails and the pipe ceases to exist\
-rem echo tries to write to the nonexistent pipe and a diagnostic is written.\
-rem It might be possible for sed to read from stdin to avoid this.\
-rem The cost of doing so seems more than the problem is worth.\
-rem Walter Briscoe 2004-08-14
+@echo %debug% off
 $# The file contains line pairs: a sed command on the 1st; a number on the 2nd.
 $# Transform each pair into one line with a conditional failure diagnostic.
-N;s,\n\(.*\), | $(sed) -ne \"1s/.*/Test $#\1 failed!/p\",
+N;s,\n\(.*\), | $(sed) -n \"1s/.*/Test $#\1 failed!/p\",
 <<
+
+# This rule tests things, not otherwise tested, specified in IEEE Std 1003.1, 2004 Edition
+# http://www.opengroup.org/onlinepubs/000095399/utilities/sed.html
+susv3: .symbolic
+    # "the order of presentation of the -e and -f options is significant."
+    > afore echo hello
+    > xpect echo help
+    $(sed) -n -e s/lo/p/ -f << afore > after 2>&1
+    p
+<<
+    diff after xpect
+    # "Multiple -e and -f options may be specified."
+    > xpect echo Help
+    $(sed) -n -e s/l// -f << -e s/h/H/ -f << afore > after 2>&1
+    s/o/p/
+<<
+    p
+<<
+    diff after xpect
+    # "If multiple file operands are specified, the named files shall be read in the order specified"
+    > xpect echo hello world
+    $(sed) -n "N;s/ //g;s/\n/ /p" << << > after 2>&1
+    hello
+<<
+    world
+<<
+    diff after xpect
+
+    # "INPUT FILES The input files shall be text files. The
+    # script_files named by the -f option shall consist of editing commands."
+    # This implementation allows \n absent from all input files.
+
+    # "ENVIRONMENT VARIABLES The following environment variables
+    # shall affect the execution of sed: ...".
+    # All the variables are setlocale() oriented. None are supported as Open
+    # Watcom C library documentation says: "Watcom C/C++ supports only the "C"
+    # locale and so invoking this function will have no effect upon the
+    # behavior of a program at present.#
+
+    # "The command can be preceded by <blank>s and/or semicolons. The function can be preceded by <blank>s."
+    $(sed) -n "    ;  1  p  " afore > after 2>&1
+    diff afore after
+
+    # "The pattern and hold spaces shall each be able to hold at least 8192 bytes."
+    > afore echo 12345678 1 2345678 2 2345678 3 2345678 4 2345678 5 2345678 6 23
+    #          128  256  512 1024  2048 4096 8192
+    $(sed) -n "h;G; h;G; h;G; h;G; h;G; h;G; h;G; h;P" afore > after 2>&1
+    diff afore after
+    > xpect echo sed: can only fit 8192 bytes at line 1
+    >>xpect echo 12345678 1 2345678 2 2345678 3 2345678 4 2345678 5 2345678 6 23
+    #          128  256  512 1024  2048 4096 8192 16384
+    $(sed) -n "h;G; h;G; h;G; h;G; h;G; h;G; h;G; h;G;P" afore > after 2>&1
+    diff after xpect
+    > xpect echo sed: can only fit 8192 bytes at line 1
+    >>xpect echo ?12345678 1 2345678 2 2345678 3 2345678 4 2345678 5 2345678 6 23
+    #          128  256  512 1024  2048 4096 8192 8193
+    $(sed) -n "h;G; h;G; h;G; h;G; h;G; h;G; h;G; s/^/?/P" afore > after 2>&1
+    diff after xpect
+
+    # "In a context address, the construction "\cBREc" , where c is any
+    # character other than backslash or <newline>, shall be identical to "/BRE/" ."
+    > afore echo hello
+    $(sed) -n \chcp afore > after 2>&1
+    diff afore after
+
+    # "The r and w command verbs, and the w flag to the s command, take an
+    # optional rfile (or wfile) parameter, separated from the command verb
+    # letter or flag by one or more <blank>s; implementations may allow
+    # zero separation as an extension."
+    # This implementation does so allow.
+
+    # "The argument rfile or the argument wfile shall terminate the editing
+    # command. Each wfile shall be created before processing begins.
+    # Implementations shall support at least ten wfile arguments in the
+    # script; the actual number (greater than or equal to 10) that is
+    # supported by the implementation is unspecified. The use of the wfile
+    # parameter shall cause that file to be initially created, if it does not
+    # exist, or shall replace the contents of an existing file."
+    # This implementation supports 10 such files.
+
+    # "The contents of the file specified for the r command shall be as of
+    # the time the output is written, not the time the r command is applied."
+    > xpect echo Hello
+    >>xpect echo hello
+    $(sed) -e rscript -e wscript -e s/h/H/ afore > after 2>&1
+    diff afore script
+    diff after xpect
+
+    # "It is unspecified whether <blank>s can follow a '!' character, and
+    # conforming applications shall not follow a '!' character with <blank>s."
+    # This implementation allows that unspecified behavior.
+    $(sed) -e "/h/ ! d" afore > after 2>&1
+    diff afore after
+
+    # "[2addr]b [label] ... The implementation shall support labels recognized
+    # as unique up to at least 8 characters; the actual length (greater than
+    # or equal to 8) that shall be supported by the implementation is
+    # unspecified. It is unspecified whether exceeding a label length causes
+    # an error or a silent truncation."
+    # This implementation imposes no length restrictions.
+    $(sed) -n -e "ba very long label" -e b -e ":a very long label" -e p afore > after 2>&1
+    diff afore after
+
+    # "[2addr]l ... Non-printable characters not in that table shall be written
+    # as one three-digit octal number (with a preceding backslash) for
+    # each byte in the character (most significant byte first)."
+    # This implementation uses hex instead.
+
+    # "[2addr]s/BRE/replacement/flags ... The value of flags shall be zero or
+    # more of: ... g Globally substitute for all non-overlapping instances of
+    # the BRE rather than just the first one.
+    # If both g and n are specified, the results are unspecified."
+    # If both g and n are specified, this implementation does n and subsequent.
+    > xpect echo helaa
+    $(sed) -e s/./a/4g afore > after 2>&1
+    diff after xpect
+
+    # In [2addr]s/BRE/replacement/flags, an extra P flag is supported.
+    > afore echo hello
+    >>afore echo world
+    > xpect echo hello
+    $(sed) -n -e N;s/d/D/P afore > after 2>&1
+    diff after xpect
+
+    # [0addr] Ignore this empty command.
+    > afore echo hello
+    $(sed) -e "" afore > after
+    diff afore after
+
+    # "[0addr]# Ignore the '#' and the remainder of the line
+    # (treat them as a comment), with the single exception that if the first
+    # two characters in the script are "#n" , the default output shall be
+    # suppressed; this shall be the equivalent of specifying -n on the command
+    # line."
+    > afore echo hello
+    $(sed) -e "$#n" -e p afore > after
+    diff afore after
+    > afore echo hello
+    $(sed) -e "$#N" afore > after
+    diff afore after

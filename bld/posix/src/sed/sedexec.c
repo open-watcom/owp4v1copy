@@ -30,7 +30,11 @@ readout() and memeql() are output and string-comparison utilities.
 #define TRUE            1
 #define FALSE           0
 
+#if 0
+/* LTLMSG was used when buffer overflow stopped sed */
 static char const       LTLMSG[] = "sed: line too long \"%.*s\"\n";
+#endif
+
 static char const       NOROOM[] = "sed: can only fit %d bytes at line %ld\n";
 static char const       INTERR[] = "sed: internal error: %s\n";
 
@@ -45,9 +49,9 @@ static sedcmd   **aptr = appends;       /* ptr to current append */
 
                                         /* genbuf and its pointers */
 static char     genbuf[GENSIZ];
-static char     *loc1;
-static char     *loc2;
-static char     *locs;
+static char     *loc1;                  /* Where match() tried to find a BRE */
+static char     *loc2;                  /* Immediately after advance() completing match() or last character to remove in dosub() */
+static char     *locs;                  /* match() sets this as a backtrack backstop */
 
                                         /* command-logic flags */
 static int      lastline;               /* do-line flag */
@@ -55,11 +59,11 @@ static int      jump;                   /* jump to cmd's link address if set */
 static int      delete;                 /* delete command flag */
 
                                         /* tagged-pattern tracking */
-static char     *bracend[MAXTAGS];      /* tagged pattern start pointers */
-static char     *brastart[MAXTAGS];     /* tagged pattern end pointers */
+static char     *bracend[MAXTAGS+1];    /* tagged pattern start pointers */
+static char     *brastart[MAXTAGS+1];   /* tagged pattern end pointers */
 
 static int      selected( sedcmd *ipc );
-static int      match( char *expbuf, int gf );
+static int      match( char *expbuf, int gf, int is_cnt );
 static int      advance( register char *lp, register char *ep );
 static int      substitute( sedcmd const *ipc );
 static void     dosub( char const *rhsbuf );
@@ -159,45 +163,33 @@ static int selected( sedcmd *ipc )
             c = p2[1];
             if( lnum > linenum[c] ) {
                 ipc->flags.inrange = FALSE;
-                if( ipc->flags.allbut )
-                    return( TRUE );
-                return( FALSE );
+                return( allbut );
             }
             if( lnum == linenum[c] )
                 ipc->flags.inrange = FALSE;
-        } else if( match( p2, 0 ) )
+        } else if( match( p2, 0, 0 ) )
             ipc->flags.inrange = FALSE;
     } else if( *p1 == CEND ) {
-        if( !lastline ) {
-            if( ipc->flags.allbut )
-                return( TRUE );
-            return( FALSE );
-        }
+        if( !lastline )
+            return( allbut );
     }
     else if( *p1 == CLNUM ) {
         c = p1[1];
-        if( lnum != linenum[c] ) {
-            if( ipc->flags.allbut )
-                return( TRUE );
-            return( FALSE );
-        }
+        if( lnum != linenum[c] )
+            return( allbut );
         if( p2 )
             ipc->flags.inrange = TRUE;
-    } else if( match( p1, 0 ) ) {
+    } else if( match( p1, 0, 0 ) ) {
         if( p2 )
             ipc->flags.inrange = TRUE;
     } else {
-        if( ipc->flags.allbut )
-            return( TRUE );
-        return( FALSE );
+        return( allbut );
     }
-    if( ipc->flags.allbut )             /* If we reach this point, the */
-        return( FALSE );                /* range test is satisfied, so */
-    return( TRUE );                     /* return TRUE unless "!"ed    */
+    return( !allbut );
 }
 
 /* match RE at expbuf against linebuf; if gf set, copy linebuf from genbuf */
-static int match( char *expbuf, int gf )
+static int match( char *expbuf, int gf, int is_cnt )
 {
     register char       *p1;
     register char       *p2;
@@ -211,8 +203,8 @@ static int match( char *expbuf, int gf )
         while( ( *p1++ = *p2++ ) != 0 ) ;
         locs = p1 = loc2;
     } else {
-        p1 = linebuf;
-        locs = FALSE;
+        p1 = ( is_cnt ) ? loc2 : linebuf;
+        locs = NULL;
     }
 
     p2 = expbuf;
@@ -509,12 +501,22 @@ static int advance(
 /* perform s command */
 static int substitute( sedcmd const *ipc ) /* ptr to s command struct */
 {
-    if( !match( ipc->u.lhs, 0 ) )       /* if no match */
+    int fcnt = ipc->flags.nthone;
+
+    if( !match( ipc->u.lhs, 0, 0 ) )    /* if no match */
         return( FALSE );                /* command fails */
+
+    if( fcnt ) {
+        while( --fcnt > 0 && *loc2 && match( ipc->u.lhs, 0, 1 ) )
+            ;
+        if( fcnt != 0 )
+            return( FALSE );            /* command fails */
+    }
+
     dosub( ipc->rhs );                  /* perform it once */
 
     if( ipc->flags.global )             /* if global flag enabled */
-        while( *loc2 && match( ipc->u.lhs, 1 ) ) /* cycle through possibles */
+        while( *loc2 && match( ipc->u.lhs, 1, 0 ) ) /* cycle through possibles */
             dosub( ipc->rhs );          /* so substitute */
     return( TRUE );                     /* we succeeded */
 }
@@ -531,8 +533,10 @@ static void dosub( char const *rhsbuf ) /* where to put the result */
     lp = linebuf; 
     sp = genbuf;
     while( lp < loc1 ) {
-        if( sp >= genbuf + sizeof genbuf )
-            ABORTEX( LTLMSG );         /* Not exercised by sedtest.mak */
+        if( sp >= genbuf + sizeof genbuf ) { /* Not exercised by sedtest.mak */
+            fprintf( stderr, NOROOM, sizeof genbuf, lnum );
+            break;
+        }
         *sp++ = *lp++;
     }
 
@@ -540,18 +544,22 @@ static void dosub( char const *rhsbuf ) /* where to put the result */
         if( c == '&' ) {
             sp = place( sp, loc1, loc2 );
         } else if( c & 0200 && ( c &= 0177 ) >= '1' && c < MAXTAGS + '1' ) {
-            sp = place( sp, brastart[c - '1'], bracend[c - '1'] );
+            sp = place( sp, brastart[c - '0'], bracend[c - '0'] );
         } else {
-            if( sp >= genbuf + sizeof genbuf )
-                ABORTEX( LTLMSG );      /* Not exercised by sedtest.mak */
+            if( sp >= genbuf + sizeof genbuf ) { /* Not exercised by sedtest.mak */
+                fprintf( stderr, NOROOM, sizeof genbuf, lnum );
+                break;
+            }
             *sp++ = c & 0177;
         }
     }
     lp = loc2;
-    loc2 = sp - ( genbuf - linebuf );
+    loc2 = sp - ( genbuf - linebuf );   /* Last character to remove */
     do{
-        if( sp >= genbuf + sizeof genbuf )
-            ABORTEX( LTLMSG );          /* Not exercised by sedtest.mak */
+        if( sp >= genbuf + sizeof genbuf ) { /* Not exercised by sedtest.mak */
+            fprintf( stderr, NOROOM, sizeof genbuf, lnum );
+            break;
+        }
     } while( ( *sp++ = *lp++ ) != 0 );
     lp = linebuf; 
     sp = genbuf;
@@ -566,8 +574,10 @@ static char *place(
     register char const *al2 )
 {
     while( al1 < al2 ) {
-        if( asp >= genbuf + sizeof genbuf )
-            ABORTEX( LTLMSG );          /* Not exercised by sedtest.mak */
+        if( asp >= genbuf + sizeof genbuf ) { /* Not exercised by sedtest.mak */
+            fprintf( stderr, NOROOM, sizeof genbuf, lnum );
+            break;
+        }
         *asp++ = *al1++;
     }
     return( asp );
@@ -578,33 +588,49 @@ static void listto(
     register char const *p1,            /* the source */
     FILE                *fp )           /* output stream to write to */
 {
+    int const   linesize = 64;
+    int         written = 0;
+
     p1--;
-    while( *++p1 )
-        if( isprint( *p1 ) )
+    while( *++p1 ) {
+        if( ++written >= linesize )
+            fprintf( fp, "%c\n", '\\' ), written = 1;
+        if( *p1 == '\\' )
+            putc( *p1, fp ), putc( *p1, fp ), written++; /* Double literal backslash */
+        else if( *p1 == '\n' || isprint( *p1 ) )
             putc( *p1, fp );            /* pass it through */
         else {
-            putc( '\134', fp );         /* emit a backslash */
+            written++;
+            putc( '\\', fp );           /* emit a backslash */
             switch( *p1 ) {
-            case '\10':     
+            case '\a':
+                putc( 'a', fp ); 
+                break;
+            case '\b':
                 putc( 'b', fp ); 
-                break;                  /* BS */
-            case '\11':     
-                putc( 't', fp ); 
-                break;                  /* TAB */
-                                        /* \11 was \9 --MRY */
-            case '\12':     
+                break;
+            case '\f':
+                putc( 'f', fp ); 
+                break;
+            case '\n':                  /* Never activated */
                 putc( 'n', fp ); 
-                break;                  /* NL */
-            case '\15':     
+                break;
+            case '\r':
                 putc( 'r', fp ); 
-                break;                  /* CR */
-            case '\33':     
-                putc( 'e', fp ); 
-                break;                  /* ESC */
-            default:        
+                break;
+            case '\t':
+                putc( 't', fp ); 
+                break;
+            case '\v':
+                putc( 'v', fp ); 
+                break;
+            default:
+                written++;
                 fprintf( fp, "%02x", *p1 & 0xFF );
             }
         }
+    }
+    putc( '$', fp );
     putc( '\n', fp );
 }
 
@@ -662,8 +688,10 @@ static void command( sedcmd *ipc )
         p1 = spend;     
         p2 = holdsp;
         while( ( *p1++ = *p2++ ) != 0 )
-            if( p1 >= linebuf + MAXBUF )
+            if( p1 >= linebuf + MAXBUF ) {
+                fprintf( stderr, NOROOM, MAXBUF, lnum );
                 break;
+            }
         spend = p1 - 1;
         break;
 
@@ -679,8 +707,10 @@ static void command( sedcmd *ipc )
         p1 = hspend;    
         p2 = linebuf;
         while( ( *p1++ = *p2++ ) != 0 )
-            if( p1 >= holdsp + MAXBUF )
+            if( p1 >= holdsp + MAXBUF ) {
+                fprintf( stderr, NOROOM, MAXBUF, lnum );
                 break;
+            }
         hspend = p1 - 1;
         break;
 
@@ -817,6 +847,10 @@ static char *getline( register char *buf )  /* where to send the input */
 
     assert( buf >= linebuf && buf < linebufend );
 
+    /* The OW fgets has some strange behavior:
+     * 0 on input is not treated specially. sed ignores the rest of the line.
+     * 26 (^Z) stops reading the current line and is stripped.
+     */
     if (fgets(buf, room, stdin) != NULL) { /* gets() can smash program - WFB */
         lnum++;                         /* note that we got another line */
         while( ( *buf++ ) != 0 ) ;      /* find the end of the input */
