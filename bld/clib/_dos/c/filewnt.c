@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  NT specific implementation of _dos file functions.
 *
 ****************************************************************************/
 
@@ -35,7 +34,7 @@
 #include <stdlib.h>
 #include <io.h>
 #include <fcntl.h>
-#include <sys\stat.h>
+#include <sys/stat.h>
 #include <share.h>
 #include <direct.h>
 #include <windows.h>
@@ -93,8 +92,17 @@ _WCRTLINK unsigned _dos_open( const char *name, unsigned mode, int *posix_handle
 
 _WCRTLINK unsigned _dos_close( int hid )
 {
-    close( hid );
-    return( _doserrno );
+    int    rc = 0;
+    HANDLE h;
+
+    h = __getOSHandle( hid );
+
+    if( !CloseHandle( h ) ) {
+        rc = __set_errno_nt();
+    }
+    __freePOSIXHandle( hid );
+    __SetIOMode( hid, 0 );
+    return( rc );
 }
 
 _WCRTLINK unsigned _dos_commit( int hid )

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 specific implementation of _dos file functions.
 *
 ****************************************************************************/
 
@@ -36,7 +35,7 @@
 #include <errno.h>
 #include <io.h>
 #include <fcntl.h>
-#include <sys\stat.h>
+#include <sys/stat.h>
 #include <share.h>
 #include <direct.h>
 #include "fileacc.h"
@@ -86,8 +85,14 @@ _WCRTLINK unsigned _dos_open( const char *name, unsigned mode, int *handle )
 
 unsigned _dos_close( int handle )
 {
-    close( handle );
-    return( _doserrno );
+    OS_UINT error;
+    error = DosClose( handle );
+    __SetIOMode( handle, 0 );
+    if( error ) {
+        __set_errno_dos( error );
+        return( error );
+    }
+    return( 0 );
 }
 
 unsigned _dos_commit( int handle )
