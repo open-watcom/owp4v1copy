@@ -1,4 +1,4 @@
-# VI component of LANG11.DAT
+# VI component of LANG.DAT
 [ DEFAULT ]
     
 usr="vi.exe" 	dir="binnt" 	cond="wnthost" 				where="c f77 ac"
@@ -13,7 +13,7 @@ usr="ctags.exe" 	dir="binp" 	cond="os2host" 			where="c f77"
 usr="ctags.exe" 	dir="binw" 	cond="doshost winhost |" 	where="c f77"
 usr="ctags.exe" 	dir="binnt" 	cond="wnthost" 			where="c f77 ac"
 usr="ctags.exe" 	dir="axpnt" 	cond="alphahost"		where="ac"
-usr="edbind.exe" 	dir="binw" 	cond="" 			where="c f77 ac"
+usr="edbind.exe" 	dir="binw" 		 			where="c f77 ac"
 
 #.VI scripts
 

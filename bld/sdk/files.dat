@@ -67,7 +67,7 @@
     dir="binnt"	usr="fmedit.dll"	cond="wnthost"
     dir="axpnt"	usr="fmedit.dll"	cond="alphahost" where="ac"
 # .UNI files    
-    dir="binw"	usr="kanji.uni"		cond="" where="c jc f77 jf77 ac" old="binb"
-    dir="binw"	usr="1252.uni"		cond="" where="c jc f77 jf77 ac"
-    dir="binw"	usr="936.uni"		cond="" where="c jc f77 jf77 ac"
-    dir="binw"	usr="949.uni"		cond="" where="c jc f77 jf77 ac"
+    dir="binw"	usr="kanji.uni"		where="c jc f77 jf77 ac" old="binb"
+    dir="binw"	usr="1252.uni"		where="c jc f77 jf77 ac"
+    dir="binw"	usr="936.uni"		where="c jc f77 jf77 ac"
+    dir="binw"	usr="949.uni"		where="c jc f77 jf77 ac"
