@@ -315,9 +315,11 @@ codeppc.gh :
 
 !else  # Intel i86 or 386
 
-!ifdef bootstrap
+!ifdef __LINUX__
+#!ifdef bootstrap: codei86.gh is problematic on Linux because it cannot
+# execute 16bit executables directly.
 code$(target_cpu).gh : code$(target_cpu).s ../a/mkcode.c
-        $(CC) -D__$(target_cpu)__ $(INCLUDE) ../a/mkcode.c code$(target_cpu).s -o mkcode
+        cc -D__$(target_cpu)__ $(INCLUDE) ../a/mkcode.c code$(target_cpu).s -o mkcode
         ./mkcode $^@
 	rm -f mkcode
 !else
