@@ -291,10 +291,6 @@ STATIC char *createTmpFileName( void )
         }
     }
 
-    if( tmpPath == NULL ) {
-        tmpPath = StrDupSafe( "" );
-    }
-
     for( ;; ) {
         tmpFileChar = tmpFileNumber % 26 + 'a' ;
         buf = StartVec();
