@@ -59,7 +59,7 @@ BOOL CALLBACK EnumProc( HWND hwnd, LPARAM lparam ) {
     return( TRUE );
 }
 
-int WINAPI WinMain( HINSTANCE currinst, HINSTANCE previnst, LPSTR cmdline, int cmdshow)
+int PASCAL WinMain( HINSTANCE currinst, HINSTANCE previnst, LPSTR cmdline, int cmdshow)
 {
     char        *ptr;
     char        *dst;
