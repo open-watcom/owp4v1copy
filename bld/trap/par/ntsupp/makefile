@@ -1,5 +1,7 @@
 #pmake: all build remote os_nt cpu_386 par
 
+!include deftarg.mif
+
 all: dbginst.exe .SYMBOLIC
 
 !ifdef on_build_machine

@@ -1,5 +1,10 @@
 #pmake: all build lcl os_win cpu_i86 cpu_386 support x86
 
+NAME = wint32
+LNK = $(NAME).lnk
+
+!include deftarg.mif
+
 !ifndef bin_root
 !ifdef bin_root_wv
 bin_root = $(bin_root_wv)
@@ -7,9 +12,6 @@ bin_root = $(bin_root_wv)
 !endif
 
 CFLAGS = -zq -s -oas -fpc -mc -w3 -d1 -i=$(%lang)\h;$(%lang)\h\win;$(watcom_dir)\h
-
-NAME = wint32
-LNK = $(NAME).lnk
 
 OBJS =  intmain.obj ints.obj int32.obj
 
