@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 2.x performance sampling core.
 *
 ****************************************************************************/
 
@@ -55,7 +54,10 @@
 #define INCL_DOSSESMGR
 #include "os2.h"
 
-#include "dosdebug.h"
+// "Fake" notification codes used internally
+#define DBG_N_Breakpoint        -100
+#define DBG_N_SStep             -101
+#define DBG_N_Signal            -102
 
 extern void REPORT_TYPE report();
 extern void             StopAndSave();
@@ -73,7 +75,7 @@ extern char  FAR_PTR    *MsgArray[ERR_LAST_MESSAGE-ERR_FIRST_MESSAGE+1];
 
 #define BUFF_SIZE 2048
 static char             UtilBuff[BUFF_SIZE];
-static dos_debug        Buff;
+static uDB_t            Buff;
 static PID              Pid;
 static USHORT           InitialCS;
 static ULONG            MainMod = 0;
@@ -199,7 +201,7 @@ void RecordSample( unsigned offset, unsigned short segment, TID tid )
 
 void GetCommArea()
 {
-    dos_debug   mybuff;
+    uDB_t   mybuff;
 
     if( CommonAddr.segment == 0 ) {     /* can't get the common region yet */
         Comm.cgraph_top = 0;
@@ -222,7 +224,7 @@ void GetCommArea()
 
 void ResetCommArea()
 {
-    dos_debug   mybuff;
+    uDB_t   mybuff;
 
     if( CommonAddr.segment != 0 ) {     /* reset common variables */
         Comm.pop_no = 0;
@@ -240,7 +242,7 @@ void ResetCommArea()
 
 void GetNextAddr()
 {
-    dos_debug   mybuff;
+    uDB_t   mybuff;
     struct {
         unsigned long   ptr;
         seg             cs;
@@ -270,7 +272,7 @@ void StopProg()
 }
 
 
-static void CodeLoad( dos_debug FAR_PTR *buff, ULONG mte,
+static void CodeLoad( uDB_t FAR_PTR *buff, ULONG mte,
                       char *name, samp_block_kinds kind )
 {
     seg_offset  ovl;
@@ -300,7 +302,7 @@ static void InternalError( char * str )
 }
 
 
-void DebugExecute( dos_debug *buff, ULONG cmd )
+void DebugExecute( uDB_t *buff, ULONG cmd )
 {
 //    EXCEPTIONREPORTRECORD     ex;
     ULONG                       value;
@@ -418,7 +420,7 @@ void DebugExecute( dos_debug *buff, ULONG cmd )
 
 void APIENTRY Sleeper( unsigned long parm )
 {
-    static dos_debug     mybuff;
+    static uDB_t    mybuff;
 
     parm = parm;
     for( ;; ) {

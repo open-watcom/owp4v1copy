@@ -74,7 +74,7 @@
 
 #define LOAD_HELPER_DLL_SIZE      8
 
-extern dos_debug        Buff;
+extern uDB_t            Buff;
 
 bool CausePgmToLoadHelperDLL(ULONG startLinear)
 {
@@ -182,7 +182,7 @@ long TaskExecute(void (*rtn)())
 }
 
 
-static void saveRegs(dos_debug *save)
+static void saveRegs(uDB_t *save)
 {
     save->Pid = Pid;
     save->Tid = 0;
@@ -192,7 +192,7 @@ static void saveRegs(dos_debug *save)
 
 long TaskOpenFile(char *name, int mode, int flags)
 {
-    dos_debug   save;
+    uDB_t       save;
     long        rc;
 
     saveRegs(&save);
@@ -208,7 +208,7 @@ long TaskOpenFile(char *name, int mode, int flags)
 
 long TaskCloseFile(HFILE hdl)
 {
-    dos_debug   save;
+    uDB_t       save;
     long        rc;
 
     saveRegs(&save);
@@ -220,7 +220,7 @@ long TaskCloseFile(HFILE hdl)
 
 HFILE TaskDupFile(HFILE old, HFILE new)
 {
-    dos_debug   save;
+    uDB_t       save;
     long        rc;
 
     saveRegs(&save);
@@ -237,7 +237,7 @@ extern void DoWriteWord(void);
 
 bool TaskReadWord(USHORT seg, ULONG off, USHORT *data)
 {
-    dos_debug   save;
+    uDB_t       save;
     bool        rc;
 
     saveRegs(&save);
@@ -256,7 +256,7 @@ bool TaskReadWord(USHORT seg, ULONG off, USHORT *data)
 
 bool TaskWriteWord(USHORT seg, ULONG off, USHORT data)
 {
-    dos_debug   save;
+    uDB_t       save;
     bool        rc;
 
     saveRegs(&save);
@@ -275,7 +275,7 @@ bool TaskWriteWord(USHORT seg, ULONG off, USHORT data)
 
 void TaskPrint(char *ptr, unsigned len)
 {
-    dos_debug   save;
+    uDB_t       save;
 
     saveRegs(&save);
     while (len > sizeof(XferBuff)) {

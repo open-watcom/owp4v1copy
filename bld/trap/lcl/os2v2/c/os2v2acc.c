@@ -52,7 +52,7 @@
 #include "exeos2.h"
 #include "exeflat.h"
 
-dos_debug               Buff;
+uDB_t                   Buff;
 static BOOL             stopOnSecond;
 USHORT                  TaskFS;
 
@@ -246,7 +246,7 @@ static void GetObjectInfo( ULONG mte )
 }
 
 
-bool DebugExecute( dos_debug *buff, ULONG cmd, bool stop_on_module_load )
+bool DebugExecute( uDB_t *buff, ULONG cmd, bool stop_on_module_load )
 {
     EXCEPTIONREPORTRECORD       ex;
     ULONG                       value;
@@ -395,13 +395,13 @@ bool DebugExecute( dos_debug *buff, ULONG cmd, bool stop_on_module_load )
 }
 
 
-void WriteRegs( dos_debug *buff )
+void WriteRegs( uDB_t *buff )
 {
     buff->Cmd = DBG_C_WriteReg;
     CallDosDebug( buff );
 }
 
-void ReadRegs( dos_debug *buff )
+void ReadRegs( uDB_t *buff )
 {
 
     buff->Cmd = DBG_C_ReadReg;
@@ -553,9 +553,9 @@ static USHORT ReadBuffer( char *data, USHORT segv, ULONG offv, USHORT size )
 
 unsigned ReqGet_sys_config()
 {
-    ULONG         version[2];
-    dos_debug     buff;
-    char          tmp[DBG_CO_SIZE];
+    ULONG               version[2];
+    uDB_t               buff;
+    char                tmp[DBG_LEN_387];
     get_sys_config_ret  *ret;
 
     ret = GetOutPtr( 0 );
@@ -572,7 +572,7 @@ unsigned ReqGet_sys_config()
     buff.Tid    = 1;
     buff.Pid    = Pid;
     buff.Value  = DBG_CO_387;       /* for 2.0: DBG_CO_387 */
-    buff.Len    = DBG_CO_SIZE;      /* for 2.0: size of register state */
+    buff.Len    = DBG_LEN_387;      /* for 2.0: size of register state */
     buff.Index  = 0;                /* for 2.0: must be 0 */
     CallDosDebug( &buff );
     if( buff.Cmd != DBG_N_Success ) {
@@ -804,13 +804,13 @@ unsigned ReqRead_fpu( void )
     Buff.Cmd    = DBG_C_ReadCoRegs;
     Buff.Buffer = (ULONG)GetOutPtr(0);
     Buff.Value  = DBG_CO_387;       /* for 2.0: DBG_CO_387 */
-    Buff.Len    = DBG_CO_SIZE;      /* for 2.0: size of register state */
+    Buff.Len    = DBG_LEN_387;      /* for 2.0: size of register state */
     Buff.Index  = 0;                /* for 2.0: must be 0 */
     CallDosDebug( &Buff );
     if( Buff.Cmd == DBG_N_CoError ) {
         return( 0 );
     } else {
-        return( DBG_CO_SIZE );
+        return( DBG_LEN_387 );
     }
 }
 
@@ -831,7 +831,7 @@ unsigned ReqWrite_fpu( void )
     Buff.Cmd    = DBG_C_WriteCoRegs;
     Buff.Buffer = (ULONG)GetInPtr(sizeof(write_fpu_req));
     Buff.Value  = DBG_CO_387;       /* for 2.0: DBG_CO_387 */
-    Buff.Len    = DBG_CO_SIZE;      /* for 2.0: buffer size */
+    Buff.Len    = DBG_LEN_387;      /* for 2.0: buffer size */
     Buff.Index  = 0;                /* for 2.0: must be zero */
     CallDosDebug( &Buff );
     return( 0 );
@@ -849,7 +849,7 @@ unsigned ReqRead_regs( void )
         Buff.Cmd    = DBG_C_ReadCoRegs;
         Buff.Buffer = (ULONG)&mr->x86.fpu;
         Buff.Value  = DBG_CO_387;       /* for 2.0: DBG_CO_387 */
-        Buff.Len    = DBG_CO_SIZE;      /* for 2.0: size of register state */
+        Buff.Len    = DBG_LEN_387;      /* for 2.0: size of register state */
         Buff.Index  = 0;                /* for 2.0: must be 0 */
         CallDosDebug( &Buff );
     }
@@ -867,7 +867,7 @@ unsigned ReqWrite_regs( void )
         Buff.Cmd    = DBG_C_WriteCoRegs;
         Buff.Buffer = (ULONG)&mr->x86.fpu;
         Buff.Value  = DBG_CO_387;       /* for 2.0: DBG_CO_387 */
-        Buff.Len    = DBG_CO_SIZE;      /* for 2.0: buffer size */
+        Buff.Len    = DBG_LEN_387;      /* for 2.0: buffer size */
         Buff.Index  = 0;                /* for 2.0: must be zero */
         CallDosDebug( &Buff );
     }
@@ -1114,7 +1114,7 @@ unsigned ReqProg_load( void )
 
         /* Splice our helper DLL into debuggee's context */
         if( CanExecTask ) {
-            dos_debug   save;
+            uDB_t       save;
 
             save.Pid = Pid;
             save.Tid = 1;
@@ -1326,7 +1326,7 @@ static bool setDebugRegs(void)
 
 static void watchSingleStep(void)
 {
-    dos_debug           save;
+    uDB_t               save;
     dword               memval;
     int                 i;
 

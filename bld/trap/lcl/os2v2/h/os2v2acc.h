@@ -29,8 +29,8 @@
 ****************************************************************************/
 
 
-void   WriteRegs(dos_debug *);
-void   ReadRegs(dos_debug *);
+void   WriteRegs(uDB_t *);
+void   ReadRegs(uDB_t *);
 void   RecordModHandle(ULONG value);
 void   WriteLinear(char *data, ULONG lin, USHORT size);
 void   ReadLinear(char *data, ULONG lin, USHORT size);
@@ -41,7 +41,7 @@ ULONG  MakeItSegmentedNumberOne(USHORT seg, ULONG offset);
 ULONG  MakeSegmentedPointer(ULONG val);
 int    GetDos32Debug(char *err);
 void   SetTaskDirectories(void);
-bool   DebugExecute(dos_debug *buff, ULONG cmd, bool);
+bool   DebugExecute(uDB_t *buff, ULONG cmd, bool);
 int    IsUnknownGDTSeg(USHORT seg);
 
 extern  void    LoadHelperDLL();
@@ -93,7 +93,7 @@ extern USHORT           NumModHandles;
 extern int              CurrModHandle;
 extern ULONG            ExceptNum;
 extern HMODULE          ThisDLLModHandle;
-//extern dos_debug      Buff;
+//extern uDB_t          Buff;
 //extern watch          WatchPoints[MAX_WP];
 //extern short          WatchCount;
 extern USHORT           FlatCS,FlatDS;
