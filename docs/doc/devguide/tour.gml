@@ -389,17 +389,6 @@ necessary environment variables but first you'll have to edit it
 to reflect your directory structure etc. It also contains the
 necessary Perforce settings.
 .np
-When you think you have set up things correctly, try running
-the
-.us mkrel2
-batch file (located in the
-.us bat
-subdirectory). If you did everything right, you'll end up with
-a ton of empty directories under the
-.us rel2
-directory. These are where the built binaries and other stuff
-end up.
-.np
 Now is the time to connect to Perforce. Again, most uptodate
 information can be found on the Open Watcom web site. If you followed
 the instructions correctly, no servers are down and no other unpredictable

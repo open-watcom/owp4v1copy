@@ -50,10 +50,9 @@ d:\
 
 
 ------------------------------
-2) To set up a new machine:
-
-  - Modify setvars.bat/setvars.cmd/setvars.sh to reflect your setup. See
-    comments within the file for additional information.
+2) To set up a new machine, modify setvars.bat/setvars.cmd/setvars.sh to 
+   reflect your setup. See comments within the file for additional 
+   information.
 
     Your path should look something like this if you are on NT:
 
@@ -65,12 +64,6 @@ d:\
     d:\bin;
     d:\tools;
     d:\bld\build\binnt
-
-  - Create directories not included in source archives/Perforce. This is
-    primarily the rel2 tree where finished binaries, libraries, include
-    files etc. end up. To do this, simply run mkrel2.bat/mkrel2.cmd which
-    should care of everything provided that you have your environment
-    variables set up correctly.
 
 ------------------------------
 3) Priming the pump:
