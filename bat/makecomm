@@ -21,7 +21,6 @@ $# just in case anyone is curious ...
 # don't ask, just nuke the files
 .ERASE
 .CONTINUE
-.JUST_ENOUGH
 
 # if you wish to have on_build_machine defined in your environment, set
 # it as an environment variable.
