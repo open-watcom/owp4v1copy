@@ -1,0 +1,24 @@
+proj_name = ssl
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+inc_dirs = ..\h;$(cpp_dir)
+
+.c: ..\c;$(cpp_dir)
+
+objs =                  &
+        ssl.obj         &
+        ssldecl.obj     &
+        sslrule.obj     &
+        sslsym.obj      &
+        sslgen.obj      &
+        preproc.obj     &
+        ppexpr.obj      &
+        ppmacro.obj     &
+        ppmem.obj
+
+$(proj_name).exe : $(objs)
+        $(linker) option quiet $(lflags) name $^. file { $< }
+
