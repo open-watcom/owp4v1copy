@@ -1,0 +1,21 @@
+proj_name = bviper
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+!include ..\lib.mif
+
+inc_dirs = $(wclass_dir)\hpp;$(gui_dir)\h;$(viper_dir)\mviper
+
+.cpp: ..
+
+.cpp.obj: $($(proj_name)_autodepends)
+          @set include=$(inc_path)
+          $(cpp) $(cflags) $(extra_cpp_flags_$(host_CPU)) $[@
+
+objs = bviper.obj
+
+
+$(proj_name).exe : $(objs)
+        $(linker) option quiet $(lflags) name $^. file { $< } lib {$(LIBS)}
