@@ -122,14 +122,6 @@ extern USHORT           FlatCS,FlatDS;
 
 bool CausePgmToLoadHelperDLL(ULONG startLinear);
 long TaskExecute(long (*rtn)());
-//#pragma aux DoOpen parm [eax] [ebx] [ecx];
-void DoOpen(char *name, int mode, int flags);
-//#pragma aux DoClose parm [eax];
-static void DoClose(HFILE hdl);
-//#pragma aux DoDupFile parm [eax] [ebx];
-void DoDupFile(HFILE old, HFILE new);
-//#pragma aux DoWritePgmScrn parm [eax] [ebx];
-void DoWritePgmScrn(char *buff, USHORT len);
 bool TaskReadWord(USHORT seg, ULONG off, USHORT *data);
 bool TaskWriteWord(USHORT seg, ULONG off, USHORT data);
 void TaskPrint(char *data, unsigned len);

@@ -70,13 +70,7 @@
 #include "trpimp.h"
 #include "os2trap.h"
 #include "os2v2acc.h"
-
-// Functions and variables imported from helper DLL
-extern char TempStack[];
-extern void DoReadWord(void);
-extern void DoWriteWord(void);
-extern void DoClose(HFILE hdl);
-
+#include "splice.h"
 
 #define LOAD_HELPER_DLL_SIZE      8
 
@@ -163,19 +157,24 @@ long TaskExecute(long (*rtn)())
     long        retval;
 
     if (CanExecTask) {
+        ExpectingAFault = TRUE;
         Buff.CS  = FlatCS;
         Buff.EIP = (ULONG)rtn;
         Buff.SS  = FlatDS;
-        Buff.ESP = (ULONG)(TempStack + 32768); // The size better be right!
+        Buff.DS  = FlatDS;
+        Buff.ES  = FlatDS;
+        Buff.ESP = (ULONG)(TempStack + TEMPSTACK_SIZE);
         WriteRegs(&Buff);
         /*
          * writing registers with invalid selectors will fail
          */
         if (Buff.Cmd != DBG_N_Success) {
-            return -1;
+            retval = -1;
+        } else {
+            DebugExecute(&Buff, DBG_C_Go, FALSE);
+            retval = Buff.EAX;
         }
-        DebugExecute(&Buff, DBG_C_Go, FALSE);
-        retval = Buff.EAX;
+        ExpectingAFault = FALSE;
         return retval;
     } else {
         return -1;
@@ -197,11 +196,9 @@ long TaskOpenFile(char *name, int mode, int flags)
     long        rc;
 
     saveRegs(&save);
-    WriteBuffer(name, FP_SEG(UtilBuff), FP_OFF(UtilBuff),
-                strlen(name) + 1);
-    Buff.EDX = FP_SEG(UtilBuff);
-    Buff.EAX = FP_OFF(UtilBuff);
-    Buff.EBX = mode;
+    WriteLinear(name, (ULONG)&XferBuff, strlen(name) + 1);
+    Buff.EAX = (ULONG)&XferBuff;
+    Buff.EDX = mode;
     Buff.ECX = flags;
     rc = TaskExecute(DoOpen);
     WriteRegs(&save);
@@ -246,9 +243,7 @@ bool TaskReadWord(USHORT seg, ULONG off, USHORT *data)
     saveRegs(&save);
     Buff.EBX = off;
     Buff.GS  = seg;
-    ExpectingAFault = TRUE;
     TaskExecute(DoReadWord);
-    ExpectingAFault = FALSE;
     if (Buff.Cmd != DBG_N_Breakpoint) {
         rc = FALSE;
     } else {
@@ -257,7 +252,6 @@ bool TaskReadWord(USHORT seg, ULONG off, USHORT *data)
     }
     WriteRegs(&save);
     return rc;
-
 }
 
 bool TaskWriteWord(USHORT seg, ULONG off, USHORT data)
@@ -269,9 +263,7 @@ bool TaskWriteWord(USHORT seg, ULONG off, USHORT data)
     Buff.EAX = data;
     Buff.EBX = off;
     Buff.GS  = seg;
-    ExpectingAFault = TRUE;
     TaskExecute(DoWriteWord);
-    ExpectingAFault = FALSE;
     if (Buff.Cmd != DBG_N_Breakpoint) {
         rc = FALSE;
     } else {
@@ -279,7 +271,6 @@ bool TaskWriteWord(USHORT seg, ULONG off, USHORT data)
     }
     WriteRegs(&save);
     return rc;
-
 }
 
 void TaskPrint(char *ptr, unsigned len)
@@ -287,20 +278,17 @@ void TaskPrint(char *ptr, unsigned len)
     dos_debug   save;
 
     saveRegs(&save);
-    while (len > sizeof(UtilBuff)) {
-        WriteBuffer(ptr, FP_SEG(UtilBuff), FP_OFF(UtilBuff),
-                sizeof(UtilBuff));
-        Buff.EAX = FP_OFF(UtilBuff);
-        Buff.EDX = FP_SEG(UtilBuff);
-        Buff.EBX = sizeof(UtilBuff);
+    while (len > sizeof(XferBuff)) {
+        WriteLinear(ptr, (ULONG)&XferBuff, sizeof(XferBuff));
+        Buff.EAX = (ULONG)&XferBuff;
+        Buff.EDX = sizeof(XferBuff);
         TaskExecute(DoWritePgmScrn);
-        ptr += sizeof(UtilBuff);
-        len -= sizeof(UtilBuff);
+        ptr += sizeof(XferBuff);
+        len -= sizeof(XferBuff);
     }
-    WriteBuffer(ptr, FP_SEG(UtilBuff), FP_OFF(UtilBuff), len);
-    Buff.EAX = FP_OFF(UtilBuff);
-    Buff.EDX = FP_SEG(UtilBuff);
-    Buff.EBX = len;
+    WriteLinear(ptr, (ULONG)&XferBuff, len);
+    Buff.EAX = (ULONG)&XferBuff;
+    Buff.EDX = len;
     TaskExecute(DoWritePgmScrn);
     WriteRegs(&save);
 }

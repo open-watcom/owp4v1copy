@@ -31,7 +31,7 @@
 
 #include <stddef.h>
 #include <string.h>
-#include <i86.h>
+//#include <i86.h>
 #define INCL_DOSEXCEPTIONS
 #define INCL_DOSPROCESS
 #define INCL_DOSMISC
@@ -555,14 +555,6 @@ static USHORT ReadBuffer(char *data, USHORT segv, ULONG offv, USHORT size)
 }
 
 
-void DoWritePgmScrn(char *buff, USHORT len)
-{
-    ULONG   written;
-
-    DosWrite(2, buff, len, &written);
-    BreakPoint(0);
-}
-
 unsigned ReqGet_sys_config()
 {
     ULONG         version[2];
@@ -1076,8 +1068,11 @@ unsigned ReqProg_load( void )
     start.PgmName = UtilBuff;
     start.PgmInputs = parms;
     start.TermQ = 0;
-    /* We really do NOT want inherit debugger's file handles */
-    start.InheritOpt = SSF_INHERTOPT_SHELL;
+    /* Both inheriting from parent and the shell causes certain problems;
+     * at the moment it'd seem that inheriting from parent causes less
+     * problems.
+     */
+    start.InheritOpt = SSF_INHERTOPT_PARENT;
     /* But we DO want debugger's (debugger's parent really) environment */
     DosGetInfoBlocks(&ptib, &ppib);
     start.Environment = ppib->pib_pchenv;
@@ -1693,27 +1688,3 @@ trap_version TRAPENTRY TrapInit(char *parm, char *err, bool remote)
 void TRAPENTRY TrapFini(void)
 {
 }
-
-/* An empty DLL initialization/termination funcion... just to prevent
- * possible misunderstandings with the linker/loader - and in case we
- * need it later.
- */
-ULONG _System _DLL_InitTerm (ULONG modhandle, ULONG flag)
-{
-    /* If flag is zero then the DLL is being loaded so initialization  */
-    /* should be performed.  If flag is 1 then the DLL is being freed  */
-    /* so termination should be performed.                             */
-
-    switch (flag)
-       {
-       case 0:
-          break;
-
-       case 1:
-          break;
-       }
-
-    /* A nonzero value must be returned to indicate success. */
-    return 1;
-}
-

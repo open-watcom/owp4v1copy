@@ -66,12 +66,7 @@ static void pascal far BrkHandler(USHORT sig_arg, USHORT sig_num)
 void GUImain(void)
 {
     char                buff[CCHMAXPATH];
-    ULONG               ulCurFH;
-    LONG                ulAddFH;
 
-    /* Instead of setting fixed limit, add 20 new handles */
-    ulAddFH = 20;
-    DosSetRelMaxFH(&ulAddFH, &ulCurFH);
     CmdStart=buff;
     getcmd(CmdStart);
     //TODO: replace with exception handler

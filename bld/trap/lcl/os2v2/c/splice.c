@@ -32,17 +32,52 @@
 
 #include <stddef.h>
 #include <string.h>
-#include <i86.h>
 #define INCL_BASE
-#define INCL_DOSDEVICES
-#define INCL_DOSMEMMGR
-#define INCL_DOSSIGNALS
 #include <os2.h>
+
+#include "splice.h"
 
 /* We need separate stack for executing spliced code. We really wouldn't
  * want to mess up debuggee's stack!
  */
-char __export TempStack[32768];
+char __export TempStack[TEMPSTACK_SIZE];
+
+char __export XferBuff[XFERBUFF_SIZE];
+
+#define OPEN_CREATE  1
+#define OPEN_PRIVATE 2
+
+long OpenFile(char *name, ULONG mode, int flags)
+{
+    HFILE       hdl;
+    ULONG       action;
+    ULONG       openflags;
+    ULONG       openmode;
+    APIRET      rc;
+
+    if (flags & OPEN_CREATE) {
+        openflags = 0x12;
+        openmode = 0x2042;
+    } else {
+        openflags = 0x01;
+        openmode = mode | 0x2040;
+    }
+    if (flags & OPEN_PRIVATE) {
+        openmode |= 0x80;
+    }
+    rc = DosOpen(name,          /* name */
+                &hdl,           /* handle to be filled in */
+                &action,        /* action taken */
+                0,              /* initial allocation */
+                0,              /* normal file */
+                openflags,      /* open the file */
+                openmode,       /* deny-none, inheritance */
+                0);             /* reserved */
+    if (rc != 0)
+        return 0xFFFF0000 | rc;
+    return hdl;
+}
+
 
 void        BreakPoint(ULONG);
 #pragma aux BreakPoint = 0xCC parm [eax] aborts;
@@ -69,8 +104,7 @@ void __export DoWriteWord(void)
 
 void __export DoOpen(char *name, int mode, int flags)
 {
-//  BreakPoint(OpenFile(name, mode, flags));
-    BreakPoint(0);
+    BreakPoint(OpenFile(name, mode, flags));
 }
 
 void __export DoClose(HFILE hdl)
@@ -91,3 +125,12 @@ void __export DoDupFile(HFILE old, HFILE new)
         BreakPoint(new_t);
     }
 }
+
+void _export DoWritePgmScrn(char *buff, ULONG len)
+{
+    ULONG   written;
+
+    DosWrite(2, buff, len, &written);
+    BreakPoint(0);
+}
+
