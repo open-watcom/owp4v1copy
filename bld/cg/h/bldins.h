@@ -38,7 +38,7 @@ extern  an      BGTempName( name *temp, type_def *tipe );
 extern  bool    FiniLabel( label_handle lbl, block *blk );
 extern  void    BGFiniLabel( label_handle lbl );
 extern  bool    NeedConvert( type_def *from, type_def *to );
-extern  temp_name       *BGNewTemp( type_def *tipe );
+extern  name    *BGNewTemp( type_def *tipe );
 extern  temp_name       *BGGlobalTemp( type_def *tipe );
 extern  an      Arithmetic( an name, type_def *tipe );
 extern  bn      BGCompare( cg_op op, an left, an rite,

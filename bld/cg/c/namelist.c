@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Manage a list of names.
 *
 ****************************************************************************/
 
@@ -337,9 +336,9 @@ extern  memory_name     *SAllocMemory( pointer symbol, type_length offset,
                 other = new_m;
                 new_m->v.usage |= USE_MEMORY | NEEDS_MEMORY;
             } else {
-                if( nclass == XX && size == 0 ) return( new_m ); /* 89-07-07 */
+                if( nclass == XX && size == 0 ) return( &( new_m->m ) ); /* 89-07-07 */
                 if( new_m->n.name_class == nclass && nclass != XX ) {/*exact!*/
-                    return( new_m );
+                    return( &( new_m->m ) );
                 }
                 if( new_m->n.name_class == XX && new_m->n.size == size ) {
                     xx = new_m;
@@ -352,7 +351,7 @@ extern  memory_name     *SAllocMemory( pointer symbol, type_length offset,
     }
     if( xx != NULL ) {
         ZapXX( xx, nclass, size );
-        return( xx );
+        return( &( xx->m ) );
     }
     new_m = AllocName( N_MEMORY, nclass, size );
     new_m->v.symbol = symbol;
@@ -379,7 +378,7 @@ extern  memory_name     *SAllocMemory( pointer symbol, type_length offset,
     if( class == CG_LBL || class == CG_CLB ) {
         new_m->v.usage |= USE_MEMORY; /* so not put in conflict graph*/
     }
-    return( new_m );
+    return( &( new_m->m ) );
 }
 
 
@@ -387,7 +386,7 @@ extern  name    *AllocMemory( pointer symbol, type_length offset,
                               cg_class class, type_class_def type_class ) {
 /*************************************************************************/
 
-    return( SAllocMemory( symbol, offset, class, type_class, 0 ) );
+    return( (name *) SAllocMemory( symbol, offset, class, type_class, 0 ) );
 }
 
 

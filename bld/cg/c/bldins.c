@@ -258,8 +258,8 @@ static  an      CnvRnd( an name, type_def *tipe, cg_op op ) {
 }
 
 
-extern  temp_name       *BGNewTemp( type_def *tipe ) {
-/*************************************************/
+extern  name        *BGNewTemp( type_def *tipe ) {
+/************************************************/
 
     name        *temp;
 
@@ -278,7 +278,7 @@ extern  temp_name       *BGGlobalTemp( type_def *tipe ) {
 
     temp = BGNewTemp( tipe );
     temp->v.usage |= USE_IN_ANOTHER_BLOCK;
-    return( temp );
+    return( &(temp->t) );
 }
 
 
@@ -649,7 +649,7 @@ extern  an      BGOpGets( cg_op op, an left, an rite,
 
     an                  result;
     an                  leftp;
-    name_def            *temp;
+    name                *temp;
     type_class_def      opclass;
     type_class_def      class;
     name                *left_name;

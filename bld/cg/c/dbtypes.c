@@ -455,14 +455,14 @@ extern  array_list * _CGAPI DBBegArray(  dbg_type base, cg_type tipe, bool is_co
 static  void    AddDim( array_list *ar, dim_any *dim ){
 /******************************************************/
 
-    dim_entry *curr;
-    dim_entry **owner;
+    dim_any *curr;
+    dim_any **owner;
 
     owner = &ar->list;
     for(;;) {
         curr = *owner;
         if( curr == NULL ) break;
-        owner = &curr->next;
+        owner = &curr->entry.next;
     }
     dim->entry.next = NULL;
     *owner = dim;
@@ -481,7 +481,7 @@ extern  void _CGAPI DBDimCon( array_list *ar, dbg_type idx, signed_32 lo, signed
     dim->lo = lo;
     dim->hi = hi;
     dim->idx = idx;
-    AddDim( ar, dim );
+    AddDim( ar, (dim_any *) dim );
 }
 
 extern  void _CGAPI DBDimVar( array_list *ar,
@@ -501,7 +501,7 @@ extern  void _CGAPI DBDimVar( array_list *ar,
     dim->off = off;
     dim->lo_bound_tipe = lo_bound_tipe;
     dim->num_elts_tipe = num_elts_tipe;
-    AddDim( ar, dim );
+    AddDim( ar, (dim_any *) dim );
     ar->is_variable = TRUE;
 }
 
@@ -779,14 +779,14 @@ static  field_member     *CreateMember( char *nm, byte strt, byte len,
 static  void    AddField( struct_list *st, field_any *field ){
 /***************************************************************/
 
-    field_entry *curr;
-    field_entry **owner;
+    field_any *curr;
+    field_any **owner;
 
     owner = &st->list;
     for(;;) {
         curr = *owner;
         if( curr == NULL ) break;
-        owner = &curr->next;
+        owner = &curr->entry.next;
     }
     field->entry.next = NULL;
     *owner = field;
@@ -806,7 +806,7 @@ extern  void _CGAPI DBAddBitField( struct_list *st, unsigned_32 off, byte strt,
     field = CreateMember( nm, strt, len, base, 0 );
     field->entry.field_type = FIELD_OFFSET;
     field->u.off= off;
-    AddField( st, field );
+    AddField( st, (field_any *) field );
 }
 
 
@@ -840,7 +840,7 @@ extern  void _CGAPI DBAddLocField( struct_list *st, dbg_loc loc, uint attr,
         field->entry.field_type = FIELD_LOC;
         field->u.loc = LocDupl( loc );
     }
-    AddField( st, field );
+    AddField( st, (field_any *) field );
 }
 
 extern  void _CGAPI DBAddStField( struct_list *st, dbg_loc loc, char *nm, uint attr,
@@ -860,7 +860,7 @@ extern  void _CGAPI DBAddStField( struct_list *st, dbg_loc loc, char *nm, uint a
     field->loc = LocDupl( loc );
     field->attr = attr;
     field->base = base;
-    AddField( st, field );
+    AddField( st, (field_any *) field );
 }
 
 extern  void _CGAPI DBAddMethod( struct_list *st, dbg_loc loc,
@@ -883,7 +883,7 @@ extern  void _CGAPI DBAddMethod( struct_list *st, dbg_loc loc,
     field->kind = kind;
     field->len = n_len;
     field->base = base;
-    AddField( st, field );
+    AddField( st, (field_any *) field );
 }
 
 extern  void _CGAPI DBAddNestedType( struct_list *st, char *nm,
@@ -901,7 +901,7 @@ extern  void _CGAPI DBAddNestedType( struct_list *st, char *nm,
     strcpy( field->name, nm );
     field->entry.field_type = FIELD_NESTED;
     field->base = base;
-    AddField( st, field );
+    AddField( st, (field_any *) field );
     st->is_cnested = TRUE;
 }
 
@@ -921,7 +921,7 @@ extern  void _CGAPI DBAddInheritance( struct_list *st, dbg_type inherit,
     field->attr = attr;
     field->kind = kind;
     field->u.adjustor = LocDupl( loc );
-    AddField( st, field );
+    AddField( st, (field_any *) field );
 }
 
 extern  void _CGAPI DBAddBaseInfo( struct_list  *st, offset vb_off,  offset esize,
@@ -951,7 +951,7 @@ extern  void _CGAPI DBAddVFuncInfo( struct_list  *st, offset vfptr_off,
     field->vft_cgtype = vft_cgtype;
     field->vft_size = size;
     st->vf = field;
-    AddField( st, field );
+    AddField( st, (field_any *) field );
 }
 
 extern  dbg_type _CGAPI DBEndStruct( struct_list  *st ) {

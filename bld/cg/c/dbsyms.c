@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Emit debug information for debugging locals.
 *
 ****************************************************************************/
 
@@ -786,7 +785,7 @@ extern  void    DbgParmLoc( name_def *parm, sym_handle sym ) {
     }
     _Alloc( new, sizeof( dbg_local ) );
     loc = DBLocInit();
-    loc = LocParm( loc, parm );
+    loc = LocParm( loc, (name *) parm );
     new->loc = loc;
     new->sym = sym;
     new->kind = DBG_SYM_VAR;

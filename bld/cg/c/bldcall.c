@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Build a subroutine call.
 *
 ****************************************************************************/
 
@@ -40,28 +39,23 @@
 #include "cgdefs.h"
 #include "cgaux.h"
 #include "zoiks.h"
+#include "offset.h"
 #include "feprotos.h"
+#include "namelist.h"
+#include "bldins.h"
+#include "makeaddr.h"
+#include "optask.h"
+#include "bgcall.h"
 
-extern  name            *GenIns(an);
-extern  name            *AllocRegName(hw_reg_set);
-extern  name            *AllocTemp(type_class_def);
-extern  memory_name     *SAllocMemory(pointer,type_length,cg_class,type_class_def,type_length);
-extern  name            *STempOffset(name*,type_length,type_class_def,type_length);
+extern  label_handle    AskForSymLabel(pointer,cg_class);
 extern  instruction     *NewIns(int);
-extern  temp_name       *BGNewTemp(type_def*);
 extern  type_def        *QParmType(sym_handle,sym_handle,type_def*);
-extern  name            *SAllocUserTemp(pointer,type_class_def,type_length);
 extern  instruction     *MakeMove(name*,name*,type_class_def);
 extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
 extern  instruction     *MakeConvert(name*,name*,type_class_def,type_class_def);
 extern  instruction     *MakeNop(void);
-extern  void            BGDone(an);
-extern  an              AddrToIns(an);
-extern  sym_handle      AskForLblSym(label_handle);
-extern  an              MakeAddrName(cg_class,sym_handle,type_def*);
 extern  hw_reg_set      ParmReg(type_class_def,type_length,type_length,call_state*);
 extern  hw_reg_set      CallZap(call_state*);
-extern  label_handle    AskForSymLabel(pointer,cg_class);
 extern  type_length     ParmMem(type_length,type_length,call_state*);
 extern  hw_reg_set      ActualParmReg(hw_reg_set);
 extern  type_class_def  CallState(aux_handle,type_def*,call_state*);
@@ -87,8 +81,6 @@ extern  hw_reg_set      StackReg(void);
 extern  name            *SAllocIndex(name*,name*,type_length,type_class_def,type_length);
 extern  name            *ScaleIndex(name*,name*,type_length,type_class_def,type_length,int,i_flags);
 extern  instruction     *PushOneParm(instruction*,name*,type_class_def,type_length,call_state*);
-extern  void            PreCall(cn);
-extern  void            PostCall(cn);
 extern  bool            IsVolatile(name*);
 extern  void            DoNothing(instruction*);
 extern  void            TNZapParms();
@@ -108,8 +100,6 @@ extern  pointer         FindAuxInfo( name *, aux_class );
 extern  type_length     ParmAlignment( type_def * );
 extern  void            SuffixIns( instruction *, instruction * );
 
-
-extern type_length      TypeClassSize[];
 extern  type_def        *TypeInteger;
 extern  type_def        *TypeProcParm;
 extern  type_def        *TypeNone;
@@ -180,7 +170,7 @@ extern  cn      BGInitCall(an node,type_def *tipe,aux_handle aux) {
         new->ins->head.opcode = OP_CALL;
         class = CallState( aux, tipe, new->state );
         mem = node->u.name;
-        mem = SAllocMemory( mem->v.symbol, mem->v.offset, mem->m.memory_type,
+        mem = (name *) SAllocMemory( mem->v.symbol, mem->v.offset, mem->m.memory_type,
                             mem->n.name_class, mem->n.size );
         node->u.name = mem;
     } else {
@@ -372,7 +362,7 @@ extern  name    *DoParmDecl( sym_handle sym, type_def *tipe, hw_reg_set reg ) {
     }
     if( _IsModel( DBG_LOCALS ) ){  // d1+ or d2
         if( sym != NULL ) {
-            DbgParmLoc( parm_name, sym );
+            DbgParmLoc( &(parm_name->n), sym );
         }
     }
     parm_def = DoParmDef( parm_name, class );
@@ -729,7 +719,7 @@ extern  void    BGReturn( an retval, type_def *tipe ) {
         }
         BGDone( retval );
     } else {
-        ins->zap = AllocRegName( CurrProc->state.return_reg );
+        ins->zap = &AllocRegName( CurrProc->state.return_reg )->r;
         ins->flags.nop_flags |= NOP_ZAP_INFO;
     }
     AddIns( ins );
@@ -904,7 +894,7 @@ extern  bool        AssgnParms( cn call, bool in_line ) {
         call_ins->operands[CALL_OP_USED] = AllocRegName( state->parm.used );
     }
     call_ins->operands[CALL_OP_POPS] = AllocS32Const( state->parm.offset );
-    call_ins->zap = AllocRegName( CallZap( state ) );
+    call_ins->zap = &AllocRegName( CallZap( state ) )->r;
     return( push_no_pop );
 }
 

@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Variable splitting - find cases where a var is used for
+*               separate and independent purposes.
 *
 ****************************************************************************/
 
@@ -200,7 +200,7 @@ extern  bool    RepOp( name **pop, name *of, name *with ) {
     return( change );
 }
 
-static  void    ReplaceInstances( name_def *of, name_def *with ) {
+static  void    ReplaceInstances( name *of, name *with ) {
 /*****************************************************************/
 
     block       *blk;

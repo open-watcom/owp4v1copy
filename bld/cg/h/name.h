@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Definition of the 'name' union.
 *
 ****************************************************************************/
 
@@ -95,8 +94,8 @@ typedef enum {
         MULT_DEFINITION         = 0x0800,         /* not ONE_DEFINITION no matter what other bit says :) */
         LOOP_DEFINITION         = 0x1000,         /* defined within a loop */
         CG_INTRODUCED           = 0x2000,         /* created under special circumstances by CG
-                                                        so don't use normal size/range checks - this
-                                                        is to allow weird t1-3 aliases made by rCYP_SEX */
+                                                     so don't use normal size/range checks - this
+                                                     is to allow weird t1-3 aliases made by rCYP_SEX */
 } t_flags;
 
 #define PERM_TEMP_FLAGS (STACK_PARM+CONST_TEMP)
@@ -153,7 +152,7 @@ typedef struct const_name {
 
 typedef struct memory_name {            /*  global name value or address */
         struct var_name         _v;
-        struct memory_name      *same_sym;
+        union name              *same_sym;
         cg_class                memory_type; /*  what the symbol points to */
         type_length             alignment;   /*  alignment - 0 if naturally aligned */
         m_flags                 memory_flags;
@@ -185,10 +184,10 @@ typedef struct register_name {
 } register_name;
 
 typedef struct indexed_name {
-        name_def                _n;
-        union name              *index;
-        union name              *base;
-        type_length              constant;
+        struct name_def         _n;
+        union  name             *index;
+        union  name             *base;
+        type_length             constant;
         i_flags                 index_flags;
         char                    scale;
 } indexed_name;
@@ -201,6 +200,7 @@ typedef union name {
         struct  temp_name       t;
         struct  register_name   r;
         struct  indexed_name    i;
+        union   name            *_n;
 } name;
 
 #define _FrontEndTmp( op ) ( !( (op)->t.temp_flags & CONST_TEMP ) && \

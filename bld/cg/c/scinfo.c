@@ -82,13 +82,13 @@ static  bool    ScoreStomp( score_info *x, score_info *y ) {
         switch( y->class ) {
         case N_MEMORY:
             if( _IsModel( RELAX_ALIAS ) )
-	        return( FALSE );
+            return( FALSE );
             /* fall through */
         case N_INDEXED:
             return( TRUE );
         case N_TEMP:
             if( y->symbol.v->usage & USE_ADDRESS )
-	        return( TRUE );
+            return( TRUE );
             return( FALSE );
         }
     }
@@ -103,20 +103,20 @@ static  bool    ScoreStomp( score_info *x, score_info *y ) {
         case N_TEMP:
             if( x->base->n.class == N_TEMP ) {
                 if( y->symbol.t->v.id == x->base->t.v.id )
-		    return( TRUE );
+            return( TRUE );
             }
             break;
         case N_MEMORY:
             if( x->base->n.class == N_MEMORY ) {
                 if( y->symbol.p == x->base->v.symbol )
-		    return( TRUE );
+            return( TRUE );
             }
             break;
         case N_INDEXED:
             if( y->base == NULL )
-	        return( TRUE );
+            return( TRUE );
             if( y->base->n.class != x->base->n.class )
-	        return( FALSE );
+            return( FALSE );
             switch( x->base->n.class ) {
             case N_TEMP:
                 return( y->base->t.v.id == x->base->t.v.id );
@@ -138,10 +138,10 @@ extern  bool    ScoreLookup( score *p, score_info *info ) {
     curr = *p->list;
     for(;;) {
         if( curr == NULL )
-	    break;
+        break;
         if( ScoreSame( &curr->info, info ) != FALSE
          && curr->info.offset == info->offset )
-	    return( TRUE );
+        return( TRUE );
         curr = curr->next;
     }
     return( FALSE );
@@ -159,7 +159,7 @@ static  void    ScoreAdd( score *p, int i, score_info *info ) {
             first = &p[ info->index_reg ];
             curr = first;
             for(;;) {
-                info->index_reg = ScoreList[ curr->index ]->reg_name->reg_index;
+                info->index_reg = ScoreList[ curr->index ]->reg_name->r.reg_index;
                 if( ScoreLookup( &p[ i ], info ) == FALSE ) {
                     ScoreInsert( p, i, info );
                 }
@@ -191,13 +191,13 @@ extern  bool    ScoreEqual( score *p, int index, score_info *info ) {
 
         entry = ScoreList[  index  ];
         if( entry->high == NO_INDEX || entry->low == NO_INDEX )
-	    return( FALSE );
+        return( FALSE );
             /*  See if low parts & high parts of register pair contain*/
             /*  the right information*/
         if( info->class == N_CONSTANT )
-	    return( FALSE );
+        return( FALSE );
         if( ScoreLookup( &p[  entry->low  ], info ) == FALSE )
-	    return( FALSE );
+        return( FALSE );
         half_size = entry->size / 2;
         info->offset += half_size;
         is_equal = ScoreLookup( &p[  entry->high  ], info );
@@ -311,7 +311,7 @@ extern  void    ScoreInfo( score_info *info, name *op ) {
         if( op->v.usage & VAR_VOLATILE ) {
             info->class = N_VOLATILE;
         }
-        info->symbol.t = op;
+        info->symbol.t = &(op->t);
         info->offset = op->v.offset;
         break;
     case N_MEMORY:
@@ -329,7 +329,7 @@ extern  void    ScoreInfo( score_info *info, name *op ) {
         info->offset = op->i.constant;
         info->index_reg = op->i.index->r.reg_index;
         info->base = op->i.base;
-	info->scale = op->i.scale;
+    info->scale = op->i.scale;
         break;
     }
 }
@@ -376,7 +376,7 @@ extern  void    ScoreKillInfo( score *scoreboard, name *op,
             for(;;) {
                 curr = *owner;
                 if( curr == NULL )
-		    break;
+            break;
                 /*   Currently looking at memory from*/
                 /*   curr->info+offset to curr->info+offset+entry->size*/
                 /*   If the names 'info' and 'curr' match, then have an*/

@@ -1416,7 +1416,7 @@ static lf_values MkVTShape( cv_out *out, field_vfunc *vf ){
 static int  MkFlist( struct_list *st  ){
 /********************************************/
     field_any         *field;
-    field_entry       *old;
+    field_any         *old;
     cv_out            out[1];
     ct_subfield_ptrs  fld;
     cv_mlist          *a_mlist;
@@ -1606,9 +1606,9 @@ static  field_any  *UnLinkMethod( field_any **owner, char *name  ){
 static  int   SortMethods( struct_list *st  ){
 /***********************************************/
 
-    field_any   *curr;
-    field_entry *next;
-    field_entry *add;
+    field_any  *curr;
+    field_any  *next;
+    field_any  *add;
     int        overops;
 
     overops = 0;
@@ -1620,7 +1620,7 @@ static  int   SortMethods( struct_list *st  ){
                 overops = 1;
                 next = curr->entry.next;
                 curr->entry.next = add;
-                add->next = next;
+                add->entry.next = next;
             }
         }
         curr = curr->entry.next;

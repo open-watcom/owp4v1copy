@@ -27,6 +27,8 @@
 * Description:  Prototypes for makeaddr.c
 *
 ****************************************************************************/
+
+
 extern  an      NewAddrName( void );
 extern  an      MakeTypeTempAddr( name *op, type_def *tipe );
 extern  an      MakeTempAddr( name *op, type_def *tipe );

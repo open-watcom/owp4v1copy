@@ -48,7 +48,7 @@ typedef enum {
 } ins_mod;
 
 typedef struct score_reg {
-        struct register_name    *reg_name;
+        union name              *reg_name;
         hw_reg_set              reg;
         int                     low;    /*  index of low part of reg, if any */
         int                     high;   /*  index of high part of reg, if any */

@@ -73,7 +73,7 @@ static  instruction     *DoReduce( instruction *ins, opcode_entry *try,
         HW_TurnOn( zap_all, *zap );
         ++zap;
     }
-    ins->zap = AllocRegName( zap_all );
+    ins->zap = (register_name *) AllocRegName( zap_all );
     if( has_index || ins->num_operands > NumOperands( ins ) ) {
         ins = NeedIndex( ins );
     } else {
