@@ -115,8 +115,8 @@ typedef struct {
 
 // functions external to obj2supp
 
-extern unsigned IncExecRelocs( save_fixup * );
-extern unsigned IncSaveRelocs( save_fixup * );
-extern unsigned RelocMarkSyms( save_fixup * );
+extern unsigned IncExecRelocs( void * );
+extern unsigned IncSaveRelocs( void * );
+extern unsigned RelocMarkSyms( void * );
 extern void     RelocStartMod( void );
 extern void     StoreFixup(offset, fix_type, frame_spec *, frame_spec *,offset);

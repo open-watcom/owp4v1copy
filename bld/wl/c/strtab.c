@@ -154,9 +154,11 @@ typedef struct {
     void * info;
 } strblkparam;
 
-static bool WriteStringBlock( stringblock *blk, strblkparam *param )
-/******************************************************************/
+static bool WriteStringBlock( void *_blk, void *_param )
+/******************************************************/
 {
+    stringblock *blk = _blk;
+    strblkparam *param = _param;
     param->fn( param->info, blk->data, blk->size );
     return FALSE;
 }

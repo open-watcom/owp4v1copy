@@ -85,14 +85,16 @@ typedef struct liblist {
     char                name[1];
 } libnamelist;
 
-typedef struct {
+struct perm_read_info_struct {
     f_handle    incfhdl;
     unsigned    currpos;
     char *      buffer;
     unsigned    num;
-    void        (*cbfn)(void *, void *);
+    void        (*cbfn)(void *, struct perm_read_info_struct *);
     carve_t     cv;
-} perm_read_info;
+};
+
+typedef struct perm_read_info_struct perm_read_info;
 
 typedef struct {
     stringtable strtab;

@@ -117,9 +117,12 @@ static void DoSavedExport( symbol *sym )
     }
 }
 
-static bool StoreCDatData( comdat_piece *piece, virt_mem *loc )
-/*************************************************************/
+static bool StoreCDatData( void *_piece, void *_loc )
+/***************************************************/
 {
+    comdat_piece *piece = _piece;
+    virt_mem *loc = _loc;
+
     PutInfo( *loc, piece->data, piece->length );
     *loc += piece->length;
     return FALSE;
@@ -135,9 +138,11 @@ extern void StoreInfoData( comdat_info *info )
     RingLookup( info->pieces, StoreCDatData, &temp );
 }
 
-static bool CheckVMemPieceDiff( comdat_piece *piece, virt_mem *loc )
-/******************************************************************/
+static bool CheckVMemPieceDiff( void *_piece, void *_loc )
+/********************************************************/
 {
+    comdat_piece *piece = _piece;
+    virt_mem *loc = _loc;
     bool retval;
 
     retval = !CompareInfo( *loc, piece->data, piece->length );
@@ -145,9 +150,11 @@ static bool CheckVMemPieceDiff( comdat_piece *piece, virt_mem *loc )
     return retval;
 }
 
-static bool CheckMemPieceDiff( comdat_piece *piece, char **loc )
-/**************************************************************/
+static bool CheckMemPieceDiff( void *_piece, void *_loc )
+/*******************************************************/
 {
+    comdat_piece *piece = _piece;
+    char **loc = _loc;
     bool retval;
 
     retval = memcmp( *loc, piece->data, piece->length ) != 0;
@@ -176,9 +183,12 @@ static bool CheckSameData( symbol *sym, comdat_info *info )
     return FALSE;
 }
 
-static bool CheckAltSym( symbol *sym, comdat_info *info )
-/*******************************************************/
+static bool CheckAltSym( void *_sym, void *_info )
+/************************************************/
 {
+    comdat_info *info = _info;
+    symbol *sym = _sym;
+
     if( sym != info->sym && IS_SYM_COMDAT(sym) && sym->info & SYM_HAS_DATA ) {
         return CheckSameData( sym, info );
     }
@@ -223,9 +233,10 @@ static void AddCDatAltDef( segdata *sdata, symbol *sym, char *data,
     }
 }
 
-static void DoIncSymbol( symbol *sym )
-/************************************/
+static void DoIncSymbol( void *_sym )
+/***********************************/
 {
+    symbol *    sym = _sym;
     symbol *    mainsym;
     void *      data;
     sym_flags   flags;
@@ -317,15 +328,17 @@ static class_entry * FindNamedClass( char *name )
     return NULL;
 }
 
-static bool CmpSegName( seg_leader *leader, char *name )
-/******************************************************/
+static bool CmpSegName( void *leader, void *name )
+/************************************************/
 {
-    return stricmp( leader->segname, name ) == 0;
+    return stricmp( ((seg_leader *)leader)->segname, name ) == 0;
 }
 
-static bool DefIncGroup( incgroupdef *def, group_entry ***grouptab )
-/******************************************************************/
+static bool DefIncGroup( void *_def, void *_grouptab )
+/****************************************************/
 {
+    incgroupdef *       def = _def;
+    group_entry ***     grouptab = _grouptab;
     group_entry *       group;
     unsigned            index;
     char **             currname;
@@ -550,9 +563,12 @@ static void CheckForLast( seg_leader *seg, class_entry *class )
     }
 }
 
-static bool CheckClassName( seg_leader *seg, segdata *sdata )
-/***********************************************************/
+static bool CheckClassName( void *_seg, void *_sdata )
+/****************************************************/
 {
+    seg_leader *seg = _seg;
+    segdata *sdata = _sdata;
+
     return stricmp( seg->segname, sdata->u.name ) == 0 &&
                                 seg->combine != COMBINE_INVALID;
 }
@@ -616,10 +632,10 @@ extern seg_leader *InitLeader( char *segname, unsigned_16 info )
     return( seg );
 }
 
-extern void FreeLeader( seg_leader *seg )
-/***************************************/
+extern void FreeLeader( void *seg )
+/*********************************/
 {
-    RingWalk( seg->pieces, FreeSegData );
+    RingWalk( ((seg_leader *)seg)->pieces, FreeSegData );
     CarveFree( CarveLeader, seg );
 }
 
@@ -635,8 +651,8 @@ static void MakeNewLeader( segdata *sdata, class_entry *class, unsigned_16 info)
     RingAppend( &sdata->u.leader->pieces, sdata );
 }
 
-static bool CmpLeaderPtr( seg_leader *a, seg_leader *b )
-/******************************************************/
+static bool CmpLeaderPtr( void *a, void *b )
+/******************************************/
 {
     return a == b;
 }

@@ -225,13 +225,13 @@ extern void ReleaseNames( void )
     FreeNodes( NameNodes );
 }
 
-static void CollapseLazy( char *node, void *dummy )
+static void CollapseLazy( void *node, void *dummy )
 /*************************************************/
 {
     extnode *   curr;
 
     dummy = dummy;
-    curr = (extnode *) node;
+    curr = node;
     if( IS_SYM_A_REF( curr->entry ) && !curr->isweak ) {
         ClearSymUnion( curr->entry );
         SET_SYM_TYPE( curr->entry, SYM_REGULAR );
@@ -302,8 +302,8 @@ extern segdata * AllocSegData( void )
     return sdata;
 }
 
-extern void FreeSegData( segdata * sdata )
-/****************************************/
+extern void FreeSegData( void * sdata )
+/*************************************/
 /* put a segdata on the list of free segdatas */
 {
     CarveFree( CarveSegData, sdata );

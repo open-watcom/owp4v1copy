@@ -312,10 +312,11 @@ extern void LinkList( void **in_head, void *newnode )
     *owner = newnode;
 }
 
-extern void FreeList( node *curr )
-/*******************************/
+extern void FreeList( void *_curr )
+/*********************************/
 /* Free a list of nodes. */
 {
+    node                *curr = _curr;
     node                *next_node;
 
     while( curr ) {

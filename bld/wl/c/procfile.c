@@ -281,9 +281,11 @@ static void MarkRelocs( mod_entry *mod )
     IterateModRelocs( mod->relocs, mod->sizerelocs, RelocMarkSyms );
 }
 
-static void KillASym( symbol *sym )
-/*********************************/
+static void KillASym( void *_sym )
+/********************************/
 {
+    symbol *sym = _sym;
+
     sym->info |= SYM_KILL;
     if( IS_SYM_IMPORTED( sym ) ) {
         KillDependantSyms( sym );
@@ -296,9 +298,11 @@ static void KillSyms( mod_entry *mod )
     Ring2Walk( mod->publist, KillASym );
 }
 
-static void SetAltDefData( symbol *sym )
-/**************************************/
+static void SetAltDefData( void *_sym )
+/*************************************/
 {
+    symbol *sym = _sym;
+
     if( sym->info & SYM_IS_ALTDEF && sym->info & SYM_COMDAT
                                   && !(sym->info & SYM_HAS_DATA) ) {
         sym->p.seg->data = sym->e.mainsym->p.seg->data;

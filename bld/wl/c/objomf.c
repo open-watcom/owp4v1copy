@@ -115,9 +115,11 @@ static unsigned long ProcObj( file_list * file, unsigned long loc,
     return( loc );
 }
 
-static void CheckUninit( segnode *seg, void *dummy )
-/**************************************************/
+static void CheckUninit( void *_seg, void *dummy )
+/************************************************/
 {
+    segnode *seg = _seg;
+
     dummy = dummy;
     if( !(seg->info & SEG_LXDATA_SEEN) ) {
         seg->entry->isuninit = TRUE;

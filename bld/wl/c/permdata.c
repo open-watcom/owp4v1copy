@@ -71,7 +71,7 @@ static char *           ReadRelocs;
 static unsigned         SizeRelocs;
 static char *           OldExe;
 static char *           OldSymFile;
-static char *           AltDefData;
+static void *           AltDefData;
 static char *           IncStrTab;
 
 #define SEG_CARVE_SIZE          (2*1024)
@@ -106,34 +106,34 @@ extern void ResetPermData( void )
 }
 
 
-static void MarkDLLInfo( dll_sym_info *dll )
-/******************************************/
+static void MarkDLLInfo( void *dll )
+/**********************************/
 {
-    dll->isfree = TRUE;
+    ((dll_sym_info *)dll)->isfree = TRUE;
 }
 
-static void MarkExportInfo( entry_export *exp )
-/*********************************************/
+static void MarkExportInfo( void *exp )
+/*************************************/
 {
-    exp->isfree = TRUE;
+    ((entry_export *)exp)->isfree = TRUE;
 }
 
-static void MarkModEntry( mod_entry *mod )
-/****************************************/
-{
-    mod->modinfo |= MOD_IS_FREE;
-}
-
-static void MarkSegData( segdata *sdata )
-/***************************************/
-{
-    sdata->isfree = TRUE;
-}
-
-static void MarkSymbol( symbol *sym )
+static void MarkModEntry( void *mod )
 /***********************************/
 {
-    sym->info |= SYM_IS_FREE;
+    ((mod_entry *)mod)->modinfo |= MOD_IS_FREE;
+}
+
+static void MarkSegData( void *sdata )
+/************************************/
+{
+    ((segdata *)sdata)->isfree = TRUE;
+}
+
+static void MarkSymbol( void *sym )
+/*********************************/
+{
+    ((symbol *)sym)->info |= SYM_IS_FREE;
 }
 
 static void * GetString( perm_write_info *info, char *str )
@@ -146,9 +146,11 @@ static void * GetString( perm_write_info *info, char *str )
     return (void *)idx;
 }
 
-static bool WriteLeaderName( seg_leader *leader, perm_write_info *info )
-/**********************************************************************/
+static bool WriteLeaderName( void *_leader, void *info )
+/*****************************************************/
 {
+    seg_leader *leader = _leader;
+
     BufWritePermFile( info, &leader->class->name, sizeof(unsigned_32) );
     BufWritePermFile( info, &leader->segname, sizeof(unsigned_32) );
     return FALSE;
@@ -187,9 +189,11 @@ static bool CheckFree( bool isfree, perm_write_info *info )
     return isfree;
 }
 
-static void WriteDLLInfo( dll_sym_info *dll, perm_write_info *info )
-/******************************************************************/
+static void WriteDLLInfo( void *_dll, void *info )
+/************************************************/
 {
+    dll_sym_info *dll = _dll;
+
     if( !CheckFree( dll->isfree, info ) ) {
         dll->m.modname = dll->m.modnum->name;
         if( !dll->isordinal ) {
@@ -199,9 +203,11 @@ static void WriteDLLInfo( dll_sym_info *dll, perm_write_info *info )
     }
 }
 
-static void WriteExportInfo( entry_export *exp, perm_write_info *info )
-/*********************************************************************/
+static void WriteExportInfo( void *_exp, void *info )
+/***************************************************/
 {
+    entry_export *exp = _exp;
+
     if( !CheckFree( exp->isfree, info ) ) {
         exp->next = CarveGetIndex( CarveExportInfo, exp->next );
         if( exp->name != NULL ) {
@@ -211,9 +217,11 @@ static void WriteExportInfo( entry_export *exp, perm_write_info *info )
     }
 }
 
-static void FixSymAddr( symbol *sym )
-/***********************************/
+static void FixSymAddr( void *_sym )
+/**********************************/
 {
+    symbol *sym = _sym;
+
     if( !IS_SYM_IMPORTED(sym) && !(sym->info & SYM_DEAD) && sym->addr.off > 0
                                                      && sym->p.seg != NULL ) {
         sym->addr.off -= sym->p.seg->u.leader->seg_addr.off;
@@ -221,9 +229,11 @@ static void FixSymAddr( symbol *sym )
     }
 }
 
-static void PrepModEntry( mod_entry *mod, perm_write_info *info )
-/***************************************************************/
+static void PrepModEntry( void *_mod, void *info )
+/************************************************/
 {
+    mod_entry *mod = _mod;
+
     if( mod->modinfo & MOD_IS_FREE ) {
         *((unsigned_32 *)mod) = CARVE_INVALID_INDEX;
         return;
@@ -239,9 +249,10 @@ static void PrepModEntry( mod_entry *mod, perm_write_info *info )
     }
 }
 
-static void PrepSegData( segdata *sdata, perm_write_info *info )
-/**************************************************************/
+static void PrepSegData( void *_sdata, void *info )
+/*************************************************/
 {
+    segdata *sdata = _sdata;
     info = info;
     if( sdata->isfree ) {
         *((unsigned_32 *)sdata) = CARVE_INVALID_INDEX;
@@ -255,9 +266,10 @@ static void PrepSegData( segdata *sdata, perm_write_info *info )
     }
 }
 
-static void PrepSymbol( symbol *sym, perm_write_info *info )
-/**********************************************************/
+static void PrepSymbol( void *_sym, void *info )
+/**********************************************/
 {
+    symbol *    sym = _sym;
     char *      save;
     symbol *    mainsym;
 
@@ -336,9 +348,11 @@ static void PrepFileList( perm_write_info *info )
     }
 }
 
-static bool PrepLeaders( seg_leader *leader, perm_write_info *info )
-/******************************************************************/
+static bool PrepLeaders( void *_leader, void *info )
+/**************************************************/
 {
+    seg_leader *leader = _leader;
+
     leader->segname = GetString( info, leader->segname );
     return FALSE;
 }
@@ -420,10 +434,10 @@ static void FlushPermBuf( perm_write_info *info )
     QWrite( info->incfhdl, TokBuff, modpos, IncFileName );
 }
 
-static void WriteStringBlock( perm_write_info *info, char *data, unsigned size )
-/******************************************************************************/
+static void WriteStringBlock( void *info, char *data, unsigned size )
+/*******************************************************************/
 {
-    QWrite( info->incfhdl, data, size, IncFileName );
+    QWrite( ((perm_write_info *)info)->incfhdl, data, size, IncFileName );
 }
 
 static void FiniStringBlock( stringtable *tab, unsigned *size, void *info,
@@ -441,9 +455,10 @@ static void FiniStringBlock( stringtable *tab, unsigned *size, void *info,
     FiniStringTable( tab );
 }
 
-static void DumpBlock( carve_t carver, void *block, perm_write_info *info )
-/*************************************************************************/
+static void DumpBlock( carve_t carver, void *block, void *_info )
+/***************************************************************/
 {
+    perm_write_info *info = _info;
     unsigned    size;
 
     size = CarveBlockSize( carver );
@@ -664,9 +679,11 @@ static void ReadLibList( unsigned count, libnamelist **head,
     }
 }
 
-static void RebuildDLLInfo( dll_sym_info *dll, perm_read_info *info )
-/*******************************************************************/
+static void RebuildDLLInfo( void *_dll, perm_read_info *info )
+/************************************************************/
 {
+    dll_sym_info *dll = _dll;
+
     BufRead( info, dll, offsetof(dll_sym_info, iatsym) );
     dll->m.modname = MapString( dll->m.modname );
     if( !dll->isordinal ) {
@@ -674,9 +691,11 @@ static void RebuildDLLInfo( dll_sym_info *dll, perm_read_info *info )
     }
 }
 
-static void RebuildExportInfo( entry_export *exp, perm_read_info *info )
-/**********************************************************************/
+static void RebuildExportInfo( void *_exp, perm_read_info *info )
+/***************************************************************/
 {
+    entry_export *exp = _exp;
+
     BufRead( info, exp, offsetof(entry_export, sym) );
     exp->next = CarveMapIndex( CarveExportInfo, exp->next );
     if( exp->name != NULL ) {
@@ -685,9 +704,11 @@ static void RebuildExportInfo( entry_export *exp, perm_read_info *info )
     exp->impname = NULL;
 }
 
-static void RebuildModEntry( mod_entry *mod, perm_read_info *info )
-/*****************************************************************/
+static void RebuildModEntry( void *_mod, void *info )
+/***************************************************/
 {
+    mod_entry *mod = _mod;
+
     info = info;
     if( *((unsigned_32 *)mod) == CARVE_INVALID_INDEX ) {
         CarveInsertFree( CarveModEntry, mod );
@@ -700,9 +721,11 @@ static void RebuildModEntry( mod_entry *mod, perm_read_info *info )
     mod->f.fname = MapString( mod->f.fname );
 }
 
-static void RebuildSegData( segdata *sdata, perm_read_info *info )
-/****************************************************************/
+static void RebuildSegData( void *_sdata, void *info )
+/****************************************************/
 {
+    segdata *sdata = _sdata;
+
     info = info;
     if( *((unsigned_32 *)sdata) == CARVE_INVALID_INDEX ) {
         CarveInsertFree( CarveSegData, sdata );
@@ -716,9 +739,11 @@ static void RebuildSegData( segdata *sdata, perm_read_info *info )
     }
 }
 
-static void RebuildSymbol( symbol *sym, perm_read_info *info )
-/************************************************************/
+static void RebuildSymbol( void *_sym, void *info )
+/*************************************************/
 {
+    symbol *sym = _sym;
+
     info = info;
     if( *((unsigned_32 *)sym) == CARVE_INVALID_INDEX ) {
         CarveInsertFree( CarveSymbol, sym );
@@ -749,15 +774,17 @@ static void RebuildSymbol( symbol *sym, perm_read_info *info )
     }
 }
 
-static void ReadBlockInfo( carve_t cv, void *blk, perm_read_info *info )
-/**********************************************************************/
-{
-    QRead( info->incfhdl, CarveBlockData(blk), CarveBlockSize(cv), IncFileName);
-}
-
-static void SmallFreeCheck( void *data, perm_read_info *info )
+static void ReadBlockInfo( carve_t cv, void *blk, void *info )
 /************************************************************/
 {
+    QRead( ((perm_read_info *)info)->incfhdl, CarveBlockData(blk), 
+           CarveBlockSize(cv), IncFileName);
+}
+
+static void SmallFreeCheck( void *data, void *_info )
+/***************************************************/
+{
+    perm_read_info *info = _info;
     unsigned_32 freeblk;
 
     if( info->num > 0 ) {
@@ -945,9 +972,11 @@ extern void IterateModRelocs( unsigned offset, unsigned sizeleft,
     }
 }
 
-static void SaveRelocData( char **curr, char *data, unsigned size )
+static void SaveRelocData( void *_curr, char *data, unsigned size )
 /*****************************************************************/
 {
+    char **curr = _curr;
+
     if( ReadRelocs == NULL && SizeRelocs > 0 ) {
         _ChkAlloc( ReadRelocs, SizeRelocs );
         *curr = ReadRelocs;
@@ -996,7 +1025,7 @@ extern void * GetSegContents( segdata *sdata, virt_mem off )
 extern void * GetAltdefContents( segdata *sdata )
 /***********************************************/
 {
-    return AltDefData + sdata->data;
+    return (char *)AltDefData + sdata->data;
 }
 
 extern void FreeSavedRelocs( void )

@@ -66,8 +66,8 @@
 static orl_handle       ORLHandle;
 static long             ORLFilePos;
 
-static long             ORLSeek( file_list *, long, int );
-static void *           ORLRead( file_list *, size_t );
+static long             ORLSeek( void *, long, int );
+static void *           ORLRead( void *, size_t );
 static int              IsOrlTocReloc( orl_reloc_type );
 
 static orl_funcs        ORLFuncs = { ORLRead, ORLSeek, ChkLAlloc, LFree };
@@ -101,9 +101,11 @@ extern void ObjORLFini( void )
     ORLFini( ORLHandle );
 }
 
-static long ORLSeek( file_list *list, long pos, int where )
-/*********************************************************/
+static long ORLSeek( void *_list, long pos, int where )
+/*****************************************************/
 {
+    file_list *list = _list;
+
     if( where == SEEK_SET ) {
         ORLFilePos = pos;
     } else if( where == SEEK_CUR ) {
@@ -114,9 +116,10 @@ static long ORLSeek( file_list *list, long pos, int where )
     return ORLFilePos;
 }
 
-static void * ORLRead( file_list *list, size_t len )
-/**************************************************/
+static void * ORLRead( void *_list, size_t len )
+/**********************************************/
 {
+    file_list * list = _list;
     void *      result;
     readcache * cache;
 
@@ -316,9 +319,10 @@ static orl_return Unsupported( orl_sec_handle dummy )
     return ORL_OKAY;
 }
 
-static void AllocSeg( segnode *snode, void *dummy )
-/*************************************************/
+static void AllocSeg( void *_snode, void *dummy )
+/***********************************************/
 {
+    segnode *           snode = _snode;
     segdata *           sdata;
     char *              clname;
     char *              sname;
@@ -394,9 +398,10 @@ static void AllocSeg( segnode *snode, void *dummy )
     }
 }
 
-static void DefNosymComdats( segnode *snode, void *dummy )
-/********************************************************/
+static void DefNosymComdats( void *_snode, void *dummy )
+/******************************************************/
 {
+    segnode *           snode = _snode;
     segdata *           sdata;
 
     dummy = dummy;

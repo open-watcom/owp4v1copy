@@ -90,15 +90,18 @@ extern void CleanToc( void )
     ZapHTable(Toc, LFree);
 }
 
-static unsigned TocEntryHashFunc( TocEntry *e, unsigned size )
-/************************************************************/
+static unsigned TocEntryHashFunc( void *_e, unsigned size )
+/*********************************************************/
 {
+    TocEntry *e = _e;
     return DataHashFunc(&e->e, sizeof e->e, size);
 }
 
-static int TocEntryCmp( const TocEntry *e1, const TocEntry *e2 )
-/**************************************************************/
+static int TocEntryCmp( const void *_e1, const void *_e2 )
+/********************************************************/
 {
+    const TocEntry *e1 = _e1;
+    const TocEntry *e2 = _e2;
     return memcmp(&e1->e, &e2->e, sizeof e1->e);
 }
 
@@ -192,10 +195,10 @@ static void ConvertTocEntryId( TocEntryId *e )
     return;
 }
 
-static void ConvertTocEntry( TocEntry *e)
-/***************************************/
+static void ConvertTocEntry( void *e)
+/***********************************/
 {
-    ConvertTocEntryId(&e->e);
+    ConvertTocEntryId(&((TocEntry *)e)->e);
 }
 
 #define GOT_RESERVED_NEG_SIZE (2* sizeof(long))
@@ -293,9 +296,10 @@ extern signed_32 FindSymPosInToc( symbol * sym )
     return FindEntryPosInToc(&e);
 }
 
-static void WriteOutTokElem( TocEntry *elem, virt_mem *buf )
-/**********************************************************/
+static void WriteOutTokElem( void *_elem, void *buf )
+/***************************************************/
 {
+    TocEntry   *elem = _elem;
     offset      addr;
     segdata *   sdata;
     seg_leader *leader;
@@ -309,7 +313,7 @@ static void WriteOutTokElem( TocEntry *elem, virt_mem *buf )
         addr = SymbolAbsAddr(elem->e.sym);
     }
     DbgAssert(elem->pos >= 0);
-    PutInfo((*buf) + elem->pos, &(addr), sizeof addr);
+    PutInfo((*((virt_mem *)buf)) + elem->pos, &(addr), sizeof addr);
 }
 
 extern void WriteToc( virt_mem buf )

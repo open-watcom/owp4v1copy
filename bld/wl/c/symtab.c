@@ -1290,9 +1290,12 @@ static void SetDataSymInfo( symbol *sym, symbol *old )
     old->u.datasym = sym;
 }
 
-static bool SetNewDataSym( symbol *dead, symbol *sym )
-/****************************************************/
+static bool SetNewDataSym( void *_dead, void *_sym )
+/**************************************************/
 {
+    symbol *dead = _dead;
+    symbol *sym = _sym;
+
     if( dead == sym->u.datasym ) {
         if( dead->u.datasym == NULL ) {
             SetDataSymInfo( sym, dead );
@@ -1454,10 +1457,10 @@ extern void ConvertLazyRefs( void )
  * the effects of this references
 */
 
-static void MarkSymTraced( symbol *sym )
-/**************************************/
+static void MarkSymTraced( void *sym )
+/************************************/
 {
-    sym->info |= SYM_TRACE;
+    ((symbol *)sym)->info |= SYM_TRACE;
 }
 
 extern void TraceSymList( symbol * sym )

@@ -389,9 +389,10 @@ static void BuildReloc( save_fixup *save, frame_spec *targ, frame_spec *frame )
     PutInfo( CurrRec.seg->data + save->off, fix.data, datasize );
 }
 
-extern unsigned IncExecRelocs( save_fixup *save )
-/***********************************************/
+extern unsigned IncExecRelocs( void *_save )
+/******************************************/
 {
+    save_fixup *save = _save;
     segdata *   sdata;
     frame_spec  targ;
     frame_spec  frame;
@@ -441,9 +442,10 @@ static void FixFrameValue( frame_type type, void **target )
     }
 }
 
-extern unsigned RelocMarkSyms( save_fixup *fix )
-/**********************************************/
+extern unsigned RelocMarkSyms( void *_fix )
+/*****************************************/
 {
+    save_fixup *fix = _fix;
     segdata *   sdata;
     frame_type  frame;
     symbol *    sym;
@@ -534,9 +536,10 @@ extern void StoreFixup( offset off, fix_type type, frame_spec *frame,
     }
 }
 
-extern unsigned IncSaveRelocs( save_fixup *save )
-/***********************************************/
+extern unsigned IncSaveRelocs( void *_save )
+/******************************************/
 {
+    save_fixup *save = _save;
     segdata *   sdata;
     frame_spec  targ;
     unsigned    fixsize;
