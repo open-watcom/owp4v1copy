@@ -109,7 +109,7 @@ proj_obj =   mem.obj listbox.obj log.obj wwinhelp.obj stat.obj lognote.obj &
 ################
 
 .asm.obj:
-        $(as) -ml $[@
+        $(as) $(aflags) $[@ /fo=$[&.obj
 
 .asm : .;$(sdk_misc)
 .c : ..\;$(common_dir);$(dig_srcs);$(mad_srcs);$(sdk_misc);$(wdisasm_dir)\c
