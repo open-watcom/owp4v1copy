@@ -38,4 +38,3 @@ _WCRTLINK int isatty( int __fildes )
 {
     return( xisatty( __fildes ) );
 }
-

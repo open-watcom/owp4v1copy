@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation for setenv()
+* Description:  Implementation of setenv().
 *
 ****************************************************************************/
 
@@ -55,19 +55,19 @@ extern _WCRTLINK int __wsetenv( const wchar_t *name, const wchar_t *newvalue, in
 
 // _wsetenv and setenv are implemented this way so that each can call the
 // other without having the other call it, which would call the other, and
-// so on, making bad things happen.  This inter-calling is necessary to keep
+// so on, making bad things happen. This inter-calling is necessary to keep
 // the wide and MBCS environments consistent.
 _WCRTLINK int __F_NAME(setenv,_wsetenv)( const CHAR_TYPE *name, const CHAR_TYPE *newvalue, int overwrite )
 {
 #ifndef __UNIX__
 #ifdef __WIDECHAR__
-    char *              otherName;
-    char *              otherNewval;
+    char                *otherName;
+    char                *otherNewval;
     const size_t        charsize = sizeof(wchar_t);
     const size_t        fact = MB_CUR_MAX;
 #else
-    wchar_t *           otherName;
-    wchar_t *           otherNewval;
+    wchar_t             *otherName;
+    wchar_t             *otherNewval;
     const size_t        charsize = MB_CUR_MAX;
     const size_t        fact = 1;
 #endif
@@ -79,52 +79,53 @@ _WCRTLINK int __F_NAME(setenv,_wsetenv)( const CHAR_TYPE *name, const CHAR_TYPE 
     BOOL                osRc;
 #endif
 
-    /*** Ensure variable is deleted if newvalue=="" ***/
-    #ifndef __UNIX__
-        if( newvalue != NULL  &&  *newvalue == NULLCHAR ) {
-            if( overwrite  ||  __F_NAME(getenv,_wgetenv)(name) == NULL ) {
-                newvalue = NULL;
-            }
+    /*** Ensure variable is deleted if newvalue == "" ***/
+#ifndef __UNIX__
+    if( (newvalue != NULL) && (*newvalue == NULLCHAR) ) {
+        if( overwrite || (__F_NAME(getenv,_wgetenv)( name ) == NULL) ) {
+            newvalue = NULL;
         }
-    #endif
+    }
+#endif
 
     /*** Update the process environment if using Win32 ***/
-    #ifdef __NT__
-        if( overwrite  ||  __F_NAME(getenv,_wgetenv)(name) == NULL ) {
-            #ifdef __WIDECHAR__
-                osRc = __lib_SetEnvironmentVariableW( name, newvalue );
-            #else
-                osRc = SetEnvironmentVariableA( name, newvalue );
-            #endif
-            if( osRc == FALSE )  return( -1 );
-        }
-    #endif
+#ifdef __NT__
+    if( overwrite  ||  __F_NAME(getenv,_wgetenv)( name ) == NULL ) {
+        #ifdef __WIDECHAR__
+            osRc = __lib_SetEnvironmentVariableW( name, newvalue );
+        #else
+            osRc = SetEnvironmentVariableA( name, newvalue );
+        #endif
+        if( osRc == FALSE ) return( -1 );
+    }
+#endif
 
     /*** Update the (__WIDECHAR__ ? wide : MBCS) environment ***/
-    #ifdef __WIDECHAR__
-        if( _RWD_wenviron == NULL )  __create_wide_environment();
-    #endif
-    #ifdef __UNIX__
-    
+#ifdef __WIDECHAR__
+    if( _RWD_wenviron == NULL )  __create_wide_environment();
+#endif
+
+#ifdef __UNIX__
+
     rc = __F_NAME(_setenv,__wsetenv)( name, newvalue, overwrite );
 
-    #else
-    if( __F_NAME(_setenv,__wsetenv)( name, newvalue, overwrite )  !=  0 ) {
+#else
+    if( __F_NAME(_setenv,__wsetenv)( name, newvalue, overwrite ) != 0 ) {
         return( -1 );
     }
 
     /*** Update the other environment ***/
     #ifndef __WIDECHAR__
-        if( _RWD_wenviron == NULL )  return( 0 );  // _wenviron uninitialized
+        if( _RWD_wenviron == NULL ) return( 0 );    // _wenviron uninitialized
     #endif
-    otherNameLen = __F_NAME(_mbslen,wcslen)(name) + 1;
+    otherNameLen = __F_NAME(_mbslen,wcslen)( name ) + 1;
     otherName = lib_malloc( otherNameLen * charsize );
     if( otherName == NULL ) {
         __set_errno( ENOMEM );
         return( -1 );
     }
     if( newvalue != NULL ) {
-        otherNewvalLen = __F_NAME(_mbslen,wcslen)(newvalue) + 1;
+        otherNewvalLen = __F_NAME(_mbslen,wcslen)( newvalue ) + 1;
         otherNewval = lib_malloc( otherNewvalLen * charsize );
         if( otherNewval == NULL ) {
             lib_free( otherName );
@@ -134,13 +135,13 @@ _WCRTLINK int __F_NAME(setenv,_wsetenv)( const CHAR_TYPE *name, const CHAR_TYPE 
     } else {
         otherNewval = NULL;
     }
-    if( __F_NAME(mbstowcs,wcstombs)( otherName, name, otherNameLen*fact )  ==  -1 ) {
+    if( __F_NAME(mbstowcs,wcstombs)( otherName, name, otherNameLen * fact ) == -1 ) {
         lib_free( otherName );
         lib_free( otherNewval );
         return( -1 );
     }
     if( otherNewval != NULL ) {
-        if( __F_NAME(mbstowcs,wcstombs)( otherNewval, newvalue, otherNewvalLen*fact )  ==  -1 ) {
+        if( __F_NAME(mbstowcs,wcstombs)( otherNewval, newvalue, otherNewvalLen * fact ) == -1 ) {
             lib_free( otherName );
             lib_free( otherNewval );
             return( -1 );
@@ -148,8 +149,8 @@ _WCRTLINK int __F_NAME(setenv,_wsetenv)( const CHAR_TYPE *name, const CHAR_TYPE 
     }
     rc = __F_NAME(__wsetenv,_setenv)( otherName, otherNewval, overwrite );
     lib_free( otherName );
-    if( otherNewval != NULL )  lib_free( otherNewval );
-    #endif
+    if( otherNewval != NULL ) lib_free( otherNewval );
+#endif
     return( rc );
 }
 
@@ -157,92 +158,92 @@ _WCRTLINK int __F_NAME(setenv,_wsetenv)( const CHAR_TYPE *name, const CHAR_TYPE 
 _WCRTLINK int __F_NAME(_setenv,__wsetenv)( const CHAR_TYPE *name,
                                            const CHAR_TYPE *newvalue,
                                            int overwrite )
-    {
+{
 #ifdef __NETWARE__
-        name = name; newvalue = newvalue; overwrite = overwrite;
-        return( -1 );
+    name = name; newvalue = newvalue; overwrite = overwrite;
+    return( -1 );
 #else
-        const CHAR_TYPE **  envp;
-        int                 index, len;
-        CHAR_TYPE *         env_str;
-        const CHAR_TYPE *   old_val;
+    const CHAR_TYPE     **envp;
+    int                 index, len;
+    CHAR_TYPE           *env_str;
+    const CHAR_TYPE     *old_val;
 
-        if( name == NULL ) return( -1 );
-        if( *name == __F_NAME('\0',L'\0') ) return( -1 );
+    if( name == NULL ) return( -1 );
+    if( *name == __F_NAME('\0',L'\0') ) return( -1 );
 
+    #ifdef __WIDECHAR__
+        if( _RWD_wenviron == NULL )  __create_wide_environment();
+    #endif
+
+    envp = (const CHAR_TYPE **)__F_NAME(_RWD_environ,_RWD_wenviron);
+    if( envp == NULL ) {
+        if( newvalue == NULL ) return( 0 ); /* nothing to do */
         #ifdef __WIDECHAR__
-            if( _RWD_wenviron == NULL )  __create_wide_environment();
+            /* wide environment doesn't use alloc'd mask */
+            envp = lib_malloc( 2 * sizeof(CHAR_TYPE *) );
+        #else
+            envp = lib_malloc( 2 * sizeof(CHAR_TYPE *) + sizeof(char) );
         #endif
-
-        envp = (const CHAR_TYPE **)__F_NAME(_RWD_environ,_RWD_wenviron);
-        if( envp == NULL ) {
-            if( newvalue == NULL ) return( 0 ); /* nothing to do */
-            #ifdef __WIDECHAR__
-                /* wide environment doesn't use alloc'd mask */
-                envp = lib_malloc( 2 * sizeof(CHAR_TYPE*) );
-            #else
-                envp = lib_malloc( 2 * sizeof(CHAR_TYPE*) + sizeof(char) );
-            #endif
-            if( envp == NULL ) return( -1 );
-            envp[ 0 ] = NULL;                   /* fill in below */
-            envp[ 1 ] = NULL;
-            __F_NAME(_RWD_environ,_RWD_wenviron) = (CHAR_TYPE**) envp;
-            #ifndef __WIDECHAR__
-                _RWD_env_mask = (char *) &envp[ 2 ];
-            #endif
-            index = 0;
-        } else {
-            index = findenv( name, newvalue );
-            if( newvalue == NULL ) return( 0 );
-            if( index <= 0 ) {                  /* name not found */
-                index = - index;
-                #ifdef __WIDECHAR__
-                    envp = lib_realloc( envp, (index+2) * sizeof(CHAR_TYPE*) );
-                    if( envp == NULL ) return( -1 );
-                    memcpy( envp, _RWD_wenviron, index * sizeof(CHAR_TYPE*) );
-                #else
-                    if( _RWD_env_mask == NULL ) {
-                        envp = lib_malloc( (index+2) * sizeof(CHAR_TYPE*) +
-                                           (index+1) * sizeof(char) );
-                        if( envp == NULL ) return( -1 );
-                        memcpy( envp, __F_NAME(_RWD_environ,_RWD_wenviron),
-                                index * sizeof(CHAR_TYPE*) );
-                        _RWD_env_mask = (char *) &envp[ index + 2 ];
-                        memset( _RWD_env_mask, 0, (index+1) * sizeof(char) );
-                    } else {
-                        envp = lib_realloc( envp, (index+2) * sizeof(CHAR_TYPE*) +
-                                                  (index+1) * sizeof(char) );
-                        if( envp == NULL ) return( -1 );
-                        memmove( &envp[ index + 2 ], _RWD_env_mask,
-                                    index * sizeof(char) );
-                        _RWD_env_mask = (char *) &envp[ index + 2 ];
-                    }
-                    _RWD_env_mask[ index ] = 0;     /* indicate string not alloc'd */
-                #endif
-                envp[ index + 1 ] = NULL;
-                __F_NAME(_RWD_environ,_RWD_wenviron) = (CHAR_TYPE**) envp;
-            } else {                            /* name found */
-                if( overwrite == 0 ) return( 0 );
-                index--;
-            }
-        }
-        len = __F_NAME(strlen,wcslen)( name );
-        old_val = _RWD_env_mask[ index ] ? envp[ index ] : NULL;
-        env_str = lib_realloc( (void*)old_val,
-                               (len + __F_NAME(strlen,wcslen)(newvalue) + 2)
-                               * sizeof(CHAR_TYPE) );
-        if( env_str == NULL ) return( -1 );
-        memcpy( env_str, name, len*sizeof(CHAR_TYPE) );
-        env_str[ len ] = __F_NAME('=',L'=');
-        __F_NAME(strcpy,wcscpy)( &env_str[ len+1 ], newvalue );
-
-        envp[ index ] = env_str;
+        if( envp == NULL ) return( -1 );
+        envp[ 0 ] = NULL;                   /* fill in below */
+        envp[ 1 ] = NULL;
+        __F_NAME(_RWD_environ,_RWD_wenviron) = (CHAR_TYPE **)envp;
         #ifndef __WIDECHAR__
-            _RWD_env_mask[ index ] = 1;     /* indicate string alloc'd */
+            _RWD_env_mask = (char *)&envp[ 2 ];
         #endif
-        return( 0 );
-#endif
+        index = 0;
+    } else {
+        index = findenv( name, newvalue );
+        if( newvalue == NULL ) return( 0 );
+        if( index <= 0 ) {                  /* name not found */
+            index = - index;
+            #ifdef __WIDECHAR__
+                envp = lib_realloc( envp, (index + 2) * sizeof(CHAR_TYPE *) );
+                if( envp == NULL ) return( -1 );
+                memcpy( envp, _RWD_wenviron, index * sizeof(CHAR_TYPE *) );
+            #else
+                if( _RWD_env_mask == NULL ) {
+                    envp = lib_malloc( (index+2) * sizeof(CHAR_TYPE *) +
+                                       (index+1) * sizeof(char) );
+                    if( envp == NULL ) return( -1 );
+                    memcpy( envp, __F_NAME(_RWD_environ,_RWD_wenviron),
+                            index * sizeof(CHAR_TYPE*) );
+                    _RWD_env_mask = (char *)&envp[ index + 2 ];
+                    memset( _RWD_env_mask, 0, (index + 1) * sizeof(char) );
+                } else {
+                    envp = lib_realloc( envp, (index + 2) * sizeof(CHAR_TYPE *) +
+                                              (index + 1) * sizeof(char) );
+                    if( envp == NULL ) return( -1 );
+                    memmove( &envp[ index + 2 ], _RWD_env_mask,
+                                index * sizeof(char) );
+                    _RWD_env_mask = (char *)&envp[ index + 2 ];
+                }
+                _RWD_env_mask[ index ] = 0;     /* indicate string not alloc'd */
+            #endif
+            envp[ index + 1 ] = NULL;
+            __F_NAME(_RWD_environ,_RWD_wenviron) = (CHAR_TYPE **) envp;
+        } else {                            /* name found */
+            if( overwrite == 0 ) return( 0 );
+            index--;
+        }
     }
+    len = __F_NAME(strlen,wcslen)( name );
+    old_val = _RWD_env_mask[ index ] ? envp[ index ] : NULL;
+    env_str = lib_realloc( (void *)old_val,
+                           (len + __F_NAME(strlen,wcslen)( newvalue ) + 2)
+                           * sizeof(CHAR_TYPE) );
+    if( env_str == NULL ) return( -1 );
+    memcpy( env_str, name, len*sizeof(CHAR_TYPE) );
+    env_str[ len ] = __F_NAME('=',L'=');
+    __F_NAME(strcpy,wcscpy)( &env_str[ len+1 ], newvalue );
+
+    envp[ index ] = env_str;
+    #ifndef __WIDECHAR__
+        _RWD_env_mask[ index ] = 1;     /* indicate string alloc'd */
+    #endif
+    return( 0 );
+#endif
+}
 
 /*
  * if newvalue == NULL then find all matching entries and delete them
@@ -251,61 +252,60 @@ _WCRTLINK int __F_NAME(_setenv,__wsetenv)( const CHAR_TYPE *name,
 
 #ifndef __NETWARE__
 static int findenv( const CHAR_TYPE *name, const CHAR_TYPE *newvalue )
-    {
-        CHAR_TYPE **envp, **tmp_envp;
-        const CHAR_TYPE *p1, *p2, *env_str;
-        int index1;
-    #ifndef __WIDECHAR__
-        int index2;
-        char *envm;
-    #endif
+{
+    CHAR_TYPE           **envp, **tmp_envp;
+    const CHAR_TYPE     *p1, *p2, *env_str;
+    int                 index1;
+#ifndef __WIDECHAR__
+    int                 index2;
+    char                *envm;
+#endif
 
-        for( envp=__F_NAME(_RWD_environ,_RWD_wenviron); p1=*envp; ++envp ) {
-            for( p2 = name; ; ++p1, ++p2 ) {
-                if( *p1==__F_NAME('=',L'=') && *p2==__F_NAME('\0',L'\0') ) {
-                    index1 = envp - __F_NAME(_RWD_environ,_RWD_wenviron);
-                    if( newvalue == NULL ) {
-                        env_str = *envp;
-                        tmp_envp = envp;        /* delete entry */
-                        for( ; *tmp_envp; ++tmp_envp ) {
-                            *tmp_envp = *(tmp_envp+1);
-                        }
-                        #ifdef __WIDECHAR__
-                            lib_free( (void*)env_str );
-                        #else
-                            if( _RWD_env_mask != NULL ) {
-                                if( _RWD_env_mask[ index1 ] != 0 ) {
-                                    lib_free( (void*)env_str );
-                                }
-                                envm = (char *)(tmp_envp);
-                                index2 = tmp_envp - _RWD_environ;
-                                memmove( envm, _RWD_env_mask, index2 * sizeof(char) );
-                                _RWD_env_mask = envm;
-                                for( ; index1 < index2; index1++ ) {
-                                    envm[ index1 ] = envm[ index1 + 1 ];
-                                }
-                            }
-                        #endif
-                                                /* delete more entries */
-                    } else {
-                        return( index1 + 1 );   /* return index origin 1 */
+    for( envp = __F_NAME(_RWD_environ,_RWD_wenviron); p1 = *envp; ++envp ) {
+        for( p2 = name; ; ++p1, ++p2 ) {
+            if( (*p1 == __F_NAME('=',L'=')) && (*p2 == __F_NAME('\0',L'\0')) ) {
+                index1 = envp - __F_NAME(_RWD_environ,_RWD_wenviron);
+                if( newvalue == NULL ) {
+                    env_str = *envp;
+                    tmp_envp = envp;        /* delete entry */
+                    for( ; *tmp_envp; ++tmp_envp ) {
+                        *tmp_envp = *(tmp_envp+1);
                     }
+                    #ifdef __WIDECHAR__
+                        lib_free( (void *)env_str );
+                    #else
+                        if( _RWD_env_mask != NULL ) {
+                            if( _RWD_env_mask[ index1 ] != 0 ) {
+                                lib_free( (void *)env_str );
+                            }
+                            envm = (char *)(tmp_envp);
+                            index2 = tmp_envp - _RWD_environ;
+                            memmove( envm, _RWD_env_mask, index2 * sizeof(char) );
+                            _RWD_env_mask = envm;
+                            for( ; index1 < index2; index1++ ) {
+                                envm[ index1 ] = envm[ index1 + 1 ];
+                            }
+                        }
+                    #endif
+                                            /* delete more entries */
+                } else {
+                    return( index1 + 1 );   /* return index origin 1 */
                 }
-#if defined(__UNIX__)
-                if( *p1 != *p2 ) break;
-#else
-                /* case independent search */
-                #ifdef __WIDECHAR__
-                    if( towupper( *p1 ) != towupper( *p2 ) )  break;
-                #else
-                    if( toupper( *p1 ) != toupper( *p2 ) )  break;
-                #endif
-#endif
-                /* QNX can have just NAME in env list instead of NAME=value */
-                if( *p2 == __F_NAME('\0',L'\0') ) break;
             }
-        }
-        return( __F_NAME(_RWD_environ,_RWD_wenviron) - envp );/* not found */
-    }
+#if defined(__UNIX__)
+            if( *p1 != *p2 ) break;
+#else
+            /* case independent search */
+            #ifdef __WIDECHAR__
+                if( towupper( *p1 ) != towupper( *p2 ) ) break;
+            #else
+                if( toupper( *p1 ) != toupper( *p2 ) ) break;
+            #endif
 #endif
-
+            /* QNX can have just NAME in env list instead of NAME=value */
+            if( *p2 == __F_NAME('\0',L'\0') ) break;
+        }
+    }
+    return( __F_NAME(_RWD_environ,_RWD_wenviron) - envp );  /* not found */
+}
+#endif

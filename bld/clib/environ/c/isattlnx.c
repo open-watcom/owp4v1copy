@@ -24,9 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of isatty() for Linux
+* Description:  Implementation of isatty() for Linux.
 *
 ****************************************************************************/
+
 
 #include <unistd.h>
 #include <termios.h>
@@ -44,6 +45,5 @@ _WCRTLINK int isatty( int __fildes )
     errno_save = errno;
     status = tcgetattr( __fildes, &term );
     errno = errno_save;
-    return (status == 0);
+    return( status == 0 );
 }
-

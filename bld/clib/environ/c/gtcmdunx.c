@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of getcmd() and _bgetcmd() for Unix.
 *
 ****************************************************************************/
 
@@ -37,63 +36,50 @@
 
 extern  char    **_argv;                /* argument vector */
 
-_WCRTLINK int (_bgetcmd)(char *buffer, int len)
+_WCRTLINK int (_bgetcmd)( char *buffer, int len )
 {
-    int    total;
-    int    i;
-    char  *word;
-    char  *p    = NULL;
-    char **argv = &_argv[1];
+    int     total;
+    int     i;
+    char    *word;
+    char    *p     = NULL;
+    char    **argv = &_argv[1];
 
     --len; // reserve space for NULL byte
 
-    if (buffer && (len > 0))
-    {
+    if( buffer && (len > 0) ) {
         p  = buffer;
-        *p = 0x00;
+        *p = '\0';
     }
 
-    /*
-     * creates approximation of original command line
-     */
-    for (word = *argv++, i = 0, total = 0; word; word = *argv++)
-    {
-        i      = strlen(word);
+    /* create approximation of original command line */
+    for( word = *argv++, i = 0, total = 0; word; word = *argv++ ) {
+        i      = strlen( word );
         total += i;
 
-        if (p)
-        {
-            if (i >= len)
-            {
-                strncpy(p, word, len);
-                p[len] = 0x00;
+        if( p ) {
+            if( i >= len ) {
+                strncpy( p, word, len );
+                p[len] = '\0';
                 p      = NULL;
                 len    = 0;
-            }
-            else
-            {
-                strcpy(p, word);
+            } else {
+                strcpy( p, word );
                 p   += i;
                 len -= i;
             }
-        } /* if */
+        }
 
-        /*
-         * Account for at least 1 space seperating arguments.
-         */
-        if (*argv)
-        {
-            if (p)
-            {
+        /* account for at least one space separating arguments */
+        if( *argv ) {
+            if( p ) {
                 *p++ = ' ';
                 --len;
             }
-
             ++total;
         }
-    } /* for */
+    }
 
-    return total;
+    return( total );
 }
 
 
@@ -102,4 +88,3 @@ _WCRTLINK char *(getcmd)( char *buffer )
     _bgetcmd( buffer, INT_MAX );
     return( buffer );
 }
-

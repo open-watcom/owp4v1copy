@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Accessor function for '_wenviron' global variable.
 *
 ****************************************************************************/
 
@@ -35,9 +34,10 @@
 #include "rtdata.h"
 
 #ifdef __NETWARE__
-_WCRTLINK extern wchar_t **_WCDATA _wenviron; /*  pointer to wide environment */
+_WCRTLINK extern wchar_t **_WCDATA _wenviron; /* pointer to wide environment */
 #endif
 
-_WCRTLINK wchar_t ** (*__get_wenviron_ptr()) {
-    return &_wenviron;
+_WCRTLINK wchar_t ** (*__get_wenviron_ptr( void ))
+{
+    return( &_wenviron );
 }

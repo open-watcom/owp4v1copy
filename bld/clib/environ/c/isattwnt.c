@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of isatty() for Win32.
 *
 ****************************************************************************/
 
@@ -47,13 +46,13 @@
 
 _WCRTLINK int isatty( int hid )
 {
-    #ifdef DEFAULT_WINDOWING
-        if( _WindowsIsWindowedHandle != 0 ) {
-            if( _WindowsIsWindowedHandle( hid ) ) {
-                return( 1 );
-            }
+#ifdef DEFAULT_WINDOWING
+    if( _WindowsIsWindowedHandle != 0 ) {
+        if( _WindowsIsWindowedHandle( hid ) ) {
+            return( 1 );
         }
-    #endif
+    }
+#endif
     if( GetFileType( __getOSHandle( hid ) ) == FILE_TYPE_CHAR ) {
         return( 1 );
     }

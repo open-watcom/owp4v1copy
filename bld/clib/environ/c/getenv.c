@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of getenv()
+* Description:  Implementation of getenv().
 *
 ****************************************************************************/
 
@@ -53,58 +53,59 @@
 
 _WCRTLINK char *getenv( const char *name )
 {
-    char **         envp;
-    char *          p;
+    char        **envp;
+    char        *p;
 
     /*** Find the environment string ***/
     __ptr_check( name, 0 );
     envp = _RWD_environ;
-    if( envp != NULL  &&  name != NULL ) {
+    if( (envp != NULL) && (name != NULL) ) {
         for( ; p = *envp; ++envp ) {
-            const char *s = name;
-            while( *p != '\0' /* simple check is sufficient for p, not s */ ) {
-                if ( _mbterm(s) ) {
+            const char  *s = name;
+
+            while( *p != '\0' ) {   /* simple check is sufficient for p, not s */
+                if ( _mbterm( s ) ) {
                     if( *p == '=' )  return( p + 1 );
                     break;
                 }
-                if ( _mbctoupper( _mbsnextc(p) ) != _mbctoupper( _mbsnextc(s) ) )
+                if ( _mbctoupper( _mbsnextc( p ) ) != _mbctoupper( _mbsnextc( s ) ) )
                     break;
-                p = _mbsinc( p );  /* skip over character */
-                s = _mbsinc( s );  /* skip over character */
+                p = _mbsinc( p );   /* skip over character */
+                s = _mbsinc( s );   /* skip over character */
             }
         }
     }
-    return( NULL );                /* not found */
+    return( NULL );                 /* not found */
 }
 
 #else
 
 _WCRTLINK CHAR_TYPE *__F_NAME(getenv,_wgetenv)( const CHAR_TYPE *name )
-    {
+{
 #ifdef __NETWARE__
-        name = name;
+    name = name;
 #else
-        CHAR_TYPE **    envp;
-        CHAR_TYPE *     p;
-        int             len;
+    CHAR_TYPE       **envp;
+    CHAR_TYPE       *p;
+    int             len;
 
-        #ifdef __WIDECHAR__
-            if( _RWD_wenviron == NULL )  __create_wide_environment();
-        #endif
+    #ifdef __WIDECHAR__
+        if( _RWD_wenviron == NULL )  __create_wide_environment();
+    #endif
 
-        /*** Find the environment string ***/
-        __ptr_check( name, 0 );
-        envp = __F_NAME(_RWD_environ,_RWD_wenviron);
-        if( envp != NULL  &&  name != NULL ) {
-            len = __F_NAME(strlen,wcslen)( name );
-            for( ; p = *envp; ++envp ) {
-                if( CMP_FUNC( p, name, len ) == 0 ) {
-                    if( p[len] == __F_NAME('=',L'=') )  return( &p[len+1] );
-                }
+    /*** Find the environment string ***/
+    __ptr_check( name, 0 );
+    envp = __F_NAME(_RWD_environ,_RWD_wenviron);
+    if( (envp != NULL) && (name != NULL) ) {
+        len = __F_NAME(strlen,wcslen)( name );
+        for( ; p = *envp; ++envp ) {
+            if( CMP_FUNC( p, name, len ) == 0 ) {
+                if( p[len] == __F_NAME('=',L'=') )  return( &p[len+1] );
             }
         }
-#endif
-        return( NULL );                 /* not found */
     }
+#endif
+    return( NULL );                 /* not found */
+}
 
 #endif

@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Clear the environment (called at exit)
+* Description:  Implementation of clearenv() - clear the environment.
 *
 ****************************************************************************/
 
@@ -34,32 +34,35 @@
 #include "liballoc.h"
 #include "rtdata.h"
 
-_WCRTLINK int (clearenv)( void ) {
-    #ifndef __NETWARE__
-        char **envp;
-        char *env_str;
-        int index;
+/* Note - clearenv() is always called at library exit */
 
-        if( _RWD_environ != NULL ) {
-            for( envp = _RWD_environ; env_str = *envp; ++envp ) {
-                if( _RWD_env_mask != NULL ) {
-                    index = envp - _RWD_environ;
-                    if( _RWD_env_mask[ index ] != 0 ) {
-                        lib_free( (void *)env_str );
-                    }
-                    *envp = NULL;
-                }
-            }
+_WCRTLINK int (clearenv)( void )
+{
+#ifndef __NETWARE__
+    char    **envp;
+    char    *env_str;
+    int     index;
+
+    if( _RWD_environ != NULL ) {
+        for( envp = _RWD_environ; env_str = *envp; ++envp ) {
             if( _RWD_env_mask != NULL ) {
-                lib_free( _RWD_environ );
+                index = envp - _RWD_environ;
+                if( _RWD_env_mask[ index ] != 0 ) {
+                    lib_free( (void *)env_str );
+                }
+                *envp = NULL;
             }
-            envp = lib_malloc( sizeof(char *) + sizeof(char) );
-            if( envp == NULL ) return( -1 );
-            _RWD_environ = envp;
-            *_RWD_environ = NULL;
-            _RWD_env_mask = ((char *)envp)+sizeof(char *);
-            *_RWD_env_mask = 0;
         }
-    #endif
+        if( _RWD_env_mask != NULL ) {
+            lib_free( _RWD_environ );
+        }
+        envp = lib_malloc( sizeof(char *) + sizeof(char) );
+        if( envp == NULL ) return( -1 );
+        _RWD_environ = envp;
+        *_RWD_environ = NULL;
+        _RWD_env_mask = ((char *)envp) + sizeof(char *);
+        *_RWD_env_mask = 0;
+    }
+#endif
     return( 0 );                /* success */
 }
