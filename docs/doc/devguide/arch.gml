@@ -494,6 +494,50 @@ host_cpu = Y
 That's it! The only downside is that sticking to these guidelines will make
 everyone's life less exciting.
 
+
+.chap Technical Notes
+.section 32-bit Windows run-time DLLs
+.*
+.np
+.ix 'Windows DLLs'
+Most of Open Watcom run-time Windows DLLs have predefined loading address.
+Bellow is table with address for each DLL.
+.np
+0x69000000  wppdxxxx.dll (C++ compiler)
+.br
+0x69400000  wccdxxxx.dll (C compiler)
+.br
+0x69800000  wrc.dll (Resource compiler)
+.br
+0x69900000  wr.dll (Resource library)
+.br
+0x69c00000  wlink.dll (Linker)
+.br
+0x6a000000  wlib.dll (Librarian)
+.br
+0x6e800000  javavm.dll (Debugger DIP)
+.br
+0x6e900000  all trap dlls (Debugger TRAP)
+.br
+0x6eb00000  madx86.dll (Debugger MAD)
+.br
+0x6ec00000  export.dll (Debugger DIP)
+.br
+0x6ed00000  codeview.dll (Debugger DIP)
+.br
+0x6ee00000  watcom.dll (Debugger DIP)
+.br
+0x6ef00000  dwarf.dll (Debugger DIP)
+.br
+0x6fd00000  plbxxxx.dll (run-time DLL C++ library)
+.br
+0x6fe00000  clbxxxx.dll (run-time DLL C library)
+.br
+0x6ff00000  mtxxxx.dll (run-time DLL math library)
+.br
+.np
+You shouldn't use these addresses for your own DLLs.
+
 .chap Build Process
 
 We use the (Open) Watcom C/C++ compilers and Watcom
