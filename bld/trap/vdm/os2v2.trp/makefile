@@ -9,4 +9,4 @@ extra_cflags = -d2
 extra_objs = $(remote_objs) vdmcli2.obj
 extra_libs = $(os2386)
 
-!include $(trap_dir)\trap.mif
+!include $(trap_dir)/trap.mif

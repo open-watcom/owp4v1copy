@@ -212,10 +212,10 @@ name_debug=d
 !endif
 dtarget = $+$(bin_root)\$(targ_$(cpu)_$(os))$-
 
-trperr_h = $(trap_dir)\h\_err.gh
-jtrperr_h = $(trap_dir)\h\_jerr.gh
-mkstr_c = $(trap_dir)\c\mkstr.c
-trap_msg = $(trap_dir)\h\trap.msg
+trperr_h = $(trap_dir)/h/_err.gh
+jtrperr_h = $(trap_dir)/h/_jerr.gh
+mkstr_c = $(trap_dir)/c/mkstr.c
+trap_msg = $(trap_dir)/h/trap.msg
 
 w : .SYMBOLIC $(trperr_h) $(jtrperr_h)
         @set COMP_DEBUG=-d1 -oxt
@@ -277,7 +277,7 @@ $(dtarget) : eraseall.obj $(dobjs) $(extra_libs) $(resource_file) $(extra_deps) 
 
 !endif
 
-eraseall.obj : $(trap_dir)\compile.gbl
+eraseall.obj : $(trap_dir)/compile.gbl
         if exist *.obj erase *.obj
         wtouch eraseall.obj
 

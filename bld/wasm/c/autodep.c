@@ -81,7 +81,7 @@ void AddFlist( char const *filename )
     FNAMEPTR    last;
     int         index;
     char        *fname;
-    char        buff[2*PATH_MAX];
+    char        buff[2*_MAX_PATH];
         
     index = 0;
     last = FNames;

@@ -1,2 +1,2 @@
-compile = $(comp286) $[* /w4 /mm /oax
-!include ..\makefile
+compile = $(comp286) $[* -w4 -mm -oax
+!include ../makefile

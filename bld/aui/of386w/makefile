@@ -1,2 +1,2 @@
-compile = $(comp386) $[* /w4 /mf /zw
-!include ..\makefile
+compile = $(comp386) $[* -w4 -mf -zw
+!include ../makefile

@@ -7,4 +7,4 @@ cpu = x86
 
 extra_objs = $(remote_objs) serint.obj serdos.obj busywait.obj
 
-!include $(trap_dir)\trap.mif
+!include $(trap_dir)/trap.mif

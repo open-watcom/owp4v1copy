@@ -1,4 +1,4 @@
-!include $(trap_dir)\lcl\lcl.mif
+!include $(trap_dir)/lcl/lcl.mif
 
 extra_srcs=$(watcom_dir)\c;$(trmem_dir)
 

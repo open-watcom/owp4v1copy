@@ -1,6 +1,6 @@
-compile = $(comp286) $[* /d2 /ml /zW
-auilib = $(auidir)\win\aui.lib
-guilib = $(guidir)\win\guiwinl.lib
+compile = $(comp286) $[* -d2 -ml -zW
+auilib = $(auidir)/win/aui.lib
+guilib = $(guidir)/win/guiwinl.lib
 rcopt   = -bt=windows
 resfile = app.res
 
@@ -11,4 +11,4 @@ app.exe : $(objs) app.lnk $(auilib) $(guilib) $(resfile)
         wrc -k $(rcopt) $(resfile)
         wrc -k $(rcopt) appj.res
 
-!include ..\makefile
+!include ../makefile

@@ -6,6 +6,6 @@ srv = nov
 cpu = x86
 
 extra_objs = $(remote_objs) novnt.obj
-extra_libs = $(lang_root)\lib386\nt\wsock32.lib
+extra_libs = $(lang_root)/lib386/nt/wsock32.lib
 
-!include $(trap_dir)\trap.mif
+!include $(trap_dir)/trap.mif

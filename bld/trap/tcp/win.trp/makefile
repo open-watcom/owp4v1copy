@@ -6,6 +6,6 @@ srv = tcp
 cpu = x86
 
 extra_objs = $(remote_objs)
-extra_libs = $(watcom_dir)\lib\winsock.lib
+extra_libs = $(watcom_dir)/lib/winsock.lib
 
-!include $(trap_dir)\trap.mif
+!include $(trap_dir)/trap.mif

@@ -20,4 +20,4 @@ extra_objs = &
         supp.obj &
         core.obj
 
-!include $(trap_dir)\trap.mif
+!include $(trap_dir)/trap.mif

@@ -6,7 +6,7 @@ inc_dirs_lang   = $(lang_root)\h
 !endif
 
 .before:
-        @set incpaths=-i$(auidir)\h;$(guidir)\h;..\h;$(posix_dir)\h;$(inc_dirs_lang)
+        @set incpaths=-i"$(auidir)/h;$(guidir)/h;../h;$(posix_dir)/h;$(inc_dirs_lang)"
 
 .extensions:
 .extensions: .exe .lib .obj .i .c .h .res .dlg .rc
@@ -14,20 +14,20 @@ inc_dirs_lang   = $(lang_root)\h
 .h: $(auidir)\h;.
 
 !ifdef on_build_machine
-copts = /zq /oxt /d1
+copts = -zq -oxt -d1
 !else
 !ifndef nodebug
 !ifdef codeview
-copts = /hc /d1 /zq
+copts = -hc -d1 -zq
 !else
-copts = /zq /d2
+copts = -zq -d2
 !endif
 !else
-copts = /zq /oxt /d1
+copts = -zq -oxt -d1
 !endif
 !endif
 !ifndef axp
-copts += /fpc
+copts += -fpc
 !endif
 copts += @incpaths
 
@@ -39,7 +39,7 @@ librarian = wlib
         $(compile) $(copts) # precompiled headers are buggy! /fh
 
 .c.i:
-        $(compile) $(copts) /fh /plc /fo
+        $(compile) $(copts) -fh -plc -fo
 
 !ifdef pm
 dlgs = dlgrx.dlg dlgsrch.dlg dlgsrcha.dlg &
@@ -49,14 +49,14 @@ auirc = $(auidir)\pmf\aui.rc
 auirc = $(auidir)\h\aui.rc
 !endif
 
-all : .symbolic $(auidir)\h\auistr.h aui.lib $(dlgs)
+all : .symbolic $(auidir)/h/auistr.h aui.lib $(dlgs)
         @%null
 
-eraseall.obj : $(auidir)\compile.gbl
+eraseall.obj : $(auidir)/compile.gbl
         if exist *.obj erase *.obj
         wtouch eraseall.obj
 
-regexp.obj : $(posix_dir)\misc\regexp.c ..\h\wndregx.h
+regexp.obj : $(posix_dir)/misc/regexp.c ../h/wndregx.h
         $(compile) $(copts) -fi=wndregx.h
 
 objs =  guimain.obj &
@@ -121,49 +121,43 @@ objs =  guimain.obj &
 aui.lib : eraseall.obj $(objs) $(__makefiles__) $(auirc)
         @if exist tmp.lbc erase tmp.lbc
         @for %i in ($(objs)) do @%append tmp.lbc +%i
-        $(librarian) /q /b /n aui @tmp.lbc
+        $(librarian) -b -n aui @tmp.lbc
 
 .rc: ..\h
 !ifdef pm
-$(auirc) : $(auidir)\h\aui.rc
+$(auirc) : $(auidir)/h/aui.rc
     cp $[@ $^@
 
-dlgrx.dlg : ..\h\dlgrx.dlg
-    parsedlg -font ..\h\dlgrx.dlg dlgrx.dlg
+dlgrx.dlg : ../h/dlgrx.dlg
+    parsedlg -font $[@ dlgrx.dlg
 
-dlgsrch.dlg : ..\h\dlgsrch.dlg
-    parsedlg -font ..\h\dlgsrch.dlg dlgsrch.dlg
+dlgsrch.dlg : ../h/dlgsrch.dlg
+    parsedlg -font $[@ dlgsrch.dlg
 
-dlgsrcha.dlg : ..\h\dlgsrcha.dlg
-    parsedlg -font ..\h\dlgsrcha.dlg dlgsrcha.dlg
+dlgsrcha.dlg : ../h/dlgsrcha.dlg
+    parsedlg -font $[@ dlgsrcha.dlg
 
-japrx.dlg : ..\h\japrx.dlg
-    parsedlg -font ..\h\japrx.dlg japrx.dlg
+japrx.dlg : ../h/japrx.dlg
+    parsedlg -font $[@ japrx.dlg
 
-japsrch.dlg : ..\h\japsrch.dlg
-    parsedlg -font ..\h\japsrch.dlg japsrch.dlg
+japsrch.dlg : ../h/japsrch.dlg
+    parsedlg -font $[@ japsrch.dlg
 
-japsrcha.dlg : ..\h\japsrcha.dlg
-    parsedlg -font ..\h\japsrcha.dlg japsrcha.dlg
+japsrcha.dlg : ../h/japsrcha.dlg
+    parsedlg -font $[@ japsrcha.dlg
 !else
 .dlg : ..\h
 !endif
 
 dlgfiles = dlgrx.h dlgsrch.h dlgrx.dlg dlgsrch.dlg dlgsrcha.dlg $(auidir)\h\auistr.h auistr.rc auigui.rc
 
-$(auidir)\h\auistr.h : $(auidir)\h\aui.msg $(auidir)\c\mkstr.c
-        wcl386 -zq $(auidir)\c\mkstr
-        mkstr $(auidir)\h\auistr.h
+$(auidir)/h/auistr.h : $(auidir)/h/aui.msg $(auidir)/c/mkstr.c
+        wcl386 -zq $]@
+        mkstr $^@
         del mkstr.obj
         del mkstr.exe
 
 clean : .SYMBOLIC
-        @if exist *.obj @del *.obj
-        @if exist *.pch @del *.pch
-        @if exist aui.lib @del aui.lib
-        @if exist aui.rc @del aui.rc
-        @if exist tmp.lbc @del tmp.lbc
-        @if exist dlg*.dlg @del dlg*.dlg
-        @if exist jap*.dlg @del jap*.dlg
-        @if exist $(auidir)\h\auistr.h @del $(auidir)\h\auistr.h
+        rm -f *.obj *.pch *.lib *.rc *.lbc *.dlg
+        rm -f $(auidir)\h\auistr.h
 

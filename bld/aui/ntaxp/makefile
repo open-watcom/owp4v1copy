@@ -1,3 +1,3 @@
-compile = $(compaxp) $[*  /w4
+compile = $(compaxp) $[* -w4
 axp = 1
-!include ..\makefile
+!include ../makefile

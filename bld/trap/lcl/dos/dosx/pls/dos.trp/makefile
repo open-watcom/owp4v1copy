@@ -10,5 +10,5 @@ extra_cflags = -dPHARLAP -dDOSXTRAP
 extra_incs = $(trap_dir)\lcl\dos\h
 extra_srcs = $(trap_dir)\lcl\dos\c;$(trap_dir)\lcl\dos\asm
 
-!include $(trap_dir)\lcl\dos\dosx\dosx.mif
-!include $(trap_dir)\trap.mif
+!include $(trap_dir)/lcl/dos/dosx/dosx.mif
+!include $(trap_dir)/trap.mif

@@ -20,9 +20,9 @@ extra_incs = $(trap_dir)\lcl\dos\h
 
 extra_aflags_npxtype = -fpi87
 
-!include $(trap_dir)\lcl\dos\dos.mif
-!include $(trap_dir)\trap.mif
+!include $(trap_dir)/lcl/dos/dos.mif
+!include $(trap_dir)/trap.mif
 
-realtrap.obj : ..\asm\trap.asm
+realtrap.obj : ../asm/trap.asm
 
-dumtrap.obj : ..\asm\trap.asm
+dumtrap.obj : ../asm/trap.asm
