@@ -37,6 +37,9 @@ build_root  = $(%devdir)
 rsi_root    = $(%rsidir)
 online_dir  = $(%devdir)\online
 utils_root  = $(build_root)
+# The NOVELLNDK environment variable should be added during install. If not, the default location is
+# C:\NOVELL\NDK\NWSDK.
+nwndk_root  = $(%NOVELLNDK)
 
 # define compilers
 comp286=*wcc
