@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Compiler target description file for Linux x86 host
+* Description:  Configuration for Linux x86 host, 32-bit x86 target.
 *
 ****************************************************************************/
 
