@@ -3,26 +3,26 @@
 #
 
 objs = &
-        PGANCOM.obj &
-        PGANMS.obj &
-        PGANPIE.obj &
-        PGANSCMS.obj &
-        PGAXIS.obj &
-        PGCHART.obj &
-        PGCHRDEF.obj &
-        PGCHRTPI.obj &
-        PGDFAULT.obj &
-        PGHLABEL.obj &
-        PGINIT.obj &
-        PGLEGEND.obj &
-        PGMISC.obj &
-        PGPAL.obj &
-        PGSCALE.obj &
-        PGSCTTER.obj &
-        PGSTYLE.obj &
-        PGTITLE.obj &
-        PGVARS.obj &
-        PGVLABEL.obj
+        pgancom.obj &
+        pganms.obj &
+        pganpie.obj &
+        pganscms.obj &
+        pgaxis.obj &
+        pgchart.obj &
+        pgchrdef.obj &
+        pgchrtpi.obj &
+        pgdfault.obj &
+        pghlabel.obj &
+        pginit.obj &
+        pglegend.obj &
+        pgmisc.obj &
+        pgpal.obj &
+        pgscale.obj &
+        pgsctter.obj &
+        pgstyle.obj &
+        pgtitle.obj &
+        pgvars.obj &
+        pgvlabel.obj
 
 !ifeq _386 386
 text_seg_name = _TEXT
