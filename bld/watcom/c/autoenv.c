@@ -60,6 +60,11 @@
     #define PRIMARY_PATH    "binw"
 #endif
 
+#ifdef DEBUG_AUTOENV
+    #define dbg_puts( a )   puts( a )
+#else
+    #define dbg_puts( a )
+#endif
 
 #if defined( __OS2__ )
 /* Set up BeginLIBPATH if required; this is not an environment variable
@@ -89,14 +94,17 @@ static int setup_os_env( const char *watcom )
      */
     if( DosLoadModule( old_blpath, sizeof( old_blpath ),
         "DOSCALLS", &hmod ) != NO_ERROR ) {
+        dbg_puts( "autoenv: DosLoadModule failed for DOSCALLS" );
         return( -8 );
     }
     if( DosQueryProcAddr( hmod, ORD_DOS32QUERYEXTLIBPATH,
         NULL, (PFN *)&fnDosQueryExtLIBPATH ) != NO_ERROR ) {
+        dbg_puts( "autoenv: DosQueryProcAddr failed for DosQueryExtLIBPATH" );
         return( -8 );
     }
     if( DosQueryProcAddr( hmod, ORD_DOS32SETEXTLIBPATH,
         NULL, (PFN *)&fnDosSetExtLIBPATH ) != NO_ERROR ) {
+        dbg_puts( "autoenv: DosQueryProcAddr failed for DosSetExtLIBPATH" );
         return( -8 );
     }
 
@@ -104,6 +112,7 @@ static int setup_os_env( const char *watcom )
     if( fnDosQueryExtLIBPATH( old_blpath, BEGIN_LIBPATH ) == NO_ERROR ) {
         if( strstr( old_blpath, watcom ) != NULL ) {
             /* Already have an entry in BEGINLIBPATH */
+            dbg_puts( "autoenv: Found valid entry in BEGINLIBPATH" );
             return( 0 );
         }
         old_blpath_len = strlen( old_blpath );
@@ -112,16 +121,21 @@ static int setup_os_env( const char *watcom )
     }
     buf = malloc( strlen( watcom ) + 16 + old_blpath_len );
     if( buf == NULL ) {
+        dbg_puts( "autoenv: Memory allocation failed" );
         return( -8 );
     }
     strcpy( buf, watcom );
     strcat( buf, "\\binp\\dll;" );
     strcat( buf, old_blpath );
     rc = fnDosSetExtLIBPATH( buf, BEGIN_LIBPATH );
-    free( buf );
     if( rc == NO_ERROR ) {
+        dbg_puts( "autoenv: DosSetExtLIBPATH succeeded:" );
+        dbg_puts( buf );
+        free( buf );
         return( 0 );
     } else {
+        dbg_puts( "autoenv: DosSetExtLIBPATH failed" );
+        free( buf );
         return( -8 );
     }
 }
@@ -148,6 +162,7 @@ int watcom_setup_env( void )
         char    *path_sep = NULL;
         char    *prev_path_sep = NULL;
 
+        dbg_puts( "autoenv: WATCOM environment variable not found" );
         if( _cmdname( buf ) == NULL ) {
             return( -1 );
         }
@@ -172,6 +187,8 @@ int watcom_setup_env( void )
             return( -1 );
         }
         watcom = getenv( "WATCOM" );
+        dbg_puts( "autoenv: WATCOM environment successfully set:" );
+        dbg_puts( watcom );
     }
     /* At this point, WATCOM is set; construct what we want in PATH */
     if( sizeof( buf ) < (strlen( watcom ) + 16) ) {
