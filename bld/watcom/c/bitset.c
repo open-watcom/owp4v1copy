@@ -24,21 +24,18 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Program to generate a set of macros to manipulate a
+*               fixed-length (but arbitrarily large) bit set.
 *
 ****************************************************************************/
 
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <malloc.h>
 #include <errno.h>
-
-/*
- * Program to generate a set of macros to manipulate a fixed-length (but
- * arbitrarily large) bit set.
- */
+#include <unistd.h>
 
 #define _NLONGS( x )    ( ( (x) + 31 ) / 32 )
 
