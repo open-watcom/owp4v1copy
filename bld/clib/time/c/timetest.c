@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <env.h>
 
 #ifdef __SW_BW
     #include <wdefwin.h>
@@ -112,6 +113,21 @@ int main( int argc, char * const argv[] )
     /* Test localtime() and asctime() */
     VERIFY( strcmp( asctime( localtime( &tt1 ) ), datestr ) == 0 );
 
+    /* Test gmtime() and strtime() */
+    gmt = gmtime( &tt2 );
+    VERIFY( strftime( buf, sizeof( buf ), "%Y", gmt ) == 4 );
+    VERIFY( strcmp( buf, "2002" ) == 0 );
+    VERIFY( strftime( buf, sizeof( buf ), "%m", gmt ) == 2 );
+    VERIFY( strcmp( buf, "08" ) == 0 );
+
+    /* Make sure clock() isn't going backwards */
+    VERIFY( clocktime <= clock() );
+
+    /* Set TZ to UTC; this is so that mktime() doesn't use any offsets
+     * and we can test the boundary values of time_t in the tests below.
+     */
+    setenv( "TZ", "GMT0", 1 );
+
     /* This time is the lowest to overflow in UNIX - has value 0x80000000 */
     tm2.tm_sec   = 8;
     tm2.tm_min   = 14;
@@ -174,16 +190,6 @@ int main( int argc, char * const argv[] )
     VERIFY( tm2.tm_mon  == gmt->tm_mon );
     VERIFY( tm2.tm_year == gmt->tm_year );
 #endif
-
-    /* Test gmtime() and strtime() */
-    gmt = gmtime( &tt2 );
-    VERIFY( strftime( buf, sizeof( buf ), "%Y", gmt ) == 4 );
-    VERIFY( strcmp( buf, "2002" ) == 0 );
-    VERIFY( strftime( buf, sizeof( buf ), "%m", gmt ) == 2 );
-    VERIFY( strcmp( buf, "08" ) == 0 );
-
-    /* Make sure clock() isn't going backwards */
-    VERIFY( clocktime <= clock() );
 
     /*** Print a pass/fail message and quit ***/
     if( NumErrors != 0 ) {
