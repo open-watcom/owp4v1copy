@@ -1,4 +1,4 @@
-#pmake:all small register 32bit linux threading convert iX86 static build os_linux cpu_386
+#pmake:all small register 32bit linux threading misc iX86 static build os_linux cpu_386
 processor=386
 model=ms
 system=linux
