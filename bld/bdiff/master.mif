@@ -13,14 +13,14 @@ name = bdiff
 
 !include cproj.mif
 
-inc_dirs = $($(proj_name)_dir)\h
+inc_dirs = $($(proj_name)_dir)/h
 
 .ERASE
 
 !ifeq host_CPU 386
-wreslib=$(wres_dir)\lib\wresf
+wreslib=$(wres_dir)/lib/wresf.lib
 !else
-wreslib=$(wres_dir)\lib\wresl
+wreslib=$(wres_dir)/lib/wresl.lib
 !endif
 
 targs = bpatch.exe bdiff.exe bpcmt.exe bplevel.exe bdump.exe
@@ -31,31 +31,31 @@ all : .symbolic $(targs)
 .EXTENSIONS:
 .EXTENSIONS: .exe .xbj .obj .dbj .wbj .pbj .ybj .c .h
 
-.c : $($(proj_name)_dir)\c
+.c : $($(proj_name)_dir)/c
 
 .c.obj: $($(proj_name)_autodepends)
         @set include=$(inc_path)
-        $(cc) $(cflags) /fo=.obj $[@
+        $(cc) $(cflags) -fo=.obj $[@
 
 .c.dbj: $($(proj_name)_autodepends)
         @set include=$(inc_path)
-        $(cc) $(cflags) /fo=.dbj /dBDIFF $[@
+        $(cc) $(cflags) -fo=.dbj -dBDIFF $[@
 
 .c.pbj: $($(proj_name)_autodepends)
         @set include=$(inc_path)
-        $(cc) $(cflags) /fo=.pbj /d_WPATCH $[@
+        $(cc) $(cflags) -fo=.pbj -d_WPATCH $[@
 
 .c.wbj: $($(proj_name)_autodepends)
         @set include=$(inc_path)
-        $(cc) $(cflags) /fo=.wbj /dBDIFF /d_WPATCH $[@
+        $(cc) $(cflags) -fo=.wbj -dBDIFF -d_WPATCH $[@
 
 .c.xbj: $($(proj_name)_autodepends)
         @set include=$(inc_path)
-        $(cc) $(cflags) /fo=.xbj /dBDUMP $[@
+        $(cc) $(cflags) -fo=.xbj -dBDUMP $[@
 
 .c.ybj: $($(proj_name)_autodepends)
         @set include=$(inc_path)
-        $(cc) $(cflags) /fo=.ybj /d_WPATCH $[@
+        $(cc) $(cflags) -fo=.ybj -d_WPATCH $[@
 
 # I don't know what WPATCH and WCPATCH are for, they look somewhat like forerunner versions.
 # They are not in the list of targets.
@@ -94,7 +94,7 @@ bpatch.exe : bpatch.res $(OBJ) makefile
         @for %i in ($(OBJ)) do @%append tmp.lnk file %i
         wlink @tmp
         erase tmp.lnk
-        wstrip /q /a /r bpatch.exe . bpatch.res
+        wstrip -q -a -r bpatch.exe . bpatch.res
 
 #
 # BDUMP. Uses .xbj object extension because of /dBDUMP requirement
@@ -108,7 +108,7 @@ bdump.exe : bpatch.res $(XBJ) makefile
         @for %i in ($(XBJ)) do @%append tmp.lnk file %i
         wlink @tmp
         erase tmp.lnk
-        wstrip /q /a /r bdump.exe . bpatch.res
+        wstrip -q -a -r bdump.exe . bpatch.res
 
 #
 # BDIFF. Uses .dbj object extension because of /dBDIFF requirement
@@ -122,34 +122,34 @@ bdiff.exe : $(DBJ) makefile bdiff.res
         @for %i in ($(DBJ)) do @%append tmp.lnk file %i
         wlink @tmp
         erase tmp.lnk
-        wstrip /q /a /r bdiff.exe . bdiff.res
+        wstrip -q -a -r bdiff.exe . bdiff.res
 
 #
 # BCMT
 #
 bpcmt.exe : bpcmt.obj bdiffmem.obj
-        $(linker) option quiet $(lflags) name $^. file { $< }
+        $(linker) option quiet $(lflags) name $^@ file { $< }
 
 #
 # BLEVEL
 #
 bplevel.exe : bplevel.obj
-        $(linker) option quiet $(lflags) name $^. file { $< }
+        $(linker) option quiet $(lflags) name $^@ file { $< }
 
-bpatch.res : ..\bpatch.rc $(inc_dirs)\bpatch.h pusage.rc pusagej.rc
-        wrc /q /r /i.. /dBPATCH /fo=$^. ..\bpatch.rc
+bpatch.res : ../bpatch.rc $(inc_dirs)/bpatch.h pusage.rc pusagej.rc
+        $(rc) -r -i.. -dBPATCH -fo=$^@ $[@
 
-pusage.rc : ..\usage.sp
-        wsplice -kBPATCH -kENGLISH -t8 -f "%+MSG_USE_E_BASE-1+%$#, \"%s\"" ..\usage.sp pusage.rc
+pusage.rc : ../usage.sp
+        wsplice -kBPATCH -kENGLISH -t8 -f "%+MSG_USE_E_BASE-1+%$#, \"%s\"" $[@ $^@
 
-pusagej.rc : ..\usage.sp
-        wsplice -kBPATCH -kJAPANESE -t8 -f "%+MSG_USE_J_BASE-1+%$#, \"%s\"" ..\usage.sp pusagej.rc
+pusagej.rc : ../usage.sp
+        wsplice -kBPATCH -kJAPANESE -t8 -f "%+MSG_USE_J_BASE-1+%$#, \"%s\"" $[@ $^@
 
-dusage.rc : ..\usage.sp
-        wsplice -kBDIFF -kENGLISH -k$(_OS) -t8 -f "%+MSG_USAGE_LN_%$#, \"%s\"" ..\usage.sp dusage.rc
+dusage.rc : ../usage.sp
+        wsplice -kBDIFF -kENGLISH -k$(_OS) -t8 -f "%+MSG_USAGE_LN_%$#, \"%s\"" $[@ $^@
 
-bdiff.res : ..\bpatch.rc dusage.rc $(inc_dirs)\bpatch.h
-        wrc /q /r /i.. /dBDIFF /fo=$^. ..\bpatch.rc
+bdiff.res : ../bpatch.rc dusage.rc $(inc_dirs)/bpatch.h
+        $(rc) -r -i.. -dBDIFF -fo=$^@ $[@
 
 # We cannot use deftarg.mif because of the non-default extension files which are generated.
 clean : .symbolic

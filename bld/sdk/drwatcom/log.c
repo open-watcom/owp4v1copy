@@ -36,7 +36,7 @@
 #include <time.h>
 #include <string.h>
 #include <dos.h>
-#include <sys\stat.h>
+#include <sys/stat.h>
 #include "tinyio.h"
 #include "wdebug.h"
 #include "drwatcom.h"

@@ -34,7 +34,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <dos.h>
-#include <sys\stat.h>
+#include <sys/stat.h>
 #include "wdebug.h"
 #include "drwatcom.h"
 #include "dump.h"
