@@ -3,8 +3,8 @@
 
 set PROJDIR=<CWD>
 
-[ INCLUDE <LANG_BLD>\master.ctl ]
-[ INCLUDE <LANG_BLD>\wproj.ctl ]
+[ INCLUDE <LANG_BLD>/master.ctl ]
+[ INCLUDE <LANG_BLD>/wproj.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
 cdsay .
@@ -14,9 +14,9 @@ cdsay .
     cd <PROJDIR>
 
 [ BLOCK <1> rel2 cprel2 ]
-    <CPCMD> <devdir>\sdk\imgedit\wini86\wimgedit.exe <relroot>\rel2\binw\
-    <CPCMD> <devdir>\sdk\imgedit\nt386\wimgedit.exe <relroot>\rel2\binnt\
-#    <CPCMD> <devdir>\sdk\imgedit\ntaxp\wimgedit.exe <relroot>\rel2\axpnt\
+    <CPCMD> <devdir>/sdk/imgedit/wini86/wimgedit.exe <relroot>/rel2/binw/
+    <CPCMD> <devdir>/sdk/imgedit/nt386/wimgedit.exe <relroot>/rel2/binnt/
+#    <CPCMD> <devdir>/sdk/imgedit/ntaxp/wimgedit.exe <relroot>/rel2/axpnt/
 
 [ BLOCK <1> clean ]
 #==================

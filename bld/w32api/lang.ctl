@@ -3,8 +3,8 @@
 
 set PROJDIR=<CWD>
 
-[ INCLUDE <LANG_BLD>\master.ctl ]
-[ INCLUDE <LANG_BLD>\wproj.ctl ]
+[ INCLUDE <LANG_BLD>/master.ctl ]
+[ INCLUDE <LANG_BLD>/wproj.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
 cdsay .
@@ -16,10 +16,10 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 acprel2 ]
 
 #NT stuff
-    <CPCMD> READ*.* <relroot>\rel2\
-    <CPCMD> include\*.h <relroot>\rel2\h\nt\
-    <CPCMD> include\GL\*.h <relroot>\rel2\h\nt\GL\
-    <CPCMD> nt386\*.lib <relroot>\rel2\lib386\nt\
+    <CPCMD> READ*.* <relroot>/rel2/
+    <CPCMD> include/*.h <relroot>/rel2/h/nt/
+    <CPCMD> include/GL/*.h <relroot>/rel2/h/nt/GL/
+    <CPCMD> nt386/*.lib <relroot>/rel2/lib386/nt/
 
 [ BLOCK <1> clean ]
 #==================

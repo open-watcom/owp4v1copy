@@ -3,8 +3,8 @@
 
 set PROJDIR=<CWD>
 
-[ INCLUDE <LANG_BLD>\master.ctl ]
-[ INCLUDE <LANG_BLD>\wproj.ctl ]
+[ INCLUDE <LANG_BLD>/master.ctl ]
+[ INCLUDE <LANG_BLD>/wproj.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
 cdsay .
@@ -15,9 +15,9 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>\wic\os2386\wic.exe <relroot>\rel2\binp\wic.exe
-    <CPCMD> <devdir>\wic\dos386\wic.exe <relroot>\rel2\binw\wic.exe
-    <CPCMD> <devdir>\wic\nt386\wic.exe <relroot>\rel2\binnt\wic.exe
+    <CPCMD> <devdir>/wic/os2386/wic.exe <relroot>/rel2/binp/wic.exe
+    <CPCMD> <devdir>/wic/dos386/wic.exe <relroot>/rel2/binw/wic.exe
+    <CPCMD> <devdir>/wic/nt386/wic.exe <relroot>/rel2/binnt/wic.exe
 
 [ BLOCK <1> clean ]
 #==================

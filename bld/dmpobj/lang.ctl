@@ -3,8 +3,8 @@
 
 set PROJDIR=<CWD>
 
-[ INCLUDE <LANG_BLD>\master.ctl ]
-[ INCLUDE <LANG_BLD>\wproj.ctl ]
+[ INCLUDE <LANG_BLD>/master.ctl ]
+[ INCLUDE <LANG_BLD>/wproj.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
 cdsay .
@@ -15,9 +15,9 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>\dmpobj\dos386\dmpobj.exe <relroot>\rel2\binw\dmpobj.exe
-    <CPCMD> <devdir>\dmpobj\os2386\dmpobj.exe <relroot>\rel2\binp\dmpobj.exe
-    <CPCMD> <devdir>\dmpobj\nt386\dmpobj.exe  <relroot>\rel2\binnt\dmpobj.exe
+    <CPCMD> <devdir>/dmpobj/dos386/dmpobj.exe <relroot>/rel2/binw/dmpobj.exe
+    <CPCMD> <devdir>/dmpobj/os2386/dmpobj.exe <relroot>/rel2/binp/dmpobj.exe
+    <CPCMD> <devdir>/dmpobj/nt386/dmpobj.exe  <relroot>/rel2/binnt/dmpobj.exe
 
 [ BLOCK <1> clean ]
 #==================

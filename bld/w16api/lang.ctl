@@ -3,8 +3,8 @@
 
 set PROJDIR=<CWD>
 
-[ INCLUDE <LANG_BLD>\master.ctl ]
-[ INCLUDE <LANG_BLD>\wproj.ctl ]
+[ INCLUDE <LANG_BLD>/master.ctl ]
+[ INCLUDE <LANG_BLD>/wproj.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
 cdsay .
@@ -14,8 +14,8 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 acprel2 ]
 
-    <CPCMD> wini86\*.lib <relroot>\rel2\lib286\win\
-    <CPCMD> include\*.h <relroot>\rel2\h\win\
+    <CPCMD> wini86/*.lib <relroot>/rel2/lib286/win/
+    <CPCMD> include/*.h <relroot>/rel2/h/win/
 
 [ BLOCK <1> clean ]
 #==================

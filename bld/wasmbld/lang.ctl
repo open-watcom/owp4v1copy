@@ -15,7 +15,7 @@ cdsay .
 [ BLOCK <1> clean ]
 #==================
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
-    @rm -f <relroot>/bld/build/bin/wasm.*
-    @rm -f <relroot>/bld/build/binp/wasm.*
-    @rm -f <relroot>/bld/build/binnt/wasm.*
-    @rm -f <relroot>/bld/build/binl/wasm.*
+    @rm -f <RELROOT>/bld/build/bin/wasm.*
+    @rm -f <RELROOT>/bld/build/binp/wasm.*
+    @rm -f <RELROOT>/bld/build/binnt/wasm.*
+    @rm -f <RELROOT>/bld/build/binl/wasm.*

@@ -3,8 +3,8 @@
 
 set PROJDIR=<CWD>
 
-[ INCLUDE <LANG_BLD>\master.ctl ]
-[ INCLUDE <LANG_BLD>\wproj.ctl ]
+[ INCLUDE <LANG_BLD>/master.ctl ]
+[ INCLUDE <LANG_BLD>/wproj.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
 cdsay .
@@ -15,13 +15,13 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>\bin\bin\mad???.mad <relroot>\rel2\binw\
-    <CPCMD> <devdir>\bin\bin\mad???.dll <relroot>\rel2\binw\
-    <CPCMD> <devdir>\bin\binp\dll\mad???.dll <relroot>\rel2\binp\dll\
-    <CPCMD> <devdir>\bin\binp\dll\mad???.d32 <relroot>\rel2\binp\
-    <CPCMD> <devdir>\bin\binnt\mad???.dll <relroot>\rel2\binnt\
-#    <CPCMD> <devdir>\bin\axpnt\mad???.dll <relroot>\rel2\axpnt\
-    <CPCMD> <devdir>\bin\qnx\*.mad <relroot>\rel2\qnx\watcom\wd\
+    <CPCMD> <devdir>/bin/bin/mad???.mad <relroot>/rel2/binw/
+    <CPCMD> <devdir>/bin/bin/mad???.dll <relroot>/rel2/binw/
+    <CPCMD> <devdir>/bin/binp/dll/mad???.dll <relroot>/rel2/binp/dll/
+    <CPCMD> <devdir>/bin/binp/dll/mad???.d32 <relroot>/rel2/binp/
+    <CPCMD> <devdir>/bin/binnt/mad???.dll <relroot>/rel2/binnt/
+#    <CPCMD> <devdir>/bin/axpnt/mad???.dll <relroot>/rel2/axpnt/
+    <CPCMD> <devdir>/bin/qnx/*.mad <relroot>/rel2/qnx/watcom/wd/
 
 [ BLOCK <1> clean ]
 #==================

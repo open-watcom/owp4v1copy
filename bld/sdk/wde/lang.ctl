@@ -3,8 +3,8 @@
 
 set PROJDIR=<CWD>
 
-[ INCLUDE <LANG_BLD>\master.ctl ]
-[ INCLUDE <LANG_BLD>\wproj.ctl ]
+[ INCLUDE <LANG_BLD>/master.ctl ]
+[ INCLUDE <LANG_BLD>/wproj.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
 cdsay .
@@ -15,9 +15,9 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>\sdk\wde\win16\wde.exe      <relroot>\rel2\binw\wde.exe
-    <CPCMD> <devdir>\sdk\wde\nt\wde.exe         <relroot>\rel2\binnt\wde.exe
-#    <CPCMD> <devdir>\sdk\wde\axp\wde.exe       <relroot>\rel2\axpnt\wde.exe
+    <CPCMD> <devdir>/sdk/wde/win16/wde.exe      <relroot>/rel2/binw/wde.exe
+    <CPCMD> <devdir>/sdk/wde/nt/wde.exe         <relroot>/rel2/binnt/wde.exe
+#    <CPCMD> <devdir>/sdk/wde/axp/wde.exe       <relroot>/rel2/axpnt/wde.exe
 
 [ BLOCK <1> clean ]
 #==================

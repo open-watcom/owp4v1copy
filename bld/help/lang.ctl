@@ -3,8 +3,8 @@
 
 set PROJDIR=<CWD>
 
-[ INCLUDE <LANG_BLD>\master.ctl ]
-[ INCLUDE <LANG_BLD>\wproj.ctl ]
+[ INCLUDE <LANG_BLD>/master.ctl ]
+[ INCLUDE <LANG_BLD>/wproj.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
 cdsay .
@@ -15,8 +15,8 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>\help\dos386\whelp.exe <relroot>\rel2\binw\whelp.exe
-    <CPCMD> <devdir>\help\os2386\whelp.exe <relroot>\rel2\binp\whelp.exe
+    <CPCMD> <devdir>/help/dos386/whelp.exe <relroot>/rel2/binw/whelp.exe
+    <CPCMD> <devdir>/help/os2386/whelp.exe <relroot>/rel2/binp/whelp.exe
 
 [ BLOCK <1> clean ]
 #==================

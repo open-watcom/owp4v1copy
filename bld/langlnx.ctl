@@ -6,6 +6,7 @@ set PROJDIR=<CWD>
 [ INCLUDE <LANG_BLD>/master.ctl ]
 [ INCLUDE <LANG_BLD>/wproj.ctl ]
 
+# compiled using GNU make + gcc + ar
 [ INCLUDE <devdir>/clib/prereq.ctl ]
 [ INCLUDE <devdir>/builder/lang.ctl ]
 [ INCLUDE <devdir>/pmake/lang.ctl ]
@@ -15,6 +16,7 @@ set PROJDIR=<CWD>
 [ INCLUDE <devdir>/wstrip/prereq.ctl ]
 [ INCLUDE <devdir>/wmake/prereq.ctl ]
 
+# compiled using wmake + gcc + wlib
 [ INCLUDE <devdir>/nwlib/prereq.ctl ]
 [ INCLUDE <devdir>/cfloat/prereq.ctl ]
 [ INCLUDE <devdir>/owl/prereq.ctl ]
@@ -24,22 +26,14 @@ set PROJDIR=<CWD>
 [ INCLUDE <devdir>/cc/prereq.ctl ]
 [ INCLUDE <devdir>/wl/prereq.ctl ]
 
+# compiled using watcom utilities
 [ INCLUDE <devdir>/hdr/lang.ctl ]
 [ INCLUDE <devdir>/clib/lang.ctl ]
 [ INCLUDE <devdir>/mathlib/lang.ctl ]
 [ INCLUDE <devdir>/emu/lang.ctl ]
-[ INCLUDE <devdir>/cfloat/lang.ctl ]
 [ INCLUDE <devdir>/cc/wcl/lang.ctl ]
-[ INCLUDE <devdir>/sdk/rc/lang.ctl ]
-[ INCLUDE <devdir>/orl/lang.ctl ]
-[ INCLUDE <devdir>/owl/lang.ctl ]
-[ INCLUDE <devdir>/dwarf/lang.ctl ]
-[ INCLUDE <devdir>/cg/lang.ctl ]
-[ INCLUDE <devdir>/cc/lang.ctl ]
-[ INCLUDE <devdir>/wl/lang.ctl ]
-[ INCLUDE <devdir>/wmake/lang.ctl ]
-[ INCLUDE <devdir>/wasm/lang.ctl ]
-[ INCLUDE <devdir>/ndisasm/lang.ctl ]
+
+# all is ready to do everything else now
 
 [ BLOCK <1> clean ]
     rm -rf <devdir>/clib/<OBJDIR>

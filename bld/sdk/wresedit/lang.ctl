@@ -3,8 +3,8 @@
 
 set PROJDIR=<CWD>
 
-[ INCLUDE <LANG_BLD>\master.ctl ]
-[ INCLUDE <LANG_BLD>\wproj.ctl ]
+[ INCLUDE <LANG_BLD>/master.ctl ]
+[ INCLUDE <LANG_BLD>/wproj.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
 cdsay .
@@ -16,17 +16,17 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 ]
 #========================
 #waccel
-    <CPCMD> <devdir>\sdk\wresedit\waccel\win16\wacc.dll <relroot>\rel2\binw\wacc.dll
-    <CPCMD> <devdir>\sdk\wresedit\waccel\nt\wacc.dll <relroot>\rel2\binnt\wacc.dll
-#    <CPCMD> <devdir>\sdk\wresedit\waccel\axp\wacc.dll <relroot>\rel2\axpnt\wacc.dll
+    <CPCMD> <devdir>/sdk/wresedit/waccel/win16/wacc.dll <relroot>/rel2/binw/wacc.dll
+    <CPCMD> <devdir>/sdk/wresedit/waccel/nt/wacc.dll <relroot>/rel2/binnt/wacc.dll
+#    <CPCMD> <devdir>/sdk/wresedit/waccel/axp/wacc.dll <relroot>/rel2/axpnt/wacc.dll
 #wmenu
-    <CPCMD> <devdir>\sdk\wresedit\wmenu\win16\wmenu.dll <relroot>\rel2\binw\wmenu.dll
-    <CPCMD> <devdir>\sdk\wresedit\wmenu\nt\wmenu.dll <relroot>\rel2\binnt\wmenu.dll
-#    <CPCMD> <devdir>\sdk\wresedit\wmenu\axp\wmenu.dll <relroot>\rel2\axpnt\wmenu.dll
+    <CPCMD> <devdir>/sdk/wresedit/wmenu/win16/wmenu.dll <relroot>/rel2/binw/wmenu.dll
+    <CPCMD> <devdir>/sdk/wresedit/wmenu/nt/wmenu.dll <relroot>/rel2/binnt/wmenu.dll
+#    <CPCMD> <devdir>/sdk/wresedit/wmenu/axp/wmenu.dll <relroot>/rel2/axpnt/wmenu.dll
 #wstring
-    <CPCMD> <devdir>\sdk\wresedit\wstring\win16\wstring.dll <relroot>\rel2\binw\wstring.dll
-    <CPCMD> <devdir>\sdk\wresedit\wstring\nt\wstring.dll <relroot>\rel2\binnt\wstring.dll
-#    <CPCMD> <devdir>\sdk\wresedit\wstring\axp\wstring.dll <relroot>\rel2\axpnt\wstring.dll
+    <CPCMD> <devdir>/sdk/wresedit/wstring/win16/wstring.dll <relroot>/rel2/binw/wstring.dll
+    <CPCMD> <devdir>/sdk/wresedit/wstring/nt/wstring.dll <relroot>/rel2/binnt/wstring.dll
+#    <CPCMD> <devdir>/sdk/wresedit/wstring/axp/wstring.dll <relroot>/rel2/axpnt/wstring.dll
 
 [ BLOCK <1> clean ]
 #==================

@@ -21,11 +21,11 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>\wmake\dosi86\wmk.exe <relroot>\rel2\binw\wmaker.exe
-    <CPCMD> <devdir>\wmake\dos386\wmk.exe <relroot>\rel2\binw\wmake.exe
-    <CPCMD> <devdir>\wmake\os2386\wmk.exe <relroot>\rel2\binp\wmake.exe
-    <CPCMD> <devdir>\wmake\nt386\wmk.exe <relroot>\rel2\binnt\wmake.exe
-#    <CPCMD> <devdir>\wmake\ntaxp\wmk.exe <relroot>\rel2\axpnt\wmake.exe
+    <CPCMD> <devdir>/wmake/dosi86/wmk.exe <relroot>/rel2/binw/wmaker.exe
+    <CPCMD> <devdir>/wmake/dos386/wmk.exe <relroot>/rel2/binw/wmake.exe
+    <CPCMD> <devdir>/wmake/os2386/wmk.exe <relroot>/rel2/binp/wmake.exe
+    <CPCMD> <devdir>/wmake/nt386/wmk.exe <relroot>/rel2/binnt/wmake.exe
+#    <CPCMD> <devdir>/wmake/ntaxp/wmk.exe <relroot>/rel2/axpnt/wmake.exe
 
 [ BLOCK <1> clean ]
 #==================
