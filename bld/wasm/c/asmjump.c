@@ -35,6 +35,7 @@
 #include "asmins.h"
 #include "asmdefs.h"
 #include "asmfixup.h"
+#include "asmeval.h"
 
 #ifdef _WASM_
   #include "directiv.h"
@@ -43,6 +44,7 @@
 /* prototypes */
 int ptr_operator( memtype mem_type, uint_8 fix_mem_type );
 int jmp( struct asm_sym *sym );
+int jmpx( expr_list *opndx );
 
 #ifdef _WASM_
 
@@ -263,6 +265,12 @@ static int check_jump( struct asm_sym *sym ) {
         }
     }
     return( NOT_ERROR );
+}
+
+int jmpx( expr_list *opndx )
+{
+    Code->data[Opnd_Count] = opndx->value;
+    return( jmp( opndx->sym ) );
 }
 
 int jmp( struct asm_sym *sym )                // Bug: can't handle indirect jump

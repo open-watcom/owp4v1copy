@@ -56,6 +56,7 @@
 extern int              match_phase_1( void );
 extern int              ptr_operator( memtype, uint_8 );
 extern int              jmp( struct asm_sym *sym );
+extern int              jmpx( expr_list * );
 
 unsigned char           More_Array_Element = FALSE;
 unsigned char           Last_Element_Size;
@@ -76,7 +77,6 @@ static void             SizeString( unsigned op_size );
 extern void             InputQueueLine( char * );
 extern int              directive( int , long );
 extern int              SymIs32( struct asm_sym *sym );
-extern void             find_use32( void );
 
 void                    check_assume( struct asm_sym *, enum prefix_reg );
 
@@ -1047,15 +1047,13 @@ int cpu_directive( int i )
     case T_DOT_486:
     case T_DOT_386P:
     case T_DOT_386:
-        SetModuleDefSegment32( TRUE );
-        find_use32();
+        SetUse32Def( TRUE );
         break;
     case T_DOT_286P:
     case T_DOT_286:
     case T_DOT_186:
     case T_DOT_8086:
-        SetModuleDefSegment32( FALSE );
-        find_use32();
+        SetUse32Def( FALSE );
         break;
     default:
         // set FPU
@@ -2131,11 +2129,7 @@ int AsmParse( void )
     expr_list           opndx;
 
 #ifdef _WASM_
-    if( Use32 ) {
-        Code->use32 = TRUE;
-    } else {
-        Code->use32 = FALSE;
-    }
+    Code->use32 = Use32;
     i = proc_check();
     if( i == ERROR )
         return( ERROR );
