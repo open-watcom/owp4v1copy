@@ -160,7 +160,7 @@ static void References( ReferWhich which, dr_handle entry, void *data1,
             break;
 
         case REF_SET_FILE:
-            registers.file = DWRFindFileName( DWRVMReadULEB128( &loc ), loc );
+            registers.file = DWRFindFileName( DWRVMReadULEB128( &loc ), infoOffset );
             break;
 
         case REF_SET_LINE:
