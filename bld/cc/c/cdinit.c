@@ -243,7 +243,8 @@ typedef struct {
     enum { IS_VALUE, IS_ADDR } state;
 } addrfold_info;
 
-local void AddrFold( TREEPTR tree, addrfold_info *info ){
+local void AddrFold( TREEPTR tree, addrfold_info *info )
+{
 // Assume tree has been const folded
     SYM_ENTRY           sym;
     long                offset = 0;
@@ -275,7 +276,7 @@ local void AddrFold( TREEPTR tree, addrfold_info *info ){
         break;
     case OPR_PUSHSTRING:
         info->state = IS_ADDR;
-        if( info->addr_set ){
+        if( info->addr_set ) {
             info->is_error = TRUE;
         }
         info->addr_set = TRUE;
@@ -287,7 +288,7 @@ local void AddrFold( TREEPTR tree, addrfold_info *info ){
     case OPR_PUSHADDR:
         info->state = IS_ADDR;
     case OPR_PUSHSYM:
-        if( info->addr_set ){
+        if( info->addr_set ) {
             info->is_error = TRUE;
         }
         info->addr_set = TRUE;
@@ -295,21 +296,21 @@ local void AddrFold( TREEPTR tree, addrfold_info *info ){
         SymGet( &sym, tree->op.sym_handle );
         info->sym_h = tree->op.sym_handle;
         CompFlags.non_zero_data = 1;
-        if( sym.stg_class == SC_AUTO ){
+        if( sym.stg_class == SC_AUTO ) {
             info->is_error = TRUE;
         }
         break;
     case OPR_INDEX:
-        if(  tree->right->op.opr == OPR_PUSHINT ){
+        if( tree->right->op.opr == OPR_PUSHINT ) {
             AddrFold( tree->left, info );
             offset = tree->right->op.long_value;
-        }else if( tree->left->op.opr == OPR_PUSHINT ){
+        } else if( tree->left->op.opr == OPR_PUSHINT ) {
             AddrFold( tree->right, info );
             offset = tree->left->op.long_value;
-        }else{
+        } else {
             info->is_error = TRUE;
         }
-        if( info->state == IS_VALUE ){ // must be foldable
+        if( info->state == IS_VALUE ) { // must be foldable
             info->is_error = TRUE;
         }
         info->offset +=  offset * SizeOfArg( tree->expr_type );
@@ -319,24 +320,24 @@ local void AddrFold( TREEPTR tree, addrfold_info *info ){
         break;
     case OPR_ADD:
     case OPR_SUB:
-        if(  tree->right->op.opr == OPR_PUSHINT ){
+        if( tree->right->op.opr == OPR_PUSHINT ) {
             AddrFold( tree->left, info );
             if( tree->op.opr == OPR_ADD ) {
                 info->offset = info->offset+tree->right->op.long_value;
             } else {
                 info->offset = info->offset-tree->right->op.long_value;
             }
-        }else if( tree->left->op.opr == OPR_PUSHINT ){
+        } else if( tree->left->op.opr == OPR_PUSHINT ) {
             AddrFold( tree->right, info );
             if( tree->op.opr == OPR_ADD ) {
                 info->offset = tree->left->op.long_value+info->offset;
             } else {
                 info->offset = tree->left->op.long_value-info->offset;
             }
-        }else{
+        } else {
             info->is_error = TRUE;
         }
-        if( info->state == IS_VALUE ){ // must be foldable
+        if( info->state == IS_VALUE ) { // must be foldable
             info->is_error = TRUE;
         }
         break;
@@ -347,7 +348,7 @@ local void AddrFold( TREEPTR tree, addrfold_info *info ){
         break;
     case OPR_ARROW:
         AddrFold( tree->left, info );
-        if( info->state == IS_VALUE ){ // must be foldable
+        if( info->state == IS_VALUE ) { // must be foldable
             info->is_error = TRUE;
         }
         info->offset += tree->right->op.long_value;
@@ -357,7 +358,7 @@ local void AddrFold( TREEPTR tree, addrfold_info *info ){
         break;
     case OPR_POINTS:
         AddrFold( tree->left, info );
-        if( info->state == IS_VALUE ){ // must be foldable
+        if( info->state == IS_VALUE ) { // must be foldable
             info->is_error = TRUE;
         }
         if( tree->op.flags & OPFLAG_RVALUE ) {
@@ -419,7 +420,7 @@ local void StorePointer( TYPEPTR typ, TOKEN int_type )
         dq.opr = T_ID;
         dq.u.var.sym_handle = 0;
         dq.u.var.offset = 0;
-    }else{
+    } else {
         tree = AddrExpr();
         tree = InitAsgn( typ, tree ); // as if we are assigning
         info.offset = 0;
@@ -430,24 +431,24 @@ local void StorePointer( TYPEPTR typ, TOKEN int_type )
         info.is_error = FALSE;
         AddrFold( tree, &info );
         FreeExprTree( tree );
-        if( info.state == IS_VALUE ){ // must be foldable  into addr+offset
+        if( info.state == IS_VALUE ) { // must be foldable  into addr+offset
             info.is_error = TRUE;
         }
-        if( info.is_str ){ // need to fix cgen an DATAQUADS to handle str+off
-            if( info.offset != 0 ){
+        if( info.is_str ) { // need to fix cgen an DATAQUADS to handle str+off
+            if( info.offset != 0 ) {
                 info.is_error = TRUE;
             }
         }
-        if( info.is_error ){
+        if( info.is_error ) {
             CErr1( ERR_NOT_A_CONSTANT_EXPR );
             dq.opr = T_ID;
             dq.u.var.sym_handle = 0;
             dq.u.var.offset = 0;
-        }else{
-            if( info.is_str ){
+        } else {
+            if( info.is_str ) {
                 dq.opr = T_STRING;
                 dq.u.string_leaf = info.str_h;
-            }else{
+            } else {
                 dq.opr = T_ID;
                 dq.u.var.sym_handle = info.sym_h;
                 dq.u.var.offset = info.offset;
@@ -487,7 +488,7 @@ local void StoreInt64( TYPEPTR typ )
         if( tree->op.opr == OPR_PUSHINT || tree->op.opr == OPR_PUSHFLOAT ) {
             CastConstValue( tree, typ->decl_type );
             dq.u.long64 = tree->op.ulong64_value;
-        }else{
+        } else {
             CErr1( ERR_NOT_A_CONSTANT_EXPR );
         }
         FreeExprTree( tree );
@@ -540,13 +541,13 @@ local FIELDPTR InitBitField( FIELDPTR field )
         if( CurToken != T_RIGHT_BRACE ) bit_value = ConstExpr();
         ChkConstant( bit_value, BitMask[ typ->u.f.field_width - 1 ] );
         bit_value &= BitMask[ typ->u.f.field_width - 1 ];
-        if( int_type == T___INT64 ){
+        if( int_type == T___INT64 ) {
             uint64 tmp;
             U32ToU64( bit_value, &tmp );
             U64ShiftL( &tmp, typ->u.f.field_start, &tmp );
             value64.u._32[L] |= tmp.u._32[L];
             value64.u._32[H] |= tmp.u._32[H];
-        }else{
+        } else {
             value |= bit_value << typ->u.f.field_start;
         }
         field = field->next_field;
@@ -556,9 +557,9 @@ local FIELDPTR InitBitField( FIELDPTR field )
         if( CurToken == T_EOF ) break;
         if( CurToken != T_RIGHT_BRACE ) MustRecog( T_COMMA );
     }
-    if( int_type == T___INT64 ){
+    if( int_type == T___INT64 ) {
         StoreIValue64( value64 );
-    }else{
+    } else {
         StoreIValue( int_type, value );
     }
     if( token == T_LEFT_BRACE ) {
@@ -603,7 +604,7 @@ local void *DesignatedInit( TYPEPTR typ, TYPEPTR ctyp, void *field )
         if( tree->op.opr == OPR_PUSHINT || tree->op.opr == OPR_PUSHFLOAT ) {
             CastConstValue( tree, typ->decl_type );
             *(unsigned long *)field = tree->op.ulong_value;
-        }else{
+        } else {
             CErr1( ERR_NOT_A_CONSTANT_EXPR );
         }
         FreeExprTree( tree );
@@ -680,7 +681,7 @@ local void InitArray( TYPEPTR typ, TYPEPTR ctyp )
         pm = DesignatedInit( typ, ctyp, pm );
         if( pm == NULL ) break;
         if( m != n ) {
-            if( typ->u.array->unspecified_dim && m > array_size ){
+            if( typ->u.array->unspecified_dim && m > array_size ) {
                 RelSeekBytes( ( array_size - n ) * SizeOfArg( typ->object ) );
                 ZeroBytes( (m - array_size) * SizeOfArg( typ->object ) );
             } else {
@@ -703,7 +704,7 @@ local void InitArray( TYPEPTR typ, TYPEPTR ctyp )
         }
         if( CurToken == T_RIGHT_BRACE ) break;
     }
-    if( typ->u.array->unspecified_dim ){
+    if( typ->u.array->unspecified_dim ) {
         typ->u.array->dimension = array_size;
     }
     if( array_size > n ) {
@@ -935,7 +936,7 @@ void InitSymData( TYPEPTR typ, TYPEPTR ctyp, int level )
         if( CurToken != T_RIGHT_BRACE ) {
             CErr1( ERR_TOO_MANY_INITS );
         }
-        while( CurToken != T_RIGHT_BRACE ){
+        while( CurToken != T_RIGHT_BRACE ) {
           if( CurToken == T_EOF ) break;
           if( CurToken == T_SEMI_COLON )break;
           if( CurToken == T_LEFT_BRACE )break;
@@ -950,7 +951,7 @@ local int CharArray( TYPEPTR typ )
 {
     if( CurToken == T_STRING ) {
         while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
-        if( typ->decl_type == TYPE_CHAR || typ->decl_type == TYPE_UCHAR ){
+        if( typ->decl_type == TYPE_CHAR || typ->decl_type == TYPE_UCHAR ) {
             return( TRUE );
         }
     }
@@ -1198,7 +1199,7 @@ local void InitStructVar( unsigned base, SYMPTR sym, SYM_HANDLE sym_handle, TYPE
             value = CommaExpr();
         }
         opnd = VarLeaf( sym, sym_handle );
-        if( typ2->decl_type == TYPE_UNION ){
+        if( typ2->decl_type == TYPE_UNION ) {
             FIELDPTR    ufield;
 
             ufield = typ2->u.tag->u.field_list;
@@ -1219,7 +1220,8 @@ local void InitStructVar( unsigned base, SYMPTR sym, SYM_HANDLE sym_handle, TYPE
     }
 }
 
-static int SimpleUnion( TYPEPTR typ ){
+static int SimpleUnion( TYPEPTR typ )
+{
     FIELDPTR    field;
 
     field = typ->u.tag->u.field_list;
@@ -1242,7 +1244,7 @@ static int SimpleStruct( TYPEPTR typ )
 {
     FIELDPTR    field;
 
-    if( typ->decl_type == TYPE_UNION ){
+    if( typ->decl_type == TYPE_UNION ) {
         return( 0 );
     }
     for( field = typ->u.tag->u.field_list; field; ) {
@@ -1251,7 +1253,7 @@ static int SimpleStruct( TYPEPTR typ )
 
         switch( typ->decl_type ) {
         case TYPE_UNION:
-            if( SimpleUnion( typ ) ){
+            if( SimpleUnion( typ ) ) {
                 break;        // go 1 deep to get by MFC examples
             }
         case TYPE_ARRAY:
@@ -1345,14 +1347,14 @@ local void InitArrayVar( SYMPTR sym, SYM_HANDLE sym_handle, TYPEPTR typ)
                 if( CurToken == T_RIGHT_BRACE )break;
                 MustRecog( T_COMMA );
                 if( CurToken == T_RIGHT_BRACE )break;
-                if( i == n ){
+                if( i == n ) {
                     CErr1( ERR_TOO_MANY_INITS );
                }
             }
-            if( typ->u.array->unspecified_dim ){
+            if( typ->u.array->unspecified_dim ) {
                 typ->u.array->dimension = i;
-            }else{
-                while( i < n ){
+            } else {
+                while( i < n ) {
                     value = IntLeaf( 0 );
                     opnd = VarLeaf( sym, sym_handle );
                     opnd = ExprNode( opnd, OPR_INDEX, IntLeaf( i ) );
@@ -1389,15 +1391,15 @@ local void InitArrayVar( SYMPTR sym, SYM_HANDLE sym_handle, TYPEPTR typ)
                 if( CurToken == T_RIGHT_BRACE )break;
                 MustRecog( T_COMMA );
                 if( CurToken == T_RIGHT_BRACE )break;
-                if( i == n ){
+                if( i == n ) {
                     CErr1( ERR_TOO_MANY_INITS );
                }
                base += size;
             }
-            if( typ->u.array->unspecified_dim ){
+            if( typ->u.array->unspecified_dim ) {
                 typ->u.array->dimension = i;
-            }else{
-                while( i < n ){ // mop up
+            } else {
+                while( i < n ) { // mop up
                     base += size;
                     InitStructVar( base, sym, sym_handle, typ2 );
                     ++i;
@@ -1459,4 +1461,3 @@ void VarDeclEquals( SYMPTR sym, SYM_HANDLE sym_handle )
         }
     }
 }
-
