@@ -149,7 +149,7 @@ dep_res1 = ../h/setup.h setup.ico disk.ico gui.rc _guimsgs.gh
 .rc : ../res;$(res_dir);$(gui_dir)/h
 .ico : $(res_dir)
 
-res_inc_dirs = -I"$(res_dir)" -I"../res" -I"$(gui_dir)/h" $(inc_dirs_sys) 
+res_inc_dirs = -I"$(res_dir)" -I"../res" -I"$(gui_dir)/h" $(inc_dirs_sys)
 
 inc_dirs  = -I"../h" -I"$(sdk_dir)/misc" -I"$(build_root)/wpack/h"
 inc_dirs += -I"$(uidir)/h" -I"$(wpi_dir)/h" -I"$(aui_dir)/h" -I"$(gui_dir)/h"
@@ -267,64 +267,64 @@ setupui.res : setupui.rc $(dep_res1)
 
 csetup.res : setup.rc $(dep_res1) ../res/wcc.bmp
 !ifeq host_os os2
-    $(bld_cc) -p -DCSETUP -fo=$[&.i -I"../res" -I"$(gui_dir)/h" $[@
-    $(rc_os2) -i ..\res -r ..\res\os2\foros2pm.rc $@
+    $(bld_cc) -p -D_OS2 -DCSETUP -fo=$[&.i -I"../res" -I"$(gui_dir)/h" $[@
+    $(rc_os2) -I $(lang_root)/h/os2 -r ..\res\os2\foros2pm.rc $@
 !else
     $(rc) $(rc_flags) $(extra_rc_flags) -DCSETUP $(res_inc_dirs) $[@ -fo=$^@
 !endif
 
 jcsetup.res : setup.rc $(dep_res1) ../res/wcc.bmp
 !ifeq host_os os2
-    $(bld_cc) -p -DJCSETUP -DJAPANESE_MESSAGES -zk0 -fo=$[&.i -I"../res" -I"$(gui_dir)/h" $[@
-    $(rc_os2) -i ..\res -r ..\res\os2\foros2pm.rc $@
+    $(bld_cc) -p -D_OS2 -DJCSETUP -DJAPANESE_MESSAGES -zk0 -fo=$[&.i -I"../res" -I"$(gui_dir)/h" $[@
+    $(rc_os2) -I $(lang_root)/h/os2 -r ..\res\os2\foros2pm.rc $@
 !else
     $(rc) $(rc_flags) $(extra_rc_flags) -DJCSETUP -dJAPANESE_MESSAGES -zk0 $(res_inc_dirs) $[@ -fo=$^@
 !endif
 
 f77setup.res : setup.rc $(dep_res1) ../res/f77.bmp
 !ifeq host_os os2
-    $(bld_cc) -p -DF77SETUP -fo=$[&.i -I"../res" -I"$(gui_dir)/h" $[@
-    $(rc_os2) -i ..\res -r ..\res\os2\foros2pm.rc $@
+    $(bld_cc) -p -D_OS2 -DF77SETUP -fo=$[&.i -I"../res" -I"$(gui_dir)/h" $[@
+    $(rc_os2) -I $(lang_root)/h/os2 -r ..\res\os2\foros2pm.rc $@
 !else
     $(rc) $(rc_flags) $(extra_rc_flags) -DF77SETUP $(res_inc_dirs) $[@ -fo=$^@
 !endif
 
 jfsetup.res : setup.rc $(dep_res1) ../res/f77.bmp
 !ifeq host_os os2
-    $(bld_cc) -p -DJFSETUP -DJAPANESE_MESSAGES -zk0 -fo=$[&.i -I"../res" -I"$(gui_dir)/h" $[@
-    $(rc_os2) -i ..\res -r ..\res\os2\foros2pm.rc $@
+    $(bld_cc) -p -D_OS2 -DJFSETUP -DJAPANESE_MESSAGES -zk0 -fo=$[&.i -I"../res" -I"$(gui_dir)/h" $[@
+    $(rc_os2) -I $(lang_root)/h/os2 -r ..\res\os2\foros2pm.rc $@
 !else
     $(rc) $(rc_flags) $(extra_rc_flags) -DJFSETUP -DJAPANESE_MESSAGES -zk0 $(res_inc_dirs) $[@ -fo=$^@
 !endif
 
 dbsetup.res : setup.rc $(dep_res1) ../res/wsql.bmp
 !ifeq host_os os2
-    $(bld_cc) -p -DDBSETUP -fo=$[&.i -I"../res" -I"$(gui_dir)/h" $[@
-    $(rc_os2) -i ..\res -r ..\res\os2\foros2pm.rc $@
+    $(bld_cc) -p -D_OS2 -DDBSETUP -fo=$[&.i -I"../res" -I"$(gui_dir)/h" $[@
+    $(rc_os2) -I $(lang_root)/h/os2 -r ..\res\os2\foros2pm.rc $@
 !else
     $(rc) $(rc_flags) $(extra_rc_flags) -DDBSETUP $(res_inc_dirs) $[@ -fo=$^@
 !endif
 
 jdbsetup.res : setup.rc $(dep_res1) ../res/wsql.bmp
 !ifeq host_os os2
-    $(bld_cc) -p -DJDBSETUP -DJAPANESE_MESSAGES -zk0 -fo=$[&.i -I"../res" -I"$(gui_dir)/h" $[@
-    $(rc_os2) -i ..\res -r ..\res\os2\foros2pm.rc $@
+    $(bld_cc) -p -D_OS2 -DJDBSETUP -DJAPANESE_MESSAGES -zk0 -fo=$[&.i -I"../res" -I"$(gui_dir)/h" $[@
+    $(rc_os2) -I $(lang_root)/h/os2 -r ..\res\os2\foros2pm.rc $@
 !else
     $(rc) $(rc_flags) $(extra_rc_flags) -DJDBSETUP -DJAPANESE_MESSAGES -zk0 $(res_inc_dirs) $[@ -fo=$^@
 !endif
 
 sdbsetup.res : setup.rc $(dep_res1) ../res/sqlserv.bmp
 !ifeq host_os os2
-    $(bld_cc) -p -DSDBSETUP -fo=$[&.i -I"../res" -i"$(gui_dir)/h" $[@
-    $(rc_os2) -i ..\res -r ..\res\os2\foros2pm.rc $@
+    $(bld_cc) -p -D_OS2 -DSDBSETUP -fo=$[&.i -I"../res" -i"$(gui_dir)/h" $[@
+    $(rc_os2) -I $(lang_root)/h/os2 -r ..\res\os2\foros2pm.rc $@
 !else
     $(rc) $(rc_flags) $(extra_rc_flags) -DSDBSETUP $(res_inc_dirs) $[@ -fo=$^@
 !endif
 
 setup.res : setup.rc $(dep_res1) ../res/generic.bmp
 !ifeq host_os os2
-    $(bld_cc) -p -fo=$[&.i -I"../res" -i"$(gui_dir)/h" $[@
-    $(rc_os2) -i ..\res -r ..\res\os2\foros2pm.rc $@
+    $(bld_cc) -p -D_OS2 -fo=$[&.i -I"../res" -i"$(gui_dir)/h" $[@
+    $(rc_os2) -I $(lang_root)/h/os2 -r ..\res\os2\foros2pm.rc $@
 !else
     $(rc) $(rc_flags) $(extra_rc_flags) $(res_inc_dirs) $[@ -fo=$^@
 !endif
