@@ -61,8 +61,8 @@ void Log( bool quiet, const char *str, ... )
 
     va_start( arg, str );
 
-        if (!quiet)
-                vfprintf( stderr, str, arg );
+    if (!quiet)
+        vfprintf( stderr, str, arg );
     va_end( arg );
     if( LogFile != NULL ) {
         va_start( arg, str );
@@ -71,9 +71,19 @@ void Log( bool quiet, const char *str, ... )
     }
 }
 
+void LogStream( bool quiet, const char *str, size_t len )
+{
+    if (!quiet) {
+        fwrite( str, 1, len, stderr );
+    }
+    if( LogFile != NULL ) {
+        fwrite( str, 1, len, LogFile );
+    }
+}
+
 void LogFlush()
 {
-        fflush( stderr );
+    fflush( stderr );
     if( LogFile != NULL ) fflush( LogFile );
 }
 
@@ -84,6 +94,15 @@ void OpenLog( const char *name )
        Fatal( "Can not open '%s': %s\n", name, strerror( errno ) );
    }
    setvbuf( LogFile, NULL, _IOLBF, BUFSIZ );
+}
+
+void CloseLog()
+{
+    LogFlush();
+    if( LogFile != NULL ) {
+        fclose( LogFile );
+        LogFile = NULL;
+    }
 }
 
 void *Alloc( unsigned size )

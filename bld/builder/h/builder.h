@@ -64,7 +64,9 @@ extern FILE     *LogFile;
 
 void            LogFlush( void );
 void            Log( bool quiet, const char *, ... );
+void            LogStream( bool quiet, const char *str, size_t len );
 void            OpenLog( const char * );
+void            CloseLog( void );
 void            Fatal( const char *, ... );
 void            *Alloc( unsigned );
 char            *SkipBlanks( const char * );
