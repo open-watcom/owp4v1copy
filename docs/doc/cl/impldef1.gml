@@ -139,7 +139,7 @@ with external linkage (6.1.2).
 The &wcboth. compilers produce object names in mixed case.
 The &lnkname. provides an option to respect or ignore case when
 resolving linkages.
-By default, the linker ignores case. See the &linkref. for details.
+By default, the linker respects case. See the &linkref. for details.
 .endbigterms
 .*
 .section Characters
