@@ -65,7 +65,7 @@ extra_c_flags += -zw-zu
 !ifdef IS_GUI
 extra_c_flags += -DWIN_GUI
 !endif
-!ifdef no_stack
+!ifeq release 0
 extra_c_flags += -s
 !endif
 
