@@ -19,6 +19,7 @@ echo Languages Build <1>
 #
 [ INCLUDE <DEVDIR>/builder/lang.ctl ]
 [ INCLUDE <DEVDIR>/pmake/lang.ctl ]
+[ INCLUDE <DEVDIR>/cc/wcl/prereq.ctl ]
 [ INCLUDE <DEVDIR>/yacc/lang.ctl ]
 [ INCLUDE <DEVDIR>/re2c/lang.ctl ]
 [ INCLUDE <DEVDIR>/whpcvt/lang.ctl ]
@@ -28,7 +29,6 @@ echo Languages Build <1>
 [ INCLUDE <DEVDIR>/posix/prereq.ctl ]
 [ INCLUDE <DEVDIR>/wstub/lang.ctl ]
 [ INCLUDE <DEVDIR>/vi/prereq.ctl ]
-[ INCLUDE <DEVDIR>/cc/wcl/prereq.ctl ]
 #
 #        Prebuild newest WASM version for build process
 [ INCLUDE <DEVDIR>/wasm/prereq.ctl ]
