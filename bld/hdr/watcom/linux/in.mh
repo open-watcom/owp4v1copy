@@ -19,6 +19,7 @@ struct sockaddr_in {
     sa_family_t    sin_family; /* address family: AF_INET */
     uint16_t       sin_port;   /* port in network byte order */
     struct in_addr sin_addr;   /* internet address */
+    char           __pad[ 16 - sizeof( sa_family_t ) - sizeof( uint16_t ) - sizeof( struct in_addr ) ];
 };
 
 #define INADDR_ANY              0x00000000UL

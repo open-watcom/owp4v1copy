@@ -14,5 +14,18 @@
 !inject closedir.obj                                                                    l32
 !inject bind.obj                                                                        l32
 !inject socket.obj                                                                      l32
+!inject stsckopt.obj                                                                    l32
+!inject recv.obj                                                                        l32
+!inject send.obj                                                                        l32
+!inject accept.obj                                                                      l32
+!inject listen.obj                                                                      l32
+!inject connect.obj                                                                     l32
+!inject gtscknam.obj                                                                    l32
+!inject htons.obj                                                                       l32
+!inject ntohs.obj                                                                       l32
+!inject inetaddr.obj                                                                    l32
+!inject gthstnam.obj                                                                    l32
+!inject gtpronam.obj                                                                    l32
+!inject gtsrvnam.obj                                                                    l32
 
 !include ../../../../objlist.mif

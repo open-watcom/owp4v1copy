@@ -24,85 +24,35 @@
 *
 *  ========================================================================
 *
-* Description:  Trap I/O functions for Linux
+* Description:  Implementation of inet_addr() for little-endian cpus.
 *
 ****************************************************************************/
 
-#define DEBUG_TRAP
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <termios.h>
-#include <conio.h>
-#include <sys/time.h>
-#include "trapdbg1.h"
-#include "trapdbg2.h"
-#include "trpimp.h"
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 
-extern char RWBuff[];
-
-void Output( char *str )
+_WCRTLINK uint32_t inet_addr(const char *cp)
 {
-    write( 2, str, strlen( str ) );
+    uint32_t ret, val;
+    int shift = 0;
+
+    ret = val = 0;
+    if ( *cp ) do {
+        if ( *cp >= '0' && *cp <= '9' ) {
+            val = val*10 + (*cp - '0');
+        } else if ( *cp == '.' || *cp == '\0' ) {
+            if ( val > 255 )
+                return INADDR_NONE;
+            ret |= ( val << shift );
+            shift += 8;
+            val = 0;
+        } else {
+            return INADDR_NONE;
+        }
+        cp++;
+    } while ( cp[-1] );
+    if ( shift != 32 )
+        return INADDR_NONE;
+    return ret;
 }
-
-void SayGNiteGracey( int return_code )
-{
-    _exit( return_code );
-}
-
-void StartupErr( char *err )
-{
-    Output( err );
-    Output( "\n" );
-    SayGNiteGracey( 1 );
-}
-
-int KeyPress()
-{
-    int             ret;
-    struct termios  old;
-    struct termios  new;
-    struct timeval  tv;
-    fd_set          rdfs;
-
-    tcgetattr( 0, &old );
-    new = old;
-    new.c_lflag &= ~(ICANON | ECHO);
-    new.c_cc[VMIN] = 1;
-    new.c_cc[VTIME] = 0;
-    tcsetattr( 0, TCSANOW, &new );
-
-    FD_ZERO( &rdfs );
-    FD_SET( 0, &rdfs );
-    tv.tv_sec = 0;
-    tv.tv_usec = 0;
-    ret = select(1, &rdfs, NULL, NULL, &tv );
-
-    tcsetattr( 0, TCSANOW, &old );
-    return( ret != 0 );
-}
-
-int KeyGet()
-{
-    struct termios  old;
-    struct termios  new;
-    char            key;
-
-    tcgetattr( 0, &old );
-    new = old;
-    new.c_lflag &= ~(ICANON | ECHO);
-    new.c_cc[VMIN] = 1;
-    new.c_cc[VTIME] = 0;
-    tcsetattr( 0, TCSANOW, &new );
-    read( 0, &key, 1 );
-    tcsetattr( 0, TCSANOW, &old );
-    return( key );
-}
-
-int WantUsage( char *ptr )
-{
-    return( *ptr == '?' );
-}
-

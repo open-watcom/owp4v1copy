@@ -42,6 +42,10 @@
 #include <string.h>
 #include <ctype.h>
 
+#ifndef __LINUX__
+#define socklen_t int
+#endif
+
 #if defined(__NT__) || defined(__WINDOWS__)
     #include <winsock.h>
 #else
@@ -171,11 +175,7 @@ char RemoteConnect( void )
     struct      timeval timeout;
     fd_set ready;
     struct      sockaddr dummy;
-#ifdef __LINUX__
     socklen_t   dummy_len = sizeof( dummy );
-#else
-    int         dummy_len = sizeof( dummy );
-#endif
 
     FD_ZERO( &ready );
     FD_SET( control_socket, &ready );
@@ -213,11 +213,7 @@ char *RemoteLink( char *name, char server )
     unsigned            port;
 
 #ifdef SERVER
-#ifdef __LINUX__
     socklen_t           length;
-#else
-    int                 length;
-#endif
 
 #if defined(__NT__) || defined(__WINDOWS__)
     {
@@ -314,6 +310,7 @@ char *RemoteLink( char *name, char server )
     socket_address.sin_family = AF_INET;
     /* OS/2's TCP/IP gethostbyname doesn't handle numeric addresses */
     socket_address.sin_addr.s_addr = inet_addr( name );
+    printf("%s %x\n", name, socket_address.sin_addr.s_addr );
     if( socket_address.sin_addr.s_addr == -1UL ) {
         hp = gethostbyname( name );
         if( hp != 0 ) {

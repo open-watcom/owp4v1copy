@@ -24,85 +24,24 @@
 *
 *  ========================================================================
 *
-* Description:  Trap I/O functions for Linux
+* Description:  Implementation of getprotobyname() for Linux.
 *
 ****************************************************************************/
 
-#define DEBUG_TRAP
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
 #include <string.h>
-#include <termios.h>
-#include <conio.h>
-#include <sys/time.h>
-#include "trapdbg1.h"
-#include "trapdbg2.h"
-#include "trpimp.h"
+#include <stdlib.h>
 
-extern char RWBuff[];
-
-void Output( char *str )
+_WCRTLINK struct protoent *getprotobyname( const char *name )
 {
-    write( 2, str, strlen( str ) );
+    static struct protoent pe;
+
+    /* just a stub for the debug trapfile for now; TODO:parse /etc/protocols.*/
+    if ( strcmp( name, "tcp" ) == 0 ) {
+        pe.p_proto = 6;
+        return &pe;
+    }
+    return ( NULL );
 }
-
-void SayGNiteGracey( int return_code )
-{
-    _exit( return_code );
-}
-
-void StartupErr( char *err )
-{
-    Output( err );
-    Output( "\n" );
-    SayGNiteGracey( 1 );
-}
-
-int KeyPress()
-{
-    int             ret;
-    struct termios  old;
-    struct termios  new;
-    struct timeval  tv;
-    fd_set          rdfs;
-
-    tcgetattr( 0, &old );
-    new = old;
-    new.c_lflag &= ~(ICANON | ECHO);
-    new.c_cc[VMIN] = 1;
-    new.c_cc[VTIME] = 0;
-    tcsetattr( 0, TCSANOW, &new );
-
-    FD_ZERO( &rdfs );
-    FD_SET( 0, &rdfs );
-    tv.tv_sec = 0;
-    tv.tv_usec = 0;
-    ret = select(1, &rdfs, NULL, NULL, &tv );
-
-    tcsetattr( 0, TCSANOW, &old );
-    return( ret != 0 );
-}
-
-int KeyGet()
-{
-    struct termios  old;
-    struct termios  new;
-    char            key;
-
-    tcgetattr( 0, &old );
-    new = old;
-    new.c_lflag &= ~(ICANON | ECHO);
-    new.c_cc[VMIN] = 1;
-    new.c_cc[VTIME] = 0;
-    tcsetattr( 0, TCSANOW, &new );
-    read( 0, &key, 1 );
-    tcsetattr( 0, TCSANOW, &old );
-    return( key );
-}
-
-int WantUsage( char *ptr )
-{
-    return( *ptr == '?' );
-}
-
