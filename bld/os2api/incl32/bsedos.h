@@ -364,13 +364,13 @@ APIRET APIENTRY DosWaitThread(PTID,ULONG);
 #define FILE_CREATED   2
 #define FILE_TRUNCATED 3
 
-#define FILE_OPEN      0x0001
-#define FILE_TRUNCATE  0x0002
-#define FILE_CREATE    0x0010
+#define FILE_OPEN     0x0001
+#define FILE_TRUNCATE 0x0002
+#define FILE_CREATE   0x0010
 
-#define OPEN_ACTION_FAIL_IF_EXISTS     0
-#define OPEN_ACTION_OPEN_IF_EXISTS     1
-#define OPEN_ACTION_REPLACE_IF_EXISTS  2
+#define OPEN_ACTION_FAIL_IF_EXISTS    0
+#define OPEN_ACTION_OPEN_IF_EXISTS    1
+#define OPEN_ACTION_REPLACE_IF_EXISTS 2
 
 #define OPEN_ACTION_FAIL_IF_NEW     0x0000
 #define OPEN_ACTION_CREATE_IF_NEW   0x0010
@@ -437,6 +437,14 @@ APIRET APIENTRY DosWaitThread(PTID,ULONG);
 #define FSCTL_PATHNAME 2
 #define FSCTL_FSDNAME  3
 
+#define FSCTL_ERROR_INFO          1
+#define FSCTL_MAX_EASIZE          2
+#define FSCTL_GET_NEXT_ROUTE_NAME 3
+#define FSCTL_DAEMON_QUERY        4
+
+#define FSCTL_QUERY_COMPLETE 0
+#define FSCTL_QUERY_AGAIN    1
+
 #define FSAIL_QUERYNAME 1
 #define FSAIL_DEVNUMBER 2
 #define FSAIL_DRVNUMBER 3
@@ -469,13 +477,20 @@ APIRET APIENTRY DosWaitThread(PTID,ULONG);
 #define EAT_MVST     0xFFDE
 #define EAT_ASN1     0xFFDD
 
-#define DSPI_WRTTHRU 0x10
+#define FEA_NEEDEA 0x80
 
-#define LISTIO_READ  0x0004
-#define LISTIO_WRITE 0x0008
+#define DSPI_WRTTHRU 0x10
 
 #define LISTIO_ORDERED   1
 #define LISTIO_UNORDERED 2
+#define LISTIO_READ      4
+#define LISTIO_WRITE     8
+
+#define ENUMEA_LEVEL_NO_VALUE 1
+
+#define ENUMEA_REFTYPE_FHANDLE 0
+#define ENUMEA_REFTYPE_PATH    1
+#define ENUMEA_REFTYPE_MAX     ENUMEA_REFTYPE_PATH
 
 typedef LHANDLE HDIR, *PHDIR;
 typedef ULONG FHLOCK, *PFHLOCK;
@@ -515,6 +530,21 @@ typedef struct _FILEFINDBUF {
     UCHAR  cchName;
     CHAR   achName[CCHMAXPATHCOMP];
 } FILEFINDBUF, *PFILEFINDBUF;
+
+typedef _Packed struct _FILEFINDBUF2 {
+    FDATE  fdateCreation;
+    FTIME  ftimeCreation;
+    FDATE  fdateLastAccess;
+    FTIME  ftimeLastAccess;
+    FDATE  fdateLastWrite;
+    FTIME  ftimeLastWrite;
+    ULONG  cbFile;
+    ULONG  cbFileAlloc;
+    USHORT attrFile;
+    ULONG  cbList;
+    UCHAR  cchName;
+    CHAR   achName[CCHMAXPATHCOMP];
+} FILEFINDBUF2, *PFILEFINDBUF2;
 
 typedef struct _FILEFINDBUF3 {
     ULONG oNextEntryOffset;
@@ -590,6 +620,19 @@ typedef struct _FILESTATUS {
     USHORT attrFile;
 } FILESTATUS, *PFILESTATUS;
 
+typedef _Packed struct _FILESTATUS2 {
+    FDATE  fdateCreation;
+    FTIME  ftimeCreation;
+    FDATE  fdateLastAccess;
+    FTIME  ftimeLastAccess;
+    FDATE  fdateLastWrite;
+    FTIME  ftimeLastWrite;
+    ULONG  cbFile;
+    ULONG  cbFileAlloc;
+    USHORT attrFile;
+    ULONG  cbList;
+} FILESTATUS2, *PFILESTATUS2;
+
 typedef struct _FILESTATUS3 {
     FDATE fdateCreation;
     FTIME ftimeCreation;
@@ -648,6 +691,33 @@ typedef struct _FSALLOCATE {
     USHORT cbSector;
 } FSALLOCATE, *PFSALLOCATE;
 
+typedef struct _GEA {
+    BYTE cbName;
+    CHAR szName[1];
+} GEA, *PGEA;
+
+typedef struct _GEALIST {
+    ULONG cbList;
+    GEA list[1];
+} GEALIST, *PGEALIST;
+
+typedef struct _FEA {
+    BYTE fEA;
+    BYTE cbName;
+    USHORT cbValue;
+} FEA, *PFEA;
+
+typedef struct _FEALIST {
+    ULONG cbList;
+    FEA list[1];
+} FEALIST, *PFEALIST;
+
+typedef struct _EAOP {
+    PGEALIST fpGEAList;
+    PFEALIST fpFEAList;
+    ULONG    oError;
+} EAOP, *PEAOP;
+
 typedef struct _GEA2 {
     ULONG oNextEntryOffset;
     BYTE  cbName;
@@ -678,6 +748,40 @@ typedef struct _EAOP2 {
     ULONG     oError;
 } EAOP2, *PEAOP2;
 
+typedef struct _EASIZEBUF {
+    USHORT cbMaxEASize;
+    ULONG  cbMaxEAListSize;
+} EASIZEBUF, *PEASIZEBUF;
+
+typedef struct _ROUTENAMEBUF {
+    ULONG hRouteHandle;
+    UCHAR szRouteName;
+} ROUTENAMEBUF, *PROUTENAMEBUF;
+
+typedef struct _FSDTHREAD {
+    USHORT usFunc;
+    USHORT usStackSize;
+    ULONG  ulPriorityClass;
+    LONG   lPriorityLevel;
+} FSDTHREAD;
+
+typedef struct _FSDDAEMON {
+    USHORT    usNumThreads;
+    USHORT    usMoreFlag;
+    USHORT    usCallInstance;
+    FSDTHREAD tdThrds[16];
+} FSDDAEMON;
+
+typedef struct _FSQBUFFER {
+    USHORT iType;
+    USHORT cbName;
+    UCHAR  szName[1];
+    USHORT cbFSDName;
+    UCHAR  szFSDName[1];
+    USHORT cbFSAData;
+    UCHAR  rgFSAData[1];
+} FSQBUFFER, *PFSQBUFFER;
+
 typedef struct _FSQBUFFER2 {
     USHORT iType;
     USHORT cbName;
@@ -687,6 +791,11 @@ typedef struct _FSQBUFFER2 {
     UCHAR  szFSDName[1];
     UCHAR  rgFSAData[1];
 } FSQBUFFER2, *PFSQBUFFER2;
+
+typedef struct _SPOOLATTACH {
+    USHORT hNmPipe;
+    ULONG  ulKey;
+} SPOOLATTACH, *PSPOOLATTACH;
 
 typedef struct _VOLUMELABEL {
     BYTE cch;
@@ -724,6 +833,16 @@ typedef struct _LISTIO_CBL {
     ULONG    Reserved2[3];
     ULONG    Reserved3[2];
 } LISTIOL, *PLISTIOL;
+
+typedef struct _DENA1 {
+    UCHAR  reserved;
+    UCHAR  cbName;
+    USHORT cbValue;
+    UCHAR  szName[1];
+} DENA1, *PDENA1;
+
+typedef FEA2  DENA2;
+typedef PFEA2 PDENA2;
 
 APIRET APIENTRY DosCancelLockRequest(HFILE,PFILELOCK);
 APIRET APIENTRY DosCancelLockRequestL(HFILE,PFILELOCKL);
