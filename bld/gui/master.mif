@@ -73,9 +73,6 @@ wpi_library=$(wpi_dir)/lib/$(wpi_lib).lib
 
 inc_dirs += ../h;../../h;$(trmem_dir);$(help_dir)/h;
 
-.BEFORE
-    @set $(build_target)_include=$(inc_path);
-
 extra_c_flags += -s
 
 !ifdef on_build_machine
