@@ -24,34 +24,27 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of ftime() for Linux.
 *
 ****************************************************************************/
 
 
 #include "variety.h"
-#include <time.h>
-#include <sys/timers.h>
+#include <sys/types.h>
 #include <sys/timeb.h>
+#include <sys/time.h>
 
-_WCRTLINK int ftime( struct timeb *timeptr )
+_WCRTLINK int ftime( struct timeb *tb )
 {
-    struct timespec ts;
-    time_t          timer;
-    struct tm       *tm_ptr;
+    struct timeval tv;
+    struct timezone tz;
 
-
-    if( getclock( TIMEOFDAY, &ts ) == -1 ) return( -1 );
-
-    timer = (time_t) ts.tv_sec;
-    if( ts.tv_nsec >=  500000000L ) timer++;
-
-    tm_ptr = localtime( &timer );
-
-    timeptr->dstflag  = tm_ptr->tm_isdst;
-    timeptr->time     = (time_t) ts.tv_sec;
-    timeptr->millitm  = ts.tv_nsec / 1000000;
-    timeptr->timezone = timezone / 60L;
-    return( 1 );
+    if (gettimeofday(&tv, &tz) < 0 )
+        return -1;
+    tb->time = tv.tv_sec;
+    tb->millitm = tv.tv_usec/1000;
+    tb->timezone = tz.tz_minuteswest;
+    tb->dstflag = tz.tz_dsttime;
+    return 0;
 }
+

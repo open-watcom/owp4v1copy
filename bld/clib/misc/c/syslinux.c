@@ -61,7 +61,7 @@ long sys_open(const char * filename, int flags, int mode)
     __syscall_return(ssize_t,res);
 }
 
-_WCRTLINK char   *getcwd( char *__buf, size_t __size )
+_WCRTLINK char *getcwd( char *__buf, size_t __size )
 {
     u_long res = sys_call2(SYS_getcwd, (u_long)__buf, __size);
     __syscall_return(char *,res);
@@ -94,6 +94,18 @@ _WCRTLINK int unlink( const char *filename )
 _WCRTLINK time_t time( time_t *t )
 {
     u_long res = sys_call1(SYS_time, (u_long)time);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int gettimeofday( struct timeval *__tv, struct timezone *__tz )
+{
+    u_long res = sys_call2(SYS_gettimeofday, (u_long)__tv, (u_long)__tz);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK extern int settimeofday( const struct timeval *__tv, const struct timezone *__tz )
+{
+    u_long res = sys_call2(SYS_settimeofday, (u_long)__tv, (u_long)__tz);
     __syscall_return(int,res);
 }
 
@@ -142,6 +154,24 @@ _WCRTLINK int close( int __fildes )
 _WCRTLINK int fsync( int __fildes )
 {
     u_long res = sys_call1(SYS_fsync, __fildes);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int ioperm( unsigned long __from, unsigned long __num, int __turn_on )
+{
+    u_long res = sys_call3(SYS_ioperm, __from, __num, __turn_on);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int iopl( int __level )
+{
+    u_long res = sys_call1(SYS_iopl, __level);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int nice( int __val )
+{
+    u_long res = sys_call1(SYS_nice, __val);
     __syscall_return(int,res);
 }
 

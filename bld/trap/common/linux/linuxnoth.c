@@ -31,6 +31,6 @@
 
 void NothingToDo()
 {
-    // TODO: Figure out how to do a Sleep(0) on Linux!
+    // TODO: Can we do a Sleep(0) on Linux?
 }
 

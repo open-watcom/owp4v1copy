@@ -205,6 +205,7 @@ LINUX_files = &
       $(common) &
         dirent.h &
         unistd.h &
+        sys/time.h
 
 all : $($(system)_files) .symbolic
     @%null
@@ -226,6 +227,10 @@ all : $($(system)_files) .symbolic
 #
 !ifeq system QNX
 sys/time.h : ..\quantum/sys_time.mh ..\poppack.sp ..\pshpackl.sp
+        $(splice)
+!endif
+!ifeq system LINUX
+sys/time.h : linux/sys_time.mh ..\readonly.sp ..\cpluspro.sp ..\lnxkpack.sp ..\poppack.sp ..\cplusepi.sp
         $(splice)
 !endif
 

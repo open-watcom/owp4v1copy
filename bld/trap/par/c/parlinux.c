@@ -32,6 +32,7 @@
 
 #include <time.h>
 #include <conio.h>
+#include <stdlib.h>
 
 
 #define NUM_ELTS( a )   (sizeof( a ) / sizeof( a[0] ))
@@ -52,13 +53,12 @@ unsigned PrnAddress( int printer )
 
 unsigned AccessPorts( unsigned first, unsigned last )
 {
-    // TODO: Call ioperm() for the ports!
-    return( 1 );
+    return ioperm(first,last,1) == 0;
 }
 
 void FreePorts( unsigned first, unsigned last )
 {
-    // TODO: Call ioperm() for the ports!
+    ioperm(first,last,0);
 }
 
 static int CheckForPort( int i, char value )
@@ -91,12 +91,6 @@ void FiniSys()
 
 unsigned long Ticks()
 {
-    // TODO!! gettimeofday()??
-// QNX:   return( SysTime->nsec / 100000000 + SysTime->seconds * 10 );
-//    ULONG  ulMsecs;
-//    DosQuerySysInfo(QSV_MS_COUNT, QSV_MS_COUNT, &ulMsecs, sizeof(ulMsecs));
-//    return  ulMsecs / 100;
-//    return( GetTickCount() / 100 );
-    return 0;
+    return clock() / (CLOCKS_PER_SEC / 10);
 }
 

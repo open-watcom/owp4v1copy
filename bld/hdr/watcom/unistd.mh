@@ -235,6 +235,14 @@ _WCRTLINK extern int    putenv(const char * estring);
 #endif
 
 :endsegment
+:segment LINUX
+/* These are Linux specific */
+
+_WCRTLINK extern int    ioperm( unsigned long __from, unsigned long __num, int __turn_on );
+_WCRTLINK extern int    iopl( int __level );
+_WCRTLINK extern int    nice( int __val );
+_WCRTLINK extern void   usleep( unsigned long __usec );
+:endsegment
 :segment QNX
 #if defined(__386__)
 #define __far_read read

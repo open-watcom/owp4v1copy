@@ -1,13 +1,11 @@
-# TODO: We may need to clone ftime() from the QNX version for Linux rather than using the
-#       generic version for DOS/Win/OS2 that I put into the build...
-#
 #                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 #==========================================================================================
 !inject asctime.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 !inject clock.obj    d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
 !inject dyltptr.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32
-!inject ftime.obj    d16 d32             nt nta ntp         o16 o32         w16 w32 osi l32
+!inject ftime.obj    d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject ftimeqnx.obj                                                q16 q32
+!inject ftimelnx.obj                                                                    l32
 !inject gmtime.obj   d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32
 !inject gtctm.obj    d16 d32                                                w16 w32 osi
 !inject gtctmos2.obj                                        o16 o32
