@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Client independent utility functions for DWARF writer lib.
 *
 ****************************************************************************/
 
@@ -34,10 +33,6 @@
 #define DWUTILS_H_INCLUDED
 
 #include "dwcnf.h"
-
-/*
-    These are client independant utility functions.
-*/
 
 /* max storage req'd in LEB128 form to store a 32 bit int/uint */
 #define MAX_LEB128      5
@@ -48,7 +43,7 @@
 extern  char *LEB128( char *__buf, dw_sconst value );
 extern  char *ULEB128( char *__buf, dw_uconst value );
 
-#if defined( M_I86 ) || defined( __386__ ) || defined(__AXP__)
+#if defined( M_I86 ) || defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
 #define WriteU16( __p, __v )    ( *(uint_16 *)(__p) = (__v) )
 #define WriteU32( __p, __v )    ( *(uint_32 *)(__p) = (__v) )
 #define WriteS16( __p, __v )    ( *(uint_16 *)(__p) = (__v) )

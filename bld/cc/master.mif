@@ -302,7 +302,7 @@ usage01.int : ./usageenc.exe ../jusage.sp
         $[@ usageenc.int usage01.int
 
 ./msgencod.exe: $(fe_misc_dir)/c/msgencod.c
-        $(bld_cl) -I"$(fe_misc_dir)/h" $[@ $(wcl_util_opts)
+        $(bld_cl) -I"$(fe_misc_dir)/h" $[@ $(wcl_util_opts) $(cl_libs)
 
 msgtxt.gh msgdefs.gh msgattr.gh errors01.int : ./msgencod.exe ../gml/cerrs.gml
         $[@ -i -ip -q -g ../gml/cerrs.gml msgtxt.gh msgdefs.gh msgattr.gh
