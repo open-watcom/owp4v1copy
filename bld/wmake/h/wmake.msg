@@ -254,6 +254,8 @@ pick( M_OLDEST_DATE,		"Oldest Possible    ",
 				"â¬î\Ç»íÜÇ≈ÇÃç≈å√  " )
 pick( GETDATE_MSG,		"\t%s\t%E",
 				"\t%s\t%E" )
+pick( WILL_BE_BUILT_BECAUSE_OF,		"%s will be built because of %s",
+				"%s will be built because of %s" )
 
 pick( JUST_A_TAB,		"\t",
 				"\t" )

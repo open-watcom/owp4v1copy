@@ -499,6 +499,12 @@ STATIC RET_T IsOutOfDate (TARGET *targ, TARGET *deptarg,
     getDate( deptarg );
     if( dateCmp( targ->date, deptarg->date ) < 0 ) {
         *outofdate = TRUE;
+        if(Glob.show_offenders)
+        {
+            PrtMsg( INF|WILL_BE_BUILT_BECAUSE_OF, 
+                targ->node.name,
+                deptarg->node.name);
+        }
     }
     if ( deptarg->error ) {
        /* one of the targets had an error while being updated

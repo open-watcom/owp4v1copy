@@ -104,6 +104,8 @@ struct Glob {
                         /* MS nmake */
     BIT verbose     : 1;/* Bit to list out the contents of a tmp file   */
     BIT auto_depends: 1;/* force autodepends info to be used */
+
+    BIT show_offenders: 1;   /* display the out-of-date file */
 };
 
 #ifdef DEVELOPMENT

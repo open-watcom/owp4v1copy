@@ -215,6 +215,14 @@ STATIC char *procFlags( const char **argv, const char **log_name )
     if( p != NULL && p[0] == '?' && p[1] == NULLCHAR ) {
         Usage();
     }
+    /*
+    //  added this as StartVec leaks vectors if Usage exits
+    //  bit paranoid but I just adjusted the above test
+    */
+    if( p != NULL && ( p[0] == '-' || p[0] == Glob.swchar ) 
+        && p[1] != NULLCHAR &&  p[1] == '?' && p[2] == NULLCHAR ) {
+        Usage();
+    }
 
     Glob.macreadonly = TRUE;
 
@@ -252,6 +260,7 @@ STATIC char *procFlags( const char **argv, const char **log_name )
 #ifdef CACHE_STATS
             case 'X':   Glob.cachestat = TRUE;  break;
 #endif
+            case 'Y':   Glob.show_offenders = TRUE; break;
             case 'Z':   Glob.hold      = TRUE;  break;
                 /* these options require a filename */
             case 'F':

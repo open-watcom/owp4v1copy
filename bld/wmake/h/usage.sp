@@ -19,7 +19,8 @@ Options:  ('/' may be substituted for '-', and '#' for '=')
 -p print the dependency tree, macro definitions, and extension information
 -r ignore built-in definitions           -s silent mode (do not print commands)
 -t touch files (commands not executed)   -u UNIX compatibility mode
--v verbose listing of inline files       -z do not erase files (no prompt)
+-v verbose listing of inline files       -y show why a target will be updated
+-z do not erase files (no prompt)
 -l <logfile>    append output to logfile
 -f <filename>   process filename instead of MAKEFILE ('-f -' means stdin)
 macro=text      overrides the definition of 'macro' with the value 'text'
@@ -42,7 +43,7 @@ target          specifies a target to make (default is first target)
 -p 依存規制、ﾏｸﾛの定義、拡張ｲﾝﾌｫﾒｰｼｮﾝなどを出力します
 -r ﾃﾞﾌｫﾙﾄ定義を無視します                 -s ｻｲﾚﾝﾄ･ﾓｰﾄﾞ(ｺﾏﾝﾄﾞを表示しません)
 -t ﾌｧｲﾙのﾀｲﾑ･ｽﾀﾝﾌﾟを更新します(ｺﾏﾝﾄﾞを実行しません)
--v verbose listing of inline file
+-v verbose listing of inline file         -y show why a target will be updated
 -z ﾌｧｲﾙを消しません(確認しません)
 -l <logfile>  ﾛｸﾞ･ﾌｧｲﾙに出力を追加します
 -f <filename>  MAKEFILEの代りにﾌｧｲﾙfilenameを処理します('-f -'は標準入力です)
