@@ -25,6 +25,9 @@ sys_windowed = 1
 ext = obj
 OBJECTS = $+$(template)$-
 
+!ifeq release 0
+OBJECTS += debuglog.obj
+!endif
 !ifeq browse_trmem 1
 OBJECTS += dmem.obj trmem.obj
 !else
