@@ -85,8 +85,11 @@ static char hooked = 0;
 static char has_wgod_emu = 0;
 
 static char FPArea[128];
-#if 0
+#if 0 /* the D16INFO typedef is so far, unknown */
 char __hook387( D16INFO __far *_d16infop )
+#else
+char __hook387( void __far *_d16infop )
+#endif
 /****************************************/
 {
     char        iswin;
@@ -108,8 +111,10 @@ char __hook387( D16INFO __far *_d16infop )
             _dos_setvect( 7,
                         (void (__interrupt *)(void))(void (__near *)
                                 (void))&__int7 );
+#if 0
             _d16infop->has_87 = 1;              /* enable emulator */
             _d16infop->MSW_bits |= EMULATING_87;
+#endif
             putcr0( getcr0() | EMULATING_87 );
             gorealmode();
             hooked = 1;
@@ -118,7 +123,11 @@ char __hook387( D16INFO __far *_d16infop )
     return( 0 );
 }
 
+#if 0 /* the D16INFO typedef is so far, unknown */
 char __unhook387( D16INFO __far *_d16infop )
+#else
+char __unhook387( void __far *_d16infop )
+#endif
 /******************************************/
 {
     if( has_wgod_emu ) {
@@ -126,11 +135,16 @@ char __unhook387( D16INFO __far *_d16infop )
         int2f( 0x1f, 0, 0, 0 );         /* emu shutdown */
         return( 1 );
     } else if( hooked ) {
+#if 0
         _d16infop->has_87 = 0;  /* disable emulator */
         _d16infop->MSW_bits &= ~EMULATING_87;
+#endif
         putcr0( getcr0() & ~EMULATING_87 );
         gorealmode();
     }
     return( 0 );
 }
-#endif
+
+
+
+

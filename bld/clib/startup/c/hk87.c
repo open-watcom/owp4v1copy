@@ -84,9 +84,9 @@ void __far __unhook8087()
     }
 
 #define EMULATING_87 4
-#if 0
 int D16Emulate( int enable_flag )
     {
+#if 0 /* d16info structure is not known */
         if( enable_flag ) {
             /* Tell the kernel that we are now emulating the 80x87 */
             _d16info.has_87 = 1;
@@ -95,6 +95,10 @@ int D16Emulate( int enable_flag )
             _d16info.has_87 = 0;
             _d16info.MSW_bits &= ~EMULATING_87;
         }
+#endif
         return(1);
     }
-#endif
+
+
+
+
