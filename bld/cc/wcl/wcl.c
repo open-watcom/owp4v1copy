@@ -336,16 +336,27 @@ void  main()
     exit( rc == 0 ? 0 : 1 );
 }
 
-
 static char *ScanFName( char *end, int len )
 {
+    int quoted;
+
+    if( *Word == '=' ) {
+        quoted = ( *(Word + 1) == '"' );
+    } else {
+        quoted = ( *Word == '"' );
+    }
+    quoted ^= ( *(end - 1) == '"' );
     for(;;) {   /* 15-jan-89: Allow '-' in filenames */
         if( *end == '\0' ) break;
-        if( *end == ' '  ) break;
-        if( *end == '\t'  ) break;                  /* 16-mar-91 */
+        if( !quoted ) {
+            if( *end == ' '  ) break;
+            if( *end == '\t'  ) break;                  /* 16-mar-91 */
 #ifndef __UNIX__
-        if( *end == Switch_Chars[1] ) break;
+            if( *end == Switch_Chars[1] ) break;
 #endif
+        } else if( *end == '"'  ) {
+            quoted = 0;
+        }
         Word[ len ] = *end;
         ++len;
         ++end;
@@ -438,6 +449,7 @@ static  int  Parse( void )
             if( opt == ' ' ) {          /* if filename, add to list */
                 strncpy( Word, Cmd, len );
                 Word[ len ] = NULLCHAR;
+                end = ScanFName( end, len );
                 if( FileExtension( Word, ".lib" ) ) {
                     strcat( Libs, Libs[0] != '\0' ? "," : " " );
                     strcat( Libs, Word );
@@ -737,6 +749,7 @@ static  int  CompLink( void )
 {
     int         rc;
     char        *p;
+    char        *end;
     char        *file;
     char        *path;
     char        *cc_name;
@@ -794,8 +807,17 @@ static  int  CompLink( void )
     }
 
     errors_found = 0;                   /* 21-jan-92 */
-    p = strtok( Files, " " );           /* get first filespec */
-    while( p != NULL ) {
+    p = Files;
+    while( *p != '\0' ) {
+        if( *p == '"' ) {
+            end = strpbrk(++p, "\"");        /* get quoted filespec */
+        } else {
+            end = strpbrk(p, " ");         /* get filespec */
+        }
+        if( end != NULL ) {
+            *(end++) = 0;
+            if( *end == ' ' ) end++;
+        }
         strcpy( Word, p );
         cc_name = SrcName( Word );      /* if no extension, assume .c */
 
@@ -831,7 +853,7 @@ static  int  CompLink( void )
             }
             file = GetName( NULL );     /* get next filename */
         }
-        p = strtok( NULL, " " );        /* get next filespec */
+        p = end;        /* get next filespec */
     }
     if( errors_found )  return( 1 );            /* 21-jan-92 */
     BuildLinkFile();
