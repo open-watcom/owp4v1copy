@@ -7,6 +7,7 @@ proj_name = dip
 dip_autodepends = .autodepend
 
 !include cproj.mif
+!include deftarg.mif
 !include defrule.mif
 
 sys_nt_386_javavm       = op offset=0x6e800000
@@ -67,6 +68,3 @@ $(exe_name) : $(objs) $(imp_libs) $(__MAKEFILES__)
                 name $^@ &
                 file {$(objs)} &
                 library {$(clib_$(host_os)_$(host_cpu)) $(imp_libs)}
-
-clean: .SYMBOLIC
-    rm -f *.obj *.dll *.dip *.d32 *.map *.sym *.err

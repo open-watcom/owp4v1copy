@@ -56,8 +56,8 @@ memory_model_386 = s
 !endif
 
 !include cproj.mif
-!include defrule.mif
 !include deftarg.mif
+!include defrule.mif
 
 !ifeq which SERVER
 !include $(trap_dir)/serv.mif

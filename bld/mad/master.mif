@@ -14,6 +14,7 @@ memory_model_386 = s
 !endif
 
 !include cproj.mif
+!include deftarg.mif
 !include defrule.mif
 
 name = mad$(mad)
@@ -86,6 +87,3 @@ $(exe_name) : eraseall.obj $(objs)
 eraseall.obj : ../compile.gbl ../../compile.gbl $(extra_gbls)
         rm -f *.obj
         wtouch eraseall.obj
-
-clean: .SYMBOLIC
-        rm -f *.obj *.dll *.d32 *.mad *.err *.map *.sym mem.trk
