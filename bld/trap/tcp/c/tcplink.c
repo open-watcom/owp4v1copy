@@ -156,6 +156,12 @@ static unsigned FullGet( void *get, unsigned len )
     for( ;; ) {
         rec = recv( data_socket, get, len, 0 );
         if( die || rec == (unsigned)-1 ) return( REQUEST_FAILED );
+#if defined(__OS2__)
+        /* OS/2 TCP/IP docs say that return value of 0 indicates closed
+         * connection; this is unlike other TCP/IP implementations.
+         */
+        if( rec == 0 ) return( REQUEST_FAILED );
+#endif
         len -= rec;
         if( len == 0 ) break;
         get = (unsigned_8 *)get + rec;

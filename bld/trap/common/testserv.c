@@ -94,7 +94,7 @@ void RunTime()
     }
 }
 
-main( unsigned argc, char *argv[] )
+int main( unsigned argc, char *argv[] )
 {
     char        *err;
     unsigned    len;
@@ -108,7 +108,7 @@ main( unsigned argc, char *argv[] )
     err = RemoteLink( argc > 1 ? argv[1] : "", 1 );
     if( err != 0 ) {
         printf( "%s\n", err );
-        return;
+        return( 1 );
     }
     printf( "server running\n" );
     for( ;; ) {
@@ -131,4 +131,5 @@ main( unsigned argc, char *argv[] )
         }
     }
     RemoteUnLink();
+    return( 0 );
 }
