@@ -160,6 +160,9 @@ extra_opts_dbgzap   = -dheader="fesupp.h"
 !ifdef plusplus_dll_ptree
 extra_opts_dbgptree = -dDLL_PTREE
 !endif
+!ifeq host_OS dos
+cflags += -dIDE_PGM
+!endif
 !ifeq host_OS osi
 cflags += -dIDE_PGM
 !endif
@@ -167,25 +170,17 @@ cflags += -dIDE_PGM
 cflags += -dIDE_PGM
 !endif
 
-# WLINK system directives for the various hosts
-wlink_sys_osi_386 = osi
-wlink_sys_dos_386 = pharlap
-wlink_sys_os2_386 = os2v2
-wlink_sys_qnx_386 = qnx386 flat
-wlink_sys_nt_386  = nt
-wlink_sys_nt_axp  = ntaxp
-
 # WLINK options for the various hosts
-wlink_opt_osi = OPTION stack=64k
-wlink_opt_dos = OPTION dosseg, stack=64k, offset=64k RUNTIME unpriv
-wlink_opt_os2 = OPTION dosseg, stack=64k, offset=64k
-wlink_opt_qnx = OPTION dosseg, stack=64k, offset=72k, priv=3, resource=usage.u
-wlink_opt_nt = OPTION dosseg, stack=0x10000k, offset=64k COMMIT stack=32k
+extra_l_flags_osi = OPTION stack=64k
+extra_l_flags_dos = OPTION dosseg, stack=64k, offset=64k #RUNTIME unpriv
+extra_l_flags_os2 = OPTION dosseg, stack=64k, offset=64k
+extra_l_flags_qnx = OPTION dosseg, stack=64k, offset=72k, priv=3, resource=usage.u
+extra_l_flags_nt = OPTION dosseg, stack=0x10000k, offset=64k COMMIT stack=32k
 
 # WLINK .DLL options for the various hosts
 wlink_dll_os2_386 = OPTION manyautodata
 
-wlink_opt_common = OPTION map, caseexact, quiet
+extra_l_flags = OPTION map, caseexact, quiet
 wlink_opt_common_exe = OPTION symfile
 wlink_opt_common_drv = OPTION symfile
 !ifndef plusplus_release
@@ -273,16 +268,16 @@ depends_drv = $(pre_obj_deps) $(dlldrv_objs)
 # DOS executables
 #
 
-$(exe_dbg_name).exp : $(depends_exe) pexedbg.lnk
-    $(linker) NAME $^* @pexedbg
+$(exe_dbg_name).exe : $(depends_exe) pexedbg.lnk
+    $(linker) $(lflags) NAME $^* @pexedbg
 
 $(exe_bld_name).exe : $(depends_exe) pexebld.lnk
-    $(linker) NAME $^* @pexebld
-    $(pharlap)bind386 $(pharlap)run386b $^*
-    $(pharlap)cfig386 $^* -win30grow -win30limit +524228 -MAXVCPI 0
-!ifdef plusplus_release
-    del $^*.exp
-!endif
+    $(linker) $(lflags) NAME $^* @pexebld
+#    $(pharlap)bind386 $(pharlap)run386b $^*
+#    $(pharlap)cfig386 $^* -win30grow -win30limit +524228 -MAXVCPI 0
+#!ifdef plusplus_release
+#    del $^*.exp
+#!endif
 
 build : .symbolic $(exe_bld_name).exe
     @%null
@@ -294,7 +289,7 @@ build : .symbolic $(exe_bld_name).exe
 #
 
 $(exe_ref_name).exe : $(depends_exe) pexebld.lnk
-    $(linker) NAME $^* @pexebld
+    $(linker) $(lflags) NAME $^* @pexebld
 
 plusplus_dll = 1
 
@@ -305,10 +300,10 @@ plusplus_dll = 1
 #
 
 $(exe_dbg_name).exe : $(depends_exe) pexedbg.lnk $(tools_root)\os2ldr.exe
-    $(linker) NAME $^* @pexedbg
+    $(linker) $(lflags) NAME $^* @pexedbg
 
 $(exe_bld_name).exe : $(depends_exe) pexebld.lnk $(tools_root)\os2ldr.exe
-    $(linker) NAME $^* @pexebld
+    $(linker) $(lflags) NAME $^* @pexebld
     w32bind $^&.rex $^&.exe $(tools_root)\os2ldr.exe
     del $^&.rex
 
@@ -321,7 +316,7 @@ build : .symbolic $(exe_bld_name).exe
 #
 
 $(exe_ref_name).exe : $(depends_exe) pexebld.lnk
-    $(linker) NAME $^* @pexebld
+    $(linker) $(lflags) NAME $^* @pexebld
 
 !ifeq host_CPU 386
 
@@ -330,10 +325,10 @@ plusplus_dll = 1
 !else
 
 $(exe_dbg_name).exe : $(depends_exe) pexedbg.lnk
-    $(linker) NAME $^* @pexedbg
+    $(linker) $(lflags) NAME $^* @pexedbg
 
 $(exe_bld_name).exe : $(depends_exe) pexebld.lnk
-    $(linker) NAME $^* @pexebld
+    $(linker) $(lflags) NAME $^* @pexebld
 
 build : .symbolic $(exe_bld_name).exe
     @%null
@@ -349,10 +344,10 @@ build : .symbolic $(exe_bld_name).exe
 pre_obj_deps += usage.u
 
 $(exe_dbg_name).qnx : $(depends_exe) pexedbg.lnk
-    $(linker) NAME $^* @pexedbg
+    $(linker) $(lflags) NAME $^* @pexedbg
 
 $(exe_bld_name).qnx : $(depends_exe) pexebld.lnk
-    $(linker) NAME $^* @pexebld
+    $(linker) $(lflags) NAME $^* @pexebld
 !ifdef plusplus_release
     serialize $(exe_bld_name).qnx wpp
 !endif
@@ -369,6 +364,7 @@ build : .symbolic $(exe_bld_name).qnx
 #
 # Common for all systems with DLLs
 #
+lflags_dll = $(mode_lflags) $(lflags_$(host_OS)_$(host_CPU)) dll initinstance terminstance $(extra_l_flags_$(host_OS)) $(extra_l_flags)
 
 # systems where version resources must be added to .DLL
 build_rc_nt_386 = nt
@@ -377,13 +373,13 @@ build : .symbolic $(exe_bld_name).exe $(dll_bld_name).dll
     @%null
 
 $(exe_bld_name).exe : $(depends_drv) pdrvbld.lnk $(dll_bld_name).lib
-    $(linker) NAME $^* @pdrvbld
+    $(linker) $(lflags) NAME $^* @pdrvbld
 
 $(dll_bld_name).lib : $(dll_bld_name).dll
     $(librarian) -b-q-n $^@ +$[@
 
 $(dll_bld_name).dll : $(depends_dll) pdllbld.lnk
-    $(linker) NAME $^* @pdllbld
+    $(linker) $(lflags_dll) NAME $^* @pdllbld
 !ifdef build_rc_$(host_OS)_$(host_CPU)
     $(bld_cl) $(fe_misc_dir)\c\genverrc.c $(wcl_util_opts) -d_VERSION=$(bld_ver)
     genverrc ..\rc\r_$(host_OS)$(host_CPU).rc plusplus.rc $$ $^@ $(patch_level)
@@ -392,13 +388,13 @@ $(dll_bld_name).dll : $(depends_dll) pdllbld.lnk
 !endif
 
 $(exe_dbg_name).exe : $(depends_drv) pdrvdbg.lnk $(dll_dbg_name).lib
-    $(linker) NAME $^* @pdrvdbg
+    $(linker) $(lflags) NAME $^* @pdrvdbg
 
 $(dll_dbg_name).lib : $(dll_dbg_name).dll
     $(librarian) -b-q-n $^@ +$[@
 
 $(dll_dbg_name).dll : $(depends_dll) pdlldbg.lnk
-    $(linker) NAME $^* @pdlldbg
+    $(linker) $(lflags_dll) NAME $^* @pdlldbg
 
 !endif
 
@@ -422,10 +418,7 @@ $(dll_dbg_name).dll : $(depends_dll) pdlldbg.lnk
 #
 pexe.lnk : $(__MAKEFILES__)
     %create $^@
-    @%append $^@ SYSTEM $(wlink_sys_$(host_OS)_$(host_CPU))
     @%append $^@ $(wlink_dbgfmt)
-    @%append $^@ $(wlink_opt_$(host_OS))
-    @%append $^@ $(wlink_opt_common)
     @%append $^@ $(wlink_opt_common_exe)
     @for %i in ($(comp_objs_exe)) do @%append $^@ file %i
     @%append $^@ library $(dwarf_dw_lib)
@@ -454,10 +447,7 @@ pexedbg.lnk : pexe.lnk
 #
 pdrv.lnk : $(__MAKEFILES__)
     %create $^@
-    @%append $^@ SYSTEM $(wlink_sys_$(host_OS)_$(host_CPU))
     @%append $^@ $(wlink_dbgfmt)
-    @%append $^@ $(wlink_opt_$(host_OS))
-    @%append $^@ $(wlink_opt_common)
     @%append $^@ $(wlink_opt_common_drv)
     @for %i in ($(dlldrv_objs)) do @%append $^@ file %i
 
@@ -482,11 +472,8 @@ pdrvdbg.lnk : pdrv.lnk
 #
 pdll.lnk : $(__MAKEFILES__)
     %create $^@
-    @%append $^@ SYSTEM $(wlink_sys_$(host_OS)_$(host_CPU)) dll initinstance terminstance
     @%append $^@ $(wlink_dbgfmt)
     @%append $^@ $(wlink_dll_$(host_OS)_$(host_CPU))
-    @%append $^@ $(wlink_opt_$(host_OS))
-    @%append $^@ $(wlink_opt_common)
     @%append $^@ $(wlink_opt_common_dll)
     @for %i in ($(comp_objs_dll)) do @%append $^@ file %i
     @%append $^@ library $(dwarf_dw_lib)
