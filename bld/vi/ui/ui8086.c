@@ -183,7 +183,7 @@ static void setColorRegister( int reg, rgb *c )
  */
 static void getColorPalette( char *p )
 {
-#if !defined( __386__ ) || defined( __OS2__ ) /* || defined( __4G__ ) */
+#if defined( __I86__ ) || defined( __OS2__ ) /* || defined( __4G__ ) */
     BIOSGetColorPalette( p );
 #else
     p = p;
