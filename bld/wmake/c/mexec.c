@@ -1098,7 +1098,7 @@ STATIC RET_T handleIf( const char *cmd )
     *end1 = NULLCHAR;
     if( stricmp( tmp1, "ERRORLEVEL" ) == 0 ) {
         *p = NULLCHAR;
-        condition = lastErrorLevel >= atoi( tmp2 );
+        condition = ( lastErrorLevel >= atoi( tmp2 ) );
     } else if( stricmp( tmp1, "EXIST" ) == 0 ) {
         char tmp3[_MAX_PATH];
 
@@ -1108,16 +1108,15 @@ STATIC RET_T handleIf( const char *cmd )
         RemoveDoubleQuotes( tmp3, sizeof(tmp3), tmp2 );
 
         file = DoWildCard( tmp3 );
-        condition = file != NULL && CacheExists( file );
-        if( condition ) {
-            while( DoWildCard( NULL ) != NULL )
-                ;           /* eat rest of entries */
-        }
+        condition = ( ( file != NULL ) && CacheExists( file ) );
+        /* abandon rest of entries if any */
+        DoWildCardClose();
     } else {
         *end1 = save;
         p = end1;           /* back up to end of 1st token */
         for( ;; ) {
-            while( *p != NULLCHAR && *p != '=' ) ++p;
+            while( ( *p != NULLCHAR ) && ( *p != '=' ) )
+                ++p;
             if( *p == NULLCHAR ) {
                 PrtMsg( ERR| SYNTAX_ERROR_IN, dosInternals[ COM_IF ] );
                 return( RET_ERROR );
@@ -1351,14 +1350,14 @@ STATIC RET_T handleFor( const char *line )
                 lastlen = newlen;
             }
 
-                        /* make variable substitutions */
+            /* make variable substitutions */
             doForSubst( var, varlen, subst, cmd, exec );
 
             if( execLine( exec ) != RET_SUCCESS ) {
                 FreeSafe( exec );
                 busy = FALSE;
-                while( DoWildCard( NULL ) != NULL )  /* eat remaining files */
-                    ;
+                /* abandon remaining file entries */
+                DoWildCardClose();
                 return( RET_ERROR );
             }
 
@@ -1529,17 +1528,21 @@ STATIC RET_T handleRM( const char *cmdname, const char *cmd )
     if( RET_SUCCESS == rt ) {
         do {
             if( strpbrk( pfname, WILD_METAS ) == NULL ) {
-                if( !doRM( pfname, &flags ) )
+                if( !doRM( pfname, &flags ) ) {
                     return( RET_ERROR );
+                }
             } else {
                 const char    *dfile;
 
                 dfile = DoWildCard( pfname );
-                if( dfile && strcmp( dfile, pfname ) ) {
+                if( ( dfile != NULL ) && strcmp( dfile, pfname ) ) {
                     do {
-                        if( !doRM( dfile, &flags ) )
+                        if( !doRM( dfile, &flags ) ) {
+                            /* abandon rest of entries */
+                            DoWildCardClose();
                             return( RET_ERROR );
-                    } while( dfile = DoWildCard( NULL ) );
+                        }
+                    } while( ( dfile = DoWildCard( NULL ) ) != NULL );
                 }
             }
         } while( RET_SUCCESS == ( rt = getRMArgs( NULL, NULL, &pfname ) ) );

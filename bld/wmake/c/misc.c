@@ -45,10 +45,6 @@
 #include "mtypes.h"
 #include "mlex.h"
 
-#if ! defined(__UNIX__)
- #define CHECK_MASK( attr ) if((attr & IGNORE_MASK)==0) break
-#endif
-
 static ENV_TRACKER *envList;
 
 extern char *SkipWS( const char *p )
@@ -198,6 +194,12 @@ extern int FNameCmp( const char *a, const char *b )
     return( strcmp( a, b ) );
 }
 
+extern int FNameCmpChr( char a, char b )
+/*************************************************/
+{
+    return( a - b );
+}
+
 
 #ifdef USE_FAR
 extern int _fFNameCmp( const char FAR *a, const char FAR *b )
@@ -244,6 +246,12 @@ extern int FNameCmp( const char *a, const char *b )
     return( stricmp( a, b ) );
 }
 
+extern int FNameCmpChr( char a, char b )
+/*************************************************/
+{
+    return( tolower( a ) - tolower( b ) );
+}
+
 
 #ifdef USE_FAR
 extern int _fFNameCmp( const char FAR *a, const char FAR *b )
@@ -268,6 +276,12 @@ extern int FNameCmp( const char *a, const char *b )
     return( strcmp( a, b ) );
 }
 
+extern int FNameCmpChr( char a, char b )
+/*************************************************/
+{
+    return( a - b );
+}
+
 #ifdef USE_FAR
 extern int _fFNameCmp( const char FAR *a, const char FAR *b )
 /***********************************************************/
@@ -278,6 +292,88 @@ extern int _fFNameCmp( const char FAR *a, const char FAR *b )
 
 #endif
 
+
+#define IS_WILDCARD_CHAR( x ) ( ( *x == '*' ) || ( *x == '?' ) )
+
+int __fnmatch( char *pattern, char *string )
+/******************************************/
+// OS specific compare function FNameCmpChr 
+// must be used for file names
+{
+    char    *p;
+    int     len;
+    int     star_char;
+    int     i;
+
+    /*
+     * check pattern section with wildcard characters
+     */
+    star_char = 0;
+    while( IS_WILDCARD_CHAR( pattern ) ) {
+        if( *pattern == '?' ) {
+            if( *string == 0 )
+                return( 0 );
+            string++;
+        } else {
+            star_char = 1;
+        }
+        pattern++;
+    }
+    if( *pattern == 0 ) {
+        if( ( *string == 0 ) || star_char ) {
+            return( 1 );
+        } else {
+            return( 0 );
+        }
+    }
+    /*
+     * check pattern section with exact match
+     * ( all characters except wildcards )
+     */
+    p = pattern;
+    len = 0;
+    do {
+        if( star_char ) {
+            if( string[ len ] == 0 )
+                return( 0 );
+            len++;
+        } else {
+            if( FNameCmpChr( *pattern, *string ) != 0 )
+                return( 0 );
+            string++;
+        }
+        pattern++;
+    } while( *pattern && !IS_WILDCARD_CHAR( pattern ) );
+    if( star_char == 0 ) {
+        /*
+         * match is OK, try next pattern section
+         */
+        return( __fnmatch( pattern, string ) );
+    } else {
+        /*
+         * star pattern section, try locate exact match
+         */
+        while( *string ) {
+            if( FNameCmpChr( *p, *string ) == 0 ) {
+                for( i = 1; i < len; i++ ) {
+                    if( FNameCmpChr( *( p + i ), *( string + i ) ) != 0 ) {
+                        break;
+                    }
+                }
+                if( i == len ) {
+                    /*
+                     * if rest doesn't match, find next occurence
+                     */
+                    if( __fnmatch( pattern, string + len ) ) {
+                        return( 1 );
+                    }
+                }
+            }
+            string++;
+        }
+        return( 0 );
+    }
+}
 
 /*
  * THIS FUNCTION IS NOT RE-ENTRANT!
@@ -299,12 +395,14 @@ extern int _fFNameCmp( const char FAR *a, const char FAR *b )
  * DoWildCard returns null.
  *
  */
+
+static DIR      *parent = NULL;  /* we need this across invocations */
+static char     *path = NULL;
+static char     *pattern = NULL;
+
 extern const char *DoWildCard( const char *base )
 /***********************************************/
 {
-    static DIR      *parent = NULL;  /* we need this across invocations */
-    static char     *path = NULL;
-
     PGROUP          *pg;
     struct dirent   *entry;
 
@@ -314,7 +412,10 @@ extern const char *DoWildCard( const char *base )
             FreeSafe( path );
             path = NULL;            /* 1-jun-90 AFS */
         }
-
+        if( pattern != NULL ) {
+            FreeSafe( pattern );
+            pattern = NULL;
+        }
         if( parent != NULL ) {
             closedir( parent );
             parent = NULL;          /* 1-jun-90 AFS */
@@ -323,14 +424,25 @@ extern const char *DoWildCard( const char *base )
         if( strpbrk( base, WILD_METAS ) == NULL ) {
             return( base );
         }
+        // create directory name and pattern
+        path = MallocSafe( _MAX_PATH );
+        pattern = MallocSafe( _MAX_PATH );
+        strcpy( path, base );
+        FixName( path );
+        pg = SplitPath( path );
+        _makepath( path, pg->drive, pg->dir, ".", NULL );
+        // create file name pattern
+        _makepath( pattern, NULL, NULL, pg->fname, pg->ext );
+        DropPGroup( pg );
 
-        parent = opendir( base );
+        parent = opendir( path );
         if( parent == NULL ) {
+            FreeSafe( path );
+            path = NULL;
+            FreeSafe( pattern );
+            pattern = NULL;
             return( base );
         }
-
-        path = MallocSafe( _MAX_PATH );
-        strcpy( path, base );
     }
 
     if( parent == NULL ) {
@@ -340,18 +452,26 @@ extern const char *DoWildCard( const char *base )
     assert( path != NULL && parent != NULL );
 
     entry = readdir( parent );
-#ifdef CHECK_MASK
     while( entry != NULL ) {
-        CHECK_MASK( entry->d_attr );
+#ifndef __UNIX__
+        if( ( entry->d_attr & IGNORE_MASK ) == 0 ) {
+#endif
+            if( __fnmatch( pattern, entry->d_name ) ) {
+                break;
+            }
+#ifndef __UNIX__
+        }
+#endif
         entry = readdir( parent );
     }
-#endif
     if( entry == NULL ) {
         closedir( parent );
         parent = NULL;
         FreeSafe( path );
         path = NULL;                    /* 1-jun-90 AFS */
-        return( NULL );
+        FreeSafe( pattern );
+        pattern = NULL;
+        return( base );
     }
 
     pg = SplitPath( path );
@@ -359,6 +479,23 @@ extern const char *DoWildCard( const char *base )
     DropPGroup( pg );
 
     return( path );
+}
+
+extern void DoWildCardClose( void )
+/*********************************/
+{
+    if( path != NULL ) {
+        FreeSafe( path );
+        path = NULL;
+    }
+    if( pattern != NULL ) {
+        FreeSafe( pattern );
+        pattern = NULL;
+    }
+    if( parent != NULL ) {
+        closedir( parent );
+        parent = NULL;
+    }
 }
 
 
