@@ -1,4 +1,5 @@
-diproj_name = plusplus
+proj_name = plusplus
+
 plusplus_autodepends = .autodepend
 
 # Important! The C++ compiler modifies string literals
