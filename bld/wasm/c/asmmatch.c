@@ -132,7 +132,7 @@ static int output( int i )
         case T_REPNZ:
         case T_REPNE:
             if( ins->allowed_prefix != REPxx ) {
-                AsmError( REP_PREFIX_IS_NOT_ALLOWED_ON_THIS_INSTRUCTION );
+                AsmError( REPX_PREFIX_IS_NOT_ALLOWED_ON_THIS_INSTRUCTION );
                 return( ERROR );
             }
             break;

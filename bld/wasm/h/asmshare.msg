@@ -298,3 +298,6 @@ pick( ONLY_SHORT_AND_NEAR_DISPLACEMENT_IS_ALLOWED,
 pick( MISSING_PTR_OPERATOR,
                                 "Missing 'PTR' operator" ,
                                 "Missing 'PTR' operator" )
+pick( REPX_PREFIX_IS_NOT_ALLOWED_ON_THIS_INSTRUCTION,
+                                "REPZ, REPNZ, REPE or REPNE prefix is not allowed on this instruction" ,
+                                "REPZ, REPNZ, REPE or REPNE prefix is not allowed on this instruction" )
