@@ -125,18 +125,18 @@ static void Sort( void **vec, int n, bool (*lt)( void *, void *) )
     }
 }
 
-static bool itemlt( a, b )
-  an_item *a, *b;
+static bool itemlt( void *_a, void *_b )
 {
+    an_item *a = _a;
+    an_item *b = _b;
+
     if( a->p.sym )
         return( b->p.sym && a[0].p.sym > b[0].p.sym );
     else
         return( b->p.sym || a[1].p.pro > b[1].p.pro );
 }
 
-static void Complete( x, s )
-  a_state *x;
-  an_item **s;
+static void Complete( a_state *x, an_item **s )
 {
     an_item **p, **q;
     a_reduce_action *rx;
