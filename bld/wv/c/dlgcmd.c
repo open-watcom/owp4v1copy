@@ -54,6 +54,7 @@ extern bool             DlgHistoryKey( gui_window *gui, void *param, int edit, i
 extern void             DlgClickHistory( gui_window *gui, int edit, int list );
 extern void             SymComplete( gui_window *gui, int id );
 extern void             DoCmd(char*);
+extern char             *DupStr(char*);
 
 extern char             *TxtBuff;
 extern void             *CmdHistory;
