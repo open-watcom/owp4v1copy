@@ -257,7 +257,7 @@ int CheckParms( int *pargc, char **pargv[] )
     argc = *pargc;
     argv = *pargv;
     if( argc != 6 ) {
-        printf( "Usage: MKDISK [-x] <version> <size> <file_list> <pack_dir> <rel_root>\n" );
+        printf( "Usage: mkdisk [-x] <version> <size> <file_list> <pack_dir> <rel_root>\n" );
         return( FALSE );
     }
     Version = argv[ 1 ];
@@ -296,15 +296,15 @@ int ReadList( FILE *fp )
 //======================
 
 {
-    char                *path;
-    char                *old_path;
-    char                *file;
-    char                *rel_fil;
-    char                *condition;
-    char                *patch;
-    char                *dst_var;
-    char                buf[ 512 ];
-    char                redist;
+    char        *path;
+    char        *old_path;
+    char        *file;
+    char        *rel_fil;
+    char        *condition;
+    char        *patch;
+    char        *dst_var;
+    char        buf[ 512 ];
+    char        redist;
     int         no_error;
 
     printf( "checking files" );
@@ -312,7 +312,7 @@ int ReadList( FILE *fp )
     while( fgets( buf, sizeof( buf ), fp ) != NULL ) {
         buf[ strlen( buf ) - 1 ] = '\0';
         redist = buf[0];
-        path = strtok( buf+1, " \t" );
+        path = strtok( buf + 1, " \t" );
         old_path = strtok( NULL, " \t" );
         if( stricmp( path, old_path ) == 0 ) old_path = NULL;
         file = strtok( NULL, " \t" );
@@ -320,6 +320,10 @@ int ReadList( FILE *fp )
         patch = strtok( NULL, " \t" );
         dst_var = strtok( NULL, " \t" );
         condition = strtok( NULL, "\0" ); // rest of line
+	if( condition == NULL ) { // no packfile
+            condition = dst_var;
+            dst_var = ".";
+	}
         while( *condition == ' ' ) ++condition;
         while( *dst_var == ' ' ) ++dst_var;
         if( strcmp( dst_var, "." ) == 0 ) {
@@ -416,8 +420,10 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
     } else {
         cmp_size = stat_buf.st_size;
     }
-//    printf( "\r%s                              \r", file );
-//    fflush( stdout );
+#if 0
+    printf( "\r%s                              \r", file );
+    fflush( stdout );
+#endif    
     act_size = RoundUp( act_size, 512 );
     cmp_size = RoundUp( cmp_size, BlockSize );
 

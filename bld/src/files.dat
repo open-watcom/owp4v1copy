@@ -6,7 +6,7 @@
 [ INCLUDE <DEVDIR>\src\WIN\files.dat ]
 [ INCLUDE <DEVDIR>\src\STARTUP\files.dat ]
 [ INCLUDE <DEVDIR>\src\MISC\files.dat ]
-[ INCLUDE <DEVDIR>\src\OS2\files.dat ]
+#[ INCLUDE <DEVDIR>\src\OS2\files.dat ] // Missing?!
 
 # CPPLIB\CONTAIN source code
 [ DEFAULT type="s" dir="src\cpplib\contain" cond="rtsource" where="c jc f77 jf77 ac" ]

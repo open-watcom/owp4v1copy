@@ -1,4 +1,4 @@
-# Online help section of LANG11.DAT
+# Online help section of lang.dat
 
 [ DEFAULT type="s" dir="binw" cond="win16_helpfiles helpfiles" ]
 #-----------------------------------------------------------------------------
@@ -13,12 +13,12 @@ usr="isvfor.hlp"	where="f77 jf77"		desc="fortran isv help"
 #-----------------------------------------------------------------------------
 # windows help files - English, which have japanese translations
 #-----------------------------------------------------------------------------
-[ INCLUDE win16eng.dat ]
+#[ INCLUDE win16eng.dat ]
 
 #-----------------------------------------------------------------------------
 # japanese windows help files
 #-----------------------------------------------------------------------------
-[ INCLUDE win16jap.dat ]
+#[ INCLUDE win16jap.dat ]
 
 #-----------------------------------------------------------------------------
 # win32 help files - all languages
@@ -34,12 +34,12 @@ usr="ime32wh.hlp"	where="jc jf77" 	desc="Input Method Editor Help"
 #-----------------------------------------------------------------------------
 # win32 help files - English, which have japanese translations
 #-----------------------------------------------------------------------------
-[ INCLUDE win32eng.dat ]
+#[ INCLUDE win32eng.dat ]
 
 #-----------------------------------------------------------------------------
 # Japanese win32 help files
 #-----------------------------------------------------------------------------
-[ INCLUDE win32jap.dat ]
+#[ INCLUDE win32jap.dat ]
 
 
 #-----------------------------------------------------------------------------
