@@ -61,6 +61,27 @@ int FileExists( char *name )
             if( en == EACCES )  {
                 return( ERR_READ_ONLY_FILE );
             }
+            if ( en == EIO ) {
+                /*
+                 * Trying to open file as writable in read only network share will cause EIO, so
+                 * try to open it as read only to determine that share is read only.
+                 */
+                i = open( name, O_RDONLY | O_BINARY, 0 );
+                if( i == - 1 ) {
+                    en = errno;
+                    if( en == -1 ) {
+                        en = ENOENT;    /* CLIB BUG in OS2 libraries */
+                    }
+                    if( en == EMFILE ) {
+                        closeAFile();
+                    }
+                    return( ERR_FILE_OPEN );
+                } else {
+                    /* If got owe did success now open file, report it as a read only */
+                    close( i );
+                    return( ERR_READ_ONLY_FILE );
+                }
+            }
             if( en != EMFILE ) {
                 return( ERR_FILE_OPEN );
             }
