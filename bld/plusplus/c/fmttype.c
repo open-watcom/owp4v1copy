@@ -30,8 +30,6 @@
 ****************************************************************************/
 
 
-#include <stdlib.h>
-
 #include "plusplus.h"
 #include "stringl.h"
 #include "stack.h"

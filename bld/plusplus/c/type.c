@@ -33,13 +33,12 @@
 /*
 TYPE: C++ type system
 */
+#include "plusplus.h"
+
 #include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
 #include <stdarg.h>
 #include <assert.h>
 
-#include "plusplus.h"
 #include "memmgr.h"
 #include "errdefns.h"
 #include "ptree.h"

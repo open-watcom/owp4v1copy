@@ -30,12 +30,11 @@
 ****************************************************************************/
 
 
-#include <string.h>
-#include <stdlib.h>
+#include "plusplus.h"
+
 #include <stdio.h>
 #include <errno.h>
 
-#include "plusplus.h"
 #include "memmgr.h"
 #include "errdefns.h"
 #include "scan.h"

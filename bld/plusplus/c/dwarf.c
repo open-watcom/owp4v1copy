@@ -30,10 +30,11 @@
 ****************************************************************************/
 
 
+#include "plusplus.h"
+
 #include <setjmp.h>
 #include <assert.h>
 
-#include "plusplus.h"
 #include "preproc.h"
 #include "errdefns.h"
 #include "cgfront.h"

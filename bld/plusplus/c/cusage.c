@@ -30,11 +30,11 @@
 ****************************************************************************/
 
 
+#include "plusplus.h"
+
 #include <conio.h>
 #include <unistd.h>
-#include <stdlib.h>
 
-#include "plusplus.h"
 #include "cusage.h"
 #include "errdefns.h"
 

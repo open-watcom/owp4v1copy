@@ -30,8 +30,6 @@
 ****************************************************************************/
 
 
-#include <stdlib.h>
-
 #include "plusplus.h"
 #include "errdefns.h"
 #include "pragdefn.h"

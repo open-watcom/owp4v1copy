@@ -30,9 +30,10 @@
 ****************************************************************************/
 
 
-#include <stdlib.h>
-#include <limits.h>
 #include "plusplus.h"
+
+#include <limits.h>
+
 #include "cgfront.h"
 #include "errdefns.h"
 #include "stringl.h"

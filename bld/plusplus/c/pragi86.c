@@ -30,9 +30,10 @@
 ****************************************************************************/
 
 
+#include "plusplus.h"
+
 #include <stddef.h>
 
-#include "plusplus.h"
 #include "toggle.h"
 #include "pragdefn.h"
 

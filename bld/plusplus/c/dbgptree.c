@@ -32,10 +32,10 @@
 
 #ifndef DLL_PTREE
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "plusplus.h"
+
+#include <stdio.h>
+
 #include "memmgr.h"
 #include "cgfront.h"
 #include "carve.h"
@@ -645,10 +645,10 @@ void DbgPrintPTREEtyped(        // PRINT BEAUTIFUL PTREE, WITH TYPES
 
 #else
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "plusplus.h"
+
+#include <stdio.h>
+
 #include "cgfront.h"
 #include "carve.h"
 #include "ring.h"

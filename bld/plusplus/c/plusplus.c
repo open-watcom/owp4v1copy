@@ -28,19 +28,17 @@
 *
 ****************************************************************************/
 
+#include "plusplus.h"
 
-#include <string.h>
 #include <signal.h>
 #include <process.h>
 #include <ctype.h>
-#include <stdlib.h>
 #include <setjmp.h>
 #include <unistd.h>
 #include <limits.h>
 #include <fcntl.h>
 #include <malloc.h>
 
-#include "plusplus.h"
 #include "scan.h"
 #include "memmgr.h"
 #include "stats.h"

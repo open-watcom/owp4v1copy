@@ -30,9 +30,10 @@
 ****************************************************************************/
 
 
+#include "plusplus.h"
+
 #include <limits.h>
 
-#include "plusplus.h"
 #include "preproc.h"
 #include "scan.h"
 

@@ -30,9 +30,10 @@
 ****************************************************************************/
 
 
+#include "plusplus.h"
+
 #include <stdarg.h>
 
-#include "plusplus.h"
 #include "cgfront.h"
 #include "fold.h"
 #include "errdefns.h"

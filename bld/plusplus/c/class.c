@@ -34,12 +34,11 @@
 CLASS.C : handles processing of declarations within classes
 
 */
-#include <stdlib.h>
-#include <string.h>
+#include "plusplus.h"
+
 #include <malloc.h>
 #include <limits.h>
 
-#include "plusplus.h"
 #include "codegen.h"
 #include "cgfront.h"
 #include "errdefns.h"

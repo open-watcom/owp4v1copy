@@ -3,8 +3,6 @@ YYDRIVER: driver code to make use of YACC generated parser tables and support
 
 00002 - increment to force compile
 */
-#include <stdlib.h>
-#include <string.h>
 
 #include "plusplus.h"
 #include "errdefns.h"

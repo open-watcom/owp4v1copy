@@ -30,9 +30,10 @@
 ****************************************************************************/
 
 
+#include "plusplus.h"
+
 #include <stdio.h>
 
-#include "plusplus.h"
 #include "errdefns.h"
 #include "carve.h"
 #include "pcheader.h"

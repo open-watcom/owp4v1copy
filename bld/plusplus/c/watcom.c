@@ -29,9 +29,11 @@
 ****************************************************************************/
 
 
+#include "plusplus.h"
+
 #include <stdio.h>
 #include <banner.h>
-#include "plusplus.h"
+
 #include "errdefns.h"
 #include "fingprnt.h"
 

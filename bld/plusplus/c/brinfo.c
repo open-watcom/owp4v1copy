@@ -29,11 +29,10 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
-
 #include "plusplus.h"
+
+#include <stdio.h>
+#include <errno.h>
 
 #ifdef OPT_BR
 

@@ -73,50 +73,6 @@ comp_objs = $($(host_os)$(target_cpu)_objs)
 comp_objs_exe = $(comp_objs) $(exe_objs)
 comp_objs_dll = $(comp_objs) $(dll_objs)
 
-!ifeq host_cpu axp
-!ifeq release 0
-cflags += -si
-!endif
-!endif
-
-# personal modifications can be made by including a local .mif file
-!ifdef %plusplus_local_mif
-!  include $(%plusplus_local_mif)
-!else ifdef plusplus_local_mif
-!  include $(plusplus_local_mif)
-!endif
-
-!ifdef %plusplus_cflags
-cflags += $(%plusplus_cflags)
-!endif
-
-!ifdef plusplus_cflags
-cflags += $(plusplus_cflags)
-!endif
-
-!ifeq host_os osi
-cflags += -D__OS2__
-!endif
-
-# specify any unique options for modules
-!ifeq host_cpu axp
-# alpha
-!ifeq plusplus_trmem 1
-extra_c_flags_memmgr = -DTRACKER
-!endif
-!else
-# all intel
-extra_c_flags_cscan = -4r
-extra_c_flags_srcfile = -4r
-!ifeq plusplus_trmem 1
-extra_c_flags_memmgr = -of+ -DTRACKER
-!endif
-!ifeq release 1
-extra_c_flags_pcheader = -oi
-!endif
-!endif
-# all platforms
-
 !ifdef __LINUX__
 fesupp_hdr   = \"fesupp.h\"
 carvecpp_hdr = \"carvecpp.h\"
@@ -125,37 +81,232 @@ fesupp_hdr   = "fesupp.h"
 carvecpp_hdr = "carvecpp.h"
 !endif
 
+!ifeq release 0
+extra_c_flags_axp = -si
+!endif
+
+extra_c_flags_osi = -D__OS2__ -DIDE_PGM
+extra_c_flags_dos = -DIDE_PGM
+extra_c_flags_qnx = -DIDE_PGM
+extra_c_flags_linux = -DIDE_PGM
+
+extra_c_flags_analcall = -fh=pch01.pch
+extra_c_flags_analcast = -fh=pch01.pch
+extra_c_flags_analclss = -fh=pch01.pch
+extra_c_flags_analconv = -fh=pch01.pch
+extra_c_flags_analctor = -fh=pch01.pch
+extra_c_flags_anallval = -fh=pch01.pch
+extra_c_flags_analnew  = -fh=pch01.pch
+extra_c_flags_analnode = -fh=pch01.pch
+extra_c_flags_analpcnv = -fh=pch01.pch
+extra_c_flags_analretn = -fh=pch01.pch
+extra_c_flags_analtyid = -fh=pch01.pch
+extra_c_flags_analtype = -fh=pch01.pch
+extra_c_flags_analudc  = -fh=pch01.pch
+extra_c_flags_analyse  = -fh=pch01.pch
+extra_c_flags_arglist  = -fh=pch01.pch
+extra_c_flags_ascii    = -fh=pch01.pch
+extra_c_flags_asmalloc = -fh=pch01.pch
+extra_c_flags_asmdata  = -fh=pch02.pch
+extra_c_flags_asmeval  = -fh=pch02.pch
+extra_c_flags_asmexpnd = -fh=pch02.pch
+extra_c_flags_asmfixup = -fh=pch02.pch
+extra_c_flags_asmjump  = -fh=pch02.pch
+extra_c_flags_asmlabel = -fh=pch02.pch
+extra_c_flags_asmline  = -fh=pch02.pch
+extra_c_flags_asmmatch = -fh=pch02.pch
+extra_c_flags_asmscan  = -fh=pch02.pch
+extra_c_flags_asmsym   = -fh=pch02.pch
+extra_c_flags_asmmsg   = -fh=pch01.pch
+extra_c_flags_asmstmt  = -fh=pch01.pch
+extra_c_flags_asmsym   = -fh=pch02.pch
+extra_c_flags_autodep  = -fh=pch01.pch
+extra_c_flags_browsio  = -fh=pch01.pch
+extra_c_flags_calldiag = -fh=pch01.pch
+extra_c_flags_callgrph = -fh=pch01.pch
+extra_c_flags_callopt  = -fh=pch01.pch
 extra_c_flags_carve    = -Dheader=$(fesupp_hdr) -Dheader2=$(carvecpp_hdr)
-extra_c_flags_cmdlnany = -os
-extra_c_flags_idedrv   = -DSTATIC_LINKAGE
+extra_c_flags_casian   = -fh=pch01.pch
+extra_c_flags_caux     = -fh=pch01.pch
+extra_c_flags_cdopt    = -fh=pch01.pch
+extra_c_flags_cgbackhn = -fh=pch01.pch
+extra_c_flags_cgbkarel = -fh=pch01.pch
+extra_c_flags_cgbkbpos = -fh=pch01.pch
+extra_c_flags_cgbkcbak = -fh=pch01.pch
+extra_c_flags_cgbkcdpm = -fh=pch01.pch
+extra_c_flags_cgbkcgrf = -fh=pch01.pch
+extra_c_flags_cgbkclab = -fh=pch01.pch
+extra_c_flags_cgbkcmds = -fh=pch01.pch
+extra_c_flags_cgbkcond = -fh=pch01.pch
+extra_c_flags_cgbkcstb = -fh=pch01.pch
+extra_c_flags_cgbkcstk = -fh=pch01.pch
+extra_c_flags_cgbkdecl = -fh=pch01.pch
+extra_c_flags_cgbkexpr = -fh=pch01.pch
+extra_c_flags_cgbkfctl = -fh=pch01.pch
+extra_c_flags_cgbkftab = -fh=pch01.pch
+extra_c_flags_cgbkibrp = -fh=pch01.pch
+extra_c_flags_cgbklabs = -fh=pch01.pch
+extra_c_flags_cgbkmain = -fh=pch01.pch
+extra_c_flags_cgbkobin = -fh=pch01.pch
+extra_c_flags_cgbkretn = -fh=pch01.pch
+extra_c_flags_cgbkrreg = -fh=pch01.pch
+extra_c_flags_cgbkrtti = -fh=pch01.pch
+extra_c_flags_cgbkrvar = -fh=pch01.pch
+extra_c_flags_cgbkscop = -fh=pch01.pch
+extra_c_flags_cgbkstab = -fh=pch01.pch
+extra_c_flags_cgbkstrn = -fh=pch01.pch
+extra_c_flags_cgbksvar = -fh=pch01.pch
+extra_c_flags_cgbkswit = -fh=pch01.pch
+extra_c_flags_cgbkthrw = -fh=pch01.pch
+extra_c_flags_cgbktsig = -fh=pch01.pch
+extra_c_flags_cgbkutil = -fh=pch01.pch
+extra_c_flags_cgfront  = -fh=pch01.pch
+extra_c_flags_cginfo   = -fh=pch01.pch
+extra_c_flags_cginimps = -fh=pch01.pch
+extra_c_flags_cginlibs = -fh=pch01.pch
+extra_c_flags_cginmisc = -fh=pch01.pch
+extra_c_flags_cgio     = -fh=pch01.pch
+extra_c_flags_cgiobuff = -fh=pch01.pch
+extra_c_flags_cgsegid  = -fh=pch01.pch
+extra_c_flags_cgtype   = -fh=pch01.pch
+extra_c_flags_class    = -fh=pch01.pch
+extra_c_flags_cmac1    = -fh=pch01.pch
+extra_c_flags_cmac2    = -fh=pch01.pch
+extra_c_flags_cmacadd  = -fh=pch01.pch
+extra_c_flags_cmacsupp = -fh=pch01.pch
+extra_c_flags_cmdln    = -fh=pch01.pch
+extra_c_flags_cmdlnany = -os -fh=pch01.pch
+extra_c_flags_cmdlnbat = -fh=pch01.pch
+extra_c_flags_cmdlnctx = -fh=pch01.pch
+extra_c_flags_cmdlnx86 = -fh=pch01.pch
+extra_c_flags_conpool  = -fh=pch01.pch
+extra_c_flags_context  = -fh=pch01.pch
+extra_c_flags_convctl  = -fh=pch01.pch
+extra_c_flags_convdiag = -fh=pch01.pch
+extra_c_flags_cppexit  = -fh=pch01.pch
+extra_c_flags_cpragma  = -fh=pch01.pch
+extra_c_flags_cpragx86 = -fh=pch01.pch
+extra_c_flags_cscan_386 = -4r
+extra_c_flags_cscan    = $(extra_c_flags_cscan_$(host_cpu))
+extra_c_flags_ctimepc  = -fh=pch01.pch
+extra_c_flags_cusage   = -fh=pch01.pch
+extra_c_flags_datadtor = -fh=pch01.pch
+extra_c_flags_datainit = -fh=pch01.pch
+!ifdef plusplus_dll_ptree
+extra_c_flags_dbgptree = -DDLL_PTREE
+!endif
+extra_c_flags_dbgsupp  = -fh=pch01.pch
+!ifeq release 0
+extra_c_flags_dbgzap   = -Dheader=$(fesupp_hdr)
+!endif
+extra_c_flags_decl     = -fh=pch01.pch
+extra_c_flags_defarg   = -fh=pch01.pch
+extra_c_flags_dgfront  = -fh=pch01.pch
+extra_c_flags_dirgraph = -fh=pch01.pch
+extra_c_flags_dmpobjmd = -fh=pch01.pch
+extra_c_flags_dupnode  = -fh=pch01.pch
+extra_c_flags_dwarf    = -fh=pch01.pch
+extra_c_flags_dwio     = -fh=pch01.pch
+extra_c_flags_dwiobuff = -fh=pch01.pch
+extra_c_flags_dyncast  = -fh=pch01.pch
+extra_c_flags_enum     = -fh=pch01.pch
+extra_c_flags_except   = -fh=pch01.pch
+extra_c_flags_extrf86  = -fh=pch01.pch
+extra_c_flags_floatsup = -fh=pch01.pch
+extra_c_flags_fmtmsg   = -fh=pch01.pch
+extra_c_flags_fmtsym   = -fh=pch01.pch
+extra_c_flags_fmttype  = -fh=pch01.pch
+extra_c_flags_fname    = -fh=pch01.pch
+extra_c_flags_fnbody   = -fh=pch01.pch
+extra_c_flags_fnname   = -fh=pch01.pch
+extra_c_flags_fnovload = -fh=pch01.pch
+extra_c_flags_fnovrank = -fh=pch01.pch
+extra_c_flags_fold     = -fh=pch01.pch
+extra_c_flags_gstack   = -fh=pch01.pch
+extra_c_flags_hashtab  = -fh=pch01.pch
+extra_c_flags_hfile    = -fh=pch01.pch
+extra_c_flags_i64supp  = -fh=pch01.pch
+extra_c_flags_icemit   = -fh=pch01.pch
+extra_c_flags_idedll   = -fh=pch01.pch
 extra_c_flags_idedlld  = -bd
+extra_c_flags_idedrv   = -DSTATIC_LINKAGE
 extra_c_flags_initfini = -Dheader=$(fesupp_hdr) -DSPLIT_REQD
+extra_c_flags_initref  = -fh=pch01.pch
+extra_c_flags_insthash = -fh=pch02.pch
 extra_c_flags_intlload = -D__header=$(fesupp_hdr)
+extra_c_flags_iosupp   = -fh=pch01.pch
+extra_c_flags_keyword  = -fh=pch01.pch
+extra_c_flags_label    = -fh=pch01.pch
+extra_c_flags_linkage  = -fh=pch01.pch
+extra_c_flags_mainproc = -fh=pch01.pch
+extra_c_flags_membptr  = -fh=pch01.pch
+!ifeq plusplus_trmem 1
+extra_c_flags_memmgr_axp = -DTRACKER
+extra_c_flags_memmgr_ppc = -DTRACKER
+extra_c_flags_memmgr_386 = -of+ -DTRACKER
+extra_c_flags_memmgr   = $(extra_c_flags_memmgr_$(host_cpu))
+!endif
+extra_c_flags_message  = -fh=pch01.pch
+extra_c_flags_module   = -fh=pch01.pch
+extra_c_flags_name     = -fh=pch01.pch
+extra_c_flags_namspace = -fh=pch01.pch
+extra_c_flags_objmodel = -fh=pch01.pch
+extra_c_flags_opovload = -fh=pch01.pch
+!ifeq release 1
+extra_c_flags_pcheader_386 = -oi
+extra_c_flags_pcheader = $(extra_c_flags_pcheader_$(host_cpu)) -fh=pch01.pch
+!else
+extra_c_flags_pcheader = -fh=pch01.pch
+!endif
+extra_c_flags_plusplus = -fh=pch01.pch
+extra_c_flags_ppexpn   = -fh=pch01.pch
+extra_c_flags_prag386  = -fh=pch01.pch
+extra_c_flags_preproc  = -fh=pch01.pch
 extra_c_flags_pstk     = -Dheader=$(fesupp_hdr)
+extra_c_flags_ptree    = -fh=pch01.pch
+extra_c_flags_ptreedec = -fh=pch01.pch
+extra_c_flags_reposit  = -fh=pch01.pch
+extra_c_flags_rewrite  = -fh=pch01.pch
+extra_c_flags_ring     = -fh=pch01.pch
 extra_c_flags_ringfns  = -Dheader=$(fesupp_hdr)
+extra_c_flags_ringname = -fh=pch01.pch
+extra_c_flags_rtfun    = -fh=pch01.pch
+extra_c_flags_rtngen   = -fh=pch01.pch
+extra_c_flags_rtti     = -fh=pch01.pch
+extra_c_flags_scope    = -fh=pch01.pch
+extra_c_flags_segment  = -fh=pch01.pch
+extra_c_flags_specfuns = -fh=pch01.pch
+extra_c_flags_srcfile_386 = -4r
+extra_c_flags_srcfile  = $(extra_c_flags_srcfile_$(host_cpu))
+extra_c_flags_stack    = -fh=pch01.pch
+extra_c_flags_stats    = -fh=pch01.pch
+extra_c_flags_stringl  = -fh=pch01.pch
+extra_c_flags_swchar   = -fh=pch01.pch
+extra_c_flags_symbol   = -fh=pch01.pch
+extra_c_flags_symdbg   = -fh=pch01.pch
+extra_c_flags_symlocn  = -fh=pch01.pch
+extra_c_flags_sysdep   = -fh=pch01.pch
+extra_c_flags_template = -fh=pch01.pch
+extra_c_flags_tempor   = -fh=pch01.pch
+extra_c_flags_thunk    = -fh=pch01.pch
+extra_c_flags_tokenbuf = -fh=pch01.pch
+extra_c_flags_tokens   = -fh=pch01.pch
+extra_c_flags_type     = -fh=pch01.pch
+extra_c_flags_typecomp = -fh=pch01.pch
+extra_c_flags_typerank = -fh=pch01.pch
+extra_c_flags_typesig  = -fh=pch01.pch
+extra_c_flags_utility  = -fh=pch01.pch
 extra_c_flags_vbuf     = -Dheader=$(fesupp_hdr)
+extra_c_flags_vfun     = -fh=pch01.pch
 extra_c_flags_vstk     = -Dheader=$(fesupp_hdr)
+extra_c_flags_watcom   = -fh=pch01.pch
 !ifeq release 1
 extra_c_flags_wppdlldd = -DDLL_NAME=$(dll_bld_name)
 !else
 extra_c_flags_wppdlldd = -DDLL_NAME=$(dll_dbg_name)
-extra_c_flags_dbgzap   = -Dheader=$(fesupp_hdr)
 !endif
-!ifdef plusplus_dll_ptree
-extra_c_flags_dbgptree = -DDLL_PTREE
-!endif
-!ifeq host_os dos
-cflags += -DIDE_PGM
-!endif
-!ifeq host_os osi
-cflags += -DIDE_PGM
-!endif
-!ifeq host_os qnx
-cflags += -DIDE_PGM
-!endif
-!ifeq host_os linux
-cflags += -DIDE_PGM
-!endif
+extra_c_flags_wppdlldr = -fh=pch01.pch
+extra_c_flags_ytab     = -fh=pch01.pch
 
 # WLINK options for the various hosts
 extra_l_flags_osi = OPTION stack=64k

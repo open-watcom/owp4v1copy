@@ -32,12 +32,11 @@
 
 #define USE_CG_MEMMGT
 
+#include "plusplus.h"
+
 #include <stddef.h>
-#include <string.h>
-#include <stdlib.h>
 #include <unistd.h>
 
-#include "plusplus.h"
 #include "errdefns.h"
 #include "memmgr.h"
 #include "toggle.h"

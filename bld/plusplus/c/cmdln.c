@@ -30,11 +30,11 @@
 ****************************************************************************/
 
 
+#include "plusplus.h"
+
 #include <ctype.h>
-#include <string.h>
 #include <banner.h>
 
-#include "plusplus.h"
 #include "errdefns.h"
 #include "memmgr.h"
 #include "preproc.h"

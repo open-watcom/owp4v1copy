@@ -30,9 +30,6 @@
 ****************************************************************************/
 
 
-#include <stdlib.h>
-#include <string.h>
-
 #include "plusplus.h"
 #include "stats.h"
 #include "preproc.h"

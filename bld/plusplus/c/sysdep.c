@@ -30,12 +30,13 @@
 ****************************************************************************/
 
 
+#include "plusplus.h"
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 #include <stdio.h>
 
-#include "plusplus.h"
 #include "sysdep.h"
 #include "watcom.h"
 

@@ -30,10 +30,10 @@
 ****************************************************************************/
 
 
-#include <string.h>
+#include "plusplus.h"
+
 #include <assert.h>
 
-#include "plusplus.h"
 #include "errdefns.h"
 #include "fnovload.h"
 #include "cgfront.h"

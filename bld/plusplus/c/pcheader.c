@@ -29,10 +29,9 @@
 *
 ****************************************************************************/
 
+#include "plusplus.h"
 
 #include <stddef.h>
-#include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -40,7 +39,6 @@
 #include <limits.h>
 #include <share.h>
 
-#include "plusplus.h"
 #include "errdefns.h"
 #include "memmgr.h"
 #include "carve.h"

@@ -30,13 +30,12 @@
 ****************************************************************************/
 
 
+#include "plusplus.h"
+
 #include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
 #include <process.h>
 #include <malloc.h>
 
-#include "plusplus.h"
 #include "memmgr.h"
 #include "idedll.h"
 #include "wcppdll.h"

@@ -30,12 +30,11 @@
 ****************************************************************************/
 
 
-#include <stdlib.h>
-#include <string.h>
+#include "plusplus.h"
+
 #include <process.h>
 #include <limits.h>
 
-#include "plusplus.h"
 #include "preproc.h"
 #include "cgdata.h"
 #include "codegen.h"

@@ -37,6 +37,9 @@
 // 91/11/07 -- J.W.Welch        -- placed common definitions in WCCP.H
 // 92/12/29 -- B.J. Stecher     -- QNX support
 
+#include <stdlib.h>
+#include <string.h>
+
 #define ARRAY_SIZE( array ) ( sizeof( array ) / sizeof( array[0] ) )
 #define PAD_UNSIGNED unsigned :0;
 

@@ -30,13 +30,12 @@
 ****************************************************************************/
 
 
+#include "plusplus.h"
+
 #include <stdarg.h>
 #include <stddef.h>
-#include <string.h>
-#include <stdlib.h>
 #include <ctype.h>
 
-#include "plusplus.h"
 #include "tgtenv.h"
 #include "ppintnam.h"
 #include "errdefns.h"

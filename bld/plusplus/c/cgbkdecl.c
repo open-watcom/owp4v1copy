@@ -30,8 +30,6 @@
 ****************************************************************************/
 
 
-#include <string.h>
-
 #include "plusplus.h"
 #include "cgfront.h"
 #include "cgback.h"

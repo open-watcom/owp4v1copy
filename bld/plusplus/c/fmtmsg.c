@@ -30,8 +30,10 @@
 ****************************************************************************/
 
 
-#include <stdarg.h>
 #include "plusplus.h"
+
+#include <stdarg.h>
+
 #include "srcfile.h"
 #include "vbuf.h"
 #include "dbg.h"

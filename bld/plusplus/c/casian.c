@@ -29,10 +29,11 @@
 ****************************************************************************/
 
 
+#include "plusplus.h"
+
 #include <mbstring.h>
 #include <mbctype.h>
 
-#include "plusplus.h"
 #include "scan.h"
 
 #define LEAD_BYTE_INIT  ( C_DB | C_EX )

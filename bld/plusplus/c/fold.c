@@ -30,12 +30,11 @@
 ****************************************************************************/
 
 
+#include "plusplus.h"
+
 #include <stddef.h>
 #include <limits.h>
-#include <string.h>
-#include <stdlib.h>
 
-#include "plusplus.h"
 #include "errdefns.h"
 #include "ptree.h"
 #include "cgfront.h"

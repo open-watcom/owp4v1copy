@@ -30,10 +30,10 @@
 ****************************************************************************/
 
 
-#include <string.h>
+#include "plusplus.h"
+
 #include <limits.h>
 
-#include "plusplus.h"
 #include "errdefns.h"
 #include "preproc.h"
 #include "fold.h"

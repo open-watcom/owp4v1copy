@@ -30,10 +30,10 @@
 ****************************************************************************/
 
 
-#include <limits.h>
-#include <string.h>
-
 #include "plusplus.h"
+
+#include <limits.h>
+
 #include "errdefns.h"
 #include "carve.h"
 #include "name.h"

@@ -29,15 +29,14 @@
 ****************************************************************************/
 
 
+#include "plusplus.h"
+
 #include <stdio.h>
-#include <stdlib.h>
 #include <setjmp.h>
 #include <stdarg.h>
-#include <string.h>
 #include <malloc.h>
 #include <errno.h>
 
-#include "plusplus.h"
 #include "preproc.h"
 #include "errdefns.h"
 #include "memmgr.h"

@@ -36,11 +36,11 @@ ANALYSE.C -- analyse parsed tree of tokens
           -- convert parse tree into form that can be directly emitted
              using IcEmitExpr
 */
-#include <stddef.h>
-#include <string.h>
-#include <stdlib.h>
 
 #include "plusplus.h"
+
+#include <stddef.h>
+
 #include "memmgr.h"
 #include "stringl.h"
 #include "cgfront.h"

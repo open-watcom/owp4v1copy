@@ -30,12 +30,11 @@
 ****************************************************************************/
 
 
+#include "plusplus.h"
+
 #include <setjmp.h>
 #include <stdarg.h>
-#include <stdlib.h>
-#include <string.h>
 
-#include "plusplus.h"
 #include "cgfront.h"
 #include "stats.h"
 #include "memmgr.h"

@@ -30,9 +30,10 @@
 ****************************************************************************/
 
 
+#include "plusplus.h"
+
 #include <assert.h>
 
-#include "plusplus.h"
 #include "errdefns.h"
 #include "cgfront.h"
 #include "cgback.h"

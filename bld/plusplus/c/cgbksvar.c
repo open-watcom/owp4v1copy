@@ -28,10 +28,10 @@
 *
 ****************************************************************************/
 
-#include <float.h>
-#include <stdlib.h>
-
 #include "plusplus.h"
+
+#include <float.h>
+
 #include "cgfront.h"
 #include "cgback.h"
 #include "memmgr.h"
