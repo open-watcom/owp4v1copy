@@ -109,7 +109,6 @@ sw_c_necdos_086   = -oax-r
 sw_c_necwin_086   = -oax-r
 sw_c_necdos_386   = -oaxt-r
 sw_c_necwin_386   = -oaxt-d__CALL21__-r
-# add -d2 if you want debug libraries
 sw_c_nw_clib_386  = -oaxt-bm -d__far= -d__near= -d_NETWARE_CLIB
 sw_c_nw_clibl_386 = -oaxt-bm -d__far= -d__near= -d_NETWARE_CLIB -d_THIN_LIB
 sw_c_nw_libc_386  = -oaxt-bm -d__far= -d__near= -d_NETWARE_LIBC
@@ -221,6 +220,12 @@ c_flags += -en
 !ifdef threading16
 c_flags += -bm
 a_flags += -d__MT__
+!endif
+
+# debug flags need to be last to override optimization flags
+!ifeq release 0
+c_flags += -d2
+a_flags += -d1
 !endif
 
 !include $(clib_dir)/bt.mif
