@@ -134,7 +134,7 @@ extern DWORD    EDataAddr;              // end of loaded code+data
 extern WORD     _no87;
 extern WORD     DPL,Has87,HasWGod;
 
-extern void     __CallBack();
+extern void     far __CallBack();
 void GetDataSelectorInfo( void );
 WORD InitFlatAddrSpace( DWORD baseaddr, DWORD len );
 

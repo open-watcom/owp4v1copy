@@ -39,7 +39,7 @@
 DWORD                   __cdecl CBJumpTable[MAX_CB_JUMPTABLE];
 extern  CALLBACKPTR     __cdecl _16BitCallBackAddr;
 extern  void (far * far * __cdecl _32BitCallBackAddr)(void);
-extern  void            __cdecl _32BitCallBack();
+extern  void            far __cdecl _32BitCallBack();
 extern DWORD far *_CodeSelectorBaseAddr;
 extern DWORD far *_DataSelectorBaseAddr;
 
