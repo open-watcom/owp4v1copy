@@ -43,7 +43,7 @@
 #define _MACHINE        _PC
 #define _CPU            386
 
-#define _OS             _OS2
+#define _OS             _DOS
 #define _EMS            0
 
 #define __TGT_SYS       __TGT_SYS_X86
