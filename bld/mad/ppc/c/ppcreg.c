@@ -39,7 +39,8 @@
 #define BIT_OFF( who ) (offsetof( mad_registers, ppc.who ) * BITS_PER_BYTE)
 
 /* Macros to get at GP/FP registers based on their number; useful in loops */
-#define TRANS_GPREG_32( mr, idx ) (*((unsigned_32 *)(&(mr.r0.u._32[I64LO32])) + (2 * idx)))
+#define TRANS_GPREG_LO( mr, idx ) (*((unsigned_32 *)(&(mr.r0.u._32[I64LO32])) + (2 * idx)))
+#define TRANS_GPREG_HI( mr, idx ) (*((unsigned_32 *)(&(mr.r0.u._32[I64HI32])) + (2 * idx)))
 #define TRANS_FPREG_LO( mr, idx ) (*((unsigned_32 *)(&(mr.f0.u64.u._32[I64LO32])) + (2 * idx)))
 #define TRANS_FPREG_HI( mr, idx ) (*((unsigned_32 *)(&(mr.f0.u64.u._32[I64HI32])) + (2 * idx)))
 
@@ -182,11 +183,15 @@ mad_status      DIGENTRY MIRegistersHost( mad_registers *mr )
     int             i;
 
     // Currently harcoded for big endian targets - should be dynamic
-    // NYI - properly support 64-bit registers
+    // And we really ought to have a 64-bit byte swap routine...
 
     // Convert GPRs
     for( i = 0; i < 32; i++ ) {
-        CONV_BE_32( TRANS_GPREG_32( mr->ppc, i ) );
+        CONV_BE_32( TRANS_GPREG_LO( mr->ppc, i ) );
+        CONV_BE_32( TRANS_GPREG_HI( mr->ppc, i ) );
+        temp = TRANS_GPREG_LO( mr->ppc, i );
+        TRANS_GPREG_LO( mr->ppc, i ) = TRANS_GPREG_HI( mr->ppc, i );
+        TRANS_GPREG_HI( mr->ppc, i ) = temp;
     }
     // Convert FPRs
     for( i = 0; i < 32; i++ ) {
@@ -198,9 +203,29 @@ mad_status      DIGENTRY MIRegistersHost( mad_registers *mr )
     }
     // Convert special registers
     CONV_BE_32( mr->ppc.iar.u._32[I64LO32] );
+    CONV_BE_32( mr->ppc.iar.u._32[I64HI32] );
+    temp = mr->ppc.iar.u._32[I64LO32];
+    mr->ppc.iar.u._32[I64LO32] = mr->ppc.iar.u._32[I64HI32];
+    mr->ppc.iar.u._32[I64HI32] = temp;
+
     CONV_BE_32( mr->ppc.msr.u._32[I64LO32] );
+    CONV_BE_32( mr->ppc.msr.u._32[I64HI32] );
+    temp = mr->ppc.msr.u._32[I64LO32];
+    mr->ppc.msr.u._32[I64LO32] = mr->ppc.msr.u._32[I64HI32];
+    mr->ppc.msr.u._32[I64HI32] = temp;
+
     CONV_BE_32( mr->ppc.ctr.u._32[I64LO32] );
+    CONV_BE_32( mr->ppc.ctr.u._32[I64HI32] );
+    temp = mr->ppc.ctr.u._32[I64LO32];
+    mr->ppc.ctr.u._32[I64LO32] = mr->ppc.ctr.u._32[I64HI32];
+    mr->ppc.ctr.u._32[I64HI32] = temp;
+
     CONV_BE_32( mr->ppc.lr.u._32[I64LO32] );
+    CONV_BE_32( mr->ppc.lr.u._32[I64HI32] );
+    temp = mr->ppc.lr.u._32[I64LO32];
+    mr->ppc.lr.u._32[I64LO32] = mr->ppc.lr.u._32[I64HI32];
+    mr->ppc.lr.u._32[I64HI32] = temp;
+
     CONV_BE_32( mr->ppc.xer );
     CONV_BE_32( mr->ppc.cr );
     CONV_BE_32( mr->ppc.fpscr );
@@ -216,7 +241,11 @@ mad_status      DIGENTRY MIRegistersTarget( mad_registers *mr )
 
     // Convert GPRs
     for( i = 0; i < 32; i++ ) {
-        CONV_BE_32( TRANS_GPREG_32( mr->ppc, i ) );
+        CONV_BE_32( TRANS_GPREG_LO( mr->ppc, i ) );
+        CONV_BE_32( TRANS_GPREG_HI( mr->ppc, i ) );
+        temp = TRANS_GPREG_LO( mr->ppc, i );
+        TRANS_GPREG_LO( mr->ppc, i ) = TRANS_GPREG_HI( mr->ppc, i );
+        TRANS_GPREG_HI( mr->ppc, i ) = temp;
     }
     // Convert FPRs
     for( i = 0; i < 32; i++ ) {
@@ -228,9 +257,29 @@ mad_status      DIGENTRY MIRegistersTarget( mad_registers *mr )
     }
     // Convert special registers
     CONV_BE_32( mr->ppc.iar.u._32[I64LO32] );
+    CONV_BE_32( mr->ppc.iar.u._32[I64HI32] );
+    temp = mr->ppc.iar.u._32[I64LO32];
+    mr->ppc.iar.u._32[I64LO32] = mr->ppc.iar.u._32[I64HI32];
+    mr->ppc.iar.u._32[I64HI32] = temp;
+
     CONV_BE_32( mr->ppc.msr.u._32[I64LO32] );
+    CONV_BE_32( mr->ppc.msr.u._32[I64HI32] );
+    temp = mr->ppc.msr.u._32[I64LO32];
+    mr->ppc.msr.u._32[I64LO32] = mr->ppc.msr.u._32[I64HI32];
+    mr->ppc.msr.u._32[I64HI32] = temp;
+
     CONV_BE_32( mr->ppc.ctr.u._32[I64LO32] );
+    CONV_BE_32( mr->ppc.ctr.u._32[I64HI32] );
+    temp = mr->ppc.ctr.u._32[I64LO32];
+    mr->ppc.ctr.u._32[I64LO32] = mr->ppc.ctr.u._32[I64HI32];
+    mr->ppc.ctr.u._32[I64HI32] = temp;
+
     CONV_BE_32( mr->ppc.lr.u._32[I64LO32] );
+    CONV_BE_32( mr->ppc.lr.u._32[I64HI32] );
+    temp = mr->ppc.lr.u._32[I64LO32];
+    mr->ppc.lr.u._32[I64LO32] = mr->ppc.lr.u._32[I64HI32];
+    mr->ppc.lr.u._32[I64HI32] = temp;
+
     CONV_BE_32( mr->ppc.xer );
     CONV_BE_32( mr->ppc.cr );
     CONV_BE_32( mr->ppc.fpscr );
