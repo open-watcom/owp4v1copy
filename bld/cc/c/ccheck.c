@@ -84,7 +84,8 @@ local  cmp_type const __FAR CompTable[22][22] = {
 };
 
 static cmp_type CompatibleType( TYPEPTR typ1, TYPEPTR typ2, int assignment );
-static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level );
+static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level, 
+                                  int assignment );
 
 static cmp_type InUnion( TYPEPTR typ1, TYPEPTR typ2, int reversed )
 {
@@ -158,7 +159,7 @@ void ChkParmList( TYPEPTR *plist1 ,TYPEPTR *plist2 ){
         ptype1 = *plist1;
         ptype2 = *plist2;
         if( ptype1 == NULL  ||  ptype2 == NULL ) break;
-        cmp = DoCompatibleType( ptype1, ptype2, 0 );
+        cmp = DoCompatibleType( ptype1, ptype2, 0, 1 );
         switch( cmp ){
         case NO:
         case PT:
@@ -284,7 +285,7 @@ local int CompatibleFunction( TYPEPTR typ1, TYPEPTR typ2 )
                     return( TC_PARM_TYPE_MISMATCH + parm_count );
                 }
             } else{
-                cmp = DoCompatibleType( *plist1, *plist2, 0 );
+                cmp = DoCompatibleType( *plist1, *plist2, 0, 0 );
                 switch( cmp ){
                 case NO:
                 case PT:
@@ -319,7 +320,8 @@ local int CompatibleFunction( TYPEPTR typ1, TYPEPTR typ2 )
 #define PTR_FLAGS (FLAG_MEM_MODEL|QUAL_FLAGS)
 #define QUAL_FLAGS (FLAG_CONST|FLAG_VOLATILE|FLAG_UNALIGNED)
 
-static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level )
+static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
+                                  int assignment )
 {
     cmp_type         ret_val;
     type_modifiers   typ1_flags, typ2_flags;
@@ -358,6 +360,9 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level )
     if( typ1->decl_type == TYPE_VOID || typ2->decl_type == TYPE_VOID ){
     // allow  void ** with any **
         if( top_level==1 || !CompFlags.strict_ANSI ){
+            if ( ( !assignment || top_level > 1 ) && !CompFlags.extensions_enabled ) {
+                CWarn1( WARN_PCTYPE_MISMATCH, ERR_PCTYPE_MISMATCH );
+            }
             return( ret_val ); // void *  and  anything *
         }
     }
@@ -390,6 +395,9 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level )
                 ret_val = NO;
             }else if( (typ1!=typ2) && (CompatibleFunction( typ1, typ2 )!=TC_OK)  ){
                 ret_val = NO;
+            /* this test might need to be changed - Bart Oldeman, 19-oct-02 */
+            }else if( !IdenticalType( typ1->object, typ2->object ) ) {
+                CWarn1( WARN_PCTYPE_MISMATCH, ERR_PCTYPE_MISMATCH );
             }
         }else if( typ1->decl_type == TYPE_STRUCT  || typ1->decl_type == TYPE_UNION ) {
            /* 11-jul-90: allow pointers to different structs */
@@ -508,7 +516,7 @@ static cmp_type CompatibleType( TYPEPTR typ1, TYPEPTR typ2, int assignment )
         typ2 = typ2->object;
         ++top_level;
     }
-    ret_val = DoCompatibleType( typ1, typ2, top_level );
+    ret_val = DoCompatibleType( typ1, typ2, top_level, assignment );
     if( ret_val == OK ){
         ret_val = ret_pq;
     }
@@ -1021,9 +1029,17 @@ local int TypeCheck( TYPEPTR typ1, TYPEPTR typ2 )
         if( typ1 == typ2 ) return( TC_OK );
         if( typ1->decl_type != typ2->decl_type ) {
             if( pointer_type ) {
-                if( typ2->decl_type == TYPE_VOID ) return( TC_OK );
-                if( typ1->decl_type == TYPE_VOID ) {
-                    return( TC_TYPE2_HAS_MORE_INFO );
+                /* this test might need to be changed
+                   - Bart Oldeman, 2002/10/19 */
+                if( CompFlags.extensions_enabled ) {
+                    if( typ2->decl_type == TYPE_VOID ) {
+                        CWarn1( WARN_POINTER_TYPE_MISMATCH, ERR_POINTER_TYPE_MISMATCH );
+                        return( TC_OK );
+                    }
+                    if( typ1->decl_type == TYPE_VOID ) {
+                        CWarn1( WARN_POINTER_TYPE_MISMATCH, ERR_POINTER_TYPE_MISMATCH );
+                        return( TC_TYPE2_HAS_MORE_INFO );
+                    }
                 }
                 if( typ1->decl_type == TYPE_ARRAY ) {
                     return( TypeCheck( typ1->object, typ2 ) );
