@@ -42,6 +42,7 @@ tests = &
         fun01.$(exe)    &
         iter01.$(exe)   &
         lim01.$(exe)    &
+        numer01.$(exe)  &
         string01.$(exe) &
         util01.$(exe)   &
         vector01.$(exe) &
@@ -69,6 +70,8 @@ test : .symbolic test.lnk $(tests)
     $(run) iter01 >> test.out
     @echo ----------lim01---------->> test.out
     $(run) lim01 >> test.out
+    @echo ----------numer01---------->> test.out
+    $(run) numer01 >> test.out
     @echo ----------string01---------->> test.out
     $(run) string01 >> test.out
     @echo ----------util01---------->> test.out
