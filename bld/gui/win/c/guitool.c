@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Dockable GUI toolbar.
 *
 ****************************************************************************/
 
@@ -145,6 +144,7 @@ BOOL GUIToolBarProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam, WPI_PARAM2 lpara
         break;
 #ifdef __OS2_PM__
     case WM_CHAR :
+    case WM_TRANSLATEACCEL :
 #else
     case WM_SYSKEYDOWN :
     case WM_SYSKEYUP :

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  GUI library window proc and other assorted guts.
 *
 ****************************************************************************/
 
@@ -1257,6 +1256,7 @@ WPI_MRESULT CALLBACK GUIWindowProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
 #endif
 #ifdef __OS2_PM__
     case WM_CHAR :
+    case WM_TRANSLATEACCEL :
 #else
     case WM_MENUCHAR :
     case WM_SYSKEYDOWN :
@@ -1353,11 +1353,26 @@ WPI_MRESULT CALLBACK GUIFrameProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
 
     if( wnd != NULL ) {
         switch( msg ) {
+
         case WM_SAVEAPPLICATION:
             call_def = TRUE; // I'm cheating and using 'call_def'
                              // outside of its self-documented purpose
             GUIEVENTWND( wnd, GUI_ENDSESSION, &call_def );
-            return( 0l );
+            return( 0L );
+
+        case WM_TRANSLATEACCEL:  {
+                // Don't let OS/2 process F10 as an accelerator
+                // Note: similar code exists in guimapky.c but we need to
+                // take different default action
+                PQMSG   pqmsg = wparam;
+                USHORT  flags = SHORT1FROMMP(pqmsg->mp1);
+                USHORT  vkey  = SHORT2FROMMP(pqmsg->mp2);
+
+                if( (flags & KC_VIRTUALKEY) && (vkey == VK_F10) )
+                    return( (WPI_MRESULT)FALSE );
+            }
+            break;
+
         case WM_CHAR:
             return( GUIProcesskey( hwnd, msg, wparam, lparam ) );
             break;
