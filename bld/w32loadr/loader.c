@@ -34,7 +34,6 @@
 #include <stdarg.h>
 #include <i86.h>
 #include "tinyio.h"
-#include <io.h>
 #include <fcntl.h>
 #include "wreslang.h"
 

@@ -7,6 +7,10 @@
 .asm.obj:
   $(as_i86) -q -i".." $<
 
+!ifdef __LINUX__
+dos_hdr_inc = -i"$(hdr_dir)/h"
+!endif
+
 !ifeq host_OS dos
 
 all: .SYMBOLIC #d4grun.exe x32run.exe tntrun.exe
@@ -74,11 +78,11 @@ ntstub.exe : ntstub.obj
   $(linker) system dos file ntstub option map
 
 int21nt.obj : int21nt.c
-  $(cc) $[@ -ox -d1 -bt=NT -i"$(watcom_nt_h)"
+  $(cc) $[@ -ox -d1 -bt=NT -i"$(watcom_nt_h)" $(dos_hdr_inc)
 ntrun.obj : loader.c loader.h
-  $(cc) $[@ -ox -d1 -bt=NT -d__NT -d__CALL21__ -fo=ntrun.obj -i"$(watcom_nt_h)"
+  $(cc) $[@ -ox -d1 -bt=NT -d__NT -d__CALL21__ -fo=ntrun.obj -i"$(watcom_nt_h)" $(dos_hdr_inc)
 ntrunner.obj : loader.c loader.h
-  $(cc) $[@ -ox -d1 -bt=NT -d__NT -d__CALL21__ -dW32RUN -fo=ntrunner.obj -i"$(watcom_nt_h)"
+  $(cc) $[@ -ox -d1 -bt=NT -d__NT -d__CALL21__ -dW32RUN -fo=ntrunner.obj -i"$(watcom_nt_h)" $(dos_hdr_inc)
 
 !else ifeq host_OS os2
 
@@ -94,9 +98,9 @@ os2stub.exe : loader16.obj dpmildr.obj int21win.obj
   $(linker) system dos name os2stub file loader16,dpmildr,int21win option map
 
 loader.obj : loader.c loader.h
-        $(cc) $[@ -ox -d1 -d__OS2 -d__CALL21__ -i"$(inc_dirs_sys_os2_386)"
+        $(cc) $[@ -ox -d1 -d__OS2 -d__CALL21__ -i"$(inc_dirs_sys_os2_386)" $(dos_hdr_inc)
 int21os2.obj : int21os2.c
-        $(cc) $[@ -ox -d1 -i"$(inc_dirs_sys_os2_386)"
+        $(cc) $[@ -ox -d1 -i"$(inc_dirs_sys_os2_386)" $(dos_hdr_inc)
 
 !endif
 
