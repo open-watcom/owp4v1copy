@@ -20,23 +20,23 @@ SOBJS = sweep.obj
 WOBJS = wsplice.obj
 
 $(name).exe : $(OBJS)
-        wlink $(lflags) name $^@ op map,quiet file {$(OBJS)}
+        $(linker) $(lflags) name $^@ op map,quiet file {$(OBJS)}
         @copy $^. $(bld_bin)
 
 cdsay.exe : cdsay.obj
-        wlink $(lflags) name $^@ op map,quiet file { $< }
+        $(linker) $(lflags) name $^@ op map,quiet file { $< }
         @copy $^. $(bld_bin)
 
 sweep.exe : sweep.obj
-        wlink $(lflags) name $^@ op map,quiet file { $< }
+        $(linker) $(lflags) name $^@ op map,quiet file { $< }
         @copy $^. $(bld_bin)
 
 wsplice.exe : wsplice.obj
-        wlink $(lflags) name $^@ op map,quiet file { $< }
+        $(linker) $(lflags) name $^@ op map,quiet file { $< }
         @copy $^. $(bld_bin)
 
 diff.exe : diff.obj
-        wlink $(lflags) name $^@ op map,quiet file { $< }
+        $(linker) $(lflags) name $^@ op map,quiet file { $< }
         @copy $^. $(bld_bin)
 
 clean: .SYMBOLIC .EXPLICIT
