@@ -589,7 +589,7 @@ void MemFreeList( int, void ** );
 void MemFree2( void ** );
 void *MemReAlloc( void *, unsigned );
 void *MemReAllocUnsafe( void *ptr, unsigned size );
-char *StaticAlloc( void );
+void *StaticAlloc( void );
 void StaticFree( char * );
 void StaticStart( void );
 void StaticFini( void );
