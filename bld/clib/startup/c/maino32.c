@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 32-bit main routines for executables.
 *
 ****************************************************************************/
 
@@ -121,9 +120,10 @@ extern  char            *_Envptr;
 
 _WCRTLINK extern char       *_LpCmdLine;    /* pointer to command line */
 _WCRTLINK extern char       *_LpPgmName;    /* pointer to program name */
+#ifdef _UNICODE
 _WCRTLINK extern wchar_t    *_LpwCmdLine;   /* pointer to wide command line */
 _WCRTLINK extern wchar_t    *_LpwPgmName;   /* pointer to wide program name */
-
+#endif
 
 int                     __Is_DLL;       /* TRUE => DLL, else not a DLL */
 
@@ -152,13 +152,17 @@ void __OS2MainInit( EXCEPTIONREGISTRATIONRECORD *xcpt, void *ptr,
 
     _Envptr = env;
     _LpCmdLine = args;
+#ifdef _UNICODE
     _LpwCmdLine = lib_malloc( (strlen( _LpCmdLine ) + 1) * sizeof( wchar_t ) );
     _atouni( _LpwCmdLine, _LpCmdLine );
+#endif
     for( cmd_path = cmd - 2; *cmd_path != '\0'; --cmd_path );
     ++cmd_path;
     _LpPgmName = cmd_path;
+#ifdef _UNICODE
     _LpwPgmName = lib_malloc( (strlen( _LpPgmName ) + 1) * sizeof( wchar_t ) );
     _atouni( _LpwPgmName, _LpPgmName );
+#endif
 
     __hmodule = hmod;
     __OS2Init( FALSE, tdata );
@@ -199,6 +203,8 @@ void __OS2Init( int is_dll, thread_data *tdata )
         _STACKLOW = (unsigned)&_end;            // cortns in F77
     }
 #endif
+
+#if 0
     {
         // Make sure the iomode array is of the proper length.
         // This needs to be done before the InitRtns.
@@ -217,6 +223,7 @@ void __OS2Init( int is_dll, thread_data *tdata )
             __set_handles( curr_max_fh );
         }
     }
+#endif
 }
 
 void __OS2Fini( void )
