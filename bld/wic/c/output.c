@@ -1030,7 +1030,8 @@ char *getTokListString(pSLList context) {
 
 //=====================================================================
 
-void expandPushTree(int fileNum, pCTree tree) {
+void expandPushTree(int fileNum, void *_tree) {
+    pCTree tree = _tree;
     pLabel label;
     int constrType;
     int pushType;

@@ -178,7 +178,7 @@ void forAllInSLList(pSLList pList, void (func)(void**)) {
 }
 
 /* Delete a list, deallocating all of the space */
-void zapSLList(pSLList pList, void* (zapElem)(void*)) {
+void zapSLList(pSLList pList, void (zapElem)(void*)) {
     _SLList *temp;
     if (pList == NULL) {
         return;

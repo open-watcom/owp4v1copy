@@ -139,7 +139,7 @@ static void CarverMsg(CarverMsgType type, pCarver carver, pBlkElem blkElem)
 
 void InitCarver(pCarver carver,
                 void* (*mallocFunc)(size_t size),
-                void* (freeFunc)(void* ptr),
+                void  (*freeFunc)(void* ptr),
                 pCarverPrintMsgFunc printMsgFunc,
                 CarverMsgType supressMsgs,
                 short unsigned blkSize,
@@ -171,7 +171,7 @@ void InitCarver(pCarver carver,
 
 void* CreateCarver(
                 void* (*mallocFunc)(size_t size),
-                void* (freeFunc)(void* ptr),
+                void  (*freeFunc)(void* ptr),
                 pCarverPrintMsgFunc printMsgFunc,
                 CarverMsgType supressMsgs,
                 short unsigned blkSize,

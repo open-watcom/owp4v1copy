@@ -55,7 +55,8 @@ void zapExpandToken(void) {
 static pTokPos _pushMacroCodePosArgument;
 int _pushMacroCodeFirstToken;
 
-static pToken changeToken(pToken token) {
+static void *changeToken(void *_token) {
+    pToken token = _token;
     pToken newToken;
     newToken = dupToken(token, _pushMacroCodePosArgument);
 

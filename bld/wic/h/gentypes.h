@@ -63,7 +63,7 @@ void addSLListElem(pSLList pList, void *elem);
 void addBegSLListElem(pSLList pList, void *elem);
 
 /* Add listAdd to the beginning of pList */
-void addBegSLListSLList(pSLList pList, pSLList listAdd, void (*action)(void *));
+void addBegSLListSLList(pSLList pList, pSLList listAdd, void* (*action)(void *));
 
 /* Insert an element after current position in the list */
 void insertSLListAfterCurrPosElem(pSLList pList, void *elem);
@@ -89,7 +89,7 @@ return (new) userData from list. */
 void forAllInSLList(pSLList pList, void (func)(void**));
 
 /* Delete a list, deallocating all of the space. */
-void zapSLList(pSLList pList, void* (zapElem)(void*));
+void zapSLList(pSLList pList, void (zapElem)(void*));
 
 
 
