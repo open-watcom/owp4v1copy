@@ -82,7 +82,7 @@ int MakeLabel( char *symbol_name, memtype mem_type )
 /**********************************************/
 {
     struct asm_sym      *sym;
-    #ifdef _WASM_
+#ifdef _WASM_
         int                     addr;
         char                    buffer[20];
 
@@ -111,8 +111,8 @@ int MakeLabel( char *symbol_name, memtype mem_type )
         }
         AsmTakeOut( "@F" );
         sym->state = SYM_INTERNAL;
-            sym->mem_type = mem_type;  // fixme ??
-            GetSymInfo( sym );
+        sym->mem_type = mem_type;  // fixme ??
+        GetSymInfo( sym );
         BackPatch( sym );
 
         /* now point the @F marker at the next anon. label if we have one */
@@ -124,12 +124,12 @@ int MakeLabel( char *symbol_name, memtype mem_type )
 
         return( NOT_ERROR );
     }
-    #endif
+#endif
     sym = AsmLookup( symbol_name );
 
     if( sym == NULL ) return( ERROR );
 
-    #ifdef _WASM_
+#ifdef _WASM_
         if( Parse_Pass == PASS_1 ) {
             if( sym->state != SYM_UNDEFINED ) {
                 AsmErr( SYMBOL_PREVIOUSLY_DEFINED, symbol_name );
@@ -152,14 +152,16 @@ int MakeLabel( char *symbol_name, memtype mem_type )
         if( Parse_Pass != PASS_1 && sym->offset != addr ) {
             PhaseError = TRUE;
         }
-    #else
+#else
         if( sym->state != SYM_UNDEFINED ) {
             AsmError( SYMBOL_ALREADY_DEFINED );
             return( ERROR );
         }
         sym->state = SYM_INTERNAL;
         sym->addr = Address;
-    #endif
+//  it should define label type ?????
+        sym->mem_type = mem_type;  // fixme ??
+#endif
     BackPatch( sym );
     return( NOT_ERROR );
 }
