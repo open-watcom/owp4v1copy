@@ -57,7 +57,7 @@ clib_dos_386    = clib3r
 clib_nt_386     = clib3r
 clib_nt_axp     = clib
 
-extra_c_flags     = -d__DIP__
+extra_c_flags     = -d__DIP__ -s
 extra_c_flags_i86 = -ml -fpc -zc -zu
 extra_c_flags_386 = -fpc
 
