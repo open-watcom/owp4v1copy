@@ -292,7 +292,7 @@ void *SetProc( FARPROC fp, int type )
 #undef FreeProcInstance
 #undef MakeProcInstance
 
-FARPROC PASCAL _Cover_MakeProcInstance( void __far *proc, HANDLE inst )
+FARPROC PASCAL _Cover_MakeProcInstance( void __far *proc, HINSTANCE inst )
 {
     inst;
     return( (FARPROC)proc );
