@@ -2310,7 +2310,7 @@ File: \406\108\form1.cpp
 (2,16): Error! E761: octal escape sequence out of range; truncated
 File: source\diag0242.c
 (9,5): Error! E071: expression must be integral
-(12,5): Error! E775: 'sizeof' unexpected in constant expression
+(12,5): Error! E764: expression contains extra operand(s)
 (15,13): Error! E767: unmatched left parenthesis '('
 (18,11): Error! E766: unmatched right parenthesis ')'
 (21,5): Error! E768: no expression between parentheses '( )'
