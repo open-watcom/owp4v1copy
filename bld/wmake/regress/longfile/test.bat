@@ -64,6 +64,20 @@ if errorlevel 1 goto err2
 
 :test5
 
+echo # ---------------------------
+echo #   Long FileName Test 5
+echo # ---------------------------
+%1 -h -m -f LONG05 > tmp.out 2>&1
+diff -b LONG05.CMP tmp.out
+if errorlevel 1 goto err2
+    @echo # LONG05 successful
+    goto test6
+:err2
+    @echo ## Long FileName ## >> %2
+    @echo Error: Long FileName #5 unsuccessful!!! | tee -a %2
+
+:test6
+
 goto done
 :usage
 echo usage: %0 prgname errorfile
