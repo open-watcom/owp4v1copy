@@ -79,13 +79,16 @@ PCH_struct template_member {
 
 PCH_struct template_specialization {
     TEMPLATE_SPECIALIZATION *next;      // (ring)
+    TEMPLATE_INFO       *tinfo;         // parent template info
     CLASS_INST          *instantiations;// list of current instantiations
     REWRITE             *defn;          // template def'n (may be NULL)
     TEMPLATE_MEMBER     *member_defns;  // external member defns
+    SCOPE               decl_scope;     // template declaration scope
     unsigned            num_args;       // number of template arguments
     TYPE                *type_list;     // template argument types
     char                **arg_names;    // argument names
     PTREE               spec_args;      // template specialization arguments
+    unsigned char       *ordering;      // "at least as specialized as" bitmask
     unsigned            corrupted : 1;  // template def'n contained errors
     unsigned            defn_found : 1; // a template defn has been found
     unsigned            free : 1;       // used for precompiled headers
@@ -97,6 +100,7 @@ PCH_struct template_info {
     TYPE                unbound_type;   // type to use in unbound circumstances
     REWRITE             **defarg_list;  // default arguments
     SYMBOL              sym;            // template symbol
+    unsigned            nr_specs;       // number of template specializations (including the primary template)
     unsigned            free : 1;       // used for precompiled headers
 };
 

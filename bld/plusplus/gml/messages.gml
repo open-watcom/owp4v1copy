@@ -11844,3 +11844,31 @@ template<class T, class U>
 struct A<T, U> { };
 }
 :eerrbad.
+
+:MSGSYM. ERR_CANNOT_EXPLICITLY_SPECIALIZE_MEMBER
+:MSGTXT. cannot explicitly specialize member of '%S'
+:MSGJTXT.
+:errbad.
+template<class T>
+struct A { };
+
+template<>
+struct A<int> {
+    void f();
+};
+
+template<>
+void A<int>::f() {
+}
+:eerrbad.
+
+:MSGSYM. ERR_TEMPLATE_SPECIALIZATION_MATCHES_PRIMARY
+:MSGTXT. specialization arguments for '%S' match primary template
+:MSGJTXT.
+:errbad.
+template<class T>
+struct A { };
+
+template<class T>
+struct A<T> { };
+:eerrbad.

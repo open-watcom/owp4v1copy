@@ -259,11 +259,12 @@ static TYPE setArgIndex( SYMBOL sym, unsigned index )
     TYPE type;
 
     type = sym->sym_type;
-    DbgAssert( type->next == NULL && type->id == TYP_GENERIC );
+    DbgAssert( type->id == TYP_GENERIC );
+    DbgAssert( type->next == NULL );
     type->u.g.index = index;
     type = CheckDupType( type );
     sym->sym_type = type;
-    return( type );
+    return type;
 }
 
 static void injectParameterDecls( DECL_INFO *args )
@@ -349,21 +350,26 @@ static TEMPLATE_SPECIALIZATION *newTemplateSpecialization(
     TEMPLATE_SPECIALIZATION *tprimary;
     unsigned arg_count;
 
+    tinfo->nr_specs++;
+
     args = data->args;
     arg_count = getArgList( args, NULL, NULL, NULL );
     tspec = RingCarveAlloc( carveTEMPLATE_SPECIALIZATION,
                             &tinfo->specializations );
     tprimary = RingFirst( tinfo->specializations );
 
+    tspec->tinfo = tinfo;
     tspec->instantiations = NULL;
     tspec->member_defns = NULL;
-    tspec->corrupted = FALSE;
+    tspec->decl_scope = ( arg_count > 0 ) ? data->decl_scope : NULL;
     tspec->num_args = arg_count;
     tspec->type_list = CPermAlloc( arg_count * sizeof( TYPE ) );
     tspec->arg_names = CPermAlloc( arg_count * sizeof( char * ) );
     tspec->spec_args = data->spec_args;
     data->spec_args = NULL;
+    tspec->ordering = NULL;
     tspec->defn = NULL;
+    tspec->corrupted = FALSE;
     tspec->defn_found = FALSE;
     tspec->free = FALSE;
 
@@ -382,6 +388,7 @@ static TEMPLATE_INFO *newTemplateInfo( TEMPLATE_DATA *data )
     arg_count = getArgList( args, NULL, NULL, NULL );
     tinfo = RingCarveAlloc( carveTEMPLATE_INFO, &allClassTemplates );
     tinfo->specializations = NULL;
+    tinfo->nr_specs = 0;
     tprimary = newTemplateSpecialization( data, tinfo );
     /* RingFirst( tinfo->specializations ) is always the primary template */
 
@@ -530,6 +537,7 @@ static TEMPLATE_SPECIALIZATION *findMatchingTemplateSpecialization(
     PTREE curr_arg;
     PTREE spec_arg;
     TYPE arg_type;
+    SYMBOL curr, stop;
     unsigned i;
     boolean something_went_wrong;
     boolean is_specialization;
@@ -542,7 +550,23 @@ static TEMPLATE_SPECIALIZATION *findMatchingTemplateSpecialization(
 
     /* make sure declaration of template parameters are in the current scope */
     saved_scope = GetCurrScope();
-    SetCurrScope( currentTemplate->decl_scope );
+    if( currentTemplate->args != NULL ) {
+        SetCurrScope( currentTemplate->decl_scope );
+
+        curr = NULL;
+        stop = ScopeOrderedStart( currentTemplate->decl_scope );
+        for(;;) {
+            curr = ScopeOrderedNext( stop, curr );
+            if( curr == NULL ) break;
+
+            curr->flag &= ~SF_REFERENCED;
+        }
+
+        curr = NULL;
+        stop = ScopeOrderedStart( currentTemplate->decl_scope );
+    } else {
+        curr = stop = NULL;
+    }
 
     for( curr_list = args, i = 0;
          curr_list != NULL;
@@ -563,6 +587,13 @@ static TEMPLATE_SPECIALIZATION *findMatchingTemplateSpecialization(
             arg_type = NULL;
         }
 
+        if( stop != NULL ) {
+            curr = ScopeOrderedNext( stop, curr );
+            if( curr == NULL ) {
+                stop = NULL;
+            }
+        }
+
         if( arg_type != NULL ) {
             curr_arg = AnalyseRawExpr( curr_arg );
             if( curr_arg->op == PT_ERROR ) {
@@ -570,20 +601,42 @@ static TEMPLATE_SPECIALIZATION *findMatchingTemplateSpecialization(
                 break;
             }
 
-            if( ( curr_arg->op != PT_SYMBOL )
-             || ! TypesIdentical( curr_arg->type, arg_type ) ) {
+            if( curr_arg->op == PT_SYMBOL ) {
+                if( curr_arg->u.symcg.symbol != curr ) {
+                    is_specialization = TRUE;
+                }
+            } else {
                 is_specialization = TRUE;
             }
         } else {
-            if( ( curr_arg->op != PT_TYPE )
-             || ( curr_arg->type->id != TYP_TYPEDEF ) 
-             || ( curr_arg->type->of->id != TYP_GENERIC ) 
-             || ( curr_arg->type->of->u.g.index != ( i + 1 ) ) ) {
+            if( ( curr_arg->op == PT_TYPE )
+             && ( curr_arg->type->id == TYP_TYPEDEF ) 
+             && ( curr_arg->type->of->id == TYP_GENERIC ) ) {
+                if ( curr_arg->type->of->u.g.index != ( i + 1 ) ) {
+                    is_specialization = TRUE;
+                }
+            } else {
                 is_specialization = TRUE;
             }
         }
 
         curr_list->u.subtree[1] = curr_arg;
+    }
+
+    if( currentTemplate->args != NULL ) {
+        curr = NULL;
+        stop = ScopeOrderedStart( currentTemplate->decl_scope );
+        for(;;) {
+            curr = ScopeOrderedNext( stop, curr );
+            if( curr == NULL ) break;
+
+            if( ( curr->sym_type->id == TYP_TYPEDEF )
+             && ( curr->sym_type->of->id == TYP_GENERIC ) ) {
+                /* TODO: check for unused symbol */
+            } else {
+                /* TODO: check for unused symbol */
+            }
+        }
     }
 
     SetCurrScope( saved_scope );
@@ -634,6 +687,120 @@ static TEMPLATE_SPECIALIZATION *findMatchingTemplateSpecialization(
     return tspec;
 }
 
+static void updateTemplatePartialOrdering( TEMPLATE_INFO *tinfo,
+                                           TEMPLATE_SPECIALIZATION *tspec )
+{
+    PTREE BindClassGenericTypes( SCOPE decl_scope, PTREE parms, PTREE args );
+
+    PTREE bindings;
+    TEMPLATE_SPECIALIZATION *curr_spec;
+    SYMBOL stop, curr;
+    TYPE type;
+    unsigned i;
+    unsigned nr_specs;
+
+    if( tspec->decl_scope != NULL ) {
+        /* It gets a bit tricky here - we need to generate distinct
+         * generic types until we have finished with the partial
+         * ordering stuff (otherwise BindClassGenericTypes might get
+         * confused).
+         *
+         * The CheckDupType will revert the type back to the original
+         * generic type.
+         */
+        stop = ScopeOrderedStart( tspec->decl_scope );
+        curr = NULL;
+        i = 0;
+        for(;;) {
+            curr = ScopeOrderedNext( stop, curr );
+            if( curr == NULL ) break;
+
+            i++;
+            type = curr->sym_type;
+
+            if( ( type->id == TYP_TYPEDEF )
+             && ( type->of->id == TYP_GENERIC ) ) {
+                type->of = MakeType( TYP_GENERIC );
+                type->of->u.g.index = i;
+            }
+        }
+    }
+
+    nr_specs = tinfo->nr_specs;
+
+    if( tspec->spec_args != NULL ) {
+        tspec->ordering = CMemAlloc( 16 * ( ( nr_specs - 2 ) / 128 + 1 ) );
+    }
+
+    i = 0;
+    RingIterBeg( tinfo->specializations, curr_spec ) {
+        if( curr_spec->spec_args == NULL ) {
+        } else if( curr_spec == tspec ) {
+            tspec->ordering[ i / 8 ] &= ~ ( 1 << ( i & 7 ) );
+            i++;
+        } else {
+            unsigned char mask;
+
+            if( ( nr_specs - 2 ) & 128 ) {
+                /* grow the bitmap as needed */
+                unsigned char *old_mem;
+
+                old_mem = curr_spec->ordering;
+                curr_spec->ordering =
+                    CMemAlloc( 16 * ( ( nr_specs - 2 ) / 128 + 1 ) );
+                memcpy( curr_spec->ordering, old_mem,
+                        16 * ( ( nr_specs - 2 ) / 128 ) );
+                CMemFree( old_mem );
+            }
+
+            bindings =
+                BindClassGenericTypes( tspec->decl_scope, tspec->spec_args,
+                                       curr_spec->spec_args );
+            /* curr_spec is at least as specialized as tspec if (
+             * bindings != NULL)
+             */
+            mask = 1 << ( ( nr_specs - 2 ) & 7 );
+            curr_spec->ordering[ ( nr_specs - 2 ) / 8 ] &= ~ mask;
+            curr_spec->ordering[ ( nr_specs - 2 ) / 8 ] |=
+                ( bindings != NULL ) ? mask : 0;
+            PTreeFreeSubtrees( bindings );
+
+            bindings =
+                BindClassGenericTypes( curr_spec->decl_scope,
+                                       curr_spec->spec_args,
+                                       tspec->spec_args );
+            /* tspec is at least as specialized as curr_spec if (
+             * bindings != NULL)
+             */
+            mask = 1 << ( i & 7 );
+            tspec->ordering[ i / 8 ] &= ~ mask;
+            tspec->ordering[ i / 8 ] |= ( bindings != NULL ) ? mask : 0;
+            PTreeFreeSubtrees( bindings );
+
+            i++;
+        }
+    } RingIterEnd( curr_spec )
+
+    if( tspec->decl_scope != NULL ) {
+        stop = ScopeOrderedStart( tspec->decl_scope );
+        curr = NULL;
+        i = 0;
+        for(;;) {
+            curr = ScopeOrderedNext( stop, curr );
+            if( curr == NULL ) break;
+
+            i++;
+            type = curr->sym_type;
+
+            if( ( type->id == TYP_TYPEDEF )
+             && ( type->of->id == TYP_GENERIC ) ) {
+                DbgAssert( type->of->next == NULL );
+                type->of = CheckDupType( type->of );
+            }
+        }
+    }
+}
+
 static TEMPLATE_SPECIALIZATION *mergeClassTemplates( TEMPLATE_DATA *data,
                                                      SYMBOL old_sym )
 {
@@ -646,11 +813,17 @@ static TEMPLATE_SPECIALIZATION *mergeClassTemplates( TEMPLATE_DATA *data,
  
     tinfo = old_sym->u.tinfo;
     args = data->args;
+
     if( data->spec_args != NULL ) {
         primary_specialization = FALSE;
         tspec = findMatchingTemplateSpecialization( tinfo, data->spec_args );
+        if( tspec == RingFirst( tinfo->specializations ) ) {
+            CErr2p( ERR_TEMPLATE_SPECIALIZATION_MATCHES_PRIMARY, tinfo->sym );
+            tspec = NULL;
+        }
         if( tspec == NULL ) {
             tspec = newTemplateSpecialization( data, tinfo );
+            updateTemplatePartialOrdering( tinfo, tspec );
         }
     } else if( data->unbound_type != NULL ) {
         PTREE parm;
@@ -700,10 +873,15 @@ static TEMPLATE_SPECIALIZATION *mergeClassTemplates( TEMPLATE_DATA *data,
             tspec = findMatchingTemplateSpecialization( tinfo, parms );
 
             if( tspec == NULL ) {
-                CErr2p( ERR_UNKNOWN_TEMPLATE_SPECIALIZATION, tinfo->sym );
+                if( ! ( data->member_found && data->args == NULL ) ) {
+                    CErr2p( ERR_UNKNOWN_TEMPLATE_SPECIALIZATION, tinfo->sym );
+                }
                 primary_specialization = TRUE;
                 tspec = RingFirst( tinfo->specializations );
             } else {
+                if( data->member_found && data->args == NULL ) {
+                    CErr2p( ERR_CANNOT_EXPLICITLY_SPECIALIZE_MEMBER, tinfo->sym );
+                }
                 primary_specialization = FALSE;
             }
         } else {
@@ -1826,42 +2004,101 @@ static TYPE instantiateUnboundClass( TEMPLATE_INFO *tinfo,
 
 static TEMPLATE_SPECIALIZATION *findTemplateClassSpecialization( TEMPLATE_INFO *tinfo, PTREE parms, PTREE *inst_parms )
 {
+    PTREE BindClassGenericTypes( SCOPE decl_scope, PTREE parms, PTREE args );
+
+    struct candidate_ring {
+        struct candidate_ring *next;
+        TEMPLATE_SPECIALIZATION *tspec;
+        PTREE inst_parms;
+        unsigned idx;
+    } *candidate_list;
+
     TEMPLATE_SPECIALIZATION *curr_spec;
     TEMPLATE_SPECIALIZATION *tspec;
     TEMPLATE_SPECIALIZATION *tprimary;
     PTREE spec_list;
     boolean ambiguous;
     unsigned num_args;
+    unsigned i;
 
-    tspec = NULL;
+    candidate_list = NULL;
     tprimary = RingFirst( tinfo->specializations );
     num_args = tprimary->num_args;
     *inst_parms = NULL;
     ambiguous = FALSE;
 
+    i = 0;
     RingIterBeg( tinfo->specializations, curr_spec ) {
         spec_list = curr_spec->spec_args;
-        if( spec_list == NULL ) {
-            tspec = curr_spec;
-            PTreeFreeSubtrees( *inst_parms );
-            *inst_parms = NULL;
-        } else {
-            PTREE BindClassGenericTypes( PTREE parms, PTREE args );
+        if( spec_list != NULL ) {
             PTREE bindings;
 
-            bindings = BindClassGenericTypes( spec_list, parms );
+            bindings = BindClassGenericTypes( curr_spec->decl_scope,
+                                              spec_list, parms );
             if( bindings != NULL ) {
-                /* we have found a matching specialization */
-
-                /* TODO: we should put it into a list and use partial
+                /* we have found a matching specialization use partial
                  * ordering rules to determine which one to use. */
+                if( candidate_list != NULL ) {
+                    struct candidate_ring *candidate_iter;
 
-                tspec = curr_spec;
-                PTreeFreeSubtrees( *inst_parms );
-                *inst_parms = bindings;
+                    RingIterBegSafe( candidate_list, candidate_iter ) {
+                        boolean curr_at_least_as_specialized;
+                        boolean candidate_at_least_as_specialized;
+
+                        curr_at_least_as_specialized =
+                            curr_spec->ordering[ candidate_iter->idx / 8 ] & ( 1 << ( candidate_iter->idx & 7 ) );
+                        candidate_at_least_as_specialized =
+                            candidate_iter->tspec->ordering[ i / 8 ] & ( 1 << ( i & 7 ) );
+
+                        if( curr_at_least_as_specialized
+                         && ! candidate_at_least_as_specialized ) {
+                            PTreeFreeSubtrees( candidate_iter->inst_parms );
+                            RingPrune( &candidate_list, candidate_iter );
+                        } else if( candidate_at_least_as_specialized
+                                && ! curr_at_least_as_specialized ) {
+                            PTreeFreeSubtrees( bindings );
+                            bindings = NULL;
+                            break;
+                        }
+                    } RingIterEndSafe( candidate_iter )
+                }
+
+                if( bindings != NULL ) {
+                    struct candidate_ring *candidate_iter =
+                        RingAlloc( &candidate_list,
+                                   sizeof( struct candidate_ring ) );
+                    candidate_iter->tspec = curr_spec;
+                    candidate_iter->inst_parms = bindings;
+                    candidate_iter->idx = i;
+                }
             }
+
+            i++;
         }
     } RingIterEnd( curr_spec );
+
+    /* no matching specialization found, use primary template */
+    if( candidate_list == NULL ) {
+        tspec = RingFirst( tinfo->specializations );
+        *inst_parms = NULL;
+    } else if( RingFirst( candidate_list ) == RingLast( candidate_list ) ) {
+        /* exactly one matching specialization found, use it */
+        struct candidate_ring *candidate_iter = RingFirst( candidate_list );
+        tspec = candidate_iter->tspec;
+        *inst_parms = candidate_iter->inst_parms;
+        RingFree( &candidate_list );
+    } else {
+        struct candidate_ring *candidate_iter;
+
+        /* free instantiation parameters */
+        RingIterBeg( candidate_list, candidate_iter ) {
+            PTreeFreeSubtrees( candidate_iter->inst_parms );
+        } RingIterEnd( candidate_iter )
+
+        tspec = NULL;
+        *inst_parms = NULL;
+        CFatal( "partial template specialization ambiguous" );
+    }
 
     return tspec;
 }
@@ -1926,6 +2163,7 @@ DECL_SPEC *TemplateClassInstantiation( PTREE tid, PTREE parms, tc_instantiate co
                 spec_parms = NULL;
                 tspec = findTemplateClassSpecialization( tinfo, parms,
                                                          &spec_parms );
+
                 type_instantiated =
                     instantiateClass( tinfo, parms,
                                       tspec, ( spec_parms == NULL ) ? parms : spec_parms,
@@ -2711,9 +2949,12 @@ static void saveTemplateSpecialization( void *p, carve_walk_base *d )
 {
     TEMPLATE_SPECIALIZATION *s = p;
     TEMPLATE_SPECIALIZATION *save_next;
+    TEMPLATE_INFO *save_tinfo;
+    SCOPE save_decl_scope;
     REWRITE *save_defn;
     CLASS_INST *save_instantiations;
     PTREE save_spec_args;
+    unsigned char *save_ordering;
     TEMPLATE_MEMBER *member;
     void *nti;
     unsigned i;
@@ -2724,12 +2965,18 @@ static void saveTemplateSpecialization( void *p, carve_walk_base *d )
     }
     save_next = s->next;
     s->next = CarveGetIndex( carveTEMPLATE_SPECIALIZATION, save_next );
+    save_tinfo = s->tinfo;
+    s->tinfo = CarveGetIndex( carveTEMPLATE_INFO, save_tinfo );
+    save_decl_scope = s->decl_scope;
+    s->decl_scope = ScopeGetIndex( save_decl_scope );
     save_defn = s->defn;
     s->defn = RewriteGetIndex( save_defn );
     save_instantiations = s->instantiations;
     s->instantiations = CarveGetIndex( carveCLASS_INST, save_instantiations );
     save_spec_args = s->spec_args;
     s->spec_args = PTreeGetIndex( save_spec_args );
+    save_ordering = s->ordering;
+    s->ordering = ( save_ordering != NULL ) ? (void *) save_tinfo->nr_specs : NULL;
     PCHWriteCVIndex( d->index );
     PCHWrite( s, sizeof( *s ) );
     for( i = 0; i < s->num_args; ++i ) {
@@ -2757,10 +3004,17 @@ static void saveTemplateSpecialization( void *p, carve_walk_base *d )
     member_buff[0] = NULL;
     member_buff[1] = NULL;
     PCHWrite( member_buff, sizeof( member_buff ) );
+    if( save_ordering != NULL ) {
+        PCHWrite( save_ordering,
+                  16 * ( ( save_tinfo->nr_specs - 2 ) / 128 + 1 ) );
+    }
     s->spec_args = save_spec_args;
     s->next = save_next;
+    s->tinfo = save_tinfo;
+    s->decl_scope = save_decl_scope;
     s->defn = save_defn;
     s->instantiations = save_instantiations;
+    s->ordering = save_ordering;
 }
 
 static void saveTemplateInfo( void *p, carve_walk_base *d )
@@ -2950,6 +3204,8 @@ pch_status PCHReadTemplates( void )
         ts = CarveInitElement( &data, i );
         PCHRead( ts, sizeof( *ts ) );
         ts->next = CarveMapIndex( carveTEMPLATE_SPECIALIZATION, ts->next );
+        ts->tinfo = CarveMapIndex( carveTEMPLATE_INFO, ts->tinfo );
+        ts->decl_scope = ScopeMapIndex( ts->decl_scope );
         ts->defn = RewriteMapIndex( ts->defn );
         ts->instantiations = CarveMapIndex( carveCLASS_INST,
                                             ts->instantiations );
@@ -2982,6 +3238,11 @@ pch_status PCHReadTemplates( void )
                 memb_arg_names = arg_names;
             }
             addMemberEntry( ts, memb_defn, memb_arg_names );
+        }
+        if( ts->ordering != NULL ) {
+            j = 16 * ( ( ( (unsigned) ts->ordering ) - 2 ) / 128 + 1 );
+            ts->ordering = CMemAlloc( j );
+            PCHRead( ts->ordering, j );
         }
     }
     CarveInitStart( carveTEMPLATE_INFO, &data );

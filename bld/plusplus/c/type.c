@@ -7401,12 +7401,16 @@ static void pushPrototypeAndArguments_ptree( type_bind_info *data,
                 /* anything after the ... cannot participate in binding */
                 break;
             }
+        } else {
+            p_type = NULL;
         }
 
         if( a->op == PT_TYPE ) {
             a_type = a->type;
 
             TypeStripTdMod( a_type );
+        } else {
+            a_type = NULL;
         }
 
 #ifndef NDEBUG
@@ -7492,6 +7496,9 @@ static void pushPrototypeAndArguments_ptree( type_bind_info *data,
         } else if( a->op == PT_INT_CONSTANT ) {
             PstkPush( &(data->without_generic),
                       PTreeInt64Constant( a->u.int64_constant, a->type->id ) );
+        } else if( a->op == PT_SYMBOL ) {
+            PstkPush( &(data->without_generic),
+                      PTreeIdSym( a->u.symcg.symbol ) );
         } else {
 #ifndef NDEBUG
             DumpPTree( a );
@@ -7611,33 +7618,31 @@ static void clearGenericBindings( PSTK_CTL *stk )
     }
 }
 
-static void clearGenericBindings_ptree( PSTK_CTL *stk )
+static void clearGenericBindings_ptree( SCOPE decl_scope, PSTK_CTL *stk )
 {
     PTREE *top;
-    TYPE bound_type;
+    SYMBOL stop, curr;
 
     for(;;) {
         top = PstkPop( stk );
         if( top == NULL ) break;
         if( *top == NULL ) continue;
 
-        if( ( *top )->op == PT_TYPE ) {
-            bound_type = ( *top )->type;
-#ifndef NDEBUG
-            switch( bound_type->id ) {
-            case TYP_GENERIC:
-            case TYP_CLASS:
-                if( bound_type->of != NULL ) {
-                    break;
-                }
-                /* fall through */
-            default:
-                CFatal( "bound generic type corrupted" );
+        PTreeFreeSubtrees( *top );
+    }
+
+    if( decl_scope != NULL ) {
+        stop = ScopeOrderedStart( decl_scope );
+        curr = NULL;
+        for(;;) {
+            curr = ScopeOrderedNext( stop, curr );
+            if( curr == NULL ) break;
+
+            if( ( curr->sym_type->id == TYP_TYPEDEF )
+                && ( curr->sym_type->of->id == TYP_GENERIC ) ) {
+                curr->sym_type->of->of = NULL;
             }
-#endif
-            bound_type->of = NULL;
         }
-        PTreeFree( *top );
     }
 }
 
@@ -8141,13 +8146,25 @@ static unsigned typesBind_ptree( type_bind_info *data )
             PTreeFree( *b_top );
             PTreeFree( *u_top );
             return( TB_NULL );
-        } else if( ( ( *u_top )->op == PT_ID )
-                || ( ( *u_top )->op == PT_SYMBOL ) ) {
+        } else if( ( *u_top )->op == PT_ID ) {
             /* TODO: check type */
             if( ( *b_top )->op == PT_INT_CONSTANT ) {
-                PstkPush( &(data->bindings),
-                          PTreeInt64Constant( ( *b_top )->u.int64_constant,
-                                              ( *b_top )->type->id ) );
+                PTREE binding =
+                    PTreeBinary( CO_STORAGE,
+                                 PTreeId( ( *u_top )->u.id.name ),
+                                 PTreeInt64Constant( ( *b_top )->u.int64_constant,
+                                                     ( *b_top )->type->id ) );
+                PstkPush( &(data->bindings), binding );
+                PTreeFree( *b_top );
+                PTreeFree( *u_top );
+                continue;
+            } else if( ( *b_top )->op == PT_ID ) {
+                PTREE binding =
+                    PTreeBinary( CO_STORAGE,
+                                 PTreeId( ( *u_top )->u.id.name ),
+                                 PTreeId( ( *b_top )->u.id.name ) );
+                PstkPush( &(data->bindings), binding );
+
                 PTreeFree( *b_top );
                 PTreeFree( *u_top );
                 continue;
@@ -8215,7 +8232,8 @@ static unsigned typesBind_ptree( type_bind_info *data )
             /* types on top of stack match exactly */
             continue;
         }
-        if( b_unmod_type->id != u_unmod_type->id ) {
+        if( ( b_unmod_type->id != u_unmod_type->id )
+         || ( u_unmod_type->id == TYP_GENERIC) ) {
             if( u_unmod_type->id != TYP_GENERIC ) {
                 return( TB_NULL );
             }
@@ -8318,7 +8336,6 @@ static unsigned typesBind_ptree( type_bind_info *data )
             }
             /* bind the generic type */
             u_unmod_type->of = g_type;
-            PstkPush( &(data->bindings), PTreeType( u_unmod_type ) );
             continue;
         }
         if( flags.arg_1st_level ) {
@@ -8355,7 +8372,7 @@ static unsigned typesBind_ptree( type_bind_info *data )
                 }
             }
             u_unmod_type->of = b_unmod_type;
-            PstkPush( &(data->bindings), PTreeType( u_unmod_type ) );
+            //PstkPush( &(data->bindings), PTreeType( u_unmod_type ) );
             break;
         case TYP_POINTER:
             if( flags.arg_1st_level ) {
@@ -8676,11 +8693,13 @@ static void binderFini_ptree( type_bind_info *data )
     PstkClose( &(data->bindings) );
 }
 
-PTREE BindClassGenericTypes( PTREE parms, PTREE args )
+PTREE BindClassGenericTypes( SCOPE decl_scope, PTREE parms, PTREE args )
 /**************************************************************************/
 {
     PTREE result;
     PTREE item;
+    PTREE node;
+    SYMBOL curr, stop;
     unsigned bind_status;
     unsigned push_control;
     auto type_bind_info data;
@@ -8692,37 +8711,81 @@ PTREE BindClassGenericTypes( PTREE parms, PTREE args )
     result = NULL;
     bind_status = typesBind_ptree( &data );
     if( bind_status != TB_NULL ) {
-        PSTK_ITER iter;
-        PTREE node;
-
         node = result = PTreeBinary( CO_LIST, NULL, NULL );
 
-        if( ! PstkIterDnOpen( &iter, &data.bindings ) ) {
-            for( ; ; ) {
-                item = PstkIterDnNext( &iter );
-                if( NULL == item ) break;
+        if( decl_scope != NULL ) {
+            stop = ScopeOrderedStart( decl_scope );
+            curr = NULL;
+            for(;;) {
+                curr = ScopeOrderedNext( stop, curr );
+                if( curr == NULL ) break;
 
-                node = node->u.subtree[0] = PTreeBinary( CO_LIST, NULL, NULL );
-                if( item->op == PT_TYPE ) {
-                    node->u.subtree[1] = PTreeType( item->type->of );
-                } else if( item->op == PT_INT_CONSTANT ) {
-                    node->u.subtree[1] =
-                        PTreeInt64Constant( item->u.int64_constant,
-                                            item->type->id );
+                if( ( curr->sym_type->id == TYP_TYPEDEF )
+                 && ( curr->sym_type->of->id == TYP_GENERIC ) ) {
+                    node = node->u.subtree[0] =
+                        PTreeBinary( CO_LIST, NULL,
+                                     PTreeType( curr->sym_type->of->of ) );
                 } else {
-                    CFatal( "not yet implemented (argument deduction)" );
+                    PSTK_ITER iter;
+
+                    node = node->u.subtree[0] =
+                        PTreeBinary( CO_LIST, NULL, NULL );
+
+                    if( ! PstkIterDnOpen( &iter, &data.bindings ) ) {
+                        for( ; ; ) {
+                            item = PstkIterDnNext( &iter );
+                            if( NULL == item ) break;
+
+                            DbgAssert( item->cgop == CO_STORAGE );
+                            DbgAssert( item->u.subtree[0]->op == PT_ID );
+                            DbgAssert( ( item->u.subtree[1]->op == PT_INT_CONSTANT ) ||
+                                       ( item->u.subtree[1]->op == PT_ID ) );
+
+                            if( ( item->u.subtree[1] != NULL )
+                                && ( item->u.subtree[0]->u.id.name == curr->name->name ) ) {
+
+                                if( node->u.subtree[1] != NULL ) {
+                                    if( ( node->u.subtree[1]->op == PT_INT_CONSTANT )
+                                        && ( item->u.subtree[1]->op == PT_INT_CONSTANT ) ) {
+                                        if( I64Cmp( &node->u.subtree[1]->u.int64_constant,
+                                                    &item->u.subtree[1]->u.int64_constant ) ) {
+                                            /* we have deduced different
+                                             * values for the same template
+                                             * parameter => therfore deduction
+                                             * failed */
+                                            bind_status = TB_NULL;
+                                        }
+                                    } else if( ( node->u.subtree[1]->op == PT_ID )
+                                               && ( item->u.subtree[1]->op == PT_ID ) ) {
+                                        if( node->u.subtree[1]->u.id.name != item->u.subtree[1]->u.id.name ) {
+                                            bind_status = TB_NULL;
+                                        }
+                                    } else {
+                                        bind_status = TB_NULL;
+                                    }
+                                } else {
+                                    node->u.subtree[1] = item->u.subtree[1];
+                                    item->u.subtree[1] = NULL;
+                                }
+                            }
+                        }
+                    }
                 }
             }
-        }
 
-        if( result->u.subtree[0] != NULL ) {
-            node = result;
-            result = result->u.subtree[0];
-            node->u.subtree[0] = NULL;
-            PTreeFree( node );
+            if( result->u.subtree[0] != NULL ) {
+                node = result;
+                result = result->u.subtree[0];
+                PTreeFree( node );
+            }
+
+            if( bind_status == TB_NULL ) {
+                PTreeFreeSubtrees( result );
+                result = NULL;
+            }
         }
     }
-    clearGenericBindings_ptree( &data.bindings );
+    clearGenericBindings_ptree( decl_scope, &data.bindings );
 
     binderFini_ptree( &data );
     return( result );
