@@ -44,12 +44,12 @@ cdsay .
     <CPCMD> <devdir>/trap/lcl/dos/dosx/rsi/nec.trp/rsi.trp <relroot>/rel2/n98bw/
     <CPCMD> <devdir>/trap/lcl/dos/dosx/rsi/nec.srv/rsihelp.exp <relroot>/rel2/n98bw/
     <CPCMD> <devdir>/trap/lcl/dos/dosx/pls/nec.trp/pls.trp <relroot>/rel2/n98bw/
-    <CPCMD> <devdir>/trap/net/necdos.trp/net.trp <relroot>/rel2/n98bw/
-    <CPCMD> <devdir>/trap/net/necdos.srv/netserv.exe <relroot>/rel2/n98bw/
-    <CPCMD> <devdir>/trap/nov/necdos.trp/nov.trp <relroot>/rel2/n98bw/
-    <CPCMD> <devdir>/trap/nov/necdos.srv/novserv.exe <relroot>/rel2/n98bw/
-    <CPCMD> <devdir>/trap/vdm/necdos.srv/vdmserv.exe <relroot>/rel2/n98bw/
-    <CPCMD> <devdir>/trap/win/necdos.srv/winserv.exe <relroot>/rel2/n98bw/
+    <CPCMD> <devdir>/trap/net/dosnec.trp/net.trp <relroot>/rel2/n98bw/
+    <CPCMD> <devdir>/trap/net/dosnec.srv/netserv.exe <relroot>/rel2/n98bw/
+    <CPCMD> <devdir>/trap/nov/dosnec.trp/nov.trp <relroot>/rel2/n98bw/
+    <CPCMD> <devdir>/trap/nov/dosnec.srv/novserv.exe <relroot>/rel2/n98bw/
+    <CPCMD> <devdir>/trap/vdm/dosnec.srv/vdmserv.exe <relroot>/rel2/n98bw/
+    <CPCMD> <devdir>/trap/win/dosnec.srv/winserv.exe <relroot>/rel2/n98bw/
 #os2v2
     <CPCMD> <devdir>/trap/lcl/os2v2/std/std.d32 <relroot>/rel2/binp/
     <CPCMD> <devdir>/trap/net/os2v2.trp/net.d32 <relroot>/rel2/binp/
@@ -102,11 +102,11 @@ cdsay .
     <CPCMD> <devdir>/trap/tcp/nt.srv/tcpserv.exe <relroot>/rel2/binnt/
     <CPCMD> <devdir>/trap/vdm/nt.trp/vdm.dll <relroot>/rel2/binnt/
 #axp
-#    <CPCMD> <devdir>/trap/lcl/nt/axpstd/std.dll <relroot>/rel2/axpnt/
-#    <CPCMD> <devdir>/trap/nov/axpnt.trp/nov.dll <relroot>/rel2/axpnt/
-#    <CPCMD> <devdir>/trap/nov/axpnt.srv/novserv.exe <relroot>/rel2/axpnt/
-#    <CPCMD> <devdir>/trap/tcp/axpnt.trp/tcp.dll <relroot>/rel2/axpnt/
-#    <CPCMD> <devdir>/trap/tcp/axpnt.srv/tcpserv.exe <relroot>/rel2/axpnt/
+#    <CPCMD> <devdir>/trap/lcl/nt/stdaxp/std.dll <relroot>/rel2/axpnt/
+#    <CPCMD> <devdir>/trap/nov/ntaxp.trp/nov.dll <relroot>/rel2/axpnt/
+#    <CPCMD> <devdir>/trap/nov/ntaxp.srv/novserv.exe <relroot>/rel2/axpnt/
+#    <CPCMD> <devdir>/trap/tcp/ntaxp.trp/tcp.dll <relroot>/rel2/axpnt/
+#    <CPCMD> <devdir>/trap/tcp/ntaxp.srv/tcpserv.exe <relroot>/rel2/axpnt/
 #nlm
     <CPCMD> <devdir>/trap/nov/nlm3.srv/novserv3.nlm <relroot>/rel2/nlm/
     <CPCMD> <devdir>/trap/nov/nlm4.srv/novserv4.nlm <relroot>/rel2/nlm/
