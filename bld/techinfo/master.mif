@@ -1,4 +1,7 @@
 proj_name = techinfo
+
+techinfo_autodepends = .AUTODEPEND
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
@@ -6,33 +9,16 @@ proj_name = techinfo
 .CONTINUE
 .ERASE
 
-.EXTENSIONS
-.EXTENSIONS : .exe .obj .c .asm
-
-cflags_dos = -bt=dos -zq -os -s -d1 -w3
-cflags_os2 = -bt=os2 -zq -os -s -d1 -w3 -d__OS2__ -i$(inc_dirs_sys)
-
-.c:..
-.asm:..
-
-.c.obj:
-    $(cc) $(cflags_$(host_OS)) $<
-
-.asm.obj : .AUTODEPEND
-    $(as) $(aflags) $(extra_a_flags_$[&) $[@
-
-#.asm.obj:
-#    $(as) -zq -fo=$^@ $[@
-
 os2objs = techinfo.obj ptype.obj pbus.obj pprefix.obj ndptype.obj
 dosobjs = $(os2objs) monint.obj
 
-lflags_os2 = system os2 pmc op newfile
+extra_c_flags_dos = -os -s
+extra_c_flags_os2 = -os -s
+
+extra_l_flags_os2 = op newfile
+
+.c: ..
+.asm: ..
 
 techinfo.exe : $($(host_OS)objs)
-    @%create $*.lnk
-    @%append $*.lnk name $^@
-    @%append $*.lnk option quiet
-    @for %i in ($($(host_OS)objs)) do @%append $*.lnk file %i
-    @%append $*.lnk libpath $(watcom_dir)\lib
-    $(linker) $(lflags) @$*.lnk
+    $(linker) $(lflags) name $^@ file {$($(host_OS)objs)}

@@ -4,9 +4,7 @@
 
 proj_name = emu86
 
-!ifndef emu86_autodepends
 emu86_autodepends = .AUTODEPEND
-!endif
 
 !include cproj.mif
 !include deftarg.mif
@@ -18,8 +16,6 @@ emu86_autodepends = .AUTODEPEND
 
 .c : ../c
 .asm : ../asm
-#.inc : ../inc
-#.new : ../inc
 
 aflag_386 =
 !ifeq host_CPU i86
@@ -41,9 +37,6 @@ extra_a_flags_emustub = -fpi87
 extra_a_flags_qnx = -DQNX$(cpu_size)
 
 extra_c_flags_qnx = -oais -s -i"$(new_qnx_h)" -DQNX$(cpu_size)
-
-.asm.obj: .AUTODEPEND
-    $(as) $(aflags) $(extra_a_flags_$[&) $[@
 
 objs_dos = initemu.obj emu8087.obj
 objs_os2 = initemu2.obj emu8087.obj

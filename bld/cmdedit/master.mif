@@ -1,5 +1,7 @@
 proj_name = cmdedit
 
+cmdedit_autodepends = .AUTODEPEND
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
@@ -48,9 +50,6 @@ extra_a_flags_os2 = -d_OS=_OS2
         $(comp286) $< /w3 /oxs /d1 /fo=.cbj /zq /d__CMDSHELL__ #
 
 .asm.cbj : .AUTODEPEND
-        $(as) $(aflags) $(extra_a_flags_$[&) $<
-
-.asm.obj : .AUTODEPEND
         $(as) $(aflags) $(extra_a_flags_$[&) $<
 
 .before:

@@ -1,8 +1,6 @@
 proj_name = win386
 
-!ifndef win386_autodepends
 win386_autodepends = .AUTODEPEND
-!endif
 
 !include cproj.mif
 !include deftarg.mif
@@ -137,11 +135,6 @@ LNK = $^&.lnk
         @%append $(LNK) segment CLASS 'EMU' PRELOAD MOVEABLE
         @%append $(LNK) @../exports.lnk
 !endif
-
-# implicit rules
-#################
-.asm.obj : .AUTODEPEND
-        $(as) $(aflags) $(extra_a_flags_$[&) $[@
 
 # explicit rules
 #################
