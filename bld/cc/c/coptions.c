@@ -24,21 +24,16 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  C compiler command line option processing.
 *
 ****************************************************************************/
 
 
 /*****************************************************************************
 *                                                                            *
-*                                                                            *
-*                                                                            *
-*       If you add an option, don't forget to change ../USAGE.SP             *
+*       If you add an option, don't forget to change ../usage.sp             *
 *       Also, don't forget to add a case in MacroDefs                        *
 *       to predefine a __SW_xx macro                                         *
-*                                                                            *
-*                                                                            *
 *                                                                            *
 *****************************************************************************/
 #include "cvars.h"
@@ -1152,6 +1147,7 @@ void Set_OX()
     GenSwitches &= ~NO_OPTIMIZATION;
     GenSwitches |= LOOP_OPTIMIZATION | INS_SCHEDULING | BRANCH_PREDICTION;
     CompFlags.inline_functions = 1;
+    OptValue = 20; // Otherwise we effectively disable inlining!
     Set_OE();
 #if _CPU == 8086 || _CPU == 386
     TargetSwitches |= I_MATH_INLINE;
