@@ -292,7 +292,6 @@ local char *ExpandMacroToken( void )
     char        *buf;
 
     len = 0;
-    i = 0;
     switch( *MacroPtr ) {
     case T_CONSTANT:
     case T_PPNUMBER:
@@ -300,9 +299,9 @@ local char *ExpandMacroToken( void )
     case T_UNEXPANDABLE_ID:
     case T_SAVED_ID:
     case T_BAD_TOKEN:                                   /* 07-apr-91 */
-        ++MacroPtr;
-        buf = CMemAlloc( strlen( MacroPtr ) + 1 );
-        while( (buf[i] = *MacroPtr++) )  ++i;
+        p = ++MacroPtr;
+        len = strlen( p );
+        MacroPtr += len;
         break;
     case T_LSTRING:                                     /* 15-may-92 */
         len = 1;
@@ -310,19 +309,24 @@ local char *ExpandMacroToken( void )
         ++MacroPtr;
         len += strlen( MacroPtr ) + 3;
         buf = CMemAlloc( len );
+        i = 0;
         if ( MacroPtr[-1] == T_LSTRING )
             buf[i++] = 'L';
         buf[i++] = '"';
         while( (buf[i] = *MacroPtr++) )  ++i;
         buf[i++] = '"';
         buf[i] = '\0';
-        break;
+        return( buf );
     default:                                            /* 28-mar-90 */
-        p = Tokens[ *MacroPtr ];
-        ++MacroPtr;
-        buf = CMemAlloc( strlen( p ) + 1 );
-        while( (buf[i] = *p++) )  ++i;
+        p = Tokens[ *MacroPtr++ ];
+        len = strlen( p );
         break;
+    }
+    buf = NULL;
+    if( len > 0 ) {
+        len++;
+        buf = CMemAlloc( len );
+        memcpy( buf, p, len );
     }
     return( buf );
 }
@@ -905,24 +909,23 @@ MACRO_TOKEN *ExpandNestedMacros( MACRO_TOKEN *head, int rescanning )
 
 char *GlueTokenToBuffer( MACRO_TOKEN *first, char *gluebuf )
 {
-    size_t      len, gluelen;
-    char       *newbuf, *buf;
+    size_t      gluelen;
+    char       *buf;
 
     buf = NULL;
     if( first != NULL ) {                               /* 19-apr-93 */
         MacroPtr = &first->token;
         buf = ExpandMacroToken();
     }
-    if ( gluebuf != NULL ) {
+    if ( buf == NULL )
+        buf = gluebuf;
+    else if ( gluebuf != NULL ) {
         /* now do a "strcat( gluebuf, buf )" */
-        len = strlen( buf );
         gluelen = strlen( gluebuf );
-        newbuf = CMemAlloc( gluelen + len + 1);
-        memcpy( newbuf, gluebuf, gluelen );
-        CMemFree( gluebuf );
-        strcpy( newbuf + gluelen, buf );
+        gluebuf = CMemRealloc( gluebuf, gluelen + strlen( buf ) + 1 );
+        strcpy( gluebuf + gluelen, buf );
         CMemFree( buf );
-        buf = newbuf;
+        buf = gluebuf;
     }
     return( buf );
 }
