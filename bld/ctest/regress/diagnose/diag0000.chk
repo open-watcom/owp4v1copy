@@ -1,0 +1,4 @@
+source\diag0001.c(4): Error! E1128: Enum constant too large
+source\diag0001.c(6): Error! E1128: Enum constant too large
+source\diag0001.c(10): Error! E1128: Enum constant too large
+source\diag0001.c(12): Error! E1128: Enum constant too large

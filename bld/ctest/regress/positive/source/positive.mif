@@ -29,7 +29,6 @@ opt_cmdln04 = /dCMDMAC -DCMD1= /DCMD2$#
 opt_cmdln05 = -dXN2=2 -dXS1="a-/ b"-dXN1=2 -dXS2#"a-/ b"
 opt_opt09 = -za
 opt_opt41 = -ot -ol+
-opt_opt42 = -ms
 opt_pack04 = -wx
 opt_pch01 = -fhq
 opt_pch02 = -fhq
@@ -58,6 +57,7 @@ opt_link_opt32 = option stack=128k
 !ifeq arch 386
 # 386 specific
 opt_opt13 = -fpd
+opt_opt42 = -ms
 !endif
 
 !ifeq arch i86

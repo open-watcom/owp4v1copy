@@ -14,7 +14,7 @@ ALWAYS_PASS
 #else
 
 /* Must be not compiled in flat model, use small (-ms) */
-#ifndef __SMALL__
+#if defined( __386__ ) && !defined( __SMALL__ )
 #error  Must use small model, not flat
 #endif
 
