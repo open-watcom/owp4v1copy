@@ -134,7 +134,7 @@ typedef struct {
 } coff_sym_section;
 
 typedef struct {
-    union type {
+    union {
         uint_32         symbol_table_index;
         uint_32         RVA;
     };
