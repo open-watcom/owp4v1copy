@@ -10,7 +10,7 @@ set PROJDIR=<CWD>
 cdsay .
 
 [ BLOCK <1> build rel2 ]
-#========================
+#=======================
     cd wres
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
     cdsay <PROJDIR>/mkcdpg
@@ -22,23 +22,22 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>/sdk/rc/rc/os2386/wrc.exe <relroot>/rel2/binp/wrc.exe
-    <CPCMD> <devdir>/sdk/rc/rc/nt386/wrc.exe <relroot>/rel2/binnt/wrc.exe
-    <CPCMD> <devdir>/sdk/rc/rc/dos386/wrc.exe <relroot>/rel2/binw/wrc.exe
-#    <CPCMD> <devdir>/sdk/rc/rc/ntaxp/wrc.exe <relroot>/rel2/axpnt/wrc.exe
-#    <CPCMD> <devdir>/sdk/rc/rc/osi386/wrc.exe <relroot>/rel2/binw/wrc.exe
-    <CPCMD> <devdir>/sdk/rc/rc/nt386.dll/wrc.dll <relroot>/rel2/binnt/wrc.dll
-#    <CPCMD> <devdir>/sdk/rc/rc/os2386.dll/wrc.dll <relroot>/rel2/binp/dll/wrc.dll
-    <CPCMD> <devdir>/sdk/rc/rc/*.uni <relroot>/rel2/binw/
-    <CPCMD> <devdir>/sdk/rc/mkcdpg/nt386/mkcdpg.exe <relroot>/rel2/binnt/mkcdpg.exe
-#    <CPCMD> <devdir>/sdk/rc/mkcdpg/ntaxp/mkcdpg.exe <relroot>/rel2/axpnt/mkcdpg.exe
-    <CPCMD> <devdir>/sdk/rc/exedmp/nt386/exedmp.exe <relroot>/rel2/binnt/exedmp.exe
-    <CPCMD> <devdir>/sdk/rc/exedmp/os2386/exedmp.exe <relroot>/rel2/binp/exedmp.exe
-    <CPCMD> <devdir>/sdk/rc/rc/nt386rt.dll/wrc.dll <relroot>/rel2/binnt/rtdll/wrc.dll
-# linux
-    <CPCMD> <devdir>/sdk/rc/rc/linux386/wrc.exe <relroot>/rel2/binl/wrc
-    <CPCMD> <devdir>/sdk/rc/rc/linux386/wrc.sym <relroot>/rel2/binl/wrc.sym
-    <CPCMD> <devdir>/sdk/rc/rc/*.uni <relroot>/rel2/binl/
+    <CPCMD> <PROJDIR>/rc/os2386/wrc.exe         <RELROOT>/rel2/binp/wrc.exe
+    <CPCMD> <PROJDIR>/rc/nt386/wrc.exe          <RELROOT>/rel2/binnt/wrc.exe
+    <CPCMD> <PROJDIR>/rc/dos386/wrc.exe         <RELROOT>/rel2/binw/wrc.exe
+#    <CPCMD> <PROJDIR>/rc/ntaxp/wrc.exe          <RELROOT>/rel2/axpnt/wrc.exe
+#    <CPCMD> <PROJDIR>/rc/osi386/wrc.exe         <RELROOT>/rel2/binw/wrc.exe
+    <CPCMD> <PROJDIR>/rc/nt386.dll/wrc.dll      <RELROOT>/rel2/binnt/wrc.dll
+#    <CPCMD> <PROJDIR>/rc/os2386.dll/wrc.dll     <RELROOT>/rel2/binp/dll/wrc.dll
+    <CPCMD> <PROJDIR>/rc/*.uni                  <RELROOT>/rel2/binw/
+    <CPCMD> <PROJDIR>/mkcdpg/nt386/mkcdpg.exe   <RELROOT>/rel2/binnt/mkcdpg.exe
+#    <CPCMD> <PROJDIR>/mkcdpg/ntaxp/mkcdpg.exe   <RELROOT>/rel2/axpnt/mkcdpg.exe
+    <CPCMD> <PROJDIR>/exedmp/nt386/exedmp.exe   <RELROOT>/rel2/binnt/exedmp.exe
+    <CPCMD> <PROJDIR>/exedmp/os2386/exedmp.exe  <RELROOT>/rel2/binp/exedmp.exe
+    <CPCMD> <PROJDIR>/rc/nt386rt.dll/wrc.dll    <RELROOT>/rel2/binnt/rtdll/wrc.dll
+    <CPCMD> <PROJDIR>/rc/linux386/wrc.exe       <RELROOT>/rel2/binl/wrc
+    <CPCMD> <PROJDIR>/rc/linux386/wrc.sym       <RELROOT>/rel2/binl/wrc.sym
+    <CPCMD> <PROJDIR>/rc/*.uni                  <RELROOT>/rel2/binl/
 
 [ BLOCK <1> clean ]
 #==================
