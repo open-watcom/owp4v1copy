@@ -346,20 +346,9 @@ extern size_t FmtStr( char *buff, const char *fmt, ... )
 
 STATIC void logWrite( const char *buff, size_t len )
 {
-    if( logName == NULL ) return;
-    if( logFH == -1 ) {
-        logFH = open( logName, O_WRONLY | O_APPEND | O_CREAT | O_TEXT,
-            S_IWRITE | S_IREAD );
-        if( logFH == -1 ) {
-            const char *fname;
-
-            fname = logName;
-            logName = NULL;     /* recursion protection */
-            PrtMsg( WRN| UNABLE_TO_INCLUDE, fname );
-            return;
-        }
+    if( logFH != -1 ) {
+        write( logFH, buff, len );
     }
-    write( logFH, buff, len );
 }
 
 #pragma on (check_stack);
@@ -572,6 +561,10 @@ extern void LogInit( const char *name )
 {
     logName = name;
     logFH = -1;
+    if( name == NULL ) return;
+    logFH = open( logName, O_WRONLY | O_APPEND | O_CREAT | O_TEXT,
+        S_IWRITE | S_IREAD );
+    return;
 }
 
 extern void LogFini( void )
