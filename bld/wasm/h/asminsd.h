@@ -575,6 +575,8 @@ ins (T_INVLPG,          OP_M,        F_0F,   OP_NONE,    no_WDS, 0x01,     0x38,
 insa(T_INVOKE,          OP_SPECIAL,  0,      OP_NONE,    0,      0,        OP_DIRECTIVE,             0,     0)
 ins (T_IRET,            OP_NONE,     F_16,   OP_NONE,    no_RM,  0xCF,     0x00,                     P_86,  NO_PREFIX)
 ins (T_IRETD,           OP_NONE,     F_32,   OP_NONE,    no_RM,  0xCF,     0x00,                     P_386, NO_PREFIX)
+ins (T_IRETDF,          OP_NONE,     F_32,   OP_NONE,    no_RM,  0xCF,     0x00,                     P_386, NO_PREFIX)
+ins (T_IRETF,           OP_NONE,     F_16,   OP_NONE,    no_RM,  0xCF,     0x00,                     P_86,  NO_PREFIX)
 insa(T_IRP,             OP_SPECIAL,  0,      OP_NONE,    0,      0,        OP_DIRECTIVE,             0,     0)
 insa(T_IRPC,            OP_SPECIAL,  0,      OP_NONE,    0,      0,        OP_DIRECTIVE,             0,     0)
 ins (T_JA,              OP_I8,       0,      OP_NONE,    no_RM,  0x77,     0x00,                     P_86,  NO_PREFIX)

@@ -3256,7 +3256,7 @@ static void write_epilogue( void )
 }
 
 int Ret( int i, int count, int flag_iret )
-/*************************/
+/*****************************************/
 {
     char        buffer[20];
     proc_info   *info;
@@ -3264,14 +3264,21 @@ int Ret( int i, int count, int flag_iret )
     info = CurrProc->e.procinfo;
     
     if( flag_iret ) {
-        strcpy( buffer, AsmBuffer[i]->string_ptr );
-    } else if( info->mem_type == MT_NEAR ) {
-        strcpy( buffer, "retn " );
+        if( AsmBuffer[i]->value == T_IRET ) {
+            strcpy( buffer, "iretf" );
+        } else {
+            strcpy( buffer, "iretdf" );
+        }
     } else {
-        strcpy( buffer, "retf " );
+        if( info->mem_type == MT_NEAR ) {
+            strcpy( buffer, "retn " );
+        } else {
+            strcpy( buffer, "retf " );
+        }
     }
     
     write_epilogue();
+
     if( !flag_iret ) {
         if( count == i + 1 ) {
             if( ( info->langtype >= LANG_BASIC &&
