@@ -44,8 +44,8 @@ $(LNK) : makefile ..\win386.mif
 .c.nbj :
         $(cc) $[* $(CFLAGSSIZE) -fo=$^&.nbj
 .c.obj :
-        $(cc) $[* $(CFLAGS) -fo=$^&.obj
+        $(cc) $[* $(CFLAGS)
 .asm.obj :
-        $(as) $[* -fo=$^&.obj
+        $(as) $[*
 .asm.dbj :
         $(as) $[* -dDLL32 -fo=$^&.dbj
