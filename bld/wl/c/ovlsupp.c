@@ -49,6 +49,8 @@
 #include "objnode.h"
 #include "distrib.h"
 #include "overlays.h"
+#include "ring.h"
+#include "specials.h"
 
 static segdata      *OvlSegData;
 static symbol       *OverlayTable;   /* symbol entry for overlay table */
@@ -308,19 +310,31 @@ extern void CalcOvl( void )
     AllocAreas( Root->areas );
     MAlign( 4 );          /*    don't add to section size */
     NormalizeAddr();        /*  now CurrLoc.seg points to next free para */
+
+    OvlGroup = AllocGroup( AutoGrpName, &Groups );
+    OvlGroup->grp_addr = OvltabAddr;
+    OvlGroup->section = Root;
+    OvlGroup->size = OvltabSize;
+    OvlGroup->totalsize = OvltabSize;
+    OvlGroup->num = 0;
+    OvlGroup->linear = 0;
+    Ring2Append( &OvlGroup->leaders, OvlSeg );
+
+    OvlSeg->group = OvlGroup;
+    OvlSeg->seg_addr = OvltabAddr;
+
+    OvlSegData->data = AllocStg( OvltabSize );
+    OvlSegData->length = OvltabSize;
+    RingAppend( &OvlSegData->u.leader->pieces, OvlSegData );
 }
 
 extern void FreeOvlStruct( void )
 /*******************************/
 {
     OvlClasses = NULL;
-/*    FreeList( OvlVectors );  vectors permalloc'd now. */
     OvlVectors = NULL;
     if( OvlSeg != NULL ) {
         FreeLeader( OvlSeg );
-    }
-    if( OvlSegData != NULL ) {
-        FreeSegData( OvlSegData );
     }
     FreeDistStuff();
 }
@@ -330,8 +344,10 @@ static bool IsAncestor( int elder, section *ceorl )
 /* Is overlay section # "elder" an ancestor of section "ceorl" */
 {
     for(;;) {
-        if( ceorl->ovl_num == elder ) return( TRUE );
-        if( ceorl->parent == NULL ) return( FALSE );
+        if( ceorl->ovl_num == elder )
+            return( TRUE );
+        if( ceorl->parent == NULL )
+            return( FALSE );
         ceorl = ceorl->parent;
     }
 }
@@ -345,7 +361,8 @@ extern void OvlDefVector( symbol * sym )
     segdata *   sdata;
     unsigned_16 ovl_num;
 
-    if( NO_VECTOR( sym ) ) return;
+    if( NO_VECTOR( sym ) )
+        return;
     sdata = sym->p.seg;
     if( sdata == NULL ) {
         sym->u.d.ovlstate |= (OVL_FORCE | OVL_NO_VECTOR);
@@ -388,8 +405,10 @@ static void OvlRefVector( symbol * sym )
 {
     unsigned_16 ovl_num;
 
-    if( IS_SYM_COMMUNAL(sym) ) return;
-    if( (sym->u.d.ovlstate & OVL_VEC_MASK) != OVL_UNDECIDED ) return;
+    if( IS_SYM_COMMUNAL(sym) )
+        return;
+    if( (sym->u.d.ovlstate & OVL_VEC_MASK) != OVL_UNDECIDED )
+        return;
     if( !(sym->info & SYM_DEFINED) ) {
         if( !(sym->u.d.ovlstate & OVL_REF) ) {
             sym->u.d.ovlref = CurrSect->ovl_num;
@@ -398,11 +417,13 @@ static void OvlRefVector( symbol * sym )
             sym->u.d.ovlref = LowestAncestor( sym->u.d.ovlref, CurrSect );
         }
     } else {
-        if( sym->p.seg == NULL ) return;
+        if( sym->p.seg == NULL )
+            return;
         /* at this point, we know it has already been defined, but does */
         /* not have an overlay vector, and is not data */
         ovl_num = sym->p.seg->u.leader->class->section->ovl_num;
-        if( IsAncestor( ovl_num, CurrSect ) ) return;
+        if( IsAncestor( ovl_num, CurrSect ) )
+            return;
         /* overlay vector necessary */
         Vectorize( sym );
     }
@@ -411,7 +432,8 @@ static void OvlRefVector( symbol * sym )
 extern void TryRefVector( symbol * sym )
 /**************************************/
 {
-    if( !(FmtData.type & MK_OVERLAYS) ) return;
+    if( !(FmtData.type & MK_OVERLAYS) )
+        return;
     if( (LinkState & SEARCHING_LIBRARIES) && FmtData.u.dos.distribute ) {
         RefDistribSym( sym );
     } else {
@@ -422,9 +444,12 @@ extern void TryRefVector( symbol * sym )
 extern void OvlUseVector( symbol * sym, extnode *newnode )
 /********************************************************/
 {
-    if( !(FmtData.type & MK_OVERLAYS) ) return;
-    if( IS_SYM_COMMUNAL(sym) ) return;
-    if( (sym->u.d.ovlstate & OVL_VEC_MASK) != OVL_MAKE_VECTOR ) return;
+    if( !(FmtData.type & MK_OVERLAYS) )
+        return;
+    if( IS_SYM_COMMUNAL(sym) )
+        return;
+    if( (sym->u.d.ovlstate & OVL_VEC_MASK) != OVL_MAKE_VECTOR )
+        return;
     if( IsAncestor( sym->p.seg->u.leader->class->section->ovl_num, CurrSect )) {
          return;
     }
@@ -437,8 +462,10 @@ extern void IndirectCall( symbol *sym )
 {
     unsigned_16 ovl_num;
 
-    if( !(FmtData.type & MK_OVERLAYS) ) return;
-    if( NO_VECTOR( sym ) ) return;
+    if( !(FmtData.type & MK_OVERLAYS) )
+        return;
+    if( NO_VECTOR( sym ) )
+        return;
     if( sym->info & SYM_DEFINED ) {
         if( sym->info & SYM_DISTRIB ) {
             DistIndCall( sym );
@@ -469,7 +496,7 @@ static void GetVecAddr( int vecnum, targ_addr *addr )
     }
 }
 
-#ifdef OVERLAY_VERSION
+#ifdef OVERLAY_VERSION1
 // NYI  broken from removal of thread
 extern void OvlForceVect( thread *thd, bool indirect )
 /****************************************************/
@@ -687,7 +714,8 @@ extern void SetOvlStartAddr( void )
     } else {
         sym = FindISymbol( _LongOvlInitRtn );
     }
-    if( sym == NULL ) return;
+    if( sym == NULL )
+        return;
     if( sym->info & SYM_DEFINED ) {
         StartInfo.addr = sym->addr;
     }
@@ -699,21 +727,24 @@ extern void OvlPass1( void )
     symbol *    sym;
 
     ProcAllOvl( LoadObjFiles );
+
     /* define symbols for overlay table */
     OverlayTable = DefISymbol( _OvltabName );
     OverlayTableEnd = DefISymbol( _OvltabEndName );
     OvlVecStart = DefISymbol( _OvlVecStartName );
     OvlVecEnd = DefISymbol( _OvlVecEndName );
+
     OvlSeg = InitLeader( "", 0 );
-    OvlSeg->align = 0;
+    OvlSeg->class = FindClass( Root, OvlMgrClass, 0, 1 );
     OvlSeg->combine = COMBINE_INVALID;
-    OvlSeg->dbgtype = NOT_DEBUGGING_INFO;
     OvlSegData = AllocSegData();
     OvlSegData->u.leader = OvlSeg;
+
     OverlayTable->p.seg = OvlSegData;
     OverlayTableEnd->p.seg = OvlSegData;
     OvlVecStart->p.seg = OvlSegData;
     OvlVecEnd->p.seg = OvlSegData;
+
     /* generate reference for overlay loader */
     if( FmtData.u.dos.dynamic ) {
         RefISymbol( _DynamicInitRtn );
@@ -841,11 +872,5 @@ extern void PadOvlFiles( void )
 static void PutOvlInfo( unsigned off, void *src, unsigned len )
 /*************************************************************/
 {
-#if 0   // NYI - group->memaddr has been removed
-   PutInfo( OvlGroup->memaddr + off - OvlGroup->grp_addr.off, src, len );
-#else
-   off = off;
-   src = src;
-   len = len;
-#endif
+   PutInfo( OvlSegData->data + off - OvlGroup->grp_addr.off, src, len );
 }

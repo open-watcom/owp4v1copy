@@ -47,7 +47,7 @@ extern void             Vectorize( symbol * );
 extern void             TryRefVector( symbol * );
 extern void             OvlUseVector( symbol *, extnode * );
 extern void             IndirectCall( symbol * );
-#ifdef OVERLAY_VERSION
+#ifdef OVERLAY_VERSION1
 extern void             OvlForceVect( thread *, bool );
 extern void             GetVecAddr2( int, thread * );
 #endif
@@ -73,7 +73,7 @@ extern void             TryDefVector( symbol * );
 extern void             TryUseVector( symbol *, extnode * );
 extern section *        GetOvlSect( char * );
 extern void             OvlPass2( void );
-#ifdef OVERLAY_VERSION
+#ifdef OVERLAY_VERSION1
 extern void             TryGetVector( extnode *, thread * );
 #endif
 extern virt_mem         GetLoadObjTarget( segdata * );

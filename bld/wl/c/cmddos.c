@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  command line parsing for the DOS load file format.
 *
 ****************************************************************************/
 
-
-/*
- *  CMDDOS : command line parsing for the DOS load file format.
- *
-*/
 
 #include <string.h>
 #include "linkstd.h"
@@ -142,9 +136,7 @@ extern bool ProcBegin( void )
     file_list **    oldflist;
     section *       sect;
 
-#ifndef OVERLAY_VERSION
-    LnkMsg( FTL+MSG_OVERLAYS_NOT_SUPPORTED, NULL );
-#endif
+//    LnkMsg( FTL+MSG_OVERLAYS_NOT_SUPPORTED, NULL );
     LinkState |= FMT_SPECIFIED;      // she must want DOS mode.
     if( OvlLevel > 0 && FmtData.u.dos.dynamic ) {
         CmdFlags &= ~CF_AUTOSECTION;        // merge old area with this.

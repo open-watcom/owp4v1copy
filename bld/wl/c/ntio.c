@@ -114,14 +114,18 @@ static int DoOpen( char *name, unsigned mode, bool isexe )
     CheckBreak();
     mode |= O_BINARY;
     for( ;; ) {
-        if( OpenFiles >= MAX_OPEN_FILES ) CleanCachedHandles();
+        if( OpenFiles >= MAX_OPEN_FILES )
+            CleanCachedHandles();
         h = open( name, mode, S_IRUSR | S_IWUSR );
         if( h != -1 ) {
             OpenFiles++;
             break;
         }
-        if( errno != TOOMANY ) break;
-        if( !CleanCachedHandles() ) break;
+        if( errno != TOOMANY )
+            break;
+        if( !CleanCachedHandles() ) {
+            break;
+        }
     }
     return( h );
 }
@@ -132,7 +136,8 @@ extern f_handle QOpenR( char *name )
     int     h;
 
     h = DoOpen( name, O_RDONLY, FALSE );
-    if( h != -1 ) return( h );
+    if( h != -1 )
+        return( h );
     LnkMsg( FTL+MSG_CANT_OPEN, "12", name, strerror( errno )  );
     return( NIL_HANDLE );
 }
@@ -143,7 +148,8 @@ extern f_handle QOpenRW( char *name )
     int     h;
 
     h = DoOpen( name, O_RDWR | O_CREAT | O_TRUNC, FALSE );
-    if( h != -1 ) return( h );
+    if( h != -1 )
+        return( h );
     LnkMsg( FTL+MSG_CANT_OPEN, "12", name, strerror( errno ) );
     return( NIL_HANDLE );
 }
@@ -164,7 +170,8 @@ extern f_handle ExeCreate( char *name )
     int     h;
 
     h = DoOpen( name, O_RDWR | O_CREAT | O_TRUNC, TRUE );
-    if( h != -1 ) return( h );
+    if( h != -1 )
+        return( h );
     LnkMsg( FTL+MSG_CANT_OPEN, "12", name, strerror( errno ) );
     return( NIL_HANDLE );
 }
@@ -175,7 +182,8 @@ extern f_handle ExeOpen( char *name )
     int     h;
 
     h = DoOpen( name, O_RDWR, TRUE );
-    if( h != -1 ) return( h );
+    if( h != -1 )
+        return( h );
     LnkMsg( FTL+MSG_CANT_OPEN, "12", name, strerror( errno ) );
     return( NIL_HANDLE );
 }
@@ -204,6 +212,9 @@ extern unsigned QWrite( f_handle file, void *buffer, unsigned len, char *name )
     int     h;
     char    rc_buff[RESOURCE_MAX_SIZE];
 
+    if( len == 0 )
+        return( 0 );
+
     #ifdef _INT_DEBUG
     {
         unsigned long pos = QPos(file);
@@ -216,7 +227,6 @@ extern unsigned QWrite( f_handle file, void *buffer, unsigned len, char *name )
     }
     #endif
 
-    if( len == 0 ) return( 0 );
     CheckBreak();
     h = dowrite( file, buffer, len );
     if( name != NULL ) {
@@ -247,7 +257,8 @@ extern void QClose( f_handle file, char *name )
     CheckBreak();
     h = close( file );
     OpenFiles--;
-    if( h != -1 ) return;
+    if( h != -1 )
+        return;
     LnkMsg( ERR+MSG_IO_PROBLEM, "12", name, strerror( errno ) );
 }
 
@@ -294,7 +305,8 @@ extern void QDelete( char *name )
 {
     int   h;
 
-    if( name == NULL ) return;
+    if( name == NULL )
+        return;
     h = remove( name );
     if( h == -1 && errno != ENOENT ) { /* file not found is OK */
         LnkMsg( ERR+MSG_IO_PROBLEM, "12", name, strerror( errno ) );
@@ -316,7 +328,9 @@ extern bool QReadStr( f_handle file, char *dest, unsigned size, char *name )
         } else if( ch != '\r' ) {
             *dest++ = ch;
         }
-        if( ch == '\n' ) break;
+        if( ch == '\n' ) {
+            break;
+        }
     }
     *dest = '\0';
     return( eof );
@@ -335,7 +349,8 @@ static f_handle NSOpen( char *name, unsigned mode )
 
     h = DoOpen( name, mode, FALSE );
     LastResult = h;
-    if( h != -1 ) return( h );
+    if( h != -1 )
+        return( h );
     return( NIL_HANDLE );
 }
 
@@ -359,12 +374,16 @@ extern int QMakeFileName( char **pos, char *name, char *fname )
     char                *file_ptr;
 
     pathptr = *pos;
-    if( pathptr == NULL ) return( 0 );
+    if( pathptr == NULL )
+        return( 0 );
     while( *pathptr != '\0' ) {
-        if( *pathptr == PATH_LIST_SEP ) *pos = ++pathptr;
+        if( *pathptr == PATH_LIST_SEP )
+            *pos = ++pathptr;
         for(;;) {
-            if( *pathptr == '\0' ) break;
-            if( *pathptr == PATH_LIST_SEP ) break;
+            if( *pathptr == '\0' )
+                break;
+            if( *pathptr == PATH_LIST_SEP )
+                break;
             pathptr++;
         }
         path_len = pathptr - *pos;

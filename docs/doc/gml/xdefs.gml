@@ -82,7 +82,7 @@ See http://www.openwatcom.org/ for details.
 .*
 :set symbol="lnkname"   value="&company Linker".
 :set symbol="lnkcmd"    value="wlink".
-:set symbol="overlay"   value="no".
+:set symbol="overlay"   value="yes".
 :set symbol="m2wcmd"    value="ms2wlink".
 :set symbol="fcename"   value="&company Far Call Optimization Enabling Utility"
 :set symbol="fcecmd"    value="fcenable".

@@ -683,7 +683,6 @@ extern void DefineSymbol( symbol *sym, segnode *seg, offset off,
 {
     unsigned    name_len;
     bool        frame_ok;
-    segdata *   sym_seg;
 
     if( seg != NULL ) {
         frame = 0;
@@ -712,18 +711,13 @@ extern void DefineSymbol( symbol *sym, segnode *seg, offset off,
                 sym->p.seg = NULL;
             }
         }
-        if( seg != NULL ) {
-            sym_seg = seg->entry;
-        } else {
-            sym_seg = NULL;
-        }
 
         ClearSymUnion( sym );
         SetAddPubSym(sym, SYM_REGULAR, CurrMod, off, frame);
         sym->info &= ~SYM_DISTRIB;
         if( seg != NULL ) {
             if( LinkFlags & STRIP_CODE ) {
-                DefStripSym( sym, sym_seg );
+                DefStripSym( sym, seg->entry );
             }
             if( seg->info & SEG_CODE ) {
                 if( FmtData.type & MK_OVERLAYS && FmtData.u.dos.distribute
@@ -731,14 +725,15 @@ extern void DefineSymbol( symbol *sym, segnode *seg, offset off,
                     sym->info |= SYM_DISTRIB;
                 }
             }
+            sym->p.seg = seg->entry;
             TryDefVector( sym );
         } else {
             if( LinkFlags & STRIP_CODE ) {
                 CleanStripInfo( sym );
             }
             sym->info |= SYM_ABSOLUTE;
+            sym->p.seg = NULL;
         }
-        sym->p.seg = sym_seg;
     }
 }
 
