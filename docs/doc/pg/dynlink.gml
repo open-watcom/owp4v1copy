@@ -96,6 +96,39 @@ is to be created.
 .point
 The "EXPORT" directive is used to to specify which functions in the
 dynamic link library are to be exported.
+.if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
+.begnote
+.*
+.note Specifying exports in the source code
+.np
+.if '&targetos' eq 'Windows NT' .do begin
+The "EXPORT" directive need not be used when the symbols to be exported
+are declared with the
+.id __declspec( dllexport )
+modifier in the source code. Such symbols are exported automatically,
+through special records inserted into the object files by the compiler.
+.if '&lang' eq 'C/C++' .do begin
+.note Exporting C++ symbols and classes
+.np
+Symbols exported via the "EXPORT" directive have to be entered in their
+mangled form. This makes it rather awkward to export C++ functions, classes
+or global objects. These symbols also often reference other compiler-generated
+symbols (invisible to the user) that need be exported together with the
+class/object. Using the
+.id __declspec( dllexport )
+method of exporting symbols is the preferred solution.
+.do end
+.do end
+.if '&targetos' eq 'OS/2 2.x' .do begin
+The "EXPORT" directive need not be used when the symbols to be exported
+are declared with the
+.id __export
+type qualifier in the source code. Such symbols are exported automatically,
+through special records inserted into the object files by the compiler.
+.do end
+.np
+.endnote
+.do end
 .point
 The "OPTION" directive is used to specify attributes such as the name of
 the dynamic link library and how to allocate the automatic data segment
@@ -106,7 +139,17 @@ For example, a segment may be read-only or read-write.
 .endpoint
 .np
 Once the dynamic link library is created, you must allow access to the
-dynamic link library to applications that wish to use it.
+dynamic link library to client applications that wish to use it.
+.if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
+.if '&targos' eq 'Windows NT' .do begin
+The client application should to be compiled so that each symbol that will
+be imported from a dynamic link library is declared with
+.id __declspec( dllimport )
+modifier in the source code. This is highly recommended for imported
+functions and required for imported variables or classes.
+The linker must also be told where the symbols should be imported from.
+.do end
+.do end
 This can be done by creating an import library for the dynamic link
 library or creating a linker directive file that contains "IMPORT"
 directives for each of the entry points in the dynamic link library.
@@ -348,9 +391,9 @@ section.
 #include <windows.h>
 
 #if defined(__cplusplus)
-#define EXTERNC extern "C"
+#define EXPORTED extern "C" __declspec( dllexport )
 #else
-#define EXTERNC
+#define EXPORTED __declspec( dllexport )
 #endif
 
 DWORD TlsIndex; /* Global Thread Local Storage index */
@@ -398,6 +441,18 @@ BOOL APIENTRY LibMain( HANDLE hinstDLL,
     return( 1 );        /* indicate success */
     /* returning 0 indicates initialization failure */
 }
+
+.code break
+EXPORTED void dll_entry_1( void )
+{
+    printf( "Hi from dll entry #1\n" );
+}
+
+.code break
+EXPORTED void dll_entry_2( void )
+{
+    printf( "Hi from dll entry #2\n" );
+}
 .do end
 .el .if '&targetos' eq 'OS/2 2.x' .do begin
 #include <os2.h>
@@ -417,8 +472,8 @@ unsigned APIENTRY LibMain( unsigned hmod, unsigned termination )
     }
     return( 1 );
 }
-.do end
 
+.code break
 EXTERNC void dll_entry_1( void )
 {
     printf( "Hi from dll entry #1\n" );
@@ -429,6 +484,7 @@ EXTERNC void dll_entry_2( void )
 {
     printf( "Hi from dll entry #2\n" );
 }
+.do end
 .code end
 .if '&targetos' eq 'Windows NT' .do begin
 .begnote Arguments:
@@ -799,6 +855,17 @@ Hence, any directive file that specifies the import library in a
 However, if you are using "IMPORT" directives, you may have to modify
 the "IMPORT" directives to reflect the changes in the dynamic link
 library.
+.if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
+.if '&targetos' eq 'Windows NT' .do begin
+.np
+It is assumed that all symbols imported by a client application were
+declared with a
+.id __declspec( dllimport )
+modifier when the client application was compiled. At the link stage
+we have to tell the linker which dynamic libraries the client
+application should link to.
+.do end
+.do end
 .np
 Let us create an import library for our sample dynamic link library we
 created in the previous section.
@@ -830,6 +897,17 @@ calls the functions from our sample dynamic link library.
 #include <process.h>
 .do end
 
+.if '&targetos' eq 'Windows NT' .do begin
+#if defined(__cplusplus)
+#define IMPORTED extern "C" __declspec( dllimport )
+#else
+#define IMPORTED __declspec( dllimport )
+#endif
+
+IMPORTED void dll_entry_1( void );
+IMPORTED void dll_entry_2( void );
+.do end
+.if '&targetos' eq 'OS/2 2.x' .do begin
 #if defined(__cplusplus)
 #define EXTERNC extern "C"
 #else
@@ -838,6 +916,7 @@ calls the functions from our sample dynamic link library.
 
 EXTERNC void dll_entry_1( void );
 EXTERNC void dll_entry_2( void );
+.do end
 
 .code break
 .if '&targetos' eq 'Windows NT' .do begin

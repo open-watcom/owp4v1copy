@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #if defined(__cplusplus)
 #define EXTERNC extern "C"
 #else

@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <os2.h>
 
 #if defined(__cplusplus)
