@@ -91,7 +91,7 @@
 #define OBJ_MAJOR_VERSION   1
 #define OBJ_MINOR_VERSION   3
 
-#pragma pack(push,1);
+#pragma pack(push,1)
 
 typedef struct {
     word            signature;      /* == 0x8386                    */
@@ -179,4 +179,4 @@ typedef struct {
 
 #define SEG_NUM_MASK    0x7fff
 
-#pragma pack(pop);
+#pragma pack(pop)

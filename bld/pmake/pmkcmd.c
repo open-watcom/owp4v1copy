@@ -38,13 +38,17 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <errno.h>
-#ifndef __UNIX__
+#ifdef __UNIX__
+#include <sys/wait.h>
+#include <sys/stat.h>
+#else
 #include <direct.h>
 #include <process.h>
 #include <dos.h>
 #endif
 #include <setjmp.h>
 #include <stdarg.h>
+#include "watcom.h"
 #include "pmake.h"
 
 #if defined(__OS2__)

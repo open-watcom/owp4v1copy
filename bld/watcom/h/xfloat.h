@@ -62,7 +62,7 @@
 extern "C" {
 #endif
 
-#if defined(__386__) || defined(M_I86)
+#if (defined(__386__) || defined(M_I86)) && defined(__WATCOMC__)
  #define _LONG_DOUBLE_
 #endif
 

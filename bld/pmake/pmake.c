@@ -88,7 +88,7 @@ char                    *SaveDir = saveDirBuff;
 
 static char *StringCopy( char *dst, char *src )
 {
-    while( *dst = *src ) {
+    while(( *dst = *src )) {
         ++dst;
         ++src;
     }

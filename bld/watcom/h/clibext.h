@@ -62,7 +62,26 @@
 #define _heapchk(x) _HEAPOK
 #define _expand(x,y) (NULL)
 
+char *itoa( int value, char *buf, int radix );
+char *utoa( unsigned int value, char *buf, int radix );
+char *ltoa( long int value, char *buf, int radix );
+char *ultoa( unsigned long int value, char *buf, int radix );
+void _splitpath2( const char *inp, char *outp, char **drive,
+                  char **dir, char **fn, char **ext );
+void _splitpath( const char *path, char *drive,
+                 char *dir, char *fname, char *ext );
+void _makepath( char *path, const char *drive, const char *dir,
+                const char *fname, const char *ext );
+char *_fullpath( char *buf, const char *path, size_t size );
+char *strlwr( char *string );
+char *strupr( char *string );
+char *strrev( char *string );
 int memicmp(const void *, const void *, size_t);
 long tell( int handle );
-int eof( int __fildes );
+long filelength(int handle);
+int eof( int fildes );
+char *getcmd( char *buffer );
+char *_cmdname( char *name );
+void _searchenv( const char *name, const char *env_var, char *buf );
+
 extern char **_argv;
