@@ -308,14 +308,14 @@ char * undecoratedName(char * sym){
 
     // Now it can not works on decorated C++ symbols.!!!!!!!!!!!
 
-    // remove leading character  _.....
-    sym += strspn(sym, "_");
     // remove trailing characters .....@nnn
     pos = strlen(sym);
     while (pos-- > 0) {
         c = sym[pos];
         if (c == '@') {
             sym[pos] = 0;
+            // remove leading character _..... if @nn removed
+            if (*sym == '_') sym++;
             break;
         } else if (c < '0' || c > '9') {
             break;
