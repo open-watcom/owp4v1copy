@@ -67,12 +67,14 @@ typedef BOOL FAR        *PBOOL;
 #define MAKEULONG(l, h)  ((ULONG)(((USHORT)(l)) | ((ULONG)((USHORT)(h))) << 16))
 #define MAKELONG(l, h)   ((LONG)MAKEULONG(l, h))
 #define MAKEUSHORT(l, h) (((USHORT)(l)) | ((USHORT)(h)) << 8)
+#define MAKESHORT(l, h)  ((SHORT)MAKEUSHORT(l, h))
 
 #define LOUCHAR(w)  ((UCHAR)(w))
 #define HIUCHAR(w)  ((UCHAR)(((USHORT)(w) >> 8) & 0xff))
 #define LOUSHORT(l) ((USHORT)(l))
-#define HIUCHAR(w)  ((UCHAR)(((USHORT)(w) >> 8) & 0xff))
 #define HIUSHORT(l) ((USHORT)(((ULONG)(l) >> 16) & 0xffff))
+#define LOBYTE(w)   LOUCHAR(w)
+#define HIBYTE(w)   HIUCHAR(w)
 
 typedef CHAR FAR     *PCHAR;
 typedef SHORT FAR    *PSHORT;
