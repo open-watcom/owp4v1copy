@@ -98,7 +98,7 @@ static char *guardStateNames[] = {    // - names of guard states
 
 typedef struct open_file OPEN_FILE;    // ACTIVE FILE (BEING READ)
 
-struct src_file {
+typedef struct _src_file {
     SRCFILE     sister;         // - ring of files for #line directives
     SRCFILE     parent;         // - NULL or including source file
     SRCFILE     unique;         // - next in unique list

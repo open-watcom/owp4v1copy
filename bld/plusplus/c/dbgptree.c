@@ -51,7 +51,6 @@ static carve_t carveSubtree;    // memory: subtrees
 static carve_t carveDecoration; // memory: decoration
 static boolean printTypes;      // TRUE ==> print types with nodes
 
-typedef struct decorated DECORATED;
 typedef struct node NODE;
 typedef struct line LINE;
 typedef struct subtree SUBTREE;
@@ -88,8 +87,9 @@ struct prline                   // PRINT LINE BUFFERING
     COL width;                  // - buffer size
 };
 
-struct decorated                // DECORATED NODES
-{   DECORATED* next;            // - next in ring
+typedef struct _decorated DECORATED;
+typedef struct _decorated {     // DECORATED NODES
+    DECORATED * next;           // - next in ring
     NODE* node;                 // - decorated node
 };
 
@@ -619,7 +619,7 @@ void DbgPrintPTREE(             // PRINT A PARSE-TREE BEAUTIFULLY
     carveNode = CarveCreate( sizeof( NODE ), 16 );
     carveLine = CarveCreate( sizeof( LINE ), 16 );
     carveSubtree = CarveCreate( sizeof( SUBTREE ), 16 );
-    carveDecoration = CarveCreate( sizeof( PTREE ), 16 );
+    carveDecoration = CarveCreate( sizeof( DECORATED ), 16 );
     subtrees = NULL;
     decoration = NULL;
     buildSubtree( root );
