@@ -1,4 +1,5 @@
 #global definition which tool is quiet
+cl         += -zq
 cc         += -zq
 cpp        += -zq
 linker     += op q
@@ -64,6 +65,7 @@ wcl_util_opts = -ox -w4 -fo=.obj -fe=$^@
 !ifdef bootstrap
 
 cc = gcc
+cl = $(cc)
 bld_cl = $(cc)
 bld_cc = $(cc)
 bld_link = $(cc)
@@ -83,6 +85,9 @@ cflags = $(extra_c_flags) $(cppflags) -g -c -Wall -funsigned-char -pipe -O -o $@
 # options for single source utility compilations
 wcl_util_opts = -funsigned-char -Wall $(cppflags) $(inc_dirs) $(ldflags) -o $[&.exe &
 $(defines) $(libs)
+
+# options for linking via cc
+clflags = -o $@
 
 !endif
 !endif

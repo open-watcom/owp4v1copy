@@ -9,6 +9,11 @@ cc_i86          = *wcc
 cc_axp          = *wccaxp
 cc_ppc          = *wccppc
 
+cl_386          = *wcl386
+cl_i86          = *wcl
+cl_axp          = *wclaxp
+cl_ppc          = *wclppc
+
 cpp_386         = *wpp386
 cpp_i86         = *wpp
 cpp_axp         = *wppaxp
@@ -133,6 +138,21 @@ cflags_dos      = -bt=dos
 cflags_nov      = -bt=netware
 cflags_linux    = -bt=linux
 
+clflags_nt_386     = -l=nt
+clflags_nt_axp     = -l=ntaxp
+clflags_win_i86    = -l=windows
+clflags_win_386    = -l=windows
+clflags_os2_i86    = -l=os2
+clflags_os2_386    = -l=os2v2
+clflags_qnx_i86    = -l=qnx
+clflags_qnx_386    = -l=qnx
+clflags_osi_386    = -l=osi
+clflags_dos_i86    = -l=dos
+clflags_dos_386    = -l=dos4g
+clflags_nov_386    = -l=netware
+clflags_linux_386  = -l=linux
+clflags_linux_ppc  = -l=linux
+
 !ifdef $(proj_name)_rtdll
 !ifeq $(proj_name)_rtdll 1
 sys_rtdll       = 1
@@ -155,6 +175,10 @@ proj_c_flags     = $(extra_c_flags) $(extra_c_flags_$(host_cpu)) $(extra_c_flags
 cflags           = $(cflags_all) $(cflags_$(host_cpu)) $(cflags_$(host_os)) $(mode_cflags) $(proj_c_flags)
 proj_cpp_flags   = $(extra_cpp_flags) $(extra_cpp_flags_$(host_cpu)) $(extra_cpp_flags_$(host_os))
 cppflags         = $(cppflags_all) $(proj_cpp_flags)
+clflags          = $(clflags_$(host_os)_$(host_cpu)) -fe=$@ -fm
+!ifneq release 1
+clflags         += -d2
+!endif
 
 aflags_all      =-w4
 !ifdef __LINUX__
@@ -283,6 +307,7 @@ re2c            = $(bld_bin)\re2c
 !endif
 
 cc              = $(cc_$(host_cpu))
+cl              = $(cl_$(host_cpu))
 cpp             = $(cpp_$(host_cpu))
 linker          = $(linker_$(host_cpu))
 librarian       = $(librarian_$(host_cpu))

@@ -27,4 +27,4 @@ objs =                  &
 table_objs = gentable.obj genfast.obj gensupp.obj
 
 $(proj_name).exe : $(objs) $(table_objs)
-        $(linker) option quiet $(lflags) name $^. file { $< }
+        $(cl) $(clflags) $<
