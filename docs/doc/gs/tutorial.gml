@@ -414,12 +414,12 @@ Double-click on the "draw" source file (i.e.,
 .fi draw???&cxt
 .ct ) to load the source file into the editor.
 .note
-Scroll down to line 217 using the keyboard or mouse. You can also pull
+Scroll down to line 227 using the keyboard or mouse. You can also pull
 down the
 .us Edit
 menu, select
 .us Goto Line...,
-and enter 217.
+and enter 227.
 The &edname makes full use of colors and fonts to achieve syntax
 highlighting. File templates for C, C++, and FORTRAN files are defined
 to assist you in distinguishing the components of your code.
@@ -632,11 +632,11 @@ Double-click on
 .fi draw???&cxt.
 to load the source file into the editor.
 .note
-Scroll down to line 217 using the keyboard or mouse, or pull down the
+Scroll down to line 227 using the keyboard or mouse, or pull down the
 .us Edit
 menu, select
 .us Goto Line...,
-and enter 217.
+and enter 227.
 .note
 Replace the line
 .id #if 1
@@ -807,12 +807,12 @@ which contains the definition of
 .note
 Next we will make some changes to
 .fi furnitu&xxt.
-in order to change the color of the tabletop. Scroll down to line 132
+in order to change the color of the tabletop. Scroll down to line 143
 using the keyboard or mouse, or pull down the
 .us Edit
 menu, select
 .us Goto Line...,
-and enter 132.
+and enter 143
 .note
 Replace the line
 .millust begin
