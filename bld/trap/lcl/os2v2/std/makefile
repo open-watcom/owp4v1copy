@@ -1,4 +1,6 @@
 #pmake: build lcl os_os2 cpu_386 cpu_386 trap x86
+host_cpu = 386
+
 #
 # Create the 32-bit OS/2 STD.DLL
 #

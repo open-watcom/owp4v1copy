@@ -1,4 +1,6 @@
 #pmake: all build lcl os_nt cpu_386 trap x86
+host_cpu = 386
+
 #
 # Create the NT STD.DLL
 #

@@ -21,9 +21,9 @@ bdir = $(bin_root)\binp
 
 objs = splice.obj
 
-extra_l_flags = op caseex, oneautodata, map
+extra_l_flags = op oneautodata, map
 
 .c: ..\c
 
 $(bdir)\dll\wdsplice.dll : $(objs)
-    $(linker) option quiet $(lflags) name $@ file { $< } l $(os2386)
+    $(linker) $(lflags) name $@ file { $< } l $(os2386)

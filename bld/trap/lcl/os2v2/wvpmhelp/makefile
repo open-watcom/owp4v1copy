@@ -28,7 +28,7 @@ tmplnk = tmp.lnk
 $(bdir)\dll\wdpmhook.dll: pmhook.obj
     @%write  $(tmplnk) name $(bdir)\dll\wdpmhook.dll sys os2v2 dll
     @%append $(tmplnk) debug all op symf
-    @%append $(tmplnk) option quiet,map,caseex
+    @%append $(tmplnk) option map
     @%append $(tmplnk) file pmhook
     @%append $(tmplnk) library $(os2386)
     @%append $(tmplnk) export SendMsgHookProc.1,SetHmqDebugee.2
@@ -42,7 +42,6 @@ $(bdir)\wdpmhelp.exe: pmhelp.obj pmhelp.res
     @%append $(tmplnk) import WinThreadAssocQueue PMMERGE.5398
     @%append $(tmplnk) file pmhelp
     @%append $(tmplnk) library os2386.lib
-    @%append $(tmplnk) option quiet
     @%append $(tmplnk) option modname=wdpmhelp
     @%append $(tmplnk) option description 'Open Watcom Debugger PM Helper'
     $(linker) @$(tmplnk)
