@@ -237,7 +237,9 @@ static mad_disasm_control DisasmControl( mad_disasm_data *dd, const mad_register
     case DI_X86_retf:
     case DI_X86_retf2:
         return( MDC_RET | MDC_TAKEN );
+    case DI_X86_jmp2:
     case DI_X86_jmp3:
+    case DI_X86_jmp4:
         return( MDC_JUMP | MDC_TAKEN );
     case DI_X86_bound:
         return( MDC_OPER | MDC_TAKEN_NOT ); /* not supported yet */
