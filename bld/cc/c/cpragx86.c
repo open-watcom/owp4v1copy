@@ -131,7 +131,7 @@ void PragmaInit( void )
                          // ROUTINE_RETURN;
                          SPECIAL_STRUCT_RETURN;
     if( CompFlags.use_stdcall_at_number ) {
-        StdcallInfo.objname = CStrSave( "_*@#" );
+        StdcallInfo.objname = CStrSave( "_*#" );
     } else {
         StdcallInfo.objname = CStrSave( "_*" );
     }
@@ -146,7 +146,7 @@ void PragmaInit( void )
                          // ROUTINE_RETURN |
                          // SPECIAL_RETURN |
                          SPECIAL_STRUCT_RETURN;
-    FastcallInfo.objname = CStrSave( "@*@#" );
+    FastcallInfo.objname = CStrSave( "@*#" );
     FastcallInfo.parms = (hw_reg_set *)CMemAlloc( sizeof( FastParms ) );
     memcpy( FastcallInfo.parms, FastParms, sizeof( FastParms ) );
 #endif

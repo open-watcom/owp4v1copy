@@ -141,7 +141,7 @@ static void pragmaInit(         // INITIALIZATION FOR PRAGMAS
         pragmaInitInfo( &StdcallInfo
                   , call_type
                    | SPECIAL_STRUCT_RETURN
-                  , "_*@#" );
+                  , "_*#" );
     } else {
         pragmaInitInfo( &StdcallInfo
                   , call_type
@@ -151,7 +151,7 @@ static void pragmaInit(         // INITIALIZATION FOR PRAGMAS
 
 #if _CPU == 386
     FastcallInfo._class = call_type | SPECIAL_STRUCT_RETURN;
-    FastcallInfo.objname = strsave( "@*@#" );
+    FastcallInfo.objname = strsave( "@*#" );
     FastcallInfo.parms = (hw_reg_set *)CMemAlloc( sizeof( FastParms ) );
     memcpy( FastcallInfo.parms, FastParms, sizeof( FastParms ) );
 #endif
