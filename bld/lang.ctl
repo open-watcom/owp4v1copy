@@ -19,7 +19,7 @@ echo Languages Build <1>
 #       BW32LDR must be done before EXE's that use the loader
 [ INCLUDE <devdir>\w32loadr\lang.ctl ]
 #        RC builds resource file libraries for everybody
-#[ INCLUDE <devdir>\sdk\rc\lang.ctl ]
+[ INCLUDE <devdir>\sdk\rc\lang.ctl ]
 #        BWOMP must be done before BWASM
 [ INCLUDE <devdir>\womp\lang.ctl ]
 #        BWASM must be done early so that inline assembler users are up-to-date
