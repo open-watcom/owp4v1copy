@@ -124,7 +124,7 @@ static void AddCtlFile( const char *name )
     for( ;; ) {
         curr = *owner;
         if( curr == NULL )
-	    break;
+            break;
         owner = &curr->next;
     }
     curr = Alloc( sizeof( *curr ) );
@@ -263,9 +263,9 @@ static bool GetALine( char *line )
             Fatal( "Error reading '%s': %s\n", IncludeStk->name, strerror( errno ) );
         }
         if( !feof( IncludeStk->fp ) )
-	    break;
+            break;
         if( !PopInclude() )
-	    return( FALSE );
+            return( FALSE );
     }
     return( TRUE );
 }
@@ -288,7 +288,7 @@ static char *SubstOne( const char **inp, char *out )
             // copy from parameter n to the end to out. E.g. <2*>
             parm = 1;
             for( starpos = out; isdigit( *starpos ); starpos++ )
-	        ;
+                ;
             if( stricmp( starpos, "*" ) == 0 ) {
                 rep = NULL;
                 p = out;
@@ -298,7 +298,7 @@ static char *SubstOne( const char **inp, char *out )
                     rep = getenv( out );
                     if( rep != NULL ) {
                         if( out != p )
-			    *out++ = ' ';
+                            *out++ = ' ';
                         strcpy( out, rep );
                         out += strlen( out );
                     }
@@ -355,7 +355,7 @@ static void SubstLine( const char *in, char *out )
         case '(':
         case ')':
             if( !first )
-	        *out++ = ' ';
+                *out++ = ' ';
             *out++ = *in++;
             *out++ = ' ';
             break;
@@ -425,7 +425,7 @@ static void ProcessCtlFile( const char *name )
                 if( IncludeStk->skipping == 0 ) {
                     PushInclude( NextWord( p ) );
                 }
-            } 
+            }
             else if( stricmp( p, "LOG" ) == 0 ) {
                 if( IncludeStk->skipping == 0 ) {
                     log_name = NextWord( p );
@@ -447,13 +447,13 @@ static void ProcessCtlFile( const char *name )
                 break;
             } else if( stricmp( p, "IFDEF" ) == 0 ) {
                 if( IncludeStk->ifdefskipping != 0 )
-		    IncludeStk->ifdefskipping--;
+                    IncludeStk->ifdefskipping--;
                 if( !MatchFound( p ) )
                     IncludeStk->ifdefskipping++;
                 break;
             } else if( stricmp( p, "ENDIF" ) == 0 ) {
                 if( IncludeStk->ifdefskipping != 0 )
-		    IncludeStk->ifdefskipping--;
+                    IncludeStk->ifdefskipping--;
                 break;
             } else {
                 Fatal( "Unknown directive '%s'\n", p );
@@ -476,7 +476,7 @@ static void ProcessCtlFile( const char *name )
                     if( !logit ) {
                         Log( FALSE, "<%s> => ", Line );
                     }
-                    Log( FALSE, "non-zero return: %u\n", res );
+                    Log( FALSE, "non-zero return: %d\n", res );
                 }
                 LogFlush();
             } else if( logit && ( VerbLevel > 1 ) ) {
@@ -506,7 +506,7 @@ static bool SearchUpDirs( const char *name, char *result )
         _splitpath2( result, buff, &drive, &dir, &fn, &ext );
         end = &dir[strlen( dir ) - 1];
         if( end == dir )
-	    return( FALSE );
+            return( FALSE );
         switch( *end ) {
         case '\\':
         case '/':
@@ -518,7 +518,7 @@ static bool SearchUpDirs( const char *name, char *result )
                 break;
             }
             if( *end == '\\' || *end == '/' )
-	        break;
+                break;
             --end;
         }
         *end = '\0';
@@ -537,7 +537,7 @@ int main( int argc, char *argv[] )
     if( CtlList == NULL ) {
         p = getenv( DEFCTLENV );
         if( p == NULL )
-	    p = DEFCTLNAME;
+            p = DEFCTLNAME;
         if( !SearchUpDirs( p, Line ) ) {
 #ifdef __WATCOMC__
             _searchenv( p, "PATH", Line );
