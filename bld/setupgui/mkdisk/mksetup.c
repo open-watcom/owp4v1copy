@@ -32,11 +32,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <process.h>
 #include <ctype.h>
-#include <sys/types.h>
 #include <sys/stat.h>
-#include "disksize.h"
 
 #ifdef __UNIX__
     #define DIR_SEP_STR "/"
@@ -48,7 +45,7 @@
 
 
 enum {
-        FALSE, TRUE
+    FALSE, TRUE
 };
 
 
@@ -130,6 +127,7 @@ int                     FillFirst = 1;
 int                     Lang = 1;
 int                     Upgrade = FALSE;
 int                     Verbose = FALSE;
+int                     IgnoreMissingFiles = FALSE;
 char                    *Include;
 const char              MksetupInf[] = "mksetup.inf";
 
@@ -207,9 +205,9 @@ int main( int argc, char *argv[] )
     if( !CheckParms( &argc, &argv ) ) {
         return( 1 );
     }
-    fp = fopen( argv[ 3 ], "r" );
+    fp = fopen( argv[ 2 ], "r" );
     if( fp == NULL ) {
-        printf( "Cannot open '%s'\n", argv[ 3 ] );
+        printf( "Cannot open '%s'\n", argv[ 2 ] );
         return( 1 );
     }
     printf( "Reading Info File...\n" );
@@ -231,7 +229,6 @@ int CheckParms( int *pargc, char **pargv[] )
 //======================================
 
 {
-    char                *size;
     struct stat         stat_buf;
     char                **argv;
     int                 argc;
@@ -259,6 +256,8 @@ int CheckParms( int *pargc, char **pargv[] )
                 Upgrade = TRUE;
             } else if( tolower( (*pargv)[1][1] ) == 'v' ) {
                 Verbose = TRUE;
+            } else if( tolower( (*pargv)[1][1] ) == 'f' ) {
+                IgnoreMissingFiles = TRUE;
             } else {
                 printf( "Unrecognized option %s\n", (*pargv)[1] );
             }
@@ -268,38 +267,27 @@ int CheckParms( int *pargc, char **pargv[] )
     }
     argc = *pargc;
     argv = *pargv;
-    if( argc != 6 ) {
-        printf( "Usage: mksetup [-x] <product> <size> <file_list> <pack_dir> <rel_root>\n" );
+    if( argc != 5 ) {
+        printf( "Usage: mksetup [-options] <product> <file_list> <pack_dir> <rel_root>\n\n" );
+        printf( "Supported options (case insensitive):\n" );
+        printf( "-v         verbose operation\n" );
+        printf( "-i<path>   include path for setup scripts\n" );
+        printf( "-u         create upgrade setup script\n" );
+        printf( "-d<string> specify string to add to Application section\n" );
+        printf( "-f         force script creation if files missing (testing only)\n" );
         return( FALSE );
     }
     Product = argv[ 1 ];
-    size = argv[ 2 ];
-    if( strcmp( size, "360" ) == 0 ) {
-        DiskSize = DISK_360;
-        MaxDiskFiles = DISK_360_FN;
-        BlockSize = 1024;
-    } else if( strcmp( size, "720" ) == 0 ) {
-        DiskSize = DISK_720;
-        MaxDiskFiles = DISK_720_FN;
-        BlockSize = 1024;
-    } else if( strcmp( size, "1.2" ) == 0 ) {
-        DiskSize = DISK_1p2;
-        MaxDiskFiles = DISK_1p2_FN;
-        BlockSize = 1024;
-    } else if ( strcmp( size, "1.4" ) == 0 ) {
-        DiskSize = DISK_1p4;
-        MaxDiskFiles = DISK_1p4_FN;
-        BlockSize = 512;
-    } else {
-        printf( "SIZE must be one of 360, 720, 1.2, 1.4\n" );
-        return( FALSE );
-    }
-    PackDir  = argv[ 4 ];
+    DiskSize = (1457664L-4096);
+    MaxDiskFiles = 215;
+    BlockSize = 512;
+	
+    PackDir  = argv[ 3 ];
     if( stat( PackDir, &stat_buf ) != 0 ) {  // exists
         printf( "\nDirectory '%s' does not exist\n", PackDir );
         return( FALSE );
     }
-    RelRoot  = argv[ 5 ];
+    RelRoot  = argv[ 4 ];
     if( stat( RelRoot, &stat_buf ) != 0 ) {  // exists
         printf( "\nDirectory '%s' does not exist\n", RelRoot );
         return( FALSE );
@@ -499,8 +487,13 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
         strcat( src, file );
     }
     if( stat( src, &stat_buf ) != 0 ) {
-        printf( "\n'%s' does not exist\n", src );
-        return( FALSE );
+        printf( "'%s' does not exist\n", src );
+        if( IgnoreMissingFiles ) {
+            act_size = 1024;
+            time = 0;
+        } else {
+            return( FALSE );
+        }
     } else {
         act_size = stat_buf.st_size;
         time = stat_buf.st_mtime;
