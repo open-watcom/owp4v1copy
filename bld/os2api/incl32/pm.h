@@ -39,5 +39,5 @@
 
 #include <pmwin.h>
 #include <pmgpi.h>
-//#include <pmdev.h>
+#include <pmdev.h>
 #include <pmstddlg.h>

@@ -41,12 +41,22 @@
 #define FALSE 0
 #endif
 
-#define FIELDOFFSET(type, field)    ((SHORT)&(((type *)0)->field))
+#define FAR
+#define NEAR
+
+#define FIELDOFFSET(type, field)   ((SHORT)&(((type *)0)->field))
 
 #define MAKEULONG(l, h)  ((ULONG)(((USHORT)(l)) | ((ULONG)((USHORT)(h))) << 16))
 #define MAKELONG(l, h)   ((LONG)MAKEULONG(l, h))
 #define MAKEUSHORT(l, h) (((USHORT)(l)) | ((USHORT)(h)) << 8)
 #define MAKESHORT(l, h)  ((SHORT)MAKEUSHORT(l, h))
+
+#define LOBYTE(w)   LOUCHAR(w)
+#define HIBYTE(w)   HIUCHAR(w)
+#define LOUCHAR(w)  ((UCHAR)(w))
+#define HIUCHAR(w)  ((UCHAR)(((USHORT)(w) >> 8) & 0xff))
+#define LOUSHORT(l) ((USHORT)((ULONG)l))
+#define HIUSHORT(l) ((USHORT)(((ULONG)(l) >> 16) & 0xffff))
 
 #define NULLHANDLE  ((LHANDLE)0)
 
@@ -91,16 +101,18 @@ typedef PVOID    *PPVOID;
 typedef int (APIENTRY _PFN)();
 typedef _PFN  *PFN;
 
-typedef USHORT   SEL, *PSEL;
+typedef USHORT  SEL, *PSEL;
 
-typedef LHANDLE  HFILE, *PHFILE;
-typedef LHANDLE  HMODULE, *PHMODULE;
-typedef LHANDLE  PID, *PPID;
-typedef LHANDLE  TID, *PTID;
-typedef ULONG    HEV,  *PHEV;
-typedef VOID     *HSEM;
-typedef HSEM     *PHSEM;
-typedef USHORT   SGID;
+typedef LHANDLE HFILE, *PHFILE;
+typedef LHANDLE HMODULE, *PHMODULE;
+typedef LHANDLE PID, *PPID;
+typedef LHANDLE TID, *PTID;
+typedef ULONG   HEV,  *PHEV;
+typedef ULONG   HMTX, *PHMTX;
+typedef ULONG   HMUX, *PHMUX;
+typedef VOID    *HSEM;
+typedef HSEM    *PHSEM;
+typedef USHORT  SGID;
 
 typedef struct _QWORD {
     ULONG   ulLo;

@@ -96,6 +96,6 @@ typedef struct _FILEDLG {
 } FILEDLG, *PFILEDLG;
 
 HWND   APIENTRY WinFileDlg(HWND hwndP, HWND hwndO, PFILEDLG pfild);
-
+BOOL   APIENTRY WinFreeFileDlgList(PAPSZ papszFQFilename);
 #endif
 

@@ -28,6 +28,9 @@
 *
 ****************************************************************************/
 
+#ifndef __BSEDOS_H__
+#define __BSEDOS_H__
+
 #ifdef INCL_DOS
     #define INCL_DOSDATETIME
     #define INCL_DOSDEVICES
@@ -52,6 +55,9 @@
 #define CCHMAXPATHCOMP      256
 
 #if (defined(INCL_DOSPROCESS) || !defined(INCL_NOCOMMON))
+
+#define DosCwait          DosWaitChild
+#define DosSetPrty        DosSetPriority
 
 #define EXEC_SYNC          0
 #define EXEC_ASYNC         1
@@ -187,12 +193,21 @@ APIRET APIENTRY DosWaitThread(PTID ptid, ULONG option);
 
 #endif
 
-#if defined(INCL_DOSFILEMGR)
+#if defined(INCL_DOSFILEMGR) || !defined(INCL_NOCOMMON)
 
-#define DosQFileInfo    DosQueryFileInfo
-#define DosQFHandState  DosQueryFHState
-#define DosQHandType    DosQueryHType
-#define DosQPathInfo    DosQueryPathInfo
+#define DosBufReset    DosResetBuffer
+#define DosChDir       DosSetCurrentDir
+#define DosChgFilePtr  DosSetFilePtr
+#define DosMkDir       DosCreateDir
+#define DosNewSize     DosSetFileSize
+#define DosQCurDir     DosQueryCurrentDir
+#define DosQCurDisk    DosQueryCurrentDisk
+#define DosQFileInfo   DosQueryFileInfo
+#define DosQFHandState DosQueryFHState
+#define DosQFSInfo     DosQueryFSInfo
+#define DosQHandType   DosQueryHType
+#define DosQPathInfo   DosQueryPathInfo
+#define DosSelectDisk  DosSetDefaultDisk
 
 #define FILE_BEGIN    0
 #define FILE_CURRENT  1
@@ -728,9 +743,6 @@ APIRET APIENTRY DosWriteQueue(HQUEUE hq, ULONG request, ULONG cbData, PVOID
 #define SEM_IMMEDIATE_RETURN 0
 #define SEM_INDEFINITE_WAIT  (-1)
 
-typedef ULONG HMTX, *PHMTX;
-typedef ULONG HMUX, *PHMUX;
-
 typedef struct _SEMRECORD {
     HSEM  hsemCur;
     ULONG ulUser;
@@ -781,6 +793,8 @@ USHORT APIENTRY16 DosMonWrite(PBYTE BufferO, PBYTE DataBuffer, USHORT Bytecnt);
 #endif
 
 #if defined(INCL_DOSNLS)
+
+#define DosGetCp       DosQueryCp
 
 typedef struct _COUNTRYCODE {
     ULONG  country;
@@ -1093,5 +1107,7 @@ typedef struct _CPUUTIL {
 APIRET APIENTRY DosPerfSysCall(ULONG ulCommand, ULONG ulParm1, ULONG ulParm2, ULONG ulParm3);
 APIRET APIENTRY DosTmrQueryFreq(PULONG pulTmrFreq);
 APIRET APIENTRY DosTmrQueryTime(PQWORD pqwTmrTime);
+
+#endif
 
 #endif
