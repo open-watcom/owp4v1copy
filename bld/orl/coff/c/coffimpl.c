@@ -321,7 +321,6 @@ char * undecoratedName(char * sym){
             break;
         }
     }
-    sym[pos + 1] = 0;
     return sym;
 }
 
