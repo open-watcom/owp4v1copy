@@ -208,6 +208,7 @@ LINUX_files = &
         utime.h &
         termios.h &
         sys/time.h &
+        sys/times.h &
         sys/ioctl.h &
         sys/ptrace.h &
         sys/wait.h

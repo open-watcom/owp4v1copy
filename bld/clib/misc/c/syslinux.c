@@ -39,6 +39,7 @@
 #include <errno.h>
 #include <time.h>
 #include <sys/time.h>
+#include <sys/times.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/ptrace.h>
@@ -357,6 +358,12 @@ _WCRTLINK int nanosleep( const struct timespec *__rqtp,
 {
     u_long res = sys_call2( SYS_nanosleep, (u_long)__rqtp, (u_long)__rmtp );
     __syscall_return(int,res);
+}
+
+_WCRTLINK clock_t times( struct tms *__buf )
+{
+    u_long res = sys_call1( SYS_times, (u_long)__buf );
+    __syscall_return(clock_t,res);
 }
 
 _WCRTLINK extern pid_t  getpgrp( void )

@@ -36,10 +36,24 @@
 #include <sys/types.h>
 #include <sys/timers.h>
 #elif defined(__LINUX__)
-#include <sys/time.h>
+#include <sys/times.h>
+#include <errno.h>
 #endif
 #include <rtinit.h>
 #include "timedata.h"
+
+#ifdef __LINUX__
+
+_WCRTLINK clock_t clock(void)
+{
+    struct tms buf;
+    int save_errno = errno;
+    clock_t clk = times( &buf );
+    errno = save_errno;
+    return clk;
+}
+
+#else
 
 #define MAX_CLOCK_T   ~((clock_t)0)
 #define MAX_SECONDS   ((time_t)(MAX_CLOCK_T / CLOCKS_PER_SEC) - 1)
@@ -55,13 +69,6 @@ static void get_clock_time(time_t *secs, clock_t *milliseconds)
     getclock(TIMEOFDAY, &timer);
     *secs = (time_t)timer.tv_sec;
     *milliseconds = (clock_t)(timer.tv_nsec / (1000000000 / CLOCKS_PER_SEC));
-#elif defined(__LINUX__)
-    struct timeval tv;
-    struct timezone tz;
-
-    gettimeofday(&tv,&tz);
-    *secs = tv.tv_sec;
-    *milliseconds = tv.tv_usec / 1000;
 #else
     struct tm t;
 
@@ -69,7 +76,6 @@ static void get_clock_time(time_t *secs, clock_t *milliseconds)
     *secs = mktime(&t);
 #endif
 } /* get_clock_time() */
-
 
 _WCRTLINK clock_t clock(void)
 {
@@ -99,7 +105,6 @@ _WCRTLINK clock_t clock(void)
     return ticks;
 } /* clock() */
 
-
 static void __clock_init(void)
 {
     get_clock_time(&init_seconds, &init_milliseconds);
@@ -112,3 +117,4 @@ static void __clock_init(void)
  */
 AXI( __clock_init, INIT_PRIORITY_LIBRARY + 1)
 
+#endif
