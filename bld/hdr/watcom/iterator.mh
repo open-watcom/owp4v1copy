@@ -1,0 +1,70 @@
+///////////////////////////////////////////////////////////////////////////
+// FILE: iterator (Iterator utilities)
+//
+:keep CPP_HDR
+:include crwat.sp
+//
+// Description: This header is part of the C++ standard library. It
+//              defines a number of helper templates that are useful
+//              when creating or manipulating iterators.
+///////////////////////////////////////////////////////////////////////////
+#ifndef _ITERATOR_INCLUDED
+#define _ITERATOR_INCLUDED
+
+:include readonly.sp
+
+#ifndef __cplusplus
+#error The header iterator requires C++
+#endif
+
+#include <cstddef>
+
+#define typename
+
+:: This header is minimal at the moment.
+namespace std {
+
+  struct input_iterator_tag  { };
+  struct output_iterator_tag { };
+  struct forward_iterator_tag       : public input_iterator_tag         { };
+  struct bidirectional_iterator_tag : public forward_iterator_tag       { };
+  struct random_access_iterator_tag : public bidirectional_iterator_tag { };
+
+  template<class Iterator>
+  struct iterator_traits {
+    typedef typename Iterator::difference_type   difference_type;
+    typedef typename Iterator::value_type        value_type;
+    typedef typename Iterator::pointer           pointer;
+    typedef typename Iterator::reference         reference;
+    typedef typename Iterator::iterator_catagory iterator_catagory;
+  };
+  // Need partial specialization for pointers const pointers, far pointers.
+
+  // Full specialization for the important case of char *. This can be
+  // removed once the compiler can do partial specializations.
+  //
+  // template<>
+  struct iterator_traits<char *> {
+    typedef ptrdiff_t                  difference_type;
+    typedef char                       value_type;
+    typedef char                      *pointer;
+    typedef char                      &reference;
+    typedef random_access_iterator_tag iterator_catagory;
+  };
+
+  template<class Catagory,
+           class T,
+           class Distance /* = ptrdiff_t */,
+           class Pointer /* = T* */,
+           class Reference /* = T& */>
+  struct iterator {
+    typedef T         value_type;
+    typedef Distance  difference_type;
+    typedef Pointer   pointer;
+    typedef Reference reference;
+    typedef Catagory  iterator_catagory;
+  };
+
+} // namespace std
+
+#endif

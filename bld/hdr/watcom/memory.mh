@@ -1,5 +1,6 @@
+:segment !CNAME
 /*
- *  memory.h    Memory manipulation functions
+ *  memory.h    C library memory manipulation functions
  *
 :include crwat.sp
  */
@@ -12,3 +13,241 @@
 #endif
 
 #endif
+:elsesegment
+:: Note that <memory> has nothing to do with <memory.h>. Both targets
+:: are being generated from this file because of their common name,
+:: not because they represent the same facility.
+::
+///////////////////////////////////////////////////////////////////////////
+// FILE: memory (Utilities for manipulating memory)
+//
+:keep CPP_HDR
+:include crwat.sp
+//
+// Description: This header is part of the C++ standard library. It
+//              defines a number of helper templates to simplify the
+//              handling of raw memory.
+///////////////////////////////////////////////////////////////////////////
+#ifndef _MEMORY_INCLUDED
+#define _MEMORY_INCLUDED
+
+:include readonly.sp
+
+#ifndef __cplusplus
+#error The header memory requires C++
+#endif
+
+#include <cstddef>
+#include <iterator>
+#include <new.h>
+
+#define typename
+
+:include throws.sp
+
+:: This header is reasonably complete except for the templated members
+:: of the allocator and auto_ptr templates. Allocator's max_size method
+:: also needs to be implemented.
+::
+namespace std {
+
+  template<class T> class allocator;
+
+  // Allocator specialization for void.
+  // template<>
+  class allocator<void> {
+  public:
+    typedef void       *pointer;
+    typedef const void *const_pointer;
+    typedef void        value_type;
+  };
+
+  // Default allocator template.
+  template<class T>
+  class allocator {
+  public:
+    typedef       std::size_t    size_type;
+    typedef       std::ptrdiff_t difference_type;
+    typedef       T             *pointer;
+    typedef const T             *const_pointer;
+    typedef       T             &reference;
+    typedef const T             &const_reference;
+    typedef       T              value_type;
+    // template<class U> struct rebind { typedef allocator<U> other; };
+
+    allocator( ) _WCTHROW(())
+      { }
+
+    allocator( const allocator & ) _WCTHROW(())
+      { }
+
+    // template<class U> allocator( const allocator<U> & ) _WCTHROW(());
+
+   ~allocator( ) _WCTHROW(())
+      { }
+
+    pointer address( reference r ) const
+      { return( &r ); }
+
+    const_pointer address( const_reference r ) const
+      { return( &r ); }
+
+    pointer allocate( size_type n, allocator<void>::const_pointer = 0 )
+      { return( reinterpret_cast<T *>(new unsigned char[n * sizeof(T)]) ); }
+
+    void deallocate( pointer p, size_type )
+      { delete [] (unsigned char *)p; }
+
+    size_type max_size() const _WCTHROW(())
+      { return 0; }  // FIX ME
+
+    void construct( pointer p, const T &value )
+      { new ((void *)p) T(value); }
+
+    void destroy( pointer p )
+      { ((T *)p)->~T(); }
+  };
+
+  // Templates for initializing blocks of uninitialized memory.
+
+  template<class ForwardIterator, class T>
+  void uninitialized_fill(
+      ForwardIterator first,
+      ForwardIterator last,
+      const T &value )
+  {
+      typedef typename iterator_traits<ForwardIterator>::value_type value_type;
+      ForwardIterator bookmark( first );
+
+      _WCTRY {
+          // Construct copies of value in the raw storage.
+          while( first != last ) {
+              new ( static_cast<void *>( &*first ) ) value_type( value );
+              ++first;
+          }
+      }
+      #ifdef _WCHANDLERS
+      // If an exception occurs, destroy copies that were made successfully.
+      catch( ... ) {
+          while( bookmark != first ) {
+              bookmark->~value_type( );
+              ++bookmark;
+          }
+          throw;
+      }
+      #endif
+  }
+
+
+  template<class ForwardIterator, class Size, class T>
+  void uninitialized_fill_n(
+      ForwardIterator first,
+      Size n,
+      const T &value )
+  {
+      typedef typename iterator_traits<ForwardIterator>::value_type value_type;
+      ForwardIterator bookmark( first );
+
+      _WCTRY {
+          // Construct n copies of value in raw storage.
+          while( n-- ) {
+              new ( static_cast<void *>( &*first ) ) value_type( value );
+              ++first;
+          }
+      }
+      #ifdef _WCHANDLERS
+      // If an exception occurs, destroy copies that were made successfully.
+      catch( ... ) {
+          while( bookmark != first ) {
+              bookmark->~value_type( );
+              ++bookmark;
+          }
+          throw;
+      }
+      #endif
+  }
+
+
+  template<class InputIterator, class ForwardIterator>
+  ForwardIterator uninitialized_copy(
+      InputIterator first,
+      InputIterator last,
+      ForwardIterator dest )
+  {
+      typedef typename iterator_traits<ForwardIterator>::value_type value_type;
+      ForwardIterator bookmark( dest );
+
+      _WCTRY {
+          // Copy objects from input sequence to raw storage.
+          while( first != last ) {
+              new ( static_cast<void *>( &*dest ) ) value_type( *first );
+              ++first;
+              ++dest;
+          }
+          return( dest );
+      }
+      #ifdef _WCHANDLERS
+      // If an exception occurs, destroy copies that were made successfully.
+      catch( ... ) {
+          while( bookmark != dest ) {
+              bookmark->~value_type( );
+              ++bookmark;
+          }
+          throw;
+      }
+      #endif
+  }
+
+
+  // Auto_ptr template.
+  template<class T>
+  class auto_ptr {
+    // template<class U> struct auto_ptr_ref { };
+  public:
+    typedef T element_type;
+
+    explicit auto_ptr( T *p = 0 ) _WCTHROW(()) : ptr( p )
+      { }
+
+    auto_ptr( auto_ptr &other ) _WCTHROW(()) : ptr( other.release() )
+      { }
+
+    // template<class U> auto_ptr( auto_ptr<U> & ) _WCTHROW(());
+
+    auto_ptr &operator=( auto_ptr &other ) _WCTHROW(())
+      { reset( other.release() ); return( *this ); }
+
+    // template<class U> auto_ptr &operator=( auto_ptr<U> & ) _WCTHROW(());
+
+   ~auto_ptr( ) _WCTHROW(())
+      { delete ptr; }
+
+    T &operator*( ) const _WCTHROW(())
+      { return( *ptr ); }
+
+    T *operator->( ) const _WCTHROW(())
+      { return( ptr ); }
+
+    T *get( ) const _WCTHROW(())
+      { return( ptr ); }
+
+    T *release( ) _WCTHROW(())
+      { T *tmp = ptr; ptr = 0; return( tmp ); }
+
+    void reset( T *p = 0 ) _WCTHROW(())
+      { if (ptr != p) delete ptr; ptr = p; }
+
+    // auto_ptr( auto_ptr_ref<T> ) _WCTHROW(());
+
+    // template<class U> operator auto_ptr_ref<U>( ) _WCTHROW(());
+
+    // template<class U> operator auto_ptr<U>( ) _WCTHROW(());
+
+  private:
+    T *ptr;
+  };
+
+} // namespace std.
+
+#endif
+:endsegment

@@ -22,6 +22,7 @@ wchar_deps = ../watcom/wchar.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../
 wctype_deps = ../watcom/wctype.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../wchar_t.sp ../wctypet.sp
 
 # These dependency lists are for the IOStreams headers.
+
 fstream_deps = ../watcom/fstream.mh ../readonly.sp ../crwat.sp ../pshpackl.sp ../poppack.sp
 iomanip_deps = ../watcom/iomanip.mh ../readonly.sp ../crwat.sp ../pshpackl.sp ../poppack.sp
 ios_deps = ../watcom/ios.mh ../readonly.sp ../crwat.sp ../cpplock.sp ../watexc.sp ../pshpackl.sp ../poppack.sp
@@ -31,6 +32,11 @@ istream_deps = ../watcom/istream.mh ../readonly.sp ../crwat.sp ../pshpackl.sp ..
 ostream_deps = ../watcom/ostream.mh ../readonly.sp ../crwat.sp ../pshpackl.sp ../poppack.sp
 streambu_deps = ../watcom/streambu.mh ../readonly.sp ../crwat.sp ../cpplock.sp ../pshpackl.sp ../poppack.sp
 strstrea_deps = ../watcom/strstrea.mh ../readonly.sp ../crwat.sp ../pshpackl.sp ../poppack.sp
+
+# These dependency lists are for other C++ library headers.
+
+iterator_deps = ../watcom/iterator.mh ../readonly.sp ../crwat.sp
+memory_deps = ../watcom/memory.mh ../readonly.sp ../crwat.sp ../throws.sp
 
 # The follow describe the dependences for the various *.h files.
 # Dependencies for the extensionless C++ headers are currently in the
@@ -81,7 +87,7 @@ math.h          : $(math_deps)
 mbctype.h       : ../watcom/mbctype.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../mbmax.sp ../null.sp ../sizet.sp ../wchar_t.sp
 mbstring.h      : ../watcom/mbstring.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../mbmax.sp ../null.sp ../sizet.sp ../wchar_t.sp
 mem.h           : ../watcom/mem.mh ../readonly.sp ../crwat.sp ../ptrdiff.sp
-memory.h        : ../watcom/memory.mh ../readonly.sp ../crwat.sp
+memory.h        : $(memory_deps)
 mmintrin.h      : ../watcom/mmintrin.mh ../readonly.sp ../crwat.sp ../cplusepi.sp ../cpluspro.sp
 new.h           : ../watcom/new.mh ../readonly.sp ../cpppfv.sp ../crwat.sp
 ostream.h       : $(ostream_deps)
@@ -95,7 +101,7 @@ signal.h        : $(signal_deps)
 stdarg.h        : $(stdarg_deps)
 stdbool.h       : ../watcom/stdbool.mh ../readonly.sp ../crwat.sp
 stddef.h        : $(stddef_deps)
-stdexcep.h      : ../watcom/stdexcep.mh ../readonly.sp ../crwat.sp
+stdexcep.h      : ../watcom/stdexcep.mh ../readonly.sp ../crwat.sp ../throws.sp
 stdint.h        : ../watcom/stdint.mh ../readonly.sp ../crwat.sp
 stdio.h         : $(stdio_deps)
 stdiobuf.h      : ../watcom/stdiobuf.mh ../readonly.sp ../crwat.sp ../poppack.sp ../pshpackl.sp

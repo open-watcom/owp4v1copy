@@ -23,6 +23,8 @@ cdsay .
     <CPCMD> <PROJDIR>/dos/iosfwd         <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/iostream       <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/istream        <RELROOT>/rel2/h/
+    <CPCMD> <PROJDIR>/dos/iterator       <RELROOT>/rel2/h/
+    <CPCMD> <PROJDIR>/dos/memory         <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/ostream        <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/streambu       <RELROOT>/rel2/h/
     <CPCMD> <PROJDIR>/dos/strstrea       <RELROOT>/rel2/h/
@@ -36,6 +38,8 @@ cdsay .
     <CPCMD> <PROJDIR>/linux/iosfwd       <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/iostream     <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/istream      <RELROOT>/rel2/lh/
+    <CPCMD> <PROJDIR>/linux/iterator     <RELROOT>/rel2/lh/
+    <CPCMD> <PROJDIR>/linux/memory       <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/ostream      <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/streambu     <RELROOT>/rel2/lh/
     <CPCMD> <PROJDIR>/linux/strstrea     <RELROOT>/rel2/lh/
@@ -50,6 +54,8 @@ cdsay .
 #    <CPCMD> <PROJDIR>/qnx/iosfwd         <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/iostream       <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/istream        <RELROOT>/rel2/qh/
+#    <CPCMD> <PROJDIR>/qnx/iterator       <RELROOT>/rel2/qh/
+#    <CPCMD> <PROJDIR>/qnx/memory         <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/ostream        <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/streambu       <RELROOT>/rel2/qh/
 #    <CPCMD> <PROJDIR>/qnx/strstrea       <RELROOT>/rel2/qh/

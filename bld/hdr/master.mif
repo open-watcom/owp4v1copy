@@ -43,6 +43,7 @@ common = &
         iso646.h &
         istream &
         istream.h &
+        iterator &
         jctype.h &
         jstring.h &
         jtime.h &
@@ -53,6 +54,7 @@ common = &
         mbctype.h &
         mbstring.h &
         mem.h &
+        memory &
         mmintrin.h &
         new.h &
         ostream &
@@ -133,18 +135,18 @@ DOS_files = &
         bios.h &
         bios98.h &
         dos.h &
+        eh.h &
         graph98.h &
+        memory.h &
         setjmpex.h &
-        wsample.h &
+        sys/utime.h &
+        wdefwin.h &
         win/_win386.h &
         win/win16.h &
         win/windows.h &
         win/win386.h &
-        sys/utime.h &
-        unistd.h &
-        wdefwin.h &
-        memory.h &
-        eh.h
+        wsample.h &
+        unistd.h
 
 QNX_files = &
       $(common) &
@@ -432,6 +434,14 @@ streambu : $(streambu_deps)
          $(csplice)
 
 strstrea : $(strstrea_deps)
+         $(csplice)
+
+# Other headers from the C++ standard library.
+
+iterator : $(iterator_deps)
+         $(csplice)
+
+memory   : $(memory_deps)
          $(csplice)
 
 
