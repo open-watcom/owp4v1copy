@@ -18,8 +18,8 @@ cdsay .
 #================================
 #NT stuff
     <CPCMD> READ*.*         <RELROOT>/rel2/readme.w32
-    <CPCMD> watcom/win/*.h     <RELROOT>/rel2/h/nt/
-    <CPCMD> watcom/win/GL/*.h  <RELROOT>/rel2/h/nt/GL/
+    <CPCMD> nt386/include/*.h     <RELROOT>/rel2/h/nt/
+    <CPCMD> nt386/include/GL/*.h  <RELROOT>/rel2/h/nt/GL/
     <CPCMD> nt386/*.lib     <RELROOT>/rel2/lib386/nt/
 
 [ BLOCK <1> clean ]

@@ -1,4 +1,4 @@
-#pmake: all build os_nt cpu_386
+##pmake: build os_nt cpu_386
 
 
 all: lastbld .symbolic

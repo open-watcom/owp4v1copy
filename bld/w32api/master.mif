@@ -1,7 +1,6 @@
 proj_name = w32api
 
 !include cproj.mif
-!include deftarg.mif
 
 .EXTENSIONS : .lbc .def
 
@@ -114,8 +113,16 @@ libs =               &
 .c.obj:
         $(cc) $(cflags) -fpc -fo=.obj -i"$(inc_dirs)" $<
 
-$(libs):
-
+all: $(libs) .SYMBOLIC
+        -@mkdir include > $(nulldevice)
+!ifdef __UNIX__
+        -@mkdir include/GL > $(nulldevice)
+!else
+        -@mkdir include\GL > $(nulldevice)
+!endif
+        @for %i in (../include/*.h) do @wmake -h -f ../fix/new_h.mif file=%i
+        @for %i in (../include/GL/*.h) do @wmake -h -f ../fix/new_h.mif file=%i
+        $(vi) -s ../fix/fix_h.vi
 
 kernel32.lib: kernel32.lbc
         $(librarian) -b -c -n -io -ii $@ @$<
@@ -130,3 +137,6 @@ shell32.lib: shell32.lbc shell32.obj
 
 uuid.lib: uuid.obj mshtml-u.obj
 
+clean : .SYMBOLIC
+        @rm -f *.?bj *.lib *.lbc 
+        @rm -f include/*.h include/GL/*.h
