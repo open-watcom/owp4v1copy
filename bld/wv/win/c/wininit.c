@@ -69,7 +69,7 @@ bool                    ToldWinHandle = FALSE;
 extern HWND     MainHwnd = NULL;
 
 #ifndef __NT__
-extern void  (WINAPI *InfoFunction)(int);
+extern void  (WINAPI *InfoFunction)(HWND);
 #endif
 
 void TellWinHandle()

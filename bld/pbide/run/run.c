@@ -108,8 +108,8 @@ int PASCAL WinMain( HINSTANCE currinst, HINSTANCE previnst, LPSTR cmdline, int c
     while( isspace( *ptr ) ) ptr++;
 
     TheWindow = NULL;
-    enumproc = MakeProcInstance( EnumProc, currinst );
-    EnumWindows( enumproc, 0 );
+    enumproc = MakeProcInstance( (FARPROC)EnumProc, currinst );
+    EnumWindows( (WNDENUMPROC)enumproc, 0 );
     FreeProcInstance( enumproc );
 
     if( TheWindow == NULL ) {

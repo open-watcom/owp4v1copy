@@ -52,7 +52,7 @@ static HSZ      topicHsz;
 static HSZ      serviceHsz;
 
 #ifdef __NT__
-int WINAPI LibMain( HANDLE hDll, DWORD reason, LPVOID res ) {
+int WINAPI LibMain( HINSTANCE hDll, DWORD reason, LPVOID res ) {
     res = res;
     reason = reason;
     hDll = hDll;
@@ -119,9 +119,9 @@ HDDEDATA __export CALLBACK DdeProc( UINT type, UINT fmt, HCONV conv,
         }
         return( NULL );
 #else
-            return( TRUE );
+            return( (HDDEDATA)TRUE );
         } else {
-            return( FALSE );
+            return( (HDDEDATA)FALSE );
         }
 #endif
     case XTYP_REQUEST:

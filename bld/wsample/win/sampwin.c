@@ -169,7 +169,7 @@ void StopProg()
 void CloseShop( void )
 {
     if( SampSave != NULL ) {
-        GlobalFree( FP_SEG( SampSave ) );
+        GlobalFree( (HGLOBAL)FP_SEG( SampSave ) );
     }
     if( SharedMemory != NULL ) {        /* JBS 93/03/17 */
         SharedMemory->ShopClosed = TRUE;
@@ -242,12 +242,12 @@ void StartProg( char *cmd, char *prog, char *args )
     /*
      * register as interrupt and notify handler
      */
-    fault_fn = MakeProcInstance( IntHandler, InstanceHandle );
-    notify_fn = MakeProcInstance( NotifyHandler, InstanceHandle );
+    fault_fn = MakeProcInstance( (FARPROC)IntHandler, InstanceHandle );
+    notify_fn = MakeProcInstance( (FARPROC)NotifyHandler, InstanceHandle );
     if( !InterruptRegister( NULL, fault_fn ) ) {
         internalError( MsgArray[MSG_SAMPLE_2-ERR_FIRST_MESSAGE] );
     }
-    if( !NotifyRegister( NULL, notify_fn, NF_NORMAL | NF_TASKSWITCH ) ) {
+    if( !NotifyRegister( NULL, (LPFNNOTIFYCALLBACK)notify_fn, NF_NORMAL | NF_TASKSWITCH ) ) {
         InterruptUnRegister( NULL );
         internalError( MsgArray[MSG_SAMPLE_3-ERR_FIRST_MESSAGE] );
     }
