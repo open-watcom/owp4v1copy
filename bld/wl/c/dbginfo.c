@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Produce WVIDEO debugging information in load file.
+* Description:  Produce Watcom style debugging information in load file.
 *
 ****************************************************************************/
 
@@ -634,26 +634,28 @@ extern void ODBIAddAddrInfo( seg_leader *seg )
     }
 }
 
-static void ODBIGenAddrInit( segdata *sdata, void *prevaddroff )
+static void ODBIGenAddrInit( segdata *sdata, void *_prevaddroff )
 /**************************************************************/
 {
     segheader   seghdr;
     seg_leader *seg;
+    unsigned_32 *prevaddroff = (unsigned_32*)_prevaddroff;
 
     seg = sdata->u.leader;
     seghdr.off = seg->seg_addr.off;
     seghdr.seg = seg->seg_addr.seg;
     seghdr.num = seg->num;
     DumpInfo( CurrSect->dbg_info, &seghdr, sizeof(segheader) );
-    prevaddroff = (void *)(((debug_info *)CurrSect->dbg_info)->DBIWrite);
+    *prevaddroff = ((debug_info *)CurrSect->dbg_info)->DBIWrite;
 }
 
 static void ODBIGenAddrAdd( segdata *sdata, offset delta, offset size,
-                            void *prevaddroff, bool isnewmod )
+                            void *_prevaddroff, bool isnewmod )
 /************************************************************/
 {
     addrinfo    addr;
     debug_info *dptr;
+    unsigned_32 *prevaddroff = (unsigned_32*)_prevaddroff;
 
     delta = delta;
     dptr = CurrSect->dbg_info;
@@ -662,8 +664,8 @@ static void ODBIGenAddrAdd( segdata *sdata, offset delta, offset size,
         addr.mod_idx = sdata->o.mod->d.o->modnum;
         DumpInfo( dptr, &addr, sizeof(addrinfo) );
     }
-    sdata->o.addrinfo = *(unsigned_32 *)prevaddroff - dptr->addr.init;
-    prevaddroff = (void *)(dptr->DBIWrite);
+    sdata->o.addrinfo = *prevaddroff - dptr->addr.init;
+    *prevaddroff = dptr->DBIWrite;
 }
 
 static void ODBIGenAddrInfo( seg_leader *seg )
