@@ -3144,17 +3144,17 @@ item: Remark
 end
 item: Edit Registry
   Total Keys=1
-  Key=HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment
+  Key=Environment
   New Value=%MAINDIR%
   Value Name=WATCOM
-  Root=2
+  Root=1
 end
 item: Edit Registry
   Total Keys=1
-  Key=HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment
+  Key=Environment
   New Value=%MAINDIR%\EDDAT
   Value Name=EDPATH
-  Root=2
+  Root=1
 end
 item: If/While Statement
   Variable=TARGET_OS
@@ -3163,19 +3163,19 @@ item: If/While Statement
 end
 item: Edit Registry
   Total Keys=1
-  Key=HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment
+  Key=Environment
   New Value=%MAINDIR%\H;%MAINDIR%\H\NT
   Value Name=INCLUDE
-  Root=2
+  Root=1
 end
 item: Else Statement
 end
 item: Edit Registry
   Total Keys=1
-  Key=HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment
+  Key=Environment
   New Value=%MAINDIR%\H;%MAINDIR%\H\WIN
   Value Name=INCLUDE
-  Root=2
+  Root=1
 end
 item: End Block
 end
@@ -3362,7 +3362,7 @@ item: Set Variable
 end
 item: Set Variable
   Variable=GROUP
-  Value=%CGROUPDIR%\%GROUP%
+  Value=%GROUPDIR%\%GROUP%
 end
 item: Create Shortcut
   Source=%WIN%\notepad.exe
