@@ -4,6 +4,7 @@ if .%relroot%. == .. goto error
 if .%defrel%. == .. goto error
 md %relroot%\%defrel%
 md %relroot%\%defrel%\n98bw
+md %relroot%\%defrel%\binl
 md %relroot%\%defrel%\binnt
 md %relroot%\%defrel%\binp
 md %relroot%\%defrel%\binw

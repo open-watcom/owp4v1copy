@@ -6,6 +6,7 @@ if [ -z "$RELROOT" -o -z "$DEFREL" ]; then
 fi
 mkdir -p $RELROOT/$DEFREL
 mkdir -p $RELROOT/$DEFREL/n98bw
+mkdir -p $RELROOT/$DEFREL/binl
 mkdir -p $RELROOT/$DEFREL/binnt
 mkdir -p $RELROOT/$DEFREL/binp
 mkdir -p $RELROOT/$DEFREL/binw
