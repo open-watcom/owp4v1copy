@@ -53,6 +53,7 @@ comp_x86_qnx            = $(comp386) -ms-fpc
 comp_x86_win            = $(comp286) -mc-fpc
 comp_x86_dos            = $(comp286) -mc-fpc
 comp_x86_rsi            = $(comp286) -mc-fpc
+comp_x86_cw             = $(comp386) -mc-fpc
 comp_x86_ads            = $(comp386) -mf-fpc-3s
 comp_x86_pls            = $(comp386) -mf-fpc
 comp_x86_nt             = $(comp386) -mf-fpc

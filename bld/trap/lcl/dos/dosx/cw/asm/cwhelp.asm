@@ -1,6 +1,7 @@
         include system.inc
         include cw.inc
 
+.387
 
 ;
 ;Hardware break point table entry structure.
@@ -48,7 +49,11 @@ Copyright       db 13,10
 ;******************************************************************************
 _ASMMain        proc    near
         public _ASMMain
-        pushs   esi,edi,ebp
+;        pushs   esi,edi,ebp
+        push    esi
+        push    edi
+        push    ebp
+
         mov     ax,__psp
         mov     PSPSegment,ax
 ;
@@ -62,7 +67,7 @@ _ASMMain        proc    near
         mov     esi,[esi]               ;retrieve contents.
         mov     al,1
         cmp     d[esi],0deb0deb0h       ;right signature?
-        jnz     @@exit
+        jnz     AM@@exit
 ;
 ;Get the buffer address.
 ;
@@ -80,15 +85,15 @@ _ASMMain        proc    near
 ;
 ;If in debug mode we need to delete the last log file.
 ;
-        cmp     DebugLevel,0
-        jz      @@0
+        cmp     dword DebugLevel,0
+        jz      AM@@0
         mov     edx,offset LogFileName
         mov     ah,41h
         int     21h
 ;
 ;Patch exception 0 interupt.
 ;
-@@0:    mov     bl,0
+AM@@0:    mov     bl,0
         sys     GetVect
         assume ds:_TEXT
         mov     d[OldInt00],edx
@@ -329,7 +334,11 @@ _ASMMain        proc    near
 ;
 ;Back to caller.
 ;
-@@exit: pops    esi,edi,ebp
+AM@@exit:
+        pop     ebp
+        pop     edi
+        pop     esi
+;pops    esi,edi,ebp
         ret
 _ASMMain        endp
 
@@ -339,7 +348,7 @@ _ASMMain        endp
 ;appropriate functions.
 ;*******************************************************************************
 Dispatcher      proc    near
-@@0:    mov     edi,offset RealModeRegs
+D@@0:    mov     edi,offset RealModeRegs
         sys     FarCallReal             ;transfer back to real mode.
 ;
 ;Copy commands up into the local buffer.
@@ -353,19 +362,19 @@ Dispatcher      proc    near
 ;
 ;If we're doing debug info dump this request.
 ;
-        cmp     DebugLevel,0
-        jz      @@1
+        cmp     dword DebugLevel,0
+        jz      D@@1
         call    DumpRequest2File
 ;
 ;Check if this is a get lost message.
 ;
-@@1:    cmp     b[ReqBuffer],0
-        jz      @@9
+D@@1:    cmp     b[ReqBuffer],0
+        jz      D@@9
 ;
 ;Check if any results are needed and skip processing on this pass if they are.
 ;
         test    b[ReqBuffer],128
-        jnz     @@2
+        jnz     D@@2
 ;
 ;Pass control back to real mode ready for result transfer.
 ;
@@ -374,45 +383,45 @@ Dispatcher      proc    near
 ;
 ;Process specified commands.
 ;
-@@2:    mov     esi,offset ReqBuffer
+D@@2:    mov     esi,offset ReqBuffer
         mov     ecx,ReqLength
         mov     edi,ReqAddress
         mov     edi,[edi]
 ;
 ;Go through all commands.
 ;
-@@3:    xor     eax,eax
+D@@3:    xor     eax,eax
         mov     al,[esi]                ;get the command number.
         and     al,127
         cmp     d[ReqTable+eax*4],0
-        jz      @@oops
+        jz      D@@oops
         call    d[ReqTable+eax*4]
         or      ecx,ecx
-        jnz     @@3
-        jmp     @@4
+        jnz     D@@3
+        jmp     D@@4
 ;
 ;Display request buffer if we don't understand it.
 ;
-@@oops: cmp     DebugLevel,0
-        jz      @@4
+D@@oops: cmp     dword DebugLevel,0
+        jz      D@@4
         call    DumpRequest
         xor     ah,ah
         int     16h
 ;
 ;Set output length.
 ;
-@@4:    mov     esi,ReqAddress
+D@@4:    mov     esi,ReqAddress
         sub     edi,[esi]
         mov     [esi+4],edi
 ;
 ;Send result to log file.
 ;
-        cmp     DebugLevel,0
-        jz      @@0
+        cmp     dword DebugLevel,0
+        jz      D@@0
         call    DumpReply2File
-        jmp     @@0
+        jmp     D@@0
 ;
-@@9:    ret
+D@@9:    ret
 Dispatcher      endp
 
 
@@ -431,9 +440,12 @@ Dispatcher      endp
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_GET_SYS_CONFIG
-        locals @@incount,@@inaddr,@@outaddr
-        pushads
+REQ_GET_SYS_CONFIG         proc near
+        local @@incount:dword,@@inaddr:dword,@@outaddr:dword
+;        locals @@incount,@@inaddr,@@outaddr
+
+;        pushads
+        pushad
 ;
         inc     esi             ;skip REQ_GET_SYS_CONFIG
         dec     ecx
@@ -498,27 +510,29 @@ medCPU:
         mov     esp,edx         ; restore stack pointer
         mov     edi,@@outaddr
         mov     [edi],al
-        inc     @@outaddr
+        inc     dword @@outaddr
 ;
 ;Get the math co-processor type.
 ;
-        pushs   ebp             ; save bp
+;        pushs   ebp             ; save bp
+        push    ebp
         sub     eax,eax         ; set initial control word to 0
-        pushs   eax             ; push it on stack
+;        pushs   eax             ; push it on stack
+        push    eax
         mov     ebp,esp         ; point to control word
         fninit          ; initialize math coprocessor
         fnstcw [ebp]            ; store control word in memory
         mov     al,0            ; assume no coprocessor present
         mov     ah,[ebp+1]              ; upper byte is 03h if
         cmp     ah,03h          ; coprocessor is present
-        jne     @@0             ; exit if no coprocessor present
+        jne     GSC@@0             ; exit if no coprocessor present
         mov     al,1            ; assume it is an 8087
         and     d[ebp],NOT 0080h        ; turn interrupts on (IEM=0)
         fldcw   [ebp]           ; load control word
         fdisi                   ; disable interrupts (IEM=1)
         fstcw   [ebp]           ; store control word
         test    d[ebp],080h             ; if IEM=1, then 8087
-        jnz     @@0
+        jnz     GSC@@0
         finit                   ; use default infinity mode
         fld1                    ; generate infinity by
         fldz                    ;   dividing 1 by 0
@@ -531,13 +545,17 @@ medCPU:
         mov     eax,[ebp]               ; get NDP control word
         mov     al,2            ; assume 80287
         sahf                    ; store condition bits in flags
-        jz      @@0             ; it's 287 if infinities equal
+        jz      GSC@@0             ; it's 287 if infinities equal
         mov     al,3            ; indicate 80387
-@@0:    pops    ebp
-        pops    ebp
+GSC@@0:
+;    pops    ebp
+;        pops    ebp
+        pop     ebp
+        pop     ebp
+
         mov     edi,@@outaddr
         mov     [edi],al
-        inc     @@outaddr
+        inc     dword @@outaddr
 ;
 ;Set OS values.
 ;
@@ -547,22 +565,24 @@ medCPU:
         mov     [edi],al
         mov     [edi+1],ah
         mov     b[edi+2],7              ;OS_RATIONAL
-        add     @@outaddr,1+1+1
+        add     dword @@outaddr,1+1+1
 ;
 ;Set huge shift value.
 ;
         mov     edi,@@outaddr
         mov     b[edi],12               ;HUGE_SHIFT!
-        inc     @@outaddr
+        inc     dword @@outaddr
 ;
 ;Return results to caller.
 ;
-        popads
+;        popads
+        popad
+
         mov     ecx,@@incount
         mov     esi,@@inaddr
         mov     edi,@@outaddr
         rets
-        endps
+REQ_GET_SYS_CONFIG        endp
 
 
 ;*******************************************************************************
@@ -580,21 +600,23 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_MAP_ADDR
-        locals @@incount,@@inaddr,@@outaddr
-        pushads
+   REQ_MAP_ADDR        proc near
+         local @@incount:dword,@@inaddr:dword,@@outaddr:dword
+;        locals @@incount,@@inaddr,@@outaddr
+;        pushads
+        pushad
 ;
 ;Setup new input count/address.
 ;
         mov     @@incount,ecx
         mov     @@inaddr,esi
-        sub     @@incount,1+6+4
-        add     @@inaddr,1+6+4
+        sub     dword @@incount,1+6+4
+        add     dword @@inaddr,1+6+4
 ;
 ;Setup output address and default contents.
 ;
         mov     @@outaddr,edi
-        add     @@outaddr,6+4+4
+        add     dword @@outaddr,6+4+4
         mov     eax,[esi+1]
         mov     [edi],eax
         mov     w[edi+4],0
@@ -606,18 +628,18 @@ medCPU:
         mov     bx,DebugPSP
         sys     GetSelDet32
         cmp     edx,[esi+1+6]   ;right module handle?
-        jnz     @@9
+        jnz     MA@@9
 ;
 ;Convert the selector.
 ;
         cmp     w[esi+1+4],-1
-        jnz     @@0
+        jnz     MA@@0
         mov     w[esi+1+4],1
-@@0:    cmp     w[esi+1+4],-2
-        jnz     @@1
+MA@@0:    cmp     w[esi+1+4],-2
+        jnz     MA@@1
         mov     w[esi+1+4],2
 ;
-@@1:    movzx   ebx,w[esi+1+4]
+MA@@1:    movzx   ebx,w[esi+1+4]
         dec     ebx
         shl     ebx,3
         add     bx,[edx+EPSP_SegBase]
@@ -640,24 +662,26 @@ medCPU:
         mov     eax,[ebx+4]             ;get limit.
         and     eax,0fffffh             ;mask to 20 bits.
         test    d[ebx+4],1 shl 20       ;G bit set?
-        jz      @@NoGBit
+        jz      MA@@NoGBit
         shl     eax,12
         or      eax,4095
-@@NoGBit:       or      eax,eax
-        jz      @@NoDecLim
+MA@@NoGBit:       or      eax,eax
+        jz      MA@@NoDecLim
         cmp     eax,-1
-        jz      @@NoDecLim
+        jz      MA@@NoDecLim
         dec     eax
-@@NoDecLim:     mov     d[edi+6+4],eax  ;set high bound.
+MA@@NoDecLim:     mov     d[edi+6+4],eax  ;set high bound.
 ;
 ;Return to caller.
 ;
-@@9:    popads
+MA@@9:
+        popad
+;    popads
         mov     ecx,@@incount
         mov     esi,@@inaddr
         mov     edi,@@outaddr
         rets
-        endps
+REQ_MAP_ADDR        endp
 
 
 ;*******************************************************************************
@@ -675,24 +699,26 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_ADDR_INFO
+   REQ_ADDR_INFO        proc near
         movzx   eax,w[esi+1+4]
+        .586p
         lar     eax,eax
+        .386
         test    eax,00400000h
         mov     eax,1
-        jnz     @@0
+        jnz     AI@@0
         xor     eax,eax
-@@0:    mov     b[edi],al
+AI@@0:    mov     b[edi],al
         inc     edi
         add     esi,1+6
         sub     ecx,1+6
         rets
-        endps
+REQ_ADDR_INFO        endp
 
 
 ; MED, 01/24/99
 ;*******************************************************************************
-        procs   REQ_MACHINE_DATA
+   REQ_MACHINE_DATA        proc near
         xor     eax,eax
         mov     [edi],eax
         add     edi,4
@@ -700,18 +726,20 @@ medCPU:
         mov     [edi],eax
         add     edi,4
         movzx   eax,w[esi+1+1+4]
+        .586p
         lar     eax,eax
+        .386
         test    eax,00400000h
         mov     eax,1
-        jnz     @@0
+        jnz     MD@@0
         xor     eax,eax
-@@0:
+MD@@0:
         mov     b[edi],al
         inc     edi
         add     esi,8+1
         sub     ecx,8+1
         rets
-        endps
+REQ_MACHINE_DATA        endp
 
 
 ;*******************************************************************************
@@ -729,47 +757,52 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_CHECKSUM_MEM
-        pushs   ecx
+   REQ_CHECKSUM_MEM        proc near
+;        pushs   ecx
+        push    ecx
         mov     bx,[esi+1+4]            ;get selector.
         sys     GetSelDet32
         mov     ebp,ecx
-        pops    ecx
+;        pops    ecx
+        pop     ecx
         mov     eax,0
-        jc      @@9
+        jc      CM@@9
         movzx   eax,w[esi+1+6]  ;get length.
         add     eax,d[esi+1]            ;include the offset.
         cmp     eax,ebp
-        jc      @@1
+        jc      CM@@1
         sub     eax,ebp
         sub     w[esi+1+6],ax
         mov     eax,0
-        js      @@0
-        jz      @@0
-@@1:    add     edx,[esi+1]             ;get linear address.
+        js      CM@@0
+        jz      CM@@0
+CM@@1:    add     edx,[esi+1]             ;get linear address.
         movzx   ebp,w[esi+1+6]  ;get length.
         xor     eax,eax
         xor     ebx,ebx
-        pushs   esi
+;        pushs   esi
+        push    esi
         mov     esi,edx
-@@0:    cli
-        or      LinearAddressCheck,1
+CM@@0:    cli
+        or      byte LinearAddressCheck,1
         mov     bl,[esi]
-        cmp     LinearAddressCheck,0
-        mov     LinearAddressCheck,0
+        cmp     byte LinearAddressCheck,0
+        mov     byte LinearAddressCheck,0
         sti
-        jz      @@2
+        jz      CM@@2
         add     eax,ebx
         inc     esi
         dec     ebp
-        jnz     @@0
-@@2:    pops    esi
-@@9:    mov     [edi],eax               ;store result.
+        jnz     CM@@0
+CM@@2:
+;    pops    esi
+        pop     esi
+CM@@9:    mov     [edi],eax               ;store result.
         add     edi,4
         add     esi,1+6+2
         sub     ecx,1+6+2
         rets
-        endps
+   REQ_CHECKSUM_MEM        endp
 
 
 ;*******************************************************************************
@@ -787,48 +820,55 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_READ_MEM
+   REQ_READ_MEM        proc     near
         xor     eax,eax
         mov     ax,[esi+1+4]
         or      eax,[esi+1]
-        jz      @@0
-        pushs   ecx
+        jz      RM@@0
+;        pushs   ecx
+        push    ecx
         mov     bx,[esi+1+4]
         sys     GetSelDet32
         mov     ebp,ecx
-        pops    ecx
-        jc      @@0
+;        pops    ecx
+        pop     ecx
+        jc      RM@@0
         movzx   eax,w[esi+1+6]  ;get length.
         add     eax,d[esi+1]            ;include the offset.
         cmp     eax,ebp
-        jc      @@1
+        jc      RM@@1
         sub     eax,ebp
         sub     w[esi+1+6],ax
-        js      @@0
-        jz      @@0
-@@1:    add     edx,[esi+1]
-        pushs   ecx,esi
+        js      RM@@0
+        jz      RM@@0
+RM@@1:    add     edx,[esi+1]
+;        pushs   ecx,esi
+        push    ecx
+        push    esi
         movzx   ecx,w[esi+1+6]
         mov     esi,edx
         or      ecx,ecx
-@@2:    jz      @@3
+RM@@2:    jz      RM@@3
         cli
-        mov     LinearAddressCheck,1
+        mov     byte LinearAddressCheck,1
         mov     al,[esi]
-        cmp     LinearAddressCheck,0
-        mov     LinearAddressCheck,0
+        cmp     byte LinearAddressCheck,0
+        mov     byte LinearAddressCheck,0
         sti
-        jz      @@3
+        jz      RM@@3
         mov     [edi],al
         inc     esi
         inc     edi
         dec     ecx
-        jmp     @@2
-@@3:    pops    ecx,esi
-@@0:    add     esi,1+6+2
+        jmp     RM@@2
+RM@@3:
+;    pops    ecx,esi
+        pop     esi
+        pop     ecx
+RM@@0:    add     esi,1+6+2
         sub     ecx,1+6+2
         rets
-        endps
+   REQ_READ_MEM        endp
 
 
 ;*******************************************************************************
@@ -846,58 +886,62 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_WRITE_MEM
+   REQ_WRITE_MEM        proc near
         xor     eax,eax
         mov     ax,[esi+1+4]
         or      eax,[esi+1]
-        jz      @@0
-        pushs   ecx
+        jz      WM@@0
+;        pushs   ecx
+        push    ecx
         mov     bx,w[esi+1+4]
         sys     GetSelDet32
         mov     ebp,ecx
-        pops    ecx
+;        pops    ecx
+        pop     ecx
         mov     eax,0
-        jc      @@0
+        jc      WM@@0
         mov     eax,ecx         ;get length.
         sub     eax,1+6
         add     eax,d[esi+1]            ;include the offset.
         cmp     eax,ebp
-        jc      @@1
+        jc      WM@@1
         sub     eax,ebp
         sub     ecx,eax
         mov     eax,0
-        js      @@0
-        jz      @@0
-@@1:    add     edx,d[esi+1]
-        pushs   edi
+        js      WM@@0
+        jz      WM@@0
+WM@@1:    add     edx,d[esi+1]
+;        pushs   edi
+        push    edi
         mov     edi,edx
         add     esi,1+6
         sub     ecx,1+6
         xor     eax,eax
         xchg    esi,edi
         or      ecx,ecx
-@@2:    jz      @@3
+WM@@2:    jz      WM@@3
         cli
-        mov     LinearAddressCheck,1
+        mov     byte LinearAddressCheck,1
         mov     bl,[esi]
-        cmp     LinearAddressCheck,0
-        mov     LinearAddressCheck,0
+        cmp     byte LinearAddressCheck,0
+        mov     byte LinearAddressCheck,0
         sti
-        jz      @@3
+        jz      WM@@3
         mov     bl,[edi]
         mov     [esi],bl
         inc     esi
         inc     edi
         inc     eax
         dec     ecx
-        jmp     @@2
-@@3:    xchg    esi,edi
-        pops    edi
-@@0:    mov     [edi],ax
+        jmp     WM@@2
+WM@@3:    xchg    esi,edi
+;        pops    edi
+        pop     edi
+WM@@0:    mov     [edi],ax
         add     edi,2
         xor     ecx,ecx
         rets
-        endps
+   REQ_WRITE_MEM        endp
 
 
 ;*******************************************************************************
@@ -915,34 +959,34 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_READ_IO
+REQ_READ_IO        proc   near
         mov     edx,[esi+1]             ;get I/O port.
         cmp     b[esi+1+4],1
-        jz      @@byte
+        jz      RIO@@byte
         cmp     b[esi+1+4],2
-        jz      @@word
+        jz      RIO@@word
         cmp     b[esi+1+4],4
-        jz      @@dword
-        jmp     @@9
+        jz      RIO@@dword
+        jmp     RIO@@9
 ;
-@@byte: in      al,dx
+RIO@@byte: in      al,dx
         mov     [edi],al
         inc     edi
-        jmp     @@9
+        jmp     RIO@@9
 ;
-@@word: in      ax,dx
+RIO@@word: in      ax,dx
         mov     [edi],ax
         add     edi,2
-        jmp     @@9
+        jmp     RIO@@9
 ;
-@@dword:        in      eax,dx
+RIO@@dword:        in      eax,dx
         mov     [edi],eax
         add     edi,4
 ;
-@@9:    add     esi,1+4+1
+RIO@@9:    add     esi,1+4+1
         sub     ecx,1+4+1
         rets
-        endps
+REQ_READ_IO        endp
 
 
 ;*******************************************************************************
@@ -960,39 +1004,39 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_WRITE_IO
+REQ_WRITE_IO        proc        near
         mov     edx,[esi+1]             ;get I/O address.
         add     esi,4
         sub     ecx,4
         cmp     ecx,1
-        jz      @@byte
+        jz      WIO@@byte
         cmp     ecx,2
-        jz      @@word
+        jz      WIO@@word
         cmp     ecx,4
-        jz      @@dword
+        jz      WIO@@dword
         xor     al,al
-        jmp     @@9
+        jmp     WIO@@9
 ;
-@@byte: mov     al,[esi]
+WIO@@byte: mov     al,[esi]
         out     dx,al
         mov     al,1
-        jmp     @@9
+        jmp     WIO@@9
 ;
-@@word: mov     ax,[esi]
+WIO@@word: mov     ax,[esi]
         out     dx,ax
         mov     al,2
-        jmp     @@9
+        jmp     WIO@@9
 ;
-@@dword:        mov     eax,[esi]
+WIO@@dword:        mov     eax,[esi]
         out     dx,eax
         mov     al,4
 ;
-@@9:    mov     [edi],al
+WIO@@9:    mov     [edi],al
         inc     edi
         add     esi,ecx
         xor     ecx,ecx
         rets
-        endps
+REQ_WRITE_IO        endp
 
 
 ;*******************************************************************************
@@ -1010,9 +1054,10 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_READ_CPU
-        locals @@incount,@@inaddr,@@outaddr
-        pushads
+   REQ_READ_CPU        proc near
+        local @@incount:dword,@@inaddr:dword,@@outaddr:dword
+;        pushads
+        pushad
 ;
         inc     esi             ;skip REQ_READ_CPU
         dec     ecx
@@ -1027,12 +1072,13 @@ medCPU:
         rep     movsb
         mov     @@outaddr,edi
 ;
-        popads
+;        popads
+        popad
         mov     ecx,@@incount
         mov     esi,@@inaddr
         mov     edi,@@outaddr
         rets
-        endps
+   REQ_READ_CPU        endp
 
 
 ;*******************************************************************************
@@ -1050,9 +1096,10 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_READ_FPU
-        locals @@incount,@@inaddr,@@outaddr
-        pushads
+REQ_READ_FPU        proc   near
+        local @@incount:dword,@@inaddr:dword,@@outaddr:dword
+;        pushads
+        pushad
 ;
         inc     esi             ;skip REQ_READ_FPU
         dec     ecx
@@ -1068,19 +1115,21 @@ medCPU:
         add     edi,108
         mov     @@outaddr,edi
 ;
-        popads
+;        popads
+        popad
         mov     ecx,@@incount
         mov     esi,@@inaddr
         mov     edi,@@outaddr
         rets
-        endps
+REQ_READ_FPU        endp
 
 
 ; MED, 01/24/99
 ;*******************************************************************************
-        procs   REQ_READ_REGS
-        locals @@incount,@@inaddr,@@outaddr
-        pushads
+REQ_READ_REGS        proc near
+        local @@incount:dword,@@inaddr:dword,@@outaddr:dword
+;        pushads
+        pushad
 
         inc     esi             ;skip REQ_READ_REGS
         dec     ecx
@@ -1101,12 +1150,13 @@ medCPU:
         add     edi,108
         mov     @@outaddr,edi
 
-        popads
+;        popads
+        popad
         mov     ecx,@@incount
         mov     esi,@@inaddr
         mov     edi,@@outaddr
         rets
-        endps
+REQ_READ_REGS        endp
 
 
 ;*******************************************************************************
@@ -1124,22 +1174,26 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_WRITE_CPU
+REQ_WRITE_CPU        proc       near
 ;
         inc     esi             ;skip REQ_WRITE_CPU
         dec     ecx
 ;
 ;Copy CPU register values.
 ;
-        pushs   ecx,edi
+;        pushs   ecx,edi
+        push    ecx
+        push    edi
         mov     edi,offset DebugRegsStart
         mov     ecx,offset DebugRegsEnd-DebugRegsStart
         rep     movsb
-        pops    ecx,edi
+;        pops    ecx,edi
+        pop     edi
+        pop     ecx
 ;
         sub     ecx,offset DebugRegsEnd-DebugRegsStart
         rets
-        endps
+REQ_WRITE_CPU        endp
 
 
 ;*******************************************************************************
@@ -1157,7 +1211,7 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_WRITE_FPU
+REQ_WRITE_FPU        proc   near
 ;
         inc     esi             ;skip REQ_WRITE_FPU
         dec     ecx
@@ -1170,22 +1224,28 @@ medCPU:
         sub     ecx,108
 ;
         rets
-        endps
+REQ_WRITE_FPU        endp
 
 
 ; MED, 01/24/99
 ;*******************************************************************************
-        procs   REQ_WRITE_REGS
+REQ_WRITE_REGS        proc      near
 
         inc     esi             ;skip REQ_WRITE_REGS
         dec     ecx
 
 ;Copy CPU register values.
-        pushs   ecx,edi
+;        pushs   ecx,edi
+        push    ecx
+        push    edi
+
         mov     edi,offset DebugRegsStart
         mov     ecx,offset DebugRegsEnd-DebugRegsStart
         rep     movsb
-        pops    ecx,edi
+;        pops    ecx,edi
+        pop     edi
+        pop     ecx
+
         sub     ecx,offset DebugRegsEnd-DebugRegsStart
 
 ;Set FPU register values.
@@ -1195,7 +1255,7 @@ medCPU:
         sub     ecx,108
 
         rets
-        endps
+REQ_WRITE_REGS        endp
 
 
 ;*******************************************************************************
@@ -1213,17 +1273,20 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_PROG_GO
-        locals @@result
+ REQ_PROG_GO        proc        near
+        local @@result:dword
         inc     esi
         dec     ecx             ;skip REQ_PROG_GO
-        pushads
+;        pushads
+        pushad
 ;
         xor     eax,eax         ;set code for GO.
         call    Execute
         mov     @@result,eax
 ;
-        popads
+;        popads
+        popad
+
         mov     eax,DebugESP
         mov     [edi],eax
         add     edi,4
@@ -1240,7 +1303,7 @@ medCPU:
         mov     [edi],ax
         add     edi,2
         rets
-        endps
+ REQ_PROG_GO        endp
 
 
 ;*******************************************************************************
@@ -1258,17 +1321,19 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_PROG_STEP
-        locals @@result
+REQ_PROG_STEP        proc       near
+        local @@result:dword
         inc     esi
         dec     ecx             ;skip REQ_PROG_STEP
-        pushads
+;        pushads
+        pushad
 ;
         mov     eax,1           ;set code for STEP.
         call    Execute
         mov     @@result,eax
 ;
-        popads
+;        popads
+        popad
         mov     eax,DebugESP
         mov     [edi],eax
         add     edi,4
@@ -1285,7 +1350,7 @@ medCPU:
         mov     [edi],ax
         add     edi,2
         rets
-        endps
+REQ_PROG_STEP        endp
 
 
 ;*******************************************************************************
@@ -1303,9 +1368,11 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_PROG_LOAD
-        locals @@incount,@@inaddr,@@outaddr
-        pushads
+REQ_PROG_LOAD        proc   near
+         local @@incount:dword,@@inaddr:dword,@@outaddr:dword
+;        locals @@incount,@@inaddr,@@outaddr
+;        pushads
+        pushad
         mov     @@outaddr,edi
 ;
         inc     esi             ;skip REQ_PROG_LOAD
@@ -1317,26 +1384,26 @@ medCPU:
 ;Get the program name.
 ;
         mov     edi,offset ProgName
-@@0:    movsb
+PL@@0:    movsb
         dec     ecx
         cmp     b[esi-1],0
-        jnz     @@0
+        jnz     PL@@0
 ;
 ;Get the command line.
 ;
         mov     edi,offset ProgCommand+1
-@@1:    or      ecx,ecx
-        jz      @@2
+PL@@1:    or      ecx,ecx
+        jz      PL@@2
         movsb
         dec     ecx
         cmp     b[esi-1],0
-        jnz     @@1
+        jnz     PL@@1
         mov     b[edi-1]," "
-        jmp     @@1
-@@2:    cmp     edi,offset ProgCommand+1
-        jz      @@5
+        jmp     PL@@1
+PL@@2:    cmp     edi,offset ProgCommand+1
+        jz      PL@@5
         mov     b[edi],13
-@@5:    sub     edi,offset ProgCommand+1
+PL@@5:    sub     edi,offset ProgCommand+1
         mov     eax,edi
         mov     ProgCommand,al  ;set command line length.
         mov     @@incount,ecx
@@ -1349,9 +1416,16 @@ medCPU:
         xor     cx,cx
         mov     ax,0fffdh
         int     31h
-        pushs   ds,ds,ds
-        pops    es,fs,gs
-        jnc     @@3
+;        pushs   ds,ds,ds
+;        pops    es,fs,gs
+        push    ds
+        push    ds
+        push    ds
+        pop     gs
+        pop     fs
+        pop     es
+
+        jnc     PL@@3
         ;
         ;Some sort of error occured so set status.
         ;
@@ -1359,12 +1433,12 @@ medCPU:
         mov     [edi],eax
         mov     ErrorNumber,eax
         call    SetErrorText
-        add     @@outaddr,4+4+4+1
-        jmp     @@9
+        add     dword @@outaddr,4+4+4+1
+        jmp     PL@@9
         ;
         ;Setup initial register values.
         ;
-@@3:    mov     DebugSegs,ebp
+PL@@3:    mov     DebugSegs,ebp
         mov     DebugCS,cx
         mov     DebugEIP,edx
         mov     DebugSS,bx
@@ -1374,20 +1448,20 @@ medCPU:
         mov     DebugES,si
         pushfd
         pop     eax
-        mov     DebugEFL,eax
-        mov     DebugEAX,0
-        mov     DebugEBX,0
-        mov     DebugECX,0
-        mov     DebugEDX,0
-        mov     DebugESI,0
-        mov     DebugEDI,0
-        mov     DebugEBP,0
+        mov     dword DebugEFL,eax
+        mov     dword DebugEAX,0
+        mov     dword DebugEBX,0
+        mov     dword DebugECX,0
+        mov     dword DebugEDX,0
+        mov     dword DebugESI,0
+        mov     dword DebugEDI,0
+        mov     dword DebugEBP,0
 ;
 ;Setup a new transfer buffer to stop debugger interfering.
 ;
         mov     bx,8192/16
         sys     GetMemDOS
-        jc      @@4
+        jc      PL@@4
         push    eax
         mov     bx,DebugPSP
         mov     ah,50h
@@ -1402,23 +1476,25 @@ medCPU:
 ;
 ;Setup results.
 ;
-@@4:    mov     edi,@@outaddr
+PL@@4:    mov     edi,@@outaddr
         mov     d[edi],0                ;error code=zero.
         movzx   ebx,DebugPSP
         mov     d[edi+4],ebx            ;task ID=PSP.
         sys     GetSelDet32
         mov     d[edi+8],edx            ;module handle=linear PSP.
         mov     b[edi+12],1+2   ;flags=32-bit+protected
-        add     @@outaddr,4+4+4+1
+        add     dword @@outaddr,4+4+4+1
 ;
 ;Return results to caller.
 ;
-@@9:    popads
+PL@@9:
+;    popads
+        popad
         mov     ecx,@@incount
         mov     esi,@@inaddr
         mov     edi,@@outaddr
         rets
-        endps
+REQ_PROG_LOAD        endp
 
 
 ;*******************************************************************************
@@ -1436,29 +1512,31 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_PROG_KILL
+REQ_PROG_KILL        proc       near
         mov     ebx,[esi+1]
         add     esi,1+4
         sub     ecx,1+4
         sys     RelSel
         mov     d[edi],0
-        jnc     @@0
+        jnc     PK@@0
         mov     d[edi],4
-        mov     ErrorNumber,4
+        mov     dword ErrorNumber,4
         call    SetErrorText
-@@0:    add     edi,4
+PK@@0:    add     edi,4
 ;
 ;Reset the timer if required.
 ;
-        cmp     ResetTimer,0
-        jz      @@1
-        pushads
+        cmp     dword ResetTimer,0
+        jz      PK@@1
+;        pushads
+        pushad
         or      eax,-1
         call    LoadTimer
-        popads
+;        popads
+        popad
 ;
-@@1:    rets
-        endps
+PK@@1:    rets
+REQ_PROG_KILL        endp
 
 
 ;*******************************************************************************
@@ -1476,35 +1554,39 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_SET_WATCH
+REQ_SET_WATCH        proc       near
 ;
 ;Check if size is OK for HBRK
 ;
         cmp     b[esi+1+6],1
-        jz      @@0
+        jz      SW@@0
         cmp     b[esi+1+6],2
-        jz      @@0
+        jz      SW@@0
         cmp     b[esi+1+6],4
-        jnz     @@3
+        jnz     SW@@3
 ;
 ;Size is OK so see if we can find a free entry.
 ;
-@@0:    mov     ebx,offset HBRKTable
+SW@@0:    mov     ebx,offset HBRKTable
         mov     ebp,4
-@@1:    test    HBRK_Flags[ebx],1       ;free?
-        jz      @@2
+SW@@1:    test    HBRK_Flags[ebx],1       ;free?
+        jz      SW@@2
         add     ebx,size HBRK
         dec     ebp
-        jnz     @@1
-        jmp     @@3             ;have to be software watch then.
+        jnz     SW@@1
+        jmp     SW@@3             ;have to be software watch then.
 ;
 ;Fill in hardware break point details.
 ;
-@@2:    mov     HBRK_Flags[ebx],1       ;mark it in use.
-        pushs   ebx,ecx
+SW@@2:    mov     HBRK_Flags[ebx],1       ;mark it in use.
+;        pushs   ebx,ecx
+        push    ebx
+        push    ecx
         mov     bx,[esi+1+4]            ;get selector.
         sys     GetSelDet32
-        pops    ebx,ecx
+;        pops    ebx,ecx
+        pop     ecx
+        pop     ebx
         add     edx,[esi+1]             ;include offset.
         mov     HBRK_Address[ebx],edx   ;set linear address of break.
         mov     al,[esi+1+6]
@@ -1516,44 +1598,48 @@ medCPU:
         add     edi,4
         add     esi,1+6+1
         sub     ecx,1+6+1
-        jmp     @@9
+        jmp     SW@@9
 ;
 ;OK, either the size won't work for a HBRK or all HBRK's are in use so set up
 ;a software WATCH.
 ;
-@@3:    cmp     NumWatches,MaxWatches   ;all watches in use?
-        jnz     @@4
+SW@@3:    cmp     dword NumWatches,MaxWatches   ;all watches in use?
+        jnz     SW@@4
         ;
         ;No more watches either so return an error.
         ;
-@@7:    add     esi,1+6+1
+SW@@7:    add     esi,1+6+1
         sub     ecx,1+6+1
         mov     d[edi],5
         add     edi,4
         mov     d[edi],0
         add     edi,4
-        mov     ErrorNumber,5
+        mov     dword ErrorNumber,5
         call    SetErrorText
-        jmp     @@9
+        jmp     SW@@9
 ;
 ;Must be a free WATCH entry so find it.
 ;
-@@4:    mov     ebx,offset WATCHTable
+SW@@4:    mov     ebx,offset WATCHTable
         mov     ebp,MaxWatches
-@@5:    test    WATCH_Flags[ebx],1
-        jz      @@6
+SW@@5:    test    WATCH_Flags[ebx],1
+        jz      SW@@6
         add     ebx,size WATCH
         dec     ebp
-        jnz     @@5
-        jmp     @@7             ;can't happen but...
+        jnz     SW@@5
+        jmp     SW@@7             ;can't happen but...
 ;
 ;Found next free WATCH so fill in the details.
 ;
-@@6:    mov     WATCH_Flags[ebx],1
-        pushs   ebx,ecx
+SW@@6:    mov     WATCH_Flags[ebx],1
+;        pushs   ebx,ecx
+        push    ebx
+        push    ecx
         mov     bx,[esi+1+4]            ;get selector.
         sys     GetSelDet32
-        pops    ebx,ecx
+;        pops    ebx,ecx
+        pop     ecx
+        pop     ebx
         add     edx,[esi+1]             ;include offset.
         mov     WATCH_Address[ebx],edx  ;set linear address of WATCH.
         xor     eax,eax
@@ -1562,20 +1648,24 @@ medCPU:
         ;
         ;Need to setup checksum.
         ;
-        pushs   esi,edi
+;        pushs   esi,edi
+        push    esi
+        push    edi
         xor     edi,edi
         mov     esi,eax
         xor     eax,eax
-@@8:    mov     al,[edx]
+SW@@8:    mov     al,[edx]
         add     edi,eax
         inc     edx
         dec     esi
-        jnz     @@8
+        jnz     SW@@8
         mov     eax,edi
-        pops    esi,edi
+;        pops    esi,edi
+        pop     edi
+        pop     esi
         mov     WATCH_Check[ebx],eax    ;set check-sum.
 ;
-        inc     NumWatches              ;update WATCH count.
+        inc     dword NumWatches              ;update WATCH count.
 ;
 ;set return details.
 ;
@@ -1588,8 +1678,8 @@ medCPU:
 ;
 ;Return to caller.
 ;
-@@9:    rets
-        endps
+SW@@9:    rets
+REQ_SET_WATCH        endp
 
 
 ;*******************************************************************************
@@ -1607,14 +1697,16 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_CLEAR_WATCH
+REQ_CLEAR_WATCH        proc     near
 ;
 ;Get the linear address ready for comparison.
 ;
-        pushs   ecx
+;        pushs   ecx
+        push    ecx
         mov     bx,[esi+1+4]            ;get selector.
         sys     GetSelDet32
-        pops    ecx
+;        pops    ecx
+        pop     ecx
         add     edx,[esi+1]             ;include offset.
         xor     eax,eax
         mov     al,[esi+1+6]            ;get size.
@@ -1623,41 +1715,41 @@ medCPU:
 ;
         mov     ebx,offset HBRKTable
         mov     ebp,4
-@@3:    test    HBRK_Flags[ebx],1       ;in use?
-        jz      @@4
+CW@@3:    test    HBRK_Flags[ebx],1       ;in use?
+        jz      CW@@4
         cmp     edx,HBRK_Address[ebx]   ;right address?
-        jnz     @@4
+        jnz     CW@@4
         cmp     al,HBRK_Size[ebx]       ;right size?
-        jnz     @@4
+        jnz     CW@@4
         mov     HBRK_Flags[ebx],0       ;free this entry.
-        jmp     @@2
-@@4:    add     ebx,size HBRK
+        jmp     CW@@2
+CW@@4:    add     ebx,size HBRK
         dec     ebp
-        jnz     @@3
+        jnz     CW@@3
 ;
 ;Check all WATCH's.
 ;
-        cmp     NumWatches,0            ;no point if no WATCH's in use.
-        jz      @@2
+        cmp     dword NumWatches,0            ;no point if no WATCH's in use.
+        jz      CW@@2
         mov     ebx,offset WATCHTable
         mov     ebp,MaxWatches
-@@0:    test    WATCH_Flags[ebx],1      ;in use?
-        jz      @@1
+CW@@0:    test    WATCH_Flags[ebx],1      ;in use?
+        jz      CW@@1
         cmp     edx,WATCH_Address[ebx]  ;right address?
-        jnz     @@1
+        jnz     CW@@1
         cmp     eax,WATCH_Length[ebx]   ;right length?
-        jnz     @@1
+        jnz     CW@@1
         mov     WATCH_Flags[ebx],0      ;clear WATCH.
-        dec     NumWatches              ;update number of WATCH's.
-        jmp     @@2
-@@1:    add     ebx,size WATCH
+        dec     dword NumWatches              ;update number of WATCH's.
+        jmp     CW@@2
+CW@@1:    add     ebx,size WATCH
         dec     ebp
-        jnz     @@0
+        jnz     CW@@0
 ;
-@@2:    add     esi,1+6+1
+CW@@2:    add     esi,1+6+1
         sub     ecx,1+6+1
         rets
-        endps
+REQ_CLEAR_WATCH        endp
 
 
 ;*******************************************************************************
@@ -1675,16 +1767,18 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_SET_BREAK
+REQ_SET_BREAK        proc   near
         inc     esi             ;skip REQ_SET_BREAK
         dec     ecx
 ;
 ;Get selector base.
 ;
         mov     bx,[esi+4]
-        pushs   ecx
+;        pushs   ecx
+        push    ecx
         sys     GetSelDet32
-        pops    ecx
+;        pops    ecx
+        pop     ecx
 ;
 ;Include offset.
 ;
@@ -1707,7 +1801,7 @@ medCPU:
         sub     ecx,6
 ;
         rets
-        endps
+REQ_SET_BREAK        endp
 
 
 ;*******************************************************************************
@@ -1725,16 +1819,18 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_CLEAR_BREAK
+REQ_CLEAR_BREAK        proc     near
         inc     esi
         dec     ecx             ;skip REQ_CLEAR_BREAK
 ;
 ;Get selector base.
 ;
         mov     bx,[esi+4]
-        pushs   ecx
+;        pushs   ecx
+        push    ecx
         sys     GetSelDet32
-        pops    ecx
+;        pops    ecx
+        pop     ecx
 ;
 ;Include offset.
 ;
@@ -1751,7 +1847,7 @@ medCPU:
         sub     ecx,6+4
 ;
         rets
-        endps
+REQ_CLEAR_BREAK        endp
 
 
 ;*******************************************************************************
@@ -1769,7 +1865,7 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_GET_NEXT_ALIAS
+REQ_GET_NEXT_ALIAS        proc  near
         movzx   eax,w[esi+1]            ;get alias requested
         add     esi,1+2
         sub     ecx,1+2
@@ -1778,7 +1874,7 @@ medCPU:
         mov     w[edi],0
         add     edi,2
         rets
-        endps
+REQ_GET_NEXT_ALIAS        endp
 
 
 ;*******************************************************************************
@@ -1796,7 +1892,7 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_GET_LIB_NAME
+REQ_GET_LIB_NAME        proc    near
         add     esi,1+4
         sub     ecx,1+4
         mov     d[edi],0
@@ -1804,7 +1900,7 @@ medCPU:
         mov     b[edi],0
         inc     edi
         rets
-        endps
+REQ_GET_LIB_NAME        endp
 
 
 ;*******************************************************************************
@@ -1822,19 +1918,19 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_GET_ERR_TEXT
+REQ_GET_ERR_TEXT        proc    near
         mov     edx,[esi+1]
         mov     edx,[ErrorList+edx*4]
         add     esi,1+4
         sub     ecx,1+4
-@@0:    mov     al,[edx]
+GE@@0:    mov     al,[edx]
         mov     [edi],al
         inc     edx
         inc     edi
         or      al,al
-        jnz     @@0
+        jnz     GE@@0
         rets
-        endps
+REQ_GET_ERR_TEXT        endp
 
 
 ;*******************************************************************************
@@ -1852,20 +1948,20 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_GET_MESSAGE_TEXT
+REQ_GET_MESSAGE_TEXT        proc   near
         mov     edx,ErrorMessage
         add     esi,1
         sub     ecx,1
         mov     b[edi],0                ;set flags.
         inc     edi
-@@0:    mov     al,[edx]
+GM@@0:    mov     al,[edx]
         mov     [edi],al
         inc     edx
         inc     edi
         or      al,al
-        jnz     @@0
+        jnz     GM@@0
         rets
-        endps
+REQ_GET_MESSAGE_TEXT        endp
 
 
 ;*******************************************************************************
@@ -1883,15 +1979,15 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_REDIRECT_STDIN
+REQ_REDIRECT_STDIN        proc
         add     esi,ecx
         xor     ecx,ecx
         mov     d[edi],6
-        mov     ErrorNumber,6
+        mov     dword ErrorNumber,6
         call    SetErrorText
         add     edi,4
         rets
-        endps
+REQ_REDIRECT_STDIN        endp
 
 
 ;*******************************************************************************
@@ -1909,15 +2005,15 @@ medCPU:
 ;ECX,ESI & EDI updated.
 ;
 ;*******************************************************************************
-        procs   REQ_REDIRECT_STDOUT
+REQ_REDIRECT_STDOUT        proc near
         add     esi,ecx
         xor     ecx,ecx
         mov     d[edi],6
-        mov     ErrorNumber,6
+        mov     dword ErrorNumber,6
         call    SetErrorText
         add     edi,4
         rets
-        endps
+   REQ_REDIRECT_STDOUT        endp
 
 
 ;*******************************************************************************
@@ -1925,14 +2021,16 @@ medCPU:
 ;Setup ErrorMessage with text for ErrorNumber.
 ;
 ;*******************************************************************************
-        procs   SetErrorText
-        pushs   eax
+SetErrorText        proc        near
+;        pushs   eax
+        push    eax
         mov     eax,ErrorNumber
         mov     eax,d[ErrorList+eax*4]
         mov     ErrorMessage,eax
-        pops    eax
+;        pops    eax
+        pop     eax
         rets
-        endps
+SetErrorText        endp
 
 
 ;*******************************************************************************
@@ -1948,8 +2046,16 @@ medCPU:
 ;EAX    - status (see REQ_PROG_GO/STEP return flags)
 ;
 ;*******************************************************************************
-        procs   Execute
-        pushs   ebx,ecx,edx,esi,edi,ebp
+Execute        proc     near
+;        pushs   ebx,ecx,edx,esi,edi,ebp
+        push    ebx
+        push    ecx
+        push    edx
+        push    esi
+        push    edi
+        push    ebp
+
+
         mov     ExecuteFlags,eax
 ;
 ;Switch to debuggee's PSP.
@@ -1962,8 +2068,8 @@ medCPU:
 ;
         mov     esi,offset HBRKTable
         mov     ebp,4
-@@hbrk0:        test    HBRK_Flags[esi],1
-        jz      @@hbrk1
+E@@hbrk0:        test    HBRK_Flags[esi],1
+        jz      E@@hbrk1
         mov     ax,0b00h
         mov     ebx,HBRK_Address[esi]
         mov     cx,bx
@@ -1971,41 +2077,42 @@ medCPU:
         mov     dl,HBRK_Size[esi]
         mov     dh,HBRK_Type[esi]
         int     31h
-        jc      @@hbrk1
+        jc      E@@hbrk1
         mov     HBRK_Handle[esi],bx
         or      HBRK_Flags[esi],2
         mov     ax,0b03h
         int     31h
-@@hbrk1:        add     esi,size HBRK
+E@@hbrk1:        add     esi,size HBRK
         dec     ebp
-        jnz     @@hbrk0
+        jnz     E@@hbrk0
 ;
 ;Force watch point checking if watches are present.
 ;
-        cmp     NumWatches,0
-        jz      @@7
-        or      ExecuteFlags,2  ;force single steping.
+        cmp     dword NumWatches,0
+        jz      E@@7
+        or      dword ExecuteFlags,2  ;force single steping.
 ;
 ;Set debuggee trap flag if it's a single instruction trace else clear it if
 ;not.
 ;
-@@7:    cmp     ExecuteFlags,0
-        jz      @@0
-        or      DebugEFL,256
-        jmp     @@11
-@@0:    and     DebugEFL,not 256
+E@@7:    cmp     dword ExecuteFlags,0
+
+        jz      E@@0
+        or      dword DebugEFL,256
+        jmp     E@@11
+E@@0:    and     dword DebugEFL,not 256
 ;
 ;Set flags ready for execution.
 ;
-@@11:   mov     Executing,1
-        mov     ExceptionFlag,-1
-        mov     BreakFlag,0
-        mov     TraceFlag,0
-        mov     BreakKeyFlag,0
+E@@11:   mov     byte Executing,1
+        mov     byte ExceptionFlag,-1
+        mov     byte BreakFlag,0
+        mov     byte TraceFlag,0
+        mov     byte BreakKeyFlag,0
 ;
 ;Put return address on the stack.
 ;
-        mov     eax,offset @@back       ;store return address for int 3.
+        mov     eax,offset E@@back       ;store return address for int 3.
         push    eax
         mov     w[DebuggerSS],ss
         mov     d[DebuggerESP],esp
@@ -2033,25 +2140,25 @@ medCPU:
 ;
 ;Clear execution flag.
 ;
-@@back: mov     Executing,0
+E@@back: mov     byte Executing,0
 ;
 ;Check if we're single stepping to allow for watches.
 ;
-        test    ExecuteFlags,2
-        jz      @@8
-        cmp     TerminationFlag,0       ;terminated?
-        jnz     @@8
-        cmp     ExceptionFlag,-1        ;exception triggered?
-        jnz     @@8
-        cmp     BreakKeyFlag,0
-        jnz     @@8
+        test    dword ExecuteFlags,2
+        jz      E@@8
+        cmp     byte TerminationFlag,0       ;terminated?
+        jnz     E@@8
+        cmp     byte ExceptionFlag,-1        ;exception triggered?
+        jnz     E@@8
+        cmp     byte BreakKeyFlag,0
+        jnz     E@@8
 ;
 ;Check state of all watches.
 ;
         mov     esi,offset WatchTable
         mov     ebp,MaxWatches
-@@hbrk6:        test    WATCH_Flags[esi],1      ;in use?
-        jz      @@hbrk7
+E@@hbrk6:        test    WATCH_Flags[esi],1      ;in use?
+        jz      E@@hbrk7
         ;
         ;Check if this watch changed.
         ;
@@ -2059,47 +2166,47 @@ medCPU:
         mov     ecx,WATCH_Length[esi]
         xor     eax,eax
         xor     ebx,ebx
-@@hbrk8:        mov     bl,[edi]
+E@@hbrk8:        mov     bl,[edi]
         add     eax,ebx
         inc     edi
         dec     ecx
-        jnz     @@hbrk8
+        jnz     E@@hbrk8
         cmp     eax,WATCH_Check[esi]
-        jnz     @@10            ;signal COND_WATCH
-@@hbrk7:        add     esi,size WATCH
+        jnz     E@@10            ;signal COND_WATCH
+E@@hbrk7:        add     esi,size WATCH
         dec     ebp
-        jnz     @@hbrk6
+        jnz     E@@hbrk6
 ;
 ;Check it wasn't a single step anyway.
 ;
-        test    ExecuteFlags,1  ;single steping anyway?
-        jnz     @@8
-        jmp     @@7
+        test    dword ExecuteFlags,1  ;single steping anyway?
+        jnz     E@@8
+        jmp     E@@7
 
 ;
 ;Set vars to trigger COND_WATCH
 ;
-@@10:   mov     ExceptionFlag,1 ;force trace flag setting.
-        or      TraceFlag,-1
+E@@10:   mov    byte ExceptionFlag,1 ;force trace flag setting.
+        or      byte TraceFlag,-1
 ;
 ;Remove HBRK's
 ;
-@@8:
+E@@8:
 
         mov     al,20h  ; MED 08/06/96, re-enable interrupts
         out     20h,al
 
         mov     esi,offset HBRKTable
         mov     ebp,4
-@@hbrk4:        test    HBRK_Flags[esi],2
-        jz      @@hbrk5
+E@@hbrk4:        test    HBRK_Flags[esi],2
+        jz      E@@hbrk5
         and     HBRK_Flags[esi],not 2
         mov     bx,HBRK_Handle[esi]
         mov     ax,0b01h
         int     31h
-@@hbrk5:        add     esi,size HBRK
+E@@hbrk5:        add     esi,size HBRK
         dec     ebp
-        jnz     @@hbrk4
+        jnz     E@@hbrk4
 ;
 ;Store PSP incase it changed.
 ;
@@ -2116,54 +2223,62 @@ medCPU:
 ;Now setup return value to reflect why we stopped execution.
 ;
         xor     eax,eax
-        cmp     TerminationFlag,0       ;program terminated?
-        jz      @@1
+        cmp     byte TerminationFlag,0       ;program terminated?
+        jz      E@@1
         or      eax,1 shl 10            ;COND_TERMINATE
-        jmp     @@9
-@@1:    cmp     BreakKeyFlag,0
-        jz      @@20
+        jmp     E@@9
+E@@1:    cmp    byte  BreakKeyFlag,0
+        jz      E@@20
         or      eax,1 shl 9             ;COND_USER
-        jmp     @@9
-@@20:   cmp     BreakFlag,0             ;break point?
-        jz      @@2
+        jmp     E@@9
+E@@20:   cmp    byte  BreakFlag,0             ;break point?
+        jz      E@@2
         or      eax,1 shl 7             ;COND_BREAK
-        jmp     @@9
-@@2:    cmp     TraceFlag,0             ;trace point?
-        jz      @@3
-        cmp     ExceptionFlag,1 ;hardware break point?
-        jnz     @@5
+        jmp     E@@9
+E@@2:    cmp    byte TraceFlag,0             ;trace point?
+        jz      E@@3
+        cmp     byte ExceptionFlag,1 ;hardware break point?
+        jnz     E@@5
         or      eax,1 shl 8             ;COND_WATCH
         or      eax,1 shl 11            ;COND_EXCEPTION
-        mov     ErrorNumber,12
+        mov     dword ErrorNumber,12
         call    SetErrorText
-        jmp     @@9
-@@5:    or      eax,1 shl 6             ;COND_TRACE
-        jmp     @@9
-@@3:    cmp     ExceptionFlag,-1        ;exception?
-        jz      @@4
+        jmp     E@@9
+E@@5:    or      eax,1 shl 6             ;COND_TRACE
+        jmp     E@@9
+E@@3:    cmp    byte  ExceptionFlag,-1        ;exception?
+        jz      E@@4
         or      eax,1 shl 11            ;COND_EXCEPTION
-        mov     ErrorNumber,7
-        cmp     ExceptionFlag,0 ;div zero?
-        jz      @@12
-        mov     ErrorNumber,8
-        cmp     ExceptionFlag,12        ;stack?
-        jz      @@12
-        mov     ErrorNumber,9
-        cmp     ExceptionFlag,13        ;general?
-        jz      @@12
-        mov     ErrorNumber,10
-        cmp     ExceptionFlag,14        ;page?
-        jz      @@12
-        mov     ErrorNumber,11
-@@12:   call    SetErrorText
-        jmp     @@9
-@@4:    or      eax,1 shl 8             ;COND_WATCH = dunno!
+        mov     dword ErrorNumber,7
+        cmp     byte ExceptionFlag,0 ;div zero?
+        jz      E@@12
+        mov     dword ErrorNumber,8
+        cmp     byte ExceptionFlag,12        ;stack?
+        jz      E@@12
+        mov     dword ErrorNumber,9
+        cmp     byte ExceptionFlag,13        ;general?
+        jz      E@@12
+        mov     dword ErrorNumber,10
+        cmp     byte ExceptionFlag,14        ;page?
+        jz      E@@12
+        mov     dword ErrorNumber,11
+E@@12:   call    SetErrorText
+        jmp     E@@9
+E@@4:    or      eax,1 shl 8             ;COND_WATCH = dunno!
 ;
 ;Return to caller.
 ;
-@@9:    pops    ebx,ecx,edx,esi,edi,ebp
+E@@9:
+;    pops    ebx,ecx,edx,esi,edi,ebp
+        pop     ebp
+        pop     edi
+        pop     esi
+        pop     edx
+        pop     ecx
+        pop     ebx
+
         rets
-        endps
+Execute        endp
 
 
 ;*******************************************************************************
@@ -2178,23 +2293,23 @@ IsHardBreak     proc    near
         mov     ds,ax
         mov     esi,offset HBRKTable
         mov     ecx,4
-@@0:    cmp     HBRK_Flags[esi],1+2
-        jnz     @@1
+HB@@0:    cmp     HBRK_Flags[esi],1+2
+        jnz     HB@@1
         mov     bx,HBRK_Handle[esi]
         mov     ax,0b02h
         int     31h
-        jc      @@1
+        jc      HB@@1
         test    ax,1
-        jnz     @@8
-@@1:    add     esi,size HBRK
+        jnz     HB@@8
+HB@@1:    add     esi,size HBRK
         dec     ecx
-        jnz     @@0
+        jnz     HB@@0
         or      eax,-1
-        jmp     @@10
+        jmp     HB@@10
         ;
-@@8:    xor     eax,eax
+HB@@8:    xor     eax,eax
         ;
-@@10:   pop     ds
+HB@@10:   pop     ds
         popad
         ret
 IsHardBreak     endp
@@ -2204,12 +2319,17 @@ IsHardBreak     endp
 ;Catch INT 0's.
 ;*******************************************************************************
 Int00Handler    proc    near
-        pushs   eax,ebp,ds,es
+;        pushs   eax,ebp,ds,es
+        push    eax
+        push    ebp
+        push    ds
+        push    es
+
         mov     ax,DGROUP               ;make our data addresable.
         mov     ds,ax
-        cmp     Executing,0
-        jz      @@Old
-        mov     Executing,0
+        cmp     byte Executing,0
+        jz      I00@@Old
+        mov     byte Executing,0
         mov     ebp,esp         ;make stack addresable.
         ;
         ;Need a stack alias for DPMI.
@@ -2244,18 +2364,23 @@ Int00Handler    proc    near
         mov     eax,es:[ebp+(4+4+4+4)+(0)]
         mov     DebugEIP,eax
         ;
-        mov     ExceptionFlag,0
+        mov     byte ExceptionFlag,0
         ;
         ;Now modify origional CS:EIP,SS:ESP values and return control
         ;to this code via interupt structure to restore stacks.
         ;
-        mov     eax,offset @@return
+        mov     eax,offset I00@@return
         mov     es:[ebp+(4+4+4+4)+(0)],eax
         mov     es:w[ebp+(4+4+4+4)+(4)],cs
-        pops    eax,ebp,ds,es
+;        pops    eax,ebp,ds,es
+        pop     es
+        pop     ds
+        pop     ebp
+        pop     eax
+
         iretd
         ;
-@@return:       ;Now return control to exec caller.
+I00@@return:       ;Now return control to exec caller.
         ;
         mov     ax,DGROUP
         mov     ds,ax
@@ -2267,7 +2392,13 @@ Int00Handler    proc    near
         lss     esp,f[DebuggerESP]
         ret
 ;
-@@Old:  pops    eax,ebp,ds,es
+I00@@Old:
+;  pops    eax,ebp,ds,es
+        pop     es
+        pop     ds
+        pop     ebp
+        pop     eax
+
         assume ds:nothing
         jmp     cs:f[OldInt00]
         assume ds:DGROUP
@@ -2279,16 +2410,21 @@ Int00Handler    endp
 ;Catch single instruction trace and debug register traps.
 ;*******************************************************************************
 Int01Handler    proc    near
-        pushs   eax,ebp,ds,es
+;        pushs   eax,ebp,ds,es
+        push    eax
+        push    ebp
+        push    ds
+        push    es
+
         mov     ax,DGROUP               ;make our data addresable.
         mov     ds,ax
-        cmp     Executing,0
-        jz      @@Old
-        mov     Executing,0
+        cmp     byte Executing,0
+        jz      I01@@Old
+        mov     byte Executing,0
         call    IsHardBreak
-        jnz     @@0
-        mov     ExceptionFlag,1
-@@0:    or      TraceFlag,-1
+        jnz     I01@@0
+        mov     byte ExceptionFlag,1
+I01@@0:    or      byte TraceFlag,-1
         mov     ebp,esp         ;make stack addresable.
         ;
         ;Need a stack alias for DPMI.
@@ -2327,14 +2463,18 @@ Int01Handler    proc    near
         ;Now modify origional CS:EIP,SS:ESP values and return control
         ;to this code via interupt structure to restore stacks.
         ;
-        mov     eax,offset @@return
+        mov     eax,offset I01@@return
         mov     es:[ebp+(4+4+4+4)+(0)],eax
         mov     es:w[ebp+(4+4+4+4)+(4)],cs
         and     es:w[ebp+(4+4+4+4)+(4+4)],65535-256
-        pops    eax,ebp,ds,es
+;        pops    eax,ebp,ds,es
+        pop     es
+        pop     ds
+        pop     ebp
+        pop     eax
         iretd
         ;
-@@return:       ;Now return control to exec caller.
+I01@@return:       ;Now return control to exec caller.
         ;
         mov     ax,DGROUP
         mov     ds,ax
@@ -2346,7 +2486,13 @@ Int01Handler    proc    near
         lss     esp,f[DebuggerESP]
         ret
 ;
-@@Old:  pops    eax,ebp,ds,es
+I01@@Old:
+;  pops    eax,ebp,ds,es
+        pop     es
+        pop     ds
+        pop     ebp
+        pop     eax
+
         assume ds:nothing
         jmp     cs:f[OldInt01]
         assume ds:DGROUP
@@ -2358,16 +2504,21 @@ Int01Handler    endp
 ;Catch single step or debug register traps.
 ;*******************************************************************************
 EInt01Handler   proc    near
-        pushs   eax,ebp,ds,es
+;        pushs   eax,ebp,ds,es
+        push    eax
+        push    ebp
+        push    ds
+        push    es
+
         mov     ax,DGROUP               ;make our data addresable.
         mov     ds,ax
-        cmp     Executing,0
-        jz      @@Old
-        mov     Executing,0
+        cmp     byte Executing,0
+        jz      E01@@Old
+        mov     byte Executing,0
         call    IsHardBreak
-        jnz     @@0
-        mov     ExceptionFlag,1
-@@0:    or      TraceFlag,-1
+        jnz     E01@@0
+        mov     byte ExceptionFlag,1
+E01@@0:    or      byte TraceFlag,-1
         mov     ebp,esp         ;make stack addresable.
         mov     ax,ss
         mov     es,ax
@@ -2403,14 +2554,18 @@ EInt01Handler   proc    near
         ;Now modify origional CS:EIP,SS:ESP values and return control
         ;to this code via interupt structure to restore stacks.
         ;
-        mov     eax,offset @@return
+        mov     eax,offset E01@@return
         mov     es:d[ebp+(4+4+4)+(4+4+4)+(0)+4],eax
         mov     es:w[ebp+(4+4+4)+(4+4+4)+(4)+4],cs
         and     es:w[ebp+(4+4+4)+(4+4+4)+(4+4)+4],65535-256
-        pops    eax,ebp,ds,es
+;        pops    eax,ebp,ds,es
+        pop     es
+        pop     ds
+        pop     ebp
+        pop     eax
         retf
         ;
-@@return:       ;Now return control to exec caller.
+E01@@return:       ;Now return control to exec caller.
         ;
         mov     ax,DGROUP
         mov     ds,ax
@@ -2422,7 +2577,13 @@ EInt01Handler   proc    near
         lss     esp,f[DebuggerESP]
         ret
 ;
-@@Old:  pops    eax,ebp,ds,es
+E01@@Old:
+;  pops    eax,ebp,ds,es
+        pop     es
+        pop     ds
+        pop     ebp
+        pop     eax
+
         assume ds:nothing
         jmp     cs:f[OldEInt01]
         assume ds:DGROUP
@@ -2434,13 +2595,18 @@ EInt01Handler   endp
 ;Catch INT 3's.
 ;*******************************************************************************
 Int03Handler    proc    near
-        pushs   eax,ebp,ds,es
+;        pushs   eax,ebp,ds,es
+        push    eax
+        push    ebp
+        push    ds
+        push    es
+
         mov     ax,DGROUP               ;make our data addresable.
         mov     ds,ax
-        cmp     Executing,0
-        jz      @@Old
-        mov     Executing,0
-        or      BreakFlag,-1
+        cmp     byte Executing,0
+        jz      I03@@Old
+        mov     byte Executing,0
+        or      byte BreakFlag,-1
         mov     ebp,esp         ;make stack addresable.
         ;
         ;Need a stack alias for DPMI.
@@ -2494,24 +2660,28 @@ med2a:
         mov     DebugEIP,eax
 
 med2b:
-        cmp     ExceptionFlag,-1
-        jnz     @@NoEIPDec
-        dec     DebugEIP                ;account for int 3 instruction length.
-        cmp     TerminationFlag,-1
-        jnz     @@NoEIPDec
-        dec     DebugEIP
-@@NoEIPDec:
+        cmp     byte ExceptionFlag,-1
+        jnz     I03@@NoEIPDec
+        dec     dword DebugEIP                ;account for int 3 instruction length.
+        cmp     byte TerminationFlag,-1
+        jnz     I03@@NoEIPDec
+        dec     dword DebugEIP
+I03@@NoEIPDec:
         ;Now modify origional CS:EIP,SS:ESP values and return control
         ;to this code via interupt structure to restore stacks.
         ;
-        mov     eax,offset @@return
+        mov     eax,offset I03@@return
         mov     es:[ebp+(4+4+4+4)+(0)],eax
         mov     es:w[ebp+(4+4+4+4)+(4)],cs
         and     es:w[ebp+(4+4+4+4)+(4+4)],65535-256
-        pops    eax,ebp,ds,es
+;        pops    eax,ebp,ds,es
+        pop     es
+        pop     ds
+        pop     ebp
+        pop     eax
         iretd
         ;
-@@return:       ;Now return control to exec caller.
+I03@@return:       ;Now return control to exec caller.
         ;
         mov     ax,DGROUP
         mov     ds,ax
@@ -2523,7 +2693,13 @@ med2b:
         lss     esp,f[DebuggerESP]
         ret
 ;
-@@Old:  pops    eax,ebp,ds,es
+I03@@Old:
+;  pops    eax,ebp,ds,es
+        pop     es
+        pop     ds
+        pop     ebp
+        pop     eax
+
         assume ds:nothing
         jmp     cs:f[OldInt03]
         assume ds:DGROUP
@@ -2535,13 +2711,18 @@ Int03Handler    endp
 ;Catch break exceptions.
 ;*******************************************************************************
 EInt03Handler   proc    near
-        pushs   eax,ebp,ds,es
+;        pushs   eax,ebp,ds,es
+        push    eax
+        push    ebp
+        push    ds
+        push    es
+
         mov     ax,DGROUP               ;make our data addresable.
         mov     ds,ax
-        cmp     Executing,0
-        jz      @@Old
-        mov     Executing,0
-        or      BreakFlag,-1
+        cmp     byte Executing,0
+        jz      E03@@Old
+        mov     byte Executing,0
+        or      byte BreakFlag,-1
         mov     ebp,esp         ;make stack addresable.
         mov     ax,ss
         mov     es,ax
@@ -2574,24 +2755,28 @@ EInt03Handler   proc    near
         mov     eax,es:[ebp+(4+4+4)+(4+4+4)+(0)+4]
         mov     DebugEIP,eax
         ;
-        cmp     ExceptionFlag,-1
-        jnz     @@NoEIPDec
-        dec     DebugEIP                ;account for int 3 instruction length.
-        cmp     TerminationFlag,-1
-        jnz     @@NoEIPDec
-        dec     DebugEIP
-@@NoEIPDec:     ;
+        cmp     byte ExceptionFlag,-1
+        jnz     E03@@NoEIPDec
+        dec     dword DebugEIP                ;account for int 3 instruction length.
+        cmp     byte TerminationFlag,-1
+        jnz     E03@@NoEIPDec
+        dec     dword DebugEIP
+E03@@NoEIPDec:     ;
         ;Now modify origional CS:EIP,SS:ESP values and return control
         ;to this code via interupt structure to restore stacks.
         ;
-        mov     eax,offset @@return
+        mov     eax,offset E03@@return
         mov     es:d[ebp+(4+4+4)+(4+4+4)+(0)+4],eax
         mov     es:w[ebp+(4+4+4)+(4+4+4)+(4)+4],cs
         and     es:w[ebp+(4+4+4)+(4+4+4)+(4+4)+4],65535-256
-        pops    eax,ebp,ds,es
+;        pops    eax,ebp,ds,es
+        pop     es
+        pop     ds
+        pop     ebp
+        pop     eax
         retf
         ;
-@@return:       ;Now return control to exec caller.
+E03@@return:       ;Now return control to exec caller.
         ;
         mov     ax,DGROUP
         mov     ds,ax
@@ -2603,7 +2788,13 @@ EInt03Handler   proc    near
         lss     esp,f[DebuggerESP]
         ret
 ;
-@@Old:  pops    eax,ebp,ds,es
+E03@@Old:
+;  pops    eax,ebp,ds,es
+        pop     es
+        pop     ds
+        pop     ebp
+        pop     eax
+
         assume ds:nothing
         jmp     cs:f[OldEInt03]
         assume ds:DGROUP
@@ -2615,13 +2806,18 @@ EInt03Handler   endp
 ;Catch stack exceptions.
 ;*******************************************************************************
 Exc12Handler    proc    near
-        pushs   eax,ebp,ds,es
+;        pushs   eax,ebp,ds,es
+        push    eax
+        push    ebp
+        push    ds
+        push    es
+
         mov     ax,DGROUP               ;make our data addresable.
         mov     ds,ax
-        cmp     Executing,0
-        jz      @@Old
-        mov     Executing,0
-        mov     ExceptionFlag,12
+        cmp     byte Executing,0
+        jz      E12@@Old
+        mov     byte Executing,0
+        mov     byte ExceptionFlag,12
         mov     ebp,esp         ;make stack addresable.
         mov     ax,ss
         mov     es,ax
@@ -2657,14 +2853,19 @@ Exc12Handler    proc    near
         ;Now modify origional CS:EIP,SS:ESP values and return control
         ;to this code via interupt structure to restore stacks.
         ;
-        mov     eax,offset @@return
+        mov     eax,offset E12@@return
         mov     es:d[ebp+(4+4+4)+(4+4+4)+(0)+4],eax
         mov     es:w[ebp+(4+4+4)+(4+4+4)+(4)+4],cs
         and     es:w[ebp+(4+4+4)+(4+4+4)+(4+4)+4],65535-256
-        pops    eax,ebp,ds,es
+;        pops    eax,ebp,ds,es
+        pop     es
+        pop     ds
+        pop     ebp
+        pop     eax
+
         retf
         ;
-@@return:       ;Now return control to exec caller.
+E12@@return:       ;Now return control to exec caller.
         ;
         mov     ax,DGROUP
         mov     ds,ax
@@ -2676,7 +2877,13 @@ Exc12Handler    proc    near
         lss     esp,f[DebuggerESP]
         ret
         ;
-@@Old:  pops    eax,ebp,ds,es
+E12@@Old:
+;  pops    eax,ebp,ds,es
+        pop     es
+        pop     ds
+        pop     ebp
+        pop     eax
+
         assume ds:nothing
         jmp     cs:f[OldExc12]
         assume ds:DGROUP
@@ -2688,13 +2895,18 @@ Exc12Handler    endp
 ;Catch general protection faults.
 ;*******************************************************************************
 Exc13Handler    proc    near
-        pushs   eax,ebp,ds,es
+;        pushs   eax,ebp,ds,es
+        push    eax
+        push    ebp
+        push    ds
+        push    es
+
         mov     ax,DGROUP               ;make our data addresable.
         mov     ds,ax
-        cmp     Executing,0
-        jz      @@Old
-        mov     Executing,0
-        mov     ExceptionFlag,13
+        cmp     byte Executing,0
+        jz      E13@@Old
+        mov     byte Executing,0
+        mov     byte ExceptionFlag,13
         mov     ebp,esp         ;make stack addresable.
         mov     ax,ss
         mov     es,ax
@@ -2730,14 +2942,18 @@ Exc13Handler    proc    near
         ;Now modify origional CS:EIP,SS:ESP values and return control
         ;to this code via interupt structure to restore stacks.
         ;
-        mov     eax,offset @@return
+        mov     eax,offset E13@@return
         mov     es:d[ebp+(4+4+4)+(4+4+4)+(0)+4],eax
         mov     es:w[ebp+(4+4+4)+(4+4+4)+(4)+4],cs
         and     es:w[ebp+(4+4+4)+(4+4+4)+(4+4)+4],65535-256
-        pops    eax,ebp,ds,es
+;        pops    eax,ebp,ds,es
+        pop     es
+        pop     ds
+        pop     ebp
+        pop     eax
         retf
         ;
-@@return:       ;Now return control to exec caller.
+E13@@return:       ;Now return control to exec caller.
         ;
         mov     ax,DGROUP
         mov     ds,ax
@@ -2749,7 +2965,13 @@ Exc13Handler    proc    near
         lss     esp,f[DebuggerESP]
         ret
         ;
-@@Old:  pops    eax,ebp,ds,es
+E13@@Old:
+;  pops    eax,ebp,ds,es
+        pop     es
+        pop     ds
+        pop     ebp
+        pop     eax
+
         assume ds:nothing
         jmp     cs:f[OldExc13]
         assume ds:DGROUP
@@ -2761,13 +2983,18 @@ Exc13Handler    endp
 ;Catch page faults.
 ;*******************************************************************************
 Exc14Handler    proc    near
-        pushs   eax,ebp,ds,es
+;        pushs   eax,ebp,ds,es
+        push    eax
+        push    ebp
+        push    ds
+        push    es
+
         mov     ax,DGROUP               ;make our data addresable.
         mov     ds,ax
-        cmp     Executing,0
-        jz      @@Old
-        mov     Executing,0
-        mov     ExceptionFlag,14
+        cmp     byte Executing,0
+        jz      E14@@Old
+        mov     byte Executing,0
+        mov     byte ExceptionFlag,14
         mov     ebp,esp         ;make stack addresable.
         mov     ax,ss
         mov     es,ax
@@ -2803,14 +3030,18 @@ Exc14Handler    proc    near
         ;Now modify origional CS:EIP,SS:ESP values and return control
         ;to this code via interupt structure to restore stacks.
         ;
-        mov     eax,offset @@return
+        mov     eax,offset E14@@return
         mov     es:d[ebp+(4+4+4)+(4+4+4)+(0)+4],eax
         mov     es:w[ebp+(4+4+4)+(4+4+4)+(4)+4],cs
         and     es:w[ebp+(4+4+4)+(4+4+4)+(4+4)+4],65535-256
-        pops    eax,ebp,ds,es
+;        pops    eax,ebp,ds,es
+        pop     es
+        pop     ds
+        pop     ebp
+        pop     eax
         retf
         ;
-@@return:       ;Now return control to exec caller.
+E14@@return:       ;Now return control to exec caller.
         ;
         mov     ax,DGROUP
         mov     ds,ax
@@ -2822,13 +3053,23 @@ Exc14Handler    proc    near
         lss     esp,f[DebuggerESP]
         ret
         ;
-@@Old:  cmp     LinearAddressCheck,0
-        jz      @@shit
-        mov     LinearAddressCheck,0
+E14@@Old:  cmp     byte LinearAddressCheck,0
+        jz      E14@@shit
+        mov     byte LinearAddressCheck,0
         xor     esi,esi
-        pops    eax,ebp,ds,es
+;        pops    eax,ebp,ds,es
+        pop     es
+        pop     ds
+        pop     ebp
+        pop     eax
         retf
-@@shit: pops    eax,ebp,ds,es
+E14@@shit:
+; pops    eax,ebp,ds,es
+        pop     es
+        pop     ds
+        pop     ebp
+        pop     eax
+
         assume ds:nothing
         jmp     cs:f[OldExc14]
         assume ds:DGROUP
@@ -2842,28 +3083,42 @@ Exc14Handler    endp
 Int21Handler    proc    far
         pushfd
         cmp     ah,4ch  ;terminate?
-        jnz     @@Old
+        jnz     I21@@Old
 ;
-        pushs   ax,bx,ds
+;        pushs   ax,bx,ds
+        push    ax
+        push    bx
+        push    ds
+
         mov     ah,62h
         int     21h
         mov     ds,bx
         lds     bx,ds:[EPSP_ExecCount]
         cmp     b[bx],0
-        pops    ax,bx,ds
-        jnz     @@Old
+;        pops    ax,bx,ds
+        pop     ds
+        pop     bx
+        pop     ax
+
+        jnz     I21@@Old
 ;
         popfd
-        pushs   ds,eax
+;        pushs   ds,eax
+        push    ds
+        push    eax
+
         mov     ax,DGROUP
         mov     ds,ax
-        mov     TerminationFlag,-1
+        mov     byte TerminationFlag,-1
         mov     eax,esp
         mov     al,ss:[eax]
-        mov     TerminateCode,al
-        pops    ds,eax
+        mov     byte TerminateCode,al
+;        pops    ds,eax
+        pop     eax
+        pop     ds
+
         jmp     Int03Handler
-@@Old:  ;
+I21@@Old:  ;
         popfd
         assume ds:nothing
         jmp     cs:f[OldInt21h]
@@ -2880,10 +3135,15 @@ Int21Handler    endp
 ;
 ;*******************************************************************************
 BreakChecker    proc    near
-        pushs   eax,ebx,ebp,ds
+;        pushs   eax,ebx,ebp,ds
+        push    eax
+        push    ebx
+        push    ebp
+        push    ds
+
         mov     ax,DGROUP
         mov     ds,ax
-        inc     InInt09
+        inc     byte InInt09
 ;
 ;Update the key table.
 ;
@@ -2897,30 +3157,30 @@ BreakChecker    proc    near
 ;
 ;Check we havn't already been here.
 ;
-        cmp     InInt09,2
-        jnc     @@old
+        cmp     byte InInt09,2
+        jnc     BC@@old
 ;
 ;Check if anything is running.
 ;
-        cmp     Executing,0
-        jz      @@old
+        cmp     byte Executing,0
+        jz      BC@@old
 ;
 ;Check if our break combination is set.
 ;
         mov     ebx,offset BreakKeyList
         cmp     d[ebx],0                ;check if any keys in the list.
-        jz      @@old
-@@6:    cmp     d[ebx],0                ;End of the list?
-        jz      @@7
+        jz      BC@@old
+BC@@6:    cmp     d[ebx],0                ;End of the list?
+        jz      BC@@7
         mov     eax,d[ebx]              ;Get scan code.
         cmp     b[KeyTable+eax],0
-        jz      @@old
+        jz      BC@@old
         add     ebx,4
-        jmp     @@6
+        jmp     BC@@6
 ;
 ;Check if return CS:EIP & stack belong to the program we're running.
 ;
-@@7:    pushad
+BC@@7:    pushad
         mov     ebp,esp
         add     ebp,4+4+4+4+(4*8)+4+4+4
         mov     ecx,d[ebp+4]            ;return CS
@@ -2931,7 +3191,7 @@ BreakChecker    proc    near
         mov     ax,es:[EPSP_SegBase]
         pop     es
         cmp     cx,ax
-        jc      @@nope
+        jc      BC@@nope
         mov     DebugEIP,edx
         mov     DebugCS,cx
 ;
@@ -2952,16 +3212,24 @@ BreakChecker    proc    near
         mov     ebp,esp
         add     ebp,4+4+4+4+(4*8)+4+4+4
         mov     w[ebp+4],cs             ;return CS
-        mov     d[ebp],offset @@3
+        mov     d[ebp],offset BC@@3
         popad
-        pops    eax,ebx,ebp,ds
+;        pops    eax,ebx,ebp,ds
+        pop     ds
+        pop     ebp
+        pop     ebx
+        pop     eax
         iretd
 ;
 ;We should be running on the applications stack with the applications registers
 ;now.
 ;
-@@3:    pushfd
-        pushs   eax,ebp,ds
+BC@@3:    pushfd
+;        pushs   eax,ebp,ds
+        push    eax
+        push    ebp
+        push    ds
+
         mov     ax,DGROUP
         mov     ds,ax
         mov     ebp,esp
@@ -2983,7 +3251,7 @@ BreakChecker    proc    near
         mov     DebugEFL,eax
         mov     DebugSS,ss
         mov     DebugESP,esp
-        add     DebugESP,4+4+4+4
+        add     dword DebugESP,4+4+4+4
 ;
 ;Return to the debugger exec routine.
 ;
@@ -2991,29 +3259,34 @@ BreakChecker    proc    near
         mov     es,ax
         mov     fs,ax
         mov     gs,ax
-        or      BreakKeyFlag,-1
-        mov     Executing,0
-        dec     InInt09
+        or      byte BreakKeyFlag,-1
+        mov     byte Executing,0
+        dec     byte InInt09
 ;
 ;Clean up the key table.
 ;
         mov     ebx,offset BreakKeyList
-@@60:   cmp     d[ebx],0                ;End of the list?
-        jz      @@70
+BC@@60:   cmp     d[ebx],0                ;End of the list?
+        jz      BC@@70
         mov     eax,d[ebx]              ;Get scan code.
         mov     b[KeyTable+eax],0
         add     ebx,4
-        jmp     @@60
+        jmp     BC@@60
 ;
-@@70:   lss     esp,f[DebuggerESP]
+BC@@70:   lss     esp,f[DebuggerESP]
         ret
 ;
-@@nope: popad
+BC@@nope: popad
 ;
 ;Pass control to the origional handler.
 ;
-@@old:  dec     InInt09
-        pops    eax,ebx,ebp,ds
+BC@@old:  dec     byte InInt09
+;        pops    eax,ebx,ebp,ds
+        pop     ds
+        pop     ebp
+        pop     ebx
+        pop     eax
+
         assume ds:nothing
         jmp     cs:f[OldInt09]
         assume ds:DGROUP
@@ -3040,14 +3313,22 @@ Int31Intercept  proc    near
         jnz     @@notset
         cmp     bl,9            ;INT 9?
         jnz     @@old
-        pushs   eax,edx,ds
+;        pushs   eax,edx,ds
+        push    eax
+        push    edx
+        push    ds
+
         mov     ax,DGROUP
         mov     ds,ax
         assume ds:_TEXT
         mov     d[OldInt09],edx
         mov     w[OldInt09+4],cx
         assume ds:DGROUP
-        pops    eax,edx,ds
+;        pops    eax,edx,ds
+        pop     ds
+        pop     edx
+        pop     eax
+
         jmp     @@ret
         ;
 @@notset:       cmp     ax,0204h                ;Get vector?
@@ -3059,13 +3340,23 @@ Int31Intercept  proc    near
         mov     cx,cs:w[OldInt09+4]
         assume ds:DGROUP
         ;
-@@ret:  pushs   eax,ebp,ds
+@@ret:
+;  pushs   eax,ebp,ds
+        push    eax
+        push    ebp
+        push    ds
+
         mov     ax,DGROUP
         mov     ds,ax
         mov     ebp,esp
         add     ebp,4+4+4+4+4
         and     ss:w[ebp],not 1 ;clear carry.
-        pops    eax,ebp,ds
+
+;        pops    eax,ebp,ds
+        pop     ds
+        pop     ebp
+        pop     eax
+
         iretd
         ;
 @@old:  assume ds:nothing
@@ -3084,56 +3375,113 @@ ReadConfig      proc    near
 ;
 ;Try in the current directory.
 ;
-        calls   OpenFile,offset ConfigFile,0
+;        calls   OpenFile,offset ConfigFile,0
+        push    dword 0
+        push    offset ConfigFile
+        call    OpenFile
+        lea     esp,[esp+8]
+
         or      eax,eax
-        jz      @@0
-        calls   CloseFile,eax
-        jmp     @@3
+        jz      RC@@0
+;        calls   CloseFile,eax
+        push    eax
+        call    CloseFile
+        lea     esp,[esp+4]
+
+        jmp     RC@@3
 ;
 ;Get the execution path and use it to find the configuration file.
 ;
-@@0:    mov     bx,__psp
+RC@@0:    mov     bx,__psp
         sys     GetSelDet32
         mov     bx,[edx+2ch]
         sys     GetSelDet32
         mov     edi,edx
         or      ecx,-1
         xor     al,al
-@@4:    repne   scasb
+RC@@4:    repne   scasb
         cmp     b[edi],0
-        jnz     @@4
+        jnz     RC@@4
         add     edi,2
         mov     esi,edi
         mov     edi,offset ConfigName
-        callc   strcpy,edi,esi
-        callc   strlen,edi
+;        callc   strcpy,edi,esi
+        pushc
+        push    esi
+        push    edi
+        call    strcpy
+        lea     esp,[esp+8]
+        popc
+
+;        callc   strlen,edi
+        pushc
+        push    edi
+        call    strlen
+        lea     esp,[esp+4]
+        popc
+
         mov     esi,edi
         add     edi,eax
-@@1:    dec     edi
+RC@@1:    dec     edi
         cmp     esi,edi
-        jnc     @@2
+        jnc     RC@@2
         cmp     b[edi],"\"
-        jnz     @@1
-@@2:    mov     b[edi+1],0
+        jnz     RC@@1
+RC@@2:    mov     b[edi+1],0
         mov     edi,esi
         mov     esi,offset ConfigFile
-        callc   strcat,edi,esi
+;        callc   strcat,edi,esi
+        pushc
+        push    esi
+        push    edi
+        call    strcat
+        lea     esp,[esp+8]
+        popc
+
         ;
-        calls   OpenFile,offset ConfigName,0
+;        calls   OpenFile,offset ConfigName,0
+        push    dword 0
+        push    offset ConfigName
+        call    OpenFile
+        lea     esp,[esp+8]
+
         or      eax,eax
-        jz      @@9
-        calls   CloseFile,eax
+        jz      RC@@9
+;        calls   CloseFile,eax
+        push    eax
+        call    CloseFile
+        lea     esp,[esp+4]
 ;
 ;config file exists so fetch our variables.
 ;
-@@3:    calls   cfgGetInts,offset ConfigName,offset SetupName, \
-                offset BreakKeyVar, offset BreakKeyList, 4
-        calls cfgGetOnOff,offset ConfigName,offset SetupName, \
-                offset ResetTimerVar, offset ResetTimer
-        calls   cfgGetOnOff,offset ConfigName,offset SetupName, \
-                offset DebugVar, offset DebugLevel
+RC@@3:
+;       calls   cfgGetInts,offset ConfigName,offset SetupName,offset BreakKeyVar, offset BreakKeyList, 4
+;        calls  cfgGetOnOff,offset ConfigName,offset SetupName,offset ResetTimerVar, offset ResetTimer
+;        calls   cfgGetOnOff,offset ConfigName,offset SetupName,offset DebugVar, offset DebugLevel
+
+        push    dword 4
+        push    offset BreakKeyList
+        push    offset BreakKeyVar
+        push    offset SetupName
+        push    offset ConfigName
+        call    cfgGetInts
+        lea     esp,[esp+20]
+
+        push    offset ResetTimer
+        push    offset ResetTimerVar
+        push    offset SetupName
+        push    offset ConfigName
+        call    cfgGetOnOff
+        lea     esp,[esp+16]
+
+        push    offset DebugLevel
+        push    offset DebugVar
+        push    offset SetupName
+        push    ConfigName
+        call    cfgGetOnOff
+        lea     esp,[esp+16]
 ;
-@@9:    ret
+RC@@9:    ret
 ReadConfig      endp
 
 
@@ -3152,26 +3500,26 @@ ReadConfig      endp
 ;*******************************************************************************
 LoadTimer       proc    near
         cli
-        jmp     @@8
-@@8:    jmp     @@9
-@@9:    push    ax
+        jmp     LT@@8
+LT@@8:    jmp     LT@@9
+LT@@9:    push    ax
         mov     al,36h
         out     43h,al
         pop     ax
-        jmp     @@0
-@@0:    jmp     @@1
-@@1:    out     40h,al
+        jmp     LT@@0
+LT@@0:    jmp     LT@@1
+LT@@1:    out     40h,al
         mov     al,ah
-        jmp     @@2
-@@2:    jmp     @@3
-@@3:    out     40h,al
-        jmp     @@4
-@@4:    jmp     @@5
-@@5:    in      al,21h
+        jmp     LT@@2
+LT@@2:    jmp     LT@@3
+LT@@3:    out     40h,al
+        jmp     LT@@4
+LT@@4:    jmp     LT@@5
+LT@@5:    in      al,21h
         and     al,254
-        jmp     @@6
-@@6:    jmp     @@7
-@@7:    out     21h,al
+        jmp     LT@@6
+LT@@6:    jmp     LT@@7
+LT@@7:    out     21h,al
         sti
         ret
 LoadTimer       endp
@@ -3185,7 +3533,7 @@ DumpRequest     proc    near
 
         mov     esi,offset ReqBuffer
         mov     ecx,ReqLength
-@@0:
+DR@@0:
         mov     edi,offset DebugBuffer
         push    ecx
         mov     ecx,80
@@ -3197,10 +3545,10 @@ DumpRequest     proc    near
         mov     ebp,esi
         xor     edx,edx
 
-@@1:    or      ecx,ecx
-        jz      @@2
+DR@@1:    or      ecx,ecx
+        jz      DR@@2
         cmp     edx,16
-        jz      @@2
+        jz      DR@@2
         ;
         ;Do hex version of value.
         ;
@@ -3210,17 +3558,23 @@ DumpRequest     proc    near
         dec     ecx
         push    ecx
         mov     ecx,2
-        calls   Bin2Hex,eax,ecx,edi
+;        calls   Bin2Hex,eax,ecx,edi
+        push    edi
+        push    ecx
+        push    eax
+        call    Bin2Hex
+        lea     esp,[esp+12]
+
         mov     edi,eax
         pop     ecx
         mov     b[edi]," "
         inc     edi
-        jmp     @@1
+        jmp     DR@@1
         ;
-@@2:    xchg    esi,ebp
+DR@@2:    xchg    esi,ebp
         mov     edi,offset DebugBuffer+(16*3)
-@@3:    or      edx,edx
-        jz      @@5
+DR@@3:    or      edx,edx
+        jz      DR@@5
         ;
         ;Do ASCII version of value.
         ;
@@ -3228,16 +3582,16 @@ DumpRequest     proc    near
         inc     esi
         mov     ah,"."
         cmp     al," "
-        jc      @@4
+        jc      DR@@4
         cmp     al,"z"+1
-        jnc     @@4
+        jnc     DR@@4
         mov     ah,al
-@@4:    mov     [edi],ah
+DR@@4:    mov     [edi],ah
         inc     edi
         dec     edx
-        jmp     @@3
+        jmp     DR@@3
 
-@@5:    mov     b[edi],13
+DR@@5:    mov     b[edi],13
         inc     edi
         mov     b[edi],10
         inc     edi
@@ -3250,11 +3604,11 @@ DumpRequest     proc    near
 
         xchg    ebp,esi
         or      ecx,ecx
-        jnz     @@0
+        jnz     DR@@0
 
-        mov     DebugBuffer,13
-        mov     DebugBuffer+1,10
-        mov     DebugBuffer+2,"$"
+        mov     byte DebugBuffer,13
+        mov     byte DebugBuffer+1,10
+        mov     byte DebugBuffer+2,"$"
         mov     edx,offset DebugBuffer
         mov     ah,9
         int     21h
@@ -3273,12 +3627,12 @@ DumpRequest2File proc near
         mov     edx,offset LogFileName
         mov     ax,3d02h
         int     21h
-        jnc     @@open
+        jnc     DF@@open
         mov     ah,3ch
         xor     cx,cx
         int     21h
-        jc      @@balls
-@@open: mov     LogFileHandle,eax
+        jc      DF@@balls
+DF@@open: mov     LogFileHandle,eax
         mov     ebx,eax
         xor     cx,cx
         xor     dx,dx
@@ -3287,7 +3641,7 @@ DumpRequest2File proc near
 
         mov     esi,offset ReqBuffer
         mov     ecx,ReqLength
-@@0:
+DF@@0:
         mov     edi,offset DebugBuffer
         push    ecx
         mov     ecx,80
@@ -3299,10 +3653,10 @@ DumpRequest2File proc near
         mov     ebp,esi
         xor     edx,edx
 
-@@1:    or      ecx,ecx
-        jz      @@2
+DF@@1:    or      ecx,ecx
+        jz      DF@@2
         cmp     edx,16
-        jz      @@2
+        jz      DF@@2
         ;
         ;Do hex version of value.
         ;
@@ -3312,17 +3666,23 @@ DumpRequest2File proc near
         dec     ecx
         push    ecx
         mov     ecx,2
-        calls   Bin2Hex,eax,ecx,edi
+;        calls   Bin2Hex,eax,ecx,edi
+        push    edi
+        push    ecx
+        push    eax
+        call    Bin2Hex
+        lea     esp,[esp+12]
+
         mov     edi,eax
         pop     ecx
         mov     b[edi]," "
         inc     edi
-        jmp     @@1
+        jmp     DF@@1
         ;
-@@2:    xchg    esi,ebp
+DF@@2:    xchg    esi,ebp
         mov     edi,offset DebugBuffer+(16*3)
-@@3:    or      edx,edx
-        jz      @@5
+DF@@3:    or      edx,edx
+        jz      DF@@5
         ;
         ;Do ASCII version of value.
         ;
@@ -3330,16 +3690,16 @@ DumpRequest2File proc near
         inc     esi
         mov     ah,"."
         cmp     al," "
-        jc      @@4
+        jc      DF@@4
         cmp     al,"z"+1
-        jnc     @@4
+        jnc     DF@@4
         mov     ah,al
-@@4:    mov     [edi],ah
+DF@@4:    mov     [edi],ah
         inc     edi
         dec     edx
-        jmp     @@3
+        jmp     DF@@3
 
-@@5:    mov     b[edi],13
+DF@@5:    mov     b[edi],13
         inc     edi
         mov     b[edi],10
         inc     edi
@@ -3354,10 +3714,10 @@ DumpRequest2File proc near
 
         xchg    ebp,esi
         or      ecx,ecx
-        jnz     @@0
+        jnz     DF@@0
 
-        mov     DebugBuffer,13
-        mov     DebugBuffer+1,10
+        mov     byte DebugBuffer,13
+        mov     byte DebugBuffer+1,10
         mov     edx,offset DebugBuffer
         mov     ebx,LogFileHandle
         mov     ecx,2
@@ -3371,9 +3731,9 @@ DumpRequest2File proc near
         mov     ebx,LogFileHandle
         mov     ah,3eh
         int     21h
-        mov     LogFileHandle,0
+        mov     dword LogFileHandle,0
 
-@@balls:        popad
+DF@@balls:        popad
         ret
 DumpRequest2File endp
 
@@ -3388,12 +3748,12 @@ DumpReply2File proc near
         mov     edx,offset LogFileName
         mov     ax,3d02h
         int     21h
-        jnc     @@open
+        jnc     D2@@open
         mov     ah,3ch
         xor     cx,cx
         int     21h
-        jc      @@balls
-@@open: mov     LogFileHandle,eax
+        jc      D2@@balls
+D2@@open: mov     LogFileHandle,eax
         mov     ebx,eax
         xor     cx,cx
         xor     dx,dx
@@ -3404,7 +3764,7 @@ DumpReply2File proc near
         mov     ecx,[esi+4]
         mov     esi,[esi]
 
-@@0:
+D2@@0:
         mov     edi,offset DebugBuffer
         push    ecx
         mov     ecx,80
@@ -3416,10 +3776,10 @@ DumpReply2File proc near
         mov     ebp,esi
         xor     edx,edx
 
-@@1:    or      ecx,ecx
-        jz      @@2
+D2@@1:    or      ecx,ecx
+        jz      D2@@2
         cmp     edx,16
-        jz      @@2
+        jz      D2@@2
         ;
         ;Do hex version of value.
         ;
@@ -3429,17 +3789,23 @@ DumpReply2File proc near
         dec     ecx
         push    ecx
         mov     ecx,2
-        calls   Bin2Hex,eax,ecx,edi
+;        calls   Bin2Hex,eax,ecx,edi
+        push    edi
+        push    ecx
+        push    eax
+        call    Bin2Hex
+        lea     esp,[esp+12]
+
         mov     edi,eax
         pop     ecx
         mov     b[edi]," "
         inc     edi
-        jmp     @@1
+        jmp     D2@@1
         ;
-@@2:    xchg    esi,ebp
+D2@@2:    xchg    esi,ebp
         mov     edi,offset DebugBuffer+(16*3)
-@@3:    or      edx,edx
-        jz      @@5
+D2@@3:    or      edx,edx
+        jz      D2@@5
         ;
         ;Do ASCII version of value.
         ;
@@ -3447,16 +3813,16 @@ DumpReply2File proc near
         inc     esi
         mov     ah,"."
         cmp     al," "
-        jc      @@4
+        jc      D2@@4
         cmp     al,"z"+1
-        jnc     @@4
+        jnc     D2@@4
         mov     ah,al
-@@4:    mov     [edi],ah
+D2@@4:    mov     [edi],ah
         inc     edi
         dec     edx
-        jmp     @@3
+        jmp     D2@@3
 
-@@5:    mov     b[edi],13
+D2@@5:    mov     b[edi],13
         inc     edi
         mov     b[edi],10
         inc     edi
@@ -3471,12 +3837,12 @@ DumpReply2File proc near
 
         xchg    ebp,esi
         or      ecx,ecx
-        jnz     @@0
+        jnz     D2@@0
 
-        mov     DebugBuffer,13
-        mov     DebugBuffer+1,10
-        mov     DebugBuffer+2,13
-        mov     DebugBuffer+3,10
+        mov     byte DebugBuffer,13
+        mov     byte DebugBuffer+1,10
+        mov     byte DebugBuffer+2,13
+        mov     byte DebugBuffer+3,10
         mov     edx,offset DebugBuffer
         mov     ebx,LogFileHandle
         mov     ecx,4
@@ -3490,9 +3856,9 @@ DumpReply2File proc near
         mov     ebx,LogFileHandle
         mov     ah,3eh
         int     21h
-        mov     LogFileHandle,0
+        mov     dword LogFileHandle,0
 
-@@balls:        popad
+D2@@balls:        popad
         ret
 DumpReply2File endp
 
