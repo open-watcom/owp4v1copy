@@ -1,0 +1,16 @@
+dirs=              &
+        src\os2    &
+        src\win    &
+        src\win32  &
+        src\win386
+
+$(dirs) : .SYMBOLIC
+        @if exist $^@\*.obj del $^@\*.obj
+        @if exist $^@\*.mk del $^@\*.mk
+        @if exist $^@\*.mk1 del $^@\*.mk1
+        @if exist $^@\*.lk1 del $^@\*.lk1
+        @if exist $^@\*.ilk del $^@\*.ilk
+        @if exist $^@\*.map del $^@\*.map
+        @if exist $^@\*.err del $^@\*.err
+
+

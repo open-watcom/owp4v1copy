@@ -87,5 +87,5 @@ cdsay .
 
 [ BLOCK <1> clean ]
 #==================
-    pmake -d clean <2> <3> <4> <5> <6> <7> <8> <9> -h
-    sweep killobjs
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
+    wmake -i -h -f clean.mif

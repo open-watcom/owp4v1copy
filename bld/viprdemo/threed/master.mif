@@ -5,12 +5,14 @@ $(host_OS)_3d.mk1: $(host_OS)_3d.tgt
         bviper -r $<
 
 clean: .SYMBOLIC
-        del *.obj
-        del *.mk
-        del *.mk1
-        del *.lk1
-        del *.dll
-        del *.lib
-        del *.map
+        @if exist *.obj del *.obj
+        @if exist *.mk del *.mk
+        @if exist *.mk1 del *.mk1
+        @if exist *.lk1 del *.lk1
+        @if exist *.ilk del *.ilk
+        @if exist *.dll del *.dll
+        @if exist *.lib del *.lib
+        @if exist *.map del *.map
+        @if exist *.err del *.err
 
 
