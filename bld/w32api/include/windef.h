@@ -50,7 +50,7 @@ extern "C" {
 #endif
 
 #ifdef __GNUC__
-#define PACKED(e) e __attribute__((packed))
+#define PACKED __attribute__((packed))
 #ifndef _fastcall
 #define _fastcall __attribute__((fastcall))
 #endif
@@ -76,7 +76,7 @@ extern "C" {
 #define _declspec(e) __attribute__((e))
 #endif
 #elif defined(__WATCOMC__)
-#define PACKED(e) _Packed e 
+#define PACKED
 #else
 #define PACKED
 #define _cdecl
@@ -228,7 +228,6 @@ typedef int *PINT,*LPINT;
 typedef WORD *PWORD,*LPWORD;
 typedef long *LPLONG;
 typedef DWORD *PDWORD,*LPDWORD;
-typedef void *PVOID,*LPVOID;
 typedef CONST void *PCVOID,*LPCVOID;
 typedef int INT;
 typedef unsigned int UINT,*PUINT,*LPUINT;

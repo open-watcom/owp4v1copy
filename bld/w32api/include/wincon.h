@@ -80,8 +80,7 @@ typedef struct _CONSOLE_SCREEN_BUFFER_INFO {
 	COORD	dwMaximumWindowSize;
 } CONSOLE_SCREEN_BUFFER_INFO,*PCONSOLE_SCREEN_BUFFER_INFO;
 typedef BOOL(CALLBACK *PHANDLER_ROUTINE)(DWORD);
-/* gcc's alignment is not what win32 expects */
-typedef PACKED(struct _KEY_EVENT_RECORD {
+typedef struct _KEY_EVENT_RECORD {
 	BOOL bKeyDown;
 	WORD wRepeatCount;
 	WORD wVirtualKeyCode;
@@ -91,7 +90,12 @@ typedef PACKED(struct _KEY_EVENT_RECORD {
 		CHAR AsciiChar;
 	} uChar;
 	DWORD dwControlKeyState;
-}) KEY_EVENT_RECORD;
+} 
+#ifdef __GNUC__
+/* gcc's alignment is not what win32 expects */
+ PACKED
+#endif
+KEY_EVENT_RECORD;
 
 typedef struct _MOUSE_EVENT_RECORD {
 	COORD dwMousePosition;
