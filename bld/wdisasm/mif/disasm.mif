@@ -1,10 +1,10 @@
 disasm =    &
-DOCODE.OBJ  &
-FORMINS.OBJ &
-FPPTAB.OBJ  &
-FPPUTIL.OBJ &
-INSNAME.OBJ &
-INSTAB.OBJ  &
-REGNAME.OBJ &
-RWDATA.OBJ
+docode.obj  &
+formins.obj &
+fpptab.obj  &
+fpputil.obj &
+insname.obj &
+instab.obj  &
+regname.obj &
+rwdata.obj
 
