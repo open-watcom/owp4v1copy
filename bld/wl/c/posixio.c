@@ -38,17 +38,18 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <process.h>
-#include <conio.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <termios.h>
 #include <sys/stat.h>
+#ifdef __WATCOMC__
+#include <process.h>
+#endif
 #include "linkstd.h"
 #include "msg.h"
 #include "alloc.h"
-#if _OS != LINUX
+#if _OS != _LINUX
 #include <sys/proc_msg.h>
 #endif
 #include "wlnkmsg.h"

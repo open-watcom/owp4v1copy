@@ -232,7 +232,7 @@ extern  parse_entry     MainOptions[] = {
     "IMPFile",      &ProcImpFile,       MK_NOVELL|MK_OS2|MK_PE, 0,
     "NORelocs",     &ProcNoRelocs,      (MK_QNX | MK_PE), 0,
     "LOnglived",    &ProcLongLived,     MK_QNX, 0,
-    "PRIVilege",    &ProcQnxPrivilege,  MK_QNX, 0,
+    "PRIVilege",    &ProcQNXPrivilege,  MK_QNX, 0,
     "LInearrelocs", &ProcLinearRelocs,  MK_QNX, 0,
     "EXTRASections",&ProcExtraSections, MK_ELF, 0,
     "EXPORTAll",    &ProcExportAll,     MK_ELF, 0,
@@ -266,7 +266,7 @@ extern  parse_entry    Models[] = {
     "WINdows",      &ProcWindows,       MK_WINDOWS|MK_PE|MK_WIN_VXD, 0,
 #endif
 #ifdef _PHARLAP
-    "PHARlap",      &ProcPharlap,       MK_PHAR_LAP, 0,
+    "PHARlap",      &ProcPharLap,       MK_PHAR_LAP, 0,
 #endif
 #ifdef _NOVELL
     "NOVell",       &ProcNovell,        MK_NOVELL, 0,

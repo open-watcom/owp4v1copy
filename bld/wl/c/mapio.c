@@ -35,6 +35,7 @@
 
 */
 
+#include <limits.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
@@ -167,11 +168,11 @@ static void WriteBox( unsigned int msgnum )
     Msg_Get( msgnum, msg_buff );
     WriteMapNL( 2 );
     box_buff[0] = '+';
-    for( i = 1; i < strlen( msg_buff ) - 1; i++ ) {
-        box_buff[i] = '-';
+    for( i = 2; i < strlen( msg_buff ); i++ ) {
+        box_buff[i-1] = '-';
     }
-    box_buff[i] = '+';
-    box_buff[i+1] = '\0';
+    box_buff[i-1] = '+';
+    box_buff[i] = '\0';
     WriteMap( "%t24%s", "", box_buff );
     WriteMap( "%t24%s", "", msg_buff );
     WriteMap( "%t24%s", "", box_buff );

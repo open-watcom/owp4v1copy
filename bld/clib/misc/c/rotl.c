@@ -48,7 +48,7 @@ extern unsigned int __rotl( unsigned int value, unsigned int shift );
 
 _WCRTLINK unsigned int _rotl( unsigned int value, unsigned int shift )
 {
-    #if defined(__AXP__) || defined(__PPC__)
+    #if defined(__AXP__) || defined(__PPC__) || !defined(__WATCOMC__)
         unsigned int tmp;
         tmp = value;
         value = value << shift;

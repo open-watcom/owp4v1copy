@@ -153,6 +153,7 @@ typedef struct file_list {
     enum file_status    status;
     unsigned            ovlref   : 16;  /* for fixed libraries */
     unsigned            priority :  8; /* for libraries */
+    unsigned                     :  0;
 } file_list;
 
 typedef struct trace_info {

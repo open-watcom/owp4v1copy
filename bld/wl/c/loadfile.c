@@ -748,7 +748,7 @@ extern void AddImpLibEntry( char *intname, char *extname, unsigned ordinal )
         utoa( ordinal, currpos, 10 );
         currpos += strlen( currpos );
     }
-#if _OS != _QNX
+#if _OS != _QNX && _OS != _LINUX
     *currpos++ = '\r';
 #endif
     *currpos = '\n';

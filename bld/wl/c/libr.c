@@ -76,7 +76,7 @@ static  bool            ARSearchExtLib( file_list *, char *, unsigned long * );
 static  unsigned_16     OMFCompName( char *, char *, unsigned_16 );
 static  void **         AllocDict( unsigned_16, unsigned_16 );
 
-#if defined( __386__ ) || defined(M_I86)
+#if (defined( __386__ ) || defined(M_I86)) && defined(__WATCOMC__)
 #if defined( __386__ )
 #define DATA16   0x66
 #else

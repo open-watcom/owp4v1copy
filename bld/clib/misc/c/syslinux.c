@@ -309,3 +309,15 @@ _WCRTLINK int chmod( const char *__path, mode_t __mode )
     __syscall_return(int,res);
 }
 
+_WCRTLINK pid_t getpid( void )
+{
+    u_long res = sys_call0(SYS_getpid);
+    __syscall_return(pid_t,res);
+}
+
+_WCRTLINK pid_t getppid( void )
+{
+    u_long res = sys_call0(SYS_getppid);
+    __syscall_return(pid_t,res);
+}
+

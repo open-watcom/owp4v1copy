@@ -70,7 +70,10 @@
     #define FNAMECMPSTR      stricmp     /* for case insensitive file systems */
 #endif
 
-typedef int             bool;
+#ifndef BOOL_DEFINED
+#define BOOL_DEFINED
+typedef int bool;
+#endif
 typedef unsigned char   byte;
 typedef unsigned long   virt_mem;
 typedef unsigned        f_handle;

@@ -175,7 +175,7 @@ extern void DoCmdFile( char *fname )
     if( *fname == '?' ) {
         Token.next = fname + 1;       // skip question mark.
         Help();
-#if _OS == _QNX
+#if _OS == _QNX || _OS == _LINUX
     } else if( *fname == '-' ) {
 #else
     } else if( *fname == '-' || *fname == '/' ) {

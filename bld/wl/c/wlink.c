@@ -116,11 +116,18 @@ extern int RunLinker( char *cmd )
 
 #elif _LINKER == _WLINK                 // it's the standalone linker
 
+#ifndef __WATCOMC__
+char **_argv;
+#endif
+
 extern int main( int argc, char ** argv )
 /***************************************/
 {
     argc = argc;        /* to avoid a warning */
     argv = argv;
+#ifndef __WATCOMC__
+    _argv = argv;
+#endif
     InitSubSystems();
     LinkMainLine( NULL );
     FiniSubSystems();

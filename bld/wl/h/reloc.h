@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#pragma pack(1);
+#pragma pack(1)
 
 typedef struct os2_reloc_item {
     unsigned_8      addr_type;          /* see below                     */
@@ -228,4 +228,4 @@ extern bool             SwapOutRelocs( void );
 extern unsigned         FmtRelocSize;
 extern RELOC_INFO *     FloatFixups;
 
-#pragma pack();
+#pragma pack()
