@@ -86,7 +86,7 @@ static int output( int i )
     if(( Options.floating_point == DO_FP_EMULATION )
         && ( !rCode->use32 )
         && ( ins->allowed_prefix != NO_FWAIT )
-        && ( (ins->cpu&P_FPU_MASK) != P_NO87 )) {
+        && (( ins->allowed_prefix == FWAIT ) || (( ins->cpu&P_FPU_MASK ) != P_NO87 ))) {
             if( AddFloatingPointEmulationFixup( ins, FALSE ) == ERROR ) {
                 return( ERROR );
             }
@@ -126,30 +126,41 @@ static int output( int i )
         AsmCodeByte( AsmOpTable[AsmOpcode[rCode->prefix].position].opcode );
     }
 
-    if(( ins->token == T_FWAIT )
-        && ( (rCode->info.cpu&P_CPU_MASK) < P_386 )
-        && ( (ins->cpu&P_FPU_MASK) == P_87 )) {
+    if( ins->token == T_FWAIT ) {
+        if(( rCode->info.cpu&P_CPU_MASK ) < P_386 ) {
 #ifdef _WASM_
-        if( Options.floating_point == DO_FP_EMULATION ) {
-            AsmCodeByte( OP_NOP );
-        }
+            if(( Options.floating_point == DO_FP_EMULATION ) && ( !rCode->use32 )) {
+                AsmCodeByte( OP_NOP );
+            }
 #else
-        AsmCodeByte( OP_NOP );
+            AsmCodeByte( OP_NOP );
 #endif
-    } else if(( ins->allowed_prefix != NO_FWAIT )
-        && ( (rCode->info.cpu&P_CPU_MASK) < P_386 )
-        && ( (ins->cpu&P_FPU_MASK) != P_NO87 )) {
+        }
+    } else if( ins->allowed_prefix == FWAIT ) {
         AsmCodeByte( OP_WAIT );
+#ifdef _WASM_
+    } else if(( Options.floating_point == DO_FP_EMULATION )
+        && ( !rCode->use32 )
+        && ( ins->allowed_prefix != NO_FWAIT )
+        && (( ins->allowed_prefix == FWAIT ) || (( ins->cpu&P_FPU_MASK ) != P_NO87 ))) {
+        AsmCodeByte( OP_WAIT );
+#endif
+    } else if( ins->allowed_prefix != NO_FWAIT ) {
+        // implicit FWAIT synchronization for 8087 (CPU 8086/80186)
+        if((( rCode->info.cpu&P_CPU_MASK ) < P_286 )
+            && (( ins->cpu&P_FPU_MASK ) == P_87 )) {
+            AsmCodeByte( OP_WAIT );
+        }
     }
 
 #ifdef _WASM_
     if(( Options.floating_point == DO_FP_EMULATION )
+        && ( !rCode->use32 )
         && ( ins->allowed_prefix != NO_FWAIT )
-        && ( (rCode->info.cpu&P_CPU_MASK) < P_386 )
-        && ( (ins->cpu&P_FPU_MASK) != P_NO87 )) {
-            if( AddFloatingPointEmulationFixup( ins, TRUE ) == ERROR ) {
-                return( ERROR );
-            }
+        && (( ins->allowed_prefix == FWAIT ) || (( ins->cpu&P_FPU_MASK ) != P_NO87 ))) {
+        if( AddFloatingPointEmulationFixup( ins, TRUE ) == ERROR ) {
+            return( ERROR );
+        }
     }
 #endif
     if( rCode->adrsiz != EMPTY ) {

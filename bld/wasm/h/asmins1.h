@@ -39,7 +39,7 @@
 
     struct asm_ins {
         unsigned short  token;                  /* T_ADD, etc */
-        unsigned        allowed_prefix  : 2,    /* allowed prefix */
+        unsigned        allowed_prefix  : 3,    /* allowed prefix */
                         byte1_info      : 2,    /* flags for 1st byte */
                         rm_info         : 2;    /* info on r/m byte */
         enum asm_cpu    cpu;                    /* CPU type */
@@ -51,7 +51,7 @@
 struct asm_ins {
         unsigned        token           : 10,   /* T_ADD, etc */
 
-                        allowed_prefix  : 2,    /* allowed prefix */
+                        allowed_prefix  : 3,    /* allowed prefix */
                         byte1_info      : 2,    /* flags for 1st byte */
                         rm_info         : 2,    /* info on r/m byte */
                         cpu             : 8;    /* CPU type */
@@ -84,7 +84,8 @@ struct asm_code {
 #define NO_PREFIX   0x00
 #define LOCK        0x01
 #define REPxx       0x02
-#define NO_FWAIT    0x03
+#define FWAIT       0x03
+#define NO_FWAIT    0x04
 
 #define PREFIX_ES       0x26
 #define PREFIX_CS       0x2E
