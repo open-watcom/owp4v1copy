@@ -171,7 +171,7 @@ dinput.lib: dinput.lbc $(dinput_objs)
 dxerr8.lib: dxerr8.obj dxerr8w.obj
         $(librarian) -b -c -n $@ +$[@ +$]@
 
-dxerr9.lib: dxerr8.obj dxerr8w.obj
+dxerr9.lib: dxerr9.obj dxerr9w.obj
         $(librarian) -b -c -n $@ +$[@ +$]@
 
 shell32.lib: shell32.lbc shell32.obj
