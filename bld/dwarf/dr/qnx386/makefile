@@ -6,4 +6,4 @@ host_cpu = 386
 memory_model_386 = s
 inline_vmem = 1
 
-!include ../dr.mif
+!include ../master.mif

@@ -1,13 +1,3 @@
-proj_name = dwarfr
-
-!ifndef dwarfr_autodepends
-dwarfr_autodepends = .AUTODEPEND
-!endif
-
-!include cproj.mif
-!include defrule.mif
-!include deftarg.mif
-
 c_objs = &
 drarange.obj &
 drdecnam.obj &
@@ -31,21 +21,8 @@ virtstub.obj
 virtmem.obj
 !endif
 
-extra_c_flags = -s
-!ifeq inline_vmem 1
-extra_c_flags += -dINLINE_VMEM
-!endif
-
-extra_c_flags_i86 = -fpc -zc -zu
-extra_c_flags_386 = -fpc -zc
-extra_c_flags_win = -zW
-
 extra_c_flags_drutils  = -I"$(lib_misc_dir)/h"
 extra_c_flags_drsearch = -I"$(posix_dir)/h"
-
-.c: ../c
-
-inc_dirs = -I"../h"
 
 dwarfr.lib : $(c_objs)
     @%create dr.lbc

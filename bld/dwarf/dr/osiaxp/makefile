@@ -3,4 +3,4 @@
 host_os  = osi
 host_cpu = axp
 
-!include ../dr.mif
+!include ../master.mif

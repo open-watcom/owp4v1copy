@@ -3,4 +3,4 @@
 host_OS = osi
 host_CPU = 386
 
-!include ../dr.mif
+!include ../master.mif

@@ -5,4 +5,4 @@ host_cpu = 386
 
 inline_vmem = 1
 
-!include ../dr.mif
+!include ../master.mif
