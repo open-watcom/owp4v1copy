@@ -1,16 +1,14 @@
 proj_name = pmake
 
 !include cproj.mif
+!include defrule.mif
 !include deftarg.mif
 
-extra_c_flags           = -i..
+.c : ..
+
+extra_c_flags           = -I..
 
 objs = pmake.obj pmkcmd.obj
 
 pmake.exe : $(objs)
-        $(LINKER) $(lflags) name $^@ file {$(objs)}
-
-.c:..
-
-.c.obj: .AUTODEPEND
-        $(CC) $(cflags) $[@
+        $(cl) $(clflags) $(objs)
