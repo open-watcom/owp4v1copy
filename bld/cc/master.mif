@@ -223,7 +223,7 @@ $(dllname).dll : $(pre_obj_deps) $(rc_objs) $(dll_objs) $(xlibs) $(cg_debug_deps
 !endif
         $(linker) $(ldebug_$(host_cpu))  @$^&.lnk
 !ifdef build_rc_$(host_os)_$(host_cpu)
-        $(rc) -bt=$(build_rc_$(host_os)_$(host_cpu)) cc.rc $^@
+        $(rc) -bt=$(build_rc_$(host_os)_$(host_cpu)) $(inc_dirs_sys) cc.rc $^@
 !endif
 
 $(dllname).lib : $(dllname).dll
