@@ -37,6 +37,7 @@ components386 =      &
         pmshapi.lbc  &
         pmviop.lbc   &
         pmwin.lbc    &
+        pmwp.lbc     &
         quecalls.lbc &
         sesmgr.lbc   &
         viocalls.lbc
