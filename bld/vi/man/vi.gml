@@ -55,11 +55,11 @@
 :SEPSECT.Appendices
 .do end
 :APPENDIX
-:cmt :INCLUDE file='a_cmdmode'.
-:cmt :INCLUDE file='a_errmsg'.
-:cmt :INCLUDE file='a_ctags'.
-:cmt :INCLUDE file='a_symkeys'.
-:cmt :INCLUDE file='a_errcode'.
+:INCLUDE file='a_cmdmode'.
+:INCLUDE file='a_errmsg'.
+:INCLUDE file='a_ctags'.
+:INCLUDE file='a_symkeys'.
+:INCLUDE file='a_errcode'.
 :BACKM.
 :INDEX.
 :eGDOC.
