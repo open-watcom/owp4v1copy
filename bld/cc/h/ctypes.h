@@ -544,9 +544,6 @@ struct debug_fwd_types {
 struct seg_info {
     SEGADDR_T index;        /* segment #, EMS page #, disk seek # */
     unsigned allocated : 1; /* 1 => has been allocated */
-    unsigned in_EMS : 1;    /* in EMS memory */
-    unsigned in_farmem : 1; /* in far memory */
-    unsigned in_page_file:1;/* in page file */
 };
 
 /* scoreboard used to record statements like "i=5" */

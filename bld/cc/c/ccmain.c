@@ -82,11 +82,18 @@
 #define O_TEMP 0
 #endif
 #ifdef __WATCOMC__
-#include <conio.h>
+    #include <conio.h>
 #endif
+
+#if defined(__QNX__) || defined(__LINUX__)
+    #define IS_PATH_SEP( ch ) ((ch) == '/')
+#else
+    #define IS_PATH_SEP( ch ) ((ch) == '/' || (ch) == '\\')
+#endif
+
+
 extern  char    CharSet[];
 
-static char WorkFile[] = "__wrk0__";
 static char IsStdIn;
 static int IncFileDepth;
 
@@ -138,8 +145,6 @@ void ClearGlobals ( void )
     SymLoc  = NULL;
     HFileList = NULL;
     IncFileDepth = 255;
-    PageHandle = -1;
-    WorkFile[5] = '0';
     SegmentNum = FIRST_PRIVATE_SEGMENT;
     BufSize = BUF_SIZE;
     Buffer = CMemAlloc( BufSize );
@@ -175,110 +180,9 @@ int FrontEnd( char **cmdline )
     return( ErrCount );
 }
 
-#if defined(__QNX__) || defined(__LINUX__)
-#define IS_PATH_SEP( ch ) ((ch) == '/')
-#else
-#define IS_PATH_SEP( ch ) ((ch) == '/' || (ch) == '\\')
-#endif
-
-local void MakeTmpName( char *fname )
-{
-    #if _OS == _CMS
-        tmpnam( fname );
-    #else
-        char    *env;
-        int     i;
-
-        #if _OS == _QNX
-            env = FEGetEnv( "TMPDIR" );
-            if( env == NULL ) env = FEGetEnv( "TMP" );
-        #else
-            env = FEGetEnv( "TMP" );
-        #endif
-        if( env == NULL ) env = "";
-
-        #define TMP_EXT ".tmp"
-        #define MAX_TMP_PATH (_MAX_PATH - sizeof( WorkFile ) - sizeof( TMP_EXT ) - 2)
-
-        strncpy( fname, env, MAX_TMP_PATH );
-        fname[ MAX_TMP_PATH ] = '\0';
-        i = strlen( fname );
-        if( i > 0 && !IS_PATH_SEP( fname[i-1] )
-        #if (_OS != _QNX) && (_OS != _LINUX)
-                && fname[i-1] != ':'
-        #endif
-            ) {
-            fname[i++] = '/';
-        }
-        strcpy( &fname[i], WorkFile );
-        strcpy( &fname[i+sizeof(WorkFile)-1], TMP_EXT );
-    #endif
-}
-
-#if (_OS == _QNX) || (_OS == _LINUX)
-
-void OpenPageFile ( void )
-{
-    auto char fname[ _MAX_PATH ];
-
-    for(;;) {
-        MakeTmpName( fname );
-        PageHandle = open( fname, O_RDWR | O_CREAT | O_EXCL | O_TEMP,
-                            S_IRUSR | S_IWUSR );
-        if( PageHandle != -1 ) break;
-        if( WorkFile[5] == '9' ) WorkFile[5] = 'A' - 1;     /* 11-may-89 */
-        WorkFile[5]++;          /* change the digit */
-        if( WorkFile[5] == '\0' ) {
-            CErr2( ERR_UNABLE_TO_OPEN_WORK_FILE, errno );
-            CSuicide();
-        }
-    }
-    /* Under POSIX it's legal to remove a file that's open. The file
-       space will be reclaimed when the handle is closed. This makes sure
-       that the work file always gets removed. */
-    remove( fname );
-    PageFile = fdopen( PageHandle, "r+b" );
-    if( PageFile == NULL ) {
-        CErr2( ERR_UNABLE_TO_OPEN_WORK_FILE, errno );
-        CSuicide();
-    }
-}
-
-#else
-
-#if _OS == _DOS
-    #define ERRVAL _doserrno
-#else
-    #define ERRVAL errno
-#endif
-
-void OpenPageFile()
-{
-    auto char fname[ _MAX_PATH ];
-
-    for(;;) {
-        MakeTmpName( fname );
-        if( access( fname, 0 ) != 0 ) break;
-        if( WorkFile[5] == '9' ) WorkFile[5] = 'A' - 1;     /* 11-may-89 */
-        WorkFile[5]++;          /* change the digit */
-    }
-    PageHandle = -1;
-    PageFile = fopen( fname, "w+b" );
-    if( PageFile == NULL ) {
-        CErr2( ERR_UNABLE_TO_OPEN_WORK_FILE, ERRVAL );
-        CSuicide();
-    }
-    PageHandle = fileno( PageFile );
-}
-
-#endif
 
 void CloseFiles( void )
 {
-    #if (_OS != _QNX) && (_OS != _LINUX)
-        auto char fname[ _MAX_PATH ];
-    #endif
-
     if( CppFile != NULL ) {
         fflush( CppFile );
         if( ferror( CppFile ) ) {
@@ -307,15 +211,6 @@ void CloseFiles( void )
     if( ErrFile != NULL ) {
         fclose( ErrFile );
         ErrFile = NULL;
-    }
-    if( PageFile != NULL ) {
-        fclose( PageFile );
-        #if (_OS != _QNX) && (_OS != _LINUX)
-            MakeTmpName( fname );
-            remove( fname );
-        #endif
-        PageHandle = -1;
-        PageFile = NULL;
     }
 }
 

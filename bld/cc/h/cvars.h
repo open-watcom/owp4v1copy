@@ -130,11 +130,9 @@ global  struct  fname_list *FNames;     /* list of file names processed */
 global  struct  rdir_list *RDirNames;  /* list of read only directorys */
 global  char    *ErrFName;      /* file name to be used in error message */
 global  unsigned ErrLine;       /* line number to be used in error msg */
-global  unsigned ErrLineNum;    /* line first error is on */
 global  FILE    *ErrFile;       /* error file */
 global  FILE    *DefFile;       /* output for func prototypes */
 global  FILE    *CppFile;       /* output for preprocessor */
-global  FILE    *PageFile;      /* page file for leafs, quads, syms */
 global  FILE    *DepFile;       /* make style auto depend file */
 global  struct  cpp_info *CppStack; /* #if structure control stack */
 global  char    *HFileList;     /* list of path names to try for H files */
@@ -317,13 +315,11 @@ global  SYM_ENTRY CurFuncSym;   /* for contents of current function symbol */
 global  SYM_HANDLE CurFuncHandle;/* sym_handle for current function */
 global  SYM_HANDLE LastFuncOutOfMem; /* cinfo: */
 global  SYM_HASHPTR HashFreeList;/* list of available hash entries */
-global  int      PageHandle;    /* handle for temp page file */
 
 global  unsigned SymBufNum;     /* current buffer in memory */
 global  unsigned SymSegNum;     /* segment # containing buffer */
 global  unsigned LastSymBuf;    /* # of last symbol table buffer */
 global  unsigned SymBufDirty;   /* 1 => buffer has been changed */
-global  char    *SymBuffer;     /* buffer pointer for symbols */
 global  SEGADDR_T SymSegment;   /* segment # for symbol table buffers */
 
 global  TYPEPTR StringType;     /* "unsigned char *" for use by literals */
@@ -334,13 +330,11 @@ global  struct nested_parm_lists {
         TYPEPTR *next_parm_type;
 } *NestedParms;
 
-global  unsigned NextFilePage;  /* next page # in page file */
-
 #ifndef LARGEST_QUAD_INDEX
- #define LARGEST_QUAD_INDEX             0xFFFF
- #define LARGEST_DATA_QUAD_INDEX        0xFFFFF
+    #define LARGEST_QUAD_INDEX             0xFFFF
+    #define LARGEST_DATA_QUAD_INDEX        0xFFFFF
 #else
- #define LARGEST_DATA_QUAD_INDEX        LARGEST_QUAD_INDEX
+    #define LARGEST_DATA_QUAD_INDEX        LARGEST_QUAD_INDEX
 #endif
 #define LARGEST_SYM_INDEX   0xFFFF
 
@@ -493,7 +487,6 @@ extern  void    PrtChar(int);
 extern  void    PrtToken(void);
 extern  int     OpenSrcFile(char *,int);
 extern  void    OpenDefFile(void);
-extern  void    OpenPageFile(void);
 extern  FILE    *OpenBrowseFile(void);
 extern  void    CloseFiles(void);
 extern  void    FreeFNames(void);
@@ -752,10 +745,6 @@ extern  int     NameCmp(const void *,const void *,int); /* cname */
 extern  int     EqualChar(int);                 /* coptions */
 extern  void    GenCOptions(char **);           /* coptions */
 extern  void    MergeInclude(void);             /* coptions */
-
-extern  void    PageRead(char *,unsigned);      /* cpageio */
-extern  void    PageWrite(char *,unsigned);     /* cpageio */
-extern  void    PageSeek(unsigned long);        /* cpageio */
 
 extern  void    CPragmaInit( void );            /* cpragma */
 extern  int     SetToggleFlag( char const *name, int const value ); /* cpragma */

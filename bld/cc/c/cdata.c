@@ -63,11 +63,9 @@ void InitGlobalVars( void ){
     FNames                  = NULL; /* list of file names processed */
     ErrFName                = NULL; /* file name to be used in error message */
     ErrLine                 = 0;    /* line number to be used in error msg */
-    ErrLineNum              = 0;    /* line first error is on */
     ErrFile                 = NULL; /* error file */
     DefFile                 = NULL; /* output for func prototypes */
     CppFile                 = NULL; /* output for preprocessor */
-    PageFile                = NULL; /* page file for leafs, quads, syms */
     CppStack                = NULL; /* #if structure control stack */
     HFileList               = NULL; /* list of path names to try for H files */
     SrcLineNum              = 0;
@@ -198,7 +196,6 @@ void InitGlobalVars( void ){
     CurFuncHandle           = 0;    /* sym_handle for current function */
     LastFuncOutOfMem        = 0;    /* cinfo: */
     HashFreeList            = NULL; /* list of available hash entries */
-    PageHandle              = 0;    /* handle for temp page file */
 
     SymSegNum               = 0;    /* segment # containing buffer */
 
@@ -207,7 +204,6 @@ void InitGlobalVars( void ){
     StringArrayType         = NULL; /* "unsigned char []" used by literals */
     NestedParms             = NULL;
 
-    NextFilePage            = 0;    /* next page # in page file */
     TextSegName             = NULL; /* name of the text segment */
     DataSegName             = NULL; /* name of the data segment */
     CodeClassName           = NULL; /* name of the code class */

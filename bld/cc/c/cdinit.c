@@ -107,10 +107,6 @@ void FreeDataQuads()
     InitDataQuads();
 }
 
-void PageOutDataQuads()
-{
-}
-
 int StartDataQuadAccess()
 {
     if( DataQuadSegIndex != -1 ) {
@@ -673,9 +669,9 @@ void InitSymData( TYPEPTR typ, int level )
             InitArray( typ );
         }
         break;
-    case TYPE_FCOMPLEX:        
-    case TYPE_DCOMPLEX:        
-    case TYPE_LDCOMPLEX:        
+    case TYPE_FCOMPLEX:
+    case TYPE_DCOMPLEX:
+    case TYPE_LDCOMPLEX:
     case TYPE_STRUCT:
         if( token != T_LEFT_BRACE  &&  level == 0 ) {
             CErr1( ERR_NEED_BRACES );
