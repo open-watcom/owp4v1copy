@@ -180,6 +180,11 @@ sqrt9:  pop     EBX             ; restore EBX
 ifdef _BUILDING_MATHLIB
 
         endmod
-        end
+
+        endf    equ end
+else
+        endf    equ <>
 
 endif
+
+endf

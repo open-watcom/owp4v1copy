@@ -1,5 +1,4 @@
-ifdef EMUL_VERSION
-else
+ifndef EMUL_VERSION
 ifdef _BUILDING_MATHLIB
 EMUL_VERSION equ 0
 else
@@ -163,6 +162,11 @@ endif
 if EMUL_VERSION eq 0
 
         endmod
-        end
+
+        endf    equ end
+else
+        endf    equ <>
 
 endif
+
+endf

@@ -132,6 +132,11 @@ chkfor0:or      EDI,[EAX]       ; see if both operands are 0
 ifdef _BUILDING_MATHLIB
 
         endmod
-        end
+
+        endf    equ end
+else
+        endf    equ <>
 
 endif
+
+endf

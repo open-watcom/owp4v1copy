@@ -93,6 +93,11 @@ __I4LD  endp
 ifdef _BUILDING_MATHLIB
 
         endmod
-        end
+
+        endf    equ end
+else
+        endf    equ <>
 
 endif
+
+endf

@@ -348,6 +348,11 @@ include ldfd086.asm
 include fdld086.asm
 
         endmod
-        end
+
+        endf    equ end
+else
+        endf    equ <>
 
 endif
+
+endf
