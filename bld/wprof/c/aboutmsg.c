@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  'About' dialog for wprof.
 *
 ****************************************************************************/
 
@@ -47,8 +46,8 @@ extern char     *AboutMessage[];
 extern int      AboutSize;
 
 STATIC bool aboutEventProc( a_window *, gui_event, void * );
-STATIC int AboutNumRows( a_window * );
-STATIC bint aboutGetLine( a_window *, int, int, wnd_line_piece * );
+STATIC int  AboutNumRows( a_window * );
+STATIC bool aboutGetLine( a_window *, wnd_row, int, wnd_line_piece * );
 
 static a_window *   aboutWindow = NULL;
 static bint         aboutOn = TRUE;
@@ -121,7 +120,7 @@ STATIC int AboutNumRows( a_window * wnd )
 
 
 
-STATIC bint aboutGetLine( a_window * wnd, int row, int piece,
+STATIC bool aboutGetLine( a_window * wnd, wnd_row row, int piece,
                                       wnd_line_piece * line )
 /***********************************************************/
 {

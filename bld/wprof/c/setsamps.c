@@ -83,10 +83,10 @@ STATIC void initFileInfo( mod_info * );
 STATIC void initRoutineInfo( file_info * );
 STATIC void loadImageInfo( image_info * );
 STATIC walk_result loadModuleInfo( mod_handle, void * );
-STATIC walk_result loadRoutineInfo( sym_walk_info, sym_handle *, mod_info * );
+STATIC walk_result loadRoutineInfo( sym_walk_info, sym_handle *, void * );
 STATIC file_info * loadFileInfo( mod_info *, sym_handle * );
 STATIC void resolveImageSamples();
-STATIC int rawSampCmp( const pointer *, const pointer * );
+STATIC int rawSampCmp( const void *, const void * );
 STATIC void calcAggregates();
 
 
@@ -568,9 +568,10 @@ STATIC void initRoutineInfo( file_info * curr_file )
 
 
 
-STATIC walk_result loadModuleInfo( mod_handle mh, image_info * curr_image )
+STATIC walk_result loadModuleInfo( mod_handle mh, void * _curr_image )
 /*************************************************************************/
 {
+    image_info *    curr_image = _curr_image;
     mod_info *      new_mod;
     int             mod_count;
     int             name_len;
@@ -592,9 +593,10 @@ STATIC walk_result loadModuleInfo( mod_handle mh, image_info * curr_image )
 
 
 STATIC walk_result loadRoutineInfo( sym_walk_info swi, sym_handle * sym,
-                                                      mod_info * new_mod )
+                                                      void * _new_mod )
 /************************************************************************/
 {
+    mod_info *      new_mod = _new_mod;
     sym_info        sinfo;
     file_info *     sym_file;
     rtn_info *      new_rtn;
@@ -686,9 +688,11 @@ extern int AddrCmp( address * addr1, address * addr2 )
 
 
 
-STATIC int rawSampCmp( const pointer * d1, const pointer * d2 )
-/*************************************************/
+STATIC int rawSampCmp( const void * _d1, const void * _d2 )
+/*********************************************************/
 {
+    const pointer * d1 = _d1;
+    const pointer * d2 = _d2;
     address *   data1;
     address *   data2;
 

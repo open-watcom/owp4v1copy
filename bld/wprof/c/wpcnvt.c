@@ -87,9 +87,10 @@ extern void WPConvert( a_window * wnd, int convert_select )
 
 
 
-STATIC void doConvert( a_window * wnd, DUMPRTNS * dump_rtn, int convert_select )
+STATIC void doConvert( a_window * wnd, pointer _dump_rtn, int convert_select )
 /******************************************************************************/
 {
+    DUMPRTNS *      dump_rtn = _dump_rtn;
     sio_data *      curr_sio;
 
     curr_sio = WndExtra( wnd );
@@ -110,9 +111,10 @@ STATIC void doConvert( a_window * wnd, DUMPRTNS * dump_rtn, int convert_select )
 
 
 
-STATIC void dumpSampleImages( sio_data * curr_sio, DUMPRTNS * dump_rtn )
+STATIC void dumpSampleImages( sio_data * curr_sio, pointer _dump_rtn )
 /**********************************************************************/
 {
+    DUMPRTNS *      dump_rtn = _dump_rtn;
     image_info *    curr_image;
     int             image_index;
 
