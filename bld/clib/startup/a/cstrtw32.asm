@@ -24,7 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  C/C++ Windows 386 16-bit console, window and DLL startup code.
+;* Description:  C/C++ Windows 386 console, window and DLL startup code (32-bit).
 ;*
 ;*****************************************************************************
 

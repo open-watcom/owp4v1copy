@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Windows 386 Supervisor init 32-bit DPMI mode startup code (16-bit)
 *
 ****************************************************************************/
 
@@ -101,7 +100,7 @@ struct wstart_vars {
     addr_48     _32BitCallBackAddr;
     addr_48     _DLLEntryAddr;
     addr_48     _WEPAddr;
-    void        (far *_16BitCallBackAddr)();
+    void        (FAR *_16BitCallBackAddr)();
     addr_48     gluertns[5];
 };
 
@@ -133,7 +132,7 @@ extern DWORD    EDataAddr;              // end of loaded code+data
 extern WORD     _no87;
 extern WORD     DPL,Has87,HasWGod;
 
-extern void     far __CallBack();
+extern void     FAR __CallBack();
 void GetDataSelectorInfo( void );
 WORD InitFlatAddrSpace( DWORD baseaddr, DWORD len );
 
@@ -577,11 +576,7 @@ int Fini( int strcnt, ... )
     tmp[0] = 0;
     while( strcnt > 0 ) {
         n = va_arg( arg, char _FAR * );
-#ifdef DLL32
-        _fstrcat( tmp, n );
-#else
         strcat( tmp, n );
-#endif
         strcnt--;
     }
     va_end( arg );
