@@ -32,7 +32,6 @@
 
 #include "madimp.h"
 #include "madx86.h"
-#include "x86regs.h"
 #include "dis.h"
 
 typedef enum { LN, L1, L2, L3, L5, L6, LX } processor_level;
