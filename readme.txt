@@ -1,3 +1,12 @@
+Note: This information and much more is now in the Open Watcom Developer's
+Guide. To produce a PostScript version go to docs\doc and run
+
+ .\fmt devguide pass 2
+
+If you have everything set up correctly, you should end up with devguide.ps
+which you can print or view.
+-------------------------------------------------------------------------------
+
 
   Getting up to Speed on Open Watcom
   ==================================
