@@ -26,17 +26,17 @@
 
 class _WPRTLINK bad_exception : public exception {
 public:
-    bad_exception( void ) _WCTHROWS(())
+    bad_exception( void ) _WCTHROWS()
         : exception( "exception missing from function exception specification" ) {
     }
-    bad_exception( bad_exception const & ) _WCTHROWS(()) {
+    bad_exception( bad_exception const & ) _WCTHROWS() {
     }
-    bad_exception & operator=( bad_exception & ) _WCTHROWS(()) {
+    bad_exception & operator=( bad_exception & ) _WCTHROWS() {
         return *this;
     }
-    virtual ~bad_exception( void ) _WCTHROWS(()) {
+    virtual ~bad_exception( void ) _WCTHROWS() {
     }
-    virtual char const * what( void ) const _WCTHROWS(()) {
+    virtual char const * what( void ) const _WCTHROWS() {
         return exception::what();
     }
 };
