@@ -10,7 +10,7 @@
 
 */
 
-#if defined(__LCC__) || defined(__GNUC__)
+#if defined(__LCC__) || defined(__GNUC__) || defined(__WATCOMC__)
 #define INITGUID 1
 #include <windows.h>
 #else

@@ -5,6 +5,7 @@ proj_name = w32api
 .EXTENSIONS : .lbc .def
 
 base_libs =        &
+        aclui.lib &
         advapi32.lib &
         avicap32.lib &
         avifil32.lib &
@@ -15,6 +16,7 @@ base_libs =        &
         ctl3d32.lib &
         dhcpcsvc.lib &
         dlcapi.lib &
+        dmoguids.lib &
         dnsapi.lib &
         faultrep.lib &
         gdi32.lib &
@@ -68,6 +70,7 @@ base_libs =        &
         shfolder.lib &
         shlwapi.lib &
         snmpapi.lib &
+        strmiids.lib &
         svrapi.lib &
         tapi32.lib &
         th32.lib &
@@ -173,6 +176,10 @@ dxerr8.lib: dxerr8.obj dxerr8w.obj
 
 dxerr9.lib: dxerr9.obj dxerr9w.obj
         $(librarian) -b -c -n $@ +$[@ +$]@
+
+ksuser.lib: ksuser.lbc ksuser.obj
+        $(librarian) -b -c -n -io -ii $@ @$[@
+        $(librarian) -b -c $@ +$]@
 
 shell32.lib: shell32.lbc shell32.obj
         $(librarian) -b -c -n -io -ii $@ @$[@
