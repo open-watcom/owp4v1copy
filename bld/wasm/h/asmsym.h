@@ -116,6 +116,8 @@ typedef struct asm_sym {
         enum sym_state  state;
         struct asmfixup *fixup;
 } asm_sym;
+
+extern char *InitAsmSym( struct asm_sym *sym, char *name );
 extern struct asm_sym *AsmLookup( char *name );
 extern struct asm_sym *AsmAdd( struct asm_sym *symbol );
 extern void AsmSymFini(void);

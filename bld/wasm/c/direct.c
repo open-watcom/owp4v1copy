@@ -405,6 +405,24 @@ static dir_add( dir_node *new, int tab )
     }
 }
 
+static dir_node *AllocADir( char *name ) {
+    dir_node *dir;
+
+    dir = AsmAlloc( sizeof( dir_node ) );
+    if( dir != NULL ) {
+        if( InitAsmSym( (struct asm_sym *)dir, name ) == NULL ) {
+            AsmFree( dir );
+            return( NULL );
+        } else {
+            dir->next = NULL;
+            dir->prev = NULL;
+            dir->line = 0;
+            dir->e.seginfo = NULL;
+        }
+    }
+    return( dir );
+}
+
 dir_node *dir_insert( char *name, int tab )
 /*****************************************/
 /* Insert a node into the table specified by tab */
@@ -412,11 +430,12 @@ dir_node *dir_insert( char *name, int tab )
     dir_node            *new;
     struct asm_sym      *sym;
 
-    new = AsmAlloc( sizeof( dir_node ) );
-    new->next = NULL;
+    new = AllocADir( name );
+    if( new == NULL ) {
+        AsmError( NO_MEMORY );
+        return( NULL );
+    }
     new->line = LineNumber;
-    new->sym.name = AsmAlloc( strlen( name ) + 1 );
-    strcpy( new->sym.name, name );
     new->next = new->prev = NULL;
 
     if( tab != TAB_CLASS_LNAME ) {

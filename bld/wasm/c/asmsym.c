@@ -82,6 +82,58 @@ struct asm_sym *sym_table[ HASH_TABLE_SIZE ] = { NULL };
 
 #endif
 
+char *InitAsmSym( struct asm_sym *sym, char *name )
+/************************************************/
+{
+    sym->name = AsmAlloc( strlen( name ) + 1 );
+    if( sym->name != NULL ) {
+        strcpy( sym->name, name );
+        sym->next = NULL;
+        sym->state = SYM_UNDEFINED;
+        sym->mem_type = EMPTY;
+        sym->fixup = NULL;
+#ifdef _WASM_
+        sym->grpidx = 0;
+        sym->segidx = 0;
+        sym->offset = 0;
+        sym->public = FALSE;
+        sym->first_size = 0;
+        sym->first_length = 0;
+        sym->total_size = 0;
+        sym->total_length = 0;
+        sym->mangler = NULL;
+#else
+        sym->addr = 0;
+#endif
+    }
+    return( sym->name );
+}
+
+static struct asm_sym *AllocASym( char *name )
+/************************************************/
+{
+    struct asm_sym      *sym;
+
+#ifdef _WASM_
+    sym = AsmAlloc( sizeof( dir_node ) );
+#else
+    sym = AsmAlloc( sizeof( struct asm_sym ) );
+#endif
+    if( sym != NULL ) {
+        if( InitAsmSym( sym, name ) == NULL ) {
+            AsmFree( sym );
+            return( NULL );
+        }
+#ifdef _WASM_
+        ((dir_node *)sym)->next = NULL;
+        ((dir_node *)sym)->prev = NULL;
+        ((dir_node *)sym)->line = 0;
+        ((dir_node *)sym)->e.seginfo = NULL;
+#endif
+    }
+    return sym;
+}
+
 struct asm_sym **AsmFind( char *name )
 /***********************************/
 /* find a symbol in the symbol table, return NULL if not found */
@@ -123,45 +175,28 @@ struct asm_sym *AsmLookup( char *name )
 #endif
     if( *sym_ptr != NULL ) return( *sym_ptr );
 
-#ifndef _WASM_
-    sym = AsmAlloc( sizeof( struct asm_sym ) );
-#else
-    sym = AsmAlloc( sizeof( dir_node ) );
-#endif
+    sym = AllocASym( name );
     if( sym != NULL ) {
+        sym->next = *sym_ptr;
+        *sym_ptr = sym;
 
 #ifndef _WASM_
         sym->addr = Address;
 #else
-        sym->grpidx = 0;
-        sym->segidx = 0;
-        sym->public = FALSE;
         if( is_current_loc ) {
             GetSymInfo( sym );
             sym->state = SYM_INTERNAL;
-        } else {
-            sym->offset = 0;
+            sym->mem_type = T_NEAR;
         }
-        sym->first_size = 0;
-        sym->first_length = 0;
-        sym->total_size = 0;
-        sym->total_length = 0;
-        sym->mangler = NULL;
 #endif
-        sym->fixup = NULL;
-        sym->next = *sym_ptr;
-        *sym_ptr = sym;
-
-        sym->name = AsmAlloc( strlen( name ) + 1 );
-        strcpy( sym->name, name );
         if( is_current_loc ) {
             return( sym );
         }
         sym->state = AsmQueryExternal( name );
-        if( sym->state != SYM_UNDEFINED ) {
-            sym->mem_type = CvtTable[ AsmQueryType( name ) ];
+        if( sym->state == SYM_UNDEFINED ) {
+            sym->mem_type = EMPTY;
         } else {
-            sym->mem_type = 0;
+            sym->mem_type = CvtTable[ AsmQueryType( name ) ];
         }
     } else {
         AsmError( NO_MEMORY );
