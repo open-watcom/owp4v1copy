@@ -57,6 +57,9 @@ $(lnk) : makefile
         @for %i in ($(objs)) do @%append $(lnk) file obj\%i
         @for %i in ($(disasm)) do @%append $(lnk) file obj\%i
 
+..\misc\ctl3d.lib: ..\misc\ctl3d.dll
+        $(librarian) $@ +$<
+
 $(msgh) : $(mastermsg)
         vi -i -q "-k :source ..\\\\misc\\\\msgtoh.vi $(msgh)\n" $(mastermsg)
         -del obj\*.obj
@@ -79,7 +82,7 @@ mem.obj : mem.c
 .c.obj :
         $(comp286) $[* -ml$(cflags)
 .asm.obj:
-        masm /Mx /Zd $[*,obj\$[&.obj;
+        wasm $[* /fo=obj\$[&.obj;
 
 clean : .symbolic
     @rm -f *.exe *.res *.lnk *.map

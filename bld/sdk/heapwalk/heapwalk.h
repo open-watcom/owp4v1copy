@@ -323,7 +323,7 @@ BOOL __export FAR PASCAL FreeNDlgProc( HWND hwnd, WORD msg, WORD wparam,
                                     DWORD lparam );
 BOOL __export FAR PASCAL SetCodeDlgProc( HWND hwnd, WORD msg, WORD wparam,
                                     DWORD lparam );
-SetMenusForAdd( HWND hwnd, BOOL start );
+void SetMenusForAdd( HWND hwnd, BOOL start );
 HWND StartAdd( HWND parent, ListBoxInfo *info );
 
 /* hwalloc.c */
