@@ -31,12 +31,9 @@ xname=wsamplew
     @%append $(lnk) option description 'WATCOM Sampler'
     @%append $(lnk) segment class 'CODE' preload fixed
     @%append $(lnk) segment class 'DATA' preload fixed
-    @%append $(lnk) lib $(watcom_dir)\lib\commdlg,$(watcom_dir)\lib\toolhelp
-!include ..\setsize.mif
+    @%append $(lnk) lib commdlg,toolhelp
     wlink @$(lnk)
     wrc $(xname).res ..\bin\$(xname).exe
-
-!include ..\objsize.mif
 
 $(xname).res : $(xname).ico $(xname).rc wsampres.rc ..\h\wsample.rc ..\h\wmsg.h
     wrc -bt=windows -zk0 -r -dWIN -30 -i$(lang_root)\h\win $(xname).rc
@@ -50,7 +47,7 @@ $(xname).res : $(xname).ico $(xname).rc wsampres.rc ..\h\wsample.rc ..\h\wmsg.h
     $(comp286) $[* $(cflags) -fo=obj\.obj
 
 .asm.obj :
-        masm $[*,obj\$[&.obj;
+        wasm -fo=obj\$[&.obj $[*
 
 clean : .symbolic
     @rm -f *.obj *.res *.lnk *.map *.err
