@@ -57,7 +57,7 @@ void FmtHexNum( char *buff, unsigned prec, unsigned long value )
         sprintf( buff, "0%*.*lxH", prec, prec, value );
         /* don't need the extra leading zero, squeeze it out */
         for ( src = dst = buff; *src != '\0'; src++ ) {
-            if ( src[0] != '0' || !isdigit( src[1] ) ) {
+            if ( dst != buff || src[0] != '0' || !isdigit( src[1] ) ) {
                 *dst = *src;
                 dst++;
             }
