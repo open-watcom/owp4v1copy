@@ -46,7 +46,7 @@ librarian = wlib
 !ifdef pm
 dlgs = dlgrx.dlg dlgsrch.dlg dlgsrcha.dlg &
        japrx.dlg japsrch.dlg japsrcha.dlg
-auirc = $(auidir)\pm\aui.rc
+auirc = $(auidir)\pmf\aui.rc
 !else
 auirc = $(auidir)\h\aui.rc
 !endif

@@ -114,8 +114,8 @@ eraseall.obj : ..\compile.gbl
 wprof.res : wprof.rc
         @set oinc=$(%include)
         set include=$(lang_root)\h\os2;$(rcinclude);$(%include)
-        wcc -dRC -i$(aui_dir)\pm;$(rcinclude) -p -pw=0 -fo=wprof.i wprof.rc
-#       wcc -dRC -i$(aui_dir)\pm;$(rcinclude) -p -pw=0 -fo=wprofj.i wprof.rc /dJAPANESE_MESSAGES
+        wcc -dRC -i$(aui_dir)\pmf;$(rcinclude) -p -pw=0 -fo=wprof.i wprof.rc
+#       wcc -dRC -i$(aui_dir)\pmf;$(rcinclude) -p -pw=0 -fo=wprofj.i wprof.rc /dJAPANESE_MESSAGES
         set opath=$(%path)
         set path=$(lang_root)\binp
         $(lang_root)\binp\rc -i $(lang_root)\h\os2 -r foros2pm.rc

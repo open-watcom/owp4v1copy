@@ -627,8 +627,8 @@ wvnt.res : $(hdir)\wvwin.rc $(bitmaps) $(rcfiles) .autodepend
 wvpm.res wvpmj.res : $(hdir)\wvpm.rc $(bitmaps) $(rcfiles) .autodepend
         @set oinc=$(%include)
         set include=$(watcom_dir)\os220_h;$(rcinclude);$(%include)
-        wcc -dRC -i$(aui_dir)\pm;$(rcinclude) -p -pw=0 -fo=wvpm.i $(hdir)\wvpm.rc
-        wcc -dRC -i$(aui_dir)\pm;$(rcinclude) -p -pw=0 -fo=wvpmj.i $(hdir)\wvpm.rc /dJAPANESE_MESSAGES
+        wcc -dRC -i$(aui_dir)\pmf;$(rcinclude) -p -pw=0 -fo=wvpm.i $(hdir)\wvpm.rc
+        wcc -dRC -i$(aui_dir)\pmf;$(rcinclude) -p -pw=0 -fo=wvpmj.i $(hdir)\wvpm.rc /dJAPANESE_MESSAGES
         set opath=$(%path)
         set path=$(lang_root)\binp
         $(lang_root)\binp\rc -i $(inc_dirs_sys_os2_386) -r $(hdir)\foros2pm.rc .\foros2pm.res
