@@ -28,13 +28,16 @@
 *
 ****************************************************************************/
 
+
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 #include <termios.h>
-#include <conio.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <string.h>
 #include <sys/time.h>
+#include <process.h>
 #include "trpimp.h"
 
 extern char RWBuff[];
@@ -96,6 +99,120 @@ int KeyGet()
     read( 0, &key, 1 );
     tcsetattr( 0, TCSANOW, &old );
     return( key );
+}
+
+
+static char *StrCopy( char *src, char *dst )
+{
+    while( *dst = *src ) {
+        ++src;
+        ++dst;
+    }
+    return( dst );
+}
+
+static unsigned TryOnePath( char *path, struct stat *tmp, char *name,
+                         char *result )
+{
+    char        *end;
+    char        *ptr;
+
+    if( path == NULL ) return( 0 );
+    ptr = result;
+    for( ;; ) {
+        if( *path == '\0' || *path == ':' ) {
+            if( ptr != result ) *ptr++ = '/';
+            end = StrCopy( name, ptr );
+            if( stat( (char *)result, tmp ) == 0 ) return( end - result );
+            if( *path == '\0' ) return( 0 );
+            ++path;
+            ptr = result;
+        }
+        if( *path != ' ' && *path != '\t' ) {
+            *ptr++ = *path;
+        }
+        ++path;
+    }
+}
+
+static unsigned FindFilePath( char *name, char *result )
+{
+    struct stat tmp;
+    unsigned    len;
+    char        *end;
+    char        cmd[256];
+
+    if( stat( name, &tmp ) == 0 ) {
+        end = StrCopy( name, result );
+        return( end - result );
+    }
+    len = TryOnePath( getenv( "WD_PATH" ), &tmp, name, result );
+    if( len != 0 ) return( len );
+    len = TryOnePath( getenv( "HOME" ), &tmp, name, result );
+    if( len != 0 ) return( len );
+    if( _cmdname( cmd ) != NULL ) {
+        end = strrchr( cmd, '/' );
+        if( end != NULL ) {
+            *end = '\0';
+            end = strrchr( cmd, '/' );
+            if( end != NULL ) {
+                /* look in the wd sibling directory of where the command
+                   came from */
+                StrCopy( "wd", end + 1 );
+                len = TryOnePath( cmd, &tmp, name, result );
+                if( len != 0 ) return( len );
+            }
+        }
+    }
+    return( TryOnePath( "/usr/watcom/wd", &tmp, name, result ) );
+}
+
+unsigned PathOpen( char *name, unsigned name_len, char *exts )
+{
+    bool                has_ext;
+    bool                has_path;
+    char                *ptr;
+    char                *endptr;
+    char                trpfile[256];
+    unsigned            filehndl;
+
+    has_ext = FALSE;
+    has_path = FALSE;
+    endptr = name + name_len;
+    for( ptr = name; ptr != endptr; ++ptr ) {
+        switch( *ptr ) {
+        case '.':
+            has_ext = TRUE;
+            break;
+        case '/':
+            has_ext = FALSE;
+            has_path = TRUE;
+            /* fall through */
+            break;
+        }
+    }
+    memcpy( trpfile, name, name_len );
+    if( has_ext ) {
+        trpfile[name_len] = '\0';
+    } else {
+        trpfile[ name_len++ ] = '.';
+        memcpy( (char near *)&trpfile[ name_len ], exts, strlen( exts ) + 1 );
+    }
+    if( has_path ) {
+        filehndl = open( trpfile, O_RDONLY );
+    } else {
+        if( FindFilePath( trpfile, RWBuff ) == 0 ) {
+            filehndl = -1;
+        } else {
+            filehndl = open( RWBuff, O_RDONLY );
+        }
+    }
+    return( filehndl );
+}
+
+unsigned long GetSystemHandle( unsigned h )
+{
+    return( h );
 }
 
 int WantUsage( char *ptr )
