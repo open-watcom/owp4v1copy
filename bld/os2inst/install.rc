@@ -1,0 +1,648 @@
+/* OS/2 Warp Resource Script File - Created by Universal Resource Editor */
+
+#define INCL_WINSYS
+#define INCL_WINSTDDLGS
+#define INCL_WINSTDSPIN
+#define INCL_NLS
+#define INCL_SW
+
+#include <os2.h>
+
+#include "install.h"
+
+BITMAP      I_LOGO1     "..\\bitmaps\\install1.bmp"
+BITMAP      I_LOGO2     "..\\bitmaps\\install2.bmp"
+BITMAP      I_LOGO3     "..\\bitmaps\\install3.bmp"
+BITMAP      I_LOGO4     "..\\bitmaps\\install4.bmp"
+BITMAP      I_LOGO5     "..\\bitmaps\\install5.bmp"
+BITMAP      I_LOGO6     "..\\bitmaps\\install6.bmp"
+BITMAP      I_LOGO7     "..\\bitmaps\\install7.bmp"
+BITMAP      I_LOGO8     "..\\bitmaps\\install8.bmp"
+
+ICON        I_Icon      "..\\bitmaps\\install.ico"
+ICON        FOLDERICON  "..\\bitmaps\\folder.ico"
+ICON        FILEICON    "..\\bitmaps\\file.ico"
+
+DLGTEMPLATE I_DialogBeta 850
+BEGIN
+    DIALOG "Installer", I_DialogBeta, 16, -60, 395, 224, FS_NOBYTEALIGN |
+                FS_DLGBORDER | WS_CLIPSIBLINGS | WS_SAVEBITS | WS_VISIBLE,
+                FCF_TITLEBAR
+    PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
+    BEGIN
+        CONTROL "Next >>",       I_Next, 321, 5, 48, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "Exit Installation",   I_Cancel, 12, 5, 59, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "<< Back",             I_Back, 275, 5, 46, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL I_LOGO1,               I_LOGO1, 8, 28, 67, 138, WC_STATIC,
+                                            SS_BITMAP | WS_GROUP | WS_VISIBLE
+        CONTROL "Beta Software Notice", I_Welcome, 189, 136, 197, 81,
+                                            WC_STATIC, SS_TEXT | DT_CENTER |
+                                            WS_GROUP | WS_VISIBLE
+                PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
+        CONTROL "",                    I_Status, 12, 19, 371, 6, WC_STATIC,
+                                            SS_GROUPBOX | WS_GROUP | WS_VISIBLE
+        CONTROL "Please note that this is BETA software, meaning the product is still undergoing active development and testing.",
+                                       I_Info1, 191, 116, 196, 18, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "While we have made every attempt to ensure this release is stable, as with any beta software, unexpected problems may occur.",
+                                       I_Info2, 191, 94, 195, 22, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "For this reason, we recommend that you backup your system before you install the software and that you do not install this beta release on a production machine.",
+                                       I_Info3, 191, 67, 197, 23, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "",                    I_Progress, 195, 43, 179, 8, WC_STATIC,
+                                            SS_TEXT | WS_GROUP | WS_VISIBLE
+    END
+END
+
+DLGTEMPLATE I_Dialog1 850
+BEGIN
+    DIALOG "Installer", I_Dialog1, 16, -66, 395, 224, FS_NOBYTEALIGN |
+                FS_DLGBORDER | WS_CLIPSIBLINGS | WS_SAVEBITS | WS_VISIBLE,
+                FCF_TITLEBAR
+    PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
+    BEGIN
+        CONTROL "Next >>",             I_Next, 321, 5, 48, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "Exit Installation",   I_Cancel, 12, 5, 59, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "View Product Description and Release Notes", I_README,
+                                        195, 55, 184, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "<< Back",             I_Back, 275, 5, 46, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL I_LOGO1,               I_LOGO1, 8, 28, 67, 138, WC_STATIC,
+                                            SS_BITMAP | WS_GROUP | WS_VISIBLE
+        CONTROL "Welcome to %PRODUCT% %WEB_VER%", I_Welcome,
+                                        189, 131, 197, 86, WC_STATIC, SS_TEXT |
+                                            DT_CENTER | WS_GROUP | WS_VISIBLE
+                PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
+        CONTROL "",                    I_Status, 12, 19, 371, 6, WC_STATIC,
+                                            SS_GROUPBOX | WS_GROUP | WS_VISIBLE
+        CONTROL "Click \x22Next >>\x22 and get ready experience the Open Watcom power!",
+                                       I_Info3, 190, 27, 196, 17, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "%PRODUCT% is a suite of advanced, easy to use cross platform compilers and development tools. Supported platforms include DOS, Windows, OS/2 and Netware.",
+                                       I_Info1, 190, 100, 196, 27, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "Included is an Integrated Development Environment, graphical debugger, profiler and a class browser. For a detailed list of product features, click on the button below:",
+                                       I_Info2, 190, 77, 196, 27, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+    END
+END
+
+DLGTEMPLATE I_Dialog2 850
+BEGIN
+    DIALOG "Installer", I_Dialog2, 22, -65, 395, 224, FS_NOBYTEALIGN |
+                FS_DLGBORDER | WS_CLIPSIBLINGS | WS_SAVEBITS | WS_VISIBLE,
+                FCF_TITLEBAR
+    PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
+    BEGIN
+        CONTROL "I have read and agree to the terms of this license agreement.",
+                                       I_Agree, 195, 25, 193, 10, WC_BUTTON,
+                                            BS_AUTOCHECKBOX | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "Next >>",             I_Next, 321, 5, 48, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "Exit Installation",   I_Cancel, 12, 5, 59, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "<< Back",             I_Back, 275, 5, 46, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL I_LOGO2,               I_LOGO2, 8, 28, 67, 138, WC_STATIC,
+                                            SS_BITMAP | WS_GROUP | WS_VISIBLE
+        CONTROL "Software Licence Agreement", I_Welcome, 189, 137, 197, 81,
+                                            WC_STATIC, SS_TEXT | DT_CENTER |
+                                            WS_GROUP | WS_VISIBLE
+                PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
+        CONTROL "",                    I_Status, 12, 19, 371, 6, WC_STATIC,
+                                            SS_GROUPBOX | WS_GROUP | WS_VISIBLE
+        CONTROL "",                    I_Licence, 192, 39, 196, 92, WC_MLE,
+                                            MLS_BORDER | MLS_IGNORETAB |
+                                            MLS_READONLY | MLS_VSCROLL |
+                                            MLS_WORDWRAP | WS_TABSTOP |
+                                            WS_VISIBLE
+                CTLDATA 32, 0, 32767, 32767, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    END
+END
+
+DLGTEMPLATE I_Dialog3 850
+BEGIN
+    DIALOG "Installer", I_Dialog3, 16, -57, 395, 224, FS_NOBYTEALIGN |
+                FS_DLGBORDER | WS_CLIPSIBLINGS | WS_SAVEBITS | WS_VISIBLE,
+                FCF_TITLEBAR
+    PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
+    BEGIN
+        CONTROL "Next >>",             I_Next, 321, 5, 48, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "Exit Installation",   I_Cancel, 12, 5, 59, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "<< Back",             I_Back, 275, 5, 46, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL I_LOGO3,               I_LOGO3, 8, 28, 67, 138, WC_STATIC,
+                                            SS_BITMAP | WS_GROUP | WS_VISIBLE
+        CONTROL "Check for Internet Updates?", I_Welcome, 189, 152, 197, 65,
+                                            WC_STATIC, SS_TEXT | DT_CENTER |
+                                            WS_GROUP | WS_VISIBLE
+                PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
+        CONTROL "",                    I_Status, 12, 19, 371, 6, WC_STATIC,
+                                            SS_GROUPBOX | WS_GROUP | WS_VISIBLE
+        CONTROL "The installer can check the Internet to see if there has been an update to this software. We highly recommend that you only use the latest official release of this product.",
+                                       I_Info1, 190, 122, 196, 27, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "If you wish to check the Internet for updates to %PRODUCT%, please ensure that you are currently connected to the Internet before proceeding.",
+                                       I_Info2, 190, 99, 196, 27, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "If you do not have a connection to the Internet or do not wish to check for updates, click \x22Continue installation without checking\x22 and then \x22Next >>\x22",
+                                       I_Info3, 190, 67, 196, 35, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "",                    I_Grid, 192, 28, 189, 37, WC_STATIC,
+                                            SS_GROUPBOX | WS_GROUP | WS_VISIBLE
+        CONTROL "Check Internet for updates now (recommended)", I_Updates1,
+                                        201, 46, 174, 10, WC_BUTTON,
+                                            BS_AUTORADIOBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+                CTLDATA 6, 1, 0
+        CONTROL "Continue Installation without checking", I_Updates2,
+                                        201, 33, 127, 10, WC_BUTTON,
+                                            BS_AUTORADIOBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+    END
+END
+
+DLGTEMPLATE I_Dialog4 850
+BEGIN
+    DIALOG "Installer", I_Dialog4, 13, 72, 395, 224, FS_NOBYTEALIGN |
+                FS_DLGBORDER | WS_CLIPSIBLINGS | WS_SAVEBITS | WS_VISIBLE,
+                FCF_TITLEBAR
+    PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
+    BEGIN
+        CONTROL "Next >>",             I_Next, 321, 5, 48, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "Exit Installation",   I_Cancel, 12, 5, 59, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "<< Back",             I_Back, 275, 5, 46, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL I_LOGO3,               I_LOGO3, 8, 28, 67, 138, WC_STATIC,
+                                            SS_BITMAP | WS_GROUP | WS_VISIBLE
+        CONTROL "You have the latest version", I_Welcome, 189, 152, 197, 65,
+                                            WC_STATIC, SS_TEXT | DT_CENTER |
+                                            WS_GROUP | WS_VISIBLE
+                PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
+        CONTROL "",                    I_Status, 12, 19, 371, 6, WC_STATIC,
+                                            SS_GROUPBOX | WS_GROUP | WS_VISIBLE
+        CONTROL "",                    I_Info3, 191, 76, 193, 25, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "%PRODUCT% %VERSION% is the current version.  There have been no new product releases.",
+                                       I_Info1, 191, 133, 200, 19, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "To ensure that you are automatically notified when new releases become available, you can add your email address to the product inform list at: http://www.scitechsoft.com/mailing_lists.html",
+                                       I_Info2, 190, 106, 196, 23, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+    END
+END
+
+DLGTEMPLATE I_Dialog5 850
+BEGIN
+    DIALOG "Installer", I_Dialog5, 14, 56, 395, 224, FS_NOBYTEALIGN |
+                FS_DLGBORDER | WS_CLIPSIBLINGS | WS_SAVEBITS | WS_VISIBLE,
+                FCF_TITLEBAR
+    PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
+    BEGIN
+        CONTROL "Next >>",             I_Next, 321, 5, 48, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "Exit Installation",   I_Cancel, 12, 5, 59, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "<< Back",             I_Back, 275, 5, 46, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL I_LOGO3,               I_LOGO3, 8, 28, 67, 138, WC_STATIC,
+                                            SS_BITMAP | WS_GROUP | WS_VISIBLE
+        CONTROL "Newer version available", I_Welcome, 189, 152, 197, 65,
+                                            WC_STATIC, SS_TEXT | DT_CENTER |
+                                            WS_GROUP | WS_VISIBLE
+                PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
+        CONTROL "",                    I_Status, 12, 19, 371, 6, WC_STATIC,
+                                            SS_GROUPBOX | WS_GROUP | WS_VISIBLE
+        CONTROL "If you want to leave your current version and continue the installation click \x22Continue with current version\x22 then \x22Next >>\x22",
+                                       I_Info3, 191, 84, 193, 17, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "The version of %PRODUCT% that you have is not the most recent version.  %PRODUCT% %WEB_VER% was released on %WEB_DATE%. SciTech Software recommends you use this new version as it includes numerous new features and enhancements.",
+                                       I_Info1, 191, 123, 200, 29, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "If you would like to get version %WEB_VER%, click \x22Select download site and install new version\x22 then \x22Next >>\x22"
+                                       I_Info2, 190, 104, 196, 15, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "",                    I_Grid, 191, 28, 197, 39, WC_STATIC,
+                                            SS_GROUPBOX | WS_GROUP | WS_VISIBLE
+        CONTROL "Select download site and install new version (recommended)",
+                                       I_Updates1, 197, 46, 187, 10, WC_BUTTON,
+                                            BS_AUTORADIOBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+                CTLDATA 6, 1, 0
+        CONTROL "Continue with current version", I_Updates2, 197, 33, 184, 10,
+                                            WC_BUTTON, BS_AUTORADIOBUTTON |
+                                            WS_TABSTOP | WS_VISIBLE
+        CONTROL "Download Product Description and Release Notes", I_README,
+                                        199, 69, 179, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+    END
+END
+
+DLGTEMPLATE I_Dialog6 850
+BEGIN
+    DIALOG "Installer", I_Dialog6, 9, 76, 395, 224, FS_NOBYTEALIGN |
+                FS_DLGBORDER | WS_CLIPSIBLINGS | WS_SAVEBITS | WS_VISIBLE,
+                FCF_TITLEBAR
+    PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
+    BEGIN
+        CONTROL "Next >>",             I_Next, 321, 5, 48, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "Exit Installation",   I_Cancel, 12, 5, 59, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "<< Back",             I_Back, 275, 5, 46, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL I_LOGO3,               I_LOGO3, 8, 28, 67, 138, WC_STATIC,
+                                            SS_BITMAP | WS_GROUP | WS_VISIBLE
+        CONTROL "Select Download Site", I_Welcome, 189, 152, 197, 65, WC_STATIC,
+                                            SS_TEXT | DT_CENTER | WS_GROUP |
+                                            WS_VISIBLE
+                PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
+        CONTROL "",                    I_Status, 12, 19, 371, 6, WC_STATIC,
+                                            SS_GROUPBOX | WS_GROUP | WS_VISIBLE
+        CONTROL "Please choose the site you would like to use and click \x22Next >>\x22.",
+                                       I_Info1, 190, 128, 200, 23, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "Once the download of %PRODUCT% %WEB_VER% is complete, the installation process for the new version will begin.",
+                                       I_Info2, 190, 36, 196, 22, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "",                    I_Grid, 190, 65, 189, 63, WC_STATIC,
+                                            SS_GROUPBOX | WS_GROUP | WS_VISIBLE
+        CONTROL "%WEB_LOCATION1%",     I_Updates1, 199, 108, 175, 10, WC_BUTTON,
+                                            BS_AUTORADIOBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+                CTLDATA 6, 1, 0
+        CONTROL "%WEB_LOCATION2%",     I_Updates2, 199, 96, 174, 10, WC_BUTTON,
+                                            BS_AUTORADIOBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "%WEB_LOCATION3%",     I_Updates3, 199, 83, 173, 10, WC_BUTTON,
+                                            BS_AUTORADIOBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "%WEB_LOCATION4%",     I_Updates4, 199, 70, 177, 10, WC_BUTTON,
+                                            BS_AUTORADIOBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+    END
+END
+
+DLGTEMPLATE I_Dialog7 850
+BEGIN
+    DIALOG "Installer", I_Dialog7, 18, -72, 395, 224, FS_NOBYTEALIGN |
+                FS_DLGBORDER | WS_CLIPSIBLINGS | WS_SAVEBITS | WS_VISIBLE,
+                FCF_TITLEBAR
+    PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
+    BEGIN
+        CONTROL "Next >>",             I_Next, 321, 5, 48, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "Exit Installation",   I_Cancel, 12, 5, 59, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "<< Back",             I_Back, 275, 5, 46, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL I_LOGO4,               I_LOGO4, 8, 28, 67, 138, WC_STATIC,
+                                            SS_BITMAP | WS_GROUP | WS_VISIBLE
+        CONTROL "Select Installation Type", I_Welcome, 189, 122, 197, 97,
+                                            WC_STATIC, SS_TEXT | DT_CENTER |
+                                            WS_GROUP | WS_VISIBLE
+                PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
+        CONTROL "",                    I_Status, 12, 19, 371, 6, WC_STATIC,
+                                            SS_GROUPBOX | WS_GROUP | WS_VISIBLE
+        CONTROL "Please select the type of installation you want and click \x22Next >>\x22 to continue the installation procedure.",
+                                       I_Info2, 191, 94, 193, 22, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "",                    I_Grid, 205, 39, 161, 42, WC_STATIC,
+                                            SS_GROUPBOX | WS_GROUP | WS_VISIBLE
+        CONTROL "Express Installation", I_Updates1,
+                                        215, 61, 139, 10, WC_BUTTON,
+                                            BS_AUTORADIOBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+                CTLDATA 6, 1, 0
+        CONTROL "Custom Installation", I_Updates2, 215, 48, 115, 10, WC_BUTTON,
+                                            BS_AUTORADIOBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+    END
+END
+
+DLGTEMPLATE I_Dialog8 850
+BEGIN
+    DIALOG "Installer", I_Dialog8, 12, -57, 395, 224, FS_NOBYTEALIGN |
+                FS_DLGBORDER | WS_CLIPSIBLINGS | WS_SAVEBITS | WS_VISIBLE,
+                FCF_TITLEBAR
+    PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
+    BEGIN
+        CONTROL "Next >>",             I_Next, 321, 5, 48, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL I_LOGO5,               I_LOGO5, 8, 28, 67, 138, WC_STATIC,
+                                            SS_BITMAP | WS_GROUP | WS_VISIBLE
+        CONTROL "Select Destination Directory", I_Welcome, 189, 155, 197, 63,
+                                            WC_STATIC, SS_TEXT | DT_CENTER |
+                                            WS_GROUP | WS_VISIBLE
+                PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
+        CONTROL "",                    I_Status, 12, 19, 371, 6, WC_STATIC,
+                                            SS_GROUPBOX | WS_GROUP | WS_VISIBLE
+        CONTROL "",                    I_Dirs, 191, 47, 197, 74, WC_CONTAINER,
+                                            CCS_SINGLESEL | CCS_AUTOPOSITION |
+                                            CCS_READONLY | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "c:\\",                I_InstallDir, 194, 125, 193, 8,
+                                            WC_ENTRYFIELD, ES_AUTOSCROLL |
+                                            ES_MARGIN | WS_TABSTOP | WS_VISIBLE
+                CTLDATA 8, 400, 0, 0
+        CONTROL "c: OS/2",             I_Drives, 191, 9, 198, 32, WC_COMBOBOX,
+                                            CBS_DROPDOWNLIST | WS_GROUP |
+                                            WS_TABSTOP | WS_VISIBLE
+        CONTROL "Exit Installation",   I_Cancel, 12, 5, 59, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "<< Back",             I_Back, 275, 5, 46, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "Please select the directory where %PRODUCT% files are to be installed:",
+                                       I_Info1, 191, 137, 195, 15, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+    END
+END
+
+DLGTEMPLATE I_Dialog9 850
+BEGIN
+    DIALOG "Installer", I_Dialog9, 13, 71, 395, 224, FS_NOBYTEALIGN |
+                FS_DLGBORDER | WS_CLIPSIBLINGS | WS_SAVEBITS | WS_VISIBLE,
+                FCF_TITLEBAR
+    PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
+    BEGIN
+        CONTROL "Next >>",             I_Next, 321, 5, 48, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "Exit Installation",   I_Cancel, 12, 5, 59, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "<< Back",             I_Back, 275, 5, 46, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL I_LOGO3,               I_LOGO3, 8, 28, 67, 138, WC_STATIC,
+                                            SS_BITMAP | WS_GROUP | WS_VISIBLE
+        CONTROL "Configuration Options", I_Welcome, 189, 152, 197, 65, WC_STATIC,
+                                            SS_TEXT | DT_CENTER | WS_GROUP |
+                                            WS_VISIBLE
+                PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
+        CONTROL "",                    I_Status, 12, 19, 371, 6, WC_STATIC,
+                                            SS_GROUPBOX | WS_GROUP | WS_VISIBLE
+        CONTROL "For %PRODUCT% to operate properly, it is necessary to set a number of environment variables. The installer can perform the necessary changes.",
+                                       I_Info1, 190, 120, 196, 30, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "Choose to update CONFIG.SYS if %PRODUCT% is the only compiler you are planning to use.",
+                                       I_Info2, 190, 102, 196, 22, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "A SETENV.CMD file is useful if you use other compilers and/or other versions of %PRODUCT%. You will need to run SETENV.CMD each time before you can use %PRODUCT%.",
+                                       I_Info3, 190, 72, 196, 32, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "",                    I_Grid, 192, 28, 189, 37, WC_STATIC,
+                                            SS_GROUPBOX | WS_GROUP | WS_VISIBLE
+        CONTROL "Update CONFIG.SYS",   I_Updates1,
+                                        201, 46, 174, 10, WC_BUTTON,
+                                            BS_AUTORADIOBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+                CTLDATA 6, 1, 0
+        CONTROL "Create SETENV.CMD only",   I_Updates2,
+                                        201, 33, 127, 10, WC_BUTTON,
+                                            BS_AUTORADIOBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+    END
+END
+
+DLGTEMPLATE I_Dialog10 850
+BEGIN
+    DIALOG "Installer", I_Dialog10, 16, -60, 395, 224, FS_NOBYTEALIGN |
+                FS_DLGBORDER | WS_CLIPSIBLINGS | WS_SAVEBITS | WS_VISIBLE,
+                FCF_TITLEBAR
+    PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
+    BEGIN
+        CONTROL "Start Install",       I_Next, 321, 5, 48, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "Exit Installation",   I_Cancel, 12, 5, 59, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "<< Back",             I_Back, 275, 5, 46, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL I_LOGO6,               I_LOGO6, 8, 28, 67, 138, WC_STATIC,
+                                            SS_BITMAP | WS_GROUP | WS_VISIBLE
+        CONTROL "Ready to begin installation", I_Welcome, 189, 136, 197, 81,
+                                            WC_STATIC, SS_TEXT | DT_CENTER |
+                                            WS_GROUP | WS_VISIBLE
+                PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
+        CONTROL "",                    I_Status, 12, 19, 371, 6, WC_STATIC,
+                                            SS_GROUPBOX | WS_GROUP | WS_VISIBLE
+        CONTROL "Thank you for choosing %PRODUCT%! After installation, please review the Getting Started online book to learn important facts about %PRODUCT%.",
+                                       I_Info1, 192, 102, 196, 31, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "You can remove %PRODUCT% at any time after installation by running the Uninstall utility.",
+                                       I_Info2, 191, 62, 195, 37, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "",
+                                       I_Info3, 191, 26, 197, 33, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+    END
+END
+
+DLGTEMPLATE I_Dialog11 850
+BEGIN
+    DIALOG "Installer", I_Dialog11, 12, -68, 395, 224, FS_NOBYTEALIGN |
+                FS_DLGBORDER | WS_CLIPSIBLINGS | WS_SAVEBITS | WS_VISIBLE,
+                FCF_TITLEBAR
+    PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
+    BEGIN
+        CONTROL "Progress",            I_Progress, 191, 53, 198, 34, WC_STATIC,
+                                            SS_GROUPBOX | WS_GROUP | WS_VISIBLE
+                PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
+        CONTROL "Next >>",             I_Next, 321, 5, 48, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "Exit Installation",   I_Cancel, 12, 5, 59, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "<< Back",             I_Back, 275, 5, 46, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "test",                I_Percent, 195, 63, 188, 9, WC_SLIDER,
+                                            SLS_HORIZONTAL | SLS_TOP |
+                                            SLS_BUTTONSRIGHT | SLS_HOMELEFT |
+                                            SLS_READONLY | SLS_RIBBONSTRIP |
+                                            SLS_PRIMARYSCALE1 | WS_VISIBLE
+                CTLDATA 12, 0, 5, 55, 5, 5
+        CONTROL I_LOGO7,               I_LOGO7, 8, 28, 67, 138, WC_STATIC,
+                                            SS_BITMAP | WS_GROUP | WS_VISIBLE
+        CONTROL "Installing %PRODUCT%", I_Welcome,
+                                        189, 128, 197, 89, WC_STATIC, SS_TEXT |
+                                            DT_CENTER | WS_GROUP | WS_VISIBLE
+                PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
+        CONTROL "",                    I_Status, 12, 19, 371, 6, WC_STATIC,
+                                            SS_GROUPBOX | WS_GROUP | WS_VISIBLE
+        CONTROL "Please wait while %PRODUCT% installs on your computer. This may take a while....",
+                                       I_Info2, 191, 99, 196, 22, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "",                    I_Info3, 193, 30, 194, 19, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+    END
+END
+
+DLGTEMPLATE I_Dialog12 850
+BEGIN
+    DIALOG "Installer", I_Dialog12, 17, -58, 395, 224, FS_NOBYTEALIGN |
+                FS_DLGBORDER | WS_CLIPSIBLINGS | WS_SAVEBITS | WS_VISIBLE,
+                FCF_TITLEBAR
+    PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
+    BEGIN
+        CONTROL "Finish",              I_Next, 321, 5, 48, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "Exit Installation",   I_Cancel, 12, 5, 59, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_DISABLED | WS_VISIBLE
+        CONTROL "<< Back",             I_Back, 275, 5, 46, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_DISABLED | WS_VISIBLE
+        CONTROL I_LOGO8,               I_LOGO8, 8, 28, 67, 138, WC_STATIC,
+                                            SS_BITMAP | WS_GROUP | WS_VISIBLE
+        CONTROL "%PRODUCT% Installation Completed", I_Welcome,
+                                        190, 140, 197, 80, WC_STATIC, SS_TEXT |
+                                            DT_CENTER | WS_GROUP | WS_VISIBLE
+                PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
+        CONTROL "",                    I_Status, 12, 19, 371, 6, WC_STATIC,
+                                            SS_GROUPBOX | WS_GROUP | WS_VISIBLE
+        CONTROL "Installation of %PRODUCT% is now complete. You must reboot for the changes to take effect.",
+                                       I_Info1, 190, 119, 197, 18, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+        CONTROL "Thank you for using %PRODUCT%!", I_Info3,
+                                        191, 32, 190, 15, WC_STATIC, SS_TEXT |
+                                            WS_GROUP | WS_VISIBLE
+        CONTROL "",                    I_Grid, 209, 56, 137, 37, WC_STATIC,
+                                            SS_GROUPBOX | WS_GROUP | WS_VISIBLE
+        CONTROL "Reboot now",          I_Updates1, 223, 73, 111, 10,
+                                            WC_BUTTON, BS_AUTORADIOBUTTON |
+                                            WS_TABSTOP | WS_VISIBLE
+        CONTROL "Reboot later",        I_Drives, 223, 62, 109, 10, WC_BUTTON,
+                                            BS_AUTORADIOBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+                CTLDATA 6, 1, 0 // Make default
+    END
+END
+
+DLGTEMPLATE I_Karte 850
+BEGIN
+    DIALOG "Installer", I_Karte, 182, 151, 178, 62, FS_NOBYTEALIGN |
+                FS_DLGBORDER | WS_CLIPSIBLINGS | WS_SAVEBITS | WS_VISIBLE,
+                FCF_TITLEBAR | FCF_SYSMENU
+    PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
+    BEGIN
+        CONTROL "Yes",                 I_Ja, 5, 5, 38, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | BS_DEFAULT |
+                                            WS_GROUP | WS_TABSTOP | WS_VISIBLE
+                PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
+        CONTROL "No",                  I_Nein, 49, 5, 38, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+                PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
+        CONTROL "All",                 I_Alle, 92, 5, 38, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+                PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
+        CONTROL "Cancel",              I_Halt, 134, 5, 38, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+                PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans Bold"
+        CONTROL "",                    I_Confirm, 8, 21, 161, 35, WC_STATIC,
+                                            SS_TEXT | DT_WORDBREAK | WS_GROUP |
+                                            WS_VISIBLE
+    END
+END
+
+DLGTEMPLATE I_Cancel2 850
+BEGIN
+    DIALOG "Packages to Install", I_Cancel2, 15, 137, 301, 135, FS_NOBYTEALIGN |
+                FS_DLGBORDER | WS_CLIPSIBLINGS | WS_SAVEBITS | WS_VISIBLE,
+                FCF_TITLEBAR | FCF_SYSMENU
+    PRESPARAMS PP_FONTNAMESIZE, "9.WarpSans"
+    BEGIN
+        CONTROL "",                    I_Logo16, 9, 10, 224, 118, WC_LISTBOX,
+                                            LS_NOADJUSTPOS | LS_MULTIPLESEL |
+                                            WS_VISIBLE
+        CONTROL "OK",                  PB_OK, 239, 113, 53, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "Select All",          PB_SELECTALL, 239, 77, 53, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+        CONTROL "Deselect All",        PB_DESELECTALL, 239, 59, 53, 12,
+                                            WC_BUTTON, BS_PUSHBUTTON |
+                                            WS_TABSTOP | WS_VISIBLE
+        CONTROL "Cancel",              PB_CANCEL, 239, 96, 53, 12, WC_BUTTON,
+                                            BS_PUSHBUTTON | WS_TABSTOP |
+                                            WS_VISIBLE
+    END
+END
