@@ -73,7 +73,7 @@ _start proc near
         mov     _STACKTOP,esp   ; set stack top
         pop     ecx             ; Pop the argument count.
         mov     esi,esp         ; argv starts just at the current stack top
-        lea     eax,esi + ecx*4 + 4
+        lea     eax,[esi + ecx*4 + 4]
         push    eax             ; Push arge (pointer to environment)
         push    esi             ; Push argv
         push    ecx             ; Push argc
