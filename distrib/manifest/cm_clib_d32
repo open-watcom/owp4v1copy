@@ -1,8 +1,5 @@
 # Manifest file for common runtime libraries + stubs (C/C++/Fortran, DOS 32-bit target)
 
-lib386\dos\adiestrt.obj
-lib386\dos\adifstrt.obj
-lib386\dos\adsstart.obj
 lib386\dos\binmode.obj
 lib386\dos\clib3r.lib
 lib386\dos\clib3s.lib

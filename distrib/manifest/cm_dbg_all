@@ -1,7 +1,6 @@
 # Manifest file for debugger binaries (Watcom C/C++/Fortran, All hosts)
 
 binw\addsrc.dbg
-binw\ads.dbg
 binw\animate.dbg
 binw\bcnt.dbg
 binw\bif.dbg
@@ -14,7 +13,6 @@ binw\cvkeys.dbg
 binw\default.dbg
 binw\fill.dbg
 binw\fortran.prs
-binw\fox.dbg
 binw\mono.dbg
 binw\nwvkeys.dbg
 binw\owvkeys.dbg

@@ -1,7 +1,5 @@
 # Manifest file for debugger binaries (Watcom C/C++/Fortran, DOS host)
 
-binw\ads.trp			
-binw\adshelp.exp
 binw\net.trp
 binw\nmp.trp
 binw\nov.trp
@@ -20,5 +18,4 @@ binw\wprof.exe
 binw\wsample.exe
 binw\wsamprsi.exe
 binw\wsamppls.exp
-
 
