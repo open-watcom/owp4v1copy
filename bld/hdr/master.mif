@@ -6,119 +6,128 @@ splice = wsplice -i.. -k$(system) $(options) ../common.sp $[@ $^@
 psplice = wsplice -i.. -k$(system) $(options) $(options_$^&) ../common.sp $[@ $^@
 
 .EXTENSIONS
-.EXTENSIONS : .h .hpp .gh .cnv .mh .mhp
+.EXTENSIONS : .h .hpp .cnv .mh .mhp
 
 #
-# Handle cname style headers as files with *.gh extension.
-# Extension is removed when they are copied to the release tree.
+# Handle C++ and cname style headers through .default command.
 #
+
+.DEFAULT
+        $(psplice)
+
+common_no_ext = &
+        algorith &
+        bitset &
+        cassert &
+        cctype &
+        cerrno &
+        cfloat &
+        ciso646 &
+        climits &
+        clocale &
+        cmath &
+        complex &
+        csetjmp &
+        csignal &
+        cstdarg &
+        cstddef &
+        cstdio &
+        cstdlib &
+        cstring &
+        ctime &
+        cwchar &
+        cwctype &
+        deque &
+        exceptio &
+        fstream &
+        function &
+        iomanip &
+        ios &
+        iosfwd &
+        iostream &
+        istream &
+        iterator &
+        limits &
+        list &
+        locale &
+        map &
+        memory &
+        new &
+        numeric &
+        ostream &
+        queue &
+        set &
+        sstream &
+        stack &
+        stdexcep &
+        streambu &
+        string &
+        strstrea &
+        typeinfo &
+        utility &
+        valarray &
+        vector
 
 common = &
+        $(common_no_ext) &
         _comdef.h &
         _strdef.h &
-        algorith.gh &
         assert.h &
-        bitset.gh &
-        cassert.gh &
-        cctype.gh &
-        cerrno.gh &
-        cfloat.gh &
-        ciso646.gh &
-        climits.gh &
-        clocale.gh &
-        cmath.gh &
-        complex.gh &
         complex.h &
         conio.h &
         crtdbg.h &
-        csetjmp.gh &
-        csignal.gh &
-        cstdarg.gh &
-        cstddef.gh &
-        cstdio.gh &
-        cstdlib.gh &
-        cstring.gh &
-        ctime.gh &
         ctype.h &
-        cwchar.gh &
-        cwctype.gh &
-        deque.gh &
         env.h &
         errno.h &
         except.h &
-        exceptio.gh &
         exceptio.h &
         excpt.h &
         exstring.h &
         fcntl.h &
         fenv.h &
         float.h &
-        fstream.gh &
         fstream.h &
-        function.gh &
         generic.h &
         graph.h &
         i86.h &
         inttypes.h &
-        iomanip.gh &
         iomanip.h &
-        ios.gh &
         ios.h &
-        iosfwd.gh &
         iosfwd.h &
-        iostream.gh &
         iostream.h &
         iso646.h &
-        istream.gh &
         istream.h &
-        iterator.gh &
         jctype.h &
         jstring.h &
         jtime.h &
-        limits.gh &
         limits.h &
-        list.gh &
-        locale.gh &
         locale.h &
         malloc.h &
-        map.gh &
         math.h &
         mbctype.h &
         mbstring.h &
         mem.h &
-        memory.gh &
         mmintrin.h &
-        new.gh &
         new.h &
-        numeric.gh &
-        ostream.gh &
         ostream.h &
         pgchart.h &
         process.h &
-        queue.gh &
         search.h &
-        set.gh &
         setjmp.h &
         share.h &
         signal.h &
-        sstream.gh &
         sstream.h &
-        stack.gh &
         stdarg.h &
         stdbool.h &
         stddef.h &
-        stdexcep.gh &
         stdexcep.h &
         stdint.h &
         stdio.h &
         stdiobuf.h &
         stdlib.h &
-        streambu.gh &
         streambu.h &
-        string.gh &
         string.h &
         string.hpp &
-        strstrea.gh &
         strstrea.h &
         sys/locking.h &
         sys/stat.h &
@@ -126,12 +135,8 @@ common = &
         sys/types.h &
         tchar.h &
         time.h &
-        typeinfo.gh &
         typeinfo.h &
-        utility.gh &
-        valarray.gh &
         varargs.h &
-        vector.gh &
         wcdefs.h &
         wcexcept.h &
         wchar.h &
@@ -362,9 +367,6 @@ all : $($(system)_files) .symbolic
 .mh.cnv:
         $(splice)
 
-.mh.gh:
-        $(psplice)
-
 #
 # Special case for sys/time.h since there is also a time.h
 #
@@ -420,45 +422,8 @@ options_string   = -kCPPSTRING
 options_strstrea = -kCNAME
 options_typeinfo = -kCNAME
 
-cassert.gh :
-        $(psplice)
-cctype.gh :
-        $(psplice)
-cerrno.gh :
-        $(psplice)
-cfloat.gh :
-        $(psplice)
-ciso646.gh :
-        $(psplice)
-climits.gh :
-        $(psplice)
-clocale.gh :
-        $(psplice)
-cmath.gh :
-        $(psplice)
-csetjmp.gh :
-        $(psplice)
-csignal.gh :
-        $(psplice)
-cstdarg.gh :
-        $(psplice)
-cstddef.gh :
-        $(psplice)
-cstdio.gh :
-        $(psplice)
-cstdlib.gh :
-        $(psplice)
-cstring.gh :
-        $(psplice)
-ctime.gh :
-        $(psplice)
-cwchar.gh :
-        $(psplice)
-cwctype.gh :
-        $(psplice)
-
 clean: .SYMBOLIC
-      rm -f *.h *.gh sys/*.h *.hpp common.cnv
+      rm -f *.h sys/*.h *.hpp common.cnv $(common_no_ext)
 !ifeq system DOS
       rm -f win/*.h
 !else ifeq system LINUX
