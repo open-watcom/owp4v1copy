@@ -146,9 +146,9 @@ echo Languages Build <1>
 [ INCLUDE <devdir>\pbide\lang.ctl ]
 [ INCLUDE <devdir>\trmem\lang.ctl ]
 #[ INCLUDE <devdir>\version\lang.ctl ]
+[ INCLUDE <devdir>\dmpobj\lang.ctl ]
 [ INCLUDE <devdir>\wpack\lang.ctl ]
 [ INCLUDE <devdir>\cvpack\lang.ctl ]
-#[ INCLUDE <devdir>\build\lang.ctl ]
 #[ INCLUDE <devdir>\wic\lang.ctl ]      SH: Removed as not needed for 11.0c
 [ INCLUDE <devdir>\redist\lang.ctl ]
 
