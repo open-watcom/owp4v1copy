@@ -24,11 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of helper function for assert macro.
+* Description:  Implementation of helper function for C99 style assert macro.
 *
 ****************************************************************************/
 
-
+// This is a clone of assert.c - adding another level of conditional
+// compilation would make things more complex, not simpler
 #include "variety.h"
 #include "widechar.h"
 #include "enterdb.h"
@@ -54,7 +55,7 @@
     #endif
 #endif
 
-#define STR_SIZE        128
+#define STR_SIZE        256
 
 #if defined(__WIDECHAR__) && !(defined(__WINDOWS__) || defined(__WINDOWS_386__))
     #define _WCH(a)     L ## a
@@ -71,13 +72,13 @@
 #endif
 
 #define LEAD_STRING     _WCH("Assertion failed: ")
-#define FMT_STRING      _WCH("%hs, file %hs, line %d\n")
+#define FMT_STRING      _WCH("%hs, function %hs, file %hs, line %d.\n")
 
 #if !defined(__WIDECHAR__)
     static int __extra_return;
 #endif
 
-_WCRTLINK void __F_NAME(_assert,_wassert)( char *expr, char *fn, int line_num ) {
+_WCRTLINK void __F_NAME(_assert99,_wassert99)( char *expr, char *func, char *fn, int line_num ) {
     _WCH_TYPE   str[STR_SIZE];
 
     #if !defined(__WIDECHAR__)
@@ -89,14 +90,13 @@ _WCRTLINK void __F_NAME(_assert,_wassert)( char *expr, char *fn, int line_num ) 
     #endif
 
     #if defined(__NETWARE__)
-        sprintf( str, FMT_STRING, expr, fn, line_num );
+        sprintf( str, FMT_STRING, expr, func, fn, line_num );
     #elif defined(__WINDOWS__) || defined(__WINDOWS_386__)
-        _snprintf( str, STR_SIZE, FMT_STRING, expr, fn, line_num );
+        _snprintf( str, STR_SIZE, FMT_STRING, expr, func, fn, line_num );
     #elif defined(__NT__)
-        // __AXP__ wsprintf( str, FMT_STRING, expr, fn, line_num );
-        __F_NAME(_snprintf,swprintf)( str, STR_SIZE, LEAD_STRING FMT_STRING, expr, fn, line_num );
+        __F_NAME(_snprintf,swprintf)( str, STR_SIZE, LEAD_STRING FMT_STRING, expr, func, fn, line_num );
     #else
-        __F_NAME(_snprintf,swprintf)( str, STR_SIZE, LEAD_STRING FMT_STRING, expr, fn, line_num );
+        __F_NAME(_snprintf,swprintf)( str, STR_SIZE, LEAD_STRING FMT_STRING, expr, func, fn, line_num );
     #endif
     #if !defined(__WIDECHAR__)
         if( __WD_Present ) {
@@ -115,7 +115,7 @@ _WCRTLINK void __F_NAME(_assert,_wassert)( char *expr, char *fn, int line_num ) 
 
             rc = __F_NAME(fputs,fputws)( str, stderr);
             if( ( rc == EOF ) && ( errno == EBADF ) ) {
-                __F_NAME(_snprintf,swprintf)( str, STR_SIZE, FMT_STRING, expr, fn, line_num );
+                __F_NAME(_snprintf,swprintf)( str, STR_SIZE, FMT_STRING, expr, func, fn, line_num );
                 MessageBox( NULL, str, TITLE_STRING, MB_OK | MB_TASKMODAL );
             }
         #elif defined( __OS2__ ) && defined( __386__ )
@@ -137,7 +137,7 @@ _WCRTLINK void __F_NAME(_assert,_wassert)( char *expr, char *fn, int line_num ) 
                 #else
                     char *outstr = str;
                 #endif
-                __F_NAME(_snprintf,swprintf)( str, STR_SIZE, FMT_STRING, expr, fn, line_num );
+                __F_NAME(_snprintf,swprintf)( str, STR_SIZE, FMT_STRING, expr, func, fn, line_num );
                 #if defined( __WIDECHAR__ )
                     wcstombs( outstr, str, MB_CUR_MAX * STR_SIZE );
                 #endif
@@ -154,12 +154,12 @@ _WCRTLINK void __F_NAME(_assert,_wassert)( char *expr, char *fn, int line_num ) 
     }
 }
 
-_WCRTLINK void __F_NAME(__assert,__wassert)( int value, char *expr, char *fn, int line_num )
+_WCRTLINK void __F_NAME(__assert99,__wassert99)( int value, char *expr, char *func, char *fn, int line_num )
 {
     if( !value ) {
         #if !defined(__WIDECHAR__)
             __extra_return = 1;
         #endif
-        __F_NAME(_assert,_wassert)( expr, fn, line_num );
+        __F_NAME(_assert99,_wassert99)( expr, func, fn, line_num );
     }
 }

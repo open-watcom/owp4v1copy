@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Wide character version of assert helper routines.
+* Description:  Wide character version of C99 style assert helper routines.
 *
 ****************************************************************************/
 
@@ -34,4 +34,4 @@
 #define __WIDECHAR__
 #define UNICODE
 #undef __INLINE_FUNCTIONS__
-#include "assert.c"
+#include "assert99.c"
