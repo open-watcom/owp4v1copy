@@ -1,8 +1,4 @@
 #ifndef _NLSCMPERROR
-:segment CNAME
- #include <climits>
-:elsesegment
- #include <limits.h>
-:endsegment
- #define _NLSCMPERROR INT_MAX
+ /* For MS compatibility, equal to INT_MAX */
+ #define _NLSCMPERROR ((int)((unsigned int)~0 >> 1))
 #endif

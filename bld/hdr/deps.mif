@@ -16,7 +16,7 @@ stdarg_deps = ../watcom/stdarg.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp .
 stddef_deps = ../watcom/stddef.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../null.sp ../ptrdiff.sp ../sizet.sp ../wchar_t.sp
 stdio_deps = ../watcom/stdio.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../ext.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../valist.sp ../wchar_t.sp ../wctypet.sp
 stdlib_deps = ../watcom/stdlib.mh ../readonly.sp ../alloca.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../errno.sp ../ext.sp ../maxpath.sp ../mbmax.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../wchar_t.sp
-string_deps = ../watcom/string.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp
+string_deps = ../watcom/string.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp ../nlserror.sp
 time_deps = ../watcom/time.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp ../timet.sp ../wchar_t.sp ../clockt.sp
 wchar_deps = ../watcom/wchar.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../mbmax.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp
 wctype_deps = ../watcom/wctype.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../wchar_t.sp ../wctypet.sp
@@ -157,7 +157,7 @@ locale.h        : $(locale_deps)
 malloc.h        : ../watcom/malloc.mh ../readonly.sp ../alloca.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../null.sp ../poppack.sp ../pshpackl.sp ../sizet.sp
 math.h          : $(math_deps)
 mbctype.h       : ../watcom/mbctype.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../mbmax.sp ../null.sp ../sizet.sp ../wchar_t.sp
-mbstring.h      : ../watcom/mbstring.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../mbmax.sp ../null.sp ../sizet.sp ../wchar_t.sp
+mbstring.h      : ../watcom/mbstring.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../mbmax.sp ../null.sp ../sizet.sp ../wchar_t.sp ../nlserror.sp
 mem.h           : ../watcom/mem.mh ../readonly.sp ../crwat.sp ../ptrdiff.sp
 memory.h        : $(memory_deps)
 mmintrin.h      : ../watcom/mmintrin.mh ../readonly.sp ../crwat.sp ../cplusepi.sp ../cpluspro.sp
