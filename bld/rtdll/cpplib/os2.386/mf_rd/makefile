@@ -3,7 +3,7 @@
 component  = cpplib
 processor  = 386
 model      = mf
-subdir     = mf_rd
+subdir     = mf_r
 system     = os2
 convention = register
 debug      = 1

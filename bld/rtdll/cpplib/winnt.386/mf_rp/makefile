@@ -2,7 +2,7 @@
 component=cpplib
 processor=386
 model=mf
-subdir=mf_rp
+subdir=mf_r
 system=winnt
 convention=register
 profile=1
