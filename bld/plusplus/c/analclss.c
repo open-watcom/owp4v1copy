@@ -1907,8 +1907,8 @@ static boolean isForThisItem(   // IS CDOPT ITER FOR THIS ITEM?
 }
 
 
-static getComponentKind         // GET DTC_... FOR COMPONENT
-    ( ctor_init options )       // - options
+static unsigned getComponentKind( // GET DTC_... FOR COMPONENT
+    ctor_init options )         // - options
 {
     unsigned kind = DTC_COMP_DBASE;
     if( options & CI_EXACT ) {

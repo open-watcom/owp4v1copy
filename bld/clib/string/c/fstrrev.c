@@ -59,7 +59,7 @@
 *****************************************************************************
 */
 
-extern fast_rev( char _WCFAR * );
+extern void fast_rev( char _WCFAR * );
 
 #pragma aux     fast_rev = \
         0x1e            /* push ds */\

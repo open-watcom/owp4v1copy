@@ -53,8 +53,8 @@
 #endif
 
 #if defined(__DOS_386__) && !defined(__OSI__)
-    extern     __GETDSStart_;
-    extern     __GETDSEnd_;
+    extern int __GETDSStart_;
+    extern int __GETDSEnd_;
     extern int __DPMI_hosted(void);
 #endif
 

@@ -44,8 +44,8 @@ extern  void    __Fini_FPE_handler();
 extern  void    __Enable_FPE();
 extern  void    _WCI86FAR __sigfpe_handler();
 #ifdef __DOS_386__
-extern     __FPEHandlerStart_;
-extern     __FPEHandlerEnd_;
+extern int __FPEHandlerStart_;
+extern int __FPEHandlerEnd_;
 extern int __DPMI_hosted(void);
 #endif
 

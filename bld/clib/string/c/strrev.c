@@ -64,7 +64,7 @@ extern size_t wcslen( const CHAR_TYPE * );
 *****************************************************************************
 */
 
-extern fast_rev( char *, char _WCFAR * );
+extern void fast_rev( char *, char _WCFAR * );
 
 #if defined(__SMALL_DATA__)
 #pragma aux     fast_rev = \
