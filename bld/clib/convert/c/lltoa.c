@@ -36,9 +36,9 @@
 #include <stdlib.h>
 
 static const char _WCI86FAR Alphabet[] = "0123456789abcdefghijklmnopqrstuvwxyz";
-
+#if defined(__386__) || defined(M_I86)
+unsigned __int64 __ulldiv( unsigned __int64, unsigned _WCNEAR *);
 #if defined(__386__)
-    unsigned __int64 __ulldiv( unsigned __int64, unsigned *);
     #pragma aux __ulldiv = \
         "xor ecx,ecx"     /* set high word of quotient to 0 */ \
         "cmp edx,dword ptr[ebx]" /* if quotient will be >= 4G */ \
@@ -53,7 +53,6 @@ static const char _WCI86FAR Alphabet[] = "0123456789abcdefghijklmnopqrstuvwxyz";
         "mov [ebx],edx"   /* store remainder */ \
         parm [eax edx] [ebx] value [eax ecx];
 #elif defined(M_I86)  && defined(__BIG_DATA__)
-    unsigned __int64 __ulldiv( unsigned __int64, unsigned *);
     #pragma aux __ulldiv = \
         "mov di,dx"        /* initial dividend = ax:bx:cx:dx(di); save dx */ \
         "test ax,ax"       /* less work to do if ax == 0 */ \
@@ -82,7 +81,7 @@ static const char _WCI86FAR Alphabet[] = "0123456789abcdefghijklmnopqrstuvwxyz";
         "mov bx,cx" \
         "mov cx,di" \
         "jmp end_div" \
-      "skip1:"      /* dx==0 */  \
+      "skip1:"      /* ax==0 */  \
         "test bx,bx"       /* even less work to do if bx == 0 too */ \
         "jz skip2" \
         "mov dx,bx"        /* dx:ax = bx:cx */ \
@@ -109,7 +108,6 @@ static const char _WCI86FAR Alphabet[] = "0123456789abcdefghijklmnopqrstuvwxyz";
       "end_div:" \
         parm [ax bx cx dx] [si] modify [di] value [ax bx cx dx];
 #elif defined(M_I86) && defined(__SMALL_DATA__)
-    unsigned __int64 __ulldiv( unsigned __int64, unsigned *);
     #pragma aux __ulldiv = \
         "mov di,dx"        /* initial dividend = ax:bx:cx:dx(di); save dx */ \
         "test ax,ax"       /* less work to do if ax == 0 */ \
@@ -165,6 +163,7 @@ static const char _WCI86FAR Alphabet[] = "0123456789abcdefghijklmnopqrstuvwxyz";
       "end_div:" \
         parm [ax bx cx dx] [si] modify [di] value [ax bx cx dx];
 #endif
+#endif
 
 _WCRTLINK CHAR_TYPE *__F_NAME(__clib_ulltoa,__clib_wulltoa)(
         unsigned __int64 value,
@@ -181,7 +180,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(__clib_ulltoa,__clib_wulltoa)(
         do {
 #if defined(__386__) || defined(M_I86)
             rem = radix;
-            value = __ulldiv( value, &rem );
+            value = __ulldiv( value, (unsigned _WCNEAR *) &rem );
 #else
             rem = value % radix;
             value = value / radix;
