@@ -2,16 +2,16 @@ c$ifdef nt
 c$pragma aux __stdcall "_*" parm routine [] \
 c                           value struct struct caller [] \
 c                           modify [eax ebx ecx edx]
-c$pragma aux (__stdcall) Sleep parm( value )
-c$pragma aux (__stdcall) CreateMutex "_*A" parm( value )
-c$pragma aux (__stdcall) CloseHandle parm( value )
-c$pragma aux (__stdcall) WaitForSingleObject parm( value )
-c$pragma aux (__stdcall) ReleaseMutex parm( value )
+c$pragma aux (__stdcall) Sleep parm( value*4 )
+c$pragma aux (__stdcall) CreateMutex "_*A" parm( reference, value*4, reference )
+c$pragma aux (__stdcall) CloseHandle parm( value*4 )
+c$pragma aux (__stdcall) WaitForSingleObject parm( value*4 )
+c$pragma aux (__stdcall) ReleaseMutex parm( value*4 )
 c$else
-c$pragma aux (__syscall) DosSleep parm( value )
+c$pragma aux (__syscall) DosSleep parm( value*4 )
 c$pragma aux (__syscall) DosEnterCritSec
 c$pragma aux (__syscall) DosEnterExitSec
-c$pragma aux (__syscall) DosKillThread parm( value )
+c$pragma aux (__syscall) DosKillThread parm( value*4 )
 c$endif
 
         integer NumThreads, MaxThreads

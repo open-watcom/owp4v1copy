@@ -2,9 +2,9 @@ c$ifdef nt
 c$pragma aux __stdcall "_*" parm routine [] \
 c                           value struct struct caller [] \
 c                           modify [eax ebx ecx edx]
-c$pragma aux (__stdcall) Sleep parm( value )
+c$pragma aux (__stdcall) Sleep parm( value*4 )
 c$else
-c$pragma aux (__syscall) DosSleep parm( value )
+c$pragma aux (__syscall) DosSleep parm( value*4 )
 c$endif
 
         subroutine dll_entry_1()
