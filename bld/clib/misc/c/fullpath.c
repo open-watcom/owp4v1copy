@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of fullpath() - returns fully qualified
+*               pathname of a file.
 *
 ****************************************************************************/
 
@@ -335,11 +335,11 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
         rc = DosQueryPathInfo( root, FIL_QUERYFULLNAME, buff, size );
         if( rc != NO_ERROR ) {
             /*** Drive does not exist; return x:\filename.ext ***/
-            _WILL_FIT( __F_NAME(_mbslen,wcslen)( &path[2] ) + 3 );
+            _WILL_FIT( __F_NAME(strlen,wcslen)( &path[2] ) + 3 );
             buff[0] = root[0];
             buff[1] = ':';
             buff[2] = '\\';
-            __F_NAME(_mbscpy,wcscpy)( &buff[3], &path[2] );
+            __F_NAME(strcpy,wcscpy)( &buff[3], &path[2] );
             return( buff );
         }
     }
@@ -439,7 +439,7 @@ _WCRTLINK CHAR_TYPE *__F_NAME(_sys_fullpath,_sys_wfullpath)
             return( NULL );
         }
   #endif
-        len = __F_NAME(strlen,_mbslen)( curr_dir );
+        len = strlen( curr_dir );
         if( curr_dir[0] != '\\' ) {
             _WILL_FIT( 1 );
             *(q++) = '\\';
