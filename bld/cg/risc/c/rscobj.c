@@ -1077,8 +1077,10 @@ extern  bool    CodeHasAbsPatch( oc_entry *code ) {
     return( FALSE );    // NYI
 }
 
-static  bool    relocBefore( byte_seq_reloc *p1, byte_seq_reloc *p2 ) {
+static  bool    relocBefore( void *_p1, void *_p2 ) {
 /*********************************************************************/
+    byte_seq_reloc *p1 = _p1;
+    byte_seq_reloc *p2 = _p2;
 
     if( p1->off == p2->off ) {
         /*
