@@ -239,15 +239,17 @@ proj_cpp_flags   = $(extra_cpp_flags) $(extra_cpp_flags_$(host_cpu)) $(extra_cpp
 cppflags         = $(cppflags_all) $(proj_cpp_flags)
 clflags          = $(mode_clflags) $(clflags_$(host_os)_$(host_cpu)) $(extra_cl_flags) -fe=$^@ -fm
 
-aflags_all      =-w4
-!ifdef __LINUX__
-aflags_all      += -fo=.obj
-!endif
+aflags_all      =
 
-aflags_386      = -3
-aflags_i86      =
-aflags_axp      =
-aflags_ppc      =
+!ifdef __UNIX__
+aflags_386      = -3-w4-fo=.obj
+aflags_i86      = -w4-fo=.obj
+!else
+aflags_386      = -3-w4
+aflags_i86      = -w4
+!endif
+aflags_axp      = -we
+aflags_ppc      = -we
 
 aflags_nt       = -bt=nt
 aflags_win      = -bt=windows
