@@ -1,0 +1,30 @@
+proj_name = yacc
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+inc_dirs = $(yacc_dir)\h
+
+.c: ..\c
+
+objs =                  &
+        bitsets.obj     &
+        buildpro.obj    &
+        default.obj     &
+        defshift.obj    &
+        dont_opt.obj    &
+        elimunit.obj    &
+        fpopen.obj      &
+        getname.obj     &
+        lalr1.obj       &
+        lr0.obj         &
+        parse.obj       &
+        sentence.obj    &
+        used.obj        &
+        yacc.obj
+
+table_objs = gentable.obj genfast.obj gensupp.obj
+
+$(proj_name).exe : $(objs) $(table_objs)
+        $(linker) option quiet $(lflags) name $^. file { $< }
