@@ -97,7 +97,7 @@ $(fname).$(exe) : eraseall.obj $(objs) $(sys_objs) $(dip_objs) $(mad_objs) $(wpr
 !ifdef resfile
 !ifeq sys_windowed 1
 !ifeq host_OS os2
-    $(lang_root)\binp\rc $(rc_flags) $(resfile) $(fname).exe
+    $(rc) $(rc_flags) $(resfile) $(fname).exe
 !else
     $(rc) $(rc_flags) $(resfile) $(fname).exe
 !endif
@@ -116,11 +116,23 @@ wprof.res : wprof.rc
         set include=$(lang_root)\h\os2;$(rcinclude);$(%include)
         wcc -dRC -i$(aui_dir)\pmf;$(rcinclude) -p -pw=0 -fo=wprof.i wprof.rc
 #       wcc -dRC -i$(aui_dir)\pmf;$(rcinclude) -p -pw=0 -fo=wprofj.i wprof.rc /dJAPANESE_MESSAGES
+
+!ifndef %use_os2tk_stuff
+
         set opath=$(%path)
         set path=$(lang_root)\binp
-        $(lang_root)\binp\rc -i $(lang_root)\h\os2 -r foros2pm.rc
+
+!endif
+
+        $(rc) -i $(inc_dirs_sys) -r foros2pm.rc
         copy foros2pm.res wprof.res
+
+!ifndef %use_os2tk_stuff
+
         set path=$(%opath)
+
+!endif
+
         @set include=$(%oinc)
 !else
 !ifeq sys_windowed 1
