@@ -233,11 +233,14 @@ cv : .SYMBOLIC $(trperr_h) $(jtrperr_h)
         @%make $(dtarget)
         !cvpack $(dtarget)
 
-$(trperr_h) $(jtrperr_h) : $(mkstr_c) $(trap_msg)
-        wcl386 $(mkstr_c) -zq -dJAPANESE_MESSAGES -i"$(trap_dir)/h"
-        mkstr $(jtrperr_h)
-        wcl386 $(mkstr_c) -zq -i"$(trap_dir)/h"
-        mkstr $(trperr_h)
+$(trperr_h) : $(mkstr_c) $(trap_msg)
+        wcl386 $[@ -zq -i"$(trap_dir)\h"
+        mkstr $^@
+        rm -f mkstr.*
+
+$(jtrperr_h) : $(mkstr_c) $(trap_msg)
+        wcl386 $[@ -zq -dJAPANESE_MESSAGES -i"$(trap_dir)\h"
+        mkstr $^@
         rm -f mkstr.*
 
 !ifndef extra_dobjs
