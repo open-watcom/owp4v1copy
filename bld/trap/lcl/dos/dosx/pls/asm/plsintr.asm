@@ -90,7 +90,7 @@ restintr        macro   num,reg
             endif
                 mov     es,cs:dataseg           ; get addressability
                 mov     ax,2504H                ; set pm interrupt
-                lds     edx,pword ptr es:i&num&off
+                lds     edx,fword ptr es:i&num&off
                 cmp     word ptr es:i&num&seg,0
                 je      no&num
                 int     21h
@@ -134,13 +134,13 @@ assume  ds:flat,cs:flat
 
 _text segment byte public 'code'
 
-int5          proc    near
+int05H          proc    near
                 push    ds                      ; save ds
                 mov     ds,cs:dataseg           ; set it up
                 mov     ds:break_hit,1          ; break hit!
                 pop     ds                      ; restore ds
                 iretd
-int5          endp
+int05H          endp
 
 public          intKB
 intKB           proc    near
@@ -166,11 +166,11 @@ intKB           proc    near
                 push    cs                      ; ...
                 push    offset return           ; ...
                 jmp     chip_bug_1              ; bug in the chip
-chip_bug_1:     jmp     pword ptr cs:iKBoff     ; ...
+chip_bug_1:     jmp     fword ptr cs:iKBoff     ; ...
 ver2:
                 pushfd                          ; push flags
                 jmp     chip_bug_2              ; BUG IN THE CHIP!!! (don't ask)
-chip_bug_2:     call    pword ptr cs:kbloffs    ; chain to old handler
+chip_bug_2:     call    fword ptr cs:kbloffs    ; chain to old handler
 
 return:         mov     esp,cs:saveesp          ; old handler might not pop FL!
                 push    ds                      ; save regs again
@@ -210,19 +210,17 @@ chip_bug_3:     iretd                           ; return to caller
 intKB           endp
 
 public          int20H
-int32          proc    near                    ; terminate request
-int20H:
+int20H          proc    near                    ; terminate request
                 push    ds                      ; save ds
                 mov     ds,cs:dataseg           ; set it up
                 dec     byte ptr spawned        ; if no spawned subprocess
                 pop     ds                      ; restore ds
                 js      fakebreak               ; - fake up a break point
-                jmp     pword ptr cs:i32off    ; chain to old handler
-int32          endp
+                jmp     fword ptr cs:i20Hoff    ; chain to old handler
+int20H          endp
 
 public          int21H
-int33          proc    near                    ; interrupt 21 handler
-int21H:
+int21H          proc    near                    ; interrupt 21 handler
                 cmp     ah,4cH                  ; if terminate request
                 je      terminate               ; - then
                 cmp     ah,0                    ; if terminate
@@ -235,25 +233,24 @@ spawn:          push    ds                      ; save ds
                 mov     ds,cs:dataseg           ; set it up
                 inc     byte ptr spawned        ; - keep track of it
                 pop     ds                      ; restore ds
-chain21:        jmp     pword ptr cs:i33off    ; chain to old handler
+chain21:        jmp     fword ptr cs:i21Hoff    ; chain to old handler
 terminate:      push    ds                      ; save ds
                 mov     ds,cs:dataseg           ; set it up
                 dec     byte ptr spawned        ; - if no spawned a subprocess
                 pop     ds                      ; restore ds
                 js      fakebreak               ; - - fake a break point
                 jmp     short chain21           ; chain to old handler
-int33          endp                            ; whew!
+int21H          endp                            ; whew!
 
 public          int27H
-int39          proc    near                    ; terminate request
-int27H:
+int27H          proc    near                    ; terminate request
                 push    ds                      ; save ds
                 mov     ds,cs:dataseg           ; set it up
                 dec     byte ptr spawned        ; if no spawned subprocess
                 pop     ds                      ; restore ds
                 js      fakebreak               ; - fake up a break point
-                jmp     pword ptr cs:i39off    ; chain to old handler
-int39          endp
+                jmp     fword ptr cs:i27Hoff    ; chain to old handler
+int27H          endp
 
 public          fakebreak
 fakebreak       proc    near

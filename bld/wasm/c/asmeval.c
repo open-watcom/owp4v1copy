@@ -33,20 +33,18 @@
 #include <stdlib.h>
 
 #include "asmglob.h"
-#include "asmops1.h"
-#include "asmops2.h"
+#include "asmins.h"
 #include "asmerr.h"
 #include "asmsym.h"
 #include "asmalloc.h"
 #include "asmeval.h"
+#include "asmdefs.h"
 
 #include "watcom.h"
 #include "myassert.h"
 
 extern void             AsmError( int );
 extern void             DefFlatGroup();
-
-extern struct asm_tok   *AsmBuffer[];
 
 static int              TakeOut[ MAX_TOKEN ];
 static int              TokCnt;
@@ -1097,7 +1095,8 @@ static int fix( expr_list *res, int start, int end )
 
         if( res->string == NULL ) {
             AsmBuffer[ start ]->token = T_NUM;
-            AsmBuffer[ start++ ]->value = res->value;
+            AsmBuffer[ start ]->value = res->value;
+            AsmBuffer[ start++ ]->string_ptr = "";
         } else {
             AsmBuffer[ start ]->token = T_STRING;
             AsmBuffer[ start++ ]->string_ptr = res->string;
@@ -1213,7 +1212,8 @@ static int fix( expr_list *res, int start, int end )
                 AsmBuffer[start]->string_ptr = "*";
                 AsmBuffer[start++]->token = T_TIMES;
                 AsmBuffer[start]->token = T_NUM;
-                AsmBuffer[start++]->value = res->scale;
+                AsmBuffer[start]->value = res->scale;
+                AsmBuffer[start++]->string_ptr = "";
                 res->scale = 1;
             }
             AsmBuffer[start++]->token = T_CL_SQ_BRACKET;
@@ -1222,7 +1222,8 @@ static int fix( expr_list *res, int start, int end )
         if( need_number ) {
             AsmBuffer[start++]->token = T_OP_SQ_BRACKET;
             AsmBuffer[start]->token = T_NUM;
-            AsmBuffer[start++]->value = res->value;
+            AsmBuffer[start]->value = res->value;
+            AsmBuffer[start++]->string_ptr = "";
             AsmBuffer[start++]->token = T_CL_SQ_BRACKET;
         }
 

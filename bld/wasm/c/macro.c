@@ -42,12 +42,11 @@
 #include "asmglob.h"
 #include "asmalloc.h"
 #include "asmerr.h"
-#include "asmops1.h"
-#include "asmops2.h"
-#include "asmins1.h"
+#include "asmins.h"
 #include "namemgr.h"
 #include "asmsym.h"
 #include "asmerr.h"
+#include "asmdefs.h"
 
 #include "womp.h"
 #include "pcobj.h"
@@ -62,7 +61,7 @@ extern char             *ReadTextLine( char * );
 extern void             FlushCurrSeg( void );
 extern void             AsmError( int );
 extern int              InputQueueFile( char * );
-extern int              AsmScan( char *, char * );
+extern int              AsmScan( char * );
 extern struct fixup     *CreateFixupRec( int );
 extern void             InputQueueLine( char * );
 extern void             PushLineQueue(void);
@@ -73,19 +72,12 @@ extern void             wipe_space( char *token );
 extern char             *get_curr_filename( void );
 extern void             PushMacro( char *, bool );
 
-extern  const struct asm_ins    ASMFAR AsmOpTable[];
-extern  uint            LineNumber;
-extern  struct asm_tok  *AsmBuffer[];   // buffer to store token
-extern  struct AsmCodeName AsmOpcode[];
-extern  char            StringBuf[];
 extern  char            Parse_Pass;     // phase of parsing
 extern  int_8           DefineProc;     // TRUE if the definition of procedure
                                         // has not ended
 extern dir_node         *CurrProc;
-extern int_8            Use32;          // if 32-bit code is use
 extern File_Info        AsmFiles;
 extern char             *CurrString;    // Current Input Line
-extern char             AsmChars[];
 extern int              Token_Count;    // number of tokens on line
 extern int              MacroLocalVarCounter;
 
@@ -577,7 +569,11 @@ int ExpandMacro( int tok_count)
                             next_char[0] = *( AsmBuffer[count]->string_ptr );
                             strcat( buffer, next_char );
                         } else if( AsmBuffer[count]->token == T_NUM ) {
-                            itoa( AsmBuffer[count]->value, buffer+strlen( buffer ), 10 );
+                            if( *AsmBuffer[count]->string_ptr == 0 ) {
+                                itoa( AsmBuffer[count]->value, buffer+strlen( buffer ), 10 );
+                            } else {
+                                strcpy( buffer+strlen( buffer ), AsmBuffer[count]->string_ptr );
+                            }
                         } else if( AsmBuffer[count]->token == T_STRING ) {
                             char        *src;
                             char        *dst;
@@ -639,7 +635,7 @@ int ExpandMacro( int tok_count)
             }
         } else if( lineis( line, "local" ) ) {
             if( nesting_depth == 0 ) {
-                AsmScan( line, StringBuf );
+                AsmScan( line );
                 if( macro_local() == ERROR ) return( ERROR );
                 AsmFree( line );
                 continue;
