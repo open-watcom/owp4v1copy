@@ -605,24 +605,36 @@ local void InitArray( TYPEPTR typ, TYPEPTR ctyp )
 local FIELDPTR DesignatedField( TYPEPTR typ, TYPEPTR ctyp, FIELDPTR field )
 {
     unsigned long       offs;
+    static int          new_field = 1;
 
-    if( ( !CompFlags.extensions_enabled && !CompFlags.c99_extensions )
-        || CurToken != T_DOT )
+    if( !CompFlags.extensions_enabled && !CompFlags.c99_extensions ) {
         return( field );
+    }
+
+    if( CurToken != T_DOT ) {
+        new_field = 1;
+        return( field );
+    }
+
     /* if designator refers to outer type: back out */
-    if( typ != ctyp )
+    if( typ != ctyp && new_field )
         return( NULL );
+
+    new_field = 0;
     NextToken();
     if ( CurToken != T_ID ) {
         CErr1( ERR_EXPECTING_ID );
     }
     offs = 0;
-    field = SearchFields( &ctyp, &offs, Buffer );
+    field = SearchFields( &typ, &offs, Buffer );
     if ( field == NULL ) {
-        CErr( ERR_NAME_NOT_FOUND_IN_STRUCT, Buffer, ctyp->u.tag->name );
+        CErr( ERR_NAME_NOT_FOUND_IN_STRUCT, Buffer, typ->u.tag->name );
     }
     NextToken();
-    MustRecog( T_EQUAL );
+    if( CurToken != T_DOT ) {
+        new_field = 1;
+        MustRecog( T_EQUAL );
+    }
     return( field );
 }
 
