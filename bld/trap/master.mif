@@ -154,10 +154,10 @@ targ = os2
 targ = $(os)
 !endif
 
-!ifdef on_build_machine
-default_targ    = w
-!else
+!ifeq release 0
 default_targ    = d
+!else
+default_targ    = w
 !endif
 
 first : $(default_targ) .SYMBOLIC
