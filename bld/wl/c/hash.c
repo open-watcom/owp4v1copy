@@ -34,6 +34,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include "debug.h"
 
 /* ----------------------------------------------------------------------- */
 pHTable CreateHTable( int size, pHashFunc hashFunc, pHashElemCmp compareFunc,

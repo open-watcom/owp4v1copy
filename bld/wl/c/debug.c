@@ -215,9 +215,9 @@ void PrintMemDump(void *p, unsigned long size, DbgDumpType type) {
         void (*OneLineDump)(void*, int);
         int max;
     } MemDump[DUMP_MAX] = {
-        { OneLineDumpByte,  16 },     // DUMP_BYTE
-        {  OneLineDumpByte, 16 },     // DUMP_WORD: NYI
-        {  OneLineDumpDWord, 4*4 }    // DUMP_DWORD
+        { (void(*)(void*,int))OneLineDumpByte,  16 },     // DUMP_BYTE
+        { (void(*)(void*,int))OneLineDumpByte, 16 },     // DUMP_WORD: NYI
+        { (void(*)(void*,int))OneLineDumpDWord, 4*4 }    // DUMP_DWORD
     };
     int max = MemDump[type].max;
 

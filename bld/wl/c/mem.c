@@ -64,7 +64,7 @@ static bool         CacheRelease( void );
 
 #ifdef TRACKER
 
-void PrintLine( void * bogus, const char *buff, unsigned len )
+void PrintLine( int * bogus, const char *buff, unsigned len )
 {
     bogus = bogus;      /* to avoid a warning */
     len = len;
