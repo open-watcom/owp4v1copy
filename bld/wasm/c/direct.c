@@ -1018,7 +1018,7 @@ int GlobalDef( int i )
 
         sym = AsmGetSymbol( token );
 
-        if( sym != NULL && sym->mem_type != SYM_UNDEFINED ) {
+        if( sym != NULL && sym->state != SYM_UNDEFINED ) {
             return( PubDef( 0 ) ); // it is defined here, so make a pubdef
         }
 
@@ -1119,7 +1119,7 @@ int ExtDef( int i )
         sym = AsmGetSymbol( token );
 
         if( sym != NULL ) {
-            if( sym->mem_type == SYM_UNDEFINED ) {
+            if( sym->state == SYM_UNDEFINED ) {
                 if( MakeExtern( token, mem_type, TRUE ) == NULL ) {
                     return( ERROR );
                 }
@@ -3367,7 +3367,7 @@ int CommDef( int i )
 
         if( sym != NULL ) {
             SetMangler( sym, mangle_type );
-            if( sym->mem_type == SYM_UNDEFINED ) {
+            if( sym->state == SYM_UNDEFINED ) {
                 if( MakeComm( token, TypeInfo[type].value, TRUE, count,
                     TypeInfo[distance].value ) == ERROR ) {
                     return( ERROR );
