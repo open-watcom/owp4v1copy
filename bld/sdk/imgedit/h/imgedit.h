@@ -72,7 +72,7 @@ typedef enum {
 #include "wstatus.h"
 #include "wptoolbr.h"
 
-#define MAX_DIM         512
+#define MAX_DIM         2048
 #define MIN_DIM         0
 #define FALSE           0
 #define TRUE            1
