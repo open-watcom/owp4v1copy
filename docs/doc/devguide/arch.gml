@@ -593,3 +593,138 @@ in the right spot is the thing to do during development.
 .np
 Happy Building!
 
+
+.chap Testing
+.*
+.ix 'testing'
+There is undoubtedly a question on your mind: Now that I have the Open Watcom
+compilers, libraries and tools built, what do I do next? The answer is simpler
+than you may have expected: Ensure that what you built actually works.
+.np
+Fortunately there is a number of more or less automated test available in the
+source tree. Currently these tests are not part of the build process per se,
+although that might (and perhaps should) change in future.
+.np
+There are two major classes of situations when the tests should be run:
+.begbull
+.bull
+After building on a fresh system for the first time, running (and passing)
+the tests verifies that what was built behaves at least somewhat as expected.
+In this case it might be prudent to run as many tests as possible, especially
+when building on a new, not yet widely tested platform.
+.bull
+After making modifications to a particular tool or library, run the
+appropriate tests exercising the component (if available) to ensure that the
+changes didn't cause any serious regressions.
+.endbull
+.np
+If a bug is discovered and fixed, it is a good practice to code up a simple
+test verifying the fix. That way we can prevent (or at least expediently
+discover) regressions in future builds. In other words, we won't be embarrassed
+by the same bug cropping up again. Just because commercial compiler vendors
+occasionally have this problem doesn't mean we have to as well!
+.np
+Passing the automated tests can never completely guarantee that everything
+works perfectly as designed, but it does let you sleep easier at night,
+comfortable in the knowledge that there aren't any really major problems.
+
+.section Running the tests
+.*
+.np
+This section maps the major test nests and gives brief description on how
+to run the tests and how they're constructed. There is often a single batch
+file or script that will build and run all the tests for a given project,
+the end result being either "all set to go" or "we have a bug infestation
+problem at location xyz, send out bug swat team immediately".
+.np
+To make automated testing feasible, the test programs do not require user
+input (unless they were testing user input of course). Some test programs do
+their work and then decide whether everything worked as expected or not and
+output a message to that effect. Other test programs ouput messages mapping
+their progress as they go and the output is then compared with a file
+containing the 'good' output. Which method exactly is used depends mostly
+on what is being tested. When testing error and warning messages
+printed by the compilers and tools, it is natural to compare the captured
+output to the expected text. When testing the runtime library for instance,
+it makes sense for the test program itself to decide whether the function
+call results are what was expected.
+.np
+Now we'll go through the projects alphabetically and make a stop whenever
+there's something interesting to see. Note that not all of the tests are
+automated, the really extensive tests are however. Being a lazy folk,
+programmers are likely to bang together an automated test suite if that
+helps them avoid babysitting the tests.
+.begnote
+.note as
+In
+.us bld\as\alpha\test
+there are several tests exercising the Alpha AXP assembler, using C wrappers
+for infrastructure.
+.note aui
+Not a real test, nevertheless the sample programs in
+.us bld\aui\sample
+are useful in demonstrating and informally testing the user interface library.
+.note brinfo
+In
+.us bld\brinfo\test
+there is a simple browser information test program.
+.note browser
+Tests exercising the class browser are located in
+.us bld\browser\test.
+.note cg
+In
+.us cg\test\far16
+there is a test exercising the
+.id __far16
+keyword. Real code generator tests are found elsewhere.
+.note clib
+The C runtime library tests are located in
+.us bld\clib\qa.
+These tests are not terribly comprehensive but they do verify the basic C
+runtime functionality.
+.note gui
+Again not a real test, there is a GUI library sample in
+.us bld\gui\sample.
+.note ndisasm
+Tests for the 'new' disassembler (not many at this point) are located in
+.us bld\ndisasm\test.
+.note orl
+The Object Reader Library tests are in
+.us bld\orl\test.
+.note plustest
+This project holds
+.us the
+test suite. Ostensibly designed to exercise the C++ compiler, the tests also
+verify the functionality of the code generator and some are designed for the
+C compiler. Running these tests can take a while as there are over a thousand
+test cases. Highly recommended.
+.note ssl
+In
+.us bld\ssl\test
+there are several simple test scripts for SSL.
+.note trmem
+While the memory tracker is not a test, it bears mentioning here. This can be
+used for testing many other projects for memory leaks, memory overwrites and
+other cases of rude behaviour.
+.note viprdemo
+Again not a test per se, the 'Viper demo' is a good way to verify basic IDE
+functionality.
+.note wasm
+Extensive assembler test can be found (rather predictably) in
+.us bld\wasm\test.
+.note wdisasm
+Tests for the 'old' disassembler are located in
+.us bld\wdisasm\test.
+.note wmake
+Extensive make utility tests can be found in
+.us bld\wmake\reg
+and
+.us bld\wmake\regress.
+.note wprof
+A profiler test program is located in
+.us bld\wprof\test.
+.note yacc
+Several sample/test YACC input files are in
+.us bld\yacc\y.
+.endnote
+
