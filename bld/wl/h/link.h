@@ -56,7 +56,7 @@ typedef unsigned long linkflag;
 #define INC_LINK_FLAG   0x00100000UL
 #define NOCACHE_FLAG    0x00200000UL
 #define CACHE_FLAG      0x00400000UL
-#define __UNUSED_FLAG_9 0x00800000UL
+#define FAR_CALLS_FLAG  0x00800000UL    // optimize far calls
 #define __UNUSED_FLAG_8 0x01000000UL
 #define __UNUSED_FLAG_7 0x02000000UL
 #define __UNUSED_FLAG_6 0x04000000UL

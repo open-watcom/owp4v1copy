@@ -1249,3 +1249,19 @@ extern bool ProcModTrace( void )
     LinkFlags |= TRACE_FLAG;
     return ProcArgList( &AddModTrace, TOK_INCLUDE_DOT | TOK_IS_FILENAME );
 }
+
+extern bool ProcFarCalls( void )
+/*********************************/
+{
+    LinkFlags |= FAR_CALLS_FLAG;
+    DEBUG(( DBG_OLD, "Far Calls optimization" ));
+    return( TRUE );
+}
+
+extern bool ProcNoFarCalls( void )
+/***********************************/
+{
+    LinkFlags &= ~FAR_CALLS_FLAG ;
+    DEBUG(( DBG_OLD, "No Far Calls optimization" ));
+    return( TRUE );
+}

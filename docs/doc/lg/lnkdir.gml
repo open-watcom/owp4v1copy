@@ -127,6 +127,7 @@
 .dir endlink            ldendlin.gml    all
 .dir exit               opexit.gml      netware
 .dir export             ldexport.gml    elf netware os2 win16 win32
+.dir farcalls           opfarcal.gml    all
 .dir file               ldfile.gml      all
 .if '&overlay' eq 'yes' .do begin
 .dir fixedlib           ldfixedl.gml    dos

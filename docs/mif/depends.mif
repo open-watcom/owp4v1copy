@@ -1037,6 +1037,7 @@ $(docsrc_dir)\lg\opdosseg.gml &
 $(docsrc_dir)\lg\opdynami.gml &
 $(docsrc_dir)\lg\opelimin.gml &
 $(docsrc_dir)\lg\opexit.gml &
+$(docsrc_dir)\lg\opfarcal.gml &
 $(docsrc_dir)\lg\opheap.gml &
 $(docsrc_dir)\lg\ophelp.gml &
 $(docsrc_dir)\lg\opimpfil.gml &

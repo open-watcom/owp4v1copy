@@ -48,6 +48,7 @@ is any of the following:
 .note CVPACK
 .note DOSSEG
 .note ELIMINATE
+.note [NO]FARCALLS
 .note INCREMENTAL
 .note MANGLEDNAMES
 .note MAP[=map_file]

@@ -107,6 +107,8 @@ extern bool     ProcChinese( void );
 extern bool     ProcKorean( void );
 extern bool     ProcEntry( void );
 extern bool     ProcNoExtension( void );
+extern bool     ProcFarCalls( void );
+extern bool     ProcNoFarCalls( void );
 
 extern bool     ProcStub( void );
 extern bool     ProcVersion( void );

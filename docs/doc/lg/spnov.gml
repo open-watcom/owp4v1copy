@@ -56,6 +56,7 @@ is any of the following:
 .note DOSSEG
 .note ELIMINATE
 .note EXIT=symbol_name
+.note [NO]FARCALLS
 .note HELP=help_file
 .note IMPFILE[=imp_file]
 .note IMPLIB[=imp_lib]

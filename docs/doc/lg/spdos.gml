@@ -69,6 +69,7 @@ is any of the following:
 .note DYNAMIC
 .do end
 .note ELIMINATE
+.note [NO]FARCALLS
 :cmt. crashes linker .note INCREMENTAL
 .note MANGLEDNAMES
 .note MAP[=map_file]
