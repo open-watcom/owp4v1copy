@@ -284,7 +284,7 @@ static BOOL changeIDEProject( char *dllname )
     int         err_rc;
 
     err = FALSE;
-    ddeinst = NULL;
+    ddeinst = 0;
     conv = NULL;
     rc = DdeInitialize( &ddeinst, DdeProc,
                         APPCMD_CLIENTONLY | CBF_SKIP_ALLNOTIFICATIONS, 0L );

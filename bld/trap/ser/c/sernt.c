@@ -105,7 +105,7 @@ char *InitSys( void )
         0,
         NULL,
         OPEN_EXISTING,
-        NULL,
+        0L,
         NULL);
 
     if(INVALID_HANDLE_VALUE == hSerial)
