@@ -90,6 +90,15 @@ extern  void    __STKOVERFLOW();
     to achieve POSIX conformance.
 */
 
+/*
+    POSIX Note:
+    When writing to a file that does not support seek operations (pipe,
+    device, etc.), the O_APPEND flag is effectively ignored. POSIX does
+    not explicitly state this, but it is implied. Also, ESPIPE (illegal
+    seek error) is not listed for write(), only pwrite(). Hence we must
+    either not attempt to seek on such devices, or ignore the failures.
+*/
+
 #define PAD_SIZE 512
 
 typedef union {
@@ -289,7 +298,7 @@ static int os_write( int handle, const void *buffer, unsigned len, unsigned *amt
     // put a semaphore around our writes
 
     _AccessFileH( handle );
-    if( iomode_flags & _APPEND ) {
+    if( (iomode_flags & _APPEND) && !(iomode_flags & _ISTTY) ) {
     #if defined(__NT__)
         if( GetFileType( h ) == FILE_TYPE_DISK ) {
             cur_ptr_low = 0;
@@ -303,10 +312,11 @@ static int os_write( int handle, const void *buffer, unsigned len, unsigned *amt
             }
         }
     #else
-        #ifdef __OS2__
+        #if defined(__OS2__)
         {
         unsigned long       dummy;
         rc1 = DosChgFilePtr( handle, 0L, SEEK_END, &dummy );
+        // should we explicitly ignore ERROR_SEEK_ON_DEVICE here?
         }
         #else
         rc1 = TinySeek( handle, 0L, SEEK_END );

@@ -67,8 +67,8 @@ static int _set_binary( int handle )
 
 _WCRTLINK int __F_NAME(open,_wopen)( const CHAR_TYPE *name, int mode, ... )
 {
-    int permission;
-    va_list args;
+    int         permission;
+    va_list     args;
 
     va_start( args, mode );
     permission = va_arg( args, int );
@@ -79,7 +79,7 @@ _WCRTLINK int __F_NAME(open,_wopen)( const CHAR_TYPE *name, int mode, ... )
 
 _WCRTLINK int __F_NAME(sopen,_wsopen)( const CHAR_TYPE *name, int mode, int shflag, ... )
 {
-    va_list             args;
+    va_list     args;
 
     va_start( args, shflag );
     return( __F_NAME(_sopen,__wsopen)( name, mode, shflag, args ) );
@@ -99,22 +99,19 @@ static int __F_NAME(_sopen,__wsopen)( const CHAR_TYPE *name, int mode, int share
     while( *name == ' ' ) ++name;
 
     /*** If necessary, convert the wide filename to multibyte form ***/
-    #ifdef __WIDECHAR__
-        __filename_from_wide( mbName, name );
-    #endif
+#ifdef __WIDECHAR__
+    __filename_from_wide( mbName, name );
+#endif
                                                     /* 05-sep-91 */
     if( mode & O_CREAT ) {
         perm = va_arg( args, int );
         va_end( args );
         if( mode & O_EXCL ) {
-            openflag = OPENFLAG_FAIL_IF_EXISTS |
-                       OPENFLAG_CREATE_IF_NOT_EXISTS;
+            openflag = OPENFLAG_FAIL_IF_EXISTS | OPENFLAG_CREATE_IF_NOT_EXISTS;
         } else if( mode & O_TRUNC ) {
-            openflag = OPENFLAG_REPLACE_IF_EXISTS |
-                       OPENFLAG_CREATE_IF_NOT_EXISTS;
+            openflag = OPENFLAG_REPLACE_IF_EXISTS | OPENFLAG_CREATE_IF_NOT_EXISTS;
         } else {
-            openflag = OPENFLAG_OPEN_IF_EXISTS |
-                       OPENFLAG_CREATE_IF_NOT_EXISTS;
+            openflag = OPENFLAG_OPEN_IF_EXISTS | OPENFLAG_CREATE_IF_NOT_EXISTS;
         }
     } else if( mode & O_TRUNC ) {
         openflag = OPENFLAG_REPLACE_IF_EXISTS;
@@ -141,49 +138,50 @@ static int __F_NAME(_sopen,__wsopen)( const CHAR_TYPE *name, int mode, int share
         fileattr = _A_NORMAL;
     }
 
-    #ifdef __WIDECHAR__
-        error = DosOpen( (PSZ)mbName, &handle, &actiontaken, 0ul,
-                            fileattr, openflag, openmode, 0ul );
-    #else
-        error = DosOpen( (PSZ)name, &handle, &actiontaken, 0ul,
-                            fileattr, openflag, openmode, 0ul );
-    #endif
+#ifdef __WIDECHAR__
+    error = DosOpen( (PSZ)mbName, &handle, &actiontaken, 0ul,
+                        fileattr, openflag, openmode, 0ul );
+#else
+    error = DosOpen( (PSZ)name, &handle, &actiontaken, 0ul,
+                        fileattr, openflag, openmode, 0ul );
+#endif
     if( error ) {
         return( __set_errno_dos( error ) );
     }
 
-    if (handle >= __NFiles)
-    {
-            DosClose( handle );
-            __set_errno(ENOMEM);
-            return -1;
+    if( handle >= __NFiles ) {
+        DosClose( handle );
+        __set_errno(ENOMEM);
+        return( -1 );
     }
 
-    if( rwmode == O_RDWR )  iomode_flags = _READ | _WRITE;
-    if( rwmode == O_RDONLY) iomode_flags = _READ;
-    if( rwmode == O_WRONLY) iomode_flags = _WRITE;
-    if( mode & O_APPEND )   iomode_flags |= _APPEND;
+    if( rwmode == O_RDWR )              iomode_flags  = _READ | _WRITE;
+    if( rwmode == O_RDONLY)             iomode_flags  = _READ;
+    if( rwmode == O_WRONLY)             iomode_flags  = _WRITE;
+    if( mode & O_APPEND )               iomode_flags |= _APPEND;
     if( mode & (O_BINARY|O_TEXT) ) {
-        if( mode & O_BINARY )         iomode_flags |= _BINARY;
+        if( mode & O_BINARY )           iomode_flags |= _BINARY;
     } else {
-        if( _RWD_fmode == O_BINARY )  iomode_flags |= _BINARY;
+        if( _RWD_fmode == O_BINARY )    iomode_flags |= _BINARY;
     }
+    if( isatty( handle ) )              iomode_flags |= _ISTTY;
+
     if( iomode_flags & _BINARY )  _set_binary( handle );
     __SetIOMode( handle, iomode_flags );
-    #ifdef DEFAULT_WINDOWING
-        if( _WindowsNewWindow != 0 ) {
-            #ifdef __WIDECHAR__
-                if( ( _wcsicmp( name, L"con" ) == 0 ) ||
-                    ( _wcsicmp( name, L"\\dev\\con" ) == 0 ) ) {
-                    _WindowsNewWindow( NULL, handle, -1 );
-                }
-            #else
-                if( ( stricmp( name, "con" ) == 0 ) ||
-                    ( stricmp( name, "\\dev\\con" ) == 0 ) ) {
-                    _WindowsNewWindow( NULL, handle, -1 );
-                }
-            #endif
+#ifdef DEFAULT_WINDOWING
+    if( _WindowsNewWindow != 0 ) {
+    #ifdef __WIDECHAR__
+        if( ( _wcsicmp( name, L"con" ) == 0 ) ||
+            ( _wcsicmp( name, L"\\dev\\con" ) == 0 ) ) {
+            _WindowsNewWindow( NULL, handle, -1 );
+        }
+    #else
+        if( ( stricmp( name, "con" ) == 0 ) ||
+            ( stricmp( name, "\\dev\\con" ) == 0 ) ) {
+            _WindowsNewWindow( NULL, handle, -1 );
         }
     #endif
+    }
+#endif
     return( handle );
 }
