@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of wctype().
 *
 ****************************************************************************/
 
@@ -35,16 +34,12 @@
 #include <wchar.h>
 #include "wctype.h"
 
-
-
-/****
-***** Return a type ID usable by iswctype on success, or zero on error.
-****/
-
+/* Return a type ID usable by iswctype on success, or zero on error. */
 _WCRTLINK wctype_t wctype( const char *property )
 {
     if( !strcmp( property, "alnum" ) )   return( WCTYPE_ALNUM );
     if( !strcmp( property, "alpha" ) )   return( WCTYPE_ALPHA );
+    if( !strcmp( property, "blank" ) )   return( WCTYPE_BLANK );
     if( !strcmp( property, "cntrl" ) )   return( WCTYPE_CNTRL );
     if( !strcmp( property, "digit" ) )   return( WCTYPE_DIGIT );
     if( !strcmp( property, "graph" ) )   return( WCTYPE_GRAPH );

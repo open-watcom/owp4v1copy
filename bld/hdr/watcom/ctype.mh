@@ -28,7 +28,7 @@
 // C99 functions in ctype.h
 using std::isalnum;
 using std::isalpha;
-/* using std::isblank; */
+using std::isblank;
 using std::iscntrl;
 using std::isdigit;
 using std::isgraph;
@@ -47,7 +47,7 @@ using std::toupper;
 // C99 functions that are not specified for ctype.h
 using std::iswalnum;
 using std::iswalpha;
-/* using std::iswblank; */
+using std::iswblank;
 using std::iswcntrl;
 using std::iswdigit;
 using std::iswgraph;
@@ -96,7 +96,7 @@ namespace std {
 :endsegment
 _WCRTLINK extern int    isalnum(int);
 _WCRTLINK extern int    isalpha(int);
-/* _WCRTLINK extern int    isblank(int); */
+_WCRTLINK extern int    isblank(int);
 _WCRTLINK extern int    iscntrl(int);
 _WCRTLINK extern int    isdigit(int);
 _WCRTLINK extern int    isgraph(int);
@@ -127,6 +127,7 @@ namespace std {
 _WCRTLINK extern int    iswalnum(wint_t);
 _WCRTLINK extern int    iswalpha(wint_t);
 _WCRTLINK extern int    iswascii(wint_t);
+_WCRTLINK extern int    iswblank(wint_t);
 _WCRTLINK extern int    iswcntrl(wint_t);
 _WCRTLINK extern int    iswdigit(wint_t);
 _WCRTLINK extern int    iswgraph(wint_t);
@@ -166,6 +167,7 @@ _WCRTLINK extern const char _WCDATA _IsTable[257];
 :segment !CNAME
 #define isalnum(__c)  ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & (_LOWER|_UPPER|_DIGIT))
 #define isalpha(__c)  ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & (_LOWER|_UPPER))
+#define isblank(__c)  (((__c)==' ')||((__c)=='\t'))
 #define iscntrl(__c)  ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & _CNTRL)
 #define isdigit(__c)  ((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & _DIGIT)
 #define isgraph(__c) (((unsigned char)(_IsTable[((unsigned char)(__c))+1]) & (_PRINT|_SPACE))==_PRINT)

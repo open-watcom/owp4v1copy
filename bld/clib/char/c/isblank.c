@@ -24,32 +24,22 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation if iswctype().
+* Description:  Implementation if isblank().
 *
 ****************************************************************************/
 
 
 #include "variety.h"
 #include <ctype.h>
-#include <wchar.h>
-#include "wctype.h"
+#include "widechar.h"
+#include "istable.h"
+#undef  isblank
 
-/* Determine if the given character is of the specified type. */
-_WCRTLINK int iswctype( wint_t wc, wctype_t desc )
+_WCRTLINK int __F_NAME(isblank,iswblank)( INTCHAR_TYPE c )
 {
-    switch( desc ) {
-    case WCTYPE_ALNUM:   return( iswalnum( wc ) );
-    case WCTYPE_ALPHA:   return( iswalpha( wc ) );
-    case WCTYPE_BLANK:   return( iswblank( wc ) );
-    case WCTYPE_CNTRL:   return( iswcntrl( wc ) );
-    case WCTYPE_DIGIT:   return( iswdigit( wc ) );
-    case WCTYPE_GRAPH:   return( iswgraph( wc ) );
-    case WCTYPE_LOWER:   return( iswlower( wc ) );
-    case WCTYPE_PRINT:   return( iswprint( wc ) );
-    case WCTYPE_PUNCT:   return( iswpunct( wc ) );
-    case WCTYPE_SPACE:   return( iswspace( wc ) );
-    case WCTYPE_UPPER:   return( iswupper( wc ) );
-    case WCTYPE_XDIGIT:  return( iswxdigit( wc ) );
-    default:             return( 0 );
+    if( IS_ASCII( c ) ) {
+        return( (c == ' ') || (c == '\t') );
+    } else {
+        return( 0 );
     }
 }

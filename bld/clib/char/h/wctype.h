@@ -24,16 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Identifiers for use by iswctype() and wctype().
 *
 ****************************************************************************/
 
 
-#ifndef WCTYPEdotH
+#ifndef WCTYPE_H_clib
+#define WCTYPE_H_clib
 
-
-/* Define the IDs used by iswctype and wctype */
 #define WCTYPE_ALNUM            1
 #define WCTYPE_ALPHA            2
 #define WCTYPE_CNTRL            3
@@ -45,7 +43,6 @@
 #define WCTYPE_SPACE            9
 #define WCTYPE_UPPER            10
 #define WCTYPE_XDIGIT           11
+#define WCTYPE_BLANK            12
 
-
-#define WCTYPEdotH
 #endif

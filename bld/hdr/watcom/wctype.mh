@@ -37,6 +37,7 @@ using std::wctype_t;
 // C99 functions in wctype.h
 using std::iswalnum;
 using std::iswalpha;
+using std::iswblank;
 using std::iswcntrl;
 using std::iswdigit;
 using std::iswgraph;
@@ -80,6 +81,7 @@ namespace std {
 _WCRTLINK extern int      iswalnum( wint_t __wc );
 _WCRTLINK extern int      iswalpha( wint_t __wc );
 _WCRTLINK extern int      iswascii( wint_t __wc );
+_WCRTLINK extern int      iswblank( wint_t __wc );
 _WCRTLINK extern int      iswcntrl( wint_t __wc );
 _WCRTLINK extern int      iswdigit( wint_t __wc );
 _WCRTLINK extern int      iswgraph( wint_t __wc );

@@ -1406,6 +1406,7 @@ $(docsrc_dir)\lr\src\isalnum.gml &
 $(docsrc_dir)\lr\src\isalpha.gml &
 $(docsrc_dir)\lr\src\isascii.gml &
 $(docsrc_dir)\lr\src\isatty.gml &
+$(docsrc_dir)\lr\src\isblank.gml &
 $(docsrc_dir)\lr\src\iscntrl.gml &
 $(docsrc_dir)\lr\src\iscsym.gml &
 $(docsrc_dir)\lr\src\iscsymf.gml &

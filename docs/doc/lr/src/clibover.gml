@@ -391,6 +391,7 @@ convert to upper/lower case.
 .fd *fun="isalnum" test for letter or digit
 .fd *fun="isalpha" test for letter
 .fd *fun="isascii" test for ASCII character
+.fd *fun="isblank" test for blank character
 .fd *fun="iscntrl" test for control character
 .fd *fun="iscsym" test for letter, underscore or digit
 .fd *fun="iscsymf" test for letter or underscore
@@ -419,6 +420,7 @@ between upper and lowercase.
 .fd *fun="iswalnum" test for letter or digit
 .fd *fun="iswalpha" test for letter
 .fd *fun="iswascii" test for ASCII character
+.fd *fun="iswblank" test for blank character
 .fd *fun="iswcntrl" test for control character
 .fd *fun="iswdigit" test for digit
 .fd *fun="iswgraph" test for printable character, except space

@@ -3,6 +3,7 @@
 !inject isalnum.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
 !inject isalpha.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
 !inject isascii.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
+!inject isblank.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
 !inject iscntrl.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
 !inject iscsym.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 !inject iscsymf.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
@@ -21,6 +22,7 @@
 !inject uisalnum.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32     l32
 !inject uisalpha.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32     l32
 !inject uisascii.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32     l32
+!inject uisblank.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32     l32
 !inject uiscntrl.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32     l32
 !inject uisdigit.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32     l32
 !inject uisgraph.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32     l32

@@ -502,6 +502,7 @@ isalnum.exe &
 isalpha.exe &
 isascii.exe &
 isatty.exe &
+isblank.exe &
 iscntrl.exe &
 isdigit.exe &
 isgraph.exe &

@@ -507,6 +507,9 @@
 .fnw iswascii                   isascii.gml     DOS QNX W WIN32
 .fnu _uisascii                  isascii.gml     DOS       WIN32
 .fnc isatty                     isatty.gml      DOS QXO   WIN32
+.fnc isblank                    isblank.gml     DOS QNX W WIN32
+.fnw iswblank                   isblank.gml     DOS QNX W WIN32
+.fnu _uisblank                  isblank.gml     DOS       WIN32
 .fnc iscntrl                    iscntrl.gml     DOS QNX W WIN32
 .fnw iswcntrl                   iscntrl.gml     DOS QNX W WIN32
 .fnu _uiscntrl                  iscntrl.gml     DOS       WIN32
