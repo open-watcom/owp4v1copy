@@ -456,8 +456,7 @@ strxfrm.exe
 
 # Available on ALL platforms and Netware
 # NOTE: mbstowcs, getosfha, oshandle not available under QNX.
-FN_ALLN = spawn.exe &
-_fsopen.exe &
+FN_ALLN = _fsopen.exe &
 _exit.exe &
 _fullpat.exe &
 _grow_ha.exe &
@@ -481,7 +480,7 @@ chmod.exe &
 chsize.exe &
 clearenv.exe &
 clearerr.exe &
-clock_.exe &
+clock.exe &
 close.exe &
 closedir.exe &
 cprintf.exe &
@@ -574,3 +573,5 @@ stricoll.exe &
 strspnp.exe &
 vsnprint.exe
 
+# Available on ALL platforms except 16-bit Windows
+FN_SPAWN = spawn.exe

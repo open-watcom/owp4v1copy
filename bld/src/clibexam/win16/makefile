@@ -1,6 +1,6 @@
 compiler = wcc
 cflags = -bt=windows -bw
-linkflags = sys win debug all
+linkflags = sys windows debug all
 cdebug = -d2
 
 !include ..\master.mif

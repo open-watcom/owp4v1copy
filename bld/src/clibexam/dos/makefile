@@ -7,7 +7,7 @@ cdebug = -d2
 
 all: $(FN_ALL) $(FN_MACRO) $(FN_FILE) $(FN_STRING) $(FN_ALLN) &
         $(FN_DP) $(FN_BIOS) $(FN_DOSCALL) $(FN_16BIT) $(FN_DOSWIN) &
-        $(FN_DOS)
+        $(FN_DOS) $(FN_SPAWN)
 
 {..\}.c.exe:
     $(compiler) $(cflags) $(cdebug) $<
