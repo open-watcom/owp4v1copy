@@ -49,6 +49,7 @@
 #include "ldstr.h"
 #include "preproc.h"
 #include "dbtable.h"
+#include "rclayer0.h"
 #ifdef DLL_COMPILE
 #include "rcdll.h"
 #endif
@@ -144,6 +145,8 @@ int main( int argc, char * argv[] )
 
 #ifndef DLL_COMPILE
     RcMemInit();
+    Layer0InitStatics();
+    _grow_handles(100);
 #endif
     if( !InitRcMsgs( argv[0] ) ) return( 1 );
 
