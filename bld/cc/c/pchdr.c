@@ -1273,6 +1273,7 @@ static char *FixupTypes( char *p, unsigned type_count )
         if( typ->decl_type == TYPE_ARRAY ) {
             array = (struct array_info *)CMemAlloc(sizeof(struct array_info));
             array->dimension = typ->u.array_dimension;
+            array->unspecified_dim = ( array->dimension == 0 );
             typ->u.array = array;
         }
         AddTypeHash( typ );
