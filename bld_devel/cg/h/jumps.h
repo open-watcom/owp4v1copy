@@ -49,6 +49,7 @@
                                         OutDataByte( 0x66 ); \
                                     }
     #define _OutFarOff( off )       OutDataLong( off );
+    #define _OutFarCodeOff( off )   OutDataLong( off - (_IsTargetModel( ELF ) ? 4 : 0) )
     #define _OutNearD( addr )       OutDataLong( (addr)-AskLocation()-4 );
     #define _OutFarD( seg, off )    OutDataInt( seg ); \
                                     OutDataLong( (unsigned)off );
@@ -59,6 +60,7 @@
     #define _OutFarD( seg, off )    OutDataInt( seg ); \
                                     OutDataInt( off )
     #define _OutFarOff( off )       OutDataInt( off )
+    #define _OutFarCodeOff( off )   OutDataInt( off - (_IsTargetModel( ELF ) ? 2 : 0) )
     #define _OutNearD( addr )       OutDataInt( addr - AskLocation() - 2 )
     #define _OFFSET_PATCH           WORD_PATCH
     #define _NEAR_PATCH             (ADD_PATCH | WORD_PATCH)

@@ -426,7 +426,7 @@ static  void    OutCodeDisp( label_handle lbl, fix_class f,
         if( class & ATTR_FAR ) {
             _OutFarD( 0, 0 );
         } else {
-            _OutFarOff( 0 );
+            _OutFarCodeOff( 0 );
         }
     } else {                /* patch, to be done later*/
         addr = AskAddress( lbl );
