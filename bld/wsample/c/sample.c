@@ -148,7 +148,7 @@ void WriteCodeLoad( seg_offset ovl_tbl, char *name, samp_block_kinds kind )
     code->pref.kind = kind;
     code->d.ovl_tab.segment = ovl_tbl.segment;
     code->d.ovl_tab.offset = ovl_tbl.offset;
-#ifndef NETWARE
+#ifndef __NETWARE__
     {
     struct  stat            state;
 
@@ -360,7 +360,7 @@ void REPORT_TYPE report()
         Output( "\r\n" );
         fatal();
     }
-#if !defined(NETWARE) && !defined(__WINDOWS__)
+#if !defined(__NETWARE__) && !defined(__WINDOWS__)
     MsgFini();
     _exit( 0 );
 #endif

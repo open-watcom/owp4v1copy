@@ -165,7 +165,7 @@ void INTR far timer_handler( union INTPACK r )
                 }
             }
             ++CurrTick;
-            #ifdef NETWARE
+            #ifdef __NETWARE__
                 /* avoid pointer truncation warning */
                 RecordSample( (union INTPACK *)&r );
             #else

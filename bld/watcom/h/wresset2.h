@@ -67,7 +67,7 @@ typedef struct handle_info * PHANDLE_INFO;
 
 #ifndef WIN_GUI
 #define LoadString2( Dir, hInstance, idResource, lpszBuffer, nBufferMax ) \
-            WResLoadString( Dir, hInstance, idResource, lpszBuffer, nBufferMax )
+            WResLoadString2( Dir, hInstance, idResource, lpszBuffer, nBufferMax )
 #define LoadString( hInstance, idResource, lpszBuffer, nBufferMax ) \
             WResLoadString( hInstance, idResource, lpszBuffer, nBufferMax )
 #ifndef WINAPI
