@@ -1,6 +1,9 @@
 proj_name = plusplus
 plusplus_autodepends = .autodepend
 
+# Important! The C++ compiler modifies string literals
+suppress_zc = 1
+
 !include cproj.mif
 !include defrule.mif
 
