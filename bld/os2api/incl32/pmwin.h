@@ -198,6 +198,7 @@ typedef LHANDLE HBITMAP, *PHBITMAP;
 typedef LHANDLE HDC, *PHDC;
 typedef LHANDLE HMF, *PHMF;
 typedef LHANDLE HPAL, *PHPAL;
+typedef LHANDLE HPOINTER, *PHPOINTER;
 typedef LHANDLE HPS, *PHPS;
 typedef LHANDLE HRGN, *PHRGN;
 typedef VOID    *MPARAM, **PMPARAM;
@@ -759,14 +760,19 @@ BOOL    APIENTRY WinGetMsg(HAB hab, PQMSG pqmsgmsg, HWND hwndFltr, ULONG ulFirst
 BOOL    APIENTRY WinPeekMsg(HAB hab, PQMSG pqmsg, HWND hwndFilter, ULONG ulFirst,
                    ULONG ulLast, ULONG flOptions);
 BOOL    APIENTRY WinPostMsg(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
-BOOL    APIENTRY WinPostQueueMsg(HMQ hmq, ULONG msg, MPARAM mp1, MPARAM mp2);
 
-BOOL    APIENTRY WinQueryMsgPos(HAB hab, PPOINTL pptl);
-BOOL    APIENTRY WinQueryMsgTime(HAB hab);
+#endif
 
-APIRET  APIENTRY WinWaitEventSem(HEV hev, ULONG ulTimeout);
-BOOL    APIENTRY WinWaitMsg(HAB hab, ULONG ulFirst, ULONG ulLast);
-APIRET  APIENTRY WinWaitMuxWaitSem(HMUX hmux, ULONG ulTimeout, PULONG pulUser);
+#if defined(INCL_WINMESSAGEMGR)
+
+BOOL    APIENTRY WinBroadcastMsg(HWND,ULONG,MPARAM,MPARAM,ULONG);
+APIRET  APIENTRY WinRequestMutexSem(HMTX,ULONG);
+APIRET  APIENTRY WinWaitEventSem(HEV,ULONG);
+BOOL    APIENTRY WinWaitMsg(HAB,ULONG,ULONG);
+APIRET  APIENTRY WinWaitMuxWaitSem(HMUX,ULONG,PULONG);
+BOOL    APIENTRY WinPostQueueMsg(HMQ,ULONG,MPARAM,MPARAM);
+BOOL    APIENTRY WinQueryMsgPos(HAB,PPOINTL);
+BOOL    APIENTRY WinQueryMsgTime(HAB);
 
 #endif
 
@@ -1771,8 +1777,6 @@ HWND   APIENTRY WinLoadMenu(HWND hwndFrame, HMODULE hmod, ULONG idMenu);
 #define SBMP_CLOSE             52
 #define SBMP_CLOSEDEP          53
 
-typedef LHANDLE HPOINTER, *PHPOINTER;
-
 typedef struct _POINTERINFO {
     ULONG   fPointer;
     LONG    xHotSpot;
@@ -2289,9 +2293,9 @@ BOOL   APIENTRY WinSetSysValue(HWND hwndDeskTop, LONG iSysValue, LONG lValue);
 #define TID_FLASHWINDOW 0xfffd
 #define TID_USERMAX     0x7fff
 
-ULONG  APIENTRY WinGetCurrentTime(HAB hab);
-ULONG  APIENTRY WinStartTimer(HAB hab, HWND hwnd, ULONG idTimer, ULONG dtTimeout);
-BOOL   APIENTRY WinStopTimer(HAB hab, HWND hwnd, ULONG ulTimer);
+ULONG  APIENTRY WinGetCurrentTime(HAB);
+ULONG  APIENTRY WinStartTimer(HAB,HWND,ULONG,ULONG);
+BOOL   APIENTRY WinStopTimer(HAB,HWND,ULONG);
 
 #endif
 
@@ -2323,21 +2327,19 @@ typedef struct _TRACKINFO {
     ULONG  fs;
 } TRACKINFO, *PTRACKINFO;
 
-BOOL   APIENTRY WinShowTrackRect(HWND hwnd, BOOL fShow);
-BOOL   APIENTRY WinTrackRect(HWND hwnd, HPS hps, PTRACKINFO ptiTrackinfo);
+BOOL   APIENTRY WinShowTrackRect(HWND,BOOL);
+BOOL   APIENTRY WinTrackRect(HWND,HPS,PTRACKINFO);
 
 #endif
 
 #if defined(INCL_WINCOUNTRY)
 
-PCSZ   APIENTRY WinNextChar(HAB hab, ULONG idcp, ULONG idcc, PCSZ psz);
-PCSZ   APIENTRY WinPrevChar(HAB hab, ULONG idcp, ULONG idcc, PCSZ pszStart, PCSZ psz);
-ULONG  APIENTRY WinQueryCp(HMQ hmq);
-ULONG  APIENTRY WinQueryCpList(HAB hab, ULONG ccpMax, PULONG prgcp);
-BOOL   APIENTRY WinSetCp(HMQ hmq, ULONG idCodePage);
-ULONG  APIENTRY WinUpper(HAB hab, ULONG idcp, ULONG idcc, PCSZ psz);
-ULONG  APIENTRY WinUpperChar(HAB hab, ULONG idcp, ULONG idcc, ULONG c);
+PCSZ   APIENTRY WinNextChar(HAB,ULONG,ULONG,PCSZ);
+PCSZ   APIENTRY WinPrevChar(HAB,ULONG,ULONG,PCSZ,PCSZ);
+ULONG  APIENTRY WinQueryCp(HMQ);
+ULONG  APIENTRY WinQueryCpList(HAB,ULONG,PULONG);
+BOOL   APIENTRY WinSetCp(HMQ,ULONG);
+ULONG  APIENTRY WinUpper(HAB,ULONG,ULONG,PCSZ);
+ULONG  APIENTRY WinUpperChar(HAB,ULONG,ULONG,ULONG);
 
 #endif
-
-

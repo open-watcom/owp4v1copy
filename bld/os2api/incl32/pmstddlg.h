@@ -6,13 +6,15 @@
 #define STDDLG_INCLUDED
 
 #ifdef INCL_WINSTDDLGS
+    #define INCL_WINSTDDRAG
     #define INCL_WINSTDFILE
     #define INCL_WINSTDFONT
     #define INCL_WINSTDBOOK
     #define INCL_WINSTDSPIN
 #endif
 
-#if defined(INCL_WINSTDSPIN)
+#if defined(INCL_WINSTDSPIN) && !defined(WINSTDSPIN_INCLUDED)
+#define WINSTDSPIN_INCLUDED
 
 #define SPBS_ALLCHARACTERS 0x00000000
 #define SPBS_NUMERICONLY   0x00000001
@@ -60,7 +62,8 @@ typedef struct _SPBCDATA {
 
 #endif
 
-#if defined(INCL_WINSTDBOOK)
+#if defined(INCL_WINSTDBOOK) && !defined(WINSTDBOOK_INCLUDED)
+#define WINSTDBOOK_INCLUDED
 
 #define BKM_CALCPAGERECT         0x0353
 #define BKM_DELETEPAGE           0x0354
@@ -212,7 +215,8 @@ typedef struct _PAGESELECTNOTIFY {
 
 #endif
 
-#if defined(INCL_WINSTDFILE)
+#if defined(INCL_WINSTDFILE) && !defined(WINSTDFILE_INCLUDED)
+#define WINSTDFILE_INCLUDED
 
 #define FDS_CENTER            0x00000001
 #define FDS_CUSTOM            0x00000002
@@ -290,13 +294,14 @@ typedef struct _FILEDLG {
     SHORT   sEAType;
 } FILEDLG, *PFILEDLG;
 
-MRESULT APIENTRY WinDefFileDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
-HWND    APIENTRY WinFileDlg(HWND hwndP, HWND hwndO, PFILEDLG pfild);
-BOOL    APIENTRY WinFreeFileDlgList(PAPSZ papszFQFilename);
+MRESULT APIENTRY WinDefFileDlgProc(HWND,ULONG,MPARAM,MPARAM);
+HWND    APIENTRY WinFileDlg(HWND,HWND,PFILEDLG);
+BOOL    APIENTRY WinFreeFileDlgList(PAPSZ);
 
 #endif
 
-#if defined(INCL_WINSTDFONT)
+#if defined(INCL_WINSTDFONT) && !defined(WINSTDFONT_INCLUDED)
+#define WINSTDFONT_INCLUDED
 
 #define CLRC_FOREGROUND 1
 #define CLRC_BACKGROUND 2
@@ -397,7 +402,220 @@ typedef struct _STYLECHANGE {
     ULONG  flStyleMaskOld;
 } STYLECHANGE, *PSTYLECHANGE;
 
-MRESULT APIENTRY WinDefFontDlgProc(HWND hwnd, ULONG msg, MPARAM mp1, MPARAM mp2);
-HWND    APIENTRY WinFontDlg(HWND hwndP, HWND hwndO, PFONTDLG pfntd);
+MRESULT APIENTRY WinDefFontDlgProc(HWND,ULONG,MPARAM,MPARAM);
+HWND    APIENTRY WinFontDlg(HWND,HWND,PFONTDLG);
 
 #endif
+
+#if defined(INCL_WINSTDDRAG) && !defined(STDDRAG_INCLUDED)
+#define STDDRAG_INCLUDED
+
+#define PMERR_NOT_DRAGGING     0x1f00
+#define PMERR_ALREADY_DRAGGING 0x1f01
+
+#define MSGF_DRAG 0x0010
+
+#define DM_DROP             0x032f
+#define DM_DRAGOVER         0x032e
+#define DM_DRAGLEAVE        0x032d
+#define DM_DROPHELP         0x032c
+#define DM_ENDCONVERSATION  0x032b
+#define DM_PRINT            0x032a
+#define DM_RENDER           0x0329
+#define DM_RENDERCOMPLETE   0x0328
+#define DM_RENDERPREPARE    0x0327
+#define DM_DRAGFILECOMPLETE 0x0326
+#define DM_EMPHASIZETARGET  0x0325
+#define DM_DRAGERROR        0x0324
+#define DM_FILERENDERED     0x0323
+#define DM_RENDERFILE       0x0322
+#define DM_DRAGOVERNOTIFY   0x0321
+#define DM_PRINTOBJECT      0x0320
+#define DM_DISCARDOBJECT    0x031f
+#define DM_DROPNOTIFY       0x031e
+
+#define DRT_ASM      "Assembler Code"
+#define DRT_BASIC    "BASIC Code"
+#define DRT_BINDATA  "Binary Data"
+#define DRT_BITMAP   "Bitmap"
+#define DRT_C        "C Code"
+#define DRT_COBOL    "COBOL Code"
+#define DRT_DLL      "Dynamic Link Library"
+#define DRT_DOSCMD   "DOS Command File"
+#define DRT_EXE      "Executable"
+#define DRT_FORTRAN  "FORTRAN Code"
+#define DRT_ICON     "Icon"
+#define DRT_LIB      "Library"
+#define DRT_METAFILE "Metafile"
+#define DRT_OS2CMD   "OS/2 Command File"
+#define DRT_PASCAL   "Pascal Code"
+#define DRT_RESOURCE "Resource File"
+#define DRT_TEXT     "Plain Text"
+#define DRT_UNKNOWN  "Unknown"
+
+#define DOR_NODROP    0x0000
+#define DOR_DROP      0x0001
+#define DOR_NODROPOP  0x0002
+#define DOR_NEVERDROP 0x0003
+
+#define DO_COPYABLE                0x0001
+#define DO_MOVEABLE                0x0002
+#define DO_LINKABLE                0x0004
+#define DO_CREATEABLE              0x0008
+#define DO_CREATEPROGRAMOBJECTABLE 0x0010
+
+#define DC_OPEN            0x0001
+#define DC_REF             0x0002
+#define DC_GROUP           0x0004
+#define DC_CONTAINER       0x0008
+#define DC_PREPARE         0x0010
+#define DC_REMOVEABLEMEDIA 0x0020
+
+#define DO_DEFAULT             0xBFFE
+#define DO_UNKNOWN             0xBFFF
+#define DO_COPY                0x0010
+#define DO_MOVE                0x0020
+#define DO_LINK                0x0018
+#define DO_CREATE              0x0040
+#define DO_CREATEPROGRAMOBJECT 0x0080
+
+#define DGS_DRAGINPROGRESS     0x0001
+#define DGS_LAZYDRAGINPROGRESS 0x0002
+
+#define DMFL_TARGETSUCCESSFUL 0x0001
+#define DMFL_TARGETFAIL       0x0002
+#define DMFL_NATIVERENDER     0x0004
+#define DMFL_RENDERRETRY      0x0008
+#define DMFL_RENDEROK         0x0010
+#define DMFL_RENDERFAIL       0x0020
+
+#define DRG_ICON        0x00000001
+#define DRG_BITMAP      0x00000002
+#define DRG_POLYGON     0x00000004
+#define DRG_STRETCH     0x00000008
+#define DRG_TRANSPARENT 0x00000010
+#define DRG_CLOSED      0x00000020
+#define DRG_MINIBITMAP  0x00000040
+
+#define DME_IGNOREABORT    1
+#define DME_IGNORECONTINUE 2
+#define DME_REPLACE        3
+#define DME_RETRY          4
+
+#define DF_MOVE       0x0001
+#define DF_SOURCE     0x0002
+#define DF_SUCCESSFUL 0x0004
+
+#define DRR_SOURCE 1
+#define DRR_TARGET 2
+#define DRR_ABORT  3
+
+#define DFF_MOVE   1
+#define DFF_COPY   2
+#define DFF_DELETE 3
+
+#define WM_DRAGFIRST 0x0310
+#define WM_DRAGLAST  0x032f
+
+typedef LHANDLE HSTR;
+
+typedef struct _DRAGITEM {
+    HWND   hwndItem;
+    ULONG  ulItemID;
+    HSTR   hstrType;
+    HSTR   hstrRMF;
+    HSTR   hstrContainerName;
+    HSTR   hstrSourceName;
+    HSTR   hstrTargetName;
+    SHORT  cxOffset;
+    SHORT  cyOffset;
+    USHORT fsControl;
+    USHORT fsSupportedOps;
+} DRAGITEM, *PDRAGITEM;
+
+typedef struct _DRAGINFO {
+    ULONG  cbDraginfo;
+    USHORT cbDragitem;
+    USHORT usOperation;
+    HWND   hwndSource;
+    SHORT  xDrop;
+    SHORT  yDrop;
+    USHORT cditem;
+    USHORT usReserved;
+} DRAGINFO, *PDRAGINFO;
+
+typedef struct _DRAGIMAGE {
+    USHORT  cb;
+    USHORT  cptl;
+    LHANDLE hImage;
+    SIZEL   sizlStretch;
+    ULONG   fl;
+    SHORT   cxOffset;
+    SHORT   cyOffset;
+} DRAGIMAGE, *PDRAGIMAGE;
+
+typedef struct _DRAGTRANSFER {
+    ULONG     cb;
+    HWND      hwndClient;
+    PDRAGITEM pditem;
+    HSTR      hstrSelectedRMF;
+    HSTR      hstrRenderToName;
+    ULONG     ulTargetInfo;
+    USHORT    usOperation;
+    USHORT    fsReply;
+} DRAGTRANSFER, *PDRAGTRANSFER;
+
+typedef struct _RENDERFILE {
+    HWND   hwndDragFiles;
+    HSTR   hstrSource;
+    HSTR   hstrTarget;
+    USHORT fMove;
+    USHORT usRsvd;
+} RENDERFILE, *PRENDERFILE;
+
+BOOL      APIENTRY DrgAcceptDroppedFiles(HWND,PCSZ,PCSZ,ULONG,ULONG);
+BOOL      APIENTRY DrgAccessDraginfo(PDRAGINFO);
+PDRAGINFO APIENTRY DrgAllocDraginfo(ULONG);
+PDRAGTRANSFER APIENTRY DrgAllocDragtransfer(ULONG);
+HSTR      APIENTRY DrgAddStrHandle(PCSZ);
+BOOL      APIENTRY DrgCancelLazyDrag(VOID);
+BOOL      APIENTRY DrgDeleteDraginfoStrHandles(PDRAGINFO);
+BOOL      APIENTRY DrgDeleteStrHandle(HSTR);
+HWND      APIENTRY DrgDrag(HWND,PDRAGINFO,PDRAGIMAGE,ULONG,LONG,PVOID);
+BOOL      APIENTRY DrgDragFiles(HWND,PCSZ*,PCSZ*,PCSZ*,ULONG,HPOINTER,ULONG,BOOL,ULONG);
+BOOL      APIENTRY DrgFreeDraginfo(PDRAGINFO);
+BOOL      APIENTRY DrgFreeDragtransfer(PDRAGTRANSFER);
+HPS       APIENTRY DrgGetPS(HWND);
+BOOL      APIENTRY DrgLazyDrag(HWND, PDRAGINFO, PDRAGIMAGE, ULONG, PVOID);
+BOOL      APIENTRY DrgLazyDrop(HWND, ULONG, PPOINTL);
+BOOL      APIENTRY DrgPostTransferMsg(HWND,ULONG,PDRAGTRANSFER,ULONG,ULONG,BOOL);
+BOOL      APIENTRY DrgPushDraginfo(PDRAGINFO, HWND);
+PDRAGINFO APIENTRY DrgQueryDraginfoPtr(PDRAGINFO);
+PDRAGINFO APIENTRY DrgQueryDraginfoPtrFromHwnd(HWND);
+PDRAGINFO APIENTRY DrgQueryDraginfoPtrFromDragitem(PDRAGITEM);
+BOOL      APIENTRY DrgQueryDragitem(PDRAGINFO,ULONG,PDRAGITEM,ULONG);
+ULONG     APIENTRY DrgQueryDragitemCount(PDRAGINFO);
+PDRAGITEM APIENTRY DrgQueryDragitemPtr(PDRAGINFO,ULONG);
+ULONG     APIENTRY DrgQueryDragStatus(VOID);
+ULONG     APIENTRY DrgQueryFormat(PDRAGITEM, PCSZ, ULONG, PCSZ, ULONG);
+BOOL      APIENTRY DrgQueryNativeRMF(PDRAGITEM,ULONG,PCHAR);
+ULONG     APIENTRY DrgQueryNativeRMFLen(PDRAGITEM);
+ULONG     APIENTRY DrgQueryStrName(HSTR,ULONG,PCSZ);
+ULONG     APIENTRY DrgQueryStrNameLen(HSTR);
+BOOL      APIENTRY DrgQueryTrueType(PDRAGITEM,ULONG,PCSZ);
+ULONG     APIENTRY DrgQueryTrueTypeLen(PDRAGITEM);
+PDRAGINFO APIENTRY DrgReallocDraginfo (PDRAGINFO, ULONG);
+BOOL      APIENTRY DrgReleasePS(HPS);
+MRESULT   APIENTRY DrgSendTransferMsg(HWND,ULONG,MPARAM,MPARAM);
+BOOL      APIENTRY DrgSetDragitem(PDRAGINFO,PDRAGITEM,ULONG,ULONG);
+BOOL      APIENTRY DrgSetDragImage(PDRAGINFO,PDRAGIMAGE,ULONG,PVOID);
+BOOL      APIENTRY DrgSetDragPointer(PDRAGINFO, HPOINTER);
+BOOL      APIENTRY DrgVerifyTypeSet(PDRAGITEM,PCSZ,ULONG,PCSZ);
+BOOL      APIENTRY DrgVerifyNativeRMF(PDRAGITEM, PCSZ);
+BOOL      APIENTRY DrgVerifyRMF(PDRAGITEM, PCSZ, PCSZ);
+BOOL      APIENTRY DrgVerifyTrueType(PDRAGITEM, PCSZ);
+BOOL      APIENTRY DrgVerifyType(PDRAGITEM, PCSZ);
+
+#endif
+
+

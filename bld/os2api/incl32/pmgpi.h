@@ -9,8 +9,10 @@
 #ifdef INCL_GPI
     #define INCL_GPIBITMAPS
     #define INCL_GPICONTROL
+    #define INCL_GPICORRELATION
     #define INCL_GPILCIDS
     #define INCL_GPILOGCOLORTABLE
+    #define INCL_GPIMETAFILES
     #define INCL_GPIPATHS
     #define INCL_GPIPOLYGON
     #define INCL_GPIPRIMITIVES
@@ -225,7 +227,55 @@ LONG    APIENTRY GpiWCBitBlt(HPS hpsTarget, HBITMAP hbmSource, LONG lCount,
 
 #endif
 
+#if defined(INCL_GPICONTROL) || !defined(INCL_NOCOMMON)
+
+#define PU_ARBITRARY 0x0004
+#define PU_PELS      0x0008
+#define PU_LOMETRIC  0x000C
+#define PU_HIMETRIC  0x0010
+#define PU_LOENGLISH 0x0014
+#define PU_HIENGLISH 0x0018
+#define PU_TWIPS     0x001C
+
+#define GPIF_DEFAULT      0
+#define GPIF_SHORT   0x0100
+#define GPIF_LONG    0x0200
+
+#define GPIT_NORMAL       0
+#define GPIT_MICRO   0x1000
+#define GPIT_INK     0x2000
+
+#define GPIA_NOASSOC      0
+#define GPIA_ASSOC   0x4000
+
+#define GPIM_AREAEXCL 0x8000
+
+#define HDC_ERROR ((HDC)-1)
+
+BOOL   APIENTRY GpiAssociate(HPS,HDC);
+HPS    APIENTRY GpiCreatePS(HAB,HDC,PSIZEL,ULONG);
+BOOL   APIENTRY GpiDestroyPS(HPS);
+BOOL   APIENTRY GpiErase(HPS);
+HDC    APIENTRY GpiQueryDevice(HPS);
+BOOL   APIENTRY GpiRestorePS(HPS,LONG);
+LONG   APIENTRY GpiSavePS(HPS);
+
+#endif
+
 #if defined(INCL_GPICONTROL)
+
+#define DCTL_ERASE      1
+#define DCTL_DISPLAY    2
+#define DCTL_BOUNDARY   3
+#define DCTL_DYNAMIC    4
+#define DCTL_CORRELATE  5
+#define DCTL_ERROR    (-1)
+#define DCTL_OFF        0
+#define DCTL_ON         1
+
+#define SDW_ERROR (-1)
+#define SDW_OFF     0
+#define SDW_ON      1
 
 #define GRES_ATTRS    0x0001
 #define GRES_SEGMENTS 0x0002
@@ -247,40 +297,18 @@ LONG    APIENTRY GpiWCBitBlt(HPS hpsTarget, HBITMAP hbmSource, LONG lCount,
 #define DM_RETAIN        2
 #define DM_DRAWANDRETAIN 3
 
-BOOL   APIENTRY GpiAssociate(HPS hps, HDC hdc);
-HPS    APIENTRY GpiCreatePS(HAB hab, HDC hdc, PSIZEL psizlSize, ULONG flOptions);
-BOOL   APIENTRY GpiDestroyPS(HPS hps);
-BOOL   APIENTRY GpiErase(HPS hps);
-HDC    APIENTRY GpiQueryDevice(HPS hps);
-ULONG  APIENTRY GpiQueryPS(HPS hps, PSIZEL psizlSize);
-BOOL   APIENTRY GpiResetPS(HPS hps, ULONG flOptions);
-BOOL   APIENTRY GpiRestorePS(HPS hps, LONG lPSid);
-LONG   APIENTRY GpiSavePS(HPS hps);
+LONG   APIENTRY GpiQueryDrawControl(HPS,LONG);
+LONG   APIENTRY GpiQueryDrawingMode(HPS);
+ULONG  APIENTRY GpiQueryPS(HPS,PSIZEL);
+LONG   APIENTRY GpiQueryStopDraw(HPS);
+BOOL   APIENTRY GpiResetPS(HPS,ULONG);
+BOOL   APIENTRY GpiSetDrawControl(HPS,LONG,LONG);
+BOOL   APIENTRY GpiSetDrawingMode(HPS,LONG);
+BOOL   APIENTRY GpiSetStopDraw(HPS,LONG);
 
 #endif
 
 #if defined(INCL_GPILCIDS) || !defined(INCL_NOCOMMON)
-
-#define PU_ARBITRARY  0x0004
-#define PU_PELS       0x0008
-#define PU_LOMETRIC   0x000C
-#define PU_HIMETRIC   0x0010
-#define PU_LOENGLISH  0x0014
-#define PU_HIENGLISH  0x0018
-#define PU_TWIPS      0x001C
-
-#define GPIF_DEFAULT       0
-#define GPIF_SHORT    0x0100
-#define GPIF_LONG     0x0200
-
-#define GPIT_NORMAL        0
-#define GPIT_MICRO    0x1000
-#define GPIT_INK      0x2000
-
-#define GPIA_NOASSOC       0
-#define GPIA_ASSOC    0x4000
-
-#define GPIM_AREAEXCL 0x8000
 
 #endif
 
@@ -551,6 +579,10 @@ LONG   APIENTRY GpiCharStringAt(HPS hps, PPOINTL pptlPoint, LONG lCount, PCH pch
 
 #if defined(INCL_GPIPRIMITIVES)
 
+#define AM_ERROR     (-1)
+#define AM_PRESERVE    0
+#define AM_NOPRESERVE  1
+
 #define CM_ERROR   (-1)
 #define CM_DEFAULT   0
 #define CM_MODE1     1
@@ -729,72 +761,69 @@ typedef struct _MARKERBUNDLE {
 } MARKERBUNDLE, *PMARKERBUNDLE;
 
 typedef struct _GRADIENTL {
-    LONG     x;
-    LONG     y;
+    LONG x;
+    LONG y;
 } GRADIENTL, *PGRADIENTL;
 
-LONG   APIENTRY GpiCharStringPos(HPS hps, PRECTL prclRect, ULONG flOptions, LONG lCount,
-                   PCH pchString, PLONG alAdx);
-LONG   APIENTRY GpiCharStringPosAt(HPS hps, PPOINTL pptlStart, PRECTL prclRect,
-                   ULONG flOptions, LONG lCount, PCH pchString, PLONG alAdx);
-BOOL   APIENTRY GpiComment(HPS hps, LONG lLength, PBYTE pbData);
-LONG   APIENTRY GpiFullArc(HPS hps, LONG lControl, FIXED fxMultiplier);
-LONG   APIENTRY GpiPartialArc(HPS hps, PPOINTL pptlCenter, FIXED fxMultiplier,
-                   FIXED fxStartAngle, FIXED fxSweepAngle);
-LONG   APIENTRY GpiQueryAttrs(HPS hps, LONG lPrimType, ULONG flAttrMask, PBUNDLE ppbunAttrs);
-LONG   APIENTRY GpiQueryBackColor(HPS hps);
-LONG   APIENTRY GpiQueryBackMix(HPS hps);
-BOOL   APIENTRY GpiQueryCharAngle(HPS hps, PGRADIENTL pgradlAngle);
-BOOL   APIENTRY GpiQueryCharBox(HPS hps, PSIZEF sizfxSize);
-BOOL   APIENTRY GpiQueryCharBreakExtra(HPS hps, PFIXED BreakExtra);
-LONG   APIENTRY GpiQueryCharDirection(HPS hps);
-BOOL   APIENTRY GpiQueryCharExtra(HPS hps, PFIXED Extra);
-LONG   APIENTRY GpiQueryCharMode(HPS hps);
-LONG   APIENTRY GpiQueryCharSet(HPS hps);
-BOOL   APIENTRY GpiQueryCharShear(HPS hps, PPOINTL pptlShear);
-BOOL   APIENTRY GpiQueryCharStringPos(HPS hps, ULONG flOptions, LONG lCount,
-                   PCH pchString, PLONG alXincrements, PPOINTL aptlPositions);
-BOOL   APIENTRY GpiQueryCharStringPosAt(HPS hps, PPOINTL pptlStart, ULONG flOptions, LONG lCount,
-                   PCH pchString, PLONG alXincrements, PPOINTL aptlPositions);
-LONG   APIENTRY GpiQueryClipBox(HPS hps, PRECTL prclBound);
-HRGN   APIENTRY GpiQueryClipRegion(HPS hps);
-BOOL   APIENTRY GpiQueryCurrentPosition(HPS hps, PPOINTL pptlPoint);
-BOOL   APIENTRY GpiQueryDefCharBox(HPS hps, PSIZEL psizlSize);
-LONG   APIENTRY GpiQueryLineEnd(HPS hps);
-LONG   APIENTRY GpiQueryLineJoin(HPS hps);
-LONG   APIENTRY GpiQueryLineType(HPS hps);
-FIXED  APIENTRY GpiQueryLineWidth(HPS hps);
-LONG   APIENTRY GpiQueryLineWidthGeom(HPS hps);
-LONG   APIENTRY GpiQueryMix(HPS hps);
-BOOL   APIENTRY GpiQueryTextAlignment(HPS hps, PLONG plHoriz, PLONG plVert);
-BOOL   APIENTRY GpiQueryTextBox(HPS hps, LONG lCount1, PCH pchString,
-                   LONG lCount2, PPOINTL aptlPoints);
-LONG   APIENTRY GpiRectVisible(HPS hps, PRECTL prclRectangle);
-BOOL   APIENTRY GpiSetArcParams(HPS hps, PARCPARAMS parcpArcParams);
-BOOL   APIENTRY GpiSetAttrs(HPS hps, LONG lPrimType, ULONG flAttrMask,
-                   ULONG flDefMask, PBUNDLE ppbunAttrs);
-BOOL   APIENTRY GpiSetBackColor(HPS hps, LONG lColor);
-BOOL   APIENTRY GpiSetBackMix(HPS hps, LONG lMixMode);
-BOOL   APIENTRY GpiSetCharBox(HPS hps, PSIZEF psizfxBox);
-BOOL   APIENTRY GpiSetCharBreakExtra(HPS hps, FIXED BreakExtra);
-BOOL   APIENTRY GpiSetCharDirection(HPS hps, LONG lDirection);
-BOOL   APIENTRY GpiSetCharExtra(HPS hps, FIXED Extra);
-BOOL   APIENTRY GpiSetCharMode(HPS hps, LONG lMode);
-BOOL   APIENTRY GpiSetCharSet(HPS hps, LONG llcid);
-BOOL   APIENTRY GpiSetCharShear(HPS hps, PPOINTL pptlAngle);
-BOOL   APIENTRY GpiSetCurrentPosition(HPS hps, PPOINTL pptlPoint);
-BOOL   APIENTRY GpiSetLineEnd(HPS hps, LONG lLineEnd);
-BOOL   APIENTRY GpiSetLineJoin(HPS hps, LONG lLineJoin);
-BOOL   APIENTRY GpiSetLineType(HPS hps, LONG lLineType);
-BOOL   APIENTRY GpiSetLineWidth(HPS hps, FIXED fxLineWidth);
-BOOL   APIENTRY GpiSetLineWidthGeom(HPS hps, LONG lLineWidth);
-BOOL   APIENTRY GpiSetMarker(HPS hps, LONG lSymbol);
-BOOL   APIENTRY GpiSetMarkerBox(HPS hps, PSIZEF psizfxSize);
-BOOL   APIENTRY GpiSetMarkerSet(HPS hps, LONG lSet);
-BOOL   APIENTRY GpiSetMix(HPS hps, LONG lMixMode);
-BOOL   APIENTRY GpiSetPatternRefPoint(HPS hps, PPOINTL pptlRefPoint);
-BOOL   APIENTRY GpiSetPatternSet(HPS hps, LONG lSet);
-BOOL   APIENTRY GpiSetTextAlignment(HPS hps, LONG lHoriz, LONG lVert);
+LONG   APIENTRY GpiCharStringPos(HPS,PRECTL,ULONG,LONG,PCH,PLONG);
+LONG   APIENTRY GpiCharStringPosAt(HPS,PPOINTL,PRECTL,ULONG,LONG,PCH,PLONG);
+BOOL   APIENTRY GpiComment(HPS,LONG,PBYTE);
+LONG   APIENTRY GpiFullArc(HPS,LONG,FIXED);
+LONG   APIENTRY GpiImage(HPS,LONG,PSIZEL,LONG,PBYTE);
+LONG   APIENTRY GpiPartialArc(HPS,PPOINTL,FIXED,FIXED,FIXED);
+BOOL   APIENTRY GpiPop(HPS,LONG);
+LONG   APIENTRY GpiQueryAttrMode(HPS);
+LONG   APIENTRY GpiQueryAttrs(HPS,LONG,ULONG,PBUNDLE);
+LONG   APIENTRY GpiQueryBackColor(HPS);
+LONG   APIENTRY GpiQueryBackMix(HPS);
+BOOL   APIENTRY GpiQueryCharAngle(HPS,PGRADIENTL);
+BOOL   APIENTRY GpiQueryCharBox(HPS,PSIZEF);
+BOOL   APIENTRY GpiQueryCharBreakExtra(HPS,PFIXED);
+LONG   APIENTRY GpiQueryCharDirection(HPS);
+BOOL   APIENTRY GpiQueryCharExtra(HPS,PFIXED);
+LONG   APIENTRY GpiQueryCharMode(HPS);
+LONG   APIENTRY GpiQueryCharSet(HPS);
+BOOL   APIENTRY GpiQueryCharShear(HPS,PPOINTL);
+BOOL   APIENTRY GpiQueryCharStringPos(HPS,ULONG,LONG,PCH,PLONG,PPOINTL);
+BOOL   APIENTRY GpiQueryCharStringPosAt(HPS,PPOINTL,ULONG,LONG,PCH,PLONG,PPOINTL);
+LONG   APIENTRY GpiQueryClipBox(HPS,PRECTL);
+HRGN   APIENTRY GpiQueryClipRegion(HPS);
+BOOL   APIENTRY GpiQueryCurrentPosition(HPS,PPOINTL);
+BOOL   APIENTRY GpiQueryDefCharBox(HPS,PSIZEL);
+LONG   APIENTRY GpiQueryLineEnd(HPS);
+LONG   APIENTRY GpiQueryLineJoin(HPS);
+LONG   APIENTRY GpiQueryLineType(HPS);
+FIXED  APIENTRY GpiQueryLineWidth(HPS);
+LONG   APIENTRY GpiQueryLineWidthGeom(HPS);
+LONG   APIENTRY GpiQueryMix(HPS);
+BOOL   APIENTRY GpiQueryTextAlignment(HPS,PLONG,PLONG);
+BOOL   APIENTRY GpiQueryTextBox(HPS,LONG,PCH,LONG,PPOINTL);
+LONG   APIENTRY GpiRectVisible(HPS,PRECTL);
+BOOL   APIENTRY GpiSetArcParams(HPS,PARCPARAMS);
+BOOL   APIENTRY GpiSetAttrMode(HPS,LONG);
+BOOL   APIENTRY GpiSetAttrs(HPS,LONG,ULONG,ULONG,PBUNDLE);
+BOOL   APIENTRY GpiSetBackColor(HPS,LONG);
+BOOL   APIENTRY GpiSetBackMix(HPS,LONG);
+BOOL   APIENTRY GpiSetCharBox(HPS,PSIZEF);
+BOOL   APIENTRY GpiSetCharBreakExtra(HPS,FIXED);
+BOOL   APIENTRY GpiSetCharDirection(HPS,LONG);
+BOOL   APIENTRY GpiSetCharExtra(HPS,FIXED);
+BOOL   APIENTRY GpiSetCharMode(HPS,LONG);
+BOOL   APIENTRY GpiSetCharSet(HPS,LONG);
+BOOL   APIENTRY GpiSetCharShear(HPS,PPOINTL);
+BOOL   APIENTRY GpiSetCurrentPosition(HPS,PPOINTL);
+BOOL   APIENTRY GpiSetLineEnd(HPS,LONG);
+BOOL   APIENTRY GpiSetLineJoin(HPS,LONG);
+BOOL   APIENTRY GpiSetLineType(HPS,LONG);
+BOOL   APIENTRY GpiSetLineWidth(HPS,FIXED);
+BOOL   APIENTRY GpiSetLineWidthGeom(HPS,LONG);
+BOOL   APIENTRY GpiSetMarker(HPS,LONG);
+BOOL   APIENTRY GpiSetMarkerBox(HPS,PSIZEF);
+BOOL   APIENTRY GpiSetMarkerSet(HPS,LONG);
+BOOL   APIENTRY GpiSetMix(HPS,LONG);
+BOOL   APIENTRY GpiSetPatternRefPoint(HPS,PPOINTL);
+BOOL   APIENTRY GpiSetPatternSet(HPS,LONG);
+BOOL   APIENTRY GpiSetTextAlignment(HPS,LONG,LONG);
 
 #endif
 
@@ -874,24 +903,116 @@ BOOL   APIENTRY GpiSetRegion(HPS hps, HRGN hrgn, LONG lcount, PRECTL arclRectang
 #define TRANSFORM_ADD     1
 #define TRANSFORM_PREEMPT 2
 
-BOOL   APIENTRY GpiConvert(HPS hps, LONG lSrc, LONG lTarg, LONG lCount, PPOINTL aptlPoints);
-BOOL   APIENTRY GpiConvertWithMatrix(HPS hps, LONG lCountp, PPOINTL aptlPoints, LONG lCount,
-                   PMATRIXLF pmatlfArray);
-BOOL   APIENTRY GpiQueryGraphicsField(HPS hps, PRECTL prclField);
-BOOL   APIENTRY GpiQueryModelTransformMatrix(HPS hps, LONG lCount, PMATRIXLF pmatlfArray);
-BOOL   APIENTRY GpiQueryPageViewport(HPS hps, PRECTL prclViewport);
-BOOL   APIENTRY GpiQuerySegmentTransformMatrix(HPS hps, LONG lSegid, LONG lCount,
-                   PMATRIXLF pmatlfArray);
-BOOL   APIENTRY GpiQueryViewingLimits(HPS hps, PRECTL prclLimits);
-BOOL   APIENTRY GpiRotate(HPS, PMATRIXLF, LONG, FIXED, PPOINTL);
-BOOL   APIENTRY GpiScale(HPS, PMATRIXLF, LONG, PFIXED, PPOINTL);
-BOOL   APIENTRY GpiSetGraphicsField(HPS hps, PRECTL prclField);
-BOOL   APIENTRY GpiSetModelTransformMatrix(HPS hps, LONG lCount,
-                   PMATRIXLF pmatlfArray, LONG lOptions);
-BOOL   APIENTRY GpiSetPageViewport(HPS hps, PRECTL prclViewport);
-BOOL   APIENTRY GpiSetSegmentTransformMatrix(HPS hps, LONG lSegid, LONG lCount,
-                   PMATRIXLF pmatlfarray, LONG lOptions);
-BOOL   APIENTRY GpiSetViewingLimits(HPS hps, PRECTL prclLimits);
-BOOL   APIENTRY GpiTranslate(HPS, PMATRIXLF, LONG, PPOINTL);
+BOOL   APIENTRY GpiConvert(HPS,LONG,LONG,LONG,PPOINTL);
+BOOL   APIENTRY GpiConvertWithMatrix(HPS,LONG,PPOINTL,LONG,PMATRIXLF);
+BOOL   APIENTRY GpiQueryDefaultViewMatrix(HPS,LONG,PMATRIXLF);
+BOOL   APIENTRY GpiQueryGraphicsField(HPS,PRECTL);
+BOOL   APIENTRY GpiQueryModelTransformMatrix(HPS,LONG,PMATRIXLF);
+BOOL   APIENTRY GpiQueryPageViewport(HPS,PRECTL);
+BOOL   APIENTRY GpiQuerySegmentTransformMatrix(HPS,LONG,LONG,PMATRIXLF);
+BOOL   APIENTRY GpiQueryViewingLimits(HPS,PRECTL);
+BOOL   APIENTRY GpiRotate(HPS,PMATRIXLF,LONG,FIXED,PPOINTL);
+BOOL   APIENTRY GpiScale(HPS,PMATRIXLF,LONG,PFIXED,PPOINTL);
+BOOL   APIENTRY GpiSetDefaultViewMatrix(HPS,LONG,PMATRIXLF,LONG);
+BOOL   APIENTRY GpiSetGraphicsField(HPS,PRECTL);
+BOOL   APIENTRY GpiSetModelTransformMatrix(HPS,LONG,PMATRIXLF,LONG);
+BOOL   APIENTRY GpiSetPageViewport(HPS,PRECTL);
+BOOL   APIENTRY GpiSetSegmentTransformMatrix(HPS,LONG,LONG,PMATRIXLF,LONG);
+BOOL   APIENTRY GpiSetViewingLimits(HPS,PRECTL);
+BOOL   APIENTRY GpiTranslate(HPS,PMATRIXLF,LONG,PPOINTL);
+
+#endif
+
+#if defined(INCL_GPIMETAFILES)
+
+#define PMF_SEGBASE         0
+#define PMF_LOADTYPE        1
+#define PMF_RESOLVE         2
+#define PMF_LCIDS           3
+#define PMF_RESET           4
+#define PMF_SUPPRESS        5
+#define PMF_COLORTABLES     6
+#define PMF_COLORREALIZABLE 7
+#define PMF_DEFAULTS        8
+#define PMF_DELETEOBJECTS   9
+#define PMF_PERPAGEINFOPTR  12
+
+#define PPI_PLAYSEQ     0
+#define PPI_PLAYDEFINED 1
+
+#define RS_DEFAULT          0
+#define RS_NODISCARD        1
+#define LC_DEFAULT          0
+#define LC_NOLOAD           1
+#define LC_LOADDISC         3
+#define LT_DEFAULT          0
+#define LT_NOMODIFY         1
+#define LT_ORIGINALVIEW     4
+#define RES_DEFAULT         0
+#define RES_NORESET         1
+#define RES_RESET           2
+#define SUP_DEFAULT         0
+#define SUP_NOSUPPRESS      1
+#define SUP_SUPPRESS        2
+#define CTAB_DEFAULT        0
+#define CTAB_NOMODIFY       1
+#define CTAB_REPLACE        3
+#define CTAB_REPLACEPALETTE 4
+#define CREA_DEFAULT        0
+#define CREA_REALIZE        1
+#define CREA_NOREALIZE      2
+#define CREA_DOREALIZE      3
+#define DDEF_DEFAULT        0
+#define DDEF_IGNORE         1
+#define DDEF_LOADDISC       3
+#define DOBJ_DEFAULT        0
+#define DOBJ_NODELETE       1
+#define DOBJ_DELETE         2
+#define RSP_DEFAULT         0
+#define RSP_NODISCARD       1
+
+typedef struct  _PERPAGEINFO {
+    ULONG  ulType;
+    ULONG  ulStart;
+    ULONG  ulEnd;
+    ULONG  ulSkip;
+    ULONG  ulPageCnt;
+    PULONG pulDefined;
+} PERPAGEINFO;
+
+HMF    APIENTRY GpiCopyMetaFile(HMF);
+BOOL   APIENTRY GpiDeleteMetaFile(HMF);
+HMF    APIENTRY GpiLoadMetaFile(HAB,PCSZ);
+LONG   APIENTRY GpiPlayMetaFile(HPS,HMF,LONG,PLONG,PLONG,LONG,PCSZ);
+BOOL   APIENTRY GpiQueryMetaFileBits(HMF,LONG,LONG,PBYTE);
+LONG   APIENTRY GpiQueryMetaFileLength(HMF);
+BOOL   APIENTRY GpiResumePlay(HPS);
+BOOL   APIENTRY GpiSaveMetaFile(HMF,PCSZ);
+BOOL   APIENTRY GpiSetMetaFileBits(HMF,LONG,LONG,PBYTE);
+BOOL   APIENTRY GpiSuspendPlay(HPS);
+
+#endif
+
+#if defined(INCL_GPICORRELATION)
+
+#define PICKAP_DEFAULT 0
+#define PICKAP_REC     2
+
+#define PICKSEL_VISIBLE 0
+#define PICKSEL_ALL     1
+
+#define GPI_HITS 2
+
+LONG   APIENTRY GpiCorrelateChain(HPS,LONG,PPOINTL,LONG,LONG,PLONG);
+LONG   APIENTRY GpiCorrelateFrom(HPS,LONG,LONG,LONG,PPOINTL,LONG,LONG,PLONG);
+LONG   APIENTRY GpiCorrelateSegment(HPS,LONG,LONG,PPOINTL,LONG,LONG,PLONG);
+BOOL   APIENTRY GpiQueryBoundaryData(HPS,PRECTL);
+BOOL   APIENTRY GpiQueryPickAperturePosition(HPS,PPOINTL);
+BOOL   APIENTRY GpiQueryPickApertureSize(HPS,PSIZEL);
+BOOL   APIENTRY GpiQueryTag(HPS,PLONG);
+BOOL   APIENTRY GpiResetBoundaryData(HPS);
+BOOL   APIENTRY GpiSetPickAperturePosition(HPS,PPOINTL);
+BOOL   APIENTRY GpiSetPickApertureSize(HPS,LONG,PSIZEL);
+BOOL   APIENTRY GpiSetTag(HPS,LONG);
 
 #endif
