@@ -58,3 +58,8 @@ dbg.exe: dbg.obj dbg.lnk hello.res
     wlink @dbg.lnk op symfile
     rc -p -x hello.res dbg.exe
     copy/b dbg.exe+dbg.sym
+
+clean: .SYMBOLIC
+    @if exist *.obj @del *.obj
+    @if exist *.res @del *.res
+    @if exist *.exe @del *.exe
