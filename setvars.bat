@@ -28,11 +28,11 @@ set GHOSTSCRIPT=C:\gs\gs7.04
 REM temporary sub-directory for pre-build OW tools
 set OBJDIR=prebuild
 
-REM Unset this variable to get more debug info
-set on_build_machine=1
+REM set this variable to get debug build
+set DEBUG_BUILD=0
 
 REM set this variable if you want default windowing support
-rem set default_windowing=1
+set default_windowing=0
 
 REM Change the default command prompt
 prompt $p$g

@@ -40,10 +40,10 @@ rc              = *wrc
 
 
 !ifndef release_$(proj_name)
-!ifeq on_build_machine 1
-release = 1
-!else
+!ifeq debug_build 1
 release = 0
+!else
+release = 1
 !endif
 !else
 release = $(release_$(proj_name))

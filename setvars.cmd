@@ -32,10 +32,10 @@ REM Change this to point to your OS/2 Toolkit directory
 set os2tkroot=c:\Toolkit
 
 REM set this variable if you want default windowing support
-REM set default_windowing=1
+set default_windowing=0
 
-REM Unset this variable to get more debug info
-set on_build_machine=1
+REM set this variable to get debug build
+set DEBUG_BUILD=0
 
 REM Change the default command prompt
 prompt $p$g

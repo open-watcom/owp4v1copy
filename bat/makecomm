@@ -22,10 +22,9 @@ $# just in case anyone is curious ...
 .ERASE
 .CONTINUE
 
-# if you wish to have on_build_machine defined in your environment, set
-# it as an environment variable.
-!ifdef %on_build_machine
-on_build_machine = $(%on_build_machine)
+# if you wish to build debug version
+!ifdef %DEBUG_BUILD
+debug_build = $(%DEBUG_BUILD)
 !endif
 # default windowing support
 !ifdef %default_windowing

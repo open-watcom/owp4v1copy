@@ -13,8 +13,11 @@ export MAKE=make
 #subdirectory to be used for bootstrapping
 export OBJDIR=bootstrp
 
-# Unset this variable to get more debug info
-export ON_BUILD_MACHINE=1
+# set this variable to get debug build
+export DEBUG_BUILD=0
+
+# set this variable if you want default windowing support
+export default_windowing=0
 
 # Stuff for the Open Watcom build environment
 export BATDIR=$OWROOT
