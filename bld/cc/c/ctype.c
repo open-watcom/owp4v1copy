@@ -1276,7 +1276,14 @@ TYPEPTR FuncNode( TYPEPTR return_typ, int flag, TYPEPTR *parm_types )
     return( typ );
 }
 
+/* CarlYoung 31-Oct-03 */
 unsigned long TypeSize( TYPEPTR typ )
+{
+    return(TypeSizeEx(typ, NULL));
+}
+
+/* CarlYoung 31-Oct-03 */
+unsigned long TypeSizeEx( TYPEPTR typ , unsigned long * pFieldWidth)
 {
     unsigned long size;
 
@@ -1341,6 +1348,10 @@ unsigned long TypeSize( TYPEPTR typ )
     case TYPE_FIELD:
     case TYPE_UFIELD:
         size = CTypeSizes[ typ->u.f.field_type ];
+        /* CarlYoung 31-Oct-03 */
+        if(pFieldWidth){
+            *pFieldWidth = typ->u.f.field_width;
+        }
         break;
     default:
         size = 0;

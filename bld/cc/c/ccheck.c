@@ -370,6 +370,9 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
                     ret_val = NO;
                 }
             }
+        } else if((TYPE_FIELD == typ1->decl_type) || (TYPE_UFIELD == typ1->decl_type)){ /* CarlYoung 31-Oct-03 */
+            if(typ2->u.f.field_width > typ1->u.f.field_width)
+                ret_val = AC;
         }
     }else if( typ1->decl_type == TYPE_UNION && top_level > 0 ) {
         if( InUnion( typ1, typ2, 0 ) != OK ){
@@ -821,8 +824,17 @@ void ParmAsgnCheck( TYPEPTR typ1, TREEPTR opnd2, int parm_num )
         }
         break;
     case AC:
-        if(TypeSize( typ2 ) > TypeSize( typ1 ))
-            CWarn1( WARN_LOSE_PRECISION, ERR_LOSE_PRECISION);
+        /* CarlYoung 31-Oct-03 */
+        {
+            unsigned long fsize_1 = 0, fsize_2 = 0;
+
+            if(TypeSizeEx( typ2, &fsize_2 ) > TypeSizeEx( typ1, &fsize_1 )){
+                CWarn1( WARN_LOSE_PRECISION, ERR_LOSE_PRECISION);
+            }
+            if(fsize_2 > fsize_1){
+                CWarn1( WARN_LOSE_PRECISION, ERR_LOSE_PRECISION);
+            }
+        }
     case OK:
         AssRangeChk( typ1, opnd2 );
         break;
@@ -1006,6 +1018,12 @@ local int TypeCheck( TYPEPTR typ1, TYPEPTR typ2 )
                 }
             }
             return( TC_TYPE_MISMATCH );
+        }
+        /* CarlYoung 31-Oct-03 */
+        if( (TYPE_FIELD == typ1->decl_type) || (TYPE_UFIELD == typ1->decl_type) ) {
+            if(typ1->u.f.field_width != typ2->u.f.field_width){
+                return( TC_TYPE_MISMATCH );
+            }
         }
         if( typ1->decl_type == TYPE_STRUCT  ||
             typ1->decl_type == TYPE_UNION ) {

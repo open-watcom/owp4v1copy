@@ -247,7 +247,6 @@ typedef struct type_definition {
                 };
         } u;
 } TYPEDEFN, *TYPEPTR;
-extern  unsigned long TypeSize(TYPEPTR);
 extern  void WalkTypeList( void (*func)(TYPEPTR) );
 extern  void WalkFuncTypeList( void (*func)(TYPEPTR,int) );
 
