@@ -71,7 +71,7 @@ comp_opts_i86 = -ml -fpc -zc -zu
 comp_opts_386 = -fpc -zc
 comp_opts_axp =
 
-comp_opts = -d__DIP__ -zq -w3 -bt=$(targ) -dSTRICT -i..\h;..\..\h;$(dig_dir)\h;$(inc_dirs_lang);$(watcom_dir)\h
+comp_opts = -d__DIP__ -zq -w3 -bt=$(targ) -i..\h;..\..\h;$(dig_dir)\h;$(inc_dirs_lang);$(watcom_dir)\h
 
 !ifdef extra_incs
 comp_opts += -i$(extra_incs)

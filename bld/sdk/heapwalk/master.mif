@@ -14,7 +14,7 @@ msgfiles = $(wheapwlk_dir)\heapwalk.msg $(sdk_dir)\misc\savelbox.msg &
            $(sdk_dir)\misc\memwnd.msg $(sdk_dir)\misc\about.msg
  
 lnk = $(name).lnk
-cflags= -zq-2-s-zu-d1-zW-fpc-w4-dSTRICT -fo=$[&.obj -i=$(sdk_dir)\misc;$(wdisasmdir)h;$(win31_hdrs)
+cflags= -zq-2-s-zu-d1-zW-fpc-w4 -fo=$[&.obj -i=$(sdk_dir)\misc;$(wdisasmdir)h;$(win31_hdrs)
 !ifndef on_build_machine
 cflags += -d2
 !endif

@@ -87,9 +87,9 @@ rc_flags_nt = -bt=nt -d__NT__
 rc_flags_win = -bt=windows -zm
 
 !ifdef wpitest
-extra_c_flags = -DWIN_GUI -dSTRICT /d_WPI_TEST_ -s
+extra_c_flags = -DWIN_GUI /d_WPI_TEST_ -s
 !else
-extra_c_flags = -DWIN_GUI -dSTRICT -s
+extra_c_flags = -DWIN_GUI -s
 !endif
 extra_c_flags_i86 = -zc -fpc
 extra_c_flags_386 = -fpc

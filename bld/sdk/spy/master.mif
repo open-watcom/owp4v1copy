@@ -62,7 +62,7 @@ resources_win = spymsgs.dlg
 
 extra_c_flags_mem = -dNO_WPI
 
-extra_c_flags     += -s-dSTRICT
+extra_c_flags     += -s
 extra_c_flags_i86 += -fpc -zu -2 -zW
 extra_c_flags_386 += -fpc -4
 

@@ -48,7 +48,7 @@ objs += trmem.obj
 !endif
 !endif
 
-extra_c_flags     = -dYYDEBUG -dSCANDEBUG -dSTRICT
+extra_c_flags     = -dYYDEBUG -dSCANDEBUG
 !ifeq host_OS nt
 extra_c_flags    += -dNT_HOSTED
 !endif

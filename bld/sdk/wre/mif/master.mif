@@ -42,7 +42,7 @@ TRMEM           += -of+
 !endif
 !endif
 
-extra_c_flags           = -s -DWIN_GUI -DSTRICT -we
+extra_c_flags           = -s -DWIN_GUI -we
 extra_c_flags_i86       = -fpc-zu-zw-zc
 extra_c_flags_386       = -fpc
 !ifeq host_OS nt

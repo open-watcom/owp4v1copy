@@ -20,7 +20,6 @@ rcopts1         = -r -zk0
 rcopts2         = -k -ad
 
 extra_c_flags_nt  = -dNOUSE3D
-extra_c_flags     = -dSTRICT
 extra_c_flags_mem = -DNO_WPI
 extra_l_flags_win = option stack=7k option heapsize=2k lib toolhelp.lib lib $(misc_dir)\ctl3d.lib
 extra_l_flags_nt  = option stack=64k

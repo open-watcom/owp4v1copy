@@ -39,8 +39,6 @@ extra_c_flags_mem = -dWANT_MSGS -dNO_WPI
 extra_c_flags = -dNOUSE3D
 !endif
 
-extra_c_flags += -dSTRICT
-
 #lflags stuff
 #########
 extra_l_flags = option map,quiet name $(exc_name)

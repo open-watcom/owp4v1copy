@@ -36,7 +36,7 @@ cflags_all = -zq -w4
 extra_c_flags_386       = -fpc-s
 extra_c_flags_i86       = -fpc-s-zu-zw-zc
 
-extra_c_flags           = -DWIN_GUI -DSTRICT -we
+extra_c_flags           = -DWIN_GUI -we
 
 OF_386  = -of+
 OF_i86  = -of+
