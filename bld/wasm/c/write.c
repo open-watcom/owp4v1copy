@@ -140,7 +140,7 @@ void AddFlist( char const *filename )
     }
     fname = _getFilenameFullPath( buff, filename, sizeof(buff) );
     flist = (FNAMEPTR)AsmAlloc( sizeof( FNAME ) );
-    flist->name = (char*)AsmAlloc( strlen( fname ) + 1 );
+    flist->name = (char *)AsmAlloc( strlen( fname ) + 1 );
     strcpy( flist->name, fname );
     flist->mtime = _getFilenameTimeStamp( fname );
     flist->next = NULL;
@@ -581,7 +581,7 @@ static void write_comm( void )
     uint        num = 0;
     uint        total_size = 0;
     uint        varsize = 0;
-    uint        mem_type;
+    uint        symsize;
     uint        i = 0;
     uint        j = 0;
     char        *name;
@@ -646,9 +646,9 @@ static void write_comm( void )
             }
             if( varsize > 1 ) varsize--; /* we already output 1 byte */
 
-            mem_type = opsize( curr->sym.mem_type );
+            symsize = opsize( curr->sym.mem_type );
             if( curr->e.comminfo->distance != T_FAR ) {
-                value *= mem_type;
+                value *= symsize;
             }
 
             for( j=0; j < varsize; j++ ) {
@@ -658,8 +658,8 @@ static void write_comm( void )
 
             if( curr->e.comminfo->distance == T_FAR ) {
                 /* mem type always needs <= 1 byte */
-                myassert( mem_type < UCHAR_MAX );
-                name[i++] = mem_type;
+                myassert( symsize < UCHAR_MAX );
+                name[i++] = symsize;
             }
         }
         ObjAttachData( objr, name, total_size );
@@ -721,7 +721,7 @@ static int write_autodep( void )
         objr->d.coment.class = CMT_DEPENDENCY;
 
         len = strlen(curr->name);
-        *((time_t*)buff) = _timet2dos(curr->mtime);
+        *((time_t *)buff) = _timet2dos(curr->mtime);
         *(buff + 4) = (unsigned char)len;
         strcpy(buff + 5, curr->name);
         len += 5;
@@ -1181,7 +1181,8 @@ void WriteObjModule( void )
         }
         prev_total = curr_total;
     }
-    if( write_to_file && Options.error_count == 0 ) write_modend();
+    if( write_to_file && Options.error_count == 0 )
+        write_modend();
 
     FreeFlist();
     AsmSymFini();
