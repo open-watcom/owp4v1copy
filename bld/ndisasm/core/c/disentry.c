@@ -172,10 +172,14 @@ dis_return DisDecode( dis_handle *h, void *d, dis_dec_ins *ins )
     int                         offs;
 
     start = 0;
+    curr  = 0;
     table = h->d->range;
     for( ;; ) {
         dr = DisCliGetData( d, start, sizeof( ins->opcode ), &ins->opcode );
-        if( dr != DR_OK ) return( dr );
+        if( dr != DR_OK ) {
+            ins->num_ops = 0;   /* must reset num_ops before returning! */
+            return( dr );
+        }
         h->d->preproc_hook( h, d, ins );
         page = 0;
         for( pos = h->d->range_pos ; *pos != -1 ; ++pos, ++page ) {
