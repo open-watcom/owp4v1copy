@@ -943,7 +943,7 @@ static  void    PutInMemory( conflict_node *conf ) {
             if( ins->head.state == OPERANDS_NEED_WORK ) {
                 ins->head.state = INS_NEEDS_WORK;
             }
-            if( ins == conf->ins_range.last ) break;
+            if( ins->id == conf->ins_range.last->id ) break;
             if( ins->head.opcode == OP_BLOCK ) {
                 if( blk->next_block == NULL ) {
                     Zoiks( ZOIKS_141 );
@@ -1271,7 +1271,7 @@ static  void    NeighboursUse( conflict_node *conf ) {
                 ins = (instruction *)&blk->ins;
                 _NameSetInit( no_conflict );
             }
-            if( ins == last ) break;
+            if( ins->id == last->id ) break;
         }
     }
     /*
