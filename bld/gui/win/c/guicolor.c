@@ -41,6 +41,8 @@
 
 extern  WPI_INST        GUIMainHInst;
 
+static int init_rgb = 0;
+
 WPI_COLOUR GUIColours[] = {
 #ifdef __OS2_PM__
 //      R G B
@@ -63,13 +65,13 @@ WPI_COLOUR GUIColours[] = {
 #else
 //      B G R
     0x00000000, /* GUI_BLACK          */
-    0x00800000, /* GUI_BLUE           */
+    0x00800000, /* GUI_BLUE           IDE std back col */
     0x00008000, /* GUI_GREEN          */
     0x00808000, /* GUI_CYAN           */
     0x00000080, /* GUI_RED            */
     0x00800080, /* GUI_MAGENTA        */
     0x00008080, /* GUI_BROWN          */
-    0x00c0c0c0, /* GUI_WHITE          */
+    0x00c0c0c0, /* GUI_WHITE          IDE std fore col */
     0x00808080, /* GUI_GREY           */
     0x00ff0000, /* GUI_BRIGHT_BLUE    */
     0x0000ff00, /* GUI_BRIGHT_GREEN   */
@@ -82,6 +84,34 @@ WPI_COLOUR GUIColours[] = {
 };
 
 #define NUM_COLOURS ( sizeof( GUIColours ) / sizeof( WPI_COLOUR ) )
+
+void InitSystemRGB()
+{
+#ifdef __NT__
+    /* Overwrite static default colors above, with system colors */
+    /* Should be able to support WM_SYSCOLORCHANGE: later.       */
+    /* Done to avoid hardcoded RGB values. (looks BAD!)          */
+    if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {  
+       GUIColours[0]  = GetSysColor(COLOR_WINDOWTEXT);     /* GUI_BLACK   / Text */
+       GUIColours[1]  = GetSysColor(COLOR_HIGHLIGHT);      /* GUI_BLUE    / Selected menu/list backgr */
+       GUIColours[2]  = GetSysColor(COLOR_WINDOWTEXT);     /* GUI_GREEN   / */      
+       GUIColours[3]  = GetSysColor(COLOR_APPWORKSPACE);   /* GUI_CYAN    / Main MDI backgr. */
+       GUIColours[4]  = GetSysColor(COLOR_HIGHLIGHT);      /* GUI_RED     / TEXT FG HILITE WDW */
+       GUIColours[5]  = GetSysColor(COLOR_APPWORKSPACE);   /* GUI_MAGENTA / */
+       GUIColours[6]  = GetSysColor(COLOR_HIGHLIGHTTEXT);  /* GUI_BROWN   / */
+       GUIColours[7]  = GetSysColor(COLOR_BTNFACE);        /* GUI_WHITE   / Dialog items Backgr */
+       GUIColours[8]  = GetSysColor(COLOR_BTNFACE);        /* GUI_GREY    / Button face  */
+       GUIColours[9]  = GetSysColor(COLOR_MENU);           /* GUI_BRIGHT_BLUE   */     
+       GUIColours[10] = GetSysColor(COLOR_MENUTEXT);       /* GUI_BRIGHT_GREEN  */
+       GUIColours[11] = GetSysColor(COLOR_WINDOW);         /* GUI_BRIGHT_CYAN / Used as text BG info on WDW splash */
+       GUIColours[12] = GetSysColor(COLOR_WINDOW);         /* GUI_BRIGHT_RED     */
+       GUIColours[13] = GetSysColor(COLOR_WINDOW);         /* GUI_BRIGHT_MAGENTA */
+       GUIColours[14] = GetSysColor(COLOR_BTNTEXT);        /* GUI_BRIGHT_YELLOW */
+       GUIColours[15] = GetSysColor(COLOR_WINDOW);         /* GUI_BRIGHT_WHITE / Window Backg */
+    }
+#endif
+}
+
 
 bool GUISetRGB( gui_colour colour, gui_rgb rgb )
 {
@@ -128,6 +158,9 @@ bool GUIGetWndColour( gui_window *wnd, gui_attr attr, gui_colour_set *colour_set
 
 void SetBKBrush( gui_window *wnd )
 {
+    if (!init_rgb)
+        InitSystemRGB();
+
     GUIGetRGB( wnd->colours[GUI_BACKGROUND].back, &wnd->bk_rgb );
     wnd->bk_brush = _wpi_createsolidbrush(GUIGetBack( wnd, GUI_BACKGROUND ));
 }

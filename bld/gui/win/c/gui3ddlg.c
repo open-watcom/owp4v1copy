@@ -93,22 +93,27 @@ bool GUI3DDialogInit( void )
 #endif
 
 #if defined( __WINDOWS__ ) || defined( __NT__ )
-    Ctl3dRegister( GUIMainHInst );
-    Ctl3dAutoSubclass( GUIMainHInst );
 
-    #ifdef __WINDOWS_386__
-        GUISetCtl3dUnregister( &_CB_Ctl3dUnregister );
-        GUISetCtl3dSubclassDlg( &_CB_Ctl3dSubclassDlg );
-        GUISetCtl3dColorChange( &_CB_Ctl3dColorChange );
-        GUISetCtl3dSubclassCtl( &_CB_Ctl3dSubclassCtl );
-        GUISetCtl3dCtlColorEx( &_CB_Ctl3dCtlColorEx );
-    #else
-        GUISetCtl3dUnregister( &Ctl3dUnregister );
-        GUISetCtl3dSubclassDlg( &Ctl3dSubclassDlg );
-        GUISetCtl3dColorChange( &Ctl3dColorChange );
-        GUISetCtl3dSubclassCtl( &Ctl3dSubclassCtl );
-        GUISetCtl3dCtlColorEx( &Ctl3dCtlColorEx );
-    #endif
+    if( LOBYTE(LOWORD(GetVersion())) < 4 ) {
+
+        /* Only use ctl3d on old versions of Windows */
+        Ctl3dRegister( GUIMainHInst );
+        Ctl3dAutoSubclass( GUIMainHInst );
+
+        #ifdef __WINDOWS_386__
+            GUISetCtl3dUnregister( &_CB_Ctl3dUnregister );
+            GUISetCtl3dSubclassDlg( &_CB_Ctl3dSubclassDlg );
+            GUISetCtl3dColorChange( &_CB_Ctl3dColorChange );
+            GUISetCtl3dSubclassCtl( &_CB_Ctl3dSubclassCtl );
+            GUISetCtl3dCtlColorEx( &_CB_Ctl3dCtlColorEx );
+        #else
+            GUISetCtl3dUnregister( &Ctl3dUnregister );
+            GUISetCtl3dSubclassDlg( &Ctl3dSubclassDlg );
+            GUISetCtl3dColorChange( &Ctl3dColorChange );
+            GUISetCtl3dSubclassCtl( &Ctl3dSubclassCtl );
+            GUISetCtl3dCtlColorEx( &Ctl3dCtlColorEx );
+        #endif
+    }
     return( TRUE );
 #else
     return( FALSE );

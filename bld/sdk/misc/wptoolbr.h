@@ -93,6 +93,10 @@ void ChangeToolButtonBitmap( struct toolbar *bar, WORD id, HBITMAP newbmp );
 BOOL HasToolAtPoint( struct toolbar *bar, WPI_PARAM1 wparam, WPI_PARAM2 lparam );
 void ToolBarRedrawButtons( struct toolbar *bar );
 
+#if defined(__NT__)
+void WPTB_TransparentBlt(HDC, UINT, UINT, UINT, UINT, HDC, COLORREF);
+#endif
+
 #ifndef __OS2_PM__
 #define TOOLBAR_FIXED_STYLE     (WS_BORDER|WS_CHILDWINDOW)
 #define TOOLBAR_FLOAT_STYLE     (WS_CAPTION|WS_POPUP|WS_THICKFRAME|WS_SYSMENU)

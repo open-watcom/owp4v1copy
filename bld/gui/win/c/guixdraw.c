@@ -99,7 +99,7 @@ void GUIDrawTextBitmapRGB ( gui_window *wnd, char *text,
         height = AVGYCHAR(GUItm);
     }
     rect = wnd->hwnd_client;
-    _wpi_getrectvalues( rect, &left, &top, &right, &bottom );
+    _wpi_getrectvalues( rect, &left, &top, &right, &bottom);
     _wpi_getpaintrect( wnd->ps, &paint_rect );
     _wpi_getwrectvalues( paint_rect, &paint_left, &paint_top, &paint_right,
                          &paint_bottom );
@@ -160,13 +160,13 @@ void GUIDrawTextBitmapRGB ( gui_window *wnd, char *text,
 #ifdef __OS2_PM__
         _wpi_rectangle( wnd->hdc, nDrawX, nDrawY+1, right, nDrawY + height - 1 );
 #else
-        _wpi_rectangle( wnd->hdc, nDrawX, nDrawY, right, nDrawY + height );
+        _wpi_rectangle( wnd->hdc, nDrawX, nDrawY, right, nDrawY + height);
 #endif
 
         /* if visible even with scrolling */
         if( nDrawX < ( paint_right + hscroll_pos ) ) {
             if( bitmap > 0 ) {
-                GUIDrawBitmap( bitmap, wnd->hdc, nDrawX, nDrawY );
+                GUIDrawBitmap( bitmap, wnd->hdc, nDrawX, nDrawY, colour);
             } else {
 #ifdef __OS2_PM__
                 nDrawY += _wpi_metricdescent( GUItm );

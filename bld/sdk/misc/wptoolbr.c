@@ -123,10 +123,6 @@ static BOOL     round_corners = TRUE;     // Platform has rounded buttons?
 static BOOL     round_corners = FALSE;    // Platform has rounded buttons?
 #endif
 
-#if defined(__NT__)
-void WPTB_TransparentBlt(HDC, UINT, UINT, UINT, UINT, HDC, COLORREF);
-#endif
-
 MRESULT CALLBACK ToolBarWndProc( HWND, WPI_MSG, WPI_PARAM1, WPI_PARAM2 );
 
 static void toolbardestroywindow( HWND hwnd )

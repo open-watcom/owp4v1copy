@@ -591,11 +591,16 @@ static HWND CreateControl( gui_control_info *info, gui_window *parent,
     xstyle = 0L;
     // We do this crud to get 3d edges on edit controls, listboxes, and
     // comboboxes -rnk 07/07/95
-    classname = GUIControls[info->control_class].classname;
-    if( lstrcmpi( classname, "Edit" ) == 0 ||
-        lstrcmpi( classname, "Listbox" ) == 0 ||
-        lstrcmpi( classname, "Combobox" ) == 0 ) {
-        xstyle = WS_EX_CLIENTEDGE;
+
+    if( LOBYTE(LOWORD(GetVersion())) >= 4) {
+        /* In W95 and later we don't want this crud any more... RR 2003.12.8 */
+        
+        classname = GUIControls[info->control_class].classname;
+        if( lstrcmpi( classname, "Edit" ) == 0 ||
+            lstrcmpi( classname, "Listbox" ) == 0 ||
+            lstrcmpi( classname, "Combobox" ) == 0 ) {
+            xstyle = WS_EX_CLIENTEDGE;
+        }
     }
 
     hwnd = CreateWindowEx( xstyle, GUIControls[info->control_class].classname,
@@ -610,7 +615,7 @@ static HWND CreateControl( gui_control_info *info, gui_window *parent,
         /* about cleaning it up later (no DeleteObject() necessary) */
         HFONT setFont;
 
-        if ( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
+        if( LOBYTE(LOWORD(GetVersion())) >= 4 ) {
             /* New shell active, Win95 or later */
             setFont = (HFONT) GetStockObject( DEFAULT_GUI_FONT );
         } else {
