@@ -65,8 +65,21 @@ static int_vect_32      old24;
 static char tSec1,tSec2,tMin1,tMin2,tHour1,tHour2;
 static char cTick1=18,cTick2=5;
 
-extern void HandleInt24( void );
+void __int24_handler( void );
+#ifdef __386__
+#pragma aux __int24_handler = \
+        "mov    al,3" \
+        "iretd" ;
+#else
+#pragma aux __int24_handler = \
+        "mov    al,3" \
+        "iret" ;
+#endif
 
+static void HandleInt24( void )
+{
+    __int24_handler();
+}
 
 /*
  * drawClock - draw the clock

@@ -1,5 +1,5 @@
 objdostimeroot = &
-        int.ubj int24.obj
+        int.ubj
 
 objdossizeroot = &
         dosmain.ybj
