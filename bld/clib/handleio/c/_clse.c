@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  low-level component of close() for DOS/Win16
 *
 ****************************************************************************/
 
@@ -40,6 +39,8 @@
 #include "seterrno.h"
 #include "defwin.h"
 
+extern  unsigned __NFiles;              /* maximum # of files we can open */
+extern  unsigned *__io_mode;
 
 int __close( int handle )
 {
@@ -66,6 +67,8 @@ int __close( int handle )
         __set_errno( EBADF );
         rv = -1;
     }
-    __SetIOMode( handle, 0 );
+    if( handle < __NFiles ) {
+        __io_mode[handle] = 0;    /* we're closing it; smite _INITIALIZED */
+    }
     return( rv );
 }
