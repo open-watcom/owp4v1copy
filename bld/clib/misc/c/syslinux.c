@@ -74,6 +74,12 @@ long sys_open(const char * filename, int flags, int mode)
     __syscall_return(ssize_t,res);
 }
 
+int sys_getdents(u_int fd, struct dirent *dirp, u_int count)
+{
+    u_long res = sys_call3(SYS_getdents, fd, (u_long)dirp, count);
+    __syscall_return(int,res);    
+}
+
 _WCRTLINK char *getcwd( char *__buf, size_t __size )
 {
     u_long res = sys_call2(SYS_getcwd, (u_long)__buf, __size);
@@ -243,3 +249,4 @@ _WCRTLINK int utime( const char *__path, const struct utimbuf * __times )
     u_long res = sys_call2(SYS_utime, (u_long)__path, (u_long)__times);
     __syscall_return(int,res);
 }
+

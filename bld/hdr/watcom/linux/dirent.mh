@@ -16,7 +16,9 @@ struct dirent {
     ino_t           d_ino;
     off_t           d_off;
     unsigned short  d_reclen;
+#if 0 /* this field is missing for linux kernel 2.2 */
     unsigned char   d_type;
+#endif
     char            d_name[256];		/* We must not include limits.h! */
 };
 

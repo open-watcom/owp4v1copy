@@ -334,6 +334,7 @@ u_long sys_call5(u_long func,u_long r_ebx,u_long r_ecx,u_long r_edx,u_long r_esi
 u_long  sys_brk(u_long brk);
 long    sys_open(const char * filename, int flags, int mode);
 long    sys_exit(int error_code);
+int     sys_getdents(u_int fd, struct dirent *dirp, u_int count);
 
 #if 0
 struct itimerval;

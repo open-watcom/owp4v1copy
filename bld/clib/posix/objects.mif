@@ -2,5 +2,8 @@
 #==========================================================================================
 !inject tcgattr.obj                                                                     l32
 !inject tcsattr.obj                                                                     l32
+!inject opendir.obj                                                                     l32
+!inject readdir.obj                                                                     l32
+!inject closedir.obj                                                                    l32
 
 !include ..\..\..\..\objlist.mif
