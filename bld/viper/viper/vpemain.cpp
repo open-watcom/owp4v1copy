@@ -107,7 +107,7 @@ struct mData {
     MenuPop*    pop;
 };
 
-char _viperTitle[] = { "WATCOM IDE" };
+char _viperTitle[] = { "Open Watcom IDE" };
 char _viperError[] = { "IDE Error" };
 char _viperRequest[] = { "IDE Request" };
 char _viperInfo[] = { "IDE Information" };
@@ -467,9 +467,9 @@ void VpeMain::buildMenuBar()
         pop7->insertItem( mi );
     }
     pop7->insertSeparator();
-    mi = new WMenuItem( "&About the WATCOM IDE...", this,
+    mi = new WMenuItem( "&About the Open Watcom IDE...", this,
                         (cbm)&VpeMain::about, (cbh)&VpeMain::mHint,
-                        "About the WATCOM IDE" );
+                        "About the Open Watcom IDE" );
     pop7->insertItem( mi );
 
     setMenu( menuBar );
