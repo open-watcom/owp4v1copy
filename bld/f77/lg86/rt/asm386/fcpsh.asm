@@ -43,7 +43,7 @@ fcode   PUSH_INT1               ; push integer*1
 dfcode  PUSH_LOG1               ; push logical*1
         getdw   edi             ; get addr of variable
         add     edi,ebp
-;;;;;;;;hop     VAL_INT1
+;;;;;;;;jmp     VAL_INT1
 efcode  PUSH_INT1
 
 
@@ -58,7 +58,7 @@ efcode  VAL_INT1
 fcode   PUSH_INT2               ; push integer*2
         getdw   edi             ; get addr of variable
         add     edi,ebp
-;;;;;;;;hop     VAL_INT2
+;;;;;;;;jmp     VAL_INT2
 efcode  PUSH_INT2
 
 
@@ -82,14 +82,14 @@ fcode   PUSH_IND_LOG1           ; push logical*1 indirect
 dfcode  PUSH_IND_INT1           ; push integer*1 indirect
         getdw   eax             ; get addr of pointer
         mov     edi,[eax+ebp]   ; get addr of value
-        hop     VAL_INT1        ; push value
+        jmp     VAL_INT1        ; push value
 efcode  PUSH_IND_LOG1
 
 
 fcode   PUSH_IND_INT2           ; push integer*2 indirect
         getdw   eax             ; get addr of pointer
         mov     edi,[eax+ebp]   ; get addr of value
-        hop     VAL_INT2        ; push value
+        jmp     VAL_INT2        ; push value
 efcode  PUSH_IND_INT2
 
 
@@ -98,7 +98,7 @@ dfcode  PUSH_IND_INT4           ; push integer*4 indirect
 dfcode  PUSH_IND_REAL4          ; push real*4 indirect
         getdw   eax             ; get addr of pointer
         mov     edi,[eax+ebp]   ; get addr of value
-        hop     VAL_INT4        ; push value
+        jmp     VAL_INT4        ; push value
 efcode  PUSH_IND_LOG4
 
 
@@ -106,7 +106,7 @@ fcode   PUSH_IND_REAL8          ; push real*8 indirect
 dfcode  PUSH_IND_CPLX8          ; push complex*8 indirect
         getdw   eax             ; get addr of pointer
         mov     edi,[eax+ebp]   ; get addr of value
-        hop     VAL_REAL8       ; push value
+        jmp     VAL_REAL8       ; push value
 efcode  PUSH_IND_REAL8
 
 
@@ -122,7 +122,7 @@ efcode  PUSH_REAL8
 fcode   PUSH_IND_REAL16         ; push real*16 indirect
         getdw   eax             ; get addr of pointer
         mov     edi,[eax+ebp]   ; get addr of value
-;;;;;;;;hop     VAL_REAL16      ; push value
+;;;;;;;;jmp     VAL_REAL16      ; push value
 efcode  PUSH_IND_REAL16
 
 
@@ -148,25 +148,25 @@ efcode  PUSH_REAL16
 fcode   PUSH_IND_CPLX16         ; push complex*16 indirect
         getdw   eax             ; get addr of pointer
         mov     edi,[eax+ebp]   ; get addr of value
-        hop     VAL_CPLX16      ; push value
+        jmp     VAL_CPLX16      ; push value
 efcode  PUSH_IND_CPLX16
 
 fcode   PUSH_CPLX16             ; push complex*16
         getdw   edi             ; get addr of variable
         add     edi,ebp
-        hop     VAL_CPLX16
+        jmp     VAL_CPLX16
 efcode  PUSH_CPLX16
 
 fcode   PUSH_IND_CPLX32         ; push complex*32 indirect
         getdw   eax             ; get addr of pointer
         mov     edi,[eax+ebp]   ; get addr of value
-        hop     VAL_CPLX32      ; push value
+        jmp     VAL_CPLX32      ; push value
 efcode  PUSH_IND_CPLX32
 
 fcode   PUSH_CPLX32             ; push complex*32
         getdw   edi             ; get addr of variable
         add     edi,ebp
-;;;;;;;;hop     VAL_CPLX32
+;;;;;;;;jmp     VAL_CPLX32
 efcode  PUSH_CPLX32
 
 
@@ -175,21 +175,21 @@ fcode   VAL_CPLX32
         push    24[edi]         ; ...
         push    20[edi]         ; ...
         push    16[edi]         ; ...
-;;;;;;;;hop     VAL_CPLX16
+;;;;;;;;jmp     VAL_CPLX16
 efcode  VAL_CPLX32
 
 
 fcode   VAL_CPLX16
         push    12[edi]         ; push value
         push    8[edi]          ; ...
-;;;;;;;;hop     VAL_CPLX8
+;;;;;;;;jmp     VAL_CPLX8
 efcode  VAL_CPLX16
 
 
 fcode   VAL_CPLX8
 dfcode  VAL_REAL8
         push    4[edi]          ; ...
-;;;;;;;;hop     VAL_LOG4
+;;;;;;;;jmp     VAL_LOG4
 efcode  VAL_CPLX8
 
 

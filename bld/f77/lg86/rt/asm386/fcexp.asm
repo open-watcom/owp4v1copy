@@ -174,7 +174,7 @@ efcode  XI_EXP
 
 fcode   IR_EXP
         call    DoIRCnv
-;;;;;;;;hop     RR_EXP
+;;;;;;;;jmp     RR_EXP
 efcode  IR_EXP
 
 
@@ -193,13 +193,13 @@ efcode  RR_EXP
 
 fcode   DR_EXP
         call    DoDRCnv
-        hop     DD_EXP
+        jmp     DD_EXP
 efcode  DR_EXP
 
 
 fcode   ER_EXP
         call    DoERCnv
-        hop     EE_EXP
+        jmp     EE_EXP
 efcode  ER_EXP
 
 
@@ -229,7 +229,7 @@ efcode  ID_EXP
 
 fcode   RD_EXP
         call    DoRDCnv
-;;;;;;;;hop     DD_EXP
+;;;;;;;;jmp     DD_EXP
 efcode  RD_EXP
 
 
@@ -241,13 +241,13 @@ efcode  DD_EXP
 
 fcode   ED_EXP
         call    DoEDCnv
-        hop     EE_EXP
+        jmp     EE_EXP
 efcode  ED_EXP
 
 
 fcode   CD_EXP
         call    DoCQCnv
-;;;;;;;;hop     QD_EXP
+;;;;;;;;jmp     QD_EXP
 efcode  CD_EXP
 
 
@@ -265,19 +265,19 @@ efcode  XD_EXP
 
 fcode   IE_EXP
         call    DoIECnv
-        hop     EE_EXP
+        jmp     EE_EXP
 efcode  IE_EXP
 
 
 fcode   RE_EXP
         call    DoRECnv
-        hop     EE_EXP
+        jmp     EE_EXP
 efcode  RE_EXP
 
 
 fcode   DE_EXP
         call    DoDECnv
-;;;;;;;;hop     EE_EXP
+;;;;;;;;jmp     EE_EXP
 efcode  DE_EXP
 
 
@@ -307,27 +307,27 @@ efcode  XE_EXP
 
 fcode   IC_EXP
         call    DoICCnv
-        hop     CC_EXP
+        jmp     CC_EXP
 efcode  IC_EXP
 
 
 fcode   RC_EXP
         call    DoRCCnv
-        hop     CC_EXP
+        jmp     CC_EXP
 efcode  RC_EXP
 
 
 fcode   DC_EXP
         call    DoDQCnv
         call    DoQCCnv
-        hop     QQ_EXP
+        jmp     QQ_EXP
 efcode  DC_EXP
 
 
 fcode   EC_EXP
         call    DoEXCnv
         call    DoXCCnv
-        hop     XX_EXP
+        jmp     XX_EXP
 efcode  EC_EXP
 
 
@@ -339,44 +339,44 @@ efcode  CC_EXP
 
 fcode   QC_EXP
         call    DoQCCnv
-        hop     QQ_EXP
+        jmp     QQ_EXP
 efcode  QC_EXP
 
 
 fcode   XC_EXP
         call    DoXCCnv
-        hop     XX_EXP
+        jmp     XX_EXP
 efcode  XC_EXP
 
 
 fcode   IQ_EXP
         call    DoIQCnv
-        hop     QQ_EXP
+        jmp     QQ_EXP
 efcode  IQ_EXP
 
 
 fcode   RQ_EXP
         call    DoRQCnv
-        hop     QQ_EXP
+        jmp     QQ_EXP
 efcode  RQ_EXP
 
 
 fcode   DQ_EXP
         call    DoDQCnv
-        hop     QQ_EXP
+        jmp     QQ_EXP
 efcode  DQ_EXP
 
 
 fcode   EQ_EXP
         call    DoEQCnv
         call    DoEXCnv
-        hop     XX_EXP
+        jmp     XX_EXP
 efcode  EQ_EXP
 
 
 fcode   CQ_EXP
         call    DoCQCnv
-;;;;;;;;hop     QQ_EXP
+;;;;;;;;jmp     QQ_EXP
 efcode  CQ_EXP
 
 
@@ -388,43 +388,43 @@ efcode  QQ_EXP
 
 fcode   XQ_EXP
         call    DoXQCnv
-        hop     XX_EXP
+        jmp     XX_EXP
 efcode  XQ_EXP
 
 
 fcode   IX_EXP
         call    DoIXCnv
-        hop     XX_EXP
+        jmp     XX_EXP
 efcode  IX_EXP
 
 
 fcode   RX_EXP
         call    DoRXCnv
-        hop     XX_EXP
+        jmp     XX_EXP
 efcode  RX_EXP
 
 
 fcode   DX_EXP
         call    DoDXCnv
-        hop     XX_EXP
+        jmp     XX_EXP
 efcode  DX_EXP
 
 
 fcode   EX_EXP
         call    DoEXCnv
-        hop     XX_EXP
+        jmp     XX_EXP
 efcode  EX_EXP
 
 
 fcode   CX_EXP
         call    DoCXCnv
-        hop     XX_EXP
+        jmp     XX_EXP
 efcode  CX_EXP
 
 
 fcode   QX_EXP
         call    DoQXCnv
-;;;;;;;;hop     XX_EXP
+;;;;;;;;jmp     XX_EXP
 efcode  QX_EXP
 
 
