@@ -21,11 +21,11 @@ time_deps = ../watcom/time.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../cr
 wchar_deps = ../watcom/wchar.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../ext.sp ../mbmax.sp ../null.sp ../sizet.sp ../wchar_t.sp ../wctypet.sp
 wctype_deps = ../watcom/wctype.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwat.sp ../wchar_t.sp ../wctypet.sp
 
-ios_deps = ../watcom/ios.mh ../readonly.sp ../crwat.sp
+ios_deps = ../watcom/ios.mh ../readonly.sp ../crwat.sp ../cpplock.sp ../watexc.sp ../pshpackl.sp ../poppack.sp
 iosfwd_deps = ../watcom/iosfwd.mh ../readonly.sp ../crwat.sp
-iostream_deps = ../watcom/iostream.mh ../readonly.sp ../cpplock.sp ../crwat.sp ../poppack.sp ../pshpackl.sp ../watexc.sp
-istream_deps = ../watcom/istream.mh ../readonly.sp ../crwat.sp
-ostream_deps = ../watcom/ostream.mh ../readonly.sp ../crwat.sp
+iostream_deps = ../watcom/iostream.mh ../readonly.sp ../crwat.sp
+istream_deps = ../watcom/istream.mh ../readonly.sp ../crwat.sp ../pshpackl.sp ../poppack.sp
+ostream_deps = ../watcom/ostream.mh ../readonly.sp ../crwat.sp ../pshpackl.sp ../poppack.sp
 
 # The follow describe the dependences for the various *.h files.
 # Dependencies for the extensionless C++ headers are currently in the
