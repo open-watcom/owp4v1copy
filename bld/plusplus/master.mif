@@ -68,14 +68,10 @@ comp_objs = $($(host_os)$(target_cpu)_objs)
 comp_objs_exe = $(comp_objs) $(exe_objs)
 comp_objs_dll = $(comp_objs) $(dll_objs)
 
-cflags =
-
 !ifeq host_cpu axp
 !ifeq release 0
 cflags += -si
 !endif
-!else
-cflags += -5r-fpc
 !endif
 
 !ifdef plusplus_rtdll
@@ -87,20 +83,6 @@ cflags += -br
 !  include $(%plusplus_local_mif)
 !else ifdef plusplus_local_mif
 !  include $(plusplus_local_mif)
-!endif
-
-cflags += -oalrs-s-zq-w4-we -bt=$(host_os)
-
-!ifndef dbg_cflags
-!ifeq release 1
-cflags += -d1
-!else
-cflags += -d2
-!endif
-!endif
-
-!ifeq release 1
-cflags += -dNDEBUG -ot
 !endif
 
 !ifdef %plusplus_cflags
@@ -185,11 +167,6 @@ extra_l_flags_nt  = OPTION dosseg, stack=0x10000k, offset=64k COMMIT stack=32k
 # WLINK .DLL options for the various hosts
 wlink_dll_os2_386 = OPTION manyautodata
 
-#######################################
-# workaround for OW 1.0 WLINK problem
-#######################################
-linker+= op caseex
-#######################################
 extra_l_flags = OPTION map
 wlink_opt_common_exe = OPTION symfile
 wlink_opt_common_drv = OPTION symfile
