@@ -63,14 +63,14 @@
 #include "linuxcomm.h"
 #include "x86cpu.h"
 
-static pid_t        OrigPGrp;
+u_short                 flatCS;
+u_short                 flatDS;
+pid_t                   pid;
 
+static pid_t            OrigPGrp;
 static watch_point      wpList[ MAX_WP ];
 static int              wpCount = 0;
-static pid_t            pid;
 static int              attached;
-static u_short          flatCS;
-static u_short          flatDS;
 static long             orig_eax;
 static long             last_eip;
 static int              last_sig;
@@ -79,8 +79,8 @@ static struct r_debug   rdebug;         /* Copy of debuggee's r_debug (if presen
 static int              have_rdebug;    /* Flag indicating valid r_debug */
 static Elf32_Dyn        *dbg_dyn;       /* VA debuggee's dynamic section (if present) */
 
-#if 0
-void Out( char *str )
+#ifdef DEBUG_OUT
+void Out( const char *str )
 {
     write( 1, (char *)str, strlen( str ) );
 }
@@ -100,9 +100,6 @@ void OutNum( unsigned long i )
     } while( i != 0 );
     Out( ptr );
 }
-#else
-#define Out( x )
-#define OutNum( x )
 #endif
 
 static unsigned WriteMem( void *ptr, addr_off offv, unsigned size )
@@ -192,6 +189,7 @@ static unsigned ReadMem( void *ptr, addr_off offv, unsigned size )
             *((unsigned_8*)(data+2)) = (unsigned_8)(val >> 16);
             break;
         }
+	count = 0;
     }
     return( size - count );
 }
@@ -277,6 +275,45 @@ int Get_ld_info( struct r_debug *debug_ptr )
     return( TRUE );
 }
 
+/* Like strcpy() but source string is in debuggee's address space. Not
+ * very efficient, use sparingly!
+ */
+char *dbg_strcpy( char *s1, const char *s2 )
+{
+    char    *dst = s1;
+    char    c;
+
+    do {
+        if( ReadMem( &c, (addr48_off)s2, 1 ) != 1 ) {
+            Out( "dbg_strcpy: failed at " );
+            OutNum( (addr48_off)s2 );
+            Out( "\n" );
+            return( NULL );
+	}
+        *dst++ = c;
+	++s2;
+    } while( c );
+    
+    return( s1 );
+}
+
+/* Copy a link map struct from debuggee address space to memory
+ * provided by caller.
+ */
+int GetLinkMap( struct link_map *dbg_lmap, struct link_map *local_lmap )
+{
+    unsigned    read_len;
+
+    read_len = sizeof( *local_lmap );
+    if( ReadMem( local_lmap, (addr_off)dbg_lmap, read_len ) != read_len ) {
+        Out( "GetLinkMap: failed to copy link_map struct at " );
+        OutNum( (addr48_off)dbg_lmap );
+        Out( "\n" );
+        return( FALSE );
+    }
+    return( TRUE ); 
+}
+
 unsigned ReqGet_sys_config( void )
 {
     get_sys_config_ret  *ret;
@@ -284,7 +321,7 @@ unsigned ReqGet_sys_config( void )
     ret = GetOutPtr( 0 );
     ret->sys.os = OS_LINUX;
 
-    // TODO: Detect OS version!
+    // TODO: Detect OS version (kernel version?)!
     ret->sys.osmajor = 1;
     ret->sys.osminor = 0;
 
@@ -296,42 +333,6 @@ unsigned ReqGet_sys_config( void )
     }
     ret->sys.huge_shift = 3;
     ret->sys.mad = MAD_X86;
-    return( sizeof( *ret ) );
-}
-
-unsigned ReqMap_addr( void )
-{
-    map_addr_req    *acc;
-    map_addr_ret    *ret;
-    unsigned long   val;
-
-    // TODO: This appears to a segment and offset address in the
-    //       process disk image address space to a real segment/offset
-    //       space in virtual memory. We need to figure out what segment
-    //       this address corresponds to within the process and
-    //       convert the address appropriately (using FlatCS/FlatDS as necessary).
-    //
-    // TODO: See the NT implementation for ideas!
-    //
-    // Note: Info about the process address space is stored in the user register
-    //       for GDB, so we can use that to find out what we need to convert these
-    //       values in here...
-    acc = GetInPtr( 0 );
-    ret = GetOutPtr( 0 );
-    ret->lo_bound = 0;
-    ret->hi_bound = ~(addr48_off)0;
-    sys_ptrace( PTRACE_PEEKUSER, pid, offsetof( user_struct, start_code ), &val );
-    ret->out_addr.offset = acc->in_addr.offset + val;
-    OutNum( acc->in_addr.segment );
-    OutNum( acc->handle );
-    if( acc->in_addr.segment == MAP_FLAT_DATA_SELECTOR ||
-        acc->in_addr.segment == flatDS ) {
-        sys_ptrace( PTRACE_PEEKUSER, pid, offsetof( user_struct, u_tsize ), &val );
-        ret->out_addr.offset += val;
-        ret->out_addr.segment = flatDS;
-    } else {
-        ret->out_addr.segment = flatCS;
-    }
     return( sizeof( *ret ) );
 }
 
@@ -747,6 +748,7 @@ unsigned ReqProg_load( void )
     ret = GetOutPtr( 0 );
 
     last_sig = -1;
+    have_rdebug = FALSE;
     at_end = FALSE;
     parms = (char *)GetInPtr( sizeof( *acc ) );
     parm_start = parms;
@@ -831,6 +833,7 @@ unsigned ReqProg_load( void )
 	if( !GetFlatSegs( &flatCS, &flatDS ) )
 	    goto fail;
         dbg_dyn = GetDebuggeeDynSection( exe_name );
+	AddProcess();
         errno = 0;
     }
     ret->err = errno;
@@ -867,6 +870,7 @@ unsigned ReqProg_kill( void )
             waitpid( pid, &status, 0 );
         }
     }
+    DelProcess();
     at_end = FALSE;
     pid = 0;
     ret = GetOutPtr( 0 );
@@ -1112,6 +1116,7 @@ static unsigned ProgRun( int step )
      */
     if( !have_rdebug && (dbg_dyn != NULL) ) {
         if( Get_ld_info( &rdebug ) ) {
+            AddInitialLibs( rdebug.r_map );
             have_rdebug = TRUE;
             ret->conditions |= COND_LIBRARIES;
         }

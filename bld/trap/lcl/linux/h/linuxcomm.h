@@ -249,11 +249,32 @@ extern u_long   GetDR6( void );
 extern void     ClearDebugRegs( void );
 extern int      SetDebugRegs( void );
 extern int      CheckWatchPoints( void );
+extern int      GetLinkMap( struct link_map *, struct link_map * );
+extern int      AddInitialLibs( struct link_map * );
+extern void     AddProcess( void );
+extern void     DelProcess( void );
+extern char     *dbg_strcpy( char *, const char * );
 
 extern void print_msg( const char *format, ... );
 
 /* Copy of parent's environment */
 extern char     **dbg_environ;
+
+/* Internal debugging functions */
+
+#ifdef DEBUG_OUT
+extern void Out( const char *str );
+extern void OutNum( unsigned long i );
+#else
+#define Out( x )
+#define OutNum( x )
+#endif
+
+/* Global trap file vairables */
+
+extern u_short          flatCS;
+extern u_short          flatDS;
+extern pid_t            pid;
 
 #pragma pack( pop )
 

@@ -62,6 +62,20 @@ static lib_load_info    module_info_array[32];
 #endif
 
 /*
+ * FindLib - find a shared lib entry in the list
+ */
+lib_load_info *FindLib( addr48_off dynsection )
+{
+    unsigned    i;
+    
+    for( i = 0; i < ModuleTop; ++i ) {
+        if( moduleInfo[i].dbg_dyn_sect == dynsection )
+            return( &moduleInfo[i] );
+    }
+    return( NULL );
+}
+
+/*
  * AddProcess - a new process has been created
  */
 void AddProcess( void )
@@ -79,8 +93,8 @@ void AddProcess( void )
     lli = &moduleInfo[0];
 
     lli->offset = 0;    /* Assume that main executable was not relocated */
-    lli->modname[0] = 0;
-    lli->filename[0] = 0;
+    lli->modname[0] = '\0';
+    lli->filename[0] = '\0';
 }
 
 /*
@@ -106,9 +120,18 @@ void AddLib( struct link_map *lmap )
     lli->offset = lmap->l_addr;
     lli->dbg_dyn_sect = (addr48_off)lmap->l_ld;
     lli->modname[0] = 0;
-    strcpy( lli->filename, lmap->l_name );
+    dbg_strcpy( lli->filename, lmap->l_name );
     lli->newly_loaded = TRUE;
     lli->newly_unloaded = FALSE;
+    lli->offset = lmap->l_addr;
+    
+    Out( "Added library: ofs/dyn = " );
+    OutNum( lmap->l_addr );
+    Out( "/" );
+    OutNum( (addr48_off)lmap->l_ld );
+    Out( " " );
+    Out( lli->filename );
+    Out( "\n" );
 }
 
 void DelLib( addr48_off dynsection )
@@ -137,63 +160,77 @@ void DelProcess( void )
     }
 }
 
-#if 0
+
+/*
+ * AddInitialLibs - called the first time we can get information
+ * about loaded shared libs.
+ */
+int AddInitialLibs( struct link_map *first_lmap )
+{
+    struct link_map     lmap;
+    struct link_map     *dbg_lmap;
+    int                 count = 0;
+
+    dbg_lmap = first_lmap;
+    while( dbg_lmap != NULL ) {
+        if( !GetLinkMap( dbg_lmap, &lmap ) ) break;
+	AddLib( &lmap );
+	++count;
+        dbg_lmap = lmap.l_next;
+    }
+    return( count );
+}
+
+/*
+ * AccMapAddr - map address in image from link-time virtual address to
+ * actual linear address as loaded in memory. For executables, this will
+ * in effect return the address unchanged (image base 0x08048100 equals
+ * linear 0x08048100), for shared libs this will typically add the offset
+ * from zero (link time VA) to actual load base.
+ */
 unsigned ReqMap_addr( void )
 {
-    u_short             seg;
-    map_addr_req        *acc;
-    map_addr_ret        *ret;
-    lib_load_info       *lli;
-
+    map_addr_req    *acc;
+    map_addr_ret    *ret;
+    unsigned long   val;
+    lib_load_info   *lli;
+    
+    // Note: Info about the process address space is stored in the user register
+    //       for GDB, so we can use that to find out what we need to convert these
+    //       values in here...
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
-
-    seg = acc->in_addr.segment;
-    switch( seg ) {
-    case MAP_FLAT_CODE_SELECTOR:
-    case MAP_FLAT_DATA_SELECTOR:
-        seg = 0;
-        break;
-    default:
-        --seg;
-        break;
-    }
-
-    lli = &moduleInfo[acc->handle];
-
-#if 0
-    /*
-     * for a 32-bit app, we get the PE header. We can look up the
-     * object in the header and determine if it is code or data, and
-     * use that to assign the appropriate selector (either FlatCS
-     * or FlatDS).
-     */
-    if( hi.sig == EXE_PE ) {
-        for( i = 0; i < hi.peh.num_objects; i++ ) {
-            ReadFile( handle, &obj, sizeof( obj ), &bytes, NULL );
-            if( i == seg ) {
-                break;
-            }
-        }
-        if( i == hi.peh.num_objects ) {
-            return( 0 );
-        }
-        if( obj.flags & ( PE_OBJ_CODE | PE_OBJ_EXECUTABLE ) ) {
-            ret->out_addr.segment = FlatCS;
-        } else {
-            ret->out_addr.segment = FlatDS;
-        }
-        ret->out_addr.offset = (addr48_off)lli->base + obj.rva;
-    } else {
-        return( 0 );
-    }
-#endif
-    ret->out_addr.offset += acc->in_addr.offset;
     ret->lo_bound = 0;
     ret->hi_bound = ~(addr48_off)0;
+    sys_ptrace( PTRACE_PEEKUSER, pid, offsetof( user_struct, start_code ), &val );
+    ret->out_addr.offset = acc->in_addr.offset + val;
+
+    // TODO: sometimes we're called with weird handle - why?
+    if( acc->handle > ModuleTop )
+        lli = &moduleInfo[0];
+    else
+        lli = &moduleInfo[acc->handle];
+
+    Out( "ReqMap_addr: addr " );
+    OutNum( acc->in_addr.segment );
+    Out( ":" );
+    OutNum( acc->in_addr.offset );
+    Out( " in module " );
+    OutNum( acc->handle );
+    if( acc->in_addr.segment == MAP_FLAT_DATA_SELECTOR ||
+        acc->in_addr.segment == flatDS ) {
+        sys_ptrace( PTRACE_PEEKUSER, pid, offsetof( user_struct, u_tsize ), &val );
+        ret->out_addr.offset += val;
+        ret->out_addr.segment = flatDS;
+    } else {
+        ret->out_addr.segment = flatCS;
+    }
+    ret->out_addr.offset += lli->offset;
+    Out( " to " );
+    OutNum( ret->out_addr.offset );
+    Out( "\n" );
     return( sizeof( *ret ) );
 }
-#endif
 
 /*
  * AccGetLibName - get lib name of current module
@@ -204,7 +241,6 @@ unsigned ReqGet_lib_name( void )
     get_lib_name_ret    *ret;
     char                *name;
     unsigned            i;
-
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -226,5 +262,10 @@ unsigned ReqGet_lib_name( void )
             return( sizeof( *ret ) + strlen( name ) + 1 );
         }
     }
+    Out( "ReqGet_lib_name: in handle " );
+    OutNum( acc->handle );
+    Out( " out handle " );
+    OutNum( ret->handle );
+    Out( "\n" );
     return( sizeof( *ret ) );
 }
