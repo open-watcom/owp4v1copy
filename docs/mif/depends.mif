@@ -2320,7 +2320,6 @@ $(docsrc_dir)\wd\dlgsrch.bmp &
 $(docsrc_dir)\wd\dlgwopt.bmp &
 $(docsrc_dir)\wd\dlgwopt2.bmp &
 $(docsrc_dir)\wd\symbuttn.gml &
-$(docsrc_dir)\wd\tmp.gml &
 $(docsrc_dir)\wd\wdbg.gml &
 $(docsrc_dir)\wd\wdbgasm.gml &
 $(docsrc_dir)\wd\wdbgbrkp.gml &
