@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Message resource handling.
 *
 ****************************************************************************/
 
@@ -33,8 +32,7 @@
 #include "as.h"
 #ifdef _STANDALONE_
 #include <process.h>
-#include <unistd.h>
-#include <stdlib.h>
+#include <fcntl.h>
 #include "wressetr.h"
 #include "wreslang.h"
 #else

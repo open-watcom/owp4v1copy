@@ -1,7 +1,7 @@
-#pmake: all cpu_386 os_nt
+#pmake: cpu_386 os_nt
 
-host_CPU = 386
-host_OS  = nt
+host_os  = nt
+host_cpu = 386
 
 cpu = ppc
 inline_as = 1

@@ -1,6 +1,6 @@
-#pmake: build cpu_386 os_dos
+#pmake: build cpu_386 os_linux
 
-host_os  = dos
+host_os  = linux
 host_cpu = 386
 
 cpu = alpha

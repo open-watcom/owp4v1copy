@@ -1,7 +1,7 @@
-#pmake: all build cpu_386 os_nt
+#pmake: build cpu_386 os_nt
 
-host_CPU = 386
-host_OS  = nt
+host_os  = nt
+host_cpu = 386
 
 cpu = alpha
 

@@ -49,7 +49,7 @@ splice_opts     += -k_STANDALONE_
 
 exe_deps_osi = $(bld_bin)\os2ldr.exe
 
-libs = $(owl_dir)/o.$(host_CPU)/owl.lib $(wres_lib)
+libs = $(owl_dir)/o.$(host_cpu)/owl.lib $(wres_lib)
 
 extra_defines           = -d$(as_cpu)
 !ifndef inline_as
@@ -61,7 +61,7 @@ extra_c_flags           = $(extra_defines)
 as_trmem_flag_386       = -of+
 
 !ifeq release 0
-as_trmem                = -dTRMEM $(as_trmem_flag_$(host_CPU))
+as_trmem                = -dTRMEM $(as_trmem_flag_$(host_cpu))
 as_yydebug              = -dYYDEBUG=1
 !endif
 
@@ -76,27 +76,27 @@ extra_c_flags_ppexpr    = -fh=ppexpr.pch
 extra_c_flags_ppmacro   = -fh=ppmacro.pch
 extra_c_flags_ppmem     = -fh=ppmem.pch
 
-extra_c_flags_asexpr= -fh
-extra_c_flags_asopernd= -fh
-extra_c_flags_asutils= -fh
-extra_c_flags_alphafmt= -fh
-extra_c_flags_alphains= -fh
-extra_c_flags_asregs= -fh
-extra_c_flags_assymbol= -fh
-extra_c_flags_asdrectv= -fh
-extra_c_flags_asdirop= -fh
-extra_c_flags_asnumlab= -fh
-extra_c_flags_asmsg= -fh
-extra_c_flags_asmsgj=
-extra_c_flags_ashash= -fh
-extra_c_flags_asinline= -fh
-extra_c_flags_asiobj= -fh
-extra_c_flags_main= -fh
-extra_c_flags_obj= -fh
-extra_c_flags_sections= -fh
-extra_c_flags_options= -fh
-extra_c_flags_ppcfmt= -fh
-extra_c_flags_ppcins= -fh
+extra_c_flags_asexpr    = -fh
+extra_c_flags_asopernd  = -fh
+extra_c_flags_asutils   = -fh
+extra_c_flags_alphafmt  = -fh
+extra_c_flags_alphains  = -fh
+extra_c_flags_asregs    = -fh
+extra_c_flags_assymbol  = -fh
+extra_c_flags_asdrectv  = -fh
+extra_c_flags_asdirop   = -fh
+extra_c_flags_asnumlab  = -fh
+extra_c_flags_asmsg     = -fh
+extra_c_flags_asmsgj    =
+extra_c_flags_ashash    = -fh
+extra_c_flags_asinline  = -fh
+extra_c_flags_asiobj    = -fh
+extra_c_flags_main      = -fh
+extra_c_flags_obj       = -fh
+extra_c_flags_sections  = -fh
+extra_c_flags_options   = -fh
+extra_c_flags_ppcfmt    = -fh
+extra_c_flags_ppcins    = -fh
 
 extra_l_flags           = option map
 !ifndef inline_as
@@ -149,8 +149,8 @@ asi_test_objs   = asitest$(obj) trmemcvr$(obj)
 asi_test_objs   += trmem$(obj)
 !endif
 
-asi_lib     = $(as_dir)/$(cpu)/inline/o.$(host_CPU)/asinline.lib
-asi_lib_j   = $(as_dir)/$(cpu)/inline/o.$(host_CPU)/asinlinj.lib
+asi_lib     = $(as_dir)/$(cpu)/inline/o.$(host_cpu)/asinline.lib
+asi_lib_j   = $(as_dir)/$(cpu)/inline/o.$(host_cpu)/asinlinj.lib
 !ifdef test_inline_as
 asi_test_name = asinline
 
@@ -158,9 +158,9 @@ $(asi_test_name)$(exe) : $(asi_test_objs) $(asi_lib)
         $(linker) $(lflags) name $@ file { $(asi_test_objs) } lib $(asi_lib)
 
 $(asi_lib) :
-        cd $(as_dir)\$(cpu)\inline\o.$(host_CPU)
+        cd $(as_dir)\$(cpu)\inline\o.$(host_cpu)
         wmake -h
-        cd $(as_dir)\$(cpu)\inline\o.$(host_CPU)\test
+        cd $(as_dir)\$(cpu)\inline\o.$(host_cpu)\test
 !endif
 
 !ifdef asi_build_lib
@@ -175,29 +175,21 @@ $(asi_lib_j) : $(asi_lib) asmsgj$(obj)
         cp $[@ $^@
         $(librarian) -b $^@ -asmsg.obj
         $(librarian) -b $^@ +asmsgj.obj
-
-#asmsgj$(obj): asmsg.c
-#        @set include=$(inc_path)
-#        $(cc) $(cflags) $(extra_c_flags_$[&) $[@ -fo=$^@ -dJAPANESE_MSG
 !endif
 
-$(name)$(exe) : $(as_objs) $(libs) $(exe_deps_$(host_OS)) $(name).res
+$(name)$(exe) : msg.gh $(as_objs) $(libs) $(exe_deps_$(host_os)) $(name).res
         $(linker) $(lflags) name $@ file { $(as_objs) } op symfile
-!ifeq host_OS osi
+!ifeq host_os osi
         $(bld_bin)\w32bind $(name).rex $(name)$(exe) $(bld_bin)\os2ldr.exe
         erase $(name).rex
 !endif
         wstrip -q -a -r $^@ . $(name).res
 
 !ifndef inline_as
-$(as_objs) : msg.gh
-
 $(name).res : as.rc msg.gh
         $(rc_aui) $(extra_defines) -i"$(as_dir)/h" $[@ -fo=$^@
 !else
-
 $(asi_objs) : msg.gh
-
 !endif
 
 msg.gh : ./mkstrid.exe

@@ -1,6 +1,6 @@
-#pmake: cpu_386 os_osi
+#pmake: build cpu_386 os_linux
 
-host_os  = osi
+host_os  = linux
 host_cpu = 386
 
 cpu = ppc
