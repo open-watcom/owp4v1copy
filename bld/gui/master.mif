@@ -94,9 +94,12 @@ extra_c_flags_386 += -fpc
 
 extra_c_flags_nov += -4s-dNLM
 
+extra_c_flags_trmem = $(track) -fh=$^&.pch
+extra_c_flags_trmemcvr = $(track) -fh=$^&.pch
 extra_c_flags_guimem = $(track)
-extra_c_flags_trmem = $(track)
-extra_c_flags_trmemcvr = $(track)
+!ifndef on_build_machine
+extra_c_flags_guimem += -fh=$^&.pch
+!endif
 
 extra_c_flags_guisdef += -fh=$^&.pch
 extra_c_flags_guifcrck += -fh=$^&.pch
