@@ -116,6 +116,21 @@ To use IDE:
    3. The target name in the IDE must match the name of the DLL.
 
 
+Arguments to the DLL
+   REXX arguments to functions in the DLL are received by the function as
+   character strings.  To receive two integer arguments, termed ELAS_U and
+   BperLine, do the following in the function source code.
+
+      character*(*) ELAS_U_c,BperLine_c
+
+      ! Allocate character variables and store argument strings.
+      allocate( ELAS_U_c*args(1).strlength, location=args(1).strptr )
+      allocate( BperLine_c*args(2).strlength, location=args(2).strptr )
+
+      ! Convert to integer values.
+      read(ELAS_U_c,*)    ELAS_U
+      read(BperLine_c,*)  BperLine
+
+
 Doug Rickman
 MSFC/NASA August 5, 2003
-
