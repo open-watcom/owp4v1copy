@@ -69,7 +69,11 @@ extra_l_flags_nt  = option stack=64k option heapsize=2k &
 extra_l_flags     = option map
 !ifeq host_CPU  386
 # To maintain cross-version linkability
+!ifdef __LINUX__
+extra_l_flags    += alias "'_WinMain'='_WinMain@16'"
+!else
 extra_l_flags    += alias '_WinMain'='_WinMain@16'
+!endif
 !endif
 
 wspy_dll_lflags_wini86 = $(dll_debug_$(host_CPU)) &
