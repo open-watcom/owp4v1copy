@@ -69,19 +69,19 @@ Each makefile should be located in the object file directory - ie. no more
 of this silly cd'ing into the object directory based on crystal-balls and
 what not. The makefile must define the following:
 .begnote
-.note host_CPU:
+.note host_cpu:
         architecture which the resulting executable code will run on.
-.note host_OS:
+.note host_os:
         os which the resulting executable code will run on
 .note proj_name:
         the project name
 .endnote
 .np
 Valid values for
-.id host_CPU
+.id host_cpu
 are 386, i86, axp, ppc. These should be self-explanatory.
 Valid values for
-.id host_OS
+.id host_os
 are dos, nt, os2, nov, qnx, win, osi. These should be self-explanatory for
 the most part, with one possible exception: osi stands for OS Independent,
 the executables can run on multiple OSes if appropriate loader stub is
@@ -297,11 +297,11 @@ should be in every makefile
 .note build
 indicates that wmake should be run in this directory as part of the build process
 .note os_x
-for each x in the list of the valid host_OS tokens
+for each x in the list of the valid host_os tokens
 .note cpu_x
-for each x in the list of the valid host_CPU tokens
+for each x in the list of the valid host_cpu tokens
 .note target_x
-for each x in the list of valid host_CPU tokens (for compilers and targetted apps)
+for each x in the list of valid host_cpu tokens (for compilers and targetted apps)
 .note tiny, small, compact, medium, large, huge, flat, nomodel
 the memory model
 .note inline, calls
@@ -345,9 +345,9 @@ and be in the root directory, or a mif subdirectory thereof, of the project.
 .np
 Also, it is suggested that the object file directory name be a combination
 of the
-.id host_OS
+.id host_os
 followed by the
-.id host_CPU,
+.id host_cpu,
 if convenient. For example, NT versions for the PPC should be genned into
 a ntppc directory. If a directory structure which is different than this
 is used for some reason, then comments explaining exactly what is built
@@ -367,9 +367,9 @@ directory can hold the Alpha AXP NT compiler producing 386 code.
 .ix 'DLLs'
 .ix 'windowed applications'
 Set
-.id host_OS
+.id host_os
 and
-.id host_CPU
+.id host_cpu
 as normal, and then, if creating a windowed app, set
 .id sys_windowed
 = 1. If creating a DLL, set
@@ -389,8 +389,8 @@ Projects are able to hook any of these variables by redefining them after
 .us cproj.mif
 is included. The current, and likely to change, structure looks like this:
 .millust begin
-inc_path = inc_dirs | inc_dirs_$(host_OS) | inc_dirs_sys
-inc_dirs_sys = inc_dirs_lang | inc_dirs_sys_$(host_OS)
+inc_path = inc_dirs | inc_dirs_$(host_os) | inc_dirs_sys
+inc_dirs_sys = inc_dirs_lang | inc_dirs_sys_$(host_os)
 inc_dirs_lang = $(lang_root)\h
 .millust end
 So, a project should put any include directories it needs into inc_dirs - this
@@ -405,10 +405,10 @@ redefine
 .id inc_dirs_lang.
 .np
 Any OS-specific header files needed by the project can be set in
-.id inc_dirs_$(host_OS)
+.id inc_dirs_$(host_os)
 &mdash again, this should not include the standard system
 header files, which will be defined in
-.id inc_dirs_sys_$(host_OS).
+.id inc_dirs_sys_$(host_os).
 
 
 .section Executive Summary
@@ -420,7 +420,7 @@ conforming) project, do the following:
 .np
 .autonote
 .note
-Create an object file directory for each combination of host_OS/host_CPU
+Create an object file directory for each combination of host_os/host_cpu
 under your project.
 .note
 Give your project a name, for instance Foo.
@@ -451,12 +451,12 @@ in include path - this does not include OS-specific includes (ie
 Add
 .id extra_c_flags
 = {list of c flags, not including optimization, /w4, /zq. /we and model info,
-needed to compile your application} These should be host_OS/host_CPU independant.
+needed to compile your application} These should be host_os/host_cpu independant.
 .note
 Add
 .id extra_l_flags
  = {list of linker directives, not incuding system or debug directives}
- Should be host_OS/host_CPU independant.
+ Should be host_os/host_cpu independant.
 .note
 Use following to compile:
 .id $(cc) $(cflags)
@@ -472,8 +472,8 @@ Use following to create libraries:
 In each object file directory, create a makefile which looks like the following:
 .millust begin
 #pmake: all build os_X cpu_Y
-host_OS=X
-host_CPU=Y
+host_os=X
+host_cpu=Y
 !include ..\master.mif
 .millust end
 .endnote
