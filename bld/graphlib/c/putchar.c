@@ -38,7 +38,7 @@
 
 #if defined( _DEFAULT_WINDOWS )
 
-void _PutChar( short row, short col, char ch )
+void _PutChar( short row, short col, short ch )
 //=============================================
 
 // Display the given character on the screen. The point has already been

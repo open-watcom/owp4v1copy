@@ -76,11 +76,13 @@ void _RemapNum( long _WCI86FAR *colours, short num )
 {
     short               i;
 
+#if !defined( _DEFAULT_WINDOWS )
     if( _CurrState->vc.adapter != _EGA ) {
         if( _FastMap( colours, num ) ) {
             return;
         }
     }
+#endif    
     for( i = 0; i < num; ++i ) {
         PutPalette( i, colours[ i ] );
     }

@@ -703,8 +703,8 @@ static struct xycoord Cal_Coord( float x, float y, float a, float b )
     if( x != 0 ) {
         delta = atan2( b * x,  a * y );
         gamma = delta;
-        _GR_sin( &delta );
-        _GR_cos( &gamma );
+        delta = sin( delta );
+        gamma = cos( gamma );
         point.xcoord = round( a * delta ) + _ArcInfo.centre.xcoord;
         point.ycoord = round( b * gamma ) + _ArcInfo.centre.ycoord;
     } else {

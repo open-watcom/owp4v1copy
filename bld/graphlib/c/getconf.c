@@ -34,6 +34,8 @@
 #include "gbios.h"
 
 
+#if !defined( _DEFAULT_WINDOWS )
+
 static short            _AdapTab[ 18 ] = {
     _NODISPLAY,     _MDPA,          _CGA,           _EGA,
     _EGA,           _EGA,           _UNKNOWN,       _VGA,
@@ -54,6 +56,7 @@ static short            _MemoryTab[ 8 ] = {
     0, 16, 16, 64, 256, -1, 256, 256
 };
 
+#endif
 
 struct videoconfig _WCI86FAR * _WCI86FAR _CGRAPH
 /*===================*/ _getvideoconfig( struct videoconfig _WCI86FAR *config )

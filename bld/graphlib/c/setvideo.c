@@ -362,7 +362,7 @@ short _WCI86FAR _CGRAPH _setvideomode( short req_mode )
     gphmenu.id = DID_WIND_STDIO + w->handles[0];
     gphmenu.hwndSubMenu = NULL;
     gphmenu.hItem = 0;
-    if ( MIT_ERROR == WinSendMsg( menu, ( ULONG )MM_INSERTITEM, MPFROMP( &gphmenu ), MPFROMP( dest ) ) ) abort();
+    if ( (MRESULT)MIT_ERROR == WinSendMsg( menu, ( ULONG )MM_INSERTITEM, MPFROMP( &gphmenu ), MPFROMP( dest ) ) ) abort();
 
   #else
     AppendMenu( menu, MF_ENABLED, MSG_WINDOWS+w->handles[0], dest );
