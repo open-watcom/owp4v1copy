@@ -22,6 +22,7 @@
     #define INCL_WINHOOKS
     #define INCL_WININPUT
     #define INCL_WINLISTBOXES
+    #define INCL_WINLOAD
     #define INCL_WINMENUS
     #define INCL_WINMESSAGEMGR
     #define INCL_WINMLE
@@ -245,6 +246,9 @@ typedef LHANDLE HPS, *PHPS;
 typedef LHANDLE HRGN, *PHRGN;
 typedef VOID    *MPARAM, **PMPARAM;
 typedef VOID    *MRESULT, **PMRESULT;
+
+typedef HMODULE  HLIB;
+typedef PHMODULE PHLIB;
 
 typedef CHAR STR8[8];
 typedef STR8 *PSTR8;
@@ -2549,6 +2553,15 @@ ULONG  APIENTRY WinUpperChar(HAB,ULONG,ULONG,ULONG);
 #ifdef INCL_WINPALETTE
 
 LONG  APIENTRY WinRealizePalette(HWND,HPS,PULONG);
+
+#endif
+
+#if defined(INCL_WINLOAD)
+
+BOOL  APIENTRY WinDeleteLibrary(HAB,HLIB);
+BOOL  APIENTRY WinDeleteProcedure(HAB,PFNWP);
+HLIB  APIENTRY WinLoadLibrary(HAB,PCSZ);
+PFNWP APIENTRY WinLoadProcedure(HAB,HLIB,PCSZ);
 
 #endif
 
