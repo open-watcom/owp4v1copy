@@ -91,7 +91,6 @@ objs_cpp =  allocexc.$(obj_ext) &
             darrnew.obj  &
             dtorarst.obj &
             exc_pr.obj   &
-            exstring.obj &
             fatalerr.obj &
             $(objs_dyn)  &
             $(objs_reg)  &
