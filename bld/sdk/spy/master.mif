@@ -99,13 +99,11 @@ wspy_dll_lflags_wini86 = $(dll_debug_$(host_CPU)) &
 
 wspy_dll_lflags_nt386  = $(dll_debug_$(host_CPU)) &
                          system nt_dll initglobal name $(dllname).dll &
-                         libpath d:\utils\watcom\lib &
-                         library nt option map &
+                         option map &
                          file { $(dllobjs) }
 
 wspy_dll_lflags_ntaxp  = $(dll_debug_$(host_CPU)) &
                          system ntaxp_dll initglobal name $(dllname).dll &
-                         libpath d:\utils\watcom\lib &
                          option map &
                          file { $(dllobjs) }
 
