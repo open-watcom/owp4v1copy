@@ -24,7 +24,7 @@ winlibs =            &
         kernel.lbc   &
         keyboard.lbc &
 #        lzexpand.lbc &
-        shell.lbc    &
+#        shell.lbc    &
         sound.lbc    &
         user.lbc     &
         win87em.lbc
@@ -33,7 +33,7 @@ winlibs =            &
 .asm: ..\asm
 
 .asm.obj:
-	$(as) $[@
+    $(as) $[@
 
 .def.lbc:
         vi -i -q -k ":set norc\n:r ../lib/$[.\n:source ../def16lbc.vi $*\n"
