@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Terminal display routines.
 *
 ****************************************************************************/
 
@@ -321,10 +320,10 @@ static void TI_SETATTR( void )
                         0, 0, TIAACS );
         __putp( x );
 
-QNXDebugPrintf0("\n[******]");
-QNXDebugPrintf1("%s", set_attributes);
-QNXDebugPrintf1("%s",x);
-QNXDebugPrintf0("[~~~~~~]\n");
+        UIDebugPrintf0( "\n[******]" );
+        UIDebugPrintf1( "%s", set_attributes );
+        UIDebugPrintf1( "%s", x );
+        UIDebugPrintf0( "[~~~~~~]\n" );
     } else {
 /*
         fprintf(stderr, "Doing attributes %s %s %s %s %s\n", \
@@ -643,15 +642,15 @@ static void TI_SETCOLOUR( register int f, register int b )
     // vga to ansi conversion table
     static int  colorans[]={ 0, 4, 2, 6, 1, 5, 3, 7 };
 
-QNXDebugPrintf2( "TI_SETCOLOUR: %d %d", f, b );
+    UIDebugPrintf2( "TI_SETCOLOUR: %d %d", f, b );
 
     if( TCAP_MONOCHROME ){
         // simulate colour using reverse (this assumes background is
         // darker than foreground).
         if( colorpri[ f%8 ]<colorpri[ b%8 ] ){
-            QNXDebugPrintf0( "[<enter_reverse_mode-vvvvvvvvvvvv>]" );
-            QNXDebugPrintf1( "\n%s\n", enter_reverse_mode );
-            QNXDebugPrintf0( "[<enter_reverse_mode-^^^^^^^^^^^^>]" );
+            UIDebugPrintf0( "[<enter_reverse_mode-vvvvvvvvvvvv>]" );
+            UIDebugPrintf1( "\n%s\n", enter_reverse_mode );
+            UIDebugPrintf0( "[<enter_reverse_mode-^^^^^^^^^^^^>]" );
             TIARev= 1;
             TI_FillColourSet= FALSE;
         } else {
@@ -856,7 +855,7 @@ static bool intern ti_initconsole( void )
     TI_NOWRAP();
     // if we can't then we just won't use the bottom right corner
     TI_ignore_bottom_right= !TCAP_NOSCROLL;
-    QNXDebugPrintf1( "IgnoreLowerRight=%d", TI_ignore_bottom_right );
+    UIDebugPrintf1( "IgnoreLowerRight=%d", TI_ignore_bottom_right );
 
     TI_NOBOLD();
     TI_NOBLINK();
@@ -1031,15 +1030,15 @@ static struct {
 static int td_update(SAREA *area)
 {
     if (!area) {
-QNXDebugPrintf0("td_update: no arg");
+        UIDebugPrintf0( "td_update: no arg" );
         dirty.row0 = 0;
         dirty.col0 = 0;
         dirty.row1 = UIData->height;
         dirty.col1 = UIData->width;
         return 0;
     }
-QNXDebugPrintf4("td_update(%d,%d,%d,%d)", area->row, area->col, area->height,
-                                        area->width);
+    UIDebugPrintf4( "td_update(%d,%d,%d,%d)", area->row, area->col, area->height,
+                                        area->width );
     if (area->row < dirty.row0) {
         dirty.row0 = area->row;
     }
@@ -1151,7 +1150,7 @@ static int ti_refresh( int must )
         return 0;
     }
 
-    QNXDebugPrintf4( "ti_refresh( %d, %d )->( %d, %d )", dirty.row0,
+    UIDebugPrintf4( "ti_refresh( %d, %d )->( %d, %d )", dirty.row0,
                                     dirty.col0, dirty.row1, dirty.col1 );
 
     // Disable cursor during draw if we can
@@ -1332,7 +1331,7 @@ static int ti_refresh( int must )
                 }
 
                 if( !ca_valid ){
-                    QNXDebugPrintf2( "cursor address %d, %d\n", j, i );
+                    UIDebugPrintf2( "cursor address %d, %d\n", j, i );
 
                     // gotta dump chars before we move
                     TI_DUMPCHARS();
@@ -1361,7 +1360,7 @@ static int ti_refresh( int must )
 
                 if( !TI_ignore_bottom_right || (j!=UIData->width-1) ||
                                                     (i!=UIData->height-1) ){
-                    // Slurp up the char to be output. Will dump existing 
+                    // Slurp up the char to be output. Will dump existing
                     // chars if new char is different.
                     unsigned c = bufp[j].ch;
                     if( rcount != 0 && ( rchar != ti_char_map[c][0] || ralt != ti_alt_map( c ) ) )

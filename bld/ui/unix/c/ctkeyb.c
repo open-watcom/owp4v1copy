@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Terminal keyboard input processing.
 *
 ****************************************************************************/
 
@@ -405,13 +404,13 @@ EVENT ck_keyboardevent()
             }
         }
         if( ev ) {
-            QNXDebugPrintf1( "UI: Something read: %4.4X", ev );
+            UIDebugPrintf1( "UI: Something read: %4.4X", ev );
         }
         return( ev );
     }
     ShftState = real_shift;
     if( ev ) {
-        QNXDebugPrintf1( "UI: Something read: %4.4X", ev );
+        UIDebugPrintf1( "UI: Something read: %4.4X", ev );
     }
     return( ev );
 }
@@ -423,7 +422,7 @@ EVENT tk_keyboardevent()
 
     ev = ck_keyboardevent();
     if( ev != EV_MOUSE_PRESS ) return( ev );
-    QNXDebugPrintf0( "UI: Mouse event handling" );
+    UIDebugPrintf0( "UI: Mouse event handling" );
     tm_saveevent();
     return( EV_NO_EVENT ); /* make UI check for mouse events */
 }

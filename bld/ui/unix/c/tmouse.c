@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Terminal mouse handling
+* Description:  Terminal mouse handling.
 *
 ****************************************************************************/
 
@@ -127,7 +127,7 @@ static int tm_check( unsigned short *status, unsigned short *row,
          uisetmouse(*row, *col);
          return 0;
     }
-    QNXDebugPrintf1("mouse_string = '%s'", buf);
+    UIDebugPrintf1( "mouse_string = '%s'", buf );
     if( new_sample ) {
         switch( MouseType ) {
         case M_XT:

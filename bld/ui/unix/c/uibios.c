@@ -144,21 +144,22 @@ void intern physupdate( SAREA *area )
     }
 }
 
-#if defined( QNX_DEBUG )
+#if defined( UI_DEBUG )
 #include <stdio.h>
 #include <stdarg.h>
-void QNXDebugPrintf(const char *f, ...)
+void UIDebugPrintf( const char *f, ... )
 {
-static FILE *file = 0;
-        va_list vargs;
-        if (!file) {
-                if ((file=fopen("QNX.Debug","w")) == 0) {
-                        return;
-                }
+    static FILE     *file = 0;
+    va_list         vargs;
+
+    if (!file) {
+        if( (file = fopen( "UI.Debug", "w" )) == 0 ) {
+            return;
         }
-        va_start(vargs, f);
-        vfprintf(file, f, vargs);
-        putc('\n',file);
-        fflush( file );
+    }
+    va_start( vargs, f );
+    vfprintf( file, f, vargs );
+    putc( '\n', file );
+    fflush( file );
 }
 #endif
