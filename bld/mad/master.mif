@@ -18,6 +18,7 @@ host_OS = $(os)
 .mif: $(mif_path)
 !include cproj.mif
 !include defrule.mif
+!include deftarg.mif
 
 model_os2 = l
 model_os2v2 = f
