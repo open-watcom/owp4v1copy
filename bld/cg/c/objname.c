@@ -222,9 +222,6 @@ static int GetExtName( sym_handle sym, char *buffer, int max_len )
                 c = *p;
             }
         } else if( *p == '#' ) {
-            if( c == '\0' ) {
-                basename_len = p - pattern;
-            }
             break;
         } else if( *p == '\\' ) {
             if( c != '\0' )
@@ -234,6 +231,8 @@ static int GetExtName( sym_handle sym, char *buffer, int max_len )
             break;
         }
     }
+    if( c == '\0' )
+        basename_len = p - pattern;
     sufix = p;
     // add prefix to buffer
     dst = buffer;
