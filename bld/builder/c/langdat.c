@@ -69,6 +69,7 @@ static char     *DefWhere  = NULL;
 static char     *DefDesc   = NULL;
 static char     *DefOld    = NULL;
 static char     *DefPatch  = NULL;
+static char     *DefDstvar = NULL;
 
 
 static void AddCtlFile( const char *name )
@@ -372,12 +373,12 @@ static void ProcessLine( const char *line )
     char    *cmd, *p, *str;
     char    *line_copy;
     char    *type, *redist, *dir, *usr, *rel, *cond;
-    char    *pack, *where, *desc, *old, *patch;
+    char    *pack, *where, *desc, *old, *patch, *dstvar;
     int     special = FALSE;
 
     type = DefType; redist = DefRedist; dir = DefDir; usr = DefUsr;
     rel = DefRel; cond = DefCond; pack = DefPack; where = DefWhere;
-    desc = DefDesc; old = DefOld; patch = DefPatch;
+    desc = DefDesc; old = DefOld; patch = DefPatch; dstvar = DefDstvar;
 
     line_copy = strdup( line );
     p = SkipBlanks( line_copy );
@@ -406,17 +407,25 @@ static void ProcessLine( const char *line )
             where = str;
         } else if( !stricmp( cmd, "desc" ) ) {
             desc = str;
+        } else if( !stricmp( cmd, "descr" ) ) {     //  Multiple spellings
+            desc = str;
         } else if( !stricmp( cmd, "old" ) ) {
             old = str;
         } else if( !stricmp( cmd, "patch" ) ) {
             patch = str;
+        } else if( !stricmp( cmd, "dstvar" ) ) {
+            dstvar = str;
+        } else {
+            printf( "langdat warning: unknown keyword %s\n", cmd );
+            printf( "(in file %s)\n", IncludeStk->name );
         }
         cmd = strtok( NULL, " \t=" );
     } while( cmd != NULL );
     if( !special ) {
         /* Check if 'where' matches specified product */
         if( !Product || !where || ContainsWord( where, Product ) ) {
-            Log( TRUE, "<%s><%s><%s><%s><%s><%s><%s><%s>\n", type, dir, old, usr, rel, where, desc, cond );
+            Log( TRUE, "<%s><%s><%s><%s><%s><%s><%s><%s><%s>\n",
+                redist, dir, old, usr, rel, where, dstvar, cond, desc );
         }
     }
     free( line_copy );
@@ -439,8 +448,9 @@ static void ProcessDefault( const char *line )
     if( DefDesc != NULL ) free( DefDesc );
     if( DefOld != NULL ) free( DefOld );
     if( DefPatch != NULL ) free( DefPatch );
+    if( DefDstvar != NULL ) free( DefDstvar );
     DefType = DefRedist = DefDir = DefUsr = DefRel = DefCond
-    = DefPack = DefWhere = DefDesc = DefOld = DefPatch = NULL;
+    = DefPack = DefWhere = DefDesc = DefOld = DefPatch = DefDstvar = NULL;
 
     /* Process new defaults (if provided) */
     line_copy = strdup( line );
@@ -476,6 +486,8 @@ static void ProcessDefault( const char *line )
                 DefOld = strdup( str );
             } else if( !stricmp( cmd, "patch" ) ) {
                 DefPatch = strdup( str );
+            } else if( !stricmp( cmd, "dstvar" ) ) {
+                DefDstvar = strdup( str );
             } else {
                 printf( "langdat warning: unknown default %s\n", cmd );
                 printf( "(in file %s)\n", IncludeStk->name );

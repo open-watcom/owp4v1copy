@@ -2,32 +2,32 @@ Open Watcom Setup Program Install Script Description  (2nd draft)
 ====================================================
 
 This installer was originally used by Watcom and later Sybase for deployment
-of their products such as Watcom C/C++ and FORTRAN, VX-REXX (for OS/2) or 
-Watcom SQL (later Sybase SQL Anywhere). The installer was used on DOS, 
+of their products such as Watcom C/C++ and FORTRAN, VX-REXX (for OS/2) or
+Watcom SQL (later Sybase SQL Anywhere). The installer was used on DOS,
 Windows 3.x, Windows 9x, Windows NT and OS/2. A Unix (Linux) build of the
-installer is also available. Character mode (console) versions are available, 
+installer is also available. Character mode (console) versions are available,
 as well as GUI versions for Windows and OS/2.
 
-The install script is named setup.inf and the setup executable is looking 
-for it in the same directory where the executable is located (not necessarily 
-where the executable is run from). The .inf file is divided in sections, 
-each section preceded by a section name enclosed in square brackets, e.g. 
-[Application]. Other than section headings, the script file must consist of 
+The install script is named setup.inf and the setup executable is looking
+for it in the same directory where the executable is located (not necessarily
+where the executable is run from). The .inf file is divided in sections,
+each section preceded by a section name enclosed in square brackets, e.g.
+[Application]. Other than section headings, the script file must consist of
 empty lines or lines whose content is dependent on the section.
- Leading and trailing spaces are ignored. Lines starting with the hash 
-sign '#' are treated as comment lines. If a line ends in a backslash '\', 
+ Leading and trailing spaces are ignored. Lines starting with the hash
+sign '#' are treated as comment lines. If a line ends in a backslash '\',
 then it is continued on the next line.
 
 
 Variables
 ---------
    Variables have a name and a value. Each time a variable is set in a script
-   it is overwritten, except for variables whose name starts with a '$': 
+   it is overwritten, except for variables whose name starts with a '$':
    These retain their original value.
 
   Magic variables
    FullInstall         If set, all non-magic variables are true
-   FullCDInstall       If set, all non-magic variables are true 
+   FullCDInstall       If set, all non-magic variables are true
                        with the exception of "HelpFiles" variable
    UnInstall           If set, all non-magic variables are false
    MinimalInstall      If set, make all file variables false
@@ -49,10 +49,10 @@ Variables
 
 Conditions
 ----------
-   A condition is an boolean expression that evaluates to true or false. 
-   Conditions currently cannot be longer than 128 bytes (variable MAXBUF 
+   A condition is an boolean expression that evaluates to true or false.
+   Conditions currently cannot be longer than 128 bytes (variable MAXBUF
    in setupinf.h).
-    Conditions consist of one or more variable names plus operators. The 
+    Conditions consist of one or more variable names plus operators. The
    expressions employ Reverse Polish Notation (RPN), that is, use a postfix
    notation. The available operators are:
    &   AND     previous two values
@@ -71,19 +71,19 @@ Conditions
 Sections
 --------
 [Application]
-   This defines global information for a product. Only one keyword is 
-   defined. Typically, global script variables are defined/set here. 
-   Theis section can appear multiple times in the script, for instance to 
-   define additional variables. But per script the latest DefPMGroup will 
+   This defines global information for a product. Only one keyword is
+   defined. Typically, global script variables are defined/set here.
+   Theis section can appear multiple times in the script, for instance to
+   define additional variables. But per script the latest DefPMGroup will
    be in effect. [what's this sudden talk about DefPMGroup?]
 
   DefPMGroup=wcpp32.grp, Watcom C_C++, %DstDir%\watcom.ico
-   Defines the global PM (Windows Program Manager) group. The first value 
-   is the group file name, the second is the group name, the optional third 
+   Defines the global PM (Windows Program Manager) group. The first value
+   is the group file name, the second is the group name, the optional third
    is the group's icon file.
 
   $<var>=<value>
-   If variable <var> doesn't exist yet, create global variable <var> with 
+   If variable <var> doesn't exist yet, create global variable <var> with
    value <value>. Do nothing if <var> already exists.
 
   <var>=<value>
@@ -91,42 +91,42 @@ Sections
 
 
 [Autoexec]
-   This section defines modifications to be made to autoexec.bat. The 
-   format is variable name, followed by an '=', then the value terminated 
-   by a comma, then a condition. If the variable is preceded by a '+' sign, 
-   the value is appended to any existing variable, else the variable is 
+   This section defines modifications to be made to autoexec.bat. The
+   format is variable name, followed by an '=', then the value terminated
+   by a comma, then a condition. If the variable is preceded by a '+' sign,
+   the value is appended to any existing variable, else the variable is
    simply set. Example:
-    
+
    +PATH=%DstDir%\BINNT,IsWin95
-    
-   If 'IsWin95' is true, add '%DstDir%\BINNT' to 'PATH' environment variable, 
-   or add 'PATH' if it didn't already exist. Note that '%DstDir% will be 
+
+   If 'IsWin95' is true, add '%DstDir%\BINNT' to 'PATH' environment variable,
+   or add 'PATH' if it didn't already exist. Note that '%DstDir% will be
    replaced with the actual value of 'DstDir' script variable.
 
 
 [AutoSet]
-   Defines conditional variables, with a variable name and a condition. 
+   Defines conditional variables, with a variable name and a condition.
    Example:
-    
+
    tools16=IsDos IsOS2 IsWin | |
 
 
 [Config]
-   This defines value to be added to config.sys. The format is variable name, 
-   followed by an '=', then the value terminated by a comma, then a 
-   condition. If the variable is preceded by a '+' sign, the value is 
-   appended to any existing variable, else the variable is simply set. 
+   This defines value to be added to config.sys. The format is variable name,
+   followed by an '=', then the value terminated by a comma, then a
+   condition. If the variable is preceded by a '+' sign, the value is
+   appended to any existing variable, else the variable is simply set.
    Example:
-   
+
    FILES=20,IsDOS IsWin |
-   
+
    The Config section is very similar to the Autoexec section.
 
 
 [DeleteFiles]
    This defines which dialogs, directories or files should be deleted. Each of
-   the three possible keywords 'dialog', 'file' or 'directory' is followed by 
-   a value giving the name of the dialog , file or directory to delete. 
+   the three possible keywords 'dialog', 'file' or 'directory' is followed by
+   a value giving the name of the dialog , file or directory to delete.
    Examples:
 
    dialog=FoundMFC21
@@ -135,22 +135,22 @@ Sections
 
    [I don't think this is right - the dialog will ask user if the files
    should really be deleted??]
-   
+
 
 [Dialog]
    This section defines a dynamically constructed dialog to provide feedback
-   to user as well as facilitate user input. A dialog section must have only 
-   lines of the form 'keyword=value'. The following keywords are valid in 
+   to user as well as facilitate user input. A dialog section must have only
+   lines of the form 'keyword=value'. The following keywords are valid in
    a Dialog section
 
   name=<dlgname>
-     Start a new dialog with the name <dlgname>. The dialog is referred to 
+     Start a new dialog with the name <dlgname>. The dialog is referred to
      in other parts of setup script through this name.
 
   condition=<cond>
      Define one or more conditions under which this dialog will be displayed
      A condition is a variable name which is true or not. The condition
-     can be negated by following the name with a space and an exclamation 
+     can be negated by following the name with a space and an exclamation
      mark '!'
 
   title=<text>
@@ -166,20 +166,20 @@ Sections
 
   static_text=<text>
      Add a static text control to the dialog. If no text is following the '='
-     sign, and empty line is added, which is useful to add padding in 
-     dialogs. The character '@' in static text is replaced by the name of 
+     sign, and empty line is added, which is useful to add padding in
+     dialogs. The character '@' in static text is replaced by the name of
      the installtion program (e.g. 'SETUP' or 'INSTALL'). Note that the text
      must be enclosed in quotes.
 
   dynamic_text=FormattedDiskInfo,""
 
   other_button="&Target...",Target,"Target operating systems:"
-     Add a selection button. It needs 3 command separated values. The first 
-     is the button label, and an '&' before a letter indicates a keyboard 
+     Add a selection button. It needs 3 command separated values. The first
+     is the button label, and an '&' before a letter indicates a keyboard
      shortcut (button will be activated if Alt+letter is pressed). The second
-     value is the name of a dialog that will be invoked if the button is 
+     value is the name of a dialog that will be invoked if the button is
      activated. The third value is the explanatory text.
-     
+
   edit_button
 
   push_button=-"&Previous..."
@@ -190,8 +190,8 @@ Sections
   radio_button=ModNow,1,"&Make all the modifications for you"
      Define a radio button. It is followed by three values: a variable name,
      an initial value (1 or 0), and an explantory text. & in front of a letter
-     of the text will activate the button (set the variable to 1) if 
-     Alt-letter is pressed. Of multiple radiobuttons, only 1 will be set to 
+     of the text will activate the button (set the variable to 1) if
+     Alt-letter is pressed. Of multiple radiobuttons, only 1 will be set to
      1, all other will be 0.
 
   check_box=CfgFileCreate,1,"&Create the file"
@@ -212,36 +212,36 @@ Sections
      optional initial value, and a explanatory text.
 
   text_window=<height>,<text>,<condition>
-     Define a multi-line text control, <height> lines tall, shown if 
-     <condition> is true. The text will be word wrapped to fit. The 
-     text_window control will typically be very wide, unless the width is 
-     limited via the 'width' keyword. If <text> starts with an '@' sign 
-     followed by a file name, then text is read from the external file 
+     Define a multi-line text control, <height> lines tall, shown if
+     <condition> is true. The text will be word wrapped to fit. The
+     text_window control will typically be very wide, unless the width is
+     limited via the 'width' keyword. If <text> starts with an '@' sign
+     followed by a file name, then text is read from the external file
      (searched for in the current directory). Example:
-     
+
      text_window=5,"@readme.txt",true
-     
-     Display a text control 5 lines tall, read input text rom 'readme.txt', 
+
+     Display a text control 5 lines tall, read input text rom 'readme.txt',
      and always show this control.
 
 
 [Dirs]
-   Defines the target directories used by the installed product. Each line 
-   lists one directory. The directories are internally sequentially numbered, 
+   Defines the target directories used by the installed product. Each line
+   lists one directory. The directories are internally sequentially numbered,
    starting with 1 for the first directory in the install script. The directory
-   numers are referenced later in the Files section. Each line has three 
+   numers are referenced later in the Files section. Each line has three
    values. e.g. :
 
   binp\dll,1,8
-     The first value is the directory name, the second is the target (??), 
-     the third is the parent. This parent is the number of the directory 
-     under which this particular directory resides. In the example, "binp" 
+     The first value is the directory name, the second is the target (??),
+     the third is the parent. This parent is the number of the directory
+     under which this particular directory resides. In the example, "binp"
      would have been the 8th directory line. If the parent is "-1", then ??
 
 
 [Disks]
-   This section defines the names of the disks on which the software is 
-   supplied. Each line names one disk, e.g. "Disk 1". Used primarily for 
+   This section defines the names of the disks on which the software is
+   supplied. Each line names one disk, e.g. "Disk 1". Used primarily for
    floppy installs.
 
 
@@ -250,96 +250,104 @@ Sections
 
 
 [Environment]
-   This section defines values to be added to the environment. The form is 
-   
+   This section defines values to be added to the environment. The form is
+
    <envvar>=<value>,<condition>
-   
-   If the variable name is preceded by a '+' sign, the value is added to 
+
+   If the variable name is preceded by a '+' sign, the value is added to
    any existing variable, otherwise the variable is simply set. Example:
-   
+
   EDPATH=%WDir%\EDDAT,IsWinNT
-  
+
   [is this section intended for NT only?]
-  
+
 
 [ErrorMessage]
    The ErrorMessage section serves primarily to ease translation of installer
    text. It provides a mechanism to externally store text for messages used
    by the installer. The format is
-   
+
    <msgid>=<text>
-   
+
    where <msgid> is a message identifier and <text> is the actual text to be
    displayed. The text may contain printf() style format specifiers. Example:
-   
+
    IDS_ADD_TO_VAR="add the following to the '%s' variable"
-   
+
    For full list of messages, see the ErrorMessage section in templat1.inf.
-   
+
 
 [Files]
-   Defines a list of files to be installed. This is done in the form of 
-   'archive' lines, frequently split over multiple lines with the 
-   continuation character '\', where each archive file contains one or more 
-   files, directory and disk references, file type and optional conditions 
-   under which the archive must be processed.
+   Defines a list of files to be installed. This is done in the form of
+   'archive' lines, frequently split over multiple lines with the
+   continuation character '\', where each archive file contains one or more
+   file, directory and disk references, file type and optional conditions
+   under which the archive should be processed. Example of a complete archive
+   line:
 
-  pck00063,1,ochook.dll!4t!!,6,-1,2,.,wnthost
-   The first value is the name of the archive, then second the
+  pck00659,1,tools.ini!1!e6w01s!!s,6,-1,4,.,wnttarg
+
+   The first field (string) is the name of the archive, the second is the
    number of files in the archive in base-36 notation (symbols 0-9 and a-z).
-   Then there are as many file specifications as there are files in the 
-   archive, by a comma, followed by five more fields.
-   The rest of the line is split into comma-separated sections, within each
-   section the values are separated by an exclamation mark '!'. Example:
-   
-  ochook.dll!4t!!
-  
-   File specification. The first value is the file name (if the extension 
-   is .NLM the file is flagged internally).
-   The second is the base-36 file size in 512 byte blocks.
-   The third (optional) value is the base-36 file 'last modified' date 
-   (time_t value as returned by stat()'s st_mtime), if not supplied, the date 
-   from the .inf file is used.
-   The fourth (optional) value is a variable name which will be created if 
-   needed and associated with the file.
-   The fifth (optional) value is an extra indicator, a single letter. If 'o', 
-   it is odbc; if 's', it is supplemental; if 'k', it is a core component.
-  6,-1,2,.,wnthost
-   The first value is the base-36 index of the directory into which the 
-   file(s) must be placed. The second value is the base-36 old_dir index 
-   (?? if the file moves from one dir to another in another release??; I 
-   guess -1 means no old_dir)
-   The third value is the base-36 disk index.
-   The fourth value is the file type, which can be '1', 'm' or '$' 
-   (?? possibly to do with if a file is split over multiple diskettes, where 
-   '1' is the first part, 'm' is an intermediate part and '$' is the last 
-   part). If not specified, it is a single-part file.
-   This is used to calculate file sizes.
-   The fifth value is a condition.
+   Following are as many file specifications as there are files in the
+   archive, separated by a comma, and the archive entry is completed by five
+   additional fields. The entire archive line is thus split into
+   comma-separated sections, and within each of the one or more file sections
+   the values are separated by an exclamation mark '!'. Example of a file
+   specification within an archive line:
+
+  tools.ini!1!e6w01s!!s
+
+   Detailed description of the file specification follows. The first field
+   (string) is the file name (note - if the extension is '.nlm' the file is
+   flagged internally). The second field is the base-36 file size in 512 byte
+   blocks (ie. disk sectors). The third (optional) field is the base-36 file
+   'last modified' date (time_t value as returned by stat()'s st_mtime); if
+   this field is empty, the date from the .inf file is used. The fourth
+   (optional) value (string) is a variable name which will be created if
+   needed and associated with the file. The fifth (optional) value (character)
+   is an additional indicator, a single letter: If 'o', file is ODBC; if 's',
+   it is supplemental; if 'k', it is a core component.
+
+   Following is the trailing part of an archive entry. Example:
+
+  6,-1,4,.,wnttarg
+
+   The first field is the base-36 index of the directory into which the
+   file(s) should be placed. The second field is the base-36 "old directory"
+   index: It is used when a file moved from one directory to another between
+   releases; value of -1 indicates there is no previous directory. The third
+   field is the base-36 disk index. The fourth field is the file type, which
+   can be '1', 'm' or '$' (?? possibly to do with if a file is split over
+   multiple diskettes, where '1' is the first part, 'm' is an intermediate
+   part and '$' is the last part). If not specified, it is a single-part file.
+   This is used to calculate file sizes. The fifth field (string) specifies a
+   condition (in a format described above in the 'Conditions' section). This
+   condition must be true for an archive to be processed.
 
 
 [ForceDLLInstall]
-   This doesn't seem to work looking at the code. An extra define 
-   (EXTRA_CAUTIOUS_FOR_DLLS) is needed for the code to activate. Its purpose 
-   might have been to force installation even if some paths etc don't match. 
+   This doesn't seem to work looking at the code. An extra define
+   (EXTRA_CAUTIOUS_FOR_DLLS) is needed for the code to activate. Its purpose
+   might have been to force installation even if some paths etc don't match.
    TBS
 
 
 [Labels]
-   This is used in OS/2 only to add long name label to directories using 
-   the extended attributes. The format is: 
-   
+   This is used in OS/2 only to add long name label to directories using
+   the extended attributes. The format is:
+
    <dirname>=<label>
 
 
 [LicenseMessage]
-   Maps a variable name to strings. The variable names are fixed values 
+   Maps a variable name to strings. The variable names are fixed values
    inside the setup program. The format and purpose is similar to the
    ErrorMessage section (see ErrorMessage section description for details).
 
 
 [MiscMessage]
-   Maps a variable name to strings. The variable names are fixed values 
+   Maps a variable name to strings. The variable names are fixed values
    inside the setup program.
 
 
@@ -347,15 +355,15 @@ Sections
    Defines patches.
 
   copy
-     Copy has four values, respectively source file name, destination 
+     Copy has four values, respectively source file name, destination
      directory, destination file name, and condition.
 
   patch
-     Patch has five values, respectively source file name, destination 
+     Patch has five values, respectively source file name, destination
      directory, destination file name, exec type, and condition.
 
   delete
-     Delete has three values, respectively destination file name, 
+     Delete has three values, respectively destination file name,
      destination directory, and condition.
 
   mkdir
@@ -363,11 +371,11 @@ Sections
 
 
 [PM Info]
-   Defines whether a GUI folder/group will be populated with icons and 
-   shortcuts to installed files or folders. There are two kinds of entries: 
-   those where first word is 'GROUP' (case-sensitive), and which define a 
-   new group; and other lines, which specify a file (icon) to be added to 
-   the group. Each line has comma-separated values. The first two parameters 
+   Defines whether a GUI folder/group will be populated with icons and
+   shortcuts to installed files or folders. There are two kinds of entries:
+   those where first word is 'GROUP' (case-sensitive), and which define a
+   new group; and other lines, which specify a file (icon) to be added to
+   the group. Each line has comma-separated values. The first two parameters
    are treated differently for group and file.
 
   GROUP, wpp32hlp.grp, Watcom C_C++ Tools Help,,, DoCreateHelpIcons IsFortranInstall !
@@ -375,15 +383,15 @@ Sections
      The second is the group file name
 
   view.exe, c_readme.inf, Getting Started,,, IsOS2 DoCreateHelpIcons IsFortranInstall !
-     The first parameter is the file name, e.g. executable program name 
+     The first parameter is the file name, e.g. executable program name
      such as 'notepad.exe', or .hlp file name, or text file name etc.
-     The second (optional) parameter is passed as parameters to the first 
+     The second (optional) parameter is passed as parameters to the first
      item, if it is an executable.
 
      The third is a description/name of the item
-     The optional fourth is the icon file name, which must b present in the 
+     The optional fourth is the icon file name, which must b present in the
      Files section.
-     The optional fifth is the numeric icon position within the file, if 
+     The optional fifth is the numeric icon position within the file, if
      there are multiple in the file. Only used on Windows.
      The sixth parameter is a condition.
 
@@ -412,12 +420,12 @@ Sections
 
 
 [Restrictions]
-   Defines conditional variables which must be either true or false. Each 
-   line in the section must be of the form 
-   
+   Defines conditional variables which must be either true or false. Each
+   line in the section must be of the form
+
    <var>=<value>
-   
-   where <value> is either 'true' or 'false', and <var> is a variable name. 
+
+   where <value> is either 'true' or 'false', and <var> is a variable name.
    The variable will be created if needed.
 
 
@@ -426,10 +434,10 @@ Sections
 
 
 [Spawn]
-   Runs an external program conditionally. Each line has three parts. The 
-   first is a keyword which is one of 'end', 'after' or anything else which 
-   is treated as 'before'. Then there are two values separated by a comma: 
-   the first is the program to run, the second the condition(s) under which 
+   Runs an external program conditionally. Each line has three parts. The
+   first is a keyword which is one of 'end', 'after' or anything else which
+   is treated as 'before'. Then there are two values separated by a comma:
+   the first is the program to run, the second the condition(s) under which
    it should run. Example:
 
    after=cmd.exe /c detach %CDDir%\binp\nmpbind.exe, SrcIsCD IsOS2
@@ -440,17 +448,17 @@ Sections
 
 
 [Targets]
-   Defines target directories. The directory variable name may be followed 
+   Defines target directories. The directory variable name may be followed
    by a comma and the word 'supplimental' (which is a misspelling). Example:
-   
+
   DstDir
   windir,supplimental
 
 
 [Upgrade]
-    Used for products that are sold as upgrade, either to previous version 
-    of the same product or as a "competitive upgrade". The Upgrade section 
+    Used for products that are sold as upgrade, either to previous version
+    of the same product or as a "competitive upgrade". The Upgrade section
     contains a simple list of partial pathnames that the system will search
     for, for instance
-    
+
    bin\msvc.exe

@@ -125,7 +125,7 @@ int                     FillFirst = 1;
 int                     Lang = 1;
 int                     Upgrade = FALSE;
 char                    *Include;
-const char              MkdiskInf[] = "mkdisk.inf";
+const char              MksetupInf[] = "mksetup.inf";
 
 
 static char *mygets( char *buf, unsigned len, FILE *fp )
@@ -182,7 +182,7 @@ long FileSize( char *file )
 {
     struct stat         stat_buf;
 
-    if( stat( file, &stat_buf ) != 0 ) {
+    if( (file == NULL) || (stat( file, &stat_buf ) != 0) ) {
         printf( "Can't find '%s'\n", file );
         return( 0 );
     } else {
@@ -261,7 +261,7 @@ int CheckParms( int *pargc, char **pargv[] )
     argc = *pargc;
     argv = *pargv;
     if( argc != 6 ) {
-        printf( "Usage: mkdisk [-x] <product> <size> <file_list> <pack_dir> <rel_root>\n" );
+        printf( "Usage: mksetup [-x] <product> <size> <file_list> <pack_dir> <rel_root>\n" );
         return( FALSE );
     }
     Product = argv[ 1 ];
@@ -332,8 +332,9 @@ int ReadList( FILE *fp )
     char        *file;
     char        *rel_fil;
     char        *condition;
-    char        *patch;
+    char        *desc;
     char        *dst_var;
+    char        *where;
     char        buf[ 1024 ];
     char        redist;
     int         no_error;
@@ -348,15 +349,17 @@ int ReadList( FILE *fp )
         }
         redist = s[0];
         free( s );
+        if( redist == '\0' )
+            redist = ' ';
 
         path = GetBracketedString( p, &p );
         if( path == NULL ) {
-            printf( "Invalid list file format - 'path' not found\n" );
+            printf( "Invalid list file format - 'dir' not found\n" );
             exit( 2 );
         }
         old_path = GetBracketedString( p, &p );
         if( old_path == NULL ) {
-            printf( "Invalid list file format - 'old path' not found\n" );
+            printf( "Invalid list file format - 'old dir' not found\n" );
             exit( 2 );
         }
         if( (stricmp( path, old_path ) == 0) || (*old_path == '\0') ) {
@@ -377,9 +380,9 @@ int ReadList( FILE *fp )
             free( rel_fil );
             rel_fil = strdup( "." );
         }
-        patch = GetBracketedString( p, &p );
-        if( patch == NULL ) {
-            printf( "Invalid list file format - 'patch' not found\n" );
+        where = GetBracketedString( p, &p );
+        if( where == NULL ) {
+            printf( "Invalid list file format - 'product' not found\n" );
             exit( 2 );
         }
         dst_var = GetBracketedString( p, &p );
@@ -396,11 +399,16 @@ int ReadList( FILE *fp )
             printf( "Invalid list file format - 'condition' not found\n" );
             exit( 2 );
         }
+        desc = GetBracketedString( p, &p );
+        if( desc == NULL ) {
+            printf( "Invalid list file format - 'description' not found\n" );
+            exit( 2 );
+        }
         if( dst_var && strcmp( dst_var, "." ) == 0 ) {
             free( dst_var );
             dst_var = NULL;
         }
-        if( !AddFile( path, old_path, redist, file, rel_fil, "pck0001", dst_var, condition ) ) {
+        if( !AddFile( path, old_path, redist, file, rel_fil, dst_var, condition ) ) {
             no_error = FALSE;
         }
         // TODO: free strings here
@@ -430,8 +438,8 @@ int AddPathTree( char *path, int target )
 }
 
 
-int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file, char *patch, char *dst_var, char *cond )
-/*******************************************************************************************************************/
+int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file, char *dst_var, char *cond )
+/***********************************************************************************************************/
 {
     int                 path_dir, old_path_dir, target;
     FILE_INFO           *new, *curr;
@@ -440,8 +448,13 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
     struct stat         stat_buf;
     char                *p;
     char                *root_file;
+    char                *archive;
     char                src[ _MAX_PATH ], dst[ _MAX_PATH ];
     size_list           *ns,*sl;
+    static char         archive_name[16] = "pck00000";
+    static int          pack_num = 1;
+
+    archive = archive_name;
 
     if( strcmp( rel_file, "." ) != 0 ) {
         if( strchr( rel_file, ':' ) != NULL
@@ -482,7 +495,7 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
     if( dst[ strlen( dst ) - 1 ] != '\\' ) {
         strcat( dst, "\\" );
     }
-    strcat( dst, patch );
+    strcat( dst, archive );
     // What's this 'patch' stuff good for?
 #if 0
     if( stat( dst, &stat_buf ) != 0 ) {
@@ -491,6 +504,8 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
     } else {
         cmp_size = stat_buf.st_size;
     }
+#else
+    cmp_size = 0;
 #endif
 #if 0
     printf( "\r%s                              \r", file );
@@ -545,8 +560,30 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
     // see if the pack_file has been seen already
     curr = FileList;
     while( curr != NULL ) {
-        if( stricmp( curr->pack, patch ) == 0 ) {
+        if( stricmp( curr->pack, archive ) == 0 ) {
             // this file is already in the current pack file
+
+            // if the path differs, start a new pack file
+            if( curr->path != path_dir ) {
+                printf( "\nPath for archive '%s' changed to '%s'\n", curr->pack, path );
+                sprintf( archive_name, "pck%05d", pack_num++ );
+                archive = strdup( archive_name );
+                printf( "Changing archive to '%s'\n", archive );
+                curr = curr->next;
+                break;
+            }
+            // if the condition differs, start a new pack file
+            if( strcmp( curr->condition, cond ) != 0 ) {
+                printf( "\nCondition for archive '%s' changed:\n", curr->pack );
+                printf( "Old: <%s>\n", curr->condition );
+                printf( "New: <%s>\n", cond );
+                sprintf( archive_name, "pck%05d", pack_num++ );
+                archive = strdup( archive_name );
+                printf( "Changing archive to '%s'\n", archive );
+                curr = curr->next;
+                break;
+            }
+
             curr->num_files++;
             ns = malloc( sizeof( size_list ) + strlen( root_file ) );
             if( ns == NULL ) {
@@ -566,16 +603,6 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
             ns->dst_var = dst_var;
             ns->next = curr->sizes;
             curr->sizes = ns;
-            if( curr->path != path_dir ) {
-                printf( "\nPath for archive '%s' changed to '%s'\n", curr->pack, path );
-                return( FALSE );
-            }
-            if( strcmp( curr->condition, cond ) != 0 ) {
-                printf( "\nCondition for archive '%s' changed:\n", curr->pack );
-                printf( "Old: <%s>\n", curr->condition );
-                printf( "New: <%s>\n", cond );
-                return( FALSE );
-            }
             return( TRUE );
         }
         curr = curr->next;
@@ -588,7 +615,7 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
         return( FALSE );
     } else {
         new->file = strdup( file );
-        new->pack = strdup( patch );
+        new->pack = strdup( archive );
         new->condition = strdup( cond );
         if( new->file == NULL || new->pack == NULL || new->condition == NULL ) {
             printf( "Out of memory\n" );
@@ -828,7 +855,7 @@ void ReadSection( FILE *fp, char *section, LIST **list )
     Setup = "setup.exe";
     for( ;; ) {
         if( mygets( SectionBuf, sizeof( SectionBuf ), fp ) == NULL ) {
-            printf( "%s section not found in '%s'\n", section, MkdiskInf );
+            printf( "%s section not found in '%s'\n", section, MksetupInf );
             return;
         }
         if( SectionBuf[ 0 ] == '#' || SectionBuf[ 0 ] == '\0' ) continue;
@@ -929,9 +956,9 @@ void ReadInfFile()
     FILE                *fp;
     char                ver_buf[ 80 ];
 
-    fp = fopen( MkdiskInf, "r" );
+    fp = fopen( MksetupInf, "r" );
     if( fp == NULL ) {
-        printf( "Cannot open '%s'\n", MkdiskInf );
+        printf( "Cannot open '%s'\n", MksetupInf );
         return;
     }
     sprintf( ver_buf, "[%s]", Product );
@@ -974,7 +1001,7 @@ void DumpSizes( FILE *fp, FILE_INFO *curr )
         }
         if( csize->redist != ' ' ) {
             // 'o' for ODBC file
-            // 's' for supplimental file (not deleted)
+            // 's' for supplemental file (not deleted)
             fprintf( fp, "!%c", tolower( csize->redist ) );
         }
         if( csize->dst_var ) {

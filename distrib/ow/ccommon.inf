@@ -1,0 +1,8 @@
+IsFortranInstall=0
+AppName=Open Watcom C/C++
+Setup=csetup\setup.exe
+Exe=csetup\dossetup.exe
+Exe=csetup\setup32.exe
+Exe=csetup\install.exe
+DefPMGroup=wcpp32.grp, Watcom C_C++, %DstDir%\watcom.ico
+include=common.inf
