@@ -41,11 +41,12 @@
 
 #undef  _fmemchr
 
-_WCRTLINK void _WCFAR *_fmemchr( const char _WCFAR *s, int c, size_t n )
+_WCRTLINK void _WCFAR *_fmemchr( const void _WCFAR *vs, int c, size_t n )
     {
 #if defined(__INLINE_FUNCTIONS__)
-        return( _inline__fmemchr( s, c, n ) );
+        return( _inline__fmemchr( vs, c, n ) );
 #else
+        const char _WCFAR *s = vs;
         while( n ) {
             if( *s == c ) return( s );
             ++s;

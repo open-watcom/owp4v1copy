@@ -62,11 +62,12 @@
 #else
     _WCRTLINK int read
 #endif
-                     ( int handle, char *buffer, unsigned len )
+                     ( int handle, void *buf, unsigned len )
 {
     unsigned read_len, total_len;
     unsigned reduce_idx, finish_idx;
     unsigned iomode_flags;
+    char *buffer = buf;
     #if defined(__NT__)
         DWORD   amount_read;
         BOOL    rc;

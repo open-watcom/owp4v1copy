@@ -38,7 +38,7 @@ _WCRTLINK extern int PASCAL DefaultWinMain( HANDLE inst, HANDLE previnst,
                                             int (*pmain)( int, char ** ) );
 extern int main( int, char ** );
 
-int PASCAL WinMain( HANDLE inst, HANDLE previnst, LPSTR cmd, int show)
+int PASCAL WinMain( HINSTANCE inst, HINSTANCE previnst, LPSTR cmd, int show)
 {
         return( DefaultWinMain( inst, previnst, cmd, show, &main ) );
 }

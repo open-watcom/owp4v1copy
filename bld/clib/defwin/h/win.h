@@ -312,7 +312,7 @@ void _WindowsKeyPush( WORD, WORD );
 void _WindowsVirtualKeyPush( WORD, WORD );
 int _KeyboardHit( BOOL );
 int _GetKeyboard( int * );
-int _GetString( LPWDATA, void *, int );
+int _GetString( LPWDATA, char *, int );
 
 /* winlines.c */
 void _AddLine( LPWDATA, const void *, unsigned );

@@ -127,11 +127,10 @@ extern  void    movefwd( char _WCFAR *dst, const char _WCFAR *src, unsigned len)
 #endif
 
 
-_WCRTLINK void *memmove( char *to, const char *from, size_t len )
+_WCRTLINK void *memmove( void *toStart, const void *fromStart, size_t len )
     {
-#if defined(__HUGE__) || defined(__AXP__) || defined(__PPC__)
-        char *          toStart = to;
-#endif
+        const char *    from = fromStart;
+        char *          to = toStart;
 
         if( from == to ) {
             return( to );

@@ -42,14 +42,15 @@
 
 #undef  memchr
 
-_WCRTLINK void *memchr( const char *s, int c, size_t n )
+_WCRTLINK void *memchr( const void *s, int c, size_t n )
     {
 #if defined(__INLINE_FUNCTIONS__) && !defined(__WIDECHAR__) && defined(_M_IX86)
         return( _inline_memchr( s, c, n ) );
 #else
+        const char *cs = s;
         while( n ) {
-            if( *s == c ) return( (void*)s );
-            ++s;
+            if( *cs == c ) return( (void *)cs );
+            ++cs;
             --n;
         }
         return( NULL );
