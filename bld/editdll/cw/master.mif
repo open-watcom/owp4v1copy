@@ -5,11 +5,10 @@ lnk = tmp.lnk
 !ifeq host_OS win
 
 # windows version
-weditcw.dll : weditcw.obj
+wedit.dll : weditcw.obj
     @%create $(lnk)
     @%append $(lnk) system windows dll debug all
     @%append $(lnk) name wedit
-    @%append $(lnk) option modname=wedit
     @%append $(lnk) option description 'Open Watcom Editor DLL for Codewriter'
     @%append $(lnk) option map, elim, verbose, static
     @%append $(lnk) library ddeml
@@ -28,11 +27,10 @@ weditcw.obj : ../weditcw.c
 !else ifeq host_OS nt
 
 # NT version
-weditcw.dll : weditcw.obj
+wedit.dll : weditcw.obj
     @%create $(lnk)
     @%append $(lnk) system nt_dll debug all
     @%append $(lnk) name wedit
-    @%append $(lnk) option modname=wedit
     @%append $(lnk) option description 'Open Watcom Editor DLL for Codewriter'
     @%append $(lnk) option map, elim, verbose, static
     @%append $(lnk) file weditcw.obj
