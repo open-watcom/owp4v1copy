@@ -188,6 +188,11 @@ extra_l_flags_nt  = OPTION dosseg, stack=0x10000k, offset=64k COMMIT stack=32k
 # WLINK .DLL options for the various hosts
 wlink_dll_os2_386 = OPTION manyautodata
 
+#######################################
+# workaround for OW 1.0 WLINK problem 
+#######################################
+linker+= op caseex
+#######################################
 extra_l_flags = OPTION map
 wlink_opt_common_exe = OPTION symfile
 wlink_opt_common_drv = OPTION symfile
