@@ -388,10 +388,13 @@ static void setMemoryModel( OPT_STORAGE *data, mem_model_control control )
     default:
         DbgNever();
     }
-#if _CPU == 386
-    // 386 flat model needs at least one floating segment register
-    bit |= FLOATING_GS;
-#endif
+    if( GET_CPU( GET_CPU( CpuSwitches ) >= CPU_386 ) ) {
+        // 386 flat model needs at least one floating segment register
+        bit |= FLOATING_GS | FLOATING_FS;
+        if( bit & FLAT_MODEL ) {
+            bit &= ~FLOATING_FS;
+        }
+    }
     if( ! ( bit & FLAT_MODEL ) ) {
         bit |= FLOATING_ES;
     }
