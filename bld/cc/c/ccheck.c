@@ -92,6 +92,9 @@ static cmp_type CompatibleType( TYPEPTR typ1, TYPEPTR typ2, int assignment );
 static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
                                   voidptr_cmp_type voidptr_cmp );
 
+local int TypeCheck( TYPEPTR typ1, TYPEPTR typ2 );
+
+
 static cmp_type InUnion( TYPEPTR typ1, TYPEPTR typ2, int reversed )
 {
     FIELDPTR    field;
@@ -146,6 +149,8 @@ static int ChkParmPromotion( TYPEPTR *plist, int topLevelCheck )    /* 25-nov-94
                 CErr2( ERR_PARM_TYPE_MISMATCH, parm_count );
             }
             return( TC_TYPE_MISMATCH );
+        default:
+            break;
         }
     }
     return TC_OK;
@@ -292,9 +297,9 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
                     ret_val = PQ;
                 }
             }
-            if( (typ1_flags & FLAG_MEM_MODEL)!=(typ2_flags & FLAG_MEM_MODEL) ){
-                if( (typ1_flags & FLAG_MEM_MODEL) != FLAG_NONE   // if same as mem model ok
-                 && (typ2_flags & FLAG_MEM_MODEL) != FLAG_NONE
+            if( (typ1_flags & FLAG_MEM_MODEL) != (typ2_flags & FLAG_MEM_MODEL) ){
+                if( ((typ1_flags & FLAG_MEM_MODEL) != FLAG_NONE   // if same as mem model ok
+                   && (typ2_flags & FLAG_MEM_MODEL) != FLAG_NONE)
                  ||  TypeSize( typ1 ) != TypeSize( typ2 )  ){
                     return( NO );
                 }
@@ -423,6 +428,8 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
             }else if( TypeSize( typ1 ) ==   TypeSize( typ2 ) ){
                 ret_val = PM;
             }
+            break;
+        default:
             break;
         }
     }
@@ -599,6 +606,8 @@ static void CompareParms( TYPEPTR *master,
                     }
                 }
                 break;
+            case OK:
+                break;
             }
         SetDiagPop();
         }
@@ -692,7 +701,7 @@ static void AssRangeChk( TYPEPTR typ1, TREEPTR opnd2 )
         switch( typ1->decl_type ) {
         case TYPE_FIELD:
         case TYPE_UFIELD:
-            high = 0xfffffffful >> MAXSIZE-typ1->u.f.field_width;
+            high = 0xfffffffful >> (MAXSIZE - (typ1->u.f.field_width));
             if( opnd2->op.ulong_value > high ){
                 if( (opnd2->op.ulong_value | (high >> 1)) != ~0UL ) {
                     CWarn1( WARN_CONSTANT_TOO_BIG, ERR_CONSTANT_TOO_BIG );
@@ -728,6 +737,8 @@ static void AssRangeChk( TYPEPTR typ1, TREEPTR opnd2 )
                 opnd2->op.long_value < -32768L ) {
                 CWarn1( WARN_CONSTANT_TOO_BIG, ERR_CONSTANT_TOO_BIG );
             }
+            break;
+        default:
             break;
         }
     } else if( opnd2->op.opr == OPR_PUSHFLOAT ) {
