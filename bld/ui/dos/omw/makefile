@@ -1,7 +1,9 @@
 #pmake: all cpu_i86 os_dos
 host_CPU = i86
 host_OS = dos
-MODEL = M
-EXTRA=/of
 
-!include ../makefile
+memory_model_i86 = m
+
+extra_c_flags += -of
+
+!include ../dos.mif

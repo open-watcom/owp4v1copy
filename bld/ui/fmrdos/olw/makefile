@@ -2,7 +2,6 @@
 host_CPU = i86
 host_OS = dos
 
-MODEL = L
-pdir = ../..
+memory_model_i86 = l
 
-!include ../makefile
+!include ../dosfmr.mif

@@ -3,14 +3,8 @@
 host_os  = qnx
 host_cpu = 386
 
-MODEL = S
-!ifdef comp386
-WCCEXE=$(comp386)
-!else
-WCCEXE=wcc386
-!endif
-WCPPEXE=wcc386
-EXTRA=$(deffp)/4r/bt=qnx
-FORM=qnx386
+memory_model_386 = s
 
-!include ../makefile
+extra_c_flags += -4r
+
+!include ../qnx.mif

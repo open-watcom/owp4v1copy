@@ -13,6 +13,7 @@ sys_windowed = 1
 
 !include cproj.mif
 !include defrule.mif
+!include deftarg.mif
 
 .mif : ../mif
 
@@ -108,7 +109,7 @@ eraseall.obj : ../compile.gbl
     wtouch eraseall.obj
 
 !ifeq host_OS os2
-wprof.res : auistr.gh wprof.rc
+wprof.res : _guimsgs.gh auistr.gh wprof.rc
         @set oinc=$(%include)
         set include=$(lang_root)/h/os2;$(rcinclude);$(%include)
         wcc -dRC -i"$(aui_dir)/os2386.pm;$(rcinclude)" -p -pw=0 -fo=wprof.i wprof.rc
@@ -133,8 +134,11 @@ wprof.res : auistr.gh wprof.rc
         @set include=$(%oinc)
 !else
 !ifeq sys_windowed 1
-wprof.res : auistr.gh wprof.rc
-        $(rc) -r $(rc_flags) wprof.rc
+wprof.res : _guimsgs.gh auistr.gh ../h/wprof.rc
+    $(rc) -r -q -bt=windows -i="$(rcinclude);$(lang_root)/h/win" $]@ -fo=$^@
+#
+#wprof.res : _guimsgs.gh auistr.gh ../h/wprof.rc
+#        $(rc) -r $(rc_flags) ../h/wprof.rc
 !endif
 !endif
 
@@ -155,23 +159,22 @@ rcfiles = &
 
 rcinclude=.;../h;$(dig_dir)/h;$(aui_dir)/h;$(gui_dir);$(gui_dir)/h;$(brinfo_dir)/merge/res
 
-wprofui.res : ../h/wprofui.rc auistr.gh $(rcfiles)
+wprofui.res : ../h/wprofui.rc _guimsgs.gh auistr.gh $(rcfiles)
     $(rc) -r -q -bt=windows -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
 
-auistr.gh : $(aui_dir)/h/aui.msg $(aui_dir)/c/mkstr.c
-        $(bld_cl) -i"$(aui_dir)/h" $]@
-        mkstr $^@
-        @rm -f mkstr.*
+#auistr.gh : $(aui_dir)/h/aui.msg $(aui_dir)/c/mkstr.c
+#        $(bld_cl) -i"$(aui_dir)/h" $]@
+#        mkstr $^@
+#        @rm -f mkstr.*
 
-clean: .SYMBOLIC .EXPLICIT
-        @if exist *.?bj del *.?bj
-        @if exist *.lnk del *.lnk
-        @if exist *.exe del *.exe
-        @if exist *.dll del *.dll
-        @if exist *.lib del *.lib
-        @if exist *.res del *.res
-        @if exist *.lbc del *.lbc
-        @if exist *.err del *.err
-        @if exist *.map del *.map
-        @if exist *.sym del *.sym
+./auimkstr.exe : $(aui_dir)/h/aui.msg $(aui_dir)/c/mkstr.c
+        $(bld_cl) -i"$(aui_dir)/h" $(wcl_util_opts) $]@
 
+auistr.gh : $(aui_dir)/h/aui.msg ./auimkstr.exe
+        $]@ $^@
+
+./guimkstr.exe: $(gui_dir)/c/mkstr.c $(gui_dir)/h/gui.msg
+        $(bld_cl) -i"$(gui_dir)/h" $(wcl_util_opts) $[@
+
+_guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
+        $[@ $^@ $(gui_msg_id_modifier)

@@ -2,18 +2,9 @@
 host_CPU = 386
 host_OS  = os2
 
-MODEL = F
-!ifdef comp386
-WCCEXE=$(comp386)
-!else
-WCCEXE=wcc386p
-!endif
-WCPPEXE=wcpp386
-FORM=os2v2
+!include ../os2.mif
 
-!include ../makefile
-
-sample2.$(EXE) : sample.obj sampdial.obj ../$(LIBNAME).lib
+sample2.$(EXE) : sample.obj sampdial.obj ui.lib
     %create sample.lnk
     %append sample.lnk  system os2v2
     %append sample.lnk  option map

@@ -1,0 +1,6 @@
+
+extra_c_flags += -ot -4s -dNLM
+extra_hdir = $(watcom_nw40_h);
+
+!include ../../ui.mif
+

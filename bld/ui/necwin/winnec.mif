@@ -1,0 +1,6 @@
+extra_c_flags += -d_NEC_PC -zu -DCLIB_MB
+
+extra_hdir =../../necdos/h;
+extra_cdir =../../necdos/c;
+
+!include ../../ui.mif

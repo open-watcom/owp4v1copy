@@ -2,7 +2,7 @@
 host_CPU = i86
 host_OS = win
 
-MODEL = L
+memory_model_i86 = l
 SAMPLE_MODE = WIN_C_M_J
 
-!include ../makefile
+!include ../winnec.mif

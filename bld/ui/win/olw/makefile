@@ -2,6 +2,6 @@
 host_CPU = i86
 host_OS = win
 
-MODEL = L
+memory_model_i86 = l
 
-!include ../makefile
+!include ../win.mif

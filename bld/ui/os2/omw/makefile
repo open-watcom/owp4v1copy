@@ -1,6 +1,6 @@
 #pmake: all cpu_i86 os_os2
 host_CPU = i86
 host_OS = os2
-MODEL = M
+memory_model_i86 = m
 
-!include ../makefile
+!include ../os2.mif

@@ -2,23 +2,11 @@
 host_CPU = 386
 host_OS = nov
 
-MODEL = S
-!ifdef comp386
-WCCEXE=$(comp386)
-!else
-WCCEXE=wcc386
-!endif
-WCPPEXE=wcpp386
-INCLUDES=;../h
-FORM=NLM
-EXE=nlm
+memory_model_386 = s
 
-.before
-    set include=$(inc_dirs_lang_netware);$(watcom_nw40_h);$(watcom_h);$(%WATCOM)/h;$(%include)
+!include ../nov.mif
 
-!include ../makefile
-
-sample2.$(EXE) : sample.obj sampdial.obj ../$(LIBNAME).lib
+sample2.$(EXE) : sample.obj sampdial.obj ui.lib
     %create sample.lnk
     %append sample.lnk  name sample2
     %append sample.lnk  format novell 'sample2 nlm'

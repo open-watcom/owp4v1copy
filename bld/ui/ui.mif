@@ -1,99 +1,30 @@
-.mif: $(mif_path);..
+proj_name = ui
+name = ui
+
+target: $(name).lib
 
 !include cproj.mif
+!include defrule.mif
 !include deftarg.mif
 
-system_nt_386    = nt
-system_nt_axp    = ntaxp
+.c: ../c;../../c;$(extra_cdir)
+.h: ../h;../../h;$(extra_hdir)
 
-compiler_i86     = $(comp286)
-compiler_386     = $(comp386)
-compiler_axp     = wccaxp
+inc_dirs += ../h;../../h;$(extra_hdir)
 
-includes_nt_386  = $(lang_root)/h/nt;$(lang_root)/h
-includes_nt_axp  = $(lang_root)/h/nt;$(lang_root)/h
-includes_os2_i86 = $(inc_dirs_sys_os2);$(lang_root)/h
-includes_os2_386 = $(inc_dirs_sys_os2);$(lang_root)/h
-includes_qnx_i86 = $(lang_root)/qh
-includes_qnx_386 = $(lang_root)/qh
+obj = obj
+!include ../objfiles.mif
 
-# database team uses fpi87 as default in 6.0
-!ifdef wsqlver
-!  ifeqi wsqlver 6.0
-!    define deffp -fpi87
-!  else
-!    define deffp -fpc
-!  endif
-!else
-!    define deffp -fpc
-!endif
+extra_c_flags_i86 = -fpc
+extra_c_flags_386 = -fpc
 
-!ifndef host_CPU
-!ifeq MODEL F
-host_CPU=386
-!else
-host_CPU=i86
-!endif
-!endif
+extra_c_flags += -os-s
 
-!ifndef INCLUDES
-INCLUDES=$(includes_$(host_OS)_$(host_CPU))
-!endif
-
-!ifndef TARG
-TARG=$(host_OS)
-!endif
-
-!ifndef FORM
-FORM=$(system_$(host_OS)_$(host_CPU))
-!endif
-
-!ifndef EXE
-EXE=exe
-!endif
-
-!ifndef WCCEXE
-WCCEXE=$(compiler_$(host_CPU))
-!endif
-
-libname_i86     = uilib$(MODEL)
-libname_386     = $(libname_i86)
-libname_axp     = uilibaxp
-
-!ifndef LIBNAME
-LIBNAME=$(libname_$(host_CPU))
-!endif
-
-cflags_i86      = -m$(MODEL)
-cflags_386      = $(cflags_i86)
-cflags_axp      =
-!ifndef WCDEB
-WCDEB=-d1
-!endif
-CFLAGS=-bt=$(TARG) -os-s-w3$(WCDEB)-I"../h;../../h;$(INCLUDES);$(watcom_dir)/h" $(cflags_$(host_CPU))$(EXTRA)
-!ifdef __LINUX__
-CFLAGS += -fo=.obj
-!endif
-
-WCC=$(WCCEXE) $[*.c $(CFLAGS) -zq
-
-.EXTENSIONS:
-.EXTENSIONS: .$(EXE) .obj .i .h .c .mif
-
-.JUST_ENOUGH
-
-.mif: ..
-
-target: ../$(libname).lib .SYMBOLIC
-    @%null
-
-OBJ = obj
-!include objfiles.mif
-
-../$(LIBNAME).lib: $(objfiles)
-        $(librarian) -b $* $<
+$(name).lib: $(objfiles)
+        $(librarian) -b $^@ $<
 
 .$(EXE): ../x
+
 !ifeq SAMPLE_MODE WIN_C_M_J
 sample.$(EXE) : samplew.obj sampdial.obj ../$(LIBNAME).lib
         %create sample.lnk
@@ -116,16 +47,6 @@ sample.$(EXE) : samplew.obj sampdial.obj swap.obj ../$(LIBNAME).lib
 sample.$(EXE) : sample.obj sampdial.obj ../$(LIBNAME).lib
         !wlink system $(FORM) op m,st=32k D A library ../$(LIBNAME) n sample f sample, sampdial
 !endif
-
-.c: ../c;../../c;$(extra_cdir)
-
-.c.obj :
-        $(WCC)
-
-.c.i :
-        $(WCC) -fo=.i -plc
-
-.h: ../h;../../h;$(extra_hdir)
 
 make: .SYMBOLIC
     %create mkmk.cmd
