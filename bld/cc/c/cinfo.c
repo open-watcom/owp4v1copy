@@ -311,8 +311,6 @@ void SetSegment( SYMPTR sym )
     }
 }
 
-#ifndef WCPP
-
 struct  seg_name {
     char        *name;
     int         segment;
@@ -922,8 +920,6 @@ int FEStackChk( CGSYM_HANDLE cgsym_handle )
     sym = SymGetPtr( sym_handle );
     return( (sym->flags & SYM_CHECK_STACK) != 0 );
 }
-
-#endif
 
 void SegInit()
 {
