@@ -70,7 +70,7 @@ proj_obj =   $(extra_proj_obj_$(host_OS)_$(host_CPU)) &
     main.obj            &
     write.obj           &
     fatal.obj           &
-    util.obj            &
+    womputil.obj        &
     direct.obj          &
     posndir.obj         &
     asmeval.obj         &
@@ -92,7 +92,6 @@ proj_obj =   $(extra_proj_obj_$(host_OS)_$(host_CPU)) &
     queue.obj           &
     fixup.obj           &
     lifix.obj           &
-    array.obj           &
     asmins.obj          &
     asmscan.obj         &
     asmline.obj         &
@@ -105,6 +104,7 @@ proj_obj =   $(extra_proj_obj_$(host_OS)_$(host_CPU)) &
     insthash.obj        &
     asmjump.obj         &
     autodept.obj        &
+    queues.obj          &
     finger.obj
 
 !ifdef prebuild

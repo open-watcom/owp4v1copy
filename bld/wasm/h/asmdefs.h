@@ -29,8 +29,8 @@
 *
 ****************************************************************************/
 
-#ifndef ASMDEFS_H
-#define ASMDEFS_H
+#ifndef _ASMDEFS_H_
+#define _ASMDEFS_H_
 
 #include "asmopnds.h"
 
@@ -95,18 +95,15 @@
 
 #ifdef _WASM_
 
-#define     Address         ( GetCurrAddr() )
 #define MEM_TYPE( op, typ ) ( (op) == T_##typ || (op) == T_S##typ )
 
 #else
 
-extern uint_32              Address;
 #define MEM_TYPE( op, typ ) ( (op) == T_##typ )
 
 #endif
 
 /* global variables */
-extern unsigned char    *CodeBuffer;
 extern struct asm_tok   *AsmBuffer[];
 extern struct asm_code  *Code;
 extern int_8            Frame;
@@ -115,11 +112,9 @@ extern char             Parse_Pass;     // phase of parsing
 extern unsigned char    Opnd_Count;
 extern char             Modend;         // end of module is reached
 extern int_8            Use32;          // if 32-bit code is use
-extern uint             LineNumber;
 extern int              Token_Count;    // number of tokens on line
 
 struct asm_sym;
-extern int              match_phase_1( void );
 extern void             AsmByte( unsigned char );
 
 #ifdef _WASM_

@@ -29,16 +29,11 @@
 ****************************************************************************/
 
 
-#include <stdlib.h>
-
 #include "asmglob.h"
+
 #include "asmins.h"
-#include "asmerr.h"
-#include "asmsym.h"
 #include "asmeval.h"
 #include "asmdefs.h"
-
-#include "watcom.h"
 
 #ifdef _WASM_
 #include "myassert.h"
@@ -47,7 +42,6 @@
 #define myassert(x)
 #endif
 
-extern void             AsmError( int );
 extern void             DefFlatGroup();
 
 static int              TakeOut[ MAX_TOKEN ];
@@ -904,7 +898,7 @@ static int calculate( expr_list *token_1, expr_list *token_2, uint_8 index )
                     token_2->expr_type = token_1->expr_type;
                 }
                 TokenAssign( token_1, token_2 );
-            } else {
+            } else if( Parse_Pass > PASS_1 ) {
                 AsmError( ONLY_SEG_OR_GROUP_ALLOWED );
                 return( ERROR );
             }

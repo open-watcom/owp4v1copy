@@ -372,7 +372,7 @@ static void assemblerInit(      // INITIALIZATION OF ASSEMBLER
     case FPU_NONE:      fpu = 0; break;
     default:            fpu = 1; break;
     }
-    AsmInit( cpu, fpu, use32, -1 );
+    AsmInit( cpu, fpu, use32, 1 );
 }
 
 

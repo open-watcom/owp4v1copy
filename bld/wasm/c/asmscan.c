@@ -30,37 +30,15 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <limits.h>
-
 #include "asmglob.h"
-#include "asmopnds.h"
+#include <ctype.h>
+
 #include "asmins.h"
-#include "asmerr.h"
-#include "asmsym.h"
-#include "asmalloc.h"
 #include "asmdefs.h"
-
-#ifdef _WASM_
-
-#include "directiv.h"
-#include "watcom.h"
-#include "womp.h"
-#include "objrec.h"
-#include "pcobj.h"
-#include "fixup.h"
-#include "namemgr.h"
-
-#endif
-
-extern void             AsmError( int );
 
 char                    *CurrString; // Current Input Line
 
-extern int get_instruction_position( char *string );
+extern int              get_instruction_position( char *string );
 
 #ifdef _WASM_
 

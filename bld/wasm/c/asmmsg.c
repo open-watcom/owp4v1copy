@@ -32,33 +32,23 @@
 
 #ifdef _WASM_
 
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include "watcom.h"
-#include "asmerr.h"
 #include "asmglob.h"
-#include "asmdefs.h"
+#include <stdarg.h>
 
-extern File_Info    AsmFiles;   // files information
+#include "asmsym.h"
+#include "directiv.h"
 
-extern char         *curr_src_line;
+extern char             *curr_src_line;
 
 extern void             MsgPrintf( int resourceid ); // don't use this
 extern int              MsgGet( int resourceid, char *buffer );
 extern int              trademark( void );
 extern char             *get_curr_filename( void );
 
-static void AsmSuicide( void );
-void PutMsg( FILE *fp, char *prefix, int msgnum, va_list args );
-void OpenErrFile( void );
-void PrtMsg( register char *prefix, register int msgnum, va_list args1,
-             va_list args2 );
-void print_include_file_nesting_structure( void );
-
-#include <stdarg.h>
+void                    OpenErrFile( void );
+void                    PrtMsg( register char *prefix, register int msgnum, va_list args1,
+                                va_list args2 );
+void                    print_include_file_nesting_structure( void );
 
 //    WngLvls[level] // warning levels associated with warning messages
 //    CompFlags.errout_redirected
@@ -79,8 +69,11 @@ void print_include_file_nesting_structure( void );
 #define __vfprintf vfprintf
 #define __printf printf
 
-int Errfile_Written = FALSE;
-FILE *ErrFile = NULL;
+static int              Errfile_Written = FALSE;
+static FILE             *ErrFile = NULL;
+
+static void             AsmSuicide( void );
+static void             PutMsg( FILE *fp, char *prefix, int msgnum, va_list args );
 
 void AsmError( int msgnum )
 /*************************/
@@ -162,6 +155,7 @@ void AsmWarn( int level, int msgnum, ... )
 void PrtMsg( register char *prefix, register int msgnum, va_list args1,
              va_list args2 )
 /**************************/
+// print messages from WOMP !!!
 {
     if( !Options.banner_printed ) {
         Options.banner_printed = TRUE;
@@ -190,8 +184,8 @@ void OpenErrFile()
     }
 }
 
-void PutMsg( FILE *fp, char *prefix, int msgnum, va_list args )
-/*************************************************************/
+static void PutMsg( FILE *fp, char *prefix, int msgnum, va_list args )
+/********************************************************************/
 {
     char *fname;
     unsigned line_num;

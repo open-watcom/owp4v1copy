@@ -46,7 +46,6 @@
 #include "asmsym.h"
 #include "asmops1.h"
 #include "asmops2.h"
-#include "asmglob.h"
 
 enum prefix_reg {
     PREFIX_EMPTY = EMPTY,
@@ -171,9 +170,7 @@ extern char AsmChars[];
 int check_override( int *i );
 int OperandSize( enum operand_type opnd );
 int InRange( unsigned long val, unsigned bytes );
-int mem2code( char ss, int index, int base, asm_sym *sym );
 int cpu_directive( int i );
 int AsmParse( void );
-void AsmInit( int cpu, int fpu, int use32 );
 
 #endif

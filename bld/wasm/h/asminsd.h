@@ -29,9 +29,10 @@
 *
 ****************************************************************************/
 
+#ifndef _ASMINSD_H_
+#define _ASMINSD_H_
 
 #include "asmins.h"
-#include "asmopnds.h"
 
 #define ins(tok,op1,byte1_info,op2,op3,op_dir,rm_info,opcode,rm_byte,cpu,prefix) \
                 {tok,prefix,byte1_info,rm_info,op3,op_dir,cpu,{op1,op2},opcode,rm_byte},
@@ -1454,3 +1455,5 @@ ins (T_XORPS,           OP_XMM,      F_0F,   OP_XMM|OP_M,   OP3_NONE,1,  no_WDS,
 
 #define DEFINE_ASMOPS 1
 #include "asmops2.h"
+
+#endif

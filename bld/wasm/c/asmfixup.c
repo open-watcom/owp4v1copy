@@ -30,36 +30,18 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <limits.h>
-#include <malloc.h>
-
 #include "asmglob.h"
+
 #include "asmins.h"
-#include "asmopnds.h"
-#include "asmerr.h"
-#include "asmsym.h"
 #include "asmdefs.h"
 #include "asmalloc.h"
-#include "asmfixup.h"
 
 #ifdef _WASM_
-#include "womp.h"
-#include "fixup.h"
 #include "directiv.h"
-
-#include "watcom.h"
-#include "objrec.h"
-#include "pcobj.h"
 #include "myassert.h"
 #endif
 
 struct asmfixup         *InsFixups[3];
-struct fixup            *FixupListHead; // head of list of fixups
-struct fixup            *FixupListTail;
 
 #ifndef _WASM_
 
@@ -67,8 +49,8 @@ struct asmfixup         *FixupHead;
 
 #else
 
-extern int_8            PhaseError;
-extern seg_list         *CurrSeg;       // points to stack of opened segments
+struct fixup            *FixupListHead; // head of list of fixups
+struct fixup            *FixupListTail;
 
 void add_frame( void )
 /********************/

@@ -76,6 +76,7 @@ or &
 out &
 outs &
 pop &
+pword &
 rcl &
 sal &
 sbb &
@@ -120,7 +121,8 @@ init_sse3 = XMM3
 testcomp=wcc386
 !endif 
 
-!ifdef __UNIX__
+!ifdef nulldevice
+!else ifdef __UNIX__
 nulldevice=/dev/null
 !else
 nulldevice=nul
@@ -129,14 +131,16 @@ nulldevice=nul
 log_file=testcomp.log
 
 .BEFORE
-    @%create $(log_file)
+#    @%create $(log_file)
 
 all : clean $(objs) $(dev_objs) .SYMBOLIC
 
 !ifdef objs
 !ifneq objs
 $(objs) : .SYMBOLIC
-    @echo $@ ================================================================
+    @echo ==============================================================
+    @echo $(testcomp) $^@.asm
+    @echo ==============================================================
     @rm -f $@.c
     @vi -d -q -k ":so createc.vi $@ $(init_$^@)\n"
     @$(testcomp) $@.c -s -os -zq -wx -fo=.obj >$(nulldevice)
@@ -150,8 +154,8 @@ $(objs) : .SYMBOLIC
 !ifneq dev_objs
 $(dev_objs) : .SYMBOLIC
     @echo .
-    @echo $@ ==============================================================
-    @echo DEVELOPMENT - $^@.asm
+    @echo ==============================================================
+    @echo DEVELOPMENT - $(testcomp) $^@.asm
     @echo ==============================================================
     @rm -f $@.c
     @vi -d -q -k ":so createc.vi $@ $(init_$^@)\n"

@@ -34,16 +34,11 @@
  * used only by WASM not the inline assembler
  */
 
-#include <stdlib.h>
-
-#include "watcom.h"
-
 #include "asmglob.h"
+
 #include "asmins.h"
 #include "directiv.h"
 #include "condasm.h"
-#include "myassert.h"
-#include "asmerr.h"
 #include "asmexpnd.h"
 #include "asmdefs.h"
 
@@ -52,12 +47,7 @@ extern int              OrgDirective( int );
 extern int              AlignDirective( uint_16, int );
 extern int              LabelDirective( int );
 extern int              StructDef( int );
-extern void             GetInsString( enum asm_token , char *, int );
 extern int              ForDirective( int, enum irp_type );
-
-/* global vars */
-extern dir_node         *CurrProc;
-extern seg_list         *CurrSeg;
 
 int directive( int i, long direct )
 /* Handle all directives */
@@ -204,8 +194,6 @@ int directive( int i, long direct )
     case T_TYPEDEF:
     case T_UNION:
     case T_WIDTH:
-    case T_DOT_STARTUP:
-    case T_DOT_EXIT:
         AsmError( NOT_SUPPORTED );
         return( ERROR );
     case T_ORG:
@@ -232,6 +220,8 @@ int directive( int i, long direct )
     case T_NAME:
         // no expand parameters
         break;
+    case T_DOT_STARTUP:
+    case T_DOT_EXIT:
     default:
         /* expand any constants in all other directives */
         //if( Parse_Pass == PASS_1 ) {
@@ -298,6 +288,9 @@ int directive( int i, long direct )
     case T_REPT:
     case T_REPEAT:
         return( ForDirective ( i+1, IRP_REPEAT ) );
+    case T_DOT_STARTUP:
+    case T_DOT_EXIT:
+        return( Startup ( i ) );
     }
     AsmError( UNKNOWN_DIRECTIVE );
     return( ERROR );

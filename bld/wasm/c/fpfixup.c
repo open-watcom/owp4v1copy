@@ -30,19 +30,15 @@
 ****************************************************************************/
 
 
-#include <stdlib.h>
-
 #include "asmglob.h"
-#include "asmalloc.h"
-#include "asmerr.h"
+
 #include "asmins.h"
-#include "asmsym.h"
 #include "directiv.h"
-#include "myassert.h"
 #include "asmdefs.h"
 #include "asmfixup.h"
+#include "mangle.h"
 
-extern char *AsmMangler( struct asm_sym *sym, char *buffer );
+#include "myassert.h"
 
 typedef enum {
     FPP_NONE,
@@ -125,7 +121,7 @@ int AddFloatingPointEmulationFixup( const struct asm_ins ASMFAR *ins, bool secon
     sym = AsmGetSymbol( patch_name_array[patch] );
     if( sym == NULL ) {
         sym = MakeExtern( patch_name_array[patch], T_FAR, FALSE );
-        sym->mangler = AsmMangler;
+        SetMangler( sym, "N", LANG_NONE );
     }
     if( MakeFpFixup( sym ) == ERROR ) return( ERROR );
 

@@ -29,69 +29,11 @@
 *
 ****************************************************************************/
 
+#ifndef _UTIL_H_
+#define _UTIL_H_
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+extern pobj_state       pobjState;
 
-#include "watcom.h"
-#include "womp.h"
-#include "myassert.h"
-#include "asmalloc.h"
-#include "asmerr.h"
-#include "memutil.h"
+extern void write_record( obj_rec *objr, char kill );
 
-#include "objprs.h"
-#define JUMP_OFFSET(cmd)    ((cmd)-CMD_POBJ_MIN_CMD)
-
-pobj_filter     jumpTable[ CMD_MAX_CMD - CMD_POBJ_MIN_CMD + 1 ];
-
-extern void             MsgPrintf( int resourceid );
-extern int              MsgGet( int resourceid, char *buffer );
-
-/* these routines are part of the interface to the WOMP routines */
-
-void PObjRegList( const pobj_list *list, size_t len )
-/***************************************************/
-{
-
-    size_t  i;
-
-    for( i = 0; i < len; ++i ) {
-        jumpTable[ JUMP_OFFSET( list[i].command ) ] = list[i].func;
-    }
-}
-
-
-void PObjUnRegList( const pobj_list *list, size_t len )
-/*****************************************************/
-{
-
-    list = list;
-    len = len;
-}
-
-int InternalError( const char *file, unsigned line ) {
-/***************************************************/
-
-    char msgbuf[80];
-
-///**/    printf( "Internal error in %s(%u)\n", file, line );
-    MsgGet( MSG_INTERNAL_ERROR, msgbuf );
-    printf( msgbuf, file, line );
-    exit( EXIT_FAILURE );
-    return( 0 );
-}
-
-int BeQuiet( void )
-/*****************/
-{
-    return 1;
-}
-
-void ObjWriteError( void )
-{
-//    printf( "OBJECT WRITE ERROR !!\n" );
-    MsgPrintf( OBJECT_WRITE_ERROR );
-    exit( EXIT_FAILURE );
-};
+#endif

@@ -30,28 +30,13 @@
 ****************************************************************************/
 
 
-#include <stdlib.h>
-#include <string.h>
-
 #include "asmglob.h"
-#include "asmerr.h"
+
 #include "asmins.h"
-#include "directiv.h"
 #include "asmdefs.h"
+#include "directiv.h"
 
-#include "womp.h"
-#include "pcobj.h"
-#include "objrec.h"
 #include "myassert.h"
-
-extern void             AsmError( int );
-extern direct_idx       FindClassLnameIdx( char *name );
-extern uint_32          GetCurrSegAlign( void );
-extern void             FlushCurrSeg( void );
-extern bool             CheckHaveSeg( void );
-
-/* stupid global vars that we may as well use since they are there */
-extern seg_list         *CurrSeg;       // points to stack of opened segments
 
 typedef unsigned char   byte;
 
@@ -60,6 +45,7 @@ static byte NopList16[] = {
     0x89, 0xc0,         /* MOV AX,AX */
     0xfc                /* CLD */
 };
+
 static byte NopList32[] = {
     6,
     0x8d,0x80,0x00,0x00,0x00,0x00,  // lea     eax,+00000000H[eax]
@@ -70,7 +56,8 @@ static byte NopList32[] = {
     0x8b,0xc0,                      // mov     eax,eax
     0x90                            // nop
 };
-byte *NopLists[] = { NopList16, NopList32 };
+
+static byte *NopLists[] = { NopList16, NopList32 };
 
 int ChangeCurrentLocation( bool relative, int_32 value  )
 /*******************************************************/
@@ -80,8 +67,6 @@ int ChangeCurrentLocation( bool relative, int_32 value  )
         value += GetCurrAddr();
     }
     FlushCurrSeg();
-
-//    CurrSeg->seg->e.seginfo->segrec->d.segdef.seg_length = value;
 
     CurrSeg->seg->e.seginfo->current_loc = value;
     CurrSeg->seg->e.seginfo->start_loc = value;

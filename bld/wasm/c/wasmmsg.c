@@ -30,23 +30,16 @@
 ****************************************************************************/
 
 
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-#include <ctype.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+#include "asmglob.h"
+
 #include <fcntl.h>
 #include <unistd.h>
+
 #ifdef __WATCOMC__
-#include <conio.h>
-#include <process.h>
+  #include <conio.h>
+  #include <process.h>
 #endif
 
-#include "asmerr.h"
-#include "asmglob.h"
 #include "wressetr.h"
 #include "wreslang.h"
 

@@ -24,23 +24,17 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Symbol mangling routines.
 *
 ****************************************************************************/
 
 
-#include <stdlib.h>
-#include <string.h>
 #include "asmglob.h"
+
 #include "asmsym.h"
 #include "asmalloc.h"
-#include "asmerr.h"
 #include "directiv.h"
-#include "asmins.h"
-
-extern char *CMangler( struct asm_sym *sym, char *buffer );
-extern char *AsmMangler( struct asm_sym *sym, char *buffer );
+#include "mangle.h"
 
 /* constants used by the name manglers ( changes ) */
 #define     NORMAL              0
@@ -50,7 +44,7 @@ extern char *AsmMangler( struct asm_sym *sym, char *buffer );
 #define     REM_USCORE_BACK     8
 #define     UPPERCASE           16
 
-char *AsmMangler( struct asm_sym *sym, char *buffer )
+static char *AsmMangler( struct asm_sym *sym, char *buffer )
 /***************************************************/
 {
     char *name;
@@ -65,7 +59,7 @@ char *AsmMangler( struct asm_sym *sym, char *buffer )
     }
 }
 
-char *CMangler( struct asm_sym *sym, char *buffer )
+static char *CMangler( struct asm_sym *sym, char *buffer )
 /*************************************************/
 {
     char                *name;

@@ -30,15 +30,11 @@
 ****************************************************************************/
 
 
-#include <stdlib.h>
-#include <string.h>
 #include "asmglob.h"
+
 #include "asmdefs.h"
 #include "asmalloc.h"
-#include "asmerr.h"
 #include "asmins.h"
-#include "namemgr.h"
-#include "asmsym.h"
 #include "directiv.h"
 #include "asmexpnd.h"
 
@@ -47,7 +43,7 @@ extern void             AddTokens( struct asm_tok **, int, int );
 extern void             InputQueueLine( char * );
 extern void             PushMacro( char *, bool );
 
-const char macroname[] = "__STATIC_IRP_MACRO_";
+static const char macroname[] = "__STATIC_IRP_MACRO_";
 
 int ForDirective( int i, enum irp_type type )
 /*************************************/

@@ -24,34 +24,27 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  WASM conditional processing routines
 *
 ****************************************************************************/
 
 
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-#include <ctype.h>
-#include <stdio.h>
-
 #include "asmglob.h"
+#include <ctype.h>
+
 #include "asmins.h"
 #include "directiv.h"
-#include "asmerr.h"
-#include "myassert.h"
-#include "asmalloc.h"
 #include "asmexpnd.h"
 #include "asmdefs.h"
 
-extern void             AsmError( int );
+#include "myassert.h"
 
 extern int              get_instruction_position( char *string );
 
 extern int              MacroExitState;
 
-enum if_state CurState = ACTIVE;
+static enum if_state CurState = ACTIVE;
+
 // fixme char *IfSymbol;        /* save symbols in IFDEF's so they don't get expanded */
 #define    MAX_NESTING  20
 
@@ -133,23 +126,19 @@ void prep_line_for_conditional_assembly( char *line )
 static char check_defd( char *string )
 /************************************/
 {
-    char        *ptr;
-    char        *end;
-    struct asm_sym      **sym_ptr;
+    char                *ptr;
+    char                *end;
+    struct asm_sym      *sym;
 
     /* isolate 1st word */
     ptr = string + strspn( string, " \t" );
     end = ptr + strcspn( ptr, " \t" );
     *end = '\0';
 
-
-    sym_ptr = AsmFind( ptr );
-
-    if( *sym_ptr != NULL ) {
-        *end = '\0';
+    sym = AsmGetSymbol( ptr );
+    if( sym != NULL ) {
         return( TRUE );
     } else {
-        *end = '\0';
         return( FALSE );
     }
 }
@@ -157,19 +146,6 @@ static char check_defd( char *string )
 static char check_blank( char *string )
 /************************************/
 {
-    #if 0
-    char        *ptr;
-    char        *end;
-
-    /* isolate word inside < > */
-    /* error condtions? */
-    for( ptr = string; *ptr !='\0' && *ptr != '<'; ptr++ );
-    ptr++;
-    for( end = ptr; *end !='\0' && *end != '>'; end++ );
-    *end = '\0';
-    return( strlen( ptr ) == 0 ? TRUE : FALSE );
-    #endif
-
     return( strlen( string ) == 0 ? TRUE : FALSE );
 }
 

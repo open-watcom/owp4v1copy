@@ -24,51 +24,34 @@
 *
 *  ========================================================================
 *
-* Description:  WASM symbol expansion.
+* Description:  WASM symbols expansion.
 *
 ****************************************************************************/
 
 #include "asmglob.h"
 
+#include "asmeval.h"
+#include "asmexpnd.h"
+#include "asmdefs.h"
+
 #ifdef _WASM_
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <malloc.h>
-#include <ctype.h>
-
 #include "asmalloc.h"
-#include "asmerr.h"
 #include "asmins.h"
-#include "namemgr.h"
 #include "asmsym.h"
-#include "asmdefs.h"
-#include "asmeval.h"
-
-#include "womp.h"
-#include "pcobj.h"
-#include "objrec.h"
-#include "myassert.h"
-#include "fixup.h"
-#include "queue.h"
-
 #include "directiv.h"
 
-#include "asmexpnd.h"
+#include "myassert.h"
 
-extern dir_node         *CurrProc;
+#define    MAX_EQU_NESTING      20
 
 extern void             InputQueueLine( char * );
 extern void             PushLineQueue(void);
-extern void             wipe_space( char *token );
 extern int              AsmScan( char * );
 extern void             GetInsString( enum asm_token , char *, int );
 extern int              MakeLabel( char *symbol_name, memtype mem_type );
 
-static int createconstant( char *name, bool value, int start, bool redefine, bool expand_early );
-
-#define    MAX_EQU_NESTING      20
+static int              createconstant( char *, bool, int, bool, bool );
 
 static label_list *label_cmp( char *name, label_list *head )
 {
@@ -458,9 +441,6 @@ int ExpandTheConstant( int start_pos, bool early_only, bool flag_msg )
 }
 
 #else
-
-extern int      EvalExpr( int, int, int, bool );
-extern int      Token_Count;    // number of tokens on line
 
 int ExpandTheWorld( int start_pos, bool early_only, bool flag_msg )
 /******************************************************************/

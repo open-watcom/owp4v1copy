@@ -29,37 +29,29 @@
 ****************************************************************************/
 
 
-#include <stdlib.h>
-#include <string.h>
+#include "asmglob.h"
 #include <fcntl.h>
 #include <unistd.h>
 #ifdef __WATCOMC__
-#include <process.h>
+  #include <process.h>
 #endif
 #include <ctype.h>
-#include <malloc.h>
 
-#include "asmglob.h"
 #include "asmalloc.h"
 #include "asmins.h"
-#include "asmsym.h"
-#include "directiv.h"
 #include "fatal.h"
-#include "asmerr.h"
 #include "asmdefs.h"
 #include "asmexpnd.h"
-
-#include "memutil.h"
-
-#include "womp.h"
 #include "objprs.h"
 #include "genmsomf.h"
+#include "directiv.h"
+#include "womputil.h"
+
 #ifdef __OSI__
- #include "ostype.h"
+  #include "ostype.h"
 #endif
 
 extern void             Fatal( unsigned msg, ... );
-extern void             WriteObjModule( void );
 extern void             ObjRecInit( void );
 extern void             DelErrFile();
 extern void             PrintStats();
@@ -116,7 +108,7 @@ static char *OptParm;
 
 #if defined( __DOS__ )
 
-extern  unsigned char    _DOS_Switch_Char();
+extern unsigned char    _DOS_Switch_Char();
 #pragma aux     _DOS_Switch_Char = \
     0x52            /* push dx */\
     0xb4 0x37       /* mov ah,37h    */\
@@ -126,7 +118,7 @@ extern  unsigned char    _DOS_Switch_Char();
     0x5a            /* pop dx        */;
 #endif
 
-unsigned char _dos_switch_char()
+static unsigned char _dos_switch_char()
 {
 #if defined( __DOS__ )
         return( _DOS_Switch_Char() );
@@ -507,9 +499,10 @@ static void do_init_stuff( char **cmdline )
     char        *dst;
     char        buff[80];
 
-    if( !MsgInit() ) exit(1);
+    if( !MsgInit() )
+        exit(1);
 
-    AsmInit(-1, -1, -1);                // initialize hash table
+    AsmInit( -1, -1, -1, -1 );                // initialize hash table
     strcpy( buff, "__WASM__=" );
     dst = &buff[ strlen(buff) ];
     src = (char *)FingerMsg[0];
@@ -530,7 +523,8 @@ static void do_init_stuff( char **cmdline )
     set_build_target();
     get_os_include();
     env = getenv( "INCLUDE" );
-    if( env != NULL ) AddStringToIncludePath( env );
+    if( env != NULL )
+        AddStringToIncludePath( env );
     if( !Options.quiet && !Options.banner_printed ) {
         Options.banner_printed = TRUE;
         trademark();

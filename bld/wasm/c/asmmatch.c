@@ -30,18 +30,9 @@
 ****************************************************************************/
 
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <limits.h>
-#include <malloc.h>
-
 #include "asmglob.h"
+
 #include "asmins.h"
-#include "asmopnds.h"
-#include "asmerr.h"
-#include "asmsym.h"
 #include "asmdefs.h"
 #include "asmalloc.h"
 #include "asmfixup.h"
@@ -49,19 +40,15 @@
 #ifdef _WASM_
 
 #include "directiv.h"
-#include "womp.h"
-#include "queue.h"
+#include "queues.h"
 
-extern int_8                    PhaseError;
-
-static void AddLinnumData( void );
+static void AddLinnumDataRef( void );
 
 extern int  AddFloatingPointEmulationFixup( const struct asm_ins ASMFAR *, bool );
-qdesc       *LinnumQueue = NULL;    // queue of linnum_data structs
 
 #endif
 
-int match_phase_3( int *i, enum operand_type determinant );
+static int match_phase_3( int *i, enum operand_type determinant );
 
 static int output_3DNow( int i )
 /************************/
@@ -90,7 +77,7 @@ static int output( int i )
      * Output debug info - line numbers
      */
     if( Options.debug_flag && !PhaseError && (Parse_Pass != PASS_1) ) {
-        AddLinnumData();
+        AddLinnumDataRef();
     }
 
     /*
@@ -602,7 +589,7 @@ int match_phase_1( void )
     return( ERROR );
 }
 
-int match_phase_2( int *i )
+static int match_phase_2( int *i )
 /*
 - a routine used by match_phase_1() to determine whether both operands match
   with that in the assembly instructions table;
@@ -665,7 +652,7 @@ static int output_3rd_operand( int i )
     }
 }
 
-int match_phase_3( int *i, enum operand_type determinant )
+static int match_phase_3( int *i, enum operand_type determinant )
 /*
 - this routine will look up the assembler opcode table and try to match
   the second operand with what we get;
@@ -771,6 +758,9 @@ int match_phase_3( int *i, enum operand_type determinant )
                     case 4:
                         cur_opnd = OP_I32;
                         Code->prefix.opsiz = Code->use32 ? FALSE : TRUE;
+                        break;
+                    default:
+                        AsmError( INVALID_INSTRUCTION_OPERANDS );
                         break;
                     }
                 }
@@ -893,25 +883,18 @@ int match_phase_3( int *i, enum operand_type determinant )
 
 #ifdef _WASM_
 
-static void AddLinnumData( void )
+static void AddLinnumDataRef( void )
 /*******************************/
 /* store a reference for the current line at the current address */
 {
     struct linnum_data  *curr;
-    struct queuenode    *node;
 
     if( LineNumber < 0x8000 )  {
         curr = AsmAlloc( sizeof( struct linnum_data ) );
         curr->number = LineNumber;
         curr->offset = Address;
-        node = AsmAlloc( sizeof( queuenode ) );
-        node->data = curr;
 
-        if( LinnumQueue == NULL ) {
-            LinnumQueue = AsmAlloc( sizeof( qdesc ) );
-            QInit( LinnumQueue );
-        }
-        QEnqueue( LinnumQueue, node );
+        AddLinnumData( curr );
     }
 }
 #endif

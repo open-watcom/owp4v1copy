@@ -28,15 +28,19 @@
 *
 ****************************************************************************/
 
+#ifndef _ASMALLOC_H_
+#define _ASMALLOC_H_
 
 #ifdef _WASM_
+  #include <malloc.h>
+  #include "memutil.h"  // WOMP memory routines declaration
+#endif
 
-#include "malloc.h"
-
-#define AsmTmpAlloc( amount )   alloca( amount )
-
+#ifdef _WASM_
+  #define AsmTmpAlloc( amount )   alloca( amount )
 #endif
 
 extern  void    *AsmAlloc( size_t );
 extern  void    AsmFree( void * );
 
+#endif

@@ -29,10 +29,9 @@
 ****************************************************************************/
 
 
-#ifndef ASMSYM_H
-#define ASMSYM_H
+#ifndef _ASMSYM_H_
+#define _ASMSYM_H_
 
-#include "watcom.h"
 #include "asminlin.h"
 #include "asmops2.h"
 
@@ -86,17 +85,15 @@ typedef struct asm_sym {
         struct asmfixup *fixup;
 } asm_sym;
 
-extern char *InitAsmSym( struct asm_sym *sym, char *name );
 extern struct asm_sym *AsmLookup( char *name );
-extern struct asm_sym *AsmAdd( struct asm_sym *symbol );
-extern void AsmSymFini(void);
-extern struct asm_sym **AsmFind( char *name );
 extern struct asm_sym *AsmGetSymbol( char *name );
 
 #ifdef _WASM_
 
 extern void AsmTakeOut( char *name );
 extern int AsmChangeName( char *old, char *new );
+
+extern struct asm_sym *AllocDSym( char *, int );
 
 #endif
 

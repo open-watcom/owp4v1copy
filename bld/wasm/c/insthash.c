@@ -30,13 +30,9 @@
 ****************************************************************************/
 
 
-#include <stdlib.h>
-#include <string.h>
-#include "asmins.h"
-#include "asmalloc.h"
-#include "asmerr.h"
 #include "asmglob.h"
-#include "asmdefs.h"
+
+#include "asmins.h"
 
 #ifdef __USE_BSD
 #define strnicmp strncasecmp
@@ -44,7 +40,7 @@
 
 #include "hash.h"
 
-struct AsmCodeName *inst_table[ HASH_TABLE_SIZE ] = { NULL };
+static struct AsmCodeName *inst_table[ HASH_TABLE_SIZE ] = { NULL };
 
 
 static struct AsmCodeName **find( char *name )

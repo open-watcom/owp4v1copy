@@ -30,13 +30,10 @@
 ****************************************************************************/
 
 
-#include <stdlib.h>
-#include <string.h>
+#include "asmglob.h"
 #include <ctype.h>
 
-#include "asmglob.h"
 #include "asmalloc.h"
-#include "asmerr.h"
 #include "asmins.h"
 #include "directiv.h"
 #include "asmdefs.h"
@@ -45,8 +42,6 @@ a_definition_struct Definition = { 0, NULL, NULL };
 
 extern void             InputQueueLine( char * );
 extern void             PushLineQueue(void);
-
-extern void             AsmError( int );
 
 int StructDef( int i )
 /********************/

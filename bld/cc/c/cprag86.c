@@ -79,7 +79,7 @@ void PragmaInit()
     default:    fpu = 1; break;
     }
 
-    AsmInit( cpu, fpu, use32, -1 );
+    AsmInit( cpu, fpu, use32, 1 );
 
     PragInit();
 

@@ -204,12 +204,6 @@ static  char            _wresppc[] = { "wresppc" };
 #define MAXIMUM_BYTESEQ 127
 
 #if ( _TARGET == _8086 || _TARGET == _80386 )
-extern  long            Address;
-extern  char            *CodeBuffer;
-
-extern  void            AsmInit(int,int,int);
-extern  void            AsmLine(char *);
-extern  void            AsmSymFini(void);
   #define ASM_CODE_BUFF_TYPE    char*
 #elif _TARGET == _AXP || _TARGET == _PPC
   #define AsmSymFini    AsmFini
@@ -344,7 +338,7 @@ void            InitAuxInfo() {
     if( CPUOpts & CPUOPT_80586 ) cpu = 5;
     if( CPUOpts & CPUOPT_80686 ) cpu = 6;
     if( CPUOpts & ( CPUOPT_FPI87 | CPUOPT_FPI ) ) fpu = 1;
-    AsmInit( cpu, fpu, use32 );
+    AsmInit( cpu, fpu, use32, 1 );
 #elif _TARGET == _AXP || _TARGET == _PPC
     AsmInit();
 #else

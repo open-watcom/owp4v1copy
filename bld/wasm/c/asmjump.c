@@ -30,39 +30,27 @@
 ****************************************************************************/
 
 
-#include <stdlib.h>
-#include <string.h>
-#include <limits.h>
 #include "asmglob.h"
-#include "asmopnds.h"
+
 #include "asmins.h"
-#include "asmerr.h"
-#include "asmsym.h"
 #include "asmdefs.h"
 #include "asmfixup.h"
 
 #ifdef _WASM_
     #include "directiv.h"
-    #include "myassert.h"
 #endif
 
-extern int_8                    PhaseError;
 /* prototypes */
 int ptr_operator( memtype mem_type, uint_8 fix_mem_type );
 int jmp( struct asm_sym *sym );
 
 #ifdef _WASM_
 
-extern seg_list         *CurrSeg;       // points to stack of opened segments
-
 extern void             InputQueueLine( char * );
 extern void             GetInsString( enum asm_token, char *, int );
-extern uint_32          GetCurrAddr( void );
 extern int              SymIs32( struct asm_sym *sym );
 extern void             check_assume( struct asm_sym *sym, enum prefix_reg default_reg );
 extern void             find_frame( struct asm_sym *sym );
-
-extern int              curr_ptr_type;
 
 static enum asm_token getJumpNegation( enum asm_token instruction )
 /*****************************************************************/
@@ -200,7 +188,7 @@ static void FarCallToNear()
 }
 #endif
 
-int check_jump( struct asm_sym *sym ) {
+static int check_jump( struct asm_sym *sym ) {
 
     memtype mem_type;
     memtype tmp;
@@ -497,20 +485,33 @@ int jmp( struct asm_sym *sym )                // Bug: can't handle indirect jump
             switch( Code->mem_type ) {
             case T_SHORT:
             case T_NEAR:
+                if( Opnd_Count == OPND1 ) {
                 AsmError( CANNOT_USE_SHORT_OR_NEAR );
                 return( ERROR );
+                }
+                /* fall through */
             case T_FAR:
             case EMPTY:
 #ifdef _WASM_
                 SET_OPSIZ( Code, SymIs32( sym ));
                 find_frame( sym );
 #endif
+                if( Opnd_Count == OPND2 ) {
+                    if( oper_32( Code ) ) {
+                        fixup_type = FIX_OFF32;
+                        Code->info.opnd_type[Opnd_Count] = OP_I32;
+                    } else {
+                        fixup_type = FIX_OFF16;
+                        Code->info.opnd_type[Opnd_Count] = OP_I16;
+                    }
+                } else {
                 if( oper_32( Code )) {
                     fixup_type = FIX_PTR32;
                     Code->info.opnd_type[Opnd_Count] = OP_J48;
                 } else {
                     fixup_type = FIX_PTR16;
                     Code->info.opnd_type[Opnd_Count] = OP_J32;
+                }
                 }
                 break;
             case T_BYTE:

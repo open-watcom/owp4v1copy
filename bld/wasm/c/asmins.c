@@ -40,40 +40,22 @@
  */
 #define ALLOW_STRUCT_INIT 1
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <limits.h>
-#include <malloc.h>
-
 #include "asmglob.h"
+
 #include "asminsd.h"
-#include "asmerr.h"
-#include "asmsym.h"
-#include "asmalloc.h"
-#include "condasm.h"
 #include "asmdefs.h"
 #include "asmexpnd.h"
 #include "asmfixup.h"
 #include "asmeval.h"
 
 #ifdef _WASM_
-
 #include "directiv.h"
-#include "watcom.h"
-#include "womp.h"
-#include "objrec.h"
-#include "pcobj.h"
 #include "myassert.h"
-#include "fixup.h"
-#include "queue.h"
-
 #endif
 
+extern int              match_phase_1( void );
 extern int              ptr_operator( memtype, uint_8 );
 extern int              jmp( struct asm_sym *sym );
-extern int              check_jump( struct asm_sym * );
 
 unsigned char           More_Array_Element = FALSE;
 unsigned char           Last_Element_Size;
@@ -93,16 +75,13 @@ static void             SizeString( unsigned op_size );
 
 extern void             InputQueueLine( char * );
 extern int              directive( int , long );
-extern void             GetInsString( enum asm_token, char *, int );
 extern int              SymIs32( struct asm_sym *sym );
 extern void             find_use32( void );
 
-void                    check_assume( struct asm_sym *sym, enum prefix_reg default_reg );
+void                    check_assume( struct asm_sym *, enum prefix_reg );
 
 extern  int_8           DefineProc;     // TRUE if the definition of procedure
                                         // has not ended
-extern dir_node         *CurrProc;
-extern symbol_queue     Tables[];       // tables of definitions
 
 uint_8                  CheckSeg;       // if checking of opened segment is needed
 int_8                   Frame;          // Frame of current fixup
@@ -111,8 +90,6 @@ extern char             *CurrString;    // Current Input Line
 dir_node                *SegOverride;
 
 static int              in_epilogue = 0;
-extern seg_list         *CurrSeg;
-extern void             SetModuleDefSegment32( int flag );
 
 #else
 
@@ -120,13 +97,16 @@ extern void             SetModuleDefSegment32( int flag );
 
 #endif
 
-int                     curr_ptr_type;
+extern void             make_inst_hash_table( void );
+
+static int              curr_ptr_type;
 static char             ConstantOnly;
 
-void make_inst_hash_table( void );
+static int              mem2code( char, int, int, asm_sym * );
 
 /* moved here from asmline */
 static struct asm_tok   tokens[MAX_TOKEN];
+
 struct asm_tok  *AsmBuffer[MAX_TOKEN];  // buffer to store token
 
 #ifdef _WASM_
@@ -168,6 +148,7 @@ void find_frame( struct asm_sym *sym )
 #endif
 
 static int comp_mem( int reg1, int reg2 )
+/***************************************/
 /*
 - compare and return the r/m field encoding of 16-bit address mode;
 - call by mem2code() only;
@@ -192,6 +173,7 @@ static int comp_mem( int reg1, int reg2 )
 }
 
 static void seg_override( int seg_reg, asm_sym *sym )
+/***************************************************/
 /*
 - determine if segment override is necessary with the current address mode;
 */
@@ -268,7 +250,8 @@ static void seg_override( int seg_reg, asm_sym *sym )
 
 #ifdef _WASM_
 
-void check_assume( struct asm_sym *sym, enum prefix_reg default_reg )
+static void check_assume( struct asm_sym *sym, enum prefix_reg default_reg )
+/**************************************************************************/
 /* Check if an assumed register is found, and prefix a register if necessary */
 {
     enum assume_reg     reg;
@@ -361,6 +344,7 @@ int check_override( int *i )
 #endif
 
 static int mem( int i )
+/*********************/
 /*
   parse the memory reference operand
 */
@@ -729,7 +713,8 @@ static int mem( int i )
 #endif
 }
 
-static int Reg386( int reg_token )                      /* 12-feb-92 */
+static int Reg386( int reg_token )
+/********************************/
 {
     switch( reg_token ) {
     case T_EAX:         return( 0 );
@@ -746,7 +731,7 @@ static int Reg386( int reg_token )                      /* 12-feb-92 */
 }
 
 int OperandSize( enum operand_type opnd )
-/***********************************/
+/***************************************/
 {
     if( opnd == OP_NONE || opnd & OP_SPECIAL ) {
         return( 0 );
@@ -790,6 +775,7 @@ int OperandSize( enum operand_type opnd )
 }
 
 int InRange( unsigned long val, unsigned bytes )
+/**********************************************/
 /*
      Can 'val' be represented in 'bytes' bytes?
 */
@@ -807,7 +793,8 @@ int InRange( unsigned long val, unsigned bytes )
 
 }
 
-int mem2code( char ss, int index, int base, asm_sym *sym )
+static int mem2code( char ss, int index, int base, asm_sym *sym )
+/***************************************************************/
 /*
   encode the memory operand to machine code
 */
@@ -938,6 +925,7 @@ int mem2code( char ss, int index, int base, asm_sym *sym )
 }
 
 static int comp_opt( uint direct )
+/********************************/
 /*
   Compare function for CPU directive
 */
@@ -994,7 +982,7 @@ static int comp_opt( uint direct )
 
 #ifdef _WASM_
 static void MakeCPUConstant( int i )
-/****************************/
+/**********************************/
 {
     MakeConstantUnderscored( i );
 
@@ -1022,6 +1010,7 @@ static void MakeCPUConstant( int i )
 #endif
 
 int cpu_directive( int i )
+/************************/
 {
     int                 temp;
 
@@ -1074,6 +1063,7 @@ int cpu_directive( int i )
 
 
 static int idata( long value )
+/****************************/
 /*
   determine the correct data size of immediate operand;
 */
@@ -1277,6 +1267,7 @@ static int idata( long value )
 }
 
 static int idata_float( long value )
+/**********************************/
 /*
   check the correct operand/data size for float immediate operand;
 */
@@ -1318,7 +1309,7 @@ static int idata_float( long value )
 }
 
 static unsigned char get_sr_rm_byte( enum prefix_reg seg_prefix )
-/*************************************************************/
+/***************************************************************/
 {
     switch( seg_prefix ) {
     case PREFIX_ES:
@@ -1341,6 +1332,7 @@ static unsigned char get_sr_rm_byte( enum prefix_reg seg_prefix )
 }
 
 static int reg( int i )
+/*********************/
 /*
 - parse and encode the register operand;
 */
@@ -1497,6 +1489,7 @@ static int reg( int i )
 #ifdef _WASM_
 
 static int proc_check( void )
+/***************************/
 /* Check if we are inside a procedure and write prologue statements if the
    current line is the first instruction line following the procedure
    declaration */
@@ -1534,7 +1527,7 @@ int check_override_x( expr_list *opndx )
     switch( AsmBuffer[index]->token ) {
     case T_REG:
 //        Code->prefix.seg = AsmOpTable[AsmOpcode[AsmBuffer[index]->value].position].opcode;
-//            break;
+        break;
     case T_ID:      // Segment or Group override
         if( FixOverride(index) != NOT_ERROR )
             return( ERROR );
@@ -1548,6 +1541,7 @@ int check_override_x( expr_list *opndx )
 #endif
 
 static int process_address( expr_list *opndx )
+/********************************************/
 /*
   parse the memory reference operand
 */
@@ -1955,6 +1949,7 @@ static int process_address( expr_list *opndx )
 }
 
 static int process_const( expr_list *opndx )
+/******************************************/
 {
     if( ( Code->info.token == T_IMUL )
         && ( Code->info.opnd_type[OPND1] & OP_R ) ) {
@@ -1979,6 +1974,7 @@ static int process_const( expr_list *opndx )
 }
 
 static int process_reg( expr_list *opndx )
+/****************************************/
 /*
 - parse and encode the register operand;
 */
@@ -2611,7 +2607,7 @@ int AsmParse( void )
                 cur_opnd = OP_M;
             } else if ( last_opnd == OP_LABEL ) {
                 if( AsmBuffer[i+1]->token != T_RES_ID ) {
-                    if( MakeLabel( AsmBuffer[i-1]->string_ptr, EMPTY )==ERROR ) {
+                    if( MakeLabel( AsmBuffer[i-1]->string_ptr, T_NEAR )==ERROR ) {
                          return( ERROR );
                     }
                 }
@@ -2747,6 +2743,7 @@ int AsmParse( void )
 }
 
 static void SizeString( unsigned op_size )
+/****************************************/
 {
     /* size an string instruction based on it's operand's size */
     switch( op_size ) {
@@ -2769,6 +2766,7 @@ static void SizeString( unsigned op_size )
 }
 
 static int check_size( void )
+/***************************/
 /*
 - use to make sure the size of first operand match the size of second operand;
 - optimize MOV instruction;
@@ -2889,16 +2887,26 @@ static int check_size( void )
             AsmError( SEGMENT_TOO_BIG );
             state = ERROR;
         }
+        if( (Code->info.cpu&(P_CPU_MASK|P_PM)) <= P_286p ) {
         // offset can only be 16-bit if CPU is 286 and down
-        if( !Code->use32 && op2 > OP_I16 ) {
+            if( op2 > OP_I16 ) {
             AsmError( OFFSET_TOO_BIG );
             state = ERROR;
         }
+        }
         // swap the 2 opnds to make output easier
+        if( InsFixups[OPND2] != NULL ) {
+            // absolute segment + offset nnnn,offset
+            Code->info.opnd_type[OPND1] = Code->info.opnd_type[OPND2];
+            InsFixups[OPND1] = InsFixups[OPND2];
+            InsFixups[OPND2] = NULL;
+        } else {
+            // absolute ptr nnnn,nnnn
+            Code->info.opnd_type[OPND1] = Code->use32 ? OP_I32 : OP_I16;
+        }
         temp = Code->data[OPND1];
         Code->data[OPND1] = Code->data[OPND2];
         Code->data[OPND2] = temp;
-        Code->info.opnd_type[OPND1] = Code->use32 ? OP_I32 : OP_I16;
         Code->info.opnd_type[OPND2] = OP_I16;
         break;
     case T_MOVSX:
@@ -3104,8 +3112,8 @@ static int check_size( void )
     return( state );
 }
 
-void AsmInit( int cpu, int fpu, int use32 )
-/*****************************************/
+void AsmInit( int cpu, int fpu, int use32, int extn )
+/***************************************************/
 {
     int         pos = 0;
     enum asm_token  token_value = 1;
@@ -3119,6 +3127,7 @@ void AsmInit( int cpu, int fpu, int use32 )
     if( use32 < 0 ) use32 = 0; // default is 16-bit segment
     if( cpu < 0 ) cpu = 0;     // default is 8086 CPU
     if( fpu < 0 ) fpu = 1;     // default is FPU use
+    if( extn < 0 ) extn = 0;   // default is no CPU extension instructions
     switch( use32 ) {
     case 0:
         Code->use32 = 0;
@@ -3151,10 +3160,12 @@ void AsmInit( int cpu, int fpu, int use32 )
     case 5:
         Code->info.cpu |= P_586p;
         if( fpu ) Code->info.cpu |= P_387;
+        if( extn ) Code->info.cpu |= P_K3D | P_MMX;
         break;
     case 6:
         Code->info.cpu |= P_686p;
         if( fpu ) Code->info.cpu |= P_387;
+        if( extn ) Code->info.cpu |= P_K3D | P_MMX | P_SSE | P_SSE2 | P_SSE3;
         break;
     }
 

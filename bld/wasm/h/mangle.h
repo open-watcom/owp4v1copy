@@ -24,31 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Declaration for mangler routines
 *
 ****************************************************************************/
 
-#ifdef DEFINE_ASMOPS
+#ifndef _MANGLE_H_
+#define _MANGLE_H_
 
-#ifndef _WASM_
-#include "inlnops.gh"
-#else
-#include "fullops.gh"
-#endif
-#undef DEFINE_ASMOPS
-
-#else
-
-#ifndef _ASMOPS2_H_
-#define _ASMOPS2_H_
-
-#ifndef _WASM_
-#include "inlnops.gh"
-#else
-#include "fullops.gh"
-#endif
-
-#endif
+extern char *Mangle( struct asm_sym *, char * );
+extern void SetMangler( struct asm_sym *, char *, int );
 
 #endif

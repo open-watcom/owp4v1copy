@@ -24,31 +24,27 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Declaration for OBJ output queues
 *
 ****************************************************************************/
 
-#ifdef DEFINE_ASMOPS
+#ifndef _QUEUES_H_
+#define _QUEUES_H_
 
-#ifndef _WASM_
-#include "inlnops.gh"
-#else
-#include "fullops.gh"
-#endif
-#undef DEFINE_ASMOPS
+extern void     AddPublicData( dir_node *data );
+extern void     AddLnameData( dir_node *data );
+extern void     AddGlobalData( dir_node *data );
+extern void     AddAliasData( char *data );
+extern void     AddLinnumData( struct linnum_data *data );
 
-#else
+extern direct_idx FindLnameIdx( char * );
 
-#ifndef _ASMOPS2_H_
-#define _ASMOPS2_H_
+extern unsigned GetLnameData( char ** );
+extern char     *GetAliasData( bool );
+extern uint     GetPublicData( uint *, uint *, char *, char ***, struct pubdef_data **, bool *, bool );
+extern int      GetLinnumData( struct linnum_data **ldata, bool *need32 );
+extern void     GetGlobalData( void );
 
-#ifndef _WASM_
-#include "inlnops.gh"
-#else
-#include "fullops.gh"
-#endif
-
-#endif
+extern void     FreeAllQueues( void );
 
 #endif

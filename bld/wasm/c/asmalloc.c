@@ -35,13 +35,11 @@
 */
 
 #include <stdlib.h>
-#include <malloc.h>
 #include <fcntl.h>
 #include <unistd.h>
 
 #include "asmalloc.h"
 #include "fatal.h"
-#include "memutil.h"
 
 #ifdef TRMEM
 #include "trmem.h"

@@ -24,32 +24,21 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  directives declarations
 *
 ****************************************************************************/
 
 
-#ifndef _DIRECT_H_
-#define _DIRECT_H_
+#ifndef _DIRECTIV_H_
+#define _DIRECTIV_H_
 
-#ifndef _DIRECT_FIX_
-
-#include "womp.h"
-#include "pcobj.h"
 #include "objrec.h"
-#include "asmsym.h"
 
 #define MAX_LNAME       255
 #define LNAME_NULL      0
 
-#define BIT16           0
-#define BIT32           1
-
 typedef int     direct_idx;     // directive index, such as segment index,
                                 // group index or lname index, etc.
-
-#define MAGIC_FLAT_GROUP        ModuleInfo.flat_idx
 
 typedef enum {
         SIM_CODE = 0,
@@ -122,7 +111,6 @@ enum {
     TAB_LAST
 };                      // tables for definitions
 
-
 enum {
     QUERY_COMMENT,
     QUERY_COMMENT_DELIM,
@@ -147,7 +135,6 @@ typedef struct stacknode {
 /* Structures for grpdef, segdef, externdef, pubdef, included library,       */
 /* procedure and symbolic integer constants.                                 */
 /*---------------------------------------------------------------------------*/
-struct dir_node;
 
 typedef struct seg_list {
     struct seg_list     *next;
@@ -288,11 +275,6 @@ typedef struct {
 } symbol_queue;     // tables array - queues of symbols of 1 type ie: segments
                     // the data are actually part of the symbol table
 
-typedef struct proc_stack_node {
-    struct proc_stack_node *next;
-    dir_node *proc;
-} proc_stack_node;
-
 /*---------------------------------------------------------------------------*/
 
 /* global structure */
@@ -303,7 +285,8 @@ typedef struct a_definition_struct {
     dir_node        *curr_struct;
 } a_definition_struct;
 
-extern a_definition_struct Definition;
+extern a_definition_struct      Definition;
+extern uint                     LnamesIdx;      // Number of LNAMES definition
 
 typedef struct {
     dist_type   distance;        // stack distance;
@@ -319,16 +302,6 @@ typedef struct {
     char        name[_MAX_FNAME];// name of module
 } module_info;                   // Information about the module
 
-/*---------------------------------------------------------------------------*/
-
-typedef struct {
-    sim_seg     seg;                    // segment id
-    char        close[MAX_LINE];        // closing line for this segment
-    int_16      stack_size;             // size of stack segment
-} last_seg_info;        // information about last opened simplified segment
-
-/*---------------------------------------------------------------------------*/
-
 enum assume_reg {
     ASSUME_DS=0,
     ASSUME_ES,
@@ -343,35 +316,17 @@ enum assume_reg {
 #define ASSUME_FIRST    ASSUME_DS
 #define ASSUME_LAST     ASSUME_ERROR
 
-typedef struct {
-    asm_sym             *symbol;        /* segment or group that is to
-                                           be associated with the register */
-    unsigned            error:1;        // the register is assumed to ERROR
-    unsigned            flat:1;         // the register is assumed to FLAT
-} assume_info;
-
-extern assume_info      AssumeTable[ASSUME_LAST];
 extern module_info      ModuleInfo;
 
+extern seg_list         *CurrSeg;       // points to stack of opened segments
+
 /*---------------------------------------------------------------------------*/
-
-extern void             TableInit( void );
-extern void             TableFini( void );
-
-extern void             FreeTable( int );
-/* Free all the directive tables */
-
-//extern dir_dir        *DirLookup( char *, int );
-/* Search for the directive node (name specified by 1st para) in the table
-   ( specified by 2nd para ) */
 
 extern dir_node         *dir_insert( char *, int );
 extern void             dir_change( dir_node *, int );
 
 extern void             IdxInit( void );
 /* Initialize all the index variables */
-
-extern int              ExpandMacro( int );
 
 extern direct_idx       GetLnameIdx( char * );
 
@@ -381,7 +336,6 @@ extern uint_32          GetCurrAddr( void );    // Get offset from current segme
 
 extern uint             GetCurrSeg( void );
 /* Get current segment index; 0 means none */
-
 extern uint             GetCurrGrp( void );
 /* Get current group index; 0 means none */
 
@@ -423,7 +377,7 @@ extern int              ModuleEnd( int );       // handle END statement
 extern uint_32          GetCurrSegStart(void);
 /* Get offset of segment at the start of current LEDATA record */
 
-extern dir_node *GetSeg( struct asm_sym *sym );
+extern dir_node         *GetSeg( struct asm_sym *sym );
 
 extern void             AssumeInit( void );     // init all assumed-register table
 extern int              SetAssume( int );       // Assume a register
@@ -441,113 +395,29 @@ extern int              FixOverride( int );
 
 extern void             GetSymInfo( struct asm_sym * );
 /* Store location information about a symbol */
-extern int NameDirective( int );
+extern int              NameDirective( int );
 
-extern int Comment( int, int ); /* handle COMMENT directives */
+extern int              Comment( int, int ); /* handle COMMENT directives */
 
-extern int AddAlias( int );
-extern void FreePubQueue( void );
-extern void FreeAliasQueue( void );
-extern void FreeLnameQueue( void );
-extern void FreeInfo( dir_node * );
-extern void push( void **stack, void *elt );
-extern void *pop( void **stack );
-/*---------------------------------------------------------------------------*/
+extern int              AddAlias( int );
+extern void             FreeInfo( dir_node * );
+extern void             push( void **stack, void *elt );
+extern void             *pop( void **stack );
+extern uint_32          GetCurrSegAlign( void );
+extern void             wipe_space( char *token );
+extern void             SetModuleDefSegment32( int flag );
 
-#undef fix
-#define fix( tok, str, val, init )              tok
-enum {
+/*---------------------------------------------------------------------------
+ *   included from write.c
+ *---------------------------------------------------------------------------*/
 
-#else
+extern dir_node         *CurrProc;      // current procedure
+extern uint             LineNumber;
+extern int_8            PhaseError;
 
-#undef _DIRECT_FIX_
-#undef fix
-#define fix( tok, string, value, init_val )     { string, value, init_val }
-
-typedef struct {
-      char      *string;        // the token string
-      uint      value;          // value connected to this token
-      uint      init;           // explained in direct.c ( look at SegDef() )
-} typeinfo;
-
-#define INIT_ALIGN      0x1
-#define INIT_COMBINE    0x2
-#define INIT_USE        0x4
-#define INIT_CLASS      0x8
-#define INIT_MEMORY     0x10
-#define INIT_STACK      0x20
-
-extern typeinfo TypeInfo[] = {
-
-#endif
-
-// Strings recognized by directives
-
-fix( TOK_READONLY,      "READONLY",     0,              0               ),
-fix( TOK_BYTE,          "BYTE",         ALIGN_BYTE,     INIT_ALIGN      ),
-fix( TOK_WORD,          "WORD",         ALIGN_WORD,     INIT_ALIGN      ),
-fix( TOK_DWORD,         "DWORD",        ALIGN_DWORD,    INIT_ALIGN      ),
-fix( TOK_PARA,          "PARA",         ALIGN_PARA,     INIT_ALIGN      ),
-fix( TOK_PAGE,          "PAGE",         ALIGN_PAGE,     INIT_ALIGN      ),
-fix( TOK_PRIVATE,       "PRIVATE",      COMB_INVALID,   INIT_COMBINE    ),
-fix( TOK_PUBLIC,        "PUBLIC",       COMB_ADDOFF,    INIT_COMBINE    ),
-fix( TOK_STACK,         "STACK",        COMB_STACK,     INIT_COMBINE    ),
-fix( TOK_COMMON,        "COMMON",       COMB_COMMON,    INIT_COMBINE    ),
-fix( TOK_MEMORY,        "MEMORY",       COMB_ADDOFF,    INIT_COMBINE    ),
-fix( TOK_USE16,         "USE16",        FALSE,          INIT_USE        ),
-fix( TOK_USE32,         "USE32",        TRUE,           INIT_USE        ),
-fix( TOK_IGNORE,        "IGNORE",       0,              0               ),
-fix( TOK_AT,            "AT",           0,              0               ),
-fix( TOK_CLASS,         NULL,           0,              INIT_CLASS      ),
-fix( TOK_TINY,          "TINY",         MOD_TINY,       INIT_MEMORY     ),
-fix( TOK_SMALL,         "SMALL",        MOD_SMALL,      INIT_MEMORY     ),
-fix( TOK_COMPACT,       "COMPACT",      MOD_COMPACT,    INIT_MEMORY     ),
-fix( TOK_MEDIUM,        "MEDIUM",       MOD_MEDIUM,     INIT_MEMORY     ),
-fix( TOK_LARGE,         "LARGE",        MOD_LARGE,      INIT_MEMORY     ),
-fix( TOK_HUGE,          "HUGE",         MOD_HUGE,       INIT_MEMORY     ),
-fix( TOK_FLAT,          "FLAT",         MOD_FLAT,       INIT_MEMORY     ),
-fix( TOK_NEARSTACK,     "NEARSTACK",    STACK_NEAR,     INIT_STACK      ),
-fix( TOK_FARSTACK,      "FARSTACK",     STACK_FAR,      INIT_STACK      ),
-fix( TOK_EXT_NEAR,      "NEAR",         T_NEAR,         0               ),
-fix( TOK_EXT_FAR,       "FAR",          T_FAR,          0               ),
-fix( TOK_EXT_PROC,      "PROC",         T_PROC,         0               ),
-fix( TOK_EXT_BYTE,      "BYTE",         T_BYTE,         0               ),
-fix( TOK_EXT_SBYTE,     "SBYTE",        T_BYTE,         0               ),
-fix( TOK_EXT_WORD,      "WORD",         T_WORD,         0               ),
-fix( TOK_EXT_SWORD,     "SWORD",        T_WORD,         0               ),
-fix( TOK_EXT_DWORD,     "DWORD",        T_DWORD,        0               ),
-fix( TOK_EXT_SDWORD,    "SDWORD",       T_DWORD,        0               ),
-fix( TOK_EXT_PWORD,     "PWORD",        T_FWORD,        0               ),
-fix( TOK_EXT_FWORD,     "FWORD",        T_FWORD,        0               ),
-fix( TOK_EXT_QWORD,     "QWORD",        T_QWORD,        0               ),
-fix( TOK_EXT_TBYTE,     "TBYTE",        T_TBYTE,        0               ),
-fix( TOK_EXT_OWORD,     "OWORD",        T_OWORD,        0               ),
-fix( TOK_EXT_ABS,       "ABS",          T_ABS,          0               ),
-fix( TOK_DS,            "DS",           ASSUME_DS,      0               ),
-fix( TOK_ES,            "ES",           ASSUME_ES,      0               ),
-fix( TOK_SS,            "SS",           ASSUME_SS,      0               ),
-fix( TOK_FS,            "FS",           ASSUME_FS,      0               ),
-fix( TOK_GS,            "GS",           ASSUME_GS,      0               ),
-fix( TOK_CS,            "CS",           ASSUME_CS,      0               ),
-fix( TOK_ERROR,         "ERROR",        ASSUME_ERROR,   0               ),
-fix( TOK_NOTHING,       "NOTHING",      ASSUME_NOTHING, 0               ),
-fix( TOK_PROC_FAR,      "FAR",          T_FAR,          0               ),
-fix( TOK_PROC_NEAR,     "NEAR",         T_NEAR,         0               ),
-fix( TOK_PROC_BASIC,    "BASIC",        LANG_BASIC,     0               ),
-fix( TOK_PROC_FORTRAN,  "FORTRAN",      LANG_FORTRAN,   0               ),
-fix( TOK_PROC_PASCAL,   "PASCAL",       LANG_PASCAL,    0               ),
-fix( TOK_PROC_C,        "C",            LANG_C,         0               ),
-fix( TOK_PROC_WATCOM_C, "WATCOM_C",     LANG_WATCOM_C,  0               ),
-fix( TOK_PROC_STDCALL,  "STDCALL",      LANG_STDCALL,   0               ),
-fix( TOK_PROC_SYSCALL,  "SYSCALL",      LANG_SYSCALL,   0               ),
-fix( TOK_PROC_PRIVATE,  "PRIVATE",      VIS_PRIVATE,    0               ),
-fix( TOK_PROC_PUBLIC,   "PUBLIC",       VIS_PUBLIC,     0               ),
-fix( TOK_PROC_EXPORT,   "EXPORT",       VIS_EXPORT,     0               ),
-fix( TOK_PROC_USES,     "USES",         0,              0               ),
-fix( TOK_PROC_VARARG,   "VARARG",       0,              0               ),
-fix( TOK_OS_OS2,        "OS_OS2",       OPSYS_OS2,      0               ),
-fix( TOK_OS_DOS,        "OS_DOS",       OPSYS_DOS,      0               ),
-
-};
+extern void             FlushCurrSeg( void );
+extern void             AddFlist( char const *filename );
+extern void             OutSelect( bool );
+extern void             WriteObjModule( void );
 
 #endif

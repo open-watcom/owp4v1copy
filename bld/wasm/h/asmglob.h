@@ -29,12 +29,16 @@
 ****************************************************************************/
 
 
-#ifndef ASMGLOB_H
-#define ASMGLOB_H
+#ifndef _ASMGLOB_H_
+#define _ASMGLOB_H_
 
 #include <stdio.h>
-#include <watcom.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include "watcom.h"
 #include "bool.h"
+#include "asmerr.h"
 
 #define MAX_TOKEN               100     // there is no restriction for this number
 #define MAX_LINE_LEN            512     // there is no restriction for this number
@@ -111,6 +115,8 @@ typedef struct {
     char        *fname[FILE_TYPES];
 } File_Info;    // Information about the source and object files
 
+extern File_Info        AsmFiles;   // files information
+
 #define ASM_EXT "asm"
 #define ERR_EXT "err"
 
@@ -119,11 +125,6 @@ typedef struct {
 #else
 #define OBJ_EXT "obj"
 #endif
-
-typedef struct queuenode {
-    void *next;
-    void *data;
-} queuenode;
 
 /* stuff used by condasm.c,
  * here since we need it so we can tell asmeval where to go if

@@ -30,10 +30,8 @@
 ****************************************************************************/
 
 
-#ifndef ASMOPS1_H
-#define ASMOPS1_H
-
-#include "watcom.h"
+#ifndef _ASMOPS1_H_
+#define _ASMOPS1_H_
 
 struct AsmCodeName {
         unsigned short  position;       // starting position in AsmOpTable

@@ -29,13 +29,10 @@
 ****************************************************************************/
 
 
-#include <stdlib.h>
-#include <string.h>
-#include "asmsym.h"
-#include "asmins.h"
-#include "asmalloc.h"
-#include "asmerr.h"
 #include "asmglob.h"
+
+#include "asmsym.h"
+#include "asmalloc.h"
 #include "asmdefs.h"
 
 #ifdef __USE_BSD
@@ -44,16 +41,16 @@
 
 #ifdef _WASM_
 
-#include "myassert.h"
 #include "directiv.h"
-
+#include "queues.h"
 #include "hash.h"
-struct asm_sym *sym_table[ HASH_TABLE_SIZE ] = { NULL };
+
+static struct asm_sym *sym_table[ HASH_TABLE_SIZE ] = { NULL };
 /* initialize the whole table to null pointers */
 
 #else
 
-struct asm_sym  *AsmSymHead;
+static struct asm_sym  *AsmSymHead;
 
 static unsigned short CvtTable[] = {
     T_BYTE,   // INT1
@@ -72,9 +69,7 @@ static unsigned short CvtTable[] = {
 
 #endif
 
-extern void     AsmError( int );
-
-char *InitAsmSym( struct asm_sym *sym, char *name )
+static char *InitAsmSym( struct asm_sym *sym, char *name )
 /************************************************/
 {
     sym->name = AsmAlloc( strlen( name ) + 1 );
@@ -133,7 +128,7 @@ static struct asm_sym *AllocASym( char *name )
     return sym;
 }
 
-struct asm_sym **AsmFind( char *name )
+static struct asm_sym **AsmFind( char *name )
 /***********************************/
 /* find a symbol in the symbol table, return NULL if not found */
 {
@@ -194,6 +189,7 @@ struct asm_sym *AsmLookup( char *name )
 }
 
 static void FreeASym( struct asm_sym *sym )
+/*****************************************/
 {
 #ifdef _WASM_
     struct asmfixup     *fix;
@@ -234,24 +230,6 @@ int AsmChangeName( char *old, char *new )
     return( NOT_ERROR );
 }
 
-struct asm_sym *AsmAdd( struct asm_sym *sym )
-/*******************************************/
-{
-    struct asm_sym  **location;
-
-    location = AsmFind( sym->name );
-
-    if( *location != NULL ) {
-        /* we already have one */
-        AsmError( SYMBOL_ALREADY_DEFINED );
-        return( NULL );
-    }
-
-    sym->next = *location;
-    *location = sym;
-    return( sym );
-}
-
 void AsmTakeOut( char *name )
 /***************************/
 {
@@ -269,7 +247,42 @@ void AsmTakeOut( char *name )
     return;
 }
 
-#endif
+static struct asm_sym *AsmAdd( struct asm_sym *sym )
+/*******************************************/
+{
+    struct asm_sym  **location;
+
+    location = AsmFind( sym->name );
+
+    if( *location != NULL ) {
+        /* we already have one */
+        AsmError( SYMBOL_ALREADY_DEFINED );
+        return( NULL );
+    }
+
+    sym->next = *location;
+    *location = sym;
+    return( sym );
+}
+
+struct asm_sym *AllocDSym( char *name, int add_symbol )
+/*****************************************************/
+/* Create directive symbol and insert it into the symbol table */
+{
+    struct asm_sym      *new;
+
+    new = AllocASym( name );
+    if( new == NULL ) {
+        AsmError( NO_MEMORY );
+        return( NULL );
+    }
+    /* add it into the symbol table */
+    if( add_symbol ) {
+        return( AsmAdd( new ) );
+    } else {
+        return( new );
+    }
+}
 
 struct asm_sym *AsmGetSymbol( char *name )
 /****************************************/
@@ -279,17 +292,17 @@ struct asm_sym *AsmGetSymbol( char *name )
     sym_ptr = AsmFind( name );
     return( *sym_ptr );
 }
+#endif
 
 void AsmSymFini()
+/***************/
 {
     struct asm_sym      *sym;
 #ifdef _WASM_
     dir_node            *dir;
     unsigned            i;
 
-    FreePubQueue();
-    FreeAliasQueue();
-    FreeLnameQueue();
+    FreeAllQueues();
 
 #if defined( _WASM_ ) && defined( DEBUG_OUT )
     DumpASym();
@@ -330,6 +343,7 @@ void AsmSymFini()
 #if defined( _WASM_ ) && defined( DEBUG_OUT )
 
 static void DumpSymbol( struct asm_sym *sym )
+/*******************************************/
 {
     dir_node    *dir;
     char        *type;
@@ -461,6 +475,7 @@ static void DumpSymbol( struct asm_sym *sym )
 }
 
 void DumpASym( void )
+/*******************/
 {
     struct asm_sym      *sym;
     unsigned            i;

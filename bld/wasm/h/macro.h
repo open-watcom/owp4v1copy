@@ -29,26 +29,9 @@
 *
 ****************************************************************************/
 
-#ifdef DEFINE_ASMOPS
+#ifndef _MACRO_H_
+#define _MACRO_H_
 
-#ifndef _WASM_
-#include "inlnops.gh"
-#else
-#include "fullops.gh"
-#endif
-#undef DEFINE_ASMOPS
-
-#else
-
-#ifndef _ASMOPS2_H_
-#define _ASMOPS2_H_
-
-#ifndef _WASM_
-#include "inlnops.gh"
-#else
-#include "fullops.gh"
-#endif
-
-#endif
+extern int              ExpandMacro( int );
 
 #endif

@@ -24,31 +24,13 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Fatal error messages, they are shared with WOMP
 *
 ****************************************************************************/
 
-#ifdef DEFINE_ASMOPS
-
-#ifndef _WASM_
-#include "inlnops.gh"
-#else
-#include "fullops.gh"
-#endif
-#undef DEFINE_ASMOPS
-
-#else
-
-#ifndef _ASMOPS2_H_
-#define _ASMOPS2_H_
-
-#ifndef _WASM_
-#include "inlnops.gh"
-#else
-#include "fullops.gh"
-#endif
-
-#endif
-
-#endif
+fix( MSG_OUT_OF_MEMORY, 0, OUT_OF_MEMORY, AsmShutDown, 0 ),
+fix( MSG_CANNOT_OPEN_FILE, 1, CANNOT_OPEN_FILE, NULL, 1 ),
+fix( MSG_CANNOT_CLOSE_FILE, 1, CANNOT_CLOSE_FILE, NULL, 1 ),
+fix( MSG_CANNOT_GET_START_OF_SOURCE_FILE, 0, CANNOT_GET_FILE, AsmShutDown, 1 ),
+fix( MSG_CANNOT_SET_TO_START_OF_SOURCE_FILE, 0, CANNOT_SET_FILE, AsmShutDown, 1 ),
+fix( MSG_TOO_MANY_FILES, 0, TOO_MANY_FILES, NULL, 1 ),

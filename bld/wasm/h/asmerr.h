@@ -29,6 +29,8 @@
 *
 ****************************************************************************/
 
+#ifndef _ASMERR_H_
+#define _ASMERR_H_
 
 #ifdef M_I86
     #define ASMFAR far
@@ -107,4 +109,6 @@ extern char             *curr_src_line;
         #include "asmshare.msg"
     };
     #undef pick
+#endif
+
 #endif
