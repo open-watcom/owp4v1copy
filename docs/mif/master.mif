@@ -25,6 +25,7 @@ docsrc_dir=..\doc
 
 company=Open Watcom
 
+optfile=wgmlopts.tmp
 gml_whelp=$(%doc_root)\doc\whelp
 
 #
@@ -70,83 +71,6 @@ proj_objs= &
 gml_drivers= &
     whelp.cop &
     whelpdrv.cop
-
-####################################################
-#
-# Settings for the wgml utility
-#
-####################################################
-
-!ifeq dotarget ps
-########################################
-# settings for Post Script documentation
-########################################
-#
-# layout setting
-#
-!ifeq hbook c_readme
-wgml_opts=file nn7x9ps
-!else ifeq hbook f77lr
-wgml_opts=file nbpsshad
-!else
-wgml_opts=file nb7x9ps
-!endif
-#
-# number of passes
-#
-!ifeq hbook c_readme
-wgml_opts+= pass 3
-!else ifeq hbook cguideq
-wgml_opts+= pass 3
-!else ifeq hbook guitool
-wgml_opts+= pass 3
-!else ifeq hbook wd
-wgml_opts+= pass 3
-!else ifeq hbook lguide
-wgml_opts+= pass 3
-!else
-wgml_opts+= pass 2
-!endif
-#
-# output format
-#
-!ifeq hbook pguide
-wgml_opts+= out (t:100)$(hbook)
-!else ifeq hbook fpguide
-wgml_opts+= out (t:100)$(hbook)
-!else
-wgml_opts+= out (t:80)$(hbook)
-!endif
-#
-# common setting
-#
-wgml_opts+= cpi 10 ind set dotarget $(dotarget)
-
-!else
-
-########################################
-# settings for on-line help processing
-########################################
-#
-# common setting
-#
-wgml_opts=file whelp pass 2 set dohelp 1 out (t:2200)$(hbook) set dotarget $(dotarget) set book $(hbook)
-!endif
-
-!ifeq hbook cpplib
-wgml_opts += set target DOS
-!endif
-
-#
-# details about wgml processing
-#
-!ifndef %on_build_machine
-wgml_opts += verb stat
-!else ifeq %on_build_machine 1
-wgml_opts += nowarn
-!else
-wgml_opts += verb stat
-!endif
 
 ####################################################
 #
@@ -291,7 +215,8 @@ all : $(hbook).ps .SYMBOLIC
 
 $(hbook).ps : $(book_objs) $(proj_objs)
     @set GMLINC=$(book_incs);$(gml_incs);$(whelp_incs)
-    -$(gml_path)\wgml $(book_src) ($(wgml_opts)
+    %make prepare_wgml_opts
+    -$(gml_path)\wgml $(book_src) ( file $(optfile)
 
 
 !else ifeq dotarget os2
@@ -327,6 +252,89 @@ $(hbook).ipf $(hbook).h : $(book_objs) $(proj_objs) $(gml_drivers)
 
 ####################################################
 #
+# Set up options for the wgml utility
+#
+####################################################
+prepare_wgml_opts : .PROCEDURE
+    @%create $(optfile)
+!ifeq dotarget ps
+########################################
+# settings for Post Script documentation
+########################################
+#
+# layout setting
+#
+!ifeq hbook c_readme
+    @%append $(optfile) ( file nn7x9ps
+!else ifeq hbook f77lr
+    @%append $(optfile) ( file nbpsshad
+!else
+    @%append $(optfile) ( file nb7x9ps
+!endif
+#
+# number of passes
+#
+!ifeq hbook c_readme
+    @%append $(optfile) ( passes 3
+!else ifeq hbook cguideq
+    @%append $(optfile) ( passes 3
+!else ifeq hbook guitool
+    @%append $(optfile) ( passes 3
+!else ifeq hbook wd
+    @%append $(optfile) ( passes 3
+!else ifeq hbook lguide
+    @%append $(optfile) ( passes 3
+!else
+    @%append $(optfile) ( passes 2
+!endif
+#
+# output format
+#
+!ifeq hbook pguide
+    @%append $(optfile) ( output (t:100)$(hbook)
+!else ifeq hbook fpguide
+    @%append $(optfile) ( output (t:100)$(hbook)
+!else
+    @%append $(optfile) ( output (t:80)$(hbook)
+!endif
+#
+# common setting
+#
+    @%append $(optfile) ( cpinch 10 
+    @%append $(optfile) ( index 
+    @%append $(optfile) ( setsymbol dotarget $(dotarget)
+!else
+########################################
+# settings for on-line help processing
+########################################
+#
+# common setting
+#
+    @%append $(optfile) ( file whelp 
+    @%append $(optfile) ( passes 2
+    @%append $(optfile) ( setsymbol dohelp 1 
+    @%append $(optfile) ( output (t:2200)$(hbook) 
+    @%append $(optfile) ( setsymbol dotarget $(dotarget) 
+    @%append $(optfile) ( setsymbol book $(hbook)
+!endif
+!ifeq hbook cpplib
+    @%append $(optfile) ( setsymbol target DOS
+!endif
+#
+# details about wgml processing
+#
+!ifndef %on_build_machine
+    @%append $(optfile) ( verbose 
+    @%append $(optfile) ( statistics
+!else ifeq %on_build_machine 1
+    @%append $(optfile) ( nowarning
+!else
+    @%append $(optfile) ( verbose 
+    @%append $(optfile) ( statistics
+!endif
+
+####################################################
+#
 #   compile_gml_to_xxx : .PROCEDURE
 #
 # !!!!!!!!!!!!!!!  IMPORTANT   !!!!!!!!!!!!!!!!!!!!
@@ -353,12 +361,13 @@ compile_gml_to_xxx : .PROCEDURE
     @if not exist $*.tbl @%create $*.tbl
     @if not exist $*.kw @%create $*.kw
     @set GMLINC=.\;$(hlp_incs);$(whelp_incs);$(book_incs);$(gml_incs)
-    -$(gml_path)\wgml $(book_src) ($(wgml_opts)
+    %make prepare_wgml_opts
+    -$(gml_path)\wgml $(book_src) ( file $(optfile)
     @%create whpcvt.dat
     @for %p in ( $(whpcvt_opts_ext) ) do @echo %p >> whpcvt.dat
     whpcvt $(whpcvt_opts) -@ whpcvt.dat $*.ptf
     @%create sysusr02.gml
-    -$(gml_path)\wgml $(book_src) ($(wgml_opts)
+    -$(gml_path)\wgml $(book_src) ( file $(optfile)
     @if exist $*.cn1 @erase $*.cn1
     @ren sysusr03.gml $*.cn1
     @if exist $*.h @erase $*.h

@@ -8,6 +8,7 @@ clean : .SYMBOLIC
  @if exist *.h erase *.h
  @if exist *.ipf erase *.ipf
  @if exist *.inf erase *.inf
+ @if exist *.tmp erase *.tmp
 
  @if exist *.ib erase *.ib
  @if exist *.blt erase *.blt
