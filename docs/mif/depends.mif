@@ -2463,12 +2463,8 @@ $(docsrc_dir)\gml\fmtmacro.gml  &
 $(docsrc_dir)\gml\foxlay.gml    &
 $(docsrc_dir)\gml\gmlack.gml    &
 $(docsrc_dir)\gml\gmlmacs.gml   &
-$(docsrc_dir)\gml\help.cop      &
 $(docsrc_dir)\gml\help.gml      &
 $(docsrc_dir)\gml\help.opt      &
-$(docsrc_dir)\gml\help.pcd      &
-$(docsrc_dir)\gml\helpdrv.cop   &
-$(docsrc_dir)\gml\helpdrv.pcd   &
 $(docsrc_dir)\gml\helplay.gml   &
 $(docsrc_dir)\gml\html.opt      &
 $(docsrc_dir)\gml\htmllay.gml   &

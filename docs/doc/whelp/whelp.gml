@@ -662,42 +662,42 @@
 .ga * * value '' default
 
 :cmt. **** :SEEALSO ****
-.dm seealso begin
-:H6.See Also
-:zsl.
-.if &*0 >= 1 .do begin
-.   :zli. :qref str='&*1'.
-.do end
-.if &*0 >= 2 .do begin
-.   :zli. :qref str='&*2'.
-.do end
-.if &*0 >= 3 .do begin
-.   :zli. :qref str='&*3'.
-.do end
-.if &*0 >= 4 .do begin
-.   :zli. :qref str='&*4'.
-.do end
-.if &*0 >= 5 .do begin
-.   :zli. :qref str='&*5'.
-.do end
-.if &*0 >= 6 .do begin
-.   :zli. :qref str='&*6'.
-.do end
-.if &*0 >= 7 .do begin
-.   :zli. :qref str='&*7'.
-.do end
-.if &*0 >= 8 .do begin
-.   :zli. :qref str='&*8'.
-.do end
-.if &*0 >= 9 .do begin
-.   :zli. :qref str='&*9'.
-.do end
-:zesl.
-.dm seealso end
-.dm xseealso begin
-.seealso &*
-.dm xseealso end
-.gt seealso add xseealso cont
+:cmt .dm seealso begin
+:cmt :H6.See Also
+:cmt :zsl.
+:cmt .if &*0 >= 1 .do begin
+:cmt .   :zli. :qref str='&*1'.
+:cmt .do end
+:cmt .if &*0 >= 2 .do begin
+:cmt .   :zli. :qref str='&*2'.
+:cmt .do end
+:cmt .if &*0 >= 3 .do begin
+:cmt .   :zli. :qref str='&*3'.
+:cmt .do end
+:cmt .if &*0 >= 4 .do begin
+:cmt .   :zli. :qref str='&*4'.
+:cmt .do end
+:cmt .if &*0 >= 5 .do begin
+:cmt .   :zli. :qref str='&*5'.
+:cmt .do end
+:cmt .if &*0 >= 6 .do begin
+:cmt .   :zli. :qref str='&*6'.
+:cmt .do end
+:cmt .if &*0 >= 7 .do begin
+:cmt .   :zli. :qref str='&*7'.
+:cmt .do end
+:cmt .if &*0 >= 8 .do begin
+:cmt .   :zli. :qref str='&*8'.
+:cmt .do end
+:cmt .if &*0 >= 9 .do begin
+:cmt .   :zli. :qref str='&*9'.
+:cmt .do end
+:cmt :zesl.
+:cmt .dm seealso end
+:cmt .dm xseealso begin
+:cmt .seealso &*
+:cmt .dm xseealso end
+:cmt .gt seealso add xseealso cont
 
 :cmt. **** :CONTPC ****
 .dm conttpc begin

@@ -19,4 +19,4 @@ $(books) : .SYMBOLIC
 !include clean.mif
 
 .BEFORE
-    @set path=$(%GHOSTSCRIPT)/bin;$(%GHOSTSCRIPT)/lib;$(%PATH)
+    @set PATH=$(%GHOSTSCRIPT)/bin;$(%GHOSTSCRIPT)/lib;$(%PATH)

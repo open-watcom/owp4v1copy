@@ -1,7 +1,5 @@
 proj_name = docs
 
-.EXTENSIONS: .cop .pcd
-
 !include cproj.mif
 
 # location of documentation sources
@@ -29,25 +27,25 @@ company=Open Watcom
 optfile_wgml=wgmlopts.tmp
 optfile_whpcvt=whpcopts.tmp
 vi_script_nt=crtcnt.tmp
-gml_whelp=$(%doc_root)\doc\whelp
+gml_lib=..\gml\syslib
 
 #
 # There should be settings for supported building platforms
 #
 !ifeq %build_platform dos386
-gml_path=$(%doc_root)\gml\dos
-pgm_HCDOS=$(%doc_root)\cmds\hcdos
-OS2_TK=dummy
+wgml = $(%DOC_ROOT)\gml\dos\wgml
+HCDOS = $(%DOC_ROOT)\cmds\hcdos
+OS2_TK = dummy
 
 !else ifeq %build_platform os2386
-gml_path=$(%doc_root)\gml\os2
-pgm_HCDOS=$(%doc_root)\cmds\hcdosos2
-OS2_TK=dummy
+wgml = $(%DOC_ROOT)\gml\os2\wgml
+HCDOS = $(%DOC_ROOT)\cmds\hcdosos2
+OS2_TK = dummy
 
 !else ifeq %build_platform nt386
-gml_path=$(%doc_root)\gml\dos
-pgm_HCDOS=$(%doc_root)\cmds\hcdos32
-OS2_TK=dummy
+wgml = $(%DOC_ROOT)\gml\dos\wgml
+HCDOS = $(%DOC_ROOT)\cmds\hcdos32
+OS2_TK = dummy
 
 !else
 !error Unsupported building platform !!!!!!
@@ -57,6 +55,7 @@ OS2_TK=dummy
 #############################################################
 
 .BEFORE
+    @set GMLLIB=$(gml_lib);
     @echo **************************************************************
     @echo $(dotarget) : $(hbook)/$(book_src) : $(book_title)
     @echo **************************************************************
@@ -70,10 +69,6 @@ proj_objs= &
 #    ..\mif\master.mif &
 #    ..\lang.ctl &
 #    makefile
-
-gml_drivers= &
-    whelp.cop &
-    whelpdrv.cop
 
 ####################################################
 #
@@ -108,7 +103,7 @@ $(hbook).cnt : $(hbook).cn1
 !endif
     !$(vi) -s $(vi_script_nt) $[@
 
-$(hbook).rtf $(hbook).cn1 $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs) $(gml_drivers)
+$(hbook).rtf $(hbook).cn1 $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs)
     @%make compile_gml_to_xxx
     @copy $(hbook).h $(guitools_dir)\win95 > $(nulldevice)
 
@@ -137,7 +132,7 @@ $(hbook).hlp : $(hbook).hpj $(hbook).rtf $(hbook).hh
 $(hbook).hpj : $(proj_objs)
     @%make compile_hpj_win
 
-$(hbook).rtf $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs) $(gml_drivers)
+$(hbook).rtf $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs)
     @%make compile_gml_to_xxx
     @copy $(hbook).h $(guitools_dir)\win > $(nulldevice)
 
@@ -155,9 +150,9 @@ all : $(hbook).ihp $(hbook).h .SYMBOLIC
     @%null
 
 $(hbook).ihp : $(hbook).ib $(hbook).h
-    $(pgm_HCDOS) -h 25 -w 80 $(hbook).ib $(hbook).ihp
+    $(HCDOS) -h 25 -w 80 $(hbook).ib $(hbook).ihp
 
-$(hbook).ib $(hbook).h : $(book_objs) $(proj_objs) $(gml_drivers)
+$(hbook).ib $(hbook).h : $(book_objs) $(proj_objs)
     @%make compile_gml_to_xxx
     @copy $(hbook).h $(guitools_dir)\ib > $(nulldevice)
 
@@ -174,7 +169,7 @@ $(hbook).ib $(hbook).h : $(book_objs) $(proj_objs) $(gml_drivers)
 all : $(hbook).htm $(hbook).h .SYMBOLIC
     @%null
 
-$(hbook).htm $(hbook).h : $(book_objs) $(proj_objs) $(gml_drivers)
+$(hbook).htm $(hbook).h : $(book_objs) $(proj_objs)
 !ifdef book_bmroot
     @copy $(book_bmroot)\*.bmp $^: > $(nulldevice)
 !endif
@@ -194,9 +189,9 @@ all : $(hbook).ps .SYMBOLIC
     @%null
 
 $(hbook).ps : $(book_objs) $(proj_objs)
-    @set GMLINC=$(book_incs);$(gml_incs);$(whelp_incs)
+    @set GMLINC=$(book_incs);$(whelp_incs);$(gml_incs)
     %make prepare_wgml_opts
-    -$(gml_path)\wgml $(book_src) ( file $(optfile_wgml)
+    -$(wgml) $(book_src) ( file $(optfile_wgml)
 
 ####################################################
 #
@@ -236,18 +231,18 @@ all : $(hbook).inf $(hbook).hlp $(hbook).h .SYMBOLIC
     @%null
 
 $(hbook).inf : $(hbook).ipf
-    set ipfcartwork=$(book_incs)
+    set IPFCARTWORK=$(book_incs)
     ipfc $(hbook).ipf /inf
 
 !ifdef book_os2_help
 $(hbook).hlp : $(hbook).ipf
-    set ipfcartwork=$(book_incs)
+    set IPFCARTWORK=$(book_incs)
     ipfc $(hbook).ipf
 !else
 $(hbook).hlp : .symbolic
 !endif
 
-$(hbook).ipf $(hbook).h : $(book_objs) $(proj_objs) $(gml_drivers)
+$(hbook).ipf $(hbook).h : $(book_objs) $(proj_objs)
     @%make compile_gml_to_xxx
     @copy $(hbook).h $(guitools_dir)\os2 > $(nulldevice)
 
@@ -413,13 +408,13 @@ compile_gml_to_xxx : .PROCEDURE
     @if not exist $*.idx @%create $*.idx
     @if not exist $*.tbl @%create $*.tbl
     @if not exist $*.kw @%create $*.kw
-    @set GMLINC=.\;$(hlp_incs);$(whelp_incs);$(book_incs);$(gml_incs)
-    %make prepare_wgml_opts
-    -$(gml_path)\wgml $(book_src) ( file $(optfile_wgml)
-    %make prepare_whpcvt_opts
+    @set GMLINC=.;$(whelp_incs);$(gml_lib);$(hlp_incs);$(book_incs);$(gml_incs);
+    @%make prepare_wgml_opts
+    -$(wgml) $(book_src) ( file $(optfile_wgml)
+    @%make prepare_whpcvt_opts
     whpcvt -@ $(optfile_whpcvt) $*.ptf
     @%create sysusr02.gml
-    -$(gml_path)\wgml $(book_src) ( file $(optfile_wgml)
+    -$(wgml) $(book_src) ( file $(optfile_wgml)
     @if exist $*.cn1 @erase $*.cn1
     @ren sysusr03.gml $*.cn1
     @if exist $*.h @erase $*.h
@@ -527,14 +522,5 @@ prepare_vi_script_cp: .PROCEDURE
     @%append $(vi_script_nt) q!
 
 ####################################################
-
-.pcd : $(gml_whelp)
-.cop : .
-
-.pcd.cop :
-currGMLLIB=$+$(%GMLLIB)$-
-    @set GMLLIB=$(%cwd)
-    -$(gml_path)\gendev $(gml_whelp)\$^&.pcd
-    @set GMLLIB=$(currGMLLIB)
 
 !include ../mif/clean.mif

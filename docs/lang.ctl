@@ -12,12 +12,12 @@ set PROJDIR=<CWD>
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <doc_root>/dos/*.ihp <relroot>/rel2/binw/
-    <CPCMD> <doc_root>/win/*.hlp <relroot>/rel2/binw/
-    <CPCMD> <doc_root>/os2/*.inf <relroot>/rel2/binp/help/
-    <CPCMD> <doc_root>/os2/*.hlp <relroot>/rel2/binp/help/
-    <CPCMD> <doc_root>/nt/*.hlp  <relroot>/rel2/binnt/
-    <CPCMD> <doc_root>/nt/*.cnt  <relroot>/rel2/binnt/
+    <CPCMD> <DOC_ROOT>/dos/*.ihp <RELROOT>/rel2/binw/
+    <CPCMD> <DOC_ROOT>/win/*.hlp <RELROOT>/rel2/binw/
+    <CPCMD> <DOC_ROOT>/os2/*.inf <RELROOT>/rel2/binp/help/
+    <CPCMD> <DOC_ROOT>/os2/*.hlp <RELROOT>/rel2/binp/help/
+    <CPCMD> <DOC_ROOT>/nt/*.hlp  <RELROOT>/rel2/binnt/
+    <CPCMD> <DOC_ROOT>/nt/*.cnt  <RELROOT>/rel2/binnt/
 
 [ BLOCK <1> clean ]
 #==================
