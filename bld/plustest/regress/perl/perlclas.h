@@ -569,7 +569,8 @@ PerlList<T>  PerlList<T>::splice(int offset, int len)
 PerlList<T> r;
 
     if(offset >= count()) return r;
-    for(int i=offset;i<offset+len;i++){
+    int i;
+    for(i=offset;i<offset+len;i++){
         r.add((*this)[i]);
     }
 
@@ -584,7 +585,8 @@ PerlList<T>  PerlList<T>::splice(int offset)
 PerlList<T> r;
 
     if(offset >= count()) return r;
-    for(int i=offset;i<count();i++){
+    int i;
+    for(i=offset;i<count();i++){
         r.add((*this)[i]);
     }
 

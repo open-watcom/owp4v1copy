@@ -395,7 +395,8 @@ void CoolBignum::resize (Counter new_count) {
       (new_count > 0 ? new Data[new_count] : 0);
 
     if (this->count <= new_count) {             // Copy old data into new
-      for (Counter i = 0; i < this->count; i++)  
+      Counter i;
+      for (i = 0; i < this->count; i++)  
         new_data[i] = this->data[i];
       for (; i < new_count; i++)
         new_data[i] = 0;
@@ -418,7 +419,8 @@ void CoolBignum::resize (Counter new_count) {
 // Outputs:  reference to modified CoolBignum
 
 CoolBignum& CoolBignum::trim () {
-  for (Counter i = this->count; i > 0; i--)     // Skip over high-order words
+  Counter i;
+  for (i = this->count; i > 0; i--)             // Skip over high-order words
     if (this->data[i - 1] != 0) break;          //   that are zero
   if (i < this->count) {                        // If there are some such words
     Counter oldcount = this->count;
@@ -480,7 +482,8 @@ void subtract (const CoolBignum& bmax, const CoolBignum& bmin, CoolBignum& diff)
   diff.data = new Data[diff.count = bmax.count];// Allocate data for difference
   unsigned long temp;
   int borrow = 0;
-  for (Counter i = 0; i < bmin.count; i++) {    // Subtract word by word.
+  Counter i;
+  for (i = 0; i < bmin.count; i++) {    // Subtract word by word.
     
     temp = (unsigned long)bmax.data[i] 
       + (unsigned long)radix_s - borrow;        // Add radix to bmax's data
@@ -764,7 +767,8 @@ Data multiply_subtract (CoolBignum& u, const CoolBignum& v, Data q_hat, Counter 
   // simultaneous computation of u - v*q_hat
   unsigned long prod, diff;
   Data carry = 0, borrow = 0;
-  for (Counter i = 0; i < v.count; i++) {       
+  Counter i;
+  for (i = 0; i < v.count; i++) {       
     // for each digit of v, multiply it by q_hat and subtract the result
     prod = (unsigned long)v.data[i] * (unsigned long)q_hat + carry;
     diff = (unsigned long)u.data[u.count - v.count - 1 - j + i]

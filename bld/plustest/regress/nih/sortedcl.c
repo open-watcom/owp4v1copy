@@ -200,7 +200,8 @@ Range SortedCltn::findRangeOf(const Object& key) const
 
 int SortedCltn::findIndexOfFirstKey(const Object& key, const int index) const
 {
-        for (register j = index - 1; j > -1; j--)
+        register j;
+        for (j = index - 1; j > -1; j--)
                 if (key.compare(*contents[j]) != 0)
                         break;
         return (j + 1);
@@ -210,7 +211,8 @@ int SortedCltn::findIndexOfFirstKey(const Object& key, const int index) const
 int SortedCltn::findIndexOfLastKey(const Object& key, const int index) const
 {
         register max = size();
-        for (register j = index + 1; j < max; j++)
+        register j;
+        for (j = index + 1; j < max; j++)
                 if (key.compare(*contents[j]) != 0)
                         break;
         return (j - 1);

@@ -36,7 +36,8 @@ public:
 void __random_generator::seed(unsigned long j) {
     unsigned long k = 1;
     table[54] = j;
-    for (size_t i = 0; i < 54; i++) {
+    size_t i;
+    for (i = 0; i < 54; i++) {
         size_t ii = 21 * i % 55;
         table[ii] = k;
         k = j - k;

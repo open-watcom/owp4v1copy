@@ -75,7 +75,8 @@ void test_switches()
         }
         l = 1;
         show_width(a.Width());
-        for (int i = 0; i < max_sig; i++) {
+        int i;
+        for (i = 0; i < max_sig; i++) {
             cout << sample.Str(l) << flush;
             cout << " -> |";
             cout << a.Str(l);

@@ -123,7 +123,8 @@ void test_int_2 () {
   CoolSet<int> s5; 
   CoolSet<int> s6;
   CoolSet<int> s7;
-  for (int i = 0; i < 10; i++) 
+  int i;
+  for (i = 0; i < 10; i++) 
     s0.put(i);
   s0.remove(8);
   for (i = 2; i < 10; i++)
@@ -341,7 +342,8 @@ void test_double_2 () {
   CoolSet<double> d5; 
   CoolSet<double> d6;
   CoolSet<double> d7;
-  for (double i = 0.0; i < 10.0; i++) 
+  double i;
+  for (i = 0.0; i < 10.0; i++) 
     d0.put(i);
   d0.remove(8.0);
   for (i = 2.0; i < 10.0; i++)

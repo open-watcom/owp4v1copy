@@ -19,7 +19,8 @@ void WriteFile ()
           // Make a new file
     buffer = 1L;
     CL_IntegerSequence handle (MAX_RECORDS);
-    for (long i = 0; i < MAX_RECORDS; i++) {
+    long i;
+    for (i = 0; i < MAX_RECORDS; i++) {
         buffer = (long) i+3;
         handle[i] = file1.AddRecord (buffer);
         if (i % 1000 == 1) printf ("Added record %ld\n", i);

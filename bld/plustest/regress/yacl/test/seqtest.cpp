@@ -104,6 +104,7 @@ main ()
     printf ("Restored b is: \n"); PrintOut (*b);
     delete b;
 
+    long i;
     for (long i = 0; i < a2.Size(); i++) {
         printf ("'%s'\n", ((CL_String*) a2[i])->AsPtr());
     }
@@ -142,7 +143,8 @@ main ()
         iseq.Remove (2);
     iseq.Add (253);
     printf ("iseq size %ld\n", iseq.Size());
-    for (long j = 0; j < iseq.Size(); j++) {
+    long j;
+    for (j = 0; j < iseq.Size(); j++) {
         printf ("iseq[%ld] = %ld\n", j, iseq[j]);
     }
     iseq.Sort();

@@ -12,7 +12,8 @@ int numbers[6] = { 1, 10, 42, 3, 16, 32 };
 
 int main ()
 {
-  for (int i = 0; i < 6; i++)
+  int i;
+  for (i = 0; i < 6; i++)
     cout << numbers[i] << ' ';
   cout << endl;
   inplace_merge (numbers, numbers + 3, numbers + 6);

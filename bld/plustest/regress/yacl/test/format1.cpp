@@ -20,7 +20,8 @@ main ()
         // Find the sum of the lengths of all the words
         if (word_count > 1) {
             short word_len_sum = 0;
-            for (short i = 0; i < word_count; i++)
+            short i;
+            for (i = 0; i < word_count; i++)
                 word_len_sum += words[i].Size();
             short space = max_line_length - word_len_sum;
             short space_per_word = space / (word_count - 1);

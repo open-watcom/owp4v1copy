@@ -120,7 +120,8 @@ int n;
     if(il.shift() != 1) cout << "FIFO1 error" << endl;
     if(il.shift() != 2) cout << "FIFO2 error" << endl;
 
-    for(int i=0;i<100;i++) il.push(i);
+    int i;
+    for(i=0;i<100;i++) il.push(i);
     i= 0;
     while(il){
         if(il.shift() != i)  cout << "FIFO3 error" << endl;

@@ -13,7 +13,8 @@ int array [] = { 1, 4, 9, 16, 25, 36 };
 int main ()
 {
   vector<int> v (array, array + 6);
-  for (int i = 0; i < v.size (); i++)
+  int i;
+  for (i = 0; i < v.size (); i++)
     cout << "v[" << i << "] = " << v[i] << endl;
   cout << endl;
   v.erase (v.begin ()); // Erase first element.

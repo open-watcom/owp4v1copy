@@ -16,7 +16,8 @@ bool odd (int a_)
 int main ()
 {
   vector <int> v1 (10);
-  for (int i = 0; i < v1.size (); i++)
+  int i;
+  for (i = 0; i < v1.size (); i++)
   {
     v1[i] = i % 5;
     cout << v1[i] << ' ';

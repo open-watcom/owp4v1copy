@@ -76,7 +76,8 @@ CoolMatrix<Type>::CoolMatrix(unsigned int rows, unsigned int cols, int n,
 #endif
   this->data = new Type*[rows];                 // Allocate the row memory
   Type* columns = new Type[cols*rows];          // Allocate the array of elmts
-  for (int i = 0; i < rows; i ++)               // For each row in the Matrix
+  int i;
+  for (i = 0; i < rows; i ++)                   // For each row in the Matrix
     this->data[i] = &columns[i*cols];           // Fill in address of row
   if (n > 0) {                                  // If user specified values
     va_list argp;                               // Declare argument list

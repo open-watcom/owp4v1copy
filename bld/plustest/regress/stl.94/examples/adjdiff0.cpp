@@ -14,7 +14,8 @@ int main ()
 {
   int difference[5];
   adjacent_difference (numbers, numbers + 5, difference);
-  for (int i = 0; i < 5; i++)
+  int i;
+  for (i = 0; i < 5; i++)
     cout << numbers[i] << ' ';
   cout << endl;
   for (i = 0; i < 5; i++)

@@ -128,7 +128,8 @@ Boolean CoolBase_List::prev() {
 
 Boolean CoolBase_List::operator==(const CoolBase_List& l) const {
   if (this == &l) return TRUE;  // same CoolBase_Lists
-  for (CoolBase_List_Node *np = this->node_ptr, *np_l = l.node_ptr;
+  CoolBase_List_Node *np, *np_l;
+  for (np = this->node_ptr, np_l = l.node_ptr;
       np != NULL && np_l != NULL; 
       np = np->next, np_l = np_l->next) {
     if (np == np_l)
@@ -270,7 +271,8 @@ Boolean CoolBase_List::search(const CoolBase_List& l) {
     }
     // data of node in this CoolBase_List is also in node of CoolBase_List l
     // continue searching rest of data
-    for (CoolBase_List_Node *np2 = tnode->next, *lnp = lnode->next; 
+    CoolBase_List_Node *np2, *lnp;
+    for (np2 = tnode->next, lnp = lnode->next; 
          np2 != NULL && lnp != NULL;
          np2 = np2->next, lnp = lnp->next) {
       if (np2 == lnp) {
@@ -401,7 +403,8 @@ Boolean CoolBase_List::append(const CoolBase_List& l) {
 Boolean CoolBase_List::set_tail(const CoolBase_List& l, int n) {
   // find node at start of nth tail
   int count = n;
-  for (CoolBase_List_Node *np = this->node_ptr, *prev_np = NULL; 
+  CoolBase_List_Node *np, *prev_np;
+  for (np = this->node_ptr, prev_np = NULL; 
       np != NULL && count > 0;
       prev_np = np, np = np->next, count--);
   if (np != NULL && count == 0) {
@@ -847,7 +850,8 @@ CoolBase_List* CoolBase_List::operator=(const CoolBase_List& l) {
 
 CoolBase_List_Node* CoolBase_List::operator[] (int n) {
   int count = n;
-  for (CoolBase_List_Node *np = this->node_ptr, *prev_np = NULL;
+  CoolBase_List_Node *np, *prev_np;
+  for (np = this->node_ptr, prev_np = NULL;
       np != NULL && count > 0;
       prev_np = np, np = np->next, count--);
 

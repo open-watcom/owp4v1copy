@@ -18,7 +18,8 @@ int main (void) {
     cout << __FILE__ << endl;
   CoolStack<int> s1(10);                        // Declare CoolStack of integers
   s1.push( -1 );
-  for (int i = 1; i <= 5; i++)                  // In a small loop, push "n"
+  int i;
+  for (i = 1; i <= 5; i++)                      // In a small loop, push "n"
     s1.pushn (i,i);                             // copies of an integer value
   for (i = 0; i < 5; i++) {                     // In another similar loop upto
     for (int j = 0; j < s1.top(); j++)          // the top element value, get

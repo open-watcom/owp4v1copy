@@ -677,7 +677,8 @@ CL_String CL_Date::ShortMonthName (MonthEnum month_num)
 // And the opposite of the above:
 CL_Date::MonthEnum CL_Date::MonthNumber (const CL_String& month_name)
 {
-    for (short i = 0; i < 12; i++) {
+    short i;
+    for (i = 0; i < 12; i++) {
         if (month_name == months[i]) return (MonthEnum) (i+1);
     }
     for (i = 0; i < 12; i++) {

@@ -14,7 +14,8 @@ int main ()
 {
   int result[6];
   reverse_copy (numbers, numbers + 6, result);
-  for (int i = 0; i < 6; i++)
+  int i;
+  for (i = 0; i < 6; i++)
     cout << numbers[i] << ' ';
   cout << endl;
   for (i = 0; i < 6; i++)

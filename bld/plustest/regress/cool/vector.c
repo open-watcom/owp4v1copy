@@ -173,7 +173,8 @@ void CoolVector<Type>::copy (const CoolVector<Type>& v, size_t start, size_t end
 #endif
     this->grow(end);
   }
-  for (size_t i = start; i < end; i++)          // For each element in range
+  size_t i;
+  for (i = start; i < end; i++)                 // For each element in range
     this->data[i] = v.data[i];                  // Assign new value
   if (i > this->number_elements)                // If we added new elements
     this->number_elements = i;                  // Update element count
@@ -520,7 +521,8 @@ Boolean CoolVector<Type>::prepend (const CoolVector<Type>& v) {
       this->size = new_size + this->alloc_size; // use alloc_size
   }
   temp = new Type[this->size];                  // Allocate required storage
-  for (size_t i = 0; i < v.number_elements; i++)        // For all elements
+  size_t i;
+  for (i = 0; i < v.number_elements; i++)        // For all elements
     temp[i] = v.data[i];                        // Copy to beginning of CoolVector
   this->curpos = i;                             // Set current position
   for (i = 0; i < this->number_elements; i++)   // For each element

@@ -20,7 +20,8 @@ int main (void) {
   CoolRandom r2 (THREE_CONGRUENTIAL, 1, 5.0, 11.5);     // Highly random generator
 
   cout << "Simple random number generator:\n";  // Output banner title 
-  for (int i = 0; i < 10; i++)                  // Generate 10 random numbers
+  int i;
+  for (i = 0; i < 10; i++)                      // Generate 10 random numbers
     cout << "  Random number " << i << " is: " << r1.next () << "\n";
   cout << "\nThree congruential linear random number generator:\n"; // Banner
   for (i = 0; i < 10; i++)                      // Generate 10 random numbers

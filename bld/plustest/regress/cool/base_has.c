@@ -128,7 +128,8 @@ Boolean CoolBase_Hash_Table::next () {
   if (this->curpos == INVALID) {                // If INVALID current position
     if (this->entry_count == 0)                 // If no entries in table
       return FALSE;                             // Return failure
-    for (long i = 0; i < this->get_bucket_count(); i++) // For each bucket
+    long i;
+    for (i = 0; i < this->get_bucket_count(); i++) // For each bucket
       if (this->get_count_in_bucket(i) != 0)    // If the bucket has an item
         break;
     this->curpos = SET_BUCKET_NUMBER(i);        // Set bucket number
@@ -145,7 +146,8 @@ Boolean CoolBase_Hash_Table::next () {
       this->curpos |= SET_BUCKET_INDEX(index);  // Update bucket index bits
       return TRUE;                              // And return success
     }
-    for (long i = hash+1; i < prime; i++)       // For remaining buckets
+    long i;
+    for (i = hash+1; i < prime; i++)            // For remaining buckets
       if (this->get_count_in_bucket(i) != 0)    // If the bucket has item
         break;
     if (i == prime) {                           // If no more items
@@ -171,7 +173,8 @@ Boolean CoolBase_Hash_Table::prev () {
   if (this->curpos == INVALID) {                // If INVALID current position
     if (this->entry_count == 0)                 // If no entries in table
       return FALSE;                             // Return failure
-    for (long i = prime-1; i >= 0; i--)         // For each bucket, search
+    long i;
+    for (i = prime-1; i >= 0; i--)              // For each bucket, search
       if (this->get_count_in_bucket (i) != 0)   // If the bucket has an item
         break;
     this->curpos = SET_BUCKET_NUMBER (i);       // Set bucket number
@@ -188,7 +191,8 @@ Boolean CoolBase_Hash_Table::prev () {
       this->curpos |= SET_BUCKET_INDEX ((index-1)); // Update bucket index bits
       return TRUE;                              // And return success
     }
-    for (long i = hash-1; i >= 0; i--)          // For remaining buckets
+    long i;
+    for (i = hash-1; i >= 0; i--)               // For remaining buckets
       if (this->items_in_buckets[i] != 0)       // If the bucket has an item
         break;
     if (i < 0) {                                // If no more items
@@ -210,7 +214,8 @@ void CoolBase_Hash_Table::statistics () {
   long arry[BUCKET_SIZE+1];
   char str[30];
   float pct_full;
-  for (int i = 0; i <= BUCKET_SIZE; i++)
+  int i;
+  for (i = 0; i <= BUCKET_SIZE; i++)
     arry[i]=0;
   long buckets = get_bucket_count();
   long total_slots = buckets * BUCKET_SIZE;

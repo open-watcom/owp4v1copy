@@ -76,7 +76,8 @@ long CL_IntegerSet::SmallestNonMember () const
     long n = Size();
     if (n <= 0)
         return -1;
-    for (long i = 0; i < n; i++)
+    long i;
+    for (i = 0; i < n; i++)
         if (ItemWithRank(i) != i)
             break;
     return i;

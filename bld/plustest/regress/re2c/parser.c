@@ -608,7 +608,8 @@ void parse(istream &i, ostream &o){
                 sym->re = prog(in);
                 CharSet cs;
                 memset(&cs, 0, sizeof(cs));
-                for(uint j = 0; j < nChars; ++j){
+                uint j;
+                for(j = 0; j < nChars; ++j){
                     cs.rep[j] = &cs.ptn[0];
                     cs.ptn[j].nxt = &cs.ptn[j+1];
                 }

@@ -122,7 +122,8 @@ void CoolDate_Time::adjust_tz () {
   time_t sys_seconds = time ((time_t*)0);               // System GMT time in seconds
   set_tz (this->tz_code);                       // Setup local time conversion
   t = localtime (&sys_seconds);                 // Convert to local time
-  for (int i = 70; i < t->tm_year; i++) {
+  int i;
+  for (i = 70; i < t->tm_year; i++) {
     local_secs += (YEAR + DAY);
     if (IS_LEAP_YEAR (i)) local_secs += DAY;
   }
@@ -1368,7 +1369,8 @@ void CoolDate_Time::parse (char* source, int settz) {
           printf ("CoolDate_Time::parse(): Invalid time specified in input.\n");
           abort ();
         }
-        for (int tmp = ind-1; 0 <= tmp && token_num[tmp] != 0 
+        int tmp;
+        for (tmp = ind-1; 0 <= tmp && token_num[tmp] != 0 
              && strlen(token_list[tmp]) <= 2
              && token_used[tmp] != 1; tmp--);
         tmp = ind - tmp - 1;

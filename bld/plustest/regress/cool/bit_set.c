@@ -560,7 +560,8 @@ CoolBit_SetE CoolBit_Set::operator- () {
   unsigned char* a_data = a->data;                                            \
   unsigned char* b_data = b.data;                                             \
   int min_size = min(a_size, b_size);                                         \
-  for (int i = 0; i < min_size; i++)                                          \
+  int i;                                                                      \
+  for (i = 0; i < min_size; i++)                                              \
      a_data[i] = a_data[i] op b_data[i];        /*operate on common sets*/    \
   for (; i < b_size; i++)                                                     \
      a_data[i] = excess;                        /*operate on excess b's*/
@@ -662,7 +663,8 @@ void CoolBit_Set::grow (int min_size) {
 void CoolBit_Set::resize (int n) {
   int nbytes = BS_BYTE_COUNT(n);
   unsigned char* temp = new unsigned char[nbytes]; // Allocate storage
-  for (int i = 0; i < this->number_elements; i++) 
+  int i;
+  for (i = 0; i < this->number_elements; i++) 
     temp[i] = this->data[i];                    // copy old data
   for (; i < nbytes; i++)
     temp[i] = 0;                                // clear new data
@@ -719,7 +721,8 @@ ostream& operator<< (ostream& os, const CoolBit_Set& b) {
 
 Boolean operator== (const CoolBit_Set& b1, const CoolBit_Set& b2) {
   int len = min(b1.number_elements, b2.number_elements); // common length
-  for (int i = 0; i < len; i++)                            
+  int i;
+  for (i = 0; i < len; i++)                            
     if (b1.data[i] != b2.data[i])                 // Check for different bits
       return FALSE;                               // in common section
   for (i = len; i < b1.number_elements; i++)      // Check for nonzero bits in

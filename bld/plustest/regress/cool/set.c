@@ -290,7 +290,8 @@ Boolean CoolSet<Type>::resize (long n) {
  retry:
   long new_prime = hash_primes[this->current_bucket];// Get prime number 
   unsigned char* t1 = new unsigned char[new_prime];  // Counts items in buckets
-  for (long i = 0; i < new_prime; i++)               // For each bucket count
+  long i;
+  for (i = 0; i < new_prime; i++)               // For each bucket count
     t1[i] = 0;                                       // Initialize to zero
   t2 = new Bucket[new_prime];                // Allocate new buckets
   for (i = 0; i < old_prime; i++) {                  // For each bucket count

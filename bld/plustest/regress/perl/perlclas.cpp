@@ -255,7 +255,8 @@ int PerlString::tr(const char *sl, const char *rl, const char *opts)
     // build search array, which is a 256 byte array that stores the index+1
     // in the search string for each character found, == 0 if not in search
     memset(fr, 0, 256);
-    for(int i=0;i<strlen(sl);i++){
+    int i;
+    for(i=0;i<strlen(sl);i++){
         if(i && sl[i] == '-'){ // got a range
             assert(i+1 < strlen(sl) && lstc <= sl[i+1]); // sanity check
             for(unsigned char c=(unsigned char)lstc+1;c<=sl[i+1];c++){

@@ -118,7 +118,8 @@ bool CL_GenericBTreeNode::Search (CL_VoidPtr itm, short& index) const
 
 void CL_GenericBTreeNode::ShiftRightAt (short pos, short amount)
 {
-    for (short i = _keyCount-1; i >= pos; i--) {
+    short i;
+    for (i = _keyCount-1; i >= pos; i--) {
         _item[i+amount] = _item[i];
         _subtree[i+amount+1] = _subtree[i+1];
     }
@@ -131,7 +132,8 @@ void CL_GenericBTreeNode::ShiftRightAt (short pos, short amount)
 
 void CL_GenericBTreeNode::ShiftLeftAt (short pos, short amount)
 {
-    for (short i = pos; i < _keyCount; i++) {
+    short i;
+    for (i = pos; i < _keyCount; i++) {
         _item[i-amount] = _item[i];
         _subtree[i-amount] = _subtree[i];
     }
@@ -335,7 +337,8 @@ CL_VoidPtr CL_GenericBTree::ItemWithRank (long rank) const
         }
         // We're in a non-leaf, so find the subtree to descend into
         // (if any)
-        for (short i = 0; i < tmp_ptr->_keyCount; i++) {
+        short i;
+        for (i = 0; i < tmp_ptr->_keyCount; i++) {
             p1 = _nodeSpace->BorrowNode (tmp_ptr->_subtree[i]);
             if (p1->_subtreeSize > rank)
                 break;
@@ -378,7 +381,8 @@ long CL_GenericBTree::RankOf (CL_VoidPtr item) const
             return count;
         }
         // We're in a non-leaf, so find the subtree to descend into
-        for (short i = 0; i <= pos; i++) {
+        short i;
+        for (i = 0; i <= pos; i++) {
             p1 = _nodeSpace->BorrowNode (tmp_ptr->_subtree[i]);
             count += p1->_subtreeSize; // Account for i-th subtree
             _nodeSpace->ReturnNode (p1);

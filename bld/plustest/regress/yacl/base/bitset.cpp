@@ -227,7 +227,8 @@ long CL_BitSet::Largest () const
         return -1;
     }
     register ulong data = *p;
-    for (short j = 31; j >= 0; j--) {
+    short j;
+    for (j = 31; j >= 0; j--) {
         if (data & BitTable[j])
             break;
     }
@@ -251,7 +252,8 @@ long CL_BitSet::Smallest () const
         return 0;
     }
     register ulong data = *p;
-    for (short j = 0; j < 32; j++) {
+    short j;
+    for (j = 0; j < 32; j++) {
         if (data & BitTable[j])
             break;
     }
@@ -309,7 +311,8 @@ long  CL_BitSet::SmallestNonMember () const
     if (i >= _count)
         return __Mul32 (_count);
     register ulong data = ~ (*p);
-    for (short j = 0; j < 32; j++) {
+    short j;
+    for (j = 0; j < 32; j++) {
         if (data & BitTable[j])
             break;
     }
@@ -340,7 +343,8 @@ long CL_BitSet::ItemWithRank (long rank) const
         return -1;
     rank = maxl (0, minl (rank, _size - 1));
     long r = 0, l = 0;
-    for (long i = 0; i < _count; i++) {
+    long i;
+    for (i = 0; i < _count; i++) {
         l = BitCount (_rep[i]);
         if (r + l > rank)
             break;
@@ -349,7 +353,8 @@ long CL_BitSet::ItemWithRank (long rank) const
     if (i >= _count) // We've looked at all the words in _rep
         i = _count-1;
     long m = _rep[i];
-    for (short j = 0; j < 32; j++) {
+    short j;
+    for (j = 0; j < 32; j++) {
         if (m & 1) {
             if (r == rank)
                 break;
@@ -495,7 +500,8 @@ CL_BitSet CL_BitSet::_DoOp (const CL_BitSet& s, void (*opr)(ulong&, ulong))
     ulong* new_rep = new ulong[cnt];
     if (! new_rep)
         return *this; // No memory
-    for (long i = 0; i < cnt; i++)
+    long i;
+    for (i = 0; i < cnt; i++)
         new_rep[i] = (i < _count) ? _rep[i] : 0;
     for (i = 0; i < s._count; i++) {
         (*opr) (new_rep[i], s._rep[i]);
@@ -734,7 +740,8 @@ void CL_BitSetIterator::BeginFromRank (long l)
     _count = maxl (0, l);
     if (!p)
         return;
-    for (register long i = 0; i < _set._count; i++, p++) {
+    register long i;
+    for (i = 0; i < _set._count; i++, p++) {
         short q = BitCount (*p);
         if (l < q) break;
         l -= q;

@@ -109,7 +109,8 @@ SegmentedSequence::SegmentedSequence (long initial_cap)
         _totalCap = _numSegs = 0;
         return;
     }
-    for (short i = 0; i < _numSegs-1; i++) {
+    short i;
+    for (i = 0; i < _numSegs-1; i++) {
         _segs[i]._data = new long[0x1fff + 1];
         if (!_segs[i]._data) break;
         _segs[i]._cap = 0x1fff + 1;
@@ -163,7 +164,8 @@ bool SegmentedSequence::ResizeTo    (long new_cap)
         if (!dsc)
             return FALSE;
         short n = minl (_numSegs, segs_needed);
-        for (short i = 0; i < n; i++)
+        short i;
+        for (i = 0; i < n; i++)
             dsc[i] = _segs[i];
         if (n < _numSegs) {
             // If the number of segments is less than before, get rid of

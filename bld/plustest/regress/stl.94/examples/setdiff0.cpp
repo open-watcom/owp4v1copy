@@ -15,7 +15,8 @@ int result[4] = { 0, 0, 0, 0 };
 int main ()
 {
   set_difference (v1, v1 + 3, v2, v2 + 4, result);
-  for (int i = 0; i < 4; i++)
+  int i;
+  for (i = 0; i < 4; i++)
     cout << result[i] << ' ';
   cout << endl;
   set_difference (v2, v2 + 4, v1, v1 + 2, result);

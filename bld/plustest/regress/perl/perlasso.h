@@ -76,7 +76,8 @@ PerlList<T> Assoc<T>::values(void)
 template<class T>
 T& Assoc<T>::operator()(const PerlString& k)
 {
-    for(int i=0;i<dat.scalar();i++){
+    int i;
+    for(i=0;i<dat.scalar();i++){
         if(k == dat[i].key()) return dat[i].value();
     }
     

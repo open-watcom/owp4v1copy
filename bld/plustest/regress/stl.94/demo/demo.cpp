@@ -41,7 +41,8 @@ int main() {
     cout << "Testing set<char>:" << endl;
     
     set<char, less<char> > sc;
-    for (deque<char>::iterator di = d.begin(); di != d.end(); ++di)
+    deque<char>::iterator di;
+    for (di = d.begin(); di != d.end(); ++di)
         sc.insert(*di);
     copy(sc.begin(), sc.end(), ostream_iterator<char>(cout));
     cout << endl;

@@ -12,7 +12,8 @@ int main ()
 {
   vector<int> v1(10);
   vector<int> v2(3);
-  for (int i = 0; i < v1.size (); i++)
+  int i;
+  for (i = 0; i < v1.size (); i++)
   {
     v1[i] = i;
   }

@@ -14,7 +14,8 @@ int main ()
 {
   int result[5];
   copy_backward (numbers, numbers + 5, result + 5);
-  for (int i = 0; i < 5; i++)
+  int i;
+  for (i = 0; i < 5; i++)
     cout << numbers[i] << ' ';
   cout << endl;
   for (i = 0; i < 5; i++)

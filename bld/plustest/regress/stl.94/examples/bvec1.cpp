@@ -11,7 +11,8 @@
 int main ()
 {
   bit_vector b (3);
-  for (int i = 0; i < b.size (); i++)
+  int i;
+  for (i = 0; i < b.size (); i++)
     cout << b[i];
   cout << endl;
   b[0] = b[2] = 1;

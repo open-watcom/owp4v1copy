@@ -721,7 +721,8 @@ bool CL_Sequence<BaseType>::ReadFrom (const CL_Stream& s)
     long cap;
     if (!s.Read (size))
         return FALSE;
-    for (long i = 0; i < _size; i++)
+    long i;
+    for (i = 0; i < _size; i++)
         CL_Basics<BaseType>::Destroy (_data[i]);
     if (!_data.ResizeTo (size))
         return FALSE;

@@ -476,7 +476,8 @@ long CL_String::NCharIndex (const char* s, long pos) const
         return 0;
     long n = strlen(s);
     for (long i = pos; i < _size; i++) {
-        for (long j = 0; j < n; j++) {
+        long j;
+        for (j = 0; j < n; j++) {
             if (_string[i] == s[j]) break;
         }
         if (j >= n) return i;
@@ -602,7 +603,8 @@ CL_StringSequence CL_String::Split (const char field_seps[]) const
 long CL_String::Split (CL_String fld[], long n, const char field_seps[]) const
 {
     CL_StringSplitter splitter (*this, field_seps);
-    for (long i = 0; i < n-1; i++) {
+    long i;
+    for (i = 0; i < n-1; i++) {
         fld[i] = splitter.Next();
         if (fld[i].Length() == 0) break;
     }

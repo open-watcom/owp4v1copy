@@ -288,7 +288,8 @@ void CoolHash_Table<Tkey,Tval>::resize (long n) {
  retry:
   long new_prime = hash_primes[this->current_bucket]; // Get prime number 
   unsigned char* t1 = new unsigned char[new_prime];   // Counts items in buckets
-  for (long i = 0; i < new_prime; i++)          // For each bucket count
+  long i;
+  for (i = 0; i < new_prime; i++)               // For each bucket count
     t1[i] = 0;                                  // Initialize to zero
   // NOTE: We should use the overloaded operator new to construct only
   //       the new buckets, and use memcpy instead of operator= for copying

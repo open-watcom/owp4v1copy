@@ -261,7 +261,8 @@ bool CL_DiskBTreeNode::ReadFrom (const CL_Stream& s)
         // _subtree is already allocated in the BTreeNode constructor
         if (_keyCount <= 0)
             return TRUE;
-        for (short i = 0; i <= _keyCount; i++)
+        short i;
+        for (i = 0; i <= _keyCount; i++)
             if (!s.Read (_subtree[i]))
                 return FALSE;
         CL_ObjectBuilder* bld =
@@ -284,7 +285,8 @@ bool CL_DiskBTreeNode::WriteTo  (CL_Stream& s) const
 {
     if (s.Write (_keyCount) && s.Write ((short) _isLeaf) && s.Write
         (_subtreeSize)) {
-        for (short i = 0; i <= _keyCount; i++)
+        short i;
+        for (i = 0; i <= _keyCount; i++)
             if (!s.Write (_subtree[i]))
                 return FALSE;
         for (i = 0; i < _keyCount; i++) {

@@ -195,7 +195,8 @@ void test_switches(int mode)
         }
         l = 1;
         show_width(a.Width());
-        for (int i = 0; i < 10; i++) {
+        int i;
+        for (i = 0; i < 10; i++) {
             cout << "|" << a.Str(l) << "|" << endl;
             switch (mode) {
             default: // ios::dec
