@@ -1,6 +1,7 @@
 proj_name = wlink
 
 !include cproj.mif
+!include defrule.mif
 !include deftarg.mif
 
 objs  = &
@@ -12,30 +13,18 @@ mem.obj &
 records.obj &
 wildargv.obj
 
-.extensions:
-.extensions: .exe .obj .c
-
-copts_i86   = /fpc/oaxt /ms /d1 /w4 /we
-copts_386   = /fpc/oaxt /d1 /w4 /we
-
 !ifdef on_build_machine
 copts += -zq
 !endif
 
-compile = $(cc_$(host_CPU)) $[* $(copts_$(host_CPU))
 prj = fcenable.exe
 
 .c: ..\c;$(lang_root)\src\startup
 
-.c.obj:
-        $(compile) /bt=$(host_OS)
-
 lflags_dos = system dos
-lflags_nt = system nt
-lflags_os2 = system os2 pmcompat 
+lflags_nt  = system nt
+lflags_os2 = system os2 pmcompat
 
 $(prj) : $(objs)
         $(linker) $(lflags_$(host_OS)) n $(prj) op map f {$(objs)}
 
-spawn.obj : spawn.c
-        $(compile) /i=$(inc_dirs_sys) /i=$(inc_dirs_sys_os2) /bt=os2

@@ -214,9 +214,6 @@ extra_rc_flags_qnx = -D_UNIX
 extra_rc_flags_linux = -D_UNIX
 extra_rc_flags = $(extra_rc_flags_$(host_OS))
 
-.extensions:
-.extensions: .exe .obj .c .mif
-
 .mif : $(mif_path)
 
 .c: ../c
@@ -364,4 +361,4 @@ global.chk : ../compile.gbl
 !endif
 
 .BEFORE:
-	 @set INCLUDE=$(inc_path)
+     @set INCLUDE=$(inc_path)
