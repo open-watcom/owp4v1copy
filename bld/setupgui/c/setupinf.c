@@ -462,6 +462,7 @@ static int NewFileCond( char *str )
     num = SetupInfo.fileconds.num;
     while( --num >= 0 ) {
         if( SameExprTree( new, FileCondInfo[ num ].cond ) ) {
+            BurnTree( new );
             return( num );
         }
     }
