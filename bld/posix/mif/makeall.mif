@@ -7,25 +7,25 @@ lib : .symbolic
 curr_dir_all=$+ $(%cwd) $-
         @cd $(posix_dir)\misc\$(targos)
 !ifeq targos dos
-        @wmake -h model=c
-        @wmake -h model=s
+        !@wmake -h model=c
+        !@wmake -h model=s
 !else ifeq targos dosos2
-        @wmake -h model=c
-        @wmake -h model=s
+        !@wmake -h model=c
+        !@wmake -h model=s
 !else
-        @wmake -h
+        !@wmake -h
 !endif
         @cd $(curr_dir_all)
 
 $(commands) : .symbolic
-        @wmake -h -f $(posix_dir)\src\$^@\makefile targos=$(targos) make_all=1
+        !@wmake -h -f $(posix_dir)\src\$^@\makefile targos=$(targos) make_all=1
 !ifdef install
         @wstrip $^@.exe $(install)\$^@.exe
         @wtouch -f $^@.exe $(install)\$^@.exe
 !endif
 
 clean : .symbolic
-        @wmake -h -f $(posix_dir)\misc\$(targos)\makefile clean clean_dir=$(posix_dir)\misc\$(targos)
+        !@wmake -h -f $(posix_dir)\misc\$(targos)\makefile clean clean_dir=$(posix_dir)\misc\$(targos)
         @if exist *.ex? @erase *.ex?
         @if exist *.?bj @erase *.?bj
         @if exist *.map @erase *.map

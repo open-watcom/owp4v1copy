@@ -2,5 +2,10 @@
 
 targos          = dos
 
+!ifdef prebuild
+!include $(posix_dir)/mif/bld_cmds.mif
+!else
 !include $(posix_dir)/mif/commands.mif
+!endif
+
 !include $(posix_dir)/mif/makeall.mif
