@@ -12,11 +12,6 @@ cc_autodepends = .autodepend
 !include $(cg_dir)/mif/hostos.mif
 !include $(dwarf_dir)/dw/client.mif
 
-!ifdef bootstrap
-cg_inc_dirs = -I$(cfloat_dir)/h -I$(watcom_dir)/h -I$(owl_dir)/h &
-  -I$(cg_dir)/h -I$(cg_dir)/intel/h -I$(cg_dir)/intel/$(target_CPU)/h
-!endif
-
 !ifndef patch_level
 patch_level=0
 !endif
@@ -121,29 +116,14 @@ cxname = wcc$(target_cpu)s.$(final_exe_$(host_os))
 build_rc_nt_386 = nt
 
 !ifdef bootstrap
-inc_dirs = -I. -I../h
-inc_dirs += -I$(cc_dir)/h $(cg_inc_dirs)
-inc_dirs += -I$(inline_asm_h)
-inc_dirs += -I$(dwarf_dir)/dw/h
-inc_dirs += -I$(comp_cfg_dir)/h
-inc_dirs += -I$(fe_misc_dir)/h
 
 ldflags = -L$(clib_dir)/$(%OBJDIR) -L$(wres_dir)/$(%OBJDIR)
 libs = -lwatcom -lwres
 
-!else
-
-inc_dirs =.;
-inc_dirs +=$(cc_dir)/h;$(cg_inc_dirs);
-inc_dirs +=$(inline_asm_h);
-inc_dirs +=$(dwarf_dir)/dw/h;
-inc_dirs +=$(comp_cfg_dir)/h;
-inc_dirs +=$(fe_misc_dir)/h
-
 !endif
 
-.BEFORE
-        @set include=$(inc_path)
+inc_dirs  = -I. -I"../h" -I"$(cc_dir)/h" $(cg_inc_dirs) -I"$(inline_asm_h)"
+inc_dirs += -I"$(dwarf_dir)/dw/h" -I"$(comp_cfg_dir)/h" -I"$(fe_misc_dir)/h"
 
 .c: $(cc_dir)/c;$(inline_asm_dir)/c;$(watcom_dir)/c;$(fe_misc_dir)/c
 .h: $(cc_dir)/h;$(inline_asm_h);$(watcom_dir)/h
@@ -152,7 +132,7 @@ inc_dirs +=$(fe_misc_dir)/h
 extra_c_flags += $(defines)
 
 !ifdef bootstrap
-def_targ = wcc$(target_CPU)
+def_targ = wcc$(target_cpu)
 !endif
 !ifndef def_targ
 !ifdef debug
@@ -181,7 +161,7 @@ target: $(def_targ) .SYMBOLIC
 xname = wcc$(target_cpu)
 !endif
 
-$(xname): eraseall.obj $(pre_obj_deps) $(cc_objs) $(xlibs) $(cg_deps) $(cc_dir)/ccobjs.mif
+$(xname): $(pre_obj_deps) $(cc_objs) $(xlibs) $(cg_deps) $(cc_dir)/ccobjs.mif
 !ifdef bootstrap
         $(cc) $(ldflags) -o $@ $(cc_objs) $(xlibs) $(libs) $(cg_deps)
 !else
@@ -199,12 +179,12 @@ $(xname): eraseall.obj $(pre_obj_deps) $(cc_objs) $(xlibs) $(cg_deps) $(cc_dir)/
 !endif
 !endif
 
-$(dxname): eraseall.obj $(pre_obj_deps) $(cc_objs) $(xlibs) $(cg_debug_deps) $(cc_dir)/ccobjs.mif
+$(dxname): $(pre_obj_deps) $(cc_objs) $(xlibs) $(cg_debug_deps) $(cc_dir)/ccobjs.mif
         @%make linkfile
         @%append $^&.lnk $(cg_debug_libs)
         $(linker) $(lflags) @$^&.lnk
 
-$(cxname): eraseall.obj $(pre_obj_deps) $(cc_objs) $(xlibs) $(cg_stub_deps) $(cc_dir)/ccobjs.mif
+$(cxname): $(pre_obj_deps) $(cc_objs) $(xlibs) $(cg_stub_deps) $(cc_dir)/ccobjs.mif
         @%make linkfile
         @%append $^&.lnk $(cg_stub_libs)
         $(linker) $(lflags) @$^&.lnk
@@ -291,10 +271,10 @@ code$(target_cpu).gh : xcode$(target_cpu).tmp ./mkcode.exe
         $]@ $[@ $^@
 !endif
 
-target_as_axp=wasmaxp -zq -w4
-target_as_i86=bwasm -zq -w4
-target_as_386=bwasm -zq -w4 -3
-target_as_ppc=wasmppc -zq -w4
+target_as_axp = wasmaxp -zq -w4
+target_as_i86 = bwasm -zq -w4
+target_as_386 = bwasm -zq -w4 -3
+target_as_ppc = wasmppc -zq -w4
 
 xcode$(target_cpu).tmp: ../a/code$(target_cpu).asm
         $(target_as_$(target_cpu)) -fo=.obj $[@
@@ -310,20 +290,20 @@ wcc.u: ../usage.sp msgencod.exe intlbin.exe
         wsplice -k T$(target_cpu) -k H$(host_cpu) -k OS_$(host_os) -u -t8 ../usage.sp wcc.u
 
 ./usageenc.exe: $(fe_misc_dir)/c/usageenc.c ../jusage.sp
-        $(bld_cl) $[@ $(wcl_util_opts)
+        $(bld_cl) $(inc_path) $[@ $(wcl_util_opts)
 
 usage01.int : ./usageenc.exe ../jusage.sp
         wsplice -k T$(target_cpu) -k H$(host_cpu) -k OS_$(host_os) ../jusage.sp usageenc.int
         $[@ usageenc.int usage01.int
 
 ./msgencod.exe: $(fe_misc_dir)/c/msgencod.c
-        $(bld_cl) $[@ $(wcl_util_opts)
+        $(bld_cl) $(inc_path) $[@ $(wcl_util_opts)
 
 msgtxt.gh msgdefs.gh msgattr.gh errors01.int : ./msgencod.exe ../gml/cerrs.gml
         $[@ -i -ip -q -g ../gml/cerrs.gml msgtxt.gh msgdefs.gh msgattr.gh
 
 ./intlbin.exe: $(fe_misc_dir)/c/intlbin.c
-        $(bld_cl) $[@ $(wcl_util_opts)
+        $(bld_cl) $(inc_path) $[@ $(wcl_util_opts)
 
 $(intname)01.int : ./intlbin.exe errors01.int usage01.int
         $[@ $(intname)
@@ -335,7 +315,7 @@ cc.rc : ./genverrc.exe ../rc/r_$(host_os)$(host_cpu).rc
         $[@ ../rc/r_$(host_os)$(host_cpu).rc cc.rc $$ $(dllname).dll $(patch_level)
 
 ./mkopcode.exe: $(wasm_dir)/mkopcode.c
-        $(bld_cl) $[@ $(wcl_util_opts)
+        $(bld_cl) $(inc_path) $[@ $(wcl_util_opts)
 
 inlnops.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
         $[@ $(wasm_dir)/inlnops.tok $^@
@@ -347,9 +327,5 @@ key_objs = ../h/c.key ../h/pc.key ../h/seh.key ../h/dummy.key
 
 weights.gh keywords.gh : ./findhash.exe $(key_objs)
         $[@ -q $(key_objs)
-
-eraseall.obj : ../compile.gbl
-        rm -f *.?bj
-        wtouch eraseall.obj
 
 wccexed: $(dxname) .symbolic .explicit

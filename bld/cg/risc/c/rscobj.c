@@ -29,7 +29,7 @@
 ****************************************************************************/
 
 
-#include <io.h>
+#include <unistd.h>
 #include <assert.h>
 #include <string.h>
 #include "standard.h"

@@ -1,3 +1,5 @@
+# This file is designed to be included by users of the cg library
+
 # target_cpu = 386 | i86 | ppc | axp
 # host_cpu = 386 | ppc | axp
 # host_os  = nt | os2 | qnx | dos | linux
@@ -23,21 +25,21 @@ o_dir_i86 = $(cg_dir)/intel/i86/$(obj_dir).dbg
 o_dir_386 = $(cg_dir)/intel/386/$(obj_dir)
 o_dir_i86 = $(cg_dir)/intel/i86/$(obj_dir)
 !endif
-i_dir_386 = $(cg_dir)/intel/386/h;$(cg_dir)/intel/h
-i_dir_i86 = $(cg_dir)/intel/i86/h;$(cg_dir)/intel/h
+i_path_386 = -I"$(cg_dir)/intel/386/h" -I"$(cg_dir)/intel/h"
+i_path_i86 = -I"$(cg_dir)/intel/i86/h" -I"$(cg_dir)/intel/h"
 
-o_dir_axp = $(cg_dir)/risc/axp/$(obj_dir)
-i_dir_axp = $(cg_dir)/risc/axp/h;$(cg_dir)/risc/h;$(owl_dir)/h
+o_dir_axp  = $(cg_dir)/risc/axp/$(obj_dir)
+i_path_axp = -I"$(cg_dir)/risc/axp/h" -I"$(cg_dir)/risc/h" -I"$(owl_dir)/h"
 
-o_dir_ppc = $(cg_dir)/risc/ppc/$(obj_dir)
-i_dir_ppc = $(cg_dir)/risc/ppc/h;$(cg_dir)/risc/h;$(owl_dir)/h
+o_dir_ppc  = $(cg_dir)/risc/ppc/$(obj_dir)
+i_path_ppc = -I"$(cg_dir)/risc/ppc/h" -I"$(cg_dir)/risc/h" -I"$(owl_dir)/h"
 
 !ifndef o_dir_$(target_cpu)
 !error unsupported target_cpu
 !endif
 
-o_dir = $(o_dir_$(target_cpu))
-i_dir = $(i_dir_$(target_cpu));$(cg_dir)/h;$(cfloat_dir)/h
+o_dir  = $(o_dir_$(target_cpu))
+i_path = $(i_path_$(target_cpu)) -I"$(cg_dir)/h" -I"$(cfloat_dir)/h"
 
 cg_target = $(target_cpu)
 
@@ -54,7 +56,7 @@ use_owl_lib_i86 = 0
 
 !include $(cg_dir)/mif/cg.mif
 
-cg_inc_dirs = $(i_dir)
+cg_inc_dirs = $(i_path)
 
 !ifeq cg_dll 1
 cg_deps = $(o_dir).dll/cgdllcli.lib
