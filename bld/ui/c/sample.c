@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Sample app for the ui library.
 *
 ****************************************************************************/
 
@@ -105,20 +104,20 @@ static MENUITEM editmenu[] = {
 };
 
 static MENUITEM barmenu[] = {
-        { "File",     EV_NO_EVENT,      0 },
-        { "Edit",     EV_NO_EVENT,      1 },
+        { "File",               EV_NO_EVENT,      0 },
+        { "Edit",               EV_NO_EVENT,      1 },
         { "LongMenuItem_1",     EV_NO_EVENT,      1 },
         { "LongMenuItem_2",     EV_NO_EVENT,      1 },
         { "LongMenuItem_3",     EV_NO_EVENT,      1 },
         { "LongMenuItem_4",     EV_NO_EVENT,      1 },
         { "LongMenuItem_5",     EV_NO_EVENT,      1 },
-        { "MidFile",     EV_NO_EVENT,      2 },
+        { "MidFile",            EV_NO_EVENT,      2 },
         { "LongMenuItem_6",     EV_NO_EVENT,      1 },
         { "LongMenuItem_7",     EV_NO_EVENT,      1 },
         { "LongMenuItem_8",     EV_NO_EVENT,      1 },
         { "LongMenuItem_9",     EV_NO_EVENT,      1 },
-        { "Go!",      EV_GO,            0 },
-        { "File",     EV_NO_EVENT,      2 },
+        { "Go!",                EV_GO,            0 },
+        { "File",               EV_NO_EVENT,      2 },
         NULL
 };
 
@@ -194,10 +193,6 @@ static EVENT oplist[] = {
         EV_ESCAPE,
         EV_NO_EVENT
 };
-
-#ifndef UNIX
-extern  void                system();
-#endif
 
 typedef struct an_event_string{
     EVENT       ev;

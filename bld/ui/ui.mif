@@ -23,10 +23,8 @@ extra_c_flags += -os-s
 $(name).lib: $(objfiles)
         $(librarian) -b $^@ $<
 
-.$(EXE): ../x
-
 !ifeq SAMPLE_MODE WIN_C_M_J
-sample.$(EXE) : samplew.obj sampdial.obj $(name).lib
+sample.exe : samplew.obj sampdial.obj $(name).lib
         %create sample.lnk
         %append sample.lnk system windows op m D A library $(name).lib
         %append sample.lnk n sample
@@ -35,7 +33,7 @@ sample.$(EXE) : samplew.obj sampdial.obj $(name).lib
         %append sample.lnk import RESURRECTION GDI.122
         wlink @sample.lnk
 !else ifeq SAMPLE_MODE WIN_C_M
-sample.$(EXE) : samplew.obj sampdial.obj swap.obj $(name).lib
+sample.exe : samplew.obj sampdial.obj swap.obj $(name).lib
         %create sample.lnk
         %append sample.lnk system windows op m D A library $(name).lib
         %append sample.lnk n sample
@@ -44,8 +42,8 @@ sample.$(EXE) : samplew.obj sampdial.obj swap.obj $(name).lib
         %append sample.lnk import RESURRECTION GDI.122
         wlink @sample.lnk
 !else
-sample.$(EXE) : sample.obj sampdial.obj $(name).lib
-        !wlink system $(FORM) op m,st=32k D A library $(name).lib n sample f sample, sampdial
+sample.exe : sample.obj sampdial.obj $(name).lib
+        $(linker) $(lflags) op q,m,st=32k library $(name).lib n sample f sample, sampdial
 !endif
 
 make: .SYMBOLIC
