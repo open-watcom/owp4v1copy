@@ -43,6 +43,7 @@ struct blk {
     blk_t *     next;
     unsigned    index;
     unsigned    modified : 1;
+    unsigned    : 15;
     char        data[1];
 };
 
@@ -436,8 +437,8 @@ extern void CarveRestart( carve_t cv, unsigned num )
     cv->insert = NULL;
 }
 
-static void CarveZapBlock( carve_t cv, blk_t *blk, void *dummy )
-/**************************************************************/
+static void CarveZapBlock( carve_t cv, void *blk, void *dummy )
+/*************************************************************/
 {
     dummy = dummy;
     MakeFreeList( cv, blk, 0 );

@@ -330,10 +330,10 @@ static void SortGroup( seg_leader *seg )
     }
 }
 
-static bool CheckGroupSplit( seg_leader *leader, section *sect )
-/**************************************************************/
+static bool CheckGroupSplit( void *leader, void *sect )
+/*****************************************************/
 {
-    return leader->class->section != sect;
+    return ((seg_leader *)leader)->class->section != (section *)sect;
 }
 
 static void FindSplitGroups( void )

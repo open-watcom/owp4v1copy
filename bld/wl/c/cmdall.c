@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  CMDALL : commands common to all executable formats 
 *
 ****************************************************************************/
 
-
-/*
- *  CMDALL : commands common to all executable formats
- *
-*/
 
 #include <malloc.h>
 #include <string.h>
@@ -1029,9 +1023,10 @@ extern bool ProcSystem( void )
     return( TRUE );
 }
 
-static void CopyBlocks( char **copyptr, char *data, unsigned size )
-/*****************************************************************/
+static void CopyBlocks( void *copyp, char *data, unsigned size )
+/**************************************************************/
 {
+    char **copyptr = copyp;
     memcpy( *copyptr, data, size );
     *copyptr += size;
 }

@@ -24,16 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description: COMDEF -- support for Microsoft COMDEFs 
 *
 ****************************************************************************/
-
-
-/*
-   COMDEF -- support for Microsoft COMDEFs
-
-*/
 
 #include <string.h>
 #include <stdlib.h>
@@ -143,9 +136,10 @@ static comdat_piece * AllocCDatPiece( void )
     return( piece );
 }
 
-static void FreeCDatPiece( comdat_piece * piece )
-/***********************************************/
+static void FreeCDatPiece( void * piec )
+/**************************************/
 {
+    comdat_piece *piece = piec;
     if( piece->free_data ) {
         _LnkFree( piece->data );
     }
@@ -265,9 +259,10 @@ static void DoAltDef( comdat_info *info )
     }
 }
 
-static void FinishComdat( comdat_info *info )
-/*******************************************/
+static void FinishComdat( void *inf )
+/***********************************/
 {
+    comdat_info *info = inf;
     if( info->flags & SYM_DEAD ) {      // is redefined
         DoAltDef( info );
     } else {
@@ -387,10 +382,10 @@ static offset CalcLIDataLength( void )
     return( total );
 }
 
-static bool CompInfoSym( comdat_info *info, symbol *sym )
-/*******************************************************/
+static bool CompInfoSym( void *info, void *sym )
+/**********************************************/
 {
-    return info->sym == sym;
+    return ((comdat_info *)info)->sym == (symbol *)sym;
 }
 
 #ifdef _INT_DEBUG
