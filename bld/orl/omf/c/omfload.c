@@ -195,7 +195,7 @@ static orl_return       processExplicitFixup( omf_file_handle ofh, int is32,
     int                 location;
     int                 offset;
     int                 fmethod;
-    omf_idx             fidx;
+    omf_idx             fidx = 0;
     int                 thred;
     int                 tmethod;
     omf_idx             tidx;
@@ -566,8 +566,8 @@ static orl_return       doLINNUM( omf_file_handle ofh, omf_rectyp typ )
     orl_return          err;
     omf_bytes           buffer;
     long                len;
-    omf_idx             seg;
-    omf_idx             name;
+    omf_idx             seg = 0;
+    omf_idx             name = 0;
     unsigned_16         line;
     unsigned_32         offset;
     int                 wordsize;
@@ -636,7 +636,7 @@ static orl_return       doPUBDEF( omf_file_handle ofh, omf_rectyp typ )
     int                 slen;
     omf_idx             seg;
     omf_idx             group;
-    omf_frame           frame;
+    omf_frame           frame = 0;
     omf_bytes           name;
     orl_sec_offset      offset;
     int                 is32;
@@ -723,7 +723,7 @@ static orl_return       doSEGDEF( omf_file_handle ofh, omf_rectyp typ )
     int                 is32;
     int                 wordsize;
     orl_sec_alignment   align;
-    orl_sec_size        size;
+    orl_sec_size        size = 0;
     int                 combine;
     int                 max = 0;
     int                 use32 = 0;
@@ -950,9 +950,9 @@ static orl_return       doCOMDAT( omf_file_handle ofh, omf_rectyp typ )
     omf_bytes           buffer;
     long                len;
     int                 wordsize;
-    omf_idx             seg;
-    omf_idx             group;
-    omf_frame           frame;
+    omf_idx             seg = 0;
+    omf_idx             group = 0;
+    omf_frame           frame = 0;
     omf_idx             name;
     uint_8              attr;
     int                 align;

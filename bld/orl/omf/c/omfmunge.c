@@ -485,7 +485,7 @@ static orl_return       writeAndFixupLIData( omf_file_handle ofh,
     int                 hi;
     int                 lo;
     omf_bytes           ptr;
-    orl_return          err;
+    orl_return          err = ORL_OKAY;
     omf_tmp_fixup       ftr;
     omf_tmp_fixup       ntr;
     int                 x;
@@ -587,7 +587,7 @@ static orl_return       expandPrevLIData( omf_file_handle ofh )
     omf_sec_handle      sh;
     int                 size;
     omf_bytes           buffer;
-    orl_return          err;
+    orl_return          err = ORL_OKAY;
     unsigned char       tmp[1024];
     omf_tmp_fixup       ftr;
     orl_sec_offset      offset;
@@ -677,7 +677,7 @@ static orl_sec_offset   calcLIDataLength( int is32, omf_bytes *input, int *len )
     long        tmp;
     uint_32     repeat;
     long        block;
-    long        result;
+    long        result = 0;
 
     assert( input );
     assert( *input );

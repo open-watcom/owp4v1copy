@@ -46,7 +46,7 @@ orl_return      OmfParseComments( omf_sec_handle sh, orl_note_callbacks *cb,
                                   void *cookie )
 {
     omf_quantity        x;
-    orl_return          err;
+    orl_return          err = ORL_OKAY;
     omf_comment_struct  *comment;
     omf_scan_tab_struct st;
     omf_sec_handle      csh;
