@@ -1,4 +1,4 @@
-#pmake:all large 16bit calls windows iX86 static build os_windows cpu_i86
+#pmake:all large 16bit calls windows iX86 static build os_win os_windows cpu_i86
 processor=286
 model=ml
 subdir=ml

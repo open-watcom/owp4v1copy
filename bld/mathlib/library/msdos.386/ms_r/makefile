@@ -1,4 +1,4 @@
-#pmake:all small 32bit register calls msdos iX86 static build os_dos cpu_386
+#pmake:all small 32bit register calls msdos iX86 static build os_nov os_dos os_osi os_os2 os_win os_nt cpu_386
 processor=386
 model=ms
 subdir=ms_r

@@ -1,4 +1,4 @@
-#pmake:all compact 16bit inline msdos iX86 static build os_dos cpu_i86
+#pmake:all compact 16bit inline msdos iX86 static build os_dos os_os2 cpu_i86
 processor=287
 model=mc
 subdir=mc
