@@ -205,10 +205,6 @@ _WCRTLINK void  __F_NAME(_splitpath2,_wsplitpath2)( CHAR_TYPE const *inp, CHAR_T
     outp = pcopy( path, outp, startp, fnamep );
     if( dotp == NULL )
         dotp = inp;
-#if defined(__UNIX__)
-    if( ext == NULL )
-        dotp = inp;
-#endif
     outp = pcopy( fn, outp, fnamep, dotp );
     outp = pcopy( ext, outp, dotp, inp );
 }
