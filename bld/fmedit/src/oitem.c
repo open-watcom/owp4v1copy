@@ -44,7 +44,7 @@
 
 /* forward references */
 
-static BOOL PASCAL OItemDispatch( ACTION, OITEM *, void *, void * );
+static BOOL WINAPI OItemDispatch( ACTION, OITEM *, void *, void * );
 static BOOL OItemRegister( OITEM *, void *, void * );
 static BOOL OItemLocation( OITEM *, RECT *, void * );
 static BOOL OItemMove( OITEM *, void *, void * );
@@ -80,7 +80,7 @@ static DISPATCH_ITEM OItemActions[] = {
 
 static FARPROC DispatchRtn = NULL;
 
-BOOL WINIEXP OItemDispatch( ACTION id, OITEM * obj, void * p1, void * p2 )
+BOOL WINAPI OItemDispatch( ACTION id, OITEM * obj, void * p1, void * p2 )
 /************************************************************************/
 
 /* dispatch the desired operation to the correct place */
