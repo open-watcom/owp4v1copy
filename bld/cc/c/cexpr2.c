@@ -288,43 +288,34 @@ TREEPTR LongLeaf( target_long value )
     return( leaf );
 }
 
-TREEPTR LongLeaf64( uint64 value, DATA_TYPE decl_type )
+local TREEPTR EnumLeaf( struct enum_info *eip )
 {
+    DATA_TYPE   decl_type;
     TREEPTR     leaf;
 
     leaf = LeafNode( OPR_PUSHINT );
-    leaf->op.const_type = decl_type;
-    leaf->op.long64_value = value;
-    leaf->expr_type = GetType( decl_type );
-    return( leaf );
-}
-
-local TREEPTR EnumLeaf( struct enum_info *eip )
-{
-    DATA_TYPE decl_type;
-#if 0
-    XREFPTR     xref;
-
-    if( CompFlags.emit_browser_info ) {
-        xref = eip->enum_entry->xref;
-        xref->next_xref = NewXref( xref->next_xref );
-    }
-#endif
     decl_type = eip->parent->sym_type->object->decl_type;
     switch( decl_type ) {
-    case TYPE_LONG64:
-    case TYPE_ULONG64:
-    case TYPE_LONG:
-    case TYPE_ULONG:
+    case TYPE_CHAR:
+    case TYPE_UCHAR:
+    case TYPE_SHORT:
+    case TYPE_USHORT:
+        decl_type = TYPE_INT;
+        // fall through
     case TYPE_INT:
     case TYPE_UINT:
-        return( LongLeaf64( eip->value , decl_type ) );
-    case TYPE_UCHAR:
-    case TYPE_USHORT:
-        return( UIntLeaf( eip->value.u._32[L] ) );
-    default:
-        return( IntLeaf( eip->value.u._32[L] ) );
+    case TYPE_LONG:
+    case TYPE_ULONG:
+        leaf->op.long_value = eip->value.u._32[L];
+        break;
+    case TYPE_LONG64:
+    case TYPE_ULONG64:
+        leaf->op.long64_value = eip->value;
+        break;
     }
+    leaf->op.const_type = decl_type;
+    leaf->expr_type = GetType( decl_type );
+    return( leaf );
 }
 
 TREEPTR VarLeaf( SYMPTR sym, SYM_HANDLE sym_handle )
