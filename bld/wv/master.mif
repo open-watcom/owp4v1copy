@@ -358,7 +358,7 @@ resname=$+$(resname)$-dll
 !endif
 resfile = $(resname).res
 
-$(exe_name) : eraseall.obj $(resfile) fingmsg.obj $(objs) $(sysobjs) $(libs) $(lnk)
+$(exe_name) : $(resfile) fingmsg.obj $(objs) $(sysobjs) $(libs) $(lnk)
         $(linker) $(lflags) name $^@ @$(lnk) $(endsect)
 !ifneq sys_windowed 1
         wstrip -q -a -r $^@ . $(resfile)
@@ -375,7 +375,7 @@ $(exe_name) : eraseall.obj $(resfile) fingmsg.obj $(objs) $(sysobjs) $(libs) $(l
 !endif
 !endif
 
-wd.lib : eraseall.obj litdef.gh $(engine_objs) $(sysobjs)
+wd.lib : litdef.gh $(engine_objs) $(sysobjs)
         @%create tmp.lbc
         @for %i in ($(engine_objs) $(sysobjs)) do @%append tmp.lbc +%i
         $(librarian) -b -n wd.lib @tmp.lbc
@@ -655,9 +655,3 @@ _guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
 
 litdef.gh : ./mkstr.exe
         $[@ $^@
-
-####################
-
-eraseall.obj : $(wv_dir)/compile.gbl
-        if exist *.obj erase *.obj
-        wtouch eraseall.obj

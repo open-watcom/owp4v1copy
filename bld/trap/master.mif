@@ -187,7 +187,7 @@ nversion_tmp = ./nversion.tmp
 nversion_tmp =
 !endif
 
-w : .SYMBOLIC $(trperr_h) $(jtrperr_h)
+w : .SYMBOLIC $(trperr_h) #$(jtrperr_h)
         @set LINK_DEBUG=d a op symfile
         @%make $(target)
 
@@ -217,7 +217,7 @@ $(trperr_h) : ./mkstr.exe
         $[@ $^@
 
 ./jmkstr.exe: $(mkstr_c) $(trap_msg)
-        $(bld_cl) $(wcl_util_opts) -I"$(trap_dir)/h" -dJAPANESE_MESSAGES $[@
+        $(bld_cl) $(wcl_util_opts) -I"$(trap_dir)/h" -DJAPANESE_MESSAGES $[@
 
 $(jtrperr_h) : ./jmkstr.exe
         $[@ $^@

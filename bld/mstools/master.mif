@@ -7,15 +7,12 @@ proj_name = mstools
 mstools_autodepends = .AUTODEPEND
 !endif
 
-.CONTINUE
-.ERASE
-
-!ifeq host_CPU axp
-targdef=-d__TARGET_AXP__
-!else ifeq host_CPU ppc
-targdef=-d__TARGET_PPC__
+!ifeq host_cpu axp
+targdef = -D__TARGET_AXP__
+!else ifeq host_cpu ppc
+targdef = -D__TARGET_PPC__
 !else
-targdef=-d__TARGET_$(host_CPU)__
+targdef = -D__TARGET_$(host_cpu)__
 !endif
 
 #
@@ -28,7 +25,7 @@ mstools_objs        = cmdline.obj cmdscan.obj context.obj error.obj file.obj mem
 .c :  ../c;../../c
 .h :  ../h;../../h
 
-inc_dirs = ../h;../../h;../c;../../c;
+inc_dirs = -I"../h" -I"../../h"
 
 #
 # Include standard .mif files to do the work.
@@ -53,4 +50,4 @@ optparsc.gh optparsh.gh : ./optencod.exe ../gml/ms.gml
 # Dependencies for source in $(fe_misc_dir).
 #
 ./optencod.exe : $(fe_misc_dir)/c/optencod.c
-        $(bld_cl) $(wcl_util_opts) -i"$(fe_misc_dir)/h;$(watcom_dir)/h" $[@
+        $(bld_cl) $(wcl_util_opts) -I"$(fe_misc_dir)/h" -I"$(watcom_dir)/h" $[@

@@ -2,7 +2,7 @@ proj_name = cvpack
 
 cvpack_autodepends = .autodepend
 
-inc_dirs = $(watcom_dir)/h;$(dev_dir)/$(proj_name)/hpp
+inc_dirs = -I"$(dev_dir)/$(proj_name)/hpp"
 
 extra_cpp_flags = -xs
 extra_l_flags   = name $(exe_file) op map #option eliminate

@@ -49,14 +49,14 @@ objects = $(objs_$(target)_$(host_cpu)) sample.obj sampdata.obj io.obj sysio.obj
 
 extra_c_flags =  -s
 
-extra_c_flags_dos_dos = -dREPORT_TYPE=__interrupt -dFAR_PTR=__far
-extra_c_flags_dos_rsi = -dREPORT_TYPE= -dFAR_PTR=__far -zu -hc
-extra_c_flags_dos_pls = -dREPORT_TYPE= -dFAR_PTR= -d_PLS
+extra_c_flags_dos_dos = -DREPORT_TYPE=__interrupt -DFAR_PTR=__far
+extra_c_flags_dos_rsi = -DREPORT_TYPE= -DFAR_PTR=__far -zu -hc
+extra_c_flags_dos_pls = -DREPORT_TYPE= -DFAR_PTR= -D_PLS
 extra_c_flags_dos     = $(extra_c_flags_dos_$(target))
-extra_c_flags_win     = -dREPORT_TYPE= -dFAR_PTR=__far -zu -zw -orlt
-extra_c_flags_nov     = -dREPORT_TYPE= -dFAR_PTR= -dNETWARE -3s -zp1
-extra_c_flags_nt      = -dREPORT_TYPE= -dFAR_PTR=
-extra_c_flags_os2     = -dREPORT_TYPE= -dFAR_PTR=
+extra_c_flags_win     = -DREPORT_TYPE= -DFAR_PTR=__far -zu -zw -orlt
+extra_c_flags_nov     = -DREPORT_TYPE= -DFAR_PTR= -DNETWARE -3s -zp1
+extra_c_flags_nt      = -DREPORT_TYPE= -DFAR_PTR=
+extra_c_flags_os2     = -DREPORT_TYPE= -DFAR_PTR=
 
 extra_c_flags_i86     = -fpc -2
 extra_c_flags_386     = -fpc
@@ -71,16 +71,16 @@ extra_a_flags_dos     = $(extra_a_flags_dos_$(target))
 
 extra_a_flags_dbgliba = -zcm
 
-extra_rc_flags_nt          = -dNT
-extra_rc_flags_os2_386     = -dOS22
-extra_rc_flags_os2_i86     = -dOS2
+extra_rc_flags_nt          = -DNT
+extra_rc_flags_os2_386     = -DOS22
+extra_rc_flags_os2_i86     = -DOS2
 extra_rc_flags_os2         = $(extra_rc_flags_os2_$(host_cpu))
-extra_rc_flags_dos_dos_i86 = -dDOS
-extra_rc_flags_dos_rsi_i86 = -dRSI
-extra_rc_flags_dos_pls_386 = -dPLS
+extra_rc_flags_dos_dos_i86 = -DDOS
+extra_rc_flags_dos_rsi_i86 = -DRSI
+extra_rc_flags_dos_pls_386 = -DPLS
 extra_rc_flags_dos         = $(extra_rc_flags_dos_$(target)_$(host_cpu))
-extra_rc_flags_nov         = -dNLM
-extra_rc_flags_win         = -dWIN -30
+extra_rc_flags_nov         = -DNLM
+extra_rc_flags_win         = -DWIN -30
 extra_rc_flags             = $(extra_rc_flags_$(host_os))
 
 nlm_imports = &
@@ -116,16 +116,15 @@ extra_l_flags_os2 = $(extra_l_flags_os2_$(host_cpu))
 extra_l_flags_win = option heap=10k, stack=10k segment class 'CODE' preload fixed segment class 'DATA' preload fixed lib commdlg,toolhelp
 
 !ifeq target nov
-inc_dirs=$(ow_nwoss_root)/common/h;$(ow_nwoss_root)/nw4/h;$(nwsrc);$(dig_dir)/h;
+inc_dirs = -I"$(ow_nwoss_root)/common/h" -I"$(ow_nwoss_root)/nw4/h" -I"$(nwsrc)"
 !else ifeq target win
-inc_dirs = ../h;$(sdkdir)/misc;$(watcom_dir)/h;$(dig_dir)/h;
+inc_dirs = -I"../h" -I"$(sdkdir)/misc"
 !else ifeq target rsi
-inc_dirs = ../rsii86;$(rsilib);$(dig_dir)/h
+inc_dirs = -I"../rsii86" -I"$(rsilib)"
 !else ifeq target pls
-inc_dirs = $(plsdir);$(dig_dir)/h
-!else
-inc_dirs = $(watcom_dir)/h;$(dig_dir)/h;
+inc_dirs = -I"$(plsdir)"
 !endif
+inc_dirs += -I"$(dig_dir)/h"
 
 !ifeq target dos
 .c: ../dosi86;../c
@@ -234,5 +233,4 @@ $(xname).res : ../h/wsamplew.rc ../h/wsampres.rc ../h/wsamplew.ico ../h/wsample.
 !else
 $(xname).res : ../h/wsample.rc ../h/wmsg.h
 !endif
-    @set include=$(inc_path)
-    $(rc_aui) $(extra_rc_flags) $[@ -fo=$^@
+    $(rc_aui) $(extra_rc_flags) $(inc_path) $[@ -fo=$^@
