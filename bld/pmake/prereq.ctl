@@ -5,19 +5,19 @@
 #================================
     cdsay <projdir>\dos386
     wmake -h
-    <CPCMD> pmake.exe <relroot>\bld\build\bin\pmake.exe
+    <CPCMD> pmake.exe <owroot>\bld\build\bin\pmake.exe
     cdsay <projdir>
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
     cdsay <projdir>\os2386
     wmake -h
-    <CPCMD> pmake.exe <relroot>\bld\build\binp\pmake.exe
+    <CPCMD> pmake.exe <owroot>\bld\build\binp\pmake.exe
     cdsay <projdir>
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
     cdsay <projdir>\nt386
     wmake -h
-    <CPCMD> pmake.exe <relroot>\bld\build\binnt\pmake.exe
+    <CPCMD> pmake.exe <owroot>\bld\build\binnt\pmake.exe
     cdsay <projdir>

@@ -5,19 +5,19 @@
 #================================
     cdsay <projdir>\dos386
     wmake -h
-    <CPCMD> ssl.exe <relroot>\bld\build\bin\ssl.exe
+    <CPCMD> ssl.exe <owroot>\bld\build\bin\ssl.exe
     cdsay <projdir>
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
     cdsay <projdir>\os2386
     wmake -h
-    <CPCMD> ssl.exe <relroot>\bld\build\binp\ssl.exe
+    <CPCMD> ssl.exe <owroot>\bld\build\binp\ssl.exe
     cdsay <projdir>
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
     cdsay <projdir>\nt386
     wmake -h
-    <CPCMD> ssl.exe <relroot>\bld\build\binnt\ssl.exe
+    <CPCMD> ssl.exe <owroot>\bld\build\binnt\ssl.exe
     cdsay <projdir>
