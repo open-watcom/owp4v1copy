@@ -34,4 +34,3 @@ extra_c_flags_wsvobj= -fh
 extra_c_flags_wstr2rc= -fh
 
 !include ../../mif/master.mif
-

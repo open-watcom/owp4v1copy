@@ -36,4 +36,3 @@ extra_c_flags_wprev= -fh
 extra_c_flags_wmen2rc= -fh
 
 !include ../../mif/master.mif
-

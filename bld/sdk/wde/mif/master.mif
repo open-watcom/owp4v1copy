@@ -214,4 +214,3 @@ wdemsgs.gh: wdetemp.gh
 wdetemp.gh: ../h/wde.msg
         @set include=$(inc_path)
         $(cc) $(cflags) -p $[@ -fo=$^@
-

@@ -159,4 +159,3 @@ wretemp.gh: ../h/wre.msg
 #################
 .rc.res: .AUTODEPEND
         $(rc) $(rc_flags) -r -ad $[@ -fo=$^@
-
