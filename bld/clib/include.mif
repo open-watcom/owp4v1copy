@@ -67,8 +67,4 @@ include_a_windows  =
 include_a_winnt    =
 include_a_linux    =
 
-!ifdef __LINUX__
 include_a_path =-i"$(include_default)$(include_a_$(system))$(include_watcom)"
-!else
-include_a_path =-i$(include_default)$(include_a_$(system))$(include_watcom)
-!endif

@@ -31,8 +31,9 @@
 
 
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
+#include <fcntl.h>
+#include <unistd.h>
 #ifdef __WATCOMC__
 #include <process.h>
 #endif
@@ -51,7 +52,6 @@
 #ifdef TRMEM
 #include "memutil.h"
 #endif
-
 
 #include "womp.h"
 #include "objprs.h"
@@ -84,6 +84,454 @@ pobj_state              pobjState;      // object file information for WOMP
 
 #define IS_EQ_CHAR( ch ) ( (ch)=='=' || (ch)=='#' )
 
+struct  option {
+    char        *option;
+    unsigned    value;
+    void        (*function)(void);
+};
+
+#define MAX_NESTING 15
+#define BUF_SIZE 512
+
+static char ParamBuf[ BUF_SIZE ];
+static unsigned char SwitchChar;
+static unsigned OptValue;
+static char *OptScanPtr;
+static char *OptParm;
+
+#if defined(__DOS__)
+
+extern  unsigned char    _DOS_Switch_Char();
+#pragma aux     _DOS_Switch_Char = \
+                        0x52            /* push dx */\
+                        0xb4 0x37       /* mov ah,37h    */\
+                        0xb0 0x00       /* mov al,00h    */\
+                        0xcd 0x21       /* int 21h       */\
+                        0x88 0xd0       /* mov al,dl     */\
+                        0x5a            /* pop dx        */;
+#endif
+
+unsigned char _dos_switch_char()
+{
+#if defined(__UNIX__)
+        return( '-' );
+#elif defined(__NT__)
+        return( '/' );
+#elif defined(__OS2__)
+        return( '/' );
+#elif defined(__WINDOWS_386__)
+        return( '/' );
+#else
+        return( _DOS_Switch_Char() );
+#endif
+}
+
+static char *CopyOfParm(void)
+/*******************************************/
+{
+    unsigned    len;
+
+    len = OptScanPtr - OptParm;
+    memcpy( ParamBuf, OptParm, len );
+    ParamBuf[ len ] = '\0';
+    return( ParamBuf );
+}
+
+static void SetCPU(void)
+/*******************************************/
+{
+    enum asm_token      token;
+    char                protect = FALSE;
+    char                *tmp;
+
+    for( tmp=OptParm; tmp < OptScanPtr; tmp++ ) {
+        if( *tmp == 'r' ) {
+            Options.naming_convention = ADD_USCORES;
+            add_constant( "__REGISTER__" );
+        } else if( *tmp == 's' ) {
+            add_constant( "__STACK__" );
+            Options.naming_convention = DO_NOTHING;
+        } else if( *tmp == '_' ) {
+            if( Options.naming_convention == DO_NOTHING ) {
+                Options.naming_convention = REMOVE_USCORES;
+            } else {
+                Options.naming_convention = DO_NOTHING;
+            }
+        } else if( *tmp == 'p' ) {
+            protect = TRUE;
+        } else if( *tmp == '"' ) {
+            char *dest;
+            tmp++;
+            dest = strchr(tmp, '"');
+            Options.default_name_mangler = AsmAlloc( dest - tmp + 1 );
+            dest = Options.default_name_mangler;
+            for( ; *tmp != '"'; dest++, tmp++ ) {
+                *dest = *tmp;
+            }
+            *dest = NULLC;
+        } else {
+            MsgPrintf1( MSG_UNKNOWN_OPTION, CopyOfParm() );
+            exit( 1 );
+        }
+    }
+
+    switch( OptValue ) {
+    case 0:
+        token = T_DOT_8086;
+        break;
+    case 1:
+        token = T_DOT_186;
+        break;
+    case 2:
+        token =  protect ? T_DOT_286P : T_DOT_286;
+        break;
+    case 3:
+        token =  protect ? T_DOT_386P : T_DOT_386;
+        break;
+    case 4:
+        token =  protect ? T_DOT_486P : T_DOT_486;
+        break;
+    case 5:
+        token =  protect ? T_DOT_586P : T_DOT_586;
+        break;
+    case 6:
+        token =  protect ? T_DOT_686P : T_DOT_686;
+        break;
+    case 7:
+        switch( Code->info.cpu & P_CPU_MASK ) {
+        case P_286:
+            token =  T_DOT_287;
+            break;
+        case P_386:
+        case P_486:
+        case P_586:
+        case P_686:
+            token =  T_DOT_387;
+            break;
+        case P_86:
+        case P_186:
+        default:
+            token =  T_DOT_8087;
+            break;
+        }
+        break;
+    }
+    cpu_directive( token );
+}
+
+static void SetFPU(void)
+/*******************************************/
+{
+    enum asm_token      token;
+
+    switch( OptValue ) {
+    case 'i':
+    case '7':
+                if(OptValue == 'i') {
+            Options.floating_point = DO_FP_EMULATION;
+            add_constant("__FPI__");
+                } else {
+            Options.floating_point = NO_FP_EMULATION;
+            add_constant("__FPI87__");
+                }
+        switch( Code->info.cpu & P_CPU_MASK ) {
+        case P_286:
+            token =  T_DOT_287;
+            break;
+        case P_386:
+        case P_486:
+        case P_586:
+        case P_686:
+            token =  T_DOT_387;
+            break;
+        case P_86:
+        case P_186:
+        default:
+            token =  T_DOT_8087;
+            break;
+        }
+        break;
+    case 'c':
+        Options.floating_point = NO_FP_ALLOWED;
+        add_constant("__FPC__");
+        token = T_DOT_NO87;
+        break;
+    case 0:
+        token = T_DOT_8087;
+        break;
+    case 2:
+        token = T_DOT_287;
+        break;
+    case 3:
+    case 5:
+        token = T_DOT_387;
+        break;
+    }
+    cpu_directive( token );
+}
+
+static void StripQuotes( char *fname )
+/*******************************************/
+{
+    char *s;
+    char *d;
+
+    if( *fname == '"' ) {
+        // string will shrink so we can reduce in place
+        d = fname;
+        for( s = d + 1; *s && *s != '"'; ++s ) {
+            if( *s == '\0' )break;
+            if( s[0] == '\\' && s[1] == '"' ) {
+                ++s;
+            }
+            *d++ = *s;
+        }
+        *d = '\0';
+    }
+}
+
+static char *GetAFileName(void)
+/*******************************************/
+{
+    char *fname;
+    fname = CopyOfParm();
+    StripQuotes( fname );
+    return( fname );
+}
+
+static void SetTargName( char *name, unsigned len )
+/*******************************************/
+{
+    char        *p;
+
+    if( Options.build_target != NULL ) {
+        AsmFree( Options.build_target );
+        Options.build_target = NULL;
+    }
+    if( name == NULL || len == 0 ) return;
+    Options.build_target = AsmAlloc( len + 1 );
+    p = Options.build_target;
+    while( len != 0 ) {
+        *p++ = toupper( *name++ );
+        --len;
+    }
+    *p++ = '\0';
+}
+
+static void Ignore(void) {};
+
+static void Set_BT(void)
+/*******************************************/
+{
+    SetTargName( OptParm,  OptScanPtr - OptParm );
+}
+
+static void Set_C(void)
+/*******************************************/
+{
+    Options.output_data_in_code_records = FALSE;
+}
+
+static void Set_D(void)
+/*******************************************/
+{
+    Options.debug_flag = (OptValue != 0) ? TRUE : FALSE;
+}
+
+#ifdef DEBUG_OUT
+static void Set_D6(void)
+/*******************************************/
+{
+    Options.debug = TRUE;
+    DebugMsg(( "debugging output on \n" ));
+}
+#endif
+
+static void DefineMacro(void)
+/*******************************************/
+{
+    add_constant( CopyOfParm() );
+}
+
+static void SetErrorLimit(void)
+/*******************************************/
+{
+    Options.error_limit = OptValue;
+}
+
+static void SetStopEnd(void)
+/*******************************************/
+{
+    Options.stop_at_end = TRUE;
+}
+
+static void Set_FR(void)
+/*******************************************/
+{
+    get_fname( GetAFileName(), ERR );
+}
+
+static void Set_FI(void)
+/*******************************************/
+{
+    InputQueueFile( GetAFileName() );
+}
+
+static void Set_FO(void)
+/*******************************************/
+{
+    get_fname( GetAFileName(), OBJ );
+}
+
+static void SetInclude(void)
+/*******************************************/
+{
+    AddStringToIncludePath( GetAFileName() );
+}
+
+static void Set_S(void)
+/*******************************************/
+{
+    Options.sign_value = TRUE;
+}
+
+static void SetMemoryModel(void)
+/*******************************************/
+{
+    char buffer[20];
+    char *model;
+
+    switch( OptValue ) {
+    case 'c':
+        model = "COMPACT";
+        break;
+    case 'f':
+        model = "FLAT";
+        break;
+    case 'h':
+        model = "HUGE";
+        break;
+    case 'l':
+        model = "LARGE";
+        break;
+    case 'm':
+        model = "MEDIUM";
+        break;
+    case 's':
+        model = "SMALL";
+        break;
+    case 't':
+        model = "TINY";
+        break;
+    default:
+        strcpy( buffer, "/m" );
+        strcat( buffer, (char*)&OptValue );
+        MsgPrintf1( MSG_UNKNOWN_OPTION, buffer );
+        exit( 1 );
+    }
+
+    strcpy( buffer, ".MODEL " );
+    strcat( buffer, model );
+    InputQueueLine( buffer );
+
+    return;    
+}
+
+static void Set_N(void)
+/*******************************************/
+{
+    set_some_kinda_name( OptValue, CopyOfParm() );
+}
+
+static void Set_O(void)
+/*******************************************/
+{
+    Options.allow_c_octals = TRUE;
+}
+
+static void Set_ZQ(void)
+/*******************************************/
+{
+    Options.quiet = TRUE;
+}
+
+static void Set_WE(void)
+/*******************************************/
+{
+    Options.warning_error = TRUE;
+}
+
+static void Set_WX(void)
+/*******************************************/
+{
+    Options.warning_level = 4;
+}
+
+static void SetWarningLevel(void)
+/*******************************************/
+{
+    Options.warning_level = OptValue;
+}
+
+static struct option const cmdl_options[] = {
+    { "0$",     0,        SetCPU },
+    { "1$",     1,        SetCPU },
+    { "2$",     2,        SetCPU },
+    { "3$",     3,        SetCPU },
+    { "4$",     4,        SetCPU },
+    { "5$",     5,        SetCPU },
+    { "7$",     7,        SetCPU },
+    { "bt=$",   0,        Set_BT },
+    { "c",      0,        Set_C },
+    { "d0",     0,        Set_D },
+    { "d1",     1,        Set_D },
+    { "d2",     2,        Set_D },
+    { "d3",     3,        Set_D },
+#ifdef DEBUG_OUT
+    { "d6",     6,        Set_D6 },
+#endif    
+    { "d+",     0,        Ignore },
+    { "d$",     0,        DefineMacro },
+    { "e=#",    0,        SetErrorLimit },
+    { "e",      0,        SetStopEnd },
+    { "fe=@",   0,        Set_FR },
+    { "fi=@",   0,        Set_FI },
+    { "fo=@",   0,        Set_FO },
+    { "fp0",    0,        SetFPU },
+    { "fp2",    2,        SetFPU },
+    { "fp3",    3,        SetFPU },
+    { "fp5",    5,        SetFPU },
+    { "fpi87",  '7',      SetFPU },
+    { "fpi",    'i',      SetFPU },
+    { "fpc",    'c',      SetFPU },
+    { "fr=@",   0,        Set_FR },
+    { "hc",     'c',      Ignore },
+    { "hd",     'd',      Ignore },
+    { "hw",     'w',      Ignore },
+    { "i=@",    0,        SetInclude },
+    { "j",      0,        Set_S },
+    { "mc",     'c',      SetMemoryModel },
+    { "mf",     'f',      SetMemoryModel },
+    { "mh",     'h',      SetMemoryModel },
+    { "ml",     'l',      SetMemoryModel },
+    { "mm",     'm',      SetMemoryModel },
+    { "ms",     's',      SetMemoryModel },
+    { "mt",     't',      SetMemoryModel },
+    { "nc=$",   'c',      Set_N },
+    { "nd=$",   'd',      Set_N },
+    { "nm=$",   'm',      Set_N },
+    { "nt=$",   't',      Set_N },
+    { "o",      0,        Set_O },
+    { "q",      0,        Set_ZQ },
+    { "s",      0,        Set_S },
+    { "u",      0,        Ignore },
+    { "we",     0,        Set_WE },
+    { "wx",     0,        Set_WX },
+    { "w=#",    0,        SetWarningLevel },
+    { "zq",     0,        Set_ZQ },
+    { 0,        0,        0 }
+};
+
 global_options Options = {
     /* sign_value       */      FALSE,
     /* stop_at_end      */      FALSE,
@@ -113,6 +561,15 @@ global_options Options = {
     /* allow_c_octals   */      FALSE,
 };
 
+static int OptionDelimiter( char c )
+/*********************************/
+{
+    if( c == ' ' || c == '-' || c == '\0' || c == '\t' || c == SwitchChar ) {
+        return( 1 );
+    }
+    return( 0 );
+}
+
 static int isvalidident( char *id )
 /*********************************/
 {
@@ -131,6 +588,7 @@ static int isvalidident( char *id )
     }
     return( NOT_ERROR );
 }
+
 static void get_os_include( void )
 /********************************/
 {
@@ -147,7 +605,7 @@ static void get_os_include( void )
     if( env != NULL ) AddStringToIncludePath( env );
 }
 
-void do_init_stuff( int argc, char *argv[] )
+static void do_init_stuff( char **cmdline )
 /******************************************/
 {
     char        *env;
@@ -174,7 +632,7 @@ void do_init_stuff( int argc, char *argv[] )
     }
     add_constant( buff );
     do_envvar_cmdline( "WASM", 0 );
-    parse_cmdline( argc, argv );
+    parse_cmdline( cmdline );
     set_build_target();
     get_os_include();
     env = getenv( "INCLUDE" );
@@ -191,24 +649,53 @@ void do_init_stuff( int argc, char *argv[] )
 char **_argv;
 #endif
 
-int main( int argc, char *argv[] )
+#ifdef __UNIX__
+
+int main( int argc, char **argv )
 /********************************/
 {
+    argc = argc;
 #ifndef __WATCOMC__
     _argv = argv;
 #endif
+
+#else
+
+int main()
+/********************************/
+{
+    char       *argv[2];
+    int        len;
+    char       *buff;
+#endif
+
     main_init();
-    do_init_stuff( argc, argv );
-
+    SwitchChar = _dos_switch_char();
+#ifndef __UNIX__
+    len = _bgetcmd( NULL, INT_MAX ) + 1;
+    buff = malloc( len );
+    if( buff != NULL ) {
+        argv[0] = buff;
+        argv[1] = NULL;
+        _bgetcmd( buff, len );
+    } else {
+        return(-1);
+    }
+    do_init_stuff( argv );
+#else
+    do_init_stuff( &argv[1] );
+#endif
     WriteObjModule();           // main body: parse the source file
-
     if( !Options.quiet ) {
         PrintStats();
     }
     MsgFini();
     main_fini();
+#ifndef __UNIX__
+    free( buff );
+#endif
     return( (int)Options.error_count ); /* zero if no errors */
-}
+    }
 
 static void usage_msg( void )
 /***************************/
@@ -382,41 +869,15 @@ static void get_fname( char *token, int type )
     }
 }
 
-static void do_envvar_cmdline( char *envvar, int level )
+static void do_envvar_cmdline( char *envvar )
 /******************************************************/
 {
-    #define MAX_NESTING 10
-    #define IS_SPACECHAR( ch )  ( ch == ' ' || ch == '\t' )
-    #define IS_SPACE_OR_NULL( ch )      ( IS_SPACECHAR( ch ) || ch == '\0' )
-
     char *cmdline;
-    char *token; /* current token */
-    char *next;  /* next token */
-
-    if( level >= MAX_NESTING ) {
-        return;
-    }
+    int  level = 0;
 
     cmdline = getenv( envvar );
-    if( cmdline == NULL ) return;
-    /* now handle the cmdline in the envvar 1 token at a time */
-
-    while( IS_SPACE_OR_NULL( *cmdline ) ) cmdline++;
-    token = cmdline;
-    next = cmdline;
-    while( *token != '\0' ) {
-        while( !IS_SPACE_OR_NULL( *next ) ) next++;
-        if( *next == '\0' ) {
-            /* last token */
-            parse_token( token, level + 1 );
-            break;
-        }
-        *next = '\0'; /* break string after 1st token */
-        next++;
-        parse_token( token, level + 1 );
-        while( IS_SPACECHAR( *next ) ) next++;
-        if( *next == '\0' ) break;
-        token=next;
+    if( cmdline != NULL ) {
+        ProcOptions( cmdline, &level );
     }
     return;
 }
@@ -448,112 +909,6 @@ static void add_constant( char *string )
 
     StoreConstant( string, tmp, FALSE ); // don't allow it to be redef'd
     return;
-}
-
-static char * set_processor_type(char *input)
-/*******************************************/
-{
-    enum asm_token      token;
-    char                protect = FALSE;
-    char                *tmp = input+1;
-
-    for( tmp=input+1; *tmp != '\0' && !isspace( *tmp ); tmp++ ) {
-        if( *input == 'f' ) {
-            tmp = input + strcspn( input, "/-" );
-            break;
-        } else if( *tmp == '/' || *tmp == '-' ) {
-            break;
-        } else if( *tmp == 'r' ) {
-            Options.naming_convention = ADD_USCORES;
-            add_constant( "__REGISTER__" );
-        } else if( *tmp == 's' ) {
-            add_constant( "__STACK__" );
-            Options.naming_convention = DO_NOTHING;
-        } else if( *tmp == '_' ) {
-            if( Options.naming_convention == DO_NOTHING ) {
-                Options.naming_convention = REMOVE_USCORES;
-            } else {
-                Options.naming_convention = DO_NOTHING;
-            }
-        } else if( *tmp == 'p' ) {
-            protect = TRUE;
-        } else if( *tmp == '"' ) {
-            char *dest;
-            tmp++;
-            Options.default_name_mangler = AsmAlloc( strlen( tmp ) + 1 );
-            dest = Options.default_name_mangler;
-            for( ; *tmp != '"'; dest++, tmp++ ) {
-                *dest = *tmp;
-            }
-            *dest = NULLC;
-        } else {
-            MsgPrintf1( MSG_UNKNOWN_OPTION, input );
-            exit( 1 );
-        }
-    }
-
-    switch( *input ) {
-    case '0':
-        token = T_DOT_8086;
-        break;
-    case '1':
-        token = T_DOT_186;
-        break;
-    case '2':
-        token =  protect ? T_DOT_286P : T_DOT_286;
-        break;
-    case '3':
-        token =  protect ? T_DOT_386P : T_DOT_386;
-        break;
-    case '4':
-        token =  protect ? T_DOT_486P : T_DOT_486;
-        break;
-    case '5':
-        token =  protect ? T_DOT_586P : T_DOT_586;
-        break;
-    case '6':
-        token =  protect ? T_DOT_686P : T_DOT_686;
-        break;
-    case '7':
-        switch( Code->info.cpu & P_CPU_MASK ) {
-        case P_286:
-            token =  T_DOT_287;
-            break;
-        case P_386:
-        case P_486:
-        case P_586:
-        case P_686:
-            token =  T_DOT_387;
-            break;
-        case P_86:
-        case P_186:
-        default:
-            token =  T_DOT_8087;
-            break;
-        }
-        break;
-    case 'f':       // fp#
-        switch( *(input+2) ) {
-        case 'c':
-            token = T_DOT_NO87;
-            break;
-        case '0':
-            token = T_DOT_8087;
-            break;
-        case '2':
-            token = T_DOT_287;
-            break;
-        case '3':
-        case '5':
-            token = T_DOT_387;
-            break;
-        }
-        break;
-    /* no other cases are possible */
-    }
-    cpu_directive( token );
-
-    return( tmp );
 }
 
 static int set_build_target( void )
@@ -618,48 +973,6 @@ static int set_build_target( void )
     return( NOT_ERROR );
 }
 
-static void set_mem_type( char mem_type )
-/***************************************/
-{
-    char buffer[20];
-    char *model;
-
-    switch( mem_type ) {
-    case 'c':
-        model = "COMPACT";
-        break;
-    case 'f':
-        model = "FLAT";
-        break;
-    case 'h':
-        model = "HUGE";
-        break;
-    case 'l':
-        model = "LARGE";
-        break;
-    case 'm':
-        model = "MEDIUM";
-        break;
-    case 's':
-        model = "SMALL";
-        break;
-    case 't':
-        model = "TINY";
-        break;
-    default:
-        strcpy( buffer, "/m" );
-        strcat( buffer, &mem_type );
-        MsgPrintf1( MSG_UNKNOWN_OPTION, buffer );
-        exit( 1 );
-    }
-
-    strcpy( buffer, ".MODEL " );
-    strcat( buffer, model );
-    InputQueueLine( buffer );
-
-    return;
-}
-
 static void set_some_kinda_name( char token, char *name )
 /*******************************************************/
 /* set:  code class / data seg. / module name / text seg */
@@ -684,254 +997,250 @@ static void set_some_kinda_name( char token, char *name )
     default:
         return;
     }
+        if( *tmp != NULL ) {
+                AsmFree(*tmp);
+        }
     *tmp = AsmAlloc( len );
     strcpy( *tmp, name );
     return;
 }
 
-static void parse_token( char *token, int nesting_level )
-/*******************************************************/
+static char *CollectEnvOrFileName( char *str )
+/*******************************************/
 {
-    char *ptr;
-    int_8 len;
+    char        *env;
+    char        ch;
 
+    while( *str == ' ' || *str == '\t' ) ++str;
+    env = ParamBuf;
     for( ;; ) {
-        ptr = NULL;
-        switch( *token ) {
-        case '?':
-            usage_msg();
-            break;
-        case '=':
-        case '#':
-            AsmError( SPACES_NOT_ALLOWED_IN_COMMAND_LINE_OPTIONS );
-            break;
-    #ifndef __UNIX__
-        case '/':
-    #endif
-        case '-':
-            /* options */
-            token++;
-            switch( tolower( *token ) ) {
-            case '0':
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '7':
-                ptr = set_processor_type( token );
-                break;
-            case 'b':
-                if( *(token+1) == 't' ) {
-                    token += 2;
-                    if( IS_EQ_CHAR( *token ) ) token++;
-                    if( Options.build_target != NULL ) {
-                        AsmFree( Options.build_target );
-                    }
-                    Options.build_target = AsmAlloc( strlen( token ) + 1 );
-                    strcpy( Options.build_target, token );
-                    break;
-                }
-                MsgPrintf1( MSG_UNKNOWN_OPTION, token );
-                exit( 1 );
-            case 'c':
-                Options.output_data_in_code_records = FALSE;
-                ptr = token+1;
-                break;
-            case 'h':
-                switch( token[1] ) {
-                case 'c':
-                case 'd':
-                case 'w':
-                    ptr = token + 2;
-                    break;
-                default:
-                    MsgPrintf1( MSG_UNKNOWN_OPTION, token );
-                    exit( 1 );
-                }
-                break;
-            case 'm':
-                set_mem_type( *(token+1) );
-                ptr = token+2;
-                break;
-            case 'n':
-                if( IS_EQ_CHAR( *(token+2) ) ) {
-                    set_some_kinda_name( *(token+1), token+3 );
-                } else {
-                    set_some_kinda_name( *(token+1), token+2 );
-                }
-                break;
-            case '?':
-                usage_msg();
-                break;
-            case 'i':
-                /* set include path */
-                token++;
-                if( IS_EQ_CHAR( *token ) ) token++;
-                AddStringToIncludePath( token );
-                break;
-            case 'e':
-                if( isdigit( *(token+1) ) ) {
-                    Options.error_limit = (char)atoi( token+1 );
-                } else if( *(token+1) == '\0' ) {
-                    /* stop reading asm file at the END directive */
-                    Options.stop_at_end = TRUE;
-                }
-                ptr = token + 1 + strcspn( token+1, "/-" );
-                break;
-            case 'w':
-                if( isdigit( *(token+1) ) ) {
-                    Options.warning_level = (char)atoi( token+1 );
-                } else if( *(token+1) == 'e' ) {
-                    Options.warning_error = TRUE;
-                }
-                ptr = token + 1 + strcspn( token+1, "/-" );
-                break;
-            case 'j':
-            case 's':
-                /* force use of sbyte, sword, sdword etc. for signed values */
-                Options.sign_value = TRUE;
-                ptr = token+1;
-                break;
-            case 'o':
-                Options.allow_c_octals = TRUE;
-                ptr = token+1;
-                break;
-            case 'd':
-                switch( *(token+1) ) {
-                case '+':
-                    /* just ignore it */
-                    break;
-                case '0':
-                    Options.debug_flag = FALSE;
-                    ptr = token+1;
-                    break;
-                case '1':
-                case '2':
-                case '3':
-                    Options.debug_flag = TRUE;
-                    ptr = token + 1 + strcspn( token+1, "/-" );
-                    break;
-                    // make d2 different sometime
-    #ifdef DEBUG_OUT
-                case '6':
-                    Options.debug = TRUE;
-                    DebugMsg(( "debugging output on \n" ));
-                    break;
-    #endif
-                default:
-                    add_constant( token+1 );
-                }
-                break;
-            case 'f':
-                switch( *(token+1) ) {
-                case 'i':
-                    /* force file following to be included */
-                    token += 2;
-                    if( IS_EQ_CHAR( *token ) ) token++;
-                    InputQueueFile( token );
-                    break;
-                case 'o':
-                    token += 2;
-                    if( IS_EQ_CHAR( *token ) ) token++;
-                    get_fname( token, OBJ );
-                    break;
-                case 'r':
-                case 'e': /* for backwards compatablity */
-                    /* use this as the error file, default fname.err */
-                    token += 2;
-                    if( IS_EQ_CHAR( *token ) ) token++;
-                    get_fname( token, ERR ); /* +3 to get past fe= */
-                    break;
-                case 'p':
-                    ptr = token + 1 + strcspn( token+1, "/-" );
-                    len = ptr - token;
-                    if( strnicmp( token, "fpi", len ) == 0 ) {
-                        Options.floating_point = DO_FP_EMULATION;
-                        add_constant("__FPI__");
-                        set_processor_type( "7" );
-                        break;
-                    } else if( strnicmp( token, "fpi87", len ) == 0 ) {
-                        Options.floating_point = NO_FP_EMULATION;
-                        add_constant("__FPI87__");
-                        set_processor_type( "7" );
-                        break;
-                    } else if( strnicmp( token, "fpc", len ) == 0 ) {
-                        Options.floating_point = NO_FP_ALLOWED;
-                        add_constant("__FPC__");
-                        set_processor_type( token );
-                        break;
-                    } else {
-                        switch( *(token+2) ) {
-                        case '0':
-                        case '2':
-                        case '3':
-                        case '5':
-                            ptr = set_processor_type( token );
-                        }
-                    }
-                    break;
-                default:
-                    MsgPrintf1( MSG_UNKNOWN_OPTION, token );
-                    exit( 1 );
-                }
-                break;
-            case 'q':
-                Options.quiet = TRUE;
-                ptr = token + 1;
-                break;
-            case 'u':
-                /* undefine macro - ignore for now */
-                break;
-            case 'z':
-                switch( *(token+1) ) {
-                case 'q':
-                    Options.quiet = TRUE;
-                    ptr = token + 2;
-                    break;
-                default:
-                    MsgPrintf1( MSG_UNKNOWN_OPTION, token );
-                    exit( 1 );
-                }
-                break;
-            default:
-                MsgPrintf1( MSG_UNKNOWN_OPTION, token );
-                exit( 1 );
-            }
-            break;
-        case '@':
-            do_envvar_cmdline( token+1, nesting_level );
-            break;
-        default:
-            /* must be a filename */
-            get_fname( token, ASM );
-            break;
-        }
-        if( ptr == NULL ) break;
-        switch( *ptr ) {
-        #ifndef __UNIX__
-            case '/':
+        ch = *str;
+        if( ch == '\0' ) break;
+        ++str;
+        if( ch == ' ' ) break;
+        if( ch == '\t' ) break;
+        #if !defined(__UNIX__)
+            if( ch == '-' ) break;
+            if( ch == SwitchChar ) break;
         #endif
-        case '-':
-            break;
-        default:
-            return;
-        }
-        token = ptr;
+        *env++ = ch;
     }
+    *env = '\0';
+    return( str );
 }
 
-static void parse_cmdline( int argc, char *argv[] )
+static char *ReadIndirectFile()
+/*******************************************/
+{
+    char        *env;
+    char        *str;
+    int         handle;
+    int         len;
+    char        ch;
+
+    env = NULL;
+    handle = open( ParamBuf, O_RDONLY | O_BINARY );
+    if( handle != -1 ) {
+        len = filelength( handle );
+        env = AsmAlloc( len + 1 );
+        read( handle, env, len );
+        env[len] = '\0';
+        close( handle );
+        // zip through characters changing \r, \n etc into ' '
+        str = env;
+        while( *str ) {
+            ch = *str;
+            if( ch == '\r' || ch == '\n' ) {
+                *str = ' ';
+            }
+            #if !defined(__UNIX__)
+                if( ch == 0x1A ) {      // if end of file
+                    *str = '\0';        // - mark end of str
+                    break;
+                }
+            #endif
+            ++str;
+        }
+    }
+    return( env );
+}
+
+static char *ProcessOption( char *p, char *option_start )
+/*******************************************/
+{
+    int         i;
+    int         j;
+    char        *opt;
+    char        c;
+
+    for( i = 0; ; i++ ) {
+        opt = cmdl_options[i].option;
+        if( opt == NULL ) break;
+        c = tolower( *p );
+        if( c == *opt ) {
+            OptValue = cmdl_options[i].value;
+            j = 1;
+            for(;;) {
+                ++opt;
+                if( *opt == '\0' || *opt == '*' ) {
+                    if( *opt == '\0' ) {
+                        if( p - option_start == 1 ) {
+                            // make sure end of option
+                            if( !OptionDelimiter( p[j] ) ) break;
+                        }
+                    }
+                    OptScanPtr = p + j;
+                    cmdl_options[i].function();
+                    return( OptScanPtr );
+                }
+                if( *opt == '#' ) {             // collect a number
+                    if( p[j] >= '0' && p[j] <= '9' ) {
+                        OptValue = 0;
+                        for(;;) {
+                            c = p[j];
+                            if( c < '0' || c > '9' ) break;
+                            OptValue = OptValue * 10 + c - '0';
+                            ++j;
+                        }
+                    }
+                } else if( *opt == '$' ) {      // collect an identifer
+                    OptParm = &p[j];
+                    for(;;) {
+                        c = p[j];
+                        if( c == '\0' ) break;
+                        if( c == '-' ) break;
+                        if( c == ' ' ) break;
+                        if( c == SwitchChar ) break;
+                        ++j;
+                    }
+                } else if( *opt == '@' ) {      // collect a filename
+                    OptParm = &p[j];
+                    c = p[j];
+                    if( c == '"' ){ // "filename"
+                        for(;;){
+                            c = p[++j];
+                            if( c == '"' ){
+                                ++j;
+                                break;
+                            }
+                            if( c == '\0' )break;
+                            if( c == '\\' ){
+                                ++j;
+                            }
+                        }
+                    }else{
+                        for(;;) {
+                            c = p[j];
+                            if( c == '\0' ) break;
+                            if( c == ' ' ) break;
+                            if( c == '\t' ) break;
+                            #if !defined(__UNIX__)
+                                if( c == SwitchChar ) break;
+                            #endif
+                            ++j;
+                        }
+                    }
+                } else if( *opt == '=' ) {      // collect an optional '='
+                    if( p[j] == '=' || p[j] == '#' ) ++j;
+                } else {
+                    c = tolower( p[j] );
+                    if( *opt != c ) {
+                        if( *opt < 'A' || *opt > 'Z' ) break;
+                        if( *opt != p[j] ) break;
+                    }
+                    ++j;
+                }
+            }
+        }
+    }
+    MsgPrintf1( MSG_UNKNOWN_OPTION, option_start );
+    exit( 1 );
+    return( NULL );
+}
+
+static int ProcOptions( char *str, int *level )
+/*******************************************************/
+{
+    char *save[MAX_NESTING];
+    char *buffers[MAX_NESTING];
+        
+    if( str != NULL ) {
+        for(;;) {
+            while( *str == ' ' || *str == '\t' ) ++str;
+            if( *str == '@' && *level < MAX_NESTING ) {
+                save[(*level)++] = CollectEnvOrFileName( str + 1 );
+                buffers[*level] = NULL;
+                str = getenv( ParamBuf );
+                if( str == NULL ) {
+                    str = ReadIndirectFile();
+                    buffers[*level] = str;
+                }
+                if( str != NULL )  continue;
+                str = save[--(*level)];
+            }
+            if( *str == '\0' ) {
+                if( *level == 0 ) break;
+                if( buffers[*level] != NULL ) {
+                    AsmFree( buffers[*level] );
+                    buffers[*level] = NULL;
+                }
+                str = save[--(*level)];
+                continue;
+            }
+            if( *str == '-'  ||  *str == SwitchChar ) {
+                str = ProcessOption(str+1, str);
+            } else {  /* collect  file name */
+                char *beg, *p;
+                int len;
+
+                beg = str;
+                if( *str == '"' ){
+                    for(;;){
+                        ++str;
+                        if( *str == '"' ){
+                            ++str;
+                            break;
+                        }
+                        if( *str == '\0' ) break;
+                        if( *str == '\\' ){
+                            ++str;
+                        }
+                    }
+                }else{
+                    for(;;) {
+                        if( *str == '\0' ) break;
+                        if( *str == ' '  ) break;
+                        if( *str == '\t'  ) break;
+                        #if !defined(__UNIX__)
+                            if( *str == SwitchChar ) break;
+                        #endif
+                        ++str;
+                    }
+                }
+                len = str-beg;
+                p = (char *) AsmAlloc( len + 1 );
+                memcpy( p, beg, len );
+                p[ len ] = '\0';
+                StripQuotes( p );
+                get_fname( p, ASM );
+                AsmFree(p);
+            }
+        }
+    }
+    return 0;
+}
+
+static void parse_cmdline( char **cmdline )
 /*************************************************/
 {
-    int  i;
     char msgbuf[80];
+    int  level = 0;
 
-    if( argc == 1 ) {
+    if( cmdline == NULL || *cmdline == NULL ) {
         usage_msg();
     }
-    for( i = 1; i < argc; i++ ) {
-        parse_token( argv[i], 0 );
+    for( ;*cmdline != NULL; ++cmdline ) {
+        ProcOptions( *cmdline, &level );
     }
     if( AsmFiles.fname[ASM] == NULL ) {
         MsgGet( NO_FILENAME_SPECIFIED, msgbuf );
