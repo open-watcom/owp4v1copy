@@ -3,14 +3,14 @@ BEGIN
     POPUP sp( "&File",
 	      "&File" ) 
     BEGIN
-	MENUITEM sp( "&New ...\tF2",
-		     "&New ...\tF2" ), IMGED_NEW
-	MENUITEM sp( "&Open ...\tShift+F2",
-		     "&Open ...\tShift+F2" ), IMGED_OPEN
-	MENUITEM sp( "&Save\tF3",
-		     "&Save\tF3" ), IMGED_SAVE
-	MENUITEM sp( "Save &As ...\tShift+F3",
-		     "Save &As ...\tShift+F3" ), IMGED_SAVE_AS
+	MENUITEM sp( "&New ...\tCtrl+N",
+		     "&New ...\tCtrl+N" ), IMGED_NEW
+	MENUITEM sp( "&Open ...\tCtrl+O",
+		     "&Open ...\tCtrl+O" ), IMGED_OPEN
+	MENUITEM sp( "&Save\tCtrl+S",
+		     "&Save\tCtrl+S" ), IMGED_SAVE
+	MENUITEM sp( "Save &As ...\tF12",
+		     "Save &As ...\tF12" ), IMGED_SAVE_AS
 	MENUITEM SEPARATOR
 	MENUITEM sp( "&Close\tShift+F10",
 		     "&Close\tShift+F10" ), IMGED_CLOSE
@@ -23,10 +23,10 @@ BEGIN
     POPUP sp( "&Edit",
 	      "&Edit" )
     BEGIN
-    	MENUITEM sp( "&Undo\tCtrl+U",
-		     "&Undo\tCtrl+U" ), IMGED_UNDO
-    	MENUITEM sp( "&Redo\tCtrl+R",
-		     "&Redo\tCtrl+R" ), IMGED_REDO
+    	MENUITEM sp( "&Undo\tCtrl+Z",
+		     "&Undo\tCtrl+Z" ), IMGED_UNDO
+    	MENUITEM sp( "&Redo\tCtrl+Y",
+		     "&Redo\tCtrl+Y" ), IMGED_REDO
 	MENUITEM sp( "R&estore",
 		     "R&estore" ), IMGED_REST
 	MENUITEM SEPARATOR
