@@ -150,8 +150,14 @@ static void DoLocExpr( char             *p,
         case DW_LOP_ADDR:
             if( addr_size == 4 ) {
                 op1 = *(uint_32 _WCUNALIGNED *)p;
+                if( DWRCurrNode->byte_swap ) {
+                    SWAP_32( op1 );
+                }
             } else if( addr_size == 2 ) {
                 op1 = *(uint_16 _WCUNALIGNED *)p;
+                if( DWRCurrNode->byte_swap ) {
+                    SWAP_16( op1 );
+                }
             } else if( addr_size == 1 ) {
                 op1 = *(uint_8 _WCUNALIGNED *)p;
             } else {
