@@ -20,7 +20,7 @@ MCommand
 5
 WFileName
 14
-os2\os2_3d.tgt
+win\win_3d.tgt
 6
 WVList
 1
@@ -37,7 +37,7 @@ WRect
 9
 WFileName
 14
-os2\os2_3d.tgt
+win\win_3d.tgt
 0
-12
+0
 7

@@ -29,13 +29,26 @@
 *
 ****************************************************************************/
 
-
-/*
- * This file redefines some of the macros.  As routines are tested and found
- * to be relatively safe, they are added to wpi_os2.h.
- */
-
-#if 0
-#undef _wpi_createwpifont
-extern WPI_FONT _wpi_createwpifont( WPI_LOGFONT *fontmetrics );
+#ifdef PLAT_OS2
+#define INCL_PM
+#include <os2.h>
+#else
+#include <windows.h>
 #endif
+#include "wpi.h"
+#include "wpitypes.h"
+
+void _wpi_free( void * ptr )
+{
+    free( ptr );
+}
+
+void * _wpi_malloc( size_t size )
+{
+    return( malloc( size ) );
+}
+
+void * _wpi_realloc( void *ptr, size_t size )
+{
+    return( realloc( ptr, size ) );
+}

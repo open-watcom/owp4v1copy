@@ -166,19 +166,3 @@ void ENTRYPOINT three_d_set( three_d_handle handle, three_d_attr attr, int new_v
     case THREE_D_LIGHT_DEPTH:   Three_d.lighting.depth = new_val; break;
     }
 }
-
-// Stubs
-
-#if defined(PLAT_OS2)
-
-void _wpi_free( void * ptr )
-{
-    free( ptr );
-}
-
-void * _wpi_malloc( size_t size )
-{
-    return( malloc( size ) );
-}
-
-#endif
