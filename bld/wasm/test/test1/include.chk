@@ -1,0 +1,2 @@
+do_ax.asm(1): Error! E545: Model declared already
+include.asm(6): Warning! W549: End directive required at end of file
