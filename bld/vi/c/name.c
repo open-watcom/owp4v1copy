@@ -48,6 +48,8 @@ char TITLE[] = "vi/nt";
 char TITLE[] = "vi/386";
 #elif defined(__QNX__)
 char TITLE[] = "vi/qnx";
+#elif defined(__LINUX__)
+char TITLE[] = "vi/linux";
 #elif defined(__286__)
 #if defined(__V__)
 char TITLE[] = "vi/286v";

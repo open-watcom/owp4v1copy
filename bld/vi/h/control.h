@@ -45,7 +45,7 @@
 #define NOXTD
 #define _FAR
 #define __WIN__
-#elif defined(__OS2__) || defined(__QNX__) || defined(__NT__)
+#elif defined(__OS2__) || defined(__UNIX__) || defined(__NT__)
 #define NOXMS
 #define NOEMS
 #define NOXTD

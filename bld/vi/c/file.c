@@ -191,7 +191,7 @@ static int getFileInfoString( char *st, int is_small )
         if( CurrentFile->modified ) {
             strcat( st," [modified]" );
         }
-        #if defined(__QNX__)
+        #if defined(__UNIX__)
             if( EditFlags.WriteCRLF ) {
                 strcat( st," [crlf]" );
             }
@@ -225,7 +225,7 @@ static int getFileInfoString( char *st, int is_small )
         if( CurrentFile->modified ) {
             strcat( st,"[M]" );
         }
-        #if defined(__QNX__)
+        #if defined(__UNIX__)
             if( EditFlags.WriteCRLF ) {
                 strcat( st," [C]" );
             }

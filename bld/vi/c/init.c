@@ -34,7 +34,9 @@
 #include <stdlib.h>
 #include <string.h>
 #ifndef __AXP__
+#ifdef __WATCOMC__
 #include <i86.h>
+#endif
 #endif
 #include "vi.h"
 #include "rxsupp.h"

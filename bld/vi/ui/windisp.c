@@ -334,7 +334,7 @@ void DisplayCrossLineInWindow( window_id wn, int line )
     scr = (char_info _FAR *) &Scrn[ (w->x1 + (1+line+w->y1)*WindMaxWidth) *
                                 sizeof(char_info) ];
 #ifdef __VIO__
-    oscr = (unsigned) ((unsigned char _FAR *) scr-Scrn);
+    oscr = (unsigned) ((char _FAR *) (scr) - Scrn);
 #endif
     what.attr = MAKE_ATTR( w, w->border_color1, w->border_color2 );
     what.ch = WindowBordersNG[ WB_LEFTT ];

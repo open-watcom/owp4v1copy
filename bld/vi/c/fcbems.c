@@ -64,9 +64,9 @@ void EMSBlockRead( long addr, void *buff, unsigned len )
     emsRead( addr, buff, len );
 } /* EMSBlockRead */
 
-int EMSBlockWrite( long addr, void *buff, unsigned len )
+void EMSBlockWrite( long addr, void *buff, unsigned len )
 {
-    return( emsWrite( addr, buff, len ) );
+    emsWrite( addr, buff, len );
 
 } /* EMSBlockWrite */
 

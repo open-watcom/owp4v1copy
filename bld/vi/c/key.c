@@ -38,7 +38,9 @@
 #include "win.h"
 #endif
 #ifndef __AXP__
+#ifdef __WATCOMC__
 #include <i86.h>
+#endif
 #endif
 #include <string.h>
 #include "keys.h"
@@ -50,11 +52,11 @@
 static int      overrideKeyBuff[MAX_OVERRIDE_KEY_BUFF];
 static int      overrideKeyPos,overrideKeyEnd;
 
-#if !defined(__QNX__) && !defined(__NT__) || defined( __WIN__ )
+#if !defined(__UNIX__) && !defined(__NT__) || defined( __WIN__ )
 #define BUSYWAIT
 #endif
 
-#if defined(__QNX__) || defined(__NT__) && !defined( __WIN__ )
+#if defined(__UNIX__) || defined(__NT__) && !defined( __WIN__ )
 #define NO_TRANSLATE
 #endif
 

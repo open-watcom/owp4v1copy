@@ -41,7 +41,7 @@
 #include "xmem.h"
 #include "fcbmem.h"
 
-extern interrupt XMemIntHandler( volatile union INTPACK r );
+extern void interrupt XMemIntHandler( volatile union INTPACK r );
 
 static descriptor GDT[] = {
 { 0, 0, 0 },    /* dummy segment */

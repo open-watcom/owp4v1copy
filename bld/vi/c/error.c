@@ -137,6 +137,7 @@ void Error( char *str, ... )
         va_start( al, str );
 #ifndef __WIN__
         MyVPrintf( str, al );
+        MyPrintf( "\n" );
 #endif
         va_end( al );
     }

@@ -146,7 +146,7 @@ int GetMouseEvent( void )
     MouseCol = col;
     return( me );
 #endif
-
+    
 } /* GetMouseEvent */
 
 /*

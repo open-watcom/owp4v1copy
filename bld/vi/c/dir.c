@@ -34,8 +34,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#ifdef __WATCOMC__
 #include <conio.h>
-#include <sys\types.h>
+#endif
+#include <sys/types.h>
 #include "posix.h"
 #include "vi.h"
 

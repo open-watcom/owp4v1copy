@@ -199,7 +199,7 @@ void GetFromEnv( char *what, char *path )
 
 } /* GetFromEnv */
 
-#if defined(__QNX__)
+#if defined(__UNIX__)
 static char altTmpDir[] = "/tmp";
 #else
 static char altTmpDir[] = "c:";
@@ -298,7 +298,7 @@ void TmpFileClose( int handle, char *name )
  */
 void FileLower( char *str )
 {
-#ifndef __QNX__
+#ifndef __UNIX__
         strlwr( str );
 #else
         str = str;

@@ -559,7 +559,7 @@ int RunKeyMap( key_map *, long );
 int AddKeyMap( key_map *, char *, int );
 void InitKeyMaps( void );
 int ExecuteBuffer( void );
-char *LookUpCharToken( char ch, bool want_single );
+char *LookUpCharToken( int ch, bool want_single );
 void FiniKeyMaps( void );
 
 /* mark.c */

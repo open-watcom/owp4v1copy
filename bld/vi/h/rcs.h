@@ -54,7 +54,7 @@
     typedef const char *rcsstring;
     typedef void *rcsdata;
     #define RCSAPI      __export _syscall
-#elif defined( __DOS__ ) || defined( __QNX__ )
+#elif defined( __DOS__ ) || defined( __UNIX__ )
     #define RCSAPI // typedefs in api.h
 #else
     #error Unsupported OS

@@ -87,7 +87,7 @@ static int getDir( char *dname, bool want_all_dirs )
     if( i ) {
         return( i );
     }
-#ifndef __QNX__
+#ifndef __UNIX__
     if( ch != '\\' && ch != '/' && ch != ':' && ch != 0 ) {
         strcat( path,FILE_SEP_STR );
     }
@@ -118,7 +118,15 @@ static int getDir( char *dname, bool want_all_dirs )
             break;
         }
         is_subdir = FALSE;
-        #ifdef __QNX__
+        #if defined( __LINUX__ )
+            {
+                struct stat st;
+                stat(nd->d_name, &st);
+                if( st.st_mode & S_IFDIR ) {
+                    is_subdir = TRUE;
+                }
+            }
+        #elif defined(__QNX__)
             if( nd->d_stat.st_mode & S_IFDIR ) {
                 is_subdir = TRUE;
             }

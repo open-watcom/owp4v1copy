@@ -33,10 +33,10 @@
 #ifndef _POSIX_INCLUDED
 #define _POSIX_INCLUDED
 
-#ifdef __QNX__
+#ifdef __UNIX__
 #include <unistd.h>
 #include <dirent.h>
-#include <sys\stat.h>
+#include <sys/stat.h>
 #define _mkdir( a, b ) mkdir( a, b )
 #define DIRFLAGS S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH
 #define ACCESS_WR W_OK

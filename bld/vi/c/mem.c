@@ -34,7 +34,9 @@
 #include <string.h>
 #include <malloc.h>
 #ifndef __AXP__
+#ifdef __WATCOMC__
 #include <i86.h>
+#endif
 #endif
 #include "vi.h"
 #include "colors.h"
@@ -69,7 +71,9 @@ static void *getMem( unsigned size, _trmem_who who )
     tmp = malloc( size );
 #endif
     if( tmp != NULL ) {
+#ifdef __WATCOMC__
         size = MSIZE( tmp );
+#endif
         memset( tmp, 0, size );
     }
     return( tmp );
@@ -255,11 +259,16 @@ void MemFree2( void **ptr )
 void *doMemReAllocUnsafe( void *ptr, unsigned size, _trmem_who who )
 {
     void        *tmp;
+
     unsigned    orig_size;
     unsigned    tsize;
 
     if( ptr != NULL ) {
+#ifdef __WATCOMC__
         orig_size = MSIZE( ptr );
+#else
+        orig_size = 0xffffffff;
+#endif
     } else {
         orig_size = 0;
     }
@@ -269,6 +278,7 @@ void *doMemReAllocUnsafe( void *ptr, unsigned size, _trmem_who who )
 #else
     tmp = realloc( ptr, size );
 #endif
+#ifdef __WATCOMC__
     if( tmp == NULL ) {
         tmp = doMemAllocUnsafe( size, who );
         if( tmp == NULL ) {
@@ -283,8 +293,12 @@ void *doMemReAllocUnsafe( void *ptr, unsigned size, _trmem_who who )
             memcpy( tmp, ptr, tsize );
             MemFree( ptr );
         }
-    } else {
+    } else
+#endif
+    {
+#ifdef __WATCOMC__
         size = MSIZE( tmp );
+#endif
         if( size > orig_size ) {
             memset( &(((char *)tmp)[orig_size]), 0, size-orig_size );
         }

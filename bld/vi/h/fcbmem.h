@@ -45,7 +45,7 @@ void SwapBlockInit( int );
 /* fcbems.c */
 int EMSBlockTest( unsigned short );
 void EMSBlockRead( long, void *, unsigned );
-int EMSBlockWrite( long , void *, unsigned );
+void EMSBlockWrite( long , void *, unsigned );
 int EMSGetBlock( long * );
 int SwapToEMSMemory( fcb * );
 int SwapToMemoryFromEMSMemory( fcb * );
@@ -68,7 +68,7 @@ void GiveBackXMemBlock( long );
 /* fcbxms.c */
 int XMSBlockTest( unsigned short );
 void XMSBlockRead( long, void *, unsigned );
-int XMSBlockWrite( long , void *, unsigned );
+void XMSBlockWrite( long , void *, unsigned );
 int XMSGetBlock( long * );
 int SwapToXMSMemory( fcb * );
 int SwapToMemoryFromXMSMemory( fcb * );

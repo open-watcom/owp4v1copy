@@ -40,8 +40,10 @@
 #include <i86.h>
 #endif
 #include <errno.h>
+#ifdef __WATCOMC__
 #include <env.h>
 #include <process.h>
+#endif
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -265,7 +267,7 @@ int doExec( char *std_in, char *std_out, char *cmd )
             SetConsoleActiveScreenBuffer( GetStdHandle( STD_OUTPUT_HANDLE ) );
             st = system( cmd );
         }
-    #elif defined(__QNX__)
+    #elif defined(__UNIX__)
         st = MySpawn( cmd );
     #else
         st = system( cmd );

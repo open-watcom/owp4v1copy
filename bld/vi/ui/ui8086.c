@@ -33,8 +33,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#ifdef __WATCOMC__
 #include <conio.h>
 #include <malloc.h>
+#endif
 #include "vi.h"
 #include "win.h"
 #include "dosx.h"
@@ -99,7 +101,7 @@ void RestoreCursor( void )
 
 } /* RestoreCursor */
 
-#if !defined(__QNX__) && !defined(__OS2__) && !defined(__NT__)
+#if !defined(__UNIX__) && !defined(__OS2__) && !defined(__NT__)
     extern void JustAnInt28( void );
     #pragma aux JustAnInt28 = 0xcd 0x28;
 #endif
@@ -112,7 +114,7 @@ bool KeyboardHit( void )
     bool        rc;
 
     rc = BIOSKeyboardHit( EditFlags.ExtendedKeyboard + 1 );
-#if !defined(__QNX__) && !defined(__OS2__) && !defined(__NT__)
+#if !defined(__UNIX__) && !defined(__OS2__) && !defined(__NT__)
     if( !rc ) {
         #if defined(__386__)  && !defined(__4G__)
             extern void UpdateDOSClock( void );

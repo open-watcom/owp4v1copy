@@ -418,7 +418,7 @@ int DumpMemory()
     window_id   wn;
     window_info *wi;
     char        tmp[128],tmp2[128];
-#if !defined( __WIN__ ) && !defined(__386__) && !defined(__OS2__) && !defined(__QNX__) && !defined(__ALPHA__)
+#if !defined( __WIN__ ) && !defined(__386__) && !defined(__OS2__) && !defined(__UNIX__) && !defined(__ALPHA__)
     long        mem1;
 #endif
     long        mem2;

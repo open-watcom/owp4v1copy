@@ -34,9 +34,10 @@
 #include <stdarg.h>
 #include <string.h>
 #include <ctype.h>
-#include <io.h>
+#include <unistd.h>
 #include <fcntl.h>
 #include <malloc.h>
+#include <sys/stat.h>
 #include "banner.h"
 
 char magic_cookie[]="CGEXXX";
@@ -127,7 +128,7 @@ void AddDataToEXE( char *exe, char *buffer, unsigned short len,
     }
     _splitpath( exe, drive, dir, NULL, NULL );
     _makepath( foo, drive,dir,"__cge__",".exe" );
-    newh = open( foo, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, S_IWRITE | S_IREAD );
+    newh = open( foo, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, S_IRWXU | S_IRWXG | S_IRWXO );
     if( newh == -1 ) {
         Abort("Fatal error opening \"%s\"",foo );
     }

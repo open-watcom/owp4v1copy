@@ -32,11 +32,7 @@
 
 #include <stdio.h>
 #include <fcntl.h>
-#ifndef __QNX__
-#include <io.h>
-#else
 #include <unistd.h>
-#endif
 #include "vi.h"
 #include "win.h"
 

@@ -36,7 +36,9 @@
 
 #define USE_FCNS
 
-#if defined(__QNX__)
+#if defined(__LINUX__)
+#include "dosext.h"
+#elif defined(__QNX__)
 #include <sys/seginfo.h>
 #include <sys/console.h>
 #include <sys/con_msg.h>

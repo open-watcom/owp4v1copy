@@ -63,9 +63,9 @@ void XMSBlockRead( long addr, void *buff, unsigned len )
         xmsRead( addr, buff, len );
 } /* XMSBlockRead */
 
-int XMSBlockWrite( long addr, void *buff, unsigned len )
+void XMSBlockWrite( long addr, void *buff, unsigned len )
 {
-    return( xmsWrite( addr, buff, len ) );
+    xmsWrite( addr, buff, len );
 
 } /* XMSBlockWrite */
 

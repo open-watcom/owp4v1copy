@@ -235,7 +235,9 @@ int SaveFile( char *name, linenum start, linenum end, int dammit )
         }
     } else {
         fileHandle = 0;
+#ifdef __WATCOMC__
         setmode( fileno( stdout ), O_BINARY );
+#endif
     }
 
     /*
@@ -247,11 +249,13 @@ int SaveFile( char *name, linenum start, linenum end, int dammit )
     if( CurrentFile->check_for_crlf ) {
         if( fileHandle ) {
             EditFlags.WriteCRLF = FALSE;
+        #ifndef __LINUX__
             if( FileSysNeedsCR( fileHandle ) ) {
                 EditFlags.WriteCRLF = TRUE;
             }
+        #endif 
         } else {
-        #ifdef __QNX__
+        #ifdef __UNIX__
             EditFlags.WriteCRLF = FALSE;
         #else
             EditFlags.WriteCRLF = TRUE;

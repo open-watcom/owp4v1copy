@@ -32,7 +32,7 @@
 #ifndef _PRAGMAS_INCLUDED
 #define _PRAGMAS_INCLUDED
 
-#if defined(__OS2__) || defined(__QNX__) || defined(__NT__)
+#if defined(__OS2__) || defined(__UNIX__) || defined(__NT__)
 #define NO_INLINE
 #endif
 
