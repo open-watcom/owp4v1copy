@@ -275,8 +275,11 @@ _WCRTLINK int execve( const char *__path, const char *const __argv[],
 _WCRTLINK int sigaction(int __signum, const struct sigaction *__act,
                             struct sigaction *__oldact)
 {
-    u_long res = sys_call3(SYS_sigaction, __signum, (u_long)__act,
-                           (u_long)__oldact);
+    /* given the sigaction layout we must use rt_sigaction
+       this requires Linux kernel 2.2 or higher (probably not
+       a big deal nowadays) */
+    u_long res = sys_call4(SYS_rt_sigaction, __signum, (u_long)__act,
+                           (u_long)__oldact, sizeof( sigset_t ) );
     __syscall_return(int,res);
 }
 
