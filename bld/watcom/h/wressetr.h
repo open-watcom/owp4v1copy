@@ -45,8 +45,8 @@ struct WResRoutines {                                       /* defaults */
     /* I/O routines */
     WResFileID (*   open) (const char *, int, ...);         /* open */
     int (*          close) (WResFileID);                    /* close */
-    int (*          write) (WResFileID, const void *, int); /* write */
-    int (*          read) (WResFileID, void *, int);        /* read */
+    int (*          write) (WResFileID, const void *, size_t); /* write */
+    int (*          read) (WResFileID, void *, size_t);     /* read */
     long (*         seek) (WResFileID, long, int );         /* lseek */
     long (*         tell) (WResFileID);                     /* tell */
     /* memory routines */

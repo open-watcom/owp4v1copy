@@ -33,7 +33,9 @@
 #include <string.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#ifdef __WATCOMC__
 #include <process.h>
+#endif
 #include "watcom.h"
 #include "wstrip.h"
 #include "banner.h"
