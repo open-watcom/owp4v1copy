@@ -303,7 +303,7 @@ static void AddDirective( int len )
     p = MemAlloc( sizeof(struct directives) );
     p->next = NULL;
     p->directive = MemAlloc( len + 1 );
-    strcpy( p->directive, Word );
+    UnquoteFName( p->directive, len + 1, Word );
     if( Directive_List == NULL ) {
         Directive_List = p;
     } else {
@@ -599,8 +599,13 @@ static  int  Parse( void )
                     }
                     break;
                 case '"':                           /* 17-dec-91 */
+                    /* As parameter passing to linker is a special case, we need to pass
+                     * whole command instead of first character removed. This allows us
+                     * to parse also string literals in AddDirective.
+                     */
                     wcc_option = 0;
-                    if( *end == '"'  )  ++end;
+                    strncpy( Word, Cmd, ++len);
+                    Word[ len ] = NULLCHAR;
                     AddDirective( len );
                     break;
                 }
