@@ -1699,10 +1699,10 @@ extern RET_T ExecCList( CLIST *clist )
                  ret = VerbosePrintTempFile(currentFlist);
             }
             ret = execLine( line );
+            FreeSafe( line );
             if (ret != RET_SUCCESS) {
                 return (ret);
             }
-            FreeSafe( line );
         } else {
             closeCurrentFile();
             return( ret );
