@@ -74,7 +74,7 @@ void __F_NAME(__NTMain,__wNTMain)( void )
     {
         #if defined(_M_IX86)
             REGISTRATION_RECORD rr;
-            __NewExceptionHandler( &rr, 1 );
+            __NewExceptionFilter( &rr );
         #endif
         __process_fini = &__FiniRtns;
         __InitRtns( 255 );

@@ -68,7 +68,7 @@ void __F_NAME(__WinMain,__wWinMain)( void )
     {
         #ifdef _M_IX86
             REGISTRATION_RECORD rr;
-            __NewExceptionHandler( &rr, 1 );
+            __NewExceptionFilter( &rr );
         #endif
         __process_fini = &__FiniRtns;
         __InitRtns( 255 );

@@ -110,7 +110,8 @@ static int critsect_next;
 static CRITICAL_SECTION **critsect_vector;
 static int critsect_vectornext;
 
-CRITICAL_SECTION *__NTGetCriticalSection( void ) {
+static CRITICAL_SECTION *__NTGetCriticalSection( void )
+{
     CRITICAL_SECTION *ptr;
 
     if( critsect_next < MAX_CRITICAL_SECTION ) {
@@ -134,13 +135,13 @@ CRITICAL_SECTION *__NTGetCriticalSection( void ) {
     InitializeCriticalSection( ptr );
     return( ptr );
 }
-__NTDeleteCriticalSection( void ) {
+static __NTDeleteCriticalSection( void ) {
     int i;
     for( i = 0 ; i < critsect_next ; i++ ) {
         DeleteCriticalSection( &(critsect_cache[i]) );
     }
 }
-__NTFreeCriticalSection( void ) {
+static __NTFreeCriticalSection( void ) {
     int i;
     for( i = 0 ; i < critsect_vectornext ; i++ ) {
         DeleteCriticalSection( critsect_vector[i] );
@@ -424,8 +425,8 @@ BOOL __NTThreadInit( void )
 }
 
 
-void __NTThreadFini( void )
-/*************************/
+static void __NTThreadFini( void )
+/********************************/
 {
     if( __TlsIndex != NO_INDEX ) {
         TlsFree( __TlsIndex );
@@ -565,21 +566,6 @@ void __InitMultipleThread()
 /*************************/
 {
     if( __GetThreadPtr != &__MultipleThread ) {
-        _AccessFileH   = &__AccessFileH;
-        _ReleaseFileH  = &__ReleaseFileH;
-        _AccessIOB     = &__AccessIOB;
-        _ReleaseIOB    = &__ReleaseIOB;
-        _AccessTDList  = &__AccessTDList;
-        _ReleaseTDList = &__ReleaseTDList;
-        __AccessSema4  = &__AccessSemaphore;
-        __ReleaseSema4 = &__ReleaseSemaphore;
-        __CloseSema4   = &__CloseSemaphore;
-        #if !defined( __NETWARE__ )
-            _AccessNHeap  = &__AccessNHeap;
-            _AccessFHeap  = &__AccessFHeap;
-            _ReleaseNHeap = &__ReleaseNHeap;
-            _ReleaseFHeap = &__ReleaseFHeap;
-        #endif
         #if defined( __NETWARE__ )
         {
         /* __ThreadData[ 0 ] is used whenever GetThreadID() returns a pointer
@@ -622,10 +608,8 @@ void __InitMultipleThread()
         #elif defined( __NT__ )
             InitSemaphore.semaphore = __NTGetCriticalSection();
             InitSemaphore.initialized = 1;
-            _AccessFList  = &__AccessFList;
-            _ReleaseFList = &__ReleaseFList;
-            _ThreadExitRtn= &__ThreadExit;
-            // note that __AddThreadData uses the InitSemaphore
+            _ThreadExitRtn = &__ThreadExit;
+            // Note: __AddThreadData uses the InitSemaphore, _AccessTDList & _ReleaseTDList
             __AddThreadData( __FirstThreadData->thread_id, __FirstThreadData );
             TlsSetValue( __TlsIndex, __FirstThreadData );
         #elif defined( __QNX__ )
@@ -638,12 +622,33 @@ void __InitMultipleThread()
             __ThreadData[1].data = __FirstThreadData;
             __ThreadData[1].allocated_entry = __FirstThreadData->__allocated;
         #endif
+
+        // Set these up after we have created the InitSemaphore
+        _AccessFileH      = &__AccessFileH;
+        _ReleaseFileH     = &__ReleaseFileH;
+        _AccessIOB        = &__AccessIOB;
+        _ReleaseIOB       = &__ReleaseIOB;
+        _AccessTDList     = &__AccessTDList;
+        _ReleaseTDList    = &__ReleaseTDList;
+        __AccessSema4     = &__AccessSemaphore;
+        __ReleaseSema4    = &__ReleaseSemaphore;
+        __CloseSema4      = &__CloseSemaphore;
+        #if !defined( __NETWARE__ )
+            _AccessNHeap  = &__AccessNHeap;
+            _AccessFHeap  = &__AccessFHeap;
+            _ReleaseNHeap = &__ReleaseNHeap;
+            _ReleaseFHeap = &__ReleaseFHeap;
+        #endif
+        #if defined( __NT__ )
+            _AccessFList  = &__AccessFList;
+            _ReleaseFList = &__ReleaseFList;
+        #endif
         __GetThreadPtr  = &__MultipleThread;
     }
 }
 #endif
 
-void static __FiniSema4s()              // called from finalizer
+static void __FiniSema4s()              // called from finalizer
 /************************/
 {
     int         i;
@@ -658,6 +663,9 @@ void static __FiniSema4s()              // called from finalizer
     #endif
     #if !defined( __QNX__ )
         __FiniThreadProcessing();
+        // All thread data areas freed, including main process thread data
+        // so mark first thread data pointer null.
+        __FirstThreadData = NULL;
     #endif
     #if !defined( __NETWARE__ )
         _heapshrink();

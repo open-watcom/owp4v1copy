@@ -44,6 +44,8 @@
 #include "rtinit.h"
 #include "exitwmsg.h"
 
+extern        int             __Is_DLL;
+
 _WCRTLINK unsigned __ThreadDataSize = sizeof( thread_data );
 
 void __InitThreadData( thread_data *tdata )
@@ -53,8 +55,10 @@ void __InitThreadData( thread_data *tdata )
     tdata->__randnext = 1;
     #if defined( __OS2__ )
         // We want to detect stack overflow before it actually
-        // happens; let's have 8K in reserve
-        tdata->__stklowP = __threadstack() + 2 * 4096;
+        // happens; let's have a page in reserve
+        if( !__Is_DLL ) {
+            tdata->__stklowP = __threadstack() + 4096;
+        }
     #elif defined( __NT__ )
         __init_stack_limits( &tdata->__stklowP, 0 );
         tdata->thread_id = GetCurrentThreadId();
@@ -63,8 +67,6 @@ void __InitThreadData( thread_data *tdata )
     #endif
     }
 }
-
-#if defined( __386__ ) || defined( __AXP__ ) || defined( __PPC__ )
 
 thread_data *__AllocInitThreadData( thread_data *tdata )
 /******************************************************/
@@ -84,15 +86,8 @@ void __FreeInitThreadData( thread_data *tdata )
 /******************************************************/
 {
     if( tdata != NULL ) {
-        int     alloced = tdata->__allocated;
-        // We need to check tdata->__allocated first and _then_
-        // overwrite tdata, not the other way round. Note that
-        // 0xDEADDEAD ends up as 0xADADADAD pattern in memory
-        // because memset() only does chars.
-//      memset( tdata, 0xdeaddead, tdata->__data_size );
-        if( alloced )
+        if( tdata->__allocated == 1 )
             lib_free( tdata );
     }
 }
 
-#endif

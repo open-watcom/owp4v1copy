@@ -79,6 +79,8 @@ static __cdecl begin_thread_helper( thread_args *td )
     rtn = td->rtn;
     arg = td->argument;
 
+    // For DLLs, __NTAddThread has already been called from _LibMain
+    // in DLL_THREAD_ATTACH processing.
     if( !__Is_DLL ) {                                   /* 15-feb-93 */
         #if defined(__AXP__) || defined(__PPC__)
             tdata = (thread_data *)alloca( __ThreadDataSize );
@@ -95,11 +97,12 @@ static __cdecl begin_thread_helper( thread_args *td )
     // make a copy of the event handle before it disappears from the stack
     event_ack = td->event_ack;
     td->thread_handle = &(__THREADDATAPTR->thread_handle);
+
+    __NewExceptionFilter( &rr );
+    __sig_init_rtn(); // fills in a thread-specific copy of signal table
     // allow main process to proceed
     SetEvent( td->event );
 
-    __NewExceptionHandler( &rr, 0 );
-    __sig_init_rtn();   // fills in a thread-specific copy of signal table
     // wait for main process to have given us the thread handle
     WaitForSingleObject( event_ack, -1 );
     CloseHandle( event_ack );
@@ -167,7 +170,9 @@ unsigned long __CBeginThread(thread_fn *start_addr, unsigned stack_size,
 void __CEndThread( void )
 {
     __sig_fini_rtn();
-    __DoneExceptionHandler();
+    __DoneExceptionFilter();
+    // For DLLs, __NTRemoveThread will be called from _LibMain
+    // in DLL_THREAD_DETACH processing.
     if( ! __Is_DLL ) {
         __NTRemoveThread( TRUE );
     }

@@ -90,7 +90,7 @@ static unsigned WINAPI begin_thread_helper( thread_args *td )
     }
     free( td );
 
-    __NewExceptionHandler( &rr, 0 );
+    __NewExceptionFilter( &rr );
     __sig_init_rtn();   // fills in a thread-specific copy of signal table
     (*rtn)( arg );
     _endthreadex( 0 );
@@ -139,7 +139,7 @@ int __CBeginThreadEx(
 void __CEndThreadEx( unsigned retval )
 {
     __sig_fini_rtn();
-    __DoneExceptionHandler();
+    __DoneExceptionFilter();
     if( ! __Is_DLL ) {
         __NTRemoveThread( TRUE );
     }

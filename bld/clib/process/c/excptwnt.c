@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Default Win32 exception handlers.
 *
 ****************************************************************************/
 
@@ -67,13 +66,13 @@ static int _my_GetActiveWindow( void ) {
 static void fmt_hex( char *buf, char *fmt, void *hex ) {
 
     static char alpha[] = "0123456789abcdef";
-    char *ptr = 0;
+    char *ptr = NULL;
     unsigned long value;
 
     /*
      * find the end of the buffer
      */
-    while( *buf != 0 ) {
+    while( *buf != '\0' ) {
         buf++;
     }
 
@@ -82,7 +81,7 @@ static void fmt_hex( char *buf, char *fmt, void *hex ) {
      */
     for( ;; ) {
         *buf = *fmt;
-        if( *fmt == 0 ) break;
+        if( *fmt == '\0' ) break;
         if( *fmt == '0' && *(fmt+1) == 'x' ) {
             /* memorize the location of the hex field */
             ptr = buf+9;
@@ -94,7 +93,7 @@ static void fmt_hex( char *buf, char *fmt, void *hex ) {
     /*
      * format the hex value, if a location was found
      */
-    if( ptr != 0 ) {
+    if( ptr != NULL ) {
         value = (unsigned long)hex;
         while( value ) {
             *ptr = alpha[ value & 0xf ];
@@ -104,7 +103,20 @@ static void fmt_hex( char *buf, char *fmt, void *hex ) {
     }
 }
 
-static LONG WINAPI __ReportException(EXCEPTION_POINTERS *rec)
+#if defined(_M_IX86)
+void *GetFromSS( DWORD *sp );
+#pragma aux GetFromSS = \
+    "mov ebx,ss:[ecx]" \
+    parm [ecx] \
+    value [ebx]
+#endif
+
+
+/*
+ * Make function external so we can set it manually
+ */
+
+LONG WINAPI __ReportException( EXCEPTION_POINTERS *rec )
 {
     EXCEPTION_RECORD *ex = rec->ExceptionRecord;
 #if defined(_M_IX86)
@@ -112,6 +124,11 @@ static LONG WINAPI __ReportException(EXCEPTION_POINTERS *rec)
 #endif
     char              buff[256];
     DWORD             written;
+    DWORD             *sp;
+    int               i;
+
+    // if we are active then we've done crashed ourselves.
+    if ( __ReportInvoked ) return EXCEPTION_CONTINUE_SEARCH;
 
     __ReportInvoked = 1;    // indicate that we ran
 
@@ -125,7 +142,7 @@ static LONG WINAPI __ReportException(EXCEPTION_POINTERS *rec)
     /*
      * prepare the mesage buffer
      */
-    buff[0] = 0;
+    buff[0] = '\0';
 
     /*
      * Lets see what caused the exception.
@@ -138,13 +155,13 @@ static LONG WINAPI __ReportException(EXCEPTION_POINTERS *rec)
             {
                 fmt_hex( buff, "The instruction at 0x00000000 caused a "
                            "stack overflow floating point\nexception.\n",
-                           ex->ExceptionAddress);
+                           ex->ExceptionAddress );
             }
             else
             {
-                fmt_hex(buff, "The instruction at 0x00000000 caused a "
+                fmt_hex( buff, "The instruction at 0x00000000 caused a "
                            "stack underflow floating point\nexception.\n",
-                           ex->ExceptionAddress);
+                           ex->ExceptionAddress );
             }
             break;
 #elif defined(__AXP__)
@@ -154,98 +171,165 @@ static LONG WINAPI __ReportException(EXCEPTION_POINTERS *rec)
 #endif
 
         case STATUS_FLOAT_DENORMAL_OPERAND:
-            fmt_hex(buff, "The instruction at 0x00000000 caused a denormal "
+            fmt_hex( buff, "The instruction at 0x00000000 caused a denormal "
                        "operand floating point\nexception.\n",
-                       ex->ExceptionAddress);
+                       ex->ExceptionAddress );
             break;
 
         case STATUS_FLOAT_DIVIDE_BY_ZERO:
-            fmt_hex(buff, "The instruction at 0x00000000 caused a division "
+            fmt_hex( buff, "The instruction at 0x00000000 caused a division "
                        "by zero floating point\nexception.\n",
-                       ex->ExceptionAddress);
+                       ex->ExceptionAddress );
             break;
 
         case STATUS_FLOAT_INEXACT_RESULT:
-            fmt_hex(buff, "The instruction at 0x00000000 caused an inexact "
+            fmt_hex( buff, "The instruction at 0x00000000 caused an inexact "
                        "value floating point\nexception.\n",
-                       ex->ExceptionAddress);
+                       ex->ExceptionAddress );
             break;
 
         case STATUS_FLOAT_OVERFLOW:
-            fmt_hex(buff, "The instruction at 0x00000000 caused an overflow "
+            fmt_hex( buff, "The instruction at 0x00000000 caused an overflow "
                        "floating point exception.\n",
-                       ex->ExceptionAddress);
+                       ex->ExceptionAddress );
             break;
 
         case STATUS_FLOAT_UNDERFLOW:
-            fmt_hex(buff, "The instruction at 0x00000000 caused an underflow "
+            fmt_hex( buff, "The instruction at 0x00000000 caused an underflow "
                        "floating point exception.\n",
-                       ex->ExceptionAddress);
+                       ex->ExceptionAddress );
             break;
 
         case STATUS_FLOAT_INVALID_OPERATION:
-            fmt_hex(buff, "The instruction at 0x00000000 caused an invalid "
+            fmt_hex( buff, "The instruction at 0x00000000 caused an invalid "
                        "operation floating point\nexception.\n",
-                       ex->ExceptionAddress);
+                       ex->ExceptionAddress );
             break;
 
 #if defined(__AXP__)
         case STATUS_DATATYPE_MISALIGNMENT:
-            fmt_hex(buff, "The instruction at 0x00000000 tried to reference ",
-                       ex->ExceptionAddress);
-            fmt_hex(buff, "unaligned data at 0x00000000.\n",
+            fmt_hex( buff, "The instruction at 0x00000000 tried to reference ",
+                       ex->ExceptionAddress );
+            fmt_hex( buff, "unaligned data at 0x00000000.\n",
                        (void *)(ex->ExceptionInformation[2]) );
             break;
 #endif
         case STATUS_ACCESS_VIOLATION:
-            fmt_hex(buff, "The instruction at 0x00000000 referenced memory ",
+            fmt_hex( buff, "The instruction at 0x00000000 referenced memory ",
                        ex->ExceptionAddress );
-            fmt_hex(buff, "at 0x00000000.\nThe memory could not be ",
+            fmt_hex( buff, "at 0x00000000.\nThe memory could not be ",
                        (void *)(ex->ExceptionInformation[1]) );
-            if( ex->ExceptionInformation[0] == 0 ) {
-                fmt_hex(buff, "read.\n", 0 );
+            if ( ex->ExceptionInformation[0] == 0 ) {
+                fmt_hex( buff, "read.\n", 0 );
             } else {
-                fmt_hex(buff, "written.\n", 0 );
+                fmt_hex( buff, "written.\n", 0 );
             }
             break;
 
         case STATUS_PRIVILEGED_INSTRUCTION:
-            fmt_hex(buff, "A privileged instruction was executed at "
-                       "address 0x00000000.\n", ex->ExceptionAddress);
+            fmt_hex( buff, "A privileged instruction was executed at "
+                       "address 0x00000000.\n", ex->ExceptionAddress );
             break;
 
         case STATUS_ILLEGAL_INSTRUCTION:
-            fmt_hex(buff, "An illegal instruction was executed at "
-                       "address 0x00000000.\n", ex->ExceptionAddress);
+            fmt_hex( buff, "An illegal instruction was executed at "
+                       "address 0x00000000.\n", ex->ExceptionAddress );
             break;
 
         case STATUS_INTEGER_DIVIDE_BY_ZERO:
-            fmt_hex(buff, "An integer divide by zero was encountered at "
-                       "address 0x00000000.\n", ex->ExceptionAddress);
+            fmt_hex( buff, "An integer divide by zero was encountered at "
+                       "address 0x00000000.\n", ex->ExceptionAddress );
             break;
 
         case STATUS_STACK_OVERFLOW:
-            fmt_hex(buff, "A stack overflow was encountered at address "
-                       "0x00000000.\n", ex->ExceptionAddress);
+            fmt_hex( buff, "A stack overflow was encountered at address "
+                       "0x00000000.\n", ex->ExceptionAddress );
             break;
 
         default:
-            fmt_hex(buff, "The program encountered exception 0x00000000 at ",
+            fmt_hex( buff, "The program encountered exception 0x00000000 at ",
                        (void *)ex->ExceptionCode);
-            fmt_hex(buff, "address 0x00000000 and\ncannot continue.\n",
-                       ex->ExceptionAddress);
+            fmt_hex( buff, "address 0x00000000 and\ncannot continue.\n",
+                       ex->ExceptionAddress );
             break;
     } /* switch */
 
     WriteFile(NT_STDERR_FILENO, buff, strlen(buff), &written, NULL);
 
+#if defined(_M_IX86)
+    buff[0] = '\0';
+    fmt_hex( buff, "Exception fielded by 0x00000000\n", __ReportException );
+    WriteFile( NT_STDERR_FILENO, buff, strlen(buff), &written, NULL );
+    buff[0] = '\0';
+    if ( context->ContextFlags & CONTEXT_INTEGER ) {
+        fmt_hex( buff, "EAX=0x00000000 ", (void *)context->Eax );
+        fmt_hex( buff, "EBX=0x00000000 ", (void *)context->Ebx );
+        fmt_hex( buff, "ECX=0x00000000 ", (void *)context->Ecx );
+        fmt_hex( buff, "EDX=0x00000000\n", (void *)context->Edx );
+        fmt_hex( buff, "ESI=0x00000000 ", (void *)context->Esi );
+        fmt_hex( buff, "EDI=0x00000000 ", (void *)context->Edi );
+    }
+    if ( context->ContextFlags & CONTEXT_CONTROL ) {
+        fmt_hex( buff, "EBP=0x00000000 ", (void *)context->Ebp );
+        fmt_hex( buff, "ESP=0x00000000\n", (void *)context->Esp );
+        fmt_hex( buff, "EIP=0x00000000 ", (void *)context->Eip );
+        fmt_hex( buff, "EFL=0x00000000 ", (void *)context->EFlags );
+        fmt_hex( buff, "CS =0x00000000 ", (void *)context->SegCs );
+        fmt_hex( buff, "SS =0x00000000\n", (void *)context->SegSs );
+    }
+    if ( context->ContextFlags & CONTEXT_SEGMENTS ) {
+        fmt_hex( buff, "DS =0x00000000 ", (void *)context->SegDs );
+        fmt_hex( buff, "ES =0x00000000 ", (void *)context->SegEs );
+        fmt_hex( buff, "FS =0x00000000 ", (void *)context->SegFs );
+        fmt_hex( buff, "GS =0x00000000\n", (void *)context->SegGs );
+    }
+    WriteFile( NT_STDERR_FILENO, buff, strlen(buff), &written, NULL );
+    buff[0] = '\0';
+    if ( context->ContextFlags & CONTEXT_CONTROL ) {
+        sp = (DWORD *)context->Esp;
+        fmt_hex( buff, "Stack dump (SS:ESP)\n", 0 );
+        for( i = 1; i <= 72; i++) {
+            if ( ((long)sp & 0x0000FFFF) == 0 ) {
+                fmt_hex( buff, "-stack end\n", 0 );
+            } else {
+                fmt_hex( buff, "0x00000000 ", GetFromSS( sp ) );
+            }
+            if ( (i % 6) == 0 ) {
+                fmt_hex( buff, "\n", 0 );
+            }
+            WriteFile( NT_STDERR_FILENO, buff, strlen(buff), &written, NULL );
+            buff[0] = '\0';
+            if ( ((long)sp & 0x0000FFFF) == 0 ) break;
+            sp++;
+        }
+    }
+
+#endif
+
     return EXCEPTION_EXECUTE_HANDLER;
 } /* ReportException() */
 
 
+void __DefaultExceptionHandler()
+{
+    LPTOP_LEVEL_EXCEPTION_FILTER top_filter;
+
+    // This routine is called whenever a new process begins.
+    // Install an exception handler and then check to see if we already
+    // have one. If we did, set it back to the previous one. This ensures
+    // we always have one set up and permits apps to install their own.
+
+    top_filter = SetUnhandledExceptionFilter( __ReportException );
+    if ( top_filter != NULL ) {
+        SetUnhandledExceptionFilter( top_filter );
+    }
+}
+
+
 // Note: this needs to be cdecl for Win32s and Windows 95
 //       Windows NT doesn't care if it is cdecl or stdcall
-int __cdecl __ExceptionFilter( PEXCEPTION_RECORD ex,
+
+int __cdecl __ExceptionFilter( LPEXCEPTION_RECORD ex,
                                LPVOID establisher_frame,
                                LPCONTEXT context,
                                LPVOID dispatch_context )
@@ -413,19 +497,20 @@ int __cdecl __ExceptionFilter( PEXCEPTION_RECORD ex,
 
     __ReportInvoked = 0;    // indicate our own last-chance handler has not run
 
-    // call __ReportException or an application-installed handler
-    // NOTE: if running under a Debugger, the handler will NOT be called
+    // Call __ReportException or an application-installed handler.
+    // NOTE: if running under a debugger, the handler will NOT be called
+    // since the debugger usurps this handler.
     // Possible rv values:
     //   -1 => EXCEPTION_CONTINUE_EXECUTION
     //    0 => EXCEPTION_CONTINUE_SEARCH
     //   +1 => EXCEPTION_EXECUTE_HANDLER
 
-    rv = UnhandledExceptionFilter(&rec);    // us or somebody else ?
-    if (rv == EXCEPTION_EXECUTE_HANDLER) {
-        if (__ReportInvoked == 0) {
-            rv = __ReportException( &rec ); // call our last-chance handler directly
-        }
-    }
+    rv = UnhandledExceptionFilter( &rec );  // us or somebody else ?
+//  if (rv == EXCEPTION_EXECUTE_HANDLER) {
+//      if (__ReportInvoked == 0) {
+//          rv = __ReportException( &rec ); // call our last-chance handler directly
+//      }
+//  }
     if (rv == EXCEPTION_EXECUTE_HANDLER) {
         ExitProcess( -1 );
     }
@@ -440,8 +525,10 @@ int __cdecl __ExceptionFilter( PEXCEPTION_RECORD ex,
 } /* __ExceptionFilter */
 
 
-void __NewExceptionHandler( REGISTRATION_RECORD *rr, int set_unh )
+void __NewExceptionFilter( REGISTRATION_RECORD *rr )
 {
+    // This routine is called whenever a new process/thread begins.
+
     __XCPTHANDLER = rr;
     #if defined(__386__)
         rr->RegistrationRecordPrev = (LPVOID) GetFromFS( 0 );
@@ -452,12 +539,10 @@ void __NewExceptionHandler( REGISTRATION_RECORD *rr, int set_unh )
     #elif defined (__PPC__)
         // No idea yet.
     #endif
-    // we only need to do this once
-    if( set_unh ) SetUnhandledExceptionFilter(__ReportException);
-} /* __NewExceptionHandler() */
 
+} /* __NewExceptionFilter() */
 
-void __DoneExceptionHandler( void )
+void __DoneExceptionFilter( void )
 {
     #if defined(__386__)
         REGISTRATION_RECORD *rr;
@@ -472,4 +557,24 @@ void __DoneExceptionHandler( void )
     #endif
 
     __XCPTHANDLER = NULL;
+} /* __DoneExceptionFilter() */
+
+// The following two routines are provided for apps linked against
+// the C Library Run-time DLLs.
+
+// For backwards compatibility (deprecated)
+
+void __NewExceptionHandler( REGISTRATION_RECORD *rr )
+{
+    __NewExceptionFilter( rr );
+    __DefaultExceptionHandler();
+
+} /* __NewExceptionHandler() */
+
+// For backwards compatibility (deprecated)
+
+void __DoneExceptionHandler( void )
+{
+    __DoneExceptionFilter();
+
 } /* __DoneExceptionHandler() */

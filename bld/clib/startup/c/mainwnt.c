@@ -117,6 +117,8 @@ int                     __Is_DLL;       /* TRUE => DLL, else not a DLL */
 static char             *_cmd_ptr;
 static wchar_t          *_wcmd_ptr;
 
+// called once at DLL_PROCESS_ATTACH or by __NTMainInit
+
 int __NTInit( int is_dll, thread_data *tdata, HANDLE hdll )
 {
     DWORD       ver;
@@ -233,21 +235,18 @@ void __NTFini( void )
         lib_free( _wcmd_ptr );
         _wcmd_ptr = NULL;
     }
-    /* do we need to do the next two ? */
     if( _Envptr != NULL ) {
         FreeEnvironmentStrings( _Envptr );
         _Envptr = NULL;
     }
-//  gets done by __FreeThreadDataList which is activated from FiniSema4s
-//  __FreeInitThreadData( __FirstThreadData );
-//  __FirstThreadData = NULL;
 }
 
 void __NTMainInit( REGISTRATION_RECORD *rr, thread_data *tdata )
 {
+    __DefaultExceptionHandler();
     __NTInit( FALSE, tdata, GetModuleHandle(NULL) );
     __init_stack_limits( &_STACKLOW, &_STACKTOP );
-    __NewExceptionHandler( rr, 1 );
+    __NewExceptionFilter( rr );
     __InitRtns( INIT_PRIORITY_LIBRARY+1 );
     __sig_init_rtn();
     __InitRtns( 255 );
@@ -263,9 +262,15 @@ _WCRTLINK void __exit( unsigned ret_code )
             (*__process_fini)( 0, FINI_PRIORITY_EXIT-1 );
         }
     } else {
-        __DoneExceptionHandler();
+        __DoneExceptionFilter();
         __FiniRtns( 0, FINI_PRIORITY_EXIT-1 );
         (*_ThreadExitRtn)();
+    }
+    // Also gets done by __FreeThreadDataList which is activated from FiniSema4s
+    // for multi-threaded apps
+    if( __FirstThreadData != NULL ) {
+        __FreeInitThreadData( __FirstThreadData );
+        __FirstThreadData = NULL;
     }
     ExitProcess( ret_code );
 }

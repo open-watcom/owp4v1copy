@@ -52,7 +52,8 @@ typedef struct thread_data_list {
 static thread_data_list *__thread_data_list;
 
 // lookup thread data
-thread_data *__GetThreadData( void ) {
+thread_data *__GetThreadData( void )
+{
     thread_data *tdata = NULL;
     #ifdef __OS2__
         TID             tid;
@@ -114,7 +115,8 @@ thread_data *__GetThreadData( void ) {
 }
 
 // realloc thread data
-thread_data *__ReallocThreadData( void ) {
+thread_data *__ReallocThreadData( void )
+{
     TID tid;
     thread_data *tdata;
 
@@ -179,9 +181,11 @@ thread_data *__ReallocThreadData( void ) {
 }
 
 // add to list of thread data
-int __AddThreadData( TID tid, thread_data *tdata ) {
+int __AddThreadData( TID tid, thread_data *tdata )
+{
     int             retn = 1;
     thread_data_list *tdl;
+
     _AccessTDList();
     tdl = lib_calloc( 1, sizeof( *tdl ) );
     if( tdl != NULL ) {
@@ -203,11 +207,12 @@ int __AddThreadData( TID tid, thread_data *tdata ) {
 }
 
 // remove from list of thread data
-void __RemoveThreadData( TID tid ) {
+void __RemoveThreadData( TID tid )
+{
     thread_data_list *tdl;
     thread_data_list **pprev;
-    _AccessTDList();
 
+    _AccessTDList();
     pprev = &__thread_data_list;
     for( tdl = *pprev; tdl != NULL ; tdl = tdl->next ) {
         if( tdl->tid == tid ) {
@@ -227,7 +232,8 @@ void __RemoveThreadData( TID tid ) {
 }
 
 // mark for resize in list of thread data
-void __ResizeThreadDataList( void ) {
+void __ResizeThreadDataList( void )
+{
     thread_data_list *tdl;
 
     _AccessTDList();
@@ -257,8 +263,9 @@ void __ResizeThreadDataList( void ) {
 }
 
 // clean up list of thread data
-// don't need semaphores becuase shutdown only has one thread executing
-void __FreeThreadDataList() {
+// don't need semaphores because shutdown only has one thread executing
+void __FreeThreadDataList()
+{
     thread_data_list *tdl;
     thread_data_list *next;
 
@@ -271,4 +278,18 @@ void __FreeThreadDataList() {
         lib_free( tdl );
         tdl = next;
     }
+}
+
+// a sanity check routine that can be called from a termination routine
+int __ActiveThreads()
+{
+
+    thread_data_list *tdl;
+    int threads;
+
+    threads = 0;
+    for( tdl = __thread_data_list ; tdl != NULL ; tdl = tdl->next ) {
+      threads++;
+    }
+    return( threads );
 }
