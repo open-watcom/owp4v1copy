@@ -147,7 +147,7 @@ inc_dirs += -I$(fe_misc_dir)/h
 cc = cc
 bld_cl = cc
 
-CPPFLAGS = $(inc_dirs) -DNDEBUG -Dlocal=static -D__UNIX__ -D__LINUX__ -D__SMALL__ -D_M_IX86
+CPPFLAGS = $(inc_dirs) $(defines) -DNDEBUG -Dlocal=static -D__UNIX__ -D__LINUX__ -D__SMALL__ -D_M_IX86
 CFLAGS = $(CPPFLAGS) -c -funsigned-char -pipe -std=gnu99 -O -o $@
 LDFLAGS = -L$(cg_dir)/intel/$(target_CPU)/$(%OBJDIR) -L$(dwarf_dir)/dw/$(%OBJDIR) &
 -L$(cfloat_dir)/$(%OBJDIR) -L$(owl_dir)/$(%OBJDIR) -L$(clib_dir)/$(%OBJDIR) &
@@ -204,7 +204,7 @@ target: $(def_targ) .SYMBOLIC
 !include $(cc_dir)/ccobjs.mif
 
 !ifdef bootstrap
-wcc$(target_CPU): code$(target_CPU).gh weights.gh keywords.gh msgtxt.gh msgdefs.gh msgattr.gh errors01.int $(intname)01.int usage.gh $(cc_objs)
+wcc$(target_CPU): $(pre_obj_deps) code$(target_CPU).gh errors01.int $(cc_objs)
 	$(cc) $(LDFLAGS) -o $@ $(cc_objs) $(LIBS)
 !endif
 

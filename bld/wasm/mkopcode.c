@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "watcom.h"
 
 char Chars[3000];
 struct words {

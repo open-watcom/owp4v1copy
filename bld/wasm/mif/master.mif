@@ -19,7 +19,7 @@ bld_cl = cc
 cflags = -funsigned-char -c -D_WASM_ -DUNIX -D__UNIX__ -D__LINUX__ -D__386__ -D__FLAT__ -D_WCUNALIGNED= -I$(%PWD) -I$(proj_path)/h -I$(womp_dir)/h -I$(watcom_dir)/h -I$(wres_dir)/h -I$(trmem_dir) -o $@
 force_include = -include
 LIBS = -L$(clib_dir)/$(%OBJDIR) -lwatcom
-wcl_util_opts = -o $^@ -Dstricmp=strcasecmp $(LIBS)
+wcl_util_opts = -I$(watcom_dir)/h -o $^@ $(LIBS)
 !else
 wcl_util_opts = -fe=$^@
 !endif
