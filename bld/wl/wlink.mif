@@ -225,6 +225,7 @@ stubexe = $(bin_prefix)wlstub.exe
 
 !ifeq bootstrap 1
 exe = $(proj_name)
+extra_c_flags =
 inc_dirs = -I../linux386 -I. -I../h -I$(rc_dir)/h -I$(lib_misc_dir)/h &
 -I$(watcom_dir)/h
 libs = $(wres_dir)/$(%OBJDIR)/libwres.a $(dwarf_lib) &
