@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of isatty() for SNAP.
+* Description:  Implementation of putenv() for SNAP.
 *
 ****************************************************************************/
 
@@ -34,8 +34,8 @@
 
 #include <os/imports.h>
 
-_WCRTLINK int isatty( int __fildes )
+_WCRTLINK int putenv( const char *name )
 {
-    return( xisatty( __fildes ) );
+    return( xputenv( name ) );
 }
 

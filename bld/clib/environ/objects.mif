@@ -18,6 +18,7 @@
 !inject isattsnp.obj                                                                        snp
 !inject isattwnt.obj                     nt nta ntp
 !inject isattlnx.obj                                                                    l32
+!inject ptenvsnp.obj                                                                        snp
 !inject putenv.obj   d16 d32             nt nta ntp         o16 o32 q16     w16 w32     l32
 !inject searchen.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32
 !inject setenv.obj   d16 d32             nt nta ntp         o16 o32 q16     w16 w32     l32

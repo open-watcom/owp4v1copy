@@ -32,7 +32,7 @@
 #include "variety.h"
 #include <stdlib.h>
 
-#include <libc/xfile.h>
+#include <os/imports.h>
 
 _WCRTLINK char *getenv( const char *name )
 {
