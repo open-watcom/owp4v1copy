@@ -122,7 +122,7 @@ static void TrecFailCondition(void) {
 
 void Trec(char *str, ...) {
     enum { max=10 };
-    static currBuff;
+    static int  currBuff;
     static char buff[max][128];
     va_list     arglist;
 
