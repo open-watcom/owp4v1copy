@@ -394,7 +394,7 @@ extern uint             GetDirIdx( char *, int );
 extern int              GlobalDef( int );       // define an global symbol
 extern int              ExtDef( int );          // define an external symbol
 extern int              CommDef( int );         // define an communal symbol
-extern struct asm_sym   *MakeExtern( char *name, memtype type, char already_defd );
+extern struct asm_sym   *MakeExtern( char *name, memtype type, bool already_defd );
 extern int              PubDef( int );          // define a public symbol
 extern int              GrpDef( int );          // define a group
 extern int              SegDef( int );          // open or close a segment
@@ -406,8 +406,8 @@ extern int              ProcEnd( int );         // end a procedure
 extern int              Ret( int, int, int );   // emit return statement from procedure
 extern int              WritePrologue( void );  // emit prologue statement after the
                                                 // declaration of a procedure
-extern int              MacroDef( int, char );  // define a macro
-extern int              MacroEnd( char );       // end a macro
+extern int              MacroDef( int, bool );  // define a macro
+extern int              MacroEnd( bool );       // end a macro
 extern int              Startup( int );         // handle .startup & .exit
 extern int              SimSeg( int );          // handle simplified segment
 extern int              Include( int );         // handle an INCLUDE statement
