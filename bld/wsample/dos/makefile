@@ -1,7 +1,12 @@
 #pmake: all build os_dos cpu_i86
+host_OS = dos
+host_CPU = i86
+
+!include cproj.mif
+
 .erase
 
-linker = *wlink
+#linker = *wlink
 
 objects = sample.obj sampdata.obj realmode.obj rmhooks.obj sampdos.obj &
           io.obj sysio.obj timasm.obj interc.obj sampexe.obj settime.obj &
@@ -18,23 +23,26 @@ xname   =   wsample
     @%append tmp.lnk lib wress
     @%append tmp.lnk name $^@
     @for %i in ($objects) do @%append tmp.lnk file %i
-    wlink @tmp.lnk
+    $(linker) @tmp.lnk
     wstrip -q -a -r $^@ . $(xname).res
 
 .c: .;../c
 .c.obj :
-    $(comp286) $[* $cflags2
+#    $(comp286) $[* $cflags2
+    $(cc) $[* $cflags2
 
 .asm: .
 .asm.obj :
 #    $(asm286) $[*/ZD;
-    wasm $[*
+#    *wasm -q $[*
+    $(as) $[*
 
 $(xname).res : ../h/wsample.rc ../h/wmsg.h
-        wrc -bt=windows -zk0 -r -dDOS -fo=$^. $[@
+    $(rc_aui) -zk0 -dDOS -fo=$^. $[@
 
 wmsg.obj: ../c/wmsg.c ../h/wmsg.h
-    $(comp286) $[* $cflags
+#    $(comp286) $[* $cflags
+    $(cc) $[* $cflags
 
 clean : .symbolic
     @rm -f *.obj *.res *.lnk *.map

@@ -579,6 +579,7 @@ int sample_main( char far *win_cmd )
     }
     getcmd( cmd_line );
 #else
+    cmdlen = cmdlen;
     cmd_line = malloc( 256 ); /* Just hope for the best */
     arg = malloc( 256 );
     if( ( cmd_line == NULL ) || ( arg == NULL ) ) {
