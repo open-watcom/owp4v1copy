@@ -5,7 +5,7 @@
 .np
 The "PSEUDOPREEMPTION" option specifies that an additional set of
 system calls will yield control to other processes.
-Multitasking in the NetWare 386 operating system is non-preemptive.
+Multitasking in current NetWare operating systems is non-preemptive.
 That is, a process must give up control in order for other processes
 to execute.
 Using the "PSEUDOPREEMPTION" option increases the probability that all

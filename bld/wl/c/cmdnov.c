@@ -47,35 +47,178 @@
 #include "loadnov.h"
 #include "wlnkmsg.h"
 #include "cmdnov.h"
+#include "nwpfx.h"
 
 static bool             GetNovImport( void );
 static bool             GetNovExport( void );
 extern bool             ProcNLM( void );
 
+static bool IsNetWarePrefix(const char * pToken, int nLen)
+{
+	if(NULL == pToken)
+		return FALSE;
+	if((pToken[0] == '(') && (pToken[nLen-1] == ')'))
+		return TRUE;
+	return FALSE;
+}
+
+/*
+//	should move these somewhere more suitable
+*/
+#define IS_NUMBER(ptr)	((*ptr >= '0') && (*ptr <= '9'))
+#define IS_WHITESPACE(ptr) (*(ptr) == ' ' || *(ptr) =='\t' || *(ptr) == '\r')
+
+static bool NetWareSplitSymbol(char * tokenThis, int tokenLen, char ** name, int *namelen, char **prefix, int *prefixlen)
+{
+	char * findAt = tokenThis;
+	int nLen = tokenLen;
+
+	if((NULL == tokenThis) || (0 == tokenLen) || (NULL == name) || (NULL == namelen) || (NULL == prefix) || (NULL == prefixlen))
+		return FALSE;
+
+	*name = *prefix = NULL;
+	*namelen = *prefixlen = 0;
+
+	while(nLen)
+	{
+		if('@' == *findAt)
+			break;
+		if( '\0' == *findAt)
+		{
+			nLen = 0;	/* force zero */
+			break;
+		}
+		findAt++;
+		nLen--;
+	}
+
+	if(0 == nLen)
+	{
+		*name = tokenThis;
+		*namelen = tokenLen;
+		return TRUE;
+	}
+
+	/*
+	//	findAt now points at an @ symbol. this maybe a stdcall designator or a prefixed symbol.
+	//	if the following character is a number then it must be stdcall as it is illegal to start
+	//	a function name with a numeric character (I believe)
+	*/
+
+	if(IS_NUMBER(&findAt[1]))
+	{
+		*name = tokenThis;
+		*namelen = tokenLen;
+		return TRUE;
+	}
+
+	*prefix = tokenThis;
+	*prefixlen = (int)(findAt - tokenThis);
+
+	*name = &findAt[1];
+	*namelen = nLen-1;
+
+	return TRUE;
+}
+
+/*
+//	Trouble! In files, import and export specifiers may or may not have a trailing comma
+//	so we look ahead to Token.next and see if there is a comma next (after whitespace)
+//	and if there is then we don't set this flag else we do
+//	this also affects us using
+//		IMPORT x, (PREFIX), y, (PREFIX), x
+*/
+static unsigned int DoWeNeedToSkipASeparator(void)
+{
+	char *parse;
+
+	if((NULL == (parse = Token.next)) || ('\0' == *parse))
+		return 0;
+
+	while(('\0' != *parse) && (IS_WHITESPACE(parse)))
+		parse++;
+
+	if('\0' == *parse)
+		return 0;
+
+	if(',' == *parse)
+		return 0;
+
+	/*
+	//	skip cr-lf
+	*/
+	if(('\n' == *parse) || ('\r' == *parse))
+		parse++;
+	if(('\n' == *parse) || ('\r' == *parse))
+		parse++;
+
+	if(!IS_WHITESPACE(parse))	/* import lines must be in second column or greater */
+		return 0;
+
+	return 1;
+}
+
 extern bool ProcNovImport( void )
 /*******************************/
 {
-    return( ProcArgList( GetNovImport, TOK_INCLUDE_DOT ) );
+	SetCurrentPrefix(NULL, 0);
+	return(ProcArgList( GetNovImport, TOK_INCLUDE_DOT ));
 }
 
 extern bool ProcNovExport( void )
 /*******************************/
 {
+	SetCurrentPrefix(NULL, 0);
     return( ProcArgList( GetNovExport, TOK_INCLUDE_DOT ) );
 }
+
+//extern int printf(char *fmt, ...);
 
 static bool GetNovImport( void )
 /******************************/
 {
     symbol *        sym;
 
-    sym = SymXOp( ST_DEFINE_SYM, Token.this, Token.len );
+	char *	name = NULL;
+	char *	prefix = NULL;
+	int		namelen = 0;
+	int		prefixlen = 0;
+
+	/*
+	//	we need to trap import/export prefixes here. Unfortunately the prefix context
+	//	is not followed by a valid seperator so the GetToken() call in ProcArgList
+	//	at the end of the do...while loop terminates the loop after we return from
+	//	this call (and WildCard from where we were called of course
+	*/
+	if(IsNetWarePrefix(Token.this, Token.len))
+	{
+		bool result;
+		if(FALSE == (result = SetCurrentPrefix(Token.this, Token.len)))
+			return FALSE;
+
+		Token.skipToNext = DoWeNeedToSkipASeparator();
+
+		return result;
+	}
+
+	if(!NetWareSplitSymbol(Token.this, Token.len, &name, &namelen, &prefix, &prefixlen))
+	{
+		return (FALSE);
+	}
+
+    sym = SymXOpNWPfx( ST_DEFINE_SYM, name, namelen, prefix, prefixlen);
     if( sym == NULL || sym->p.import != NULL ) {
         return( TRUE );
     }
+
+//	printf("imported %s from %s\n", sym->name, sym->prefix ? sym->prefix : "(NONE)");
+
     SET_SYM_TYPE( sym, SYM_IMPORTED );
     sym->info |= SYM_DCE_REF;   // make sure we don't try to get rid of these.
     SetNovImportSymbol( sym );
+
+	Token.skipToNext = DoWeNeedToSkipASeparator();
+
     return( TRUE );
 }
 
@@ -90,9 +233,41 @@ static bool GetNovExport( void )
 {
     symbol *    sym;
 
-    sym = SymXOp( ST_CREATE | ST_REFERENCE, Token.this, Token.len );
+	char *	name = NULL;
+	char *	prefix = NULL;
+	int		namelen = 0;
+	int		prefixlen = 0;
+
+	/*
+	//	we need to trap import/export prefixes here. Unfortunately the prefix context
+	//	is not followed by a valid seperator so the GetToken() call in ProcArgList
+	//	at the end of the do...while loop terminates the loop after we return from
+	//	this call (and WildCard from where we were called of course
+	*/
+	if(IsNetWarePrefix(Token.this, Token.len))
+	{
+		bool result;
+
+		if(FALSE == (result = SetCurrentPrefix(Token.this, Token.len)))
+			return FALSE;
+
+		Token.skipToNext = DoWeNeedToSkipASeparator();
+		return result;
+	}
+
+	if(!NetWareSplitSymbol(Token.this, Token.len, &name, &namelen, &prefix, &prefixlen))
+	{
+		return (FALSE);
+	}
+
+    sym = SymXOpNWPfx( ST_CREATE | ST_REFERENCE, name, namelen, prefix, prefixlen);
+
     sym->info |= SYM_DCE_REF | SYM_EXPORTED;
-    AddNameTable( Token.this, Token.len, TRUE, &FmtData.u.nov.exp.export );
+/*    AddNameTable( Token.this, Token.len, TRUE, &FmtData.u.nov.exp.export ); */
+    AddNameTable( name, namelen, TRUE, &FmtData.u.nov.exp.export );
+
+	Token.skipToNext = DoWeNeedToSkipASeparator();
+
     return( TRUE );
 }
 
@@ -129,6 +304,14 @@ extern bool ProcMultiLoad( void )
     FmtData.u.nov.exeflags |= NOV_MULTIPLE;
     return( TRUE );
 }
+
+extern bool ProcAutoUnload( void )
+/*******************************/
+{
+    FmtData.u.nov.exeflags |= NOV_AUTOUNLOAD;
+    return( TRUE );
+}
+
 
 extern bool ProcReentrant( void )
 /*******************************/
@@ -353,6 +536,83 @@ extern bool ProcNAM( void )
     FmtData.u.nov.moduletype = 3;
     return( TRUE );
 }
+
+extern bool     ProcModuleType4( void )
+/*************************/
+{
+    Extension = E_NLM;
+    FmtData.u.nov.moduletype = 4;
+    return( TRUE );
+}
+
+extern bool     ProcModuleType5( void )
+/*************************/
+{
+    Extension = E_NOV_MSL;
+    FmtData.u.nov.moduletype = 5;
+    return( TRUE );
+}
+
+extern bool     ProcModuleType6( void )
+/*************************/
+{
+    Extension = E_NLM;
+    FmtData.u.nov.moduletype = 6;
+    return( TRUE );
+}
+
+extern bool     ProcModuleType7( void )
+/*************************/
+{
+    Extension = E_NLM;
+    FmtData.u.nov.moduletype = 7;
+    return( TRUE );
+}
+
+extern bool     ProcModuleType8( void )
+/*************************/
+{
+    Extension = E_NOV_HAM;
+    FmtData.u.nov.moduletype = 8;
+    return( TRUE );
+}
+
+extern bool     ProcModuleType9( void )
+/*************************/
+{
+    Extension = E_NOV_CDM;
+    FmtData.u.nov.moduletype = 9;
+    return( TRUE );
+}
+
+#if 0 
+/*
+// as I have got tired ot writing, module types 10 through 12 are reserved */
+extern bool     ProcModuleType10( void )
+/*************************/
+{
+    Extension = ;
+    FmtData.u.nov.moduletype = 10;
+    return( TRUE );
+}
+
+extern bool     ProcModuleType11( void )
+/*************************/
+{
+    Extension = ;
+    FmtData.u.nov.moduletype = 11;
+    return( TRUE );
+}
+
+extern bool     ProcModuleType12( void )
+/*************************/
+{
+    Extension = ;
+    FmtData.u.nov.moduletype = 12;
+    return( TRUE );
+}
+#endif
+
 
 static bool GetNovModule( void )
 /******************************/

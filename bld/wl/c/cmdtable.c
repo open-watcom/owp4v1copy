@@ -213,6 +213,7 @@ extern  parse_entry     MainOptions[] = {
     "SCReenname",   &ProcScreenName,    MK_NOVELL, 0,
     "CHeck",        &ProcCheck,         MK_NOVELL, 0,
     "MULTILoad",    &ProcMultiLoad,     MK_NOVELL, 0,
+    "AUTOUNload",   &ProcAutoUnload,    MK_NOVELL, 0,
     "REentrant",    &ProcReentrant,     MK_NOVELL, 0,
     "SYnchronize",  &ProcSynch,         MK_NOVELL, 0,
     "CUSTom",       &ProcCustom,        MK_NOVELL, 0,
@@ -348,11 +349,27 @@ extern parse_entry  PharModels[] = {
 /* parse tables used in CMDNOV.C */
 
 extern  parse_entry     NovModels[] = {
-    "NLM",      &ProcNLM,           MK_NOVELL, 0,
-    "LAN",      &ProcLAN,           MK_NOVELL, 0,
-    "DSK",      &ProcDSK,           MK_NOVELL, 0,
-    "NAM",      &ProcNAM,           MK_NOVELL, 0,
-    NULL
+    "NLM",      &ProcNLM,				    MK_NOVELL, 0,	/*	0	*/
+    "LAN",      &ProcLAN		,           MK_NOVELL, 0,	/*	1	*/
+    "DSK",      &ProcDSK,				    MK_NOVELL, 0,	/*	2	*/
+    "NAM",      &ProcNAM		,           MK_NOVELL, 0,	/*	3	*/
+	"0",		&ProcNLM,					MK_NOVELL, 0,	/*	0 again */
+	"1",		&ProcLAN,					MK_NOVELL, 0,	/*	etc		*/
+	"2",		&ProcDSK,					MK_NOVELL, 0,
+	"3",		&ProcNAM,					MK_NOVELL, 0,
+	"4",		&ProcModuleType4,			MK_NOVELL, 0,
+	"5",		&ProcModuleType5,			MK_NOVELL, 0,
+	"6",		&ProcModuleType6,			MK_NOVELL, 0,
+	"7",		&ProcModuleType7,			MK_NOVELL, 0,
+	"8",		&ProcModuleType8,			MK_NOVELL, 0,
+	"9",		&ProcModuleType9,			MK_NOVELL, 0,
+#if 0
+	/* NLM types 10 through 12 are currently reserved */
+	"10",		&ProcModuleType10,			MK_NOVELL, 0,
+	"11",		&ProcModuleType11,			MK_NOVELL, 0,
+    "12",		&ProcModuleType12,			MK_NOVELL, 0,
+#endif
+	NULL
 };
 
 extern parse_entry      NovDBIOptions[] = {

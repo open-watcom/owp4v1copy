@@ -327,7 +327,7 @@ When generating an OS/2
 :cmt. or PenPoint
 executable file, a symbol imported from a DLL cannot be a start
 address.
-When generating a NetWare 386 executable file, a symbol imported from
+When generating a NetWare executable file, a symbol imported from
 an NLM cannot be a start address.
 .if &e'&optdoc eq 1 .do begin
 .np
@@ -454,7 +454,7 @@ A syntax error occurred while the linker was processing directives.
 .np
 An imported symbol is one that was specified in an "IMPORT" directive.
 Imported symbols are defined in Windows or OS/2 16-bit DLLs and in
-Netware 386 NLMs.
+Netware NLMs.
 References to imported symbols must always have an offset value of 0.
 If "DosWrite" is an imported symbol, then referencing "DosWrite+2" is
 illegal.
@@ -540,7 +540,7 @@ to the symbol that caused the warning.
 .*
 .errnote 1044,2044 exported symbol %s not found
 .np
-This message is issued when generating a DLL or NetWare 386 NLM.
+This message is issued when generating a DLL or NetWare NLM.
 An attempt has been made to define an entry point into a DLL or NLM
 that does not exist.
 .*
@@ -752,7 +752,7 @@ If it is issued, please report this problem.
 .*
 .errnote 2066 invalid relative relocation type for an import at %a
 .np
-This message is issued only if a NetWare 386 executable file is being
+This message is issued only if a NetWare executable file is being
 generated.
 An imported symbol is one that was specified in an "IMPORT" directive
 or an import library.
@@ -767,7 +767,7 @@ If it is issued, please report this problem.
 .*
 .errnote 2067 %a: cannot relocate between code and data in Novell formats
 .np
-This message is issued only if a NetWare 386 executable file is being
+This message is issued only if a NetWare executable file is being
 generated.
 Segment relocation is not permitted.
 "%a" defines the location of the fixup.
@@ -784,7 +784,7 @@ A protected-mode application is one that is being generated for OS/2,
 FlashTek's DOS extender,
 Phar Lap's 386|DOS-Extender,
 Tenberry Software's DOS/4G or DOS/4GW DOS extender,
-Novell's NetWare 386 operating system,
+Novell's NetWare operating systems,
 Windows NT,
 or Windows 95.
 An absolute location is most commonly defined by the "EQU" assembler
@@ -792,7 +792,7 @@ directive.
 .*
 .errnote 1069 unload CHECK procedure not found
 .np
-This message is issued only if a NetWare 386 executable file is being
+This message is issued only if a NetWare executable file is being
 generated.
 The symbol specified in the "CHECK" option has not been defined.
 .if &e'&optdoc eq 1 .do begin
@@ -803,7 +803,7 @@ If it is issued, please report this problem.
 .*
 .errnote 2070 START procedure not found
 .np
-This message is issued only if a NetWare 386 executable file is being
+This message is issued only if a NetWare executable file is being
 generated.
 The symbol specified in the "START" option has not been defined.
 The default "START" symbol is "_Prelude".
@@ -815,7 +815,7 @@ If it is issued, please report this problem.
 .*
 .errnote 2071 EXIT procedure not found
 .np
-This message is issued only if a NetWare 386 executable file is being
+This message is issued only if a NetWare executable file is being
 generated.
 The symbol specified in the "EXIT" option has not been defined.
 The default "STOP" symbol is "_Stop".
@@ -839,8 +839,17 @@ If it is issued, please report this problem.
 .*
 .errnote 2073 bad Novell file format specified
 .np
-An invalid NetWare 386 executable file format was specified.
-Valid formats are NLM, DSK, NAM and LAN.
+An invalid NetWare executable file format was specified.
+Valid formats are NLM, DSK, NAM, LAN, or a numerical module type of 0
+through 9.
+0 corresponds to NLM, 1 to DSK, 2 to NAM, and 3 to LAN.
+4 specifies a utility NLM (default extension .NLM)
+5 specifies a Mirrored Server Link module (default .MSL)
+6 specifies an Operating System module (default .NLM) 
+7 specifies a Page High OS module (default .NLM)
+8 specifies a Host Adapter module (default .HAM)
+9 specified a Custom Device module (default .CDM)
+Currently module types of 10 and above are reserved for future use.
 .if &e'&optdoc eq 1 .do begin
 .np
 This message should not be issued for a &powerpp Win32 executable.
@@ -1369,7 +1378,7 @@ If it is issued, please report this problem.
 .*
 .errnote 1134 %s is an invalid message file
 .np
-The file specified in a "MESSAGE" option for NetWare 386 executable
+The file specified in a "MESSAGE" option for NetWare executable
 files is invalid.
 .if &e'&optdoc eq 1 .do begin
 .np
@@ -1613,6 +1622,15 @@ specified in the program and they have symbol names associated with
 them, it will emit this error message. If there is more than one
 starting address specified and at least one of them is unnamed, it
 will issue message 2030.
+.*
+.errnote 1167 The NLM internal name (%s) has been truncated as it exceeds the maximum size.
+.np
+This message is issued when generating a NetWare NLM.
+The output file name as specified by the NAME directive has
+specified a long file name (exceeds 8.3). The linker will truncate
+the generated file name by using the first eight characters of the
+specified file name and the first three characters of the file
+extension (if supplied), separated by a period.
 .*
 .if &e'&dohelp eq 0 .do begin
 .endnote

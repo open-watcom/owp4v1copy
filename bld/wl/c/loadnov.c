@@ -93,14 +93,32 @@ static unsigned_32 WriteNovImports( fixed_header *header )
     for( sym = HeadSym; sym != NULL; sym = sym->link ) {
         if( !(IS_SYM_IMPORTED(sym)) ) continue;
         /* so SymFini doesn't try to free it */
-        if( sym->p.import == DUMMY_IMPORT_PTR ) sym->p.import = NULL;
+        if( sym->p.import == DUMMY_IMPORT_PTR )
+			sym->p.import = NULL;
         import = sym->p.import;
+
         if( import != NULL ) {
             count++;
             name = sym->name;
             namelen = strlen( name );
-            WriteLoad( &namelen, sizeof( unsigned_8 ) );
-            WriteLoad( name, namelen );
+
+			/*
+			//	netware prefix support
+			*/
+			if(sym->prefix)
+			{
+				namelen += (strlen(sym->prefix) + 1);
+	            WriteLoad( &namelen, sizeof( unsigned_8 ) );
+				WriteLoad(sym->prefix, strlen(sym->prefix));
+				WriteLoad("@", 1);
+	            WriteLoad( name, strlen(sym->name) );
+			}
+			else
+			{
+	            WriteLoad( &namelen, sizeof( unsigned_8 ) );
+	            WriteLoad( name, namelen );
+			}
+
             wrote += namelen + sizeof( unsigned_8 ) + sizeof( unsigned_32 );
             if( import->contents <= MAX_IMP_INTERNAL ) {
                 refs = import->contents;
@@ -139,15 +157,38 @@ static unsigned_32 WriteNovExports( fixed_header *header )
     count = wrote = 0;
     export = FmtData.u.nov.exp.export;
     while( export != NULL ) {
+
         len = export->len;
         sym = SymOp( ST_FIND, export->name, len );
         if( sym == NULL || !(sym->info & SYM_DEFINED) ) {
             LnkMsg( WRN+MSG_EXP_SYM_NOT_FOUND, "s", export->name );
         } else if( !IS_SYM_IMPORTED(sym) ) {
-            AddImpLibEntry( sym->name, sym->name, NOT_IMP_BY_ORDINAL );
+
+			/*
+			//	netware prefix support
+			*/
+			if(sym->prefix)
+			{
+				char		full_name[255+1];
+
+				strcpy(full_name, sym->prefix);
+				strcat(full_name, "@");
+				strcat(full_name, sym->name);
+				AddImpLibEntry( sym->name, full_name, NOT_IMP_BY_ORDINAL );
+
+				len = strlen(full_name);
+	            
+				WriteLoad( &len, sizeof( unsigned_8 ) );
+		        WriteLoad( full_name, len );
+			}
+			else
+			{
+	            AddImpLibEntry( sym->name, sym->name, NOT_IMP_BY_ORDINAL );
+				WriteLoad( &len, sizeof( unsigned_8 ) );
+				WriteLoad( export->name, len );
+			}
+
             count++;
-            WriteLoad( &len, sizeof( unsigned_8 ) );
-            WriteLoad( export->name, len );
             off = sym->addr.off;
             if( sym->addr.seg == CODE_SEGMENT ) {
                 off |= NOV_EXP_ISCODE;
@@ -357,7 +398,7 @@ static void GetProcOffsets( fixed_header *header )
     if( StartInfo.type == START_IS_SYM ) {
         name = StartInfo.targ.sym->name;
     } else {
-        name = DEFAULT_PRELUDE_FN;
+        name = DEFAULT_PRELUDE_FN_CLIB;
     }
     sym = FindISymbol( name );
     if( sym == NULL || !(sym->info & SYM_DEFINED) ) {
@@ -368,7 +409,7 @@ static void GetProcOffsets( fixed_header *header )
     if( FmtData.u.nov.exitfn != NULL ) {
         name = FmtData.u.nov.exitfn;
     } else {
-        name = DEFAULT_EXIT_FN;
+        name = DEFAULT_EXIT_FN_CLIB;
     }
     sym = FindISymbol( name );
     if( sym == NULL ) {
@@ -449,6 +490,14 @@ static void NovNameWrite( char *name )
     WriteLoad( name, len + 1 );
 }
 
+static int __min__(int a, int b)
+{
+	if(a > b)
+		return b;
+	else
+		return a;
+}
+
 extern void FiniNovellLoadFile( void )
 /************************************/
 {
@@ -465,8 +514,10 @@ extern void FiniNovellLoadFile( void )
     unsigned_8          len;
     struct tm *         currtime;
     time_t              thetime;
+	char *				pPeriod = NULL;
+	char				module_name[NOV_MAX_MODNAME_LEN+1];
 
-// find module name (output file name without the path.
+/* find module name (output file name without the path.) */
 
     lastslash = filename = Root->outfile->fname;
     while( *filename != '\0' ) {
@@ -474,9 +525,33 @@ extern void FiniNovellLoadFile( void )
         if( IS_PATH_SEP( ch ) ) {
             lastslash = filename;     // NOTE: 1 added already.
         }
+		if( '.' == ch)
+			pPeriod = filename-1;
     }
     strupr( lastslash );
-    len = strlen( lastslash );       // length of module name;
+
+	/*
+	// cull the module name to 8.3 (NOV_MAX_MODNAME_LEN) if necessary
+	*/
+	if(pPeriod)
+	{
+		len = __min__((pPeriod - lastslash), NOV_MAX_NAME_LEN);
+		strncpy(module_name, lastslash, len);
+		strncpy(&module_name[len], pPeriod, NOV_MAX_EXT_LEN + 1);	/* + period */
+	}
+	else
+	{
+		/* still only copy 8 chars else the module name will be too long */
+		strncpy(module_name, lastslash, NOV_MAX_NAME_LEN);
+	}
+
+	module_name[NOV_MAX_MODNAME_LEN] = '\0';
+	if(0 != strcmp(module_name, lastslash))
+	{
+		LnkMsg( WRN+MSG_INTERNAL_MOD_NAME_DIFF_FROM_FILE, "s", module_name );
+	}
+
+    len = strlen( module_name );       // length of module name;
 
     file_size = strlen( FmtData.u.nov.description ) + sizeof(fixed_header)
                 + sizeof(extended_nlm_header) + 2*sizeof(unsigned_32)
@@ -537,8 +612,8 @@ extern void FiniNovellLoadFile( void )
     memcpy( nov_header.signature, NLM_SIGNATURE, sizeof( NLM_SIGNATURE ) );
     nov_header.version = NLM_VERSION;
     nov_header.moduleName[0] = len;
-    memcpy( &nov_header.moduleName[1], lastslash, len );
-    memset( &nov_header.moduleName[ len + 1 ], 0, 13-len ); // zero rest.
+    memcpy( &nov_header.moduleName[1], module_name, len );
+    memset( &nov_header.moduleName[ len + 1 ], 0, NOV_MAX_MODNAME_LEN-len ); // zero rest.
     nov_header.uninitializedDataSize = 0; // MemorySize() - image_size;
     GetProcOffsets( &nov_header );
     nov_header.moduleType = FmtData.u.nov.moduletype;
@@ -555,7 +630,7 @@ extern void FiniNovellLoadFile( void )
     if( FmtData.u.nov.threadname != NULL ) {
         NovNameWrite( FmtData.u.nov.threadname );
     } else {
-        NovNameWrite( lastslash );      // use module name as a default
+        NovNameWrite( module_name );      // use module name as a default
     }
     if( FmtData.major != 0 || FmtData.minor != 0 ) {
         memcpy( second_header.versionSignature, VERSION_SIGNATURE,

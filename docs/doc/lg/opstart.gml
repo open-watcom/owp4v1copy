@@ -12,5 +12,5 @@ The format of the "START" option is as follows.
 specifies the name of the procedure where execution begins.
 .esynote
 .np
-For the Netware 386 executable format, the default name of the start
+For the Netware executable format, the default name of the start
 procedure is "_Prelude".

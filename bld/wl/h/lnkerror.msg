@@ -327,3 +327,5 @@ pick(	 MSG_RESOURCE_TOO_BIG,		"resource file %s too big",
 					"リソースファイル %s は大きすぎます" )
 pick(	 MSG_MULT_START_ADDRS_BY,	"both %1 and %2 marked as starting symbols" ,
 					"%1と%2の両方は開始シンボルとしてマークされています" )
+pick(	 MSG_INTERNAL_MOD_NAME_DIFF_FROM_FILE,	"The NLM internal name (%s) has been truncated as it exceeds the maximum size." ,
+					"The NLM internal name (%s) has been truncated as it exceeds the maximum size." )

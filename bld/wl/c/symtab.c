@@ -55,6 +55,7 @@
 #include "strtab.h"
 #include "carve.h"
 #include "permdata.h"
+#include "nwpfx.h"
 
 
 #define STATIC_TABSIZE  241  /* should be prime */
@@ -76,6 +77,8 @@ static symbol **    StaticSymPtrs;
 
 static unsigned GlobalHashFn( char *, int );
 static unsigned StaticHashFn( char *, int );
+
+static char	g_szCurrentPrefix[255+1] = {0};
 
 static const unsigned ScatterTable[] = {
 #ifdef __386__
@@ -874,6 +877,41 @@ extern symbol * SymXOp( sym_flags op, char *name, int length )
     return( SymOp( op, symname, length ) );
 }
 
+extern symbol * SymXOpNWPfx( sym_flags op, char *name, int length, char * prefix, int prefixLen)
+/************************************************************/
+{
+	symbol * retsym = SymXOp(op, name, length);
+
+	if(NULL == retsym)
+		return NULL;
+
+	if(((NULL != prefix) && (0 != prefixLen)) || (0 != strlen(g_szCurrentPrefix)))
+	{
+		char * pfxname = alloca(255+1);	/* max len of PString - used to be prefixLen+1 */
+
+		if(NULL == pfxname)
+		{
+	        LnkMsg( ERR+MSG_SYMBOL_NAME_TOO_LONG, "s", prefix );
+			return NULL;
+		}
+
+		if(prefix)
+		{
+			memcpy( pfxname, prefix, prefixLen);
+	        pfxname[ prefixLen] = '\0';
+		}
+		else
+			strcpy( pfxname, g_szCurrentPrefix);
+
+		if(NULL == (retsym->prefix = AddStringTable(&PrefixStrings, pfxname, strlen(pfxname) + 1)))
+		{
+	        LnkMsg( ERR+MSG_INTERNAL, "s", "no memory for prefix symbol");
+			return NULL;
+		}
+	}
+	return retsym;
+}
+
 extern void MakeSymAlias( char *name, int namelen, char *target, int targetlen )
 /******************************************************************************/
 /* make a symbol table alias */
@@ -985,6 +1023,24 @@ static symbol * DoSymOp( byte op, char *symname, int length )
         sym = AddSym();
         sym->name = AddStringTable( &PermStrings, symname, length + 1 );
         sym->namelen = searchlen;
+#if 0
+		moved to nw specific function
+		/*
+		//	NetWare: add prefix to symbol if necessary
+		*/
+		if(strlen(g_szCurrentPrefix))
+		{
+			if(NULL == (sym->prefix = AddStringTable(&PrefixStrings, g_szCurrentPrefix, strlen(g_szCurrentPrefix) + 1)))
+			{
+				/*
+				//	We don't delete the symbol as it has already been added to the symbol chain
+				*/
+		        LnkMsg( ERR+MSG_INTERNAL, "s", "no memory for prefix symbol");
+				return NULL;
+			}
+		}
+#endif
+
         if( op & ST_STATIC ) {
             sym->info |= SYM_STATIC;
             sym->hash = StaticSymPtrs[hash];
@@ -1475,4 +1531,39 @@ extern group_entry *SymbolGroup( symbol *sym )
         }
     }
     return group;
+}
+
+#define IS_WHITESPACE(ptr) (*(ptr) == ' ' || *(ptr) =='\t' || *(ptr) == '\r')
+
+extern bool SetCurrentPrefix(const char * pszPrefix, int nLen)
+{
+	const char *	pStart = pszPrefix;
+	char *			pFix;
+	int				nIntLen = nLen;
+	
+	if((NULL == pStart) || (nLen == 0))
+	{
+		g_szCurrentPrefix[0] = 0;
+		return TRUE;
+	}
+
+	pStart++;	/* skip opening parentheses */
+	nIntLen--;	/* and record that */
+
+	while((0 != *pStart) && (IS_WHITESPACE(pStart)))
+		pStart++, nIntLen--;
+
+	if((0 == *pStart) || (0 == nLen))
+		return FALSE;
+
+	/* convert to C string */
+	memcpy(g_szCurrentPrefix, pStart, nIntLen-1);	/* hopefully drop the closing parentheses */
+	g_szCurrentPrefix[nIntLen-1] = '\0';
+	
+	pFix = g_szCurrentPrefix;
+	while((0 != *pFix) && (!IS_WHITESPACE(pFix)))
+		pFix++;
+	*pFix = '\0';
+
+	return (0 != strlen(g_szCurrentPrefix));
 }

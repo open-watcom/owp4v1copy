@@ -88,6 +88,7 @@ typedef struct liblist {
 /* data and functions used for permanent data structure storage */
 
 extern stringtable      PermStrings;
+extern stringtable      PrefixStrings;	/* these are NetWare prefix strings of which there could possibly be several */
 extern carve_t          CarveLeader;
 extern carve_t          CarveModEntry;
 extern carve_t          CarveDLLInfo;

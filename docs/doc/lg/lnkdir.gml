@@ -93,6 +93,7 @@
 .*   area               oparea.gml      dos
 .dir artificial         opartifi.gml    all
 .*   autosection        ldautose.gml    dos
+.dir autounload         opautoun.gml    netware
 .*   begin              ldbegin.gml     dos
 .dir cache              opcache.gml     all
 .dir caseexact          opcaseex.gml    all
@@ -202,5 +203,5 @@
 .dir vfremoval          opvfremo.gml    all
 .dir xdcdata            opxdcdat.gml    netware
 .*
-:set symbol="headtxt0$" value="The WATCOM Linker".
+:set symbol="headtxt0$" value="The Open Watcom Linker".
 .*

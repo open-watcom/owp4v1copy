@@ -446,8 +446,8 @@ pick(	 MSG_NOVELL_HELP_1,	"commands valid for the Novell Netware executable form
 				"Novell Netware実行可能形式に対してのみ有効なコマンド:" )
 pick(	 MSG_NOVELL_HELP_2,	" " ,
 				" " )
-pick(	 MSG_NOVELL_HELP_3,	"form      ::= \"NOVell\" [\"NLM\" | \"LAN\" | \"DSK\" | \"NAM\"] description" ,
-				"form      ::= \"NOVell\" [\"NLM\" | \"LAN\" | \"DSK\" | \"NAM\"] ﾃﾞｨｽｸﾘﾌﾟｼｮﾝ" )
+pick(	 MSG_NOVELL_HELP_3,	"form      ::= \"NOVell\" [\"NLM\" | \"LAN\" | \"DSK\" | \"NAM\" | 0-9 ] 'description'" ,
+				"form      ::= \"NOVell\" [\"NLM\" | \"LAN\" | \"DSK\" | \"NAM\" | 0-9 ] ﾃﾞｨｽｸﾘﾌﾟｼｮﾝ" )
 pick(	 MSG_NOVELL_HELP_4,	"directive ::= \"MODUle\"      module_name{\",\"module_name}" ,
                                 "directive ::= \"MODUle\"      モジュール名{\",\"モジュール名}" )
 pick(	 MSG_NOVELL_HELP_5,	"            | \"IMPort\"      import{\",\"import}" ,
@@ -468,8 +468,8 @@ pick(	 MSG_NOVELL_HELP_12,	"            | \"SCReenname\" description | \"SHAreli
                                 "            | \"SCReenname\" ﾃﾞｨｽｸﾘﾌﾟｼｮﾝ | \"SHArelib=\"ファイル名 | \"SYnchronize\"" )
 pick(	 MSG_NOVELL_HELP_13,	"            | \"THReadname\" name | \"VERSion=\"major[.minor[.revision]]" ,
 				"            | \"THReadname\" name | \"VERSion=\"ﾒｼﾞｬｰﾊﾞｰｼﾞｮﾝ[.ﾏｲﾅｰﾊﾞｰｼﾞｮﾝ[.ﾘﾋﾞｼﾞｮﾝ]]" )
-pick(	 MSG_NOVELL_HELP_14,	"            | \"XDCdata=\"file_name" ,
-				"            | \"XDCdata=\"ファイル名" )
+pick(	 MSG_NOVELL_HELP_14,	"            | \"XDCdata=\"file_name | \"AUTOUNload\"" ,
+				"            | \"XDCdata=\"ファイル名 | \"AUTOUNload\"" )
 pick(	 MSG_NOVELL_HELP_15,	"import    ::= entryname" ,
 				"import    ::= エントリ名" )				
 pick(	 MSG_NOVELL_HELP_16,	"export    ::= entryname" ,

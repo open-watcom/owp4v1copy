@@ -54,7 +54,7 @@ DOS extenders
 .bull
 executable files that run under Autodesk's AutoCAD Development System
 .bull
-NetWare Loadable Modules (NLMs) that run under Novell's NetWare 386
+NetWare Loadable Modules (NLMs) that run under Novell's NetWare 
 operating system
 .bull
 OS/2 executable files including Dynamic Link Libraries

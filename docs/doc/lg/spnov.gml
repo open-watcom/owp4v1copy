@@ -2,7 +2,7 @@
 .*
 .helppref NetWare:
 :set symbol="unique_lbl" value="net".
-:set symbol="opsys" value="NetWare 386".
+:set symbol="opsys" value="NetWare".
 :set symbol="sysprompt" value="".
 :set symbol="exeformat" value="nov".
 :set symbol="exefmtup" value="NOV".
@@ -15,7 +15,7 @@
 .*
 .im dosfiles
 .*
-.chap *refid=novchap The NetWare 386 Executable File Format
+.chap *refid=novchap The NetWare O/S Executable File Format
 .*
 .im wlintro
 .im wlsyntax
@@ -25,12 +25,13 @@ where
 is any of the following:
 .begnote $compact
 .note ALIAS alias_name=symbol_name{,alias_name=symbol_name}
+.note AUTOUNLOAD
 .note DEBUG dbtype [dblist] |
 .note DISABLE msg_num{,msg_num}
 .note ENDLINK
 .note EXPORT entry_name {,entry_name}
 .note FILE obj_spec{,obj_spec}
-.note FORMAT NOVELL [NLM | LAN | DSK | NAM] 'description'
+.note FORMAT NOVELL [NLM | LAN | DSK | NAM | 0-9] 'description'
 .note IMPORT external_name {,external_name}
 .note LANGUAGE lang
 .note LIBFILE obj_file{,obj_file}
@@ -114,8 +115,8 @@ is any of the following:
 :CMT. .mnote exe_file
 :CMT. is a file specification for the name of the executable file.
 :CMT. If no file extension is specified, a file extension of "nlm", "dsk",
-:CMT. "lan" or "nam" is assumed depending on the executable file format
-:CMT. selected.
+:CMT. "lan", "nam", "cdm", "msl" or "ham" is assumed depending on the 
+:CMT. executable file format selected.
 :CMT. .mnote help_file
 :CMT. is a file specification for the name of an internationalized help
 :CMT. file.
@@ -156,14 +157,14 @@ is any of the following:
 .*
 .np
 NetWare Loadable Modules (NLMs) are executable files that run in
-file server memory under the NetWare 386 operating system.
+file server memory under the NetWare operating system.
 NLMs can be loaded and unloaded from file server memory while the
 server is running.
 When running they actually become part of the operating system thus
 acting as building blocks for a server environment tailored to your needs.
 .np
-There are four types of NLMs, each identified by the file extension of
-the executable file.
+There are multiple types of NLMs, each identified by the file extension 
+of the executable file and the internal module type number.
 .begbull
 .bull
 Utility and server applications (executable files with extension "nlm").
@@ -174,6 +175,12 @@ Disk drivers (executable files with extension "dsk").
 .bull
 Modules that define file system name spaces
 (executable files with extension "nam").
+.bull
+Custom Device modules (executable images with extension "cdm").
+.bull
+Host Adapter modules (executable images with extension "ham").
+.bull
+Mirrored server link modules (executable images with extension "msl").
 .endbull
 .pc
 The &lnkname can generate all four types of NLMs.

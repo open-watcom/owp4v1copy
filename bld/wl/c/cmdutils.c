@@ -68,10 +68,13 @@ static  char            *DefExt[] = {           /* see LINK.H */
     ".ovl",
     ".dll",
     ".exp",
-    ".nlm",
-    ".lan",
-    ".dsk",
-    ".nam",
+    ".nlm",	/* netware loadable module	*/
+    ".lan",	/* LAN driver				*/
+    ".dsk",	/* disk driver				*/
+    ".nam",	/* name space module		*/
+	".msl",	/* mirrored server link		*/
+	".ham",	/* host adapter module		*/
+	".cdm",	/* custom device module		*/
     ".com",
     ".rex",
 #if _OS == _QNX
@@ -441,6 +444,31 @@ extern bool GetToken( sep_type req, tokcontrol ctrl )
     }
     need_sep = TRUE;
     for(;;) {                           /* finite state machine */
+
+		/*
+		//	carl.young
+		//	We had a situation where an input file (in this case a Novell 
+		//	import or export file) does not have the consistent format
+		//	expected from this FSM code. If the skipToNext flag is set,
+		//	then we just skip to the next token and return rather than
+		//	reporting an error.
+		//	For reference the import files looked like:
+		//		(PREFIX)
+		//			symbol1,
+		//			symbol2,
+		//			symbolnm1,
+		//			symboln
+		//
+		//	Note the missing comma separator after the prefix token. The
+		//	prefix token(s) may also appear anywhere in the file.
+		*/
+
+		if(Token.skipToNext)
+		{
+			Token.skipToNext = 0;
+			need_sep = FALSE;
+		}
+
         switch( Token.where ) {
         case MIDST:
             EatWhite();
@@ -506,7 +534,7 @@ extern bool GetToken( sep_type req, tokcontrol ctrl )
                         if( hmm == ',' || hmm == '=' ) return( FALSE );
                         break;
                     case SEP_COMMA:
-                        if( hmm != ',' ) return( FALSE);
+						if(hmm != ',' )	return( FALSE);
                         Token.next++;
                         break;
                     case SEP_EQUALS:

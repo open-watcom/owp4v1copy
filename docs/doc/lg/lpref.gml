@@ -19,7 +19,7 @@ Microsoft Windows 95,
 IBM OS/2,
 :cmt. PenPoint,
 QNX, and
-Novell's NetWare 386 operating system.
+Novell's NetWare operating system.
 The &lnkname can also generate ELF format executable files for
 those systems that will support ELF.
 :cmt. Other related tools,

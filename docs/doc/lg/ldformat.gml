@@ -14,7 +14,7 @@ The format of the "FORMAT" directive (short form "FORM") is as follows.
                  | WINDOWS NT [TNT] [dll_attrs]
                  | OS2 [os2_type] [dll_attrs | os2_attrs]
                  | PHARLAP [EXTENDED | REX | SEGMENTED]
-                 | NOVELL [NLM | LAN | DSK | NAM] 'description'
+                 | NOVELL [NLM | LAN | DSK | NAM | 0-9] 'description'
                  | QNX [FLAT]
                  | ELF [DLL]
 
@@ -320,7 +320,7 @@ For more information on Phar Lap executable file formats,
 see the chapter entitled :HDREF refid='phrchap'..
 .do end
 .mnote NOVELL
-(short form "NOV") tells the &lnkname to generate a NetWare 386
+(short form "NOV") tells the &lnkname to generate a NetWare 
 executable file, more commonly called a NetWare Loadable Module (NLM).
 .np
 NLMs are further classified according to their function.
@@ -339,6 +339,15 @@ A file extension of "dsk" is used for the name of the executable file.
 instructs the &lnkname to generate a file system name-space support
 module.
 A file extension of "nam" is used for the name of the executable file.
+.point MSL
+instructs the &lnkname to generate a Mirrored Server Link module. The
+default file extension is "msl"
+.point CDM
+instructs the &lnkname to generate a Custom Device module. The
+default file extension is "cdm"
+.point HAM
+instructs the &lnkname to generate a Host Adapter module. The
+default file extension is "ham"
 .point NLM
 instructs the &lnkname to generate a utility or server application.
 This is the default.
@@ -348,7 +357,7 @@ is a textual description of the program being linked.
 .endpoint
 .if '&target' ne 'QNX' .do begin
 .np
-For more information on NetWare 386 executable file formats,
+For more information on NetWare executable file formats,
 see the chapter entitled :HDREF refid='novchap'..
 .do end
 .mnote QNX

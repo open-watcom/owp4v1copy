@@ -56,7 +56,7 @@ Alternatively, you can run CVPACK from the command line.
 .point NOVELL
 .ix 'DEBUG options' 'NOVELL'
 (short form "N") specifies a form of global symbol information that
-can only be processed by the NetWare 386 debugger.
+can only be processed by the NetWare debugger.
 .endpoint
 .np
 For the WATCOM debugging information format, we can be selective about
@@ -67,7 +67,7 @@ We can categorize the types of debugging information as follows:
 .ix 'debugging information' 'line numbering'
 .ix 'debugging information' 'local symbol'
 .ix 'debugging information' 'typing'
-.ix 'debugging information' 'NetWare 386 global symbol'
+.ix 'debugging information' 'NetWare global symbol'
 .begbull
 .bull
 global symbol information
@@ -78,7 +78,7 @@ local symbol information
 .bull
 typing information
 .bull
-NetWare 386 global symbol information
+NetWare global symbol information
 .endbull
 .np
 The following options can be used with the "DEBUG WATCOM" directive to
@@ -248,18 +248,18 @@ When the &lnkname encounters a "DEBUG" directive, global symbol
 information for all the global symbols appearing in your program is
 placed in the executable file.
 .*
-.section Global Symbols for the NetWare 386 Debugger - DEBUG NOVELL
+.section Global Symbols for the NetWare Debugger - DEBUG NOVELL
 .*
 .np
-.ix 'debugging information' 'for NetWare 386 debugger'
-.ix 'NetWare 386 debugger'
-The NetWare 386 operating system has a built-in debugger that can be
+.ix 'debugging information' 'for NetWare debugger'
+.ix 'NetWare debugger'
+The NetWare operating system has a built-in debugger that can be
 used to debug programs.
 When "DEBUG NOVELL" is specified, the &lnkname will generate global
-symbol information that can be used by the NetWare 386 debugger.
+symbol information that can be used by the NetWare debugger.
 Note that any line numbering, local symbol, and typing information
 generated in the executable file will not be recognized by the NetWare
-386 debugger.
+debugger.
 Also,
 .kw &stripcmdup
 cannot be used to remove this form of global symbol information from
@@ -274,7 +274,7 @@ of global symbol information to exported symbols (symbols appearing in
 an "EXPORT" directive).
 If "DEBUG WATCOM ONLYEXPORTS" is specified, &dbgname global symbol
 information is generated only for exported symbols.
-If "DEBUG NOVELL ONLYEXPORTS" is specified, NetWare 386 global symbol
+If "DEBUG NOVELL ONLYEXPORTS" is specified, NetWare global symbol
 information is generated only for exported symbols.
 .*
 .section Using DEBUG Directives

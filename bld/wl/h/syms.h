@@ -211,6 +211,9 @@ typedef struct symbol {
         void *          export;     // OS/2 & PE only: exported sym info.
     } e;
     char *              name;
+	char *				prefix;		// primarily for netware, though could be
+									// subverted for other use. gives symbol
+									// namespace qualification
 } symbol;
 
 /* function prototypes */
@@ -237,6 +240,7 @@ extern symbol *         RefISymbol( char * );
 extern symbol *         DefISymbol( char * );
 extern symbol *         FindISymbol( char * );
 extern symbol *         SymXOp( sym_flags, char *, int );
+extern symbol *         SymXOpNWPfx( sym_flags, char *, int ,char * , int );
 extern symbol *         SymOp( sym_flags , char *, int );
 extern void             ReportMultiple( symbol *, char *, unsigned );
 extern void             ReportUndefined( void );

@@ -86,10 +86,10 @@ Phar Lap's 386|DOS-Extender
 .endpoint
 .do end
 .if '&exeformat' eq 'nov' .do begin
-.ix 'NetWare 386 applications' 'creating'
-.ix 'applications' 'creating for NetWare 386'
-The Novell NetWare 386 executable file format will only run under the
-NetWare 386 operating system.
+.ix 'NetWare applications' 'creating'
+.ix 'applications' 'creating for NetWare'
+The Novell NetWare executable file format will only run under
+NetWare operating systems.
 .do end
 .if '&exeformat' eq 'qnx' .do begin
 .ix 'QNX applications' 'creating'

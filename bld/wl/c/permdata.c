@@ -57,6 +57,7 @@
 #include "permdata.h"
 
 stringtable             PermStrings;
+stringtable				PrefixStrings;	/* these are NetWare prefix strings of which there could possibly be several */
 carve_t                 CarveLeader;
 carve_t                 CarveModEntry;
 carve_t                 CarveSymbol;
@@ -106,6 +107,7 @@ extern void ResetPermData( void )
     CarveSegData = CarveCreate( sizeof(segdata), SDATA_CARVE_SIZE );
     CarveSymbol = CarveCreate( sizeof(symbol), SYM_CARVE_SIZE );
     InitStringTable( &PermStrings, TRUE );
+    InitStringTable( &PrefixStrings, TRUE );
     InitStringTable( &StoredRelocs, FALSE );
 }
 
@@ -1054,6 +1056,7 @@ extern void CleanPermData( void )
     CarveDestroy( CarveSegData );
     CarveDestroy( CarveClass );
     CarveDestroy( CarveGroup );
+	FiniStringTable( &PrefixStrings);
     FiniStringTable( &PermStrings );
     FiniStringTable( &StoredRelocs );
     _LnkFree( IncFileName );

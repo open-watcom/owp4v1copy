@@ -15,7 +15,7 @@ follows.
 is the file name of a DLL or NLM.
 .esynote
 .warn
-Versions 3.0 and 3.1 of the NetWare 386 operating system do not
+Versions 3.0 and 3.1 of the NetWare operating system do not
 support the automatic loading of modules specified in the "MODULE"
 directive.
 You must load them manually.
