@@ -33,7 +33,7 @@
 #include "variety.h"
 #include <stdio.h>
 #include <stdarg.h>
-#include <memory.h>
+#include <string.h>
 #include "printf.h"
 #include "myvalist.h"
 #include "xfloat.h"

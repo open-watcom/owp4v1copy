@@ -122,7 +122,7 @@
 extern "C" {
 #include "variety.h"
 #include "malloc.h"
-#include "memory.h"
+#include "string.h"
 #define CONST const
 #else
 #ifdef __STDC__
@@ -132,7 +132,7 @@ extern "C" {
 #else
 #define CONST /* blank */
 #include "malloc.h"
-#include "memory.h"
+#include "string.h"
 #endif
 #endif
 
