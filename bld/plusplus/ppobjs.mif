@@ -1,9 +1,9 @@
 # driver for dll
 
 dlldrv_objs =
-dlldrv_objs += idedrv.rbj
-dlldrv_objs += idemsgfm.rbj
-dlldrv_objs += wppdlldr.rbj
+dlldrv_objs += idedrv.obj
+dlldrv_objs += idemsgfm.obj
+dlldrv_objs += wppdlldd.obj
 
 # stand-alone executable
 
@@ -17,9 +17,9 @@ exe_objs += idedll.obj
 # DLL stuff
 
 dll_objs =
-dll_objs += idedll.lbj
-dll_objs += idemsgfm.lbj
-dll_objs += idemsgpr.lbj
+dll_objs += idedlld.obj
+dll_objs += idemsgfm.obj
+dll_objs += idemsgpr.obj
 
 
 # C Files

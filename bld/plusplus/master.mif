@@ -1,9 +1,8 @@
 proj_name = plusplus
+plusplus_autodepends = .autodepend
 
-.erase
-.continue
-.extensions:
-.extensions: .qnx .exe .exp .pp .obj .rbj .lbj .asm .c .mif
+!include cproj.mif
+!include defrule.mif
 
 .mif: $(mif_path)
 
@@ -13,8 +12,6 @@ proj_name = plusplus
 !  endif
 !endif
 
-!include cproj.mif
-
 !include $(cg_dir)/mif/fe.mif
 !include $(cg_dir)/mif/hostos.mif
 !include $(dwarf_dir)/dw/client.mif
@@ -22,6 +19,12 @@ proj_name = plusplus
 xlibs = $(dwarf_dw_lib) $(asminline_lib)
 
 !include ../verify.mif
+
+#pre_obj_deps must be defined before ppobjs.mif is included
+pre_obj_deps = global.chk errmsgs.gh ic_mask.gh weights.gh keywords.gh yylex.gh
+# international data files
+pre_obj_deps += wpp$(target_cpu)01.int $(pre_obj_deps_wasm)
+
 !include ../ppobjs.mif
 
 inc_dirs =.;
@@ -89,11 +92,11 @@ cflags += -br
 cflags += -oalrs-s-zq-w4-we -bt=$(host_os)
 
 !ifndef dbg_cflags
-!  ifeq release 1
-!    define dbg_cflags -d1
-!  else
-!    define dbg_cflags -d2
-!  endif
+!ifeq release 1
+cflags += -d1
+!else
+cflags += -d2
+!endif
 !endif
 
 !ifeq release 1
@@ -116,17 +119,17 @@ cflags += -d__OS2__
 !ifeq host_cpu axp
 # alpha
 !ifeq plusplus_trmem 1
-extra_opts_memmgr = -dTRACKER
+extra_c_flags_memmgr = -dTRACKER
 !endif
 !else
 # all intel
-extra_opts_cscan = -4r
-extra_opts_srcfile = -4r
+extra_c_flags_cscan = -4r
+extra_c_flags_srcfile = -4r
 !ifeq plusplus_trmem 1
-extra_opts_memmgr = -of+ -dTRACKER
+extra_c_flags_memmgr = -of+ -dTRACKER
 !endif
 !ifeq release 1
-extra_opts_pcheader = -oi
+extra_c_flags_pcheader = -oi
 !endif
 !endif
 # all platforms
@@ -139,24 +142,25 @@ fesupp_hdr   = "fesupp.h"
 carvecpp_hdr = "carvecpp.h"
 !endif
 
-extra_opts_carve    = -dheader=$(fesupp_hdr) -dheader2=$(carvecpp_hdr)
-extra_opts_cmdlnany = -os
-extra_opts_idedrv = -dSTATIC_LINKAGE
-extra_opts_initfini = -dheader=$(fesupp_hdr) -dSPLIT_REQD
-extra_opts_intlload = -d__header=$(fesupp_hdr)
-extra_opts_pstk     = -dheader=$(fesupp_hdr)
-extra_opts_pstk     = -dheader=$(fesupp_hdr)
-extra_opts_ringfns  = -dheader=$(fesupp_hdr)
-extra_opts_vbuf     = -dheader=$(fesupp_hdr)
-extra_opts_vstk     = -dheader=$(fesupp_hdr)
+extra_c_flags_carve    = -dheader=$(fesupp_hdr) -dheader2=$(carvecpp_hdr)
+extra_c_flags_cmdlnany = -os
+extra_c_flags_idedrv   = -dSTATIC_LINKAGE
+extra_c_flags_idedlld  = -bd
+extra_c_flags_initfini = -dheader=$(fesupp_hdr) -dSPLIT_REQD
+extra_c_flags_intlload = -d__header=$(fesupp_hdr)
+extra_c_flags_pstk     = -dheader=$(fesupp_hdr)
+extra_c_flags_pstk     = -dheader=$(fesupp_hdr)
+extra_c_flags_ringfns  = -dheader=$(fesupp_hdr)
+extra_c_flags_vbuf     = -dheader=$(fesupp_hdr)
+extra_c_flags_vstk     = -dheader=$(fesupp_hdr)
 !ifeq release 1
-extra_opts_wppdlldr = -dDLL_NAME=$(dll_bld_name)
+extra_c_flags_wppdlldd = -dDLL_NAME=$(dll_bld_name)
 !else
-extra_opts_wppdlldr = -dDLL_NAME=$(dll_dbg_name)
-extra_opts_dbgzap   = -dheader=$(fesupp_hdr)
+extra_c_flags_wppdlldd = -dDLL_NAME=$(dll_dbg_name)
+extra_c_flags_dbgzap   = -dheader=$(fesupp_hdr)
 !endif
 !ifdef plusplus_dll_ptree
-extra_opts_dbgptree = -dDLL_PTREE
+extra_c_flags_dbgptree = -dDLL_PTREE
 !endif
 !ifeq host_os dos
 cflags += -dIDE_PGM
@@ -222,31 +226,12 @@ optencod_targ_linux = linux
 optencod_targ_dbg = dbg
 !endif
 
-pre_obj_deps = global.chk errmsgs.gh ic_mask.gh
-# international data files
-pre_obj_deps += wpp$(target_cpu)01.int
-pre_obj_deps += $(pre_obj_deps_wasm)
-
 external_dependencies = $(cg_deps) $(xlibs)
 
-# objects for dll
-# obj -- normal object
-# lbj -- in DLL
-# rbj -- in driver for DLL
+# source search path
 
 .c: ../c;$(wasm_dir)/c;$(watcom_dir)/c;$(fe_misc_dir)/c;$(brinfo_dir)/c
 
-.c.lbj:
-        $(cc) $(cflags) $(dbg_cflags) -fo=.lbj -bd-dwpp_dll $[@ $(extra_opts_$[&)
-
-.c.rbj:
-        $(cc) $(cflags) $(dbg_cflags) -fo=.rbj -dwpp_drv $[@ $(extra_opts_$[&)
-
-.c.obj:
-        $(cc) $(cflags) $(dbg_cflags) -fo=.obj $[@ $(extra_opts_$[&)
-
-.c.pp:
-        $(cc) $(cflags) $(dbg_cflags) $[@ $(extra_opts_$[&) -fo=*.pp -p
 
 !ifeq release 1
 
@@ -430,8 +415,6 @@ plusplus.rc : ./genverrc.exe ../rc/r_$(host_os)$(host_cpu).rc
 
 !endif
 
-
-!include ../deps.mif
 
 # conventions:
 #

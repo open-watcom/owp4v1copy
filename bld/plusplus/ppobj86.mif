@@ -13,7 +13,9 @@ common_objs += asmmsg.obj
 common_objs += cmdlnx86.obj
 common_objs += cprag86.obj
 !ifeq target_cpu i86
-common_objs += pragdata.obj
+common_objs  += pragdata.obj
+pre_obj_deps += codei86.gh
 !else
-common_objs += prag386.obj
+common_objs  += prag386.obj
+pre_obj_deps += code386.gh
 !endif
