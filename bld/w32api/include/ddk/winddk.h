@@ -35,10 +35,11 @@ extern "C" {
 ** Definitions specific to this Device Driver Kit
 */
 #if defined( __WATCOMC__ )
+#if __WATCOMC__ < 1240
 #pragma aux __fastcall "@*" \
         parm caller [ecx] [edx] \
-        value struct float struct routine [eax] \
-        modify [ecx edx];
+        value struct [] \
+        modify [eax ecx edx];
 #pragma aux (__fastcall) InterlockedIncrement;
 #pragma aux (__fastcall) InterlockedDecrement;
 #pragma aux (__fastcall) InterlockedCompareExchange;
@@ -83,6 +84,12 @@ extern "C" {
 #define DDKAPI __stdcall
 #define DDKFASTAPI __stdcall
 #define DDKCDECLAPI __cdecl
+#else
+#define DDKAPI __stdcall
+#define DDKFASTAPI __fastcall
+#define DDKCDECLAPI __cdecl
+#endif
+
 #else
 #define DDKAPI __attribute__((stdcall))
 #define DDKFASTAPI __attribute__((fastcall))
