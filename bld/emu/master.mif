@@ -26,11 +26,11 @@ INCS = &
 .psm : ../asm
 .asm : ../asm
 
-extra_a_flags = -i"$(mathlib_dir)/h;$(emu386)/inc"
+extra_a_flags = -i"$(mathlib_dir)/h;$(emu386)/inc" -fpc
 extra_a_flags_dos = -d_OS=_PLDT -dSEGMENTED
 extra_a_flags_qnx = -d_OS=_QNX -dSEGMENTED
 extra_a_flags_win = -mf -d_OS=_PLDT -d__WIN387__
-extra_c_flags_qnx = -oais-s-w3 -i"$(new_qnx_h)" -dQNX32
+extra_c_flags_qnx = -oais-s-w3 -i"$(new_qnx_h)" -dQNX32 -fpc
 
 !ifeq host_OS dos
 

@@ -234,7 +234,14 @@ maino16_postopts =-os
 maino32_postopts =-os
 seterrno_postopts=-os
 
-adsstart_postopts=-fpi87
-adifstrt_postopts=-fpi87
+086_fpi87_postopts=-fpi87
+286_fpi87_postopts=-fpi87
+386_fpi87_postopts=-fpi87
+axp_fpi87_postopts=
+ppc_fpi87_postopts=
+fpi87_postopts=$($(processor)_fpi87_postopts)
+
+adsstart_postopts=$(fpi87_postopts)
+adifstrt_postopts=$(fpi87_postopts)
 
 no_truncate_object_code=1

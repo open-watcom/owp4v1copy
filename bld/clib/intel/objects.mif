@@ -36,7 +36,15 @@
 
 !include ../../../../objlist.mif
 
-chipbug_postopts=-fpi87
+086_fpi87_postopts=-fpi87
+286_fpi87_postopts=-fpi87
+386_fpi87_postopts=-fpi87
+axp_fpi87_postopts=
+ppc_fpi87_postopts=
+fpi87_postopts=$($(processor)_fpi87_postopts)
+
+chipbug_postopts=$(fpi87_postopts)
+
 profilog_opts=-of
 p5prof2_opts=-of
 dp5prof2_opts=-of

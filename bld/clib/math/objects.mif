@@ -20,5 +20,12 @@
 
 !include ../../../../objlist.mif
 
-fpe387_postopts=-fpi87
-fpeinth_postopts=-fpi87
+086_fpi87_postopts=-fpi87
+286_fpi87_postopts=-fpi87
+386_fpi87_postopts=-fpi87
+axp_fpi87_postopts=
+ppc_fpi87_postopts=
+fpi87_postopts=$($(processor)_fpi87_postopts)
+
+fpe387_postopts=$(fpi87_postopts)
+fpeinth_postopts=$(fpi87_postopts)
