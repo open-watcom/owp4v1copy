@@ -113,7 +113,7 @@ libaxp=$(nlang_root)\binnt\wlibaxp.exe
 !ifdef msc
 lib=$(msvc_dir)\bin\lib /MACHINE:IX86 /NOLOGO
 !else
-lib=wlib
+lib=*wlib
 !endif
 
 
