@@ -2,6 +2,17 @@
 
 /* Incorrect handling of expressions with both int64 values and far pointers */
 
+/* This test needs segment/offset relocations which cannot be used with
+ * PE, ELF and other executable formats. 32-bit OS/2 and DOS (using LX/LE 
+ * format) is fine.
+ */
+
+#if defined(__NT__) || defined(__UNIX__)
+
+ALWAYS_PASS
+
+#else
+
 /* Must be not compiled in flat model, use small (-ms) */
 #ifndef __SMALL__
 #error  Must use small model, not flat
@@ -94,3 +105,5 @@ int main(void)
 
 	return 0;
 }
+
+#endif
