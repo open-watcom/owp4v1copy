@@ -284,15 +284,22 @@ void FreeInvalidThreads()
     msb *curr;
 
     owner = &MSBHead;
-    for( ;; ) {
+    for( ;; ) 
+    {
         curr = *owner;
-        if( curr == NULL ) return;
-        if( !ValidatePID( curr->os_id ) ) {
-            *owner = curr->next;
-            if( curr->sem ) CDeAllocateSemaphore( curr->sem );
-            owner = &(curr->next);
-            Free( curr );
-        } else {
+        if( curr == NULL ) 
+            return;
+        if( !ValidatePID( curr->os_id ) ) 
+        {
+            *owner = curr->next;    /* remove MSB from chain */
+            if( curr->sem ) 
+                CDeAllocateSemaphore( curr->sem );
+            //owner = &(curr->next);
+            owner = &MSBHead;       /* start from the begiining again */
+            Free( curr );           /* free MSB */
+        } 
+        else 
+        {
             owner = &(curr->next);
         }
     }
