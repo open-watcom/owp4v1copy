@@ -46,11 +46,6 @@
 
 typedef struct {
     int         handle;         // file handle of open obj file
-#ifndef __DOS__
-    char        *Data,          // file buffer
-                *pData;         // current pointer
-    long        len;            // file length
-#endif
     time_t      time_stamp;     // time stamp of next dependancy comment
     char        *name;          // point to nameBuffer - name of next dependancy comment
 } omf_info;
@@ -68,36 +63,29 @@ typedef struct {
 } obj_comment;
 #pragma pack( pop );
 
-static BOOLEAN verifyObjFile(void)
+static BOOLEAN verifyObjFile( int fh )
 /************************************/
 {
-    auto struct obj {
+    auto struct {
         obj_record      header;
         obj_name        name;
-    } *ptheadr;
-#ifdef __DOS__
-    auto struct obj theadr = &theadr;
+    } theadr;
 
     if( lseek( fh, 0, SEEK_SET ) < 0 ) {
         return( FALSE );
     }
-    if( read( fh, ptheadr, sizeof(theadr) ) != sizeof(theadr) ) {
+    if( read( fh, &theadr, sizeof(theadr) ) != sizeof(theadr) ) {
         return( FALSE );
     }
-#else
-    ptheadr = (struct obj*)fileHandle.Data;
-#endif
-    if( ptheadr->header.command != CMD_THEADR ) {
+    if( theadr.header.command != CMD_THEADR ) {
         return( FALSE );
     }
-    if(( ptheadr->name.len + 2 ) != ptheadr->header.length ) {
+    if(( theadr.name.len + 2 ) != theadr.header.length ) {
         return( FALSE );
     }
-#ifdef __DOS__
     if( lseek( fh, 0, SEEK_SET ) < 0 ) {
         return( FALSE );
     }
-#endif
     return( TRUE );
 }
 
@@ -110,13 +98,8 @@ STATIC handle OMFInitFile( const char *name ) {
     ret_val = NULL;
     handl = open( name, O_RDONLY|O_BINARY );
     if( handl != -1 ) {
-#ifndef __DOS__
-        fileHandle.len = filelength(handl);
-        fileHandle.pData = fileHandle.Data = malloc(fileHandle.len);
-        read(handl,fileHandle.Data,fileHandle.len);
-#endif
         fileHandle.handle = handl;
-        if( verifyObjFile() ) {
+        if( verifyObjFile( handl ) ) {
             ret_val = &fileHandle;
         } else {
             close( handl );
@@ -127,7 +110,7 @@ STATIC handle OMFInitFile( const char *name ) {
 
 static BOOLEAN getOMFCommentRecord( omf_info *info ) {
 /*************************************************/
-#ifdef __DOS__
+
     obj_record          header;
     obj_comment         comment;
     int                 hdl;
@@ -157,45 +140,6 @@ static BOOLEAN getOMFCommentRecord( omf_info *info ) {
         info->name = &nameBuffer[ 0 ];
         return( TRUE );
     }
-#else
-    obj_record          *header;
-    obj_comment         *comment;
-    unsigned            len;
-
-    for(; info->pData - info->Data < info->len;) {
-        header = (obj_record*)info->pData;
-        info->pData += sizeof(header); // read
-        if (info->pData - info->Data >= info->len ) break;
-
-        if( header->command != CMD_COMENT ) {
-            // first LNAMES record means objfile has no dependancy info
-            if( header->command == CMD_LNAMES ) break;
-            info->pData += header->length; // seek
-            continue;
-        }
-        comment = (obj_comment*)info->pData;
-        info->pData += sizeof(comment); // read
-        if (info->pData - info->Data >= info->len ) break;
-
-        if( comment->type != CMT_DEPENDENCY ) {
-            info->pData += header->length - sizeof( comment ); // seek
-            continue;
-        }
-        // NULL dependency means end of dependency info
-        if( header->length < sizeof( comment ) ) break;
-        // we have a dependency comment!
-        len = comment->name_len + 1;
-
-        memcpy(nameBuffer,info->pData,len);
-        info->pData += len; // read
-        if (info->pData - info->Data >= info->len ) break;
-
-        nameBuffer[ len - 1 ] = '\0';
-        info->time_stamp = _DOSStampToTime( comment->dos_date, comment->dos_time );
-        info->name = &nameBuffer[ 0 ];
-        return( TRUE );
-    }
-#endif
     return( FALSE );
 }
 
@@ -218,12 +162,6 @@ STATIC void OMFTransDep( dep_handle info, char **name, time_t *stamp ) {
 STATIC void OMFFiniFile( handle info ) {
 /**************************************/
 
-#ifndef __DOS__
-    char    *Data   = ((omf_info *)info)->Data;
-
-    if (Data)
-        free( Data );
-#endif
     close( ((omf_info *)info)->handle );
 }
 
