@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Macros for single source wide/narrow character code.
 *
 ****************************************************************************/
 
@@ -41,6 +40,7 @@
     #define DIR_TYPE            struct _wdirent
     #define CHAR_TYPE           wchar_t
     #define UCHAR_TYPE          wchar_t
+    #define INTCHAR_TYPE        wint_t
     #define NULLCHAR            0
     #define _AToUni(p1,p2)      _atouni(p1,p2)
     #define IS_ASCII(c)         ( (c & 0xff00) == 0 )
@@ -53,6 +53,7 @@
     #define DIR_TYPE            struct dirent
     #define CHAR_TYPE           char
     #define UCHAR_TYPE          unsigned char
+    #define INTCHAR_TYPE        int
     #define NULLCHAR            '\0'
     #define _AToUni(p1,p2)      (p2)
     #define IS_ASCII(c)         ( 1 )
