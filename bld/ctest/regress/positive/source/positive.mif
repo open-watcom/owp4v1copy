@@ -28,6 +28,8 @@ opt_cmdln03 = /dX /DXX /uXX /DXXX /uXXX /UXXX /dXXX /DXXXX /uXXXX /DXXXX /uXXXX
 opt_cmdln04 = /dCMDMAC -DCMD1= /DCMD2$#
 opt_cmdln05 = -dXN2=2 -dXS1="a-/ b"-dXN1=2 -dXS2#"a-/ b"
 opt_opt09 = -za
+opt_opt41 = -ot -ol+
+opt_opt42 = -ms
 opt_pack04 = -wx
 opt_pch01 = -fhq
 opt_pch02 = -fhq
@@ -159,6 +161,8 @@ positive_tests = &
     opt38.$(ext) &
     opt39.$(ext) &
     opt40.$(ext) &
+    opt41.$(ext) &
+    opt42.$(ext) &
     pack01.$(ext) &
     pack02.$(ext) &
     pack03.$(ext) &
