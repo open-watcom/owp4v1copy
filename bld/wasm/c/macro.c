@@ -82,7 +82,6 @@ extern  struct asm_tok  *AsmBuffer[];   // buffer to store token
 extern  struct AsmCodeName AsmOpcode[];
 extern  char            StringBuf[];
 extern  char            Parse_Pass;     // phase of parsing
-extern  module_info     ModuleInfo;
 extern  int_8           DefineProc;     // TRUE if the definition of procedure
                                         // has not ended
 extern dir_node         *CurrProc;

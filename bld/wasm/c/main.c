@@ -88,6 +88,13 @@ struct  option {
     void        (*function)(void);
 };
 
+static struct SWData {
+    char naming_convention;
+    char protect_mode;
+    int cpu;
+    int fpu;
+} SWData = { 0, 0, -1, -1 };
+
 #define MAX_NESTING 15
 #define BUF_SIZE 512
 
@@ -182,29 +189,38 @@ static void SetTargName( char *name, unsigned len )
 static void SetCPU(void)
 /*******************************************/
 {
-    enum asm_token      token;
-    char                protect = FALSE;
     char                *tmp;
 
+    switch( OptValue ) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+        SWData.cpu = OptValue;
+        break;
+    case 7:
+        SWData.fpu = OptValue;
+        break;
+    }
     for( tmp=OptParm; tmp < OptScanPtr; tmp++ ) {
         if( *tmp == 'r' ) {
-            Options.naming_convention = ADD_USCORES;
-            add_constant( "__REGISTER__" );
+            SWData.naming_convention = *tmp;
         } else if( *tmp == 's' ) {
-            add_constant( "__STACK__" );
-            Options.naming_convention = DO_NOTHING;
+            SWData.naming_convention = *tmp;
         } else if( *tmp == '_' ) {
-            if( Options.naming_convention == DO_NOTHING ) {
-                Options.naming_convention = REMOVE_USCORES;
-            } else {
-                Options.naming_convention = DO_NOTHING;
-            }
+            SWData.naming_convention = *tmp;
         } else if( *tmp == 'p' ) {
-            protect = TRUE;
+            SWData.protect_mode = TRUE;
         } else if( *tmp == '"' ) {
             char *dest;
             tmp++;
             dest = strchr(tmp, '"');
+            if( Options.default_name_mangler != NULL ) {
+                AsmFree( Options.default_name_mangler );
+            }
             Options.default_name_mangler = AsmAlloc( dest - tmp + 1 );
             dest = Options.default_name_mangler;
             for( ; *tmp != '"'; dest++, tmp++ ) {
@@ -216,98 +232,30 @@ static void SetCPU(void)
             exit( 1 );
         }
     }
-
-    switch( OptValue ) {
-    case 0:
-        token = T_DOT_8086;
-        break;
-    case 1:
-        token = T_DOT_186;
-        break;
-    case 2:
-        token =  protect ? T_DOT_286P : T_DOT_286;
-        break;
-    case 3:
-        token =  protect ? T_DOT_386P : T_DOT_386;
-        break;
-    case 4:
-        token =  protect ? T_DOT_486P : T_DOT_486;
-        break;
-    case 5:
-        token =  protect ? T_DOT_586P : T_DOT_586;
-        break;
-    case 6:
-        token =  protect ? T_DOT_686P : T_DOT_686;
-        break;
-    case 7:
-        switch( Code->info.cpu & P_CPU_MASK ) {
-        case P_286:
-            token =  T_DOT_287;
-            break;
-        case P_386:
-        case P_486:
-        case P_586:
-        case P_686:
-            token =  T_DOT_387;
-            break;
-        case P_86:
-        case P_186:
-        default:
-            token =  T_DOT_8087;
-            break;
-        }
-        break;
-    }
-    cpu_directive( token );
 }
 
 static void SetFPU(void)
 /*******************************************/
 {
-    enum asm_token      token;
-
     switch( OptValue ) {
     case 'i':
+        Options.floating_point = DO_FP_EMULATION;
+        break;
     case '7':
-        if(OptValue == 'i') {
-            Options.floating_point = DO_FP_EMULATION;
-        } else {
-            Options.floating_point = NO_FP_EMULATION;
-        }
-        switch( Code->info.cpu & P_CPU_MASK ) {
-        case P_286:
-            token =  T_DOT_287;
-            break;
-        case P_386:
-        case P_486:
-        case P_586:
-        case P_686:
-            token =  T_DOT_387;
-            break;
-        case P_86:
-        case P_186:
-        default:
-            token =  T_DOT_8087;
-            break;
-        }
+        Options.floating_point = NO_FP_EMULATION;
         break;
     case 'c':
         Options.floating_point = NO_FP_ALLOWED;
-        token = T_DOT_NO87;
         break;
     case 0:
-        token = T_DOT_8087;
-        break;
     case 2:
-        token = T_DOT_287;
-        break;
     case 3:
+    case 4:
     case 5:
     case 6:
-        token = T_DOT_387;
+        SWData.fpu = OptValue;
         break;
     }
-    cpu_directive( token );
 }
 
 static void SetMemoryModel(void)
@@ -425,6 +373,7 @@ static struct option const cmdl_options[] = {
     { "fp0",    0,        SetFPU },
     { "fp2",    2,        SetFPU },
     { "fp3",    3,        SetFPU },
+    { "fp4",    4,        SetFPU },
     { "fp5",    5,        SetFPU },
     { "fp6",    6,        SetFPU },
     { "fpi87",  '7',      SetFPU },
@@ -562,8 +511,10 @@ static void do_init_stuff( char **cmdline )
     add_constant( buff );
     do_envvar_cmdline( "WASM", 0 );
     parse_cmdline( cmdline );
+    ModuleInit();
     set_build_target();
-    set_fpu_emulation();
+    set_cpu_parameters();
+    set_fpu_parameters();
     get_os_include();
     env = getenv( "INCLUDE" );
     if( env != NULL ) AddStringToIncludePath( env );
@@ -844,7 +795,53 @@ static void add_constant( char *string )
     return;
 }
 
-static void set_fpu_emulation( void )
+static void set_cpu_parameters( void )
+{
+    int token;
+    
+    if( SWData.naming_convention == 'r' ) {
+        Options.naming_convention = ADD_USCORES;
+        add_constant( "__REGISTER__" );
+    } else if( SWData.naming_convention == 's' ) {
+        add_constant( "__STACK__" );
+        Options.naming_convention = DO_NOTHING;
+    } else if( SWData.naming_convention == '_' ) {
+        if( Options.naming_convention == DO_NOTHING ) {
+            Options.naming_convention = REMOVE_USCORES;
+        } else {
+            Options.naming_convention = DO_NOTHING;
+        }
+    }
+    switch( SWData.cpu ) {
+    case 0:
+        token = T_DOT_8086;
+        break;
+    case 1:
+        token = T_DOT_186;
+        break;
+    case 2:
+        token =  SWData.protect_mode ? T_DOT_286P : T_DOT_286;
+        break;
+    case 3:
+        token =  SWData.protect_mode ? T_DOT_386P : T_DOT_386;
+        break;
+    case 4:
+        token =  SWData.protect_mode ? T_DOT_486P : T_DOT_486;
+        break;
+    case 5:
+        token =  SWData.protect_mode ? T_DOT_586P : T_DOT_586;
+        break;
+    case 6:
+        token =  SWData.protect_mode ? T_DOT_686P : T_DOT_686;
+        break;
+    default: // default CPU is 8086
+        token = T_DOT_8086;
+        break;
+    }
+    cpu_directive( token );
+}
+
+static void set_fpu_parameters( void )
 /**********************************/
 {
     switch( Options.floating_point ) {
@@ -859,23 +856,46 @@ static void set_fpu_emulation( void )
         cpu_directive( T_DOT_NO87 );
         return;
     }
-    if(( Code->info.cpu & P_FPU_MASK ) == P_NO87 ) {
-        switch( Code->info.cpu & P_CPU_MASK ) {
-        case P_286:
+    switch( SWData.fpu ) {
+    case -1: // default FPU is none
+        cpu_directive( T_DOT_NO87 );
+        break;
+    case 0:
+    case 1:
+        cpu_directive( T_DOT_8087 );
+        break;
+    case 2:
+        cpu_directive( T_DOT_287 );
+        break;
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+        cpu_directive( T_DOT_387 );
+        break;
+    case 7:
+        switch( SWData.cpu ) {
+        case 0:
+        case 1:
+            cpu_directive( T_DOT_8087 );
+            break;
+        case 2:
             cpu_directive( T_DOT_287 );
             break;
-        case P_386:
-        case P_486:
-        case P_586:
-        case P_686:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
             cpu_directive( T_DOT_387 );
             break;
-        case P_86:
-        case P_186:
-        default:
+        default: // default CPU is 8086
             cpu_directive( T_DOT_8087 );
             break;
         }
+        break;
+    default: // default FPU is none
+        cpu_directive( T_DOT_NO87 );
+        break;
     }
 }
 

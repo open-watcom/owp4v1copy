@@ -2021,6 +2021,13 @@ void ModuleInit( void )
     ModuleInfo.cmdline = FALSE;
 }
 
+void SetModuleDefSegment32( int flag ) 
+{
+    if(( CurrSeg == NULL ) && (( ModuleInfo.init == 0 ) || ( ModuleInfo.cmdline == TRUE ))) {
+        ModuleInfo.defseg32 = flag;
+    }
+}
+
 static void get_module_name( void )
 {
     char dummy[_MAX_EXT];

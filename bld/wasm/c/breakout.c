@@ -55,12 +55,10 @@ extern int              cpu_directive( uint_16 );
 extern int              StructDef( int );
 extern void             GetInsString( enum asm_token , char *, int );
 extern int              ForDirective( int, bool );
-extern void             find_use32( void );
 
 /* global vars */
 extern char             Parse_Pass;     // phase of parsing
 extern int              Token_Count;
-extern module_info      ModuleInfo;     // general info about the module
 extern dir_node         *CurrProc;
 extern seg_list         *CurrSeg;
 
@@ -71,6 +69,12 @@ int directive( int i, long direct )
 
     /* no expansion on the following */
     switch( direct ) {
+    case T_DOT_286C:
+        direct = T_DOT_286;
+    case T_DOT_8086:
+    case T_DOT_186:
+    case T_DOT_286:
+    case T_DOT_286P:
     case T_DOT_386:
     case T_DOT_386P:
     case T_DOT_486:
@@ -79,23 +83,6 @@ int directive( int i, long direct )
     case T_DOT_586P:
     case T_DOT_686:
     case T_DOT_686P:
-        if(( CurrSeg == NULL ) && (( ModuleInfo.init == 0 ) || ( ModuleInfo.cmdline == TRUE ))) {
-            ModuleInfo.defseg32 = TRUE;
-        }
-        find_use32();
-        ret = cpu_directive(direct);
-        if( Parse_Pass != PASS_1 ) ret = NOT_ERROR;
-        return( ret );
-    case T_DOT_286C:
-        direct = T_DOT_286;
-    case T_DOT_8086:
-    case T_DOT_186:
-    case T_DOT_286:
-    case T_DOT_286P:
-        if(( CurrSeg == NULL ) && (( ModuleInfo.init == 0 ) || ( ModuleInfo.cmdline == TRUE ))) {
-            ModuleInfo.defseg32 = FALSE;
-        }
-        find_use32();
     case T_DOT_8087:
     case T_DOT_287:
     case T_DOT_387:
@@ -229,6 +216,9 @@ int directive( int i, long direct )
         //if( Parse_Pass == PASS_1 ) {
             ExpandTheWorld( 0, FALSE, TRUE );
         //}
+        break;
+    case T_NAME:
+        // no expand parameters
         break;
     default:
         /* expand any constants in all other directives */

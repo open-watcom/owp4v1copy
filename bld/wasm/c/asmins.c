@@ -102,6 +102,7 @@ extern void             InputQueueLine( char * );
 extern int              directive( int , long );
 extern void             GetInsString( enum asm_token, char *, int );
 extern int              SymIs32( struct asm_sym *sym );
+extern void             find_use32( void );
 
 extern  int_8           DefineProc;     // TRUE if the definition of procedure
                                         // has not ended
@@ -117,6 +118,8 @@ extern char             *CurrString;    // Current Input Line
 extern char             EndDirectiveFound;
 
 static int              in_epilogue = 0;
+extern seg_list         *CurrSeg;
+extern void             SetModuleDefSegment32( int flag );
 
 #else
 
@@ -1045,6 +1048,29 @@ int cpu_directive( uint_16 i )
 
     #ifdef _WASM_
         MakeCPUConstant( (long)i );
+        switch( i ) {
+        case T_DOT_686P:
+        case T_DOT_686:
+        case T_DOT_586P:
+        case T_DOT_586:
+        case T_DOT_486P:
+        case T_DOT_486:
+        case T_DOT_386P:
+        case T_DOT_386:
+            SetModuleDefSegment32( TRUE );
+            find_use32();
+            break;
+        case T_DOT_286P:
+        case T_DOT_286:
+        case T_DOT_186:
+        case T_DOT_8086:
+            SetModuleDefSegment32( FALSE );
+            find_use32();
+            break;
+        default:
+            // set FPU
+            break;
+        }
     #endif
 
     if( ( temp = comp_opt( i ) ) != EMPTY ) {

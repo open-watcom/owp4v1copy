@@ -90,7 +90,6 @@ extern uint_32          BufSize;
 extern uint             LnamesIdx;      // Number of LNAMES definition
 extern obj_rec          *ModendRec;     // Record for Modend
 extern sim_seg          LastSimSeg;     // last opened simplified segment
-extern module_info      ModuleInfo;     // general info about the module
 
 int                     MacroLocalVarCounter = 0; // counter for temp. var names
 char                    Parse_Pass;     // phase of parsing
@@ -186,7 +185,6 @@ static void write_init( void )
     IdxInit();
     LnameInsert( "" );
 
-    ModuleInit();
     FixInit();
     AssumeInit();
 }
@@ -684,7 +682,6 @@ static void write_header( void )
     } else {
         name = _getFilenameFullPath( full_name, AsmFiles.fname[ASM], sizeof( full_name ) );
     }
-    objr->is_32 = ModuleInfo.use32;
     len = strlen( name );
     ObjAllocData( objr, len + 1 );
     ObjPutName( objr, name, len );
