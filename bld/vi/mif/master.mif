@@ -57,6 +57,7 @@ $(name) : $(special) $(objs) $(objsroot) $(objinit) $(other) $(videps) master.mi
         -$(linker) $(lflags) name $^& file version.ybj file {$(objsroot)} $(start_flags) file {$(objinit)} $(more_flags) file {$(objs)} $(final_flags) $(rcsdll)
 !ifeq ED vi386
 #        $(tnt_dir)\bin\rebind $(tnt_dir)\bin\rtk\tntb.exe $(ED).exp -exe $(name)
+        @ren $(ED).exp $(name)
 !endif
 !ifeq ED viwp
         wbind $(name) -s $(lang_root)\binw\win386.ext -R viwp.res
@@ -79,6 +80,8 @@ $(name) : $(special) $(objs) $(objsroot) $(objinit) $(other) $(videps) master.mi
     # run the right version of edbind depending on host platform
 !ifdef __OS2__
         $(vi_dir)\bind\objos2\edbind $(bindextra) -q $(name)
+!else ifdef __MSDOS__
+        $(vi_dir)\bind\obj\edbind $(bindextra) -q $(name)
 !else
         $(vi_dir)\bind\objnt\edbind $(bindextra) -q $(name)
 !endif
