@@ -78,7 +78,7 @@ _WCRTLINK int __F_NAME(vsnprintf,vsnwprintf) ( CHAR_TYPE *s, size_t bufsize,
         len = __F_NAME(__prtf,__wprtf)( &bufinfo, format, arg, buf_count_putc );
     else {
         len = __F_NAME(__prtf,__wprtf)( &bufinfo, format, arg, buf_putc );
-        s[len] = '\0';
+        s[len < bufsize ? len : bufsize - 1] = '\0';
     }
     return( len );
 }
