@@ -1,46 +1,52 @@
 #pmake: all build os_dos cpu_386
 host_CPU = i86
-
-!include cproj.mif
+host_OS = dos
 
 .NOCHECK
 
-.EXTENSIONS
-.EXTENSIONS : .exe .obj .nbj .c .asm
+!ifeq machine NEC
+xname = nsamprsi
+!else
+xname = wsamprsi
+!endif
 
-model=l
+assembly = masm -mx -s -Dlarge $[@; #masm 5
+#assembly = ml /c /Zm /Cx /Dlarge $[@ #masm 6
 
-xname       = wsamprsi
-
-nxname      = nsamprsi
-
-lf = tmp.lnk
+!include cproj.mif
+!include defrule.mif
 
 rsidir=$(toolsdir)
 
-first = dos16m
+objs = $(lang_root)/lib286/dos/dos16m.obj dbglib.obj &
+        segs_16m.obj dbgliba.obj rmhdlr.obj sbrk.obj sample.obj &
+        samprsi.obj sampdata.obj io.obj sysio.obj sampexe.obj settime.obj &
+        magicstr.obj wmsg.obj sysinit.obj
 
-objs  = $(lang_root)/lib286/dos/$(first).obj segs_16m.obj dbglib.obj &
-        dbgliba.obj rmhdlr.obj sbrk.obj sample.obj samprsi.obj sampdata.obj &
-        io.obj sysio.obj sampexe.obj settime.obj magicstr.obj wmsg.obj sysinit.obj
-
-nobjs  = $(lang_root)/lib286/dos/$(first).nbj segs_16m.nbj intrm.nbj &
-        dbgliba.nbj rmhdlr.nbj sbrk.nbj sample.nbj samprsi.nbj sampdata.nbj &
-        io.nbj sysio.nbj sampexe.nbj settime.nbj magicstr.nbj wmsg.nbj sysinit.nbj
-
-extra_c_flags = -zdp -osail -s -dREPORT_TYPE= -dFAR_PTR=__far -fi=watcom.h -i"$(dig_dir)/h"
+extra_c_flags = -zdp -osail -s -dREPORT_TYPE= -dFAR_PTR=__far -fi=watcom.h
+!ifeq machine NEC
+extra_c_flags += -d_NEC_PC
+extra_rc_flags = -dNEC
+!endif
 extra_c_flags_dbglib = -wcd=1177
 
-inc_dirs=$(rsilib)
+extra_a_flags = -Dlarge
 
-all: at nec .symbolic
-    @%null
+!ifeq machine NEC
+inc_dirs = ../rsii86;$(rsilib);$(dig_dir)/h
+!else
+inc_dirs = $(rsilib);$(dig_dir)/h
+!endif
 
-at: ../bin/$(xname).exe .symbolic
-    @%null
+!ifeq machine NEC
+.c: ../rsii86;../c;$(rsilib)
+.asm: ../rsii86;../a;$(rsilib)
+!else
+.c: .;../c;$(rsilib)
+.asm: .;../a;$(rsilib)
+!endif
 
-nec: ../bin/$(nxname).exe .symbolic
-    @%null
+lf = tmp.lnk
 
 ../bin/$(xname).exe : $(xname).exp $(xname).res
     $(rsidir)splice $^@ $(xname).exp -ALT $(rsidir)wstubq.exe
@@ -48,54 +54,21 @@ nec: ../bin/$(nxname).exe .symbolic
 
 $(xname).exp : $(objs) $(__MAKEFILES__)
     @%create $(lf)
-    @%append $(lf) exp(wsamprsi) map(wsamprsi) log(wsamprsi.log)
-    @%append $(lf) -nod -DPMI -map -acg -farcall -quiet -auto -rtnerr 2
-    @for %i in ($(objs)) do @%append $(lf) %i
-    @%append $(lf) $(rsilib)/d16libc.lib $(lang_root)/lib286/dos/clib$(model).lib
-    @%append $(lf) $(wres_dir)/lib/wres$(model)p.lib
-    $(rsidir)glu @$(lf)
-    @rm -f *.err
-
-../bin/$(nxname).exe : $(nxname).exp $(nxname).res
-    $(rsidir)splice $^@ $(nxname).exp -ALT $(rsidir)wstubq.exe
-    wstrip -q -a -r $^@ . $(nxname).res
-
-nsamprsi.exp : $(nobjs) $(__MAKEFILES__)
-    @%create $(lf)
-    @%append $(lf) exp(nsamprsi) map(nsamprsi) log(nsamprsi.log)
+    @%append $(lf) exp($(xname)) map($(xname)) log($(xname).log)
     @%append $(lf) -nod -DPMI -map -acg -farcall -auto -rtnerr 2
     @for %i in ($(objs)) do @%append $(lf) %i
-    @%append $(lf) $(rsilib)/d16libc.lib $(lang_root)/lib286/dos/clib$(model).lib
-    @%append $(lf) $(wres_dir)/lib/wres$(model)p.lib
-    $(rsidir)glu @$(lf)
-    @rm -f *.err
+    @%append $(lf) $(rsilib)/d16libc.lib
+    @%append $(lf) $(lang_root)/lib286/dos/clibl.lib
+    @%append $(lf) $(wres_dir)/lib/wreslp.lib
+    -$(rsidir)glu @$(lf)
 
-.c: .;../c;$(rsilib)
+$(xname).res : ../h/wsample.rc ../h/wmsg.h
+    $(rc_aui) $(extra_rc_flags) -dRSI -fo=$^@ $[@
 
-.c.obj :
-    @set include=$(inc_path)
-    $(cc) $[* $(cflags) $(extra_c_flags_$[&) -fo=.obj
-
-.c.nbj :
-    @set include=$(inc_path)
-    $(cc) $[* $(cflags) $(extra_c_flags_$[&) -d_NEC_PC -fo=.nbj
-
-.asm: .;../a;$(rsilib)
+clean : .symbolic
+    rm -f *.?bj *.res *.lnk *.map *.exp *.log *.err
+    rm -f ../bin/$(xname).exe
 
 .asm.obj :
     @set include=$(rsilib)
-    masm -mx -s -Dlarge $[@;
-
-.asm.nbj :
-    @set include=$(rsilib)
-    masm -mx -s -Dlarge $[@.nbj;
-
-$(xname).res : ../h/wsample.rc ../h/wmsg.h
-    $(rc_aui) -zk0 -dRSI -fo=$^@ $[@
-$(nxname).res : ../h/wsample.rc ../h/wmsg.h
-    $(rc_aui) -zk0 -dRSI -dNEC -fo=$^@ $[@
-
-clean : .symbolic
-    @rm -f *.obj *.res *.lnk *.map *.exp *.log *.err
-    @rm -f ../bin/$(xname).exe ../bin/$(nxname).exe
-
+    $(assembly)
