@@ -283,6 +283,7 @@ extern ssize_t __far_write(int __fildes,void __far *__buffer,size_t __len);
 :endsegment
 :segment DOS
 _WCRTLINK extern int    fsync( int __filedes );
+_WCRTLINK extern unsigned int sleep( unsigned int __seconds );
 :endsegment
 
 :include cplusepi.sp
