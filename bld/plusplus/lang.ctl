@@ -36,9 +36,13 @@ cdsay .
     cdsay ..\nt386dll
     wmake /h /k
 #    MEP - 3/27/00 just make NT for now
-    cdsay ..\osii86
+#    cdsay ..\osii86
+#    wmake /h /k
+#    cdsay ..\osi386
+#    wmake /h /k
+    cdsay ..\dosi86
     wmake /h /k
-    cdsay ..\osi386
+    cdsay ..\dos386
     wmake /h /k
     cdsay ..\os2i86
     wmake /h /k
@@ -90,13 +94,24 @@ cdsay .
 # 386 OSI hosted compilers
 #
 #  i86 target
-    <CPCMD> osii86\wcppi86.exe <relroot>\rel2\binw\wpp.exe
-    <CPCMD> osii86\wcppi86.sym <relroot>\rel2\binw\wpp.sym
-    <CPCMD> osii86\wppi8601.int <relroot>\rel2\binw\wppi8601.int
+#    <CPCMD> osii86\wcppi86.exe <relroot>\rel2\binw\wpp.exe
+#    <CPCMD> osii86\wcppi86.sym <relroot>\rel2\binw\wpp.sym
+#    <CPCMD> osii86\wppi8601.int <relroot>\rel2\binw\wppi8601.int
 #  386 target
-    <CPCMD> osi386\wcpp386.exe <relroot>\rel2\binw\wpp386.exe
-    <CPCMD> osi386\wcpp386.sym <relroot>\rel2\binw\wpp386.sym
-    <CPCMD> osi386\wpp38601.int <relroot>\rel2\binw\wpp38601.int
+#    <CPCMD> osi386\wcpp386.exe <relroot>\rel2\binw\wpp386.exe
+#    <CPCMD> osi386\wcpp386.sym <relroot>\rel2\binw\wpp386.sym
+#    <CPCMD> osi386\wpp38601.int <relroot>\rel2\binw\wpp38601.int
+#
+# 386 DOS hosted compilers
+#
+#  i86 target
+    <CPCMD> dosi86\wcppi86.exe <relroot>\rel2\binw\wpp.exe
+    <CPCMD> dosi86\wcppi86.sym <relroot>\rel2\binw\wpp.sym
+    <CPCMD> dosi86\wppi8601.int <relroot>\rel2\binw\wppi8601.int
+#  386 target
+    <CPCMD> dos386\wcpp386.exe <relroot>\rel2\binw\wpp386.exe
+    <CPCMD> dos386\wcpp386.sym <relroot>\rel2\binw\wpp386.sym
+    <CPCMD> dos386\wpp38601.int <relroot>\rel2\binw\wpp38601.int
 #
 # 386 QNX hosted compilers
 #
