@@ -32,8 +32,8 @@
 .386p
 
     PUBLIC    sig32
-    PUBLIC    DOSGETMESSAGE
-    PUBLIC    DOS32GETMESSAGE
+;    PUBLIC    DOSGETMESSAGE
+;    PUBLIC    DOS32GETMESSAGE
     PUBLIC    DosGetMessage
     PUBLIC    Dos32GetMessage
     EXTRN     DOS32TRUEGETMESSAGE:BYTE
@@ -65,4 +65,3 @@ L1:
 
 _MSGSEG32     ENDS
               END
-
