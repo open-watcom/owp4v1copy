@@ -1,9 +1,10 @@
 #pmake/50: all build os_win cpu_i86 cpu_386
-
-.mif: $(mif_path)
+#host_os = win
+host_cpu = 386
 
 !include cproj.mif
 !include deftarg.mif
+!include defrule.mif
 
 .EXTENSIONS:
 .EXTENSIONS: .exe .obj .asm .def .c .h .mif
@@ -39,7 +40,7 @@ conv.exe : conv.c makefile
 win386.lib : $(def_files) ..\def\win386 conv.exe fldenv.obj _call16.obj
         conv ..\def\win386 ..\def -s -q
         ls -1 win*.obj >tmp.lbc
-        wlib /n /b /p=16 win386.lib +fldenv.obj +_call16.obj @tmp.lbc
+        $(librarian) /n /b /p=16 win386.lib +fldenv.obj +_call16.obj @tmp.lbc
         @erase tmp.lbc
         @copy winglue.asm ..\..\asm
         @copy dllthunk.c ..\..\c
@@ -51,6 +52,6 @@ win386.lib : $(def_files) ..\def\win386 conv.exe fldenv.obj _call16.obj
         @erase winglue.inc
 
 fldenv.obj : fldenv.asm
-        wasm -i$(watcomdir)h $[*
+        $(as) -i$(watcomdir)h $[*
 _call16.obj : _call16.asm
-        wasm $[*
+        $(as) $[*

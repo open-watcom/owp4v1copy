@@ -1,3 +1,4 @@
+!include cproj.mif
 !include deftarg.mif
 
 .EXTENSIONS:
@@ -6,7 +7,7 @@
 .EXTENSIONS: .def .asm .c
 
 .before
-        set INCLUDE = $(win31_hdrs);$(bld_h);..\h;$(watcom_h)
+        @set INCLUDE = $(win31_hdrs);$(bld_h);..\h;$(watcom_h)
 
 CC = $(comp286)
 
@@ -18,14 +19,14 @@ CFLAGS = -oalrt-s-d1-ms-2-w4-fpc-zq
 CFLAGSSIZE = -oas-s-d1-ms-2-w4-fpc-zq
 
 $(EXTNAME).ext : $(OBJS) ..\win386.mif $(LNK)
-    wlink @$(LNK)
+    $(linker) @$(LNK)
 
 dbg90: .SYMBOLIC
     erase ..\obj\begin.obj
     erase ..\obj\winext.obj
 
 $(LNK) : makefile ..\win386.mif
-    %create $(LNK)
+    @%create $(LNK)
     @%append $(LNK) path ..\obj
     @%append $(LNK) debug all
     @%append $(LNK) @$(EXTRALNK)
@@ -59,6 +60,6 @@ $(LNK) : makefile ..\win386.mif
 .c.obj :
         $(CC) $[* $(CFLAGS) -fo=..\obj\$^&.obj
 .asm.obj :
-        wasm -w2 -i=$(MINCLUDE) $[* -fo=..\obj\$^&.obj
+        $(as) -i=$(MINCLUDE) $[* -fo=..\obj\$^&.obj
 .asm.dbj :
-        wasm -w2 -i=$(MINCLUDE) -dDLL32 $[* -fo=..\obj\$^&.dbj
+        $(as) -i=$(MINCLUDE) -dDLL32 $[* -fo=..\obj\$^&.dbj

@@ -1,4 +1,4 @@
 #pmake: build all os_dos cpu_i86
-host_OS = dos
-host_CPU = i86
-!include ..\makefile
+host_os = dos
+host_cpu = i86
+!include ..\master.mif
