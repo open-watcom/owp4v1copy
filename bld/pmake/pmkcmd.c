@@ -24,11 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  pmake command line interface
 *
 ****************************************************************************/
-
 
 #include <unistd.h>
 #include <signal.h>
@@ -54,12 +52,12 @@
 #include "watcom.h"
 #include "pmake.h"
 
-#if defined(__OS2__)
-    #define TMPBAT "tmp.cmd"
-#elif defined(__UNIX__)
-    #define TMPBAT "./tmp.sh"
+#if defined( __OS2__ )
+#define TMPBAT "tmp.cmd"
+#elif defined( __UNIX__ )
+#define TMPBAT "./tmp.sh"
 #else
-    #define TMPBAT "tmp.bat"
+#define TMPBAT "tmp.bat"
 #endif
 
 #ifndef __LINUX__
@@ -72,18 +70,18 @@ static char     buffer[512];
 static int intSystem( char *cmd )
 /* interruptable "system" (so that ctrl-c works) */
 {
-    pid_t pid = fork();
-    int status;
-    
-    if ( pid == -1 )
+    pid_t       pid = fork();
+    int         status;
+
+    if( pid == -1 )
         return -1;
-    if ( pid == 0 ) {
+    if( pid == 0 ) {
         execl( "/bin/sh", "sh", "-c", cmd, NULL );
         exit( 127 );
     }
-    for (;;) {
-        if ( waitpid( pid, &status, 0) == -1 ) {
-            if ( errno == EINTR ) {
+    for( ;; ) {
+        if( waitpid( pid, &status, 0 ) == -1 ) {
+            if( errno == EINTR ) {
                 continue;
             }
             status = -1;
@@ -108,10 +106,10 @@ void WriteCmdFile( pmake_data *data )
     fprintf( fp, "#!/bin/sh\n" );
     fprintf( fp, "rm "TMPBAT"\n" );
     fchmod( fileno( fp ), 0777 );
-#else    
+#else
     fprintf( fp, "@echo off\n" );
 #endif
-    for( curr = data->dir_list; curr != NULL ; curr = curr->next ) {
+    for( curr = data->dir_list; curr != NULL; curr = curr->next ) {
         if( curr->dir_name[0] != '\0' ) {
             fprintf( fp, "cd %s\n", curr->dir_name );
             if( data->display ) {
@@ -130,7 +128,7 @@ void WriteCmdFile( pmake_data *data )
     }
 }
 
-char *Help[] = {
+char    *Help[] = {
 "Usage: PMAKE [options] [targ_list] [make options]",
 "     Execute 'wmake.exe' in each subdirectory of the current working",
 "     directory that has a makefile which contains the specified ",
@@ -174,14 +172,15 @@ void PrintHelp( void )
 {
     int         i;
 
-    for( i = 0; Help[i] != NULL; ++i ) puts( Help[i] );
+    for( i = 0; Help[i] != NULL; ++i )
+        puts( Help[i] );
     exit( EXIT_FAILURE );
 }
 
-char                    CmdBuff[512];
+char    CmdBuff[512];
 
-#if !defined(__WATCOMC__) && defined(__UNIX__)
-char **_argv;
+#if !defined( __WATCOMC__ ) && defined( __UNIX__ )
+char    **_argv;
 
 int main( int argc, char **argv )
 {
@@ -190,7 +189,7 @@ int main( int argc, char **argv )
 int main( void )
 {
 #endif
-    pmake_data *data;
+    pmake_data  *data;
 
     getcmd( CmdBuff );
     data = PMakeBuild( CmdBuff );
