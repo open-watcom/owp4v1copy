@@ -85,3 +85,10 @@ axp_fpi_postopts=
 
 7u8f086_postopts=$($(processor)_fpi_postopts)
 7fu8086_postopts=$($(processor)_fpi_postopts)
+7u8f386_postopts=-fpi87
+7fu8386_postopts=-fpi87
+fdmth086_postopts=-fpi87
+fsmth086_postopts=-fpi87
+fdmth386_postopts=-fpi87
+fsmth386_postopts=-fpi87
+div386_postopts=-fpi87

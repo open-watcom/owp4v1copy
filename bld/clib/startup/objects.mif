@@ -234,4 +234,6 @@ maino16_postopts =-os
 maino32_postopts =-os
 seterrno_postopts=-os
 
+adsstart_postopts=-fpi87
+
 no_truncate_object_code=1

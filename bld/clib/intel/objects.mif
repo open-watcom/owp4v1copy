@@ -36,7 +36,7 @@
 
 !include ../../../../objlist.mif
 
-chipbug_opts=-fpi87
+chipbug_postopts=-fpi87
 profilog_opts=-of
 p5prof2_opts=-of
 dp5prof2_opts=-of

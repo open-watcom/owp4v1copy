@@ -20,8 +20,18 @@
 
 !include ../../../../objlist.mif
 
-chipd16_opts=-fpi87
-chipa16_opts=-fpi87
-chipw16_opts=-fpi87
-chipt16_opts=-fpi87
-chipr16_opts=-fpi87
+chipa16_postopts=-fpi87
+chipd16_postopts=-fpi87
+chipr16_postopts=-fpi87
+chipt16_postopts=-fpi87
+chipw16_postopts=-fpi87
+chipa32_postopts=-fpi87
+chipd32_postopts=-fpi87
+chipr32_postopts=-fpi87
+chipt32_postopts=-fpi87
+chipw32_postopts=-fpi87
+fclex387_postopts=-fpi87
+ini87086_postopts=-fpi87
+ini87386_postopts=-fpi87
+old87_postopts=-fpi87
+fpe87_postopts=-fpi87
