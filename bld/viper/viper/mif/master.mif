@@ -48,15 +48,15 @@ extra_cpp_flags_i86     = -zm-zc
 $(name).exe : $(OBJECTS) $(LIBS) viper.res
 !ifneq host_OS os2
         $(linker) $(lflags) name $(name) op map, de $(description) f {$(OBJECTS)} lib {$(LIBS)}
-        $(rc) -q viper.res $(name).exe
+        $(rc) $(rc_flags) viper.res $(name).exe
 !else
         $(linker) $(lflags) name $(name) op map, de $(description) f {$(OBJECTS)} lib {$(LIBS)}
         $(rc_os2) -p -x viper.res $(name).exe
 !endif
 
-viper.res : viper.rc
+viper.res : _guimsgs.gh $(gui_dir)/h/gui.rc viper.rc
 !ifneq host_OS os2
-        $(rc) $(rc_flags) -i".." -q -r $[@ -fo=$^@
+        $(rc) $(rc_flags) -i".." -r $[@ -fo=$^@
 !else
 !ifeq host_lang japan
         $(cc) -zk0 -dJAPANESE_MESSAGES -i=".." -p $[@ -fo=viper.prc
@@ -65,3 +65,10 @@ viper.res : viper.rc
 !endif
         $(rc_os2) -i".." -r viper.prc viper.res
 !endif
+
+./guimkstr.exe: $(gui_dir)/c/mkstr.c $(gui_dir)/h/gui.msg
+        $(bld_cl) -i"$(gui_dir)/h" $(wcl_util_opts) $[@
+
+_guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
+        $[@ $^@ $(gui_msg_id_modifier)
+

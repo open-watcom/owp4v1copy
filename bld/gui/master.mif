@@ -117,12 +117,12 @@ $(name).lib : eraseall.obj _guimsgs.gh $(objs) $(extra_objs) $(sysobjs) $(__make
         $(librarian) $(wlib_opt) -n -b $^@ @tmp.lbc
         @rm -f tmp.lbc
 
-./mkstr.exe: gui.msg ../../c/mkstr.c
-        $(bld_cl) -i"$(guidir)/h" -fe=$^@ $]@ -lr
+./mkstr.exe: $(gui_dir)/c/mkstr.c $(gui_dir)/h/gui.msg
+        $(bld_cl) -i"$(gui_dir)/h" $(wcl_util_opts) $[@
 
-_guimsgs.gh: gui.msg ./mkstr.exe
-        $]@ $^@ $(gui_msg_id_modifier)
+_guimsgs.gh: ./mkstr.exe $(gui_dir)/h/gui.msg
+        $[@ $^@ $(gui_msg_id_modifier)
 
-eraseall.obj : $(guidir)/$(type)/compile.gbl
+eraseall.obj : $(gui_dir)/$(type)/compile.gbl
         rm -f *.obj
         wtouch eraseall.obj

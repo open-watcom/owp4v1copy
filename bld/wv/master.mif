@@ -449,9 +449,9 @@ post_process :.PROCEDURE
 !ifeq display char
         wstrip -q -a -r  $(bdir)/$(%NAME).$(EXE) . $(%RESFILE)
 !else ifeq host_OS win
-        $(rc) -k -bt=windows -i="$(rcinclude);$(lang_root)/h/win" $(%RESFILE) $(bdir)/$(%NAME).$(EXE)
+        $(rc) -k $(rc_flags) -i="$(rcinclude);$(lang_root)/h/win" $(%RESFILE) $(bdir)/$(%NAME).$(EXE)
 !else ifeq host_OS nt
-        $(rc) -k -bt=nt -i="$(rcinclude);$(lang_root)/h/nt" $(%RESFILE) $(bdir)/$(%NAME).$(EXE)
+        $(rc) -k $(rc_flags) -i="$(rcinclude);$(lang_root)/h/nt" $(%RESFILE) $(bdir)/$(%NAME).$(EXE)
 !else ifeq host_OS os2
         $(rc_os2) -p -x $(%RESFILE) $(bdir)/$(%NAME).$(EXE)
 !endif
@@ -611,25 +611,25 @@ rcfiles = &
     japhis.dlg
 
 ./mkstr.exe : $(cdir)/mkstr.c wd.str wdengin.str menu.str $(dig_dir)/h/mad.str
-        $(bld_cl) $(wcl_util_opts) $[@ -i"$(hdir);$(dig_dir)/h"
+        $(bld_cl) $(wcl_util_opts) -i"$(hdir);$(dig_dir)/h" $[@
 
 $(litdef) : ./mkstr.exe wd.str wdengin.str menu.str $(dig_dir)/h/mad.str
         set DOS4G=quiet
         $[@ $^@
 
-wvui.res : $(hdir)/wvui.rc auistr.gh $(rcfiles) .autodepend
-        $(rc) -r -q -bt=windows -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
+wvui.res : $(hdir)/wvui.rc auistr.gh _guimsgs.gh $(rcfiles) .autodepend
+        $(rc) -r -bt=windows -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
 
 wvntdll.res : $(hdir)/strings.rc .autodepend
-        $(rc) -r -q -bt=nt -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@x
+        $(rc) -r $(rc_flags) -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
 
-wvwin.res : $(hdir)/wvwin.rc auistr.gh $(bitmaps) $(rcfiles) .autodepend
-        $(rc) -k -r -bt=windows -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
+wvwin.res : $(hdir)/wvwin.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
+        $(rc) -k -r $(rc_flags) -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
 
-wvnt.res : $(hdir)/wvwin.rc auistr.gh $(bitmaps) $(rcfiles) .autodepend
-        $(rc) -k -r -bt=nt -i="$(rcinclude);$(lang_root)/h/nt" $[@ -fo=$^@
+wvnt.res : $(hdir)/wvwin.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
+        $(rc) -k -r $(rc_flags) -i="$(rcinclude);$(lang_root)/h/nt" $[@ -fo=$^@
 
-wvpm.res wvpmj.res : $(hdir)/wvpm.rc auistr.gh $(bitmaps) $(rcfiles) .autodepend
+wvpm.res wvpmj.res : $(hdir)/wvpm.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
         @set oinc=$(%include)
         set include=$(inc_dirs_sys);$(rcinclude);$(%include)
         *wcc -dRC -i"$(aui_dir)/os2386.pm;$(rcinclude)" -p -pw=0 -fo=wvpm.i $[@
@@ -790,7 +790,14 @@ japhis.dlg : $(hdir)/japhis.dlg
 !endif
 
 ./auimkstr.exe : $(aui_dir)/h/aui.msg $(aui_dir)/c/mkstr.c
-        $(bld_cl) -i"$(aui_dir)/h" $]@ $(wcl_util_opts)
+        $(bld_cl) -i"$(aui_dir)/h" $(wcl_util_opts) $]@
 
 auistr.gh : $(aui_dir)/h/aui.msg ./auimkstr.exe
         $]@ $^@
+
+./guimkstr.exe: $(gui_dir)/c/mkstr.c $(gui_dir)/h/gui.msg
+        $(bld_cl) -i"$(gui_dir)/h" $(wcl_util_opts) $[@
+
+_guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
+        $[@ $^@ $(gui_msg_id_modifier)
+

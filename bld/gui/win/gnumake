@@ -37,7 +37,7 @@ vpath %.c $(SRCDIRS)
 vpath %.h $(INCDIRS)
 vpath %.msg $(GUI_DIR)/h
 
-GUI_MSG_FILE = $(GUI_DIR)/h/_guimsgs.h
+GUI_MSG_FILE = _guimsgs.gh
 
 all	: $(GUI_MSG_FILE) $(OBJDIR)/lib$(LIBNAME).a
 
