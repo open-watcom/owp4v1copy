@@ -14,6 +14,8 @@ cdsay .
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
     cdsay <PROJDIR>\mkcdpg
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
+    cdsay <PROJDIR>\exedmp
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
     cd <PROJDIR>\rc
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
 
@@ -33,6 +35,8 @@ cdsay .
     <CPCMD> <devdir>\sdk\rc\rc\1252.uni <relroot>\rel2\binw\1252.uni
     <CPCMD> <devdir>\sdk\rc\mkcdpg\nt386\mkcdpg.exe <relroot>\rel2\binnt\mkcdpg.exe
 #    <CPCMD> <devdir>\sdk\rc\mkcdpg\ntaxp\mkcdpg.exe <relroot>\rel2\axpnt\mkcdpg.exe
+    <CPCMD> <devdir>\sdk\rc\exedmp\nt386\exedmp.exe <relroot>\rel2\binnt\exedmp.exe
+    <CPCMD> <devdir>\sdk\rc\exedmp\os2386\exedmp.exe <relroot>\rel2\binp\exedmp.exe
     <CPCMD> <devdir>\sdk\rc\rc\ntrtdll\wrc.dll <relroot>\rel2\binnt\rtdll\wrc.dll
 
 [ BLOCK <1> clean ]
