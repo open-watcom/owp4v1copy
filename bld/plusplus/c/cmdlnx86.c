@@ -1007,7 +1007,7 @@ void CmdSysAnalyse( OPT_STORAGE *data )
 #if _CPU == 386
     if (data->zro && data->zri)
     {
-        DbgDefault( "invalid fp rounding flags - ignored" );
+//        DbgDefault( "invalid fp rounding flags - ignored" );
         data->zro = data->zri = 0;
     }
     if (data->zri)
