@@ -1,7 +1,7 @@
 This is a list of Open Watcom projects.
-each is genrally a subdirectory under OpenWatcom\bld.
+each is genrally a subdirectory under <owroot>\bld.
 
-as              - alpha assembler
+as              - alpha/ppc assembler
 aui             - ui library used by debugger
 bdiff           - diff and patch utilities
 bin             - some tools such as the debugger get built into this dir.
@@ -16,8 +16,8 @@ clib            - C library
 cmdedit         - source code for cmdedit dos shell shortcut program
 comp_cfg        - compiler config
 cpp             - C preprocessor
-cvpack
-diff
+cvpack          - CodeView debug info packing utility
+diff            - the classic diff utility
 dig             - used by debugger
 dip             - used by debugger
 dwarf           - dwarf reading/writing libraries
@@ -42,7 +42,7 @@ online          - online help files
 orl             - object reading library
 owl             - object writing library
 pbide           - DLL for Powerbuilder IDE (powerbuilder c++ class builder )
-pgchart
+pgchart         - part of graphlib (presentation graphics)
 plusplus        - C++ compiler
 plusplus\cpplib - C++ class library
 pmake           - parallel make
@@ -50,6 +50,7 @@ posix           - posix tools
 rcsdll          - RCS DLL for editor
 rtdll           - clib, mathlib, c++ lib. runtime DLLs
 sdk             - dialog editor,image editor,resource compiler,etc.
+setupgui        - installation utility
 src             - sample source code
 techinfo        - utility to check watcom tool versions, etc.
 trap            - trap files - used by debugger
@@ -64,7 +65,7 @@ wasm            - watcom assembler
 watcom          - shared source code
 wclass          - wclass C++ class library - used by IDE, browser
 wdisasm         - old disassembler - source code still used by debugger
-wic             -
+wic             - watcom interface converter
 win386          - watcom 32-bit windows extender
 wl              - linker
 wmake           - watcom make
@@ -74,7 +75,7 @@ wpi             - macro library used by GUI
 wprof           - execution profiler
 wsample         - sampler
 wsplice         - wsplice utility - text file processor
-wstrip
-wstub
-wtouch
-wv              - WVIDEO - watcom debugger frontend
+wstrip          - executable strip utility
+wstub           - DOS/4GW stub program
+wtouch          - touch utility
+wv              - WD (used to be WVIDEO) - watcom debugger frontend
