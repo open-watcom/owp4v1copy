@@ -223,6 +223,12 @@ bool InitCmd()
     }
     memmove( ptr + 1, parm, last - parm + 1 );
     *ptr = NULLCHAR;
+    ptr = TaskCmd;
+    // If the program name was quoted, strip off the quotes
+    if( *ptr == '\"' ) {
+        memmove( ptr, ptr + 1, end - ptr );
+        *( end - 2 ) = NULLCHAR;
+    }
     return( TRUE );
 }
 
