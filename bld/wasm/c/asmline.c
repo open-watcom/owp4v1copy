@@ -565,7 +565,7 @@ void AsmByte( unsigned char byte )
 
 #ifdef _WASM_
 #ifdef DEBUG_OUT
-static void output( void )
+static void dbg_output( void )
 /************************/
 /* For debugging use only; print out a simplied version of the source line
    after it is parsed and the expression is evaluated */
@@ -689,7 +689,7 @@ void AsmLine( char *string )
         write_to_file = FALSE;
     }
     #ifdef DEBUG_OUT
-        output();               // for debuggin only
+        dbg_output();               // for debuggin only
     #endif
 
 #else

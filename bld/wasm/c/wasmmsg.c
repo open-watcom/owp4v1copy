@@ -68,7 +68,7 @@ static const unsigned char PressReturn[] = {
 "    (Press return to continue)"
 };
 
-static void output( const unsigned char *text )
+static void con_output( const unsigned char *text )
 {
     char c;
 
@@ -163,7 +163,7 @@ void MsgPrintf1( int resourceid, char *token )
 static void Wait_for_return()
 {
     if( isatty( fileno(stdout) ) ) {
-        output( PressReturn );
+        con_output( PressReturn );
         fflush( stdout );
         getch();
     }
