@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Regexp and plain file matching routines.
 *
 ****************************************************************************/
 
@@ -260,6 +259,7 @@ int FileMatchNoRx( char *name, char *wild )
     }
     ext[elen] = 0;
 
+    memset(sp_buf, 0, sizeof(sp_buf));
     _splitpath2( name, sp_buf, NULL, NULL, &cfname, &cext );
     if( cext[0] == '.' ) {
         ++cext;
