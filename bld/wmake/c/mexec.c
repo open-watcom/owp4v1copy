@@ -1424,6 +1424,7 @@ STATIC RET_T handleChangeDrive( const char *cmd )
 #endif
 
 
+#if !defined( __UNIX__ )
 STATIC RET_T handleRMSyntaxError( void )
 /***************************************/
 {
@@ -1431,7 +1432,6 @@ STATIC RET_T handleRMSyntaxError( void )
     return( RET_ERROR );
 }
 
-#if !defined( __UNIX__ )
 typedef struct {
     BIT bForce  : 1;
     BIT bVerbose : 1;
