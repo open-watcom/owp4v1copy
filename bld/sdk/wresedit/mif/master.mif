@@ -105,13 +105,6 @@ $(name).lib: $(name).dll
 $(name).dll: wmsgfile.gh $(object) $(wres_lib) $(wr_lib) $(name).res
         $(linker) $(lflags) name $^@ file {$(object)}
         $(rc) $(rc_flags) -k $(name).res $^@
-!ifdef TOOLS_10_0
-!ifeq host_OS nt
-!ifeq host_CPU 386
-        whack $(name).dll
-!endif
-!endif
-!endif
 
 .rc.res: .AUTODEPEND
         $(rc) $(rc_flags) -r -ad $[@ -fo=$^@

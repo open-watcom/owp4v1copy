@@ -188,13 +188,6 @@ extra_l_flags_win += library commdlg, ddeml
 $(name).exe: wdemsgs.gh $(OBJS) $(name).res $(wres_lib) $(fmedit_lib) $(wr_lib)
         $(linker) name $^@ $(lflags) file {$(OBJS)}
         $(rc) $(rc_flags) -k $(name).res $^@
-!ifdef TOOLS_10_0
-!ifeq host_OS nt
-!ifeq host_CPU 386
-        whack $(name).exe
-!endif
-!endif
-!endif
 
 # implicit rules
 #################

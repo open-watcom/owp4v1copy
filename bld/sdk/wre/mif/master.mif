@@ -131,13 +131,6 @@ extra_l_flags_win = op stack=32k,rwr library commdlg,ddeml
 $(name).exe: wremsgs.gh $(OBJS) $(wres_lib) $(resedit_libs) $(wr_lib) $(name).res
         $(linker) $(lflags) name $^@ file {$(OBJS)}
         $(rc) $(rc_flags) -k $(name).res $^@
-!ifdef TOOLS_10_0
-!ifeq host_OS nt
-!ifeq host_CPU 386
-        whack $(name).exe
-!endif
-!endif
-!endif
 
 wremsgs.gh: wretemp.gh
         $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@

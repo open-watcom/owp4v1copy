@@ -16,7 +16,6 @@ memory_model_i86 = l
 .EXTENSIONS: .res .rc
 
 WINDOWS=1
-
 !include wres.mif
 
 .JUST_ENOUGH
@@ -178,13 +177,6 @@ $(name).res : $(wimgedit_dir)/objos2/res/$(name).rc $(rcdeps)
 $(name).exe : rcstr.gh $(objs) $(name).res
         $(linker) $(lflags) name $(name).exe file { $(objs) }
         $(RC) $(rc_flags) -k $(name).res $^@
-!ifdef TOOLS_10_0
-!ifeq host_OS nt
-!ifeq host_CPU 386
-        whack $(name).exe
-!endif
-!endif
-!endif
 
 rcstr.gh : rcstrmsg.gh
         $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@

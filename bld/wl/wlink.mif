@@ -272,7 +272,6 @@ $(orl_dir)/$(%OBJDIR)/liborl.a $(clib_dir)/$(%OBJDIR)/libwatcom.a
 !endif
 
 $(exe) : wlink.res $(c_objs) $(extra_objs) $(libs) $(rc_objs)
-    @%make wlink.res
 !ifeq bootstrap 1
     $(cc) -o $^@ $(c_objs) $(extra_objs) $(libs)
 !else
