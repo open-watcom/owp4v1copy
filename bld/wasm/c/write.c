@@ -50,6 +50,7 @@
 #include "directiv.h"
 #include "queues.h"
 #include "womputil.h"
+#include "asmlabel.h"
 
 #include "myassert.h"
 
@@ -61,7 +62,6 @@
 
 extern char             *ScanLine( char *, int );
 extern void             FreeIncludePath( void );
-extern void             PrepAnonLabels( void );
 extern void             CheckForOpenConditionals();
 extern bool             PopLineQueue();
 extern void             set_cpu_parameters( void );

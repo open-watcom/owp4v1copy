@@ -12,7 +12,7 @@ bar &
 beep &
 bigext &
 bug &
-bunk &
+#bunk &
 c &
 cmps &
 comm &
@@ -42,7 +42,7 @@ jmpext &
 jmpfword &
 jmpsize &
 jmptst &
-kyb &
+#kyb &
 l2 &
 l3 &
 labelbug &

@@ -41,6 +41,7 @@
 #include "asmdefs.h"
 #include "asmfixup.h"
 #include "mangle.h"
+#include "asmlabel.h"
 
 #include "myassert.h"
 
@@ -1100,7 +1101,6 @@ int ExtDef( int i )
     int                 type;
     memtype             mem_type;
     struct asm_sym      *sym;
-    struct asm_sym      *struct_sym;
     int                 lang_type;
 
     mangle_type = Check4Mangler( &i );
@@ -1122,9 +1122,7 @@ int ExtDef( int i )
         type = token_cmp( &typetoken, TOK_EXT_NEAR, TOK_EXT_ABS );
 
         if( type == ERROR ) {
-            struct_sym = AsmGetSymbol( AsmBuffer[i]->string_ptr );
-            if( ( struct_sym == NULL )
-                || ( struct_sym->state != SYM_STRUCT ) ) {
+            if( !IsLabelStruct( AsmBuffer[i]->string_ptr ) ) {
                 AsmError( INVALID_QUALIFIED_TYPE );
                 return( ERROR );
             }

@@ -1,6 +1,7 @@
 
 objs = &
 3dnow &
+absjumps &
 addrmode &
 allign &
 callcnv1 &

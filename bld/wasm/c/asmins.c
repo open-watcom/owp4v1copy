@@ -47,6 +47,7 @@
 #include "asmexpnd.h"
 #include "asmfixup.h"
 #include "asmeval.h"
+#include "asmlabel.h"
 
 #ifdef _WASM_
   #include "directiv.h"
@@ -66,7 +67,6 @@ struct asm_code         *Code = &Code_Info;
 
 unsigned char           Opnd_Count;
 
-extern int              MakeLabel( char *, memtype );
 extern int              dup_array( struct asm_sym *, char, char );
 extern int              data_init( int, int );
 
@@ -1169,7 +1169,7 @@ static int idata_fixup( expr_list *opndx )
         }
         Code->mem_type = T_WORD;
         // no break
-#ifdef _WASM__
+#ifdef _WASM_
     case T_SWORD:
 #endif
     case T_WORD:
@@ -1697,9 +1697,8 @@ int AsmParse( void )
     struct asm_code     *rCode = Code;
     expr_list           opndx;
     int                 temp;
-#ifdef _WASM_
-    struct asm_sym      *sym = NULL;
 
+#ifdef _WASM_
     Code->use32 = Use32;
     i = proc_check();
     if( i == ERROR )
@@ -1757,6 +1756,15 @@ int AsmParse( void )
                 return( ERROR );
             }
             cur_opnd = OP_NONE;
+#ifdef _WASM_
+            if( ( AsmBuffer[i+1]->token == T_DIRECTIVE )
+                || ( AsmBuffer[i+1]->token == T_COLON ) ) {
+                // instruction name is label
+                AsmBuffer[i]->token = T_ID;
+                i--;
+                continue;
+            }
+#endif
             switch( AsmBuffer[i]->value ) {
             // prefix
             case T_LOCK:
@@ -1799,13 +1807,6 @@ int AsmParse( void )
                 rCode->info.token = AsmBuffer[i]->value;
                 break;
             }
-#ifdef _WASM_
-            if( AsmBuffer[i+1]->token == T_DIRECTIVE ) {
-                AsmBuffer[i]->token = T_ID;
-                i--;
-                continue;
-            }
-#endif
             i++;
             if( EvalOperand( &i, Token_Count, &opndx, TRUE ) == ERROR )
                 return( ERROR );
@@ -1833,7 +1834,7 @@ int AsmParse( void )
         case T_RES_ID:
             if( rCode->info.token == T_NULL ) {
                 temp = ( i == 0 ) ? -1 : 0;
-                return( ( data_init( temp, i ) == ERROR ) ? ERROR : NOT_ERROR );
+                return( data_init( temp, i ) );
             }
             AsmError( SYNTAX_ERROR );
             return( ERROR );
@@ -1880,17 +1881,16 @@ int AsmParse( void )
             if( i == 0 ) {   // a new label
 #if ALLOW_STRUCT_INIT
 #ifdef _WASM_
-                sym = AsmGetSymbol( AsmBuffer[i]->string_ptr );
-                if( sym != NULL && sym->state == SYM_STRUCT &&
-                    AsmBuffer[i+1]->token != T_DIRECTIVE ) {
+                if( IsLabelStruct( AsmBuffer[i]->string_ptr )
+                    && ( AsmBuffer[i+1]->token != T_DIRECTIVE ) ) {
                     AsmBuffer[i]->token = T_DIRECTIVE;
                     AsmBuffer[i]->value = T_STRUCT;
-                    return( ( data_init( -1,0 ) == ERROR ) ? ERROR : NOT_ERROR );
+                    return( data_init( -1, 0 ) );
                 }
 #endif
 #endif
 
-                switch( AsmBuffer[i + 1]->token ) {
+                switch( AsmBuffer[i+1]->token ) {
                 case T_COLON:
                     cur_opnd = OP_LABEL;
                     break;
@@ -1898,23 +1898,18 @@ int AsmParse( void )
 #ifdef _WASM_
                 case T_ID:
                     /* structure declaration */
-                    sym = AsmGetSymbol( AsmBuffer[i+1]->string_ptr );
-                    if( sym == NULL || sym->state != SYM_STRUCT ) {
+                    if( IsLabelStruct( AsmBuffer[i+1]->string_ptr ) ) {
+                        AsmBuffer[i+1]->token = T_DIRECTIVE;
+                        AsmBuffer[i+1]->value = T_STRUCT;
+                    } else {
                         AsmError( SYNTAX_ERROR );
                         return( ERROR );
-                    } else {
-                        AsmBuffer[i + 1]->token = T_DIRECTIVE;
-                        AsmBuffer[i + 1]->value = T_STRUCT;
                     }
                     /* fall through */
 #endif
 #endif
                 case T_RES_ID:
-                    if( data_init( i, i+1 ) == ERROR ) {
-                        return( ERROR );
-                    } else {
-                        return( NOT_ERROR );
-                    }
+                    return( data_init( i, i+1 ) );
                     break;
 #ifdef _WASM_
                 case T_DIRECTIVE:
@@ -1928,13 +1923,13 @@ int AsmParse( void )
             }
             break;
         case T_COMMA:
-            cur_opnd = OP_NONE;
-            curr_ptr_type = EMPTY;
-            if( Opnd_Count == OPND2 ) {
+            if( Opnd_Count == OPND1 ) {
+                Opnd_Count++;
+            } else if( Opnd_Count == OPND2 ) {
                 switch( rCode->info.token ) {
                 case T_SHLD:
                 case T_SHRD:
-                    switch( AsmBuffer[i + 1]->token ) {
+                    switch( AsmBuffer[i+1]->token ) {
                     case T_NUM:
                         break;
                     case T_REG:
@@ -1953,17 +1948,17 @@ int AsmParse( void )
                     Opnd_Count++;
                     break;
                 }
-            } else if( Opnd_Count == OPND3 ) {
+            } else {
                 AsmError( TOO_MANY_COMMAS );
                 return( ERROR );
-            } else {
-                Opnd_Count++;
-#ifdef _WASM_
-                Frame = EMPTY;
-                SegOverride = NULL;
-#endif
             }
             i++;
+            cur_opnd = OP_NONE;
+            curr_ptr_type = EMPTY;
+#ifdef _WASM_
+            Frame = EMPTY;
+            SegOverride = NULL;
+#endif
             if( EvalOperand( &i, Token_Count, &opndx, TRUE ) == ERROR )
                 return( ERROR );
             if( opndx.empty )
@@ -1988,29 +1983,13 @@ int AsmParse( void )
             i--;
             break;
         case T_COLON:
-// !! /* */myassert( 0 );
-            if( rCode->info.opnd_type[Opnd_Count] & OP_SR ) {
-                // rCode->info.opnd_type[Opnd_Count] = OP_NONE;
-                rCode->info.opnd_type[Opnd_Count] = OP_M;
-                cur_opnd = OP_M;
-            } else if ( last_opnd == OP_LABEL ) {
+            if ( last_opnd == OP_LABEL ) {
                 if( AsmBuffer[i+1]->token != T_RES_ID ) {
                     if( MakeLabel( AsmBuffer[i-1]->string_ptr, T_NEAR )==ERROR ) {
                          return( ERROR );
                     }
                 }
                 cur_opnd = OP_NONE;
-            } else if( rCode->info.token == T_CALLF ||
-                       rCode->info.token == T_JMPF ) {
-                if( AsmBuffer[i - 1]->token == T_NUM ) {
-                    // last opnd is segment
-                    rCode->info.opnd_type[Opnd_Count] = OP_I16;
-                    Opnd_Count++;
-                    cur_opnd = OP_NONE;
-                } else {
-                    AsmError( SYNTAX_ERROR_UNEXPECTED_COLON );
-                    return( ERROR );
-                }
             } else {
                 AsmError( SYNTAX_ERROR_UNEXPECTED_COLON );
                 return( ERROR );

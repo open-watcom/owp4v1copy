@@ -41,11 +41,11 @@
 #include "condasm.h"
 #include "asmexpnd.h"
 #include "asmdefs.h"
+#include "asmlabel.h"
 
 /* prototypes */
 extern int              OrgDirective( int );
 extern int              AlignDirective( uint_16, int );
-extern int              LabelDirective( int );
 extern int              StructDef( int );
 extern int              ForDirective( int, enum irp_type );
 

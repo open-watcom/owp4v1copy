@@ -34,6 +34,7 @@
 #include "asmins.h"
 #include "asmdefs.h"
 #include "asmfixup.h"
+#include "asmlabel.h"
 
 #ifdef _WASM_
 
@@ -58,6 +59,15 @@ void PrepAnonLabels( void )
         AsmChangeName( sym->name, "@F" );
     }
 
+}
+
+bool IsLabelStruct( char *name )
+/******************************/
+{
+    asm_sym *sym;
+
+    sym = AsmGetSymbol( name );
+    return( ( sym != NULL && sym->state == SYM_STRUCT ) );
 }
 #endif
 
@@ -156,10 +166,7 @@ int LabelDirective( int i )
         return( ERROR );
     }
     if( AsmBuffer[i+1]->token == T_ID ) {
-        asm_sym *sym;
-
-        sym = AsmGetSymbol( AsmBuffer[i+1]->string_ptr );
-        if( sym != NULL && sym->state == SYM_STRUCT ) {
+        if( IsLabelStruct( AsmBuffer[i+1]->string_ptr ) ) {
             return( MakeLabel( AsmBuffer[i-1]->string_ptr, T_STRUCT ) );
         }
     }
