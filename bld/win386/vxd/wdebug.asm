@@ -41,7 +41,7 @@
         .387
 
         INCLUDE win30vxd.inc
-        INCLUDE WDEBUG.INC
+        INCLUDE wdebug.inc
 
 MAX_EMU_REG     equ 32
 
