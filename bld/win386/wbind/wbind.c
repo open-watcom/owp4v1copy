@@ -41,7 +41,12 @@
 #include <sys\types.h>
 #include <sys\stat.h>
 #include "banner.h"
-#include <win16.h>
+//#include <win16.h>
+typedef unsigned short WORD;
+typedef unsigned long DWORD;
+typedef void *HANDLE;
+typedef char far *LPSTR;
+#define FAR far
 #include "..\h\winext.h"
 #include "watcom.h"
 #include "exedos.h"
@@ -282,7 +287,7 @@ main( int argc, char *argv[] )
     char        winext[_MAX_PATH];
     char        rc[256];
     long        totalsize;
-    char        **arglist;
+    const char  **arglist;
     char        *path = NULL;
     int         currarg,len;
     rex_exe     re;
