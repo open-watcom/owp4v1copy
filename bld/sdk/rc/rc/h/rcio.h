@@ -40,7 +40,7 @@
 #include "semstr.h"
 #include "semsingl.h"
 #include "sharedio.h"
-#ifdef __UNIX__
+#if defined( __UNIX__ ) && !defined( __WATCOMC__ )
     #include "clibext.h"
 #endif
 

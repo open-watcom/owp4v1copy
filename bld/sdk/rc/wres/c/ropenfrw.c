@@ -34,7 +34,7 @@
 #include "wresrtns.h"
 #include "opcl.h"
 #include "reserr.h"
-#if defined( __UNIX__ )
+#if defined( __UNIX__ ) && !defined( __WATCOMC__ )
 #include "clibext.h"
 #endif
 

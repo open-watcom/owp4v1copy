@@ -33,7 +33,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "util.h"
-#if defined( __UNIX__ )
+#if defined( __UNIX__ ) && !defined( __WATCOMC__ )
 #include "clibext.h"
 #include "strings.h"
 #endif

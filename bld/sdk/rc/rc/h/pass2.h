@@ -40,7 +40,7 @@
 #include "exerespe.h"
 #include "exeseg.h"
 #include "exeres.h"
-#ifdef __UNIX__
+#if defined( __UNIX__ ) && !defined( __WATCOMC__ )
     #include "clibext.h"
 #endif
 

@@ -34,7 +34,7 @@
 
 #include <stdlib.h>
 #include "types.h"
-#ifdef __UNIX__
+#if defined( __UNIX__ ) && !defined( __WATCOMC__ )
     #include "clibext.h"
 #endif
 #ifndef _MAX_PATH

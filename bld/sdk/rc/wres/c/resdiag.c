@@ -39,7 +39,7 @@
 #include "read.h"
 #include "resdiag.h"
 #include "reserr.h"
-#ifdef __UNIX__
+#if defined( __UNIX__ ) && !defined( __WATCOMC__ )
     #include "clibext.h"
 #endif
 

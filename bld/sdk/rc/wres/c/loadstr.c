@@ -34,7 +34,7 @@
 #include <string.h>
 #include <limits.h>
 #include <malloc.h>
-#ifdef __UNIX__
+#if defined( __UNIX__ ) && !defined( __WATCOMC__ )
     #include <alloca.h>
     #ifdef _AIX
         #define alloca __alloca

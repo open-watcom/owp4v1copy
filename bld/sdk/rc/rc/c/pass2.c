@@ -559,7 +559,7 @@ HANDLE_ERROR:
 
 STOP_ERROR:
     RcFatalError( ERR_STOP_REQUESTED );
-#if defined( __ALPHA__ ) || defined( __UNIX__ )
+#if defined( __ALPHA__ ) || defined( __UNIX__ ) && !defined( __WATCOMC__ )
     return( FALSE );
 #endif
 
