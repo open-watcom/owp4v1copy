@@ -1509,10 +1509,10 @@ STATIC RET_T handleRM( const char *cmdname, const char *cmd )
     rt = getRMArgs( cmd, &flags, &pfname );
     if( RET_SUCCESS == rt ) {
         do {
-            if( strpbrk( pfname, WILD_METAS ) == NULL )
+            if( strpbrk( pfname, WILD_METAS ) == NULL ) {
                 if( !doRM( pfname, &flags ) )
                     return( RET_ERROR );
-            else {
+            } else {
                 const char    *dfile;
 
                 dfile = DoWildCard( pfname );
