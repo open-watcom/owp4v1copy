@@ -133,7 +133,7 @@ static  char    CGDataType[] = {
         T_DOUBLE,       /* TYPE_DIMAGINARY */
         T_LONG_DOUBLE,  /* TYPE_LDIMAGINARY */
         T_UINT_1,       /* TYPE_BOOL */
-        T_INTEGER,      /* TYPE_UNUSED */         
+        T_INTEGER,      /* TYPE_UNUSED */
   };
 
 static  char    CGOperator[] = {
@@ -1294,21 +1294,12 @@ static void DoInLineFunction( TREEPTR tree )
     --InLineDepth;
 }
 
-TREEPTR FindFuncStmtTree( SYM_HANDLE sym_handle )
+static TREEPTR FindFuncStmtTree( SYM_HANDLE sym_handle )
 {
-    TREEPTR     tree;
-    TREEPTR     right;
-    tree = FirstStmt;
-    while( tree != NULL ) {
-        right = tree->right;
-        if( right->op.opr == OPR_FUNCTION ) {     // if start of func
-            if( right->op.func.sym_handle == sym_handle ){
-                break;
-            }
-        }
-        tree = tree->left;
-    }
-    return( tree );
+    SYMPTR      symptr;
+
+    symptr = SymGetPtr( sym_handle );
+    return( symptr->u.func.start_of_func );
 }
 
 void GenInLineFunc( SYM_HANDLE sym_handle )

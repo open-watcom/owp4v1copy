@@ -309,15 +309,15 @@ typedef struct incfile {
     char            filename[1];
 } INCFILE;
 
-typedef struct  xref_entry {
-    struct  xref_entry      *next_xref;
+typedef struct xref_entry {
+    struct xref_entry       *next_xref;
     unsigned                linenum;
     unsigned                filenum;
 } XREF_ENTRY, *XREFPTR;
 
-extern  XREFPTR NewXref(XREFPTR);
+extern  XREFPTR NewXref( XREFPTR );
 
-struct  sym_hash_entry {   /* SYMBOL TABLE structure */
+struct sym_hash_entry {   /* SYMBOL TABLE structure */
     union {
         struct sym_hash_entry __FAR *next_sym;
         int     hash_index;         /* for pre-compiled header */
@@ -337,41 +337,40 @@ struct  sym_hash_entry {   /* SYMBOL TABLE structure */
 };
 
 typedef struct sym_hash_entry __FAR *SYM_HASHPTR;
+typedef struct expr_node            *TREEPTR;
 
 typedef struct symtab_entry {           /* SYMBOL TABLE structure */
-    char            *name;
+    char                *name;
     union {
-        TYPEPTR     sym_type;
-        int         sym_type_index;     /* for pre-compiled header */
+        TYPEPTR         sym_type;
+        int             sym_type_index;     /* for pre-compiled header */
     };
-    SYM_HANDLE      handle;
-    unsigned short  defn_file_index;    /* file this symbol is defined in */
+    SYM_HANDLE          handle;
+    unsigned short      defn_file_index;    /* file this symbol is defined in */
     union {
-        int         defn_line;          /* line number sym is defined on */
-        int         index;              /* symbol index in object file */
+        int             defn_line;          /* line number sym is defined on */
+        int             index;              /* symbol index in object file */
     } d;
     union {
         BACK_HANDLE     backinfo;
         int             hash_value;
-        temp_handle     return_var;     /* for the .R symbol */
+        temp_handle     return_var;         /* for the .R symbol */
     } info;
     union {
         struct {
-            int     offset;
-            int     segment;            /* segment identifier */
+            int         offset;
+            int         segment;            /* segment identifier */
         } var;
         struct {
             SYM_HANDLE      parms;
             SYM_HANDLE      locals;
-            unsigned short  number_of_quads;
-            unsigned short  start_of_func;  /* quad number */
+            TREEPTR         start_of_func;  /* starting tree node */
         } func;
     } u;
     union {
         struct textsegment  *seginfo;       /* 26-oct-91 */
         int                 seginfo_index;  /* for pre-compiled header */
     };
-    unsigned short /*TREEPTR*/ sym_leaf;
     type_modifiers  attrib;   /* LANG_CDECL, _PASCAL, _FORTRAN */
     sym_flags       flags;
     unsigned char   level;

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Parse tree operators and data structures.
 *
 ****************************************************************************/
 
@@ -187,8 +186,6 @@ typedef enum{
 }func_flags;
 
 typedef unsigned short  LABEL_INDEX;
-
-typedef struct expr_node *TREEPTR;
 
 struct patch_entry {
         TREEPTR owner;

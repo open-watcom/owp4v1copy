@@ -153,6 +153,8 @@ void GenFunctionNode( SYM_HANDLE sym_handle )
     tree->op.flags = OpFlags( sym->attrib );
     tree->expr_type = sym->sym_type->object;    // function return type
     AddStmt( tree );
+    // Evil, evil globals! But we need this for later lookups in cgen2.c
+    sym->u.func.start_of_func = LastStmt;
     CurFuncNode = tree;
     NodeCount = 0;
 }
