@@ -144,8 +144,8 @@ BOOL API _16PolyPolygon(HDC, LPPOINT, LPINT, int);
 BOOL  API _16TextOut(HDC, int, int, LPSTR, int);
 LONG  API _16TabbedTextOut(HDC, int, int, LPSTR, int, int, LPINT, int);
 BOOL  API _16GetCharWidth(HDC, WORD, WORD, LPINT);
-void  API _16LineDDA(int, int, int, int, FARPROC, LPARAM);
-void  API _Cover_LineDDA(int, int, int, int, FARPROC, LPARAM);
+void  API _16LineDDA(int, int, int, int, LINEDDAPROC, LPARAM);
+void  API _Cover_LineDDA(int, int, int, int, LINEDDAPROC, LPARAM);
 HPEN API _16CreatePenIndirect( LPLOGPEN );
 HBRUSH API _16CreateBrushIndirect( LPLOGBRUSH );
 HBITMAP API _16CreateBitmap(int, int, UINT, UINT, LPSTR);
@@ -173,9 +173,15 @@ BOOL API _Cover_EnumMetaFile(HDC, LOCALHANDLE, FARPROC, LPSTR );
 #endif
 int API _16Escape(HDC, int, int, LPSTR, LPSTR);
 int API _Cover_Escape(HDC, int, int, LPSTR, LPSTR);
-int API _16EnumFonts(HDC, LPSTR, FARPROC, LPSTR);
-int API _Cover_EnumFonts(HDC, LPSTR, FARPROC, LPSTR);
-int API _Cover_EnumFontFamilies(HDC, LPSTR, FARPROC, LPSTR);
+#ifdef STRICT
+int API _16EnumFonts(HDC, LPSTR, FONTENUMPROC, LPARAM);
+int API _Cover_EnumFonts(HDC, LPSTR, FONTENUMPROC, LPARAM);
+int API _Cover_EnumFontFamilies(HDC, LPSTR, FONTENUMPROC, LPARAM);
+#else
+int API _16EnumFonts(HDC, LPSTR, FONTENUMPROC, LPSTR);
+int API _Cover_EnumFonts(HDC, LPSTR, FONTENUMPROC, LPSTR);
+int API _Cover_EnumFontFamilies(HDC, LPSTR, FONTENUMPROC, LPSTR);
+#endif
 int API _16EnumObjects(HDC, int, FARPROC, LPSTR);
 int API _Cover_EnumObjects(HDC, int, FARPROC, LPSTR);
 int API _16GetTextFace(HDC, int, LPSTR);
@@ -237,6 +243,16 @@ BOOL  API _16GetClassInfo(HANDLE, LPSTR, LPWNDCLASS);
 HWND  API _16CreateWindow(LPSTR, LPSTR, DWORD, int, int, int, int, HWND, HMENU, HANDLE, LPSTR);
 HWND  API _16CreateWindowEx(DWORD, LPSTR, LPSTR, DWORD, int, int, int, int, HWND, HMENU, HANDLE, LPSTR);
 #ifndef NOCTLMGR
+#ifdef STRICT
+HWND API _Cover_CreateDialog(HANDLE, LPSTR, HWND, DLGPROC);
+HWND API _Cover_CreateDialogIndirect(HANDLE, LPSTR, HWND, DLGPROC);
+HWND API _Cover_CreateDialogParam(HANDLE, LPSTR, HWND, DLGPROC, LONG);
+HWND API _Cover_CreateDialogIndirectParam(HANDLE, LPSTR, HWND, DLGPROC, LONG);
+HWND API _16CreateDialog(HANDLE, LPSTR, HWND, DLGPROC);
+HWND API _16CreateDialogIndirect(HANDLE, LPSTR, HWND, DLGPROC);
+HWND API _16CreateDialogParam(HANDLE, LPSTR, HWND, DLGPROC, LONG);
+HWND API _16CreateDialogIndirectParam(HANDLE, LPSTR, HWND, DLGPROC, LONG);
+#else
 HWND API _Cover_CreateDialog(HANDLE, LPSTR, HWND, FARPROC);
 HWND API _Cover_CreateDialogIndirect(HANDLE, LPSTR, HWND, FARPROC);
 HWND API _Cover_CreateDialogParam(HANDLE, LPSTR, HWND, FARPROC, LONG);
@@ -245,6 +261,7 @@ HWND API _16CreateDialog(HANDLE, LPSTR, HWND, FARPROC);
 HWND API _16CreateDialogIndirect(HANDLE, LPSTR, HWND, FARPROC);
 HWND API _16CreateDialogParam(HANDLE, LPSTR, HWND, FARPROC, LONG);
 HWND API _16CreateDialogIndirectParam(HANDLE, LPSTR, HWND, FARPROC, LONG);
+#endif
 int  API _Cover_DialogBox(HANDLE, LPSTR, HWND, DLGPROC);
 int  API _Cover_DialogBoxParam(HANDLE, LPSTR, HWND, DLGPROC, LONG);
 int  API _Cover_DialogBoxIndirect(HANDLE, HANDLE, HWND, DLGPROC);
@@ -750,14 +767,14 @@ extern WORD LocalPtr;
 
 #pragma library (WIN386);
 
-#if	defined(STRICT)
-int	PASCAL	WinMain(HINSTANCE,HINSTANCE,LPSTR,int);
-int	CALLBACK	LibMain(HINSTANCE,WORD,WORD,LPSTR);
+#if     defined(STRICT)
+int     PASCAL  WinMain(HINSTANCE,HINSTANCE,LPSTR,int);
+int     CALLBACK        LibMain(HINSTANCE,WORD,WORD,LPSTR);
 #else
-int	PASCAL	WinMain(HANDLE,HANDLE,LPSTR,int);
-int	CALLBACK	LibMain(HANDLE,WORD,WORD,LPSTR);
+int     PASCAL  WinMain(HANDLE,HANDLE,LPSTR,int);
+int     CALLBACK        LibMain(HANDLE,WORD,WORD,LPSTR);
 #endif
-int	CALLBACK	WEP(int);
+int     CALLBACK        WEP(int);
 
 #else /* __WINDOWS_386__ */
 

@@ -303,6 +303,11 @@ typedef	DWORD	COLORREF;
 #define	WS_OVERLAPPEDWINDOW	(WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX)
 #define	WS_POPUPWINDOW	(WS_POPUP | WS_BORDER | WS_SYSMENU)
 #define	WS_CHILDWINDOW	(WS_CHILD)
+/* Obsolete style names */
+#define WS_TILED            WS_OVERLAPPED
+#define WS_ICONIC           WS_MINIMIZE
+#define WS_SIZEBOX          WS_THICKFRAME
+#define WS_TILEDWINDOW      WS_OVERLAPPEDWINDOW
 
 /* Static Control Styles */
 #define	SS_LEFT	0L
@@ -1448,6 +1453,26 @@ typedef	DWORD	COLORREF;
 #define	HS_CROSS	4
 #define	HS_DIAGCROSS	5
 
+/* CallMsgFilter() and WH_SYS/MSGFILTER context codes */
+#define MSGF_DIALOGBOX           0
+#define MSGF_MENU                2
+#define MSGF_MOVE                3
+#define MSGF_SIZE                4
+#define MSGF_SCROLLBAR           5
+#define MSGF_NEXTWINDOW          6
+#define MSGF_MAINLOOP            8
+#define MSGF_USER                4096
+
+/* Accent Modes */
+#define S_NORMAL      0
+#define S_LEGATO      1
+#define S_STACCATO    2
+
+/* WaitSoundState() constants */
+#define S_QUEUEEMPTY        0
+#define S_THRESHOLD         1
+#define S_ALLTHRESHOLD      2
+
 DECLARE_HANDLE(HTASK);
 DECLARE_HANDLE(HRSRC);
 DECLARE_HANDLE(HBITMAP);
@@ -1769,8 +1794,7 @@ typedef	void	(CALLBACK* TIMERPROC)(HWND,UINT,UINT,DWORD);
 typedef	BOOL	(CALLBACK* PROPENUMPROC)(HWND,LPCSTR,HANDLE);
 typedef	BOOL	(CALLBACK* WNDENUMPROC)(HWND,LPARAM);
 typedef	int	(CALLBACK* MFENUMPROC)(HDC,HANDLETABLE FAR*,METARECORD FAR*,int,LPARAM);
-typedef	int	(CALLBACK* OLDFONTENUMPROC)(const LOGFONT FAR*,const TEXTMETRIC FAR*,int,LPARAM);
-typedef	int	(CALLBACK* FONTENUMPROC)(const ENUMLOGFONT FAR*,const NEWTEXTMETRIC FAR*,int,LPARAM);
+typedef	int	(CALLBACK* FONTENUMPROC)(const LOGFONT FAR*,const NEWTEXTMETRIC FAR*,int,LPARAM);
 typedef	void	(CALLBACK* LINEDDAPROC)(int,int,LPARAM);
 typedef	BOOL	(CALLBACK* GRAYSTRINGPROC)(HDC,LPARAM,int);
 typedef	int	(CALLBACK* GOBJENUMPROC)(void FAR*,LPARAM);
@@ -1783,7 +1807,6 @@ typedef	FARPROC	TIMERPROC;
 typedef	FARPROC	PROPENUMPROC;
 typedef	FARPROC	WNDENUMPROC;
 typedef	FARPROC	MFENUMPROC;
-typedef	FARPROC	OLDFONTENUMPROC;
 typedef	FARPROC	FONTENUMPROC;
 typedef	FARPROC	LINEDDAPROC;
 typedef	FARPROC	GRAYSTRINGPROC;
@@ -2161,6 +2184,30 @@ int	WINAPI	GetDeviceCaps(HDC,int);
 int	FAR CDECL	wsprintf(LPSTR,LPCSTR,...);
 UINT	WINAPI	SetHandleCount(UINT);
 int WINAPI	Escape(HDC,int,int,LPCSTR,void FAR*);
+HDC     WINAPI CreateDC(LPCSTR, LPCSTR, LPCSTR, const void FAR*);
+HDC     WINAPI CreateIC(LPCSTR, LPCSTR, LPCSTR, const void FAR*);
+HDC     WINAPI CreateCompatibleDC(HDC);
+BOOL    WINAPI DeleteDC(HDC);
+int     WINAPI lstrcmp(LPCSTR, LPCSTR);
+int     WINAPI lstrcmpi(LPCSTR, LPCSTR);
+LPSTR   WINAPI lstrcpy(LPSTR, LPCSTR);
+LPSTR   WINAPI lstrcat(LPSTR, LPCSTR);
+int     WINAPI lstrlen(LPCSTR);
+LPSTR   WINAPI lstrcpyn(LPSTR, LPCSTR, int);
+void    WINAPI hmemcpy(void _huge*, const void _huge*, long);
+int     WINAPI SetMapMode(HDC, int);
+int     WINAPI GetMapMode(HDC);
+int     WINAPI WaitSoundState(int);
+int     WINAPI OpenSound(void);
+void    WINAPI CloseSound(void);
+int     WINAPI StartSound(void);
+int     WINAPI StopSound(void);
+int     WINAPI SetVoiceQueueSize(int, int);
+int     WINAPI SetVoiceNote(int, int, int, int);
+int     WINAPI SetVoiceAccent(int, int, int, int, int);
+int     WINAPI SetVoiceEnvelope(int, int, int);
+int     WINAPI SetVoiceSound(int, DWORD, int);
+void    WINAPI InvertRect(HDC, const RECT FAR*);
 
 #ifdef	STRICT
 HHOOK	WINAPI	SetWindowsHook(int,HOOKPROC);
@@ -2168,7 +2215,7 @@ int	WINAPI	EnumObjects(HDC,int,GOBJENUMPROC,LPARAM);
 HLOCAL	WINAPI	LocalHandle(void NEAR*);
 LRESULT	WINAPI	CallWindowProc(WNDPROC,HWND,UINT,WPARAM,LPARAM);
 int	WINAPI	EnumFontFamilies(HDC,LPCSTR,FONTENUMPROC,LPARAM);
-int	WINAPI	EnumFonts(HDC,LPCSTR,OLDFONTENUMPROC,LPARAM);
+int	WINAPI	EnumFonts(HDC,LPCSTR,FONTENUMPROC,LPARAM);
 void	NEAR* WINAPI	LocalLock(HLOCAL);
 void	FAR* WINAPI	LockResource(HGLOBAL);
 void	FAR* WINAPI	GlobalLock(HGLOBAL);
@@ -2177,7 +2224,7 @@ HOOKPROC	WINAPI	SetWindowsHook(int,HOOKPROC);
 int	WINAPI	EnumObjects(HDC,int,GOBJENUMPROC,LPSTR);
 HLOCAL	WINAPI	LocalHandle(UINT);
 LRESULT	WINAPI	CallWindowProc(FARPROC,HWND,UINT,WPARAM,LPARAM);
-int	WINAPI	EnumFonts(HDC,LPCSTR,OLDFONTENUMPROC,LPSTR);
+int	WINAPI	EnumFonts(HDC,LPCSTR,FONTENUMPROC,LPSTR);
 int	WINAPI	EnumFontFamilies(HDC,LPCSTR,FONTENUMPROC,LPSTR);
 char	NEAR* WINAPI	LocalLock(HLOCAL);
 char	FAR* WINAPI	LockResource(HGLOBAL);
@@ -2202,4 +2249,3 @@ int	CALLBACK	WEP(int);
 #pragma	pack(pop)
 
 #endif
-
