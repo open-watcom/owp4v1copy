@@ -408,7 +408,8 @@ global  char    *CodeClassName; /* name of the code class */
 global  char    *ModuleName;    /* name of module */
 global  char    *ObjectFileName;/* name of object file */
 global  char    *DependFileName;/* name of make style auto depend file */
-global  char    *DependTarget;  /* name of target generated in make style auto depend */
+global  char    *DependTarget;  /* name of target in make style autodep */
+global  char    *SrcDepName;    /* name of first depend (sourcefile)*/
 global  char     DependForceSlash;/* type of slash to force to in depend output */
 global  int      PackAmount;    /* current packing alignment */
 global  int      GblPackAmount; /* packing alignment given on command line */
@@ -546,6 +547,8 @@ extern  char    *DepFileName(void);
 extern  char    *ObjFileName(char *);
 extern  char    *ForceSlash(char *, char );
 extern  char    *CreateFileName( char *template, char *extension, bool forceext );
+extern  char    *GetSourceDepName( void );
+
 extern  FNAMEPTR AddFlist(char const *);
 extern  FNAMEPTR FileIndexToFName(unsigned);
 extern  char    *FNameFullPath( FNAMEPTR flist );

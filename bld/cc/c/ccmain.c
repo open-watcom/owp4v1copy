@@ -362,20 +362,29 @@ void DumpDepFile( void )
         {
             return;
         }
-        fprintf( DepFile, "%s :",
-                ForceSlash( CreateFileName( DependTarget, OBJ_EXT, FALSE ), DependForceSlash ) );
+        fprintf( DepFile, "%s :"
+               , ForceSlash( CreateFileName( DependTarget, OBJ_EXT, FALSE )
+                          , DependForceSlash ) );
+        if( curr )
+            if( curr->rwflag && !SrcFileInRDir( curr ) )
+                fprintf( DepFile, " %s"
+                        , ForceSlash( GetSourceDepName()
+                                    , DependForceSlash ) );
+        curr = curr->next;
         for( ; curr; curr = curr->next )
         {
             if( curr->rwflag && !SrcFileInRDir( curr ) )
                 fprintf( DepFile, " %s", ForceSlash( curr->name, DependForceSlash ) );
         }
         fprintf( DepFile, "\n" );
+        /*
         for( curr = FNames; curr; curr = curr->next )
         {
             if( curr->rwflag && !SrcFileInRDir( curr ) )
                 continue;
             //fprintf( DepFile, "#Skipped file...%s\n", curr->name );
         }
+        */
     }
 }
 
@@ -562,6 +571,20 @@ char *CreateFileName( char *template, char *extension, bool forceext )
     #endif
     return( Buffer );
 }
+
+char *GetSourceDepName( void )
+{
+    char buff[ _MAX_PATH2 ];
+    char *drive;
+    char *dir;
+    char *fname;
+    char *ext;
+
+    _splitpath2( WholeFName, buff, &drive, &dir, &fname, &ext );
+
+    return CreateFileName( SrcDepName, ext, FALSE );
+}
+
 
 char *ObjFileName( char *ext )
 {

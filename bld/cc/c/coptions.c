@@ -1235,6 +1235,13 @@ void SetAutoDependTarget()
     DependTarget = GetAFileName();
 }
 
+void SetAutoDependSrcDepend()
+{
+    CompFlags.generate_auto_depend = 1;
+    CMemFree( SrcDepName );
+    SrcDepName = GetAFileName();
+}
+
 void SetAutoDependForeSlash()
 {
     DependForceSlash = '/';
@@ -1381,6 +1388,7 @@ struct option const CFE_Options[] = {
     // short command sets us up for failure...
     { "adt=@",  0,              SetAutoDependTarget },
     { "adbs",   0,              SetAutoDependBackSlash },
+    { "add=@",  0,              SetAutoDependSrcDepend },
     { "adfs",   0,              SetAutoDependForeSlash },
     { "ad=@",   0,              SetGenerateMakeAutoDepend },
     { "ai",     0,              Set_AI },
