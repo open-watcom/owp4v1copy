@@ -24,12 +24,8 @@ exc_name = $(name).exe
 !endif
 link_name = $(name).lnk
 
-!ifdef bootstrap
-inc_dirs = -I. -I"$(proj_path)/h" -I"$(womp_dir)/h" -I"$(watcom_dir)/h" &
--I"$(wres_dir)/h" -I"$(trmem_dir)"
-!else
-inc_dirs = .;$(proj_path)/h;$(womp_dir)/h;$(watcom_dir)/h;$(wres_dir)/h
-!endif
+# Note the explicit $(watcom_dir)/h; there appear to be clashing headers
+inc_dirs  = -I. -I"$(proj_path)/h" -I"$(womp_dir)/h" -I"$(watcom_dir)/h" -I"$(wres_dir)/h"
 
 libs = -L$(clib_dir)/$(%OBJDIR) -lwatcom -L$(wres_dir)/$(%OBJDIR) -lwres
 
@@ -141,7 +137,7 @@ wres_obj =              &
     wrfirres.obj        &
     rduint8.obj         &
     rrdstr.obj          &
-    varstr.obj          
+    varstr.obj
 
 proj_obj += $(wres_obj)
 !endif
@@ -194,7 +190,7 @@ usage.rc : $(proj_path)/h/usage.sp
         wsplice @usage.tmp
 
 usagej.rc : $(proj_path)/h/usage.sp
-        @%write usagej.tmp -kJAPANESE $(wsplice_keys) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" $< $^@ 
+        @%write usagej.tmp -kJAPANESE $(wsplice_keys) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" $< $^@
         wsplice @usagej.tmp
 
 usage.u : $(proj_path)/h/usage.sp

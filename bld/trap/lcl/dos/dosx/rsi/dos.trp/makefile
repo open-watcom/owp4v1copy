@@ -1,13 +1,14 @@
-#pmake: all build trap lcl os_dos dsx cpu_386 x86
-host_CPU = i86
-host_OS = dos
+#pmake: build trap lcl os_dos dsx cpu_386 x86
 
-os = dos
+host_os  = dos
+host_cpu = i86
+
+os  = dos
 srv = rsi
 cpu = x86
 which = TRAP
 
-extra_c_flags = -dDOS4G -dDOSXTRAP
+extra_c_flags = -DDOS4G -DDOSXTRAP
 
 extra_objs = $(dosx_trap_objs)
 

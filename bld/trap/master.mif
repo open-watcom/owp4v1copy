@@ -251,9 +251,9 @@ $(target) : $(objs) $(extra_libs) $(resource_file) $(extra_deps) $(__MAKEFILES__
 dbgstr.lib : dbgstr.obj
         $(librarian) $^@ +$[@
 
-inc_dirs+=;$(dig_dir)/h;$(trap_dir)/common/$(os);$(trap_dir)/common;$(trap_dir)/h;$(watcom_dir)/h
+inc_dirs += -I"$(dig_dir)/h" -I"$(trap_dir)/common/$(os)" -I"$(trap_dir)/common" -I"$(trap_dir)/h"
 !ifeq host_os nov
-inc_dirs+=;$(ow_nwoss_root)/nw$(nlm_ver)/h;$(ow_nwoss_root)/nw$(nlm_ver)/src;$(ow_nwoss_root)/common/h
+inc_dirs += -I"$(ow_nwoss_root)/nw$(nlm_ver)/h" -I"$(ow_nwoss_root)/nw$(nlm_ver)/src" -I"$(ow_nwoss_root)/common/h"
 !endif
 
 .c: ../c;../../c;$(trap_dir)/common/$(os);$(trap_dir)/common;$(trap_dir)/c;$(extra_srcs)
@@ -264,4 +264,4 @@ inc_dirs+=;$(ow_nwoss_root)/nw$(nlm_ver)/h;$(ow_nwoss_root)/nw$(nlm_ver)/src;$(o
 # implicit rules
 #################
 .rc.res: .AUTODEPEND
-        $(rc) -r -i"$(inc_path)" -bt=$(targ) $[@ -fo=$^@
+        $(rc) -r $(inc_path) -bt=$(targ) $[@ -fo=$^@

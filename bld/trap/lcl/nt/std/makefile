@@ -1,6 +1,7 @@
-#pmake: all build lcl os_nt cpu_386 trap x86
+#pmake: build lcl os_nt cpu_386 trap x86
+
+host_os  = nt
 host_cpu = 386
-host_OS = nt
 
 #
 # Create the NT STD.DLL
@@ -33,9 +34,7 @@ extra_objs = &
         dbgthrd.obj &
         core.obj
 
-#       pgmexec.obj &
-
-inc_dirs += $(lang_root)/h/nt;$(trap_dir)/lcl/dos/h
+inc_dirs += -I"$(trap_dir)/lcl/dos/h"
 extra_c_flags += -dWOW
 
 !include $(trap_dir)/lcl/lcl.mif

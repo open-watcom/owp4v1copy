@@ -150,11 +150,11 @@ extra_l_flags_nt += alias '_WinMain'='_WinMain@16'
 extra_l_flags_os2 = option stack=12k option heapsize=2k &
                     option symfile=$(name).sym
 
-inc_dirs        = h;$(wimgedit_dir)/h;$(wres_dir)/h;$(wr_dir)/h;$(wpi_dir)/h;$(sdk_dir)/misc;$(watcom_dir)/h
-inc_dirs_os2    = $(watcom_dir)/os220_h;$(%toolkit)/c/os2h
+inc_dirs  = -Ih -I"$(wimgedit_dir)/h" -I"$(wres_dir)/h" -I"$(wr_dir)/h"
+inc_dirs += -I"$(wpi_dir)/h" -I"$(sdk_dir)/misc"
 
 .before:
-        @set include=$(inc_path)
+        @set include=
 
 !ifeq host_OS os2
 $(name).exe : $(objs) $(name).res $(libs)
@@ -165,21 +165,19 @@ $(name).exe : $(objs) $(name).res $(libs)
 
 $(name).res : $(wimgedit_dir)/objos2/res/$(name).rc $(rcdeps)
         @$(%toolkit)/os2bin/rc -r -DBMP_DIR=$(sdk_dir)/wimgedit/res &
-        -DMISC_DIR=$(sdk_dir)/misc $(resinc) &
-        $[@ $^@
+        -DMISC_DIR=$(sdk_dir)/misc $(inc_path) $(resinc) $[@ $^@
 !else
 
 $(name).exe : rcstr.gh $(objs) $(name).res $(libs)
         $(linker) $(lflags) name $(name).exe file { $(objs) }
-        $(RC) $(rc_flags) -k $(name).res $^@
+        $(rc) $(rc_flags) -k $(name).res $^@
 
 rcstr.gh : rcstrmsg.gh
         $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@
 
 rcstrmsg.gh : $(wimgedit_dir)/h/wimgedit.msg $(msgfiles)
-        @set include=$(inc_path)
-        $(cc) -zk0 -p -i="$(sdk_dir)/misc" $[@ -fo=$^@
+        $(cc) -zk0 -p $(inc_path) $[@ -fo=$^@
 
 .rc.res: .AUTODEPEND
-        $(RC) $(rc_flags) -r -ad -zk0 -i"$(wimgedit_dir)/res;$(sdk_dir)/misc" $[@ -fo=$^@
+        $(rc) $(rc_flags) $(inc_path) -r -ad -zk0 -I"$(wimgedit_dir)/res" $[@ -fo=$^@
 !endif

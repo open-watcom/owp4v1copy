@@ -5,7 +5,7 @@ bmp2eps_autodepends = .autodepend
 !include deftarg.mif
 !include defrule.mif
 
-inc_dirs = ../h
+inc_dirs = -I"../h"
 
 .c: ../c
 

@@ -1,12 +1,11 @@
 proj_name = whc
-
 whc_autodepends = .autodepend
 
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
 
-inc_dirs = ../h;$(cpp_dir)
+inc_dirs = -I"../h" -I$(cpp_dir)
 
 extra_cpp_flags = -xs
 

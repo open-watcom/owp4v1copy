@@ -146,16 +146,9 @@ dep_res1 = ../h/setup.h setup.ico disk.ico gui.rc _guimsgs.gh
 .rc : res;$(gui_dir)/h
 .ico : res
 
-#inc_dirs_dos = $(guidir)/ui/dos$(host_cpu)
-#inc_dirs_linux = $(guidir)/ui/linux$(host_cpu)
-#inc_dirs_nt = $(guidir)/win/nt$(host_cpu)
-#inc_dirs_os2 = $(guidir)/win/os2$(host_cpu)
-#inc_dirs_win = $(guidir)/win/win$(host_cpu)
-
-inc_dirs = ../h;$(sdk_dir)/misc;$(build_root)/wpack/h;$(build_root)/wpack/o;$(uidir)/h;$(wpi_dir)/h;$(aui_dir)/h;$(gui_dir)/h;$(build_root)/bdiff/h;$(trmem_dir)
-
-.BEFORE
-    @set include=$(inc_path)
+inc_dirs  = -I"../h" -I"$(sdk_dir)/misc" -I"$(build_root)/wpack/h"
+inc_dirs += -I"$(uidir)/h" -I"$(wpi_dir)/h" -I"$(aui_dir)/h" -I"$(gui_dir)/h"
+inc_dirs += -I"$(build_root)/bdiff/h" -I$(trmem_dir)
 
 
 # explicit rules
@@ -248,7 +241,7 @@ setup.lnk : makefile ../setup.mif
     @%append setup.lnk option stack=30K
 !else ifeq host_os nt
     @%append setup.lnk option stack=30K, heap=20K
-! ifneq host_CPU axp
+! ifneq host_cpu axp
     @%append setup.lnk lib shell32.lib
     @%append setup.lnk lib uuid.lib
 ! endif
@@ -265,66 +258,66 @@ setup.lnk : makefile ../setup.mif
 nonibm.obj : $(new_clib)/startup/c/nonibm.c
 
 setupui.res : ../setupui.rc $(dep_res1)
-    $(rc_aui) -i="$(gui_dir)/h;$(inc_dirs_sys_win)" $[@ -fo=setupui.res
+    $(rc_aui) -I"$(gui_dir)/h" $(inc_dirs_sys_win) $[@ -fo=setupui.res
 
 csetup.res : setup.rc $(dep_res1) ../wcc.bmp
     cp ../wcc.bmp ../splash.bmp > $(nulldevice)
 !ifeq host_os os2
-    $(bld_cc) -p -fo=$[&.i -i"$(gui_dir)/h" $[@
+    $(bld_cc) -p -fo=$[&.i -I"$(gui_dir)/h" $[@
     $(rc_os2) -r foros2pm.rc
     cp foros2pm.res $^@ > $(nulldevice)
 !else
-    $(rc) $(rc_flags) $(extra_rc_flags) -i"../h" $[@ -fo=$^@
+    $(rc) $(rc_flags) $(extra_rc_flags) $(inc_path) -I"../h" $[@ -fo=$^@
 !endif
 
 jcsetup.res : setup.rc $(dep_res1) ../wcc.bmp
     cp ../wcc.bmp ../splash.bmp > $(nulldevice)
 !ifeq host_os os2
-    $(bld_cc) -p -dJAPANESE_MESSAGES -zk0 -fo=$[&.i -i"$(gui_dir)/h" $[@
+    $(bld_cc) -p -DJAPANESE_MESSAGES -zk0 -fo=$[&.i -I"$(gui_dir)/h" $[@
     $(rc_os2) -r foros2pm.rc
     cp foros2pm.res $^@ > $(nulldevice)
 !else
-    $(rc) $(rc_flags) $(extra_rc_flags) -dJAPANESE_MESSAGES -zk0 -i"../h" $[@ -fo=$^@
+    $(rc) $(rc_flags) $(extra_rc_flags) -dJAPANESE_MESSAGES -zk0 $(inc_path) -I"../h" $[@ -fo=$^@
 !endif
 
 f77setup.res : setup.rc $(dep_res1) ../f77.bmp
     cp ../f77.bmp ../splash.bmp > $(nulldevice)
 !ifeq host_os os2
-    $(bld_cc) -p -fo=$[&.i -i"$(gui_dir)/h" $[@
+    $(bld_cc) -p -fo=$[&.i -I"$(gui_dir)/h" $[@
     $(rc_os2) -r foros2pm.rc
     cp foros2pm.res $^@ > $(nulldevice)
 !else
-    $(rc) $(rc_flags) $(extra_rc_flags) -i"../h" $[@ -fo=$^@
+    $(rc) $(rc_flags) $(extra_rc_flags) $(inc_path) -I"../h" $[@ -fo=$^@
 !endif
 
 jfsetup.res : setup.rc $(dep_res1) ../f77.bmp
     cp ../f77.bmp ../splash.bmp > $(nulldevice)
 !ifeq host_os os2
-    $(bld_cc) -p -dJAPANESE_MESSAGES -zk0 -fo=$[&.i -i"$(gui_dir)/h" $[@
+    $(bld_cc) -p -DJAPANESE_MESSAGES -zk0 -fo=$[&.i -I"$(gui_dir)/h" $[@
     $(rc_os2) -r foros2pm.rc
     cp foros2pm.res $^@ > $(nulldevice)
 !else
-    $(rc) $(rc_flags) $(extra_rc_flags) -dJAPANESE_MESSAGES -zk0 -i"../h" $[@ -fo=$^@
+    $(rc) $(rc_flags) $(extra_rc_flags) -DJAPANESE_MESSAGES -zk0 $(inc_path) -I"../h" $[@ -fo=$^@
 !endif
 
 dbsetup.res : setup.rc $(dep_res1) ../wsql.bmp
     cp ../wsql.bmp ../splash.bmp > $(nulldevice)
 !ifeq host_os os2
-    $(bld_cc) -p -fo=$[&.i -i"$(gui_dir)/h" $[@
+    $(bld_cc) -p -fo=$[&.i -I"$(gui_dir)/h" $[@
     $(rc_os2) -r foros2pm.rc
     cp foros2pm.res $^@ > $(nulldevice)
 !else
-    $(rc) $(rc_flags) $(extra_rc_flags) -i"../h" $[@ -fo=$^@
+    $(rc) $(rc_flags) $(extra_rc_flags) $(inc_path) -I"../h" $[@ -fo=$^@
 !endif
 
 jdbsetup.res : setup.rc $(dep_res1) ../wsql.bmp
     cp ../wsql.bmp ../splash.bmp > $(nulldevice)
 !ifeq host_os os2
-    $(bld_cc) -p -dJAPANESE_MESSAGES -zk0 -fo=$[&.i -i"$(gui_dir)/h" $[@
+    $(bld_cc) -p -DJAPANESE_MESSAGES -zk0 -fo=$[&.i -I"$(gui_dir)/h" $[@
     $(rc_os2) -r foros2pm.rc
     cp foros2pm.res $^@ > $(nulldevice)
 !else
-    $(rc) $(rc_flags) $(extra_rc_flags) -dJAPANESE_MESSAGES -zk0 -i"../h" $[@ -fo=$^@
+    $(rc) $(rc_flags) $(extra_rc_flags) -DJAPANESE_MESSAGES -zk0 $(inc_path) -I"../h" $[@ -fo=$^@
 !endif
 
 sdbsetup.res : setup.rc $(dep_res1) ../sqlserv.bmp
@@ -334,7 +327,7 @@ sdbsetup.res : setup.rc $(dep_res1) ../sqlserv.bmp
     $(rc_os2) -r foros2pm.rc
     cp foros2pm.res $^@ > $(nulldevice)
 !else
-    $(rc) $(rc_flags) $(extra_rc_flags) -i"../h" $[@ -fo=$^@
+    $(rc) $(rc_flags) $(extra_rc_flags) $(inc_path) -I"../h" $[@ -fo=$^@
 !endif
 
 setup.res : setup.rc $(dep_res1) ../generic.bmp
@@ -344,7 +337,7 @@ setup.res : setup.rc $(dep_res1) ../generic.bmp
     $(rc_os2) -r foros2pm.rc
     cp foros2pm.res $^@ > $(nulldevice)
 !else
-    $(rc) $(rc_flags) $(extra_rc_flags) -i"../h" $[@ -fo=$^@
+    $(rc) $(rc_flags) $(extra_rc_flags) $(inc_path) -I"../h" $[@ -fo=$^@
 !endif
 
 dosstub.exe : ../stub/dosstub.c
@@ -384,7 +377,7 @@ sdbsetup.exe: virgin.exe sdbsetup.res
     $(rc_out) $]@ $^@
 
 ./guimkstr.exe: $(gui_dir)/c/mkstr.c $(gui_dir)/h/gui.msg
-    $(bld_cl) -i"$(gui_dir)/h" $(wcl_util_opts) $[@
+    $(bld_cl) -I"$(gui_dir)/h" $(wcl_util_opts) $[@
 
 _guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
     $[@ $^@ $(gui_msg_id_modifier)

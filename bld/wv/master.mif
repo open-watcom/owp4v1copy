@@ -274,17 +274,17 @@ extra_c_flags_regexp = -fi=wndregx.h
 
 # inc_dirs
 ###########
-inc_dirs = $(dig_dir)/h;$(syshdir);$(hdir)
+inc_dirs = -I"$(dig_dir)/h" -I"$(syshdir)" -I"$(hdir)"
 !ifndef dll
-inc_dirs += ;$(aui_dir)/h;$(gui_dir)/h;$(ui_dir)/h
+inc_dirs += -I"$(aui_dir)/h" -I"$(gui_dir)/h" -I"$(ui_dir)/h"
 !endif
-inc_dirs += ;$($(host_os)inc)
+inc_dirs += -I"$($(host_os)inc)"
 !ifndef dll
-inc_dirs += ;$(posix_dir)/h;$(gui_dir)/ui/h;$(help_dir)/h
+inc_dirs += -I"$(posix_dir)/h" -I"$(gui_dir)/ui/h" -I"$(help_dir)/h"
 !endif
 !ifeq host_os linux
-inc_dirs += ;$(ncurses_dir)/h
-dig_srcs+=;$(dig_dir)/c/dsx
+inc_dirs += -I"$(ncurses_dir)/h"
+dig_srcs +=;$(dig_dir)/c/dsx
 !endif
 
 # libs

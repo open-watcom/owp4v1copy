@@ -1,7 +1,8 @@
-#pmake: build all os_linux cpu_386
-host_CPU = 386
-host_OS = linux
+#pmake: build os_linux cpu_386
 
-inc_dirs = $(ncurses_dir)/h;
+host_os  = linux
+host_cpu = 386
+
+inc_dirs = -I"$(ncurses_dir)/h"
 
 !include ../../ui.mif

@@ -1,7 +1,7 @@
-#pmake: all build os_dos os_win cpu_i86 cpu_386
+#pmake: build os_dos os_win cpu_i86 cpu_386
 
-host_OS = DOS
-host_CPU = i86
+host_os  = dos
+host_cpu = i86
 
 all : wstub.exe wstubq.exe
 
@@ -11,9 +11,12 @@ all : wstub.exe wstubq.exe
 
 wstub.exe : wstub.obj
         $(linker) file $[@ name $^@ op map sys dos
+
 wstubq.exe : wstubq.obj
         $(linker) file $[@ name $^@ op map sys dos
+
 wstub.obj : wstub.c
         $(cc) -bt=dos $[@ -oaxs -w4-we -fo=$^@
+
 wstubq.obj : wstub.c
-        $(cc) -bt=dos $[@ -oaxs -w4-we -dQUIET -fo=$^@
+        $(cc) -bt=dos $[@ -oaxs -w4-we -DQUIET -fo=$^@

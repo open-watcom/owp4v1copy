@@ -9,11 +9,11 @@ nlm_objs = &
     core.obj
 
 extra_srcs = ;$(trap_dir)/lcl/nlm/c;$(trap_dir)/lcl/nlm/asm
-inc_dirs = ;$(trap_dir)/lcl/nlm/h
+inc_dirs   = -I"$(trap_dir)/lcl/nlm/h"
 
-extra_c_flags = -d__NW$(nlm_ver)0__ -dDEBUG_ME
+extra_c_flags = -D__NW$(nlm_ver)0__ -DDEBUG_ME
 !ifeq nwlib libc
-extra_c_flags +=  -d__NETWARE_LIBC__
+extra_c_flags +=  -D__NETWARE_LIBC__
 !endif
 
 extra_a_flags_nlmintr = -fpi87

@@ -19,21 +19,17 @@ objs =  savelbox.obj mem.obj font.obj fontstr.obj srchmsg.obj log.obj &
 
 
 extra_c_flags_mem = -DNO_WPI
-extra_c_flags_nt = -dNOUSE3D
+extra_c_flags_nt  = -DNOUSE3D
 
 extra_l_flags     = option map
 extra_l_flags_win = option stack=7k option heapsize=2k lib ddeml.lib
-                    # lib { toolhelp.lib ddeml.lib commdlg.lib } #$(misc_dir)/ctl3d.lib }
 
 #extra_l_flags_nt_axp  = lib ctl3d32.lib
-
-.before:
-        @set include=$(inc_path)
 
 .c: $(wddespy_dir);$(sdk_dir)/misc
 .h: $(wddespy_dir);$(sdk_dir)/misc
 
-inc_dirs  = $(wddespy_dir);$(sdk_dir)/misc;$(watcom_dir)/h
+inc_dirs  = -I$(wddespy_dir) -I"$(sdk_dir)/misc"
 
 msgfiles  = $(sdk_dir)/misc/about.msg $(sdk_dir)/misc/log.msg &
             $(sdk_dir)/misc/savelbox.msg $(sdk_dir)/misc/alias.msg
@@ -46,14 +42,13 @@ $(name).exe : rcstr.gh $(objs) $(name).res
         wstrip $(name).exe $(name).exe $(name).sym
 !endif
 !endif
-        $(RC) $(rc_flags) -k $(name).res $^@
+        $(rc) $(rc_flags) -k $(name).res $^@
 
 rcstr.gh : rcstrmsg.gh
         $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@
 
 rcstrmsg.gh : $(wddespy_dir)/ddespy.msg $(msgfiles)
-        @set include=$(inc_path)
-        $(cc) -zk0 -p -i="$(sdk_dir)/misc" $[@ -fo=$^@
+        $(cc) -zk0 -p -I"$(sdk_dir)/misc" $(inc_path) $[@ -fo=$^@
 
 $(name).res : $(wddespy_dir)/$(name).rc .AUTODEPEND
-        $(RC) $(rc_flags) -r -ad -zk0 -i"$(wddespy_dir)/res" $[@ -fo=$^@
+        $(rc) $(rc_flags) $(inc_path) -r -ad -zk0 -I"$(wddespy_dir)/res" $[@ -fo=$^@

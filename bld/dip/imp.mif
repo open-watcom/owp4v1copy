@@ -52,11 +52,11 @@ clib_dos_386    = clib3r
 clib_nt_386     = clib3r
 clib_nt_axp     = clib
 
-extra_c_flags     = -s -d__DIP__ $(extra_cflags)
+extra_c_flags     = -s -D__DIP__ $(extra_cflags)
 extra_c_flags_i86 = -fpc -zc -zu
 extra_c_flags_386 = -fpc
 
-inc_dirs = $(extra_incs);$(dig_dir)/h
+inc_dirs = $(extra_incs) -I"$(dig_dir)/h"
 
 .c: ../c;../../c;$(extra_srcs)
 

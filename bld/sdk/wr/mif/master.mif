@@ -95,10 +95,7 @@ extra_c_flags_trmem = $(trmem_cflags)
 
 .c:   ../c;$(trmem_dir);$(misc_dir);$(cpp_dir);$(wrc_dir)/c
 
-inc_dirs = .;../h;$(misc_dir);$(cpp_dir);$(wres_dir)/h;$(wrc_dir)/h;$(watcom_dir)/h
-
-.BEFORE
-        @set include=$(inc_path)
+inc_dirs = -I. -I"../h" -I"$(misc_dir)" -I$(cpp_dir) -I"$(wres_dir)/h" -I"$(wrc_dir)/h"
 
 #------------- LIB
 $(name).lib: $(__MAKEFILES__) $(name).dll
@@ -133,7 +130,7 @@ wrcmsg.gh: wrtemp.gh
         $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
 
 wrtemp.gh: ../h/master.msg $(msgfiles)
-        $(cc) $(cflags) -p $[@ -fo=$^@
+        $(cc) $(cflags) $(inc_path) -p $[@ -fo=$^@
 
 ytab.gh : $(wrc_dir)/y/rc.y $(wrc_dir)/y/yydriver.c $(wrc_dir)/h/rcmem.h
         $(yacc) -d -b $[@ $(wrc_dir)/y/yydriver.c >$(nulldevice)
@@ -142,4 +139,4 @@ ytab.gh : $(wrc_dir)/y/rc.y $(wrc_dir)/y/yydriver.c $(wrc_dir)/h/rcmem.h
         @rm -f ytab.c # ytab.c isn't used
 
 $(name).res: ../h/wr.rc .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad -DWR_COMPILED $[@ -fo=$^@
+        $(rc) $(rc_flags) $(inc_path) -r -ad -DWR_COMPILED $[@ -fo=$^@

@@ -112,9 +112,9 @@ extra_c_flags_guihelp += -fh=gui07.pch
 extra_c_flags_guixmain += -fh=gui07.pch
 
 !ifeq sys_windowed 1
-inc_dirs = ../h;../../h;$(help_dir)/h;$(wpi_dir)/h;$(sdk_dir)/misc
+inc_dirs = -I"../h" -I"../../h" -I"$(help_dir)/h" -I"$(wpi_dir)/h" -I"$(sdk_dir)/misc"
 !else
-inc_dirs = ../h;../../h;$(help_dir)/h;$(ui_dir)/h
+inc_dirs = -I"../h" -I"../../h" -I"$(help_dir)/h" -I"$(ui_dir)/h"
 !endif
 
 .c:     ../c;../../c;$(help_dir)/c;$(sdk_dir)/misc;$(trmem_dir)

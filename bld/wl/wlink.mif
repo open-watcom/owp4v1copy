@@ -30,7 +30,7 @@ suppress_bd = 1
 
 .ERASE
 
-inc_dirs = .;../h;
+inc_dirs = -I. -I"../h"
 
 .c: ../c;$(watcom_dir)/c;$(wrc_dir)/c;$(lib_misc_dir)/c;$(trmem_dir)
 
@@ -162,14 +162,14 @@ extra_c_flags_dbgdwarf   = -I"$(dwarf_dir)/dw/h"
 extra_c_flags_loadpe     = -I. -I"../h" -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -DINSIDE_WLINK
 extra_c_flags_loados2    = -I"$(wres_dir)/h"
 extra_c_flags_demangle   = -I"$(lib_misc_dir)/h"
-extra_c_flags_idedrv     = -dCHAIN_CALLBACK
+extra_c_flags_idedrv     = -DCHAIN_CALLBACK
 extra_c_flags_msg        = -I"$(lib_misc_dir)/h"
 extra_c_flags_rcstr      = -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" $(force_include)"../h/wlrcmem.h" -DINSIDE_WLINK
 extra_c_flags_exerespe   = -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" -DINSIDE_WLINK
 extra_c_flags_sharedio   = -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" -DINSIDE_WLINK
-extra_c_flags_stubidedrv = -dSTATIC_LINKAGE
 extra_c_flags_trmem      = $(trmem_cflags)
 extra_c_flags_mem        = $(trmem_cover_cflags)
+extra_c_flags_stubidedrv = -I"$(watcom_dir)/c"
 
 !ifdef sys_dll
 # invoke -bd switch for one module in dll
@@ -262,8 +262,7 @@ $(exe) : wlink.res $(c_objs) $(extra_objs) $(libs) $(rc_objs)
     $(linker) @$(lnk)
 !ifeq sys_dll 1
 !ifdef build_rc_$(host_os)_$(host_cpu)
-    $(rc) -bt=$(build_rc_$(host_os)_$(host_cpu)) &
-    -i="$(inc_dirs_sys_$(build_rc_$(host_os)_$(host_cpu)))" version.rc $^@
+    $(rc) -bt=$(build_rc_$(host_os)_$(host_cpu)) $(inc_path) version.rc $^@
 !endif
 !endif
 !endif
@@ -278,12 +277,8 @@ $(exe) : wlink.res $(c_objs) $(extra_objs) $(libs) $(rc_objs)
 version.rc : ./genverrc.exe ../h/wlver.rc $(fe_misc_dir)/c/genverrc.c
         $[@ ../h/wlver.rc version.rc $$ wlink.dll $(patch_level)
 
-stubidedrv.obj : idedrv.c .AUTODEPEND
-        @set include=$(inc_path)
-        $(cc) $(cflags) $(extra_c_flags_$^&) -fo=$^&.obj $[@
-
 wlink.res : rcmsg.gh ../h/wlink.msg ../h/lnkerror.rc ../h/wlnkmsg.h ../h/lnkerror.msg ../h/wlink.rc
-        $(rc_aui) $(extra_rc_flags) -I"$(wrc_dir)/h" -I"$(watcom_dir)/h" $]@ -fo=$^@
+        $(rc_aui) $(extra_rc_flags) -I"$(wrc_dir)/h" $(inc_path) $]@ -fo=$^@
 
 rcmsg.gh : $(wrc_dir)/h/rc.msg
 !ifdef __LINUX__

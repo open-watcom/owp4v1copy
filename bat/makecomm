@@ -233,7 +233,6 @@ watcom_lib=$(wat_utils)\lib
 
 datactl_dir=$(tools_root)\datactl
 win_h=$(lang_root)\h\win
-win31_hdrs=$(win_h)
 asm_h=$(wat_utils)\h
 ui_h=$(build_root)\ui\h
 hdr_proj=$(build_root)\hdr
@@ -500,7 +499,6 @@ watcom_h=$(wat_utils)/h
 watcom_lib=$(wat_utils)/lib
 
 win_h=$(lang_root)/h/win
-win31_hdrs=$(win_h)
 asm_h=$(wat_utils)/h
 ui_h=$(build_root)/ui/h
 hdr_proj=$(build_root)/hdr

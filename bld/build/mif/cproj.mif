@@ -70,9 +70,9 @@ ldebug_axp = debug dwarf
 ldebug_ppc = debug dwarf
 !endif
 
-mode_cflags_r   = -oaxt -d1-dNDEBUG
+mode_cflags_r   = -oaxt -d1-DNDEBUG
 mode_lflags_r   = $(ldebug_$(host_cpu))
-mode_aflags_r   = -dNDEBUG
+mode_aflags_r   = -DNDEBUG
 mode_cflags_d   = -od -d2 $(cdebug_$(host_cpu))
 mode_lflags_d   = $(ldebug_$(host_cpu))
 mode_aflags_d   = -d1
@@ -220,62 +220,62 @@ lflags          = $(mode_lflags) $(lflags_$(host_os)_$(host_cpu)) $(extra_l_flag
 rc_flags_nt     = -bt=nt
 rc_flags_win    = -bt=windows
 
-rc_flags_axp    = -d__AXP__
+rc_flags_axp    = -D__AXP__
 
 rc_flags        = $(rc_flags_$(host_os)) $(rc_flags_$(host_cpu))
 
 !ifdef __LINUX__
 
-inc_dirs_sys_os2_386 = $(dev_dir)/os2api/incl32
-inc_dirs_sys_os2_i86 = $(dev_dir)/os2api/incl16
-inc_dirs_sys_nt    = $(dev_dir)/w32api/include
-inc_dirs_sys_win   = $(hdr_dir)/dos/win;$(dev_dir)/w16api/include
+inc_dirs_sys_os2_386 = -I$(dev_dir)/os2api/incl32
+inc_dirs_sys_os2_i86 = -I$(dev_dir)/os2api/incl16
+inc_dirs_sys_nt    = -I$(dev_dir)/w32api/include
+inc_dirs_sys_win   = -I$(hdr_dir)/dos/win -I$(dev_dir)/w16api/include
 inc_dirs_sys_os2   = $(inc_dirs_sys_os2_$(host_cpu))
 inc_dirs_sys_dos   =
 inc_dirs_sys_nov   =
 inc_dirs_sys_qnx   =
 inc_dirs_sys_linux =
 
-inc_dirs_lang_qnx     = $(hdr_dir)/qnx
-inc_dirs_lang_linux   = $(hdr_dir)/linux
-inc_dirs_lang_netware = $(ow_nwoss_root)/common/h
+inc_dirs_lang_qnx     = -I$(hdr_dir)/qnx
+inc_dirs_lang_linux   = -I$(hdr_dir)/linux
+inc_dirs_lang_netware = -I$(ow_nwoss_root)/common/h
 
 !ifdef inc_dirs_lang_$(host_os)
 inc_dirs_lang   = $(inc_dirs_lang_$(host_os))
 !else
-inc_dirs_lang   = $(hdr_dir)/dos
+inc_dirs_lang   = -I$(hdr_dir)/dos
 !endif
 
-inc_dirs_sys    = $(inc_dirs_lang);$(inc_dirs_sys_$(host_os))
-inc_path        = $(inc_dirs);$(inc_dirs_$(host_os));$(inc_dirs_sys);$(watcom_dir)/h
+inc_dirs_sys    = $(inc_dirs_lang) $(inc_dirs_sys_$(host_os))
+inc_path        = $(inc_dirs) $(inc_dirs_$(host_os)) $(inc_dirs_sys) -I$(watcom_dir)/h
 
 yacc            = $(bld_bin)/wyacc
 re2c            = $(bld_bin)/re2c
 
 !else
 
-inc_dirs_sys_os2_386 = $(lang_root)\h\os2
-inc_dirs_sys_os2_i86 = $(lang_root)\h\os21x
-inc_dirs_sys_nt    = $(lang_root)\h\nt
-inc_dirs_sys_win   = $(lang_root)\h\win
+inc_dirs_sys_os2_386 = -I$(lang_root)\h\os2
+inc_dirs_sys_os2_i86 = -I$(lang_root)\h\os21x
+inc_dirs_sys_nt    = -I$(lang_root)\h\nt
+inc_dirs_sys_win   = -I$(lang_root)\h\win
 inc_dirs_sys_os2   = $(inc_dirs_sys_os2_$(host_cpu))
 inc_dirs_sys_dos   =
 inc_dirs_sys_nov   =
 inc_dirs_sys_qnx   =
 inc_dirs_sys_linux =
 
-inc_dirs_lang_qnx     = $(lang_root)\qh
-inc_dirs_lang_linux   = $(lang_root)\lh
-inc_dirs_lang_netware = $(ow_nwoss_root)\common\h
+inc_dirs_lang_qnx     = -I$(lang_root)\qh
+inc_dirs_lang_linux   = -I$(lang_root)\lh
+inc_dirs_lang_netware = -I$(ow_nwoss_root)\common\h
 
 !ifdef inc_dirs_lang_$(host_os)
 inc_dirs_lang   = $(inc_dirs_lang_$(host_os))
 !else
-inc_dirs_lang   = $(lang_root)\h
+inc_dirs_lang   = -I$(lang_root)\h
 !endif
 
-inc_dirs_sys    = $(inc_dirs_lang);$(inc_dirs_sys_$(host_os))
-inc_path        = $(inc_dirs);$(inc_dirs_$(host_os));$(inc_dirs_sys);$(watcom_dir)\h
+inc_dirs_sys    = $(inc_dirs_lang) $(inc_dirs_sys_$(host_os))
+inc_path        = $(inc_dirs) $(inc_dirs_$(host_os)) $(inc_dirs_sys) -I$(watcom_dir)\h
 
 yacc            = $(bld_bin)\yacc
 re2c            = $(bld_bin)\re2c

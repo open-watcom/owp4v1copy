@@ -46,7 +46,7 @@ object =                &
 .c:   ../src;$(dev_dir)/version
 .rc : ../src
 
-inc_dirs = ../src;../dev
+inc_dirs = -I"../src" -I"../dev"
 
 extra_c_flags = -s
 extra_c_flags_i86= -fpc
@@ -69,4 +69,4 @@ $(name).dll: $(object) verimp.obj $(library_files) $(name).res
     $(rc) $(rc_flags) -k $(name).res $(name).dll
 
 $(name).res: fmedit.rc .AUTODEPEND
-    $(rc) $(rc_flags) -I="$(inc_path)" -r $[@ -fo=$^@
+    $(rc) $(rc_flags) $(inc_path) -r $[@ -fo=$^@

@@ -30,9 +30,10 @@ dwutils.obj
 
 .c : $(dwarf_dir)/dw/c
 
+inc_dirs = -I. -I"../h"
+
 !ifeq bootstrap 1
 
-inc_dirs = -I$(watcom_dir)/h -I. -I../h
 dwtjbflags = -c $(cflags)
 dwmakeabflags = dwmakeab.obj -o $^@
 
@@ -43,7 +44,6 @@ dw.lib : dwabenum.gh $(objs)
 
 !else
 
-inc_dirs = $(watcom_dir)/h
 dwtjbflags = -d1 -fo=$@
 dwmakeabflags = op quiet,map debug all file dwmakeab.obj n $^@
 extra_c_flags = -s

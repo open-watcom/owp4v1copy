@@ -4,14 +4,15 @@
 #
 
 proj_name = whpcvt
+whpcvt_autodepends = .autodepend
 
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
 
-inc_dirs = $(whpcvt_dir)\h
+inc_dirs = -I"$(whpcvt_dir)/h"
 
-.c: ..\c
+.c: ../c
 
 objs =              &
         whpcvt.obj  &

@@ -1,10 +1,9 @@
 proj_name       = ncurses
-inc_dirs        = ../h
+inc_dirs        = -I"../h"
 
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
-
 
 .c: ../c
 

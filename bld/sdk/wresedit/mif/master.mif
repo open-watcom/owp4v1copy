@@ -1,17 +1,3 @@
-#  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#  %       Copyright (C) 1992, by WATCOM Systems Inc. All rights     %
-#  %       reserved. No part of this software may be reproduced      %
-#  %       in any form or by any means - graphic, electronic or      %
-#  %       mechanical, including photocopying, recording, taping     %
-#  %       or information storage and retrieval systems - except     %
-#  %       with the written permission of WATCOM Systems Inc.        %
-#  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#
-#  Date         By              Reason
-#  ----         --              ------
-#  20 Jul 93    Wes Nelson      initial implementation
-#
-
 proj_name = wresedit
 
 !ifndef wresedit_autodepends
@@ -22,7 +8,7 @@ sys_dll = 1
 
 suppress_bd = 1
 
-.EXTENSIONS: .res .rc #.dlg .men #.msg
+.EXTENSIONS: .res .rc
 
 memory_model_i86 = l
 
@@ -34,12 +20,12 @@ WINDOWS = 1
 !include wres.mif
 
 object = $(sys_object)
-object +=       wmem.obj wctl3d.obj wgetfn.obj wlist.obj &
-                winst.obj wsetedit.obj wmsg.obj wopts.obj wstrdup.obj &
-                wselft.obj wrename.obj wwait.obj wmemf.obj wcopystr.obj &
-                widn2str.obj wclip.obj wisedit.obj weditsym.obj &
-                preproc.obj ppexpr.obj ppmacro.obj &
-                toolbr.obj mstatwnd.obj ldstr.obj wwinhelp.obj jdlg.obj
+object +=   wmem.obj wctl3d.obj wgetfn.obj wlist.obj &
+            winst.obj wsetedit.obj wmsg.obj wopts.obj wstrdup.obj &
+            wselft.obj wrename.obj wwait.obj wmemf.obj wcopystr.obj &
+            widn2str.obj wclip.obj wisedit.obj weditsym.obj &
+            preproc.obj ppexpr.obj ppmacro.obj &
+            toolbr.obj mstatwnd.obj ldstr.obj wwinhelp.obj jdlg.obj
 
 msgfiles = ../../h/w.msg ../h/$(name).msg
 
@@ -79,12 +65,12 @@ extra_c_flags_preproc = -zm
 extra_c_flags_ppexpr = -zm
 extra_c_flags_ppmacro = -zm
 
-wr_lib = $(wr_dir)/$(host_OS)$(host_CPU)/wr.lib
+wr_lib = $(wr_dir)/$(host_os)$(host_cpu)/wr.lib
 
 .c: ../c;../../c;$(misc_dir);$(cpp_dir)
 .rc: ../h
 
-inc_dirs = ../h;../../h;$(misc_dir);$(wr_dir)/h;$(wres_dir)/h;$(cpp_dir)
+inc_dirs = -I"../h" -I"../../h" -I$(misc_dir) -I"$(wr_dir)/h" -I"$(wres_dir)/h" -I$(cpp_dir)
 
 extra_l_flags = op map,v,static
 extra_l_flags_nt = op stack=16k,heap=16k commit heap=8k
@@ -92,9 +78,6 @@ extra_l_flags_win = library commdlg op stack=8k,rwr &
                     export WEP RESIDENT
 
 xlibs = $(wres_lib) $(wr_lib)
-
-.BEFORE
-        @set include=$(inc_path)
 
 $(name).lib: $(name).dll
         $(librarian) -b -n $^@ +$[@
@@ -108,11 +91,10 @@ $(name).dll: wmsgfile.gh $(object) $(name).res $(xlibs)
         $(rc) $(rc_flags) -k $(name).res $^@
 
 .rc.res: .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad $[@ -fo=$^@
+        $(rc) $(rc_flags) $(inc_path) -r -ad $[@ -fo=$^@
 
 wmsgfile.gh: msgtemp.gh
         $(vi) -s $(misc_dir)/msgtoh.vi -p"$^@" $[@
 
 msgtemp.gh: ../h/master.msg $(msgfiles)
-        @set include=$(inc_path)
-        $(cc) $(cflags) -p $[@ -fo=$^@
+        $(cc) $(cflags) $(inc_path) -p $[@ -fo=$^@

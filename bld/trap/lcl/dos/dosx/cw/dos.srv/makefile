@@ -1,6 +1,7 @@
 #pmake: build serv lcl os_dos dsx cpu_386 x86
+
+host_os  = dos
 host_cpu = 386
-host_OS = dos
 
 memory_model_386 = s
 
@@ -13,7 +14,7 @@ which = SERVER
 extra_c_flags = -DCAUSEWAY -DDOSXHELP
 extra_a_flags_cwhelp = -fpi87
 
-inc_dirs = ../h;
+inc_dirs = -I"../h"
 
 !define substitute_linker
 

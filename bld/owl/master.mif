@@ -1,6 +1,6 @@
 proj_name       = owl
 
-inc_dirs        = $(watcom_dir)/h;../h
+inc_dirs        = -I"../h"
 
 !include cproj.mif
 !include deftarg.mif

@@ -7,7 +7,7 @@ name = wclass
 
 .cpp : ../cpp;../../cpp
 
-inc_dirs = ../hpp;../../hpp;$(gui_dir)/h
+inc_dirs = -I"../hpp" -I"../../hpp" -I"$(gui_dir)/h"
 
 extra_c_flags = -s
 

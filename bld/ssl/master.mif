@@ -1,10 +1,11 @@
 proj_name = ssl
+ssl_autodepends = .autodepend
 
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
 
-inc_dirs = ../h;$(cpp_dir)
+inc_dirs = -I"../h" -I$(cpp_dir)
 
 .c: ../c;$(cpp_dir)
 

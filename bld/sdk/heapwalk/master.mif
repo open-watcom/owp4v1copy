@@ -24,14 +24,11 @@ extra_c_flags_mem   = -dNO_WPI
 extra_l_flags = op map
 extra_l_flags_win = op stack=7k, heapsize=2k lib stress.lib
 
-inc_dirs = ..;$(sdk_dir)/misc;$(watcom_dir)/h;$(dis_includes);$(win31_hdrs)
+inc_dirs = -I.. -I"$(sdk_dir)/misc" $(dis_includes)
 
 .c   : ..;$(sdk_dir)/misc;$(dis_srcs)
 .asm : ..;$(sdk_dir)/misc
 .rc  : ..
-
-.before:
-        @set include=$(inc_path)
 
 objs_win = heapwalk.obj hwlist.obj hwproc.obj hwglob.obj hwsort.obj &
         hwbox.obj hwdisp.obj hwsave.obj hwobjec.obj hwlocal.obj&
@@ -54,8 +51,7 @@ rcstr.gh : rcstrmsg.gh
         $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@
 
 rcstrmsg.gh : ../heapwalk.msg $(msgfiles)
-        @set include=$(inc_path)
-        $(cc) -zk0 -p -i="$(sdk_dir)/misc" $[@ -fo=$^@
+        $(cc) -zk0 -p -I"$(sdk_dir)/misc" $(inc_path) $[@ -fo=$^@
 
 .rc.res: .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad -zk0 -i="$(sdk_dir)/misc" $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad -zk0 $(inc_path) $[@ -fo=$^@

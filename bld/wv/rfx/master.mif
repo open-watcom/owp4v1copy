@@ -19,7 +19,7 @@ dig_os = os2v2
 
 !include $(dig_dir)/mif/trpcli.mif
 
-inc_dirs = ..;$(wv_dir)/h;$(dig_dir)/h;
+inc_dirs = -I.. -I"$(wv_dir)/h" -I"$(dig_dir)/h"
 
 extra_c_flags = -s -dBUILD_RFX
 !ifeq machine fmr
@@ -61,7 +61,7 @@ rfx.exe : litdef.gh $(objs)
 .asm: ../$(host_os)i86
 
 ./mkstr.exe : mkstr.c wd.str wdengin.str menu.str $(dig_dir)/h/mad.str
-        $(bld_cl) -i"$(wv_dir)/h;$(dig_dir)/h" $(wcl_util_opts) $[@
+        $(bld_cl) -I"$(wv_dir)/h" -I"$(dig_dir)/h" $(wcl_util_opts) $[@
 
 litdef.gh : ./mkstr.exe
         $[@ $^@

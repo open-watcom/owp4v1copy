@@ -8,7 +8,7 @@ proj_name = wtouch
 
 .EXTENSIONS: .msg .vi .rc .sp
 
-inc_dirs = $(wtouch_dir)#;$(wtouch_dir)\$(host_os)$(host_cpu)
+inc_dirs = -I"$(wtouch_dir)"
 
 .c .msg .vi .rc .sp: $(wtouch_dir)
 
@@ -24,7 +24,7 @@ $(proj_name).exe : $(dependants)
         wstrip -q -a -r $(proj_name).exe . $(proj_name).res
 
 $(proj_name).res : $(proj_name).rc $(proj_name).msg usage.rc usagej.rc msg.gh
-        $(rc_aui) -i"$(wtouch_dir)" $[@ -fo=$^@
+        $(rc_aui) -I"$(wtouch_dir)" $[@ -fo=$^@
 
 usage.rc : usage.sp
         wsplice -kIS_RC -kENGLISH -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" $[@ usage.rc

@@ -10,7 +10,7 @@ womp_autodepends = .autodepend
 
 !include wres.mif
 
-inc_dirs = $(womp_dir)/h
+inc_dirs = -I"$(womp_dir)/h"
 
 .c: ../c;$(trmem_dir)
 

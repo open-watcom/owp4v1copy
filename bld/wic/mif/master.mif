@@ -40,7 +40,7 @@ extra_c_flags_wicgener = $(trmem_cover_cflags)
 .c      : ../c;$(trmem_dir)
 .rc     : ../rc
 
-inc_dirs = ../h
+inc_dirs = -I"../h"
 
 ##############################################################################
 

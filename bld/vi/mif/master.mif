@@ -29,9 +29,6 @@ PROJECT : $(name) .symbolic
 .ctl : $(vi_dir)/ctl
 .dyn : $(vi_dir)/ctl
 
-.BEFORE:
-        set include=$(inc_path)
-
 !ifdef prebuild
 extra_c_flags +=-DPREBUILD
 !endif
@@ -60,10 +57,10 @@ $(name) : $(special) $(objs) $(objsroot) $(objinit) $(other) $(videps) $(mifdep)
         wbind $(lname) -s $(lang_root)\binw\win386.ext -R -q $(ED).res
         @erase $(lname)
 !else
-        $(rc) $(rc_flags) -k -zk0 $(ED).res $^@
+        $(rc) $(rc_flags) $(inc_dirs_sys_$(host_os)) -k -zk0 $(ED).res $^@
 !endif
 !else ifeq host_os nt
-        $(rc) $(rc_flags) -zk0 $(ED).res $^@
+        $(rc) $(rc_flags) $(inc_dirs_sys_$(host_os)) -zk0 $(ED).res $^@
 !endif
         # don't bind - it screws up everything - BBB
 !else
@@ -92,6 +89,6 @@ tags : ../win/tags .SYMBOLIC
 !endif
 
 clean: .SYMBOLIC .EXPLICIT
-        rm -f *.?bj *.o 
-        rm -f *.lnk *.exe *.dll *.res *.lbc *.gh 
+        rm -f *.?bj *.o
+        rm -f *.lnk *.exe *.dll *.res *.lbc *.gh
         rm -f *.err *.map *.sym *.dh *.ch *.msg *.rex

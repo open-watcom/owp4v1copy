@@ -1,9 +1,10 @@
 #pmake: build lcl os_os2 cpu_386 cpu_386 trap x86
-host_CPU = 386
-host_OS = os2
+
+host_os  = os2
+host_cpu = 386
 
 #
-# Create the 32-bit OS/2 STD.DLL
+# Create the 32-bit OS/2 std.dll
 #
 
 os      = os2v2
@@ -11,8 +12,6 @@ srv     = lcl
 cpu     = x86
 name    = std
 which = TRAP
-
-#extra_cflags = -d2
 
 extra_objs =          &
         accmisc.obj   &

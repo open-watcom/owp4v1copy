@@ -8,9 +8,9 @@ proj_name = strip
 
 .EXTENSIONS: .gh .rc .msg .sp
 
-inc_dirs = $(wstrip_dir);$(watcom_dir)/h;$(dip_dir)/watcom/h
+inc_dirs = -I$(wstrip_dir) -I"$(dip_dir)/watcom/h"
 
-.c .rc .msg .sp: .. #$(wstrip_dir)
+.c .rc .msg .sp: ..
 
 res_qnx = qwstrip.res
 res_linux = qwstrip.res

@@ -1,5 +1,5 @@
 dis_srcs = $(wdisasm_dir)/c
-dis_includes = $(wdisasm_dir)/h
+dis_includes = -I"$(wdisasm_dir)/h"
 
 dis_objs =  &
 docode.obj  &

@@ -4,7 +4,7 @@ host_os  = os2
 host_cpu = 386
 
 #
-# Builds WDPMHELP.EXE, WDPMHOOK.DLL
+# Builds wdpmhelp.exe, wdpmhook.dll
 #
 
 !include cproj.mif
@@ -19,7 +19,7 @@ description = 'Open Watcom Debugger PM Helper'
 
 extra_c_flags = -s -fpc
 
-inc_dirs = $(trap_dir)/h
+inc_dirs = -I"$(trap_dir)/h"
 
 w d : wdpmhook.dll wdpmhelp.exe .SYMBOLIC
         @%null
@@ -63,7 +63,7 @@ _jerr.gh : ./jmkstr.exe
         $[@ $^@
 
 ./mkstr.exe : $(trap_dir)/c/mkstr.c $(trap_dir)/h/trap.msg
-        $(bld_cl) $[@ $(wcl_util_opts) -i"$(trap_dir)/h"
+        $(bld_cl) $[@ $(wcl_util_opts) -I"$(trap_dir)/h"
 
 ./jmkstr.exe : $(trap_dir)/c/mkstr.c $(trap_dir)/h/trap.msg
-        $(bld_cl) $[@ $(wcl_util_opts) -dJAPANESE_MESSAGES -i"$(trap_dir)/h"
+        $(bld_cl) $[@ $(wcl_util_opts) -dJAPANESE_MESSAGES -I"$(trap_dir)/h"

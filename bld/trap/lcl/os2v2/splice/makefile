@@ -1,6 +1,6 @@
-#pmake: all build os_os2 lcl 32bit support x86
+#pmake: build os_os2 lcl 32bit support x86
 #
-# Builds WDSPLICE.DLL
+# Builds wdsplice.dll
 #
 
 host_os  = os2
@@ -15,7 +15,7 @@ objs = splice.obj
 
 extra_l_flags = op oneautodata, map
 
-inc_dirs = $(dig_dir)/h
+inc_dirs = -I"$(dig_dir)/h"
 
 .c: ../c
 
