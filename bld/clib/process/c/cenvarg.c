@@ -141,16 +141,19 @@ int __F_NAME(__cenvarg,__wcenvarg)( argv, envp, envptr, envstrings, envseg, cmdl
     }
 
     len = 0;
-    if( argv[0] != NULL ){
+    if( argv[0] != NULL ) {
         for( ++argv; (arg = *argv) != NULL; ++argv ){
             if( len != 0 ) ++len;       /* plus 1 for blank separator */
             len += __F_NAME(strlen,wcslen)( arg );
         }
     }
-#if defined( __OS2__ ) || defined( __NT__ )
+#if defined( __NT__ )
+    // we are going to add quotes around program name (argv[0])
+    len += _MAX_PATH2 + 3;
+#elif defined( __OS2__ )
     len += _MAX_PATH2 + 1;
 #else
-    if( len > 126 ){
+    if( len > 126 ) {
         __set_errno( E2BIG );
         __set_doserrno( E_badenv );
         lib_free( *envptr );
@@ -178,27 +181,32 @@ void __F_NAME(__ccmdline,__wccmdline)( CHAR_TYPE *path, CHAR_TYPE *argv[], CHAR_
 
     CHAR_TYPE *p;
 
-    if( just_args ) {
-        p = buffer;
-    } else {
+    p = buffer;
+    if( ! just_args ) {
 #if defined( __OS2__ )
         path = path;
         /* OS/2 wants:  argv[0] '\0' arguments '\0' '\0'
            IMPORTANT: it is vital that there are 2 trailing '\0's
            for DosExecPgm()
          */
-        p = stpcpy( buffer, argv[0] ) + 1;
+	p = stpcpy( p, argv[0] ) + 1;
 #elif defined( __NT__ )
-        /* NT wants: path ' ' arguments '\0' */
-        p = stpcpy( buffer, path );
-        *p++ = ' ';
+	/* NT wants: "path" ' ' arguments '\0'
+	   IMPORTANT: use of quotation marks fixes misparsing of spacey
+	   file names like "c:\program files\common\tool.exe". Also overcomes
+	   bug in WinXP SP2 (beta).
+	*/
+	if( path[0] != '"' ) *p++ = '"';
+	p = stpcpy( p, path );
+	if( path[0] != '"' ) *p++ = '"';
+	*p++ = ' ';
 #else
         path = path;
         /* DOS wants: len_byte arguments '\r' */
-        p = buffer + 1;
+        p++;
 #endif
     }
-    if( argv[0] != NULL ){
+    if( argv[0] != NULL ) {
         ++argv;
         if( *argv != NULL ) {
             for(;;) {
