@@ -198,18 +198,18 @@ typedef unsigned_8 mad_memref_kind; enum {
 };
 
 typedef unsigned_8 mad_trace_kind; enum {
-    MTK_INTO,
-    MTK_OVER,
-    MTK_OUT,
-    MTK_NEXT
+    MTRK_INTO,
+    MTRK_OVER,
+    MTRK_OUT,
+    MTRK_NEXT
 };
 
 typedef unsigned_8 mad_trace_how; enum {
-    MTH_STOP,
-    MTH_SIMULATE,
-    MTH_STEP,
-    MTH_STEPBREAK,
-    MTH_BREAK
+    MTRH_STOP,
+    MTRH_SIMULATE,
+    MTRH_STEP,
+    MTRH_STEPBREAK,
+    MTRH_BREAK
 };
 
 

@@ -207,7 +207,7 @@ bool TraceStart( bool tracing )
 
 mad_trace_how TraceHow( bool force_into )
 {
-    static const mad_trace_kind MTKind[] = { MTK_INTO, MTK_OVER, MTK_NEXT };
+    static const mad_trace_kind MTRKind[] = { MTRK_INTO, MTRK_OVER, MTRK_NEXT };
     mad_trace_kind      kind;
     mad_trace_how       how;
 
@@ -224,27 +224,27 @@ mad_trace_how TraceHow( bool force_into )
     if( TraceState.give_it_up ) {
         DbgTmpBrk.status.b.active = FALSE;
         TraceState.give_it_up = FALSE;
-        how = MTH_BREAK;
+        how = MTRH_BREAK;
         return( how );
     } else if( force_into ) {
-        kind = MTK_INTO;
+        kind = MTRK_INTO;
     } else if( TraceState.trace_out ) {
         TraceState.trace_out = FALSE;
         TraceState.in_dll_thunk = FALSE;
-        kind = MTK_OUT;
+        kind = MTRK_OUT;
     } else {
-        kind = MTKind[ TraceState.type ];
+        kind = MTRKind[ TraceState.type ];
     }
     if( !force_into && DbgTmpBrk.status.b.active ) {
-        how = MTH_BREAK;
+        how = MTRH_BREAK;
         _SwitchOn( SW_EXECUTE_LONG );
     } else {
         how = MADTraceOne( TraceState.td, TraceState.dd, kind,
                                     &DbgRegs->mr, &DbgTmpBrk.loc.addr );
     }
     switch( how ) {
-    case MTH_BREAK:
-    case MTH_STEPBREAK:
+    case MTRH_BREAK:
+    case MTRH_STEPBREAK:
         DbgTmpBrk.status.b.active = TRUE;
     }
     if( DbgTmpBrk.status.b.active ) {
@@ -270,9 +270,9 @@ bool TraceSimulate()
 bool TraceModifications( MAD_MEMREF_WALKER *wk, void *d )
 {
     switch( TraceState.how ) {
-    case MTH_SIMULATE:
-    case MTH_STEP:
-    case MTH_STEPBREAK:
+    case MTRH_SIMULATE:
+    case MTRH_STEP:
+    case MTRH_STEPBREAK:
         if( MADDisasmInsUndoable( TraceState.dd ) != MS_OK ) return( FALSE );
         if( MADDisasmMemRefWalk( TraceState.dd, wk, &DbgRegs->mr, d ) == WR_CONTINUE ) {
             return( TRUE );

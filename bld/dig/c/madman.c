@@ -2018,7 +2018,7 @@ static mad_trace_how DIGREGISTER DummyTraceOne( mad_trace_data *td, mad_disasm_d
     tk = tk;
     mr = mr;
     a  = a;
-    return( MTH_STOP );
+    return( MTRH_STOP );
 }
 
 mad_trace_how   MADTraceOne( mad_trace_data *td, mad_disasm_data *dd, mad_trace_kind tk, const mad_registers *mr, address *a )

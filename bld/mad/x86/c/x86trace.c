@@ -115,19 +115,19 @@ static void BreakNext( mad_trace_data *td, mad_disasm_data *dd )
 static mad_trace_how DoTraceOne( mad_trace_data *td, mad_disasm_data *dd, mad_trace_kind tk, const mad_registers *mr )
 {
     switch( tk ) {
-    case MTK_OUT:
+    case MTRK_OUT:
         BreakRet( td, dd, mr );
-        return( MTH_BREAK );
-    case MTK_INTO:
-        return( MTH_STEP );
-    case MTK_OVER:
+        return( MTRH_BREAK );
+    case MTRK_INTO:
+        return( MTRH_STEP );
+    case MTRK_OVER:
         switch( dd->ins.opcode ) {
         case I_CALL:
         case I_CALL_FAR:
         case I_INT:
         case I_INTO:
             BreakNext( td, dd );
-            return( MTH_BREAK );
+            return( MTRH_BREAK );
         case I_MOVS:
         case I_CMPS:
         //case I_SCAS:
@@ -158,16 +158,16 @@ static mad_trace_how DoTraceOne( mad_trace_data *td, mad_disasm_data *dd, mad_tr
         case I_INSB:
             if( dd->ins.pref & (PREF_REPE|PREF_REPNE|PREF_FWAIT) ) {
                 BreakNext( td, dd );
-                return( MTH_BREAK );
+                return( MTRH_BREAK );
             }
-            return( MTH_STEP );
+            return( MTRH_STEP );
         }
-        return( MTH_STEP );
-    case MTK_NEXT:
+        return( MTRH_STEP );
+    case MTRK_NEXT:
         BreakNext( td, dd );
-        return( MTH_BREAK );
+        return( MTRH_BREAK );
     }
-    return( MTH_STOP );
+    return( MTRH_STOP );
 }
 
 
@@ -178,27 +178,27 @@ static mad_trace_how DoTraceOne( mad_trace_data *td, mad_disasm_data *dd, mad_tr
 
 static mad_trace_how CheckSpecial( mad_trace_data *td, mad_disasm_data *dd, const mad_registers *mr, mad_trace_how th )
 {
-    if( th != MTH_STEP ) return( th );
+    if( th != MTRH_STEP ) return( th );
     switch( dd->ins.opcode ) {
     case I_INT:
         if( dd->ins.pref & EMU_INTERRUPT ) break;
         /* fall through */
     case I_INTO:
         if( !(dd->characteristics & X86AC_REAL) ) break;
-        return( MTH_SIMULATE );
+        return( MTRH_SIMULATE );
     case I_IRET:
     case I_IRETD:
        BreakRet( td, dd, mr );
-       return( MTH_STEPBREAK );
+       return( MTRH_STEPBREAK );
     case I_POP:
     case I_MOV:
-        if( dd->ins.op[0].mode != ADDR_REG ) return( MTH_STEP );
+        if( dd->ins.op[0].mode != ADDR_REG ) return( MTRH_STEP );
         switch( dd->ins.op[0].base ) {
         case ES_REG:
         case DS_REG:
             if( MCSystemConfig()->cpu < X86_386 ) break;
         default:
-            return( MTH_STEP );
+            return( MTRH_STEP );
         }
         break;
     case I_PUSHF:
@@ -207,16 +207,16 @@ static mad_trace_how CheckSpecial( mad_trace_data *td, mad_disasm_data *dd, cons
     case I_POPFD:
         break;
     case I_WAIT:
-        if( MCSystemConfig()->fpu != X86_EMU ) return( MTH_STEP );
+        if( MCSystemConfig()->fpu != X86_EMU ) return( MTRH_STEP );
         break;
     default:
         if( dd->ins.pref & EMU_INTERRUPT ) break;
         if( (dd->ins.pref & FP_INS)
          && ((dd->ins.pref & PREF_FWAIT ) || (MCSystemConfig()->fpu==X86_EMU)) ) break;
-        return( MTH_STEP );
+        return( MTRH_STEP );
     }
     BreakNext( td, dd );
-    return( MTH_STEPBREAK );
+    return( MTRH_STEPBREAK );
 }
 
 static walk_result TouchesScreenBuff( address a, mad_type_handle th, mad_memref_kind mk, void *d )
@@ -264,7 +264,7 @@ mad_trace_how   DIGENTRY MITraceOne( mad_trace_data *td, mad_disasm_data *dd, ma
     td->prev_opcode = dd->ins.opcode;
     td->prev_pref   = dd->ins.pref;
     switch( th ) {
-    case MTH_BREAK:
+    case MTRH_BREAK:
         switch( td->prev_opcode ) {
         case I_CALL:
         case I_CALL_FAR:
@@ -274,7 +274,7 @@ mad_trace_how   DIGENTRY MITraceOne( mad_trace_data *td, mad_disasm_data *dd, ma
             break;
         }
         /* fall through */
-    case MTH_STEPBREAK:
+    case MTRH_STEPBREAK:
         *brk = td->brk;
         break;
     }

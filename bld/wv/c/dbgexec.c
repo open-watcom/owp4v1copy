@@ -329,22 +329,22 @@ unsigned ExecProg( bool tracing, bool do_flip, bool want_wps )
                 how = TraceHow( FALSE );
             } else {
                 _SwitchOn( SW_EXECUTE_LONG );
-                how = MTH_BREAK;
+                how = MTRH_BREAK;
             }
             break;
         case ES_STEP_ONE:
             how = TraceHow( TRUE );
             break;
         }
-        if( how == MTH_STOP ) break;
+        if( how == MTRH_STOP ) break;
         switch( how ) {
-        case MTH_BREAK:
+        case MTRH_BREAK:
             DbgUpdate( UP_CSIP_JUMPED );
             _SwitchOn( SW_TOUCH_SCREEN_BUFF );
             /* fall through */
-        case MTH_SIMULATE:
-        case MTH_STEP:
-        case MTH_STEPBREAK:
+        case MTRH_SIMULATE:
+        case MTRH_STEP:
+        case MTRH_STEPBREAK:
             if( _IsOff( SW_TOUCH_SCREEN_BUFF ) ) break;
             /* fall through */
         default:
@@ -361,7 +361,7 @@ unsigned ExecProg( bool tracing, bool do_flip, bool want_wps )
         }
         have_brk_at_ip = InsertBPs( (es == ES_FORCE_BREAK) );
         act_wps = UpdateWPs();
-        if( how == MTH_BREAK ) {
+        if( how == MTRH_BREAK ) {
             if( have_brk_at_ip ) {
                 es = ES_STEP_ONE;
                 RemoveBPs();
@@ -374,13 +374,13 @@ unsigned ExecProg( bool tracing, bool do_flip, bool want_wps )
 
         SetMemBefore( tracing );
         switch( how ) {
-        case MTH_SIMULATE:
+        case MTRH_SIMULATE:
             if( TraceSimulate() ) {
                 conditions = COND_TRACE;
                 break;
             }
             /* fall through */
-        case MTH_STEP:
+        case MTRH_STEP:
             /* only updates stack/execution */
             conditions = MakeProgRun( TRUE );
             break;
@@ -409,7 +409,7 @@ unsigned ExecProg( bool tracing, bool do_flip, bool want_wps )
         if( _IsOn( SW_BREAK_ON_DEBUG_MESSAGE ) && ( conditions & COND_MESSAGE ) ) {
             conditions |= COND_STOP;
         }
-        if( how == MTH_STEPBREAK && (conditions & COND_BREAK) && DbgTmpBrk.status.b.hit ) {
+        if( how == MTRH_STEPBREAK && (conditions & COND_BREAK) && DbgTmpBrk.status.b.hit ) {
             conditions &= ~COND_BREAK;
             conditions |= COND_TRACE;
         }
