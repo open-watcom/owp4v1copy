@@ -34,8 +34,6 @@
 #if (_OS == _QNX) || (_OS == _LINUX)
 #include <stdlib.h>
 
-extern char **_argv;
-
 static char const *NextUsage( char const *p ) {
     while( *p ) {
         ++p;

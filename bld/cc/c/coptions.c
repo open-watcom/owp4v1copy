@@ -1098,7 +1098,6 @@ void Set_ZE()           { CompFlags.extensions_enabled = 1; }
 void Set_ZG()           { CompFlags.generate_prototypes = 1; }
 
 void Set_ZI()           { CompFlags.extra_stats_wanted = 1; }
-#ifdef __WATCOMC__
 void Set_ZKU()
 {
     CompFlags.use_unicode = 1;
@@ -1136,7 +1135,6 @@ void Set_ZKL()
     CompFlags.use_unicode = 0;          /* 05-jun-91 */
     SetDBChar( -1 );                   /* set double-byte char type to defualt */
 }
-#endif
 #endif
 void Set_ZL()                   { CompFlags.emit_library_with_main = 0; }
 void Set_ZLF()                  { CompFlags.emit_library_any  = 1; }

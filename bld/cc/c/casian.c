@@ -42,10 +42,13 @@ switch  Character Set           of a double-byte character
 
 00000 - increment to force compile
 */
+#include "cvars.h"
+
+#ifndef __LINUX__
 #include <mbstring.h>
 #include <mbctype.h>
+#endif
 
-#include "cvars.h"
 #include "scan.h"
 
 #define LEAD_BYTE_INIT  ( C_DB | C_EX )

@@ -38,7 +38,7 @@ hw_reg_set DefaultParms[] = {
 #elif _CPU == 386
         HW_D_4( HW_EAX,HW_EBX,HW_ECX,HW_EDX ) /*+HW_ST1+HW_ST2+HW_ST3+HW_ST4*/,
 #endif
-        0 };
+        { 0 } };
 
 #ifndef WCPP
         char Registers[] = {            /* table for TableLookup*/
@@ -111,11 +111,11 @@ hw_reg_set DefaultParms[] = {
  };
 
 hw_reg_set DefaultVarParms[] = {
-        0 };
+        { 0 } };
 
 /*      these are the registers that Microsoft saves and restores */
 
-hw_reg_set MSC_Save = { HW_D_3( HW_ESI, HW_EDI, HW_BP ) };
+hw_reg_set MSC_Save = HW_D_3( HW_ESI, HW_EDI, HW_BP );
 
 /*      INLINE FUNCTIONS */
 
@@ -261,10 +261,10 @@ enum    asm_codes {
 #define C_div_saves      HW_NotD_2( HW_EAX, HW_EDX )
 static byte_seq C_div = {
                 8,
-                cwd,
+              { cwd,
                 idiv_cx,
-                0x89,0x06,      /* mov [esi],eax   store quotient */
-                0x89,0x56,0x04  /* mov 4[esi],edx  store remainder */
+                0x89,0x06,       /* mov [esi],eax   store quotient */
+                0x89,0x56,0x04 } /* mov 4[esi],edx  store remainder */
         };
 
 
@@ -274,21 +274,21 @@ static byte_seq C_div = {
 #define S_memset_saves   HW_NotD( HW_ECX )
 static byte_seq S_memset = {
                 8,
-                push_es,
+              { push_es,
                 push_di,
                 push_ds,
                 pop_es,
                 rep,
                 stosb,
                 pop_di,
-                pop_es
+                pop_es }
         };
 static byte_seq FS_memset = {
                 4,
-                push_di,
+              { push_di,
                 rep,
                 stosb,
-                pop_di,
+                pop_di, }
         };
 
 
@@ -309,15 +309,15 @@ static byte_seq FS_memset = {
                 pop_di
 static byte_seq C_memset = {
                 C_memset_bodysize+4,
-                push_es,
+              { push_es,
                 push_ds,
                 pop_es,
                 C_memset_body,
-                pop_es
+                pop_es }
         };
 static byte_seq FC_memset = {
                 C_memset_bodysize,
-                C_memset_body,
+              { C_memset_body, }
         };
 
 
@@ -327,10 +327,10 @@ static byte_seq FC_memset = {
 #define Z_memset_saves   HW_NotD( HW_ECX )
 static byte_seq Z_memset = {
                 4,
-                push_di,
+              { push_di,
                 rep,
                 stosb,
-                pop_di
+                pop_di }
         };
 
 
@@ -340,7 +340,7 @@ static byte_seq Z_memset = {
 #define BD_memset_saves  HW_NotD_2( HW_AH, HW_ECX )
 static byte_seq BD_memset = {
                 13,
-                push_di,
+              { push_di,
                 mov_ah_al,
                 shr_cx_1,
                 rep,
@@ -348,7 +348,7 @@ static byte_seq BD_memset = {
                 adc_cx_cx,
                 rep,
                 stosb,
-                pop_di
+                pop_di }
         };
 
 /* dx:edi memset( dx:edi, al, ecx ) zaps ah,ecx */
@@ -357,7 +357,7 @@ static byte_seq BD_memset = {
 #define DP_memset_saves  HW_NotD_2( HW_AH, HW_ECX )
 static byte_seq DP_memset = {
                 17,
-                push_es,
+              { push_es,
                 push_di,
                 mov_es_dx,
                 mov_ah_al,
@@ -368,7 +368,7 @@ static byte_seq DP_memset = {
                 rep,
                 stosb,
                 pop_di,
-                pop_es
+                pop_es }
         };
 /****************************************************************/
 
@@ -379,11 +379,11 @@ static byte_seq DP_memset = {
 #define C_stosw_saves   HW_NotD_2( HW_EDI, HW_ECX )
 static byte_seq C_stosw = {
                 7,
-                push_es,
+              { push_es,
                 mov_es_dx,
                 rep,
                 stosw,
-                pop_es
+                pop_es }
         };
 
 
@@ -394,8 +394,8 @@ static byte_seq C_stosw = {
 #define F_stosw_saves   HW_NotD_2( HW_EDI, HW_ECX )
 static byte_seq F_stosw = {
                 3,
-                rep,
-                stosw,
+              { rep,
+                stosw, }
         };
 
 /* es:edi stosw( es:edi, ax, ecx ) zaps edi,ecx */
@@ -404,8 +404,8 @@ static byte_seq F_stosw = {
 #define BD_stosw_saves  HW_NotD_2( HW_EDI, HW_ECX )
 static byte_seq BD_stosw = {
                 3,
-                rep,
-                stosw,
+              { rep,
+                stosw, }
         };
 
 
@@ -416,11 +416,11 @@ static byte_seq BD_stosw = {
 #define C_stosd_saves   HW_NotD_2( HW_EDI, HW_ECX )
 static byte_seq C_stosd = {
                 6,
-                push_es,
+              { push_es,
                 mov_es_dx,
                 rep,
                 stosd,
-                pop_es
+                pop_es }
         };
 
 
@@ -431,8 +431,8 @@ static byte_seq C_stosd = {
 #define F_stosd_saves   HW_NotD_2( HW_EDI, HW_ECX )
 static byte_seq F_stosd = {
                 2,
-                rep,
-                stosd,
+              { rep,
+                stosd, }
         };
 
 /* es:edi stosd( es:edi, eax, ecx ) zaps edi,ecx */
@@ -441,8 +441,8 @@ static byte_seq F_stosd = {
 #define BD_stosd_saves  HW_NotD_2( HW_EDI, HW_ECX )
 static byte_seq BD_stosd = {
                 2,
-                rep,
-                stosd,
+              { rep,
+                stosd, }
         };
 
 
@@ -453,12 +453,12 @@ static byte_seq BD_stosd = {
 #define C_stoswb_saves   HW_NotD_2( HW_EDI, HW_ECX )
 static byte_seq C_stoswb = {
                 8,
-                push_es,
+              { push_es,
                 mov_es_dx,
                 rep,
                 stosw,
                 stosb,
-                pop_es
+                pop_es }
         };
 
 
@@ -469,9 +469,9 @@ static byte_seq C_stoswb = {
 #define F_stoswb_saves   HW_NotD_2( HW_EDI, HW_ECX )
 static byte_seq F_stoswb = {
                 4,
-                rep,
+              { rep,
                 stosw,
-                stosb,
+                stosb, }
         };
 
 /* es:edi stoswb( es:edi, al, ecx ) zaps edi,ecx */
@@ -480,9 +480,9 @@ static byte_seq F_stoswb = {
 #define BD_stoswb_saves  HW_NotD_2( HW_EDI, HW_ECX )
 static byte_seq BD_stoswb = {
                 4,
-                rep,
+              { rep,
                 stosw,
-                stosb,
+                stosb, }
         };
 
 
@@ -492,21 +492,21 @@ static byte_seq BD_stoswb = {
 #define S_memcpy_saves   HW_NotD_2( HW_ESI, HW_ECX )
 static byte_seq S_memcpy = {
                 8,
-                push_es,
+              { push_es,
                 push_di,
                 push_ds,
                 pop_es,
                 rep,
                 movsb,
                 pop_di,
-                pop_es
+                pop_es }
         };
 static byte_seq FS_memcpy = {
                 4,
-                push_di,
+              { push_di,
                 rep,
                 movsb,
-                pop_di,
+                pop_di, }
         };
 
 
@@ -530,15 +530,15 @@ static byte_seq FS_memcpy = {
 
 static byte_seq C_memcpy = {
                 C_memcpy_bodysize+6,
-                push_es,
+              { push_es,
                 mov_ax_ds,
                 mov_es_ax,
                 C_memcpy_body,
-                pop_es
+                pop_es }
         };
 static byte_seq FC_memcpy = {
                 C_memcpy_bodysize,
-                C_memcpy_body
+              { C_memcpy_body }
         };
 
 
@@ -548,10 +548,10 @@ static byte_seq FC_memcpy = {
 #define Z_memcpy_saves   HW_NotD_2( HW_ESI, HW_ECX )
 static byte_seq Z_memcpy = {
                 4,
-                push_di,
+              { push_di,
                 rep,
                 movsb,
-                pop_di
+                pop_di }
         };
 
 
@@ -561,7 +561,7 @@ static byte_seq Z_memcpy = {
 #define BD_memcpy_saves  C_memcpy_saves
 static byte_seq BD_memcpy = {
                 C_memcpy_bodysize,
-                C_memcpy_body
+              { C_memcpy_body }
         };
 
 /* dx:eax memcpy( dx:edi, cx:esi, eax ) zaps ecx,esi,edi,eax */
@@ -570,7 +570,7 @@ static byte_seq BD_memcpy = {
 #define DP_memcpy_saves  HW_NotD_4( HW_ESI, HW_ECX, HW_EDI, HW_EAX )
 static byte_seq DP_memcpy = {
                 25,
-                push_ds,
+              { push_ds,
                 push_es,
                 push_di,
                 xchg_cx_ax,
@@ -586,7 +586,7 @@ static byte_seq DP_memcpy = {
                 movsb,
                 pop_ax,
                 pop_es,
-                pop_ds
+                pop_ds }
         };
 
 /****************************************************************/
@@ -606,15 +606,15 @@ static byte_seq DP_memcpy = {
 
 static byte_seq C_memcmp = {
                 C_memcmp_bodysize+6,
-                push_es,
+              { push_es,
                 mov_ax_ds,
                 mov_es_ax,
                 C_memcmp_body,
-                pop_es
+                pop_es }
         };
 static byte_seq FC_memcmp = {
                 C_memcmp_bodysize,
-                C_memcmp_body
+              { C_memcmp_body }
         };
 
 
@@ -624,12 +624,12 @@ static byte_seq FC_memcmp = {
 #define BD_memcmp_saves  HW_NotD_3( HW_ESI, HW_EDI, HW_ECX )
 static byte_seq BD_memcmp = {
                 11,
-                or_cx_cx,
+              { or_cx_cx,
                 repz,
                 cmpsb,
                 je,  5,
                 sbb_rr, cx_cx,
-                sbb_cx_ffff     /* 3 bytes */
+                sbb_cx_ffff }   /* 3 bytes */
         };
 
 /* ecx memcmp( dx:esi, cx:edi, eax ) zaps esi,edi,ecx,eax */
@@ -638,7 +638,7 @@ static byte_seq BD_memcmp = {
 #define DP_memcmp_saves  HW_NotD_4( HW_ESI, HW_EDI, HW_ECX, HW_EAX )
 static byte_seq DP_memcmp = {
                 20,
-                push_ds,
+              { push_ds,
                 push_es,
                 xchg_cx_ax,
                 mov_ds_dx,
@@ -650,7 +650,7 @@ static byte_seq DP_memcmp = {
                 sbb_rr, cx_cx,
                 sbb_cx_ffff,     /* 3 bytes */
                 pop_es,
-                pop_ds
+                pop_ds }
         };
 
 /****************************************************************/
@@ -662,7 +662,7 @@ static byte_seq DP_memcmp = {
 #define C_memchr_saves   HW_NotD_3( HW_EDX, HW_EDI, HW_ECX )
 static byte_seq C_memchr = {
                 17,
-                push_es,
+              { push_es,
                 jcxz, 11,
                 mov_dx_ds,
                 mov_es_dx,
@@ -672,17 +672,17 @@ static byte_seq C_memchr = {
                 dec_di,
                 hide2,
                 mov_di_cx,
-                pop_es
+                pop_es }
         };
 static byte_seq FC_memchr = {
                 11,
-                jcxz, 7,
+              { jcxz, 7,
                 repnz,
                 scasb,
                 jne, 3,
                 dec_di,
                 hide2,
-                mov_di_cx,
+                mov_di_cx, }
         };
 
 
@@ -692,14 +692,14 @@ static byte_seq FC_memchr = {
 #define BD_memchr_saves  HW_NotD_2( HW_EDI, HW_ECX )
 static byte_seq BD_memchr = {
                 13,
-                jcxz, 9,
+              { jcxz, 9,
                 repnz,
                 scasb,
                 jne, 5,
                 dec_di,
                 mov_cx_es,
                 hide2,
-                mov_di_cx
+                mov_di_cx }
         };
 
 /* cx:edi memchr( dx:edi, al, ecx ) zaps edi,ecx */
@@ -708,7 +708,7 @@ static byte_seq BD_memchr = {
 #define DP_memchr_saves  HW_NotD_2( HW_EDI, HW_ECX )
 static byte_seq DP_memchr = {
                 17,
-                push_es,
+              { push_es,
                 jcxz, 11,               /* 27-jul-90, was 10 */
                 mov_es_dx,
                 repnz,
@@ -718,7 +718,7 @@ static byte_seq DP_memchr = {
                 mov_cx_es,
                 hide2,
                 mov_di_cx,
-                pop_es
+                pop_es }
         };
 
 /****************************************************************/
@@ -730,7 +730,7 @@ static byte_seq DP_memchr = {
 #define S_strcmp_saves   HW_NotD_3( HW_EAX, HW_ESI, HW_EDI )
 static byte_seq S_strcmp = {
                 16,
-                lodsb,
+              { lodsb,
                 mov_ah_atdi,
                 sub_al_ah,
                 jne, 5,
@@ -739,7 +739,7 @@ static byte_seq S_strcmp = {
                 jne, -12,
                 size_prefix,
                 sbb_ah_ah,
-                cwde
+                cwde }
         };
 
 /* ax strcmp( si, di ) zaps ax,es,si,di,cx */
@@ -748,7 +748,7 @@ static byte_seq S_strcmp = {
 #define C_strcmp_saves   HW_NotD_4( HW_EAX, HW_ESI, HW_EDI, HW_ECX )
 static byte_seq C_strcmp = {
                 31,
-                push_es,
+              { push_es,
                 mov_ax_ds,
                 mov_es_ax,
                 cmpsb,
@@ -766,7 +766,7 @@ static byte_seq C_strcmp = {
                 je,  5,
                 sbb_rr, ax_ax,
                 sbb_ax_ffff,
-                pop_es
+                pop_es }
         };
 
 
@@ -776,7 +776,7 @@ static byte_seq C_strcmp = {
 #define F_strcmp_saves   HW_NotD_4( HW_EAX, HW_ESI, HW_EDI, HW_ECX )
 static byte_seq F_strcmp = {
                 25,
-                cmpsb,
+              { cmpsb,
                 jne, 17,
                 dec_di,
                 dec_si,
@@ -790,7 +790,7 @@ static byte_seq F_strcmp = {
                 cmpsb,
                 je,  5,
                 sbb_rr, ax_ax,
-                sbb_ax_ffff
+                sbb_ax_ffff }
         };
 
 
@@ -800,7 +800,7 @@ static byte_seq F_strcmp = {
 #define Z_strcmp_saves   HW_NotD_3( HW_EAX, HW_ESI, HW_EDI )
 static byte_seq Z_strcmp = {
                 17,
-                lodsb,
+              { lodsb,
                 mov_ah_atesdi,
                 sub_al_ah,
                 jne, 5,
@@ -809,7 +809,7 @@ static byte_seq Z_strcmp = {
                 jne, -13,
                 size_prefix,
                 sbb_ah_ah,
-                cwde
+                cwde }
         };
 
 
@@ -819,7 +819,7 @@ static byte_seq Z_strcmp = {
 #define BD_strcmp_saves  HW_NotD_4( HW_EAX, HW_ESI, HW_EDI, HW_ECX )
 static byte_seq BD_strcmp = {
                 25,
-                cmpsb,
+              { cmpsb,
                 jne, 17,
                 dec_di,
                 dec_si,
@@ -833,7 +833,7 @@ static byte_seq BD_strcmp = {
                 cmpsb,
                 je,  5,
                 sbb_rr, cx_cx,
-                sbb_cx_ffff     /* 3 bytes */
+                sbb_cx_ffff }   /* 3 bytes */
         };
 
 /* ecx strcmp( si:eax, cx:edi ) zaps eax,esi,edi,ecx */
@@ -842,7 +842,7 @@ static byte_seq BD_strcmp = {
 #define DP_strcmp_saves  HW_NotD_4( HW_EAX, HW_ESI, HW_EDI, HW_ECX )
 static byte_seq DP_strcmp = {
                 34,
-                push_ds,
+              { push_ds,
                 push_es,
                 xchg_si_ax,
                 mov_ds_ax,
@@ -864,7 +864,7 @@ static byte_seq DP_strcmp = {
                 sbb_rr, cx_cx,
                 sbb_cx_ffff,     /* 3 bytes */
                 pop_es,
-                pop_ds
+                pop_ds }
         };
 
 /****************************************************************/
@@ -881,19 +881,19 @@ static byte_seq DP_strcmp = {
                 repnz,\
                 scasb,\
                 not_cx,\
-                dec_cx
+                dec_cx 
 
 static byte_seq C_strlen = {
                 C_strlen_bodysize+6,
-                push_es,
+              { push_es,
                 mov_ax_ds,
                 mov_es_ax,
                 C_strlen_body,
-                pop_es
+                pop_es }
         };
 static byte_seq FC_strlen = {
                 C_strlen_bodysize,
-                C_strlen_body
+              { C_strlen_body }
         };
 
 
@@ -903,12 +903,12 @@ static byte_seq FC_strlen = {
 #define BD_strlen_saves  HW_NotD_3( HW_EAX, HW_ECX, HW_EDI )
 static byte_seq BD_strlen = {
                 10,
-                mov_cx_ffff,
+              { mov_cx_ffff,
                 xor_rr, ax_ax,
                 repnz,
                 scasb,
                 not_cx,
-                dec_cx
+                dec_cx }
         };
 
 /* ecx strlen( cx:edi ) zaps eax,ecx,edi */
@@ -917,7 +917,7 @@ static byte_seq BD_strlen = {
 #define DP_strlen_saves  HW_NotD_3( HW_EAX, HW_ECX, HW_EDI )
 static byte_seq DP_strlen = {
                 14,
-                push_es,
+              { push_es,
                 mov_es_cx,
                 xor_rr, ax_ax,
                 mov_cx_ax,
@@ -926,7 +926,7 @@ static byte_seq DP_strlen = {
                 scasb,
                 not_cx,
                 dec_cx,
-                pop_es
+                pop_es }
         };
 
 /****************************************************************/
@@ -936,9 +936,9 @@ static byte_seq DP_strlen = {
 #define C_abs_saves   HW_NotD_2( HW_EAX, HW_EDX )
 static byte_seq C_abs = {
                 5,
-                cwd,
+              { cwd,
                 xor_rr, ax_dx,
-                sub_rr, ax_dx
+                sub_rr, ax_dx }
         };
 
 
@@ -947,9 +947,9 @@ static byte_seq C_abs = {
 #define C_labs_saves   HW_NotD_2( HW_EAX, HW_EDX )
 static byte_seq C_labs = {
                 5,
-                cwd,
+              { cwd,
                 xor_rr, ax_dx,
-                sub_rr, ax_dx
+                sub_rr, ax_dx }
         };
 
 #define C_inp_ret    HW_D( HW_EAX )
@@ -957,8 +957,8 @@ static byte_seq C_labs = {
 #define C_inp_saves   HW_NotD( HW_EAX )
 static byte_seq C_inp = {
                 3,
-                sub_rr,ax_ax,
-                in_al_dx
+              { sub_rr,ax_ax,
+                in_al_dx }
         };
 
 
@@ -967,9 +967,9 @@ static byte_seq C_inp = {
 #define C_inpw_saves   HW_NotD( HW_EAX )
 static byte_seq C_inpw = {
                 4,
-                sub_rr,ax_ax,
+              { sub_rr,ax_ax,
                 size_prefix,
-                in_ax_dx
+                in_ax_dx }
         };
 
 
@@ -978,7 +978,7 @@ static byte_seq C_inpw = {
 #define C_inpd_saves   HW_NotD( HW_EAX )
 static byte_seq C_inpd = {
                 1,
-                in_ax_dx
+              { in_ax_dx }
         };
 
 
@@ -987,7 +987,7 @@ static byte_seq C_inpd = {
 #define C_outp_saves   HW_NotD( HW_EMPTY )
 static byte_seq C_outp = {
                 1,
-                out_dx_al
+              { out_dx_al }
         };
 
 
@@ -996,8 +996,8 @@ static byte_seq C_outp = {
 #define C_outpw_saves   HW_NotD( HW_EMPTY )
 static byte_seq C_outpw = {
                 2,
-                size_prefix,
-                out_dx_ax
+              { size_prefix,
+                out_dx_ax }
         };
 
 
@@ -1006,7 +1006,7 @@ static byte_seq C_outpw = {
 #define C_outpd_saves   HW_NotD( HW_EMPTY )
 static byte_seq C_outpd = {
                 1,
-                out_dx_ax
+              { out_dx_ax }
         };
 
 
@@ -1015,7 +1015,7 @@ static byte_seq C_outpd = {
 #define C_movedata_saves   HW_NotD_4( HW_EAX, HW_ECX, HW_ESI, HW_EDI )
 static byte_seq C_movedata = {
                 22,
-                push_ds,
+              { push_ds,
                 push_es,
                 mov_ds_ax,
                 mov_es_dx,
@@ -1028,7 +1028,7 @@ static byte_seq C_movedata = {
                 rep,
                 movsb,
                 pop_es,
-                pop_ds
+                pop_ds }
         };
 
 #define C_enable_ret    HW_D( HW_EMPTY )
@@ -1036,8 +1036,8 @@ static byte_seq C_movedata = {
 #define C_enable_saves   HW_NotD( HW_EMPTY )
 static byte_seq C_enable = {
                 2,
-                sti,
-                cld
+              { sti,
+                cld }
         };
 
 #define C_disable_ret    HW_D( HW_EMPTY )
@@ -1045,7 +1045,7 @@ static byte_seq C_enable = {
 #define C_disable_saves   HW_NotD( HW_EMPTY )
 static byte_seq C_disable = {
                 1,
-                cli
+              { cli } 
         };
 
 #define C_rotl_ret    HW_D( HW_EAX )
@@ -1053,7 +1053,7 @@ static byte_seq C_disable = {
 #define C_rotl_saves   HW_NotD( HW_EAX )
 static byte_seq C_rotl = {
                 2,
-                0xd3,0xc0      /* rol ax,cl */
+              { 0xd3,0xc0 }     /* rol ax,cl */
         };
 
 #define C_rotr_ret    HW_D( HW_EAX )
@@ -1061,7 +1061,7 @@ static byte_seq C_rotl = {
 #define C_rotr_saves   HW_NotD( HW_EAX )
 static byte_seq C_rotr = {
                 2,
-                0xd3,0xc8      /* ror ax,cl */
+              { 0xd3,0xc8 }     /* ror ax,cl */
         };
 
 #define C_8087_fabs_ret    HW_D( HW_FLTS )
@@ -1069,7 +1069,7 @@ static byte_seq C_rotr = {
 #define C_8087_fabs_saves   HW_NotD( HW_EMPTY )
 static byte_seq _8087_fabs = {
                 2,
-                fabs
+              { fabs }
         };
 
 #define C_fabs_ret    HW_D_2( HW_EDX, HW_EAX )
@@ -1077,8 +1077,8 @@ static byte_seq _8087_fabs = {
 #define C_fabs_saves   HW_NotD( HW_EDX )
 static byte_seq C_fabs = {
                 4,
-                shl_edx_1,
-                shr_edx_1
+              { shl_edx_1,
+                shr_edx_1 }
         };
 
 
@@ -1087,10 +1087,10 @@ static byte_seq C_fabs = {
 #define C_min_saves      HW_NotD_2( HW_ECX, HW_EAX )
 static byte_seq C_min = {
                 8,
-                sub_ax_dx,
+              { sub_ax_dx,
                 sbb_cx_cx,
                 and_ax_cx,
-                add_ax_dx
+                add_ax_dx }
         };
 
 #define C_max_ret       HW_D( HW_EAX )
@@ -1098,11 +1098,11 @@ static byte_seq C_min = {
 #define C_max_saves      HW_NotD_2( HW_ECX, HW_EAX )
 static byte_seq C_max = {
                 9,
-                sub_ax_dx,
+              { sub_ax_dx,
                 cmc,
                 sbb_cx_cx,
                 and_ax_cx,
-                add_ax_dx
+                add_ax_dx }
         };
 
 
