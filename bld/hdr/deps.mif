@@ -132,7 +132,6 @@ env.h           : ../watcom/env.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp 
 errno.h         : $(errno_deps)
 except.h        : ../watcom/except.mh ../readonly.sp ../cpppfv.sp ../crwat.sp ../watexc.sp
 exceptio.h      : $(exception_deps)
-exstring.h      : ../watcom/exstring.mh ../readonly.sp ../crwat.sp
 fcntl.h         : ../watcom/fcntl.mh ../readonly.sp ../cplusepi.sp ../cpluspro.sp ../crwatqnx.sp ../poppack.sp ../pshpackl.sp ../wchar_t.sp
 fenv.h          : ../watcom/fenv.mh ../readonly.sp ../crwat.sp ../pshpackl.sp ../poppack.sp
 float.h         : $(float_deps)

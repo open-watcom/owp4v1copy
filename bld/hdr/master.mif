@@ -82,7 +82,6 @@ common = &
         except.h &
         exceptio.h &
         excpt.h &
-        exstring.h &
         fcntl.h &
         fenv.h &
         float.h &
