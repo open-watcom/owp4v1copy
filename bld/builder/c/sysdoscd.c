@@ -39,13 +39,14 @@ unsigned SysDosChdir( char *dir )
     unsigned    len;
     unsigned    total;
 
-    if( dir[0] == '\0' ) return( 0 );
+    if( dir[0] == '\0' )
+        return( 0 );
     len = strlen( dir );
-    end = &dir[len-1];
+    end = &dir[len - 1];
     switch( *end ) {
     case '\\':
     case '/':
-        if( end > dir && end[-1] != ':' ) {
+        if( end > dir && end[ -1] != ':' ) {
             *end = '\0';
             --len;
         }

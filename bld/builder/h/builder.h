@@ -29,19 +29,18 @@
 *
 ****************************************************************************/
 
-
 #include <stdlib.h>
 #include <stdio.h>
 #include "bool.h"
 
-typedef struct copy_entry copy_entry;
+typedef struct copy_entry       copy_entry;
 struct copy_entry {
     copy_entry  *next;
     char        src[_MAX_PATH];
     char        dst[_MAX_PATH];
 };
 
-typedef struct include include;
+typedef struct include          include;
 struct include {
     include     *prev;
     FILE        *fp;
@@ -52,7 +51,7 @@ struct include {
     copy_entry  *reset_abit;
 };
 
-typedef struct ctl_file ctl_file;
+typedef struct ctl_file         ctl_file;
 struct ctl_file {
     ctl_file    *next;
     char        name[_MAX_PATH];

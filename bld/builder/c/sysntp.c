@@ -28,7 +28,6 @@
 *
 ****************************************************************************/
 
-
 #include <sys/types.h>
 #include <direct.h>
 #include <string.h>
@@ -41,24 +40,25 @@
 
 #include <windows.h>
 
-char    *CmdProc;
+char            *CmdProc;
 #define TITLESIZE 256
-char    Title[TITLESIZE];
+char            Title[TITLESIZE];
 
-extern bool Quiet;
+extern bool     Quiet;
 
 void SysInitTitle( int argc, char *argv[] )
 {
     int         i;
 
     strcpy( Title, "Builder " );
-    for( i=1; i < argc; i++ ) {
-        if( strlen( Title ) + strlen( argv[i] ) > TITLESIZE - 3 ) break;
+    for( i = 1; i < argc; i++ ) {
+        if( strlen( Title ) + strlen( argv[i] ) > TITLESIZE - 3 )
+	    break;
         strcat( Title, argv[i] );
         strcat( Title, " " );
     }
     strcat( Title, "[" );
-    getcwd( Title+strlen(Title), TITLESIZE - strlen( Title ) - 2 );
+    getcwd( Title + strlen( Title ), TITLESIZE - strlen( Title ) - 2 );
     strcat( Title, "]" );
     SetConsoleTitle( Title );
 }
@@ -66,29 +66,30 @@ void SysInitTitle( int argc, char *argv[] )
 void SysSetTitle( char *title )
 {
     char        *end;
+
     end = strchr( Title, ']' );
-    *(end+1) = '\0';
+    *( end + 1 ) = '\0';
 
     strcat( Title, " (" );
-    getcwd( Title+strlen(Title), TITLESIZE - strlen( Title ) - 2 );
+    getcwd( Title + strlen( Title ), TITLESIZE - strlen( Title ) - 2 );
     strcat( Title, ")" );
     SetConsoleTitle( Title );
 }
 
-int RunChildProcessCmdl(char *prg, char *cmdl) {
+int RunChildProcessCmdl( char *prg, char *cmdl ) {
 
     PROCESS_INFORMATION piProcInfo;
-    STARTUPINFO siStartInfo;
- 
-    ZeroMemory( &piProcInfo, sizeof(PROCESS_INFORMATION) );
-    ZeroMemory( &siStartInfo, sizeof(STARTUPINFO) );
-    siStartInfo.cb = sizeof(STARTUPINFO); 
-    return (CreateProcess(prg, cmdl, NULL, NULL, TRUE, 0, NULL, NULL, &siStartInfo, &piProcInfo) != 0) ? 0 : 1;
+    STARTUPINFO         siStartInfo;
+
+    ZeroMemory( &piProcInfo, sizeof( PROCESS_INFORMATION ) );
+    ZeroMemory( &siStartInfo, sizeof( STARTUPINFO ) );
+    siStartInfo.cb = sizeof( STARTUPINFO );
+    return( CreateProcess( prg, cmdl, NULL, NULL, TRUE, 0, NULL, NULL, &siStartInfo, &piProcInfo ) != 0 ) ? 0 : 1;
 }
 
 void SysInit( int argc, char *argv[] )
 {
-    SysInitTitle(argc, argv);
+    SysInitTitle( argc, argv );
     CmdProc = getenv( "ComSpec" );
     if( CmdProc == NULL ) {
         Fatal( "Can not find command processor" );
@@ -97,22 +98,22 @@ void SysInit( int argc, char *argv[] )
 
 unsigned SysRunCommand( const char *cmd )
 {
-    HANDLE      pipe_input;
-    HANDLE      pipe_output;
-    HANDLE      std_output;
-    HANDLE      std_error;
-    HANDLE      my_std_output;
-    HANDLE      my_std_error;
-    HANDLE      read_output;
-    DWORD       bytes_read;
-    char        buff[256+1];
-    int         rc;
+    HANDLE              pipe_input;
+    HANDLE              pipe_output;
+    HANDLE              std_output;
+    HANDLE              std_error;
+    HANDLE              my_std_output;
+    HANDLE              my_std_error;
+    HANDLE              read_output;
+    DWORD               bytes_read;
+    char                buff[256 + 1];
+    int                 rc;
     SECURITY_ATTRIBUTES saAttr;
-    int fh;
-    
-    saAttr.nLength = sizeof(SECURITY_ATTRIBUTES); 
-    saAttr.bInheritHandle = TRUE; 
-    saAttr.lpSecurityDescriptor = NULL; 
+    int                 fh;
+
+    saAttr.nLength = sizeof( SECURITY_ATTRIBUTES );
+    saAttr.bInheritHandle = TRUE;
+    saAttr.lpSecurityDescriptor = NULL;
 
     rc = 1;
     // save stdout and stderr
@@ -132,8 +133,8 @@ unsigned SysRunCommand( const char *cmd )
         DuplicateHandle( GetCurrentProcess(), pipe_input, GetCurrentProcess(), &read_output,
             0, FALSE, DUPLICATE_SAME_ACCESS );
         CloseHandle( pipe_input );
-        strcpy(buff, "/c ");
-        strcat(buff, cmd);
+        strcpy( buff, "/c " );
+        strcat( buff, cmd );
         // run child process with redirected stdout and stderr
         rc = RunChildProcessCmdl( CmdProc, buff );
         CloseHandle( pipe_output );
@@ -144,14 +145,15 @@ unsigned SysRunCommand( const char *cmd )
     SetStdHandle( STD_OUTPUT_HANDLE, my_std_output );
     SetStdHandle( STD_ERROR_HANDLE, my_std_error );
     if( rc == 0 ) {
-        fh = _hdopen( (int)read_output, O_RDONLY );
-        for(;;) {
-            bytes_read = read ( fh, buff, sizeof( buff )-1 );
-            if( bytes_read == 0 ) break;
+        fh = _hdopen( ( int ) read_output, O_RDONLY );
+        for( ;; ) {
+            bytes_read = read( fh, buff, sizeof( buff ) - 1 );
+            if( bytes_read == 0 )
+	        break;
             buff[bytes_read] = '\0';
             LogStream( Quiet, buff, bytes_read );
         }
-        close(fh);
+        close( fh );
         CloseHandle( read_output );
     }
     return( rc );
@@ -167,4 +169,3 @@ unsigned SysChDir( char *dir )
 
     return( retval );
 }
-

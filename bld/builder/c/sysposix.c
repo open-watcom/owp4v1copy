@@ -44,32 +44,33 @@ void SysInit( int argc, char *argv[] )
 
 unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
 {
-    int pipe_fd[2];
-    pid_t pid;
-    char *cmdnam = strdup( cmd );
-    char *sp = cmdnam;
-    const char **argv = malloc( strlen( cmd ) * sizeof ( char * ) );
-    int i = 0;
+    int         pipe_fd[2];
+    pid_t       pid;
+    char        *cmdnam = strdup( cmd );
+    char        *sp = cmdnam;
+    const char  **argv = malloc( strlen( cmd )* sizeof( char * ) );
+    int         i = 0;
 
-    while ( sp != NULL ) {
+    while( sp != NULL ) {
         argv[i++] = sp;
         sp = strchr( sp, ' ' );
-        if ( sp != NULL ) {
+        if( sp != NULL ) {
             *sp = '\0';
             sp++;
         }
     }
     argv[i] = NULL;
-    if( pipe( pipe_fd ) == -1)
+    if( pipe( pipe_fd ) == -1 )
         return( errno );
-    if ( dup2( pipe_fd[1], STDOUT_FILENO ) == -1 )
+    if( dup2( pipe_fd[1], STDOUT_FILENO ) == -1 )
         return( errno );
-    if ( dup2( pipe_fd[1], STDERR_FILENO ) == -1 )
+    if( dup2( pipe_fd[1], STDERR_FILENO ) == -1 )
         return( errno );
     close( pipe_fd[1] );
     pid = fork();
-    if ( pid == -1 ) return ( -1 );
-    if ( pid == 0 ) {
+    if( pid == -1 )
+        return( -1 );
+    if( pid == 0 ) {
         execvp( cmdnam, argv );
         exit( 127 );
     }
@@ -83,9 +84,10 @@ unsigned SysChdir( char *dir )
 {
     char        *end;
 
-    if( dir[0] == '\0' ) return( 0 );
-    end = &dir[strlen( dir )-1];
-    if( *end == '/'  && end > dir ) {
+    if( dir[0] == '\0' )
+        return( 0 );
+    end = &dir[strlen( dir ) - 1];
+    if( *end == '/' && end > dir ) {
         *end = '\0';
     }
     return( chdir( dir ) );

@@ -28,7 +28,6 @@
 *
 ****************************************************************************/
 
-
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
@@ -66,9 +65,10 @@ static void LogDir( char *dir )
     strcat( tbuff, " " );
     strcat( tbuff, dir );
     equals = ( SCREEN - ( bufflen = strlen( tbuff ) ) ) / 2 - 2;
-    if( equals < 0 ) equals = 0;
-    eq = &Equals[ (sizeof( Equals )-1) - equals ];
-    printf("%s %s %s%s\n", eq, tbuff, eq, ( bufflen & 1 ) ? "" : "=" );
+    if( equals < 0 )
+        equals = 0;
+    eq = &Equals[ ( sizeof( Equals ) - 1 ) - equals];
+    printf( "%s %s %s%s\n", eq, tbuff, eq, ( bufflen & 1 ) ? "" : "=" );
 }
 
 unsigned ChgDir( char *dir )
@@ -79,13 +79,14 @@ unsigned ChgDir( char *dir )
     unsigned    total;
 #endif
 
-    if( dir[0] == '\0' ) return( 0 );
+    if( dir[0] == '\0' )
+        return( 0 );
     len = strlen( dir );
-    end = &dir[len-1];
+    end = &dir[len - 1];
     switch( *end ) {
     case '\\':
     case '/':
-        if( end > dir && end[-1] != ':' ) {
+        if( end > dir && end[ -1] != ':' ) {
             *end = '\0';
             --len;
         }
@@ -99,12 +100,12 @@ unsigned ChgDir( char *dir )
     return( chdir( dir ) );
 }
 
-int main(int argc, char **argv)
+int main( int argc, char **argv )
 {
     int    res = 0;
     char   cwd[_MAX_PATH];
 
-    if (argc > 1) {
+    if( argc > 1 ) {
         res = ChgDir( argv[1] );
     }
     if( res == 0 ) {
@@ -112,11 +113,10 @@ int main(int argc, char **argv)
 #ifdef __UNIX__
         LogDir( cwd );
 #else
-        LogDir( strupr(cwd) );
+        LogDir( strupr( cwd ) );
 #endif
-    }
-    else {
-        printf("Error! CDSAY: invalid directory\n");
+    } else {
+        printf( "Error! CDSAY: invalid directory\n" );
     }
     return res;
 }
