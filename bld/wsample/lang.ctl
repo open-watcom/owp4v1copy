@@ -20,7 +20,7 @@ set PROJDIR=<CWD>
 
   [ IFDEF (os_os2 "") <2*> ]
 #    <CPCMD> <PROJDIR>/os2i86/wsampos2.exe     <RELROOT>/rel2/binp/wsampos2.exe
-    <CPCMD> <PROJDIR>/os2386/wsmpos22.exe     <RELROOT>/rel2/binp/wsmpos22.exe
+    <CPCMD> <PROJDIR>/os2386/wsmpos22.exe     <RELROOT>/rel2/binp/wsample.exe
 
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> <PROJDIR>/nt386/wsmpnt.exe        <RELROOT>/rel2/binnt/wsample.exe

@@ -1,6 +1,7 @@
-#pmake: all build os_nov cpu_386
+#pmake: build os_nov cpu_386
+
+host_os  = nov
 host_cpu = 386
-host_os = nov
 
 STACK =
 suppress_zc = 1

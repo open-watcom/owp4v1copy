@@ -1,6 +1,7 @@
 #pmake: os_dos cpu_386 rsi
-host_CPU = i86
-host_OS = dos
+
+host_os  = dos
+host_cpu = i86
 
 target = rsi
 

@@ -6,7 +6,7 @@ dir="binw"	usr="wsample.exe"	cond="dostarg"		where="c jc f77 jf77"
 dir="binw"	usr="wsamplew.exe"	cond="wintarg"		where="c jc f77 jf77"
 
 #dir="binp"	usr="wsampos2.exe"	cond="os2targ"		where="c jc f77 jf77"
-dir="binp"	usr="wsmpos22.exe"	cond="os2targ"		where="c jc f77 jf77"
+dir="binp"	usr="wsample.exe"	cond="os2targ"		where="c jc f77 jf77"
 
 dir="nlm"	usr="wsample.nlm"	cond="nlmtarg"		where="c jc f77 jf77"
 
