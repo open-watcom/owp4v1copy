@@ -107,8 +107,8 @@ typedef struct ss_flags_g {
 } ss_flags_g;
 
 typedef struct ss_flags_m {
-    char inMkComment:1;
-    char inMkKeyword:1;
+    char inPreproc:1;
+    char inInlineFile:1;
     char inMacro:1;
     char spare:5;
 } ss_flags_m;

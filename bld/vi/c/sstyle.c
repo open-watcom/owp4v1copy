@@ -425,7 +425,7 @@ bool SSKillsFlags( char ch )
             if( ch == ':' || ch == '.' ) return( TRUE );
             break;
         case LANG_MAKEFILE:
-            if( ch == '!' || ch == '$' || ch == '#' ) return( TRUE );
+            if( ch == '#' ) return( TRUE );
             break;
         }
     }

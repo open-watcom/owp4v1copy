@@ -39,21 +39,15 @@
 #include "lang.h"
 
 
+/* Note: We're cheating and only have a single list of keywords.
+ * We don't expect people to try '.ifdef' or '!autodepend'.
+ */
+
 /*----- LOCALS -----*/
 
 static  ss_flags_m  flags;
 static  char        *firstNonWS;
 static  char        *firstChar;
-
-
-static int isMkComment( char *string )
-{
-    if( !strnicmp( string, ".*", 2 ) || !strnicmp( string, ":cmt.", 5 ) ) {
-        return( 1 );
-    } else {
-        return( 0 );
-    }
-}
 
 void InitMkLine( char *text )
 {
@@ -78,23 +72,64 @@ static void getWhiteSpace( ss_block *ss_new, char *start )
 static void getText( ss_block *ss_new, char *start )
 {
     char    *text = start + 1;
+
+    // gather up symbol
+    while( isalnum( *text ) ) {
+        text++;
+    }
+    ss_new->type = SE_IDENTIFIER;
+
+    ss_new->len = text - start;
+}
+
+static void getPreproc( ss_block *ss_new, char *start )
+{
+    char    *text = start + 1;
+    char    *keyword;
+    char    save_char;
+
+    // whitespace is allowed after '!'
+    while( isspace( *text ) ) {
+        text++;
+    }
+    keyword = text;
+    // gather up symbol
+    while( isalpha( *text ) ) {
+        text++;
+    }
+
+    ss_new->type = SE_IDENTIFIER;
+
+    // see if symbol is a keyword
+    save_char = *text;
+    *text = '\0';
+    if( IsKeyword( keyword, TRUE ) ) {
+        ss_new->type = SE_PREPROCESSOR;
+        flags.inPreproc = FALSE;
+    }
+    *text = save_char;
+
+    ss_new->len = text - start;
+}
+
+static void getDirective( ss_block *ss_new, char *start )
+{
+    char    *text = start + 1;
     char    save_char;
 
     // gather up symbol
-    while( isalnum( *text ) || ( *text == '_' ) ) {
+    while( isalpha( *text ) ) {
         text++;
     }
     ss_new->type = SE_IDENTIFIER;
 
     // see if symbol is a keyword
-    if( flags.inMkKeyword ) {
-        save_char = *text;
-        *text = '\0';
-        if( IsKeyword( start, TRUE ) ) ss_new->type = SE_KEYWORD;
-        *text = save_char;
-        // only check first word after a ":" (should check all tokens?)
-        flags.inMkKeyword = FALSE;
+    save_char = *text;
+    *text = '\0';
+    if( IsKeyword( start + 1, TRUE ) ) {
+        ss_new->type = SE_KEYWORD;
     }
+    *text = save_char;
 
     ss_new->len = text - start;
 }
@@ -111,28 +146,12 @@ static void getBeyondText( ss_block *ss_new )
     ss_new->len = BEYOND_TEXT;
 }
 
-static void getMkComment( ss_block *ss_new, char *start, int skip )
+static void getComment( ss_block *ss_new, char *start )
 {
-    char    *text = start + skip;
-    char    comment1;
-    char    comment2;
-    char    comment3;
+    char    *text = start + 1;
 
-    for( ;; ) {
-        // check for "-->"
-        comment1 = text[0];
-        if( comment1 == '\0' ) break;
-
-        comment2 = '\0';
-        comment3 = '\0';
-        if( comment1 != '\0' ) comment2 = text[1];
-        if( comment2 != '\0' ) comment3 = text[2];
-
-        if( comment1 == '-' && comment2 == '-' && comment3 == '>' ) {
-            flags.inMkComment = FALSE;
-            text += 3;
-            break;
-        }
+    // everything is a comment until the end of line
+    while( *text ) {
         text++;
     }
     ss_new->type = SE_COMMENT;
@@ -145,17 +164,59 @@ static void getMacro( ss_block *ss_new, char *start, int skip )
     char    *text = nstart;
 
     ss_new->type = SE_STRING;
-    while( *text && *text != '"' ) {
-        text++;
-    }
-    if( *text == '\0' ) {
-    // string continued on next line
-        flags.inMacro = TRUE;
+
+    if( *text && *text == '(' ) {
+        int     nesting = 1;
+
+        // parse a parenthesized macro
+        ++text;
+        // the '%' char is only allowed at start of macro
+        if( *text == '%' ) ++text;
+
+        while( *text && nesting && (isalnum( *text ) || (*text == '_')
+            || (*text == '(') || (*text == ')') || (*text == '$')
+            || (*text == '&') || (*text == '[')) ) {
+            if( *text == '(' ) ++nesting;
+            if( *text == ')' ) --nesting;
+            ++text;
+        }
+    } else if( *text && isalnum(*text) ) {
+        // parse a non-parenthesized macro
+        ++text;
+        while( *text && (isalnum( *text ) || (*text == '_')) ) {
+            ++text;
+        }
     } else {
-        text++;
-        // definitely finished string
-        flags.inMacro = FALSE;
+        bool    quit = FALSE;
+
+        // let's try a special macro
+        while( *text && !quit ) {
+            switch( *text ) {
+            case '^':
+            case '[':
+            case ']':
+                ++text;
+                break;
+            case '@':
+            case '*':
+            case '&':
+            case '.':
+            case ':':
+            case '$':
+            case '#':
+            case '<':
+            case '?':
+                quit = TRUE;
+                ++text;
+                break;
+            default:
+                quit = TRUE;
+                break;
+            }
+        }
     }
+
+    flags.inMacro = FALSE;
     ss_new->len = text - start;
 }
 
@@ -171,8 +232,8 @@ void GetMkFlags( ss_flags_m *storeFlags )
 
 void InitMkFlags( linenum line_no )
 {
-    flags.inMkComment = FALSE;
-    flags.inMkKeyword = FALSE;
+    flags.inPreproc = FALSE;
+    flags.inInlineFile = FALSE;
     flags.inMacro = FALSE;
 }
 
@@ -184,21 +245,19 @@ void GetMkBlock( ss_block *ss_new, char *start, int line )
         if( firstNonWS == start ) {
             // line is empty -
             // do not flag following line as having anything to do
-            // with an unterminated "
+            // with an unterminated macro
             flags.inMacro = FALSE;
         }
         getBeyondText( ss_new );
         return;
     }
 
-    if( isMkComment( firstChar ) ) {
-        getMkComment( ss_new, start, 0 );
+    // Preprocessor directives must start at beginning of line
+    if( (start[ 0 ] == '!') && (firstChar == start) ) {
+        getPreproc( ss_new, start );
         return;
     }
-    if( flags.inMkComment ) {
-        getMkComment( ss_new, start, 0 );
-        return;
-    }
+
     if( flags.inMacro ) {
         getMacro( ss_new, start, 0 );
         return;
@@ -210,18 +269,18 @@ void GetMkBlock( ss_block *ss_new, char *start, int line )
     }
 
     switch( start[ 0 ] ) {
-    case '"':
+    case '$':
         getMacro( ss_new, start, 1 );
         return;
-    case ':':
-        flags.inMkKeyword = TRUE;
-        break;
+    case '#':
+        getComment( ss_new, start );
+        return;
     case '.':
-        flags.inMkKeyword = FALSE;
-        break;
+        getDirective( ss_new, start );
+        return;
     }
 
-    if( isalnum( start[0] ) || ( start[0] == '_' ) ) {
+    if( isalpha( start[0] ) ) {
         getText( ss_new, start );
     } else {
         getSymbol( ss_new );
