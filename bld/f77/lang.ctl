@@ -17,45 +17,45 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-#    <CPCMD> <devdir>/f77/cg86/cp/osii86/wfc.exe <relroot>/rel2/binw/wfc.exe
-#    <CPCMD> <devdir>/f77/cg86/cp/osi386/wfc386.exe <relroot>/rel2/binw/wfc386.exe
+#    <CPCMD> <devdir>/f77/cg86/cp/osi386.i86/wfc.exe <relroot>/rel2/binw/wfc.exe
+#    <CPCMD> <devdir>/f77/cg86/cp/osi386.386/wfc386.exe <relroot>/rel2/binw/wfc386.exe
 
     #intel compilers
-    <CPCMD> <devdir>/f77/cg86/cp/dosi86/wfc.exe <relroot>/rel2/binw/wfc.exe
-    <CPCMD> <devdir>/f77/cg86/cp/dosi86/wfc.sym <relroot>/rel2/binw/wfc.sym
-    <CPCMD> <devdir>/f77/cg86/cp/dos386/wfc386.exe <relroot>/rel2/binw/wfc386.exe
-    <CPCMD> <devdir>/f77/cg86/cp/dos386/wfc386.sym <relroot>/rel2/binw/wfc386.sym
-    <CPCMD> <devdir>/f77/cg86/cp/os2i86/wfc.exe <relroot>/rel2/binp/wfc.exe
-    <CPCMD> <devdir>/f77/cg86/cp/os2i86/wfc.sym <relroot>/rel2/binp/wfc.sym
-    <CPCMD> <devdir>/f77/cg86/cp/os2386/wfc386.exe <relroot>/rel2/binp/wfc386.exe
-    <CPCMD> <devdir>/f77/cg86/cp/os2386/wfc386.sym <relroot>/rel2/binp/wfc386.sym
-    <CPCMD> <devdir>/f77/cg86/cp/nti86/wfc.exe <relroot>/rel2/binnt/wfc.exe
-    <CPCMD> <devdir>/f77/cg86/cp/nti86/wfc.sym <relroot>/rel2/binnt/wfc.sym
-    <CPCMD> <devdir>/f77/cg86/cp/nt386/wfc386.exe <relroot>/rel2/binnt/wfc386.exe
-    <CPCMD> <devdir>/f77/cg86/cp/nt386/wfc386.sym <relroot>/rel2/binnt/wfc386.sym
+    <CPCMD> <devdir>/f77/cg86/cp/dos386.i86/wfc.exe <relroot>/rel2/binw/wfc.exe
+    <CPCMD> <devdir>/f77/cg86/cp/dos386.i86/wfc.sym <relroot>/rel2/binw/wfc.sym
+    <CPCMD> <devdir>/f77/cg86/cp/dos386.386/wfc386.exe <relroot>/rel2/binw/wfc386.exe
+    <CPCMD> <devdir>/f77/cg86/cp/dos386.386/wfc386.sym <relroot>/rel2/binw/wfc386.sym
+    <CPCMD> <devdir>/f77/cg86/cp/os2386.i86/wfc.exe <relroot>/rel2/binp/wfc.exe
+    <CPCMD> <devdir>/f77/cg86/cp/os2386.i86/wfc.sym <relroot>/rel2/binp/wfc.sym
+    <CPCMD> <devdir>/f77/cg86/cp/os2386.386/wfc386.exe <relroot>/rel2/binp/wfc386.exe
+    <CPCMD> <devdir>/f77/cg86/cp/os2386.386/wfc386.sym <relroot>/rel2/binp/wfc386.sym
+    <CPCMD> <devdir>/f77/cg86/cp/nt386.i86/wfc.exe <relroot>/rel2/binnt/wfc.exe
+    <CPCMD> <devdir>/f77/cg86/cp/nt386.i86/wfc.sym <relroot>/rel2/binnt/wfc.sym
+    <CPCMD> <devdir>/f77/cg86/cp/nt386.386/wfc386.exe <relroot>/rel2/binnt/wfc386.exe
+    <CPCMD> <devdir>/f77/cg86/cp/nt386.386/wfc386.sym <relroot>/rel2/binnt/wfc386.sym
 
     #axp compilers
-#    <CPCMD> <devdir>/f77/cg86/cp/os2axp/wfcaxp.exe <relroot>/rel2/binp/wfcaxp.exe
-#    <CPCMD> <devdir>/f77/cg86/cp/ntaxp/wfcaxp.exe <relroot>/rel2/binnt/wfcaxp.exe
+#    <CPCMD> <devdir>/f77/cg86/cp/os2386.axp/wfcaxp.exe <relroot>/rel2/binp/wfcaxp.exe
+#    <CPCMD> <devdir>/f77/cg86/cp/nt386.axp/wfcaxp.exe <relroot>/rel2/binnt/wfcaxp.exe
 #    <CPCMD> <devdir>/f77/cg86/cp/ntaxp.axp/wfcaxp.exe <relroot>/rel2/axpnt/wfcaxp.exe
 
     #intel link utilities
-    <CPCMD> <devdir>/f77/wfl/obj/wfl.exe <relroot>/rel2/binw/wfl.exe
-    <CPCMD> <devdir>/f77/wfl/obj/wfl.sym <relroot>/rel2/binw/wfl.sym
-    <CPCMD> <devdir>/f77/wfl/386/wfl386.exe <relroot>/rel2/binw/wfl386.exe
-    <CPCMD> <devdir>/f77/wfl/386/wfl386.sym <relroot>/rel2/binw/wfl386.sym
-    <CPCMD> <devdir>/f77/wfl/nti86/wfl.exe <relroot>/rel2/binnt/wfl.exe
-    <CPCMD> <devdir>/f77/wfl/nti86/wfl.sym <relroot>/rel2/binnt/wfl.sym
-    <CPCMD> <devdir>/f77/wfl/nt/wfl386.exe <relroot>/rel2/binnt/wfl386.exe
-    <CPCMD> <devdir>/f77/wfl/nt/wfl386.sym <relroot>/rel2/binnt/wfl386.sym
-    <CPCMD> <devdir>/f77/wfl/os2i86/wfl.exe <relroot>/rel2/binp/wfl.exe
-    <CPCMD> <devdir>/f77/wfl/os2i86/wfl.sym <relroot>/rel2/binp/wfl.sym
-    <CPCMD> <devdir>/f77/wfl/os2386/wfl386.exe <relroot>/rel2/binp/wfl386.exe
-    <CPCMD> <devdir>/f77/wfl/os2386/wfl386.sym <relroot>/rel2/binp/wfl386.sym
+    <CPCMD> <devdir>/f77/wfl/dosi86.i86/wfl.exe <relroot>/rel2/binw/wfl.exe
+    <CPCMD> <devdir>/f77/wfl/dosi86.i86/wfl.sym <relroot>/rel2/binw/wfl.sym
+    <CPCMD> <devdir>/f77/wfl/dos386.386/wfl386.exe <relroot>/rel2/binw/wfl386.exe
+    <CPCMD> <devdir>/f77/wfl/dos386.386/wfl386.sym <relroot>/rel2/binw/wfl386.sym
+    <CPCMD> <devdir>/f77/wfl/nt386.i86/wfl.exe <relroot>/rel2/binnt/wfl.exe
+    <CPCMD> <devdir>/f77/wfl/nt386.i86/wfl.sym <relroot>/rel2/binnt/wfl.sym
+    <CPCMD> <devdir>/f77/wfl/nt386.386/wfl386.exe <relroot>/rel2/binnt/wfl386.exe
+    <CPCMD> <devdir>/f77/wfl/nt386.386/wfl386.sym <relroot>/rel2/binnt/wfl386.sym
+    <CPCMD> <devdir>/f77/wfl/os2386.i86/wfl.exe <relroot>/rel2/binp/wfl.exe
+    <CPCMD> <devdir>/f77/wfl/os2386.i86/wfl.sym <relroot>/rel2/binp/wfl.sym
+    <CPCMD> <devdir>/f77/wfl/os2386.386/wfl386.exe <relroot>/rel2/binp/wfl386.exe
+    <CPCMD> <devdir>/f77/wfl/os2386.386/wfl386.sym <relroot>/rel2/binp/wfl386.sym
 
     #alpha link utilities
-#    <CPCMD> <devdir>/f77/wfl/os2axp/wflaxp.exe <relroot>/rel2/binp/wflaxp.exe
-#    <CPCMD> <devdir>/f77/wfl/ntaxp/wflaxp.exe <relroot>/rel2/binnt/wflaxp.exe
+#    <CPCMD> <devdir>/f77/wfl/os2386.axp/wflaxp.exe <relroot>/rel2/binp/wflaxp.exe
+#    <CPCMD> <devdir>/f77/wfl/nt386.axp/wflaxp.exe <relroot>/rel2/binnt/wflaxp.exe
 #    <CPCMD> <devdir>/f77/wfl/ntaxp.axp/wflaxp.exe <relroot>/rel2/axpnt/wflaxp.exe
 
 
