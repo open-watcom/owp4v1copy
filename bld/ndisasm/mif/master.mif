@@ -82,12 +82,12 @@ $(bin_path) : $(wdisasm_objs) $(pre_deps_$(host_os)) $(orl_lib) $(proj_name).res
 
 msg.obj :: msg.c
 
-$(stand_objs) :: ..\h\msg.gh
+$(stand_objs) :: ..\stand\h\msg.gh
 
-$(proj_name).res : wdis.rc ..\h\msg.gh
+$(proj_name).res : wdis.rc ..\stand\h\msg.gh
         $(rc) /bt=windows /r $[@ /i$(disasm_dir)\stand\h /zk0 /fo=$^@
 
-..\h\msg.gh : mkstr.c wdis.msg
+..\stand\h\msg.gh : mkstr.c wdis.msg
         $(bld_cl) $[@ /i$(disasm_dir)\stand
         mkstr $^@
 
@@ -107,4 +107,4 @@ clean: .SYMBOLIC .EXPLICIT
         @if exist *.sym del *.sym
         @if exist *.map del *.map
         @if exist ..\*.exe del ..\*.exe
-        @if exist ..\h\*.gh del ..\h\*.gh
+        @if exist ..\stand\h\*.gh del ..\stand\h\*.gh
