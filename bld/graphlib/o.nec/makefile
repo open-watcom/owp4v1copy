@@ -1,14 +1,14 @@
 # makefile for GRAPHS.LIB
 
 libname =       graphs
-model =         /ms /d_NEC_PC
+model =         -ms -d_NEC_PC
 module =        $[&
 cdecl =         _loadds
 fard =
 _386 =
 _qnx =
-asm_cmd =       masm
-asm_flags =     -t -ml -i..\inc -d_MODEL=_SMALL;
+asm_cmd =       wasm
+asm_flags =     -q -ms -i..\inc -d_MODEL=_SMALL -d_NEC_PC
 _NEC_PC =       1
 
 !include ..\graphics.mif

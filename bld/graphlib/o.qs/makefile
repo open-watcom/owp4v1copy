@@ -7,7 +7,7 @@ cdecl =         _loadds
 fard =
 _386 =
 _qnx =          q
-asm_cmd =       masm
-asm_flags =     -t -ml -i..\inc -d_MODEL=_SMALL;
+asm_cmd =       wasm
+asm_flags =     -q -ms -i..\inc -d_MODEL=_SMALL
 
 !include ..\graphics.mif

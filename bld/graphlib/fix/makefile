@@ -26,10 +26,10 @@ graph.lib : ..\o.s\graphs.lib $(build_root)\pgchart\o.s\charts.lib
 graph386.lib : ..\o.3s\graph3s.lib ..\o.3r\graph3r.lib &
                $(build_root)\pgchart\o.3r\chart3r.lib $(build_root)\pgchart\o.3s\chart3s.lib
     copy ..\o.3s\graph3s.lib ..\o.3r\tmp.lib
-    wlib /b /q ..\o.3r\tmp -globals -bit -sqrtf -std -hercfont -cgautils -egautils -vgautils -hgcutils -svgautil -font8x8
-    wlib /b /q ..\o.3r\tmp +..\o.3r\graph3r.lib
+    $(lib) /b /q ..\o.3r\tmp -globals -bit -sqrtf -std -hercfont -cgautils -egautils -vgautils -hgcutils -svgautil -font8x8
+    $(lib) /b /q ..\o.3r\tmp +..\o.3r\graph3r.lib
     copy $(build_root)\pgchart\o.3r\chart3r.lib chart.lib
-    wlib /b /q chart.lib + $(build_root)\pgchart\o.3s\chart3s.lib
+    $(lib) /b /q chart.lib + $(build_root)\pgchart\o.3s\chart3s.lib
     set srclib=tmp
     set targlib=graph386
     set chartlib=chart.lib
@@ -52,10 +52,10 @@ graph98.lib : ..\o.nec\graphs.lib $(build_root)\pgchart\o.s\charts.lib
 graph983.lib : ..\o.n3s\graph3s.lib ..\o.n3r\graph3r.lib &
                $(build_root)\pgchart\o.3r\chart3r.lib $(build_root)\pgchart\o.3s\chart3s.lib
     copy ..\o.n3s\graph3s.lib ..\o.n3r\tmp.lib
-    wlib /b /q ..\o.n3r\tmp -globals -bit -sqrtf -std -necutils -font8x8
-    wlib /b /q ..\o.n3r\tmp +..\o.n3r\graph3r.lib
+    $(lib) /b /q ..\o.n3r\tmp -globals -bit -sqrtf -std -necutils -font8x8
+    $(lib) /b /q ..\o.n3r\tmp +..\o.n3r\graph3r.lib
     copy $(build_root)\pgchart\o.3r\chart3r.lib chart.lib
-    wlib /b /q chart.lib + $(build_root)\pgchart\o.3s\chart3s.lib
+    $(lib) /b /q chart.lib + $(build_root)\pgchart\o.3s\chart3s.lib
     set srclib=tmp
     set targlib=graph983
     set chartlib=chart.lib
@@ -77,37 +77,37 @@ graphq.lib : ..\o.qs\graphs.lib $(build_root)\pgchart\o.s\charts.lib
 
 graphq3r.lib : ..\o.q3r\graph3r.lib $(build_root)\pgchart\o.3r\chart3r.lib
     copy ..\o.q3r\graph3r.lib graphq3r.lib
-    wlib /b /q graphq3r.lib + $(build_root)\pgchart\o.3r\chart3r.lib
-    objstrip /n graphq3r.lib
+    $(lib) /b /q graphq3r.lib + $(build_root)\pgchart\o.3r\chart3r.lib
+#    objstrip /n graphq3r.lib
 
 graphq3s.lib : ..\o.q3r\graph3r.lib $(build_root)\pgchart\o.3s\chart3s.lib
     copy ..\o.q3s\graph3s.lib graphq3s.lib
-    wlib /b /q graphq3s.lib + $(build_root)\pgchart\o.3s\chart3s.lib
-    objstrip /n graphq3s.lib
+    $(lib) /b /q graphq3s.lib + $(build_root)\pgchart\o.3s\chart3s.lib
+#    objstrip /n graphq3s.lib
 
 fixlib : .procedure
 # get library - add fsmath, dummy, chart library
     copy $(%objdir)$(%srclib).lib $(%targlib).lib
-    wlib /b /q $(%targlib).lib +$(%objdir)dummy +$(%objdir)fsmath +$(%chartlib)
+    $(lib) /b /q $(%targlib).lib +$(%objdir)dummy +$(%objdir)fsmath +$(%chartlib)
 # find external references - and check for double precision usage
-    objxref /e=except $(%targlib).lib | sort >$(%targlib).ref
-    wgrep -f -l __FD $(%targlib).ref >x.x
-    cmp -s x.x fd.ok
-    @if errorlevel 1 echo ERROR - double precision floating point used
-    erase x.x
+#    objxref /e=except $(%targlib).lib | sort >$(%targlib).ref
+#    wgrep -f -l __FD $(%targlib).ref >x.x
+#    cmp -s x.x fd.ok
+#    @if errorlevel 1 echo ERROR - double precision floating point used
+#    erase x.x
 # find modules, extract, change _TEXT segment, and add to lib
 # fix_seg symbol controls zapping of segment names (not for 32-bit)
-    objfind @$(%targlib).ref $(%clib) >$(%targlib).mod
-    sed 's/^^/*/' $(%targlib).mod >tmp.lbc
-    wlib /b /q $(%clib) @tmp.lbc
-    del tmp.lbc
-    @if $(%fix_seg) == yes objlnam _TEXT=GRAPH_TEXT /n *.obj
-    wlib /b /q $(%targlib).lib @$(%targlib).mod
+#    objfind @$(%targlib).ref $(%clib) >$(%targlib).mod
+#    sed 's/^^/*/' $(%targlib).mod >tmp.lbc
+#    $(lib) /b /q $(%clib) @tmp.lbc
+#    del tmp.lbc
+#    @if $(%fix_seg) == yes objlnam _TEXT=GRAPH_TEXT /n *.obj
+#    $(lib) /b /q $(%targlib).lib @$(%targlib).mod
 # add _GR to names of all symbols in extracted files and fsmath, dummy
-    objxdef *.obj $(%objdir)fsmath.obj $(%objdir)dummy.obj >$(%targlib).stb
-    del *.obj
-    objnames _GR* /i=$(%targlib).stb /n $(%targlib).lib
-    objstrip /n $(%targlib).lib
+#    objxdef *.obj $(%objdir)fsmath.obj $(%objdir)dummy.obj >$(%targlib).stb
+#    del *.obj
+#    objnames _GR* /i=$(%targlib).stb /n $(%targlib).lib
+#    objstrip /n $(%targlib).lib
 
 !include ..\o.s\makefile
 
