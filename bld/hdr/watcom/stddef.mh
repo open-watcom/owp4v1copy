@@ -30,11 +30,6 @@
 #define _SIZE_T_DEFINED_
 using std::size_t;
 #endif
-#ifndef _WCHAR_T_DEFINED
-#define _WCHAR_T_DEFINED
-#define _WCHAR_T_DEFINED_
-using std::wchar_t;
-#endif
 #ifndef _PTRDIFF_T_DEFINED
 #define _PTRDIFF_T_DEFINED
 #define _PTRDIFF_T_DEFIEND_

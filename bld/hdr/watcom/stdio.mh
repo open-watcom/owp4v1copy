@@ -5,8 +5,6 @@
  *
  * Description: This header is part of the C/C++ standard library. It
  *              describes the I/O facilities provided by the C standard.
- *              If the symbol NO_EXT_KEYS is not defined, this header
- *              declares a number of non-standard names as an extension.
  **************************************************************************/
 :segment CNAME
 #ifndef _CSTDIO_INCLUDED
@@ -82,11 +80,6 @@ using std::vsprintf;
 :: Now the extensions section.
 :include ext.sp
 // C99 types that are not specified for stdio.h
-#ifndef _WCHAR_T_DEFINED
-#define _WCHAR_T_DEFINED
-#define _WCHAR_T_DEFINED_
-using std::wchar_t;
-#endif
 #ifndef _WCTYPE_T_DEFINED
 #define _WCTYPE_T_DEFINED
 #define _WCTYPE_T_DEFINED_
@@ -497,43 +490,38 @@ _WCRTLINK extern int           fputchar( int __c );
 
 :segment !NO_WIDECHAR
 /* These functions pertain to wide character handling. */
-_WCRTLINK extern int           _bwprintf( std::wchar_t *, std::size_t,
-                                          const std::wchar_t *, ... );
-_WCRTLINK extern std::wchar_t *_getws( std::wchar_t * );
+_WCRTLINK extern int           _bwprintf( wchar_t *, std::size_t,
+                                          const wchar_t *, ... );
+_WCRTLINK extern wchar_t      *_getws( wchar_t * );
 _WCRTLINK extern std::wint_t   _fgetwchar( void );
 _WCRTLINK extern std::wint_t   _fputwchar( std::wint_t );
-_WCRTLINK extern int           _putws( const std::wchar_t * );
-_WCRTLINK extern int           _snwprintf( std::wchar_t *, std::size_t,
-                                           const std::wchar_t *, ... );
-_WCRTLINK extern int           _swprintf( std::wchar_t *,
-                                          const std::wchar_t *, ... );
-_WCRTLINK extern int           _vbwprintf( std::wchar_t *, std::size_t,
-                                           const std::wchar_t *, __va_list );
-_WCRTLINK extern int           _vsnwprintf( std::wchar_t *, std::size_t,
-                                            const std::wchar_t *, __va_list );
-_WCRTLINK extern int           _vswprintf( std::wchar_t *,
-                                           const std::wchar_t *, __va_list );
-_WCRTLINK extern std::FILE    *_wfdopen( int, const std::wchar_t * );
-_WCRTLINK extern std::FILE    *_wfopen( const std::wchar_t *,
-                                         const std::wchar_t * );
-_WCRTLINK extern std::FILE    *_wfreopen( const std::wchar_t *,
-                                          const std::wchar_t *, std::FILE * );
-_WCRTLINK extern std::FILE    *_wfsopen( const std::wchar_t *__filename,
-                                          const std::wchar_t *__mode,
-                                          int __shflag );
-_WCRTLINK extern void          _wperror( const std::wchar_t * );
-_WCRTLINK extern std::FILE    *_wpopen( const std::wchar_t *__command,
-                                        const std::wchar_t *__mode );
-_WCRTLINK extern int           _wremove( const std::wchar_t * );
-_WCRTLINK extern int           _wrename( const std::wchar_t *,
-                                         const std::wchar_t * );
-_WCRTLINK extern std::wchar_t *_wtempnam( std::wchar_t *__dir,
-                                          std::wchar_t *__prefix );
-_WCRTLINK extern std::wchar_t *_wtmpnam( std::wchar_t * );
+_WCRTLINK extern int           _putws( const wchar_t * );
+_WCRTLINK extern int           _snwprintf( wchar_t *, std::size_t,
+                                           const wchar_t *, ... );
+_WCRTLINK extern int           _swprintf( wchar_t *, const wchar_t *, ... );
+_WCRTLINK extern int           _vbwprintf( wchar_t *, std::size_t,
+                                           const wchar_t *, __va_list );
+_WCRTLINK extern int           _vsnwprintf( wchar_t *, std::size_t,
+                                            const wchar_t *, __va_list );
+_WCRTLINK extern int           _vswprintf( wchar_t *,
+                                           const wchar_t *, __va_list );
+_WCRTLINK extern std::FILE    *_wfdopen( int, const wchar_t * );
+_WCRTLINK extern std::FILE    *_wfopen( const wchar_t *, const wchar_t * );
+_WCRTLINK extern std::FILE    *_wfreopen( const wchar_t *,
+                                          const wchar_t *, std::FILE * );
+_WCRTLINK extern std::FILE    *_wfsopen( const wchar_t *__filename,
+                                         const wchar_t *__mode, int __shflag );
+_WCRTLINK extern void          _wperror( const wchar_t * );
+_WCRTLINK extern std::FILE    *_wpopen( const wchar_t *__command,
+                                        const wchar_t *__mode );
+_WCRTLINK extern int           _wremove( const wchar_t * );
+_WCRTLINK extern int           _wrename( const wchar_t *, const wchar_t * );
+_WCRTLINK extern wchar_t      *_wtempnam( wchar_t *__dir, wchar_t *__prefix );
+_WCRTLINK extern wchar_t      *_wtmpnam( wchar_t * );
 _WCRTLINK extern std::wint_t   fgetwchar( void );
 _WCRTLINK extern std::wint_t   fputwchar( std::wint_t );
-_WCRTLINK extern std::wchar_t *getws( std::wchar_t * );
-_WCRTLINK extern int           putws( const std::wchar_t * );
+_WCRTLINK extern wchar_t      *getws( wchar_t * );
+_WCRTLINK extern int           putws( const wchar_t * );
 :endsegment
 :endsegment
 ::

@@ -221,15 +221,15 @@ _WCRTLINK extern time_t       time( time_t *__timer );
 
 :segment !NO_WIDECHAR
 :segment CNAME
-_WCRTLINK extern std::wchar_t *_wasctime( const std::tm * );
-_WCRTLINK extern std::wchar_t *_wctime( const std::time_t * );
-_WCRTLINK extern std::wchar_t *_wstrdate( std::wchar_t *__buf );
-_WCRTLINK extern std::wchar_t *_wstrtime( std::wchar_t *__buf );
-_WCRTLINK extern std::size_t   _wstrftime_ms( std::wchar_t *, std::size_t,
+_WCRTLINK extern wchar_t      *_wasctime( const std::tm * );
+_WCRTLINK extern wchar_t      *_wctime( const std::time_t * );
+_WCRTLINK extern wchar_t      *_wstrdate( wchar_t *__buf );
+_WCRTLINK extern wchar_t      *_wstrtime( wchar_t *__buf );
+_WCRTLINK extern std::size_t   _wstrftime_ms( wchar_t *, std::size_t,
                                               const char *,
                                               const std::tm * );
-_WCRTLINK extern std::size_t   wcsftime( std::wchar_t *, std::size_t,
-                                         const std::wchar_t *,
+_WCRTLINK extern std::size_t   wcsftime( wchar_t *, std::size_t,
+                                         const wchar_t *,
                                          const std::tm * );
 :elsesegment
 _WCRTLINK extern wchar_t     *_wasctime( const struct tm * );
@@ -266,10 +266,8 @@ _WCRTLINK extern char        *_strdate( char *__buf );
 _WCRTLINK extern char        *_strtime( char *__buf );
 :segment !NO_WIDECHAR
 :segment CNAME
-_WCRTLINK extern std::wchar_t  *__wctime( const std::time_t *,
-                                          std::wchar_t * );
-_WCRTLINK extern std::wchar_t  *__wasctime( const std::tm *,
-                                            std::wchar_t * );
+_WCRTLINK extern wchar_t     *__wctime( const std::time_t *, wchar_t * );
+_WCRTLINK extern wchar_t     *__wasctime( const std::tm *, wchar_t * );
 :elsesegment
 _WCRTLINK extern wchar_t     *__wctime( const time_t *, wchar_t * );
 _WCRTLINK extern wchar_t     *__wasctime( const struct tm *, wchar_t * );
