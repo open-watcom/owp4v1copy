@@ -97,11 +97,16 @@ set PROJDIR=<CWD>
     <CPCMD> library/nw_libcl.386/ms_s/clib3s.lib            <RELROOT>/rel2/lib386/netware/libc3sl.lib
     <CPCMD> library/nw_clib.386/ms_s/clib3s.lib             <RELROOT>/rel2/lib386/netware/clib3s.lib
     <CPCMD> library/nw_clibl.386/ms_s/clib3s.lib            <RELROOT>/rel2/lib386/netware/clib3sl.lib
+    <CPCMD> library/nw_libc.386/ms_sd/clib3s.lib            <RELROOT>/rel2/lib386/netware/libc3sd.lib
+    <CPCMD> library/nw_libcl.386/ms_sd/clib3s.lib           <RELROOT>/rel2/lib386/netware/libc3sld.lib
+    <CPCMD> library/nw_clib.386/ms_sd/clib3s.lib            <RELROOT>/rel2/lib386/netware/clib3sd.lib
+    <CPCMD> library/nw_clibl.386/ms_sd/clib3s.lib           <RELROOT>/rel2/lib386/netware/clib3sld.lib
 #
 # Note binmode applies to both LIBC and CLIB libraries but only needs to be built once from the
 # fat CLIB source code.
 #
     <CPCMD> startup/library/nw_clib.386/ms_s/binmode.obj    <RELROOT>/rel2/lib386/netware/binmode.obj
+    <CPCMD> startup/library/nw_clib.386/ms_sd/binmode.obj   <RELROOT>/rel2/lib386/netware/binmoded.obj
 
   [ IFDEF (cpu_axp) <2*> ]
     <CPCMD> library/winnt.axp/_s/clib.lib                   <RELROOT>/rel2/libaxp/nt/clib.lib
