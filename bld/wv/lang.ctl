@@ -15,7 +15,7 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-##    <CPCMD> <devdir>/bin/bin/rfx.exe <relroot>/rel2/binw/rfx.exe
+    <CPCMD> <devdir>/wv/rfx/dosi86/rfx.exe <relroot>/rel2/binw/rfx.exe
     <CPCMD> <devdir>/wv/rfx/os2386/rfx.exe <relroot>/rel2/binp/rfx.exe
 
     <CPCMD> <devdir>/bin/bin.nec/dv.exe <relroot>/rel2/n98bw/wd.exe

@@ -24,25 +24,44 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Errors messages only English
 *
 ****************************************************************************/
 
-extern unsigned LocalMkDir( char * );
-extern unsigned LocalRmDir( char * );
-extern unsigned LocalGetCwd( int, char * );
-extern unsigned LocalSetCWD( char * );
-extern int      LocalGetDrv( void );
-extern unsigned LocalSetDrv( int );
-extern unsigned LocalFindFirst( char *, void *, unsigned, int );
-extern unsigned LocalFindNext( void *, unsigned );
-extern long     LocalGetFileAttr( char * );
-extern unsigned LocalSetFileAttr( char *, long );
-extern long     LocalGetFreeSpace( int );
-extern unsigned LocalRename( char *, char * );
-extern void     LocalTime( int *hour, int *min, int *sec, int *hundredths );
-extern void     LocalDate( int *year, int *month, int *day, int *weekday );
-extern unsigned LocalDateTime( sys_handle, int *, int *, int );
-extern int      LocalInteractive( sys_handle );
-extern void     LocalGetBuff( char *, unsigned );
+#include "doserr.h"
+
+extern char *Format(char *,char *,... );
+extern char *StrCopy(char *,char *);
+
+char *DosErrMsgs[] = {
+        "",
+        "invalid function number",
+        "file not found",
+        "path not found",
+        "too many open files",
+        "access denied",
+        "invalid handle",
+        "memory control blocks destroyed",
+        "insufficient memory",
+        "invalid memory block address",
+        "invalid environment",
+        "invalid format",
+        "invalid access code",
+        "invalid data",
+        "", /* reserved */
+        "invalid drive was specified",
+        "attempt to remove current directory",
+        "not same device",
+        "no more files"
+};
+
+#define MAX_CODE (sizeof( DosErrMsgs ) / sizeof( char * ) - 1)
+
+void GetDOSErrMsg( sys_error code, char *buff )
+{
+    if( code > MAX_CODE ) {
+        Format( buff, "error #%u", code );
+    } else {
+        StrCopy( DosErrMsgs[ code ], buff );
+    }
+}

@@ -29,12 +29,7 @@
 *
 ****************************************************************************/
 
-
-typedef unsigned long   sys_handle;
-typedef unsigned long   sys_error;
-
-#define NIL_SYS_HANDLE  ((sys_handle)-1)
-#define SYS_ERR_OK      ((sys_error)0)
+#include "sysdef.h"
 
 typedef         unsigned handle;
 typedef unsigned_8 seek_method; enum {

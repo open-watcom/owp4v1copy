@@ -44,20 +44,7 @@
 #define INCL_SUB
 #include "os2.h"
 
-extern unsigned         LocalRename( char *, char * );
-extern unsigned         LocalMkDir( char *);
-extern unsigned         LocalRmDir( char *);
-extern unsigned         LocalSetDrv( int );
-extern int              LocalGetDrv(void);
-extern unsigned         LocalSetCWD( char *);
-extern long             LocalGetFileAttr( char * );
-extern unsigned         LocalSetFileAttr( char * , long );
-extern long             LocalGetFreeSpace( int );
-extern unsigned         LocalDateTime( sys_handle , void *, void *, int);
-extern unsigned         LocalGetCwd( int , char *);
-extern unsigned         LocalFindFirst( char *, void *, unsigned , int );
-extern unsigned         LocalFindNext( void *, unsigned );
-extern unsigned         LocalFindClose(void);
+#include "local.h"
 
 void LocalTime( int *hour, int *min, int *sec, int *hundredths )
 {
@@ -81,7 +68,7 @@ void LocalDate( int *year, int *month, int *day, int *weekday )
     *weekday = datetime.weekday;
 }
 
-int LocalInteractive( handle fh )
+int LocalInteractive( sys_handle fh )
 /*******************************/
 {
     USHORT type;
@@ -180,7 +167,7 @@ long LocalGetFreeSpace( int drv )
     return( usage.cbSector * usage.cSectorUnit * usage.cUnitAvail );
 }
 
-unsigned LocalDateTime( sys_handle fh, void *time, void *date, int set )
+unsigned LocalDateTime( sys_handle fh, int *time, int *date, int set )
 /**************************************************************/
 {
     struct _FILESTATUS fstatus;
@@ -188,8 +175,8 @@ unsigned LocalDateTime( sys_handle fh, void *time, void *date, int set )
     struct _FTIME *ptime;
     unsigned    rc;
 
-    pdate = date;
-    ptime = time;
+    pdate = (struct _FDATE *)date;
+    ptime = (struct _FTIME *)time;
     if( set ) {
         rc = DosQFileInfo( fh, 1, (PBYTE)&fstatus, sizeof( fstatus ) );
         if( rc != 0 ) return( StashErrCode( rc, OP_LOCAL ) );

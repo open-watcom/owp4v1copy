@@ -40,25 +40,16 @@
 #include <string.h>
 #include "trpfile.h"
 
-extern char *Format(char *,char *,... );
-extern char *StrCopy(char *,char *);
+#include "doserr.h"
 
 extern char             _osmajor;
 
 file_components         LclFile = { '.', { '\\', '/', ':' }, { '\r', '\n' } };
 char                    LclPathSep = { ';' };
 
-
-extern char     **DosErrMsgs[];
-extern int      MaxDosErrMsg;
-
 void LocalErrMsg( sys_error code, char *buff )
 {
-    if( code > MaxDosErrMsg ) {
-        Format( buff, "ERR#%u", code );
-    } else {
-        StrCopy( *DosErrMsgs[ code ], buff );
-    }
+    GetDOSErrMsg( code, buff );
 }
 
 sys_handle LocalOpen( char *name, open_access access )

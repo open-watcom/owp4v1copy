@@ -46,7 +46,6 @@
 #include "trpfile.h"
 #include "dta.h"
 #include "trprfx.h"
-#include "dbglit.h"
 #include "tcerr.h"
 
 #include "local.h"
@@ -124,21 +123,6 @@ extern unsigned         RemoteGetCwd( int , char *);
 extern unsigned         RemoteFindFirst( char *, void *, unsigned , int );
 extern unsigned         RemoteFindNext( void *, unsigned );
 extern unsigned         RemoteFindClose(void);
-
-extern unsigned         LocalRename( char *, char * );
-extern unsigned         LocalMkDir( char *);
-extern unsigned         LocalRmDir( char *);
-extern unsigned         LocalSetDrv( int );
-extern int              LocalGetDrv(void);
-extern unsigned         LocalSetCWD( char *);
-extern long             LocalGetFileAttr( char * );
-extern unsigned         LocalSetFileAttr( char * , long );
-extern long             LocalGetFreeSpace( int );
-extern unsigned         LocalDateTime( sys_handle , int *, int *, int);
-extern unsigned         LocalGetCwd( int , char *);
-extern unsigned         LocalFindFirst( char *, void *, unsigned , int );
-extern unsigned         LocalFindNext( void *, unsigned );
-extern unsigned         LocalFindClose(void);
 
 dbg_switches            DbgSwitches;
 char                    *TrpFile;
@@ -1964,28 +1948,3 @@ char    *TrapClientString( unsigned tc )
     return( NULL );
 }
 
-char **DosErrMsgs[] = {
-    NULL
-#if 0
-    LITREF( Empty ),
-    LITREF( DOS_invalid_function ),
-    LITREF( DOS_file_not_found ),
-    LITREF( DOS_path_not_found ),
-    LITREF( DOS_too_many_open_files ),
-    LITREF( DOS_access_denied ),
-    LITREF( DOS_invalid_handle ),
-    LITREF( DOS_memory_control ),
-    LITREF( DOS_insufficient_memory ),
-    LITREF( DOS_invalid_address ),
-    LITREF( DOS_invalid_environment ),
-    LITREF( DOS_invalid_format ),
-    LITREF( DOS_invalid_access_code ),
-    LITREF( DOS_invalid_data ),
-    LITREF( Empty ),
-    LITREF( DOS_invalid_drive ),
-    LITREF( DOS_remove_cd ),
-    LITREF( DOS_not_same_device ),
-#endif
-};
-
-int MaxDosErrMsg = (sizeof( DosErrMsgs ) / sizeof( char * ) - 1);

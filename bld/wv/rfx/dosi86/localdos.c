@@ -40,6 +40,7 @@
 #include "dbgio.h"
 
 #include "tinyio.h"
+#include "local.h"
 
 extern void __buffered_keyboard_input( char * );
 #pragma aux __buffered_keyboard_input = \
@@ -47,21 +48,6 @@ extern void __buffered_keyboard_input( char * );
         _INT_21 \
         parm caller [ds dx] \
         modify [ax];
-
-extern unsigned         LocalRename( char *, char * );
-extern unsigned         LocalMkDir( char *);
-extern unsigned         LocalRmDir( char *);
-extern unsigned         LocalSetDrv( int );
-extern int              LocalGetDrv(void);
-extern unsigned         LocalSetCWD( char *);
-extern long             LocalGetFileAttr( char * );
-extern unsigned         LocalSetFileAttr( char * , long );
-extern long             LocalGetFreeSpace( int );
-extern unsigned         LocalDateTime( sys_handle , int *, int *, int);
-extern unsigned         LocalGetCwd( int , char *);
-extern unsigned         LocalFindFirst( char *, void *, unsigned , int );
-extern unsigned         LocalFindNext( void *, unsigned );
-extern unsigned         LocalFindClose(void);
 
 static unsigned DOSErrCode( tiny_ret_t rc )
 {
@@ -91,7 +77,7 @@ void LocalDate( int *year, int *month, int *day, int *weekday )
     *weekday = date.day_of_week;
 }
 
-int LocalInteractive( handle fh )
+int LocalInteractive( sys_handle fh )
 /*******************************/
 {
     tiny_ret_t rc;
@@ -177,7 +163,7 @@ long LocalGetFileAttr( char *name )
 
     rc = TinyGetFileAttr( name );
     if( TINY_ERROR( rc ) ) {
-        return( -1 );
+        return( -1L );
     }
     return( TINY_INFO( rc ) );
 }
@@ -188,7 +174,7 @@ long LocalGetFreeSpace( int drv )
     return( TinyFreeSpace( drv ) );
 }
 
-unsigned LocalDateTime( sys_handle fh, void *time, void *date, int set )
+unsigned LocalDateTime( sys_handle fh, int *time, int *date, int set )
 /**************************************************************/
 {
     tiny_ftime_t *ptime;
@@ -196,8 +182,8 @@ unsigned LocalDateTime( sys_handle fh, void *time, void *date, int set )
     tiny_ret_t rc;
     tiny_file_stamp_t *file_stamp;
 
-    ptime = time;
-    pdate = date;
+    ptime = (tiny_ftime_t *)time;
+    pdate = (tiny_ftime_t *)date;
     if( set ) {
         rc = TinySetFileStamp( fh, *ptime, *pdate );
     } else {

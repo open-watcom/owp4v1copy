@@ -29,20 +29,9 @@
 *
 ****************************************************************************/
 
-extern unsigned LocalMkDir( char * );
-extern unsigned LocalRmDir( char * );
-extern unsigned LocalGetCwd( int, char * );
-extern unsigned LocalSetCWD( char * );
-extern int      LocalGetDrv( void );
-extern unsigned LocalSetDrv( int );
-extern unsigned LocalFindFirst( char *, void *, unsigned, int );
-extern unsigned LocalFindNext( void *, unsigned );
-extern long     LocalGetFileAttr( char * );
-extern unsigned LocalSetFileAttr( char *, long );
-extern long     LocalGetFreeSpace( int );
-extern unsigned LocalRename( char *, char * );
-extern void     LocalTime( int *hour, int *min, int *sec, int *hundredths );
-extern void     LocalDate( int *year, int *month, int *day, int *weekday );
-extern unsigned LocalDateTime( sys_handle, int *, int *, int );
-extern int      LocalInteractive( sys_handle );
-extern void     LocalGetBuff( char *, unsigned );
+typedef unsigned long   sys_handle;
+typedef unsigned long   sys_error;
+
+#define NIL_SYS_HANDLE  ((sys_handle)-1)
+#define SYS_ERR_OK      ((sys_error)0)
+
