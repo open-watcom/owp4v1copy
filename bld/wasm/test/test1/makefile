@@ -103,10 +103,13 @@ x &
 xx
 
 test : .SYMBOLIC
+!ifndef asm
+asm=wasm
+!endif 
 	@%create $(cmd_file)
 	@%write $(cmd_file) @echo off
 	@%write $(cmd_file) @echo %1.asm ======================================================
-	@%write $(cmd_file) @wasm %1.asm -q >null
+	@%write $(cmd_file) @$(asm) %1.asm -q >null
 	@%write $(cmd_file) @if not exist %1.err goto next1
 	@%write $(cmd_file) @if not exist %1.chk goto next2
         @%write $(cmd_file) @diff -b %1.err %1.chk
@@ -120,7 +123,7 @@ debug : .SYMBOLIC
 	@%create $(cmd_file)
 	@%write $(cmd_file) @echo off
 	@%write $(cmd_file) @echo %1.asm ======================================================
-	@%write $(cmd_file) @wasm %1.asm -q -d6 >null
+	@%write $(cmd_file) @$(asm) %1.asm -q -d6 >null
 	@%write $(cmd_file) @if not exist %1.err goto next1
 	@%write $(cmd_file) @if not exist %1.chk goto next2
         @%write $(cmd_file) @diff -b %1.err %1.chk

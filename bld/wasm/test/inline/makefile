@@ -105,12 +105,10 @@ asmbug13
 .exe : ..
 .c : ..
 
-wcc386 : reverse.exe .SYMBOLIC
-compiler = wcc386
-	@%make test_files
-
-wcc : reverse.exe .SYMBOLIC
-compiler = wcc
+test : reverse.exe .SYMBOLIC
+!ifndef ccomp
+ccomp=wcc386
+!endif 
 	@%make test_files
 
 reverse.exe : reverse.c
@@ -129,7 +127,7 @@ test_files : .SYMBOLIC
 	@%write $(cmd_file) ..\reverse %1.lst
 	@%write $(cmd_file) diff -b %1.lst %1.asm
 	@%write $(cmd_file) set cmplr=
-	@for %x in ($(objs1)) do @call $(cmd_file) %x $(compiler)
+	@for %x in ($(objs1)) do @call $(cmd_file) %x $(ccomp)
 	@%create $(cmd_file)
 	@%write $(cmd_file) @echo off
 	@%write $(cmd_file) echo %1 ================================================================
@@ -142,7 +140,7 @@ test_files : .SYMBOLIC
 	@%write $(cmd_file) ..\reverse %1.lst
 	@%write $(cmd_file) diff -b %1.lst %1.bug
 	@%write $(cmd_file) set cmplr=
-	@for %x in ($(objs2)) do @call $(cmd_file) %x $(compiler)
+	@for %x in ($(objs2)) do @call $(cmd_file) %x $(ccomp)
 
 
 clean : .SYMBOLIC

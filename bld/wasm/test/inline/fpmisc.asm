@@ -22,7 +22,7 @@ fstsw qword ptr x
 fnstsw ax
 fldcw word ptr x
 fstenv x
-flenv x
+fldenv x
 fnop
 fpatan
 fprem
