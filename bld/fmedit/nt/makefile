@@ -1,6 +1,4 @@
-#
-#   REPORT EDITOR make file
-#
+#pmake: all build cpu_386 os_nt
 
 name            = fmedit
 

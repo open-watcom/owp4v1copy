@@ -1,6 +1,4 @@
-#
-#   REPORT EDITOR make file
-#
+#pmake: cpu_axp os_nt
 
 host_OS = nt
 host_CPU= axp
@@ -30,4 +28,3 @@ rc_opts         = -q -bt=$(build_target)
 __ALPHA__       = 1
 
 !include ..\mif\fmedit.mif
-

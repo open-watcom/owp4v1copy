@@ -12,18 +12,12 @@ set PROJDIR=<CWD>
 cdsay .
 
 [ BLOCK <1> build rel2 ]
-    cdsay obj
-    wmake /h /i
-    cdsay ..\nt
-    wmake /h /i
+    pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
 
 [ BLOCK <1> rel2 cprel2 ]
-<cpcmd> <projdir>\obj\fmedit.dll <relroot>\rel2\binw\
-<cpcmd> <projdir>\nt\fmedit.dll <relroot>\rel2\binnt\
+<CPCMD> <projdir>\obj\fmedit.dll <relroot>\rel2\binw\
+<CPCMD> <projdir>\nt\fmedit.dll <relroot>\rel2\binnt\
 
 [ BLOCK <1> clean ]
 #==================
-    cdsay obj
-    wmake /h /i clean
-    cdsay ..\nt
-    wmake /h /i clean
+    pmake -d all -h clean

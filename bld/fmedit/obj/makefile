@@ -1,6 +1,4 @@
-#
-#   REPORT EDITOR make file
-#
+#pmake: all build 16bit windows iX86 os_win cpu_i86
 
 name            = fmedit
 

@@ -359,7 +359,7 @@ main( int argc , char *argv[] )
     int         ch,i;
 
     while( 1 ) {
-        ch = GetOpt( &argc, argv, optStr, (char**)usageMsg );
+        ch = GetOpt( &argc, argv, optStr, usageMsg );
         if( ch == -1 ) {
             break;
         }
