@@ -1534,19 +1534,30 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
     int     retcode;    /* from spawnvp */
     UINT16  tmp_env;    /* for * commands */
     RET_T   my_ret;     /* return code for this function */
+    int     quote;      /* true if inside quotes */
 
     assert( cmd != NULL );
 
     percent_cmd = cmd[0] == '%';
     arg = cmd + ( percent_cmd ? 1 : 0 );    /* split cmd name from args */
-    while( !( isws( *arg ) || *arg == Glob.swchar || *arg == '+' ||
-        *arg == '=' || *arg == NULLCHAR ) ) {
+
+    quote = 0;                              /* no quotes yet */
+    while( !((isws( *arg ) || *arg == Glob.swchar || *arg == '+' ||
+        *arg == '=' ) && !quote) && *arg != NULLCHAR  ) {
+        if( *arg == '\"' )
+            quote = !quote;  /* found a quote */
         ++arg;
     }
     if( arg - cmd >= _MAX_PATH ) {
         PrtMsg( ERR| COMMAND_TOO_LONG );
         return( RET_ERROR );
     }
+    if( quote ) {
+        /* closing quote is missing */
+        PrtMsg( ERR| SYNTAX_ERROR_IN, cmd );
+        return( RET_ERROR );
+    }
+
     memcpy( cmdname, cmd, arg - cmd );  /* copy command */
     cmdname[ arg - cmd ] = NULLCHAR;    /* null terminate it */
 #if defined( __DOS__ )
