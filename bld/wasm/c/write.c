@@ -684,7 +684,7 @@ static void write_header( void )
     } else {
         name = _getFilenameFullPath( full_name, AsmFiles.fname[ASM], sizeof( full_name ) );
     }
-    objr->is_32 = Use32;
+    objr->is_32 = ModuleInfo.use32;
     len = strlen( name );
     ObjAllocData( objr, len + 1 );
     ObjPutName( objr, name, len );

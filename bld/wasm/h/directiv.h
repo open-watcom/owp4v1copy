@@ -171,6 +171,7 @@ typedef struct {
 
 typedef struct {
     uint        idx;            // external definition index
+    unsigned    use32:1;
 } ext_info;
 
 typedef struct {
@@ -303,10 +304,11 @@ typedef struct {
     mod_type    model;           // memory model;
     lang_type   langtype;        // language;
     os_type     ostype;          // operating system;
-    unsigned    use32:1;         // If 32-bit is used
+    unsigned    use32:1;         // If 32-bit segment is used
     unsigned    init:1;
     unsigned    cmdline:1;
     unsigned    defseg32:1;      // default segment size 32-bit
+    unsigned    mseg:1;          // mixed segments (16/32-bit)
     unsigned    flat_idx;        // index of FLAT group
     char        name[_MAX_FNAME];// name of module
 } module_info;                   // Information about the module

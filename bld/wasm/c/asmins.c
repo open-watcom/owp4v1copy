@@ -101,6 +101,7 @@ extern int              data_init( int, int );
 extern void             InputQueueLine( char * );
 extern int              directive( int , long );
 extern void             GetInsString( enum asm_token, char *, int );
+extern int              SymIs32( struct asm_sym *sym );
 
 extern  int_8           DefineProc;     // TRUE if the definition of procedure
                                         // has not ended
@@ -622,6 +623,7 @@ static int mem( int i )
                 field_flag = 1;
                 continue;
             } else {
+                SET_ADRSIZ( Code, SymIs32( sym ));
 #endif
                 ConstantOnly = FALSE;
                 if( id_flag > 0 ) {
@@ -850,7 +852,7 @@ int mem2code( char ss, int index, int base )
         // direct memory
         // clear the rightmost 3 bits
         rCode->info.rm_byte &= BIT_345;
-        if( !rCode->use32 ) {
+        if( !addr_32( rCode )) {
             if( !InRange( rCode->data[Opnd_Count], 2 ) ) {
                 // expect 16-bit but got 32-bit address
                 AsmError( DISPLACEMENT_OUT_OF_RANGE );

@@ -1070,6 +1070,7 @@ asm_sym *MakeExtern( char *name, int type, bool already_defd )
     if( ext == NULL ) return( NULL );
     sym = (struct asm_sym *)ext;
     ext->e.extinfo->idx = ++extdefidx;
+    ext->e.extinfo->use32 = Use32;
 
     GetSymInfo( sym );
     sym->state = SYM_EXTERNAL;
@@ -1395,7 +1396,7 @@ static int token_cmp( char **token, int start, int end )
     }
 }
 
-static void find_use32( void )
+void find_use32( void )
 {
     if( CurrSeg == NULL ) {
         Use32 = ModuleInfo.defseg32;
@@ -1621,9 +1622,14 @@ int SegDef( int i )
                 LnameInsert( name );
 
             }
-            if(( CurrSeg != NULL )
-                && ( CurrSeg->seg->e.seginfo->segrec->d.segdef.use_32 )) {
-                ModuleInfo.use32 = TRUE;
+            if( CurrSeg != NULL ) {
+                if(( !ModuleInfo.mseg )
+                    && ( CurrSeg->seg->e.seginfo->segrec->d.segdef.use_32 != ModuleInfo.use32 )) {
+                    ModuleInfo.mseg = TRUE;
+                }
+                if( CurrSeg->seg->e.seginfo->segrec->d.segdef.use_32 ) {
+                    ModuleInfo.use32 = TRUE;
+                }
             }
             break;
         case T_ENDS:
@@ -2110,8 +2116,8 @@ int Model( int i )
             case TOK_FLAT:
                 DefFlatGroup();
                 // TODO!! FLAT Model supposed 32-bit segments
-                Use32 = 1;
                 ModuleInfo.defseg32 = 1;
+                find_use32();
             case TOK_TINY:
             case TOK_SMALL:
             case TOK_COMPACT:
@@ -2305,6 +2311,36 @@ uint GetGrpIdx( struct asm_sym *sym )
         }
     }
     return( idx );
+}
+
+int SymIs32( struct asm_sym *sym )
+/**************************************/
+/* get sym's segment size */
+{
+    dir_node            *curr;
+    uint                idx;
+
+    idx = sym->segidx;
+    if( idx == 0 ) {
+        if( sym->state == SYM_EXTERNAL ) {
+            if( ModuleInfo.mseg ) {
+                curr = (dir_node *)sym;
+                return( curr->e.extinfo->use32);
+            } else {
+                return( ModuleInfo.use32 );
+            }
+        } else {
+            return( 0 );
+        }
+    } else {
+        for( curr = Tables[TAB_SEG].head; curr; curr = curr->next ) {
+            if( curr->sym.state != SYM_SEG ) continue;
+            if( idx == curr->e.seginfo->segrec->d.segdef.idx ) {
+                return( curr->e.seginfo->segrec->d.segdef.use_32 );
+            }
+        }
+    }
+    return( 0 );
 }
 
 int FixOverride( int index )

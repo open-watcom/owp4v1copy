@@ -55,6 +55,7 @@ extern int              cpu_directive( uint_16 );
 extern int              StructDef( int );
 extern void             GetInsString( enum asm_token , char *, int );
 extern int              ForDirective( int, bool );
+extern void             find_use32( void );
 
 /* global vars */
 extern char             Parse_Pass;     // phase of parsing
@@ -81,6 +82,7 @@ int directive( int i, long direct )
         if(( CurrSeg == NULL ) && (( ModuleInfo.init == 0 ) || ( ModuleInfo.cmdline == TRUE ))) {
             ModuleInfo.defseg32 = TRUE;
         }
+        find_use32();
         ret = cpu_directive(direct);
         if( Parse_Pass != PASS_1 ) ret = NOT_ERROR;
         return( ret );
@@ -93,6 +95,7 @@ int directive( int i, long direct )
         if(( CurrSeg == NULL ) && (( ModuleInfo.init == 0 ) || ( ModuleInfo.cmdline == TRUE ))) {
             ModuleInfo.defseg32 = FALSE;
         }
+        find_use32();
     case T_DOT_8087:
     case T_DOT_287:
     case T_DOT_387:
