@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  PowerPC instruction tracing support.
 *
 ****************************************************************************/
 
@@ -72,6 +71,7 @@ mad_trace_how   DIGENTRY MITraceOne( mad_trace_data *td, mad_disasm_data *dd, ma
         switch( dc & MDC_TYPE_MASK ) {
         case MDC_OPER:
         case MDC_RET:
+        case MDC_JUMP:
             return( MTRH_STEP );
         }
         break;
