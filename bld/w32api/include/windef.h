@@ -69,6 +69,8 @@ extern "C" {
 #ifndef _declspec
 #define _declspec(e) __attribute__((e))
 #endif
+#elif defined(__WATCOMC__)
+#define PACKED
 #else
 #define PACKED
 #define _cdecl
