@@ -29,8 +29,11 @@ as_i86          = *wasm
 as_axp          = *wasaxp
 as_ppc          = *wasppc
 
+!ifndef %use_os2tk_stuff
+rc_os2      = $(lang_root)\binp\rc.exe
+!else
 rc_os2      = $(os2_toolkit)\bin\rc.exe
-#rc_os2      = $(lang_root)\binp\rc.exe
+!endif
 
 !ifeq host_os os2
 %PATH = $+$(%PATH);$(%watcom)\binp$-

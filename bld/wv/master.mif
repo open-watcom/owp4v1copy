@@ -356,7 +356,14 @@ $(exe_name) : eraseall.obj $(resfile) fingmsg.obj $(objs) $(sysobjs) $(libs) $(l
 !else ifeq host_OS nt
         $(rc) -k $(rc_flags) -i="$(rcinclude);$(lang_root)/h/nt" $(resfile) $^@
 !else ifeq host_OS os2
+!ifndef %use_os2tk_stuff
+        @set opath=$(%path)
+        @set path=$(lang_root)\binp
+!endif
         $(rc_os2) -p -x $(resfile) $^@
+!ifndef %use_os2tk_stuff
+        @set path=$(%opath)
+!endif
 !endif
 
 wd.lib : eraseall.obj $(engine_objs) $(sysobjs)
@@ -531,22 +538,34 @@ wvnt.res : $(hdir)/wvwin.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodep
 
 wvpm.res wvpmj.res : $(hdir)/wvpm.rc auistr.gh _guimsgs.gh $(bitmaps) $(rcfiles) .autodepend
         @set oinc=$(%include)
-        set include=$(inc_dirs_sys);$(rcinclude);$(%include)
+        @set include=$(inc_dirs_sys);$(rcinclude);$(%include)
         *wcc -dRC -i"$(aui_dir)/os2386.pm;$(rcinclude)" -p -pw=0 -fo=wvpm.i $[@
         *wcc -dRC -i"$(aui_dir)/os2386.pm;$(rcinclude)" -p -pw=0 -fo=wvpmj.i $[@ -dJAPANESE_MESSAGES
+
 !ifndef %use_os2tk_stuff
-        set opath=$(%path)
-        set path=$(lang_root)\binp
+        @set opath=$(%path)
+        @set path=$(lang_root)\binp
 !endif
         $(rc_os2) -i $(inc_dirs_sys_os2_386) -r $(hdir)\foros2pm.rc .\foros2pm.res
         del wvpm.i
+
+!ifndef %use_os2tk_stuff
+        @set path=$(%opath)
+!endif
         cp foros2pm.res wvpm.res
         cp wvpmj.i wvpm.i
-        $(rc_os2) -i $(inc_dirs_sys_os2_386) -r $(hdir)\foros2pm.rc .\foros2pm.res
-        cp foros2pm.res wvpmj.res
+
 !ifndef %use_os2tk_stuff
-        set path=$(%opath)
+        @set opath=$(%path)
+        @set path=$(lang_root)\binp
 !endif
+
+        $(rc_os2) -i $(inc_dirs_sys_os2_386) -r $(hdir)\foros2pm.rc .\foros2pm.res
+
+!ifndef %use_os2tk_stuff
+        @set path=$(%opath)
+!endif
+        cp foros2pm.res wvpmj.res
         @set include=$(%oinc)
 
 !ifeq display char
