@@ -518,29 +518,29 @@ trappick( TRP_TCP_ip_address,
      "Local IP address  : ",
      "jLocal IP address  : " )
 trappick( TRP_PARSERV_Usage,
-    "PARSERV [-Trap=trap_file[;trap_parm]] [-Once] [printer_number]",
-    "jPARSERV [-Trap=trap_file[;trap_parm]] [-Once] [printer_number]" )
+    "parserv [-Trap=trap_file[;trap_parm]] [-Once] [printer_number]",
+    "jparserv [-Trap=trap_file[;trap_parm]] [-Once] [printer_number]" )
 trappick( TRP_SERSERV_Usage,
-    "SERSERV [-Trap=trap_file[;trap_parm]] [-Once] [serial_port][.max_baud_rate]",
-    "jSERSERV [-Trap=trap_file[;trap_parm]] [-Once] [serial_port][.max_baud_rate]" )
+    "serserv [-Trap=trap_file[;trap_parm]] [-Once] [serial_port][.max_baud_rate]",
+    "jserserv [-Trap=trap_file[;trap_parm]] [-Once] [serial_port][.max_baud_rate]" )
 trappick( TRP_NETSERV_Usage,
-    "NETSERV [-Trap=trap_file[;trap_parm]] [-Once] [server_name]",
-    "jNETSERV [-Trap=trap_file[;trap_parm]] [-Once] [server_name]" )
+    "netserv [-Trap=trap_file[;trap_parm]] [-Once] [server_name]",
+    "jnetserv [-Trap=trap_file[;trap_parm]] [-Once] [server_name]" )
 trappick( TRP_NOVSERV_Usage,
-    "NOVSERV [-Trap=trap_file[;trap_parm]] [-Once] [server_name]",
-    "jNOVSERV [-Trap=trap_file[;trap_parm]] [-Once] [server_name]" )
+    "novserv [-Trap=trap_file[;trap_parm]] [-Once] [server_name]",
+    "jnovserv [-Trap=trap_file[;trap_parm]] [-Once] [server_name]" )
 trappick( TRP_VDMSERV_Usage,
-    "VDMSERV [-Trap=trap_file[;trap_parm]] [-Once] [server_name]",
-    "jVDMSERV [-Trap=trap_file[;trap_parm]] [-Once] [server_name]" )
+    "vdmserv [-Trap=trap_file[;trap_parm]] [-Once] [server_name]",
+    "jvdmserv [-Trap=trap_file[;trap_parm]] [-Once] [server_name]" )
 trappick( TRP_NMPSERV_Usage,
-    "NMPSERV [-Trap=trap_file[;trap_parm]] [-Once] [server_name]",
-    "jNMPSERV [-Trap=trap_file[;trap_parm]] [-Once] [server_name]" )
+    "nmpserv [-Trap=trap_file[;trap_parm]] [-Once] [server_name]",
+    "jnmpserv [-Trap=trap_file[;trap_parm]] [-Once] [server_name]" )
 trappick( TRP_TCPSERV_Usage,
-    "TCPSERV [-Trap=trap_file[;trap_parm]] [-Once] [service_or_port]",
-    "jTCPSERV [-Trap=trap_file[;trap_parm]] [-Once] [service_or_port]" )
+    "tcpserv [-Trap=trap_file[;trap_parm]] [-Once] [service_or_port]",
+    "jtcpserv [-Trap=trap_file[;trap_parm]] [-Once] [service_or_port]" )
 trappick( TRP_WINSERV_Usage,
-    "WINSERV [-Trap=trap_file[;trap_parm]] [-Once] [server_name]",
-    "jWINSERV [-Trap=trap_file[;trap_parm]] [-Once] [server_name]" )
+    "winserv [-Trap=trap_file[;trap_parm]] [-Once] [server_name]",
+    "jwinserv [-Trap=trap_file[;trap_parm]] [-Once] [server_name]" )
 trappick( TRP_Parallel_Name,
     "Parallel Debug Server",
     "jParallel Debug Server" )

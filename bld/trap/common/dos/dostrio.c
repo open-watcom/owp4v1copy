@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DOS specific trap I/O.
 *
 ****************************************************************************/
 
@@ -141,6 +140,7 @@ unsigned FileClose( unsigned h )
 
 int WantUsage( char *ptr )
 {
+    if( (*ptr == '-') || (*ptr == '/') ) ++ptr;
     return( *ptr == '?' );
 }
 

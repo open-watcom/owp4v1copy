@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  OS/2 2.x system specific console I/O.
+* Description:  OS/2 2.x system specific trap I/O.
 *
 ****************************************************************************/
 
@@ -33,7 +33,7 @@
 #include <stddef.h>
 
 #define INCL_DOSPROCESS
-#include "os2.h"
+#include <os2.h>
 
 void Output( char *str )
 {
@@ -74,6 +74,7 @@ int WantUsage( char *ptr )
     /* This is a stupid place to do this, but it's the only system
        specific hook that I've got. */
     DosSetRelMaxFH( &lReq, &ulCurMax );
+
+    if( (*ptr == '-') || (*ptr == '/') ) ++ptr;
     return( *ptr == '?' );
 }
-
