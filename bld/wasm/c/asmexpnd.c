@@ -350,8 +350,7 @@ static int createconstant( char *name, bool value, int start, bool redefine, boo
             }
             break;
         case T_ID:
-            if( AsmBuffer[start+i]->string_ptr[0] == '$'
-             && AsmBuffer[start+i]->string_ptr[1] == '\0' ) {
+            if( IS_SYM_COUNTER( AsmBuffer[start+i]->string_ptr ) ) {
                 char            buff[40];
                 /*
                     We want a '$' symbol to have the value at it's

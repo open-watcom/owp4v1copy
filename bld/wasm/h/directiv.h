@@ -319,6 +319,8 @@ enum assume_reg {
 
 extern module_info      ModuleInfo;
 
+#define IS_PROC_FAR()   ( ModuleInfo.model > MOD_FLAT )
+
 extern seg_list         *CurrSeg;       // points to stack of opened segments
 
 /*---------------------------------------------------------------------------*/

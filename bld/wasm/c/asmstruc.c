@@ -60,11 +60,15 @@ int StructDef( int i )
     case T_STRUCT:
         sym = AsmGetSymbol( name );
         if( Parse_Pass == PASS_1 ) {
-            if( sym != NULL  ) {
+            if( sym == NULL ) {
+                dir = dir_insert( name, TAB_STRUCT );
+            } else if( sym->state == SYM_UNDEFINED ) {
+                dir = (dir_node *)sym;
+                dir_change( dir, TAB_STRUCT );
+            } else {
                 AsmError( SYMBOL_ALREADY_DEFINED );
                 return( ERROR );
             }
-            dir = dir_insert( name, TAB_STRUCT );
         } else {
             dir = (dir_node *)sym;
         }

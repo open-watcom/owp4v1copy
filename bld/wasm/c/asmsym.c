@@ -161,7 +161,7 @@ struct asm_sym *AsmLookup( char *name )
     if( sym != NULL ) {
 #ifdef _WASM_
         /* current address operator */
-        if( strcmp( name, "$" ) ==  0 )
+        if( IS_SYM_COUNTER( name ) )
             GetSymInfo( sym );
 #endif
         return( sym );
@@ -173,7 +173,7 @@ struct asm_sym *AsmLookup( char *name )
         *sym_ptr = sym;
 
 #ifdef _WASM_
-        if( strcmp( name, "$" ) ==  0 ) {
+        if( IS_SYM_COUNTER( name ) ) {
             GetSymInfo( sym );
             sym->state = SYM_INTERNAL;
             sym->mem_type = T_NEAR;
@@ -290,6 +290,10 @@ struct asm_sym *AsmGetSymbol( char *name )
     struct asm_sym  **sym_ptr;
 
     sym_ptr = AsmFind( name );
+#ifdef _WASM_
+    if( ( *sym_ptr != NULL ) && IS_SYM_COUNTER( name ) )
+        GetSymInfo( *sym_ptr );
+#endif
     return( *sym_ptr );
 }
 #endif

@@ -1123,7 +1123,8 @@ int ExtDef( int i )
 
         if( type == ERROR ) {
             struct_sym = AsmGetSymbol( AsmBuffer[i]->string_ptr );
-            if( struct_sym == NULL || struct_sym->state != SYM_STRUCT ) {
+            if( ( struct_sym == NULL )
+                || ( struct_sym->state != SYM_STRUCT ) ) {
                 AsmError( INVALID_QUALIFIED_TYPE );
                 return( ERROR );
             }
@@ -2804,11 +2805,7 @@ static memtype proc_exam( int i )
 
     /* Obtain all the default value */
 
-    if( ModuleInfo.model <= MOD_FLAT ) {
-        info->mem_type = T_NEAR;
-    } else {
-        info->mem_type = T_FAR;
-    }
+    info->mem_type = IS_PROC_FAR() ? T_FAR : T_NEAR;
     info->visibility = dir->sym.public ? VIS_PUBLIC : VIS_PRIVATE;
     info->parasize = 0;
     info->localsize = 0;

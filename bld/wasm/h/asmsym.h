@@ -95,6 +95,8 @@ extern int AsmChangeName( char *old, char *new );
 
 extern struct asm_sym *AllocDSym( char *, int );
 
+#define IS_SYM_COUNTER( x ) ( ( x[0] == '$' ) && ( x[1] == 0 ) )
+
 #endif
 
 #endif

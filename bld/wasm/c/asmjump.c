@@ -468,13 +468,10 @@ int jmp( struct asm_sym *sym )                // Bug: can't handle indirect jump
                 break;
 #ifdef _WASM_
             case T_PROC:
-                if( ModuleInfo.model > MOD_FLAT ) {
-                    if( IS_JMPCALLN( Code->info.token ) ) {
-                        Code->info.token++;
-                    }
-                    Code->mem_type = T_FAR;
-                } else {
-                    Code->mem_type = T_NEAR;
+                Code->mem_type = IS_PROC_FAR() ? T_FAR : T_NEAR;
+                if( IS_JMPCALLN( Code->info.token )
+                    && ( Code->mem_type == T_FAR ) ) {
+                    Code->info.token++;
                 }
                 break;
 #endif
