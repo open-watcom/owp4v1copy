@@ -3235,14 +3235,17 @@ struct D {
 enum E enum_var;    // E not visible
 :eerrbad.
 
-:MSGSYM. ERR_UNDECLARED_CLASS_SYM
-:MSGTXT. 'class %s' has not been declared
+:MSGSYM. ERR_UNDECLARED_CLASSNAMESPACE_SYM
+:MSGTXT. 'class or namespace %s' has not been declared
 :MSGJTXT. 'ÉNÉâÉX%s'ÇÕêÈåæÇ≥ÇÍÇƒÇ¢Ç‹ÇπÇÒ
 The construct "A::B::C" requires that
-'A' be a class type, and 'B' be a nested class within the scope of 'A'.
+'A' be a class type or a namespace, and 'B' be a nested class or
+namespace within the scope of 'A'.
 The reference to 'A' could not be satisfied.
 All enclosing scopes have been searched for a
 .kw class
+or
+.kw namespace
 name.  Visible variable declarations do not affect the search.
 :errbad.
 struct A{ int a; };
