@@ -19,19 +19,19 @@ lang_root = $(%dwatcom)
 #%WATCOM=$+$(lang_root)$-
 #%PATH=$+$(lang_root)\binnt;$(lang_root)\binw;$(%PATH)$-
 #%INCLUDE=$+$(lang_root)\h;$(lang_root)\h\nt$-
-librarian       = $(nlang_bin)\wlib
-libaxp          = $(nlang_bin)\wlib
+librarian       = *$(nlang_bin)\wlib
+libaxp          = *$(nlang_bin)\wlib
 # this is since the path stuff above doesn't appear to work at the moment
 !ifdef __NTAXP__
-bld_cl          = $(nlang_bin)\wclaxp -zq -l=$(bld_sys) -i$(bld_incs)
-bld_cc          = $(nlang_bin)\wccaxp -zq -i$(bld_incs)
+bld_cl          = *$(nlang_bin)\wclaxp -zq -l=$(bld_sys) -i$(bld_incs)
+bld_cc          = *$(nlang_bin)\wccaxp -zq -i$(bld_incs)
 !else
 !ifdef __OS2__
-bld_cl          = $(lang_root)\binw\wcl386 -zq -l=$(bld_sys) -i$(bld_incs)
+bld_cl          = *$(lang_root)\binw\wcl386 -zq -l=$(bld_sys) -i$(bld_incs)
 !else
-bld_cl          = $(nlang_bin)\wcl386 -zq -l=$(bld_sys) -i$(bld_incs)
+bld_cl          = *$(nlang_bin)\wcl386 -zq -l=$(bld_sys) -i$(bld_incs)
 !endif
-bld_cc          = $(nlang_bin)\wcc386 -zq -i$(bld_incs)
+bld_cc          = *$(nlang_bin)\wcc386 -zq -i$(bld_incs)
 
 !ifdef clib_rtdll
 # C runtime library must compile against local headers!!!!
