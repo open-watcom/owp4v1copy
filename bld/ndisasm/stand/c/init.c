@@ -608,6 +608,9 @@ static return_val initORL( void )
             // check intended machine type
             machine_type = GetMachineType();
             switch( machine_type ) {
+            // If there's no machine specific code, the CPU we choose shouldn't
+            // matter; there are some object files like this.
+            case ORL_MACHINE_TYPE_NONE:
             case ORL_MACHINE_TYPE_ALPHA:
                 if( DisInit( DISCPU_axp, &DHnd, byte_swap ) != DR_OK ) {
                     ORLFini( ORLHnd );
