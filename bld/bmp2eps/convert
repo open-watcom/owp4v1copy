@@ -1,0 +1,62 @@
+.extensions: .ps .bmp
+
+.bmp : $(%OWROOT)\docs\doc\gui\snaps
+
+.bmp.ps:
+    bmp2eps -s $< $*.ps
+
+psfiles = &
+acc1.ps acc2.ps acc3.ps acc4.ps acc5.ps acc6.ps acc7.ps acc8.ps &
+acc9.ps acc10.ps acc11.ps acc12.ps acc13.ps &
+bmatch.ps &
+brow1.ps brow2.ps brow3.ps brow4.ps brow5.ps brow6.ps brow7.ps brow8.ps &
+brow9.ps brow10.ps brow11.ps brow12.ps brow13.ps brow14.ps brow15.ps &
+brow16.ps brow17.ps brow18.ps brow19.ps &
+browtarg.ps &
+copy.ps &
+cut.ps &
+dde1.ps dde2.ps dde5.ps dde6.ps dde9.ps dde10.ps dde11.ps dde12.ps dde13.ps &
+debgtarg.ps &
+dia1.ps dia2.ps dia3.ps dia4.ps dia5.ps dia6.ps dia7.ps dia8.ps &
+dia9.ps dia10.ps dia11.ps &
+drw1.ps drw2.ps drw3.ps drw4.ps drw5.ps drw6.ps drw7.ps drw8.ps drw9.ps &
+drw10.ps drw11.ps drw12.ps drw13.ps drw14.ps drw15.ps drw16.ps &
+edititem.ps &
+files.ps &
+finddlg.ps &
+hammer.ps &
+hw1.ps hw2.ps hw3.ps hw4.ps hw5.ps hw6.ps hw7.ps hw8.ps hw9.ps &
+hw10.ps hw11.ps hw12.ps hw13.ps hw14.ps hw15.ps hw16.ps &
+ide1.ps ide2.ps ide3.ps ide4.ps ide5.ps ide6.ps ide7.ps ide8.ps &
+ide9.ps ide10.ps ide11.ps ide12.ps ide13.ps ide14.ps ide15.ps ide16.ps &
+ide17.ps ide18.ps ide19.ps ide20.ps ide21.ps ide22.ps ide23.ps ide24.ps &
+ide25.ps ide26.ps ide27.ps ide28.ps ide29.ps ide_s.ps &
+img1.ps img2.ps img3.ps img4.ps img5.ps img6.ps img7.ps &
+makeitem.ps makeproj.ps maketarg.ps &
+mnu1.ps mnu2.ps mnu3.ps mnu4.ps mnu5.ps mnu6.ps mnu7.ps mnu8.ps mnu9.ps &
+new.ps &
+newproj.ps &
+nextfile.ps &
+open.ps &
+openproj.ps &
+paste.ps &
+prevfile.ps &
+proftarg.ps &
+redo.ps &
+refind.ps &
+res1.ps res2.ps res3.ps res4.ps res5.ps res6.ps res7.ps res8.ps &
+res9.ps res10.ps res11.ps res12.ps &
+runtarg.ps &
+samptarg.ps &
+save.ps &
+saveproj.ps &
+spy1.ps spy2.ps spy5.ps spy6.ps spy8.ps spy9.ps spy10.ps spy11.ps spy13.ps &
+str1.ps str2.ps str3.ps str4.ps str5.ps str6.ps str7.ps str8.ps &
+undo.ps &
+vi0.ps vi1.ps vi2.ps vi3.ps vi4.ps vi5.ps vi6.ps vi7.ps vi8.ps &
+vi9.ps vi10.ps vi11.ps vi12.ps &
+wprof01.ps wprof02.ps wprof03.ps wprof04.ps wprof05.ps wprof06.ps &
+wprof07.ps wprof08.ps &
+wzm1.ps wzm2.ps
+
+all: $(psfiles)

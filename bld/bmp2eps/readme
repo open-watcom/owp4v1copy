@@ -1,0 +1,15 @@
+This is a proof-of-concept(!) bmp2eps tool. Based on GPLed bmeps tool with
+most of it guts ripped out and replaced with a BMP reading routines.
+
+The code is ugly and incomplete - no error checking on the BMP data is
+being done! The code is likely missing some features and won't parse all
+BMP files properly; it can however process many 4-bit, 8-bit and 24-bit
+BMPs.
+
+The 'convert' makefile can be used for quick test conversion of BMP GUI
+tools screenshots (must have bmp2eps in PATH).
+
+To get help, run 'bmp2eps --help'. The '-c' switch can be used to produce
+color images. The '-e a' can be used to specify uncompressed ASCII-Hex
+encoding. The default is to use RLE compression and ASCII-85 encoding,
+resulting in much smaller files.

@@ -1,0 +1,19 @@
+proj_name = bmp2eps
+bmp2eps_autodepends = .autodepend
+
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+inc_dirs = ../h
+
+.c: ../c
+
+objs =                  &
+        bmeps.obj       &
+        bmepsm.obj      &
+        bmepsoe.obj     &
+        bmpeps.obj
+
+$(proj_name).exe : $(objs)
+        $(linker) option quiet, map $(lflags) name $^. file { $< }
