@@ -1,4 +1,8 @@
-#pmake: all build cpu_i86 os_win
+#pmake: build cpu_i86 os_win
+
+host_cpu = i86
+host_os  = win
+
 op_sys=windows dll libfile libentry.obj
 os=windows
 ccopt = -zw -ml -zu -bd -d__DLL__
