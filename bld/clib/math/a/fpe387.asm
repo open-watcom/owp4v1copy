@@ -24,15 +24,11 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  Connect/disconnect 80x87 interrupt handler.
 ;*
 ;*****************************************************************************
 
 
-;
-; FPE387        : connect/disconnect 80x87 interrupt handler
-;
 .8087
 .386p
 
@@ -45,10 +41,6 @@ include extender.inc
         xref    __Phar_hook_fini_       ; restore interupts for Pharlap
         xref    __DOS4G_hook_init_      ; setup interupts for Rational
         xref    __DOS4G_hook_fini_      ; restore interupts for Rational
-        xref    __Ergo_hook_init_       ; setup interupts for Ergo
-        xref    __Ergo_hook_fini_       ; restore interupts for Ergo
-        xref    __Intel_hook_init_
-        xref    __Intel_hook_fini_
 
         modstart        fpe387
 
@@ -82,18 +74,10 @@ defp    __Init_FPE_handler
         push    EDX                     ; ...
         push    ES                      ; ...
         push    DS                      ; ...
-        _guess                          ; guess: Ergo OS/386
-          cmp   byte ptr _Extender,X_ERGO ; - quit if not OS/386 from Ergo
-          _quif ne                      ; - ...
-          call __Ergo_hook_init_        ; - setup interupt vector
-        _admit                          ; guess: Rational DOS/4G
+        _guess                          ; guess: Rational DOS/4G
           cmp   byte ptr _Extender,X_RATIONAL ; - quit if not DOS/4G
           _quif ne                      ; - ...
           call __DOS4G_hook_init_       ; - setup interupt vector
-        _admit                          ; guess: Intel Code Builder
-          cmp   byte ptr _Extender,X_INTEL ; - quit if not Code Builder
-          _quif ne                      ; - ...
-          call __Intel_hook_init_       ; - setup interupt vector
         _admit                          ; admit: Pharlap
           call __Phar_hook_init_        ; - setup interupt vector
         _endguess                       ; endguess
@@ -125,18 +109,10 @@ defp    __Fini_FPE_handler
         fldcw   word ptr [ESP]          ; ...
         fwait                           ; ...
         add     ESP,4                   ; remove temporary
-        _guess                          ; guess: Ergo OS/386
-          cmp   byte ptr _Extender,X_ERGO ; quit if not OS/386 from Ergo
-          _quif ne                      ; - ...
-          call __Ergo_hook_fini_        ; - restore int vector
-        _admit                          ; guess: Rational DOS/4G
+        _guess                          ; guess: Rational DOS/4G
           cmp byte ptr _Extender,X_RATIONAL ; - quit if not DOS/4G
           _quif ne                      ; - ...
           call __DOS4G_hook_fini_       ; - restore int vector
-        _admit                          ; guess: Intel Code Builder
-          cmp byte ptr _Extender,X_INTEL ; quit if not Code Builder
-          _quif ne                      ; - ...
-          call __Intel_hook_fini_       ; - restore int vector
         _admit                          ; admit: Pharlap
           call __Phar_hook_fini_        ; - restore int vector
         _endguess                       ; endguess
