@@ -22,9 +22,11 @@ c_dirs = $(vi_dir)/c;$(c_dirs_root);$(vi_dir)/ui
 !endif
 
 .c : $(c_dirs)
-
 .asm : $(c_dirs)
 
+!ifdef vroomed
+extra_c_flags_int = -zu
+!endif
 
 !ifeq vi_trmem 1
 extra_c_flags_trmem = -dTRMEM
@@ -45,7 +47,6 @@ extra_c_flags_i86_win = -fpc -zW -2 -zc
 
 extra_c_flags_i86 = $(extra_c_flags_i86_$(host_OS))
 
-
 !ifdef curses
 extra_c_flags_386_dos = -D__PHAR__ -D__CURSES__
 !else
@@ -62,25 +63,6 @@ extra_c_flags_386 = $(extra_c_flags_386_$(host_OS))
 
 extra_c_flags = $(extra_c_flags_trmem) $(extra_c_flags_debug) -DNOUSE3D=1 -ai
 
-.c.obj:
-        $(cc) $(cflags) $(extra_c_flags_$[&) $[@ -fo=.obj
-.c.ybj:
-        $(cc) $(cflags) $(extra_c_flags_$[&) $[@ -fo=.ybj
-
-!ifdef vroomed
-.c.ubj:
-        $(cc) -zu $(cflags) $(extra_c_flags_$[&) $[@ -fo=.ubj
-!else
-.c.ubj:
-        $(cc) $(cflags) $(extra_c_flags_$[&) $[@ -fo=.ubj
-!endif
-
-
-#!ifeq host_CPU 386
-#wasm_flags = -3
-#!endif
-#.asm.obj:
-#        wasm $(wasm_flags) $[*
 
 !ifdef __LINUX__
 .ctl.ch:

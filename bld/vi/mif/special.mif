@@ -8,33 +8,31 @@ rcstr.gh : rcstrmsg.gh
 rcstrmsg.gh : $(vi_dir)/vi.msg $(msgfiles)
         $(bld_cc) -p -i="$(sdk_dir)/misc" -zk0 $[@ -fo=$^@
 
-setfs.ybj : setfs.c setfs.ch setfs.dh
+setfs.obj : setfs.c setfs.ch setfs.dh
 setfs.ch : setfs.ctl
 setfs.dh : setfs.dyn
 
-setgen.ybj : setgen.c setgen.ch setgen.dh
+setgen.obj : setgen.c setgen.ch setgen.dh
 setgen.ch : setgen.ctl
 setgen.dh : setgen.dyn
 
-setscr.ybj : setscr.c setscr.ch
+setscr.obj : setscr.c setscr.ch
 setscr.ch : setscr.ctl
 
 !endif
 
-ideactiv.ybj : $(viper_dir)/ideact/ideactiv.c
-        $(cc) $[@ -D__ISVI__ $(cflags) -fo=ideactiv.ybj
-getopt.ybj : $(posix_dir)/misc/getopt.c
-        $(cc) $[@ -D__ISVI__ $(cflags) -fo=getopt.ybj
-regexp.obj : $(posix_dir)/misc/regexp.c
-        $(cc) $[@ -DREGEXP -fi=rxsupp.h $(cflags) -fo=regexp.obj
+extra_c_flags_ideactiv = -D__ISVI__
+extra_c_flags_getopt = -D__ISVI__
+extra_c_flags_regexp = -DREGEXP -fi=rxsupp.h
+
+.c : $(viper_dir)/ideact
+.c : $(posix_dir)/misc
 
 !ifndef on_build_machine
 !ifeq vi_trmem 1
 !ifneq host_CPU axp
 extra_c_flags += -of+
 !endif
-
-trmem.ybj : $(trmem_dir)/trmem.c
-trmemcvr.ybj : $(trmem_dir)/trmemcvr.c
+.c : $(trmem_dir)
 !endif
 !endif

@@ -17,41 +17,41 @@ objtime = fcbems.obj fcbxms.obj fcbdisk.obj fcbxmem.obj &
         status.obj expr.obj op.obj &
         lang.obj sstyle.obj sstyle_f.obj sstyle_c.obj sstyle_h.obj rcs.obj
 
-objinit = init.obj getopt.ybj
+objinit = init.obj getopt.obj
 
-objsizeroot = name.ybj key.ybj &
-        globals.ybj pdata.ybj &
-        bind.ybj exdata.ybj srcdata.ybj
+objsizeroot = name.obj key.obj &
+        globals.obj pdata.obj &
+        bind.obj exdata.obj srcdata.obj
 
-objsize = xmem.ybj fcbswap.ybj clset.ybj hist.ybj samefile.ybj &
-        dirdisp.ybj expandfn.ybj getdir.ybj &
-        mapkey.ybj editmv.ybj &
-        linenum.ybj linework.ybj &
-        undoclne.ybj &
-        fcbdmp.ybj &
-        file.ybj filemove.ybj filelast.ybj &
-        fini.ybj autosave.ybj &
-        srchook.ybj srcgoto.ybj srcif.ybj &
-        srcfile.ybj srccs.ybj srcexpr.ybj srcvar.ybj srcinp.ybj &
-        srcassgn.ybj srcexpnd.ybj srcnextw.ybj &
-        filestk.ybj dotmode.ybj &
-        source.ybj mark.ybj &
-        move.ybj change.ybj delete.ybj &
-        linefind.ybj &
-        dat.ybj parsecl.ybj &
-        findcmd.ybj savebuf.ybj error.ybj cmdline.ybj editdc.ybj &
-        word.ybj hide.ybj &
-        editins.ybj getautoi.ybj &
-        replace.ybj dir.ybj select.ybj &
-        io.ybj clread.ybj cledit.ybj misc.ybj &
-        tags.ybj alias.ybj bnddata.ybj abandon.ybj &
-        filter.ybj ex.ybj exappend.ybj &
-        wingen.ybj printf.ybj getspcmd.ybj &
-        selrgn.ybj cstatus.ybj help.ybj &
-        readstr.ybj tab_e_c.ybj gencfg.ybj fts.ybj
+objsize = xmem.obj fcbswap.obj clset.obj hist.obj samefile.obj &
+        dirdisp.obj expandfn.obj getdir.obj &
+        mapkey.obj editmv.obj &
+        linenum.obj linework.obj &
+        undoclne.obj &
+        fcbdmp.obj &
+        file.obj filemove.obj filelast.obj &
+        fini.obj autosave.obj &
+        srchook.obj srcgoto.obj srcif.obj &
+        srcfile.obj srccs.obj srcexpr.obj srcvar.obj srcinp.obj &
+        srcassgn.obj srcexpnd.obj srcnextw.obj &
+        filestk.obj dotmode.obj &
+        source.obj mark.obj &
+        move.obj change.obj delete.obj &
+        linefind.obj &
+        dat.obj parsecl.obj &
+        findcmd.obj savebuf.obj error.obj cmdline.obj editdc.obj &
+        word.obj hide.obj &
+        editins.obj getautoi.obj &
+        replace.obj dir.obj select.obj &
+        io.obj clread.obj cledit.obj misc.obj &
+        tags.obj alias.obj bnddata.obj abandon.obj &
+        filter.obj ex.obj exappend.obj &
+        wingen.obj printf.obj getspcmd.obj &
+        selrgn.obj cstatus.obj help.obj &
+        readstr.obj tab_e_c.obj gencfg.obj fts.obj
 !ifndef on_build_machine
 !ifeq vi_trmem 1
-extraobjs += trmem.ybj trmemcvr.ybj
+extraobjs += trmem.obj trmemcvr.obj
 !endif
 !endif
 

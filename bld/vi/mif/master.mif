@@ -1,16 +1,10 @@
 proj_name = vi
 
-.EXTENSIONS:
-.EXTENSIONS: .exe
-.EXTENSIONS: .obj .ybj .ubj
-.EXTENSIONS: .asm .cpp .c .h
 .EXTENSIONS: .ch .dh
 .EXTENSIONS: .ctl .dyn
 .EXTENSIONS: .vi
-.EXTENSIONS: .mif
 
-.mif : $(mif_path);$(vi_dir)/mif
-!include name.mif
+!include ../mif/name.mif
 
 PROJECT : $(name) .symbolic
 
@@ -19,13 +13,13 @@ PROJECT : $(name) .symbolic
 !include defrule.mif
 
 !ifndef prebuild
-!include rcsdll.mif
+!include ../mif/rcsdll.mif
 !endif
-!include include.mif
-!include objects.mif
-!include compile.mif
-!include special.mif
-!include link.mif
+!include ../mif/include.mif
+!include ../mif/objects.mif
+!include ../mif/compile.mif
+!include ../mif/special.mif
+!include ../mif/link.mif
 
 .h : $(vi_dir)/h
 .ctl : $(vi_dir)/ctl
@@ -55,9 +49,8 @@ final_flags = end
 bindextra = -d$(vi_dir)\dat\winbind.dat
 !endif
 
-$(name) : $(special) $(objs) $(objsroot) $(objinit) $(other) $(videps) master.mif $(mifdep)
-        $(cc) $(cflags) version.c -fo=.ybj
-        $(linker) $(lflags) name $(lname) file version.ybj file {$(objsroot)} $(start_flags) file {$(objinit)} $(more_flags) file {$(objs)} $(final_flags) $(rcsdll)
+$(name) : $(special) $(objs) $(objsroot) $(objinit) $(other) $(videps) $(mifdep) version.obj
+        $(linker) $(lflags) name $(lname) file version.obj file {$(objsroot)} $(start_flags) file {$(objinit)} $(more_flags) file {$(objs)} $(final_flags) $(rcsdll)
 !ifeq host_os dos
 !ifeq host_cpu 386
 #        $(tnt_dir)\bin\rebind $(tnt_dir)\bin\rtk\tntb.exe $(ED).exp -exe $(name)
@@ -78,7 +71,7 @@ $(name) : $(special) $(objs) $(objsroot) $(objinit) $(other) $(videps) master.mi
 !else
 !ifndef prebuild
         set edpath=$(vi_dir)/dat
-    # run the right version of edbind depending on host platform
+# run the right version of edbind depending on host platform
 !ifdef __OS2__
         $(vi_dir)\bind\os2386\edbind $(bindextra) -q $(name)
 !else ifdef __MSDOS__
@@ -99,7 +92,6 @@ tags : ../win/tags .SYMBOLIC
     ctags @vi.tag -f$^@
 !endif
 !endif
-
 
 clean: .SYMBOLIC .EXPLICIT
         rm -f *.?bj *.o 
