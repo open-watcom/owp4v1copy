@@ -1224,6 +1224,10 @@ static MACRO_TOKEN *BuildMTokenList( byte __FAR *p, MACRO_ARG *macro_parms )
             nested->substituting_parms = 1;             /* 09-nov-93 */
             if( macro_parms ) {
                 mtok = BuildMTokenList( macro_parms[buf[0]].arg, NULL );
+                if( mtok == NULL ) {    // deal with empty arguments
+                    mtok = BuildAToken( "" );
+                    mtok->token = T_UNEXPANDABLE_ID;
+                }
             } else {
                 mtok = BuildAToken( "" );
                 mtok->token = T_WHITE_SPACE;
