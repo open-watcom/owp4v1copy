@@ -191,6 +191,7 @@ positive_tests = &
     pp28.$(ext) &
     pp29.$(ext) &
     pp30.$(ext) &
+    pp31.$(ext) &
     quest01.$(ext) &
     quest02.$(ext) &
     ret01.$(ext) &
