@@ -30,6 +30,3 @@ clean : .SYMBOLIC
 # useful to delete all windows .gid
  @if exist *.gid @attrib -h *.gid
  @if exist *.gid erase *.gid
-
-#   erase $(WHELP)\whelp.cop
-#   erase $(WHELP)\whelpdrv.cop

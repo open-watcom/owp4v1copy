@@ -1,4 +1,4 @@
-wgml = $(%gml_root)\wgml
+wgml = $(%gml_path)\wgml
 
 .before
     set gmlinc=pict;$(%doc_root)\doc\gml

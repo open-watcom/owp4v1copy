@@ -5,7 +5,7 @@ lang_root = $(%lang)
 # librarian=$(lang_root)\binnt\wlib
 build_dir = $(%devdir)\build
 dev_dir = $(%devdir)
-guitools_dir = d:\online\hlp
+guitools_dir = $(%devdir)\online\hlp
 mif_path = $(build_dir)\local;$(build_dir)\mif
 .mif: $(mif_path)
 !include cdirs.mif

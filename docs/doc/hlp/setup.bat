@@ -1,4 +1,4 @@
-set GML_ROOT=%doc_root%\gml\dos
+set GML_PATH=%doc_root%\gml\dos
 set GMLLIB=%doc_root%\gml\syslib
 set WHELP=%doc_root%\doc\whelp
 set TEMP2=%TEMP%

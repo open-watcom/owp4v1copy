@@ -27,30 +27,18 @@ company=Open Watcom
 # There should be settings for supported building platforms
 #
 !ifeq %build_platform dos386
-pgm_wgml=$(%doc_root)\gml\dos\wgml
-pgm_whpcvt=whpcvt
+gml_path=$(%doc_root)\gml\dos\wgml
 pgm_HCDOS=$(%doc_root)\cmds\hcdos
-pgm_WIN31HC=$(%doc_root)\cmds\hcp
-pgm_WAT31HC=whc
-pgm_WIN95HC=$(%doc_root)\cmds\hcrtf
 OS2_TK=dummy
 
 !else ifeq %build_platform os2386
-pgm_wgml=$(%doc_root)\gml\os2\wgml
-pgm_whpcvt=whpcvt
+gml_path=$(%doc_root)\gml\os2\wgml
 pgm_HCDOS=$(%doc_root)\cmds\hcdosos2
-pgm_WAT31HC=whc
-pgm_WIN31HC=$(%doc_root)\cmds\hcp
-pgm_WIN95HC=$(%doc_root)\cmds\hcrtf
 OS2_TK=dummy
 
 !else ifeq %build_platform nt386
-pgm_wgml=$(%doc_root)\gml\dos\wgml
-pgm_whpcvt=whpcvt
+gml_path=$(%doc_root)\gml\dos\wgml
 pgm_HCDOS=$(%doc_root)\cmds\hcdos32
-pgm_WAT31HC=whc
-pgm_WIN31HC=$(%doc_root)\cmds\hcp
-pgm_WIN95HC=$(%doc_root)\cmds\hcrtf
 OS2_TK=dummy
 
 !else
@@ -186,7 +174,7 @@ whpcvt_opts =-rtf -i -t -e -lk -b -hh -k -up -hn
 .OPTIMIZE
 
 all : $(hbook).hlp $(hbook).h $(hbook).cnt .SYMBOLIC
-    @copy $(hbook).h $(%hlpdir)\win95 > nul
+    @copy $(hbook).h $(guitools_dir)\win95 > nul
 
 $(hbook).hlp : $(hbook).hpj $(hbook).rtf $(hbook).hh $(hbook).cnt
     $(%WIN95HC) -xn $*.hpj
@@ -221,7 +209,7 @@ $(hbook).rtf $(hbook).cn1 $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs)
 .EXTENSIONS: .hlp .hpj .hh .h .rtf
 
 all : $(hbook).hlp $(hbook).h .SYMBOLIC
-    @copy $(hbook).h $(%hlpdir)\win > nul
+    @copy $(hbook).h $(guitools_dir)\win > nul
 
 $(hbook).hlp : $(hbook).hpj $(hbook).rtf $(hbook).hh
 !ifeq hbook c_readme
@@ -255,10 +243,10 @@ $(hbook).rtf $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs)
 .EXTENSIONS: .ihp .ib .h
 
 all : $(hbook).ihp $(hbook).h .SYMBOLIC
-    @copy $(hbook).h $(%hlpdir)\ib > nul
+    @copy $(hbook).h $(guitools_dir)\ib > nul
 
 $(hbook).ihp : $(hbook).ib $(hbook).h
-    $(%HCDOS) -h 25 -w 80 $(hbook).ib $(hbook).ihp
+    $(pgm_HCDOS) -h 25 -w 80 $(hbook).ib $(hbook).ihp
 
 $(hbook).ib $(hbook).h : $(book_objs) $(proj_objs)
     @%make compile_gml_to_xxx
@@ -297,7 +285,7 @@ all : $(hbook).ps .SYMBOLIC
 
 $(hbook).ps : $(book_objs) $(proj_objs)
         @set GMLINC=$(book_incs);$(gml_incs);$(whelp_incs)
-        -$(%GML_ROOT)\wgml $(book_src) ($(wgml_opts)
+        -$(%gml_path)\wgml $(book_src) ($(wgml_opts)
 
 
 !else ifeq dotarget os2
@@ -310,7 +298,7 @@ $(hbook).ps : $(book_objs) $(proj_objs)
 .EXTENSIONS: .hlp .inf .ipf .h
 
 all : $(hbook).inf $(hbook).hlp $(hbook).h .SYMBOLIC
-    @copy $(hbook).h $(%hlpdir)\os2 > nul
+    @copy $(hbook).h $(guitools_dir)\os2 > nul
 
 $(hbook).inf : $(hbook).ipf
     set ipfcartwork=$(book_incs)
@@ -359,12 +347,12 @@ compile_gml_to_xxx : .PROCEDURE
     @if not exist $*.kw @%create $*.kw
     @set GMLLIB=.\;$(whelp_incs);$(%GMLLIB)
     @set GMLINC=.\;$(hlp_incs);$(whelp_incs);$(book_incs);$(gml_incs)
-    -$(%GML_ROOT)\wgml $(book_src) ($(wgml_opts)
+    -$(gml_path)\wgml $(book_src) ($(wgml_opts)
     @%create whpcvt.dat
     @for %p in ( $(whpcvt_opts_ext) ) do @echo %p >> whpcvt.dat
     whpcvt $(whpcvt_opts) -@ whpcvt.dat $*.ptf
     @%create sysusr02.gml
-    -$(%GML_ROOT)\wgml $(book_src) ($(wgml_opts)
+    -$(gml_path)\wgml $(book_src) ($(wgml_opts)
     @if exist $*.cn1 @erase $*.cn1
     @ren sysusr03.gml $*.cn1
     @if exist $*.h @erase $*.h

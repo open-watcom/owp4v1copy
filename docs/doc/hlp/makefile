@@ -289,8 +289,8 @@ book_winhc=whc
 multi_chap=false
 !endif
 
-!ifndef GML_ROOT
-GML_ROOT = $(%GML_ROOT)
+!ifndef GML_PATH
+GML_PATH = $(%GML_PATH)
 !endif
 !ifndef GMLLIB
 GMLLIB = $(%GMLLIB)
@@ -341,15 +341,15 @@ $(hbook).whp : $(rootdir)\makefile $(WHELP)\whelp.cop $(WHELP)\whelpdrv.cop
     @%append $(hbook).tbl
     @%append $(hbook).kw
 !ifndef %OS2_TK
-    -$(GML_ROOT)\wgml $(book_name) (pass 2 output (t:2200)$(hbook).whp file whelp.opt $(gml_opts)
+    -$(GML_PATH)\wgml $(book_name) (pass 2 output (t:2200)$(hbook).whp file whelp.opt $(gml_opts)
 !else
-    -$(GML_ROOT)\wgml $(book_name) (pass 2 output (t:2200)$(hbook).whp file whelp.opt $(gml_opts) | tee $(hbook).log
+    -$(GML_PATH)\wgml $(book_name) (pass 2 output (t:2200)$(hbook).whp file whelp.opt $(gml_opts) | tee $(hbook).log
 !endif
     copy sysusr01.gml $(hbook).mix
     del  sysusr01.gml
 
 .pcd.cop :
     cd $(WHELP)
-    -$(GML_ROOT)\gendev $[*.pcd
+    -$(GML_PATH)\gendev $[*.pcd
     cd $(projdir)
 

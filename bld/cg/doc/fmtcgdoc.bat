@@ -1,2 +1,2 @@
 @echo off
-%gml_root%\wgml cgdoc.gml (file cgdps
+%gml_path%\wgml cgdoc.gml (file cgdps

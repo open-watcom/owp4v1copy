@@ -63,11 +63,9 @@ set copycmd=/y
 
 REM Documentation related variables
 set doc_root=%owroot%\docs
-set whelp=%doc_root%\doc\whelp
-set gml_root=%doc_root%\gml\dos
+set gml_path=%doc_root%\gml\dos
 set gmllib=%doc_root%\gml\syslib
 set hcdos=%doc_root%\cmds\hcdos
-set hlpdir=%devdir%\online\hlp
 set win95hc=hcrtf
 set wat31hc=whc
 set win31hc=hc31

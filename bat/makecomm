@@ -362,10 +362,9 @@ obj_drv = $(build_root)
 # for creating on-line help
 #
 whelp=$(online_dir)\whelp
-whpcvt=$(tools_root)
 langbk=$(online_dir)\hlp;$(online_dir)\cg;$(online_dir)\gml
-gml_root=$(tools_root)\gml
-gmllib=$(tools_root)\gml\syslib
+gml_root=$(doc_root)\gml
+gmllib=$(doc_root)\gml\syslib
 windev_dir=$(tools_root)\windev
 
 dwarf_dir = $(build_root)\dwarf
