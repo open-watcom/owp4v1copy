@@ -114,7 +114,7 @@ $(name).lib : eraseall.obj _guimsgs.gh $(objs) $(extra_objs) $(sysobjs) $(__make
 !ifdef ctl3d_lib
         @%append tmp.lbc +$(ctl3d_lib)
 !endif
-        $(librarian) $(wlib_opt) -n -b -q $^@ @tmp.lbc
+        $(librarian) $(wlib_opt) -n -b $^@ @tmp.lbc
         @rm -f tmp.lbc
 
 ./mkstr.exe: gui.msg ../../c/mkstr.c
