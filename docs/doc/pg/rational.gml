@@ -35,9 +35,10 @@ PO Box 20050
 Fountain Hills, Arizona
 U.S.A  85269-0050
 
-Telephone:      1.480.767.8868
-Fax:            1.480.767.8709
-Internet:       info@tenberry.com
+WWW:        http://www.tenberry.com/dos4g/
+Email:      info@tenberry.com
+Phone:      1.480.767.8868
+Fax:        1.480.767.8709
 .illust end
 .np
 Programs developed to use the restricted version of &dos4g which is
