@@ -173,8 +173,11 @@ extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
         float   "fstp tbyte ptr [ebx]"\
                 parm caller [eax] [edx] [ebx];
   #pragma aux   __FLDC = \
-        float   "fld tbyte ptr [eax]"\
+                /* ST(1) */\
         float   "fld tbyte ptr [edx]"\
+                /* ST(0) */\
+        float   "fld tbyte ptr [eax]"\
+                /* compare ST(0) with ST(1) */\
         float   "fcompp"\
         float   "fstsw  ax"\
                 "sahf"\
@@ -312,10 +315,13 @@ extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
                 parm caller [ax] [dx] [bx];
   #pragma aux   __FLDC = \
                 "push bp"\
-                "mov  bp,ax"\
-        float   "fld  tbyte ptr [bp]"\
                 "mov  bp,dx"\
+                /* ST(1) */\
         float   "fld  tbyte ptr [bp]"\
+                "mov  bp,ax"\
+                /* ST(0) */\
+        float   "fld  tbyte ptr [bp]"\
+                /* compare ST(0) with ST(1) */\
         float   "fcompp"\
                 "push ax"\
                 "mov  bp,sp"\
