@@ -1266,6 +1266,7 @@ TYPEPTR FuncNode( TYPEPTR return_typ, int flag, TYPEPTR *parm_types )
         }
     }
     typ = TypeNode( TYPE_FUNCTION, return_typ );
+    typ->type_flags = flag;
     typ->u.parms = parm_types;
     typ->next_type = FuncTypeHead[ index ];
     FuncTypeHead[ index ] = typ;

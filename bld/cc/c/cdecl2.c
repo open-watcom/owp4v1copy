@@ -892,8 +892,9 @@ local TYPEPTR Pointer( TYPEPTR ptr_typ, struct mod_info *info )
 
 local void ParseDeclPart2( TYPEPTR *typep, TYPEPTR typ )
 {
-    TYPEPTR     decl1;
-    TYPEPTR     decl2;
+    TYPEPTR         decl1;
+    TYPEPTR         decl2;
+    type_modifiers  mod = FLAG_NONE;
 
     decl1 = *typep;
     if( decl1 != NULL ) {
@@ -901,7 +902,10 @@ local void ParseDeclPart2( TYPEPTR *typep, TYPEPTR typ )
             decl1 = decl1->object;
         }
     }
-    decl2 = DeclPart2( typ, FLAG_NONE );
+    // Pass on pointer flags
+    if( ( decl1 != NULL ) && ( decl1->decl_type == TYPE_POINTER ) )
+        mod = decl1->u.p.decl_flags;
+    decl2 = DeclPart2( typ, mod );
     if( decl1 == NULL ) {
         *typep = decl2;
     } else {
@@ -1019,11 +1023,6 @@ void Declarator( SYMPTR sym, type_modifiers mod, TYPEPTR typ, decl_state state )
             if( info.segment != 0 ) {           // __based( __segname("X"))
                 SetFuncSegment( sym, info.segment );
             }
-        }
-        // Keep track of calling convention
-        if( ( typ->decl_type == TYPE_FUNCTION ) ||
-            ( typ->decl_type == TYPE_POINTER  ) ) {
-            typ->type_flags |= info.modifier;
         }
     }
 }
