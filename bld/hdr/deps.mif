@@ -69,6 +69,7 @@ setjmpex.h      : ../watcom/setjmpex.mh ../readonly.sp ../cplusepi.sp ../cpluspr
 share.h         : ../watcom/share.mh ../readonly.sp ../crwat.sp
 signal.h        : $(signal_deps)
 stdarg.h        : $(stdarg_deps)
+stdbool.h       : ../watcom/stdbool.mh ../readonly.sp ../crwat.sp
 stddef.h        : $(stddef_deps)
 stdexcep.h      : ../watcom/stdexcep.mh ../readonly.sp ../crwat.sp
 stdint.h        : ../watcom/stdint.mh ../readonly.sp ../crwat.sp

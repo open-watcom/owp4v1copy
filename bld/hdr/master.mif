@@ -51,6 +51,7 @@ common = &
         share.h &
         signal.h &
         stdarg.h &
+        stdbool.h &
         stddef.h &
         stdexcep.h &
         stdint.h &

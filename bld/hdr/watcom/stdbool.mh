@@ -1,0 +1,19 @@
+/***************************************************************************
+ * FILE: stdbool.h (Macros to simulate the 'bool' type in C)
+ *
+:include crwat.sp
+ *
+ * Description: This header is part of the C99 standard library. It
+ *              provides a way for the programmer, at his/her option
+ *              to introduce the type 'bool' into a C program.
+ ***************************************************************************/
+#ifndef _STDBOOL_H_INCLUDED
+#define _STDBOOL_H_INCLUDED
+:include readonly.sp
+
+#define bool  int  /* Should really be _Bool. Not currently implememtned. */
+#define true  1
+#define false 0
+#define __bool_true_false_are_defined 1
+
+#endif
