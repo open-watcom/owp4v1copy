@@ -6,10 +6,14 @@ _TEXT		SEGMENT	DWORD PUBLIC USE32 'CODE'
     jmp         dword ptr 2[bx]
     xor         ax,ax
 L$1:
-    jmp         L$4
+    nop         
 L$2:
-    xor         ax,ax
+    nop         
+    nop         
+    nop         
 L$3:
+    jmp         L$4
+    xor         ax,ax
 L$4:
     jmp         L$2
     xor         ax,ax
@@ -28,9 +32,13 @@ L$5:
     call        dword ptr 2[bx]
     xor         ax,ax
 L$6:
-    call        near ptr L$9
+    nop         
 L$7:
+    nop         
+    nop         
+    nop         
 L$8:
+    call        near ptr L$9
     xor         ax,ax
 L$9:
     call        near ptr L$7

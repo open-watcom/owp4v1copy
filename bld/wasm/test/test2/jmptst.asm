@@ -3,7 +3,11 @@
 .code
         jmp dword ptr [bx]+2
         xor ax, ax
-foo:    jmp bar
+foo:    nop
+        nop
+        nop
+        nop
+        jmp bar
         xor ax, ax
 bar:    jmp foo+1
         xor ax, ax
@@ -21,7 +25,11 @@ bar:    jmp foo+1
 late:
         call dword ptr [bx]+2
         xor ax, ax
-foo2:   call bar2
+foo2:   nop
+        nop
+        nop
+        nop
+        call bar2
         xor ax, ax
 bar2:   call foo2+1
         xor ax, ax

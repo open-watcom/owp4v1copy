@@ -37,6 +37,8 @@ _code16 segment use16 'CODE'
 	nop
 c16ln label near
 c16lf label far
+	nop
+	nop
 
 jmp word ptr [bx]
 jmp word ptr [bx]+2
@@ -163,6 +165,8 @@ _code32 segment use32 'CODE'
 	nop
 c32ln label near
 c32lf label far
+	nop
+	nop
 
 jmp word ptr [bx]
 jmp word ptr [bx]+2

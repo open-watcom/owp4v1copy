@@ -50,8 +50,10 @@ _code16		SEGMENT	PARA PRIVATE USE16 'CODE'
     nop         
     nop         
 L$15:
-    jmp         word ptr [bx]
+    nop         
+    nop         
 L$16:
+    jmp         word ptr [bx]
     jmp         word ptr 2[bx]
     jmp         dword ptr [bx]
     jmp         dword ptr 2[bx]
@@ -120,8 +122,10 @@ _code32		SEGMENT	PARA PRIVATE USE32 'CODE'
     nop         
     nop         
 L$17:
-    jmp         word ptr [bx]
+    nop         
+    nop         
 L$18:
+    jmp         word ptr [bx]
     jmp         word ptr 2[bx]
     jmp         dword ptr [bx]
     jmp         dword ptr 2[bx]
