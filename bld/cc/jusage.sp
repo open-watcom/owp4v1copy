@@ -216,6 +216,7 @@ Options:
 -zku=<num>    指定したコードページのUNICODE変換テーブルをロードします
 -zl	      デフォルト･ライブラリ情報を削除します
 -zld	      ファイル依存情報を削除します
+-zls	      remove automatically inserted symbols
 -zm	      各関数を別のセグメントに入れます
 -zp=<num>     構造体メンバーを{1,2,4,8,16}に整列してパックします
 -zpw	      構造体にパディングが追加されたときに警告します

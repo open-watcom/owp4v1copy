@@ -233,6 +233,12 @@ static void setFinalTargetSystem( OPT_STORAGE *data, char *target_name )
     } else if( 0 == strcmp( target_name, "NETWARE" ) ) {
         TargetSystem = TS_NETWARE;
         PreDefineStringMacro( "__NETWARE_386__" );
+    } else if( 0 == strcmp( target_name, "NETWARE5" ) ) {
+        TargetSystem = TS_NETWARE5;
+        PreDefineStringMacro( "__NETWARE_386__" );
+        PreDefineStringMacro( "__NETWARE__" );
+        /* can get away with this because "netware5" is longer */
+        strcpy( target_name, "NETWARE" );
     } else if( 0 == strcmp( target_name, "NT" ) ) {
         PreDefineStringMacro( "_WIN32" );
         TargetSystem = TS_NT;
@@ -258,9 +264,14 @@ static void setFinalTargetSystem( OPT_STORAGE *data, char *target_name )
     strcat( buff, target_name );
     strcat( buff, "__" );
     PreDefineStringMacro( buff );
+
+    /*
+    //  Note the hacks for windows/cheap_windows & netware/netware5, above.
+    */
     strcpy( buff, target_name );
     strcat( buff, "_INCLUDE" );
     MergeIncludeFromEnv( buff );
+
     MergeIncludeFromEnv( "INCLUDE" );
     CMemFree( target_name );
     if( data->bm ) {
@@ -1013,6 +1024,8 @@ void CmdSysAnalyse( OPT_STORAGE *data )
                 mmc |= MMC_WIN;
             } else if( strcmp( target_name, "NETWARE" ) == 0 ) {
                 mmc |= MMC_NETWARE;
+            } else if( strcmp( target_name, "NETWARE5" ) == 0 ) {
+                mmc |= MMC_NETWARE;
             }
         }
         CMemFree( target );
@@ -1122,8 +1135,21 @@ void CmdSysAnalyse( OPT_STORAGE *data )
     if( data->fpd ) {
         TargetSwitches |= P5_DIVIDE_CHECK;
     }
-    if( data->fpr || ( mmc & MMC_NETWARE )) {
-        Stack87 = 4;
+    /*
+    //  Changed the ordering.
+    //      Always set Stack87 if fpr switch is used.
+    //      If fpr switch is not present but are using NetWare then set Stack87
+    //      unless the target is NetWare 5 or above.
+    */
+    if( data->fpr) {
+            Stack87 = 4;
+    }
+    else{
+        if( mmc & MMC_NETWARE ) {
+            if(TS_NETWARE5 != TargetSystem){
+                Stack87 = 4;    /* no fpr for netware 5 */
+            }
+        }
     }
     if( data->g ) {
         SetStringOption( &GenCodeGroup, &(data->g_value) );

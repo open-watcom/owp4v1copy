@@ -66,23 +66,60 @@ char    *OptParm;
 #define PEGGED( r )     unsigned peg_##r##s_used        : 1;    \
                         unsigned peg_##r##s_on          : 1
 
-static struct {
+static struct 
+{
     char        *sys_name;
-    enum {
-        SW_CPU_DEF, SW_CPU0, SW_CPU1, SW_CPU2, SW_CPU3, SW_CPU4, SW_CPU5, SW_CPU6
-    }           cpu;
-    enum {
-        SW_FPU_DEF, SW_FPU0, SW_FPU3, SW_FPU5, SW_FPU6
-    }           fpu;
-    enum {
-        SW_FPT_DEF, SW_FPT_CALLS, SW_FPT_EMU, SW_FPT_INLINE
-    }           fpt;
-    enum {
-        SW_M_DEF, SW_MF, SW_MS, SW_MM, SW_MC, SW_ML, SW_MH
-    }           mem;
-    enum {
-        SW_DF_DEF, SW_DF_WATCOM, SW_DF_CV, SW_DF_DWARF, SW_DF_DWARF_A, SW_DF_DWARF_G
-    }           dbg_fmt;
+
+    enum    /* TARGET CPU SUPPORT - Intel defined (AXP/PPC uses CPU0 as default CPU) */
+    {
+        SW_CPU_DEF,     /*  No target CPU specified     */
+        SW_CPU0,        /*  Target 8086/8               */
+        SW_CPU1,        /*  Target 80186/8              */
+        SW_CPU2,        /*  Target 80286                */
+        SW_CPU3,        /*  Target 80386                */
+        SW_CPU4,        /*  Target 80486                */
+        SW_CPU5,        /*  Target Pentium              */
+        SW_CPU6         /*  Target Pentium-Pro          */
+    }cpu;
+    
+    enum    /* TARGET FPU SUPPORT */
+    {
+        SW_FPU_DEF,     /*  No target FPU specified     */
+        SW_FPU0,        /*  Target 8087 co-pro          */
+        SW_FPU3,        /*  Target 80387 co-pro         */
+        SW_FPU5,        /*  Target Pentium int fpu      */
+        SW_FPU6         /*  Target Pentium-Pro int fpu  */
+    }fpu;
+
+    enum    /* FPU CALL TYPES */
+    {
+        SW_FPT_DEF,     /*  No FPU call type specified  */
+        SW_FPT_CALLS,   /*  FPU calls via library       */
+        SW_FPT_EMU,     /*  FPU calls inline & emulated */
+        SW_FPT_INLINE   /*  FPU calls inline            */
+    }fpt;
+
+    enum    /* MEMORY MODELS */
+    {
+        SW_M_DEF,       /*  No memory model specified   */
+        SW_MF,          /*  Flat memory model           */
+        SW_MS,          /*  Small memory model          */
+        SW_MM,          /*  Medium memory model         */
+        SW_MC,          /*  Compact memory model        */
+        SW_ML,          /*  Large memory model          */
+        SW_MH           /*  Huge memory model           */
+    }mem;
+
+    enum    /*  DEBUGGING INFORMATION TYPE */
+    {
+        SW_DF_DEF,      /*  No debug type specified     */
+        SW_DF_WATCOM,   /*  Use Watcom                  */
+        SW_DF_CV,       /*  Use CodeView                */
+        SW_DF_DWARF,    /*  Use DWARF                   */
+        SW_DF_DWARF_A,  /*  Use DWARF + A?              */
+        SW_DF_DWARF_G   /*  Use DWARF + G?              */
+    }dbg_fmt;
+
     PEGGED( d );
     PEGGED( e );
     PEGGED( f );
@@ -106,7 +143,8 @@ local void SetTargName( char *name, unsigned len )
     if( name == NULL || len == 0 ) return;
     SwData.sys_name = CMemAlloc( len + 1 ); /* for NULLCHAR */
     p = SwData.sys_name;
-    while( len != 0 ) {
+    while( len != 0 )
+    {
         *p++ = toupper( *name++ );
         --len;
     }
@@ -151,12 +189,16 @@ local void SetTargSystem()                               /* 07-aug-90 */
 #else
     #error SetTargSystem not configured
 #endif
+
+
     PreDefine_Macro( "__WATCOM_INT64__" );
     PreDefine_Macro( "_INTEGRAL_MAX_BITS=64" );
-    if( SwData.sys_name == NULL ) {
+    if( SwData.sys_name == NULL ) 
+    {
         #if _CPU == 386 || _CPU == 8086
             #if defined( __OSI__ )
-                switch( __OS ) {                        // 11-mar-94
+                switch( __OS ) 
+                {                        // 11-mar-94
                 case OS_DOS:
                 case OS_WIN:
                     _SetConstTarg( "dos" );
@@ -187,48 +229,71 @@ local void SetTargSystem()                               /* 07-aug-90 */
         #else
             #error Target Machine OS not configured
         #endif
-
     }
-    if( strcmp( SwData.sys_name, "DOS" ) == 0 ) {
+
+    if( strcmp( SwData.sys_name, "DOS" ) == 0 ) 
+    {
         TargSys = TS_DOS;
-    } else if( strcmp( SwData.sys_name, "NETWARE" ) == 0 ) {
+    } 
+    else if( strcmp( SwData.sys_name, "NETWARE" ) == 0 ) 
+    {
         TargSys = TS_NETWARE;
-    } else if( strcmp( SwData.sys_name, "NETWARE5" ) == 0 ) {
+    } 
+    else if( strcmp( SwData.sys_name, "NETWARE5" ) == 0 ) 
+    {
         TargSys = TS_NETWARE5;
-    } else if( strcmp( SwData.sys_name, "WINDOWS" ) == 0 ) {
+    } 
+    else if( strcmp( SwData.sys_name, "WINDOWS" ) == 0 ) 
+    {
         TargSys = TS_WINDOWS;
-    } else if( strcmp( SwData.sys_name, "CHEAP_WINDOWS" ) == 0 ) {
+    } 
+    else if( strcmp( SwData.sys_name, "CHEAP_WINDOWS" ) == 0 ) 
+    {
         TargSys = TS_CHEAP_WINDOWS;
-    } else if( strcmp( SwData.sys_name, "NT" ) == 0 ) {
+    } 
+    else if( strcmp( SwData.sys_name, "NT" ) == 0 ) 
+    {
         TargSys = TS_NT;
-    } else {
+    } 
+    else 
+    {
         TargSys = TS_OTHER;
     }
-    switch( TargSys ) {
+
+    switch( TargSys ) 
+    {
     case TS_DOS:
         PreDefine_Macro( "MSDOS" );
         PreDefine_Macro( "_DOS" );
-        break;
+    break;
+
 #if _CPU == 386
     case TS_NETWARE:
         Stack87 = 4;
         /* fall through */
     case TS_NETWARE5:
         /* no "fpr" for Netware 5.0 */
-        if( SwData.mem == SW_M_DEF ) {
+        if( SwData.mem == SW_M_DEF ) 
+        {
             SwData.mem = SW_MS;
         }
-        if( TargSys == TS_NETWARE5 ) PreDefine_Macro( "__NETWARE__" );
+        if( TargSys == TS_NETWARE5 ) 
+            PreDefine_Macro( "__NETWARE__" );
         PreDefine_Macro( "__NETWARE_386__" );
-        /* NETWARE uses stack based calling conventions
-           by default - silly people. */
-        if( !CompFlags.register_conv_set ) {
+        /* 
+        //  NETWARE uses stack based calling conventions
+        //  by default - silly people.
+        */
+        if( !CompFlags.register_conv_set ) 
+        {
             CompFlags.register_conventions = 0;
         }
-        break;
+    break;
+
     case TS_NT:
         PreDefine_Macro( "_WIN32" );
-        break;
+    break;
+
 #endif
     case TS_CHEAP_WINDOWS:
         #if _CPU == 8086
@@ -238,14 +303,17 @@ local void SetTargSystem()                               /* 07-aug-90 */
             TargSys = TS_WINDOWS;
         #endif
         /* fall through */
+
     case TS_WINDOWS:
         #if _CPU == 386
             PreDefine_Macro( "__WINDOWS_386__" );
-            if( !SwData.peg_fs_used ) {
+            if( !SwData.peg_fs_used ) 
+            {
                 SwData.peg_fs_on = 0;
                 SwData.peg_fs_used = 1;
             }
-            switch( SwData.fpt ) {
+            switch( SwData.fpt ) 
+            {
             case SW_FPT_DEF:
             case SW_FPT_EMU:
                 SwData.fpt = SW_FPT_INLINE;
@@ -253,7 +321,8 @@ local void SetTargSystem()                               /* 07-aug-90 */
             }
             TargetSwitches |= WINDOWS | CHEAP_WINDOWS;
         #elif _CPU == 8086
-            if( !SwData.peg_ds_used ) {
+            if( !SwData.peg_ds_used ) 
+            {
                 SwData.peg_ds_on = 1;
                 SwData.peg_ds_used = 1;
             }
@@ -266,7 +335,6 @@ local void SetTargSystem()                               /* 07-aug-90 */
     strcat( buff, "__" );
     PreDefine_Macro( buff );
 }
-
 
 #define SET_PEG( r ) if( !SwData.peg_##r##s_used ) SwData.peg_##r##s_on = 1;
 
@@ -511,7 +579,8 @@ static void MacroDefs()
     if( CompFlags.bd_switch_used ) {
         Define_Macro( "__SW_BD" );
     }
-    if( CompFlags.bc_switch_used ) {
+    if( CompFlags.bc_switch_used ) /*    Target is console application */
+    {
         Define_Macro( "__SW_BC" );
     }
     if( CompFlags.bg_switch_used ) {
@@ -1055,6 +1124,7 @@ void Set_ZKL()
 void Set_ZL()                   { CompFlags.emit_library_with_main = 0; }
 void Set_ZLF()                  { CompFlags.emit_library_any  = 1; }
 void Set_ZLD()                  { CompFlags.emit_dependencies = 0; }
+void Set_ZLS()                  { CompFlags.emit_targimp_symbols = 0; }
 void Set_ZV()                   { CompFlags.unix_ext = 1; }
 void Set_ZM()
 {
@@ -1380,6 +1450,7 @@ struct option const CFE_Options[] = {
 #endif
     { "zld",    0,              Set_ZLD },
     { "zlf",    0,              Set_ZLF },
+    { "zls",    0,              Set_ZLS },
     { "zl",     0,              Set_ZL },
     { "zm",     0,              Set_ZM },
     { "zpw",    0,              Set_ZPW },

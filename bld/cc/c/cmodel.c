@@ -360,6 +360,7 @@ void InitModInfo( void )
     CompFlags.emit_library_any = 0;
     CompFlags.emit_library_with_main = 1;
     CompFlags.emit_dependencies   = 1;                  /* 04-dec-92 */
+    CompFlags.emit_targimp_symbols  = 1;                  /* 27-oct-02 */
     CompFlags.use_unicode         = 1;                  /* 05-jun-91 */
     CompFlags.no_debug_type_names = 0;                  /* 16-aug-91 */
     CompFlags.auto_agg_inits      = 0;

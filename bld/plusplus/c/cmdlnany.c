@@ -1285,6 +1285,9 @@ static void analyseAnyTargetOptions( OPT_STORAGE *data )
     if( data->zlf ) {
         CompFlags.emit_default_libs = 1;
     }
+    if( data->zls ) {
+        CompFlags.emit_targimp_symbols = 0;
+    }
     if( data->zl ) {
         CompFlags.emit_library_names = 0;
     }

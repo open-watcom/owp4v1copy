@@ -1136,6 +1136,11 @@
 :jusage. デフォルト･ライブラリ情報を常に生成します
 :internal.
 
+:option. zls
+:target. any
+:usage. remove automatically inserted symbols
+:jusage. remove automatically inserted symbols
+
 :option. zm
 :target. i86 386
 :usage. emit functions in separate segments

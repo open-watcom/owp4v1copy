@@ -584,6 +584,7 @@ struct  comp_flags {
         unsigned bc_switch_used         : 1;    /* build charater mode */
         unsigned bg_switch_used         : 1;    /* build gui      mode */
         unsigned emit_library_any       : 1;
+        unsigned emit_targimp_symbols   : 1;    /* emit per target auto symbols */
         unsigned low_on_memory_printed  : 1;
         unsigned extra_stats_wanted     : 1;
         unsigned external_defn_found    : 1;

@@ -146,6 +146,7 @@ typedef struct comp_flags {
     unsigned unique_functions       : 1;
     unsigned jis_to_unicode         : 1;
     unsigned emit_dependencies      : 1;
+    unsigned emit_targimp_symbols   : 1;    // Insert target specific import symbols
     unsigned emit_browser_info      : 1;
     unsigned excs_enabled           : 1;    // exceptions enabled
     unsigned rtti_enabled           : 1;    // RTTI enabled

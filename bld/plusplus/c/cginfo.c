@@ -1060,7 +1060,7 @@ static void addDefaultImports( void )
      && ! CompFlags.fs_registration ) {
         CgInfoAddImport( RunTimeCodeString( RTF_LONGJMP_REF ) );
     }
-    if( CompFlags.has_main && TargetSystem == TS_NETWARE ) {
+    if( CompFlags.has_main && ( (TargetSystem == TS_NETWARE) || (TargetSystem == TS_NETWARE5) ) ) {
         CgInfoAddImport( "__WATCOM_Prelude" );
     }
 #endif

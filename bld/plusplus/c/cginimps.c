@@ -60,7 +60,8 @@ static IMP_LIST *addNewImport( char *name )
 void CgInfoAddImport( char *name )
 /********************************/
 {
-    addNewImport( name );
+    if(CompFlags.emit_targimp_symbols)
+        addNewImport( name );
 }
 
 void *CgInfoImportNext( void *h )

@@ -322,6 +322,7 @@ void InitModInfo(               // INITIALIZE MODULE INFORMATION
     CompFlags.extensions_enabled = 1;
     CompFlags.emit_library_names = 1;
     CompFlags.emit_dependencies = 1;
+    CompFlags.emit_targimp_symbols = 1;
     CompFlags.check_truncated_fnames = 1;
     CompFlags.inline_functions = 1;
     PragInitDefaultInfo();
