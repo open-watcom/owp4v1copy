@@ -25,10 +25,10 @@ $(commands) : .symbolic
 !endif
 
 clean : .symbolic
-curr_dir_all=$+ $(%cwd) $-
+#curr_dir_all=$+ $(%cwd) $-
         @for %i in ($(commands)) do @wmake -h -f $(posix_dir)\src\%i\makefile clean clean_dir=$(posix_dir)\src\%i\$(targos)
         @wmake -h -f $(posix_dir)\misc\$(targos)\makefile clean clean_dir=$(posix_dir)\misc\$(targos)
-        @cd $(curr_dir_all)
+#        @cd $(curr_dir_all)
         @if exist *.ex? @erase *.ex?
         @if exist *.?bj @erase *.?bj
         @if exist *.map @erase *.map
