@@ -41,43 +41,43 @@ objfiles = &
         uivline.obj  uivmove.obj  uivopen.obj  uivscrn.obj  &
         uivstr.obj   uivutil.obj  uiwin.obj    uiyield.obj
 
-# system type         dos  d_fmr  d_nec  nlm  nt   os2  qnx  unix  win  w_nec
-# builder builds      yes  no     no     no   yes  yes  no   yes   yes  no
-#============================================================================
-!inject cdisp.obj                                       qnx
-!inject cmouse.obj                                      qnx
+# system type         dos  nlm  nt   os2  qnx  unix  win
+# builder builds      yes  no   yes  yes  no   yes   yes
+#=======================================================
+!inject cdisp.obj                         qnx
+!inject cmouse.obj                        qnx
 !inject charmap.obj   dos
-!inject ctkeyb.obj                                      qnx  unix
-!inject ctkeyb2.obj                                          unix
+!inject ctkeyb.obj                        qnx  unix
+!inject ctkeyb2.obj                            unix
 !inject gmouse.obj    dos
-!inject kbwait.obj                                           unix
-!inject tdisp.obj                                       qnx  unix
-!inject tixparse.obj                                    qnx  unix
-!inject tixsupp.obj                                     qnx  unix
-!inject tmouse.obj                                      qnx  unix
-!inject trie.obj                                        qnx  unix
-!inject uibmous.obj   dos         d_nec  nlm  nt  os2   qnx  unix  win  w_nec
-!inject uichlen.obj        d_fmr  d_nec  nlm  nt  os2   qnx  unix  win  w_nec
+!inject kbwait.obj                             unix
+!inject tdisp.obj                         qnx  unix
+!inject tixparse.obj                      qnx  unix
+!inject tixsupp.obj                       qnx  unix
+!inject tmouse.obj                        qnx  unix
+!inject trie.obj                          qnx  unix
+!inject uibmous.obj   dos  nlm  nt  os2   qnx  unix  win
+!inject uichlen.obj        nlm  nt  os2   qnx  unix  win
 !inject uicurshk.obj  dos
-!inject uievent.obj                           nt
-!inject uimous.obj    dos  d_fmr  d_nec  nlm      os2   qnx  unix  win  w_nec
-!inject uiextrn.obj                                     qnx  unix
-!inject uihook.obj    dos                               qnx  unix
-!inject uikeyb.obj    dos  d_fmr  d_nec  nlm      os2   qnx  unix  win  w_nec
+!inject uievent.obj             nt
+!inject uimous.obj    dos  nlm      os2   qnx  unix  win
+!inject uiextrn.obj                       qnx  unix
+!inject uihook.obj    dos                 qnx  unix
+!inject uikeyb.obj    dos  nlm      os2   qnx  unix  win
 !inject uimapch.obj   dos
-!inject uiproxy.obj                                     qnx
-!inject uiscrnameobj                     nlm
-!inject uiscreen.obj              d_nec                                 w_nec
-!inject uiswap.obj                                                      w_nec
-!inject uitime.obj                d_nec
-!inject uiupdate.obj              d_nec                                 w_nec
-!inject uiutil.obj    dos  d_fmr  d_nec
-!inject uivirt.obj                                      qnx  unix
+!inject uiproxy.obj                       qnx
+!inject uiscrnameobj       nlm
+!inject uiscreen.obj
+!inject uiswap.obj
+!inject uitime.obj
+!inject uiupdate.obj
+!inject uiutil.obj    dos
+!inject uivirt.obj                        qnx  unix
 
 # This check is partial! A full check is tedious. W.Briscoe 2004-11-26
 # extra_files must be set in including makefile as mapping of other data is not 1 to 1.
 !ifndef extra_files
-!error $$(extra_files) unset. Must be $$(dos), $$(d_fmr), $$(d_nec), $$(nlm), $$(nt), $$(os2), $$(qnx), $$(unix), $$(win) or $$(w_nec)
+!error $$(extra_files) unset. Must be $$(dos), $$(nlm), $$(nt), $$(os2), $$(qnx), $$(unix) or $$(win)
 !endif
 
 # $(trmem_objs) appended to objfiles = ... is ineffective W.Briscoe 2004-11-25

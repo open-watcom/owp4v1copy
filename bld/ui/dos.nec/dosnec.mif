@@ -1,4 +1,0 @@
-
-extra_c_flags += -d_NEC_PC -dCLIB_MB
-
-!include ../../ui.mif

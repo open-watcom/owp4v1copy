@@ -1,6 +1,0 @@
-extra_c_flags += -d_NEC_PC -zu -DCLIB_MB
-
-extra_hdir =../../dos.nec/h;
-extra_cdir =../../dos.nec/c;
-
-!include ../../ui.mif
