@@ -1,12 +1,45 @@
-/*
- *  signal.h    Signal definitions
+/***************************************************************************
+ * FILE: signal.h/csignal (Signal definitions)
  *
 :include crwatqnx.sp
- */
+ *
+ * Description: This header is part of the C/C++ standard library. It
+ *              declares facilities for handling signals in programs.
+ ***************************************************************************/
+:segment CNAME
+#ifndef _CSIGNAL_INCLUDED
+#define _CSIGNAL_INCLUDED
+
+#ifndef __cplusplus
+#error The header csignal requires C++
+#endif
+:elsesegment
 #ifndef _SIGNAL_H_INCLUDED
 #define _SIGNAL_H_INCLUDED
+:endsegment
+
 :include readonly.sp
+::
+:: The following segment only appears in signal.h.
+:segment !CNAME
+#ifdef __cplusplus
+#include <csignal>
+
+// C99 types in signal.h.
+using std::sig_atomic_t;
+
+// C99 functions in signal.h.
+using std::signal;
+using std::raise;
+
+#else /* __cplusplus not defined */
+:: End of segment that is only in signal.h
+:endsegment
+
+:: Only need extern "C" in csignal
+:segment CNAME
 :include cpluspro.sp
+:endsegment
 
 #ifndef _COMDEF_H_INCLUDED
  #include <_comdef.h>
@@ -16,7 +49,14 @@
  #include <sys/types.h>
 #endif
 :endsegment
-typedef int     sig_atomic_t;
+
+:segment CNAME
+namespace std {
+  typedef int sig_atomic_t;
+}
+:elsesegment
+typedef int sig_atomic_t;
+:endsegment
 
 :segment LINUX
 #if defined(_POSIX_SOURCE) || !defined(NO_EXT_KEYS)
@@ -249,8 +289,15 @@ typedef void (*__sig_func)( int );
 #define SA_ONESHOT   SA_RESETHAND
 :endsegment
 
+:segment CNAME
+namespace std {
+:endsegment
 _WCRTLINK extern int  raise( int __sig );
 _WCRTLINK extern void (*signal( int __sig, void (*__func)(int) ) )(int);
+:segment CNAME
+}
+:endsegment
+
 :segment QNX | LINUX
 #if defined(_POSIX_SOURCE) || defined(_QNX_SOURCE) || !defined(NO_EXT_KEYS)
 _WCRTLINK extern int  kill( pid_t __pid, int __signum );
@@ -266,5 +313,11 @@ _WCRTLINK extern int  sigsuspend( const sigset_t *sigmask );
 #endif  /* _POSIX_SOURCE || _QNX_SOURCE || !NO_EXT_KEYS */
 :endsegment
 
+:segment CNAME
 :include cplusepi.sp
+:endsegment
+
+:segment !CNAME
+#endif /* __cplusplus */
+:endsegment
 #endif

@@ -47,6 +47,7 @@
 #include "dwutils.h"
 #include "dwabbrev.h"
 
+#include "dwutils.c"
 
 #define MAX_CODES       29
 
@@ -862,7 +863,7 @@ void main( void )
     FILE *                      fp;
     uint_32                     total;
 
-    fp = fopen( "dwabinfo.i", "w" );
+    fp = fopen( "dwabinfo.gh", "w" );
     if( fp == NULL ) {
         fprintf( stderr, "unable to open dwabinfo.i for writing: %s",
             strerror( errno ) );
@@ -873,7 +874,7 @@ void main( void )
     total = emitInfo( fp );
     fclose( fp );
 
-    fp = fopen( "dwabenum.i", "w" );
+    fp = fopen( "dwabenum.gh", "w" );
     if( fp == NULL ) {
         fprintf( stderr, "unable to open dwabenum.i for writing: %s",
             strerror( errno ) );

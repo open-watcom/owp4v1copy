@@ -292,7 +292,7 @@ static bool InsertOmfDict( OmfLibBlock *lib_block, unsigned num_blocks,
 
 static bool HashOmfSymbols( OmfLibBlock *lib_block, unsigned num_blocks, sym_file *file )
 {
-    bool        ret;
+    bool        ret = TRUE;
     sym_entry   *sym;
     unsigned    str_len;
     char        *fname;

@@ -210,17 +210,17 @@ static void WriteCoffFileHeader( libfile io, coff_lib_file *c_file )
     LibWrite( io, &( c_file->header ), COFF_FILE_HEADER_SIZE );
 }
 
-static WriteCoffSections( libfile io, coff_lib_file *c_file )
+static void WriteCoffSections( libfile io, coff_lib_file *c_file )
 {
     LibWrite( io, c_file->section, c_file->header.num_sections * COFF_SECTION_HEADER_SIZE );
 }
 
-static WriteCoffSymbols( libfile io, coff_lib_file *c_file )
+static void WriteCoffSymbols( libfile io, coff_lib_file *c_file )
 {
     LibWrite( io, c_file->symbol, c_file->header.num_symbols * COFF_SYM_SIZE );
 }
 
-static WriteCoffReloc( libfile io, unsigned_32 offset, unsigned_32 sym_tab_index, unsigned_16 type )
+static void WriteCoffReloc( libfile io, unsigned_32 offset, unsigned_32 sym_tab_index, unsigned_16 type )
 {
     //output is buffered so no point in putting COFF_RELOC struct
     LibWrite( io, &offset, sizeof( offset ) );
@@ -228,7 +228,7 @@ static WriteCoffReloc( libfile io, unsigned_32 offset, unsigned_32 sym_tab_index
     LibWrite( io, &type, sizeof( type ) );
 }
 
-static WriteCoffStringTable( libfile io, coff_lib_file *c_file )
+static void WriteCoffStringTable( libfile io, coff_lib_file *c_file )
 {
     c_file->string_table_size += 4;
     LibWrite( io, &( c_file->string_table_size ), 4 );
@@ -586,7 +586,11 @@ void CoffWriteImport( libfile io, sym_file *file )
         if( !( sym_name_len & 1 ) ) {
             LibWrite( io, "\0", 1 );
         }
+    default:
+        break;
     }
+
+
     WriteCoffSymbols( io, &c_file );
     WriteCoffStringTable( io, &c_file );
     FiniCoffLibFile( &c_file );

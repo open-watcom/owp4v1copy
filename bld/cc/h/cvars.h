@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  C compiler global variables.
 *
 ****************************************************************************/
 
@@ -131,11 +130,9 @@ global  struct  fname_list *FNames;     /* list of file names processed */
 global  struct  rdir_list *RDirNames;  /* list of read only directorys */
 global  char    *ErrFName;      /* file name to be used in error message */
 global  unsigned ErrLine;       /* line number to be used in error msg */
-global  unsigned ErrLineNum;    /* line first error is on */
 global  FILE    *ErrFile;       /* error file */
 global  FILE    *DefFile;       /* output for func prototypes */
 global  FILE    *CppFile;       /* output for preprocessor */
-global  FILE    *PageFile;      /* page file for leafs, quads, syms */
 global  FILE    *DepFile;       /* make style auto depend file */
 global  struct  cpp_info *CppStack; /* #if structure control stack */
 global  char    *HFileList;     /* list of path names to try for H files */
@@ -208,16 +205,11 @@ global  SYM_HANDLE SymCover;    /* sym handle for '__COVERAGE' */
 global  SYM_HANDLE SymDFAbbr;   /* sym handle for '__DFABBREV' */
 global  SYM_HANDLE SymChipBug;  /* sym handle for '__chipbug' */
 global  FIELDPTR ErrSym;
-global  unsigned QuadIndex;
 
 #if _CPU == 386
 global  void     *FunctionProfileBlock; /* handle for profiling data block */
 global  int      FunctionProfileSegment; /* segment for profiling data block */
 #endif
-
-global  BLOCKPTR BlockStack;
-global  BLOCKPTR LoopStack;
-global  SWITCHPTR SwitchStack;
 
 global  int     MacroDepth;
 global  byte    *MacroPtr;
@@ -226,12 +218,13 @@ global  MEPTR   UndefMacroList;
 global  MEPTR   __FAR *MacHash;     /* [ MACRO_HASH_SIZE ] */
 global  ENUMPTR EnumTable[ ENUM_HASH_SIZE ];
 global  SYM_HASHPTR __FAR *HashTab;
-global  TYPEPTR BaseTypes[TYPE_PLAIN_CHAR+1];
-global  int     CTypeCounts[TYPE_PLAIN_CHAR+1];
+global  TYPEPTR BaseTypes[TYPE_LAST_ENTRY];
+global  int     CTypeCounts[TYPE_LAST_ENTRY];
 
 #define BUF_SIZE 512
-global  char Buffer[BUF_SIZE+16];
-global  char TokenBuf[ BUF_SIZE ];
+global  size_t BufSize;
+global  char *Buffer;
+global  char *TokenBuf;
 
 global  unsigned long   GenSwitches;    /* target independant switches for code generator */
 global  unsigned long   TargetSwitches; /* target specific code generator switches */
@@ -259,7 +252,7 @@ global  int     FarStringSegment;
 
 global  void    *Environment;   /* var for Suicide() */
 
-#define MAX_LEVEL       256
+#define MAX_LEVEL       1024
 
 /* The following 3 arrays are also used by CGEN for saving _try block info */
 global  TREEPTR ValueStack[ MAX_LEVEL ];
@@ -269,7 +262,9 @@ global  int     Level;
 
 global  struct  segment_list *SegListHead;
 global  int     SegImport;              /* next segment # for import sym */
-global  int     SegData; ;              /* datra segment # for -nd option */
+global  int     SegData;                /* data segment # for -nd option */
+
+global TREEPTR  FirstStmt;              /* root of expression tree */
 
 global dbug_type ScopeStruct;
 global dbug_type ScopeUnion;
@@ -321,13 +316,11 @@ global  SYM_ENTRY CurFuncSym;   /* for contents of current function symbol */
 global  SYM_HANDLE CurFuncHandle;/* sym_handle for current function */
 global  SYM_HANDLE LastFuncOutOfMem; /* cinfo: */
 global  SYM_HASHPTR HashFreeList;/* list of available hash entries */
-global  int      PageHandle;    /* handle for temp page file */
 
 global  unsigned SymBufNum;     /* current buffer in memory */
 global  unsigned SymSegNum;     /* segment # containing buffer */
 global  unsigned LastSymBuf;    /* # of last symbol table buffer */
 global  unsigned SymBufDirty;   /* 1 => buffer has been changed */
-global  char    *SymBuffer;     /* buffer pointer for symbols */
 global  SEGADDR_T SymSegment;   /* segment # for symbol table buffers */
 
 global  TYPEPTR StringType;     /* "unsigned char *" for use by literals */
@@ -338,38 +331,13 @@ global  struct nested_parm_lists {
         TYPEPTR *next_parm_type;
 } *NestedParms;
 
-global  unsigned NextFilePage;  /* next page # in page file */
-#ifndef NEWCFE
-global  int     LeafGetCount, LeafRepCount;
-
-/* magic leaf numbers that contain constants */
-
-#define LEAF_0          0xFFFF
-#define LEAF_1          (LEAF_0-1)
-#define LEAF_2          (LEAF_1-1)
-#define LEAF_4          (LEAF_2-1)
-#define LEAF_0L         (LEAF_4-1)
-#define LEAF_MAGIC      LEAF_0L
-#endif
-
 #ifndef LARGEST_QUAD_INDEX
- #define LARGEST_QUAD_INDEX             0xFFFF
- #define LARGEST_DATA_QUAD_INDEX        0xFFFFF
+    #define LARGEST_QUAD_INDEX             0xFFFF
+    #define LARGEST_DATA_QUAD_INDEX        0xFFFFF
 #else
- #define LARGEST_DATA_QUAD_INDEX        LARGEST_QUAD_INDEX
+    #define LARGEST_DATA_QUAD_INDEX        LARGEST_QUAD_INDEX
 #endif
-#define LARGEST_LEAF_INDEX  LEAF_MAGIC
 #define LARGEST_SYM_INDEX   0xFFFF
-
-#define QUAD_BUF_SIZE   512
-#define QUADS_PER_BUF   (QUAD_BUF_SIZE/sizeof(QUAD))
-#define QUADBUFS_PER_SEG 32
-#define QUAD_SEG_SIZE    (QUAD_BUF_SIZE*QUADBUFS_PER_SEG)
-
-#define LEAF_BUF_SIZE   512
-#define LEAFS_PER_BUF   (LEAF_BUF_SIZE/sizeof(LEAF))
-#define LEAFBUFS_PER_SEG 32
-#define LEAF_SEG_SIZE    (LEAF_BUF_SIZE*LEAFBUFS_PER_SEG)
 
 #define SYM_BUF_SIZE    1024
 #define SYMS_PER_BUF    (SYM_BUF_SIZE/sizeof(SYM_ENTRY))
@@ -379,24 +347,6 @@ global  int     LeafGetCount, LeafRepCount;
 #define MAX_SYM_SEGS  (LARGEST_SYM_INDEX/(SYMS_PER_BUF*SYMBUFS_PER_SEG)+1)
 
 global  struct seg_info SymSegs[MAX_SYM_SEGS];  /* segments for symbols */
-#ifndef NEWCFE
-#define MAX_QUAD_SEGS (LARGEST_QUAD_INDEX/(QUADS_PER_BUF*QUADBUFS_PER_SEG)+1)
-#define MAX_LEAF_SEGS (LARGEST_LEAF_INDEX/(LEAFS_PER_BUF*LEAFBUFS_PER_SEG)+1)
-global  struct seg_info QuadSegs[MAX_QUAD_SEGS];/* segments for quads */
-global  struct seg_info LeafSegs[MAX_LEAF_SEGS];/* segments for leafs */
-
-global struct  int_file_info {          /* intermediate file information */
-        unsigned        curr_buf_num;   /* QuadBufNum */
-        unsigned        last_buf_num;   /* LastQuadBuf */
-        unsigned        curr_seg_num;   /* QuadSegNum */
-        unsigned        items_per_buf;  /* QUADS_PER_BUF */
-        unsigned        size_of_item;   /* sizeof(QUAD) */
-        struct seg_info *seg_table;     /* QuadSegs */
-        SEGADDR_T       curr_buf_seg;   /* QuadSegment */
-        char            *buffer;        /* QuadBuffer */
-        char            curr_buf_dirty; /* QuadBufDirty */
-} QuadFileInfo, LeafFileInfo, SymFileInfo;
-#endif
 
 #define STRING_HASH_SIZE        1024
 global  STR_HANDLE StringHash[STRING_HASH_SIZE];    /* string literals */
@@ -523,7 +473,9 @@ extern  int     IdenticalType(TYPEPTR,TYPEPTR); /* ccheck */
 extern  int     VerifyType(TYPEPTR,TYPEPTR,SYMPTR);/* ccheck */
 extern  TYPEPTR SkipTypeFluff( TYPEPTR typ );      /* ccheck */
 extern  void    ParmAsgnCheck( TYPEPTR typ1, TREEPTR opnd2, int parm_num ); /* ccheck */
+
 //ccmain.c
+extern  void    FreeRDir( void );
 extern  void    FrontEndInit( bool reuse );
 extern  int     FrontEnd(char **);
 extern  void    FrontEndFini( void );
@@ -536,7 +488,6 @@ extern  void    PrtChar(int);
 extern  void    PrtToken(void);
 extern  int     OpenSrcFile(char *,int);
 extern  void    OpenDefFile(void);
-extern  void    OpenPageFile(void);
 extern  FILE    *OpenBrowseFile(void);
 extern  void    CloseFiles(void);
 extern  void    FreeFNames(void);
@@ -561,18 +512,27 @@ extern  void    GetNextToken(void);
 extern  void    EmitLine(unsigned,char *);
 extern  void    EmitPoundLine(unsigned,char *,int);
 
+// cdata.c
 extern  void    InitGlobalVars( void );
+
+// from cdebug.c
 extern  dbug_type DBType(TYPEPTR);
 extern  void    EmitDBType(void);
+extern  dbug_type FEDbgType( CGSYM_HANDLE cgsym_handle );
+extern  dbug_type FEDbgRetType( CGSYM_HANDLE cgsym_handle );
 
 extern  void    ParsePgm(void);
 extern  void    AdjParmType(SYMPTR sym);
 extern  void    Chk_Struct_Union_Enum(TYPEPTR);
-extern  void  Declarator( SYMPTR sym, type_modifiers mod, TYPEPTR typ, decl_state state );
+extern  void    Declarator( SYMPTR sym, type_modifiers mod, TYPEPTR typ, decl_state state );
 extern  int     DeclList(SYM_HANDLE *);
 extern  FIELDPTR FieldDecl( TYPEPTR typ, type_modifiers mod, decl_state state );
 extern  TYPEPTR SkipDummyTypedef(TYPEPTR);
 extern  TYPEPTR TypeName(void);
+
+// cdecl2.c
+extern  void InvDecl( void );
+
 // cinfo.c
 extern  segment_id SymSegId( SYMPTR sym );
 
@@ -595,6 +555,7 @@ extern  TYPEPTR EnumDecl(int);                  /* cenum */
 extern  int     EnumLookup(int,char *,ENUM_INFO *); /* cenum */
 extern  void    EnumInit(void);                 /* cenum */
 extern  void    FreeEnums(void);                /* cenum */
+
 //cerror.c
 extern  void    CErr1(int);
 extern  void    CErr2(int,int);
@@ -710,6 +671,7 @@ extern char    *FEGetEnv( char const  *name );
 extern void     FESetCurInc( void );
 
 //cmac1.c
+extern  void    EnlargeBuffer(size_t);
 extern  void    MacroInit(void);
 extern  void    MacroAddComp(void);
 extern  void    MacroFini(void);
@@ -730,7 +692,7 @@ extern  void    MacLkAdd( MEPTR mentry, int len, enum macro_flags flags );
 extern  void    MacroAdd( MEPTR mentry, char *buf, int len, enum macro_flags flags );
 extern  int     MacroCompare(MEPTR,MEPTR);
 extern  void    MacroCopy(MPTR_T,MACADDR_T,unsigned);
-extern  MEPTR   MacroLookup(void);
+extern  MEPTR   MacroLookup(const char *);
 extern  void    MacroOverflow(unsigned,unsigned);
 extern  SYM_HASHPTR SymHashAlloc(unsigned);
 
@@ -758,6 +720,7 @@ extern  void    CMemInit(void);                 /* cmemmgr */
 extern  void    CMemFini(void);                 /* cmemmgr */
 extern  void    *CPermAlloc(unsigned);          /* cmemmgr */
 extern  void    *CMemAlloc(unsigned);           /* cmemmgr */
+extern  void    *CMemRealloc( void *loc, unsigned size ); /* cmemmgr */
 extern  void    CMemFree(void *);               /* cmemmgr */
 extern  void    *FEmalloc(unsigned);            /* cmemmgr */
 extern  void    FEfree(void *);                 /* cmemmgr */
@@ -778,22 +741,11 @@ extern char const * UsageText(void);      // GET INTERNATIONAL USAGE TEXT
 extern msgtype CGetMsgType( msg_codes msgcode );
 char const *CGetMsgPrefix( msg_codes msgcode );
 
-extern  int     NameCmp(void *,void *,int);     /* cname */
-
-#ifndef NEWCFE
-extern  void    QuadInit(void);                         /* cnode */
-extern  TREEPTR GenLeaf(LEAFPTR);                       /* cnode */
-extern  TREEPTR GenQuad(TREEPTR,int,TREEPTR,TREEPTR);   /* cnode */
-extern  TREEPTR NextLabel(void);                        /* cnode */
-#endif
+extern  int     NameCmp(const void *,const void *,int); /* cname */
 
 extern  int     EqualChar(int);                 /* coptions */
 extern  void    GenCOptions(char **);           /* coptions */
 extern  void    MergeInclude(void);             /* coptions */
-
-extern  void    PageRead(char *,unsigned);      /* cpageio */
-extern  void    PageWrite(char *,unsigned);     /* cpageio */
-extern  void    PageSeek(unsigned long);        /* cpageio */
 
 extern  void    CPragmaInit( void );            /* cpragma */
 extern  int     SetToggleFlag( char const *name, int const value ); /* cpragma */
@@ -828,7 +780,7 @@ extern  int     InitPPScan(void);               /* cscan */
 extern  void    FiniPPScan(int);                /* cscan */
 extern  int     CalcHash(char *,int);           /* cscan */
 extern  unsigned hashpjw(char *);               /* cscan */
-extern  int     ESCChar(int,int,char *);        /* cscan */
+extern  int     ESCChar(int,const char **,char *); /* cscan */
 extern  void    SkipAhead(void);                /* cscan */
 extern  int     ScanSlash(void);                /* cscan */
 extern  int     ScanToken(void);                /* cscan */
@@ -836,8 +788,8 @@ extern  void    ReScanInit(char *);             /* cscan */
 extern  int     ReScanBuffer(void);             /* cscan */
 extern  int     ReScanToken(void);              /* cscan */
 extern  char    *ReScanPos(void);               /* cscan */
-extern  int     IdLookup(void);                 /* cscan */
-extern  int     KwLookup(void);                 /* cscan */
+extern  int     IdLookup(const char *);         /* cscan */
+extern  int     KwLookup(const char *);         /* cscan */
 extern  int     NextToken(void);                /* cscan */
 extern  int     PPNextToken(void);              /* cscan */
 
@@ -850,18 +802,14 @@ extern  void    LookAhead(void);                /* cstmt */
 extern  void    Statement(void);                /* cstmt */
 extern  void    AddStmt(TREEPTR);               /* cstmt */
 extern  void    GenFunctionNode(SYM_HANDLE);    /* cstmt */
-#ifdef NEWCFE
 extern  int     NextLabel(void);                /* cstmt */
 extern  void    StmtInit( void );               /* cstmt */
-#else
-extern  void    UpdateSymHeaders(unsigned);     /* cstmt */
-#endif
 
+extern  void    FreeLiteral(STRING_LITERAL *);  /* cstring */
 extern  STRING_LITERAL  *GetLiteral(void);      /* cstring */
 extern  void    LoadUnicodeTable(long);         /* cstring */
 extern  void    StringInit(void);               /* cstring */
 extern  TREEPTR StringLeaf(int);                /* cstring */
-extern  int     RemoveEscapes(char *);          /* cstring */
 
 extern  void    SymInit(void);                  /* csym */
 extern  void    SpcSymInit(void);               /* csym */
@@ -945,7 +893,12 @@ extern  void    MyExit( int ret );              /* cintmain */
 
 extern  void    DBSetSymLoc(CGSYM_HANDLE,long); /* dbsupp */
 
-#if _OS == _CMS
+// cstmt2.c
+extern  SYM_HANDLE GetBlockSymList( void );
+extern  void    InitStmt( void );
+extern  void    SwitchPurge( void );
+
+#if _OS == _CMS || ! defined(__WATCOMC__)
     #define  __va_list  va_list
     #define  __puts     puts
     #define  __printf   printf

@@ -44,10 +44,11 @@ void SysInit( int argc, char *argv[] )
 unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
 {
     /* no pipes for DOS so we call spawn with P_WAIT and hence cannot log */
-    char *cmdnam = strdup( cmd );
-    char *sp = strchr( cmdnam, ' ' );
-    int rc;
-    if ( sp != NULL ) {
+    char        *cmdnam = strdup( cmd );
+    char        *sp = strchr( cmdnam, ' ' );
+    int         rc;
+
+    if( sp != NULL ) {
         *sp = '\0';
         sp++;
     }

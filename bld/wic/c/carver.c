@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Carver memory allocator.
 *
 ****************************************************************************/
 
@@ -324,7 +323,7 @@ void FiniCarver(pCarver carver, int checkMem) {
     }
 }
 
-void CarverDefaultPrintMsg(CarverMsgType msgType, char *str) {
+void CarverDefaultPrintMsg(size_t msgType, char *str) {
     msgType = msgType;
     printf("%s\n", str);
 }

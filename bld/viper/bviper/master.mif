@@ -1,21 +1,23 @@
 proj_name = bviper
 
+!ifndef bviper_autodepends
+bviper_autodepends = .AUTODEPEND
+!endif
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
 
-!include ../lib.mif
-
-inc_dirs = $(wclass_dir)/hpp;$(gui_dir)/h;$(viper_dir)/mviper
-
-.cpp: ..
-
-.cpp.obj: $($(proj_name)_autodepends)
-          @set include=$(inc_path)
-          $(cpp) $(cflags) $(extra_cpp_flags_$(host_cpu)) $[@
+!include $(wclass_dir)/mif/client.mif
 
 objs = bviper.obj
 
+inc_dirs = $(wclass_inc_dirs);$(viper_dir)/mviper
+
+.cpp: ..
+
+LIBS = $(wclass_lib) &
+    $(viper_dir)/mviper/$(host_OS)$(host_CPU)/mviper.lib
 
 $(proj_name).exe : $(objs)
         $(linker) option quiet $(lflags) option map name $^@ file { $< } lib {$(LIBS)}

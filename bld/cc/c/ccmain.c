@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  C compiler top level driver module and file I/O.
 *
 ****************************************************************************/
 
@@ -83,14 +82,39 @@
 #define O_TEMP 0
 #endif
 #ifdef __WATCOMC__
-#include <conio.h>
+    #include <conio.h>
 #endif
+
+#if defined(__QNX__) || defined(__LINUX__)
+    #define IS_PATH_SEP( ch ) ((ch) == '/')
+#else
+    #define IS_PATH_SEP( ch ) ((ch) == '/' || (ch) == '\\')
+#endif
+
+
 extern  char    CharSet[];
 
-static char WorkFile[] = "__wrk0__";
 static char IsStdIn;
 static int IncFileDepth;
 
+int PrintWhiteSpace;     // also refered from cmac2.c
+
+// local functions definition
+static void DoCCompile( char **cmdline );
+static void DelErrFile( void );
+static void MakePgmName( void );
+static int OpenFCB( FILE *fp, char *filename );
+static bool IsFNameOnce( char const *filename );
+static int TryOpen( char *prefix, char *separator, char *filename, char *suffix );
+static void ParseInit( void );
+static void CPP_Parse( void );
+static int FCB_Alloc( FILE *fp, char *filename );
+local void Parse( void );
+static int OpenPgmFile( void );
+static void DelDepFile( void );
+
+
+//
 void FrontEndInit( bool reuse ) {
 //**************************//
 // Do the once only things //
@@ -107,7 +131,7 @@ void FrontEndFini( void ) {
     GlobalCompFlags.cc_first_use = TRUE;
 }
 
-void ClearGlobals()
+void ClearGlobals ( void )
 {
     InitStats();
     IsStdIn = 0;
@@ -121,9 +145,10 @@ void ClearGlobals()
     SymLoc  = NULL;
     HFileList = NULL;
     IncFileDepth = 255;
-    PageHandle = -1;
-    WorkFile[5] = '0';
     SegmentNum = FIRST_PRIVATE_SEGMENT;
+    BufSize = BUF_SIZE;
+    Buffer = CMemAlloc( BufSize );
+    TokenBuf = CMemAlloc( BufSize );
 }
 
 
@@ -155,111 +180,9 @@ int FrontEnd( char **cmdline )
     return( ErrCount );
 }
 
-#if defined(__QNX__) || defined(__LINUX__)
-#define IS_PATH_SEP( ch ) ((ch) == '/')
-#else
-#define IS_PATH_SEP( ch ) ((ch) == '/' || (ch) == '\\')
-#endif
 
-local void MakeTmpName( char *fname )
+void CloseFiles( void )
 {
-    #if _OS == _CMS
-        tmpnam( fname );
-    #else
-        char    *env;
-        int     i;
-
-        #if _OS == _QNX
-            env = FEGetEnv( "TMPDIR" );
-            if( env == NULL ) env = FEGetEnv( "TMP" );
-        #else
-            env = FEGetEnv( "TMP" );
-        #endif
-        if( env == NULL ) env = "";
-
-        #define TMP_EXT ".tmp"
-        #define MAX_TMP_PATH (_MAX_PATH - sizeof( WorkFile ) - sizeof( TMP_EXT ) - 2)
-
-        strncpy( fname, env, MAX_TMP_PATH );
-        fname[ MAX_TMP_PATH ] = '\0';
-        i = strlen( fname );
-        if( i > 0 && !IS_PATH_SEP( fname[i-1] )
-        #if (_OS != _QNX) && (_OS != _LINUX)
-                && fname[i-1] != ':'
-        #endif
-            ) {
-            fname[i++] = '/';
-        }
-        strcpy( &fname[i], WorkFile );
-        strcpy( &fname[i+sizeof(WorkFile)-1], TMP_EXT );
-    #endif
-}
-
-#if (_OS == _QNX) || (_OS == _LINUX)
-
-void OpenPageFile()
-{
-    auto char fname[ _MAX_PATH ];
-
-    for(;;) {
-        MakeTmpName( fname );
-        PageHandle = open( fname, O_RDWR | O_CREAT | O_EXCL | O_TEMP,
-                            S_IRUSR | S_IWUSR );
-        if( PageHandle != -1 ) break;
-        if( WorkFile[5] == '9' ) WorkFile[5] = 'A' - 1;     /* 11-may-89 */
-        WorkFile[5]++;          /* change the digit */
-        if( WorkFile[5] == '\0' ) {
-            CErr2( ERR_UNABLE_TO_OPEN_WORK_FILE, errno );
-            CSuicide();
-        }
-    }
-    /* Under POSIX it's legal to remove a file that's open. The file
-       space will be reclaimed when the handle is closed. This makes sure
-       that the work file always gets removed. */
-    remove( fname );
-    PageFile = fdopen( PageHandle, "r+b" );
-    if( PageFile == NULL ) {
-        CErr2( ERR_UNABLE_TO_OPEN_WORK_FILE, errno );
-        CSuicide();
-    }
-}
-
-#else
-
-#if _OS == _DOS
-    #define ERRVAL _doserrno
-#else
-    #define ERRVAL errno
-#endif
-
-void OpenPageFile()
-{
-    auto char fname[ _MAX_PATH ];
-
-    for(;;) {
-        MakeTmpName( fname );
-        if( access( fname, 0 ) != 0 ) break;
-        if( WorkFile[5] == '9' ) WorkFile[5] = 'A' - 1;     /* 11-may-89 */
-        WorkFile[5]++;          /* change the digit */
-    }
-    PageHandle = -1;
-    PageFile = fopen( fname, "w+b" );
-    if( PageFile == NULL ) {
-        CErr2( ERR_UNABLE_TO_OPEN_WORK_FILE, ERRVAL );
-        CSuicide();
-    }
-    PageHandle = fileno( PageFile );
-}
-
-#endif
-
-
-void CloseFiles()
-{
-    #if (_OS != _QNX) && (_OS != _LINUX)
-        auto char fname[ _MAX_PATH ];
-    #endif
-
     if( CppFile != NULL ) {
         fflush( CppFile );
         if( ferror( CppFile ) ) {
@@ -288,15 +211,6 @@ void CloseFiles()
     if( ErrFile != NULL ) {
         fclose( ErrFile );
         ErrFile = NULL;
-    }
-    if( PageFile != NULL ) {
-        fclose( PageFile );
-        #if (_OS != _QNX) && (_OS != _LINUX)
-            MakeTmpName( fname );
-            remove( fname );
-        #endif
-        PageHandle = -1;
-        PageFile = NULL;
     }
 }
 
@@ -388,7 +302,7 @@ void DumpDepFile( void )
     }
 }
 
-void DoCCompile( char **cmdline )
+static void DoCCompile( char **cmdline )
 /******************************/
 {
     auto jmp_buf env;
@@ -433,7 +347,7 @@ void DoCCompile( char **cmdline )
                 FreeMacroSegments();
             }
         }
-        if( ErrCount == 0 ) {
+        if( ErrCount == 0 && DepFile ) {
             DumpDepFile();
             fclose( DepFile );
         }
@@ -457,13 +371,11 @@ void DoCCompile( char **cmdline )
 
 
 
-
-
 /* open the primary source file, and return pointer to root file name */
 
 #define STDIN_NAME      "stdin"
 
-extern char FindIt[10] = "cgtype";
+// extern char FindIt[10] = "cgtype";
 
 static void MakePgmName( void )
 {
@@ -517,7 +429,7 @@ local void CantOpenFile( char *name )
     BannerMsg( msgbuf );
 }
 
-int OpenPgmFile()
+static int OpenPgmFile( void )
 {
     if( IsStdIn ) {
         return( OpenFCB( stdin, "stdin" ) );
@@ -679,20 +591,22 @@ void CppPrtf( char *fmt, ... )
 {
     va_list     arg;
     char        *p;
-    char        buff[BUF_SIZE];
+    char        *buff;
 
+    buff = CMemAlloc( BufSize );
     va_start( arg, fmt );
-    vsprintf( buff, fmt, arg );
+    vsnprintf( buff, BufSize, fmt, arg );
     for( p = buff; *p != '\0'; ++p ) {
         CppPutc( *p );
     }
     va_end( arg );
+    CMemFree( buff );
 }
 
 
 void OpenCppFile()
 {
-    char        *name;
+    char  *name = NULL;
 
     if( CompFlags.cpp_output_to_file ) {                /* 29-sep-90 */
         name = ObjFileName( CPP_EXT );
@@ -761,7 +675,7 @@ FILE *OpenBrowseFile()
 }
 
 
-void DelErrFile()
+static void DelErrFile(void)
 {
     char        *name;
 
@@ -769,7 +683,7 @@ void DelErrFile()
     if( name != NULL ) remove( name );
 }
 
-void DelDepFile()
+static void DelDepFile( void )
 {
     char        *name;
 
@@ -935,8 +849,7 @@ bool FreeSrcFP( void )
     return( ret );
 }
 
-static bool IsFNameOnce( char const *filename );
-int TryOpen( char *prefix, char *separator, char *filename, char *suffix )
+static int TryOpen( char *prefix, char *separator, char *filename, char *suffix )
 {
     int         i, j;
     FILE        *fp;
@@ -948,11 +861,11 @@ int TryOpen( char *prefix, char *separator, char *filename, char *suffix )
         return( 0 );
     }
     i = 0;
-    while( buf[i] = *prefix++ )    ++i;
-    while( buf[i] = *separator++ ) ++i;
+    while( (buf[i] = *prefix++) )    ++i;
+    while( (buf[i] = *separator++) ) ++i;
     j = i;
-    while( buf[i] = *filename++ )  ++i;
-    while( buf[i] = *suffix++ )    ++i;
+    while( (buf[i] = *filename++) )  ++i;
+    while( (buf[i] = *suffix++) )    ++i;
     filename = &buf[0];                 /* point to the full name */
     if( IsFNameOnce( filename ) ) {
         return( 1 );
@@ -1080,7 +993,7 @@ void FreeFNames( void )
 {
     FNAMEPTR    flist;
 
-    while( flist = FNames ) {
+    while( (flist = FNames) ) {
         FNames = flist->next;
         if( flist->fullpath != NULL ) {
             CMemFree( flist->fullpath );
@@ -1133,7 +1046,7 @@ void FreeRDir( void )
 {
     RDIRPTR    dirlist;
 
-    while( dirlist = RDirNames ) {
+    while( (dirlist = RDirNames) ) {
         RDirNames = dirlist->next;
         CMemFree( dirlist );
     }
@@ -1287,7 +1200,7 @@ void SetSrcFNameOnce( void )
     SrcFile->src_flist->once = TRUE;
 }
 
-static void ParseInit()
+static void ParseInit( void )
 {
     ScanInit();
     CTypeInit();
@@ -1295,19 +1208,14 @@ static void ParseInit()
     SymInit();
     SpcSymInit();
     StringInit();
-#ifndef NEWCFE
-        QuadInit();
-#endif
     InitDataQuads();
     ExprInit();
-#ifdef NEWCFE
     StmtInit();
-#endif
     SegInit();                                  /* 02-feb-92 */
 }
 
 
-local void Parse()
+local void Parse( void )
 {
     EmitInit();
     // The first token in a file should be #include if a user wants to
@@ -1342,8 +1250,7 @@ local void Parse()
     if( CompFlags.warnings_cause_bad_exit )  ErrCount += WngCount;
 }
 
-int PrintWhiteSpace;
-static void CPP_Parse()
+static void CPP_Parse( void )
 {
     if( ForceInclude ) {
         PrtChar( '\n' );

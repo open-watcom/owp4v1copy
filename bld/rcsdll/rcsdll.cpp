@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  SCM interface library implementation.
 *
 ****************************************************************************/
 
@@ -51,10 +50,11 @@
 #include "rcsdll.hpp"
 #include "inifile.hpp"
 
-mksRcsSystem MksRcs;
-pvcsSystem Pvcs;
-genericRcs Generic;
-wprojRcs Wproj;
+mksRcsSystem    MksRcs;
+pvcsSystem      Pvcs;
+genericRcs      Generic;
+p4System        Perforce;
+wprojRcs        Wproj;
 
 static char *rcs_type_strings[] = {
     "no_rcs",
@@ -63,6 +63,7 @@ static char *rcs_type_strings[] = {
     "pvcs",
     "generic",
     "o_cycle",
+    "perforce",
     "wproj" // hidden
 };
 
@@ -87,6 +88,7 @@ static rcsSystem *rcs_systems[] = {
     #else
     NULL,
     #endif
+    &Perforce,
     &Wproj // hidden
 };
 

@@ -422,14 +422,16 @@ static void dumpInfo( const char *input, uint length ) {
     uint_32     tmp;
     int_32      stmp;
     uint_32     unit_length;
+    int         address_size;
     const uint_8 *unit_base;
 
     p = input;
     while( p - input < length ) {
         unit_length = *(uint_32 *)p;
         unit_base = p + sizeof( uint_32 );
+        address_size = *(p+10);
         printf( "Length: %08lx\nVersion: %04lx\nAbbrev: %08lx\nAddress Size %02lx\n",
-            unit_length, *(uint_16 *)(p+4), *(uint_32 *)(p+6), *(p+10) );
+            unit_length, *(uint_16 *)(p+4), *(uint_32 *)(p+6), address_size );
         p += 11;
         while( p - unit_base < unit_length ) {
             printf( "offset %08lx: ", p - input );
@@ -453,17 +455,22 @@ static void dumpInfo( const char *input, uint length ) {
     decode_form:
                 switch( form ) {
                 case DW_FORM_addr:
-#ifdef __ADDR_IS_32
-                    tmp = *(uint_32 *)p;
-                    p += sizeof( uint_32 );
-                    tmp_seg = *(uint_16 *)p;
-                    p += sizeof( uint_16 );
-                    printf( "\t%04lx:%08lx\n", tmp_seg, tmp );
-#else
-                    tmp = *(uint_16 *)p;
-                    p += sizeof( uint_16 );
-                    printf( "\t%04xl\n", tmp );
-#endif
+                    switch( address_size ) {
+                    case 4:
+                        tmp = *(uint_32 *)p;
+                        p += sizeof( uint_32 );
+                        printf( "\t%08lx\n", tmp );
+                        break;
+                    case 2:
+                        tmp = *(uint_16 *)p;
+                        p += sizeof( uint_16 );
+                        printf( "\t%04lx\n", tmp );
+                        break;
+                    default:
+                        printf( "Unknown address size\n" );
+                        p += address_size;
+                        break;
+                    }
                     break;
                 case DW_FORM_block:
                     p = DecodeULEB128( p, &len );
@@ -533,7 +540,7 @@ static void dumpInfo( const char *input, uint length ) {
                     p += sizeof(uint_32);
                     break;
                 default:
-                    printf( "unknown form\n" );
+                    printf( "unknown form!\n" );
                     return;
                 }
             }

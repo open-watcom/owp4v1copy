@@ -6,6 +6,9 @@ name = builder
 !include deftarg.mif
 
 cpcmd = copy
+!ifdef __NT__
+cpcmd = copy>nul # command is noisy by default in MS-produced "shells"
+!endif
 !ifdef __LINUX__
 cpcmd = cp
 !endif
@@ -25,24 +28,24 @@ OBJS   = builder.obj utils.obj runit.obj $(sys_$(host_os)) pmake.obj
 
 $(name).exe : $(OBJS)
         $(linker) $(lflags) name $^@ op map file {$(OBJS)}
-        @$(cpcmd) $^. $(bld_bin)
+        $(cpcmd) $^. $(bld_bin)
 
 cdsay.exe : cdsay.obj
         $(linker) $(lflags) name $^@ op map file { $< }
-        @$(cpcmd) $^. $(bld_bin)
+        $(cpcmd) $^. $(bld_bin)
 
 sweep.exe : sweep.obj
         $(linker) $(lflags) name $^@ op map file { $< }
-        @$(cpcmd) $^. $(bld_bin)
+        $(cpcmd) $^. $(bld_bin)
 
 wsplice.exe : wsplice.obj
         $(linker) $(lflags) name $^@ op map file { $< }
-        @$(cpcmd) $^. $(bld_bin)
+        $(cpcmd) $^. $(bld_bin)
 
 diff.exe : diff.obj
         $(linker) $(lflags) name $^@ op map,quiet file { $< }
-        @$(cpcmd) $^. $(bld_bin)
+        $(cpcmd) $^. $(bld_bin)
 
 comstrip.exe : comstrip.obj
         $(linker) $(lflags) name $^@ op map file { $< }
-        @$(cpcmd) $^. $(bld_bin)
+        $(cpcmd) $^. $(bld_bin)

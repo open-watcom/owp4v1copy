@@ -24,15 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Functions controlling GUI attributes.
 *
 ****************************************************************************/
 
 
-/*
-*   COMMENTS: Functions controlling gui attributes.
-*/
 #include "gui.h"
 #include "guidlg.h"
 #include "guistr.h"
@@ -101,10 +97,12 @@ bool WndMainEventProc( gui_window * gui, gui_event event, void *parm )
             GUIGetClientRect( gui, &rect );
             GUIGetTextMetrics( gui, &metrics );
             indent = ( rect.width - BitMapSize.x ) / 2;
-            if( BitMapSize.x > rect.width ) indent = 0;
+            if( BitMapSize.x > rect.width )
+                indent = 0;
             topdent = metrics.avg.y; // ( rect.height - BitMapSize.y ) / 2;
             BitMapBottom = BitMapSize.y + metrics.avg.y;
-            if( BitMapSize.y > rect.height ) topdent = 0;
+            if( BitMapSize.y > rect.height )
+                topdent = 0;
             row = topdent / metrics.max.y;
             GUIDrawHotSpot( gui, 1, row, indent, GUI_BACKGROUND );
         } else {
@@ -127,12 +125,7 @@ extern bool SetupInit()
     gui_rect            rect;
     gui_create_info     init;
 
-    GUIMemOpen();
-    #ifdef NECCHECK
-        GUISetJapanese();
-    #endif
-
-    // Cancel button is wider in Japanese
+    // Cancel button may be wider in other languages
     NominalButtonWidth = strlen( LIT( Cancel ) ) + 5;
 
     GUIWndInit( 300, GUI_PLAIN ); // 300 uS mouse dbl click rate, graphics mouse
@@ -157,9 +150,9 @@ extern bool SetupInit()
     } else {
         init.style |= GUI_VISIBLE | GUI_MAXIMIZE | GUI_MINIMIZE;
     }
-    #ifdef _UI
-        init.style |= GUI_NOFRAME;
-    #endif
+#ifdef _UI
+    init.style |= GUI_NOFRAME;
+#endif
     init.parent = NULL;
     init.num_menus = 0;
     init.menu = NULL;

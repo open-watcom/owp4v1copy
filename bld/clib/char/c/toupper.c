@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of toupper().
 *
 ****************************************************************************/
 
@@ -37,21 +36,8 @@
  #include <wchar.h>
 #endif
 
-#ifdef __NETWARE__
- #ifndef _WCTYPE_T_DEFINED
-  #define _WCTYPE_T_DEFINED
-  #define _WCTYPE_T_DEFINED_
-  typedef long wint_t;
-  typedef int wctype_t;
- #endif
-#endif
-
-
-#ifdef __WIDECHAR__
- _WCRTLINK wint_t towupper( wint_t c ) {
-#else
- _WCRTLINK int toupper( int c ) {
-#endif
+_WCRTLINK INTCHAR_TYPE __F_NAME(toupper,towupper)( INTCHAR_TYPE c )
+{
     if( c >= 'a' && c <= 'z' ) {
         c = c - 'a' + 'A';
     }

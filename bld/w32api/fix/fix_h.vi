@@ -7,7 +7,7 @@ set nomagic
 #        GetCurrentFiber(), GetFiberData()
 #
 assign %fix1beg = "#if defined( _X86_ ) /* Open Watcom fix */"
-assign %fix1end = "#endif /* Open Watcom fix */"
+assign %fix1end = "#endif               /* Open Watcom fix */"
 edit include/winnt.h
 /Open Watcom fix
 if lastrc != ERR_NO_ERR

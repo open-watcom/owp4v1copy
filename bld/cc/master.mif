@@ -1,7 +1,5 @@
 proj_name = cc
-
-.continue
-.erase
+cc_autodepends = .autodepend
 
 .extensions: .gh
 
@@ -9,20 +7,14 @@ proj_name = cc
 !include deftarg.mif
 !include defrule.mif
 
-!include mlibs.mif
-
 # CODEGEN stuff
 !include $(cg_dir)/mif/fe.mif
 !include $(cg_dir)/mif/hostos.mif
+!include $(dwarf_dir)/dw/client.mif
 
 !ifdef bootstrap
 cg_inc_dirs = -I$(cfloat_dir)/h -I$(watcom_dir)/h -I$(owl_dir)/h &
   -I$(cg_dir)/h -I$(cg_dir)/intel/h -I$(cg_dir)/intel/$(target_CPU)/h
-!endif
-
-
-!ifndef cc_version
-cc_version      = tree
 !endif
 
 !ifndef patch_level
@@ -35,9 +27,7 @@ extra_c_flags_386= -3r -fpc
 extra_c_flags = -D_CGDLL
 !endif
 
-defines_tree    = -DNEWCFE
-
-defines = $(defines_$(cc_version)) -Dlocal=static
+defines = -Dlocal=static
 # international data files
 intname = wcc$(target_cpu)
 
@@ -55,30 +45,20 @@ extra_c_flags_intlload = -D__header=\"fesupp.h\"
 extra_c_flags_intlload = -D__header="fesupp.h"
 !endif
 extra_c_flags_cmsg = -D__msg_file_prefix=$(intname)
-opts_cdata_nt = -DLARGEST_QUAD_INDEX=500
-opts_cdata_os2 = -DLARGEST_QUAD_INDEX=500
-extra_c_flag_cdata = $(opts_cdata_$(host_OS))
 
 # WASM stuff
 !ifeq target_cpu axp
 inline_asm_dir = $(as_dir)
 inline_asm_h = $(as_dir)/alpha/h;$(as_dir)/h;$(owl_dir)/h
-!else
-!ifeq target_cpu ppc
+!else ifeq target_cpu ppc
 inline_asm_dir = $(as_dir)
 inline_asm_h = $(as_dir)/ppc/h;$(as_dir)/h;$(owl_dir)/h
-!else
+!else # target_cpu x86
 !include $(wasm_dir)/mif/inline.mif
 inline_asm_dir = $(wasm_dir)
 inline_asm_h = $(wasm_dir)/h
 pre_deps_wasm = inlnops.gh
 !endif
-!endif
-
-#dwarf stuff
-!include $(dwarf_dir)/dw/client.mif
-dwarf_deps = $(dwarf_dw_dep)
-dwarf_lib  = $(dwarf_dw_lib)
 
 #dll test driver
 #wcc386t.exe
@@ -118,9 +98,17 @@ wlink_opt_os2_386_dll   = sys os2v2 dll
 wlink_opt_nt_386_dll    = sys nt_dll
 wlink_opt_nt_axp_dll    = sys ntaxp_dll
 
-# 1 if we use asinline_lib to do inline assembly
-as_lib_ppc      = 1
-as_lib_axp      = 1
+# 1 if we use asminline_lib to do inline assembly
+use_asminline_lib_ppc      = 1
+use_asminline_lib_axp      = 1
+
+!ifdef bootstrap
+xlibs = $(dwarf_dw_lib)
+!else ifeq use_asminline_lib_$(target_cpu) 1
+xlibs = $(dwarf_dw_lib) $(asminline_lib)
+!else
+xlibs = $(dwarf_dw_lib)
+!endif
 
 xname = wcc$(target_cpu)c.$(final_exe_$(host_os))
 dxname = wcc$(target_cpu)d.$(final_exe_$(host_os))
@@ -141,7 +129,7 @@ inc_dirs += -I$(comp_cfg_dir)/h
 inc_dirs += -I$(fe_misc_dir)/h
 
 ldflags = -L$(clib_dir)/$(%OBJDIR) -L$(wres_dir)/$(%OBJDIR)
-libs = $(dwarf_dir)/dw/$(%OBJDIR)/dwf.lib -lwatcom -lwres
+libs = -lwatcom -lwres
 
 !else
 
@@ -167,7 +155,9 @@ extra_c_flags += $(defines)
 def_targ = wcc$(target_CPU)
 !endif
 !ifndef def_targ
-!ifeq release 1
+!ifdef debug
+def_targ        = $(dxname)
+!else ifeq release 1
 def_targ_os2    = $(dllexe).exe
 def_targ_nt     = $(dllexe).exe
 def_targ        = $(xname)
@@ -185,17 +175,15 @@ target: $(def_targ) .SYMBOLIC
         @%null
 
 # Our stuff
-!include $(cc_dir)/deps.mif
 !include $(cc_dir)/ccobjs.mif
 
 !ifdef bootstrap
 xname = wcc$(target_cpu)
-dwarf_deps =
 !endif
 
-$(xname): eraseall.obj $(pre_obj_deps) $(cc_objs) $(dwarf_deps) $(cg_deps) $(cc_dir)/ccobjs.mif
+$(xname): eraseall.obj $(pre_obj_deps) $(cc_objs) $(xlibs) $(cg_deps) $(cc_dir)/ccobjs.mif
 !ifdef bootstrap
-    $(cc) $(ldflags) -o $@ $(cc_objs) $(libs) $(cg_deps)
+        $(cc) $(ldflags) -o $@ $(cc_objs) $(xlibs) $(libs) $(cg_deps)
 !else
         @%make linkfile
         @%append $^&.lnk $(cg_libs)
@@ -211,12 +199,12 @@ $(xname): eraseall.obj $(pre_obj_deps) $(cc_objs) $(dwarf_deps) $(cg_deps) $(cc_
 !endif
 !endif
 
-$(dxname): eraseall.obj $(pre_obj_deps) $(cc_objs) $(dwarf_deps) $(cg_debug_deps) $(cc_dir)/ccobjs.mif
+$(dxname): eraseall.obj $(pre_obj_deps) $(cc_objs) $(xlibs) $(cg_debug_deps) $(cc_dir)/ccobjs.mif
         @%make linkfile
         @%append $^&.lnk $(cg_debug_libs)
         $(linker) $(lflags) @$^&.lnk
 
-$(cxname): eraseall.obj $(pre_obj_deps) $(cc_objs) $(dwarf_deps) $(cg_stub_deps) $(cc_dir)/ccobjs.mif
+$(cxname): eraseall.obj $(pre_obj_deps) $(cc_objs) $(xlibs) $(cg_stub_deps) $(cc_dir)/ccobjs.mif
         @%make linkfile
         @%append $^&.lnk $(cg_stub_libs)
         $(linker) $(lflags) @$^&.lnk
@@ -238,19 +226,16 @@ rc_objs = cc.rc
 # Note this is just hammered in cause I don't know what
 # I'm doing
 #
-$(dllname).dll : $(pre_obj_deps) $(rc_objs) $(dll_objs) $(dwarf_deps) $(cg_debug_deps) $(cc_dir)/ccobjs.mif
-        @if exist $^&.lnk @rm -f $^&.lnk
-        @%write $^&.lnk name $@
+$(dllname).dll : $(pre_obj_deps) $(rc_objs) $(dll_objs) $(xlibs) $(cg_debug_deps) $(cc_dir)/ccobjs.mif
+        @%create $^&.lnk
+        @%append $^&.lnk name $@
         @%append $^&.lnk OP map
         @%append $^&.lnk OP SYMFILE
         @%append $^&.lnk  $(wlink_opt_$(host_os)_$(host_cpu)_dll) initinstance terminstance
         @%append $^&.lnk $(wlink_dll_$(host_os))
         @%append $^&.lnk $(wlink_opt_common)
-        @for %i in ( $(dll_objs) ) do @%append $^&.lnk file %i
-        @%append $^&.lnk lib $(dwarf_lib)
-!ifdef as_lib_$(target_cpu)
-        @%append $^&.lnk lib $(asinline_axp_lib)
-!endif
+        @for %i in ($(dll_objs)) do @%append $^&.lnk file %i
+        @for %i in ($(xlibs)) do @%append $^&.lnk lib %i
 !ifeq release 1
         @%append $^&.lnk $(cg_libs)
 !else
@@ -262,39 +247,33 @@ $(dllname).dll : $(pre_obj_deps) $(rc_objs) $(dll_objs) $(dwarf_deps) $(cg_debug
 !endif
 
 $(dllname).lib : $(dllname).dll
-    @if exist $(dllname).lib @rm -f $(dllname).lib
-    $(librarian) -n -c $(dllname).lib +$(dllname).dll
+        @if exist $(dllname).lib @rm -f $(dllname).lib
+        $(librarian) -n -c $(dllname).lib +$(dllname).dll
 
 $(dllexet).exe : $(cdrv_objs) $(dllname).lib
-        @if exist $^&.lnk @rm -f $^&.lnk
-        @%write $^&.lnk name $@
+        @%create $^&.lnk
+        @%append $^&.lnk name $@
         @for %i in ( $(cdrv_objs) ) do @%append $^&.lnk file %i
         @%append $^&.lnk lib $(dllname).lib
         $(linker) $(lflags) @$^&.lnk
 
 $(dllexe).exe : $(dlldrv_obj) $(dllname).lib
-        @if exist $^&.lnk @rm -f $^&.lnk
-        @%write $^&.lnk name $@
+        @%create $^&.lnk
+        @%append $^&.lnk name $@
         @for %i in ( $(dlldrv_obj) ) do @%append $^&.lnk file %i
         @%append $^&.lnk lib $(dllname).lib
-        $(linker) $(lflags)  @$^&.lnk
+        $(linker) $(lflags) @$^&.lnk
 #
 # done
 #
 
 linkfile: .procedure
-        @if exist $^&.lnk @rm -f $^&.lnk
-        @%write $^&.lnk name $@
+        @%create $^&.lnk
+        @%append $^&.lnk name $@
         @%append $^&.lnk $(wlink_opt_$(host_os))
         @%append $^&.lnk $(wlink_opt_common)
-        @for %i in ( $(cc_objs) ) do @%append $^&.lnk file %i
-#       @for %i in ( $(cg_objs) ) do @%append $^&.lnk file $(o_dir)/%i
-#       @for %i in ( $($(host_os)_objs) ) do @%append $^&.lnk file $(o_dir)/%i
-#       @for %i in ( $(mem_objs) ) do @%append $^&.lnk file $(o_dir)/%i
-        @%append $^&.lnk lib $(dwarf_lib)
-!ifdef as_lib_$(target_cpu)
-        @%append $^&.lnk lib $(asinline_axp_lib)
-!endif
+        @for %i in ($(cc_objs)) do @%append $^&.lnk file %i
+        @for %i in ($(xlibs)) do @%append $^&.lnk lib %i
 
 !ifeq target_cpu axp
 
@@ -312,8 +291,13 @@ code$(target_cpu).gh : xcode$(target_cpu).tmp ./mkcode.exe
         $]@ $[@ $^@
 !endif
 
+target_as_axp=wasmaxp -zq -w4
+target_as_i86=bwasm -zq -w4
+target_as_386=bwasm -zq -w4 -3
+target_as_ppc=wasmppc -zq -w4
+
 xcode$(target_cpu).tmp: ../a/code$(target_cpu).asm
-        $(as) $(aflags) $(extra_a_flags_$[&) $[@
+        $(target_as_$(target_cpu)) -fo=.obj $[@
         $(linker) format dos com op nodefault file code$(target_cpu).obj name $^@ disable 1023,1080
 
 ./mkcode.exe: ../a/mkcode.c

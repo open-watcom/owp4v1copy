@@ -23,3 +23,7 @@ extra_srcs = $(lib_misc_dir)/c
 extra_cflags =  -DDIP_PRIORITY=DP_DEFAULT
 
 !include ../../imp.mif
+
+!include $(dwarf_dir)/dr/client.mif
+
+imp_libs += $(dwarf_dr_lib)

@@ -44,6 +44,7 @@
 #include "seterrno.h"
 #ifdef __WIDECHAR__
     #include "wenviron.h"
+    #include <wctype.h>
 #endif
 
 

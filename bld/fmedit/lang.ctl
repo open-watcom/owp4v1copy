@@ -9,15 +9,19 @@ set PROJDIR=<CWD>
 [ INCLUDE <LANG_BLD>/wproj.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
-cdsay .
-
 [ BLOCK <1> build rel2 ]
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
+    cdsay <PROJDIR>
+
 
 [ BLOCK <1> rel2 cprel2 ]
-<CPCMD> <PROJDIR>/wini86/fmedit.dll <RELROOT>/rel2/binw/
-<CPCMD> <PROJDIR>/nt386/fmedit.dll <RELROOT>/rel2/binnt/
+  [ IFDEF (os_win "") <2*> ]
+    <CPCMD> <PROJDIR>/wini86/fmedit.dll <RELROOT>/rel2/binw/
+  [ IFDEF (os_nt "") <2*> ]
+    <CPCMD> <PROJDIR>/nt386/fmedit.dll <RELROOT>/rel2/binnt/
 
 [ BLOCK <1> clean ]
 #==================
     pmake -d all -h clean
+    cdsay <PROJDIR>
+

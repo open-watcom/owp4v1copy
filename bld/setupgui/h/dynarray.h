@@ -31,13 +31,13 @@
 
 
 typedef struct array_info {
-    int         num;
-    int         alloc;
-    int         esize;
+    size_t      num;
+    size_t      alloc;
+    size_t      esize;
     void        **array;
-    int         increment;
+    size_t      increment;
 } array_info;
 
-extern void InitArray( void **array, int esize, array_info *info );
+extern void InitArray( void **array, size_t esize, array_info *info );
 extern bool BumpArray( array_info *info );
 extern bool BumpDownArray( array_info *info );

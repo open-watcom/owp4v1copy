@@ -40,7 +40,16 @@
 #include "qwrite.h"
 #include "lseek.h"
 
-#if !defined(__NETWARE__) && !defined (_THIN_LIB)
+#if defined(__NETWARE__) && defined (_THIN_LIB)
+/*
+//  Take flush from LibC
+*/
+_WCRTLINK int __flush( FILE *fp )
+{
+    return(fflush(fp));
+}
+
+#else
 
 _WCRTLINK int __flush( FILE *fp )
 {
@@ -97,16 +106,6 @@ _WCRTLINK int __flush( FILE *fp )
     #endif
     _ReleaseFile( fp );
     return( ret );
-}
-
-#else
-
-/*
-//  Take flush from LibC
-*/
-_WCRTLINK int __flush( FILE *fp )
-{
-    return(fflush(fp));
 }
 
 #endif

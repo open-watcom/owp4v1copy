@@ -64,6 +64,8 @@ int WLinkItself;   // file handle
 
 #define NO_RES_MESSAGE "could not open message resource file"
 
+static void Msg_Add_Arg( MSG_ARG *arginfo, char typech, va_list *args );
+
 extern int InitMsg( void )
 {
 #if _LINKER == _WATFOR77
@@ -146,42 +148,46 @@ extern void Msg_Do_Put_Args( char rc_buff[], MSG_ARG_LIST *arg_info,
     va_end( args );
 }
 
-extern void Msg_Put_Args( char rc_buff[], MSG_ARG_LIST *arg_info, char *types,
-                        va_list *args )
+// Write arguments to put into a message and make it printf-like
+extern void Msg_Put_Args(
+    char                message[],      // Contains %s, etc. or %digit specifiers
+    MSG_ARG_LIST        *arg_info,      // Arguments found
+    char                *types,         // message conversion specifier types
+                                        // NULL or strlen <= 3 ( arg_info->arg elements)
+    va_list             *args )         // Initialized va_list
 {
-    int         argnum = 0;
-    int         j;
-    int         order[3];
-    char        *findpct;
-    char        types_buff[4];
-    char        ch;
+    int         argnum = 0;             // Index of argument found
+    int         j;                      // General purpose loop index
+    int         order[3];               // Mapping of args to arg_info->arg
+    char        *percent;               // Position of '%' in message
+    char        types_buff[1 + 3];      // readwrite copy of types
+    char        specifier;              // Character following '%'
 
     if( types != NULL ) {
         strcpy( types_buff, types );
-    }
-    findpct = strchr( rc_buff, '%' );
-    while( findpct != NULL ) {
-        ch = *( findpct + 1 );
-        for( j = 0; types_buff[j] != '\0'; j++ ) {
-            if( types_buff[j] == ch ) {
-                order[j] = argnum;
-                argnum++;
-                if( isdigit( types_buff[j] ) ) {
-                    *( findpct + 1 ) = 's';
-                    types_buff[j] = 's';
+                                        // conversions set order[]; digits->s
+        percent = message - 2;          // So strchr below can work
+        while( ( percent = strchr( percent + 2, '%' ) ) != NULL ) {
+            specifier = percent[1];
+            for( j = 0; types_buff[j] != '\0'; j++ ) {  // Match with types
+                if( types_buff[j] == specifier ) {
+                    order[j] = argnum;
+                    argnum++;
+                    if( isdigit( specifier ) )          // Digit becomes s
+                        types_buff[j] = percent[1] = 's';
+                    break;
                 }
-                break;
             }
         }
-        findpct = strchr( findpct + 2, '%' );
+                                        // Re-order sequential arguments
+        for( j = 0; j < argnum; j++ ) {
+            Msg_Add_Arg( arg_info->arg + order[j], types_buff[j], args );
+        }
     }
-    for( j = 0; j < argnum; j++ ) {
-        Msg_Add_Args( &(arg_info->arg[order[j]]), types_buff[j], args );
-        arg_info->index = 0;
-    }
+    arg_info->index = 0;
 }
 
-static void Msg_Add_Args( MSG_ARG *arginfo, char typech, va_list *args )
+static void Msg_Add_Arg( MSG_ARG *arginfo, char typech, va_list *args )
 {
     switch( typech ) {
         case 's':

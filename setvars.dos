@@ -44,10 +44,9 @@ echo Open Watcom compiler build environment
 REM Stuff for the Open Watcom build environment
 set build_platform=dos386
 set batdir=%owroot%
-set bld_ver=12
-set bld_ver_str=1.2
+set bld_ver=13
+set bld_ver_str=1.3
 set builder.ctl=lang.ctl
-set cge=vi.exe pagedown pageup end
 set defrel=rel2
 set devdir=%owroot%\bld
 set distroot=%owroot%\distrib
@@ -59,15 +58,15 @@ set lang_bld=%owroot%\bat
 set lib=%owroot%\bld\watcom\lib
 set path=%owroot%\bin;%devdir%\build\bin;%owroot%\bat;%lang%\binw;%doc_root%\cmds;%defpath%
 set relroot=%owroot%
-set rm=-s
 set watcom=%lang%
 set edpath=%lang%\eddat
 set wwinhelp=%owroot%\bld\online\hlp\ib
 
 REM Documentation related variables
+REM set appropriate variables to blank for help compilers which you haven't installed
 set win95hc=hcrtf
-set wat31hc=whc
 set win31hc=hc31
+set os2hc=ipfc
 
 %devdr%
 cd %devdir%

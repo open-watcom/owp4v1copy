@@ -1,7 +1,7 @@
-#pmake: all 386 os2 build os_os2 cpu_386 target_386
-host_CPU = 386
-host_OS = os2
-host_CG = os220
-target_CPU = 386
-cc_version = tree
+#pmake: build 386 os2 os_os2 cpu_386 target_386
+
+host_os    = os2
+host_cpu   = 386
+target_cpu = 386
+
 !include ../master.mif

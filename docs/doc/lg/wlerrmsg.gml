@@ -1388,11 +1388,12 @@ If it is issued, please report this problem.
 .do end
 .do end
 .*
-.errnote 1136 relocation to a read/write data segment found at %a
+.errnote 1136 segment relocation to a read/write data segment found at %a(%S)
 .np
 The "RWRELOCCHECK" option for 16-bit Windows (Win16) executables has
 been specified and the linker has detected a segment relocation to a
-read/write data segment.
+read/write data segment. Where the name of the offending symbol is not
+available, "identifier unavailable" is used.
 .if &e'&optdoc eq 1 .do begin
 .np
 This message should not be issued for a &powerpp Win32 executable.

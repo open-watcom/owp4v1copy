@@ -50,7 +50,9 @@ utoa__          utoa            _utoa           d16 d32 nt  nta ntp nvc nvl o16 
 lockin          locking         _locking        d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32     l32
 lseek_          lseek           _lseek          d16 d32 nt  nta ntp         o16 o32         w16 w32 osi
 ltoa__          ltoa            _ltoa           d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+lltoa_          lltoa           _lltoa          d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 ultoa_          ultoa           _ultoa          d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
+ulltoa          ulltoa          _ulltoa         d16 d32 nt  nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 tccmp_          _mbccmp         _tccmp          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
 tccpy_          _mbccpy         _tccpy          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32
 tclen_          _mbclen         _tclen          d16 d32 nt  nta ntp         o16 o32 q16 q32 w16 w32 osi l32

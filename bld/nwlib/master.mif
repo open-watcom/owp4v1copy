@@ -1,121 +1,148 @@
 # be very careful with the ordering of the cproj.mif and defrule.mif
 proj_name       = wlib
 
+!ifndef wlib_autodepends
+wlib_autodepends = .AUTODEPEND
+!endif
+
+wlib_trmem = 1
+
+suppress_bd = 1
+
+!ifeq sys_dll 1
+targ_name = wlibd.dll
+!else ifdef __LINUX__
+targ_name = wlib
+!else
+targ_name = wlib.exe
+!endif
+
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
 
-.c: $(trmem_dir);../c;$(lib_misc_dir)/c;$(watcom_dir)/c
-.h: $(trmem_dir);../h;$(watcom_dir)/h
+!include $(orl_dir)/client.mif
+!include wres.mif
 
-obj             = .obj
-dll_name        = $(proj_name)d.dll
-exe_name        = $(proj_name).exe
+!include trmem.mif
+
+##########
+# objects
 
 wlib_objs = &
-        wlib$(obj) &
-        libio$(obj) &
-        symtable$(obj) &
-        symomf$(obj) &
-        writelib$(obj) &
-        convert$(obj) &
-        util$(obj) &
-        libwalk$(obj) &
-        symlist$(obj) &
-        proclib$(obj) &
-        cmdline$(obj) &
-        error$(obj) &
-        implib$(obj) &
-        elfobjs$(obj) &
-        orlrtns$(obj) &
-        memfuncs$(obj) &
-        trmemcvr$(obj) &
-        demangle$(obj) &
-        omfutil$(obj) &
-        coffwrt$(obj) &
-        inlib$(obj) &
-        idemsgpr$(obj) &
-        idedll$(obj)
+        wlib.obj &
+        libio.obj &
+        symtable.obj &
+        symomf.obj &
+        writelib.obj &
+        convert.obj &
+        util.obj &
+        libwalk.obj &
+        symlist.obj &
+        proclib.obj &
+        cmdline.obj &
+        error.obj &
+        implib.obj &
+        elfobjs.obj &
+        orlrtns.obj &
+        memfuncs.obj &
+        trmemcvr.obj &
+        demangle.obj &
+        omfutil.obj &
+        coffwrt.obj &
+        inlib.obj &
+        idemsgpr.obj &
+        idedll.obj
 
-stub_objs = libdlldr.obj idedrv.obj idemsgfm.obj
+stub_objs = libdlldr.obj idedrv.obj idemsgfm.obj idemsgpr.obj
 
-common_lflags = debug all opt symfile opt map
-!ifdef wlib_dll
-stub_objs += idemsgpr$(obj)
-targ_name = $(dll_name)
-!ifeq host_OS nt
-wlib_objs += ntdll$(obj)
+!ifneq sys_dll 1
+wlib_objs += libdlldr.obj idedrv.obj idemsgfm.obj
+!else ifeq host_OS nt
+wlib_objs += ntdll.obj
 !else ifeq host_OS os2
-wlib_objs += os2dll$(obj)
+wlib_objs += os2dll.obj
 !endif
+wlib_objs += $(trmem_objs)
+
+#########
+# cflags
+
 !ifeq release 0
-#common_lflags += debug all
+extra_c_flags += -d__DEBUG__
 !endif
-extra_lflags_nt += op offset=0x6A000000
+
+extra_c_flags_ntdll    = -bd
+extra_c_flags_os2dll   = -bd
+extra_c_flags_trmem    = $(trmem_cflags)
+extra_c_flags_trmemcvr = $(trmem_cover_cflags)
+extra_c_flags_memfuncs = $(trmem_cover_cflags)
+extra_c_flags_idedrv   = -DSTATIC_LINKAGE
+
+!ifneq sys_dll 1
+extra_c_flags_idedrv   += -DIDE_PGM
+extra_c_flags_idemsgfm += -DIDE_PGM
+extra_c_flags_idemsgpr += -DIDE_PGM
+extra_c_flags_libdlldr += -DIDE_PGM
+extra_c_flags_idedll   += -DIDE_PGM
+!endif
+
+#########
+# lflags
+
+extra_l_flags = op map
+extra_l_flags_qnx += op offset=64k, stack=60k
+
+!ifeq sys_dll 1
+extra_l_flags_nt += op offset=0x6A000000
 lflags_nt_386   = sys nt_dll initinstance terminstance
 lflags_nt_axp   = sys ntaxp_dll initinstance terminstance
 lflags_os2_386  = sys os2v2 dll INITINSTANCE TERMINSTANCE reference __DLLstart_
 exe_lflags_nt_386 = sys nt
 exe_lflags_nt_axp = sys ntaxp
 exe_lflags_os2_386 = sys os2v2
-!else
-targ_name = $(exe_name)
-wlib_objs += $(stub_objs)
-extra_c_flags = -DIDE_PGM
-extra_c_flags_linux = -fo=.obj
 !endif
 
-extra_lflags_qnx += op offset=64k, stack=60k
+###########
+# rc flags
 
-!include orl.mif
-!include wres.mif
+extra_rc_flags_qnx = -d__UNIX__
+extra_rc_flags_linux = -d__UNIX__
+extra_rc_flags = $(extra_rc_flags_$(host_os))
 
-inc_dirs = ../h;$(orl_dir)/h;$(trmem_dir);$(lib_misc_dir)/h;$(watcom_dir)/h
-
-extra_c_flags_ntdll = -bd
-extra_c_flags_os2dll = -bd
-extra_c_flags_idedrv = -DSTATIC_LINKAGE
-!ifeq release 0
-extra_c_flags += -dTRMEM -d__DEBUG__
-wlib_objs += trmem$(obj)
-!ifneq host_CPU axp
-extra_c_flags_trmem     = -of+
-extra_c_flags_trmemcvr  = -of+
-!endif
-!endif
-
-
-wlib_libs = $(orl_lib) $(wres_lib)
-
-.before:
-    set include=$(inc_path)
-
-!ifdef wlib_dll
-$(exe_name): $(stub_objs) $(proj_name).lib
-    $(linker) $(exe_lflags_$(host_OS)_$(host_CPU)) $(common_lflags) name $^@ file { $(stub_objs) } lib $(proj_name).lib
-
-$(proj_name).lib: $(targ_name)
-    @rm -f $(exe_name)
-    $(librarian) -b-n $^@ +$(targ_name)
-!endif
+inc_dirs = ../h;$(orl_dir)/h;$(lib_misc_dir)/h;$(watcom_dir)/h
 
 !ifeq bootstrap 1
 inc_dirs=-I. -I../h -I$(orl_dir)/h -I$(trmem_dir) -I$(lib_misc_dir)/h -I$(watcom_dir)/h
 defines = -DIDE_PGM -D__stdcall=
-wlib_libs = $(clib_dir)/$(%OBJDIR)/libwatcom.a &
-$(wres_dir)/$(%OBJDIR)/libwres.a $(orl_dir)/$(%OBJDIR)/liborl.a
-targ_name = $(proj_name)
+!endif
+
+.c: $(trmem_dir);../c;$(lib_misc_dir)/c;$(watcom_dir)/c
+.h: ../h;$(watcom_dir)/h
+
+wlib_libs = $(orl_lib) $(wres_lib)
+!ifeq bootstrap 1
+wlib_libs += $(clib_dir)/$(%OBJDIR)/libwatcom.a
+!endif
+
+!ifeq sys_dll 1
+wlib.exe: $(stub_objs) $(proj_name).lib
+    $(linker) $(mode_lflags) $(exe_lflags_$(host_OS)_$(host_CPU)) $(extra_l_flags) name $^@ file { $(stub_objs) } lib $(proj_name).lib
+
+$(proj_name).lib: $(targ_name)
+    @rm -f $^@
+    $(librarian) -b-n $^@ +$[@
 !endif
 
 $(targ_name): msg.gh $(wlib_objs) wlib.res $(wlib_libs)
 !ifeq bootstrap 1
     $(cc) -g -o $@ $(wlib_objs) $(wlib_libs)
 !else ifeq host_OS osi
-    $(linker) $(lflags_$(host_OS)_$(host_CPU)) $(common_lflags) $(extra_lflags_$(host_OS)) name wlib.rex file { $(wlib_objs) } lib { $(wlib_libs) }
+    $(linker) $(lflags) name wlib.rex file { $(wlib_objs) } lib { $(wlib_libs) }
     $(bld_bin)/w32bind wlib.rex $@ $(tools_root)/os2ldr.exe
     erase wlib.rex
 !else
-    $(linker) $(lflags_$(host_OS)_$(host_CPU)) $(common_lflags) $(extra_lflags_$(host_OS)) name $^@ file { $(wlib_objs) } lib { $(wlib_libs) }
+    $(linker) $(lflags) name $^@ file { $(wlib_objs) } lib { $(wlib_libs) }
 !endif
     wstrip -q -a -r $^@ . wlib.res
 
@@ -127,12 +154,6 @@ error.obj : msg.gh error.c
 msg.gh : ./mkstr.exe
     *$< $@
 
-!ifeq host_OS qnx
-msg_rc_flags = -d__UNIX__
-!endif
-!ifeq host_OS linux
-msg_rc_flags = -d__UNIX__
-!endif
-
 wlib.res : ../wlib.rc ../wlib.msg msg.gh
-        $(rc_aui) $(msg_rc_flags) $[@ -fo=$^@
+    @set include=$(inc_path)
+    $(rc_aui) $(extra_rc_flags) $[@ -fo=$^@

@@ -45,27 +45,58 @@ static char             *dialogBoxText[4];
  */
 static short getIconType( int bitcount, int width, int height )
 {
-    if (bitcount == 8) {
-        return(5);                      // 256 col, 48x48
-    } else if (bitcount == 4) {
+    /*
+    if (bitcount == 24) {
         if (height == 32)
-             return( 0 );               // 16 col, 32x32
+             return( XX );               // True col, 32x32
         else if (height == 16)
-             return( 3 );               // 16 col, 16x16
-        else if (height == 48)          // 16 col, 48x48
-            return( 6 );
-        else if (height == 24)          // 16 col, 24x24
-            return( 7 );
+             return( XX );               // True col, 16x16
+        else if (height == 48)
+             return( XX );               // True col, 48x48
         else
-             return( -1 );
+             return ( -1 );
+    } else
+    */
+    if (bitcount == 8) {
+        if (height == 96)
+            return( 15 );              // 256 col, 96x96
+        else if (height == 64)
+            return( 12 );              // 256 col, 64x64
+        else if (height == 32)
+            return( 8 );               // 256 col, 32x32
+        else if (height == 16)
+            return( 9 );               // 256 col, 16x16
+        else if (height == 48)
+            return( 5 );               // 256 col, 48x48
+        else
+            return ( -1 );
+    } else if (bitcount == 4) {
+        if (height == 96)
+            return( 14 );              // 16 col, 96x96
+        else if (height == 64)
+            return( 11 );              // 16 col, 64x64
+        else if (height == 32)
+            return( 0 );               // 16 col, 32x32
+        else if (height == 16)
+            return( 3 );               // 16 col, 16x16
+        else if (height == 48)          
+            return( 6 );               // 16 col, 48x48
+        else if (height == 24)          
+            return( 7 );               // 16 col, 24x24
+        else
+            return( -1 );
     } else if (bitcount == 1) {
-        if (height == 32) {             // 2 col, 32x32
-            return( 1 );
-        } else if (height == 16) {      // 2 col, 32x16
+        if (height == 96)               
+            return( 13 );              // 2 col, 96x96
+        else if (height == 64)               
+            return( 10 );              // 2 col, 32x32
+        else if (height == 32)              
+            return( 1 );               // 2 col, 32x32
+        else if (height == 16) {      
             if (width == 32)
-                return( 2 );
-            else if (width == 16)       // 2 col, 16x16
-                return( 4 );
+                return( 2 );           // 2 col, 32x16
+            else if (width == 16)      
+                return( 4 );           // 2 col, 16x16
             else
                 return( -1 );
         } else {
@@ -114,15 +145,46 @@ void InitIconInfo( void )
     iconInfo[6].height = iconInfo[6].width = 48;
     iconInfo[7].height = iconInfo[7].width = 24;
 
+    // iconInfo[8].height = iconInfo[8].width = 32;
+    iconInfo[9].height = iconInfo[9].width = 16;
+
+    iconInfo[10].height = iconInfo[10].width = 64;
+    iconInfo[11].height = iconInfo[11].width = 64;
+    iconInfo[12].height = iconInfo[12].width = 64;
+    iconInfo[13].height = iconInfo[13].width = 96;
+    iconInfo[14].height = iconInfo[14].width = 96;
+    iconInfo[15].height = iconInfo[15].width = 96;
+
+    /*
+    // iconInfo[XX].height = iconInfo[10].width = 32;
+    iconInfo[XX].height = iconInfo[11].width = 16;
+    iconInfo[XX].height = iconInfo[12].width = 48;
+    */
+    
     iconInfo[0].text = IEAllocRCString( WIE_16COLOUR32X32 );
     iconInfo[1].text = IEAllocRCString( WIE_2COLOUR32X32 );
     iconInfo[2].text = IEAllocRCString( WIE_2COLOUR32X16 );
     iconInfo[3].text = IEAllocRCString( WIE_16COLOUR16X16 );
     iconInfo[4].text = IEAllocRCString( WIE_2COLOUR16X16 );
-    iconInfo[5].text = IEAllocRCString( WIE_256COLOUR48x48 );
-    iconInfo[6].text = IEAllocRCString( WIE_16COLOUR48x48 );
-    iconInfo[7].text = IEAllocRCString( WIE_16COLOUR24x24 );
+    iconInfo[5].text = IEAllocRCString( WIE_256COLOUR48X48 );
+    iconInfo[6].text = IEAllocRCString( WIE_16COLOUR48X48 );
+    iconInfo[7].text = IEAllocRCString( WIE_16COLOUR24X24 );
 
+    iconInfo[8].text = IEAllocRCString( WIE_256COLOUR32X32 );
+    iconInfo[9].text = IEAllocRCString( WIE_256COLOUR16X16 );
+
+    iconInfo[10].text = IEAllocRCString( WIE_2COLOUR64X64 );
+    iconInfo[11].text = IEAllocRCString( WIE_16COLOUR64X64 );
+    iconInfo[12].text = IEAllocRCString( WIE_256COLOUR64X64 );
+    iconInfo[13].text = IEAllocRCString( WIE_2COLOUR96X96 );
+    iconInfo[14].text = IEAllocRCString( WIE_16COLOUR96X96 );
+    iconInfo[15].text = IEAllocRCString( WIE_256COLOUR96X96 );
+    /*
+    iconInfo[XX].text = IEAllocRCString( WIE_TRUECOLOUR32X32 );
+    iconInfo[XX].text = IEAllocRCString( WIE_TRUECOLOUR16X16 );
+    iconInfo[XX].text = IEAllocRCString( WIE_TRUECOLOUR48X48 );
+    */
+    
     iconInfo[0].bitcount = 4;
     iconInfo[1].bitcount = 1;
     iconInfo[2].bitcount = 1;
@@ -131,6 +193,22 @@ void InitIconInfo( void )
     iconInfo[5].bitcount = 8;
     iconInfo[6].bitcount = 4;
     iconInfo[7].bitcount = 4;
+
+    iconInfo[8].bitcount = 8;
+    iconInfo[9].bitcount = 8;
+
+    iconInfo[10].bitcount = 2;
+    iconInfo[11].bitcount = 4;
+    iconInfo[12].bitcount = 8;
+    iconInfo[13].bitcount = 2;
+    iconInfo[14].bitcount = 4;
+    iconInfo[15].bitcount = 8;
+    
+    /*
+    iconInfo[XX].bitcount = 24;
+    iconInfo[XX].bitcount = 24;
+    iconInfo[XX].bitcount = 24;
+    */
 
     dialogBoxText[NEW_ICON_OP]    = IEAllocRCString( WIE_SELECTTARGETICON );
     dialogBoxText[ADD_ICON_OP]    = IEAllocRCString( WIE_SELECTTYPEOFNEWICON );

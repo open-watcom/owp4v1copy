@@ -49,8 +49,6 @@ extern void             FlushRead( void );
 extern void             FlushWrite( void );
 extern int              QOpenR( char * );
 extern unsigned long    QFileLen( int );
-extern void *           MemAlloc( unsigned );
-extern void             MemFree( void * );
 extern unsigned long    QGetDate( int );
 extern unsigned_32      GetCRC( void );
 extern void             LinkList( void **, void * );
@@ -414,7 +412,7 @@ static void FreeRunList( void )
 static void StartRunList( void )
 /******************************/
 {
-    RunList = MemAlloc( MAX_COPYLIST_SIZE + sizeof( runlist ) );
+    RunList = WPMemAlloc( MAX_COPYLIST_SIZE + sizeof( runlist ) );
     RunList->next = NULL;
     CurrRun = RunList;
     NumSpilled = 0;
@@ -709,7 +707,7 @@ static void WriteHeaders( arc_header *header, info_list *list, int numfiles,
         QWrite( file, &list->i, entrylen );
         header->info_len += entrylen;
         info = list->next;
-        MemFree( list );
+        WPMemFree( list );
         list = info;
         numfiles--;
     }
@@ -859,7 +857,7 @@ extern void Encode( arccmd *cmd )
     if( TmpHandle < 0 || RunHandle < 0 ) {
         Error( -1, "problem opening temporary files" );
     }
-    AltBuffer = MemAlloc( MAX_COPYLIST_SIZE );      // must be >= WRITE_SIZE
+    AltBuffer = WPMemAlloc( MAX_COPYLIST_SIZE );      // must be >= WRITE_SIZE
     liststart = NULL;
     amtread = 0;
     numfiles = 0;
@@ -899,7 +897,7 @@ extern void Encode( arccmd *cmd )
             length = QFileLen( infile );
             amtread += length;
             namelen = strlen( name );
-            info = MemAlloc( sizeof( info_list ) + namelen - 1);
+            info = WPMemAlloc( sizeof( info_list ) + namelen - 1);
             info->i.length = length;
             info->i.disk_addr = amtwrote;
             amtwrote += codesize;

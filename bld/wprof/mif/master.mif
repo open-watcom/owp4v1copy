@@ -1,16 +1,6 @@
 proj_name = wprof
 fname = wprof$(machine)
 
-!ifeq PM 1
-sys_windowed = 1
-!endif
-!ifeq host_OS win
-sys_windowed = 1
-!endif
-!ifeq host_OS nt
-sys_windowed = 1
-!endif
-
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
@@ -45,19 +35,20 @@ extra_c_flags   += -of+
 !endif
 !endif
 
-extra_c_flags_axp       = -d_OS=_OS_NT
-extra_c_flags_386_nt    = -d_OS=_OS_NT
-extra_c_flags_386_dos   = -d_OS=_OS_DOS
-extra_c_flags_386_qnx   = -ms -D_OS=_OS_QNX
-extra_c_flags_386_os2   = -d_OS=_OS_OS2
-!ifeq PM 1
-extra_c_flags_386_os2   += -dOS2_PM=1
+extra_c_flags_dos       = -d_OS=_OS_DOS
+extra_c_flags_nt        = -d_OS=_OS_NT
+extra_c_flags_win       = -d_OS=_OS_WIN
+extra_c_flags_qnx       = -d_OS=_OS_QNX
+extra_c_flags_os2       = -d_OS=_OS_OS2
+!ifeq host_cpu i86
+extra_c_flags_qnx       += -zt32
+extra_c_flags_win       += -zW
+!else ifeq sys_windowed 1
+extra_c_flags_os2       += -d_OS2_PM=1
 !endif
-extra_c_flags_i86_qnx   = -d_OS=_OS_QNX -zt32
-extra_c_flags_i86_win   = -d_OS=_OS_WIN -zW
 
-extra_c_flags_386       = -fpc $(extra_c_flags_386_$(host_OS))
-extra_c_flags_i86       = -fpc $(extra_c_flags_i86_$(host_OS))
+extra_c_flags_386       = -fpc
+extra_c_flags_i86       = -fpc
 
 # lflags stuff
 ###############
@@ -69,14 +60,10 @@ extra_l_flags_dos       = op map,stack=20k export DOS4GOPTIONS=_DOS4GOPTIONS
 
 # resources stuff
 ##################
-resfile_dos             = wprofui.res
-resfile_qnx             = wprofui.res
-!ifneq PM 1
-resfile_os2             = wprofui.res
-!endif
-resfile                 = $(resfile_$(host_OS))
 !ifeq sys_windowed 1
 resfile                 = wprofgui.res
+!else
+resfile                 = wprofui.res
 !endif
 
 rcfiles = &
@@ -94,25 +81,17 @@ rcinclude=.;../h;$(dig_dir)/h;$(aui_dir)/h;$(gui_dir);$(gui_dir)/h;$(brinfo_dir)
 
 # exlicit rules
 ################
-$(fname).$(exe) : eraseall.obj _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_objs) $(mad_objs) $(wprof_libs) $(sys_libs) $(resfile)
+$(fname).$(exe) : _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_objs) $(mad_objs) $(wprof_libs) $(sys_libs) $(resfile)
     @rm -f finger.obj
     @%make finger.obj
     $(linker) name $^@ $(lflags) op map file {$(objs) $(dip_objs) $(mad_objs) finger.obj} lib {$(wprof_libs) $(sys_libs)}
-!ifdef resfile
-!ifeq sys_windowed 1
-!ifeq host_OS os2
-    $(rc_os2) $(rc_flags) $(resfile) $^@
-!else
-    $(rc) $(rc_flags) -k $(resfile) $^@
-!endif
-!else
+!ifneq sys_windowed 1
     wstrip -q -a -r  $^@ . $(resfile)
+!else ifneq host_OS os2
+    $(rc) $(rc_flags) -k $(resfile) $^@
+!else
+    $(rc_os2) $(rc_flags) $(resfile) $^@
 !endif
-!endif
-
-eraseall.obj : ../compile.gbl
-    @rm -f *.obj
-    wtouch eraseall.obj
 
 !ifeq host_OS os2
 wprofgui.res : ../h/wprofgui.rc
@@ -137,9 +116,12 @@ wprofgui.res : ../h/wprofgui.rc
 !endif
 
         @set include=$(%oinc)
+!else ifeq host_OS nt
+wprofgui.res : ../h/wprofgui.rc .AUTODEPEND
+        $(rc) $(rc_flags) -r -ad -i="$(rcinclude);$(inc_dirs_sys_nt)" $]@ -fo=$^@
 !else
 wprofgui.res : ../h/wprofgui.rc .AUTODEPEND
-        $(rc) $(rc_flags) -r -ad -i="$(rcinclude);$(lang_root)/h/win" $]@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad -i="$(rcinclude);$(inc_dirs_sys_win)" $]@ -fo=$^@
 !endif
 
 msg.obj : msg.c msg.h
@@ -147,7 +129,7 @@ msg.obj : msg.c msg.h
 msgstr.obj : msgstr.c msg.h
 
 wprofui.res : ../h/wprofui.rc .AUTODEPEND
-        $(rc_aui) -ad -i="$(rcinclude);$(lang_root)/h/win" $[@ -fo=$^@
+        $(rc_aui) -ad -i="$(rcinclude);$(inc_dirs_sys_win)" $[@ -fo=$^@
 
 ./auimkstr.exe : $(aui_dir)/h/aui.msg $(aui_dir)/c/mkstr.c
         $(bld_cl) -i"$(aui_dir)/h" $(wcl_util_opts) $]@

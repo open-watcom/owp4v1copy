@@ -24,14 +24,14 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Directory caching routines.
 *
 ****************************************************************************/
 
+
 #if !defined(__UNIX__)
- #include <direct.h>
- #include <dos.h>
+    #include <direct.h>
+    #include <dos.h>
 #endif
 #include <unistd.h>
 #include <stdlib.h>
@@ -51,7 +51,7 @@
 #include "autodept.h"
 
 
-#if defined( __DOS__ ) || defined( __OS2__ ) || defined( __WINDOWS__ ) || defined( __NT__ )
+#if defined( __DOS__ ) || defined( __OS2__ ) || defined( __NT__ )
 
 /*
  * Implement a directory cache in far memory for MSDOS machines.  The
@@ -61,7 +61,7 @@
  */
 
 
-#if 1 && defined(__NT__)
+#if defined(__NT__)
 /*
     Windows NT makes us call an expensive convert GMT to local function
     for each time-stamp we want to look at!
@@ -100,8 +100,7 @@ typedef struct cacheEntry FAR *CENTRYPTR;
 struct cacheEntry {
     CENTRYPTR   ce_next;
     char        ce_name[ NAME_MAX + 1 ];
-    DOSDATE_T   ce_date;
-    DOSDATE_T   ce_time;
+    time_t      ce_tt;
 };
 
 
@@ -241,8 +240,7 @@ STATIC enum cacheRet cacheDir( DHEADPTR *pdhead, char *path )
                 ++files;
 #           endif
 
-            cnew->ce_date = entry->d_date;
-            cnew->ce_time = entry->d_time;
+            cnew->ce_tt = _DOSStampToTime( entry->d_date, entry->d_time );
             ConstMemCpy( cnew->ce_name, entry->d_name, NAME_MAX + 1 );
 
             cnew->ce_next = (*pdhead)->dh_table[ h ];
@@ -326,36 +324,6 @@ STATIC CENTRYPTR findFile( DHEADPTR dir, const char *name )
 
     return( NULL );
 }
-
-
-#if 0
-/*
- * Given a directory, find an 8.3 file within that directory.
- * Return NULL if file not found.
- */
-STATIC CENTRYPTR findDOSFile( DHEADPTR dir, const char *name )
-/************************************************************/
-{
-#if _MAX_FNAME == ( 8 + 1 )
-    dir = dir;
-    name = name;
-    return( NULL );
-#else
-    size_t len;
-    char fname[_MAX_FNAME];
-    char ext[_MAX_EXT];
-    char DOSname[_MAX_PATH];
-
-    _splitpath( name, NULL, NULL, fname, ext );
-    len = strlen( fname );
-    if( len > 8 ) {
-        fname[8] = '\0';
-    }
-    _makepath( DOSname, NULL, NULL, fname, ext );
-    return( findFile( dir, DOSname ) );
-#endif
-}
-#endif
 
 
 /*
@@ -477,18 +445,7 @@ STATIC enum cacheRet maybeCache( const char *fullpath, CENTRYPTR *pc )
 
     centry = findFile( dcur, name );
     if( centry == NULL ) {
-/* I'm not sure what the idea behind this was but it caused problems when
- * two different files had the same 8.3 stem. I'll leave the old code in
- * here in case someone figures out why it was here in the first place. MN
- */
-#if 0
-        centry = findDOSFile( dcur, name );
-        if( centry == NULL ) {
-            return( CACHE_FILE_NOT_FOUND );
-        }
-#else
         return( CACHE_FILE_NOT_FOUND );
-#endif
     }
 
     if( pc != NULL ) {
@@ -519,7 +476,7 @@ extern RET_T CacheTime( const char *fullpath, time_t *ptime )
 #endif
         switch( maybeCache( fullpath, &centry ) ) {
         case CACHE_OK:
-            *ptime = _DOSStampToTime( centry->ce_date, centry->ce_time );
+            *ptime = centry->ce_tt;
             return( RET_SUCCESS );
         case CACHE_NOT_ENUF_MEM:
             break;

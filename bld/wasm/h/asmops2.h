@@ -29,15 +29,26 @@
 *
 ****************************************************************************/
 
+#ifdef DEFINE_ASMOPS
 
 #ifndef _WASM_
 #include "inlnops.gh"
-#ifndef asm_op
-#error =================================
-#error Missing "inlnops.gh" include file?
-#error This is a generated file.
-#error =================================
-#endif
 #else
 #include "fullops.gh"
+#endif
+#undef DEFINE_ASMOPS
+
+#else
+
+#ifndef ASMOPS2_H
+#define ASMOPS2_H
+
+#ifndef _WASM_
+#include "inlnops.gh"
+#else
+#include "fullops.gh"
+#endif
+
+#endif
+
 #endif

@@ -1,8 +1,4 @@
-c$ifdef _NEC_98
-c$pragma library graph98
-c$else
 c$pragma library graph
-c$endif
 
 c$ifdef __stack_conventions__
 c$pragma aux wcgraph "!"

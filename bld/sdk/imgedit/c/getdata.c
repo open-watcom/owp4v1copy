@@ -78,12 +78,14 @@ static void getBitmapInfo( BITMAPINFO *bmi, img_node *node )
 
     GetBitmapInfoHeader( &bmih, node );
 
-    aRgbq = MemAlloc(RGBQ_SIZE(node->bitcount));
-    SetRGBValues(aRgbq, (1<<(node->bitcount)));
-
     memcpy( &(bmi->bmiHeader), &bmih, sizeof(BITMAPINFOHEADER) );
-    memcpy( bmi->bmiColors, aRgbq, RGBQ_SIZE(node->bitcount) );
-    MemFree(aRgbq);
+
+    if( node->bitcount < 9 ) {
+        aRgbq = MemAlloc(RGBQ_SIZE(node->bitcount));
+        SetRGBValues(aRgbq, (1<<(node->bitcount)));
+        memcpy( bmi->bmiColors, aRgbq, RGBQ_SIZE(node->bitcount) );
+        MemFree(aRgbq);
+    }
 
 } /* getBitmapInfo */
 
@@ -178,10 +180,12 @@ void GetImageData( an_img *img, img_node *node )
 
     h = &(img->bm->bmiHeader);
 
-    aRgbq = MemAlloc(RGBQ_SIZE(h->biBitCount));
-    SetRGBValues(aRgbq, (1<<(h->biBitCount)));
-    memcpy( img->bm->bmiColors, aRgbq, RGBQ_SIZE(h->biBitCount) );
-    MemFree(aRgbq);
+    if (h->biBitCount < 9) {
+        aRgbq = MemAlloc(RGBQ_SIZE(h->biBitCount));
+        SetRGBValues(aRgbq, (1<<(h->biBitCount)));
+        memcpy( img->bm->bmiColors, aRgbq, RGBQ_SIZE(h->biBitCount) );
+        MemFree(aRgbq);
+    }
 
     getXorBits( img->bm, img->xor_mask, node );
 

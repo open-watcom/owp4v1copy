@@ -260,7 +260,7 @@ char *GUIMakeEditCopy( char *buffer, int length )
     char        *copy;
 
     if( length > 0 ) {
-        copy = (char * )GUIAlloc( length + 1 );
+        copy = (char * )GUIMemAlloc( length + 1 );
         if( copy != NULL ) {
             memcpy( copy, buffer, length );
             copy[length] = NULLCHAR;
@@ -305,7 +305,7 @@ bool GUIJustSetWindowText( gui_window *wnd, char *data )
     if( !GUIStrDup( data, &name ) ) {
         return( FALSE );
     } else {
-        GUIFree( wnd->screen.name );
+        GUIMemFree( wnd->screen.name );
         wnd->screen.name = name;
         return( TRUE );
     }

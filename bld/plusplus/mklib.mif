@@ -89,7 +89,7 @@ $(target_lib_x) : $(target_xbjs)
 
 # -zv has to be on in case the user uses -zv
 # -xr has to be on in case the user uses -xr
-comp_flags = -xr -zq-w4-ox $(mflag) -i"$(plusplus_runtime_dir)/h" -zl
+comp_flags = -xr -zq-w4-ox $(mflag) $(fp_option) -i"$(plusplus_runtime_dir)/h" -zl
 # temporary fix until AXP targets support -zv properly
 !ifneq host_CPU axp
 comp_flags += -zv
@@ -206,9 +206,6 @@ asm_flags += -bt=qnx
 
 reference : .symbolic $(target_lib)
     cp $(target_lib) $(plusplus_dir)/bin
-
-update : .symbolic $(target_lib)
-    $(librarian) -b -c -n -s -t $(lang_root)/$(production_lib)/$(target_lib) +$(target_lib)
 
 .EXTENSIONS:
 .EXTENSIONS: .exe .lnk .obj .xbj .c .cpp .asm

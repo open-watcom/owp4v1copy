@@ -41,7 +41,6 @@
 #include "ntex.h"
 #include "seterrno.h"
 
-
 _WCRTLINK unsigned _dos_findfirst( const char *path, unsigned attr, struct find_t *buf )
 {
     HANDLE              h;

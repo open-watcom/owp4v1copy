@@ -59,7 +59,7 @@ static void WFreeMenuEntry( GUIRMenuEntry *entry )
         if( entry->item ) {
             ResFreeMenuItem( entry->item );
         }
-        GUIFree( entry );
+        GUIMemFree( entry );
     }
 }
 
@@ -116,7 +116,7 @@ static int WMakeMenuItem( uint_8 **data, int *size, MenuItem **new )
         text += msize;
     }
     tlen = strlen( text ) + 1;
-    itext = (char *)GUIAlloc( tlen );
+    itext = (char *)GUIMemAlloc( tlen );
     if( !itext ) {
         *size = 0;
         return( FALSE );
@@ -148,7 +148,7 @@ static int WAllocMenuEntry( uint_8 **data, int *size, GUIRMenuEntry **entry )
     ok = ( data && *data && size && *size && entry );
 
     if( ok ) {
-        *entry = (GUIRMenuEntry *) GUIAlloc( sizeof(GUIRMenuEntry) );
+        *entry = (GUIRMenuEntry *) GUIMemAlloc( sizeof(GUIRMenuEntry) );
         ok = ( *entry != NULL );
     }
 
@@ -264,10 +264,10 @@ void GUIFreeGUIMenuStruct( gui_menu_struct *entry, int num )
                 GUIFreeGUIMenuStruct( entry[i].child, entry[i].num_child_menus );
             }
             if( entry[i].label ) {
-                GUIFree( entry[i].label );
+                GUIMemFree( entry[i].label );
             }
         }
-        GUIFree( entry );
+        GUIMemFree( entry );
     }
 }
 
@@ -335,7 +335,7 @@ static gui_menu_struct *MakeGUIMenuStruct( GUIRMenuEntry *rmenu )
     ok = ( num_entries > 0 );
 
     if( ok ) {
-        menu = GUIAlloc( num_entries * sizeof( gui_menu_struct ) );
+        menu = GUIMemAlloc( num_entries * sizeof( gui_menu_struct ) );
         ok = ( menu != NULL );
     }
 
@@ -350,7 +350,7 @@ static gui_menu_struct *MakeGUIMenuStruct( GUIRMenuEntry *rmenu )
 
     if( !ok ) {
         if( menu ) {
-            GUIFree( menu );
+            GUIMemFree( menu );
             menu = NULL;
         }
     }
@@ -397,7 +397,7 @@ bool GUICreateMenuStructFromRes( int id, gui_menu_struct **menu, int *num )
     }
 
     if( data ) {
-        GUIFree( data );
+        GUIMemFree( data );
     }
 
     return( ok );

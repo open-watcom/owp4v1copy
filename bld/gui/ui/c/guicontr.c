@@ -80,7 +80,7 @@ bool GUIAddControl( gui_control_info *info, gui_colour_set *plain,
         }
     }
     GUIDeleteField( info->parent, info->id );
-    GUIFree( control );
+    GUIMemFree( control );
     return( FALSE );
 }
 
@@ -129,7 +129,7 @@ static bool DeleteControl( gui_window *wnd, unsigned id )
             } else {
                 wnd->controls = control->sibling;
             }
-            GUIFree( control );
+            GUIMemFree( control );
             return( TRUE );
         }
         prev = control;
@@ -147,7 +147,7 @@ gui_control *GUIInsertControl( gui_window *wnd, gui_control_info *info,
     if( dialog == NULL ) {
         return( NULL );
     }
-    control = (gui_control *)GUIAlloc( sizeof( gui_control ) );
+    control = (gui_control *)GUIMemAlloc( sizeof( gui_control ) );
     if( control != NULL ) {
         control->class = info->control_class;
         control->id = info->id;
@@ -190,7 +190,7 @@ void GUIFreeAllControls( gui_window *wnd )
 
     for( control = wnd->controls; control != NULL; control = next ) {
         next = control->sibling;
-        GUIFree( control );
+        GUIMemFree( control );
     }
     wnd->controls = NULL;
     node = GUIGetDlgByWnd( wnd );
@@ -200,7 +200,7 @@ void GUIFreeAllControls( gui_window *wnd )
         dialog = node->dialog;
         GUIDeleteDialog( dialog );
         if( !GUI_IS_DIALOG( wnd ) ) {
-            GUIFree( dialog );
+            GUIMemFree( dialog );
         }
     }
 }

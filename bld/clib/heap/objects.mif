@@ -38,7 +38,6 @@
 !inject heapgrow.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp drv
 !inject heapinit.obj d16
 !inject heapmin.obj  d16                                    o16     q16     w16
-!inject heapmod.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp drv
 !inject heapset.obj  d16                                    o16     q16     w16
 !inject heapwalk.obj d16                                    o16     q16     w16
 !inject mem.obj      d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp drv

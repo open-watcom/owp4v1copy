@@ -34,8 +34,7 @@
 #define PRODUCTION_BUFFER_SIZE  (1024*4)
 
 #define EOF_CHAR                256
-#define CONTINUE_CHAR_STRING    257
-#define MACRO_CHAR              258
+#define MACRO_CHAR              257
 
 typedef struct fcb_struct {     /* file control block structure */
         char *  src_name;       /* pointer to file name */

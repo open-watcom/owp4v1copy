@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 #include <string.h>
 #include "wresall.h"
 #include "layer0.h"
@@ -37,13 +36,13 @@
 #include "global.h"
 #include "fcntl.h"
 #include "rcldstr.h"
+#if !defined( __UNIX__ ) || defined( __WATCOMC__ )
 #include "process.h"
+#endif
 #include "wreslang.h"
 #include "iortns.h"
 
-static unsigned MsgShift;
-
-#ifdef UNIX
+#if defined( __UNIX__ ) && !defined( __WATCOMC__ )
     #undef BOOTSTRAP_RC
     #define BOOTSTRAP_RC
 #endif
@@ -63,6 +62,9 @@ static unsigned MsgShift;
         #define _arraysize( a ) (sizeof(a)/sizeof(a[0]))
     #endif
 
+#else
+
+static unsigned MsgShift;
 #endif
 
 

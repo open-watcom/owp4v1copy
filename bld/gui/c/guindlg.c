@@ -87,7 +87,7 @@ extern unsigned GUIDlgBuffGetText( gui_window *gui, unsigned id,
     } else {
         strncpy( buff, str, max_len-1 );
         buff[max_len-1] = '\0';
-        GUIFree( str );
+        GUIMemFree( str );
     }
     return( strlen( buff ) );
 }

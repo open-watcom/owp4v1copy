@@ -28,6 +28,7 @@
 *
 ****************************************************************************/
 
+
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
@@ -55,10 +56,6 @@
 #include "mupdate.h"
 #include "mvecstr.h"
 #include "mautodep.h"
-#if defined( __WINDOWS__ )
-#define STRICT
-#include <windows.h>
-#endif
 
 STATIC TLIST    *mustTargs;     /* targets we must update                   */
 STATIC TLIST   *firstTargFound; /* first targets we ever found              */
@@ -91,7 +88,7 @@ STATIC void doBuiltIns( const char *makeopts )
         if( Glob.microsoft | Glob.unix ) {
             // suffixes must be parsed before builtins
             const char *suffices = MSSuffixList;
-            const char *builtins = MSBuiltIn; 
+            const char *builtins = MSBuiltIn;
             FmtStr( cpy, "%%MAKEFLAGS=$(%%MAKEFLAGS) %F", makeopts );
             InsString( cpy, FALSE );
             list = Parse();
@@ -121,6 +118,8 @@ STATIC void doBuiltIns( const char *makeopts )
 static void setFirstTarget( TLIST *potential_first )
 {
     if( firstTargFound != NULL || potential_first == NULL ) {
+        if( potential_first )
+            FreeTList( potential_first );
         return;
     }
     /*  Note all first targets must not have attribute explicit */
@@ -221,15 +220,15 @@ STATIC char *procFlags( char const * const *argv, const char **log_name )
  * of some features in microsoft compatability
  */
 {
-    char    select;     /* - or swchar (*argv)[0]                   */
-    char    option;     /* the option (*argv)[1]                    */
+    char    select = '\0';     /* - or swchar (*argv)[0]                   */
+    char    option = '\0';     /* the option (*argv)[1]                    */
     const char *p;      /* working pointer to *argv                 */
     NODE    *new;       /* for adding a new file                    */
     int      options[256 + 1] = { 0 };
 
     if( ( p = argv[1] ) != NULL ) {
-        if( strcmp( p, "?" ) == 0 
-        || ( p[0] == '-' || p[0] == Glob.swchar ) && strcmp( p+1, "?" ) == 0 ) {
+        if( strcmp( p, "?" ) == 0
+        || (( p[0] == '-' || p[0] == Glob.swchar ) && strcmp( p+1, "?" ) == 0) ) {
             Usage();
         }
     }
@@ -602,11 +601,7 @@ char **_argv;
 #else
 #pragma off(unreferenced);
 #endif
-#if !defined( __WINDOWS__ )
 int main( int argc, char * const *argv )
-#else
-int wmake_main( int argc, char * const *argv )
-#endif
 #ifdef __WATCOMC__
 #pragma on (unreferenced);
 #endif
@@ -614,7 +609,7 @@ int wmake_main( int argc, char * const *argv )
 {
     assert( argv[argc] == NULL );       /* part of ANSI standard */
 #ifndef __WATCOMC__
-    _argv = argv;
+    _argv = (char**) argv;
 #endif
     InitSignals();
     InitHardErr();
@@ -634,31 +629,3 @@ int wmake_main( int argc, char * const *argv )
     ParseFini();
     return( ExitSafe( EXIT_OK ) );
 }
-
-#if 0
-#ifdef __NT__
-// remove when mktime is faster
-char *getenv( const char *name )
-    {
-        register char **envp;
-        register char *p;
-        register int len;
-
-        envp = environ;
-        if( envp != NULL  &&  name != NULL ) {
-            len = strlen( name );
-            for( ; p = *envp; ++envp ) {
-                if( strnicmp( p, name, len ) == 0 ) {
-                    if( p[ len ] == '=' ) return( &p[ len+1 ] );
-                }
-            }
-            // after search in case user sets TZ
-            if( ! Glob.disable_TZ_kludge && strnicmp( name, "TZ", len ) == 0 ) {
-                return( "EST5DST" );
-            }
-        }
-        return( NULL );                 /* not found */
-    }
-#endif
-#endif
-

@@ -38,7 +38,7 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <io.h>
+#include <unistd.h>
 #include <fcntl.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -77,23 +77,22 @@ static void FreeDialog( a_dialog_header *tmp_dialog)
 {
     int i;
 
-    GUIFree( tmp_dialog->name );
-
+    GUIMemFree( tmp_dialog->name );
+    GUIMemFree( tmp_dialog->condition );
+    GUIMemFree( tmp_dialog->title );
     if( !tmp_dialog->def_dlg ) {            /* free non-default controls */
         for( i=0; i < tmp_dialog->num_controls; i++ ){
-            GUIFree(tmp_dialog->controls[i].text);
+            GUIMemFree(tmp_dialog->controls[i].text);
             if( tmp_dialog->pConditions[i] != NULL ) {
-                GUIFree(tmp_dialog->pConditions[i]);
+                GUIMemFree(tmp_dialog->pConditions[i]);
             }
             if( tmp_dialog->pVisibilityConds[i] != NULL ) {
-                GUIFree(tmp_dialog->pVisibilityConds[i]);
+                GUIMemFree(tmp_dialog->pVisibilityConds[i]);
             }
         }
-        GUIFree( tmp_dialog->controls );
+        GUIMemFree( tmp_dialog->controls );
     }
-                                                 /* free variables */
-    GUIFree( tmp_dialog );
-
+    GUIMemFree( tmp_dialog );
 }
 
 extern a_dialog_header *AddNewDialog( char *dlg_name )
@@ -104,9 +103,9 @@ extern a_dialog_header *AddNewDialog( char *dlg_name )
     a_dialog_header *tmp_dialog;
     a_dialog_header *new_dialog;
 
-    new_dialog = (a_dialog_header *)GUIAlloc( sizeof( a_dialog_header ) );
+    new_dialog = (a_dialog_header *)GUIMemAlloc( sizeof( a_dialog_header ) );
     memset( new_dialog, '\0', sizeof( *new_dialog ) );
-    new_dialog->controls = GUIAlloc( sizeof(gui_control_info) );
+//    new_dialog->controls = GUIMemAlloc( sizeof(gui_control_info) );
     GUIStrDup( dlg_name, &new_dialog->name );
     new_dialog->adjusted = FALSE;
     new_dialog->def_dlg     = FALSE;
@@ -159,7 +158,8 @@ bool CheckDialog( char *name )
     if( dlg == NULL ) {
         return( FALSE );
     }
-    if( dlg->condition == NULL ) return( TRUE );
+    if( dlg->condition == NULL )
+        return( TRUE );
     return( EvalCondition( dlg->condition ) );
 }
 
@@ -177,43 +177,43 @@ dlg_state DoDialogWithParent( void *parent, char *name )
 {
     a_dialog_header     *dlg;
     dlg_state           return_state;
-    #if defined( WSQL ) && ( defined ( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-        int                     i;
-        int                     var_handle;
-    #endif
+#if defined( WSQL ) && ( defined ( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
+    int                     i;
+    int                     var_handle;
+#endif
 
     dlg = FindDialogByName( name );
     if( dlg == NULL ) {
         return( DLG_CAN );
     }
     return_state = DoDialogByPointer( parent, dlg );
-    #if defined( WSQL ) && ( defined ( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
-        // Put variables set in dialogs into the install script file
-        // for MSBackOffice packages (with the noted exceptions below)
-        if( GetVariableIntVal( "MakePackage" ) == 1 ) {
-            for( i = 0; dlg->pVariables[ i ] != NO_VAR; i++ ) {
-                var_handle = dlg->pVariables[ i ];
-                // Exceptions: The values the following variables get in dialogs
-                // do not apply to the package being created, so they are not tagged:
-                if( stricmp( VarGetName( var_handle ), "Install" ) == 0
-                    || stricmp( VarGetName( var_handle ), "UnInstall" ) == 0
-                    || stricmp( VarGetName( var_handle ), "MakeDisks" ) == 0
-                    || stricmp( VarGetName( var_handle ), "MakePackage" )  == 0
-                    || stricmp( VarGetName( var_handle ), "PackageDir" ) == 0
-                    || stricmp( VarGetName( var_handle ), "ApplyLicense" ) == 0 ) {
-                    continue;
-                }
-                SetVariableNeedsToBeInScriptFile( dlg->pVariables[ i ] );
+#if defined( WSQL ) && ( defined ( WINNT ) || defined( WIN ) ) // Microsoft BackOffice
+    // Put variables set in dialogs into the install script file
+    // for MSBackOffice packages (with the noted exceptions below)
+    if( GetVariableIntVal( "MakePackage" ) == 1 ) {
+        for( i = 0; dlg->pVariables[ i ] != NO_VAR; i++ ) {
+            var_handle = dlg->pVariables[ i ];
+            // Exceptions: The values the following variables get in dialogs
+            // do not apply to the package being created, so they are not tagged:
+            if( stricmp( VarGetName( var_handle ), "Install" ) == 0
+                || stricmp( VarGetName( var_handle ), "UnInstall" ) == 0
+                || stricmp( VarGetName( var_handle ), "MakeDisks" ) == 0
+                || stricmp( VarGetName( var_handle ), "MakePackage" )  == 0
+                || stricmp( VarGetName( var_handle ), "PackageDir" ) == 0
+                || stricmp( VarGetName( var_handle ), "ApplyLicense" ) == 0 ) {
+                continue;
             }
+            SetVariableNeedsToBeInScriptFile( dlg->pVariables[ i ] );
         }
-    #endif
+    }
+#endif
     if( return_state == DLG_CAN ) {
         // This block is a kludgy hack which allows a dialog to
         // return DLG_DONE when the ESC key is pressed, if it has a
         // DONE button rather than a CANCEL button.
-        int                             i;
-        bool                            can = FALSE;
-        bool                            done = FALSE;
+        int   i;
+        bool  can = FALSE;
+        bool  done = FALSE;
 
         for( i = 0; i < dlg->num_controls; i++ ) {
             if( dlg->controls[ i ].id == CTL_CANCEL ) {
@@ -226,7 +226,6 @@ dlg_state DoDialogWithParent( void *parent, char *name )
         }
         if( can == FALSE && done == TRUE ) return_state = DLG_DONE;
     }
-
     return( return_state );
 }
 
@@ -240,7 +239,6 @@ dlg_state DoDialog( char *name )
     } else {
         result = DoDialogWithParent( NULL, name );
     }
-
     return result;
 }
 

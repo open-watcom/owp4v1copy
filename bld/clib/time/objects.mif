@@ -1,7 +1,10 @@
 #                    d16 d32 dpm g16 g32 nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
 #==================================================================================================
 !inject asctime.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32 snp drv
-!inject clock.obj    d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
+!inject clock.obj    d16 d32                                        q16 q32 w16 w32     l32
+!inject clocko16.obj                                        o16
+!inject clocko32.obj                                            o32
+!inject clockwnt.obj                     nt nta ntp
 !inject clocksnp.obj                                                                        snp drv
 !inject dyltptr.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
 !inject ftime.obj    d16 d32             nt nta ntp         o16 o32         w16 w32 osi
@@ -19,10 +22,8 @@
 !inject time.obj     d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject timesnp.obj                                                                         snp drv
 !inject timeutil.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp drv
-!inject tmznptr.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
 !inject tzfile.obj                                                                      l32
 !inject tzset.obj    d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
-!inject tznmptr.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32 snp
 !inject uasctime.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
 !inject ustrdate.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
 !inject ustrftim.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
@@ -30,5 +31,9 @@
 
 !include ../../../../objlist.mif
 
+asctime_postopts=-os
+strftime_postopts=-os
+clocko16_postopts=-os
+clocko32_postopts=-os
 uasctime_postopts=-os
-wustrftim_postopts=-os
+ustrftim_postopts=-os

@@ -810,7 +810,7 @@ The following describes the form of the "error" pragma.
 is the text of the message that you wish to display.
 .endnote
 .np
-You should use the ANSI
+You should use the ISO
 .kw #error
 directive rather than this pragma.
 This pragma is provided for compatibility with legacy code.
@@ -2209,7 +2209,7 @@ is called.
 extern void myalias(void);
 void myrtn(void);
 #pragma aux myrtn =                     \
-    0xe8 offset myalias /* near call */;
+    0xe8 reloff myalias /* near call */;
 .millust end
 .pc
 In the following example, a far call to the function
@@ -2954,13 +2954,13 @@ used.
 .if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
 .millust begin
 void mycopy( char near *, char *, int );
-#pragma aux mycopy parm [&diup] [&siup] [&cxup];
+#pragma aux mycopy parm [&siup] [&diup] [&cxup];
 .millust end
 .do end
 .if '&lang' eq 'FORTRAN 77' .do begin
 .millust begin
 *$pragma aux mycopy parm (value) \
-*                        [&diup] [&siup] [&cxup]
+*                        [&siup] [&diup] [&cxup]
       character*10  dst
       call mycopy( dst, '0123456789', 10 )
       ...

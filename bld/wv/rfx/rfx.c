@@ -1499,12 +1499,7 @@ void ProcDir( int argc, char **argv ) {
                 }
             }
             if( line == 23 ) {
-#if defined(_FMR_PC) || defined( _NEC_PC )
-//              WriteStream( STD_OUT, "€”õ‚ª‚Å‚«‚½‚ç‚Ç‚ê‚©ƒL[‚ğ‰Ÿ‚µ‚Ä‚­‚¾‚³‚¢.", 41 );
-                WriteStream( STD_OUT, "(Press any key when ready . . . )", 33 );
-#else
                 WriteStream( STD_OUT, "Press any key when ready . . . ", 31 );
-#endif
                 getch();
                 WriteStream( STD_OUT, "\r\n\r\n", 4 );
                 line = 0;

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Video mode set processing.
 *
 ****************************************************************************/
 
@@ -100,18 +99,12 @@ static void HScrollRestore()
 
 #else
 
-  #if defined( _NEC_PC )
-extern gr_device _FARD  _GrNEC_TEXT, _GrNEC_GRAPH8,
-                        _GrNEC_GRAPH16, _GrNEC_GRAPH1120;
-  #else
 extern gr_device _FARD  _TextDevice, _GrCGA_4, _GrCGA_6, _GrHGC_11,
                         _GrEGA_13, _GrEGA_14, _GrEGA_15, _GrEGA_16,
                         _GrVGA_17, _GrVGA_18, _GrVGA_19;
-    #if defined( _SUPERVGA )
+  #if defined( _SUPERVGA )
 extern gr_device _FARD  _GrSVGA_100, _GrSVGA_102, _GrSVGA_103,
                         _GrSVGA_104, _GrSVGA_105;
-    #endif
-
   #endif
 
 
@@ -122,17 +115,6 @@ typedef struct supported_video_mode {
 
 
 static SUPP_MODE        VideoModes[] = {
-  #if defined( _NEC_PC )
-    _98TEXT80,          &_GrNEC_TEXT,
-    _98RESSCOLOR,       &_GrNEC_GRAPH8,
-    _98RESS8COLOR,      &_GrNEC_GRAPH8,
-    _98RESS16COLOR,     &_GrNEC_GRAPH16,
-    _98RESCOLOR,        &_GrNEC_GRAPH8,
-    _98RES8COLOR,       &_GrNEC_GRAPH8,
-    _98RES16COLOR,      &_GrNEC_GRAPH16,
-    _98HIRES16COLOR,    &_GrNEC_GRAPH1120,
-    _98HIRESS16COLOR,   &_GrNEC_GRAPH1120,
-  #else
     _TEXTBW40,          &_TextDevice,
     _TEXTC40,           &_TextDevice,
     _TEXTBW80,          &_TextDevice,
@@ -149,14 +131,13 @@ static SUPP_MODE        VideoModes[] = {
     _VRES2COLOR,        &_GrVGA_17,
     _VRES16COLOR,       &_GrVGA_18,
     _MRES256COLOR,      &_GrVGA_19,
-    #if defined( _SUPERVGA )
+  #if defined( _SUPERVGA )
     0x100,              &_GrSVGA_100,
     0x101,              &_GrSVGA_100,
     0x102,              &_GrSVGA_102,
     0x103,              &_GrSVGA_103,
     0x104,              &_GrSVGA_104,
     0x105,              &_GrSVGA_105,
-    #endif
   #endif
     -1,                 NULL
 };
@@ -438,11 +419,9 @@ short _WCI86FAR _CGRAPH _setvideomode( short req_mode )
             _SetRows( _DefTextRows );
         }
         _InitVariables();               /* initialize globals       */
-    #if !defined( _NEC_PC )
         if( req_mode != _DEFAULTMODE ) {
             _PaletteInit();             // don't init palette if _DEFAULTMODE
         }
-    #endif
     }
 #endif
 
@@ -463,33 +442,7 @@ short _WCI86FAR _CGRAPH _setvideomode( short req_mode )
 Entry( _SETVIDEOMODE, _setvideomode ) // alternate entry-point
 
 
-#if defined( _NEC_PC )
-
-static short SelectMode( short req_mode )
-/*=======================================
-
-    Return the actual mode based on the value of req_mode. */
-
-{
-    short               mode;
-
-    if( req_mode == _MAXRESMODE || req_mode == _MAXCOLORMODE ) {
-        if( _GRCGPort == 0xA4 ) {       // if hires mode
-            mode = _98HIRES16COLOR;
-        } else if( ( inp( 0x42 ) & 0x08 ) != 0 ) {
-            mode = _98RES8COLOR;
-        } else {
-            mode = _98RES16COLOR;
-        }
-    } else if( req_mode == _DEFAULTMODE ) {
-        mode = _DefMode;
-    } else {
-        mode = req_mode;
-    }
-    return( mode );
-}
-
-#elif !defined( _DEFAULT_WINDOWS )
+#if !defined( _DEFAULT_WINDOWS )
 
 static short SelectMode( short req_mode )
 /*=======================================
@@ -874,7 +827,7 @@ static short _registergphclass( WPI_INST inst )
 }
 
 
-#elif !defined( _NEC_PC )
+#else
 
 void _PaletteInit( void )
 //=======================

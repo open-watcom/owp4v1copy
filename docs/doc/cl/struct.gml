@@ -209,7 +209,7 @@ and
 ..li.
 .* .pp
 .* Unnamed structure members may not be portable to other compilers,
-.* because they are not required by the ANSI standard.
+.* because they are not required by the ISO standard.
 .shade end
 .pp
 Each

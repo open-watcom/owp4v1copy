@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Generic (target independent) pragma processing.
 *
 ****************************************************************************/
 
@@ -45,6 +44,43 @@ struct enums_info {
     int    make_enums;
 } *EnumInfo;
 
+// local functions
+local void EndOfPragma( void );
+local void PragFlag( int value );
+local void GetLibraryNames( void );
+local void PragComment( void );
+local void SetPackAmount( void );
+local void PragPack( void );
+local void PragAllocText( void );
+local void PragEnableDisableMessage( int enable );
+local void PragSTDCOption( void );
+local void PragAddExtRef ( char * );
+static void PragMessage( void );
+static void PragEnum ( void );
+static void PragLibs( void );
+static void PragCodeSeg( void );
+static void PragIntrinsic( int intrinsic );
+static void PragDataSeg( void );
+static void PragUnroll( void );
+static void PragReadOnlyFile( void );
+static void PragReadOnlyDir( void );
+static void PragOnce( void );
+static void PragSTDC( void );
+static void PragExtRef( void );
+local void CopyParms( void );
+local void CopyLinkage( void );
+local void CopyCode( void );
+local void CopyObjName( void );
+
+
+// local variables
+static struct toggle ToggleNames[] = {
+    #define TOGDEF( a, b ) {  #a, b },
+    #include "togdef.h"
+    #undef TOGDEF
+        { NULL, 0 }
+    };
+
 void CPragmaInit( void ){
 //********************************//
 // Init any general pragma things //
@@ -53,7 +89,7 @@ void CPragmaInit( void ){
     PragmaInit(); // call traget specific init
 }
 
-void CPragma()
+void CPragma( void )
 {
     if( CompFlags.cpp_output ) {                    /* 29-sep-90 */
         if( ! CppPrinting() ) return;               /* 12-dec-89 */
@@ -106,6 +142,10 @@ void CPragma()
             PragOnce();
         } else if( PragRecog( "unroll" ) ) {
             PragUnroll();
+        } else if( PragRecog( "STDC" ) ) {
+            PragSTDC();
+        } else if( PragRecog( "extref" ) ) {
+            PragExtRef();
         } else {
             return;                     /* don't recognize anything */
         }
@@ -114,7 +154,7 @@ void CPragma()
 }
 
 
-local void EndOfPragma()
+local void EndOfPragma( void )
 {
     if( CurToken == T_SEMI_COLON ) NextToken();
     if( CurToken != T_NULL ) ExpectEndOfLine();
@@ -123,7 +163,7 @@ local void EndOfPragma()
 
 
 
-void PragInit()
+void PragInit( void )
 {
     CdeclInfo   = DefaultInfo;
     PascalInfo  = DefaultInfo;
@@ -141,14 +181,9 @@ void PragInit()
     EnumInfo = NULL;
 }
 
-static struct toggle ToggleNames[] = {
-    #define TOGDEF( a, b ) {  #a, b },
-    #include "togdef.h"
-    #undef TOGDEF
-        { NULL, 0 }
-    };
 
-extern int SetToggleFlag( char const *name, int const value ){
+extern int SetToggleFlag( char const *name, int const value )
+{
 /************************************************************/
     int     i;
     char   *pnt;
@@ -181,7 +216,7 @@ local void PragFlag( int value )
     MustRecog( T_RIGHT_PAREN );
 }
 
-local void GetLibraryNames()
+local void GetLibraryNames( void )
 {
     struct library_list **owner;
     struct library_list *new;
@@ -200,7 +235,7 @@ local void GetLibraryNames()
     MustRecog( T_RIGHT_PAREN );
 }
 
-void PragLibs()
+static void PragLibs( void )
 {
     if( CurToken == T_LEFT_PAREN ) {
         NextToken();
@@ -208,7 +243,7 @@ void PragLibs()
     }
 }
 
-local void PragComment()
+local void PragComment( void )
 {
     if( CurToken == T_LEFT_PAREN ) {
         NextToken();
@@ -219,7 +254,7 @@ local void PragComment()
     }
 }
 
-local void SetPackAmount()
+local void SetPackAmount( void )
 {
     PackAmount = Constant;
     switch( PackAmount ) {
@@ -234,7 +269,7 @@ local void SetPackAmount()
     }
 }
 
-void PragPack()
+local void PragPack( void )
 {
     struct pack_info    *pi;
 
@@ -284,6 +319,7 @@ struct magic_words {
         char *  name;
         int     index;
 };
+
 enum {
         M_UNKNOWN,
         M_DEFAULT,
@@ -311,7 +347,7 @@ struct magic_words MagicWords[] = {                     /* 18-aug-90 */
         { NULL,         M_UNKNOWN }
 };
 
-local int MagicKeyword()
+local int MagicKeyword( void )
 {
     int         i;
 
@@ -334,7 +370,7 @@ void CreateAux( char *id )
 }
 
 
-void SetCurrInfo()
+void SetCurrInfo( void )
 {
     switch( MagicKeyword() ) {
     case M_DEFAULT:
@@ -408,7 +444,7 @@ void XferPragInfo( char *from, char *to )
 }
 
 
-void PragEnding()
+void PragEnding( void )
 {
     if( CurrEntry == NULL ) return;
     CurrInfo->use = CurrAlias->use; /* for compare */
@@ -430,7 +466,7 @@ void PragEnding()
 }
 
 
-local void CopyLinkage()
+local void CopyLinkage( void )
 {
 #if _CPU == 370
     linkage_regs *regs;
@@ -445,7 +481,7 @@ local void CopyLinkage()
 }
 
 
-local void CopyParms()
+local void CopyParms( void )
 {
     int         i;
     hw_reg_set  *regs;
@@ -461,7 +497,7 @@ local void CopyParms()
 }
 
 #if _MACHINE == _ALPHA || _MACHINE == _PPC
-local void CopyCode()
+local void CopyCode( void )
 {
     risc_byte_seq    *code;
     int              size;
@@ -488,7 +524,7 @@ local void CopyCode()
 }
 #endif
 
-local void CopyObjName()
+local void CopyObjName( void )
 {
     char        *name;
 
@@ -519,7 +555,7 @@ int PragRecog( char *what )
 }
 
 
-void PragObjNameInfo()
+void PragObjNameInfo( void )
 {
     if( CurToken == T_STRING ) {
         CurrInfo->objname = CMemAlloc( strlen( Buffer ) + 1 );
@@ -528,7 +564,7 @@ void PragObjNameInfo()
     }
 }
 
-int PragSet()
+int PragSet( void )
 {
     if( CurToken == T_LEFT_BRACKET ) return( T_RIGHT_BRACKET );
     if( CurToken == T_LEFT_BRACE ) return( T_RIGHT_BRACE );
@@ -536,7 +572,7 @@ int PragSet()
 }
 
 
-hw_reg_set PragRegList()
+hw_reg_set PragRegList( void )
 {
     hw_reg_set  res, reg;
     int         close;
@@ -559,7 +595,7 @@ hw_reg_set PragRegList()
     return( res );
 }
 
-void PragManyRegSets()
+void PragManyRegSets( void )
 {
     int         i;
     hw_reg_set  list, *sets;
@@ -617,7 +653,7 @@ struct textsegment *LkSegName( char *segname, char *classname )
     return( NewTextSeg( segname, "", classname ) );
 }
 
-local void PragAllocText()                              /* 26-oct-91 */
+local void PragAllocText( void )                              /* 26-oct-91 */
 {
     struct textsegment  *seg;
     SYM_HANDLE          sym_handle;
@@ -671,6 +707,12 @@ void EnableDisableMessage( int enable, unsigned msg_num )
     }
 }
 
+// forms:
+//    #pragma enable_message messageNo
+//    #pragma disable_message messageNo
+//
+// dis- enable display of selected message number
+//
 local void PragEnableDisableMessage( int enable )
 {
     if( CurToken != T_LEFT_PAREN ) return;
@@ -684,7 +726,13 @@ local void PragEnableDisableMessage( int enable )
     MustRecog( T_RIGHT_PAREN );
 }
 
-static void PragMessage()
+
+// form:
+// #pragma message ("one or more " "long message " "strings")
+// output these strings to stdout
+// this output is _not_ dependent on setting
+// of #pragma enable_message or disable_message.
+static void PragMessage( void )
 {
     if( CurToken != T_LEFT_PAREN ) return;
     CompFlags.pre_processing = 1;           /* enable macros */
@@ -735,8 +783,7 @@ static void PopEnum( void ){
     }
 }
 
-static void PragEnum            // #pragma enum PARSING
-    ( void )
+static void PragEnum( void )    // #pragma enum PARSING
 {
     if( PragRecog( "int" ) ) {
         PushEnum();
@@ -775,7 +822,7 @@ static void PragIntrinsic( int intrinsic )              /* 09-oct-92 */
     }
 }
 
-static void PragCodeSeg()                       /* 22-oct-92 */
+static void PragCodeSeg( void )                       /* 22-oct-92 */
 {
     struct textsegment  *seg;
     char                *segname;
@@ -811,7 +858,7 @@ static void PragCodeSeg()                       /* 22-oct-92 */
     }
 }
 
-static void PragDataSeg()                       /* 22-oct-92 */
+static void PragDataSeg( void )                       /* 22-oct-92 */
 {
     char        *segname;
     int         segment;
@@ -842,7 +889,7 @@ static void PragDataSeg()                       /* 22-oct-92 */
     }
 }
 
-static void PragUnroll()
+static void PragUnroll( void )
 {
     unsigned    unroll_count;
 
@@ -859,12 +906,8 @@ static void PragUnroll()
     NextToken();
     if( unroll_count > 255 ) unroll_count = 255;
     UnrollCount = unroll_count;
-#ifndef NEWCFE
-    if( QuadIndex != 0 ) {              // if we have started some quads
-        GenQuad( unroll_count, T_UNROLL, 0, 0 );
-    }
-#endif
 }
+
 // forms: (1) #pragma read_only_file
 //        (2) #pragma read_only_file "file"*
 //
@@ -911,3 +954,48 @@ static void PragOnce( void )
 {
     SetSrcFNameOnce();
 }
+
+local void PragSTDCOption( void )
+{
+    if( PragRecog( "ON" ) ) {
+    }
+    else if( PragRecog( "OFF" ) ) {
+    }
+    else if( PragRecog( "DEFAULT" ) ) {
+    }
+}
+
+// form:
+// #pragma STDC (FP_CONTRACT|FENV_ACCESS|CX_LIMITED_RANGE) (ON|OFF|DEFAULT)
+//
+static void PragSTDC( void )
+{
+    if( PragRecog( "FP_CONTRACT" ) ) {
+           PragSTDCOption();
+    }
+    else if( PragRecog( "FENV_ACCESS" ) ) {
+           PragSTDCOption();
+    }
+    else if( PragRecog( "CX_LIMITED_RANGE" ) ) {
+           PragSTDCOption();
+    }
+}
+
+local void PragAddExtRef ( char *symbol )
+{
+    SpcSymbol( symbol, SC_EXTERN  );
+}
+
+// #pragma extref symbolname
+//
+static void PragExtRef( void )
+{
+    while( CurToken == T_ID ) {
+        PragAddExtRef( Buffer );
+        NextToken();
+        if( CurToken == T_SEMI_COLON ) {
+            NextToken();
+        }
+    }
+}
+

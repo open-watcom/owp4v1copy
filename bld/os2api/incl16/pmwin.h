@@ -733,6 +733,7 @@ BOOL  APIENTRY WinGetMinPosition(HWND,PSWP,PPOINTL);
 #define HK_PLIST_EXIT      10
 #define HK_FINDWORD        11
 #define HK_CODEPAGECHANGED 12
+#define HK_CALLHOOK        13
 #define HMQ_CURRENT  ((HMQ)1)
 
 #define MSGF_DIALOGBOX  1
@@ -921,8 +922,8 @@ BOOL  APIENTRY WinSetFocus(HWND,HWND);
 
 #ifdef INCL_WININPUT
 
-#define JRN_QUEUESTATUS            0x00000001L
-#define JRN_PHYSKEYSTATE           0x00000002L
+#define JRN_QUEUESTATUS  1L
+#define JRN_PHYSKEYSTATE 2L
 
 #define KC_CHAR        0x0001
 #define KC_VIRTUALKEY  0x0002

@@ -206,7 +206,7 @@ int intern initbios()
     return( initialized );
 }
 
-static void intern initmonitor()
+static int intern initmonitor()
 /***********************************************************************
  initmonitor:
  -----------
@@ -227,6 +227,7 @@ static void intern initmonitor()
     FMRScreenHeight = screen_size >> 8;
     UIData->width = FMRScreenWidth;
     UIData->height = FMRScreenHeight - 1;   /* can't use bottom line */
+    return( TRUE );
 }
 
 static void setscreen( struct fmr_screen *scr )

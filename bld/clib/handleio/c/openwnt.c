@@ -52,7 +52,6 @@
 
 extern unsigned __NFiles;
 
-
 _WCRTLINK int __F_NAME(open,_wopen)( const CHAR_TYPE *name, int mode, ... )
 {
     int         permission;

@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Callback functions invoked from cg - communicate
+*               auxiliary information to the backend.
 *
 ****************************************************************************/
 
@@ -40,10 +40,6 @@
 #include "compcfg.h"
 #include <sys/stat.h>
 #include "autodept.h"
-
-#ifdef NEWCFE
-extern  TREEPTR FirstStmt;
-#endif
 
 static unsigned char VarFuncWeights[] = {
 //a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y,z
@@ -123,7 +119,7 @@ int VarParm( SYMPTR sym )
         parm = fn_typ->u.parms;
         if( parm != NULL )
         {
-            for(; typ = *parm; ++parm )
+            for(; (typ = *parm); ++parm )
             {
                 if( typ->decl_type == TYPE_DOT_DOT_DOT )
                     return( 1 );
@@ -469,7 +465,7 @@ struct aux_info *FindInfo( SYM_ENTRY *sym, SYM_HANDLE sym_handle )
     }
     if( sym_handle == SymFinally )
     {                /* 28-mar-94 */
-        static byte_seq FinallyCode = { 1, 0xc3 };
+        static byte_seq FinallyCode = { 1, {0xc3} };
 
         InlineInfo = DefaultInfo;
         InlineInfo.code = &FinallyCode;
@@ -484,7 +480,7 @@ struct aux_info *FindInfo( SYM_ENTRY *sym, SYM_HANDLE sym_handle )
         };
         static byte_seq TryFiniCode =
         {
-            6, 0x64, 0xA3, 0,0,0,0
+            6, {0x64, 0xA3, 0,0,0,0}
         };  /* mov fs:0,eax */
 
         InlineInfo = DefaultInfo;
@@ -757,7 +753,7 @@ static FNAMEPTR NextDependency( FNAMEPTR curr )
 static VOIDPTR NextLibrary( int index, aux_class request )
 {
     struct library_list *liblist;
-    char                *name;
+    char                *name = NULL;
     int                 i;
 
     i = 0;
@@ -959,13 +955,8 @@ static VOIDPTR NextImport( int index, aux_class request )
         if( CompFlags.emit_library_with_main    /* emit default library info? */
          || CompFlags.emit_library_any )        /* -zlf emit all library info? */
         {            /* 12-mar-90 */
-            #ifdef NEWCFE
             if( FirstStmt != 0 )
                 break;
-            #else
-            if( SymHeaders != 0 )
-                break;
-            #endif
         }
         #endif
         ++index;
@@ -1148,7 +1139,7 @@ extern char *FEExtName( CGSYM_HANDLE sym_handle, char **pat_ret )
         parm = fn_typ->u.parms;
         if( parm != NULL )
         {
-            for(; typ = *parm; ++parm )
+            for(; (typ = *parm); ++parm )
             {
                 if( typ->decl_type == TYPE_DOT_DOT_DOT )
                 {
@@ -1158,7 +1149,7 @@ extern char *FEExtName( CGSYM_HANDLE sym_handle, char **pat_ret )
 
                 while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
                 if ( typ->decl_type == TYPE_VOID ) break;
-                
+
                 parm_size = TypeSize( typ );
                 parm_size = (parm_size + sizeof(target_int) - 1)  &
                                 - sizeof(target_int);
@@ -1291,6 +1282,9 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, aux_class request )
 
     case PEGGED_REGISTER:
         return( SegPeggedReg( (unsigned)cgsym_handle ) );
+
+    default:
+        break;
     }
 
     inf = FindInfo( &sym, sym_handle );
@@ -1355,6 +1349,9 @@ VOIDPTR FEAuxInfo( CGSYM_HANDLE cgsym_handle, aux_class request )
             inf = LangInfo( sym.attrib, inf );
         }
         return( &inf->streturn );
+
+    default:
+        break;
     }
     return( NULL );
 }

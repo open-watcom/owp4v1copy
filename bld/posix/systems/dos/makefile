@@ -1,11 +1,5 @@
-#pmake: all build os_dos cpu_i86
+#pmake: build os_dos cpu_i86
 
-targos          = dos
-
-!ifdef prebuild
-!include $(posix_dir)/mif/bld_cmds.mif
-!else
-!include $(posix_dir)/mif/commands.mif
-!endif
+targos = dos
 
 !include $(posix_dir)/mif/makeall.mif

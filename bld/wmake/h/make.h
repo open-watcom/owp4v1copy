@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Global wmake definitions.
 *
 ****************************************************************************/
 
@@ -95,8 +94,6 @@ struct Glob {
     BIT rcs_make    : 1;/* TRUE if new target's date is max of dep dates */
     BIT fuzzy       : 1;/* TRUE .AUTODEPEND times can be off by one minute */
     BIT keep_spaces : 1;/* TRUE keep spaces in macro defns              */
-
-    BIT disable_TZ_kludge : 1;/* TRUE don't intercept getenv("TZ") in MAIN.C */
 
 #ifdef CACHE_STATS
     BIT cachestat   : 1;/* cache status report                          */

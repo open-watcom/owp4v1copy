@@ -40,9 +40,7 @@
 
 #include "asmsym.h"
 #include "asmops1.h"
-#ifndef   asm_op
-    #include "asmops2.h"
-#endif
+#include "asmops2.h"
 
 #ifdef _WASM_
     struct asm_ins {

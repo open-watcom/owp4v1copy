@@ -37,7 +37,8 @@
 #include <stdio.h>
 #include "errorno.h"
 
-#if defined(stdprn) && !defined(__NETWARE__)
+/* DOS based platforms have stdaux/stdprn in addition to stdin/out/err */
+#if defined(__DOS__) || defined(__WINDOWS__)
     #define NUM_STD_STREAMS 5
 #else
     #define NUM_STD_STREAMS 3

@@ -46,7 +46,6 @@
 #include "ntex.h"
 #include "seterrno.h"
 
-
 #define SEEK_ATTRIB (~_A_VOLID)
 
 #ifdef __WIDECHAR__

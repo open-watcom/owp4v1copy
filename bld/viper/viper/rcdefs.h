@@ -30,7 +30,6 @@
 ****************************************************************************/
 
 
-
 #define B_newproj       1000
 #define B_openproj      1001
 #define B_saveproj      1002
@@ -54,9 +53,3 @@
 #define I_Viper         100
 #define I_Target        101
 #define I_MsgLog        102
-
-/* Following is special defines for including XP XML file in .rc */
-#if defined __NT__
-#define RT_MANIFEST  24
-#define IDR_MANIFEST  1
-#endif

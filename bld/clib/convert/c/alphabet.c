@@ -29,9 +29,5 @@
 ****************************************************************************/
 
 
-#include "variety.h"
-//#include "widechar.h"
-//#include <stdlib.h>
-
-const char _WCI86FAR __Alphabet[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+const char __based(__segname("_CONST")) __Alphabet[] = "0123456789abcdefghijklmnopqrstuvwxyz";
 

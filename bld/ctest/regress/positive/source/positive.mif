@@ -1,12 +1,19 @@
 #
 # awaiting bug fixes
 #
-# bf04.$(ext) &         # bitfield in static anonymous union
-# init26.$(ext) &       # init anon struct with bitfields in anon union
-# opt19.$(ext) &        # codegen 8086 -1 optimization bug test5= arch=i86
-# opt28.$(ext) &        # loop optimization bug
-# opt38.$(ext) &        # codegen -2-ml-ox-d1 (load 'ds' too early)
-# opt43.$(ext) &        # wcl -d2 bug with post increment
+# pch01.$(ext) &    # All of the PCH tests are currently broken!
+# pch02.$(ext) &    # There are at least three distinct problems
+# pch03.$(ext) &    # - Count of SpecialSyms may not match and
+# pch04.$(ext) &    #   PCH will be endlessly regenerated if there
+# pch05.$(ext) &    #   are inlined assembly functions in header
+# pch06.$(ext) &    #   (pch01/02)
+# pch07.$(ext) &    # - Missing CR/LF at the end of precompiled
+# pch08.$(ext) &    #   header throws off the parser (pch03/04)
+# pch09.$(ext) &    # - Expression trees aren't stored in PCH, any
+# pch10.$(ext) &    #   functions defined in headers will screw
+# pch11.$(ext) &    #   things up (pch05/06 and others)
+# init12.$(ext) &   # based pointer problem
+# opt11.$(ext) &    # volatile + post increment problem
 
 !ifdef %ctest_bad_br
 no_br_except30 = no
@@ -15,51 +22,28 @@ no_br_except30 = no
 #
 # special options
 #
-opt_cdisp13 = -xr
 opt_cmdln01 = /d+XXX=0+1
 opt_cmdln02 = /d+ /dXXX=0+1
 opt_cmdln03 = /dX /DXX /uXX /DXXX /uXXX /UXXX /dXXX /DXXXX /uXXXX /DXXXX /uXXXX
 opt_cmdln04 = /dCMDMAC -DCMD1= /DCMD2$#
-!ifndef %ctest_old_compiler
 opt_cmdln05 = -dXN2=2 -dXS1="a-/ b"-dXN1=2 -dXS2#"a-/ b"
-!endif
-opt_dyn01 = -xr
 opt_opt09 = -za
-opt_opt44 = -os
-opt_pack6 = -ot -zp8
-opt_pack7 = -wx
+opt_pack04 = -wx
 opt_pch01 = -fhq
 opt_pch02 = -fhq
-opt_pch03 = -fhq
-opt_pch04 = -fhq
-opt_pch05 = -fhq
+# pch03,04,05 are same test
+opt_pch03 =             # (1) no PCH
+opt_pch04 = -fhq        # (2) write PCH
+opt_pch05 = -fhq        # (3) read PCH
 opt_pch06 = -fhq
 opt_pch07 = -fhq
-opt_pch08 = -fhq
-opt_pch09 = -fhq
-opt_pch10 = -fhq
-opt_pch11 = -fhq
-opt_pch12 = -fhq
-# pch13,14,15 are same test
-opt_pch13 =             # (1) no PCH
-opt_pch14 = -fhq        # (2) write PCH
-opt_pch15 = -fhq        # (3) read PCH
-opt_pch16 = -fhq
-opt_pch17 = -fhq
-opt_pch18 = -fhq -dAFS_CM
-opt_pch19 = -fhq -dAFS_CM
-opt_pch20 = -fhq -dAFS_CM
-opt_pch21 = -fhq -dAFS_CM
+# pch08,09,10,11 use the same PCH
+opt_pch08 = -fhq -dAFS_CM
+opt_pch09 = -fhq -dAFS_CM
+opt_pch10 = -fhq -dAFS_CM
+opt_pch11 = -fhq -dAFS_CM
 opt_pp08 = -w0
-opt_rtti02 = -xr
-opt_rtti03 = -xr
-opt_rtti04 = -xr
-opt_rtti05 = -xr
-opt_rtti06 = -xr
-opt_rtti07 = -xr
-opt_rtti08 = -xr -xbnm
 opt_thread01 = -i$(lang_root)\h\nt
-opt_vf18 = -za
 
 !ifneq arch i86
 opt_link_opt32 = option stack=128k
@@ -71,21 +55,14 @@ opt_link_opt32 = option stack=128k
 
 !ifeq arch 386
 # 386 specific
-opt_init12 = -mf
 opt_opt13 = -fpd
-opt_vf17 = -zv
-
-opt_link_vf17 = option vfremoval
 !endif
 
 !ifeq arch i86
 # i86 specific
 opt_opt13 = -fpd
-opt_opt29 = -zff
+opt_opt29 = -3 -zff
 opt_opt31 = -zff
-opt_vf17 = -zv
-
-opt_link_vf17 = option vfremoval
 !endif
 
 #
@@ -100,6 +77,7 @@ positive_tests = &
     asm03.$(ext) &
     asm04.$(ext) &
     asm05.$(ext) &
+    asm06.$(ext) &
     based02.$(ext) &
     bf01.$(ext) &
     bf02.$(ext) &
@@ -118,6 +96,7 @@ positive_tests = &
     i64cnv.$(ext) &
     i64op.$(ext) &
     i6402.$(ext) &
+    i6402.$(ext) &
     i6404.$(ext) &
     i6405.$(ext) &
     i6407.$(ext) &
@@ -133,7 +112,6 @@ positive_tests = &
     init09.$(ext) &
     init10.$(ext) &
     init11.$(ext) &
-    init12.$(ext) &
     init13.$(ext) &
     init14.$(ext) &
     init15.$(ext) &
@@ -151,7 +129,6 @@ positive_tests = &
     opt08.$(ext) &
     opt09.$(ext) &
     opt10.$(ext) &
-    opt11.$(ext) &
     opt12.$(ext) &
     opt14.$(ext) &
     opt15.$(ext) &
@@ -165,7 +142,7 @@ positive_tests = &
     opt25.$(ext) &
     opt26.$(ext) &
     opt27.$(ext) &
-#    opt28.$(ext) &
+    opt28.$(ext) &
     opt29.$(ext) &
     opt30.$(ext) &
     opt31.$(ext) &

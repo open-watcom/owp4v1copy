@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  COFF symbol table and relocations processing.
 *
 ****************************************************************************/
 
@@ -164,10 +163,23 @@ orl_return CoffCreateSymbolHandles( coff_file_handle file_hnd )
                     current->type &= ~ORL_SYM_CDAT_MASK;
                     current->type |= (aux->selection << ORL_SYM_CDAT_SHIFT)
                                         & ORL_SYM_CDAT_MASK;
+                } else {
+                    type = _CoffComplexType( current->symbol->type );
+                    if( type & IMAGE_SYM_DTYPE_FUNCTION ) {
+                        current->type |= ORL_SYM_TYPE_FUNCTION;
+                    }
                 }
                 break;
             case IMAGE_SYM_CLASS_FUNCTION:
-                current->binding = ORL_SYM_BINDING_LOCAL;
+                // The .bf, .lf and .ef symbols are not regular symbols
+                // and their values in particular must not be interpreted
+                // as offsets/addresses.
+                if( !memcmp( current->name, ".bf", 4 )
+                    || !memcmp( current->name, ".lf", 4 )
+                    || !memcmp( current->name, ".ef", 4 ) )
+                    current->binding = ORL_SYM_BINDING_NONE;
+                else
+                    current->binding = ORL_SYM_BINDING_LOCAL;
                 current->type |= ORL_SYM_TYPE_FUNC_INFO;
                 break;
             case IMAGE_SYM_CLASS_FILE:

@@ -37,7 +37,11 @@
 #include <string.h>
 #include <limits.h>
 #include <errno.h>
-#include <ctype.h>
+#ifdef __WIDECHAR__
+    #include <wctype.h>
+#else
+    #include <ctype.h>
+#endif
 #if defined(__UNIX__)
     #include <dirent.h>
     #include <unistd.h>

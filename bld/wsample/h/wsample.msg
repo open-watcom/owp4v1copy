@@ -30,34 +30,34 @@ pick( MSG_USAGE_LN_1,       "g—p•û–@: wsample [options] program [program argume
 pick( MSG_USAGE_LN_2,       "ƒIƒvƒVƒ‡ƒ“:\n",
                 "Options:\n" )
 #ifndef WIN
-pick( MSG_USAGE_LN_3,       "    /b=<size> ƒTƒ“ƒvƒŠƒ“ƒO—pƒoƒbƒtƒ@ƒTƒCƒY (ÃŞÌ«ÙÄ: 63KB)\n",
-                "    /b=<size> specify the buffer size for samples (default: 63KB)\n" )
+pick( MSG_USAGE_LN_3,       "    -b=<size> ƒTƒ“ƒvƒŠƒ“ƒO—pƒoƒbƒtƒ@ƒTƒCƒY (ÃŞÌ«ÙÄ: 63KB)\n",
+                "    -b=<size> specify the buffer size for samples (default: 63KB)\n" )
 #endif
-pick( MSG_USAGE_LN_4,       "    /c        ƒR[ƒ‹ƒOƒ‰ƒtî•ñ‚ğƒTƒ“ƒvƒ‹ƒtƒ@ƒCƒ‹‚ÉŠÜ‚ß‚Ü‚·\n",
-                "    /c        callgraph information is to be included in the sample file\n" )
-pick( MSG_USAGE_LN_5,       "    /f=<file> ƒTƒ“ƒvƒ‹ƒtƒ@ƒCƒ‹‚Ìƒtƒ@ƒCƒ‹–¼\n",
-                "    /f=<file> specify the output filename for the sample file\n" )
+pick( MSG_USAGE_LN_4,       "    -c        ƒR[ƒ‹ƒOƒ‰ƒtî•ñ‚ğƒTƒ“ƒvƒ‹ƒtƒ@ƒCƒ‹‚ÉŠÜ‚ß‚Ü‚·\n",
+                "    -c        callgraph information is to be included in the sample file\n" )
+pick( MSG_USAGE_LN_5,       "    -f=<file> ƒTƒ“ƒvƒ‹ƒtƒ@ƒCƒ‹‚Ìƒtƒ@ƒCƒ‹–¼\n",
+                "    -f=<file> specify the output filename for the sample file\n" )
 #if defined(NLM)
-pick( MSG_USAGE_LN_6,   
-    "    /o=<tmct> Specify a count to be used to reset the timer at unload\n",
-    "    /o=<tmct> Specify a count to be used to reset the timer at unload\n" )
-pick( MSG_USAGE_LN_7,   
-    "    /e        Estimate the timer terminal count for /o= (see above)\n",
-    "    /e        Estimate the timer terminal count for /o= (see above)\n" )
+pick( MSG_USAGE_LN_6,
+    "    -o=<tmct> Specify a count to be used to reset the timer at unload\n",
+    "    -o=<tmct> Specify a count to be used to reset the timer at unload\n" )
+pick( MSG_USAGE_LN_7,
+    "    -e        Estimate the timer terminal count for -o= (see above)\n",
+    "    -e        Estimate the timer terminal count for -o= (see above)\n" )
 #endif
 
-pick( MSG_OPTIONS_1,        "    /r=<rate> ƒTƒ“ƒvƒŠƒ“ƒOŠÔŠu\n",
-                "    /r=<rate> specify the sampling rate\n" )
+pick( MSG_OPTIONS_1,        "    -r=<rate> ƒTƒ“ƒvƒŠƒ“ƒOŠÔŠu\n",
+                "    -r=<rate> specify the sampling rate\n" )
 #ifdef DOS      /* messages in sampdos */
-pick( MSG_OPTIONS_2,        "    /i=<intr> ƒTƒ“ƒvƒŠƒ“ƒO‚ğs‚¤Š„‚İ”Ô†\n",
-                "    /i=<intr> specify an interrupt number for assigning samples\n" )
-pick( MSG_OPTIONS_3,        "    /d        DOSŠ„‚İ‚ÌŠÄ‹‚Ì‹Ö~\n",
-                "    /d        disable assignment of DOS interrupts to application\n" )
+pick( MSG_OPTIONS_2,        "    -i=<intr> ƒTƒ“ƒvƒŠƒ“ƒO‚ğs‚¤Š„‚İ”Ô†\n",
+                "    -i=<intr> specify an interrupt number for assigning samples\n" )
+pick( MSG_OPTIONS_3,        "    -d        DOSŠ„‚İ‚ÌŠÄ‹‚Ì‹Ö~\n",
+                "    -d        disable assignment of DOS interrupts to application\n" )
 #endif
 
 #if defined(OS2) || defined(OS22)      /* messages in sampos2 and sampos22 */
-pick( MSG_OPTIONS_2,        "    /s        V‚µ‚¢ƒZƒbƒVƒ‡ƒ“‚Å‚ÌƒvƒƒOƒ‰ƒ€‚ÌŠJn\n",
-                "    /s        start the program in a new session\n" )
+pick( MSG_OPTIONS_2,        "    -s        V‚µ‚¢ƒZƒbƒVƒ‡ƒ“‚Å‚ÌƒvƒƒOƒ‰ƒ€‚ÌŠJn\n",
+                "    -s        start the program in a new session\n" )
 #endif
 
 #ifndef WIN
@@ -84,7 +84,7 @@ pick( MSG_EXPLAIN_7,        "              (ÃŞÌ«ÙÄ: DOS Š„‚İ 21 ‚ªÓÆÀ°‚³‚ê‚Ä‚¢
 
 #if defined(OS2) || defined(OS22)      /* messages in sampos2 and sampos22 */
 pick( MSG_EXPLAIN_1,        "    <rate>    ‚ÍƒTƒ“ƒvƒŠƒ“ƒOŠÔ‚Ì‚¨‚æ‚»‚ÌŠÔŠÔŠu (’PˆÊ:ĞØ•b) ‚ğ\n",
-                "    <rate>    is a number (range 27 to 1000) specifying the approximate\n" )
+                "    <rate>    is a number (range 1 to 1000) specifying the approximate\n" )
 pick( MSG_EXPLAIN_2,        "              w’è‚·‚é”’l (”ÍˆÍ:27 ‚©‚ç 1000‚Ü‚Å) ‚Å‚· (ÃŞÌ«ÙÄ: 55)\n",
                 "              time interval (in milliseconds) between samples (default: 55)\n" )
 #endif
@@ -118,9 +118,9 @@ pick( MSG_EXPLAIN_2,        "              w’è‚·‚é”’l (”ÍˆÍ:1 ‚©‚ç 1000‚Ü‚Å) ‚
                 "              time interval (in milliseconds) between samples (default: 55)\n" )
 #endif
 
-pick( MSG_USAGE_LN_9,   
-    "\n   ƒIƒvƒVƒ‡ƒ“‚Ì’†‚Å‚Í '=' ‚Ì‘ã‚è‚É '#' ‚ğg‚Á‚Ä‚­‚¾‚³‚¢ (—á /b#10)\n",
-    "\n   '#' may be used instead of '=' in options (eg. /b#10)\n" )
+pick( MSG_USAGE_LN_9,
+    "\n   ƒIƒvƒVƒ‡ƒ“‚Ì’†‚Å‚Í '=' ‚Ì‘ã‚è‚É '#' ‚ğg‚Á‚Ä‚­‚¾‚³‚¢ (—á -b#10)\n",
+    "\n   '#' may be used instead of '=' in options (eg. -b#10)\n" )
 
 #ifdef DOS      /* messages in sampdos */
 pick( MSG_SAMPLE_1,     "ƒvƒƒOƒ‰ƒ€‚Ì’†‚ÌƒZƒNƒVƒ‡ƒ“‚ª‘½‚·‚¬‚Ü‚·",

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Intel x86 indexed addressing instruction processing.
 *
 ****************************************************************************/
 
@@ -320,21 +319,22 @@ extern  void    FixSegments( void ) {
         ins = blk->ins.hd.next;
         while( ins->head.opcode != OP_BLOCK ) {
             AddSegment( ins );
+            /* Generate an error if segment override is requested and all segment
+             * registers are pegged. However we do NOT want to generate an error
+             * if this is a CS override in flat model - that particular case is not
+             * an error because the CS override is essentially a no-op.  MN
+             */
 #define ANY_FLOATING (FLOATING_DS|FLOATING_ES|FLOATING_FS|FLOATING_GS)
             if( _IsntTargetModel( ANY_FLOATING ) &&
-                ins->num_operands > NumOperands( ins ) ) {
+                ins->num_operands > NumOperands( ins )
+            #if _TARGET & _TARG_80386
+                 && !(_IsTargetModel( FLAT_MODEL ) &&
+                (ins->operands[ ins->num_operands-1 ]->n.class == N_REGISTER) &&
+                HW_CEqual( ins->operands[ ins->num_operands-1 ]->r.reg, HW_CS ))
+            #endif
+            ) {
                 /* throw away override */
                 ins->num_operands--;
-#ifdef QNX_FLAKEY
-{
-extern unsigned long OrigModel;
-DumpString( "CG:about to issue msg: " );
-Dump8h( OrigModel );
-DumpString( " -> " );
-Dump8h( Model );
-DumpString( "\r\n" );
-}
-#endif
                 FEMessage( MSG_NO_SEG_REGS, AskForLblSym( CurrProc->label ) );
             }
             ins = ins->head.next;

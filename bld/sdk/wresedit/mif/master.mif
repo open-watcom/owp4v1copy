@@ -79,10 +79,6 @@ extra_c_flags_preproc = -zm
 extra_c_flags_ppexpr = -zm
 extra_c_flags_ppmacro = -zm
 
-!ifeq wresedit_trmem 1
-TRMEM           = -DTRMEM
-!endif
-
 wr_lib = $(wr_dir)/$(host_OS)$(host_CPU)/wr.lib
 
 .c: ../c;../../c;$(misc_dir);$(cpp_dir)
@@ -90,11 +86,12 @@ wr_lib = $(wr_dir)/$(host_OS)$(host_CPU)/wr.lib
 
 inc_dirs = ../h;../../h;$(misc_dir);$(wr_dir)/h;$(wres_dir)/h;$(cpp_dir)
 
-extra_l_flags = lib $(wres_lib),$(wr_lib)
-extra_l_flags_nt = op map,v,static
-extra_l_flags_nt += op stack=16k,heap=16k commit heap=8k
+extra_l_flags = op map,v,static
+extra_l_flags_nt = op stack=16k,heap=16k commit heap=8k
 extra_l_flags_win = library commdlg op stack=8k,rwr &
                     export WEP RESIDENT
+
+xlibs = $(wres_lib) $(wr_lib)
 
 .BEFORE
         @set include=$(inc_path)
@@ -102,16 +99,13 @@ extra_l_flags_win = library commdlg op stack=8k,rwr &
 $(name).lib: $(name).dll
         $(librarian) -b -n $^@ +$[@
 
-$(name).dll: wmsgfile.gh $(object) $(wres_lib) $(wr_lib) $(name).res
-        $(linker) $(lflags) name $^@ file {$(object)}
+$(name).dll: wmsgfile.gh $(object) $(name).res $(xlibs)
+        @%create tmp.lnk
+        @%append tmp.lnk $(lflags)
+        @for %i in ($(object)) do @%append tmp.lnk file %i
+        @for %i in ($(xlibs)) do @%append tmp.lnk lib %i
+        $(linker) name $^@ @tmp.lnk
         $(rc) $(rc_flags) -k $(name).res $^@
-!ifdef TOOLS_10_0
-!ifeq host_OS nt
-!ifeq host_CPU 386
-        whack $(name).dll
-!endif
-!endif
-!endif
 
 .rc.res: .AUTODEPEND
         $(rc) $(rc_flags) -r -ad $[@ -fo=$^@

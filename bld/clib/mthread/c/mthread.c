@@ -111,6 +111,7 @@ static semaphore_object IOBSemaphore;
 #endif
 
 #if defined( __NT__ )
+
 #define MAX_CRITICAL_SECTION 64
 static CRITICAL_SECTION critsect_cache[MAX_CRITICAL_SECTION];
 static int critsect_next;
@@ -453,7 +454,7 @@ thread_data *__AllocInitThreadData( thread_data *tdata )
 /******************************************************/
 {
     if( tdata == NULL ) {
-        tdata = lib_malloc( __ThreadDataSize );
+        tdata = lib_calloc( 1, __ThreadDataSize );
         if( tdata != NULL ) {
             tdata->__allocated = 1;
             tdata->__data_size = __ThreadDataSize;

@@ -1,4 +1,4 @@
-#pmake: all build serv lcl os_dos dsx cpu_386 x86
+#pmake: serv lcl os_dos dsx cpu_386 x86 pls
 
 name = pedhelp
 sys_x86_pls = sys tnt op st=8K

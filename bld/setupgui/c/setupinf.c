@@ -24,16 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Read and parse setup.inf file, create dialogs if necessary.
+*               Also initialize other variables.
 *
 ****************************************************************************/
 
 
-/*
-*   COMMENTS: Read the setup.inf file and: Create Dialogs if necessary.
-*                                          Initialize other variables.
-*/
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -42,13 +38,15 @@
 #include <fcntl.h>
 #include <stdarg.h>
 #include <ctype.h>
-#ifndef UNIX
-#include <direct.h>
+#if !defined( UNIX ) && !defined( __UNIX__ )
+    #include <direct.h>
+#else
+    #include <sys/stat.h>
 #endif
 
 #if defined( __WINDOWS__ ) || defined( __NT__ )
-  #define STRICT
-  #include "windows.h"
+    #define STRICT
+    #include "windows.h"
 #endif
 
 #include "gui.h"
@@ -63,17 +61,17 @@
 #include "genctrl.h"
 #include "dlggen.h"
 #include "utils.h"
-#ifndef UNIX
-#include "bdiff.h"
+#if !defined( UNIX ) && !defined( __UNIX__ )
+    #include "bdiff.h"
 #endif
 #if defined( WSQL )
-  #include <sys/stat.h>
-  #include <sys/utime.h>
-  #include "wsqldef.h"
-  #include "standard.h"
-  #include "license.h"
-  #include "dbparms.h"
-  #include "wsql.h"
+    #include <sys/stat.h>
+    #include <sys/utime.h>
+    #include "wsqldef.h"
+    #include "standard.h"
+    #include "license.h"
+    #include "dbparms.h"
+    #include "wsql.h"
 #endif
 
 extern char             *TrimQuote(char*);
@@ -84,12 +82,11 @@ extern void             ReadVariablesFile( char * );
 
 #define RoundUp( v, r ) (((v)+(r)-1) & ~(unsigned long)((r)-1))
 
-#define BUF_SIZE        2048
+#define BUF_SIZE        8192
 
 #include "dynarray.h"
 
-
-struct setup_info  {
+static struct setup_info {
     long                stamp;
     char                *pm_group_file_name;
     char                *pm_group_name;
@@ -105,9 +102,9 @@ struct setup_info  {
     array_info          target;
     array_info          label;
     array_info          upgrade;
-    #ifdef PATCH
-        array_info      patch_files;
-    #endif
+#ifdef PATCH
+    array_info          patch_files;
+#endif
     array_info          spawn;
     array_info          delete;
     array_info          fileconds;
@@ -146,12 +143,12 @@ extern unsigned_32      ReadInternal( char* );
 
 #endif
 
-struct disk_info {
+static struct disk_info {
     char                *desc;
 } *DiskInfo = NULL;
 
 
-struct dir_info {
+static struct dir_info {
     char                *desc;
     int                 target;
     int                 parent;
@@ -161,7 +158,7 @@ struct dir_info {
 } *DirInfo = NULL;
 
 
-struct target_info {
+static struct target_info {
     char                *name;
     long                space_needed;
     long                max_tmp_file;
@@ -171,12 +168,12 @@ struct target_info {
     char                *temp_disk;
 } *TargetInfo = NULL;
 
-struct label_info {
+static struct label_info {
     char                *dir;
     char                *label;
 } *LabelInfo = NULL;
 
-struct upgrade_info {
+static struct upgrade_info {
     char                *name;
 } *UpgradeInfo = NULL;
 
@@ -208,7 +205,7 @@ typedef struct tree_node {
     union {
         struct tree_node*left;
         vhandle         v;
-    }u;
+    } u;
     struct tree_node    *right;
     tree_op             op;
 } tree_node;
@@ -221,7 +218,7 @@ typedef struct file_cond_info {
 
 file_cond_info *FileCondInfo = NULL;
 
-struct file_info {
+static struct file_info {
     char                *filename;
     int                 dir_index, old_dir_index, disk_index;
     unsigned            num_files;
@@ -238,7 +235,7 @@ struct file_info {
     unsigned            core_component : 1;
 } *FileInfo = NULL;
 
-struct pm_info {
+static struct pm_info {
     char                *filename;
     char                *parameters;
     char                *desc;
@@ -247,7 +244,7 @@ struct pm_info {
     char                *condition;
 } *PMInfo = NULL;
 
-struct profile_info {
+static struct profile_info {
     char                *hive_name;
     char                *app_name;
     char                *key_name;
@@ -256,7 +253,7 @@ struct profile_info {
     char                *condition;
 } *ProfileInfo = NULL;
 
-struct spawn_info {
+static struct spawn_info {
     char                *condition;
     char                *command;
     when_time           when;
@@ -268,27 +265,27 @@ typedef enum {
     DELETE_DIR,
 } delete_type;
 
-struct delete_info {
+static struct delete_info {
     char                *name;
     delete_type         type;
 } *DeleteInfo = NULL;
 
-struct config_info {
+static struct config_info {
     char                *var;
     char                *value;
     char                *condition;
 } *ConfigInfo = NULL, *EnvironmentInfo = NULL, *AutoExecInfo = NULL;
 
-struct dlls_to_check {
+static struct dlls_to_check {
     int                 index;
     char *              full_path;
 } *DLLsToCheck = NULL;
 
-struct force_DLL_install {
+static struct force_DLL_install {
     char        *name;
 } *ForceDLLInstall = NULL;
 
-struct all_pm_groups {
+static struct all_pm_groups {
     char        *group;
 } *AllPMGroups = NULL;
 
@@ -321,14 +318,14 @@ typedef enum {
     RS_FORCEDLLINSTALL
 } read_state;
 
-static read_state        State;
-static int              NoLineCount;
-static int              *LineCountPointer = &NoLineCount;
+static read_state       State;
+static size_t           NoLineCount;
+static size_t           *LineCountPointer = &NoLineCount;
 static vhandle          hMakeDisks;
 static bool             NeedGetDiskSizes = FALSE;
 static bool             NeedInitAutoSetValues = TRUE;
 static char             *ReadBuf;
-static int              ReadBufSize;
+static size_t           ReadBufSize;
 extern bool             RemoveODBC;
 extern gui_coord        GUIScale;
 static int              MaxWidthChars;
@@ -371,7 +368,7 @@ static tree_node *TreeNode( tree_op op, void *left, void *right )
 {
     tree_node   *tree;
 
-    tree = GUIAlloc( sizeof( tree_node ) );
+    tree = GUIMemAlloc( sizeof( tree_node ) );
     tree->op = op;
     tree->u.left = left;
     tree->right = right;
@@ -420,16 +417,19 @@ static tree_node *BuildExprTree( char *str )
     while( --stack_top >= 0 ) {
         tree = TreeNode( OP_AND, tree, stack[ stack_top ] );
     }
-    GUIFree( str2 );
+    GUIMemFree( str2 );
     return( tree );
 }
 
-bool SameExprTree( tree_node *a, tree_node *b )
-/*********************************************/
+static bool SameExprTree( tree_node *a, tree_node *b )
+/****************************************************/
 {
-    if( a == NULL ) return( b == NULL );
-    if( b == NULL ) return( a == NULL );
-    if( a->op != b->op ) return( FALSE );
+    if( a == NULL )
+        return( b == NULL );
+    if( b == NULL )
+        return( a == NULL );
+    if( a->op != b->op )
+        return( FALSE );
     switch( a->op ) {
     case OP_AND:
     case OP_OR:
@@ -460,6 +460,7 @@ static int NewFileCond( char *str )
     num = SetupInfo.fileconds.num;
     while( --num >= 0 ) {
         if( SameExprTree( new, FileCondInfo[ num ].cond ) ) {
+            BurnTree( new );
             return( num );
         }
     }
@@ -559,18 +560,18 @@ static void BurnTree( tree_node *tree )
         BurnTree( tree->u.left );
         break;
     case OP_EXIST:
-        GUIFree( tree->u.left );
+        GUIMemFree( tree->u.left );
         break;
     case OP_VAR:
     case OP_TRUE:
     case OP_FALSE:
         break;
     }
-    GUIFree( tree );
+    GUIMemFree( tree );
 }
 
-int DoEvalCondition( char *str, bool is_minimal )
-/***********************************************/
+static int DoEvalCondition( char *str, bool is_minimal )
+/******************************************************/
 {
     int         value;
     tree_node   *tree;
@@ -632,7 +633,7 @@ static void EndHandle( char *source )
     int         length;
 
     length = strlen( source );
-#ifdef UNIX
+#if defined( UNIX ) || defined( __UNIX__ )
     if( source[ length - 1 ] != '/' ) {
         source[ length ] = '/';
         source[ length + 1 ] = '\0';
@@ -727,7 +728,7 @@ extern void PatchingFile( char *patchname, char *path )
 }
 #endif
 
-extern char *NextToken( char *buf, char delim )
+static char *NextToken( char *buf, char delim )
 /*********************************************/
 // Locate the next 'token', delimited by the given character. Return a
 // pointer to the next one, and trim trailing blanks off the current one.
@@ -761,7 +762,8 @@ static char *StripEndBlanks( char *p )
         return p;
     }
 
-    while( *p == ' ' || *p == '\t' ) ++p;
+    while( *p == ' ' || *p == '\t' )
+        ++p;
     q = p + strlen( p ) - 1;
     while( q >= p && ( *q == ' ' || *q == '\t' || *q == '\n' ) ) {
         *q = '\0';
@@ -893,11 +895,14 @@ static char *find_break( char *text, DIALOG_INFO *dlg, int *chwidth )
     *chwidth = dlg->max_width;
     br = text;
     for( e=text;; ) {
-        if( *e == '\0' ) return( text );
-        if( *e == '\\' && *( e + 1 ) == 'n' ) return( e );
+        if( *e == '\0' )
+            return( text );
+        if( *e == '\\' && *( e + 1 ) == 'n' )
+            return( e );
         n = e + GUICharLen( *e );
         width = GUIGetExtentX( MainWnd, text, n - text );
-        if( width >= winwidth ) break;
+        if( width >= winwidth )
+            break;
         // is this a good place to break?
         if( *e == ' ' || *e == '\t' ) { // English
             br = n;
@@ -906,7 +911,8 @@ static char *find_break( char *text, DIALOG_INFO *dlg, int *chwidth )
         }
         e = n;
     }
-    if( br == text ) return( e );
+    if( br == text )
+        return( e );
     return( br );
 }
 
@@ -961,9 +967,9 @@ static bool dialog_static( char *next, DIALOG_INFO *dlg )
 /*******************************************************/
 {
     char                *line;
-    #ifndef WSQL
-        int             len;
-    #endif
+#ifndef WSQL
+    int                 len;
+#endif
     char                *text;
     bool                rc = TRUE;
     char                dummy_var[ DUMMY_VAR_SIZE ];
@@ -986,15 +992,15 @@ static bool dialog_static( char *next, DIALOG_INFO *dlg )
         var_handle = AddVariable( dummy_var );
         if( text != NULL ) {
             text = AddInstallName( text, TRUE );
-        #ifdef WSQL
+#ifdef WSQL
             text = ReplaceVarsInplace( text, TRUE );
             word_wrap( text, dlg, line );
-        #else
+#else
             len = strlen( text );
             set_dlg_dynamstring( dlg->curr_dialog->controls, dlg->array.num-1,
                                  text, var_handle, dlg->col_num, dlg->row_num, dlg->col_num + len );
             dlg->max_width = max( dlg->max_width, dlg->col_num + len );
-        #endif
+#endif
         } else {
             set_dlg_dynamstring( dlg->curr_dialog->controls, dlg->array.num-1,
                                  "", var_handle, dlg->col_num, dlg->row_num, dlg->col_num + 0 );
@@ -1002,7 +1008,7 @@ static bool dialog_static( char *next, DIALOG_INFO *dlg )
     } else {
         rc = FALSE;
     }
-    GUIFree( text );
+    GUIMemFree( text );
     return( rc );
 }
 
@@ -1022,7 +1028,7 @@ static char * textwindow_wrap( char *text, DIALOG_INFO *dlg, bool convert_newlin
         return( NULL );
     }
 
-    big_buffer = GUIAlloc( strlen( text ) * 2 + 1 );
+    big_buffer = GUIMemAlloc( strlen( text ) * 2 + 1 );
     if( big_buffer == NULL ) {
         return( NULL );
     }
@@ -1062,9 +1068,9 @@ static char * textwindow_wrap( char *text, DIALOG_INFO *dlg, bool convert_newlin
     }
     *new_index = '\0';
 
-    GUIFree( text );
+    GUIMemFree( text );
     GUIStrDup( big_buffer, &text );
-    GUIFree( big_buffer );
+    GUIMemFree( big_buffer );
     return( text );
 }
 
@@ -1097,14 +1103,14 @@ static bool dialog_textwindow( char *next, DIALOG_INFO *dlg )
             fp = fopen( file_name, "rb" );
             if( fp != NULL ) {
                 stat( file_name, &buf );
-                text = GUIAlloc( buf.st_size + 1 );  // 1 for terminating null
+                text = GUIMemAlloc( buf.st_size + 1 );  // 1 for terminating null
                 if( text != NULL ) {
                     fread( text, sizeof( *text ), buf.st_size, fp );
                     text[ buf.st_size ] = '\0';
                     fclose( fp );
                 }
             }
-            GUIFree( file_name );
+            GUIMemFree( file_name );
             text = textwindow_wrap( text, dlg, FALSE ); //VERY VERY SLOW!!!!  Don't use large files!!!
                                                         // bottleneck is the find_break function
         } else {
@@ -1129,14 +1135,14 @@ static bool dialog_textwindow( char *next, DIALOG_INFO *dlg )
                       GUI_VSCROLL );
             dlg->curr_dialog->rows += rows;
             dlg->row_num += rows;
-            #if defined( __DOS__ )
-                dlg->curr_dialog->rows += 2;
-                dlg->row_num += 2;
-            #endif
+#if defined( __DOS__ )
+            dlg->curr_dialog->rows += 2;
+            dlg->row_num += 2;
+#endif
         } else {
             rc = FALSE;
         }
-        GUIFree( text );
+        GUIMemFree( text );
     }
     return( rc );
 }
@@ -1178,8 +1184,8 @@ static bool dialog_dynamic( char *next, DIALOG_INFO *dlg )
     } else {
         rc = FALSE;
     }
-    GUIFree( vbl_name );
-    GUIFree( text );
+    GUIMemFree( vbl_name );
+    GUIMemFree( text );
     return( rc );
 }
 
@@ -1228,9 +1234,9 @@ static bool dialog_edit_button( char *next, DIALOG_INFO *dlg )
     char                *section;
     char                *button_text;
     char                *dialog_name;
-    #if defined( __NT__ )
-        char            *value;
-    #endif
+#if defined( __NT__ )
+    char                *value;
+#endif
     vhandle             var_handle;
     vhandle             var_handle_2;
     char                buff[MAXBUF];
@@ -1251,17 +1257,17 @@ static bool dialog_edit_button( char *next, DIALOG_INFO *dlg )
             if( section != NULL ) {
                 // terminate envvar
                 *section = '\0';
-                #if defined( __NT__ )
-                    ++section;
-                    value = strchr( section, ':' );
-                    if( value != NULL ) {
-                        *value = '\0';
-                        ++value;
-                        if( GetRegString( HKEY_CURRENT_USER, section, value, buff, MAXBUF ) ) {
-                            val = buff;
-                        }
+#if defined( __NT__ )
+                ++section;
+                value = strchr( section, ':' );
+                if( value != NULL ) {
+                    *value = '\0';
+                    ++value;
+                    if( GetRegString( HKEY_CURRENT_USER, section, value, buff, MAXBUF ) ) {
+                        val = buff;
                     }
-                #endif
+                }
+#endif
             }
             if( val == NULL && line[1] != '\0' ) {
                 val = getenv( &line[1] );
@@ -1327,7 +1333,7 @@ static bool dialog_edit_button( char *next, DIALOG_INFO *dlg )
     } else {
         rc = FALSE;
     }
-    GUIFree( vbl_name );
+    GUIMemFree( vbl_name );
     return( rc );
 }
 
@@ -1375,7 +1381,7 @@ static bool dialog_other_button( char *next, DIALOG_INFO *dlg )
     } else {
         rc = FALSE;
     }
-    GUIFree( next_copy );
+    GUIMemFree( next_copy );
     return( rc );
 }
 
@@ -1444,9 +1450,9 @@ static bool dialog_radiobutton( char *next, DIALOG_INFO *dlg )
     } else {
         rc = FALSE;
     }
-    GUIFree( init_cond );
-    GUIFree( vbl_name );
-    GUIFree( text );
+    GUIMemFree( init_cond );
+    GUIMemFree( vbl_name );
+    GUIMemFree( text );
     return( rc );
 }
 
@@ -1493,9 +1499,9 @@ static bool dialog_checkbox( char *next, DIALOG_INFO *dlg )
     } else {
         rc = FALSE;
     }
-    GUIFree( init_cond );
-    GUIFree( vbl_name );
-    GUIFree( text );
+    GUIMemFree( init_cond );
+    GUIMemFree( vbl_name );
+    GUIMemFree( text );
     return( rc );
 }
 
@@ -1532,7 +1538,7 @@ static bool dialog_detail_check( char *next, DIALOG_INFO *dlg )
         GUIStrDup( next2,
                    &dlg->curr_dialog->pVisibilityConds[ dlg->curr_dialog->num_controls ] + 1 );
     }
-    GUIFree( next2_org );
+    GUIMemFree( next2_org );
     return( added );
 }
 
@@ -1550,9 +1556,9 @@ static bool dialog_editcontrol( char *next, DIALOG_INFO *dlg )
     char                *vbl_name;
     char                *val;
     char                *section;
-    #if defined( __NT__ )
-        char            *value;
-    #endif
+#if defined( __NT__ )
+    char                *value;
+#endif
     vhandle             var_handle;
     char                buff[MAXBUF];
     bool                rc = TRUE;
@@ -1572,17 +1578,17 @@ static bool dialog_editcontrol( char *next, DIALOG_INFO *dlg )
             if( section != NULL ) {
                 // terminate envvar
                 *section = '\0';
-                #if defined( __NT__ )
-                    ++section;
-                    value = strchr( section, ':' );
-                    if( value != NULL ) {
-                        *value = '\0';
-                        ++value;
-                        if( GetRegString( HKEY_CURRENT_USER, section, value, buff, MAXBUF ) ) {
-                            val = buff;
-                        }
+#if defined( __NT__ )
+                ++section;
+                value = strchr( section, ':' );
+                if( value != NULL ) {
+                    *value = '\0';
+                    ++value;
+                    if( GetRegString( HKEY_CURRENT_USER, section, value, buff, MAXBUF ) ) {
+                        val = buff;
                     }
-                #endif
+                }
+#endif
             }
             if( val == NULL && line[1] != '\0' ) {
                 val = getenv( &line[1] );
@@ -1629,11 +1635,12 @@ static bool dialog_editcontrol( char *next, DIALOG_INFO *dlg )
     } else {
         rc = FALSE;
     }
-    GUIFree( vbl_name );
+    GUIMemFree( vbl_name );
     return( rc );
 }
 
-void CompileCondition( char *str, char **to );
+static void CompileCondition( char *str, char **to );
+
 static void GrabConfigInfo( char *line, array_info *info )
 /********************************************************/
 {
@@ -1642,7 +1649,8 @@ static void GrabConfigInfo( char *line, array_info *info )
    struct       config_info *array;
 
     num = info->num;
-    if( !BumpArray( info ) ) return;
+    if( !BumpArray( info ) )
+        return;
     array = *(info->array);
     next = NextToken( line, '=' );
     GUIStrDup( line, &array[num].var );
@@ -1651,7 +1659,7 @@ static void GrabConfigInfo( char *line, array_info *info )
     CompileCondition( next, &array[num].condition );
 }
 
-extern bool ProcLine( char *line, pass_type pass )
+static bool ProcLine( char *line, pass_type pass )
 /************************************************/
 {
     char                *next;
@@ -1743,7 +1751,8 @@ extern bool ProcLine( char *line, pass_type pass )
     }
 
     // line is part of the current state.
-    if( *line == ';' || *line == '\0' ) return( TRUE );
+    if( *line == ';' || *line == '\0' )
+        return( TRUE );
     if( pass == PRESCAN_FILE ) {
         ++*LineCountPointer;
         return( TRUE );
@@ -1842,7 +1851,8 @@ extern bool ProcLine( char *line, pass_type pass )
             line = next; next = NextToken( line, ',' );
             GUIStrDup( line, &SetupInfo.pm_group_name );
             num = SetupInfo.all_pm_groups.num;
-            if( !BumpArray( &SetupInfo.all_pm_groups ) ) return( FALSE );
+            if( !BumpArray( &SetupInfo.all_pm_groups ) )
+                return( FALSE );
             GUIStrDup( line, &AllPMGroups[ num ].group );
             if( next == NULL ) {
                 SetupInfo.pm_group_icon = NULL;
@@ -1864,13 +1874,15 @@ extern bool ProcLine( char *line, pass_type pass )
 
     case RS_DISKS:
         num = SetupInfo.disks.num;
-        if( !BumpArray( &SetupInfo.disks ) ) return( FALSE );
+        if( !BumpArray( &SetupInfo.disks ) )
+            return( FALSE );
         GUIStrDup( line, &DiskInfo[num].desc );
         break;
 
     case RS_DIRS:
         num = SetupInfo.dirs.num;
-        if( !BumpArray( &SetupInfo.dirs ) ) return( FALSE );
+        if( !BumpArray( &SetupInfo.dirs ) )
+            return( FALSE );
         next = NextToken( line, ',' );
         GUIStrDup( line, &DirInfo[num].desc );
         line = next; next = NextToken( line, ',' );
@@ -1883,7 +1895,8 @@ extern bool ProcLine( char *line, pass_type pass )
 
     case RS_FILES:
         num = SetupInfo.files.num;
-        if( !BumpArray( &SetupInfo.files ) ) return( FALSE );
+        if( !BumpArray( &SetupInfo.files ) )
+            return( FALSE );
         next = NextToken( line, ',' );
         GUIStrDup( line, &FileInfo[num].filename );
         line = next; next = NextToken( line, ',' );
@@ -1896,8 +1909,9 @@ extern bool ProcLine( char *line, pass_type pass )
         if( tmp == 0 ) {
             FileInfo[ num ].files = NULL;
         } else {
-            FileInfo[ num ].files = GUIAlloc( tmp * sizeof( a_file_info ) );
-            if( FileInfo[ num ].files == NULL ) return( NULL );
+            FileInfo[ num ].files = GUIMemAlloc( tmp * sizeof( a_file_info ) );
+            if( FileInfo[ num ].files == NULL )
+                return( NULL );
         }
         FileInfo[num].supplimental = FALSE;
         FileInfo[num].is_odbc = FALSE;
@@ -1956,7 +1970,8 @@ extern bool ProcLine( char *line, pass_type pass )
 #ifdef PATCH
     case RS_PATCH:
         num = SetupInfo.patch_files.num;
-        if( !BumpArray( &SetupInfo.patch_files ) ) return( FALSE );
+        if( !BumpArray( &SetupInfo.patch_files ) )
+            return( FALSE );
         memset( &PatchInfo[ num ], NULL, sizeof( *PatchInfo ) );
         next = NextToken( line, ',' );
         if( stricmp( line, "copy" ) == 0 ) {
@@ -2015,7 +2030,8 @@ extern bool ProcLine( char *line, pass_type pass )
 
     case RS_SPAWN:
         num = SetupInfo.spawn.num;
-        if( !BumpArray( &SetupInfo.spawn ) ) return( FALSE );
+        if( !BumpArray( &SetupInfo.spawn ) )
+            return( FALSE );
         next = NextToken( line, '=' );
         if( stricmp( line, "after" ) == 0 ) {
             SpawnInfo[num].when = WHEN_AFTER;
@@ -2031,7 +2047,8 @@ extern bool ProcLine( char *line, pass_type pass )
 
     case RS_DELETEFILES:
         num = SetupInfo.delete.num;
-        if( !BumpArray( &SetupInfo.delete ) ) return( FALSE );
+        if( !BumpArray( &SetupInfo.delete ) )
+            return( FALSE );
         next = NextToken( line, '=' );
         if( stricmp( line, "dialog" ) == 0 ) {
             DeleteInfo[num].type = DELETE_DIALOG;
@@ -2046,7 +2063,8 @@ extern bool ProcLine( char *line, pass_type pass )
 
     case RS_PMINFO:
         num = SetupInfo.pm_files.num;
-        if( !BumpArray( &SetupInfo.pm_files ) ) return( FALSE );
+        if( !BumpArray( &SetupInfo.pm_files ) )
+            return( FALSE );
         next = NextToken( line, ',' );
         GUIStrDup( line, &PMInfo[num].filename );
         if( strcmp( line, "GROUP" ) == 0 ) {
@@ -2060,7 +2078,8 @@ extern bool ProcLine( char *line, pass_type pass )
         GUIStrDup( line, &PMInfo[num].desc );
         if( tmp ) {
             GUIStrDup( line, &AllPMGroups[ SetupInfo.all_pm_groups.num ].group );
-            if( !BumpArray( &SetupInfo.all_pm_groups ) ) return( FALSE );
+            if( !BumpArray( &SetupInfo.all_pm_groups ) )
+                return( FALSE );
         }
         if( next == NULL ) {
             PMInfo[ num ].icoioname = NULL;
@@ -2086,7 +2105,8 @@ extern bool ProcLine( char *line, pass_type pass )
 
     case RS_PROFILE:
         num = SetupInfo.profile.num;
-        if( !BumpArray( &SetupInfo.profile ) ) return( FALSE );
+        if( !BumpArray( &SetupInfo.profile ) )
+            return( FALSE );
         next = NextToken( line, ',' );
         GUIStrDup( line, &ProfileInfo[num].app_name );
         line = next; next = NextToken( line, ',' );
@@ -2127,14 +2147,15 @@ extern bool ProcLine( char *line, pass_type pass )
 
     case RS_TARGET:
         num = SetupInfo.target.num;
-        if( !BumpArray( &SetupInfo.target ) ) return( FALSE );
+        if( !BumpArray( &SetupInfo.target ) )
+            return( FALSE );
         next = NextToken( line, ',' );
         GUIStrDup( line, &TargetInfo[num].name );
         TargetInfo[num].supplimental = FALSE;
         if( next != NULL && stricmp( next, "supplimental" ) == 0 ) {
             TargetInfo[num].supplimental = TRUE;
         }
-        TargetInfo[num].temp_disk = GUIAlloc( _MAX_PATH );
+        TargetInfo[num].temp_disk = GUIMemAlloc( _MAX_PATH );
         if( TargetInfo[num].temp_disk == NULL ) {
             return( FALSE );
         }
@@ -2143,7 +2164,8 @@ extern bool ProcLine( char *line, pass_type pass )
 
     case RS_LABEL:
         num = SetupInfo.label.num;
-        if( !BumpArray( &SetupInfo.label ) ) return( FALSE );
+        if( !BumpArray( &SetupInfo.label ) )
+            return( FALSE );
         next = NextToken( line, '=' );
         GUIStrDup( line, &LabelInfo[num].dir );
         GUIStrDup( next, &LabelInfo[num].label );
@@ -2151,13 +2173,15 @@ extern bool ProcLine( char *line, pass_type pass )
 
     case RS_UPGRADE:
         num = SetupInfo.upgrade.num;
-        if( !BumpArray( &SetupInfo.upgrade ) ) return( FALSE );
+        if( !BumpArray( &SetupInfo.upgrade ) )
+            return( FALSE );
         GUIStrDup( line, &UpgradeInfo[num].name );
         break;
 
     case RS_FORCEDLLINSTALL:
         num = SetupInfo.force_DLL_install.num;
-        if( !BumpArray( &SetupInfo.force_DLL_install ) ) return( FALSE );
+        if( !BumpArray( &SetupInfo.force_DLL_install ) )
+            return( FALSE );
         GUIStrDup( line, &ForceDLLInstall[ num ].name );
         break;
 
@@ -2168,9 +2192,9 @@ extern bool ProcLine( char *line, pass_type pass )
     case RS_STATUSLINEMESSAGE:
     case RS_MISCMESSAGE:
     case RS_ERRORMESSAGE:
-    #ifdef LICENSE
+#ifdef LICENSE
     case RS_LICENSEMESSAGE:
-    #endif
+#endif
     {
         char    *remnewline;
 
@@ -2180,7 +2204,8 @@ extern bool ProcLine( char *line, pass_type pass )
         *( strchr( next, '\0' ) - 1 ) = '\0';
         for( ; ; ) {
             remnewline = strstr( next, "\\n" );
-            if( remnewline == NULL ) break;
+            if( remnewline == NULL )
+                break;
             *remnewline = '\n';
             memmove( remnewline + 1, remnewline + 2, strlen( remnewline + 2 ) + 1 );
         }
@@ -2202,7 +2227,8 @@ static void ProcessDisketteInfo( char *disk_name )
     FILE        *io;
 
     io = fopen( disk_name, "r" );
-    if( io == NULL ) return;
+    if( io == NULL )
+        return;
     while( fgets( buff, 200, io ) != NULL ) {
         if( ProcLine( buff, DOING_DISKETTE ) == FALSE ) {
             return;
@@ -2223,12 +2249,13 @@ static bool GetFileInfo( int dir_index, int i, bool in_old_dir, bool *pzeroed )
     bool        supp;
     a_file_info *file;
 
-    if( dir_index == -1 ) return( FALSE );
-    SimDirNoSlash( dir_index, buff );
-    if( access( buff, F_OK ) != 0 ) {
+    if( dir_index == -1 )
         return( FALSE );
-    }
-#ifdef UNIX
+    SimDirNoSlash( dir_index, buff );
+    if( access( buff, F_OK ) != 0 )
+        return( FALSE );
+
+#if defined( UNIX ) || defined( __UNIX__ )
     strcat( buff, "/" );
 #else
     strcat( buff, "\\" );
@@ -2244,7 +2271,8 @@ static bool GetFileInfo( int dir_index, int i, bool in_old_dir, bool *pzeroed )
     for( j = 0; j < FileInfo[ i ].num_files; ++j ) {
         file = &FileInfo[ i ].files[ j ];
         file->disk_size = 0;
-        if( file->name == NULL ) continue;
+        if( file->name == NULL )
+            continue;
         strcpy( dir_end, file->name );
         if( access( buff, F_OK ) == 0 ) {
             stat( buff, &buf );
@@ -2257,7 +2285,8 @@ static bool GetFileInfo( int dir_index, int i, bool in_old_dir, bool *pzeroed )
                 file->in_new_dir = TRUE;
             }
             file->read_only = !( buf.st_mode & S_IWRITE );
-            if( supp ) continue;
+            if( supp )
+                continue;
             if( !*pzeroed ) {
                 ZeroAutoSetValues();
                 for( k = 0; k < SetupInfo.fileconds.num; ++k ) {
@@ -2295,13 +2324,13 @@ static bool GetDiskSizes()
     StatusLines( STAT_CHECKING, "" );
     SetVariableByHandle( PreviousInstall, "0" );
     zeroed = FALSE;
-    #if defined( WSQL )
-        // if we're doing an install (instead of reinstall), don't want
-        // to initialize all of autoset variables to zero
-        if( GetVariableIntVal( "Install" ) != 0 ) {
-            zeroed = TRUE;
-        }
-    #endif
+#if defined( WSQL )
+    // if we're doing an install (instead of reinstall), don't want
+    // to initialize all of autoset variables to zero
+    if( GetVariableIntVal( "Install" ) != 0 ) {
+        zeroed = TRUE;
+    }
+#endif
     status_curr = 0;
     InitAutoSetValues();
     for( i = 0; i < SetupInfo.files.num; ++i ) {
@@ -2311,7 +2340,8 @@ static bool GetDiskSizes()
             break;
         }
         status_curr += FileInfo[ i ].num_files;
-        if( FileInfo[ i ].num_files == 0 ) continue;
+        if( FileInfo[ i ].num_files == 0 )
+            continue;
         for( j = 0; j < FileInfo[ i ].num_files; ++j ) {
             FileInfo[ i ].files[ j ].disk_size = 0;
             FileInfo[ i ].files[ j ].disk_date = 0;
@@ -2325,7 +2355,8 @@ static bool GetDiskSizes()
     StatusLines( STAT_BLANK, "" );
     StatusAmount( 0, 1 );
     StatusShow( FALSE );
-    if( !rc ) return( rc );
+    if( !rc )
+        return( rc );
     dont_touch = FALSE;
     uninstall = VarGetIntVal( UnInstall );
     if( uninstall ) {
@@ -2356,7 +2387,7 @@ static int PrepareSetupInfo( FILE *io, pass_type pass )
     int                 result;
     void                *cursor;
     bool                done;
-    int                 len;
+    size_t              len;
     char                *p;
 
     LineCountPointer = &NoLineCount;
@@ -2378,27 +2409,33 @@ static int PrepareSetupInfo( FILE *io, pass_type pass )
             // Eliminate leading blanks on continued lines
             if( len > 0 ) {
                 p = ReadBuf + len;
-                while( *p == ' ' || *p == '\t' ) ++p;
+                while( *p == ' ' || *p == '\t' )
+                    ++p;
                 memmove( ReadBuf + len, p, strlen(p)+1 );
             }
             len = strlen( ReadBuf );
-            if( len == 0 ) break;
+            if( len == 0 )
+                break;
             if( ReadBuf[len-1] == '\n' ) {
-                if( len == 1 ) break;
-                if( ReadBuf[len-2] != '\\' ) break;
+                if( len == 1 )
+                    break;
+                if( ReadBuf[len-2] != '\\' )
+                    break;
                 len -= 2;
             }
             if( ReadBufSize - len < BUF_SIZE / 2 ) {
                 ReadBufSize += BUF_SIZE;
-                ReadBuf = GUIRealloc( ReadBuf, ReadBufSize );
+                ReadBuf = GUIMemRealloc( ReadBuf, ReadBufSize );
             }
         }
-        if( done ) break;
+        if( done )
+            break;
         if( ProcLine( ReadBuf, pass ) == FALSE ) {
             result = SIM_INIT_NOMEM;
             break;
         }
-        if( State == RS_TERMINATE ) break;
+        if( State == RS_TERMINATE )
+            break;
     }
     GUIResetMouseCursor( cursor );
     return( result );
@@ -2437,13 +2474,13 @@ extern long SimInit( char *inf_name, char *disk_name )
     hMakeDisks = AddVariable( "MakeDisks" );
     SetDefaultGlobalVarList();
     ReadBufSize = BUF_SIZE;
-    ReadBuf = GUIAlloc( BUF_SIZE );
+    ReadBuf = GUIMemAlloc( BUF_SIZE );
     if( ReadBuf == NULL ) {
         return( SIM_INIT_NOMEM );
     }
     io = fopen( inf_name, "r" );
     if( io == NULL ) {
-        GUIFree( ReadBuf );
+        GUIMemFree( ReadBuf );
         return( SIM_INIT_NOFILE );
     }
     SetVariableByName( "SetupInfFile", inf_name );
@@ -2461,18 +2498,18 @@ extern long SimInit( char *inf_name, char *disk_name )
     InitArray( &TargetInfo, sizeof( struct target_info ), &SetupInfo.target );
     InitArray( &LabelInfo, sizeof( struct label_info ), &SetupInfo.label );
     InitArray( &UpgradeInfo, sizeof( struct upgrade_info ), &SetupInfo.upgrade );
-    #ifdef PATCH
-        InitArray( &PatchInfo, sizeof( struct patch_info ), &SetupInfo.patch_files );
-    #endif
+#ifdef PATCH
+    InitArray( &PatchInfo, sizeof( struct patch_info ), &SetupInfo.patch_files );
+#endif
     InitArray( &SpawnInfo, sizeof( struct spawn_info ), &SetupInfo.spawn );
     InitArray( &DeleteInfo, sizeof( struct spawn_info ), &SetupInfo.delete );
     InitArray( &FileCondInfo, sizeof( struct file_cond_info ), &SetupInfo.fileconds );
     InitArray( &DLLsToCheck, sizeof( struct dlls_to_check ), &SetupInfo.dlls_to_count );
     InitArray( &ForceDLLInstall, sizeof( struct force_DLL_install ), &SetupInfo.force_DLL_install );
     InitArray( &AllPMGroups, sizeof( struct all_pm_groups ), &SetupInfo.all_pm_groups );
-    #ifndef _UI
-        SetDialogFont();
-    #endif
+#ifndef _UI
+    SetDialogFont();
+#endif
     GUIGetTextMetrics( MainWnd, &metrics );
     GUIGetDlgTextMetrics( &metrics );
     CharWidth = metrics.avg.x;
@@ -2482,7 +2519,7 @@ extern long SimInit( char *inf_name, char *disk_name )
     }
     result = PrepareSetupInfo( io, FINAL_SCAN );
     fclose( io );
-    GUIFree( ReadBuf );
+    GUIMemFree( ReadBuf );
     for( i = 0; i < SetupInfo.files.num; ++i ) {
         FileInfo[i].condition.p = &FileCondInfo[ FileInfo[i].condition.i ];
     }
@@ -2586,11 +2623,11 @@ extern char *SimGetTargTempDisk( int parm )
  * =======================================================================
  */
 
- extern int SimGetNumDisks()
- /*************************/
- {
+extern int SimGetNumDisks()
+/*************************/
+{
     return( SetupInfo.disks.num );
- }
+}
 
 /*
  * =======================================================================
@@ -2628,22 +2665,22 @@ extern void SimDirNoSlash( int i, char *buff )
     strcpy( dir, DirInfo[ i ].desc );
     if( dir[0] != '.'  &&  dir[0] != '\0' ) {
         len = strlen( buff );
-#ifdef UNIX
-        if( len > 0 && buff[ len - 1 ] != '/' ) {
-            buff[ len ] = '/';
-            buff[ len + 1 ] = '\0';
-        }
+#if defined( UNIX ) || defined( __UNIX__ )
+    if( len > 0 && buff[ len - 1 ] != '/' ) {
+        buff[ len ] = '/';
+        buff[ len + 1 ] = '\0';
+    }
 #else
-        if( len > 0 && buff[ len - 1 ] != '\\' ) {
-            buff[ len ] = '\\';
-            buff[ len + 1 ] = '\0';
-        }
+    if( len > 0 && buff[ len - 1 ] != '\\' ) {
+        buff[ len ] = '\\';
+        buff[ len + 1 ] = '\0';
+    }
 #endif
         strcat( buff, dir );
     }
     len = strlen( buff );
 
-#ifdef UNIX
+#if defined( UNIX ) || defined( __UNIX__ )
     if( len > 1 && buff[ len - 1 ] == '/' ) {
         buff[len-1] = '\0';
     }
@@ -2671,7 +2708,7 @@ extern void SimGetDir( int i, char *buff )
 
     SimDirNoSlash( i, buff );
     len = strlen( buff );
-#ifdef UNIX
+#if defined( UNIX ) || defined( __UNIX__ )
     if( len > 0 && buff[ len - 1 ] != '/' ) {
         buff[ len ] = '/';
         buff[ len + 1 ] = '\0';
@@ -2762,7 +2799,8 @@ extern int SimFileDirNum( int parm )
 extern bool SimFileOldDir( int parm, char *buff )
 /********************************************/
 {
-    if( FileInfo[ parm ].old_dir_index == -1 ) return( FALSE );
+    if( FileInfo[ parm ].old_dir_index == -1 )
+        return( FALSE );
     SimGetDir( FileInfo[ parm ].old_dir_index, buff );
     return( TRUE );
 }
@@ -2775,7 +2813,7 @@ extern bool SimFileSplit( int parm )
             FileInfo[ parm ].file_type == '$' );
 }
 
-extern bool SimFileFirstSplit( int parm )
+static bool SimFileFirstSplit( int parm )
 /***************************************/
 {
     return( FileInfo[ parm ].file_type == '1' );
@@ -2812,7 +2850,7 @@ extern bool SimSubFileReadOnly( int parm, int subfile )
 }
 
 extern bool SimSubFileNewer( int parm, int subfile )
-/***************************************************/
+/**************************************************/
 {
     return( FileInfo[ parm ].files[ subfile ].disk_date >
             FileInfo[ parm ].files[ subfile ].date );
@@ -2831,7 +2869,7 @@ extern int SimSubFileExists( int parm, int subfile )
 }
 
 extern void SimSubFileName( int parm, int subfile, char *buff )
-/********************************************************/
+/*************************************************************/
 {
     strcpy( buff, FileInfo[ parm ].files[ subfile ].name );
 }
@@ -2849,14 +2887,17 @@ extern bool SimFileUpToDate( int parm )
     int         i;
 
     info = &FileInfo[ parm ];
-    if( info->num_files == 0 ) return( FALSE );
+    if( info->num_files == 0 )
+        return( FALSE );
     for( i = 0; i < info->num_files; ++i ) {
-        if( !info->files[i].in_new_dir ) return( FALSE );
-        if( info->files[ i ].disk_date > info->files[ i ].date ) return( TRUE );
-        if( info->files[ i ].date > info->files[ i ].disk_date ) return( FALSE );
-        if( RoundUp( info->files[ i ].disk_size, 512 ) != info->files[ i ].size ) {
+        if( !info->files[i].in_new_dir )
             return( FALSE );
-        }
+        if( info->files[ i ].disk_date > info->files[ i ].date )
+            return( TRUE );
+        if( info->files[ i ].date > info->files[ i ].disk_date )
+            return( FALSE );
+        if( RoundUp( info->files[ i ].disk_size, 512 ) != info->files[ i ].size )
+            return( FALSE );
     }
     return( TRUE );
 }
@@ -3162,7 +3203,7 @@ extern char * SimGetDriveLetter( int parm )
     char * buff;
     char temp[ _MAX_PATH ];
 
-    buff = GUIAlloc( _MAX_PATH );
+    buff = GUIMemAlloc( _MAX_PATH );
     if( buff == NULL ) {
         return( NULL );
     }
@@ -3242,9 +3283,9 @@ extern void SimCalcAddRemove()
     long                tmp_size;
     bool                makedisks;
     vhandle             reinstall;
-    #if defined( __NT__ )
-        char            ext[ _MAX_EXT ];
-    #endif
+#if defined( __NT__ )
+    char                ext[ _MAX_EXT ];
+#endif
 
     // for each file that will be installed, total the size
     diskette = strtol( GetVariableStrVal( "DisketteSize" ), NULL, 10 );
@@ -3302,16 +3343,16 @@ extern void SimCalcAddRemove()
         }
         TargetInfo[ targ_index ].num_files += FileInfo[i].num_files;
         DirInfo[ dir_index ].num_files += FileInfo[i].num_files;
-        #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) )
-            if( *TargetInfo[ targ_index ].temp_disk == '\\' &&
-                *( TargetInfo[ targ_index ].temp_disk + 1 ) == '\\' ) {
-                cs = ClusterSize( TargetInfo[ targ_index ].temp_disk );
-            } else {
-                cs = GetClusterSize( *TargetInfo[ targ_index ].temp_disk );
-            }
-        #else
+#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) )
+        if( *TargetInfo[ targ_index ].temp_disk == '\\' &&
+            *( TargetInfo[ targ_index ].temp_disk + 1 ) == '\\' ) {
+            cs = ClusterSize( TargetInfo[ targ_index ].temp_disk );
+        } else {
             cs = GetClusterSize( *TargetInfo[ targ_index ].temp_disk );
-        #endif
+        }
+#else
+        cs = GetClusterSize( *TargetInfo[ targ_index ].temp_disk );
+#endif
         FileInfo[ i ].remove = remove;
         FileInfo[ i ].add = add;
         for( k = 0; k < FileInfo[i].num_files; ++k ) {
@@ -3374,25 +3415,27 @@ extern void SimCalcAddRemove()
     /* estimate space used for directories. Be generous. */
     if( !uninstall ) {
         for( i = 0; i < SetupInfo.target.num; ++i ) {
-            #if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) )
-                if( *TargetInfo[ targ_index ].temp_disk  == '\\' &&
-                    *( TargetInfo[ targ_index ].temp_disk + 1 ) == '\\' ) {
-                    cs = ClusterSize( TargetInfo[ targ_index ].temp_disk );
-                } else {
-                    cs = GetClusterSize( *TargetInfo[ targ_index ].temp_disk );
-                }
-            #else
+#if defined( WSQL ) && ( defined( WINNT ) || defined( WIN ) )
+            if( *TargetInfo[ targ_index ].temp_disk  == '\\' &&
+                *( TargetInfo[ targ_index ].temp_disk + 1 ) == '\\' ) {
+                cs = ClusterSize( TargetInfo[ targ_index ].temp_disk );
+            } else {
                 cs = GetClusterSize( *TargetInfo[ targ_index ].temp_disk );
-            #endif
+            }
+#else
+            cs = GetClusterSize( *TargetInfo[ targ_index ].temp_disk );
+#endif
             for( j = 0; j < SetupInfo.dirs.num; ++j ) {
-                if( DirInfo[j].target != i ) continue;
-                if( DirInfo[j].num_files <= DirInfo[j].num_existing ) continue;
+                if( DirInfo[j].target != i )
+                    continue;
+                if( DirInfo[j].num_files <= DirInfo[j].num_existing )
+                    continue;
                 TargetInfo[ i ].space_needed += RoundUp((((DirInfo[j].num_files-DirInfo[j].num_existing)/10)+1)*1024UL,cs);
             }
-            TargetInfo[ i ].space_needed += cs * 2;
         }
     }
 }
+
 
 extern bool SimCalcTargetSpaceNeeded()
 /************************************/
@@ -3404,15 +3447,15 @@ extern bool SimCalcTargetSpaceNeeded()
     /* assume power of 2 */
 
     if( NeedGetDiskSizes && VarGetIntVal( hMakeDisks ) == 0 ) {
-        if( !GetDiskSizes() ) return( FALSE );
+        if( !GetDiskSizes() )
+            return( FALSE );
         NeedGetDiskSizes = FALSE;
     }
     cursor = GUISetMouseCursor( GUI_HOURGLASS_CURSOR );
     for( i = 0; i < SetupInfo.target.num; ++i ) {
         temp = SimGetDriveLetter( i );
-        if( temp == NULL ) {
+        if( temp == NULL )
             return( FALSE );
-        }
         TargetInfo[ i ].temp_disk = temp;
         TargetInfo[ i ].space_needed = 0;
         TargetInfo[ i ].max_tmp_file = 0;
@@ -3445,12 +3488,14 @@ static void AddFileName( int i, char *buffer, int rename )
     }
 }
 
+
 static void GetSourcePath( int i, char *buffer )
 /**********************************************/
 {
     ReplaceVars( buffer, GetVariableStrVal( "Srcdir" ) );
     strcat( buffer, PatchInfo[i].srcfile);
 }
+
 
 static bool CopyErrorDialog( int ret, int i, char *file )
 /*******************************************************/
@@ -3472,6 +3517,7 @@ static bool CopyErrorDialog( int ret, int i, char *file )
     return( TRUE );
 }
 
+
 static bool PatchErrorDialog( int ret, int i )
 /********************************************/
 {
@@ -3491,19 +3537,17 @@ static bool PatchErrorDialog( int ret, int i )
     return( TRUE );
 }
 
-static a_bool FindStr(
-    FILE            *fp,
-    char            *fullpath,
-    char            *pattern )
-/*******************************/
+
+static a_bool FindStr( FILE *fp, char *fullpath, char *pattern )
+/**************************************************************/
 {
     char            *buff;
-    int             len;
-    int             readsize;
+    size_t          len;
+    size_t          readsize;
     char            *p;
-    int             i;
+    size_t          i;
     a_bool          found;
-    int             patternlen;
+    size_t          patternlen;
 
     patternlen = strlen( pattern );
     found = FALSE;
@@ -3542,12 +3586,9 @@ static a_bool FindStr(
     return FALSE;
 }
 
-a_bool ReadBlock(
-    char            *fullpath,
-    char            *pattern,
-    void            *block,
-    long            blocklen )
-/*******************************/
+
+a_bool ReadBlock( char *fullpath, char *pattern, void *block, long blocklen )
+/***************************************************************************/
 {
     FILE            *fp;
     int             len;
@@ -3576,12 +3617,9 @@ a_bool ReadBlock(
     return FALSE;
 }
 
-a_bool WriteBlock(
-    char            *fullpath,
-    char            *pattern,
-    void            *block,
-    long            blocklen )
-/*******************************/
+
+a_bool WriteBlock( char *fullpath, char *pattern, void *block, long blocklen )
+/****************************************************************************/
 {
     a_bool          foundstr;
     FILE            *fp;
@@ -3618,6 +3656,7 @@ a_bool WriteBlock(
     return foundstr;
 }
 
+
 static FILE *OpenLogFile()
 /*************************/
 {
@@ -3648,6 +3687,7 @@ static FILE *OpenLogFile()
     return logfp;
 }
 
+
 static void CloseLogFile( FILE *logfp )
 /*************************************/
 {
@@ -3660,6 +3700,7 @@ static void CloseLogFile( FILE *logfp )
     }
     return;
 }
+
 
 extern bool PatchFiles( void )
 /****************************/
@@ -4020,7 +4061,7 @@ extern bool PatchFiles( void )
     }
     return( TRUE );
 }
-#endif
+
 
 void MsgPut( int resourceid, va_list arglist )
 {
@@ -4033,41 +4074,42 @@ void MsgPut( int resourceid, va_list arglist )
         argbuf[i] = va_arg( arglist, char * );
     }
     switch( resourceid ) {
-#ifndef UNIX
-        case ERR_TWO_NAMES:     messageid = "IDS_TWONAMES";
-                                break;
-        case ERR_WRONG_SIZE:    messageid = "IDS_BADLENGTH";
-                                break;
-        case ERR_CANT_RENAME:   messageid = "IDS_CANTRENAME";
-                                break;
-        case ERR_WRONG_CHECKSUM:messageid = "IDS_WRONGCHECKSUM";
-                                break;
-        case ERR_PATCH_ABORTED: messageid = "IDS_PATCHABORT";
-                                break;
-        case ERR_NOT_PATCHFILE: messageid = "IDS_NOTPATCHFILE";
-                                break;
-        case ERR_BAD_PATCHFILE: messageid = "IDS_BADPATCHFILE";
-                                break;
-        case ERR_CANT_FIND:     messageid = "IDS_CANTOPENSRC";
-                                break;
-        case ERR_CANT_READ:     messageid = "IDS_CANTREADFILE";
-                                break;
-        case ERR_CANT_WRITE:    messageid = "IDS_CANTWRITE";
-                                break;
-        case ERR_CANT_OPEN:     messageid = "IDS_CANTFINDOUTPUT";
-                                break;
-        case ERR_IO_ERROR:      messageid = "IDS_IOERROR";
-                                break;
-        case ERR_MEMORY_OUT:    messageid = "IDS_NOMEMORY";
-                                break;
-        case ERR_CANT_GET_ATTRIBUTES:   messageid = "IDS_NOATTRIBUTES";
-                                        break;
+#if !defined( UNIX ) && !defined( __UNIX__ )
+    case ERR_TWO_NAMES:     messageid = "IDS_TWONAMES";
+                            break;
+    case ERR_WRONG_SIZE:    messageid = "IDS_BADLENGTH";
+                            break;
+    case ERR_CANT_RENAME:   messageid = "IDS_CANTRENAME";
+                            break;
+    case ERR_WRONG_CHECKSUM:messageid = "IDS_WRONGCHECKSUM";
+                            break;
+    case ERR_PATCH_ABORTED: messageid = "IDS_PATCHABORT";
+                            break;
+    case ERR_NOT_PATCHFILE: messageid = "IDS_NOTPATCHFILE";
+                            break;
+    case ERR_BAD_PATCHFILE: messageid = "IDS_BADPATCHFILE";
+                            break;
+    case ERR_CANT_FIND:     messageid = "IDS_CANTOPENSRC";
+                            break;
+    case ERR_CANT_READ:     messageid = "IDS_CANTREADFILE";
+                            break;
+    case ERR_CANT_WRITE:    messageid = "IDS_CANTWRITE";
+                            break;
+    case ERR_CANT_OPEN:     messageid = "IDS_CANTFINDOUTPUT";
+                            break;
+    case ERR_IO_ERROR:      messageid = "IDS_IOERROR";
+                            break;
+    case ERR_MEMORY_OUT:    messageid = "IDS_NOMEMORY";
+                            break;
+    case ERR_CANT_GET_ATTRIBUTES:   messageid = "IDS_NOATTRIBUTES";
+                                    break;
 #endif
-        default:                messageid = "IDS_ERROR";
+    default:                messageid = "IDS_ERROR";
     }
     msgbuf = GetVariableStrVal( messageid );
     MsgBox( NULL, messageid, GUI_OK, argbuf[ 0 ], argbuf[ 1 ], argbuf[ 2 ] );
 }
+
 
 void PatchError( int format, ... )
 {
@@ -4075,8 +4117,9 @@ void PatchError( int format, ... )
 
     // don't give error message if the patch file cant be found
     // just continue
-#ifndef UNIX
-    if( format == ERR_CANT_FIND ) return;
+#if !defined( UNIX ) && !defined( __UNIX__ )
+    if( format == ERR_CANT_FIND )
+        return;
 #endif
     if( GetVariableIntVal( "Debug" ) != 0 ) {
         va_start( args, format );
@@ -4085,18 +4128,22 @@ void PatchError( int format, ... )
     }
 }
 
+
 void FilePatchError( int format, ... )
 {
     va_list     args;
 
-#ifndef UNIX
-    if( format == ERR_CANT_FIND ) return;
-    if( format == ERR_CANT_OPEN ) return;
+#if !defined( UNIX ) && !defined( __UNIX__ )
+    if( format == ERR_CANT_FIND )
+        return;
+    if( format == ERR_CANT_OPEN )
+        return;
 #endif
     va_start( args, format );
     MsgPut( format, args );
     va_end( args );
 }
+#endif
 
 
 /* ********** Free up all structures associated with this file ******* */
@@ -4105,20 +4152,22 @@ void FilePatchError( int format, ... )
 static void FreeSetupInfoVal( void )
 /**********************************/
 {
-    GUIFree(SetupInfo.pm_group_file_name);
-    GUIFree(SetupInfo.pm_group_name);
+    GUIMemFree(SetupInfo.pm_group_file_name);
+    GUIMemFree(SetupInfo.pm_group_name);
+    GUIMemFree(SetupInfo.pm_group_icon);
 }
 
 
-static void FreetargetVal( void )
+static void FreeTargetVal( void )
 /*******************************/
 {
     int i;
 
     for( i = 0; i < SetupInfo.target.num; i++ ) {
-        GUIFree( TargetInfo[i].name );
+        GUIMemFree( TargetInfo[i].name );
+        GUIMemFree( TargetInfo[i].temp_disk );
     }
-    GUIFree( TargetInfo );
+    GUIMemFree( TargetInfo );
 }
 
 
@@ -4127,9 +4176,9 @@ static void FreeDiskInfo( void )
 {
     int i;
     for( i = 0; i < SetupInfo.disks.num; i++ ) {
-        GUIFree( DiskInfo[i].desc );
+        GUIMemFree( DiskInfo[i].desc );
     }
-    GUIFree( DiskInfo );
+    GUIMemFree( DiskInfo );
 }
 
 
@@ -4138,9 +4187,9 @@ static void FreeDirInfo( void )
 {
     int i;
     for( i = 0; i < SetupInfo.dirs.num; i++ ) {
-        GUIFree( DirInfo[i].desc );
+        GUIMemFree( DirInfo[i].desc );
     }
-    GUIFree( DirInfo );
+    GUIMemFree( DirInfo );
 }
 
 
@@ -4152,13 +4201,13 @@ static void FreeFileInfo( void )
 
     if( FileInfo != NULL ) {
         for( i = 0; i < SetupInfo.files.num; i++ ) {
-            GUIFree( FileInfo[i].filename );
+            GUIMemFree( FileInfo[i].filename );
             for( j = 0; j < FileInfo[i].num_files; ++j ) {
-                GUIFree( FileInfo[i].files[j].name );
+                GUIMemFree( FileInfo[i].files[j].name );
             }
-            GUIFree( FileInfo[i].files );
+            GUIMemFree( FileInfo[i].files );
         }
-        GUIFree( FileInfo );
+        GUIMemFree( FileInfo );
     }
 }
 
@@ -4169,9 +4218,9 @@ static void FreeDLLsToCheck( void )
 
     if( DLLsToCheck != NULL ) {
         for( i = 0; i < SetupInfo.dlls_to_count.num; i++ ) {
-            GUIFree( DLLsToCheck[i].full_path );
+            GUIMemFree( DLLsToCheck[i].full_path );
         }
-        GUIFree( DLLsToCheck );
+        GUIMemFree( DLLsToCheck );
         DLLsToCheck = NULL;
     }
 }
@@ -4185,7 +4234,7 @@ static void FreeFileCondInfo( void )
         for( i = 0; i < SetupInfo.fileconds.num; i++ ) {
             BurnTree( FileCondInfo[i].cond );
         }
-        GUIFree( FileCondInfo );
+        GUIMemFree( FileCondInfo );
         FileCondInfo = NULL;
     }
 }
@@ -4197,9 +4246,9 @@ static void FreeForceDLLInstall( void )
 
     if( ForceDLLInstall != NULL ) {
         for( i = 0; i < SetupInfo.force_DLL_install.num; i++ ) {
-            GUIFree( ForceDLLInstall[i].name );
+            GUIMemFree( ForceDLLInstall[i].name );
         }
-        GUIFree( ForceDLLInstall );
+        GUIMemFree( ForceDLLInstall );
         ForceDLLInstall = NULL;
     }
 }
@@ -4211,11 +4260,13 @@ static void FreePatchInfo( void )
     int i;
 
     for( i = 0; i < SetupInfo.patch_files.num; i++ ) {
-        GUIFree( PatchInfo[i].destdir );
-        GUIFree( PatchInfo[i].destfile );
-        GUIFree( PatchInfo[i].srcfile );
+        GUIMemFree( PatchInfo[i].destdir );
+        GUIMemFree( PatchInfo[i].destfile );
+        GUIMemFree( PatchInfo[i].srcfile );
+        GUIMemFree( PatchInfo[i].condition );
+        GUIMemFree( PatchInfo[i].exetype );
     }
-    GUIFree( PatchInfo );
+    GUIMemFree( PatchInfo );
 }
 #endif
 
@@ -4226,10 +4277,10 @@ static void FreeSpawnInfo( void )
     int i;
 
     for( i = 0; i < SetupInfo.spawn.num; i++ ) {
-        GUIFree( SpawnInfo[i].command );
-        GUIFree( SpawnInfo[i].condition );
+        GUIMemFree( SpawnInfo[i].command );
+        GUIMemFree( SpawnInfo[i].condition );
     }
-    GUIFree( SpawnInfo );
+    GUIMemFree( SpawnInfo );
 }
 
 
@@ -4239,9 +4290,9 @@ static void FreeDeleteInfo( void )
     int i;
 
     for( i = 0; i < SetupInfo.delete.num; i++ ) {
-        GUIFree( DeleteInfo[i].name );
+        GUIMemFree( DeleteInfo[i].name );
     }
-    GUIFree( DeleteInfo );
+    GUIMemFree( DeleteInfo );
 }
 
 
@@ -4251,13 +4302,13 @@ static void FreePMInfo( void )
     int i;
 
     for( i = 0; i < SetupInfo.pm_files.num; i++ ) {
-        GUIFree( PMInfo[i].desc );
-        GUIFree( PMInfo[i].filename );
-        GUIFree( PMInfo[i].parameters );
-        GUIFree( PMInfo[i].icoioname );
-        GUIFree( PMInfo[i].condition );
+        GUIMemFree( PMInfo[i].desc );
+        GUIMemFree( PMInfo[i].filename );
+        GUIMemFree( PMInfo[i].parameters );
+        GUIMemFree( PMInfo[i].icoioname );
+        GUIMemFree( PMInfo[i].condition );
     }
-    GUIFree( PMInfo );
+    GUIMemFree( PMInfo );
 }
 
 
@@ -4267,14 +4318,14 @@ static void FreeProfileInfo( void )
     int i;
 
     for( i = 0; i < SetupInfo.profile.num; i++ ) {
-        GUIFree( ProfileInfo[i].hive_name );
-        GUIFree( ProfileInfo[i].app_name );
-        GUIFree( ProfileInfo[i].key_name );
-        GUIFree( ProfileInfo[i].value );
-        GUIFree( ProfileInfo[i].file_name );
-        GUIFree( ProfileInfo[i].condition );
+        GUIMemFree( ProfileInfo[i].hive_name );
+        GUIMemFree( ProfileInfo[i].app_name );
+        GUIMemFree( ProfileInfo[i].key_name );
+        GUIMemFree( ProfileInfo[i].value );
+        GUIMemFree( ProfileInfo[i].file_name );
+        GUIMemFree( ProfileInfo[i].condition );
     }
-    GUIFree( ProfileInfo );
+    GUIMemFree( ProfileInfo );
 }
 
 
@@ -4284,25 +4335,68 @@ static void FreeOneConfigInfo( array_info *info, struct config_info *array )
     int         i;
 
     for( i = 0; i < info->num; i++ ) {
-        GUIFree( array[i].var );
-        GUIFree( array[i].value );
-        GUIFree( array[i].condition );
+        GUIMemFree( array[i].var );
+        GUIMemFree( array[i].value );
+        GUIMemFree( array[i].condition );
     }
-    GUIFree( array );
+    GUIMemFree( array );
 }
 
+
+static void FreeUpgradeInfo( void )
+/*****************************************/
+{
+    int i;
+
+    if( UpgradeInfo != NULL ) {
+        for( i = 0; i < SetupInfo.upgrade.num; i++ ) {
+            GUIMemFree( UpgradeInfo[i].name );
+        }
+        GUIMemFree( UpgradeInfo );
+        UpgradeInfo = NULL;
+    }
+}
+
+static void FreeLabelInfo( void )
+/*****************************************/
+{
+    int i;
+
+    if( LabelInfo != NULL ) {
+        for( i = 0; i < SetupInfo.label.num; i++ ) {
+            GUIMemFree( LabelInfo[i].dir );
+            GUIMemFree( LabelInfo[i].label );
+        }
+        GUIMemFree( LabelInfo );
+        LabelInfo = NULL;
+    }
+}
+
+static void FreeAllPMGroups( void )
+/*****************************************/
+{
+    int i;
+
+    if( AllPMGroups != NULL ) {
+        for( i = 0; i < SetupInfo.all_pm_groups.num; i++ ) {
+            GUIMemFree( AllPMGroups[i].group );
+        }
+        GUIMemFree( AllPMGroups );
+        AllPMGroups = NULL;
+    }
+}
 
 extern void FreeAllStructs( void )
 /********************************/
 {
-    FreetargetVal();
+    FreeTargetVal();
     FreeDiskInfo();
     FreeDirInfo();
     FreeFileInfo();
     FreeFileCondInfo();
-    #ifdef PATCH
-        FreePatchInfo();
-    #endif
+#ifdef PATCH
+    FreePatchInfo();
+#endif
     FreePMInfo();
     FreeProfileInfo();
     FreeOneConfigInfo( &SetupInfo.environment, EnvironmentInfo );
@@ -4313,6 +4407,9 @@ extern void FreeAllStructs( void )
     FreeDeleteInfo();
     FreeDLLsToCheck();
     FreeForceDLLInstall();
+    FreeUpgradeInfo();
+    FreeLabelInfo();
+    FreeAllPMGroups();
 }
 
 
@@ -4320,7 +4417,8 @@ void SimGetSpawnCommand( char *buff, int i )
 /***********************************/
 {
     buff[0] = '\0';
-    if( SpawnInfo[i].command == NULL || SpawnInfo[i].command[0] == '\0' ) return;
+    if( SpawnInfo[i].command == NULL || SpawnInfo[i].command[0] == '\0' )
+        return;
     ReplaceVars( buff, SpawnInfo[i].command );
 }
 
@@ -4387,8 +4485,8 @@ static void InitAutoSetValues()
 }
 
 
-void CompileCondition( char *str, char **to )
-/*******************************************/
+static void CompileCondition( char *str, char **to )
+/**************************************************/
 // turn token names in an expression into #<var_handle>
 {
     char        buff[MAXBUF];
@@ -4422,7 +4520,7 @@ void CompileCondition( char *str, char **to )
         }
         token = strtok( NULL, " " );
     }
-    GUIFree( str2 );
+    GUIMemFree( str2 );
     GUIStrDup( buff, to );
 }
 

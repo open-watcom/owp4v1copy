@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DPMI API int 31h wrappers.
 *
 ****************************************************************************/
 
@@ -160,6 +159,7 @@ typedef struct {
 #define DPMISetDescriptor                       _DPMISetDescriptor
 #define DPMICreateCodeSegmentAliasDescriptor    _DPMICreateCodeSegmentAliasDescriptor
 #define DPMIAllocateLDTDescriptors              _DPMIAllocateLDTDescriptors
+#define DPMISegmentToDescriptor                 _DPMISegmentToDescriptor
 #define DPMIFreeLDTDescriptor                   _DPMIFreeLDTDescriptor
 #define DPMIGetSegmentBaseAddress               _DPMIGetSegmentBaseAddress
 #define DPMISetSegmentBaseAddress               _DPMISetSegmentBaseAddress
@@ -431,7 +431,7 @@ extern void _DPMIResetWatch( short handle );
         "mov bx,ax"     \
         "shr eax,16"    \
         "mov cx,ax"     \
-        "mov ax,0600h"  \
+        "mov ax,0601h"  \
         _INT_31 \
         "sbb ax,ax"     \
         parm [eax] [edx] value[ax] modify [bx cx si di];

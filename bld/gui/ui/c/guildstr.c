@@ -45,10 +45,6 @@
     #include "clibext.h"
 #endif
 
-#ifdef __WINDOWS__
-#define WINAPI _far _pascal
-#endif
-
 #include "wressetr.h"
 
 #define NIL_HANDLE      ((int)-1)
@@ -91,8 +87,8 @@ WResSetRtns( open,
              write,
              GUIResSeek,
              tell,
-             GUIAlloc,
-             GUIFree );
+             GUIMemAlloc,
+             GUIMemFree );
 #else
 WResSetRtns( open,
              close,
@@ -100,8 +96,8 @@ WResSetRtns( open,
              ( int (*) (WResFileID, const void *, int) )write,
              GUIResSeek,
              tell,
-             ( void* (*)(unsigned long) )GUIAlloc,
-             GUIFree );
+             ( void* (*)(unsigned long) )GUIMemAlloc,
+             GUIMemFree );
 #endif
 
 bool GUIIsLoadStrInitialized( void )

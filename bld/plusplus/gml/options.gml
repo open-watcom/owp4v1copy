@@ -1217,6 +1217,16 @@
 :usage. operate quietly (display only error messages)
 :jusage. 無メッセージモードで動作します(エラーメッセージのみ表示されます)
 
+:option. zro
+:target. any
+:usage. omit floating point rounding calls (non ANSI)
+:jusage. omit floating point rounding calls (non ANSI)
+
+:option. zri
+:target. 386
+:usage. inline floating point rounding calls
+:jusage. inline floating point rounding calls
+
 :option. zs
 :target. any
 :usage. syntax check only

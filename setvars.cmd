@@ -40,44 +40,40 @@ set default_windowing=0
 REM Set this variable to 0 to suppress documentation build
 set DOC_BUILD=1
 
-REM Change the default command prompt
-prompt $p$g
-
 REM Ensure COMSPEC points to CMD.EXE
 set COMSPEC=CMD.EXE
-REM Make the window bigger
-mode 80,50
+
 cls
 echo Open Watcom compiler build environment
 
 REM Stuff for the Open Watcom build environment
 set build_platform=os2386
 set batdir=%owroot%
-set bld_ver=12
-set bld_ver_str=1.2
+set bld_ver=13
+set bld_ver_str=1.3
 set builder.ctl=lang.ctl
-set cge=vi.exe pagedown pageup end
 set defrel=rel2
 set devdir=%owroot%\bld
 set distroot=%owroot%\distrib
+set relroot=%owroot%
 set dwatcom=%watcom%
 set doc_root=%owroot%\docs
 set lang=%watcom%
 set include=%lang%\h;%lang%\h\win;%devdir%\watcom\h
 set lang_bld=%owroot%\bat
 set lib=%owroot%\bld\watcom\lib;%os2tkroot%\lib
+
 set path=%owroot%\binp;%devdir%\build\binp;%owroot%\bat;%lang%\binp;%lang%\binw;%doc_root%\cmds;%os2tkroot%\bin;%defpath%
-set relroot=%owroot%
-set rm=-s
-set watcom=%lang%
+
 set edpath=%lang%\eddat
 set wwinhelp=%owroot%\bld\online\hlp\ib
 set beginlibpath=%watcom%\binp\dll
 
 REM Documentation related variables
+REM set appropriate variables to blank for help compilers which you haven't installed
 set win95hc=hcrtf
-set wat31hc=whc
 set win31hc=hc31
+set os2hc=ipfc
 set ipfc=%os2tkroot%\ipfc
 
 %devdr%

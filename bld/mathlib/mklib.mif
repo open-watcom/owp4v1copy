@@ -9,7 +9,7 @@ $(libname).lib : $(objs) $(libs) .precious
     # Carl Young : 2003-11-19
     # force a delete of the library. defeats the object of .precious but we have a bug in wlib apparently!?
     # next thing is to fix the bug!
-    @rm $^@
+    @rm -f $^@
 !endif
     $(librarian) $(lib_flags) $(lib_flags_linkage) $^@ $(objs) $(libs)
 !ifeq linkage dynamic

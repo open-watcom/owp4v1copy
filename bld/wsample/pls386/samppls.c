@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  PharLap execution sampler support.
 *
 ****************************************************************************/
 
@@ -94,16 +93,8 @@ int VersionCheck()
     return( TRUE );
 }
 
-#if defined(_NEC_PC)
-int Count_down = 0;
-#endif
-
 void RecordSample( unsigned offset, unsigned short segment )
 {
-#if defined(_NEC_PC)
-    if( --TimerMod == 0 ) {
-        TimerMod = TimerMult;
-#endif
     if( InsiderTime == 1 && SamplerOff == 0 ) {
         LastSampleIndex = SampleIndex;
         if( SampleIndex == 0 ) {
@@ -116,11 +107,6 @@ void RecordSample( unsigned offset, unsigned short segment )
         ++SampleIndex;
         ++SampleCount;
     }
-#if defined(_NEC_PC)
-    }
-    --Count_down;
-    if( Count_down == 0 ) init_timer( 0 );
-#endif
 
 /*
  *  Call Graph information still has to be written.  If this sample occurred
@@ -234,51 +220,6 @@ void FixTime( void )
     SetBiosClk( count );
 }
 
-#if defined(_NEC_PC)
-extern int ExtCall( int AX, int BX, int CX, int EDX, int SI );
-
-#pragma aux ExtCall =       \
-    "push ds"               \
-    "mov ds,si"             \
-    "int 21h"               \
-    "pop ds"                \
-    parm routine [ax][bx][cx][edx][si] \
-    modify [eax edx];
-
-struct DPMIREGS {
-        unsigned short itr;
-        unsigned short ds;
-        unsigned short es;
-        unsigned short fs;
-        unsigned short gs;
-        unsigned int   eax;
-        unsigned int   edx;
-};
-union REGS      r;
-struct SREGS    sr;
-struct DPMIREGS block;
-long            RMAddr;
-
-void init_timer( count )
-{
-    if( count != 0 ) {
-        Count_down = count / 2;
-    } else {
-        Count_down = 32767;             // max duration / 2
-    }
-    block.itr = 0x1c;                   // set interrupt number
-    block.es = RMAddr >> 16;            // copy real-mode segment value
-    block.ds = block.fs = block.gs = 0; // set dummy real-mode segment values
-    block.eax = 0x0200;                 // set interval timer
-
-/*      issue real-mode interrupt, registers specified
-        copy real-mode offset value to bx
-        set cx to duration n x 10 msec
-*/
-    ExtCall( 0x2511, RMAddr, count, FP_OFF( &block ), FP_SEG( &block ) );
-}
-#endif
-
 void StartProg( char *cmd, char *prog, char *args )
 {
 
@@ -286,10 +227,6 @@ void StartProg( char *cmd, char *prog, char *args )
     char        buff[BSIZE];
     int         len;
     seg_offset  where;
-#if defined(_NEC_PC)
-    long        pmaddr;
-    short       pmseg;
-#endif
 
     cmd = cmd;
     SampleIndex = 0;
@@ -317,27 +254,8 @@ void StartProg( char *cmd, char *prog, char *args )
     WriteAddrMap( 1, Mach.msb_cs, 0 );
     InitialCS = Mach.msb_cs;
     InitialSS = Mach.msb_ss;
-#if defined(_NEC_PC)
-    r.w.ax = 0x2502;            // get protected-mode interrupt vector
-    r.h.cl = 7;                 // for interrupt number 7
-    intdosx( &r, &r, &sr );
-    pmaddr = r.x.ebx;
-    pmseg = sr.es;
-    r.w.ax = 0x2503;            // get real-mode interrupt vector
-    r.h.cl = 7;                 // for interrupt number 7
-    intdos( &r, &r );
-    RMAddr = r.x.ebx;           // address of real-mode interrupt handler routine
-    r.w.ax = sr.cs;
-    sr.ds = r.w.ax;
-    r.w.ax = 0x2506;            // set interrupt to always gain control in protected mode
-    r.h.cl = 7;
-    intdosx( &r, &r, &sr );
-
-    init_timer( 0 );
-#else
     outp( TIMER0, DIVISOR & 0xff );
     outp( TIMER0, DIVISOR >> 8 );
-#endif
     for( ;; ) {
         check( dbg_go() );
         check( dbg_rdmsb( &Mach ) );
@@ -376,17 +294,8 @@ void StartProg( char *cmd, char *prog, char *args )
             CommonAddr.offset = Mach.msb_ebx;
         }
     }
-#if defined(_NEC_PC)
-    r.w.ax = 0x2507;            // set real- and protected-mode interrupt vectors
-    r.h.cl = 7;
-    r.x.ebx = RMAddr;
-    r.x.edx = pmaddr;
-    sr.ds = pmseg;
-    intdosx( &r, &r, &sr );
-#else
     outp( TIMER0, 0 );
     outp( TIMER0, 0 );
-#endif
     FixTime();
     if( Mach.msb_event <= 16 ) {
         Output( MsgArray[MSG_SAMPLE_3-ERR_FIRST_MESSAGE] );

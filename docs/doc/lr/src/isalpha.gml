@@ -4,7 +4,7 @@
 int isalpha( int c );
 .ixfunc2 '&CharTest' &func
 .if &'length(&wfunc.) ne 0 .do begin
-#include <wchar.h>
+#include <wctype.h>
 int iswalpha( wint_t c );
 .ixfunc2 '&CharTest' &wfunc
 .do end
@@ -60,11 +60,11 @@ is true.
 #include <ctype.h>
 
 void main()
-  {
+{
     if( isalpha( getchar() ) ) {
-      printf( "is alphabetic\n" );
+        printf( "is alphabetic\n" );
     }
-  }
+}
 .exmp end
 .class ANSI
 .system

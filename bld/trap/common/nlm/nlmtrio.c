@@ -40,6 +40,9 @@
 #include "nw3to4.h"
 
 #include <ecb.h>
+#if defined ( __NW50__ )
+void  NXVmExit( int status ) ;
+#endif
 
 extern struct ScreenStruct                     *screenID;
 extern struct LoadDefinitionStruct             *MyNLMHandle;
@@ -62,7 +65,11 @@ void SayGNiteGracey( int return_code )
 {
     return_code = return_code;
     KillMe( MyNLMHandle );
+#if defined ( __NW50__ )
+    NXVmExit(return_code);
+#else
     CDestroyProcess( CGetMyProcessID() );
+#endif
 }
 
 int KeyPress()

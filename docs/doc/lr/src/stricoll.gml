@@ -58,7 +58,7 @@ according to the collating sequence selected.
 char buffer[80] = "world";
 
 void main()
-  {
+{
     int test;
 
     test = _stricoll( buffer, "world2" );
@@ -69,7 +69,7 @@ void main()
     } else {
         printf( "Greater than\n" );
     }
-  }
+}
 .exmp end
 .class WATCOM
 .system

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Generic data structures (linked list, stack).
 *
 ****************************************************************************/
 
@@ -80,7 +79,7 @@ void addSLListElem(pSLList pList, void *elem) {
 }
 
 /* Add elem to the beginning of pList */
-void addBegSLListelem(pSLList pList, void *elem) {
+void addBegSLListElem(pSLList pList, void *elem) {
 
     _SLList *newList;
     newList = wicMalloc(sizeof(_SLList));

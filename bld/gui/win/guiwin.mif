@@ -1,5 +1,7 @@
 type=win
 
+sys_windowed = 1
+
 extra_objs = wpimem.obj
 
 sysobjs = guixscal.obj &
@@ -79,14 +81,15 @@ sysobjs = guixscal.obj &
           guiximdi.obj &
           guixmdi.obj  &
           guixbar.obj  &
-          guildstr.obj  &
+          guildstr.obj &
           guirdlg.obj  &
-          guirmenu.obj  &
-          guiclass.obj  &
+          guirmenu.obj &
+          guiclass.obj &
           guif1hk.obj  &
           wmdisim.obj  &
           wptoolbr.obj &
-          guiclen.obj
+          guiclen.obj  &
+          ctl3d32.obj
 
 !ifeq host_OS os2
 sysobjs +=             &
@@ -98,22 +101,11 @@ sysobjs +=             &
           windlg.obj
 !endif
 
-!ifeq host_OS win
-!ifeq host_CPU 386
-sysobjs += ctl3d32.obj
-!endif
-!endif
+# memory tracker cover routines
+extra_c_flags_mem    = $(trmem_cover_cflags) -fh=$^&.pch
+extra_c_flags_os2mem = $(trmem_cover_cflags) -fh=$^&.pch
+extra_c_flags_wpimem = $(trmem_cover_cflags) -fh=$^&.pch
 
-inc_dirs += $(sdk_dir)/misc;$(wpi_dir)/h;
-
-.c: $(sdk_dir)/misc
-
-extra_c_flags_os2 = -d__OS2_PM__
-!ifeq host_CPU 386
-extra_c_flags_win = -zw
-!else
-extra_c_flags_win = -zw-zW
-!endif
-extra_c_flags_i86 = -zu
+wlib_opt = -p=64
 
 !include ../../master.mif

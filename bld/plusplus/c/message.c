@@ -400,6 +400,7 @@ void MsgDisplay                 // DISPLAY A MESSAGE
     VbufFree( &buffer );
     --reserveDepth;
     if( NULL != sym ) {
+        notes_locn = sym->locn->tl;
         MsgDisplayArgs( IDEMSGSEV_NOTE
                       , SymIsFunctionTemplateModel( sym )
                             ? INF_TEMPLATE_FN_DECL : INF_SYMBOL_DECLARATION

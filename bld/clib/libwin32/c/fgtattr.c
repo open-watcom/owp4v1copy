@@ -36,7 +36,6 @@
 #include <windows.h>
 #include "libwin32.h"
 
-
 /*
  * Apparently GetFileAttributes 3.51 sometimes gets confused when the
  * file in question is on a FAT drive.  Since FindFirstFile seems to

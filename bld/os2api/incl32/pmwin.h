@@ -7,6 +7,7 @@
 #define INCL_WININCLUDED
 
 #ifdef INCL_WIN
+    #define INCL_WINACCELERATORS
     #define INCL_WINATOM
     #define INCL_WINBUTTONS
     #define INCL_WINCLIPBOARD
@@ -41,21 +42,21 @@
     #define INCL_WINWINDOWMGR
 #else
   #ifdef RC_INVOKED
-    #define INCL_WININPUT
-    #define INCL_WINDIALOGS
-    #define INCL_WINSTATICS
+    #define INCL_WINACCELERATORS
     #define INCL_WINBUTTONS
+    #define INCL_WINDIALOGS
     #define INCL_WINENTRYFIELDS
+    #define INCL_WINFRAMECTLS
+    #define INCL_WINFRAMEMGR
+    #define INCL_WINHELP
+    #define INCL_WININPUT
     #define INCL_WINLISTBOXES
     #define INCL_WINMENUS
-    #define INCL_WINSCROLLBARS
-    #define INCL_WINFRAMEMGR
-    #define INCL_WINFRAMECTLS
-    #define INCL_WINACCELERATORS
-    #define INCL_WINPOINTERS
     #define INCL_WINMESSAGEMGR
     #define INCL_WINMLE
-    #define INCL_WINHELP
+    #define INCL_WINPOINTERS
+    #define INCL_WINSCROLLBARS
+    #define INCL_WINSTATICS
     #define INCL_WINSTDDLGS
     #define INCL_WINSYS
   #endif
@@ -878,6 +879,34 @@ ULONG   APIENTRY WinQueryQueueStatus(HWND);
 
 #endif
 
+#if defined(INCL_WINACCELERATORS)
+
+#define AF_CHAR       0x0001
+#define AF_VIRTUALKEY 0x0002
+#define AF_SCANCODE   0x0004
+#define AF_SHIFT      0x0008
+#define AF_CONTROL    0x0010
+#define AF_ALT        0x0020
+#define AF_LONEKEY    0x0040
+#define AF_SYSCOMMAND 0x0100
+#define AF_HELP       0x0200
+
+typedef struct _ACCELTABLE {
+    USHORT cAccel;
+    USHORT codepage;
+    ACCEL  aaccel[1];
+} ACCELTABLE, *PACCELTABLE;
+
+HACCEL APIENTRY WinLoadAccelTable(HAB,HMODULE,ULONG);
+HACCEL APIENTRY WinCreateAccelTable(HAB,PACCELTABLE);
+HACCEL APIENTRY WinQueryAccelTable(HAB,HWND);
+BOOL   APIENTRY WinDestroyAccelTable(HACCEL);
+BOOL   APIENTRY WinTranslateAccel(HAB,HWND,HACCEL,PQMSG);
+BOOL   APIENTRY WinSetAccelTable(HAB,HACCEL,HWND);
+ULONG  APIENTRY WinCopyAccelTable(HACCEL,PACCELTABLE,ULONG);
+
+#endif
+
 #if defined(INCL_WINCURSORS)
 
 #define CURSOR_SOLID       0x0000
@@ -1370,6 +1399,7 @@ HWND   APIENTRY WinCreateStdWindow(HWND,ULONG,PULONG,PCSZ,PCSZ,ULONG,HMODULE,ULO
 #define HK_PLIST_EXIT      10
 #define HK_FINDWORD        11
 #define HK_CODEPAGECHANGED 12
+#define HK_CALLHOOK        13
 #define HK_WINDOWDC        15
 #define HK_DESTROYWINDOW   16
 #define HK_CHECKMSGFILTER  20
@@ -1427,72 +1457,81 @@ BOOL  APIENTRY WinSetVisibleRegionNotify(HWND,BOOL);
 
 #if defined(INCL_WININPUT)
 
-#define VK_BUTTON1                 0x01
-#define VK_BUTTON2                 0x02
-#define VK_BUTTON3                 0x03
-#define VK_BREAK                   0x04
-#define VK_BACKSPACE               0x05
-#define VK_TAB                     0x06
-#define VK_BACKTAB                 0x07
-#define VK_NEWLINE                 0x08
-#define VK_SHIFT                   0x09
-#define VK_CTRL                    0x0A
-#define VK_ALT                     0x0B
-#define VK_ALTGRAF                 0x0C
-#define VK_PAUSE                   0x0D
-#define VK_CAPSLOCK                0x0E
-#define VK_ESC                     0x0F
-#define VK_SPACE                   0x10
-#define VK_PAGEUP                  0x11
-#define VK_PAGEDOWN                0x12
-#define VK_END                     0x13
-#define VK_HOME                    0x14
-#define VK_LEFT                    0x15
-#define VK_UP                      0x16
-#define VK_RIGHT                   0x17
-#define VK_DOWN                    0x18
-#define VK_PRINTSCRN               0x19
-#define VK_INSERT                  0x1A
-#define VK_DELETE                  0x1B
-#define VK_SCRLLOCK                0x1C
-#define VK_NUMLOCK                 0x1D
-#define VK_ENTER                   0x1E
-#define VK_SYSRQ                   0x1F
-#define VK_F1                      0x20
-#define VK_F2                      0x21
-#define VK_F3                      0x22
-#define VK_F4                      0x23
-#define VK_F5                      0x24
-#define VK_F6                      0x25
-#define VK_F7                      0x26
-#define VK_F8                      0x27
-#define VK_F9                      0x28
-#define VK_F10                     0x29
-#define VK_F11                     0x2A
-#define VK_F12                     0x2B
-#define VK_F13                     0x2C
-#define VK_F14                     0x2D
-#define VK_F15                     0x2E
-#define VK_F16                     0x2F
-#define VK_F17                     0x30
-#define VK_F18                     0x31
-#define VK_F19                     0x32
-#define VK_F20                     0x33
-#define VK_F21                     0x34
-#define VK_F22                     0x35
-#define VK_F23                     0x36
-#define VK_F24                     0x37
-#define VK_ENDDRAG                 0x38
-#define VK_CLEAR                   0x39
-#define VK_EREOF                   0x3A
-#define VK_PA1                     0x3B
-#define VK_ATTN                    0x3C
-#define VK_CRSEL                   0x3D
-#define VK_EXSEL                   0x3E
-#define VK_COPY                    0x3F
-#define VK_BLK1                    0x40
-#define VK_BLK2                    0x41
-#define VK_MENU                    VK_F10
+#define VK_BUTTON1   0x01
+#define VK_BUTTON2   0x02
+#define VK_BUTTON3   0x03
+#define VK_BREAK     0x04
+#define VK_BACKSPACE 0x05
+#define VK_TAB       0x06
+#define VK_BACKTAB   0x07
+#define VK_NEWLINE   0x08
+#define VK_SHIFT     0x09
+#define VK_CTRL      0x0a
+#define VK_ALT       0x0b
+#define VK_ALTGRAF   0x0c
+#define VK_PAUSE     0x0d
+#define VK_CAPSLOCK  0x0e
+#define VK_ESC       0x0f
+#define VK_SPACE     0x10
+#define VK_PAGEUP    0x11
+#define VK_PAGEDOWN  0x12
+#define VK_END       0x13
+#define VK_HOME      0x14
+#define VK_LEFT      0x15
+#define VK_UP        0x16
+#define VK_RIGHT     0x17
+#define VK_DOWN      0x18
+#define VK_PRINTSCRN 0x19
+#define VK_INSERT    0x1a
+#define VK_DELETE    0x1b
+#define VK_SCRLLOCK  0x1c
+#define VK_NUMLOCK   0x1d
+#define VK_ENTER     0x1e
+#define VK_SYSRQ     0x1f
+#define VK_F1        0x20
+#define VK_F2        0x21
+#define VK_F3        0x22
+#define VK_F4        0x23
+#define VK_F5        0x24
+#define VK_F6        0x25
+#define VK_F7        0x26
+#define VK_F8        0x27
+#define VK_F9        0x28
+#define VK_F10       0x29
+#define VK_F11       0x2a
+#define VK_F12       0x2b
+#define VK_F13       0x2c
+#define VK_F14       0x2d
+#define VK_F15       0x2e
+#define VK_F16       0x2f
+#define VK_F17       0x30
+#define VK_F18       0x31
+#define VK_F19       0x32
+#define VK_F20       0x33
+#define VK_F21       0x34
+#define VK_F22       0x35
+#define VK_F23       0x36
+#define VK_F24       0x37
+#define VK_ENDDRAG   0x38
+#define VK_CLEAR     0x39
+#define VK_EREOF     0x3a
+#define VK_PA1       0x3b
+#define VK_ATTN      0x3c
+#define VK_CRSEL     0x3d
+#define VK_EXSEL     0x3e
+#define VK_COPY      0x3f
+#define VK_BLK1      0x40
+#define VK_BLK2      0x41
+#define VK_MENU      VK_F10
+#define VK_USERFIRST 0x0100
+#define VK_USERLAST  0x01ff
+
+#ifdef INCL_NLS
+  #define VK_DBCSFIRST  0x0080
+  #define VK_DBCSLAST   0x00ff
+  #define VK_BIDI_FIRST 0xe0
+  #define VK_BIDI_LAST  0xff
+#endif
 
 #define KC_NONE        0x0000
 #define KC_CHAR        0x0001
@@ -1512,6 +1551,20 @@ BOOL  APIENTRY WinSetVisibleRegionNotify(HWND,BOOL);
 #define KC_DBCSRSRVD1  0x4000
 #define KC_DBCSRSRVD2  0x8000
 
+#define INP_NONE   0x0000
+#define INP_KBD    0x0001
+#define INP_MULT   0x0002
+#define INP_RES2   0x0004
+#define INP_SHIFT  0x0008
+#define INP_CTRL   0x0010
+#define INP_ALT    0x0020
+#define INP_RES3   0x0040
+#define INP_RES4   0x0080
+#define INP_IGNORE 0xffff
+
+#define JRN_QUEUESTATUS  1
+#define JRN_PHYSKEYSTATE 2
+
 #define WM_MOUSEFIRST         0x0070
 #define WM_MOUSELAST          0x0079
 #define WM_BUTTONCLICKFIRST   0x0071
@@ -1526,6 +1579,7 @@ BOOL  APIENTRY WinSetVisibleRegionNotify(HWND,BOOL);
 #define WM_BUTTON3DOWN        0x0077
 #define WM_BUTTON3UP          0x0078
 #define WM_BUTTON3DBLCLK      0x0079
+#define WM_JOURNALNOTIFY      0x007C
 #define WM_MOUSEMAP           0x007D
 #define WM_EXTMOUSEFIRST      0x0410
 #define WM_EXTMOUSELAST       0x0419
@@ -1560,11 +1614,33 @@ BOOL  APIENTRY WinSetVisibleRegionNotify(HWND,BOOL);
 #define WM_CHAR               0x007A
 #define WM_VIOCHAR            0x007B
 
+#define CHARMSG(pmsg) ((PCHRMSG)((PBYTE)pmsg + sizeof(MPARAM)))
+#define MOUSEMSG(pmsg) ((PMSEMSG)((PBYTE)pmsg + sizeof(MPARAM)))
+
+typedef struct _CHARMSG {
+    USHORT fs;
+    UCHAR  cRepeat;
+    UCHAR  scancode;
+    USHORT chr;
+    USHORT vkey;
+} CHRMSG, *PCHRMSG;
+
+typedef struct _MOUSEMSG {
+    SHORT  x;
+    SHORT  y;
+    USHORT codeHitTest;
+    USHORT fsInp;
+} MSEMSG, *PMSEMSG;
+
+BOOL   APIENTRY WinCheckInput(HAB);
+BOOL   APIENTRY WinEnablePhysInput(HWND,BOOL);
 LONG   APIENTRY WinGetKeyState(HWND,LONG);
 LONG   APIENTRY WinGetPhysKeyState(HWND,LONG);
+BOOL   APIENTRY WinIsPhysInputEnabled(HWND);
 HWND   APIENTRY WinQueryCapture(HWND);
 HWND   APIENTRY WinQueryFocus(HWND);
 BOOL   APIENTRY WinSetCapture(HWND,HWND);
+BOOL   APIENTRY WinSetKeyboardStateTable(HWND,PBYTE,BOOL);
 
 #endif
 

@@ -380,7 +380,7 @@ static struct spc_info *InitFiniLookup( char *name ){
     return( NULL );
 }
 
-int AddSeg( char *segname, char *class_name, int segtype )
+static int AddSeg( char *segname, char *class_name, int segtype )
 {
     struct seg_name     *seg;
     struct user_seg     *useg, **lnk;
@@ -663,57 +663,6 @@ char *FEName( CGSYM_HANDLE cgsym_handle )
 }
 
 
-// stashed code to use in str
-char *GetMangledName( SYM_HANDLE  sym_handle )
-/***return a slightley mangled name   *********/
-{
-#if _MACHINE == _ALPHA || _MACHINE == _PPC
-    SYMPTR      sym;
-
-    if( sym_handle == 0 ) return( "*** NULL ***" );
-    sym = SymGetPtr( sym_handle );
-    return( sym->name );
-#else
-    SYMPTR      sym;
-    TYPEPTR     *parm;
-    TYPEPTR     typ;
-    TYPEPTR     fn_typ;
-    int         parm_size;
-    int         total_parm_size;
-
-    if( sym_handle == 0 ) return( "*** NULL ***" );
-    sym = SymGetPtr( sym_handle );
-    total_parm_size = -1;
-    if( (sym->flags & SYM_FUNCTION)  &&                 /* 07-oct-92 */
-//        CompFlags.use_stdcall_at_number  &&           /* 05-nov-92 */
-        (sym->attrib & FLAG_LANGUAGES) == LANG_STDCALL ) {
-        total_parm_size = 0;
-        fn_typ = sym->sym_type;
-        while( fn_typ->decl_type == TYPE_TYPEDEF ) fn_typ = fn_typ->object;
-        parm = fn_typ->u.parms;
-        if( parm != NULL ) {
-            for(; typ = *parm; ++parm ) {
-                if( typ->decl_type == TYPE_DOT_DOT_DOT ) {
-                    total_parm_size = -1;
-                    break;
-                }
-                while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
-                if ( typ->decl_type == TYPE_VOID ) break;
-                parm_size = TypeSize( typ );
-                parm_size = (parm_size + sizeof(target_int) - 1)  &
-                                - sizeof(target_int);
-                total_parm_size += parm_size;
-            }
-        }
-    }
-    if( total_parm_size != -1 ) {
-        sprintf( Buffer, "%s@%d", sym->name, total_parm_size );
-        return( Buffer );
-    }
-    return( sym->name );
-#endif
-}
-
 void FEMessage( msg_class class, void *parm )
 /*******************************************/
 {
@@ -788,25 +737,27 @@ void FEMessage( msg_class class, void *parm )
         break;
     case MSG_NO_SEG_REGS:
 #ifdef QNX_FLAKEY
-{
-extern unsigned long OrigModel;
-extern unsigned long Model;
-DumpString( "FE:about to issue msg: " );
-Dump8h( OrigModel );
-DumpString( " -> " );
-Dump8h( Model );
-DumpString( "\r\n" );
-if( !CompFlags.emit_dependencies ) {
-extern boom();
-#pragma aux boom = 0xf 0xff 0xff 0xff
-boom();
-}
-}
+        {
+            extern unsigned long OrigModel;
+            extern unsigned long Model;
+            DumpString( "FE:about to issue msg: " );
+            Dump8h( OrigModel );
+            DumpString( " -> " );
+            Dump8h( Model );
+            DumpString( "\r\n" );
+            if( !CompFlags.emit_dependencies ) {
+                extern boom();
+                #pragma aux boom = 0xf 0xff 0xff 0xff
+                boom();
+            }
+        }
 #endif
         CErr2p( ERR_NO_SEG_REGS, FEName( (CGSYM_HANDLE)parm ) );
         break;
     case MSG_BAD_PEG_REG:
         CErr2p( ERR_BAD_PEG_REG, FEName( (CGSYM_HANDLE)parm ) );
+        break;
+    default:
         break;
     }
 }
@@ -823,18 +774,6 @@ int FETrue()
 /**********/
 {
     return( 1 );
-}
-
-int FESymIndex( CGSYM_HANDLE sym )
-/********************************/
-{
-    return( 0 );
-}
-
-int FECodeBytes( const char *buffer, int len )
-/********************************************/
-{
-    return( 0 );
 }
 
 

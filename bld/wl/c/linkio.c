@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Linker binary i/o interface routines (DOS flavour).
 *
 ****************************************************************************/
 
-
-/*
-  LINKIO -- linker binary i/o interface routines
-
-*/
 
 #include <stdio.h>
 #include <dos.h>
@@ -72,17 +66,13 @@ extern void LnkFilesInit( void )
 // the linker doesn't use stdaux or stdprn, so close these.
 {
     CaughtBreak = NOT_HIT;
-#if 0
     if( !AuxFilesClosed ) {
         OpenFiles = 2;      // will be 0 when done closing stdaux & stdprn.
         QClose( STDAUX_HANDLE, "stdaux" );
         QClose( STDPRN_HANDLE, "stdprn" );
         AuxFilesClosed = TRUE;
+        OpenFiles = 0;
     }
-#else
-    AuxFilesClosed = TRUE;
-    OpenFiles = 0;
-#endif
 }
 
 extern void PrintIOError( unsigned msg, char *types, char *name )

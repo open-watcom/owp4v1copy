@@ -5,16 +5,16 @@ name = wbrw
 browse_autodepends = .AUTODEPEND
 !endif
 
-.extensions:
-.extensions: .exe .obj .cpp .gpp .c .asm .y .mif
-
-.mif : $(mif_path)
+.extensions: .gpp
 
 sys_windowed = 1
 
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
+
+!include $(dwarf_dir)/dr/client.mif
+!include $(wclass_dir)/mif/client.mif
 
 .c: ../cpp;../merge/c;$(posix_dir)/misc;$(lib_misc_dir)/c
 .cpp: ../cpp;../brg/cpp
@@ -39,21 +39,21 @@ ext = mbr
 mbr_files = $+$(template)$-
 !endif
 
-inc_dirs_nt     = $(wclass_dir)/win/hpp;$(guitools_dir)/win95;
-inc_dirs_win    = $(wclass_dir)/win/hpp;$(guitools_dir)/win;
-inc_dirs_dos    = $(wclass_dir)/dos/hpp;$(guitools_dir)/os2;
-inc_dirs_os2    = $(wclass_dir)/pm/hpp;$(guitools_dir)/os2;
+inc_dirs_nt  = $(guitools_dir)/win95
+inc_dirs_win = $(guitools_dir)/win
+inc_dirs_dos = $(guitools_dir)/os2
+inc_dirs_os2 = $(guitools_dir)/os2
 
-inc_dirs    = ../h;../brg/h;../gen;$(wclass_dir)/hpp;$(gui_dir)/h;$(dwarf_dir)/dr/h;$(posix_dir)/h;../contain/h;$(editdll_dir)
+inc_dirs = ../h;../brg/h;../gen;$(wclass_inc_dirs);$(dwarf_dir)/dr/h;$(posix_dir)/h;$(editdll_dir)
 
 .before:
-    set include=$(inc_path)
+    @set include=$(inc_path)
 
-cflags_all  = -zq -w4
+extra_c_flags_i86 = -zc -zm
 !ifdef DBG
-extra_c_flags_i86 = -zc-zm-zw
+extra_c_flags_i86 += -zw
 !else
-extra_c_flags_i86 = -zc-zm-zW
+extra_c_flags_i86 += -zW
 extra_c_flags_386_os2 = -dNDEBUG=1
 !endif
 !ifndef NOASSERT
@@ -65,7 +65,7 @@ extra_c_flags   = -dSTANDALONE_RX=1
 !ifeq release 0
 extra_c_flags   += -dDEBUG=1 -dDEBUG_ASSERT=1 -dDEBUGTREE=1
 !endif
-extra_cpp_flags = -ew-xs-dNOPERSIST=1
+extra_cpp_flags = -ew -xs -dNOPERSIST=1
 !ifdef gen_browse_file
 extra_cpp_flags += -db
 !endif
@@ -91,29 +91,29 @@ rc_file_os2 = ../res/wbrwpm.rc
 rc_file     = $(rc_file_$(host_OS))
 
 #linker
-LIBS_win    = $(watcom_dir)/lib/dwarfrlw.lib $(gui_dir)/win/wini86/gui.lib $(wclass_dir)/win/obj/wclass.lib $(misc_dir)/ctl3d.lib
-LIBS_nt_axp = $(watcom_dir)/lib/draxp.lib $(gui_dir)/win/ntaxp/gui.lib $(wclass_dir)/win/axp/wclass.lib
-LIBS_nt_386 = $(watcom_dir)/lib/dwarfrp.lib $(gui_dir)/win/nt386/gui.lib $(wclass_dir)/win/nt/wclass.lib
+LIBS_win    = $(gui_dir)/win/wini86/gui.lib
+LIBS_nt_axp = $(gui_dir)/win/ntaxp/gui.lib
+LIBS_nt_386 = $(gui_dir)/win/nt386/gui.lib
 LIBS_nt     = $(LIBS_NT_$(HOST_CPU))
-LIBS_os2    = $(watcom_dir)/lib/dwarfrp.lib $(gui_dir)/win/os2386/gui.lib $(wclass_dir)/pm/obj32/wclass.lib
-LIBS_dos    = $(watcom_dir)/lib/dwarfrp.lib $(gui_dir)/ui/dos386/gui.lib $(ui_dir)/dos/dos386/ui.lib
+LIBS_os2    = $(gui_dir)/win/os2386/gui.lib
+LIBS_dos    = $(gui_dir)/ui/dos386/gui.lib $(ui_dir)/dos/dos386/ui.lib
 
-LIBS    = $(LIBS_$(host_OS))
+LIBS    = $(LIBS_$(host_OS)) $(dwarf_dr_lib) $(wclass_lib)
 
 lflags_win_i86  = sys windows font mem
-extra_l_flags_win = op packdata=48k seg CLASS CODE FIXED, CLASS FAR_DATA FIXED, CLASS DATA FIXED
 lflags_dos_386  = sys pharlap
-extra_l_flags_dos = op stub=$(pharlap)stub386.exe
+
+extra_l_flags   = op stack=16k,map
+!ifndef quick_link
+extra_l_flags   += op show,art,static
+!endif
+
+extra_l_flags_dos = op stub=$(pharlap)stub386.exe op eliminate
+extra_l_flags_win = op packdata=48k seg CLASS CODE FIXED, CLASS FAR_DATA FIXED, CLASS DATA FIXED
 extra_l_flags_nt_386 =
 extra_l_flags_nt_axp = op undefsok
 extra_l_flags_nt = $(extra_l_flags_nt_$(host_CPU))
 extra_l_flags_os2 =
-
-extra_l_flags   = op stack=16k
-
-!ifndef quick_link
-extra_l_flags   += op map=wbr,show,art,static
-!endif
 
 exe_ext_osi = .rex
 !ifdef exe_ext_$(host_OS)
@@ -127,7 +127,9 @@ prereq_win = $(guitools_dir)/win/wbrw.h
 prereq_os2 = $(guitools_dir)/os2/wbrw.h
 prereq_dos = $(guitools_dir)/os2/wbrw.h
 
-$(name).exe : $(prereq_$(host_os)) $(OBJECTS) $(LIBS)
+all: $(prereq_$(host_os)) $(name).exe .SYMBOLIC
+
+$(name).exe : $(OBJECTS) $(LIBS)
     $(linker) $(lflags) name $(name).$(exe_ext) file {$(OBJECTS)} lib {$(LIBS)}
 !ifeq host_OS os2
     $(rc_os2) $(rc_flags) $(rc_file) $^@
@@ -139,24 +141,16 @@ $(name).exe : $(prereq_$(host_os)) $(OBJECTS) $(LIBS)
     @for %i in ($(mbr_files)) do @%append browser.wbr file %i
 !endif
 
-#compiling
-
-cppflags    = $(cflags) $(extra_cpp_flags)
-
-.cpp.obj:
+.gpp.obj: .AUTODEPEND
     @set include=$(inc_path)
-    $(cpp) $(cppflags) $(extra_c_flags_$[&) $[@
-
-.gpp.obj:
-    @set include=$(inc_path)
-    $(cpp) $(cppflags) $(extra_c_flags_$[&) $[@
+    $(cpp) $(cflags) $(extra_cpp_flags) $(extra_c_flags_$[&) $[@
 
 dmem.obj : mem.cpp
 
 !ifdef prereq_$(host_os)
-$(prereq_$(host_os)): .SYMBOLIC
+$(prereq_$(host_os)): .ALWAYS
 curr_dir=$+$(%cwd)$-
         @cd $(%DOC_ROOT)\$(host_os)
-        @wmake hbook=wbrw
+        @wmake -h hbook=wbrw header=1
         @cd $(curr_dir)
 !endif

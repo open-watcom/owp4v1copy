@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Far heap expansion routines.
 *
 ****************************************************************************/
 
@@ -55,13 +54,9 @@ _WCRTLINK void _WCFAR *_fexpand( void _WCFAR *stg, size_t req_size )
     if( seg == _DGroup() ) {
         tmp = _nexpand( (void _WCNEAR *) stg, req_size );
         if( tmp == NULL )  return( NULL );
-#if __WATCOMC__ >= 900
     } else if( _bexpand( seg,(void __based(void) *)FP_OFF(stg), req_size )
                                 == _NULLOFF ) {
         return( NULL );
-#else
-        return( NULL );
-#endif
     }
     return( stg );
 }

@@ -1,12 +1,45 @@
-/*
- *  locale.h
+/***************************************************************************
+ * FILE: locale.h/clocale (Localization)
  *
 :include crwatqnx.sp
- */
+ *
+ * Description: This header is part of the C/C++ standard library. It
+ *              declares facilities for controlling localization.
+ ***************************************************************************/
+:segment CNAME
+#ifndef _CLOCALE_INCLUDED
+#define _CLOCALE_INCLUDED
+
+#ifndef __cplusplus
+#error The header clocale requires C++
+#endif
+:elsesegment
 #ifndef _LOCALE_H_INCLUDED
 #define _LOCALE_H_INCLUDED
+:endsegment
+
 :include readonly.sp
+::
+:: The following segment only appears in locale.h.
+:segment !CNAME
+#ifdef __cplusplus
+#include <clocale>
+
+// C99 types in locale.h.
+using std::lconv;
+
+// C99 functions in locale.h.
+using std::setlocale;
+using std::localeconv;
+
+#else /* __cplusplus not defined */
+:: End of segment that is only in locale.h
+:endsegment
+
+:: Only need extern "C" in clocale
+:segment CNAME
 :include cpluspro.sp
+:endsegment
 
 #ifndef _COMDEF_H_INCLUDED
  #include <_comdef.h>
@@ -16,6 +49,8 @@
 
 :include wchar_t.sp
 
+:include null.sp
+
 #define LC_CTYPE        0
 #define LC_NUMERIC      1
 #define LC_TIME         2
@@ -24,6 +59,9 @@
 #define LC_MESSAGES     5
 #define LC_ALL          6
 
+:segment CNAME
+namespace std {
+:endsegment
 struct lconv {
         char *decimal_point;
         char *thousands_sep;
@@ -45,15 +83,23 @@ struct lconv {
         char n_sign_posn;
 };
 
-:include null.sp
-
 _WCRTLINK extern char *setlocale(int __category,const char *__locale);
 _WCRTLINK extern struct lconv *localeconv(void);
-:segment !NO_WIDECHAR
+:segment CNAME
+}
+:endsegment
 
+:segment !NO_WIDECHAR
 _WCRTLINK extern wchar_t *_wsetlocale(int __category,const wchar_t *__locale);
 :endsegment
 
 :include poppack.sp
+:segment CNAME
 :include cplusepi.sp
+:endsegment
+
+:segment !CNAME
+#endif /* __cplusplus */
+:endsegment
+
 #endif

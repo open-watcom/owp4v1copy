@@ -35,8 +35,8 @@
 #include "timedata.h"
 #include <os/imports.h>
 
-_WCRTLINK clock_t clock(void)
+_WCRTLINK clock_t clock( void )
 {
-    return (clock_t)xtime( NULL );
+    return( ( clock_t ) xtime( NULL ) );
 }
 

@@ -64,23 +64,21 @@ typedef struct thread_args {
     HANDLE      parent;
 } thread_args;
 
-static unsigned WINAPI begin_thread_helper( thread_args *td )
+static DWORD WINAPI begin_thread_helper( thread_args *td )
 /***********************************************************/
 {
     thread_fnex         *rtn;
     void                *arg;
     REGISTRATION_RECORD rr;
     thread_data         *tdata;
+    DWORD               rv;
 
     rtn = td->rtn;
     arg = td->argument;
+    free( td );
 
     if( !__Is_DLL ) {                                   /* 15-feb-93 */
-        #if defined(__AXP__) || defined(__PPC__)
-            tdata = alloca( __ThreadDataSize );
-        #else
-            tdata = __alloca( __ThreadDataSize );
-        #endif
+        if (NULL==(tdata = alloca( __ThreadDataSize )))  return( 0 );
         memset( tdata, 0, __ThreadDataSize );
         // tdata->__allocated = 0;
         tdata->__data_size = __ThreadDataSize;
@@ -88,13 +86,12 @@ static unsigned WINAPI begin_thread_helper( thread_args *td )
             return( 0 );
         }
     }
-    free( td );
 
     __NewExceptionFilter( &rr );
     __sig_init_rtn();   // fills in a thread-specific copy of signal table
-    (*rtn)( arg );
-    _endthreadex( 0 );
-    return( 0 );
+    rv = (*rtn)( arg );
+    _endthreadex( rv );
+    return( rv );
 }
 
 int __CBeginThreadEx(
@@ -109,15 +106,15 @@ int __CBeginThreadEx(
     thread_args *td;
     HANDLE      th;
 
+    if( __TlsIndex == NO_INDEX ) {
+        if( __NTThreadInit() == FALSE )  return( 0 );
+        __InitMultipleThread();
+    }
+
     td = malloc( sizeof( *td ) );
     if( td == NULL ) {
         __set_errno( ENOMEM );
         return( 0 );
-    }
-
-    if( __TlsIndex == NO_INDEX ) {
-        if( __NTThreadInit() == FALSE )  return( 0 );
-        __InitMultipleThread();
     }
 
     stack_size = __Align4K( stack_size );
@@ -133,6 +130,10 @@ int __CBeginThreadEx(
         (LPVOID) td,
         (DWORD)initflag,
         (LPDWORD)thrdaddr );
+
+    if( th == NULL )
+        free( td );
+
     return( (unsigned long)th );
 }
 
@@ -141,7 +142,7 @@ void __CEndThreadEx( unsigned retval )
     __sig_fini_rtn();
     __DoneExceptionFilter();
     if( ! __Is_DLL ) {
-        __NTRemoveThread( TRUE );
+        __NTRemoveThread( FALSE );
     }
     ExitThread( retval );
 }

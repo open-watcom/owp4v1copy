@@ -1349,30 +1349,15 @@ static bool AddArrayIndex( dr_handle abbrev, dr_handle entry, void *data )
 // add an array index to the name
 {
     unsigned_32 upper_bd;
-    String      bounds;
-    char        buf[ 15 ];      /* "[ 2147483647 ]\0" */
-    char        indx[ 12 ];     /* "2147483647" */
+    unsigned_32 *dataptr;
 
     if( DWRScanForAttrib( &abbrev, &entry, DW_AT_upper_bound )
-                != DW_AT_upper_bound ) {
+        != DW_AT_upper_bound )
+        return FALSE;
 
-        buf[ 0 ] = '\0';
-        strncat( buf, ArrayLeftKwd.s, ArrayLeftKwd.l );
-        upper_bd = DWRReadConstant( abbrev, entry );
-        if( upper_bd != 0 ) {
-            ltoa( upper_bd, indx, 10 );
-            strcat( buf, indx );
-        }
-        strncat( buf, ArrayRightKwd.s, ArrayRightKwd.l );
-
-        bounds.s = buf;
-        bounds.l = strlen( buf );
-        ((String *)data)->l += bounds.l;
-        ReallocStr( (String *) data );
-        strncat( ((String *) data)->s, bounds.s, bounds.l );
-
-    }
-
+    dataptr  = data;
+    upper_bd = DWRReadConstant( abbrev, entry );
+    *dataptr = upper_bd;
     return TRUE;
 }
 
@@ -1384,6 +1369,7 @@ static BrokenName_T * DecorateArray( BrokenName_T * decname, Loc_T * loc )
     dr_handle   type_entry;
     Loc_T       type_loc;
     String      tmpStr;
+    unsigned_32 upper_bd;
 
     tmpStr.s = DWRALLOC( 1 );
     *tmpStr.s = '\0';
@@ -1398,8 +1384,32 @@ static BrokenName_T * DecorateArray( BrokenName_T * decname, Loc_T * loc )
     type_entry =  SkipPCH( type_entry );
     FillLoc( &type_loc, type_entry );
     DecorateType( decname, &type_loc, DW_TAG_padding );
-    DWRSkipRest( abbrev, &entry );
-    DWRAllChildren( entry, AddArrayIndex, &tmpStr );
+
+    abbrev = loc->abbrev_cr;
+    entry = loc->entry_cr;
+    if( DWRScanForAttrib( &abbrev, &entry, DW_AT_count ) == DW_AT_count ) {
+        upper_bd = DWRReadConstant( abbrev, entry );
+    } else {
+        DWRSkipRest( abbrev, &entry );
+        DWRAllChildren( entry, AddArrayIndex, &upper_bd );
+    }
+    if( upper_bd != 0 ) {
+        String      bounds;
+        char        buf[ 15 ];      /* "[ 2147483647 ]\0" */
+        char        indx[ 12 ];     /* "2147483647" */
+
+        buf[ 0 ] = '\0';
+        strncat( buf, ArrayLeftKwd.s, ArrayLeftKwd.l );
+        ltoa( upper_bd, indx, 10 );
+        strcat( buf, indx );
+        strncat( buf, ArrayRightKwd.s, ArrayRightKwd.l );
+
+        bounds.s = buf;
+        bounds.l = strlen( buf );
+        tmpStr.l += bounds.l;
+        ReallocStr( &tmpStr );
+        strncat( tmpStr.s, bounds.s, bounds.l );
+    }
     strrev( tmpStr.s );
 
     ListConcat( &(decname->var_elg), tmpStr );

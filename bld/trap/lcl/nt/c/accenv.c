@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 #include "stdnt.h"
 
 unsigned ReqEnv_setvar()
@@ -45,7 +44,8 @@ unsigned ReqEnv_setvar()
     ret = GetOutPtr( 0 );
 
     ret->err = 0;
-    if( value[0] == '\0' ) value = NULL;
+    if( value[0] == '\0' )
+        value = NULL;
     if( !SetEnvironmentVariable( var, value ) ) {
         ret->err = GetLastError();
     }

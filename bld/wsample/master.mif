@@ -11,7 +11,8 @@ target = $(host_os)
 !ifeq target dos
 memory_model_i86 = s
 !else ifeq target rsi
-memory_model_i86 = c
+memory_model_i86 = l
+PEGGED = 1
 !else ifeq target win
 memory_model_i86 = c
 !endif
@@ -47,9 +48,6 @@ objs_nov_386 = sampnlm.obj realmode.obj nwhooks.obj settime.obj cpuspeed.obj pit
 objects = $(objs_$(target)_$(host_cpu)) sample.obj sampdata.obj io.obj sysio.obj wmsg.obj
 
 extra_c_flags =  -s
-!ifeq machine NEC
-extra_c_flags += -d_NEC_PC
-!endif
 
 extra_c_flags_dos_dos = -dREPORT_TYPE=__interrupt -dFAR_PTR=__far
 extra_c_flags_dos_rsi = -dREPORT_TYPE= -dFAR_PTR=__far -zu -hc
@@ -68,7 +66,7 @@ extra_c_flags_i86     += -DSHORT_OFF
 extra_c_flags_i86     += -DSHORT_OFF
 !endif
 
-extra_a_flags_dos_rsi = -Dcompact
+extra_a_flags_dos_rsi = -Dlarge
 extra_a_flags_dos     = $(extra_a_flags_dos_$(target))
 
 extra_rc_flags_nt          = -dNT
@@ -79,11 +77,9 @@ extra_rc_flags_dos_dos_i86 = -dDOS
 extra_rc_flags_dos_rsi_i86 = -dRSI
 extra_rc_flags_dos_pls_386 = -dPLS
 extra_rc_flags_dos         = $(extra_rc_flags_dos_$(target)_$(host_cpu))
+extra_rc_flags_nov         = -dNLM
 extra_rc_flags_win         = -dWIN -30
 extra_rc_flags             = $(extra_rc_flags_$(host_os))
-!ifeq machine NEC
-extra_rc_flags += -d_NEC_PC
-!endif
 
 nlm_imports = &
     FileServerMajorVersionNumber &
@@ -112,7 +108,7 @@ description = \'Open Watcom Sampler V2.2\'
 description = 'Open Watcom Sampler V2.2'
 !endif
 
-extra_l_flags = op symfile,map lib $(wres_lib) name $(xname)
+extra_l_flags = op symfile,map name $(xname)
 extra_l_flags_os2_i86 = lib os2.lib op stack=4k, newfiles
 extra_l_flags_os2 = $(extra_l_flags_os2_$(host_cpu))
 extra_l_flags_win = option heap=10k, stack=10k segment class 'CODE' preload fixed segment class 'DATA' preload fixed lib commdlg,toolhelp
@@ -120,7 +116,7 @@ extra_l_flags_win = option heap=10k, stack=10k segment class 'CODE' preload fixe
 !ifeq target nov
 inc_dirs=$(ow_nwoss_root)/common/h;$(ow_nwoss_root)/nw4/h;$(nwsrc);$(dig_dir)/h;
 !else ifeq target win
-inc_dirs = $(sdkdir)/misc;$(watcom_dir)/h;$(dig_dir)/h;
+inc_dirs = ../h;$(sdkdir)/misc;$(watcom_dir)/h;$(dig_dir)/h;
 !else ifeq target rsi
 inc_dirs = ../rsii86;$(rsilib);$(dig_dir)/h
 !else ifeq target pls
@@ -152,49 +148,60 @@ inc_dirs = $(watcom_dir)/h;$(dig_dir)/h;
 rsidir = $(tools_root)
 
 !ifeq target rsi
+
+libs = $(rsilib)/d16libc.lib &
+    $(lang_root)/lib286/dos/clibl.lib &
+    $(wres_lib)
+
 $(xname).exe : $(xname).exp $(xname).res
     $(rsidir)\splice $^@ $(xname).exp -ALT ../../wstub/wstubq.exe
     wstrip -q -a -r $^@ . $(xname).res
 
-$(xname).exp : $(objects) $(wres_lib) $(__MAKEFILES__)
+$(xname).exp : $(objects) $(libs) $(__MAKEFILES__)
     @%create tmp.lnk
     @%append tmp.lnk exp($(xname)) map($(xname)) log($(xname).err)
-    @%append tmp.lnk -nod -DPMI -map -acg -farcall -quiet -auto -rtnerr 2
+!ifeq release 0
+    @%append tmp.lnk -codeview
+!endif
+    @%append tmp.lnk -mpl -nod -DPMI -map -acg -farcall -auto -quiet -rtnerr 2
     @for %i in ($(objects)) do @%append tmp.lnk %i
-    @%append tmp.lnk $(rsilib)/d16libc.lib
-    @%append tmp.lnk $(lang_root)/lib286/dos/clibc.lib
-    @%append tmp.lnk $(wres_lib)
-    -$(rsidir)\glu @tmp.lnk
+    @for %i in ($(libs)) do @%append tmp.lnk %i
+    -!$(rsidir)\glu @tmp.lnk
+
 !else ifeq target nov
-$(xname).nlm : $(xname).res $(objects) $(wres_lib) $(__MAKEFILES__)
+
+libs = ../../clib/library/nw_clib.386/ms_s/clib3s.lib &
+    $(wres_lib)
+
+$(xname).nlm : $(xname).res $(objects) $(libs) $(__MAKEFILES__)
     @%write $(%debug) tmp.lnk name $^@
     @%append tmp.lnk option osname='Novell NLM'
     @%append tmp.lnk format novell nlm $(description)
     @%append tmp.lnk debug novell
     @%append tmp.lnk debug all
     @%append tmp.lnk option map
-    @%append tmp.lnk option caseexact
     @%append tmp.lnk option stack=10k
     @%append tmp.lnk option nodefault
     @for %i in ($objects) do @%append tmp.lnk file %i
     @for %i in ($(nlm_imports)) do @%append tmp.lnk import %i
     @%append tmp.lnk import @$(ow_nwoss_root)/common/imp/owclib.imp
-    @%append tmp.lnk lib $(wres_lib)
-    @%append tmp.lnk lib ../../clib/library/nw_clib.386/ms_s/clib3s.lib
+    @for %i in ($(libs)) do @%append tmp.lnk lib %i
     @%append tmp.lnk module clib
     $(linker) @tmp.lnk
     wstrip -q -a -r $^@ . $(xname).res
+
 !else ifeq target pls
-$(xname).exp : $(objects) $(xname).res $(wres_lib) $(__MAKEFILES__)
+
+libs = $(plsdir)/wdos32.lib &
+    $(plsdir)/wdosx32.lib &
+    $(wres_lib) &
+    $(lang_root)/lib386/dos/clib3r.lib &
+    $(lang_root)/lib386/math3r.lib
+
+$(xname).exp : $(objects) $(xname).res $(libs) $(__MAKEFILES__)
     @%write tmp.lnk format phar ext
-    @%append tmp.lnk option map
-    @%append tmp.lnk option nodefaultlibs
     @%append tmp.lnk name $^@
-    @%append tmp.lnk lib $(plsdir)/wdos32.lib
-    @%append tmp.lnk lib $(plsdir)/wdosx32.lib
-    @%append tmp.lnk lib $(wres_lib)
-    @%append tmp.lnk lib $(lang_root)/lib386/dos/clib3r.lib
-    @%append tmp.lnk lib $(lang_root)/lib386/math3r.lib
+    @%append tmp.lnk option map,nodefaultlibs
     @%append tmp.lnk option maxdata=0
     @%append tmp.lnk runtime maxreal=1023K
     @%append tmp.lnk runtime maxibuf=4K
@@ -202,24 +209,28 @@ $(xname).exp : $(objects) $(xname).res $(wres_lib) $(__MAKEFILES__)
     @%append tmp.lnk file $(plsdir)/dilseg.obj
     @%append tmp.lnk file $(plsdir)/dilglue.obj
     @for %i in ($(objects)) do @%append tmp.lnk file %i
+    @for %i in ($(libs)) do @%append tmp.lnk lib %i
     $(linker) @tmp.lnk
     wstrip -q -a -r $^@ . $(xname).res
 !else
+
 $(xname).exe : $(objects) $(xname).res $(wres_lib) $(__MAKEFILES__)
-    $(linker) $(lflags) file {$(objects)}
+    @%write tmp.lnk $(lflags)
+    @for %i in ($(objects)) do @%append tmp.lnk file %i
+    @%append tmp.lnk lib $(wres_lib)
+    $(linker) name $^@ @tmp.lnk
 !ifeq host_os win
     $(rc) $(rc_flags) $(xname).res $^@
 !else
     wstrip -q -a -r $^@ . $(xname).res
 !endif
+
 !endif
 
 !ifeq host_os win
-$(xname).res : ../h/$(xname).rc ../h/wsampres.rc ../h/$(xname).ico ../h/wsample.rc ../h/wmsg.h
-    @set include=$(inc_path)
-    $(rc) $(rc_flags) $(extra_rc_flags) -r -zk0 -i"$(lang_root)/h/win" -i"../h" $[@ -fo=$^@
+$(xname).res : ../h/wsamplew.rc ../h/wsampres.rc ../h/wsamplew.ico ../h/wsample.rc ../h/wmsg.h
 !else
 $(xname).res : ../h/wsample.rc ../h/wmsg.h
+!endif
     @set include=$(inc_path)
     $(rc_aui) $(extra_rc_flags) $[@ -fo=$^@
-!endif

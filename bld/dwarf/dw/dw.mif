@@ -1,4 +1,8 @@
-proj_name = dwarf
+proj_name = dwarfw
+
+!ifndef dwarfw_autodepends
+dwarfw_autodepends = .AUTODEPEND
+!endif
 
 !include cproj.mif
 !include defrule.mif
@@ -24,56 +28,45 @@ dwsym.obj &
 dwtype.obj &
 dwutils.obj
 
-!ifeq model s
-!ifeq host_cpu 386
-mem_model_386 = -ms
-!endif
-!endif
-
-inc_dirs = $(watcom_dir)/h
-
-.BEFORE
-    @set include=$(inc_path)
-
 .c : $(dwarf_dir)/dw/c
-
-dwtjbflags = -d1 -fo=$@
-dwmakeabflags = op quiet,map debug all file dwmakeab.tbj, dwutils.tbj n $^@
 
 !ifeq bootstrap 1
 
 inc_dirs = -I$(watcom_dir)/h -I. -I../h
 dwtjbflags = -c $(cflags)
-dwmakeabflags = dwmakeab.tbj dwutils.tbj -o $^@
+dwmakeabflags = dwmakeab.obj -o $^@
+
+# to be fixed: wlib -fa produces a library that gnu ld can't read
+# can be a bug in wlib or in gnu ld, I don't know right now...
+dw.lib : dwabenum.gh $(objs)
+        ar crs $^@ $(objs)
 
 !else
 
-!ifeq host_cpu 386
-extra_c_flags += -fpc
-!endif
+inc_dirs = $(watcom_dir)/h
+dwtjbflags = -d1 -fo=$@
+dwmakeabflags = op quiet,map debug all file dwmakeab.obj n $^@
+extra_c_flags = -s
+extra_c_flags_i86 = -fpc
+extra_c_flags_386 = -fpc
+
+dw.lib : dwabenum.gh $(objs)
+        @%create tmp.lbc
+        @for %i in ($(objs)) do @%append tmp.lbc +%i
+        $(librarian) -n -b -q $^@ @tmp.lbc
 
 !endif
 
-dw$(model).lib : dwabenum.i $(objs)
-        @%create lbc.tmp
-        @for %i in ($(objs)) do @%append lbc.tmp +%i
-        $(librarian) -n -b -q $^@ @lbc.tmp
-        wtouch compile.tim
-
-./dwmakeab.exe : dwmakeab.tbj dwutils.tbj
+./dwmakeab.exe : dwmakeab.obj
         $(bld_link) $(dwmakeabflags)
 
-dwabenum.i dwabinfo.i : ./dwmakeab.exe
+dwabenum.gh dwabinfo.gh : ./dwmakeab.exe
         $[@
 
-dwmakeab.tbj : dwmakeab.c
-        $(bld_cc) $(dwtjbflags) $<
+dwmakeab.obj : dwmakeab.c dwutils.c
+        $(bld_cc) $(dwtjbflags) $[@
 
-dwutils.tbj : dwutils.c
-        $(bld_cc) $(dwtjbflags) $<
+dwabbrev.obj : dwabbrev.c dwabinfo.gh
 
-dwabbrev.obj : dwabbrev.c dwabinfo.i
-
-testcli.exe : testcli.obj testtest.obj testdump.obj dw$(model).lib
-        $(linker) $(lflags) op quiet,map file testcli,testtest,testdump lib dw$(model).lib
-
+testcli.exe : testcli.obj testtest.obj testdump.obj dw.lib
+        $(linker) $(lflags) op quiet,map file testcli,testtest,testdump lib dw.lib

@@ -1,55 +1,64 @@
 #
 # Master makefile for WIC
 #
-
 ##############################################################################
 
 proj_name = wic
 name = wic
 
+wic_trmem = 1
+
+.ERASE
+
+.extensions: .rc
+
 !include cproj.mif
 !include deftarg.mif
 !include defrule.mif
 
-!ifndef LANGUAGE
-LANGUAGE  = ENGLISH
-!endif
+!include trmem.mif
 
-!ifeq        LANGUAGE ENGLISH
-lang_prefix = e
-!else ifeq   LANGUAGE JAPANESE
-lang_prefix = j
-!else
-!error Invalid language specified: $(LANGUAGE)!
-!endif
+!include ../mif/objsdef.mif                #   get objs macro
+
+!include wres.mif
 
 ##############################################################################
 
-extra_c_flags = -d$(LANGUAGE) -i..\h -fpc -zp1 # -oailt -s -3r
+OBJS += $(trmem_objs)
 
-!include ../mif/objsdef.mif                #   get objs macro
+extra_c_flags = -zp1 -s
+extra_c_flags_i86 = -fpc
+extra_c_flags_386 = -fpc
+
+extra_c_flags_trmem = $(trmem_cflags)
+extra_c_flags_wicgener = $(trmem_cover_cflags)
+
+##############################################################################
+
+
+.h      : ../h
+.c      : ../c;$(trmem_dir)
+.rc     : ../rc
+
+inc_dirs = ../h
 
 ##############################################################################
 
 lnk = $(name).lnk
 
-!ifeq host_CPU 386
-wreslib=$(wres_dir)\lib\wresf
-!else
-wreslib=$(wres_dir)\lib\wresl
-!endif
-
-!ifeq host_OS osi
+!ifeq host_os osi
 extra_stuff = $(tools_root)\os2ldr.exe
 !endif
 
-$(name).exe : $(objs) $(lnk) $(extra_stuff) wic.res
-    $(linker) $(lflags) @$(lnk)
-!ifeq host_OS osi
+##############################################################################
+
+$(name).exe : $(objs) $(lnk) $(extra_stuff) wic.res $(wres_lib)
+        $(linker) $(lflags) @$(lnk)
+!ifeq host_os osi
         w32bind $(name).rex $(name).exe $(tools_root)\os2ldr.exe
         erase $(name).rex
 !endif
-    wstrip -a -r -q $(name).exe . wic.res
+        wstrip -a -r -q $(name).exe . wic.res
 
 $(lnk) : $(__MAKEFILES__)
         %create $(lnk)
@@ -59,55 +68,18 @@ $(lnk) : $(__MAKEFILES__)
         @%append $(lnk) option symfile
 !endif
         @%append $(lnk) name $(name)
-        @%append $(lnk) lib $(wreslib)
+        @%append $(lnk) lib $(wres_lib)
         @for %i in ($(objs)) do @@%append $(lnk) file %i
 
 ##############################################################################
 
-#.CONTINUE
-.ERASE
+wic.res: ../rc/wic.rc usagee.rc usagej.rc #../rc/messages.rc
+    $(rc_aui) $[@ -fo=$^@
 
-.extensions:
-.extensions: . .exe .obj .res .c .h .rc
+usagee.rc:  ../rc/usage.sp
+    @%write usagee.tmp -kENGLISH -t8 -f "%+(USAGEE_MSG_BASE+%$#-1), \"%s\"" $< $^@
+    wsplice @usagee.tmp
 
-.h      : ..\h;$(%include)
-.c      : ..\c
-.rc     : ..\rc
-
-.c.obj:
-    $(cc) $[* $(cflags)
-
-##############################################################################
-
-yacc = ..\c\yaccpre
-
-..\c\preparse.c: ..\c\preparse.y
-    $(YACC) pre ..\c\preparse > $(nulldevice)
-
-..\c\cparse.c: ..\c\cparse.y
-    $(YACC) c ..\c\cparse > $(nulldevice)
-
-
-##############################################################################
-
-wic.res: ..\rc\usage$(lang_prefix).rc ..\rc\messages.rc ..\rc\wic.rc
-    wrc ..\rc\wic.rc -d$(LANGUAGE) -r -fo=wic.res
-
-..\rc\usage$(lang_prefix).rc:  ..\rc\usage.sp ..\h\msg.h
-    wsplice -k $(LANGUAGE)  ..\rc\usage.sp ..\rc\usage$(lang_prefix).rc
-    $(vi) -s ..\rc\usage.vi ..\rc\usage$(lang_prefix).rc
-
-superclean : .symbolic
-    rm -f *.obj *.lnk *.exe *.res
-    rm -f *.map
-    rm -f *.err
-    rm -f ..\c\cparse.c ..\c\preparse.c
-    rm -f ..\rc\usage?.rc
-
-
-
-
-
-
-
-
+usagej.rc:  ../rc/usage.sp
+    @%write usagej.tmp -kJAPANESE -t8 -f "%+(USAGEJ_MSG_BASE+%$#-1), \"%s\"" $< $^@
+    wsplice @usagej.tmp

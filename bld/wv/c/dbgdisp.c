@@ -150,7 +150,7 @@ extern  char    *GetWndFont( a_window *wnd )
 
 static void SetFont( wnd_class class, char *font )
 {
-    WndFree( WndFontInfo[ class ] );
+    GUIMemFree( WndFontInfo[ class ] );
     WndFontInfo[ class ] = font;
 }
 
@@ -213,6 +213,19 @@ void FiniFont()
     }
 }
 
+static char *GUIDupStrLen( char *str, unsigned len )
+{
+    char        *dup;
+
+    dup = GUIMemAlloc( len + 1 );
+    if( dup != NULL ) {
+        memcpy( dup, str, len );
+        dup[len] = '\0';
+    }
+    return( dup );
+}
+
+
 void ProcFont()
 {
     wnd_class class;
@@ -228,7 +241,7 @@ void ProcFont()
             SetFont( i, NULL );
         }
     }
-    SetFont( class, DupStrLen( start, len ) );
+    SetFont( class, GUIDupStrLen( start, len ) );
     _SwitchOn( SW_PENDING_REPAINT );
 }
 

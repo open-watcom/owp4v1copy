@@ -717,7 +717,7 @@ unsigned _trmem_prt_list( _trmem_hdl hdl )
     chunks = 0;
     do {
         size = getSize( tr );
-        if( chunks < 5 ) {
+        if( chunks < 20 ) {
             trPrt( hdl
                  , MSG_PRT_LIST_3
                  , tr->who

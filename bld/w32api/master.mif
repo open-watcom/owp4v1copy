@@ -4,24 +4,18 @@ proj_name = w32api
 
 .EXTENSIONS : .lbc .def
 
-libs =               &
+base_libs =        &
+        aclui.lib &
         advapi32.lib &
         cap.lib &
         comctl32.lib &
         comdlg32.lib &
         crypt32.lib &
         ctl3d32.lib &
-        d3dim.lib &
-        d3drm.lib &
-        d3dxof.lib &
-        ddraw.lib &
         dhcpcsvc.lib &
-        dinput.lib &
         dlcapi.lib &
-        dplayx.lib &
-        dsetup.lib &
-        dsound.lib &
-        dxguid.lib &
+        dmoguids.lib &
+        dnsapi.lib &
         faultrep.lib &
         gdi32.lib &
         glaux.lib &
@@ -73,6 +67,7 @@ libs =               &
         shfolder.lib &
         shlwapi.lib &
         snmpapi.lib &
+        strmiids.lib &
         svrapi.lib &
         tapi32.lib &
         th32.lib &
@@ -97,12 +92,46 @@ libs =               &
         wsock32.lib &
         wst.lib
 
-.def: ../lib
+directx_libs = &
+        d3d8.lib &
+        d3d9.lib &
+        d3dim.lib &
+        d3drm.lib &
+        d3dx8d.lib &
+        d3dx9d.lib &
+        d3dxof.lib &
+        ddraw.lib &
+        dinput.lib &
+        dinput8.lib &
+        dplayx.lib &
+        dpnaddr.lib &
+        dpnet.lib &
+        dpnlobby.lib &
+        dpvoice.lib &
+        dsetup.lib &
+        dsound.lib &
+        dxerr8.lib &
+        dxerr9.lib &
+        dxguid.lib &
+        ksproxy.lib &
+        ksuser.lib &
+        msdmo.lib &
+        quartz.lib
 
-.c: ../lib
+vfw32_libs = &
+        msvfw32.lbc &
+        avicap32.lbc &
+        avifil32.lbc
+
+
+libs = $(base_libs) $(directx_libs)
+
+.def: ../lib;../lib/directx
+
+.c: ../lib;../lib/directx
 
 .def.lbc:
-        $(vi) -s ../def2lbc.vi -p"../lib/$[. $*"
+        $(vi) -s ../def2lbc.vi -p"$[@ $*"
 
 .lbc.lib:
         $(librarian) -b -c -n -io -ii $@ @$<
@@ -111,23 +140,57 @@ libs =               &
         $(librarian) -b -c -n $@ $<
 
 .c.obj:
-        $(cc) $(cflags) -fpc -fo=.obj -i"$(inc_dirs)" $<
+        $(cc) $(cflags) -fpc -zld -fo=.obj -i"$(inc_dirs)" $<
 
+# the __UNIX__ has to be here until at least "for" is fixed in wmake for UNIX:
+# wmake exploits the special WATCOM readdir(wildcard) property...
 all: $(libs) .SYMBOLIC
+!ifdef __UNIX__
+        /bin/sh -c 'for i in ../include/*.h; do wmake -h -f ../fix/new_h.mif file=$$i; done'
+        /bin/sh -c 'for i in ../include/directx/*.h; do wmake -h -f ../fix/new_h.mif file=$$i; done'
+        /bin/sh -c 'for i in ../include/GL/*.h; do wmake -h -f ../fix/new_h.mif file=$$i; done'
+!else
         @for %i in (../include/*.h) do @wmake -h -f ../fix/new_h.mif file=%i
+        @for %i in (../include/directx/*.h) do @wmake -h -f ../fix/new_h.mif file=%i
         @for %i in (../include/GL/*.h) do @wmake -h -f ../fix/new_h.mif file=%i
+!endif
         $(vi) -s ../fix/fix_h.vi
 
 kernel32.lib: kernel32.lbc
         $(librarian) -b -c -n -io -ii $@ @$<
 
-dinput.lib: dinput.lbc dinput.obj
+dinput_objs = dinput_joy.obj dinput_joy2.obj dinput_kbd.obj dinput_mouse.obj &
+        dinput_mouse2.obj
+
+dinput8.lib: dinput8.lbc $(dinput_objs)
+        @%create tmp.lbc
+        @for %i in ($(dinput_objs)) do @%append tmp.lbc -+%i
+        $(librarian) -b -c -n -io -ii $@ @$[@
+        $(librarian) -b -c $@ @tmp.lbc
+
+dinput.lib: dinput.lbc $(dinput_objs)
+        @%create tmp.lbc
+        @for %i in ($(dinput_objs)) do @%append tmp.lbc -+%i
+        $(librarian) -b -c -n -io -ii $@ @$[@
+        $(librarian) -b -c $@ @tmp.lbc
+
+dxerr8.lib: dxerr8.obj dxerr8w.obj
+        $(librarian) -b -c -n $@ +$[@ +$]@
+
+dxerr9.lib: dxerr9.obj dxerr9w.obj
+        $(librarian) -b -c -n $@ +$[@ +$]@
+
+ksuser.lib: ksuser.lbc ksuser.obj
         $(librarian) -b -c -n -io -ii $@ @$[@
         $(librarian) -b -c $@ +$]@
 
 shell32.lib: shell32.lbc shell32.obj
         $(librarian) -b -c -n -io -ii $@ @$[@
         $(librarian) -b -c $@ +$]@
+
+vfw32.lbc : $(vfw32_libs)
+        @%create $@
+        @for %i in ($(vfw32_libs)) do @%append $@ @ %i
 
 uuid.lib: uuid.obj mshtml-u.obj
 

@@ -57,7 +57,6 @@
  #include <os/imports.h>
 #endif
 
-
 static frlptr __LinkUpNewMHeap( mheapptr );
 
 #if defined(__DOS_EXT__)

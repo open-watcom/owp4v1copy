@@ -107,8 +107,8 @@ OBJDIR = watcom\large
 
 LIBARG = $(OBJDIR)\wlib.arg
 C_ARGS = $(OBJDIR)\cc.arg
-AFLAGS = $(AFLAGS) -zq -bt=dos -fr=nul -d3
-CFLAGS = $(CFLAGS) -zq -bt=dos -fr=nul -w6 -fpi -zm -s -oilrtfm
+AFLAGS = $(AFLAGS) -zq -bt=dos -fr=nul -d1
+CFLAGS = $(CFLAGS) -zq -bt=dos -fr=nul -w4 -fpc -zm -s -oilrtfm
 
 # C-flags used:
 #   -m{s,l,f} memory model; small, large or flat

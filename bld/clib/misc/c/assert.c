@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of helper function for assert macro.
 *
 ****************************************************************************/
 
@@ -46,8 +45,13 @@
 #elif defined( __OS2__ ) && defined( __386__ )
     #define INCL_DOSPROCESS
     #define INCL_WINDIALOGS
+    #define INCL_DOSERRORS
+    #define INCL_DOSMODULEMGR
+    #define INCL_ORDINALS
     #include <os2.h>
-    extern unsigned (*_WindowsStdout)();
+    #ifdef DEFAULT_WINDOWING
+        extern unsigned (*_WindowsStdout)();
+    #endif
 #endif
 
 #define STR_SIZE        128
@@ -61,9 +65,9 @@
 #endif
 
 #if defined( __OS2__ ) && defined( __386__ )
-  #define TITLE_STRING  "Assertion Failed!"
+    #define TITLE_STRING  "Assertion Failed!"
 #else
-  #define TITLE_STRING  _WCH("Assertion Failed!")
+    #define TITLE_STRING  _WCH("Assertion Failed!")
 #endif
 
 #define LEAD_STRING     _WCH("Assertion failed: ")
@@ -115,10 +119,19 @@ _WCRTLINK void __F_NAME(_assert,_wassert)( char *expr, char *fn, int line_num ) 
                 MessageBox( NULL, str, TITLE_STRING, MB_OK | MB_TASKMODAL );
             }
         #elif defined( __OS2__ ) && defined( __386__ )
-            TIB *ptib;
-            PIB *ppib;
+            TIB     *ptib;
+            PIB     *ppib;
+            ULONG   (APIENTRY *pfnWinMessageBox)(HWND,HWND,PCSZ,PCSZ,ULONG,ULONG);
+            HMODULE hmodPMWIN;
+
             DosGetInfoBlocks( &ptib, &ppib );
-            if( ( ppib->pib_ultype == 3 ) && ( _WindowsStdout == 0 ) ) {
+            if( ( ppib->pib_ultype == PT_PM ) &&
+                #ifdef DEFAULT_WINDOWING
+                    ( _WindowsStdout == 0 ) &&
+                #endif
+                ( DosLoadModule( NULL, 0, "PMWIN", &hmodPMWIN ) == NO_ERROR ) &&
+                ( DosQueryProcAddr( hmodPMWIN, ORD_WIN32MESSAGEBOX, NULL, (PFN*)&pfnWinMessageBox ) == NO_ERROR )
+            ) {
                 #if defined( __WIDECHAR__ )
                     char outstr[MB_CUR_MAX * STR_SIZE];
                 #else
@@ -128,21 +141,22 @@ _WCRTLINK void __F_NAME(_assert,_wassert)( char *expr, char *fn, int line_num ) 
                 #if defined( __WIDECHAR__ )
                     wcstombs( outstr, str, MB_CUR_MAX * STR_SIZE );
                 #endif
-                WinMessageBox( HWND_DESKTOP, NULL, outstr, TITLE_STRING, 0,
-                                MB_SYSTEMMODAL | MB_OK );
+                pfnWinMessageBox( HWND_DESKTOP, NULL, outstr, TITLE_STRING, 0,
+                                  MB_SYSTEMMODAL | MB_OK );
+                DosFreeModule( hmodPMWIN );
             } else {
-                __F_NAME(fputs,fputws)( str, stderr);
+                __F_NAME(fputs,fputws)( str, stderr );
             }
         #else
-            __F_NAME(fputs,fputws)( str, stderr);
+            __F_NAME(fputs,fputws)( str, stderr );
         #endif
         abort();
     }
 }
 
-_WCRTLINK void __F_NAME(__assert,__wassert)( int value, char *expr, char *fn, int line_num ) {
-
-    if( ! value ) {
+_WCRTLINK void __F_NAME(__assert,__wassert)( int value, char *expr, char *fn, int line_num )
+{
+    if( !value ) {
         #if !defined(__WIDECHAR__)
             __extra_return = 1;
         #endif

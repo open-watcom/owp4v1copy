@@ -34,6 +34,19 @@
 
 #include "bool.h"
 #include "align.h"
+
+#ifdef GUISETUP
+
+#define WPMemAlloc malloc
+#define WPMemFree  free
+
+#else
+
+extern void *WPMemAlloc( size_t );
+extern void WPMemFree( void * );
+
+#endif
+
 #ifdef __WATCOMC__
 #pragma pack( 1 );
 #endif

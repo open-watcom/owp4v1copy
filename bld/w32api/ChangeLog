@@ -1,3 +1,607 @@
+2004-04-24  Luke Dunstan  <infidel@users.sourceforge.net>
+
+	* include/winuser.h (SM_IMMENABLED, SM_CXFOCUSBORDER,
+	SM_CYFOCUSBORDER, SM_TABLETPC, SM_MEDIACENTER): Add defines.
+	(SM_CMETRICS): Adjust value.
+	* include/winnt.h (PROCESSOR_ARCHITECTURE_MSIL): Correct define.
+	(PROCESSOR_ARCHITECTURE_AMD64, PROCESSOR_ARCHITECTURE_IA32_ON_WIN64):
+	Add defines.
+	Thanks to Benoit Blanchon <benoit.blanchon@free.fr>
+
+2004-04-24  Justin Forest  <vhex@users.sourceforge.net>
+
+	* include/winsock2.h (LUP_DEEP, LUP_CONTAINERS,
+	LUP_NOCONTAINERS, LUP_NEAREST, LUP_RETURN_NAME,
+	LUP_RETURN_TYPE, LUP_RETURN_VERSION, LUP_RETURN_COMMENT,
+	LUP_RETURN_ADDR, LUP_RETURN_BLOB, LUP_RETURN_ALIASES,
+	LUP_RETURN_QUERY_STRING, LUP_RETURN_ALL, LUP_RES_SERVICE,
+	LUP_FLUSHCACHE, LUP_FLUSHPREVIOUS): Add defines.
+
+2004-04-24  Luke Dunstan  <infidel@users.sourceforge.net>
+
+	* include/windns.h (DNSREC_QUESTION, DNSREC_ANSWER, DNSREC_AUTHORITY,
+	DNSREC_ADDITIONAL): Add defines.
+
+2004-04-23  Robert Wruck  <wruck@tweerlei.de>
+
+	* include/commctrl.h (LPNMLVDISPINFO): Add defines.
+
+2004-04-23  Robert Wruck  <wruck@tweerlei.de>
+
+	* include/aclui.h: New file.
+	* lib/aclui.def: New file.
+	* lib/test.c: Add aclui.h to includes.
+
+2004-04-21  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winuser.h (SPI_GETACTIVEWINDOWTRACKING,
+	SPI_GETACTIVEWNDTRKZORDER, SPI_SETACTIVEWINDOWTRACKING,
+	SPI_SETACTIVEWNDTRKZORDER): Remove duplicate defines.
+
+2004-04-20  Christopher Faylor  <cgf@alum.bu.edu>
+
+	* include/wingdi.h: Protect non-unicode case of below.
+
+2004-04-20  Christopher Faylor  <cgf@alum.bu.edu>
+
+	* include/wingdi.h: Protect use of ENUMLOGFONTEXDV, PENUMLOGFONTEXDV,
+	LPENUMLOGFONTEXDV with appropriate version check.
+
+2004-04-18  Hans Leidekker  <hans@it.vu.nl>
+
+	* lib/directx/dxguid.c (CLSID_DirectSoundPrivate,
+	DSPROPSETID_DirectSoundDevice): Add defines.
+
+2004-04-20  Adrian Sandor  <aditsu@users.sourceforge.net>
+
+	* include/msacm.h: New file.
+
+2004-01-09  Stuart Cunningham  <stuart_hc@users.sourceforge.net>
+
+	* include/objbase.h (STGFMT): Declare enum.
+	(STGOPTIONS): Declare structure.
+	(StgCreateStorageEx, StgOpenStorageEx): Declare.
+	(STGOPTIONS_VERSION): Define.
+	* lib/ole32.def (StgCreateStorageEx, StgOpenStorageEx): Add stubs.
+
+2004-04-13  Filip Navara  <xnavara@volny.cz>
+
+	* include/winuser.h (IS_INTRESOURCE, MB_CANCELTRYCONTINUE,
+	WM_NCXBUTTONDOWN, WM_NCXBUTTONUP, WM_NCXBUTTONDBLCLK,
+	WM_XBUTTONDOWN, WM_XBUTTONUP, WM_XBUTTONDBLCLK,
+	DCX_INTERSECTUPDATE, MK_XBUTTON1, MK_XBUTTON2,
+	HELP_SETWINPOS): Define.
+	(WM_MOUSELAST): Different value for _WIN32_WINNT >= 0x0500.
+	(SPI_*): Add new definitions for WINVER >= 0x500.
+	(CallMsgFilter[AW], SetWindowsHookA): Correct prototype.
+	(InternalGetWindowText, SetWindowsHookW): Declare.
+	* include/winbase.h (InitializeSListHead): Avoid conflicting
+	definition with DDK headers.
+
+2004-04-13  Gé van Geldorp  <gvg@reactos.com>
+
+	* include/winuser.h (GetLastError): Move from here...
+	* include/winbase.h: ... to here.
+
+2004-04-13  Filip Navara  <xnavara@volny.cz>
+
+	* include/winspool.h (DocumentPropertiesW): Correct prototype.
+
+2004-04-13  Filip Navara  <xnavara@volny.cz>
+
+	* include/wingdi.h (ENHMETAHEADER): Add definitions for
+	WINVER >= 0x400.
+	(WCRANGE, GLYPHSET, LPPOLYTEXT[AW]): Declare.
+	(ENUMLOGFONTEXW): Fix definition.
+	(ENUMLOGFONTEXDV[AW]): Declare.
+
+2004-04-13  Filip Navara  <xnavara@volny.cz>
+
+	* include/wingdi.h: Declare the DirectDraw structures only if
+	the DirectDraw kernel mode headers aren't included.
+	(EMFINFO): Declare.
+	(EngStretchBlt, EngTextOut, FONTOBJ_cGetGlyphs,
+	STROBJ_bEnumPositionsOnly): Correct prototypes.
+
+2004-04-13  Filip Navara  <xnavara@volny.cz>
+
+	* include/objidl.h (PRPCOLEMESSAGE): Declare.
+	* include/rpc.h	(RPCRTAPI): Define.
+	* include/rpcdce.h (RpcServerRegisterIf2): Declare.
+	* include/rpcdcep.h (RPC_BLOCKING_FN, I_RpcSend): Declare.
+	(RPC_BLOCKING_FUNCTION): Remove, replaced by RPC_BLOCKING_FN.
+	(I_RpcBindingSetAsync): Correct prototype.
+	* include/rpcndr.h (MIDL_STUB_MESSAGE): Rename 'Reserved' field
+	to w2kReserved.
+	(USER_MARSHAL_SIZING_ROUTINE, USER_MARSHAL_MARSHALLING_ROUTINE,
+	USER_MARSHAL_UNMARSHALLING_ROUTINE, USER_MARSHAL_FREEING_ROUTINE,
+	USER_MARSHAL_ROUTINE_QUADRUPLE, NDR_NOTIFY_ROUTINE, IDL_CS_CONVERT,
+	CS_TYPE_NET_SIZE_ROUTINE, CS_TYPE_LOCAL_SIZE_ROUTINE,
+	CS_TYPE_TO_NETCS_ROUTINE, CS_TYPE_FROM_NETCS_ROUTINE,
+	CS_TAG_GETTING_ROUTINE, NDR_CS_SIZE_CONVERT_ROUTINES,
+	NDR_CS_ROUTINES, NdrUserMarshalMarshall, NdrUserMarshalUnmarshall,
+	NdrUserMarshalBufferSize, NdrUserMarshalMemorySize,
+	NdrUserMarshalFree): Declare.
+	(MIDL_STUB_DESC): Add new fields that were added in W2K.
+	* include/rpcproxy.h (CStdStubBuffer): Ditto.
+
+2004-04-13  Filip Navara  <xnavara@volny.cz>, David Welch  <welch@cwcom.net>
+
+	* include/ddk/ntapi.h (NtCurrentProcess, NtCurrentThread,
+	LPC_MESSAGE_BASE_SIZE):	Define.
+	* include/ddk/ntifs.h: Move the pack pragma under header inclusion.
+
+2004-04-13  Filip Navara  <xnavara@volny.cz>
+
+	* include/commctrl.h (TB_MARKBUTTON, NMTBGETINFOTIP[AW]):
+	Declare.
+
+2004-04-18  Allan Bazinet  <bazineta@users.sourceforge.net>
+
+	* include/winuser.h (MONITORINFOEX[AW]): Change to be derived from
+	MONITORINFO when compiling as C++.
+
+2004-04-17  Luke Dunstan  <infidel@users.sourceforge.net>
+
+	* README.w32api: List separate copyright conditions for some headers.
+	* include/(winsock2.h, wsipx.h): Minor change to copyright header.
+
+2004-04-15  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/wingdi.h (RGB): Correct macro.
+
+2004-04-14  Robert Wruck  <rwruck@users.sourceforge.net>
+
+	* include/ddk/winddk.h (RtlEqualLuid): Correct macro.
+
+2004-04-06  Luke Dunstan  <infidel@users.sourceforge.net>
+
+	* include/ocidl.h (QACONTAINERFLAGS): Correct typedef.
+
+2004-03-29  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* lib/Makefile.in: Add directx to .PHONY target.
+	* lib/directx/dxerr.c: Remove dependence on mingw runtime. 
+	Don't include stdio.h or tchar.h.
+	Replace _T() macro with TEXT() macro, throughout.
+	Replace _stprintf with wsprintf, throughout.
+
+2004-03-27  Hosaka Yuji  <hos@tamanegi.org>
+
+	* include/dbt.h (DBT_DEVTYP_DEVICEINTERFACE, DBT_DEVTYP_HANDLE):
+	Add define.
+	(DEV_BROADCAST_DEVICEINTERFACE, DEV_BROADCAST_HANDLE): Add struct.
+	* include/winuser.h (UnregisterDeviceNotification): Add prototype.
+	* lib/user32.def (UnregisterDeviceNotification): Add export stub.
+
+2004-03-27  Filip Navara  <xnavara@volny.cz>
+
+	* include/directx: New subdir.
+	* lib/directx: Ditto.
+	* include/directx/(d3d9.h, d3d9caps.h, d3d9types.h, dxerr8.h,
+	dxerr9.h): New files.
+	* lib/directx/(Makefile.in, d3d8.def, d3d9.def, d3dim.def, d3drm.def,
+	d3dx8d.def, d3dx9d.def, d3dxof.def, ddraw.def, dinput.def,
+	dinput_joy.c, dinput_joy2.c, dinput_kbd.c, dinput_mouse.c,
+	dinput_mouse2.c, dinput_private.h, dinput8.def, dmoguids.c, dplayx.def,
+	dpnaddr.def, dpnet.def, dpnlobby.def, dpvoice.def, dsetup.def,
+	dsound.def, dxerr.c, dxerr8.c, dxerr8w.c, dxerr9.c, dxerr9w.c,
+	dxguid.c, ksproxy.def, ksuser.c, ksuser.def, msdmo.def, quartz.def,
+	strmiids.c, test.c): Ditto.
+	* lib/(d3dim.def, d3drm.def, d3dxof.def, ddraw.def, dinput.c,
+	dinput.def, dplayx.def, dsetup.def, dsound.def, dxguid.c): Removed.
+
+2004-03-25  Dimitri Papadopoulos  <papadopo@users.sourceforge.net>
+
+	* include/GL/glu.h (GLU_AUTO_LOAD_MATRIX, GLU_CULLING,
+	GLU_SAMPLING_TOLERANCE, GLU_DISPLAY_MODE, GLU_PARAMETRIC_TOLERANCE,
+	GLU_SAMPLING_METHOD, GLU_U_STEP, GLU_V_STEP): Define.
+
+2004-03-24  Filip Navara  <xnavara@volny.cz>
+
+	* include/commctrl.h (TB_GETSTRING[AW]): Add defines.
+	(RBBS_HIDETITLE, RBBS_TOPALIGN): Ditto.
+
+2004-03-24  Filip Navara  <xnavara@volny.cz>
+
+	* include/ddk/srb.h (_PORT_CONFIGURATION_INFORMATION):	Rename
+	TaggedQueueing to TaggedQueuing.
+	(_HW_INITIALIZATION_DATA): Likewise.
+
+2004-03-16  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/docobj.h (IOleDocumentView::GetDocument): Correct
+	prototype.	
+	Thanks to Buster Copley  <consequent@users.sourceforge.net>
+
+2004-03-16  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* lib/ddk/ntoskrnl.def (MmAllocatePagesForMdl): Correct suffix.
+	(MmMapIoSpace): Likewise.
+	Thanks to Dan Aloni  <da-x@colinux.org>
+
+2004-03-16  Martin Fuchs  <martin-fuchs@gmx.net>
+
+	* include/shellapi.h (NIM_* NIS_*): Define constants for
+	notification icons with _WIN32_IE >= 0x0500.
+	(NOTIFYICONDATA): Add new structure members for notification
+	icons with _WIN32_IE >= 0x0500.
+
+2004-03-13  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	*include/wininet.h (CACHEGROUP_SEARCH_ALL, CACHEGROUP_SEARCH_BYURL):
+	Add defines.
+	(INTERNET_CACHE_GROUP_ADD, INTERNET_CACHE_GROUP_REMOVE): Add defines.
+	(GROUPID) Add typedef.
+	(INTERNET_CACHE_GROUP_INFO[AW]): Define structures.
+	(CreateUrlCacheGroup): Add prototype.
+	(DeleteUrlCacheGroup): Add prototype.
+	(FindFirstUrlCacheGroup): Add prototype.
+	(FindNextUrlCacheGroup): Add prototype.
+	(GetUrlCacheGroupAttribute[AW]): Add prototypes.
+	(SetUrlCacheGroupAttribute[AW]): Add prototypes.
+
+2004-03-10  Al Slater  <al.slater@scluk.com>
+
+	* include/winsock2.h: Add missing LPFN_ typdefs for
+	function pointers.
+	Clean up whitespace.
+
+2004-03-05  Filip Navara  <xnavara@volny.cz>
+
+	* include/ddk/scsi.h: Replace assert with ASSERT.
+	* include/ddk/video.h: Ditto.
+	* include/ddk/winddk.h: Ditto. Remove the assert macro.
+	* include/ddk/tdi.h: Correct packing.
+
+2004-03-04  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/wtypes.h (DECIMAL_SETZERO): Add definition for
+	NONAMELESSUNION case.
+
+2004-03-03  Martin Fuchs  <martin-fuchs@gmx.net>
+
+	* include/oleauto.h (V_UNION, V_VT, V_DECIMAL): Use
+	__VARIANT_NAME_ constants.
+
+2004-03-02  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/uxtheme.h: Include <commctrl.h>
+
+2004-03-02  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/basetyps.h (GUID_SECT): Define to nothing for GCC >= 2.95.
+
+2004-03-02  Martin Fuchs  <martin-fuchs@gmx.net>
+
+	* include/oleauto.h (VAR_VALIDDATE, VAR_FORMAT_NOSUBSTITUTE,
+	VAR_FOURDIGITYEARS): Define new constants. Group VAR_*  defines
+	together.
+	(V_UI2, V_UI4, V_UI4REF, V_UI, V_UI8REF): Define macros.
+	(V_I8, V_I8REF): Correct macros.
+	(V_DECIMAL): Correct macro definitions.
+	(V_INT_PTR, V_UINT_PTR, V_INT_PTRREF, V_UINT_PTRREF): Define
+	constants.
+	(VTBIT_*): Define constants.
+	(UDATE): Add structure definition.
+	(VarDateFromUdate, VarDateFromUdateEx, VarUdateFromDate): Declare
+	functions.
+	(SafeArrayCreateVector): Correct parameter type from UINT to ULONG
+	(SafeArrayCreateVectorEx): Declare function.
+	(Var*): declare VARIANT manipulation functions.
+	* include/ocidl.h (IPicture_*): Define IPicture COBJ macros.
+	* include/oaidl.h (IRecordInfo_*): Define IRecordInfo COBJ
+	macros.
+
+2004-03-01  Martin Fuchs  <martin-fuchs@gmx.net>
+
+	* include/oaidl.h (FADF_*): Define missing constants.
+	(IDispatch_*): Define COBJ macros.
+	(VARIANT): Add missing union members llVal and ullVal.
+	(wireVARIANT): Likewise.
+	(ITypeinfo_*): Define COBJ macros.
+	* include/oleauto.h (Var*FromDisp): Correct parameter type from
+	LPDISPATCH* to LPDISPATCH.
+	(VARCMP_*, VAR_LOCALBOOL, LOCALE_USE_NLS, VARIANT_*,
+	VAR_CALENDAR_*): Add missing constants.
+	(SafeArray[Get/Set]*): Add prototypes.
+	(Var*From*):  Add missing prototypes.
+	(NUMPRS_*): Add defines.
+	(NUMPARSE): Define structure.
+	(VarParseNumFromStr,VarNumFromParseNum): Add prototypes.
+	* include/winerror.h (DISP_E_DIVBYZERO): Define constant.
+	* include/winuser.h (COLOR_*): Define missing constants.
+	* include/wtypes.h (enum VARENUM): Add VT_INT_PTR, VT_UINT_PTR.
+ 	(VT_INT_PTR, VT_UINT_PTR): Remove macro definitions.
+
+2004-02-23  Filip Navara  <xnavara@volny.cz>
+
+	* include/ddk/video.h: Corrected packing.
+
+2004-02-19  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/GL/glu.h (GLU_ERROR): Define.
+	Thanks to Philip Lamb  <phil at rave dot co dot nz> 
+
+2004-02-19  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/GL/glu.h: Include <stddef.h>.
+	Thanks to Greg Couch <gregcouch@users.sourceforge.net>
+
+2004-02-13  Earnie Boyd  <earnie@users.sourceforge.net>
+
+	* include/ddk/winddk.h (DIRECTORY_QUERY): Add define.
+	(DIRECTORY_TRAVERSE): Ditto.
+	(DIRECTORY_CREATE_OBJECT): Ditto.
+	(DIRECTORY_CREATE_SUBDIRECTORY): Ditto.
+	(DIRECTORY_ALL_ACCESS): Ditto.
+	Thanks to Konstantin Stepaniuk <skostia@users.sourceforge.net>
+
+2004-02-12  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/basetypes.h (_REFIID_DEFINED): Correct typo.
+
+	* include/winuser.h (NCCALCSIZE_PARAMS): Define structure.
+	Thanks to Mike Nordell <tamlin at algonet dot se>.
+
+2004-02-11  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* lib/dnsapi.def: New file.
+	* lib/test.c: Include windns.h.
+ 
+2004-02-11  Pierre A. Humblet  <Pierre.Humblet@ieee.org>
+
+	* include/windns.h: New file.
+
+2004-02-11  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/sqlucode.h (SQLGetStmtAttr[AW]): Remove duplicate
+	defines.
+	(SQLSetStmtAttr[AW]): Move into ODBCVER >= 0x0300 block.
+	(SQLSetDescFieldW): Correct prototype.
+	(SQLSetDescFieldA): Add prototype.
+	(SQLGetDescFieldW): Add prototype.
+
+2004-02-11  Pat Thoyts  <patthoyts@users.sourceforge.net>
+
+	* include/winuser.h (DFC_POPUPMENU): Add define.
+
+2004-02-07  Dan Aloni  <da-x@gmx.net>
+
+	* lib/ddk/ntoskrnl.def (KeSetTimer,KeSetTimerEx): Correct
+	suffix.
+
+2004-02-02  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/oleacc.h (LIBID_Accessibility): Declare.
+	* lib/uuid.c (LIBID_Accessibility): Define.
+
+2004-02-02  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winioctl.h (NTFS_VOLUME_DATA_BUFFER): Add structure.
+	(FSCTL_GET_NTFS_VOLUME_DATA): Add macro.
+
+2004-02-02  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/commctrl.h (ICC_STANDARD_CLASSES, ICC_LINK_CLASS): Add
+	defines.
+
+2004-01-31  Jiri Malak  <Jiri.Malak@geac.cz>
+
+	* include/winuser.h (RT_MANIFEST): Make conditional on
+	RC_INVOKED.
+	(CREATEPROCESS_MANIFEST_RESOURCE_ID,
+	ISOLATIONAWARE_MANIFEST_RESOURCE_ID,
+	ISOLATIONAWARE_NOSTATICIMPORT_MANIFEST_RESOURCE_ID): Add
+	defines.
+
+2004-01-16 Martin Fuchs  <martin-fuchs@gmx.net>
+
+	* include/shlobj.h (SHGDN_INCLUDE_NONFILESYS): Add define.
+
+2004-01-15  Filip Navara  <xnavara@volny.cz>
+
+	* include/ddk/mcd.h: Don't care about value of DBG define.
+	* include/ddk/srb.h: Ditto.
+	* include/ddk/storport.h: Ditto.
+	* include/ddk/video.h: Ditto.
+	* include/nspapi.h (SetServiceW, GetAddressByNameA,
+	GetAddressByNameW): Correct protoype.
+	* include/ntsecapi.h (PCUNICODE_STRING): Define.
+
+2004-01-05  Filip Navara  <xnavara@volny.cz>
+
+	* include/prsht.h (LPCPROPSHEETPAGEW): Fix definition.
+	* include/shlwapi.h (SHRegQueryInfoUSKey[AW]): Fix prototype.
+	* include/cpl.h (CPL_STARTWPARMS[AW]): Correct.
+	* include/shellapi.h (ABS_AUTOHIDE, ABS_ALWAYSONTOP,
+	SEE_MASK_NO_CONSOLE, SEE_MASK_ASYNCOK, SEE_MASK_HMONITOR,
+	FOF_NOCOPYSECURITYATTRIBS): Add defines.
+	* include/shlobj.h (BFFM_SETOKTEXT, BFFM_SETEXPANDED,
+	CSIDL_FLAG_DONT_VERIFY, CSIDL_FLAG_CREATE, CSIDL_FLAG_MASK,
+	CFSTR_INETURL[AW], SHGDN_FOREDITING, SHGDN_FORADDRESSBAR,
+	SSF_*): Add defines.
+	(SHCNF_PATH[AW], SHCNF_PRINTER[AW], CFSTR_FILENAME[AW],
+	CFSTR_FILENAMEMAP[AW], CFSTR_FILEDESCRIPTOR[AW], CFSTR_SHELLURL,
+	CMDSTR_NEWFOLDER[AW], CMDSTR_VIEWLIST[AW], CMDSTR_VIEWDETAILS[AW]):
+	Correct.
+	(IEnumIDList): Add COBJMACROS.
+	* include/winuser.h (MIM_*): Add define.
+
+2004-01-04  Filip Navara  <xnavara@volny.cz>
+
+	* include/shlguid.h (IID_IPersistFolder2, IID_IPersistFolder3,
+	IID_IShellFolder2, IID_IFileSystemBindData): Add declarations.
+	* include/shlobj.h (EXTRASEARCH, SHCOLSTATEF, SHELLDETAILS,
+	PERSIST_FOLDER_TARGET_INFO): Define structures.
+	(IEnumExtraSearch, IShellFolder2, IFileSystemBindData,
+	IPersistFolder2, IPersistFolder3): Add COM interface
+	definitions.
+	(IExtractIcon[AW], IShellLink[AW], IPersistFolder, IShellView,
+	ICommDlgBrowser, IShellFolder2, IPersistFolder2, IPersistFolder3):
+	Add COBJMACROS.
+	(SHCreateDirectoryEx[AW], SHBindToParent): Add prototypes.
+        * lib/shell32.c	(IID_IPersistFolder2, IID_IPersistFolder3,
+	IID_IShellFolder2, IID_IFileSystemBindData): Add definitions.
+
+2004-01-03  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/mshtml.h (IHTMLDocument2): Correct write, writeln
+	declarations.
+	Thanks to: Rene Nyffenegger <renenyffenegger@users.sf.net>.
+
+2004-01-03  Filip Navara  <xnavara@volny.cz>
+
+	* include/cguid.h (CLSID_StdGlobalInterfaceTable): Declare IID.
+	* include/oaidl.h (ITypeLib2, ITypeInfo2): Define interfaces,
+	declare IID's.
+	(IErrorInfo): Add COBJMACROS.
+	* include/objbase.h (STGM_NOSNAPSHOT): Add define.
+	(CoGetPSClsid): Add protototype,
+	(CoRegisterPSClsid): Likewise.
+	* include/objidl.h (IMarshal): Correct methods.
+	(IMallocSpy): Likewise,
+	(LPPSFACTORYBUFFER): Add typedef.
+	(IGlobalInterfaceTable): Define interface and COBJMACROS. Declare
+	IID.
+	(IStorage_CreateStorage, IRpcStubBuffer_Invoke): Fix macros.
+	* include/ocidl.h (PROPBAG2_TYPE): Define enum.
+	(PROPBAG2, QACONTAINERFLAGS, QACONTAINER, QACONTROL): Define
+	structures.
+	(IPropertyBag2, IPersistPropertyBag2,IAdviseSinkEx, IPointerInactive,
+	IOleUndoUnit, IOleParentUndoUnit, IEnumOleUndoUnits, IOleUndoManager,
+	IQuickActivate): Define interfaces. Declare IID's.
+	(IPersistPropertyBag2): Add COBJMACROS.
+	(LPOLEUNDOMANAGER): Add typedef.
+	(LPPROPERTYBAG2): Likewise.
+	* include/oleidl.h (LPPARSEDISPLAYNAME): Fix definiton.
+	(BINDSPEED): Add definition.
+	(IParseDisplayName, IOleItemContainer, IOleObject, IDropSource,
+	IDropTarget): Add COBJMACROS.
+	* include/wtypes.h (MEMCTX, MSHCTX): Fix enum.
+	* include/winerror.h (CO_S_NOTALLINTERFACES): Add define.
+	* lib/uuid.c (IID_IGlobalInterfaceTable, IID_IOleUndoManager,
+	IID_IPersistPropertyBag2, IID_IPropertyBag2, IID_IRpcProxyBuffer):
+	Add IID definitions.
+
+2004-01-02  Filip Navara  <xnavara@volny.cz>
+
+	* include/ddk/winddk.h: Don't care about value of
+	DBG define.
+
+2004-01-02  Danny Smith  <dannysmith@users.sourceforge.net>
+	    Filip Navara  <xnavara@volny.cz>
+	    
+	* include/ddk/winddk.h (_DDK_DUMMYUNION_MEMBER,
+	_DDK_DUMMYUNION_N_MEMBER): New macros.
+	(ExAllocateFromPagedLookasideList,ExFreeToPagedLookasideList,
+	ExAllocateFromNPagedLookasideList, ExFreeToNPagedLookasideList):
+	Use them.
+
+2004-01-01  Filip Navara  <xnavara@volny.cz>
+
+	* include/objbase.h: Don't care about value of DBG define.
+	* include/objidl.h: Add some COBJMACROS.
+	* include/ocidl.h: Ditto.
+	* include/oleidl.h: Ditto.
+	* include/servprov.h: Ditto.
+	* include/shlobj.h: Ditto.
+	* include/shlobj.h (IContextMenu2): Correct parent in
+	DECLARE_INTERFACE.
+	* include/oleidl.h (IOleCache, IOleCache2, IOleCacheControl):
+	Define interfaces.
+	* include/setupapi.h (SetupGetLineTextA): Correct prototype.
+	Add new constants for _SETUPAPI_VER >= 0x501.
+
+2004-01-01  Filip Navara  <xnavara@volny.cz>
+
+	* include/winnt.h (NtCurrentTeb): Add inline definition.
+
+2004-01-01  Martin Fuchs  <martin-fuchs@gmx.net>
+
+	* include/shlobj.h (SHCoCreateInstance): Add prototype.
+	* lib/shell32.def (SHCoCreateInstance): Add export stub.
+
+2004-01-01  Igor Pechtchanski  <pechtcha@cs.nyu.edu>
+
+	* lib/setupapi.def (CM_Request_Device_Eject[AW]): Add export.
+	(CM_Request_Device_Eject_Ex[AW]): Likwise.
+	* include/ddk/cfg.h (DN_*): Add defines.
+
+2004-01-01  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* lib/ddk/cfgmgr32.def: Remove duplicate symbol names.
+
+2004-01-01  Mattia Barbon  <mbarbon@users.sourceforge.net>
+
+	* include/commctrl.h (TVN_GETINFOTIP): Add UNICODE mappings.
+	(NMTVGETINFOTIP): Add structure.
+
+2003-12-08  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winuser.h (DISPLAY_DEVICE_*): Remove defines.
+	* include/wingdi.h (DISPLAY_DEVICE_REMOVABLE,
+	DISPLAY_DEVICE_MODESPRUNED): Add defines.
+
+2003-12-08  Hartmut Honisch  <hhonisch@users.sourceforge.net>
+
+	* include/commctrl.h (ListView_Get_State, ListView_Check_State):
+	Add macros.
+	* include/wingdi.h  (DISPLAY_DEVICE_*): Add multi-monitor
+	constants.
+	* include/shlobj.h (SHCOLUMNINIT): Add structure.
+	(SHCOLUMNDAT): Likwise.
+	(SHCOLUMNID): Likewise.
+	(SHCOLUMNINFO): Likewise.
+	(SHCOLSTATE): Add enum.
+	(IColumnProvider): Add COM interface.
+	(IQueryInfo): Likewise.
+	(IShellIconOverlayIdentifier): Likewise. 
+  	* include/shlguid.h (IID_IColumnProvider) Declare.
+	(IID_IQueryInfo): Likweise.
+	(IID_IShellIconOverlayIdentifier): Likwise. 
+	* lib/shell32.c (IID_IColumnProvider) Define.
+	(IID_IQueryInfo): Likweise.
+	(IID_IShellIconOverlayIdentifier): Likwise.
+
+2003-12-08  Roald Ribe <rrib@users.sourceforge.net>
+
+	* include/winuser.h (RT_MANIFEST): Add define.
+
+2003-12-08  Pascal Buhler <pbuhler@users.sourceforge.net>
+
+	* include/oleidl.h (IViewObject2): Inherit from IViewObject.
+
+2003-12-01  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winnt.h (GetCurrentFiber): Remove duplicate prototype.
+	(GetFiberData): Likewise.
+	(GetCurrentFiber): Change volatile to __volatile__.
+	(GetFiberData): Likewise.
+
+2003-11-27  Christopher Faylor  <cgf@redhat.com>
+
+	* lib/Makefile.in: Use make function to locate .mri file to allow
+	building in directory other than source directory.
+
+2003-11-27  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* lib/vfw32.def: Remove, replacing with ...
+	* lib/msvfw32.def: New file.
+	* lib/avicap32.def: New file.
+	* lib/avifil32.def: New file.
+	* lib/vfw32.mri: New file.
+	* Makefile.in: (MRI_FILES, MIMPLIBS): New vars for
+	import libs with multiple dll's.
+	(LIBS): Add MIMPLIBS.
+	(DISTFILES): Add MRI_FILES.
+	(libvfw32.a): Build using mri script.
+
+2003-11-23  Danny Smith  <dannysmith@users.sourceforge.net>
+
+	* include/winnt.h (PAGE_*): Group defines together. Change
+	constants to hex notation.
+
 2003-11-15  Manu B  <manubee@users.sourceforge.net>
 
 	* include/commctrl.h (TabCtrl_GetImageList): Add macro.
@@ -33,14 +637,14 @@
 
 2003-10-13  Filip Navara  <xnavara@volny.cz>
 
-	* include/commctrl.h: (DSA_*):Add prototypes, typedefs and
+	* include/commctrl.h (DSA_*): Add prototypes, typedefs and
 	defines for Dynamic Storage Arrays.
 	(DPA_*): Likewise, for Dynamic Pointer Arrays.
 	(FlatSB_*, InitializeFlatSB, InitializeFlatSB): Add prototypes
 	and defines for Flat ScrollBars.
 	(SetWindowSubclass, GetWindowSubclass, RemoveWindowSubclass,
 	DefSubclassProc): Add prototypes for subclassing.
-	(DrawShadowText) Add prototype.
+	(DrawShadowText): Add prototype.
 	(COMCTL32_VERSION): Define.
 
 2003-10-13  Martin Fuchs  <Martin-Fuchs@gmx.net>
@@ -856,7 +1460,7 @@
 
 	* include/commctrl.h (ILCF_*): Add defines.
 	(ILD_*): Ditto.
-	(HDS_*); Ditto.
+	(HDS_*): Ditto.
 	(IPN_FIRST, IPN_LAST): Cast to UINT.
 	(SBN_FIRST, SBN_LAST): Add defines.
 	(PGN_*): Ditto.
@@ -1054,7 +1658,7 @@
 
 2003-08-01  Gisle Vanem  <gvanem@broadpark.no>
 
-	* include/ddk/winddk.h; Remove trailing ';' from macros,
+	* include/ddk/winddk.h: Remove trailing ';' from macros,
 	throughout. Add () around defines with cast returns, throughout.
 
 2003-07-31  Martin Fuchs  <Martin-Fuchs@gmx.net>
@@ -3351,7 +3955,7 @@
 
 2002-02-28  Danny Smith  <dannysmith@users.sourceforge.net>
 
-	* include/windows.h; Remove test for __W32API_MAJOR_VERSION
+	* include/windows.h: Remove test for __W32API_MAJOR_VERSION
 	when selecting winsock interface.
 	* include/winsock2.h (SOCKET_ADDRESS_LIST): Add structure
 	and typedefs. Thanks to: 'Lorenzo' <conte0@infinito.it>.
@@ -3710,7 +4314,7 @@
 2001-11-09  Robert Collins  <rbtcollins@hotmail.com>
 
 	* include/winnt.h (GetCurrentFiber): Create a prototype before the 
-	implementation;
+	implementation.
 	(GetFiberData): Ditto.
 
 2001-11-09  Robert Collins  <rbtcollins@hotmail.com>
@@ -3720,7 +4324,7 @@
 2001-11-08  Robert Collins  <rbtcollins@hotmail.com>
 
 	* include/winnt.h: Define *_SID_AUTHORITY appropriately,
-	GetCurrentFiber: Create a prototype before the implementation;
+	GetCurrentFiber: Create a prototype before the implementation.
 	GetFiberData: Ditto.
 
 2001-11-06  Danny Smith  <dannysmith@users.sourceforge.net>

@@ -47,9 +47,7 @@ extern void                     StartupErr( char * );
 extern void                     SaveOrigVectors( void );
 extern void                     RestoreOrigVectors(void);
 
-#ifndef _NEC_PC
 static memptr                   OldInt1b;
-#endif
 static memptr                   OldInt23;
 static memptr                   OldInt24;
 static memptr                   OldInt28;
@@ -58,15 +56,11 @@ static memptr                   Orig28;
 dos_memory      RMData;
 rm_data         __far *PMData;
 
-#if defined(__OSI__) || __WATCOMC__ < 1000
+#if defined(__OSI__)
 short   _ExtenderRealModeSelector;
 #endif
 
-#if defined(_NEC_PC)
- #define CTRL_BREAK_VECTOR      0x6
-#else
- #define CTRL_BREAK_VECTOR      0x1b
-#endif
+#define CTRL_BREAK_VECTOR      0x1b
 
 extern void CheckForBrk(void);
 #pragma aux CheckForBrk = "mov  ah,0xb"  "int   0x21"
@@ -75,14 +69,6 @@ char TBreak( void )
 {
     char        tmp;
 
-#ifdef _NEC_PC
-    /*
-        If we grab the STOP key vector we get spurious interrupts for
-        some reason on the NEC. So instead, we leave it along and force
-        DOS to check for breaks for us.
-    */
-    CheckForBrk();
-#endif
     tmp = PMData->pending;
     PMData->pending = 0;
     return( tmp );
@@ -104,17 +90,13 @@ void MySetRMVector( unsigned vect, unsigned seg, unsigned off )
 
 void GrabHandlers( void )
 {
-#ifndef _NEC_PC
     PMData->oldint10.a = MyGetRMVector( 0x10 );
     OldInt1b.a = MyGetRMVector( CTRL_BREAK_VECTOR );
-#endif
     OldInt23.a = MyGetRMVector( 0x23 );
     OldInt24.a = MyGetRMVector( 0x24 );
     OldInt28.a = MyGetRMVector( 0x28 );
-#ifndef _NEC_PC
     MySetRMVector( 0x10, RMData.s.rm, RM_OFF( Interrupt10 ) );
     MySetRMVector( CTRL_BREAK_VECTOR, RMData.s.rm, RM_OFF( Interrupt1b_23 ) );
-#endif
     MySetRMVector( 0x23, RMData.s.rm, RM_OFF( Interrupt1b_23 ) );
     MySetRMVector( 0x24, RMData.s.rm, RM_OFF( Interrupt24 ) );
     MySetRMVector( 0x28, Orig28.s.segment, Orig28.s.offset );
@@ -122,7 +104,6 @@ void GrabHandlers( void )
 
 void RestoreHandlers( void )
 {
-#ifndef _NEC_PC
     if( PMData->oldint10.a != 0 ) {
         MySetRMVector( 0x10, PMData->oldint10.s.segment,
                              PMData->oldint10.s.offset );
@@ -130,7 +111,6 @@ void RestoreHandlers( void )
     if( OldInt1b.a ) {
         MySetRMVector( CTRL_BREAK_VECTOR, OldInt1b.s.segment, OldInt1b.s.offset );
     }
-#endif
     if( OldInt23.a ) {
         MySetRMVector( 0x23, OldInt23.s.segment, OldInt23.s.offset );
     }

@@ -260,6 +260,8 @@ invd
 invlpg
 iret
 iretd
+iretdf
+iretf
 ja
 jae
 jb

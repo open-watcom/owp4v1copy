@@ -28,13 +28,13 @@
 *
 ****************************************************************************/
 
-
 #include <errno.h>
 #include <locale.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <env.h>
 
 #ifdef __SW_BW
     #include <wdefwin.h>
@@ -42,8 +42,7 @@
 
 #define VERIFY( exp )   if( !(exp) ) {                                      \
                             printf( "%s: ***FAILURE*** at line %d of %s.\n",\
-                                    ProgramName, __LINE__,                  \
-                                    strlwr(__FILE__) );                     \
+                                    ProgramName, __LINE__, myfile );        \
                             NumErrors++;                                    \
                             exit( -1 );                                     \
                         }
@@ -53,30 +52,38 @@ char ProgramName[128];                          /* executable filename */
 int NumErrors = 0;                              /* number of errors */
 
 
-
 /****
 ***** Program entry point.
 ****/
 
-int main( int argc, char *argv[] )
+int main( int argc, char * const argv[] )
 {
-    clock_t	clocktime = clock();
-    time_t	tt1, tt2;
-    double      dtime;
-    struct tm	tm1, tm2, *gmt;
-    char	*datestr = "Wed Aug 14 17:23:31 2002\n";
-    char	buf[64];
-    
+    clock_t const       clocktime = clock();
+    time_t              tt1;
+    time_t              tt2;
+    time_t              tt3;
+    double              dtime;
+    struct tm           tm1;
+    struct tm           tm2;
+    struct tm const     *gmt;
+    char const * const  datestr = "Wed Aug 14 17:23:31 2002\n";
+    char                buf[64];
+    char                myfile[ sizeof __FILE__ ];
+
     #ifdef __SW_BW
-        FILE *my_stdout;
-        my_stdout = freopen( "tmp.log", "a", stdout );
-        if( my_stdout == NULL ) {
-            fprintf( stderr, "Unable to redirect stdout\n" );
-            exit( -1 );
-        }
+    FILE *my_stdout;
+    my_stdout = freopen( "tmp.log", "a", stdout );
+    if( my_stdout == NULL ) {
+        fprintf( stderr, "Unable to redirect stdout\n" );
+        exit( -1 );
+    }
     #endif
+    ( void ) argc;                      /* Unused */
     /*** Initialize ***/
-    strcpy( ProgramName, strlwr(argv[0]) );     /* store filename */
+    strcpy( ProgramName, argv[0] );     /* store filename */
+    strlwr( ProgramName );              /* and lower case it */
+    strcpy( myfile, __FILE__ );
+    strlwr( myfile );
 
     /*** Test various functions ***/
     tt1 = time( &tt2 );
@@ -84,8 +91,8 @@ int main( int argc, char *argv[] )
      * is being returned correctly. So let's just see if time() behaves
      * consistently.
      */
-    VERIFY( tt1 == tt2 )
- 
+    VERIFY( tt1 == tt2 );
+
     tm1.tm_sec   = 31;
     tm1.tm_min   = 23;
     tm1.tm_hour  = 17;
@@ -97,7 +104,7 @@ int main( int argc, char *argv[] )
     /* See if mktime() works properly */
     VERIFY( tm1.tm_wday == 3 );
     VERIFY( tm1.tm_yday == 225 );
-    
+
     tm1.tm_sec++;
     tt2 = mktime( &tm1 );
     /* Test difftime() */
@@ -105,7 +112,6 @@ int main( int argc, char *argv[] )
     VERIFY( dtime == -1.0 );
     /* Test localtime() and asctime() */
     VERIFY( strcmp( asctime( localtime( &tt1 ) ), datestr ) == 0 );
-
 
     /* Test gmtime() and strtime() */
     gmt = gmtime( &tt2 );
@@ -116,16 +122,84 @@ int main( int argc, char *argv[] )
 
     /* Make sure clock() isn't going backwards */
     VERIFY( clocktime <= clock() );
-    
+
+    /* Set TZ to UTC; this is so that mktime() doesn't use any offsets
+     * and we can test the boundary values of time_t in the tests below.
+     */
+    setenv( "TZ", "GMT0", 1 );
+
+    /* This time is the lowest to overflow in UNIX - has value 0x80000000 */
+    tm2.tm_sec   = 8;
+    tm2.tm_min   = 14;
+    tm2.tm_hour  = 3;
+    tm2.tm_mday  = 19;
+    tm2.tm_mon   = 0;
+    tm2.tm_year  = 138;
+    tm2.tm_isdst = -1;
+    tt3 = mktime( &tm2 );
+    if( tt3 != (time_t) -1 ) {
+        gmt = gmtime( &tt3 );
+        VERIFY( tm2.tm_sec  == gmt->tm_sec );
+        VERIFY( tm2.tm_min  == gmt->tm_min );
+        VERIFY( tm2.tm_hour == gmt->tm_hour );
+        VERIFY( tm2.tm_mday == gmt->tm_mday );
+        VERIFY( tm2.tm_mon  == gmt->tm_mon );
+        VERIFY( tm2.tm_year == gmt->tm_year );
+    }
+
+    /* This time is the greatest to work */
+    tm2.tm_sec   -= 1;
+    tt3 = mktime( &tm2 );
+    VERIFY( tt3 != (time_t) -1 );
+    gmt = gmtime( &tt3 );
+    VERIFY( tm2.tm_sec  == gmt->tm_sec );
+    VERIFY( tm2.tm_min  == gmt->tm_min );
+    VERIFY( tm2.tm_hour == gmt->tm_hour );
+    VERIFY( tm2.tm_mday == gmt->tm_mday );
+    VERIFY( tm2.tm_mon  == gmt->tm_mon );
+    VERIFY( tm2.tm_year == gmt->tm_year );
+#ifndef __UNIX__ /* time_t is signed */
+    /* This time is the lowest to overflow - has value 0 */
+    tm2.tm_sec   = 16;
+    tm2.tm_min   = 28;
+    tm2.tm_hour  = 6;
+    tm2.tm_mday  = 7;
+    tm2.tm_mon   = 1;
+    tm2.tm_year  = 206;
+    tm2.tm_isdst = -1;
+    tt3 = mktime( &tm2 );
+    if( tt3 != (time_t) -1 ) {
+        gmt = gmtime( &tt3 );
+        VERIFY( tm2.tm_sec  == gmt->tm_sec );
+        VERIFY( tm2.tm_min  == gmt->tm_min );
+        VERIFY( tm2.tm_hour == gmt->tm_hour );
+        VERIFY( tm2.tm_mday == gmt->tm_mday );
+        VERIFY( tm2.tm_mon  == gmt->tm_mon );
+        VERIFY( tm2.tm_year == gmt->tm_year );
+    }
+
+    /* This time is the greatest to work */
+    tm2.tm_sec   -= 2;
+    tt3 = mktime( &tm2 );
+    VERIFY( tt3 != (time_t) -1 );
+    gmt = gmtime( &tt3 );
+    VERIFY( tm2.tm_sec  == gmt->tm_sec );
+    VERIFY( tm2.tm_min  == gmt->tm_min );
+    VERIFY( tm2.tm_hour == gmt->tm_hour );
+    VERIFY( tm2.tm_mday == gmt->tm_mday );
+    VERIFY( tm2.tm_mon  == gmt->tm_mon );
+    VERIFY( tm2.tm_year == gmt->tm_year );
+#endif
+
     /*** Print a pass/fail message and quit ***/
-    if( NumErrors!=0 ) {
+    if( NumErrors != 0 ) {
         printf( "%s: FAILURE (%d errors).\n", ProgramName, NumErrors );
         return( EXIT_FAILURE );
     }
-    printf( "Tests completed (%s).\n", strlwr( argv[0] ) );
+    printf( "Tests completed (%s).\n", ProgramName );
     #ifdef __SW_BW
     {
-        fprintf( stderr, "Tests completed (%s).\n", strlwr( argv[0] ) );
+        fprintf( stderr, "Tests completed (%s).\n", ProgramName );
         fclose( my_stdout );
         _dwShutDown();
     }

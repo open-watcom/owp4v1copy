@@ -55,7 +55,7 @@
     #include <windows.h>
     #if !defined(__NT__)  &&  !defined(__WINDOWS_386__) && !defined(WILLOWS)
         #include <commdlg.h>
-        #pragma library( "commdlg" );
+        #pragma library( "commdlg.lib" );
     #endif
 #endif
 #include "guiwind.h"
@@ -92,7 +92,7 @@ char *GetStrFromEdit( HWND hDlg, int id )
     int    text_copied;
 
     text_length = SendDlgItemMessage( hDlg, id, WM_GETTEXTLENGTH, 0, 0 );
-    cp = (char *) GUIAlloc( text_length + 1 );
+    cp = (char *) GUIMemAlloc( text_length + 1 );
     if( cp == NULL ) {
         return ( NULL );
     }
@@ -229,7 +229,7 @@ int GUIGetFileName( gui_window *wnd, open_file_name *ofn )
     }
 
     if( LastPath && ( !rc || !( ofn->flags & OFN_WANT_LAST_PATH ) ) ) {
-        GUIFree( LastPath );
+        GUIMemFree( LastPath );
         LastPath = NULL;
     }
     ofn->last_path = LastPath;

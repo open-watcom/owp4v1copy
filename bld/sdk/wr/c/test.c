@@ -44,16 +44,20 @@ int PASCAL WinMain( HINSTANCE hinstCurrent, HINSTANCE hinstPrevious,
     extern char **_argv;
     extern int    _argc;
     int           ret;
-    int           i, dup;
+    int           i;
     int           ltype;
     int           stype;
     int           backup;
     WRInfo       *info;
     WRFileType    ftype;
-    char         *data;
-    WResID        type, name;
     uint_16       mflags;
     WRSelectImageInfo *sii;
+#if 0
+    int           dup;
+    char         *data;
+    WResID        type;
+    WResID        name;
+#endif
 
     hinstCurrent  = hinstCurrent;
     hinstPrevious = hinstPrevious;
@@ -110,13 +114,13 @@ int PASCAL WinMain( HINSTANCE hinstCurrent, HINSTANCE hinstPrevious,
 #endif
     } else {
         for( i=1; i<_argc; i++ ) {
-            WRSelectFileType( HWND_DESKTOP, _argv[i], FALSE, i%2 );
+            WRSelectFileType( HWND_DESKTOP, _argv[i], FALSE, i%2, NULL );
             ftype = WRIdentifyFile( _argv[i] );
         }
         ret = TRUE;
     }
 
-    WRChangeMemFlags( HWND_DESKTOP, "test", &mflags );
+    WRChangeMemFlags( HWND_DESKTOP, "test", &mflags, NULL );
 
     if( info ) {
         info->save_name = NULL;
@@ -124,7 +128,7 @@ int PASCAL WinMain( HINSTANCE hinstCurrent, HINSTANCE hinstPrevious,
     }
 
     info = WRLoadResource( _argv[1], WR_DONT_KNOW );
-    sii = WRSelectImage( HWND_DESKTOP, info );
+    sii = WRSelectImage( HWND_DESKTOP, info, NULL );
     if( sii ) {
         WRFreeSelectImageInfo( sii );
     }

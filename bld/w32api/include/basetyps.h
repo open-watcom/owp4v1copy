@@ -140,13 +140,16 @@ typedef unsigned long PROPID;
 #define REFCLSID const CLSID* const
 #endif
 #define _REFGUID_DEFINED
-#define _REFGIID_DEFINED
+#define _REFIID_DEFINED
 #define _REFCLSID_DEFINED
 #endif
 #ifndef GUID_SECTION
 #define GUID_SECTION ".text"
 #endif
-#ifdef __GNUC__
+/* Explicit naming of .text section for readonly data is only
+   needed for older GGC (pre-2.95).
+   More recent (3.4) GCC puts readonly data in .rdata.  */
+#if defined (__GNUC__) && (__GNUC__ <= 2 && __GNUC_MINOR__ < 95) 
 #define GUID_SECT __attribute__ ((section (GUID_SECTION)))
 #else
 #define GUID_SECT

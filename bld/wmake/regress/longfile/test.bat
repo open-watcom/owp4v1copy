@@ -1,4 +1,4 @@
-@echo off
+@echo %verbose% off
 echo # ===========================
 echo # Start Long FileName Test
 echo # ===========================
@@ -10,7 +10,6 @@ echo #   Long FileName Test 1
 echo # ---------------------------
 echo LONGFILENAME OK > "HELLO TMP.TMP"
 wtouch HELLO.H
-rm tmp.out
 %1 -h -a -f LONG01 > tmp.out 2>&1
 diff -b LONG01.CMP tmp.out
 if errorlevel 1 goto err1
@@ -27,8 +26,7 @@ rm HELLO.H
 echo # ---------------------------
 echo #   Long FileName Test 2
 echo # ---------------------------
-rm tmp.out
-%1 -h -ms -a -f LONG02 > tmp.out 2>&1
+%1 -h -ms -m -a -f LONG02 > tmp.out 2>&1
 diff -b LONG02.CMP tmp.out
 if errorlevel 1 goto err2
     @echo # LONG02 successful
@@ -41,9 +39,8 @@ if errorlevel 1 goto err2
 echo # ---------------------------
 echo #   Long FileName Test 3
 echo # ---------------------------
-rm tmp.out
 rem This one MUST NOT use -a switch!
-%1 -h -ms -f LONG03 > tmp.out 2>&1
+%1 -h -ms -m -f LONG03 > tmp.out 2>&1
 diff -b LONG03.CMP tmp.out
 if errorlevel 1 goto err2
     @echo # LONG03 successful

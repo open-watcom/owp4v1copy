@@ -72,6 +72,10 @@ typedef enum {
     #undef inspick
     #define inspick( idx, name, opcode, mask, handler ) DI_X86_##idx,
     #include "insx86.h"
+    #include "insx86e1.h"
+    #include "insx86e2.h"
+    #include "insx86e3.h"
+    #include "insx86e4.h"
 #endif
 #if DISCPU & DISCPU_jvm
     DI_JVM_FIRST,

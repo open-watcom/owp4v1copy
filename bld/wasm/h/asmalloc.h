@@ -24,17 +24,19 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  memory manipulation routines
 *
 ****************************************************************************/
 
 
 #ifdef _WASM_
-extern  void    *AsmRealloc( void *, size_t );
+
 #include "malloc.h"
-#endif
-extern  void    *AsmAlloc( unsigned );
-extern  void    AsmFree( void * );
 
 #define AsmTmpAlloc( amount )   alloca( amount )
+
+#endif
+
+extern  void    *AsmAlloc( size_t );
+extern  void    AsmFree( void * );
+

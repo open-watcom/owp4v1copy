@@ -5,8 +5,6 @@
 host_cpu = 386
 
 suffix = mt3s
-target_lib = $(prefix)$(suffix).lib
-production_lib = lib386
 target_system = generic
 define_library_include = $(plusplus_iostream_dir)/iostream.mif
 define_deps_include = $(plusplus_iostream_dir)/deps.mif

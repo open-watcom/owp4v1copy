@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Near heap expansion routines.
 *
 ****************************************************************************/
 
@@ -44,9 +43,9 @@
 #if defined(__SMALL_DATA__)
 
 _WCRTLINK void *_expand( void *stg, size_t amount )
-    {
-        return( _nexpand( stg, amount ) );
-    }
+{
+    return( _nexpand( stg, amount ) );
+}
 
 #endif
 
@@ -124,7 +123,6 @@ int __HeapManager_expand( _SEGMENT seg,
                     pnext->prev = pprev;
                     p1->len += free_size;
                     hblk->numfree--;
-                    __fheap_clean = 0;
                     if( free_size >= *growth_size ) {
                         return( __HM_SUCCESS );
                     }
@@ -138,7 +136,6 @@ int __HeapManager_expand( _SEGMENT seg,
                     pprev->next = p2;
                     pnext->prev = p2;
                     p1->len += *growth_size;
-                    __fheap_clean = 0;
                     return( __HM_SUCCESS );
                 }
             }

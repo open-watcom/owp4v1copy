@@ -24,8 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  These are the assembler codes for the instructions listed
+*               in g.h
+*               NB. If you add instructions to this list, then you *must*
+*               also change g.h to match - these tables match those enums
 *
 ****************************************************************************/
 
@@ -134,8 +136,8 @@ static opcode G8Opcodes[] = {
  0xf8d8, 0xf0d8, 0xf0de, 0xf8de, 0xf0dc, 0xf8dc, 0x38d8, 0x30d8};/* OP_DIV*/
 
 static opcode G9Opcodes[] = {
-/*  MFLD   RFLD   IFLD   MFST   RFST   IFST   FCHS   FRNDINT FLDZ  FLD1*/
-  0x00d9,0xc0d9,0x28df,0x18d9,0xd8dd,0x38df,0xe0d9,0xfcd9,0xeed9,0xe8d9,
+/*  MFLD   RFLD   IFLD   MFST MFSTRND  RFST   IFST   FCHS   FRNDINT FLDZ  FLD1*/
+  0x00d9,0xc0d9,0x28df,0x18d9,0x18d9,0xd8dd,0x38df,0xe0d9,0xfcd9,0xeed9,0xe8d9,
 /*  FINIT  FCOMPP MCOMP  RCOMP  MCOM   RCOM   MFSTNP RFSTNP FTST*/
   0xe3db,0xd9de,0x18d8,0xd8d8,0x10d8,0xd0d8,0x10d9,0xd0dd,0xe4d9 };
 

@@ -945,6 +945,16 @@
 ~b~b~b~b~b~b
 .br
 .*
+:CMT. .note zri
+:hotlink refid='SWzri'.
+~b~b~b~b~b~b
+.br
+.*
+:CMT. .note zro
+:hotlink refid='SWzro'.
+~b~b~b~b~b~b
+.br
+.*
 :CMT. .note zs
 :hotlink refid='SWzs'.
 ~b~b~b~b~b~b

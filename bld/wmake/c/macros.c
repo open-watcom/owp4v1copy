@@ -337,9 +337,7 @@ STATIC const char *GetMacroValueProcess( const char *name )
     makeMacroName( macro, name );
 
     if( *macro == ENVVAR ) {
-        Glob.disable_TZ_kludge = TRUE;
         env = getenv( macro + 1 );
-        Glob.disable_TZ_kludge = FALSE;
         if( env != NULL ) {
             return( env );
         }
@@ -1317,7 +1315,6 @@ extern void DefMacro( const char *name )
                 + strlen( name ) + strlen( EnvVarValue ) + 1 );
         FmtStr( env->value, "%s=%s", name + 1, EnvVarValue );
         FreeSafe( value );
-        FreeSafe( EnvVarValue );
         PutEnvSafe( env );
     } else {
         if (Glob.microsoft){
@@ -1344,6 +1341,7 @@ extern void DefMacro( const char *name )
             addMacro( name, value );
         }
     }
+    FreeSafe( EnvVarValue );
 }
 
 

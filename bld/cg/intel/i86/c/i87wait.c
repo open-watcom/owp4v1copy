@@ -143,6 +143,7 @@ extern  void    Wait8087( void ) {
                         break;
                     case G_MFSTNP:
                     case G_MFST:
+                    case G_MFSTRND:
                         last_fpins = ins;
                         last_fpres = ins->result;
                         last_fpop = NULL;

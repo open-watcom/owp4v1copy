@@ -320,14 +320,14 @@ to a pointer.
 .ix 'calling convention' 'what you need to know'
 .ix '&cmpname' 'calling convention'
 .ix '&cmpname' 'unique aspects'
-.ix 'ANSI standard' 'variable number of arguments'
+.ix 'ISO/ANSI standard' 'variable number of arguments'
 Passing arguments on the stack has been the method used by most older
 compilers because it allowed the C library function "printf" to work
 with a variable number of arguments.
 Older C compilers catered to a few functions by forcing all the
 argument handling to be handled by the caller of the function.
-With the advent of the ANSI standard, which forced all functions
-expecting a variable number of arguments to be declared properly,
+With the advent of the ANSI (and later ISO) standard, which forced all
+functions expecting a variable number of arguments to be declared properly,
 compilers can generate smaller code for routines that did not require
 a variable number of arguments.
 .exam begin
@@ -337,7 +337,7 @@ extern FILE *fopen( char *, char * );
 extern int printf( char *, ... );
 .exam end
 .pc
-The &cmpname compiler takes advantage of this part of the ANSI
+The &cmpname compiler takes advantage of this part of the ISO/ANSI
 standard by passing arguments in registers (for the first few
 arguments).
 .ix 'registers' 'calling convention'
@@ -400,7 +400,7 @@ type is "signed" rather than the default "unsigned".
 .np
 .ix 'converting to &cmpname' 'from UNIX'
 .ix 'UNIX'
-The ANSI standard for C (which &cmpname adheres to) is very similar to
+The ISO/ANSI standard for C (which &cmpname adheres to) is very similar to
 UNIX C.
 .if '&target' ne 'QNX' .do begin
 Most of the effort in converting UNIX C programs will involve
@@ -413,7 +413,7 @@ There is a common problem which many older UNIX programs exhibit,
 namely, functions that accept a variable number of arguments are coded
 in many different ways.
 Functions accepting a variable number of arguments must be coded
-according to the ANSI standard if they are to work with &cmpname..
+according to the ISO standard if they are to work with &cmpname..
 We will code an example of a function which will return the maximum of
 a list of positive integers.
 .ix 'example' 'variable number of arguments'
@@ -465,7 +465,7 @@ variable number of arguments handling.
 .ix 'converting to &cmpname' 'from IBM-compatible PC compilers'
 .ix 'IBM-compatible PC compilers'
 Most of the compilers available for IBM-compatible PCs
-have been following the ANSI standard and, as such,
+have been following the ISO/ANSI standard and, as such,
 the majority of programs will not require extensive source changes.
 There are problems with programs that use compiler-specific library
 functions.
@@ -1731,14 +1731,14 @@ files should be recompiled.
 .ix 'debugging' 'NULL assignment detected'
 .ix 'debugging' 'memory bugs'
 .ix 'debugging' 'techniques'
-.ix 'ANSI standard' 'NULL'
+.ix 'ISO/ANSI standard' 'NULL'
 This question applies to 16-bit applications.
 The C language makes use of the concept of a
 .id NULL
 pointer.
 The
 .id NULL
-pointer cannot be dereferenced according to the ANSI standard.
+pointer cannot be dereferenced according to the ISO standard.
 The &cmpname compiler cannot signal the programmer when the
 .id NULL
 address has been written to or read from because the Intel-based
@@ -2072,7 +2072,7 @@ module and leave it to the linker to pick one and resolve all
 references to one variable.
 The development of the ANSI C standard made this practice
 non-conforming.
-The &company C compiler is an ANSI C compiler and as such, is not
+The &company C compiler is an ISO/ANSI C compiler and as such, is not
 required to support this obsolete behavior.
 The effect is that &lnkcmdup will report redefinition errors.
 The header file must be coded in such a way that the variables are

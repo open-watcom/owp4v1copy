@@ -1388,6 +1388,7 @@ TREEPTR CnvOp( TREEPTR opnd, TYPEPTR newtyp, int cast_op )
     enum  conv_types    cnv;
     enum ops            opr;
     op_flags            flags;
+    type_modifiers      opnd_type;
 
     if( opnd->op.opr == OPR_ERROR )  return( opnd );
     while( newtyp->decl_type == TYPE_TYPEDEF ) newtyp = newtyp->object;
@@ -1402,6 +1403,7 @@ TREEPTR CnvOp( TREEPTR opnd, TYPEPTR newtyp, int cast_op )
             flags |= OPFLAG_LVALUE_CAST;
         }
     }
+    opnd_type = opnd->expr_type->decl_type;
     if( ! CompFlags.pre_processing )  opnd = RValue( opnd );
     typ = TypeOf( opnd );
     if( newtyp->decl_type > TYPE_POINTER ) {
@@ -1435,8 +1437,9 @@ convert:                                /* moved here 30-aug-89 */
             return( ErrorNode( opnd ) );
         } else if( cnv != NIL ) {
             if( cnv == P2P ) {
-                if( ( typ->u.p.decl_flags & NEAR_FAR_HUGE ) !=
-                    ( newtyp->u.p.decl_flags & NEAR_FAR_HUGE ) ) {
+                if( ( typ->u.p.decl_flags & NEAR_FAR_HUGE )
+                    != ( newtyp->u.p.decl_flags & NEAR_FAR_HUGE )
+                    || ( opnd_type == TYPE_ARRAY ) ) {
                     if( cast_op == 0 ) {
                         if( TypeSize(typ) > TypeSize(newtyp) ) {
                             CWarn1( WARN_POINTER_TRUNCATION,

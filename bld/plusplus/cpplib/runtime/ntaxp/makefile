@@ -7,8 +7,7 @@ host_cpu = axp
 pd_registration = yes
 suffix = nt
 target_system = ntaxp
-production_lib = libaxp
+text = -hd
 define_library_include = $(plusplus_runtime_dir)/plib.mif
 define_target_include = $(plusplus_dir)/libaxp$(suffix).mif
-text = -hd
 !include $(plusplus_dir)/mklib.mif

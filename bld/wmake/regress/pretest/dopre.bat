@@ -13,7 +13,8 @@ cd ..\pretest
 ECHO # -----------------------------
 ECHO #   Test 1
 ECHO # -----------------------------
-%1 -h -f pre01 pre01 -f pre02 pre02
+:: 2>nul to hide debug-build, memory-tracking diagnostic
+%1 -h -f pre01 pre01 -f pre02 pre02 2>nul
 if errorlevel 1 goto err1
     echo # Test1 successful
     goto test2

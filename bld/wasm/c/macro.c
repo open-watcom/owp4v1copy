@@ -54,7 +54,7 @@
 #include "objrec.h"
 #include "myassert.h"
 #include "fixup.h"
-#include "expand.h"
+#include "asmexpnd.h"
 
 #include "directiv.h"
 

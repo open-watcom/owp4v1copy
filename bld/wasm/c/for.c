@@ -40,7 +40,7 @@
 #include "namemgr.h"
 #include "asmsym.h"
 #include "directiv.h"
-#include "expand.h"
+#include "asmexpnd.h"
 
 extern void             PushLineQueue(void);
 extern void             AddTokens( struct asm_tok **, int, int );

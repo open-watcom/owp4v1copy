@@ -29,7 +29,6 @@
 *
 ****************************************************************************/
 
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -43,7 +42,8 @@ void AddThread( DWORD tid, HANDLE th, LPVOID sa )
     thread_info *ti;
 
     ti = LocalAlloc( LMEM_FIXED | LMEM_ZEROINIT, sizeof( thread_info ) );
-    if( ti == NULL ) return;
+    if( ti == NULL )
+        return;
     ti->tid = tid;
     ti->start_addr = sa;
     ti->thread_handle = th;
@@ -56,8 +56,7 @@ void AddThread( DWORD tid, HANDLE th, LPVOID sa )
     ti->is_dos = FALSE;
     ti->is_foreign = FALSE;
     ProcessInfo.thread_list = ti;
-
-} /* AddThread */
+}
 
 /*
  * FindThread - find a thread from a given process_info struct
@@ -74,8 +73,7 @@ thread_info *FindThread( DWORD tid )
         ti = ti->next;
     }
     return( NULL );
-
-} /* FindThread */
+}
 
 /*
  * DeadThread - process a dead thread
@@ -89,8 +87,7 @@ void DeadThread( DWORD tid )
         return;
     }
     ti->alive = FALSE;
-
-} /* DeadThread */
+}
 
 
 /*
@@ -98,7 +95,7 @@ void DeadThread( DWORD tid )
  */
 void RemoveAllThreads( void )
 {
-    thread_info *ti,*next;
+    thread_info *ti, *next;
 
     ti = ProcessInfo.thread_list;
     while( ti != NULL ) {
@@ -107,8 +104,7 @@ void RemoveAllThreads( void )
         ti = next;
     }
     ProcessInfo.thread_list = NULL;
-
-} /* RemoveAllThreads */
+}
 
 unsigned ReqThread_freeze( void )
 {
@@ -141,7 +137,6 @@ unsigned ReqThread_freeze( void )
         ret->err = 1;
     }
     return( sizeof( *ret ) );
-
 }
 
 unsigned ReqThread_thaw( void )
@@ -247,10 +242,10 @@ unsigned ReqThread_get_extra( void )
 {
     thread_get_extra_req        *acc;
     char                        *name;
-    thread_info *ti;
+    thread_info                 *ti;
 
-    acc = GetInPtr(0);
-    name = GetOutPtr(0);
+    acc = GetInPtr( 0 );
+    name = GetOutPtr( 0 );
     strcpy( name, "" );
     if( acc->thread == 0 ) {
         strcpy( name, "priority" );

@@ -24,10 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Functions for "text vector" handling.
 *
 ****************************************************************************/
+
 
 #include <string.h>
 
@@ -103,6 +103,7 @@ STATIC OURPTR freeVec;
  * The strings stored in a vecEntry are not null-terminated.
  */
 
+#ifdef USE_SCARCE
 STATIC RET_T vecScarce( void )
 /****************************/
 {
@@ -119,6 +120,7 @@ STATIC RET_T vecScarce( void )
 
     return( RET_ERROR );
 }
+#endif
 
 
 extern void VecInit( void )
@@ -133,7 +135,9 @@ extern void VecInit( void )
         new->next = freeVec;
         freeVec = new;
     }
+#ifdef USE_SCARCE
     IfMemScarce( vecScarce );
+#endif
 }
 
 
@@ -196,11 +200,6 @@ STATIC char *expandVec( VECSTR vec )
     }
 
     result = MallocSafe( ((OURPTR)vec)->d.totlen + 1 );
-#if 0   /* 24-jan-90 AFS */
-    if( result == NULL ) {
-        PrtMsg( FTL|LOC| MAXIMUM_STRING_LENGTH );
-    }
-#endif
 
     d = result;
     for( ; cur != NULL; cur = cur->next ) {
@@ -295,8 +294,8 @@ extern void WriteVec( VECSTR vec, const char *text )
 }
 
 
-extern void WriteNVec( VECSTR vec, const char *text, size_t len)
-/**************************************************
+extern void WriteNVec( VECSTR vec, const char *text, size_t len )
+/****************************************************************
  * write vector with input string length len
  */
 {
@@ -306,6 +305,7 @@ extern void WriteNVec( VECSTR vec, const char *text, size_t len)
         cpyTxt( (OURPTR) vec, text, len);
     }
 }
+
 
 extern void CatVec( VECSTR dest, VECSTR src )
 /********************************************
@@ -326,35 +326,22 @@ extern void CatVec( VECSTR dest, VECSTR src )
     freeVec = (OURPTR)src;
 }
 
+// TODO: If these functions work the way I think they do, all calls to
+//       Cat(N)StrToVec should be just replaced with Write(N)Vec - MN
 
-extern void CatStrToVec( VECSTR dest, const char* str) {
-/**************************************************
+extern void CatStrToVec( VECSTR dest, const char* str )
+/******************************************************
  *  Concatenate the whole string ended by nullchar to the end of dest
- *  Same with WriteVec but adds handling of string length = 0
  */
-
-    size_t length;
-    VECSTR temp;
-
-    length = strlen (str);
-    if (length > 0 ) {
-
-        temp = StartVec();
-        WriteVec(temp,str);
-        CatVec(dest,temp);
-    }
-
+{
+    WriteVec( dest, str );
 }
 
 
-/* Concatenate a string to the end of dest with length length */
-extern void CatNStrToVec( VECSTR dest, const char* str, size_t length) {
-
-    VECSTR temp;
-
-    if (length > 0 ) {
-        temp = StartVec();
-        WriteNVec(temp,str,length);
-        CatVec(dest,temp);
-    }
+extern void CatNStrToVec( VECSTR dest, const char* str, size_t length )
+/**********************************************************************
+ * Concatenate a string to the end of 'dest' with length 'length'
+ */
+{
+    WriteNVec( dest, str, length );
 }

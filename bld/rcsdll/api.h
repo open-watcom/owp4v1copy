@@ -82,12 +82,13 @@ void RCSAPI RCSFini( rcsdata );
 void RCSAPI RCSSetPause( rcsdata, int );
 
 /* parms to RCSSetSystem, retvals from RCSQuerySystem */
-#define NO_RCS  0
-#define MKS_RCS 1
-#define MKS_SI  2
-#define PVCS    3
-#define GENERIC 4
-#define O_CYCLE 5
+#define NO_RCS   0
+#define MKS_RCS  1
+#define MKS_SI   2
+#define PVCS     3
+#define GENERIC  4
+#define O_CYCLE  5
+#define PERFORCE 6
 
 #define RCS_DLL_VER             1
 #ifdef __cplusplus

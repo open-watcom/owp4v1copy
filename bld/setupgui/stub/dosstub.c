@@ -15,7 +15,7 @@ int main( int argc, char **argv )
 
     _splitpath( argv[0], drive, path, name, ext );
 #if !defined( WSQL )
-#if 0
+#if NECCHECK
     if( __nonIBM() ) {
 #else
     if( 0 ) {

@@ -1,5 +1,5 @@
 .func iswctype
-#include <wchar.h>
+#include <wctype.h>
 int iswctype( wint_t wc, wctype_t desc );
 .ixfunc2 '&CharTest' &wfunc
 .ixfunc2 '&Wide' &wfunc
@@ -67,7 +67,7 @@ has the property described by
 .see end
 .exmp begin
 #include <stdio.h>
-#include <wchar.h>
+#include <wctype.h>
 
 char *types[11] = {
     "alnum",
@@ -84,14 +84,14 @@ char *types[11] = {
 };
 .exmp break
 void main()
-  {
+{
     int     i;
     wint_t  wc = 'A';
 .exmp break
     for( i = 0; i < 11; i++ )
-      if( iswctype( wc, wctype( types[i] ) ) )
-        printf( "%s\n", types[ i ] );
-  }
+        if( iswctype( wc, wctype( types[i] ) ) )
+            printf( "%s\n", types[ i ] );
+}
 .exmp output
 alnum
 alpha

@@ -3,6 +3,8 @@
 ::
 :segment Taxp
 Usage: wccaxp [options] file [options]
+:elsesegment Tppc
+Usage: wccppc [options] file [options]
 :elsesegment T386
 Usage: wcc386 [options] file [options]
 :elsesegment
@@ -193,6 +195,7 @@ Options:
 -wcd=<num>    warning control: disable warning message <num>
 -wce=<num>    warning control: enable warning message <num>
 -we           treat all warnings as errors
+-wx           set warning level to maximum setting
 :segment Ti86
 -wo           warn about problems with overlaid code
 :endsegment
@@ -234,6 +237,12 @@ Options:
 -zps          always align structs on qword boundaries
 :endsegment
 -zq           operate quietly
+:segment T386 | Ti86
+-zro          omit floating point rounding calls (non ANSI)
+:endsegment
+:segment T386
+-zri          inline floating point rounding calls
+:endsegment
 -zs           syntax check only
 -zt[=<num>]   set far data threshold (i.e., larger objects go in far memory)
 :segment T386 | Ti86

@@ -35,15 +35,20 @@ vi.ps : vi.gml settings.gml intro.gml basic.gml &
         spmapkey.gml &
         oper.gml worddef.gml speckeys.gml &
         a_errcod.gml a_cmdmod.gml a_symkey.gml
-    @%create $(optsfile)
-    @%append $(optsfile) ( file nb7x9ps
-    @%append $(optsfile) ( index
-    @%append $(optsfile) ( passes 2
-    @%append $(optsfile) ( cpinch 20
-    @%append $(optsfile) ( verbose
-    @%append $(optsfile) ( statistics
-    -$(wgml) vi ( file $(optsfile)
-
+    -$(wgml) vi ( file nb7x9ps index passes 2 cpinch 20 # verbose statistics
+    # Bodge supplying missing functions
+    bvi -s << vi.ps
+/^\/
+insert
+/setSize { pop gsave } def
+/startFig { /Courier findfont 8 scalefont setfont 0 192 moveto pop } def
+/paintString { show pop } def
+/nextline { 0 currentpoint 8 sub exch pop moveto } def
+/endFig { grestore showpage } def
+.
+x
+q
+<<
 #    -$(wgml) stat.vi.gml (file nb7x9ps index pass 1 cpi 20 stat verb
 #    -$(wgml) vi.gml (file nb7x9ps index pass 1 cpi 20 stat verb
 #    -$(wgml) vi.gml (file nb7x9ps pass 1 cpi 20 stat verb
@@ -70,6 +75,7 @@ vihelp.src: vi.gml .SYMBOLIC
     @%append $(optsfile) ( setsymbol dohelp 1
     @%append $(optsfile) ( process vihelp
     @%append $(optsfile) ( file help
+#   Next line fails: Fixing is non-trivial. W.Briscoe 2004-02-04.
    -$(wgml) vi ( file $(optsfile)
     $(vi) -s remtoc.vi vihelp.src
     @cp toc.src vitoc.src

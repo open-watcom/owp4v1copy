@@ -5,7 +5,8 @@
 
 host_OS=win
 host_CPU=i86
-display=gui
+
+sys_windowed = 1
 
 sysobjs =   &
     wininit.obj &

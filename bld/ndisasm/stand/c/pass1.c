@@ -222,7 +222,7 @@ return_val DoPass1( orl_sec_handle shnd, char * contents, orl_sec_size size,
                                 }
                             }
                             value = decoded.op[i].value;
-                            if( value < 0 || value >= ORLSecGetSize( r_entry->label->shnd ) ) {
+                            if( value < 0 || value > ORLSecGetSize( r_entry->label->shnd ) ) {
                                 // can't fold it into the label position - BBB Oct 28, 1996
                                 value = 0;
                                 r_entry->no_val = 0;
@@ -237,11 +237,26 @@ return_val DoPass1( orl_sec_handle shnd, char * contents, orl_sec_size size,
                 } else {
                     if( decoded.op[i].base == DR_NONE &&
                         decoded.op[i].index == DR_NONE ) {
-                        // create an LTYP_UNNAMED label
-                        CreateUnnamedLabel( shnd, decoded.op[i].value, &rs );
-                        if( rs.error != OKAY ) return( rs.error );
-                        error = CreateUnnamedLabelRef( shnd, rs.entry, op_pos );
-                        if( error != OKAY ) return( error );
+                        switch( decoded.op[i].type & DO_MASK ) {
+                        case DO_MEMORY_REL:
+                        case DO_MEMORY_ABS:
+                            // create an LTYP_ABSOLUTE label
+                            CreateAbsoluteLabel( shnd, decoded.op[i].value, &rs );
+                            if( rs.error != OKAY )
+                                return( rs.error );
+                            error = CreateAbsoluteLabelRef( shnd, rs.entry, op_pos );
+                            break;
+                        default:
+                            // create an LTYP_UNNAMED label
+                            CreateUnnamedLabel( shnd, decoded.op[i].value, &rs );
+                            if( rs.error != OKAY )
+                                return( rs.error );
+                            error = CreateUnnamedLabelRef( shnd, rs.entry, op_pos );
+                            break;
+                        }
+                        if( error != OKAY ) {
+                            return( error );
+                        }
                     }
                 }
                 break;

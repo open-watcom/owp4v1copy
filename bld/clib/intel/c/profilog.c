@@ -38,7 +38,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #ifdef __NT__
-#include <windows.h>
+ #include <windows.h>
 #endif
 
 #define info new_P5_timing_info

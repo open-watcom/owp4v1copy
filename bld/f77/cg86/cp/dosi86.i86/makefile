@@ -1,4 +1,4 @@
-#pmake: all os_dos cpu_i86
+#pmake: os_dos cpu_i86 target_i86
 
 host_OS         = dos
 host_CPU        = i86

@@ -43,8 +43,8 @@ typedef struct keyword {
 } keyword;
 
 
-extern const keyword Statements[];
-extern keyword  DataTypes[];
+extern const keyword __based(__segname("_CONST")) Statements[];
+extern const keyword __based(__segname("_CONST")) DataTypes[];
 
 extern int      IsPtrType( id_type );
 extern char     *FindType( id_type );

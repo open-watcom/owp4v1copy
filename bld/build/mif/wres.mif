@@ -1,49 +1,49 @@
 # WRES library finder.  You must define:
 # ~~~~~~~~~~~~~~~~~~~
-# 1. host_OS and host_CPU
-# 2. If 32-bit stack-based, define STACK
+# 1. host_os and host_cpu
+# 2. If 32-bit stack-based, define 'stack'
 # 3. If 16-bit, define memory_model_i86 = l, m, c, or s (l is default)
-# 4. For large memory model pegged version, define PEGGED
-# 5. For large memory model windows version, define WINDOWS
+# 4. For large memory model pegged version, define 'pegged'
+# 5. For large memory model windows version, define 'windows'
 #
 
-wres_nt_axp = wresaxp.lib
-wres_nt_386 = wresf.lib
+!ifdef pegged
+wres_lib_l = $(wres_dir)/lib/wreslp.lib
+!else ifdef windows
+wres_lib_l = $(wres_dir)/lib/wreslw.lib
+!else
+wres_lib_l = $(wres_dir)/lib/wresl.lib
+!endif
+wres_lib_m = $(wres_dir)/lib/wresm.lib
+wres_lib_c = $(wres_dir)/lib/wresc.lib
+wres_lib_s = $(wres_dir)/lib/wress.lib
+wres_lib_i86 = $(wres_lib_$(memory_model_i86))
+
+!ifdef stack
+wres_lib_386 = $(wres_dir)/lib/wresfs.lib
+!else
+wres_lib_386 = $(wres_dir)/lib/wresf.lib
+!endif
+
 !ifeq memory_model_386 s
-wres_qnx_386 = wressqnx.lib
+wres_lib_qnx_386 = $(wres_dir)/lib/wressqnx.lib
 !else
-wres_qnx_386 = wresf.lib
+wres_lib_qnx_386 = $(wres_dir)/lib/wresf.lib
 !endif
 
-!ifndef wres_lib_dir
-wres_lib_dir = $(wres_dir)/lib
-!endif
-!ifdef PEGGED
-wres_l = wreslp.lib
-!else ifdef WINDOWS
-wres_l = wreslw.lib
-!else
-wres_l = wresl.lib
-!endif
-wres_m = wresm.lib
-wres_c = wresc.lib
-wres_s = wress.lib
-wres_i86 = $(wres_$(memory_model_i86))
-!ifdef STACK
-wres_386 = wresfs.lib
-!else
-wres_386 = wresf.lib
-!endif
-
+wres_lib_nt_axp = $(wres_dir)/lib/wresaxp.lib
+wres_lib_nt_386 = $(wres_dir)/lib/wresf.lib
 !ifdef $(proj_name)_rtdll
 !ifeq $(proj_name)_rtdll 1
-wres_nt_axp = wresaxpd.lib
-wres_nt_386 = wresfdll.lib
+wres_lib_nt_axp = $(wres_dir)/lib/wresaxpd.lib
+wres_lib_nt_386 = $(wres_dir)/lib/wresfdll.lib
 !endif
 !endif
 
-!ifdef wres_$(host_OS)_$(host_CPU)
-wres_lib = $(wres_lib_dir)/$(wres_$(host_OS)_$(host_CPU))
+!ifdef bootstrap
+wres_lib = $(wres_dir)/$(%OBJDIR)/libwres.a
+!else ifdef wres_lib_$(host_os)_$(host_cpu)
+wres_lib = $(wres_lib_$(host_os)_$(host_cpu))
 !else
-wres_lib = $(wres_lib_dir)/$(wres_$(host_CPU))
+wres_lib = $(wres_lib_$(host_cpu))
 !endif

@@ -415,6 +415,29 @@ USHORT APIENTRY16 MouSynch(USHORT);
 #define COLORS_4  2
 #define COLORS_16 4
 
+#define DISPLAY_MONOCHROME      0
+#define DISPLAY_CGA             1
+#define DISPLAY_EGA             2
+#define DISPLAY_VGA             3
+#define DISPLAY_8514A           7
+#define DISPLAY_IMAGEADAPTER    8
+#define DISPLAY_XGA             9
+#define DISPLAY_SVGA           10
+
+#define MONITOR_MONOCHROME      0
+#define MONITOR_COLOR           1
+#define MONITOR_ENHANCED        2
+#define MONITOR_8503            3
+#define MONITOR_851X_COLOR      4
+#define MONITOR_8514            9
+#define MONITOR_FLATPANEL      10
+#define MONITOR_8507_8604      11
+#define MONITOR_8515           12
+#define MONITOR_9515           15
+#define MONITOR_9517           17
+#define MONITOR_9518           18
+#define MONITOR_OEM            19
+
 typedef SHANDLE  HVIO;
 typedef HVIO     *PHVIO;
 

@@ -3,6 +3,4 @@
 host_os  = linux
 host_cpu = 386
 
-imp_libs = $(watcom_dir)/lib/dwarfrpd.lib
-
 !include ../dwarf.mif

@@ -46,6 +46,8 @@
 
 extern TREEPTR         CurFuncNode;
 
+static int RemoveEscapes( char *buf, const char *inbuf, size_t length );
+
 static int OpenUnicodeFile( char *filename )
 {
     int         handle;
@@ -89,7 +91,7 @@ void LoadUnicodeTable( long codePage )
     int         handle;
     char        filename[8+1+3+1];
 
-    sprintf( filename, "unicode.%3.3d", codePage );
+    sprintf( filename, "unicode.%3.3ld", codePage );
     handle = OpenUnicodeFile( filename );
     if( handle != -1 ) {
         ReadUnicodeFile( handle );
@@ -110,31 +112,60 @@ void StringInit()
     }
 }
 
+void FreeLiteral( STRING_LITERAL *str_lit )
+{
+    CMemFree( str_lit->literal );
+    CMemFree( str_lit );
+}
 
-STRING_LITERAL *GetLiteral()
+STRING_LITERAL *GetLiteral( void )
 {
     unsigned            len, len2;
+    char                *s;
     STRING_LITERAL      *str_lit;
     STRING_LITERAL      *p;
+    STRING_LITERAL      *q;
+    int                 is_wide;
 
-    len = RemoveEscapes( NULL );
-    str_lit = (STRING_LITERAL *)CMemAlloc( sizeof( STRING_LITERAL ) + len );
-    RemoveEscapes( str_lit->literal );
-    NextToken();
-    while( CurToken == T_STRING ) {
-        len2 = RemoveEscapes( NULL );
+    /* first we store the whole string in a linked list to see if
+       the end result is wide or not wide */
+    p = str_lit = CMemAlloc( sizeof( STRING_LITERAL ) );
+    q = NULL;
+    is_wide = 0;
+    do {
+        /* if one component is wide then the whole string is wide */
+        if( CompFlags.wide_char_string )
+            is_wide = 1;
+        if( q != NULL ) {
+            p = CMemAlloc( sizeof( STRING_LITERAL ) );
+            q->next_string = p;
+        }
+        q = p;
+        p->length = CLitLength;
+        p->next_string = NULL;
+        p->literal = Buffer;
+        Buffer = CMemAlloc( BufSize );
+    } while( NextToken() == T_STRING );
+    CompFlags.wide_char_string = is_wide;
+    /* then remove escapes (C99: translation phase 5), and only then
+       concatenate (translation phase 6), not the other way around! */
+    len = 1;
+    s = NULL;
+    q = str_lit;
+    do {
+        len2 = RemoveEscapes( NULL, q->literal, q->length );
         --len;
-        if( CompFlags.wide_char_string && len != 0 ) --len;
-        p = (STRING_LITERAL *)CMemAlloc( sizeof( STRING_LITERAL )
-                                     + len + len2 );
-        memcpy( p->literal, str_lit->literal, len );
-        RemoveEscapes( &p->literal[len] );
+        if( is_wide && len != 0 ) --len;
+        s = CMemRealloc( s, len + len2 + 1 );
+        RemoveEscapes( &s[len], q->literal, q->length );
         len += len2;
-        CMemFree( str_lit );
-        str_lit = p;
-        NextToken();
-    }
+        p = q->next_string;
+        if( q != str_lit )  FreeLiteral( q );
+        q = p;
+    } while ( q );
     CLitLength = len;
+    CMemFree( str_lit->literal );
+    str_lit->literal = s;
     str_lit->length = len;
     str_lit->flags = 0;
     str_lit->cg_back_handle = 0;
@@ -142,42 +173,41 @@ STRING_LITERAL *GetLiteral()
     return( str_lit );
 }
 
-int RemoveEscapes( char *buf )
+static int RemoveEscapes( char *buf, const char *inbuf, size_t length )
 {
     unsigned int        c;
-    int                 j;
-    unsigned int        saved_length;
+    size_t              j;
     char                error;
+    const char         *end;
 
     j = 0;
-    saved_length = CLitLength;
-    CLitLength = 0;
     error = 0;
-    while( CLitLength < saved_length ) {
-        c = Buffer[CLitLength];
+    end = inbuf + length;
+    while( inbuf < end ) {
+        c = *inbuf;
         if( c == '\\' ) {
-            ++CLitLength;
-            c = ESCChar( Buffer[CLitLength], RTN_NEXT_BUF_CHAR, &error );
+            ++inbuf;
+            c = ESCChar( *inbuf, &inbuf, &error );
             if( CompFlags.wide_char_string ) {
                 if( buf ) buf[j] = c;
                 ++j;
                 c = c >> 8;                     /* 31-may-91 */
             }
         } else {
-            ++CLitLength;
+            ++inbuf;
             if( CharSet[c] & C_DB ) {       /* if double-byte character */
                 if( CompFlags.jis_to_unicode &&
                     CompFlags.wide_char_string ) {      /* 15-jun-93 */
-                    c = (c << 8) + Buffer[CLitLength];
+                    c = (c << 8) + *inbuf;
                     c = JIS2Unicode( c );
                     if( buf ) buf[j] = c;
                     c = c >> 8;
                 } else {
                     if( buf ) buf[j] = c;
-                    c = Buffer[CLitLength];
+                    c = *inbuf;
                 }
                 ++j;
-                ++CLitLength;
+                ++inbuf;
             } else if( CompFlags.wide_char_string ) {
                 if( CompFlags.use_unicode ) {   /* 05-jun-91 */
                     c = UniCode[ c ];
@@ -266,7 +296,7 @@ TREEPTR StringLeaf( int flags )
         new_lit->next_string = StringHash[ hash ];
         StringHash[ hash ] = new_lit;
     } else {            // we found a duplicate
-        CMemFree( new_lit );
+        FreeLiteral( new_lit );
         new_lit = strlit;
     }
 

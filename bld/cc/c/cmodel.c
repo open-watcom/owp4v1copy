@@ -42,24 +42,7 @@ extern  char    CompilerID[];
 /* COMMAND LINE PARSING OF MACRO DEFINITIONS */
 
 
-int fndlen( char *str )
-{
-    int         i;
-
-    i = 0;
-    for(;;) {
-        if( *str == '\0' ) break;
-        if( *str == '-' ) break;
-        if( *str == ' ' ) break;
-        if( *str == SwitchChar ) break;
-        str++;
-        i++;
-    }
-    return( i );
-}
-
-
-char *copy_eq( char *dest, char *src )
+static char *copy_eq( char *dest, char *src )
 {
     char        c;
 
@@ -133,6 +116,7 @@ static char *Def_Macro_Tokens( char *str, int multiple_tokens, int flags )
             if( CurToken == T_WHITE_SPACE ) break;      /* 28-apr-94 */
             if( CurToken == T_BAD_CHAR && ! multiple_tokens ) break;
             TokenBuf[i++] = CurToken;
+
             switch( CurToken ) {
             case T_BAD_CHAR:
                 TokenBuf[i++] = Buffer[0];
@@ -147,6 +131,8 @@ static char *Def_Macro_Tokens( char *str, int multiple_tokens, int flags )
             case T_STRING:
                 memcpy( &TokenBuf[i], &Buffer[0], TokenLen );
                 i += TokenLen;
+                break;
+            default:
                 break;
             }
             str = ReScanPos();
@@ -228,11 +214,11 @@ char *AddUndefName( char *str )
 }
 
 
-void FreeUndefNames()
+static void FreeUndefNames()
 {
     struct undef_names *uname;
 
-    for(; uname = UndefNames; ) {
+    for(; (uname = UndefNames); ) {
         UndefNames = uname->next;
         CMemFree( uname->name );
         CMemFree( uname );
@@ -240,7 +226,7 @@ void FreeUndefNames()
 }
 
 
-void Define_Extensions()
+static void Define_Extensions()
 {
     PreDefine_Macro( "_far16=__far16" );
     PreDefine_Macro( "near=__near" );

@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#ifndef UNIX
+#if !defined( UNIX ) && !defined( __UNIX__ )
 #include <conio.h>
 #endif
 #include "gui.h"
@@ -74,7 +74,7 @@ bool                    CancelSetup = FALSE;
     extern void         BkOfficePercent( int );
 #endif
 
-#ifdef UNIX
+#if defined( UNIX ) || defined( __UNIX__ )
 #include "stdui.h"
 #elif defined( _UI )
 #include <stdui.h>
@@ -501,10 +501,10 @@ void EspeciallyUglyLittleKanjiiKludge()
 {
 #if 0
     if( GetVariableIntVal( "IsJapanese" ) ) {
-        GUIFree( LIT( OK ) );
-        GUIFree( LIT( XYes ) );
-        GUIFree( LIT( XNo ) );
-        GUIFree( LIT( Cancel ) );
+        GUIMemFree( LIT( OK ) );
+        GUIMemFree( LIT( XYes ) );
+        GUIMemFree( LIT( XNo ) );
+        GUIMemFree( LIT( Cancel ) );
         GUIStrDup( "&OK", &LIT( OK ) );         // nyi - translate these
         GUIStrDup( "&Yes", &LIT( XYes ) );
         GUIStrDup( "&No", &LIT( XNo ) );

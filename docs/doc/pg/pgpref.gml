@@ -50,17 +50,6 @@ Common Problems
 .*
 .im gmlack
 .*
-.if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
-.np
-The Plum Hall Validation Suite for &lang has been invaluable in
-verifying the conformance of the &product compilers to the
-.if '&lang' eq 'C' .do begin
-ANSI C Language Standard.
-.do end
-.if '&lang' eq 'C/C++' .do begin
-ANSI C Language Standard and the Draft Proposed C++ Language Standard.
-.do end
-.do end
 .np
 Many users have provided valuable feedback on earlier versions of
 the &product compilers and related tools.

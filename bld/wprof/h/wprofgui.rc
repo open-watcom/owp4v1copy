@@ -6,7 +6,7 @@
 #include "../h/wprof.rc"
 
 #ifdef __NT__
-IDR_MANIFEST RT_MANIFEST MOVEABLE PURE "appmanif.xml"
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST MOVEABLE PURE "appmanif.xml"
 #endif
 
 #ifdef __OS2__

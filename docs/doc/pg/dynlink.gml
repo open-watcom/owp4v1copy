@@ -684,8 +684,8 @@ option manyautodata
 system nt_dll initinstance terminstance
 .do end
 .if '&lang' eq 'FORTRAN 77' .do begin
-export dll_entry_1
-export dll_entry_2
+export DLL_ENTRY_1
+export DLL_ENTRY_2
 .do end
 .if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
 export dll_entry_1_
@@ -735,6 +735,12 @@ required.
 .note
 The "EXPORT" directive specifies the entry points into the dynamic
 link library.
+.if '&lang' eq 'FORTRAN 77' .do begin
+Note that in &product, names of all symbols are uppercased. Regardless
+of the case used in source files, linker directives must use uppercased
+symbol names. The linker is case sensitive by default, although the
+"OP NOCASEEXACT" directive may be used to override this.
+.do end
 .if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
 Note that the names specified in the "EXPORT" directive are appended
 with an underscore.
@@ -876,8 +882,8 @@ directive file, say
 would be as follows.
 .if '&lang' eq 'FORTRAN 77' .do begin
 .millust begin
-import dll_entry_1 dllsamp
-import dll_entry_2 dllsamp
+import DLL_ENTRY_1 dllsamp
+import DLL_ENTRY_2 dllsamp
 .millust end
 .do end
 .if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin

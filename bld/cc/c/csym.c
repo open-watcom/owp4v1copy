@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  C compiler symbol table management.
 *
 ****************************************************************************/
 
@@ -37,11 +36,13 @@
 #pragma intrinsic(memcpy)
 
 extern  void    CSegFree( SEGADDR_T );
-extern  void    WriteOutSegment( struct seg_info * );
 extern  TREEPTR CurFuncNode;
 
+static void NewSym( void );
+
+
 static unsigned Cached_sym_num;
-static void    *Cached_sym_addr;
+static void     *Cached_sym_addr;
 struct sym_stats {
     unsigned get, getptr, replace, read, write;
 } SymStats;
@@ -78,13 +79,8 @@ void SymInit()
     for( seg_num = 0; seg_num < MAX_SYM_SEGS; ++seg_num ) {
         SymSegs[ seg_num ].allocated = 0;
     }
-    SymBuffer = CPermAlloc( SYM_BUF_SIZE );
     SymSegment = AllocSegment( &SymSegs[0] );
-    if( SymSegment == 0 ) {
-        SymBufPtr = SymBuffer;
-    } else {
-        SymBufPtr = (char *)SymSegment;
-    }
+    SymBufPtr = (char *)SymSegment;
     EnumInit();
 }
 
@@ -97,9 +93,7 @@ void SymFini()
     for( seg_num = 0; seg_num < MAX_SYM_SEGS; ++seg_num ) {
         si = &SymSegs[ seg_num ];
         if( si->allocated ) {
-            if( si->in_farmem ) {
-                CSegFree( si->index );
-            }
+            CSegFree( si->index );
         }
     }
     if( CompFlags.extra_stats_wanted ) {
@@ -221,7 +215,7 @@ SYM_HANDLE MakeFunction( char *id, TYPEPTR typ )
 }
 
 
-void NewSym()
+static void NewSym( void )
 {
     ++NextSymHandle;
     if( NextSymHandle >= LARGEST_SYM_INDEX ) {
@@ -255,37 +249,20 @@ void SymAccess( unsigned sym_num )
         if( SymBufDirty ) {
             ++SymStats.write;
             si = &SymSegs[ SymSegNum ];
-            if( ! si->allocated ) {
+            if( !si->allocated ) {
                 SymSegment = AllocSegment( si );
-            }
-            if( SymSegment == 0 ) {
-                PageSeek( ((unsigned long)si->index * SYM_SEG_SIZE) +
-                       (SymBufNum % SYMBUFS_PER_SEG) * SYM_BUF_SIZE );
-                PageWrite( SymBufPtr, SYM_BUF_SIZE );
             }
             SymBufDirty = 0;
         }
         seg_num = buf_num / SYMBUFS_PER_SEG;
         si = &SymSegs[ seg_num ];
         SymSegment = AccessSegment( si );
-        if( SymSegment != 0 ) {
-            SymBufPtr = (char *)SymSegment +
-                      (buf_num % SYMBUFS_PER_SEG) * SYM_BUF_SIZE;
-        } else if( buf_num <= LastSymBuf ) {
-            ++SymStats.read;
-            PageSeek( ((unsigned long)si->index * SYM_SEG_SIZE) +
-                   (buf_num % SYMBUFS_PER_SEG) * SYM_BUF_SIZE );
-            PageRead( SymBufPtr, SYM_BUF_SIZE );
-        } else {
-            LastSymBuf = buf_num;
-            memset( SymBufPtr, 0, SYM_BUF_SIZE );
-        }
+        SymBufPtr = (char *)SymSegment + (buf_num % SYMBUFS_PER_SEG) * SYM_BUF_SIZE;
         SymBufNum = buf_num;
         SymSegNum = seg_num;
         FirstSymInBuf = buf_num * SYMS_PER_BUF;
     }
-    Cached_sym_addr = SymBufPtr +
-                         (sym_num - FirstSymInBuf) * sizeof(SYM_ENTRY);
+    Cached_sym_addr = SymBufPtr + (sym_num - FirstSymInBuf) * sizeof(SYM_ENTRY);
 }
 
 SYMPTR SymGetPtr( SYM_HANDLE sym_handle )
@@ -335,29 +312,6 @@ void SymReplace( SYMPTR sym, SYM_HANDLE sym_handle )
         SymBufDirty = 1;
     }
 }
-
-
-#ifndef NEWCFE
-void PageOutSyms()
-{
-    unsigned seg_num;
-    struct seg_info *si;
-
-    Cached_sym_num = ~0u;
-    if( SymBufPtr != SymBuffer ) {
-        memcpy( SymBuffer, SymBufPtr, SYM_BUF_SIZE );
-        SymBufPtr = SymBuffer;
-        SymBufDirty = 0;
-    }
-    for( seg_num = 0; seg_num < MAX_SYM_SEGS; ++seg_num ) {
-        si = &SymSegs[ seg_num ];
-        if( si->in_farmem ) {
-            if( si->index == SymSegment )  SymSegment = 0;
-            WriteOutSegment( si );
-        }
-    }
-}
-#endif
 
 
 SYM_HASHPTR SymHash( SYMPTR sym, SYM_HANDLE sym_handle )
@@ -913,7 +867,7 @@ void EndBlock()
             AsgnSegs( CurFunc->u.func.locals );
 /*          DumpWeights( CurFunc->u.func.locals ); */
         } else {
-            AsgnSegs( BlockStack->sym_list );
+            AsgnSegs( GetBlockSymList() );
         }
     }
     --SymLevel;
@@ -959,7 +913,7 @@ void FreeLabels()
 {
     LABELPTR label;
 
-    for( ; label = LabelHead; ) {
+    for( ; (label = LabelHead); ) {
         LabelHead = label->next_label;
         if( label->defined == 0 ) {
             CErr2p( ERR_UNDEFINED_LABEL, label->name );

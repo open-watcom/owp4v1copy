@@ -36,6 +36,9 @@
 #include <commdlg.h>
 #include "font.h"
 #include "win1632.h"
+#ifdef __WINDOWS__
+#pragma library("commdlg.lib")
+#endif
 
 #define MAX_STR 256
 

@@ -20,7 +20,6 @@ $# just in case anyone is curious ...
 
 # don't ask, just nuke the files
 .ERASE
-.CONTINUE
 
 # if you wish to build debug version
 !ifdef %DEBUG_BUILD
@@ -314,9 +313,10 @@ obj_drv = $(build_root)
 #
 # for creating on-line help
 #
-gml_root=$(doc_root)\gml
-gmllib=$(doc_root)\gml\syslib
-windev_dir=$(tools_root)\windev
+docs_root = $(%DOC_ROOT)
+gml_root  = $(docs_root)\gml
+gmllib    = $(docs_root)\gml\syslib
+windev_dir= $(tools_root)\windev
 
 !else
 
@@ -538,9 +538,10 @@ obj_drv = $(build_root)
 #
 # for creating on-line help
 #
-gml_root=$(doc_root)/gml
-gmllib=$(doc_root)/gml/syslib
-windev_dir=$(tools_root)/windev
+docs_root = $(%DOC_ROOT)
+gml_root  = $(docs_root)/gml
+gmllib    = $(docs_root)/gml/syslib
+windev_dir= $(tools_root)/windev
 
 !endif
 

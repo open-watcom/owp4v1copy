@@ -29,13 +29,12 @@
 *
 ****************************************************************************/
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "stdnt.h"
 
-unsigned ReqRedirect_stdin( void  )
+unsigned ReqRedirect_stdin( void )
 {
     redirect_stdin_ret  *ret;
 
@@ -44,7 +43,7 @@ unsigned ReqRedirect_stdin( void  )
     return( sizeof( *ret ) );
 }
 
-unsigned ReqRedirect_stdout( void  )
+unsigned ReqRedirect_stdout( void )
 {
     redirect_stdout_ret *ret;
 

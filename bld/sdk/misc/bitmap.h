@@ -38,8 +38,14 @@
 /* this macros determines the number of bytes of storage needed by a bitmap */
 #define BITS_TO_BYTES( x, y )   ( ( ( ( x ) + 31 ) / 32 ) * 4 * ( y ) )
 
+/* Old version
 #define DIB_INFO_SIZE( bc )  ( sizeof(BITMAPINFO) + \
                                     sizeof(RGBQUAD) * ((1<<(bc))-1))
+New below: only add size for palette if bits per pix is 8 or less.
+*/
+#define DIB_INFO_SIZE( bc )  \
+    ( (bc) < 9 ? sizeof(BITMAPINFO) + sizeof(RGBQUAD) * ((1<<(bc))-1) : sizeof(BITMAPINFOHEADER) )
+
 #define CORE_INFO_SIZE( bc ) ( sizeof(BITMAPCOREINFO) + \
                                     sizeof(RGBTRIPLE) * ((1<<(bc))-1))
 

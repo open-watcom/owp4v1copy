@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Dump internal C compiler data structures.
 *
 ****************************************************************************/
 
@@ -76,6 +75,8 @@ static char *_Ops[] = {
     "pushint",
     "pushfloat",
     "pushstring",
+    "pushseg",
+    "dupe",
     "convert_ptr",
     "nop",
     ".",
@@ -126,14 +127,6 @@ static char *_Ops[] = {
 };
 
 char    *CCOps[] = { "==", "!=", "<", "<=", ">", ">=" };
-
-void PageOutQuads() {}
-void PageOutLeafs() {}
-void GenQuad() {}
-void WriteOutSegment() {}
-void SetExpressCGInterface() {}
-
-extern  TREEPTR FirstStmt;
 
 static void DumpAString( STR_HANDLE str_handle )
 {

@@ -36,6 +36,7 @@
 #include <string.h>
 #include <dos.h>
 #include <malloc.h>
+#include <errno.h>
 #include "liballoc.h"
 #include "ntex.h"
 #include "stacklow.h"
@@ -45,6 +46,7 @@
 #include "mthread.h"
 #include "rtdata.h"
 #include "extfunc.h"
+#include "seterrno.h"
 
 extern  void            __InitMultipleThread( void );
 
@@ -56,114 +58,83 @@ extern  void            (*__sig_fini_rtn)(void);
 
 extern  void            _endthread(void);
 
-static  int             event_ctr = 0;
-
 typedef struct thread_args {
     thread_fn   *rtn;
     void        *argument;
     HANDLE      parent;
-    HANDLE      event;
-    HANDLE      event_ack;
-    HANDLE      *thread_handle;
+    HANDLE      thread_handle;
 } thread_args;
 
-static __cdecl begin_thread_helper( thread_args *td )
+static DWORD WINAPI begin_thread_helper( thread_args *td )
 /***************************************************/
 {
     thread_fn           *rtn;
     void                *arg;
-    HANDLE              event_ack;
     REGISTRATION_RECORD rr;
     thread_data         *tdata;
 
     rtn = td->rtn;
     arg = td->argument;
+    __THREADDATAPTR->thread_handle = td->thread_handle;
+    free( td );
 
     // For DLLs, __NTAddThread has already been called from _LibMain
     // in DLL_THREAD_ATTACH processing.
     if( !__Is_DLL ) {                                   /* 15-feb-93 */
-        #if defined(__AXP__) || defined(__PPC__)
-            tdata = (thread_data *)alloca( __ThreadDataSize );
-        #else
-            tdata = (thread_data *)__alloca( __ThreadDataSize );
-        #endif
+        if (NULL==(tdata = (thread_data *)alloca( __ThreadDataSize ))) {
+            CloseHandle(__THREADDATAPTR->thread_handle);
+            return( 0 );
+        }
         memset( tdata, 0, __ThreadDataSize );
         // tdata->__allocated = 0;
         tdata->__data_size = __ThreadDataSize;
         if( !__NTAddThread( tdata ) ) {
-            return;
+            CloseHandle(__THREADDATAPTR->thread_handle);
+            return( 0 );
         }
     }
-    // make a copy of the event handle before it disappears from the stack
-    event_ack = td->event_ack;
-    td->thread_handle = &(__THREADDATAPTR->thread_handle);
 
     __NewExceptionFilter( &rr );
     __sig_init_rtn(); // fills in a thread-specific copy of signal table
-    // allow main process to proceed
-    SetEvent( td->event );
-
-    // wait for main process to have given us the thread handle
-    WaitForSingleObject( event_ack, -1 );
-    CloseHandle( event_ack );
     (*rtn)( arg );
     _endthread();
+     return( 0 );
 }
 
 unsigned long __CBeginThread(thread_fn *start_addr, unsigned stack_size,
                      void *arglist)
 {
-
     DWORD       tid;
-    thread_args td;
+    thread_args *td;
     HANDLE      th;
-    char        *evn;
-    char        evname[32];     // we need room for 8+8+8+1 chars
 
     if( __TlsIndex == NO_INDEX ) {
-        if( __NTThreadInit() == FALSE )  return NULL;
+        if( __NTThreadInit() == FALSE ) return( -1L );
         __InitMultipleThread();
     }
-    //stack_bottom = stack_bottom;
+
+    td = malloc( sizeof( *td ) );
+    if( td == NULL ) {
+        __set_errno( ENOMEM );
+        return( -1L );
+    }
 
     stack_size = __Align4K( stack_size );
 
-    td.rtn = start_addr;
-    td.argument = arglist;
-    td.parent = GetCurrentThread();
-    td.thread_handle = 0;
+    td->rtn = start_addr;
+    td->argument = arglist;
+    td->parent = GetCurrentThread();
 
-    event_ctr++;
-    // make up a unique name like "__bgnthd12def8_2"
-    strcpy( evname, "__bgnthd" );
-    itoa( GetCurrentThreadId(), &evname[8], 16 );
-    evn = &evname[ strlen(evname) ];
-    *evn++ = '_';
-    itoa( event_ctr, evn, 16 );
-    td.event = CreateEvent( NULL, FALSE, FALSE, evname );
-
-    // make up a unique name like "__endthd12def8_2"
-    strcpy( evname, "__endthd" );
-    itoa( GetCurrentThreadId(), &evname[8], 16 );
-    evn = &evname[ strlen(evname) ];
-    *evn++ = '_';
-    itoa( event_ctr, evn, 16 );
-    td.event_ack = CreateEvent( NULL, FALSE, FALSE, evname );
-
-    th = CreateThread( NULL, stack_size, (LPVOID) begin_thread_helper,
-                (LPVOID) &td, 0, &tid );
-    if( th != NULL ) {
-        WaitForSingleObject( td.event, -1 );
-        if( td.thread_handle ) {
-            (*td.thread_handle) = th;
-        } else {
-            CloseHandle( th );
-        }
-        SetEvent( td.event_ack );
+    th = CreateThread( NULL, stack_size, (LPTHREAD_START_ROUTINE)&begin_thread_helper,
+                (LPVOID) td, CREATE_SUSPENDED, &tid );
+    if( th ) {
+        td->thread_handle = th;
+        ResumeThread( th );
     } else {
-        tid = -1;
+        // we didn't create the thread so it isn't going to free this
+        free( td );
+        th = (HANDLE)-1L;
     }
-    CloseHandle( td.event );
     return( (unsigned long)th );
 }
 

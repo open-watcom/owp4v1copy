@@ -482,7 +482,7 @@ EVENT intern keyboardevent()
 ************************************************************************/
 {
     register    unsigned int            key;
-    register    unsigned char           scan;
+    register    unsigned int            scan;
     register    unsigned char           ascii;
     register    EVENT                   ev;
     register    unsigned char           newshift;

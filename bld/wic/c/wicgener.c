@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Watcom Interface Converter main module.
 *
 ****************************************************************************/
 
@@ -42,11 +41,22 @@
 #include <fcntl.h>
 #include "wic.h"
 #include "wressetr.h"
+#include "wreslang.h"
+#include "banner.h"
 #ifdef TRMEM
     #include "trmem.h"
 #endif
 
 static int _fileNum = 0;
+static int MsgShift = 0;
+
+const char *FingerMsg[] = {
+    banner1w( "Interface Converter", _WIC_VERSION_ ),
+    banner2( "1993" ),
+    banner3,
+    banner3a,
+    0
+};
 
 /*--------------------- Resources --------------------------------*/
 
@@ -84,11 +94,12 @@ void initWicResources( char * fname )
         fprintf(stderr, "Internal error: Cannot open resources");
         wicExit(-1);
     }
+    MsgShift = WResLanguage() * MSG_LANG_SPACING;
 }
 
 int getResStr( int resourceid, char *buffer )
 {
-    if ( LoadString( &hInstance, resourceid,
+    if ( LoadString( &hInstance, resourceid + MsgShift,
                 (LPSTR) buffer, MAX_RESOURCE_SIZE ) != 0 ) {
         buffer[0] = 0;
         return 0;
@@ -215,7 +226,7 @@ void reportError(WicErrors err, ...) {
         _MEMOUT_INFO
     } _memOutput = _MEMOUT_NORMAL;
 
-    static void _printLine( void *dummy1, const char *buf, size_t dummy2 )
+    static void _printLine( int *dummy1, const char *buf, size_t dummy2 )
     {
         dummy1 = dummy1;  dummy2 = dummy2;
         if (_memOutput == _MEMOUT_NORMAL) {
@@ -373,11 +384,16 @@ void checkMemory(void) {
 
 void printUsageAndExit(void) {
     int i = USAGE_MSG_BASE;
+    int j = 0;
     char resStr[MAX_RESOURCE_SIZE];
 
     if (!getResStr(i, resStr)) {
         reportError(FATAL_INTERNAL, "Can't get usage resource");
     }
+
+    while (FingerMsg[j])
+        printf("%s\n", FingerMsg[j++]);
+
     while (strcmp(resStr, "END") != 0) {
         printf("%s\n", resStr);
         ++i;

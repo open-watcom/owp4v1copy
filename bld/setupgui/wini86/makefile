@@ -1,7 +1,7 @@
-VERSION = _WIN
-model = l
+#pmake: build os_win cpu_i86
 
-guilib  = $(guidir)/win/wini86/gui.lib
-guiinc  = $(guidir)/win/wini86
+host_os = win
+host_cpu = i86
+sys_windowed = 1
 
 !include ../setup.mif

@@ -236,9 +236,17 @@ common_objs += dbgzap.obj
 common_objs += fnovprt.obj
 !endif
 
-# system-dependent objects
+# target processor-dependent objects
 
-!include sysobjs.mif
+!ifeq target_cpu i86
+!include ../ppobj86.mif
+!else ifeq target_cpu 386
+!include ../ppobj86.mif
+!else ifeq target_cpu axp
+!include ../ppobjaxp.mif
+!else
+!error Unknown $(target_cpu) target processor!
+!endif
 
 #
 # object file macros are of the form <compiler_os><target>_objs

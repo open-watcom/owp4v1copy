@@ -49,6 +49,7 @@
 !inject sigsyo16.obj                                        o16
 !inject _slashc.obj  d16 d32             nt nta ntp         o16 o32
 !inject sleep.obj    d16 d32                        nvc nvl                 w16 w32
+!inject sleeplnx.obj                                                                    l32
 !inject sleepos2.obj                                        o16 o32
 !inject sleepwnt.obj                     nt nta ntp
 !inject spawn086.obj d16

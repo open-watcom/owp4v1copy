@@ -3,7 +3,7 @@
 This appendix describes the behavior of &wcboth. when the standard
 describes the behavior as
 .us implementation-defined.
-The term describing each behavior is taken directly from the ANSI/ISO
+The term describing each behavior is taken directly from the ISO/ANSI
 C Language standard.
 The numbers in parentheses at the end of each term refers to the
 section of the standard that discusses the behavior.
@@ -139,7 +139,7 @@ with external linkage (6.1.2).
 The &wcboth. compilers produce object names in mixed case.
 The &lnkname. provides an option to respect or ignore case when
 resolving linkages.
-By default, the linker ignores case. See the &linkref. for details.
+By default, the linker respects case. See the &linkref. for details.
 .endbigterms
 .*
 .section Characters
@@ -776,16 +776,11 @@ By default, &wcboth. will use the smallest integer type that
 can accommodate all values in the enumeration.
 .keep begin
 .pp
-&wc286. will choose the first appropriate
+&wc286. and
+&wc386. will choose the first appropriate
 type from the following table:
 ..sk 1 c
-..im enum286
-.keep end
-.keep begin
-.pp
-&wc386. will choose the first appropriate type from the following table:
-..sk 1 c
-..im enum386
+..im enumtab
 .keep end
 .pp
 Both compilers have a command-line switch that force all enumerations

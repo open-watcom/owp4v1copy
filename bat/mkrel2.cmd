@@ -143,6 +143,17 @@ md %relroot%\%defrel%\samples\win\datactl\win32
 md %relroot%\%defrel%\samples\win\edit\win16
 md %relroot%\%defrel%\samples\win\edit\win32
 md %relroot%\%defrel%\samples\win\edit\win386
+md %relroot%\%defrel%\samples\directx
+md %relroot%\%defrel%\samples\directx\c
+md %relroot%\%defrel%\samples\directx\cpp
+md %relroot%\%defrel%\samples\directx\c\d3d
+md %relroot%\%defrel%\samples\directx\c\dshow
+md %relroot%\%defrel%\samples\directx\c\dsound
+md %relroot%\%defrel%\samples\directx\c\dinput
+md %relroot%\%defrel%\samples\directx\cpp\d3d
+md %relroot%\%defrel%\samples\directx\cpp\dshow
+md %relroot%\%defrel%\samples\directx\cpp\dsound
+md %relroot%\%defrel%\samples\directx\cpp\dinput
 md %relroot%\%defrel%\src\cpplib
 md %relroot%\%defrel%\src\editdll
 md %relroot%\%defrel%\src\editdll\nt

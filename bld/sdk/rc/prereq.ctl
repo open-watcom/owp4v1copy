@@ -11,6 +11,6 @@ set PROJDIR=<CWD>
     <MAKE> -f gnumake
     cdsay ../rc
     <MAKE> -f gnumake
-    <CPCMD> bootstrp/rc <OWROOT>/bld/build/binl/wrc
+    <CPCMD> <OBJDIR>/rc <OWROOT>/bld/build/binl/wrc
     cdsay <PROJDIR>
 

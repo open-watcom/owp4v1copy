@@ -30,7 +30,10 @@
 ;*****************************************************************************
 
 
-ifdef _386
+include mdef.inc
+include struct.inc
+
+ifdef __386__
 
     .386                ; allow generation of 386 code
     _eax equ eax        ; map 32-bit registers to 32-bit
@@ -81,6 +84,3 @@ else
                 endm
 
 endif
-
-include mdef.inc
-include struct.inc

@@ -40,7 +40,7 @@
 #include "watcom.h"
 #include "builder.h"
 
-extern bool Quiet;
+extern bool     Quiet;
 
 unsigned SysRunCommand( const char *cmd )
 {
@@ -58,20 +58,23 @@ unsigned SysRunCommand( const char *cmd )
     dup2( my_std_error, STDERR_FILENO );
     close( my_std_output );
     close( my_std_error );
-    if ( rc == -1 ) {
-        if ( readpipe != -1 ) close( readpipe );
+    if( rc == -1 ) {
+        if( readpipe != -1 )
+	    close( readpipe );
         return( rc );
     }
-    if ( readpipe != -1 ) {
-        for (;;) {
-            bytes_read = read ( readpipe, buff, sizeof( buff )-1 );
-            if( bytes_read == 0 ) break;
+    if( readpipe != -1 ) {
+        for( ;; ) {
+            bytes_read = read( readpipe, buff, sizeof( buff ) - 1 );
+            if( bytes_read == 0 )
+	        break;
             buff[bytes_read] = '\0';
             Log( Quiet, "%s", buff );
         }
         close( readpipe );
     }
     /* free up the zombie (if there is one) */
-    while ( wait( &rc ) == -1 && errno == EINTR );
+    while( wait( &rc ) == -1 && errno == EINTR )
+        ;
     return( 0 );
 }

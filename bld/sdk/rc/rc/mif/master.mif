@@ -1,6 +1,12 @@
 proj_name = wrc
 name = wrc
 
+!ifeq sys_dll 1
+xname = $(name).dll
+!else
+xname = $(name).exe
+!endif
+
 !ifndef wrc_autodepends
 wrc_autodepends = .AUTODEPEND
 !endif
@@ -68,7 +74,7 @@ extra_c_flags_rcmem = $(TRACK_MEM_OPTS)
 
 # lflags stuff
 ###############
-extra_l_flags += lib $(wres_lib) option map
+extra_l_flags = option map
 
 !ifeq sys_dll 1
 !ifeq host_os nt
@@ -76,7 +82,7 @@ extra_l_flags += option offset=0x69800000
 !endif
 !endif
 
-extra_l_flags_osi += option symfile
+extra_l_flags_osi = option symfile
 
 # where to look for various files
 .c : .;$(wrc_dir)/c;$(cpp_dir);$(trmem_dir);$(watcom_dir)/c
@@ -91,19 +97,13 @@ inc_dirs = .;$(wrc_dir)/h;$(wres_dir)/h;$(watcom_dir)/h;$(cpp_dir);$(trmem_dir)
 
 # explicit rules
 
-!ifeq sys_dll 1
-$(name).dll : usage.rc usagej.rc rcmsg.gh $(objs) $(name).res $(wres_lib)
-!else
-$(name).exe : usage.rc usagej.rc rcmsg.gh $(objs) $(name).res $(wres_lib)
-!endif
-        $(linker) $(lflags) name $@ file { $(objs) }
+$(xname) : usage.rc usagej.rc rcmsg.gh $(objs) $(name).res $(wres_lib)
+        $(linker) $(lflags) name $@ file { $(objs) } lib {$(wres_lib)}
         @%make bindit
+        wstrip -q -a -r $^@ . $(name).res
 !ifeq sys_dll 1
-        wstrip -q -a -r $(name).dll . $(name).res
         @rm -f $(name).lib
         $(librarian) $(name).lib +$(name).dll
-!else
-        wstrip -q -a -r $(name).exe . $(name).res
 !endif
 
 bindit : .PROCEDURE
@@ -118,13 +118,6 @@ bindit : .PROCEDURE
 !else
         @%null
 !endif
-
-ytab.obj : ytab.c param.h ytab.gh
-#!ifeq release 0
-#       $(CC) -nm=rc.y $(CFLAGS) $[*
-#!else
-        $(CC) $(CFLAGS) $[*
-#!endif
 
 ytab.c ytab.gh : rc.y $(wrc_dir)/y/yydriver.c rcmem.h
         $(yacc) -d -b $[@ $[:yydriver.c >$(nulldevice)

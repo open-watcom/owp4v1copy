@@ -162,12 +162,12 @@ bool TBreak()
     return( ret );
 }
 
+#if 0
 void __assert( int value, char *expr, char *fn, int line_num )
 {
     value=value;expr=expr;fn=fn;line_num=line_num;
 }
 
-#if 0
 void exit( int code )
 {
     KillDebugger( code );
