@@ -10,9 +10,9 @@ HWND        MessageWnd = NULL;
 HWND        ScoreWnd = NULL;
 BOOL        MessagesOn = FALSE;
 
-int PASCAL WinMain( HANDLE, HANDLE, LPSTR, int );
-static BOOL FirstInstance( HANDLE );
-static BOOL AnyInstance( HANDLE, int );
+int PASCAL WinMain( HINSTANCE, HINSTANCE, LPSTR, int );
+static BOOL FirstInstance( HINSTANCE );
+static BOOL AnyInstance( HINSTANCE, int );
 
 BOOL _EXPORT FAR PASCAL About( HWND, unsigned, UINT, LONG );
 BOOL _EXPORT FAR PASCAL SpeedDlgProc( HWND, unsigned, UINT, LONG );
@@ -32,7 +32,7 @@ static void BoltSound();
 /*
  * WinMain - initialization, message loop
  */
-int PASCAL WinMain( HANDLE this_inst, HANDLE prev_inst, LPSTR cmdline,
+int PASCAL WinMain( HINSTANCE this_inst, HINSTANCE prev_inst, LPSTR cmdline,
                     int cmdshow )
 /*******************************/
 {
@@ -71,7 +71,7 @@ int PASCAL WinMain( HANDLE this_inst, HANDLE prev_inst, LPSTR cmdline,
  * FirstInstance - register window class for the application,
  *                 and do any other application initialization
  */
-static BOOL FirstInstance( HANDLE this_inst )
+static BOOL FirstInstance( HINSTANCE this_inst )
 /*******************************************/
 {
     WNDCLASS    wc;
@@ -100,7 +100,7 @@ static BOOL FirstInstance( HANDLE this_inst )
  * AnyInstance - do work required for every instance of the application:
  *                create the window, initialize data
  */
-static BOOL AnyInstance( HANDLE this_inst, int cmdshow )
+static BOOL AnyInstance( HINSTANCE this_inst, int cmdshow )
 /******************************************************/
 {
     HWND        window_handle;
@@ -158,9 +158,9 @@ static BOOL AnyInstance( HANDLE this_inst, int cmdshow )
     edata_ptr->bolt_speed = STD_BOLT_SPEED;
     GetClientRect( window_handle, &edata_ptr->client_rect );
     edata_ptr->message_window_proc =
-             MakeProcInstance( MessageWindowProc, this_inst );
+             MakeProcInstance( (FARPROC)MessageWindowProc, this_inst );
     edata_ptr->score_window_proc =
-             MakeProcInstance( ScoreProc, this_inst );
+             MakeProcInstance( (FARPROC)ScoreProc, this_inst );
     edata_ptr->bolt_icon = LoadIcon( this_inst, "Bolt" );
 
     /*
@@ -412,8 +412,8 @@ LONG _EXPORT FAR PASCAL WindowProc( HWND window_handle, unsigned msg,
         switch( cmd ) {
         case MENU_ABOUT:
             inst_handle = GET_HINST( window_handle );
-            proc = MakeProcInstance( About, inst_handle );
-            DialogBox( inst_handle,"AboutBox", window_handle, proc );
+            proc = MakeProcInstance( (FARPROC)About, inst_handle );
+            DialogBox( inst_handle,"AboutBox", window_handle, (DLGPROC)proc );
             FreeProcInstance( proc );
             break;
         case MENU_EXIT:
@@ -421,15 +421,15 @@ LONG _EXPORT FAR PASCAL WindowProc( HWND window_handle, unsigned msg,
             break;
         case MENU_SET_TARGET_SPEED:
             inst_handle = GET_HINST( window_handle );
-            proc = MakeProcInstance( SpeedDlgProc, inst_handle );
-            DialogBoxParam( inst_handle,"SpeedDlg", window_handle, proc,
+            proc = MakeProcInstance( (FARPROC)SpeedDlgProc, inst_handle );
+            DialogBoxParam( inst_handle,"SpeedDlg", window_handle, (DLGPROC)proc,
                             (DWORD)SET_TARGET_SPEED );
             FreeProcInstance( proc );
             break;
         case MENU_SET_BOLT_SPEED:
             inst_handle = GET_HINST( window_handle );
-            proc = MakeProcInstance( SpeedDlgProc, inst_handle );
-            DialogBoxParam( inst_handle,"SpeedDlg", window_handle, proc,
+            proc = MakeProcInstance( (FARPROC)SpeedDlgProc, inst_handle );
+            DialogBoxParam( inst_handle,"SpeedDlg", window_handle, (DLGPROC)proc,
                             (DWORD)SET_BOLT_SPEED );
             FreeProcInstance( proc );
             break;
@@ -1035,7 +1035,7 @@ static void ShootBolt( HWND window_handle )
      * use aim - boltheight so that the bottom left corner of the bolt icon
      * stops at the point AIM
      */
-    proc = MakeProcInstance( DrawBolt, inst_handle );
+    proc = MakeProcInstance( (FARPROC)DrawBolt, inst_handle );
     LineDDA( edata_ptr->bolt.x, edata_ptr->bolt.y, edata_ptr->aim.x,
              edata_ptr->aim.y - BOLTHEIGHT, proc, (LPARAM)(LPVOID)&mover );
     FreeProcInstance( proc );

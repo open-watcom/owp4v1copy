@@ -136,8 +136,8 @@ FARPROC fp;
     if( CFont != NULL ) DeleteObject( CFont );
     CFont = NULL;
 
-    fp = MakeProcInstance( GetFont, ed->inst );
-    if( DialogBox( ed->inst, "GetFont", ed->hwnd, fp ) ) {
+    fp = MakeProcInstance( (FARPROC)GetFont, ed->inst );
+    if( DialogBox( ed->inst, "GetFont", ed->hwnd, (DLGPROC)fp ) ) {
         if( ed->font != NULL ) DeleteObject( ed->font );
         ed->font = CFont;
         SendMessage( ed->editwnd, WM_SETFONT, (UINT)ed->font, TRUE );
@@ -203,7 +203,7 @@ short           _FAR *newsize;
 void GetAllFonts( LPEDATA ed )
 {
     HDC                 hdc;
-    FONTENUMPROC        fp;
+    FARPROC             fp;
     LPFINFO             tmp,next;
 
     /*
@@ -216,10 +216,10 @@ void GetAllFonts( LPEDATA ed )
         tmp = next;
     }
 
-    fp = MakeProcInstance( EnumFontsProc, ed->inst );
+    fp = MakeProcInstance( (FARPROC)EnumFontsProc, ed->inst );
     hdc = GetDC( ed->hwnd );
-    EnumFonts( hdc, (LPSTR) 0, fp,
-                (LPSTR) PASS_WORD_AS_POINTER( FONT_DATA ) );
+    EnumFonts( hdc, (LPSTR) 0, (FONTENUMPROC)fp,
+                (LPARAM) PASS_WORD_AS_POINTER( FONT_DATA ) );
 
     /*
      * get all sizes
@@ -227,8 +227,8 @@ void GetAllFonts( LPEDATA ed )
     CurrFont = FontHead;
     while( CurrFont != NULL ) {
         CurrFont->size_count = 0;
-        EnumFonts( hdc, CurrFont->name, fp,
-                (LPSTR) PASS_WORD_AS_POINTER( FONT_SIZES ) );
+        EnumFonts( hdc, CurrFont->name, (FONTENUMPROC)fp,
+                (LPARAM) PASS_WORD_AS_POINTER( FONT_SIZES ) );
         CurrFont = CurrFont->next;
     }
 

@@ -28,7 +28,7 @@
 
 char       _class[64];
 HWND       hWnd;               /* Handle to main window */
-HANDLE     hInst;              /* Handle to instance data*/
+HINSTANCE     hInst;              /* Handle to instance data*/
 BOOL       bHelp = FALSE;      /* Help mode flag; TRUE = "ON"*/
 HCURSOR    hHelpCursor;        /* Cursor displayed when in help mode*/
 char       szHelpFileName[EXE_NAME_MAX_SIZE+1];    /* Help file name*/
@@ -39,15 +39,15 @@ void MakeHelpPathName(char*);  /* Function deriving help file path */
 
 /****************************************************************************
 
-   FUNCTION:   WinMain(HANDLE, HANDLE, LPSTR, int)
+   FUNCTION:   WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
    PURPOSE:    Calls initialization function, processes message loop.
 
 ****************************************************************************/
 
 int PASCAL WinMain(hInstance, hPrevInstance, lpCmdLine, nCmdShow)
-HANDLE hInstance;
-HANDLE hPrevInstance;
+HINSTANCE hInstance;
+HINSTANCE hPrevInstance;
 LPSTR  lpCmdLine;
 int    nCmdShow;
 {
@@ -79,7 +79,7 @@ int    nCmdShow;
 
 /****************************************************************************
 
-   FUNCTION:   InitApplication(HANDLE)
+   FUNCTION:   InitApplication(HINSTANCE)
 
    PURPOSE:    Initializes window data and registers window class.
 
@@ -88,7 +88,7 @@ int    nCmdShow;
 ****************************************************************************/
 
 BOOL InitApplication(hInstance)
-HANDLE hInstance;
+HINSTANCE hInstance;
 {
    WNDCLASS wc;
 
@@ -110,7 +110,7 @@ HANDLE hInstance;
 
 /****************************************************************************
 
-   FUNCTION:   InitInstance(HANDLE, int)
+   FUNCTION:   InitInstance(HINSTANCE, int)
 
    PURPOSE:    Saves instance handle in global variable and creates main
                window.
@@ -120,7 +120,7 @@ HANDLE hInstance;
 ****************************************************************************/
 
 BOOL InitInstance(hInstance, nCmdShow)
-HANDLE hInstance;
+HINSTANCE hInstance;
 int    nCmdShow;
 {
 
@@ -249,11 +249,11 @@ LONG       lParam;
                    break;
 
                case IDM_ABOUT:
-                   lpProcAbout = MakeProcInstance(About, hInst);
+                   lpProcAbout = MakeProcInstance((FARPROC)About, hInst);
                    DialogBox(hInst,
                        "AboutBox",
                        hWnd,
-                       lpProcAbout);
+                       (DLGPROC)lpProcAbout);
                    FreeProcInstance(lpProcAbout);
                    break;
 
