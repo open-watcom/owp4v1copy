@@ -159,8 +159,10 @@ bool GUIGetWndColour( gui_window *wnd, gui_attr attr, gui_colour_set *colour_set
 
 void SetBKBrush( gui_window *wnd )
 {
-    if (!init_rgb)
+    if (!init_rgb){
         InitSystemRGB();
+        init_rgb = 1;
+    }
 
     GUIGetRGB( wnd->colours[GUI_BACKGROUND].back, &wnd->bk_rgb );
     wnd->bk_brush = _wpi_createsolidbrush(GUIGetBack( wnd, GUI_BACKGROUND ));
