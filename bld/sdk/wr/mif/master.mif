@@ -1,17 +1,3 @@
-#  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#  %       Copyright (C) 1992, by WATCOM Systems Inc. All rights     %
-#  %       reserved. No part of this software may be reproduced      %
-#  %       in any form or by any means - graphic, electronic or      %
-#  %       mechanical, including photocopying, recording, taping     %
-#  %       or information storage and retrieval systems - except     %
-#  %       with the written permission of WATCOM Systems Inc.        %
-#  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-#
-#  Date         By              Reason
-#  ----         --              ------
-#  21 May 93    Wes Nelson      initial implementation
-#
-
 proj_name = wr
 name = wr
 
@@ -30,33 +16,33 @@ WINDOWS = 1
 !include wres.mif
 
 object =    wrmain.obj wrmem.obj wrmsg.obj wrfindt.obj wrtmpfil.obj &
-                wrrdw16.obj wrrdwnt.obj wrrdres.obj wrimg.obj &
-                wrsvexe.obj wrsvres.obj &
-                wridfile.obj wrinfo.obj wrstrdup.obj &
-                wrrcmem.obj wrlist.obj wrdel.obj wrstr.obj wrclean.obj &
-                wrdata.obj wrnamoor.obj wrwresid.obj &
-                wrselft.obj wrmemf.obj wrdmsg.obj wrctl3d.obj &
-                wrbitmap.obj wricon.obj wr_wres.obj wrselimg.obj &
-                wrrnames.obj wrhash.obj wredit.obj wrutil.obj &
+            wrrdw16.obj wrrdwnt.obj wrrdres.obj wrimg.obj &
+            wrsvexe.obj wrsvres.obj &
+            wridfile.obj wrinfo.obj wrstrdup.obj &
+            wrrcmem.obj wrlist.obj wrdel.obj wrstr.obj wrclean.obj &
+            wrdata.obj wrnamoor.obj wrwresid.obj &
+            wrselft.obj wrmemf.obj wrdmsg.obj wrctl3d.obj &
+            wrbitmap.obj wricon.obj wr_wres.obj wrselimg.obj &
+            wrrnames.obj wrhash.obj wredit.obj wrutil.obj &
             trmem.tbj trmemcvr.tbj &
             preproc.cbj ppexpr.cbj ppmacro.cbj &
             rcerrprt.obj &
             palette.mbj ldstr.mbj jdlg.mbj &
             pass2.rbj exeseg.rbj exeres.rbj rcstr.rbj ppalloc.rbj &
-                exeutil.rbj exeobj.rbj exerespe.rbj rcio.rbj &
-                global.rbj semstr.rbj semsingl.rbj semantic.rbj semraw.rbj &
-                errors.rbj tmpctl.rbj autodep.rbj layer0.rbj param.rbj &
-                dbtable.rbj swchar.rbj sharedio.rbj
+            exeutil.rbj exeobj.rbj exerespe.rbj rcio.rbj &
+            global.rbj semstr.rbj semsingl.rbj semantic.rbj semraw.rbj &
+            errors.rbj tmpctl.rbj autodep.rbj layer0.rbj param.rbj &
+            dbtable.rbj swchar.rbj sharedio.rbj
 
 
-!ifeq host_CPU axp
+!ifeq host_cpu axp
 OF =
 !else
 OF = -of+
 !endif
 
 extra_c_flags_nt_386    = -fpc
-extra_c_flags_nt        = $(extra_c_flags_nt_$(host_CPU))
+extra_c_flags_nt        = $(extra_c_flags_nt_$(host_cpu))
 extra_c_flags_win       = -fpc-s-zc-zu-zw
 extra_c_flags           = -DWIN_GUI
 
@@ -75,9 +61,9 @@ TRMEM =
 wbind           = wbind
 rc_opts_nt      = -bt=NT
 rc_opts_win     = -bt=windows
-rc_opts         = -q $(rc_opts_$(host_OS))
+rc_opts         = -q $(rc_opts_$(host_os))
 
-!ifeq host_OS nt
+!ifeq host_os nt
 rc_opts         += -d__NT__
 !else
 #rc_opts        += -zm
@@ -96,10 +82,10 @@ HOME__DIR       =$+ $(%cwd) $-
 
 .BEFORE
         set INCLUDE=$(inc_path)
-        cd $(wrc_dir)\o
-        wmake -h -i rcmsg.h
-        wmake -h -i ytab.obj
-        cd $(HOME__DIR)
+#        cd $(wrc_dir)\o
+#        wmake -h -i rcmsg.h
+#        wmake -h -i ytab.obj
+#        cd $(HOME__DIR)
 
 #------------- LIB
 $(name).lib: wrcmsg.h $(name).dll
@@ -108,11 +94,9 @@ $(name).lib: wrcmsg.h $(name).dll
 #------------- LINK
 extra_l_flags = libpath $(misc_dir) op map,v,static
 extra_l_flags_nt = op stack=32k,heap=16k commit heap=8k
-!ifndef TOOLS_10_0
-!ifeq host_CPU 386
+!ifeq host_cpu 386
 #extra_l_flags_nt += runtime windows=4.0 option offset=69900000
 extra_l_flags_nt += runtime windows=4.0
-!endif
 !endif
 extra_l_flags_win = op rwr,stack=16k export WEP RESIDENT
 #extra_l_flags_win += segment  _TEXT PRELOAD FIXED
@@ -122,19 +106,12 @@ extra_l_flags_win = op rwr,stack=16k export WEP RESIDENT
 $(name).dll: $(object) $(wres_lib) $(name).res
         *$(linker)  d a $(lflags) name $(name).dll lib $(wres_lib) file {$(object)}
         $(rc) $(rc_opts) -k $(name).res $(name).dll
-!ifdef TOOLS_10_0
-!ifeq host_OS nt
-!ifeq host_CPU 386
-        whack $(name).dll
-!endif
-!endif
-!endif
 
 #---------- TEST
 test_system_win_i86= windows
 test_system_nt_386 = nt_win
 test_system_nt_axp = ntaxp_win
-test_system = $(test_system_$(host_OS)_$(host_CPU))
+test_system = $(test_system_$(host_os)_$(host_cpu))
 
 test_lflags = system $(test_system) name test debug all libpath $(watcom_dir)\lib
 test_lflags += option quiet, map, elim, v, static
@@ -144,11 +121,9 @@ test.exe: $(name).lib $(TESTLNK) test.obj
 
 test.obj: test.c
 
-$(name).res: $(name).rc wrcmsg.h
-
-$(name).rc: addsym.dlg editsym.dlg selft.dlg selimage.dlg memflags.dlg &
-            addsym.h editsym.h selft.h selimage.h memflags.h
-        @%null
+$(name).res: $(name).rc wrcmsg.h &
+             addsym.dlg editsym.dlg selft.dlg selimage.dlg memflags.dlg &
+             addsym.h editsym.h selft.h selimage.h memflags.h
 
 .c.obj: .AUTODEPEND
         $(cc) $(cflags) $(extra_c_flags_$[&) -fhq $[@
@@ -172,7 +147,7 @@ ldstr.mbj: .AUTODEPEND
         $(cc) $(cflags) $(extra_c_flags_$[&) -zm $(misc_dir)\$^& -fo=$^&.mbj
 
 .rc.res:
-        $(rc) $(rc_opts) -DWR_COMPILED -r -fo=.\$^&.res ..\h\$^&.rc
+        $(rc) $(rc_opts) -DWR_COMPILED -DFoO -r -fo=.\$^&.res ..\h\$^&.rc
 
 wrcmsg.h: wrtemp.h
         vi -q -i -s $(sdk_dir)\misc\msgtoh.vi -p"wrcmsg.h" wrtemp.h
