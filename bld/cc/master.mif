@@ -323,8 +323,10 @@ code$(target_cpu).gh : code$(target_cpu).s ../a/mkcode.c
         ./mkcode $^@
 	rm -f mkcode
 !else
-code$(target_cpu).gh : ./mkcod$(target_cpu).exe
-        $[@ $^@
+#code$(target_cpu).gh : ./mkcod$(target_cpu).exe
+#        $[@ $^@
+code$(target_cpu).gh : ./mkcod$(target_cpu)x.bin ./mkcodex.exe
+        $]@ $[@ $^@
 !endif
 
 code$(target_cpu).s: ../a/code$(target_cpu).asm ../asm2s.sed
@@ -344,6 +346,13 @@ code$(target_cpu).s: ../a/code$(target_cpu).asm ../asm2s.sed
         $(bld_link) f { mkcode.obj code$(target_cpu).obj } n $@
 !endif
 !endif
+
+./mkcod$(target_cpu)x.bin: ../a/code$(target_cpu)x.asm
+        $(as) $(aflags) $(extra_a_flags_$[&) $[@
+        $(linker) format dos com option nodefault file code$(target_cpu)x.obj name $^@
+
+./mkcodex.exe: ../a/mkcodex.c
+        $(bld_cl) $[@ -fo=$^@
 
 usage.gh: ../usage.sp
         wsplice -k T$(target_cpu) -k H$(host_cpu) -k OS_$(host_os)  "-f\"%s\0\"" ../usage.sp usage.gh
