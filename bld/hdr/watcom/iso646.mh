@@ -1,5 +1,5 @@
 /*
- *  iso646.h    Normative Addendum alternative spellings
+ *  iso646.h    C99 Standard:  7.9  Alternative spellings  <iso646.h>
  *
 :include crwat.sp
  */
@@ -13,8 +13,8 @@
 #define bitand  &
 #define bitor   |
 #define compl   ~
-#define ne      !=
 #define not     !
+#define not_eq  !=
 #define or      ||
 #define or_eq   |=
 #define xor     ^
