@@ -29,11 +29,9 @@ as_i86          = *wasm
 as_axp          = *wasaxp
 as_ppc          = *wasppc
 
-#rc_os2          = *rc
-rc_os2          = d:\lang\binp\rc
+rc_os2          = *rc
 !ifeq host_OS os2
-#%PATH = $+$(%PATH);$(%watcom)\binp$-
-%PATH = $+$(%PATH);d:\lang\binp$-
+%PATH = $+$(%PATH);$(%watcom)\binp$-
 # this extra line appears to be needed
 !endif
 rc              = *wrc

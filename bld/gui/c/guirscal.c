@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Get rounded coordinate scaling factors.
 *
 ****************************************************************************/
 
@@ -38,6 +37,6 @@ extern void GUIGetRoundScale( gui_coord * scale )
     gui_rect screen;
 
     GUIGetScreen( &screen );
-    scale->x = ( scale->x / screen.width ) * screen.width;
-    scale->y = ( scale->y / screen.height ) * screen.height;
+    scale->x = ( scale->x * screen.width ) / screen.width;
+    scale->y = ( scale->y * screen.height ) / screen.height;
 }
