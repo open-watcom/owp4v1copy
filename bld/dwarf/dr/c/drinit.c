@@ -107,7 +107,8 @@ static dr_dbg_handle  InitDbgHandle( void *file, unsigned long *sizes, int bytes
 
     dbg = DWRALLOC( sizeof(struct dr_dbg_info) );
     DWRCurrNode = dbg;    /* must be set for DWRVMAlloc in virtstub.c */
-    if( dbg == NULL ) goto error;
+    if( dbg == NULL ) return( NULL );
+    dbg->next = NULL;
     dbg->file = file;
     dbg->addr_size = 0;
     dbg->wat_version = 0; /* zero means not Watcom DWARF */
@@ -117,15 +118,16 @@ static dr_dbg_handle  InitDbgHandle( void *file, unsigned long *sizes, int bytes
         dbg->sections[i].size = *sizes;
         if( *sizes != 0 ) {
             dbg->sections[i].base = DWRVMAlloc( *sizes, i );
-            if( dbg->sections[i].base == NULL ) goto error;
+            if( dbg->sections[i].base == NULL ) {
+                DWRFREE( dbg );
+                return( NULL );
+            }
         } else {
             dbg->sections[i].base = NULL;
         }
         sizes++;
     }
     return( dbg );
-error:
-    return( NULL );
 }
 
 extern int  DRDbgClear( dr_dbg_handle dbg )
@@ -190,10 +192,10 @@ static void ReadCompUnits( struct dr_dbg_info *dbg, int read_ftab )
         }
         compunit->abbrev_start = abbrev_offset;
         ReadCUAbbrevTable( dbg, compunit );
-	if( read_ftab ) {
+        if( read_ftab ) {
             DWRInitFileTable( &compunit->filetab );
             DWRScanFileTable( start, &FileNameTable, &compunit->filetab );
-	} else {
+        } else {
             compunit->filetab.len  = 0;
             compunit->filetab.tab  = NULL;
         }
@@ -257,7 +259,6 @@ void DRDbgFini( dr_dbg_handle dbg )
     }
     DWRFiniFileTable( &dbg->compunit.filetab, FALSE );
     DWRFREE( dbg );
-    DWRVMReset();
 }
 
 dr_dbg_handle  DRSetDebug( dr_dbg_handle dbg )
