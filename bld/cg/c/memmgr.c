@@ -539,7 +539,11 @@ static  char    *MemFromSys( tag amount )
 
     // round up size to multiple of 64K
     size = (amount + sizeof( mem_blk ) + sizeof( blk_hdr ) + (_64K - 1)) & - _64K;
+#ifdef NDEBUG
     ptr = malloc( size );
+#else
+    ptr = calloc( 1, size );   // Need to clear memory for later assert() calls
+#endif
     if( ptr != NULL ) {
         AllocSize += size;
 #ifdef MEMORY_STATS
