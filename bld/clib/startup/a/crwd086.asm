@@ -24,15 +24,11 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  C runtime read/write data (i86 version).
 ;*
 ;*****************************************************************************
 
 
-;
-; read/write data for WATCOM C
-;
 include mdef.inc
 .286p
         name    crwdata
@@ -49,11 +45,11 @@ _DATA   segment word public 'DATA'
 
         assume  DS:DGROUP
 
-_curbrk   dw 0          ; top of usable memory
+_curbrk    dw 0                 ; top of usable memory
 ifndef __QNX__
 _psp       dw 0                 ; segment addr of program segment prefix
-_osmajor  db 0          ; major DOS version number
-_osminor  db 0          ; minor DOS version number
+_osmajor   db 0                 ; major DOS version number
+_osminor   db 0                 ; minor DOS version number
 ifdef _PROT_MODE_
 __osmode   db 1                 ; 0 => DOS real mode, 1 => protect-mode
 __HShift   db 3                 ; Huge Shift amount (real-mode=12,prot-mode=3)
@@ -62,15 +58,15 @@ __osmode   db 0                 ; 0 => DOS real mode
 __HShift   db 12                ; Huge Shift amount (real-mode=12,prot-mode=3)
 endif
 endif
-_STACKLOW dw 0          ; lowest address in stack
-_STACKTOP dw 0          ; highest address in stack
-_cbyte    dw 0          ; used by getch, getche
-_child    dw 0          ; non-zero => a spawned process is running
+_STACKLOW  dw 0                 ; lowest address in stack
+_STACKTOP  dw 0                 ; highest address in stack
+_cbyte     dw 0                 ; used by getch, getche
+_child     dw 0                 ; non-zero => a spawned process is running
 __no87     dw 0                 ; non-zero => "NO87" environment var present
 ifndef __QNX__
-__get_ovl_stack dw 0,0          ; get overlay stack pointer
+__get_ovl_stack     dw 0,0      ; get overlay stack pointer
 __restore_ovl_stack dw 0,0      ; restore overlay stack pointer
-__close_ovl_file dw 0,0         ; close the overlay file handle
+__close_ovl_file    dw 0,0      ; close the overlay file handle
 endif
  __FPE_handler label dword
 ___FPE_handler dw 0,0           ; FPE handler

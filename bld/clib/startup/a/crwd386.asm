@@ -24,15 +24,11 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  C runtime read/write data (386 version).
 ;*
 ;*****************************************************************************
 
 
-;
-; R/W data for WATCOM C 386
-;
         name    crwdata
 
 .387
@@ -54,26 +50,26 @@ _DATA   segment dword public 'DATA'
         assume  DS:DGROUP
 
 ifndef __NETWARE__
-_dynend    dd 0                 ; top of dynamic data area
-_curbrk    dd 0                 ; top of usable memory
+_dynend      dd 0               ; top of dynamic data area
+_curbrk      dd 0               ; top of usable memory
 endif
 ifndef __QNX__
-_LpCmdLine  dd 0                ; pointer to raw command line
-_LpPgmName  dd 0                ; pointer to program name (for argv[0])
+_LpCmdLine   dd 0               ; pointer to raw command line
+_LpPgmName   dd 0               ; pointer to program name (for argv[0])
 ifdef __NT__
-_LpDllName  dd 0                ; pointer to dll name (for OS/2,WIN32)
+_LpDllName   dd 0               ; pointer to dll name (for OS/2,WIN32)
 _LpwCmdLine  dd 0               ; pointer to widechar raw command line
 _LpwPgmName  dd 0               ; pointer to widechar program name (for argv[0])
 _LpwDllName  dd 0               ; pointer to widechar dll name (for OS/2,WIN32)
 endif
 ifdef __OS2__
-_LpDllName  dd 0                ; pointer to dll name (for OS/2,WIN32)
+_LpDllName   dd 0               ; pointer to dll name (for OS/2,WIN32)
 _LpwCmdLine  dd 0               ; pointer to widechar raw command line
 _LpwPgmName  dd 0               ; pointer to widechar program name (for argv[0])
 _LpwDllName  dd 0               ; pointer to widechar dll name (for OS/2,WIN32)
 endif
-ifndef __NETWARE__
-_psp        dw 0,0               ; segment addr of program segment prefix
+ifdef __DOS__
+_psp         dw 0,0             ; segment addr of program segment prefix
 __x386_stacklow label   dword
 endif
 endif
@@ -88,7 +84,7 @@ _child     dd 0                 ; non-zero => a spawned process is running
 endif
 __no87     dw 0                 ; non-zero => "NO87" environment var present
 ifndef __NETWARE__
-ifndef __QNX__
+ifdef __DOS__
 _Extender         db 0          ; see clib\h\extender.inc for values
 _ExtenderSubtype  db 0          ; non-zero -> variant of extender
 __X32VM    db 0                 ; non-zero => X-32VM DOS Extender
@@ -113,7 +109,6 @@ ___FPE_handler dd __null_FPE_rtn ; FPE handler
 
 ifndef __QNX__
 ifndef __NETWARE__
-        public  "C",_psp
         public  "C",_osmajor
         public  "C",_osminor
 ifdef __NT__
@@ -123,6 +118,9 @@ ifdef __NT__
         public  "C",_winminor
         public  "C",_winver
 endif
+endif
+ifdef __DOS__
+        public  "C",_psp
         public  "C",_Extender
         public  "C",_ExtenderSubtype
         public  __X32VM
