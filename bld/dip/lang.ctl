@@ -22,6 +22,8 @@ set PROJDIR=<CWD>
 #        <CPCMD> <DEVDIR>/dip/export/dos386/export.sym       <RELROOT>/rel2/binw/export.dsy
         <CPCMD> <DEVDIR>/dip/watcom/dos386/watcom.dip       <RELROOT>/rel2/binw/
 #        <CPCMD> <DEVDIR>/dip/watcom/dos386/watcom.sym       <RELROOT>/rel2/binw/watcom.dsy
+        <CPCMD> <DEVDIR>/dip/mapsym/dos386/mapsym.dip       <RELROOT>/rel2/binw/
+#        <CPCMD> <DEVDIR>/dip/mapsym/dos386/mapsym.sym       <RELROOT>/rel2/binw/watcom.dsy
 
   [ IFDEF (os_win "") <2*> ]
         <CPCMD> <DEVDIR>/dip/dwarf/wini86/dwarf.dll         <RELROOT>/rel2/binw/
@@ -32,6 +34,8 @@ set PROJDIR=<CWD>
 #        <CPCMD> <DEVDIR>/dip/export/wini86/export.sym       <RELROOT>/rel2/binw/
         <CPCMD> <DEVDIR>/dip/watcom/wini86/watcom.dll       <RELROOT>/rel2/binw/
 #        <CPCMD> <DEVDIR>/dip/watcom/wini86/watcom.sym       <RELROOT>/rel2/binw/
+        <CPCMD> <DEVDIR>/dip/mapsym/wini86/mapsym.dll       <RELROOT>/rel2/binw/
+#        <CPCMD> <DEVDIR>/dip/mapsym/wini86/mapsym.sym       <RELROOT>/rel2/binw/
 
   [ IFDEF (os_os2 "") <2*> ]
 #        <CPCMD> <DEVDIR>/dip/dwarf/os2i86/dwarf.dll         <RELROOT>/rel2/binp/dll/
@@ -50,6 +54,8 @@ set PROJDIR=<CWD>
         <CPCMD> <DEVDIR>/dip/export/os2386/export.sym       <RELROOT>/rel2/binp/
         <CPCMD> <DEVDIR>/dip/watcom/os2386/watcom.d32       <RELROOT>/rel2/binp/
         <CPCMD> <DEVDIR>/dip/watcom/os2386/watcom.sym       <RELROOT>/rel2/binp/
+        <CPCMD> <DEVDIR>/dip/mapsym/os2386/mapsym.d32       <RELROOT>/rel2/binp/
+        <CPCMD> <DEVDIR>/dip/mapsym/os2386/mapsym.sym       <RELROOT>/rel2/binp/
 
   [ IFDEF (os_nt "") <2*> ]
         <CPCMD> <DEVDIR>/dip/dwarf/nt386/dwarf.dll          <RELROOT>/rel2/binnt/
@@ -60,6 +66,8 @@ set PROJDIR=<CWD>
         <CPCMD> <DEVDIR>/dip/export/nt386/export.sym        <RELROOT>/rel2/binnt/
         <CPCMD> <DEVDIR>/dip/watcom/nt386/watcom.dll        <RELROOT>/rel2/binnt/
         <CPCMD> <DEVDIR>/dip/watcom/nt386/watcom.sym        <RELROOT>/rel2/binnt/
+        <CPCMD> <DEVDIR>/dip/mapsym/nt386/mapsym.dll        <RELROOT>/rel2/binnt/
+        <CPCMD> <DEVDIR>/dip/mapsym/nt386/mapsym.sym        <RELROOT>/rel2/binnt/
 
   [ IFDEF (os_linux "") <2*> ]
         <CPCMD> <DEVDIR>/dip/dwarf/linux386/dwarf.dip       <RELROOT>/rel2/binl/
@@ -70,6 +78,8 @@ set PROJDIR=<CWD>
         <CPCMD> <DEVDIR>/dip/codeview/linux386/codeview.sym <RELROOT>/rel2/binl/
         <CPCMD> <DEVDIR>/dip/export/linux386/export.dip     <RELROOT>/rel2/binl/
         <CPCMD> <DEVDIR>/dip/export/linux386/export.sym     <RELROOT>/rel2/binl/
+        <CPCMD> <DEVDIR>/dip/mapsym/linux386/mapsym.dip     <RELROOT>/rel2/binl/
+        <CPCMD> <DEVDIR>/dip/mapsym/linux386/mapsym.sym     <RELROOT>/rel2/binl/
 
   [ IFDEF axp <2*> ]
 #        <CPCMD> <DEVDIR>/dip/dwarf/ntaxp/dwarf.dll          <RELROOT>/rel2/axpnt/
