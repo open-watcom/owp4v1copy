@@ -1,27 +1,30 @@
-OpenWatcom DirectX Sample Code
-------------------------------
+Open Watcom DirectX Sample Code
+-------------------------------
 
-These folders contain some DirectX sample code.
-They require at least DirectX 9.0 to compile.
+These folders contain DirectX sample code.
+The examples require DirectX 9.0 SDK or newer to compile.
 
 The latest DirectX SDK can be downloaded from
 http://www.microsoft.com/directx
 
-At the time of writing DirectX9.0b is the latest version.
+At the time of this writing DirectX9.0b is the latest version.
 
 You should add the path to where you installed the SDK
 to the front of the LIB and INCLUDE environment variables,
-before the OpenWatcom paths
-eg.
+before the Open Watcom paths, eg.
+
 set LIB=c:\dxsdk9\lib;c:\ow\lib386\nt;c:\ow\lib386
 set INCLUDE=c:\dxsdk9\include;c:\ow\h\nt;c:\ow\h
 
-It might be a good idea to install the SDK into a 8.3
-compatible folder name.
+This is to override the older DirectX headers and libraries
+supplied with Open Watcom.
 
-A few notes on the samples.
+It is recommended to install the SDK into an 8.3 conforming
+folder name.
 
-Usually, pressing Escape will exit the demos.
+Miscellaneous notes on the samples follow:
+
+In most cases, pressing the Esc key will exit the demos.
 
 Direct3D
 --------
@@ -39,30 +42,31 @@ windowed, with or without a Z-buffer.
 
 DirectSound
 -----------
-The sample will probably not work properly with exotic
+The sample will likely not work properly with "exotic"
 files (like mp3) encapsulated inside WAV files.
 
 DirectShow
 ----------
-The sample will probably not work properly with exotic
+The sample will likely not work properly with "exotic"
 files (like mpeg2) encapsulated inside AVI files.
 
 Inside the code there is a toggle to allow DirectShow to
-manage its own window instead of using the application one.
+manage its own window instead of using the application
+provided one.
 
 DirectInput
 -----------
 The sample uses the most conservative locking of resources
-to be most Windows friendly.
+to be maximally Windows friendly.
 
 DirectPlay
 ----------
-There's currently no DirectPlay example.  I think this API
-has gone mad!  Use BSD sockets instead.
+There's currently no DirectPlay example. Using BSD sockets
+instead is highly recommended.
 
 DirectMusic
 -----------
-Up for grabs.
+Looking for contributors!
 
 
-Jim Shaw 16/3/2004
+Jim Shaw - March 16, 2004
