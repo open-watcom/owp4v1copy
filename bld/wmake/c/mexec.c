@@ -1424,6 +1424,13 @@ STATIC RET_T handleChangeDrive( const char *cmd )
 #endif
 
 
+STATIC RET_T handleRMSyntaxError( void )
+/***************************************/
+{
+    PrtMsg( ERR| SYNTAX_ERROR_IN, dosInternals[ COM_RM ] );
+    return( RET_ERROR );
+}
+
 #if !defined( __UNIX__ )
 typedef struct {
     BIT bForce  : 1;
@@ -1456,7 +1463,7 @@ STATIC RET_T getRMArgs( const char *line, rm_flags *flags, const char **pfile )
                         flags->bVerbose = TRUE;
                         break;
                     default:
-                        return( RET_ERROR );
+                        return( handleRMSyntaxError() );
                 }
                 p++;
             }
@@ -1511,7 +1518,6 @@ STATIC RET_T handleRM( const char *cmdname, const char *cmd )
  *
  * -f   Force deletion of read-only files.
  * -v   Verbose operation.
- * Other flags are handled by rm.exe
  */
 {
     rm_flags    flags;
@@ -1519,29 +1525,27 @@ STATIC RET_T handleRM( const char *cmdname, const char *cmd )
     const char  *pfname;
 
     rt = getRMArgs( cmd, &flags, &pfname );
-    if( RET_SUCCESS == rt ) {
-        do {
-            if( strpbrk( pfname, WILD_METAS ) == NULL ) {
-                if( !doRM( pfname, &flags ) ) {
-                    return( RET_ERROR );
-                }
-            } else {
-                const char    *dfile;
-
-                dfile = DoWildCard( pfname );
-                if( ( dfile != NULL ) && strcmp( dfile, pfname ) ) {
-                    do {
-                        if( !doRM( dfile, &flags ) ) {
-                            /* abandon rest of entries */
-                            DoWildCardClose();
-                            return( RET_ERROR );
-                        }
-                    } while( ( dfile = DoWildCard( NULL ) ) != NULL );
-                }
+    while( RET_SUCCESS == rt ) {
+        if( strpbrk( pfname, WILD_METAS ) == NULL ) {
+            if( !doRM( pfname, &flags ) ) {
+                return( RET_ERROR );
             }
-        } while( RET_SUCCESS == ( rt = getRMArgs( NULL, NULL, &pfname ) ) );
-    } else
-        rt = mySystem( cmdname, cmd );
+        } else {
+            const char    *dfile;
+
+            dfile = DoWildCard( pfname );
+            if( ( dfile != NULL ) && strcmp( dfile, pfname ) ) {
+                do {
+                    if( !doRM( dfile, &flags ) ) {
+                        /* abandon rest of entries */
+                        DoWildCardClose();
+                        return( RET_ERROR );
+                    }
+                } while( ( dfile = DoWildCard( NULL ) ) != NULL );
+            }
+        }
+        rt = getRMArgs( NULL, NULL, &pfname );
+    }
 
     if( RET_WARN == rt )
         rt = RET_SUCCESS;
