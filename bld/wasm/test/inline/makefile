@@ -27,6 +27,7 @@ cmp &
 cmpx &
 dec &
 div &
+disasm &
 dmodes1 &
 dmodes2 &
 dmodes3 &
@@ -111,16 +112,19 @@ nulldevice=/dev/null
 nulldevice=nul
 !endif
 
+.BEFORE
+    @%create testcomp.log
+
 all : clean reverse.exe $(objs) .SYMBOLIC
 
 reverse.exe : reverse.c
-    wcl ..\reverse.c -fe=..\reverse.exe
+    @wcl -zq ..\reverse.c -fe=..\reverse.exe
 
 $(objs) : .SYMBOLIC
     @echo $@ ================================================================
     @rm -f $@.c
     @vi -d -q -k ":r $@.asm\n:so toc.vi\n:0r cinit.vi\n:w $@.c\n:q!\n"
-    @$(testcomp) $@.c -s -ot -zm -zq -wx -fo=.obj >$(nulldevice)
+    @$(testcomp) $@.c -s -ot -zm -zq -wx -wcd=301 -fo=.obj >$(nulldevice)
     @wdis -a -l $@.obj >$(nulldevice)
     @vi -d -q -k ":so fixlst.vi\nZZ" $@.lst
     @..\reverse $@.lst

@@ -18,7 +18,7 @@ fldlg2
 fldln2
 fldz
 fstcw word ptr x
-fstsw qword ptr x
+fstsw word ptr x
 fnstsw ax
 fldcw word ptr x
 fstenv x
