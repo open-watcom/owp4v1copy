@@ -144,7 +144,7 @@ unsigned                DIGENTRY MIDisasmFormat( mad_disasm_data *dd, mad_disasm
     if( MADState->disasm_state & DT_PSEUDO_OPS ) ff |= DFF_PSEUDO;
     if( MADState->disasm_state & DT_UPPER ) ff |= DFF_INS_UP | DFF_REG_UP;
     if( MADState->reg_state[CPU_REG_SET] & CT_SYMBOLIC_NAMES ) {
-        ff |= DFF_AXP_SYMBOLIC_REG;
+        ff |= DFF_SYMBOLIC_REG;
     }
     dd->radix = radix;
     if( DisFormat( &DH, dd, &dd->ins, ff, np, op ) != DR_OK ) {
