@@ -740,9 +740,9 @@ static int scan_int( specs, arg, base, sign_flag )
         int digit;
         FAR_INT iptr;
         #if defined(__LONG_LONG_SUPPORT__)
-            UINT64_TYPE long_value;
+            unsigned __int64 long_value;
             FAR_INT64 llptr;
-            _clib_U32ToU64( 0, long_value );
+            long_value = 0;
         #endif
 
         value = 0;
@@ -790,16 +790,10 @@ static int scan_int( specs, arg, base, sign_flag )
         }
         #if defined(__LONG_LONG_SUPPORT__)
             if( specs->long_double_var ) {
-                UINT64_TYPE long_base;
-                UINT64_TYPE long_digit;
-
-                _clib_U32ToU64( base, long_base );
                 for( ; ; ) {
                     digit = radix_value( c );
                     if( digit >= base ) break;
-                    _clib_U32ToU64( digit, long_digit );
-                    _clib_U64Mul( long_value, long_base, long_value );
-                    _clib_U64Add( long_value, long_digit, long_value );
+                    long_value = long_value * base + digit;
                     ++len;
                     if( (c = cgetw( specs )) == STOP_CHR ) goto done;
                 }
@@ -809,9 +803,7 @@ static int scan_int( specs, arg, base, sign_flag )
                         if( (c = cgetw( specs )) == STOP_CHR ) goto done;
                         digit = radix_value( c );
                         if( digit >= base ) break;
-                        _clib_U32ToU64( digit, long_digit );
-                        _clib_U64Mul( long_value, long_base, long_value );
-                        _clib_U64Add( long_value, long_digit, long_value );
+                        long_value = long_value * base + digit;
                     }
                 }
             } else
@@ -840,21 +832,21 @@ static int scan_int( specs, arg, base, sign_flag )
         #if defined(__LONG_LONG_SUPPORT__)
             if( specs->long_double_var ) {
                 if( sign == '-' ) {
-                    _clib_U64Neg( long_value, long_value );
+                    long_value =- long_value;
                 }
                 if( len > 0 ) {
                     len += pref_len;
                     if( specs->assign ) {
                         #if defined( __FAR_SUPPORT__ )
                             if( specs->far_ptr ) {
-                                llptr = va_arg( arg->v, UINT64_TYPE _WCFAR * );
+                                llptr = va_arg( arg->v, unsigned __int64 _WCFAR * );
                             } else if( specs->near_ptr ) {
-                                llptr = va_arg( arg->v, UINT64_TYPE _WCNEAR * );
+                                llptr = va_arg( arg->v, unsigned __int64 _WCNEAR * );
                             } else {
-                                llptr = va_arg( arg->v, UINT64_TYPE * );
+                                llptr = va_arg( arg->v, unsigned __int64 * );
                             }
                         #else
-                            llptr = va_arg( arg->v, UINT64_TYPE * );
+                            llptr = va_arg( arg->v, unsigned __int64 * );
                         #endif
                         *llptr = long_value;
                     }

@@ -767,7 +767,7 @@ static FAR_STRING formstring( CHAR_TYPE *buffer, my_va_list *pargs,
     int                 length;
     int                 radix;
 #if defined(__LONG_LONG_SUPPORT__)
-    auto UINT64_TYPE    long_long_value;
+    auto unsigned __int64    long_long_value;
 #endif
     auto unsigned long  long_value;
     auto unsigned int   int_value;
@@ -792,12 +792,7 @@ static FAR_STRING formstring( CHAR_TYPE *buffer, my_va_list *pargs,
     case 'X':
 #if defined(__LONG_LONG_SUPPORT__)
         if( specs->_flags & SPF_LONG_DOUBLE ) {
-            #ifdef USE_INT64
-                long_long_value = va_arg( pargs->v, UINT64_TYPE );
-            #else
-                long_long_value.u._32[I64LO32] = va_arg( pargs->v, unsigned long );
-                long_long_value.u._32[I64HI32] = va_arg( pargs->v, unsigned long );
-            #endif
+            long_long_value = va_arg( pargs->v, unsigned __int64 );
         } else
 #endif
         if( specs->_flags & SPF_LONG ) {
@@ -813,12 +808,7 @@ static FAR_STRING formstring( CHAR_TYPE *buffer, my_va_list *pargs,
     case 'i':
 #if defined(__LONG_LONG_SUPPORT__)
         if( specs->_flags & SPF_LONG_DOUBLE ) {
-            #ifdef USE_INT64
-                long_long_value = va_arg( pargs->v, INT64_TYPE );
-            #else
-                long_long_value.u._32[I64LO32] = va_arg( pargs->v, unsigned long );
-                long_long_value.u._32[I64HI32] = va_arg( pargs->v, unsigned long );
-            #endif
+                long_long_value = va_arg( pargs->v, __int64 );
         } else
 #endif
         if( specs->_flags & SPF_LONG ) {
@@ -833,7 +823,7 @@ static FAR_STRING formstring( CHAR_TYPE *buffer, my_va_list *pargs,
             int negative = 0;
 #if defined(__LONG_LONG_SUPPORT__)
             if( specs->_flags & SPF_LONG_DOUBLE ) {
-                if( _clib_I64Negative(long_long_value) ) {
+                if( (__int64)long_long_value < 0 ) {
                     negative = TRUE;
                 }
             } else
@@ -845,7 +835,7 @@ static FAR_STRING formstring( CHAR_TYPE *buffer, my_va_list *pargs,
                 buffer[specs->_n0++] = '-';
 #if defined(__LONG_LONG_SUPPORT__)
                 if( specs->_flags & SPF_LONG_DOUBLE ) {
-                    _clib_I64Neg( long_long_value, long_long_value );
+                    long_long_value = -long_long_value;
                 } else
 #endif
                 long_value = - long_value;
@@ -952,7 +942,7 @@ static FAR_STRING formstring( CHAR_TYPE *buffer, my_va_list *pargs,
         if( specs->_flags & SPF_ALT ) {
 #if defined(__LONG_LONG_SUPPORT__)
             if( specs->_flags & SPF_LONG_DOUBLE ) {
-                if( !_clib_U64Zero(long_long_value) ) {
+                if( long_long_value != 0 ) {
                     buffer[specs->_n0++] = '0';
                     buffer[specs->_n0++] = specs->_o._character;
                 }
@@ -979,11 +969,11 @@ static FAR_STRING formstring( CHAR_TYPE *buffer, my_va_list *pargs,
         arg = &buffer[ specs->_n0 ];
 #if defined(__LONG_LONG_SUPPORT__)
         if( specs->_flags & SPF_LONG_DOUBLE ) {
-            if( specs->_o._prec == 0 && _clib_U64Zero(long_long_value) ) {
+            if( specs->_o._prec == 0 && long_long_value == 0 ) {
                 *arg = '\0';
                 length = 0;
             } else {
-                __F_NAME(__clib_ulltoa,__clib_wulltoa)( &long_long_value, &buffer[specs->_n0], radix );
+                __F_NAME(__clib_ulltoa,__clib_wulltoa)( long_long_value, &buffer[specs->_n0], radix );
                 if( specs->_o._character == 'X' ) {
                     zupstr( buffer );
                 }

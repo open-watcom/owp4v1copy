@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  ASCII to long long conversion routine.
 *
 ****************************************************************************/
 
@@ -38,11 +37,9 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-_WCRTLINK void __F_NAME(__clib_atoll,__clib_watoll)( const CHAR_TYPE *p, UINT64_TYPE *pv )  /* convert ASCII string to long integer */
+_WCRTLINK void __F_NAME(__clib_atoll,__clib_watoll)( const CHAR_TYPE *p, unsigned __int64 *pv )  /* convert ASCII string to long integer */
     {
-        UINT64_TYPE value;
-        UINT64_TYPE radix;
-        UINT64_TYPE digit;
+        unsigned __int64 value = 0;
         CHAR_TYPE    sign;
 
         __ptr_check( p, 0 );
@@ -50,15 +47,10 @@ _WCRTLINK void __F_NAME(__clib_atoll,__clib_watoll)( const CHAR_TYPE *p, UINT64_
         while( __F_NAME(isspace,iswspace)( *p ) ) ++p;
         sign = *p;
         if( sign == '+' || sign == '-' ) ++p;
-        _clib_U32ToU64( 0, value );
-        _clib_U32ToU64( 10, radix );
-        _clib_U32ToU64( 0, digit );
         while( __F_NAME(isdigit,iswdigit)(*p) ) {
-            _clib_U64Mul( value, radix, value );
-            _clib_U32ToU64( *p - '0', digit );
-            _clib_U64Add( value, digit, value );
+            value = value * 10 + *p - '0';
             ++p;
         }
-        if( sign == '-' ) _clib_U64Neg( value, value );
+        if( sign == '-' ) value -= value;
         *pv = value;
     }
