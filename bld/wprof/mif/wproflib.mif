@@ -15,17 +15,17 @@ aui_dir_win     = wini86
 
 aui_lib = $(aui_dir)\$(aui_dir_$(host_OS))\aui.lib
 
-gui_dir_nt_axp  = win\guintaxp
-gui_dir_nt_386  = win\guintf
+gui_dir_nt_axp  = win/ntaxp/gui
+gui_dir_nt_386  = win/nt386/gui
 gui_dir_nt      = $(gui_dir_nt_$(host_CPU))
-gui_dir_dos     = ui\guidosf
+gui_dir_dos     = ui/dos386/gui
 !ifeq PM 1
-gui_dir_os2     = win\guios2f
+gui_dir_os2     = win/os2386/gui
 !else
-gui_dir_os2     = ui\guios2f
+gui_dir_os2     = ui/os2386/gui
 !endif
-gui_dir_qnx     = ui\guiqnxs
-gui_dir_win     = win\guiwinl
+gui_dir_qnx     = ui/qnx386/gui
+gui_dir_win     = win/wini86/gui
 
 gui_lib = $(gui_dir)\$(gui_dir_$(host_OS)).lib
 

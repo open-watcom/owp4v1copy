@@ -8,4 +8,4 @@ compiler = comp386
 model=f
 plat_inc=$(inc_dirs_sys_os2);
 
-!include ../makefile
+!include ../guiui.mif

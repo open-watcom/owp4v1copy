@@ -111,7 +111,7 @@ sysobjs = $(wv_sysobjs) $(sys_hooks) $(sys_dep_objs)
 
 sysinclude +=;$(ui_dir)/h;$(watcom_dir)/h;$(sdk_dir)/rc/wres/h
 
-!include ../../makefile
+!include ../../master.mif
 
 guikey.obj :    guikey.c
            $(compile)

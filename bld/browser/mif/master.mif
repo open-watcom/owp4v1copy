@@ -88,12 +88,12 @@ rc_file_os2 = ../res/wbrwpm.rc
 rc_file     = $(rc_file_$(host_OS))
 
 #linker
-LIBS_win    = $(watcom_dir)/lib/dwarfrlw.lib $(gui_dir)/win/guiwinl.lib $(wclass_dir)/win/obj/wclass.lib $(misc_dir)/ctl3d.lib
-LIBS_nt_axp = $(watcom_dir)/lib/draxp.lib $(gui_dir)/win/guintaxp.lib $(wclass_dir)/win/axp/wclass.lib
-LIBS_nt_386 = $(watcom_dir)/lib/dwarfrp.lib $(gui_dir)/win/guintf.lib $(wclass_dir)/win/nt/wclass.lib
+LIBS_win    = $(watcom_dir)/lib/dwarfrlw.lib $(gui_dir)/win/wini86/gui.lib $(wclass_dir)/win/obj/wclass.lib $(misc_dir)/ctl3d.lib
+LIBS_nt_axp = $(watcom_dir)/lib/draxp.lib $(gui_dir)/win/ntaxp/gui.lib $(wclass_dir)/win/axp/wclass.lib
+LIBS_nt_386 = $(watcom_dir)/lib/dwarfrp.lib $(gui_dir)/win/nt386/gui.lib $(wclass_dir)/win/nt/wclass.lib
 LIBS_nt     = $(LIBS_NT_$(HOST_CPU))
-LIBS_os2    = $(watcom_dir)/lib/dwarfrp.lib $(gui_dir)/win/guios2f.lib $(wclass_dir)/pm/obj32/wclass.lib
-LIBS_dos    = $(watcom_dir)/lib/dwarfrp.lib $(gui_dir)/ui/guidosf.lib $(ui_dir)/dos/uilibf.lib
+LIBS_os2    = $(watcom_dir)/lib/dwarfrp.lib $(gui_dir)/win/os2386/gui.lib $(wclass_dir)/pm/obj32/wclass.lib
+LIBS_dos    = $(watcom_dir)/lib/dwarfrp.lib $(gui_dir)/ui/dos386/gui.lib $(ui_dir)/dos/uilibf.lib
 
 LIBS    = $(LIBS_$(host_OS))
 

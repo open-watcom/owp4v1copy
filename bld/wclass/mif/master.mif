@@ -86,11 +86,11 @@ win_objs = &
         wflashp.obj &
         wtimer.obj &
 
-extra_objlib_nt_386     = $(win_objs) $(ndos_objs) $(gui_dir)/win/guintf.lib
-extra_objlib_nt_axp     = $(win_objs) $(ndos_objs) $(gui_dir)/win/guintaxp.lib
-extra_objlib_win_i86    = $(win_objs) $(ndos_objs) $(gui_dir)/win/guiwinl.lib
-extra_objlib_dos_386    = $(ndos_objs) $(gui_dir)/ui/guidosf.lib
-extra_objlib_os2_386    = $(win_objs) $(ndos_objs) wddeobj.obj $(gui_dir)/win/guios2f.lib
+extra_objlib_nt_386     = $(win_objs) $(ndos_objs) $(gui_dir)/win/nt386/gui.lib
+extra_objlib_nt_axp     = $(win_objs) $(ndos_objs) $(gui_dir)/win/ntaxp/gui.lib
+extra_objlib_win_i86    = $(win_objs) $(ndos_objs) $(gui_dir)/win/wini86/gui.lib
+extra_objlib_dos_386    = $(ndos_objs) $(gui_dir)/ui/dos386/gui.lib
+extra_objlib_os2_386    = $(win_objs) $(ndos_objs) wddeobj.obj $(gui_dir)/win/os2386/gui.lib
 
 extra_objlib = $(extra_objlib_$(host_OS)_$(host_CPU))
 

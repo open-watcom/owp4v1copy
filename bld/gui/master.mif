@@ -1,3 +1,5 @@
+proj_name = gui
+
 .EXTENSIONS:
 .EXTENSIONS: .pp .exe .lib .obj .res .asm .c .h .msg
 
@@ -135,7 +137,7 @@ tail_i86 = $(model)
 tail_386 = $(model)
 tail_axp = axp
 
-../gui$(host_OS)$(tail_$(host_CPU)).lib : eraseall.obj $(gui_msg_file) $(objs) $(extra_objs) $(sysobjs) $(__makefiles__) $(wpi_library) $(ctl3d_lib)
+gui.lib : eraseall.obj $(gui_msg_file) $(objs) $(extra_objs) $(sysobjs) $(__makefiles__) $(wpi_library) $(ctl3d_lib)
         @%create tmp.lbc
         @for %i in ($(objs)) do @%append tmp.lbc +%i
         @for %i in ($(sysobjs)) do @%append tmp.lbc +%i

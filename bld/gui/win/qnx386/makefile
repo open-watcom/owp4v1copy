@@ -16,10 +16,10 @@ host_OS = qnx
 
 os = qnx
 build_target = qnx
-sysinclude = $(willows_dir)\h;$(watcom_dir)\qnx_h
+sysinclude = $(willows_dir)/h;$(watcom_dir)/qnx_h
 compiler = comp386
 model = s
-wlib_opt = /p=256
+wlib_opt = -p=256
 wpi_lib=wpi_qnx
 
 proj_name = gui
@@ -27,7 +27,7 @@ proj_name = gui
 !include cproj.mif
 
 type=win
-sys_dep_dir = $(sdk_dir)\misc;$(wpi_dir)\h
+sys_dep_dir = $(sdk_dir)/misc;$(wpi_dir)/h
 plat_inc +=$(watcom_h)
 extra_objs = wpimem.obj
 sysobjs = guixscal.obj &
@@ -131,31 +131,31 @@ sysobjs +=             &
           ctl3d32.obj
 !endif
 
-!include ../../makefile
+!include ../guiwin.mif
 
 cflags += -DWILLOWS -DTWIN32 -fpi
 
-rm_wpi :  $(wpi_dir)\h\wpicomp.h .SYMBOLIC
-        @-rm $(sysobjs)
+#rm_wpi :  $(wpi_dir)/h/wpicomp.h .SYMBOLIC
+#        @-rm $(sysobjs)
 
-ctl3d32.obj : $(sdk_dir)\misc\ctl3d32.c
+ctl3d32.obj : $(sdk_dir)/misc/ctl3d32.c
 
-wptoolbr.obj :  wptoolbr.c $(sdk_dir)\misc\wptoolbr.h
-           $($(compiler)) $[* $(cflags) /dNDEBUG
+#wptoolbr.obj :  wptoolbr.c $(sdk_dir)/misc/wptoolbr.h
+#           $($(compiler)) $[* $(cflags) -dNDEBUG
 
-wstatus.obj : wstatus.c
-        $(compile)
+#wstatus.obj : wstatus.c
+#        $(compile)
 
-fontstr.obj : fontstr.c
-        $(compile)
+#fontstr.obj : fontstr.c
+#        $(compile)
 
-wmdisim.obj : wmdisim.c
-        $(compile)
+#wmdisim.obj : wmdisim.c
+#        $(compile)
 
 guixdlg.obj     : guixdlg.c guistyle.h
 guicontr.obj    : guicontr.c guistyle.h
-guisetup.obj    : guisetup.c guiwind.h $(sdk_dir)\misc\wptoolbr.h
-guixwind.obj    : guixwind.c $(sdk_dir)\misc\wptoolbr.h
-guimdi.obj      : guimdi.c $(sdk_dir)\misc\mdisim.h
-mdisim.obj      : mdisim.c $(sdk_dir)\misc\mdisim.h
-guixmdi.obj     : guixmdi.c $(guidir)\h\guix.h
+guisetup.obj    : guisetup.c guiwind.h $(sdk_dir)/misc/wptoolbr.h
+guixwind.obj    : guixwind.c $(sdk_dir)/misc/wptoolbr.h
+guimdi.obj      : guimdi.c $(sdk_dir)/misc/mdisim.h
+mdisim.obj      : mdisim.c $(sdk_dir)/misc/mdisim.h
+guixmdi.obj     : guixmdi.c $(guidir)/h/guix.h

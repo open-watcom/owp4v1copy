@@ -9,4 +9,4 @@ model=m
 track=
 nodebug=
 
-!include ../makefile
+!include ../guiui.mif

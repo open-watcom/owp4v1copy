@@ -7,6 +7,6 @@ build_target = linux
 compiler = comp386
 model=f
 
-!include ../makefile
+!include ../guiui.mif
 
 xflags=-of-s

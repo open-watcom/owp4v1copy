@@ -8,6 +8,6 @@ build_target = qnx
 compiler = comp386
 model = s
 track =
-sysinclude=$(lang_root)\qh;
+sysinclude=$(lang_root)/qh;
 
-!include ../makefile
+!include ../guiui.mif

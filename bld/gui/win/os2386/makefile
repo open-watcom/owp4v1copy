@@ -9,6 +9,6 @@ compiler = comp386
 plat_inc=$(inc_dirs_sys_os2);
 xflags=-s
 wpi_lib=wpi_os2f
-wlib_opt = /p=32
+wlib_opt = -p=32
 
-!include ../makefile
+!include ../guiwin.mif

@@ -7,7 +7,7 @@ build_target = netware
 compiler = comp386
 model=s
 
-!include ../makefile
+!include ../guiui.mif
 
-xflags = /4s/s$(deffp)/ot/dNLM
+xflags = -4s-s$(deffp)-ot-dNLM
 
