@@ -20,7 +20,7 @@ $(fcbuild) : $(f77_dir)\lg86\utils\fcbuild.obj
 !ifdef __OS2__
     wlink sys os2 debug all option quiet name $(fcbuild) file $[@
 !else
-    wlink sys dos debug all option quiet name $(fcbuild) file $[@
+    *wlink sys dos debug all option quiet name $(fcbuild) file $[@
 !endif
 
 $(f77_dir)\lg86\utils\fcbuild.obj : fcbuild.c
