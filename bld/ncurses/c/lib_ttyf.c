@@ -141,13 +141,13 @@ reset_shell_mode(void)
     T((T_CALLED("reset_shell_mode()")));
 
     if (cur_term != 0) {
-	if (SP) {
 #if 0
+	if (SP) {
 	    _nc_keypad(FALSE);
 	    _nc_flush();
 	    NC_BUFFERED(FALSE);
-#endif
 	}
+#endif
 	returnCode(_nc_set_tty_mode(&cur_term->Ottyb));
     }
     returnCode(ERR);
