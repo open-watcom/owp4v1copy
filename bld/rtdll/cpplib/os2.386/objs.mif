@@ -1,13 +1,11 @@
 pfx__          =$(cpplib_dir)
-letter_register=r
-letter_stack   =s
-__ifx__        =os23$(letter_$(convention))mt
+__ifx__        =os23$(dllname_$(convention))mt
 
 dll_libs = $+ &
-    $(pfx__)\$(__ifx__).dll\plbxmt3$(letter_$(convention)).lib &
-    ..\..\..\clib\$(system).386\$(subdir)\clibs.lib &
-    ..\..\..\mathlib\$(system).387\$(subdir)\clibs.lib &
-    $(pfx__)\$(__ifx__)\plbxmt3$(letter_$(convention)).lib &
+    $(pfx__)\$(__ifx__).dll\plbxmt3$(dllname_$(convention)).lib &
+    ..\..\..\clib\$(system).386\$(subdir)\clib3$(dllname_$(convention)).lib &
+    ..\..\..\mathlib\$(system).387\$(subdir)\clib.lib &
+    $(pfx__)\$(__ifx__)\plbxmt3$(dllname_$(convention)).lib &
     $-
 
 # def_hack.def is necessary to work around a linker bug
@@ -32,6 +30,4 @@ targdir =
 static_objs = $+ $(objs) $-
 
 pfx__          =
-letter_register=
-letter_stack   =
 __ifx__        =

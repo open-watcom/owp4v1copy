@@ -2,8 +2,8 @@ pfx__ =$(mathlib_dir)
 __ifx__ =\library\$(system).$(processor)\$(subdir)
 
 dll_libs = $+ &
-    $(pfx__)$(__ifx__)dll\maths.lib &
-    ..\..\..\clib\$(system).386\$(subdir)\clibs.lib &
+    $(pfx__)$(__ifx__)dll\math3$(dllname_$(convention)).lib &
+    ..\..\..\clib\$(system).386\$(subdir)\clib3$(dllname_$(convention)).lib &
     $-
 
 dll_def = $+ &

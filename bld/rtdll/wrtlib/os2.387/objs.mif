@@ -1,14 +1,12 @@
 __cifx__       =\library\$(system).386\$(subdir)\
 __mifx__       =\library\$(system).387\$(subdir)
-letter_register=r
-letter_stack   =s
-__pifx__       =os23$(letter_$(convention))mt
+__pifx__       =os23$(dllname_$(convention))mt
 
 dll_libs = $+ &
-    $(new_clib)$(__cifx__)clibs.lib &
-    $(new_mlib)$(__mifx__)dll\maths.lib &
-    $(plusplus_cpplib_dir)\$(__pifx__).dll\plbxmt3$(letter_$(convention)).lib &
-    $(plusplus_cpplib_dir)\$(__pifx__)\plbxmt3$(letter_$(convention)).lib &
+    $(new_clib)$(__cifx__)clib3$(dllname_$(convention)).lib &
+    $(new_mlib)$(__mifx__)dll\math387$(dllname_$(convention)).lib &
+    $(plusplus_cpplib_dir)\$(__pifx__).dll\plbxmt3$(dllname_$(convention)).lib &
+    $(plusplus_cpplib_dir)\$(__pifx__)\plbxmt3$(dllname_$(convention)).lib &
     $-
 
 dll_def = $+ &
@@ -48,6 +46,4 @@ static_objs += $+ &
 
 __cifx__       =
 __mifx__       =
-letter_register=
-letter_stack   =
 __pifx__       =

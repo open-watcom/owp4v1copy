@@ -24,10 +24,10 @@ $(dllname).imp : $(dllname).lbc $(rtdll_dir)/trimlbc.vi $(rtdll_dir)/add_br.vi
 !endif
 
 !ifeq system winnt
-dll_objs += $(dllname).rc
+res_objs = $(dllname).rc
 !endif
 
-$(dllname).dll $(dllname).lbc : $(dll_objs) $(dll_libs) tmp.def
+$(dllname).dll $(dllname).lbc : $(res_objs) $(dll_objs) $(dll_libs) tmp.def
     $(linker) debug dwarf $(option_symfile) $(l_flags) $(dllbase) op map name $(dllname).dll file { $(dll_objs) } export { @$]@ } lib { $(dll_libs) }
 !ifeq system winnt
     $(rc) -q -bt=nt -i$(%watcom)/h/nt $(dllname).rc $(dllname).dll

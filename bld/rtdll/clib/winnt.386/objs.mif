@@ -3,11 +3,11 @@ __ifx__ =\library\$(system).$(processor)\$(subdir)\
 
 !ifdef profile
 dll_libs = $+ &
-    $(pfx__)\library\$(system).$(processor)\ms_rp\clibs.lib &
+    $(pfx__)\library\$(system).$(processor)\ms_rp\clib3$(dllname_$(convention)).lib &
     $-
 !else
 dll_libs = $+ &
-    $(pfx__)$(__ifx__)clibs.lib &
+    $(pfx__)$(__ifx__)clib3$(dllname_$(convention)).lib &
     $-
 !endif
 

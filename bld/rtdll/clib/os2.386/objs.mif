@@ -2,7 +2,7 @@ pfx__ =$(clib_dir)
 __ifx__ =\library\$(system).$(processor)\$(subdir)\
 
 dll_libs = $+ &
-    $(pfx__)$(__ifx__)clibs.lib &
+    $(pfx__)$(__ifx__)clib3$(dllname_$(convention)).lib &
     $-
 
 dll_def = $+ &
