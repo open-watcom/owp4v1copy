@@ -34,7 +34,7 @@ $(hbook).htm : $(hbook).whp
 !else ifeq hbook wfcerrs
     copy sysusr02.gml $*.h
 !endif
-    $(WHPCVT)\$(whp_ver) -html $(whp_opts) -i -hn -tl "$(book_title)" $* | tee -a $(hbook).log
+    $(%WHPCVT) -html $(whp_opts) -i -hn -tl "$(book_title)" $* | tee -a $(hbook).log
     @%create $^*.tbl
 
 clean : .symbolic

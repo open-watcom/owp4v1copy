@@ -599,7 +599,7 @@ static void output_hdr(
 ) {
     whp_fprintf( Out_file, "<HEAD>\n" );
     if( Ipf_title != NULL && Ipf_title[0] != '\0' ) {
-        whp_fprintf( Out_file, "<TITLE> %s <\TITLE>\n", Ipf_title );
+        whp_fprintf( Out_file, "<TITLE> %s </TITLE>\n", Ipf_title );
     }
     whp_fprintf( Out_file, "</HEAD>\n" );
     whp_fprintf( Out_file, "<BODY>\n" );
