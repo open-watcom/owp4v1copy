@@ -129,7 +129,7 @@ unsigned SysRunCommand( const char *cmd )
     rc = dup2( pipe_fd[1], STDERR_FILENO );
     if (rc != 0) return ( rc );
     rc = spawnl( P_NOWAIT, CmdProc, CmdProc, "/c", cmd, NULL );
-    close(pipe_fd[1]);
+    close( pipe_fd[1] );
     dup2( my_std_output, STDOUT_FILENO );
     dup2( my_std_error, STDERR_FILENO );
     if( rc == -1 ) {
@@ -143,6 +143,8 @@ unsigned SysRunCommand( const char *cmd )
         Log( Quiet, "%s", buff );
     }
     close( pipe_fd[0] );
+    close( my_std_output );
+    close( my_std_error );
     return( 0 );
 #else
     /* no pipes for DOS so we call "system" and hence cannot log */
