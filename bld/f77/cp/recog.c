@@ -1,0 +1,354 @@
+/****************************************************************************
+*
+*                            Open Watcom Project
+*
+*    Portions Copyright (c) 1983-2002 Sybase, Inc. All Rights Reserved.
+*
+*  ========================================================================
+*
+*    This file contains Original Code and/or Modifications of Original
+*    Code as defined in and that are subject to the Sybase Open Watcom
+*    Public License version 1.0 (the 'License'). You may not use this file
+*    except in compliance with the License. BY USING THIS FILE YOU AGREE TO
+*    ALL TERMS AND CONDITIONS OF THE LICENSE. A copy of the License is
+*    provided with the Original Code and Modifications, and is also
+*    available at www.sybase.com/developer/opensource.
+*
+*    The Original Code and all software distributed under the License are
+*    distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+*    EXPRESS OR IMPLIED, AND SYBASE AND ALL CONTRIBUTORS HEREBY DISCLAIM
+*    ALL SUCH WARRANTIES, INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF
+*    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR
+*    NON-INFRINGEMENT. Please see the License for the specific language
+*    governing rights and limitations under the License.
+*
+*  ========================================================================
+*
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
+*
+****************************************************************************/
+
+
+//
+// RECOG     : recognize specific tokens
+//
+
+#include "ftnstd.h"
+#include "opr.h"
+#include "opn.h"
+#include "errcod.h"
+#include "global.h"
+
+extern  void            Error(int,...);
+extern  void            AdvError(uint);
+extern  void            OpndErr(uint);
+extern  void            KnownClassErr(uint,uint);
+extern  bool            CmpNode2Str(itnode *,char *);
+extern  sym_id          LkSym(void);
+extern  void            GetFunctionShadow(void);
+
+// Routines with names 'Rec...' attempt to recognize '...',
+//   returning true if found, else false
+//
+// Routines with names 'Req...' require that '...' be found,
+//   generating an error message if not found
+
+
+bool    RecEquSign() {
+//====================
+
+    return( OPR_EQU == CITNode->opr );
+}
+
+
+bool    ReqOperator( byte operator, int error ) {
+//===============================================
+
+    if( operator == CITNode->opr ) return( TRUE );
+    Error( error );
+    return( FALSE );
+}
+
+
+bool    ReqEquSign() {
+//====================
+
+    return( ReqOperator( OPR_EQU, EQ_NO_EQUALS ) );
+}
+
+
+bool    RecColon() {
+//==================
+
+    return( OPR_COL == CITNode->opr );
+}
+
+
+bool    RecComma() {
+//==================
+
+    return( OPR_COM == CITNode->opr );
+}
+
+
+bool    ReqComma() {
+//==================
+
+    return( ReqOperator( OPR_COM, SX_MISSING_COMMA ) );
+}
+
+
+bool    ReqColon() {
+//==================
+
+    return( ReqOperator( OPR_COL, SX_NO_COLON ) );
+}
+
+
+bool    RecCloseParen() {
+//=======================
+
+    return( OPR_RBR == CITNode->opr );
+}
+
+
+bool    ReqCloseParen() {
+//=======================
+
+    return( ReqOperator( OPR_RBR, PC_NO_CLOSEPAREN ) );
+}
+
+
+bool    RecOpenParen() {
+//======================
+
+    return( OPR_LBR == CITNode->opr );
+}
+
+
+bool    ReqOpenParen() {
+//======================
+
+    return( ReqOperator( OPR_LBR, PC_NO_OPENPAREN ) );
+}
+
+bool    RecMul() {
+//================
+
+    return( OPR_MUL == CITNode->opr );
+}
+
+
+bool    ReqMul() {
+//================
+
+    return( ReqOperator( OPR_MUL, SX_NO_ASTERISK ) );
+}
+
+
+bool    RecDiv() {
+//================
+
+    return( OPR_DIV == CITNode->opr );
+}
+
+
+bool    ReqDiv() {
+//================
+
+    return( ReqOperator( OPR_DIV, SX_NO_SLASH ) );
+}
+
+
+bool    RecPlus() {
+//=================
+
+    return( OPR_PLS == CITNode->opr );
+}
+
+
+bool    RecMin() {
+//================
+
+    return( OPR_MIN == CITNode->opr );
+}
+
+
+bool    RecCat() {
+//================
+
+    return( OPR_CAT == CITNode->opr );
+}
+
+
+bool    RecNOpr() {
+//=================
+
+    return( OPR_PHI == CITNode->opr );
+}
+
+
+bool    RecFBr() {
+//================
+
+    return( OPR_FBR == CITNode->opr );
+}
+
+
+bool    RecTrmOpr() {
+//===================
+
+    return( OPR_TRM == CITNode->opr );
+}
+
+
+bool    RecEOS() {
+//================
+
+    return( ( OPR_TRM == CITNode->opr ) && ( CITNode->oprpos == 9999 ) );
+}
+
+
+bool    ReqEOS() {
+//================
+
+    if( RecEOS() ) return( TRUE );
+    Error( SX_EOS_EXPECTED );
+    return( FALSE );
+}
+
+
+bool    RecNOpn() {
+//=================
+
+    return( CITNode->opn == OPN_PHI );
+}
+
+
+bool    ReqNOpn() {
+//=================
+
+    if( RecNOpn() ) return( TRUE );
+    OpndErr( SX_UNEXPECTED_OPN );
+    return( FALSE );
+}
+
+
+bool    RecKeyWord( char *key ) {
+//===============================
+
+    if( CITNode->opn != OPN_NAM ) return( FALSE );
+    return( CmpNode2Str( CITNode, key ) );
+}
+
+
+bool    RecName() {
+//=================
+
+    return( CITNode->opn == OPN_NAM );
+}
+
+
+bool    ReqName( int index ) {
+//============================
+
+    if( RecName() ) return( TRUE );
+    KnownClassErr( SX_NO_NAME, index );
+    return( FALSE );
+}
+
+
+bool    RecNWL() {
+//================
+
+    return( CITNode->opn == OPN_NWL );
+}
+
+
+bool    RecNumber() {
+//===================
+
+    return( CITNode->opn == OPN_INT );
+}
+
+
+bool    RecLiteral() {
+//====================
+
+    return( CITNode->opn == OPN_LIT );
+}
+
+
+bool    RecNextOpr( byte operator ) {
+//===================================
+
+    return( operator == CITNode->link->opr );
+}
+
+
+bool    ReqNextOpr( byte operator, int error ) {
+//==============================================
+
+    if( RecNextOpr( operator ) ) return( TRUE );
+    AdvError( error );
+    return( FALSE );
+}
+
+
+static  bool    IsVariable() {
+//============================
+
+    unsigned_16 flags;
+
+    if( !RecName() ) return( FALSE );
+    LkSym();
+    flags = CITNode->flags;
+    if( ( flags & SY_CLASS ) == SY_VARIABLE ) {
+        if( flags & SY_SUBSCRIPTED ) return( FALSE );
+        return( TRUE );
+    }
+    if( ( flags & SY_CLASS ) == SY_SUBPROGRAM ) {
+        if( ( flags & SY_SUBPROG_TYPE ) != SY_FUNCTION ) return( FALSE );
+        if( !(flags & SY_PS_ENTRY) ) return( FALSE );
+        GetFunctionShadow();
+        return( TRUE );
+    }
+    return( FALSE );
+}
+
+
+bool    RecIntVar() {
+//===================
+
+    if( !IsVariable() ) return( FALSE );
+    return( _IsTypeInteger( CITNode->typ ) );
+}
+
+
+bool    ReqIntVar() {
+//===================
+
+    if( RecIntVar() ) return( TRUE );
+    Error( SX_NO_INTEGER_VAR );
+    return( FALSE );
+}
+
+
+bool    ReqDoVar() {
+//==================
+
+    if( IsVariable() ) {
+        if( ( CITNode->typ >= TY_INTEGER_1 ) &&
+            ( CITNode->typ <= TY_EXTENDED ) ) return( TRUE );
+    }
+    Error( SX_NO_NUMBER_VAR );
+    return( FALSE );
+}
+
+
+bool    RecArrName() {
+//====================
+
+    return( ( CITNode->opn & OPN_WHAT ) == OPN_ARR );
+}

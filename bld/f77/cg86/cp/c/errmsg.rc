@@ -1,0 +1,42 @@
+#include "macro.h"
+
+#define MSG_LANG_BASE 0
+#if _TARGET == _8086
+  #include "errmsgi.rc"
+  #undef MSG_LANG_BASE
+  #define MSG_LANG_BASE (RLE_JAPANESE*MSG_LANG_SPACING)
+  #include "jerrmsgi.rc"
+#elif _TARGET == _80386
+  #include "errmsg3.rc"
+  #undef MSG_LANG_BASE
+  #define MSG_LANG_BASE (RLE_JAPANESE*MSG_LANG_SPACING)
+  #include "jerrmsg3.rc"
+#else
+  #include "errmsgr.rc"
+  #undef MSG_LANG_BASE
+  #define MSG_LANG_BASE (RLE_JAPANESE*MSG_LANG_SPACING)
+  #include "jerrmsgr.rc"
+#endif
+
+#if _TARGET == _8086 || _TARGET == _80386
+
+STRINGTABLE
+BEGIN
+
+#define _USE_RESOURCES_
+#include "asmerr.h"
+
+#undef pick
+#define pick( code, string1, string2 )  \
+        (code+RLE_ENGLISH*MSG_LANG_SPACING), string1
+#include "../h/asmshare.msg"
+#undef pick
+
+#define pick( code, string1, string2 )  \
+        (code+RLE_JAPANESE*MSG_LANG_SPACING), string2
+#include "../h/asmshare.msg"
+#undef pick
+
+END
+
+#endif

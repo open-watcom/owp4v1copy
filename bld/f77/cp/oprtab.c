@@ -1,0 +1,63 @@
+/****************************************************************************
+*
+*                            Open Watcom Project
+*
+*    Portions Copyright (c) 1983-2002 Sybase, Inc. All Rights Reserved.
+*
+*  ========================================================================
+*
+*    This file contains Original Code and/or Modifications of Original
+*    Code as defined in and that are subject to the Sybase Open Watcom
+*    Public License version 1.0 (the 'License'). You may not use this file
+*    except in compliance with the License. BY USING THIS FILE YOU AGREE TO
+*    ALL TERMS AND CONDITIONS OF THE LICENSE. A copy of the License is
+*    provided with the Original Code and Modifications, and is also
+*    available at www.sybase.com/developer/opensource.
+*
+*    The Original Code and all software distributed under the License are
+*    distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+*    EXPRESS OR IMPLIED, AND SYBASE AND ALL CONTRIBUTORS HEREBY DISCLAIM
+*    ALL SUCH WARRANTIES, INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF
+*    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR
+*    NON-INFRINGEMENT. Please see the License for the specific language
+*    governing rights and limitations under the License.
+*
+*  ========================================================================
+*
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
+*
+****************************************************************************/
+
+
+//
+// OPRTAB       : jump table for operator generator routines
+//
+
+#include "ftnstd.h"
+
+extern  void            LogOp(int,int,int);
+extern  void            AsgnOp(int,int,int);
+extern  void            RelOp(int,int,int);
+extern  void            BinOp(int,int,int);
+extern  void            ExpOp(int,int,int);
+extern  void            FieldOp(int,int,int);
+
+void    (* const __FAR GenOprTable[])() = {
+        &LogOp,            // 0    .EQV.
+        &LogOp,            // 1    .NEQV.
+        &LogOp,            // 2    .OR.
+        &LogOp,            // 3    .AND.
+        &LogOp,            // 4    .NOT.
+        &FieldOp,          // 5      %
+        &AsgnOp,           // 6      =
+         0,                // 7    filler
+        &FieldOp,          // 8      .
+        &RelOp,            // 9    relop
+        &BinOp,            // A      +
+        &BinOp,            // B      -
+        &BinOp,            // C      *
+        &BinOp,            // D      /
+        &ExpOp,            // E      **
+        0                  // F      // AsgnOp handles a = b // c
+};

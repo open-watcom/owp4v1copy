@@ -1,0 +1,59 @@
+
+!ifeq target_CPU 386
+!include $(wasm_dir)\inline.mif
+!else ifeq target_CPU i86
+!include $(wasm_dir)\inline.mif
+!else ifeq target_CPU axp
+inline_objs=
+!else ifeq target_CPU ppc
+inline_objs=
+!endif
+
+
+# system independent compile-time files
+
+tdovl1 = &
+    boot77.obj &
+    declare.obj &
+    fmacros.obj &
+    fmtemit.obj &
+    implicit.obj &
+    inout.obj &
+    option.obj &
+    proclist.obj &
+    rstmgr.obj
+
+# system dependent compile-time files
+
+tdroot = &
+    auxlook.obj &
+    forcstat.obj &
+    gsegs.obj &
+    objutil.obj
+
+tdovl1 += &
+    fieldops.obj &
+    gflow.obj &
+    gsubstr.obj &
+    initopt.obj &
+    mainline.obj &
+    regs.obj &
+    wf77aux.obj &
+    asmalloc.obj &
+    asmmsg.obj &
+    $(inline_objs)
+
+tdovl2 = &
+    bldobj.obj &
+    fccall.obj &
+    fcdata.obj &
+    fcfield.obj &
+    fcgmain.obj &
+    fcrtns.obj &
+    inline.obj &
+    fcifns.obj &
+    fcstack.obj &
+    wf77info.obj &
+    fctypes.obj
+
+tdfiles = $(tdroot) $(tdovl1) $(tdovl2)

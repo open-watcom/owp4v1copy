@@ -1,0 +1,209 @@
+!include cproj.mif
+!include deftarg.mif
+!include defrule.mif
+
+!include wres.mif
+!include mlibs.mif
+
+!ifdef on_build_machine
+clibldos_dir    = $(new_clib)\library\msdos.086\ml
+clibldos_lib    = $(new_clib)\library\msdos.086\ml\clibl.lib
+cliblnec_lib    = $(new_clib)\library\necdos.086\ml\clibl.lib
+mathl286_lib    = $(new_mlib)\library\msdos.286\ml\mathl.lib
+mathl287_lib    = $(new_mlib)\library\msdos.287\ml\mathl.lib
+ovlldr_lib      = $(wlink_dir)\ovlldr\wovl.lib
+emu286_lib      = $(emu286)\noemu87.lib
+clibros2_lib    = $(new_clib)\library\os2.386\ms_r\clibs.lib
+clibrnt_lib     = $(new_clib)\library\winnt.386\ms_r\clibs.lib
+clibrnec_lib    = $(new_clib)\library\necdos.386\ms_r\clibs.lib
+clibr386_lib    = $(new_clib)\library\msdos.386\ms_r\clibs.lib
+mathr386_lib    = $(new_mlib)\library\msdos.386\ms_r\maths.lib
+mathr387_dir    = $(new_mlib)\library\msdos.387\ms_r
+mathr387_lib    = $(new_mlib)\library\msdos.387\ms_r\maths.lib
+!else
+clibldos_dir    = $(%watcom)\lib286\dos
+clibldos_lib    = $(%watcom)\lib286\dos\clibl.lib
+mathl286_lib    = $(%watcom)\lib286\mathl.lib
+mathl287_lib    = $(%watcom)\lib286\math87l.lib
+ovlldr_lib      = $(%watcom)\lib286\dos\wovl.lib
+emu286_lib      = $(%watcom)\lib286\noemu87.lib
+clibros2_lib    = $(%watcom)\lib386\os2\clib3r.lib
+clibrnt_lib     = $(%watcom)\lib386\nt\clib3r.lib
+clibr386_lib    = $(%watcom)\lib386\dos\clib3r.lib
+mathr386_lib    = $(%watcom)\lib386\math3r.lib
+mathr387_dir    = $(%watcom)\lib386
+mathr387_lib    = $(%watcom)\lib386\math387r.lib
+!endif
+
+asm = *wasm
+
+c_opts = /w4 /zp1
+!ifdef __386__
+comp = $(comp386)
+c_opts += /mf
+model = f
+asm_opts = /3/w3/mf/zq/d1/fp$(fp_model) /i=$(f77_dir)\lg86\rt\asm\ /i=$(watcom_h)\
+asm_o_opt =/fo=
+!else
+comp = $(comp286)
+asm_opts = /w3/ml/zq/d1/fp$(fp_model) /i=$(f77_dir)\lg86\rt\asm\ /i=$(watcom_h)\
+asm_o_opt =/fo=
+c_opts += /ml/zc
+model = l
+!endif
+
+!ifeq form os2v2
+c_opts +=/bt=OS2
+!else ifeq form nt
+c_opts +=/bt=NT
+!else
+c_opts +=/bt=DOS
+!endif
+c_opts +=/zq/oax/fp$(fp_model)/d__RT__
+!ifdef in_sa_library
+c_opts +=/zl
+!ifdef __mt__
+c_opts +=/d__MT__
+!endif
+!endif
+!ifdef japan_objs
+c_opts +=/d__NEC__
+!endif
+
+wlib_opts = /b/n/q
+!ifdef on_build_machine
+wlib_opts += /s/t
+!endif
+
+#
+# define possible extensions
+#
+# .2bj and .3bj are used to build ifbuild[23].exe in f77\lg86\utils
+#
+# .obj indicates an object that is in common with another compiler...
+#       for example:  obj387\wf387.exe and os2_387\wf387.exe share
+#       many object files.
+# .XBJ indicates an object that is dependant on the target and must
+#       be recompiled always.  XBJ was chose to stand out in the long
+#       file lists.
+# .JBJ indicates objects that must be compiled when creating Japanese
+#       versions
+#
+.extensions:
+.extensions: .exp .exe .2bj .3bj .XBJ .JBJ .obj .asm .c
+
+!ifndef __386__
+!ifeq fp_model i87
+.asm: $(f77_dir)\lg86\rt\asm87
+!endif
+.asm: $(f77_dir)\lg86\rt\asm;$(f77_dir)\lg86\asm;$(f77_dir)\cg86\asm
+!else
+!ifeq fp_model i87
+.asm: $(f77_dir)\lg86\rt\asm387
+!endif
+.asm: $(f77_dir)\lg86\rt\asm386
+!endif
+.asm.XBJ:
+    $(asm) $[* $(asm_o_opt)$^. $(asm_opts)
+
+.asm.obj:
+    $(asm) $[* $(asm_o_opt)$(share_objs)$^. $(asm_opts)
+
+!ifdef on_build_machine
+c_opts += /d1
+!else
+c_opts += /d2
+!endif
+compile = $(comp) $(c_opts) $[*
+
+!ifdef in_sa_library
+.c: $(f77_dir)\lg86\rt\c;$(f77_dir)\lg86\c;$(f77_dir)\lg86\cp\c;$(f77_dir)\cg86\rt\c;$(f77_dir)\rt
+!else
+.c: $(f77_dir)\lg86\c;$(f77_dir)\lg86\rt\c;$(f77_dir)\lg86\cp\c;$(f77_dir)\cg86\rt\c;$(f77_dir)\rt
+!endif
+.c: $(f77_dir)\rt\math;$(f77_dir)\rt\ifns;$(f77_dir)\rt\ufns;$(f77_dir)\rt\iad;$(f77_dir)\cg86\c
+.c: $(f77_dir)\c;$(f77_dir)\cp;$(f77_dir)\cg86\cp\c;$(f77_dir)\lg86\utils\c
+.c.obj:
+!ifdef share_objs
+    $(compile)/fo=$(share_objs).obj
+!else
+    $(compile)
+!endif
+.c.XBJ:
+!ifdef japan_objs
+    $(compile)/fo=$(share_objs).XBJ
+!else
+    $(compile)/fo=.XBJ
+!endif
+.c.JBJ:
+    $(compile)/fo=.JBJ
+.c.2bj .c.3bj:
+    $(compile)/fo=$^@
+
+!ifdef share_objs
+.obj: $(share_objs)
+!endif
+!ifdef japan_objs
+.XBJ: $(share_objs)
+!endif
+
+!ifdef oshdrs
+oshdrs +=;
+!endif
+
+!  ifeq form dos
+!    ifdef japan_objs
+libs = $(cliblnec_lib)
+!    else
+libs = $(clibldos_lib)
+!    endif
+libs += $(ovlldr_lib) $(watcom_dir)\lib\wresl.lib
+!    ifeq fp_model c
+libs += $(mathl286_lib)
+!    else
+libs += $(mathl287_lib) $(emu286_lib)
+!    endif
+
+!  else ifeq form os2v2
+libs = $(clibros2_lib) $(os2386) $(watcom_dir)\lib\wresf.lib
+!    ifeq fp_model c
+libs += $(mathr386_lib)
+!    else
+libs += $(mathr387_lib)
+!    endif
+
+!  else ifeq form nt
+libs = $(clibrnt_lib) $(watcom_dir)\lib\wresf.lib
+!    ifeq fp_model c
+libs += $(mathr386_lib)
+!    else
+libs += $(mathr387_lib)
+!    endif
+
+!  else
+!    ifdef japan_objs
+libs = $(clibrnec_lib)
+!    else
+libs = $(clibr386_lib)
+!    endif
+libs += $(watcom_dir)\lib\wresf.lib
+!    ifeq fp_model c
+libs += $(mathr386_lib)
+!    else
+libs += $(mathr387_lib)
+!    endif
+!  endif
+
+
+!ifdef in_sa_library
+rt_h    = $(f77_dir)\lg86\rt\h;
+!else
+rt_h    =
+!endif
+
+!ifeq form dos
+wlink_include_dir = $(wl95_dir)\h
+!endif
+
+.before
+    set include=$(rt_h)$(f77_dir)\lg86\h;$(f77_dir)\cg86\h;$(f77_dir)\h;$(womp_dir)\h;$(wlink_inlcude_dir);$(lang_root)\h;$(oshdrs)$(watcom_dir)\h;$(dwarf_dir)\dw\h;$(clib_dir)\h;$(lib_misc_dir)\h;$(comp_cfg_dir)\h;$(cg_inc_dirs)

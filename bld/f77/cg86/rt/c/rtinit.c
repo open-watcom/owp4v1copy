@@ -1,0 +1,200 @@
+/****************************************************************************
+*
+*                            Open Watcom Project
+*
+*    Portions Copyright (c) 1983-2002 Sybase, Inc. All Rights Reserved.
+*
+*  ========================================================================
+*
+*    This file contains Original Code and/or Modifications of Original
+*    Code as defined in and that are subject to the Sybase Open Watcom
+*    Public License version 1.0 (the 'License'). You may not use this file
+*    except in compliance with the License. BY USING THIS FILE YOU AGREE TO
+*    ALL TERMS AND CONDITIONS OF THE LICENSE. A copy of the License is
+*    provided with the Original Code and Modifications, and is also
+*    available at www.sybase.com/developer/opensource.
+*
+*    The Original Code and all software distributed under the License are
+*    distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+*    EXPRESS OR IMPLIED, AND SYBASE AND ALL CONTRIBUTORS HEREBY DISCLAIM
+*    ALL SUCH WARRANTIES, INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF
+*    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR
+*    NON-INFRINGEMENT. Please see the License for the specific language
+*    governing rights and limitations under the License.
+*
+*  ========================================================================
+*
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
+*
+****************************************************************************/
+
+
+//
+// RTINIT       : run-time system initialization
+//
+
+#include "ftnstd.h"
+#include "rundat.h"
+#include "xfflags.h"
+#include "errcod.h"
+#include "trcback.h"
+#include "fapptype.h"
+#include "fthread.h"
+#include "rtinit.h"
+
+#include <stdlib.h>
+
+extern  void            R_TrapInit(void);
+extern  void            R_TrapFini(void);
+
+#if _OPT_CG == _ON
+extern  void            (* __ErrorInit)(char *);
+extern  void            (* __ErrorFini)(void);
+extern  char            *_LpPgmName;
+#endif
+
+#if defined( __WINDOWS__ )
+  #if defined( __386__ )
+    // so compile-generated symbol "__fthread_init" is defined
+    // when we link a 32-bit Windows DLL
+    #pragma aux         __fthread_init "*";
+    char                __fthread_init = { 0 };
+  #endif
+  char          __FAppType = { FAPP_GUI };
+#else
+  char          __FAppType = { FAPP_CHARACTER_MODE };
+#endif
+
+void            (* _ExceptionInit)() = { &R_TrapInit };
+void            (* _ExceptionFini)() = { &R_TrapFini };
+
+static  char            RTSysInitialized = { 0 };
+
+#if defined( __MT__ )
+
+#include "fthread.h"
+
+static  void    __NullFIOAccess() {}
+
+void            (*_AccessFIO)()         = &__NullFIOAccess;
+void            (*_ReleaseFIO)()        = &__NullFIOAccess;
+void            (*_PartialReleaseFIO)() = &__NullFIOAccess;
+unsigned        __FThreadDataOffset;
+
+
+void    __InitFThreadData( fthread_data *td ) {
+//=============================================
+
+// Must match __InitRTData().
+
+    td->__ExCurr = NULL;
+    td->__XceptionFlags = 0;
+}
+
+#endif
+
+
+static  void    __InitRTData() {
+//==============================
+
+// Must match __InitFThreadData().
+
+    ExCurr = NULL;
+    __XcptFlags = 0;
+}
+
+
+void    RTSysFini() {
+//===================
+
+    _ExceptionFini();
+    // WATFOR-77 calls __ErrorFini() when it terminates
+#if _OPT_CG == _ON
+    __ErrorFini();
+#endif
+}
+
+
+unsigned        RTSysInit() {
+//===========================
+
+    if( RTSysInitialized ) return( 0 );
+#if defined( __OS2__ ) && defined( __386__ )
+    {
+        #define INCL_DOSPROCESS
+        #include <os2.h>
+
+        extern unsigned (*_WindowsStdout)();
+
+        TIB     *ptib;
+        PIB     *ppib;
+
+        DosGetInfoBlocks( &ptib, &ppib );
+        if( ppib->pib_ultype == 3 ) {
+            if( _WindowsStdout == 0 ) {
+                __FAppType = FAPP_GUI;
+            } else {
+                __FAppType = FAPP_DEFAULT_GUI;
+            }
+        }
+    }
+#elif defined( __NT__ )
+    {
+        extern unsigned (*_WindowsStdout)();
+
+        if( _WindowsStdout != 0 ) {
+            __FAppType = FAPP_DEFAULT_GUI;
+        }
+    }
+#endif
+    // WATFOR-77 calls __ErrorInit() when it starts
+#if _OPT_CG == _ON
+    __ErrorInit( _LpPgmName );
+#endif
+    RTSysInitialized = 1;
+    __InitRTData(); // for main thread
+    _ExceptionInit();
+    // call to RTSysFini() is done in LGSysFini() for load'n go
+    // (i.e. we must call RTSysFini() after each time we execute, not when
+    // WATFOR-77 exits in case we are operating in batch mode)
+#if _OPT_CG == _ON
+    atexit( &RTSysFini );
+#endif
+    return( 0 );
+}
+
+
+// WARNING: ALL routines below this point are XI initialization routines with no
+// stack checking on at all times.  do not place routines below this point
+// unless stack checking must be turned off at all times.
+#pragma off (check_stack)
+
+#if defined( __MT__ )
+
+static  void    __InitThreadDataSize() {
+//======================================
+
+    __FThreadDataOffset = __RegisterThreadDataSize( sizeof( fthread_data ) );
+}
+
+XI( __fthread_data_size, __InitThreadDataSize, INIT_PRIORITY_THREAD )
+
+#endif
+
+// Alternative Stack Activation for Alpha NT
+#if defined( __AXP__ ) || defined( __PPC__ )
+
+extern  unsigned        __ASTACKSIZ;    /* alternate stack size */
+#define F77_ALT_STACK_SIZE      8*1024
+
+static void     __InitAlternateStack() {
+//======================================
+
+        __ASTACKSIZ = F77_ALT_STACK_SIZE;
+}
+
+AXI( __InitAlternateStack, INIT_PRIORITY_LIBRARY );
+
+#endif
+

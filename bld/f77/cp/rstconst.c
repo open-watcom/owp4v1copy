@@ -1,0 +1,88 @@
+/****************************************************************************
+*
+*                            Open Watcom Project
+*
+*    Portions Copyright (c) 1983-2002 Sybase, Inc. All Rights Reserved.
+*
+*  ========================================================================
+*
+*    This file contains Original Code and/or Modifications of Original
+*    Code as defined in and that are subject to the Sybase Open Watcom
+*    Public License version 1.0 (the 'License'). You may not use this file
+*    except in compliance with the License. BY USING THIS FILE YOU AGREE TO
+*    ALL TERMS AND CONDITIONS OF THE LICENSE. A copy of the License is
+*    provided with the Original Code and Modifications, and is also
+*    available at www.sybase.com/developer/opensource.
+*
+*    The Original Code and all software distributed under the License are
+*    distributed on an 'AS IS' basis, WITHOUT WARRANTY OF ANY KIND, EITHER
+*    EXPRESS OR IMPLIED, AND SYBASE AND ALL CONTRIBUTORS HEREBY DISCLAIM
+*    ALL SUCH WARRANTIES, INCLUDING WITHOUT LIMITATION, ANY WARRANTIES OF
+*    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, QUIET ENJOYMENT OR
+*    NON-INFRINGEMENT. Please see the License for the specific language
+*    governing rights and limitations under the License.
+*
+*  ========================================================================
+*
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
+*
+****************************************************************************/
+
+
+//
+// RSTCONST  : Constant list
+//
+
+#include "ftnstd.h"
+#include "global.h"
+
+#include <string.h>
+
+extern  void            *FMemAlloc(int);
+extern  uint            TypeSize(uint);
+extern  unsigned        CalcHash(void *,int);
+extern  void            HashInsert(hash_entry *,unsigned,sym_id *,sym_id);
+
+hash_entry              ConstHashTable[HASH_PRIME];
+
+
+sym_id  STConst( ftn_type *c_ptr, int typ, int size ) {
+//=====================================================
+
+// Search the symbol table for a constant. If the constant is not in the
+// symbol table, add it to the symbol table.
+
+    unsigned    hash_value;
+    sym_id      head;
+    sym_id      tail;
+
+    if( _IsTypeLogical( typ ) ) {
+        c_ptr->logstar4 = c_ptr->logstar1;
+    }
+    hash_value = CalcHash( c_ptr, size );
+    head = ConstHashTable[ hash_value ].h_head;
+    if( head != NULL ) {
+        tail = ConstHashTable[ hash_value ].h_tail;
+        for(;;) {
+            if( head->cn.typ == typ ) {
+                if( memcmp( c_ptr, &head->cn.value, size ) == 0 ) {
+                    return( head );
+                }
+            }
+            if( head == tail ) break;
+            head = head->cn.link;
+        }
+    }
+    head = FMemAlloc( sizeof( constant ) - sizeof( ftn_type ) + size );
+    memcpy( &head->cn.value, c_ptr, size );
+    head->cn.typ = typ;
+    head->cn.size = size;
+#if _OPT_CG == _OFF
+    head->cn.reloc_chain = NULL;
+#else
+    head->cn.address = NULL;
+#endif
+    HashInsert( ConstHashTable, hash_value, &CList, head );
+    return( head );
+}

@@ -1,0 +1,12 @@
+obj_rt_1 += &
+$+$(indep)$-fctab.obj &
+$+$(indep)$-shell.obj &
+$+$(indep)$-datainit.obj
+obj_rt_1 += &
+$+$(indep)$-dbstub.obj &
+$+$(indep)$-dbinit.obj
+obj_rt_1 += &
+$+$(indep)$-lrtmain.obj &
+$+$(indep)$-errgrp.obj &
+$+$(indep)$-errmsg.obj &
+$+$(indep)$-iomain.obj
