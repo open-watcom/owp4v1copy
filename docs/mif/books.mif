@@ -344,6 +344,7 @@ book_multi_chapter=1
 # ide
 book_title=$(company) IDE
 book_objs=$(objs_gui) $(objs_cg)
+book_objs_ps=$(objs_gui_ps)
 book_incs=$(incs_gui);$(incs_cg)
 book_bmroot=$(bmroot_gui)
 book_src=guitool
