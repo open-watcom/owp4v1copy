@@ -93,7 +93,7 @@ pick( MAXIMUM_STRING_LENGTH,	"Maximum string length exceeded",
 				"最大文字列長を越えます" )
 pick( BARF_CHARACTER,		"Illegal character value %xH in file",
 				"ファイルに不正な文字の値 %xH があります" )
-pick( ASSUMING_SYMBOLIC,	"Assuming target(s) are .%s",
+pick( ASSUMING_SYMBOLIC,	"Assuming %s target is .SYMBOLIC",
 				"ターゲットは .%s であると仮定します" )
 pick( PERCENT_MAKE_DEPTH,	"Maximum %%make depth exceeded",
 				"%%make の深さの最大を越えます" )
