@@ -1,13 +1,3 @@
-######################################################################
-#       Copyright by WATCOM International Corporation, 1987, 1996.   #
-#       All rights reserved. No part of this software may be         #
-#       reproduced in any form or by any means - graphic, electronic,#
-#       mechanical or otherwise, including, without limitation,      #
-#       photocopying, recording, taping or information storage and   #
-#       retrieval systems - except with the written permission of    #
-#       WATCOM International Corporation.                            #
-######################################################################
-
 proj_name = plusplus
 
 .erase
