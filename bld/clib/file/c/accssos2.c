@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 implementation of access().
 *
 ****************************************************************************/
 
@@ -45,43 +44,41 @@
 
 
 _WCRTLINK int __F_NAME(access,_waccess)( const CHAR_TYPE *path, int pmode )
-    {
-        USHORT          attr;
+{
+    USHORT          attr;
 #ifdef __WIDECHAR__
-        char            mbPath[MB_CUR_MAX*_MAX_PATH]; /* single-byte char */
+    char            mbPath[MB_CUR_MAX*_MAX_PATH]; /* single-byte char */
 #endif
 
 #if defined(__WARP__)
-        FILESTATUS      fs;
-        APIRET          rc;
+    FILESTATUS3     fs;
+    APIRET          rc;
 
-        #ifdef __WIDECHAR__
-            __filename_from_wide( mbPath, path );
-            rc = DosQueryPathInfo( (PSZ)mbPath, FIL_STANDARD,
-                                   &fs, sizeof( FILESTATUS ) );
-        #else
-            rc = DosQueryPathInfo( (PSZ)path, FIL_STANDARD,
-                                   &fs, sizeof( FILESTATUS ) );
-        #endif
-        attr = fs.attrFile;
+    #ifdef __WIDECHAR__
+        __filename_from_wide( mbPath, path );
+        rc = DosQueryPathInfo( (PSZ)mbPath, FIL_STANDARD, &fs, sizeof( fs ) );
+    #else
+        rc = DosQueryPathInfo( (PSZ)path, FIL_STANDARD, &fs, sizeof( fs ) );
+    #endif
+    attr = fs.attrFile;
 #else
-        USHORT          rc;
+    USHORT          rc;
 
-        #ifdef __WIDECHAR__
-            __filename_from_wide( mbPath, path );
-            rc = DosQFileMode( mbPath, &attr, 0 );
-        #else
-            rc = DosQFileMode( (PSZ)path, &attr, 0 );
-        #endif
+    #ifdef __WIDECHAR__
+        __filename_from_wide( mbPath, path );
+        rc = DosQFileMode( mbPath, &attr, 0 );
+    #else
+        rc = DosQFileMode( (PSZ)path, &attr, 0 );
+    #endif
 #endif
 
-        if( rc ) {
-            __set_errno_dos( rc );
-            return( -1 );
-        }
-        if( ( pmode & ACCESS_WR ) && ( attr & _A_RDONLY ) ) {
-            __set_errno_dos( ERROR_ACCESS_DENIED ); /* invalid access mode */
-            return( -1 );
-        }
-        return( 0 );
+    if( rc ) {
+        __set_errno_dos( rc );
+        return( -1 );
     }
+    if( ( pmode & ACCESS_WR ) && ( attr & _A_RDONLY ) ) {
+        __set_errno_dos( ERROR_ACCESS_DENIED ); /* invalid access mode */
+        return( -1 );
+    }
+    return( 0 );
+}

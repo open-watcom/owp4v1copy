@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 32-bit implementation of _dos_getfileattr().
 *
 ****************************************************************************/
 
@@ -39,10 +38,10 @@
 
 
 
-_WCRTLINK unsigned _dos_getfileattr( const char *path, unsigned *attribute ) {
-/***************************************************************************/
-
-    FILESTATUS  fs;
+_WCRTLINK unsigned _dos_getfileattr( const char *path, unsigned *attribute )
+/**************************************************************************/
+{
+    FILESTATUS3 fs;
     APIRET      rc;
 
     rc = DosQueryPathInfo( (PSZ)path, FIL_STANDARD, &fs, sizeof( fs ) );
