@@ -961,9 +961,9 @@ Tool WLINK "Linker"
   Family Advanced
     CSwitch  0, ?????, "Verbose", "op v", OFF
     RGroup "Case sensitive link"
-        RSwitch 0, ?????, "Linker default", , ON
-        RSwitch 0, ?????, "Yes:", "op c", OFF
-        RSwitch 0, ?????, "No:", "op nocase", OFF
+        RSwitch 0, ?????, "Default", , ON
+        RSwitch 0, ?????, "Case sensitive:", "op c", OFF
+        RSwitch 0, ?????, "No case sensitive:", "op nocase", OFF
     VSwitch  0, ?????, "Error count:", "op maxe", =, ONE, REQ, 25
     CSwitch  0, w?6??, "Check relocation of RW data", "op rwr", OFF
     CSwitch  0, ?????, "Dosseg", "op d", OFF
@@ -1017,11 +1017,13 @@ Tool WLINK "Linker"
         RSwitch  0, ???d?, "DGROUP is not shared", "op many", OFF
         RSwitch  0, ?????, "DGROUP is not shared", "op many", OFF
     RGroup "Runtime environment"
-        RSwitch  0, nw???, "Native NT", "", ON
-        RSwitch  0, nw???, "Windows 95", "ru win=4.0", OFF
-        RSwitch  0, nw???, "Windows 3.x", "ru win", OFF
-        RSwitch  0, nc???, "Character mode", "ru con", OFF
-        RSwitch  0, nc???, "16Bit OS/2 1.x", "ru os2", OFF
+        RSwitch  0, nw???, "Default GUI", "", ON
+        RSwitch  0, nw???, "Win32s Windows 3.x:", "ru win=3.10", OFF
+        RSwitch  0, nc???, "Default character mode", "", ON
+        RSwitch  0, nc???, "16Bit OS/2 1.x:", "ru os2=3.10", OFF
+        RSwitch  0, n?2d?, "Default GUI", "", ON
+        RSwitch  0, n?2d?, "Character mode:", "ru con=4.0", OFF
+        RSwitch  0, n?2d?, "Win32s Windows 3.x:", "ru win=3.10", OFF
     VSwitch  0, o????, "Stub executable", "op stub", =, ONE, REQ, ""
     CSwitch  0, na?e?, "Eliminate dead code", "op el", ON, OFF
     CSwitch  0, no?e?, "Eliminate dead code", "op el", ON, OFF
