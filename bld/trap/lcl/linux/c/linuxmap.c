@@ -51,17 +51,6 @@ typedef struct lli {
 static lib_load_info    *moduleInfo;
 static int              ModuleTop;
 
-/* At this point, due to the way the Linux trap file is built, we don't have
- * any dynamic memory management routines available. So we just define a big
- * fat static array. This should be redone once the trap file becomes a real
- * shared library.
- */
-#define NO_DYN_MEM
-#ifdef NO_DYN_MEM
-#define MAX_MODULES     256
-static lib_load_info    module_info_array[MAX_MODULES];
-#endif
-
 /*
  * FindLib - find a shared lib entry in the list
  */
@@ -98,11 +87,7 @@ void AddProcess( void )
 {
     lib_load_info       *lli;
 
-#ifdef NO_DYN_MEM
-    moduleInfo = &module_info_array[0];
-#else    
     moduleInfo = malloc( sizeof( lib_load_info ) );
-#endif    
     memset( moduleInfo, 0, sizeof( lib_load_info ) );
     ModuleTop = 1;
 
@@ -120,21 +105,12 @@ void AddLib( struct link_map *lmap )
 {
     lib_load_info       *lli;
 
-#ifdef NO_DYN_MEM
-    if( ModuleTop >= (MAX_MODULES-1) ) {
-        Out( "Module array is too small!\n" );
-        return;
-    }
-    ModuleTop++;
-    lli = &module_info_array[0];
-#else
     /* This code is not terribly efficient */
     ModuleTop++;
     lli = malloc( ModuleTop * sizeof( lib_load_info ) );
     memset( lli, 0, ModuleTop * sizeof( lib_load_info ) );
     memcpy( lli, moduleInfo, ( ModuleTop - 1 ) *sizeof( lib_load_info ) );
     free( moduleInfo );
-#endif
     moduleInfo = lli;
     lli = &moduleInfo[ModuleTop - 1];
 
@@ -276,11 +252,12 @@ unsigned ReqMap_addr( void )
     sys_ptrace( PTRACE_PEEKUSER, pid, offsetof( user_struct, start_code ), &val );
     ret->out_addr.offset = acc->in_addr.offset + val;
 
-    // TODO: sometimes we're called with weird handle - why?
-    if( acc->handle > ModuleTop )
-        lli = &moduleInfo[0];
-    else
+    if( acc->handle > ModuleTop ) {
+        Out( "ReqMap_addr: Invalid handle passed!\n" );
+        return( sizeof( *ret ) );
+    } else {
         lli = &moduleInfo[acc->handle];
+    }
 
     Out( "ReqMap_addr: addr " );
     OutNum( acc->in_addr.segment );
