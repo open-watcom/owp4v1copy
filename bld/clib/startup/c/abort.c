@@ -28,7 +28,6 @@
 *
 ****************************************************************************/
 
-
 #include "variety.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -42,6 +41,8 @@
 void __terminate();
 
 void    (*_RWD_abort)() = __terminate;
+
+// TODO: We may need some different abort handling here for Linux?
 
 #if defined(__QNX__)
 /*
@@ -81,3 +82,4 @@ void __terminate()
 {
     __fatal_runtime_error( "ABNORMAL TERMINATION\r\n", EXIT_FAILURE );
 }
+

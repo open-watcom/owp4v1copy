@@ -42,6 +42,7 @@
 _TEXT   segment use32 word public 'CODE'
 
         public  _cstart_
+        public  _start          ; Needed for debugging with GDB
 
         assume  cs:_TEXT
 
@@ -64,7 +65,8 @@ _TEXT   segment use32 word public 'CODE'
 ;           ...
 ;           NULL
 
-_cstart_ proc near
+_cstart_:
+_start proc near
 
 	    xor     ebp,ebp     ; Clear frame pointer
         pop     ecx         ; Pop the argument count.
@@ -80,9 +82,9 @@ _cstart_ proc near
 ;
         db      "Open Watcom C/C++32 Run-Time system. "
         db      "Portions Copyright (c) Sybase, Inc. 1988-2002."
-_cstart_ endp
+_start endp
 
 _TEXT   ends
 
-        end     _cstart_
+        end     _start
 
