@@ -35,7 +35,7 @@
 #include "errors.h"
 #include "global.h"
 #include "fcntl.h"
-#include "ldstr.h"
+#include "rcldstr.h"
 #if !defined( __UNIX__ ) || defined( __WATCOMC__ )
 #include "process.h"
 #endif

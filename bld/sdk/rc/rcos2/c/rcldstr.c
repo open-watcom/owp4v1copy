@@ -36,7 +36,7 @@
 #include "errors.h"
 #include "global.h"
 #include "fcntl.h"
-#include "ldstr.h"
+#include "rcldstr.h"
 #include "process.h"
 #include "wreslang.h"
 #include "iortns.h"
