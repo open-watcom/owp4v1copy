@@ -558,23 +558,3 @@ void __DoneExceptionFilter( void )
 
     __XCPTHANDLER = NULL;
 } /* __DoneExceptionFilter() */
-
-// The following two routines are provided for apps linked against
-// the C Library Run-time DLLs.
-
-// For backwards compatibility (deprecated)
-
-void __NewExceptionHandler( REGISTRATION_RECORD *rr )
-{
-    __NewExceptionFilter( rr );
-    __DefaultExceptionHandler();
-
-} /* __NewExceptionHandler() */
-
-// For backwards compatibility (deprecated)
-
-void __DoneExceptionHandler( void )
-{
-    __DoneExceptionFilter();
-
-} /* __DoneExceptionHandler() */
