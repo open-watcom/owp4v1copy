@@ -304,21 +304,17 @@ extern  type_length     TempLocation( name *temp ) {
 static  void    doCall( instruction *ins ) {
 /******************************************/
 
-    pointer     sym;
-    byte_seq    *code;
-    ppc_ins     encoding;
-    code_lbl    *lbl;
+    pointer         sym;
+    risc_byte_seq   *code;
+    ppc_ins         encoding;
+    code_lbl        *lbl;
 
     code = code;
     sym = ins->operands[ CALL_OP_ADDR ]->v.symbol;
-#if 0
     code = FEAuxInfo( sym, CALL_BYTES );
     if( code != NULL ) {
         ObjBytes( code->data, code->length );
     } else {
-#else
-    {
-#endif
         lbl = symLabel( ins->operands[ CALL_OP_ADDR ] );
         lbl = GetWeirdPPCDotDotLabel( lbl );
         GenBRANCH( 18, lbl, TRUE, FALSE );
