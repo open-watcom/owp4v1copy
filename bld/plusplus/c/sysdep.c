@@ -67,7 +67,7 @@ void SysSeek( int fh, unsigned long pos )
      TinySeek( fh, pos, SEEK_SET );
 }
 
-#elif defined(__OS2__) || defined( __NT__ ) || defined( __QNX__ )
+#elif defined(__OS2__) || defined( __NT__ ) || defined( __UNIX__ )
 
 size_t SysRead( int fh, void *buff, size_t amt )
 /**********************************************/

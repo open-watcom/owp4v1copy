@@ -50,7 +50,7 @@ unsigned char _dos_switch_char()
         return( _DOS_Switch_Char() );
 #elif defined(__OS2__)
         return( '/' );
-#elif defined(__QNX__)
+#elif defined(__UNIX__)
         return( '-' );
 #elif defined(__NT__)
         return( '/' );

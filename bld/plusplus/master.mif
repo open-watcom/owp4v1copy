@@ -2,7 +2,6 @@ proj_name = plusplus
 
 .erase
 .continue
-.just_enough
 .extensions:
 .extensions: .qnx .exe .exp .pp .obj .rbj .lbj .asm .c .mif
 
@@ -138,21 +137,30 @@ extra_opts_pcheader = -oi
 !endif
 !endif
 # all platforms
-extra_opts_carve    = -dheader="fesupp.h" -dheader2="carvecpp.h"
+
+!ifdef __LINUX__
+fesupp_hdr   = \"fesupp.h\"
+carvecpp_hdr = \"carvecpp.h\"
+!else
+fesupp_hdr   = "fesupp.h"
+carvecpp_hdr = "carvecpp.h"
+!endif
+
+extra_opts_carve    = -dheader=$(fesupp_hdr) -dheader2=$(carvecpp_hdr)
 extra_opts_cmdlnany = -os
 extra_opts_idedrv = -dSTATIC_LINKAGE
-extra_opts_initfini = -dheader="fesupp.h" -dSPLIT_REQD
-extra_opts_intlload = -d__header="fesupp.h"
-extra_opts_pstk     = -dheader="fesupp.h"
-extra_opts_pstk     = -dheader="fesupp.h"
-extra_opts_ringfns  = -dheader="fesupp.h"
-extra_opts_vbuf     = -dheader="fesupp.h"
-extra_opts_vstk     = -dheader="fesupp.h"
+extra_opts_initfini = -dheader=$(fesupp_hdr) -dSPLIT_REQD
+extra_opts_intlload = -d__header=$(fesupp_hdr)
+extra_opts_pstk     = -dheader=$(fesupp_hdr)
+extra_opts_pstk     = -dheader=$(fesupp_hdr)
+extra_opts_ringfns  = -dheader=$(fesupp_hdr)
+extra_opts_vbuf     = -dheader=$(fesupp_hdr)
+extra_opts_vstk     = -dheader=$(fesupp_hdr)
 !ifdef plusplus_release
 extra_opts_wppdlldr = -dDLL_NAME=$(dll_bld_name)
 !else
 extra_opts_wppdlldr = -dDLL_NAME=$(dll_dbg_name)
-extra_opts_dbgzap   = -dheader="fesupp.h"
+extra_opts_dbgzap   = -dheader=$(fesupp_hdr)
 !endif
 !ifdef plusplus_dll_ptree
 extra_opts_dbgptree = -dDLL_PTREE
@@ -164,6 +172,9 @@ cflags += -dIDE_PGM
 cflags += -dIDE_PGM
 !endif
 !ifeq host_os qnx
+cflags += -dIDE_PGM
+!endif
+!ifeq host_os linux
 cflags += -dIDE_PGM
 !endif
 
@@ -221,7 +232,6 @@ external_dependencies = $(cg_deps) $(dwarf_dw_dep)
 
 # objects for dll
 # obj -- normal object
-# ebj -- in stand-alone executable
 # lbj -- in DLL
 # rbj -- in driver for DLL
 
@@ -232,9 +242,6 @@ external_dependencies = $(cg_deps) $(dwarf_dw_dep)
 
 .c.rbj:
         $(cc) $(cflags) $(dbg_cflags) -fo=.rbj -dwpp_drv $[@ $(extra_opts_$[&)
-
-# .c.ebj:
-#         $(cc) $(cflags) $(dbg_cflags) -fo=.ebj -dwpp_exe$[@ $(extra_opts_$[&)
 
 .c.obj:
         $(cc) $(cflags) $(dbg_cflags) -fo=.obj $[@ $(extra_opts_$[&)
@@ -363,13 +370,13 @@ build : .symbolic $(exe_bld_name).qnx
 #
 
 $(exe_ref_name).elf : $(depends_exe) pexebld.lnk
-    $(linker) $(lflags) NAME $^* @pexebld
+    $(linker) $(lflags) NAME $^*.elf @pexebld
 
 $(exe_dbg_name).elf : $(depends_exe) pexedbg.lnk
-    $(linker) $(lflags) NAME $^* @pexedbg
+    $(linker) $(lflags) NAME $^*.elf @pexedbg
 
 $(exe_bld_name).elf : $(depends_exe) pexebld.lnk
-    $(linker) $(lflags) NAME $^* @pexebld
+    $(linker) $(lflags) NAME $^*.elf @pexebld
 
 build : .symbolic $(exe_bld_name).elf
     @%null
@@ -520,7 +527,7 @@ pdlldbg.lnk : pdll.lnk
 #
 # miscellaneous build rules
 #
-./intlbin.exe: $(fe_misc_dir)/c/intlbin.c 
+./intlbin.exe: $(fe_misc_dir)/c/intlbin.c
     $(bld_cl) $[@ $(wcl_util_opts)
 
 wpp$(target_cpu)01.int : ./intlbin.exe errors01.int usage01.int
@@ -530,7 +537,7 @@ wpp$(target_cpu)01.int : ./intlbin.exe errors01.int usage01.int
 #msgencod_opts = -w
 #!endif
 
-./msgencod.exe: $(fe_misc_dir)/c/msgencod.c 
+./msgencod.exe: $(fe_misc_dir)/c/msgencod.c
     $(bld_cl) $[@ $(wcl_util_opts)
 
 errmsgs.c errmsgs.gh errlevel.gh errors01.int : ./msgencod.exe ../gml/messages.gml
@@ -556,7 +563,11 @@ xlat.gh : ./mktrans.exe ../h/ctokens.h keywords.gh ytab.gh
 
 ytab.c ytab.gh : ../y/plusplus.y ../c/yydriver.c
     $(yacc) -b -d -f -t -u $[@ $]@ >y.out
+# For some reason yacc delivers slightly different results on Linux?
+!ifdef __LINUX__
+!else
     diff y.out ../y/check.out
+!endif
     if exist ytab.gh rm ytab.gh
     mv ytab.h ytab.gh
 
@@ -568,7 +579,7 @@ cmdlnprs.c cmdlnprs.gh cmdlnusg.gh usage.u usage01.int : ./optencod.exe ../gml/o
 
 ./icmask.exe: ../c/icmask.c
     $(bld_cl) $< $(wcl_util_opts)
-    
+
 ic_mask.gh : ./icmask.exe ../h/ic.h ../c/dwarf.c ../c/cgbkcgrf.c ../c/cgio.c ../c/brmwrite.c
     $[@ ../h/ic.h ../c/dwarf.c ../c/cgbkcgrf.c ../c/cgio.c ../c/brmwrite.c
 
@@ -630,9 +641,9 @@ global.chk : ../compile.gbl
 clean global : .symbolic
     @rm -f *.?bj *.lib *.pch *.lst *.gh *.rc *.int *.res *.err *.tmp
     @rm -f *.cod *.asm *.dmp *.lnk *.bak *.dll *.pdb errmsgs.c y.out ytab.*
-    @rm -f cmdlnprs.* usage.u global.chk 
+    @rm -f cmdlnprs.* usage.u global.chk
     @rm -f usage.u @del usage.u $(exe_dbg_name).* $(exe_bld_name).*
     @rm -f $(exe_ref_name).* ../bin/$(exe_ref_name).* $(dll_bld_name).*
-    @rm -f $(dll_dbg_name).* mkopcode.* optencod.* msgencod.* 
+    @rm -f $(dll_dbg_name).* mkopcode.* optencod.* msgencod.*
     @rm -f icmask.* intlbin.* mkcode.* findhash.* mktrans.* umktable.*
 

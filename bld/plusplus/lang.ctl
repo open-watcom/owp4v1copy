@@ -79,6 +79,17 @@ set PROJDIR=<CWD>
 #    <CPCMD> qnx386/wcpp386.sym <relroot>/rel2/qnx/sym/wpp386.sym
 #    <CPCMD> qnx386/wpp38601.int <relroot>/rel2/qnx/sym/wpp38601.int
 
+# 386 Linux hosted compilers
+#
+#  i86 target
+    <CPCMD> linuxi86/wcppi86.elf <relroot>/rel2/binl/wpp
+    <CPCMD> linuxi86/wcppi86.sym <relroot>/rel2/binl/wpp.sym
+    <CPCMD> linuxi86/wppi8601.int <relroot>/rel2/binl/wppi8601.int
+#  386 target
+    <CPCMD> linux386/wcpp386.elf <relroot>/rel2/binl/wpp386
+    <CPCMD> linux386/wcpp386.sym <relroot>/rel2/binl/wpp386.sym
+    <CPCMD> linux386/wpp38601.int <relroot>/rel2/binl/wpp38601.int
+
 [ BLOCK <1> clean ]
 #==================
     pmake -d buildwpp <2> <3> <4> <5> <6> <7> <8> <9> -h clean

@@ -57,7 +57,7 @@
 #endif
 #endif
 
-#if defined(__QNX__)
+#if defined(__UNIX__)
 #define USE_ARGV
 #endif
 

@@ -248,9 +248,11 @@ static void setFinalTargetSystem( OPT_STORAGE *data, char *target_name )
         TargetSystem = TS_OS2;
     } else if( 0 == strcmp( target_name, "QNX" ) ) {
         TargetSystem = TS_QNX;
+        PreDefineStringMacro( "__QNX__" );
         PreDefineStringMacro( "__UNIX__" );
     } else if( 0 == strcmp( target_name, "LINUX" ) ) {
         TargetSystem = TS_LINUX;
+        PreDefineStringMacro( "__LINUX__" );
         PreDefineStringMacro( "__UNIX__" );
 #endif
     } else if( 0 == strcmp( target_name, "WINDOWS" ) ) {

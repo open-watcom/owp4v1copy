@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Pre-compiled header file support.
 *
 ****************************************************************************/
 
@@ -58,7 +57,7 @@ enum {
 #define PHH_MINOR               0x22
 
 #define TEXT_HEADER_SIZE        40
-#ifdef __QNX__
+#ifdef __UNIX__
 #define PHH_TEXT_HEADER         "WATCOM C++ Precompiled Header File\n\x0c\x04   "
 #else
 #define PHH_TEXT_HEADER         "WATCOM C++ Precompiled Header File\r\n\x1a   "
@@ -94,7 +93,7 @@ enum {
 #define PHH_SYSTEM_DOS          0x01
 #define PHH_SYSTEM_UNIX         0x02
 
-#ifdef __QNX__
+#ifdef __UNIX__
 #define PHH_HOST_SYSTEM         PHH_SYSTEM_UNIX
 #else
 #define PHH_HOST_SYSTEM         PHH_SYSTEM_DOS

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  I/O support routines.
 *
 ****************************************************************************/
 
@@ -427,9 +426,9 @@ static char *openSrcExts(       // ATTEMPT TO OPEN FILE (EXT.S TO BE APPENDED)
         int doSrc = (!(CompFlags.dont_autogen_ext_src) && (FT_SRC == typ));
         int doInc = (!(CompFlags.dont_autogen_ext_inc) && ((FT_HEADER == typ)||(FT_LIBRARY == typ)));
         int doExt = (doSrc || doInc);
-        
+
         ext = openExt( NULL, nd, typ );
-        
+
         if(( ext == NULL ) && (doExt)) {
             for( ; ; ) {
                 ext = *exts++;
@@ -667,7 +666,7 @@ static void tempFname( char *fname )
     char    *env;
     int     i;
 
-    #if defined(__QNX__)
+    #if defined(__UNIX__)
         env = CppGetEnv( "TMPDIR" );
         if( env == NULL ) env = CppGetEnv( "TMP" );
     #else
@@ -724,8 +723,8 @@ static void ioSuppTempOpen(             // OPEN TEMPORARY FILE
     auto char   fname[ _MAX_PATH ];
 
     mode = O_RDWR | O_CREAT | O_EXCL;
-    #if defined(__QNX__)
-        // QNX files are always binary
+    #if defined(__UNIX__)
+        // Unix files are always binary
         mode |= O_TEMP;
     #else
         mode |= O_BINARY;
@@ -765,7 +764,7 @@ static void ioSuppTempOpen(             // OPEN TEMPORARY FILE
             break;
         }
     }
-    #if defined(__QNX__)
+    #if defined(__UNIX__)
         /* Under POSIX it's legal to remove a file that's open. The file
            space will be reclaimed when the handle is closed. This makes
            sure that the work file always gets removed. */

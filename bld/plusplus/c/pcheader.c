@@ -54,7 +54,7 @@
 #include "cgiobuff.h"
 #include "brinfo.h"
 
-#if defined(__QNX__)
+#if defined(__UNIX__)
  #include <dirent.h>
  #define _FILENAME_CMP  strcmp
 #else
