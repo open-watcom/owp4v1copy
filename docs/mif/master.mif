@@ -84,7 +84,7 @@ gml_drivers= &
 .EXTENSIONS: .hlp .hpj .cnt .rtf .hh .h .cn1
 
 all : $(hbook).hlp $(hbook).h $(hbook).cnt .SYMBOLIC
-    @copy $(hbook).h $(guitools_dir)\win95 > nul
+    @%null
 
 $(hbook).hlp : $(hbook).hpj $(hbook).rtf $(hbook).hh $(hbook).cnt
     $(%WIN95HC) -xn $*.hpj
@@ -108,6 +108,8 @@ $(hbook).cnt : $(hbook).cn1
 
 $(hbook).rtf $(hbook).cn1 $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs) $(gml_drivers)
     @%make compile_gml_to_xxx
+    @copy $(hbook).h $(guitools_dir)\win95 > nul
+
 
 ####################################################
 #
@@ -119,7 +121,7 @@ $(hbook).rtf $(hbook).cn1 $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs) $(g
 .EXTENSIONS: .hlp .hpj .hh .h .rtf
 
 all : $(hbook).hlp $(hbook).h .SYMBOLIC
-    @copy $(hbook).h $(guitools_dir)\win > nul
+    @%null
 
 $(hbook).hlp : $(hbook).hpj $(hbook).rtf $(hbook).hh
 !ifeq hbook cmix
@@ -135,6 +137,7 @@ $(hbook).hpj : $(proj_objs)
 
 $(hbook).rtf $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs) $(gml_drivers)
     @%make compile_gml_to_xxx
+    @copy $(hbook).h $(guitools_dir)\win > nul
 
 
 ####################################################
@@ -147,13 +150,14 @@ $(hbook).rtf $(hbook).h $(hbook).hh : $(book_objs) $(proj_objs) $(gml_drivers)
 .EXTENSIONS: .ihp .ib .h
 
 all : $(hbook).ihp $(hbook).h .SYMBOLIC
-    @copy $(hbook).h $(guitools_dir)\ib > nul
+    @%null
 
 $(hbook).ihp : $(hbook).ib $(hbook).h
     $(pgm_HCDOS) -h 25 -w 80 $(hbook).ib $(hbook).ihp
 
 $(hbook).ib $(hbook).h : $(book_objs) $(proj_objs) $(gml_drivers)
     @%make compile_gml_to_xxx
+    @copy $(hbook).h $(guitools_dir)\ib > nul
 
 
 ####################################################
@@ -166,7 +170,7 @@ $(hbook).ib $(hbook).h : $(book_objs) $(proj_objs) $(gml_drivers)
 .EXTENSIONS: .htm .h
 
 all : $(hbook).htm $(hbook).h .SYMBOLIC
-        @%null
+    @%null
 
 $(hbook).htm $(hbook).h : $(book_objs) $(proj_objs) $(gml_drivers)
 !ifdef book_bmroot
@@ -204,7 +208,7 @@ $(hbook).ps : $(book_objs) $(proj_objs)
 .IGNORE
 
 all : $(hbook).inf $(hbook).hlp $(hbook).h .SYMBOLIC
-    @copy $(hbook).h $(guitools_dir)\os2 > nul
+    @%null
 
 $(hbook).inf : $(hbook).ipf
     set ipfcartwork=$(book_incs)
@@ -220,6 +224,7 @@ $(hbook).hlp : .symbolic
 
 $(hbook).ipf $(hbook).h : $(book_objs) $(proj_objs) $(gml_drivers)
     @%make compile_gml_to_xxx
+    @copy $(hbook).h $(guitools_dir)\os2 > nul
 
 !endif
 
