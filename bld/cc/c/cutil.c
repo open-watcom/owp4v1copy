@@ -85,6 +85,16 @@ void Expecting( char *a_token )
     }
 }
 
+void ExpectingAfter( char *a_token, char *after_token )
+{
+    if( CurToken == T_EOF ) {
+        CErr( ERR_EXPECTING_AFTER_BUT_FOUND_END_OF_FILE, a_token, after_token );
+    } else {
+        CErr( ERR_EXPECTING_AFTER_BUT_FOUND, a_token, after_token, NameOfToken() );
+    }
+}
+
+
 void ExpectEndOfLine()
 {
     CErr( ERR_EXPECTING_END_OF_LINE_BUT_FOUND, NameOfToken() );

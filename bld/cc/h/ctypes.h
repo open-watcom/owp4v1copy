@@ -689,6 +689,8 @@ struct  comp_flags {
         unsigned rent                   : 1;    /* make re-entrant r/w split thind  */
         unsigned unaligned_segs         : 1;    /* don't align segments */
         unsigned trigraph_alert         : 1;    /* trigraph char alert */
+
+        unsigned generate_auto_depend   : 1; /* Generate make auto depend file */
 };
 
 struct  global_comp_flags {  // things that live across compiles

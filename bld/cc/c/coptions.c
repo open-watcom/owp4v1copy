@@ -1215,6 +1215,36 @@ void SetWindows()
 }
 #endif
 
+void SetGenerateMakeAutoDepend()
+{
+    CompFlags.generate_auto_depend = 1;
+    CMemFree( DependFileName );
+    DependFileName = GetAFileName();
+    if( !DependFileName[0] )
+    {
+        CMemFree( DependFileName );
+        DependFileName = NULL;
+    }
+}
+
+void SetAutoDependTarget()
+{
+   // auto set depend yes...
+    CompFlags.generate_auto_depend = 1;
+    CMemFree( DependTarget );
+    DependTarget = GetAFileName();
+}
+
+void SetAutoDependForeSlash()
+{
+    DependForceSlash = '/';
+}
+
+void SetAutoDependBackSlash()
+{
+    DependForceSlash = '\\';
+}
+
 void Set_PL()           { CompFlags.cpp_line_wanted = 1; }
 void Set_PC()
 {
@@ -1319,7 +1349,6 @@ struct option const Preprocess_Options[] = {
 
 extern void SetOptimization();
 extern void SetPreprocessOptions();
-
 struct option const CFE_Options[] = {
     { "o*",     0,              SetOptimization },
     { "i=@",    0,              SetInclude },
@@ -1348,6 +1377,12 @@ struct option const CFE_Options[] = {
     { "3",      SW_CPU3,        SetCPU },
 #endif
     { "aa",     0,              Set_AA },
+    // more specific commands first ... otherwise the
+    // short command sets us up for failure...
+    { "adt=@",  0,              SetAutoDependTarget },
+    { "adbs",   0,              SetAutoDependBackSlash },
+    { "adfs",   0,              SetAutoDependForeSlash },
+    { "ad=@",   0,              SetGenerateMakeAutoDepend },
     { "ai",     0,              Set_AI },
     { "aq",     0,              Set_AQ },
 #if _MACHINE == _ALPHA

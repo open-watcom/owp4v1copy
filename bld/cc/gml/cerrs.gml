@@ -603,6 +603,12 @@ statement.
 .np
 A syntax error has been detected.
 The tokens displayed in the message should help you to determine the problem.
+:MSGSYM. ERR_EXPECTING_AFTER_BUT_FOUND
+:MSGTXT. Expecting '%s' after '%s' but found '%s'
+:MSGJTXT. Expecting '%s' after '%s' but found '%s'
+.np
+A syntax error has been detected.
+The tokens displayed in the message should help you to determine the problem.
 :MSGSYM. ERR_TYPE_MISMATCH
 :MSGTXT. Type mismatch
 :MSGJTXT. 型が一致しません
@@ -1788,6 +1794,13 @@ You can only specify one storage class specifier in a declaration.
 :MSGSYM. ERR_EXPECTING_BUT_FOUND_END_OF_FILE
 :MSGTXT. Expecting '%s' but found end of file
 :MSGJTXT. '%s'があるはずですが，ファイルが終了してしまいました
+.np
+A syntax error has been detected.
+The compiler is still expecting more input when it reached the
+end of the source program.
+:MSGSYM. ERR_EXPECTING_AFTER_BUT_FOUND_END_OF_FILE
+:MSGTXT. Expecting '%s' after '%s' but found end of file
+:MSGJTXT. Expecting '%s' after '%s' but found end of file
 .np
 A syntax error has been detected.
 The compiler is still expecting more input when it reached the

@@ -327,6 +327,8 @@ void InitModInfo( void )
     WholeFName = NULL;
     ObjectFileName = NULL;
     ErrorFileName = CStrSave( "*" );
+    DependFileName = NULL;
+    DependForceSlash = 0;
     ModuleName = NULL;
     ErrLimit = 20;
     WngLevel = 1;

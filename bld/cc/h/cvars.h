@@ -138,6 +138,7 @@ global  FILE    *ErrFile;       /* error file */
 global  FILE    *DefFile;       /* output for func prototypes */
 global  FILE    *CppFile;       /* output for preprocessor */
 global  FILE    *PageFile;      /* page file for leafs, quads, syms */
+global  FILE    *DepFile;       /* make style auto depend file */
 global  struct  cpp_info *CppStack; /* #if structure control stack */
 global  char    *HFileList;     /* list of path names to try for H files */
 global  int     SrcLineNum;
@@ -406,6 +407,9 @@ global  char    *DataSegName;   /* name of the data segment */
 global  char    *CodeClassName; /* name of the code class */
 global  char    *ModuleName;    /* name of module */
 global  char    *ObjectFileName;/* name of object file */
+global  char    *DependFileName;/* name of make style auto depend file */
+global  char    *DependTarget;  /* name of target generated in make style auto depend */
+global  char     DependForceSlash;/* type of slash to force to in depend output */
 global  int      PackAmount;    /* current packing alignment */
 global  int      GblPackAmount; /* packing alignment given on command line */
 global  struct textsegment *TextSegList; /* list of #pragma alloc_text segs*/
@@ -538,6 +542,7 @@ extern  FILE    *OpenBrowseFile(void);
 extern  void    CloseFiles(void);
 extern  void    FreeFNames(void);
 extern  char    *ErrFileName(void);
+extern  char    *DepFileName(void);
 extern  char    *ObjFileName(char *);
 extern  FNAMEPTR AddFlist(char const *);
 extern  FNAMEPTR FileIndexToFName(unsigned);
@@ -911,6 +916,7 @@ extern  void    CCusage(void);                  /* cusage */
 
 extern  void    CErrSymName(int,SYMPTR,SYM_HANDLE);/* cutil */
 extern  void    Expecting(char *);              /* cutil */
+extern  void    ExpectingAfter(char *,char *);  /* cutil */
 extern  void    ExpectConstant(void);           /* cutil */
 extern  void    ExpectEndOfLine(void);          /* cutil */
 extern  void    ExpectIdentifier(void);         /* cutil */

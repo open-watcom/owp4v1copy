@@ -49,4 +49,4 @@
 #define MBR_EXT         ".mbr"
 #define C_EXT           ".c"
 #define CPP_EXT         ".i"
-
+#define DEP_EXT         ".d"
