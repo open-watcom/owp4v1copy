@@ -89,6 +89,9 @@ cflags_axp += -we-w0-zq -i$(positive_dir)
 cflags_386 += $(add_br_$(no_br_$^*))
 !endif
 
+# Some tests require more than the default stack size
+lnk_i86 += op stack=8k
+
 .error
     @%append $(%error_file) $(%error_msg)
 
