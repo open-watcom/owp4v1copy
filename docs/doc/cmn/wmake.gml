@@ -390,6 +390,7 @@ __NT386__ = defined if x86 Windows NT version
 __OS2__ = defined if OS/2 version
 __QNX__ = defined if QNX version
 __LINUX__ = defined if Linux version
+__UNIX__ = defined if QNX or Linux version
 MAKE = <name of file containing &makcmdup>
 #endif
 # clear &sysper.EXTENSIONS list
@@ -617,6 +618,10 @@ This macro is defined in the Windows NT environment.
 This macro is defined in the OS/2 environment.
 .point __LINUX__
 This macro is defined in the Linux environment.
+.point __QNX__
+This macro is defined in the QNX environment.
+.point __UNIX__
+This macro is defined in the Linux or QNX environment.
 .point __MAKEOPTS__
 contains all of the command line options that &makcmdup was invoked
 with except for any use of the "f" or "n" options.

@@ -185,6 +185,8 @@ set C name mangler to MASM compatible mode
 remove file dependency information
 .note zq or q
 operate quietly
+.note zz
+remove "@size" from STDCALL function names
 .note ?  or h
 print this message
 .note w<number>
@@ -1047,6 +1049,7 @@ PASCAL              '^'         '^'
 WASM uses MASM compatible names when -zcm command line option is used.
 .note
 In STDCALL procedures name 'nn' is overall parametrs size in bytes.
+It is suppressed when -zz command line option is used (WATCOM 10.0 compatibility).
 .endnote
 .np
 .section &company "C" name mangler
