@@ -175,6 +175,18 @@ static char *mygets( char *buf, unsigned len, FILE *fp )
     return( buf );
 }
 
+
+static void AddToList( LIST *new, LIST **list )
+//=============================================
+
+{
+    while( *list != NULL ) {
+        list = &((*list)->next);
+    }
+    *list = new;
+}
+
+
 long FileSize( char *file )
 //=========================
 
@@ -187,36 +199,6 @@ long FileSize( char *file )
     } else {
         return( RoundUp( stat_buf.st_size, BlockSize ) );
     }
-}
-
-
-int main( int argc, char *argv[] )
-//================================
-
-{
-    int                 ok;
-    FILE                *fp;
-
-    if( !CheckParms( &argc, &argv ) ) {
-        return( 1 );
-    }
-    fp = fopen( argv[ 2 ], "r" );
-    if( fp == NULL ) {
-        printf( "Cannot open '%s'\n", argv[ 2 ] );
-        return( 1 );
-    }
-    printf( "Reading Info File...\n" );
-    ReadInfFile();
-    ok = ReadList( fp );
-    if( !ok ) return( 1 );
-    printf( "Checking for duplicate files...\n" );
-    ok = CheckForDuplicateFiles();
-    if( !ok ) return( 1 );
-    fclose( fp );
-    printf( "Making script...\n" );
-    MakeScript();
-    CreateDisks();
-    return( 0 );
 }
 
 
@@ -276,7 +258,7 @@ int CheckParms( int *pargc, char **pargv[] )
     DiskSize = (1457664L-4096);
     MaxDiskFiles = 215;
     BlockSize = 512;
-    
+
     PackDir  = argv[ 3 ];
     if( stat( PackDir, &stat_buf ) != 0 ) {  // exists
         printf( "\nDirectory '%s' does not exist\n", PackDir );
@@ -289,6 +271,49 @@ int CheckParms( int *pargc, char **pargv[] )
     }
     return( TRUE );
 }
+
+
+int AddTarget( char *target )
+//===========================
+{
+    int                 count;
+    LIST                *new, *curr;
+
+    count = 1;
+    for( curr = TargetList; curr != NULL; curr = curr->next ) {
+        if( stricmp( target, curr->item ) == 0 ) {
+            return( count );
+        }
+        ++count;
+    }
+
+    new = malloc( sizeof( LIST ) );
+    if( new == NULL ) {
+        printf( "Out of memory\n" );
+        return( 0 );
+    } else {
+        new->item = strdup( target );
+        if( new->item == NULL ) {
+            printf( "Out of memory\n" );
+            return( 0 );
+        }
+        new->next = NULL;
+        count = 1;
+        if( TargetList == NULL ) {
+            TargetList = new;
+        } else {
+            curr = TargetList;
+            while( curr->next != NULL ) {
+                curr = curr->next;
+                ++count;
+            }
+            curr->next = new;
+            ++count;
+        }
+        return( count );
+    }
+}
+
 
 static char *GetBracketedString( const char *src, char **end )
 /************************************************************/
@@ -314,98 +339,48 @@ static char *GetBracketedString( const char *src, char **end )
     return( ret );
 }
 
-int ReadList( FILE *fp )
-/**********************/
+
+int AddPath( char *path, int target, int parent )
+//===============================================
 {
-    char        *p, *s;
-    char        *path;
-    char        *old_path;
-    char        *file;
-    char        *rel_fil;
-    char        *condition;
-    char        *desc;
-    char        *dst_var;
-    char        *where;
-    char        buf[ 1024 ];
-    char        redist;
-    int         no_error;
+    int                 count;
+    PATH_INFO           *new, *curr;
 
-    printf( "Checking files...\n" );
-    no_error = TRUE;
-    while( fgets( buf, sizeof( buf ), fp ) != NULL ) {
-        s = GetBracketedString( buf, &p );
-        if( s == NULL ) {
-            printf( "Invalid list file format - 'redist' not found\n" );
-            exit( 2 );
+    count = 1;
+    for( curr = PathList; curr != NULL; curr = curr->next ) {
+        if( stricmp( path, curr->path ) == 0 && target == curr->target ) {
+            return( count );
         }
-        redist = s[0];
-        free( s );
-        if( redist == '\0' )
-            redist = ' ';
-
-        path = GetBracketedString( p, &p );
-        if( path == NULL ) {
-            printf( "Invalid list file format - 'dir' not found\n" );
-            exit( 2 );
-        }
-        old_path = GetBracketedString( p, &p );
-        if( old_path == NULL ) {
-            printf( "Invalid list file format - 'old dir' not found\n" );
-            exit( 2 );
-        }
-        if( (stricmp( path, old_path ) == 0) || (*old_path == '\0') ) {
-            free( old_path );
-            old_path = NULL;
-        }
-        file = GetBracketedString( p, &p );
-        if( file == NULL ) {
-            printf( "Invalid list file format - 'file' not found\n" );
-            exit( 2 );
-        }
-        rel_fil = GetBracketedString( p, &p );
-        if( rel_fil == NULL ) {
-            printf( "Invalid list file format - 'rel file' not found\n" );
-            exit( 2 );
-        }
-        if( *rel_fil == '\0' ) {
-            free( rel_fil );
-            rel_fil = strdup( "." );
-        }
-        where = GetBracketedString( p, &p );
-        if( where == NULL ) {
-            printf( "Invalid list file format - 'product' not found\n" );
-            exit( 2 );
-        }
-        dst_var = GetBracketedString( p, &p );
-        if( dst_var == NULL ) {
-            printf( "Invalid list file format - 'dst_var' not found\n" );
-            exit( 2 );
-        }
-        if( *dst_var == '\0' ) {
-            free( dst_var );
-            dst_var = NULL;
-        }
-        condition = GetBracketedString( p, &p );
-        if( condition == NULL ) {
-            printf( "Invalid list file format - 'condition' not found\n" );
-            exit( 2 );
-        }
-        desc = GetBracketedString( p, &p );
-        if( desc == NULL ) {
-            printf( "Invalid list file format - 'description' not found\n" );
-            exit( 2 );
-        }
-        if( dst_var && strcmp( dst_var, "." ) == 0 ) {
-            free( dst_var );
-            dst_var = NULL;
-        }
-        if( !AddFile( path, old_path, redist, file, rel_fil, dst_var, condition ) ) {
-            no_error = FALSE;
-        }
-        // TODO: free strings here
+        ++count;
     }
-    printf( ".\n" );
-    return( no_error );
+
+    new = malloc( sizeof( PATH_INFO ) );
+    if( new == NULL ) {
+        printf( "Out of memory\n" );
+        return( 0 );
+    } else {
+        new->path = strdup( path );
+        if( new->path == NULL ) {
+            printf( "Out of memory\n" );
+            return( 0 );
+        }
+        new->target = target;
+        new->parent = parent;
+        new->next = NULL;
+        count = 1;
+        if( PathList == NULL ) {
+            PathList = new;
+        } else {
+            curr = PathList;
+            while( curr->next != NULL ) {
+                curr = curr->next;
+                ++count;
+            }
+            curr->next = new;
+            ++count;
+        }
+        return( count );
+    }
 }
 
 
@@ -454,7 +429,7 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
             strcpy( src, rel_file );
         } else {
             char        c;
-    
+
             strcpy( src, RelRoot );
             c = src[ strlen( src ) - 1 ];
             if( (c != '/') && (c != '\\') ) {
@@ -469,7 +444,7 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
         strcat( src, file );
     } else {
         char    c;
-    
+
         strcpy( src, RelRoot );
     c = src[ strlen( src ) - 1 ];
         if( (c != '\\') && (c != '/') ) {
@@ -659,100 +634,98 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
 }
 
 
-int AddTarget( char *target )
-//===========================
+int ReadList( FILE *fp )
+/**********************/
 {
-    int                 count;
-    LIST                *new, *curr;
+    char        *p, *s;
+    char        *path;
+    char        *old_path;
+    char        *file;
+    char        *rel_fil;
+    char        *condition;
+    char        *desc;
+    char        *dst_var;
+    char        *where;
+    char        buf[ 1024 ];
+    char        redist;
+    int         no_error;
 
-    count = 1;
-    for( curr = TargetList; curr != NULL; curr = curr->next ) {
-        if( stricmp( target, curr->item ) == 0 ) {
-            return( count );
+    printf( "Checking files...\n" );
+    no_error = TRUE;
+    while( fgets( buf, sizeof( buf ), fp ) != NULL ) {
+        s = GetBracketedString( buf, &p );
+        if( s == NULL ) {
+            printf( "Invalid list file format - 'redist' not found\n" );
+            exit( 2 );
         }
-        ++count;
+        redist = s[0];
+        free( s );
+        if( redist == '\0' )
+            redist = ' ';
+
+        path = GetBracketedString( p, &p );
+        if( path == NULL ) {
+            printf( "Invalid list file format - 'dir' not found\n" );
+            exit( 2 );
+        }
+        old_path = GetBracketedString( p, &p );
+        if( old_path == NULL ) {
+            printf( "Invalid list file format - 'old dir' not found\n" );
+            exit( 2 );
+        }
+        if( (stricmp( path, old_path ) == 0) || (*old_path == '\0') ) {
+            free( old_path );
+            old_path = NULL;
+        }
+        file = GetBracketedString( p, &p );
+        if( file == NULL ) {
+            printf( "Invalid list file format - 'file' not found\n" );
+            exit( 2 );
+        }
+        rel_fil = GetBracketedString( p, &p );
+        if( rel_fil == NULL ) {
+            printf( "Invalid list file format - 'rel file' not found\n" );
+            exit( 2 );
+        }
+        if( *rel_fil == '\0' ) {
+            free( rel_fil );
+            rel_fil = strdup( "." );
+        }
+        where = GetBracketedString( p, &p );
+        if( where == NULL ) {
+            printf( "Invalid list file format - 'product' not found\n" );
+            exit( 2 );
+        }
+        dst_var = GetBracketedString( p, &p );
+        if( dst_var == NULL ) {
+            printf( "Invalid list file format - 'dst_var' not found\n" );
+            exit( 2 );
+        }
+        if( *dst_var == '\0' ) {
+            free( dst_var );
+            dst_var = NULL;
+        }
+        condition = GetBracketedString( p, &p );
+        if( condition == NULL ) {
+            printf( "Invalid list file format - 'condition' not found\n" );
+            exit( 2 );
+        }
+        desc = GetBracketedString( p, &p );
+        if( desc == NULL ) {
+            printf( "Invalid list file format - 'description' not found\n" );
+            exit( 2 );
+        }
+        if( dst_var && strcmp( dst_var, "." ) == 0 ) {
+            free( dst_var );
+            dst_var = NULL;
+        }
+        if( !AddFile( path, old_path, redist, file, rel_fil, dst_var, condition ) ) {
+            no_error = FALSE;
+        }
+        // TODO: free strings here
     }
-
-    new = malloc( sizeof( LIST ) );
-    if( new == NULL ) {
-        printf( "Out of memory\n" );
-        return( 0 );
-    } else {
-        new->item = strdup( target );
-        if( new->item == NULL ) {
-            printf( "Out of memory\n" );
-            return( 0 );
-        }
-        new->next = NULL;
-        count = 1;
-        if( TargetList == NULL ) {
-            TargetList = new;
-        } else {
-            curr = TargetList;
-            while( curr->next != NULL ) {
-                curr = curr->next;
-                ++count;
-            }
-            curr->next = new;
-            ++count;
-        }
-        return( count );
-    }
-}
-
-
-int AddPath( char *path, int target, int parent )
-//===============================================
-{
-    int                 count;
-    PATH_INFO           *new, *curr;
-
-    count = 1;
-    for( curr = PathList; curr != NULL; curr = curr->next ) {
-        if( stricmp( path, curr->path ) == 0 && target == curr->target ) {
-            return( count );
-        }
-        ++count;
-    }
-
-    new = malloc( sizeof( PATH_INFO ) );
-    if( new == NULL ) {
-        printf( "Out of memory\n" );
-        return( 0 );
-    } else {
-        new->path = strdup( path );
-        if( new->path == NULL ) {
-            printf( "Out of memory\n" );
-            return( 0 );
-        }
-        new->target = target;
-        new->parent = parent;
-        new->next = NULL;
-        count = 1;
-        if( PathList == NULL ) {
-            PathList = new;
-        } else {
-            curr = PathList;
-            while( curr->next != NULL ) {
-                curr = curr->next;
-                ++count;
-            }
-            curr->next = new;
-            ++count;
-        }
-        return( count );
-    }
-}
-
-
-static void AddToList( LIST *new, LIST **list )
-//=============================================
-
-{
-    while( *list != NULL ) {
-        list = &((*list)->next);
-    }
-    *list = new;
+    printf( ".\n" );
+    return( no_error );
 }
 
 
@@ -956,8 +929,8 @@ void ReadSection( FILE *fp, char *section, LIST **list )
 }
 
 
-void ReadInfFile()
-//================
+void ReadInfFile( void )
+//======================
 
 {
     FILE                *fp;
@@ -1021,7 +994,7 @@ void DumpSizes( FILE *fp, FILE_INFO *curr )
     }
 }
 
-int CheckForDuplicateFiles()
+int CheckForDuplicateFiles( void )
 {
     FILE_INFO           *file1,*file2;
     size_list           *name1,*name2;
@@ -1046,6 +1019,41 @@ int CheckForDuplicateFiles()
         }
     }
     return( ok );
+}
+
+
+void DumpFile( FILE *out, char *fname )
+//=====================================
+
+{
+    FILE                *in;
+    char                *buf;
+    int                 len;
+
+    in = PathOpen( fname );
+    if( in == NULL ) {
+        printf( "Cannot open '%s'\n", fname );
+        return;
+    }
+    buf = malloc( SECTION_BUF_SIZE );
+    if( buf == NULL ) {
+        printf( "Out of memory\n" );
+        return;
+    }
+    for( ;; ) {
+        if( mygets( buf, SECTION_BUF_SIZE, in ) == NULL ) {
+            break;
+        }
+        if( strnicmp( buf, "include=", 8 ) == 0 ) {
+            len = strlen( buf );
+            if( buf[len-1] == '\n' ) buf[len-1] = '\0';
+            DumpFile( out, buf+8 );
+        } else {
+            fputs( buf, out );
+        }
+    }
+    free( buf );
+    fclose( in );
 }
 
 
@@ -1291,8 +1299,8 @@ int CreateScript( long init_size, unsigned padding )
 }
 
 
-int MakeScript()
-//==============
+int MakeScript( void )
+//====================
 
 {
     int                 disks;
@@ -1374,8 +1382,8 @@ char                    *BootText[ NUM_LINES ] =
 };
 
 
-void CreateBootFile()
-//===================
+void CreateBootFile( void )
+//=========================
 
 {
     int                 line;
@@ -1502,8 +1510,8 @@ void CreateBatch( FILE *fp )
 }
 
 
-void CreateDisks()
-//===========================
+void CreateDisks( void )
+//======================
 
 {
     FILE                *fp;
@@ -1524,36 +1532,31 @@ void CreateDisks()
 }
 
 
-void DumpFile( FILE *out, char *fname )
-//=====================================
+int main( int argc, char *argv[] )
+//================================
 
 {
-    FILE                *in;
-    char                *buf;
-    int                 len;
+    int                 ok;
+    FILE                *fp;
 
-    in = PathOpen( fname );
-    if( in == NULL ) {
-        printf( "Cannot open '%s'\n", fname );
-        return;
+    if( !CheckParms( &argc, &argv ) ) {
+        return( 1 );
     }
-    buf = malloc( SECTION_BUF_SIZE );
-    if( buf == NULL ) {
-        printf( "Out of memory\n" );
-        return;
+    fp = fopen( argv[ 2 ], "r" );
+    if( fp == NULL ) {
+        printf( "Cannot open '%s'\n", argv[ 2 ] );
+        return( 1 );
     }
-    for( ;; ) {
-        if( mygets( buf, SECTION_BUF_SIZE, in ) == NULL ) {
-            break;
-        }
-        if( strnicmp( buf, "include=", 8 ) == 0 ) {
-            len = strlen( buf );
-            if( buf[len-1] == '\n' ) buf[len-1] = '\0';
-            DumpFile( out, buf+8 );
-        } else {
-            fputs( buf, out );
-        }
-    }
-    free( buf );
-    fclose( in );
+    printf( "Reading Info File...\n" );
+    ReadInfFile();
+    ok = ReadList( fp );
+    if( !ok ) return( 1 );
+    printf( "Checking for duplicate files...\n" );
+    ok = CheckForDuplicateFiles();
+    if( !ok ) return( 1 );
+    fclose( fp );
+    printf( "Making script...\n" );
+    MakeScript();
+    CreateDisks();
+    return( 0 );
 }
