@@ -3141,39 +3141,43 @@ static void write_epilogue( void )
     InputQueueLine( buffer );
 }
 
-int Ret( int i, int count )
+int Ret( int i, int count, int flag_iret )
 /*************************/
 {
     char        buffer[20];
     proc_info   *info;
 
     info = CurrProc->e.procinfo;
-
-    if( info->mem_type == T_NEAR ) {
+    
+    if( flag_iret ) {
+        strcpy( buffer, AsmBuffer[i]->string_ptr );
+    } else if( info->mem_type == T_NEAR ) {
         strcpy( buffer, "retn " );
     } else {
         strcpy( buffer, "retf " );
     }
-
+    
     write_epilogue();
-    if( count == i + 1 ) {
-        if( ( info->langtype >= LANG_BASIC &&
+    if( !flag_iret ) {
+        if( count == i + 1 ) {
+            if( ( info->langtype >= LANG_BASIC &&
                 info->langtype <= LANG_PASCAL ) ||
-            ( info->langtype == LANG_STDCALL && !(info->is_vararg) ) ) {
-            if( info->parasize != 0 ) {
-                sprintf( buffer + strlen(buffer), "%d", info->parasize );
+                ( info->langtype == LANG_STDCALL && !(info->is_vararg) ) ) {
+                if( info->parasize != 0 ) {
+                    sprintf( buffer + strlen(buffer), "%d", info->parasize );
+                }
             }
+        } else {
+            if( AsmBuffer[i+1]->token != T_NUM ) {
+                AsmError( CONSTANT_EXPECTED );
+                return( ERROR );
+            }
+            sprintf( buffer + strlen(buffer), "%d", AsmBuffer[i+1]->value );
         }
-    } else {
-        if( AsmBuffer[i+1]->token != T_NUM ) {
-            AsmError( CONSTANT_EXPECTED );
-            return( ERROR );
-        }
-        sprintf( buffer + strlen(buffer), "%d", AsmBuffer[i+1]->value );
     }
-
+    
     InputQueueLine( buffer );
-
+    
     return( NOT_ERROR );
 }
 

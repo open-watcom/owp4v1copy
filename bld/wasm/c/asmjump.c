@@ -64,7 +64,7 @@ extern void             InputQueueLine( char * );
 extern void             GetInsString( enum asm_token, char *, int );
 extern uint_32          GetCurrAddr( void );
 
-int    curr_ptr_type;
+extern int              curr_ptr_type;
 
 static enum asm_token getJumpNegation( enum asm_token instruction )
 /*****************************************************************/

@@ -389,7 +389,7 @@ extern int              SetCurrSeg( int );      // open or close a segment in
 extern int              ProcDef( int );         // define a procedure
 extern int              LocalDef( int );        // define local variables to procedure
 extern int              ProcEnd( int );         // end a procedure
-extern int              Ret( int, int );        // emit return statement from procedure
+extern int              Ret( int, int, int );   // emit return statement from procedure
 extern int              WritePrologue( void );  // emit prologue statement after the
                                                 // declaration of a procedure
 extern int              MacroDef( int, char );  // define a macro

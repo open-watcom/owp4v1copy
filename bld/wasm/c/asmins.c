@@ -123,7 +123,8 @@ extern uint_32          Address;
 
 #endif
 
-extern int              curr_ptr_type;
+int                     curr_ptr_type;
+static int              in_epilogue = 0;
 
 void make_inst_hash_table( void );
 
@@ -1625,9 +1626,22 @@ int AsmParse()
                 break;
 #ifdef _WASM_
             case T_RET:
-                if( CurrProc != NULL ) {
-                    return Ret( i, Token_Count );
+                if(( CurrProc != NULL ) && ( in_epilogue == 0 )) {
+                    in_epilogue = 1;
+                    return Ret( i, Token_Count, FALSE );
                 }
+            case T_RETN:
+            case T_RETF:
+                in_epilogue = 0;
+                rCode->info.token = AsmBuffer[i]->value;
+                break;
+            case T_IRET:
+            case T_IRETD:
+                if(( CurrProc != NULL ) && ( in_epilogue == 0 )) {
+                    in_epilogue = 1;
+                    return Ret( i, Token_Count, TRUE );
+                }
+                in_epilogue = 0;
                 rCode->info.token = AsmBuffer[i]->value;
                 break;
 #endif
