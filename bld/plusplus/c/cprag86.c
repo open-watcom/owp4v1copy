@@ -56,10 +56,8 @@ extern  int     GetAliasInfo();
 static  hw_reg_set      asmRegsSaved = { HW_D( HW_FULL ) };
 static  hw_reg_set      stackParms[] = { HW_D( HW_EMPTY ) };
 #if _CPU == 386
-static  hw_reg_set      optlinkParms[] = {
-    HW_D( HW_FLTS ),
-    HW_D( HW_EMPTY )
-};
+static  hw_reg_set      optlinkParms[] = { HW_D( HW_FLTS ), HW_D( HW_EMPTY ) };
+static  hw_reg_set      FastParms[]  = { HW_D( HW_ECX ), HW_D( HW_EDX ), HW_D( HW_EMPTY ) };
 #endif
 
 #define WCPP_ASM     // enable assembler
@@ -154,12 +152,10 @@ static void pragmaInit(         // INITIALIZATION FOR PRAGMAS
                   , "_*" );
     }
 
-#ifdef __OLD_STDCALL
-    pragmaInitInfo( &OldStdcallInfo
+    pragmaInitInfo( &FastcallInfo
                   , call_type
                    | SPECIAL_STRUCT_RETURN
-                  , "_*" );
-#endif
+                  , "@*@#" );
 
     #if _CPU == 386
         HW_CTurnOff( CdeclInfo.save, HW_EAX );
@@ -187,11 +183,11 @@ static void pragmaInit(         // INITIALIZATION FOR PRAGMAS
         HW_CTurnOff( StdcallInfo.save, HW_ECX );
         HW_CTurnOff( StdcallInfo.save, HW_EDX );
 
-#ifdef __OLD_STDCALL
-        HW_CTurnOff( OldStdcallInfo.save, HW_EAX );
-        HW_CTurnOff( OldStdcallInfo.save, HW_ECX );
-        HW_CTurnOff( OldStdcallInfo.save, HW_EDX );
-#endif
+        HW_CTurnOff( FastcallInfo.save, HW_EAX );
+        HW_CTurnOff( FastcallInfo.save, HW_ECX );
+        HW_CTurnOff( FastcallInfo.save, HW_EDX );
+        FastcallInfo.parms = (hw_reg_set *)CMemAlloc( sizeof( FastParms ) );
+        memcpy( FastcallInfo.parms, FastParms, sizeof( FastParms ) );
 
         HW_CTurnOff( asmRegsSaved, HW_EAX );
         HW_CTurnOff( asmRegsSaved, HW_EBX );
@@ -220,11 +216,9 @@ static void pragmaInit(         // INITIALIZATION FOR PRAGMAS
         HW_CTurnOff( StdcallInfo.save, HW_ES );
         HW_CAsgn( StdcallInfo.streturn, HW_AX );
 
-#ifdef __OLD_STDCALL
-        HW_CTurnOff( OldStdcallInfo.save, HW_ABCD );
-        HW_CTurnOff( OldStdcallInfo.save, HW_ES );
-        HW_CAsgn( OldStdcallInfo.streturn, HW_AX );
-#endif
+        HW_CTurnOff( FastcallInfo.save, HW_ABCD );
+        HW_CTurnOff( FastcallInfo.save, HW_ES );
+        HW_CAsgn( FastcallInfo.streturn, HW_AX );
 
         HW_CTurnOff( asmRegsSaved, HW_ABCD );
         HW_CTurnOff( asmRegsSaved, HW_SI );
@@ -314,11 +308,9 @@ static void pragmaFini(         // FINISH PRAGMAS
                    ( next->info == &SyscallInfo ) ||
                    ( next->info == &OptlinkInfo ) ||
                    ( next->info == &StdcallInfo ) ||
+                   ( next->info == &FastcallInfo ) ||
                    ( next->info == &Far16CdeclInfo ) ||
                    ( next->info == &Far16PascalInfo ) ||
-#ifdef __OLD_STDCALL
-                   ( next->info == &OldStdcallInfo ) ||
-#endif
                    ( next->info == &FortranInfo ) ) {
                     CFatal( "freeing a static calling convention info" );
                 }
@@ -335,11 +327,9 @@ static void pragmaFini(         // FINISH PRAGMAS
     freeInfo( &SyscallInfo );
     freeInfo( &OptlinkInfo );
     freeInfo( &StdcallInfo );
+    freeInfo( &FastcallInfo );
     freeInfo( &Far16CdeclInfo );
     freeInfo( &Far16PascalInfo );
-#ifdef __OLD_STDCALL
-    freeInfo( &OldStdcallInfo );
-#endif
     freeInfo( &FortranInfo );
     //CMemFreePtr( &FortranInfo.objname );
     AuxList = NULL;

@@ -91,9 +91,7 @@ global AUX_INFO         FortranInfo;
 global AUX_INFO         SyscallInfo;
 global AUX_INFO         OptlinkInfo;
 global AUX_INFO         StdcallInfo;
-#ifdef __OLD_STDCALL
-global AUX_INFO         OldStdcallInfo;
-#endif
+global AUX_INFO         FastcallInfo;
 global AUX_INFO         Far16CdeclInfo;
 global AUX_INFO         Far16PascalInfo;
 

@@ -169,9 +169,7 @@ pch_status PCHReadPragmas( void )
     readAuxInfo( &SyscallInfo, RAUX_NULL );
     readAuxInfo( &OptlinkInfo, RAUX_NULL );
     readAuxInfo( &StdcallInfo, RAUX_NULL );
-#ifdef __OLD_STDCALL
-    readAuxInfo( &OldStdcallInfo, RAUX_NULL );
-#endif
+    readAuxInfo( &FastcallInfo, RAUX_NULL );
     readAuxInfo( &Far16CdeclInfo, RAUX_NULL );
     readAuxInfo( &Far16PascalInfo, RAUX_NULL );
     for(;;) {
@@ -205,9 +203,7 @@ pch_status PCHReadPragmas( void )
     infoTranslate[ SyscallInfo.index ] = &SyscallInfo;
     infoTranslate[ OptlinkInfo.index ] = &OptlinkInfo;
     infoTranslate[ StdcallInfo.index ] = &StdcallInfo;
-#ifdef __OLD_STDCALL
-    infoTranslate[ OldStdcallInfo.index ] = &OldStdcallInfo;
-#endif
+    infoTranslate[ FastcallInfo.index ] = &FastcallInfo;
     infoTranslate[ Far16CdeclInfo.index ] = &Far16CdeclInfo;
     infoTranslate[ Far16PascalInfo.index ] = &Far16PascalInfo;
     return( PCHCB_OK );
@@ -270,9 +266,7 @@ pch_status PCHWritePragmas( void )
     writeAuxInfo( &SyscallInfo, &index );
     writeAuxInfo( &OptlinkInfo, &index );
     writeAuxInfo( &StdcallInfo, &index );
-#ifdef __OLD_STDCALL
-    writeAuxInfo( &OldStdcallInfo, &index );
-#endif
+    writeAuxInfo( &FastcallInfo, &index );
     writeAuxInfo( &Far16CdeclInfo, &index );
     writeAuxInfo( &Far16PascalInfo, &index );
     for( e = AuxList; e != NULL; e = e->next ) {
@@ -346,11 +340,9 @@ void *PragmaMapIndex( void *pi )
         if( i == StdcallInfo.index ) {
             return( &StdcallInfo );
         }
-#ifdef __OLD_STDCALL
-        if( i == OldStdcallInfo.index ) {
-            return( &OldStdcallInfo );
+        if( i == FastcallInfo.index ) {
+            return( &FastcallInfo );
         }
-#endif
         if( i == Far16CdeclInfo.index ) {
             return( &Far16CdeclInfo );
         }

@@ -1057,9 +1057,7 @@ void PragInit(
     SyscallInfo = DefaultInfo;
     OptlinkInfo = DefaultInfo;
     StdcallInfo = DefaultInfo;
-#ifdef __OLD_STDCALL
-    OldStdcallInfo = DefaultInfo;
-#endif
+    FastcallInfo = DefaultInfo;
 
     CompInfo.init_priority = INIT_PRIORITY_PROGRAM;
 }
@@ -1092,6 +1090,7 @@ static MAGIC_WORD magicWords[] = {
     { "optlink",    M_OPTLINK },
     { "pascal",     M_PASCAL  },
     { "stdcall",    M_STDCALL },
+    { "fastcall",   M_FASTCALL},
     { "syscall",    M_SYSCALL },
     { "system",     M_SYSCALL },
     { NULL,         M_UNKNOWN },
@@ -1115,7 +1114,7 @@ static int lookupMagicKeyword(  // LOOKUP A MAGIC KEYWORD
     return( mptr->index );
 }
 
-static char *retrieveName( unsigned m_type )
+static char *retrieveName( int m_type )
 {
     MAGIC_WORD *mptr;           // - current entry
 
@@ -1179,6 +1178,9 @@ static boolean setAuxInfo(          // SET CURRENT INFO. STRUCTURE
     case M_STDCALL:
         CurrInfo = &StdcallInfo;
         break;
+    case M_FASTCALL:
+        CurrInfo = &FastcallInfo;
+        break;
     default:
         if( create_new ) {
             CreateAux( Buffer );
@@ -1209,6 +1211,8 @@ boolean PragmaName( void *pragma, char **id )
         *id = retrieveName( M_OPTLINK );
     } else if( pragma == &StdcallInfo ) {
         *id = retrieveName( M_STDCALL );
+    } else if( pragma == &FastcallInfo ) {
+        *id = retrieveName( M_FASTCALL );
     }
     if( *id != NULL ) {
         return( TRUE );
@@ -1256,6 +1260,9 @@ void PragCurrAlias(             // LOCATE ALIAS FOR PRAGMA
         break;
     case M_STDCALL:
         CurrAlias = &StdcallInfo;
+        break;
+    case M_FASTCALL:
+        CurrAlias = &FastcallInfo;
         break;
     default:
         search = AuxLookup( Buffer );
@@ -1516,15 +1523,6 @@ boolean ReverseParms( void *pragma )
     AUX_INFO *aux = pragma;
 
     if( aux->_class & REVERSE_PARMS ) {
-        return( TRUE );
-    }
-    return( FALSE );
-}
-
-boolean AddParmSize( void *pragma )
-/*********************************/
-{
-    if( pragma == &StdcallInfo ) {
         return( TRUE );
     }
     return( FALSE );

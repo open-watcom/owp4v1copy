@@ -60,6 +60,7 @@ enum
 ,       M_FORTRAN
 ,       M_SYSCALL
 ,       M_STDCALL
+,       M_FASTCALL
 ,       M_OPTLINK
 };
 

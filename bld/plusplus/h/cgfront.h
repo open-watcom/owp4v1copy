@@ -1311,12 +1311,6 @@ unsigned PtrConvertCommon(      // CONVERT TO COMMON PTR
 boolean ReverseParms(           // ASK IF PRAGMA REQUIRES REVERSED PARMS
     void * pragma )             // - pragma
 ;
-boolean AddParmSize(            // ASK IF PRAGMA REQUIRES SIZE OF PARMS ADDED
-    void *pragma )              // - pragma                             TO NAME
-;
-boolean AddParmSize(            // ASK IF PRAGMA REQUIRES SIZE OF PARMS ADDED
-    void *pragma )              // - pragma                             TO NAME
-;
 boolean PragmaName(             // RETURN TRUE IF NAME OF PRAGMA IS SIMPLE
     void *pragma,               // - pragma
     char **id )                 // - returned name

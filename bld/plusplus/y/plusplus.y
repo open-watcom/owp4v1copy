@@ -286,6 +286,7 @@ Modified        By              Reason
 %token Y___EXPORT
 %token Y___FAR
 %token Y___FAR16
+%token Y___FASTCALL
 %token Y___FORTRAN
 %token Y___HUGE
 %token Y___INT64
@@ -1914,6 +1915,8 @@ pragma-modifier
     { $$ = MakeIndexPragma( M_OPTLINK ); }
     | Y___STDCALL
     { $$ = MakeIndexPragma( M_STDCALL ); }
+    | Y___FASTCALL
+    { $$ = MakeIndexPragma( M_FASTCALL ); }
     ;
 
 pragma-id

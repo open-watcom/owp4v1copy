@@ -584,7 +584,6 @@ static AUX_INFO *getLangInfo(   // GET LANGUAGE INFO. FOR SYMBOL
     SYMBOL sym )                // - the symbol
 {
     AUX_INFO *inf;              // - information ptr.
-    AUX_INFO *test_inf;         // - information ptr.
     TYPE unmod_type;            // - unmodified type of symbol
     type_flag mod_flags;        // - modifier flags
 
@@ -614,11 +613,9 @@ static AUX_INFO *getLangInfo(   // GET LANGUAGE INFO. FOR SYMBOL
                 }
             #endif
         } else {
-            test_inf = TypeHasPragma( sym->sym_type );
-            if( test_inf == NULL ) {
+            inf = TypeHasPragma( sym->sym_type );
+            if( inf == NULL ) {
                 inf = &DefaultInfo;
-            } else {
-                inf = test_inf;
             }
         }
     }
@@ -627,7 +624,7 @@ static AUX_INFO *getLangInfo(   // GET LANGUAGE INFO. FOR SYMBOL
 
 char *FEExtName( SYMBOL sym )      // RETURN THE SYMBOL'S External NAME
 {
-    if( sym == NULL || sym->name == NULL ) {
+    if( ( sym == NULL ) || ( sym->name == NULL ) ) {
         return( "!NULL!" );
     } else {
         return( objectName( sym ) );
@@ -740,18 +737,12 @@ static call_class getCallClass( // GET CLASS OF CALL
                     }
                 }
             }
-            #endif
-            #if _INTEL_CPU
             if( fn_flags & TF1_INTERRUPT ) {
                 value |= INTERRUPT;
             }
-            #endif
-            #if _INTEL_CPU
             if( fn_flags & TF1_LOADDS ) {
                 value |= LOAD_DS_ON_ENTRY;
             }
-            #endif
-            #if _INTEL_CPU
             if( CompFlags.emit_names ) {
                 value |= EMIT_FUNCTION_NAME;
             }

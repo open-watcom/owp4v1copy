@@ -211,8 +211,7 @@ static void defineKeywordMacros(   // PREDEFINE KEYWORD MACROS
     , "__inline=inline"
     , "_inline=inline"
     , "_stdcall=__stdcall"
-    , "_fastcall="
-    , "__fastcall="
+    , "_fastcall=__fastcall"
     , "_asm=__asm"
     , "_emit=__emit"
     , NULL
