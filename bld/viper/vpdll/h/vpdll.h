@@ -35,11 +35,9 @@
 
 
 #if defined( __NT__ )
-     #define DLL_EXPORT __export __stdcall
-//    #define DLL_EXPORT __export WINAPI
+    #define DLL_EXPORT __export WINAPI
 #elif defined( __WINDOWS__ )
-//    #error windows
-    #define DLL_EXPORT  __export __pascal
+    #define DLL_EXPORT __export WINAPI
 #else
     #error Unsupported OS
     #define RCSAPI

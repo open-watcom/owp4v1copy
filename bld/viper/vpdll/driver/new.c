@@ -41,7 +41,7 @@
 #define BUFLEN          150
 
 static FunctionPtrs     Ptrs;
-static HANDLE           Dll_Hdl;
+static HINSTANCE        Dll_Hdl;
 
 BOOL CALLBACK DllNewDlgProc( HWND hwndDlg, UINT msg, UINT wParam, DWORD lParam )
 {
@@ -84,7 +84,7 @@ BOOL CALLBACK DllNewDlgProc( HWND hwndDlg, UINT msg, UINT wParam, DWORD lParam )
     return( TRUE );
 }
 
-BOOL PASCAL __export CBFunction( DWORD msg, DWORD parm1, DWORD parm2 )
+BOOL __export WINAPI CBFunction( DWORD msg, DWORD parm1, DWORD parm2 )
 {
     char        buf[512];
     int         rc;
@@ -134,14 +134,14 @@ void GetFunctions( void )
                                                      "VPDLL_EndFileList" );
 }
 
-int PASCAL WinMain( HANDLE currinst, HANDLE previnst, LPSTR cmdline, int cmdshow)
+int PASCAL WinMain( HINSTANCE currinst, HINSTANCE previnst, LPSTR cmdline, int cmdshow)
 {
     char                str[MSG_LEN];
     char                *target;
     FARPROC             fp;
 
-//    if( *cmdline == '\0' ) cmdline = "d:\\dev\\viper\\vpdll\\dll\\vpdll.dll";
-    cmdline = "d:\\dev\\viper\\vpdll\\dll\\vpdll.dll";
+    if( *cmdline == '\0' ) cmdline = "d:\\dev\\viper\\vpdll\\dll\\vpdll.dll";
+//    cmdline = "d:\\dev\\viper\\vpdll\\dll\\vpdll.dll";
     target = cmdline;
     while( isspace( *target ) ) target++;
     while( !isspace( *target ) && *target != '\0' ) target ++;
@@ -153,7 +153,7 @@ int PASCAL WinMain( HANDLE currinst, HANDLE previnst, LPSTR cmdline, int cmdshow
 
 
     Dll_Hdl = LoadLibrary( cmdline );
-    if( Dll_Hdl < 32 ) {
+    if( (UINT)Dll_Hdl < 32 ) {
         sprintf( str, "Unable to load '%s'.", cmdline );
         MessageBox( NULL, str, "new", MB_OK );
         return( 0 );

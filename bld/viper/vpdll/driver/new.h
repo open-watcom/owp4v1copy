@@ -37,7 +37,7 @@
 #define ID_EDIT         0x0006
 #define MENU_GO         101
 
-#define DLLEXPORT       _export _pascal
+#define DLLEXPORT       _export WINAPI
 
 typedef struct {
     DWORD DLLEXPORT (*VPDLL_GetVersion)( void );
