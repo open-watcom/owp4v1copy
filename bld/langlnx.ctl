@@ -15,7 +15,6 @@ set PROJDIR=<CWD>
 [ INCLUDE <devdir>/wstrip/prereq.ctl ]
 [ INCLUDE <devdir>/wmake/prereq.ctl ]
 
-[ INCLUDE <devdir>/womp/lang.ctl ]
 [ INCLUDE <devdir>/nwlib/prereq.ctl ]
 [ INCLUDE <devdir>/cfloat/prereq.ctl ]
 [ INCLUDE <devdir>/owl/prereq.ctl ]

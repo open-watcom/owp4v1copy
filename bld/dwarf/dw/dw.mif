@@ -30,16 +30,32 @@ mem_model_386 = -ms
 !endif
 !endif
 
-!ifeq host_cpu 386
-extra_c_flags += -fpc
-!endif
-
 inc_dirs = $(watcom_dir)/h
 
 .BEFORE
     @set include=$(inc_path)
 
 .c : $(dwarf_dir)/dw/c
+
+dwtjbflags = -d1 -fo=$@
+dwmakeabflags = op quiet,map debug all file dwmakeab.tbj, dwutils.tbj n $[@
+
+!ifeq bootstrap 1
+
+inc_dirs=-I$(watcom_dir)/h -I. -I../h
+dwtjbflags = -c $(cflags) -o $@
+dwmakeabflags = dwmakeab.tbj dwutils.tbj -o $<
+
+libdwarf.a: dwabenum.i dwabinfo.i $(OBJS)
+    ar crs libdwarf.a $(OBJS)
+
+!else
+
+!ifeq host_cpu 386
+extra_c_flags += -fpc
+!endif
+
+!endif
 
 dw$(model).lib : dwabenum.i $(objs)
         @%create lbc.tmp
@@ -54,9 +70,6 @@ dwabenum.i dwabinfo.i : ./dwmakeab.exe
         rm -f $[@
         $(bld_link) $(dwmakeabflags)
         $[@
-
-dwtjbflags = -d1 -fo=$@
-dwmakeabflags = op quiet,map debug all file dwmakeab.tbj, dwutils.tbj n $[@
 
 dwmakeab.tbj : dwmakeab.c
         $(bld_cc) $(dwtjbflags) $<

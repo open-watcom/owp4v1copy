@@ -62,3 +62,27 @@ rc         += -q
 bld_cl     += -zq
 bld_cc     += -zq
 bld_link   += op q
+
+# options for single source utility compilations
+wcl_util_opts = -fe=$^@
+
+#common bootstrap definitions for Linux
+!ifdef __LINUX__
+!ifdef bootstrap
+
+cc = gcc
+bld_cl = $(cc)
+bld_cc = $(cc)
+bld_link = $(cc)
+
+cppflags = $(inc_dirs) $(defines) -DNDEBUG -D__UNIX__ -D__LINUX__ &
+-D__SMALL__ -D_M_IX86 -DUNIX -DLINUX -D__386__ -D__FLAT__ &
+-D_WCUNALIGNED="__attribute__((packed))"
+cflags = $(extra_c_flags) $(cppflags) -c -Wall -funsigned-char -pipe -O -o $@
+
+# options for single source utility compilations
+wcl_util_opts = -funsigned-char -Wall $(cppflags) $(ldflags) -o $[&.exe &
+$(defines) $(libs)
+
+!endif
+!endif

@@ -32,7 +32,7 @@
 
 #include "standard.h"
 
-#if defined(__386__) || defined(M_I86)
+#if (defined(__386__) || defined(M_I86)) && defined(__WATCOMC__)
 
 #include "cypfunc.h"
 

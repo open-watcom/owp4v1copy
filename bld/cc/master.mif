@@ -21,7 +21,7 @@ proj_name = cc
 
 !ifdef bootstrap
 cg_inc_dirs = -I$(cfloat_dir)/h -I$(watcom_dir)/h -I$(owl_dir)/h &
-  -I../../cg/h -I../../cg/intel/h -I../../cg/intel/$(target_CPU)/h
+  -I$(cg_dir)/h -I$(cg_dir)/intel/h -I$(cg_dir)/intel/$(target_CPU)/h
 !endif
 
 
@@ -144,18 +144,10 @@ inc_dirs += -I$(dwarf_dir)/dw/h
 inc_dirs += -I$(comp_cfg_dir)/h
 inc_dirs += -I$(fe_misc_dir)/h
 
-cc = cc
-bld_cl = cc
-
-CPPFLAGS = $(inc_dirs) $(defines) -DNDEBUG -Dlocal=static -D__UNIX__ -D__LINUX__ -D__SMALL__ -D_M_IX86
-CFLAGS = $(CPPFLAGS) -c -funsigned-char -pipe -std=gnu99 -O -o $@
-LDFLAGS = -L$(cg_dir)/intel/$(target_CPU)/$(%OBJDIR) -L$(dwarf_dir)/dw/$(%OBJDIR) &
+ldflags = -L$(cg_dir)/intel/$(target_CPU)/$(%OBJDIR) -L$(dwarf_dir)/dw/$(%OBJDIR) &
 -L$(cfloat_dir)/$(%OBJDIR) -L$(owl_dir)/$(%OBJDIR) -L$(clib_dir)/$(%OBJDIR) &
 -L$(wres_dir)/$(%OBJDIR)
-LIBS = -lcg$(target_cpu) -ldwarf -lcfloat -lowl -lwatcom -lwres
-
-# options for single source utility compilations
-wcl_util_opts = $(inc_dirs) $(LDFLAGS) -o $[&.exe -D__UNIX__ $(LIBS)
+libs = -lcg$(target_cpu) -ldwarf -lcfloat -lowl -lwatcom -lwres
 
 !else
 inc_dirs =.;
@@ -204,11 +196,14 @@ target: $(def_targ) .SYMBOLIC
 !include $(cc_dir)/ccobjs.mif
 
 !ifdef bootstrap
-wcc$(target_CPU): $(pre_obj_deps) code$(target_CPU).gh errors01.int $(cc_objs)
-	$(cc) $(LDFLAGS) -o $@ $(cc_objs) $(LIBS)
+xname = wcc$(target_cpu)
+cg_deps =
 !endif
 
 $(xname): eraseall.obj $(pre_obj_deps) $(cc_objs) $(dwarf_deps) $(cg_deps) $(cc_dir)/ccobjs.mif
+!ifdef bootstrap
+	$(cc) $(ldflags) -o $@ $(cc_objs) $(libs)
+!else
         @%make linkfile
         @%append $^&.lnk $(cg_libs)
         $(linker) $(lflags) @$^&.lnk
@@ -219,6 +214,7 @@ $(xname): eraseall.obj $(pre_obj_deps) $(cc_objs) $(dwarf_deps) $(cg_deps) $(cc_
 !ifeq   host_os qnx
 !ifdef  on_build_machine
         serialize $(xname) wcc
+!endif
 !endif
 !endif
 
@@ -311,28 +307,32 @@ linkfile: .procedure
 codei86.s: ../a/codei86.asm ../asm2s.sed
         sed -f ../asm2s.sed $[@ > $@
 
+./mkcodi86.exe: ../a/codei86.asm ../a/mkcode.c
+        $(as) -i"$(watcom_dir)/h" $[@ -fo=.obj
+        wcc -zq -ox $]@ @ipaths -fo=.obj
+!ifdef __OS2__
+        $(linker) -l=os2 f { mkcode.obj codei86.obj } -fe=$@ -zq
+!else
+        $(linker) f { mkcode.obj codei86.obj } -fe=$@ -zq
+!endif
+
 !ifdef bootstrap
 codei86.gh : codei86.s ../a/mkcode.c
         $(CC) -D__i86__ $(INCLUDE) ../a/mkcode.c codei86.s -o mkcode
         ./mkcode $^@
 	rm -f mkcode
 !else
-codei86.gh : ../a/codei86.asm ../a/mkcode.c
-        $(as) -i"$(watcom_dir)/h" $[@
-        wcc -zq -ox $]@ @ipaths
-!ifdef __OS2__
-        wcl -l=os2 mkcode.obj codei86.obj -fe=mkcode -zq
-!else
-        wcl  mkcode.obj codei86.obj -fe=mkcode -zq
-!endif
-        mkcode $^@
-        rm -f mkcode.obj
-        rm -f mkcode.exe
-        rm -f codei86.obj
+codei86.gh : ./mkcodi86.exe
+        $[@ $^@
 !endif
 
 code386.s: ../a/code386.asm ../asm2s.sed
         sed -f ../asm2s.sed $[@ > $@
+
+./mkcod386.exe: ../a/code386.asm ../a/mkcode.c
+        $(as) -i"$(watcom_dir)/h" $[@ -fo=.obj
+        wcc386 -zq $(popt) -ox $]@ @ipaths -fo=.obj
+        $(linker) $(lflags) f { mkcode.obj code386.obj } n $@
 
 !ifdef bootstrap
 code386.gh : code386.s ../a/mkcode.c
@@ -340,14 +340,8 @@ code386.gh : code386.s ../a/mkcode.c
         ./mkcode $^@
 	rm -f mkcode
 !else
-code386.gh : ../a/code386.asm ../a/mkcode.c
-        $(as) -i"$(watcom_dir)/h" $[@
-        wcc386 -zq $(popt) -ox $]@ @ipaths
-        wcl386 mkcode.obj code386.obj -fe=mkcode -zq
-        mkcode $^@
-        rm -f mkcode.obj
-        rm -f mkcode.exe
-        rm -f code386.obj
+code386.gh : ./mkcod386.exe
+        $[@ $^@
 !endif
 
 codeaxp.gh :
@@ -398,15 +392,8 @@ key_objs = ../h/c.key ../h/pc.key ../h/seh.key ../h/dummy.key
 ./findhash.exe : ../../fe_misc/c/findhash.c
         $(bld_cl) $[@ $(wcl_util_opts)
 
-!ifdef bootstrap
-weights.gh keywords.gh : $(key_objs)
-	$(CC) $(INCLUDE) ../../fe_misc/c/findhash.c -o findhash
-	./findhash -q $<
-	rm -f findhash
-!else
 weights.gh keywords.gh : ./findhash.exe $(key_objs)
         $[@ -q $(key_objs)
-!endif
 
 eraseall.obj : ../compile.gbl
         rm -f *.?bj

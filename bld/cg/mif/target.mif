@@ -2,9 +2,20 @@
 !include mlibs.mif
 
 !ifndef sys_dll
+
+!ifdef bootstrap
+
+libcg$(target_name).a : $(pre_obj_deps) $(target_objs) $(mem_objs) $(cg_dump_objs) $($(host_OS)_objs)
+        ar crs $@ $<
+
+!else
+
 target : $(pre_obj_deps) cg$(target_name).lib cg$(target_name)$(host_OS).lib .SYMBOLIC
         @%null
-!else
+!endif
+
+!else # not sys_dll
+
 bin_name = cg$(target_name)
 
 target : $(pre_obj_deps) $(bin_path) cgdllcli.lib .SYMBOLIC

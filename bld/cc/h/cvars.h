@@ -422,7 +422,7 @@ struct user_seg;
 
 global struct user_seg *UserSegments;
 
-#ifdef  M_I86
+#if defined( M_I86 ) && defined(__WATCOMC__)
 extern  int     far_strcmp(char far *, char *, int );
 #ifdef __LARGE__
 #pragma aux     far_strcmp = 0xf3        /* rep   */\
@@ -452,7 +452,7 @@ extern  void    far_memcpy( char far *, char far *, int );
                              0x1f       /* pop ds  */\
         parm caller [es di] [dx si] [cx] modify exact [si di cx];
 
-#elif defined(__386__) && defined(__FLAT__)
+#elif defined(__386__) && defined(__FLAT__) && defined(__WATCOMC__)
 extern  int     far_strcmp(char *, char *, int );
 #pragma aux     far_strcmp = 0xf3        /* rep   */\
                              0xa6        /* cmpsb */\

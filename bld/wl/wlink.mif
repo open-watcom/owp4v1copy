@@ -224,8 +224,19 @@ lnk = tmp.lnk
 exe = $(bin_prefix)wl.$(extend)
 stubexe = $(bin_prefix)wlstub.exe
 
-$(exe) : global.chk ../h/rc.msg $(c_objs) $(extra_objs) $(libs) wlink.res
+!ifeq bootstrap 1
+exe = $(proj_name)
+inc_dirs = -I../linux386 -I. -I../h -I$(rc_dir)/h -I$(lib_misc_dir)/h &
+-I$(watcom_dir)/h
+libs = $(wres_dir)/$(%OBJDIR)/libwres.a $(dwarf_dir)/dw/$(%OBJDIR)/libdwarf.a &
+$(orl_dir)/$(%OBJDIR)/liborl.a $(clib_dir)/$(%OBJDIR)/libwatcom.a
+!endif
+
+$(exe) : global.chk wlink.res $(c_objs) $(extra_objs) $(libs)
     @%make wlink.res
+!ifeq bootstrap 1
+    $(cc) -o $^@ $(c_objs) $(extra_objs) $(libs)
+!else
     @%create $(lnk)
     @%append $(lnk) $(lflags)
     @%append $(lnk) name $^@
@@ -244,6 +255,7 @@ $(exe) : global.chk ../h/rc.msg $(c_objs) $(extra_objs) $(libs) wlink.res
     $(rc) -q -bt=$(host_OS) version.rc $^@
 !endif
     %make $(stubexe)
+!endif
 !endif
     wstrip -q -a -r $@ . wlink.res
 
@@ -325,25 +337,23 @@ sharedio.obj : $(wrc_dir)/c/sharedio.c
         $(cc) $(cflags) $[@ -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" -DINSIDE_WLINK
 
 force_include = -fi
+!ifeq bootstrap 1
+force_include = -include
+!endif
 
 rcstr.obj : $(wrc_dir)/c/rcstr.c
         $(compile) -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -I"$(watcom_dir)/h" $(force_include)"../h/wlrcmem.h" -DINSIDE_WLINK
 
-wlink.res : ../h/wlink.rc ../h/lnkerror.rc ../h/wlnkmsg.h ../h/lnkerror.msg ../h/wlink.msg ../h/rcmsg.h
+wlink.res : rcmsg.h ../h/wlink.rc ../h/lnkerror.rc ../h/wlnkmsg.h ../h/lnkerror.msg ../h/wlink.msg
         $(rc) -zk -r -bt=windows $(extra_rc_flags) -fo=$^@ $[@ -I"$(watcom_dir)/h"
 
-../h/rc.msg : $(wrc_dir)/h/rc.msg
-        cp $[@ $^@
-
-../h/rcmsg.h : ../h/rc.msg
+rcmsg.h : $(wrc_dir)/h/rc.msg
 !ifdef __LINUX__
-        perl $(sdk_dir)/misc/msgtoh.pl < $[@ | sed 's/0$$/800/' > tmp.h
+        perl $(sdk_dir)/misc/msgtoh.pl < $[@ | sed 's/0$$/800/' > rcmsg.h
 !else
-        vi -d -q -i -s $(sdk_dir)/misc/msgtoh.vi -p"tmp.h" $[@
-        vi -d -q -i -s ../h/rcrebase.vi tmp.h
+        vi -d -q -i -s $(sdk_dir)/misc/msgtoh.vi -p"rcmsg.h" $[@
+        vi -d -q -i -s ../h/rcrebase.vi rcmsg.h
 !endif
-        cp tmp.h ../h/rcmsg.h
-        rm -f tmp.h
 
 global.chk : ../compile.gbl
     @%make clean
@@ -359,4 +369,4 @@ global.chk : ../compile.gbl
 clean: .SYMBOLIC .EXPLICIT
         rm -f *.?bj *.lnk *.exe *.dll *.lib *.res
         rm -f *.err *.map *.lst *.tmp *.ilk *.sym
-        rm -f ../h/rc.msg ../h/rcmsg.h version.rc
+        rm -f ../h/rc.msg ../h/rcmsg.h rcmsg.h version.rc

@@ -37,7 +37,7 @@ extern  char            *CypFill(byte*,uint,byte);
 extern  uint            CypLength(char*);
 extern  bool            CypEqual(byte*,byte*,uint);
 
-#if !(defined(__386__) || defined(M_I86))
+#if !(defined(__386__) || defined(M_I86)) || !defined(__WATCOMC__)
 #else
 #if defined(__FLAT__) || defined(__SMALL__) || defined(__MEDIUM__)
     #define _SAVES          0x06            /*      push    es */

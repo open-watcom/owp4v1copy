@@ -10,5 +10,5 @@ set PROJDIR=<CWD>
     mkdir -p <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
     wmake -h -f ../linux386/makefile bootstrap=1
-    <CPCMD> nwlib <devdir>/build/binl/wlib
+    <CPCMD> wlib <devdir>/build/binl/wlib
     cdsay <PROJDIR>

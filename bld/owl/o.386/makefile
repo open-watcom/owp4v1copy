@@ -2,16 +2,4 @@
 
 host_CPU = 386
 
-!ifeq bootstrap 1
-all: libowl.a
-!endif
-
 !include ../master.mif
-
-!ifeq bootstrap 1
-cc = cc
-cflags = -g -D_WCUNALIGNED= -I../../watcom/h -I../h -D__386__ -c -o $@
-
-libowl.a: $(owl_objs)
-	ar rs $@ $<
-!endif

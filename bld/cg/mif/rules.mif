@@ -35,7 +35,13 @@ std_defines = -dNDEBUG
 opt_standard += $(%CGEXTRAOPTS)
 !endif
 
-inc_dirs        = $(include_path);$(dwarf_dir)/dw/h;$(watcom_dir)/h;$(mem_include)
+!ifdef bootstrap
+inc_dirs = -I. -I$(cg_dir)/h -I$(cg_dir)/intel/h -I$(cg_dir)/intel/$(target_name)/h &
+-I$(watcom_dir)/h -I$(cfloat_dir)/h -I$(dwarf_dir)/dw/h -I$(comp_cfg_dir)/h &
+-I$(owl_dir)/h
+!else
+inc_dirs        = .;$(include_path);$(dwarf_dir)/dw/h;$(watcom_dir)/h;$(mem_include)
+!endif
 
 .BEFORE
         set include=$(inc_path)
@@ -64,23 +70,28 @@ global.chk : $(cg_dir)/compile.gbl
     # if exist *.?bj del *.?bj
     wtouch -f $[@ $^@
 
+!ifdef bootstrap
+bitset_opts = -o $@ -g
+protos_opts = -E -traditional -o $@
+!else
 bitset_opts = -fe=$@ -d2
 protos_opts = -p -fo=$@
+!endif
 
 ./bitset.exe : $(watcom_dir)/c/bitset.c
     $(bld_cl) $(bitset_opts) $[@
 
-$(cg_dir)/h/gbit.gh : ./bitset.exe $(cg_dir)/mif/cg.mif
-    $[@ $(gbit_size) _GBit global_bit_set $(cg_dir)/h/gbit.gh
+gbit.gh : ./bitset.exe $(cg_dir)/mif/cg.mif
+    $[@ $(gbit_size) _GBit global_bit_set $@
 
-$(cg_dir)/h/lbit.gh : ./bitset.exe $(cg_dir)/mif/cg.mif
-    $[@ $(lbit_size) _LBit local_bit_set $(cg_dir)/h/lbit.gh
+lbit.gh : ./bitset.exe $(cg_dir)/mif/cg.mif
+    $[@ $(lbit_size) _LBit local_bit_set $@
 
-$(cg_dir)/h/dbit.gh : ./bitset.exe $(cg_dir)/mif/cg.mif
-    $[@ $(dbit_size) _DBit dom_bit_set $(cg_dir)/h/dbit.gh
+dbit.gh : ./bitset.exe $(cg_dir)/mif/cg.mif
+    $[@ $(dbit_size) _DBit dom_bit_set $@
 
-$(cg_dir)/h/cgprotos.gh : $(cg_dir)/h/cgapicvr.h $(cg_dir)/h/cgfuntab.h
+cgprotos.gh : $(cg_dir)/h/cgapicvr.h $(cg_dir)/h/cgfuntab.h
     $(cc) $(protos_opts) $[@ -I"$(cg_dir)/h"
 
-$(cg_dir)/h/feprotos.gh : $(cg_dir)/h/cgfecvr.h $(cg_dir)/h/cgfertns.h
+feprotos.gh : $(cg_dir)/h/cgfecvr.h $(cg_dir)/h/cgfertns.h
     $(cc) $(protos_opts) $[@ -I"$(cg_dir)/h"
