@@ -55,7 +55,7 @@ COMMANDS += &
 #    fgrep &
 #    gnutar &
     ls &
-#    mkdir &
+    mkdir &
 #    od &
     rm 
 #    rmdir &

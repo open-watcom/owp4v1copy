@@ -22,6 +22,9 @@ set owroot=d:\openwa~1
 REM Change this to point to your Watcom 11.0c directory
 set watcom=c:\c\wc11
 
+REM temporary sub-directory for pre-build OW tools
+set OBJDIR=prebuild
+
 REM Unset this variable to get more debug info
 set on_build_machine=1
 

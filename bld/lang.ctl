@@ -27,12 +27,12 @@ echo Languages Build <1>
 [ INCLUDE <devdir>/posixbld/lang.ctl ]
 #
 #        Prebuild newest WASM version for building process
-[ INCLUDE <devdir>/wasmbld/lang.ctl ]
+[ INCLUDE <devdir>/wasm/prereq.ctl ]
 #
 #        Next build online docs. This will create required header files
 #        as a by-product.
 #
-#[ INCLUDE <doc_root>/lang.ctl ]
+[ INCLUDE <doc_root>/lang.ctl ]
 #
 #        Before building anything for real, create up-to-date header files
 #

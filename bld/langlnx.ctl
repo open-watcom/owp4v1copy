@@ -22,7 +22,9 @@ set PROJDIR=<CWD>
 [ INCLUDE <devdir>/owl/prereq.ctl ]
 [ INCLUDE <devdir>/dwarf/prereq.ctl ]
 [ INCLUDE <devdir>/wl/prereq.ctl ]
+set WASMLINUXBUILD = bootstrap
 [ INCLUDE <devdir>/wasm/prereq.ctl ]
+set WASMLINUXBUILD = normal
 [ INCLUDE <devdir>/cg/prereq.ctl ]
 [ INCLUDE <devdir>/cc/prereq.ctl ]
 

@@ -59,8 +59,14 @@ nulldevice      = nul
 !ifdef __NTAXP__
 bld_cl          = wclaxp -l=$(bld_sys) -i"$(bld_incs)"
 bld_cc          = *wccaxp -i"$(bld_incs)"
+bas             = $(as)
 !else
 bld_cl          = wcl386 -l=$(bld_sys) -i"$(bld_incs)"
 bld_cc          = *wcc386 -i"$(bld_incs)"
+!ifdef __LINUX__
+bas             = *$(bld_dir)/bwasm
+!else
+bas             = *$(bld_dir)\bwasm
+!endif
 !endif
 bld_link        = *wlink sys $(bld_sys)

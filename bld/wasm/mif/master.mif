@@ -1,4 +1,7 @@
 proj_name = wasm
+!ifndef name
+name = $(proj_name)
+!endif
 
 !ifndef wasm_autodepends
 wasm_autodepends = .AUTODEPEND
@@ -9,13 +12,13 @@ wasm_autodepends = .AUTODEPEND
 !include deftarg.mif
 
 !ifdef bootstrap
-exc_name = $(proj_name)
+exc_name = $(name)
 !else ifeq host_OS qnx
-exc_name = $(proj_name).qnx
+exc_name = $(name).qnx
 !else
-exc_name = $(proj_name).exe
+exc_name = $(name).exe
 !endif
-link_name = $(proj_name).lnk
+link_name = $(name).lnk
 
 .OPTIMIZE
 
@@ -131,7 +134,7 @@ proj_obj += trmem.obj trmemcvr.obj
 #explicit rules
 ######
 
-$(exc_name) : fullops.gh inlnops.gh wmpmsg.gh $(link_name) $(proj_name).res $(proj_obj)
+$(exc_name) : fullops.gh inlnops.gh wmpmsg.gh $(link_name) $(name).res $(proj_obj)
 !ifeq  host_OS qnx
         @%make usage.u
 !endif
@@ -141,18 +144,18 @@ $(exc_name) : fullops.gh inlnops.gh wmpmsg.gh $(link_name) $(proj_name).res $(pr
 !else
         $(linker) @$(link_name)
 !ifeq host_OS osi
-        $(bld_bin)/w32bind $(proj_name).rex $@ $(tools_root)/os2ldr.exe
-        @rm -f $(proj_name).rex
+        $(bld_bin)/w32bind $(name).rex $@ $(tools_root)/os2ldr.exe
+        @rm -f $(name).rex
 !endif
 !endif
-        wstrip -a -r -q $@ . $(proj_name)
+        wstrip -a -r -q $@ . $(name)
 
 
 $(link_name) : $(__MAKEFILES__)
         @%write $^@ $(lflags)
         @%append  $^@ file { $(proj_obj) }
 !ifeq host_OS osi
-        @%append  $^@ name $(proj_name).rex
+        @%append  $^@ name $(name).rex
 !else
         @%append  $^@ name $(exc_name)
 !endif
@@ -160,7 +163,7 @@ $(link_name) : $(__MAKEFILES__)
 ###################################################################
 # resource stuff
 
-$(proj_name).res : $(proj_path)/h/$(proj_name).rc $(proj_path)/h/asmshare.msg $(proj_path)/h/$(proj_name).msg usage.rc usagej.rc msg.gh wasmmsg.gh
+$(name).res : $(proj_path)/h/$(proj_name).rc $(proj_path)/h/asmshare.msg $(proj_path)/h/$(proj_name).msg usage.rc usagej.rc msg.gh wasmmsg.gh
         $(rc) -bt=windows -d_WASM_ -r -zk0 -fo=$^@ $[@
 
 usage.rc : $(proj_path)/h/usage.sp
