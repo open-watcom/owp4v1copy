@@ -55,11 +55,6 @@
 #include "defwin.h"
 
 
-#if defined(DEFAULT_WINDOWING) && defined( __WINDOWS__ )
-    extern short _WCI86FAR pascal _lread( short, char _WCI86FAR *, short );
-#endif
-
-
 #if defined(__WINDOWS_386__)
     int __read
 #else

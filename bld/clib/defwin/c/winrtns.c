@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Default Windowing - API function pointers definition.
 *
 ****************************************************************************/
 
@@ -46,4 +45,4 @@ unsigned (*_WindowsKbhit)() = { 0 };
 unsigned (*_WindowsGetch)() = { 0 };
 unsigned (*_WindowsGetche)() = { 0 };
 void (*_WindowsPutch)() = { 0 };
-void (*_WindowExitRtn)() = { 0 };
+void (*_WindowsExitRtn)() = { 0 };

@@ -39,6 +39,7 @@
 #if defined(__WINDOWS__) || defined(__WINDOWS_386__)
 #include <windows.h>
 #endif
+#include "defwin.h"
 
 /*
   __int23_exit is used by OS/2 as a general termination routine which unhooks
@@ -70,16 +71,11 @@ static void _null_exit_rtn() {}
 void    (*__FPE_handler_exit)() = _null_exit_rtn;
 #endif
 
-#if defined( __WINDOWS__ ) || defined( __WINDOWS_386__ ) || defined( __OS2__ ) || defined(__NT__)
-extern  void            (*_WindowExitRtn)();
-#endif
-
-
 _WCRTLINK void exit( int status )
     {
 #ifdef DEFAULT_WINDOWING
-        if( _WindowExitRtn != NULL ) {      // JBS 27-JUL-98
-            _WindowExitRtn();
+        if( _WindowsExitRtn != NULL ) {      // JBS 27-JUL-98
+            _WindowsExitRtn();
         }
 #endif
 #if !defined(__UNIX__) && !defined(__WINDOWS_386__)

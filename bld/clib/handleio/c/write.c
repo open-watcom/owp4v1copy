@@ -63,9 +63,6 @@
 #endif
 #endif
 
-#if defined( DEFAULT_WINDOWING ) && defined( __WINDOWS__ )
-    extern int _WCI86FAR pascal _lwrite( short, const void _WCI86FAR *, short );
-#endif
 /*
     The _lwrite function writes data to the specified file.
 

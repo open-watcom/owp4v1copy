@@ -28,6 +28,11 @@ $# just in case anyone is curious ...
 !ifdef %on_build_machine
 on_build_machine = $(%on_build_machine)
 !endif
+# default windowing support
+!ifdef %default_windowing
+default_windowing = $(%default_windowing)
+!endif
+
 tools_root  = $(%TOOLDR)\tools
 os2_toolkit     = $(%os2tkroot)
 os2_ddk         = $(%os2ddkroot)

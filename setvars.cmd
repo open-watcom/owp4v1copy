@@ -30,6 +30,9 @@ set os2ddkroot=c:\DDK
 REM Set this variable if you wish to use the OS/2 Toolkit headers and libs
 REM set use_os2tk_stuff=1
 
+REM set this variable if you want default windowing support
+rem set default_windowing=1
+
 REM Unset this variable to get more debug info
 set on_build_machine=1
 

@@ -59,7 +59,7 @@ int _MessageLoop( BOOL doexit )
         rc = GetMessage( &msg, NULL, NULL, NULL );
         if( !rc ) {
             if( doexit ) {
-                _WindowExitRtn = NULL;
+                _WindowsExitRtn = NULL;
                 exit( msg.wParam );
             }
             break;
@@ -88,7 +88,7 @@ int _BlockingMessageLoop( BOOL doexit )
     rc = GetMessage( &msg, NULL, NULL, NULL );
     if( !rc ) {
         if( doexit ) {
-            _WindowExitRtn = NULL;
+            _WindowsExitRtn = NULL;
             exit( msg.wParam );
         }
     } else {

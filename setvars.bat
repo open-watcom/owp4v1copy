@@ -25,6 +25,9 @@ set watcom=c:\c\wc11
 REM Unset this variable to get more debug info
 set on_build_machine=1
 
+REM set this variable if you want default windowing support
+rem set default_windowing=1
+
 REM Change the default command prompt
 prompt $p$g
 

@@ -24,29 +24,27 @@
 *
 *  ========================================================================
 *
-* Description:  Default windowing support - main API declaration.
-*               Only effective if DEFAULT_WINDOWING is defined.
+* Description:  None Default Windowing support
 *
 ****************************************************************************/
 
+#pragma aux __init_default_win "*";
+char __init_default_win;
 
-#ifndef _DEFWIN_H_INCLUDED
-#define _DEFWIN_H_INCLUDED
-
-#if defined(__NT__) || defined(__WINDOWS__) || defined(__OS2__)
-
-// DEFWIN switch on Default Windowing
-
-#ifdef DEFWIN
-
-// It is only location with define DEFAULT_WINDOWING
-// It enable Default Windowing support globaly
-
-#define DEFAULT_WINDOWING
-
-#include "_defwin.h"
-
-#endif
-#endif
-
-#endif
+unsigned long (*_WindowsIsWindowedHandle)() = { 0 };
+void (*_WindowsRemoveWindowedHandle)() = { 0 };
+int (*_WindowsNewWindow)() = { 0 };
+int (*_WindowsCloseWindow)() = { 0 };
+int (*_WindowsSetAbout)() = { 0 };
+int (*_WindowsSetAppTitle)() = { 0 };
+int (*_WindowsSetConTitle)() = { 0 };
+int (*_WindowsDestroyOnClose)() = { 0 };
+int (*_WindowsYieldControl)() = { 0 };
+int (*_WindowsShutDown)() = { 0 };
+unsigned (*_WindowsStdin)() = { 0 };
+unsigned (*_WindowsStdout)() = { 0 };
+unsigned (*_WindowsKbhit)() = { 0 };
+unsigned (*_WindowsGetch)() = { 0 };
+unsigned (*_WindowsGetche)() = { 0 };
+void (*_WindowsPutch)() = { 0 };
+void (*_WindowsExitRtn)() = { 0 };

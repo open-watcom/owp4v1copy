@@ -24,13 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  Default windowing main include file.
+* Description:  Default windowing - main include file.
 *
 ****************************************************************************/
-
-#ifndef DEFAULT_WINDOWING
-#define DEFAULT_WINDOWING
-#endif
 
 #include "variety.h"
 #ifdef __OS2__
@@ -47,7 +43,7 @@ extern  unsigned        __WinSetWindowPos(unsigned);
 #include <win1632.h>
 #endif
 #include <stdarg.h>
-#include "defwin.h"
+#include "_defwin.h"
 
 
 /*
@@ -211,10 +207,8 @@ typedef struct window_data {
     char        hold7:1, hold8:1;
 } window_data;
 
-#include "defwin.h"
-// LPWDATA is defined in defwin.h as follows:
+// LPWDATA is defined in _defwin.h as follows:
 // typedef struct window_data _WCI86FAR *LPWDATA;
-
 typedef LPWDATA _WCI86FAR *LPLPWDATA;
 
 typedef struct {
