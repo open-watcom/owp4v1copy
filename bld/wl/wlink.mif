@@ -235,9 +235,7 @@ exe = wl.exe
 
 !ifeq bootstrap 1
 exe = $(proj_name)
-extra_c_flags =
-inc_dirs = -I../linux386 -I. -I../h -I$(rc_dir)/h -I$(lib_misc_dir)/h &
--I$(watcom_dir)/h
+extra_c_flags = -I../$(host_os)$(host_cpu) -I$(lib_misc_dir)/h
 libs = $(wres_lib) $(dwarf_dw_lib) $(orl_lib) &
 $(clib_dir)/$(%OBJDIR)/libwatcom.a
 !endif
