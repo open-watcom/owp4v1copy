@@ -516,10 +516,7 @@ static void do_init_stuff( char **cmdline )
     add_constant( buff );
     do_envvar_cmdline( "WASM", 0 );
     parse_cmdline( cmdline );
-    ModuleInit();
     set_build_target();
-    set_cpu_parameters();
-    set_fpu_parameters();
     get_os_include();
     env = getenv( "INCLUDE" );
     if( env != NULL ) AddStringToIncludePath( env );
@@ -800,7 +797,7 @@ static void add_constant( char *string )
     return;
 }
 
-static void set_cpu_parameters( void )
+void set_cpu_parameters( void )
 {
     int token;
     
@@ -843,7 +840,7 @@ static void set_cpu_parameters( void )
     cpu_directive( token );
 }
 
-static void set_fpu_parameters( void )
+void set_fpu_parameters( void )
 /**********************************/
 {
     switch( Options.floating_point ) {

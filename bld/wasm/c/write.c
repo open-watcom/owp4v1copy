@@ -71,6 +71,8 @@ extern void             AsmEvalInit( void );
 extern void             AsmEvalFini( void );
 extern void             CheckForOpenConditionals();
 extern bool             PopLineQueue();
+extern void             set_cpu_parameters( void );
+extern void             set_fpu_parameters( void );
 
 extern uint_32          Address;
 extern unsigned char    *CodeBuffer;
@@ -185,6 +187,7 @@ static void write_init( void )
     IdxInit();
     LnameInsert( "" );
 
+    ModuleInit();
     FixInit();
     AssumeInit();
 }
@@ -1105,6 +1108,9 @@ static void writepass1stuff( void )
 
 static unsigned long OnePass( char *string )
 {
+    set_cpu_parameters();
+    set_fpu_parameters();
+
     EndDirectiveFound = FALSE;
     PhaseError = FALSE;
     Modend = FALSE;
