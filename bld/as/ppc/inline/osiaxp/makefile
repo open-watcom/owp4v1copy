@@ -1,6 +1,6 @@
-#pmake: cpu_axp os_nt target_ppc
+#pmake: os_osi os_nt os_dos os_os2 os_linux cpu_axp target_ppc
 
-host_os  = nt
+host_os  = osi
 host_cpu = axp
 
 cpu = ppc
