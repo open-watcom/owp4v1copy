@@ -13,35 +13,35 @@ incfiles = &
  memops.new stkops.new
 
 .asm.obj:
-    masm /s/mx/e /I$(emu386)\ /I$(mathlib_dir)\h\ /I$(comp_cfg_dir)\h\ $[@,$^.;
+    wasm -ms -fpi87 -i$(emu386)\ -i$(mathlib_dir)\h\ -i$(comp_cfg_dir)\h\ $[@
 
 .asm.qbj:
-    masm /s/mx/e /I$(emu386)\ /I$(mathlib_dir)\h\ $[@,$^. /DQNX16 /D__PROTMODE__;
+    *wasm -ms -bt=qnx -fpi87 -i$(emu386)\ -i$(mathlib_dir)\h\ -fo=.qbj $[@ -DQNX16 -D__PROTMODE__
 
 .asm.rbj:
-    masm /s/mx/e /I$(emu386)\ /I$(mathlib_dir)\h\ $[@,$^. /DQNX32 /D__PROTMODE__;
+    *wasm -mf -bt=qnx -fpi87 -i$(emu386)\ -i$(mathlib_dir)\h\ $[@ -fo=.rbj -DQNX32 -D__PROTMODE__x
 
 .c.obj:
-    $(libcomp286) -r-fpr $[* $(cflags)
+    $(libcomp286) $[* $(cflags)
 
 .c.qbj:
-    $(libcomp286) -r-fpr $[* $(cflags) -i$(new_qnx_h) -fo=.qbj -DQNX16 -bt=QNX
+    $(libcomp286) $[* $(cflags) -i$(new_qnx_h) -fo=.qbj -DQNX16 -bt=QNX
 
 .c.rbj:
-    $(libcomp286) -r-fpr $[* $(cflags) -i$(new_qnx_h) -fo=.rbj -DQNX32 -bt=QNX
+    $(libcomp286) $[* $(cflags) -i$(new_qnx_h) -fo=.rbj -DQNX32 -bt=QNX
 
 all: .SYMBOLIC noemu87.lib emu87.lib emuos2.lib emuwin.lib &
                 emu87_16.qnx emu87_32.qnx emu87.qnx
     @%null
 
 noemu87.lib: emustub.obj
-    wlib /n /b noemu87 +emustub
+    wlib -n -b noemu87 +emustub
 
 emu87.lib: initemu.obj emu8087.obj
-    wlib /n /b emu87 +initemu +emu8087
+    wlib -n -b emu87 +initemu +emu8087
 
 emuos2.lib: initemu2.obj emu8087.2bj
-    wlib /n /b emuos2 +initemu2 +emu8087.2bj
+    wlib -n -b emuos2 +initemu2 +emu8087.2bj
 
 emu87_16.qnx: qnxemu87.qbj emu8087.qbj fpeqnx.qbj
     wlink system qnx name $^@ file qnxemu87.qbj,emu8087.qbj,fpeqnx.qbj opt priv=0,map,long,quiet,res=emu87.u
@@ -53,17 +53,20 @@ emu87.qnx : qemu87.qbj
     wlink system qnx name $^@ file qemu87.qbj opt map,quiet,res=emu87.u
 
 emuwin.lib: initemuw.obj
-    wlib /n /b emuwin +initemuw
+    wlib -n -b emuwin +initemuw
 
 emu8087.qbj: emu8087.asm $(incfiles)
 
 emu8087.rbj: emu8087.asm $(incfiles)
 
 emu8087.2bj: emu8087.asm $(incfiles)
-    masm /s/mx /I$(emu386)\ /I$(mathlib_dir)\h\ /d__PROTMODE__ $[*,$[&.2bj;
+    wasm -i$(emu386)\ -i$(mathlib_dir)\h\ -d__PROTMODE__ $[* -fo=.2bj
 
 emu8087.obj: emu8087.asm $(incfiles)
-    masm /s/mx /I$(emu386)\ /I$(mathlib_dir)\h\ $[*;
+    wasm -i$(emu386)\ -i$(mathlib_dir)\h\ $[*
 
 initemu.obj: initemu.asm
-    masm /s/mx /I$(emu386)\ /I$(mathlib_dir)\h\ /I$(comp_cfg_dir)\h\ $[*;
+    wasm -ms -i$(emu386)\ -i$(mathlib_dir)\h\ -i$(comp_cfg_dir)\h\ $[*
+
+
+

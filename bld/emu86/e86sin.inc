@@ -79,8 +79,8 @@ Degree  dw  0, 1, 2, 3, 4, 4, 5, 5, 6
 ;;
 cosy    equ     -10
 siny    equ     cosy-10
-exponent equ    siny-2
-iflag   equ     exponent-2
+exponent_ equ    siny-2
+iflag   equ     exponent_-2
 index   equ     iflag-2
 
 ;;
@@ -128,7 +128,7 @@ index   equ     iflag-2
         _if     ge                      ; then
 ;               error
         _endif                          ; endif
-        mov     exponent[BP],CX         ; save exponent
+        mov     exponent_[BP],CX         ; save exponent
 
 ;;        y = __fprem( x, PIby4, &i );    /* 24-nov-88 */
         push    word ptr __PIby4+8      ; pi/4

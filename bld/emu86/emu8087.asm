@@ -1,13 +1,6 @@
 .286
         name    emu8087
 
-ifdef QNX16
-__QNX__         equ     1
-endif
-ifdef QNX32
-__QNX__         equ     1
-endif
-
 _TEXT   segment word public 'CODE'
         assume  cs:_TEXT
 
