@@ -268,9 +268,14 @@ static void OutPutHFileList()           // output include paths
     int         rc;
     unsigned    len;
 
-    len = strlen( HFileList ) + 1;
-    len = (len + (sizeof(int) - 1)) & - sizeof(int);
-    rc = WritePHeader( HFileList, len );
+    if( HFileList == NULL ) {
+        rc = 0;
+        rc = WritePHeader( &rc, sizeof(int) );
+    } else {
+        len = strlen( HFileList ) + 1;
+        len = (len + (sizeof(int) - 1)) & - sizeof(int);
+        rc = WritePHeader( HFileList, len );
+    }
     if( rc != 0 )  longjmp( PH_jmpbuf, rc );
 }
 
@@ -1521,10 +1526,10 @@ int SameCWD( char *p )
 {
     char        *cwd;
     int         same;
+    char        buf[_MAX_PATH];
 
-    cwd = getcwd( NULL, 0 );
+    cwd = getcwd( buf, _MAX_PATH );
     same = strcmp( cwd, p );
-    free( cwd );
     return( same == 0 );
 }
 
@@ -1622,7 +1627,8 @@ int UsePreCompiledHeader( char *filename )
     }
     len = strlen( p ) + 1;              // get length of saved HFileList
     len = (len + sizeof(int) - 1) & - sizeof(int);
-    if( strcmp( p, HFileList ) != 0 ) {
+    if((( HFileList == NULL ) && ( strlen( p ) > 0 ))
+        || (( HFileList != NULL ) && ( strcmp( p, HFileList ) != 0 ))) {
         PCHNote( PCHDR_INCFILE_DIFFERENT );
         AbortPreCompiledHeader();
         return( -1 );

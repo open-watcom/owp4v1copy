@@ -120,7 +120,7 @@ etp_flags=-d1-hd-etp
 !endif
 
 !ifndef no_precompiled_headers
-pch_flags = -fhq
+pch_flags = -fh
 !endif
 
 comp_flags += -i"$(lib_misc_dir)/h;$(inc_dirs);$(bld_h);$(watcom_dir)/h;$(comp_cfg_dir)/h"

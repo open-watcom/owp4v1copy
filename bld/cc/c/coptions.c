@@ -150,11 +150,6 @@ void SetCharacterEncoding( void )
 {
     CompFlags.jis_to_unicode = 0;
 
-    // ignore character encoding options for linux target
-    if( TargSys == TS_LINUX ) {
-        return;
-    }
-
     switch( character_encoding ) {
     case ENC_ZKU:
         LoadUnicodeTable( unicode_CP );
