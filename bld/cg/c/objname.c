@@ -109,77 +109,51 @@ static char *createFourCharHash( char *mangle, char *buff, int ucase )
     return( buff );
 }
 
-#if 0
-static char *reduceMangledName( char *mangle )
-{
-    auto char buff[MANGLED_HASH_LEN+1];
-
-    /* change "W?xxx" to "T?hhhhxxx" */
-    createFourCharHash( mangle, buff );
-    memmove( mangle + 2 + MANGLED_HASH_LEN, mangle + 2,
-             MANGLED_MAX_LEN - MANGLED_HASH_LEN );
-    memcpy( mangle + 2, buff, MANGLED_HASH_LEN );
-    mangle[MANGLED_MAX_LEN] = '\0';
-    mangle[0] = IN_TRUNCATE;
-    return( mangle );
-}
-
-static char *reduceNonMangledName( char *mangle )
-{
-    char *hash_name;
-    auto char buff[MANGLED_HASH_LEN+1];
-
-    /* change "xxx" to "xxxhhhh" */
-    hash_name = createFourCharHash( mangle, buff );
-    memmove( mangle + ( MANGLED_MAX_LEN - MANGLED_HASH_LEN ), buff,
-             MANGLED_HASH_LEN );
-    mangle[MANGLED_MAX_LEN] = '\0';
-    return( mangle );
-}
-#endif
-
-static int truncateSymbolName( char fce, char *dst, char *src, int src_len, int max_dst_len )
-/*******************************************************************************************/
+static int copyBaseName( char fce, char *dst, int dst_len, char *src, int src_len )
+/*********************************************************************************/
 {
     int     len;
     int     i;
     char    *p;
     char    c;
 
+    p = NULL;
     len = 0;
-    p = src;
-    for( i = 0; i < src_len; i++ ) {
-        if( len >= max_dst_len ) {
-            break;
-        } else if( len == max_dst_len - TRUNC_SYMBOL_HASH_LEN ) {
+    for( i = 0; ( i < src_len ) && ( len < dst_len ); i++ ) {
+        if(( p == NULL ) && ( len == dst_len - TRUNC_SYMBOL_HASH_LEN )) {
             p = src + i;
         }
         c = src[i];
         if( fce == '\0' ) {
-            if( c == '\\' )
+            if( c == '\\' ) {
                 continue;
-            dst[ len++ ] = c;
-        } else if( fce == '*' ) {
-            dst[ len++ ] = c;
+            }
         } else if( fce == '!' ) {
-            dst[ len++ ] = tolower( c );
+            c = tolower( c );
         } else if( fce == '^' ) {
-            dst[ len++ ] = toupper( c );
+            c = toupper( c );
         }
+        dst[len++] = c;
     }
-    if( len >= max_dst_len ) {
-        char    buff[ TRUNC_SYMBOL_HASH_LEN + 1 ];
+    if( len < dst_len ) {
+        return( len );
+    } else if( i < src_len ) {
+        char    buff[TRUNC_SYMBOL_HASH_LEN + 1];
 
+        assert( p != NULL );
+        if( p == NULL )
+            p = src;
         createFourCharHash( p, buff, ( fce == '^' ) );
         if( ( dst[0] == 'W' ) && ( dst[1] == '?' ) ) {
             assert( len >= TRUNC_SYMBOL_HASH_LEN + 2 );
+            memmove( dst + 2 + TRUNC_SYMBOL_HASH_LEN, dst + 2,
+                                len - 2 - TRUNC_SYMBOL_HASH_LEN );
+            memcpy( dst + 2, buff, TRUNC_SYMBOL_HASH_LEN );
             dst[0] = 'T';
-            memmove( dst + TRUNC_SYMBOL_HASH_LEN + 2, dst + 2, len - TRUNC_SYMBOL_HASH_LEN );
-            dst[ len ] = 0;
-            strncpy( dst + 2, buff, TRUNC_SYMBOL_HASH_LEN );
+            dst[len] = '\0';
         } else {
             assert( len >= TRUNC_SYMBOL_HASH_LEN );
-            strncpy( dst + len - TRUNC_SYMBOL_HASH_LEN, buff, TRUNC_SYMBOL_HASH_LEN );
+            memcpy( dst + len - TRUNC_SYMBOL_HASH_LEN, buff, TRUNC_SYMBOL_HASH_LEN );
         }
         return( -len );
     } else {
@@ -207,13 +181,13 @@ static int GetExtName( sym_handle sym, char *buffer, int max_len )
     char                 *prefix;
     char                 *sufix;
     char                 c;
-    int                  basename_len;
-    int                  max_sym_len;
+    int                  base_len;
+    int                  dst_len;
     char                 *pattern;
 
     pattern = FEExtName( sym, EXTN_PATTERN );
     c = 0;
-    basename_len = 0;
+    base_len = 0;
     prefix = NULL;
     for( p = pattern; *p != '\0'; p++ ) {
         if(( *p == '*' ) || ( *p == '!' ) || ( *p == '^' )) {
@@ -221,20 +195,16 @@ static int GetExtName( sym_handle sym, char *buffer, int max_len )
                 prefix = p;
                 c = *p;
             }
-        } else if( *p == '#' ) {
+        } else if( ( c != '\0' ) || ( *p == '#' ) ) {
             break;
         } else if( *p == '\\' ) {
-            if( c != '\0' )
-                break;
             p++;
-        } else if( c != '\0' ) {
-            break;
         }
     }
     if( c == '\0' )
-        basename_len = p - pattern;
+        base_len = p - pattern;
     sufix = p;
-    // add prefix to buffer
+    // add prefix to output buffer
     dst = buffer;
     for( src = pattern; src < prefix; ++src ) {
         if( *src != '\\' ) {
@@ -242,7 +212,7 @@ static int GetExtName( sym_handle sym, char *buffer, int max_len )
         }
     }
     *dst = '\0';
-    // add sufix to buffer
+    // add sufix to output buffer
     p = dst;
     for( src = sufix; *src != '\0'; ++src ) {
         if( *src == '#' ) {
@@ -258,35 +228,32 @@ static int GetExtName( sym_handle sym, char *buffer, int max_len )
         }
     }
     *p = '\0';
-    // calculate max base symbol length
-    max_sym_len = max_len - ( p - buffer );
-    if( max_sym_len > 0 ) {
+    // max base name length
+    dst_len = max_len - ( p - buffer );
+    if( dst_len > 0 ) {
         int     sufix_len;
-        int     base_len;
+        int     len;
 
-        if( basename_len != 0 ) {
+        if( base_len != 0 ) {
             // alias
             src = pattern;
         } else {
             src = FEExtName( sym, EXTN_BASENAME );
-            basename_len = strlen( src );
+            base_len = strlen( src );
         }
         // shift sufix to the end of buffer
         sufix_len = p - dst;
         sufix = buffer + max_len - sufix_len;
         memmove( sufix, dst, sufix_len + 1 );
         // copy + truncate base symbol name
-        base_len = truncateSymbolName( c, dst, src, basename_len, max_sym_len );
-        if( base_len < 0 ) {
-//            char    symx[ TRUNC_SYMBOL_LEN_WARN + 1 ];
-            
-//            strncpy( symx, src, TRUNC_SYMBOL_LEN_WARN );
-//            symx[ TRUNC_SYMBOL_LEN_WARN ] = 0;
-//            SetSymLoc( &sym );
-//            CWarn( WARN_SYMBOL_NAME_TOO_LONG, ERR_SYMBOL_NAME_TOO_LONG, symx );
+        len = copyBaseName( c, dst, dst_len, src, base_len );
+        if( len < 0 ) {
+            FEMessage( MSG_INFO_PROC, "Code generator truncated symbol name, because it's length "
+                "overflows allowed maximum." );
+            FEMessage( MSG_INFO_PROC, src );
         } else {
-            // shift sufix to the end of truncated symbol name
-            memcpy( dst + base_len, sufix, sufix_len + 1 );
+            // shift sufix to the end of symbol name
+            memcpy( dst + len, sufix, sufix_len + 1 );
         }
     } else {
        // TODO: error prefix + sufix >= max_len
