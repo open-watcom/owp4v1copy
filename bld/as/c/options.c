@@ -32,6 +32,7 @@
 
 #include "as.h"
 #include "preproc.h"
+#include "banner.h"
 
 #ifdef AS_ALPHA
 as_flags        AsOptions = OBJ_COFF;   // COFF is default.
@@ -121,7 +122,15 @@ extern bool OptionsInit( int argc, char **argv ) {
 
     char        *s;
 
-    maxNumPredefines = argc + 1; // An extra null at the end
+#ifdef AS_ALPHA
+    s = "__WASAXP__=" BANSTR( _BANVER ) ;
+#else
+    s = "__WASPPC__=" BANSTR( _BANVER ) ;
+#endif
+    maxNumPredefines = argc + 2; // version macro and extra null at the end
+    if( !optionsPredefine( s ) )
+        goto errInvalid;
+
     while( *argv ) {
         if( argv[0][0] == '-' || argv[0][0] == '/' ) {
             switch( argv[0][1] ) {
