@@ -210,12 +210,12 @@ do_fdiv_raw macro op1, op2, rev, popper
         do_real_fdiv op1,op2,rev,popper
 endm
 
-do_fatan macro
-        fatan
+do_fpatan macro
+        fpatan
 endm
 
-do_ftan macro
-        ftan
+do_fptan macro
+        fptan
 endm
 
 do_fprem macro
