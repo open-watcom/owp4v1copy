@@ -1,6 +1,6 @@
-#pmake: build cpu_386 os_nt target_axp
+#pmake: build cpu_386 os_dos os_os2 os_nt os_linux target_axp
 
-host_os  = nt
+host_os  = osi
 host_cpu = 386
 
 cpu = alpha
