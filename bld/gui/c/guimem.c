@@ -41,6 +41,9 @@
 _trmem_hdl  GUIMemHandle;
 static int  GUIMemFileHandle;   /* stream to put output on */
 static void GUIMemPrintLine( int *, const char * buff, size_t len );
+
+static int  GUIMemOpened = 0;
+
 #endif
 
 #ifdef NLM
@@ -56,8 +59,6 @@ extern void GUIMemRedirect( int handle )
     GUIMemFileHandle = handle;
 #endif
 }
-
-static int GUIMemOpened = 0;
 
 extern void GUIMemOpen( void )
 /***************************/
