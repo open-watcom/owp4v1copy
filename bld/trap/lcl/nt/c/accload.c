@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include "stdnt.h"
 #include "watcom.h"
 #include "trperr.h"
@@ -40,7 +41,9 @@
 #define ERR_CODES
 #include "dosmsgs.h"
 
+#ifndef CREATE_SEPARATE_WOW_VDM
 #define CREATE_SEPARATE_WOW_VDM     0x00000800  // new for NT 3.5 (daytona)
+#endif
 
 /*
  * executeUntilStart - run program until start address hit
