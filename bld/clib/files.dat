@@ -66,5 +66,5 @@ type="s"	dir="libaxp/nt"		usr="commode.obj"	cond="alphatarg"		where="ac"
 
 type="l"	dir="lib386/linux"	usr="clib3r.lib"	cond="lnxtarg 3r"		where="c jc f77 jf77 ac"
 type="l"	dir="lib386/linux"	usr="clib3s.lib"	cond="lnxtarg 3s"		where="c jc f77 jf77 ac"
-type="s"	dir="lib386/linux"	usr="binmode.obj"	cond="lnxtarg"		where="c jc f77 jf77"
+#type="s"	dir="lib386/linux"	usr="binmode.obj"	cond="lnxtarg"		where="c jc f77 jf77"
 type="s"	dir="lib386/linux"	usr="commode.obj"	cond="lnxtarg"		where="c jc f77 jf77"
