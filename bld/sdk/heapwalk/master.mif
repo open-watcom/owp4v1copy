@@ -13,9 +13,9 @@ sys_windowed=1
 
 .EXTENSIONS: .res .rc
 
-extra_c_flags= -s-zu-zW-fpc
-extra_c_flags_ldstr = -dSPECIAL_STRING_LOADING 
-extra_c_flags_mem = -dNO_WPI
+extra_c_flags= -2-s-zu-zW-fpc
+extra_c_flags_ldstr = -dSPECIAL_STRING_LOADING
+extra_c_flags_mem   = -dNO_WPI
 
 extra_l_flags = op map
 extra_l_flags_win  = lib windows.lib
@@ -27,9 +27,9 @@ extra_l_flags_win += op stack=7k, heapsize=2k
 
 inc_dirs = ..;$(sdk_dir)/misc;$(watcom_dir)/h;$(wdisasm_dir)/h;$(win31_hdrs)
 
-.c : ..;$(sdk_dir)/misc;$(wdisasm_dir)/c
+.c   : ..;$(sdk_dir)/misc;$(wdisasm_dir)/c
 .asm : ..;$(sdk_dir)/misc
-.rc : ..
+.rc  : ..
 
 .before:
         @set include=$(inc_path)
@@ -41,17 +41,17 @@ objs_win = heapwalk.obj hwlist.obj hwproc.obj hwglob.obj hwsort.obj &
         mythelp.obj mem.obj font.obj fontstr.obj segmem.obj segmem2.obj &
         dlgmod.obj savelbox.obj memwnd.obj memwndcd.obj srchmsg.obj &
         pushwin.obj sdkasm.obj about.obj ldstr.obj wwinhelp.obj jdlg.obj
- 
-objs = $(objs_$(host_OS))
+
+objs = $(objs_$(host_os))
 
 msgfiles = $(sdk_dir)/misc/savelbox.msg &
            $(sdk_dir)/misc/memwnd.msg $(sdk_dir)/misc/about.msg
- 
+
 !include $(wdisasm_dir)/mif/disasm.mif
 
 $(name).exe : rcstr.gh $(objs) $(disasm) $(name).res
-	$(linker) $(lflags) name $^@ file {$(objs) $(disasm)}
-        $(RC) $(rc_flags) -k $(name).res $^@
+        $(linker) $(lflags) name $^@ file {$(objs) $(disasm)}
+        $(rc) $(rc_flags) -k $(name).res $^@
 
 rcstr.gh : rcstrmsg.gh
         $(vi) -s ../../misc/msgtoh.vi -p"$^@" $[@
@@ -61,4 +61,4 @@ rcstrmsg.gh : ../heapwalk.msg $(msgfiles)
         $(cc) -zk0 -p -i="$(sdk_dir)/misc" $[@ -fo=$^@
 
 .rc.res: .AUTODEPEND
-        $(RC) $(rc_flags) -r -ad -zk0 -i="$(sdk_dir)/misc" $[@ -fo=$^@
+        $(rc) $(rc_flags) -r -ad -zk0 -i="$(sdk_dir)/misc" $[@ -fo=$^@
