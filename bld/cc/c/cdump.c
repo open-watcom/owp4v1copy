@@ -141,17 +141,6 @@ static void ChunkSaveStrWord( STRCHUNK *pch, const char *str )
     ChunkSaveChar( pch, ' ' );
 }
 
-#ifndef NDEBUG
-void SymDump()
-{
-    if( DebugFlag >= 2 ) {
-        DumpTags();
-        DumpHashTable();
-        DumpEnumTable();
-    }
-}
-#endif
-
 #ifdef FDEBUG
 void DumpToken()
 {
