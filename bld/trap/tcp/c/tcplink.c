@@ -310,7 +310,6 @@ char *RemoteLink( char *name, char server )
     socket_address.sin_family = AF_INET;
     /* OS/2's TCP/IP gethostbyname doesn't handle numeric addresses */
     socket_address.sin_addr.s_addr = inet_addr( name );
-    printf("%s %x\n", name, socket_address.sin_addr.s_addr );
     if( socket_address.sin_addr.s_addr == -1UL ) {
         hp = gethostbyname( name );
         if( hp != 0 ) {
