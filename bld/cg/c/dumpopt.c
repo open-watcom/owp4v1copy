@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Dump internal optimizer data.
 *
 ****************************************************************************/
 
@@ -43,6 +42,10 @@ extern  void            DumpByte(byte);
 extern  bool            AskIfRTLabel( label_handle );
 extern  bool            AskIfCommonLabel( label_handle );
 extern  char            *AskRTName( int );
+
+static  void            DoData( oc_entry *instr );
+static  void            DoLabel( oc_handle *instr );
+static  void            DoRef( oc_handle *instr );
 
 extern  ins_entry       *FirstIns;
 
@@ -187,44 +190,44 @@ extern  void    DumpOc( ins_entry *ins ) {
         DoInfo ( &ins->oc );
         break;
     case OC_CODE:
-        DoData ( &ins->oc );
+        DoData ( &ins->oc.oc_entry );
         break;
     case OC_DATA:
-        DoData ( &ins->oc );
+        DoData ( &ins->oc.oc_entry );
         break;
     case OC_IDATA:
-        DoData( &ins->oc );
+        DoData( &ins->oc.oc_entry );
         break;
     case OC_BDATA:
-        DoData ( &ins->oc );
+        DoData ( &ins->oc.oc_entry );
         break;
     case OC_LABEL:
-        DoLabel( &ins->oc );
+        DoLabel( &ins->oc.oc_handle );
         break;
     case OC_LREF:
         DumpLiteral( "dw   " );
-        DoRef  ( &ins->oc );
+        DoRef  ( &ins->oc.oc_handle );
         break;
     case OC_CALL:
         DumpLiteral( "call " );
-        DoRef  ( &ins->oc );
+        DoRef  ( &ins->oc.oc_handle );
         break;
     case OC_CALLI:
-        DoData ( &ins->oc );
+        DoData ( &ins->oc.oc_entry );
         break;
     case OC_JCOND:
         DumpString( CondName( &ins->oc.oc_jcond ) );
-        DoRef( &ins->oc );
+        DoRef( &ins->oc.oc_handle );
         break;
     case OC_JCONDI:
-        DoData( &ins->oc );
+        DoData( &ins->oc.oc_entry );
         break;
     case OC_JMP:
         DumpLiteral( "jmp  " );
-        DoRef  ( &ins->oc );
+        DoRef  ( &ins->oc.oc_handle );
         break;
     case OC_JMPI:
-        DoData ( &ins->oc );
+        DoData ( &ins->oc.oc_entry );
         break;
     case OC_RET:
         DumpInt( ins->oc.oc_ret.pops );
@@ -284,7 +287,7 @@ static  void    DoInfo( any_oc *oc ) {
     case INFO_DEAD_JMP:
         DumpLiteral( "DEAD  " );
         DumpLiteral( "jmp  " );
-        DoRef( oc );
+        DoRef( &(oc->oc_handle) );
         break;
     case INFO_DBG_RTN_BEG:
         DumpLiteral( "RTN BEGIN " );
