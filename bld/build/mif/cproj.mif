@@ -111,6 +111,7 @@ cflags_qnx      = -bt=qnx
 cflags_osi      = -bt=osi
 cflags_dos      = -bt=dos
 cflags_nov      = -bt=netware
+cflags_linux    = -bt=linux
 
 !ifdef $(proj_name)_rtdll
 !ifeq $(proj_name)_rtdll 1
@@ -130,21 +131,22 @@ cflags_win     += -br
 cflags_os2     += -br
 !endif
 
-proj_c_flags    = $(extra_c_flags) $(extra_c_flags_$(host_CPU)) $(extra_c_flags_$(host_OS))
-cflags          = $(cflags_all) $(cflags_$(host_CPU)) $(cflags_$(host_OS)) $(mode_cflags) $(proj_c_flags)
+proj_c_flags     = $(extra_c_flags) $(extra_c_flags_$(host_CPU)) $(extra_c_flags_$(host_OS))
+cflags           = $(cflags_all) $(cflags_$(host_CPU)) $(cflags_$(host_OS)) $(mode_cflags) $(proj_c_flags)
 
-lflags_dos_i86  = sys dos
-lflags_nt_axp   = sys ntaxp
-lflags_nt_386   = sys nt
-lflags_os2_386  = sys os2v2
-lflags_os2_i86  = sys os2 pmc
-lflags_dos_386  = sys dos4g
-lflags_qnx_386  = sys qnx386 flat
-lflags_qnx_i86  = sys qnx
-lflags_win_386  = sys win386
-lflags_win_i86  = sys windows
-lflags_nov_386  = sys novell
-lflags_osi_386  = sys osi
+lflags_dos_i86   = sys dos
+lflags_nt_axp    = sys ntaxp
+lflags_nt_386    = sys nt
+lflags_os2_386   = sys os2v2
+lflags_os2_i86   = sys os2 pmc
+lflags_dos_386   = sys dos4g
+lflags_qnx_386   = sys qnx386 flat
+lflags_qnx_i86   = sys qnx
+lflags_win_386   = sys win386
+lflags_win_i86   = sys windows
+lflags_nov_386   = sys novell
+lflags_osi_386   = sys osi
+lflags_linux_386 = sys linux
 
 !ifdef sys_windowed
 # this is really stupid

@@ -1,4 +1,4 @@
-#pmake:all small register 32bit generic cgsupp iX86 dynamic build os_dos os_qnx os_os2 os_nt os_nov cpu_386
+#pmake:all small register 32bit generic cgsupp iX86 dynamic build os_dos os_qnx os_os2 os_nt os_nov os_linux cpu_386
 #pmake:msdos qnx os2 winnt netware necdos
 processor=386
 model=ms

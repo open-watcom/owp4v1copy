@@ -45,8 +45,8 @@
 !inject rstrset.obj                         nta ntp
 !inject rstrstr.obj                         nta ntp
 !inject rstrupr.obj                         nta ntp
-!inject selptr.obj   d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32 osi l32
-!inject sneptr.obj   d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32 osi l32
+!inject selptr.obj   d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32 osi
+!inject sneptr.obj   d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32 osi
 !inject snprintf.obj d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 !inject sprintf.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 !inject sscanf.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
@@ -57,7 +57,7 @@
 !inject strcpy.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 !inject strcspn.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 !inject strdup.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
-!inject strerror.obj d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32 osi l32
+!inject strerror.obj d16 d32             nt nta ntp nvc nvl o16 o32         w16 w32 osi
 !inject strerrpp.obj
 !inject stricmp.obj  d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
 !inject strlen.obj   d16 d32             nt nta ntp nvc nvl o16 o32 q16 q32 w16 w32 osi l32
@@ -105,7 +105,7 @@
 !inject ustrcpy.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
 !inject ustrcspn.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
 !inject ustrdup.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
-!inject ustrerro.obj d16 d32             nt nta ntp         o16 o32         w16 w32     l32
+!inject ustrerro.obj d16 d32             nt nta ntp         o16 o32         w16 w32
 !inject ustrerrp.obj
 !inject ustricmp.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
 !inject ustrlen.obj  d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32     l32
