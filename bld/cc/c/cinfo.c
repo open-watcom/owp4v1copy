@@ -55,7 +55,11 @@ struct user_seg {
 void AssignSeg( SYM_ENTRY *sym )
 {
     SetFarHuge( sym, 1 );
-    if( sym->stg_class != SC_EXTERN ) {  /* if not imported */
+    if( (sym->stg_class == SC_AUTO) || (sym->stg_class == SC_REGISTER)
+        || (sym->stg_class == SC_TYPEDEF) ) {
+        /* if stack/register var, there is no segment */
+        sym->u.var.segment = 0;
+    } else if( sym->stg_class != SC_EXTERN ) {  /* if not imported */
         if( (sym->flags & SYM_INITIALIZED) == 0 ) {
             if( sym->u.var.segment == 0 ) {             /* 15-mar-92 */
                 SetSegment( sym );
@@ -693,7 +697,7 @@ char *GetMangledName( SYM_HANDLE  sym_handle )
                     total_parm_size = -1;
                     break;
                 }
-		while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
+                while( typ->decl_type == TYPE_TYPEDEF ) typ = typ->object;
                 if ( typ->decl_type == TYPE_VOID ) break;
                 parm_size = TypeSize( typ );
                 parm_size = (parm_size + sizeof(target_int) - 1)  &
