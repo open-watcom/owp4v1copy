@@ -1,0 +1,58 @@
+#ifndef	__SHELLAPI_H
+#define	__SHELLAPI_H
+
+#ifndef	__WINDOWS_H
+#include <windows.h>
+#endif
+
+#ifdef	__cplusplus
+extern	"C"	{
+#endif
+
+#pragma pack(push,1)
+
+#define	ERROR_SUCCESS	0L
+#define	ERROR_BADDB	1L
+#define	ERROR_BADKEY	2L
+#define	ERROR_CANTOPEN	3L
+#define	ERROR_CANTREAD	4L
+#define	ERROR_CANTWRITE	5L
+#define	ERROR_OUTOFMEMORY	6L
+#define	ERROR_INVALID_PARAMETER	7L
+#define	ERROR_ACCESS_DENIED	8L
+#define	REG_SZ	1
+#define	HKEY_CLASSES_ROOT	1
+#define	SE_ERR_SHARE	26
+#define	SE_ERR_ASSOCINCOMPLETE	27
+#define	SE_ERR_DDETIMEOUT	28
+#define	SE_ERR_DDEFAIL	29
+#define	SE_ERR_DDEBUSY	30
+#define	SE_ERR_NOASSOC	31
+
+DECLARE_HANDLE(HDROP);
+
+typedef	DWORD	HKEY;
+typedef	HKEY	FAR *PHKEY;
+
+LONG	WINAPI RegOpenKey(HKEY,LPCSTR,HKEY FAR*);
+LONG	WINAPI RegCreateKey(HKEY,LPCSTR,HKEY FAR*);
+LONG	WINAPI RegCloseKey(HKEY);
+LONG	WINAPI RegDeleteKey(HKEY,LPCSTR);
+LONG	WINAPI RegSetValue(HKEY,LPCSTR,DWORD,LPCSTR,DWORD);
+LONG	WINAPI RegQueryValue(HKEY,LPCSTR,LPSTR,LONG FAR*);
+LONG	WINAPI RegEnumKey(HKEY,DWORD,LPSTR,DWORD);
+UINT	WINAPI DragQueryFile(HDROP,UINT,LPSTR,UINT);
+BOOL	WINAPI DragQueryPoint(HDROP,POINT FAR*);
+void	WINAPI DragFinish(HDROP);
+void	WINAPI DragAcceptFiles(HWND,BOOL);
+HICON	WINAPI ExtractIcon(HINSTANCE,LPCSTR,UINT);
+HINSTANCE	WINAPI ShellExecute(HWND,LPCSTR,LPCSTR,LPCSTR,LPCSTR,int);
+HINSTANCE	WINAPI FindExecutable(LPCSTR,LPCSTR,LPSTR);
+
+#pragma pack(pop)
+
+#ifdef	__cplusplus
+}
+#endif
+
+#endif
