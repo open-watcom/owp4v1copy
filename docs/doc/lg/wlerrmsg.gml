@@ -1388,7 +1388,7 @@ If it is issued, please report this problem.
 .do end
 .do end
 .*
-.errnote 1136 relocation to a read/write data segment found at %a(%S)
+.errnote 1136 segment relocation to a read/write data segment found at %a(%S)
 .np
 The "RWRELOCCHECK" option for 16-bit Windows (Win16) executables has
 been specified and the linker has detected a segment relocation to a
