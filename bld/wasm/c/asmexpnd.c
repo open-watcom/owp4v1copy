@@ -24,13 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  WASM symbol expansion.
 *
 ****************************************************************************/
 
 #include "asmglob.h"
-#include "asmexpnd.h"
 
 #ifdef _WASM_
 
@@ -56,6 +54,8 @@
 #include "queue.h"
 
 #include "directiv.h"
+
+#include "asmexpnd.h"
 
 extern dir_node         *CurrProc;
 
@@ -119,7 +119,7 @@ int ExpandSymbol( int i, bool early_only )
     switch( sym->state ) {
     case SYM_CONST:
         dir = (dir_node *)sym;
-        if(( dir->e.constinfo->expand_early == FALSE ) 
+        if(( dir->e.constinfo->expand_early == FALSE )
             && ( early_only == TRUE )) return( NOT_ERROR );
         DebugMsg(( "Expand Constant: %s ->", sym->name ));
         /* insert the pre-scanned data for this constant */
