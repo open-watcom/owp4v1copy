@@ -319,7 +319,7 @@ code$(target_cpu).gh : xcode$(target_cpu).tmp ./mkcode.exe
 
 xcode$(target_cpu).tmp: ../a/code$(target_cpu).asm
         $(as) $(aflags) $(extra_a_flags_$[&) $[@
-        $(linker) format dos com option nodefault file code$(target_cpu).obj name $^@
+        $(linker) format dos com op nodefault file code$(target_cpu).obj name $^@ disable 1023,1080
 
 ./mkcode.exe: ../a/mkcode.c
         $(bld_cl) $[@ $(wcl_util_opts)
