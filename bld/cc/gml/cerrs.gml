@@ -1546,11 +1546,6 @@ An error was encountered trying to read information from the work file.
 :MSGJTXT. ワーク・ファイルのシーク・エラー：エラーコード = %d
 .np
 An error was encountered trying to seek to a position in the work file.
-:MSGSYM. ERR_TOKEN_TRUNCATED
-:MSGTXT. Token too long - truncated
-:MSGJTXT. トークンが長すぎます - 切り詰めました
-.np
-The token must be less than 510 bytes in length.
 :MSGSYM. ERR_OUT_OF_ENUM_MEMORY
 :MSGTXT. Out of enum space
 :MSGJTXT. enum空間が不足です
