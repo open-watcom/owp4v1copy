@@ -34,13 +34,16 @@
 extern unsigned _STACKLOW;
 struct thread_data *__FirstThreadData = (struct thread_data *)&_STACKLOW;
 
+#ifndef __SNAPDRV__
 #include "osthread.h"
+#endif
 #include "stacklow.h"
 #include "rtdata.h"
 #include "initfini.h"
 
 #include <os/imports.h>
 
+#ifndef __SNAPDRV__
 extern void __InitThreadData( thread_data * );
 
 int *__threadid( void )
@@ -84,6 +87,7 @@ void __SNAPInit( void *ptr )
     #undef _STACKLOW
     *tmp = _STACKLOW;
 }
+#endif
 
 _WCRTLINK void __exit(unsigned ret_code)
 {
