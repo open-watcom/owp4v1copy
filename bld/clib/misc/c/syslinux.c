@@ -210,7 +210,7 @@ _WCRTLINK int nice( int __val )
 
 _WCRTLINK int select( int __width, fd_set * __readfds, fd_set * __writefds, fd_set * __exceptfds, struct timeval * __timeout )
 {
-    u_long res = sys_call5(SYS_select, __width, (u_long)__readfds, (u_long)__writefds, (u_long)__exceptfds, (u_long)__timeout);
+    u_long res = sys_call5(SYS__newselect, __width, (u_long)__readfds, (u_long)__writefds, (u_long)__exceptfds, (u_long)__timeout);
     __syscall_return(int,res);
 }
 
@@ -272,6 +272,13 @@ _WCRTLINK int sigaction(int __signum, const struct sigaction *__act,
     __syscall_return(int,res);
 }
 
+_WCRTLINK int sigprocmask(int __how, const sigset_t *__set, sigset_t *__oldset)
+{
+    u_long res = sys_call3(SYS_sigprocmask, __how, (u_long)__set,
+                           (u_long)__oldset);
+    __syscall_return(int,res);
+}
+
 _WCRTLINK pid_t waitpid (pid_t __pid, int *__stat_loc, int __options)
 {
     u_long res = sys_call3(SYS_waitpid, __pid, (u_long)__stat_loc,
@@ -309,6 +316,12 @@ _WCRTLINK int chmod( const char *__path, mode_t __mode )
     __syscall_return(int,res);
 }
 
+_WCRTLINK int fchmod( int __fd, mode_t __mode )
+{
+    u_long res = sys_call2(SYS_fchmod, __fd, __mode);
+    __syscall_return(int,res);
+}
+
 _WCRTLINK pid_t getpid( void )
 {
     u_long res = sys_call0(SYS_getpid);
@@ -318,6 +331,37 @@ _WCRTLINK pid_t getpid( void )
 _WCRTLINK pid_t getppid( void )
 {
     u_long res = sys_call0(SYS_getppid);
+    __syscall_return(pid_t,res);
+}
+
+_WCRTLINK int dup( int __oldfd )
+{
+    u_long res = sys_call1(SYS_dup, __oldfd);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int dup2( int __oldfd, int __newfd )
+{
+    u_long res = sys_call2(SYS_dup2, __oldfd, __newfd);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int kill( pid_t __pid, int __sig )
+{
+    u_long res = sys_call2(SYS_kill, __pid, __sig);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int nanosleep( const struct timespec *__rqtp,
+                         struct timespec *__rmtp )
+{
+    u_long res = sys_call2( SYS_nanosleep, (u_long)__rqtp, (u_long)__rmtp );
+    __syscall_return(int,res);
+}
+
+_WCRTLINK extern pid_t  getpgrp( void )
+{
+    u_long res = sys_call0(SYS_getpgrp);
     __syscall_return(pid_t,res);
 }
 
