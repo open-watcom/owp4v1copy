@@ -53,7 +53,7 @@ libfile: .PROCEDURE
 bitset_opts = -o $@ -g
 protos_opts = -E -traditional -o $@
 !else
-bitset_opts = -fe=$@ -d2
+bitset_opts = -fo=.obj -fe=$@ -d2
 protos_opts = -p -fo=$@
 !endif
 
