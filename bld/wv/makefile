@@ -448,7 +448,7 @@ post_process :.PROCEDURE
 !else ifeq host_OS nt
         *wrc -k -bt=nt -i=$(rcinclude);$(lang_root)\h\nt $(%RESFILE) $(bdir)\$(%NAME).$(EXE)
 !else ifeq host_OS os2
-        $(os2rc) -p -x $(%RESFILE) $(bdir)\$(%NAME).$(EXE)
+        $(rc_os2) -p -x $(%RESFILE) $(bdir)\$(%NAME).$(EXE)
 !endif
 
 sortlist.obj : $(watcom_dir)\c\sortlist.c .autodepend
@@ -637,11 +637,11 @@ wvpm.res wvpmj.res : $(hdir)\wvpm.rc $(bitmaps) $(rcfiles) .autodepend
 
 !endif
 
-        $(os2rc) -i $(inc_dirs_sys_os2_386) -r $(hdir)\foros2pm.rc .\foros2pm.res
+        $(rc_os2) -i $(inc_dirs_sys_os2_386) -r $(hdir)\foros2pm.rc .\foros2pm.res
         del wvpm.i
         copy foros2pm.res wvpm.res
         copy wvpmj.i wvpm.i
-        $(os2rc) -i $(inc_dirs_sys_os2_386) -r $(hdir)\foros2pm.rc .\foros2pm.res
+        $(rc_os2) -i $(inc_dirs_sys_os2_386) -r $(hdir)\foros2pm.rc .\foros2pm.res
         copy foros2pm.res wvpmj.res
 
 !ifndef %use_os2tk_stuff
