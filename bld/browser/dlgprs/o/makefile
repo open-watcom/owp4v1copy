@@ -45,7 +45,8 @@ lnk = dlgprs.lnk
 extra_c_flags=-xs
 extra_l_flags=op map
 
-inc_dirs=$(browse_dir)/contain/h;$(browse_dir)/h;../h;
+#Note that this project includes windows.h on every platform
+inc_dirs=$(browse_dir)/contain/h;$(browse_dir)/h;../h;$(inc_dirs_sys_win)
 
 compile.tim : dlgprs.exe
     wtouch $^@
