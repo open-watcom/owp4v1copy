@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  WSystemService class implementation.
 *
 ****************************************************************************/
 
@@ -76,7 +75,7 @@ int WEXPORT WSystemService::sysExec( const char *cmd,
         if( app_type & FAPPTYP_DOS ) {
             pgm_starter = PGM_DOSSTARTSESSION;
             sess_type = SSF_TYPE_WINDOWEDVDM;
-        } else if( app_type & FAPPTYP_WINDOWSPROT31 ) {
+        } else if( app_type & ( FAPPTYP_WINDOWSPROT31 | FAPPTYP_WINDOWSPROT ) ) {
             pgm_starter = PGM_DOSSTARTSESSION;
             sess_type = SSF_TYPE_31_ENHSEAMLESSVDM;
             args.insertAt( 0, new WString( WINOS2_NAME ) );
@@ -108,7 +107,7 @@ int WEXPORT WSystemService::sysExec( const char *cmd,
         case WWinTypeFullScreen:
             if( app_type & FAPPTYP_DOS ) {
                 sess_type = SSF_TYPE_VDM;
-            } else if( app_type & FAPPTYP_WINDOWSPROT31 ) {
+            } else if( app_type & ( FAPPTYP_WINDOWSPROT31 | FAPPTYP_WINDOWSPROT ) ) {
                 sess_type = SSF_TYPE_DEFAULT;
                 args.insertAt( 0, new WString( WINOS2_NAME ) );
                 args.insertAt( 1, new WString( WINOS2_PARM ) );
@@ -119,7 +118,7 @@ int WEXPORT WSystemService::sysExec( const char *cmd,
         case WWinTypeWindowed:
             if( app_type & FAPPTYP_DOS ) {
                 sess_type = SSF_TYPE_WINDOWEDVDM;
-            } else if( app_type & FAPPTYP_WINDOWSPROT31 ) {
+            } else if( app_type & ( FAPPTYP_WINDOWSPROT31 | FAPPTYP_WINDOWSPROT ) ) {
                 sess_type = SSF_TYPE_31_ENHSEAMLESSVDM;
             } else {
                 sess_type = SSF_TYPE_WINDOWABLEVIO;
