@@ -13,10 +13,7 @@ sys_dll = 1
 
 .c: ..
 
-inc_dirs = ..;../..
-
-.before:
-        set include=$(inc_path)
+inc_dirs = -I.. -I"../.."
 
 extra_c_flags_win = -zc -zw
 

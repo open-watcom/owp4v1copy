@@ -23,7 +23,7 @@ lnk = $(name).lnk
 
 .c : ..;$(lang_root)/src/startup;$(posix_dir)/misc
 
-inc_dirs = $(posix_dir)/h;$(watcom_dir)/h
+inc_dirs = -I"$(posix_dir)/h"
 
 extra_c_flags_386 = -fpc
 extra_c_flags_i86 = -fpc

@@ -11,20 +11,20 @@ suppress_zc = 1
 !include deftarg.mif
 
 OBJS = rcsdll.obj inifile.obj $(extra_objs)
-!ifeq host_OS nt
+!ifeq host_os nt
 OBJS += mkssi.obj
-!ifeq host_CPU 386
+!ifeq host_cpu 386
 OBJS += objcycle.obj
 !endif
-!else ifeq host_OS win
+!else ifeq host_os win
 OBJS += mkssi.obj
 !endif
 
 .cpp : ..;../mkssi;../ocycle
 
-inc_dirs = ..
+inc_dirs = -I..
 
-!ifeq host_CPU 386
+!ifeq host_cpu 386
 extra_c_flags_dos = -D__PHAR__
 !endif
 extra_c_flags_win = -zw-zu

@@ -14,7 +14,7 @@ sys_dll = 1
 
 .c: ..
 
-inc_dirs = ../..
+inc_dirs = -I"../.."
 
 extra_c_flags_win = -zw -zu
 

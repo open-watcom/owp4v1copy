@@ -4,7 +4,7 @@ proj_name = whelp
 !include deftarg.mif
 !include defrule.mif
 
-inc_dirs = $(help_dir)/h;$(ui_dir)/h;$(trmem_dir)
+inc_dirs = -I"$(help_dir)/h" -I"$(ui_dir)/h" -I$(trmem_dir)
 
 .c: ../c;$(trmem_dir)
 
@@ -14,14 +14,14 @@ objs =  main.obj filelist.obj
 objs += $(help_objs)
 
 !ifdef whelp_trmem
-extra_c_flags += -dTRMEM
+extra_c_flags += -DTRMEM
 objs +=  trmemcvr.obj trmem.obj
 !endif
 
-!ifeq host_OS linux
-libs = $(ui_dir)/unix/$(host_OS)$(host_CPU)/ui.lib $(ncurses_dir)/$(host_OS)$(host_CPU)/ncurses.lib
+!ifeq host_os linux
+libs = $(ui_dir)/unix/$(host_os)$(host_cpu)/ui.lib $(ncurses_dir)/$(host_os)$(host_cpu)/ncurses.lib
 !else
-libs = $(ui_dir)/$(host_OS)/$(host_OS)$(host_CPU)/ui.lib
+libs = $(ui_dir)/$(host_os)/$(host_os)$(host_cpu)/ui.lib
 !endif
 extra_l_flags = op map l { $(libs) }
 

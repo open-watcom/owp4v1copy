@@ -12,12 +12,12 @@ bviper_autodepends = .AUTODEPEND
 
 objs = bviper.obj
 
-inc_dirs = $(wclass_inc_dirs);$(viper_dir)/mviper
+inc_dirs = $(wclass_inc_dirs) -I"$(viper_dir)/mviper"
 
 .cpp: ..
 
 LIBS = $(wclass_lib) &
-    $(viper_dir)/mviper/$(host_OS)$(host_CPU)/mviper.lib
+    $(viper_dir)/mviper/$(host_os)$(host_cpu)/mviper.lib
 
 $(proj_name).exe : $(objs)
         $(linker) option quiet $(lflags) option map name $^@ file { $< } lib {$(LIBS)}

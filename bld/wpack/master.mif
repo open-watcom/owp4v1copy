@@ -6,7 +6,7 @@ wpack_autodepends = .AUTODEPEND
 !include deftarg.mif
 !include defrule.mif
 
-inc_dirs = $(wpack_dir)/h;$(wtouch_dir);$(wtouch_dir)/$(host_os)$(host_cpu)
+inc_dirs = -I"$(wpack_dir)/h" -I$(wtouch_dir) -I"$(wtouch_dir)/$(host_os)$(host_cpu)"
 
 .c: ../c;$(wtouch_dir)
 
