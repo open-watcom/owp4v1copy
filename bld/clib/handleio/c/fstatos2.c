@@ -65,7 +65,7 @@ static unsigned short at2mode( int attr )
 
 
 #ifdef __WIDECHAR__
-_WCRTLINK int _wfstat( int handle, struct _wstat *buf )
+_WCRTLINK int _wfstat( int handle, struct _stat *buf )
 #else
 _WCRTLINK int fstat( int handle, struct stat *buf )
 #endif
@@ -110,7 +110,7 @@ _WCRTLINK int fstat( int handle, struct stat *buf )
             if( ( hand_type & ~HANDTYPE_NETWORK ) == HANDTYPE_DEVICE ) {
                 buf->st_mode |= S_IFCHR;
             } else if( ( hand_type & ~HANDTYPE_NETWORK ) == HANDTYPE_PIPE ) {
-                buf->st_mode |= S_IFFIFO;
+                buf->st_mode |= S_IFIFO;
             }
             buf->st_dev = buf->st_rdev = 1;
             buf->st_attr = 0;
@@ -124,7 +124,6 @@ _WCRTLINK int fstat( int handle, struct stat *buf )
         buf->st_updatedID = 0;
         buf->st_inheritedRightsMask = 0;
         buf->st_originatingNameSpace = 0;
-        buf->st_name[0] = '\0';
         return( 0 );
     }
 

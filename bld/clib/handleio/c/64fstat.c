@@ -50,16 +50,12 @@
 
 
 #ifdef __WIDECHAR__
- _WCRTLINK int _wfstati64( int handle, struct _wstati64 *buf )
+ _WCRTLINK int _wfstati64( int handle, struct _stati64 *buf )
 #else
  _WCRTLINK int _fstati64( int handle, struct _stati64 *buf )
 #endif
 {
-    #ifdef __WIDECHAR__
-        struct _wstat   buf32;
-    #else
-        struct _stat    buf32;
-    #endif
+    struct _stat        buf32;
     int                 rc;
     INT_TYPE            tmp;
 
@@ -86,7 +82,6 @@
     buf->st_updatedID = buf32.st_updatedID;
     buf->st_inheritedRightsMask = buf32.st_inheritedRightsMask;
     buf->st_originatingNameSpace = buf32.st_originatingNameSpace;
-    __F_NAME(strcpy,wcscpy)( buf->st_name, buf32.st_name );
 
     return( rc );
 }

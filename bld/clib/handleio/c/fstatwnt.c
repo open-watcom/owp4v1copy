@@ -65,9 +65,9 @@ extern time_t _d2ttime();
 
 #ifdef __WIDECHAR__
  #ifdef __INT64__
-  _WCRTLINK int _wfstati64( int hid, struct _wstati64 *buf )
+  _WCRTLINK int _wfstati64( int hid, struct _stati64 *buf )
  #else
-  _WCRTLINK int _wfstat( int hid, struct _wstat *buf )
+  _WCRTLINK int _wfstat( int hid, struct _stat *buf )
  #endif
 #else
  #ifdef __INT64__
@@ -134,7 +134,7 @@ extern time_t _d2ttime();
         buf->st_attr = 0;
         buf->st_mode |= S_IRUSR | S_IRGRP | S_IROTH;
         if( ftype == FILE_TYPE_PIPE ) {
-            buf->st_mode |= S_IFFIFO;
+            buf->st_mode |= S_IFIFO;
         } else if( ftype == FILE_TYPE_CHAR ) {
             buf->st_mode |= S_IFCHR;
         }
@@ -225,6 +225,5 @@ extern time_t _d2ttime();
     buf->st_updatedID = 0;
     buf->st_inheritedRightsMask = 0;
     buf->st_originatingNameSpace = 0;
-    buf->st_name[0] = '\0';
     return( 0 );
 }

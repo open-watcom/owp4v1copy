@@ -69,7 +69,7 @@ extern  time_t                  _d2ttime();
 static  unsigned short          at2mode(FF_ATTR,char *);
 
 
-_WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat,_wstat) *buf )
+_WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat,_stat) *buf )
 {
     FF_BUFFER           dir_buff;
     CHAR_TYPE const *   ptr;
@@ -192,7 +192,6 @@ _WCRTLINK int __F_NAME(stat,_wstat)( CHAR_TYPE const *path, struct __F_NAME(stat
     buf->st_updatedID = 0;
     buf->st_inheritedRightsMask = 0;
     buf->st_originatingNameSpace = 0;
-    __F_NAME(_mbsnbcpy,mbstowcs)( buf->st_name, dir_buff.achName, _MAX_NAME );
 
     return( 0 );
 }

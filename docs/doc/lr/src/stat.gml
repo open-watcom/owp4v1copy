@@ -9,11 +9,11 @@ int _stat( const char *path, struct _stat *buf );
 int _stati64( const char *path, struct _stati64 *buf );
 .ixfunc2 '&FileOp' &_func
 .if &'length(&wfunc.) ne 0 .do begin
-int _wstat( const wchar_t *path, struct _wstat *buf );
+int _wstat( const wchar_t *path, struct _stat *buf );
 .ixfunc2 '&FileOp' &wfunc
 .ixfunc2 '&Wide' &wfunc
 .do end
-int _wstati64( const wchar_t *path, struct _wstati64 *buf );
+int _wstati64( const wchar_t *path, struct _stati64 *buf );
 .ixfunc2 '&FileOp' &wfunc.i64
 .ixfunc2 '&Wide' &wfunc.i64
 .funcend

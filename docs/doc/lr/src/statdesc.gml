@@ -63,20 +63,6 @@ the inherited rights mask
 .term st_originatingNameSpace
 (unsigned char)
 the originating name space
-.term st_name
-(unsigned char array[_MAX_NAME])
-the ASCIIZ filename (null-terminated string)
-.endterm
-.np
-The structure
-.kw _wstat
-differs from
-.kw stat
-in the following way:
-.begterm
-.term st_name
-(wchar_t array[_MAX_NAME])
-the wide character filename (null-terminated wide character string)
 .endterm
 .np
 The structure
@@ -90,19 +76,6 @@ in the following way:
 total file size (as a 64-bit value)
 .endterm
 .np
-The structure
-.kw _wstati64
-differs from
-.kw stat
-in the following ways:
-.begterm
-.term st_size
-(__int64)
-total file size (as a 64-bit value)
-.term st_name
-(wchar_t array[_MAX_NAME])
-the wide character filename (null-terminated wide character string)
-.endterm
 .do end
 .np
 At least the following macros are defined in the

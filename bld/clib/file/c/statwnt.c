@@ -108,7 +108,7 @@ static DWORD at2mode( DWORD attr, CHAR_TYPE *fname )
             if( type == FILE_TYPE_CHAR ) {
                 mode = S_IFCHR;
             } else if( type == FILE_TYPE_PIPE ) {
-                mode = S_IFFIFO;
+                mode = S_IFIFO;
             }
             CloseHandle(h);
         } else {
@@ -132,7 +132,7 @@ static DWORD at2mode( DWORD attr, CHAR_TYPE *fname )
     if( attr & _A_SUBDIR ) {
         mode &= ~S_IFMT;
         mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
-    } else if( !(mode&S_IFCHR) && !(mode&S_IFFIFO) ) {
+    } else if( !(mode & S_IFCHR) && !(mode & S_IFIFO) ) {
         /* name can't be a FIFO or character device and a regular file */
         mode |= S_IFREG;
         /* determine if file is executable, very PC specific */
@@ -153,9 +153,9 @@ static DWORD at2mode( DWORD attr, CHAR_TYPE *fname )
 
 #ifdef __WIDECHAR__
  #ifdef __INT64__
-  _WCRTLINK int _wstati64( wchar_t const *path, struct _wstati64 *buf )
+  _WCRTLINK int _wstati64( wchar_t const *path, struct _stati64 *buf )
  #else
-  _WCRTLINK int _wstat( wchar_t const *path, struct _wstat *buf )
+  _WCRTLINK int _wstat( wchar_t const *path, struct _stat *buf )
  #endif
 #else
  #ifdef __INT64__
@@ -265,6 +265,5 @@ static DWORD at2mode( DWORD attr, CHAR_TYPE *fname )
     buf->st_updatedID = 0;
     buf->st_inheritedRightsMask = 0;
     buf->st_originatingNameSpace = 0;
-    __F_NAME(strncpy,wcsncpy)( buf->st_name, ffb.cFileName, _MAX_NAME );
     return( 0 );
 }

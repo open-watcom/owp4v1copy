@@ -47,7 +47,7 @@ extern time_t _d2ttime();
 
 
 #ifdef __WIDECHAR__
-_WCRTLINK int _wfstat( int handle, struct _wstat *buf )
+_WCRTLINK int _wfstat( int handle, struct _stat *buf )
 #else
 _WCRTLINK int fstat( int handle, struct stat *buf )
 #endif
@@ -99,7 +99,6 @@ _WCRTLINK int fstat( int handle, struct stat *buf )
         buf->st_updatedID = 0;
         buf->st_inheritedRightsMask = 0;
         buf->st_originatingNameSpace = 0;
-        buf->st_name[0] = '\0';
         return( 0 );
     }
 

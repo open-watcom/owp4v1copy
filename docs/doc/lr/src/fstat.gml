@@ -9,10 +9,10 @@ int _fstat( int &fd, struct stat *buf );
 .do end
 int _fstati64( int handle, struct _stati64 *buf );
 .ixfunc2 '&OsIo' _&func.i64
-int _wfstat( int handle, struct _wstat *buf );
+int _wfstat( int handle, struct _stat *buf );
 .ixfunc2 '&OsIo' _w&func
 .ixfunc2 '&Wide' _w&func
-int _wfstati64( int handle, struct _wstati64 *buf );
+int _wfstati64( int handle, struct _stati64 *buf );
 .ixfunc2 '&OsIo' _w&func.i64
 .ixfunc2 '&Wide' _w&func.i64
 .funcend
