@@ -820,8 +820,6 @@ void    GetTrademark( char *buff ) {
 //==================================
 
     strcpy( buff, banner3 );
-    strcat( buff, "\n" );
-    strcat( buff, banner3a );
 }
 
 
