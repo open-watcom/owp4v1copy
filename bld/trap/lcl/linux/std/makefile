@@ -12,6 +12,7 @@ which = TRAP
 
 extra_objs = &
         linuxacc.obj &
+        linuxmap.obj &
         linuxcomm.obj &
         linuxfile.obj &
         squish87.obj &

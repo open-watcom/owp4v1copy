@@ -59,21 +59,25 @@
 #include "mad.h"
 #include "madregs.h"
 #include "dbg386.h"
+#include "exeelf.h"
 #include "linuxcomm.h"
 #include "x86cpu.h"
 
 static pid_t        OrigPGrp;
 
-static watch_point  wpList[ MAX_WP ];
-static int          wpCount = 0;
-static pid_t        pid;
-static int          attached;
-static u_short      flatCS;
-static u_short      flatDS;
-static long         orig_eax;
-static long         last_eip;
-static int          last_sig;
-static int          at_end;
+static watch_point      wpList[ MAX_WP ];
+static int              wpCount = 0;
+static pid_t            pid;
+static int              attached;
+static u_short          flatCS;
+static u_short          flatDS;
+static long             orig_eax;
+static long             last_eip;
+static int              last_sig;
+static int              at_end;
+static struct r_debug   rdebug;         /* Copy of debuggee's r_debug (if present) */
+static int              have_rdebug;    /* Flag indicating valid r_debug */
+static Elf32_Dyn        *dbg_dyn;       /* VA debuggee's dynamic section (if present) */
 
 #if 0
 void Out( char *str )
@@ -97,8 +101,8 @@ void OutNum( unsigned long i )
     Out( ptr );
 }
 #else
-#define Out(x)
-#define OutNum(x)
+#define Out( x )
+#define OutNum( x )
 #endif
 
 static unsigned WriteMem( void *ptr, addr_off offv, unsigned size )
@@ -129,7 +133,7 @@ static unsigned WriteMem( void *ptr, addr_off offv, unsigned size )
             return( size - count );
         Out( "writemem:" );
         OutNum( val );
-        Out( " " );
+        Out( "\n" );
         switch( count ) {
         case 1:
             val &= 0xFFFFFF00;
@@ -148,7 +152,7 @@ static unsigned WriteMem( void *ptr, addr_off offv, unsigned size )
         }
         Out( "writemem:" );
         OutNum( val );
-        Out( " " );
+        Out( "\n" );
         if( sys_ptrace( PTRACE_POKETEXT, pid, offv, (void *)val ) != 0 )
             return( size - count );
     }
@@ -190,6 +194,54 @@ static unsigned ReadMem( void *ptr, addr_off offv, unsigned size )
         }
     }
     return( size - count );
+}
+
+Elf32_Dyn *GetDebuggeeDynSection( void )
+{
+    return( (Elf32_Dyn *)0x08049810 );
+}
+
+/* Copy dynamic linker rendezvous structure from debuggee's address space
+ * to memory provided by caller. Note that it is perfectly valid for this
+ * function to fail - that will happen if the debuggee is statically linked.
+ */
+int Get_ld_info( struct r_debug *debug_ptr )
+{
+    Elf32_Dyn       loc_dyn;
+    struct r_debug  *rdebug = NULL;
+    unsigned        read_len;
+
+    if( dbg_dyn == NULL ) {
+        Out( "Get_ld_info: dynamic section not available\n" );
+        return( FALSE );
+    }
+    read_len = sizeof( loc_dyn );
+    if( ReadMem( &loc_dyn, (addr_off)dbg_dyn, read_len ) != read_len ) {
+        Out( "Get_ld_info: failed to copy first dynamic entry\n" );
+	return( FALSE );
+    }
+    while( loc_dyn.d_tag != DT_NULL ) {
+        if( loc_dyn.d_tag == DT_DEBUG ) {
+            rdebug = (struct r_debug *)loc_dyn.d_un.d_ptr;
+	    break;
+        }
+	dbg_dyn++;
+        if( ReadMem( &loc_dyn, (addr_off)dbg_dyn, read_len ) != read_len ) {
+            Out( "Get_ld_info: failed to copy dynamic entry\n" );
+	    return( FALSE );
+        }
+    }
+    if( rdebug == NULL ) {
+        Out( "Get_ld_info: failed to find DT_DEBUG entry\n" );
+        return( FALSE );
+    }
+    read_len = sizeof( *debug_ptr );
+    if( ReadMem( debug_ptr, (addr_off)rdebug, read_len ) != read_len ) {
+        Out( "Get_ld_info: failed to copy r_debug struct\n" );
+        return( FALSE );
+    }
+    Out( "Get_ld_info: dynamic linker rendezvous structure found\n" );
+    return( TRUE );
 }
 
 unsigned ReqGet_sys_config( void )
@@ -374,6 +426,18 @@ unsigned ReqWrite_io( void )
         ret->len = 0;
     }
     return( sizeof( *ret ) );
+}
+
+static int GetFlatSegs( u_short *cs, u_short *ds )
+{
+    user_regs_struct    regs;
+
+    if( sys_ptrace( PTRACE_GETREGS, pid, 0, &regs ) == 0 ) {
+        *cs = regs.cs;
+	*ds = regs.ds;
+	return( TRUE );
+    }
+    return( FALSE );
 }
 
 static void ReadCPU( struct x86_cpu *r )
@@ -634,8 +698,6 @@ static pid_t RunningProc( char *name, char **name_ret )
 
 unsigned ReqProg_load( void )
 {
-    // TODO: Get the FlatCS and FlatDS register values from the process context
-    //       of the debuggee!!
     char                        **args;
     char                        *parms;
     char                        *parm_start;
@@ -647,9 +709,6 @@ unsigned ReqProg_load( void )
     prog_load_ret               *ret;
     unsigned                    len;
     int                         status;
-
-    flatDS = get_ds();
-    flatCS = get_cs();
 
     acc = GetInPtr( 0 );
     ret = GetOutPtr( 0 );
@@ -690,7 +749,7 @@ unsigned ReqProg_load( void )
         ++parms;
         --len;
         i = SplitParms( parms, NULL, len );
-        args = __alloca( (i+2) * sizeof( *args ) );
+        args = __alloca( (i + 2)  * sizeof( *args ) );
         args[ SplitParms( parms, &args[1], len ) + 1 ] = NULL;
     }
     args[0] = parm_start;
@@ -717,7 +776,7 @@ unsigned ReqProg_load( void )
         setpgid( 0, save_pgrp );
     }
     ret->flags = 0;
-    if( pid != -1 && pid != 0 ) {
+    if( (pid != -1) && (pid != 0) ) {
         int status;
 
         ret->task_id = pid;
@@ -736,6 +795,9 @@ unsigned ReqProg_load( void )
             if( WSTOPSIG( status ) != SIGTRAP )
                 goto fail;
         }
+	if( !GetFlatSegs( &flatCS, &flatDS ) )
+	    goto fail;
+	dbg_dyn = GetDebuggeeDynSection();
         errno = 0;
     }
     ret->err = errno;
@@ -983,7 +1045,7 @@ static unsigned ProgRun( int step )
             break;
         case SIGTRAP:
             ret->conditions = step ? COND_TRACE : COND_BREAK;
-            Out("sigtrap");
+            Out( "sigtrap\n" );
             ptrace_sig = 0;
             break;
         }
@@ -996,9 +1058,9 @@ static unsigned ProgRun( int step )
     if( sys_ptrace( PTRACE_GETREGS, pid, 0, &regs ) == 0 ) {
         Out( " eip " );
         OutNum( regs.eip );
-        Out( " " );
+        Out( "\n" );
         if( ret->conditions == COND_BREAK ) {
-            Out( "decrease eip(sigtrap)" );
+            Out( "decrease eip(sigtrap)\n" );
             regs.orig_eax = -1;
             regs.eip--;
             sys_ptrace( PTRACE_SETREGS, pid, 0, &regs );
@@ -1010,6 +1072,16 @@ static unsigned ProgRun( int step )
         ret->stack_pointer.offset = regs.esp;
         ret->stack_pointer.segment = regs.ss;
         ret->conditions |= COND_CONFIG;
+    }
+    /* If debuggee has dynamic section, try getting the r_debug struct
+     * every time the debuggee stops. The r_debug data may not be available
+     * immediately after the debuggee process loads.
+     */
+    if( !have_rdebug && (dbg_dyn != NULL) ) {
+        if( Get_ld_info( &rdebug ) ) {
+            have_rdebug = TRUE;
+            ret->conditions |= COND_LIBRARIES;
+        }
     }
  end:
     return( sizeof( *ret ) );
@@ -1158,19 +1230,6 @@ unsigned ReqMachine_data( void )
     ret->cache_end = ~(addr_off)0;
     *data = X86AC_BIG;
     return( sizeof( *ret ) + sizeof( *data ) );
-}
-
-unsigned ReqGet_lib_name( void )
-{
-    get_lib_name_ret    *ret;
-    char                *name;
-
-    // No shared libraries at this time
-    ret = GetOutPtr(0);
-    name = GetOutPtr( sizeof( *ret ) );
-    ret->handle = 0;
-    name[0] = '\0';
-    return( sizeof( *ret ) );
 }
 
 trap_version TRAPENTRY TrapInit( char *parm, char *err, bool remote )

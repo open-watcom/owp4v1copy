@@ -37,7 +37,7 @@
 
 /* Use 4-byte packing for compatibility with the default packing used by GCC */
 
-#pragma pack(push,4)
+#pragma pack( push, 4 )
 
 /* Linux PTRACE support defines */
 
@@ -159,22 +159,37 @@ typedef struct {
     u_short     dregs;
 } watch_point;
 
+
 #define MAX_WP          32
 
 #define TRACE_BIT       0x100
 #define BRK_POINT       0xCC
 
-/* Inline functions to get the CS and DS register values */
+/* Rendezvous structure for communication between the dynamic linker and
+ * the debugger. If executable's .dynamic section contains a DT_DEBUG element,
+ * the dynamic linker sets it to point to this structure.
+ */
 
-u_short get_ds( void );
-#pragma aux get_ds = \
-        "mov        ax,ds" \
-        value[ax];
+struct r_debug {
+    int                 r_version;    /* Protocol version */
+    struct link_map     *r_map;       /* Start of loaded objects list */
+    Elf32_Addr          r_brk;        /* Address to set a breakpoint at */
+    enum {
+        RT_CONSISTENT,                /* Mapping change is complete */
+        RT_ADD,                       /* Loading new shared object */
+        RT_DELETE                     /* Removing a shared object */
+    }                   r_state;      /* Current state of dynamic linker */
+    Elf32_Addr          r_ldbase;     /* Dynamic linker's load base */
+};
 
-u_short get_cs( void );
-#pragma aux get_cs = \
-        "mov        ax,cs" \
-        value[ax];
+/* Structure describing a loaded shared object - part of a doubly linked list */
+struct link_map {
+    Elf32_Addr          l_addr;       /* Offset from object's va to load base */
+    char                *l_name;      /* Name (absolute path) of shared object */
+    Elf32_Dyn           *l_ld;        /* Shared object's dynamic section */
+    struct link_map     *l_next;      /* Next entry in chain */
+    struct link_map     *l_prev;      /* Previous entry in chain */
+};
 
 /* ptrace system call */
 
@@ -240,7 +255,6 @@ extern void print_msg( const char *format, ... );
 /* Copy of parent's environment */
 extern char     **dbg_environ;
 
-#pragma pack(pop)
+#pragma pack( pop )
 
 #endif  /* _LINUXCOMM_H */
-
