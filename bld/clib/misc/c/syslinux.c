@@ -126,7 +126,7 @@ _WCRTLINK int unlink( const char *filename )
 
 _WCRTLINK time_t time( time_t *t )
 {
-    u_long res = sys_call1(SYS_time, (u_long)time);
+    u_long res = sys_call1(SYS_time, (u_long)t);
     __syscall_return(int,res);
 }
 
