@@ -24,6 +24,7 @@ common = &
         excpt.h &
         exstring.h &
         fcntl.h &
+        fenv.h &
         float.h &
         fstream.h &
         generic.h &
