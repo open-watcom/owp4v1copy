@@ -117,11 +117,14 @@ does not exist or src_file has the archive bit turned on. At the _end_ of
 the control file, all src_file's copied by an ACOPY have their archive bits
 turned off.
 
+PMAKE is not currently built into BUILDER whatever the following says!
+#if 0
         PMAKE pmake_command_line
 
 The PMAKE command has been built into the BUILDER program. You can specify
 all the same things as with PMAKE.EXE, except that the -b option is ignored.
 See the PMAKE.EXE usage message for more information.
+#endif
 
 
         Command Line Options
