@@ -7,7 +7,7 @@ app.nlm : $(objs) app.lnk $(auilib)
         @%append app.lnk module clib
         @%append app.lnk option caseexact,quiet
         @%append app.lnk library $(guidir)/ui/guinlmf
-        @%append app.lnk library $(uidir)/nlm/uilibf
+        @%append app.lnk library $(uidir)/nlm/nov386/ui.lib
         @%append app.lnk libpath %WATCOM%/lib386
         @%append app.lnk libpath %WATCOM%/lib386/netware
         @%append app.lnk import  @%WATCOM%/novi/clib.imp

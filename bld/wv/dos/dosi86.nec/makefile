@@ -7,7 +7,7 @@ host_OS=dos
 host_CPU=i86
 machine = nec
 EXTRA_CFLAGS = -wo-of -d_OVERLAYED_
-ui_library = $(uidir)/nec/uilibl.lib
+ui_library = $(uidir)/dos.nec/ui.lib
 sysodir = $(mdir)/dos/necobj
 syshdir = $(mdir)/dos/h
 

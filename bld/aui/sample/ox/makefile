@@ -11,9 +11,9 @@ all : .symbolic $(target)
         @%null
 
 app2.exe : $(objs) app.lnk $(auilib)
-        wlink op stack=12k name app2 sys os2 pmc @app lib $(guidir)/ui/guios2l lib $(uidir)/os2/uilibl
+        wlink op stack=12k name app2 sys os2 pmc @app lib $(guidir)/ui/guios2l lib $(uidir)/os2/os2i86/ui.lib
 
 app.exe : $(objs) app.lnk $(auilib)
-        wlink sys dos @app lib $(guidir)/ui/guidosl lib $(uidir)/dos/uilibl
+        wlink sys dos @app lib $(guidir)/ui/guidosl lib $(uidir)/dos/dosi86/ui.lib
 
 !include ../makefile

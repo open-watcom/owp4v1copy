@@ -1,8 +1,8 @@
 compile = $(comp386) $[* -d2 -mf -dDOS -zk0
 auilib = $(auidir)/of/aui.lib
 reslib = $(wres_dir)/lib/wresf.lib
-guilib = $(guidir)/ui/guidosf.lib
-uilib = $(uidir)/necdos/uilibf.lib
+guilib = $(guidir)/ui/dos386/gui.lib
+uilib = $(uidir)/dos.nec/dos386/ui.lib
 resfile = appui.res
 
 

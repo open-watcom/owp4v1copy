@@ -24,7 +24,7 @@ extra_l_flags_nt = runtime console op stack=20k
 !endif
 
 extra_l_flags_qnx = op stack=2k,priv=3
-extra_l_flags_linux = lib $(ncurses_dir)/linux386/ncurses.lib lib $(ui_dir)/unix/uilibf.lib
+extra_l_flags_linux = lib $(ncurses_dir)/linux386/ncurses.lib lib $(ui_dir)/unix/linux386/ui.lib
 
 !ifdef is286
 extra_l_flags_dos_i86 = op stack=1k

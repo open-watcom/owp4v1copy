@@ -93,7 +93,7 @@ LIBS_nt_axp = $(watcom_dir)/lib/draxp.lib $(gui_dir)/win/ntaxp/gui.lib $(wclass_
 LIBS_nt_386 = $(watcom_dir)/lib/dwarfrp.lib $(gui_dir)/win/nt386/gui.lib $(wclass_dir)/win/nt/wclass.lib
 LIBS_nt     = $(LIBS_NT_$(HOST_CPU))
 LIBS_os2    = $(watcom_dir)/lib/dwarfrp.lib $(gui_dir)/win/os2386/gui.lib $(wclass_dir)/pm/obj32/wclass.lib
-LIBS_dos    = $(watcom_dir)/lib/dwarfrp.lib $(gui_dir)/ui/dos386/gui.lib $(ui_dir)/dos/uilibf.lib
+LIBS_dos    = $(watcom_dir)/lib/dwarfrp.lib $(gui_dir)/ui/dos386/gui.lib $(ui_dir)/dos/dos386/ui.lib
 
 LIBS    = $(LIBS_$(host_OS))
 

@@ -7,14 +7,14 @@ resfile = appui
 
 app.exe appj.exe : $(objs) app.lnk $(auilib) $(reslib) $(guilib2) $(resfile).res $(resfile)j.res
         $(linker) op stack=12k name app sys os2 @app &
-                lib $(reslib),$(guilib2),$(uidir)/os2/uilibl,wresl
+                lib $(reslib),$(guilib2),$(uidir)/os2/os2i86/ui.lib,wresl
         cp app.exe appj.exe
         wstrip -q -a -r app.exe . $(resfile).res
         wstrip -q -a -r appj.exe . $(resfile)j.res
 
 appdos.exe : $(objs) app.lnk $(auilib) $(reslib) $(guilib) $(resfile).res $(resfile)j.res
         $(linker) op stack=12k name appdos sys dos @app &
-                lib $(reslib),$(guilib),$(uidir)/dos/uilibl
+                lib $(reslib),$(guilib),$(uidir)/dos/dosi86/ui.lib
         wstrip -q -a -r appdos.exe . $(resfile).res
 
 !include ../makefile

@@ -26,26 +26,26 @@ $(name).lib: $(objfiles)
 .$(EXE): ../x
 
 !ifeq SAMPLE_MODE WIN_C_M_J
-sample.$(EXE) : samplew.obj sampdial.obj ../$(LIBNAME).lib
+sample.$(EXE) : samplew.obj sampdial.obj $(name).lib
         %create sample.lnk
-        %append sample.lnk system windows op m D A library ../$(LIBNAME)
+        %append sample.lnk system windows op m D A library $(name).lib
         %append sample.lnk n sample
         %append sample.lnk f samplew f sampdial
         %append sample.lnk import DEATH GDI.121
         %append sample.lnk import RESURRECTION GDI.122
         wlink @sample.lnk
 !else ifeq SAMPLE_MODE WIN_C_M
-sample.$(EXE) : samplew.obj sampdial.obj swap.obj ../$(LIBNAME).lib
+sample.$(EXE) : samplew.obj sampdial.obj swap.obj $(name).lib
         %create sample.lnk
-        %append sample.lnk system windows op m D A library ../$(LIBNAME)
+        %append sample.lnk system windows op m D A library $(name).lib
         %append sample.lnk n sample
         %append sample.lnk f samplew f sampdial f swap
         %append sample.lnk import DEATH GDI.121
         %append sample.lnk import RESURRECTION GDI.122
         wlink @sample.lnk
 !else
-sample.$(EXE) : sample.obj sampdial.obj ../$(LIBNAME).lib
-        !wlink system $(FORM) op m,st=32k D A library ../$(LIBNAME) n sample f sample, sampdial
+sample.$(EXE) : sample.obj sampdial.obj $(name).lib
+        !wlink system $(FORM) op m,st=32k D A library $(name).lib n sample f sample, sampdial
 !endif
 
 make: .SYMBOLIC
