@@ -26,7 +26,7 @@ $(dllname).imp : $(dllname).lbc $(rtdll_dir)\trimlbc.vi $(rtdll_dir)\add_br.vi
 $(dllname).dll $(dllname).lbc : $(dll_objs) $(dll_libs) tmp.def
     $(linker) debug dwarf $(option_symfile) $(l_flags) $(dllbase) op map name $(dllname).dll file { $(dll_objs) } export { @$]@ } lib { $(dll_libs) }
 !ifeq system winnt
-    $(bld_cl) $(fe_misc_dir)\c\genverrc.c $(wcl_util_opts) -d_VERSION=$(bld_ver)
+    $(bld_cl) $(fe_misc_dir)\c\genverrc.c -d_VERSION=$(bld_ver)
     genverrc ..\verinfo.rc $(dllname).rc $$ $(dllname).dll $(patch_level)
     del genverrc.*
     $(rc) -q -bt=nt -i$(%watcom)\h\nt $(dllname).rc $(dllname).dll
