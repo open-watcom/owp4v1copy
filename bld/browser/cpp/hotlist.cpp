@@ -353,10 +353,10 @@ void HotSpotList::resetScrollRange()
         _win->setScrollTextPos( WScrollBarVertical, nRows / 2 );
     } else {
         _win->textMetrics( avg, max );
-        if( ((long) count() * (long) max.y()) > INT_MAX ) {
-            scrollr = INT_MAX / max.y();
-        } else {
+        if( (max.y() == 0) || (count() <= INT_MAX / max.y()) ) {
             scrollr = count();
+        } else {
+            scrollr = INT_MAX / max.y();
         }
 
         if( scrollr <= _win->getRows() ) {
