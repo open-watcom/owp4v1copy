@@ -48,6 +48,7 @@
     #endif
 #elif defined __WINDOWS__
     #include <windows.h>
+#elif defined __LINUX__
 #endif
 #include <string.h>
 #include <mbstring.h>
@@ -65,6 +66,8 @@
 
 #ifdef __NT__
     unsigned int __MBCodePage = CP_OEMCP;       /* default code page */
+#elif defined( __LINUX__ )
+    unsigned int __MBCodePage = 0;              /* default code page */
 #elif !defined(__UNIX__)
     unsigned int __MBCodePage = 0;              /* default code page */
 #endif
@@ -77,26 +80,26 @@
 
 int __mbinit( int codepage )
 {
+    int                     countVal;
 #ifdef __NT__
-    int                     countRange, countVal;
+    int                     countRange;
     CPINFO                  cpInfo;
     BOOL                    rc;
 #elif defined __OS2__
-    int                     countRange, countVal;
+    int                     countRange;
     COUNTRYCODE             countryInfo;
     unsigned char           leadBytes[12];
     APIRET                  rc;
     OS_UINT                 buf[8];
     OS_UINT                 bytes;
 #elif defined __OSI__
-    int                     countVal;
 #elif defined __DOS__
-    int                     countRange, countVal;
+    int                     countRange;
     unsigned short _WCFAR * leadBytes;
     unsigned char           lowerBound, upperBound;
 #elif defined __WINDOWS__
-    int                     countVal;
     DWORD                   version;
+#elif defined __LINUX__
 #endif
 
     /*** Handle values from _setmbcp ***/
@@ -217,6 +220,7 @@ int __mbinit( int codepage )
             }
         }
         __MBCodePage = GetKBCodePage();
+    #elif defined __LINUX__
     #endif
 
     return( 0 );                                /* return success code */

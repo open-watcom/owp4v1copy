@@ -80,14 +80,14 @@
 !inject mbconv.obj   d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject mbcupper.obj d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject mbgetcod.obj d16 d32             nt nta ntp         o16 o32         w16 w32 osi
-!inject mbinit.obj   d16 d32             nt nta ntp         o16 o32         w16 w32 osi
+!inject mbinit.obj   d16 d32             nt nta ntp         o16 o32         w16 w32 osi l32
 !inject mbisalnu.obj d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject mbisalph.obj d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject mbiscntr.obj d16 d32             nt nta ntp         o16 o32         w16 w32 osi
-!inject mbisdbcs.obj d16 d32             nt nta ntp         o16 o32         w16 w32
+!inject mbisdbcs.obj d16 d32             nt nta ntp         o16 o32         w16 w32     l32
 !inject mbisdigi.obj d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject mbisgrap.obj d16 d32             nt nta ntp         o16 o32         w16 w32 osi
-!inject mbislead.obj d16 d32             nt nta ntp         o16 o32         w16 w32 osi
+!inject mbislead.obj d16 d32             nt nta ntp         o16 o32         w16 w32 osi l32
 !inject mbislegl.obj d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject mbislowe.obj d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject mbisprin.obj d16 d32             nt nta ntp         o16 o32         w16 w32 osi
@@ -142,7 +142,7 @@
 !inject mbsupr.obj   d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject mbterm.obj   d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject mbtowc.obj   d16 d32             nt nta ntp         o16 o32         w16 w32 osi
-!inject setmbcp.obj  d16 d32             nt nta ntp         o16 o32         w16 w32 osi
+!inject setmbcp.obj  d16 d32             nt nta ntp         o16 o32         w16 w32 osi l32
 !inject sisinit.obj  d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 #inject utfqnx.obj                                                  q16 q32             l32
 !inject wc2mbqnx.obj                                                q16 q32             l32
