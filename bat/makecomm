@@ -252,11 +252,10 @@ objcycle_dir=$(build_root)\objcycle
 # define substructure of WATCOM project - DON'T ADD MORE. just use watcom_dir
 #
 wat_utils=$(build_root)\watcom
-watcom_nt_h=$(wat_utils)\nt_h
-watcom_os220_h=$(wat_utils)\os220_h
+watcom_nt_h=$(lang_root)\h\nt
+watcom_os220_h=$(lang_root)\h\os2
 watcom_h=$(wat_utils)\h
 watcom_lib=$(wat_utils)\lib
-watcom_cset2_h=$(wat_utils)\cset2_h
 
 datactl_dir=$(tools_root)\datactl
 win_h=$(lang_root)\h\win
