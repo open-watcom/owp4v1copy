@@ -111,7 +111,6 @@ _WCRTLINK void           _exit( int __status );
 
 :include ext.sp
 
-:segment !SNAPDRV
 :segment QNX
 _WCRTLINK extern unsigned atoh( const char *__nptr );
 :endsegment
@@ -120,15 +119,20 @@ _WCRTLINK extern void    _exit( int __status );
 :endsegment
 _WMRTLINK extern char   *ecvt( double __val, int __ndig, int *__dec,
                                int *__sign );
+:segment !SNAPDRV
 _WMRTLINK extern char   *_ecvt( double __val, int __ndig, int *__dec,
                                int *__sign );
+:endsegment
 _WMRTLINK extern char   *fcvt( double __val, int __ndig, int *__dec,
                                int *__sign );
+:segment !SNAPDRV
 _WMRTLINK extern char   *_fcvt( double __val, int __ndig, int *__dec,
                                 int *__sign );
 _WCRTLINK extern char   *_fullpath( char *__buf, const char *__path,
                                     size_t __size );
+:endsegment
 _WMRTLINK extern char   *gcvt( double __val, int __ndig, char *__buf );
+:segment !SNAPDRV
 _WMRTLINK extern char   *_gcvt( double __val, int __ndig, char *__buf );
 :endsegment
 _WCRTLINK extern char   *itoa( int __value, char *__buf, int __radix );
