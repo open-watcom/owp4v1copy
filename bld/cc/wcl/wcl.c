@@ -1083,7 +1083,7 @@ static  void  Usage( void )
                 if( *list[n] == '[' ) break;
             }
             n = (n+1) / 2;                      /* half way through list */
-#if 0
+#ifndef __UNIX__
             if( isatty( fileno( stdout ) ) ) {
                 if( lines_printed != 0 ) {
                     if( lines_printed + n > 25 ) {
