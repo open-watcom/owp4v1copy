@@ -29,13 +29,6 @@
 *
 ****************************************************************************/
 
-
-#if _OPSYS == _PENPOINT
-  #define       _sig_handler    CDECL
-#else
-  #define       _sig_handler
-#endif
-
 #if _OPSYS == _OS2
   #if defined( __386__ )
     #define     _handler

@@ -53,34 +53,7 @@ extern  int             Spawn(void (*)());
 // explicit call to RTSysInit() must be made by the caller.
 extern  void            RTSysInit(void);
 
-#if _OPSYS == _PENPOINT
-
-#pragma aux __ASTACKSIZ "*"
-#pragma aux __ASTACKPTR "*"
-
-unsigned                __ASTACKSIZ = 0;        // alternate stack size
-char                    *__ASTACKPTR = NULL;    // alternate stack pointer
-
-#include "go.h"
-
-extern  void            FMAIN(void);
-
-
-U32     CDECL main( S32 argc, CHAR* argv[], U32 instance ) {
-//==========================================================
-
-// Call user's program.
-
-    argc = argc; argv = argv; instance = instance;
-    // allocate alternate stack for F77
-    __ASTACKPTR = (char *)alloca( __ASTACKSIZ ) + __ASTACKSIZ;
-    RTSysInit();
-    Spawn( &FMAIN );
-    exit( EXIT_SUCCESS );
-    return( 0 );
-}
-
-#elif defined( __WINDOWS__ )
+#if defined( __WINDOWS__ )
 
 #include "fapptype.h"
 

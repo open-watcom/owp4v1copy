@@ -380,7 +380,7 @@ char    GetStdChar() {
 #else
     if( read( STDIN_FILENO, &ch, 1 ) < 0 )
         return( NULLCHAR );
-#if ( _OPSYS != _QNX ) && ( _OPSYS != _LINUX ) && ( _OPSYS != _PENPOINT )
+#if ( _OPSYS != _QNX ) && ( _OPSYS != _LINUX )
     if( ch == CR ) {
         if( read( STDIN_FILENO, &ch, 1 ) < 0 ) {
             return( NULLCHAR );

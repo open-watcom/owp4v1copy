@@ -217,14 +217,14 @@ static  void    SysIOInfo( ftnfile *fcb ) {
             fcb->device |= INFO_DEV;
             // devices always exist
             fcb->flags |= FTN_FSEXIST;
-#if ( _OPSYS != _PENPOINT ) && ( _OPSYS != _QNX ) && ( _OPSYS != _LINUX )
+#if ( _OPSYS != _QNX ) && ( _OPSYS != _LINUX )
         } else {
             fcb->device |= INFO_VALID_DRIVE;
 #endif
         }
     }
     if( ( fcb->flags & FTN_FSEXIST ) && !IsDevice( fcb ) ) {
-#if ( _OPSYS != _PENPOINT ) && ( _OPSYS != _QNX ) && ( _OPSYS != _LINUX )
+#if ( _OPSYS != _QNX ) && ( _OPSYS != _LINUX )
         // Assume the two most significant bits contain no useful information
         fcb->device = INFO_DRIVE & info.st_dev; // save drive letter
 #endif
@@ -235,7 +235,7 @@ static  void    SysIOInfo( ftnfile *fcb ) {
         } else if( info.st_mode & S_IWUSR ) {
             fcb->action = ACTION_WRITE;
         } else {
-            // if none of the above are set (i.e. PenPoint),
+            // if none of the above are set,
             // assume read/write
             fcb->action = ACTION_RW;
         }
@@ -629,11 +629,7 @@ void    ReportNExist( ftnfile *fcb ) {
 
 // Set i/o error condition to "file not found".
 
-#if _OPSYS == _PENPOINT
-    errno = EBADF;
-#else
     errno = ENOENT;
-#endif
     FSetSysErr( fcb->fileptr );
 }
 

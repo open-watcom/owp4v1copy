@@ -85,7 +85,7 @@ static  unsigned long   CBRealSave;
 #endif
 
 #if !defined( __WINDOWS_386__ ) && !defined( __OS220__ ) && \
-    !defined( __NT__ ) && ( _OPSYS != _PENPOINT ) && ( _OPSYS != _LINUX ) \
+    !defined( __NT__ ) && ( _OPSYS != _LINUX ) \
      && !defined( __NETWARE__ )
   static        void            (_handler *ISave)();
   static        void            (_handler *ZSave)();
@@ -93,7 +93,7 @@ static  unsigned long   CBRealSave;
 
 #if defined( __OS220__ ) || defined( __NT__ )
   extern        byte    __ExceptionHandled;
-  static        void    _sig_handler IOvFlSignal(int);
+  static        void    IOvFlSignal(int);
 #endif
 
 #if (_OPSYS == _PCDOS) && defined( __386__ )
@@ -129,7 +129,7 @@ static  void    ProcessBreak() {
 }
 
 
-static  void    _sig_handler BreakSignal( int sig ) {
+static  void    BreakSignal( int sig ) {
 //===================================================
 
     sig = sig;
@@ -164,7 +164,7 @@ static  void    _handler BreakHandler() {
 
 #if !defined( __WINDOWS_386__ )
 
-#if (_OPSYS != _PENPOINT) && ( _OPSYS != _LINUX ) && !defined( __NETWARE__ )
+#if ( _OPSYS != _LINUX ) && !defined( __NETWARE__ )
 
 static  void    ProcessIDivZ() {
 //==============================
@@ -177,7 +177,7 @@ static  void    ProcessIDivZ() {
 
 #if defined( __OS220__ ) || defined( __NT__ )
 
-static  void    _sig_handler IDivZSignal( int sig ) {
+static  void    IDivZSignal( int sig ) {
 //===================================================
 
     sig = sig;
@@ -185,7 +185,7 @@ static  void    _sig_handler IDivZSignal( int sig ) {
 }
 
 
-#elif ( _OPSYS != _PENPOINT ) && ( _OPSYS != _LINUX ) && !defined( __NETWARE__ )
+#elif ( _OPSYS != _LINUX ) && !defined( __NETWARE__ )
 
 static  void    _handler IDivZHandler() {
 //=======================================
@@ -212,7 +212,7 @@ static  void    _handler IDivZHandler() {
 #endif
 
 
-#if (_OPSYS != _PENPOINT) && ( _OPSYS != _LINUX ) && !defined( __NETWARE__ )
+#if ( _OPSYS != _LINUX ) && !defined( __NETWARE__ )
 
 static  void    ProcessIOvFl() {
 //==============================
@@ -234,7 +234,7 @@ static  void    ProcessIOvFl() {
 
 #if defined( __OS220__ ) || defined( __NT__ )
 
-static  void    _sig_handler IOvFlSignal( int sig ) {
+static  void    IOvFlSignal( int sig ) {
 //===================================================
 
     sig = sig;
@@ -245,7 +245,7 @@ static  void    _sig_handler IOvFlSignal( int sig ) {
 }
 
 
-#elif (_OPSYS != _PENPOINT) && ( _OPSYS != _LINUX ) && !defined( __NETWARE__ )
+#elif ( _OPSYS != _LINUX ) && !defined( __NETWARE__ )
 
 static  void    _handler IOvFlHandler() {
 //=======================================

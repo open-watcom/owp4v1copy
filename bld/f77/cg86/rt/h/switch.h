@@ -51,8 +51,6 @@
   #define _OPSYS        _OS2
 #elif defined( __NT__ )
   #define _OPSYS        _NT
-#elif defined( __PP__ )
-  #define _OPSYS        _PENPOINT
 #elif defined( __NETWARE__ )
   #define _OPSYS        _NETWARE
 #elif defined( __LINUX__ )

@@ -53,7 +53,3 @@ typedef enum { // must map onto error message table in POSERR.C
 #define STDOUT_FILENO   1
 #define STDERR_FILENO   2
 #endif
-
-#if _OPSYS == _PENPOINT
-#define O_BINARY        0
-#endif
