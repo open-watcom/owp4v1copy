@@ -58,7 +58,7 @@ extern void             fatal( void );
 extern void             SetTimerRate( char ** );
 extern void             RecordCGraph( void );
 #if defined(_NEC_PC)
-extern char             Timer_Mod;
+extern char             Timer_Mod();
 #endif
 extern char  FAR_PTR    *MsgArray[ERR_LAST_MESSAGE-ERR_FIRST_MESSAGE+1];
 
@@ -213,7 +213,7 @@ void StartProg( char *cmd, char *prog, char *args )
         }
         if( Proc.int_id == 8 ) {
 #if defined(_NEC_PC)
-        if( Timer_Mod == TimerMult ) {
+        if( Timer_Mod() == TimerMult ) {
 #endif
             ++InsiderTime;
             RecordSample( Proc.eip, Proc.cs );
