@@ -133,6 +133,7 @@ static char *Def_Macro_Tokens( char *str, int multiple_tokens, int flags )
             if( CurToken == T_WHITE_SPACE ) break;      /* 28-apr-94 */
             if( CurToken == T_BAD_CHAR && ! multiple_tokens ) break;
             TokenBuf[i++] = CurToken;
+
             switch( CurToken ) {
             case T_BAD_CHAR:
                 TokenBuf[i++] = Buffer[0];
@@ -147,6 +148,8 @@ static char *Def_Macro_Tokens( char *str, int multiple_tokens, int flags )
             case T_STRING:
                 memcpy( &TokenBuf[i], &Buffer[0], TokenLen );
                 i += TokenLen;
+                break;
+            default:
                 break;
             }
             str = ReScanPos();
@@ -232,7 +235,7 @@ void FreeUndefNames()
 {
     struct undef_names *uname;
 
-    for(; uname = UndefNames; ) {
+    for(; (uname = UndefNames); ) {
         UndefNames = uname->next;
         CMemFree( uname->name );
         CMemFree( uname );
