@@ -179,6 +179,7 @@ _WCRTLINK unsigned short __nec98_bios_equiplist(void)
     /* Check mouse */
     r.h.ah = 0x35;
     r.h.al = 0x33;
+    s.ds = 0;                           /* in protected mode (dos16m) DS must be initialized */
     intdosx( &r, &r, & s );
     mouse_seg = s.es;
     mouse_off = r.x.bx;

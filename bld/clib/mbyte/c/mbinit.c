@@ -274,6 +274,7 @@ unsigned short dos_get_code_page( void )
     regs.w.dx = 0xFFFF;                     /* current country */
     regs.w.di = FP_OFF( (void __far*)buf ); /* buffer offset */
     sregs.es = FP_SEG( (void __far*)buf );  /* buffer segment */
+    sregs.ds = 0;                           /* in protected mode (dos16m) DS must be initialized */
     intdosx( &regs, &regs, &sregs );        /* call DOS */
     if( regs.w.cflag )  return( 0 );        /* ensure function succeeded */
     return( * (unsigned short*)(buf+5) );   /* return code page */
