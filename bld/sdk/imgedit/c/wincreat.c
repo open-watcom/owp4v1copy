@@ -42,7 +42,7 @@ void Win_CreateColourPal( void )
     char        *title;
 
     title = IEAllocRCString( WIE_COLORPALETTETITLE );
-
+#if (_WIN32_WINNT < 0x0400)
     HColourPalette = CreateWindow(
             PaletteClass,                       /* Window class name */
             title,
@@ -55,6 +55,21 @@ void Win_CreateColourPal( void )
             (HMENU) NULL,                       /* Window menu handle */
             Instance,                           /* Program instance handle */
             NULL);                              /* Create parameters */
+#else
+    HColourPalette = CreateWindowEx(
+            WS_EX_TOOLWINDOW,
+            PaletteClass,                       /* Window class name */
+            title,
+            WS_POPUPWINDOW | WS_CAPTION,        /* Window style */
+            ImgedConfigInfo.pal_xpos,           /* Initial X position */
+            ImgedConfigInfo.pal_ypos,           /* Initial Y position */
+            CP_WIDTH+2,                         /* Initial X size */
+            CP_HEIGHT+15,                       /* Initial Y size */
+            HMainWindow,                        /* Parent window handle */
+            (HMENU) NULL,                       /* Window menu handle */
+            Instance,                           /* Program instance handle */
+            NULL);                              /* Create parameters */
+#endif
 
     if( title ) {
         IEFreeRCString( title );
@@ -344,13 +359,18 @@ HWND WinCreateViewWin( HWND hviewwnd, BOOL foneview, int *showstate,
     width += 2*BORDER_WIDTH;
     height += 2*BORDER_WIDTH;
 
-    h_adj = 2*GetSystemMetrics(SM_CXBORDER);
-    v_adj = 2*GetSystemMetrics(SM_CYBORDER) +
+    h_adj = 2*GetSystemMetrics(SM_CXDLGFRAME);
+    v_adj = 2*GetSystemMetrics(SM_CYDLGFRAME) +
+#if (_WIN32_WINNT < 0x0400)
                 GetSystemMetrics(SM_CYCAPTION) - 1;
+#else
+                GetSystemMetrics(SM_CYSMCAPTION) - 1;
+#endif
 
+#if (_WIN32_WINNT < 0X0400)
     hwnd = CreateWindow(
             ViewWinClass,                       /* Window class name */
-            NULL,
+            "View",
             WS_POPUPWINDOW | WS_CAPTION |
             WS_VISIBLE | WS_CLIPSIBLINGS |
             WS_DLGFRAME,                        /* Window style */
@@ -362,7 +382,23 @@ HWND WinCreateViewWin( HWND hviewwnd, BOOL foneview, int *showstate,
             (HMENU) NULL,                       /* Window menu handle */
             Instance,                           /* Program instance handle */
             NULL);                              /* Create parameters */
-
+#else
+    hwnd = CreateWindowEx(
+            WS_EX_TOOLWINDOW,
+            ViewWinClass,                       /* Window class name */
+            "View",
+            WS_POPUPWINDOW | WS_CAPTION |
+            WS_VISIBLE | WS_CLIPSIBLINGS |
+            WS_DLGFRAME,                        /* Window style */
+            x,                                  /* Initial X position */
+            y,                                  /* Initial Y position */
+            h_adj + width,
+            v_adj + height,
+            HMainWindow,                        /* Parent window handle */
+            (HMENU) NULL,                       /* Window menu handle */
+            Instance,                           /* Program instance handle */
+            NULL);                              /* Create parameters */
+#endif
     ShowWindow( hwnd, SW_HIDE );
 
     if( hwnd != (HWND)NULL ) {
