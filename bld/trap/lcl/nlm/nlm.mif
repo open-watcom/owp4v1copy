@@ -14,7 +14,7 @@ extra_linker4 = module clib
 extra_linker3 =
 extra_linker = $(extra_linker$(nlm_ver)) debug all debug Novell
 !ifneq release 0
-name= $(srv)srv$(nlm_ver)
-!else
 name= $(srv)serv$(nlm_ver)
+!else
+name= $(srv)srv$(nlm_ver)
 !endif
