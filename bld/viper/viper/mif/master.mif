@@ -59,9 +59,9 @@ viper.res : _guimsgs.gh $(gui_dir)/h/gui.rc viper.rc
         $(rc) $(rc_flags) -r -i".." $]@ -fo=$^@
 !else
 !ifeq host_lang japan
-        $(cc) -zk0 -dJAPANESE_MESSAGES -i=".." -p $[@ -fo=viper.prc
+        $(cc) -zk0 -dJAPANESE_MESSAGES -i=".." -p $]@ -fo=viper.prc
 !else
-        $(cc) -i=".." -p $[@ -fo=viper.prc
+        $(cc) -i=".." -p $]@ -fo=viper.prc
 !endif
         $(rc_os2) -i ".." -r viper.prc viper.res
 !endif
