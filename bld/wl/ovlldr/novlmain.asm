@@ -30,7 +30,7 @@
 ;*****************************************************************************
 
 
-        page    64,110
+;        page    64,110
 ;<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
 ;<>
 ;<> NOVLMAIN:   Overlay Manager
@@ -459,7 +459,7 @@ __NCheckRetAddr__ proc near
           mov   AX,DI           ; save overlay number in ax
           shl   DI,CL           ; . . . multiply
           pop   CX              ; restore CX
-          test  byte ptr CS:ENTRIES_M_1 + ove_flags_anc + 1[DI],10H
+          test  byte ptr CS:__OVLTAB__.ov_entries - size OVLTAB_ENTRY + ove_flags_anc + 1[DI],10H
                                 ; check if FLAG_RET_TRAP set
           _quif e               ; . . .
           inc   DX              ; this is a return trap

@@ -50,21 +50,23 @@
 #include "distrib.h"
 #include "overlays.h"
 
-static segdata *    OvlSegData;
-static symbol *     OverlayTable;/* symbol entry for overlay table */
-static symbol *     OverlayTableEnd;/* symbol entry for overlay table */
-static symbol *     OvlVecStart; /* symbol entry for overlay vector start */
-static symbol *     OvlVecEnd;   /* symbol entry for overlay vector end */
-static targ_addr    OvlvecAddr;  /* address of overlay vectors */
+static segdata      *OvlSegData;
+static symbol       *OverlayTable;   /* symbol entry for overlay table */
+static symbol       *OverlayTableEnd;/* symbol entry for overlay table */
+static symbol       *OvlVecStart;    /* symbol entry for overlay vector start */
+static symbol       *OvlVecEnd;      /* symbol entry for overlay vector end */
+static targ_addr    OvlvecAddr;      /* address of overlay vectors */
 static targ_addr    Stash;
 
-unsigned_16     AreaSize;
+unsigned_16         AreaSize;
 
-static void AllocAreas( OVL_AREA *area );
-static void GetVecAddr( int vecnum, targ_addr *addr );
-static void ShortVectors( symbol *loadsym );
-static void LongVectors( symbol *loadsym );
-static void PutOvlInfo( unsigned off, void *src, unsigned len );
+static void         AllocAreas( OVL_AREA *area );
+static void         GetVecAddr( int vecnum, targ_addr *addr );
+static void         ShortVectors( symbol *loadsym );
+static void         LongVectors( symbol *loadsym );
+static void         PutOvlInfo( unsigned off, void *src, unsigned len );
+
+static unsigned     EmitOvlAreaEntry( unsigned off, OVL_AREA *area );
 
 extern void ResetOvlSupp( void )
 /******************************/
@@ -467,19 +469,24 @@ static void GetVecAddr( int vecnum, targ_addr *addr )
     }
 }
 
-#if 0
+#ifdef OVERLAY_VERSION
 // NYI  broken from removal of thread
 extern void OvlForceVect( thread *thd, bool indirect )
 /****************************************************/
 {
     symbol  *sym;
 
-    if( !(FmtData.type & MK_OVERLAYS) ) return;
-    if( !(thd->flags & TRD_SYMBOL) ) return;
+    if( !(FmtData.type & MK_OVERLAYS) )
+        return;
+    if( !(thd->flags & TRD_SYMBOL) )
+        return;
     sym = thd->s.sym;
-    if( IS_SYM_COMMUNAL(sym) ) return;
-    if( (sym->u.d.ovlstate & OVL_VEC_MASK) != OVL_MAKE_VECTOR ) return;
-    if( !(indirect || (sym->u.d.ovlstate & OVL_ALWAYS)) ) return;
+    if( IS_SYM_COMMUNAL(sym) )
+        return;
+    if( (sym->u.d.ovlstate & OVL_VEC_MASK) != OVL_MAKE_VECTOR )
+        return;
+    if( !(indirect || (sym->u.d.ovlstate & OVL_ALWAYS)) )
+        return;
     /* taking the address of a function -- must use vector */
     GetVecAddr( sym->u.d.ovlref, &thd->addr );
 }
@@ -725,7 +732,6 @@ extern void OvlPass1( void )
 static unsigned EmitOvlEntry( unsigned off, section *sect )
 /*********************************************************/
 {
-    static unsigned EmitOvlAreaEntry( unsigned off, OVL_AREA *area );
     ovltab_entry        entry;
     offset              len;
     unsigned_16         flags_anc;

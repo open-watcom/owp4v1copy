@@ -90,11 +90,17 @@
 .dir alias              ldalias.gml     all
 .dir alignment          opalignm.gml    elf os2 win16 win32
 .dir anonymousexport    ldanonym.gml    win16 win32
-.*   area               oparea.gml      dos
+.if '&overlay' eq 'yes' .do begin
+.dir area               oparea.gml      dos
+.do end
 .dir artificial         opartifi.gml    all
-.*   autosection        ldautose.gml    dos
+.if '&overlay' eq 'yes' .do begin
+.dir autosection        ldautose.gml    dos
+.do end
 .dir autounload         opautoun.gml    netware
-.*   begin              ldbegin.gml     dos
+.if '&overlay' eq 'yes' .do begin
+.dir begin              ldbegin.gml     dos
+.do end
 .dir cache              opcache.gml     all
 .dir caseexact          opcaseex.gml    all
 .dir check              opcheck.gml     netware
@@ -107,17 +113,25 @@
 .dir debug              lddebug.gml     all
 .dir description        opdescri.gml    os2 win16 win32
 .dir disable            lddisabl.gml    all
-.*   distribute         opdistri.gml    dos
+.if '&overlay' eq 'yes' .do begin
+.dir distribute         opdistri.gml    dos
+.do end
 .dir dosseg             opdosseg.gml    all
-.*   dynamic            opdynami.gml    dos
+.if '&overlay' eq 'yes' .do begin
+.dir dynamic            opdynami.gml    dos
+.do end
 .dir eliminate          opelimin.gml    all
-.*   end                ldend.gml       dos
+.if '&overlay' eq 'yes' .do begin
+.dir end                ldend.gml       dos
+.do end
 .dir endlink            ldendlin.gml    all
 .dir exit               opexit.gml      netware
 .dir export             ldexport.gml    elf netware os2 win16 win32
 .dir file               ldfile.gml      all
-.*   fixedlib           ldfixedl.gml    dos
-.*   forcevector        ldforcev.gml    dos
+.if '&overlay' eq 'yes' .do begin
+.dir fixedlib           ldfixedl.gml    dos
+.dir forcevector        ldforcev.gml    dos
+.do end
 .dir format             ldformat.gml    all
 .dir heapsize           opheap.gml      os2 qnx win16 win32
 .dir help               ophelp.gml      netware
@@ -153,10 +167,14 @@
 .dir nlmflags           opnlmfla.gml    netware
 .dir noautodata         opnoauto.gml    os2 win16
 .dir nodefaultlibs      opnodefa.gml    all
-.*   noindirect         opnoindi.gml    dos
+.if '&overlay' eq 'yes' .do begin
+.dir noindirect         opnoindi.gml    dos
+.do end
 .dir norelocs           opnorelo.gml    qnx win32
 .dir nostdcall          opnostdc.gml    win32
-.*   novector           ldnovect.gml    dos
+.if '&overlay' eq 'yes' .do begin
+.dir novector           ldnovect.gml    dos
+.do end
 .dir objalign           opobjali.gml    win32
 .dir oldlibrary         opoldlib.gml    os2 win16 win32
 .dir offset             opoffset.gml    os2 pharlap qnx win32
@@ -166,7 +184,9 @@
 .dir osdomain           oposdoma.gml    netware
 .dir osname             oposname.gml    all
 .dir osversion          oposver.gml     win32
-.*   overlay            ldoverla.gml    dos
+.if '&overlay' eq 'yes' .do begin
+.dir overlay            ldoverla.gml    dos
+.do end
 .dir packcode           oppackco.gml    dos os2 qnx win16
 .dir packdata           oppackda.gml    dos os2 qnx win16
 .dir path               ldpath.gml      all
@@ -181,14 +201,20 @@
 .dir runtime            ldruntim.gml    pharlap win32
 .dir rwreloccheck       oprwrelo.gml    win16
 .dir screenname         opscreen.gml    netware
-.*   section            ldsectio.gml    dos
+.if '&overlay' eq 'yes' .do begin
+.dir section            ldsectio.gml    dos
+.do end
 .dir segment            ldsegmen.gml    os2 qnx win16 win32
 .dir sharelib           opsharel.gml    netware
 .dir showdead           opshowde.gml    all
-.*   small              opsmall.gml     dos
+.if '&overlay' eq 'yes' .do begin
+.dir small              opsmall.gml     dos
+.do end
 .dir sort               ldsort.gml      all
 .dir stack              opstack.gml     all
-.*   standard           opstanda.gml    dos
+.if '&overlay' eq 'yes' .do begin
+.dir standard           opstanda.gml    dos
+.do end
 .dir start              opstart.gml     all
 .dir startlink          ldstartl.gml    all
 .dir statics            opstatic.gml    all
@@ -200,7 +226,9 @@
 .dir threadname         opthread.gml    netware
 .dir togglerelocs       optoggle.gml    os2
 .dir undefsok           opundefs.gml    all
-.*   vector             ldvector.gml    dos
+.if '&overlay' eq 'yes' .do begin
+.dir vector             ldvector.gml    dos
+.do end
 .dir verbose            opverbos.gml    all
 .dir version            opversio.gml    netware os2 win16 win32
 .dir vfremoval          opvfremo.gml    all

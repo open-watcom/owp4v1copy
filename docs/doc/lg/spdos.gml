@@ -27,8 +27,6 @@ is any of the following:
 .note ALIAS alias_name=symbol_name{,alias_name=symbol_name}
 .if '&overlay' eq 'yes' .do begin
 .note AUTOSECTION
-.do end
-.if '&overlay' eq 'yes' .do begin
 .note BEGIN {section_type [INTO ovl_file] {directive}} END
 .do end
 .note DEBUG dbtype [dblist] | DEBUG [dblist]
@@ -37,6 +35,7 @@ is any of the following:
 .note FILE obj_spec{,obj_spec}
 .if '&overlay' eq 'yes' .do begin
 .note FIXEDLIB library_file{,library_file}
+.note FORCEVECTOR symbol_name{,symbol_name}
 .do end
 .note FORMAT DOS [COM]
 .note LANGUAGE lang
