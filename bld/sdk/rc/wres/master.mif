@@ -86,11 +86,13 @@ inc_dirs = ../h;
 
 # explicit rules
 
+$(watcom_dir)/lib/$(name).lib : ../lib/$(name).lib
+        cp $[@ $^@
+
 ../lib/$(name).lib : $(OBJS) $(__MAKEFILES__) .PRECIOUS
         %create $(lbcfile)
         @for %i in ($(OBJS)) do @%append $(lbcfile) +%i
         $(librarian) -n -b $^@ @$(lbcfile)
-        cp $^@ $(watcom_dir)/lib
 
 clean : .SYMBOLIC .EXPLICIT
         rm -f *.?bj *.err *.trk ../lib/$(name).lib

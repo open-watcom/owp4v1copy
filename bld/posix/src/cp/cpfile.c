@@ -271,14 +271,14 @@ void DoCP( char *f, char *dir )
     char                *source_tail;
     char                dest_buf[ _MAX_PATH ];
     char                *dest_tail;
-    int                 i;
+    int                 i = strlen( f );
 
     /*
      * get file path prefix
      */
     source_tail = source_buf;
-    for( i=strlen( f ); i>=0 ;i-- ) {
-        if( f[i] == ':' || f[i] == FILESEP ) {
+    while( --i >= 0 ) {
+        if( f[i] == ':' || isFILESEP( f[i] ) ) {
             source_tail = (char *)memcpy( source_buf, f, i + 1 ) + i + 1;
             break;
         }

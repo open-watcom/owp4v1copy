@@ -46,7 +46,7 @@
 #include "filerx.h"
 #include "fnutils.h"
 
-static char *rxErrorStrings[] = {
+static char const *rxErrorStrings[] = {
 NULL,
 "Internal err: Regexp foulup",
 "Internal err: Regexp corrupted pointer",
@@ -59,18 +59,18 @@ NULL,
 "*+ operand could be empty",
 "Unmatched ()",
 "Too many ()",
-"NULL argument"
+"NULL argument",
 "Invalid case toggle"
 };
 
 /*
  * FileMatch - check if a file matches a wild card
  */
-int FileMatch( void *crx, char *name )
+int FileMatch( void *crx, const char *name )
 {
     int i;
 
-    i = RegExec( crx, name, TRUE );
+    i = RegExec( crx, (char *) name, TRUE ); // RegExec does not yet use const
     if( i ) {
         return( TRUE );
     }
@@ -82,14 +82,11 @@ int FileMatch( void *crx, char *name )
 /*
  * FileNameWild - determine if a file name has a wild card
  */
-int FileNameWild( char *wild,  int isrx )
+int FileNameWild( const char *wild,  int isrx )
 {
-    int len,i;
     int ch;
 
-    len = strlen( wild );
-    for( i=0; i<len;i++ ) {
-        ch = wild[i];
+    while( ( ch = *wild++ ) != 0 ) {
         if( !isrx ) {
             if( ch == '*' || ch == '?' ) {
                 return( TRUE );
@@ -109,10 +106,10 @@ int FileNameWild( char *wild,  int isrx )
 /*
  * FileMatchInit - start file matching
  */
-char *FileMatchInit( void **crx, char *wild )
+char *FileMatchInit( void **crx, const char *wild )
 {
     char        *tomatch;
-    int         i,j,len;
+    size_t      i, j, len;
     regexp      *rx;
 
     /*
@@ -163,7 +160,7 @@ char *FileMatchInit( void **crx, char *wild )
     } else {
         *crx = rx;
     }
-    return( rxErrorStrings[ RegExpError ]  );
+    return( (char *) rxErrorStrings[ RegExpError ]  ); // Interface not ready to use const
 
 } /* FileMatchInit */
 
@@ -179,19 +176,20 @@ void FileMatchFini( void *crx )
 /*
  * OpenDirAll
  */
-DIR *OpenDirAll( char *filename,  char *wild )
+DIR *OpenDirAll( const char *filename,  char *wild )
 {
-    int         i,j,len;
+    int         i;
+    size_t      j, len;
     char        npath[_MAX_PATH];
     int         ch;
 
     len = strlen( filename );
-    for( i=len-1;i>=0;i-- ) {
+    for( i = (int) ( len-1 ); i >= 0; i-- ) {
         if( filename[i] == '/' || filename[i] == '\\' || filename[i] == ':' ) {
             break;
         }
     }
-    for( j=0;j<i+1;j++ ) {
+    for( j = 0; j < (size_t) ( i+1 ); j++ ) {
         npath[j] = filename[j];
     }
     npath[i+1] = 0;
@@ -200,14 +198,14 @@ DIR *OpenDirAll( char *filename,  char *wild )
     } else {
         ch = 0;
     }
-    for( j=i+1;j<=len;j++ ) {
-        wild[j-i-1] = filename[j];
+    for( j = (size_t) ( i+1 ); j <= len; j++ ) {
+        wild[j - (size_t) ( i + 1 ) ] = filename[j];
     }
 
-    if( ch != FILESEP && ch != ':' && ch != 0 ) {
+    if( ch != ':' && ch != 0 && !isFILESEP( ch ) ) {
         strcat( npath,  FILESEPSTR );
     }
-    strcat( npath,"*.*" );
+    strcat( npath, "*.*" );
 
     return( opendir( npath ) );
 
@@ -216,25 +214,25 @@ DIR *OpenDirAll( char *filename,  char *wild )
 /*
  * FileMatchNoRx - match file name vs a wild card, the old dos way
  */
-int FileMatchNoRx( char *name, char *wild )
+int FileMatchNoRx( const char *name, const char *wild )
 {
     char        fname[_MAX_FNAME];
     char        ext[_MAX_EXT];
-    char        sp_buf[ _MAX_PATH2 ];
+    char        sp_buf[ _MAX_PATH2 ] = {0};
     char        *cfname;
     char        *cext;
-    int         i,j,k,len,flen,elen,rlen;
+    size_t      i, j, k, len, flen, elen, rlen;
 
     len = strlen( wild );
     elen = flen = 0;
 
-    for( i=0;i<len;i++ ) {
+    for( i = 0; i < len; i++ ) {
         if( wild[i] == '.' ) {
             i++;
             break;
         }
         if( wild[i] == '*' ) {
-            for( j=flen;j<_MAX_FNAME-1;j++ ) {
+            for( j = flen; j < _MAX_FNAME-1; j++ ) {
                 fname[j] = '?';
             }
             flen = _MAX_FNAME-1;
@@ -246,9 +244,9 @@ int FileMatchNoRx( char *name, char *wild )
     }
     fname[flen] = 0;
 
-    for( k=i;k<len;k++ ) {
+    for( k = i; k < len; k++ ) {
         if( wild[k] == '*' ) {
-            for( j=elen;j<_MAX_EXT-1;j++ ) {
+            for( j = elen; j <_MAX_EXT-1; j++ ) {
                 ext[j] = '?';
             }
             elen = _MAX_EXT-1;
@@ -259,7 +257,6 @@ int FileMatchNoRx( char *name, char *wild )
     }
     ext[elen] = 0;
 
-    memset(sp_buf, 0, sizeof(sp_buf));
     _splitpath2( name, sp_buf, NULL, NULL, &cfname, &cext );
     if( cext[0] == '.' ) {
         ++cext;
@@ -267,7 +264,7 @@ int FileMatchNoRx( char *name, char *wild )
 
     len = strlen( cfname );
     rlen = max( len, flen );
-    for( i=0;i<rlen;i++ ) {
+    for( i = 0; i < rlen; i++ ) {
         if( FNameCharCmp( cfname[i], fname[i] ) != 0 && fname[i] != '?' ) {
             return( FALSE );
         }
@@ -275,7 +272,7 @@ int FileMatchNoRx( char *name, char *wild )
 
     len = strlen( cext );
     rlen = max( len, elen );
-    for( i=0;i<rlen;i++ ) {
+    for( i = 0; i < rlen; i++ ) {
         if( FNameCharCmp( cext[i], ext[i] ) != 0 && ext[i] != '?' ) {
             return( FALSE );
         }
@@ -283,3 +280,15 @@ int FileMatchNoRx( char *name, char *wild )
     return( TRUE );
 
 } /* FileMatchNoRx */
+
+/*
+ * isFILESEP - test if character is a directory delimiter
+ */
+int isFILESEP( int ch )
+{
+#if !defined( __UNIX__ )
+    return( ch == '\\' || ch == '/' );
+#else
+    return(               ch == '/' );
+#endif
+} /* isFILESEP */

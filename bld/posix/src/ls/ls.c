@@ -311,7 +311,7 @@ void DoLS( char *path, char *name )
      */
     if( path != NULL ) {
         strcpy( filename, path );
-        if( path[ strlen( path ) - 1 ] != FILESEP ) {
+        if( !isFILESEP( path[ strlen( path ) - 1 ] ) ) {
             strcat( filename, FILESEPSTR );
         }
         strcat( filename, name );
