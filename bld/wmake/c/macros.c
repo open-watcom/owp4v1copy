@@ -1072,8 +1072,8 @@ STATIC char *PartDeMacroProcess ( void )
  * $+$- delimited sequences.  Removes leading and trailing ws.
  */
 {
-    VECSTR  vec;        /* vector for macro defn                */
-    VECSTR  wsvec;      /* vector to hold ws                    */
+    VECSTR  vec   = NULL;      /* vector for macro defn                */
+    VECSTR  wsvec = NULL;      /* vector to hold ws                    */
     BOOLEAN holdws;     /* holding ws from last time through    */
     BOOLEAN leadingws;  /* still trimming leading ws            */
     TOKEN_T t;
@@ -1279,7 +1279,7 @@ extern void DefMacro( const char *name )
 {
     char        *value;
     char        *temp;
-    char        *EnvVarValue; /* used for env. variables (full demacro) */
+    char        *EnvVarValue = NULL; /* used for env. variables (full demacro) */
     ENV_TRACKER *env;
 #ifdef CLEAN_ENVIRONMENT_VAR
     ELIST       *tempEList;
