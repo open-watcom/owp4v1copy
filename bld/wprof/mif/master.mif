@@ -63,9 +63,6 @@ extra_c_flags_i86       = -fpc $(extra_c_flags_i86_$(host_OS))
 
 # remove these lines when the source is fixed
 cflags_all              = -zq -w4
-!ifdef on_build_machine
-cflags_all             += -dNDEBUG
-!endif
 
 extra_l_flags_nt        = op stack=30k
 extra_l_flags_os2       = op stack=32k

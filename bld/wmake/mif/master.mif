@@ -68,9 +68,6 @@ mode_cflags = -oaxs -s -d1
 
 inc_dirs = $(wmake_dir)\h;$(watcom_dir)\h;$(orl_dir)\h;$(trmem_dir)
 
-!ifeq release 1
-extra_c_flags += -dNDEBUG
-!endif
 !ifdef cachestat
 extra_c_flags += -dCACHE_STATS
 !endif
