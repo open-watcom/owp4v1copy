@@ -88,8 +88,6 @@ extern void     ResetSymTrace( void );
 extern void     ResetLoadFile( void );
 extern void     ResetToc( void );
 
-extern void     SetSymCase( void );
-
 static  void    LnkInit();
 
 extern int              __nheapblk;
