@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  POSIX conforming versions of the linker I/O functions.
 *
 ****************************************************************************/
 
-
-/*
-  POSIXIO -- POSIX conforming versions of the linker i/o functions
-
-*/
 
 #include <stdio.h>
 #include <string.h>
@@ -66,7 +60,6 @@ static bool     CaughtBreak = FALSE;    // set to TRUE if break hit.
 
 extern void LnkFilesInit( void )
 /******************************/
-// the linker doesn't use stdaux or stdprn, so close these.
 {
     OpenFiles = 0;
 //    setmode( STDIN_HANDLE, O_BINARY );      // PROBLEM ---- not POSIX!!!!!

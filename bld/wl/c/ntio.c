@@ -57,7 +57,6 @@ static bool     CaughtBreak;    // set to TRUE if break hit.
 
 extern void LnkFilesInit( void )
 /******************************/
-// the linker doesn't use stdaux or stdprn, so close these.
 {
     OpenFiles = 0;
     CaughtBreak = FALSE;
