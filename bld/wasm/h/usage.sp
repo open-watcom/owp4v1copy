@@ -13,12 +13,12 @@ Options:                    ( /option is also supported )
     -4          80486 instructions
     -5          Pentium instructions
     -6          Pentium Pro instructions
-    add p       protect mode
+    add p       protected mode
     add r       register calling conventions
     add s       stack calling conventions
                 ie: -2      -3s     -4pr    -5p
 -bt=<os>            set the build target to <os>
--c                  disable outputting of data in code records
+-c                  disable output OMF COMMENT record about data in code
 -d<name>[=text]     define text macro
 -d1                 line number debugging support
 -e                  stop reading ASM file at END directive
@@ -39,7 +39,7 @@ Options:                    ( /option is also supported )
 -m{t,s,m,c,l,h,f}   memory model:
                     (Tiny, Small, Medium, Compact, Large, Huge, Flat)
 :segment HIDDEN
--nc=<name>          set code class name // NYI
+-nc=<name>          set code class name
 :endsegment
 -nd=<name>          set data segment name
 -nm=<name>          set module name
@@ -48,7 +48,7 @@ Options:                    ( /option is also supported )
 -zcm                set C name mangler to MASM compatible mode
 -zq or -q           operate quietly
 -zld                suppress generation of file dependency info in object file
--? or h             print this message
+-? or -h            print this message
 -w<number>          set warning level number
 -we                 treat all warnings as errors
 -wx                 set warning level to the highest level

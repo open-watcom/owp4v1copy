@@ -264,6 +264,26 @@ direct_idx FindLnameIdx( char *name )
     return( LNAME_NULL );
 }
 
+char *GetLname( direct_idx idx )
+/******************************/
+{
+    queuenode           *node;
+    dir_node            *dir;
+
+    if( LnameQueue == NULL )
+        return( NULL);
+
+    for( node = LnameQueue->head; node != NULL; node = node->next ) {
+        dir = (dir_node *)node->data;
+        if( dir->sym.state != SYM_CLASS_LNAME )
+            continue;
+        if( dir->e.lnameinfo->idx == idx ) {
+            return( dir->sym.name );
+        }
+    }
+    return( NULL );
+}
+
 unsigned GetLnameData( char **data )
 /**********************************/
 {

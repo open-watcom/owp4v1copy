@@ -318,7 +318,7 @@ static void Ignore(void) {};
 
 static void Set_BT(void) { SetTargName( OptParm,  OptScanPtr - OptParm ); }
 
-static void Set_C(void) { Options.output_data_in_code_records = FALSE; }
+static void Set_C(void) { Options.output_comment_data_in_code_records = FALSE; }
 
 static void Set_D(void) { Options.debug_flag = (OptValue != 0) ? TRUE : FALSE; }
 
@@ -389,7 +389,6 @@ static struct option const cmdl_options[] = {
     { "fp0",    0,        SetFPU },
     { "fp2",    2,        SetFPU },
     { "fp3",    3,        SetFPU },
-    { "fp4",    4,        SetFPU },
     { "fp5",    5,        SetFPU },
     { "fp6",    6,        SetFPU },
     { "fpi87",  '7',      SetFPU },
@@ -434,7 +433,7 @@ global_options Options = {
     /* debug_flag       */      FALSE,
     /* naming_convention*/      ADD_USCORES,
     /* floating_point   */      DO_FP_EMULATION,
-    /* output_data_in_code_records */   TRUE,
+    /* output_comment_data_in_code_records */   TRUE,
 
     /* error_count      */      0,
     /* warning_count    */      0,
@@ -879,7 +878,6 @@ void set_fpu_parameters( void )
         cpu_directive( T_DOT_287 );
         break;
     case 3:
-    case 4:
     case 5:
     case 6:
         cpu_directive( T_DOT_387 );

@@ -5,6 +5,8 @@ name = wasm
 wasm_autodepends = .AUTODEPEND
 !endif
 
+additional_cleanup += *.u
+
 wasm_trmem = 1
 
 !include cproj.mif

@@ -1383,6 +1383,7 @@ int SegDef( int i )
     dir_node            *dirnode;
     char                *name;
     struct asm_sym      *sym;
+    int                 slen;
 
     if( i < 0 ) {
         AsmError( SEG_NAME_MISSING );
@@ -1461,8 +1462,6 @@ int SegDef( int i )
         for( ; i < Token_Count; i ++ ) {
             if( AsmBuffer[i]->token == T_STRING ) {
 
-                int len;
-
                 /* the class name - the only token which is of type STRING */
                 token = AsmBuffer[i]->string_ptr;
                 
@@ -1474,12 +1473,6 @@ int SegDef( int i )
                     }
                 }
                 seg->d.segdef.class_name_idx = classidx;
-                len = strlen( token );
-                if( len < 4 ) {
-                    dirnode->e.seginfo->iscode = FALSE;
-                } else {
-                    dirnode->e.seginfo->iscode = ( stricmp( token + len - 4, "code" ) == 0 );
-                }
                 continue;
             }
             
@@ -1544,7 +1537,31 @@ int SegDef( int i )
                 return( ERROR );
             }
         }
-        
+        dirnode->e.seginfo->iscode = FALSE;
+        token = GetLname( seg->d.segdef.class_name_idx );
+        slen = ( token == NULL ) ? 0 : strlen( token);
+        if( ( slen > 3 ) && !stricmp( "CODE", &token[slen - 4] ) ) {
+            dirnode->e.seginfo->iscode = TRUE;
+        } else if( ( slen > 3 ) && !stricmp( "DATA", &token[slen - 4] ) ) {
+        } else if( ( slen > 4 ) && !stricmp( "CONST", &token[slen - 5] ) ) {
+        } else if( ( slen > 2 ) && !stricmp( "BSS", &token[slen - 3] ) ) {
+        } else if( ( slen > 4 ) && !stricmp( "STACK", &token[slen - 5] ) ) {
+        } else if( ( slen > 2 ) && !stricmp( "TLS", &token[slen - 3] ) ) {
+        } else {   // unknown class, try segment name
+            token = name;
+            slen = ( token == NULL ) ? 0 : strlen( token);
+            if( ( slen > 3 ) && ( !stricmp( "TEXT", &token[slen - 4] ) ) ) {
+                dirnode->e.seginfo->iscode = TRUE;
+            } else if( ( slen > 3 ) && !stricmp( "DATA", &token[slen - 4] ) ) {
+            } else if( ( slen > 4 ) && !stricmp( "CONST", &token[slen - 5] ) ) {
+            } else if( ( slen > 5 ) && !stricmp( "CONST2", &token[slen - 6] ) ) {
+            } else if( ( slen > 2 ) && !stricmp( "BSS", &token[slen - 3] ) ) {
+            } else if( ( slen > 4 ) && !stricmp( "STACK", &token[slen - 5] ) ) {
+            } else {   // unknown segment name, code supposed
+                dirnode->e.seginfo->iscode = TRUE;
+            }
+        }
+
         if( defined && !ignore && !dirnode->e.seginfo->ignore ) {
             /* Check if new definition is different from previous one */
             

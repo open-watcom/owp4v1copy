@@ -189,13 +189,13 @@ void OutSelect( bool starts )
     unsigned long       curr;
 
     if( starts ) {
-        if( !Options.output_data_in_code_records || Globals.data_in_code 
+        if( !Options.output_comment_data_in_code_records || Globals.data_in_code 
             || !Globals.code_seg )
             return;
         Globals.sel_start = GetCurrAddr();
         Globals.data_in_code = TRUE;
     } else {
-        if( !Options.output_data_in_code_records || !Globals.data_in_code )
+        if( !Options.output_comment_data_in_code_records || !Globals.data_in_code )
             return;
         Globals.sel_idx = CurrSeg->seg->sym.segidx;
         Globals.data_in_code = FALSE;
@@ -1041,8 +1041,8 @@ static unsigned long OnePass( char *string )
         if( ScanLine( string, MAX_LINE_LEN ) == NULL )
             break; // EOF
         AsmLine( string );
-        if( EndDirectiveFound )
-            break;
+//        if( EndDirectiveFound )
+//            break;
     }
     CheckProcOpen();
     return( PassTotal );
@@ -1063,7 +1063,6 @@ void WriteObjModule( void )
 
     Parse_Pass = PASS_1;
     prev_total = OnePass( string );
-    CheckForOpenConditionals();
     if( EndDirectiveFound ) {
         if( !Options.stop_at_end ) {
             for( ;; ) {
@@ -1083,6 +1082,7 @@ void WriteObjModule( void )
     }
     while( PopLineQueue() ) {
     }
+    CheckForOpenConditionals();
     for( ;; ) {
         if( !write_to_file || Options.error_count > 0 )
             break;

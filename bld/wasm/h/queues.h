@@ -38,6 +38,7 @@ extern void     AddAliasData( char *data );
 extern void     AddLinnumData( struct linnum_data *data );
 
 extern direct_idx FindLnameIdx( char * );
+extern char     *GetLname( direct_idx );
 
 extern unsigned GetLnameData( char ** );
 extern char     *GetAliasData( bool );
