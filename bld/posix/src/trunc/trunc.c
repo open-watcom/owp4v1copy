@@ -35,11 +35,11 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys\stat.h>
+#include <sys/stat.h>
 #if defined(__OS_qnx__) || defined(__OS_qnx16__)
  #include <utime.h>
 #else
- #include <sys\utime.h>
+ #include <sys/utime.h>
 #endif
 #include "argvenv.h"
 #include "getopt.h"

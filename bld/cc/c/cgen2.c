@@ -665,7 +665,10 @@ static cg_name IndexOperator( cg_name op1, OPNODE *node, cg_name op2 )
     if( element_size != 1 ) {
         index_type = T_INTEGER;
         #if _CPU == 8086
-            if( node->flags & OPFLAG_HUGEPTR )  index_type = T_INT_4;
+            if(( node->flags & OPFLAG_HUGEPTR) || 
+               ((TargetSwitches & (BIG_DATA|CHEAP_POINTER))==BIG_DATA)) {
+                index_type = T_INT_4;
+            }
         #endif
         op2 = CGBinary( O_TIMES, op2,
                 CGInteger( element_size, T_INTEGER ), index_type );
