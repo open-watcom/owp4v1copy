@@ -1,6 +1,6 @@
 compiler = wcc386
-cflags = -bt=nt
-linkflags = sys nt debug all
+cflags = -zq -bt=nt -wx
+linkflags = sys nt debug all op q
 cdebug = -d2
 
 !include ../master.mif

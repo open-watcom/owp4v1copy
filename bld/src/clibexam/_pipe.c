@@ -8,7 +8,7 @@
 static int handles[2] = { 0, 0 };
 static int pid;
 
-create_pipe()
+void create_pipe()
 {
     if( _pipe( (int *)&handles, 2048, _O_BINARY ) == -1 ) {
         perror( "create_pipe" );
@@ -16,7 +16,7 @@ create_pipe()
     }
 }
 
-create_child( char *name )
+void create_child( char *name )
 {
     char buff[10];
 
@@ -31,7 +31,7 @@ create_child( char *name )
     }
 }
 
-fill_pipe()
+void fill_pipe()
 {
     int i;
     int rc;
@@ -51,7 +51,7 @@ fill_pipe()
     close( handles[1] );
 }
 
-empty_pipe( int in_pipe )
+void empty_pipe( int in_pipe )
 {
     int i;
     int amt;
