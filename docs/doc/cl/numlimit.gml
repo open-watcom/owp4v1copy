@@ -33,15 +33,15 @@ Macro: &*       Value
 .dm numterm end
 .*
 .dm ansi begin
-.  .numterm 'ANSI' '&*'
+.  .numterm 'ISO' '&*'
 .dm ansi end
 .*
 .dm noansi begin
 .  .if &e'&nobox eq 0 .do begin
-›ANSI›no value specified
+›ISO›no value specified
 .  .do end
 .  .el .do begin
-ANSI            no value specified
+ISO             no value specified
 .  .do end
 .dm noansi end
 .*
@@ -111,14 +111,14 @@ preprocessing directives.
 For a compiler to conform to the C language standard,
 the magnitude of the value of the expression
 provided by the compiler
-must equal or exceed the ANSI value given below, and have the same sign.
-(Positive values must be greater than or equal to the ANSI value.
-Negative values must be less than or equal to the ANSI value.)
-.* In the following pages, the ANSI value is the
+must equal or exceed the ISO value given below, and have the same sign.
+(Positive values must be greater than or equal to the ISO value.
+Negative values must be less than or equal to the ISO value.)
+.* In the following pages, the ISO value is the
 .* .us smallest
 .* maximum value that the compiler may impose and still conform to the
-.* ANSI standard.
-The values for the actual compilers are shown following the ANSI value.
+.* ISO standard.
+The values for the actual compilers are shown following the ISO value.
 .begbull
 .keep begin
 .bull
@@ -336,14 +336,14 @@ necessarily constant.
 For a compiler to conform to the C language standard,
 the magnitude of the value of the expression
 provided by the compiler
-must equal or exceed the ANSI value given below, and have the same sign.
-(Positive values must be greater than or equal to the ANSI value.
-Negative values must be less than or equal to the ANSI value.)
-.* In the following pages, the ANSI value is the
+must equal or exceed the ISO value given below, and have the same sign.
+(Positive values must be greater than or equal to the ISO value.
+Negative values must be less than or equal to the ISO value.)
+.* In the following pages, the ISO value is the
 .* .us smallest
 .* maximum value that the compiler may impose and still conform to the
-.* ANSI standard.
-The values for the actual compilers are shown following the ANSI value.
+.* ISO standard.
+The values for the actual compilers are shown following the ISO value.
 Most compilers will exceed some of these values.
 .pp
 For those characteristics that have three different macros, the

@@ -900,7 +900,7 @@ messages in terms of the original source file line numbers.
 .section *refid=wccmacs &product Predefined Macros
 .*
 .np
-In addition to the standard ANSI/ISO-defined macros supported by the
+In addition to the standard ISO-defined macros supported by the
 &product compilers, several additional system-dependent macros are
 also defined.
 These are described in this section.
@@ -1359,7 +1359,7 @@ dependent attributes of functions and other object names.
 These attributes are inspired by the Intel processor architecture and
 the plethora of function calling conventions in use by compilers for
 this architecture.
-In keeping with the ANSI/ISO C and C++ language standards, &product
+In keeping with the ISO C and C++ language standards, &product
 uses the double underscore (i.e., "__") or single underscore followed
 by uppercase letter (e.g., "_S") prefix with these keywords.
 To support compatibility with other C/C++ compilers, alternate forms

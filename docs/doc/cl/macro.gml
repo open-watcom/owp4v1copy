@@ -637,7 +637,7 @@ A macro definition lasts until it is undefined (with
 .section More Examples of Macro Replacement
 .*
 .pp
-The following examples are given in the ANSI C standard, and are
+The following examples are given in the ISO C standard, and are
 presented here as a complete guide to the way in which macros are
 replaced.
 The expansions are shown in stages to better illustrate the process.

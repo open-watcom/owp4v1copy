@@ -1217,7 +1217,7 @@ to parse the Windows 95 SDK header files.
 .exam begin
 typedef struct S {
 } S, const *CSP;
-     ^^^^^- not allowed in ANSI C or current WP for C++
+     ^^^^^- not allowed in ISO C or ISO C++
 .exam end
 .note
 We now do not warn about starting a nested comment if the comment is
@@ -1326,7 +1326,7 @@ We have added support for:
 #pragma error "error message"
 .millust end
 .np
-Use the ANSI method because it is more portable and acceptable
+Use the ISO/ANSI method because it is more portable and acceptable
 (Microsoft header files use the less portable #pragma when there
 is a perfectly fine, portable way to issue a message).
 .np

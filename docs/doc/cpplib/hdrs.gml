@@ -133,7 +133,7 @@ Inline member functions for the
 class are defined.
 Note that the
 :MONO.hpp
-extension is used to avoid colliding with the ANSI C
+extension is used to avoid colliding with the ISO C
 :MONO.string.h
 header file.
 :DT.strstrea.h

@@ -2,12 +2,14 @@
 .*
 .np
 &cmpcname is an implementation of
-ANSI/ISO 9899:1990 Programming Language C.
+ISO/ANSI 9899:1990 Programming Language C.
 The standard was developed by the ANSI X3J11 Technical Committee
 on the C Programming Language.
 In addition to the full C language standard, the compiler supports
 numerous extensions for the Intel 80x86-based personal computer
 environment.
+The compiler is also partially compliant with the ISO/IEC 9899:1999
+Programming Language C standard.
 .if '&lang' eq 'C/C++' .do begin
 .np
 &cmppname is an implementation of the Draft Proposed International
@@ -125,10 +127,10 @@ Additional copies of this documentation may be ordered from:
 The Plum Hall Validation Suite for &lang has been invaluable in
 verifying the conformance of the &product compilers to the
 .if '&lang' eq 'C' .do begin
-ANSI C Language Standard.
+ISO C Language Standard.
 .do end
 .if '&lang' eq 'C/C++' .do begin
-ANSI C Language Standard and the Draft Proposed C++ Language Standard.
+ISO C Language Standard and the Draft Proposed C++ Language Standard.
 .do end
 .np
 Many users have provided valuable feedback on earlier versions of

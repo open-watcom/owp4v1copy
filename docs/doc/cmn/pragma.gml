@@ -810,7 +810,7 @@ The following describes the form of the "error" pragma.
 is the text of the message that you wish to display.
 .endnote
 .np
-You should use the ANSI
+You should use the ISO
 .kw #error
 directive rather than this pragma.
 This pragma is provided for compatibility with legacy code.

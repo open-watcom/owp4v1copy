@@ -2438,9 +2438,9 @@ This option sets the warning level to its maximum setting.
 .if &e'&$SWza eq 1 .do begin
 :OPT refid='SWza' name='za'.
 .ix 'options' 'za'
-.ix 'ANSI compatibility'
+.ix 'ISO/ANSI compatibility'
 This option helps to ensure that the module to be compiled conforms to
-the ANSI C or C++ programming language specification (depending on the
+the ISO/ANSI C or C++ programming language specification (depending on the
 compiler which is selected).
 .ix 'macros' 'NO_EXT_KEYS'
 The macro
@@ -2451,7 +2451,7 @@ The "ou" option will be enabled :optref refid='SWou'..
 See also the description of the "ze" option.
 .np
 When using the C compiler, there is an exception to the enforcement of
-the ANSI C standard programming language specification.
+the ISO C standard programming language specification.
 The use of C++ style comments (// comment) are not diagnosed.
 .do end
 .*
@@ -2492,7 +2492,7 @@ struct {
 .pc
 In the above example, "x.b" is a valid reference to the "b" field.
 .note
-For C only, ANSI function prototype scope rules are relaxed to allow
+For C only, ISO function prototype scope rules are relaxed to allow
 the following program to compile without any errors.
 .exam begin 12
 void foo( struct a *__p );
@@ -2509,12 +2509,12 @@ void bar( void )
 }
 .exam end
 .pc
-According to a strict interpretation of the ANSI C standard, the
+According to a strict interpretation of the ISO C standard, the
 function prototype introduces a new scope which is terminated at the
 semicolon (;).
 The effect of this is that the structure tag "a" in the function "foo"
 is not the same structure tag "a" defined after the prototype.
-A diagnostic must be issued for a conforming ANSI C implementation.
+A diagnostic must be issued for a conforming ISO C implementation.
 .note
 A trailing comma (,) is allowed after the last constant in an enum
 declaration.
@@ -2522,7 +2522,7 @@ declaration.
 enum colour { RED, GREEN, BLUE, };
 .exam end
 .note
-The ANSI requirement that all enums have a base type of
+The ISO requirement that all enums have a base type of
 .us int
 is relaxed.
 The motivation for this extension is conservation of storage.
@@ -2544,7 +2544,7 @@ In the example, "x" can be stored in an
 .us unsigned char
 because its values span the range 0 to 2.
 .note
-The ANSI requirement that the base type of a bitfield be
+The ISO requirement that the base type of a bitfield be
 .us int
 or
 .us unsigned
@@ -3183,7 +3183,7 @@ will be predefined if "j" is selected.
 .ix 'options' 'ri'
 Functions declared to return integral types such as chars and shorts
 are promoted to returning ints.
-This allows non-ANSI-conforming source code which does not properly
+This allows non-ISO-conforming source code which does not properly
 declare the return types of functions to work properly.
 The use of this option should be avoided.
 .do end
@@ -4565,7 +4565,7 @@ This option is used with the "zdp" option but not the "zdf" option.
 .ix 'options' 'zev'
 The "zev" option is an extension to the Watcom C compiler to allow
 arithmetic operations on void derived types. This option has been added
-for compatibility with some Unix compilers and is not ANSI compliant.
+for compatibility with some Unix compilers and is not ISO compliant.
 The use of this option should be avoided.
 .do end
 .*
@@ -4618,7 +4618,7 @@ will be predefined if "zri" is selected.
 :OPT refid='SWzro' name='zro'.&optdag.
 .ix 'options' 'zro'
 The "zro" option omits the code for floating point rounding.
-This results in non-conformant code - the rounding mode is not ANSI C
+This results in non-conformant code - the rounding mode is not ISO/ANSI C
 compliant - but the code generated is very fast.
 .np
 The macro

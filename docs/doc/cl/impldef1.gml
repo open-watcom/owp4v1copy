@@ -3,7 +3,7 @@
 This appendix describes the behavior of &wcboth. when the standard
 describes the behavior as
 .us implementation-defined.
-The term describing each behavior is taken directly from the ANSI/ISO
+The term describing each behavior is taken directly from the ISO/ANSI
 C Language standard.
 The numbers in parentheses at the end of each term refers to the
 section of the standard that discusses the behavior.

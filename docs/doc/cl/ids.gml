@@ -81,7 +81,7 @@ Of course, any particular compiler may choose to consider more
 characters as being significant, but a portable C program
 will strictly adhere to the above rules.
 (This restriction is likely to be relaxed in future versions of the
-ANSI C standard and corresponding C compilers.)
+ISO C standard and corresponding C compilers.)
 .*
 .************************************************************************
 .*

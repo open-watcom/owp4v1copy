@@ -92,7 +92,7 @@ Functions are also provided for displaying text.
 .*
 .if '&lang' eq 'C/C++' .do begin
 .point &cmpcname Language Reference
-This manual describes the ANSI C programming language and extensions
+This manual describes the ISO C programming language and extensions
 which are supported by &cmpcname..
 .do end
 .*
