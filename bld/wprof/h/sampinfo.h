@@ -63,7 +63,7 @@ typedef struct ovl_entry {
     char *                      fname;
     uint_16                     start_para;
     addr_seg                    base_para;
-    fpos_t                      disk_addr;
+    off_t                       disk_addr;
     unsigned                    separate_overlay : 1;
 } ovl_entry;
 

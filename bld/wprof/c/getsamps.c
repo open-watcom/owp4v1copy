@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Read sample data from a file.
 *
 ****************************************************************************/
 
@@ -163,12 +162,12 @@ STATIC bint verifyHeader()
 /************************/
 {
     file_handle     fh;
-    fpos_t          header_position;
-    fpos_t          tmp_position;
+    off_t           header_position;
+    off_t           tmp_position;
 
     fh = CurrSIOData->fh;
-    header_position = lseek( fh, - ( (fpos_t)SIZE_HEADER ), SEEK_END );
-    if( header_position == (fpos_t)-1 ) {
+    header_position = lseek( fh, - ( (off_t)SIZE_HEADER ), SEEK_END );
+    if( header_position == (off_t)-1 ) {
         ErrorMsg( LIT( Smp_File_IO_Err ), CurrSIOData->samp_file_name );
         return( B_FALSE );
     }
@@ -186,7 +185,7 @@ STATIC bint verifyHeader()
         return( B_FALSE );
     }
     tmp_position = lseek( fh, CurrSIOData->header.sample_start, SEEK_SET );
-    if( tmp_position == (fpos_t) -1 ) {
+    if( tmp_position == (off_t) -1 ) {
         ErrorMsg( LIT( Smp_File_IO_Err ), CurrSIOData->samp_file_name );
         return( B_FALSE );
     }
@@ -202,7 +201,7 @@ STATIC bint readSampleFile()
     uint_16                 size;
     void *                  buff;
     int                     buff_len;
-    fpos_t                  start_position;
+    off_t                   start_position;
     bint                    main_exe;
     samp_block_prefix       prefix;
     samp_block_prefix *     next_prefix;
@@ -214,7 +213,7 @@ STATIC bint readSampleFile()
 /**/
     fh = CurrSIOData->fh;
     start_position = lseek( fh, CurrSIOData->header.sample_start, SEEK_SET );
-    if( start_position == (fpos_t) -1 ) {
+    if( start_position == (off_t) -1 ) {
         ErrorMsg( LIT( Smp_File_IO_Err ), CurrSIOData->samp_file_name );
         return( B_FALSE );
     }

@@ -70,26 +70,26 @@ static struct {
 } exeFlags;
 
 static uint_16          cacheSegment;
-static fpos_t           cacheExeOffset;
+static off_t            cacheExeOffset;
 static uint_32          cacheLo;
 static uint_32          cacheHi;
 static bint             isHole = B_FALSE;
 static address          currAddr;
 static uint_16          segmentShift;
 static file_handle      exeFH;
-static fpos_t           exeImageOffset;
+static off_t            exeImageOffset;
 static image_info *     exeImage;
 static EXE_TYPE         exeType;
 static uint_16          exeAmount;
 static uint_16          exeCurrent;
-static fpos_t           exePosition;
+static off_t            exePosition;
 static unsigned_16      nbytes = BUFF_SIZE;
 static uint_16          numBytes = MAX_INSTR_BYTES;
 static char             exeBuff[BUFF_SIZE];
 
 
 STATIC unsigned char    exeGetChar( void );
-STATIC bint             exeSeek( fpos_t );
+STATIC bint             exeSeek( off_t );
 STATIC void             exeRewind( size_t );
 STATIC bint             isWATCOM386Windows( file_handle );
 STATIC void             readEntry( uint_32 *, size_t );
@@ -152,7 +152,7 @@ extern void ExeClose( file_handle fh )
 STATIC void MapSetExeOffset( address a )
 /**************************************/
 {
-    fpos_t pos;
+    off_t   pos;
 
     pos = TransformExeOffset( a.mach.segment, a.mach.offset, a.sect_id );
     if( pos != -1 ) {
@@ -184,9 +184,9 @@ extern bint SetExeFile( file_handle fh, bint overlay )
 /****************************************************/
 {
     dos_exe_header      head;
-    fpos_t              new_header;
-    fpos_t              header_base;
-    fpos_t              seek_off;
+    off_t               new_header;
+    off_t               header_base;
+    off_t               seek_off;
     uint_16             dummy_16;
     uint_32             dummy_32;
 
@@ -512,7 +512,7 @@ STATIC uint_32 TransformExeOffset( uint_16 seg, uint_32 off, uint_16 sect_id )
     ovl_entry *             entry;
     segment_record          segment;
     map_entry               mapping;
-    fpos_t                  tmp_offset;
+    off_t                   tmp_offset;
     image_info *            curr_image;
     uint_32                 subresult;
     uint_32                 page_offset_shift;
@@ -550,7 +550,7 @@ STATIC uint_32 TransformExeOffset( uint_16 seg, uint_32 off, uint_16 sect_id )
             lseek( exeFH, tmp_offset, SEEK_SET );
             read( exeFH, &segment, sizeof( segment ) );
             cacheSegment = seg;
-            cacheExeOffset = ((fpos_t) segment.address) << segmentShift;
+            cacheExeOffset = ((off_t) segment.address) << segmentShift;
         }
         subresult = cacheExeOffset + off;
         break;
@@ -914,8 +914,8 @@ STATIC bint LoadOverlayInfo()
     file_handle             fh;
     address                 map_addr;
     addr_seg                base_segment;
-    fpos_t                  fileoffset;
-    fpos_t                  filenameoffset;
+    off_t                   fileoffset;
+    off_t                   filenameoffset;
     ovltab_entry            formal_entry;
     ovltab_prolog           prolog;
     ovl_entry *             entry;
@@ -1143,7 +1143,7 @@ STATIC void AdvanceCurrentOffset( uint_32 advance )
 
 
 
-STATIC bint exeSeek( fpos_t posn )
+STATIC bint exeSeek( off_t posn )
 /********************************/
 {
     if(( posn >= exePosition )&&( posn < ( exePosition + exeAmount ))) {
