@@ -44,10 +44,10 @@ win386.lib : $(def_files) ../def/win386 conv.exe fldenv.obj _call16.obj
     ls -1 win*.obj >tmp.lbc
     $(librarian) -n -b -p=16 win386.lib +fldenv.obj +_call16.obj @tmp.lbc
     @erase tmp.lbc
-    @cp winglue.asm ../../asm >nul
-    @cp dllthunk.c ../../c >nul
-    @cp dllthk.asm ../../asm >nul
-    @cp winglue.inc ../../h >nul
+    @cp winglue.asm ../../asm >$(nulldevice)
+    @cp dllthunk.c ../../c >$(nulldevice)
+    @cp dllthk.asm ../../asm >$(nulldevice)
+    @cp winglue.inc ../../h >$(nulldevice)
     @rm -f winglue.asm
     @rm -f dllthk.asm
     @rm -f dllthunk.c

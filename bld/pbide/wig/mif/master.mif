@@ -55,7 +55,7 @@ $(lnk) : ..\mif\master.mif makefile
 .y.c:
         wtouch $^@
         rm $^@
-        $(yacc) $[@ ..\c\yydriver.c
+        $(yacc) $[@ ..\c\yydriver.c > $(nulldevice)
         cp ytab.c $^@
 
 .before

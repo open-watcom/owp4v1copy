@@ -5,12 +5,6 @@ name = wrc
 wrc_autodepends = .AUTODEPEND
 !endif
 
-!ifdef __LINUX__
-nuldevice = /dev/null
-!else
-nuldevice = nul
-!endif
-
 !include cproj.mif
 !include defrule.mif
 
@@ -134,7 +128,7 @@ ytab.obj : ytab.c param.h ytab.gh
 #!endif
 
 ytab.c ytab.gh : rc.y $(wrc_dir)/y/yydriver.c rcmem.h
-        $(yacc) -d -b $[@ $[:yydriver.c >$(nuldevice)
+        $(yacc) -d -b $[@ $[:yydriver.c >$(nulldevice)
         @cp ytab.h ytab.gh
         @rm -f ytab.h
 

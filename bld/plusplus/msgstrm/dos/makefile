@@ -9,4 +9,4 @@ link_sys = pharlap
 msgstrm.exe : $(OBJS) makefile msgstrm.lnk
     $(linker) @msgstrm
     $(pharlap)bind386 $(pharlap)run386b msgstrm.exp -exe msgstrm.exe
-    del msgstrm.exp >nul
+    @rm -f msgstrm.exp

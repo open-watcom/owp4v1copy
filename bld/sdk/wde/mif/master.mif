@@ -89,7 +89,7 @@ all : $(name).exe .SYMBOLIC
 
 deps: .SYMBOLIC
         @echo making dependencies...
-        @errout ..\bin\mkwdedep > nul
+        @errout ..\bin\mkwdedep > $(nulldevice)
 
 extra_l_flags  = lib $(wres_lib), $(fmedit_lib), $(wr_lib)
 extra_l_flags += op map, v, symfile

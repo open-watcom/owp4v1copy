@@ -11,6 +11,11 @@ bin = bin
 verbose = /v
 !endif
 
+!ifdef __UNIX__
+nulldevice = /dev/null
+!else
+nulldevice = nul
+!endif
 
 all : fortran.prs cpp.prs c.prs java.prs .SYMBOLIC
 
@@ -27,7 +32,7 @@ java.prs : java.ssl pp_c.ssl $(common)
 .ssl.prs
         ssl $(verbose) $[@ $^@
 !ifndef on_build_machine
-    @cp $^@ $(bdir) >nul
+    @cp $^@ $(bdir) >$(nulldevice)
 !endif
 
 clean: .SYMBOLIC

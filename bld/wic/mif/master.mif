@@ -82,10 +82,10 @@ $(lnk) : $(__MAKEFILES__)
 yacc = ..\c\yaccpre
 
 ..\c\preparse.c: ..\c\preparse.y
-    $(YACC) pre ..\c\preparse
+    $(YACC) pre ..\c\preparse > $(nulldevice)
 
 ..\c\cparse.c: ..\c\cparse.y
-    $(YACC) c ..\c\cparse
+    $(YACC) c ..\c\cparse > $(nulldevice)
 
 
 ##############################################################################
