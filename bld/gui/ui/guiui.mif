@@ -1,16 +1,4 @@
-proj_name = gui
-.mif: $(mif_path)
-!include cproj.mif
-
 type=ui
-!ifndef axp
-xflags=-of
-!endif
-!ifeqi os nt
-plat_inc +=$(watcom_h);$(%watcom)/h/nt;
-!else
-plat_inc +=$(watcom_h);$(%watcom)/h/win;
-!endif
 
 wv_sysobjs = &
           guismove.obj &
@@ -92,13 +80,13 @@ wv_sysobjs = &
           guiclen.obj &
 
 help_objext=obj
+
 !include $(help_dir)/help.mif
 
 wv_sysobjs += $(help_objs)
 
 !ifndef on_build_machine
-wv_sysobjs += &
-       uibarf.obj
+wv_sysobjs += uibarf.obj
 !endif
 
 sys_hooks = &
@@ -109,17 +97,15 @@ sys_hooks = &
 
 sysobjs = $(wv_sysobjs) $(sys_hooks) $(sys_dep_objs)
 
-sysinclude +=;$(ui_dir)/h;$(watcom_dir)/h;$(sdk_dir)/rc/wres/h
+inc_dirs +=$(ui_dir)/h;
+
+extra_c_flags_guirdlg = -i"$(sdk_dir)/rc/wres/h"
+extra_c_flags_guirmenu = -i"$(sdk_dir)/rc/wres/h"
+
+!ifeq host_OS dos
+extra_c_flags +=-of
+!else ifeq host_OS linux
+extra_c_flags +=-of
+!endif
 
 !include ../../master.mif
-
-guikey.obj :    guikey.c
-           $(compile)
-
-guixdraw.obj    : guixdraw.c guimin.h guidraw.h
-guixloop.obj    : guixloop.c guimin.h
-guixutil.obj    : guixutil.c guimin.h
-guisize.obj     : guisize.c guimin.h
-guixmain.obj    : guixmain.c $(guidir)/h/guix.h
-guixmdi.obj     : guixmdi.c $(guidir)/h/guix.h
-

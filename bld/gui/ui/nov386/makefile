@@ -2,12 +2,6 @@
 host_CPU = 386
 host_OS = nov
 
-os = nlm
-build_target = netware
-compiler = comp386
-model=s
+memory_model_386 = s
 
 !include ../guiui.mif
-
-xflags = -4s-s$(deffp)-ot-dNLM
-

@@ -1,16 +1,7 @@
-proj_name = gui
-
-!include cproj.mif
-
 type=win
 
-sys_dep_dir = $(sdk_dir)/misc;$(wpi_dir)/h
-!ifeqi os nt
-plat_inc +=$(watcom_h);$(%watcom)/h/nt;
-!else
-plat_inc +=$(watcom_h);$(%watcom)/h/win;
-!endif
 extra_objs = wpimem.obj
+
 sysobjs = guixscal.obj &
           guidrect.obj &
           guimvctr.obj &
@@ -97,44 +88,32 @@ sysobjs = guixscal.obj &
           wptoolbr.obj &
           guiclen.obj
 
-
-!ifneq os pm
-sysobjs +=             &
-          fontstr.obj  &
-          windlg.obj
-!else
+!ifeq host_OS os2
 sysobjs +=             &
           os2mem.obj   &
           os2dlg.obj
+!else
+sysobjs +=             &
+          fontstr.obj  &
+          windlg.obj
 !endif
 
-!ifeq os w386
+!ifeq host_OS win
+!ifeq host_CPU 386
 sysobjs += ctl3d32.obj
 !endif
+!endif
+
+inc_dirs += $(sdk_dir)/misc;$(wpi_dir)/h;
+
+.c: $(sdk_dir)/misc
+
+extra_c_flags_os2 = -d__OS2_PM__
+!ifeq host_CPU 386
+extra_c_flags_win = -zw
+!else
+extra_c_flags_win = -zw-zW
+!endif
+extra_c_flags_i86 = -zu
 
 !include ../../master.mif
-
-rm_wpi :  $(wpi_dir)/h/wpicomp.h .SYMBOLIC
-        @-rm $(sysobjs)
-
-ctl3d32.obj : $(sdk_dir)/misc/ctl3d32.c
-
-wptoolbr.obj :  wptoolbr.c $(sdk_dir)/misc/wptoolbr.h
-           $($(compiler)) $[* $(cflags) /dNDEBUG
-
-wstatus.obj : wstatus.c
-        $(compile)
-
-fontstr.obj : fontstr.c
-        $(compile)
-
-wmdisim.obj : wmdisim.c
-        $(compile)
-
-guixdlg.obj     : guixdlg.c guistyle.h
-guicontr.obj    : guicontr.c guistyle.h
-guisetup.obj    : guisetup.c guiwind.h $(sdk_dir)/misc/wptoolbr.h
-guixwind.obj    : guixwind.c $(sdk_dir)/misc/wptoolbr.h
-guimdi.obj      : guimdi.c $(sdk_dir)/misc/mdisim.h
-mdisim.obj      : mdisim.c $(sdk_dir)/misc/mdisim.h
-guixmdi.obj     : guixmdi.c $(guidir)/h/guix.h

@@ -3,11 +3,7 @@
 host_os  = qnx
 host_cpu = 386
 
-os = qnx
-build_target = qnx
-compiler = comp386
-model = s
+memory_model_386 = s
 track =
-sysinclude=$(lang_root)/qh;
 
 !include ../guiui.mif

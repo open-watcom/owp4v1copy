@@ -2,11 +2,5 @@
 host_CPU = 386
 host_OS = dos
 
-os = dos
-build_target = dos
-compiler = comp386
-model=f
-
 !include ../guiui.mif
 
-xflags=-of-s
