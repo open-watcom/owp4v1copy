@@ -140,17 +140,6 @@ void WINEXP OpenFormEdit( HWND wnd, CREATE_TABLE objtable,
   }
 
 
-int WINEXP WEP( int parm )
-/************************/
-
-/* terminate the DLL */
-
-  {
-    parm = parm;
-    return( 1 );
-  }
-
-
 BOOL WINEXP FMEditWndProc( HWND wnd, unsigned message,
                             WPARAM wparam, LPARAM lparam )
 /****************************************************/
@@ -287,7 +276,7 @@ BOOL WINEXP FMEditWndProc( HWND wnd, unsigned message,
   }
 
 #ifdef __NT__
-int WINIEXP LibMain ( HANDLE inst, DWORD dwReason, LPVOID lpReserved )
+int PASCAL LibMain ( HANDLE inst, DWORD dwReason, LPVOID lpReserved )
 /* Initializes window data and registers window class */
 
   {
@@ -303,8 +292,6 @@ int WINIEXP LibMain ( HANDLE inst, DWORD dwReason, LPVOID lpReserved )
             InitOItem();
             break;
         case DLL_PROCESS_DETACH:
-            WEP( 1 ); /* 1 as parm was chosen arbitrarily */
-            break;
         case DLL_THREAD_ATTACH:
         case DLL_THREAD_DETACH:
         /* do nothing here */
@@ -316,7 +303,7 @@ int WINIEXP LibMain ( HANDLE inst, DWORD dwReason, LPVOID lpReserved )
 
 /*************************************************/
 #else
-int WINIEXP LibMain( HANDLE inst, WORD dataseg,
+int FAR PASCAL LibMain( HANDLE inst, WORD dataseg,
                      WORD heapsize, LPSTR cmdline )
 /*************************************************/
 /* Initializes window data and registers window class */
@@ -336,6 +323,17 @@ int WINIEXP LibMain( HANDLE inst, WORD dataseg,
     InitOItem();
     return( TRUE );
   }
+
+int WINIEXP WEP( int parm )
+/************************/
+
+/* terminate the DLL */
+
+  {
+    parm = parm;
+    return( 1 );
+  }
+
 #endif
 
 

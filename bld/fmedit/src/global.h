@@ -30,6 +30,10 @@
 ****************************************************************************/
 
 
-#define WINEXP  __export pascal
-#define WINIEXP __export pascal
+#define WINEXP  __export PASCAL
+#ifdef __NT__
+#define WINIEXP __export PASCAL
+#else
+#define WINIEXP __export FAR PASCAL
+#endif
 
