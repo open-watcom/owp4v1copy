@@ -392,7 +392,7 @@ extern  name    *ScanCall( tbl_control *table, name *value,
     if( tipe == U4 ) {
         HW_CAsgn( tmp, HW_ECX );
         HW_CTurnOn( tmp, HW_EDI );
-        new_ins->zap = AllocRegName( tmp );
+        new_ins->zap = &AllocRegName( tmp )->r;
         new_ins->result = AllocRegName( HW_EDI );
         HW_CAsgn( tmp, HW_CS );
         HW_CTurnOn( tmp, HW_EDI );
@@ -404,7 +404,7 @@ extern  name    *ScanCall( tbl_control *table, name *value,
     } else {
         HW_CAsgn( tmp, HW_ECX );
         HW_CTurnOn( tmp, HW_EDI );
-        new_ins->zap = AllocRegName( tmp );
+        new_ins->zap = &AllocRegName( tmp )->r;
         new_ins->result = AllocRegName( HW_ECX );
         new_ins = MakeMove( new_ins->result, AllocTemp( WD ), WD );
         AddIns( new_ins );

@@ -133,7 +133,7 @@ static  void    DropCall( instruction *ins, name *temp ) {
     new_ins->operands[ CALL_OP_USED2 ] = null_name;
     new_ins->operands[ CALL_OP_ADDR ]= RTMemRef( RT_TLS_REGION );
     new_ins->result = eax_name;
-    new_ins->zap = eax_name;
+    new_ins->zap = &eax_name->r;
     new_ins->num_operands = 2;         /* special case for OP_CALL*/
     PrefixIns( ins, new_ins );
     new_ins = MakeMove( eax_name, temp, WD );
