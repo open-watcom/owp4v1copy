@@ -1,15 +1,15 @@
 # WRES library finder.  You must define:
 # ~~~~~~~~~~~~~~~~~~~
-# 1. host_OS and host_CPU
-# 2. If 32-bit stack-based, define STACK
+# 1. host_os and host_cpu
+# 2. If 32-bit stack-based, define 'stack'
 # 3. If 16-bit, define memory_model_i86 = l, m, c, or s (l is default)
-# 4. For large memory model pegged version, define PEGGED
-# 5. For large memory model windows version, define WINDOWS
+# 4. For large memory model pegged version, define 'pegged'
+# 5. For large memory model windows version, define 'windows'
 #
 
-!ifdef PEGGED
+!ifdef pegged
 wres_lib_l = $(wres_dir)/lib/wreslp.lib
-!else ifdef WINDOWS
+!else ifdef windows
 wres_lib_l = $(wres_dir)/lib/wreslw.lib
 !else
 wres_lib_l = $(wres_dir)/lib/wresl.lib
@@ -19,7 +19,7 @@ wres_lib_c = $(wres_dir)/lib/wresc.lib
 wres_lib_s = $(wres_dir)/lib/wress.lib
 wres_lib_i86 = $(wres_lib_$(memory_model_i86))
 
-!ifdef STACK
+!ifdef stack
 wres_lib_386 = $(wres_dir)/lib/wresfs.lib
 !else
 wres_lib_386 = $(wres_dir)/lib/wresf.lib
@@ -42,8 +42,8 @@ wres_lib_nt_386 = $(wres_dir)/lib/wresfdll.lib
 
 !ifdef bootstrap
 wres_lib = $(wres_dir)/$(%OBJDIR)/libwres.a
-!else ifdef wres_lib_$(host_OS)_$(host_CPU)
-wres_lib = $(wres_lib_$(host_OS)_$(host_CPU))
+!else ifdef wres_lib_$(host_os)_$(host_cpu)
+wres_lib = $(wres_lib_$(host_os)_$(host_cpu))
 !else
-wres_lib = $(wres_lib_$(host_CPU))
+wres_lib = $(wres_lib_$(host_cpu))
 !endif

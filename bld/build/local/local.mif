@@ -17,15 +17,10 @@ lang_root = $(%open_nlang_root)
 lang_root = $(%DWATCOM)
 !endif
 
-# Do not fuck with the env vars, that way it's far too easy to break stuff!
-#%WATCOM=$+$(lang_root)$-
-#%PATH=$+$(lang_root)\binnt;$(lang_root)\binw;$(%PATH)$-
-#%INCLUDE=$+$(lang_root)\h;$(lang_root)\h\nt$-
-
 !ifndef __NTAXP__
 
 use_bld_incs    = 0
-!ifeq host_CPU axp
+!ifeq host_cpu axp
 use_bld_incs    = 1
 !endif
 !ifeq proj_name ochook
@@ -60,8 +55,8 @@ cpp_386         += -i"$(bld_incs)"
 !ifeq proj_name cc
 extra_l_flags_nt = lib $(watcom_dir)/lib/ld.lib
 !endif
-!ifeq host_CPU axp
-def_targ        = wcc$(target_CPU)c.exe
+!ifeq host_cpu axp
+def_targ        = wcc$(target_cpu)c.exe
 !endif
 
 # options for single source utility compilations
