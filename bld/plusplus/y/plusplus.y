@@ -160,6 +160,7 @@ Modified        By              Reason
 %token Y_TRUE
 %token Y_TYPEDEF
 %token Y_TYPEID
+%token Y_TYPENAME
 %token Y_UNION
 %token Y_UNSIGNED
 %token Y_USING
@@ -314,6 +315,7 @@ Modified        By              Reason
 %type <flags> packed-class-opt
 
 %type <token> class-key
+%type <token> template-typename-key
 %type <token> operator-function-type
 
 %type <type> class-mod-opt
@@ -349,6 +351,7 @@ Modified        By              Reason
 %type <dspec> cv-qualifier
 %type <dspec> class-specifier
 %type <dspec> enum-specifier
+%type <dspec> typename-specifier
 %type <dspec> class-substance
 %type <dspec> class-body
 %type <dspec> qualified-type-specifier
@@ -381,6 +384,7 @@ Modified        By              Reason
 %type <dinfo> simple-template-arg-declaration
 %type <dinfo> arg-declaration
 %type <dinfo> template-arg-declaration
+%type <dinfo> type-parameter
 %type <dinfo> arg-declaration-list
 %type <dinfo> template-arg-declaration-list
 %type <dinfo> actual-exception-declaration
@@ -1523,6 +1527,7 @@ type-specifier
     | class-specifier
     | enum-specifier
     | typeof-specifier
+    | typename-specifier
     ;
 
 typeof-specifier
@@ -1614,6 +1619,13 @@ qualified-class-type
     | template-class-id Y_TEMPLATE_SCOPED_TYPE_NAME
     { $$ = sendClass( $2 ); PTypeRelease( $1 ); }
     | template-class-id
+    ;
+
+typename-specifier
+    : Y_TYPENAME Y_SCOPED_TYPE_NAME
+    { $$ = sendType( $2 ); }
+    | Y_TYPENAME template-class-id Y_TEMPLATE_SCOPED_TYPE_NAME
+    { $$ = sendType( $3 ); PTypeRelease( $2 ); }
     ;
 
 enum-specifier
@@ -2179,6 +2191,42 @@ arg-declaration
 template-arg-declaration
     : simple-template-arg-declaration
     { GStackPop( &(state->gstack) ); }
+    | type-parameter
+    { $$ = $1; }
+    | type-parameter template-defarg-copy
+    { $$ = $1; }
+    ;
+
+type-parameter
+    : template-typename-key
+    {
+        DECL_SPEC *dspec;
+
+        pushClassData( state, TF1_NULL, CLINIT_NULL, NULL);
+        ClassName( NULL, CLASS_GENERIC );
+        dspec = ClassRefDef();
+        GStackPop( &(state->gstack) );
+        $$ = DeclSpecDeclarator( dspec );
+        PTypeRelease( dspec );
+    }
+    | template-typename-key make-id
+    {
+        DECL_SPEC *dspec;
+
+        pushClassData( state, TF1_NULL, CLINIT_NULL, NULL);
+        ClassName( $2, CLASS_GENERIC );
+        dspec = ClassRefDef();
+        GStackPop( &(state->gstack) );
+        $$ = DeclSpecDeclarator( dspec );
+        PTypeRelease( dspec );
+    }
+    ;
+
+template-typename-key
+    : Y_TYPENAME
+    { }
+    | Y_CLASS
+    { }
     ;
 
 simple-arg-declaration
@@ -2493,13 +2541,6 @@ class-name
         case Y_SEMI_COLON:
             decl_type = CLASS_DECLARATION;
             break;
-        case Y_COMMA:
-        case Y_GT:
-        case Y_EQUAL:
-            if( state->template_args ) {
-                decl_type = CLASS_GENERIC;
-            }
-            break;
         }
         after_name = ClassName( $1, decl_type );
         switch( after_name ) {
@@ -2793,14 +2834,12 @@ template-key
             CErr1( ERR_ONLY_GLOBAL_TEMPLATES );
         }
         state->template_decl = TRUE;
-        state->template_args = TRUE;
     }
     ;
 
 template-argument-decl
     : template-abstract-args
     {
-        state->template_args = FALSE;
         GStackPush( &(state->gstack), GS_TEMPLATE_DATA );
         TemplateDeclInit( &(state->gstack->u.templatedata), $1 );
         pushDefaultDeclSpec( state );
