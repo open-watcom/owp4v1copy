@@ -61,7 +61,7 @@ _WCRTLINK int *__threadid( void )
 
 thread_data             *__FirstThreadData = NULL;
 
-static void *__SingleThread()
+static struct thread_data *__SingleThread()
 {
     return( __FirstThreadData );
 }
@@ -77,7 +77,7 @@ static void __NullAccIOBRtn(void) {}
 static void __NullAccHeapRtn(void) {}
 static void __NullAccTDListRtn(void) {}
 
-_WCRTLINK void  *(*__GetThreadPtr)() = &__SingleThread;
+_WCRTLINK struct thread_data  *(*__GetThreadPtr)() = &__SingleThread;
 void    (*_AccessFileH)(int)     = &__NullAccessRtn;
 void    (*_ReleaseFileH)(int)    = &__NullAccessRtn;
 void    (*_AccessIOB)(void)      = &__NullAccIOBRtn;

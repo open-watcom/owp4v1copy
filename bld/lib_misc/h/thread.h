@@ -194,12 +194,12 @@ typedef struct thread_data {
     #endif
     #if defined(__QNX__)
         // QNX uses magic memory for thread specific data
-        extern void *__MultipleThread();
+        extern struct thread_data *__MultipleThread();
     #endif
 #else
     extern int _WCFAR *_threadid;
     extern thread_data **__ThreadData;
-    extern void *__MultipleThread();
+    extern struct thread_data * __MultipleThread();
     #define __THREADDATAPTR     ((thread_data *)__MultipleThread())
 #endif
 
