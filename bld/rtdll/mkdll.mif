@@ -32,7 +32,7 @@ $(dllname).dll $(dllname).lbc : $(dll_objs) $(dll_libs) tmp.def
     $(rc) -q -bt=nt -i$(%watcom)\h\nt $(dllname).rc $(dllname).dll
 !endif
     sort < $(dllname).lbc > $(dllname).tmp
-    -uniq < $(dllname).tmp > $(dllname).lbc
+    uniq $(dllname).tmp > $(dllname).lbc
     @erase $(dllname).tmp
 
 tmp.def : $(dll_def) $(__MAKEFILES__)
