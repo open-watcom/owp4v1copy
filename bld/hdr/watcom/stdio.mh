@@ -56,6 +56,9 @@ typedef struct  __iobuf
     struct __iobuf       *_unused;      /* spare entry */
 :endsegment
 }
+#else
+{
+}
 #endif
 FILE;
 
@@ -104,6 +107,8 @@ _WCRTLINK extern FILE _WCDATA __iob[];
 :endsegment
 
 #else
+
+_WCRTLINK extern FILE *__get_std_file(unsigned handle);
 
 #define stdin   (__get_std_file(0))     /* standard input file  */
 #define stdout  (__get_std_file(1))     /* standard output file */
