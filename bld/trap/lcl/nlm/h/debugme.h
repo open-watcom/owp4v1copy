@@ -58,7 +58,7 @@
     #define _DBG_REQ( x ) if( DebugClasses & D_REQ ) { ConsolePrintf x; }
     #define _DBG_ERROR( x ) if( DebugClasses & D_ERROR ) { ConsolePrintf x; }
 
-    extern int ConsolePrintf(char *,...);
+    extern void ConsolePrintf(char *,...);
 
 #else
 

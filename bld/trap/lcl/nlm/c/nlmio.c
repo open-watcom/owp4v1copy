@@ -61,6 +61,14 @@ extern LONG ConvertPathString(
 
 #define FIRST_HANDLE    5
 
+#define		FILE_ATTRIB_MASK	(_A_NORMAL | _A_HIDDEN | _A_RDONLY)
+/* 
+//	RWPRIVS | DENYW - 
+//	as 0x0B is 1011 I don't know which one is which or has two bits
+//	though I would hazard a guess as RWPRIVS
+*/
+#define		FILE_OPEN_PRIVS	0x0B
+
 /* From NLMCLIB.C */
 
 extern int WriteStdErr( char *buff, int len );
@@ -194,7 +202,7 @@ int IOCreat( char *name )
 //  if( !MayRelinquishControl ) return( -1 );
                                                                     _DBG_IO(( "Creating %s. Open RC(%d)\r\n", name, ccode ));
     ccode = OpenServer( OpenFile, name, &handle,
-                        0x06, RWPRIVS | DENYW );
+                        FILE_ATTRIB_MASK, FILE_OPEN_PRIVS );
     if( ccode == 0 ) {
         ccode = WriteFile( 0, handle, 0, 0, "" );
     } else {
@@ -261,7 +269,7 @@ int IOOpen( char *openname, int openmode )
                                                                     _DBG_IO(( ( ccode==0 ? "Opened %s." : "" ), loadpath ));
     } else {
         ccode = OpenServer( OpenFile, openname, &handle,
-                            0x06, RWPRIVS | DENYW );
+                            FILE_ATTRIB_MASK, FILE_OPEN_PRIVS );
                                                                     _DBG_IO(( "Opened %s.", openname ));
         isdos = FALSE;
     }

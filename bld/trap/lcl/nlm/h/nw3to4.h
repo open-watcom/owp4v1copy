@@ -83,6 +83,7 @@
     #define FieldCS( x )                        ( (x)->ExceptionCS[0] )
     #define FieldEFLAGS( x )                    ( (x)->ExceptionSystemFlags )
 #else
+#ifdef __NW30__
     #define StackFrame T_StackFrame
     #define FieldGS( x )                        ( (x)->GS[0] )
     #define FieldFS( x )                        ( (x)->FS[0] )
@@ -103,6 +104,9 @@
     #define FieldEIP( x )                       ( (x)->EIP )
     #define FieldCS( x )                        ( (x)->CS[0] )
     #define FieldEFLAGS( x )                    ( (x)->EFLAGS )
+#else
+#error Stack Frame has not been defined for this version of netware
+#endif
 #endif
 
 extern struct ResourceTagStructure      *BreakTag;

@@ -195,8 +195,11 @@ char * memcpy( char *dst, const char *src, size_t len )
     return( dst );
 }
 
-int memcmp( char *a, char *b, size_t len )
+int memcmp( const void *a_in, const void *b_in, size_t len )
 {
+    const char *a = a_in;
+    const char *b = b_in;
+
     while( len != 0 ) {
         if( *a - *b != 0 ) return( *a - *b );
         ++a;

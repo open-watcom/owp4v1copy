@@ -95,6 +95,7 @@ incs_pls        = $(watcom_dir)\h;$(lang_root)\h;$(plsdir)
 incs_nt         = $(lang_root)\h\nt;$(watcom_dir)\h;$(lang_root)\h
 #incs_nlm        = $(watcom_dir)\h;$(nw$(nlm_ver)dir);$(nw$(nlm_ver)0src);$(watcom_dir)\nw40_h
 incs_nlm        = $(watcom_dir)\h;$(ow_nwoss_root)\nw$(nlm_ver)\h;$(ow_nwoss_root)\nw$(nlm_ver)\src;$(ow_nwoss_root)\common\h
+#;$(nwndk_root)\include\nlm
 
 !ifndef machine
 machine = IBM

@@ -5,7 +5,9 @@ objects = realmode.obj nwhooks.obj sample.obj sampdata.obj sampnlm.obj &
 cflags = /bt=netware/3s/mf/d1/oax/w3 /dREPORT_TYPE= /dFAR_PTR= /dNETWARE /fiwatcom.h /zq
 
 .BEFORE
-        set include=$(nwdir);$(nwsrc);$(dig_dir)\h;$(%include)
+#        set include=$(nwdir);$(nwsrc);$(dig_dir)\h;$(%include)
+#use nw4 by default as we don't really care about stkframes and such in this code
+        set include=$(ow_nwoss_root)\common\h;$(ow_nwoss_root)\nw4\h;$(nlang_root)\novh;$(nwsrc);$(dig_dir)\h;$(%include)
 
 imports = &
     FileServerMajorVersionNumber &
@@ -43,11 +45,11 @@ xname = wsample
     @%append tmp.lnk lib $(watcom_dir)\lib\wresfs
     @for %i in ($(imports)) do @%append tmp.lnk import %i
     @for %i in ($objects) do @%append tmp.lnk file %i
-!include ..\setsize.mif
+#!include ..\setsize.mif
     wlink @tmp.lnk
     wstrip /q /a /r ..\bin\$(xname).nlm . $(xname).res
 
-!include ..\objsize.mif
+#!include ..\objsize.mif
 
 .c: .;..\c
 
