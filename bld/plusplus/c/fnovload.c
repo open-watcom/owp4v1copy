@@ -866,6 +866,7 @@ FNOV_RANK *second, TYPE *second_type )
         // do the following comparison
     case OV_RANK_STD_CONV_VOID:
     case OV_RANK_STD_CONV:
+    case OV_RANK_STD_BOOL:
     case OV_RANK_PROMOTION:
     case OV_RANK_TRIVIAL:
         retn = compareScalar( &first->u.no_ud
@@ -935,6 +936,7 @@ static OV_RESULT compareArgument(
         // otherwise, do the following comparison
     case OV_RANK_STD_CONV_VOID:
     case OV_RANK_STD_CONV:
+    case OV_RANK_STD_BOOL:
     case OV_RANK_PROMOTION:
     case OV_RANK_TRIVIAL:
         retn = compareScalar( &first->u.no_ud
