@@ -103,7 +103,7 @@
 !inject osmnptr.obj  d16 d32             nt nta ntp    o16 o32 q16 q32 w16 w32 osi
 !inject osvrptr.obj                      nt
 !inject prelude.obj                                 nv
-!inject pspptr.obj   d16 d32             nt                o32         w16     osi
+!inject pspptr.obj   d16 d32                                           w16     osi
 !inject rdllmwnt.obj                     nt nta ntp
 !inject seg086.obj   d16                               o16             w16
 !inject seg16.obj                                          o32
