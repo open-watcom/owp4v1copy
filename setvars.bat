@@ -47,8 +47,8 @@ echo Open Watcom compiler build environment
 REM Stuff for the Open Watcom build environment
 set build_platform=nt386
 set batdir=%owroot%
-set bld_ver=13
-set bld_ver_str=1.3
+set bld_ver=14
+set bld_ver_str=1.4
 set builder.ctl=lang.ctl
 set defrel=rel2
 set devdir=%owroot%\bld
