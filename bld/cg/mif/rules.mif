@@ -1,5 +1,5 @@
 .EXTENSIONS:
-.EXTENSIONS: .exe .exp .lib .wbj .zbj .pbj .sbj .tbj .qbj .ibj .2bj .obj .fbj .dbj .cpp .c .h .asm .psm
+.EXTENSIONS: .exe .exp .lib .obj .cpp .c .h .asm .psm
 .ERASE
 .DEFAULT
         @%null
@@ -20,9 +20,9 @@ track_flags_386 = -d_TRACK -of+
 track_flags_axp = -d_TRACK
 
 !ifeq cg_trmem 1
-extra_c_flags_memmgt    = $(track_flags_$(host_CPU))
-extra_c_flags_memwrap   = $(track_flags_$(host_CPU))
-extra_c_flags_trmem     = $(track_flags_$(host_CPU))
+extra_c_flags_memmgt    = $(track_flags_$(host_cpu))
+extra_c_flags_memwrap   = $(track_flags_$(host_cpu))
+extra_c_flags_trmem     = $(track_flags_$(host_cpu))
 !endif
 
 wlib_parms      = -q -b
