@@ -43,6 +43,15 @@
 #define ATTR_MASK   _A_HIDDEN + _A_SYSTEM + _A_VOLID + _A_SUBDIR
 #endif
 
+extern char *DebugOptions[] = {
+        "",
+        "debug dwarf\n",
+        "debug dwarf\n",
+        "debug watcom all\n",
+        "debug codeview\n",
+        "debug dwarf\n",
+};
+
 void PrintMsg( char *fmt, ... )
 {
     char        c;

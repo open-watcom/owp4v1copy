@@ -109,15 +109,6 @@ static  char    Conventions;        /* 'r' for -3r or 's' for -3s         */
 
 struct  flags   Flags;
 
-static char *DebugOptions[] = {
-        "",
-        "debug dwarf\n",
-        "debug dwarf\n",
-        "debug watcom all\n",
-        "debug codeview\n",
-        "debug dwarf\n",
-};
-
 /*
  *  Static function prototypes
  */

@@ -91,15 +91,6 @@ static  char    Conventions;        /* 'r' for -3r or 's' for -3s         */
 
         struct flags Flags;
 
-static char *DebugOptions[] = {
-        "",
-        "debug dwarf\n",
-        "debug dwarf\n",
-        "debug watcom all\n",
-        "debug codeview\n",
-        "debug dwarf\n",
-};
-
 /*
  *  Static function prototypes
  */
@@ -237,7 +228,7 @@ static  int  Parse( int argc, char **argv )
     Flags.windows      = 0;
     Flags.is32bit      = 1;
     Flags.math_8087    = 1;
-    DebugFlag          = 0;
+    DebugFlag          = 1;
     StackSize = NULL;
     Conventions = 'r';
 
@@ -451,6 +442,11 @@ static  int  Parse( int argc, char **argv )
                 goto parse_d;
             }
             break;
+        case 's':
+            Flags.strip_all = 1;
+            DebugFlag = 0;
+            wcc_option = 0;
+            break;
         case 'v':
             Flags.be_quiet = 0;
             wcc_option = 0;
@@ -603,6 +599,8 @@ static  int  CompLink( void )
         Fputnl( "system nt", Fp );
   #elif defined(__LINUX__)
         Fputnl( "system linux", Fp );
+        if ( ! Flags.strip_all )
+            Fputnl( "option exportall", Fp );
   #else
         Fputnl( "system dos4g", Fp );
   #endif

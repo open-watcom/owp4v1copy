@@ -81,9 +81,12 @@ struct  flags {
         unsigned is32bit      : 1;  /* 32bit link                         */
         unsigned force_c      : 1;  /* -cc option                         */
         unsigned force_c_plus : 1;  /* -cc++ option                       */
+        unsigned strip_all    : 1;  /* -s option for owcc                 */
 };
 
 extern  struct flags Flags;
+
+extern  char *DebugOptions[];
 
 void    PrintMsg( char *fmt, ... );
 void    FindPath( char *name, char *buf );
