@@ -35,8 +35,8 @@
 #include <ctype.h>
 #include <dos.h>
 #include <process.h>
-#include <io.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include "builder.h"
 
 #include <windows.h>
@@ -45,7 +45,7 @@ char    *CmdProc;
 #define TITLESIZE 256
 char    Title[TITLESIZE];
 
-void SysInit( int argc, char *argv[] )
+void SysInitTitle( int argc, char *argv[] )
 {
     int         i;
 
@@ -59,17 +59,45 @@ void SysInit( int argc, char *argv[] )
     getcwd( Title+strlen(Title), TITLESIZE - strlen( Title ) - 2 );
     strcat( Title, "]" );
     SetConsoleTitle( Title );
+}
 
+void SysSetTitle( char *title )
+{
+    char        *end;
+    end = strchr( Title, ']' );
+    *(end+1) = '\0';
+
+    strcat( Title, " (" );
+    getcwd( Title+strlen(Title), TITLESIZE - strlen( Title ) - 2 );
+    strcat( Title, ")" );
+    SetConsoleTitle( Title );
+}
+
+int RunChildProcessCmdl( char *prg, char *cmdl )
+{
+
+    PROCESS_INFORMATION pinfo;
+    STARTUPINFO sinfo;
+
+    memset( &sinfo, 0, sizeof( sinfo ) );
+    sinfo.cb = sizeof( sinfo );
+    memset( &pinfo, 0, sizeof( pinfo ) );
+
+    return CreateProcessA( prg, cmdl, NULL, NULL, TRUE, 0, NULL, NULL, &sinfo, &pinfo );
+}
+
+void SysInit( int argc, char *argv[] )
+{
+    SysInitTitle( argc, argv );
     CmdProc = getenv( "ComSpec" );
     if( CmdProc == NULL ) {
         Fatal( "Can not find command processor" );
     }
 }
 
-/* #define OS_LEVEL_PIPES doesn't seem to work for NT? */
-#ifdef OS_LEVEL_PIPES
 unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
 {
+    char        buff[256+1];
     int         rc;
     HANDLE      pipe_input;
     HANDLE      pipe_output;
@@ -88,56 +116,21 @@ unsigned SysRunCommandPipe( const char *cmd, int *readpipe )
                 GetCurrentProcess(), &pipe_input_dup , 0, FALSE,
                 DUPLICATE_SAME_ACCESS);
     CloseHandle( pipe_input );
-    rc = spawnl( P_NOWAIT, CmdProc, CmdProc, "/c", cmd, NULL );
+    strcpy( buff, "/c " );
+    strncat( buff, cmd, sizeof( buff ) - 4 );
+    rc = RunChildProcessCmdl( CmdProc, buff );
     CloseHandle( pipe_output );
     *readpipe = _hdopen( (int) pipe_input_dup, O_RDONLY );
     return rc;
 }
-#else
-unsigned SysRunCommandPipe(const char *cmd, int *readpipe)
-{
-    int rc;
-    int pipe_fd[2];
-
-    if ( _pipe( pipe_fd, 256, 0 ) == -1 )
-        return( errno );
-    if ( dup2( pipe_fd[1], STDOUT_FILENO ) == -1 )
-        return( errno );
-    if ( dup2( pipe_fd[1], STDERR_FILENO ) == -1 )
-        return( errno );
-    rc = spawnl( P_NOWAITO, CmdProc, CmdProc, "/c", cmd, NULL );
-    close( pipe_fd[1] );
-    *readpipe = pipe_fd[0];
-    return rc;
-}
-#endif
 
 unsigned SysChdir( char *dir )
 {
-    char        *end;
     unsigned    retval;
 
     retval = SysDosChdir( dir );
 
-    end = strchr( Title, ']' );
-    *(end+1) = '\0';
+    SysSetTitle( Title );
 
-    strcat( Title, " (" );
-    getcwd( Title+strlen(Title), TITLESIZE - strlen( Title ) - 2 );
-    strcat( Title, ")" );
-    SetConsoleTitle( Title );
     return( retval );
-}
-
-void SysSetTitle( char *title )
-{
-    char        *end;
-
-    end = strchr( Title, ']' );
-    *(end+1) = '\0';
-
-    strcat( Title, " (" );
-    getcwd( Title+strlen(Title), TITLESIZE - strlen( Title ) - 2 );
-    strcat( Title, ")" );
-    SetConsoleTitle( Title );
 }
