@@ -299,7 +299,7 @@ gr_device _FARD         _GrEGA_16 = {
 };
 
 gr_device _FARD         _GrEGA_EO = {
-    _NoOp, _NoOp,     // init routine is never called
+    (short (*)(short))_NoOp, _NoOp,     // init routine is never called
     _EGASetEO, _EGAResetEO,
     _EGASetupMono,
     _EGAMoveUpHi,_EGAMoveLeft,_EGAMoveDownHi,_EGAMoveRight,
