@@ -31,7 +31,7 @@ extra_objs = &
 
 #       pgmexec.obj &
 
-extra_incs = $(trap_dir)\lcl\dos\h
+extra_incs = $(lang_root)\h\nt;$(trap_dir)\lcl\dos\h
 extra_cflags = /dWOW
 
 !include $(trap_dir)\lcl\lcl.mif
