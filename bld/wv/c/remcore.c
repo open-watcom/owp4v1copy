@@ -314,7 +314,9 @@ static void WriteRegs( machine_state *state )
     in[1].ptr = &state->mr;
     in[1].len = CurrRegSize;
     TrapAccess( 2, &in, 0, NULL );
-    if( ms != MS_OK ) MADRegistersHost( &state->mr );
+    // Always convert regs back to host format; might be more
+    // efficient to create a local copy instead
+    MADRegistersHost( &state->mr );
     if( state->ovl != NULL ) {
         RemoteSectTblWrite( state->ovl );
     }
