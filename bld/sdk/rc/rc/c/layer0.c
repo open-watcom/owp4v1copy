@@ -103,6 +103,8 @@ typedef struct RcFileEntry {
 
 static RcFileEntry RcFileList[ RC_MAX_FILES ];
 
+static int RcFindIndex(int fileno );
+
 static RcBuffer * NewRcBuffer( void )
 /***********************************/
 {
@@ -471,8 +473,7 @@ extern void Layer0InitStatics( void )
 /* Find index in RcFileList table of given filehandle.
 *  Return: RC_MAX_FILES if not found, else index
 */
-
-int RcFindIndex(int fileno )
+static int RcFindIndex(int fileno )
 /******************************/
 {
     int         i;
