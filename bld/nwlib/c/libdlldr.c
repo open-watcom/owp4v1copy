@@ -51,7 +51,7 @@ int main                        // MAIN-LINE FOR DLL DRIVER
     , char* args[] )            // - arguments
 {
     int retcode;                // - return code
-#ifndef __QNX__
+#ifndef __UNIX__
     int len;
     char *cmd_line;
 #endif
@@ -59,7 +59,7 @@ int main                        // MAIN-LINE FOR DLL DRIVER
 #ifdef IDE_PGM
     ImageName = args[0];
 #endif
-#ifndef __QNX__
+#ifndef __UNIX__
     count = count;
     args = args;
     len = _bgetcmd( NULL, 0 ) + 1;
