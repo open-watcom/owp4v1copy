@@ -7,6 +7,7 @@ name = builder
 .mif: $(mif_path)
 !include cproj.mif
 !include defrule.mif
+!include deftarg.mif
 
 all: $(name).exe cdsay.exe sweep.exe wsplice.exe diff.exe
 
@@ -38,10 +39,3 @@ wsplice.exe : wsplice.obj
 diff.exe : diff.obj
         $(linker) $(lflags) name $^@ op map,quiet file { $< }
         @copy $^. $(bld_bin)
-
-clean: .SYMBOLIC .EXPLICIT
-        @if exist *.?bj del *.?bj
-        @if exist *.exe del *.exe
-        @if exist *.err del *.err
-        @if exist *.map del *.map
-        @if exist *.sym del *.sym
