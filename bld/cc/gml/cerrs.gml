@@ -389,14 +389,14 @@ have a prototype for that function defined. Implicit prototype will
 be used, but this will cause problems if the assumed prototype does
 not match actual function definition.
 :MSGSYM. ERR_NO_STG_OR_TYPE
-:MSGTXT. No storage class or type specified 
+:MSGTXT. No storage class or type specified
 :MSGJTXT.
 :WARNING. 1
 .np
 When declaring a data object, either storage class or data type must be
-given. If no type is specified, 
-.kw int 
-is assumed. If no storage class is specified, the default depends on 
+given. If no type is specified,
+.kw int
+is assumed. If no storage class is specified, the default depends on
 scope (see the
 .us C Language Reference
 for details). For instance
@@ -528,7 +528,7 @@ If an object is declared without specifying its type, such as
 .exam begin
 register count;
 .exam end
-then its type will be assumed to be 
+then its type will be assumed to be
 .kw int
 .
 :eMSGGRP. Warn3
@@ -1601,6 +1601,10 @@ An error was encountered trying to read information from the work file.
 :MSGJTXT. ワーク・ファイルのシーク・エラー：エラーコード = %d
 .np
 An error was encountered trying to seek to a position in the work file.
+:MSGSYM. ERR_UNUSED_3
+:MSGTXT. not used
+:MSGJTXT. このメッセージは使用されません
+unused message
 :MSGSYM. ERR_OUT_OF_ENUM_MEMORY
 :MSGTXT. Out of enum space
 :MSGJTXT. enum空間が不足です
