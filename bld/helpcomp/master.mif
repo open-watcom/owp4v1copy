@@ -6,11 +6,11 @@ whc_autodepends = .autodepend
 !include deftarg.mif
 !include defrule.mif
 
-inc_dirs = ..\h;$(cpp_dir)
+inc_dirs = ../h;$(cpp_dir)
 
 extra_cpp_flags = -xs
 
-.cpp: ..\cpp
+.cpp: ../cpp
 .c: $(trmem_dir)
 
 objs =                  &
