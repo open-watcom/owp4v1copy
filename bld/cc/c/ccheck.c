@@ -84,7 +84,7 @@ local  cmp_type const __FAR CompTable[22][22] = {
 };
 
 static cmp_type CompatibleType( TYPEPTR typ1, TYPEPTR typ2, int assignment );
-static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level, 
+static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
                                   int assignment );
 
 static cmp_type InUnion( TYPEPTR typ1, TYPEPTR typ2, int reversed )
@@ -507,9 +507,6 @@ static cmp_type CompatibleType( TYPEPTR typ1, TYPEPTR typ2, int assignment )
                 }else if( size1 > size2 ){
                     ret_pq = PX;
                 }
-            }
-            if( ( typ1_flags & FLAG_LANGUAGES ) != ( typ2_flags & FLAG_LANGUAGES ) ){
-                ret_pq = PX;
             }
         }
         typ1 = typ1->object;
