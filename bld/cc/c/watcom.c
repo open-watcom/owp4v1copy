@@ -31,8 +31,11 @@
 
 #include "cvars.h"
 #include <banner.h>
+
+#ifdef _BANEXTRA
 #undef  _BANEXTRA
 #define _BANEXTRA _BANEXSHORT
+#endif
 
 
 char CompilerID[] = { "__WATCOMC__=" BANSTR( _BANVER ) };
