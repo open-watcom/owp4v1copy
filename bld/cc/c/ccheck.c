@@ -85,7 +85,7 @@ local  cmp_type const __FAR CompTable[22][22] = {
 
 static cmp_type CompatibleType( TYPEPTR typ1, TYPEPTR typ2, int assignment );
 static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
-                                  int assignment );
+                                  int assign_compar );
 
 static cmp_type InUnion( TYPEPTR typ1, TYPEPTR typ2, int reversed )
 {
@@ -321,7 +321,7 @@ local int CompatibleFunction( TYPEPTR typ1, TYPEPTR typ2 )
 #define QUAL_FLAGS (FLAG_CONST|FLAG_VOLATILE|FLAG_UNALIGNED)
 
 static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
-                                  int assignment )
+                                  int assign_compar )
 {
     cmp_type         ret_val;
     type_modifiers   typ1_flags, typ2_flags;
@@ -360,7 +360,7 @@ static cmp_type DoCompatibleType( TYPEPTR typ1, TYPEPTR typ2, int top_level,
     if( typ1->decl_type == TYPE_VOID || typ2->decl_type == TYPE_VOID ){
     // allow  void ** with any **
         if( top_level==1 || !CompFlags.strict_ANSI ){
-            if ( !assignment || top_level > 1 ) {
+            if ( !assign_compar || top_level > 1 ) {
                 CWarn1( WARN_PCTYPE_MISMATCH, ERR_PCTYPE_MISMATCH );
             }
             return( ret_val ); // void *  and  anything *
@@ -513,7 +513,7 @@ static cmp_type CompatibleType( TYPEPTR typ1, TYPEPTR typ2, int assignment )
         typ2 = typ2->object;
         ++top_level;
     }
-    ret_val = DoCompatibleType( typ1, typ2, top_level, assignment );
+    ret_val = DoCompatibleType( typ1, typ2, top_level, 1 );
     if( ret_val == OK ){
         ret_val = ret_pq;
     }
