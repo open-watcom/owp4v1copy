@@ -86,9 +86,8 @@ int GetEXEHeader( HANDLE handle, header_info *hi, WORD *stack )
         return( FALSE );
     }
 
-    if( !SeekRead( handle, nh_offset, &sig, sizeof( sig ) ) ) {
-        return( FALSE );
-    }
+    if( !SeekRead( handle, nh_offset, &sig, sizeof( sig ) ) )
+        sig = 0;
     hi->sig = sig;
     if( sig == EXE_PE ) {
         if( !SeekRead( handle, nh_offset, &hi->peh, sizeof( pe_header ) ) ) {
