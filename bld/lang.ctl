@@ -80,8 +80,8 @@ echo Languages Build <1>
 #
 #        Starting with the code generators
 #
-#        BWOMP must be done before BWASM
-#[ INCLUDE <devdir>\womp\lang.ctl ]
+#        BWOMP must be done before BWASM and F77
+[ INCLUDE <devdir>\womp\lang.ctl ]
 #        BWASM must be done early so that inline assembler users are up-to-date
 [ INCLUDE <devdir>\wasm\lang.ctl ]
 [ INCLUDE <devdir>\cg\lang.ctl ]
