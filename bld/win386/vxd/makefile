@@ -47,15 +47,17 @@ $(LNK) : makefile
 !else
         @for %i in ($(objs)) do @%append $(lnk) file %i
         @%append $(LNK) libfile $(objl)
-        @%append $(LNK) form OS2 LE VIRT
+        @%append $(LNK) form windows vxd
         @%append $(LNK) name wdebug.386
         @%append $(LNK) export WDEBUG_DDB.1
         @%append $(LNK) option map
         @%append $(LNK) option description 'Win386 WDEBUG Device  (Version 1.0)'
-        @%append $(LNK) segment '_LTEXT'  preload
-        @%append $(LNK) segment '_LDATA'  preload
+        @%append $(LNK) segment '_LTEXT'  preload nondiscardable
+        @%append $(LNK) segment '_LDATA'  preload nondiscardable
         @%append $(LNK) segment '_ITEXT'  discardable
         @%append $(LNK) segment '_IDATA'  discardable
+        @%append $(LNK) segment '_TEXT'   nondiscardable
+        @%append $(LNK) segment '_DATA'   nondiscardable
 !endif
 
 $(LNKEMU) : makefile
@@ -69,16 +71,18 @@ $(LNKEMU) : makefile
 !else
         @for %i in ($(objs)) do @%append $(LNKEMU) file %i
         @%append $(LNKEMU) libfile $(objl)
-        @%append $(LNKEMU) form OS2 LE VIRT
+        @%append $(LNKEMU) form windows vxd
         @%append $(LNKEMU) name wemu387.386
         @%append $(LNKEMU) option modname=WDEBUG
         @%append $(LNKEMU) export WDEBUG_DDB.1
         @%append $(LNKEMU) option map
         @%append $(LNKEMU) option description 'Win386 WEMU387 Device  (Version 1.0)'
-        @%append $(LNKEMU) segment '_LTEXT'  preload
-        @%append $(LNKEMU) segment '_LDATA'  preload
+        @%append $(LNKEMU) segment '_LTEXT'  preload nondiscardable
+        @%append $(LNKEMU) segment '_LDATA'  preload nondiscardable
         @%append $(LNKEMU) segment '_ITEXT'  discardable
         @%append $(LNKEMU) segment '_IDATA'  discardable
+        @%append $(LNKEMU) segment '_TEXT'   nondiscardable
+        @%append $(LNKEMU) segment '_DATA'   nondiscardable
 !endif
 
 .obj : $(OBJ)

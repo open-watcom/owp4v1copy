@@ -34,7 +34,6 @@ $(LNK) : makefile ..\win386.mif
     @%append $(LNK) option nocaseexact
     @%append $(LNK) option map,nodefault
     @%append $(LNK) option symf=$(EXTNAME).sym
-    @%append $(LNK) library win31
     @%append $(LNK) library clibs
     @%append $(LNK) segment CLASS 'CODE' PRELOAD MOVEABLE
     @%append $(LNK) segment CLASS 'BEGDATA' PRELOAD MOVEABLE

@@ -24,8 +24,8 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  DEBUG - Windows 3.x/9x Virtual Device Driver
+;*               
 ;*
 ;*****************************************************************************
 
