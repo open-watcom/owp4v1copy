@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Utilities for processing creation of load files.
 *
 ****************************************************************************/
 
-
-/*
-   LOADFILE : utilities for processing creation of load files
-
-*/
 
 #include <string.h>
 #include <process.h>
@@ -604,12 +598,12 @@ static void SetupImpLib( void )
         }
         fname = RemovePath( Root->outfile->fname, &namelen );
         ImpLib.dlllen = namelen;
-        if( !(FmtData.type & MK_OS2_FLAT) ) {
+        if( !(FmtData.type & MK_OS2) ) {
             ImpLib.dlllen += 4;
         }
         _ChkAlloc( ImpLib.dllname, ImpLib.dlllen );
         memcpy( ImpLib.dllname, fname, namelen );
-        if( !(FmtData.type & MK_OS2_FLAT) ) {
+        if( !(FmtData.type & MK_OS2) ) {
             memcpy( ImpLib.dllname + namelen, ".dll", 4 );
         }
     }
