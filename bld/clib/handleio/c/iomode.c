@@ -79,10 +79,10 @@ unsigned __GetIOMode( unsigned handle )
     return( __io_mode[handle] );
 }
 
-void __CloseIOMode( unsigned handle )
+void __SetIOMode_nogrow( unsigned handle, unsigned value )
 {
     if( handle < __NFiles ) {
-        __io_mode[handle] = 0;    /* we're closing it; smite _INITIALIZED */
+        __io_mode[handle] = value;    /* we're closing it; smite _INITIALIZED */
     }
 }
 

@@ -55,7 +55,7 @@
 #include "rtdata.h"
 #include "seterrno.h"
 #include "defwin.h"
-
+#include "lseek.h"
 
 #ifdef __NT__
 #ifndef INVALID_SET_FILE_POINTER
@@ -163,9 +163,9 @@ static int zero_pad( int handle )           /* 09-jan-95 */
     char    zeroBuf[PAD_SIZE];
 
     // Pad with zeros due to lseek() past EOF (POSIX)
-    curPos = lseek( handle, 0L, SEEK_CUR ); /* current offset */
+    curPos = __lseek( handle, 0L, SEEK_CUR ); /* current offset */
     if( curPos == -1 )  return( -1 );
-    eodPos = lseek( handle, 0L, SEEK_END ); /* end of data offset */
+    eodPos = __lseek( handle, 0L, SEEK_END ); /* end of data offset */
     if( eodPos == -1 )  return( -1 );
 
     if( curPos > eodPos ) {
@@ -184,7 +184,7 @@ static int zero_pad( int handle )           /* 09-jan-95 */
         } while( bytesToWrite != 0 );
     }
     } else {
-    curPos = lseek( handle, curPos, SEEK_SET );
+    curPos = __lseek( handle, curPos, SEEK_SET );
     if( curPos == -1 )  return( -1 );
     }
 
@@ -330,7 +330,7 @@ static int os_write( int handle, const void *buffer, unsigned len, unsigned *amt
     // Pad the file with zeros if necessary
     if( iomode_flags & _FILEEXT ) {
     // turn off file extended flag
-    __SetIOMode( handle, iomode_flags&(~_FILEEXT) );
+    __SetIOMode_nogrow( handle, iomode_flags&(~_FILEEXT) );
 
     // It is not required to pad a file with zeroes on an NTFS file system;
     // unfortunately it is required on FAT (and probably FAT32). (JBS)

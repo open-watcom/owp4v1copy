@@ -53,6 +53,7 @@
 #include "rtdata.h"
 #include "seterrno.h"
 #include "defwin.h"
+#include "lseek.h"
 
 
 #if defined(__WINDOWS_386__)
@@ -177,7 +178,7 @@
             finish_idx = reduce_idx;
             for(; reduce_idx < amount_read; ++reduce_idx ) {
                 if( buffer[ reduce_idx ] == 0x1a ) {    /* EOF */
-                    lseek( handle,
+                    __lseek( handle,
                            ((long)reduce_idx - (long)amount_read)+1L,
                            SEEK_CUR );
                     total_len += finish_idx;

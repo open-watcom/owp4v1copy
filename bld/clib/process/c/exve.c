@@ -47,6 +47,7 @@
 #include "tinyio.h"
 #include "rtdata.h"
 #include "seterrno.h"
+#include "lseek.h"
 
 extern  void    (*__int23_exit)();
 extern  int     (*__Exec_addr)();
@@ -114,7 +115,7 @@ _WCRTLINK int execve( path, argv, envp )
              + (exe.length_mod_512 + 15)/16
              +  exe.min_para - exe.header_para;
     } else {
-        para = (lseek( file, 0, SEEK_END ) + MIN_COM_STACK + 15)/16;
+        para = (__lseek( file, 0, SEEK_END ) + MIN_COM_STACK + 15)/16;
     }
     close( file );
     argv[0] = buffer;           /* 22-jan-88 set program name */

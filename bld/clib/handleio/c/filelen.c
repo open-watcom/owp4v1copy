@@ -47,6 +47,7 @@
 #endif
 #include "fileacc.h"
 #include "rtcheck.h"
+#include "lseek.h"
 
 
 #if defined(__INT64__) && !defined(__NT__)
@@ -107,14 +108,14 @@ _WCRTLINK long filelength( int handle )
     _ReleaseFileH( handle );
     RETURN_INT64(file_len);
 #else
-    current_posn = lseek( handle, 0L, SEEK_CUR );
+    current_posn = __lseek( handle, 0L, SEEK_CUR );
     if( current_posn == -1L )
     {
         _ReleaseFileH( handle );
         return( -1L );
     }
-    file_len = lseek( handle, 0L, SEEK_END );
-    lseek( handle, current_posn, SEEK_SET );
+    file_len = __lseek( handle, 0L, SEEK_END );
+    __lseek( handle, current_posn, SEEK_SET );
 
     _ReleaseFileH( handle );
     return( file_len );

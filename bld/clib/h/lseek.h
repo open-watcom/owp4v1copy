@@ -24,46 +24,18 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  basic __lseek (without file extend) definition/prototype
 *
 ****************************************************************************/
 
 
-#ifndef _IOMODE_H_INCLUDED
-#define _IOMODE_H_INCLUDED
+#ifndef _LSEEK_H_INCLUDED
+#define _LSEEK_H_INCLUDED
 
-#if defined(__NT__)
-
-#define NULL_HANDLE  (HANDLE)-1
-// define a temporary dummy handle that isn't 0 or -1
-#define DUMMY_HANDLE (HANDLE)-2
-
-extern  unsigned    __NHandles;
-
-extern  void        __initPOSIXHandles( void );
-extern  unsigned    __growPOSIXHandles( unsigned num );
-extern  int         __allocPOSIXHandle( HANDLE hdl );
-extern  void        __freePOSIXHandle( int hid );
-extern  HANDLE      __getOSHandle( int hid );
-extern  int         __setOSHandle( unsigned hid, HANDLE hdl );
-extern  HANDLE      __NTGetFakeHandle( void );
-
-extern  HANDLE      *__OSHandles;
-
-#define __getOSHandle( hid ) __OSHandles[ hid ]
-#define NT_STDIN_FILENO (__getOSHandle( STDIN_FILENO ))
-#define NT_STDOUT_FILENO (__getOSHandle( STDOUT_FILENO ))
-#define NT_STDERR_FILENO (__getOSHandle( STDERR_FILENO ))
-
-#endif
-
-#if !defined(__NETWARE__)
-
-extern  unsigned    __GetIOMode( int __handle );
-extern  unsigned    __SetIOMode( int __handle, unsigned __value );
-extern  unsigned    __SetIOMode_nogrow( int __handle, unsigned __value );
-
+#if defined(__DOS__) || defined(__OS2__) || defined(__NT__) || defined(__WINDOWS__)
+extern  long    __lseek( int handle, long offset, int origin );
+#else
+#define __lseek lseek
 #endif
 
 #endif

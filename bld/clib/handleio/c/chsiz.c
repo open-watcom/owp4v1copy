@@ -40,6 +40,7 @@
 #include "rtcheck.h"
 #include "rtdata.h"
 #include "seterrno.h"
+#include "lseek.h"
 
 _WCRTLINK int chsize( int handle, long size )
     {
@@ -51,9 +52,9 @@ _WCRTLINK int chsize( int handle, long size )
 
         __handle_check( handle, -1 );
 
-        current_offset = lseek( handle, 0L, SEEK_CUR ); /* remember current */
+        current_offset = __lseek( handle, 0L, SEEK_CUR ); /* remember current */
         if( current_offset == -1 )  return( -1 );
-        diff = size - lseek( handle, 0L, SEEK_END );
+        diff = size - __lseek( handle, 0L, SEEK_END );
 
         if( diff > 0 ) {
             /*** Increase file size ***/
@@ -72,7 +73,7 @@ _WCRTLINK int chsize( int handle, long size )
 
         } else {
             /*** Shrink the file ***/
-            status = lseek( handle, size, SEEK_SET );
+            status = __lseek( handle, size, SEEK_SET );
             if( status != -1 ) {
                 status = TinyWrite( handle, buff, 0 );
                 if( TINY_ERROR(status) ) {
@@ -85,7 +86,7 @@ _WCRTLINK int chsize( int handle, long size )
             if( current_offset > size ) current_offset = size;
         }
 
-        status = lseek( handle, current_offset, SEEK_SET );
+        status = __lseek( handle, current_offset, SEEK_SET );
         if( status == -1)  ret_code = -1;
         if( ret_code != -1 )  ret_code = 0;
         return( ret_code );

@@ -33,8 +33,9 @@
 #include "variety.h"
 #include <sys/types.h>
 #include <unistd.h>
+#include "lseek.h"
 
 _WCRTLINK long int tell( int handle )
 {
-    return( lseek( handle, 0L, SEEK_CUR ) );
+    return( __lseek( handle, 0L, SEEK_CUR ) );
 }

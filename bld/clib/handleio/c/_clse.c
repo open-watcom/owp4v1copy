@@ -64,6 +64,6 @@ int __close( int handle )
         __set_errno( EBADF );
         rv = -1;
     }
-    __CloseIOMode( handle );
+    __SetIOMode_nogrow( handle, 0 );
     return( rv );
 }

@@ -38,18 +38,13 @@
 #include "fileacc.h"
 #include "tmpfname.h"
 #include "rtdata.h"
+#include "lseek.h"
 
 extern  void    __freefp( FILE *fp );
 extern  int     __flush( FILE *fp );
 extern  int     __close( int );
 #if !defined(__UNIX__)
 void    (*__RmTmpFileFn)( FILE *fp );
-#endif
-
-#if defined(__DOS__) || defined(__OS2__) || defined(__NT__) || defined(__WINDOWS__)
-extern  long    __lseek( int handle, long offset, int origin );
-#else
-#define __lseek lseek
 #endif
 
 _WCRTLINK int fclose( FILE *fp )

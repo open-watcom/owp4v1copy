@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  fflush helper implementation
 *
 ****************************************************************************/
 
@@ -39,14 +38,9 @@
 #include "rtdata.h"
 #include "seterrno.h"
 #include "qwrite.h"
+#include "lseek.h"
 
 #if !defined(__NETWARE__) && !defined (_THIN_LIB)
-
-#if defined(__DOS__) || defined(__OS2__) || defined(__NT__) || defined(__WINDOWS__)
-extern  long    __lseek( int handle, long offset, int origin );
-#else
-#define __lseek lseek
-#endif
 
 _WCRTLINK int __flush( FILE *fp )
 {

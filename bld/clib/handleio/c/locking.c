@@ -44,6 +44,7 @@
 #include "rtcheck.h"
 #include "rtdata.h"
 #include "seterrno.h"
+#include "lseek.h"
 
 #ifdef __UNIX__
 _WCRTLINK int (locking)( int handle, int mode, unsigned long nbytes )
@@ -108,7 +109,7 @@ _WCRTLINK int (locking)( int handle, int mode, unsigned long nbytes )
 
     __handle_check( handle, -1 );
 
-    offset = lseek( handle, 0L, SEEK_CUR );
+    offset = __lseek( handle, 0L, SEEK_CUR );
     if( mode == LK_UNLCK ) return( unlock( handle, offset, nbytes ) );
     for( retry_count = 0; retry_count < 10; ++retry_count ) {
         rc = lock( handle, offset, nbytes );
