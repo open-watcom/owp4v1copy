@@ -10,9 +10,6 @@ extra_c_flags_message = $(targdef)
 extra_c_flags_translat = $(targdef)
 extra_c_flags_nmake = $(targdef)
 
-.c :  ../c;../../c
-.h :  ../h;../../h
-
 #
 # Instructions for building the executable.
 #

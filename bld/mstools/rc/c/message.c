@@ -39,7 +39,7 @@
 
 
 static char *           usageMsg[] = {
-    #include "usagemsg.h"
+    #include "usagemsg.gh"
     NULL
 };
 
