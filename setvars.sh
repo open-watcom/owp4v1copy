@@ -26,6 +26,7 @@ export DEVDIR=$OWROOT/bld
 export devdir=$DEVDIR
 export DWATCOM=$WATCOM
 export INCLUDE=$WATCOM/lh:$DEVDIR/watcom/h
+export LIB=$OWROOT/bld/watcom/lib
 export LANG_BLD=$OWROOT/bat
 export owroot=$OWROOT
 export PATH=$OWROOT/bin:$DEVDIR/build/binl:$OWROOT/bat:$WATCOM/binl:$DOC_ROOT/cmds:$DEFPATH
