@@ -92,7 +92,7 @@ cppflags = $(defines) -DNDEBUG -D__UNIX__ -D__LINUX__ &
 cflags = $(extra_c_flags) $(cppflags) -g -c -Wall -funsigned-char -fno-asm -pipe -O -o $@
 
 # options for single source utility compilations
-wcl_util_opts = -funsigned-char -Wall $(cppflags) $(inc_dirs) $(ldflags) -o $@ $(defines) $(libs)
+wcl_util_opts = -funsigned-char -Wall $(cppflags) $(inc_dirs) $(ldflags) -o $@ $(defines)
 
 # options for linking via cc
 clflags = -o $@
