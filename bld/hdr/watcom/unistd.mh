@@ -199,6 +199,10 @@ _WCRTLINK extern int    mount( const char *__special, const char * __dir, int __
 _WCRTLINK extern int    tcsetct( int __fildes, pid_t pid );
 _WCRTLINK extern int    umount( const char *__special );
 :endsegment
+:segment LINUX
+_WCRTLINK extern int    truncate( const char *__path, off_t __length );
+_WCRTLINK extern int    ftruncate( int __fd, off_t __length );
+:endsegment
 
 :include ext.sp
 

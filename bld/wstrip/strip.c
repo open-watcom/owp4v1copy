@@ -39,7 +39,7 @@
 #include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#if defined(__QNX__)
+#if defined(__UNIX__)
 #include <utime.h>
 #else
 #include <sys/utime.h>
@@ -74,7 +74,7 @@ typedef struct WResHeader {
 
 
 #define NULLCHAR        '\0'
-#ifdef __QNX__
+#ifdef __UNIX__
     #define PATH_SEP '/'
     #define CASE_PATH_SEP case'/'
     #define PATH_LIST_SEP ':'
@@ -116,13 +116,13 @@ void    Banner(void);
 static char *Buffer;
 
 static char *ExtLst[] = {
-#ifdef __QNX__
+#ifdef __UNIX__
         "", ".qnx",
 #endif
         ".exe", ".dll",
         ".exp", ".rex",
         ".nlm", ".dsk", ".lan", ".nam",
-#ifndef __QNX__
+#ifndef __UNIX__
         ".qnx", "",
 #endif
         NULL };
@@ -166,7 +166,7 @@ int main( int argc, char *argv[] )
     j = argc-1;
     while( j > 0 ) {
         if( argv[j][0] == '-'
-#ifndef __QNX__
+#ifndef __UNIX__
             || argv[j][0] == '/'
 #endif
           ) {
@@ -345,7 +345,7 @@ static void StripInfo()
     }
 
     if( finfo.name[0] != '\0' && info.type != WRAP_NONE ) {
-#ifdef __QNX__
+#ifdef __UNIX__
         if( strcmp( finfo.name, fout.name ) == 0 ) {
             strcat( finfo.name, (res ? ResExt : SymExt) );
         }
@@ -392,7 +392,7 @@ static int Suffix( char *fname, char *suff )
         --scan;
         if( scan <= fname ) break;
         if( *scan == '/' ) break;
-#if !defined( __QNX__ )
+#if !defined( __UNIX__ )
         if( *scan == '\\' ) break;
 #endif
         if( *scan == '.' ) return( 0 ); /* already has an extension */

@@ -39,8 +39,6 @@
 #include "rtcheck.h"
 #include "seterrno.h"
 
-// TODO: Need Linux POSIX library!
-#if 0
 _WCRTLINK int chsize( int handle, long size )
 {
     long        current_offset;
@@ -83,11 +81,10 @@ _WCRTLINK int chsize( int handle, long size )
         if( write( handle, &buff, amount ) != amount ) return( -1 );
     } else {
         /* truncate file */
-        if( ltrunc( handle, size, SEEK_SET ) != size ) return( -1 );
+        if( ftruncate( handle, size ) != 0 ) return( -1 );
         if( current_offset > size ) current_offset = size;
     }
     lseek( handle, current_offset, SEEK_SET );
     return( 0 );
 }
-#endif
 

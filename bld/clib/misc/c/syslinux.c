@@ -291,5 +291,15 @@ _WCRTLINK int rename( const char *__old, const char *__new )
     __syscall_return(int,res);
 }
     
-                        
+_WCRTLINK int truncate( const char *__path, off_t __length )
+{
+    int res = sys_call2(SYS_truncate, (u_long)__path, __length);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int ftruncate( int __fd, off_t __length )
+{
+        int res = sys_call2(SYS_ftruncate, __fd, __length);
+    __syscall_return(int,res);
+}
         
