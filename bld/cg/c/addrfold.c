@@ -43,6 +43,8 @@
 #include "freelist.h"
 #include "cfloat.h"
 
+#include "addrfold.h"
+
 extern  type_class_def  TypeClass(type_def*);
 extern  void            AddrFree(an);
 extern  instruction     *MakeUnary(opcode_defs,name*,name*,type_class_def);
@@ -70,6 +72,8 @@ extern  void            InsToAddr(an );
 extern  name            *MaybeTemp(name *,type_class_def );
 extern  void            MoveAddress(an ,an );
 extern  i_flags         AlignmentToFlags( type_length );
+
+static  void    LoadTempInt( an addr );
 
 typedef enum {
         /* actions which require further actions*/
@@ -633,6 +637,8 @@ extern  name    *GetValue( an addr, name *suggest ) {
                                 addr->offset, XX );
             op = LoadAddress( op, suggest, addr->tipe );
             break;
+        default:
+            break;
         }
     } else if( addr->format == NF_BOOL ) {
         _Zoiks( ZOIKS_025 );
@@ -665,6 +671,8 @@ extern  name    *AddrToName( an addr ) {
             if( addr->offset == 0 ) {
                 op = addr->u.name;
             }
+            break;
+        default:
             break;
         }
     }

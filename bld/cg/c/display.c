@@ -39,12 +39,13 @@
 #include "addrname.h"
 #include "sysmacro.h"
 
+#include "addrfold.h"
+
 typedef struct frame_patch {
         struct frame_patch      *next;
         abspatch_handle         patch;
 } frame_patch;
 
-extern  an              AddrName(name*,type_def*);
 extern  void            AbsPatch(abspatch*,offset);
 extern  name            *GenIns(an);
 extern  name            *TempOffset(name*,type_length,type_class_def);

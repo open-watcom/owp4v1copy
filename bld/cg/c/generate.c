@@ -42,6 +42,8 @@
 #include "ptrint.h"
 #include "feprotos.h"
 
+#include "addrcnst.h"
+
 extern  void            FreeAName(name*);
 extern  instruction*    MakeNop();
 extern  void            AddAnIns(block*,instruction*);
@@ -127,8 +129,6 @@ extern  void            GenEpilog();
 extern  void            SplitVars();
 extern  name            *DeAlias(name*);
 extern  void            AssignOtherLocals();
-extern  void            MakeMovAddrConsts();
-extern  void            KillMovAddrConsts();
 extern  void            BuildIndex();
 extern  bool            CreateBreak();
 extern  void            FixBreak();

@@ -312,11 +312,12 @@ void genBitsetHeader( char *file, int size, char *prefix, char *type_name )
     }
 }
 
-void main( int argc, char *argv[] ) {
+int main( int argc, char *argv[] ) {
 
     if( argc != 5 ) {
         fprintf( stderr, "usage: %s <size> <prefix> <type_name> <file>\n", argv[ 0 ] );
         exit( EXIT_FAILURE );
     }
     genBitsetHeader( argv[ 4 ], atoi( argv[ 1 ] ), argv[ 2 ], argv[ 3 ] );
+    return 0;
 }

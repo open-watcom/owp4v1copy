@@ -45,6 +45,9 @@
 #include "rtclass.h"
 #include "feprotos.h"
 
+#include "addrfold.h"
+#include "bldins.h"
+
 extern  void            FPNotStack(name*);
 extern  an              MakeConst(pointer,type_def*);
 extern  uint            Length(char*);
@@ -55,24 +58,19 @@ extern  void            GenBlock(int,int);
 extern  void            AddTarget(label_handle,bool);
 extern  void            Generate(bool);
 extern  void            EnLink(label_handle,bool);
-extern  label_handle    AskForNewLabel();
+extern  label_handle    AskForNewLabel( void );
 extern  void            AddIns(instruction*);
-extern  instruction     *MakeNop();
-extern  void            BigLabel();
+extern  instruction     *MakeNop( void );
+extern  void            BigLabel( void );
 extern  void            BigGoto(int);
-extern  bool            TGIsAddress();
-extern  bool            CypAddrPlus(an,an,type_def*);
-extern  an              AddrPlus(an,an,type_def*);
-extern  bool            CypAddrShift(an,an,type_def*);
-extern  an              AddrShift(an,an,type_def*);
+extern  bool            TGIsAddress( void );
 extern  instruction     *MakeBinary(opcode_defs,name*,name*,name*,type_class_def);
 extern  name            *GenIns(an);
 extern  type_class_def  TypeClass(type_def*);
 extern  an              InsName(instruction*,type_def*);
 extern  an              MakePoints(an,type_def*);
-extern  an              AddrName(name*,type_def*);
 extern  void            FixCodePtr(an);
-extern  void            NamesCrossBlocks();
+extern  void            NamesCrossBlocks( void );
 extern  instruction     *MakeCondition(opcode_defs,name*,name*,int,int,type_class_def);
 extern  an              MakeGets(an,an,type_def*);
 extern  an              AddrDuplicate(an);
@@ -90,16 +88,16 @@ extern  instruction     *MakeConvert(name*,name*,type_class_def,type_class_def);
 extern  instruction     *MakeNary(opcode_defs,name*,name*,name*,type_class_def,type_class_def,int);
 extern  instruction     *NewIns(int);
 extern  name            *AllocTemp(type_class_def);
-extern  bool            BlkTooBig();
+extern  bool            BlkTooBig( void );
 extern  bool            NeedPtrConvert(an,type_def*);
 extern  void            DoNothing(instruction*);
 extern  type_def        *TypeAddress(cg_type );
 extern  name            *AllocRegName( hw_reg_set );
 extern  name            *AllocMemory(pointer,type_length,cg_class,type_class_def);
-extern  hw_reg_set      ReturnAddrReg();
-extern  hw_reg_set      ScratchReg();
-extern  hw_reg_set      StackReg();
-extern  hw_reg_set      VarargsHomePtr();
+extern  hw_reg_set      ReturnAddrReg( void );
+extern  hw_reg_set      ScratchReg( void );
+extern  hw_reg_set      StackReg( void );
+extern  hw_reg_set      VarargsHomePtr( void );
 extern  an              RegName( hw_reg_set, type_def *);
 extern  label_handle    RTLabel( int );
 extern  name            *AllocIndex( name *, name *, type_length, type_class_def );
@@ -111,6 +109,8 @@ extern    proc_def      *CurrProc;
 extern    type_def      *TypeInteger;
 extern    type_def      *TypeNone;
 extern    bool          HaveCurrBlock;
+
+static  void    BoolFree( bn b );
 
 static  type_def        *LastCmpType;
 static  unsigned_32     UnrollValue = 0;
@@ -364,7 +364,7 @@ extern  bn      Boolean( an node, label_handle entry ) {
 }
 
 
-extern  label_handle    BGGetEntry() {
+extern  label_handle    BGGetEntry( void ) {
 /************************************/
 
     return( CurrBlock->label );
@@ -492,6 +492,8 @@ extern  void    BGGenCtrl( cg_op op, bn expr, label_handle lbl, bool gen ) {
             Generate( FALSE );
         }
         break;
+    default:
+        break;
     }
 }
 
@@ -572,6 +574,8 @@ extern  an      BGUnary( cg_op op, an left, type_def *tipe ) {
             left = Unary( O_CONVERT, left, TypeAddress( T_NEAR_POINTER ) );
         }
 #endif
+    default:
+        break;
     }
     if( new == NULL ) {
         new = Unary( op, left, tipe );
@@ -621,6 +625,8 @@ extern  an      BGBinary( cg_op op, an left,
             }
         }
         break;
+    default:
+        break;
     }
     if( result == NULL ) {
         left = CheckType( left, tipe );
@@ -634,6 +640,7 @@ extern  an      BGBinary( cg_op op, an left,
     result->tipe = tipe;
     return( result );
 }
+
 
 
 extern  an      BGOpGets( cg_op op, an left, an rite,
@@ -725,6 +732,8 @@ extern  bn      BGFlow( cg_op op, bn left, bn rite ) {
             BoolFree( rite );
             EnLink( AskForNewLabel(), TRUE );
             break;
+        default:
+            break;
         }
     }
     return( new );
@@ -793,8 +802,8 @@ extern  void    FlowOff( bn name ) {
 
 
 
-extern  void    BGStartBlock() {
-/******************************/
+extern  void    BGStartBlock( void ) {
+/************************************/
 
     label_handle        lbl;
 

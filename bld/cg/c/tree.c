@@ -52,6 +52,9 @@
 #include "echoapi.h"
 #endif
 
+#include "addrfold.h"
+#include "bldins.h"
+
 extern  type_def    *TypeBoolean;
 extern  type_def    *TypeProcParm;
 extern  type_def    *TypePtr;
@@ -75,35 +78,16 @@ extern  an      PassProcParm(an);
 extern  cn      BGInitCall(an,type_def*,aux_handle);
 extern  void        BGFiniLabel(label_handle);
 extern  label_handle    AskForNewLabel();
-extern  an      BGInteger(signed_32,type_def*);
-extern  void        BGControl(cg_op,bn,label_handle);
-extern  void        BG3WayControl(an,label_handle,label_handle,label_handle);
 extern  void        BGZapBase(name*,type_def*);
-extern  an      Arithmetic(an,type_def*);
-extern  an      Boolean(an,label_handle);
-extern  bn      BGFlow(cg_op,bn,bn);
 extern  an      MakeTempAddr(name*,type_def*);
-extern  name        *BGNewTemp(type_def*);
-extern  an      BGOpGets(cg_op,an,an,type_def*,type_def*);
-extern  an      BGDuplicate(an);
-extern  an      BGCopy(an);
-extern  an      BGAssign(an,an,type_def*);
-extern  bn      BGCompare(cg_op,an,an,label_handle,type_def*);
 extern  label_handle    BGGetEntry();
 extern  an      FoldConsCompare(opcode_defs,tn,tn,type_def*);
-extern  an      BGUnary(cg_op,an,type_def*);
-extern  an      BGConvert(an,type_def*);
-extern  an      BGBinary(cg_op,an,an,type_def*,bool);
 extern  void        TGBlip();
-extern  void        BGGenCtrl(cg_op,bn,label_handle,bool);
 extern  bool        FoldIfFalse(tn,label_handle);
 extern  bool        FoldIfTrue(tn,label_handle);
 extern  tn      FoldFlNot(tn);
 extern  tn      FoldFlOr(tn,tn);
 extern  tn      FoldFlAnd(tn,tn);
-extern  void        BGDone(an);
-extern  name        *AddrToName(an);
-extern  an      AddrName(name*,type_def*);
 extern  an      MakeConst(pointer,type_def*);
 extern  tn      FoldBitCompare(opcode_defs,btn,tn);
 extern  tn      FoldCompare(opcode_defs,tn,tn,type_def*);
@@ -1970,7 +1954,7 @@ an  TNCompare( tn node ) {
     }
     retv = (an)BGCompare( node->op, left, rite, entry, left->tipe );
     } else {
-    retv = Boolean( Arithmetic( retv, TypeInteger ), entry );
+    retv = (an)Boolean( Arithmetic( retv, TypeInteger ), entry );
     }
     return( retv );
 }

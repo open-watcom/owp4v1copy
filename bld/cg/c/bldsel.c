@@ -40,32 +40,26 @@
 #include "tree.h"
 #include "zoiks.h"
 
-extern  an              BGConvert(an,type_def*);
+#include "bldins.h"
+
 extern  label_handle    AskForNewLabel();
-extern  an              BGDuplicate(an);
 extern  type_def        *TypeAddress(cg_type);
 extern  void            AddTarget(label_handle,bool);
 extern  signed_32       IfCost(select_node*,int);
 extern  void            EnLink(label_handle,bool);
 extern  name            *ScanCall(tbl_control*,name*,type_class_def);
-extern  an              BGBinary(cg_op,an,an,type_def*,bool);
 extern  void            AddIns(instruction*);
 extern  signed_32       JumpCost(select_node*);
-extern  bn              BGCompare(cg_op,an,an,label_handle,type_def*);
-extern  an              BGInteger(signed_32,type_def*);
 extern  instruction     *NewIns(int);
-extern  void            BGControl(cg_op,bn,label_handle);
 extern  void            Generate(bool);
 extern  signed_32       ScanCost(select_node*);
 extern  void            GenBlock(int,int);
 extern  name            *GenIns(an);
-extern  void            BGDone(an);
 extern  tbl_control     *MakeScanTab(select_list*,signed_32,
                                      label_handle,cg_type,cg_type);
 extern  tbl_control     *MakeJmpTab(select_list*,signed_32,signed_32,
                                     label_handle);
 extern  name_def        *SelIdx(tbl_control*,an);
-extern  an              Arithmetic(an,type_def*);
 extern  type_def        *SelNodeType(an,bool);
 extern  void            *SortList(void *,unsigned,bool (*)(void*,void*) );
 extern  void            MkSelOp( name *idx, cg_type tipe );
