@@ -10,6 +10,8 @@ if "[%gmlpag%]"=="[]" set gmlpag=%TMPDIR%
 if "[%gmlinc%]"=="[]" set gmlinc=cg;fg;lg;qa;cmn;gml
 if "[%1]" == "[c]" set gmlinc=cl;gml;whelp
 if "[%1]" == "[C]" set gmlinc=cl;gml;whelp
+if "[%1]" == "[cw]" set gmlinc=cw;cmn;gml;whelp
+if "[%1]" == "[CW]" set gmlinc=cw;cmn;gml;whelp
 if "[%1]" == "[devguide]" set gmlinc=devguide;cmn;gml;whelp
 if "[%1]" == "[cguide]" set gmlinc=cg;lg;cmn;plusplus;gml;whelp
 if "[%1]" == "[CGUIDE]" set gmlinc=cg;lg;cmn;plusplus;gml;whelp

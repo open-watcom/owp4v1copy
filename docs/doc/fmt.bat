@@ -7,11 +7,11 @@ set t5=%gmlopt%
 if ["%gml%"]==[""] set gml=%doc_root%\gml\dos\wgml.exe
 if ["%gmllib%"]==[""] set gmllib=%doc_root%\gml\syslib
 if ["%gmlpag%"]==[""] set gmlpag=%TMPDIR%
-if not ["%gmlinc%"]==[""] goto NOINC
-set gmlinc=cg;fg;lg;gs;cmn;gml
+if ["%gmlinc%"]==[""] set gmlinc=cg;fg;lg;qa;cmn;gml
 if ["%1"] == ["c"] set gmlinc=cl;gml;whelp
 if ["%1"] == ["C"] set gmlinc=cl;gml;whelp
-:NOINC
+if ["%1"] == ["cw"] set gmlinc=cw;cmn;gml;whelp
+if ["%1"] == ["CW"] set gmlinc=cw;cmn;gml;whelp
 if ["%1"] == ["devguide"] set gmlinc=devguide;cmn;gml;whelp
 if ["%1"] == ["cguide"] set gmlinc=cg;lg;cmn;plusplus;gml;whelp
 if ["%1"] == ["CGUIDE"] set gmlinc=cg;lg;cmn;plusplus;gml;whelp
