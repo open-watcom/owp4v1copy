@@ -15,8 +15,10 @@ set PROJDIR=<CWD>
 #========================
   [ IFDEF (os_win "") <2*> ]
     <CPCMD> <DEVDIR>/sdk/wr/wini86/wr.dll        <RELROOT>/rel2/binw/wr.dll
+
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> <DEVDIR>/sdk/wr/nt386/wr.dll         <RELROOT>/rel2/binnt/wr.dll
+
   [ IFDEF (cpu_axp) <2*> ]
     <CPCMD> <DEVDIR>/sdk/wr/ntaxp/wr.dll         <RELROOT>/rel2/axpnt/wr.dll
 

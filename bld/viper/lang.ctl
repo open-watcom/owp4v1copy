@@ -9,7 +9,7 @@ set PROJDIR=<CWD>
 
 [ BLOCK <1> build rel2 ]
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h
-    cdsay .
+    cdsay <PROJDIR>
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
@@ -28,15 +28,18 @@ set PROJDIR=<CWD>
 #    <CPCMD> viper/idemfc32.cfg   <RELROOT>/rel2/binw/idemfc32.cfg
 #    <CPCMD> viper/idemfca.cfg    <RELROOT>/rel2/binw/idemfca.cfg
 #    <CPCMD> viper/ideaxp.cfg     <RELROOT>/rel2/binw/ideaxp.cfg
+
   [ IFDEF (os_win "") <2*> ]
     <CPCMD> viper/wini86/ide.exe <RELROOT>/rel2/binw/ide.exe
     <CPCMD> viper/win/idex.cfg   <RELROOT>/rel2/binw/idex.cfg
     <CPCMD> viper/win/wsrv.pif   <RELROOT>/rel2/binw/wsrv.pif
     <CPCMD> viper/win/wd.pif     <RELROOT>/rel2/binw/wd.pif
     <CPCMD> vpdll/wini86/vpdll.dll <RELROOT>/rel2/binw/vpdll.dll
+
   [ IFDEF (os_os2 "") <2*> ]
     <CPCMD> viper/os2386/ide.exe <RELROOT>/rel2/binp/ide.exe
     <CPCMD> viper/os2/idex.cfg   <RELROOT>/rel2/binp/idex.cfg
+
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> viper/nt386/ide.exe  <RELROOT>/rel2/binnt/ide.exe
     <CPCMD> viper/nt/idex.cfg    <RELROOT>/rel2/binnt/idex.cfg
@@ -48,3 +51,5 @@ set PROJDIR=<CWD>
 [ BLOCK <1> clean ]
 #==================
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean
+    cdsay <PROJDIR>
+

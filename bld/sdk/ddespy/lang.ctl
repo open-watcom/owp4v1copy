@@ -12,10 +12,13 @@ set PROJDIR=<CWD>
     cdsay <PROJDIR>
 
 [ BLOCK <1> rel2 cprel2 ]
+#========================
   [ IFDEF (os_win "") <2*> ]
     <CPCMD> <DEVDIR>/sdk/ddespy/wini86/wddespy.exe <RELROOT>/rel2/binw/wddespy.exe
+
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> <DEVDIR>/sdk/ddespy/nt386/wddespy.exe <RELROOT>/rel2/binnt/wddespy.exe
+
   [ IFDEF (cpu_axp) <2*> ]
     <CPCMD> <DEVDIR>/sdk/ddespy/ntaxp/wddespy.exe <RELROOT>/rel2/axpnt/wddespy.exe
 

@@ -18,12 +18,17 @@ set PROJDIR=<CWD>
     <CPCMD> <PROJDIR>/rsii86/wsamprsi.exe     <RELROOT>/rel2/binw/wsamprsi.exe
     <CPCMD> <PROJDIR>/pls386/wsamppls.exp     <RELROOT>/rel2/binw/wsamppls.exp
     <CPCMD> <PROJDIR>/wini86/wsamplew.exe     <RELROOT>/rel2/binw/wsamplew.exe
+
   [ IFDEF (os_os2 "") <2*> ]
 #    <CPCMD> <PROJDIR>/os2i86/wsampos2.exe     <RELROOT>/rel2/binp/wsampos2.exe
     <CPCMD> <PROJDIR>/os2386/wsmpos22.exe     <RELROOT>/rel2/binp/wsmpos22.exe
+
   [ IFDEF (os_nt "") <2*> ]
     <CPCMD> <PROJDIR>/nt386/wsmpnt.exe        <RELROOT>/rel2/binnt/wsample.exe
-#    <CPCMD> <PROJDIR>/ntaxp/wsmpaxp.exe      <RELROOT>/rel2/axpnt/wsample.exe
+
+  [ IFDEF (cpu_axp) <2*> ]
+    <CPCMD> <PROJDIR>/ntaxp/wsmpaxp.exe       <RELROOT>/rel2/axpnt/wsample.exe
+
   [ IFDEF (os_nov "") <2*> ]
     <CPCMD> <PROJDIR>/nlm/wsample.nlm         <RELROOT>/rel2/nlm/wsample.nlm
 
