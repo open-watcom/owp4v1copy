@@ -308,8 +308,8 @@ apilib=$(build_root)\watcom\lib\api.lib
 os2386=$(os2_toolkit)\lib\os2386.lib
 os2286=$(os2_ddk)\base\lib\os2286.lib
 !else
-os2386=$(lang_root)\lib386\os2386.lib
-os2286=$(lang_root)\lib286\os2.lib
+os2386=$(lang_root)\lib386\os2\os2386.lib
+os2286=$(lang_root)\lib286\os2\os2.lib
 !endif
 
 #
