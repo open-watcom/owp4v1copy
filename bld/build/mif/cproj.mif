@@ -154,9 +154,9 @@ clflags_linux_386  = -l=linux
 clflags_linux_ppc  = -l=linux
 
 !ifeq release 1
-clflags_dbg      = 
+clflags_dbg      = -"op symf" 
 !else
-clflags_dbg      = -d2
+clflags_dbg      = -d2 -"op symf"
 !endif
 
 !ifdef $(proj_name)_rtdll
