@@ -1,0 +1,143 @@
+ftest_name = positive
+!include ../environ.mif
+
+positive_dir = source
+
+!include $(positive_dir)/positive.mif
+
+!ifdef test1
+cflags_386 = -d2-mf
+cflags_i86 = -d2-mc-2
+cflags_axp = -d2-si
+!ifndef __MSDOS__
+add_br_ = -br
+!endif
+alt_error = 01
+!else ifdef test2
+cflags_386 = -d1-mf
+cflags_i86 = -d1-mm
+cflags_axp = -d1-si
+alt_error = 02
+!else ifdef test3
+cflags_386 = -d2-ms
+cflags_i86 = -d2-ml
+cflags_axp = -d2
+alt_error = 03
+!else ifdef test4
+cflags_386 = -d1-mf
+cflags_i86 = -d1-ms
+cflags_axp = -d1-si
+alt_error = 04
+!else ifdef test5
+cflags_386 = -d1-mf
+cflags_i86 = -d1-mc-2
+cflags_axp = -d1
+alt_error = 05
+!else ifdef test6
+cflags_386 = -d2-mf
+cflags_i86 = -d2-mm
+cflags_axp = -d2
+alt_error = 06
+!else ifdef test7
+cflags_386 = -d1-ms
+cflags_i86 = -d1-ml
+cflags_axp = -d1
+alt_error = 07
+!else ifdef test8
+cflags_386 = -d2-mf
+cflags_i86 = -d2-ms
+cflags_axp = -d2
+alt_error = 08
+!else ifdef test9
+cflags_386 = -d1-oe-mf
+cflags_i86 = -d1-oe-ms
+cflags_axp = -d1-oe
+alt_error = 09
+!else
+cflags_386 = -ox-d1-ms
+cflags_i86 = -ox-d1-ms
+cflags_axp = -ox-d1
+alt_error = 00
+!ifndef __MSDOS__
+!ifndef __LINUX__
+add_br_ = -br
+!endif
+!endif
+!endif
+
+!ifdef __LINUX__
+exec_prefix = ./
+!else
+exec_prefix =
+!endif
+
+!ifndef noisy
+run_quietly = -Quiet
+!endif
+
+fflags_386 += -INCPath=$(positive_dir) $(run_quietly) #-we-w0
+fflags_i86 += -INCPath=$(positive_dir) $(run_quietly) #-we-w0
+fflags_axp += -INCPath=$(positive_dir) $(run_quietly) #-we-w0
+
+!ifeq arch 386
+cflags_386 += $(add_br_$(no_br_$^*))
+!endif
+
+.error
+    @%append $(%error_file) $(%error_msg)
+
+.for: $(positive_dir)
+.for.obj:
+    @set error_msg=failure to compile $^@
+    $(wfc_$(arch)) $[@ $(fflags_$(arch)) $(opt_$^*) -FO=.obj
+
+.obj.$(exe):
+    @set error_msg=failure to link $^@
+    $(linker) @test.lnk $(opt_link_$^*) FILE $[@ NAME $^@
+    @set error_msg=failure to execute $^@
+    @%append exec.out PASS executing $^@
+    $(run) $(exec_prefix)$^@ >> $*.out
+    diff $*.out expected/$*.exp >> exec.out
+    rm $[@
+    rm $*.out
+#    wstrip -q $^@
+
+test : .symbolic actual_test
+    @set error_file=error.out
+    @set error_msg=failure to complete test stream
+    echo OK > error.out
+    $(bld_cl) chk_exec.c -ox-d1
+    $(exec_prefix)chk_exec exec.out >> error.out
+    diff -b error.out error.chk
+    %make global
+    %append $(log_file) PASS $(%__CWD__)
+
+actual_test : .symbolic start_test $(positive_exes)
+    rm -f *.obj
+    rm -f *.$(exe)
+
+fnstat1.$(exe) : fnstat1a.obj fnstat1b.obj
+    @set error_msg=failure to link $^@
+    $(linker) @test.lnk NAME $^@ FILE $[@, $]@
+    @set error_msg=failure to execute $^@
+    @%append exec.out PASS executing $^@
+    $(run) $(exec_prefix)$^@ >>exec.out
+
+start_test : .symbolic test.lnk
+    %create exec.out
+    @set error_file=exec.out
+
+test.lnk : makefile
+    %create $^@
+    @%append $^@ $(ldebug_$(arch))
+    @%append $^@ $(lnk_$(arch))
+    @%append $^@ OPTION noredef
+
+save : .symbolic
+    if exist exec.out cp exec.out s$(arch)_$(alt_error).sav
+
+global : .symbolic
+    @if exist for007 rm for007
+    @if exist for009 rm for009
+    @if exist for024 rm for024
+    @%make common_clean

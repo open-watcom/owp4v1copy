@@ -170,6 +170,9 @@ linktest_dir    = $(dev_dir)/linktest
 !ifndef f77_dir
 f77_dir         = $(dev_dir)/f77
 !endif
+!ifndef ftest_dir
+ftest_dir       = $(dev_dir)/f77/regress
+!endif
 !ifndef clib_dir
 clib_dir        = $(dev_dir)/clib
 !endif
@@ -478,6 +481,9 @@ linktest_dir    = $(dev_dir)\linktest
 !endif
 !ifndef f77_dir
 f77_dir         = $(dev_dir)\f77
+!endif
+!ifndef ftest_dir
+ftest_dir         = $(dev_dir)\f77\regress
 !endif
 !ifndef clib_dir
 clib_dir        = $(dev_dir)\clib
