@@ -42,7 +42,7 @@ extern void __setenvp( void );
 
 AXI( __setenvp, INIT_PRIORITY_LIBRARY )
 
-#if !defined(__NETWARE__)
+#if !defined(__NETWARE__) && !defined(__LINUX__)
 extern void __freeenvp( void );
 AYI( __freeenvp, INIT_PRIORITY_LIBRARY )
 #endif

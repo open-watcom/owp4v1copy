@@ -35,7 +35,9 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <stdlib.h>
+#if !defined(__UNIX__)
 #include <dos.h>
+#endif
 #include <env.h>
 #include "liballoc.h"
 #include <string.h>
@@ -52,11 +54,11 @@
     extern char _WCI86FAR * _WCI86FAR __pascal GetDOSEnvironment( void );
 #elif defined(__DOS_386__)
     extern char _WCFAR *_Envptr;
-#elif !defined(__NETWARE__)
+#elif !defined(__NETWARE__) && !defined(__LINUX__)
     extern char _WCI86FAR *_Envptr;
 #endif
 
-#if !defined(__NETWARE__)
+#if !defined(__NETWARE__) && !defined(__LINUX__)
 static char *_free_ep;
 
 static void * (_WCI86NEAR allocate)( size_t amt ) {
@@ -87,6 +89,11 @@ static void * (_WCI86NEAR allocate)( size_t amt ) {
 void __setenvp() {
     #if defined(__NETWARE__)
         // no environment support
+    #elif defined(__LINUX__)
+        char **argep = _RWD_environ;
+        while ( *argep != NULL )
+            argep++;
+        _RWD_env_mask = (char *) argep;
     #else
         #if defined(__WINDOWS_386__) || defined(__DOS_386__)
             char        _WCFAR *startp;
@@ -165,7 +172,7 @@ void __setenvp() {
     #endif
 }
 
-#if !defined(__NETWARE__)
+#if !defined(__NETWARE__) && !defined(__LINUX__)
 void __freeenvp() {
     clearenv();
     if( _RWD_environ ) {

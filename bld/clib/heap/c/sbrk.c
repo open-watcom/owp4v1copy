@@ -45,10 +45,6 @@
     #if defined(__386__)
         extern int _brk(void *);
     #endif
-#elif defined(__LINUX__)
-    #include <sys/types.h>
-    #include <unistd.h>
-    #include "syslinux.h"
 #elif defined(__WINDOWS__)
     #include "windows.h"
 #endif
@@ -57,7 +53,7 @@
 
 extern  unsigned                _STACKTOP;
 
-#if !defined(__OS2__) && !defined(__QNX__) && !defined(__LINUX__)
+#if !defined(__OS2__) && !defined(__QNX__)
 
 extern  unsigned short SS_Reg( void );
 #pragma aux SS_Reg              = \
@@ -75,7 +71,7 @@ extern  int SetBlock( unsigned short, size_t );
 
 #endif
 
-#if (defined(__QNX__) && defined(__386__)) || defined(__LINUX__)
+#if (defined(__QNX__) && defined(__386__))
 _WCRTLINK void _WCNEAR *sbrk( int increment ) {
     return( __brk( _curbrk + increment ) );
 }
@@ -113,12 +109,10 @@ _WCRTLINK void _WCNEAR *__brk( unsigned brk_value )
         unsigned seg_size;
         unsigned segment;
 
-#ifndef __LINUX__
         if( brk_value < _STACKTOP ) {
             errno = ENOMEM;
             return( (void _WCNEAR *) -1 );
         }
-#endif
         seg_size = ( brk_value + 0x0f ) >> 4;
         if( seg_size == 0 ) {
             seg_size = 0x1000;
@@ -130,8 +124,6 @@ _WCRTLINK void _WCNEAR *__brk( unsigned brk_value )
         if( DosReallocSeg( seg_size << 4, segment ) != 0 ) {
 #elif defined(__QNX__) && defined(__386__)
         if( _brk((void *)(seg_size << 4)) == -1 ) {
-#elif defined(__LINUX__)
-        if( sys_brk((unsigned long)(seg_size << 4)) == -1 ) {
 #elif defined(__QNX__)
         if( qnx_segment_realloc( segment,((unsigned long)seg_size) << 4) == -1){
 #else

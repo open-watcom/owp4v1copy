@@ -58,8 +58,9 @@
 !inject nmsize.obj   d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32
 !inject nrealloc.obj d16 d32             nt nta ntp         o16 o32 q16 q32 w16 w32 osi l32
 !inject qallflgs.obj                                                q16 q32
-!inject sbrk.obj     d16                                    o16     q16 q32 w16         l32
+!inject sbrk.obj     d16                                    o16     q16 q32 w16
 !inject sbrk386.obj      d32                                    o32             w32 osi
+!inject sbrklnx.obj                                                                     l32
 !inject sbrkwnt.obj                      nt nta ntp
 !inject wafptr.obj                                                          w16 w32
 !inject wallflgs.obj                                                        w16 w32

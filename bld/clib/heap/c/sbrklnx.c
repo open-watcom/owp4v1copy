@@ -24,56 +24,51 @@
 *
 *  ========================================================================
 *
-* Description:  Main C library entry point for Linux
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
+
+#include "dll.h"        // needs to be first
+#include "variety.h"
 #include <stdlib.h>
+#include <errno.h>
+#include <sys/types.h>
 #include <unistd.h>
-#include <string.h>
-#include <i86.h>
-#include <limits.h>
-#include <malloc.h>
-#include "exitwmsg.h"
-#include "initfini.h"
-#include "thread.h"
-#include "rtdata.h"
 #include "syslinux.h"
+#include "heapacc.h"
+#include "heap.h"
 
-int     _argc;                      /* argument count  */
-char    **_argv;                    /* argument vector */
-
-/* address of FP exception handler */
-extern  void    (*__FPE_handler)(int);
-
-static void __null_FPE_rtn()
-{
+_WCRTLINK void _WCNEAR *sbrk( int increment ) {
+    return( __brk( _curbrk + increment ) );
 }
 
-extern int main( int, char **, char ** );
+_WCRTLINK int brk( void *endds ) {
+    return( __brk( (unsigned) endds ) == (void *)-1 ? -1 : 0 );
+}
 
-void __cdecl _LinuxMain(int argc, char **argv, char **arge)
+_WCRTLINK void _WCNEAR *__brk( unsigned brk_value )
 {
-//    thread_data *tdata;
+    unsigned old_brk_value;
+    unsigned sys_brk_value;
+    
+    /* try setting the block of memory */
+    _AccessNHeap();
 
-    // Initialise the heap. To do this we call sbrk() with
-    // a value of 0, which will return the current top of the
-    // process address space which is where we start the heap.
-    _curbrk             = (unsigned)sbrk(0);
-
-    // TODO: Need to find the end of the stack from the kernel! For now
-    //       we make it big enough to cover the heap. This will work, but
-    //       stack checking will not.
-    _STACKLOW           = _curbrk;
-    _argc               = argc;
-    _argv               = argv;
-    environ             = arge;
-    __FPE_handler =     &__null_FPE_rtn;
-    __InitRtns( 1 );
-//    tdata = __alloca( __ThreadDataSize );
-//    memset( tdata, 0, __ThreadDataSize );
-//    tdata->__data_size = __ThreadDataSize;
-    __InitRtns( 255 );
-    _amblksiz = 8 * 1024;       /* set minimum memory block allocation  */
-    exit(main(argc,argv,arge));
+    sys_brk_value = sys_brk( brk_value );
+    if( sys_brk_value == -1 ) {
+        errno = ENOMEM;
+        _ReleaseNHeap();
+        return( (void _WCNEAR *) -1 );
+    }
+    if ( _curbrk == 0 ) {
+        _curbrk = brk_value = sys_brk_value;
+    }
+    
+    old_brk_value = _curbrk;        /* return old value of _curbrk */
+    _curbrk = brk_value;            /* set new break value */
+    
+    _ReleaseNHeap();
+    return( (void _WCNEAR *) old_brk_value );
 }
