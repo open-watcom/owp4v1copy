@@ -180,13 +180,13 @@ def_fpu_flags_win_i86   = -fpi
 def_fpu_flags_qnx_i86   = -fpi
   ######
   # Extenders don't have emulator support
+  # must be -fpc or -fpi
 def_fpu_flags_dos_386   = -fpi
   ######
   # OS/2 ????
 def_fpu_flags_os2_386   = -fpi
   ######
   # OW 386 Windows extender has 387 emulator support
-  # must be -fpi87
 def_fpu_flags_win_386   = -fpi
   ######
   # QNX doesn't have emulator support, but OW has it
