@@ -33,7 +33,6 @@
 #include "variety.h"
 #include <stdio.h>
 #include <limits.h>
-#include <sys/proc_msg.h>
 #include <string.h>
 
 extern  char    **_argv;                /* argument vector */
