@@ -67,7 +67,6 @@ local   TREEPTR SegOp(TREEPTR,TREEPTR);
        call_list  *CallNodeList;
 static call_list **LastCallLnk;
 static call_list **FirstCallLnk;
-static TYPEPTR    DotType;
 
 void ExprInit()
 {
@@ -76,7 +75,6 @@ void ExprInit()
     CallNodeList = NULL;
     LastCallLnk = &CallNodeList;
     FirstCallLnk = LastCallLnk;
-    DotType = GetType( TYPE_DOT_DOT_DOT );
     InitExprTree();
 }
 
