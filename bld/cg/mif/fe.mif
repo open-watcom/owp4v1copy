@@ -1,50 +1,46 @@
-# target_CPU = 386 | i86 | ppc | axp
-# host_CPU = 386 | ppc | axp
-# host_OS  = nt | os2 | qnx | dos | linux
+# target_cpu = 386 | i86 | ppc | axp
+# host_cpu = 386 | ppc | axp
+# host_os  = nt | os2 | qnx | dos | linux
 
-owl_lib_386     = $(owl_dir)/osi386/owl.lib
-owl_lib_axp     = $(owl_dir)/osiaxp/owl.lib
-cf_lib_386      = $(cfloat_dir)/osi386/cf.lib
-cf_lib_axp      = $(cfloat_dir)/osiaxp/cf.lib
+!include $(as_dir)/mif/client.mif
+!include $(owl_dir)/client.mif
+!include $(cfloat_dir)/client.mif
 
 !ifdef bootstrap
-obj_dir         = $(%OBJDIR)
-owl_lib         = $(owl_dir)/$(%OBJDIR)/owl.lib
-cf_lib          = $(cfloat_dir)/$(%OBJDIR)/cf.lib
+obj_dir = $(%OBJDIR)
 !else
-obj_dir         = $(host_OS)$(host_CPU)
-owl_lib         = $(owl_lib_$(host_cpu))
-cf_lib          = $(cf_lib_$(host_cpu))
+obj_dir = $(host_os)$(host_cpu)
 !endif
 
-!ifdef $(proj_name)_rtdll
 !ifeq $(proj_name)_rtdll 1
-obj_dir         = $(host_OS)$(host_CPU).rtd
+obj_dir = $(host_os)$(host_cpu).rtd
 !endif
+
+o_dir_386 = $(cg_dir)/intel/386/$(obj_dir)
+i_dir_386 = $(cg_dir)/intel/386/h;$(cg_dir)/intel/h
+
+o_dir_i86 = $(cg_dir)/intel/i86/$(obj_dir)
+i_dir_i86 = $(cg_dir)/intel/i86/h;$(cg_dir)/intel/h
+
+o_dir_axp = $(cg_dir)/risc/axp/$(obj_dir)
+i_dir_axp = $(cg_dir)/risc/axp/h;$(cg_dir)/risc/h;$(owl_dir)/h
+
+o_dir_ppc = $(cg_dir)/risc/ppc/$(obj_dir)
+i_dir_ppc = $(cg_dir)/risc/ppc/h;$(cg_dir)/risc/h;$(owl_dir)/h
+
+!ifndef o_dir_$(target_cpu)
+!error unsupported target_cpu
 !endif
 
-o_dir_386       = $(cg_dir)/intel/386/$(obj_dir)
-i_dir_386       = $(cg_dir)/intel/386/h;$(cg_dir)/intel/h
+o_dir = $(o_dir_$(target_cpu))
+i_dir = $(i_dir_$(target_cpu));$(cg_dir)/h;$(cfloat_dir)/h
 
-o_dir_i86       = $(cg_dir)/intel/i86/$(obj_dir)
-i_dir_i86       = $(cg_dir)/intel/i86/h;$(cg_dir)/intel/h
+cg_target = $(target_cpu)
 
-o_dir_axp       = $(cg_dir)/risc/axp/$(obj_dir)
-i_dir_axp       = $(cg_dir)/risc/axp/h;$(cg_dir)/risc/h;$(owl_dir)/h
-
-o_dir_ppc       = $(cg_dir)/risc/ppc/$(obj_dir)
-i_dir_ppc       = $(cg_dir)/risc/ppc/h;$(cg_dir)/risc/h;$(owl_dir)/h
-
-!ifndef o_dir_$(target_CPU)
-!error unsupported target_CPU
-!endif
-o_dir           = $(o_dir_$(target_CPU))
-i_dir           = $(i_dir_$(target_CPU));$(cg_dir)/h;$(cfloat_dir)/h
-cg_target       = $(target_CPU)
-!ifeq host_OS linux
-cg_host=lnx
+!ifeq host_os linux
+cg_host = lnx
 !else
-cg_host         = $(host_OS)
+cg_host = $(host_os)
 !endif
 
 use_owl_lib_axp = 1
@@ -60,28 +56,28 @@ cg_inc_dirs = $(i_dir)
 cg_deps = $(o_dir).dll/cgdllcli.lib
 cg_libs = lib $(o_dir).dll/cgdllcli.lib
 !else
-!ifeq use_owl_lib_$(target_CPU) 1
+!ifeq use_owl_lib_$(target_cpu) 1
 cg_deps = &
     $(o_dir)/cg$(cg_target).lib &
     $(o_dir)/cg$(cg_target)$(cg_host).lib &
     $(owl_lib) &
-    $(cf_lib)
+    $(cfloat_lib)
 
 cg_libs = &
     lib $(o_dir)/cg$(cg_target).lib &
     lib $(o_dir)/cg$(cg_target)$(cg_host).lib &
     lib $(owl_lib) &
-    lib $(cf_lib)
+    lib $(cfloat_lib)
 !else
 cg_deps = &
     $(o_dir)/cg$(cg_target).lib &
     $(o_dir)/cg$(cg_target)$(cg_host).lib &
-    $(cf_lib)
+    $(cfloat_lib)
 
 cg_libs = &
     lib $(o_dir)/cg$(cg_target).lib &
     lib $(o_dir)/cg$(cg_target)$(cg_host).lib &
-    lib $(cf_lib)
+    lib $(cfloat_lib)
 !endif
 !endif
 
@@ -98,12 +94,12 @@ owl_debug_refs_axp_386 = , OWLDumpSymTab_
 cg_debug_libs_386 = &
     $(cg_libs) &
     reference DumpTree_, DumpCurrLoop_, DumpInsList_, DumpString_, DumpOpt_, DumpOpcodeName_, &
-        DumpRegTree_, DumpSc_, DumpADataDag_, DumpGen_, Dumpan_, DumpBlk_, DumpConflicts_ $(owl_debug_refs_$(cg_target)_$(host_CPU))
+        DumpRegTree_, DumpSc_, DumpADataDag_, DumpGen_, Dumpan_, DumpBlk_, DumpConflicts_ $(owl_debug_refs_$(cg_target)_$(host_cpu))
 
 cg_debug_libs_axp = &
     $(cg_libs) &
     reference DumpTree, DumpCurrLoop, DumpInsList, DumpString, DumpOpt, DumpOpcodeName, &
-        DumpRegTree, DumpSc, DumpADataDag, DumpGen, Dumpan, DumpBlk, DumpConflicts $(owl_debug_refs_$(cg_target)_$(host_CPU))
+        DumpRegTree, DumpSc, DumpADataDag, DumpGen, Dumpan, DumpBlk, DumpConflicts $(owl_debug_refs_$(cg_target)_$(host_cpu))
 
-cg_debug_libs = $(cg_debug_libs_$(host_CPU))
+cg_debug_libs = $(cg_debug_libs_$(host_cpu))
 !endif

@@ -11,7 +11,6 @@ f77_autodepends = .AUTODEPEND
 !include wres.mif
 
 !include $(cg_dir)/mif/fe.mif
-!include mlibs.mif
 
 !ifeq release 0
 f77_trmem = 1

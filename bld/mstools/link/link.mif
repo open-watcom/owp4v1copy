@@ -15,7 +15,7 @@ done: $(link_stub) link386.exe linkaxp.exe linkppc.exe
 
 !include ../../master.mif
 
-!include orl.mif
+!include $(orl_dir)/client.mif
 
 linkstub_objs       = linkstub.obj $(mstools_stub_obj) $(mstools_objs)
 link_common_objs    = demangle.obj dlltool.obj fuzzy.obj hash.obj parse.obj $(mstools_objs)

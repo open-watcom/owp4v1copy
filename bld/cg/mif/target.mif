@@ -1,5 +1,4 @@
 !include binname.mif
-!include mlibs.mif
 
 !ifeq host_OS linux
 hostcglibname=cg$(target_name)lnx.lib
@@ -14,7 +13,10 @@ target : $(pre_obj_deps) cg$(target_name).lib $(hostcglibname) .SYMBOLIC
 
 !else
 
-libs = cg$(target_name).lib $(hostcglibname) $(dw_lib) $(owl_lib) $(cfloat_lib)
+!include $(cfloat_dir)/client.mif
+!include $(dwarf_dir)/dw/client.mif
+
+libs = cg$(target_name).lib $(hostcglibname) $(dwarf_dw_lib) $(owl_lib) $(cfloat_lib)
 
 bin_name = cg$(target_name)
 

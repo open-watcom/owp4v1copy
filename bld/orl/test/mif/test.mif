@@ -2,7 +2,7 @@
 !include deftarg.mif
 !include defrule.mif
 
-!include orl.mif
+!include $(orl_dir)/client.mif
 
 .c: $(orl_dir)/test/c;$(trmem_dir)
 .h: $(orl_dir)/test/h;$(trmem_dir)

@@ -34,7 +34,7 @@ wmake_autodepends = .AUTODEPEND
 .inc    : .
 .inc    : ../h
 
-!include orl.mif
+!include $(orl_dir)/client.mif
 !include wres.mif
 
 echo    = echo

@@ -9,10 +9,7 @@ proj_name = cc
 !include deftarg.mif
 !include defrule.mif
 
-!include mlibs.mif
-
 # CODEGEN stuff
-!include $(as_dir)/mif/client.mif
 !include $(cg_dir)/mif/fe.mif
 !include $(cg_dir)/mif/hostos.mif
 

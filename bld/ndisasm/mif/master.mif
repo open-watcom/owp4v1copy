@@ -20,7 +20,7 @@ all: $(exe_name) .SYMBOLIC
 !include defrule.mif
 !include deftarg.mif
 
-!include orl.mif
+!include $(orl_dir)/client.mif
 !include wres.mif
 
 !include ../mif/dis.mif

@@ -3,7 +3,6 @@
 !include defrule.mif
 
 !include wres.mif
-!include mlibs.mif
 
 clibldos_dir    = $(%watcom)/lib286/dos
 clibldos_lib    = $(%watcom)/lib286/dos/clibl.lib
@@ -177,9 +176,8 @@ libs += $(mathr387_lib)
 # and DWARF for generating browsing info
 !ifdef __386__
 libs += $(womp_dir)/watfor/obj386/wompobj.lib
-libs += $(dwarf_dir)/dw/o/dwf.lib
+libs += $(dwarf_dw_lib)  # DWARF library
 !endif
-
 
 !ifdef in_sa_library
 rt_h    = $(f77_dir)/lg86/rt/h;

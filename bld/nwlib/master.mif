@@ -67,7 +67,7 @@ extra_c_flags_linux = -fo=.obj
 
 extra_lflags_qnx += op offset=64k, stack=60k
 
-!include orl.mif
+!include $(orl_dir)/client.mif
 !include wres.mif
 
 inc_dirs = ../h;$(orl_dir)/h;$(trmem_dir);$(lib_misc_dir)/h;$(watcom_dir)/h
