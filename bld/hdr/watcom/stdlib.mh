@@ -28,7 +28,7 @@
 
 // C99 types in stdlib.h.
 using std::div_t;
-using std::ldivt;
+using std::ldiv_t;
 #ifndef _SIZE_T_DEFINED
 #define _SIZE_T_DEFIEND
 #define _SIZE_T_DEFINED_
