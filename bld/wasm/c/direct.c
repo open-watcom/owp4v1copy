@@ -81,7 +81,7 @@ extern void             InputQueueLine( char * );
 extern void             AsmTakeOut( char * );
 extern int              EvalExpr( int, int, int, bool );
 extern void             GetInsString( enum asm_token, char *, int );
-extern void             MakeConstant( long );
+extern void             MakeConstantUnderscored( long );
 extern void             SetMangler( struct asm_sym *sym, char *mangle_type );
 
 static char *Check4Mangler( int *i );
@@ -2028,22 +2028,6 @@ static void get_module_name( void )
 
 }
 
-#if 0
-void MakeConstant( long token )
-/*****************************/
-{
-    char buffer[20];
-
-    /* define a macro */
-    buffer[0]='\0';
-    strcat( buffer, "__" );
-    GetInsString( (enum asm_token)token, buffer+2, 18 );
-    strcat( buffer, "__" );
-    strupr( buffer );
-    StoreConstant( buffer, "1", TRUE );
-}
-#endif
-
 void set_text_seg_name( void )
 /****************************/
 {
@@ -2109,7 +2093,7 @@ int Model( int i )
                 }
             }
         }
-        MakeConstant( AsmBuffer[i]->value );
+        MakeConstantUnderscored( AsmBuffer[i]->value );
 
         if( initstate & TypeInfo[type].init ) {
             AsmError( MODEL_PARA_DEFINED ); // initialized already

@@ -77,7 +77,7 @@
 
 extern int              ptr_operator( int, uint_8 );
 extern int              jmp( int i );
-extern void             MakeConstant( long );
+extern void             MakeConstantUnderscored( long );
 
 extern int              Token_Count;
 
@@ -1008,26 +1008,26 @@ static int comp_opt( uint direct )
 void MakeCPUConstant( long i )
 /****************************/
 {
-    MakeConstant( i );
+    MakeConstantUnderscored( i );
 
     switch( i ) {
     // fall right through
     case T_DOT_686P:
     case T_DOT_686:
-        MakeConstant( T_DOT_686 );
+        MakeConstantUnderscored( T_DOT_686 );
     case T_DOT_586P:
     case T_DOT_586:
-        MakeConstant( T_DOT_586 );
+        MakeConstantUnderscored( T_DOT_586 );
     case T_DOT_486P:
     case T_DOT_486:
-        MakeConstant( T_DOT_486 );
+        MakeConstantUnderscored( T_DOT_486 );
     case T_DOT_386P:
     case T_DOT_386:
-        MakeConstant( T_DOT_386 );
+        MakeConstantUnderscored( T_DOT_386 );
         break;
     case T_DOT_286P:
     case T_DOT_286:
-        MakeConstant( T_DOT_286 );
+        MakeConstantUnderscored( T_DOT_286 );
     }
     return;
 }
