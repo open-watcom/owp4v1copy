@@ -54,16 +54,9 @@ extra_c_flags_dos += -DNEC_98_BUG
 mem_model_i86 = -ms
 !endif
 
-# DOS, OS2 code will not fit in 64k with /d2
+# DOS code will not fit in 64k with /d2
 !ifeq host_OS dos
 mode_cflags = -oaxs -d1
-!endif
-!ifeq host_OS os2
-!ifeq host_CPU 386
-mode_cflags = -oaxs -s -d2
-!else
-mode_cflags = -oaxs -s -d1
-!endif
 !endif
 
 inc_dirs = $(wmake_dir)\h;$(watcom_dir)\h;$(orl_dir)\h;$(trmem_dir)
