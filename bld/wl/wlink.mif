@@ -16,7 +16,7 @@ patch_level=0
 template = &
 autogrp.$(ext) &
 carve.$(ext) &
-comdef.$(ext) &
+wcomdef.$(ext) &
 cmdall.$(ext) &
 cmddos.$(ext) &
 cmdelf.$(ext) &

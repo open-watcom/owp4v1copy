@@ -46,7 +46,7 @@
 #include "msg.h"
 #include "wlnkmsg.h"
 #include "objnode.h"
-#include "comdef.h"
+#include "wcomdef.h"
 #include "mapio.h"
 #include "impexp.h"
 #include "objstrip.h"

@@ -44,7 +44,7 @@
 #include "objpass1.h"
 #include "objpass2.h"
 #include "objfree.h"
-#include "comdef.h"
+#include "wcomdef.h"
 #include "overlays.h"
 #include "ring.h"
 #include "distrib.h"

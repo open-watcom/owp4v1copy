@@ -46,7 +46,7 @@
 #include "loados2.h"
 #include "dbgall.h"
 #include "objio.h"
-#include "comdef.h"
+#include "wcomdef.h"
 #include "objorl.h"
 #include "loadfile.h"
 #include "ring.h"

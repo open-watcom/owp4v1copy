@@ -42,7 +42,7 @@
 #include "wlnkmsg.h"
 #include "linkutil.h"
 #include "distrib.h"
-#include "comdef.h"
+#include "wcomdef.h"
 #include "strtab.h"
 #include "carve.h"
 #include "permdata.h"

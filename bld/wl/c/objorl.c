@@ -54,7 +54,7 @@
 #include "objorl.h"
 #include "strtab.h"
 #include "carve.h"
-#include "comdef.h"
+#include "wcomdef.h"
 #include "permdata.h"
 #include "command.h"    // NYI: don't want to include this!
 #include "impexp.h"

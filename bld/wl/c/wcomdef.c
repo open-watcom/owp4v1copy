@@ -55,7 +55,7 @@
 #include "objcache.h"
 #include "omfreloc.h"
 #include "ring.h"
-#include "comdef.h"
+#include "wcomdef.h"
 
 /* these are handy constants used when processing comdat records */
 #define CDAT_ALLOC_MASK         0xF

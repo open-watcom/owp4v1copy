@@ -46,7 +46,7 @@
 #include "objcalc.h"
 #include "objio.h"
 #include "objcache.h"
-#include "comdef.h"
+#include "wcomdef.h"
 #include "cmdline.h"
 #include "loadfile.h"
 #include "dbgall.h"
