@@ -22,7 +22,7 @@ set destdir=<relroot>/rel2
     set destdir=<relroot>/rel2
 
 [ BLOCK <1> nlang ]
-    set destdir=<dwatcom>
+    set destdir=<DWATCOM>
     set CPCMD=copy
 
 [ BLOCK <1> rel2 cprel2 acprel2 cpu_i86 nlang ]
