@@ -92,10 +92,7 @@ typedef struct {
             unsigned    v       : 1;
 #endif
         }       sign;
-#ifdef __WATCOM_INT64__
-        unsigned __int64     _64[1];
-#endif
-#ifdef __GNUC__
+#if defined(__WATCOM_INT64__) || defined(__GNUC__)
         unsigned long long   _64[1];
 #endif
     } u;
