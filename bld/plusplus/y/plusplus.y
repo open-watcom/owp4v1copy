@@ -548,6 +548,10 @@ goal-symbol
             what = P_DIAGNOSED;
         }
     }
+    | /* nothing */
+    {
+        what = P_DIAGNOSED;
+    }
     ;
 
 expr-decl-stmt
