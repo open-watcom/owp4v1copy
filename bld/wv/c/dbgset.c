@@ -971,7 +971,7 @@ static void MMXConf()
 static void XMMSet()
 {
     ToggleWindowSwitches( NULL, 0, NULL, MWT_XMM );
-    MMXChangeOptions();
+    XMMChangeOptions();
 }
 
 static void XMMConf()
