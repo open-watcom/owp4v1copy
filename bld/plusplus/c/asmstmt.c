@@ -128,9 +128,7 @@ static void getAsmLine( VBUF *buff )
         } else {
             if( isId( CurToken ) ) {
                 NextToken();
-                if( CurToken != T_XOR ) {
                     strncat( line, " ", sizeof(line)-1 );
-                }
             } else {
                 NextToken();
             }
@@ -173,7 +171,8 @@ PTREE AsmStmt( void )
     char *fn_name;
     auto VBUF code_buffer;
 
-    PPState = PPS_EOL | PPS_ASM;
+    PPState = PPS_EOL;
+    PPStateAsm = TRUE;
     VbufInit( &code_buffer );
     NextToken();
     while( CurToken == T_NULL ) {
@@ -200,6 +199,7 @@ PTREE AsmStmt( void )
         skip_token = skip_alt_token = T_NULL;
     }
     PPState = PPS_NORMAL;
+    PPStateAsm = FALSE;
     if( ( CurToken == skip_token ) || ( CurToken == skip_alt_token ) ) {
         NextToken();
     }

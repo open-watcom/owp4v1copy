@@ -696,7 +696,7 @@ static int doScanFloat( void )
     } else {
         ConstType = TYP_DOUBLE;
     }
-    if( ( PPState & PPS_ASM ) && (CharSet[c] & (C_AL | C_DI)) ) {
+    if( PPStateAsm && (CharSet[c] & (C_AL | C_DI)) ) {
         for(;;) {
             c = saveNextChar();
             if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
@@ -791,7 +791,7 @@ static int doScanName( int c, int expanding )
     MEPTR fmentry;
 
     SrcFileScanName( c );
-    if( expanding || ( PPState & PPS_NO_EXPAND ) != 0 ) {
+    if( expanding || ( PPState & PPS_NO_EXPAND ) || PPStateAsm ) {
         return( T_ID );
     }
     CurToken = idLookup( TokenLen, &fmentry );
@@ -1150,7 +1150,7 @@ static int scanNum( int expanding )
             CErr1( WARN_CONSTANT_TOO_BIG );
         }
     }
-    if( ( PPState & PPS_ASM ) && (CharSet[c] & (C_AL | C_DI)) ) {
+    if( PPStateAsm && (CharSet[c] & (C_AL | C_DI)) ) {
         for(;;) {
             c = saveNextChar();
             if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
@@ -1715,6 +1715,7 @@ void ScanInit( void )
     tokenSource = nextMacroToken;
     ReScanPtr = NULL;
     PPState = PPS_NORMAL;
+    PPStateAsm = FALSE;
     CompFlags.scanning_c_comment = 0;
     memset( ClassTable, SCAN_INVALID, sizeof( ClassTable ) );
     memset( &ClassTable['A'], SCAN_NAME, 26 );

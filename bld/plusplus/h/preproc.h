@@ -69,7 +69,6 @@ typedef enum ppstate_t {
     PPS_NO_EXPAND       = 0x01, // don't expand macros
     PPS_EOL             = 0x02, // return <end-of-line> as a token
     PPS_NO_LEX_ERRORS   = 0x04, // don't diagnose lexical problems
-    PPS_ASM             = 0x08, // asm line
     PPS_NORMAL          = 0x00, // expand macros, treat <eol> as white space
     PPS_NULL            = 0x00
 } ppstate_t;
@@ -77,6 +76,7 @@ typedef enum ppstate_t {
 // PREPROCESSOR DATA:
 
 global  unsigned    PPState;            // pre-processor state (ppstate_t)
+global  boolean     PPStateAsm;         // pre-processor state in _asm
 global  enum TOKEN  CurToken;           // current token
 global  unsigned    BadTokenInfo;       // error message that describes why T_BAD_TOKEN is bad
 global  int         TokenLen;           // length of current token
