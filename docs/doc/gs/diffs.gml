@@ -39,11 +39,11 @@ function sometimes produced incorrect results on OS/2 if the
 .mono TZ
 environment variable was set.
 .bull
-The editor has been changed to store temporary files in directory designated
+The vi/viw editor has been changed to store temporary files in directory designated
 by the
 .mono TMP
 environment variable, instead of using the
-.mono TMPVAR
+.mono TMPDIR
 environment variable.
 .bull
 Many packaging problems (missing files) have been resolved.
