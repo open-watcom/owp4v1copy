@@ -125,7 +125,11 @@ aui.lib : eraseall.obj $(objs) $(__makefiles__) $(auirc)
         @for %i in ($(objs)) do @%append tmp.lbc +%i
         $(librarian) /q /b /n aui @tmp.lbc
 
+!ifdef __OS2__
+parsedlg = parsedlg
+!else
 parsedlg = $(dev_dir)\browser\bin\parsedlg.exe
+!endif
 
 .rc: ..\h
 !ifdef pm
