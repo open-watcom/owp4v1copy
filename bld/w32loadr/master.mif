@@ -5,10 +5,10 @@
 .h: ..
 
 .asm.obj:
-  $(as_i86) -q -i".." -fo=.obj $<
+  $(as_i86) -q -I.. -fo=.obj $<
 
 !ifdef __LINUX__
-dos_hdr_inc = -i"$(hdr_dir)/dos"
+dos_hdr_inc = -I"$(hdr_dir)/dos"
 !endif
 
 !ifeq host_OS dos
@@ -32,11 +32,11 @@ x32run.exe : x32run.obj cmain32.obj x32start.obj
    $(linker) format os2 lx name x32run file x32start.obj,x32run.obj,cmain32.obj lib x32b option map,dosseg,internalrelocs,stack=4k libpath $(lang_root)/lib386/dos;$(lang_root)/lib386
    x32fix x32run.exe
 tntrun.obj : loader.c loader.h
-        $(cc) $[@ -ox -d1 -d__DOS -d__CALL21__ -d__TNT -fo=$@
+        $(cc) $[@ -ox -d1 -D__DOS -D__CALL21__ -D__TNT -fo=$@
 x32run.obj : loader.c loader.h
-        $(cc) $[@ -ox -d1 -d__DOS -d__CALL21__ -d__X32 -fo=$@
+        $(cc) $[@ -ox -d1 -D__DOS -D__CALL21__ -D__X32 -fo=$@
 d4grun.obj : loader.c loader.h dginfo.gh
-        $(cc) $[@ -ox -d1 -d__DOS -d__CALL21__ -d__DOS4G -fo=$@
+        $(cc) $[@ -ox -d1 -D__DOS -D__CALL21__ -D__DOS4G -fo=$@
 dginfo.gh : $(rsi_root)/bin/dos4g.exe
         @%write mkdginfo.bat $(rsi_root)\bin\dos4g $(rsi_root)\bin\dginfo >dginfo.gh
         -mkdginfo
@@ -78,11 +78,11 @@ ntstub.exe : ntstub.obj
   $(linker) system dos file ntstub.obj option map
 
 int21nt.obj : int21nt.c
-  $(cc) $[@ -fo=$@ -ox -d1 -bt=NT -i"$(watcom_nt_h)" $(dos_hdr_inc)
+  $(cc) $[@ -fo=$@ -ox -d1 -bt=NT $(inc_dirs_sys_nt) $(dos_hdr_inc)
 ntrun.obj : loader.c loader.h
-  $(cc) $[@ -ox -d1 -bt=NT -d__NT -d__CALL21__ -fo=ntrun.obj -i"$(watcom_nt_h)" $(dos_hdr_inc)
+  $(cc) $[@ -ox -d1 -bt=NT -D__NT -D__CALL21__ -fo=ntrun.obj $(inc_dirs_sys_nt) $(dos_hdr_inc)
 ntrunner.obj : loader.c loader.h
-  $(cc) $[@ -ox -d1 -bt=NT -d__NT -d__CALL21__ -dW32RUN -fo=ntrunner.obj -i"$(watcom_nt_h)" $(dos_hdr_inc)
+  $(cc) $[@ -ox -d1 -bt=NT -D__NT -D__CALL21__ -DW32RUN -fo=ntrunner.obj $(inc_dirs_sys_nt) $(dos_hdr_inc)
 
 !else ifeq host_OS os2
 
@@ -102,9 +102,9 @@ os2stub.exe : loader16.obj dpmildr.obj int21win.obj
   $(linker) system dos name os2stub file loader16.obj,dpmildr.obj,int21win.obj option map
 
 loader.obj : loader.c loader.h
-        $(cc) $[@ -fo=$@ -ox -d1 -d__OS2 -d__CALL21__ -i"$(inc_dirs_sys_os2_386)" $(dos_hdr_inc)
+        $(cc) $[@ -fo=$@ -ox -d1 -D__OS2 -D__CALL21__ $(inc_dirs_sys_os2_386) $(dos_hdr_inc)
 int21os2.obj : int21os2.c
-        $(cc) $[@ -fo=$@ -ox -d1 -i"$(inc_dirs_sys_os2_386)" $(dos_hdr_inc)
+        $(cc) $[@ -fo=$@ -ox -d1 $(inc_dirs_sys_os2_386) $(dos_hdr_inc)
 
 !endif
 

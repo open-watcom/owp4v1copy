@@ -26,6 +26,6 @@ target_lib_x = $(prefix_x)$(suffix).lib
 
 cpp_dirs = ../cpp
 c_dirs = ../c
-asm_dirs = ../a
-inc_dirs = ../h;$(plusplus_dir)/h
-asm_incs = ../inc
+asm_dirs = ../a;../inc
+
+inc_dirs = -I"../h" -I"$(plusplus_dir)/h"

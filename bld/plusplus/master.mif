@@ -35,12 +35,12 @@ pre_obj_deps += wpp$(target_cpu)01.int $(pre_obj_deps_wasm)
 
 !include ../ppobjs.mif
 
-inc_dirs =-I.
+inc_dirs = -I.
 !ifdef plusplus_include
-inc_dirs += $+$(plusplus_include)$-;
+inc_dirs += $+$(plusplus_include)$-
 !endif
 !ifeq plusplus_trmem 1
-inc_dirs += -I$(trmem_dir);
+inc_dirs += -I$(trmem_dir)
 !endif
 inc_dirs += -I"../h"
 inc_dirs += $(cg_inc_dirs)
