@@ -86,7 +86,6 @@ void PrintHelpMessage( void )
     int                 num;
     int                 ch;
 
-    BannerMessage();
     for( count=0,num=0; usageMsg[count]!=NULL; count++,num++ ) {
         if( num == lineCount ) {
             printf( "\t(Press return to continue)" );
