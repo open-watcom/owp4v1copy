@@ -1,3 +1,4 @@
+libname_pfx =math
 # libname_(model)
 libname_ms =s
 libname_mm =m
@@ -16,11 +17,11 @@ processor_ =$(processor)
 !endif
 libname_stack =s
 libname_register =r
-libname_   =math
+libname_   =
 !ifdef convention
-libname =$(libname_)$(processor_)$(libname_$(convention))
+libname =$(libname_pfx)$(processor_)$(libname_$(convention))
 !else
-libname =$(libname_)$(processor_)$(libname_$(model))
+libname =$(libname_pfx)$(processor_)$(libname_$(model))
 !endif
 
 lib_flags =-b -c -p=16

@@ -31,7 +31,7 @@ cdsay .
     <CPCMD> <devdir>/mathlib/library/windows.286/ml/mathl.lib <relroot>/rel2/lib286/win/mathl.lib
     <CPCMD> <devdir>/mathlib/library/windows.287/mc/math87c.lib <relroot>/rel2/lib286/win/math87c.lib
     <CPCMD> <devdir>/mathlib/library/windows.287/ml/math87l.lib <relroot>/rel2/lib286/win/math87l.lib
-#   <CPCMD> <devdir>/mathlib/library/winnt.axp/_s/math.lib <relroot>/rel2/libaxp/math.lib
+#   <CPCMD> <devdir>/mathlib/library/winnt.axp/_s/mathaxp.lib <relroot>/rel2/libaxp/math.lib
 
 [ BLOCK <1> clean ]
 #==================
