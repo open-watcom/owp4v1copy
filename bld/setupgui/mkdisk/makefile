@@ -25,7 +25,7 @@ host_cpu = 386
 
 extra_l_flags = op map
 
-commands = mkdisk.exe mksetup.exe splitfil.exe packsize.exe genmkfil.exe
+commands = mkdisk.exe splitfil.exe packsize.exe genmkfil.exe
 
 all : $(commands) .SYMBOLIC
 
