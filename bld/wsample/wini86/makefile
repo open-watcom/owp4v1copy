@@ -20,9 +20,9 @@ memory_model_i86 = c
 #.EXTENSIONS: .asm .c .h
 
 !ifdef __LINUX__
-description = \'Open WATCOM Sampler\'
+description = \'Open Watcom Sampler\'
 !else
-description = 'Open WATCOM Sampler'
+description = 'Open Watcom Sampler'
 !endif
 
 objects = winmain.obj sample.obj sampdata.obj sampwin.obj io.obj &

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Execution sampler for Windows mainline.
 *
 ****************************************************************************/
 
@@ -84,7 +83,7 @@ void WinMessage( char *str, ... )
 
     va_start( al, str );
     vsprintf( st, str, al );
-    MessageBox( NULL, st, "WATCOM Sampler", MB_OK | MB_ICONHAND | MB_TASKMODAL );
+    MessageBox( NULL, st, "Open Watcom Sampler", MB_OK | MB_ICONHAND | MB_TASKMODAL );
     va_end( al );
 
 } /* WinMessage */
@@ -210,16 +209,16 @@ int WindowsInit( HANDLE inst, int showcmd )
 
     MainWindowHandle = CreateWindow(
         sampleClass,
-        "WATCOM Sampler for Windows",
-        WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN, /* Window style.                      */
-        0,                                  /* Default horizontal position.       */
-        0,                                  /* Default vertical position.         */
-        x,                                  /* width.                     */
-        y,                                  /* height.                    */
-        NULL,                           /* Overlapped windows have no parent. */
-        NULL,                           /* Use the window class menu.         */
-        inst,                               /* This instance owns this window.    */
-        NULL                            /* Pointer not needed.                */
+        "Open Watcom Sampler for Windows",
+        WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN,  /* Window style.                      */
+        0,                                      /* Default horizontal position.       */
+        0,                                      /* Default vertical position.         */
+        x,                                      /* width.                     */
+        y,                                      /* height.                    */
+        NULL,                                   /* Overlapped windows have no parent. */
+        NULL,                                   /* Use the window class menu.         */
+        inst,                                   /* This instance owns this window.    */
+        NULL                                    /* Pointer not needed.                */
     );
 
     if( !MainWindowHandle ) return( FALSE );
@@ -319,7 +318,7 @@ int PASCAL WinMain( HINSTANCE inst, HINSTANCE previnst, LPSTR cmd, int show)
      * and then start sampling
      */
     if( !previnst ) {
-        SharedMemory = NULL;            /* JBS 93/03/17 */
+        SharedMemory = NULL;
         StartWDebug386();
         if( !WDebug386 ) {
             WinMessage( "Could not find WDEBUG.386" );

@@ -100,13 +100,13 @@ code_load *LoadedNLMs;
 
 void SysInit()
 {
-    AllocTag = AllocateResourceTag( 
+    AllocTag = AllocateResourceTag(
         (void *)GetNLMHandle(),
-        "OpenWatcom Sampler Work Area",
+        "Open Watcom Sampler Work Area",
         AllocSignature );
-    SwitchModeTag = AllocateResourceTag( 
+    SwitchModeTag = AllocateResourceTag(
         (void*) GetNLMHandle(),
-        "OpenWatcom Sampler ModeSwitchMon",
+        "Open Watcom Sampler ModeSwitchMon",
         EventSignature);
 }
 
@@ -169,7 +169,7 @@ void WakeMeUp()
     static int Already = FALSE;
     struct LoadDefinitionStructure *loaded;
 
-    if( Already ) 
+    if( Already )
         return;
 
     for( loaded = LoadedList; loaded != NULL; loaded = loaded->LDLink ) {
@@ -178,7 +178,7 @@ void WakeMeUp()
     }
     Already = TRUE;
     Resumed = TRUE;
-    if( Suspended ) 
+    if( Suspended )
         ResumeThread( SamplerThread );
 }
 
@@ -186,10 +186,10 @@ void WakeMeUp()
 StartProg( char *cmd, char *prog, char *args )
 {
     LONG        events;
-    
-    AESTag = AllocateResourceTag( 
+
+    AESTag = AllocateResourceTag(
         (void *)GetNLMHandle(),
-        "OpenWatcom Execution Sampler Flush Process",
+        "Open Watcom Execution Sampler Flush Process",
         AESProcessSignature );
 
     prog = prog;
@@ -201,13 +201,13 @@ StartProg( char *cmd, char *prog, char *args )
 
     EventTag = AllocateResourceTag(
         (void *)GetNLMHandle(),
-        "WATCOM Execution Sampler Events",
+        "Open Watcom Execution Sampler Events",
         EventSignature );
 
-    events = RegisterForEventNotification( 
-        EventTag, 
+    events = RegisterForEventNotification(
+        EventTag,
         EVENT_MODULE_UNLOAD,
-        EVENT_PRIORITY_APPLICATION, 
+        EVENT_PRIORITY_APPLICATION,
         NULL,
         WakeMeUp );
 
@@ -219,7 +219,7 @@ StartProg( char *cmd, char *prog, char *args )
 
     StartTimer();
 
-    if( LoadModule( systemConsoleScreen, cmd, 0 ) != 0 ) 
+    if( LoadModule( systemConsoleScreen, cmd, 0 ) != 0 )
     {
         StopTimer();
         cputs( MsgArray[MSG_SAMPLE_1-ERR_FIRST_MESSAGE] );
@@ -229,7 +229,7 @@ StartProg( char *cmd, char *prog, char *args )
     }
     SamplerThread = GetThreadID();
     Suspended = TRUE;
-    if( !Resumed ) 
+    if( !Resumed )
     {
         Suspended = TRUE;
         SuspendThread( SamplerThread );
@@ -241,7 +241,7 @@ StartProg( char *cmd, char *prog, char *args )
     UnRegisterEventNotification( events );
     report();
 
-    if( Samples != NULL ) 
+    if( Samples != NULL )
         mfree( Samples );
 }
 
@@ -258,9 +258,9 @@ void RecordSample( union INTPACK FAR_PTR *r ) {
     Samples->d.sample.sample[ SampleIndex ].offset = r->x.eip;
     Samples->d.sample.sample[ SampleIndex ].segment = r->x.cs;
     ++SampleIndex;
-    if( SampleIndex > Margin ) 
+    if( SampleIndex > Margin )
     {
-        if( AES.AProcessToCall == NULL ) 
+        if( AES.AProcessToCall == NULL )
         {
             AES.AProcessToCall = SaveOutSamples;
             AES.AWakeUpDelayAmount = 0;
@@ -353,10 +353,10 @@ static unsigned long volatile * pRealModeTimerFlag = NULL;
 
     Output("Calculating...\r");
 
-    modeSwitch = RegisterForEventNotification( 
-        SwitchModeTag, 
+    modeSwitch = RegisterForEventNotification(
+        SwitchModeTag,
         5,  /* EVENT_CHANGE_TO_REAL_MODE */
-        EVENT_PRIORITY_APPLICATION, 
+        EVENT_PRIORITY_APPLICATION,
         NULL,
         ModeSwitched );
 
@@ -386,7 +386,7 @@ static unsigned long volatile * pRealModeTimerFlag = NULL;
     Output("CPU Speed   - ");
     Output(EstRate);
     Output(" Mhz\n");
-    
+
     Output("Calculating...\r");
     if(pRealModeTimerFlag)
         while(0 != *pRealModeTimerFlag)

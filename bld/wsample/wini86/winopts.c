@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Execution sampler option dialogs for Windows.
 *
 ****************************************************************************/
 
@@ -78,7 +77,7 @@ static BOOL getFile( char *fname )
     of.Flags = OFN_NOVALIDATE;
     of.nFileOffset = 0;
     of.nFileExtension = 0;
-    of.lpstrTitle = "WATCOM Sampler - File Open";
+    of.lpstrTitle = "Open Watcom Sampler - File Open";
     of.lpstrDefExt = NULL;
 
     return( GetOpenFileName( &of ) );
@@ -234,7 +233,7 @@ BOOL GetFileName( HINSTANCE inst, int shcmd, char *fname )
 
     mh = CreateWindow(
         startClass,             /* class */
-        "WATCOM Sampler",               /* caption */
+        "Open Watcom Sampler",  /* caption */
         WS_CLIPCHILDREN | WS_OVERLAPPEDWINDOW, /* style */
         x/8,                    /* init. x pos */
         y/6,                    /* init. y pos */
@@ -266,30 +265,30 @@ BOOL GetFileName( HINSTANCE inst, int shcmd, char *fname )
 
     win = CreateWindow(
         "STATIC",               /* class */
-        "Sampler Options:",       /* caption */
+        "Sampler Options:",     /* caption */
         WS_CHILD | ES_LEFT,
-        xp+(14*avgx)-6,           /* init. x pos */
-        yp-3-avgy*3/2,                   /* init. y pos */
+        xp+(14*avgx)-6,         /* init. x pos */
+        yp-3-avgy*3/2,          /* init. y pos */
         16*avgx,                /* init. x size */
         ys,                     /* init. y size */
         mh,                     /* parent window */
         NULL,                   /* child id */
-        inst,               /* program handle */
+        inst,                   /* program handle */
         NULL                    /* create parms */
         );
     ShowWindow( win, SW_SHOWNORMAL );
     UpdateWindow( win );
 
     win = CreateWindow(
-        "EDIT",                  /* class */
+        "EDIT",                 /* class */
         NULL,                   /* caption */
         WS_CHILD | ES_LEFT | WS_BORDER | ES_AUTOHSCROLL,
         xp+7,                   /* init. x pos */
-        yp,                             /* init. y pos */
-        xs,                             /* init. x size */
-        ys,                             /* init. y size */
-        mh,                             /* parent window */
-        (HMENU)EDIT_ID,                 /* child id */
+        yp,                     /* init. y pos */
+        xs,                     /* init. x size */
+        ys,                     /* init. y size */
+        mh,                     /* parent window */
+        (HMENU)EDIT_ID,         /* child id */
         inst,                   /* program handle */
         NULL                    /* create parms */
         );
@@ -308,14 +307,14 @@ BOOL GetFileName( HINSTANCE inst, int shcmd, char *fname )
 
     win = CreateWindow(
         "BUTTON",               /* class */
-        "&Select File...",       /* caption */
+        "&Select File...",      /* caption */
         WS_CHILD | BS_PUSHBUTTON,
-        xp+(6*avgx)-6,           /* init. x pos */
-        yp+avgy*3,                      /* init. y pos */
-        16*avgx,                        /* init. x size */
+        xp+(6*avgx)-6,          /* init. x pos */
+        yp+avgy*3,              /* init. y pos */
+        16*avgx,                /* init. x size */
         avgy+avgy/2,            /* init. y size */
-        mh,                             /* parent window */
-        (HMENU)PUSH_GETFILES_ID,        /* child id */
+        mh,                     /* parent window */
+        (HMENU)PUSH_GETFILES_ID,/* child id */
         inst,                   /* program handle */
         NULL                    /* create parms */
         );
@@ -324,14 +323,14 @@ BOOL GetFileName( HINSTANCE inst, int shcmd, char *fname )
 
     win = CreateWindow(
         "BUTTON",               /* class */
-        "S&tart Sampling",       /* caption */
+        "S&tart Sampling",      /* caption */
         WS_CHILD | BS_PUSHBUTTON,
-        xp+(29*avgx)-6,           /* init. x pos */
-        yp+avgy*3,                      /* init. y pos */
-        16*avgx,                        /* init. x size */
+        xp+(29*avgx)-6,         /* init. x pos */
+        yp+avgy*3,              /* init. y pos */
+        16*avgx,                /* init. x size */
         avgy+avgy/2,            /* init. y size */
-        mh,                             /* parent window */
-        (HMENU)PUSH_OK_ID,              /* child id */
+        mh,                     /* parent window */
+        (HMENU)PUSH_OK_ID,      /* child id */
         inst,                   /* program handle */
         NULL                    /* create parms */
         );
