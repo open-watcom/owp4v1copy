@@ -17,6 +17,7 @@ include_c_os2_ppc  =;$(%watcom)\h\os2ppc
 include_c_os2      =;$(include_c_os2_$(processor));$(hdr_dir)\dos
 include_c_windows  =;$(%watcom)\h\win;$(hdr_dir)\dos
 include_c_winnt    =;$(%watcom)\h\nt;$(hdr_dir)\dos
+include_c_linux    =;$(%watcom)\h\linux;$(hdr_dir)\dos
 !else
 include_c_msdos    =;$(%watcom)\h
 include_c_necdos   =;$(%watcom)\h
@@ -27,7 +28,7 @@ include_c_os2_387  =;$(%watcom)\h\os2
 include_c_os2_ppc  =;$(%watcom)\h\os2ppc
 include_c_os2      =;$(include_c_os2_$(processor));$(%watcom)\h
 include_c_windows  =;$(%watcom)\h\win;$(%watcom)\h
-include_c_winnt    =;$(%watcom)\h\nt;$(%watcom)\h
+include_c_linux    =;$(%watcom)\h\linux;$(%watcom)\h
 !endif
 
 include_c_path =$(include_default)$(include_c_$(system))$(include_watcom)

@@ -1,4 +1,4 @@
-#pmake:all small 32bit stack calls winnt iX86 dynamic build os_nt cpu_386
+#pmake:all small 32bit stack calls winnt iX86 dynamic os_nt cpu_386
 processor=386
 model=ms
 subdir=ms_sdll

@@ -1,11 +1,12 @@
-#pmake:all small 32bit stack inline os2 iX86 dynamic os_os2 cpu_386
-processor=387
+#pmake:all small 32bit stack calls linux iX86 static os_linux cpu_386
+processor=386
 model=ms
-subdir=ms_sdll
-system=os2
+subdir=ms_s
+system=linux
 convention=stack
-linkage=dynamic
+linkage=static
 !include $(mathlib_dir)\objects.mif
 !include $(mathlib_dir)\master.mif
 !include $(mathlib_dir)\mklib.mif
 !include $(mathlib_dir)\deps.mif
+

@@ -1,7 +1,7 @@
-#pmake:all small 32bit register inline os2 iX86 dynamic os_os2 cpu_386 alias
-processor=387
+#pmake:all small register 32bit calls linux iX86 static os_linux cpu_386 alias
+processor=386
 model=ms
-system=os2
+system=linux
 convention=register
 linkage=alias
 !include ..\..\..\objects.mif

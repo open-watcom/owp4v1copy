@@ -14,6 +14,7 @@ libpfx_osi      =math
 libpfx_qnx      =math
 libpfx_windows  =math
 libpfx_winnt    =math
+libpfx_linux    =math
 
 libname_086_ms =s
 libname_286_ms =s
@@ -53,6 +54,7 @@ libpath_osi_386     =lib386\osi
 libpath_qnx_386     =lib386\qnx
 libpath_windows_386 =lib386\win
 libpath_winnt_386   =lib386\nt
+libpath_linux_386   =lib386\linux
 libpath_generic_axp =libaxp
 libpath_winnt_axp   =libaxp
 libpath_winnt_ppc   =libppc

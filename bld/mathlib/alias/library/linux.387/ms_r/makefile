@@ -1,10 +1,11 @@
-#pmake:all small 32bit register inline os2 iX86 dynamic os_os2 cpu_386 alias
+#pmake:all small register 32bit inline linux iX86 static os_linux cpu_386 alias
 processor=387
 model=ms
-system=os2
+system=linux
 convention=register
 linkage=alias
 !include ..\..\..\objects.mif
 !include $(mathlib_dir)\master.mif
 !include $(mathlib_dir)\mklib.mif
 !include ..\..\..\deps.mif
+

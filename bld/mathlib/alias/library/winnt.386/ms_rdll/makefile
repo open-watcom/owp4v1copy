@@ -1,4 +1,4 @@
-#pmake:all small 32bit register calls winnt iX86 dynamic build os_nt cpu_386 alias
+#pmake:all small 32bit register calls winnt iX86 dynamic os_nt cpu_386 alias
 processor=386
 model=ms
 system=winnt

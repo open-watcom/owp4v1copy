@@ -1,4 +1,4 @@
-#disable pmake:all small 32bit stack inline necdos iX86 static build os_dos cpu_386 alias
+#disable pmake:all small 32bit stack inline necdos iX86 static os_dos cpu_386 alias
 processor=387
 model=ms
 system=necdos

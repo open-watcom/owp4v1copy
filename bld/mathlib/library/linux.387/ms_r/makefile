@@ -1,12 +1,10 @@
-#pmake:all small 32bit register calls winnt iX86 dynamic os_nt cpu_386 profile
-processor=386
+#pmake:all small 32bit register inline linux iX86 static os_linux cpu_386
+processor=387
 model=ms
-subdir=ms_rpdll
-system=winnt
+subdir=ms_r
+system=linux
 convention=register
-linkage=dynamic
-profile=1
-mathlib_rtdll=1
+linkage=static
 !include $(mathlib_dir)\objects.mif
 !include $(mathlib_dir)\master.mif
 !include $(mathlib_dir)\mklib.mif

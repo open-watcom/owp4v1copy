@@ -13,6 +13,8 @@ objs_winnt_387    = $(d32i)
 objs_winnt_axp    = $(axp)
 objs_winnt_ppc    = $(ntp)
 objs_os2_ppc      = $(op)
+objs_linux_386    = $(d32c)
+objs_linux_387    = $(d32i)
 
 objs = $+ $(objs_$(system)_$(processor)) $-
 
@@ -31,6 +33,8 @@ objs_winnt_387    =
 objs_winnt_axp    =
 objs_winnt_ppc    =
 objs_os2_ppc      =
+objs_winnt_386    =
+objs_winnt_387    =
 
 d16c =
 d16i =

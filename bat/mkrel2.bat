@@ -50,6 +50,7 @@ md %relroot%\%defrel%\lib386\nt
 md %relroot%\%defrel%\lib386\os2
 md %relroot%\%defrel%\lib386\win
 md %relroot%\%defrel%\lib386\qnx
+md %relroot%\%defrel%\lib386\linux
 md %relroot%\%defrel%\libaxp
 md %relroot%\%defrel%\libaxp\nt
 md %relroot%\%defrel%\samples\clibexam

@@ -88,6 +88,7 @@ sw_c_necdos   =
 sw_c_os2      =
 sw_c_windows  =
 sw_c_winnt    =
+sw_c_linux    =
 
 sw_a_msdos_286    =
 sw_a_msdos_287    =
