@@ -1,4 +1,4 @@
-        include system.inc
+        include system2.inc
         include cw.inc
 
 ; MED 1/21/2003, WASM compatibility change
@@ -41,7 +41,7 @@ pushs   macro r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14,r15,r16
         irp     x,<r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14,r15,r16> ;REPEAT FOR EACH PARM
         ifnb    <x>
         push    x
-        endif
+        endif    
         endm
         endm
 
@@ -53,7 +53,7 @@ pops    macro r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,r13,r14,r15,r16
         irp     x,<r16,r15,r14,r13,r12,r11,r10,r9,r8,r7,r6,r5,r4,r3,r2,r1> ;REPEAT FOR EACH PARM
         ifnb    <x>
         pop     x
-        endif
+        endif    
         endm
         endm
 
@@ -172,8 +172,6 @@ ReqTable        label dword
         dd REQ_REDIRECT_STDOUT  ;34
         dd 0    ;35
 
-; MED 1/20/2003, don't turn on new routines until we know they work, which they
-;  probably don't first time out with no testing
 ;       dd 0    ;36
 ;       dd 0    ;37
 ;       dd 0    ;38
@@ -689,6 +687,11 @@ Dispatcher      proc    near    private
         mov     edi,offset ReqBuffer
         mov     ecx,[esi+4]             ;get data length.
         mov     esi,[esi]               ;point to data.
+        cmp     ecx,255
+        jbe     dispcopy
+        mov     ecx,255                 ; make sure request doesn't overflow buffer
+
+dispcopy:
         mov     ReqLength,ecx
         rep     movsb
 ;
@@ -941,14 +944,8 @@ Dispatcher      endp
         jnz     @@1addr
         mov     w[esi+1+4],2
 
-; MED 1/20/2003, update 1/21/2003
-; horrible horrible hackery to fix offset+10000h passed for symbol offset in global vars
-        or      w[edi+2],0
-        je      @@1addr         ; don't underflow a given address
-        sub     d[edi],10000h
-
-;
-@@1addr:        movzx   ebx,w[esi+1+4]
+@@1addr:
+        movzx   ebx,w[esi+1+4]
         dec     ebx
         shl     ebx,3
         add     bx,[edx+EPSP_SegBase]
@@ -964,6 +961,19 @@ Dispatcher      endp
         mov     eax,[ebx]               ;get base offset.
         add     eax,[edx+EPSP_MemBase]
         add     [edi],eax               ;add real address.
+
+; MED 1/23/2003
+; horrible hackery to fix offset+code size passed for symbol offset in global vars
+        cmp     WORD PTR [esi+1+4],1
+        jbe     addrsetb        ; don't adjust a base code address
+        mov     ecx,DebugSegs
+        add     ecx,8
+        mov     ecx,[ecx]       ; 2nd, hopefully DGROUP, segment base offset
+        add     ecx,65535
+        xor     cx,cx           ; round up to next 64K
+        sub     [edi],ecx       ; subtract off rounded up DGROUP offset
+addrsetb:
+
 ;
 ;Set the bounds.
 ;
@@ -1042,7 +1052,7 @@ Dispatcher      endp
         sub     ecx,1+1+6
         ret
         endps
-
+        
 
 ;*******************************************************************************
 ;
@@ -3475,7 +3485,7 @@ ReadConfig      proc    near    private
         push    offset ConfigName
         call    cfgGetInts
         add     esp,20
-
+        
 ;       calls cfgGetOnOff,offset ConfigName,offset SetupName, offset ResetTimerVar, offset ResetTimer
         push    offset ResetTimer
         push    offset ResetTimerVar
