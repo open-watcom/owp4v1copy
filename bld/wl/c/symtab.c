@@ -1525,7 +1525,9 @@ extern group_entry *SymbolGroup( symbol *sym )
 {
     group_entry *group;
 
-    if( IS_SYM_GROUP(sym) ) {
+    if( IS_SYM_ALIAS(sym) ) {
+        group = NULL;
+    } else if( IS_SYM_GROUP(sym) ) {
         for( group = Groups; group != NULL; group = group->next_group ) {
             if( sym == group->sym ) {
                 break;

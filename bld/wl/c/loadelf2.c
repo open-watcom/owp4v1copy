@@ -175,10 +175,11 @@ static void SetElfSym( ElfHdr *hdr, Elf32_Sym *elfsym, symbol *sym )
 
     elfsym->st_value = SymbolAbsAddr(sym);
     elfsym->st_size = 0;
+    bind = STB_GLOBAL;
     if( sym->info & SYM_STATIC ) {       // determine binding
         bind = STB_LOCAL;
-    } else if( IS_SYM_REGULAR(sym) || IS_SYM_IMPORTED(sym) ) {
-        bind = STB_GLOBAL;
+    } else if( IS_SYM_REGULAR(sym) || IS_SYM_IMPORTED(sym) ||
+               IS_SYM_ALIAS(sym) || IS_SYM_COMMUNAL(sym) ) {
     } else if( IS_SYM_WEAK_REF(sym) ) {
         bind = STB_WEAK;
     } else {
