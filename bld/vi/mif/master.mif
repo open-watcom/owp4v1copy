@@ -46,7 +46,7 @@ videps =
 bindextra = -d$(vi_dir)\dat\winbind.dat
 !endif
 
-$(name) : $(special) $(objs) $(objsroot) $(objinit) $(other) $(videps) $(mifdep) version.obj
+$(name) : $(special) $(objs) $(objsroot) $(objinit) $(libs) $(other) $(videps) $(mifdep) version.obj
         $(linker) $(lflags) name $(lname) file version.obj file {$(objsroot)} $(start_flags) file {$(objinit)} $(more_flags) file {$(objs)} $(final_flags) $(rcsdll)
 !ifeq host_os dos
 !ifeq host_cpu 386

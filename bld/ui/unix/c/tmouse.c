@@ -176,28 +176,54 @@ static void TryOne( int type, char *test, char *init, char *input )
 }
 
 #ifdef __LINUX__
+/* this structure is a mess with respect to binary compatibility:
+   old GPM versions did not have wdx and wdy (for wheel mice).
+   Patched versions  have it in the middle. Official 1.20.1 has them
+   at the end. We assume the old structure, and if we encounter a 4-byte
+   read or an invalid "type" it must be one of the new varieties
+*/
 static struct {
     unsigned char   button;
     unsigned char   modifiers;
     unsigned short  vc;
-    short           dx, dy, x, y, wdx, wdy;
-    int             type, clicks, margin;
+    short           dx, dy, x, y;
+    union {
+        struct {
+            int     type, clicks, margin;
+            short   wdx, wdy;
+        } gpm_w1;
+        struct {
+            short   wdx, wdy;
+            int     type, clicks, margin;
+        } gpm_w2;
+    } tail;
 } gpm_buf;
 
 /* Parse a GPM mouse event. */
 static void GPM_parse( void )
 /***************************/
 {
+    int type;
+    static int variety = 0;
     last_col = gpm_buf.x - 1;
     last_row = gpm_buf.y - 1;
-    if (gpm_buf.type & 4) { /* down */
+    type = gpm_buf.tail.gpm_w1.type & 0xf;
+    if(variety == 0) {
+        if( type == 2 || type == 4 || type == 8 )
+            variety = 1;
+        else
+            variety = 2;
+    }
+    if (variety == 2)
+        type = gpm_buf.tail.gpm_w2.type & 0xf;
+    if (type == 4) { /* down */
         if( gpm_buf.button & 4 )
             last_status |= MOUSE_PRESS;
         if( gpm_buf.button & 2 )
             last_status |= MOUSE_PRESS_MIDDLE;
         if( gpm_buf.button & 1 )
             last_status |= MOUSE_PRESS_RIGHT;
-    } else if (gpm_buf.type & 8) { /* up */
+    } else if (type == 8) { /* up */
         if( gpm_buf.button & 4 )
             last_status &= ~MOUSE_PRESS;
         if( gpm_buf.button & 2 )
@@ -346,13 +372,18 @@ void tm_saveevent()
             buf[i+1] = '\0';
             break;
 #ifdef __LINUX__
-        case M_GPM:
-            if( read( UIMouseHandle, &gpm_buf, sizeof( gpm_buf ) ) <
-                sizeof( gpm_buf ) ) {
+        case M_GPM: {
+            /* start with the old gpm structure without wdx/wdy */
+            static size_t gpm_buf_size = sizeof gpm_buf - 4;
+            i = read( UIMouseHandle, &gpm_buf, gpm_buf_size );
+            if( i < gpm_buf_size ) {
+                if( i == 4 )
+                    gpm_buf_size = 28;
                 tm_error();
                 return;
             }
             break;
+        }
 #endif
         default :
             break;
