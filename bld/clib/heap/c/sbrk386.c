@@ -55,11 +55,15 @@ extern  int                     SetBlock();
 
 extern  int                     SetBlock( unsigned short selector, int size );
 #pragma aux SetBlock            = \
+        "push   es"             \
+        "mov    es,ax"          \
         "mov    ah,04ah"        \
         "int    021h"           \
         "rcl    eax,1"          \
         "ror    eax,1"          \
-        parm caller             [es] [ebx] \
+        "pop    es"             \
+        parm caller             [ax] [ebx] \
+        modify                  [ebx] \
         value                   [eax];
 
 extern  int                     SegInfo( unsigned short selector );
