@@ -55,7 +55,7 @@ static void drawBorder( img_node *node )
     HBRUSH      nullbrush;
     int         width;
     int         height;
-#if (_WIN32_WINNT < 0X0400)
+#ifndef __NT__
     WPI_POINT   pt;
 #endif
     int         top;
@@ -95,7 +95,7 @@ static void drawBorder( img_node *node )
         bottom = height - BORDER_WIDTH + 1;
         top = _wpi_cvth_y( top, height );
         bottom = _wpi_cvth_y( bottom, height );
-#if (_WIN32_WINNT < 0X0400)
+#ifndef __NT__
         /*
          * Draw the border relative to the size of the object being displayed,
          * not the window containing it
@@ -152,7 +152,7 @@ static void drawBorder( img_node *node )
         bottom = height - BORDER_WIDTH + 1;
         top = _wpi_cvth_y( top, height );
         bottom = _wpi_cvth_y( bottom, height );
-#if (_WIN32_WINNT < 0X0400)
+#ifndef __NT__
         /*
          * Draw the border relative to the size of the object being displayed,
          * not the window containing it
@@ -169,7 +169,7 @@ static void drawBorder( img_node *node )
     /*
      * Give the view window the 3D effect.
      */
-#if (_WIN32_WINNT < 0X0400)
+#ifndef __NT__
     holdpen = _wpi_selectobject( presborder, hwhitepen );
 
     _wpi_setpoint( &pt, 0, height-1 );
@@ -512,7 +512,7 @@ void RePositionViewWnd( img_node *node )
 
     h_adj = 2 * _wpi_getsystemmetrics(SM_CXDLGFRAME) + 2 * BORDER_WIDTH;
     v_adj = 2 * _wpi_getsystemmetrics(SM_CYDLGFRAME) +
-#if (_WIN32_WINNT < 0X0400)
+#ifndef __NT__
                 _wpi_getsystemmetrics(SM_CYCAPTION) + 2 * BORDER_WIDTH - 1;
 #else
                 _wpi_getsystemmetrics(SM_CYSMCAPTION) + 2 * BORDER_WIDTH - 1;

@@ -42,7 +42,7 @@ void Win_CreateColourPal( void )
     char        *title;
 
     title = IEAllocRCString( WIE_COLORPALETTETITLE );
-#if (_WIN32_WINNT < 0x0400)
+#ifndef __NT__
     HColourPalette = CreateWindow(
             PaletteClass,                       /* Window class name */
             title,
@@ -361,13 +361,13 @@ HWND WinCreateViewWin( HWND hviewwnd, BOOL foneview, int *showstate,
 
     h_adj = 2*GetSystemMetrics(SM_CXDLGFRAME);
     v_adj = 2*GetSystemMetrics(SM_CYDLGFRAME) +
-#if (_WIN32_WINNT < 0x0400)
+#ifndef __NT__
                 GetSystemMetrics(SM_CYCAPTION) - 1;
 #else
                 GetSystemMetrics(SM_CYSMCAPTION) - 1;
 #endif
 
-#if (_WIN32_WINNT < 0X0400)
+#ifndef __NT__
     hwnd = CreateWindow(
             ViewWinClass,                       /* Window class name */
             "View",

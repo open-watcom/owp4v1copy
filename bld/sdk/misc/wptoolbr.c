@@ -527,7 +527,7 @@ void ToolBarDisplay( toolbar *bar, TOOLDISPLAYINFO *disp )
     width = _wpi_getwidthrect( (disp->area) );
     height = _wpi_getheightrect( (disp->area) );
 #ifndef __OS2_PM__
-#	if (_WIN32_WINNT < 0x0400)
+#	ifndef __NT__
     CreateWindow( className, NULL, disp->style,
         disp->area.left, disp->area.top, width, height,
         bar->owner, (HMENU) HNULL, GET_HINSTANCE( bar->owner ), bar );
