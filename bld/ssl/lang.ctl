@@ -14,3 +14,7 @@ set PROJDIR=<CWD>
 [ BLOCK <1> clean ]
 #==================
     pmake -d all -h clean
+    cdsay .
+    wmake -h -f <DEVDIR>/build/mif/cleanp.mif platform=<BUILD_PLATFORM> file=ssl
+    cdsay .
+
