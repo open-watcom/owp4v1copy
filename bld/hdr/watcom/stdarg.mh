@@ -96,13 +96,16 @@ typedef __va_list va_list;
  #endif
 #endif
 
+:: define __va_copy even if -za is used
+#if defined(__PPC__) || defined(__AXP__)
+  #define __va_copy(dest,src) ((dest)=(src),(void)0)
+#else
+  #define __va_copy(dest,src) ((dest)[0]=(src)[0],(void)0)
+#endif
+
 :: Extensions section (C99 va_copy definition)
 :include ext.sp
-#if defined(__PPC__) || defined(__AXP__)
-  #define va_copy(dest,src) ((dest)=(src),(void)0)
-#else
-  #define va_copy(dest,src) ((dest)[0]=(src)[0],(void)0)
-#endif
+#define va_copy(dest,src) __va_copy(dest,src)
 #endif /* End of extensions section. */
 
 :segment CNAME
