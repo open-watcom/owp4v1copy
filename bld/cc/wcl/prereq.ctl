@@ -42,7 +42,7 @@ set BUILD_PLATFORM=
     mkdir -p <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
     wmake -h -f ../linux386.386/makefile
-    <CPCMD> wcl386 <DEVDIR>/build/binl/bwcl386
+    <CPCMD> wcl386.exe <DEVDIR>/build/binl/bwcl386
     cdsay <PROJDIR>
 
 [ BLOCK <1> clean ]
