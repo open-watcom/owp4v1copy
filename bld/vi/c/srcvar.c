@@ -39,12 +39,12 @@
 #include "source.h"
 
 /*
- * VarAddGlobal
+ * VarAddGlobalStr
  */
-void VarAddGlobal( char *name, char *val )
+void VarAddGlobalStr( char *name, char *val )
 {
-    VarAdd( name, val, NULL );
-} /* VarAddGlobal */
+    VarAddStr( name, val, NULL );
+} /* VarAddGlobalStr */
 
 
 /*
@@ -85,14 +85,14 @@ void VarAddGlobalLong( char *name, long val )
 {
     char ibuff[MAX_NUM_STR];
 
-    VarAdd( name, ltoa( val, ibuff, 10 ), NULL );
+    VarAddStr( name, ltoa( val, ibuff, 10 ), NULL );
 
 } /* VarAddGlobalLong */
 
 /*
- * VarAdd - add a new variable
+ * VarAddStr - add a new variable
  */
-void VarAdd( char *name, char *val, vlist *vl )
+void VarAddStr( char *name, char *val, vlist *vl )
 {
     vars        *new,*curr,*head;
     bool        glob;
@@ -143,7 +143,7 @@ void VarAdd( char *name, char *val, vlist *vl )
         AddLLItemAtEnd( &vl->head, &vl->tail, new );
     }
 
-} /* VarAdd */
+} /* VarAddStr */
 
 /*
  * VarListDelete - delete a local variable list

@@ -115,7 +115,7 @@ static int srcHook( hooktype num, int lastrc )
      */
     v = GetHookVar( num );
     if( num == SRC_HOOK_COMMAND &&  v != NULL ) {
-        VarAddGlobal( "Com", CommandBuffer );
+        VarAddGlobalStr( "Com", CommandBuffer );
     }
     if( num == SRC_HOOK_MODIFIED && v != NULL ) {
         lastrc = LastEvent;

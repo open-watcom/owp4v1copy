@@ -44,7 +44,7 @@ void main( int argc, char *argv[] )
     argc = argc;
     EXEName = argv[0];
     EditFlags.HasSystemMouse = TRUE;
-    VarAddGlobal( "OS", "nt" );
+    VarAddGlobalStr( "OS", "nt" );
     Comspec = getenv( "ComSpec" );
     InitializeEditor();
     EditMain();

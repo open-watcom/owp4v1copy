@@ -254,10 +254,10 @@ void SrcGet( char *, vlist * );
 int SrcNextWord( char *, vlist * );
 
 /* srcvar.c */
-void VarAddGlobal( char *, char * );
+void VarAddGlobalStr( char *, char * );
 void VarAddRandC( void );
 void VarAddGlobalLong( char *, long );
-void VarAdd( char *, char *, vlist * );
+void VarAddStr( char *, char *, vlist * );
 void VarListDelete( vlist * );
 bool VarName( char *, vlist * );
 vars * VarFind( char *, vlist * );

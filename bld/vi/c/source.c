@@ -336,12 +336,12 @@ static int initSource( vlist *vl, char *data )
         if( i ) {
             break;
         }
-        VarAdd( itoa( j, name, 10 ), tmp, vl );
+        VarAddStr( itoa( j, name, 10 ), tmp, vl );
         StrMerge( 2, all, tmp, SingleBlank );
         j++;
 
     }
-    VarAdd( "*", all, vl );
+    VarAddStr( "*", all, vl );
 
     return( ERR_NO_ERR );
 
@@ -403,17 +403,17 @@ void FileSPVAR( void )
      * build path
      */
     if( CurrentFile == NULL ) {
-        VarAddGlobal( "F", "" );
-        VarAddGlobal( "H", "" );
+        VarAddGlobalStr( "F", "" );
+        VarAddGlobalStr( "H", "" );
         drive[0] = dir[0] = fname[0] = ext[0] = 0;
     } else {
-        VarAddGlobal( "F", CurrentFile->name );
-        VarAddGlobal( "H", CurrentFile->home );
+        VarAddGlobalStr( "F", CurrentFile->name );
+        VarAddGlobalStr( "H", CurrentFile->home );
         ConditionalChangeDirectory( CurrentFile->home );
         _splitpath( CurrentFile->name, drive, dir, fname, ext );
     }
-    VarAddGlobal( "P1", dir );
-    VarAddGlobal( "D1", drive );
+    VarAddGlobalStr( "P1", dir );
+    VarAddGlobalStr( "D1", drive );
     strcpy( path, drive );
     strcat( path, dir );
     i = strlen( path ) -1 ;
@@ -434,10 +434,10 @@ void FileSPVAR( void )
         StrMerge( 3, path,FILE_SEP_STR, fname, ext );
     }
     _splitpath( path, drive, dir, fname, ext );
-    VarAddGlobal( "D", drive );
-    VarAddGlobal( "P", dir );
-    VarAddGlobal( "N", fname );
-    VarAddGlobal( "E", ext );
+    VarAddGlobalStr( "D", drive );
+    VarAddGlobalStr( "P", dir );
+    VarAddGlobalStr( "N", fname );
+    VarAddGlobalStr( "E", ext );
 
 } /* FileSPVAR */
 

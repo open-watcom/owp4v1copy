@@ -228,9 +228,9 @@ int SrcAssign( char *data, vlist *vl )
             line        *cline;
             rc = CGimmeLinePtr( val, &cfcb, &cline );
             if( rc ) {
-                VarAdd( name, "", vl );
+                VarAddStr( name, "", vl );
             } else {
-                VarAdd( name, cline->data, vl );
+                VarAddStr( name, cline->data, vl );
             }
             return( ERR_NO_ERR );
         } else {
@@ -238,7 +238,7 @@ int SrcAssign( char *data, vlist *vl )
         }
     }
 
-    VarAdd( name, v1, vl );
+    VarAddStr( name, v1, vl );
     return( ERR_NO_ERR );
 
 } /* SrcAssign */

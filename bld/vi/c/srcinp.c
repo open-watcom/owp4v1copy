@@ -69,7 +69,7 @@ static int srcGenericInput( char *data, vlist *vl, bool input )
         tmp[1] = 0;
     }
     if( i == GOT_RESPONSE ) {
-        VarAdd( v1, tmp, vl );
+        VarAddStr( v1, tmp, vl );
         return( ERR_NO_ERR );
     }
     return( NO_VALUE_ENTERED );

@@ -505,7 +505,7 @@ static void doInitializeEditor( int argc, char *argv[] )
     AutoSaveInit();
     HalfPageLines = WindowAuxInfo( CurrentWindow, WIND_INFO_TEXT_LINES )/2-1;
     #ifdef __386__
-        VarAddGlobal( "OS386", "1" );
+        VarAddGlobalStr( "OS386", "1" );
     #endif
     if( StatusString == NULL ) {
         AddString( &StatusString, "L:$6L$nC:$6C" );

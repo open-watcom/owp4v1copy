@@ -57,7 +57,7 @@ void main( int argc, char *argv[] )
     EXEName = argv[0];
     InitialStack();
     ResetBPChain();
-    VarAddGlobal( "OS", "dos" );
+    VarAddGlobalStr( "OS", "dos" );
     Comspec = getenv( "COMSPEC" );
     InitializeEditor();
     FinalStack();

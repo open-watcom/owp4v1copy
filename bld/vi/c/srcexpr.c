@@ -87,7 +87,7 @@ int SrcExpr( sfile *sf, vlist *vl )
         }
     }
 
-    VarAdd( tmp, ltoa( val,v1,10), vl );
+    VarAddStr( tmp, ltoa( val,v1,10), vl );
     return( ERR_NO_ERR );
 
 } /* SrcExpr */

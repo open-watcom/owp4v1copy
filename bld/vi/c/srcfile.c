@@ -152,7 +152,7 @@ int SrcRead( sfile *curr, files *fi, char *data, vlist *vl )
         if( fgets( id,MAX_SRC_LINE-1,fi->f[i] ) != NULL ) {
             id[ MAX_SRC_LINE-1 ] = 0;
             id[ strlen(id) - 1] = 0;
-            VarAdd( v1, id, vl );
+            VarAddStr( v1, id, vl );
         } else {
             fclose( fi->f[i] );
             fi->ft[i] = SRCFILE_NONE;
@@ -171,7 +171,7 @@ int SrcRead( sfile *curr, files *fi, char *data, vlist *vl )
             return( END_OF_FILE );
         }
         fi->buffer[i].line++;
-        VarAdd( v1, cline->data, vl );
+        VarAddStr( v1, cline->data, vl );
     }
     return( ERR_NO_ERR );
 

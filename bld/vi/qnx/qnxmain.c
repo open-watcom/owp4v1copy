@@ -46,7 +46,7 @@ void main( int argc, char *argv[] )
     argc = argc;
     EXEName = argv[-1];
     InitialStack();
-    VarAddGlobal( "OS", "qnx" );
+    VarAddGlobalStr( "OS", "qnx" );
     Comspec = getenv( "SHELL" );
     InitializeEditor();
     FinalStack();

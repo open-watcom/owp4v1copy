@@ -751,7 +751,7 @@ int MySpawn( char * );
 void ResetSpawnScreen( void );
 
 /* srcvar.c */
-void VarAddGlobal( char *, char * );
+void VarAddGlobalStr( char *, char * );
 void VarFini( void );
 
 /* status.c */

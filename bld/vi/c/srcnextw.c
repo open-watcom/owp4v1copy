@@ -63,7 +63,7 @@ int SrcNextWord( char *data, vlist *vl )
     }
     v = VarFind( v1, vl );
     NextWord1( v->value, str );
-    VarAdd( v2, str, vl );
+    VarAddStr( v2, str, vl );
     return( ERR_NO_ERR );
 
 } /* SrcNextWord */
