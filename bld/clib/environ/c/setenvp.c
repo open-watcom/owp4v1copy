@@ -90,10 +90,18 @@ void __setenvp() {
     #if defined(__NETWARE__)
         // no environment support
     #elif defined(__LINUX__)
-        char **argep = _RWD_environ;
+        char  **argep;
+        int     count;
+
+        argep = _RWD_environ;
         while ( *argep != NULL )
             argep++;
-        _RWD_env_mask = (char *) argep;
+        count = argep - _RWD_environ;
+        argep = malloc ( (count+1) * sizeof( char * ) + count * sizeof( char ) );
+        memcpy( argep, _RWD_environ, (count+1) * sizeof( char * ) );
+        _RWD_env_mask = (char *) &argep[ count + 1 ];
+        memset( _RWD_env_mask, 0, (count) * sizeof(char) );
+        _RWD_environ = argep;
     #else
         #if defined(__WINDOWS_386__) || defined(__DOS_386__)
             char        _WCFAR *startp;
