@@ -297,7 +297,8 @@ static void CheckRWData( frame_spec *targ, targ_addr *addr )
 {
     if( FmtData.type & MK_WINDOWS && FmtData.u.os2.chk_seg_relocs
                                   && IsReadOnly( LastSegData ) ) {
-        if( !IsReadOnly( GetFrameSegData( targ ) ) ) {
+        if(( !IS_SYM_IMPORTED( targ->u.sym ))
+            && ( !IsReadOnly( GetFrameSegData( targ )))) {
             LnkMsg( LOC+WRN+MSG_RELOC_TO_RWDATA_SEG, "a", addr );
         }
     }
@@ -1280,7 +1281,11 @@ static void FmtReloc( fix_data *fix, frame_spec *tthread )
         } else {
             fixtype = MapOS2FixType( fix->type );
         }
-        targseg = GetFrameSegData( tthread );
+        if( IS_SYM_IMPORTED( tthread->u.sym )) {
+            targseg = NULL;
+        } else {
+            targseg = GetFrameSegData( tthread );
+        }
         if( targseg != NULL && !targseg->is32bit ) {
             switch( fixtype ) {
             case 2:     // 16-bit selector
