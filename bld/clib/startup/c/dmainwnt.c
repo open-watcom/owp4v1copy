@@ -41,10 +41,6 @@ extern int APIENTRY LibMain( HANDLE, DWORD, LPVOID );
 extern void __CommonInit( void );
 extern BOOL __disallow_single_dgroup( HANDLE );
 
-thread_data             *__AllocInitThreadData( thread_data * );
-void                     __FreeInitThreadData( thread_data * );
-extern      thread_data *__FirstThreadData;
-
 #ifdef __SW_BR
     extern int          __Is_DLL;       /* TRUE => DLL, else not a DLL */
     extern char *       _LpDllName;
@@ -56,6 +52,11 @@ extern      thread_data *__FirstThreadData;
     extern void __InitMultipleThread( void );
     extern BOOL __NTAddThread(void *);
     extern void __NTRemoveThread( int );
+
+    extern thread_data * __AllocInitThreadData( thread_data * );
+    extern void __FreeInitThreadData( thread_data * );
+
+    extern thread_data * __FirstThreadData;
 #endif
 
 _WCRTLINK extern void (*__sig_init_rtn)(void);
@@ -168,9 +169,9 @@ int APIENTRY _LibMain( HANDLE hdll, DWORD reason, LPVOID reserved )
         __FiniRtns( 0, FINI_PRIORITY_EXIT-1 );
         #ifndef __SW_BR
             __NTRemoveThread( TRUE );
+            __FreeInitThreadData( __FirstThreadData );
+            __FirstThreadData = NULL;
         #endif
-        __FreeInitThreadData( __FirstThreadData );
-        __FirstThreadData = NULL;
         --processes;
     }
     return( rc );
