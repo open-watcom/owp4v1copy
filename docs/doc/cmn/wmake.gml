@@ -4286,7 +4286,7 @@ internal shell command from the following list:
 .point rd
 (remove directory)
 .point rm
-(erase files, intercepted by &makecmdup)
+(erase files, intercepted by &makcmdup)
 .point set
 (set environment variables, intercepted by &makcmdup)
 .point time
