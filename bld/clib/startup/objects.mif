@@ -122,6 +122,8 @@
 !inject seh386.obj                       nt                             o32
 !inject seh386v2.obj                     nt                             o32
 !inject seterrno.obj d16 d32 dpm         nt nta ntp nvc     nvl     o16 o32 q16 q32 w16 w32 osi l32 snp
+!inject snapimps.obj                                                                                snp
+!inject snpinit.obj                                                                                 snp
 !inject stack086.obj d16                                            o16     q16     w16
 !inject stack386.obj     d32                                            o32     q32     w32 osi l32 snp
 !inject stackwnt.obj                     nt nta ntp

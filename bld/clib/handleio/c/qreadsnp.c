@@ -24,31 +24,38 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of sbrk() for SNAP.
+* Description:  Implementation of __qread() for SNAP.
 *
 ****************************************************************************/
 
 
 #include "variety.h"
-#include <stddef.h>
-#include <errno.h>
+#include <unistd.h>
+#include <limits.h>
+#include "rtcheck.h"
 
 #include <libc/init.h>
-#include <libc/alloc.h>
+#include <libc/xfile.h>
 
-_WCRTLINK void _WCNEAR *sbrk( int increment )
+#define MAX_OS_TRANSFER (((unsigned)INT_MAX+1) - 512)
+
+unsigned __qread( int file, void *buffer, unsigned len )
 {
-    if( increment > 0 ) {
-        void *p;
+    unsigned    total;
+    int         h;
+    int         amount;
 
-        p = xmalloc( increment );
-        if( p != NULL )
-            return( p );
+    __handle_check( file, -1 );
 
-        errno = ENOMEM;
-    } else {
-        errno = EINVAL;
+    total = 0;
+    for( ;; ) {
+        if( len == 0 ) return( total );
+        amount = (len > MAX_OS_TRANSFER) ? MAX_OS_TRANSFER : len;
+        h = xread( file, buffer, amount );
+        if( h < 0 ) return( h );
+        total += h;
+        if( h != amount ) return( total );
+        buffer = (char *)buffer + amount;
+        len -= amount;
     }
-    return( (void *) -1 );
 }
-

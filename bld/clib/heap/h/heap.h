@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Heap library configuration for various platforms.
 *
 ****************************************************************************/
 
@@ -36,10 +35,6 @@
 #include <i86.h>
 #endif
 
-#if (__WATCOMC__ < 900)
- #define __segment      unsigned short
-#endif
-
 #if !defined(__DOS_EXT__)
 #if defined(__386__) &&                 \
    !defined(__WINDOWS_386__) &&         \
@@ -48,7 +43,8 @@
    !defined(__NT__) &&                  \
    !defined(__OSI__) &&                 \
    !defined(__QNX__) &&                 \
-   !defined(__LINUX__)
+   !defined(__LINUX__) &&               \
+   !defined(__SNAP__)
 #define __DOS_EXT__
 #endif
 #endif

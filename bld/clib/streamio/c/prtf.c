@@ -62,7 +62,7 @@
 
   #define PASCAL_STRING           'S'             /* for Novell */
   #define WIDE_CHAR_STRING        'S'
-  #if !defined(__NETWARE__) && !defined(__UNIX__)
+  #if !defined(__NETWARE__) && !defined(__UNIX__) && !defined(__SNAP__)
     #define USE_MBCS_TRANSLATION
   #endif
 

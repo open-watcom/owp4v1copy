@@ -1,4 +1,4 @@
-#pmake: small register 32bit snap math iX86 static os_snap cpu_386
+#pmake: small register 32bit snap streamio iX86 static os_snap cpu_386
 processor=386
 model=ms
 system=snap
@@ -7,3 +7,4 @@ convention=register
 !include ../../../objects.mif
 !include $(clib_dir)/master.mif
 !include $(clib_dir)/mklib.mif
+!include ../../../deps.mif

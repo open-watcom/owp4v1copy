@@ -24,31 +24,26 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of sbrk() for SNAP.
+* Description:  Implementation of write() for SNAP.
 *
 ****************************************************************************/
 
 
 #include "variety.h"
-#include <stddef.h>
-#include <errno.h>
+#include <stdio.h>
+#include <io.h>
+#include "rtcheck.h"
 
 #include <libc/init.h>
-#include <libc/alloc.h>
+#include <libc/xfile.h>
 
-_WCRTLINK void _WCNEAR *sbrk( int increment )
+_WCRTLINK int write ( int handle, const void *buffer, unsigned len )
+/*******************************************************************/
 {
-    if( increment > 0 ) {
-        void *p;
+    int     rc;
 
-        p = xmalloc( increment );
-        if( p != NULL )
-            return( p );
+    rc = xwrite( handle, buffer, len );
 
-        errno = ENOMEM;
-    } else {
-        errno = EINVAL;
-    }
-    return( (void *) -1 );
+    return rc;
 }
 

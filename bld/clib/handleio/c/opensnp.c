@@ -24,31 +24,44 @@
 *
 *  ========================================================================
 *
-* Description:  Implementation of sbrk() for SNAP.
+* Description:  Implementation of open() and sopen() for SNAP.
 *
 ****************************************************************************/
 
 
 #include "variety.h"
-#include <stddef.h>
-#include <errno.h>
+#include <stdio.h>
+#include <stdarg.h>
 
 #include <libc/init.h>
-#include <libc/alloc.h>
+#include <libc/xfile.h>
 
-_WCRTLINK void _WCNEAR *sbrk( int increment )
+
+/* open() and sopen() are identical under SNAP, since the extra share
+ * flags passed to sopen() are simply ignored. We implement sopen() because
+ * the runtime library internally uses it.
+ */
+
+_WCRTLINK int open( const char *name, int oflag, ... )
 {
-    if( increment > 0 ) {
-        void *p;
+    int         mode;
+    va_list     args;
 
-        p = xmalloc( increment );
-        if( p != NULL )
-            return( p );
+    va_start( args, oflag );
+    mode = va_arg( args, int );
+    va_end( args );
+    return xopen( name, oflag, mode );
+}
 
-        errno = ENOMEM;
-    } else {
-        errno = EINVAL;
-    }
-    return( (void *) -1 );
+
+_WCRTLINK int sopen( const char *name, int oflag, int shflag, ... )
+{
+    int         mode;
+    va_list     args;
+
+    va_start( args, shflag );
+    mode = va_arg( args, int );
+    va_end( args );
+    return xopen( name, oflag, mode );
 }
 
