@@ -152,13 +152,13 @@ cflags_all += -fo=$@
 !endif
 wcl_util_opts = -ox -zq
 
-extra_c_flags_ntio = -i"$(wres_dir)/h"
-extra_c_flags_posixio = -i"$(wres_dir)/h"
-extra_c_flags_linkio = -i"$(wres_dir)/h"
-extra_c_flags_objorl = -i"$(orl_dir)/h"
-extra_c_flags_dbgdwarf = -i"$(dwarf_dir)/dw/h"
-extra_c_flags_loadpe = -i. -i"../h" -I"$(wrc_dir)/h" -i"$(wres_dir)/h" -DINSIDE_WLINK
-extra_c_flags_loados2 = -i"$(wres_dir)/h"
+extra_c_flags_ntio = -I"$(wres_dir)/h"
+extra_c_flags_posixio = -I"$(wres_dir)/h"
+extra_c_flags_linkio = -I"$(wres_dir)/h"
+extra_c_flags_objorl = -I"$(orl_dir)/h"
+extra_c_flags_dbgdwarf = -I"$(dwarf_dir)/dw/h"
+extra_c_flags_loadpe = -I. -I"../h" -I"$(wrc_dir)/h" -I"$(wres_dir)/h" -DINSIDE_WLINK
+extra_c_flags_loados2 = -I"$(wres_dir)/h"
 
 exe_cflags = $+$(cflags)$-
 
@@ -262,9 +262,9 @@ $(stubexe) : $(stub_objs)
 !endif
     $(linker) @$(slnk)
 
-version.rc : ../h/wlver.rc
-    $(bld_cl) $(fe_misc_dir)\c\genverrc.c $(wcl_util_opts) -d_VERSION=$(bld_ver)
-    genverrc ../h/wlver.rc version.rc $$ wlink.dll $(patch_level)
+version.rc : ../h/wlver.rc $(fe_misc_dir)/c/genverrc.c
+    $(bld_cl) $]@ $(wcl_util_opts) -d_VERSION=$(bld_ver)
+    genverrc $[@ version.rc $$ wlink.dll $(patch_level)
     rm -f genverrc.*
 
 trmem.obj : $(trmem_dir)/trmem.c
