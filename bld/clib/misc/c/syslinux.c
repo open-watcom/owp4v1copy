@@ -55,6 +55,13 @@ if ((u_long)(res) >= (u_long)(-125)) {                  \
 }                                                       \
 return (type)(res);
 
+#define __syscall_return_pointer(type, res)                     \
+if ((u_long)(res) >= (u_long)(-125)) {                  \
+    errno = -(res);                                     \
+    res = (u_long)0;                                   \
+}                                                       \
+return (type)(res);
+
 u_long sys_brk(u_long brk)
 {
     u_long newbrk;
@@ -91,7 +98,7 @@ long __socketcall(int call, u_long *args)
 _WCRTLINK char *getcwd( char *__buf, size_t __size )
 {
     u_long res = sys_call2(SYS_getcwd, (u_long)__buf, __size);
-    __syscall_return(char *,res);
+    __syscall_return_pointer(char *,res);
 }
 
 _WCRTLINK int fcntl( int __fildes, int __cmd, ... )
