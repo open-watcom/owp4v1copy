@@ -270,6 +270,17 @@ typedef struct _EAOP {
     ULONG    oError;
 } EAOP, FAR *PEAOP;
 
+typedef struct _VOLUMELABEL {
+    BYTE cch;
+    CHAR szVolLabel[12];
+} VOLUMELABEL, FAR *PVOLUMELABEL;
+
+typedef struct _FSINFO {
+    FDATE fdateCreation;
+    FTIME ftimeCreation;
+    VOLUMELABEL vol;
+} FSINFO, FAR *PFSINFO;
+
 USHORT APIENTRY DosBufReset(HFILE);
 USHORT APIENTRY DosChDir(PSZ,ULONG);
 USHORT APIENTRY DosChgFilePtr(HFILE,LONG,USHORT,PULONG);
