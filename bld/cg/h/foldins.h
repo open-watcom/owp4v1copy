@@ -27,5 +27,5 @@
 * Description:  Prototypes for foldins.c
 *
 ****************************************************************************/
-extern instruction      *FoldIns( instruction *ins );
-extern bool     ConstFold( block *root );
+extern  instruction     *FoldIns( instruction *ins );
+extern  bool    ConstFold( block *root );

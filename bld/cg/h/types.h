@@ -27,9 +27,9 @@
 * Description:  Prototypes for types.c
 *
 ****************************************************************************/
-extern void InitTyping(void);
-extern type_def *TypeAddress(cg_type tipe);
-extern type_length TypeLength(cg_type tipe);
-extern type_def *TypeAlias(cg_type define, cg_type existing);
-extern type_def *TypeDef(cg_type refno, type_length length, type_length align);
-extern void TypeFini(void);
+extern  void    InitTyping( void );
+extern  type_def        *TypeAddress( cg_type tipe );
+extern  type_length     TypeLength( cg_type tipe );
+extern  type_def        *TypeAlias( cg_type define, cg_type existing );
+extern  type_def        *TypeDef( cg_type refno, type_length length, type_length align );
+extern  void    TypeFini( void );

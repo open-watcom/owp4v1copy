@@ -27,5 +27,5 @@
 * Description:  Prototypes for treeconv.c
 *
 ****************************************************************************/
-extern tn FoldCnvRnd(cg_op op, tn name, type_def *to_tipe);
-extern void TGDemote(tn name, type_def *tipe);
+extern  tn      FoldCnvRnd( cg_op op, tn name, type_def *to_tipe );
+extern  void    TGDemote( tn name, type_def *tipe );

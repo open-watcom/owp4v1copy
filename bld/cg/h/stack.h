@@ -27,4 +27,4 @@
 * Description:  Prototype for stack.h
 *
 ****************************************************************************/
-extern pointer SafeRecurse(pointer (*rtn)(void), pointer arg);
+extern  pointer SafeRecurse( pointer (*rtn)( void), pointer arg );
