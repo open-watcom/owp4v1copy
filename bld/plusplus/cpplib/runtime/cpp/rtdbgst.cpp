@@ -753,6 +753,6 @@ void __DumpPdata()
 
 extern "C" {
 
-    #include "..\..\..\c\dbgio.c"
+    #include "../../../c/dbgio.c"
 
 };
