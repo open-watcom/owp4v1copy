@@ -45,7 +45,11 @@ include langenv.inc
 if COMP_CFG_COFF
 DGROUP group _NULL,_AFTERNULL,CONST,_DATA,DATA,_BSS,STACK
 else
+ifdef __LINUX__
+DGROUP group _NULL,_AFTERNULL,CONST,_DATA,DATA,TIB,TI,TIE,XIB,XI,XIE,YIB,YI,YIE,_BSS,STACK
+else
 DGROUP group _NULL,_AFTERNULL,CONST,_DATA,DATA,_BSS,STACK,TIB,TI,TIE,XIB,XI,XIE,YIB,YI,YIE
+endif
 endif
 
 ; this guarantees that no function pointer will equal NULL
@@ -123,7 +127,11 @@ DATA    ends
 _BSS    segment word public 'BSS'
 _BSS    ends
 
+ifdef __LINUX__
+STACK_SIZE      equ     1000h
+else
 STACK_SIZE      equ     10000h
+endif
 
 STACK   segment para stack 'STACK'
         db      (STACK_SIZE) dup(?)

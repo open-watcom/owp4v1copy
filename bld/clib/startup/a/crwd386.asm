@@ -54,6 +54,7 @@ _dynend      dd 0               ; top of dynamic data area
 _curbrk      dd 0               ; top of usable memory
 endif
 ifndef __QNX__
+ifndef __LINUX__
 ifndef _NETWARE_LIBC
 _LpCmdLine   dd 0               ; pointer to raw command line
 _LpPgmName   dd 0               ; pointer to program name (for argv[0])
@@ -75,6 +76,7 @@ _psp         dw 0,0             ; segment addr of program segment prefix
 __x386_stacklow label   dword
 endif
 endif
+endif
 _STACKLOW  dd 0                 ; lowest address in stack
 _STACKTOP  dd 0                 ; highest address in stack
 __ASTACKSIZ dd 0                ; alternate stack size
@@ -94,6 +96,7 @@ endif
 _Envptr    dd 0                 ; offset part of environment pointer
 _Envseg    dw 0                 ; segment containing environment strings
 ifndef __QNX__
+ifndef __LINUX__
 _osmajor   db 0                 ; major DOS version number
 _osminor   db 0                 ; minor DOS version number
 ifdef __NT__
@@ -105,11 +108,13 @@ _winver    dd 0                 ; operating system version number
 endif
 endif
 endif
+endif
  __FPE_handler label dword
 ___FPE_handler dd __null_FPE_rtn ; FPE handler
 
 
 ifndef __QNX__
+ifndef __LINUX__
 ifndef __NETWARE__
         public  "C",_osmajor
         public  "C",_osminor
@@ -143,6 +148,7 @@ ifdef __OS2__
         public  "C",_LpwCmdLine
         public  "C",_LpwPgmName
         public  "C",_LpwDllName
+endif
 endif
 endif
 ifndef __NETWARE__

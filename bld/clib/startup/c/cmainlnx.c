@@ -24,11 +24,57 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Main C library entry point for Linux
 *
 ****************************************************************************/
 
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <i86.h>
+#include <limits.h>
+#include <malloc.h>
+#include "exitwmsg.h"
+#include "initfini.h"
+#include "thread.h"
 
-// TODO: Clone this from the QNX version for Linux!
+//void    __near *_endheap;         /* temporary work-around */
+//char    *__near __env_mask;
+//char    **environ;
+_WCRTLINK char ** _WCNEAR environ;  /* pointer to environment table */
+int     _argc;                      /* argument count  */
+char    **_argv;                    /* argument vector */
+
+/* address of FP exception handler */
+extern  void    (*__FPE_handler)(int);
+
+static void __null_FPE_rtn()
+{
+}
+
+extern int main( int, char **, char ** );
+
+void __cdecl _LinuxMain(int argc, char **argv, char **arge)
+{
+    _argc               = argc;
+    _argv               = argv;
+    environ             = arge;
+    __FPE_handler =     &__null_FPE_rtn;
+    __InitRtns( 1 );
+    __InitRtns( 255 );
+    _amblksiz = 8 * 1024;       /* set minimum memory block allocation  */
+    exit(main(argc,argv,arge));
+}
+
+void sys_exit(int rc);
+#pragma aux sys_exit =                      \
+    "mov    eax,1"                          \
+    "int    0x80"                           \
+    parm [ebx];
+
+_WCRTLINK void __exit(unsigned ret_code)
+{
+    __FiniRtns( 0, FINI_PRIORITY_EXIT-1 );
+    sys_exit(ret_code);
+}
 

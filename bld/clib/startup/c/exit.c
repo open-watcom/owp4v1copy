@@ -63,7 +63,7 @@ _WCRTLINK extern void (*__process_fini)(unsigned,unsigned);
 #endif
 
 
-#if !defined(__QNX__) && !defined(__WINDOWS_386__)
+#if !defined(__QNX__) && !defined(__LINUX__) && !defined(__WINDOWS_386__)
 void    __null_int23_exit() {}              /* SIGNAL needs it */
 void    (*__int23_exit)() = __null_int23_exit;
 static void _null_exit_rtn() {}
@@ -82,10 +82,10 @@ _WCRTLINK void exit( int status )
             _WindowExitRtn();
         }
 #endif
-#if !defined(__QNX__) && !defined(__WINDOWS_386__)
+#if !defined(__QNX__) && !defined(__LINUX__) && !defined(__WINDOWS_386__)
         (*__int23_exit)();
 #endif
-#if defined(__QNX__)
+#if defined(__QNX__) || defined(__LINUX__)
         __FiniRtns( 0, 255 );
 #elif defined(__WINDOWS_386__)
         if( !__Is_DLL ) {
@@ -122,7 +122,7 @@ _WCRTLINK void _UnloadCLib( void )
 
 _WCRTLINK void _exit( int status )
     {
-#if !defined(__QNX__) && !defined(__WINDOWS_386__)
+#if !defined(__QNX__) && !defined(__LINUX__) && !defined(__WINDOWS_386__)
         (*__int23_exit)();
         (*__FPE_handler_exit)();
 #endif
@@ -130,3 +130,4 @@ _WCRTLINK void _exit( int status )
     }
 
 #endif
+
