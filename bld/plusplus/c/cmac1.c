@@ -981,23 +981,22 @@ static MACRO_TOKEN *glueTokens( MACRO_TOKEN *head )
                 }
                 else
                 {
-                    new_mtok = glue2Tokens( mtok, next );
+                    MACRO_TOKEN *last;
+                    last = new_mtok = glue2Tokens( mtok, next );
                     *ptail = new_mtok;
-                    while( new_mtok->next != NULL ) {
-                        // this would be incorrect anyhow
-                        // since mtok is actually reset at the 
-                        // end to what *pTail wpoints to...
-                        //ptail = &(new_mtok->next);
-                        new_mtok = new_mtok->next;
+                    while( last->next != NULL ) {
+                        last = last->next;
                     }
                     if( next != NULL ) {
-                        new_mtok->next = next->next;
+                        last->next = next->next;
                     }
                     do {
                         next = mtok->next;
                         CMemFree( mtok );
                         mtok = next;
-                    } while( mtok != new_mtok->next );
+                    } while( mtok != last->next );
+                    if( !_ptail )
+                        head = new_mtok;
                     mtok = new_mtok;
                 }
                 continue;       /* to catch consecutive ##'s */
