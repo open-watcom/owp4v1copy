@@ -228,7 +228,7 @@ local SEGSTK    *SegStk;          // - active-segments stack
 local char      KwChar = { ':' };// - key word definition character
 local TEXTENT   *SourceText;      // - source text
 local char      Token[32];       // - scan token
-local char      Record[256];     // - input record
+local char      Record[1024];     // - input record
 local char      *Rptr;            // - ptr into record
 local PROCMODE  ProcessMode;     // - processing mode
 local char      *OutFmt = "%s"; // - output format
