@@ -48,4 +48,4 @@ $(dosproj).exe : $(dos_objs)
         $(linker) system dos n $(dosproj) op map f {$(dos_objs)}
 
 spawn.obj : spawn.c
-        $(compile) /i=$(inc_dirs_sys) /bt=os2
+        $(compile) /i=$(inc_dirs_sys_os2) /bt=os2
