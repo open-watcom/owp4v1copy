@@ -131,26 +131,23 @@ mem_objs += &
 
 objs = $(wv_objs) $(mem_objs)
 
-lib_cmdfile = $(guidir)/gui$(os)$(model).clb
-here = $(%cdrive):$(%cwd)
-
 tail_i86 = $(model)
 tail_386 = $(model)
 tail_axp = axp
 
 ../gui$(host_OS)$(tail_$(host_CPU)).lib : eraseall.obj $(gui_msg_file) $(objs) $(extra_objs) $(sysobjs) $(__makefiles__) $(wpi_library) $(ctl3d_lib)
-        @%create $(lib_cmdfile)
-        @for %i in ($(objs)) do @%append $(lib_cmdfile) +%i
-        @for %i in ($(sysobjs)) do @%append $(lib_cmdfile) +%i
+        @%create tmp.lbc
+        @for %i in ($(objs)) do @%append tmp.lbc +%i
+        @for %i in ($(sysobjs)) do @%append tmp.lbc +%i
 !ifdef wpi_lib
-        @%append $(lib_cmdfile) +$(wpi_dir)/lib/$(wpi_lib).lib
-        @%append $(lib_cmdfile) +wpimem
+        @%append tmp.lbc +$(wpi_dir)/lib/$(wpi_lib).lib
+        @%append tmp.lbc +wpimem
 !endif
 !ifdef ctl3d_lib
-        @%append $(lib_cmdfile) +$(ctl3d_lib)
+        @%append tmp.lbc +$(ctl3d_lib)
 !endif
-        $(librarian_$(host_CPU)) $(wlib_opt) -n -b -q $^@ @$(lib_cmdfile)
-        rm -f $(lib_cmdfile)
+        $(librarian_$(host_CPU)) $(wlib_opt) -n -b -q $^@ @tmp.lbc
+        @rm -f tmp.lbc
 
 eraseall.obj : $(guidir)/$(type)/compile.gbl
         if exist *.obj erase *.obj

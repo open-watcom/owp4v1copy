@@ -56,13 +56,13 @@ inc_dirs        = .;$(include_path);$(dwarf_dir)/dw/h;$(watcom_dir)/h;$(mem_incl
         $(as) $(aflags) $(extra_a_flags_$[&) $[@
 
 libfile: .PROCEDURE
-        rm -f $^&.clb
+        rm -f $^&.lbc
 !ifdef on_brads_machine
-        @for %i in ($?) do @%append $^&.clb -+%i
+        @for %i in ($?) do @%append $^&.lbc -+%i
 !else
-        @for %i in ($<) do @%append $^&.clb -+%i
+        @for %i in ($<) do @%append $^&.lbc -+%i
 !endif
-        $(librarian) $(wlib_parms) $^. @$^&.clb
+        $(librarian) $(wlib_parms) $^. @$^&.lbc
 
 global.chk : $(cg_dir)/compile.gbl
     # do not renable this (build machine is auto-dep) - BBB

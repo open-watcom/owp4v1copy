@@ -21,6 +21,6 @@ cf_objs = &
     u32moddi.obj
 
 cf.lib : $(cf_objs)
-        rm -f $^&.clb
-        @for %i in ($<) do @%append $^&.clb -+%i
-        $(librarian) -n -b $^@ @$^&.clb
+        rm -f $^&.lbc
+        @for %i in ($<) do @%append $^&.lbc -+%i
+        $(librarian) -n -b $^@ @$^&.lbc

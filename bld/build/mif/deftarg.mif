@@ -4,5 +4,5 @@ clean: .SYMBOLIC .EXPLICIT
 
 killnonobj: .SYMBOLIC .EXPLICIT
         rm -f *.lnk *.exe *.dll *.lib *.i *.u *.int *.rc *.dlg *.res
-        rm -f *.clb *.lst *.err *.pch *.map *.dmp *.sym *.tmp *.ilk *.gh
+        rm -f *.lbc *.lst *.err *.pch *.map *.dmp *.sym *.tmp *.ilk *.gh
         rm -f *.elf compile.tim

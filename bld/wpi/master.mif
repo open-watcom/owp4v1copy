@@ -99,7 +99,7 @@ lib :: $(LIB_DIR)/$(libname).lib .SYMBOLIC
 
 clean: .SYMBOLIC .EXPLICIT
         rm -f *.?bj *.lnk *.exe *.dll *.lib *.res
-        rm -f *.clb *.err *.map *.def *.lbc
+        rm -f *.lbc *.err *.map *.def
         rm -f $(wpi_dir)/lib/$(libname).lib
 
 update : .SYMBOLIC

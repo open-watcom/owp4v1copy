@@ -54,9 +54,9 @@ orl_objs        = orlentry$(obj) &
                         $(coff_objs)
 
 ../$(bin_$(host_OS)_$(host_CPU))/orl.lib : $(orl_objs)
-        @%create lbc.tmp
-        @for %i in ($(orl_objs)) do @%append lbc.tmp -+%i
-        $(librarian) -b $^@ @lbc.tmp
+        @%create $^&.lbc
+        @for %i in ($(orl_objs)) do @%append $^&.lbc -+%i
+        $(librarian) -b $^@ @$^&.lbc
 
 #clean: .SYMBOLIC .EXPLICIT
-#        rm -f *.?bj *.lnk *.exe *.lib *.res *.clb *.err $(lbc)
+#        rm -f *.?bj *.lnk *.exe *.lib *.res *.lbc *.err $(lbc)

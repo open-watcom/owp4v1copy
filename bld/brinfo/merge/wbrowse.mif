@@ -98,7 +98,6 @@ clean: .symbolic
 	@if exist *.dll del *.dll
 	@if exist *.lib del *.lib
 	@if exist *.res del *.res
-	@if exist *.clb del *.clb
 	@if exist *.lbc del *.lbc
 	@if exist *.map del *.map
 	@if exist *.pch del *.pch

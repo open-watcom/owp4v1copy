@@ -140,5 +140,5 @@ wlib.res : ../wlib.rc ../wlib.msg msg.gh
         $(rc) -bt=windows -r -zk0 -fo=$^@ $(msg_rc_flags) $[@ 
 
 #clean: .SYMBOLIC .EXPLICIT
-#        rm -f *.?bj *.lnk *.exe *.lib *.res *.clb *.dll *.err
+#        rm -f *.?bj *.lnk *.exe *.lib *.res *.lbc *.dll *.err
 #        rm -f *.sym *.map *.pch *.gh ../h/msg.gh ../mkstr.exe

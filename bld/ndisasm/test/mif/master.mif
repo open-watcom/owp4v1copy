@@ -42,7 +42,7 @@ clean: .SYMBOLIC .EXPLICIT
         @if exist *.exe del *.exe
         @if exist *.lib del *.lib
         @if exist *.res del *.res
-        @if exist *.clb del *.clb
+        @if exist *.lbc del *.lbc
         @if exist *.err del *.err
         @if exist *.c del *.c
         @if exist *.map del *.map
