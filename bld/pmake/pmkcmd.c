@@ -41,6 +41,9 @@
 #ifdef __UNIX__
 #include <sys/wait.h>
 #include <sys/stat.h>
+#ifdef __WATCOMC__
+#include <process.h>
+#endif
 #else
 #include <direct.h>
 #include <process.h>
@@ -177,7 +180,7 @@ void PrintHelp( void )
 
 char                    CmdBuff[512];
 
-#ifndef __WATCOMC__
+#if !defined(__WATCOMC__) && defined(__UNIX__)
 char **_argv;
 
 int main( int argc, char **argv )
