@@ -38,7 +38,7 @@ _NW   = 2 ;     Netware 386
 _QNX  = 3 ;     QNX/386
 
 ifdef __WIN387__
-        include VMM.Inc
+        include win30VMM.Inc
 
 VxD_LOCKED_CODE_SEG
 
