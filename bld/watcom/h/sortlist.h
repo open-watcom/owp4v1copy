@@ -32,4 +32,4 @@
 
 extern void *SortLinkedList( void *list, unsigned next_offset,
                        int (*compare)(void**,void**),
-                       void (*allocrtn)(unsigned), void (*freertn)(void*) );
+                       void *(*allocrtn)(unsigned), void (*freertn)(void*) );
