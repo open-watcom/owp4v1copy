@@ -50,9 +50,12 @@ void __ioalloc( fp )
         if( fp->_flag & _IOLBF ) {
             fp->_bufsize = 134;
         } else if( fp->_flag & _IONBF ) {
-            /* note that this is big enough for UNICODE due to */
-            /* heap manager rounding up of size */
-            fp->_bufsize = 1;
+            /* Use small but reasonably sized buffer; otherwise we will end
+             * up calling into the OS for every character, completely killing
+             * performance on unbuffered stream output through printf() etc.,
+             * especially in extended DOS because of mode switches.
+             */
+            fp->_bufsize = 64;
         } else {
             fp->_bufsize = BUFSIZ;
         }
