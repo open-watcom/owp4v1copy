@@ -39,6 +39,8 @@ static sym_entry        **SortedSymbols;
 
 #define HASH_SIZE       256
 
+static int Hash( char *string, unsigned *plen );
+
 void InitFileTab()
 /***************/
 {
@@ -235,8 +237,8 @@ static void SortSymbols()
     sym_entry * sym;
     sym_entry   **sym_curr;
     int         i;
-    int         name_length;
-    int         name_extra;
+    int         name_length = 0;
+    int         name_extra = 0;
 
     NumFiles = 0;
     NumSymbols = 0;
@@ -342,17 +344,17 @@ static void WriteArMlibFileTable()
     arch_header arch;
     sym_file *  file;
     sym_entry * sym;
-    file_offset dict1_size;
-    file_offset dict2_size;
-    file_offset header_size;
+    file_offset dict1_size = 0;
+    file_offset dict2_size = 0;
+    file_offset header_size = 0;
     int         i;
     time_t      currenttime = time( NULL );
     file_offset obj_offset;
     int         index;
     libfile     io;
     char        buff[20];
-    char *      stringpad;
-    int         stringpadlen;
+    char *      stringpad = NULL;
+    int         stringpadlen = 0;
 
 
     SortSymbols();
@@ -570,7 +572,7 @@ static int Hash( char *string, unsigned *plen )
     *plen = 0;
     while( *string != 0 ) {
         h = ( h << 4 ) + *string;
-        if( g = h & 0xf0000000 ) {
+        if( (g = h & 0xf0000000) ) {
             h = h ^ ( g >> 24 );
             h = h ^ g;
         }
