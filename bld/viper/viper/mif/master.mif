@@ -51,7 +51,10 @@ $(name).exe : $(OBJECTS) $(LIBS) viper.res
         $(rc) $(rc_flags) -k viper.res $^@
 !else
         $(linker) $(lflags) name $(name) op map, de $(description) f {$(OBJECTS)} lib {$(LIBS)}
+        set opath=$(%path)
+        set path=$(os2_toolkit)\bin
         $(rc_os2) -p -x viper.res $^@
+        set path=$(%opath)
 !endif
 
 viper.res : _guimsgs.gh $(gui_dir)/h/gui.rc viper.rc
@@ -63,7 +66,10 @@ viper.res : _guimsgs.gh $(gui_dir)/h/gui.rc viper.rc
 !else
         $(cc) -i=".." -p $]@ -fo=viper.prc
 !endif
+        set opath=$(%path)
+        set path=$(lang_root)\binp
         $(rc_os2) -i ".." -r viper.prc viper.res
+        set path=$(%opath)
 !endif
 
 ./guimkstr.exe: $(gui_dir)/c/mkstr.c $(gui_dir)/h/gui.msg
