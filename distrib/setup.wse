@@ -25,11 +25,11 @@ item: Global
   MIF SMS Version=2.0
   EXE Filename=setup.exe
   FTP Host=www.openwatcom.org
-  FTP Pathname=webdeploy/c_11.0c
+  FTP Pathname=webdeploy/c_1.0
   FTP Cluster Size=20
   Upload Host=webtest.scitechsoft.com
   Upload Name=webup
-  Upload Directory=watcom/wiseupdate/c_11.0c
+  Upload Directory=watcom/wiseupdate/c_1.0
   Per-User Version ID=1
   Dialogs Version=7
   Version File=1.0
@@ -262,6 +262,11 @@ item: Set Variable
   Value=A
   Flags=10000000
 end
+item: Set Variable
+  Variable=UPDATE_ENV
+  Value=A
+  Flags=10000000
+end
 item: Remark
   Text=KB: Read registry to find previous settings for installer
 end
@@ -291,6 +296,13 @@ item: Get Registry Key Value
   Key=SOFTWARE\Open Watcom\c_1.0
   Default=%DOBACKUP%
   Value Name=Do Backup
+  Flags=00000100
+end
+item: Get Registry Key Value
+  Variable=UPDATE_ENV
+  Key=SOFTWARE\Open Watcom\c_1.0
+  Default=%UPDATE_ENV%
+  Value Name=Update Environment
   Flags=00000100
 end
 item: Remark
@@ -974,6 +986,119 @@ item: Custom Dialog Set
   end
 end
 item: Custom Dialog Set
+  Name=Select Program Manager Group
+  Display Variable=DISPLAY
+  item: Dialog
+    Title=Choose Start Menu Group
+    Title French=%APPTITLE%
+    Title German=%APPTITLE%
+    Title Portuguese=%APPTITLE%
+    Title Spanish=%APPTITLE%
+    Title Italian=%APPTITLE%
+    Title Danish=%APPTITLE%
+    Title Dutch=%APPTITLE%
+    Title Norwegian=%APPTITLE%
+    Title Swedish=%APPTITLE%
+    Width=283
+    Height=224
+    Font Name=Helv
+    Font Size=8
+    item: Push Button
+      Rectangle=172 185 214 199
+      Variable=DIRECTION
+      Value=N
+      Create Flags=01010000000000010000000000000001
+      Text=&Next >
+      Text French=&Suivant>
+      Text German=&Weiter>
+      Text Portuguese=&Próximo>
+      Text Spanish=&Siguiente >
+      Text Italian=&Avanti >
+      Text Danish=&Næste>
+      Text Dutch=&Volgende>
+      Text Norwegian=&Neste>
+      Text Swedish=&Nästa >
+    end
+    item: Push Button
+      Rectangle=130 185 172 199
+      Variable=DIRECTION
+      Value=B
+      Create Flags=01010000000000010000000000000000
+      Flags=0000000000000001
+      Text=< &Back
+      Text French=<&Retour
+      Text German=<&Zurück
+      Text Portuguese=<&Retornar
+      Text Spanish=<&Retroceder
+      Text Italian=< &Indietro
+      Text Danish=<&Back
+      Text Dutch=<&Terug
+      Text Norwegian=<&Tilbake
+      Text Swedish=< &Tillbaka
+    end
+    item: Push Button
+      Rectangle=222 185 264 199
+      Action=3
+      Create Flags=01010000000000010000000000000000
+      Text=Cancel
+      Text French=Annuler
+      Text German=Abbrechen
+      Text Portuguese=Cancelar
+      Text Spanish=Cancelar
+      Text Italian=Annulla
+      Text Danish=Slet
+      Text Dutch=Annuleren
+      Text Norwegian=Avbryt
+      Text Swedish=Avbryt
+    end
+    item: Static
+      Rectangle=90 10 260 32
+      Create Flags=01010000000000000000000000000000
+      Text=Enter the name of the Start Menu group to add %APPTITLE% icons to:
+      Text French=Entrez le nom du groupe du Gestionnaire de Programmes où placer les icônes %APPTITLE% à :
+      Text German=Den Namen der Programm-Managergruppe wählen, in der die %APPTITLE%-Symbole gespeichert werden sollen:
+      Text Portuguese=Introduzir o nome do Grupo Gestor de Programa para acrescentar os ícones %APPTITLE% para:
+      Text Spanish=Introduzca el nombre del grupo del Administrador del Programa para añadir los iconos %APPTITLE para:
+      Text Italian=Inserisci il nome del gruppo Program Manager per aggiungere le icone di %APPTITLE% a:
+      Text Danish=Indtast navnet på Programstyringsgruppen der skal tilføjes %APPTITLE% elementer:
+      Text Dutch=Breng de naam van de programmabeheergroep in waaraan u %APPTITLE%-pictogrammen wilt toevoegen.
+      Text Norwegian=Tast inn navnet på programbehandlingsgruppen for å legge %APPTITLE%-ikoner til:
+      Text Swedish=Skriv in namnet på den grupp i Programhanteraren där du vill ha ikonerna för %APPTITLE%:
+    end
+    item: Combobox
+      Rectangle=90 42 260 175
+      Variable=GROUP
+      Create Flags=01010000001000010000001100000001
+      Flags=0000000000000001
+      Text=%GROUP%
+      Text=
+      Text French=%GROUP%
+      Text French=
+      Text German=%GROUP%
+      Text German=
+      Text Portuguese=%GROUP%
+      Text Portuguese=
+      Text Spanish=%GROUP%
+      Text Spanish=
+      Text Italian=%GROUP%
+      Text Italian=
+      Text Danish=%GROUP%
+      Text Danish=
+      Text Dutch=%GROUP%
+      Text Dutch=
+      Text Norwegian=%GROUP%
+      Text Norwegian=
+      Text Swedish=%GROUP%
+      Text Swedish=
+    end
+    item: Static
+      Rectangle=10 177 264 178
+      Action=3
+      Create Flags=01010000000000000000000000000111
+    end
+  end
+end
+item: Custom Dialog Set
   Name=Select Host OS
   Display Variable=DISPLAY
   Flags=00000001
@@ -1364,6 +1489,204 @@ item: Custom Dialog Set
       Text Norwegian=
       Text Swedish=%1%
       Text Swedish=
+    end
+  end
+end
+item: Custom Dialog Set
+  Name=Update Environment Variables
+  Display Variable=DISPLAY
+  item: Dialog
+    Title=Update Environment Variables
+    Title French=Fichiers de Sauvegarde Remplacés
+    Title German=Sicherungskopie von ersetzten Dateien erstellen
+    Title Portuguese=Ficheiros substituídos de segurança
+    Title Spanish=Copias de seguridad de los archivos reemplazados
+    Title Italian=Backup file sostituiti
+    Title Danish=Sikkerhedskopiering af erstattede filer
+    Title Dutch=Vervangen bestanden kopiëren
+    Title Norwegian=Sikkerhetskopiere erstattede filer
+    Title Swedish=Säkerhetskopiera utbytta filer
+    Width=280
+    Height=224
+    Font Name=Helv
+    Font Size=8
+    item: Push Button
+      Rectangle=172 185 214 199
+      Variable=DIRECTION
+      Value=N
+      Create Flags=01010000000000010000000000000001
+      Text=&Next >
+      Text French=&Suivant>
+      Text German=&Weiter>
+      Text Portuguese=&Próximo>
+      Text Spanish=&Siguiente >
+      Text Italian=&Avanti >
+      Text Danish=&Næste>
+      Text Dutch=&Volgende>
+      Text Norwegian=&Neste>
+      Text Swedish=&Nästa >
+    end
+    item: Push Button
+      Rectangle=130 185 172 199
+      Variable=DIRECTION
+      Value=B
+      Create Flags=01010000000000010000000000000000
+      Text=< &Back
+      Text French=<&Retour
+      Text German=<&Zurück
+      Text Portuguese=<&Retornar
+      Text Spanish=<&Retroceder
+      Text Italian=< &Indietro
+      Text Danish=<&Tilbage
+      Text Dutch=<&Terug
+      Text Norwegian=<&Tilbake
+      Text Swedish=< &Tillbaka
+    end
+    item: Push Button
+      Rectangle=222 185 264 199
+      Action=3
+      Create Flags=01010000000000010000000000000000
+      Text=Cancel
+      Text French=Annuler
+      Text German=Abbrechen
+      Text Portuguese=Cancelar
+      Text Spanish=Cancelar
+      Text Italian=Annulla
+      Text Danish=Annuller
+      Text Dutch=Annuleren
+      Text Norwegian=Avbryt
+      Text Swedish=Avbryt
+    end
+    item: Static
+      Rectangle=9 177 263 178
+      Action=3
+      Create Flags=01010000000000000000000000000111
+    end
+    item: Static
+      Rectangle=90 10 260 120
+      Create Flags=01010000000000000000000000000000
+      Text=This installation program can automatically update your enviroment with the correct variables required by the Open Watcom compilers. If you do not wish to do this automatically, you may use the %MAINDIR%\setvars.bat to set the environment variables manually once Open Watcom has been installed.
+      Text=
+      Text=If Open Watcom is the only compiler you will be using on your machine, or you wish to be able to use the Open Watcom IDE from the Start Menu, it is highly recommended that you choose 'yes' below.
+      Text=
+      Text=Do you want to update the environment automatically?
+      Text French=Le programme d'installation peut créer des copies de sauvegarde de tous les fichiers remplacés pendant l'installation. Ces fichiers sont utilisés au cas où le logiciel est désinstallé et que l'on procède à la reprise du système. Si les copies de sauvegarde ne sont pas créées, on ne pourra que désinstaller le logiciel sans reprendre le système à un état précédent. Voulez-vous créer une sauvegarde des fichiers remplacés ?
+      Text German=Dieses Installationsprogramm kann Sicherungskopien von allen während der Installation ersetzten Dateien erstellen. Diese Dateien werden zur Rückgängigmachung der Installation und bei Anforderung eines Rollbacks verwendet. Ohne Sicherungskopien ist nur eine Rückgängigmachung der Installation möglich, nicht aber ein Rollback des Systems. Sicherungskopien der ersetzten Dateien erstellen?
+      Text Portuguese=Este programa de instalação pode criar cópias de segurança de todos os ficheiros substituídos durante a instalação. Estes ficheiros serão utilizados quando o programa for desinstalado  e for requisitada uma retomada. Se as cópias de segurança não forem criadas, só poderá desinstalar o programa e não pode retomar  um estado anterior do sistema. Deseja criar cópias de segurança dos ficheiros substituídos?
+      Text Spanish=Este programa de instalación puede crear copias de seguridad de todos los archivos reemplazados durante la instalación. Estos archivos se utilizarán cuando se desinstale el software y se solicite volver al estado anterior. Si no se crean copias de seguridad, únicamente podrá desinstalar el software y no podrá devolver el sistema al estado anterior. ¿Desea crear archivos de seguridad de los archivos reemplazados?
+      Text Italian=Questo programma di installazione può creare copie di backup di tutti i file sostituiti durante l’installazione. Questi file saranno usati quando il software sarà disinstallato e sarà richiesto un ritorno allo stato precedente. Se non crei le copie di backup, potrai solo disinstallare il software, ma non potrai riportare il sistema allo stato precedente. Vuoi creare i file di backup dei file sostituiti?
+      Text Danish=Dette installationsprogram kan oprette sikkerhedskopier af alle filer, som erstattes under installationen. Disse filer benyttes, når softwaren fjernes, og den tidligere systemkonfiguration genetableres. Hvis der ikke oprettes sikkerhedskopier, kan du kun fjerne den installerede software og ikke genetablere den tidligere systemkonfiguration. Vil du oprette sikkerhedskopier af filer, som erstattes?
+      Text Dutch=Dit installatieprogramma kan kopieën maken van alle bestanden die tijdens de installatie worden vervangen. Deze worden dan gebruikt als de software-installatie ongedaan wordt gemaakt en u het systeem wilt laten terugkeren naar de oorspronkelijke staat. Als er geen back-up kopieën worden gemaakt, kunt u de software enkel verwijderen maar het systeem niet in de oorspronkelijke staat terugbrengen. Wilt u een back-up maken van de vervangen bestanden?
+      Text Norwegian=Dette installasjonsprogrammet kan lage sikkerhetskopier av alle filer som blir erstattet under installasjonen. Disse filene vil tas i bruk når programvaren er avinstallert og det er behov for tilbakestilling. Hvis det ikke er laget sikkerhetskopier, kan du kun avinstallere programvaren og ikke stille systemet tilbake til tidligere status. Ønsker du å lage sikkerhetskopier av de filene som blir erstattet nå?
+      Text Swedish=Installationsprogrammet kan skapa säkerhetskopior av alla filer som byts ut under installationen. Dessa filer kan sedan användas när programvaran avinstalleras och du begär rollback. Om du då inte har några säkerhetskopior kan du bara avinstallera programvaran, inte återskapa systemet i dess tidigare skick. Vill du göra säkerhetskopior av de ersatta filerna?
+    end
+    item: Radio Button
+      Rectangle=155 134 182 160
+      Variable=UPDATE_ENV
+      Create Flags=01010000000000010000000000001001
+      Text=&Yes
+      Text=N&o
+      Text=
+      Text French=&Oui
+      Text French=N&on
+      Text French=
+      Text German=&Ja
+      Text German=N&ein
+      Text German=
+      Text Portuguese=&Sim
+      Text Portuguese=Nã&o
+      Text Portuguese=
+      Text Spanish=&Sí
+      Text Spanish=N&o
+      Text Spanish=
+      Text Italian=&Sì
+      Text Italian=N&o
+      Text Italian=
+      Text Danish=&Ja
+      Text Danish=&Nej
+      Text Danish=
+      Text Dutch=&Ja
+      Text Dutch=N&ee
+      Text Dutch=
+      Text Norwegian=&Ja
+      Text Norwegian=&Nei
+      Text Norwegian=
+      Text Swedish=&Ja
+      Text Swedish=N&ej
+      Text Swedish=
+    end
+  end
+  item: Dialog
+    Title=Select Destination Directory
+    Title French=Choisissez le répertoire de destination
+    Title German=Zielverzeichnis wählen
+    Title Portuguese=Seleccionar Directório de Destino
+    Title Spanish=Seleccione el Directorio de Destino
+    Title Italian=Seleziona Directory di destinazione
+    Title Danish=Vælg Destinationsbibliotek
+    Title Dutch=Kies Doeldirectory
+    Title Norwegian=Velg målkatalog
+    Title Swedish=Välj destinationskalatog
+    Width=221
+    Height=173
+    Font Name=Helv
+    Font Size=8
+    item: Listbox
+      Rectangle=5 2 160 149
+      Variable=BACKUP
+      Create Flags=01010000100000010000000101000000
+      Flags=0000110000100010
+      Text=%BACKUP%
+      Text=
+      Text French=%BACKUP%
+      Text French=
+      Text German=%BACKUP%
+      Text German=
+      Text Portuguese=%BACKUP%
+      Text Portuguese=
+      Text Spanish=%BACKUP%
+      Text Spanish=
+      Text Italian=%BACKUP%
+      Text Italian=
+      Text Danish=%BACKUP%
+      Text Danish=
+      Text Dutch=%BACKUP%
+      Text Dutch=
+      Text Norwegian=%BACKUP%
+      Text Norwegian=
+      Text Swedish=%BACKUP%
+      Text Swedish=
+    end
+    item: Push Button
+      Rectangle=167 6 212 21
+      Create Flags=01010000000000010000000000000001
+      Text=OK
+      Text French=OK
+      Text German=OK
+      Text Portuguese=OK
+      Text Spanish=ACEPTAR
+      Text Italian=OK
+      Text Danish=OK
+      Text Dutch=OK
+      Text Norwegian=OK
+      Text Swedish=OK
+    end
+    item: Push Button
+      Rectangle=167 25 212 40
+      Variable=BACKUP
+      Value=%BACKUP_SAVE%
+      Create Flags=01010000000000010000000000000000
+      Flags=0000000000000001
+      Text=Cancel
+      Text French=Annuler
+      Text German=Abbrechen
+      Text Portuguese=Cancelar
+      Text Spanish=Cancelar
+      Text Italian=Annulla
+      Text Danish=Slet
+      Text Dutch=Annuleren
+      Text Norwegian=Avbryt
+      Text Swedish=Avbryt
     end
   end
 end
@@ -2556,7 +2879,7 @@ end
 item: Install File
   Source=wise\cm_ide_dos\*.*
   Destination=%MAINDIR%
-  Description=DOS hosted IDE 
+  Description=DOS hosted IDE
   Flags=0000000100000010
 end
 item: End Block
@@ -2569,7 +2892,7 @@ end
 item: Install File
   Source=wise\cm_ide_win\*.*
   Destination=%MAINDIR%
-  Description=Windows 3.1 hosted IDE 
+  Description=Windows 3.1 hosted IDE
   Flags=0000000100000010
 end
 item: End Block
@@ -2582,7 +2905,7 @@ end
 item: Install File
   Source=wise\cm_ide_nt\*.*
   Destination=%MAINDIR%
-  Description=Windows NT hosted IDE 
+  Description=Windows NT hosted IDE
   Flags=0000000100000010
 end
 item: End Block
@@ -2802,6 +3125,161 @@ end
 item: Remark
 end
 item: Remark
+  Text=Update the environment
+end
+item: If/While Statement
+  Variable=UPDATE_ENV
+  Value=A
+  Flags=00000010
+end
+item: Add Directory to Path
+  Directory=%MAINDIR%\BINNT;%MAINDIR%\BINW
+  Flags=00000001
+end
+item: Check Configuration
+  Flags=10100000
+end
+item: Remark
+  Text=Update the Windows NT/2K/XP environment
+end
+item: Edit Registry
+  Total Keys=1
+  Key=HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment
+  New Value=%MAINDIR%
+  Value Name=WATCOM
+  Root=2
+end
+item: Edit Registry
+  Total Keys=1
+  Key=HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment
+  New Value=%MAINDIR%\EDDAT
+  Value Name=EDPATH
+  Root=2
+end
+item: If/While Statement
+  Variable=TARGET_OS
+  Value=D
+  Flags=00001010
+end
+item: Edit Registry
+  Total Keys=1
+  Key=HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment
+  New Value=%MAINDIR%\H;%MAINDIR%\H\NT
+  Value Name=INCLUDE
+  Root=2
+end
+item: Else Statement
+end
+item: Edit Registry
+  Total Keys=1
+  Key=HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment
+  New Value=%MAINDIR%\H;%MAINDIR%\H\WIN
+  Value Name=INCLUDE
+  Root=2
+end
+item: End Block
+end
+item: Else Statement
+end
+item: Remark
+  Text=Update the Windows 9x AUTOEXEC.BAT
+end
+item: Add to AUTOEXEC.BAT
+  New Text=SET WATCOM=%MAINDIR%
+  Search Text=SET WATCOM=
+  Line Number=0
+  Flags=00001110
+end
+item: Add to AUTOEXEC.BAT
+  New Text=SET EDPATH=%MAINDIR%\EDDAT
+  Search Text=SET EDPATH=
+  Line Number=0
+  Flags=00001110
+end
+item: If/While Statement
+  Variable=TARGET_OS
+  Value=D
+  Flags=00001010
+end
+item: Add to AUTOEXEC.BAT
+  New Text=SET INCLUDE=%MAINDIR%\H;%MAINDIR%\H\NT
+  Search Text=SET INCLUDE=
+  Line Number=0
+  Flags=00001110
+end
+item: Else Statement
+end
+item: Add to AUTOEXEC.BAT
+  New Text=SET INCLUDE=%MAINDIR%\H;%MAINDIR%\H\WIN
+  Search Text=SET INCLUDE=
+  Line Number=0
+  Flags=00001110
+end
+item: End Block
+end
+item: End Block
+end
+item: End Block
+end
+item: Remark
+end
+item: Remark
+  Text=Create the setvars.bat batch file
+end
+item: Insert Line into Text File
+  Pathname=%MAINDIR%\setvars.bat
+  New Text=@echo off
+  Search Text=@echo off
+  Line Number=0
+  Flags=00001010
+end
+item: Insert Line into Text File
+  Pathname=%MAINDIR%\setvars.bat
+  New Text=SET PATH=%MAINDIR%\BINNT;%MAINDIR%\BINW;%%PATH%%
+  Search Text=SET PATH=
+  Line Number=0
+  Flags=00001010
+end
+item: Insert Line into Text File
+  Pathname=%MAINDIR%\setvars.bat
+  New Text=SET WATCOM=%MAINDIR%
+  Search Text=SET WATCOM=
+  Line Number=0
+  Flags=00001010
+end
+item: Insert Line into Text File
+  Pathname=%MAINDIR%\setvars.bat
+  New Text=SET EDPATH=%MAINDIR%\EDDAT
+  Search Text=SET EDPATH=
+  Line Number=0
+  Flags=00001010
+end
+item: If/While Statement
+  Variable=TARGET_OS
+  Value=D
+  Flags=00001010
+end
+item: Insert Line into Text File
+  Pathname=%MAINDIR%\setvars.bat
+  New Text=SET INCLUDE=%MAINDIR%\H;%MAINDIR%\H\NT
+  Search Text=SET INCLUDE=
+  Line Number=0
+  Flags=00001010
+end
+item: Else Statement
+end
+item: Insert Line into Text File
+  Pathname=%MAINDIR%\setvars.bat
+  New Text=SET INCLUDE=%MAINDIR%\H;%MAINDIR%\H\WIN
+  Search Text=SET INCLUDE=
+  Line Number=0
+  Flags=00001010
+end
+item: End Block
+end
+item: Remark
+end
+item: Remark
   Text=Install the WiseUpdate installer
 end
 item: Remark
@@ -2894,35 +3372,41 @@ item: Remark
   Text=All OCX/DLL/EXE files that are self-registered
 end
 item: Edit Registry
-  Total Keys=5
+  Total Keys=6
   item: Key
-    Key=SOFTWARE\Open Watcom\c_11.0c
+    Key=SOFTWARE\Open Watcom\c_1.0
     New Value=%HOST_OS%
     Value Name=Host OS
     Root=2
   end
   item: Key
-    Key=SOFTWARE\Open Watcom\c_11.0c
+    Key=SOFTWARE\Open Watcom\c_1.0
     New Value=%TARGET_OS%
     Value Name=Target OS
     Root=2
   end
   item: Key
-    Key=SOFTWARE\Open Watcom\c_11.0c
+    Key=SOFTWARE\Open Watcom\c_1.0
     New Value=%DOBACKUP%
     Value Name=Do Backup
     Root=2
   end
   item: Key
-    Key=SOFTWARE\Open Watcom\c_11.0c
+    Key=SOFTWARE\Open Watcom\c_1.0
     New Value=%MAINDIR%
     Value Name=Install Location
     Root=2
   end
   item: Key
-    Key=SOFTWARE\Open Watcom\c_11.0c
+    Key=SOFTWARE\Open Watcom\c_1.0
     New Value=%COMPONENTS%
     Value Name=Components
+    Root=2
+  end
+  item: Key
+    Key=SOFTWARE\Open Watcom\c_1.0
+    New Value=%UPDATE_ENV%
+    Value Name=Update Environment
     Root=2
   end
 end
