@@ -432,7 +432,12 @@ static orl_return sectionInit( orl_sec_handle shnd )
 
 
 static void openError( char * file_name ) {
+// TODO: merge again when Linux clib supports perror()
+#ifdef __LINUX__
+    printf( "File Open Error: %s\n", file_name );
+#else
     perror( file_name );
+#endif
     exit( 1 );
 }
 
