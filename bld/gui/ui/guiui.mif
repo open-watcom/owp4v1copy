@@ -96,8 +96,6 @@ sys_hooks = &
 
 sysobjs = $(wv_sysobjs) $(sys_hooks) $(sys_dep_objs)
 
-inc_dirs +=$(ui_dir)/h;
-
 # memory tracker cover routines
 extra_c_flags_helpmem = $(trmem_cflags) -fh=$^&.pch
 

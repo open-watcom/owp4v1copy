@@ -34,9 +34,9 @@
 #include "mem.h"
 #include "trmem.h"
 
-!ifdef TRMEM
+#ifdef TRMEM
 extern _trmem_hdl  GUIMemHandle;
-!endif
+#endif
 
 void MemFree( void *ptr )
 {

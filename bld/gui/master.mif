@@ -56,28 +56,30 @@ wv_objs = &
        guifcrck.obj   &
 
 mem_objs = &
-       guimem.obj
+       guimem.obj     &
+       $(trmem_objs)
 
-!ifdef trmem_cflags
-mem_objs += &
-       trmem.obj
-!endif
 
 objs = $(wv_objs) $(mem_objs)
 
-.c:     ../c;../../c;$(trmem_dir);$(help_dir)/c
-.h:     ../h;../../h;$(wpi_dir)/h
-.msg:   ../../h
-
-inc_dirs += ../h;../../h;$(trmem_dir);$(help_dir)/h;
+!ifeq sys_windowed 1
+wpi_lib = $(wpi_dir)/$(host_os)$(host_cpu)/wpi.lib
+!endif
 
 extra_c_flags += -s -fh
 
-extra_c_flags_axp += -ai -aq
-extra_c_flags_i86 += -fpc
-extra_c_flags_386 += -fpc
+extra_c_flags_axp = -ai -aq
+extra_c_flags_i86 = -fpc -zu
+extra_c_flags_386 = -fpc
 
-extra_c_flags_nov += -4s
+extra_c_flags_nov = -4s
+extra_c_flags_win = -zw
+!ifeq host_CPU i86
+extra_c_flags_win += -zW
+!endif
+!ifeq sys_windowed 1
+extra_c_flags_os2 = -d__OS2_PM__
+!endif
 
 # memory tracker cover routines
 extra_c_flags_guimem = $(trmem_cflags) -fh=$^&.pch
@@ -107,6 +109,15 @@ extra_c_flags_guifdlg += -fh=gui06.pch
 extra_c_flags_guihelp += -fh=gui07.pch
 extra_c_flags_guixmain += -fh=gui07.pch
 
+!ifeq sys_windowed 1
+inc_dirs = ../h;../../h;$(help_dir)/h;$(trmem_dir);$(wpi_dir)/h;$(sdk_dir)/misc
+!else
+inc_dirs = ../h;../../h;$(help_dir)/h;$(trmem_dir);$(ui_dir)/h
+!endif
+
+.c:     ../c;../../c;$(help_dir)/c;$(sdk_dir)/misc;$(trmem_dir)
+.h:     ../h;../../h;$(wpi_dir)/h
+.msg:   ../../h
 
 $(name).lib : eraseall.obj _guimsgs.gh $(objs) $(extra_objs) $(sysobjs) $(__MAKEFILES__) $(wpi_lib)
         @%create tmp.lbc
@@ -122,6 +133,6 @@ $(name).lib : eraseall.obj _guimsgs.gh $(objs) $(extra_objs) $(sysobjs) $(__MAKE
 _guimsgs.gh: ./mkstr.exe $(gui_dir)/h/gui.msg
         $[@ $^@ $(gui_msg_id_modifier)
 
-eraseall.obj : $(gui_dir)/$(type)/compile.gbl
+eraseall.obj : ../compile.gbl
         rm -f *.obj
         wtouch eraseall.obj

@@ -24,9 +24,7 @@ wic_trmem = 1
 
 ##############################################################################
 
-!ifdef trmem_cflags
-OBJS += trmem.obj
-!endif
+OBJS += $(trmem_objs)
 
 extra_c_flags = -zp1 -s
 extra_c_flags_i86 = -fpc
