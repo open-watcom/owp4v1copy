@@ -2,7 +2,7 @@
 # adjusting these settings
 
 # root of source tree
-export OWROOT=$HOME/watcom/src
+export OWROOT=`cd \`dirname $0\` && pwd`
 
 # Change this to point to an existing Watcom compiler (if applicable)
 # or alternatively to the release directory
