@@ -160,6 +160,7 @@ _WCRTLINK extern mode_t  umask( mode_t __cmask );
 #ifndef __TYPES_H_INCLUDED
  #include <sys/types.h>
 #endif
+:segment !SNAP & !SNAPDRV
 
 :include pshpackl.sp
 
@@ -322,6 +323,7 @@ struct _wstati64 {
 #define S_ISCHR( m )    (((m) & S_IFMT) == S_IFCHR)
 #define S_ISDIR( m )    (((m) & S_IFMT) == S_IFDIR)
 #define S_ISREG( m )    (((m) & S_IFMT) == S_IFREG)
+:endsegment
 
 /* owner permission */
 #define S_IRWXU         0000700
@@ -349,6 +351,7 @@ struct _wstati64 {
 #define S_ISGID         0002000
 #define S_ISVTX         0001000
 
+:segment !SNAP & !SNAPDRV
 _WCRTLINK extern int fstat( int, struct stat * );
 _WCRTLINK extern int _fstat( int, struct _stat * );
 _WCRTLINK extern int stat( const char *, struct stat * );
@@ -365,6 +368,7 @@ _WCRTLINK extern int _wstati64( const wchar_t *, struct _wstati64 * );
 #endif
 
 :include poppack.sp
+:endsegment
 :include cplusepi.sp
 #endif
 :endsegment

@@ -238,36 +238,44 @@ SNAPDRV_files = &
         string.h &
         time.h &
         unistd.h &
+        complex.h &
+        except.h &
+        exceptio.h &
+        exstring.h &
+        fstream.h &
+        generic.h &
+        iomanip.h &
+        iostream.h &
+        new.h &
+        stdexcep.h &
+        stdiobuf.h &
+        streambu.h &
+        string.hpp &
+        strstrea.h &
+        typeinfo.h &
+        wcdefs.h &
+        wcexcept.h &
+        wchash.h &
+        wchbase.h &
+        wchiter.h &
+        wclbase.h &
+        wclcom.h &
+        wclibase.h &
+        wclist.h &
+        wclistit.h &
+        wcqueue.h &
+        wcsbase.h &
+        wcsibase.h &
+        wcskip.h &
+        wcskipit.h &
+        wcstack.h &
+        wcvbase.h &
+        wcvector.h &
+        sys/stat.h &
         sys/types.h
 
 SNAP_files = &
-        _comdef.h &
-        assert.h &
-        ctype.h &
-        errno.h &
-        fcntl.h &
-        float.h &
-        limits.h &
-        locale.h &
-        malloc.h &
-        math.h &
-        search.h &
-        setjmp.h &
-        share.h &
-        signal.h &
-        stdarg.h &
-        stddef.h &
-        stdio.h &
-        stdlib.h &
-        string.h &
-        time.h &
-        unistd.h &
-        sys/types.h
-
-!if 0
-# Potentially needed:
-        process.h &
-!endif
+      $(SNAPDRV_files)
 
 all : $($(system)_files) .symbolic
     @%null
