@@ -555,7 +555,6 @@ ic_mask.gh : ..\h\ic.h ..\c\dwarf.c ..\c\cgbkcgrf.c ..\c\cgio.c ..\c\brmwrite.c
 
 inlnops.gh: ./mkopcode.exe $(wasm_dir)/inlnops.tok
         $[@ $(wasm_dir)/inlnops.tok $^@
-        rm -f mkopcode.*
 
 #
 # list of target architectures that have built-in code bursts
@@ -637,3 +636,5 @@ clean global : .symbolic
     @if exist ..\bin\$(exe_ref_name).* @del ..\bin\$(exe_ref_name).*
     @if exist $(dll_bld_name).* @del $(dll_bld_name).*
     @if exist $(dll_dbg_name).* @del $(dll_dbg_name).*
+    @if exist mkopcode.* @del mkopcode.@
+
