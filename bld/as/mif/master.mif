@@ -9,9 +9,7 @@ as_prog_suffix  = axp
 proj_name = was$(as_prog_suffix)
 name = $(proj_name)
 
-.extensions:
-.extensions: .qnx .exe .exp .obj .asm .rc .c .y .re .h .gh .msg
-.extensions: .mif
+.extensions: .rc .y .re .gh .msg
 
 .c: $(as_dir)\$(cpu)\c;$(as_dir)\c;$(trmem_dir);$(cpp_dir)
 .h: $(as_dir)\$(cpu)\h;$(as_dir)\h;$(trmem_dir);$(cpp_dir)
@@ -20,7 +18,6 @@ name = $(proj_name)
 .rc: $(as_dir)\h
 .gh: .
 .msg: $(as_dir)\h
-.mif: $(mif_path)
 
 !include cproj.mif
 !include defrule.mif
@@ -202,24 +199,10 @@ $(lex_out_c).c $(lex_out_h) : $(lex_in)
         $(re2c) $(lex_flags) $[@ > $^.
 
 clean: .symbolic .explicit
-        @if exist *.obj del *.obj
-        @if exist $(name)$(exe) del $(name)$(exe)
+        rm -f *.obj $(name)$(exe)
 !ifdef test_inline_as
-        @if exist $(asi_test_name)$(exe) del $(asi_test_name)$(exe)
+        rm -f $(asi_test_name)$(exe)
 !endif
-        @if exist *.err del *.err
-        @if exist *.map del *.map
-        @if exist *.pch del *.pch
-        @if exist *.lib del *.lib
-        @if exist *.clb del *.clb
-        @if exist ytab.* del ytab.*
-        @if exist $(lex_in) del $(lex_in)
-        @if exist $(lex_out_c).c del $(lex_out_c).c
-        @if exist $(yacc_in) del $(yacc_in)
-        @if exist $(yacc_out_c).c del $(yacc_out_c).c
-        @if exist $(yacc_out_h) del $(yacc_out_h)
-        @if exist *.res del *.res
-        @if exist *.sym del *.sym
-        @if exist *.tmp del *.tmp
-        @if exist msg.gh del msg.gh
-        @if exist mkstrid$(exe) del mkstrid$(exe)
+        rm -f *.err del *.err *.map *.pch *.lib *.clb ytab.* *.res *.sym *.tmp
+        rm -f $(lex_in) $(lex_out_c).c $(yacc_in) $(yacc_out_c).c $(yacc_out_h)
+        rm -f msg.gh mkstrid$(exe)

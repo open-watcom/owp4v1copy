@@ -1,9 +1,5 @@
 proj_name = orl
 
-.extensions:
-.extensions: .lan .exe .obj .c .h .mif
-
-.mif : $(mif_path)
 !include cproj.mif
 !include defrule.mif
 

@@ -1,16 +1,10 @@
 # be very careful with the ordering of the cproj.mif and defrule.mif
 proj_name       = wlib
 !include cproj.mif
-
-.extensions:
-.extensions: .exe .obj .c .h .mif .dll .lib
+!include defrule.mif
 
 .c: $(trmem_dir);../c;$(lib_misc_dir)/c;$(watcom_dir)/c
 .h: $(trmem_dir);../h;$(watcom_dir)/h
-
-.mif: $(mif_path)
-
-!include defrule.mif
 
 obj             = .obj
 dll_name        = $(proj_name)d.dll
@@ -43,6 +37,7 @@ wlib_objs = &
 
 stub_objs = libdlldr.obj idedrv.obj idemsgfm.obj
 
+common_lflags = debug all opt symfile opt map
 !ifdef wlib_dll
 stub_objs += idemsgpr$(obj)
 targ_name = $(dll_name)
@@ -51,7 +46,6 @@ wlib_objs += ntdll$(obj)
 !else ifeq host_OS os2
 wlib_objs += os2dll$(obj)
 !endif
-common_lflags = debug all option quiet opt symfile opt map
 !ifeq release 0
 #common_lflags += debug all
 !endif
@@ -67,11 +61,9 @@ targ_name = $(exe_name)
 wlib_objs += $(stub_objs)
 extra_c_flags = -DIDE_PGM
 extra_c_flags_linux = -fo=.obj
-common_lflags = debug all option quiet opt symfile opt map
 !endif
 
 extra_lflags_qnx += op offset=64k, stack=60k
-
 
 MODEL = s
 !include orl.mif
@@ -92,41 +84,36 @@ extra_c_flags_trmemcvr  = -of+
 !endif
 
 
-extra_l_flags = op map
-
 wlib_libs = $(orl_lib) $(wres_lib)
 
 .before:
-        set include=$(inc_path)
+    set include=$(inc_path)
 
 !ifdef wlib_dll
 $(exe_name): $(stub_objs) $(proj_name).lib
-    $(LINKER) $(exe_lflags_$(host_OS)_$(host_CPU)) $(common_lflags) name $^@ file { $(stub_objs) } lib $(proj_name).lib
+    $(linker) $(exe_lflags_$(host_OS)_$(host_CPU)) $(common_lflags) name $^@ file { $(stub_objs) } lib $(proj_name).lib
 
 $(proj_name).lib: $(targ_name)
     @if exist $(exe_name) del $(exe_name)
-    $(librarian) -q-b-n $^@ + $(targ_name)
+    $(librarian) -b-n $^@ + $(targ_name)
 !endif
 
 $(targ_name): ../h/msg.gh $(wlib_objs) wlib.res $(wlib_libs)
 !ifeq host_OS osi
-        $(LINKER) $(lflags_$(host_OS)_$(host_CPU)) $(common_lflags) $(extra_lflags_$(host_OS)) name wlib.rex file { $(wlib_objs) } lib { $(wlib_libs) }
-        $(bld_bin)/w32bind wlib.rex $@ $(tools_root)/os2ldr.exe
-        erase wlib.rex
+    $(linker) $(lflags_$(host_OS)_$(host_CPU)) $(common_lflags) $(extra_lflags_$(host_OS)) name wlib.rex file { $(wlib_objs) } lib { $(wlib_libs) }
+    $(bld_bin)/w32bind wlib.rex $@ $(tools_root)/os2ldr.exe
+    erase wlib.rex
 !else
-        $(LINKER) $(lflags_$(host_OS)_$(host_CPU)) $(common_lflags) $(extra_lflags_$(host_OS)) name $^@ file { $(wlib_objs) } lib { $(wlib_libs) }
+    $(linker) $(lflags_$(host_OS)_$(host_CPU)) $(common_lflags) $(extra_lflags_$(host_OS)) name $^@ file { $(wlib_objs) } lib { $(wlib_libs) }
 !endif
-        wstrip -q -a -r $^@ . wlib.res
-
+    wstrip -q -a -r $^@ . wlib.res
 
 error.obj : ../h/msg.gh error.c
 
-wcl_flags = -fe=$@
+../mkstr.exe : ../mkstr.c ../wlib.msg
+    $(bld_cl) -fe=$@ $[@ -I..
 
-./mkstr.exe : ../mkstr.c ../wlib.msg
-        $(bld_cl) $(wcl_flags) $[@ -I..
-
-../h/msg.gh : ./mkstr.exe
+../h/msg.gh : ../mkstr.exe
     *$< $@
 
 !ifeq host_OS qnx
@@ -138,4 +125,4 @@ wlib.res : ../wlib.rc ../wlib.msg ../h/msg.gh
 
 clean: .SYMBOLIC .EXPLICIT
         rm -f *.?bj *.lnk *.exe *.lib *.res *.clb *.dll *.err
-        rm -f *.sym *.map *.pch *.gh
+        rm -f *.sym *.map *.pch *.gh ../h/msg.gh ../mkstr.exe
