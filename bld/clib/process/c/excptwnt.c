@@ -121,11 +121,11 @@ LONG WINAPI __ReportException( EXCEPTION_POINTERS *rec )
     EXCEPTION_RECORD *ex = rec->ExceptionRecord;
 #if defined(_M_IX86)
     CONTEXT          *context = rec->ContextRecord;
+    DWORD             *sp;
+    int               i;
 #endif
     char              buff[256];
     DWORD             written;
-    DWORD             *sp;
-    int               i;
 
     // if we are active then we've done crashed ourselves.
     if ( __ReportInvoked ) return EXCEPTION_CONTINUE_SEARCH;
