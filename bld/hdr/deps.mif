@@ -97,10 +97,10 @@ sys\seginfo.h   : ..\quantum\seginfo.mh ..\poppack.sp ..\pshpackl.sp
 sys\sendmx.h    : ..\quantum\sendmx.mh ..\poppack.sp ..\pshpackl.sp
 sys\ser_msg.h   : ..\quantum\ser_msg.mh ..\poppack.sp ..\pshpackl.sp
 sys\sidinfo.h   : ..\quantum\sidinfo.mh ..\poppack.sp ..\pshpackl.sp
-!ifeq system DOS
-sys\stat.h      : ..\watcom\stat.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\poppack.sp ..\pshpackl.sp
-!else
+!ifeq system QNX
 sys\stat.h      : ..\quantum\stat.mh ..\poppack.sp ..\pshpackl.sp
+!else
+sys\stat.h      : ..\watcom\stat.mh ..\readonly.sp ..\cplusepi.sp ..\cpluspro.sp ..\crwat.sp ..\poppack.sp ..\pshpackl.sp
 !endif
 sys\statfs.h    : ..\quantum\statfs.mh ..\poppack.sp ..\pshpackl.sp
 sys\sys_msg.h   : ..\quantum\sys_msg.mh ..\poppack.sp ..\pshpackl.sp

@@ -22,7 +22,7 @@ include_c_osi      =;$(hdr_dir)\dos
 include_c_qnx      =;$(hdr_dir)\qnx
 include_c_windows  =;$(inc_dirs_sys_win);$(hdr_dir)\dos
 include_c_winnt    =;$(inc_dirs_sys_nt);$(hdr_dir)\dos
-include_c_linux    =;$(inc_dirs_sys_linux);$(hdr_dir)\dos
+include_c_linux    =;$(inc_dirs_sys_linux);$(hdr_dir)\linux
 !else
 include_c_generic  =;$(%watcom)\h
 include_c_kanji    =;$(%watcom)\h

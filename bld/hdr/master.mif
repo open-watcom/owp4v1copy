@@ -10,66 +10,62 @@ splice = $(bld_bin)\wsplice -i.. -k$(system) $(options) ..\common.sp $[@ $^@
 .EXTENSIONS : .h .hpp .cnv .mh .mhp
 
 common = &
-        assert.h &
         _comdef.h &
+        assert.h &
+        complex.h &
         conio.h &
         crtdbg.h &
         ctype.h &
         env.h &
         errno.h &
-        fcntl.h &
-        float.h &
-        i86.h &
-        iso646.h &
-        limits.h &
-        malloc.h &
-        math.h &
-        mbctype.h &
-        mbstring.h &
-        mmintrin.h &
-        search.h &
-        setjmp.h &
-        signal.h &
-        stdarg.h &
-        stddef.h &
-        stdio.h &
-        stdlib.h &
-        string.h &
-        tchar.h &
-        time.h &
-        varargs.h &
-        wchar.h &
-        sys/stat.h &
-        sys/types.h
-
-dos_qnx_common = &
-        complex.h &
         except.h &
         exceptio.h &
         excpt.h &
         exstring.h &
-        iomanip.h &
-        iostream.h &
+        fcntl.h &
+        float.h &
         fstream.h &
         generic.h &
         graph.h &
+        i86.h &
+        iomanip.h &
+        iostream.h &
+        iso646.h &
         jctype.h &
         jstring.h &
         jtime.h &
-        pgchart.h &
+        limits.h &
         locale.h &
+        malloc.h &
+        math.h &
+        mbctype.h &
+        mbstring.h &
         mem.h &
+        mmintrin.h &
         new.h &
+        pgchart.h &
         process.h &
+        search.h &
+        setjmp.h &
         share.h &
+        signal.h &
+        stdarg.h &
+        stddef.h &
         stdexcep.h &
+        stdio.h &
         stdiobuf.h &
+        stdlib.h &
         streambu.h &
+        string.h &
         string.hpp &
         strstrea.h &
+        tchar.h &
+        time.h &
         typeinfo.h &
+        varargs.h &
         wcdefs.h &
         wcexcept.h &
+        wchar.h &
         wchash.h &
         wchbase.h &
         wchiter.h &
@@ -80,18 +76,19 @@ dos_qnx_common = &
         wclistit.h &
         wcqueue.h &
         wcsbase.h &
-        wcskip.h &
         wcsibase.h &
+        wcskip.h &
         wcskipit.h &
         wcstack.h &
         wcvbase.h &
         wcvector.h &
         sys/locking.h &
+        sys/stat.h &
         sys/timeb.h &
+        sys/types.h
 
 DOS_files = &
       $(common) &
-      $(dos_qnx_common) &
         common.cnv &
         direct.h &
         dosfunc.h &
@@ -114,7 +111,6 @@ DOS_files = &
 
 QNX_files = &
       $(common) &
-      $(dos_qnx_common) &
         cdrom.h &
         curses.h &
         dir.h &
@@ -205,6 +201,9 @@ QNX_files = &
         sys/sigconte.h &
         sys/sysi86.h
 
+LINUX_files = &
+      $(common) &
+        unistd.h &
 
 all : $($(system)_files) .symbolic
     @%null
