@@ -181,7 +181,7 @@ cflags += -dIDE_PGM
 # WLINK options for the various hosts
 extra_l_flags_osi = OPTION stack=64k
 extra_l_flags_dos = OPTION dosseg, stack=64k, offset=64k #RUNTIME unpriv
-extra_l_flags_os2 = OPTION dosseg, stack=64k, offset=64k
+extra_l_flags_os2 = OPTION dosseg, stack=128k, offset=64k
 extra_l_flags_qnx = OPTION dosseg, stack=64k, offset=72k, priv=3, resource=usage.u
 extra_l_flags_nt  = OPTION dosseg, stack=0x10000k, offset=64k COMMIT stack=32k
 
