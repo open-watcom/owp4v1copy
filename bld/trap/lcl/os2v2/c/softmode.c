@@ -312,6 +312,6 @@ VOID InitSoftDebug(VOID)
     // Create the thread creation event sem and load the queue hook DLL
     DosCreateEventSem( NULL, &BeginThreadSem, 0, FALSE );
     DosLoadModule( NULL, 0, HOOKER, &HookDLL );
-    DosQueryProcAddr( HookDLL, 0, "SENDMSGHOOKPROC", (PFN*)&PSendMsgHookProc );
-    DosQueryProcAddr( HookDLL, 0, "SETHMQDEBUGEE", (PFN*)&PSetHmqDebugee );
+    DosQueryProcAddr( HookDLL, 0, "SendMsgHookProc", (PFN*)&PSendMsgHookProc );
+    DosQueryProcAddr( HookDLL, 0, "SetHmqDebugee", (PFN*)&PSetHmqDebugee );
 }

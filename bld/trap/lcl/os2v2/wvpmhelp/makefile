@@ -28,7 +28,7 @@ tmplnk = tmp.lnk
 $(bdir)\dll\wdpmhook.dll: pmhook.obj
     @%write  $(tmplnk) name $(bdir)\dll\wdpmhook.dll sys os2v2 dll
     @%append $(tmplnk) debug all op symf
-    @%append $(tmplnk) option quiet,map
+    @%append $(tmplnk) option quiet,map,caseex
     @%append $(tmplnk) file pmhook
     @%append $(tmplnk) library $(os2386)
     @%append $(tmplnk) export SendMsgHookProc.1,SetHmqDebugee.2
