@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  DWARF implementation of the DIP symbol handling interface.
 *
 ****************************************************************************/
 
@@ -480,8 +479,10 @@ dip_status      DIPENTRY DIPImpSymInfo( imp_image_handle *ii,
             si->ret_modifier = TM_NONE;
             si->epilog_size = 0;
             si->rtn_calloc  = 0;
-            EvalOffset( ii, is->sym, &num1 );
-            si->ret_addr_offset = num1;
+            if( EvalOffset( ii, is->sym, &num1 ) )
+                si->ret_addr_offset = num1;
+            else
+                si->ret_addr_offset = ~0;
             addr_class =  DRGetAddrClass( is->sym );
             switch( addr_class ){
             case DR_PTR_far32:
