@@ -102,7 +102,7 @@ typedef struct ptd_type         PTD_TYPE;
 typedef struct ptd_ptree        PTD_PTREE;
 
 struct ptd_base                 // PTD_BASE -- base entry
-{   PTD_BASE* next;             // - next in list
+{   PTD* next;                  // - next in list
     PTD_KIND kind;              // - type of entry
     PTD_FMT fmt;                // - format of entry
     unsigned :0;                // - force alignment
