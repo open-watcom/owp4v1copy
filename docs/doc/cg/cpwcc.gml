@@ -632,7 +632,6 @@ file specification when the file resides on a different &drive or in a
 different directory.
 &product provides a mechanism for looking up include files which may
 be located in various directories and disks of the computer system.
-:cmt. When the &drive and path are omitted from a file specification,
 &product searches directories for header and source files in the
 following order (the search stops once the file has been located):
 .ix 'include file' 'searching'
@@ -994,8 +993,6 @@ systems.
 .ix 'MSDOS'
 .ix 'macros' '__OS2__'
 .ix '__OS2__'
-:cmt. .ix 'macros' '__PENPOINT__'
-:cmt. .ix '__PENPOINT__'
 .ix 'macros' '__QNX__'
 .ix '__QNX__'
 .ix 'macros' '__NETWARE__'
@@ -1010,6 +1007,10 @@ systems.
 .ix '__WINDOWS__'
 .ix 'macros' '__WINDOWS_386__'
 .ix '__WINDOWS_386__'
+.ix 'macros' '__UNIX__'
+.ix '__UNIX__'
+.ix 'macros' '__LINUX__'
+.ix '__LINUX__'
 .millust begin
 Target      Macros
 ======      ======================================
@@ -1168,7 +1169,7 @@ to identify the compiler as one of the &product compilers.
 The value of the macro depends on the version number of the compiler.
 The value is 100 times the version number (version 8.5 yields 850,
 version 9.0 yields 900, etc.). Note that for Open Watcom 1.0, the
-value of this macro is 1200.
+value of this macro is 1200, for Open Watcom 1.1 it is 1210 etc.
 .*
 .note __WATCOM_CPLUSPLUS__
 .ix 'macros' '__WATCOM_CPLUSPLUS__'
@@ -1180,7 +1181,7 @@ to identify the compiler as one of the &cmppname compilers.
 The value of the macro depends on the version number of the compiler.
 The value is 100 times the version number (version 10.0 yields 1000,
 version 10.5 yields 1050, etc.). Note that for Open Watcom 1.0, the
-value of this macro is 1200.
+value of this macro is 1200, for Open Watcom 1.1 it is 1210 etc.
 .*
 .endnote
 .np
@@ -1365,7 +1366,6 @@ of these keywords are also supported through predefined macros.
 .*
 .note __near &optdag.
 .ix 'keywords' '__near'
-:CMT. .ix 'macros' '_near, near'
 &product supports the
 .kwm __near
 keyword to describe functions and other object names that are in near
@@ -1381,7 +1381,6 @@ keyword.
 .*
 .note __far &optdag.
 .ix 'keywords' '__far'
-:CMT. .ix 'macros' '_far, far'
 &product supports the
 .kwm __far
 keyword to describe functions and other object names that are in far
@@ -1399,7 +1398,6 @@ keyword.
 .*
 .note __huge &optdag.
 .ix 'keywords' '__huge'
-:CMT. .ix 'macros' '_huge, huge'
 &product supports the
 .kwm __huge
 keyword to describe functions and other object names that are in huge
@@ -1499,7 +1497,6 @@ controlling the alignment of members.
 .*
 .note __cdecl
 .ix 'keywords' '__cdecl'
-:CMT. .ix 'macros' '_cdecl, cdecl'
 &product supports the
 .kwm __cdecl
 keyword to describe C functions that are called using a special
@@ -1536,7 +1533,6 @@ keyword.
 .*
 .note __pascal
 .ix 'keywords' '__pascal'
-:CMT. .ix 'macros' '_pascal, pascal'
 &product supports the
 .kwm __pascal
 keyword to describe Pascal functions that are called using a special
@@ -1553,7 +1549,6 @@ keyword.
 .*
 .note __fortran &optdag.
 .ix 'keywords' '__fortran'
-:CMT. .ix 'macros' '_fortran, fortran'
 &product supports the
 .kwm __fortran
 keyword to describe functions that are called from FORTRAN.
@@ -1570,7 +1565,6 @@ keyword.
 .*
 .note __interrupt &optdag.
 .ix 'keywords' '__interrupt'
-:CMT. .ix 'macros' '_interrupt, interrupt'
 .ix 'interrupt routine'
 &product supports the
 .kwm __interrupt
@@ -1664,7 +1658,6 @@ keyword, please see the section entitled :HDREF refid='wccdecl'..
 .*
 .note __export
 .ix 'keywords' '__export'
-:CMT. .ix 'macros' '_export'
 .ix 'dynamic link library' 'exporting functions'
 .ix 'DLL' 'exporting functions'
 &product supports the
@@ -1690,7 +1683,6 @@ keyword.
 .*
 .note __loadds &optdag.
 .ix 'keywords' '__loadds'
-:CMT. .ix 'macros' '_loadds'
 .ix 'DS segment register'
 &product supports the
 .kwm __loadds
@@ -1700,9 +1692,7 @@ register to establish addressability to the function's data segment.
 .ix 'DLL'
 This keyword is useful in describing a function that will be placed in
 a Microsoft Windows
-or OS/2 1.x
-:cmt. or Penpoint
-Dynamic Link Library (DLL).
+or OS/2 1.x Dynamic Link Library (DLL).
 See also the description of the "nd" and "zu" options.
 .exam begin 6
 void __export __loadds _Setcolor( int color )
@@ -1726,7 +1716,6 @@ keyword.
 .*
 .note __saveregs &optdag.
 .ix 'keywords' '__saveregs'
-:CMT. .ix 'macros' '_saveregs'
 &product recognizes the
 .kwm __saveregs
 keyword which is an attribute used by C/C++ compilers to describe a
@@ -1905,7 +1894,7 @@ equivalent location in the 32-bit address space.
 keyword which has a similar but not identical function as the
 .kwm __far16
 keyword described above.
-This keyword is compatible with IBM C Set/2.
+This keyword is compatible with IBM C Set/2 and IBM VisualAge C++.
 .np
 In the OS/2 operating system (version 2.0 or higher), the first 512
 megabytes of the 4 gigabyte segment referenced by the DS register is
@@ -2486,14 +2475,6 @@ The following example illustrates this error:
 extern int tls_data;    // This generates an error, because the
 TLS    int tls_data;    // declaration and the definition differ.
 .exam end
-:CMT.    .bull
-:CMT.    You cannot use the
-:CMT.    .kwm thread
-:CMT.    attribute as a type modifier.
-:CMT.    The following example illustrates this error:
-:CMT.    .exam begin
-:CMT.    char __declspec( thread ) *ch;      // Wrong!
-:CMT.    .exam end
 .bull
 Classes cannot use the
 .kwm thread

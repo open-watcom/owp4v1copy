@@ -6,8 +6,8 @@
 This chapter describes all the compiler options that are available.
 .do end
 .el .do begin
-Source files can be compiled using either the IDE, command-line
-compilers or IBM WorkFrame/2 (OS/2 only).
+Source files can be compiled using either the IDE or command-line
+compilers.
 This chapter describes all the compiler options that are available.
 .np
 For information about compiling applications from the &vip,
@@ -16,12 +16,6 @@ see the
 .np
 For information about compiling applications from the command line,
 see the chapter entitled :HDREF refid='cpwcc'..
-.np
-For information about creating applications using IBM WorkFrame/2,
-refer to IBM's
-.book OS/2 Programming Guide
-for more information.
-.do end
 .np
 The &product compiler command names (
 .ct .us compiler_name
@@ -268,14 +262,9 @@ Pentium profiling
 .do end
 .if &e'&$SWhwdc eq 1 .do begin
 .note h{w,d,c}
-set debug output format (&company, Dwarf, Codeview)
+set debug output format (&company, DWARF, Codeview)
 :optref refid='SWhwdc'
 .do end
-:CMT. .if &e'&$SWhdc eq 1 .do begin
-:CMT. .note h{d,c}
-:CMT. set debug output format (Dwarf, Codeview)
-:CMT. :optref refid='SWhdc'
-:CMT. .do end
 .if &e'&$SWs eq 1 .do begin
 .note s
 remove stack overflow checks
@@ -776,7 +765,6 @@ place each function in separate segment (near functions allowed)
 .do end
 .if &e'&$SW5 eq 1 .do begin
 .note 5
-:CMT. .ix 'options' '5'
 &286only.
 Pentium instructions
 :optref refid='SW5'.
@@ -1028,11 +1016,6 @@ enable exception handling (table-driven destructors)
 :optref refid='SWxss'.
 .do end
 .*
-:CMT..if &e'&$SWzo eq 1 .do begin
-:CMT..note zo
-:CMT.use exception-handling for a specific operating system
-:CMT.:optref refid='SWzo'.
-:CMT..do end
 .*
 .endnote
 .*
@@ -1142,11 +1125,6 @@ Only
 and
 .id wmain
 are significant.
-:CMT. .ix 'predefined macros' 'see macros'
-:CMT. .ix 'macros' '__SW_BC'
-:CMT. The macro
-:CMT. .kwm __SW_BC
-:CMT. will be predefined if "bc" is selected.
 .np
 If none of "bc", "bd", "bg" or "bw" are specified then the order of
 priority in determining which combination of startup code and
@@ -1257,11 +1235,6 @@ and
 .id wWinMain
 are significant
 :optref refid='SWbc'..
-:CMT. .ix 'predefined macros' 'see macros'
-:CMT. .ix 'macros' '__SW_BG'
-:CMT. The macro
-:CMT. .kwm __SW_BG
-:CMT. will be predefined if "bg" is selected.
 .if '&target' eq 'QNX' .do begin
 This option does not apply to QNX.
 .do end
@@ -1347,10 +1320,8 @@ __FOO__
 .pc
 and prevent it from defining
 .kwm MSDOS
-.if &version ge 107 .do begin
 .ct ,
 .kwm _DOS
-.do end
 and
 .kwm __DOS__
 if the compiler was being run under DOS,
@@ -1391,31 +1362,18 @@ additional operations.
 .notehd1 Target name
 .notehd2 Additional operation
 .note DOS
-.if &version ge 107 .do begin
 Defines the macros
 .kwm _DOS
 and
 .kwm MSDOS.
-.do end
-.el .do begin
-Defines the macro
-.kwm MSDOS.
-.do end
 .note WINDOWS
 Same as specifying one of the "zw" options.
-.if &version ge 107 .do begin
 Defines the macros
 .kwm _WINDOWS
 (16-bit only)
 and
 .kwm __WINDOWS_386__
 (32-bit only).
-.do end
-.el .do begin
-Defines the macro
-.kwm __WINDOWS_386__
-(32-bit only).
-.do end
 .note NETWARE
 (32-bit only)
 Causes the compiler to use stack-based calling conventions.
@@ -1427,10 +1385,6 @@ Defines the macro
 .note LINUX
 Defines the macro
 .kwm __UNIX__.
-:cmt. .note penpoint
-:cmt. (32-bit only)
-:cmt. Causes the compiler to use stack-based calling conventions unless
-:cmt. overridden by the "3r", "4r" or "5r" options.
 .endnote
 .np
 Specifying "bt" with no target name following restores the default
@@ -1580,8 +1534,7 @@ It will alter the code sequence generated for "_export" functions.
 :OPT refid='SWsg' name='sg'.
 .ix 'stack growing'
 .ix 'options' 'sg'
-This option is useful for 32-bit OS/2 multi-threaded
-:cmt. applications and PenPoint
+This option is useful for 32-bit OS/2 and Win32 multi-threaded
 applications.
 It requests the code generator to emit a run-time call at the start of
 any function that has more than 4K bytes of automatic variables
@@ -1654,10 +1607,7 @@ to the stack in a function is to the stack "bottom" using the SS register.
 If the memory for this part of the stack is not mapped to the task, a
 memory fault will occur involving the SS register.
 This permits an operating system
-:cmt. such as PenPoint
 to allocate additional stack space to the faulting task.
-:cmt. This option is designed to be used for ring 0 tasks in the PenPoint
-:cmt. operating system.
 .np
 Suppose that a function requires 100 bytes of stack space.
 The code generator usually emits an instruction sequence to reduce the
@@ -1896,12 +1846,10 @@ expense of larger object files and executable files).
 .np
 By default, the compiler will select the "od" level of optimization if
 "d2" is specified (see the description of the "od" option).
-.if &version ge 107 .do begin
-Starting with version &ver, the compiler now expands functions in-line
+Starting with version 11.0, the compiler now expands functions in-line
 where appropriate.
 This means that symbolic information for the in-lined function will
 not be available.
-.do end
 .np
 The use of this option will make the debugging chore somewhat easier
 at the expense of code speed and size.
@@ -2104,13 +2052,8 @@ less accurate on non-Pentium processors.
 .ix 'options' 'hd'
 .ix 'options' 'hc'
 The type of debugging information that is to be included in the object
-file is one of "&company", "Dwarf" or "Codeview".
-.if &version ge 107 .do begin
-The default is "Dwarf".
-.do end
-.el .do begin
-The default is "&company".
-.do end
+file is one of "&company", "DWARF" or "Codeview".
+The default is "DWARF".
 .np
 If you wish to use the Microsoft Codeview debugger, then choose the
 "hc" option (this option causes Codeview Level 4 information to be
@@ -2141,45 +2084,6 @@ See the
 for more information.
 .do end
 .do end
-.*
-:CMT. .if &e'&$SWhdc eq 1 .do begin
-:CMT. :OPT refid='SWhdc' name='h'.{d,c}
-:CMT. .ix 'debugging information format'
-:CMT. .ix 'options' 'hd'
-:CMT. .ix 'options' 'hc'
-:CMT. The type of debugging information that is to be included in the object
-:CMT. file is one of "Dwarf" or "Codeview".
-:CMT. The default is "Dwarf".
-:CMT. .np
-:CMT. If you wish to use the Microsoft Codeview debugger, then choose the
-:CMT. "hc" option (this option causes Codeview Level 4 information to be
-:CMT. generated).
-:CMT. .ix 'CVPACK'
-:CMT. .ix 'Debugging Information Compactor'
-:CMT. It will be necessary to run the Microsoft Debugging Information
-:CMT. Compactor, CVPACK, on the executable once the linker has created it.
-:CMT. For information on requesting the linker to automatically run CVPACK,
-:CMT. see the section entitled "OPTION CVPACK" in the
-:CMT. .if '&target' eq 'QNX' .do begin
-:CMT. part of this guide that describes the &lnkname..
-:CMT. .do end
-:CMT. .el .do begin
-:CMT. .book &lnkname User's Guide.
-:CMT. .do end
-:CMT. Alternatively, you can run CVPACK from the command line.
-:CMT. .np
-:CMT. When linking the application, you must also choose the appropriate
-:CMT. &lnkname DEBUG directive.
-:CMT. .if '&target' eq 'QNX' .do begin
-:CMT. See the part of this guide that describes the &lnkname
-:CMT. for more information.
-:CMT. .do end
-:CMT. .el .do begin
-:CMT. See the
-:CMT. .book &lnkname User's Guide
-:CMT. for more information.
-:CMT. .do end
-:CMT. .do end
 .*
 .if &e'&$SWs eq 1 .do begin
 :OPT refid='SWs' name='s'.
@@ -2774,8 +2678,8 @@ output files that the compiler processes and/or creates.
 :OPT refid='SWad' name='ad[=<file_name>]'.
 .ix 'options' 'ad'
 This option enables generation of auto dependancy infomation in a makefile
-syntax generating a <target>:<depends...> list.  If the auto depend file is 
-not specified, it is constructed from the source file name.  If the depend 
+syntax generating a <target>:<depends...> list.  If the auto depend file is
+not specified, it is constructed from the source file name.  If the depend
 extension is not specified, it is ".d" by default.
 .exam begin 1
 &prompt.:SF font=1.compiler_name:eSF. report &sw.ad=&dr4.&pc.proj&pc.obj&pc
@@ -2793,7 +2697,7 @@ A default filename extension must be preceded by a period (".").
 .exam end
 The file generated has content
 .exam begin 1
-<targetname>:<input source file> <included header files...> 
+<targetname>:<input source file> <included header files...>
 .exam end
 included header files exclude those which come <watcom>/h.
 .do end
@@ -2811,7 +2715,7 @@ output to be appropriate for the make used.
 .ix 'options' 'add'
 Set the first dependancy name in a makefile style auto depend file.  The
 default for this is the source name specified to compile.  This file spec
-follows the rules specified for other files.  
+follows the rules specified for other files.
 :optref refid='SWad'.
 .do end
 .*
@@ -2827,7 +2731,7 @@ output to be appropriate for the make used.
 :OPT refid='SWadt' name='adt[=<target_name>]'.
 .ix 'options' 'adt'
 This option enables generation of auto dependancy infomation in a makefile
-syntax.  The target name in the file can be specified.  If the auto depend target is 
+syntax.  The target name in the file can be specified.  If the auto depend target is
 not specified, it is constructed from the source file name.  If the target
 extension is not specified, it is "&obj" by default.
 .exam begin 1
@@ -2846,7 +2750,7 @@ A default filename extension must be preceded by a period (".").
 .exam end
 The file generated has content
 .exam begin 1
-<targetname>:<input source file> <included header files...> 
+<targetname>:<input source file> <included header files...>
 .exam end
 included header files exclude those which come <watcom>/h.
 .do end
@@ -3332,16 +3236,8 @@ will be predefined if "zc" is selected.
 .ix 'options' 'zp'
 The "zp" option allows you to specify the alignment of members in
 a structure.
-.if &version ge 110 .do begin
 The default is "zp2" for the 16-bit compiler and "zp8" for 32-bit
 compiler.
-.do end
-.el .if &version ge 107 .do begin
-The default is "zp4".
-.do end
-.el .do begin
-The default is "zp1".
-.do end
 The alignment of structure members is described in the following
 table.
 If the size of the member is 1, 2, 4, 8 or 16, the alignment is given
@@ -3852,8 +3748,6 @@ See Note with description of "fpi" option.
 .ix 'options' 'fp2'
 The compiler will generate in-line 80x87 numeric data processor
 instructions into the object code for floating-point operations.
-:cmt. An 8087, 287 or compatible math coprocessor must be present at
-:cmt. run-time.
 For &company compilers generating 16-bit code, this option is the
 default.
 For 32-bit applications, use this option if you wish to support those
@@ -3875,8 +3769,6 @@ will be predefined if "fp2" is selected.
 The compiler will generate in-line 387-compatible numeric data
 processor instructions into the object code for floating-point
 operations.
-:cmt. A 287XL, 387 or compatible math coprocessor must be present at
-:cmt. run-time.
 For 16-bit applications, the use of this option will limit the range
 of systems on which the application will run but there are execution
 performance improvements.
@@ -3896,8 +3788,6 @@ The compiler will generate in-line 80x87 numeric data processor
 instructions into the object code for floating-point operations.
 The sequence of floating-point instructions will be optimized for
 greatest possible performance on the Intel Pentium processor.
-:cmt. A 287XL, 387 or compatible math coprocessor must be present at
-:cmt. run-time.
 For 16-bit applications, the use of this option will limit the range
 of systems on which the application will run but there are execution
 performance improvements.
@@ -3915,8 +3805,6 @@ The compiler will generate in-line 80x87 numeric data processor
 instructions into the object code for floating-point operations.
 The sequence of floating-point instructions will be optimized for
 greatest possible performance on the Intel Pentium Pro processor.
-:cmt. A 287XL, 387 or compatible math coprocessor must be present at
-:cmt. run-time.
 For 16-bit applications, the use of this option will limit the range
 of systems on which the application will run but there are execution
 performance improvements.
@@ -4237,14 +4125,8 @@ In large code models, the segment name is composed of the function name
 concatenated with the string "_TEXT".
 .np
 (C++ only)
-.if &version ge 107 .do begin
 In large code models, the segment name is composed of the module name
 concatenated with the string "_TEXT" and a unique integral number.
-.do end
-.el .do begin
-In large code models, the segment name is composed of the module name
-concatenated with the string "_TEXT".
-.do end
 .if &e'&$SWnt eq 1 .do begin
 .np
 The default string "_TEXT" can be altered using the "nt" option
@@ -4291,18 +4173,12 @@ int foo3( int x, int y )
 The disadvantages to this option are:
 .autopoint
 .point
-.if &version lt 107 .do begin
-(C only)
-.do end
 The "near call" optimization for static functions in large code models
 is disabled (e.g., the function
 .id foo
 in the example above will never be "near called".
 Static functions will always be "far called" in large code models.
 .point
-.if &version lt 107 .do begin
-(C only)
-.do end
 Near static functions will still be "near called"
 (e.g., the function
 .id foo1
@@ -4310,18 +4186,6 @@ is "near called" in the example above).
 However, this can lead to problems at link time if the caller function
 ends up in a different segment from the called function (the linker
 will issue a message if this is the case).
-.if &version lt 107 .do begin
-.point
-(C++ only)
-The size of a physical segment is restricted to 64K in 16-bit
-applications.
-Although this may limit the number of functions that can be placed in
-the segment, the restriction is only on a "per module" basis.
-.point
-(C++ only)
-Although less constricting, the size of a physical segment is
-restricted to 4G in a 32-bit application.
-.do end
 .point
 The "common epilogue" optimization is lost.
 .point
@@ -4421,7 +4285,6 @@ object code.
 This is the default.
 The resulting code will run on 8086 and all upward compatible
 processors.
-:CMT. .ix 'macros' '__SW_0'
 The macro
 .kwm __SW_0
 will be predefined if "0" is selected.
@@ -4435,7 +4298,6 @@ The compiler will make use of 186 instructions in the generated object
 code whenever possible.
 The resulting code probably will not run on 8086 compatible processors
 but it will run on 186 and upward compatible processors.
-:CMT. .ix 'macros' '__SW_1'
 The macro
 .kwm __SW_1
 will be predefined if "1" is selected.
@@ -4449,7 +4311,6 @@ The compiler will make use of 286 instructions in the generated object
 code whenever possible.
 The resulting code probably will not run on 8086 or 186 compatible
 processors but it will run on 286 and upward compatible processors.
-:CMT. .ix 'macros' '__SW_2'
 The macro
 .kwm __SW_2
 will be predefined if "2" is selected.
@@ -4466,7 +4327,6 @@ The code will be optimized for 386 processors.
 The resulting code probably will not run on 8086, 186 or 286
 compatible processors but it will run on 386 and upward compatible
 processors.
-:CMT. .ix 'macros' '__SW_3'
 The macro
 .kwm __SW_3
 will be predefined if "3" is selected.
@@ -4483,7 +4343,6 @@ The code will be optimized for 486 processors.
 The resulting code probably will not run on 8086, 186 or 286
 compatible processors but it will run on 386 and upward compatible
 processors.
-:CMT. .ix 'macros' '__SW_4'
 The macro
 .kwm __SW_4
 will be predefined if "4" is selected.
@@ -4500,7 +4359,6 @@ The code will be optimized for the Intel Pentium processor.
 The resulting code probably will not run on 8086, 186 or 286
 compatible processors but it will run on 386 and upward compatible
 processors.
-:CMT. .ix 'macros' '__SW_5'
 The macro
 .kwm __SW_5
 will be predefined if "5" is selected.
@@ -4583,15 +4441,12 @@ The "s" conventions are similar to those used by the MetaWare High C
 .np
 By default, "r" is selected if neither "r" nor "s" is specified.
 .np
-:CMT. .ix 'macros' '__SW_3'
 The macro
 .kwm __SW_3
 will be predefined if "3" is selected.
-:CMT. .ix 'macros' '__SW_3R'
 The macro
 .kwm __SW_3R
 will be predefined if "r" is selected (or defaulted).
-:CMT. .ix 'macros' '__SW_3S'
 The macro
 .kwm __SW_3S
 will be predefined if "s" is selected.
@@ -4605,15 +4460,12 @@ This option is identical to "3{r|s}" except that the compiler will
 generate 386 instructions based on 486 instruction timings.
 The code is optimized for 486 processors rather than 386 processors.
 By default, "r" is selected if neither "r" nor "s" is specified.
-:CMT. .ix 'macros' '__SW_4'
 The macro
 .kwm __SW_4
 will be predefined if "4" is selected.
-:CMT. .ix 'macros' '__SW_3R'
 The macro
 .kwm __SW_3R
 will be predefined if "r" is selected (or defaulted).
-:CMT. .ix 'macros' '__SW_3S'
 The macro
 .kwm __SW_3S
 will be predefined if "s" is selected.
@@ -4629,15 +4481,12 @@ This is the default.
 The code is optimized for Intel Pentium processors rather than 386
 processors.
 By default, "r" is selected if neither "r" nor "s" is specified.
-:CMT. .ix 'macros' '__SW_5'
 The macro
 .kwm __SW_5
 will be predefined if "5" is selected.
-:CMT. .ix 'macros' '__SW_3R'
 The macro
 .kwm __SW_3R
 will be predefined if "r" is selected (or defaulted).
-:CMT. .ix 'macros' '__SW_3S'
 The macro
 .kwm __SW_3S
 will be predefined if "s" is selected.
@@ -4661,7 +4510,6 @@ will be predefined if "6" is selected.
 The macro
 .kwm __SW_3R
 will be predefined if "r" is selected (or defaulted).
-:CMT. .ix 'macros' '__SW_3S'
 The macro
 .kwm __SW_3S
 will be predefined if "s" is selected.
@@ -4684,11 +4532,9 @@ always point to "DGROUP"
 This is the default in the 16-bit small and medium memory models, all
 of the 16-bit Windows memory models, and the 32-bit small and flat
 memory models.
-:CMT. .ix 'macros' '__SW_ZDF'
 The macro
 .kwm __SW_ZDF
 will be predefined if "zdf" is selected.
-:CMT. .ix 'macros' '__SW_ZDP'
 The macro
 .kwm __SW_ZDP
 will be predefined if "zdp" is selected.
@@ -4721,11 +4567,9 @@ The "zff" option allows the code generator to use the FS register
 (default for all but flat memory model).
 The "zfp" option informs the code generator that the FS register must
 not be used (default in flat memory model).
-:CMT. .ix 'macros' '__SW_ZFF'
 The macro
 .kwm __SW_ZFF
 will be predefined if "zff" is selected.
-:CMT. .ix 'macros' '__SW_ZFP'
 The macro
 .kwm __SW_ZFP
 will be predefined if "zfp" is selected.
@@ -4739,11 +4583,9 @@ The "zgf" option allows the code generator to use the GS register
 (default for all memory models).
 The "zgp" option informs the code generator that the GS register must
 not be used.
-:CMT. .ix 'macros' '__SW_ZGF'
 The macro
 .kwm __SW_ZGF
 will be predefined if "zgf" is selected.
-:CMT. .ix 'macros' '__SW_ZGP'
 The macro
 .kwm __SW_ZGP
 will be predefined if "zgp" is selected.
@@ -4777,7 +4619,6 @@ a Dynamic Link Library (DLL) since the SS register points to the stack
 segment of the calling application upon entry to the function.
 .do end
 .np
-:CMT. .ix 'macros' '__SW_ZU'
 The macro
 .kwm __SW_ZU
 will be predefined if "zu" is selected.
@@ -4846,7 +4687,6 @@ path (as determined by a set of simple heuristics) will be straight
 through, with other cases being handled by jumps to separate blocks of
 code "out of line".
 This will result in better cache utilization on the Pentium.
-:cmt. , and better performance overall on the Pentium Pro.
 If the heuristics do not apply to your code, it could result in a
 performance decrease.
 .do end
@@ -4929,10 +4769,6 @@ small in size.
 .ix 'options' 'oh'
 This option enables repeated optimizations (which can result in longer
 compiles).
-:CMT. .ix 'macros' '__SW_OH'
-:CMT. The macro
-:CMT. .kwm __SW_OH
-:CMT. will be predefined if "oh" is selected.
 .do end
 .*
 .if &e'&$SWoi eq 1 .do begin
@@ -5019,10 +4855,6 @@ This means that register save/restores will not be executed when it is
 not necessary (as can be the case when a function consists of an
 if-else construct with a simple part that does little and a more
 complex part that does a lot).
-:CMT. .ix 'macros' '__SW_OK'
-:CMT. The macro
-:CMT. .kwm __SW_OK
-:CMT. will be predefined if "ok" is selected.
 .do end
 .*
 .if &e'&$SWol eq 1 .do begin
@@ -5363,58 +5195,6 @@ execution time.
 .endbull
 .do end
 .*
-:CMT..if &e'&$SWzo eq 1 .do begin
-:CMT.:OPT refid='SWzo' name='zo'.
-:CMT..ix 'options' 'zo'
-:CMT.This option enables exception handling using a space-saving scheme.
-:CMT.When this option is specified:
-:CMT..begbull
-:CMT..bull
-:CMT.This option has been added to the C++ compiler in order to specify
-:CMT.that operating-system dependent exception-handling is to be used.
-:CMT.When the option is not specified, the exception-handling mechanism is
-:CMT.independent of the operating system (as was the case in previous
-:CMT.releases).
-:CMT..bull
-:CMT.This option has an effect only under Win32 and OS/2 in the 32-bit
-:CMT.compiler (&pcmdup32).
-:CMT.A warning is issued when this option is used in other environments.
-:CMT..bull
-:CMT.When this option is used, it must be used to produce all C++ object
-:CMT.files which are linked together to create .EXE or .DLL files.
-:CMT.When only some of the object files are compiled with this option, the
-:CMT.linker will report unresolved or duplicated global symbols.
-:CMT.If you wish to use this option, the complete application must be
-:CMT.recompiled with this option.
-:CMT.This is to ensure that only operating-system dependent libraries are
-:CMT.used to link the application.
-:CMT..bull
-:CMT.When the "zo" option is used and the target object is for a different
-:CMT.system than the system used for compilation, the build-target (bt)
-:CMT.option must be used to specify the target system.
-:CMT.If omitted, the C++ compiler will assume you are producing object for
-:CMT.the system used to compile the program.
-:CMT..bull
-:CMT.This option should viewed as a temporary mechanism to allow users to
-:CMT.avoid recompiling applications when they do not require either NT or
-:CMT.OS/2 system exception handling.
-:CMT.In the next major release, full recompilation will be required and the
-:CMT.system-dependent exception handling will be the default.
-:CMT..bull
-:CMT.To help resolve errors, the following global symbols are generated:
-:CMT..millust begin
-:CMT.__compiled_under_NT  (compiled using &sw.zo &sw.bt=NT)
-:CMT.
-:CMT.__compiled_under_OS2 (compiled using &sw.zo &sw.bt=OS2)
-:CMT.
-:CMT.__compiled_under_GENERIC (compiled otherwise)
-:CMT..millust end
-:CMT..np
-:CMT.The last is defined in all libraries for which exceptions are handled
-:CMT.in a system independent manner.
-:CMT..endbull
-:CMT..do end
-.*
 :eOPTLIST.
 .*
 .section Double-Byte/Unicode Characters
@@ -5563,10 +5343,6 @@ will be predefined if "r" is selected.
 .ix 'options' 'fpr'
 Use this option if you want to generate floating-point instructions
 that will be compatible with version 9.0 or earlier of the compilers.
-:cmt. .ix 'macros' '__SW_FPR'
-:cmt. The macro
-:cmt. .kwm __SW_FPR
-:cmt. will be predefined if "fpr" is selected.
 For more information on floating-point conventions see the sections
 entitled :HDREF refid='prg87'. and :HDREF refid='prg387'..
 .do end
