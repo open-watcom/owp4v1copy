@@ -27,17 +27,21 @@ wldbgf = pa .
 
 .BEFORE
 #   @set compflags=-zq-mf-xs-w4 -bt=dos $(wppdbgf) -i=$(browse_dir)\contain\h;$(browse_dir)\h;..\h;..\gen;$(lang_root)\h\win
-    @set compflags=-zq-mf-xs-w4  $(wppdbgf) -i=$(browse_dir)\contain\h;$(browse_dir)\h;..\h;..\gen;$(lang_root)\h\win
+    @set compflags=-zq-mf-xs-w4         $(wppdbgf) -i=$(browse_dir)\contain\h;$(browse_dir)\h;..\h;..\gen;$(lang_root)\h\win
 
 .extensions:
 .extensions: .exe .obj .gh .c .cpp .gpp .y
 
-compile.tim : dlgprs.exe  dlgprsp.exe
+!ifdef __OS2__
+compile.tim : dlgprsp.exe
+!else
+compile.tim : dlgprs.exe
+!endif
     wtouch $^@
 
 dlgprs.exe : $(c_objs) $(browse_objs)
     @%create $(lnk)
-    @%append $(lnk) name $^@ system dos4g
+    @%append $(lnk) name $^@
     @%append $(lnk) $(wldbgf)
     @%append $(lnk) op map=dlgprs,quiet,show,art,static sort
     @for %i in ($(c_objs)) do @%append $(lnk) file %i
