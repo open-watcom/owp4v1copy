@@ -284,11 +284,14 @@ void GetMacroToken(void)
     }
 }
 
-
-local int ExpandMacroToken( char *buf, int i )
+/* returns Dynamically allocated buffer with expanded macro */
+local char *ExpandMacroToken( void )
 {
+    size_t       i, len;
     char        *p;
+    char        *buf;
 
+    len = 0;
     switch( *MacroPtr ) {
     case T_CONSTANT:
     case T_PPNUMBER:
@@ -297,20 +300,20 @@ local int ExpandMacroToken( char *buf, int i )
     case T_SAVED_ID:
     case T_BAD_TOKEN:                                   /* 07-apr-91 */
         ++MacroPtr;
-        while( (buf[i] = *MacroPtr++) ){
-            ++i;
-            if( i >= BUF_SIZE-2 ){
-                CErr1( ERR_TOKEN_TRUNCATED );
-                buf[i] = '\0';
-                break;
-            }
-        }
+        i = 0;
+        buf = CMemAlloc( strlen( MacroPtr ) + 1 );
+        while( (buf[i] = *MacroPtr++) )  ++i;
         break;
     case T_LSTRING:                                     /* 15-may-92 */
-        buf[i++] = 'L';
+        len = 1;
     case T_STRING:                                      /* 15-dec-91 */
-        buf[i++] = '"';
         ++MacroPtr;
+        len += strlen( MacroPtr ) + 3;
+        buf = CMemAlloc( len );
+        i = 0;
+        if ( MacroPtr[-1] == T_LSTRING )
+            buf[i++] = 'L';
+        buf[i++] = '"';
         while( (buf[i] = *MacroPtr++) )  ++i;
         buf[i++] = '"';
         buf[i] = '\0';
@@ -318,10 +321,11 @@ local int ExpandMacroToken( char *buf, int i )
     default:                                            /* 28-mar-90 */
         p = Tokens[ *MacroPtr ];
         ++MacroPtr;
+        buf = CMemAlloc( strlen( p ) + 1 );
         while( (buf[i] = *p++) )  ++i;
         break;
     }
-    return( i );
+    return( buf );
 }
 
 
@@ -892,28 +896,41 @@ MACRO_TOKEN *ExpandNestedMacros( MACRO_TOKEN *head, int rescanning )
     return( head );
 }
 
-int GlueTokenToBuffer( MACRO_TOKEN *first, char *buf, int pos )
+char *GlueTokenToBuffer( MACRO_TOKEN *first, char *gluebuf )
 {
-    int len;
+    size_t      len, gluelen;
+    char       *newbuf, *buf;
 
-    len = 0;
-    buf[pos] = '\0';
+    buf = NULL;
     if( first != NULL ) {                               /* 19-apr-93 */
         MacroPtr = &first->token;
-        pos = ExpandMacroToken( buf, pos );
+        buf = ExpandMacroToken();
     }
-    return( pos );
+    if ( gluebuf != NULL ) {
+        /* now do a "strcat( gluebuf, buf )" */
+        len = strlen( buf );
+        gluelen = strlen( gluebuf );
+        newbuf = CMemAlloc( gluelen + len + 1);
+        memcpy( newbuf, gluebuf, gluelen );
+        CMemFree( gluebuf );
+        strcpy( newbuf + gluelen, buf );
+        CMemFree( buf );
+        buf = newbuf;
+    }
+    return( buf );
 }
 
-static MACRO_TOKEN *ReTokenBuffer10( void )
-{ // retokenize starting at Buffer[10]
+static MACRO_TOKEN *ReTokenGlueBuffer( char *gluebuf )
+{ // retokenize starting at gluebuf
     MACRO_TOKEN *head;
     MACRO_TOKEN **lnk;
     MACRO_TOKEN *new;
     int         ppscan_mode;
 
     ppscan_mode = InitPPScan();
-    ReScanInit( &Buffer[10] );
+    if ( gluebuf == NULL )
+        gluebuf = "";
+    ReScanInit( gluebuf );
     head = NULL;
     lnk = &head;
     for(;;) {
@@ -935,6 +952,7 @@ MACRO_TOKEN *GlueTokens( MACRO_TOKEN *head )
     MACRO_TOKEN **lnk,**_lnk;// prior lnk
     MACRO_TOKEN *next;
     char        *buf;
+    char        *gluebuf;
 
     _lnk= NULL;
     lnk  = &head;
@@ -952,8 +970,8 @@ MACRO_TOKEN *GlueTokens( MACRO_TOKEN *head )
                 MACRO_TOKEN *rem;
 
                 next = next->next;
+                pos = 0;
                 // glue mtok->token with next->token to make one token
-                // untokenize mtok into Buffer at a funny pos to allow non overlapp expandve
                 if( ( mtok->token == T_COMMA && next->token == T_MACRO_EMPTY_VAR_PARM ) ||
                     ( mtok->token == T_MACRO_EMPTY_VAR_PARM && next->token == T_COMMA ) )
                 {
@@ -968,14 +986,14 @@ MACRO_TOKEN *GlueTokens( MACRO_TOKEN *head )
                     {
                         // well should never be in this state if no next - since ## cannot 
                         // appear at the end of a macro
-                        pos = GlueTokenToBuffer( next, buf, 10 );
+                        gluebuf = GlueTokenToBuffer( next, NULL );
                     }
                     else
                     {
-                        pos = GlueTokenToBuffer( mtok, buf, 10 );
+                        gluebuf = GlueTokenToBuffer( mtok, NULL );
                         if( next != NULL &&
                             next->token != T_MACRO_EMPTY_VAR_PARM ){
-                            pos = GlueTokenToBuffer( next, buf, pos ); //paste in next
+                            gluebuf = GlueTokenToBuffer( next, gluebuf ); //paste in next
                         }
                     }
                 }
@@ -988,7 +1006,8 @@ MACRO_TOKEN *GlueTokens( MACRO_TOKEN *head )
                 }
                 if( pos >= 0 )
                 {
-                    mtok = ReTokenBuffer10();
+                    mtok = ReTokenGlueBuffer( gluebuf );
+                    if( gluebuf != NULL ) CMemFree( gluebuf );
                     *lnk = mtok;  // link in new mtok to mtok's link
                     while( mtok && mtok->next != NULL ){ //position mtok & lnk to last token
                         _lnk = lnk;
