@@ -1428,6 +1428,8 @@ OVL_EXTERN void SymFileNew()
         curr->link = NULL;
         curr->pre_map = TRUE;
         curr->real_addr = addr.mach;
+        curr->map_valid_lo = 0;
+        curr->map_valid_hi = ~(addr_off)0;
         if( CurrToken == T_COMMA ) {
             Scan();
         }
