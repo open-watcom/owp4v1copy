@@ -24,7 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  Thread data allocation/initialization/freeing.
+* Description:  Thread data allocation/initialization/freeing. Since this
+*               module is always linked in, it should contain functions that
+*               are required by other parts of the runtime even for non-MT
+*               programs.
 *
 ****************************************************************************/
 
@@ -42,6 +45,8 @@
 #include "exitwmsg.h"
 
 extern  int     __Is_DLL;
+
+_WCRTLINK unsigned __ThreadDataSize = sizeof( thread_data );
 
 void __InitThreadData( thread_data *tdata )
 /*****************************************/

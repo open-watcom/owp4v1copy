@@ -24,8 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Multithreaded support function registration. Allows caller
+*               to override the default functions, used by FORTRAN and C++
+*               runtimes.
 *
 ****************************************************************************/
 
@@ -36,11 +37,17 @@
 
 extern beginner __CBeginThread;
 extern ender    __CEndThread;
+
 static int __CInitThread( void *p ) { p=p; return 0; }
 
 static beginner     *__BeginThread      = __CBeginThread;
 static ender        *__EndThread        = __CEndThread;
 static initializer  *__InitThread       = __CInitThread;
+
+int __initthread( void *p )
+{
+    return __InitThread( p );
+}
 
 _WCRTLINK int _beginthread( thread_fn *start_addr, void *stack_bottom,
                         unsigned stack_size, void *arglist )
@@ -51,11 +58,6 @@ _WCRTLINK int _beginthread( thread_fn *start_addr, void *stack_bottom,
 _WCRTLINK void _endthread( void )
 {
     __EndThread();
-}
-
-int __initthread( void *p )
-{
-    return __InitThread( p );
 }
 
 _WCRTLINK void __RegisterThreadData( beginner **begin, ender **end, initializer **init )
