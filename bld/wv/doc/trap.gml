@@ -54,6 +54,12 @@ is expected to be modified in future releases. Where possible, notification
 of expected changes are given in the document, but all aspects are subject
 to revision.
 :H1.Some Definitions
+:H2.Byte Order
+The trap file interface is defined to use little endian byte order. That is,
+the least significant byte is stored at the lowest address. Little endian
+byte order was chosen for compatibility with existing trap files and
+tools. Fixed byte order also eases network communication between
+debuggers and trap files running on machines with different byte order.
 :H2.Pointer Sizes
 In a 16-bit hosted environment such as DOS, all pointers used by the trap
 file are "far" 16:16 pointers. In a 32-bit environment such as Windows NT
