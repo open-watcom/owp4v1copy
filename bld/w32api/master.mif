@@ -1,7 +1,5 @@
-proj_name = w32api
-
-!include cproj.mif
-!include defrule.mif
+lib = wlib
+cc = wcc386
 
 .EXTENSIONS : .lbc .def
 
@@ -38,6 +36,7 @@ libs =               &
         mgmtapi.lib &
         mpr.lib &
         msacm32.lib &
+        msimg32.lib &
         msvcp60.lib &
         mswsock.lib &
         nddeapi.lib &
@@ -98,6 +97,9 @@ libs =               &
 
 .obj.lib:
         $(lib) -b -c -q -n $@ $<
+
+.c.obj:
+        $(cc) -i$(inc_dirs) -zq-w4-we-dNDEBUG -zc -bt=nt -oaxt -d1 $<
 
 $(libs):
 
