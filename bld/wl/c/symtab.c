@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Symbol table routines for wlink.
 *
 ****************************************************************************/
 
-
-/*
-   SYMTAB  : symbol table routines for WATCOM linker
-
-*/
 
 #include <stdio.h>
 #include <string.h>
@@ -879,36 +873,32 @@ extern symbol * SymXOp( sym_flags op, char *name, int length )
 extern symbol * SymXOpNWPfx( sym_flags op, char *name, int length, char * prefix, int prefixLen)
 /************************************************************/
 {
-	symbol * retsym = SymXOp(op, name, length);
+    symbol * retsym = SymXOp(op, name, length);
 
-	if(NULL == retsym)
-		return NULL;
+    if( NULL == retsym )
+        return NULL;
 
-	if(((NULL != prefix) && (0 != prefixLen)) || (NULL != CmdFile->symprefix))
-	{
-		char * pfxname = alloca(255+1);	/* max len of PString - used to be prefixLen+1 */
+    if( ((NULL != prefix) && (0 != prefixLen)) || (NULL != CmdFile->symprefix) ) {
+        char * pfxname = alloca(255+1); /* max len of PString - used to be prefixLen+1 */
 
-		if(NULL == pfxname)
-		{
-	        LnkMsg( ERR+MSG_SYMBOL_NAME_TOO_LONG, "s", prefix );
-			return NULL;
-		}
+        if( NULL == pfxname ) {
+            LnkMsg( ERR+MSG_SYMBOL_NAME_TOO_LONG, "s", prefix );
+            return NULL;
+        }
 
-		if(prefix)
-		{
-			memcpy( pfxname, prefix, prefixLen);
-	        pfxname[ prefixLen] = '\0';
-		}
-		else
-			strcpy( pfxname, CmdFile->symprefix);
+        if( prefix ) {
+            memcpy( pfxname, prefix, prefixLen );
+            pfxname[ prefixLen] = '\0';
+        }
+        else
+            strcpy( pfxname, CmdFile->symprefix );
 
-		if(NULL == (retsym->prefix = AddStringTable(&PrefixStrings, pfxname, strlen(pfxname) + 1)))
-		{
-	        LnkMsg( ERR+MSG_INTERNAL, "s", "no memory for prefix symbol");
-			return NULL;
-		}
-	}
-	return retsym;
+        if( NULL == (retsym->prefix = AddStringTable( &PrefixStrings, pfxname, strlen( pfxname ) + 1 )) ) {
+            LnkMsg( ERR+MSG_INTERNAL, "s", "no memory for prefix symbol");
+            return NULL;
+        }
+    }
+    return retsym;
 }
 
 extern void MakeSymAlias( char *name, int namelen, char *target, int targetlen )
@@ -969,7 +959,8 @@ static symbol * GlobalSearchSym( char *symname, int hash, int len )
     sym = GlobalSymPtrs[ hash ];
     while( sym != NULL ) {
         if( len == sym->namelen ) {
-            if( (*CmpRtn)( symname, sym->name, len ) == 0 ) break;
+            if( (*CmpRtn)( symname, sym->name, len ) == 0 )
+                break;
         }
         sym = sym->hash;
     }
@@ -985,7 +976,8 @@ static symbol * StaticSearchSym( char *symname, unsigned hash, int len )
     sym = StaticSymPtrs[ hash ];
     while( sym != NULL ) {
         if( sym->info & SYM_IN_CURRENT && len == sym->namelen ) {
-            if( memcmp( symname, sym->name, len ) == 0 ) break;
+            if( memcmp( symname, sym->name, len ) == 0 )
+                break;
         }
         sym = sym->hash;
     }
@@ -1189,8 +1181,7 @@ extern void XReportSymAddr( symbol *sym )
     char                star;
 
     if( sym->info & SYM_REFERENCED ) {
-        if( IS_SYM_IMPORTED(sym) ||
-                    (FmtData.type & MK_ELF && IsSymElfImported(sym)) ) {
+        if( IS_SYM_IMPORTED(sym) || (FmtData.type & MK_ELF && IsSymElfImported(sym)) ) {
             star = 'i';
         } else {
             star = ' ';
@@ -1212,7 +1203,7 @@ extern void XWriteImports( void )
     for( sym = HeadSym; sym != NULL; sym = sym->link ) {
         if( IS_SYM_IMPORTED(sym) && sym->p.import != NULL ) {
             if( !(FmtData.type & MK_NOVELL)
-                   || sym->p.import != DUMMY_IMPORT_PTR  ) 
+                   || sym->p.import != DUMMY_IMPORT_PTR  )
             {
                 if(sym->prefix && (strlen(sym->prefix) > 0))
                     WriteFormat( 0, "%s@%s", sym->prefix, sym->name);
@@ -1235,7 +1226,8 @@ extern symbol * AddAltDef( symbol *sym, unsigned sym_type )
 {
     symbol *    altsym;
 
-    if( !(LinkFlags & INC_LINK_FLAG) ) return sym;
+    if( !(LinkFlags & INC_LINK_FLAG) )
+        return sym;
     altsym = AddSym();
     SET_SYM_TYPE( altsym, sym_type );
     altsym->info |= SYM_DEAD | SYM_IS_ALTDEF;
@@ -1252,12 +1244,14 @@ extern symbol * HashReplace( symbol *sym )
 {
     symbol *    newsym;
 
-    if( sym->mod == NULL ) return sym;
+    if( sym->mod == NULL )
+        return sym;
     Ring2Prune( &sym->mod->publist, sym );
     if( IS_SYM_COMMUNAL(sym) ) {
         sym->p.seg->isdead = TRUE;
     }
-    if( !(LinkFlags & INC_LINK_FLAG) ) return sym;
+    if( !(LinkFlags & INC_LINK_FLAG) )
+        return sym;
     newsym = AddSym();
     newsym->e.mainsym = sym;
     newsym->name = sym->name;
@@ -1304,11 +1298,13 @@ static void CleanAltDefs( symbol *sym )
     symbol *    testring;
     symbol *    altsym;
 
-    if( sym->info & (SYM_ALIAS | SYM_DEAD) || sym->u.altdefs == NULL ) return;
+    if( sym->info & (SYM_ALIAS | SYM_DEAD) || sym->u.altdefs == NULL )
+        return;
     testring = NULL;
     for(;;) {
         altsym = RingPop( &sym->u.altdefs );
-        if( altsym == NULL ) break;
+        if( altsym == NULL )
+            break;
         if( altsym->info & SYM_KILL ) {
             if( altsym->info & SYM_HAS_DATA ) {
                 altsym->u.datasym = NULL;
@@ -1533,44 +1529,42 @@ extern group_entry *SymbolGroup( symbol *sym )
 
 extern bool SetCurrentPrefix(const char * pszPrefix, int nLen)
 {
-	const char *	pStart = pszPrefix;
-	char *			pFix;
-	int				nIntLen = nLen;
-    char *          newbuff = NULL;
-	
+    const char *    pStart = pszPrefix;
+    char *          pFix;
+    int             nIntLen = nLen;
+    char            *newbuff = NULL;
+
     /*
     //  Always delete
     */
-	if(CmdFile->symprefix)
-    {
+    if( CmdFile->symprefix ) {
         _LnkFree( CmdFile->symprefix );
         CmdFile->symprefix = NULL;
     }
 
-	if((NULL == pStart) || (nLen == 0))
-	{
-		return TRUE;
-	}
+    if( (NULL == pStart) || (nLen == 0) ) {
+        return TRUE;
+    }
 
-	pStart++;	/* skip opening parentheses */
-	nIntLen--;	/* and record that */
+    pStart++;   /* skip opening parentheses */
+    nIntLen--;  /* and record that */
 
-	while((0 != *pStart) && (IS_WHITESPACE(pStart)))
-		pStart++, nIntLen--;
+    while( (0 != *pStart) && IS_WHITESPACE(pStart) )
+        pStart++, nIntLen--;
 
-	if((0 == *pStart) || (0 == nLen))
-		return FALSE;
+    if( (0 == *pStart) || (0 == nLen) )
+        return FALSE;
 
-	/* convert to C string */
+    /* convert to C string */
     _LnkAlloc( newbuff, nIntLen + 1 );
-    memcpy(newbuff, pStart, nIntLen-1);
+    memcpy( newbuff, pStart, nIntLen - 1 );
     newbuff[nIntLen-1] = '\0';
     CmdFile->symprefix = newbuff;
-	
-	pFix = newbuff;
-	while((0 != *pFix) && (!IS_WHITESPACE(pFix)))
-		pFix++;
-	*pFix = '\0';
 
-	return (0 != strlen(newbuff));
+    pFix = newbuff;
+    while( (0 != *pFix) && !IS_WHITESPACE(pFix) )
+        pFix++;
+    *pFix = '\0';
+
+    return( 0 != strlen( newbuff ));
 }
