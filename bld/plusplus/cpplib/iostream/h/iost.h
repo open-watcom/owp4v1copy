@@ -24,13 +24,11 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  This header helps with pre-compiled headers usage.
 *
 ****************************************************************************/
 
 
-// this header file is defined to ease the use of pre-compiled headers
 #include "variety.h"
 #include <ctype.h>
 #include <errno.h>
@@ -45,5 +43,5 @@
 #include <streambu.h>
 #include <string.h>
 #include <strstrea.h>
-#include <sys\stat.h>
+#include <sys/stat.h>
 #include <unistd.h>
