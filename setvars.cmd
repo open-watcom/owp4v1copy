@@ -40,13 +40,9 @@ set default_windowing=0
 REM Set this variable to 0 to suppress documentation build
 set DOC_BUILD=1
 
-REM Change the default command prompt
-prompt $p$g
-
 REM Ensure COMSPEC points to CMD.EXE
 set COMSPEC=CMD.EXE
-REM Make the window bigger
-mode 80,50
+
 cls
 echo Open Watcom compiler build environment
 
@@ -59,15 +55,16 @@ set builder.ctl=lang.ctl
 set defrel=rel2
 set devdir=%owroot%\bld
 set distroot=%owroot%\distrib
+set relroot=%owroot%
 set dwatcom=%watcom%
 set doc_root=%owroot%\docs
 set lang=%watcom%
 set include=%lang%\h;%lang%\h\win;%devdir%\watcom\h
 set lang_bld=%owroot%\bat
 set lib=%owroot%\bld\watcom\lib;%os2tkroot%\lib
+
 set path=%owroot%\binp;%devdir%\build\binp;%owroot%\bat;%lang%\binp;%lang%\binw;%doc_root%\cmds;%os2tkroot%\bin;%defpath%
-set relroot=%owroot%
-set watcom=%lang%
+
 set edpath=%lang%\eddat
 set wwinhelp=%owroot%\bld\online\hlp\ib
 set beginlibpath=%watcom%\binp\dll
