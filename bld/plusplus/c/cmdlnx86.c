@@ -392,7 +392,7 @@ static void setMemoryModel( OPT_STORAGE *data, mem_model_control control )
 #if _CPU == 8086
     bit |= FLOATING_ES;
 #else
-    // 386 float model needs at least one floating segment register
+    // 386 flat model needs at least one floating segment register
     bit |= FLOATING_GS;
     if( !( bit & FLAT_MODEL ) ) {
         bit |= FLOATING_FS;
