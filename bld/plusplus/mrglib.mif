@@ -11,8 +11,7 @@ source_libs_x = $(libx)
 !endif
 
 lib_flags = -b -c -n -t
-!ifeq release 0
-!else
+!ifeq release 1
 !ifeq host_CPU axp
 !else
 lib_flags += -s

@@ -30,11 +30,6 @@ wacc_dir        =$(sdk_dir)/wresedit/waccel
 wmenu_dir       =$(sdk_dir)/wresedit/wmenu
 wstring_dir     =$(sdk_dir)/wresedit/wstring
 
-!ifeq release 0
-!else
-NODEBUG=1
-!endif
-
 !ifeq wre_trmem 1
 TRMEM           = -dTRMEM
 !ifneq host_CPU axp

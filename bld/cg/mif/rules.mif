@@ -1,5 +1,3 @@
-#.EXTENSIONS:
-#.EXTENSIONS: .exe .exp .lib .obj .cpp .c .h .asm .psm
 .EXTENSIONS: .psm
 
 .ERASE

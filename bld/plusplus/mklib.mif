@@ -22,8 +22,7 @@ target_xbjs = $(xbjs)
 !endif
 
 lib_flags = -b -c
-!ifeq release 0
-!else
+!ifeq release 1
 lib_flags += -t
 !ifeq host_CPU axp
 !else

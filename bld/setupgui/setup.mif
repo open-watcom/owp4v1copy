@@ -300,8 +300,7 @@ setup.exe: $(GENDEPS)
     wlink name $* @setup.lnk
 !ifndef ui_os2
 !   ifdef rational
-!      ifeq release 0
-!      else
+!      ifeq release 1
           @ren setup.exe x.exe
           @cp $(rsi_root)\bin\dos4g.exe d4g.exe
           @$(rsi_root)\bin\expmod d4g.exe pmem=384 xmax=384

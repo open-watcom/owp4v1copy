@@ -17,8 +17,7 @@ libname_   =clib
 libname =clib$(libname_$(processor)_$(model))
 
 lib_flags     =-b -c 
-!ifeq release 0
-!else
+!ifeq release 1
 !ifeq processor axp
 !else
 lib_flags    +=-s -t

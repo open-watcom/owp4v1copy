@@ -50,8 +50,7 @@ c_opts +=-d__NEC__
 !endif
 
 wlib_opts = -b-n
-!ifeq release 0
-!else
+!ifeq release 1
 wlib_opts += -s-t
 !endif
 

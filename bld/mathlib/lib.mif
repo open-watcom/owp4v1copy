@@ -25,8 +25,7 @@ libname =$(libname_pfx)$(processor_)$(libname_$(model))
 !endif
 
 lib_flags =-b -c -p=16
-!ifeq release 0
-!else
+!ifeq release 1
 !ifeq processor axp
 !else
 lib_flags    += -s -t

@@ -75,8 +75,7 @@ inc_dirs += ../h;../../h;$(trmem_dir);$(help_dir)/h;
 
 extra_c_flags += -s -fh
 
-!ifeq release 0
-!else
+!ifeq release 1
 track =
 !endif
 

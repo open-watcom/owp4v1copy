@@ -79,11 +79,6 @@ extra_c_flags_preproc = -zm
 extra_c_flags_ppexpr = -zm
 extra_c_flags_ppmacro = -zm
 
-!ifeq release 0
-!else
-NODEBUG=1
-!endif
-
 !ifeq wresedit_trmem 1
 TRMEM           = -DTRMEM
 !endif

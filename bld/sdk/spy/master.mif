@@ -54,7 +54,7 @@ extra_c_flags_spydll = -bd -mc
 extra_c_flags_spydll = -bd
 !endif
 
-!ifneq release 1
+!ifeq release 0
 wspy_non_release_option = option rwr
 dll_debug_all           = debug all
 dll_debug_axp           = debug codeview

@@ -302,8 +302,7 @@ $(stubexe) : $(stub_objs)
     @%append $(slnk) file { $(stub_objs) }
     @%append $(slnk) name $^@
     @%append $(slnk) lib wlink.lib op map=wlstub,noredefs
-!ifeq release 0
-!else
+!ifeq release 1
     @%append $(slnk) op quiet
 !endif
     $(linker) @$(slnk)

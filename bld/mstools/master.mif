@@ -25,21 +25,6 @@ targdef=-d__TARGET_$(host_CPU)__
 mstools_stub_obj    = stub.obj
 mstools_objs        = cmdline.obj cmdscan.obj context.obj error.obj file.obj memory.obj pathconv.obj
 
-#
-# Build a release version by default, and a debug version if
-# $(release_mstools) is zero.
-#
-!ifndef release_mstools
-!   define release_mstools 1
-!endif
-
-!ifeq release_mstools 0
-!   define release 0
-!else
-!   define release 1
-!endif
-
-
 .c :  ../c;../../c
 .h :  ../h;../../h
 

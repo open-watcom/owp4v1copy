@@ -59,7 +59,7 @@ extra_c_flags_386_dos = -dDEBUG=1
 extra_c_flags_386 = $(extra_c_flags_386_$(host_OS))
 
 extra_c_flags   = -dSTANDALONE_RX=1
-!ifndef release
+!ifeq release 0
 extra_c_flags   += -dDEBUG=1 -dDEBUG_ASSERT=1 -dDEBUGTREE=1
 !endif
 extra_cpp_flags = -ew-xs-dNOPERSIST=1

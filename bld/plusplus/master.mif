@@ -7,15 +7,8 @@ proj_name = plusplus
 
 .mif: $(mif_path)
 
-!ifndef plusplus_release
-!  ifeq release 0
-!  else
-!    define plusplus_release
-!  endif
-!endif
-
 !ifndef plusplus_trmem
-!  ifndef plusplus_release
+!  ifeq release 0
 !      define plusplus_trmem 1
 !  endif
 !endif
@@ -74,7 +67,7 @@ comp_objs_dll = $(comp_objs) $(dll_objs)
 cflags =
 
 !ifeq host_cpu axp
-!ifndef plusplus_release
+!ifeq release 0
 cflags += -si
 !endif
 !else
@@ -95,14 +88,14 @@ cflags += -br
 cflags += -oalrs-s-zq-w4-we -bt=$(host_os)
 
 !ifndef dbg_cflags
-!  ifdef plusplus_release
+!  ifeq release 1
 !    define dbg_cflags -d1
 !  else
 !    define dbg_cflags -d2
 !  endif
 !endif
 
-!ifdef plusplus_release
+!ifeq release 1
 cflags += -dNDEBUG -ot
 !endif
 
@@ -131,7 +124,7 @@ extra_opts_srcfile = -4r
 !ifeq plusplus_trmem 1
 extra_opts_memmgr = -of+ -dTRACKER
 !endif
-!ifdef plusplus_release
+!ifeq release 1
 extra_opts_pcheader = -oi
 !endif
 !endif
@@ -155,7 +148,7 @@ extra_opts_pstk     = -dheader=$(fesupp_hdr)
 extra_opts_ringfns  = -dheader=$(fesupp_hdr)
 extra_opts_vbuf     = -dheader=$(fesupp_hdr)
 extra_opts_vstk     = -dheader=$(fesupp_hdr)
-!ifdef plusplus_release
+!ifeq release 1
 extra_opts_wppdlldr = -dDLL_NAME=$(dll_bld_name)
 !else
 extra_opts_wppdlldr = -dDLL_NAME=$(dll_dbg_name)
@@ -195,7 +188,7 @@ linker+= op caseex
 extra_l_flags = OPTION map
 wlink_opt_common_exe = OPTION symfile
 wlink_opt_common_drv = OPTION symfile
-!ifndef plusplus_release
+!ifeq release 0
 # the only guaranteed way to find the .sym for a .DLL is for it to be attached
 # to the .DLL binary
 wlink_opt_common_dll =
@@ -224,7 +217,7 @@ exe = $(final_exe_$(host_os))
 optencod_opt_qnx = -u usage.u
 optencod_targ_qnx = qnx
 optencod_targ_linux = linux
-!ifndef plusplus_release
+!ifeq release 0
 optencod_targ_dbg = dbg
 !endif
 
@@ -254,7 +247,7 @@ external_dependencies = $(cg_deps) $(dwarf_dw_dep)
 .c.pp:
         $(cc) $(cflags) $(dbg_cflags) $[@ $(extra_opts_$[&) -fo=*.pp -p
 
-!ifdef plusplus_release
+!ifeq release 1
 
 first : .symbolic build
     @%null
@@ -289,7 +282,7 @@ $(exe_bld_name).exe : $(depends_exe) pexebld.lnk
     $(linker) $(lflags) NAME $^* @pexebld
 #    $(pharlap)bind386 $(pharlap)run386b $^*
 #    $(pharlap)cfig386 $^* -win30grow -win30limit +524228 -MAXVCPI 0
-#!ifdef plusplus_release
+#!ifeq release 1
 #    del $^*.exp
 #!endif
 
@@ -362,7 +355,7 @@ $(exe_dbg_name).qnx : $(depends_exe) pexedbg.lnk
 
 $(exe_bld_name).qnx : $(depends_exe) pexebld.lnk
     $(linker) $(lflags) NAME $^* @pexebld
-!ifdef plusplus_release
+!ifeq release 1
     serialize $(exe_bld_name).qnx wpp
 !endif
 
@@ -545,7 +538,7 @@ pdlldbg.lnk : pdll.lnk
 wpp$(target_cpu)01.int : ./intlbin.exe errors01.int usage01.int
     $[@ wpp$(target_cpu)
 
-#!ifdef plusplus_release
+#!ifeq release 1
 #msgencod_opts = -w
 #!endif
 

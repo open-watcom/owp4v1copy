@@ -91,8 +91,7 @@ inc_dirs = ../h;$(inc_dirs_$(NT))
         %create $(lbcfile)
         @for %i in ($(OBJS)) do @%append $(lbcfile) +%i
         $(librarian) -n -b $^@ @$(lbcfile)
-!ifeq release 0
-!else
+!ifeq release 1
         cp $^@ $(watcom_dir)/lib
 !endif
         @rm -f $(lbcfile)

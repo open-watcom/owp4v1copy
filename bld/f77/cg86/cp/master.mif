@@ -75,7 +75,7 @@ target_exe = $(exe)
 !ifdef mkstubs
 f77_cg_libs = $(cg_stub_libs);
 !else
-!ifeq release_f77 1
+!ifeq release 1
 f77_cg_libs = $(cg_libs)
 !else
 f77_cg_libs = $(cg_debug_libs)

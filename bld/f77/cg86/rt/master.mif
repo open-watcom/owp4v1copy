@@ -10,8 +10,7 @@ extra_c_flags = -s -zl -zld -d__RT__
 extra_c_flags_386 = -fp$(fp_model) -m$(model) -zp1
 extra_c_flags_i86 = -fp$(fp_model) -m$(model)
 
-!ifeq release 0
-!else
+!ifeq release 1
 extra_c_flags_i86 += -fpr
 extra_c_flags_386 += -fpr
 !endif

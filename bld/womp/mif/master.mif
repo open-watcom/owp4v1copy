@@ -27,10 +27,10 @@ exe = exe
 
 !include $(womp_dir)/mif/objfiles.mif
 
-!ifdef release
-default_cflags = $(opts_cc)/dNDEBUG
-!else
+!ifeq release 0
 default_cflags = $(opts_cc)/d__FNAME__="$[&"
+!else
+default_cflags = $(opts_cc)/dNDEBUG
 !endif
 
 !ifndef __watfor__

@@ -2,7 +2,7 @@
 # LCL_JWW -- local master.mif modifications
 #
 
-!ifdef plusplus_release
+!ifeq release 1
 !   ifdef p5_timing
 !       define dbg_cflags -et
 !   endif
