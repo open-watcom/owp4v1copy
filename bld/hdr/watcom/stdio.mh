@@ -30,7 +30,11 @@
 // C99 types in stdio.h.
 using std::FILE;
 using std::fpos_t;
+#ifndef _SIZE_T_DEFINED
+#define _SIZE_T_DEFINED
+#define _SIZE_T_DEFINED_
 using std::size_t;
+#endif
 
 // C99 functions in stdio.h.
 using std::clearerr;
@@ -78,8 +82,17 @@ using std::vsprintf;
 :: Now the extensions section.
 :include ext.sp
 // C99 types that are not specified for stdio.h
+#ifndef _WCHAR_T_DEFINED
+#define _WCHAR_T_DEFINED
+#define _WCHAR_T_DEFINED_
+using std::wchar_t;
+#endif
+#ifndef _WCTYPE_T_DEFINED
+#define _WCTYPE_T_DEFINED
+#define _WCTYPE_T_DEFINED_
 using std::wint_t;
 using std::wctype_t;
+#endif
 
 // C99 functions in stdio.h that are currently considered extensions.
 using std::snprintf;
