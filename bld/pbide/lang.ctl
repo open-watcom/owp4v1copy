@@ -31,8 +31,8 @@ cdsay .
     <CPCMD> <devdir>/pbide/dlldbg/pbstart.dbg <relroot>/rel2/binw/pbstart.dbg
     <CPCMD> <devdir>/pbide/dlldbg/pbwd.dbg <relroot>/rel2/binw/pbwd.dbg
     <CPCMD> <devdir>/pbide/dlldbg/pbwdnt.dbg <relroot>/rel2/binnt/pbwdnt.dbg
-    <CPCMD> <devdir>/pbide/wig/owindll/pbide.dll <relroot>/rel2/binw/pbide.dll
-    <CPCMD> <devdir>/pbide/wig/ontdll/pbide.dll <relroot>/rel2/binnt/pbide.dll
+    <CPCMD> <devdir>/pbide/wig/wini86.dll/pbide.dll <relroot>/rel2/binw/pbide.dll
+    <CPCMD> <devdir>/pbide/wig/nt386.dll/pbide.dll <relroot>/rel2/binnt/pbide.dll
     <CPCMD> <devdir>/pbide/pbdll.h <relroot>/rel2/h/pbdll.h
     <CPCMD> <devdir>/viper/viper/win/pbide.cfg <relroot>/rel2/binw/pbide.cfg
     <CPCMD> <devdir>/viper/viper/nt/pbide.cfg <relroot>/rel2/binnt/pbide.cfg
