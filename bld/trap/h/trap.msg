@@ -514,6 +514,9 @@ trappick( TRP_MSG_select_exit,
 trappick( TRP_TCP_socket_number,
      "Socket port number: ",
      "jSocket port number: " )
+trappick( TRP_TCP_ip_address,
+     "Local IP address  : ",
+     "jLocal IP address  : " )
 trappick( TRP_PARSERV_Usage,
     "PARSERV [-Trap=trap_file[;trap_parm]] [-Once] [printer_number]",
     "jPARSERV [-Trap=trap_file[;trap_parm]] [-Once] [printer_number]" )

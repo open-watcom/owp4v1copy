@@ -24,10 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description: TCP/IP transport link for trap files.
 *
 ****************************************************************************/
+
 
 #if defined( __NT__ )
 #pragma library("wsock32.lib")
@@ -56,7 +56,6 @@
 #else
     #if defined(__OS2__)
         #include <types.h>
-        #include <arpa/inet.h>
     #else
         #include <sys/types.h>
     #endif
@@ -71,18 +70,22 @@
     #include <netdb.h>
     #if defined(__OS2__) && !defined(__386__)
         #include <netlib.h>
-    #elif defined(__UNIX__)
+    #elif defined(__UNIX__) || defined(__DOS__) || defined(__OS2__)
         #include <arpa/inet.h>
     #endif
 #endif
+
 #include <watcom.h>
+#if defined(__DOS__)
+    #include <machtype.h>
+    #include <tcp.h>
+#endif
+
 #include "packet.h"
 #include "trptypes.h"
 #include "trperr.h"
 #include "bool.h"
-#if defined(__DOS__)
-    #include <tcp.h>
-#endif
+#include "ifi.h"
 
 #define DEFAULT_PORT    0xDEB
 
@@ -219,6 +222,9 @@ char *RemoteLink( char *name, char server )
 
 #ifdef SERVER
     socklen_t           length;
+    struct ifi_info     *ifi, *ifihead;
+    struct sockaddr     *sa;
+    char                buff2[128];
 
 #if defined(__NT__) || defined(__WINDOWS__)
     {
@@ -262,11 +268,24 @@ char *RemoteLink( char *name, char server )
                      &length ) ) {
         return( TRP_ERR_unable_to_get_socket_name );
     }
-    {
-        char buff2[128];
-        sprintf( buff2, "%s%d", TRP_TCP_socket_number, ntohs( socket_address.sin_port ) );
-        ServMessage( buff2 );
+    sprintf( buff2, "%s%d", TRP_TCP_socket_number, ntohs( socket_address.sin_port ) );
+    ServMessage( buff2 );
+
+    /* Find and print TCP/IP interface addresses, ignore aliases */
+    ifihead = get_ifi_info(AF_INET, FALSE);
+    for( ifi = ifihead; ifi != NULL; ifi = ifi->ifi_next ) {
+        /* Ignore loopback interfaces */
+        if( ifi->flags & IFI_LOOP )
+            continue;
+
+        if( (sa = ifi->ifi_addr) != NULL ) {
+            sprintf( buff2, "%s%s", TRP_TCP_ip_address,
+                inet_ntoa( ((struct sockaddr_in*)sa)->sin_addr ) );
+            ServMessage( buff2 );
+        }
+
     }
+    free_ifi_info( ifihead );
 
     /* Start accepting connections */
     listen( control_socket, 5 );
@@ -343,3 +362,124 @@ void RemoteUnLink( void )
 #endif
 }
 
+#ifdef SERVER
+
+/* Functions to manage IP interface information lists */
+
+#ifdef __OS2__
+
+/* Actual implementation - feel free to port to other OSes */
+
+#include <sys/ioctl.h>
+#include <net/if.h>
+
+struct ifi_info * get_ifi_info(int family, int doaliases)
+{
+    struct ifi_info     *ifi, *ifihead, **ifipnext;
+    int                 sockfd, len, lastlen, flags, myflags;
+    char                *ptr, *buf, lastname[IFNAMSIZ], *cptr;
+    struct ifconf       ifc;
+    struct ifreq        *ifr, ifrcopy;
+    struct sockaddr_in  *sinptr;
+
+    sockfd = socket( AF_INET, SOCK_DGRAM, 0 );
+
+    lastlen = 0;
+    len = 20 * sizeof( struct ifreq );   /* initial buffer size guess */
+    for( ; ; ) {
+        buf = malloc( len );
+        ifc.ifc_len = len;
+        ifc.ifc_buf = buf;
+        if( ioctl( sockfd, SIOCGIFCONF, &ifc ) >= 0 ) {
+            if( ifc.ifc_len == lastlen )
+                break;      /* success, len has not changed */
+            lastlen = ifc.ifc_len;
+        }
+        len += 10 * sizeof( struct ifreq );   /* increment */
+        free( buf );
+    }
+    ifihead = NULL;
+    ifipnext = &ifihead;
+    lastname[0] = 0;
+
+    for( ptr = buf; ptr < buf + ifc.ifc_len; ) {
+        ifr = (struct ifreq *) ptr;
+
+        len = max( sizeof( struct sockaddr ), ifr->ifr_addr.sa_len );
+        ptr += sizeof( ifr->ifr_name ) + len; /* for next one in buffer */
+
+        if( ifr->ifr_addr.sa_family != family )
+            continue;   /* ignore if not desired address family */
+
+        myflags = 0;
+        if(( cptr = strchr( ifr->ifr_name, ':' )) != NULL )
+            *cptr = 0;      /* replace colon will null */
+        if( strncmp( lastname, ifr->ifr_name, IFNAMSIZ ) == 0 ) {
+            if ( doaliases == 0 )
+                continue;   /* already processed this interface */
+            myflags = IFI_ALIAS;
+        }
+        memcpy( lastname, ifr->ifr_name, IFNAMSIZ );
+
+        ifrcopy = *ifr;
+        ioctl( sockfd, SIOCGIFFLAGS, &ifrcopy );
+        flags = ifrcopy.ifr_flags;
+        if( !( flags & IFF_UP ) )
+            continue;   /* ignore if interface not up */
+
+        ifi = calloc( 1, sizeof( struct ifi_info ));
+        *ifipnext = ifi;            /* prev points to this new one */
+        ifipnext  = &ifi->ifi_next; /* pointer to next one goes here */
+
+        if (flags & IFF_LOOPBACK )
+            myflags |= IFI_LOOP;
+
+        ifi->ifi_flags = flags;     /* IFF_xxx values */
+        ifi->flags     = myflags;   /* IFI_xxx values */
+        memcpy( ifi->ifi_name, ifr->ifr_name, IFI_NAME );
+        ifi->ifi_name[IFI_NAME-1] = '\0';
+
+        switch (ifr->ifr_addr.sa_family) {
+        case AF_INET:
+            sinptr = (struct sockaddr_in *) &ifr->ifr_addr;
+            if( ifi->ifi_addr == NULL ) {
+                ifi->ifi_addr = calloc( 1, sizeof(struct sockaddr_in) );
+                memcpy( ifi->ifi_addr, sinptr, sizeof( struct sockaddr_in ) );
+            }
+            break;
+
+        default:
+            break;
+        }
+    }
+    free( buf );
+    return( ifihead );    /* pointer to first structure in linked list */
+}
+
+void free_ifi_info(struct ifi_info *ifihead)
+{
+    struct ifi_info *ifi, *ifinext;
+
+    for( ifi = ifihead; ifi != NULL; ifi = ifinext ) {
+        if( ifi->ifi_addr != NULL )
+            free( ifi->ifi_addr );
+        ifinext = ifi->ifi_next;    /* can't fetch ifi_next after free() */
+        free( ifi );                /* the ifi_info{} itself */
+    }
+}
+
+#else
+
+/* Stubbed out */
+struct ifi_info * get_ifi_info(int family, int doaliases)
+{
+    return NULL;
+}
+
+void free_ifi_info(struct ifi_info *ifihead)
+{
+}
+
+#endif
+
+#endif
