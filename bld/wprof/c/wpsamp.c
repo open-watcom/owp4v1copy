@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Display profile samples in the GUI.
 *
 ****************************************************************************/
 
@@ -43,24 +42,6 @@
 #include "wpasmfil.h"
 #include "msg.h"
 
-//#include "wpsamp.def"
-//#include "wpwind.def"
-//#include "wpsrcfil.def"
-//#include "wpasmfil.def"
-//#include "wpsort.def"
-//#include "wpbar.def"
-//#include "wpgather.def"
-//#include "wpnumrow.def"
-//#include "wpgetrow.def"
-//#include "rptsamps.def"
-//#include "clrsamps.def"
-//#include "setsamps.def"
-//#include "dlgsamp.def"
-//#include "srcmgt.def"
-//#include "wppushin.def"
-//#include "dipinter.def"
-//#include "memutil.def"
-//#include "msg.def"
 extern image_info *SImageGetImage(a_window *wnd,int row);
 extern mod_info *SModGetModule(a_window *wnd,int row);
 extern file_info *SFileGetFile(a_window *wnd,int row);
@@ -431,7 +412,7 @@ STATIC bint sampleProcTopStatus( a_window * wnd, int row, int piece,
         return( B_TRUE );
     }
     max_y = WndMaxCharY( wnd );
-    max_x = WndMaxCharX( wnd );
+    max_x = WndAvgCharX( wnd );
     vertical_x = SEPARATOR_POINT + max_x / 2;
     client_width = WPGetClientWidth( wnd );
     cross_y = max_y * (STATUS_ROW-1) - max_y/4;
@@ -476,7 +457,7 @@ STATIC bint sampleProcBotStatus( a_window * wnd, int row, int piece,
         return( B_TRUE );
     }
     max_y = WndMaxCharY( wnd );
-    max_x = WndMaxCharX( wnd );
+    max_x = WndAvgCharX( wnd );
     vertical_x = SEPARATOR_POINT + max_x / 2;
     client_height = WPGetClientHeight( wnd );
     client_width = WPGetClientWidth( wnd );
