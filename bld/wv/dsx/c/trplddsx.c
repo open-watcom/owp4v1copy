@@ -55,12 +55,7 @@ extern trap_version     TrapVer;
 extern unsigned         (TRAPENTRY *ReqFunc)( unsigned, mx_entry *,
                                         unsigned, mx_entry * );
 
-#if defined(_NEC_PC)
- #define DOS4G_COMM_VECTOR      0x7f
-#else
- #define DOS4G_COMM_VECTOR      0x15
-#endif
-
+#define DOS4G_COMM_VECTOR       0x15
 #define NUM_BUFF_RELOCS         16
 #define DEFAULT_TRP_NAME        "STD"
 #define DEFAULT_TRP_EXT         "TRP"

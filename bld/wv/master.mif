@@ -241,7 +241,6 @@ exe_name = wv.$(EXE)
 # cflags
 #########
 extra_c_flags_at = -D_AT_PC
-extra_c_flags_nec = -D_NEC_PC
 
 extra_c_flags += -s $(extra_c_flags_$(all_machine))
 
@@ -253,9 +252,6 @@ extra_c_flags += -D__CHAR__
 
 !ifeq release 0
 extra_c_flags += -dAUI_DBG -dDBG_DBG
-!ifeq machine nec
-extra_c_flags += -dDEBUG_NEC
-!endif
 !endif
 
 extra_c_flags_i86 += -fpc

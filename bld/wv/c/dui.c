@@ -228,15 +228,9 @@ extern int DUIGetMonitorType()
     if( GUIIsGUI() ) {
         return( 1 );
     } else {
-        #ifdef _NEC_PC
-            return( 7 );
-        #else
-        {
-            gui_system_metrics  metrics;
-            GUIGetSystemMetrics( &metrics );
-            return( metrics.colour != 0 );
-        }
-        #endif
+        gui_system_metrics  metrics;
+        GUIGetSystemMetrics( &metrics );
+        return( metrics.colour != 0 );
     }
 }
 
