@@ -24,18 +24,17 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Permanent linker data structures and routines (heavily
+*               used for incremental linking).
 *
 ****************************************************************************/
 
 
-
 #define INC_FILE_SIG_SIZE        36
 #ifdef __QNX__
-#define INC_FILE_SIG  "WLINK Incremental Link File V1.02\n\x0c\x04"
+#define INC_FILE_SIG  "WLINK Incremental Link File V1.03\n\x0c\x04"
 #else
-#define INC_FILE_SIG  "WLINK Incremental Link File V1.02\r\n\x1a"
+#define INC_FILE_SIG  "WLINK Incremental Link File V1.03\r\n\x1a"
 #endif
 
 typedef struct {
@@ -106,7 +105,7 @@ typedef struct {
 /* data and functions used for permanent data structure storage */
 
 extern stringtable      PermStrings;
-extern stringtable      PrefixStrings;	/* these are NetWare prefix strings of which there could possibly be several */
+extern stringtable      PrefixStrings;  /* these are NetWare prefix strings of which there could possibly be several */
 extern carve_t          CarveLeader;
 extern carve_t          CarveModEntry;
 extern carve_t          CarveDLLInfo;
