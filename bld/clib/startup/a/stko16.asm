@@ -24,8 +24,7 @@
 ;*
 ;*  ========================================================================
 ;*
-;* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-;*               DESCRIBE IT HERE!
+;* Description:  OS/2 16-bit stack checking code.
 ;*
 ;*****************************************************************************
 
@@ -96,7 +95,6 @@ endif
         _endguess                       ; endguess
 
 __STKOVERFLOW:
-        add     sp, 100H                ; get enough of the stack
         mov     dx,cs:dgroupp           ; set stk overflow msg
         mov     ax, offset DGROUP:msg
         mov     bx, 01h                 ; return error
