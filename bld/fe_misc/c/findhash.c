@@ -306,9 +306,12 @@ char *make_define( letter_t i )
     return define_string;
 }
 
-int cmptok( const keyword_t *v1, const keyword_t *v2 )
+int cmptok( const void *_v1, const void *_v2 )
 /****************************************************/
 {
+    const keyword_t *v1 = _v1;
+    const keyword_t *v2 = _v2;
+
     return( strcmp( tokens[*v1], tokens[*v2] ) );
 }
 
