@@ -86,7 +86,7 @@ ClassLattice::ClassLattice( dr_handle hdl, Module * mod, char * name,
         , _derivedsLoaded( FALSE )
         , _flatClasses( vlist )
         , _effAccess( acc )
-        , _virtual( virt )
+        , _virtual( (VirtLevel)virt )
         , _relaxedVirt(relaxVirt)
         , _level( level )
 //-------------------------------------------------------------------------
