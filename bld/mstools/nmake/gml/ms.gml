@@ -128,7 +128,7 @@
 :usage. don't invoke the Watcom tool
 
 :cmt     NOLOGO
-:option. NOLOGO
+:option. NOLOGO L
 :target. any
 :usage. don't display copyright banner
 
