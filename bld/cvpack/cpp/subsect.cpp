@@ -32,7 +32,7 @@
 
 #include <assert.h>
 #include <wcstack.h>
-#include <String.hpp>
+#include <string.hpp>
 #include "common.hpp"
 #include "cverror.hpp"
 #include "subsect.hpp"
