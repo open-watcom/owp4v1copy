@@ -1,65 +1,13 @@
 #
 # awaiting bug fixes
 #
-# bf04.$(ext) &         # bitfield in static anonymous union
-# init26.$(ext) &       # init anon struct with bitfields in anon union
-# opt19.$(ext) &        # codegen 8086 -1 optimization bug test5= arch=i86
-# opt28.$(ext) &        # loop optimization bug
-# opt38.$(ext) &        # codegen -2-ml-ox-d1 (load 'ds' too early)
-# opt43.$(ext) &        # wcl -d2 bug with post increment
-
-!ifdef %ctest_bad_br
-no_br_except30 = no
-!endif
+# fm257.$(ext) &        # requires operator input
+# fm923.$(ext) &        # input file likely invalid
 
 #
 # special options
 #
-opt_cdisp13 = -xr
-opt_cmdln01 = /d+XXX=0+1
-opt_cmdln02 = /d+ /dXXX=0+1
-opt_cmdln03 = /dX /DXX /uXX /DXXX /uXXX /UXXX /dXXX /DXXXX /uXXXX /DXXXX /uXXXX
-opt_cmdln04 = /dCMDMAC -DCMD1= /DCMD2$#
-!ifndef %ctest_old_compiler
-opt_cmdln05 = -dXN2=2 -dXS1="a-/ b"-dXN1=2 -dXS2#"a-/ b"
-!endif
-opt_dyn01 = -xr
-opt_opt09 = -za
-opt_opt44 = -os
-opt_pack6 = -ot -zp8
-opt_pack7 = -wx
-opt_pch01 = -fhq
-opt_pch02 = -fhq
-opt_pch03 = -fhq
-opt_pch04 = -fhq
-opt_pch05 = -fhq
-opt_pch06 = -fhq
-opt_pch07 = -fhq
-opt_pch08 = -fhq
-opt_pch09 = -fhq
-opt_pch10 = -fhq
-opt_pch11 = -fhq
-opt_pch12 = -fhq
-# pch13,14,15 are same test
-opt_pch13 =             # (1) no PCH
-opt_pch14 = -fhq        # (2) write PCH
-opt_pch15 = -fhq        # (3) read PCH
-opt_pch16 = -fhq
-opt_pch17 = -fhq
-opt_pch18 = -fhq -dAFS_CM
-opt_pch19 = -fhq -dAFS_CM
-opt_pch20 = -fhq -dAFS_CM
-opt_pch21 = -fhq -dAFS_CM
-opt_pp08 = -w0
-opt_rtti02 = -xr
-opt_rtti03 = -xr
-opt_rtti04 = -xr
-opt_rtti05 = -xr
-opt_rtti06 = -xr
-opt_rtti07 = -xr
-opt_rtti08 = -xr -xbnm
-opt_thread01 = -i$(lang_root)\h\nt
-opt_vf18 = -za
+#opt_fm001 = -XTRAOPT
 
 !ifneq arch i86
 opt_link_opt32 = option stack=128k
@@ -71,21 +19,10 @@ opt_link_opt32 = option stack=128k
 
 !ifeq arch 386
 # 386 specific
-opt_init12 = -mf
-opt_opt13 = -fpd
-opt_vf17 = -zv
-
-opt_link_vf17 = option vfremoval
 !endif
 
 !ifeq arch i86
 # i86 specific
-opt_opt13 = -fpd
-opt_opt29 = -zff
-opt_opt31 = -zff
-opt_vf17 = -zv
-
-opt_link_vf17 = option vfremoval
 !endif
 
 #
@@ -210,10 +147,12 @@ positive_tests = &
     fm379.$(ext) &
     fm401.$(ext) &
     fm402.$(ext) &
+    fm403.$(ext) &
     fm404.$(ext) &
     fm405.$(ext) &
     fm406.$(ext) &
     fm407.$(ext) &
+    fm411.$(ext) &
     fm413.$(ext) &
     fm500.$(ext) &
     fm503.$(ext) &
