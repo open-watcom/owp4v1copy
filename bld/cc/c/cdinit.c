@@ -630,7 +630,7 @@ local void *DesignatedInit( TYPEPTR typ, TYPEPTR ctyp, void *field )
     return( field );
 }
 
-local void ClearArray( TYPEPTR typ, TYPEPTR ctyp )
+local void ClearArray( TYPEPTR typ, TYPEPTR ctyp, size_t members )
 {
     unsigned long       n;
     enum TOKEN          realtoken;
@@ -640,7 +640,7 @@ local void ClearArray( TYPEPTR typ, TYPEPTR ctyp )
        will make life very difficult */
     realtoken = CurToken;
     CurToken = T_RIGHT_BRACE;
-    for( n = 0; n < TypeSize( typ ); n++ ) {
+    for( n = 0; n < members; n++ ) {
         InitSymData( typ->object, ctyp, -1 );
     }
     if( realtoken == T_RIGHT_BRACE ) return;
@@ -688,14 +688,13 @@ local void InitArray( TYPEPTR typ, TYPEPTR ctyp )
             }
             n = m;
         }
-        if( !typ->u.array->unspecified_dim && n >= array_size ){
-            break;
+        n++;
+        if( n > array_size ) {
+            if( !typ->u.array->unspecified_dim ) break;
+            array_size = n;
+            ClearArray( typ, ctyp, 1 );
         }
         InitSymData( typ->object, ctyp, 1 );
-        n++;
-        if( typ->u.array->unspecified_dim && n > array_size ){
-            array_size = n;
-        }
         if( CurToken == T_EOF ) break;
         if( CurToken == T_RIGHT_BRACE ) break;
         if( DesignatedInSubAggregate( typ->object->decl_type ) ) continue;
@@ -848,7 +847,7 @@ void InitSymData( TYPEPTR typ, TYPEPTR ctyp, int level )
             }
             /* 0: top level, -1: clearing, 1: filling */
             if( level != 1 ) {
-                ClearArray( typ, ctyp );
+                ClearArray( typ, ctyp, TypeSize( typ ) );
             }
             if( level != -1 ) {
                 InitArray( typ, ctyp );
