@@ -449,7 +449,7 @@ extern void FiniOS2FlatLoadFile( void )
     exe_head.impproc_off = curr_loc - 1;
     curr_loc += ImportProcTable( &count );
     exe_head.fixup_size = curr_loc - exe_head.fixpage_off;
-    curr_loc = NullAlign( 512 );    /* align to sector boundry */
+    curr_loc = NullAlign( 4 );    /* align to dword boundary */
     exe_head.page_off = curr_loc;
     if( FmtData.type & MK_WIN_VXD ) {
         SetHeaderVxDInfo(&exe_head);
