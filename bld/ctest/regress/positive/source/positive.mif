@@ -1,9 +1,19 @@
 #
 # awaiting bug fixes
 #
-# pch01.$(ext) &        # All of the PCH tests are currently broken!
-#    init12.$(ext) &    # based pointer problem
-#    opt11.$(ext) &     # volatile + post increment problem
+# pch01.$(ext) &    # All of the PCH tests are currently broken!
+# pch02.$(ext) &    # There are at least three distinct problems
+# pch03.$(ext) &    # - Count of SpecialSyms may not match and
+# pch04.$(ext) &    #   PCH will be endlessly regenerated if there
+# pch05.$(ext) &    #   are inlined assembly functions in header
+# pch06.$(ext) &    #   (pch01/02)
+# pch07.$(ext) &    # - Missing CR/LF at the end of precompiled
+# pch08.$(ext) &    #   header throws off the parser (pch03/04)
+# pch09.$(ext) &    # - Expression trees aren't stored in PCH, any
+# pch10.$(ext) &    #   functions defined in headers will screw
+# pch11.$(ext) &    #   things up (pch05/06 and others)
+# init12.$(ext) &   # based pointer problem
+# opt11.$(ext) &    # volatile + post increment problem
 
 !ifdef %ctest_bad_br
 no_br_except30 = no
@@ -21,26 +31,17 @@ opt_opt09 = -za
 opt_pack04 = -wx
 opt_pch01 = -fhq
 opt_pch02 = -fhq
-opt_pch03 = -fhq
-opt_pch04 = -fhq
-opt_pch05 = -fhq
+# pch03,04,05 are same test
+opt_pch03 =             # (1) no PCH
+opt_pch04 = -fhq        # (2) write PCH
+opt_pch05 = -fhq        # (3) read PCH
 opt_pch06 = -fhq
 opt_pch07 = -fhq
-opt_pch08 = -fhq
-opt_pch09 = -fhq
-opt_pch10 = -fhq
-opt_pch11 = -fhq
-opt_pch12 = -fhq
-# pch13,14,15 are same test
-opt_pch13 =             # (1) no PCH
-opt_pch14 = -fhq        # (2) write PCH
-opt_pch15 = -fhq        # (3) read PCH
-opt_pch16 = -fhq
-opt_pch17 = -fhq
-opt_pch18 = -fhq -dAFS_CM
-opt_pch19 = -fhq -dAFS_CM
-opt_pch20 = -fhq -dAFS_CM
-opt_pch21 = -fhq -dAFS_CM
+# pch08,09,10,11 use the same PCH
+opt_pch08 = -fhq -dAFS_CM
+opt_pch09 = -fhq -dAFS_CM
+opt_pch10 = -fhq -dAFS_CM
+opt_pch11 = -fhq -dAFS_CM
 opt_pp08 = -w0
 opt_thread01 = -i$(lang_root)\h\nt
 
