@@ -6,6 +6,8 @@ proj_name = w32api
 
 libs =               &
         advapi32.lib &
+        avicap32.lib &
+        avifil32.lib &
         cap.lib &
         comctl32.lib &
         comdlg32.lib &
@@ -42,6 +44,7 @@ libs =               &
         msacm32.lib &
         msimg32.lib &
         msvcp60.lib &
+        msvfw32.lib &
         mswsock.lib &
         nddeapi.lib &
         netapi32.lib &
@@ -113,9 +116,16 @@ libs =               &
 .c.obj:
         $(cc) $(cflags) -fpc -fo=.obj -i"$(inc_dirs)" $<
 
+# the __UNIX__ has to be here until at least "for" is fixed in wmake for UNIX:
+# wmake exploits the special WATCOM readdir(wildcard) property...
 all: $(libs) .SYMBOLIC
+!ifdef __UNIX__
+        /bin/sh -c "for i in ../include/*.h; do wmake -h -f ../fix/new_h.mif file=$$i; done"
+        /bin/sh -c "for i in ../include/GL/*.h; do wmake -h -f ../fix/new_h.mif file=$$i; done"
+!else
         @for %i in (../include/*.h) do @wmake -h -f ../fix/new_h.mif file=%i
         @for %i in (../include/GL/*.h) do @wmake -h -f ../fix/new_h.mif file=%i
+!endif
         $(vi) -s ../fix/fix_h.vi
 
 kernel32.lib: kernel32.lbc
@@ -128,6 +138,9 @@ dinput.lib: dinput.lbc dinput.obj
 shell32.lib: shell32.lbc shell32.obj
         $(librarian) -b -c -n -io -ii $@ @$[@
         $(librarian) -b -c $@ +$]@
+
+vfw32.lib: msvfw32.lib avicap32.lib avifil32.lib
+        $(librarian) -b -c -n $@ +msvfw32.lib +avicap32.lib +avifil32.lib
 
 uuid.lib: uuid.obj mshtml-u.obj
 
