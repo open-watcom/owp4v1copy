@@ -31,6 +31,8 @@ cdsay .
     <CPCMD> <devdir>/watcom/lib/wresm.lib <relroot>/rel2/lib286/
     <CPCMD> <devdir>/watcom/lib/wresl.lib <relroot>/rel2/lib286/
 
+    <CPCMD> <devdir>/misc/unicode.* <relroot>/rel2/binl/
+
 [ BLOCK <1> clean ]
 #==================
     pmake -d build <2> <3> <4> <5> <6> <7> <8> <9> -h clean

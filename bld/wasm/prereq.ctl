@@ -7,7 +7,7 @@ set PROJDIR=<CWD>
 [ INCLUDE <LANG_BLD>/wproj.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
-[ BLOCK <1> clean ]
+[ BLOCK <1> clean cprel2 ]
 #==================
 set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 set BUILD_PLATFORM=
@@ -55,10 +55,13 @@ set BUILD_PLATFORM=
 
 [ BLOCK <1> clean ]
 #==================
-set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>
-set TMP_BUILD_PLATFORM=
     rm -f -r <PROJDIR>/<OBJDIR>
     @rm -f <RELROOT>/bld/build/bin/bwasm.*
     @rm -f <RELROOT>/bld/build/binp/bwasm.*
     @rm -f <RELROOT>/bld/build/binnt/bwasm.*
     @rm -f <RELROOT>/bld/build/binl/bwasm.*
+
+[ BLOCK <1> clean cprel2 ]
+#==================
+set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>
+set TMP_BUILD_PLATFORM=

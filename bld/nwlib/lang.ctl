@@ -23,6 +23,8 @@ cdsay .
     <CPCMD> dos386/wlib.exe  <relroot>/rel2/binw/wlib.exe
 #    <CPCMD> qnx386/wlib.exe  <relroot>/rel2/qnx/wlib.
 #    <CPCMD> qnx386/wlib.sym  <relroot>/rel2/qnx/wlib.sym
+    <CPCMD> linux386/wlib.exe  <relroot>/rel2/binl/wlib
+    <CPCMD> linux386/wlib.sym  <relroot>/rel2/binl/wlib.sym
 
 [ BLOCK <1> clean ]
 #==================

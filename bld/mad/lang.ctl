@@ -22,6 +22,7 @@ cdsay .
     <CPCMD> <devdir>/bin/binnt/mad???.dll <relroot>/rel2/binnt/
 #    <CPCMD> <devdir>/bin/axpnt/mad???.dll <relroot>/rel2/axpnt/
     <CPCMD> <devdir>/bin/qnx/*.mad <relroot>/rel2/qnx/watcom/wd/
+    <CPCMD> <devdir>/bin/linux/*.mad <relroot>/rel2/binl/
 
 [ BLOCK <1> clean ]
 #==================

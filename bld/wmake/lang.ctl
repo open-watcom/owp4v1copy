@@ -26,6 +26,8 @@ cdsay .
     <CPCMD> <devdir>/wmake/os2386/wmk.exe <relroot>/rel2/binp/wmake.exe
     <CPCMD> <devdir>/wmake/nt386/wmk.exe <relroot>/rel2/binnt/wmake.exe
 #    <CPCMD> <devdir>/wmake/ntaxp/wmk.exe <relroot>/rel2/axpnt/wmake.exe
+    <CPCMD> <devdir>/wmake/linux386/wmk.exe <relroot>/rel2/binl/wmake
+    <CPCMD> <devdir>/wmake/linux386/wmk.sym <relroot>/rel2/binl/wmake.sym
 
 [ BLOCK <1> clean ]
 #==================

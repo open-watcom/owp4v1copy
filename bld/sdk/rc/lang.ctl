@@ -29,17 +29,15 @@ cdsay .
 #    <CPCMD> <devdir>/sdk/rc/rc/osi386/wrc.exe <relroot>/rel2/binw/wrc.exe
     <CPCMD> <devdir>/sdk/rc/rc/nt386.dll/wrc.dll <relroot>/rel2/binnt/wrc.dll
 #    <CPCMD> <devdir>/sdk/rc/rc/os2386.dll/wrc.dll <relroot>/rel2/binp/dll/wrc.dll
-    <CPCMD> <devdir>/sdk/rc/rc/kanji.uni <relroot>/rel2/binw/kanji.uni
-    <CPCMD> <devdir>/sdk/rc/rc/936.uni <relroot>/rel2/binw/936.uni
-    <CPCMD> <devdir>/sdk/rc/rc/949.uni <relroot>/rel2/binw/949.uni
-    <CPCMD> <devdir>/sdk/rc/rc/1250.uni <relroot>/rel2/binw/1250.uni
-    <CPCMD> <devdir>/sdk/rc/rc/1251.uni <relroot>/rel2/binw/1251.uni
-    <CPCMD> <devdir>/sdk/rc/rc/1252.uni <relroot>/rel2/binw/1252.uni
+    <CPCMD> <devdir>/sdk/rc/rc/*.uni <relroot>/rel2/binw/
     <CPCMD> <devdir>/sdk/rc/mkcdpg/nt386/mkcdpg.exe <relroot>/rel2/binnt/mkcdpg.exe
 #    <CPCMD> <devdir>/sdk/rc/mkcdpg/ntaxp/mkcdpg.exe <relroot>/rel2/axpnt/mkcdpg.exe
     <CPCMD> <devdir>/sdk/rc/exedmp/nt386/exedmp.exe <relroot>/rel2/binnt/exedmp.exe
     <CPCMD> <devdir>/sdk/rc/exedmp/os2386/exedmp.exe <relroot>/rel2/binp/exedmp.exe
     <CPCMD> <devdir>/sdk/rc/rc/nt386rt.dll/wrc.dll <relroot>/rel2/binnt/rtdll/wrc.dll
+# linux
+    <CPCMD> <devdir>/sdk/rc/rc/linux386/wrc.exe <relroot>/rel2/binl/wrc
+    <CPCMD> <devdir>/sdk/rc/rc/*.uni <relroot>/rel2/binl/
 
 [ BLOCK <1> clean ]
 #==================

@@ -41,6 +41,11 @@ cdsay .
 #    <CPCMD> <devdir>/wl/axp/wlstub.exe <relroot>/rel2/axpnt/wlink.exe
 #    <CPCMD> <devdir>/wl/axp/wl.dll <relroot>/rel2/axpnt/wlink.dll
 #   cat <devdir>\wl\wlsystem.lnk <devdir>\wl\wlqnx.lnk ><relroot>\rel2\qnx\etc\wlink.lnk
+# linux
+    <CPCMD> <devdir>/wl/wlbinl.lnk <relroot>/rel2/binl/wlink.lnk
+    <CPCMD> <devdir>/wl/wlsystem.lnk <relroot>/rel2/binl/wlsystem.lnk
+    <CPCMD> <devdir>/wl/linux386/wl.exe <relroot>/rel2/binl/wlink
+    <CPCMD> <devdir>/wl/linux386/wl.sym <relroot>/rel2/binl/wlink.sym
 
 [ BLOCK <1> clean ]
 #==================

@@ -72,6 +72,15 @@ cdsay .
 #       <CPCMD> <devdir>/bin/axpnt/codeview.sym <relroot>/rel2/axpnt/
 #       <CPCMD> <devdir>/bin/axpnt/export.sym   <relroot>/rel2/axpnt/
 #       <CPCMD> <devdir>/bin/axpnt/watcom.sym   <relroot>/rel2/axpnt/
+#       LINUX
+        <CPCMD> <devdir>/bin/linux/dwarf.dip      <relroot>/rel2/binl/
+        <CPCMD> <devdir>/bin/linux/watcom.dip     <relroot>/rel2/binl/
+#        <CPCMD> <devdir>/bin/linux/codeview.dip   <relroot>/rel2/binl/
+#        <CPCMD> <devdir>/bin/linux/export.dip     <relroot>/rel2/binl/
+        <CPCMD> <devdir>/bin/linux/dwarf.sym      <relroot>/rel2/binl/
+        <CPCMD> <devdir>/bin/linux/watcom.sym     <relroot>/rel2/binl/
+#        <CPCMD> <devdir>/bin/linux/codeview.sym   <relroot>/rel2/binl/
+#        <CPCMD> <devdir>/bin/linux/export.sym     <relroot>/rel2/binl/
 
 
 [ BLOCK <1> clean ]

@@ -9,7 +9,7 @@ set PROJDIR=<CWD>
 
 cdsay .
 
-[ BLOCK <1> clean ]
+[ BLOCK <1> clean cprel2 ]
 #==================
 set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 set BUILD_PLATFORM=
@@ -68,8 +68,6 @@ set BUILD_PLATFORM=
 
 [ BLOCK <1> clean ]
 #==================
-set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>
-set TMP_BUILD_PLATFORM=
     rm -f -r <PROJDIR>/<OBJDIR>
     @rm -f <owroot>/bld/build/bin/bvi.*
     @rm -f <owroot>/bld/build/bin/parsectl.*
@@ -83,3 +81,8 @@ set TMP_BUILD_PLATFORM=
     @rm -f <owroot>/bld/build/binl/bvi*
     @rm -f <owroot>/bld/build/binl/parsectl*
     @rm -f <owroot>/bld/build/binl/parsedyn*
+
+[ BLOCK <1> clean cprel2 ]
+#==================
+set BUILD_PLATFORM=<TMP_BUILD_PLATFORM>
+set TMP_BUILD_PLATFORM=

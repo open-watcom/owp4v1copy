@@ -57,6 +57,10 @@ cdsay .
 # NT parallel port device driver and installer
     <CPCMD> <devdir>/trap/par/ntsupp/dbgport.sys <relroot>/rel2/binnt/
     <CPCMD> <devdir>/trap/par/ntsupp/dbginst.exe <relroot>/rel2/binnt/
+#linux
+    <CPCMD> <devdir>/bin/linux/*.trp <relroot>/rel2/binl/
+    <CPCMD> <devdir>/bin/linux/parserv.elf <relroot>/rel2/binl/parserv
+    <CPCMD> <devdir>/bin/linux/tcpserv.elf <relroot>/rel2/binl/tcpserv
 
 [ BLOCK <1> clean ]
 #==================
