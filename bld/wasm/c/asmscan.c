@@ -93,6 +93,11 @@ void GetInsString( enum asm_token token, char *string, int len )
 }
 #endif
 
+typedef union {
+        float   f;
+        long    l;
+} NUMBERFL;
+
 static int get_float( struct asm_tok *buf, char **input, char **output )
 /**********************************************************************/
 {
@@ -126,7 +131,8 @@ static int get_float( struct asm_tok *buf, char **input, char **output )
                 }
             }
         default:
-            return( get_string( buf, input, output ) );
+            goto done_scanning_float;
+//            return( get_string( buf, input, output ) );
         }
     }
 
@@ -141,7 +147,7 @@ done_scanning_float:
     (*output)++;
     *input = ptr;
 
-    buf->value = 0;
+    *((float*)(&buf->value)) = atof(buf->string_ptr);
     return( NOT_ERROR );
 }
 

@@ -1212,6 +1212,51 @@ static int idata( long value )
     return( NOT_ERROR );
 }
 
+static int idata_float( long value )
+/*
+  check the correct operand/data size for float immediate operand;
+*/
+{
+    switch( Code->mem_type ) {
+    case EMPTY:
+        switch( Code->distance ) {
+        case EMPTY:
+            if( Code->info.token == T_PUSH ) { // sigh. another special case
+                if( !Code->use32 ) {
+                    // expect 32-bit code but get 16-bit
+                    AsmError( IMMEDIATE_DATA_OUT_OF_RANGE );
+                    return( ERROR );
+                }
+            }
+            break;
+        case T_FAR:
+        case T_NEAR:
+        case T_SHORT:
+            AsmError( SYNTAX_ERROR );
+            return( ERROR );
+        }
+        break;
+#ifdef _WASM_
+    case T_SBYTE:
+    case T_SWORD:
+#endif
+    case T_BYTE:
+    case T_WORD:
+        AsmError( OPERANDS_MUST_BE_THE_SAME_SIZE );
+        return( ERROR );
+#ifdef _WASM_
+    case T_SDWORD:
+#endif
+    case T_DWORD:
+        // set w-bit
+        Code->info.opcode |= W_BIT;
+        break;
+    }
+    Code->info.opnd_type[Opnd_Count] = OP_I32;
+    Code->data[Opnd_Count] = value;
+    return( NOT_ERROR );
+}
+
 static unsigned char get_sr_rm_byte( unsigned char seg_prefix )
 /*************************************************************/
 {
@@ -2040,6 +2085,15 @@ int AsmParse()
                 return( ERROR );
             }
             break;
+        case T_FLOAT:
+            if( idata_float( AsmBuffer[i]->value ) == ERROR ) {
+                return( ERROR );
+            }
+            if( AsmBuffer[i-1]->token == T_MINUS ) {
+                rCode->data[Opnd_Count] *= -1;
+            }
+            AsmWarn( 4, FLOAT_OPERAND );
+            break;
         case T_CL_SQ_BRACKET:
             break;
         case T_REG:
@@ -2364,11 +2418,10 @@ static int check_size( void )
                 op2_size = op1_size;    /* promote to larger size */
             }
         }
-        if( op1_size == 1 && op2 == OP_I16 && Code->data[OPND1] <= UCHAR_MAX ) {
+        if( op1_size == 1 && op2 == OP_I16 && Code->data[OPND2] <= UCHAR_MAX ) {
             return( state ); // OK cause no sign extension
         }
-        if( op1_size == 2 && op2 == OP_I32 &&
-            Code->data[OPND1] <= (signed long)USHRT_MAX ) {
+        if( op1_size == 2 && op2 == OP_I32 && Code->data[OPND2] <= USHRT_MAX ) {
             return( state ); // OK cause no sign extension
         }
         if( op1_size != op2_size ) {

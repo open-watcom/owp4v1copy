@@ -289,3 +289,6 @@ pick( ASSUMING_WORD,
 pick( ASSUMING_DWORD,
                                 "size not specified -- DWORD PTR is assumed" ,
                                 "‘å‚«‚³‚ªŽw’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ -- DWORD PTR‚ð‰¼’è‚µ‚Ü‚·" )
+pick( FLOAT_OPERAND,
+                                "Float is used as operand" ,
+                                "Float is used as operand" )
