@@ -1,5 +1,5 @@
 proj_name       = ncurses
-inc_dirs        = $(lang_root)/h;../h
+inc_dirs        = ../h
 
 !include cproj.mif
 !include deftarg.mif

@@ -146,7 +146,6 @@ libs = $(dwarf_dir)/dw/$(%OBJDIR)/dwf.lib -lwatcom -lwres
 !else
 
 inc_dirs =.;
-inc_dirs +=$(lang_root)/h;$(watcom_dir)/h;
 inc_dirs +=$(cc_dir)/h;$(cg_inc_dirs);
 inc_dirs +=$(inline_asm_h);
 inc_dirs +=$(dwarf_dir)/dw/h;

@@ -31,7 +31,6 @@ inc_dirs += $+$(plusplus_include)$-;
 inc_dirs += $(trmem_dir);
 !endif
 inc_dirs += ../h;
-inc_dirs += $(lang_root)/h;
 inc_dirs += $(cg_inc_dirs);
 inc_dirs += $(wasm_dir)/h;
 inc_dirs += $(as_dir)/h;

@@ -11,7 +11,7 @@ extra_l_flags_nt = op stack=1024k commit stack=32k
 !include wres.mif
 !include mlibs.mif
 
-inc_dirs=$(lang_root)/h;$(f77_dir)/cg86/cp/h;$(f77_dir)/cg86/h;$(cg_inc_dirs);$(f77_dir)/h;$(dwarf_dir)/dw/h;$(comp_cfg_dir)/h
+inc_dirs=$(f77_dir)/cg86/cp/h;$(f77_dir)/cg86/h;$(cg_inc_dirs);$(f77_dir)/h;$(dwarf_dir)/dw/h;$(comp_cfg_dir)/h
 
 !ifeq target_CPU 386
 inc_dirs+=;$(wasm_dir)/h

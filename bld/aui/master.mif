@@ -14,7 +14,7 @@ suppress_zc = 1
 
 .EXTENSIONS: .dlg .rc
 
-inc_dirs = $(lang_root)/h;$(aui_dir)/h;$(gui_dir)/h;$(posix_dir)/h
+inc_dirs = $(aui_dir)/h;$(gui_dir)/h;$(posix_dir)/h
 
 .c: .;$(aui_dir)/c;$(posix_dir)/misc
 .h: .;$(aui_dir)/h

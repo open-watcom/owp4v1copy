@@ -70,7 +70,7 @@ extra_lflags_qnx += op offset=64k, stack=60k
 !include orl.mif
 !include wres.mif
 
-inc_dirs = $(lang_root)/h;../h;$(orl_dir)/h;$(trmem_dir);$(lib_misc_dir)/h;$(watcom_dir)/h
+inc_dirs = ../h;$(orl_dir)/h;$(trmem_dir);$(lib_misc_dir)/h;$(watcom_dir)/h
 
 extra_c_flags_ntdll = -bd
 extra_c_flags_os2dll = -bd

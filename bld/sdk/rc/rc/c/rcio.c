@@ -35,9 +35,9 @@
 #include <string.h>
 #include <errno.h>
 #include <stdarg.h>
-// #ifndef __UNIX__
+#ifndef __UNIX__
 #include <process.h>
-//#endif
+#endif
 #include "watcom.h"
 #include "wresall.h"
 #include "global.h"

@@ -54,13 +54,13 @@
 #include "cgiobuff.h"
 #include "brinfo.h"
 
-//#if defined(__UNIX__)
-// #include <dirent.h>
-// #define _FILENAME_CMP  strcmp
-//#else
+#if defined(__UNIX__)
+ #include <dirent.h>
+ #define _FILENAME_CMP  strcmp
+#else
  #include <direct.h>
  #define _FILENAME_CMP  stricmp
-//#endif
+#endif
 
 static pch_status (*readFunctions[])( void ) = {
 #define PCH_EXEC( s, g )        PCHRead##g,
