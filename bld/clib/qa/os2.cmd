@@ -9,5 +9,5 @@ os3_3r
 os3_3s
 rem os3pm_3r
 rem os3pm_3s
-type tmp.log
-erase tmp.log>nul
+rem type tmp.log
+rem erase tmp.log>nul

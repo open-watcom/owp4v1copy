@@ -17,7 +17,7 @@
 
 void dll_threadfunc( void* private_data )
 {
-    static counter = 0;
+    static int counter = 0;
 
     ++counter;
     printf( "DLL threadfunc entered %2d time. This time during %s\n",
@@ -64,7 +64,7 @@ extern void QA_func1( void );
 // check that threading works at all in the exe
 void exe_threadfunc( void* private_data )
 {
-    static counter = 0;
+    static int counter = 0;
 
     ++counter;
     printf( ".exe threadfunc entered %2d times.\n", counter );
