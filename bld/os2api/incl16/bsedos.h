@@ -465,7 +465,7 @@ typedef HMONITOR FAR  *PHMONITOR;
 
 USHORT APIENTRY DosMonClose(HMONITOR Handle);
 USHORT APIENTRY DosMonOpen(PSZ Devname, PHMONITOR Handle);
-USHORT APIENTRY DosMonRead(PBYTE BufferI, UCHAR WaitFlag, PBYTE DataBuffer, PUSHORT Bytecnt);
+USHORT APIENTRY DosMonRead(PBYTE BufferI, USHORT WaitFlag, PBYTE DataBuffer, PUSHORT Bytecnt);
 USHORT APIENTRY DosMonReg(HMONITOR Handle, PBYTE BufferI, PBYTE BufferO, USHORT Posflag, USHORT Index);
 USHORT APIENTRY DosMonWrite(PBYTE BufferO, PBYTE DataBuffer, USHORT Bytecnt);
 
