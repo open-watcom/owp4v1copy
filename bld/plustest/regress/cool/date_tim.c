@@ -1671,7 +1671,7 @@ void CoolDate_Time::parse (char* source, int settz) {
    t.tm_hour = hour;                    // Copy hours value
    t.tm_mday = day;                     // Copy day of month value
    t.tm_mon = month;                    // Copy month value
-   t.tm_year = (int)year;               // Copy year value
+   t.tm_year = (int)(this->century + year - 1900);  // Copy year value
    t.tm_isdst = 0;
 
    this->time_seconds = mktime (&t);

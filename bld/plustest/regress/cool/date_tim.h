@@ -469,7 +469,7 @@ inline int CoolDate_Time::get_mon () const {
 inline int CoolDate_Time::get_year () const {
   return ((this->year_adjust > 0) ? (this->century+OLD_YEAR (this->dt.tm_year,
                                                this->year_adjust)) :
-          this->century + this->dt.tm_year);
+          1900 + this->dt.tm_year);
 }
 
 
