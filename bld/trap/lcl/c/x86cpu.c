@@ -118,6 +118,8 @@ extern unsigned Is486();
         "and    eax,1"          \
         value [AX] modify [BX]
 
+// CPUID EDX bit 23 - MMX instructions -> MMX registers
+// CPUID EDX bit 25 - SSE instructions -> XMM registers
 extern unsigned CPUId();
 #pragma aux CPUId =             \
         ".586"                  \
@@ -125,6 +127,11 @@ extern unsigned CPUId();
         "cpuid"                 \
         "shr    eax,8"          \
         "and    eax,0xf"        \
+        "shr    edx,16"         \
+        "shr    dh,1"           \
+        "shr    edx,3"          \
+        "and    edx,0x30"       \
+        "or     eax,edx"        \
         value [AX] modify [BX CX DX]
 
 unsigned X86CPUType()

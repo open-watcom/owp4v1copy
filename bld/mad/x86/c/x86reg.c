@@ -461,11 +461,11 @@ walk_result DIGENTRY MIRegSetWalk( mad_type_kind tk, MI_REG_SET_WALKER *wk, void
         wr = wk( &RegSet[FPU_REG_SET], d );
         if( wr != WR_CONTINUE ) return( wr );
     }
-    if( (tk & MTK_CUSTOM) && (MCSystemConfig()->cpu >= X86_586) ) {
+    if( (tk & MTK_CUSTOM) && (MCSystemConfig()->cpu & X86_MMX) ) {
         wr = wk( &RegSet[MMX_REG_SET], d );
         if( wr != WR_CONTINUE ) return( wr );
     }
-    if( (tk & MTK_XMM) && (MCSystemConfig()->cpu >= X86_686) ) {
+    if( (tk & MTK_XMM) && (MCSystemConfig()->cpu & X86_XMM) ) {
         wr = wk( &RegSet[XMM_REG_SET], d );
         if( wr != WR_CONTINUE ) return( wr );
     }
@@ -484,7 +484,7 @@ unsigned DIGENTRY MIRegSetLevel( const mad_reg_set_data *rsd, unsigned max, char
 
     switch( rsd - RegSet ) {
     case CPU_REG_SET:
-        switch( MCSystemConfig()->cpu ) {
+        switch( MCSystemConfig()->cpu & X86_CPU_MASK ) {
         case X86_86:
             strcpy( str, "8086" );
             break;
@@ -493,6 +493,9 @@ unsigned DIGENTRY MIRegSetLevel( const mad_reg_set_data *rsd, unsigned max, char
             break;
         case X86_686:
             strcpy( str, "Pentium Pro" );
+            break;
+        case X86_P4:
+            strcpy( str, "Pentium 4/Xeon" );
             break;
         default:
             str[0] = MCSystemConfig()->cpu + '0';
@@ -516,6 +519,9 @@ unsigned DIGENTRY MIRegSetLevel( const mad_reg_set_data *rsd, unsigned max, char
             break;
         case X86_687:
             strcpy( str, "Pentium Pro" );
+            break;
+        case X86_P47:
+            strcpy( str, "Pentium 4/Xeon" );
             break;
         default:
             str[0] = MCSystemConfig()->fpu + '0';
@@ -962,7 +968,8 @@ static mad_status MMXGetPiece(
     DescriptBuff[0] = '\0';
     *descript_p = DescriptBuff;
     *max_value_p = 0;
-    if( MCSystemConfig()->cpu < X86_586 ) return( MS_FAIL );
+    if( ( MCSystemConfig()->cpu & X86_MMX ) == 0 )
+        return( MS_FAIL );
 
     if( MADState->reg_state[MMX_REG_SET] & MT_BYTE ) {
         list = list_byte;
@@ -1090,7 +1097,8 @@ static mad_status XMMGetPiece(
     DescriptBuff[0] = '\0';
     *descript_p = DescriptBuff;
     *max_value_p = 0;
-    if( MCSystemConfig()->cpu < X86_686 ) return( MS_FAIL );
+    if( ( MCSystemConfig()->cpu & X86_XMM ) == 0 )
+        return( MS_FAIL );
 
     if( MADState->reg_state[XMM_REG_SET] & XT_BYTE ) {
         list = list_byte;
@@ -1553,7 +1561,7 @@ walk_result DIGENTRY MIRegWalk(
 
     list = (ri==NULL) ? rsd->reglist : ((const x86_reg_info *)ri)->sublist;
     if( list == NULL ) return( WR_CONTINUE );
-    level = MCSystemConfig()->cpu;
+    level = MCSystemConfig()->cpu & X86_CPU_MASK;
     if( level >= X86_686 ) {
         cpulevel = L6;
     } else if( level >= X86_586 ) {

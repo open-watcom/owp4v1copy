@@ -491,7 +491,7 @@ static void TaskFPExec( ULONG rtn, struct x86_fpu *regs )
     long        eax,eip,efl;
     short       cs,ds;
 
-    if( RealNPXType == 3 || RealNPXType == 2 || (Mach.msb_cr0 & CR0_EM) ) {
+    if( RealNPXType == X86_387 || RealNPXType == X86_287 || (Mach.msb_cr0 & CR0_EM) ) {
         ds = Mach.msb_ds;
         eax = Mach.msb_eax;
         cs = Mach.msb_cs;

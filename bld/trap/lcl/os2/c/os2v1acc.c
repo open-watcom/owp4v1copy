@@ -358,7 +358,7 @@ unsigned ReqGet_sys_config()
     ret->sys.cpu = X86CPUType();
     DosDevConfig( &npx, 3, 0 );
     if( npx ) {
-        if( ret->sys.cpu >= 4 ) {
+        if( ( ret->sys.cpu & X86_CPU_MASK ) >= X86_486 ) {
             ret->sys.fpu = ret->sys.cpu;
         } else {
             ret->sys.fpu = NPXType();

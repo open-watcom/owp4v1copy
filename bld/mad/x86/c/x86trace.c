@@ -194,7 +194,7 @@ static mad_trace_how CheckSpecial( mad_trace_data *td, mad_disasm_data *dd, cons
         switch( dd->ins.op[0].base ) {
         case DR_X86_es:
         case DR_X86_ds:
-            if( MCSystemConfig()->cpu < X86_386 )
+            if( ( MCSystemConfig()->cpu & X86_CPU_MASK ) < X86_386 )
                 break;
             /* fall through */
         default:

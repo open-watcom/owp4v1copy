@@ -130,7 +130,7 @@ walk_result     DIGENTRY MITypeWalk( mad_type_kind tk, MI_TYPE_WALKER *wk, void 
 
     iol = LN;
     meml = LN;
-    if( MCSystemConfig()->cpu < X86_386 ) {
+    if( ( MCSystemConfig()->cpu & X86_CPU_MASK ) < X86_386 ) {
         if( tk & MAS_IO ) iol = L1;
         if( tk & MAS_MEMORY ) meml = L1;
     } else {
@@ -186,7 +186,7 @@ mad_type_handle DIGENTRY MITypeDefault( mad_type_kind tk, mad_address_format af,
     } else if( mr != NULL ) {
         big = BIG_SEG( GetRegIP( mr ) );
     } else {
-        big = (MCSystemConfig()->cpu >= X86_386);
+        big = ( ( MCSystemConfig()->cpu & X86_CPU_MASK ) >= X86_386);
     }
     switch( tk & MTK_ALL ) {
     case MTK_BASIC:

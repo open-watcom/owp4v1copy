@@ -177,20 +177,7 @@ unsigned ReqGet_sys_config( void )
     GetSystemInfo( &info );
 #if defined( MD_x86 )
     ret->sys.cpu = X86CPUType();
-    switch( ret->sys.cpu ) {
-    case X86_486:
-        ret->sys.fpu = X86_487;
-        break;
-    case X86_586:
-        ret->sys.fpu = X86_587;
-        break;
-    case X86_686:
-        ret->sys.fpu = X86_687;
-        break;
-    default:
-        ret->sys.fpu = X86_387;
-        break;
-    }
+    ret->sys.fpu = ret->sys.cpu;
     if( IsWOW )
         ret->sys.os = OS_WINDOWS;
     ret->sys.mad = MAD_X86;

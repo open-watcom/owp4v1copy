@@ -16,7 +16,8 @@ extra_objs = &
         linuxfile.obj &
         squish87.obj &
         supp.obj &
-        core.obj
+        core.obj &
+        x86cpu.obj
 
 inc_dirs = $(trap_dir)/lcl/h
 

@@ -581,7 +581,7 @@ unsigned ReqGet_sys_config()
     ret->sys.osminor = version & 0xff;
     ret->sys.osmajor = (version >> 16) & 0xff;
     ret->sys.cpu = X86CPUType();
-    ret->sys.fpu = X86_387; /* OS/2 2.0 auto-emulates */
+    ret->sys.fpu = ret->sys.cpu;
     WriteRegs( &Buff );
 
     buff.Cmd = DBG_C_ReadCoRegs;

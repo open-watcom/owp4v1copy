@@ -40,7 +40,11 @@ enum x86_cputypes {
         X86_386,
         X86_486,
         X86_586,
-        X86_686
+        X86_686,
+        X86_P4 = 0x0f,
+        X86_CPU_MASK = 0x0f,
+        X86_MMX = 0x10,
+        X86_XMM = 0x20
 };
 
 enum x86_fputypes {
@@ -51,6 +55,7 @@ enum x86_fputypes {
         X86_487,
         X86_587,
         X86_687,
+        X86_P47 = 0x0f,
         X86_EMU = (unsigned_8)-1
 };
 

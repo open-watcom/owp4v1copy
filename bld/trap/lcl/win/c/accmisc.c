@@ -108,7 +108,7 @@ unsigned ReqGet_sys_config( void )
         fpu = X86_287;
     } else {
         ret->sys.cpu = X86CPUType();
-        fpu = X86_387;
+        fpu = ret->sys.cpu;
     }
 
     if( WindowsFlags & WF_80x87 ) {

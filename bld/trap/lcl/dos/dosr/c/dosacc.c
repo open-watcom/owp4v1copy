@@ -254,7 +254,7 @@ unsigned ReqGet_sys_config()
     ret->sys.osmajor = DOS_major;
     ret->sys.osminor = DOS_minor;
     ret->sys.cpu = X86CPUType();
-    if( ret->sys.cpu >= 3 ) {
+    if( ( ret->sys.cpu & X86_CPU_MASK ) >= X86_386 ) {
         Flags.Is386 = TRUE;
     } else {
         Flags.Is386 = FALSE;
@@ -262,7 +262,7 @@ unsigned ReqGet_sys_config()
     if( Have87Emu() ) {
         ret->sys.fpu = X86_EMU;
     } else if( RealNPXType != 0 ) {
-        if( ret->sys.cpu >= 4 ) {
+        if( ( ret->sys.cpu & X86_CPU_MASK ) >= X86_486 ) {
             ret->sys.fpu = ret->sys.cpu;
         } else {
             ret->sys.fpu = RealNPXType;
@@ -1041,7 +1041,7 @@ out( "    checking environment:\r\n" );
     if( parm[0] == 'D' || parm[0] == 'd' ) {
         Flags.DRsOn = FALSE;
         ++parm;
-    } else if( out0( "    CPU type\r\n" ) || X86CPUType() < 3 ) {
+    } else if( out0( "    CPU type\r\n" ) || X86CPUType() < X86_386 ) {
         Flags.DRsOn = FALSE;
     } else if( out0( "    WinEnh\r\n" ) || ( EnhancedWinCheck() & 0x7f ) ) {
         /* Enhanced Windows 3.0 VM kernel messes up handling of debug regs */

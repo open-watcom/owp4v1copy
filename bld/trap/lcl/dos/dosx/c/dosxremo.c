@@ -111,7 +111,7 @@ unsigned ReqGet_sys_config()
         ret->sys.osminor = 0;
         ret->sys.fpu = X86_NO;
         ret->sys.huge_shift = 12;
-        ret->sys.cpu = 3;
+        ret->sys.cpu = X86_386;
         ret->sys.mad = MAD_X86;
         return( sizeof( *ret ) );
     }
