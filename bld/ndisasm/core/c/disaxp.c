@@ -164,6 +164,8 @@ dis_handler_return AXPMemoryFC( dis_handle *h, void *d, dis_dec_ins *ins )
         ins->op[0].type = DO_REG;
         ins->op[0].base = code.memory.rb + DR_AXP_r0;
         ins->num_ops = 1;
+    default:
+        break;
     }
     return( DHR_DONE );
 }
@@ -505,6 +507,8 @@ static unsigned AXPInsHook( dis_handle *h, void *d, dis_dec_ins *ins,
                 ins->num_ops = 2;
             }
         }
+        break;
+    default:
         break;
     }
     if( name != NULL && new != NULL ) {

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Instruction decoding for Sun SPARC architecture.
 *
 ****************************************************************************/
 
@@ -283,6 +282,8 @@ static unsigned SPARCInsHook( dis_handle *h, void *d, dis_dec_ins *ins,
             ins->num_ops = 0;
         }
         break;
+    default:
+        break;
     }
     if( name != NULL && new != NULL ) {
         strcpy( name, new );
@@ -307,6 +308,8 @@ static dis_register sparcTranslate( dis_register reg ) {
             break;
         case DR_SPARC_o6:
             reg = DR_SPARC_sp;
+            break;
+        default:
             break;
         }
     }
