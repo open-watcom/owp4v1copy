@@ -29,8 +29,10 @@
 *
 ****************************************************************************/
 
-#ifdef __NT__
-#pragma library("wsock32")
+#if defined( __NT__ )
+#pragma library("wsock32.lib")
+#elif defined( __WINDOWS__ )
+#pragma library("winsock.lib")
 #endif
 
 #if defined(__OS2__) && !defined(__386__)

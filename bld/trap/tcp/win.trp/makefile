@@ -8,6 +8,5 @@ cpu = x86
 which = TRAP
 
 extra_objs = $(remote_objs)
-extra_libs = $(watcom_dir)/lib/winsock.lib
 
 !include $(trap_dir)/master.mif

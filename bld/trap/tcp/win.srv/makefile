@@ -9,6 +9,5 @@ cpu = x86
 which = SERVER
 
 extra_objs = $(remote_objs)
-extra_libs = $(watcom_dir)/lib/winsock.lib
 
 !include $(trap_dir)/master.mif

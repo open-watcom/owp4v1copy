@@ -9,6 +9,5 @@ cpu = x86
 which = SERVER
 
 extra_objs = $(remote_objs) novnt.obj
-extra_libs = $(lang_root)/lib386/nt/wsock32.lib
 
 !include $(trap_dir)/master.mif

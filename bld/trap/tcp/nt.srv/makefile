@@ -9,8 +9,5 @@ cpu = x86
 which = SERVER
 
 extra_objs = $(remote_objs)
-extra_libs = $(lang_root)/lib386/nt/wsock32.lib
-# extra_libs = $(watcom_dir)/lib/tcpipdll.lib
-# extra_incs = $(watcom_dir)/os220_h/tcpip
 
 !include $(trap_dir)/master.mif
