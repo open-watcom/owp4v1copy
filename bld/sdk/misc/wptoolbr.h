@@ -89,7 +89,7 @@ void ToolBarDestroy ( struct toolbar *bar );
 void ToolBarFini( struct toolbar * );
 void ToolBarDrawBitmap( WPI_PRES pres, WPI_POINT size, WPI_POINT org, HBITMAP bitmap );
 void UpdateToolBar( struct toolbar *bar );
-void ChangeToolButtonBitmap( struct toolbar *bar, WORD id, HBITMAP new );
+void ChangeToolButtonBitmap( struct toolbar *bar, WORD id, HBITMAP newbmp );
 BOOL HasToolAtPoint( struct toolbar *bar, WPI_PARAM1 wparam, WPI_PARAM2 lparam );
 void ToolBarRedrawButtons( struct toolbar *bar );
 

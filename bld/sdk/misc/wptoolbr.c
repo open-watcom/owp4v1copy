@@ -1137,12 +1137,12 @@ MRESULT CALLBACK ToolBarWndProc( HWND hwnd, WPI_MSG msg, WPI_PARAM1 wparam,
 /*
  * ChangeToolButtonBitmap - change a bitmap for a toolbar item
  */
-void ChangeToolButtonBitmap( toolbar *bar, WORD id, HBITMAP new )
+void ChangeToolButtonBitmap( toolbar *bar, WORD id, HBITMAP newbmp )
 {
     tool        *t;
     t = findTool( bar->tool_list, id );
     if( t != NULL ) {
-        t->u.bitmap = new;
+        t->u.bitmap = newbmp;
         _wpi_invalidaterect( bar->hwnd, &t->area, TRUE );
         _wpi_updatewindow( bar->hwnd );
     }

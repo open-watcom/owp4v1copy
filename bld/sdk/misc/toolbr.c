@@ -935,12 +935,12 @@ LONG WINEXP ToolBarWndProc( HWND hwnd, unsigned msg, UINT wparam, LONG lparam )
 /*
  * ChangeToolButtonBitmap - change a bitmap for a toolbar item
  */
-void ChangeToolButtonBitmap( toolbar *bar, int id, HBITMAP new )
+void ChangeToolButtonBitmap( toolbar *bar, int id, HBITMAP newbmp )
 {
     tool        *t;
     t = findTool( bar->tool_list, id );
     if( t != NULL ) {
-        t->bitmap = new;
+        t->bitmap = newbmp;
         InvalidateRect( bar->hwnd, &t->area, TRUE );
         UpdateWindow( bar->hwnd );
     }

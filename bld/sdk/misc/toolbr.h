@@ -87,7 +87,7 @@ void ToolBarDestroy ( struct toolbar *bar );
 void ToolBarFini( struct toolbar * );
 //void ToolBarDrawBitmap( HDC hdc, POINT size, POINT org, HBITMAP bitmap );
 void UpdateToolBar( struct toolbar *bar );
-void ChangeToolButtonBitmap( struct toolbar *bar, int id, HBITMAP new );
+void ChangeToolButtonBitmap( struct toolbar *bar, int id, HBITMAP newbmp );
 BOOL HasToolAtPoint( struct toolbar *bar, LONG lparam );
 BOOL FindToolIDAtPoint( struct toolbar *bar, LPARAM lparam, UINT *id );
 void ToolBarChangeSysColors( COLORREF, COLORREF, COLORREF );
