@@ -676,7 +676,6 @@ char *GetMangledName( SYM_HANDLE  sym_handle )
     TYPEPTR     fn_typ;
     int         parm_size;
     int         total_parm_size;
-    auto char   suffix[6];
 
     if( sym_handle == 0 ) return( "*** NULL ***" );
     sym = SymGetPtr( sym_handle );
@@ -694,6 +693,7 @@ char *GetMangledName( SYM_HANDLE  sym_handle )
                     total_parm_size = -1;
                     break;
                 }
+                if (typ->decl_type == TYPE_VOID) break;
                 parm_size = TypeSize( typ );
                 parm_size = (parm_size + sizeof(target_int) - 1)  &
                                 - sizeof(target_int);
@@ -702,10 +702,7 @@ char *GetMangledName( SYM_HANDLE  sym_handle )
         }
     }
     if( total_parm_size != -1 ) {
-        strcpy( Buffer, sym->name );
-        suffix[0] = '@';
-        itoa( total_parm_size, &suffix[1], 10 );
-        strcat( Buffer, suffix );
+        sprintf( Buffer, "%s@%d", sym->name, total_parm_size );
         return( Buffer );
     }
     return( sym->name );
