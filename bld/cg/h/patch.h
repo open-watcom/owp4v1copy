@@ -46,8 +46,8 @@ extern void DeadBeef();
 #define PatchArea() Bytes_512 Bytes_256
 #endif
 
-extern patch *BGNewPatch(void);
-extern an TNPatch(tn node);
-extern cg_name BGPatchNode(patch *hdl, type_def *tipe);
-extern void BGPatchInteger(patch *hdl, signed_32 value);
-extern void BGFiniPatch(patch *hdl);
+extern patch    *BGNewPatch( void );
+extern an       TNPatch( tn node );
+extern cg_name  BGPatchNode( patch *hdl, type_def *tipe );
+extern void     BGPatchInteger( patch *hdl, signed_32 value );
+extern void     BGFiniPatch( patch *hdl );
