@@ -320,7 +320,7 @@ drvmsgpr.obj : idemsgpr.c .AUTODEPEND
         $(cc) $(cflags) $(extra_c_flags_$^&) $[@
 
 wlink.res : rcmsg.gh ../h/wlink.msg ../h/lnkerror.rc ../h/wlnkmsg.h ../h/lnkerror.msg ../h/wlink.rc
-        $(rc_aui) -zk $(extra_rc_flags) -I"$(wrc_dir)/h" -I"$(watcom_dir)/h" $]@ -fo=$^@
+        $(rc_aui) $(extra_rc_flags) -I"$(wrc_dir)/h" -I"$(watcom_dir)/h" $]@ -fo=$^@
 
 rcmsg.gh : $(wrc_dir)/h/rc.msg
 !ifdef __LINUX__

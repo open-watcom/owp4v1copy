@@ -24,7 +24,7 @@ $(proj_name).exe : $(dependants)
         wstrip -q -a -r $(proj_name).exe . $(proj_name).res
 
 $(proj_name).res : $(proj_name).rc $(proj_name).msg usage.rc usagej.rc msg.gh
-        $(rc_aui) -zk0 -i"$(wtouch_dir)" $[@ -fo=$^@
+        $(rc_aui) -i"$(wtouch_dir)" $[@ -fo=$^@
 
 usage.rc : usage.sp
         wsplice -kIS_RC -kENGLISH -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" $[@ usage.rc

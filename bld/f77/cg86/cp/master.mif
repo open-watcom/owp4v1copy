@@ -106,7 +106,7 @@ trmemcvr.obj : trmemcvr.c
 !endif
 
 errmsg.res : ../c/errmsg.rc ../h/errmsgi.rc ../h/errmsg3.rc ../h/errcod.h ../h/errcodi.h ../h/errcod3.h
-    $(rc_aui) -zk0 -i="$(inc_path)" $[@ -fo=$^@
+    $(rc_aui) -i="$(inc_path)" $[@ -fo=$^@
 
 ./mkopcode.exe: $(wasm_dir)/mkopcode.c
         $(bld_cl) $(wcl_util_opts) $[@
