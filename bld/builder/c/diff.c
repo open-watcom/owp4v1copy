@@ -35,12 +35,13 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <stdarg.h>
-
-#ifdef __LINUX__
-    #include <sys/stat.h> /* For stat, etc. */
-#endif
-
+#include <limits.h>
+#include <sys/stat.h>
 #include "diff.h"
+
+#ifdef UNIX
+    #include "clibext.h"
+#endif
 
 typedef unsigned long ULONG;
 typedef signed long SLONG;
@@ -64,31 +65,51 @@ typedef struct line {
 }               LINE;
 
 LINE            *file[2];       /* Hash/line for total file  */
+#define  fileA  file[0]
+#define  fileB  file[1]
+
 LINE            *sfile[2];      /* Hash/line after prefix  */
+#define  sfileA  sfile[0]
+#define  sfileB  sfile[1]
+
 SLONG           len[2];         /* Actual lines in each file  */
+#define  lenA  len[0]
+#define  lenB  len[1]
+
 SLONG           slen[2];        /* Squished lengths      */
+#define  slenA  slen[0]
+#define  slenB  slen[1]
+
 SLONG           prefix;         /* Identical lines at start  */
 SLONG           suffix;         /* Identical lenes at end  */
 
 FILE            *infd[2] = { NULL, NULL}; /* Input file identifiers  */
 FILE            *tempfd;        /* Temp for input redirection  */
 
+/* forward declarations */
+void            error( char *, ... );
+void            fatal( char *, ... );
+char            *fgetss();
+USHORT          hash();
+extern char     *myalloc();     /* Storage allocator     */
+extern char     *compact();     /* Storage compactor     */
+
 /*
- * The following vectors overlay the area defined by file[0]
+ * The following vectors overlay the area defined by fileA
  */
 
 short           *class;         /* Unsorted line numbers  */
 SLONG           *klist;         /* Index of element in clist  */
 CANDIDATE       *clist;         /* Storage pool for candidates  */
-ULONG           clength = 0;    /* Number of active candidates  */
+SLONG           clength = 0;    /* Number of active candidates  */
 #define CSIZE_INC 50            /* How many to allocate each time we have to */
-ULONG           csize = CSIZE_INC;      /* Current size of storage pool */
+SLONG           csize = CSIZE_INC;      /* Current size of storage pool */
 
 SLONG           *match;         /* Longest subsequence       */
 long            *oldseek;       /* Seek position in file A  */
 
 /*
- * The following vectors overlay the area defined by file[1]
+ * The following vectors overlay the area defined by fileB
  */
 
 short           *member;        /* Concatenated equiv. classes  */
@@ -98,6 +119,7 @@ long            *newseek;       /* Seek position in file B  */
  * Global variables
  */
 
+char            *Dflag = NULL;  /* output #ifdef code */
 INT             Hflag = FALSE;  /* half hearted algorithm */
 INT             nflag = FALSE;  /* Edit script requested  */
 INT             eflag = FALSE;  /* Edit script requested  */
@@ -110,54 +132,48 @@ INT             havediffs = FALSE;
 char            text[1025];      /* Input line from file1  */
 char            textb[1025];     /* Input from file2 for check  */
 
-char const      *cmdusage =
+char            *cmdusage =
 "usage:\n"
 "        diff [options] file1 file2\n"
 "\n"
 "options:\n"
+"        -H           Use half hearted algorithm if memory runs out\n"
+"        -n           generate an edit script for RCS\n"
+"        -e           generate an edit script\n"
 "        -b           ignore blanks\n"
 "        -c[n]        print n context line (defaults to 3)\n"
-"        -e           generate an edit script\n"
-"        -H           Use half hearted algorithm if memory runs out\n"
 "        -i           ignore case\n"
-"        -n           generate an edit script for RCS\n"
 "        -t           quiet mode. return 3 if not enough memory\n"
 "        -x           shift return codes by 100\n"
 ;
 
-void    input( SLONG which );
+INT     main( INT, char ** );
+void    input( SLONG );
 void    squish( void );
-void    sort( LINE *vector, SLONG vecsize );
+void    sort( LINE *, SLONG );
 void    equiv( void );
 void    unsort( void );
-ULONG   subseq( void );
-SLONG   newcand( SLONG a, SLONG b, SLONG pred );
-ULONG   search( ULONG low, ULONG high, SLONG b );
-void    unravel( SLONG k );
-INT     check( const char *fileAname, const char *fileBname );
-void    output( const char *fileAname, const char *fileBname );
-void    change( SLONG astart, SLONG aend, SLONG bstart, SLONG bend );
-void    range( SLONG from, SLONG to, SLONG w );
-void    fetch( const long *seekvec, SLONG start, SLONG end, SLONG trueend, FILE *fd, const char *pfx );
-INT     getline( FILE *fd, char *buffer );
-USHORT  hash( const char *buffer );
-void    *myalloc( ULONG amount, const char *why );
-void    myfree( void *what );
-void    *compact( void *pointer, ULONG new_amount, const  char *why );
-void    noroom( const char *why );
-#ifdef DEBUG
-#if 0
-void    rdump( SLONG *pointer, char *why );
-void    dump( LINE *d_linep, SLONG d_len, SLONG d_which );
-#endif
-void    dumpklist( ULONG kmax, const char *why );
-#endif
-INT     streq( const char *s1, const char *s2 );
-void    cant( const char *filename, const char *what, SLONG fatalflag );
-void    fatal( const char *format, ... );
-void    error( const char *format, ... );
-void    fputss( const char *s, FILE *iop );
-char    *fgetss( char *s, SLONG n, FILE *iop );
+SLONG   subseq( void );
+SLONG   newcand( SLONG, SLONG, SLONG );
+SLONG   search( ULONG, ULONG, SLONG );
+void    unravel( SLONG );
+INT     check( char *, char * );
+void    output( char *, char * );
+void    change( SLONG, SLONG, SLONG, SLONG );
+void    range( SLONG, SLONG, SLONG );
+void    fetch( long *, SLONG, SLONG, SLONG, FILE *, char * );
+INT     getline( FILE *, char * );
+USHORT  hash( char * );
+char    *myalloc( ULONG, char * );
+void    myfree( void * );
+char    *compact( char *, ULONG, char * );
+void    noroom( char * );
+INT     streq( char *, char * );
+void    cant( char *, char *, SLONG );
+void    fatal( char *, ... );
+void    error( char *, ... );
+void    fputss( char *, FILE * );
+char    *fgetss( char *, SLONG, FILE * );
 
 /*
  * Diff main program
@@ -165,15 +181,16 @@ char    *fgetss( char *s, SLONG n, FILE *iop );
 
 // #include "diff.def"
 
-INT main( INT argc, char * const *argv )
+INT main( argc, argv )
+     INT             argc;
+     char          **argv;
 {
-    SLONG       i;
-    char const  *ap;
-    struct stat st;
-    char        path[_MAX_PATH];
-    char        fname[_MAX_FNAME];
-    char        ext[_MAX_EXT];
-    ULONG       sub;
+    register SLONG      i;
+    register char       *ap;
+    struct stat         st;
+    char                path[_MAX_PATH];
+    char                fname[_MAX_FNAME];
+    char                ext[_MAX_EXT];
 
     while( argc > 1 && *( ap = argv[1] ) == '-' && *++ap != EOS ) {
         while( *ap != EOS ) {
@@ -191,6 +208,12 @@ INT main( INT argc, char * const *argv )
 
             case 'e':
                 eflag++;
+                break;
+
+            case 'd':
+                Dflag = ap;
+                while( *ap != EOS )
+		    ++ap;
                 break;
 
             case 'H':
@@ -226,7 +249,7 @@ INT main( INT argc, char * const *argv )
         error( cmdusage );
         exit( xflag + DIFF_NOT_COMPARED );
     }
-    if( nflag + (INT)( cflag != 0 ) + eflag > 1 ) {
+    if( nflag + ( cflag != 0 ) + eflag > 1 ) {
         error( " -c, -n and -e are incompatible.\n" );
         exit( xflag + DIFF_NOT_COMPARED );
     }
@@ -267,67 +290,66 @@ INT main( INT argc, char * const *argv )
     squish();
 #ifdef DEBUG
     printf( "before sort\n" );
-    for( i = 1; i <= slen[0]; i++ ) {
-        printf( "sfile[0][%d] = %6d %06o\n",
-                i, sfile[0][i].serial, sfile[0][i].hash );
+    for( i = 1; i <= slenA; i++ ) {
+        printf( "sfileA[%d] = %6d %06o\n",
+                i, sfileA[i].serial, sfileA[i].hash );
     }
-    for( i = 1; i <= slen[1]; i++ ) {
-        printf( "sfile[1][%d] = %6d %06o\n",
-                i, sfile[1][i].serial, sfile[1][i].hash );
+    for( i = 1; i <= slenB; i++ ) {
+        printf( "sfileB[%d] = %6d %06o\n",
+                i, sfileB[i].serial, sfileB[i].hash );
     }
 #endif
-    sort( sfile[0], slen[0] );
-    sort( sfile[1], slen[1] );
+    sort( sfileA, slenA );
+    sort( sfileB, slenB );
 #ifdef DEBUG
     printf( "after sort\n" );
-    for( i = 1; i <= slen[0]; i++ ) {
-        printf( "sfile[0][%d] = %6d %06o\n",
-                i, sfile[0][i].serial, sfile[1][i].hash );
+    for( i = 1; i <= slenA; i++ ) {
+        printf( "sfileA[%d] = %6d %06o\n",
+                i, sfileA[i].serial, sfileB[i].hash );
     }
-    for( i = 1; i <= slen[1]; i++ ) {
-        printf( "sfile[1][%d] = %6d %06o\n",
-                i, sfile[1][i].serial, sfile[1][i].hash );
+    for( i = 1; i <= slenB; i++ ) {
+        printf( "sfileB[%d] = %6d %06o\n",
+                i, sfileB[i].serial, sfileB[i].hash );
     }
 #endif
 
     /*
      * Build equivalence classes.
      */
-    member = (void*)file[1];
+    member = ( short * ) fileB;
     equiv();
-    /* Contrary to appearances, *member is a short */
-    member = compact( member, ( (ULONG)slen[1] + 2 ) * sizeof( SLONG ),
+    member = ( short * ) compact( ( char *) member, ( slenB + 2 ) * sizeof( SLONG ),
                                  "squeezing member vector" );
-    file[1] = (void*)member;
+    fileB = ( LINE * ) member;
 
     /*
      * Reorder equivalence classes into array class[]
      */
-    class = (void*)file[0];
+    class = ( short * ) fileA;
     unsort();
-    class = compact( class, ( (ULONG)slen[0] + 2 ) * sizeof( SLONG ),
+    class = ( short * ) compact( ( char *) class, ( slenA + 2 ) * sizeof( SLONG ),
                                 "compacting class vector" );
-    file[0] = (void*)class;
+    fileA = ( LINE * ) class;
     /*
      * Find longest subsequences
      */
-    klist = myalloc( ( (ULONG)slen[0] + 2 ) * sizeof( SLONG ), "klist" );
-    clist = myalloc( csize * sizeof( CANDIDATE ), "clist" );
-    sub = subseq();
+    klist = ( SLONG * ) myalloc( ( slenA + 2 ) * sizeof( SLONG ), "klist" );
+    clist = ( CANDIDATE * ) myalloc( csize * sizeof( CANDIDATE ), "clist" );
+    i = subseq();
     myfree( &member );
-    file[1] = NULL;
+    fileB = NULL;
     myfree( &class );
-    file[0] = NULL;
-    match = myalloc( ( (ULONG)len[0] + 2 ) * sizeof( SLONG ), "match" );
-    unravel( klist[sub] );
+    fileA = NULL;
+    match = ( SLONG * ) myalloc( ( lenA + 2 ) * sizeof( SLONG ), "match" );
+    unravel( klist[i] );
     myfree( &clist );
     myfree( &klist );
 
     /*
      * Check for fortuitous matches and output differences
      */
-    oldseek = myalloc( ( (ULONG)len[0] + 2 ) * sizeof *oldseek, "oldseek" );
-    newseek = myalloc( ( (ULONG)len[1] + 2 ) * sizeof *newseek, "newseek" );
+    oldseek = ( long * ) myalloc( ( lenA + 2 ) * sizeof( *oldseek ), "oldseek" );
+    newseek = ( long * ) myalloc( ( lenB + 2 ) * sizeof( *newseek ), "newseek" );
     if( check( argv[0], argv[1] ) ) {
 #ifdef DEBUG
         fprintf( stderr, "Spurious match, output is not optimal\n" );
@@ -342,8 +364,8 @@ INT main( INT argc, char * const *argv )
     }
     myfree( &oldseek );
     myfree( &newseek );
-    myfree( file + 0 );
-    myfree( file + 1 );
+    myfree( &fileA );
+    myfree( &fileB );
 
     return( xflag + ( havediffs ? DIFF_HAVE_DIFFS : DIFF_NO_DIFFS ) );
 }
@@ -352,20 +374,22 @@ INT main( INT argc, char * const *argv )
  * Read the file, building hash table
  */
 
-void input( SLONG which )      /* 0 or 1 to select from infd[]  */
+void input( which )
+     SLONG             which;      /* 0 or 1 to redefine infd[]  */
 {
-    LINE       *lentry;
-    SLONG      linect = 0;
+    register LINE       *lentry;
+    register SLONG      linect = 0;
     FILE                *fd;
 #define LSIZE_INC 200           /* # of line entries to alloc at once */
     SLONG               lsize = LSIZE_INC;
 
-    lentry = myalloc( ( (ULONG)lsize + 3 ) * sizeof *lentry, "line" );
+    lentry = ( LINE * ) myalloc( sizeof( LINE )* ( lsize + 3 ), "line" );
     fd = infd[which];
     while( !getline( fd, text ) ) {
         if( ++linect >= lsize ) {
             lsize += 200;
-            lentry = compact( lentry, ( (ULONG)lsize + 3 ) * sizeof *lentry,
+            lentry = ( LINE * ) compact( ( char *) lentry,
+                                         ( lsize + 3 ) * sizeof( LINE ),
                                          "extending line vector" );
         }
         lentry[linect].hash = hash( text );
@@ -392,21 +416,21 @@ void input( SLONG which )      /* 0 or 1 to select from infd[]  */
  * Don't bother building them into the candidate vector.
  */
 
-void squish( void )
+void squish()
 {
-    SLONG       i;
-    LINE        *ap;
-    LINE const  *bp;
-    SLONG       j;
-    SLONG       k;
+    register SLONG      i;
+    register LINE       *ap;
+    register LINE       *bp;
+    SLONG               j;
+    SLONG               k;
 
     /*
      * prefix -> first line (from start) that doesn't hash identically
      */
     i = 0;
-    ap = file[0] + 1;
-    bp = file[1] + 1;
-    while( i < len[0] && i < len[1] && ap->hash == bp->hash ) {
+    ap = &fileA[1];
+    bp = &fileB[1];
+    while( i < lenA && i < lenB && ap->hash == bp->hash ) {
         i++;
         ap++;
         bp++;
@@ -416,10 +440,10 @@ void squish( void )
     /*
      * suffix -> first line (from end) that doesn't hash identically
      */
-    j = len[0] - i;
-    k = len[1] - i;
-    ap = file[0] + len[0];
-    bp = file[1] + len[1];
+    j = lenA - i;
+    k = lenB - i;
+    ap = &fileA[lenA];
+    bp = &fileB[lenB];
     i = 0;
     while( i < j && i < k && ap->hash == bp->hash ) {
         i++;
@@ -433,10 +457,10 @@ void squish( void )
      */
     for( k = 0; k <= 1; k++ ) {
         sfile[k] = file[k] + prefix;
-        j = slen[k] = len[k] - ( prefix + suffix );
+        j = slen[k] = len[k] - prefix - suffix;
 
         for( i = 0, ap = sfile[k]; i <= slen[k]; i++, ap++ ) {
-            ap->serial = (short)i;
+            ap->serial = i;
         }
     }
 }
@@ -445,16 +469,16 @@ void squish( void )
  * Sort hash entries
  */
 
-void sort(
-     LINE       *vector,     /* What to sort       */
-     SLONG      vecsize )    /* How many to sort      */
+void sort( vector, vecsize )
+     LINE           *vector;     /* What to sort       */
+     SLONG             vecsize;    /* How many to sort      */
 {
-    SLONG       j;
-    LINE        *aim;
-    LINE        *ai;
-    SLONG       mid;
-    SLONG       k;
-    LINE        work;
+    register SLONG      j;
+    register LINE       *aim;
+    register LINE       *ai;
+    SLONG               mid;
+    SLONG               k;
+    LINE                work;
 
     for( j = 1; j <= vecsize; j *= 2 )
         ;
@@ -484,37 +508,37 @@ void sort(
  * Build equivalence class vector
  */
 
-void equiv( void )
+void equiv()
 {
-    LINE        *ap;
+    register LINE       *ap;
     union {
         LINE    *bp;
         short   *mp;
-    }           r;
-    SLONG       j;
-    LINE const  *atop;
+    }                   r;
+    register SLONG      j;
+    LINE                *atop;
 
 #ifdef DEBUG
     printf( "equiv entry\n" );
-    for( j = 1; j <= slen[0]; j++ ) {
-        printf( "sfile[0][%d] = %6d %06o\n",
-                j, sfile[0][j].serial, sfile[0][j].hash );
+    for( j = 1; j <= slenA; j++ ) {
+        printf( "sfileA[%d] = %6d %06o\n",
+                j, sfileA[j].serial, sfileA[j].hash );
     }
-    for( j = 1; j <= slen[1]; j++ ) {
-        printf( "sfile[1][%d] = %6d %06o\n",
-                j, sfile[1][j].serial, sfile[1][j].hash );
+    for( j = 1; j <= slenB; j++ ) {
+        printf( "sfileB[%d] = %6d %06o\n",
+                j, sfileB[j].serial, sfileB[j].hash );
     }
 #endif
     j = 1;
-    ap = sfile[0] + 1;
-    r.bp = sfile[1] + 1;
-    atop = sfile[0] + slen[0];
-    while( ap <= atop && j <= slen[1] ) {
+    ap = &sfileA[1];
+    r.bp = &sfileB[1];
+    atop = &sfileA[slenA];
+    while( ap <= atop && j <= slenB ) {
         if( ap->hash < r.bp->hash ) {
             ap->hash = 0;
             ap++;
         } else if( ap->hash == r.bp->hash ) {
-            ap->hash = (USHORT)j;
+            ap->hash = j;
             ap++;
         } else {
             r.bp++;
@@ -525,20 +549,20 @@ void equiv( void )
         ap->hash = 0;
         ap++;
     }
-    sfile[1][slen[1] + 1].hash = 0;
+    sfileB[slenB + 1].hash = 0;
 #ifdef DEBUG
     printf( "equiv exit\n" );
-    for( j = 1; j <= slen[0]; j++ ) {
-        printf( "sfile[0][%d] = %6d %06o\n",
-                j, sfile[0][j].serial, sfile[0][j].hash );
+    for( j = 1; j <= slenA; j++ ) {
+        printf( "sfileA[%d] = %6d %06o\n",
+                j, sfileA[j].serial, sfileA[j].hash );
     }
-    for( j = 1; j <= slen[1]; j++ ) {
-        printf( "sfile[1][%d] = %6d %06o\n",
-                j, sfile[1][j].serial, sfile[1][j].hash );
+    for( j = 1; j <= slenB; j++ ) {
+        printf( "sfileB[%d] = %6d %06o\n",
+                j, sfileB[j].serial, sfileB[j].hash );
     }
 #endif
-    ap = sfile[1] + 0;
-    atop = sfile[1] + slen[1];
+    ap = &sfileB[0];
+    atop = &sfileB[slenB];
     r.mp = &member[0];
     while( ++ap <= atop ) {
         r.mp++;
@@ -551,7 +575,7 @@ void equiv( void )
     }
     r.mp[1] = -1;
 #ifdef DEBUG
-    for( j = 0; j <= slen[1]; j++ ) {
+    for( j = 0; j <= slenB; j++ ) {
         printf( "member[%d] = %d\n", j, member[j] );
     }
 #endif
@@ -561,23 +585,23 @@ void equiv( void )
  * Build class vector
  */
 
-void unsort( void )
+void unsort()
 {
-    SLONG       *temp;
-    SLONG const *tp;
+    SLONG               *temp;
+    register SLONG      *tp;
     union {
         LINE    *ap;
         short   *cp;
-    }           u;
-    LINE const  *evec;
-    short const *eclass;
+    }                   u;
+    LINE                *evec;
+    short               *eclass;
 #ifdef DEBUG
-    SLONG       i;
+    SLONG               i;
 #endif
 
-    temp = myalloc( ( (ULONG)slen[0] + 1 ) * sizeof *temp, "unsort scratch" );
-    u.ap = sfile[0] + 1;
-    evec = sfile[0] + slen[0];
+    temp = ( SLONG * ) myalloc( ( slenA + 1 ) * sizeof( SLONG ), "unsort scratch" );
+    u.ap = &sfileA[1];
+    evec = &sfileA[slenA];
     while( u.ap <= evec ) {
 #ifdef DEBUG
         printf( "temp[%2d] := %06o\n", u.ap->serial, u.ap->hash );
@@ -589,16 +613,16 @@ void unsort( void )
     /*
      * Copy into class vector and free work space
      */
-    u.cp = class + 1;
-    eclass = class + slen[0];
-    tp = temp + 1;
+    u.cp = &class[1];
+    eclass = &class[slenA];
+    tp = &temp[1];
     while( u.cp <= eclass ) {
-        *u.cp++ = (short)*tp++;
+        *u.cp++ = *tp++;
     }
     myfree( &temp );
 #ifdef DEBUG
     printf( "unsort exit\n" );
-    for( i = 1; i <= slen[0]; i++ ) {
+    for( i = 1; i <= slenA; i++ ) {
         printf( "class[%d] = %d %06o\n", i, class[i], class[i] );
     }
 #endif
@@ -608,22 +632,24 @@ void unsort( void )
  * Generate maximum common subsequence chain in clist[]
  */
 
-ULONG subseq( void )
+SLONG newcand();
+SLONG subseq()
 {
-    SLONG       a;
-    ULONG       ktop;
-    SLONG       b;
-    ULONG       s;
-    ULONG       r;
-    SLONG       i;
-    SLONG       cand;
+    SLONG               a;
+    register ULONG      ktop;
+    register SLONG      b;
+    register SLONG      s;
+    ULONG               r;
+    SLONG               i;
+    SLONG               cand;
 
     klist[0] = newcand( 0, 0, -1 );
-    klist[1] = newcand( slen[0] + 1, slen[1] + 1, -1 );
+    klist[1] = newcand( slenA + 1, slenB + 1, -1 );
     ktop = 1;                   /* -> guard entry  */
-    for( a = 1; a <= slen[0]; a++ ) {
+    for( a = 1; a <= slenA; a++ ) {
+
         /*
-         * For each non-zero element in file[0] ...
+         * For each non-zero element in fileA ...
          */
         if( ( i = class[a] ) == 0 )
 	    continue;
@@ -640,11 +666,11 @@ ULONG subseq( void )
             if( ( b = member[i] ) < 0 ) {
                 b = -b;
             }
-            s = search( r, ktop, b );
 #ifdef DEBUG
-            printf( "search(%d, %d, %d) -> %lu\n", r, ktop, b, s );
+            printf( "search(%d, %d, %d) -> %d\n",
+                    r, ktop, b, search( r, ktop, b ) );
 #endif
-            if( s != 0 ) {
+            if( ( s = search( r, ktop, b ) ) != 0 ) {
                 if( clist[klist[s]].b > b ) {
                     klist[r] = cand;
                     r = s;
@@ -672,39 +698,42 @@ ULONG subseq( void )
     return( ktop - 1 );          /* Last entry found  */
 }
 
-SLONG newcand(
-    SLONG       a,          /* Line in file[0]      */
-    SLONG       b,          /* Line in file[1]      */
-    SLONG       pred )      /* Link to predecessor, index in cand[]  */
+SLONG
+newcand( a, b, pred )
+    SLONG             a;          /* Line in fileA      */
+    SLONG             b;          /* Line in fileB      */
+    SLONG             pred;       /* Link to predecessor, index in cand[]  */
 {
-    CANDIDATE   *new;
+    register CANDIDATE  *new;
 
     clength++;
     if( ++clength >= csize ) {
         csize += CSIZE_INC;
-        clist = compact( clist, csize * sizeof *clist, "extending clist" );
+        clist = ( CANDIDATE * ) compact( ( char *) clist,
+                                         csize * sizeof( CANDIDATE ),
+                                         "extending clist" );
     }
     new = &clist[clength - 1];
     new->a = a;
     new->b = b;
     new->link = pred;
-    return( (SLONG)clength - 1 );
+    return( clength - 1 );
 }
 
 /*
  * Search klist[low..top] (inclusive) for b.  If klist[low]->b >= b,
  * return zero.  Else return s such that klist[s-1]->b < b and
  * klist[s]->b >= b.  Note that the algorithm presupposes the two
- * preset "fence" elements, (0, 0) and (slen[0], slen[1]).
+ * preset "fence" elements, (0, 0) and (slenA, slenB).
  */
 
-ULONG search(
-     ULONG     low,
-     ULONG     high,
-     SLONG     b )
+SLONG search( low, high, b )
+     register ULONG    low;
+     register ULONG    high;
+     register SLONG    b;
 {
-    SLONG      temp;
-    ULONG      mid;
+    register SLONG      temp;
+    register ULONG      mid;
 
     if( clist[klist[low]].b >= b )
         return( 0 );
@@ -720,20 +749,21 @@ ULONG search(
     return( mid + 1 );
 }
 
-void unravel( SLONG k )
+void unravel( k )
+     register SLONG    k;
 {
-    SLONG               i;
-    CANDIDATE const     *cp;
+    register SLONG      i;
+    register CANDIDATE  *cp;
     SLONG               first_trailer;
     SLONG               difference;
 
-    first_trailer = len[0] - suffix;
-    difference = len[1] - len[0];
+    first_trailer = lenA - suffix;
+    difference = lenB - lenA;
 #ifdef DEBUG
     printf( "first trailer = %d, difference = %d\n",
             first_trailer, difference );
 #endif
-    for( i = 0; i <= len[0]; i++ ) {
+    for( i = 0; i <= lenA; i++ ) {
         match[i] = ( i <= prefix ) ? i
             : ( i > first_trailer ) ? i + difference
             : 0;
@@ -744,7 +774,7 @@ void unravel( SLONG k )
     while( k != -1 ) {
         cp = &clist[k];
 #ifdef DEBUG
-        if( k < 0 || (ULONG)k >= clength )
+        if( k < 0 || k >= clength )
             error( "Illegal link -> %d", k );
         printf( "match[%d] := %d\n", cp->a + prefix, cp->b + prefix );
 #endif
@@ -763,12 +793,14 @@ void unravel( SLONG k )
  * file position.  FIXME.
  */
 
-INT check( const char *fileAname, const char *fileBname )
+INT check( char *fileAname, char *fileBname )
 {
     SLONG       a;          /* Current line in file A  */
     SLONG       b;          /* Current line in file B  */
     SLONG       jackpot;
 
+    fileAname= fileAname;
+    fileBname= fileBname;
     /*
      * The VAX C ftell() returns the address of the CURRENT record, not the
      * next one (as in DECUS C or, effectively, other C's).  Hence, the values
@@ -790,10 +822,10 @@ INT check( const char *fileAname, const char *fileBname )
     jackpot = 0;
 #ifdef DEBUG
     printf( "match vector\n" );
-    for( a = 0; a <= len[0]; a++ )
+    for( a = 0; a <= lenA; a++ )
         printf( "match[%d] = %d\n", a, match[a] );
 #endif
-    for( a = 1; a <= len[0]; a++ ) {
+    for( a = 1; a <= lenA; a++ ) {
         if( match[a] == 0 ) {
             /* Unique line in A */
             oldseek[a + OFFSET] = ftell( infd[0] );
@@ -826,15 +858,13 @@ INT check( const char *fileAname, const char *fileBname )
                      a, fileAname, text );
             fprintf( stderr, "line %d in %s, \"%s\"\n",
                      b, fileBname, textb );
-#else
-            (void)fileAname, (void)fileBname;
 #endif
             match[a] = 0;
             jackpot++;
         }
         b++;
     }
-    for( ; b <= len[1]; b++ ) {
+    for( ; b <= lenB; b++ ) {
         newseek[b + OFFSET] = ftell( infd[1] );
         getline( infd[1], textb );
     }
@@ -847,7 +877,7 @@ INT check( const char *fileAname, const char *fileBname )
     return( jackpot );
 }
 
-void output( const char *fileAname, const char *fileBname )
+void output( char *fileAname, char *fileBname )
 {
     SLONG       astart;
     SLONG       aend = 0;
@@ -857,7 +887,7 @@ void output( const char *fileAname, const char *fileBname )
     rewind( infd[0] );
     rewind( infd[1] );
     match[0] = 0;
-    match[len[0] + 1] = len[1] + 1;
+    match[lenA + 1] = lenB + 1;
     if( !eflag ) {
         if( cflag ) {
 
@@ -872,12 +902,12 @@ void output( const char *fileAname, const char *fileBname )
         /*
          * Normal printout
          */
-        for( astart = 1; astart <= len[0]; astart = aend + 1 ) {
+        for( astart = 1; astart <= lenA; astart = aend + 1 ) {
 
             /*
              * New subsequence, skip over matching stuff
              */
-            while( astart <= len[0] && match[astart] == ( match[astart - 1] + 1 ) ) {
+            while( astart <= lenA && match[astart] == ( match[astart - 1] + 1 ) ) {
                 astart++;
             }
 
@@ -886,7 +916,7 @@ void output( const char *fileAname, const char *fileBname )
              */
             bstart = match[astart - 1] + 1;
             aend = astart - 1;
-            while( aend < len[0] && match[aend + 1] == 0 ) {
+            while( aend < lenA && match[aend + 1] == 0 ) {
                 aend++;
             }
             bend = match[aend + 1] - 1;
@@ -899,7 +929,7 @@ void output( const char *fileAname, const char *fileBname )
          * Edit script output -- differences are output "backwards" for the
          * benefit of a line-oriented editor.
          */
-        for( aend = len[0]; aend >= 1; aend = astart - 1 ) {
+        for( aend = lenA; aend >= 1; aend = astart - 1 ) {
             while( aend >= 1 && match[aend] == ( match[aend + 1] - 1 )
                    && match[aend] != 0 ) {
                 aend--;
@@ -914,13 +944,13 @@ void output( const char *fileAname, const char *fileBname )
             change( astart, aend, bstart, bend );
         }
     }
-    if( len[0] == 0 ) {
-        change( 1, 0, 1, len[1] );
+    if( lenA == 0 ) {
+        change( 1, 0, 1, lenB );
     }
 }
 
 /*
- * Output a change entry: file[0][astart..aend] changed to file[1][bstart..bend]
+ * Output a change entry: fileA[astart..aend] changed to fileB[bstart..bend]
  */
 
 void change( SLONG astart, SLONG aend, SLONG bstart, SLONG bend )
@@ -936,14 +966,14 @@ void change( SLONG astart, SLONG aend, SLONG bstart, SLONG bend )
     c = ( astart > aend ) ? 'a' : ( bstart > bend ) ? 'd' : 'c';
     if( nflag ) {
         if( c == 'a' ) {
-            printf( "a%ld %ld\n", astart - 1, bend + 1 - bstart );
-            fetch( newseek, bstart, bend, len[1], infd[1], "" );
+            printf( "a%ld %ld\n", astart - 1, bend - bstart + 1 );
+            fetch( newseek, bstart, bend, lenB, infd[1], "" );
         } else if( c == 'd' ) {
-            printf( "d%ld %ld\n", astart, aend + 1 - astart );
+            printf( "d%ld %ld\n", astart, aend - astart + 1 );
         } else {
-            printf( "d%ld %ld\n", astart, aend + 1 - astart );
-            printf( "a%ld %ld\n", aend, bend + 1 - bstart );
-            fetch( newseek, bstart, bend, len[1], infd[1], "" );
+            printf( "d%ld %ld\n", astart, aend - astart + 1 );
+            printf( "a%ld %ld\n", aend, bend - bstart + 1 );
+            fetch( newseek, bstart, bend, lenB, infd[1], "" );
         }
         return;
     }
@@ -970,7 +1000,7 @@ void change( SLONG astart, SLONG aend, SLONG bstart, SLONG bend )
     }
     putchar( '\n' );
     if( ( !eflag && c != 'a' ) || cflag ) {
-        fetch( oldseek, astart, aend, len[0], infd[0],
+        fetch( oldseek, astart, aend, lenA, infd[0],
                cflag ? ( c == 'd' ? "- " : "! " ) : "< " );
         if( cflag ) {
             fputs( "--- ", stdout );
@@ -981,7 +1011,7 @@ void change( SLONG astart, SLONG aend, SLONG bstart, SLONG bend )
         }
     }
     if( bstart <= bend ) {
-        fetch( newseek, bstart, bend, len[1], infd[1],
+        fetch( newseek, bstart, bend, lenB, infd[1],
                cflag ? ( c == 'a' ? "+ " : "! " ) : ( eflag ? "" : "> " ) );
         if( eflag )
 	    printf( ".\n" );
@@ -1015,7 +1045,7 @@ void range( SLONG from, SLONG to, SLONG w )
  * Print the appropriate text
  */
 
-void fetch( const long *seekvec, SLONG start, SLONG end, SLONG trueend, FILE *fd, const char *pfx )
+void fetch( long *seekvec, SLONG start, SLONG end, SLONG trueend, FILE *fd, char *pfx )
 {
     SLONG       i;
     SLONG       first;
@@ -1062,9 +1092,9 @@ void fetch( const long *seekvec, SLONG start, SLONG end, SLONG trueend, FILE *fd
 
 INT getline( FILE *fd, char *buffer )
 {
-    char        *top;
-    char const  *fromp;
-    char        c;
+    char     *top;
+    char     *fromp;
+    char      c;
 
     if( fgetss( buffer, sizeof text, fd ) == NULL ) {
         *buffer = EOS;
@@ -1083,7 +1113,7 @@ INT getline( FILE *fd, char *buffer )
                     fromp++;
             }
             if( iflag ) {
-                c = (char)tolower( c );
+                c = tolower( c );
             }
             *top++ = c;
         }
@@ -1114,15 +1144,15 @@ static USHORT    crc16b[] = {
  * Algorithm from Stu Wecker (Digital memo 130-959-002-00).
  */
 
-USHORT hash( const char *buffer )
+USHORT hash( char *buffer )
 {
     USHORT      crc;
-    char const  *tp;
+    char        *tp;
     short       temp;
 
     crc = 0;
     for( tp = buffer; *tp != EOS; ) {
-        temp = (short)( *tp++ ^ crc );     /* XOR crc with new char  */
+        temp = *tp++ ^ crc;     /* XOR crc with new char  */
         crc = ( crc >> 8 ) ^ crc16a[ ( temp & 0017 )]
             ^ crc16b[ ( temp & 0360 ) >> 4];
     }
@@ -1133,9 +1163,9 @@ USHORT hash( const char *buffer )
  * Allocate or crash.
  */
 
-void *myalloc( ULONG amount, const char *why )
+char *myalloc( ULONG amount, char *why )
 {
-    void        *pointer;
+    char        *pointer;
 
 #if !defined( __386__ )
     if( amount > UINT_MAX )
@@ -1152,12 +1182,9 @@ void myfree( void *what )
     *( char **) what = NULL;
 }
 
-void *compact( void *pointer, ULONG new_amount, const char *why )
+char *compact( char *pointer, ULONG new_amount, char *why )
 {
-    void                *new_pointer;
-#ifdef DEBUG
-    void const * const  old_pointer = pointer;
-#endif
+    char        *new_pointer;
 
 #if !defined( __386__ )
     if( new_amount > UINT_MAX )
@@ -1169,14 +1196,15 @@ void *compact( void *pointer, ULONG new_amount, const char *why )
         noroom( why );
 
 #ifdef DEBUG
-    if( new_pointer != old_pointer ) {
-        fprintf( stderr, "moved from %p to %p\n", old_pointer, new_pointer );
+    if( new_pointer != pointer ) {
+        fprintf( stderr, "moved from %06o to %06o\n",
+                 pointer, new_pointer );
     }
 #endif
     return( new_pointer );
 }
 
-void noroom( const char *why )
+void noroom( char *why )
 {
     if( tflag ) {
         exit( xflag + DIFF_NO_MEMORY );
@@ -1187,10 +1215,10 @@ void noroom( const char *why )
         freeup( match );
         freeup( oldseek );
         freeup( newseek );
-        freeup( file[0] );
-        freeup( file[1] );
-        printf( "d1 %ld\n", len[0] );
-        printf( "a1 %ld\n", len[1] );
+        freeup( fileA );
+        freeup( fileB );
+        printf( "d1 %ld\n", lenA );
+        printf( "a1 %ld\n", lenB );
         fseek( infd[1], 0, 0 );
         while( fgetss( text, sizeof text, infd[1] ) != NULL )
             printf( "%s\n", text );
@@ -1202,7 +1230,6 @@ void noroom( const char *why )
 }
 
 #ifdef DEBUG
-#if 0
 /*
  * Dump memory block
  */
@@ -1212,48 +1239,45 @@ void rdump( SLONG *pointer, char *why )
     SLONG       *last;
     SLONG       count;
 
-    last = ( ( SLONG **) (void*)pointer )[ -1];
-    fprintf( stderr, "dump %s of %p -> %p, %d words",
+    last = ( ( SLONG **) pointer )[ -1];
+    fprintf( stderr, "dump %s of %06o -> %06o, %d words",
              why, pointer, last, last - pointer );
     last = ( SLONG *) ( ( ( SLONG ) last ) & ~1 );
     for( count = 0; pointer < last; ++count ) {
         if( ( count & 07 ) == 0 ) {
-            fprintf( stderr, "\n%p", pointer );
+            fprintf( stderr, "\n%06o", pointer );
         }
-        fprintf( stderr, "\t%ld", *pointer );
+        fprintf( stderr, "\t%06o", *pointer );
         pointer++;
     }
     fprintf( stderr, "\n" );
 }
 #endif
-#endif
 
 #ifdef DEBUG
-#if 0
 void dump( LINE *d_linep, SLONG d_len, SLONG d_which )
 {
     SLONG       i;
 
     printf( "Dump of file%c, %d elements\n", "AB"[d_which], d_len );
-    printf( "linep @ %p\n", d_linep );
+    printf( "linep @ %06o\n", d_linep );
     for( i = 0; i <= d_len; i++ ) {
         printf( "%3d  %6d  %06o\n", i,
                 d_linep[i].serial, d_linep[i].hash );
     }
 }
-#endif
 
 /*
  * Dump klist
  */
 
-void dumpklist( ULONG kmax, const char *why )
+void dumpklist( SLONG kmax, char *why )
 {
-    ULONG       i;
-    CANDIDATE   *cp;
-    SLONG       count;
+    SLONG    i;
+    CANDIDATE *cp;
+    SLONG    count;
 
-    printf( "\nklist[0..%d] %s, clength = %lu\n", kmax, why, clength );
+    printf( "\nklist[0..%d] %s, clength = %d\n", kmax, why, clength );
     for( i = 0; i <= kmax; i++ ) {
         cp = &clist[klist[i]];
         printf( "%2d %2d", i, klist[i] );
@@ -1266,7 +1290,8 @@ void dumpklist( ULONG kmax, const char *why )
     }
     for( i = 0; i <= kmax; i++ ) {
         count = -1;
-        for( cp = (void *)klist[i]; cp > &clist[0]; cp = (void *)&cp->link ) {
+        for( cp = ( CANDIDATE * ) klist[i]; cp > &clist[0];
+             cp = ( CANDIDATE * ) & cp->link ) {
             if( ++count >= 6 ) {
                 printf( "\n    " );
                 count = 0;
@@ -1284,7 +1309,7 @@ void dumpklist( ULONG kmax, const char *why )
  * TRUE if strings are identical
  */
 
-INT streq( const char *s1, const char *s2 )
+INT streq( char *s1, char *s2 )
 {
     while( *s1++ == *s2 ) {
         if( *s2++ == EOS )
@@ -1297,7 +1322,7 @@ INT streq( const char *s1, const char *s2 )
  * Can't open file message
  */
 
-void cant( const char *filename, const char *what, SLONG fatalflag )
+void cant( char *filename, char *what, SLONG fatalflag )
 {
     fprintf( stderr, "Can't open %s file \"%s\": ", what, filename );
     perror( ( char *) NULL );
@@ -1306,9 +1331,9 @@ void cant( const char *filename, const char *what, SLONG fatalflag )
     }
 }
 
-void fatal( const char *format, ... )
+void fatal( char *format, ... )
 {
-    va_list     args;
+    va_list args;
 
     va_start( args, format );
     fprintf( stderr, "Internal error: " );
@@ -1321,7 +1346,7 @@ void fatal( const char *format, ... )
  * Error message before retiring.
  */
 
-void error( const char *format, ... )
+void error( char *format, ... )
 {
     va_list args;
 
@@ -1336,7 +1361,7 @@ void error( const char *format, ... )
  * Like fput() except that it puts a newline at the end of the line.
  */
 
-void fputss( const char *s, FILE *iop )
+void fputss( char *s, FILE *iop )
 {
     fputs( s, iop );
     putc( '\n', iop );
@@ -1349,18 +1374,18 @@ void fputss( const char *s, FILE *iop )
 
 char *fgetss( char *s, SLONG n, FILE *iop )
 {
-    char        *cs;
-    size_t      len_s;
+    char  *cs;
+    int    len;
 
     if( fgets( s, n, iop ) == NULL )
         return( ( char *) NULL );
-    len_s = strlen( s );
-    cs = s + len_s - 1;
+    len = strlen( s );
+    cs = s + len - 1;
     if( *cs == '\n' ) {
         *cs = '\0';
     }
     --cs;
-    if( len_s > 1 && *cs == '\r' ) {
+    if( len > 1 && *cs == '\r' ) {
         *cs = '\0';
     }
     return( s );
