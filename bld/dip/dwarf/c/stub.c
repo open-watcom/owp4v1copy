@@ -24,16 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Stub definitions to stop the C library from hauling in stuff
+*               we don't want.
 *
 ****************************************************************************/
 
 
-/*
-        Stub definitions to stop the C library from hauling in stuff
-        we don't want.
-*/
 #if defined(__NT__) || defined(__DOS__) || defined(__OS2__) || defined(__UNIX__)
 
 #pragma off(unreferenced);
@@ -49,6 +45,11 @@ void __set_ERANGE() {};
 void __FPE_exception() {};
 
 int __FPE_handler;
+
+/* WD looks for this symbol to determine module bitness */
+int __nullarea;
+#pragma aux __nullarea "*";
+
 #elif defined(__AXP__)
 int DllMainCRTStartup()
 {
