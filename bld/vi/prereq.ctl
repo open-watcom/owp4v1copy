@@ -42,8 +42,8 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     cdsay <PROJDIR>
     mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
-    wmake -h -f ../dos386/makefile bname=bvi prebuild=1
-    <CPCMD> bvi.exe <DEVDIR>/build/bin/
+    wmake -h -f ../dos386/makefile prebuild=1
+    <CPCMD> vi.exe <DEVDIR>/build/bin/bvi.exe
     cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
@@ -57,8 +57,8 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     cdsay <PROJDIR>
     mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
-    wmake -h -f ../os2386/makefile bname=bvi prebuild=1
-    <CPCMD> bvi.exe <DEVDIR>/build/binp/
+    wmake -h -f ../os2386/makefile prebuild=1
+    <CPCMD> vi.exe <DEVDIR>/build/binp/bvi.exe
     cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
@@ -72,8 +72,8 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     cdsay <PROJDIR>
     mkdir <PROJDIR>\<OBJDIR>
     cdsay <PROJDIR>\<OBJDIR>
-    wmake -h -f ../nt386/makefile bname=bvi prebuild=1
-    <CPCMD> bvi.exe <DEVDIR>/build/binnt/
+    wmake -h -f ../nt386/makefile prebuild=1
+    <CPCMD> vi.exe <DEVDIR>/build/binnt/bvi.exe
     cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> linux386 ]
@@ -87,8 +87,8 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     cdsay <PROJDIR>
     mkdir <PROJDIR>/<OBJDIR>
     cdsay <PROJDIR>/<OBJDIR>
-    wmake -h -f ../linux386/makefile bname=bvi prebuild=1
-    <CPCMD> bvi.exe <DEVDIR>/build/binl/bvi
+    wmake -h -f ../linux386/makefile prebuild=1
+    <CPCMD> vi.exe <DEVDIR>/build/binl/bvi
     cdsay <PROJDIR>
 
 [ BLOCK . . ]
