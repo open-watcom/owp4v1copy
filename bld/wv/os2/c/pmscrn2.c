@@ -24,8 +24,8 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  OS/2 PM specific debugger code dealing with multithreading.
+*               Scary stuff.
 *
 ****************************************************************************/
 
@@ -155,34 +155,33 @@ VOID PumpMessageQueue( VOID )
     ULONG       ulCount;
 
     for( ;; ) {
-        DosWaitEventSem(PumpMessageSem, SEM_INDEFINITE_WAIT);
-        DosResetEventSem(PumpMessageSem, &ulCount);
-        WinThreadAssocQueue(GUIGetHAB(), GUIPMmq);
-        while (WinGetMsg(GUIGetHAB(), &qmsg, 0L, 0, 0)) {
-            WinQueryClassName(qmsg.hwnd, sizeof(class_name), class_name);
-            if (strcmp(class_name, "GUIClass") == 0 ||
-                strcmp(class_name, "WTool") == 0) {
-                WinDefWindowProc(qmsg.hwnd, qmsg.msg, qmsg.mp1, qmsg.mp2);
+        DosWaitEventSem( PumpMessageSem, SEM_INDEFINITE_WAIT );
+        DosResetEventSem( PumpMessageSem, &ulCount );
+        WinThreadAssocQueue( GUIGetHAB(), GUIPMmq );
+        while ( WinGetMsg( GUIGetHAB(), &qmsg, 0L, 0, 0 ) ) {
+            WinQueryClassName( qmsg.hwnd, sizeof( class_name ), class_name );
+            if (strcmp( class_name, "GUIClass" ) == 0 ||
+                strcmp( class_name, "WTool" ) == 0) {
+                WinDefWindowProc( qmsg.hwnd, qmsg.msg, qmsg.mp1, qmsg.mp2 );
             } else {
-                WinDispatchMsg(GUIGetHAB(), &qmsg);
+                WinDispatchMsg( GUIGetHAB(), &qmsg );
             }
         }
-        WinThreadAssocQueue(GUIGetHAB(), NULL);
-        err = WinGetLastError(GUIGetHAB());
-        DosPostEventSem(PumpMessageDoneSem);
+        WinThreadAssocQueue( GUIGetHAB(), NULL );
+        err = WinGetLastError( GUIGetHAB() );
+        DosPostEventSem( PumpMessageDoneSem );
     }
 }
 
 void InitScreen()
 {
     TID                 tid;
-    ULONG               ulCount;
 
-    RestoreMainScreen("WDPM");
-    DosResetEventSem(PumpMessageSem, &ulCount);
-    DosResetEventSem(PumpMessageDoneSem, &ulCount);
-    DosCreateThread(&tid, (PFNTHREAD)PumpMessageQueue, NULL, 0, STACK_SIZE);
-    DosSetPriority(PRTYS_THREAD, PRTYC_TIMECRITICAL, 0, tid);
+    RestoreMainScreen( "WDPM" );
+    DosCreateEventSem( NULL, &PumpMessageDoneSem, 0, FALSE );
+    DosCreateEventSem( NULL, &PumpMessageSem, 0, FALSE );
+    DosCreateThread( &tid, (PFNTHREAD)PumpMessageQueue, NULL, 0, STACK_SIZE );
+    DosSetPriority( PRTYS_THREAD, PRTYC_TIMECRITICAL, 0, tid );
 }
 
 
@@ -237,18 +236,20 @@ bool UserScreen()
 {
     if (!WndMain)
         return FALSE;
-    FocusWnd = WinQueryFocus(HWND_DESKTOP);
-    ActiveWnd = WinQueryActiveWindow(HWND_DESKTOP);
+    FocusWnd = WinQueryFocus( HWND_DESKTOP );
+    ActiveWnd = WinQueryActiveWindow( HWND_DESKTOP );
     return FALSE;
 }
 
 void SaveMainWindowPos()
 {
-    SaveMainScreen("WDPM");
+    SaveMainScreen( "WDPM" );
 }
 
 void FiniScreen()
 {
+    DosCloseEventSem( PumpMessageSem );
+    DosCloseEventSem( PumpMessageDoneSem );
 }
 
 
@@ -285,20 +286,14 @@ unsigned OnAnotherThread(unsigned (*rtn)(), unsigned in_len, void *in, unsigned 
     unsigned    result;
     ULONG       ulCount;
 
-    if (!ToldWinHandle || IsTrapFilePumpingMessageQueue()) {
-        return rtn(in_len, in, out_len, out);
+    if ( !ToldWinHandle || IsTrapFilePumpingMessageQueue() ) {
+        return rtn( in_len, in, out_len, out );
     } else {
-        if (PumpMessageDoneSem == NULL)
-            DosCreateEventSem(NULL, &PumpMessageDoneSem, 0, FALSE);
-
-        if (PumpMessageSem == NULL)
-            DosCreateEventSem(NULL, &PumpMessageSem, 0, FALSE);
-
-        DosPostEventSem(PumpMessageSem);
-        result = rtn(in_len, in, out_len, out);
-        WinPostMsg(GUIGetSysHandle(WndGui(WndMain)), WM_QUIT, 0, 0);
-        DosWaitEventSem(PumpMessageDoneSem, SEM_INDEFINITE_WAIT);
-        DosResetEventSem(PumpMessageDoneSem, &ulCount);
+        DosPostEventSem( PumpMessageSem );
+        result = rtn( in_len, in, out_len, out );
+        WinPostMsg( GUIGetSysHandle( WndGui( WndMain ) ), WM_QUIT, 0, 0 );
+        DosWaitEventSem( PumpMessageDoneSem, SEM_INDEFINITE_WAIT );
+        DosResetEventSem( PumpMessageDoneSem, &ulCount );
         return result;
     }
 }
