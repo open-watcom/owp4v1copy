@@ -42,7 +42,7 @@ static_objs = $+ &
     $(pfx__)/startup$(__ifx__)histsplt.obj &
     $(pfx__)/fpu$(__ifx__)old87.obj &
     $(pfx__)/streamio$(__ifx__)dsetefg.obj &
-!ifdef default_windowing
+!ifeq default_windowing 1
     $(pfx__)/defwin$(__ifx__)dinitwin.obj &
 !else
     $(pfx__)/defwin$(__ifx__)nodefwin.obj &

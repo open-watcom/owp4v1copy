@@ -25,10 +25,11 @@ $(dllname).imp : $(dllname).lbc $(rtdll_dir)/trimlbc.vi $(rtdll_dir)/add_br.vi
 
 !ifeq system winnt
 res_objs = $(dllname).rc
+extra_libs = kernel32.lib user32.lib advapi32.lib
 !endif
 
 $(dllname).dll $(dllname).lbc : $(res_objs) $(dll_objs) $(dll_libs) tmp.def
-    $(linker) debug dwarf $(option_symfile) $(l_flags) $(dllbase) op map name $(dllname).dll file { $(dll_objs) } export { @$]@ } lib { $(dll_libs) }
+    $(linker) debug dwarf $(option_symfile) $(l_flags) $(dllbase) op map name $(dllname).dll file { $(dll_objs) } export { @$]@ } lib { $(dll_libs) $(extra_libs) }
 !ifeq system winnt
     $(rc) $(rc_flags) -i"$(%watcom)/h/nt" $(dllname).rc $(dllname).dll
 !endif
