@@ -1,4 +1,4 @@
-#pmake: small register 32bit snap fpu iX86 static build os_snap cpu_386
+#pmake: small register 32bit snap fpu iX86 static os_snap cpu_386
 processor=386
 model=ms
 system=snap
