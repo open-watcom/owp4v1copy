@@ -16,19 +16,19 @@ are:
 .ix 'fastest 16-bit code'
 .begnote
 .note Pentium Pro
-&sw.oneatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.6 &sw.fpi87 &sw.fp6
+&sw.onatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.6 &sw.fpi87 &sw.fp6
 .note Pentium
-&sw.oneatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.5 &sw.fpi87 &sw.fp5
+&sw.onatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.5 &sw.fpi87 &sw.fp5
 .note 486
-&sw.oneatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.4 &sw.fpi87 &sw.fp3
+&sw.onatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.4 &sw.fpi87 &sw.fp3
 .note 386
-&sw.oneatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.3 &sw.fpi87 &sw.fp3
+&sw.onatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.3 &sw.fpi87 &sw.fp3
 .note 286
-&sw.oneatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.2 &sw.fpi87 &sw.fp2
+&sw.onatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.2 &sw.fpi87 &sw.fp2
 .note 186
-&sw.oneatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.1 &sw.fpi87
+&sw.onatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.1 &sw.fpi87
 .note 8086
-&sw.oneatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.0 &sw.fpi87
+&sw.onatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.0 &sw.fpi87
 .endnote
 .np
 The recommended options for generating the fastest 32-bit Intel code
@@ -36,13 +36,13 @@ are:
 .ix 'fastest 32-bit code'
 .begnote
 .note Pentium Pro
-&sw.oneatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.6 &sw.fp6
+&sw.onatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.6 &sw.fp6
 .note Pentium
-&sw.oneatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.5 &sw.fp5
+&sw.onatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.5 &sw.fp5
 .note 486
-&sw.oneatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.4 &sw.fp3
+&sw.onatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.4 &sw.fp3
 .note 386
-&sw.oneatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.3 &sw.fp3
+&sw.onatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.3 &sw.fp3
 .endnote
 .np
 The "oi+" option is for C++ only.
@@ -55,7 +55,7 @@ are:
 .ix 'fastest AXP code'
 .begnote
 .note Alpha AXP
-&sw.oneatx &sw.zp4 &sw.zps &sw.as
+&sw.onatx &sw.zp4 &sw.zps &sw.as
 .endnote
 .do end
 .*
@@ -147,7 +147,7 @@ and minimal, if any, impact on the 386 and 486.
 Thus, the following set of options gives good overall performance
 for the 386, 486 and Pentium processors.
 .illust begin
-&sw.oneatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.5 &sw.fp3
+&sw.onatx &sw.oh &sw.oi+ &sw.ei &sw.zp8 &sw.5 &sw.fp3
 .illust end
 .if '&alpha' eq 'AXP' .do begin
 .np

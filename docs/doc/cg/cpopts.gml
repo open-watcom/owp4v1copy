@@ -949,7 +949,7 @@ all functions must have unique addresses
 .do end
 .if &e'&$SWox eq 1 .do begin
 .note ox
-equivalent to -obiklmr -s
+equivalent to -obmiler -s
 :optref refid='SWox'.
 .do end
 .if &e'&$SWoz eq 1 .do begin
@@ -2768,9 +2768,9 @@ Only one "fc" option is allowed and no source file names are permitted
 on the command line.
 .exam begin 6
 [batch.txt]
-main        &sw.oneatx &sw.zp4
-part1 part2 &sw.oneatx &sw.zp4 &sw.d1
-part3       &sw.oneatx &sw.zp4 &sw.d2
+main        &sw.onatx &sw.zp4
+part1 part2 &sw.onatx &sw.zp4 &sw.d1
+part3       &sw.onatx &sw.zp4 &sw.d2
 
 &prompt.:SF font=1.compiler_name:eSF. &sw.fc=&pathnam.&hdrdir.&pc.batch.txt
 .exam end
@@ -5140,13 +5140,13 @@ will be predefined if "oz" is selected.
 .*
 :eOPTLIST.
 .np
-When "ox" is combined with the "on", "oe", "oa" and "ot" options
-("oneatx") and the "zp4" option, the code generator will attempt to
+When "ox" is combined with the "on", "oa" and "ot" options
+("onatx") and the "zp4" option, the code generator will attempt to
 give you the fastest executing code possible irrespective of
 architecture.
 Other options can give you architecture specific optimizations to
 further improve the speed of your code.
-Note that specifying "oneatx" is equivalent to specifying "oneatilmr"
+Note that specifying "onatx" is equivalent to specifying "onatblimer"
 and "s".
 See the section entitled :HDREF refid='wccfast'. for more information
 on generating fast code.
