@@ -357,7 +357,7 @@ file.
 .np
 Things get more interesting if cross compilers are thrown into the mix.
 In that case three components are required in the name: for instance a
-.us nt386.axp
+.us ntaxp.386
 directory can hold the Alpha AXP NT compiler producing 386 code.
 
 
