@@ -1,0 +1,8 @@
+[ DEFAULT type="e" redist="" dir="binw" rel="."  where="c jc f77 jf77" ]
+usr="win386.ext"	cond="wintarg"		desc="32-bit Windows Supervisor"
+usr="w386dll.ext"	cond="wintarg"		desc="32-bit Windows Supervisor for DLLs"
+usr="wemu387.386"	cond="wintarg"
+usr="wbind.exe"		cond="wintarg"		desc="32-bit Windows supervisor bind utility"	old="binb"
+usr="wdebug.386"	cond="winhost wintarg | MinimalInstall |"
+usr="wbind.exe"		cond="wnthost wintarg"	dir="binnt"
+usr="win386.lib"	cond="wintarg"		type="l" dir="lib386\win"

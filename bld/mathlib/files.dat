@@ -1,0 +1,27 @@
+# Mathlib piece of lang11.dat
+
+[ DEFAULT type="l" desc="Math Library" ]
+
+dir="lib286"	usr="mathc.lib"	         cond="tools16 mc &"	where="c jc"
+dir="lib286"	usr="mathh.lib"	         cond="tools16 mh &"	where="c jc"
+dir="lib286"	usr="mathl.lib"	         cond="tools16 ml &"	where="c jc f77 jf77"
+dir="lib286"	usr="mathm.lib"	         cond="tools16 mm &"	where="c jc f77 jf77"
+dir="lib286"	usr="maths.lib"	         cond="tools16 ms &"	where="c jc"
+
+dir="lib286"	usr="math87c.lib"	       cond="tools16 mc &"	where="c jc"
+dir="lib286"	usr="math87h.lib"	       cond="tools16 mh &"	where="c jc"
+dir="lib286"	usr="math87l.lib"	       cond="tools16 ml &"	where="c jc f77 jf77"
+dir="lib286"	usr="math87m.lib"	       cond="tools16 mm &"	where="c jc f77 jf77"
+dir="lib286"	usr="math87s.lib"	       cond="tools16 ms &"	where="c jc"
+
+dir="lib386"	usr="math3r.lib"	        cond="3r"	where="c jc f77 jf77 ac"
+dir="lib386"	usr="math3s.lib"	        cond="3s"	where="c jc f77 jf77 ac"
+dir="lib386"	usr="math387r.lib"	      cond="3r"	where="c jc f77 jf77 ac"
+dir="lib386"	usr="math387s.lib"	      cond="3s"	where="c jc f77 jf77 ac"
+
+dir="libaxp"	usr="math.lib"	      cond=""	where="ac"
+
+dir="lib286\win"	usr="mathc.lib"	         cond="tools16 wintarg mc"	where="c jc"
+dir="lib286\win"	usr="mathl.lib"	         cond="tools16 wintarg ml"	where="c jc f77 jf77"
+dir="lib286\win"	usr="math87c.lib"	       cond="tools16 wintarg mc"	where="c jc"
+dir="lib286\win"	usr="math87l.lib"	       cond="tools16 wintarg ml"	where="c jc f77 jf77"

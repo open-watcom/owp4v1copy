@@ -1,0 +1,6 @@
+[ DEFAULT type="e" redist="" rel="." desc="cmdedit command line editing utility" where="c jc f77 jf77" ]
+dir="binw"	usr="cmdedit.exe"       cond="doshost winhost |"	old="bin"
+dir="binw"	usr="cmdedit.txt"       cond="" 			old="binb"
+dir="binp"	usr="os2edit.exe"       cond="os2host"
+dir="binp\dll"	usr="os2edit.dll"       cond="os2host"
+dir="binp"	usr="os22edit.exe"      cond="os2host"

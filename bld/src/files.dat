@@ -1,0 +1,18 @@
+[ DEFAULT ]
+[ INCLUDE <devdir>\src\CLIBEXAM\files.dat ]
+[ INCLUDE <devdir>\src\CPLBEXAM\files.dat ]
+[ INCLUDE <devdir>\src\DLL\files.dat ]
+[ INCLUDE <devdir>\src\GOODIES\files.dat ]
+[ INCLUDE <devdir>\src\WIN\files.dat ]
+[ INCLUDE <devdir>\src\STARTUP\files.dat ]
+[ INCLUDE <devdir>\src\MISC\files.dat ]
+[ INCLUDE <devdir>\src\OS2\files.dat ]
+
+# CPPLIB\CONTAIN source code
+[ DEFAULT type="s" dir="src\cpplib\contain" cond="rtsource" where="c jc f77 jf77 ac" ]
+usr="wchash.cpp"
+usr="wclist.cpp"
+usr="wcskip.cpp"
+usr="wcexcept.cpp"
+#[ INCLUDE <devdir>\src\CPPEXAMP\files.dat ] what is this
+#[ INCLUDE <devdir>\src\P16\files.dat ]

@@ -1,0 +1,6 @@
+# AS component of LANG11.DAT
+[ DEFAULT ]
+usr="wasaxp.exe" 	dir="binw" 	cond="doshost" 		where=""
+usr="wasaxp.exe" 	dir="binp" 	cond="os2host" 		where=""
+usr="wasaxp.exe" 	dir="binnt" 	cond="wnthost" 		where="ac"
+usr="wasaxp.exe" 	dir="axpnt" 	cond="alphahost"	where="ac"

@@ -1,0 +1,54 @@
+[ DEFAULT ]
+# dos and windows
+type="e" dir="binw"	usr="wd.exe"		cond="doshost dostarg |"			where="c jc f77 jf77"		descr="Character mode debugger"			old="bin"
+type="e" dir="binw"	usr="wdc.exe"		cond="wintarg winhost |"			where="c jc f77 jf77"		descr="Character-mode debugger"
+type="e" dir="binw"	usr="wdw.exe"		cond="wintarg winhost |"			where="c jc f77 jf77"		descr="GUI debugger"
+
+# japanese NEC98 dos 
+type="e" dir="n98bw"	usr="wd.exe"		cond="doshost dostarg | nechost nectarg |"	where="jc jf77"			descr="Gui debugger"
+type="e" dir="n98bw"	usr="wdc.exe"		cond="wintarg winhost | nechost nectarg |"	where="jc jf77"			descr="Character-mode debugger"
+
+# OS/2
+type="e" dir="binp"	usr="wd.exe"		cond="os2host os2targ |"			where="c jc f77 jf77"		descr="Character-mode debugger"
+type="e" dir="binp"	usr="wdw.exe"		cond="os2host os2targ |"			where="c jc f77 jf77"		descr="GUI debugger"
+
+# WINDOWS NT - INTEL
+type="e" dir="binnt"	usr="wd.exe"		cond="wnthost wnttarg |"			where="c jc f77 jf77 ac"	descr="Character mode debugger"
+type="e" dir="binnt"	usr="wdw.exe"		cond="wnthost wnttarg |"			where="c jc f77 jf77 ac"	descr="GUI debugger"
+
+# WINDOWS NT - ALPHA
+type="e" dir="axpnt"	usr="wd.exe"		cond="alphahost alphatarg |"			where="ac"			descr="Character mode debugger"
+type="e" dir="axpnt"	usr="wdw.exe"		cond="alphahost alphatarg |"			where="ac"			descr="GUI debugger"
+
+# Debugger Command Files
+type="s" dir="binw"	usr="ads.dbg"		cond="adstarg"					where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="animate.dbg"							where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="bcnt.dbg"								where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="bif.dbg"								where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="fox.dbg"								where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="cntbrks.dbg"							where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="cvkeys.dbg"							where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="wdkeys.dbg"							where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="vc.dbg"								where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="colour.dbg"							where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="fill.dbg"								where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="restart.dbg"							where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="resize.dbg"							where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="return.dbg"							where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="save.dbg"								where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="slow.dbg"								where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="setup.dbg"								where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="vr.dbg"								where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="mono.dbg"								where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="default.dbg"							where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="owvkeys.dbg"							where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="bp.dbg"								where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="wd.dbg"								where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="tdkeys.dbg"							where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="tdemu.dbg"								where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="nwvkeys.dbg"							where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="addsrc.dbg"							where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="vikeys.dbg"							where="c jc f77 jf77 ac"	descr="Debugger command file"			old="binb"
+type="s" dir="binw"	usr="fortran.prs"							where="c jc f77 jf77"		descr="Debugger parse file for FORTRAN 77"	old="binb"
+type="s" dir="binw"	usr="cpp.prs"								where="c jc f77 jf77 ac"	descr="Debugger parse file for C++"		old="binb"
+type="s" dir="binw"	usr="c.prs"								where="c jc f77 jf77 ac"	descr="Debugger parser file for C"		old="binb"

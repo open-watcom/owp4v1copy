@@ -1,0 +1,28 @@
+# DIP part of lang11.dat
+[ DEFAULT ]
+
+#	OS2
+usr="dwarf.dll"		dir="binp\dll"	cond="os2host"			where="c jc f77 jf77"
+usr="codeview.dll"	dir="binp\dll"	cond="os2host"			where="c jc f77 jf77"
+usr="export.dll"	dir="binp\dll"	cond="os2host"			where="c jc f77 jf77"
+usr="watcom.dll"	dir="binp\dll"	cond="os2host"			where="c jc f77 jf77"
+#	WINDOWS	
+usr="dwarf.dll"		dir="binw"	cond="winhost wintarg |"	where="c jc f77 jf77"
+usr="codeview.dll"	dir="binw"	cond="winhost wintarg |"	where="c jc f77 jf77"
+usr="export.dll"	dir="binw"	cond="winhost wintarg |"	where="c jc f77 jf77"
+usr="watcom.dll"	dir="binw"	cond="winhost wintarg |"	where="c jc f77 jf77"
+#	DOS	
+usr="dwarf.dip"		dir="binw"	cond="winhost doshost | dostarg |"	where="c jc f77 jf77"
+usr="codeview.dip"	dir="binw"	cond="winhost doshost | dostarg |"	where="c jc f77 jf77"
+usr="export.dip"	dir="binw"	cond="winhost doshost | dostarg |"	where="c jc f77 jf77"
+usr="watcom.dip"	dir="binw"	cond="winhost doshost | dostarg |"	where="c jc f77 jf77"
+#	NT 
+usr="dwarf.dll"		dir="binnt"	cond="wnthost wnttarg |"	where="c jc f77 jf77 ac"
+usr="codeview.dll"	dir="binnt"	cond="wnthost wnttarg |"	where="c jc f77 jf77 ac"
+usr="export.dll"	dir="binnt"	cond="wnthost wnttarg |"	where="c jc f77 jf77 ac"
+usr="watcom.dll"	dir="binnt"	cond="wnthost wnttarg |"	where="c jc f77 jf77 ac"
+#	ALPHA	
+usr="dwarf.dll"		dir="axpnt"	cond="alphahost alphatarg |"	where="ac"
+usr="codeview.dll"	dir="axpnt"	cond="alphahost alphatarg |"	where="ac"
+usr="export.dll"	dir="axpnt"	cond="alphahost alphatarg |"	where="ac"
+usr="watcom.dll"	dir="axpnt"	cond="alphahost alphatarg |"	where="ac"
