@@ -46,17 +46,17 @@ extra_a_flags_os2 = -D_OS=_OS2
 .c: ..
 
 .c.ubj:
-        $(comp286) $< -w3 -oxs -d1 -fo=.ubj -zu -zq #
+        $(comp286) $< -w3 -oxs -d1 -fo=.ubj -zu -zq $(inc_dirs_sys) #
 
 .c.cbj:
-        $(comp286) $< -w3 -oxs -d1 -fo=.cbj -zq -D__CMDSHELL__ #
+        $(comp286) $< -w3 -oxs -d1 -fo=.cbj -zq -D__CMDSHELL__ $(inc_dirs_sys) #
 
 lnk = tmp.lnk
 
 !ifeq host_os dos
 
 .c.obj:
-        $(comp286) $< -w3 -DDOS -oas -s -$(dopt) -zq -fo=.obj #
+        $(comp286) $< -w3 -DDOS -oas -s -$(dopt) -zq -fo=.obj $(inc_dirs_sys) #
 
 #
 # CMDEDIT.EXE
