@@ -1,20 +1,20 @@
-LIBRARY SOUND
+LIBRARY     SOUND
 EXPORTS
-    OpenSound          @1
-    CloseSound         @2
-    SetVoiceQueueSize  @3
-    SetVoiceNote       @4
-    SetVoiceAccent     @5
-    SetVoiceEnvelope   @6
-    SetSoundNoise      @7
-    SetVoiceSound      @8
-    StartSound         @9
-    StopSound          @10
-    WaitSoundState     @11
-    SyncAllVoices      @12
-    CountVoiceNotes    @13
-    GetThresholdEvent  @14
-    GetThresholdStatus @15
-    SetVoiceThreshold  @16
-    DoBeep             @17
-    WEP                @18
+    OPENSOUND                      @1
+    CLOSESOUND                     @2
+    SETVOICEQUEUESIZE              @3
+    SETVOICENOTE                   @4
+    SETVOICEACCENT                 @5
+    SETVOICEENVELOPE               @6
+    SETSOUNDNOISE                  @7
+    SETVOICESOUND                  @8
+    STARTSOUND                     @9
+    STOPSOUND                      @10
+    WAITSOUNDSTATE                 @11
+    SYNCALLVOICES                  @12
+    COUNTVOICENOTES                @13
+    GETTHRESHOLDEVENT              @14
+    GETTHRESHOLDSTATUS             @15
+    SETVOICETHRESHOLD              @16
+    DOBEEP                         @17
+    WEP                            @18

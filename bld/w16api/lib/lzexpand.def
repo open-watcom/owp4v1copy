@@ -1,14 +1,14 @@
-LIBRARY LZEXPAND
+LIBRARY     LZEXPAND
 EXPORTS
-    LZCopy                         @1
-    LZOpenFile                     @2
-    LZInit                         @3
-    LZSeek                         @4
-    LZRead                         @5
-    LZClose                        @6
-    LZStart                        @7
-    CopyLZFile                     @8
-    LZDone                         @9
-    GetExpandedName                @10
+    LZCOPY                         @1
+    LZOPENFILE                     @2
+    LZINIT                         @3
+    LZSEEK                         @4
+    LZREAD                         @5
+    LZCLOSE                        @6
+    LZSTART                        @7
+    COPYLZFILE                     @8
+    LZDONE                         @9
+    GETEXPANDEDNAME                @10
     WEP                            @11
     ___EXPORTEDSTUB                @12

@@ -1,4 +1,7 @@
-LIBRARY WIN87EM
+LIBRARY     WIN87EM
 EXPORTS
-    __fpmath                       @1   
-    WEP                            @2   
+    __FPMATH                       @1
+    WEP                            @2
+    __WIN87EMINFO                  @3
+    __WIN87EMRESTORE               @4
+    __WIN87EMSAVE                  @5
