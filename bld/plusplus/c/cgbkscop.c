@@ -397,7 +397,7 @@ static CALLNODE* makeNonThrowFun// FUNCTION BECOMES A NON-THROWING FUNCTION
     fun = owner->base.object;
     fun = symDefaultBase( fun );
     DbgVerify( ! ( fun->flag & SF_LONGJUMP )
-             , "makeThrowFun -- has SF_LONGJUMP" );
+             , "makeNonThrowFun -- has SF_LONGJUMP" );
     if( ! ( fun->flag & SF_NO_LONGJUMP ) ) {
         fun->flag |= SF_NO_LONGJUMP;
         res = pushActionCaller( owner, RES_FN_NT );
