@@ -15,10 +15,11 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
-    <CPCMD> <devdir>\wstrip\dos\strip.exe <relroot>\rel2\binw\wstrip.exe
-    <CPCMD> <devdir>\wstrip\nt\strip.exe <relroot>\rel2\binnt\wstrip.exe
+    <CPCMD> <devdir>\wstrip\dosi86\strip.exe <relroot>\rel2\binw\wstrip.exe
+    <CPCMD> <devdir>\wstrip\os2386\strip.exe <relroot>\rel2\binp\wstrip.exe
+    <CPCMD> <devdir>\wstrip\nt386\strip.exe  <relroot>\rel2\binnt\wstrip.exe
 #    <CPCMD> <devdir>\wstrip\ntaxp\strip.exe <relroot>\rel2\axpnt\wstrip.exe
-    <CPCMD> <devdir>\wstrip\qnx\strip.exe <relroot>\rel2\qnx\binq\wstrip.
+    <CPCMD> <devdir>\wstrip\qnx386\strip.exe <relroot>\rel2\qnx\binq\wstrip.
 
 [ BLOCK <1> clean ]
 #==================
