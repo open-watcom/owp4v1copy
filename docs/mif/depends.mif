@@ -2261,7 +2261,6 @@ $(docsrc_dir)\pg\mem4.ps &
 $(docsrc_dir)\pg\mthread.gml &
 $(docsrc_dir)\pg\os2pdd.gml &
 $(docsrc_dir)\pg\os2pm.gml &
-$(docsrc_dir)\pg\pgads.gml &
 $(docsrc_dir)\pg\pgbldbnd.gml &
 $(docsrc_dir)\pg\pgblddw.gml &
 $(docsrc_dir)\pg\pgbldwin.gml &
@@ -2288,7 +2287,6 @@ $(docsrc_dir)\pg\pgwin16w.gml &
 $(docsrc_dir)\pg\pgwin32.gml &
 $(docsrc_dir)\pg\pgwin32q.gml &
 $(docsrc_dir)\pg\pgwin32w.gml &
-$(docsrc_dir)\pg\pgwin95.gml &
 $(docsrc_dir)\pg\pgwinnt.gml &
 $(docsrc_dir)\pg\pgwinntw.gml &
 $(docsrc_dir)\pg\pgwinpsx.gml &
@@ -2314,7 +2312,6 @@ $(docsrc_dir)\pg\wfl386w2.gml &
 $(docsrc_dir)\pg\wflw1.gml &
 $(docsrc_dir)\pg\wflw2.gml &
 $(docsrc_dir)\pg\winnt.gml &
-$(docsrc_dir)\pg\wkframe.gml
 
 # plusplus sub-directory
 incs_plusplus = $(docsrc_dir)\plusplus
