@@ -199,27 +199,6 @@ void __OS2Init( int is_dll, thread_data *tdata )
         _STACKLOW = (unsigned)&_end;            // cortns in F77
     }
 #endif
-
-#if 0
-    {
-        // Make sure the iomode array is of the proper length.
-        // This needs to be done before the InitRtns.
-        // Make sure we track the current number of file handles.
-        extern  void    __grow_iomode(int);
-        extern  void    __set_handles(int);
-
-        LONG    req_count;
-        ULONG   curr_max_fh;
-        APIRET  rc;
-
-        req_count = 0;
-        rc = DosSetRelMaxFH( &req_count, &curr_max_fh );
-        if( rc == 0 ) {
-            __grow_iomode( curr_max_fh );
-            __set_handles( curr_max_fh );
-        }
-    }
-#endif
 }
 
 void __OS2Fini( void )

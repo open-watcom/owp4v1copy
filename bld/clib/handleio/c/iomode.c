@@ -35,6 +35,10 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#if defined(__OS2__)
+ #define INCL_DOSFILEMGR
+ #include <wos2.h>
+#endif
 #include "rtdata.h"
 #include "liballoc.h"
 #include "fileacc.h"
@@ -102,6 +106,31 @@ void __shrink_iomode( void )
 }
 
 AYI(__shrink_iomode,INIT_PRIORITY_IOSTREAM);
+
+
+#if defined(__WARP__)
+
+extern  unsigned    __NHandles;
+
+void __preinit_iomode_os2(void)
+{
+    LONG    req_count;
+    ULONG   curr_max_fh;
+    APIRET  rc;
+
+    // Ensure that the clib and OS file handle limits match
+    req_count = 0;
+    rc = DosSetRelMaxFH( &req_count, &curr_max_fh );
+    if( rc == 0 ) {
+        __grow_iomode( curr_max_fh );
+        __NHandles = curr_max_fh;   // same as __set_handles
+    }
+
+}
+
+AXI( __preinit_iomode_os2, INIT_PRIORITY_RUNTIME );
+
+#endif
 
 #define _INITIALIZED    _DYNAMIC
 
