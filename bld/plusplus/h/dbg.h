@@ -153,7 +153,7 @@ void DumpHashStats(             // DUMP HASH TABLE STATISTICS
 void FtabDump()                 // DUMP FUNCTION STATE TABLE
 ;
 void DumpSymbol(                // DUMP SYMBOL ENTRY
-    SYMBOL sym )                // - symbol
+    void *_sym )                // - symbol
 ;
 void DumpSymbolName(            // DUMP SYMBOL_NAME ENTRY
     SYMBOL_NAME sn )            // - symbol name entry

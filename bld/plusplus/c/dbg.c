@@ -455,8 +455,9 @@ static void dumpNameSpaceInfo( NAME_SPACE *ns )
 //  SYMBOL-TABLE FUNCTIONS
 //
 void DumpSymbol(                // DUMP SYMBOL ENTRY
-    SYMBOL sym )                // - symbol
+    void *_sym )                // - symbol
 {
+    SYMBOL sym = _sym;
     VBUF vbuf;
 
     static char const *ids[] = {
@@ -601,8 +602,9 @@ static void dumpFnType(         // DUMP EXTRA INFO FOR FUNCTION
 
 
 static void dumpBaseClass(      // DUMP BASE_CLASS
-    BASE_CLASS *base )          // - points to information
+    void *_base )               // - points to information
 {
+    BASE_CLASS *base = _base;
     printf( "    BASECLASS" F_BADDR
             " next"         F_PTR
             " type"         F_PTR
@@ -758,7 +760,7 @@ static void dumpClassType(      // DUMP EXTRA INFO FOR CLASS
 
     ci = tp->u.c.info;
     DumpClassInfo( ci );
-    RingWalk( ci->bases, (void(*)(void*))&dumpBaseClass );
+    RingWalk( ci->bases, &dumpBaseClass );
 }
 
 void PrintFullType(             // PRINT FULL TYPE INFORMATION
@@ -848,8 +850,9 @@ void DumpSymInfo(               // DUMP COMPLETE INFO FOR SYMBOL
 
 
 static void dumpFriendRef(      // DUMP REFERENCE TO FRIEND SCOPE
-    FRIEND *fr )                 // - the reference
+    void *_fr )                 // - the reference
 {
+    FRIEND *fr = _fr;
     printf( "   FRIEND"     F_BADDR
             " next"         F_PTR
             " sym"          F_PTR
@@ -866,7 +869,7 @@ static void dumpSymbolNameInfo( // DUMP SYMBOL_NAME ENTRY
 {
     DumpSymbolName( sn );
     DumpSymbol( sn->name_type );
-    RingWalk( sn->name_syms, (void(*)(void*))&DumpSymbol );
+    RingWalk( sn->name_syms, &DumpSymbol );
 }
 
 
@@ -923,8 +926,8 @@ void DumpScope(                 // DUMP SCOPE INFO FOR SYMBOL
         break;
     }
     ScopeWalkNames( scope, &dumpSymbolNameInfo );
-    RingWalk( ScopeFriends( scope ), (void(*)(void*))&dumpFriendRef );
-    RingWalk( ScopeInherits( scope ), (void(*)(void*))&dumpBaseClass );
+    RingWalk( ScopeFriends( scope ), &dumpFriendRef );
+    RingWalk( ScopeInherits( scope ), &dumpBaseClass );
 }
 
 
@@ -945,8 +948,9 @@ static void dump_sym_scope(     // DUMP SCOPE FOR A SYMBOL
 
 
 static void dumpFriend(         // DUMP A FRIEND SCOPE
-    FRIEND *fr )                 // - symbol for the friend scope
+    void *_fr )                 // - symbol for the friend scope
 {
+    FRIEND *fr = _fr;
     dump_sym_scope( fr->sym );
 }
 
@@ -955,8 +959,8 @@ void DumpScopeInfo(             // DUMP INFORMATION FOR SCOPE
     SCOPE scope )               // - starting scope
 {
     DumpScope( scope );
-    RingWalk( ScopeFriends( scope ), (void(*)(void*))&dumpFriend );
-    RingWalk( ScopeInherits( scope ), (void(*)(void*))&dumpBaseClass );
+    RingWalk( ScopeFriends( scope ), &dumpFriend );
+    RingWalk( ScopeInherits( scope ), &dumpBaseClass );
 }
 
 
@@ -999,8 +1003,9 @@ void DbgForgetScope(            // SCOPE is useless, so don't dump it
 
 
 static dump_scope_defn(         // DUMP SCOPE, GIVEN A SCOPE_DEFN
-    SCOPE_DEFN *defn )          // - scope definition
+    void *_defn )               // - scope definition
 {
+    SCOPE_DEFN *defn = _defn;
     DumpScope( defn->defn );
 }
 
@@ -1008,13 +1013,14 @@ static dump_scope_defn(         // DUMP SCOPE, GIVEN A SCOPE_DEFN
 void DumpScopes(                // DUMP ALL SCOPES
     void )
 {
-    RingWalk( scopes, (void(*)(void*))dump_scope_defn );
+    RingWalk( scopes, dump_scope_defn );
 }
 
 
 static dump_hash(               // DUMP HASH STAT FOR SCOPE, GIVEN A SCOPE_DEFN
-    SCOPE_DEFN *defn )          // - scope definition
+    void *_defn )               // - scope definition
 {
+    SCOPE_DEFN *defn = _defn;
     printf( "SCOPE: %p\n", defn->defn );
     StatsHASHTAB( defn->defn->names );
 }
