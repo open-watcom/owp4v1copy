@@ -14,10 +14,11 @@ cdsay .
     wmake /h /i
     cdsay ..\objw
     wmake /h /i
-    cdsay ..\objq
-    wmake /h /i
-    cdsay ..\obj32q
-    wmake /h /i
+# disable QNX builds until pmake can be used 20020618
+#    cdsay ..\objq
+#    wmake /h /i
+#    cdsay ..\obj32q
+#    wmake /h /i
     cdsay ..\obj2
     wmake /h /i
     cdsay ..\obj2f

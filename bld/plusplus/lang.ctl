@@ -44,10 +44,11 @@ cdsay .
     wmake /h /k
     cdsay ..\os2386
     wmake /h /k
-    cdsay ..\qnxi86
-    wmake /h /k
-    cdsay ..\qnx386
-    wmake /h /k
+# Skip QNX for now until we have proper pmake 20020618 MWN
+#    cdsay ..\qnxi86
+#    wmake /h /k
+#    cdsay ..\qnx386
+#    wmake /h /k
     cd ..
 
 [ BLOCK <1> rel2 cprel2 acprel2 ]

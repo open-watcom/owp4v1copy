@@ -16,10 +16,11 @@ cdsay .
     wmake /h /i
     cdsay ..\..\os2\ofw
     wmake /h /i
-    cdsay ..\..\qnx\olwq
-    wmake /h /i
-    cdsay ..\os32q
-    wmake /h /i
+# Disable QNX builds until pmake can be used 20020618
+#    cdsay ..\..\qnx\olwq
+#    wmake /h /i
+#    cdsay ..\os32q
+#    wmake /h /i
     cdsay ..\..\win\olw
     wmake /h /i
     cdsay ..\..\nt\ofw
