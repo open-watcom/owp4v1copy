@@ -74,7 +74,7 @@ static BOOL getNewLogName( HWND parent ) {
     of.nFilterIndex = 1L;
     of.lpstrTitle = AllocRCString( STR_LOG_FILENAME );
     ret = GetSaveFileName( &of );
-    FreeRCString( of.lpstrTitle );
+    FreeRCString( (char *)of.lpstrTitle );
     return( ret );
 }
 

@@ -19,7 +19,7 @@ objs =  savelbox.obj mem.obj font.obj fontstr.obj srchmsg.obj log.obj &
 extra_c_flags_mem = -DNO_WPI
 extra_l_flags_win = option stack=7k option heapsize=2k lib windows.lib &
                     lib toolhelp.lib lib ddeml.lib lib commdlg.lib &
-                    lib $(sdk_dir)\misc\ctl3d.lib
+                    lib ctl3d.lib
 
 extra_l_flags_nt_axp  = lib ctl3d32.lib
 

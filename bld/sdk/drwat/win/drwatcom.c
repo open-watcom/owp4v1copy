@@ -171,7 +171,7 @@ int PASCAL WinMain( HANDLE currinst, HANDLE previnst, LPSTR cmdline, int cmdshow
         DispatchMessage(&msg);
     }
     Death( STR_DEATH_NO_MSG );
-/*  return( 0 ); */
+    return( 0 );
 
 }  /* WinMain */
 

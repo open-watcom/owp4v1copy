@@ -436,7 +436,7 @@ void DIGCLIENT DIPCliAddrSection( address *addr ) {
 /*
  * DIPCliOpen
  */
-dig_fhandle DIGCLIENT DIGCliOpen( char *path, dig_open mode ) {
+dig_fhandle DIGCLIENT DIGCliOpen( const char *path, dig_open mode ) {
 
     dig_fhandle         ret;
     int                 flags;
@@ -508,7 +508,7 @@ void DIGCLIENT DIGCliClose( dig_fhandle hdl ) {
 /*
  * DIPCliRemove
  */
-void DIGCLIENT DIGCliRemove( char *path, dig_open mode ) {
+void DIGCLIENT DIGCliRemove( const char *path, dig_open mode ) {
     mode = mode;
     remove( path );
 }
