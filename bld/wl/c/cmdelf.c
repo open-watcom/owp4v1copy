@@ -130,3 +130,11 @@ extern bool ProcExtraSections( void )
 {
     return GetLong( &FmtData.u.elf.extrasects );
 }
+
+extern bool ProcELFNoRelocs( void )
+/*********************************/
+{
+    LinkState &= ~MAKE_RELOCS;
+    return TRUE;
+}
+

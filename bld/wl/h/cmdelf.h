@@ -41,3 +41,6 @@ extern void     SetELFImportSymbol( symbol * );
 
 extern bool     ProcExtraSections( void );
 extern bool     ProcExportAll( void );
+
+extern bool     ProcELFNoRelocs( void );
+

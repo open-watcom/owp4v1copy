@@ -230,7 +230,7 @@ extern  parse_entry     MainOptions[] = {
     "VERSion",      &ProcVersion,       MK_NOVELL|MK_OS2_FLAT|MK_PE|MK_WINDOWS, 0,
     "IMPLib",       &ProcImplib,        MK_NOVELL|MK_OS2|MK_PE, 0,
     "IMPFile",      &ProcImpFile,       MK_NOVELL|MK_OS2|MK_PE, 0,
-    "NORelocs",     &ProcNoRelocs,      (MK_QNX | MK_PE), 0,
+    "NORelocs",     &ProcNoRelocs,      (MK_QNX | MK_PE | MK_ELF), 0,
     "LOnglived",    &ProcLongLived,     MK_QNX, 0,
     "PRIVilege",    &ProcQNXPrivilege,  MK_QNX, 0,
     "LInearrelocs", &ProcLinearRelocs,  MK_QNX, 0,

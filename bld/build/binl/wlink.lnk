@@ -30,6 +30,7 @@ system begin bld_linux
     libpath %DEVDIR%/emu/stub386
     format elf
     op exportall
+    op norelocs
     op caseexact
 end
 @%DEVDIR%/wl/wlsystem.lnk

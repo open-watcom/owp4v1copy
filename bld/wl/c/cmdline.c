@@ -911,7 +911,7 @@ extern bool ProcExport( void )
 }
 #endif
 
-#if defined( _QNXLOAD ) || defined( _OS2 )
+#if defined( _QNXLOAD ) || defined( _OS2 ) || defined( _ELF )
 extern bool ProcNoRelocs( void )
 /******************************/
 {
@@ -923,6 +923,11 @@ extern bool ProcNoRelocs( void )
 #if defined( _OS2 )
     if( HintFormat( MK_PE ) ) {
         return( ProcPENoRelocs() );
+    }
+#endif
+#if defined( _ELF )
+    if( HintFormat( MK_ELF ) ) {
+        return( ProcELFNoRelocs() );
     }
 #endif
     return( TRUE );

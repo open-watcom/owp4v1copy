@@ -244,6 +244,7 @@ system begin linux
     libpath %WATCOM%/lib386/linux
     format elf
     op exportall
+    op norelocs
 end
 system begin nt
     option osname='Windows NT character-mode'
