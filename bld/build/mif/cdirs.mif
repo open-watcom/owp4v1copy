@@ -298,3 +298,6 @@ wgif2bmp_dir    = $(dev_dir)\imgtools\wgif2bmp
 !ifndef debugger_dir
 debugger_dir    = $(dev_dir)\debugger
 !endif
+!ifndef re2c_dir
+re2c_dir        = $(dev_dir)\re2c
+!endif
