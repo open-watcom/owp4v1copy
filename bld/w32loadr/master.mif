@@ -56,28 +56,19 @@ w32bindnt.exe : w32bind.c
 dbgntrun.exe : ntrun.obj cstrtwnt.obj int21.obj int21nt.obj ntstub.exe
   @%write tmp.lnk debug all
   @%append tmp.lnk sys nt name dbgntrun file cstrtwnt,ntrun,int21,int21nt opt map,stack=64k,stub=ntstub.exe,quiet
-  @%append tmp.lnk lib nt
-! ifdef tools_10_1
-  @%append tmp.lnk lib kernel32,user32,gdi32,comdlg32,winspool,advapi32,shell32
-! endif
+  @%append tmp.lnk lib kernel32
   $(linker) @tmp.lnk
 
 ntrun.exe : ntrun.obj cstrtwnt.obj int21.obj int21nt.obj ntstub.exe
   @%write tmp.lnk sys nt name ntrun file cstrtwnt,ntrun,int21,int21nt opt map,stack=64k,stub=ntstub.exe,quiet
-  @%append tmp.lnk lib nt,kernel32
-! ifdef tools_10_1
-  @%append tmp.lnk lib kernel32,user32,gdi32,comdlg32,winspool,advapi32,shell32
-! endif
+  @%append tmp.lnk lib kernel32
   $(linker) @tmp.lnk
   del tmp.lnk
   for %i in ( $(nt_exes) ) do copy ntrun.exe nt\%i
 
 ntrunner.exe : ntrunner.obj cstrtwnt.obj int21.obj int21nt.obj ntstub.exe
   @%write tmp.lnk sys nt name ntrunner.exe file cstrtwnt, ntrunner,int21,int21nt opt map,stack=64k,stub=ntstub.exe,quiet
-  @%append tmp.lnk lib nt,kernel32
-! ifdef tools_10_1
-  @%append tmp.lnk lib kernel32,user32,gdi32,comdlg32,winspool,advapi32,shell32
-! endif
+  @%append tmp.lnk lib kernel32
   $(linker) @tmp.lnk
   del tmp.lnk
 
