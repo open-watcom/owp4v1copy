@@ -75,6 +75,7 @@ static  bool            OMFSearchExtLib( file_list *, char *, unsigned long * );
 static  bool            ARSearchExtLib( file_list *, char *, unsigned long * );
 static  unsigned_16     OMFCompName( char *, char *, unsigned_16 );
 static  void **         AllocDict( unsigned_16, unsigned_16 );
+static  void            SetDict( file_list *, unsigned_16 );
 
 #if (defined( __386__ ) || defined(M_I86)) && defined(__WATCOMC__)
 #if defined( __386__ )
@@ -117,6 +118,20 @@ static void BadLibrary( file_list *list )
     LnkMsg( ERR+MSG_LIB_FILE_ATTR, NULL );
 }
 
+static unsigned_32 ReadBigEndian32( unsigned char *buf )
+{
+    unsigned_32 res = 0;
+
+    res = buf[0];
+    res <<= 8;
+    res |= buf[1];
+    res <<= 8;
+    res |= buf[2];
+    res <<= 8;
+    res |= buf[3];
+    return res;
+}
+
 static bool ReadARDict( file_list *list, unsigned long *loc, unsigned *numdicts,
                         bool makedict )
 /*****************************************************************************/
@@ -135,26 +150,68 @@ static bool ReadARDict( file_list *list, unsigned long *loc, unsigned *numdicts,
     if( ar_hdr->name[0] == '/' && ar_hdr->name[1] == ' ' ) {
         *numdicts += 1;
         *loc += sizeof(ar_header);
-        if( *numdicts == 2 && makedict ) {
+        if( makedict && (*numdicts == 1 || *numdicts == 2) ) {
+
+            /* a dictionary in an AR archive commonly starts with
+               a header marked with '/ '.
+               AR archives on Linux commonly have only one dictionary
+               which is of the form:
+
+               (all numbers in *big* endian format)
+               unsigned_32: number of entries (num)
+               num unsigned_32's: offset within AR file of the object file
+                 that the symbol name belongs too.
+               num zero terminated strings: the symbols themselves
+               (unsorted).
+               WLIB however calls this the "useless dictionary".
+
+               WLIB generates a second, more efficient dictionary:
+               (all numbers in *little* endian format)
+               unsigned_32: number of files in object
+               nfiles unsigned_32's: offsets of the files within the archive
+               unsigned_32: number of entries (num)
+               num unsigned_16's: the file number that the symbol belongs to
+               num zero terminated strings: the symbols themselves
+               (sorted case-sensitively).               
+
+               however WLINK needs to be able to parse both kinds.
+               (dict->offsettab == NULL) means that we only know about
+               an unsorted dictionary and it will be sorted later.
+            */ 
+
             dict = &list->u.dict->a;
             data = CachePermRead( list, *loc, size );
-            num = *((unsigned_32 *)data);
-            data += sizeof(unsigned_32);
-            dict->filepostab = (unsigned_32 *) data;
-            data += num * sizeof(unsigned_32);
-            num = *((unsigned_32 *)data);
-            data += sizeof(unsigned_32);
-            dict->offsettab = (unsigned_16 *) data;
-            data += num * sizeof(unsigned_16);
-            dict->num_entries = num;
-            if( num > 0 ) {
-                _ChkAlloc( dict->fnametab, sizeof(char *) * num );
+            if ( *numdicts == 1 ) {
+                num = ReadBigEndian32( data ); /* number of symbols */
+                data += sizeof(unsigned_32);
+                dict->filepostab = (unsigned_32 *) data;
                 for( index = 0; index < num; index++ ) {
-                    dict->fnametab[index] = data;
-                    data = strchr( data, '\0' ) + 1;
+                    dict->filepostab[index] = ReadBigEndian32(data);
+                    data += sizeof(unsigned_32);
                 }
-            } else {
+                dict->num_entries = num;
+                dict->offsettab = NULL;
                 dict->fnametab = NULL;
+                if( num > 0 ) {
+                    _ChkAlloc( dict->fnametab, sizeof(char *) * num );
+                }
+            } else /* if ( *numdicts == 2 ) */ {
+                num = *((unsigned_32 *)data); /* number of files */
+                data += sizeof(unsigned_32);
+                dict->filepostab = (unsigned_32 *) data; /* first file off */
+                data += num * sizeof(unsigned_32);
+                num = *((unsigned_32 *)data); /* number of symbols */
+                data += sizeof(unsigned_32);
+                dict->offsettab = (unsigned_16 *) data; /* first offset */
+                data += num * sizeof(unsigned_16);
+                dict->num_entries = num;
+                if( num > 0 && dict->fnametab == NULL ) {
+                    _ChkAlloc( dict->fnametab, sizeof(char *) * num );
+                }    
+            }
+            for( index = 0; index < num; index++ ) {
+                dict->fnametab[index] = data;
+                data = strchr( data, '\0' ) + 1;
             }
         }
         *loc += MAKE_EVEN( size );
@@ -178,6 +235,13 @@ static int ARCompI( const void *index1, const void *index2 )
                     ARDict->fnametab[ *(unsigned_16 *)index2 ] );
 }
 
+static int ARComp( const void *index1, const void *index2 )
+/**********************************************************/
+{
+    return strcmp( ARDict->fnametab[ *(unsigned_16 *)index1 ],
+                   ARDict->fnametab[ *(unsigned_16 *)index2 ] );
+}
+
 extern int CheckLibraryType( file_list *list, unsigned long *loc, bool makedict)
 /******************************************************************************/
 {
@@ -193,7 +257,7 @@ extern int CheckLibraryType( file_list *list, unsigned long *loc, bool makedict)
     unsigned            ix_next;
     unsigned            ix_save;
     char *              fname_save;
-    unsigned_16         offset_save;
+    unsigned_32         offset_save;
 
     omf_hdr = CacheRead( list, 0, sizeof(lib_header) );
     header = (unsigned_8*) omf_hdr;
@@ -226,7 +290,7 @@ extern int CheckLibraryType( file_list *list, unsigned long *loc, bool makedict)
         *loc = AR_IDENT_LEN;
         numdicts = 0;
         while( ReadARDict( list, loc, &numdicts, makedict ) ) {} // NULL loop
-        if( numdicts < 2 && makedict ) {
+        if( numdicts < 1 && makedict ) {
             Locator( list->file->name, NULL, 0 );
             LnkMsg( ERR+MSG_NO_DICT_FOUND, NULL );
             _LnkFree( list->u.dict );
@@ -234,7 +298,8 @@ extern int CheckLibraryType( file_list *list, unsigned long *loc, bool makedict)
             return -1;
         }
         ar_dict = &list->u.dict->a;
-        if( (!(LinkFlags & CASE_FLAG)) && (ar_dict->num_entries > 0) ) {
+        if( (!(LinkFlags & CASE_FLAG) || numdicts == 1) &&
+              (ar_dict->num_entries > 0) ) {
             // Create an index table that we will sort to match the
             // case-insensitive sort order that we want for our symbol names.
             _ChkAlloc( index_tab, sizeof(unsigned_16) * ar_dict->num_entries );
@@ -245,8 +310,13 @@ extern int CheckLibraryType( file_list *list, unsigned long *loc, bool makedict)
             ARDict = ar_dict;
             // Sort the index table using the corresponding symbol names
             // to determine the sort order (see ARCompI() for more info).
-            qsort( index_tab, ar_dict->num_entries, sizeof(unsigned_16),
-                ARCompI );
+            if (LinkFlags & CASE_FLAG) {
+                qsort( index_tab, ar_dict->num_entries, sizeof(unsigned_16),
+                       ARComp );
+            } else {
+                qsort( index_tab, ar_dict->num_entries, sizeof(unsigned_16),
+                       ARCompI );
+            }
 
             // Reorder the function name table (a vector of pointers to
             // symbol names) and the offset table (a vector of 16-bit offsets
@@ -258,7 +328,10 @@ extern int CheckLibraryType( file_list *list, unsigned long *loc, bool makedict)
                 // so that we can correct it.
                 if( ix != index_tab[ix] ) {
                     fname_save = ar_dict->fnametab[ix];
-                    offset_save = ar_dict->offsettab[ix];
+                    if (ar_dict->offsettab == NULL)
+                        offset_save = ar_dict->filepostab[ix];
+                    else
+                        offset_save = ar_dict->offsettab[ix];
                     // Correct all the entries in this sequence
                     for(;;) {
                         ix_next = index_tab[ix];
@@ -267,13 +340,19 @@ extern int CheckLibraryType( file_list *list, unsigned long *loc, bool makedict)
                         if( ix_next == ix_save ) break;
 
                         ar_dict->fnametab[ix] = ar_dict->fnametab[ix_next];
-                        ar_dict->offsettab[ix] = ar_dict->offsettab[ix_next];
+                        if (ar_dict->offsettab == NULL)
+                            ar_dict->filepostab[ix] = ar_dict->filepostab[ix_next];
+                        else
+                            ar_dict->offsettab[ix] = ar_dict->offsettab[ix_next];
                         ix = ix_next;
                     }
                     // Update this final entry in the sequence from the
                     // values we set aside.
                     ar_dict->fnametab[ix] = fname_save;
-                    ar_dict->offsettab[ix] = offset_save;
+                    if (ar_dict->offsettab == NULL)
+                        ar_dict->filepostab[ix] = offset_save;
+                    else
+                        ar_dict->offsettab[ix] = offset_save;
                 }
                 ix = ix_save + 1;
             }
@@ -606,7 +685,10 @@ static bool ARSearchExtLib( file_list *lib, char *name, unsigned long *off )
     }
     if( result != NULL ) {
         tabidx = result - dict->fnametab;
-        *off = dict->filepostab[dict->offsettab[tabidx] - 1];
+        if (dict->offsettab == NULL)
+            *off = dict->filepostab[tabidx];
+        else
+            *off = dict->filepostab[dict->offsettab[tabidx] - 1];
         return TRUE;
     }
     return FALSE;

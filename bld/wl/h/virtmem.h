@@ -30,7 +30,7 @@
 ****************************************************************************/
 
 
-#if _OS == _NT || _OS == _OS2V2 && !defined(__OSI__)
+#if _OS == _LINUX || _OS == _NT || _OS == _OS2V2 && !defined(__OSI__)
 
 extern void WriteLoad( void *, unsigned long );
 

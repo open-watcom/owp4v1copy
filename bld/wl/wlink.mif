@@ -115,7 +115,7 @@ extra_objs = linkio.obj virtmem.obj
 extra_objs = posixio.obj virtmem.obj
 !else
 !ifeq host_OS linux
-extra_objs = posixio.obj virtmem.obj
+extra_objs = posixio.obj virtpage.obj
 !else
 extra_objs = ntio.obj virtpage.obj
 !endif

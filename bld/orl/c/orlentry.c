@@ -746,7 +746,7 @@ orl_symbol_handle ORLENTRY ORLSymbolGetAssociated( orl_symbol_handle hnd )
 {
     switch( hnd->type ) {
     case( ORL_ELF ):
-        return NULL;    // NYI: call to an ELF func. here.
+        return (orl_symbol_handle) ElfSymbolGetAssociated( (elf_symbol_handle) hnd );
     case( ORL_COFF ):
         return (orl_symbol_handle) CoffSymbolGetAssociated( (coff_symbol_handle) hnd );
     case( ORL_OMF ):

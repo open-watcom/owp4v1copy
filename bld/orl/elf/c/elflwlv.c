@@ -202,6 +202,7 @@ static orl_reloc_type convert386Reloc( elf_reloc_type elf_type ) {
         return( ORL_RELOC_TYPE_WORD_32 );
     case R_386_PC32:
     case R_386_PLT32:
+    case R_386_GOTPC:
         return( ORL_RELOC_TYPE_REL_32 );
     default:
         assert( 0 );

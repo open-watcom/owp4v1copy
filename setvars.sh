@@ -22,6 +22,7 @@ export BUILDER_CTL=lang.ctl
 export BUILD_PLATFORM=linux386
 export build_platform=$BUILD_PLATFORM
 export DEFPATH=$PATH
+export DEFREL=rel2
 export DEVDIR=$OWROOT/bld
 export devdir=$DEVDIR
 export DWATCOM=$WATCOM
@@ -30,6 +31,7 @@ export LIB=$OWROOT/bld/watcom/lib
 export LANG_BLD=$OWROOT/bat
 export owroot=$OWROOT
 export PATH=$OWROOT/bin:$DEVDIR/build/binl:$OWROOT/bat:$WATCOM/binl:$DOC_ROOT/cmds:$DEFPATH
+export RELROOT=$OWROOT
 
 # Setup environment variables for Perforce
 export P4PORT=perforce.scitechsoft.com:3488

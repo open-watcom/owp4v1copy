@@ -74,5 +74,6 @@ orl_symbol_binding      ELFENTRY ElfSymbolGetBinding( elf_symbol_handle );
 orl_symbol_type         ELFENTRY ElfSymbolGetType( elf_symbol_handle );
 unsigned char           ELFENTRY ElfSymbolGetRawInfo( elf_symbol_handle );
 elf_sec_handle          ELFENTRY ElfSymbolGetSecHandle( elf_symbol_handle );
+elf_symbol_handle       ELFENTRY ElfSymbolGetAssociated( elf_symbol_handle elf_symbol_hnd );
 
 #endif

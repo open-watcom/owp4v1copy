@@ -357,7 +357,7 @@ static void ParseCommand( char **pc )
             doquotes = FALSE;
             ++c;
             break;
-#if defined(__QNX__)
+#if defined(__UNIX__)
         case ':':
 #else
         case '*':
@@ -384,7 +384,7 @@ static void ParseCommand( char **pc )
             break;
         }
         break;
-#if defined(__QNX__)
+#if defined(__UNIX__)
     case ':':
 #else
     case '*':
@@ -417,7 +417,7 @@ static void ParseOneLine( char *c )
         eatwhite( c );
         start = c;
         switch( *c ) {
-#if !defined(__QNX__)
+#if !defined(__UNIX__)
         case '/':
             if( !ParseOption( &c, buff ) ) {
                 FatalError( ERR_BAD_OPTION, c[1] );
@@ -425,7 +425,7 @@ static void ParseOneLine( char *c )
             break;
 #endif
 
-#if !defined(__QNX__)
+#if !defined(__UNIX__)
         case '*':
 #else
         case ':':

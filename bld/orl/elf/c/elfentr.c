@@ -410,3 +410,8 @@ elf_sec_handle ELFENTRY ElfSymbolGetSecHandle( elf_symbol_handle elf_symbol_hnd 
             return( elf_symbol_hnd->elf_file_hnd->orig_sec_hnd[elf_symbol_hnd->symbol->st_shndx - 1]);
     }
 }
+
+elf_symbol_handle ELFENTRY ElfSymbolGetAssociated( elf_symbol_handle elf_symbol_hnd )
+{
+    return elf_symbol_hnd;
+}
