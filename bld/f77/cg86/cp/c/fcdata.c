@@ -85,6 +85,9 @@ extern  void            (* __FAR FCJmpTab[])();
 extern  void            (* __FAR DataJmpTab[])();
 extern  char            *StmtKeywords[];
 
+static  void            InitStructArr( sym_id fd, act_dim_list *dim );
+static  void            StructInit( sym_id fd );
+
 #define CONST_TYPES     9
 
 static  char    MapType[] = {
@@ -1309,7 +1312,7 @@ void    DtInpStructArray() {
 
     InitVar = GetPtr();
     DtOffset = 0;
-    InitStructArr( InitVar->ns.xt.record->fl.fields, InitVar->ns.si.va.dim_ext );
+    InitStructArr( InitVar->ns.xt.record->fl.sym_fields, InitVar->ns.si.va.dim_ext );
 }
 
 
@@ -1354,7 +1357,7 @@ void    DtInpStruct() {
 
 // Initialize a struct.
 
-    StructInit( ((sym_id)GetPtr())->sd.fl.fields );
+    StructInit( ((sym_id)GetPtr())->sd.fl.sym_fields );
 }
 
 

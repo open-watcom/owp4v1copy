@@ -145,6 +145,8 @@ extern  dep_info        *DependencyInfo;
 extern  unsigned int    EMSsegment;
 #endif
 
+static  void            DefDbgStruct( sym_id sym );
+
 #define CS_SUFF_LEN             5
 #define G_DATA_LEN              6
 #define BLANK_COM_LEN           6
@@ -1610,7 +1612,7 @@ static  void    DefDbgFields( sym_id sd, dbg_struct db, unsigned_32 f_offset ) {
         } else {
             STFieldName( field, field_name );
             if( field->fd.typ == TY_STRUCTURE ) {
-                DefDbgStruct( field->fd.xt.record );
+                DefDbgStruct( field->fd.xt.sym_record );
                 size = field->fd.xt.record->size;
                 db_type = field->fd.xt.record->dbi;
             } else {
