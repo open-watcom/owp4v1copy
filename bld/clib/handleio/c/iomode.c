@@ -45,7 +45,7 @@
 #include "rtinit.h"
 #include "seterrno.h"
 
-unsigned __NFiles = _NFILES;            /* maximum # of files we can open */
+unsigned __NFiles   = _NFILES;          /* maximum # of files we can open */
 
 #if defined(__NETWARE__)
 #error NO IO MODE MANAGER UNDER NETWARE
@@ -61,76 +61,7 @@ unsigned _HUGEDATA __init_mode[_NFILES] = { /* file mode information (flags) */
         _WRITE          /* stdprn */
 };
 
-static  unsigned    *_iomode = __init_mode; // initially points to static array
-static  unsigned    _init_NFiles;           // original __NFiles value;
-
-
-void __grow_iomode( int num )
-{
-    unsigned    *new;
-
-    _AccessIOB();
-    if( _iomode == __init_mode ) {
-        _init_NFiles = __NFiles;
-        new = (unsigned *) lib_malloc( num * sizeof( unsigned ) );
-        if( new != NULL ) {
-            memcpy( new, __init_mode, __NFiles * sizeof(unsigned) );
-        }
-    } else {
-        #if defined(__NETWARE__)
-            new = (unsigned *) lib_realloc( _iomode, num * sizeof( unsigned ), __NFiles * sizeof( unsigned ) );
-        #else
-            new = (unsigned *) lib_realloc( _iomode, num * sizeof( unsigned ) );
-        #endif
-    }
-    if( new == NULL ) {
-        __set_errno( ENOMEM );
-    } else {
-        memset( &new[__NFiles], 0, (num-__NFiles)*sizeof(unsigned) );
-        _iomode = new;
-        __NFiles = num;
-    }
-    _ReleaseIOB();
-}
-
-void __shrink_iomode( void )
-{
-    _AccessIOB();
-    // free any malloc'd iomode array
-    if( _iomode != __init_mode ) {
-        lib_free( _iomode );
-        _iomode = __init_mode;
-        __NFiles = _init_NFiles;
-    }
-    _ReleaseIOB();
-}
-
-AYI(__shrink_iomode,INIT_PRIORITY_IOSTREAM);
-
-
-#if defined(__WARP__)
-
-extern  unsigned    __NHandles;
-
-void __preinit_iomode_os2(void)
-{
-    LONG    req_count;
-    ULONG   curr_max_fh;
-    APIRET  rc;
-
-    // Ensure that the clib and OS file handle limits match
-    req_count = 0;
-    rc = DosSetRelMaxFH( &req_count, &curr_max_fh );
-    if( rc == 0 ) {
-        __grow_iomode( curr_max_fh );
-        __NHandles = curr_max_fh;   // same as __set_handles
-    }
-
-}
-
-AXI( __preinit_iomode_os2, INIT_PRIORITY_RUNTIME );
-
-#endif
+unsigned *__io_mode = __init_mode;      /* initially points to static array */
 
 #define _INITIALIZED    _DYNAMIC
 
@@ -139,13 +70,13 @@ unsigned __GetIOMode( unsigned handle )
     if( handle >= __NFiles ) {
         return( 0 );
     }
-    if( handle < NUM_STD_STREAMS && !(_iomode[handle] & _INITIALIZED) ) {
-        _iomode[handle] |= _INITIALIZED;
+    if( handle < NUM_STD_STREAMS && !(__io_mode[handle] & _INITIALIZED) ) {
+        __io_mode[handle] |= _INITIALIZED;
         if( isatty( handle ) ) {
-            _iomode[handle] |= _ISTTY;
+            __io_mode[handle] |= _ISTTY;
         }
     }
-    return( _iomode[handle] );
+    return( __io_mode[handle] );
 }
 
 // For F77 to call
@@ -153,29 +84,6 @@ unsigned __GetIOMode( unsigned handle )
 unsigned __IOMode( unsigned handle )
 {
     return( __GetIOMode( handle ) );
-}
-
-signed __SetIOMode( unsigned handle, unsigned value )
-{
-    int         i;
-
-    if( handle >= __NFiles ) {
-        i = __NFiles;           // 20 -> (20+10+1) -> 31
-                                // 31 -> (31+15+1) -> 47
-                                // 47 -> (47+23+1) -> 71
-        __grow_iomode( i + (i > 1) + 1 );
-    }
-    if( handle >= __NFiles ) {
-        // return an error indication (errno should be set to ENOMEM)
-        return( -1 );
-    } else {
-        if( value != 0 ) {
-            _iomode[handle] = value | _INITIALIZED;
-        } else {
-            _iomode[handle] = value;    /* we're closing it; smite _INITIALIZED */
-        }
-        return( handle );
-    }
 }
 #endif
 

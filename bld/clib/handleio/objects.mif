@@ -66,6 +66,7 @@
 !inject read.obj     d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject setmd.obj    d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject setmdunx.obj                                                q16 q32             l32
+!inject stiomode.obj d16 d32             nt nta ntp         o16 o32         w16 w32 osi
 !inject tell.obj     d16 d32                                                w16 w32 osi
 !inject tellos2.obj                                         o16 o32
 !inject tellsnp.obj                                                                         snp drv
