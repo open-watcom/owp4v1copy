@@ -270,6 +270,7 @@ STATIC char *procFlags( const char **argv, const char **log_name )
                     PrtMsg( ERR| INVALID_FILE_OPTION, select, option );
                     Usage();
                 }
+                argv++;
                 checkCtrl( p );
                 switch( toupper( option ) ) {
                 case 'F':
