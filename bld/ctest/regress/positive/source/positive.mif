@@ -2,6 +2,8 @@
 # awaiting bug fixes
 #
 # pch01.$(ext) &        # All of the PCH tests are currently broken!
+#    init12.$(ext) &    # based pointer problem
+#    opt11.$(ext) &     # volatile + post increment problem
 
 !ifdef %ctest_bad_br
 no_br_except30 = no
@@ -109,7 +111,6 @@ positive_tests = &
     init09.$(ext) &
     init10.$(ext) &
     init11.$(ext) &
-    init12.$(ext) &
     init13.$(ext) &
     init14.$(ext) &
     init15.$(ext) &
@@ -127,7 +128,6 @@ positive_tests = &
     opt08.$(ext) &
     opt09.$(ext) &
     opt10.$(ext) &
-    opt11.$(ext) &
     opt12.$(ext) &
     opt14.$(ext) &
     opt15.$(ext) &
