@@ -59,6 +59,9 @@ extern char             *TxtBuff;
 /* this item doesn't really exist, it's just being used for sizeof */
 extern item_mach    Mach;
 
+/***********************************************************************
+  !!!!!! must correspond with enum order (item_type) in dbgitem.h !!!!!
+ ***********************************************************************/
 static unsigned Sizes[] = {
         0,
         sizeof( Mach.ub ),
@@ -67,13 +70,17 @@ static unsigned Sizes[] = {
         sizeof( Mach.sw ),
         sizeof( Mach.ud ),
         sizeof( Mach.sd ),
+        sizeof( Mach.uq ),
+        sizeof( Mach.sq ),
         sizeof( Mach.sf ),
-        sizeof( Mach.xf ),
         sizeof( Mach.lf ),
+        sizeof( Mach.xf ),
         sizeof( Mach.so ),
         sizeof( Mach.lo ),
+        sizeof( Mach.qo ),
         sizeof( Mach.sa ),
         sizeof( Mach.la ),
+        sizeof( Mach.xa ),
         sizeof( Mach.sc ),
         sizeof( Mach.lc ),
         sizeof( Mach.xc ),
@@ -82,7 +89,6 @@ static unsigned Sizes[] = {
         sizeof( Mach.ndscb ),
         sizeof( Mach.fdscb ),
 };
-
 
 void ChangeMemUndoable( address addr, void *item, int size )
 {
