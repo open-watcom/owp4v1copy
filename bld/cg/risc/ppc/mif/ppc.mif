@@ -2,6 +2,7 @@ ppc_objs = &
         ppccall.obj  &
         ppcdfsup.obj &
         ppcenc.obj   &
+        ppcenc2.obj   &
         ppcoptab.obj &
         ppcreg.obj   &
         ppcrtrtn.obj &

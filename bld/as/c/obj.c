@@ -108,7 +108,7 @@ bool ObjInit( char *fname ) {
 //***************************
 
     owl_client_funcs    funcs = {
-        (int (*)( owl_client_file, const char *, int ))write,
+        (int (*)( owl_client_file, const char *, uint ))write,
         (long (*)( owl_client_file ))tell,
         (long (*)( owl_client_file, long, int ))lseek,
         MemAlloc,

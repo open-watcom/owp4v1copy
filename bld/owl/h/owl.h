@@ -142,7 +142,7 @@ typedef void *owl_client_file;
 
 // if you add a field, update owl@copyClientFuncs
 typedef struct {
-    int                 (*write)( owl_client_file, const char *, int );
+    int                 (*write)( owl_client_file, const char *, uint );
     long                (*tell)( owl_client_file );
     long                (*lseek)( owl_client_file, long int, int );
     void *              (*alloc)( size_t );
