@@ -160,7 +160,7 @@ void OMFWalkSymList( obj_file *ofile, sym_file *sfile, void (*rtn)(char*name,sym
 }
 
 
-void OMFLibWalk( libfile io, char *name, void *(rtn)( arch_header *arch, libfile io ) )
+void OMFLibWalk( libfile io, char *name, void (*rtn)( arch_header *arch, libfile io ) )
 {
     long                pagelen, offset, end_offset;
     arch_header         arch;
