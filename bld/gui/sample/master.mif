@@ -13,7 +13,7 @@ rcopt += -i=$(guidir)\$(type);$(guidir)\h;$(sdk_dir)\misc;$(inc_dirs_sys)
 rcopt += -i=$(guidir)\$(type);$(sdk_dir)\misc;$(guidir)\win;$(guidir)\h;$(lang_root)\h\win
 !endif
 
-inc_dirs = $(guidir)\h;$(guidir)\$(type)\h
+inc_dirs = -I"$(guidir)/h" -I"$(guidir)/$(type)/h"
 
 objs =                  &
         dlgstat.obj     &

@@ -12,7 +12,7 @@ gui_type = ui
 
 !include wres.mif
 
-inc_dirs=$(auidir)/h;$(guidir)/h;$(uidir)/h;../h;
+inc_dirs = -I"$(auidir)/h" -I"$(guidir)/h" -I"$(uidir)/h" -I"../h"
 
 auilib = $(auidir)/$(host_os)$(host_cpu)/aui.lib
 guilib = $(guidir)/$(gui_type)/$(host_os)$(host_cpu)/gui.lib
@@ -65,13 +65,13 @@ app.res : ../h/app.rc $(rcfiles)
         $(rc) $(rc_flags) -r $[@ -fo=$@
 
 appj.res : ../h/app.rc $(rcfiles)
-        $(rc) $(rc_flags) -r -dJAPANESE_MESSAGES $[@ -fo=$@
+        $(rc) $(rc_flags) -r -DJAPANESE_MESSAGES $[@ -fo=$@
 
 appui.res : ../h/appui.rc ../h/app.rc $(rcfiles)
-        $(rc_aui) -I$(inc_dirs_sys_win) $[@ -fo=$@
+        $(rc_aui) $(inc_dirs_sys_win) $(inc_path) $[@ -fo=$@
 
 appuij.res : ../h/appui.rc ../h/app.rc $(rcfiles)
-        $(rc_aui) -I$(inc_dirs_sys_win) -dJAPANESE_MESSAGES $[@ -fo=$@
+        $(rc_aui) $(inc_dirs_sys_win) $(inc_path) -DJAPANESE_MESSAGES $[@ -fo=$@
 
 apppm.res apppmj.res : ../h/apppm.rc ../h/app.rc $(rcfiles)
         @set oinc=$(%include)
@@ -98,7 +98,7 @@ auistr.gh : ./auimkstr.exe $(auidir)/h/aui.msg
         $[@ $^@
 
 ./guimkstr.exe: $(gui_dir)/c/mkstr.c $(gui_dir)/h/gui.msg
-        $(bld_cl) -i"$(gui_dir)/h" $(wcl_util_opts) $[@
+        $(bld_cl) -I"$(gui_dir)/h" $(wcl_util_opts) $[@
 
 _guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
         $[@ $^@ $(gui_msg_id_modifier)
