@@ -6,11 +6,17 @@ sys_windowed = 1
 drwatcom_autodepends = .AUTODEPEND
 !endif
 
+.EXTENSIONS: .rc .dlg
+
+exc_name = $(proj_name).exe
+
+all: $(exc_name) .SYMBOLIC
+
 !include cproj.mif
 !include defrule.mif
 !include deftarg.mif
 
-.EXTENSIONS: .rc .dlg
+!include $(wdisasm_dir)/mif/disasm.mif
 
 !ifndef drwatcom_95
 drwatcom_95 = 0
@@ -23,8 +29,6 @@ drwatcom_95 = 0
 !else
         @set include=$(inc_path)
 !endif
-
-exc_name = $(proj_name).exe
 
 msgfiles = $(sdk_misc)/about.msg $(sdk_misc)/savelbox.msg &
            $(sdk_misc)/memwnd.msg $(dig_dir)/h/mad.str
@@ -57,7 +61,6 @@ extra_l_flags_win = lib toolhelp.lib,commdlg.lib,$(misc_dir)/ctl3d.lib
 dig_os = $(host_OS)
 !include $(dig_dir)/mif/dipcli.mif
 !include $(dig_dir)/mif/madcli.mif
-!include $(wdisasm_dir)/mif/disasm.mif
 
 extra_proj_obj_nt = global.obj param.obj procctl.obj dipcli.obj memory.obj &
             drproc.obj handler.obj memview.obj proclist.obj thrdctl.obj &
@@ -78,7 +81,7 @@ extra_proj_obj_win = globals.obj notify.obj winproc.obj debug.obj dump.obj &
             win32app.obj lddips.obj stack.obj &
             mythelp.obj intdata.obj inth.obj dbg386.obj sdkasm.obj &
             ismod32.obj segmem.obj segmem2.obj getsaddr.obj getcsip.obj &
-            $(disasm)
+            $(dis_objs)
 
 proj_obj =   mem.obj listbox.obj log.obj wwinhelp.obj stat.obj lognote.obj &
             drwatcom.obj sym.obj profile.obj fault.obj &
@@ -88,15 +91,15 @@ proj_obj =   mem.obj listbox.obj log.obj wwinhelp.obj stat.obj lognote.obj &
             $(dip_objs)
 
 .asm : .;$(sdk_misc)
-.c : ..;$(common_dir);$(dig_srcs);$(mad_srcs);$(sdk_misc);$(wdisasm_dir)/c
+.c : ..;$(common_dir);$(dig_srcs);$(mad_srcs);$(sdk_misc);$(dis_srcs)
 .rc: ..;$(common_dir);$(sdk_misc)
 
-inc_dirs=.;..;$(common_dir);$(dig_dir)/h;$(sdk_misc);$(wdisasm_dir)/h;
+inc_dirs=.;..;$(common_dir);$(dig_dir)/h;$(sdk_misc);$(dis_includes);
 
 #explicit rules
 ################
 
-$(exc_name) : rcstr.gh $(link_name) $(proj_name).res $(proj_obj)
+$(exc_name) : rcstr.gh $(dis_prereq) $(link_name) $(proj_name).res $(proj_obj)
         $(linker) @$(link_name)
         $(rc) $(rc_flags) -k $(proj_name).res $^@
 
