@@ -56,8 +56,10 @@ static void ReadCUAbbrevTable( struct dr_dbg_info *dbg, compunit_info *compunit 
     // if a previous compilation unit shares the same table, reuse it
     for( cu = &(dbg->compunit); cu != compunit; cu = cu->next ) {
         if( cu->abbrev_start == compunit->abbrev_start ) {
-            compunit->numabbrevs = cu->numabbrevs;
-            compunit->abbrevs    = cu->abbrevs;
+            compunit->numabbrevs  = cu->numabbrevs;
+            compunit->abbrevs     = cu->abbrevs;
+            compunit->abbrev_refs = cu->abbrev_refs;
+            ++(*compunit->abbrev_refs); // increase abbrevs reference count
             return;
         }
     }
@@ -66,7 +68,7 @@ static void ReadCUAbbrevTable( struct dr_dbg_info *dbg, compunit_info *compunit 
     memset( abbrevs, 0, sizealloc * sizeof(dr_handle) );
     maxnum = 0;
     start = dbg->sections[DR_DEBUG_ABBREV].base + compunit->abbrev_start;
-    finish = start + dbg->sections[DR_DEBUG_ABBREV].size;
+    finish = dbg->sections[DR_DEBUG_ABBREV].base + dbg->sections[DR_DEBUG_ABBREV].size;
     while( start < finish ) {
         code = DWRVMReadULEB128( &start );
         if( code == 0 ) break;                  // indicates end of table
@@ -93,6 +95,8 @@ static void ReadCUAbbrevTable( struct dr_dbg_info *dbg, compunit_info *compunit 
     }
     compunit->numabbrevs = maxnum + 1;
     compunit->abbrevs = abbrevs;
+    compunit->abbrev_refs = DWRALLOC( sizeof(unsigned) );
+    *compunit->abbrev_refs = 1;
 }
 
 static void ReadAbbrevTable( struct dr_dbg_info *dbg )
@@ -321,7 +325,12 @@ void DRDbgFini( dr_dbg_handle dbg )
         next = compunit->next;
         DWRFiniFileTable( &compunit->filetab, FALSE );
         if( compunit->abbrevs != NULL ) {
-            DWRFREE( compunit->abbrevs );
+            if( --(*compunit->abbrev_refs) == 0 ) {
+                DWRFREE( compunit->abbrevs );
+                DWRFREE( compunit->abbrev_refs );
+            }
+            compunit->abbrevs = NULL;
+            compunit->abbrev_refs = NULL;
         }
         DWRFREE( compunit );
         compunit = next;

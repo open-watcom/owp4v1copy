@@ -76,6 +76,7 @@ typedef struct COMPUNIT_INFO {
     unsigned                    numabbrevs;
     dr_handle                   abbrev_start;   // offset into abbrev section
     dr_handle                   *abbrevs;       // variable length array
+    unsigned                    *abbrev_refs;   // abbrevs reference counter
 } compunit_info;
 
 #if 0
