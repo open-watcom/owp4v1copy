@@ -141,6 +141,7 @@ extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
   #pragma aux   __Get87CW = \
                 "push 0"\
         float   "fstcw [esp]"\
+        float   "fwait"\
                 "pop eax"\
                 value [eax];
   #pragma aux   __Set87CW = \
@@ -193,6 +194,7 @@ extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
                 "push  eax"\
                 "push  eax"\
         float   "fstcw [esp]"\
+        float   "fwait"\
                 "pop eax"\
                 "push eax"\
                 "or ah,0x0c"\
@@ -258,6 +260,7 @@ extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
                 "push bp"\
                 "mov  bp,sp"\
         float   "fstcw 2[bp]"\
+        float   "fwait"\
                 "pop bp"\
                 "pop ax"\
                 value [ax];
@@ -326,6 +329,7 @@ extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
                 "push ax"\
                 "mov  bp,sp"\
         float   "fstsw 0[bp]"\
+        float   "fwait"\
                 "pop  ax"\
                 "sahf"\
                 "sbb  dx,dx"\
@@ -345,6 +349,7 @@ extern int  __FLDC(long_double _WCNEAR *,long_double _WCNEAR *);
                 "push ax"\
                 "mov  bp,sp"\
         float   "fstcw [bp]"\
+        float   "fwait"\
                 "pop  ax"\
                 "push ax"\
                 "or   ah,0x0c"\
