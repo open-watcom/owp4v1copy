@@ -733,6 +733,7 @@ BOOL  APIENTRY WinGetMinPosition(HWND,PSWP,PPOINTL);
 #define HK_PLIST_EXIT      10
 #define HK_FINDWORD        11
 #define HK_CODEPAGECHANGED 12
+#define HK_CALLHOOK        13
 #define HMQ_CURRENT  ((HMQ)1)
 
 #define MSGF_DIALOGBOX  1
