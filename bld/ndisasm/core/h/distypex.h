@@ -32,6 +32,7 @@
 
 #ifndef DISTYPEX_H
 #include "watcom.h"
+#include "bool.h"
 
 #define DISCPU_none     0x00
 #define DISCPU_axp      0x01
@@ -289,6 +290,7 @@ typedef struct  dis_cpu_data    dis_cpu_data;
 struct dis_handle {
     unsigned            cpu;
     const dis_cpu_data  *d;
+    bool                need_bswap;
 };
 
 #define DISTYPEX_H

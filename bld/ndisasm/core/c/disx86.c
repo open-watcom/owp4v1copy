@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Instruction decoding for x86 architecture.
 *
 ****************************************************************************/
 
@@ -4010,8 +4009,13 @@ static dis_handler_return X86DecodeTableCheck( int page, dis_dec_ins *ins )
     }
 }
 
+static void X86ByteSwapHook( dis_handle *h, void *d, dis_dec_ins *ins )
+{
+    // Nothing to do here - instruction will be decoded byte by byte
+}
+
 const dis_cpu_data X86Data = {
-    X86RangeTable, X86RangeTablePos, X86DecodeTableCheck, X86InsHook, X86FlagHook, X86OpHook, &X86MaxInsName, 1
+    X86RangeTable, X86RangeTablePos, X86ByteSwapHook, X86DecodeTableCheck, X86InsHook, X86FlagHook, X86OpHook, &X86MaxInsName, 1
 };
 
 #endif

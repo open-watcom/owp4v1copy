@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  CPU independent instruction decoding core.
 *
 ****************************************************************************/
 
@@ -93,7 +92,7 @@ dis_handler_return DisDummyHandler( dis_handle *h, void *d, dis_dec_ins *ins )
     return( DHR_INVALID );
 }
 
-dis_return DisInit( dis_cpu cpu, dis_handle *h )
+dis_return DisInit( dis_cpu cpu, dis_handle *h, bool swap_bytes )
 // Perform all setup required
 {
     h->cpu = cpu;
@@ -127,6 +126,7 @@ dis_return DisInit( dis_cpu cpu, dis_handle *h )
         return( DR_FAIL );
     }
     if( h->d->range == NULL ) return( DR_FAIL );
+    h->need_bswap = swap_bytes;
     return( DR_OK );
 }
 
@@ -176,6 +176,7 @@ dis_return DisDecode( dis_handle *h, void *d, dis_dec_ins *ins )
     for( ;; ) {
         dr = DisCliGetData( d, start, sizeof( ins->opcode ), &ins->opcode );
         if( dr != DR_OK ) return( dr );
+        h->d->bswap_hook( h, d, ins );
         page = 0;
         for( pos = h->d->range_pos ; *pos != -1 ; ++pos, ++page ) {
             if( h->d->decode_check( page, ins ) != DHR_DONE )

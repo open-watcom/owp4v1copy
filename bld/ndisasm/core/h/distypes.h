@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Internal disassembler types.
 *
 ****************************************************************************/
 
@@ -57,6 +56,7 @@ typedef signed_16       dis_selector;
 struct dis_cpu_data {
     const dis_range     *range;
     const int           *range_pos;
+    void                (*bswap_hook)( dis_handle *, void *, dis_dec_ins * );
     dis_handler_return  (*decode_check)( int, dis_dec_ins * );
     unsigned            (*ins_hook)( dis_handle *, void *, dis_dec_ins *, dis_format_flags, char *ins );
     unsigned            (*flag_hook)( dis_handle *, void *, dis_dec_ins *, dis_format_flags, char *ins );

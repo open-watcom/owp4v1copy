@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Instruction decoding for PowerPC architecture.
 *
 ****************************************************************************/
 
@@ -1296,8 +1295,19 @@ static dis_handler_return PPCDecodeTableCheck( int page, dis_dec_ins *ins )
     return( DHR_DONE );
 }
 
+static void PPCByteSwapHook( dis_handle *h, void *d, dis_dec_ins *ins )
+{
+    if( h->need_bswap ) {
+#ifdef __BIG_ENDIAN__
+        CONV_LE_32( ins->opcode );
+#else
+        CONV_BE_32( ins->opcode );
+#endif
+    }
+}
+
 const dis_cpu_data PPCData = {
-    PPCRangeTable, PPCRangeTablePos, PPCDecodeTableCheck, PPCInsHook, PPCFlagHook, PPCOpHook, &PPCMaxInsName, 4
+    PPCRangeTable, PPCRangeTablePos, PPCByteSwapHook, PPCDecodeTableCheck, PPCInsHook, PPCFlagHook, PPCOpHook, &PPCMaxInsName, 4
 };
 
 #endif

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  External disassembler routines.
 *
 ****************************************************************************/
 
@@ -35,7 +34,7 @@
 /*
         Disassembler routines
 */
-extern dis_return       DisInit( dis_cpu, dis_handle * );
+extern dis_return       DisInit( dis_cpu, dis_handle *, bool );
 extern unsigned         DisInsNameMax( dis_handle * );
 extern unsigned         DisInsSizeInc( dis_handle * );
 extern void             DisDecodeInit( dis_handle *, dis_dec_ins * );

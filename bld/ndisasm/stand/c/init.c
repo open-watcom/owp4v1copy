@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Standalone disassembler initialization routines.
 *
 ****************************************************************************/
 
@@ -576,6 +575,7 @@ static return_val initORL( void )
     orl_machine_type    machine_type;
     orl_return          error = OKAY;
     orl_file_format     type;
+    bool                byte_swap;
 
     oFuncs.alloc = &MemAlloc;
     oFuncs.free = &MemFree;
@@ -590,18 +590,31 @@ static return_val initORL( void )
         }
         ObjFileHnd = ORLFileInit( ORLHnd, NULL, type );
         if( ObjFileHnd ) {
+            // check byte order
+            flags = ORLFileGetFlags( ObjFileHnd );
+            byte_swap = FALSE;
+#ifdef __BIG_ENDIAN__
+            if( flags & ORL_FILE_FLAG_LITTLE_ENDIAN ) {
+                byte_swap = TRUE;
+            }
+#else
+            if( flags & ORL_FILE_FLAG_BIG_ENDIAN ) {
+                byte_swap = TRUE;
+            }
+#endif
+
             // check intended machine type
             machine_type = GetMachineType();
             switch( machine_type ) {
             case ORL_MACHINE_TYPE_ALPHA:
-                if( DisInit( DISCPU_axp, &DHnd ) != DR_OK ) {
+                if( DisInit( DISCPU_axp, &DHnd, byte_swap ) != DR_OK ) {
                     ORLFini( ORLHnd );
                     PrintErrorMsg( OKAY, WHERE_UNSUPPORTED_PROC );
                     return( ERROR );
                 }
                 break;
             case ORL_MACHINE_TYPE_PPC601:
-                if( DisInit( DISCPU_ppc, &DHnd ) != DR_OK ) {
+                if( DisInit( DISCPU_ppc, &DHnd, byte_swap ) != DR_OK ) {
                     ORLFini( ORLHnd );
                     PrintErrorMsg( OKAY, WHERE_UNSUPPORTED_PROC );
                     return( ERROR );
@@ -613,7 +626,7 @@ static return_val initORL( void )
                 break;
             case ORL_MACHINE_TYPE_I386:
             case ORL_MACHINE_TYPE_I8086:
-                if( DisInit( DISCPU_x86, &DHnd ) != DR_OK ) {
+                if( DisInit( DISCPU_x86, &DHnd, byte_swap ) != DR_OK ) {
                     ORLFini( ORLHnd );
                     PrintErrorMsg( OKAY, WHERE_UNSUPPORTED_PROC );
                     return( ERROR );
@@ -624,14 +637,6 @@ static return_val initORL( void )
                     PrintErrorMsg( OKAY, WHERE_UNSUPPORTED_PROC );
                     return( ERROR );
             }
-            // check byte order
-            flags = ORLFileGetFlags( ObjFileHnd );
-#if 0   /* MS doesn't set the flags consistently :-( */
-            if( !(flags & ORL_FILE_FLAG_LITTLE_ENDIAN) ) {
-                PrintErrorMsg( OKAY, WHERE_BIT_ENDIAN );
-                error = ERROR;
-            }
-#endif
         } else {
             error = ORLGetError( ORLHnd );
             // An "out of memory" error is not necessarily what it seems.

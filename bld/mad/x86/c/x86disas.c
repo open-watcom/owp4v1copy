@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  MAD interface to disassembler
+* Description:  MAD interface to x86 disassembler.
 *
 ****************************************************************************/
 
@@ -943,7 +943,7 @@ unsigned DisCliValueString( void *d, dis_dec_ins *ins, unsigned opnd, char *buff
 
 mad_status DisasmInit()
 {
-    if( DisInit( DISCPU_x86, &DH ) != DR_OK ) {
+    if( DisInit( DISCPU_x86, &DH, FALSE ) != DR_OK ) {
         return( MS_ERR | MS_FAIL );
     }
     return( MS_OK );

@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Instruction decoding for Alpha AXP architecture.
 *
 ****************************************************************************/
 
@@ -574,8 +573,19 @@ static dis_handler_return AXPDecodeTableCheck( int page, dis_dec_ins *ins )
     return( DHR_DONE );
 }
 
+static void AXPByteSwapHook( dis_handle *h, void *d, dis_dec_ins *ins )
+{
+    if( h->need_bswap ) {
+#ifdef __BIG_ENDIAN__
+        CONV_LE_32( ins->opcode );
+#else
+        CONV_BE_32( ins->opcode );
+#endif
+    }
+}
+
 const dis_cpu_data AXPData = {
-    AXPRangeTable, AXPRangeTablePos, AXPDecodeTableCheck, AXPInsHook, AXPFlagHook, AXPOpHook, &AXPMaxInsName, 4
+    AXPRangeTable, AXPRangeTablePos, AXPByteSwapHook, AXPDecodeTableCheck, AXPInsHook, AXPFlagHook, AXPOpHook, &AXPMaxInsName, 4
 };
 
 #endif
