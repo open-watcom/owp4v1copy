@@ -557,13 +557,6 @@ extern void WLPrtBanner( void )
     if( !BannerPrinted ) {
         msg = MsgStrings[ PRODUCT ];
         WriteInfoStdOut( msg, BANNER, NULL );
-
-#ifndef NDEBUG
-        WriteInfoStdOut( "                            TEST VERSION", BANNER, NULL );
-        WriteInfoStdOut( "WARNING: This is a test release version of the Open Watcom linker!", BANNER, NULL );
-        WriteInfoStdOut( "                            TEST VERSION", BANNER, NULL );
-#endif
-
         msg = MsgStrings[ COPYRIGHT ];
         WriteInfoStdOut( msg, BANNER, NULL );
         msg = MsgStrings[ TRADEMARK ];
