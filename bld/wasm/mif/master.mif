@@ -10,7 +10,7 @@ link_name = $(proj_name).lnk
 
 .OPTIMIZE
 
-inc_dirs = $(wasm_dir)\h;$(womp_dir)\h;$(womp_dir);$(trmem_dir)
+inc_dirs = ..\h;$(womp_dir)\h;$(womp_dir);$(trmem_dir)
 
 .BEFORE
         @set include=$(inc_path)
@@ -29,7 +29,7 @@ extra_c_flags_386 = /fpc
 extra_l_flags = option map,quiet,symfile,stack=12k
 extra_l_flags_qnx = option offset=16k, res=usage.u
 
-.c      : $(wasm_dir)\c;$(womp_dir)\c;$(trmem_dir)
+.c      : ..\c;$(womp_dir)\c;$(trmem_dir)
 
 
 proj_obj =   $(extra_proj_obj_$(host_OS)_$(host_CPU)) &
@@ -85,7 +85,7 @@ proj_obj += trmem.obj trmemcvr.obj
 #explicit rules
 ######
 
-$(exc_name) : $(wasm_dir)\h\fullops.h $(wasm_dir)\h\inlnops.h $(link_name) $(proj_name).res $(proj_obj)
+$(exc_name) : ..\h\fullops.h ..\h\inlnops.h $(link_name) $(proj_name).res $(proj_obj)
 !ifeq  host_OS qnx
         @%make usage.u
 !endif
@@ -114,46 +114,46 @@ $(link_name) : $(__MAKEFILES__)
 ###################################################################
 # resource stuff
 
-$(proj_name).res : $(wasm_dir)/h/$(proj_name).rc $(wasm_dir)/h/asmshare.msg $(wasm_dir)/h/$(proj_name).msg usage.rc usagej.rc $(wasm_dir)/h/msg.gh $(wasm_dir)/h/wasmmsg.gh
-        $(RC) /bt=windows /d_WASM_ /r /zk0 /fo=$^@ $(wasm_dir)\h\$(proj_name).rc
+$(proj_name).res : ../h/$(proj_name).rc ../h/asmshare.msg ../h/$(proj_name).msg usage.rc usagej.rc ../h/msg.gh ../h/wasmmsg.gh
+        $(RC) /bt=windows /d_WASM_ /r /zk0 /fo=$^@ ..\h\$(proj_name).rc
 
-usage.rc : $(wasm_dir)/h/usage.sp
-        $(bld_bin)\wsplice -kIS_RC -kENGLISH -k$(host_OS) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" $(wasm_dir)/h/usage.sp usage.rc
+usage.rc : ../h/usage.sp
+        $(bld_bin)\wsplice -kIS_RC -kENGLISH -k$(host_OS) -t8 -f "%+(MSG_USE_E_BASE+%$#-1), \"%s\"" ../h/usage.sp usage.rc
 
-usagej.rc : $(wasm_dir)/h/usage.sp
-        $(bld_bin)\wsplice -kIS_RC -kJAPANESE -k$(host_OS) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" $(wasm_dir)/h/usage.sp usagej.rc
+usagej.rc : ../h/usage.sp
+        $(bld_bin)\wsplice -kIS_RC -kJAPANESE -k$(host_OS) -t8 -f "%+(MSG_USE_J_BASE+%$#-1), \"%s\"" ../h/usage.sp usagej.rc
 
-$(wasm_dir)/h/msg.gh : $(wasm_dir)/h/asmshare.msg
+../h/msg.gh : ../h/asmshare.msg
         @SET OLD_CWD=$+$(%cwd)$-
-        @cd $(wasm_dir)\h
+        @cd ..\h
         vi -d -i "-k:g!/^pick/d\n:w!t.msg\n:q!\n" asmshare.msg
         vi -d -s makemsg.vi t.msg
         del t.msg
         @cd $(%OLD_CWD)
 
-$(wasm_dir)/h/wasmmsg.gh : $(wasm_dir)/h/$(proj_name).msg
+../h/wasmmsg.gh : ../h/$(proj_name).msg
         @SET OLD_CWD=$+$(%cwd)$-
-        @cd $(wasm_dir)\h
+        @cd ..\h
         vi -q -d -i "-k:g!/^pick/d\n:w!t.msg\n:q!\n" $(proj_name).msg
         vi -d -s makewmsg.vi t.msg
         del t.msg
         @cd $(%OLD_CWD)
 
-usage.u : $(wasm_dir)/h/usage.sp
-        $(bld_bin)\wsplice -kENGLISH -k$(host_OS) -t8 -u $(wasm_dir)/h/usage.sp usage.u
+usage.u : ../h/usage.sp
+        $(bld_bin)\wsplice -kENGLISH -k$(host_OS) -t8 -u ../h/usage.sp usage.u
 
-usagej.u : $(wasm_dir)/h/usage.sp
-        $(bld_bin)\wsplice -kJAPANESE -k$(host_OS) -t8 -u $(wasm_dir)/h/usage.sp usagej.u
+usagej.u : ../h/usage.sp
+        $(bld_bin)\wsplice -kJAPANESE -k$(host_OS) -t8 -u ../h/usage.sp usagej.u
 
 ###################################################################
 
-$(wasm_dir)\h\inlnops.h: $(wasm_dir)\inlnops.tok $(wasm_dir)\mkopcode.exe
-        $(wasm_dir)\mkopcode $(wasm_dir)\inlnops.tok $^@
+..\h\inlnops.h: ..\inlnops.tok ..\mkopcode.exe
+        ..\mkopcode ..\inlnops.tok $^@
 
-$(wasm_dir)\h\fullops.h: $(wasm_dir)\fullops.tok $(wasm_dir)\inlnops.tok $(wasm_dir)\mkopcode.exe
-        $(wasm_dir)\mkopcode $(wasm_dir)\fullops.tok $(wasm_dir)\inlnops.tok $^@
+..\h\fullops.h: ..\fullops.tok ..\inlnops.tok ..\mkopcode.exe
+        ..\mkopcode ..\fullops.tok ..\inlnops.tok $^@
 
-$(wasm_dir)\mkopcode.exe: $(wasm_dir)\mkopcode.c
+..\mkopcode.exe: ..\mkopcode.c
         $(bld_cl) $[@ /fe=$^@
         del mkopcode.obj
 
@@ -172,8 +172,8 @@ clean: .SYMBOLIC .EXPLICIT
         @if exist *.tmp @del *.tmp
         @if exist *.ilk @del *.ilk
         @if exist *.gh  @del *.gh
-	@if exist $(wasm_dir)\h\msg.gh @del $(wasm_dir)\h\msg.gh
-	@if exist $(wasm_dir)\h\wasmmsg.gh @del $(wasm_dir)\h\wasmmsg.gh
-	@if exist $(wasm_dir)\h\inlnops.h @del $(wasm_dir)\h\inlnops.h
-	@if exist $(wasm_dir)\h\fullops.h @del $(wasm_dir)\h\fullops.h
-	@if exist $(wasm_dir)\mkopcode.exe @del $(wasm_dir)\mkopcode.exe
+	@if exist ..\h\msg.gh @del ..\h\msg.gh
+	@if exist ..\h\wasmmsg.gh @del ..\h\wasmmsg.gh
+	@if exist ..\h\inlnops.h @del ..\h\inlnops.h
+	@if exist ..\h\fullops.h @del ..\h\fullops.h
+	@if exist ..\mkopcode.exe @del ..\mkopcode.exe
