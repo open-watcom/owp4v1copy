@@ -800,6 +800,9 @@ static void get_fname( char *token, int type )
             ext = type == ERR ? ERR_EXT : OBJ_EXT;
         }
         _makepath( name, drive, dir, fname, ext );
+        if( AsmFiles.fname[type] != NULL ) {
+            AsmFree( AsmFiles.fname[type] );
+        }
         AsmFiles.fname[type] = AsmAlloc( strlen( name ) + 1 );
         strcpy( AsmFiles.fname[type], name );
     }
