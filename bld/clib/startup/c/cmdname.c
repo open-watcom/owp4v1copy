@@ -54,7 +54,7 @@ _WCRTLINK char *_cmdname( char *name )
     if (result == -1 || result == PATH_MAX)
         return( strcpy( name, _argv[0] ) );
 
-    /* readlink does add a NUL so we need to do it ourselves */
+    /* readlink does not add a NUL so we need to do it ourselves */
     name[result] = '\0';
     return name;
 }
