@@ -205,7 +205,7 @@ int FAR PASCAL LibMain( HANDLE hDll, DWORD reason, LPVOID res )
     res = res;
     reason = reason;
 
-    hInstance = hDll;
+    hInstance = (HINSTANCE) hDll;
     return( 1 );
 }
 #else
@@ -217,7 +217,7 @@ int FAR PASCAL LibMain( HANDLE hInst, WORD wDataSeg, WORD wHeapSize,
     wHeapSize = wHeapSize;
     lpszCmdLine = lpszCmdLine;
 
-    hInstance = hInst;
+    hInstance = (HINSTANCE) hInst;
 
     return( 1 );
 }

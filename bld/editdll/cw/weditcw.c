@@ -304,7 +304,7 @@ int extern __export FAR PASCAL EDITDisconnect( void )
 
     if( bAppSpawned ) {
         // look for a window with class name szClassName
-        lpEnumWnd = (FONTENUMPROC) MakeProcInstance( (FARPROC) EnumWnd,
+        lpEnumWnd = (WNDENUMPROC) MakeProcInstance( (FARPROC) EnumWnd,
                                                      hInstance );
         EnumWindows( lpEnumWnd, (LPARAM)&hwndCodewright );
         FreeProcInstance( (FARPROC) lpEnumWnd );
