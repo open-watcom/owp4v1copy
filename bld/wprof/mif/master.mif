@@ -101,7 +101,7 @@ $(fname).$(exe) : eraseall.obj _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_o
 !ifdef resfile
 !ifeq sys_windowed 1
 !ifeq host_OS os2
-    $(rc) $(rc_flags) $(resfile) $^@
+    $(rc_os2) $(rc_flags) $(resfile) $^@
 !else
     $(rc) $(rc_flags) -k $(resfile) $^@
 !endif
@@ -128,8 +128,7 @@ wprofgui.res : ../h/wprofgui.rc
 
 !endif
 
-        $(rc_os2) -i $(inc_dirs_sys) -r ..\h\foros2pm.rc
-        cp foros2pm.res wprofgui.res
+        $(rc_os2) -i $(inc_dirs_sys) -r ..\h\foros2pm.rc wprofgui.res
 
 !ifndef %use_os2tk_stuff
 
