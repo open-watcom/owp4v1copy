@@ -1,0 +1,21 @@
+!include $(bench_dir)\mif\bench.mif
+
+.c: $(bench_dir)\support
+.h: $(bench_dir)\support
+
+extra_includes	= $(bench_dir)\support
+extra_cflags	=
+
+obj_files = timer.obj report.obj
+
+support.lib : $(obj_files)
+	%make lib
+
+lib: .PROCEDURE
+!ifeq compiler watcom
+	@if exist tmp.clb @erase tmp.clb
+	@for %i in ($?) do @%append tmp.clb -+%i
+	wlib -b -q $* @tmp.clb
+!else
+	lib $^. $?
+!endif

@@ -1,0 +1,56 @@
+!ifndef cflags_watcom
+cflags_watcom   = -otexan -d1 -zq -w3 -zm -fpi87 -fp5 -5s $(extra_w_opts)
+# cflags_watcom = -obmilertan -s -d1 -zq -w3 $(extra_w_opts)
+!endif
+!ifndef cflags_msvc
+cflags_msvc     = -c -O2 -Ox -nologo $(extra_m_opts)
+!endif
+
+lflags_watcom   = sys $(host_os) debug all op quiet op map
+lflags_msvc     = -nologo
+
+!ifeq compiler watcom
+cc  = wcc386
+cpp = wpp386
+
+.before:
+        @set include=$(lang_root)\h;$(lang_root)\h\nt
+
+.c.obj:
+        $(cc) $(cflags_watcom) $(extra_cflags) $(extra_defines) $[@
+
+.cpp.obj:
+        $(cpp) $(cflags_watcom) $(extra_cflags) $(extra_defines) $[@
+
+deflink = wlink $(lflags_watcom) name $^. file { $< } lib $(bench_dir)\support\watcom\support.lib
+
+!else
+!ifeq compiler msvc
+.before:
+        @set include=$(msvc_root)\include
+
+.c.obj:
+        $(msvc_root)\bin\cl $(cflags_msvc) $(extra_cflags) $(extra_defines) $[@
+
+.cpp.obj:
+        $(msvc_root)\bin\cl $(cflags_msvc) $(extra_cflags) $(extra_defines) $[@
+
+deflink = $(msvc_root)\bin\link $(lflags_msvc) /out:$^. $(bench_dir)\support\msvc\support.lib $<
+!else
+# !error unknown compiler
+!endif
+!endif
+
+clean: .SYMBOLIC .EXPLICIT
+        @if exist *.?bj del *.?bj
+        @if exist *.lnk del *.lnk
+        @if exist *.exe del *.exe
+        @if exist *.lib del *.lib
+        @if exist *.res del *.res
+        @if exist *.clb del *.clb
+        @if exist *.lst del *.lst
+        @if exist *.err del *.err
+        @if exist *.map del *.map
+        @if exist *.sym del *.sym
+        @if exist *.tmp del *.tmp
+        @if exist *.out del *.out
