@@ -1,5 +1,34 @@
 # Manifest file for C++ runtime library header files
 
+h\cassert
+h\cctype
+h\cerrno
+h\cfloat
+h\ciso646
+h\climits
+h\clocale
+h\cmath
+h\csetjmp
+h\csignal
+h\cstdarg
+h\cstddef
+h\cstdio
+h\cstdlib
+h\cstring
+h\ctime
+h\cwchar
+h\cwctype
+h\fstream
+h\iomanip
+h\ios
+h\iosfwd
+h\iostream
+h\istream
+h\iterator
+h\memory
+h\ostream
+h\streambu
+h\strstrea
 h\complex.h
 h\except.h
 h\exceptio.h
@@ -31,4 +60,3 @@ h\wcskipit.h
 h\wcstack.h
 h\wcvbase.h
 h\wcvector.h
-
