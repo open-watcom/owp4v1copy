@@ -964,11 +964,11 @@ GetLimit PROC NEAR
         mov     ax,dx                           ; move in low 16 bits
         mov     dx,Desc4
         test    dx,080h                         ; page granularity?
-        jz      short small                     ; nope
+        jz      short small1                    ; nope
         inc     eax                             ; yes, then
         shl     eax,0ch                         ;    get real limit
         dec     eax                             ; make it limit-1
-small:
+small1:
         ret
 GetLimit ENDP
 
