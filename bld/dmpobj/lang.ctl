@@ -15,10 +15,15 @@ cdsay .
 
 [ BLOCK <1> rel2 cprel2 ]
 #========================
+[ IFEQU os_dos <*>]
     <CPCMD> <PROJDIR>/dos386/dmpobj.exe    <RELROOT>/rel2/binw/dmpobj.exe
+[ ELSEIFEQU os_os2 <*> ]
     <CPCMD> <PROJDIR>/os2386/dmpobj.exe    <RELROOT>/rel2/binp/dmpobj.exe
+[ ELSEIFEQU os_nt <*> ]
     <CPCMD> <PROJDIR>/nt386/dmpobj.exe     <RELROOT>/rel2/binnt/dmpobj.exe
+[ ELSEIFEQU os_linux <*> ]
     <CPCMD> <PROJDIR>/linux386/dmpobj.exe  <RELROOT>/rel2/binl/dmpobj
+[ ENDIF ]
 
 [ BLOCK <1> clean ]
 #==================
