@@ -78,7 +78,6 @@ $(docsrc_dir)\cl\float.gml &
 $(docsrc_dir)\cl\float370.gml &
 $(docsrc_dir)\cl\float87.gml &
 $(docsrc_dir)\cl\fltround.gml &
-$(docsrc_dir)\cl\fmt.bat &
 $(docsrc_dir)\cl\function.gml &
 $(docsrc_dir)\cl\glossary.gml &
 $(docsrc_dir)\cl\grammar.gml &
@@ -135,7 +134,7 @@ $(docsrc_dir)\cl\void.gml &
 $(docsrc_dir)\cl\volatile.gml
 
 # cmn sub-directory
-incs_cmn = $(docsrc_dir)\cmn 
+incs_cmn = $(docsrc_dir)\cmn
 objs_cmn = &
 $(docsrc_dir)\cmn\386arch.gml &
 $(docsrc_dir)\cmn\86arch.gml &
@@ -323,7 +322,7 @@ $(docsrc_dir)\fg\wfcerrs.gml &
 $(docsrc_dir)\fg\wfcopts.gml
 
 # fl sub-directory
-incs_fl = $(docsrc_dir)\fl &
+incs_fl = $(docsrc_dir)\fl
 objs_fl = &
 $(docsrc_dir)\fl\alloc.for &
 $(docsrc_dir)\fl\appoint.for &
@@ -482,7 +481,6 @@ bmroot_gs = $(docsrc_dir)\gs
 incs_gs = $(docsrc_dir)\gs
 objs_gs = &
 $(docsrc_dir)\gs\bench.gml &
-$(docsrc_dir)\gs\bmpide.bat &
 $(docsrc_dir)\gs\c10mfc.gml &
 $(docsrc_dir)\gs\c_readme.gml &
 $(docsrc_dir)\gs\cbooks.bmp &
@@ -606,14 +604,6 @@ $(docsrc_dir)\gui\snaps\acc8.ps &
 $(docsrc_dir)\gui\snaps\acc9.bmp &
 $(docsrc_dir)\gui\snaps\acc9.ps &
 $(docsrc_dir)\gui\snaps\bmatch.bmp &
-$(docsrc_dir)\gui\snaps\bmpacc.bat &
-$(docsrc_dir)\gui\snaps\bmpdia.bat &
-$(docsrc_dir)\gui\snaps\bmpide.bat &
-$(docsrc_dir)\gui\snaps\bmpimg.bat &
-$(docsrc_dir)\gui\snaps\bmpmnu.bat &
-$(docsrc_dir)\gui\snaps\bmpres.bat &
-$(docsrc_dir)\gui\snaps\bmpstr.bat &
-$(docsrc_dir)\gui\snaps\bmpwed.bat &
 $(docsrc_dir)\gui\snaps\brow1.bmp &
 $(docsrc_dir)\gui\snaps\brow1.ps &
 $(docsrc_dir)\gui\snaps\brow10.bmp &
@@ -976,7 +966,7 @@ $(docsrc_dir)\gui\snaps\wprof08.ps &
 $(docsrc_dir)\gui\snaps\wzm1.bmp &
 $(docsrc_dir)\gui\snaps\wzm1.ps &
 $(docsrc_dir)\gui\snaps\wzm2.bmp &
-$(docsrc_dir)\gui\snaps\wzm2.ps 
+$(docsrc_dir)\gui\snaps\wzm2.ps
 
 # isv sub-directory
 bmroot_isv = $(docsrc_dir)\isv
@@ -1322,7 +1312,6 @@ $(docsrc_dir)\lr\src\clock.gml &
 $(docsrc_dir)\lr\src\close.gml &
 $(docsrc_dir)\lr\src\closedir.gml &
 $(docsrc_dir)\lr\src\cmanmac.gml &
-$(docsrc_dir)\lr\src\co.bat &
 $(docsrc_dir)\lr\src\control8.gml &
 $(docsrc_dir)\lr\src\controlf.gml &
 $(docsrc_dir)\lr\src\cos.gml &
@@ -1359,7 +1348,6 @@ $(docsrc_dir)\lr\src\dosexter.gml &
 $(docsrc_dir)\lr\src\dosfind.gml &
 $(docsrc_dir)\lr\src\dosfindn.gml &
 $(docsrc_dir)\lr\src\dospm.lst &
-$(docsrc_dir)\lr\src\dumplibs.bat &
 $(docsrc_dir)\lr\src\dumplibs.ed2 &
 $(docsrc_dir)\lr\src\dumplibs.lst &
 $(docsrc_dir)\lr\src\dumplibs.prg &
@@ -1449,7 +1437,6 @@ $(docsrc_dir)\lr\src\globdata.gml &
 $(docsrc_dir)\lr\src\gmtime.gml &
 $(docsrc_dir)\lr\src\graph.lst &
 $(docsrc_dir)\lr\src\grmacs.gml &
-$(docsrc_dir)\lr\src\gt.bat &
 $(docsrc_dir)\lr\src\halloc.gml &
 $(docsrc_dir)\lr\src\hantozen.gml &
 $(docsrc_dir)\lr\src\hcfunmac.gml &
@@ -1666,7 +1653,6 @@ $(docsrc_dir)\lr\src\mkdir.gml &
 $(docsrc_dir)\lr\src\mkit.c &
 $(docsrc_dir)\lr\src\mktemp.gml &
 $(docsrc_dir)\lr\src\mktime.gml &
-$(docsrc_dir)\lr\src\mmx.bat &
 $(docsrc_dir)\lr\src\modf.gml &
 $(docsrc_dir)\lr\src\movedata.gml &
 $(docsrc_dir)\lr\src\mpaddb.gml &
@@ -1950,7 +1936,7 @@ $(docsrc_dir)\lr\clibref.gml &
 $(docsrc_dir)\lr\f77graph.gml &
 $(docsrc_dir)\lr\nobanfox.gml &
 $(docsrc_dir)\lr\os2help.gml &
-$(docsrc_dir)\lr\symbols.gml 
+$(docsrc_dir)\lr\symbols.gml
 incs_lr3+=;$(incs_lr1)
 objs_lr3+= $(objs_lr1)
 
@@ -2108,7 +2094,6 @@ $(docsrc_dir)\lr\ge\grdemo1.c &
 $(docsrc_dir)\lr\ge\grdemo1.for &
 $(docsrc_dir)\lr\ge\grdemo2.c &
 $(docsrc_dir)\lr\ge\grdemo2.for &
-$(docsrc_dir)\lr\ge\mksizes.bat &
 $(docsrc_dir)\lr\ge\mksizes.wat &
 $(docsrc_dir)\lr\ge\pg.fi &
 $(docsrc_dir)\lr\ge\pgapi.fi &
@@ -2119,7 +2104,6 @@ $(docsrc_dir)\lr\ge\pic1.for &
 $(docsrc_dir)\lr\ge\pic2.bmp &
 $(docsrc_dir)\lr\ge\pic2.c &
 $(docsrc_dir)\lr\ge\pic2.for &
-$(docsrc_dir)\lr\gp\capture.bat &
 $(docsrc_dir)\lr\gp\colmap &
 $(docsrc_dir)\lr\gp\eg_arc.ps &
 $(docsrc_dir)\lr\gp\eg_ellip.ps &
