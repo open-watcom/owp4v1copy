@@ -162,10 +162,10 @@ defn    Prt                             ; put an n-byte item into IORslt
         movzx   ecx,DataSize[ebx]       ; get size of data
         mov     edi,offset32 _IORslt    ; get a pointer to IORslt
         jcxz    done                    ; jump around pops if nothing to do
-repeat:                                 ; loop
+loop1:                                 ; loop
         pop     ax                      ; - get value
         stosw                           ; - store in IORslt and inc pointer
-        loop    repeat                  ; until done
+        loop    loop1                  ; until done
 done:   mov     eax,ebx                 ; return type of io item
         jmp     IORegs
 endproc Prt
