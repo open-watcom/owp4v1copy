@@ -260,6 +260,17 @@ USHORT APIENTRY MouSynch(USHORT IOWait);
 #define VP_OPAQUE      0
 #define VP_TRANSPARENT 2
 
+#define COLORS_2  1
+#define COLORS_4  2
+#define COLORS_16 4
+#define COLORS_256 8
+
+#define DISPLAY_MONOCHROME  0
+#define DISPLAY_CGA         1
+#define DISPLAY_EGA         2
+#define DISPLAY_VGA         3
+#define DISPLAY_8514A       9
+
 typedef SHANDLE    HVIO;
 typedef HVIO FAR   *PHVIO;
 
