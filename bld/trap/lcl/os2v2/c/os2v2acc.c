@@ -59,7 +59,9 @@ uDB_t                   Buff;
 static BOOL             stopOnSecond;
 static BOOL             isAttached;
 USHORT                  TaskFS;
-
+static byte             saved_splice_bp;
+static BOOL             splice_bp_set;
+static ULONG            splice_bp_lin_addr;
 extern VOID             InitDebugThread( VOID );
 
 #ifdef DEBUG_OUT
@@ -270,8 +272,7 @@ bool DebugExecute( uDB_t *buff, ULONG cmd, bool stop_on_module_load )
         stopvalue = XCPT_CONTINUE_STOP;
     }
 
-    for( ; ; ) {
-
+    for( ;; ) {
         buff->Value = value;
         buff->Cmd = cmd;
         CallDosDebug( buff );
@@ -390,6 +391,29 @@ bool DebugExecute( uDB_t *buff, ULONG cmd, bool stop_on_module_load )
         default:
             if( notify != 0 ) {
                 buff->Cmd = notify;
+                // Check if we hit our splice DLL breakpoint
+                if( (notify == DBG_N_Breakpoint) && splice_bp_set && (splice_bp_lin_addr == ExceptLinear) ) {
+                    uDB_t       save;
+
+                    // Remove breakpoint
+                    WriteLinear( &saved_splice_bp, splice_bp_lin_addr, sizeof( byte ) );
+                    splice_bp_set = FALSE;
+                    splice_bp_lin_addr = 0;
+
+                    // Attempt to load helper DLL
+                    save.Pid = Pid;
+                    save.Tid = 1;
+                    ReadRegs( &save );
+                    ExpectingAFault = TRUE;
+                    // NB - the following will recursively call DebugExecute!
+                    if( !CausePgmToLoadHelperDLL( ExceptLinear ) ) {
+                        CanExecTask = FALSE;
+                    } else {
+                        CanExecTask = TRUE;
+                    }
+                    WriteRegs( &save );
+                    break;
+                }
             }
             return( FALSE );
         }
@@ -947,7 +971,7 @@ static bool FindLinearStartAddress( ULONG *pLin, char *name )
     if( !FindNewHeader( name, &hdl, &new_head, &type ) ) {
         return( FALSE );
     }
-    for( ; ; ) {
+    for( ;; ) {
         rc = FALSE;
         if( type == EXE_NE ) {
             if( !SeekRead( hdl, new_head + 0x14, &ip, sizeof( ip ) ) ) {
@@ -993,12 +1017,13 @@ static bool FindLinearStartAddress( ULONG *pLin, char *name )
 
 static BOOL ExecuteUntilLinearAddressHit( ULONG lin )
 {
-    byte        saved;
     byte        breakpnt = 0xCC;
     BOOL        rc = TRUE;
 
-    ReadLinear( &saved, lin, sizeof( byte ) );
+    ReadLinear( &saved_splice_bp, lin, sizeof( byte ) );
     WriteLinear( &breakpnt, lin, sizeof( byte ) );
+    splice_bp_set = TRUE;
+    splice_bp_lin_addr = lin;
     do {
         ExceptNum = 0;
         DebugExecute( &Buff, DBG_C_Go, TRUE );
@@ -1017,7 +1042,6 @@ static BOOL ExecuteUntilLinearAddressHit( ULONG lin )
             break;
         }
     } while( ExceptLinear != lin );
-    WriteLinear( &saved, lin, sizeof( byte ) );
     return( rc );
 }
 
@@ -1186,6 +1210,8 @@ unsigned ReqProg_load( void )
 
         ReadRegs( &Buff );
         CanExecTask = FALSE;
+        splice_bp_set = FALSE;
+        splice_bp_lin_addr = 0;
 
         if( isAttached ) {
         } else {
@@ -1203,6 +1229,13 @@ unsigned ReqProg_load( void )
             ReadRegs( &save );
             if( !CausePgmToLoadHelperDLL( startLinear ) ) {
                 CanExecTask = FALSE;
+                // Note - the breakpoint is still set; we'll likely hit
+                // it later
+            } else {
+                // Remove breakpoint
+                WriteLinear( &saved_splice_bp, startLinear, sizeof( byte ) );
+                splice_bp_set = FALSE;
+                splice_bp_lin_addr = 0;
             }
             WriteRegs( &save );
         }
