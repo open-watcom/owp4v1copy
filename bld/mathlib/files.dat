@@ -1,4 +1,4 @@
-# Mathlib piece of lang11.dat
+# Mathlib piece of lang.dat
 
 [ DEFAULT type="l" desc="Math Library" ]
 
@@ -21,7 +21,7 @@ dir="lib386"	usr="math387s.lib"	cond="3s"	where="c jc f77 jf77 ac"
 
 dir="libaxp"	usr="math.lib"	      	where="ac"
 
-dir="lib286\win"	usr="mathc.lib"	        cond="tools16 wintarg mc"	where="c jc"
-dir="lib286\win"	usr="mathl.lib"	        cond="tools16 wintarg ml"	where="c jc f77 jf77"
-dir="lib286\win"	usr="math87c.lib"	cond="tools16 wintarg mc"	where="c jc"
-dir="lib286\win"	usr="math87l.lib"	cond="tools16 wintarg ml"	where="c jc f77 jf77"
+dir="lib286/win"	usr="mathc.lib"	        cond="tools16 wintarg mc"	where="c jc"
+dir="lib286/win"	usr="mathl.lib"	        cond="tools16 wintarg ml"	where="c jc f77 jf77"
+dir="lib286/win"	usr="math87c.lib"	cond="tools16 wintarg mc"	where="c jc"
+dir="lib286/win"	usr="math87l.lib"	cond="tools16 wintarg ml"	where="c jc f77 jf77"

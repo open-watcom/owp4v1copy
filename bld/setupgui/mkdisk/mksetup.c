@@ -32,12 +32,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <direct.h>
 #include <process.h>
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "disksize.h"
+
+#ifdef __UNIX__
+    #define DIR_SEP_STR "/"
+#else
+    #define DIR_SEP_STR "\\"
+#endif
 
 #define RoundUp( size, limit )  ( ( ( size + limit - 1 ) / limit ) * limit )
 
@@ -429,13 +434,13 @@ int AddPathTree( char *path, int target )
 
     if( path == NULL ) return( -1 );
     parent = AddPath( ".", target, -1 );
-    p = strchr( path, '\\' );
+    p = strchr( path, '/' );
     while( p != NULL ) {
         *p = '\0';
         parent = AddPath( path, target, parent );
         if( parent == 0 ) return( FALSE );
-        *p = '\\';
-        p = strchr( p + 1, '\\' );
+        *p = '/';
+        p = strchr( p + 1, '/' );
     }
     return( AddPath( path, target, parent ) );
 }
@@ -465,25 +470,31 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
         ||  *rel_file == '/' ) {
             strcpy( src, rel_file );
         } else {
+            char        c;
+	    
             strcpy( src, RelRoot );
-            if( src[ strlen( src ) - 1 ] != '\\' ) {
-                strcat( src, "\\" );
+            c = src[ strlen( src ) - 1 ];
+            if( (c != '/') && (c != '\\') ) {
+                strcat( src, DIR_SEP_STR );
             }
             strcat( src, rel_file );
         }
     } else if( strchr( path, ':' ) != NULL ) {
         // path is absolute. don't use RelRoot
         strcpy( src, path );
-        strcat( src, "\\" );
+        strcat( src, DIR_SEP_STR );
         strcat( src, file );
     } else {
+        char    c;
+	
         strcpy( src, RelRoot );
-        if( src[ strlen( src ) - 1 ] != '\\' ) {
-            strcat( src, "\\" );
+	c = src[ strlen( src ) - 1 ];
+        if( (c != '\\') && (c != '/') ) {
+            strcat( src, DIR_SEP_STR );
         }
         if( path[ 0 ] != '.' ) {
             strcat( src, path );
-            strcat( src, "\\" );
+            strcat( src, DIR_SEP_STR );
         }
         strcat( src, file );
     }
@@ -496,7 +507,7 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
     }
     strcpy( dst, PackDir );
     if( dst[ strlen( dst ) - 1 ] != '\\' ) {
-        strcat( dst, "\\" );
+        strcat( dst, DIR_SEP_STR );
     }
     strcat( dst, archive );
     // What's this 'patch' stuff good for?
@@ -529,7 +540,7 @@ int AddFile( char *path, char *old_path, char redist, char *file, char *rel_file
         path = p + 1;
         if( *path == '\0' ) {
             path = ".";
-        } else if( *path == '\\' ) {
+        } else if( (*path == '\\') || (*path == '/') ) {
             ++path;
         } else {
             printf( "Invalid path (%s)\n", path );

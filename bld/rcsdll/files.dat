@@ -1,7 +1,7 @@
-# RCSDLL component of LANG11.DAT
+# RCSDLL component of lang.dat
 [ DEFAULT desc="RCSDLL" ]
 usr="rcsdll.dll" dir="binw" 	cond="doshost winhost |"	where="c jc f77 jf77"
-usr="rcsdll.dll" dir="binp\dll" cond="os2host" 			where="c jc f77 jf77"
+usr="rcsdll.dll" dir="binp/dll" cond="os2host" 			where="c jc f77 jf77"
 usr="rcsdll.dll" dir="binnt" 	cond="wnthost" 			where="c jc ac f77 jf77"
 usr="rcsdll.dll" dir="axpnt" 	cond="alphahost"		where="ac"
 

@@ -1,4 +1,4 @@
-# CC component of LANG11.DAT
+# CC component of lang.dat
 [DEFAULT]
     
 usr="wccaxp.exe" 	dir="binnt" 	cond="wnthost" 		where="ac"
@@ -11,11 +11,11 @@ usr="wccd.dll" 		dir="binnt" 	cond="wnthost tools16" 	where="c jc"
 usr="wcci8601.int"	dir="binnt" 	cond="wnthost tools16" 	where="  jc"
 
 usr="wcc386.exe" 	dir="binp" 	cond="os2host" 		where="c jc"
-usr="wccd386.dll" 	dir="binp\dll" 	cond="os2host" 		where="c jc"
-usr="wcc38601.int" 	dir="binp\dll" 	cond="os2host" 		where="  jc"
+usr="wccd386.dll" 	dir="binp/dll" 	cond="os2host" 		where="c jc"
+usr="wcc38601.int" 	dir="binp/dll" 	cond="os2host" 		where="  jc"
 usr="wcc.exe" 		dir="binp" 	cond="os2host tools16" 	where="c jc"
-usr="wccd.dll" 		dir="binp\dll" 	cond="os2host tools16" 	where="c jc"
-usr="wcci8601.int" 	dir="binp\dll" 	cond="os2host tools16" 	where="  jc"
+usr="wccd.dll" 		dir="binp/dll" 	cond="os2host tools16" 	where="c jc"
+usr="wcci8601.int" 	dir="binp/dll" 	cond="os2host tools16" 	where="  jc"
 
 usr="wccaxp.exe" 	dir="axpnt" 	cond="alphahost" 	where="ac"
 usr="wcc386.exe" 	dir="axpnt" 	cond="alphahost" 	where="ac"

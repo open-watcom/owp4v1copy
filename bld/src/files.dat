@@ -1,18 +1,18 @@
 [ DEFAULT ]
-[ INCLUDE <DEVDIR>\src\CLIBEXAM\files.dat ]
-[ INCLUDE <DEVDIR>\src\CPLBEXAM\files.dat ]
-[ INCLUDE <DEVDIR>\src\DLL\files.dat ]
-[ INCLUDE <DEVDIR>\src\GOODIES\files.dat ]
-[ INCLUDE <DEVDIR>\src\WIN\files.dat ]
-[ INCLUDE <DEVDIR>\src\STARTUP\files.dat ]
-[ INCLUDE <DEVDIR>\src\MISC\files.dat ]
-#[ INCLUDE <DEVDIR>\src\OS2\files.dat ] // Missing?!
+[ INCLUDE <DEVDIR>/src/clibexam/files.dat ]
+[ INCLUDE <DEVDIR>/src/cplbexam/files.dat ]
+[ INCLUDE <DEVDIR>/src/dll/files.dat ]
+[ INCLUDE <DEVDIR>/src/goodies/files.dat ]
+[ INCLUDE <DEVDIR>/src/win/files.dat ]
+[ INCLUDE <DEVDIR>/src/startup/files.dat ]
+[ INCLUDE <DEVDIR>/src/misc/files.dat ]
+#[ INCLUDE <DEVDIR>/src/os2/files.dat ] // Missing?!
 
-# CPPLIB\CONTAIN source code
-[ DEFAULT type="s" dir="src\cpplib\contain" cond="rtsource" where="c jc f77 jf77 ac" ]
+# CPPLIB/CONTAIN source code
+[ DEFAULT type="s" dir="src/cpplib/contain" cond="rtsource" where="c jc f77 jf77 ac" ]
 usr="wchash.cpp"
 usr="wclist.cpp"
 usr="wcskip.cpp"
 usr="wcexcept.cpp"
-#[ INCLUDE <DEVDIR>\src\CPPEXAMP\files.dat ] what is this
-#[ INCLUDE <DEVDIR>\src\P16\files.dat ]
+#[ INCLUDE <DEVDIR>/src/cppexam/files.dat ] what is this
+#[ INCLUDE <DEVDIR>/src/p16/files.dat ]

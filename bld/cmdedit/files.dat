@@ -2,5 +2,5 @@
 dir="binw"	usr="cmdedit.exe"       cond="doshost winhost |"	old="bin"
 dir="binw"	usr="cmdedit.txt"        				old="binb"
 dir="binp"	usr="os2edit.exe"       cond="os2host"
-dir="binp\dll"	usr="os2edit.dll"       cond="os2host"
+dir="binp/dll"	usr="os2edit.dll"       cond="os2host"
 dir="binp"	usr="os22edit.exe"      cond="os2host"

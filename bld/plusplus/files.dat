@@ -23,17 +23,17 @@ usr="wpp38601.int" 	dir="binnt" 	cond="wnthost" 		where="  jc   "
 #  i86 target
 
 usr="wpp.exe" 		dir="binp" 	cond="os2host tools16" 		where="c jc"
-usr="wppdi86.dll"	dir="binp\dll" 	cond="os2host tools16" 		where="c jc"
-usr="wppi8601.int"	dir="binp\dll" 	cond="os2host tools16" 		where="  jc"
+usr="wppdi86.dll"	dir="binp/dll" 	cond="os2host tools16" 		where="c jc"
+usr="wppi8601.int"	dir="binp/dll" 	cond="os2host tools16" 		where="  jc"
 
 #  386 target
 usr="wpp386.exe" 	dir="binp" 	cond="os2host" 		where="c jc"
-usr="wppd386.dll" 	dir="binp\dll" 	cond="os2host" 		where="c jc"
-usr="wpp38601.int" 	dir="binp\dll" 	cond="os2host" 		where="  jc"
+usr="wppd386.dll" 	dir="binp/dll" 	cond="os2host" 		where="c jc"
+usr="wpp38601.int" 	dir="binp/dll" 	cond="os2host" 		where="  jc"
 
 #  axp target
 #usr="wppaxp.exe" 	dir="binp" 	cond="os2host" 		where=""
-#usr="wppdaxp.dll" 	dir="binp\dll" 	cond="os2host" 		where=""
+#usr="wppdaxp.dll" 	dir="binp/dll" 	cond="os2host" 		where=""
 
 #
 # 386 DOS hosted compilers
