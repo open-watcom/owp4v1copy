@@ -24,7 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  Linux debugger trap file x86 specific functions.
+* Description:  Linux debugger trap file PowerPC specific functions.
 *
 ****************************************************************************/
 
@@ -42,70 +42,45 @@
 #include "exeelf.h"
 #include "linuxcomm.h"
 
+/* Implementation notes:
+ *
+ * - This code is big endian, for 32-bit PowerPC systems. It could be extended
+ *   to support 64-bit machines relatively easily.
+ *
+ * - Some PowerPC systems/CPUs/kernels appear to have problems setting/clearing
+ *   breakpoints. This could very well be caused by cache coherency problems;
+ *   the I-cache and D-cache are not guaranteed to be consistent. We should
+ *   be able to manually force the caches to be synced.
+ */
+
+/* Macros to get at GP/FP registers based on their number; useful in loops */
+#define TRANS_GPREG_32( mr, idx ) (*((unsigned_32 *)(&(mr->r0.u._32[0])) + (2 * idx)))
+#define TRANS_FPREG_LO( mr, idx ) (*((unsigned_32 *)(&(mr->f0.u64.u._32[1])) + (2 * idx)))
+#define TRANS_FPREG_HI( mr, idx ) (*((unsigned_32 *)(&(mr->f0.u64.u._32[0])) + (2 * idx)))
 
 static void ReadCPU( struct ppc_mad_registers *r )
 {
-    struct pt_regs      regs;
-    int                 i;
+    int         i;
 
     memset( r, 0, sizeof( *r ) );
-    memset( &regs, 0, sizeof( regs ) );
     /* Read GPRs */
     for( i = 0; i < 32; i++ ) {
-        regs.gpr[i] = ptrace( PTRACE_PEEKUSER, pid, i * REGSIZE, 0 );
+        TRANS_GPREG_32( r, i ) = ptrace( PTRACE_PEEKUSER, pid, i * REGSIZE, 0 );
+    }
+    /* Read FPRs */
+    for( i = 0; i < 64; i += 2 ) {
+        TRANS_FPREG_HI( r, i ) = ptrace( PTRACE_PEEKUSER, pid, (PT_FPR0 + i) * REGSIZE, 0 );
+        TRANS_FPREG_LO( r, i ) = ptrace( PTRACE_PEEKUSER, pid, (PT_FPR0 + i + 1) * REGSIZE, 0 );
     }
     /* Read SPRs */
-    regs.nip  = ptrace( PTRACE_PEEKUSER, pid, PT_NIP * REGSIZE, 0 );
-    regs.msr  = ptrace( PTRACE_PEEKUSER, pid, PT_MSR * REGSIZE, 0 );
-    regs.ctr  = ptrace( PTRACE_PEEKUSER, pid, PT_CTR * REGSIZE, 0 );
-    regs.link = ptrace( PTRACE_PEEKUSER, pid, PT_LNK * REGSIZE, 0 );
-    regs.xer  = ptrace( PTRACE_PEEKUSER, pid, PT_XER * REGSIZE, 0 );
-    regs.ccr  = ptrace( PTRACE_PEEKUSER, pid, PT_CCR * REGSIZE, 0 );
-    regs.mq   = ptrace( PTRACE_PEEKUSER, pid, PT_MQ  * REGSIZE, 0 );
-    /* Copy to MAD structure */
-    r->r0.u._32[0]  = regs.gpr[0];
-    r->r1.u._32[0]  = regs.gpr[1];
-    r->r2.u._32[0]  = regs.gpr[2];
-    r->r3.u._32[0]  = regs.gpr[3];
-    r->r4.u._32[0]  = regs.gpr[4];
-    r->r5.u._32[0]  = regs.gpr[5];
-    r->r6.u._32[0]  = regs.gpr[6];
-    r->r7.u._32[0]  = regs.gpr[7];
-    r->r8.u._32[0]  = regs.gpr[8];
-    r->r9.u._32[0]  = regs.gpr[9];
-    r->r10.u._32[0] = regs.gpr[10];
-    r->r11.u._32[0] = regs.gpr[11];
-    r->r12.u._32[0] = regs.gpr[12];
-    r->r13.u._32[0] = regs.gpr[13];
-    r->r14.u._32[0] = regs.gpr[14];
-    r->r15.u._32[0] = regs.gpr[15];
-    r->r16.u._32[0] = regs.gpr[16];
-    r->r17.u._32[0] = regs.gpr[17];
-    r->r18.u._32[0] = regs.gpr[18];
-    r->r19.u._32[0] = regs.gpr[19];
-    r->r20.u._32[0] = regs.gpr[20];
-    r->r20.u._32[0] = regs.gpr[21];
-    r->r21.u._32[0] = regs.gpr[22];
-    r->r22.u._32[0] = regs.gpr[23];
-    r->r23.u._32[0] = regs.gpr[24];
-    r->r24.u._32[0] = regs.gpr[25];
-    r->r25.u._32[0] = regs.gpr[26];
-    r->r26.u._32[0] = regs.gpr[26];
-    r->r27.u._32[0] = regs.gpr[27];
-    r->r28.u._32[0] = regs.gpr[28];
-    r->r29.u._32[0] = regs.gpr[29];
-    r->r30.u._32[0] = regs.gpr[30];
-    r->r31.u._32[0] = regs.gpr[31];
-    r->lr.u._32[0]  = regs.link;
-    r->ctr.u._32[0] = regs.ctr;
-    r->iar.u._32[0] = regs.nip;
-    r->msr.u._32[0] = regs.msr;
-    r->cr  = regs.ccr;
-    r->xer = regs.xer;
-    last_eip = regs.nip;
-#if 0
-        orig_eax = regs.orig_eax;
-#endif
+    r->iar.u._32[0] = ptrace( PTRACE_PEEKUSER, pid, PT_NIP * REGSIZE, 0 );
+    r->msr.u._32[0] = ptrace( PTRACE_PEEKUSER, pid, PT_MSR * REGSIZE, 0 );
+    r->ctr.u._32[0] = ptrace( PTRACE_PEEKUSER, pid, PT_CTR * REGSIZE, 0 );
+    r->lr.u._32[0]  = ptrace( PTRACE_PEEKUSER, pid, PT_LNK * REGSIZE, 0 );
+    r->xer          = ptrace( PTRACE_PEEKUSER, pid, PT_XER * REGSIZE, 0 );
+    r->cr           = ptrace( PTRACE_PEEKUSER, pid, PT_CCR * REGSIZE, 0 );
+    r->fpscr        = ptrace( PTRACE_PEEKUSER, pid, PT_FPSCR * REGSIZE, 0 );
+    last_eip = r->iar.u._32[0];
 }
 
 unsigned ReqRead_cpu( void )
@@ -131,34 +106,25 @@ unsigned ReqRead_regs( void )
 
 static void WriteCPU( struct ppc_mad_registers *r )
 {
-#if 0
-    /* the kernel uses an extra register orig_eax
-       If orig_eax >= 0 then it will check eax for
-       certain values to see if it needs to restart a
-       system call.
-       If it restarts a system call then it will set
-       eax=orig_eax and eip-=2.
-       If orig_eax < 0 then eax is used as is.
-    */
+    int         i;
 
-    regs.eax = r->eax;
-    if( regs.eip != last_eip ) {
-        /* eip is actually changed! This means that
-           the orig_eax value does not make sense;
-           set it to -1 */
-        orig_eax = -1;
-        last_eip = regs.eip;
-    }
-    regs.orig_eax = orig_eax;
-#endif
+    /* Write SPRs */
     ptrace( PTRACE_POKEUSER, pid, PT_NIP * REGSIZE, (void *)(r->iar.u._32[0]) );
     ptrace( PTRACE_POKEUSER, pid, PT_MSR * REGSIZE, (void *)(r->msr.u._32[0]) );
     ptrace( PTRACE_POKEUSER, pid, PT_CTR * REGSIZE, (void *)(r->ctr.u._32[0]) );
     ptrace( PTRACE_POKEUSER, pid, PT_LNK * REGSIZE, (void *)(r->lr.u._32[0]) );
     ptrace( PTRACE_POKEUSER, pid, PT_CCR * REGSIZE, (void *)r->cr );
     ptrace( PTRACE_POKEUSER, pid, PT_XER * REGSIZE, (void *)r->xer );
-    ptrace( PTRACE_POKEUSER, pid, 0 * REGSIZE, (void *)(r->r0.u._32[0]) );
-    ptrace( PTRACE_POKEUSER, pid, 1 * REGSIZE, (void *)(r->r1.u._32[0]) );
+    /* Write GPRs */
+    for( i = 0; i < 32; i++ ) {
+        ptrace( PTRACE_POKEUSER, pid, i * REGSIZE, (void *)TRANS_GPREG_32( r, i ) );
+    }
+    /* Write FPRs */
+    for( i = 0; i < 64; i += 2 ) {
+        ptrace( PTRACE_POKEUSER, pid, (PT_FPR0 + i) * REGSIZE, TRANS_FPREG_HI( r, i ) );
+        ptrace( PTRACE_POKEUSER, pid, (PT_FPR0 + i + 1) * REGSIZE, TRANS_FPREG_LO( r, i ) );
+    }
+    ptrace( PTRACE_POKEUSER, pid, PT_FPSCR * REGSIZE, (void *)(r->fpscr) );
 }
 
 unsigned ReqWrite_cpu( void )
@@ -201,6 +167,10 @@ unsigned ReqClear_watch( void )
     return( 0 );
 }
 
+/* We do not support I/O port access on PowerPC, although if we really
+ * wanted to, we could access memory mapped ISA/PCI I/O ports on systems
+ * where those are provided. Would require root privileges.
+ */
 unsigned ReqRead_io( void )
 {
     read_io_req *acc;
@@ -235,7 +205,7 @@ unsigned ReqGet_sys_config( void )
     ret->sys.osmajor = 1;
     ret->sys.osminor = 0;
 
-    ret->sys.cpu = PPC_603;
+    ret->sys.cpu = PPC_604;
     ret->sys.fpu = 0;
     ret->sys.huge_shift = 3;
     ret->sys.mad = MAD_PPC;
