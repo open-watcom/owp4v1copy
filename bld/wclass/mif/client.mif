@@ -1,9 +1,9 @@
 
-wclass_inc_dirs_dos   = $(wclass_dir)/dos/hpp;$(wclass_dir)/hpp;$(gui_dir)/h
-wclass_inc_dirs_os2   = $(wclass_dir)/pm/hpp;$(wclass_dir)/hpp;$(gui_dir)/h
-wclass_inc_dirs_nt    = $(wclass_dir)/win/hpp;$(wclass_dir)/hpp;$(gui_dir)/h
-wclass_inc_dirs_linux = $(wclass_dir)/hpp;$(gui_dir)/h
-wclass_inc_dirs_win   = $(wclass_dir)/win/hpp;$(wclass_dir)/hpp;$(gui_dir)/h
+wclass_inc_dirs_dos   = -I"$(wclass_dir)/dos/hpp" -I"$(wclass_dir)/hpp" -I"$(gui_dir)/h"
+wclass_inc_dirs_os2   = -I"$(wclass_dir)/pm/hpp" -I"$(wclass_dir)/hpp" -I"$(gui_dir)/h"
+wclass_inc_dirs_nt    = -I"$(wclass_dir)/win/hpp" -I"$(wclass_dir)/hpp" -I"$(gui_dir)/h"
+wclass_inc_dirs_linux = -I"$(wclass_dir)/hpp" -I"$(gui_dir)/h"
+wclass_inc_dirs_win   = -I"$(wclass_dir)/win/hpp" -I"$(wclass_dir)/hpp" -I"$(gui_dir)/h"
 !ifdef wclass_inc_dirs_$(host_os)_$(host_cpu)
 wclass_inc_dirs = $(wclass_inc_dirs_$(host_os)_$(host_cpu))
 !else
@@ -18,5 +18,4 @@ wclass_lib_nt_axp    = $(wclass_dir)/win/ntaxp/wclass.lib
 wclass_lib_win_i86   = $(wclass_dir)/win/wini86/wclass.lib
 wclass_lib_linux_386 = $(wclass_dir)/linux386/wclass.lib
 
-wclass_lib = $(wclass_lib_$(host_OS)_$(host_CPU))
-
+wclass_lib = $(wclass_lib_$(host_os)_$(host_cpu))

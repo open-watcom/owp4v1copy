@@ -10,7 +10,7 @@ viper_autodepends = .autodepend
 .SUFFIXES : .rc
 
 c_path_os2 = $(batch_dir)/os2
-c_path_nt = $(batch_dir)/nt
+c_path_nt  = $(batch_dir)/nt
 c_path_win = $(batch_dir)/dos;$(batch_dir)/os2
 
 .c : $(c_path_$(host_os));$(watcom_dir)/c
@@ -55,9 +55,10 @@ prereq_inc_nt  = $(guitools_dir)/win95
 prereq_ide_h = $(prereq_inc_$(host_os))/ide.h
 !endif
 
-inc_dirs_win = $(batch_dir)/dos
+inc_dirs_win = -I"$(batch_dir)/dos"
 
-inc_dirs = $(wclass_inc_dirs);$(viper_dir)/mviper;$(editdll_dir);$(rcsdll_dir);$(batch_dir)/h;$(gui_dir)/win/h;$(prereq_inc_$(host_os))
+inc_dirs  = $(wclass_inc_dirs) -I"$(viper_dir)/mviper" -I$(editdll_dir) -I$(rcsdll_dir) 
+inc_dirs += -I"$(batch_dir)/h" -I"$(gui_dir)/win/h" -I"$(prereq_inc_$(host_os))"
 
 LIBS = &
     $(viper_dir)/mviper/$(host_os)$(host_cpu)/mviper.lib &
@@ -65,13 +66,10 @@ LIBS = &
     $(gui_dir)/win/$(host_os)$(host_cpu)/gui.lib &
     $(wres_lib)
 
-.before:
-        @set include=$(inc_path)
-
-all: $(prereq_ide_h) $(name).exe .SYMBOLIC
+all: $(prereq_ide_h) $(name).exe
 
 $(name).exe : $(OBJECTS) $(LIBS) viper.res
-!ifneq host_OS os2
+!ifneq host_os os2
         $(linker) $(lflags) name $(name) op map, de $(description) f {$(OBJECTS)} lib {$(LIBS)}
         $(rc) $(rc_flags) -k viper.res $^@
 !else
@@ -83,13 +81,13 @@ $(name).exe : $(OBJECTS) $(LIBS) viper.res
 !endif
 
 viper.res : _guimsgs.gh $(gui_dir)/h/gui.rc viper.rc
-!ifneq host_OS os2
-        $(rc) $(rc_flags) -r -i".." $]@ -fo=$^@
+!ifneq host_os os2
+        $(rc) $(rc_flags) -r -I.. $(inc_path) $]@ -fo=$^@
 !else
 !ifeq host_lang japan
-        $(cc) -zk0 -dJAPANESE_MESSAGES -i=".." -p $]@ -fo=viper.prc
+        $(cc) -zk0 -dJAPANESE_MESSAGES -I.. $(inc_path) -p $]@ -fo=viper.prc
 !else
-        $(cc) -i=".." -p $]@ -fo=viper.prc
+        $(cc) -I.. $(inc_path) -p $]@ -fo=viper.prc
 !endif
         set opath=$(%path)
 	set path=$(rc_os2_path)
@@ -98,7 +96,7 @@ viper.res : _guimsgs.gh $(gui_dir)/h/gui.rc viper.rc
 !endif
 
 ./guimkstr.exe: $(gui_dir)/c/mkstr.c $(gui_dir)/h/gui.msg
-        $(bld_cl) -i"$(gui_dir)/h" $(wcl_util_opts) $[@
+        $(bld_cl) -I"$(gui_dir)/h" $(wcl_util_opts) $[@
 
 _guimsgs.gh: ./guimkstr.exe $(gui_dir)/h/gui.msg
         $[@ $^@ $(gui_msg_id_modifier)

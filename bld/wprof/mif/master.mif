@@ -90,7 +90,7 @@ $(fname).$(exe) : _guimsgs.gh auistr.gh $(objs) $(sys_objs) $(dip_objs) $(mad_ob
     $(rc_os2) $(rc_flags) $(resfile) $^@
 !endif
 
-!ifeq host_OS os2
+!ifeq host_os os2
 wprofgui.res : ../h/wprofgui.rc
         @set oinc=$(%include)
         set include=$(lang_root)/h/os2;$(rcinclude);$(%include)
@@ -104,7 +104,7 @@ wprofgui.res : ../h/wprofgui.rc
 
 !endif
 
-        $(rc_os2) -i $(inc_dirs_sys) -r ..\h\foros2pm.rc wprofgui.res
+        $(rc_os2) -i $(lang_root)/h/os2 -r ..\h\foros2pm.rc wprofgui.res
 
 !ifndef %use_os2tk_stuff
 
@@ -113,7 +113,7 @@ wprofgui.res : ../h/wprofgui.rc
 !endif
 
         @set include=$(%oinc)
-!else ifeq host_OS nt
+!else ifeq host_os nt
 wprofgui.res : ../h/wprofgui.rc .AUTODEPEND
         $(rc) $(rc_flags) -r -ad $(rcinclude) $(inc_dirs_sys_nt) $]@ -fo=$^@
 !else
