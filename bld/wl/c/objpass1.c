@@ -726,6 +726,8 @@ extern void DefineSymbol( symbol *sym, segnode *seg, offset off,
                 }
             }
             sym->p.seg = seg->entry;
+            if( sym->p.seg->isabs )
+                sym->info |= SYM_ABSOLUTE;
             TryDefVector( sym );
         } else {
             if( LinkFlags & STRIP_CODE ) {
