@@ -1,7 +1,11 @@
 #pmake: all build os_nov cpu_386
 host_cpu = 386
+host_os = nov
+
+suppress_zc = 1
 
 !include cproj.mif
+!include defrule.mif
 
 !ifdef __LINUX__
 description = \'OpenWatcom Execution Sampler Version 1.0\'
@@ -12,11 +16,9 @@ description = 'OpenWatcom Execution Sampler Version 1.0'
 objects = realmode.obj nwhooks.obj sample.obj sampdata.obj sampnlm.obj &
           io.obj sysio.obj settime.obj wmsg.obj pitstuff.obj cpuspeed.obj
 
-cflags = -zq -bt=netware-3s-mf-d1-oax-w3 -dREPORT_TYPE= -dFAR_PTR= -dNETWARE -fi=watcom.h -zp1
+extra_c_flags = -3s -dREPORT_TYPE= -dFAR_PTR= -dNETWARE -fi=watcom.h -zp1
 
-.BEFORE
-#        set include=$(nwdir);$(nwsrc);$(dig_dir)/h;$(%include)
-        set include=$(ow_nwoss_root)/common/h;$(ow_nwoss_root)/nw4/h;$(nwsrc);$(dig_dir)/h;$(%include)
+inc_dirs=$(ow_nwoss_root)/common/h;$(ow_nwoss_root)/nw4/h;$(nwsrc);$(dig_dir)/h;
 
 imports = &
     FileServerMajorVersionNumber &
@@ -64,20 +66,6 @@ xname = wsample
 .c: .;../c
 
 .asm: .
-
-.c.obj : .AUTODEPEND
-    $(comp386) $[* $cflags
-
-.asm.obj: .AUTODEPEND
-    $(as) $[@ -5 -e -mf -we -fr=$^&.err
-#    erase $^&.err
-
-#
-#   zk0         - double-byte char support:   0: (default) Japanese (Kanji, CP 932)
-#   r           - only build the RES file
-#   bt=windows  - produce MBCS encoded res file (not bt=nt; produces Unicode)
-#   ad          - add autodepends information for wmake
-#
 
 $(xname).res : ../h/wsample.rc ../h/wmsg.h .AUTODEPEND
     $(rc_aui) -dNLM -fo=$^. $[@
