@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Data types holding object file information.
 *
 ****************************************************************************/
 
@@ -219,6 +218,13 @@ typedef struct odbimodinfo      ODBIMODINFO;    // defd in dbg information hdrs
 typedef struct dwarfmodinfo     DWARFMODINFO;
 typedef struct cvmodinfo        CVMODINFO;
 
+// OMF debug information formats
+typedef enum {
+    OMF_DBG_UNKNOWN,
+    OMF_DBG_CODEVIEW,
+    OMF_DBG_HLL
+} omf_dbg_type;
+
 typedef struct mod_entry {
     union {
         MOD_ENTRY * next_mod;   // regular next pointer
@@ -237,6 +243,7 @@ typedef struct mod_entry {
     unsigned            sizerelocs;
     module_flags        modinfo;
     void *              lines;
+    omf_dbg_type        omfdbg;
     union {
         arcdata *   arclist;    // segment definition data.
         MOD_ENTRY * next;       // for keeping track of modules when distrib

@@ -24,16 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Object file processing routines specific to OMF.
 *
 ****************************************************************************/
 
-
-/*
- *  OBJOMF:  object file processing routines specific to OMF
- *
-*/
 
 #include <string.h>
 #include "linkstd.h"
@@ -62,7 +56,7 @@
 
 /* forward declarations */
 
-static void             Pass1Cmd( byte );
+static void     Pass1Cmd( byte );
 
 byte            OMFAlignTab[] = {0,0,1,4,8,2,12};
 
@@ -142,6 +136,7 @@ extern unsigned long OMFPass1( void )
     } else {
         LinkState |= HAVE_I86_CODE;
     }
+    CurrMod->omfdbg = OMF_DBG_CODEVIEW; // Assume MS style LINNUM records
     retval = ProcObj( CurrMod->f.source, CurrMod->location, &Pass1Cmd );
     IterateNodelist( SegNodes, CheckUninit, NULL );
     ResolveComdats();
@@ -199,7 +194,8 @@ static void Pass1Cmd( byte cmd )
     case CMD_LINN32:
         ObjFormat |= FMT_MS_386;
     case CMD_LINNUM:
-        ProcLinnum();
+        if (CurrMod->omfdbg == OMF_DBG_CODEVIEW)
+            ProcLinnum();
         break;
     case CMD_LINS32:
         ObjFormat |= FMT_MS_386;
@@ -423,6 +419,29 @@ static void ProcImportKeyword( void )
     }
 }
 
+
+int printf(char *, ...);
+
+static void DoMSOMF( void )
+/***********************************/
+/* Figure out debug info type and handle it accordingly later. */
+{
+    unsigned_8  version;
+    char        *dbgtype;
+
+    version = *ObjBuff++;
+    dbgtype = ObjBuff;
+    ObjBuff += 2;
+    if( strncmp( dbgtype, "CV", 2 ) == 0 ) {
+        CurrMod->omfdbg = OMF_DBG_CODEVIEW;
+    } else if( strncmp( dbgtype, "HL", 2 ) == 0 ) {
+        CurrMod->omfdbg = OMF_DBG_HLL;
+    }
+    else {
+        CurrMod->omfdbg = OMF_DBG_UNKNOWN;
+    }
+}
+
 static void Comment( void )
 /*************************/
 /* Process a comment record. */
@@ -485,6 +504,9 @@ static void Comment( void )
         break;
     case CMT_SOURCE_NAME:
         DBIComment();
+        break;
+    case CMT_MS_OMF:
+        DoMSOMF();
         break;
     case 0x80:      /* Code Gen used to put bytes out in wrong order */
         if( attribute == CMT_SOURCE_NAME ) {    /* no longer generated */
