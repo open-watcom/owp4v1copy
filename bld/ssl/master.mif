@@ -4,9 +4,9 @@ proj_name = ssl
 !include deftarg.mif
 !include defrule.mif
 
-inc_dirs = ..\h;$(cpp_dir)
+inc_dirs = ../h;$(cpp_dir)
 
-.c: ..\c;$(cpp_dir)
+.c: ../c;$(cpp_dir)
 
 objs =                  &
         ssl.obj         &

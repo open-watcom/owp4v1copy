@@ -21,3 +21,10 @@
     wmake -h
     <CPCMD> ssl.exe <owroot>\bld\build\binnt\ssl.exe
     cdsay <PROJDIR>
+
+[ BLOCK <BUILD_PLATFORM> linux386 ]
+#==================================
+    cdsay <PROJDIR>/linux386
+    wmake -h
+    <CPCMD> ssl.exe <owroot>\bld\build\binl\ssl
+    cdsay <PROJDIR>
