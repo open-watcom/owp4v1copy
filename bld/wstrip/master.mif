@@ -28,8 +28,8 @@ $(proj_name).exe : $(dependants)
         $(linker) option quiet $(lflags) name $^. file { $(objs) } lib $(wres_lib)
         wstrip -q -a -r $^@ . $(res_$(host_os))
 
-msg.gh : wstrip.msg
-        $(vi) -s ../go.vi
+msg.gh : ../wstrip.msg
+        $(vi) -s $(sdk_dir)/misc/msgtoh.vi -p"$^@" $[@
 
 owstrip.res : wstrip.rc wstrip.msg msg.gh ousage.rc ousagej.rc
         $(rc_aui) -zk0 -DDOS $[@ -fo=$^@
@@ -48,4 +48,3 @@ qusage.rc : usage.sp
 
 qwstrip.u : usage.sp
         wsplice -kENGLISH -kQNX -t8 -u $[@ $^@
-

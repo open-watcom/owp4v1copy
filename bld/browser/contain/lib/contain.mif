@@ -18,5 +18,5 @@ lbc = tmp.lbc
 
 .cpp: ../../cpp
 .cpp.obj: .AUTODEPEND
-    $(ppcompile) -xs-zm-zld @compflags $[@
+    $(ppcompile) -fo=.obj -xs-zm-zld $(compflags) $[@
 

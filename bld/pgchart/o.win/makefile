@@ -4,7 +4,7 @@
 #
 
 libname =       chartw
-model =         /ml /zW
+model =         -ml -zW
 module =        $[&
 cdecl =         _loadds
 fard =

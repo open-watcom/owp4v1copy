@@ -2,6 +2,7 @@
 
 host_cpu = i86
 host_os  = win
+sys_dll = 1
 
 op_sys=windows dll libfile libentry.obj export WEP RESIDENT
 os=windows

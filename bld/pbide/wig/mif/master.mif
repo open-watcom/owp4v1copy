@@ -4,13 +4,13 @@
 .extensions: .pp .obj .c .h .y
 
 
-.h      : ..\h;$(%include)
-.c      : ..\c;.;$(trmem_dir)
-.y      : ..\c
+.h      : ../h;
+.c      : ../c;.;$(trmem_dir)
+.y      : ../c
 
 lnk = wig.lnk
 
-ccopt += -w4 -oaxt -zq -fpc /bt=$(os)
+ccopt += -w4 -oaxt -zq -fpc -bt=$(os)
 
 !ifndef ext
 ext = exe
@@ -38,7 +38,7 @@ ccopt += -d2 -dDEBUG
 $(name).$(ext) : $(objs) $(lnk)
         $(linker) debug all sys $(op_sys) option map name $(name) @$(lnk)
 
-$(lnk) : ..\mif\master.mif makefile
+$(lnk) : ../mif/master.mif makefile
         %create $(lnk)
 !ifdef on_build_machine
         @%append $(lnk) option symfile
@@ -47,26 +47,19 @@ $(lnk) : ..\mif\master.mif makefile
         @for %i in ($(objs)) do @@%append $(lnk) file %i
 
 .c.obj:
-        *$(compiler) $(ccopt) $[* /fo=$^@
+        *$(compiler) $(ccopt) $[* -fo=$^@
 
 .c.pp:
-        *$(compiler) $(ccopt) $[* /fo=.pp /plc
+        *$(compiler) $(ccopt) $[* -fo=.pp -plc
 
 .y.c:
         wtouch $^@
         rm $^@
-        $(yacc) $[@ ..\c\yydriver.c > $(nulldevice)
+        $(yacc) $[@ ../c/yydriver.c > $(nulldevice)
         cp ytab.c $^@
 
 .before
-        set include = ..\h;$(trmem_dir);$(%include)
+        set include = ../h;$(trmem_dir);$(inc_path)
 
 clean: .symbolic
-        @if exist *.dll del *.dll
-        @if exist *.err del *.err
-        @if exist *.lnk del *.lnk
-        @if exist *.map del *.map
-        @if exist *.obj del *.obj
-        @if exist *.sym del *.sym
-        @if exist ytab.* del ytab.*
-        @if exist sruparse.c del sruparse.c
+        @rm -f *.dll *.err *.lnk *.map *.obj *.sym ytab.* sruparse.c

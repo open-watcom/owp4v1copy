@@ -8,16 +8,20 @@ idebatch_autodepend = .AUTODEPEND
 
 !ifeq host_OS os2
 
+!ifdef __LINUX__
+dos_hdr_inc = -i"$(hdr_dir)/dos"
+!endif
+
 all : batserv.exe batcli.obj .symbolic
 
 batserv.exe : batserv.obj
-        $(linker) $(lflags) file batserv op stack=16k
+        $(linker) $(lflags) file batserv.obj op stack=16k
 
 batcli.obj : batcli.c
-        *wcc batcli.c -oaxt -d1 -w3
+        *wcc -zq -w4-we -oaxt -fo=.obj -d1 $(dos_hdr_inc) batcli.c
 
 tst.exe : tst.c batcli.obj
-        *wcl -d2 tst.c batcli.obj -l=dos
+        *wcl -zq -d2 tst.c batcli.obj -l=dos
 
 
 !else ifeq host_OS nt
@@ -27,10 +31,10 @@ tst.exe : tst.c batcli.obj
 all : batserv.exe batcli.obj batpipe.obj tst.exe .symbolic
 
 batserv.exe : batserv.obj batpipe.obj
-        $(linker) $(lflags) file batserv,batpipe op stack=32K
+        $(linker) $(lflags) file batserv.obj,batpipe.obj op stack=32K
 
 tst.exe : tst.obj batcli.obj batpipe.obj
-        $(linker) $(lflags) file tst,batcli,batpipe
+        $(linker) $(lflags) file tst.obj,batcli.obj,batpipe.obj
 
 !else ifeq host_OS dos
 

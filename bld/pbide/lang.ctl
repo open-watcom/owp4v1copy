@@ -24,7 +24,7 @@ cdsay .
 [ BLOCK <1> rel2 cprel2 ]
 #========================
     <CPCMD> <devdir>/pbide/run/wini86/run.exe <relroot>/rel2/binw/watrun.exe
-    <CPCMD> <devdir>/pbide/run/nt386/runnt.exe <relroot>/rel2/binnt/watrun.exe
+    <CPCMD> <devdir>/pbide/run/nt386/run.exe <relroot>/rel2/binnt/watrun.exe
     <CPCMD> <devdir>/pbide/dlldbg/wini86/dlldbg.exe <relroot>/rel2/binw/dlldbg.exe
     <CPCMD> <devdir>/pbide/dlldbg/nt386/dlldbg.exe <relroot>/rel2/binnt/dlldbg.exe
     <CPCMD> <devdir>/pbide/dlldbg/pbend.dbg <relroot>/rel2/binw/pbend.dbg

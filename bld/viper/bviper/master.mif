@@ -18,4 +18,4 @@ objs = bviper.obj
 
 
 $(proj_name).exe : $(objs)
-        $(linker) option quiet $(lflags) option map name $^. file { $< } lib {$(LIBS)}
+        $(linker) option quiet $(lflags) option map name $^@ file { $< } lib {$(LIBS)}

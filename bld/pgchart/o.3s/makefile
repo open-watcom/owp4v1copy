@@ -4,7 +4,7 @@
 #
 
 libname =       chart3s
-model =         /ms /3s
+model =         -ms -3s
 module =        $[&s
 cdecl =
 fard =

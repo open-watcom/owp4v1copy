@@ -4,7 +4,7 @@
 #
 
 libname =       charto
-model =         /3r /mf /bt=OS2
+model =         -3r -mf -bt=OS2
 module =        $[&
 cdecl =
 fard =

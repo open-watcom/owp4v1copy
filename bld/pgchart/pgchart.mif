@@ -3,26 +3,26 @@
 #
 
 objs = &
-        PGANCOM.OBJ &
-        PGANMS.OBJ &
-        PGANPIE.OBJ &
-        PGANSCMS.OBJ &
-        PGAXIS.OBJ &
-        PGCHART.OBJ &
-        PGCHRDEF.OBJ &
-        PGCHRTPI.OBJ &
-        PGDFAULT.OBJ &
-        PGHLABEL.OBJ &
-        PGINIT.OBJ &
-        PGLEGEND.OBJ &
-        PGMISC.OBJ &
-        PGPAL.OBJ &
-        PGSCALE.OBJ &
-        PGSCTTER.OBJ &
-        PGSTYLE.OBJ &
-        PGTITLE.OBJ &
-        PGVARS.OBJ &
-        PGVLABEL.OBJ
+        PGANCOM.obj &
+        PGANMS.obj &
+        PGANPIE.obj &
+        PGANSCMS.obj &
+        PGAXIS.obj &
+        PGCHART.obj &
+        PGCHRDEF.obj &
+        PGCHRTPI.obj &
+        PGDFAULT.obj &
+        PGHLABEL.obj &
+        PGINIT.obj &
+        PGLEGEND.obj &
+        PGMISC.obj &
+        PGPAL.obj &
+        PGSCALE.obj &
+        PGSCTTER.obj &
+        PGSTYLE.obj &
+        PGTITLE.obj &
+        PGVARS.obj &
+        PGVLABEL.obj
 
 !ifeq _386 386
 text_seg_name = _TEXT
@@ -45,9 +45,9 @@ $(libname).lib : $(objs) ../pgchart.lbc
 
 .c.obj:
 !ifeq _386 386
-        $(libcomp386) $(cflags) $(extra_c_flags) $[*
+        $(libcomp386) -zq $(cflags) $(extra_c_flags) $[*
 !else
-        $(libcomp286) $(cflags) $(extra_c_flags) $[*
+        $(libcomp286) -zq $(cflags) $(extra_c_flags) $[*
 !endif
 
 ../pgchart.lbc : ../pgchart.mif

@@ -2,18 +2,18 @@ WINDOWS = 1
 !include wres.mif
 
 !ifneq host_CPU axp
-viper_lib       = $(viper_dir)\mviper\$(host_OS)\mviper.lib
+viper_lib       = $(viper_dir)/mviper/$(host_OS)/mviper.lib
 !else
-viper_lib       = $(viper_dir)\mviper\axp\mviper.lib
+viper_lib       = $(viper_dir)/mviper/axp/mviper.lib
 !endif
 
-wclass_dir_nt_386       = win\nt
-wclass_dir_nt_axp       = win\axp
+wclass_dir_nt_386       = win/nt
+wclass_dir_nt_axp       = win/axp
 wclass_dir_nt   = $(wclass_dir_nt_$(host_CPU))
-wclass_dir_os2  = pm\obj32
-wclass_dir_win  = win\obj
+wclass_dir_os2  = pm/obj32
+wclass_dir_win  = win/obj
 
-wclass_lib      = $(wclass_dir)\$(wclass_dir_$(host_OS))\wclass.lib
+wclass_lib      = $(wclass_dir)/$(wclass_dir_$(host_OS))/wclass.lib
 
 !ifeq host_CPU axp
 gui_lib         = $(gui_dir)/win/ntaxp/gui.lib

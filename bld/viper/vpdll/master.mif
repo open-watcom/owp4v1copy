@@ -28,7 +28,7 @@ extra_l_flags_nt = op stack=40k
 
 $(name).dll : $(name).obj
 !ifeq host_OS nt
-        $(linker) $(lflags) name $(name) file $(name) @../export.mif
+        $(linker) $(lflags) name $^@ file $[@ @../export.mif
 !else
-        $(linker) $(lflags) name $(name) file $(name)
+        $(linker) $(lflags) name $^@ file $[@
 !endif

@@ -4,7 +4,7 @@
 #
 
 libname =       charts
-model =         /ms
+model =         -ms
 module =        $[&
 cdecl =         _loadds
 fard =
