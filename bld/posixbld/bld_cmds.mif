@@ -57,7 +57,7 @@ COMMANDS += &
     ls &
 #    mkdir &
 #    od &
-    rm &
+    rm 
 #    rmdir &
 #    sleep &
 #    which
