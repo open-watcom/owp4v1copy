@@ -59,45 +59,45 @@ _WCRTLINK extern int _fheapshrink( void );
 
 _WCRTLINK extern int __nmemneed( size_t );
 _WCRTLINK extern int __fmemneed( size_t );
-#if !(defined(_fcalloc) && _fcalloc == calloc)
+#if !defined(_fcalloc) || !defined(_INC_WINDOWSX)
 _WCRTLINK extern void _WCFAR *_fcalloc( size_t __n, size_t __size );
 #endif
-#if !(defined(_ncalloc) && _ncalloc == calloc)
+#if !defined(_ncalloc) || !defined(_INC_WINDOWSX)
 _WCRTLINK extern void _WCNEAR *_ncalloc( size_t __n, size_t __size );
 #endif
 _WCRTLINK extern void * _expand( void *__ptr, size_t __size );
-#if !(defined(_fexpand) && _fexpand == _expand)
+#if !defined(_fexpand) || !defined(_INC_WINDOWSX)
 _WCRTLINK extern void _WCFAR *_fexpand( void _WCFAR *__ptr, size_t __size );
 #endif
-#if !(defined(_nexpand) && _nexpand == _expand)
+#if !defined(_nexpand) || !defined(_INC_WINDOWSX)
 _WCRTLINK extern void _WCNEAR *_nexpand( void _WCNEAR *__ptr, size_t __size );
 #endif
-#if !(defined(_ffree) && _ffree == free)
+#if !defined(_ffree) || !defined(_INC_WINDOWSX)
 _WCRTLINK extern void _ffree( void _WCFAR *__ptr );
 #endif
-#if !(defined(_fmalloc) && _fmalloc == malloc)
+#if !defined(_fmalloc) || !defined(_INC_WINDOWSX)
 _WCRTLINK extern void _WCFAR * _fmalloc( size_t __size );
 #endif
 _WCRTLINK extern unsigned int _freect( size_t __size );
 _WCRTLINK extern void _WCHUGE *halloc( long __n, size_t __size );
 _WCRTLINK extern void hfree( void _WCHUGE * );
-#if !(defined(_nfree) && _nfree == free)
+#if !defined(_nfree) || !defined(_INC_WINDOWSX)
 _WCRTLINK extern void _nfree( void _WCNEAR *__ptr );
 #endif
-#if !(defined(_nmalloc) && _nmalloc == malloc)
+#if !defined(_nmalloc) || !defined(_INC_WINDOWSX)
 _WCRTLINK extern void _WCNEAR *_nmalloc( size_t __size );
 #endif
-#if !(defined(_nrealloc) && _nrealloc == realloc)
+#if !defined(_nrealloc) || !defined(_INC_WINDOWSX)
 _WCRTLINK extern void _WCNEAR *_nrealloc( void _WCNEAR *__ptr, size_t __size );
 #endif
-#if !(defined(_frealloc) && _frealloc == realloc)
+#if !defined(_frealloc) || !defined(_INC_WINDOWSX)
 _WCRTLINK extern void _WCFAR *_frealloc( void _WCFAR *__ptr, size_t __size );
 #endif
 _WCRTLINK extern size_t _msize( void *__ptr );
-#if !(defined(_nmsize) && _nmsize == _msize)
+#if !defined(_nmsize) || !defined(_INC_WINDOWSX)
 _WCRTLINK extern size_t _nmsize( void _WCNEAR *__ptr );
 #endif
-#if !(defined(_fmsize) && _fmsize == _msize)
+#if !defined(_fmsize) || !defined(_INC_WINDOWSX)
 _WCRTLINK extern size_t _fmsize( void _WCFAR *__ptr );
 #endif
 _WCRTLINK extern size_t _memavl( void );
