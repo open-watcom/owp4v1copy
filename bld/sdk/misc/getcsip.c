@@ -32,10 +32,8 @@
 
 #include <stdio.h>
 #define STRICT
+#define INCLUDE_TOOLHELP_H
 #include <windows.h>
-#ifndef __NT__
-#include "toolhelp.h"
-#endif
 
 /*
  * GetRealCSIP - get the CS:IP of a stopped task, cuz microsoft only tells

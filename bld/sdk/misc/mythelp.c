@@ -34,10 +34,8 @@
 #include <stdlib.h>
 #include <string.h>
 #define STRICT
+#define INCLUDE_TOOLHELP_H
 #include <windows.h>
-#ifndef __NT__
-#include "toolhelp.h"
-#endif
 
 BOOL MyModuleFindHandle( MODULEENTRY FAR* me, HMODULE h )
 {

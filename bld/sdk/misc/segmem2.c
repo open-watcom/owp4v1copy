@@ -34,10 +34,8 @@
 #include <string.h>
 #include <dos.h>
 #define STRICT
+#define INCLUDE_TOOLHELP_H
 #include <windows.h>
-#ifndef __NT__
-#include "toolhelp.h"
-#endif
 #include "descript.h"
 #include "wdebug.h"
 

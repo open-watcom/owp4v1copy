@@ -34,15 +34,13 @@
 #include <io.h>
 #include <ctype.h>
 #define STRICT
+#define INCLUDE_TOOLHELP_H
 #include <windows.h>
 #include "memwnd.h"
 #include "segmem.h"
 #include "sdkasm.h"
 #include "font.h"
 #include "mem.h"
-#ifndef __NT__
- #include "toolhelp.h"
-#endif
 
 #define MAX_BACKUPS             1000
 #define BYTES_PER_BACKUP        100

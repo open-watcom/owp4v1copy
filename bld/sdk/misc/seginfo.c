@@ -36,10 +36,8 @@
 #include <stdlib.h>
 #include <dos.h>
 #define STRICT
+#define INCLUDE_TOOLHELP_H
 #include <windows.h>
-#ifndef __NT__
-#include "toolhelp.h"
-#endif
 #include "types.h"
 #include "seginfo.h"
 #include "segmem.h"
