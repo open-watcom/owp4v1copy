@@ -1,4 +1,4 @@
-#pmake: all buildwpp flat cpu_386 target_i86 os_nt
+#pmake: all build buildwpp flat cpu_386 target_i86 os_nt
 host_CPU = 386
 host_OS = nt
 host_CG = nt

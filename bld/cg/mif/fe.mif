@@ -1,6 +1,6 @@
 # target_CPU = 386 | i86 | ppc | axp
 # host_CPU = 386 | ppc | axp
-# host_OS  = nt | os2 | qnx | dos
+# host_OS  = nt | os2 | qnx | dos | linux
 
 obj_dir         = $(host_OS)$(host_CPU)
 obj_dir_libs    = o.$(host_CPU)
@@ -34,7 +34,11 @@ i_dir_ppc       = $(cg_dir)/risc/ppc/h;$(cg_dir)/risc/h;$(owl_dir)/h
 o_dir           = $(o_dir_$(target_CPU))
 i_dir           = $(i_dir_$(target_CPU));$(cg_dir)/h;$(cfloat_dir)/h
 cg_target       = $(target_CPU)
+!ifeq host_OS linux
+cg_host=lnx
+!else
 cg_host         = $(host_OS)
+!endif
 
 owl_lib         = $(owl_dir)/$(obj_dir_libs)/owl.lib
 cf_lib          = $(cfloat_dir)/$(obj_dir_libs)/cf.lib
