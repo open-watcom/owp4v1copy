@@ -9,6 +9,6 @@ wlib_opt = /p=32
 
 !include ..\makefile
 
-guifdlg.obj : $(guidir)\ui\c\guifdlg.c
-           $($(compiler)) $(guidir)\ui\c\guifdlg.c /d__OS2__ $(cflags)
+#guifdlg.obj : $(guidir)\ui\c\guifdlg.c
+#           $($(compiler)) $(guidir)\ui\c\guifdlg.c /d__OS2__ $(cflags)
 
