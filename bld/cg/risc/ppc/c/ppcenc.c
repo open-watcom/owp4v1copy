@@ -77,7 +77,6 @@ extern type_class_def   Unsigned[];
 extern type_length      TypeClassSize[];
 extern proc_def         *CurrProc;
 
-typedef uint_32         ppc_ins;
 typedef uint_32         opcode;
 typedef uint_32         reg_index;
 

@@ -24,37 +24,29 @@
 *
 *  ========================================================================
 *
-* Description:  Stub routines for the PowerPC backend.
+* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
+*               DESCRIBE IT HERE!
 *
 ****************************************************************************/
 
 
-#include "standard.h"
-#include "coderep.h"
-#include "cgdefs.h"
-#include "regset.h"
-#include "addrname.h"
-#include "offset.h"
-#include "optopts.h"
-#include "optlbl.h"
-#include "rttable.h"
-#include "rtclass.h"
-#include "zoiks.h"
+/*  size of data types on target machine */
 
-void StartBlockProfiling( block *blk ) {
-/**************************************/
+#ifndef _TARGET_INCLUDED
+#define _TARGET_INCLUDED
+#include "target32.h"
+#include "targdef.h"
+#include "langenvd.h"
 
-    blk = blk;
-}
+#define VERSION         PRODUCTION
 
-void EndBlockProfiling() {
-/************************/
+#define _MACHINE        _PPC
+#define _CPU            601
 
-}
+#define _OS             _LINUX
+#define _EMS            0
 
-segment_id GenP5ProfileData( char *fe_name, label_handle *data ) {
-/****************************************************************/
-    fe_name = fe_name;
-    data = data;
-    return( 0 );
-}
+#define __TGT_SYS       __TGT_SYS_PPC_NT
+
+#define _HOST           386
+#endif
