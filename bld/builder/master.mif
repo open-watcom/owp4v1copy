@@ -13,7 +13,7 @@ cpcmd = copy>nul # command is noisy by default in MS-produced "shells"
 cpcmd = cp
 !endif
 
-all: $(name).exe cdsay.exe sweep.exe wsplice.exe diff.exe comstrip.exe
+all: $(name).exe langdat.exe cdsay.exe sweep.exe wsplice.exe diff.exe comstrip.exe
 
 extra_c_flags = -i"../../pmake"
 
@@ -24,10 +24,15 @@ sys_os2 = sys.obj sysos2.obj sysdoscd.obj
 sys_nt = sys.obj sysnt.obj sysdoscd.obj
 sys_linux = sys.obj sysposix.obj
 
-OBJS   = builder.obj utils.obj runit.obj $(sys_$(host_os)) pmake.obj
+OBJS     = builder.obj utils.obj runit.obj $(sys_$(host_os)) pmake.obj
+L_OBJS   = langdat.obj utils.obj $(sys_$(host_os))
 
 $(name).exe : $(OBJS)
         $(linker) $(lflags) name $^@ op map file {$(OBJS)}
+        $(cpcmd) $^. $(bld_bin)
+
+langdat.exe : $(L_OBJS)
+        $(linker) $(lflags) name $^@ op map file {$(L_OBJS)}
         $(cpcmd) $^. $(bld_bin)
 
 cdsay.exe : cdsay.obj
