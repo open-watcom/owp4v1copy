@@ -9,10 +9,22 @@
 #ifndef _INTTYPES_H_INCLUDED
 #define _INTTYPES_H_INCLUDED
 :include readonly.sp
+:include cpluspro.sp
+
+#ifndef _COMDEF_H_INCLUDED
+ #include <_comdef.h>
+#endif
 
 #ifndef _STDINT_H_INCLUDED
   #include <stdint.h>
 #endif
+
+:include wchar_t.sp
+
+typedef struct {
+    intmax_t    quot;
+    intmax_t    rem;
+} imaxdiv_t;
 
 /* Format macros. According to C99 these are only visible in C++ programs
    if __STDC_FORMAT_MACROS is defined. */
@@ -229,4 +241,12 @@
 
 #endif  /* __STDC_FORMAT_MACROS */
 
+_WCRTLINK extern intmax_t   imaxabs( intmax_t j );
+_WCRTLINK extern imaxdiv_t  imaxdiv( intmax_t numer, intmax_t denom );
+_WCRTLINK extern intmax_t   strtoimax( const char *nptr, char **endptr, int base );
+_WCRTLINK extern uintmax_t  strtoumax( const char *nptr, char **endptr, int base );
+_WCRTLINK extern intmax_t   wcstoimax( const wchar_t *nptr, wchar_t **endptr, int base );
+_WCRTLINK extern uintmax_t  wcstoumax( const wchar_t *nptr, wchar_t **endptr, int base );
+
+:include cplusepi.sp
 #endif

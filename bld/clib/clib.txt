@@ -14,7 +14,7 @@ notes on the estimated effort required to bring them to C99 conformance:
     errno.h     - C99 conforming
     fenv.h      - Completely new; requires compiler changes (new #pragma)
     float.h     - Needs review, no significant changes expected
-    inttypes.h  - Macros finished, still needs the new functions
+    inttypes.h  - C99 conforming
     iso646.h    - C99 conforming
     limits.h    - Needs review, no significant changes expected
     locale.h    - Needs review, no significant changes expected

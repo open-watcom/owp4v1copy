@@ -33,6 +33,7 @@
 #include "widechar.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
 #ifdef __WIDECHAR__
     #include <wctype.h>
 #else
@@ -164,3 +165,13 @@ _WCRTLINK long long int __F_NAME(strtoll,wcstoll)( const CHAR_TYPE *nptr, CHAR_T
     return( _stoll( nptr, endptr, base, 1 ) );
 }
 
+/* Assuming that intmax_t is equal to long long and uintmax_t to unsigned long long */
+_WCRTLINK uintmax_t __F_NAME(strtoumax,wcstoumax)( const CHAR_TYPE *nptr, CHAR_TYPE **endptr, int base )
+{
+    return( _stoll( nptr, endptr, base, 0 ) );
+}
+
+_WCRTLINK intmax_t __F_NAME(strtoimax,wcstoimax)( const CHAR_TYPE *nptr, CHAR_TYPE **endptr, int base )
+{
+    return( _stoll( nptr, endptr, base, 1 ) );
+}

@@ -328,6 +328,8 @@ frexp.exe &
 gcvt.exe &
 hypot.exe &
 itoa.exe &
+imaxabs.exe &
+imaxdiv.exe &
 labs.exe &
 ldexp.exe &
 ldiv.exe &
@@ -450,6 +452,8 @@ strrev.exe &
 strset.exe &
 strspn.exe &
 strstr.exe &
+strtoimx.exe &
+strtoumx.exe &
 strtod.exe &
 strtok.exe &
 strtol.exe &
