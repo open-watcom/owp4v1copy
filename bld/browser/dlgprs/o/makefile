@@ -97,3 +97,7 @@ scanner.obj : ..\cpp\scanner.cpp ..\gen\prsdlg.gh ..\gen\prsbnd.gh .AUTODEPEND
 .gpp: ..\gen
 .gpp.obj: .AUTODEPEND
     wpp386 @compflags $[@
+
+clean : .symbolic
+        @rm -f *.obj *.lnk *.err *.exe *.map *.tim
+
