@@ -1144,7 +1144,6 @@
 :target. any
 :usage. always generate default library information
 :jusage. デフォルト･ライブラリ情報を常に生成します
-:internal.
 
 :option. zls
 :target. any
