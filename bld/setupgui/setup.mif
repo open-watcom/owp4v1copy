@@ -64,6 +64,16 @@ objs += &
     utils.obj
 !endif
 
+!ifeq sys_windowed 1
+
+libs_nt = $(guidir)/win/nt$(host_cpu)/gui.lib
+
+libs_os2 = $(guidir)/win/os2$(host_cpu)/gui.lib
+
+libs_win = $(guidir)/win/win$(host_cpu)/gui.lib
+
+!else
+
 libs_dos = &
 $(guidir)/ui/dos$(host_cpu)/gui.lib &
 $(uidir)/dos/dos$(host_cpu)/ui.lib &
@@ -75,11 +85,12 @@ $(uidir)/unix/linux$(host_cpu)/ui.lib &
 $(ncurses_dir)/linux$(host_cpu)/ncurses.lib &
 $(wres_lib)
 
-libs_nt = $(guidir)/win/nt$(host_cpu)/gui.lib
+libs_os2 = &
+$(guidir)/ui/os2$(host_cpu)/gui.lib &
+$(uidir)/os2/os2$(host_cpu)/ui.lib &
+$(wres_lib)
 
-libs_os2 = $(guidir)/win/os2$(host_cpu)/gui.lib
-
-libs_win = $(guidir)/win/win$(host_cpu)/gui.lib
+!endif
 
 libs = $(libs_$(host_os))
 
@@ -121,7 +132,11 @@ rcx_out_nt = $(rc) -k
 rc_out = $(rcx_out_$(host_os))
 
 !ifeq host_os os2
+!ifeq sys_windowed 1
 dep_res1 = ../h/setup.h setup.ico gui.rc _guimsgs.gh
+!else
+dep_res1 = ../h/setup.h gui.rc _guimsgs.gh
+!endif
 !else ifeq host_os dos
 dep_res1 = ../h/setup.h gui.rc _guimsgs.gh
 !else ifeq host_os linux
@@ -170,6 +185,8 @@ virgin.exe: $(gendeps) dosstub.exe
 
 !else ifeq host_os os2
 
+!ifeq sys_windowed 1
+
 all : setup.exe csetup.exe f77setup.exe .SYMBOLIC
 
 setup.exe: virgin.exe setup.res
@@ -179,6 +196,13 @@ setup.exe: virgin.exe setup.res
 virgin.exe: $(gendeps)
     $(linker) name $^@ @setup.lnk
 
+!else
+
+setup.exe: $(gendeps) setupui.res
+    $(linker) name $^@ @setup.lnk
+    wstrip -q -a -r setup.exe . setupui.res
+
+!endif
 
 !else ifeq host_os nt
 

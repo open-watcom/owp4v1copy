@@ -42,9 +42,6 @@
 #include "setupwpi.h"
 #include "setupinf.h"
 
-extern void *MemAlloc( int size );
-extern void MemFree( void *ptr );
-
 
 extern bool CreatePMInfo( bool uninstall )
 /****************************************/
@@ -160,8 +157,8 @@ extern bool CreatePMInfo( bool uninstall )
 
             // Append the subdir where the icon file is and the icon file's name.
             dwTemp = SimGetPMIconInfo( nPMProg, PMIconFileName );
-            nDirIndex = (short) LOWORD( dwTemp );
-            icon_number = (short) HIWORD( dwTemp );
+            nDirIndex = (short) ( dwTemp & 0xFFFF );
+            icon_number = (short) ( dwTemp >> 16 );
             if( icon_number == -1 ) icon_number = 0;
             if( nDirIndex != -1 ) {
                 SimGetDir( nDirIndex, t1 );
@@ -206,7 +203,7 @@ static bool SetEAttr( char *filename, char const *name, char const *val )
     plen = strlen( val );
     nlen = strlen( name );
     len = sizeof( FEA2LIST ) + nlen + plen + 4;
-    fet = MemAlloc( len );
+    fet = GUIMemAlloc( len );
     fet->cbList = len;
     fet->list[0].oNextEntryOffset = sizeof( FEA2 ) + nlen + plen + 4;
     fet->list[0].fEA = 0;
@@ -221,7 +218,7 @@ static bool SetEAttr( char *filename, char const *name, char const *val )
     memcpy( value, val, plen );
 
     len = sizeof( GEA2LIST ) + nlen ;
-    get = MemAlloc( len );
+    get = GUIMemAlloc( len );
     get->cbList = len;
     get->list[0].oNextEntryOffset = sizeof( GEA2 ) + nlen;
     get->list[0].cbName = nlen;
@@ -230,8 +227,8 @@ static bool SetEAttr( char *filename, char const *name, char const *val )
     eabuf.fpGEA2List = get;
     eabuf.fpFEA2List = fet;
     ret = DosSetPathInfo( filename, FIL_QUERYEASIZE, &eabuf, sizeof( eabuf ), 0 );
-    MemFree( fet );
-    MemFree( get );
+    GUIMemFree( fet );
+    GUIMemFree( get );
     return( ret == NO_ERROR );
 }
 
