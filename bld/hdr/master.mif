@@ -282,6 +282,7 @@ LINUX_files = &
         sys/time.h &
         sys/times.h &
         sys/ioctl.h &
+        sys/mman.h &
         sys/mount.h &
         sys/ptrace.h &
         sys/utsname.h &

@@ -537,9 +537,15 @@ _WCRTLINK void sync( void )
     return;
 }
 
-_WCRTLINK int    uname ( struct utsname *__name)
+_WCRTLINK int    uname( struct utsname *__name )
 {
     u_long res = sys_call1(SYS_uname, (u_long)__name);
+    __syscall_return(int,res);
+}
+
+_WCRTLINK int mprotect( void *addr, size_t len, int prot )
+{
+    u_long res = sys_call3(SYS_mprotect, (u_long)addr, len, prot);
     __syscall_return(int,res);
 }
 

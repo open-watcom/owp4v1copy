@@ -55,12 +55,15 @@ Structure of a module handle when loaded from disk
 {secret}
 ****************************************************************************/
 typedef struct {
+    u_char  *pbase;         /* Base of image in memory                  */
     u_char  *ptext;         /* Text section read from disk              */
     u_char  *pdata;         /* Data section read from disk              */
+    u_char  *pbss;          /* BSS section read                         */
     u_char  *pimport;       /* Import section read from disk            */
     u_char  *pexport;       /* Export section read from disk            */
     u_long  textBase;       /* Base of text section in image            */
     u_long  dataBase;       /* Base of data section in image            */
+    u_long  bssBase;        /* Base of BSS data section in image        */
     u_long  importBase;     /* Offset of import section in image        */
     u_long  exportBase;     /* Offset of export section in image        */
     u_long  exportDir;      /* Offset of export directory               */
