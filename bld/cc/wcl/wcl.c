@@ -237,6 +237,7 @@ void print_banner( void )
     puts( banner1w( _NAME_ "Compile and Link Utility",_WCL_VERSION_) );
     puts( banner2( "1988" ) );
     puts( banner3 );
+    puts( banner3a );
     done = 1;
 }
 

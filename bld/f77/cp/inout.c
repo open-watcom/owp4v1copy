@@ -1,4 +1,4 @@
-/****************************************************************************
+/***************************************************************************
 *
 *                            Open Watcom Project
 *
@@ -126,7 +126,6 @@ extern  character_set   CharSetInfo;
         #define _Banner "WATFOR-77/32"
     #endif
 #endif
-//#define _ExclUse "**** CONFIDENTIAL - Preliminary software ****"
 
 
 //========================================================================
@@ -822,6 +821,12 @@ void    GetTrademark( char *buff ) {
     strcpy( buff, banner3 );
 }
 
+void    GetMoreInfo( char *buff ) {
+//=================================
+
+    strcpy( buff, banner3a );
+}
+
 
 void    PrtBanner() {
 //===================
@@ -846,22 +851,14 @@ void    PrtBanner() {
     }
     PrtLstNL( banner );
 
-    PrtExcUse();
+    GetMoreInfo( banner );
+    if( !(Options & OPT_QUIET) && !(Options & OPT_TYPE) ) {
+        TOutNL( banner );
+    }
+    PrtLstNL( banner );
+
     PrtOptions();
     LFSkip();
-}
-
-
-static  void    PrtExcUse() {
-//===========================
-
-#if defined( _ExclUse )
-    LFSkip();
-    PrtLstNL( _ExclUse );
-    if( !(Options & OPT_TYPE) ) {
-        TOutNL( _ExclUse );
-    }
-#endif
 }
 
 

@@ -51,7 +51,7 @@
 
 #define _C      "C++"
 
-#define _COMPILER " Optimizing Compiler "
+#define _COMPILER " Optimizing Compiler"
 
 void CBanner( void )
 {

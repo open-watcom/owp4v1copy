@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Compiler usage information output routines.
 *
 ****************************************************************************/
 
@@ -65,7 +64,7 @@ void CCusage()
     char const  * p;
     unsigned    count;
 
-    count = 0;
+    count = 2;
     #ifdef __OSI__
         if( _Copyright != NULL ) {
             ConsMsg( _Copyright );
@@ -74,7 +73,7 @@ void CCusage()
     #endif
     p = UsageText();
     while( *p != '\0' ) {
-        if( ++count > 20 ) {
+        if( ++count > 21 ) {
             Wait_for_return();
             count = 0;
         }

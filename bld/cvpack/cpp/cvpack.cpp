@@ -45,11 +45,13 @@
 #include "cssymbol.hpp"
 #include "symdis.hpp"
 
+#include "banner.h"
 
-static const char* CVpackHeader = "Open Watcom CV4 Symbolic Debugging "\
-                                  "Information Compactor Version 1.00\n"\
-                                  "Portions Copyright (c) Sybase, Inc. 1995-2002.\n"\
-                                  "All rights reserved.\n";
+static const char* CVpackHeader =
+    banner1w( "CV4 Symbolic Debugging Information Compactor", BAN_VER_STR ) "\n" \
+    banner2( "1995" ) "\n" \
+    banner3 "\n" \
+    banner3a;
 
 static const char* CVpackUsage = "usage : cvpack [/nologo] <exefile>\n";
 

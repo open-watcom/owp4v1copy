@@ -24,15 +24,10 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Mainline for WATFOR-77.
 *
 ****************************************************************************/
 
-
-//
-// BOOT77       : mainline for WATFOR-77
-//
 
 #include "ftnstd.h"
 #include "progsw.h"
@@ -56,6 +51,7 @@ extern  char            *Batch(char *,uint);
 extern  void            GetBanner(char *);
 extern  void            GetCopyright(char *);
 extern  void            GetTrademark(char *);
+extern  void            GetMoreInfo(char *);
 extern  void            InitMacroProcessor(void);
 extern  void            FiniMacroProcessor(void);
 extern  void            FMemInit(void);
@@ -187,6 +183,8 @@ void    ShowUsage() {
     GetCopyright( buff );
     TOutNL( buff );
     GetTrademark( buff );
+    TOutNL( buff );
+    GetMoreInfo( buff );
     TOutNL( buff );
     TOutNL( "" );
     MsgBuffer( MS_USAGE_LINE, buff, _CmpName );

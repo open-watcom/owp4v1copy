@@ -37,7 +37,7 @@
 
 char CompilerID[] = { "__WATCOMC__=" BANSTR( _BANVER ) };
 
-#define _COMPILER " Optimizing Compiler "
+#define _COMPILER " Optimizing Compiler"
 
 #if _CPU == 386
  #define _386 "32"
@@ -51,10 +51,10 @@ void CBanner()
     if( CompFlags.banner_printed ) return;              /* 13-mar-90 */
     if( CompFlags.quiet_mode )     return;
 #if _MACHINE == _ALPHA
-    BannerMsg( banner1w( "C Alpha AXP Optimizing Compiler ",
+    BannerMsg( banner1w( "C Alpha AXP Optimizing Compiler",
                                                 _WCC_VERSION_ ) );
 #elif _MACHINE == _PPC
-    BannerMsg( banner1w( "C Power PC Optimizing Compiler ",
+    BannerMsg( banner1w( "C Power PC Optimizing Compiler",
                                                 _WCC_VERSION_ ) );
 #else
     BannerMsg( banner1w( "C" _386 _COMPILER, _WCC_VERSION_ ) );
@@ -62,31 +62,5 @@ void CBanner()
     BannerMsg( banner2( "1984" ) );
     BannerMsg( banner3 );
     BannerMsg( banner3a );
-#if 0
-    ChkExpiryDate();
-#endif
     CompFlags.banner_printed = 1;                       /* 13-mar-90 */
 }
-
-#if 0
-void ChkExpiryDate()
-{
-    if( expired() ) {
-        BannerMsg( "Beta Test period has expired" );
-        exit( 1 );
-    }
-}
-
-int expired()
-{
-    struct tm *t;
-    auto time_t tod;
-
-    /* get current date */
-    tod = time( &tod );
-    t = localtime( &tod );
-    if( t->tm_year != 88 ) return( 1 );
-    if( t->tm_mon >= 4 )   return( 1 );     /* if past April, too bad */
-    return( 0 );
-}
-#endif
