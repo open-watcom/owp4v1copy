@@ -15,13 +15,14 @@ set P4USER=YourName
 set P4CLIENT=YOURCLIENT
 set P4PASSWD=YourPassword
 
-REM Change this to point to your OpenWatcom tree
+REM Change this to point to your Open Watcom tree
 set owroot=d:\openwatcom
 
-REM Change this to point to your Watcom 11.0c directory
+REM Change this to point to your installed Open Watcom directory
 set watcom=c:\c\wc11
 
-REM Change this to the install location of GhostScript for PDF creation (only if you want it)
+REM Change this to the install location of GhostScript for PDF creation
+REM (only if you want it)
 set GHOSTSCRIPT=C:\gs\gs7.04
 
 REM temporary sub-directory for pre-build OW tools
@@ -30,14 +31,8 @@ set OBJDIR=prebuild
 REM Change this to point to your OS/2 Toolkit directory
 set os2tkroot=c:\Toolkit
 
-REM Change this to point to your OS/2 DDK directory
-set os2ddkroot=c:\DDK
-
-REM Set this variable if you wish to use the OS/2 Toolkit headers and libs
-REM set use_os2tk_stuff=1
-
 REM set this variable if you want default windowing support
-rem set default_windowing=1
+REM set default_windowing=1
 
 REM Unset this variable to get more debug info
 set on_build_machine=1

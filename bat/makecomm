@@ -33,14 +33,6 @@ default_windowing = $(%default_windowing)
 !endif
 
 os2_toolkit     = $(%os2tkroot)
-os2_ddk         = $(%os2ddkroot)
-
-# if you wish to use the OS/2 Toolkit headers/libraries, set the environment
-# variable; default is OS/2 headers/libraries in the Watcom tree
-!ifdef %use_os2tk_stuff
-use_os2tk_hdrs = $(%use_os2tk_stuff)
-use_os2tk_libs = $(%use_os2tk_stuff)
-!endif
 
 !ifndef __LINUX__
 
@@ -273,14 +265,8 @@ bindcalls=$(build_root)\watcom\lib\doscalls.lib
 doscalls=$(build_root)\watcom\lib\doscalls.lib
 apilib=$(build_root)\watcom\lib\api.lib
 
-# Select OS/2 Libs based on use_os2tk_stuff
-!ifdef %use_os2tk_stuff
-os2386=$(os2_toolkit)\lib\os2386.lib
-os2286=$(os2_ddk)\base\lib\os2286.lib
-!else
 os2386=$(lang_root)\lib386\os2\os2386.lib
 os2286=$(lang_root)\lib286\os2\os2.lib
-!endif
 
 #
 # locations of c libraries - used by fortran library build
@@ -548,14 +534,8 @@ bindcalls=$(build_root)/watcom/lib/doscalls.lib
 doscalls=$(build_root)/watcom/lib/doscalls.lib
 apilib=$(build_root)/watcom/lib/api.lib
 
-# Select OS/2 Libs based on use_os2tk_stuff
-!ifdef %use_os2tk_stuff
-os2386=$(os2_toolkit)/lib/os2386.lib
-os2286=$(os2_ddk)/base/lib/os2286.lib
-!else
 os2386=$(lang_root)/lib386/os2/os2386.lib
 os2286=$(lang_root)/lib286/os2/os2.lib
-!endif
 
 lib_drv = $(build_root)
 inc_drv = $(tools_root)
