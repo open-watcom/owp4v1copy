@@ -11,6 +11,7 @@ proccall &
 segatrep &
 shift &
 structdd &
+tbyte &
 testequ
 
 dev_objs = &
