@@ -78,8 +78,8 @@ static void  WExpandEditWindowItem      ( HWND, HWND, RECT * );
 /* static variables                                                         */
 /****************************************************************************/
 static DLGPROC     WMenuEditWinProc = NULL;
-static HBRUSH      WEditWinBrush     = NULL;
-static COLORREF    WEditWinColor     = NULL;
+static HBRUSH      WEditWinBrush    = NULL;
+static COLORREF    WEditWinColor    = 0;
 
 int appWidth = -1;
 int appHeight = -1;

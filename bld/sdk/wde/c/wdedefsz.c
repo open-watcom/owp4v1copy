@@ -86,7 +86,7 @@ static WdeDefaultSizeStruct WdeDefaultSizes[] =
 ,   { PROGRESS_OBJ      , { 32, 12 } }
 ,   { HOTKEY_OBJ        , { 32, 12 } }
 ,   { HEADER_OBJ        , { 48, 12 } }
-,   { NULL          , {  0,  0 } }
+,   { 0                 , {  0,  0 } }
 };
 
 /****************************************************************************/

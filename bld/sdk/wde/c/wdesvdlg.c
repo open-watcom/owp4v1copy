@@ -56,7 +56,7 @@
 #define lvs_pick(a,b)   { a##b, 0x3, 0x3, xstr(a)##xstr(b), ControlStyle }
 #define jpick(a,b)      { a##b, 0x0f00, 0x0, xstr(a)##xstr(b), ControlStyle }
 #define fpick(a,b)      { a##b, a##b, a##b, xstr(a)##xstr(b), ControlStyle }
-#define sentinel        { NULL, NULL, NULL, NULL, 0 }
+#define sentinel        { 0, 0, 0, NULL, 0 }
 
 /****************************************************************************/
 /* type definitions                                                         */

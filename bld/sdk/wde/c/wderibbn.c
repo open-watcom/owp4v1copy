@@ -81,18 +81,18 @@ static Bool WdeDoInitRibbon( HINSTANCE, WdeRibbonName *, int );
 /****************************************************************************/
 WdeRibbonName WdeRibbonNames[] =
 {
-    { "New"     , NULL , IDM_NEW_RES     , NULL         }
-,   { "Open"    , NULL , IDM_OPEN_RES    , NULL         }
-,   { "Save"    , NULL , IDM_SAVE_RES    , NULL         }
-,   { NULL      , NULL , BLANK_PAD       , NULL         }
-,   { "Cut"     , NULL , IDM_CUTOBJECT   , NULL         }
-,   { "Copy"    , NULL , IDM_COPYOBJECT  , NULL         }
-,   { "Paste"   , NULL , IDM_PASTEOBJECT , NULL         }
-,   { NULL      , NULL , BLANK_PAD       , NULL         }
-,   { "SzToTxt" , NULL , IDM_SIZETOTEXT  , NULL         }
-,   { NULL      , NULL , BLANK_PAD       , NULL         }
+    { "New"     , NULL , IDM_NEW_RES     , 0            }
+,   { "Open"    , NULL , IDM_OPEN_RES    , 0            }
+,   { "Save"    , NULL , IDM_SAVE_RES    , 0            }
+,   { NULL      , NULL , BLANK_PAD       , 0            }
+,   { "Cut"     , NULL , IDM_CUTOBJECT   , 0            }
+,   { "Copy"    , NULL , IDM_COPYOBJECT  , 0            }
+,   { "Paste"   , NULL , IDM_PASTEOBJECT , 0            }
+,   { NULL      , NULL , BLANK_PAD       , 0            }
+,   { "SzToTxt" , NULL , IDM_SIZETOTEXT  , 0            }
+,   { NULL      , NULL , BLANK_PAD       , 0            }
 ,   { "Test"    , NULL , IDM_TEST_MODE   , ITEM_STICKY  }
-,   { NULL      , NULL , BLANK_PAD       , NULL         }
+,   { NULL      , NULL , BLANK_PAD       , 0            }
 ,   { "Order"   , NULL , IDM_SET_ORDER   , ITEM_STICKY  }
 ,   { "Tabs"    , NULL , IDM_SET_TABS    , ITEM_STICKY  }
 ,   { "Groups"  , NULL , IDM_SET_GROUPS  , ITEM_STICKY  }
@@ -101,17 +101,17 @@ WdeRibbonName WdeRibbonNames[] =
 
 WdeRibbonName WdeDDERibbonNames[] =
 {
-    { "Clear"   , NULL , IDM_DDE_CLEAR   , NULL         }
-,   { "Save"    , NULL , IDM_DDE_UPDATE_PRJ , NULL      }
-,   { NULL      , NULL , BLANK_PAD       , NULL         }
-,   { "Cut"     , NULL , IDM_CUTOBJECT   , NULL         }
-,   { "Copy"    , NULL , IDM_COPYOBJECT  , NULL         }
-,   { "Paste"   , NULL , IDM_PASTEOBJECT , NULL         }
-,   { NULL      , NULL , BLANK_PAD       , NULL         }
-,   { "SzToTxt" , NULL , IDM_SIZETOTEXT  , NULL         }
-,   { NULL      , NULL , BLANK_PAD       , NULL         }
+    { "Clear"   , NULL , IDM_DDE_CLEAR   , 0            }
+,   { "Save"    , NULL , IDM_DDE_UPDATE_PRJ , 0         }
+,   { NULL      , NULL , BLANK_PAD       , 0            }
+,   { "Cut"     , NULL , IDM_CUTOBJECT   , 0            }
+,   { "Copy"    , NULL , IDM_COPYOBJECT  , 0            }
+,   { "Paste"   , NULL , IDM_PASTEOBJECT , 0            }
+,   { NULL      , NULL , BLANK_PAD       , 0            }
+,   { "SzToTxt" , NULL , IDM_SIZETOTEXT  , 0            }
+,   { NULL      , NULL , BLANK_PAD       , 0            }
 ,   { "Test"    , NULL , IDM_TEST_MODE   , ITEM_STICKY  }
-,   { NULL      , NULL , BLANK_PAD       , NULL         }
+,   { NULL      , NULL , BLANK_PAD       , 0            }
 ,   { "Order"   , NULL , IDM_SET_ORDER   , ITEM_STICKY  }
 ,   { "Tabs"    , NULL , IDM_SET_TABS    , ITEM_STICKY  }
 ,   { "Groups"  , NULL , IDM_SET_GROUPS  , ITEM_STICKY  }

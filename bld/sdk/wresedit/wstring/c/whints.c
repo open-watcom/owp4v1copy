@@ -91,7 +91,7 @@ static WHintItem WHints[] =
 ,   { IDM_STR_NEWITEM   , W_STR_NEWITEM         }
 ,   { IDM_STR_ABOUT     , W_STR_ABOUT           }
 ,   { IDM_HELP          , W_STR_HELP            }
-,   { -1                , NULL                  }
+,   { -1                , 0                     }
 };
 
 static WPopupHintItem WPopupHints[] =
@@ -166,7 +166,7 @@ DWORD WGetPopupHint( WPopupHintItem *items, int num, HMENU popup )
         }
     }
 
-    return( NULL );
+    return( 0L );
 }
 
 void WHandlePopupHint( wstatbar *wsb, HMENU menu, HMENU popup )

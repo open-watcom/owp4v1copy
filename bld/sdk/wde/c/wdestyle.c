@@ -65,7 +65,7 @@ static WdeWinStyle WdeStyleMap[] =
 ,   { WS_THICKFRAME,    "WS_THICKFRAME",        IDB_WS_THICKFRAME       , 0 }
 ,   { WS_GROUP,         "WS_GROUP",             IDB_WS_GROUP            , IDB_WS_MINIMIZEBOX }
 ,   { WS_TABSTOP,       "WS_TABSTOP",           IDB_WS_TABSTOP          , IDB_WS_MAXIMIZEBOX }
-,   { 0,                NULL,                   NULL                    , 0 }
+,   { 0,                NULL,                   0                       , 0 }
 };
 
 static WdeWinStyle *WdeGetWdeWinStyleFromStyle( DialogStyle style )

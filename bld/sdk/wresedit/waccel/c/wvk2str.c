@@ -166,7 +166,7 @@ static WVKey WVKeys[] =
 ,   { VK_F24       , "VK_F24"        }
 ,   { VK_NUMLOCK   , "VK_NUMLOCK"    }
 ,   { VK_SCROLL    , "VK_SCROLL"     }
-,   { NULL         , NULL            }
+,   { 0            , NULL            }
 };
 
 char WMapKeyToShiftedKey( char c )
