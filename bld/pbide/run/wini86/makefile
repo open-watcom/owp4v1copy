@@ -1,8 +1,14 @@
-#pmake: all build cpu_i86 os_win
+#pmake: build cpu_i86 os_win
+
+host_os  = win
+host_cpu = i86
 
 !include cproj.mif
+!include defrule.mif
 !include deftarg.mif
 
-run.exe : ../run.c
-        wcc -bt=windows -ml -i$(lang_root)\h\win $< -d2 -w4
-        wlink deb all sys windows file run.obj op map
+.c: ..
+
+run.exe : run.obj
+        wlink deb all sys windows name $@ file run op quiet,map
+
