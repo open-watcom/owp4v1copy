@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Macro processing, part 2.
 *
 ****************************************************************************/
 
@@ -34,8 +33,6 @@
 #include "pragmas.h"
 #include "scan.h"
 #include <stddef.h>
-
-// void    CPragma(void);
 
 static void    CSkip(void);
 static void    CSkipIf(void);
@@ -102,7 +99,7 @@ struct  cpp_info {              /* C Pre-processor information */
         int             processing;
 };
 
-void PreProcStmt(void)
+static void PreProcStmt(void)
 {
     struct preproc      *pp;
     int                 hash;
@@ -180,6 +177,7 @@ int ChkControl(void)
     return( T_WHITE_SPACE );
 }
 
+#if 0
 int ScanCharacters()
 {
     int         c;
@@ -207,6 +205,7 @@ int ScanCharacters()
     ScanCharPtr = scanptr;
     return( c );
 }
+#endif
 
 static void Flush2EOL( void )
 {

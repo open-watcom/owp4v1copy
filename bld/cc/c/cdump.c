@@ -35,7 +35,7 @@
 extern  char    *Tokens[];
 
 /* matches table of type in ctypes.h */
-char    *CTypeNames[] = {
+static  char    *CTypeNames[] = {
         "signed char",
         "unsigned char",
         "short",
@@ -141,21 +141,20 @@ static void ChunkSaveStrWord( STRCHUNK *pch, const char *str )
     ChunkSaveChar( pch, ' ' );
 }
 
+#ifndef NDEBUG
 void SymDump()
 {
-#if 0
     if( DebugFlag >= 2 ) {
         DumpTags();
         DumpHashTable();
         DumpEnumTable();
     }
-#endif
 }
+#endif
 
-
+#ifdef FDEBUG
 void DumpToken()
 {
-#if 0
     int value;
 
     if( DebugFlag >= 3 ) {
@@ -170,18 +169,16 @@ void DumpToken()
         } else
             printf( "'%s'\n", Tokens[ CurToken ] );
     }
-#endif
 }
+#endif
 
 #if 0
 void DumpTypeCounts()
 {
-/*
     int i;
     for( i = TYPE_CHAR; i <= TYPE_VOID; ++i ) {
         printf( "%3d %s\n", CTypeCounts[i], CTypeNames[i] );
     }
-*/
     printf( "%d pointer nodes\n", CTypeCounts[TYPE_POINTER] );
 }
 #endif

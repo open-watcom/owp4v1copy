@@ -68,9 +68,9 @@ struct  option {
     void        (*function)(void);
 };
 
-unsigned OptValue;
-char    *OptScanPtr;
-char    *OptParm;
+static unsigned OptValue;
+static char    *OptScanPtr;
+static char    *OptParm;
 
 #define __isdigit(c)    ((c) >= '0' && (c) <= '9')
 
@@ -863,59 +863,59 @@ static void EnsureEndOfSwitch()
 }
 
 #if _MACHINE == _ALPHA
-void SetStructPack()    { CompFlags.align_structs_on_qwords = 1; }
+static void SetStructPack()    { CompFlags.align_structs_on_qwords = 1; }
 #endif
 
-void SetPackAmount()    { PackAmount = OptValue; }
-void Set_DbgFmt()       { SwData.dbg_fmt = OptValue; }
+static void SetPackAmount()    { PackAmount = OptValue; }
+static void Set_DbgFmt()       { SwData.dbg_fmt = OptValue; }
 
 #if _CPU == 8086 || _CPU == 386
-void SetCPU()           { SwData.cpu = OptValue; }
-void SetCPU_xR(){ SwData.cpu = OptValue; CompFlags.register_conventions = 1; }
-void SetCPU_xS(){ SwData.cpu = OptValue; CompFlags.register_conventions = 0; }
-void SetFPU()           { SwData.fpu = OptValue; }
-void Set_FPR()          { Stack87 = 4; }
-void Set_FPI87()        { SwData.fpt = SW_FPT_INLINE; }
-void Set_Emu()          { SwData.fpt = SW_FPT_EMU; }
-void Set_FPC()          { SwData.fpt = SW_FPT_CALLS; }
-void Set_FPD()          { TargetSwitches |= P5_DIVIDE_CHECK; }
+static void SetCPU()           { SwData.cpu = OptValue; }
+static void SetCPU_xR(){ SwData.cpu = OptValue; CompFlags.register_conventions = 1; }
+static void SetCPU_xS(){ SwData.cpu = OptValue; CompFlags.register_conventions = 0; }
+static void SetFPU()           { SwData.fpu = OptValue; }
+static void Set_FPR()          { Stack87 = 4; }
+static void Set_FPI87()        { SwData.fpt = SW_FPT_INLINE; }
+static void Set_Emu()          { SwData.fpt = SW_FPT_EMU; }
+static void Set_FPC()          { SwData.fpt = SW_FPT_CALLS; }
+static void Set_FPD()          { TargetSwitches |= P5_DIVIDE_CHECK; }
 
-void SetMemoryModel()   { SwData.mem = OptValue; }
+static void SetMemoryModel()   { SwData.mem = OptValue; }
 #endif
 
-void Set_BD()           { CompFlags.bd_switch_used = 1; GenSwitches |= DLL_RESIDENT_CODE; }
-void Set_BC()           { CompFlags.bc_switch_used = 1; }
-void Set_BG()           { CompFlags.bg_switch_used = 1; }
-void Set_BM()           { CompFlags.bm_switch_used = 1; }
-void Set_BR()           { CompFlags.br_switch_used = 1; }
-void Set_BW()           { CompFlags.bw_switch_used = 1; }
-void Set_BT()           { SetTargName( OptParm,  OptScanPtr - OptParm ); }
+static void Set_BD()           { CompFlags.bd_switch_used = 1; GenSwitches |= DLL_RESIDENT_CODE; }
+static void Set_BC()           { CompFlags.bc_switch_used = 1; }
+static void Set_BG()           { CompFlags.bg_switch_used = 1; }
+static void Set_BM()           { CompFlags.bm_switch_used = 1; }
+static void Set_BR()           { CompFlags.br_switch_used = 1; }
+static void Set_BW()           { CompFlags.bw_switch_used = 1; }
+static void Set_BT()           { SetTargName( OptParm,  OptScanPtr - OptParm ); }
 
-void SetExtendedDefines()
+static void SetExtendedDefines()
 {
     CompFlags.extended_defines = 1;
     EnsureEndOfSwitch();
 }
-void SetBrowserInfo()   { CompFlags.emit_browser_info = 1; }
+static void SetBrowserInfo()   { CompFlags.emit_browser_info = 1; }
 
 #if _MACHINE == _ALPHA
-void Set_AS()
+static void Set_AS()
 {
     TargetSwitches |= ALIGNED_SHORT;
 }
 #endif
 
-void Set_AA()           { CompFlags.auto_agg_inits = 1; }
-void Set_AI()           { CompFlags.no_check_inits = 1; }
-void Set_AQ()           { CompFlags.no_check_qualifiers = 1; }
-void Set_D0()
+static void Set_AA()           { CompFlags.auto_agg_inits = 1; }
+static void Set_AI()           { CompFlags.no_check_inits = 1; }
+static void Set_AQ()           { CompFlags.no_check_qualifiers = 1; }
+static void Set_D0()
 {
     GenSwitches &= ~(NUMBERS | DBG_TYPES | DBG_LOCALS | NO_OPTIMIZATION);
     CompFlags.debug_info_some = 0;
     CompFlags.no_debug_type_names = 0;
     EnsureEndOfSwitch();
 }
-void Set_D1()
+static void Set_D1()
 {
     GenSwitches |= NUMBERS;
     if( *OptScanPtr == '+' ) {
@@ -925,7 +925,7 @@ void Set_D1()
     }
     EnsureEndOfSwitch();
 }
-void Set_D2()
+static void Set_D2()
 {
     GenSwitches |= NUMBERS | DBG_TYPES | DBG_LOCALS | NO_OPTIMIZATION;
     CompFlags.inline_functions = 0;
@@ -935,32 +935,32 @@ void Set_D2()
     }
     EnsureEndOfSwitch();
 }
-void Set_D3()
+static void Set_D3()
 {
     CompFlags.dump_types_with_names = 1;
     Set_D2();
 }
-void Set_D9()           { CompFlags.use_full_codegen_od = 1; }
-void DefineMacro()      { OptScanPtr = Define_UserMacro( OptScanPtr ); }
+static void Set_D9()           { CompFlags.use_full_codegen_od = 1; }
+static void DefineMacro()      { OptScanPtr = Define_UserMacro( OptScanPtr ); }
 
-void SetErrorLimit()    { ErrLimit = OptValue; }
-void Set_EC()           { CompFlags.ec_switch_used = 1; }
-void Set_EE()           { CompFlags.ee_switch_used = 1; }
-void Set_EF()           { CompFlags.ef_switch_used = 1; }
-void Set_EN()           { CompFlags.emit_names = 1; }
-void Set_EI()           { CompFlags.make_enums_an_int = 1;
-                          CompFlags.original_enum_setting = 1;}
-void Set_EM()           { CompFlags.make_enums_an_int = 0;
-                          CompFlags.original_enum_setting = 0;}
+static void SetErrorLimit()    { ErrLimit = OptValue; }
+static void Set_EC()           { CompFlags.ec_switch_used = 1; }
+static void Set_EE()           { CompFlags.ee_switch_used = 1; }
+static void Set_EF()           { CompFlags.ef_switch_used = 1; }
+static void Set_EN()           { CompFlags.emit_names = 1; }
+static void Set_EI()           { CompFlags.make_enums_an_int = 1;
+                                 CompFlags.original_enum_setting = 1;}
+static void Set_EM()           { CompFlags.make_enums_an_int = 0;
+                                 CompFlags.original_enum_setting = 0;}
 
 #if _CPU == 8086 || _CPU == 386
-void Set_ET()           { TargetSwitches |= P5_PROFILING; }
-void Set_ETP()          { TargetSwitches |= NEW_P5_PROFILING; }
-void Set_ESP()          { TargetSwitches |= STATEMENT_COUNTING; }
-void Set_EZ()           { TargetSwitches |= EZ_OMF; }
+static void Set_ET()           { TargetSwitches |= P5_PROFILING; }
+static void Set_ETP()          { TargetSwitches |= NEW_P5_PROFILING; }
+static void Set_ESP()          { TargetSwitches |= STATEMENT_COUNTING; }
+static void Set_EZ()           { TargetSwitches |= EZ_OMF; }
 #endif
 
-void Set_EP()
+static void Set_EP()
 {
     CompFlags.ep_switch_used = 1;
     ProEpiDataSize = OptValue;
@@ -989,7 +989,7 @@ static void StripQuotes( char *fname )
     }
 }
 
-char *CopyOfParm()
+static char *CopyOfParm()
 {
     char        *p;
     unsigned    len;
@@ -1001,7 +1001,7 @@ char *CopyOfParm()
     return( p );
 }
 
-char *GetAFileName()
+static char *GetAFileName()
 {
     char *fname;
     fname = CopyOfParm();
@@ -1009,7 +1009,7 @@ char *GetAFileName()
     return( fname );
 }
 
-void Set_FH()
+static void Set_FH()
 {
     if( OptParm == OptScanPtr ) {
         PCH_FileName = DEFAULT_PCH_NAME;
@@ -1017,29 +1017,31 @@ void Set_FH()
         PCH_FileName = GetAFileName();
     }
 }
-void Set_FHQ()
+
+static void Set_FHQ()
 {
     CompFlags.no_pch_warnings = 1;
     Set_FH();
 }
-void Set_FI()
+
+static void Set_FI()
 {
     ForceInclude = GetAFileName();
 }
 
-void Set_FLD()
+static void Set_FLD()
 {
     CompFlags.use_long_double = 1;
 }
 
-void Set_FO()
+static void Set_FO()
 {
     CMemFree( ObjectFileName );
     ObjectFileName = GetAFileName();
     CompFlags.cpp_output_to_file = 1;   /* in case '-p' option */
 }
 
-void Set_FR()
+static void Set_FR()
 {
     CMemFree( ErrorFileName );
     ErrorFileName = GetAFileName();
@@ -1050,8 +1052,8 @@ void Set_FR()
 }
 
 #if _CPU == 8086 || _CPU == 386
-void SetCodeClass()     { CodeClassName = CopyOfParm(); }
-void SetDataSegName()
+static void SetCodeClass()     { CodeClassName = CopyOfParm(); }
+static void SetDataSegName()
 {
     SwData.nd_used = 1;
     DataSegName = CopyOfParm();
@@ -1061,23 +1063,24 @@ void SetDataSegName()
         DataSegName = NULL;
     }
 }
-void SetTextSegName()   { TextSegName = CopyOfParm(); }
-void SetGroup()         { GenCodeGroup = CopyOfParm(); }
+static void SetTextSegName()   { TextSegName = CopyOfParm(); }
+static void SetGroup()         { GenCodeGroup = CopyOfParm(); }
 #endif
-void SetModuleName()    { ModuleName = CopyOfParm(); }
+static void SetModuleName()    { ModuleName = CopyOfParm(); }
 
-void SetAPILogging()    { GenSwitches |= ECHO_API_CALLS; }
+static void SetAPILogging()    { GenSwitches |= ECHO_API_CALLS; }
 
 #ifndef NDEBUG
 #ifdef ASM_OUTPUT
-void SetAsmListing()    { TargetSwitches |= ASM_OUTPUT; }
+static void SetAsmListing()    { TargetSwitches |= ASM_OUTPUT; }
 #endif
 #ifdef OWL_LOGGING
-void SetOwlLogging()    { TargetSwitches |= OWL_LOGGING; }
+static void SetOwlLogging()    { TargetSwitches |= OWL_LOGGING; }
 #endif
 #endif
 
-void SetInclude(){
+static void SetInclude()
+{
     char *fname;
 
     fname = GetAFileName();
@@ -1085,7 +1088,7 @@ void SetInclude(){
     CMemFree( fname );
 }
 
-void SetReadOnlyDir(){
+static void SetReadOnlyDir(){
     char *dirpath;
 
     dirpath = GetAFileName();
@@ -1093,157 +1096,161 @@ void SetReadOnlyDir(){
     CMemFree( dirpath );
 }
 
-void SetCharType()
+static void SetCharType()
 {
     SetSignedChar();
     CompFlags.signed_char = 1;
 }
 
 #if _CPU == 8086 || _CPU == 386
-void Set_RE()           { CompFlags.rent = 1; }
-void Set_RI()           { CompFlags.returns_promoted = 1; }
-void Set_R()            { CompFlags.save_restore_segregs = 1; }
-void Set_SG()           { CompFlags.sg_switch_used = 1; }
-void Set_ST()           { CompFlags.st_switch_used = 1; }
+static void Set_RE()           { CompFlags.rent = 1; }
+static void Set_RI()           { CompFlags.returns_promoted = 1; }
+static void Set_R()            { CompFlags.save_restore_segregs = 1; }
+static void Set_SG()           { CompFlags.sg_switch_used = 1; }
+static void Set_ST()           { CompFlags.st_switch_used = 1; }
 #endif
 #if _MACHINE == _ALPHA
-void Set_SI()           { TargetSwitches |= STACK_INIT; }
+static void Set_SI()           { TargetSwitches |= STACK_INIT; }
 #endif
-void Set_S()            { Toggles &= ~TOGGLE_CHECK_STACK; }
+static void Set_S()            { Toggles &= ~TOGGLE_CHECK_STACK; }
 
-void Set_TP(){
+static void Set_TP()
+{
     char *togname;
     togname = CopyOfParm();
     SetToggleFlag( togname, TRUE );
     CMemFree( togname );
 }
 
-void SetDataThreshHold(){ DataThreshold = OptValue; }
+static void SetDataThreshHold(){ DataThreshold = OptValue; }
 
-void UndefMacroName()   { OptScanPtr = AddUndefName( OptScanPtr ); }
-
-void Set_U(){
+static void Set_U()
+{
     char *name;
     name = CopyOfParm();
     AddUndefName( name );
     CMemFree( name );
 }
-void Set_V()            { CompFlags.generate_prototypes = 1; }
+static void Set_V()            { CompFlags.generate_prototypes = 1; }
 
-void Set_WE()           { CompFlags.warnings_cause_bad_exit = 1; }
-void Set_WO()           { CompFlags.using_overlays = 1; }
-void Set_WX()           { WngLevel = 4; }
-void SetWarningLevel()  { WngLevel = OptValue; }
-void Set_WCD()          { EnableDisableMessage( 0, OptValue ); }
-void Set_WCE()          { EnableDisableMessage( 1, OptValue ); }
+static void Set_WE()           { CompFlags.warnings_cause_bad_exit = 1; }
+static void Set_WO()           { CompFlags.using_overlays = 1; }
+static void Set_WX()           { WngLevel = 4; }
+static void SetWarningLevel()  { WngLevel = OptValue; }
+static void Set_WCD()          { EnableDisableMessage( 0, OptValue ); }
+static void Set_WCE()          { EnableDisableMessage( 1, OptValue ); }
 
 #if _CPU == 386
-void Set_XGV()          { GenSwitches |= INDEXED_GLOBALS; }
+static void Set_XGV()          { GenSwitches |= INDEXED_GLOBALS; }
 #endif
 
-void Set_XBSA()
+static void Set_XBSA()
 {
     CompFlags.unaligned_segs = 1;
 }
 
 #if _MACHINE == _ALPHA
-void Set_XD()           { TargetSwitches |= EXCEPT_FILTER_USED; }
+static void Set_XD()           { TargetSwitches |= EXCEPT_FILTER_USED; }
 #endif
 
-void Set_ZA99()
+static void Set_ZA99()
 {
     PreDefine_Macro( "__STDC_VERSION__=199901L" );
     CompFlags.c99_extensions = 1;
 }
 
-void Set_ZA()
+static void Set_ZA()
 {
     CompFlags.extensions_enabled = 0;
     CompFlags.unique_functions = 1;
     TargetSwitches &= ~I_MATH_INLINE;
 }
-void SetStrictANSI()
+
+static void SetStrictANSI()
 {
     CompFlags.strict_ANSI = 1;
     Set_ZA();
 }
 
 #if _CPU == 8086 || _CPU == 386
-void Set_ZC()
+static void Set_ZC()
 {
     CompFlags.strings_in_code_segment = 1;
     CompFlags.zc_switch_used = 1;       /* 04-jun-91 */
     TargetSwitches |= CONST_IN_CODE;
 }
-void Set_ZDF()          { SwData.peg_ds_used = 1; SwData.peg_ds_on = 0; }
-void Set_ZDP()          { SwData.peg_ds_used = 1; SwData.peg_ds_on = 1; }
-void Set_ZDL()          { TargetSwitches |= LOAD_DS_DIRECTLY; }
-void Set_ZFF()          { SwData.peg_fs_used = 1; SwData.peg_fs_on = 0; }
-void Set_ZFP()          { SwData.peg_fs_used = 1; SwData.peg_fs_on = 1; }
-void Set_ZGF()          { SwData.peg_gs_used = 1; SwData.peg_gs_on = 0; }
-void Set_ZGP()          { SwData.peg_gs_used = 1; SwData.peg_gs_on = 1; }
+static void Set_ZDF()          { SwData.peg_ds_used = 1; SwData.peg_ds_on = 0; }
+static void Set_ZDP()          { SwData.peg_ds_used = 1; SwData.peg_ds_on = 1; }
+static void Set_ZDL()          { TargetSwitches |= LOAD_DS_DIRECTLY; }
+static void Set_ZFF()          { SwData.peg_fs_used = 1; SwData.peg_fs_on = 0; }
+static void Set_ZFP()          { SwData.peg_fs_used = 1; SwData.peg_fs_on = 1; }
+static void Set_ZGF()          { SwData.peg_gs_used = 1; SwData.peg_gs_on = 0; }
+static void Set_ZGP()          { SwData.peg_gs_used = 1; SwData.peg_gs_on = 1; }
 #endif
-void Set_ZE()           { CompFlags.extensions_enabled = 1; }
-void Set_ZG()
+static void Set_ZE()           { CompFlags.extensions_enabled = 1; }
+static void Set_ZG()
 {
     CompFlags.generate_prototypes = 1;
     CompFlags.dump_prototypes     = 1;
 }
 
-void Set_ZI()           { CompFlags.extra_stats_wanted = 1; }
+static void Set_ZI()           { CompFlags.extra_stats_wanted = 1; }
 
-void Set_ZK()           { character_encoding = ENC_ZK; }
-void Set_ZK0()          { character_encoding = ENC_ZK0; }
-void Set_ZK1()          { character_encoding = ENC_ZK1; }
-void Set_ZK2()          { character_encoding = ENC_ZK2; }
-void Set_ZK3()          { character_encoding = ENC_ZK3; }
-void Set_ZKL()          { character_encoding = ENC_ZKL; }
-void Set_ZKU()
+static void Set_ZK()           { character_encoding = ENC_ZK; }
+static void Set_ZK0()          { character_encoding = ENC_ZK0; }
+static void Set_ZK1()          { character_encoding = ENC_ZK1; }
+static void Set_ZK2()          { character_encoding = ENC_ZK2; }
+static void Set_ZK3()          { character_encoding = ENC_ZK3; }
+static void Set_ZKL()          { character_encoding = ENC_ZKL; }
+static void Set_ZKU()
 {
     character_encoding = ENC_ZKU;
     unicode_CP = OptValue;
 }
-void Set_ZK0U()         { character_encoding = ENC_ZK0U; }
+static void Set_ZK0U()         { character_encoding = ENC_ZK0U; }
 
-void Set_ZL()                   { CompFlags.emit_library_with_main = 0; }
-void Set_ZLF()                  { CompFlags.emit_library_any  = 1; }
-void Set_ZLD()                  { CompFlags.emit_dependencies = 0; }
-void Set_ZLS()                  { CompFlags.emit_targimp_symbols = 0; }
-void Set_ZEV()                  { CompFlags.unix_ext = 1; }
-void Set_ZM()
+static void Set_ZL()           { CompFlags.emit_library_with_main = 0; }
+static void Set_ZLF()          { CompFlags.emit_library_any  = 1; }
+static void Set_ZLD()          { CompFlags.emit_dependencies = 0; }
+static void Set_ZLS()          { CompFlags.emit_targimp_symbols = 0; }
+static void Set_ZEV()          { CompFlags.unix_ext = 1; }
+static void Set_ZM()
 {
     CompFlags.multiple_code_segments = 1;
     CompFlags.zm_switch_used = 1;
 }
-void Set_ZPW()                { CompFlags.slack_byte_warning = 1; }
+static void Set_ZPW()          { CompFlags.slack_byte_warning = 1; }
 
-void Set_ZRO()
+static void Set_ZRO()
 {
     GenSwitches |= FPU_ROUNDING_OMIT;
     GenSwitches &= ~FPU_ROUNDING_INLINE;
 }
 
-void Set_ZRI()
+static void Set_ZRI()
 {
     GenSwitches |= FPU_ROUNDING_INLINE;
     GenSwitches &= ~FPU_ROUNDING_OMIT;
 }
 
-void Set_ZQ()                 { CompFlags.quiet_mode = 1; }
-void Set_EQ()                 { CompFlags.no_conmsg  = 1; }
-void Set_ZS()                   { CompFlags.check_syntax = 1; }
+static void Set_ZQ()           { CompFlags.quiet_mode = 1; }
+static void Set_EQ()           { CompFlags.no_conmsg  = 1; }
+static void Set_ZS()           { CompFlags.check_syntax = 1; }
+
 #if _CPU == 8086 || _CPU == 386
-void Set_ZU()
+static void Set_ZU()
 {
     CompFlags.zu_switch_used = 1;
     TargetSwitches |= FLOATING_SS;
 }
-void Set_ZZ()
+
+static void Set_ZZ()
 {
     CompFlags.use_stdcall_at_number = 0;
 }
+
 #if _CPU == 8086
-void ChkSmartWindows()
+static void ChkSmartWindows()
 {
     if( tolower(*OptScanPtr) == 's' ) {        /* 22-mar-94 */
         TargetSwitches |= SMART_WINDOWS;
@@ -1251,13 +1258,14 @@ void ChkSmartWindows()
     }
     EnsureEndOfSwitch();
 }
-void SetCheapWindows()
+
+static void SetCheapWindows()
 {
     _SetConstTarg( "cheap_windows" );
     ChkSmartWindows();
 }
 #endif
-void SetWindows()
+static void SetWindows()
 {
     _SetConstTarg( "windows" );
 #if _CPU == 8086
@@ -1266,7 +1274,7 @@ void SetWindows()
 }
 #endif
 
-void SetGenerateMakeAutoDepend()
+static void SetGenerateMakeAutoDepend()
 {
     CompFlags.generate_auto_depend = 1;
     CMemFree( DependFileName );
@@ -1278,7 +1286,7 @@ void SetGenerateMakeAutoDepend()
     }
 }
 
-void SetAutoDependTarget()
+static void SetAutoDependTarget()
 {
    // auto set depend yes...
     CompFlags.generate_auto_depend = 1;
@@ -1286,67 +1294,67 @@ void SetAutoDependTarget()
     DependTarget = GetAFileName();
 }
 
-void SetAutoDependSrcDepend()
+static void SetAutoDependSrcDepend()
 {
     CompFlags.generate_auto_depend = 1;
     CMemFree( SrcDepName );
     SrcDepName = GetAFileName();
 }
 
-void SetAutoDependForeSlash()
+static void SetAutoDependForeSlash()
 {
     DependForceSlash = '/';
 }
 
-void SetAutoDependBackSlash()
+static void SetAutoDependBackSlash()
 {
     DependForceSlash = '\\';
 }
 
-void Set_PL()           { CompFlags.cpp_line_wanted = 1; }
-void Set_PC()
+static void Set_PL()           { CompFlags.cpp_line_wanted = 1; }
+static void Set_PC()
 {
     CompFlags.keep_comments = 1;
     CompFlags.comments_wanted = 1;
 }
-void Set_PW()
+static void Set_PW()
 {
     if( OptValue != 0 && OptValue < 20 ) OptValue = 20;
     if( OptValue > 10000 ) OptValue = 10000;
     SetCppWidth( OptValue );
 }
-void Set_PreProcChar()  { PreProcChar = *OptScanPtr++; }
+static void Set_PreProcChar()  { PreProcChar = *OptScanPtr++; }
 
-void Set_OA() { GenSwitches |= RELAX_ALIAS; }
-void Set_OB() { GenSwitches |= BRANCH_PREDICTION; }
-void Set_OD() { GenSwitches |= NO_OPTIMIZATION; }
-void Set_OE()
+static void Set_OA()           { GenSwitches |= RELAX_ALIAS; }
+static void Set_OB()           { GenSwitches |= BRANCH_PREDICTION; }
+static void Set_OD()           { GenSwitches |= NO_OPTIMIZATION; }
+static void Set_OE()
 {
     Inline_Threshold = OptValue;
     Toggles |= TOGGLE_INLINE;
 }
 #if _CPU == 8086 || _CPU == 386
-void Set_OC() { TargetSwitches |= NO_CALL_RET_TRANSFORM; }
-void Set_OF()
+static void Set_OC()           { TargetSwitches |= NO_CALL_RET_TRANSFORM; }
+static void Set_OF()
 {
     TargetSwitches |= NEED_STACK_FRAME;
     if( OptValue != 0 )  DefaultInfo.class |= GENERATE_STACK_FRAME;
 }
-void Set_OM() { TargetSwitches |= I_MATH_INLINE; }
-void Set_OP() { CompFlags.op_switch_used = 1; } // force floats to memory
+static void Set_OM()           { TargetSwitches |= I_MATH_INLINE; }
+static void Set_OP()           { CompFlags.op_switch_used = 1; } // force floats to memory
 #endif
-void Set_OH() { GenSwitches |= SUPER_OPTIMAL; }
-void Set_OK() { GenSwitches |= FLOW_REG_SAVES; }
-void Set_OI() { CompFlags.inline_functions = 1; }
-void Set_OL()      { GenSwitches |= LOOP_OPTIMIZATION; }
-void Set_OL_plus() { GenSwitches |= LOOP_OPTIMIZATION | LOOP_UNROLLING; }
-void Set_ON() { GenSwitches |= FP_UNSTABLE_OPTIMIZATION; }
-void Set_OO() { GenSwitches &= ~MEMORY_LOW_FAILS; }
-void Set_OR() { GenSwitches |= INS_SCHEDULING; }
-void Set_OS() { GenSwitches &= ~NO_OPTIMIZATION; OptSize = 100; }
-void Set_OT() { GenSwitches &= ~NO_OPTIMIZATION; OptSize = 0; }
-void Set_OU() { CompFlags.unique_functions = 1; }
-void Set_OX()
+static void Set_OH()           { GenSwitches |= SUPER_OPTIMAL; }
+static void Set_OK()           { GenSwitches |= FLOW_REG_SAVES; }
+static void Set_OI()           { CompFlags.inline_functions = 1; }
+static void Set_OL()           { GenSwitches |= LOOP_OPTIMIZATION; }
+static void Set_OL_plus()      { GenSwitches |= LOOP_OPTIMIZATION | LOOP_UNROLLING; }
+static void Set_ON()           { GenSwitches |= FP_UNSTABLE_OPTIMIZATION; }
+static void Set_OO()           { GenSwitches &= ~MEMORY_LOW_FAILS; }
+static void Set_OR()           { GenSwitches |= INS_SCHEDULING; }
+static void Set_OS()           { GenSwitches &= ~NO_OPTIMIZATION; OptSize = 100; }
+static void Set_OT()           { GenSwitches &= ~NO_OPTIMIZATION; OptSize = 0; }
+static void Set_OU()           { CompFlags.unique_functions = 1; }
+static void Set_OX()
 {
     Toggles &= ~TOGGLE_CHECK_STACK;
     GenSwitches &= ~NO_OPTIMIZATION;
@@ -1358,7 +1366,7 @@ void Set_OX()
     TargetSwitches |= I_MATH_INLINE;
 #endif
 }
-void Set_OZ()   { GenSwitches |= NULL_DEREF_OK; }
+static void Set_OZ()           { GenSwitches |= NULL_DEREF_OK; }
 
 // '=' indicates optional '='
 // '#' indicates a decimal numeric value
@@ -1368,7 +1376,7 @@ void Set_OZ()   { GenSwitches |= NULL_DEREF_OK; }
 // if a capital letter appears in the option, then input must match exactly
 // otherwise all input characters are changed to lower case before matching
 
-struct option const Optimization_Options[] = {
+static struct option const Optimization_Options[] = {
     { "a",      0,              Set_OA },
     { "b",      0,              Set_OB },
     { "d",      0,              Set_OD },
@@ -1396,7 +1404,7 @@ struct option const Optimization_Options[] = {
     { 0,        0,              0 },
 };
 
-struct option const Preprocess_Options[] = {
+static struct option const Preprocess_Options[] = {
     { "c",      0,              Set_PC },
     { "l",      0,              Set_PL },
     { "w=#",    0,              Set_PW },
@@ -1405,9 +1413,9 @@ struct option const Preprocess_Options[] = {
     { 0,        0,              0 },
 };
 
-extern void SetOptimization();
-extern void SetPreprocessOptions();
-struct option const CFE_Options[] = {
+static void SetOptimization();
+static void SetPreprocessOptions();
+static struct option const CFE_Options[] = {
     { "o*",     0,              SetOptimization },
     { "i=@",    0,              SetInclude },
     { "zq",     0,              Set_ZQ },
@@ -1622,7 +1630,7 @@ struct option const CFE_Options[] = {
     { 0,        0,              0 },
 };
 
-char *ProcessOption( struct option const *op_table, char *p, char *option_start )
+static char *ProcessOption( struct option const *op_table, char *p, char *option_start )
 {
     int         i;
     int         j;
@@ -1717,7 +1725,7 @@ char *ProcessOption( struct option const *op_table, char *p, char *option_start 
     return( p );
 }
 
-void ProcessSubOption( struct option const *op_table )
+static void ProcessSubOption( struct option const *op_table )
 {
     char        *option_start;
 
@@ -1728,12 +1736,12 @@ void ProcessSubOption( struct option const *op_table )
     }
 }
 
-void SetOptimization()
+static void SetOptimization()
 {
     ProcessSubOption( Optimization_Options );
 }
 
-void SetPreprocessOptions()
+static void SetPreprocessOptions()
 {
     CompFlags.cpp_output_requested = 1;
     if( !OptionDelimiter( *OptScanPtr ) ) {
@@ -1741,7 +1749,7 @@ void SetPreprocessOptions()
     }
 }
 
-char *CollectEnvOrFileName( char *str )
+static char *CollectEnvOrFileName( char *str )
 {
     char        *env;
     char        ch;
@@ -1764,7 +1772,7 @@ char *CollectEnvOrFileName( char *str )
     return( str );
 }
 
-char *ReadIndirectFile()
+static char *ReadIndirectFile()
 {
     char        *env;
     char        *str;
@@ -2099,7 +2107,7 @@ void GenCOptions( char **cmdline )
 
 #if _CPU == 386
 
-hw_reg_set MetaWareParms[] = {
+static hw_reg_set MetaWareParms[] = {
         {0}, {0}
 };
 

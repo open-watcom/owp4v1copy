@@ -596,60 +596,60 @@ local void SaveParm( MEPTR      mentry,
 #ifndef NDEBUG
 
 void DumpMDefn( unsigned char *p )
-    {
-        int c;
+{
+    int c;
 
-        for(; p;) {
-            if( *p == 0 ) break;
-            switch( *p ) {
-            case T_CONSTANT:
-            case T_PPNUMBER:
-            case T_ID:
-            case T_UNEXPANDABLE_ID:
-                ++p;
-                for(;;) {
-                    c = *p++;
-                    if( c == '\0' ) break;
-                    putchar( c );
-                }
-                continue;
-            case T_LSTRING:
-                putchar( 'L' );
-            case T_STRING:
-                ++p;
-                putchar( '\"' );
-                for(;;) {
-                    c = *p++;
-                    if( c == '\0' ) break;
-                    putchar( c );
-                }
-                putchar( '\"' );
-                continue;
-            case T_WHITE_SPACE:
-                ++p;
-                putchar( ' ' );
-                continue;
-            case T_BAD_CHAR:
-                ++p;
-                putchar( *p++ );
-                continue;
-            case T_MACRO_PARM:
-                ++p;
-                printf( "parm#%c", '1' + *p++ );
-                continue;
-            case T_MACRO_VAR_PARM:
-                ++p;
-                printf( "varparm#%c", '1' + *p++ );
-                continue;
-            default:
-                printf( "%s", Tokens[ *p ] );
-                ++p;
-                continue;
+    for(; p;) {
+        if( *p == 0 ) break;
+        switch( *p ) {
+        case T_CONSTANT:
+        case T_PPNUMBER:
+        case T_ID:
+        case T_UNEXPANDABLE_ID:
+            ++p;
+            for(;;) {
+                c = *p++;
+                if( c == '\0' ) break;
+                putchar( c );
             }
+            continue;
+        case T_LSTRING:
+            putchar( 'L' );
+        case T_STRING:
+            ++p;
+            putchar( '\"' );
+            for(;;) {
+                c = *p++;
+                if( c == '\0' ) break;
+                putchar( c );
+            }
+            putchar( '\"' );
+            continue;
+        case T_WHITE_SPACE:
+            ++p;
+            putchar( ' ' );
+            continue;
+        case T_BAD_CHAR:
+            ++p;
+            putchar( *p++ );
+            continue;
+        case T_MACRO_PARM:
+            ++p;
+            printf( "parm#%c", '1' + *p++ );
+            continue;
+        case T_MACRO_VAR_PARM:
+            ++p;
+            printf( "varparm#%c", '1' + *p++ );
+            continue;
+        default:
+            printf( "%s", Tokens[ *p ] );
+            ++p;
+            continue;
         }
-        putchar( '\n' );
     }
-#endif
+    putchar( '\n' );
+}
+
 
 void DumpMTokens( MACRO_TOKEN *mtok )
 {
@@ -658,6 +658,8 @@ void DumpMTokens( MACRO_TOKEN *mtok )
         mtok = mtok->next;
     }
 }
+
+
 void DumpNestedMacros()
 {
     NESTED_MACRO *nested;
@@ -668,9 +670,10 @@ void DumpNestedMacros()
         nested = nested->next;
     }
 }
+#endif
 
 
-int TokLength( char __FAR *p )
+static int TokLength( char __FAR *p )
 {
     int len;
 
@@ -698,7 +701,7 @@ static MACRO_TOKEN *BuildAToken( char __FAR *p )
 }
 
 
-MACRO_TOKEN *AppendToken( MACRO_TOKEN *head, int token, char *data )
+static MACRO_TOKEN *AppendToken( MACRO_TOKEN *head, int token, char *data )
 {
     MACRO_TOKEN *tail;
     MACRO_TOKEN *new;
@@ -715,7 +718,7 @@ MACRO_TOKEN *AppendToken( MACRO_TOKEN *head, int token, char *data )
     return( head );
 }
 
-int Expandable( MACRO_TOKEN *mtok, int macro_parm )
+static int Expandable( MACRO_TOKEN *mtok, int macro_parm )
 {
     int         lparen;
 
@@ -772,7 +775,7 @@ static int MacroBeingExpanded( MEPTR mentry )
     return( 0 );
 }
 
-MACRO_TOKEN *ExpandNestedMacros( MACRO_TOKEN *head, int rescanning )
+static MACRO_TOKEN *ExpandNestedMacros( MACRO_TOKEN *head, int rescanning )
 {
     MACRO_TOKEN *mtok;
     MACRO_TOKEN *toklist;
@@ -907,7 +910,7 @@ MACRO_TOKEN *ExpandNestedMacros( MACRO_TOKEN *head, int rescanning )
     return( head );
 }
 
-char *GlueTokenToBuffer( MACRO_TOKEN *first, char *gluebuf )
+static char *GlueTokenToBuffer( MACRO_TOKEN *first, char *gluebuf )
 {
     size_t      gluelen;
     char       *buf;
@@ -956,7 +959,7 @@ static MACRO_TOKEN *ReTokenGlueBuffer( char *gluebuf )
 }
 
 
-MACRO_TOKEN *GlueTokens( MACRO_TOKEN *head )
+static MACRO_TOKEN *GlueTokens( MACRO_TOKEN *head )
 {
     MACRO_TOKEN *mtok;
     MACRO_TOKEN **lnk,**_lnk;// prior lnk
@@ -1070,7 +1073,6 @@ static MACRO_TOKEN **NextString( MACRO_TOKEN **lnk, char *buf, unsigned i )
 }
 
 
-
 local MACRO_TOKEN *BuildString(  byte *p )
 {
     MACRO_TOKEN    *head;
@@ -1156,7 +1158,7 @@ local MACRO_TOKEN *BuildString(  byte *p )
 }
 
 
-MACRO_TOKEN *BuildMTokenList( byte __FAR *p, MACRO_ARG *macro_parms )
+static MACRO_TOKEN *BuildMTokenList( byte __FAR *p, MACRO_ARG *macro_parms )
 {
     MACRO_TOKEN *mtok;
     MACRO_TOKEN  *head;
