@@ -66,6 +66,8 @@ display 0xf8 alt 'f'	# Degree		# ø
 display 0xf9 alt '~'	# Bullet		# ù
 display 0xfa alt '~'	# Bullet		# ú
 display 0xfe alt 'h'	# Square		# þ
+display 0xfb alt '+'    # Check                 # {
+display 0xff ' '        # Other Space           #
 
 key 0x000 0xff 0x20	# ignore extended key follows
 key 0x000 0xff 0x21	# ignore key up
