@@ -7,53 +7,9 @@ set PROJDIR=<CWD>
 [ INCLUDE <LANG_BLD>\wproj.ctl ]
 [ LOG <LOGFNAME>.<LOGEXT> ]
 
-cdsay .
-
-[ BLOCK <1> reference ]
-    cdsay <PROJDIR>\c
-    cdsay ..\nti86
-    wmake /h /k
-    wmake /h /k reference
-    cdsay ..\nt386
-    wmake /h /k
-    wmake /h /k reference
-
-[ BLOCK <1> referenceos2 ]
-    cdsay <PROJDIR>\c
-    cdsay ..\os2i86
-    wmake /h /k
-    wmake /h /k reference
-    cdsay ..\os2386
-    wmake /h /k
-    wmake /h /k reference
-
 [ BLOCK <1> build rel2 ]
-    cdsay <PROJDIR>\c
-    cdsay ..\nti86
-    wmake /h /k
-    cdsay ..\nt386
-    wmake /h /k
-    cdsay ..\nt386dll
-    wmake /h /k
-#    MEP - 3/27/00 just make NT for now
-#    cdsay ..\osii86
-#    wmake /h /k
-#    cdsay ..\osi386
-#    wmake /h /k
-    cdsay ..\dosi86
-    wmake /h /k
-    cdsay ..\dos386
-    wmake /h /k
-    cdsay ..\os2i86
-    wmake /h /k
-    cdsay ..\os2386
-    wmake /h /k
-# Skip QNX for now until we have proper pmake 20020618 MWN
-#    cdsay ..\qnxi86
-#    wmake /h /k
-#    cdsay ..\qnx386
-#    wmake /h /k
-    cd ..
+    pmake -d buildwpp <2> <3> <4> <5> <6> <7> <8> <9> -h
+    cd <PROJDIR>
     wmake /h /k /f mkwppref.mif host_CPU=386
     wmake /h /k /f mkwppref.mif host_CPU=i86
 
