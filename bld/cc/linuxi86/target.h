@@ -33,7 +33,7 @@
 
 #ifndef _TARGET_INCLUDED
 #define _TARGET_INCLUDED
-#include "target32.h"
+#include "target16.h"
 #include "targdef.h"
 #include "langenvd.h"
 
