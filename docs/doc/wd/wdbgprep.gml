@@ -6,16 +6,14 @@
 Before you can debug a program, you must put
 .us debugging information
 into the code.
-.if &version ge 107 .do begin
 .np
 There are three different formats of debugging information that can be
-put into the code &mdash. "&company", "Dwarf" or "Codeview".
-Starting with version 10.7, the default format is "Dwarf".
-In earlier releases, the default was "&company".
+put into the code &mdash. "Watcom", "Dwarf" or "Codeview".
+Starting with version 11.0, the default format is "Dwarf".
+In earlier releases, the default was "Watcom".
 Although the debugger supports all three formats, it is best if you
 allow the default format to be generated.
 .np
-.do end
 To produce an executable that has debugging
 information, you need to:
 .autopoint
@@ -75,7 +73,6 @@ option will generate the most debugging information
 that is normally needed,
 including global information, line numbers, types, and local
 variables.
-.if &version ge 107 .do begin
 .note d2i
 The
 .us d2i
@@ -92,7 +89,6 @@ option is identical to
 but does not include type name debugging information.
 This option can result in smaller object and/or executable files (we
 are discussing "file" size here).
-.do end
 .note d3
 The
 .us d3

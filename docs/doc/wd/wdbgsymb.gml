@@ -443,22 +443,14 @@ DOS/4GW from Tenberry Software, Inc. (included in the &watc32 and
 .ix 'Windows 3.x'
 .ix 'Microsoft Corp.'
 Windows 3.x from Microsoft Corporation
-:cmt. .note 9
-:cmt. :cmt..ix 'PenPoint'
-:cmt. PenPoint from GO Corporation
 .note 10
 .ix 'Windows NT'
 .ix 'Windows 95'
 .ix 'Microsoft Corp.'
-Windows NT or Windows 95 from Microsoft Corporation
-.note 11
-.ix 'AutoCAD Development System'
-.ix 'Autodesk, Inc.'
-AutoCAD from Autodesk, Inc.
+Windows NT/2000/XP or Windows 9x from Microsoft Corporation
 .endnote
 .ix 'predefined symbol' 'dbg$pid'
 .mnote dbg$pid
-:cmt. (OS/2, NetWare 386, PenPoint, QNX, Windows NT only) This debugger
 (OS/2, NetWare 386, QNX, Windows NT, Windows 95 only)
 This debugger symbol contains the process identification value for the
 program being debugged.

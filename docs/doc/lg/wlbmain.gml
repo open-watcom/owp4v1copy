@@ -100,10 +100,8 @@ imports for the resident/non-resident names table are to be imported by
 name/ordinal.
 .note l[=<list_file>]
 create a listing file
-.if &version gt 90 .do begin
 .note m
 display C++ mangled names
-.do end
 .note n
 always create a new library
 .note o=<output_file>
@@ -356,14 +354,6 @@ OS/2 applications.
 .do end
 .el .do begin
 OS/2, Win16 or Win32 applications.
-:cmt.    For more information on import and Dynamic Link Libraries, see the
-:cmt.    chapter entitled
-:cmt.    .if '&opsys' eq 'PenPoint' .do begin
-:cmt.    "Linking PenPoint Applications".
-:cmt.    .do end
-:cmt.    .el .do begin
-:cmt.    "The OS/2 Executable and DLL File Formats".
-:cmt.    .do end
 .do end
 .exam begin
 &libcmd implib +dynamic.dll
@@ -602,8 +592,6 @@ following example.
 &libcmd mylib
 .exam end
 .*
-.if &version gt 90 .do begin
-.*
 .section Display C++ Mangled Names - "m" Option
 .*
 .np
@@ -612,7 +600,6 @@ The "m" option instructs the &libname to display C++ mangled names
 rather than displaying their demangled form.
 The default is to interpret mangled C++ names and display them in
 a somewhat more intelligible form.
-.do end
 .*
 .section Always Create a New Library - "n" Option
 .*

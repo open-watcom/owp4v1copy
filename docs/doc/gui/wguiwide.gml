@@ -2865,24 +2865,6 @@ The target is an OS/2 help file (HLP format).
 The target is an OS/2 help file (INF format).
 .endnote
 .*
-.section AutoCad - 32-bit Targets
-.*
-.ix 'targets' 'AutoCAD 32-bit'
-.ix 'AutoCAD 32-bit targets'
-.begnote
-.note Executable [.exp]
-.br
-The target is a 32-bit AutoCAD Development System (ADS) application.
-.note Device Interface [.exp]
-.br
-The target is a floating-point emulation 32-bit AutoCAD Device
-Interface (EADI) application.
-.note Floating-point Device Interface [.exp]
-.br
-The target is a floating-point 32-bit AutoCAD Device Interface (FADI)
-application.
-.endnote
-.*
 .endlevel
 .*
 .section Invoking Other Applications from the &vip

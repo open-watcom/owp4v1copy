@@ -31,9 +31,9 @@ This is the Windows 3.x character-mode debugger.
 .note binw&pc.&dbgcmd.w.exe
 This is the Windows 3.x windowed (GUI) debugger.
 .note binnt&pc.&dbgcmd..exe
-This is the Windows NT/95 character-mode debugger.
+This is the Windows NT/9x character-mode debugger.
 .note binnt&pc.&dbgcmd.w.exe
-This is the Windows NT/95 windowed (GUI) debugger.
+This is the Windows NT/9x windowed (GUI) debugger.
 .note binp&pc.&dbgcmd..exe
 This is the OS/2 character-mode debugger.
 .note binp&pc.&dbgcmd.w.exe
@@ -76,9 +76,8 @@ for debugging are sometimes called "traps".  The
 option selects
 the appropriate trap file to use.
 .bi This option must be specified when remote debugging,
-.bi debugging DOS extender applications,
-.bi debugging OS/2 exception handlers,
-.bi or debugging an AutoCAD ADS application.
+.bi debugging DOS extender applications
+.bi or debugging OS/2 exception handlers.
 .np
 The remote trap files themselves have startup parameters.
 This is specified following the semi-colon.
@@ -108,9 +107,6 @@ To debug an OS/2 exception handler, you must use
 .us /TRAP=STD&semi.2
 which tells the debugger to catch exceptions only on the second chance
 (normally it would be the debugger that traps the exception).
-.point
-To debug an AutoCAD add on, you must use
-.us /TRAP=ADS.
 .point
 To debug an OS/2 16-bit application under Phar Lap's RUN286 DOS
 extender, you must use

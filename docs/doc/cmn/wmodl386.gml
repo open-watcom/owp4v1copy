@@ -136,11 +136,6 @@ compact     small       big         near        far
 .sk 1
 large       big         big         far         far
 .millust end
-.if '&target' eq 'PP' .do begin
-.remark
-PenPoint applications must use the flat memory model.
-.eremark
-.do end
 .*
 .section Flat Memory Model
 .*
@@ -194,8 +189,6 @@ Data objects outside of the DGROUP segment are described with the
 .kw far
 keyword.
 .do end
-.*
-.if '&target' ne 'PP' .do begin
 .*
 .section Linking Applications for the Various 32-bit Memory Models
 .*

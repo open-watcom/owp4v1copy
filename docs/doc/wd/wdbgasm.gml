@@ -13,34 +13,19 @@ features:
 :HDREF refid='wndio'.
 .bull
 :HDREF refid='wndfpu'.
-.if &version ge 107 .do begin
 .bull
 :HDREF refid='wndmmx'.
-.do end
 .endbull
-.if &version ge 107 .do begin
 .*
 .section *refid=wndreg The CPU Register Window
 .*
 .figure *depth='1.31' *scale=100 *file='dbgreg2' The CPU Register Window
-.do end
-.el .do begin
-.*
-.section *refid=wndreg The Register Window
-.*
-.figure *depth='3.66' *scale=150 *file='dbgreg' The Register Window
-.do end
 .*
 .*
 .np
 .ix 'registers' 'examining'
 You can open the
-.if &version ge 107 .do begin
 .wnddef CPU Register
-.do end
-.el .do begin
-.wnddef Register
-.do end
 window by choosing
 .menuref 'Register' 'Data'
 .dot
@@ -179,18 +164,10 @@ Write the displayed value to the port.
 Change the display type of the value.  The size of this type determines
 how much is read from or written to the I/O port.
 .endmenu
-.if &version ge 107 .do begin
 .*
 .section *refid=wndfpu The FPU Registers Window
 .*
 .figure *depth='1.28' *scale=100 *file='dbgfpu' The FPU Registers Window
-.do end
-.el .do begin
-.*
-.section *refid=wndfpu The 80x87 FPU Window
-.*
-.figure *depth='3.18' *scale=130 *file='dbg87' The 80x87 FPU Window
-.do end
 .np
 .ix '8087' 'examining'
 .ix '8087' 'modifying'
@@ -199,12 +176,7 @@ how much is read from or written to the I/O port.
 .ix 'Coprocessor' 'examining'
 .ix 'Coprocessor' 'modifying'
 Choose
-.if &version ge 107 .do begin
 .menuref 'FPU Registers' 'Data'
-.do end
-.el .do begin
-.menuref '80x87 FPU' 'Data'
-.do end
 to open the
 .wnddef FPU
 window. This window displays the current value and status of all the
@@ -223,7 +195,6 @@ A bit will toggle between 0 and 1.
 Toggle the FPU window display between hexadecimal and floating point display.
 :INCLUDE file='wdbgopt.gml'
 .endmenu
-.if &version ge 107 .do begin
 .*
 .section *refid=wndmmx The MMX Registers Window
 .*
@@ -269,4 +240,3 @@ Display the contents of the MMX registers as a series of 4 words.
 .menuitem DWord
 Display the contents of the MMX registers as a series of 2 double-words.
 .endmenu
-.do end

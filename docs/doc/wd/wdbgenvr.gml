@@ -624,12 +624,7 @@ if you are having trouble with double clicks.
 .section *refid=dlgwopt The Window Options Dialog
 .*
 .ix 'window' 'options'
-.if &version ge 107 .do begin
 .figure *depth='3.57' *scale=100 *file='dlgwopt2' The Window Options Dialog
-.do end
-.el .do begin
-.figure *depth='4.77' *scale=150 *file='dlgwopt' The Window Options Dialog
-.do end
 .np
 Use the Window Options dialog to define options related to the
 debugger's various windows.
@@ -656,16 +651,8 @@ Locals
 File Variables
 .bull
 Globals
-.if &version lt 107 .do begin
-.bull
-Registers
-.do end
 .bull
 Variable
-.if &version lt 107 .do begin
-.bull
-80x87 FPU
-.do end
 .endbull
 .*
 .beglevel
@@ -682,14 +669,6 @@ You can set the following options:
 .note Show Source
 Turn on this option if you want source code intermixed with assembly
 code.
-.if &version lt 107 .do begin
-.note Upper Case
-Turn on this option if you want instructions and operands to appear in
-upper case.
-.note Index Inside
-Turn on this option to display an alternate form of indexing, e.g.,
--4[bp] will be displayed as [bp-4].
-.do end
 .note Hexadecimal
 Turn on this option if you want immediate operands and values to be
 displayed in hexadecimal.
@@ -705,12 +684,10 @@ Use the Variable options to set display options and to specify which
 members of a class you want displayed when a structure or class is
 expanded. You can set:
 .begnote $break
-.if &version ge 107 .do begin
 .note Protected
 Display protected members in expanded classes.
 .note Private
 Display private members in expanded classes.
-.do end
 .note Whole Expression
 Turn this option on to show the whole expression used to access fields
 and array elements instead of just the element number or field name
@@ -725,29 +702,9 @@ option turned on.
 .note Members
 Display members of the 'this' pointer as if they were local variables
 declared within the member function.
-.if &version ge 107 .do begin
 .note Static
 Display static members.
-.do end
-.if &version lt 107 .do begin
-.note Private
-Display private members in expanded classes.
-.note Protected
-Display protected members in expanded classes.
-.do end
 .endnote
-.*
-.if &version lt 107 .do begin
-.*
-.section *refid=fpuopt The FPU Options
-.*
-.np
-.ix 'FPU options'
-.ix 'options' 'FPU window'
-Turn on the hexadecimal option to display the floating point registers
-in raw 10 byte hexadecimal format instead of the usual floating point
-notation.
-.do end
 .*
 .section *refid=fileopt The File Options
 .*
@@ -756,26 +713,6 @@ notation.
 .ix 'options' 'File window'
 You can set the display width of a tab in the File options section.
 This value defaults to 8 spaces.
-.*
-.if &version lt 107 .do begin
-.*
-.section *refid=regopt The Registers Options
-.*
-.np
-.ix 'Registers options'
-.ix 'options' 'Register window'
-Use the Registers options to set:
-.begnote $break
-.note Hexadecimal
-Turn this option on to display the register values in hexadecimal
-instead of decimal.
-.note 386 Registers
-.ix '386 Registers'
-.ix 'Registers' '32-bit'
-Turn this option on if you are debugging a 16-bit application and want
-to see the full 32-bit register set.
-.endnote
-.do end
 .*
 .section *refid=funcopt The Functions and Globals Options
 .*
@@ -913,26 +850,16 @@ add them to a Watches window.
 .ix 'Registers'
 Displays the CPU registers and their values.
 .refalso wndreg
-.if &version ge 107 .do begin
 .*
 .menuitem FPU Registers
 .*
 Displays the FPU registers and their values.
-.do end
-.el .do begin
-.*
-.menuitem 80X87 FPU
-.*
-Displays the 8087 registers and their values.
-.do end
 .refalso wndfpu
-.if &version ge 107 .do begin
 .*
 .menuitem MMX Registers
 .*
 Displays the MMX (multi-media extension) registers and their values.
 .refalso wndmmx
-.do end
 .*
 .menuitem Stack
 .*

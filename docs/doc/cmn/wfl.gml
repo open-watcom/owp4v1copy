@@ -61,10 +61,6 @@ A summary of options is displayed on the screen by simply entering the
 .ix '&wclcmdup16 options' 'C'
 .ix '&wclcmdup32 options' 'C'
 compile the files only, do not link them
-:cmt. .note P
-:cmt. .ix '&wclcmdup16 options' 'P'
-:cmt. .ix '&wclcmdup32 options' 'P'
-:cmt. use the protected-mode version of the compiler
 .note Y
 .ix '&wclcmdup16 options' 'Y'
 .ix '&wclcmdup32 options' 'Y'
@@ -124,8 +120,6 @@ hosted OS/2 session.
 Windows NT;
 32-bit OS/2 executables (synonym for "OS2V2") under 32-bit OS/2
 hosted OS/2 session.
-.note ADS
-32-bit AutoCAD ADS executables
 .note COM
 16-bit DOS "COM" files
 .note DOS
@@ -134,10 +128,6 @@ hosted OS/2 session.
 32-bit Tenberry Software DOS Extender executables
 .note DOS4GNZ
 32-bit Tenberry Software DOS Extender non-zero base executables
-.note EADI
-32-bit AutoCAD ADI executables (emulation)
-.note FADI
-32-bit AutoCAD ADI executables (floating-point)
 .note NETWARE
 32-bit Novell NetWare 386 NLMs
 .note NOVELL
@@ -150,8 +140,14 @@ hosted OS/2 session.
 32-bit Windows NT windowed executables
 .note OS2
 16-bit OS/2 V1.x executables
+.note OS2_DLL
+16-bit OS/2 DLLs
+.note OS2_PM
+16-bit OS/2 PM executables
 .note OS2V2
 32-bit OS/2 executables
+.note OS2V2_DLL
+32-bit OS/2 DLLs
 .note OS2V2_PM
 32-bit OS/2 PM executables
 .note PHARLAP
@@ -165,7 +161,7 @@ hosted OS/2 session.
 .note WIN386
 32-bit extended Windows 3.x executables/DLLs
 .note WIN95
-32-bit Windows 95 executables/DLLs
+32-bit Windows 9x executables/DLLs
 .note WINDOWS
 16-bit Windows executables
 .note WINDOWS_DLL
@@ -181,13 +177,7 @@ hosted OS/2 session.
 .endnote
 .np
 These names are among the systems identified in the &lnkname
-initialization file,
-.if &version gt 90 .do begin
-"WLSYSTEM.LNK".
-.do end
-.el .do begin
-"WLINK.LNK".
-.do end
+initialization file, "WLSYSTEM.LNK".
 The &lnkname "SYSTEM" directives, found in this file, are used to
 specify default link options for particular (operating) systems.
 Users can augment the &lnkname initialization file with their own

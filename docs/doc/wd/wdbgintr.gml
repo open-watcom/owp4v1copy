@@ -24,17 +24,15 @@ Phar Lap DOS Extender
 .bull
 Windows 3.x
 .bull
-Windows NT
+Windows NT/2000/XP
 .bull
-Windows 95
+Windows 9x
 .bull
 16 and 32-bit OS/2
 .bull
 QNX
 .bull
 Novell NetWare
-.bull
-AutoCAD ADS
 .endbull
 .*
 .section New Features
@@ -52,8 +50,8 @@ you should know about.
 .np
 .ix 'user interface'
 The debugger's user interface has been redesigned. There are GUI
-versions of the debugger that run under Windows 3.x, Windows NT,
-Windows 95, and 32-bit OS/2. There are also character mode versions
+versions of the debugger that run under Windows 3.x, Windows NT/2000/XP,
+Windows 9x, and 32-bit OS/2. There are also character mode versions
 that run under DOS, Windows 3.x, OS/2, and QNX. All versions share a
 common user interface incorporating powerful features like context
 sensitive menus, eliminating the need for command oriented debugging.

@@ -7,17 +7,11 @@ The &stripname command line syntax is:
 .ix '&stripcmdup.' 'command line format'
 .ix 'command line format' '&stripcmdup'
 .mbigbox
-.if &version le 90 .do begin
-&stripcmdup input_file [output_file] [symbol_file]
-.do end
-.if &version gt 90 .do begin
 &stripcmdup [options] input_file [output_file] [info_file]
-.do end
 .embigbox
 .begnote where:
 .note []
 The square brackets denote items which are optional.
-.if &version gt 90 .do begin
 .note options
 .begpoint
 .point &sw.n
@@ -30,7 +24,6 @@ information.
 .point &sw.a
 (add) Add information rather than remove information.
 .endpoint
-.do end
 .note input_file
 is a file specification for the name of an executable file.
 If no file extension is specified, the &stripname will assume one of
@@ -43,17 +36,6 @@ is an optional file specification for the output file.
 If no file extension is specified, the file extension specified in the
 input file name will be used for the output file name.
 If "." is specified, the input file name will be used.
-.if &version le 90 .do begin
-.note symbol_file
-is an optional file specification for the file in which the debugging
-information is to be stored.
-If no file extension is specified, a file extension of "sym" is
-assumed.
-To specify the name of the symbolic information file but not the name
-of an output file, a "." may be specified in place of
-.sy output_file.
-.do end
-.if &version gt 90 .do begin
 .note info_file
 is an optional file specification for the file in which the debugging
 or resource information is to be stored (when removing information) or
@@ -63,36 +45,8 @@ assumed for debugging information and "res" for resource information.
 To specify the name of the information file but not the name of an
 output file, a "." may be specified in place of
 .sy output_file.
-.do end
 .endnote
 .autonote Description:
-.if &version le 90 .do begin
-.note
-If
-.sy output_file
-is not specified, the debugging information is removed from
-.sy input_file.
-.note
-If
-.sy output_file
-is specified,
-.sy input_file
-is copied to
-.sy output_file
-and the debugging information is removed from
-.sy output_file.
-.sy input_file
-remains unchanged.
-.note
-If
-.sy symbol_file
-is specified then the debugging that is removed from the executable
-file is written to this file.
-The debugging information may be appended to the executable by
-concatenating the debugging information file to the end of the
-executable file (the files must be treated as binary files).
-.do end
-.if &version gt 90 .do begin
 .note
 If the "r" (resource) option is not specified then the default action
 is to add/remove symbolic debugging information.
@@ -127,7 +81,6 @@ executable by specifying the "a" (add) option.
 Also, the debugging information may be appended to the executable by
 concatenating the debugging information file to the end of the
 executable file (the files must be treated as binary files).
-.do end
 .note
 During processing, the &stripname will create a temporary file,
 ensuring that a file by the chosen name does not already exist.

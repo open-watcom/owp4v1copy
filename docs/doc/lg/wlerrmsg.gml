@@ -323,10 +323,8 @@ If it is issued, please report this problem.
 .*
 .errnote 2022 cannot have a starting address with an imported symbol
 .np
-When generating an OS/2
-:cmt. or PenPoint
-executable file, a symbol imported from a DLL cannot be a start
-address.
+When generating an OS/2 executable file, a symbol imported from a DLL
+cannot be a start address.
 When generating a NetWare executable file, a symbol imported from
 an NLM cannot be a start address.
 .if &e'&optdoc eq 1 .do begin
@@ -845,7 +843,7 @@ through 9.
 0 corresponds to NLM, 1 to DSK, 2 to NAM, and 3 to LAN.
 4 specifies a utility NLM (default extension .NLM)
 5 specifies a Mirrored Server Link module (default .MSL)
-6 specifies an Operating System module (default .NLM) 
+6 specifies an Operating System module (default .NLM)
 7 specifies a Page High OS module (default .NLM)
 8 specifies a Host Adapter module (default .HAM)
 9 specified a Custom Device module (default .CDM)

@@ -58,11 +58,13 @@ non-zero based 32-bit x86 DOS/4GW executable
 synonym for "netware"
 .note os2
 16-bit x86 OS/2 executable
-.note os2 dll
+.note os2_dll
 16-bit x86 OS/2 Dynamic Link Library
+.note os2_pm
+16-bit x86 OS/2 Presentation Manager executable
 .note os2v2
 32-bit x86 OS/2 executable
-.note os2v2 dll
+.note os2v2_dll
 32-bit x86 OS/2 Dynamic Link Library
 .note os2v2_pm
 32-bit x86 OS/2 Presentation Manager executable
@@ -91,9 +93,9 @@ conventions
 .note win_vxd
 32-bit x86 Windows 3.x or 9x Virtual Device Driver
 .note win95
-32-bit x86 Windows 95 executable
+32-bit x86 Windows 9x executable
 .note win95 dll
-32-bit x86 Windows 95 Dynamic Link Library
+32-bit x86 Windows 9x Dynamic Link Library
 .note nt
 32-bit x86 Windows NT character-mode executable
 .note nt_win
@@ -112,12 +114,6 @@ AXP Windows NT Dynamic Link Library
 .do end
 .note win386
 32-bit x86 &company extended Windows 3.x executable or Dynamic Link Library
-.note ads
-32-bit x86 AutoCAD Development System executable
-.note eadi
-32-bit x86 Emulation AutoCAD Device Interface
-.note fadi
-32-bit x86 Floating-point AutoCAD Device Interface
 .endnote
 .np
 The various systems that we have listed above are defined in special
@@ -142,9 +138,8 @@ you will find more information on the directives available with the
 executable format used.
 .np
 At this point, it should be noted that various systems have adopted
-particular executable file formats. For example, AutoCAD applications
-use a Phar Lap executable file format and both the Tenberry Software
-DOS/4G(W) and FlashTek DOS extenders support one of the OS/2
+particular executable file formats. For example, both the Tenberry
+Software DOS/4G(W) and FlashTek DOS extenders support one of the OS/2
 executable file
 formats. It is for this reason that you may find that we direct you to
 a chapter which would, at first glance, seem unrelated to the
@@ -280,38 +275,6 @@ The following sections describe how to create a variety of 32-bit
 executable files.
 .*
 .beglevel
-.*
-.section Linking 32-bit x86 AutoCAD Development System Executable Files
-.*
-.np
-.ix '32-bit AutoCAD ADS executables'
-To create this type of file, use the following structure.
-.millust begin
-system   ads
-.im tutsteps
-.millust end
-.np
-For more information,
-see the chapter entitled :HDREF refid='phrchap'..
-.*
-.section Linking 32-bit x86 AutoCAD Device Interface Executable Files
-.*
-.np
-.ix '32-bit AutoCAD ADI executables'
-To create this type of file, use the following structure for an emulation
-AutoCAD Device Interface.
-.millust begin
-system   eadi
-.im tutsteps
-.millust end
-.np
-To create a floating-point AutoCAD Device Interface, specify
-.millust begin
-system   fadi.
-.millust end
-.np
-For more information,
-see the chapter entitled :HDREF refid='phrchap'..
 .*
 .section Linking 32-bit x86 DOS/4GW Executable Files
 .*

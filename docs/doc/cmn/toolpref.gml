@@ -3,22 +3,13 @@
 .np
 The
 .us &product Tools User's Guide
-.if '&target' eq 'FOX' .do begin
-.us for FoxPro
-.do end
-.el .if '&target' eq 'PP' .do begin
-.us for PenPoint
-.do end
-.el .if '&target' eq 'QNX' .do begin
+.if '&target' eq 'QNX' .do begin
 .us for QNX
 .do end
 describes how to use &company's software development tools on Intel
 80x86-based personal computers
-.if '&target' eq 'FOX' .do begin
-to build FoxPro applications.
-.do end
-.el .if '&target' eq 'PP' .do begin
-to build PenPoint applications.
+.if '&target' eq 'QNX' .do begin
+to build QNX applications.
 .do end
 .el .do begin
 with DOS, Windows, Windows NT, or OS/2.

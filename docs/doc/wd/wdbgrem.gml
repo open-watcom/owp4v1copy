@@ -14,7 +14,7 @@ both the debugger and the application on the same machine.
 .np
 The DOS debugger runs in protected mode (above the 1M mark), with a
 small memory footprint in the first 640k. Newer operating systems such
-as OS/2 and Windows NT/95 have eliminated the 640k barrier, so there
+as OS/2 and Windows NT/9x have eliminated the 640k barrier, so there
 is little need for remote debugging. Remote debugging is also required
 to debug Novell NetWare applications.
 .np
@@ -39,8 +39,7 @@ Its name is either &dbgcmdup..EXE, &dbgcmdup.W.EXE or &dbgcmdup.C.EXE
 The debugger interprets your requests and sends low level requests to
 the debug kernel. It is a small executable that is dynamically loaded
 by the debugger or a remote debug server and used to control your
-application. It can be called STD.TRP, STD.DLL, RSI.TRP, ADS.TRP or
-PLS.TRP
+application. It can be called STD.TRP, STD.DLL, RSI.TRP or PLS.TRP
 .note Remote Trap Files&mdash.
 .ix 'remote trap files'
 .ix 'trap file' 'remote'
@@ -221,7 +220,7 @@ The debugger provides the following remote link capabilities:
 .begnote
 .note NOV
 This link uses Novell's SPX layer for communication.
-Supported under DOS, OS/2, Windows 3.x, Windows NT/2K/XP and NetWare.
+Supported under DOS, OS/2, Windows 3.x, Windows NT/2000/XP and NetWare.
 .note NET
 This link uses NetBIOS to communicate. If your network software
 supports NetBIOS, you can use this link.
@@ -230,15 +229,12 @@ Supported under DOS, OS/2, Windows 3.x, and NetWare.
 This link supports communication using the parallel or printer port.
 Several different cable configurations are supported.
 .refalso vidwire
-Supported under DOS, OS/2, Windows 3.x, Windows 9x, Windows NT/2K/XP, NetWare and QNX.
+Supported under DOS, OS/2, Windows 3.x, Windows 9x, Windows NT/2000/XP, NetWare and QNX.
 .note SER
 This link uses a serial port to communicate. Rates of up to 115K
 BAUD are supported.
 .refalso vidwire
-Supported under DOS, OS/2, Windows 9x, Windows NT/2K/XP and QNX.
-:cmt..note DQV
-:cmt.This link will communicate between two DESQView DOS boxes.
-:cmt.Supported under DOS running DESQView.
+Supported under DOS, OS/2, Windows 9x, Windows NT/2000/XP and QNX.
 .note WIN
 This link will communicate between two Windows DOS boxes.
 Supported under Windows 3.x and Windows 9x (for DOS applications
@@ -260,7 +256,7 @@ applications).
 .note TCP
 This link will use TCP/IP to communicate internally or over a network
 between sessions.
-Supported under DOS, OS/2, Windows 9x, Windows NT/2K/XP and QNX.
+Supported under DOS, OS/2, Windows 9x, Windows NT/2000/XP and QNX.
 .endnote
 .np
 Communication parameters may be passed to the remote trap file and the
@@ -446,10 +442,6 @@ environment variable.
 See the section entitled :HDREF refid='vidpls'. for more information
 on debugging applications that use the Phar Lap DOS extender.
 .*
-.note ADS
-See the section entitled :HDREF refid='vidads'. for more information
-on debugging AutoCAD applications.
-.*
 .endnote
 .*
 .section *refid=remser SER (Serial)
@@ -551,39 +543,9 @@ environment variable.
 See the section entitled :HDREF refid='vidpls'. for more information
 on debugging applications that use the Phar Lap DOS extender.
 .*
-.note ADS
-See the section entitled :HDREF refid='vidads'. for more information
-on debugging AutoCAD applications.
-.*
 .endnote
-:cmt..*
-:cmt..section *refid=remdqv DQV (DESQView)
-:cmt..*
-:cmt..ix 'DESQView' 'remote debugging'
-:cmt..ix 'remote debugging' 'with DESWView'
-:cmt..np
-:cmt.This link communicates between 2 DESQView DOS sessions.
-:cmt.In order to use this link, you must have DESQView installed on your
-:cmt.machine. Consult your DESQView documentation for details.
-:cmt..np
-:cmt.The parameter to this link is an arbitrary name to be used
-:cmt.for the connection. This allows you to have multiple remote
-:cmt.debug sessions active simultaneously. The default name
-:cmt.is "WATCOM Server".
-:cmt.The following example shows how to use
-:cmt.the default link parameters:
-:cmt..millust begin
-:cmt.A>dqvserv
-:cmt.B>&dbgcmd. /tr=dqv app
-:cmt..millust end
-:cmt.
-:cmt.The following example shows how to use the name "mylink":
-:cmt..millust begin
-:cmt.A>dqvserv mylink
-:cmt.B>&dbgcmd. /tr=dqv;mylink app
-:cmt..millust end
 .*
-.section *refid=remwin WIN (Windows 3.x/95 Virtual DOS Machine)
+.section *refid=remwin WIN (Windows 3.x/9x Virtual DOS Machine)
 .*
 .np
 .ix 'Windows' 'remote debugging'
@@ -786,7 +748,6 @@ Press 'q' to exit
 .ix 'socket port number'
 The server program displays an available socket port number on the
 screen.
-.if &version ge 107 .do begin
 .np
 .ix 'TCP/IP services'
 You may specify a TCP/IP "service" as an argument on the command line.
@@ -811,14 +772,13 @@ the operating system.
 depending on the drive where TCP/IP is installed
 .note QNX
 .mono /etc/services
-.note Windows 95
+.note Windows 9x
 .mono d:\windows\SERVICES
 depending on the drive and directory where Windows 95 is installed
 .note Windows NT
-.mono d:\WINNT35\SYSTEM32\DRIVERS\ETC\SERVICES
+.mono d:\WINNT\SYSTEM32\DRIVERS\ETC\SERVICES
 depending on the drive where Windows NT is installed
 .endnote
-.do end
 .np
 .ix 'IP address'
 You will also need to know the Internet Protocol (IP) address of the
@@ -830,16 +790,10 @@ name portion if the two machines are in the same domain.
 .np
 To use the remote TCP/IP server, you must specify the TCP/IP trap file
 name to the debugger along with an argument consisting of
-.if &version ge 107 .do begin
 your IP address, optionally followed by a ":" and the service name or
 socket port number used by TCPSERV.
-.do end
-.el .do begin
-the socket port number used by TCPSERV and your IP address.
-.do end
 You must also include the name of the application you wish to run and
 debug on the remote machine.
-.if &version ge 107 .do begin
 .exam begin 4 1
 A>tcpserv
 B>&dbgcmd. /tr=tcp;jdoe app
@@ -862,16 +816,6 @@ B>&dbgcmd. /tr=tcp;jdoe.watcom.on.ca:dbgservice app
         or
 B>&dbgcmd. /tr=tcp;172.31.0.99:dbgservice app
 .exam end
-.do end
-.el .do begin
-.exam begin
-B>&dbgcmd. /tr=tcp;1024.jdoe app
-        or
-B>&dbgcmd. /tr=tcp;1024.jdoe.watcom.on.ca app
-        or
-B>&dbgcmd. /tr=tcp;1024.172.31.0.99 app
-.exam end
-.do end
 .np
 .ix 'Internet'
 The TCP/IP remote debug service permits debugging of applications

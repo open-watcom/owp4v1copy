@@ -70,9 +70,9 @@ Zoom, and Editor.
 .point &product Programmer's Guide
 This manual includes 5 major sections each of which describes
 operating system specific development issues. The operating systems
-covered include extended DOS, OS/2, Windows 3.x, Windows NT/Win32s,
-32-bit Windows 3.x (using &company's Supervisor technology), AutoCAD
-ADS and Novell NLMs. Topics include creating a sample program,
+covered include extended DOS, OS/2, Windows 3.x, Windows NT/2000/XP,
+Windows 95/98/Me, 32-bit Windows 3.x (using &company's Supervisor
+technology) and Novell NLMs. Topics include creating a sample program,
 operating system specific error messages, and debugging techniques.
 .*
 .*

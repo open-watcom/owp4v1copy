@@ -5,8 +5,6 @@ This section discusses the following topics:
 .begnote $break
 .note DOS Extender debugging
 See the section entitled :HDREF refid='vid32'..
-.note AutoCAD debugging
-See the section entitled :HDREF refid='vidads'..
 .note NLM debugging
 See the section entitled :HDREF refid='vidnlm'..
 .note Graphics programs
@@ -42,12 +40,6 @@ a DOS extender from Tenberry Software, Inc.
 DOS/4GW is a subset of Tenberry Software's DOS/4G product.
 DOS/4GW is customized for use with &watc32 and &watf32 and is
 included in these packages.
-:cmt. .note OS/386
-:cmt. .ix 'DOS extenders' 'OS/386'
-:cmt. .ix 'OS/386 DOS extender'
-:cmt. .ix 'OS/386 DOS extender' 'version'
-:cmt. .ix 'ERGO Computing, Inc.'
-:cmt. (version 2.1 or later) a DOS extender from ERGO Computing, Inc.
 .note 386|DOS-Extender
 .ix 'DOS extenders' '386|DOS-Extender'
 .ix '386|DOS-Extender'
@@ -145,71 +137,6 @@ C>&dbgcmd hello
 .exam end
 .*
 .endlevel
-.*
-.section *refid=vidads Debugging AutoCAD Applications
-.*
-.np
-.ix 'AutoCAD Development System'
-.ix 'AutoCAD Debugging' 'ADS'
-.ix 'AutoCAD Debugging' 'ADI'
-The &dbgname can be used to debug AutoCAD Development System (ADS) and
-AutoCAD Device Interface (ADI) applications.
-.ix 'AutoCAD Debugging' 'ACAD.ADS'
-Before running the debugger, add a line similar to the following to your
-"ACAD.ADS" file.
-.ix 'AutoCAD Debugging' 'ADSHELP.EXP'
-This line specifies the path to the "ADSHELP.EXP" file.
-.millust begin
-C:&pathnamup.\BINW\ADSHELP.EXP
-.millust end
-.pc
-The file "ACAD.ADS" contains a list of AutoCAD applications that are
-loaded by AutoCAD when AutoCAD is started.
-"ADSHELP.EXP" is an AutoCAD application that is required by the
-debugger for debugging AutoCAD applications.
-.np
-.ix 'AutoCAD debugging' 'ADS trap file'
-.ix 'AutoCAD debugging' 'ADS.TRP'
-.ix 'trap file' 'ADS.TRP'
-To debug an ADS application, a special trap file "ADS.TRP" must be
-used.
-.mbigbox
-&dbgcmdup /TRap=ADS
-.embigbox
-.np
-If you do not have a two-monitor setup, you should also specify the
-.sy Swap
-option.
-.mbigbox
-&dbgcmdup /TRap=ADS /Swap
-.embigbox
-.np
-Note that we did not specify the AutoCAD executable file; the trap
-file, "ADS.TRP", will load AutoCAD automatically.
-You should now be in the debugger.
-At this point, choose
-.menuref 'Command' 'File'
-and enter the following debugger command specifying the name of the
-file containing your AutoCAD application (e.g., foo.exp).
-.exam begin
-DBG>ads foo.exp
-.exam end
-.np
-.ix 'AutoCAD debugging' 'ADS.DBG'
-The file "ADS.DBG" contains a sequence of debugger commands that
-starts AutoCAD, loads the debugging information from the executable
-file you specify, and relocates address information based on the code
-and data selector values for your application.
-.np
-You should now be in AutoCAD.
-When you load your AutoCAD application from AutoLISP, the debugger
-will be entered and source for your program should be displayed in the
-source window.
-.exam begin
-xload "foo.exp"
-.exam end
-.np
-You are now ready to debug your AutoCAD application.
 .*
 .section *refid=vidnlm Debugging a Novell NLM
 .*

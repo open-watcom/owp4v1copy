@@ -7,13 +7,6 @@
 .ix 'diagnostics' '&stripcmdup'
 The following messages may be issued by the &stripname..
 .begnote $break
-.if &version le 90 .do begin
-.note Usage: &stripcmdup. input_file
-.bi or: &stripcmdup. input_file output_file [symbol_file]
-.br
-.bi or: &stripcmdup. input_file ~b~b~b.~b~b~b~b~b~b~b~b~b~b [symbol_file]
-.do end
-.if &version gt 90 .do begin
 .note Usage: &stripcmdup. [options] input_file [output_file] [info_file]
 .bi options: (-option is also accepted)
 .br
@@ -32,7 +25,6 @@ The following messages may be issued by the &stripname..
 .bi info_file:   optional output debugging or resource information file
 .br
 .bi ~b~b~b~b~b~b~b~b~b~b~b~b~bor input debugging or resource informational file
-.do end
 .br
 The command line was entered with no arguments.
 .mnote Too low on memory

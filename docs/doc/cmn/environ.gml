@@ -62,16 +62,9 @@ option.
 The
 .ev INCLUDE
 environment variable describes the location of the
-.if '&target' eq 'PP' .do begin
-C and PenPoint header files (files with the "&hxt" filename
-extension).
-This variable is used by &product..
-.do end
-.el .do begin
 C and C++ header files (files with the "&hxt" filename
 extension).
 This variable is used by &product..
-.do end
 .millust begin
 .if '&target' eq 'QNX' .do begin
 &setcmdup. &setdelim.&incvar=path:path...&setdelim.
@@ -133,7 +126,6 @@ environment string is like the
 .ev PATH
 string in that you can specify one or more directories separated by
 &psword.s ("&ps").
-.if '&target' ne 'PP' .do begin
 .if '&target' ne 'QNX' .do begin
 .np
 If you have the 286 development system, 16-bit applications can be
@@ -142,9 +134,7 @@ libraries are selected.
 If you have the 386 development system, 32-bit applications can
 be linked for DOS Extender systems, Microsoft Windows and QNX.
 .do end
-.do end
 .************************************************************************
-.if '&target' ne 'PP' .do begin
 .if '&target' ne 'QNX' .do begin
 .section LIBDOS
 .np
@@ -177,9 +167,7 @@ The default installation directory for the &prod16 math libraries is
 .exam end
 .do end
 .do end
-.do end
 .************************************************************************
-.if '&target' ne 'PP' .do begin
 .if '&target' ne 'QNX' .do begin
 .section LIBWIN
 .np
@@ -217,9 +205,7 @@ The default installation directory for the &prod16 math libraries is
 .tinyexam end
 .do end
 .do end
-.do end
 .************************************************************************
-.if '&target' ne 'PP' .do begin
 .if '&target' ne 'QNX' .do begin
 .section LIBOS2
 .np
@@ -260,55 +246,7 @@ The default installation directory for the &prod16 math libraries is
 .exam end
 .do end
 .do end
-.do end
 .************************************************************************
-:cmt. .if '&target' ne 'PP' .do begin
-:cmt. .if '&target' ne 'QNX' .do begin
-:cmt. .section LIBOS2FLAT
-:cmt. .np
-:cmt. The use of the
-:cmt. .ev &pathvarup
-:cmt. environment variable and the &lnkname "SYSTEM" directive is
-:cmt. recommended over the use of this environment variable.
-:cmt. .np
-:cmt. If you are developing a 32-bit OS/2 FLAT, LE, or LX executable, the
-:cmt. .ev LIBOS2FLAT
-:cmt. environment variable must include the location of the &prod32 DOS or
-:cmt. OS/2 library files (files with the "&lib" filename extension).
-:cmt. This variable is used by the &lnkname (&lnkcmdup.&exc).
-:cmt. The default installation directory for &prod32 DOS libraries is
-:cmt. .fi &pathnamup&pc.LIB386&pc.DOS.
-:cmt. The default installation directory for &prod32 OS/2 libraries is
-:cmt. .fi &pathnamup&pc.LIB386&pc.OS2.
-:cmt. .ix 'DOSCALLS.LIB'
-:cmt. .ix 'OS/2' 'DOSCALLS.LIB'
-:cmt. For OS/2, the
-:cmt. .ev LIBOS2FLAT
-:cmt. environment variable must also include the directory of the OS/2
-:cmt. .fi DOSCALLS.LIB
-:cmt. file which is usually
-:cmt. .fi &pc.OS2.
-:cmt. .if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
-:cmt. The
-:cmt. .ev LIBOS2FLAT
-:cmt. environment variable must also include the location of the &prod32
-:cmt. math library files.
-:cmt. The default installation directory for the &prod32 32-bit math
-:cmt. libraries is
-:cmt. .fi &pathnamup&pc.LIB386.
-:cmt. .tinyexam begin
-:cmt. &prompt.&setcmd. &setdelim.libos2flat=&dr3.&pathnam.&pc.lib386&pc.os2&ps.&dr3.&pathnam.&pc.lib386&ps.&dr3.&pc.os2&setdelim.
-:cmt. .tinyexam end
-:cmt. .do end
-:cmt. .if '&lang' eq 'FORTRAN 77' .do begin
-:cmt. .exam begin
-:cmt. &prompt.&setcmd. &setdelim.libos2flat=&dr3.&pathnam.&pc.lib386&pc.os2&ps.&dr3.&pc.os2&setdelim.
-:cmt. .exam end
-:cmt. .do end
-:cmt. .do end
-:cmt. .do end
-.************************************************************************
-.if '&target' ne 'PP' .do begin
 .if '&target' ne 'QNX' .do begin
 .section LIBPHAR
 .np
@@ -351,9 +289,7 @@ The default installation directory for the &prod32 math libraries is
 .exam end
 .do end
 .do end
-.do end
 .************************************************************************
-.if '&target' ne 'PP' .do begin
 .if '&target' ne 'QNX' .do begin
 .section NO87
 .np
@@ -394,36 +330,6 @@ To undefine the environment variable, enter the command:
 &setcmdup. &setdelim.NO87=&setdelim.
 .millust end
 .do end
-.do end
-:cmt. .************************************************************************
-:cmt. .if '&ccmd' eq 'wcexp' .do begin
-:cmt. .section OBJ
-:cmt. .np
-:cmt. The
-:cmt. .ev OBJ
-:cmt. environment variable identifies object files that are to be loaded by
-:cmt. the &company Express C compiler when compiling a program.
-:cmt. .code begin
-:cmt. &setcmdup. &setdelim.OBJ=[d:][path]fn[.ext]&ps.[d:][path]fn[.ext]...&setdelim.
-:cmt. .code end
-:cmt. .pc
-:cmt. In the following example, two object files "LINE.OBJ" and
-:cmt. "CIRCLE.OBJ" are included when "GRDEMO.C" is compiled and linked by
-:cmt. &company Express C.
-:cmt. .exam begin
-:cmt. &prompt.&setcmd. &setdelim.obj=..&pc.obj&pc.line&ps...&pc.obj&pc.circle&setdelim.
-:cmt. &prompt.wcexp grdemo
-:cmt. .exam end
-:cmt. .pc
-:cmt. If the
-:cmt. .ev OBJ
-:cmt. environment variable is not defined then you must specify the names of
-:cmt. object files that you wish to be loaded using the &company Express C
-:cmt. "lo" option.
-:cmt. .exam begin
-:cmt. &prompt.wcexp grdemo &sw.lo=..&pc.obj&pc.line&ps...&pc.obj&pc.circle
-:cmt. .exam end
-:cmt. .do end
 .************************************************************************
 .section PATH
 .np
@@ -507,11 +413,6 @@ described manner.
 .point
 &wclname to locate the &prod16 and &prod32 compilers and the
 &lnkname..
-:cmt.wcg. .apoint
-:cmt.wcg. the &product compiler, "&ccmdup.&exc", to locate the code generator
-:cmt.wcg. "&wcgnamup.&exc" when the
-:cmt.wcg. .ev &wcgvarup
-:cmt.wcg. environment variable is not defined.
 .point
 .if '&target' eq 'QNX' .do begin
 "&dbgcmdup.&exc" to locate programs.
@@ -519,8 +420,6 @@ described manner.
 .el .do begin
 "&dbgcmdup.&exc" to locate programs and debugger command files.
 .do end
-:cmt. .apoint
-:cmt. "&patchcmdup.&exc" to locate the file that is to be patched.
 .endpoint
 .************************************************************************
 .if '&target' ne 'QNX' .do begin
@@ -748,94 +647,10 @@ environment variable has been defined, those options listed become the
 default each time the &wclcmdup32 command is used.
 .do end
 .************************************************************************
-:cmt.wcg. ..if '&ccmd' eq 'wcc' or '&ccmd' eq 'wcexp' .do begin
-:cmt.wcg. .section WCG
-:cmt.wcg. .np
-:cmt.wcg. The
-:cmt.wcg. .ev WCG
-:cmt.wcg. environment variable is used by "WCC&exc" to locate
-:cmt.wcg. and load a version of the &product 16-bit code generator.
-:cmt.wcg. When the
-:cmt.wcg. .ev WCG
-:cmt.wcg. environment variable has not been defined, &product
-:cmt.wcg. will search the current directory and paths listed in the
-:cmt.wcg. .ev PATH
-:cmt.wcg. environment variable for the code generator "WCG&exc".
-:cmt.wcg. .np
-:cmt.wcg. There are two versions of the code generator, "WCG&exc" and
-:cmt.wcg. "WCGL&exc".
-:cmt.wcg. The "WCG" code generator manipulates a 64K data area.
-:cmt.wcg. To ensure selection of this version of the code generator, you
-:cmt.wcg. may define the
-:cmt.wcg. .ev WCG
-:cmt.wcg. environment variable using the DOS "&setcmdup."
-:cmt.wcg. command as follows:
-:cmt.wcg. .millust
-:cmt.wcg. &setcmdup. &setdelim.WCG=[d:][path]WCG&exc&setdelim.
-:cmt.wcg. .emillust
-:cmt.wcg. .np
-:cmt.wcg. The "WCGL" code generator uses all available memory (up to 640K) on
-:cmt.wcg. the personal computer.
-:cmt.wcg. This version of the code generator is somewhat larger and slower
-:cmt.wcg. than the former version but it may be able to do a much better
-:cmt.wcg. job of optimizing large modules.
-:cmt.wcg. .np
-:cmt.wcg. To ensure selection of this version of the code generator, you
-:cmt.wcg. may define the
-:cmt.wcg. .ev WCG
-:cmt.wcg. environment variable using the DOS "&setcmdup."
-:cmt.wcg. command as follows:
-:cmt.wcg. .millust
-:cmt.wcg. &setcmdup. &setdelim.WCG=[d:][path]WCGL&exc&setdelim.
-:cmt.wcg. .emillust
-:cmt.wcg. ..do end
-:cmt.wcg. ..if '&ccmd32' eq 'wcc386' .do begin
-:cmt.wcg. .section WCG386
-:cmt.wcg. .np
-:cmt.wcg. The
-:cmt.wcg. .ev WCG386
-:cmt.wcg. environment variable is used by "WCC386&exc" to locate
-:cmt.wcg. and load a version of the &product 32-bit code generator.
-:cmt.wcg. When the
-:cmt.wcg. .ev WCG386
-:cmt.wcg. environment variable has not been defined, &product
-:cmt.wcg. will search the current directory and paths listed in the
-:cmt.wcg. .ev PATH
-:cmt.wcg. environment variable for the code generator "386WCG&exc".
-:cmt.wcg. .np
-:cmt.wcg. There are two versions of the code generator, "386WCG&exc" and
-:cmt.wcg. "386WCGL&exc".
-:cmt.wcg. The "386WCG" code generator manipulates a 64K data area.
-:cmt.wcg. To ensure selection of this version of the code generator, you
-:cmt.wcg. may define the
-:cmt.wcg. .ev WCG386
-:cmt.wcg. environment variable using the DOS "&setcmdup."
-:cmt.wcg. command as follows:
-:cmt.wcg. .millust
-:cmt.wcg. &setcmdup. &setdelim.WCG386=[d:][path]386WCG&exc&setdelim.
-:cmt.wcg. .emillust
-:cmt.wcg. .np
-:cmt.wcg. The "386WCGL" code generator uses all available memory (up to 640K) on
-:cmt.wcg. the personal computer.
-:cmt.wcg. This version of the code generator is somewhat larger and slower
-:cmt.wcg. than the former version but it may be able to do a much better
-:cmt.wcg. job of optimizing large modules.
-:cmt.wcg. .np
-:cmt.wcg. To ensure selection of this version of the code generator, you
-:cmt.wcg. may define the
-:cmt.wcg. .ev WCG386
-:cmt.wcg. environment variable using the DOS "&setcmdup."
-:cmt.wcg. command as follows:
-:cmt.wcg. .millust
-:cmt.wcg. &setcmdup. &setdelim.WCG386=[d:][path]386WCGL&exc&setdelim.
-:cmt.wcg. .emillust
-:cmt.wcg. ..do end
-.************************************************************************
 .section WCGMEMORY
 .np
 :INCLUDE file='WCGMEM'.
 .************************************************************************
-.if '&target' ne 'PP' .do begin
 .section &dbgvarup
 .np
 The
@@ -869,9 +684,7 @@ Once the
 .ev &dbgvarup
 environment variable has been defined, those options listed become the
 default each time the &dbgcmdup command is used.
-.do end
 .************************************************************************
-.if '&target' ne 'PP' .do begin
 .if '&target' ne 'QNX' .do begin
 .section &dbgvarup.W
 .np
@@ -899,7 +712,6 @@ Once the
 .ev &dbgvarup.W
 environment variable has been defined, those options listed become the
 default each time the &dbgcmdup.W command is used.
-.do end
 .do end
 .************************************************************************
 .if '&target' eq 'QNX' .do begin
@@ -1045,7 +857,6 @@ environment variable has been defined, those options listed become the
 default each time the WFL386 command is used.
 .do end
 .************************************************************************
-.if '&target' ne 'PP' .do begin
 .if '&target' ne 'QNX' .do begin
 .section WLANG
 .np
@@ -1077,34 +888,6 @@ Normally, use of the
 .ev WLANG
 environment variable should not be required.
 .do end
-.do end
-.************************************************************************
-:cmt. .if '&target' ne 'PP' .do begin
-:cmt. .if '&target' ne 'QNX' .do begin
-:cmt. .section WOMP
-:cmt. .np
-:cmt. The
-:cmt. .ev WOMP
-:cmt. environment variable can be used to specify commonly-used &wompname
-:cmt. options.
-:cmt. .millust begin
-:cmt. &setcmdup. &setdelim.WOMP=&sw.option1 &sw.option2 ...&setdelim.
-:cmt. .millust end
-:cmt. .pc
-:cmt. These options are processed before options specified on the
-:cmt. command line.
-:cmt. The following example defines the default option to be "f-"
-:cmt. (do not convert the object file).
-:cmt. .exam begin
-:cmt. &prompt.&setcmd. &setdelim.womp=&sw.f-&setdelim.
-:cmt. .exam end
-:cmt. .np
-:cmt. Once the
-:cmt. .ev WOMP
-:cmt. environment variable has been defined, those options listed become the
-:cmt. default each time the WOMP command is used.
-:cmt. .do end
-:cmt. .do end
 .************************************************************************
 .if '&lang' eq 'C' or '&lang' eq 'C/C++' .do begin
 .if '&target' eq 'QNX' .do begin

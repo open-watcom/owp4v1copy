@@ -117,12 +117,12 @@ see the chapter entitled :HDREF refid='winchap'..
 .ix 'VxD format executable'
 tells the &lnkname to generate a Windows VxD file (Virtual Device Driver).
 .np
-The name of the file will have extension "386". Note that this default 
-extension can be overridden by using the "NAME" directive to name 
+The name of the file will have extension "386". Note that this default
+extension can be overridden by using the "NAME" directive to name
 the driver file.
 .np
-Specifying "DYNAMIC" (short form "DYN") , dynamicaly loadable driver will 
-be generated (only for Windows 3.11 or 9x). By default the &lnkname 
+Specifying "DYNAMIC" (short form "DYN") , dynamicaly loadable driver will
+be generated (only for Windows 3.11 or 9x). By default the &lnkname
 generate staticaly loadable driver (for Windows 3.x or 9x).
 .if '&target' ne 'QNX' .do begin
 .np
@@ -189,7 +189,6 @@ The name of the executable file will have extension "exe".
 If "LE" is specified, an early form of the OS/2 32-bit linear
 executable will be generated.
 This executable file format is required by
-:cmt. PenPoint and
 Tenberry Software's DOS/4G and DOS/4GW DOS extenders.
 .np
 In order to improve load time and minimize the size of the executable
@@ -337,7 +336,7 @@ For more information on Phar Lap executable file formats,
 see the chapter entitled :HDREF refid='phrchap'..
 .do end
 .mnote NOVELL
-(short form "NOV") tells the &lnkname to generate a NetWare 
+(short form "NOV") tells the &lnkname to generate a NetWare
 executable file, more commonly called a NetWare Loadable Module (NLM).
 .np
 NLMs are further classified according to their function.
