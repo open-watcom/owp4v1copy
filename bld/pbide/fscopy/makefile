@@ -1,4 +1,4 @@
-#pmake: build cpu_i86 os_dos os_nt os_win os_os2
+#pmake: build cpu_i86 os_dos
 proj_name = fscopy
 
 host_OS = dos
