@@ -37,6 +37,12 @@
 #include "myassert.h"
 #include "womputil.h"
 
+#ifdef __UNIX__
+#define errout stderr
+#else
+#define errout stdout
+#endif
+
 #define JUMP_OFFSET(cmd)    ((cmd)-CMD_POBJ_MIN_CMD)
 
 extern void             MsgPrintf( int resourceid );
@@ -74,7 +80,8 @@ int InternalError( const char *file, unsigned line )
     char msgbuf[80];
 
     MsgGet( MSG_INTERNAL_ERROR, msgbuf );
-    printf( msgbuf, file, line );
+    fprintf( errout, msgbuf, file, line );
+    fflush( errout );
     exit( EXIT_FAILURE );
     return( 0 );
 }
