@@ -12,10 +12,10 @@ extra_c_flags = -i..\..\pmake
 
 .c: ..\c;..\..\pmake
 
-OBJS = builder.obj utils.obj runit.obj sys$(host_OS).obj pmake.obj pmkcmd.obj
+OBJS = builder.obj utils.obj runit.obj sys$(host_OS).obj # pmake.obj pmkcmd.obj
 
 $(name).exe : $(OBJS)
-        wlink $(lflags) name $^@ file {$(OBJS)}
+        wlink $(lflags) name $^@ op map file {$(OBJS)}
 
 clean: .SYMBOLIC .EXPLICIT
         @if exist *.?bj del *.?bj
