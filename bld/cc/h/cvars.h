@@ -541,7 +541,7 @@ extern  void    InitDataQuads(void);            /* cdinit */
 extern  void    FreeDataQuads(void);            /* cdinit */
 extern  int     StartDataQuadAccess(void);      /* cdinit */
 extern  DATA_QUAD *NextDataQuad(void);          /* cdinit */
-extern  void    InitSymData(TYPEPTR,int);       /* cdinit */
+extern  void    InitSymData(TYPEPTR,TYPEPTR,int);       /* cdinit */
 extern  void    StaticInit(SYMPTR,SYM_HANDLE);  /* cdinit */
 extern  void    VarDeclEquals(SYMPTR,SYM_HANDLE);/* cdinit */
 
@@ -601,6 +601,8 @@ extern  TREEPTR BasedPtrNode(TYPEPTR,TREEPTR);
 extern  int     IsLValue(TREEPTR);
 extern  op_flags OpFlags( type_modifiers  flags );
 extern  type_modifiers FlagOps( op_flags ops );
+extern  FIELDPTR SearchFields( TYPEPTR *class_typ, unsigned long *field_offset,
+                               char *name );
 
 //cfeinfo.c
 extern  int     VarFunc(SYMPTR);
