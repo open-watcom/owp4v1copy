@@ -353,7 +353,6 @@ static void assemblerInit(      // INITIALIZATION OF ASSEMBLER
     int         use32;
 
     defn = defn;
-    if( CompFlags.dll_subsequent ) return;
 #if _CPU == 386
     use32 = 1;
     cpu = 3;
