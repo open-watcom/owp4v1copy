@@ -49,6 +49,8 @@ memory_model_i86 = c
 
 !ifeq host_os qnx
 memory_model_386 = s
+!else ifeq host_os nov
+memory_model_386 = s
 !endif
 
 fpu_flags_dos_i86   = -fpc
