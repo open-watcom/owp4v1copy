@@ -76,8 +76,10 @@ static long             last_eip;
 static int              last_sig;
 static int              at_end;
 static struct r_debug   rdebug;         /* Copy of debuggee's r_debug (if present) */
+static struct r_debug   *dbg_rdebug;    /* Ptr to r_debug in debuggee's space */
 static int              have_rdebug;    /* Flag indicating valid r_debug */
-static Elf32_Dyn        *dbg_dyn;       /* VA debuggee's dynamic section (if present) */
+static Elf32_Dyn        *dbg_dyn;       /* VA of debuggee's dynamic section (if present) */
+static unsigned_8       old_ld_bp;
 
 #ifdef DEBUG_OUT
 void Out( const char *str )
@@ -128,9 +130,11 @@ static unsigned WriteMem( void *ptr, addr_off offv, unsigned size )
         u_long  val;
         if( sys_ptrace( PTRACE_PEEKTEXT, pid, offv, &val ) != 0 )
             return( size - count );
+#if DEBUG_WRITEMEM
         Out( "writemem:" );
         OutNum( val );
         Out( "\n" );
+#endif
         switch( count ) {
         case 1:
             val &= 0xFFFFFF00;
@@ -147,9 +151,11 @@ static unsigned WriteMem( void *ptr, addr_off offv, unsigned size )
                    ((u_long)(*((unsigned_8*)(data+2))) << 16);
             break;
         }
+#if DEBUG_WRITEMEM
         Out( "writemem:" );
         OutNum( val );
         Out( "\n" );
+#endif
         if( sys_ptrace( PTRACE_POKETEXT, pid, offv, (void *)val ) != 0 )
             return( size - count );
     }
@@ -236,7 +242,7 @@ Elf32_Dyn *GetDebuggeeDynSection( const char *exe_name )
  * to memory provided by caller. Note that it is perfectly valid for this
  * function to fail - that will happen if the debuggee is statically linked.
  */
-int Get_ld_info( struct r_debug *debug_ptr )
+int Get_ld_info( struct r_debug *debug_ptr, struct r_debug **dbg_rdebug_ptr )
 {
     Elf32_Dyn       loc_dyn;
     struct r_debug  *rdebug = NULL;
@@ -271,6 +277,7 @@ int Get_ld_info( struct r_debug *debug_ptr )
         Out( "Get_ld_info: failed to copy r_debug struct\n" );
         return( FALSE );
     }
+    *dbg_rdebug_ptr = rdebug;
     Out( "Get_ld_info: dynamic linker rendezvous structure found\n" );
     return( TRUE );
 }
@@ -749,6 +756,7 @@ unsigned ReqProg_load( void )
 
     last_sig = -1;
     have_rdebug = FALSE;
+    dbg_dyn = NULL;
     at_end = FALSE;
     parms = (char *)GetInPtr( sizeof( *acc ) );
     parm_start = parms;
@@ -1039,6 +1047,7 @@ unsigned ReqClear_watch( void )
 static unsigned ProgRun( int step )
 {
     static int          ptrace_sig = 0;
+    static int          ld_state = 0;
     user_regs_struct    regs;
     int                 status;
     prog_go_ret         *ret;
@@ -1061,7 +1070,7 @@ static unsigned ProgRun( int step )
     } else {
         sys_ptrace( PTRACE_CONT, pid, 0, (void *)ptrace_sig );
     }
-    waitpid ( pid, &status, 0 );
+    waitpid( pid, &status, 0 );
     signal( SIGINT, old );
     if( WIFSTOPPED( status ) ) {
         switch( ( ptrace_sig = WSTOPSIG( status ) ) ) {
@@ -1097,10 +1106,55 @@ static unsigned ProgRun( int step )
         OutNum( regs.eip );
         Out( "\n" );
         if( ret->conditions == COND_BREAK ) {
-            Out( "decrease eip(sigtrap)\n" );
-            regs.orig_eax = -1;
-            regs.eip--;
-            sys_ptrace( PTRACE_SETREGS, pid, 0, &regs );
+            if( regs.eip == rdebug.r_brk + sizeof( old_ld_bp ) ) {
+                int         psig = 0;
+                void        (*oldsig)(int);
+                unsigned_8  opcode = BRK_POINT;
+		
+                /* The dynamic linker breakpoint was hit, meaning that
+                 * libraries are being loaded or unloaded. This gets a bit
+                 * tricky because we must restore the original code that was
+                 * at the breakpoint and execute it, but we still want to 
+                 * keep the breakpoint.
+                 */
+                WriteMem( &old_ld_bp, rdebug.r_brk, sizeof( old_ld_bp ) );
+                ReadMem( &rdebug, (addr48_off)dbg_rdebug, sizeof( rdebug ) );
+                Out( "ld breakpoint hit, state is " );
+                switch( rdebug.r_state ) {
+                case RT_ADD:
+                    Out( "RT_ADD\n" );
+                    ld_state = RT_ADD;
+                    AddOneLib( rdebug.r_map );
+                    break;
+                case RT_DELETE:
+                    Out( "RT_DELETE\n" );
+                    ld_state = RT_DELETE;
+                    break;
+                case RT_CONSISTENT:
+                    Out( "RT_CONSISTENT\n" );
+                    if( ld_state == RT_DELETE )
+                        DelOneLib( rdebug.r_map );
+                    ld_state = RT_CONSISTENT;
+                    break;
+                default:
+                    Out( "error!\n" );
+                    break;
+                }
+                regs.orig_eax = -1;
+                regs.eip--;
+                sys_ptrace( PTRACE_SETREGS, pid, 0, &regs );
+                oldsig = signal( SIGINT, SIG_IGN );
+                sys_ptrace( PTRACE_SINGLESTEP, pid, 0, (void *)psig );
+                waitpid( pid, &status, 0 );
+                signal( SIGINT, oldsig );
+                WriteMem( &opcode, rdebug.r_brk, sizeof( old_ld_bp ) );
+                ret->conditions = COND_LIBRARIES;
+            } else {
+                Out( "decrease eip(sigtrap)\n" );
+                regs.orig_eax = -1;
+                regs.eip--;
+                sys_ptrace( PTRACE_SETREGS, pid, 0, &regs );
+            }
         }
         orig_eax = regs.orig_eax;
         last_eip = regs.eip;
@@ -1115,10 +1169,24 @@ static unsigned ProgRun( int step )
      * immediately after the debuggee process loads.
      */
     if( !have_rdebug && (dbg_dyn != NULL) ) {
-        if( Get_ld_info( &rdebug ) ) {
+        if( Get_ld_info( &rdebug, &dbg_rdebug ) ) {
+            unsigned_8  opcode;
+	    
             AddInitialLibs( rdebug.r_map );
             have_rdebug = TRUE;
             ret->conditions |= COND_LIBRARIES;
+	    
+            /* Set a breakpoint in dynamic linker. That way we can be 
+             * informed on dynamic library load/unload events.
+             */
+            ReadMem( &old_ld_bp, rdebug.r_brk, sizeof( old_ld_bp ) );
+            Out( "Setting ld breakpoint at " );
+            OutNum( rdebug.r_brk );
+            Out( " old opcode was " );
+            OutNum( old_ld_bp );
+            Out( "\n" );
+            opcode = BRK_POINT;
+            WriteMem( &opcode, rdebug.r_brk, sizeof( opcode ) );
         }
     }
  end:

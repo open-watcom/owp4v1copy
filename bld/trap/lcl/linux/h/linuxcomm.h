@@ -251,6 +251,8 @@ extern int      SetDebugRegs( void );
 extern int      CheckWatchPoints( void );
 extern int      GetLinkMap( struct link_map *, struct link_map * );
 extern int      AddInitialLibs( struct link_map * );
+extern int      AddOneLib( struct link_map * );
+extern int      DelOneLib( struct link_map * );
 extern void     AddProcess( void );
 extern void     DelProcess( void );
 extern char     *dbg_strcpy( char *, const char * );

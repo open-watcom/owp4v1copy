@@ -67,10 +67,25 @@ static lib_load_info    module_info_array[32];
 lib_load_info *FindLib( addr48_off dynsection )
 {
     unsigned    i;
-    
+
     for( i = 0; i < ModuleTop; ++i ) {
         if( moduleInfo[i].dbg_dyn_sect == dynsection )
             return( &moduleInfo[i] );
+    }
+    return( NULL );
+}
+
+struct link_map *FindLibInLinkMap( struct link_map *first_lmap, addr48_off dyn_base )
+{
+    struct link_map     lmap;
+    struct link_map     *dbg_lmap;
+
+    dbg_lmap = first_lmap;
+    while( dbg_lmap != NULL ) {
+        if( !GetLinkMap( dbg_lmap, &lmap ) ) break;
+	if( (addr48_off)lmap.l_ld == dyn_base )
+            return( dbg_lmap );
+        dbg_lmap = lmap.l_next;
     }
     return( NULL );
 }
@@ -140,6 +155,9 @@ void DelLib( addr48_off dynsection )
 
     for( i = 0; i < ModuleTop; ++i ) {
         if( moduleInfo[i].dbg_dyn_sect == dynsection ) {
+            Out( "Deleting library " );
+            Out( moduleInfo[i].filename );
+            Out( "\n" );
             moduleInfo[i].newly_unloaded = TRUE;
             moduleInfo[i].offset = NULL;
 	    moduleInfo[i].dbg_dyn_sect = NULL;
@@ -174,9 +192,56 @@ int AddInitialLibs( struct link_map *first_lmap )
     dbg_lmap = first_lmap;
     while( dbg_lmap != NULL ) {
         if( !GetLinkMap( dbg_lmap, &lmap ) ) break;
-	AddLib( &lmap );
-	++count;
+        AddLib( &lmap );
+        ++count;
         dbg_lmap = lmap.l_next;
+    }
+    return( count );
+}
+
+/*
+ * AddOneLib - called when dynamic linker is adding a library. Unfortunately
+ * we don't get told which library, so we just have to zip through the list
+ * until we find one we don't know about yet.
+ */
+int AddOneLib( struct link_map *first_lmap )
+{
+    struct link_map     lmap;
+    struct link_map     *dbg_lmap;
+    int                 count = 0;
+    lib_load_info       *lli;
+
+    dbg_lmap = first_lmap;
+    while( dbg_lmap != NULL ) {
+        if( !GetLinkMap( dbg_lmap, &lmap ) ) break;
+        lli = FindLib( (addr48_off)lmap.l_ld );
+        if( lli == NULL ) {
+            AddLib( &lmap );
+            ++count;
+        }
+        dbg_lmap = lmap.l_next;
+    }
+    return( count );
+}
+
+/*
+ * DelOneLib - called when dynamic linker is deleting a library. Unfortunately
+ * we don't get told which library, so we just have to zip through our list
+ * until we find out which one is suddenly missing.
+ */
+int DelOneLib( struct link_map *first_lmap )
+{
+    int                 count = 0;
+    int                 i;
+    addr48_off          dyn_base;
+
+    for( i = 0; i < ModuleTop; ++i ) {
+        dyn_base = moduleInfo[i].dbg_dyn_sect;
+        if( dyn_base != NULL ) {
+            if( FindLibInLinkMap( first_lmap, dyn_base ) == NULL ) {
+                DelLib( dyn_base );
+            }
+        }
     }
     return( count );
 }
@@ -251,11 +316,13 @@ unsigned ReqGet_lib_name( void )
 
     for( i = 0; i < ModuleTop; ++i ) {
         if( moduleInfo[i].newly_unloaded ) {
+            Out( "(newly unloaded) " );
             ret->handle = i;
             name[0] = '\0';
             moduleInfo[i].newly_unloaded = FALSE;
             return( sizeof( *ret ) );
         } else if( moduleInfo[i].newly_loaded ) {
+            Out( "(newly loaded) " );
             ret->handle = i;
             strcpy( name, moduleInfo[i].filename );
             moduleInfo[i].newly_loaded = FALSE;
