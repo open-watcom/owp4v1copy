@@ -1,5 +1,5 @@
 # VI Prerequisite Build Control File
-# =========================================
+# ==================================
 
 set PROJDIR=<CWD>
 
@@ -24,8 +24,8 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     cdsay <PROJDIR>/bind
     pmake -d all -h clean
     cdsay <PROJDIR>
-    echo rm -f -r <PROJDIR>/<OBJDIR>
-    rm -f -r <PROJDIR>/<OBJDIR>
+    echo rm -f -r <PROJDIR>/<PREOBJDIR>
+    rm -f -r <PROJDIR>/<PREOBJDIR>
     wmake -h -f <DEVDIR>/build/mif/cleanp.mif platform=<BUILD_PLATFORM> file=bvi
     cdsay .
     set BUILD_PLATFORM=
@@ -39,8 +39,8 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     cdsay <PROJDIR>\bind\dos386
     wmake -h
     cdsay <PROJDIR>
-    mkdir <PROJDIR>\<OBJDIR>
-    cdsay <PROJDIR>\<OBJDIR>
+    mkdir <PROJDIR>\<PREOBJDIR>
+    cdsay <PROJDIR>\<PREOBJDIR>
     wmake -h -f ../dos386/makefile prebuild=1
     <CPCMD> vi.exe <DEVDIR>/build/bin/bvi.exe
     cdsay <PROJDIR>
@@ -54,8 +54,8 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     cdsay <PROJDIR>\bind\os2386
     wmake -h
     cdsay <PROJDIR>
-    mkdir <PROJDIR>\<OBJDIR>
-    cdsay <PROJDIR>\<OBJDIR>
+    mkdir <PROJDIR>\<PREOBJDIR>
+    cdsay <PROJDIR>\<PREOBJDIR>
     wmake -h -f ../os2386/makefile prebuild=1
     <CPCMD> vi.exe <DEVDIR>/build/binp/bvi.exe
     cdsay <PROJDIR>
@@ -69,8 +69,8 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     cdsay <PROJDIR>\bind\nt386
     wmake -h
     cdsay <PROJDIR>
-    mkdir <PROJDIR>\<OBJDIR>
-    cdsay <PROJDIR>\<OBJDIR>
+    mkdir <PROJDIR>\<PREOBJDIR>
+    cdsay <PROJDIR>\<PREOBJDIR>
     wmake -h -f ../nt386/makefile prebuild=1
     <CPCMD> vi.exe <DEVDIR>/build/binnt/bvi.exe
     cdsay <PROJDIR>
@@ -84,8 +84,8 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
     cdsay <PROJDIR>/bind/linux386
     wmake -h
     cdsay <PROJDIR>
-    mkdir <PROJDIR>/<OBJDIR>
-    cdsay <PROJDIR>/<OBJDIR>
+    mkdir <PROJDIR>/<PREOBJDIR>
+    cdsay <PROJDIR>/<PREOBJDIR>
     wmake -h -f ../linux386/makefile prebuild=1
     <CPCMD> vi.exe <DEVDIR>/build/binl/bvi
     cdsay <PROJDIR>

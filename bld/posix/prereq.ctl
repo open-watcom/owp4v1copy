@@ -14,11 +14,11 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 
 [ BLOCK <1> clean ]
 #==================
-    cdsay <PROJDIR>\<OBJDIR>
+    cdsay <PROJDIR>\<PREOBJDIR>
     wmake -h -f <PROJDIR>/mif/makeall.mif prebuild=1 clean
     cdsay <PROJDIR>
-    echo rm -f -r <PROJDIR>/<OBJDIR>
-    rm -f -r <PROJDIR>/<OBJDIR>
+    echo rm -f -r <PROJDIR>/<PREOBJDIR>
+    rm -f -r <PROJDIR>/<PREOBJDIR>
     wmake -h -f <PROJDIR>/mif/makeall.mif prebuild=1 build_path=<OWROOT>\bld\build\bin clean_build
     wmake -h -f <PROJDIR>/mif/makeall.mif prebuild=1 build_path=<OWROOT>\bld\build\binp clean_build
     wmake -h -f <PROJDIR>/mif/makeall.mif prebuild=1 build_path=<OWROOT>\bld\build\binnt clean_build
@@ -26,24 +26,24 @@ set TMP_BUILD_PLATFORM=<BUILD_PLATFORM>
 
 [ BLOCK <BUILD_PLATFORM> dos386 ]
 #================================
-    mkdir <PROJDIR>\<OBJDIR>
-    cdsay <PROJDIR>\<OBJDIR>
+    mkdir <PROJDIR>\<PREOBJDIR>
+    cdsay <PROJDIR>\<PREOBJDIR>
     wmake -h -f ../systems/dos/makefile prebuild=1
     <CPCMD> *.exe <OWROOT>\bld\build\bin\
     cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> os2386 ]
 #================================
-    mkdir <PROJDIR>\<OBJDIR>
-    cdsay <PROJDIR>\<OBJDIR>
+    mkdir <PROJDIR>\<PREOBJDIR>
+    cdsay <PROJDIR>\<PREOBJDIR>
     wmake -h -f ../systems/os2386/makefile prebuild=1
     <CPCMD> *.exe <OWROOT>\bld\build\binp\
     cdsay <PROJDIR>
 
 [ BLOCK <BUILD_PLATFORM> nt386 ]
 #===============================
-    mkdir <PROJDIR>\<OBJDIR>
-    cdsay <PROJDIR>\<OBJDIR>
+    mkdir <PROJDIR>\<PREOBJDIR>
+    cdsay <PROJDIR>\<PREOBJDIR>
     wmake -h -f ../systems/nt386/makefile prebuild=1
     <CPCMD> *.exe <OWROOT>\bld\build\binnt\
     cdsay <PROJDIR>

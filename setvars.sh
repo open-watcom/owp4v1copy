@@ -46,6 +46,9 @@ export DOC_BUILD=0      # Documentation building uses DOS programs.
 # Subdirectory to be used for bootstrapping
 export OBJDIR=bootstrp
 
+# Subdirectory to be used for building prerequisite utilities
+export PREOBJDIR=prebuild
+
 # Stuff for the Open Watcom build environment
 export BUILD_PLATFORM=linux386
 export BLD_VER=14

@@ -44,7 +44,10 @@ REM Set up default path information variable
 if %DEFPATH%. == . set DEFPATH=%PATH%
 
 REM Subdirectory to be used for bootstrapping
-set OBJDIR=prebuild
+set OBJDIR=bootstrp
+
+REM Subdirectory to be used for building prerequisite utilities
+set PREOBJDIR=prebuild
 
 REM Stuff for the Open Watcom build environment
 set BUILD_PLATFORM=os2386
