@@ -1208,8 +1208,9 @@ static MACRO_TOKEN *BuildMTokenList( byte __FAR *p, MACRO_ARG *macro_parms )
             ++p;                // skip over T_MACRO_SHARP
             while( *p == T_WHITE_SPACE ) ++p;
             ++p;                // skip over T_MACRO_PARM
-            if( macro_parms ) {
-                mtok = BuildString(  macro_parms[*p].arg );
+            // If no macro arg given, result must be "", not empty
+            if( macro_parms && macro_parms[*p].arg && !(*(macro_parms[*p].arg) == '\0') ) {
+                mtok = BuildString( macro_parms[*p].arg );
             } else {
                 mtok = BuildAToken( "" );
                 mtok->token = T_STRING;
