@@ -86,7 +86,9 @@ void FiniGrepDialog( void )
     if( grepHwnd != NULL ) {
     DestroyWindow( grepHwnd );
     }
+#ifndef __NT__
     (void)FreeProcInstance( (FARPROC) grepProc );
+#endif
     grepProc = NULL;
     grepHwnd = NULL;
 

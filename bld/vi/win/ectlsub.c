@@ -183,7 +183,9 @@ void RemoveEditSubClass( HWND hwnd, int id )
 
     edit = GetDlgItem( hwnd, id );
     SetWindowLong( edit, GWL_WNDPROC, (LONG) oldEditProc );
+#ifndef __NT__
     (void)FreeProcInstance( editProc );
+#endif
     FinishFileComplete();
 
 } /* RemoveEditSubClass */
