@@ -1,5 +1,6 @@
 # Win32 include files and import libraries
 
+README.w32api
 h\nt\accctrl.h
 h\nt\aclapi.h
 h\nt\basetsd.h
