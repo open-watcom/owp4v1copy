@@ -7,13 +7,6 @@ src\cpplib\contain\wcexcept.cpp
 src\cpplib\contain\wchash.cpp
 src\cpplib\contain\wclist.cpp
 src\cpplib\contain\wcskip.cpp
-src\editdll\makefile
-src\editdll\weditcw.c
-src\editdll\weditcw.h
-src\editdll\weditcw.lnk
-src\editdll\weditcwn.lnk
-src\editdll\wedit.doc
-src\editdll\wedit.h
 src\grdemo.c
 src\grdemo.cpp
 src\hello.c

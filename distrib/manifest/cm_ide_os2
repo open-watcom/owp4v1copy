@@ -3,7 +3,7 @@
 binp\batserv.exe
 binp\gen_ci.cmd
 binp\gen_co.cmd
-binp\dll\epmlink.dll
+binp\dll\weditepm.dll
 binp\dll\os2edit.dll
 binp\dll\rcsdll.dll
 binp\ide.exe
