@@ -934,8 +934,8 @@ static dip_status TryELF( dig_fhandle h, imp_image_handle *ii )
 
         ds = AddName( ii, sizeof( unknown ) - 1, unknown );
         if( ds != DS_OK ) return( ds );
-        name = &unknown[sizeof( unknown )-1];
-        while( ++*name <= '9' ) {
+        name = &unknown[sizeof( unknown ) - 2];
+        while( ++*name == '9' ) {
             *name = '0';
             --name;
         }
