@@ -21,6 +21,7 @@ dosinc  = $(common_h)
 ntinc   = $(watcom_nt_h);$(common_h)
 wininc  = $(lang_root)/h/win;$(common_h)
 qnxinc  = $(lang_root)/qh;$(watcom_dir)/h
+linuxinc  = $(lang_root)/lh;$(watcom_dir)/h;$(ncurses_dir)/h
 
 !ifeq host_OS nt
 sysdir = win

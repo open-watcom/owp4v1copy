@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Linux initialization support routines for wd
 *
 ****************************************************************************/
 
@@ -37,10 +36,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <stdio.h>
 #include <sys/types.h>
-#if 0
-#include <sys/utsname.h>
-#endif
 #include <sys/wait.h>
 #include <signal.h>
 
@@ -147,10 +144,7 @@ long _fork( char *cmd, unsigned len )
     const char    *argv[4];
     char    *shell;
     pid_t   pid;
-    int     i;
-    char    iov[10];
-
-
+    
     shell = getenv( "SHELL" );
     if( shell == NULL ) shell = "/bin/sh";
 
@@ -164,19 +158,15 @@ long _fork( char *cmd, unsigned len )
     } else {
         argv[1] = NULL;
     }
-    /* make sure STDIN/STDOUT/STDERR are connected to a terminal */
-    iov[0] = DbgConHandle;
-    iov[1] = DbgConHandle;
-    iov[2] = DbgConHandle;
-    for( i = 3; i < 10; ++i ) iov[i] = (char)-1;
-    fcntl( DbgConHandle, F_SETFD, (int)0 );
+    fcntl( DbgConHandle, F_SETFD, 0 );
     if ((pid = fork()) == 0) {
+            /* make sure STDIN/STDOUT/STDERR are connected to a terminal */
+            dup2( DbgConHandle, 0 );
+            dup2( DbgConHandle, 1 );
+            dup2( DbgConHandle, 2 );
+            close( DbgConHandle );
             execve(shell, argv, (const char **)environ);
-#if 0
-            pid = qnx_spawn( 0, 0, 0, -1, -1,
-                _SPAWN_NEWPGRP | _SPAWN_TCSETPGRP | _SPAWN_SETSID,
-                             shell, argv, environ, iov, DbgConHandle );
-#endif
+            exit( 1 );
     } else {
             fcntl( DbgConHandle, F_SETFD, (int)FD_CLOEXEC );
             if( pid == -1 ) return( 0xffff0000 | errno );
