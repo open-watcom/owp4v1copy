@@ -74,6 +74,7 @@ REM Documentation related variables
 set win95hc=hcrtf
 set wat31hc=whc
 set win31hc=hc31
+set ipfc=%os2tkroot%\ipfc
 
 %devdr%
 cd %devdir%
