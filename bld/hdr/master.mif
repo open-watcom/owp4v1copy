@@ -205,6 +205,7 @@ LINUX_files = &
       $(common) &
         dirent.h &
         unistd.h &
+        utime.h &
         termios.h &
         sys/time.h &
         sys/ioctl.h &

@@ -105,6 +105,9 @@ const char FAR *BuiltIns = {
 #elif defined( __QNX__ )
     "__QNX__=\n"
 
+#elif defined( __LINUX__ )    
+    "__LINUX__=\n"
+
 #endif
 };
 

@@ -28,7 +28,7 @@
 *
 ****************************************************************************/
 
-#if !defined(__QNX__)
+#if !defined(__UNIX__)
  #include <direct.h>
  #include <dos.h>
 #endif
@@ -203,7 +203,7 @@ STATIC const char *const dosInternals[] = {   /* COMMAND.COM commands */
     "VERIFY",
     "VOL"
 
-#elif   defined( __QNX__ )
+#elif   defined( __UNIX__ )
 
     "BREAK",
     "CALL",
@@ -1319,7 +1319,7 @@ STATIC RET_T handleFor( char *line )
 #pragma off(check_stack);
 
 
-#if     defined( __OS2__ ) || defined( __NT__ ) || defined( __QNX__ )
+#if     defined( __OS2__ ) || defined( __NT__ ) || defined( __UNIX__ )
 STATIC RET_T handleCD( char *cmd )
 /********************************/
 {
@@ -1400,7 +1400,7 @@ STATIC BOOLEAN hasMetas( const char *cmd )
 #if     defined( __DOS__ ) || defined( __NT__ )
     return( strpbrk( cmd, SHELL_METAS ) != NULL );
 
-#elif   defined( __OS2__ ) || defined( __QNX__ )
+#elif   defined( __OS2__ ) || defined( __UNIX__ )
     const char *p;
 
     p = cmd;
@@ -1562,7 +1562,7 @@ STATIC RET_T shellSpawn( char *cmd, int flags )
         case COM_SET:   my_ret = handleSet( cmd );          break;
         case COM_FOR:   my_ret = handleFor( cmd );          break;
         case COM_IF:    my_ret = handleIf( cmd );           break;
-#if defined( __OS2__ ) || defined( __NT__ ) || defined( __QNX__ )
+#if defined( __OS2__ ) || defined( __NT__ ) || defined( __UNIX__ )
         case COM_CD:    /* fall through */
         case COM_CHDIR: my_ret = handleCD( cmd );           break;
 #if defined( __OS2__ ) || defined( __NT__ )

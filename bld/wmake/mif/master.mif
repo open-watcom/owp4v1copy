@@ -101,6 +101,7 @@ libs_nt_386     = $(orl_dir)\o\orl.lib
 libs_nt_axp     = $(orl_dir)\axp\orl.lib
 libs_os2_386    = $(orl_dir)\os2\orl.lib
 libs_qnx_386    = $(orl_dir)\o\orl.lib
+libs_linux_386  = $(orl_dir)\o\orl.lib
 libs_dos_386    = $(orl_dir)\o\orl.lib
 libs            = $(libs_$(host_OS)_$(host_CPU))
 

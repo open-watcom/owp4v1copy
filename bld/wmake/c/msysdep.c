@@ -90,7 +90,7 @@ extern int SwitchChar( void )
     return( '/' );
 #elif   defined( __OS2__ ) || defined( __NT__ )
     return( '/' );
-#elif   defined( __QNX__ )
+#elif   defined( __UNIX__ )
     return( '-' );
 
 #endif
@@ -187,7 +187,7 @@ extern RET_T TouchFile( const char *name )
 
 #include <sys/stat.h>
 #include <sys/types.h>
-#if defined(__QNX__)
+#if defined(__UNIX__)
  #include <utime.h>
 #else
  #include <sys/utime.h>

@@ -28,11 +28,13 @@
 *
 ****************************************************************************/
 
-#include <io.h>
+#include <unistd.h>
 #include <setjmp.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef __UNIX__
 #include <direct.h>
+#endif
 
 #include "macros.h"
 #include "massert.h"

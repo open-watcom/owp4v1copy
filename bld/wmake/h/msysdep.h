@@ -115,7 +115,7 @@
 # define FAR                        /* don't use far memory at all          */
 # define DLL_CMD_ENTRY      "EXEC_CMD"   /* entry-pt for .DLL version of command */
 
-#elif defined( __QNX__ )
+#elif defined( __UNIX__ )
 
 # define PATH_SPLIT         ':'     /* path seperator                       */
 # define PATH_SPLIT_S       ":"     /* path seperator in string form        */
