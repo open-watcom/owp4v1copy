@@ -395,6 +395,7 @@ int doScanFloat()
 {
     int         c;
 
+    BadTokenInfo = 0;
     c = CurrChar;
     if( c == '.' ) {
         while( (c = SaveNextChar()) >= '0' && c <= '9' ) ;
@@ -417,33 +418,24 @@ int doScanFloat()
         }
     }
     if( c == 'f' || c == 'F' ) {
-        c = SaveNextChar();
+        NextChar();
         ConstType = TYPE_FLOAT;
     } else if( c == 'l' || c == 'L' ) {
-        c = SaveNextChar();
-        if( CompFlags.use_long_double )
+        NextChar();
+        if( CompFlags.use_long_double ) {
             ConstType = TYPE_LONG_DOUBLE;
-        else
+        } else {
             ConstType = TYPE_DOUBLE;
+        }
     } else {
+        --TokenLen;
         ConstType = TYPE_DOUBLE;
     }
-    if( CompFlags.pre_processing && (CharSet[c] & (C_AL | C_DI)) ) {
-        for(;;) {
-            c = SaveNextChar();
-            if( (CharSet[c] & (C_AL | C_DI)) == 0 ) break;
-        }
-        --TokenLen;
-        Buffer[TokenLen] = '\0';
-        return( T_BAD_TOKEN );
-    } else {
-        --TokenLen;
-        Buffer[TokenLen] = '\0';
-        return( T_CONSTANT );
-    }
+    Buffer[TokenLen] = '\0';
+    return( CurToken );
 }
 
-static int doScanAsmDirective( void )
+static void doScanAsmToken( void )
 {
     char        *scanptr;
     char        *p;
@@ -497,19 +489,28 @@ static int doScanAsmDirective( void )
     }
     *p = '\0';
     TokenLen = p - Buffer;
-    return( T_DOT );
+}
+
+static int doScanAsm( void )
+{
+    BadTokenInfo = 0;
+    TokenLen = 0;
+    do {
+        Buffer[TokenLen++] = CurrChar;
+        doScanAsmToken();
+    } while( CurrChar == '.' );
+    CurToken = T_ID;
+    return( CurToken );
 }
 
 int ScanDot()
 {
+    if( CompFlags.inside_asm_stmt == 1 )
+        return( doScanAsm() );
+
     Buffer[0] = '.';
     TokenLen = 1;
-    if( CompFlags.inside_asm_stmt == 1 ) {
-        // inline assembler directives start with dot
-        return( doScanAsmDirective() );
-    } else {
-        return( doScanFloat() );
-    }
+    return( doScanFloat() );
 }
 
 static int ScanPPNumber()
@@ -739,6 +740,10 @@ static int ScanNum( void )
                SUFF_LL,SUFF_ULL } suffix;
     }con;
 
+    if( CompFlags.inside_asm_stmt == 1 )
+        return( doScanAsm() );
+
+    BadTokenInfo = 0;
     ov = CNV_32;
     Constant = 0;
     TokenLen = 1;
@@ -776,7 +781,6 @@ static int ScanNum( void )
                 c = SaveNextChar();
             }
             if( c == '.' || c == 'e' || c == 'E' ) {
-                BadTokenInfo = bad_token_type;
                 return( doScanFloat() );
             }
             if( digit_mask & 0x08 ) {   /* if digit 8 or 9 somewhere */
@@ -795,7 +799,6 @@ static int ScanNum( void )
             if( c < '0'  ||  c > '9' ) break;
         }
         if( c == '.' || c == 'e' || c == 'E' ) {
-            BadTokenInfo = bad_token_type;
             return( doScanFloat() );
         }
     }
@@ -1295,6 +1298,7 @@ static int CharConst( int char_type )
         BadTokenInfo = ERR_INV_CHAR_CONSTANT;
         return( T_BAD_TOKEN );
     }
+    BadTokenInfo = 0;
     token = T_CONSTANT;
     i = 0;
     value = 0;

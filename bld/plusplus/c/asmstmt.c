@@ -76,22 +76,6 @@ static boolean endOfAsmStmt( void )
     return( FALSE );
 }
 
-static void absorbASMConstant( char *buff, unsigned size )
-{
-    // 0a0b3h is a valid .ASM constant
-    for(;;) {
-        NextToken();
-        if( endOfAsmStmt() ) {
-            return;
-        }
-        ensureBufferReflectsCurToken();
-        if(( CharSet[ Buffer[0] ] & (C_AL|C_DI) ) == 0 ) {
-            return;
-        }
-        strncat( buff, Buffer, size );
-    }
-}
-
 static boolean isId( unsigned token )
 {
     if( token == T_ID ) {
@@ -123,10 +107,6 @@ static void getAsmLine( VBUF *buff )
         if( endOfAsmStmt() ) break;
         strncat( line, Buffer, sizeof(line)-1 );
         switch( CurToken ) {
-        case T_CONSTANT:
-            absorbASMConstant( line, sizeof(line)-1 );
-            strncat( line, " ", sizeof(line)-1 );
-            continue;
         case T_ALT_XOR:
         case T_ALT_EXCLAMATION:
         case T_ALT_AND_AND:

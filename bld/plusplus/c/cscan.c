@@ -836,6 +836,20 @@ static int scanName( int expanding )
     return( doScanName( c, expanding ) );
 }
 
+static int doScanAsmToken( void )
+{
+    TokenLen = 0;
+    do {
+        Buffer[TokenLen++] = CurrChar;
+        if( CurrChar == '.' ) {
+            CurrChar = saveNextChar();
+        }
+        SrcFileScanName( CurrChar );
+    } while( CurrChar == '.' );
+    CurToken = T_ID;
+    return( CurToken );
+}
+
 static int scanWide( int expanding )    // scan something that starts with L
 {
     int c;
@@ -901,6 +915,9 @@ static int scanNum( int expanding )
     char max_digit;
 
     SrcFileCurrentLocation();
+    if( PPStateAsm )
+        return( doScanAsmToken() );
+
     U64Clear( Constant64 );
     value = 0;
     too_big = 0;
@@ -1481,6 +1498,9 @@ static int scanFloat( int expanding )
 {
     expanding = expanding;
     SrcFileCurrentLocation();
+    if( PPStateAsm )
+        return( doScanAsmToken() );
+
     Buffer[0] = CurrChar;
     TokenLen = 1;
     return( doScanFloat() );
