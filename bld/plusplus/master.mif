@@ -571,7 +571,7 @@ xcode$(target_cpu).tmp: $(cc_dir)/a/code$(target_cpu).asm
         $(linker) format dos com option nodefault file code$(target_cpu).obj name $^@
 
 ./mkcode.exe: $(cc_dir)/a/mkcode.c
-        $(bld_cl) $[@ $(wcl_util_opts) -fo=$^@
+        $(bld_cl) $[@ $(wcl_util_opts)
 
 !endif
 
