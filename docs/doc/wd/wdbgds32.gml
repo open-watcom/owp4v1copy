@@ -19,12 +19,6 @@ a DOS extender from Tenberry Software, Inc.
 DOS/4GW is a subset of Tenberry Software's DOS/4G product.
 DOS/4GW is customized for use with &watc32 and &watf32 and is
 included in these packages.
-:cmt. .note OS/386
-:cmt. .ix 'DOS extenders' 'OS/386'
-:cmt. .ix 'OS/386 DOS extender'
-:cmt. .ix 'OS/386 DOS extender' 'version'
-:cmt. .ix 'ERGO Computing, Inc.'
-:cmt. (version 2.1 or later) a DOS extender from ERGO Computing, Inc.
 .note 386|DOS-Extender
 .ix 'DOS extenders' '386|DOS-Extender'
 .ix '386|DOS-Extender'
@@ -50,12 +44,12 @@ the DOS
 .ev PATH
 environment variable.
 The "DOS4GW.EXE" file will usually be stored in the "BINW" directory
-of the WATCOM compiler package.
+of the &company compiler package.
 You must also use the
 .sy /TRap=RSI
 option.
 The "RSI.TRP" file will usually be stored in the "BINW" directory of
-the WATCOM compiler package.
+the &company compiler package.
 You should ensure that this "BINW" directory is included in the DOS
 .ev PATH
 environment variable.
@@ -65,7 +59,7 @@ The help file "RSIHELP.EXP" must also be located in one of the
 directories listed in the DOS
 .ev PATH
 environment variable.
-It will usually be stored in the "BINW" directory of the WATCOM
+It will usually be stored in the "BINW" directory of the &company
 compiler package.
 .exam begin
 C>&dbgcmd /trap=rsi hello
@@ -99,7 +93,7 @@ You must also use the
 .sy /TRap=PLS
 option.
 The "PLS.TRP", "PLSHELP.EXP" and "PEDHELP.EXP" files will usually be
-stored in the "BINW" directory of the WATCOM compiler package.
+stored in the "BINW" directory of the &company compiler package.
 You should ensure that this "BINW" directory is included in the DOS
 .ev PATH
 environment variable.

@@ -9,10 +9,10 @@ into the code.
 .np
 There are three different formats of debugging information that can be
 put into the code &mdash. "Watcom", "Dwarf" or "Codeview".
-Starting with version 11.0, the default format is "Dwarf".
-In earlier releases, the default was "Watcom".
-Although the debugger supports all three formats, it is best if you
-allow the default format to be generated.
+Starting with version 11.0 (and continuing in the &company 1.0 and later
+compilers), the default format is "Dwarf". In earlier releases, the
+default was "Watcom". Although the debugger supports all three formats,
+it is best if you allow the default format to be generated.
 .np
 To produce an executable that has debugging
 information, you need to:

@@ -365,7 +365,7 @@ B>&dbgcmd. /tr=net;tammy app
 .np
 This link communicates over the parallel port. Three different cable
 types may be used. They are called the LapLink, Flying Dutchman, and
-WATCOM cables. Although the WATCOM cable will communicate considerably
+Watcom cables. Although the Watcom cable will communicate considerably
 faster than the other two, we have found it to be unreliable on some
 printer cards.
 .refalso vidwire
@@ -739,9 +739,8 @@ TCPSERV server program first.
 .exam begin
 A>tcpserv
 Socket port number: 3563
-WATCOM TCP/IP Debug Server
-Version &ver..&rev
-Copyright by WATCOM International ...
+&company TCP/IP Debug Server Version &ver..&rev
+&cpyrit 1988
 Press 'q' to exit
 .exam end
 .pc
@@ -822,7 +821,7 @@ The TCP/IP remote debug service permits debugging of applications
 anywhere on the Internet.
 However, response will vary with the distances involved.
 .*
-.* The WATCOM Debugger travels the information superhighway.
+.* The &company Debugger travels the information superhighway.
 .*
 .endlevel
 .*

@@ -24,7 +24,7 @@ A grammar is selected automatically by the debugger when tracing the
 execution of modules in an application.
 For example, part of an application may be written in C, another part
 in C++, and another part in FORTRAN 77.
-The modules must have been compiled by one of the WATCOM C, C++ or
+The modules must have been compiled by one of the &company C, C++ or
 FORTRAN 77 compilers.
 When tracing into a module written in one of these languages, the debugger
 will automatically select the appropriate grammar.
@@ -82,7 +82,6 @@ Breakpoint dialog takes an address expression, and an implicit unary "&"
 operator is placed in front of symbols.
 The debugger has a set of heuristics that it applies to determine
 whether it should use the rvalue or lvalue of a symbol.
-.if &e'&addend. eq 0 .do begin
 .*
 .section Language Independent Variables and Constants
 .*
@@ -251,7 +250,7 @@ Global and local symbol name debugging information is included in an
 executable image if you request it of the linker.
 However, local symbol information must be present in your object
 files.
-The WATCOM C, C++ and FORTRAN 77 compilers can include local symbol
+The &company C, C++ and FORTRAN 77 compilers can include local symbol
 debugging information in object files by specifying the appropriate
 compiler option.
 .refalso vidprep
@@ -309,13 +308,13 @@ When the module name is omitted, the current module is assumed.
 Line number debugging information is included in an executable image
 if you request it of the linker.
 However, line number information must be present in your object files.
-The WATCOM C, C++ and FORTRAN 77 compilers can include line number
+The &company C, C++ and FORTRAN 77 compilers can include line number
 debugging information in object files by specifying the appropriate
 compiler option.
 .refalso vidprep
 You can request line number debugging information when assembling
-assembly language source files using Microsoft's MASM Version 5.
-The "Zd" option must be specified on the command line.
+assembly language source files using &asmname. The "d1" option must
+be specified on the command line.
 .endnote
 .*
 .section Constants
@@ -663,7 +662,7 @@ may be used.
 The debugger supports most C operators and includes an additional set
 of operators for convenience.
 The
-.us WATCOM C Language Reference
+.us &company C Language Reference
 manual describes many of these operators.
 .np
 The syntax for debugger expressions is similar to that of the C
@@ -1156,19 +1155,13 @@ tyme->tm_year
 .exam end
 .endnote
 .endlevel
-..do end
 .*
 .section Operators for the C++ Grammar
 .*
 .np
 .ix 'expressions' 'C++ operators'
-..if &e'&addend. eq 0 .do begin
 Debugger support for the C++ grammar includes all of the C operators
 described in the previous section entitled :HDREF refid='videxpc'..
-..do end
-..el ..do begin
-Debugger support for the C++ grammar includes all of the C operators.
-..do end
 In addition to this, the debugger supports a variety of C++ operators
 which are described in the
 .us C++ Programming Language
@@ -1353,7 +1346,6 @@ constructor and destructor functions in the class
 .id BASE.
 .*
 .endlevel
-..if &e'&addend. eq 0 .do begin
 .*
 .section Operators for the FORTRAN Grammar
 .*
@@ -1751,4 +1743,3 @@ tyme->tm_year
 .millust end
 .endnote
 .endlevel
-..do end

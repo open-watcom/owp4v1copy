@@ -65,12 +65,12 @@ the DOS
 .ev PATH
 environment variable.
 The "DOS4GW.EXE" file will usually be stored in the "BINW" directory
-of the WATCOM compiler package.
+of the &company compiler package.
 You must also use the
 .sy TRap=RSI
 option.
 The "RSI.TRP" file will usually be stored in the "BINW" directory of
-the WATCOM compiler package.
+the &company compiler package.
 You should ensure that this "BINW" directory is included in the DOS
 .ev PATH
 environment variable.
@@ -80,7 +80,7 @@ The help file "RSIHELP.EXP" must also be located in one of the
 directories listed in the DOS
 .ev PATH
 environment variable.
-It will usually be stored in the "BINW" directory of the WATCOM
+It will usually be stored in the "BINW" directory of the &company
 compiler package.
 .exam begin
 C>&dbgcmd /trap=rsi hello
@@ -113,7 +113,7 @@ You must also use the
 .sy TRap=PLS
 option.
 The "PLS.TRP", "PLSHELP.EXP" and "PEDHELP.EXP" files will usually be
-stored in the "BINW" directory of the WATCOM compiler package.
+stored in the "BINW" directory of the &company compiler package.
 You should ensure that this "BINW" directory is included in the DOS
 .ev PATH
 environment variable.
@@ -146,7 +146,7 @@ C>&dbgcmd hello
 .ix 'debugging' 'Novell NLM'
 Novell NLM's may only be debugged remotely. You must use either the
 serial, parallel, or Novell SPX link.
-There are 5 NLM's distributed in the WATCOM package.
+There are 5 NLM's distributed in the &company package.
 The following table describes their use:
 .millust begin
                 NetWare 3.11/3.12       NetWare 4.01
@@ -177,7 +177,7 @@ On a workstation, type:
 Debugging information for every running NLM is available. You can
 debug any NLM in the system as if it were part of your application, as
 long as you created it with debug information. If the NLM does not
-have WATCOM style debugging information, the debugger will attempt to
+have Watcom style debugging information, the debugger will attempt to
 use any debugging information created by Novell's linker (NLMLINK).
 .*
 .section *refid=viddosg Debugging Graphics Applications

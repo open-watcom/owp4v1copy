@@ -6,7 +6,7 @@
 .ix 'debugging' 'Novell NLM'
 Novell NLM's may only be debugged remotely. You must use either the
 serial, parallel, or Novell SPX link.
-There are 6 NLM's distributed in the WATCOM package.
+There are 6 NLM's distributed in the &company package.
 The following table describes their use:
 .millust begin
                 NetWare 3.11/3.12       NetWare 4.01

@@ -2,7 +2,6 @@
 .*
 This appendix describes both serial and parallel port cable wiring for
 remote debugging.
-..if &e'&addend. eq 0 .do begin
 .*
 .section *refid=vidwirs Serial Port Wiring Considerations
 .*
@@ -52,7 +51,6 @@ cable can be plugged into either PC).
 This particular arrangement of the wiring is sometimes called
 a "null modem" (since pins 2 and 3 are crossed and no modem is
 involved).
-..do end
 .*
 .section *refid=vidwirp Parallel Port Wiring Considerations
 .*
@@ -69,24 +67,24 @@ computer systems.
 .ix 'Flying Dutchman cable'
 .ix 'cable' 'Flying Dutchman'
 .ix 'Cyco'
-.ix 'cable' 'WATCOM's own'
+.ix 'cable' 'Watcom's own'
 Three cabling methods are supported - the LapLink cable, the Flying
-Dutchman cable, and WATCOM's own design.
+Dutchman cable, and Watcom's own design.
 There are two advantages to using the LapLink or Flying Dutchman
 cable:
 .autonote
 .note
 They are commercially available (you may already own one).
 .note
-They may work with more PC "compatibles" than WATCOM's cable.
-WATCOM's cabling requires 8 bi-directional data lines in the parallel
+They may work with more PC "compatibles" than Watcom's cable.
+Watcom's cabling requires 8 bi-directional data lines in the parallel
 port and some PC "compatibles" do not support this.
 .endnote
 .np
 The disadvantage with the LapLink and Flying Dutchman cables is that
-they are slower than WATCOM's cable since only 4 bits are transmitted
-in parallel versus 8 bits for WATCOM's.
-Thus WATCOM's cable is faster but it will have to be custom made.
+they are slower than Watcom's cable since only 4 bits are transmitted
+in parallel versus 8 bits for Watcom's.
+Thus Watcom's cable is faster but it will have to be custom made.
 .np
 The LapLink cable is available from:
 .illust begin
@@ -105,13 +103,7 @@ Adm. Banckertweg 2a,
 The Netherlands.
 .illust end
 .np
-..if &e'&addend. ne 0 .do begin
-The wiring diagram for WATCOM's cable can be found in Appendix B of
-the Third Edition of
-.us WATCOM VIDEO User's Guide.
-..do end
-..if &e'&addend. eq 0 .do begin
-The following diagram illustrates WATCOM's cable wiring between the
+The following diagram illustrates Watcom's cable wiring between the
 two parallel ports.
 .cp 25
 .code begin
@@ -139,9 +131,8 @@ Parallel Connector   Parallel Connector
         18 <--------------> 18
 .code end
 :FIG.
-:FIGCAP.WATCOM Cable Wiring Scheme
+:FIGCAP.Watcom Cable Wiring Scheme
 :eFIG.
-..do end
 .np
 The following diagram illustrates the LapLink cable wiring between the
 two parallel ports.
@@ -195,6 +186,6 @@ connectors.
 Note that, in all cases, the wiring is symmetrical (i.e., either end
 of the cable can be plugged into either PC).
 .remark
-Although the wiring is different for all three cables, WATCOM's
+Although the wiring is different for all three cables, the &company
 parallel communications software can determine which one is in use.
 .eremark
