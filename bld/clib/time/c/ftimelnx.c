@@ -28,7 +28,6 @@
 *
 ****************************************************************************/
 
-
 #include "variety.h"
 #include <sys/types.h>
 #include <sys/timeb.h>
@@ -36,15 +35,14 @@
 
 _WCRTLINK int ftime( struct timeb *tb )
 {
-    struct timeval tv;
-    struct timezone tz;
+    struct timeval      tv;
+    struct timezone     tz;
 
     if( gettimeofday( &tv, &tz ) < 0 )
-        return -1;
-    tb->time = tv.tv_sec;
-    tb->millitm = tv.tv_usec / 1000;
+        return( -1 );
+    tb->time     = tv.tv_sec;
+    tb->millitm  = tv.tv_usec / 1000;
     tb->timezone = tz.tz_minuteswest;
-    tb->dstflag = tz.tz_dsttime;
-    return 0;
+    tb->dstflag  = tz.tz_dsttime;
+    return( 0 );
 }
-

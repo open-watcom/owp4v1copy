@@ -24,8 +24,7 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Writes time now as hh:mm:ss (ISO 8601 format)
 *
 ****************************************************************************/
 
@@ -33,9 +32,10 @@
 #include "widechar.h"
 #include <time.h>
 
-_WCRTLINK CHAR_TYPE *__F_NAME( _strtime, _wstrtime ) ( CHAR_TYPE *buf ) {
-    time_t time_of_day;
-    struct tm now;
+_WCRTLINK CHAR_TYPE *__F_NAME( _strtime, _wstrtime ) ( CHAR_TYPE *buf )
+{
+    time_t      time_of_day;
+    struct tm   now;
 
     time_of_day = time( NULL );
     _localtime( &time_of_day, &now );

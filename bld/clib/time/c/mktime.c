@@ -46,9 +46,9 @@
 
 // these ones can underflow in 16bit environments,
 // so check the relative values first
-#if( HOUR_YR ) < ( INT_MAX / 60 )
- #define __MINUTES      (INT_MIN / MINUTE_YR )
- #if( MINUTE_YR ) < ( INT_MAX / 60 )
+#if ( HOUR_YR ) < ( INT_MAX / 60 )
+ #define __MINUTES      ( INT_MIN / MINUTE_YR )
+ #if ( MINUTE_YR ) < ( INT_MAX / 60 )
   #define __SECONDS     ( INT_MIN / SECOND_YR )
  #else
   #define __SECONDS     ( 0 )
@@ -71,19 +71,16 @@ _WCRTLINK time_t mktime( struct tm *t )
     month_start = __diyr;
     month = t->tm_mon % 12; /* put tm_mon into range */
     year = t->tm_year;
-    if( year < SMALLEST_YEAR_VALUE ) {
-        return( ( time_t ) - 1 );
-    }
+    if( year < SMALLEST_YEAR_VALUE )
+        return( ( time_t ) -1 );
     year += t->tm_mon / 12;
-    while( month < 0 ) {
-        --year;
-        month += 12;
-    }
+    while( month < 0 )
+        --year, month += 12;
     if( year < 0 )
-        return( ( time_t ) - 1 );
-    if( __leapyear( year + 1900 ) )
+        return( ( time_t ) -1 );
+    if( __leapyear( ( unsigned ) ( year + 1900 ) ) )
         month_start = __dilyr;
-    days = ( unsigned ) year * 365L      /* # of days in the years */
+    days = year * 365L                   /* # of days in the years */
         + ( ( year + 3 ) / 4 )           /* add # of leap years before year */
         - ( ( year + 99 ) / 100 )        /* sub # of leap centuries */
         + ( ( year + 399 - 100 ) / 400 ) /* add # of leap 4 centuries */
@@ -93,45 +90,35 @@ _WCRTLINK time_t mktime( struct tm *t )
         + t->tm_mday - 1;                /* day of the month */
     seconds = ( ( ( long ) ( t->tm_hour ) ) *60L + ( long ) ( t->tm_min ) ) *60L + t->tm_sec;
                                          /* seconds needs to be positive for __brktime */
-    while( seconds < 0 ) {
-        days -= 1;
-        seconds += SECONDS_PER_DAY;
-    }
-    while( seconds >= SECONDS_PER_DAY ) {
-        days += 1;
-        seconds -= SECONDS_PER_DAY;
-    }
-    if( days < ( DAYS_FROM_1900_TO_1970 - 1 ) ) {
-        return( ( time_t ) - 1 );
-    }
-    __brktime( days, seconds, 0L, t );
+    while( seconds < 0 )
+        days -= 1, seconds += ( long ) SECONDS_PER_DAY;
+    while( seconds >= ( long ) SECONDS_PER_DAY )
+        days += 1, seconds -= ( long ) SECONDS_PER_DAY;
+    if( days < ( DAYS_FROM_1900_TO_1970 - 1 ) )
+        return( ( time_t ) -1 );
+    __brktime( (unsigned long) days, (time_t) seconds, 0L, t );
     tzset();
     seconds += _RWD_timezone; /* add in seconds from GMT */
 #ifdef __UNIX__               /* time_t is signed */
-    seconds += ( days - DAYS_FROM_1900_TO_1970 ) * SECONDS_PER_DAY;
+    seconds += ( days - DAYS_FROM_1900_TO_1970 ) * ( long ) SECONDS_PER_DAY;
 #ifdef __LINUX__
     if( t->tm_isdst < 0 )
         __check_tzfile( seconds, t );
 #endif
     /* if we are in d.s.t. then subtract __dst_adjust from seconds */
-    if( __isindst( t ) ) { /* - determine if we are in d.s.t. */
+    if( __isindst( t ) )  /* - determine if we are in d.s.t. */
         seconds -= _RWD_dst_adjust;
-    }
     if( seconds < 0 )
-        return( ( time_t ) - 1 );
+        return( ( time_t ) -1 );
 #else /* time_t is unsigned, special day check needed for 31 dec 1969 */
     /* if we are in d.s.t. then subtract __dst_adjust from seconds */
-    if( __isindst( t ) ) { /* - determine if we are in d.s.t. */
+    if( __isindst( t ) )  /* - determine if we are in d.s.t. */
         seconds -= _RWD_dst_adjust;
-    }
-    while( seconds < 0 ) {
-        days -= 1;
-        seconds += SECONDS_PER_DAY;
-    }
-    seconds += ( days - DAYS_FROM_1900_TO_1970 ) * SECONDS_PER_DAY;
-    if( days < DAYS_FROM_1900_TO_1970 && ( _RWD_timezone <= 0 || seconds < 0 ) ) {
-        return( ( time_t ) - 1 );
-    }
+    while( seconds < 0 )
+        days -= 1, seconds += ( long ) SECONDS_PER_DAY;
+    seconds += ( days - DAYS_FROM_1900_TO_1970 ) * ( long ) SECONDS_PER_DAY;
+    if( days < DAYS_FROM_1900_TO_1970 && ( _RWD_timezone <= 0 || seconds < 0 ) ) 
+        return( ( time_t ) -1 );
 #endif
-    return( seconds );
+    return( ( time_t ) seconds );
 }

@@ -98,8 +98,8 @@ struct rt_init // structure placed in XI/YI segment
 /*
     Use these when you want a global label for the XI/YI structure
 */
-#define XI( label, routine, priority ) YIXI( TS_SEG_XI, label, &routine, priority )
-#define YI( label, routine, priority ) YIXI( TS_SEG_YI, label, &routine, priority )
+#define XI( label, routine, priority ) YIXI( TS_SEG_XI, label, routine, priority )
+#define YI( label, routine, priority ) YIXI( TS_SEG_YI, label, routine, priority )
 
 /*
     Use these when you don't care about the label on the XI/YI structure
@@ -109,19 +109,19 @@ struct rt_init // structure placed in XI/YI segment
 #define AXI( routine, priority ) static XI( ANON( __LINE__ ), routine, priority )
 #define AYI( routine, priority ) static YI( ANON( __LINE__ ), routine, priority )
 
-#define INIT_PRIORITY_THREAD     1 // priority for thread data init
-#define INIT_PRIORITY_FPU        2 // priority for FPU/EMU init
-#define INIT_PRIORITY_RUNTIME   10 // priority for run/time initialization
-#define INIT_PRIORITY_IOSTREAM  20 // priority for IOSTREAM
-#define INIT_PRIORITY_LIBRARY   32 // default library-initialization priority
-#define INIT_PRIORITY_PROGRAM   64 // default program-initialization priority
-#define FINI_PRIORITY_DTOR      40 // priority for module DTOR
-#define DTOR_PRIORITY           40 // priority for module DTOR
-#define FINI_PRIORITY_EXIT      16 // when exit() is called, functions between
-                                   // 255 and this are invoked, the rest of
-                                   // the fini routines are invoked from
-                                   // the __exit() function
-
+enum {
+    INIT_PRIORITY_THREAD    =  1, // priority for thread data init
+    INIT_PRIORITY_FPU       =  2, // priority for FPU/EMU init
+    INIT_PRIORITY_RUNTIME   = 10, // priority for run/time initialization
+    INIT_PRIORITY_IOSTREAM  = 20, // priority for IOSTREAM
+    INIT_PRIORITY_LIBRARY   = 32, // default library-initialization priority
+    INIT_PRIORITY_PROGRAM   = 64, // default program-initialization priority
+    FINI_PRIORITY_DTOR      = 40, // priority for module DTOR
+    DTOR_PRIORITY           = 40, // priority for module DTOR
+    FINI_PRIORITY_EXIT      = 16  // when exit() is called, functions between
+                                  // 255 and this are called, the rest of the
+                                  // fini routines are called from __exit().
+};
 
 /* have to turn off, or we get unref'd warnings for AXI & AYI stuff */
 #pragma off(unreferenced)

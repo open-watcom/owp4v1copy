@@ -24,11 +24,9 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implementation of the ANSI/ISO clock() function.
 *
 ****************************************************************************/
-
 
 #include "variety.h"
 #include <time.h>
@@ -46,9 +44,9 @@
 
 _WCRTLINK clock_t clock( void )
 {
-    struct tms buf;
-    int save_errno = errno;
-    clock_t clk = times( &buf );
+    struct tms  buf;
+    int         save_errno = errno;
+    clock_t     clk = times( &buf );
     errno = save_errno;
     return clk;
 }
@@ -64,7 +62,7 @@ static time_t  init_seconds;
 static void get_clock_time( time_t *secs, clock_t *milliseconds )
 {
 #if defined( __QNX__ )
-    struct timespec timer;
+    struct timespec     timer;
 
     getclock( TIMEOFDAY, &timer );
     *secs = ( time_t ) timer.tv_sec;
@@ -79,8 +77,8 @@ static void get_clock_time( time_t *secs, clock_t *milliseconds )
 
 _WCRTLINK clock_t clock( void )
 {
-    time_t  new_seconds;
-    clock_t ticks;
+    time_t      new_seconds;
+    clock_t     ticks;
 
     /*
      * Get the change in seconds and milliseconds of seconds since startup.
@@ -93,7 +91,7 @@ _WCRTLINK clock_t clock( void )
      * Make sure we won't overflow.
      */
     if( new_seconds > MAX_SECONDS )
-        return -1;
+        return( ( clock_t ) -1 );
 
     /*
      * `ticks' right now contains the number of milliseconds of seconds since
@@ -102,13 +100,13 @@ _WCRTLINK clock_t clock( void )
      */
     ticks += ( clock_t ) ( new_seconds * CLOCKS_PER_SEC );
 
-    return ticks;
-} /* clock() */
+    return( ticks );
+}
 
 static void __clock_init( void )
 {
     get_clock_time( &init_seconds, &init_milliseconds );
-} /* __clock_init() */
+}
 
 /* Note: __clock_init() ends up calling tzset() which ends up querying the
  * TZ envirnment variable. Because getenv() access has also

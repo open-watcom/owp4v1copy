@@ -37,6 +37,6 @@
 
 _WCRTLINK clock_t clock( void )
 {
-    return ( clock_t ) xtime( NULL );
+    return( ( clock_t ) xtime( NULL ) );
 }
 

@@ -24,23 +24,19 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  Implements the ANSI/ISO strftime() function.
 *
 ****************************************************************************/
-
 
 #include "variety.h"
 #include "widechar.h"
 #ifdef __WIDECHAR__
 #include <mbstring.h>
+#include <malloc.h>
 #endif
 #include <stdio.h>
-#include <stdlib.h>
-#include <stddef.h>
 #include <time.h>
 #include <string.h>
-#include <malloc.h>
 #include "rtdata.h"
 
 #ifndef TZNAME_MAX
@@ -80,15 +76,15 @@ static const char * const mon_name[12] = {
 
 static void TwoDigits( CHAR_TYPE *buffer, int value )
 {
-    buffer[0] = value / 10 + '0';
-    buffer[1] = value % 10 + '0';
+    buffer[0] = ( CHAR_TYPE ) ( value / 10 + '0' );
+    buffer[1] = ( CHAR_TYPE ) ( value % 10 + '0' );
     buffer[2] = NULLCHAR;
 }
 
 _WCRTLINK size_t __F_NAME( strftime, wcsftime ) ( CHAR_TYPE *s, size_t maxsize,
              const CHAR_TYPE *format, const struct tm *timeptr )
 {
-    auto CHAR_TYPE      buffer[TZNAME_MAX + 1];
+    CHAR_TYPE           buffer[TZNAME_MAX + 1];
     const char          *p;
     const CHAR_TYPE     *save_format;
     size_t              len;
@@ -103,7 +99,7 @@ _WCRTLINK size_t __F_NAME( strftime, wcsftime ) ( CHAR_TYPE *s, size_t maxsize,
     amt_left = maxsize;
     save_format = NULL;
     for( ;; ) {
-        p = ( char * ) &buffer[0];
+        p = ( char * ) buffer;
         if( *format == '\0' ) {
             if( save_format == NULL )
                 break;
@@ -114,8 +110,7 @@ _WCRTLINK size_t __F_NAME( strftime, wcsftime ) ( CHAR_TYPE *s, size_t maxsize,
         if( *format != '%' ) {
             buffer[0] = *format;
             buffer[1] = '\0';
-        }
-        else {
+        } else {
             ++format;
             switch( *format ) {
             case 'a' :                         /* locale's abbreviated weekday name */
@@ -196,9 +191,7 @@ _WCRTLINK size_t __F_NAME( strftime, wcsftime ) ( CHAR_TYPE *s, size_t maxsize,
                     hour -= 12;
                 if( hour == 0 )
                     hour = 12;                 /* 24-sep-90 */
-                sprintf( buffer, "%.2d:%.2d:%.2d PM",
-                          hour,
-                          timeptr->tm_min,
+                sprintf( buffer, "%.2d:%.2d:%.2d PM", hour, timeptr->tm_min,
                           timeptr->tm_sec );
                 if( timeptr->tm_hour < 12 )
                     buffer[9] = 'A';
@@ -209,12 +202,7 @@ _WCRTLINK size_t __F_NAME( strftime, wcsftime ) ( CHAR_TYPE *s, size_t maxsize,
                 continue;
 #endif
             case 'p' :                         /* locale's equivalent of either AM or PM */
-                if( timeptr->tm_hour < 12 ) {
-                    p = "AM";
-                }
-                else {
-                    p = "PM";
-                }
+                p = ( timeptr->tm_hour < 12 ) ? "AM" : "PM";
                 break;
             case 'S' :   /* second (00-60) */
                 TwoDigits( buffer, timeptr->tm_sec );
@@ -227,13 +215,13 @@ _WCRTLINK size_t __F_NAME( strftime, wcsftime ) ( CHAR_TYPE *s, size_t maxsize,
                                 + 7 - timeptr->tm_wday ) / 7 );
                 break;
             case 'w' :   /* weekday (0-6) Sunday=0 */
-                buffer[0] = timeptr->tm_wday + '0';
+                buffer[0] = ( CHAR_TYPE ) ( timeptr->tm_wday + '0' );
                 buffer[1] = '\0';
                 break;
-            case 'W' :   /* week number of the year (00-53) Mon first day */
-                TwoDigits( buffer,
-                   ( 6 - ( timeptr->tm_yday % 7 - timeptr->tm_wday + 7 ) % 7
-                                        + timeptr->tm_yday ) / 7 );
+            case 'W' : { /* week number of the year (00-53) Mon first day */
+                    int x = ( timeptr->tm_yday % 7 - timeptr->tm_wday + 7 );
+                    TwoDigits( buffer, ( 6 - x % 7 + timeptr->tm_yday ) / 7 );
+                }
                 break;
             case 'x' :   /* locale's appropriate date representation */
 #if 0
@@ -282,9 +270,8 @@ _WCRTLINK size_t __F_NAME( strftime, wcsftime ) ( CHAR_TYPE *s, size_t maxsize,
 #if defined( __WIDECHAR__ )
         if( p != ( char *) buffer ) {
             /*** Convert the MBCS string to wide chars in buffer ***/
-            if( mbstowcs( buffer, p, _mbslen( p ) + 1 ) == ( size_t ) - 1 ) {
+            if( mbstowcs( buffer, p, _mbslen( p ) + 1 ) == ( size_t ) - 1 ) 
                 buffer[0] = L'\0';
-            }
             p = ( const char*) buffer;
         }
 #endif
@@ -300,9 +287,7 @@ _WCRTLINK size_t __F_NAME( strftime, wcsftime ) ( CHAR_TYPE *s, size_t maxsize,
         s[len] = NULLCHAR;
         return( len );
     }
-    else {
-        return( 0 );
-    }
+    return( 0 );
 }
 
 #ifdef __WIDECHAR__

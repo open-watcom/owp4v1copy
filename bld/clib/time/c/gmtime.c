@@ -24,19 +24,12 @@
 *
 *  ========================================================================
 *
-* Description:  WHEN YOU FIGURE OUT WHAT THIS FILE DOES, PLEASE
-*               DESCRIBE IT HERE!
+* Description:  __brktime() is an internal function to convert time to struct tm
 *
 ****************************************************************************/
 
-
-/*
- *      Convert time_t into struct tm
- */
-
 #include "variety.h"
 #include <time.h>
-#include "rtdata.h"
 #include "thetime.h"
 #include "timedata.h"
 
@@ -65,10 +58,10 @@ static unsigned long __DaysToJan1( unsigned year )
 
 /*  __brktime breaks down a calendar time (clock) into a struct tm t */
 
-struct tm *__brktime( unsigned long days,
-                      time_t clock,
-                      long timezone,
-                      struct tm *t )
+struct tm *__brktime( unsigned long     days,
+                      time_t            wallclock,
+                      long              gmtdelta,       // localtime - gmtime
+                      struct tm         *t )
 {
     unsigned long       secs;
     unsigned            year;
@@ -78,30 +71,20 @@ struct tm *__brktime( unsigned long days,
 
     /*
         If date is Jan 1, 1970 0:00 to 12:00 UTC and we are west of UTC
-        then add a day to clock, subtract the timezone value, and
+        then add a day to wallclock, subtract the gmtdelta value, and
         decrement the calculated days. This prevents local times
         such as "Wed Dec 31 19:00:00 1969 (EST)" from being
         erroneously reported as "Sun Feb 6 01:28:16 2106 (EST)"
-        since (clock - timezone) wraps (i.e., clock < timezone).
+        since (wallclock - gmtdelta) wraps (i.e., wallclock < gmtdelta).
     */
-    if( ( clock < 12 * 60 * 60UL ) && ( timezone > 0 ) ) {
-        clock += SECONDS_PER_DAY;
-        clock -= timezone;
-        days += clock / SECONDS_PER_DAY;
-        days--;
-        /*
-            clock is now ahead one day but this doesn't
-            affect the time-of-day calculation
-        */
-    } 
-    else {
-        clock -= timezone;
-        days += clock / SECONDS_PER_DAY;
-    }
-    secs       = clock % SECONDS_PER_DAY;
-    t->tm_hour = secs / 3600;
+    if( wallclock < 12 * 60 * 60UL && gmtdelta > 0 )
+        wallclock += SECONDS_PER_DAY, days--; /* days compensated for wallclock one day ahead */
+    wallclock -= ( time_t ) gmtdelta;
+    days      += wallclock / SECONDS_PER_DAY;
+    secs       = wallclock % SECONDS_PER_DAY;
+    t->tm_hour = ( int ) ( secs / 3600 ) ;
     secs       = secs % 3600;
-    t->tm_min  = secs / 60;
+    t->tm_min  = ( int ) ( secs / 60 );
     t->tm_sec  = secs % 60;
 
     // The following two lines are not needed in the current implementation
@@ -120,7 +103,7 @@ struct tm *__brktime( unsigned long days,
     //    t->tm_wday = (days + 1) % 7;                /* 24-sep-92 */
     //
     year = days / 365;
-    day_of_year = days - __DaysToJan1( year );
+    day_of_year = ( int ) ( days - __DaysToJan1( year ) );
     while( day_of_year < 0 ) {
         --year;
         day_of_year += __leapyear( year + 1900 ) + 365;
@@ -128,7 +111,7 @@ struct tm *__brktime( unsigned long days,
     // year += year400s;
 
     t->tm_yday = day_of_year;
-    t->tm_year = year;
+    t->tm_year = ( int ) year;
     month_start = __diyr;
     if( __leapyear( year + 1900 ) )
         month_start = __dilyr;

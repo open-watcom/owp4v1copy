@@ -29,38 +29,36 @@
 *
 ****************************************************************************/
 
-
 #include "variety.h"
 #include "widechar.h"
 #include <time.h>
-#include <stdlib.h>
 #include "rtdata.h"
 #include "asctime.h"
 
 static void convDec( int num, int off, CHAR_TYPE *buf )
 {
-    div_t tens_units;
+    div_t        tens_units;
 
-    tens_units = div( num, 10 );
-    buf[off] = tens_units.quot + '0';
-    buf[off + 1] = tens_units.rem + '0';
+    tens_units   = div( num, 10 );
+    buf[off]     = ( CHAR_TYPE ) ( tens_units.quot + '0' );
+    buf[off + 1] = ( CHAR_TYPE ) ( tens_units.rem + '0' );
 }
 
 
 _WCRTLINK CHAR_TYPE *__F_NAME( _asctime, __wasctime ) ( const struct tm *tm, CHAR_TYPE *buf )
 {
-    static const char months[] = {
+    static const char   months[] = {
         'J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D',
         'a', 'e', 'a', 'p', 'a', 'u', 'u', 'u', 'e', 'c', 'o', 'e',
         'n', 'b', 'r', 'r', 'y', 'n', 'l', 'g', 'p', 't', 'v', 'c'
     };
-    static const char weekdays[] = {
+    static const char   weekdays[] = {
         'S', 'M', 'T', 'W', 'T', 'F', 'S',
         'u', 'o', 'u', 'e', 'h', 'r', 'a',
         'n', 'n', 'e', 'd', 'u', 'i', 't'
     };
-    div_t hundreds_units;
-    int i;
+    div_t               hundreds_units;
+    int                 i;
 
     i = tm->tm_wday;
     buf[0] = weekdays[i];
