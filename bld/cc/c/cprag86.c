@@ -463,8 +463,8 @@ static enum sym_type AsmDataType[] = {
         SYM_INT,        /* TYPE_UINT,*/
         SYM_INT4,       /* TYPE_LONG,*/
         SYM_INT4,       /* TYPE_ULONG,*/
-        0,              /* TYPE_LONG64,*/
-        0,              /* TYPE_ULONG64,*/
+        SYM_INT8,       /* TYPE_LONG64,*/
+        SYM_INT8,       /* TYPE_ULONG64,*/
         SYM_FLOAT4,     /* TYPE_FLOAT,*/
         SYM_FLOAT8,     /* TYPE_DOUBLE,*/
         0,              /* TYPE_POINTER,*/

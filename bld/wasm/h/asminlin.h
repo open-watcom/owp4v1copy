@@ -55,11 +55,13 @@ enum sym_state {
 
 };
 
+/* It must correspond with CvtTable in asmsym.c */
 enum sym_type {
         SYM_INT1,               /* a byte variable */
         SYM_INT2,               /* a word variable */
         SYM_INT4,               /* a dword variable */
         SYM_INT6,               /* a 32-bit far pointer */
+        SYM_INT8,               /* a qword variable */
         SYM_FLOAT4,             /* a 4 byte floating point variable */
         SYM_FLOAT8,             /* an 8 byte floating point variable */
         SYM_FLOAT10,            /* a 10 byte floating point variable */

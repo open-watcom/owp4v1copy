@@ -57,17 +57,18 @@ struct asm_sym *sym_table[ HASH_TABLE_SIZE ] = { NULL };
 struct asm_sym  *AsmSymHead;
 
 static unsigned short CvtTable[] = {
-    T_BYTE,
-    T_WORD,
-    T_DWORD,
-    T_DWORD,    /* should be T_PWORD, T_FWORD */
-    T_DWORD,
-    T_QWORD,
-    T_TBYTE,
-    T_NEAR,
-    T_NEAR,
-    T_FAR,
-    T_FAR,
+    T_BYTE,   // INT1
+    T_WORD,   // INT2
+    T_DWORD,  // INT4
+    T_FWORD,  // INT6
+    T_QWORD,  // INT8
+    T_DWORD,  // FLOAT4
+    T_QWORD,  // FLOAT8
+    T_TBYTE,  // FLOAT10
+    T_NEAR,   // NEAR2
+    T_NEAR,   // NEAR4
+    T_FAR,    // FAR2
+    T_FAR,    // FAR4
 };
 
 #endif
