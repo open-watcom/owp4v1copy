@@ -354,7 +354,12 @@ unsigned HandleAReference( dis_value value, int ins_size, ref_flags flags,
         // not so - BBB Oct 28, 1996
         if(( (*r_entry)->no_val == 0 ) && ( nvalue != 0 )) {
             p = &buff[strlen(buff)];
-            *p++ = '+';
+            if( nvalue < 0 ) {
+                *p++ = '-';
+                nvalue = -nvalue;
+            } else {
+                *p++ = '+';
+            }
             FmtHexNum( p, 0, nvalue );
         }
     }
