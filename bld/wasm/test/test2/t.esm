@@ -9,7 +9,8 @@ L$1:
 L$2:
     jmp       L$1
 L$3:
-    DB	17H, 0
+    pop       ss
+    add       byte ptr [bx+si],al
 _TEXT		ENDS
 _DATA		SEGMENT	WORD PUBLIC USE16 'DATA'
 _DATA		ENDS

@@ -34,9 +34,9 @@ L$4:
     call      near ptr L$25
     jmp       L$4
 L$5:
-    mov       ax,word ptr L$31
-    mul       byte ptr L$32
-    mov       word ptr L$33,ax
+    mov       ax,word ptr L$32
+    mul       byte ptr L$33
+    mov       word ptr L$34,ax
     mov       ax,2
     cwd       
     mov       di,1
@@ -129,8 +129,8 @@ L$14:
     sub       ax,1
     sbb       dx,0
     add       ax,word ptr L$30
-    adc       dx,word ptr L$30
-    div       word ptr L$33
+    adc       dx,word ptr L$31
+    div       word ptr L$34
     cmp       ax,400H
     jl        L$16
     mov       al,43H
@@ -143,7 +143,7 @@ L$16:
     ror       cl,2
     mov       ax,dx
     cwd       
-    div       byte ptr L$32
+    div       byte ptr L$33
     mov       dh,al
     or        cl,ah
     add       cl,byte ptr L$29
@@ -154,7 +154,7 @@ L$16:
     jmp       L$18
 L$17:
     xor       dl,dl
-    mov       al,byte ptr L$32
+    mov       al,byte ptr L$33
     sub       al,ah
 L$18:
     xor       ah,ah
@@ -262,13 +262,14 @@ L$29:
     add       byte ptr [bx+si],al
 L$30:
     add       byte ptr [bx+si],al
-    DB	0
 L$31:
     add       byte ptr [bx+si],al
 L$32:
     add       byte ptr [bx+si],al
-    add       byte ptr [bx+si],al
 L$33:
+    add       byte ptr [bx+si],al
+    DB	0
+L$34:
     add       byte ptr [bx+si],al
 code		ENDS
 		END
