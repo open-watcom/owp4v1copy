@@ -52,4 +52,4 @@ debug_linker=-debug:none -debugtype:both /pdb:none
 #
 #
 dbginst.exe : ..\c\dbginst.c
-        wcl386 -zq -w4 -bm-bt=nt-l=nt-D_WIN32 -i$(lang_root)\h\nt ..\c\dbginst.c $(lang_root)\lib386\nt\advapi32.lib
+        wcl386 -zq -w4 -bm-bt=nt-l=nt-D_WIN32-DWIN32 -i$(lang_root)\h\nt ..\c\dbginst.c $(lang_root)\lib386\nt\advapi32.lib
