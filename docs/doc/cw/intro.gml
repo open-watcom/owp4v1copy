@@ -4,7 +4,7 @@
 .*
 .*
 .np
-CauseWay is a 386 DOS extender package for use with Watcom C/C++
+CauseWay is a 386 DOS extender package for use with &product. C/C++
 programs.  It is provided as a stub executable for which can be easily 
 linked into DOS extended applications.
 .*
@@ -42,17 +42,14 @@ schemes.
 A primary objective of CauseWay development was to ensure minimal effort
 would be needed by programmers to adapt their code to work with the
 CauseWay DOS e
-tender.  As a result, most Watcom C/C++ an.fi  many realmode
-assembl
-.fi  language 
-ograms need no or minor changes to produce a fully
+tender.  As a result, most &product. C/C++ and many realmode
+assembly language programs need no or minor changes to produce a fully
 operational CauseWay protected mode application.
 .*
 .section Minimum System Requirements
 .*
-.fi 
 .np
-CauseWay for Watcom C/C++ requires a 386SX based
+CauseWay for &product C/C++ requires a 386SX based
 computer or better.  The required operating environment is MS-DOS or
 PC-DOS 3.3 or higher, Windows 3.0 or higher, OS/2 2.0 and above,
 Windows 95 and above, Windows NT or higher or a
@@ -72,8 +69,7 @@ conventional DOS memory, the remainder may be extended memory.  CauseWay
 applications can run in less memory, down to the 300KB range, provided
 sufficient virtual (disk-based) memory is available, but application
 performance will decline significantly.  More physical memory improves a
-.fi rogram's pr
-formanc, reducin virtual memory disk access overhead.
+program's performance, reducing virtual memory disk access overhead.
 .*
 .section Operating CauseWay
 .*
@@ -91,7 +87,7 @@ This switch can be automated by adding &sw.l#CauseWay to the
 .ev WCL386
 environment variable, making CauseWay the default when compiling via WCL386.
 .np
-Watcom users linking with WLINK should add the statement
+&product. users linking with WLINK should add the statement
 .mono system CauseWay
 to the link command.  
 .exam begin
@@ -124,7 +120,7 @@ with the CauseWay DOS extender version in
 .*
 .np
 .ix 'WD'
-To debug CauseWay programs with the Watcom debugger after installing the
+To debug CauseWay programs with the &product. debugger after installing the
 CauseWay files, simply use the &sw.tr=cw command line option.
 .exam begin
 WD &sw.tr=cw myprog
@@ -194,7 +190,7 @@ of priority is
 .ev TEMP
 , 
 .ev TMP
-, and application execution path.
+and application execution path.
 .np
 If end users reboot the system or turn off power while executing a
 CauseWay application under DOS, a temporary file will be left on the

@@ -16,7 +16,7 @@ address video memory.  Reading from memory locations in the 0FFF00h
 range will access ROM code. Under DPMI there is usually no direct
 relationship between linear and physical addresses, the DPMI host will
 however emulate access to memory below 1MB as appropriate without
-requiring any special considerations on the part of application writer.
+requiring any special considerations on the part of the application writer.
 .np
 .ix 'near model'
 Generally speaking, flat is an improved version of the older near memory
@@ -26,7 +26,7 @@ linear memory addresses without translation. Flat model
 supports all near memory model code without translation, including
 automatic handling of near-specific API functions.
 .*
-.chap Using DLLs with Watcom C/C++
+.chap Using DLLs with &product. C/C++
 .*
 .np
 .ix 'DLL'
@@ -77,7 +77,7 @@ its file name without an extension.  In this example, the module name
 would become USEME if no NAME is specified.
 .np
 Following is an overview of the standard link file commands used to
-create DLLs. You may also refer to the Watcom Linker documentation for a
+create DLLs. You may also refer to the &product. Linker documentation for a
 description of these commands.
 .mbigbox
 EXPORT function_name
@@ -208,11 +208,11 @@ space is less than physical memory, then CauseWay shuts off all use of
 virtual memory.  Windows and OS/2 handle virtual memory internally and
 supply it through the swap file and DPMI settings for the application.
 .*
-.section Watcom C/C++ kbhit() replacement
+.section &product. C/C++ kbhit() replacement
 .*
 .np
 .ix 'kbhit()'
-Two optimized replacement versions of the Watcom C++ runtime library
+Two optimized replacement versions of the &product. C++ runtime library
 kbhit() function are provided. The
 files are KBHITR.OBJ and KBHITS.OBJ for, respectively, register-based
 and stack-based calling conventions.  Simply link in the kbhit()
