@@ -46,7 +46,7 @@ unsigned SysRunCommand( const char *cmd )
     int         my_std_error;
     int         bytes_read;
     int         rc;
-    int         readpipe;
+    int         readpipe = -1;
     char        buff[256 + 1];
     
     my_std_output = dup( STDOUT_FILENO );
@@ -56,8 +56,10 @@ unsigned SysRunCommand( const char *cmd )
     dup2( my_std_error, STDERR_FILENO );
     close( my_std_output );
     close( my_std_error );
-    if ( rc == -1 )
+    if ( rc == -1 ) {
+        if ( readpipe != -1 ) close( readpipe );
         return( rc );
+    }
     if ( readpipe != -1 ) {
         for (;;) {
             bytes_read = read ( readpipe, buff, sizeof( buff )-1 );

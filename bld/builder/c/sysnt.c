@@ -99,14 +99,14 @@ unsigned SysRunCommandPipe(const char *cmd, int *readpipe)
     int rc;
     int pipe_fd[2];
 
-    if ( _pipe( pipe_fd, 0, 0 ) == -1 )
+    if ( _pipe( pipe_fd, 256, 0 ) == -1 )
         return( errno );
     if ( dup2( pipe_fd[1], STDOUT_FILENO ) == -1 )
         return( errno );
     if ( dup2( pipe_fd[1], STDERR_FILENO ) == -1 )
         return( errno );
+    rc = spawnl( P_NOWAITO, CmdProc, CmdProc, "/c", cmd, NULL );
     close( pipe_fd[1] );
-    rc = spawnl( P_NOWAIT, CmdProc, CmdProc, "/c", cmd, NULL );
     *readpipe = pipe_fd[0];
     return rc;
 }
