@@ -63,14 +63,14 @@ static char *my_strcat( char *p, char *msg )
     return( p );
 }
 
-HAB     (APIENTRY *pfnWinInitialize)(ULONG);
-HMQ     (APIENTRY *pfnWinCreateMsgQueue)(HAB, ULONG);
-ULONG   (APIENTRY *pfnWinGetLastError)(HAB);
-ERRORID (APIENTRY *pfnWinGetLastError)(HAB);
-BOOL    (APIENTRY *pfnWinDestroyMsgQueue)(HMQ);
-BOOL    (APIENTRY *pfnWinTerminate)(HAB);
-BOOL    (APIENTRY *pfnWinTerminate)(HAB);
-ULONG   (APIENTRY *pfnWinMessageBox)(HWND,HWND,PCSZ,PCSZ,ULONG,ULONG);
+static HAB     (APIENTRY *pfnWinInitialize)(ULONG);
+static HMQ     (APIENTRY *pfnWinCreateMsgQueue)(HAB, ULONG);
+static ULONG   (APIENTRY *pfnWinGetLastError)(HAB);
+static ERRORID (APIENTRY *pfnWinGetLastError)(HAB);
+static BOOL    (APIENTRY *pfnWinDestroyMsgQueue)(HMQ);
+static BOOL    (APIENTRY *pfnWinTerminate)(HAB);
+static BOOL    (APIENTRY *pfnWinTerminate)(HAB);
+static ULONG   (APIENTRY *pfnWinMessageBox)(HWND,HWND,PCSZ,PCSZ,ULONG,ULONG);
 
 int __disallow_single_dgroup( unsigned hmod )
 {
